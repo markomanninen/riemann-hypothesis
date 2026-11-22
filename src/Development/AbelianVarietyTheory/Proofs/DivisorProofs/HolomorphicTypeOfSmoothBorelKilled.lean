@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusLawOfKilled
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothGramSchmidtIndefiniteHermitianFrames
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegativeFrameDomainProductOpenPreconnectedStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagOfUpTOfPreserves
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjInvol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusLawOfKilled
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothGramSchmidtIndefiniteHermitianFrames
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegativeFrameDomainProductOpenPreconnectedStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagOfUpTOfPreserves
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjInvol
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -109,7 +114,7 @@ lemma complex_linear {H x : Mt n} {q : ℕ} (h : OrthFr H q x) (L : Mt n →ₗ[
   have hadd : ∀ Z Z', M (Z + Z') = M Z + M Z' := by
     intro Z Z'
     simp only [hM, conjH_add]
-    rw [add_add_add_comm Z, add_sub_add_comm Z, smul_add, smul_add (1 / (2 * Complex.I)), map_add, map_add]
+    rw [add_add_add_comm Z, add_sub_add_comm Z, smul_add, smul_add (1 / (2 * Complex.I)), map_add (f := _), map_add (f := _)]
     ring
   have hr : ∀ (r : ℝ) Z, M ((r : ℂ) • Z) = r * M Z := by
     intro r Z
@@ -148,7 +153,8 @@ lemma complex_linear {H x : Mt n} {q : ℕ} (h : OrthFr H q x) (L : Mt n →ₗ[
     rw [hB B hB']
     change M' _ = _
     nth_rewrite 1 [matrix_eq_sum_single B]
-    simp only [Matrix.mul_sum, Matrix.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_sum, Matrix.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     have e : ∀ c, M' (x * Matrix.single a c (B a c) * x⁻¹) = B a c * if a = c then d a else 0 := by
       intro c
@@ -162,7 +168,7 @@ lemma complex_linear {H x : Mt n} {q : ℕ} (h : OrthFr H q x) (L : Mt n →ₗ[
   have h3 : ∀ Z, M Z = L Z := by
     intro Z
     obtain ⟨X, hX, B, hB', rfl⟩ := decomp h Z
-    rw [hadd, map_add, h1 X hX, h2 B hB']
+    rw [hadd, map_add (f := _), h1 X hX, h2 B hB']
   rw [← h3, ← h3, hsm]
 
 lemma uh_mul {H g g' : Mt n} (hg : g ∈ Formalism.QuantumDeterminants.UH H) (hg' : g' ∈ Formalism.QuantumDeterminants.UH H) : g * g' ∈ Formalism.QuantumDeterminants.UH H := by
@@ -226,7 +232,7 @@ lemma upT_inv {b : Mt n} (hb : UpT b) : UpT b⁻¹ := by
 lemma upT_one : UpT (1 : Mt n) := ⟨by simp, fun _ _ h => one_apply_ne h.ne'⟩
 
 lemma upT_mul_diag {b b' : Mt n} (hb : UpT b) (hb' : UpT b') (a : Fin n) : (b * b') a a = b a a * b' a a := by
-  rw [mul_apply, Finset.sum_eq_single a]
+  rw [Matrix.mul_apply, Finset.sum_eq_single a]
   · intro c _ hc
     rcases lt_or_gt_of_ne hc with h | h
     · rw [hb.2 _ _ h, zero_mul]
@@ -268,7 +274,7 @@ lemma curve_deriv (A C : ι → Mt n) (τ : ι) (c : ℝ → Mt n) (Z : Mt n)
   by_cases h : ρ = τ
   · subst h
     simp only [Pi.mulSingle_eq_same, Pi.single_eq_same]
-    simp only [mul_apply]
+    simp only [Matrix.mul_apply]
     exact HasDerivAt.fun_sum fun k _ => (HasDerivAt.fun_sum fun l _ => (hc l k).const_mul _).mul_const _
   · simp only [Pi.mulSingle_eq_of_ne h, Pi.single_eq_of_ne h]
     exact hasDerivAt_const _ _
@@ -307,7 +313,7 @@ lemma core (h : ∀ τ, OrthFr (Hm τ) (q τ) (x₀ τ)) {f : (ι → Mt n) → 
     let L : Mt n →ₗ[ℝ] ℂ :=
       { toFun := fun Z => D (co (Pi.single τ (u τ * Z * (x₀ * b) τ)))
         map_add' := fun Z Z' => by
-          rw [← map_add, Matrix.mul_add, Matrix.add_mul, Pi.single_add]; rfl
+          rw [← map_add (f := _), Matrix.mul_add, Matrix.add_mul, Pi.single_add]; rfl
         map_smul' := fun r Z => by
           rw [← map_smul, Matrix.mul_smul, Matrix.smul_mul, Pi.single_smul]; rfl }
     have hL : ∀ X ∈ lieH (Hm τ), L X = chi w b * der τ X f u := by
@@ -381,7 +387,7 @@ lemma core (h : ∀ τ, OrthFr (Hm τ) (q τ) (x₀ τ)) {f : (ι → Mt n) → 
     intro z v
     induction v using Pi.single_induction with
     | zero => simp
-    | add v v' h1 h2 => rw [smul_add, map_add, map_add, h1, h2, smul_add]
+    | add v v' h1 h2 => rw [smul_add, map_add (f := _), map_add (f := _), h1, h2, smul_add]
     | single τ v =>
       rw [← Pi.single_smul]
       exact hsingle τ z v
@@ -398,7 +404,7 @@ lemma cd_det {g : E → Mt n} (hg : ∀ a c, ContDiffOn ℝ ∞ (fun x => g x a 
 
 lemma cd_mulM {g g' : E → Mt n} (hg : ∀ a c, ContDiffOn ℝ ∞ (fun x => g x a c) U)
     (hg' : ∀ a c, ContDiffOn ℝ ∞ (fun x => g' x a c) U) (a c : Fin n) : ContDiffOn ℝ ∞ (fun x => (g x * g' x) a c) U := by
-  simp only [mul_apply]
+  simp only [Matrix.mul_apply]
   exact ContDiffOn.sum fun k _ => (hg _ _).mul (hg' _ _)
 
 lemma cd_inv {g : E → Mt n} (hg : ∀ a c, ContDiffOn ℝ ∞ (fun x => g x a c) U) (h0 : ∀ x ∈ U, (g x).det ≠ 0) (a c : Fin n) :
@@ -416,8 +422,8 @@ end GlobalTheory.HolDict.HolOf
 
 namespace GlobalTheory.HolDict
 
-open TorusLaw HolOf in
 
+open TorusLaw HolOf in
 theorem holFn_of_killed : ∀ (n : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι] (Hm : ι → Mt n) (q : ι → ℕ) (x₀ : ι → Mt n) (w : ι → Fin n → ℤ), (∀ τ, OrthFr (Hm τ) (q τ) (x₀ τ)) → ∀ f, SmFn Hm f → KilledFn Hm x₀ w f → HolFn Hm q x₀ w f := by
   intro n ι _ _ Hm q x₀ w h f hs hk
   choose β hβ hβ' using fun τ => GlobalTheory.HolDict.GS.smooth_gramSchmidt n (Hm τ) (q τ) (x₀ τ) (h τ)

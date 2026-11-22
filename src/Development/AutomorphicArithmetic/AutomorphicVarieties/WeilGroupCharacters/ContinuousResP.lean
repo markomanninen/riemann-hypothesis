@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,8 +103,8 @@ variable (s : HidaSetting l L Ω)
 
 def S : Set (Plc (Lp L)) := {v | ((l : ℕ) : 𝓞 (Lp L)) ∈ v.asIdeal ∨ v ∈ s.St ∨ v = s.v0}
 
-variable (l L) in
 
+variable (l L) in
 abbrev _root_.UpperTheory.V.W.Vl : Type := {v : Plc (Lp L) // ((l : ℕ) : 𝓞 (Lp L)) ∈ v.asIdeal}
 
 structure Lev where
@@ -140,7 +144,7 @@ theorem continuous_resP : Continuous (resP L Ω) := Af.continuous_restrictScalar
 def HidaSetting.Lev.frame {s : HidaSetting l L Ω} (V : s.Lev) : GFrame l where
   Γ := GS Ω V.S'
   cpt := inferInstance
-  tdisc := totDisc_quot _ (isClosed_NS Ω V.S')
+  tdisc := by exact totDisc_quot _ (isClosed_NS Ω V.S')
   η := V.η
   η_open := V.η_open
   c := toGS Ω V.S' s.c
@@ -149,7 +153,8 @@ def HidaSetting.Lev.frame {s : HidaSetting l L Ω} (V : s.Lev) : GFrame l where
   ε := V.ε
   ε_cont := V.ε_cont
   Vl := Vl l L
-  finV := haveI : Finite (Vl l L) := (V.fin.subset fun v (hv : _ ∈ v.asIdeal) => V.sub (Or.inl hv)).to_subtype
+  finV := haveI : Finite (Vl l L) := (V.fin.subset (t := {v : Plc (Lp L) | ((l : ℕ) : 𝓞 (Lp L)) ∈ v.asIdeal})
+      (fun _ hv => V.sub (Or.inl hv))).to_subtype
     Fintype.ofFinite _
   Gv v := Dec (F := L) (s.A v)
   cv v := isCompact_iff_compactSpace.1 (isClosed_Dec (F := L) (s.A v)).isCompact

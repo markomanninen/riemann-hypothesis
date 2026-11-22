@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.SharpRestriction.Divisibility.WeightFamilies
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TorsionTranslateThetaJetsDenominatorBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.SharpRestriction.Divisibility.WeightFamilies
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TorsionTranslateThetaJetsDenominatorBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem AlgLe.add {x y : ℂ} {t : ℝ} (h : AlgLe lam x t) (h' : AlgLe lam y t)
   lift x to Qbar using hx
   lift y to Qbar using hy
   refine ⟨add_mem x.2 y.2, ?_⟩
-  rw [← AddMemClass.coe_add, lamC_coe, map_add]
+  rw [← AddMemClass.coe_add, lamC_coe, map_add (f := _)]
   rw [lamC_coe] at h h'
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le h h')
 
@@ -178,7 +182,8 @@ theorem coordL_embV (h : TraceMapNormalisation D) (cc : Ideal (𝓞 D.host.K)) (
   rw [h2] at h1
   have h3 : coordL (tor0 D cc δ) b j (embV D (tor0 D cc δ) (b k)) =
       ∑ τ, embT D τ (∑ i, ∑ i', b k i i' * D.host.conj (b j i i')) := by
-    simp only [coordL_apply, coordB, embV, tor0, map_sum, map_mul, WeightFamilies.emb_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coordL_apply, coordB, embV, tor0, map_sum, map_mul, WeightFamilies.emb_conj]
     rfl
   rw [h3, h1]
   split_ifs <;> simp
@@ -186,7 +191,8 @@ theorem coordL_embV (h : TraceMapNormalisation D) (cc : Ideal (𝓞 D.host.K)) (
 theorem coordL_sum (h : TraceMapNormalisation D) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {a d r : ℕ}
     {b : Fin r → Matrix (Fin d) (Fin a) D.host.E} (hb : Orthonormal D b) (j : Fin r) (c : Fin r → ℂ) :
     coordL (tor0 D cc δ) b j (∑ k, c k • embV D (tor0 D cc δ) (b k)) = c j := by
-  simp [map_sum, map_smul, coordL_embV h cc δ hb]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, coordL_embV h cc δ hb]
 
 theorem exists_coord_of_mem_LaB (T : Tor D) {a d r : ℕ}
     {b : Fin r → Matrix (Fin d) (Fin a) D.host.E} {x : VC D a d} (hx : x ∈ LaB D T b) :
@@ -213,7 +219,8 @@ theorem Hf_sum (T : Tor D) {a d r : ℕ} (b : Fin r → Matrix (Fin d) (Fin a) D
     Hf D T z (∑ k, c k • embV D T (b k)) = (∑ k, coordB D T b k z * (starRingEnd ℂ) (c k)) / (area T.abelian₂ : ℂ) := by
   unfold Hf coordB
   congr 1
-  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul, embV]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul, embV]
   symm
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun τ _ => ?_
@@ -230,7 +237,7 @@ theorem U_pullB (h : TraceMapNormalisation D) (cc : Ideal (𝓞 D.host.K)) (δ :
   funext z
   unfold U U1 pullB
   rw [Hf_sum, Hf_sum, Finset.prod_mul_distrib, ← Complex.exp_sum]
-  simp only [← coordL_apply, map_add, coordL_sum h cc δ hb]
+  simp only [← coordL_apply, map_add (f := _), coordL_sum h cc δ hb]
   congr 2
   simp only [Finset.sum_div, Finset.mul_sum, ← Finset.sum_sub_distrib, tor0]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -257,7 +264,8 @@ theorem algLe_coord {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) (h : adm
       embV D (tor0 D cc δ) (b k) := by
     funext τ i i'
     have h2 := congrArg (fun M : Matrix (Fin d) (Fin a) D.host.E => embT D τ (M i i')) hc
-    simp only [Matrix.smul_apply, smul_eq_mul, Matrix.sum_apply, map_mul, map_sum, map_natCast, h.1 τ] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.smul_apply, smul_eq_mul, Matrix.sum_apply, map_mul, map_sum, map_natCast, h.1 τ] at h2
     simp only [embV, tor0, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, mul_assoc, ← Finset.mul_sum, ← h2]
     field_simp
   rw [h1, coordL_sum h.2 cc δ hb]

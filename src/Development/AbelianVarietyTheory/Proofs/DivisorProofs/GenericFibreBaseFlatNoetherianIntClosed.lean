@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -62,7 +67,6 @@ theorem flat_noetherian_nzd_intClosed : ∀ (A : Type) [CommRing A] [IsDomain A]
         (TensorProduct.toIntegralClosure A R K y : R ⊗[A] K) = b ⊗ₜ[A] (1 : K) := by
       intro y
       induction y with
-      | zero => exact ⟨0, by simp⟩
       | tmul b c =>
         obtain ⟨r, hr⟩ := IsIntegrallyClosed.isIntegral_iff.1 c.2
         refine ⟨r • b, ?_⟩
@@ -71,7 +75,7 @@ theorem flat_noetherian_nzd_intClosed : ∀ (A : Type) [CommRing A] [IsDomain A]
       | add u v hu hv =>
         obtain ⟨a, ha⟩ := hu
         obtain ⟨b, hb⟩ := hv
-        exact ⟨a + b, by rw [map_add, Subalgebra.coe_add, ha, hb, TensorProduct.add_tmul]⟩
+        exact ⟨a + b, by rw [map_add (f := _), Subalgebra.coe_add, ha, hb, TensorProduct.add_tmul]⟩
     obtain ⟨b, hb⟩ := key y
     refine ⟨b, ?_⟩
     apply e.injective

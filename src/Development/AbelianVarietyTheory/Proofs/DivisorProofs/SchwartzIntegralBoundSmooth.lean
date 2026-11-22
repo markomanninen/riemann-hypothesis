@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OnMatInfOfIsUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SandCLMInfApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArchimedeanRapidKernelOperatorFinsetSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumNormEntriesMulLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OnMatInfOfIsUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SandCLMInfApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArchimedeanRapidKernelOperatorFinsetSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumNormEntriesMulLe
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep GlobalTheory.JSW GlobalTheory.JSW.MirCinf MeasureTheory
 open scoped FourierTransform ContDiff
 
@@ -60,7 +65,7 @@ theorem sum_norm_le_of_le (A : Matrix (Fin n) (Fin n) (Cinf E)) {c : ℝ} (hc : 
 theorem measurable_sandCLMInf_apply {Y : Type} [MeasurableSpace Y] {A B : Y → Matrix (Fin n) (Fin n) (Cinf E)}
     (hA : ∀ i j, Measurable fun y => A y i j) (hB : ∀ i j, Measurable fun y => B y i j) (c : Fin n → Fin n → Cinf E) :
     Measurable fun y => sandCLMInf (A y) (B y) c := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [sandCLMInf_apply, Matrix.mul_apply, Matrix.of_apply]
   refine Finset.measurable_sum _ fun l _ => ?_
   refine Measurable.mul ?_ (hB l j)
@@ -99,13 +104,13 @@ theorem measurable_toGLInf_entry (i j : Fin n) :
 
 theorem continuous_jacInf : Continuous (jacInf : Matrix (Fin n) (Fin n) (Cinf E) → ℝ) := by
   unfold jacInf
-  refine continuous_finset_prod _ fun w _ => ?_
+  refine continuous_finsetProd _ fun w _ => ?_
   exact (Complex.continuous_normSq.comp ((continuous_apply w).comp (continuous_id.matrix_det))).pow n
 
 theorem one_le_htInf' (y : GL (Fin n) (Cinf E)) : 1 ≤ htInf y := by
   unfold htInf
   calc (1 : ℝ) = ∏ _w : InfinitePlace E, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
 
 theorem htGL_le_htInf' (y : GL (Fin n) (Cinf E)) (w : InfinitePlace E) :
     htGL (Matrix.GeneralLinearGroup.map (Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) w) y) ≤ htInf y := by
@@ -114,7 +119,7 @@ theorem htGL_le_htInf' (y : GL (Fin n) (Cinf E)) (w : InfinitePlace E) :
   rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ w)]
   refine le_mul_of_one_le_right (htGL_pos _).le ?_
   calc (1 : ℝ) = ∏ _w ∈ Finset.univ.erase w, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
 
 theorem norm_entry_le_htInf' (y : GL (Fin n) (Cinf E)) (i j : Fin n) (w : InfinitePlace E) :
     ‖(y : Matrix (Fin n) (Fin n) (Cinf E)) i j w‖ ≤ htInf y ∧
@@ -182,7 +187,7 @@ theorem jacInf_inv_le (q : GL (Fin n) (Cinf E)) :
       ((((n.factorial : ℝ) * htInf q ^ n) ^ 2) ^ n) ^ Fintype.card (InfinitePlace E) := by
   unfold jacInf
   rw [← Finset.card_univ, ← Finset.prod_const]
-  refine Finset.prod_le_prod (fun w _ => pow_nonneg (Complex.normSq_nonneg _) _) fun w _ => ?_
+  refine Finset.prod_le_prod₀ (fun w _ => pow_nonneg (Complex.normSq_nonneg _) _) fun w _ => ?_
   set M := ((q⁻¹ : GL (Fin n) (Cinf E)) : Matrix (Fin n) (Fin n) (Cinf E)) with hM
   have hdw : M.det w = ((Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) w).mapMatrix M).det :=
     RingHom.map_det (Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) w) M
@@ -353,12 +358,5 @@ theorem isRapidFamInf_secKInf : ∀ (E : Type) [Field E] [NumberField E] (n : �
       ENNReal.toReal_ofReal (by positivity : (0:ℝ) ≤ (|R| * htInf q) ^ Module.finrank ℝ (Fin n → Fin n → Cinf E)), hK]
     simp only [mul_pow, ← pow_mul, pow_add]
     ring
-
-example : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (Z : Type) [NormedAddCommGroup Z] [NormedSpace ℝ Z]
-    [FiniteDimensional ℝ Z] (X : Type) [MeasurableSpace X] (ν : Measure X) [SFinite ν] (κ : X → ℂ)
-    (τ : X → (Z × (Fin n → Fin n → Cinf E)) →L[ℝ] ℝ), Measurable κ → (∀ z, Measurable fun x => τ x z) →
-    (∀ N : ℕ, Integrable (fun x => ‖κ x‖ * (1 + ‖τ x‖) ^ N) ν) → ∀ (R : ℝ) (σ₀ : Fin n → Fin n → Cinf E)
-    (L : Z →L[ℝ] (Fin n → Fin n → Cinf E)), IsRapidFamInf ((volume : Measure (Fin n → Fin n → Cinf E)).prod ν)
-      (secKInf R σ₀ κ τ) (fun p => toGLInf (Matrix.of p.1)) (secEtaInf L τ) := isRapidFamInf_secKInf
 
 end GlobalTheory.JSW.MirCinf.SecFamInf

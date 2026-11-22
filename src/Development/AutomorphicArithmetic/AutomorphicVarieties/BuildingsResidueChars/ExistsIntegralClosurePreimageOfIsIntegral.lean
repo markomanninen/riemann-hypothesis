@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial in
 theorem UpperTheory.exists_integralClosure_preimage_of_isIntegral :

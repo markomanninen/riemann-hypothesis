@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGVTr
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGVTr
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

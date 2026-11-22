@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TcoMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibFiniteAndSep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TcoMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibFiniteAndSep
+
+@[expose] public section
 
 open GlobalTheory GlobalTheory.PD
 
@@ -45,7 +49,7 @@ theorem UpperTheory.finite_fiber_of_finiteType_parameter_ring :
       simp only [AlgHom.commutes]
     | add y z hy hz ihy ihz =>
       show e1.1 (ι (⟨y, hy⟩ + ⟨z, hz⟩)) = e2.1 (ι (⟨y, hy⟩ + ⟨z, hz⟩))
-      simp only [map_add, ihy, ihz]
+      simp only [map_add (f := _), ihy, ihz]
     | mul y z hy hz ihy ihz =>
       show e1.1 (ι (⟨y, hy⟩ * ⟨z, hz⟩)) = e2.1 (ι (⟨y, hy⟩ * ⟨z, hz⟩))
       simp only [map_mul, ihy, ihz]

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSquareMulInfinite
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsKum
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CyclicKummerNormFixedHilbert90
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HerbrandPrimeOrder
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PIdxUnitsFiniteExtensionAdicCompletion
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSubgroupIndexTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSquareMulInfinite
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsKum
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CyclicKummerNormFixedHilbert90
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HerbrandPrimeOrder
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PIdxUnitsFiniteExtensionAdicCompletion
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSubgroupIndexTwo
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped WithZero
@@ -260,6 +264,7 @@ theorem normsEscape_of_pow_two (M : Type) [Field M] [Algebra A M] [FiniteDimensi
     have hn' : Module.finrank K' M = 2 ^ (n + 1) := by
       rw [IntermediateField.finrank_fixedField_eq_card, hH]
     letI : Algebra K' K := (IntermediateField.inclusion hK').toRingHom.toAlgebra
+    letI : Module.Free K' K := Module.Free.of_divisionRing K' K
     haveI : IsScalarTower A K' K := IsScalarTower.of_algebraMap_eq fun _ => rfl
     haveI : IsScalarTower K' K M := IsScalarTower.of_algebraMap_eq fun _ => rfl
     haveI : FiniteDimensional K' K := Module.Finite.of_restrictScalars_finite A K' K
@@ -332,7 +337,7 @@ theorem baseChangeAt (F E K L A : Type) [Field F] [CharZero F] [Field E] [Field 
     have hbot : (⊤ : Subalgebra K L) ≤ ⊥ := by
       rw [← hgen, Algebra.adjoin_le_iff]
       rintro _ ⟨y, rfl⟩
-      rw [← e.sum_repr y, Fin.sum_univ_two, h0, map_add, Algebra.smul_def, Algebra.smul_def,
+      rw [← e.sum_repr y, Fin.sum_univ_two, h0, map_add (f := _), Algebra.smul_def, Algebra.smul_def,
         map_mul, map_mul, map_one, ← hc, ← IsScalarTower.algebraMap_apply,
         ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply F K L,
         IsScalarTower.algebraMap_apply F K L]
@@ -356,8 +361,8 @@ theorem baseChangeAt (F E K L A : Type) [Field F] [CharZero F] [Field E] [Field 
 
 end NormBaseChange
 
-open NormBaseChange in
 
+open NormBaseChange in
 theorem baseChange : ∀ (F E K L : Type) [Field F] [NumberField F] [Field E] [NumberField E]
     [Field K] [NumberField K] [Field L] [NumberField L] [Algebra F E] [Algebra F K] [Algebra K L]
     [Algebra E L] [Algebra F L] [IsScalarTower F K L] [IsScalarTower F E L]

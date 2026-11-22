@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LengthEqAddEigen
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LengthEqAddEigen
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,11 @@ theorem exists_isConjOm : ∃ σ : Ω ≃+* Ω, IsConjOm σ := by
   have : Algebra.IsAlgebraic E Ω := IsAlgClosure.isAlgebraic
   have : Algebra.IsAlgebraic ℚ Ω := Algebra.IsAlgebraic.trans ℚ E Ω
   have : IsAlgClosure ℚ Ω := ⟨inferInstance, inferInstance⟩
-  let j : Ω →ₐ[ℚ] ℂ := IsAlgClosed.lift
+  let j : Ω →ₐ[ℚ] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   letI : Algebra Ω ℂ := j.toRingHom.toAlgebra
   let c : ℂ ≃ₐ[ℚ] ℂ := Complex.conjAe.restrictScalars ℚ
   exact ⟨(c.restrictNormal Ω).toRingEquiv, j.toRingHom, fun x => c.restrictNormal_commutes Ω x⟩
@@ -74,20 +82,6 @@ private theorem mem_eig (D : LData E Ω l) (e : ℕ) {σ : Ω ≃+* Ω} (h : IsC
   refine ⟨fun ⟨m, hm⟩ => ⟨(-1 : ℤ_[l]) ^ e • m, fun g => ?_⟩, fun ⟨m, hm⟩ => ⟨(-1 : ℤ_[l]) ^ e • m, fun g => ?_⟩⟩
   · rw [map_smul, ← smul_sub, ← hm, smul_smul, hs, one_smul]
   · rw [map_smul, ← smul_sub, ← hm]
-
-theorem mk_mem_ShaPlus_iff (D : LData E Ω l) (e : ℕ) {σ : Ω ≃+* Ω} (h : IsConjOm σ) (z : Z1 (qzTw D (e : ℤ))) :
-    Submodule.Quotient.mk z ∈ ShaPlus D e ↔ Submodule.Quotient.mk z ∈ Sha D e ∧
-      ∃ m, ∀ g, z.1 (conjGS D h.isLift g) - z.1 g = qzTw D e g m - m := by
-  have := mem_eig D e h z 1
-  simp only [mul_one, one_smul] at this
-  exact and_congr_right fun _ => this
-
-theorem mk_mem_ShaMinus_iff (D : LData E Ω l) (e : ℕ) {σ : Ω ≃+* Ω} (h : IsConjOm σ) (z : Z1 (qzTw D (e : ℤ))) :
-    Submodule.Quotient.mk z ∈ ShaMinus D e ↔ Submodule.Quotient.mk z ∈ Sha D e ∧
-      ∃ m, ∀ g, z.1 (conjGS D h.isLift g) + z.1 g = qzTw D e g m - m := by
-  have := mem_eig D e h z (-1)
-  simp only [← pow_succ, neg_smul, one_smul, sub_neg_eq_add] at this
-  exact and_congr_right fun _ => this
 
 end UpperTheory.V
 

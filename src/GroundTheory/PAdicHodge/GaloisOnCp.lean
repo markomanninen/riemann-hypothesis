@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.PAdicHodge
@@ -59,10 +64,6 @@ theorem continuous_gal_apply (y : PadicAlgCl p) :
   rw [mul_smul, inv_smul_eq_iff] at h
   exact h
 
-instance : ContinuousSMul Gal(PadicAlgCl p/K) (PadicAlgCl p) :=
-  continuousSMul_of_isometry_of_dense Set.univ dense_univ (fun σ => isometry_gal σ)
-    (fun y _ => continuous_gal_apply y)
-
 theorem gal_smul_coe (σ : Gal(PadicAlgCl p/K)) (y : PadicAlgCl p) :
     σ • (y : ℂ_[p]) = ((σ y : PadicAlgCl p) : ℂ_[p]) :=
   (Completion.coe_smul σ y).symm
@@ -107,10 +108,6 @@ theorem gal_smul_algebraMap (σ : Gal(PadicAlgCl p/K)) (q : ℚ_[p]) :
   rw [gal_smul_coe]
   exact congrArg _ ((σ.restrictScalars ℚ_[p]).commutes q)
 
-instance : FaithfulSMul Gal(PadicAlgCl p/K) ℂ_[p] :=
-  ⟨fun h => AlgEquiv.ext fun y => Completion.coe_injective (PadicAlgCl p) <| by
-    rw [← gal_smul_coe, ← gal_smul_coe, h]⟩
-
 def galCp (σ : Gal(PadicAlgCl p/K)) : ℂ_[p] ≃+* ℂ_[p] :=
   MulSemiringAction.toRingEquiv _ ℂ_[p] σ
 
@@ -119,9 +116,6 @@ theorem galCp_apply (σ : Gal(PadicAlgCl p/K)) (x : ℂ_[p]) : galCp σ x = σ �
 theorem galCp_coe (σ : Gal(PadicAlgCl p/K)) (y : PadicAlgCl p) :
     galCp σ (y : ℂ_[p]) = ((σ y : PadicAlgCl p) : ℂ_[p]) :=
   gal_smul_coe σ y
-
-theorem galCp_symm_apply (σ : Gal(PadicAlgCl p/K)) (x : ℂ_[p]) :
-    (galCp σ).symm x = σ⁻¹ • x := rfl
 
 theorem norm_galCp (σ : Gal(PadicAlgCl p/K)) (x : ℂ_[p]) : ‖galCp σ x‖ = ‖x‖ :=
   norm_smul_gal σ x
@@ -132,9 +126,6 @@ theorem isometry_galCp (σ : Gal(PadicAlgCl p/K)) : Isometry (galCp σ) :=
 theorem continuous_galCp (σ : Gal(PadicAlgCl p/K)) : Continuous (galCp σ) :=
   (isometry_galCp σ).continuous
 
-theorem continuous_galCp_symm (σ : Gal(PadicAlgCl p/K)) : Continuous (galCp σ).symm :=
-  (isometry_smul_gal σ⁻¹).continuous
-
 theorem eq_galCp_of_continuous (σ : Gal(PadicAlgCl p/K)) (f : ℂ_[p] → ℂ_[p])
     (hf : Continuous f) (h : ∀ y : PadicAlgCl p, f y = ((σ y : PadicAlgCl p) : ℂ_[p])) :
     f = galCp σ :=
@@ -142,8 +133,6 @@ theorem eq_galCp_of_continuous (σ : Gal(PadicAlgCl p/K)) (f : ℂ_[p] → ℂ_[
 
 def galCpHom : Gal(PadicAlgCl p/K) →* RingAut ℂ_[p] :=
   MulSemiringAction.toRingAut _ ℂ_[p]
-
-theorem galCpHom_apply (σ : Gal(PadicAlgCl p/K)) : galCpHom σ = galCp σ := rfl
 
 theorem galCp_mul (σ τ : Gal(PadicAlgCl p/K)) : galCp (σ * τ) = (galCp τ).trans (galCp σ) :=
   map_mul galCpHom σ τ
@@ -156,18 +145,6 @@ theorem mem_padicComplexInt_iff (x : ℂ_[p]) : x ∈ 𝓞_ℂ_[p] ↔ ‖x‖ �
     ← map_one (Valuation.RankOne.hom (PadicComplex.valued p).v),
     (Valuation.RankOne.strictMono _).le_iff_le, Valuation.restrict_le_one_iff]
   rfl
-
-theorem gal_smul_mem_padicComplexInt_iff (σ : Gal(PadicAlgCl p/K)) (x : ℂ_[p]) :
-    σ • x ∈ 𝓞_ℂ_[p] ↔ x ∈ 𝓞_ℂ_[p] := by
-  rw [mem_padicComplexInt_iff, mem_padicComplexInt_iff, norm_smul_gal]
-
-theorem gal_smul_padicComplexInt (σ : Gal(PadicAlgCl p/K)) :
-    (fun x : ℂ_[p] => σ • x) '' (𝓞_ℂ_[p] : Set ℂ_[p]) = 𝓞_ℂ_[p] := by
-  ext x
-  refine ⟨?_, fun hx => ⟨σ⁻¹ • x, ?_, smul_inv_smul σ x⟩⟩
-  · rintro ⟨y, hy, rfl⟩
-    exact (gal_smul_mem_padicComplexInt_iff σ y).2 hy
-  · exact (gal_smul_mem_padicComplexInt_iff σ⁻¹ x).2 hx
 
 end
 

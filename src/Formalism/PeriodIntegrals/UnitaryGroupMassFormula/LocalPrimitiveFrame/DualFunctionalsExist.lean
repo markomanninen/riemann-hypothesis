@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalPrimitiveFrame.StepsTop
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalPrimitiveFrame.StepsTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem Dual_ne_zero (Lb : Submodule (𝓞 E) (Fin n → E)) (z : Fin n → E)
   intro hz
   obtain ⟨o, ho⟩ := hprim (algebraMap ℚ E (1 / 2)) (by rw [hz, smul_zero]; exact Lb.zero_mem)
   have hint : IsIntegral ℤ (algebraMap ℚ E (1 / 2)) := ho ▸ RingOfIntegers.isIntegral_coe o
-  rw [isIntegral_algebraMap_iff (algebraMap ℚ E).injective] at hint
+  rw [isIntegral_algebraMap_iff ] at hint
   obtain ⟨m, hm⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
   have h2 : ((2 * m : ℤ) : ℚ) = 1 := by
     push_cast
@@ -161,17 +165,20 @@ theorem dualFunctionalsExist : Dual := by
         rw [Submodule.coe_smul, Dual_smul_coe]
       have h1 : (d : E) * χ s = (d : E) * (ρ ⟨s, hSLb s hs⟩ : E) := by
         have hL : (d : E) * χ s = ∑ t : B, (o t : E) * (ρ ⟨t, hBLb t t.2⟩ : E) := by
-          rw [← smul_eq_mul, ← map_smul, hdo, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [← smul_eq_mul, ← map_smul, hdo, map_sum]
           refine Finset.sum_congr rfl fun t _ => ?_
           rw [map_smul, smul_eq_mul, hχ t]
         have hR : ρ (d • (⟨s, hSLb s hs⟩ : Lb)) = ∑ t : B, o t * ρ ⟨t, hBLb t t.2⟩ := by
-          rw [hsum, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [hsum, map_sum]
           refine Finset.sum_congr rfl fun t _ => ?_
           rw [map_smul, smul_eq_mul]
         rw [map_smul, smul_eq_mul] at hR
         rw [hL]
         have h3 := congrArg (algebraMap (𝓞 E) E) hR
-        simp only [map_mul, map_sum] at h3
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_mul, map_sum] at h3
         exact h3.symm
       exact mul_left_cancel₀ hdE h1
     have key' : ∀ l, l ∈ Submodule.span (𝓞 E) (S : Set (Fin n → E)) → ∀ hl : l ∈ Lb,
@@ -189,7 +196,7 @@ theorem dualFunctionalsExist : Dual := by
         have hx' : x ∈ Lb := hS ▸ hx
         have hy' : y ∈ Lb := hS ▸ hy
         have h0 : (⟨x + y, hl⟩ : Lb) = ⟨x, hx'⟩ + ⟨y, hy'⟩ := rfl
-        rw [map_add, ihx hx', ihy hy', h0, map_add]
+        rw [map_add (f := _), ihx hx', ihy hy', h0, map_add (f := _)]
         exact (map_add (algebraMap (𝓞 E) E) _ _).symm
       | smul a x hx ihx =>
         intro hl

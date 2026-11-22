@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+
+@[expose] public section
+
 open NumberField GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open scoped NumberField.AdeleRing
 
@@ -54,8 +59,8 @@ theorem detModule_rhs (K : Type) [Field K] [NumberField K] (n r : ℕ) (X Y : UP
 end GlobalTheory.CompanionTheory.Latexp
 
 namespace GlobalTheory.CompanionTheory.Latexp
-open GroundTheory.Automorphic.Reduction in
 
+open GroundTheory.Automorphic.Reduction in
 theorem exponent_mem_finset : ∀ (K : Type) [Field K] [NumberField K] (n r : ℕ), 0 < n → ∀ (Q : Set (AdelicGLn.AdelicGL K n)), IsCompact Q → ∃ M : Finset ℤ, ∀ (t : ℝ) (X Y : UPos n r → 𝔸[K]), ∀ q ∈ Q, ∀ (γ₀ : GL (Fin n) K) (m : ℤ), AdelicGLn.diagonal K n γ₀ * (PositivityTheory.Rg.Rs.An.tor K fun _ : Fin n => (1 : ℝ)) ^ m = unipGL X * PositivityTheory.Rg.Rs.An.aR K n r t * q * (PositivityTheory.Rg.Rs.An.aR K n r t)⁻¹ * (unipGL Y)⁻¹ → m ∈ M := by
   intro K _ _ n r hn Q hQ
   have hdc : Continuous fun g : AdelicGLn.AdelicGL K n => (detModule K n g : ℝ) :=

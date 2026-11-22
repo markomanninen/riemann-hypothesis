@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPair
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDJNice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveOrbitOpen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPair
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDJNice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveOrbitOpen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

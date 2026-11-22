@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh
 
@@ -15,7 +19,7 @@ variable {R : Type*} [CommRing R] {κ : Type*}
 
 def wt (R : Type*) [CommRing R] (A : κ →₀ ℕ) : R := A.prod fun _ e => (e.factorial : R)
 
-def pair (P Q : MvPolynomial κ R) : R := ∑ A ∈ P.support, coeff A P * wt R A * coeff A Q
+def pair (P Q : MvPolynomial κ R) : R := ∑ A ∈ P.support, AddMonoidAlgebra.coeff P A * wt R A * AddMonoidAlgebra.coeff Q A
 
 theorem wt_add_single (B : κ →₀ ℕ) (v : κ) :
     wt R (B + Finsupp.single v 1) = wt R B * ((B v : R) + 1) := by
@@ -47,7 +51,7 @@ theorem wt_add_single (B : κ →₀ ℕ) (v : κ) :
   ring
 
 theorem pair_eq_sum (P Q : MvPolynomial κ R) (S : Finset (κ →₀ ℕ)) (hS : P.support ⊆ S) :
-    pair P Q = ∑ A ∈ S, coeff A P * wt R A * coeff A Q := by
+    pair P Q = ∑ A ∈ S, AddMonoidAlgebra.coeff P A * wt R A * AddMonoidAlgebra.coeff Q A := by
   unfold pair
   apply Finset.sum_subset hS
   intro A _ hA
@@ -62,7 +66,7 @@ theorem pair_add_left (P P' Q : MvPolynomial κ R) : pair (P + P') Q = pair P Q 
     ← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro A _
-  simp only [coeff_add]
+  simp only [MvPolynomial.coeff_add]
   ring
 
 theorem pair_C_mul_left (c : R) (P Q : MvPolynomial κ R) : pair (C c * P) Q = c * pair P Q := by
@@ -136,7 +140,7 @@ theorem constantCoeff_subst (g : κ → κ → R) (Q : MvPolynomial κ R) :
     constantCoeff (subst g Q) = constantCoeff Q := by
   induction Q using MvPolynomial.induction_on with
   | C a => rw [subst_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp => simp [subst_X]
 
 theorem pderiv_subst (g : κ → κ → R) (j : κ) (Q : MvPolynomial κ R) :
@@ -144,10 +148,11 @@ theorem pderiv_subst (g : κ → κ → R) (j : κ) (Q : MvPolynomial κ R) :
   classical
   induction Q using MvPolynomial.induction_on with
   | C a => simp [subst_C]
-  | add p q hp hq => simp only [map_add, hp, hq, mul_add, Finset.sum_add_distrib]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, mul_add, Finset.sum_add_distrib]
   | mul_X p k hp =>
     have h1 : pderiv j (subst g (X k)) = C (g k j) := by
-      rw [subst_X, map_sum, Finset.sum_eq_single j]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [subst_X, map_sum, Finset.sum_eq_single j]
       · simp
       · intro b _ hb
         simp [pderiv_X_of_ne hb]
@@ -161,24 +166,17 @@ theorem pderiv_subst (g : κ → κ → R) (j : κ) (Q : MvPolynomial κ R) :
     rw [map_mul, pderiv_mul, h1, hp, ← h2, Finset.sum_mul, ← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro i _
-    simp only [pderiv_mul, map_add, map_mul, mul_add, mul_assoc]
+    simp only [pderiv_mul, map_add (f := _), map_mul, mul_add, mul_assoc]
 
 theorem pair_subst (g : κ → κ → R) (P Q : MvPolynomial κ R) :
     pair P (subst g Q) = pair (subst (fun i j => g j i) P) Q := by
   induction P using MvPolynomial.induction_on generalizing Q with
   | C a => rw [subst_C, pair_C_left, pair_C_left, constantCoeff_subst]
-  | add p q hp hq => rw [map_add, pair_add_left, pair_add_left, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), pair_add_left, pair_add_left, hp, hq]
   | mul_X p k hp =>
     rw [pair_mul_X, pderiv_subst, pair_sum_right, map_mul, subst_X, Finset.mul_sum, pair_sum_left]
     apply Finset.sum_congr rfl
     intro i _
     rw [pair_C_mul_right, hp, mul_left_comm, pair_C_mul_left, pair_mul_X]
-
-theorem main :
-  (∀ (C : Type) [Field C] [CharZero C] (κ : Type) [Fintype κ] [DecidableEq κ] (g : Matrix κ κ C) (P Q : MvPolynomial κ C),
-    (∑ A ∈ (P).support, MvPolynomial.coeff A (P) * (A.prod fun _ e => (e.factorial : C)) * MvPolynomial.coeff A (MvPolynomial.aeval (fun i => ∑ j, MvPolynomial.C (g i j) * MvPolynomial.X j) Q)) =
-    (∑ A ∈ (MvPolynomial.aeval (fun i => ∑ j, (MvPolynomial.C (g j i) * MvPolynomial.X j : MvPolynomial κ C)) P).support, MvPolynomial.coeff A (MvPolynomial.aeval (fun i => ∑ j, (MvPolynomial.C (g j i) * MvPolynomial.X j : MvPolynomial κ C)) P) * (A.prod fun _ e => (e.factorial : C)) * MvPolynomial.coeff A (Q))) := by
-  intro C _ _ κ _ _ g P Q
-  exact pair_subst (fun i j => g i j) P Q
 
 end GlobalTheory.PolyPairingAdjoint

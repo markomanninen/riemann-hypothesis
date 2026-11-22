@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ClassFieldConsequences.CongruenceSubgroupLeStandardOpenSubgroup
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SPicDefs
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ClassFieldConsequences.CongruenceSubgroupLeStandardOpenSubgroup
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SPicDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -61,11 +66,6 @@ theorem mk_diagonal (a : Kˣ) : mk S (diagonal K a) = 1 :=
 
 theorem mk_eq_one_of_mem {x : IdeleGroup K} (hx : x ∈ unitsOutside S) : mk S x = 1 :=
   (QuotientGroup.eq_one_iff _).2 (Subgroup.mem_sup_right hx)
-
-theorem diagonal_range_le : (diagonal K).range ≤ sIdeleSubgroup S := le_sup_left
-
-def ofIdeleClass : IdeleClassGroup K →* SIdeleClassGroup S :=
-  QuotientGroup.map _ _ (MonoidHom.id _) (diagonal_range_le S)
 
 end SIdeleClassGroup
 

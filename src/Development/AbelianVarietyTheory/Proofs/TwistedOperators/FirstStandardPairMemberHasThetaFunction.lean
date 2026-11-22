@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousCharacterFiniteOrderIntegralUnits
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousCharacterFiniteOrderIntegralUnits
+
+@[expose] public section
 
 namespace StandardFirstTheta
 section
@@ -30,7 +34,7 @@ theorem hom_sum {R R' ι : Type} [CommRing R] [CommRing R'] (f : R →+* R') (p 
 
 theorem hom_shift {R κ : Type} [CommRing R] [CommRing κ] (f : R →+* κ) {a b z u u' : R} (h0 : f a * f b = 0)
     (hu' : u' = u + a * (b * z)) : f u' = f u := by
-  rw [hu', map_add, map_mul, map_mul, ← mul_assoc, h0, zero_mul, add_zero]
+  rw [hu', map_add (f := _), map_mul, map_mul, ← mul_assoc, h0, zero_mul, add_zero]
 
 theorem hom_natCast {R R' : Type} [CommRing R] [CommRing R'] (f : R →+* R') (n : ℕ) : f n = n := map_natCast f n
 
@@ -44,7 +48,7 @@ theorem toEAf_surj (z : EAf D) : ∃ w : AE D, infPart D w = 0 ∧ toEAf D w = z
   | add x y hx hy =>
     obtain ⟨a, ha, rfl⟩ := hx
     obtain ⟨b, hb, rfl⟩ := hy
-    exact ⟨a + b, by rw [RingHom.map_add, ha, hb, add_zero], RingHom.map_add _ _ _⟩
+    exact ⟨a + b, by rw [RingHom.map_add (f := _), ha, hb, add_zero], RingHom.map_add _ _ _⟩
 
 theorem finPart_eq_of_toEAf {a b : AE D} (h : toEAf D a = toEAf D b) : finPart D a = finPart D b :=
   (Algebra.TensorProduct.comm D.host.F (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.host.E).injective h
@@ -63,15 +67,15 @@ theorem exists_unit {u v : EAf D} (huv : u * v = 1) :
   have w₁ : infPart D (1 - g₁) = 1 := by rw [RingHom.map_sub, a₁, RingHom.map_one, sub_zero]
   have w₀ : toEAf D (1 - g₁) = 0 := by rw [RingHom.map_sub, b₁, RingHom.map_one, sub_self]
   have h : (1 - g₁ + g) * (1 - g₁ + g') = 1 := eq_of_parts
-    (by simp only [RingHom.map_mul, RingHom.map_add, w₁, a₂, a₃, RingHom.map_one, add_zero, mul_one])
-    (by simp only [RingHom.map_mul, RingHom.map_add, w₀, b₂, b₃, RingHom.map_one, zero_add, huv])
+    (by simp only [RingHom.map_mul, RingHom.map_add (f := _), w₁, a₂, a₃, RingHom.map_one, add_zero, mul_one])
+    (by simp only [RingHom.map_mul, RingHom.map_add (f := _), w₀, b₂, b₃, RingHom.map_one, zero_add, huv])
   refine ⟨⟨_, _, h, by rw [mul_comm]; exact h⟩, ?_, ?_, ?_⟩
   · change infPart D (1 - g₁ + g) = 1
-    rw [RingHom.map_add, w₁, a₂, add_zero]
+    rw [RingHom.map_add (f := _), w₁, a₂, add_zero]
   · change toEAf D (1 - g₁ + g) = u
-    rw [RingHom.map_add, w₀, b₂, zero_add]
+    rw [RingHom.map_add (f := _), w₀, b₂, zero_add]
   · change toEAf D (1 - g₁ + g') = v
-    rw [RingHom.map_add, w₀, b₃, zero_add]
+    rw [RingHom.map_add (f := _), w₀, b₃, zero_add]
 
 theorem res_idem_off {a : AE D} {P Q : Pl D.host.E} (ha : Formalism.L2.NTheta.IsIdemAt a P) (hQ : Q ≠ P)
     (h : toEAf D a ∈ OO) : resS D.host.F Q ⟨toEAf D a, h⟩ = 0 := by
@@ -120,7 +124,7 @@ theorem det_cong {R : Type} [CommRing R] {k : ℕ} {A B : Matrix (Fin k) (Fin k)
   have e : (Ideal.Quotient.mk (Ideal.span {c})).mapMatrix B = (Ideal.Quotient.mk (Ideal.span {c})).mapMatrix A := by
     ext i j
     obtain ⟨z, hz⟩ := h i j
-    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, hz, RingHom.map_add, RingHom.map_mul]
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, hz, RingHom.map_add (f := _), RingHom.map_mul]
     rw [Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self c), zero_mul, add_zero]
   have e2 : Ideal.Quotient.mk (Ideal.span {c}) B.det = Ideal.Quotient.mk (Ideal.span {c}) A.det := by
     rw [RingHom.map_det, RingHom.map_det, e]
@@ -217,8 +221,8 @@ theorem exists_isUnitDet {e : AE D} {S : Finset (Pl D.host.E)} (he : IsIdemSum e
   obtain ⟨x', a, b, d⟩ := exists_unit (u := 1 - toEAf D e + toEAf D e * N'.det) (v := (w : EAf D)) (congrArg Subtype.val hw)
   exact ⟨x', a, b, by rw [d]; exact w.2⟩
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem nu_eq {ν : (AE D)ˣ →* Circle} {e : AE D} {S : Finset (Pl D.host.E)} (he : IsIdemSum e S) {n c : ℕ}
     (hl : ∀ x, Formalism.L2.Pj.FinUnit x → (∃ y ∈ intAE D, finPart D (x : AE D) - 1 = n • y) → ν x = 1) {k : ℕ}
     {N N' Z : Matrix (Fin k) (Fin k) (EAf D)} (hN : IsIntM N) (hZ : IsIntM Z)
@@ -287,8 +291,8 @@ theorem unitChar_congr {ν : (AE D)ˣ →* Circle} {e : AE D} {S : Finset (Pl D.
   have g := fun hx => exists_isUnitDet he hC hN' hZ' h' hx
   unfold unitChar
   by_cases hx : ∃ x, IsUnitDet e N x
-  · rw [dif_pos hx, dif_pos (f hx), nu_eq he hl hN hZ h hx.choose_spec (f hx).choose_spec]
-  · rw [dif_neg hx, dif_neg fun h => hx (g h)]
+  · rw [dite_eq_left hx, dite_eq_left (f hx), nu_eq he hl hN hZ h hx.choose_spec (f hx).choose_spec]
+  · rw [dite_eq_right hx, dite_eq_right fun h => hx (g h)]
 
 theorem isIntM_topL {b a k : ℕ} {Y : Matrix (Fin b) (Fin a) (EAf D)} (h : IsIntM Y) : IsIntM (topL k Y) := fun i j => by
   unfold topL
@@ -341,8 +345,8 @@ variable {D : D7}
 
 local notation "OO" => Formalism.L2.Herm.intAf D.host.F D.host.E
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem stdFst_shift {ν : (AE D)ˣ →* Circle} {e : AE D} {S : Finset (Pl D.host.E)} (he : IsIdemSum e S)
     {I : Ideal (𝓞 D.host.E)} {n₀ n c : ℕ} (hn₀ : ((n₀ : ℕ) : 𝓞 D.host.E) ∈ I)
     (hl : ∀ x, Formalism.L2.Pj.FinUnit x → (∃ y ∈ intAE D, finPart D (x : AE D) - 1 = n • y) → ν x = 1)
@@ -377,8 +381,8 @@ theorem stdFst_shift {ν : (AE D)ˣ →* Circle} {e : AE D} {S : Finset (Pl D.ho
     ring
   · rw [if_neg hcnd, if_neg fun h' => hcnd ⟨hh.1 h'.1, hint.1 h'.2.1, hid.1 h'.2.2⟩]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem stdFst_isSB {ν : (AE D)ˣ →* Circle} (hν : Continuous ν) {e : AE D} {S : Finset (Pl D.host.E)} (he : IsIdemSum e S)
     {I : Ideal (𝓞 D.host.E)} (hI : I ≠ ⊥) (A WW : HSp D) (βA : GL (Fin A.rank) (EAf D)) (βW : GL (Fin WW.rank) (EAf D))
     (Λ : AddSubgroup (WO A WW))
@@ -424,7 +428,9 @@ theorem exists_theta : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFa
     · simp [neg_gram, hc]
     · simp [neg_gram] at hc ⊢
       exact neg_eq_iff_eq_neg.2 hc
-  obtain ⟨K, hK, hC⟩ := GlobalTheory.PlaceDatum.exists_nsmul_of_frMapO (S := neg A) hSd.1 hW.1.1 rA.β rW.β
+  obtain ⟨K, hK, hC⟩ := GlobalTheory.PlaceDatum.exists_nsmul_of_frMapO (S := neg A)
+    (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hSd)
+    (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ (hW.1)) rA.β rW.β
   have hSB : IsSBHalf e (latO (neg A) WW rA.Λ rW.Λ fun _ => True) (stdFst ν e I A WW rA.β rW.β) :=
     stdFst_isSB hν.1 he hI A WW rA.β rW.β (latO (neg A) WW rA.Λ rW.Λ fun _ => True)
       (GlobalTheory.PlaceDatum.exists_den_frMapO (S := neg A) hSd.1.fg hW.1.1.fg rA.β rW.β)

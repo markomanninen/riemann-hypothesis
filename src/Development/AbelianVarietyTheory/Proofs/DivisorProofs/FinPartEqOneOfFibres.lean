@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ namespace GlobalTheory.CMVal.Fibre
 
 variable {E : Type} [Field E] [NumberField E]
 
-open Classical in
 
+open Classical in
 theorem tendsto_of_cut (a : Af E) (g : Finset (HeightOneSpectrum (𝓞 E)) → Af E)
     (hg : ∀ T v, g T v = if v ∈ T then a v else 1) : Tendsto g atTop (𝓝 a) := by
   let S : Set (HeightOneSpectrum (𝓞 E)) := {v | a v ∈ v.adicCompletionIntegers E}
@@ -39,8 +43,8 @@ theorem tendsto_of_cut (a : Af E) (g : Finset (HeightOneSpectrum (𝓞 E)) → A
   rw [h3]
   exact h2
 
-open Classical in
 
+open Classical in
 theorem prod_single_apply (y : (Af E)ˣ) (T : Finset (HeightOneSpectrum (𝓞 E))) (v : HeightOneSpectrum (𝓞 E)) :
     ((∏ P ∈ T, single P (coord P y) : (Af E)ˣ) : Af E) v = if v ∈ T then (y : Af E) v else 1 := by
   induction T using Finset.induction_on with

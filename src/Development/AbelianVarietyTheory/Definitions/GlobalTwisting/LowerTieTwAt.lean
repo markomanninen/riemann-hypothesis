@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
-import Formalism.SharpRestriction.Divisibility.StatementFT.PeriodPointConditions
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
+public import Formalism.SharpRestriction.Divisibility.StatementFT.PeriodPointConditions
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,9 +77,6 @@ variable {B : Base} {X : PreX B.toPre} (I : TC B X) (l : I.Laws)
 def RowVal (u : B.Word) (a : I.ι) (G : (I.per l u a).Mt) : Prop :=
   ∀ c : (I.stX a).Cl, ∃ y ∈ nabAt B.fields.emb B.wts.sgTrue ((I.stX a).rep c).1.1.deco.1.N,
     (I.perIn u a).rd B.fields.emb B.embLL G c = MvPolynomial.map B.embLL y.1
-
-theorem rowVal_zero (u : B.Word) (a : I.ι) : RowVal I l u a 0 := fun c => ⟨0, Submodule.zero_mem _, by
-  rw [map_zero]; exact (map_zero _).symm⟩
 
 structure RowInt (Z : TC.Later B (I.cols l)) : Prop where
   ref : ∀ u, ∀ F ∈ ((I.rec7 l Z).what₂.Mtilde (I.rec7 l Z).what₂.mu0).carrier, RowVal I l u I.mu0 (((I.rec7 l Z).eMt u).symm F)

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.KTwoMinorIntegrality
-import Formalism.SharpRestriction.CuspSpanNormBounds.WeightedLatticeSum
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.KTwoMinorIntegrality
+public import Formalism.SharpRestriction.CuspSpanNormBounds.WeightedLatticeSum
+
+@[expose] public section
 
 noncomputable section
 

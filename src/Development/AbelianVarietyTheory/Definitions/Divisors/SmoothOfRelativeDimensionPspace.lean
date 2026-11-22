@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemSubPtsCutBaseChangeIff
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.LocusEqTopOfDualPow
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsIsoGrCechMapPolyToGamma
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemSubPtsCutBaseChangeIff
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.LocusEqTopOfDualPow
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsIsoGrCechMapPolyToGamma
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -82,12 +86,6 @@ theorem form_eq {d : ℕ} {g : MvPolynomial (Fin (M + 1)) k} (hg : g.IsHomogeneo
   exact congrArg (fun a : Algebra k Γ(PSpace k M, ⊤) =>
     letI := a; Twist.formSec (coord k M) (mem_polyGrading_natCast.2 hg)) (algebraΓ_eq k M)
 
-theorem imageIdeal_eq_bot : (projSys k M).imageIdeal = ⊥ := by
-  refine le_bot_iff.1 (Ideal.span_le.2 ?_)
-  rintro g ⟨d, hg, h⟩
-  refine (formSec_inj hg (isHomogeneous_zero _ k d)).1 ((form_eq k M hg).symm.trans (h.trans ?_))
-  exact LB.f_injective (funext fun j => (formOn_zero (hi := (On_U k M d j).le)).symm)
-
 theorem del_eq_one : (projSys k M).del = 1 := by
   have h := interNum_const_of_polynomial k (structureModule (PSpace k M)) (O1_isLB k M) (d := M)
     (Polynomial.preHilbertPoly ℚ M 0) (Polynomial.natDegree_preHilbertPoly ℚ M 0).le
@@ -161,7 +159,7 @@ theorem birational : (projSys k M).Birational := by
       refine Subfield.subset_closure (Or.inl ⟨a, ?_⟩)
       rw [algHom_C, ← resG_algebraMap le_top, ← algebraΓ_eq]
       exact ((valR_res _ le_top hx' _).trans ((projSys k M).valR_algebraMap _ a)).symm
-    | add p q hp hq => rw [map_add, valR_add _ _ hx']; exact add_mem hp hq
+    | add p q hp hq => rw [map_add (f := _), valR_add _ _ hx']; exact add_mem hp hq
     | mul_X p j hp =>
       rw [map_mul, valR_mul _ _ hx', aeval_X]
       refine mul_mem hp (Subfield.subset_closure (Or.inr ⟨j, (0 : Fin (M + 1)), ?_⟩))

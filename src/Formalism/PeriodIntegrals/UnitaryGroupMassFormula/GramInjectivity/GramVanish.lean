@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,22 +26,24 @@ theorem gram_vanish {σ ι K : Type*} [Fintype ι] [Field K] [CharZero K]
         map_mul, map_intCast, mul_comm]
     have hrel : ∑ j, algebraMap ℚ K (l (ph (g j))) • g j = 0 := by
       ext s
-      have hs := congrArg (fun p => l (coeff s p)) h
-      simp only [coeff_sum, coeff_smul, smul_eq_mul, coeff_zero, map_sum, map_zero] at hs
-      have e : ∀ j, coeff s (g j) = ((coeff s (f j) : ℤ) : K) := fun j => by
+      have hs := congrArg (fun p => l (AddMonoidAlgebra.coeff p s)) h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [coeff_sum, coeff_smul, smul_eq_mul, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, map_sum, map_zero] at hs
+      have e : ∀ j, AddMonoidAlgebra.coeff (g j) s = ((AddMonoidAlgebra.coeff (f j) s : ℤ) : K) := fun j => by
         rw [hg, coeff_map, eq_intCast]
-      rw [coeff_sum, coeff_zero]
+      rw [coeff_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
       simp only [coeff_smul, smul_eq_mul]
-      calc ∑ j, algebraMap ℚ K (l (ph (g j))) * coeff s (g j)
-          = ∑ j, algebraMap ℚ K (l (ph (g j) * coeff s (g j))) := by
+      calc ∑ j, algebraMap ℚ K (l (ph (g j))) * AddMonoidAlgebra.coeff (g j) s
+          = ∑ j, algebraMap ℚ K (l (ph (g j) * AddMonoidAlgebra.coeff (g j) s)) := by
             refine Finset.sum_congr rfl (fun j _ => ?_)
             rw [e j, lin]
-        _ = algebraMap ℚ K (∑ j, l (ph (g j) * coeff s (g j))) := by rw [map_sum]
+        _ = algebraMap ℚ K (∑ j, l (ph (g j) * AddMonoidAlgebra.coeff (g j) s)) := by rw [map_sum]
         _ = 0 := by rw [hs, map_zero]
     have hsum : ∑ j, l (ph (g j)) ^ 2 = 0 := by
       have h1 : l (ph (∑ j, algebraMap ℚ K (l (ph (g j))) • g j)) = 0 := by
         rw [hrel, map_zero, map_zero]
-      rw [map_sum, map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum] at h1
       rw [← h1]
       refine Finset.sum_congr rfl (fun j _ => ?_)
       rw [map_smul, smul_eq_mul, ← Algebra.smul_def, map_smul, smul_eq_mul, sq]

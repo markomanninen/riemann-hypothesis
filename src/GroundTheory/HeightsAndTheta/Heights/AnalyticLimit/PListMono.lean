@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMono
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMonoRaise
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMonoDens
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLocDensContOnOpen
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StMIntegrableOfDensLe
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StMIntMonoOfDensLe
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMono
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMonoRaise
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMonoDens
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLocDensContOnOpen
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StMIntegrableOfDensLe
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StMIntMonoOfDensLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.OrdMul
 
@@ -19,7 +23,7 @@ theorem coeff_mem_of_mul {O : Type} [CommRing O] (I : Ideal O) {ι : Type} (K : 
       intro m hμ hm hK
       set m' : ι →₀ ℕ := m + Finsupp.single q 1 with hm'
       have hdeg' : m'.degree < N + 1 := by
-        rw [hm', map_add, Finsupp.degree_single]; omega
+        rw [hm', map_add (f := _), Finsupp.degree_single]; omega
       have hK' : ∀ j ∈ K, m' j = 0 := by
         intro j hj
         have hqj : q ≠ j := fun h => hq (h ▸ hj)
@@ -50,7 +54,7 @@ theorem coeff_mem_of_mul {O : Type} [CommRing O] (I : Ideal O) {ι : Type} (K : 
             have := congrArg (Finsupp.erase q) hx
             simpa [hm', Finsupp.erase_add] using this
           have hD : (x.1.erase q).degree + (x.2.erase q).degree = (m.erase q).degree := by
-            rw [← map_add, hxe]
+            rw [← map_add (f := _), hxe]
           have hdx : x.1.degree + x.2.degree = m.degree + 1 := by
             have := congrArg Finsupp.degree hx
             simpa [hm'] using this

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementK
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementK
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -38,7 +42,7 @@ lemma norm_det_le {K : Type} [NormedField K] [IsUltrametricDist K] {n : Type} [F
   rw [Units.smul_def, zsmul_eq_mul, norm_mul, norm_prod]
   exact mul_le_one₀ (IsUltrametricDist.norm_intCast_le_one K _)
     (Finset.prod_nonneg fun _ _ => norm_nonneg _)
-    (Finset.prod_le_one (fun _ _ => norm_nonneg _) fun i _ => h _ _)
+    (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun i _ => h _ _)
 
 lemma inv_shift {K : Type} [Field K] {m : ℕ} [NeZero m] (τ : K →+* K)
     (V P : Matrix (Fin m) (Fin m) K) (hVP : V * P = 1)

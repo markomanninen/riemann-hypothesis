@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.MemMirabIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.DirChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPosNatMemOpenAdeleSubgroup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.MemMirabIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.DirChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPosNatMemOpenAdeleSubgroup
+
+@[expose] public section
 
 open NumberField Neutral.B1 Formalism.L2.Host GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Sd UpperTheory.V.Af UpperTheory.V.Af.Nf Filter Topology
 
@@ -65,7 +69,8 @@ private theorem lv_eig {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] (�
     exact smul_ne_zero (Nat.cast_ne_zero.2 (Nat.totient_pos.2 (NeZero.pos N)).ne') h0
   obtain ⟨χ, -, hχ⟩ := Finset.exists_ne_zero_of_sum_ne_zero hs
   refine ⟨χ, _, W.sum_mem fun a _ => W.smul_mem _ (hfW a), hχ, fun g => ?_⟩
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Fintype.sum_equiv (δ.toHomUnits g).mulLeft _ _ fun a => ?_
   rw [map_smul, hm, smul_smul, ← map_mul]
   rfl
@@ -153,9 +158,9 @@ private noncomputable def lowSub (k : ℕ) : Submodule ℂ (TR.Sm ℚ 2) where
   carrier := {φ | IsLow k φ}
   zero_mem' := ⟨fun _ => by simp, fun _ => by simp, fun _ => by simp⟩
   add_mem' {a b} ha hb :=
-    ⟨fun v => by simp only [map_add]; linear_combination (norm := module) ha.wt v + hb.wt v,
-      fun v => by simp only [map_add]; linear_combination (norm := module) ha.low v + hb.low v,
-      fun v => by simp only [map_add]; linear_combination (norm := module) ha.one v + hb.one v⟩
+    ⟨fun v => by simp only [map_add (f := _)]; linear_combination (norm := module) ha.wt v + hb.wt v,
+      fun v => by simp only [map_add (f := _)]; linear_combination (norm := module) ha.low v + hb.low v,
+      fun v => by simp only [map_add (f := _)]; linear_combination (norm := module) ha.one v + hb.one v⟩
   smul_mem' c a ha :=
     ⟨fun v => by simp only [map_smul]; linear_combination (norm := module) c • ha.wt v,
       fun v => by simp only [map_smul]; linear_combination (norm := module) c • ha.low v,
@@ -164,8 +169,8 @@ private noncomputable def lowSub (k : ℕ) : Submodule ℂ (TR.Sm ℚ 2) where
 private theorem lv_map {k : ℕ} (T : TR.Sm ℚ 2 →ₗ[ℂ] TR.Sm ℚ 2) (hT : ∀ v i j φ, TR.Eop v i j (T φ) = T (TR.Eop v i j φ))
     {φ : TR.Sm ℚ 2} (h : IsLow k φ) : IsLow k (T φ) :=
   ⟨fun v => by rw [hT, hT, ← map_sub, h.wt, map_smul],
-    fun v => by rw [hT, hT, hT, hT, ← map_sub, h.low, map_smul, map_add],
-    fun v => by rw [hT, hT, ← map_add, h.one, map_zero]⟩
+    fun v => by rw [hT, hT, hT, hT, ← map_sub, h.low, map_smul, map_add (f := _)],
+    fun v => by rw [hT, hT, ← map_add (f := _), h.one, map_zero]⟩
 
 end UpperTheory.V.Br
 

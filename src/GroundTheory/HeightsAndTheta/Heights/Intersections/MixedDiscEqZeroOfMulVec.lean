@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherTail
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ExMapAlt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ExMap
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherTail
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ExMapAlt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ExMap
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

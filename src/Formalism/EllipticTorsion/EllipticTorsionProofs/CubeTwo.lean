@@ -1,13 +1,19 @@
-import Formalism.EllipticTorsion.CoeffRing
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WChord
-import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsUnitFactor
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WSubst
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WPoint
-import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsHomDef
-import Formalism.EllipticTorsion.EllipticTorsionProofs.JetsTwo
+module
+
+public import Formalism.EllipticTorsion.CoeffRing
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WChord
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsUnitFactor
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WSubst
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WPoint
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsHomDef
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.JetsTwo
+
+@[expose] public section
 
 open PowerSeries
+
+local notation "cc" => MvPowerSeries.constantCoeff
 
 universe u
 
@@ -19,8 +25,6 @@ namespace CubeTwoAlt
 open WeierstrassChordSeries
 
 variable {K : Type u} [Field K]
-
-local notation "cc" => MvPowerSeries.constantCoeff
 
 theorem coeff_subst_X0_zero (H : MvPowerSeries (Fin 2) K) (e : Fin 2 →₀ ℕ) (he : e 1 = 0) :
     MvPowerSeries.coeff e (H.subst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) K), 0]) =
@@ -188,7 +192,7 @@ theorem invSer_subst (hw : WFixed W w) (i : Fin 2) :
   have hs : (-1 + C W.a₁ * X + C W.a₃ * w : PowerSeries K).subst
       (MvPowerSeries.X i : MvPowerSeries (Fin 2) K) = dI W w i := by
     rw [← PowerSeries.coe_substAlgHom ha]
-    simp only [map_add, map_neg, map_one, map_mul]
+    simp only [map_add (f := _), map_neg, map_one, map_mul]
     rw [PowerSeries.coe_substAlgHom ha, PowerSeries.subst_C, PowerSeries.subst_C,
       PowerSeries.subst_X ha]
     rfl
@@ -259,8 +263,6 @@ namespace CubeTwoAlt
 open WeierstrassChordSeries
 
 variable {K : Type u} [Field K] {W : WeierstrassCurve K} {w : PowerSeries K}
-
-local notation "cc" => MvPowerSeries.constantCoeff
 
 theorem chord_subst_inverse_mem (hw : WFixed W w) :
     (WeierstrassChordSeries.F2 W w).subst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) K),

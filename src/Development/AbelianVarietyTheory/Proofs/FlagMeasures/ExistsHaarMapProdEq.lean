@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Measure
 open scoped NNReal ENNReal
@@ -21,7 +25,9 @@ theorem exists_haar_map_prod_eq {A B C : Type*} [Group A] [Group B] [Group C]
   refine ⟨haarScalarFactor μC ((μA.prod ν).map e) • ν, IsHaarMeasure.nnreal_smul _ hc.ne', ?_⟩
   conv_rhs => rw [h]
   generalize haarScalarFactor μC ((μA.prod ν).map e) = c
-  rw [← Measure.map_smul]
+  have he : AEMeasurable (e : A × B → C) (μA.prod ν) :=
+    e.continuous.measurable.aemeasurable
+  rw [← Measure.map_smul c he]
   congr 1
   rw [ENNReal.smul_def, ENNReal.smul_def, Measure.prod_smul_right]
 

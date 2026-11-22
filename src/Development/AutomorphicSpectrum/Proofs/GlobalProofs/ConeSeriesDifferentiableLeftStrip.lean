@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialSum
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelSummationByPartsWeights
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SummationOperatorsBoundedGood
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SummationOperatorsPreserveOtherIndex
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDifferenceSummable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialSum
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelSummationByPartsWeights
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SummationOperatorsBoundedGood
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SummationOperatorsPreserveOtherIndex
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDifferenceSummable
+
+@[expose] public section
 
 set_option autoImplicit false
 

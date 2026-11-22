@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementF
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalC
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SecondLevelOfNormHolds
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementF
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalC
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SecondLevelOfNormHolds
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -64,12 +68,12 @@ theorem cW_map (g2 g3 : K) (k : ℕ) : φ (cW g2 g3 k) = cW (φ g2) (φ g3) k :=
     split_ifs with h2 h3 h4
     · rw [map_div₀, map_ofNat]
     · rw [map_div₀, map_ofNat]
-    · rw [map_mul, map_div₀, map_mul, map_add, map_sub, map_mul, map_natCast, map_one, map_sum]
-      simp only [map_ofNat]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_mul, map_div₀, map_add, map_sub, map_natCast, map_one, map_ofNat, map_sum]
       congr 1
       refine Finset.sum_congr rfl fun m _ => ?_
       have hm := m.isLt
-      rw [map_mul, ih (m.val + 2) (by omega), ih (k - (m.val + 2)) (by omega)]
+      rw [ih (m.val + 2) (by omega), ih (k - (m.val + 2)) (by omega)]
     · exact map_zero φ
 
 theorem wpNum_map (g2 g3 : K) : PowerSeries.map φ (wpNum g2 g3) = wpNum (φ g2) (φ g3) := by
@@ -126,7 +130,7 @@ theorem cc_phFF {l : ℕ} (hl : 2 ≤ l) (g2 g3 s2 ε : K) :
   have h3 : PowerSeries.constantCoeff (Formalism.L2.Th1.B.fLog (Formalism.L2.Th1.B.lU (lgF K l))) = 0 :=
     Pair.cc_ps (τ := Unit) h2 PowerSeries.constantCoeff_log
   unfold phFF
-  rw [map_sub, map_add, map_neg, map_mul, map_pow, h1, h3, cc_arg hl ε]
+  rw [map_sub, map_add (f := _), map_neg, map_mul, map_pow, h1, h3, cc_arg hl ε]
   simp
 
 end Maps
@@ -173,10 +177,6 @@ theorem exists_root2 : ∃ ζ : MaximalUnramifiedExtension l, IsPrimitiveRoot ζ
     rwa [Nat.sub_sub_self h1.le] at this
   exact hl.out.one_lt.ne' (Nat.dvd_one.1 h3)
 
-theorem exists_pi : ∃ ϖ : ℂ_[l], ϖ ^ (l ^ 2 - 1) = (l : ℂ_[l]) := by
-  have h1 : 1 < l ^ 2 := by have := hl.out.two_le; nlinarith
-  exact IsAlgClosed.exists_pow_nat_eq _ (by omega)
-
 end Field
 
 end FAux
@@ -197,40 +197,5 @@ theorem complex_multiplication_field_data : FieldDataCM := by
     exact hσ.1.one_lt.ne' (Nat.dvd_one.1 h3))
   obtain ⟨om, oms, h1, h2⟩ := trDualExists (MaximalUnramifiedExtension l) l d σ hσ hd ζ hζ
   exact ⟨ζ, om, oms, hζ, h1, h2⟩
-
-theorem ThmAEntryCM_of (hF1 : CurveExponentCoboundaryCocycle) : ThmAEntryCM := by
-  intro h2 h3 dK L hsq h4 hcm l _ h5 hd hin ι
-  obtain ⟨g2, g3, ε, hg, hε, hth⟩ := FAux.model l h2 h3 dK L hsq h4 hcm h5 hd hin ι
-  refine ⟨g2, g3, ε, hg, hε, hth, ?_⟩
-  intro σ hσ F hF s2 hN
-  obtain ⟨a1, a2, -⟩ := FAux.ffs l hF1 g2 g3 ε hg.2.2.1 hg.2.2.2.1 hε hth σ hσ F hF s2 hN
-  exact thmAEntryOfF l (MaximalUnramifiedExtension l) σ hσ (MaximalUnramifiedExtension l).subtype (FAux.norm_coe l) F hF _ a1 a2
-
-theorem ThmAGaussCM_of (hF1 : CurveExponentCoboundaryCocycle) : ThmAGaussCM := by
-  intro h2 h3 dK L hsq h4 hcm l _ h5 hd hin ι
-  obtain ⟨g2, g3, ε, hg, hε, hth⟩ := FAux.model l h2 h3 dK L hsq h4 hcm h5 hd hin ι
-  refine ⟨g2, g3, ε, hg, hε, hth, ?_⟩
-  intro σ hσ F hF s2 hN
-  obtain ⟨a1, a2, -⟩ := FAux.ffs l hF1 g2 g3 ε hg.2.2.1 hg.2.2.2.1 hε hth σ hσ F hF s2 hN
-  exact thmAGaussOfF l (MaximalUnramifiedExtension l) σ hσ (MaximalUnramifiedExtension l).subtype (FAux.norm_coe l) F hF _ a1 a2
-
-theorem OneLetterGaussCM_of (hF1 : CurveExponentCoboundaryCocycle) : OneLetterGaussCM := by
-  intro h2 h3 dK L hsq h4 hcm l _ h5 hd hin ι
-  obtain ⟨g2, g3, ε, hg, hε, hth⟩ := FAux.model l h2 h3 dK L hsq h4 hcm h5 hd hin ι
-  refine ⟨g2, g3, ε, hg, hε, hth, ?_⟩
-  intro σ hσ F hF s2 hN
-  obtain ⟨a1, a2, a3⟩ := FAux.ffs l hF1 g2 g3 ε hg.2.2.1 hg.2.2.2.1 hε hth σ hσ F hF s2 hN
-  exact oneLetterGaussOfF l (MaximalUnramifiedExtension l) σ hσ (MaximalUnramifiedExtension l).subtype (FAux.norm_coe l) F hF _ a1 a2
-    (FAux.exists_root2 l) _ a3
-
-theorem KernelCM_of (hF1 : CurveExponentCoboundaryCocycle) : KernelCM := by
-  intro h2 h3 dK L hsq h4 hcm l _ h5 hd hin ι
-  obtain ⟨g2, g3, ε, hg, hε, hth⟩ := FAux.model l h2 h3 dK L hsq h4 hcm h5 hd hin ι
-  refine ⟨g2, g3, ε, hg, hε, hth, ?_⟩
-  intro σ hσ F hF s2 hN ν r0 r1 _ om oms
-  obtain ⟨a1, a2, -⟩ := FAux.ffs l hF1 g2 g3 ε hg.2.2.1 hg.2.2.2.1 hε hth σ hσ F hF s2 hN
-  have : CompleteSpace (MaximalUnramifiedExtension l) := kurComplete l
-  exact kernelOfF l (MaximalUnramifiedExtension l) σ hσ (FAux.exists_root2 l) F hF _ a1 a2 ℂ_[l] (MaximalUnramifiedExtension l).subtype ν r0 r1
-    (FAux.norm_coe l) (FAux.exists_pi l) om oms
 
 end Formalism.L2.Th1.D

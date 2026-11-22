@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
-import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
-import Development.WeilBound.ThetaLifts.CartanFactorisation.IntegrableOnRight
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSplitting.ActUDiagMonomial
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSplitting.GIinvA
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.IntegrableOnRight
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSplitting.ActUDiagMonomial
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSplitting.GIinvA
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem T_lin (d : SD σ) (Φ Φ' : d.Fn) (a : ℂ) : d.T (Φ + a • Φ') = d.T
     ring
   show d.l (d.dd.rho d.B.ψ (X * (incM F d.b.1.toCols₂)ᵀ) (Φ + a • Φ')) =
     d.l (d.dd.rho d.B.ψ (X * (incM F d.b.1.toCols₂)ᵀ) Φ) + a • d.l (d.dd.rho d.B.ψ (X * (incM F d.b.1.toCols₂)ᵀ) Φ')
-  rw [e, map_add, map_smul]
+  rw [e, map_add (f := _), map_smul]
 
 theorem mu_right (d : SD σ) : d.μ.IsMulRightInvariant := by
   exact KSplitA.mu_right d
@@ -91,7 +95,7 @@ theorem I_lin (hT : TAll) (d : SD σ) {Φ Φ' : d.Fn} (hΦ : Φ ∈ d.sch) (hΦ'
     fun Ξ hΞ => ((hT.2.2.2.2 F E σ d).2.2 Ξ hΞ).1 x
   have e : ∀ h, thetaSum F (d.om x (d.S h (Φ + a • Φ'))) =
       thetaSum F (d.om x (d.S h Φ)) + a * thetaSum F (d.om x (d.S h Φ')) := fun h => by
-    rw [map_add, map_smul, map_add, map_smul]
+    rw [map_add (f := _), map_smul, map_add (f := _), map_smul]
     exact thetaSum_lin hT d (d.ok.dbl.weil.2.1.pres _ _ (d.ok.dbl.lin.pres _ _ hΦ))
       (d.ok.dbl.weil.2.1.pres _ _ (d.ok.dbl.lin.pres _ _ hΦ')) a
   simp only [SD.I, thetaMean, MeasureTheory.setAverage_eq, e]
@@ -143,7 +147,7 @@ theorem gIinv_of : TAll → FockMem → GIinv := by
       map_add' := fun P Q => by
         have e := I_lin hT d (hφ P).1 (hφ Q).1 1 g
         rw [one_smul, one_mul] at e
-        simp only [map_add]; exact e
+        simp only [map_add (f := _)]; exact e
       map_smul' := fun c P => by
         have e := I_lin hT d (Submodule.zero_mem _) (hφ P).1 c g
         rw [zero_add, hI0, zero_add] at e

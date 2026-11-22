@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DetMulMapDetEqOneOfSesq
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PowEqOneOfIsIntegralOfMulComplexConjEqOne
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RootMulComplexConjEqOne
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DetOneAddCompCommField
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DetMulMapDetEqOneOfSesq
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PowEqOneOfIsIntegralOfMulComplexConjEqOne
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RootMulComplexConjEqOne
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DetOneAddCompCommField
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat Filter Topology Metric
 open scoped TensorProduct
@@ -98,12 +103,12 @@ theorem perDet_det_mul_conj {E : Type} [Field E] [NumberField E] [IsCMField E]
     exact IsCMField.complexConj_apply_apply E _
   have h_add_l : ∀ x x' y, h (x + x') y = h x y + h x' y := fun x x' y =>
     perDet_trace_mul_ext _ _ fun a => by
-      rw [add_mul, map_add, hh, hh, hh, smul_add, map_add, LinearMap.add_apply]
+      rw [add_mul, map_add (f := _), hh, hh, hh, smul_add, map_add (f := _), LinearMap.add_apply]
       push_cast
       rfl
   have h_add_r : ∀ x y y', h x (y + y') = h x y + h x y' := fun x y y' =>
     perDet_trace_mul_ext _ _ fun a => by
-      rw [add_mul, map_add, hh, hh, hh, map_add]
+      rw [add_mul, map_add (f := _), hh, hh, hh, map_add (f := _)]
       push_cast
       rfl
   have h_smul_l : ∀ (c : 𝓞 E) x y, h (c • x) y = (c : E) * h x y := fun c x y =>
@@ -137,7 +142,7 @@ theorem perDet_det_mul_conj {E : Type} [Field E] [NumberField E] [IsCMField E]
     | zero => simp
     | tmul e x => rw [LinearMap.add_apply, F_tmul, F_tmul, F_tmul, h_add_r, mul_add]
     | add a b ha hb =>
-      rw [map_add, map_add, ha, hb]
+      rw [map_add (f := _), map_add (f := _), ha, hb]
   have F_smul : ∀ (c : 𝓞 E) y, F (c • y) = σ (c : E) • F y := by
     intro c y
     apply LinearMap.ext
@@ -148,7 +153,7 @@ theorem perDet_det_mul_conj {E : Type} [Field E] [NumberField E] [IsCMField E]
       rw [LinearMap.smul_apply, F_tmul, F_tmul, h_smul_r, smul_eq_mul]
       ring
     | add a b ha hb =>
-      rw [map_add, map_add, ha, hb]
+      rw [map_add (f := _), map_add (f := _), ha, hb]
   let f0 : E →+ La →+ ((E ⊗[𝓞 E] La) →ₗ[E] E) := AddMonoidHom.mk'
     (fun e => AddMonoidHom.mk' (fun y => σ e • F y) (fun y y' => by rw [F_add, smul_add]))
     (fun e e' => by
@@ -165,12 +170,12 @@ theorem perDet_det_mul_conj {E : Type} [Field E] [NumberField E] [IsCMField E]
     | zero => simp
     | tmul e y =>
       rw [TensorProduct.smul_tmul', G_tmul, G_tmul, smul_eq_mul, map_mul, smul_smul]
-    | add a b ha hb => rw [smul_add, map_add, map_add, ha, hb, smul_add]
+    | add a b ha hb => rw [smul_add, map_add (f := _), map_add (f := _), ha, hb, smul_add]
   let Hf : (E ⊗[𝓞 E] La) →ₗ[E] (E ⊗[𝓞 E] La) →ₛₗ[σ] E :=
     LinearMap.mk₂'ₛₗ (RingHom.id E) σ (fun v w => G w v)
       (fun v v' w => map_add _ _ _)
       (fun c v w => by rw [map_smul]; rfl)
-      (fun v w w' => by rw [map_add, LinearMap.add_apply])
+      (fun v w w' => by rw [map_add (f := _), LinearMap.add_apply])
       (fun c v w => by rw [G_smul, LinearMap.smul_apply])
   have hHf : ∀ v w, Hf v w = G w v := fun _ _ => rfl
   have hnd : ∀ v, (∀ w, Hf v w = 0) → v = 0 := by
@@ -198,13 +203,13 @@ theorem perDet_det_mul_conj {E : Type} [Field E] [NumberField E] [IsCMField E]
     rw [hHf, hHf]
     induction w using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, ha, hb]
     | tmul e y =>
       rw [LinearMap.baseChange_tmul, G_tmul, G_tmul, LinearMap.smul_apply, LinearMap.smul_apply]
       congr 1
       induction v using TensorProduct.induction_on with
       | zero => simp
-      | add a b ha hb => rw [map_add, map_add, map_add, ha, hb]
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
       | tmul e' x => rw [LinearMap.baseChange_tmul, F_tmul, F_tmul, h_iso]
   exact det_mul_map_det_eq_one_of_sesq σ Hf hnd (g.baseChange E) hiso
 

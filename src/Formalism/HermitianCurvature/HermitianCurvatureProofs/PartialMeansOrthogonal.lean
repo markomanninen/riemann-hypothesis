@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt.A6
 
@@ -11,7 +15,8 @@ theorem norm_sq_sum_orth {E : Type} [NormedAddCommGroup E] [InnerProductSpace �
     (h : ∀ ρ ρ', ρ ≠ ρ' → inner ℂ (P ρ) (P ρ') = 0) :
     ‖∑ ρ, e₁ ρ • P ρ‖ ^ 2 = ∑ ρ, ‖P ρ‖ ^ 2 := by
   classical
-  rw [← inner_self_eq_norm_sq (𝕜 := ℂ), sum_inner, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← inner_self_eq_norm_sq (𝕜 := ℂ), sum_inner, map_sum]
   refine Finset.sum_congr rfl fun ρ _ => ?_
   rw [inner_sum, Finset.sum_eq_single ρ]
   · rw [inner_self_eq_norm_sq (𝕜 := ℂ), norm_smul, he ρ, one_mul]

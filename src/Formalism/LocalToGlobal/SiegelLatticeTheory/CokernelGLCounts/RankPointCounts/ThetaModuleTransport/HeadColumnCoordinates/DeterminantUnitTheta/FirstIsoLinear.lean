@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.FirstQuotientOfQuotientEq
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.FirstQuotientOfQuotientEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,14 +65,14 @@ theorem firstIso_linear (hs : M.split = some g) (T T' : F) (TT : M.R) (hTT : g.e
         laG (ZZm g Zh T T') (s • v) = (s : E) * laG (ZZm g Zh T T') v := by
     intro Zh s v w
     refine ⟨?_, ?_⟩
-    · rw [← laGLin_apply, map_add]; rfl
+    · rw [← laGLin_apply, map_add (f := _)]; rfl
     · rw [← laGLin_apply, map_smul, Subring.smul_def, smul_eq_mul]; rfl
   let γ₀ : (Fin (r + 1) → M.R) →ₗ[M.R] MbMod Z₂.Z :=
     { toFun := fun l => Submodule.Quotient.mk (H l)
       map_add' := fun l l' => by
         rw [← Submodule.Quotient.mk_add]
         refine hU (hH (l + l')).2.1 ?_ ?_
-        · rw [show mk1 hs Z₁ TT (l + l') = mk1 hs Z₁ TT l + mk1 hs Z₁ TT l' from rfl, map_add, (hH l).2.1,
+        · rw [show mk1 hs Z₁ TT (l + l') = mk1 hs Z₁ TT l + mk1 hs Z₁ TT l' from rfl, map_add (f := _), (hH l).2.1,
             (hH l').2.1]; rfl
         · rw [(hH (l + l')).2.2, (hLlin Zh₁ 1 l l').1, (hLlin Zh₂ 1 (H l) (H l')).1, (hH l).2.2, (hH l').2.2]
       map_smul' := fun s l => by

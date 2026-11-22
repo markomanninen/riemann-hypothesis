@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -10,8 +15,8 @@ namespace GlobalTheory.BSP.TopBasisCons
 
 variable {S A : Type} [CommRing S] [CommRing A] {s : S →+* A} {I : Ideal S} {ι : Type} {b : ι → A}
 
-variable (s I b) in
 
+variable (s I b) in
 def Approx (x : A) (f : ι → S) : Prop :=
   ∀ n : ℕ, ∃ F : Finset ι, (∀ i, i ∉ F → f i ∈ I ^ n) ∧ x - ∑ i ∈ F, s (f i) * b i ∈ (I ^ n).map s
 
@@ -51,7 +56,7 @@ theorem Approx.add {x y : A} {f g : ι → S} (hx : Approx s I b x f) (hy : Appr
   · have h1 := hx.approx n (F ∪ G) fun i hi => hF i fun h => hi (Finset.mem_union_left _ h)
     have h2 := hy.approx n (F ∪ G) fun i hi => hG i fun h => hi (Finset.mem_union_right _ h)
     convert add_mem h1 h2 using 1
-    simp only [Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+    simp only [Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
     ring
 
 theorem Approx.mul {x : A} {f : ι → S} (hx : Approx s I b x f) (a : S) :
@@ -105,7 +110,7 @@ theorem exists_step (hsp : ∀ x : A, ∃ a : ι →₀ S, x - a.sum (fun i y =>
   have Tadd : ∀ y y', T y → T y' → T (y + y') := by
     rintro y y' ⟨a, ha, hy⟩ ⟨a', ha', hy'⟩
     refine ⟨a + a', fun i => add_mem (ha i) (ha' i), ?_⟩
-    rw [Finsupp.sum_add_index' (fun _ => by simp) (fun _ _ _ => by rw [map_add, add_mul])]
+    rw [Finsupp.sum_add_index' (fun _ => by simp) (fun _ _ _ => by rw [map_add (f := _), add_mul])]
     convert add_mem hy hy' using 1
     ring
   have T1 : ∀ t ∈ I ^ n, ∀ w : A, T (s t * w) := by
@@ -172,7 +177,8 @@ theorem exists_approx (hS : IsPrecomplete I S) (g : ℕ → A → ι →₀ S)
         (fun i hi => Finset.mem_biUnion.2 ⟨k, hk, hi⟩) (fun i c => s c * b i) (fun _ _ => by simp),
         Finset.sum_comm]
       refine Finset.sum_congr rfl fun i _ => ?_
-      simp only [P, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [P, map_sum, Finset.sum_mul]
     have e : x - ∑ i ∈ F, s (f i) * b i = r n + ∑ i ∈ F, s (P n i - f i) * b i := by
       rw [hrx, hsum]
       simp only [map_sub, sub_mul, Finset.sum_sub_distrib]
@@ -182,8 +188,8 @@ theorem exists_approx (hS : IsPrecomplete I S) (g : ℕ → A → ι →₀ S)
 
 end GlobalTheory.BSP.TopBasisCons
 
-open GlobalTheory.BSP.TopBasisCons in
 
+open GlobalTheory.BSP.TopBasisCons in
 theorem GlobalTheory.BSP.exists_topBasis_of_span_of_strict : ∀ (S A : Type) [CommRing S] [CommRing A] (s : S →+* A)
     (I : Ideal S) (ι : Type) (b : ι → A) (i₀ : ι), b i₀ = 1 → I.FG → IsAdicComplete I S →
     IsAdicComplete (I.map s) A → (∀ x : A, ∃ a : ι →₀ S, x - a.sum (fun i y => s y * b i) ∈ I.map s) →

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsClosedPointChartField
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsClosedPointConeCoord
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIntChowFormExists
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowFormHomog
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormIrreducible
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsClosedPointChartField
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsClosedPointConeCoord
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIntChowFormExists
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowFormHomog
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormIrreducible
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -18,7 +23,8 @@ theorem aeval_smul_of_isHomogeneous {F K : Type*} [Field F] [Field K] [Algebra F
   classical
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hdeg : ∑ j ∈ m.support, m j = d := by
     have := hg (mem_support_iff.mp hm)
@@ -45,7 +51,7 @@ theorem ChowDegreeClosedPoint.proof (hField : ClosedPointChartField.Statement)
     intro g
     induction g using MvPolynomial.induction_on with
     | C a => simp; rfl
-    | add p q hp hq => rw [map_add, map_add, hp, hq]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
     | mul_X p j hp => rw [map_mul, map_mul, hp, aeval_X]
   have hξi : ξ i = 1 := by
     have : X i - 1 ∈ J := Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)
@@ -89,7 +95,8 @@ theorem ChowDegreeClosedPoint.proof (hField : ClosedPointChartField.Statement)
     let ys : Fin n → K := fun j => (y i)⁻¹ * y j
     have hker : J ≤ RingHom.ker (aeval (R := F) ys).toRingHom := by
       refine sup_le (fun g hg => ?_) ((Ideal.span_le).mpr ?_)
-      · rw [RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
+      · set_option synthInstance.maxHeartbeats 100000 in
+        rw [RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
           ← sum_homogeneousComponent g, map_sum]
         refine Finset.sum_eq_zero fun d _ => ?_
         rw [aeval_smul_of_isHomogeneous (homogeneousComponent_isHomogeneous d g),

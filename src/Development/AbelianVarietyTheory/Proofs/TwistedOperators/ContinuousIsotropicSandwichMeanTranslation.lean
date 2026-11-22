@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

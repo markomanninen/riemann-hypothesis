@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial Topology
 
@@ -43,7 +47,7 @@ theorem exists_GL_conj_eq_diagonal_of_charpoly_eq_prod :
     intro f a
     conv_lhs => rw [hsplit f a]
     rw [add_mul, mul_comm (X - Polynomial.C (p a)), mul_assoc, hfull]
-    simp only [map_add, map_mul, hz, mul_zero, add_zero, aeval_C, Algebra.smul_def]
+    simp only [map_add (f := _), map_mul, hz, mul_zero, add_zero, aeval_C, Algebra.smul_def]
   have hq : ∀ a, IsUnit ((P a).eval (p a)) := by
     intro a
     simp only [hPdef, eval_prod, eval_sub, eval_X, eval_C]
@@ -89,7 +93,7 @@ theorem exists_GL_conj_eq_diagonal_of_charpoly_eq_prod :
       have h' : aeval A (P a) = (u : C) • E := by rw [hE, smul_smul, Units.mul_inv, one_smul]
       rw [h', hE0, smul_zero]
     have hs := congrArg (aeval A) (hsplit (P a) a)
-    rw [hB0, map_add, aeval_C, map_mul, ← hu] at hs
+    rw [hB0, map_add (f := _), aeval_C, map_mul, ← hu] at hs
     have hinv : aeval A (X - Polynomial.C (p a)) *
         (-(((u⁻¹ : Cˣ) : C) • aeval A (P a /ₘ (X - Polynomial.C (p a))))) = 1 := by
       have h2 : aeval A (X - Polynomial.C (p a)) * aeval A (P a /ₘ (X - Polynomial.C (p a))) =

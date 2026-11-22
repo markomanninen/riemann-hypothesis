@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal Pointwise
@@ -55,7 +59,7 @@ theorem conj_eq_smul (N : Subgroup G) (hN : IsClosed (N : Set G)) (g : G) (h1 : 
     ← Measure.map_map measurable_subtype_coe hφc.measurable]
   conv_lhs => rw [Measure.isMulLeftInvariant_eq_smul ((Measure.haar : Measure N).map (conjSub N g h1 h2))
     Measure.haar]
-  rw [Measure.map_smul]
+  rw [Measure.map_smul _ measurable_subtype_coe.aemeasurable]
 
 end Conj
 
@@ -110,18 +114,18 @@ theorem genModOne_of (hHaar : GenHaarSub) : GenModOne := by
     obtain ⟨cs', hcs'⟩ := hsc σ⁻¹ (H.inv_mem hσ)
     have e1 : (cs' * cs) • haarSub N hN = (1 : ℝ≥0) • haarSub N hN := by
       have e := hid σ
-      rw [hmap, hcs', Measure.map_smul, hcs, smul_smul] at e
+      rw [hmap, hcs', Measure.map_smul _ (hm σ).aemeasurable, hcs, smul_smul] at e
       rw [e, one_smul]
     have hss : cs' * cs = 1 := cancel _ _ e1
     have hpinv : (fun x : G => p⁻¹ * x * p⁻¹⁻¹) =
         (fun x : G => σ * p * σ⁻¹ * x * (σ * p * σ⁻¹)⁻¹) := by
       rw [hσp]
     have e2 : (haarSub N hN).map (fun x => p⁻¹ * x * p⁻¹⁻¹) = (cs' * cp * cs) • haarSub N hN := by
-      rw [hpinv, hmap (σ * p) σ⁻¹, hcs', Measure.map_smul, hmap σ p, hcp, Measure.map_smul, hcs,
-        smul_smul, smul_smul]
+      rw [hpinv, hmap (σ * p) σ⁻¹, hcs', Measure.map_smul _ (hm (σ * p)).aemeasurable,
+        hmap σ p, hcp, Measure.map_smul _ (hm σ).aemeasurable, hcs, smul_smul, smul_smul]
     have e3 : (cs' * cp * cs * cp) • haarSub N hN = (1 : ℝ≥0) • haarSub N hN := by
       have e := hid p
-      rw [hmap p p⁻¹, e2, Measure.map_smul, hcp, smul_smul] at e
+      rw [hmap p p⁻¹, e2, Measure.map_smul _ (hm p).aemeasurable, hcp, smul_smul] at e
       rw [e, one_smul]
     have hcp1 : cp = 1 := by
       have h4 := cancel _ _ e3

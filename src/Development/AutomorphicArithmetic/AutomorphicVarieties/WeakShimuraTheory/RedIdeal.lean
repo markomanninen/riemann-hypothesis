@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,7 +110,6 @@ structure Res (P : PD Φ.ι Γ R) : Prop where
   shape : (Supp nP P.r ∧ ∀ v, SuppM qQ (P.n v)) ∨ Supp nM P.r
 
 variable {Φ} in
-
 def InV (P : PD Φ.ι Γ R) : Prop := Supp vV P.r ∧ ∀ v, SuppM qQ (P.n v) ∧ P.n v 2 0 ≠ 0
 
 def Good (P : PD Φ.ι Γ R) : Prop :=
@@ -255,7 +258,7 @@ structure Fr.Std {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace Γ] [Is
   phi : ∀ H : Subgroup Γ, IsOpen (H : Set Γ) → Subgroup.normalClosure Φ.N ≤ H → Finite {φ : H →* Multiplicative (ZMod l) //
     IsOpen (φ.ker : Set H) ∧ ∀ g : H, (g : Γ) ∈ (Subgroup.normalClosure Φ.N).topologicalClosure → φ g = 1}
   closed : ∀ v, IsClosed (Φ.Gv v : Set Γ)
-  phiv : ∀ v, PhiCond (Φ.Gv v) l
+  phiv : ∀ v, PhiCond (Γ := Φ.Gv v) l
   mu : ∀ v, ∀ s ∈ Φ.Mu v, s ∈ Φ.Gv v ∧ ∀ i, residue Λ (a (Φ.χ i s)) = 1
 
 def redIdeal {Γ R : Type} [Group Γ] [CommRing R] (S : Finset (ℤ × ℤ)) (r : Γ →* M4 R) : Ideal R :=

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 open scoped TensorProduct
@@ -206,7 +211,7 @@ theorem GlobalTheory.HTFaith.faithful : ∀ (p : ℕ) [Fact p.Prime] (D : Global
     obtain ⟨a, z, hz⟩ := GlobalTheory.HTFaith.approx p D.O (φ.symm (Matrix.of B))
     refine ⟨a, ?_⟩
     have h1 : φ (a ⊗ₜ 1) = Matrix.of B - (p : ℤ) • φ z := by
-      rw [← map_zsmul, ← φ.apply_symm_apply (Matrix.of B), hz, map_add]; abel
+      rw [← map_zsmul, ← φ.apply_symm_apply (Matrix.of B), hz, map_add (f := _)]; abel
     ext i j
     rw [hΦ, h1, Matrix.map_apply, Matrix.sub_apply, Matrix.smul_apply, map_sub, hπ, sub_zero, Matrix.of_apply]
     exact hB i j
@@ -214,7 +219,7 @@ theorem GlobalTheory.HTFaith.faithful : ∀ (p : ℕ) [Fact p.Prime] (D : Global
     intro r
     obtain ⟨s, rfl⟩ := Ideal.Quotient.mk_surjective r
     obtain ⟨c, z, hz⟩ := GlobalTheory.HTFaith.approx p (𝓞 D.F) s
-    exact ⟨c, by rw [hz, map_add, hπ, add_zero]⟩
+    exact ⟨c, by rw [hz, map_add (f := _), hπ, add_zero]⟩
   have hscal : ∀ c : 𝓞 D.F, Φ (algebraMap _ _ c) = Matrix.scalar _ (π (c ⊗ₜ 1)) := by
     intro c
     rw [hΦ]
@@ -228,7 +233,8 @@ theorem GlobalTheory.HTFaith.faithful : ∀ (p : ℕ) [Fact p.Prime] (D : Global
   choose E hE using fun k l => hsurj (Matrix.single k l 1)
   let y := ∑ k, E k i * x' * E j k
   have hy : Φ y = Matrix.scalar _ (Φ x' i j) := by
-    simp only [y, map_sum, map_mul, hE, Matrix.single_mul_mul_single, _root_.one_mul, _root_.mul_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [y, map_sum, map_mul, hE, Matrix.single_mul_mul_single, _root_.one_mul, _root_.mul_one]
     ext a b
     rw [Matrix.sum_apply]
     by_cases hab : a = b

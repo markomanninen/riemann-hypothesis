@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.LocalFields.ConductorLubinTate
-import GroundTheory.LocalFields.ConductorTransport
-import GroundTheory.LocalFields.LocalArtinMap
-import GroundTheory.LocalFields.KroneckerWeber
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.ConductorLubinTate
+public import GroundTheory.LocalFields.ConductorTransport
+public import GroundTheory.LocalFields.LocalArtinMap
+public import GroundTheory.LocalFields.KroneckerWeber
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 attribute [local instance] isDiscreteModule_units
 
-include hf in
 
+include hf in
 theorem restrictAb_localArtinMap_lubinTate {n : ℕ} (hn : 0 < n) (E : IntermediateField K Ω)
     [FiniteDimensional K E] [IsGalois K E] (hE : E ≤ maximalUnramifiedExtension K Ω)
     [IsAbelianGalois K (lubinTateField Ω hπ hf n ⊔ E : IntermediateField K Ω)]
@@ -44,7 +48,7 @@ theorem restrictAb_localArtinMap_lubinTate {n : ℕ} (hn : 0 < n) (E : Intermedi
       (classFieldAxiom_units K Ω)).symm
         ((baseUnitsEquiv.symm (unitUniformizerPow hπ u k) : fixedModule Ωˣ
           ((⊤ : OpenSubgroup (Ω ≃ₐ[K] Ω)) : Subgroup (Ω ≃ₐ[K] Ω))) : tateZero Ωˣ _ _) =
-      Abelianization.of (QuotientGroup.mk
+      Group.Abelianization.of (QuotientGroup.mk
         (⟨τ, by simp⟩ : ((⊤ : OpenSubgroup (Ω ≃ₐ[K] Ω)) : Subgroup (Ω ≃ₐ[K] Ω)))) := by
     rw [MulEquiv.symm_apply_eq, ClassFieldData.reciprocityAbEquiv_of]
     exact hrec.symm
@@ -56,8 +60,8 @@ section Compositum
 variable {n : ℕ} (hn : 0 < n) {E : IntermediateField K Ω} [FiniteDimensional K E] [IsGalois K E]
   (hE : IsUnramifiedSubextension E)
 
-include hn hE in
 
+include hn hE in
 theorem mem_upperRamificationGroup_lubinTateField_sup {v : ℝ} (hv : -1 < v)
     (σ : (lubinTateField Ω hπ hf n ⊔ E : IntermediateField K Ω) ≃ₐ[K]
       (lubinTateField Ω hπ hf n ⊔ E : IntermediateField K Ω)) :
@@ -88,8 +92,8 @@ theorem mem_upperRamificationGroup_lubinTateField_sup {v : ℝ} (hv : -1 < v)
     have : σ' = σ := (bijective_restrictAut_prod hπ hf hn hE).1 (Prod.ext he (h1'.trans h1.symm))
     exact this ▸ hσ'
 
-include hn hE in
 
+include hn hE in
 theorem restrictAut_localArtinMap_unitsIncl
     [IsAbelianGalois K (lubinTateField Ω hπ hf n ⊔ E : IntermediateField K Ω)] (u : 𝒪[K]ˣ) :
     restrictAut le_sup_right (restrictAb (lubinTateField Ω hπ hf n ⊔ E) (le_maximalAbelianExtension _)
@@ -115,8 +119,8 @@ theorem restrictAut_localArtinMap_unitsIncl
     intro x hx
     rw [AlgEquiv.restrictNormalHom_apply, ← hτ x hx, lubinTateGalPointMap_val]
 
-include hn hE in
 
+include hn hE in
 theorem map_unitFiltrationUnits_lubinTateField_sup
     [IsAbelianGalois K (lubinTateField Ω hπ hf n ⊔ E : IntermediateField K Ω)] (j : ℕ) :
     (unitFiltrationUnits K j).map ((restrictAb (lubinTateField Ω hπ hf n ⊔ E)
@@ -152,9 +156,9 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   {Ω : Type*} [Field Ω] [ValuativeRel Ω] [TopologicalSpace Ω] [IsValuativeTopology Ω]
   [Algebra K Ω] [ValuativeExtension K Ω] [IsSepClosure K Ω]
 
+
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel Ω]
   [TopologicalSpace Ω] [IsValuativeTopology Ω] [ValuativeExtension K Ω] in
-
 theorem restrictAb_eq_restrictAut_comp {L M : IntermediateField K Ω} [Normal K L] [Normal K M]
     (h : L ≤ M) (hM : M ≤ maximalAbelianExtension K Ω) :
     restrictAb L (h.trans hM) = (restrictAut h).comp (restrictAb M hM) := by

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnitaryFrameDual
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnitaryFrameDual
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver
 open scoped Classical
 set_option maxHeartbeats 1000000 in

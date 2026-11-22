@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PhiFreeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PhiFreeStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Cyc
 
@@ -25,7 +29,7 @@ theorem exists_coords_mem {R ι : Type} [CommRing R] [Fintype ι] (f : R →+* R
       obtain ⟨v, hv, h2⟩ := hy a
       refine ⟨u + v, fun j => 𝔟.add_mem (hu j) (hv j), ?_⟩
       rw [mul_add, h1, h2, ← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun j _ => by rw [Pi.add_apply, map_add, mul_add]
+      exact Finset.sum_congr rfl fun j _ => by rw [Pi.add_apply, map_add (f := _), mul_add]
     | smul c x _ hx =>
       intro a
       obtain ⟨u, hu, h1⟩ := hx (a * c)
@@ -68,7 +72,7 @@ theorem phi_mem_span (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [Algebra �
   rw [hl] at hd
   refine Ideal.mem_span_pair.2 ⟨phi l O a + phi l O b * PowerSeries.C t * r * d,
     phi l O b * PowerSeries.X ^ m, ?_⟩
-  rw [map_add, map_mul, map_mul, map_pow, hC]
+  rw [map_add (f := _), map_mul, map_mul, map_pow, hC]
   linear_combination (-(phi l O b)) * hd
 
 end GlobalTheory.Cyc.FrobIdeal
@@ -111,7 +115,7 @@ theorem XX_pow_mem_of_QQ_pow_mul_mem_map_phi : ∀ (l : ℕ) [Fact l.Prime] (O :
         (phi_mem_span l O ϖ (hdvd _ hlu) (m + 1) (Nat.le_add_left 1 m) (ih _ (hz j)))
   obtain ⟨a, b, hab⟩ := Ideal.mem_span_pair.1 (main c _ (Ideal.mul_mem_left _ _ (hc _)))
   have h := congrArg (PowerSeries.coeff c) hab
-  rw [map_add, PowerSeries.coeff_mul_C, PowerSeries.coeff_mul_X_pow', if_neg (by omega),
+  rw [map_add (f := _), PowerSeries.coeff_mul_C, PowerSeries.coeff_mul_X_pow', if_neg (by omega),
     PowerSeries.coeff_X_pow, if_pos rfl, add_zero] at h
   exact hϖ.not_isUnit (IsUnit.of_mul_eq_one_right _ h)
 

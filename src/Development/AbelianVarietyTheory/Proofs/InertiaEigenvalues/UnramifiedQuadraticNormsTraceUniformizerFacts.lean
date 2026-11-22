@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ def cO : K.O ≃+* K.O where
   left_inv x := alg_inj K (by rw [cOf_spec, cOf_spec, K.c_c])
   right_inv x := alg_inj K (by rw [cOf_spec, cOf_spec, K.c_c])
   map_mul' x y := alg_inj K (by rw [cOf_spec, map_mul, map_mul, map_mul, cOf_spec, cOf_spec])
-  map_add' x y := alg_inj K (by rw [cOf_spec, map_add, map_add, map_add, cOf_spec, cOf_spec])
+  map_add' x y := alg_inj K (by rw [cOf_spec, map_add (f := _), map_add (f := _), map_add (f := _), cOf_spec, cOf_spec])
 
 open IsLocalRing Polynomial in
 variable (K : _root_.GlobalTheory.UnitLemma.UQ) in
@@ -83,9 +87,9 @@ private theorem valuation_algebraMap_cO (a : K.O) :
   rw [valuation_algebraMap_isUnit_eq_one K _ (u.isUnit.map (_root_.GlobalTheory.UnitLemma.UnramNorm.cO K)),
     valuation_algebraMap_isUnit_eq_one K _ u.isUnit, valuation_algebraMap_irreducible_eq K hϖ hcϖ]
 
+
 open IsLocalRing Polynomial in
 variable (K : _root_.GlobalTheory.UnitLemma.UQ) in
-
 theorem _root_.GlobalTheory.UnitLemma.UnramNorm.val_c (x : K.E) :
     _root_.GlobalTheory.UnitLemma.val K.O (K.c x) = _root_.GlobalTheory.UnitLemma.val K.O x := by
   unfold _root_.GlobalTheory.UnitLemma.val
@@ -173,9 +177,9 @@ private theorem exists_add_mul_cO_notMem_maximalIdeal (e : K.O) :
   rw [this]
   exact Ideal.sub_mem _ hx (Ideal.mul_mem_right _ _ h1)
 
+
 open IsLocalRing Polynomial in
 variable (K : _root_.GlobalTheory.UnitLemma.UQ) in
-
 theorem _root_.GlobalTheory.UnitLemma.UnramNorm.unram_quadratic_facts :
     ∀ (K : _root_.GlobalTheory.UnitLemma.UQ), (∀ u : K.Oˣ, K.c (algebraMap K.O K.E u) = algebraMap K.O K.E u →
     ∃ z : K.Oˣ, algebraMap K.O K.E u = algebraMap K.O K.E z * K.c (algebraMap K.O K.E z)) ∧
@@ -255,7 +259,7 @@ theorem _root_.GlobalTheory.UnitLemma.UnramNorm.unram_quadratic_facts :
       linear_combination e0 * σ e0 * h - ((t + σ t) * X0 + (z0 * σ z0 - u)) * hi2
     have hE' : e0 * σ e0 * σ X0 ^ 2 + (t + σ t) * σ X0 + (z0 * σ z0 - u) = 0 := by
       have h := congrArg σ hE
-      simp only [map_add, map_mul, map_pow, map_zero, map_sub, hσσ, hσu] at h
+      simp only [map_add (f := _), map_mul, map_pow, map_zero, map_sub, hσσ, hσu] at h
       linear_combination h
     have hfix : σ X0 = X0 := by
       have hprod : (X0 - σ X0) * (e0 * σ e0 * (X0 + σ X0) + (t + σ t)) = 0 := by
@@ -270,7 +274,7 @@ theorem _root_.GlobalTheory.UnitLemma.UnramNorm.unram_quadratic_facts :
       have := (mul_eq_zero.mp hprod).resolve_right hunit.ne_zero
       exact (sub_eq_zero.mp this).symm
     have hnorm : (z0 + X0 * e0) * σ (z0 + X0 * e0) = u := by
-      rw [map_add, map_mul, hfix]
+      rw [map_add (f := _), map_mul, hfix]
       linear_combination hE + X0 * hz0e0 + X0 * he0z0
     have hzu : IsUnit (z0 + X0 * e0) := isUnit_of_mul_isUnit_left (hnorm ▸ u.isUnit)
     refine ⟨hzu.unit, ?_⟩
@@ -279,10 +283,10 @@ theorem _root_.GlobalTheory.UnitLemma.UnramNorm.unram_quadratic_facts :
     rw [one_mul] at ht
     have hs := (isUnit_iff_notMem_maximalIdeal K).mpr ht
     set s := t + σ t
-    have hσs : σ s = s := by simp only [s, map_add, hσσ, add_comm]
+    have hσs : σ s = s := by simp only [s, map_add (f := _), hσσ, add_comm]
     obtain ⟨w, hws⟩ : ∃ w, w * s = 1 := ⟨↑hs.unit⁻¹, hs.val_inv_mul⟩
     refine ⟨t * w, ?_⟩
-    rw [hspec, ← map_add, ← map_one (algebraMap K.O K.E)]
+    rw [hspec, ← map_add (f := _), ← map_one (algebraMap K.O K.E)]
     congr 1
     have hz : t * w * s = t := by rw [mul_assoc, hws, mul_one]
     have hz' : σ (t * w) * s = σ t := by
@@ -302,6 +306,6 @@ theorem _root_.GlobalTheory.UnitLemma.UnramNorm.unram_quadratic_facts :
       exact (irreducible_mul_isUnit hw).mpr hϖ
     · rw [hspec]
       congr 1
-      rw [map_add, hσσ, add_comm]
+      rw [map_add (f := _), hσσ, add_comm]
 
 end GlobalTheory.UnitLemma.UnramNorm

@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.EqCOfPderivZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.EqCOfPderivZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,15 +33,10 @@ def evHom {a : Fin m → Pt k n d} (ha : CZ a) : PS k m d →+* PS k n d :=
 theorem evHom_apply {a : Fin m → Pt k n d} (ha : CZ a) (f : PS k m d) : evHom ha f = ev a f := by
   simp [evHom, ev]
 
-theorem ev_sub {a : Fin m → Pt k n d} (ha : CZ a) (f g : PS k m d) : ev a (f - g) = ev a f - ev a g := by
-  simp only [← evHom_apply ha, map_sub]
-
-theorem ev_neg {a : Fin m → Pt k n d} (ha : CZ a) (f : PS k m d) : ev a (-f) = -ev a f := by
-  simp only [← evHom_apply ha, map_neg]
-
 theorem ev_sum {a : Fin m → Pt k n d} (ha : CZ a) {ι : Type} (s : Finset ι) (f : ι → PS k m d) :
     ev a (∑ x ∈ s, f x) = ∑ x ∈ s, ev a (f x) := by
-  simp only [← evHom_apply ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← evHom_apply ha, map_sum]
 
 theorem ev_C {a : Fin m → Pt k n d} (ha : CZ a) (c : k) : ev a (C c : PS k m d) = C c := by
   rw [← evHom_apply ha]
@@ -71,7 +70,8 @@ theorem CZ.pt : CZ (fun j => pt k (n := n) d j) := fun j i => by
   simp
 
 theorem pderiv_ev {a : Fin m → Pt k n d} (ha : CZ a) (f : PS k m d) (v : Fin n × Fin d) :
-    pderiv k v (ev a f) = ∑ p : Fin m × Fin d, ev a (pderiv k p f) * pderiv k v (a p.1 p.2) := by
+    pderiv (R := k) v (ev a f) =
+      ∑ p : Fin m × Fin d, ev a (pderiv (R := k) p f) * pderiv (R := k) v (a p.1 p.2) := by
   unfold ev
   exact pderiv_subst (a := fun p : Fin m × Fin d => a p.1 p.2) (fun p => ha p.1 p.2) f v
 

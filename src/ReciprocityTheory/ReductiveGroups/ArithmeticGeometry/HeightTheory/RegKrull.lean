@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -59,13 +63,13 @@ theorem exists_prime_colon [IsNoetherianRing R] (s a : R) (ha : a ∉ Ideal.span
 
 end KrullColonIdeal
 
-open KrullColonIdeal in
 
+open KrullColonIdeal in
 theorem mem_of_mem_heightOne_localizations {R K : Type*} [CommRing R] [IsDomain R] [IsNoetherianRing R]
     [IsIntegrallyClosed R] [Field K] [Algebra R K] [IsFractionRing R K] (x : K)
     (hx : ∀ p : Ideal R, p.IsPrime → p.height = 1 →
       ∃ a s : R, s ∉ p ∧ x * algebraMap R K s = algebraMap R K a) :
-    ∃ r : R, algebraMap R K r = x := by
+    ∃ r : R, algebraMap R K r = x := open KrullColonIdeal in by
   classical
 
   obtain ⟨a, b, hb0, hxab⟩ : ∃ a b : R, b ≠ 0 ∧ x * algebraMap R K b = algebraMap R K a := by
@@ -161,22 +165,8 @@ theorem mem_of_mem_heightOne_localizations {R K : Type*} [CommRing R] [IsDomain 
   have hle1 : (colonI b c).height ≤ 1 :=
     Ideal.height_le_one_of_isPrincipal_of_mem_minimalPrimes (Ideal.span {q0}) _ hmin
   have hge1 : (1 : ℕ∞) ≤ (colonI b c).height := by
-    unfold Ideal.height
-    refine le_iInf₂ (fun J hJ => ?_)
-    have hJP : colonI b c ≤ J := hJ.1.2
-    have hJne : J ≠ ⊥ := fun h => hPne (eq_bot_iff.2 (h ▸ hJP))
-    haveI : J.IsPrime := hJ.1.1
-    show 1 ≤ Order.height (⟨J, hJ.1.1⟩ : PrimeSpectrum R)
-    rw [ENat.one_le_iff_ne_zero, Ne, Order.height_eq_zero]
-    intro hmin
-    have hlt : (⟨⊥, inferInstance⟩ : PrimeSpectrum R) < ⟨J, hJ.1.1⟩ := by
-      refine lt_of_le_of_ne ?_ ?_
-      · first
-        | exact (bot_le : (⊥ : Ideal R) ≤ J)
-        | exact (PrimeSpectrum.asIdeal_le_asIdeal _ _).1 bot_le
-      · intro h
-        exact hJne (congrArg PrimeSpectrum.asIdeal h).symm
-    exact hmin.not_lt hlt
+    rw [ENat.one_le_iff_ne_zero, Ne, Ideal.height_eq_zero_iff_eq_bot]
+    exact hPne
   have hheight : (colonI b c).height = 1 := le_antisymm hle1 hge1
   obtain ⟨a', s', hs', hs'x⟩ := hx (colonI b c) hPprime hheight
   apply hs'

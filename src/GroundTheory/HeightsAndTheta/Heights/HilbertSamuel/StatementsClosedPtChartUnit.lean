@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenNear
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenSESStep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenNear
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenSESStep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

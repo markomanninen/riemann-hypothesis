@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAQQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAQQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt MeasureTheory
 open scoped ComplexConjugate
@@ -121,7 +125,7 @@ theorem PI_add_right {U V V' : M.Ty P → MA.SmQ P.r P.TT} (h : PI P U V) (h' : 
   intro π
   have e : (fun q => MA.evQ P (U π) q * conj (MA.evQ P ((V + V') π) q)) =
       (fun q => MA.evQ P (U π) q * conj (MA.evQ P (V π) q)) + (fun q => MA.evQ P (U π) q * conj (MA.evQ P (V' π) q)) := by
-    funext q; simp only [Pi.add_apply, evQ_add, map_add]; ring
+    funext q; simp only [Pi.add_apply, evQ_add, map_add (f := _)]; ring
   rw [e]; exact (h π).add (h' π)
 
 theorem PI_smul_right {U V : M.Ty P → MA.SmQ P.r P.TT} (c : ℂ) (h : PI P U V) : PI P U (c • V) := by
@@ -160,7 +164,7 @@ theorem ipA_add_right {U V V' : M.Ty P → MA.SmQ P.r P.TT} (h : PI P U V) (h' :
   simp only [ipA_eq, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun π _ => ?_
   rw [← integral_add (h π) (h' π)]
-  congr 1; funext q; simp only [Pi.add_apply, evQ_add, map_add]; ring
+  congr 1; funext q; simp only [Pi.add_apply, evQ_add, map_add (f := _)]; ring
 
 theorem ipA_smul_right (c : ℂ) (U V : M.Ty P → MA.SmQ P.r P.TT) :
     MA.ipA P U (c • V) = conj c * MA.ipA P U V := by
@@ -343,9 +347,6 @@ theorem van_applyL (l : List (OpT S v)) {ε : ℝ} {J : GFn S v} (h : Van S T v 
 theorem van_mulG {φ : ℝ → ℝ} {ε : ℝ} (hφ : ∀ x, x ≤ ε → φ x = 0) (J : GFn S v) : Van S T v ε (mulG S T v φ J) := by
   intro g hg
   simp [mulG, hφ _ hg.le]
-
-theorem applyL_cons (Θ : OpT S v) (l : List (OpT S v)) (J : GFn S v) :
-    applyL S v (Θ :: l) J = B.opApply Θ (applyL S v l J) := rfl
 
 theorem applyL_append (l₁ l₂ : List (OpT S v)) (J : GFn S v) :
     applyL S v (l₁ ++ l₂) J = applyL S v l₁ (applyL S v l₂ J) := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTangentVectorsFunctionsInvertibleDerivs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTangentVectorsFunctionsInvertibleDerivs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,7 +43,7 @@ theorem exists_coords_derivs' {k A : Type} [CommRing k] [CommRing A] {α : k →
       map_add' := fun s t => by simp }, fun c a b => ?_, fun a c => ?_, fun c r => ?_⟩
   · change B.coord c (KaehlerDifferential.D k A (a * b)) =
       a * B.coord c (KaehlerDifferential.D k A b) + b * B.coord c (KaehlerDifferential.D k A a)
-    rw [Derivation.leibniz, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [Derivation.leibniz, map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   · change B.coord c (KaehlerDifferential.D k A (P.val (e.symm a))) = _
     rw [hB, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply]
   · change B.coord c (KaehlerDifferential.D k A (algebraMap k A r)) = 0
@@ -63,7 +67,7 @@ def jetVec {A K : Type} [CommRing A] [Field K] {D : ℕ} (φ : A →+* K) (d : F
     refine TrivSqZeroExt.ext (map_add φ s t) ?_
     funext c
     change φ (d c (s + t)) = φ (d c s) + φ (d c t)
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
   map_mul' s t := by
     refine TrivSqZeroExt.ext (map_mul φ s t) ?_
     refine Eq.trans ?_ (TrivSqZeroExt.snd_mul _ _).symm
@@ -96,7 +100,7 @@ theorem exists_tangent_point : ∀ {o : Type} [CommRing o] (X : Scheme.{0}) (s :
     (Scheme.ΓSpecIso (CommRingCat.of o)).symm.commRingCatIsoToRingEquiv
     (h t t.2 Γ(Y, Y.basicOpen (t : Γ(Y, V))))
   have h₂ : (ReciprocityTheory.ChartRestriction.G.DVR.FlatBC.algX p (Y.basicOpen (t : Γ(Y, V)))).IsStandardSmoothOfRelativeDimension D := by
-    rw [← GlobalTheory.TopForm.resG_comp_algX p (Y.basicOpen_le (t : Γ(Y, V)))]
+    rw [← GlobalTheory.TopForm.resG_comp_algX (p := p) (Y.basicOpen_le (t : Γ(Y, V)))]
     exact h₁
   obtain ⟨x, d, hl, hd, h0⟩ := exists_coords_derivs' h₂
   have hO : IsAffineOpen (Y.basicOpen (t : Γ(Y, V))) := IsAffineOpen.basicOpen hV _

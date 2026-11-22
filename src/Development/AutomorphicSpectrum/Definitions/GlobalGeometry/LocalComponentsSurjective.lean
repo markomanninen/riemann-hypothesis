@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,9 +38,5 @@ def CurveIn.IsDeg (Y : CurveIn C ζ) {Ω : Type} [Field Ω] {ξ : Spec (CommRing
 def coordDeg (C : ACurve K) {B : Type} [Fintype B] {ι : B → Type} [∀ k, Fintype (ι k)] (w : (Σ k, ι k) → K)
     (a : B → ℤ) : ℤ :=
   ∑ k, a k * ∑ᶠ i, (C.w i : ℤ) * WithZero.log (Finset.univ.sup fun c : ι k => C.v i (w ⟨k, c⟩))
-
-def lmuExp {T : Type} (j q : ℕ) (μ : T → ℕ → ℤ) : (Σ s : T ⊕ T, Fin (Sum.elim (fun _ => j) (fun _ => q) s)) → ℤ
-  | ⟨Sum.inl τ, i⟩ => -μ τ (i.1 + 1)
-  | ⟨Sum.inr τ, i⟩ => μ τ (j + q - i.1)
 
 end GlobalTheory.CompanionTheory.Ar.Crv

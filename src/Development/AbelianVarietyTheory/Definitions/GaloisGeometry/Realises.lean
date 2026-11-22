@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
-import Formalism.LocalToGlobal.InertKernelTheory.ProjRSurj
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
+public import Formalism.LocalToGlobal.InertKernelTheory.ProjRSurj
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ def relPhi (i : ℕ) {n : ℕ} (h : (X.Pj i).m + 1 = n) (a : D.what₂.Tau → �
     intro x y hx hy f
     have h1 := hx f
     have h2 := hy f
-    simp only [GL3Theta.evFr, Prod.fst_add, Prod.snd_add, map_add, Pi.add_apply] at h1 h2 ⊢
+    simp only [GL3Theta.evFr, Prod.fst_add, Prod.snd_add, map_add (f := _), Pi.add_apply] at h1 h2 ⊢
     rw [h1, h2, mul_add]
   zero_mem' := by
     intro f
@@ -50,8 +54,8 @@ def relPhi (i : ℕ) {n : ℕ} (h : (X.Pj i).m + 1 = n) (a : D.what₂.Tau → �
 def phiC (i : ℕ) {n : ℕ} (h : (X.Pj i).m + 1 = n) (a : D.what₂.Tau → ℤ) : MvPolynomial (GL3Theta.FrV D n) ℂ →ₗ[ℂ] XR (X.Pj i) ℂ :=
   selOf (relPhi X D pos i h a)
 
-open Classical in
 
+open Classical in
 def phi0 {Kc : Type} [Field Kc] (ι : ℂ →+* Kc) (j : ℕ) :
     MvPolynomial (GL3Theta.FrV D (D.R.N (j + 1))) ℂ →ₛₗ[ι] XspC (X.Pj (j + 1)) Kc :=
   if h : (X.Pj (j + 1)).m + 1 = D.R.N (j + 1) then (mapSL ι).comp (phiC X D pos (j + 1) h (wT X D pos j)) else 0

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.StatementACE
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.StatementACE
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix

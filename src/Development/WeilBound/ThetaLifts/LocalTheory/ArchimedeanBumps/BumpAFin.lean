@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.BumpAOf
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.SliceMain
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.BumpAOf
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.SliceMain
+
+@[expose] public section
 
 namespace PositivityTheory.ThKG.Loc.Bump
 

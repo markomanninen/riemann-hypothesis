@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypLift
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem lin_ext_map {σ : Type} (φ : MvPolynomial σ LL →ₗ[LL] LL) (P : MvP
       rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
     rw [h1, map_smul, Basis.constr_basis, h2, map_smul, smul_eq_mul, smul_eq_mul, map_mul]
   next p q hp hq =>
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
 
 theorem desc_span {σ : Type} (V : Submodule LL (MvPolynomial σ LL)) {Q : MvPolynomial σ LL}
     (hQ : MvPolynomial.map e Q ∈ Submodule.span K (MvPolynomial.map e '' (V : Set (MvPolynomial σ LL)))) : Q ∈ V := by
@@ -108,7 +112,7 @@ theorem span_prod_map {S : Type} [Fintype S] {σ : S → Type} {τ : Type} (f : 
     refine Submodule.subset_span ⟨fun s => MvPolynomial.map e (F s), fun s => h s _ (hF s), ?_⟩
     simp only [map_prod, MvPolynomial.map_rename]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [mapE_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem vsp_map {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1) → ℤ) {x : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) LL}

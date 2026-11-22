@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.InnerEqZeroOfNotUEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.InnerEqZeroOfNotUEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,15 +23,15 @@ theorem norm_sq_le_hsNormSq {T : H →L[ℂ] K} (h : IsHilbertSchmidt T) : ‖T�
   refine opNorm_le_bound _ (Real.sqrt_nonneg _) fun x => ?_
   refine abs_le_of_sq_le_sq' ?_ (by positivity) |>.2
   rw [mul_pow, Real.sq_sqrt h0]
-  refine hasSum_le (fun j => ?_) (hasSum_norm_inner_sq (stdBasis K) (T x))
-    ((hasSum_adjoint (stdBasis H) (stdBasis K) (h.hasSum (stdBasis H))).mul_right (‖x‖ ^ 2))
+  refine hasSum_le (fun j => ?_) (hasSum_norm_inner_sq (stdBasis (H := K)) (T x))
+    ((hasSum_adjoint (stdBasis (H := H)) (stdBasis (H := K)) (h.hasSum (stdBasis (H := H)))).mul_right (‖x‖ ^ 2))
   rw [← adjoint_inner_left, ← mul_pow]
   gcongr
   exact norm_inner_le_norm _ _
 
 theorem isCompactOperator_of_isHilbertSchmidt {T : H →L[ℂ] K} (h : IsHilbertSchmidt T) : IsCompactOperator T := by
   classical
-  let e := stdBasis H
+  let e := stdBasis (H := H)
   let P : Finset (stdIndex H) → (H →L[ℂ] K) := fun s => ∑ i ∈ s, InnerProductSpace.rankOne ℂ (T (e i)) (e i)
   have hP : ∀ s j, (T - P s) (e j) = if j ∈ s then 0 else T (e j) := fun s j => by
     have := orthonormal_iff_ite.1 e.orthonormal
@@ -35,7 +39,7 @@ theorem isCompactOperator_of_isHilbertSchmidt {T : H →L[ℂ] K} (h : IsHilbert
       ite_smul, one_smul, zero_smul, Finset.sum_ite_eq']
     split_ifs <;> simp
   have hs : ∀ s, HasSum (fun j => ‖(T - P s) (e j)‖ ^ 2) (∑' j : {j // j ∉ s}, ‖T (e j)‖ ^ 2) := fun s => by
-    have := (hasSum_subtype_iff_indicator (s := {j | j ∉ s})).1 (Summable.subtype h {j | j ∉ s}).hasSum
+    have := (hasSum_subtype_iff_indicator (s := {j | j ∉ s})).1 (Summable.subtype h (fun j => j ∉ s)).hasSum
     refine this.congr_fun fun j => ?_
     by_cases hj : j ∈ s <;> simp [hP, hj, e]
   refine isCompactOperator_of_tendsto (l := atTop) (F := P) ?_ (.of_forall fun s => ?_)
@@ -155,6 +159,22 @@ theorem EnoughCompact.multIn_lt (hρ : IsUnitaryRep ρ) (h : EnoughCompact ρ) (
   by_cases h0 : homIn π ρ ⊤ = ⊥
   · rw [h0]; infer_instance
   have := hπ.complete
+  haveI := hπ.irred.1
+  obtain ⟨v, hvnorm⟩ := exists_norm_eq H zero_le_one
+  have inner_eq_be : ∀ (T T' : H →L[ℂ] K), T ∈ homIn π ρ ⊤ → T' ∈ homIn π ρ ⊤ →
+      ∀ x y, ⟪T' y, T x⟫_ℂ = ⟪T' v, T v⟫_ℂ * ⟪y, x⟫_ℂ := by
+    intro T T' hT hT' x y
+    obtain ⟨c, hc⟩ := GlobalTheory.hilbert_schur H G π hπ.unitary.norm_apply
+      (fun S hS h => hπ.irred.2 S ⟨hS, h⟩) (T'.adjoint ∘L T) fun g => by
+        refine ContinuousLinearMap.ext fun x => ext_inner_left ℂ fun y => ?_
+        change ⟪y, π g (T'.adjoint (T x))⟫_ℂ = ⟪y, T'.adjoint (T (π g x))⟫_ℂ
+        rw [← inv_inv g, ← hπ.unitary.inner_apply_left, adjoint_inner_right,
+          adjoint_inner_right, hT.2, hT'.2, hρ.inner_apply_left]
+    have key : ∀ x y, ⟪T' y, T x⟫_ℂ = c * ⟪y, x⟫_ℂ := fun x y => by
+      rw [← adjoint_inner_right, show T'.adjoint (T x) = c • x from DFunLike.congr_fun hc x,
+        inner_smul_right]
+    rw [key, key, inner_self_eq_norm_sq_to_K, hvnorm]
+    simp
   obtain ⟨T, hT, hT0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h0
   have hc := (isCopy_range hπ hρ hT hT0).isIrredSubrep hπ.irred
   obtain ⟨E, hE, hS, hWE⟩ := h.exists_finiteDimensional hρ hc.1 hc.2.1
@@ -168,15 +188,21 @@ theorem EnoughCompact.multIn_lt (hρ : IsUnitaryRep ρ) (h : EnoughCompact ρ) (
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
   refine Module.Finite.of_injective L ((injective_iff_map_eq_zero L).2 fun S e => Subtype.ext (ContinuousLinearMap.ext fun x => norm_eq_zero.1 ?_))
-  have h1 := norm_apply_eq hπ hρ S.2 (adjoint T (T u))
-  rw [show S.1 (adjoint T (T u)) = 0 from congrArg Subtype.val e, norm_zero, eq_comm, mul_eq_zero] at h1
-  rw [norm_apply_eq hπ hρ S.2 x, h1.resolve_right (norm_ne_zero_iff.2 hv), zero_mul]
+  have hz : S.1 (adjoint T (T u)) = 0 := congrArg Subtype.val e
+  have hk := inner_eq_be S.1 S.1 S.2 S.2 (adjoint T (T u)) (adjoint T (T u))
+  rw [hz, inner_zero_left] at hk
+  have hvinner : ⟪adjoint T (T u), adjoint T (T u)⟫_ℂ ≠ 0 :=
+    fun h => hv ((inner_self_eq_zero (𝕜 := ℂ)).1 h)
+  have hsinner := (mul_eq_zero.mp hk.symm).resolve_right hvinner
+  have hx := inner_eq_be S.1 S.1 S.2 S.2 x x
+  rw [hsinner, zero_mul] at hx
+  exact norm_eq_zero.2 ((inner_self_eq_zero (𝕜 := ℂ)).1 hx)
 
 theorem EnoughCompact.isDiscreteSum (hρ : IsUnitaryRep ρ) (h : EnoughCompact ρ) : IsDiscreteSum ρ :=
   ⟨exists_isHilbertSum hρ fun _ => h.exists_irred_le hρ, fun R => h.multIn_lt hρ R.isIrr⟩
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem eq_zero_of_isHilbertSum {ι : Type} {W : ι → Submodule ℂ K}
     (hs : IsHilbertSum ℂ (fun i => W i) fun i => (W i).subtypeₗᵢ) {x : K} (h : ∀ i, ∀ y ∈ W i, ⟪y, x⟫_ℂ = 0) :
     x = 0 := by
@@ -185,41 +211,50 @@ theorem eq_zero_of_isHilbertSum {ι : Type} {W : ι → Submodule ℂ K}
   refine (inner_self_eq_zero (𝕜 := ℂ)).1 (h1.unique (hasSum_zero.congr_fun fun i => ?_))
   exact inner_eq_zero_symm.1 (h i _ (Subtype.prop _))
 
-theorem IsDiscreteSum.disc_eq_top (h : IsDiscreteSum ρ) : disc ρ = ⊤ := by
-  obtain ⟨ι, W, hW, hs⟩ := h.1
-  have := (isSubrep_disc (π := ρ)).completeSpace
-  rw [← Submodule.orthogonal_eq_bot_iff, eq_bot_iff]
-  exact fun x hx => eq_zero_of_isHilbertSum hs fun i y hy => hx y ((hW i).le_disc hy)
-
 theorem multIn_eq_ncard (hρ : IsUnitaryRep ρ) (hπ : IsIrrUnitary π) (hm : multIn π ρ ⊤ < Cardinal.aleph0) {ι : Type}
     {W : ι → Submodule ℂ K} (hW : ∀ i, IsIrredSubrep ρ (W i))
     (hs : IsHilbertSum ℂ (fun i => W i) fun i => (W i).subtypeₗᵢ) :
     {i | IsCopy π ρ (W i)}.Finite ∧ multIn π ρ ⊤ = {i | IsCopy π ρ (W i)}.ncard := by
   classical
   have := hπ.complete
-  have := hπ.irred.1
+  haveI := hπ.irred.1
+  obtain ⟨v, hvnorm⟩ := exists_norm_eq H zero_le_one
+  have inner_eq_be : ∀ (T T' : H →L[ℂ] K), T ∈ homIn π ρ ⊤ → T' ∈ homIn π ρ ⊤ →
+      ∀ x y, ⟪T' y, T x⟫_ℂ = ⟪T' v, T v⟫_ℂ * ⟪y, x⟫_ℂ := by
+    intro T T' hT hT' x y
+    obtain ⟨c, hc⟩ := GlobalTheory.hilbert_schur H G π hπ.unitary.norm_apply
+      (fun S hS h => hπ.irred.2 S ⟨hS, h⟩) (T'.adjoint ∘L T) fun g => by
+        refine ContinuousLinearMap.ext fun x => ext_inner_left ℂ fun y => ?_
+        change ⟪y, π g (T'.adjoint (T x))⟫_ℂ = ⟪y, T'.adjoint (T (π g x))⟫_ℂ
+        rw [← inv_inv g, ← hπ.unitary.inner_apply_left, adjoint_inner_right,
+          adjoint_inner_right, hT.2, hT'.2, hρ.inner_apply_left]
+    have key : ∀ x y, ⟪T' y, T x⟫_ℂ = c * ⟪y, x⟫_ℂ := fun x y => by
+      rw [← adjoint_inner_right, show T'.adjoint (T x) = c • x from DFunLike.congr_fun hc x,
+        inner_smul_right]
+    rw [key, key, inner_self_eq_norm_sq_to_K, hvnorm]
+    simp
   have := multIn_lt_aleph0_iff.1 hm
   choose e he hr using fun i : {i | IsCopy π ρ (W i)} => isCopy_iff.1 i.2
   let b : {i | IsCopy π ρ (W i)} → homIn π ρ ⊤ := fun i => ⟨(e i).toContinuousLinearMap, mem_homIn_top.2 (he i)⟩
   have hmem : ∀ (i : {i | IsCopy π ρ (W i)}) x, e i x ∈ W i := fun i x => hr i ▸ ⟨x, rfl⟩
-  have ho : Orthonormal ℂ fun i => e i (unitVec H) :=
-    ⟨fun i => by rw [(e i).norm_map, norm_unitVec], fun i j hij =>
+  have ho : Orthonormal ℂ fun i => e i (v) :=
+    ⟨fun i => by rw [(e i).norm_map, hvnorm], fun i j hij =>
       hs.OrthogonalFamily (Subtype.val_injective.ne hij) ⟨_, hmem i _⟩ ⟨_, hmem j _⟩⟩
   have hl : LinearIndependent ℂ b :=
-    .of_comp ((ContinuousLinearMap.apply ℂ K (unitVec H)).toLinearMap ∘ₗ (homIn π ρ ⊤).subtype) ho.linearIndependent
+    .of_comp ((ContinuousLinearMap.apply ℂ K (v)).toLinearMap ∘ₗ (homIn π ρ ⊤).subtype) ho.linearIndependent
   have hfin : Finite {i | IsCopy π ρ (W i)} := hl.finite
   have := Fintype.ofFinite {i | IsCopy π ρ (W i)}
   have hsp : ⊤ ≤ Submodule.span ℂ (Set.range b) := fun T _ => by
     rw [Submodule.mem_span_range_iff_exists_fun]
-    refine ⟨fun i => be T.1 (b i).1, (sub_eq_zero.1 (Subtype.ext (ContinuousLinearMap.ext fun x => ?_))).symm⟩
-    set S := T - ∑ i, be T.1 (b i).1 • b i with hS
+    refine ⟨fun i => ⟪(b i).1 v, T.1 v⟫_ℂ, (sub_eq_zero.1 (Subtype.ext (ContinuousLinearMap.ext fun x => ?_))).symm⟩
+    set S := T - ∑ i, ⟪(b i).1 v, T.1 v⟫_ℂ • b i with hS
     refine eq_zero_of_isHilbertSum hs fun j y hy => ?_
     by_cases hj : IsCopy π ρ (W j)
     · obtain ⟨z, rfl⟩ : y ∈ LinearMap.range (e ⟨j, hj⟩).toLinearMap := (hr ⟨j, hj⟩).symm ▸ hy
-      refine (inner_eq_be hπ hρ S.2 (b ⟨j, hj⟩).2 x z).trans (mul_eq_zero_of_left ?_ _)
-      have h1 : S.1 (unitVec H) = T.1 (unitVec H) - ∑ i, be T.1 (b i).1 • e i (unitVec H) := by simp [hS, b]
-      rw [be_def, h1, inner_sub_right, sub_eq_zero]
-      exact (ho.inner_right_fintype (fun i => be T.1 (b i).1) ⟨j, hj⟩).symm
+      refine (inner_eq_be S.1 (b ⟨j, hj⟩).1 S.2 (b ⟨j, hj⟩).2 x z).trans (mul_eq_zero_of_left ?_ _)
+      have h1 : S.1 (v) = T.1 (v) - ∑ i, ⟪(b i).1 v, T.1 v⟫_ℂ • e i (v) := by simp [hS, b]
+      rw [h1, inner_sub_right, sub_eq_zero]
+      exact (ho.inner_right_fintype (fun i => ⟪(b i).1 v, T.1 v⟫_ℂ) ⟨j, hj⟩).symm
     · exact inner_eq_zero_of_not_uEquiv hπ (isIrrUnitary_rep hρ (hW j)) hρ (fun h => hj ⟨_, h⟩) S.2
         (S := (W j).subtypeL) (U' := ⊤) (mem_homIn_top.2 fun _ _ => rfl) x ⟨y, hy⟩
   refine ⟨hfin, ?_⟩

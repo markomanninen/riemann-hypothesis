@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -20,7 +24,7 @@ theorem index_transfer_along_projection {M N : Type} [AddCommGroup M] [AddCommGr
         rwa [map_sub, sub_eq_zero] at this
       refine ⟨p x + (y - p y), L.add_mem (hpL x hx) (L.sub_mem hy (hpL y hy)), ?_⟩
       show T (p x + (y - p y)) = y
-      rw [map_add, hT1, hTp, hp]
+      rw [map_add (f := _), hT1, hTp, hp]
       abel
   let ψ : L →+ L.map Φ :=
     (Φ.comp L.subtype).codRestrict (L.map Φ) (fun x => ⟨x.1, x.2, rfl⟩)

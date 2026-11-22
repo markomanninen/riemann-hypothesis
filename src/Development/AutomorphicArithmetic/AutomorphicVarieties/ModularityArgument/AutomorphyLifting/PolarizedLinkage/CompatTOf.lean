@@ -1,17 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.GalUnitaryT
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RcUnlinkedChars
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatWDCharPolChars
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupercuspidalSupportTwistNuCharacters
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalContragredientMonomial
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupercuspidalSupportCharacters
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeakRepIso
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FontaineParameterInvariantUnderConjugation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicHodgePropertiesConjInvariant
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.RecTExists
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.Multi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.SphUnl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.PlainIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.NormAbsPowUnif
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.GalUnitaryT
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RcUnlinkedChars
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatWDCharPolChars
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupercuspidalSupportTwistNuCharacters
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalContragredientMonomial
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupercuspidalSupportCharacters
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeakRepIso
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FontaineParameterInvariantUnderConjugation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicHodgePropertiesConjInvariant
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.RecTExists
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.Multi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.SphUnl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.PlainIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.NormAbsPowUnif
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAl
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
 
 private theorem charPol_chars {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a}
-    {rc : IrrGL (w.adicCompletion E) → WD h} (H : LawsT a ha rc) (x : IrrGL (w.adicCompletion E)) {n : ℕ}
+    {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : LawsT a ha rc) (x : IrrGL (k := w.adicCompletion E)) {n : ℕ}
     (ξ : Fin n → ((w.adicCompletion E)ˣ →* ℂˣ)) (hξ : ∀ j, IsSmoothChar (ξ j)) (hs : HasSupport x.rep (chars ξ hξ))
     (hu : Unlinked (chars ξ hξ)) (g : Weil h) : (rc x).charPol g = ∏ j, (X - C ((ξ j (a g) : ℂˣ) : ℂ)) := by
   haveI : CharZero (w.adicCompletion E) := charZero_of_injective_algebraMap (algebraMap E _).injective
@@ -89,7 +93,7 @@ variable {E Ω : Type} [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algeb
 
 private theorem rec_eq_sat (hn : 1 ≤ n) (π : CuspSub E n) {w : HeightOneSpectrum (𝓞 E)} {A : ValuationSubring Ω}
     {h : IsPlaceOver A w} {σ : SmIrr (GL (Fin n) (w.adicCompletion E))} (hσ : π.IsLocComp w σ) {B : Multiset ℂˣ}
-    (hB : (CG.mk π).HasSat w B) {rc : IrrGL (w.adicCompletion E) → WD h} (hrc : IsRecT h rc)
+    (hB : (CG.mk π).HasSat w B) {rc : IrrGL (k := w.adicCompletion E) → WD h} (hrc : IsRecT h rc)
     (hP : PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred)) (hm : (rc (algNorm σ)).mono0) : rc (algNorm σ) = satWD h n B := by
   haveI : CharZero (w.adicCompletion E) := charZero_of_injective_algebraMap (algebraMap E _).injective
   obtain ⟨a, ha, hL⟩ := hrc
@@ -150,7 +154,7 @@ private theorem plain_all (hn : 1 ≤ n) {π : CuspSub F n} {w : HeightOneSpectr
   exact ⟨s', hs', h1, hu⟩
 
 private theorem gd_of (H : PlainRec) (hn : 1 ≤ n) {π : CuspSub F n} {w : HeightOneSpectrum (𝓞 F)} {A : ValuationSubring Ω}
-    {h : IsPlaceOver A w} {rc : IrrGL (w.adicCompletion F) → WD h} (hrc : IsRecT h rc)
+    {h : IsPlaceOver A w} {rc : IrrGL (k := w.adicCompletion F) → WD h} (hrc : IsRecT h rc)
     {σ : SmIrr (GL (Fin n) (w.adicCompletion F))} (hσ : π.IsLocComp w σ)
     (hall : ∀ σ', π.IsLocComp w σ' → PlainTor (IrrGL.of σ'.ρ σ'.smooth σ'.irred)) :
     UpperTheory.GalStar.Tor (rc (algNorm σ)) ∧ (rc (algNorm σ)).mono0 := by

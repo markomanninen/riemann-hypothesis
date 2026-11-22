@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMaxVector
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MaximalHermitianLatticeLocalStructureDiscriminan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMaxVector
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MaximalHermitianLatticeLocalStructureDiscriminan
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
 
@@ -18,12 +23,14 @@ theorem form_eq_sum (h : V →ₗ⋆[K] V →ₗ[K] K) (e : Module.Basis ι K V)
     (he : ∀ i l, i ≠ l → h (e i) (e l) = 0) (x y : V) :
     h x y = ∑ i, star (e.repr x i) * h (e i) (e i) * e.repr y i := by
   conv_lhs => rw [← e.sum_repr x]
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, mul_assoc]
   congr 1
   conv_lhs => rw [← e.sum_repr y]
-  rw [map_sum, Finset.sum_eq_single i]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single i]
   · rw [map_smul, smul_eq_mul, mul_comm]
   · intro l _ hl
     rw [map_smul, he i l hl.symm, smul_zero]
@@ -80,8 +87,8 @@ theorem val_star (w : HeightOneSpectrum (𝓞 K)) (hw : conjIdeal (K := K) w.asI
     have := h2 (star k) (star_ne_zero.2 hk) (by rwa [star_star])
     rwa [star_star] at this
 
-omit [StarRing K] in
 
+omit [StarRing K] in
 theorem val_unif (w : HeightOneSpectrum (𝓞 K)) {a : 𝓞 K} (h1 : a ∈ w.asIdeal) (h2 : a ∉ w.asIdeal ^ 2) :
     w.valuation K (algebraMap (𝓞 K) K a) = WithZero.exp (-1 : ℤ) := by
   rw [w.valuation_of_algebraMap]

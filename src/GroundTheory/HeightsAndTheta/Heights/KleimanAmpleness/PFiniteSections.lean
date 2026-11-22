@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsTildeTail
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsTildeTail
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -73,8 +78,8 @@ variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : 
   {x : Fin (N + 1) → Ω} {F : Type u} [Field F] [Algebra S F] [Algebra F Ω] [IsScalarTower S F Ω]
   [IsFractionRing S F]
 
-omit [IsFractionRing S F] in
 
+omit [IsFractionRing S F] in
 theorem exists_monos_map {I : Finset (Fin (N + 1))} {s : Poly F N} (hs : s ∈ monos I) :
     ∃ s' : Poly S N, s' ∈ monos I ∧ map (algebraMap S F) s' = s := by
   induction hs using Submonoid.closure_induction with
@@ -101,10 +106,11 @@ theorem exists_mul_mem_chartRing {I : Chart x} {a : Ω} (ha : a ∈ chartRing F 
   have hse' : s'.IsHomogeneous e := fun d hd => hse (by
     rw [coeff_map]; exact fun h => hd (hinj (h.trans (map_zero _).symm)))
   have hsum : aeval x f / aeval x (map (algebraMap S F) s') =
-      ∑ d ∈ f.support, coeff d f • (aeval x (monomial d (1 : S)) / aeval x s') := by
+      ∑ d ∈ f.support, AddMonoidAlgebra.coeff f d • (aeval x (monomial d (1 : S)) / aeval x s') := by
     rw [aeval_map_algebraMap]
     conv_lhs => rw [f.as_sum]
-    rw [map_sum, Finset.sum_div]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_div]
     refine Finset.sum_congr rfl fun d _ => ?_
     rw [aeval_monomial, aeval_monomial, map_one, one_mul, Algebra.smul_def, mul_div_assoc]
   rw [hsum]
@@ -122,10 +128,10 @@ theorem exists_mul_mem_chartRing {I : Chart x} {a : Ω} (ha : a ∈ chartRing F 
     have hmem : aeval x (monomial d (1 : S)) / aeval x s' ∈ chartRing S x I :=
       ⟨monomial d 1, s', e, hs', isHomogeneous_monomial _ (by
         rw [Finsupp.degree_eq_weight_one]; exact hf (mem_support_iff.mp hd)), hse', rfl⟩
-    obtain ⟨u, v, hv, huv⟩ := IsFractionRing.div_surjective (A := S) (coeff d f)
+    obtain ⟨u, v, hv, huv⟩ := IsFractionRing.div_surjective (A := S) (AddMonoidAlgebra.coeff f d)
     refine ⟨v, hv, ?_⟩
     have hv0 : algebraMap S Ω v ≠ 0 := algebraMap_ne_zero_of_mem F hv
-    have : algebraMap S Ω v * (coeff d f • (aeval x (monomial d (1 : S)) / aeval x s')) =
+    have : algebraMap S Ω v * (AddMonoidAlgebra.coeff f d • (aeval x (monomial d (1 : S)) / aeval x s')) =
         algebraMap S Ω u * (aeval x (monomial d (1 : S)) / aeval x s') := by
       rw [Algebra.smul_def, ← huv, map_div₀, ← IsScalarTower.algebraMap_apply,
         ← IsScalarTower.algebraMap_apply]
@@ -217,7 +223,7 @@ theorem FiniteSections.proof (hE : Extension.Statement.{u, w, w}) (hT : TildeTai
     rintro _ ⟨j, f, e, hf, hej, rfl⟩
     have he : e = 0 := by have := (hgen j).1; omega
     subst he
-    have hfC : f = C (coeff 0 f) := totalDegree_eq_zero_iff_eq_C.mp (Nat.le_zero.mp hf.totalDegree_le)
+    have hfC : f = C (AddMonoidAlgebra.coeff f 0) := totalDegree_eq_zero_iff_eq_C.mp (Nat.le_zero.mp hf.totalDegree_le)
     rw [hfC, aeval_C, ← Algebra.smul_def]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
   have := isNoetherian_span_of_finite S (Set.finite_range gen)

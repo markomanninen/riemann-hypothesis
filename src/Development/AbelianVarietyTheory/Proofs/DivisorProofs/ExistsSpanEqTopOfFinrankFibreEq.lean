@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct Module
 
@@ -22,8 +26,8 @@ private lemma finrank_fiber_eq (hinj : Function.Injective (algebraMap B A))
     (AlgebraTensorModule.cancelBaseChange B (B ⧸ P) (A ⧸ Q) (A ⧸ Q) M).finrank_eq,
     ← (AlgebraTensorModule.cancelBaseChange B A (A ⧸ Q) (A ⧸ Q) M).finrank_eq, h1]
 
-open TensorProduct Module in
 
+open TensorProduct Module in
 theorem _root_.GlobalTheory.nonempty_basis_of_basis_baseChange {B A M : Type*} [CommRing B] [CommRing A]
     [Finite (MaximalSpectrum B)] [Algebra B A] [Algebra.IsIntegral B A] [AddCommGroup M]
     [Module B M] [Module.Finite B M] {r : ℕ}
@@ -127,8 +131,8 @@ theorem _root_.GlobalTheory.nonempty_basis_of_basis_baseChange {B A M : Type*} [
     exact hinj (by rw [Pi.zero_apply, map_zero, Algebra.algebraMap_eq_smul_one]; simpa using congrFun h2 i)
   exact ⟨Basis.ofEquivFun (LinearEquiv.ofBijective f ⟨hfi, hfs⟩).symm⟩
 
-open TensorProduct Module in
 
+open TensorProduct Module in
 theorem _root_.GlobalTheory.finrank_eq_mul_of_basis_tensor_self (k B A : Type) [Field k] [CommRing B] [CommRing A]
     [Algebra k B] [Algebra k A] [Algebra B A] [IsScalarTower k B A] [Module.Finite k A] (r : ℕ)
     (hinj : Function.Injective (algebraMap B A))

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CubeTheorem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineH2SmallCoverBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CubeTheorem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineH2SmallCoverBijective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,14 +38,14 @@ theorem hasLoc (s : X ⟶ Sp R) : Desc.HasLoc ((IsTriv s).ι ⋙ O (dp0 R) s) :=
   · obtain ⟨⟨_, n, rfl⟩, hm⟩ :=
       (IsLocalization.map_eq_zero_iff (Submonoid.powers b') (Localization.Away b') x).1 hx
     exact ⟨n, hm⟩
-  · exact ObjectProperty.hom_ext _ (Thick.hom_ext (ThickLoc.liftφ_algebraMap u.hom hu))
+  · exact ObjectProperty.hom_ext _ (Thick.Hom.ext' (AlgHom.ext (ThickLoc.liftφ_algebraMap u.hom hu)))
   · have hv' : ∀ x : T.obj.B, v.hom.φ (algebraMap T.obj.B (Localization.Away b') x) = u.hom.φ x :=
       fun x ↦ by rw [← hv]; rfl
     have : (v.hom.φ : Localization.Away b' →+* S.obj.B) =
         (ThickLoc.liftφ u.hom hu : Localization.Away b' →+* S.obj.B) := by
       refine IsLocalization.ringHom_ext (Submonoid.powers b') (RingHom.ext fun x ↦ ?_)
       exact (hv' x).trans (ThickLoc.liftφ_algebraMap u.hom hu x).symm
-    exact ObjectProperty.hom_ext _ (Thick.hom_ext fun x ↦ RingHom.congr_fun this x)
+    exact ObjectProperty.hom_ext _ (Thick.Hom.ext' (AlgHom.ext fun x ↦ RingHom.congr_fun this x))
 
 theorem pull_restrict_small_injective : ∀ (R : Type) [CommRing R] (X : Scheme.{0}) (s : X ⟶ Sp R) (K : Type) (U : K → X.Opens), ⨆ i, U i = ⊤ → Function.Injective (CoefMap.restrict ((IsTriv s).ι ⋙ O (dp0 R) s) (ObjectProperty.ι (fun T : (IsTriv s).FullSubcategory => IsSmall (dp0 R) s U T.obj))).pull2 := by
   intro R _ X s K U hU

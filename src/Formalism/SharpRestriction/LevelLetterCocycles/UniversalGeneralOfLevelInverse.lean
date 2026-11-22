@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneratorsOfUnits
-import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneralOfInverseLevels
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneratorsOfUnits
+public import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneralOfInverseLevels
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+
+@[expose] public section
 
 noncomputable section
 

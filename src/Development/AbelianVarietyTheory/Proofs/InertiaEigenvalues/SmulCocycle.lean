@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.HerrClassFieldOfNorms
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.T2SpaceLocLatV
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFixingSubgroupMaxUnramifiedOfMemLocalGalois
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineAndDecompletion
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlWcbInjective
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.HerrClassFieldOfNorms
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.T2SpaceLocLatV
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFixingSubgroupMaxUnramifiedOfMemLocalGalois
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineAndDecompletion
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlWcbInjective
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation TensorProduct
 

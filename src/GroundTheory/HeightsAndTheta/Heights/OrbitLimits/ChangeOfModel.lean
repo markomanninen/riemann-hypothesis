@@ -1,14 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChangeOfModel
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIsomInvariance
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiHomogRenameCoordPow
-import GroundTheory.HeightsAndTheta.Heights.Intersections.QuotientMapImageZInjective
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalImageZIff
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsIntegralLogNormRat
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PConsequences
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ExistsUnique
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChangeOfModel
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIsomInvariance
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiHomogRenameCoordPow
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.QuotientMapImageZInjective
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalImageZIff
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsIntegralLogNormRat
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PConsequences
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ExistsUnique
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,7 +18,7 @@ theorem cup_add_cup_swap {R : Type} [CommRing R] {C : Type} [Category.{0} C]
     (F : C ⥤ CommAlgCat.{0} R) (a b : H1 F) : cup F a b + cup F b a = 0 := by
   obtain ⟨a', rfl⟩ := H1.mk_surjective F a
   obtain ⟨b', rfl⟩ := H1.mk_surjective F b
-  rw [cup_mk, cup_mk, ← map_add, H2.mk_eq_zero]
+  rw [cup_mk, cup_mk, ← map_add (f := _), H2.mk_eq_zero]
   refine ⟨-(fun T T' φ => a'.1 T T' φ * b'.1 T T' φ), ?_⟩
   funext T T' T'' φ ψ
   simp only [map_neg, Pi.neg_apply, d1_apply, Submodule.coe_add, Pi.add_apply, cupZ_apply, Z1.comp, map_mul]
@@ -36,7 +40,7 @@ theorem hopf_pull_lift_cup {R : Type} [CommRing R] {C : Type} [Category.{0} C]
     refine congrArg (fun x => π.pull2 x) ?_
     rw [CoefMap.pullCohomologyTwo_cup (boxL F) a b, CoefMap.pullCohomologyTwo_cup (boxR F) a b, TensorProduct.comm_tmul, map_sub,
       TensorProduct.lift.tmul, TensorProduct.lift.tmul, crossB_apply, crossB_apply]
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     have h := cup_add_cup_swap (box F) ((boxL F).pull1 b) ((boxR F).pull1 a)
     have h3 : cup (box F) ((boxR F).pull1 a) ((boxL F).pull1 b) =
         -cup (box F) ((boxL F).pull1 b) ((boxR F).pull1 a) :=
@@ -44,7 +48,7 @@ theorem hopf_pull_lift_cup {R : Type} [CommRing R] {C : Type} [Category.{0} C]
     rw [h3]
     abel
   | add x y hx hy =>
-    simp only [map_add, map_sub, hx, hy]
+    simp only [map_add (f := _), map_sub, hx, hy]
     abel
 
 theorem hopf_cross_antisymm : LowSt → ∀ (R : Type) [CommRing R] (C : Type) [Category.{0} C]

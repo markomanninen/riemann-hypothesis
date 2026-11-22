@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.ArchimedeanJacquetSegments.SegmentSubquotients.SegmentRepresentation
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.ArchimedeanJacquetSegments.SegmentSubquotients.SegmentRepresentation
+
+@[expose] public section
 
 namespace GlobalTheory
 

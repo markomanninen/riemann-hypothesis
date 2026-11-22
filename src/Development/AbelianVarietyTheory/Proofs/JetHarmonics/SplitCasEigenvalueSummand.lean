@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+
+@[expose] public section
+
 open Finset BranchingSupport Formalism.REAL Formalism.QuantumDeterminants
 open scoped InnerProductSpace
 
@@ -38,7 +43,8 @@ private lemma casG_sub_single {n : ℕ} (μ : Fin n → ℝ) (s : Fin n) :
 theorem splitCas_eigenvalue_summand : ∀ (M : Type) [NormedAddCommGroup M] [InnerProductSpace ℂ M] (n : ℕ) (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) (N : Fin n → Type) [∀ s, NormedAddCommGroup (N s)] [∀ s, InnerProductSpace ℂ (N s)] (F : ∀ s, Fin n → Fin n → Module.End ℂ (N s)) (io : ∀ s, N s →ₗ[ℂ] (Fin n → M)) (pr : ∀ s, (Fin n → M) →ₗ[ℂ] N s) (μ : Fin n → ℝ), IsMod ε E μ → (∀ s, IsMod ε (F s) (μ - Pi.single s 1)) → AlgTens ε E N F io pr → ∀ s (y : N s), splitCas E (io s y) = ((-μ s + (1 - (n : ℝ)) / 2 : ℝ) : ℂ) • io s y := by
   intro M _ _ n ε E N _ _ F io pr μ hE hF hT s y
   have h1 : io s (Cas (F s) y) = ∑ a, ∑ b, dualTens E a b (dualTens E b a (io s y)) := by
-    simp only [Cas, LinearMap.sum_apply, Module.End.mul_apply, map_sum, hT.io_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Cas, LinearMap.sum_apply, Module.End.mul_apply, map_sum, hT.io_comm]
   rw [dualTens_casimir_sum, (hF s).2.2, map_smul, casG_sub_single] at h1
   have h2 : (fun i => Cas E (io s y i)) = (casG μ : ℂ) • io s y := by
     funext i; rw [hE.2.2]; rfl

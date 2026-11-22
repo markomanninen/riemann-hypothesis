@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecTw
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecTw
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -38,7 +43,8 @@ theorem linearIndependent_image {a : V →ₛₗ[algebraMap K F] W} (ha : IsExte
     obtain ⟨Λ, hΛ⟩ := ha.coord ℓ
     have h0 : ∑ j ∈ s, ℓ (g j) • Module.Basis.ofVectorSpace K V j = 0 := by
       have := congrArg Λ hg
-      rw [map_sum, map_zero, Finset.sum_congr rfl fun j _ => hΛ (g j) _] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero, Finset.sum_congr rfl fun j _ => hΛ (g j) _] at this
       exact this
     exact linearIndependent_iff'.1 (Module.Basis.ofVectorSpace K V).linearIndependent s _ h0 i hi
   let e := Module.Basis.ofVectorSpace K F
@@ -50,7 +56,8 @@ theorem span_image {a : V →ₛₗ[algebraMap K F] W} (ha : IsExtension a) :
     ⊤ ≤ Submodule.span F (Set.range fun i => a (Module.Basis.ofVectorSpace K V i)) := by
   rw [← ha.span, Submodule.span_le]
   rintro _ ⟨v, rfl⟩
-  rw [← (Module.Basis.ofVectorSpace K V).linearCombination_repr v, Finsupp.linearCombination_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (Module.Basis.ofVectorSpace K V).linearCombination_repr v, Finsupp.linearCombination_apply,
     Finsupp.sum, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [map_smulₛₗ]
@@ -73,7 +80,7 @@ theorem repr_semilinear {Idx : Type} (B : Module.Basis Idx F W) (τ : F →+* F)
     rw [hg, B.repr_self, Finsupp.single_apply]
     split_ifs <;> simp
   | zero => simp
-  | add x y _ _ hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   | smul c x _ hx =>
     rw [map_smulₛₗ, map_smul, map_smul, Finsupp.smul_apply, Finsupp.smul_apply, smul_eq_mul, smul_eq_mul, hx,
       map_mul]
@@ -95,7 +102,8 @@ theorem exists_scale [CharZero K] [IsAlgClosure K F] {a : V →ₛₗ[algebraMap
     choose k hk using this
     refine ⟨∑ j ∈ (B.repr w).support, k j • Module.Basis.ofVectorSpace K V j, ?_⟩
     conv_rhs => rw [← B.linearCombination_repr w, Finsupp.linearCombination_apply, Finsupp.sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smulₛₗ, hk, extBasis_apply]
   by_cases h0 : ∀ i, T i = 0

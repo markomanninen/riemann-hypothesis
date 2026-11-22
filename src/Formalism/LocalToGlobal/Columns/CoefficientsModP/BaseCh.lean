@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.CoefModX
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.TauLatticeLatticeHolds
+module
+
+public import Formalism.LocalToGlobal.Columns.CoefModX
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.TauLatticeLatticeHolds
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -33,7 +37,7 @@ theorem bc_map_blockAct (g : ι → Matrix (Fin n) (Fin n) K) (P : Pol K ι n) :
       Formalism.GradedWeylDivisibility.blockAct K' (fun τ => (g τ).map j) (MvPolynomial.map j P) := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [Formalism.GradedWeylDivisibility.blockAct]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p x hp =>
     simp only [map_mul, hp, map_X]
     congr 1
@@ -91,7 +95,7 @@ theorem bc_map_mem_span {σ : Type} (S : Set (MvPolynomial σ K)) {F : MvPolynom
   induction hF using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [bc_map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem bc_descent_span {σ κ : Type} [Fintype κ] (v : κ → MvPolynomial σ K) (c : κ → K') (F : MvPolynomial σ K)
@@ -107,8 +111,9 @@ theorem bc_descent_span {σ κ : Type} [Fintype κ] (v : κ → MvPolynomial σ 
     rw [this, map_smul, smul_eq_mul, mul_comm]
   refine ⟨fun i => π (c i), ?_⟩
   ext m
-  have h1 := congrArg (fun P => π (coeff m P)) h
-  simp only [coeff_map, hπ', coeff_sum, coeff_smul, smul_eq_mul, map_sum, hmul] at h1
+  have h1 := congrArg (fun P => π (AddMonoidAlgebra.coeff P m)) h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coeff_map, hπ', coeff_sum, coeff_smul, smul_eq_mul, map_sum, hmul] at h1
   rw [h1, coeff_sum]
   simp only [coeff_smul, smul_eq_mul]
 
@@ -166,7 +171,8 @@ theorem baseChangeAction_holds : BaseChangeAct := by
 theorem bc_map_fockS {K K' : Type} [Field K] [StarRing K] [Field K'] [StarRing K'] (j : K →+* K')
     (hj : ∀ x, j (star x) = star (j x)) {σ : Type} (f g : MvPolynomial σ K) :
     fockS (MvPolynomial.map j f) (MvPolynomial.map j g) = j (fockS f g) := by
-  rw [fockS_eq_sum _ _ f.support (support_map_subset j f), fockS, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fockS_eq_sum _ _ f.support (support_map_subset j f), fockS, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, map_mul, hj, coeff_map, coeff_map, map_natCast]
 
@@ -280,7 +286,7 @@ theorem bc_bcPol_span {σ : Type} (S : Set (MvPolynomial σ K)) :
     induction hx using Submodule.span_induction with
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => simp only [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => simp only [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => simp only [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul r x _ hx => exact bc_map_osmul_mem j _ r hx
   · exact Submodule.span_mono (Set.image_mono Submodule.subset_span)
 
@@ -383,7 +389,7 @@ theorem bc_inv_bc {ι : Type} {n : ℕ} (B : ι → GL (Fin n) K) :
 variable {ι : Type} [Fintype ι] {n : ℕ}
 
 theorem bc_transLat (lam : ι → DomWeight n) (T : Submodule (𝓞 K) (Pol K ι n)) (T' : Submodule (𝓞 K') (Pol K' ι n))
-    (hT : bcPol j T = T') (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ))
+    (hT : bcPol j T = T') (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ))
     (hind : ∀ (w' : HeightOneSpectrum (𝓞 K')) (B B' : ι → GL (Fin n) K'),
       (∀ τ, IsBasisAt w' (bcLat j (M τ)) (B τ)) → (∀ τ, IsBasisAt w' (bcLat j (M τ)) (B' τ)) → ∀ F : Pol K' ι n,
       (actP lam B⁻¹ F ∈ Formalism.HermitianLatticesTheory.localization₂ w'.asIdeal T' ↔ actP lam B'⁻¹ F ∈ Formalism.HermitianLatticesTheory.localization₂ w'.asIdeal T'))
@@ -426,7 +432,7 @@ theorem bc_transLat (lam : ι → DomWeight n) (T : Submodule (𝓞 K) (Pol K ι
         rw [hloc _ B hB]
         exact ⟨P, lc_le_locP _ _ hP, rfl⟩
       | zero => rw [map_zero]; exact Submodule.zero_mem _
-      | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
       | smul r x _ hx => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ _ hx
     obtain ⟨s, hs, hsx⟩ := (lc_mem_locP _ _ _).1 h1
     have h3 := key _ hsx
@@ -467,8 +473,8 @@ theorem bc_linearIndependent_map {K K' : Type} [Field K] [Field K'] (j : K →+*
   rw [← hv']
   exact b'.linearIndependent.comp _ h_inj
 
-open Formalism.L2.Col in
 
+open Formalism.L2.Col in
 theorem bc_local_basis {K : Type} [Field K] [NumberField K] {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V]
     [IsScalarTower (𝓞 K) K V] (w : HeightOneSpectrum (𝓞 K)) {A : Submodule (𝓞 K) V} (hfg : A.FG) :
     ∃ (κ : Type) (_ : Fintype κ) (β : κ → V), LinearIndependent K β ∧
@@ -574,7 +580,8 @@ theorem bc_local_descent {σ : Type} {T : Submodule (𝓞 K) (MvPolynomial σ K)
       obtain ⟨t, ht, rfl⟩ := hy
       obtain ⟨c, hc, rfl⟩ := (hT t).1 (lc_le_locP _ _ ht)
       refine ⟨fun i => j (c i), fun i => map_mem_localized_one j w' (hc i), ?_⟩
-      simp only [map_sum, bc_map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, bc_map_smul]
     | zero => exact ⟨0, fun i => Submodule.zero_mem _, by simp⟩
     | add x y _ _ hx hy =>
       obtain ⟨c, hc, rfl⟩ := hx
@@ -600,7 +607,8 @@ theorem bc_local_descent {σ : Type} {T : Submodule (𝓞 K) (MvPolynomial σ K)
   have h3 : ∑ i, (j (d i) - (algebraMap (𝓞 K') K' s)⁻¹ * c i) • MvPolynomial.map j (β i) = 0 := by
     simp only [sub_smul, Finset.sum_sub_distrib]
     rw [← h1, hd, sub_eq_zero]
-    simp only [map_sum, bc_map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, bc_map_smul]
   have h4 := Fintype.linearIndependent_iff.1 (bc_linearIndependent_map j β hβ) _ h3
   refine (hT P).2 ⟨d, fun i => mem_localized_one_of_map_mem j w' ?_, hd⟩
   rw [sub_eq_zero.1 (h4 i)]
@@ -683,20 +691,20 @@ theorem bc_polOfVV_comap (lam : ι → DomWeight n) (N : Submodule (𝓞 K) (Pol
 theorem usage₁₁ (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) : delP lam M ≤ nabP lam M :=
   transLat_mono lam (delStd_le_nabStd K lam) M
 
-theorem bc_dualFr_lattice (h : DualFrLattice) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
-    Submodule.IsLattice K (dualFr M) :=
+theorem bc_dualFr_lattice (h : DualFrLattice) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
+    Submodule.IsFullLattice K (dualFr M) :=
   (@h K _ _ starRingOfComm n 1 M (by simp) hM).1
 
 variable {K' : Type} [Field K'] [NumberField K'] (j : K →+* K')
 
-theorem bc_bcLat_lattice (h : TauLatLattice) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
-    Submodule.IsLattice K' (bcLat j M) := h K K' Unit n (fun _ => j) () M hM
+theorem bc_bcLat_lattice (h : TauLatLattice) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
+    Submodule.IsFullLattice K' (bcLat j M) := h K K' Unit n (fun _ => j) () M hM
 
 theorem bc_at (hbc : NabDelBaseChange) (hle : NabLeVV) (htl : TauLatLattice) (lam : ι → DomWeight n)
-    (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) :
+    (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) :
     polOfVV lam (nabK lam fun τ => bcLat j (M τ)) = bcPol j (polOfVV lam (nabK lam M)) ∧
     polOfVV lam (delK lam fun τ => bcLat j (M τ)) = bcPol j (polOfVV lam (delK lam M)) := by
-  have hM' : ∀ τ, Submodule.IsLattice K' (bcLat j (M τ)) := fun τ => bc_bcLat_lattice j htl (M τ) (hM τ)
+  have hM' : ∀ τ, Submodule.IsFullLattice K' (bcLat j (M τ)) := fun τ => bc_bcLat_lattice j htl (M τ) (hM τ)
   obtain ⟨h1, h2⟩ := hbc K K' j ι n lam M hM
   unfold nabK delK
   rw [bc_polOfVV_comap lam _ (hle K' ι n lam _ hM'), bc_polOfVV_comap lam _ (hle K ι n lam M hM),
@@ -709,7 +717,7 @@ end AtE
 theorem nabDelBaseChangeAt_of (hbc : NabDelBaseChange) (hle : NabLeVV) (htl : TauLatLattice) (hdl : DualFrLattice)
     (hdf : BaseChangeDualFr) : NabDelBaseChangeAt := by
   intro E K K' _ _ _ _ _ _ j ι _ n emb lam L hL
-  have hM : ∀ τ, Submodule.IsLattice K (tauLat emb τ L) := fun τ => htl E K ι n emb τ L hL
+  have hM : ∀ τ, Submodule.IsFullLattice K (tauLat emb τ L) := fun τ => htl E K ι n emb τ L hL
   have e1 : (fun τ => tauLat (fun τ => j.comp (emb τ)) τ L) = fun τ => bcLat j (tauLat emb τ L) :=
     funext fun τ => baseChangeTauLattice_holds E K K' j ι n emb τ L
   have e2 : (fun τ => dualFr (tauLat (fun τ => j.comp (emb τ)) τ L)) = fun τ => bcLat j (dualFr (tauLat emb τ L)) :=
@@ -723,7 +731,7 @@ theorem nabDelBaseChangeAt_of (hbc : NabDelBaseChange) (hle : NabLeVV) (htl : Ta
 theorem nabDelDescentAt_of (hd : NabDelDescent) (htl : TauLatLattice) (hdl : DualFrLattice)
     (hdf : BaseChangeDualFr) : NabDelDescentAt := by
   intro E K K' _ _ _ _ _ _ j ι _ n emb lam L hL x y hxy
-  have hM : ∀ τ, Submodule.IsLattice K (tauLat emb τ L) := fun τ => htl E K ι n emb τ L hL
+  have hM : ∀ τ, Submodule.IsFullLattice K (tauLat emb τ L) := fun τ => htl E K ι n emb τ L hL
   have e1 : (fun τ => tauLat (fun τ => j.comp (emb τ)) τ L) = fun τ => bcLat j (tauLat emb τ L) :=
     funext fun τ => baseChangeTauLattice_holds E K K' j ι n emb τ L
   have e2 : (fun τ => dualFr (tauLat (fun τ => j.comp (emb τ)) τ L)) = fun τ => bcLat j (dualFr (tauLat emb τ L)) :=

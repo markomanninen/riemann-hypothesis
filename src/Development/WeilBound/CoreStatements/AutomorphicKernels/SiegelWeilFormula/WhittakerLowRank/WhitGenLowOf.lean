@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerLowRank.AnalyticAtUpdateZero
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerGlobalFactors.ExistsFinsetOfCofinite
-import Development.AutomorphicSpectrum.Proofs.HermitianForms.ExistsSdWSdHerm
-import Development.AutomorphicSpectrum.Proofs.HermitianForms.HasCoordOfFiniteDimensional
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerLowRank.AnalyticAtUpdateZero
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerGlobalFactors.ExistsFinsetOfCofinite
+public import Development.AutomorphicSpectrum.Proofs.HermitianForms.ExistsSdWSdHerm
+public import Development.AutomorphicSpectrum.Proofs.HermitianForms.HasCoordOfFiniteDimensional
+
+@[expose] public section
 
 noncomputable section
 

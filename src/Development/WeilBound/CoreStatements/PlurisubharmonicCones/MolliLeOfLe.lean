@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.LevelFree
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWeightPshAndBounds
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsomorphicLinesPotentialDifference
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncTransfer
+module
+
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.LevelFree
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWeightPshAndBounds
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsomorphicLinesPotentialDifference
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncTransfer
+
+@[expose] public section
 
 open MeasureTheory Metric Set Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.ChartRestriction.G.Geo
 open GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular

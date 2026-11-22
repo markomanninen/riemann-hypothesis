@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisInvariantFunctionsFlatBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisInvariantFunctionsFlatBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -89,9 +94,18 @@ theorem descend : ∀ (R : Type) [CommRing R] [IsDomain R] (R' : Type) [CommRing
   have ei' : ∀ σ, act σ⁻¹ ≫ act σ = 𝟙 Y' := fun σ => by rw [← e2, inv_mul_cancel, e1]
   let ρ' : Gal ρ →* Aut Y' :=
     { toFun := fun σ => ⟨act σ⁻¹, act σ, ei' σ, ei σ⟩
-      map_one' := Iso.ext (by show act 1⁻¹ = 𝟙 Y'; rw [inv_one, e1])
-      map_mul' := fun σ τ => Iso.ext (by show act (σ * τ)⁻¹ = act τ⁻¹ ≫ act σ⁻¹; rw [mul_inv_rev, e2]) }
-  have hρ' : ∀ g, (ρ' g).hom ≫ β = β := fun g => hβ g⁻¹
+      map_one' := by
+        apply Aut.ext
+        apply Iso.ext
+        change act 1⁻¹ = 𝟙 Y'
+        rw [inv_one, e1]
+      map_mul' := by
+        intro σ τ
+        apply Aut.ext
+        apply Iso.ext
+        change act (σ * τ)⁻¹ = act τ⁻¹ ≫ act σ⁻¹
+        rw [mul_inv_rev, e2] }
+  have hρ' : ∀ g, (ρ' g).asIso.hom ≫ β = β := fun g => hβ g⁻¹
   have hinv : ∀ V : Y.Opens, IsAffineOpen V → ∀ s : Γ(Y', β ⁻¹ᵁ V),
       GlobalTheory.IsInvariantSection ρ' _ s → s ∈ Set.range (β.app V) := by
     intro V _ s hs

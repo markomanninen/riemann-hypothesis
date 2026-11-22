@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -32,11 +37,11 @@ theorem aeval_scale {A : Type} [CommRing A] [Algebra S A] {g : MRingOver S ι'} 
 
 theorem coeff_eval₂_scale {σ R A : Type} [Fintype σ] [CommRing R] [CommRing A] (f : R →+* A) (b : σ → A)
     (P : MvPolynomial σ R) (m : σ →₀ ℕ) :
-    coeff m (eval₂ ((C : A →+* MvPolynomial σ A).comp f) (fun k => X k * C (b k)) P) =
-      f (coeff m P) * ∏ k, b k ^ m k := by
+    AddMonoidAlgebra.coeff (eval₂ ((C : A →+* MvPolynomial σ A).comp f) (fun k => X k * C (b k)) P) m =
+      f (AddMonoidAlgebra.coeff P m) * ∏ k, b k ^ m k := by
   classical
-  have hterm : ∀ d : σ →₀ ℕ, ((C : A →+* MvPolynomial σ A).comp f) (coeff d P) *
-      ∏ k, (X k * C (b k)) ^ d k = monomial d (f (coeff d P) * ∏ k, b k ^ d k) := by
+  have hterm : ∀ d : σ →₀ ℕ, ((C : A →+* MvPolynomial σ A).comp f) (AddMonoidAlgebra.coeff P d) *
+      ∏ k, (X k * C (b k)) ^ d k = monomial d (f (AddMonoidAlgebra.coeff P d) * ∏ k, b k ^ d k) := by
     intro d
     have hX : ∏ k, (X k : MvPolynomial σ A) ^ d k = monomial d 1 := by
       rw [monomial_eq, C_1, one_mul, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
@@ -52,13 +57,13 @@ theorem coeff_eval₂_scale {σ R A : Type} [Fintype σ] [CommRing R] [CommRing 
   · rfl
   · rw [notMem_support_iff.mp hm, map_zero, zero_mul]
 
-open Classical in
 
+open Classical in
 def scaleWt (κ : K → K') (A : Type) [CommRing A] (k' : K') : MvPolynomial (FibreBlock κ) A :=
   if h : k' ∈ Set.range κ then 1 else X ⟨k', h⟩
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem algebraicIndependent_forgotten {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     (V' : Ideal (MRingOver S ι')) [V'.IsPrime] (hV' : IsMultiHomogIdeal V') (i : ∀ k : FibreBlock κ, ι' k.1)
     (hi : ∀ k : FibreBlock κ, (X ⟨k.1, i k⟩ : MRingOver S ι') ∉ V') :
@@ -137,12 +142,12 @@ theorem algebraicIndependent_forgotten {κ : K → K'} {v : (Σ k, ι k) → (Σ
     rw [← this, hP, map_zero]
   ext m
   have hc := coeff_eval₂_scale j y P m
-  rw [h0, coeff_zero] at hc
-  rw [coeff_zero]
+  simp only [h0, AddMonoidAlgebra.coeff_zero] at hc
+  simp only [AddMonoidAlgebra.coeff_zero]
   exact hjinj ((mul_eq_zero.mp hc.symm).resolve_right (hyprod m) |>.trans (map_zero j).symm)
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem trdeg_add_card_le [Nontrivial S] {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     (V' : Ideal (MRingOver S ι')) [V'.IsPrime] (hV' : IsMultiHomogIdeal V') (hrel : IsRelevant V')
     (hinj : Function.Injective (algebraMap S

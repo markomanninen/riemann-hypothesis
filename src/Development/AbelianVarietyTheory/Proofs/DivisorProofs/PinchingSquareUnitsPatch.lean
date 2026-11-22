@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedImmersionBaseChangeKerMemMapAffineStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedImmersionBaseChangeKerMemMapAffineStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
@@ -50,12 +55,12 @@ theorem affine_descent_units : ∀ (X X' Z Z' : Scheme.{0}) (p : X' ⟶ X) (i : 
         exact ⟨y, hy, rfl⟩
       · exact ⟨0, map_zero _, map_zero _⟩
       · rintro _ _ _ _ ⟨y₁, h₁, e₁⟩ ⟨y₂, h₂, e₂⟩
-        exact ⟨y₁ + y₂, by rw [map_add, h₁, h₂, add_zero], by rw [map_add, e₁, e₂]⟩
+        exact ⟨y₁ + y₂, by rw [map_add (f := _), h₁, h₂, add_zero], by rw [map_add (f := _), e₁, e₂]⟩
       · rintro r _ _ ⟨y, hy, rfl⟩
         obtain ⟨y', hy', e'⟩ := (hc W hW).2 y hy r
         exact ⟨y', hy', by rw [smul_eq_mul, mul_comm]; exact e'⟩
     obtain ⟨y, -, hy⟩ := key
-    exact ⟨s₀ + y, by rw [map_add, hy, add_sub_cancel]⟩
+    exact ⟨s₀ + y, by rw [map_add (f := _), hy, add_sub_cancel]⟩
   have germs : ∀ (a : Γ(X', p ⁻¹ᵁ W)ˣ) (b : Γ(Z, i ⁻¹ᵁ W)ˣ),
       (∀ z : Z', p (i' z) ∈ W → gm i' z (p ⁻¹ᵁ W) a = gm p' z (i ⁻¹ᵁ W) b) →
       ∃ s : Γ(X, W), (p.app W).hom s = a.val := by

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StabilizerEqCentralizer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumOrbitRelFibredEquivariantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumOrbitsInvStabilizerCardMassStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteSupportStabilizerWeightedPairTermStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StabilizerEqCentralizer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumOrbitRelFibredEquivariantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumOrbitsInvStabilizerCardMassStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteSupportStabilizerWeightedPairTermStatement
+
+@[expose] public section
+
 open GlobalTheory.OrbitUnfold GlobalTheory.OrbitUnfold.ConjSelf
 
 noncomputable section
@@ -33,36 +38,38 @@ theorem finsum_conjClasses_centralizer_orbits {Γ Y : Type} [Group Γ] [MulActio
     ∑ᶠ c : ConjClasses Γ, ∑ᶠ o : MulAction.orbitRel.Quotient (Subgroup.centralizer {Quotient.out c}) Y,
       ((Nat.card (MulAction.stabilizer Γ (Quotient.out o) ⊓ Subgroup.centralizer {Quotient.out c} :
         Subgroup Γ) : ℕ) : ℂ)⁻¹ * F (Quotient.out o) (Quotient.out c) = pairSum F := by
-  set e := conjClassesEquivOrbits Γ
-  have key := GlobalTheory.T.finsum_orbitRel_fibred_equivariant (H := Γ) (X := Y × ConjSelf Γ) (B := ConjSelf Γ) (E := Y)
-    Prod.snd (fun _ _ => rfl) (fun b => Subgroup.centralizer {val b})
-    (fun b => by rw [stabilizer_eq_centralizer])
-    (fun b y => (y, b)) (fun b y y' h => congrArg Prod.fst h) (fun _ _ => rfl)
-    (fun b x hx => ⟨x.1, Prod.ext rfl hx.symm⟩)
-    (fun b h hh y => by
-      have : h • b = b := by
-        rw [← MulAction.mem_stabilizer_iff, stabilizer_eq_centralizer]; exact hh
-      show (h • y, b) = (h • y, h • b)
-      rw [this])
-    (fun q => of (Quotient.out (e.symm q)))
-    (fun q => by
-      show Quotient.mk _ (of (Quotient.out (e.symm q))) = q
-      have hout : ∀ c : ConjClasses Γ, (Quotient.mk (IsConj.setoid Γ) (Quotient.out c) : ConjClasses Γ) = c :=
-        fun c => Quotient.out_eq c
-      rw [← conjClassesEquivOrbits_mk, hout, Equiv.apply_symm_apply])
-    (fun o => pairTerm F (Quotient.out o))
-    (GlobalTheory.T.finite_support_stabilizerWeightedPairTerm F hF hsupp hfin)
-  unfold pairSum
-  rw [key, ← finsum_comp_equiv e]
-  refine finsum_congr (fun c => ?_)
-  have hc : e.symm (e c) = c := e.symm_apply_apply c
-  generalize e.symm (e c) = c' at hc ⊢
-  subst hc
-  simp only [val_of]
-  refine finsum_congr (fun o => ?_)
-  rw [pairTerm_out F hF]
-  unfold pairTerm
-  rw [stabilizer_pair]
-  rfl
+  set_option backward.isDefEq.respectTransparency false in
+    set e := conjClassesEquivOrbits Γ
+    have key := GlobalTheory.T.finsum_orbitRel_fibred_equivariant (H := Γ) (X := Y × ConjSelf Γ) (B := ConjSelf Γ) (E := Y)
+      Prod.snd (fun _ _ => rfl) (fun b => Subgroup.centralizer {val b})
+      (fun b => by rw [stabilizer_eq_centralizer])
+      (fun b y => (y, b)) (fun b y y' h => congrArg Prod.fst h) (fun _ _ => rfl)
+      (fun b x hx => ⟨x.1, Prod.ext rfl hx.symm⟩)
+      (fun b h hh y => by
+        have : h • b = b := by
+          rw [← MulAction.mem_stabilizer_iff, stabilizer_eq_centralizer]; exact hh
+        show (h • y, b) = (h • y, h • b)
+        rw [this])
+      (fun q => of (Quotient.out (e.symm q)))
+      (fun q => by
+        show Quotient.mk _ (of (Quotient.out (e.symm q))) = q
+        have hout : ∀ c : ConjClasses Γ, (Quotient.mk (IsConj.setoid Γ) (Quotient.out c) : ConjClasses Γ) = c :=
+          fun c => Quotient.out_eq c
+        rw [← conjClassesEquivOrbits_mk, hout, Equiv.apply_symm_apply])
+      (fun o => pairTerm F (Quotient.out o))
+      (GlobalTheory.T.finite_support_stabilizerWeightedPairTerm F hF hsupp hfin)
+    unfold pairSum
+    rw [key, ← finsum_comp_equiv e]
+    refine finsum_congr (fun c => ?_)
+    change Quotient (IsConj.setoid Γ) at c
+    change ConjClasses Γ at c
+    change (Quotient (IsConj.setoid Γ)) at c
+    rw [e.symm_apply_apply]
+    dsimp only [ConjSelf.val, ConjSelf.of]
+    refine finsum_congr (fun o => ?_)
+    rw [pairTerm_out F hF]
+    unfold pairTerm
+    rw [stabilizer_pair]
+    rfl
 
 end GlobalTheory.OrbitUnfold

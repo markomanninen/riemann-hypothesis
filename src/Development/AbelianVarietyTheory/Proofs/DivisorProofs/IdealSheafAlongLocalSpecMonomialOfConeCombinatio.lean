@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdlAlongComapEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvdOfForallCompleteDvrDominating
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RefinePolarisedMonomialPeriodsMonomialDataStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUniformisationCompleteLocalDomainPrime
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolarizationTransferModels
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdlAlongComapEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvdOfForallCompleteDvrDominating
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RefinePolarisedMonomialPeriodsMonomialDataStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUniformisationCompleteLocalDomainPrime
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolarizationTransferModels
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -25,7 +30,31 @@ theorem idlAlong_monomial : ∀ {o : Type} [CommRing o] {ζ : o} {g n : ℕ} (F 
       idlAlong J x = Ideal.span {∏ k, s k ^ b k} := by
   intro o _ ζ g n F Z i φ J d hV X _ _ _ m ga δ M hcone hδ b hb T W _ _ σ c e' x s hσ hcomm hs hβ
   obtain ⟨a, ha, hid⟩ := hV T (spMap σ ≫ x) hcomm
-  rw [GlobalTheory.TraitOrder.idlAlong_comp] at hid
+  have heq (χ : Sp W ⟶ Z) (U : Z.affineOpens) (hle : ⊤ ≤ χ ⁻¹ᵁ U.1) :
+      idlAlong J χ = (J.ideal U).map (χ.appLE U.1 ⊤ hle ≫ (Scheme.ΓSpecIso (.of W)).hom).hom := by
+    have hx : χ (closedPoint W) ∈ U.1 := hle trivial
+    unfold idlAlong
+    rw [ds_stalkId_eq_map J U _ hx, Ideal.map_map, ← CommRingCat.hom_comp, Scheme.germ_stalkClosedPointTo]
+    congr 2
+  have hcomp : idlAlong J (spMap σ ≫ x) = (idlAlong J x).map σ := by
+    obtain ⟨U, hU, hx, -⟩ := TopologicalSpace.Opens.isBasis_iff_nbhd.1 Z.isBasis_affineOpens
+      (show x (closedPoint W) ∈ (⊤ : Z.Opens) from trivial)
+    have hle : ⊤ ≤ x ⁻¹ᵁ U := (Scheme.preimage_eq_top_of_closedPoint_mem x hx).ge
+    have hle' : ⊤ ≤ (spMap σ ≫ x) ⁻¹ᵁ U := fun y _ => hle (show spMap σ y ∈ (⊤ : (Sp W).Opens) from trivial)
+    have heq' : idlAlong J (spMap σ ≫ x) = (J.ideal ⟨U, hU⟩).map
+        ((spMap σ ≫ x).appLE U ⊤ hle' ≫ (Scheme.ΓSpecIso (.of T.V)).hom).hom := by
+      have hx' : (spMap σ ≫ x) (closedPoint T.V) ∈ U := hle' trivial
+      unfold idlAlong
+      rw [ds_stalkId_eq_map J ⟨U, hU⟩ _ hx', Ideal.map_map, ← CommRingCat.hom_comp, Scheme.germ_stalkClosedPointTo]
+      congr 2
+    rw [heq x ⟨U, hU⟩ hle, heq', Ideal.map_map]
+    congr 1
+    have e : (spMap σ ≫ x).appLE U ⊤ hle' = x.appLE U ⊤ hle ≫ (spMap σ).appTop := by
+      rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
+      exact (Scheme.Hom.appLE_comp_appLE _ _ _ _ _ _ _).symm
+    rw [e, Category.assoc, Scheme.ΓSpecIso_naturality, ← Category.assoc, CommRingCat.hom_comp]
+    rfl
+  rw [hcomp] at hid
   have hlin : φ.LinearOn δ := by
     have := hcone.linearOn_smul M
     rwa [show δ = fun k => (M : ℤ) • ga k from funext hδ]

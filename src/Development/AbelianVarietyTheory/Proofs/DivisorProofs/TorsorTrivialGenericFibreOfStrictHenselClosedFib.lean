@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsIntClosedLocalizationAndQuotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsIntClosedLocalizationAndQuotient
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 namespace GlobalTheory.LocAcyc
@@ -8,9 +13,9 @@ namespace GlobalTheory.LocAcyc
 theorem torsorsTrivial_of_ringEquiv {B B' : Type} [CommRing B] [CommRing B'] (e : B ≃+* B')
     (q : ℕ) (h : TorsorsTrivial B' q) : TorsorsTrivial B q := by
   intro D _ _ hfin hproj hff act hbij
-  letI : Algebra B' B := e.symm.toRingHom.toAlgebra
-  letI : Algebra B' D := ((algebraMap B D).comp e.symm.toRingHom).toAlgebra
-  haveI : IsScalarTower B' B D := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
+  let : Algebra B' B := e.symm.toRingHom.toAlgebra
+  let : Algebra B' D := ((algebraMap B D).comp e.symm.toRingHom).toAlgebra
+  have : IsScalarTower B' B D := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
   have hmap : ∀ b : B, algebraMap B D b = algebraMap B' D (e b) := by
     intro b
     change algebraMap B D b = algebraMap B D (e.symm (e b))
@@ -23,40 +28,39 @@ theorem torsorsTrivial_of_ringEquiv {B B' : Type} [CommRing B] [CommRing B'] (e 
       map_smul' := fun b' b => by
         change e (e.symm b' * b) = b' * e b
         rw [map_mul, RingEquiv.apply_symm_apply] }
-  haveI : Module.FaithfullyFlat B' B := Module.FaithfullyFlat.of_linearEquiv B' B' eL
-  haveI : Module.Finite B' B := Module.Finite.equiv eL.symm
-  haveI : Module.FaithfullyFlat B D := hff
-  haveI : Module.Finite B D := hfin
+  have : Module.FaithfullyFlat B' B := Module.FaithfullyFlat.of_linearEquiv B' B' eL
+  have : Module.Finite B' B := Module.Finite.equiv eL.symm
+  have : Module.FaithfullyFlat B D := hff
+  have : Module.Finite B D := hfin
   have hfin' : Module.Finite B' D := Module.Finite.trans B D
   have hff' : Module.FaithfullyFlat B' D := Module.FaithfullyFlat.trans B' B D
-  haveI i1 : RingHomInvPair e.toRingHom e.symm.toRingHom := RingHomInvPair.of_ringEquiv e
-  haveI i2 : RingHomInvPair e.symm.toRingHom e.toRingHom := RingHomInvPair.symm _ _
+  have i1 : RingHomInvPair e.toRingHom e.symm.toRingHom := RingHomInvPair.of_ringEquiv e
+  have i2 : RingHomInvPair e.symm.toRingHom e.toRingHom := RingHomInvPair.symm _ _
   let sl : D ≃ₛₗ[e.toRingHom] D :=
     { AddEquiv.refl D with
       map_smul' := fun b d => hsmul b d }
-  haveI := hproj
+  have := hproj
   have hproj' : Module.Projective B' D := Module.Projective.of_equiv sl
   let act' : Multiplicative (ZMod q) →* (D ≃ₐ[B'] D) :=
     { toFun := fun g => (act g).restrictScalars B'
       map_one' := by ext x; simp
       map_mul' := fun g g' => by ext x; simp }
-  haveI : TensorProduct.CompatibleSMul B' B D D := ⟨fun b m n => by
+  have : TensorProduct.CompatibleSMul B' B D D := ⟨fun b m n => by
     rw [hsmul b m, hsmul b n, TensorProduct.smul_tmul]⟩
   let s : TensorProduct B' D D ≃ₗ[B'] TensorProduct B D D :=
     TensorProduct.equivOfCompatibleSMul B B' B' D D
   have hcomp : ∀ x : TensorProduct B' D D,
       Algebra.TensorProduct.productMap
-        (Pi.algHom B' (fun _ : Multiplicative (ZMod q) => D) (fun _ => AlgHom.id B' D))
-        (Pi.algHom B' (fun _ : Multiplicative (ZMod q) => D) (fun g => (act' g).toAlgHom)) x =
+        (AlgHom.pi (fun _ : Multiplicative (ZMod q) => AlgHom.id B' D))
+        (AlgHom.pi (fun g => (act' g).toAlgHom)) x =
       Algebra.TensorProduct.productMap
-        (Pi.algHom B (fun _ : Multiplicative (ZMod q) => D) (fun _ => AlgHom.id B D))
-        (Pi.algHom B (fun _ : Multiplicative (ZMod q) => D) (fun g => (act g).toAlgHom)) (s x) := by
+        (AlgHom.pi (fun _ : Multiplicative (ZMod q) => AlgHom.id B D))
+        (AlgHom.pi (fun g => (act g).toAlgHom)) (s x) := by
     intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
+    induction x using TensorProduct.inductionOn with
     | tmul a b =>
       rfl
-    | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
   obtain ⟨σ⟩ := h D hfin' hproj' hff' act' (by
     convert hbij.comp s.bijective using 1
     exact funext hcomp)
@@ -73,7 +77,7 @@ theorem nonempty_genFib_equiv {T T' O : Type} [CommRing T] [IsDomain T] [CommRin
     [Algebra T T'] [Algebra T O] [Algebra T' O] [IsScalarTower T T' O] (M : Submonoid T)
     (hM : M ≤ nonZeroDivisors T) [IsLocalization M T'] :
     Nonempty (GenFib T O ≃+* GenFib T' O) := by
-  haveI : IsDomain T' := IsLocalization.isDomain_of_le_nonZeroDivisors _ hM
+  have : IsDomain T' := IsLocalization.isDomain_of_le_nonZeroDivisors _ hM
   have hinj : Function.Injective (algebraMap T T') := IsLocalization.injective T' hM
   set M1 := Algebra.algebraMapSubmonoid O (nonZeroDivisors T)
   set M2 := Algebra.algebraMapSubmonoid O (nonZeroDivisors T')
@@ -93,7 +97,7 @@ theorem nonempty_genFib_equiv {T T' O : Type} [CommRing T] [IsDomain T] [CommRin
     · change algebraMap T O a = algebraMap T O s * algebraMap T' O (IsLocalization.mk' T' a s)
       rw [IsScalarTower.algebraMap_apply T T' O s, ← map_mul, IsLocalization.mk'_spec',
         ← IsScalarTower.algebraMap_apply]
-  haveI : IsLocalization M2 (GenFib T O) :=
+  have : IsLocalization M2 (GenFib T O) :=
     IsLocalization.isLocalization_of_is_exists_mul_mem (S := GenFib T O) (M := M1) (N := M2) h1 h2
   exact ⟨(IsLocalization.algEquiv M2 (GenFib T O) (GenFib T' O)).toRingEquiv⟩
 
@@ -101,12 +105,12 @@ end GlobalTheory.LocAcyc
 
 namespace GlobalTheory.LocAcyc
 
-open CategoryTheory in
 
+open CategoryTheory in
 theorem keyAll_of_keyLocal : KeyLocal → KeyAll := by
   intro hL T O _ _ _ _ _ _ _ hAIC P _ φ hφ hSH q hq hqu
   set p : Ideal T := P.comap (C : T →+* T[X]) with hp
-  haveI : p.IsPrime := Ideal.comap_isPrime _ _
+  have : p.IsPrime := Ideal.comap_isPrime _ _
   let T' := Localization.AtPrime p
   have hle : p.primeCompl ≤ nonZeroDivisors T := p.primeCompl_le_nonZeroDivisors
   have hAIC' : AbsIntClosed T' :=
@@ -122,40 +126,39 @@ theorem keyAll_of_keyLocal : KeyLocal → KeyAll := by
       (⟨C (s : T), hs⟩ : P.primeCompl)).map φ
     rw [← RingHom.comp_apply, hφ] at hu
     rwa [hTO]
-  letI : Algebra T' O := (IsLocalization.lift (M := p.primeCompl) (S := T') hunit).toAlgebra
-  haveI : IsScalarTower T T' O :=
+  let : Algebra T' O := (IsLocalization.lift (M := p.primeCompl) (S := T') hunit).toAlgebra
+  have : IsScalarTower T T' O :=
     IsScalarTower.of_algebraMap_eq (fun x => (IsLocalization.lift_eq hunit x).symm)
-  letI : Algebra T'[X] O := (eval₂RingHom (algebraMap T' O) (algebraMap T[X] O X)).toAlgebra
-  haveI : IsScalarTower T' T'[X] O :=
+  let : Algebra T'[X] O := (eval₂RingHom (algebraMap T' O) (algebraMap T[X] O X)).toAlgebra
+  have : IsScalarTower T' T'[X] O :=
     IsScalarTower.of_algebraMap_eq (fun x => by
       change _ = eval₂ (algebraMap T' O) (algebraMap T[X] O X) (algebraMap T' T'[X] x)
       rw [Polynomial.algebraMap_eq, eval₂_C])
 
-  letI : Algebra T[X] T'[X] := Polynomial.algebra T T'
-  haveI : IsLocalization (Submonoid.map C p.primeCompl) T'[X] :=
+  let : Algebra T[X] T'[X] := Polynomial.algebra T T'
+  have : IsLocalization (Submonoid.map C p.primeCompl) T'[X] :=
     Polynomial.isLocalization p.primeCompl T'
   have hdisj : Disjoint (Submonoid.map C p.primeCompl : Set T[X]) (P : Set T[X]) := by
     rw [Set.disjoint_left]
     rintro _ ⟨s, hs, rfl⟩ hsP
     exact hs hsP
   set P' : Ideal T'[X] := P.map (algebraMap T[X] T'[X]) with hP'
-  haveI hP'prime : P'.IsPrime :=
+  have hP'prime : P'.IsPrime :=
     IsLocalization.isPrime_of_isPrime_disjoint _ T'[X] P inferInstance hdisj
   have hcomapP' : P'.comap (algebraMap T[X] T'[X]) = P :=
-    IsLocalization.comap_map_of_isPrime_disjoint _ T'[X] inferInstance hdisj
+    IsLocalization.under_map_of_isPrime_disjoint _ T'[X] inferInstance hdisj
   have hCcomm : ∀ a : T, C (algebraMap T T' a) = algebraMap T[X] T'[X] (C a) := fun a => by
     change _ = (C a).map (algebraMap T T')
     rw [Polynomial.map_C]
   have hmax : P'.comap (C : T' →+* T'[X]) = maximalIdeal T' := by
-    rw [← IsLocalization.map_comap p.primeCompl T' (P'.comap C),
-      ← IsLocalization.map_comap p.primeCompl T' (maximalIdeal T'),
-      IsLocalization.AtPrime.comap_maximalIdeal T' p]
-    congr 1
+    apply (IsLocalization.orderEmbedding p.primeCompl T').injective
+    change (P'.comap C).under T = (maximalIdeal T').under T
+    rw [IsLocalization.AtPrime.under_maximalIdeal T' p]
     ext a
     change C (algebraMap T T' a) ∈ P' ↔ C a ∈ P
     rw [hCcomm, ← Ideal.mem_comap, hcomapP']
 
-  haveI : IsLocalization.AtPrime (Localization.AtPrime P') P := by
+  have : IsLocalization.AtPrime (Localization.AtPrime P') P := by
     have := IsLocalization.isLocalization_isLocalization_atPrime_isLocalization
       (Submonoid.map C p.primeCompl) (Localization.AtPrime P') P'
     have hc : (P'.comap (algebraMap T[X] T'[X])).primeCompl = P.primeCompl := by
@@ -185,11 +188,11 @@ theorem keyAll_of_keyLocal : KeyLocal → KeyAll := by
       change IsUnit (φ (e.symm a)) at ha
       have h5 : IsUnit (e.symm a) := h3.map_nonunit _ ha
       simpa using h5.map e
-    · haveI : (RingHom.toMorphismProperty @RingHom.Etale).RespectsIso :=
+    · have : (RingHom.toMorphismProperty @RingHom.Etale).RespectsIso :=
         RingHom.toMorphismProperty_respectsIso_iff.mp RingHom.Etale.respectsIso
       unfold GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.IsIndEtale at h4 ⊢
       rw [CommRingCat.ofHom_comp]
-      haveI : IsIso (CommRingCat.ofHom e.symm.toRingEquiv.toRingHom) :=
+      have : IsIso (CommRingCat.ofHom e.symm.toRingEquiv.toRingHom) :=
         inferInstanceAs (IsIso (e.symm.toRingEquiv.toCommRingCatIso).hom)
       exact (MorphismProperty.cancel_left_of_respectsIso _ _ _).mpr h4
   have hqu' : IsUnit (q : T') := by

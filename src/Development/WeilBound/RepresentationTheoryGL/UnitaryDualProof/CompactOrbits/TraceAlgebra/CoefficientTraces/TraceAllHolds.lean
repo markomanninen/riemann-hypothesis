@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.TraceAlgebra.IsoOfTrace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.TraceAlgebra.IsoOfTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem trace_all_holds : TrAll k := by
     intro w j hj
     have hw : (w : Matrix (Fin n) (Fin n) k) = ∑ i, (Module.finBasis k Z).repr w i • ((Module.finBasis k Z) i : Matrix (Fin n) (Fin n) k) := by
       nth_rewrite 1 [← (Module.finBasis k Z).sum_repr w]
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul]
+      simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul]
     rw [hw, Finset.sum_mul, Finset.sum_mul, trace_sum, trace_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_mul_assoc, smul_mul_assoc, trace_smul, trace_smul]

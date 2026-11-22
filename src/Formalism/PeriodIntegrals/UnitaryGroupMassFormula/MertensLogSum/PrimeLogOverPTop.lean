@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.PrimeSums
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MertensLogSum.SLeOfBlock
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MertensLogSum.PrimeLogOverPWork
+module
+
+public import Formalism.PeriodIntegrals.PrimeSums
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MertensLogSum.SLeOfBlock
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MertensLogSum.PrimeLogOverPWork
+
+@[expose] public section
 
 namespace PI.PrimeLogOverPWork
 

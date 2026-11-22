@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.general_b_fact_third_ter_form
 
@@ -40,10 +44,10 @@ theorem goal1 :
   ∀ {K W : Type} [inst : Field.{0} K] [NumberField.{0} K] [inst_2 : AddCommGroup.{0} W] [inst_3 : Module.{0, 0} K W]
   [inst_4 : Module.{0, 0} (NumberField.RingOfIntegers.{0} K) W]
   [inst_5 : IsScalarTower.{0, 0, 0} (NumberField.RingOfIntegers.{0} K) K W]
-  (Λ : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} K) W) [hΛ : Submodule.IsLattice.{0, 0, 0} K Λ] (v : W),
+  (Λ : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} K) W) [hΛ : Submodule.IsFullLattice.{0, 0, 0} K Λ] (v : W),
   Exists.{1} fun (s : NumberField.RingOfIntegers.{0} K) ↦
     And (Ne.{1} s 0) (Membership.mem.{0, 0} Λ (HSMul.hSMul.{0, 0, 0} s v)) := by
   intro K W _ _ _ _ _ _ Λ hΛ v
-  exact aux Λ hΛ.2 v
+  exact aux Λ hΛ.span_eq_top v
 
 end Bl.general_b_fact_third_ter_form

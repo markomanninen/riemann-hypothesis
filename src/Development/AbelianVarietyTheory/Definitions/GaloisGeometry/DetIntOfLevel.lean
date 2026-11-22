@@ -1,16 +1,21 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypTwA
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.NrmAMemAdForms
-import Formalism.LocalToGlobal.HermitianColumns.FullSym
-import Formalism.LocalToGlobal.Columns.RecLevelLoc
-import Formalism.LocalRingCardinality.SpanPowerMembership.Places
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocBases
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.LatSOfLocBasis
-import Formalism.SharpRestriction.GrowthBounds.BaseLevels.LevelsGEmpty
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.TiedCls
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.MemAll
-import Formalism.SharpRestriction.GrowthBounds.TwistedLevelAgreement.StepInTwK
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypTwA
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.NrmAMemAdForms
+public import Formalism.LocalToGlobal.HermitianColumns.FullSym
+public import Formalism.LocalToGlobal.Columns.RecLevelLoc
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Places
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocBases
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.LatSOfLocBasis
+public import Formalism.SharpRestriction.GrowthBounds.BaseLevels.LevelsGEmpty
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ClsChartedLabAt
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.OneChartLev
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.BadQNotOver
+public import Formalism.SharpRestriction.GrowthBounds.TwistedLevelAgreement.StepInTwK
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +34,8 @@ section Gen
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n : ℕ}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem det_stab_loc (v : HeightOneSpectrum (𝓞 F)) (Lb : Submodule (𝓞 E) (Fin n → E)) (hfg : Lb.FG)
     (hsp : Submodule.span E (Lb : Set (Fin n → E)) = ⊤) (g : GL (Fin n) (E ⊗[F] v.adicCompletion F))
     (hg : g ∈ stabGL (latS (F := F) (v.adicCompletion F) (intV E v) Lb)) :
@@ -67,8 +72,8 @@ theorem det_stab_loc (v : HeightOneSpectrum (𝓞 F)) (Lb : Submodule (𝓞 E) (
 
 variable {σ : E →ₐ[F] E} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F))}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem det_int_of_level (S : StepLevel F E σ J T f bad) (x : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) (hx : x ∈ S.U) :
     (x : Matrix (Fin n) (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)).det ∈ intAf F E := by
   refine Formalism.L2.Col.rll_int_of_loc _ fun v => ?_
@@ -136,9 +141,9 @@ theorem scalar_stab {A : Type} [CommRing A] (R : Subring A) (d : Aˣ) (h1 : (d :
     rw [hsm, ← mul_assoc, Units.inv_mul, one_mul] at h3
     exact h3
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem scalar_mem_U1int (d : (D.host.E ⊗[D.host.F] Af D.host.F)ˣ)
     (h : sigR D.sp.cm.sig (Af D.host.F) (d : D.host.E ⊗[D.host.F] Af D.host.F) * d = 1)
     (h1 : (d : D.host.E ⊗[D.host.F] Af D.host.F) ∈ intAf D.host.F D.host.E)
@@ -146,8 +151,8 @@ theorem scalar_mem_U1int (d : (D.host.E ⊗[D.host.F] Af D.host.F)ˣ)
     Matrix.GeneralLinearGroup.scalar (Fin 1) d ∈ IntegralUnitGroup D.sp.cm :=
   ⟨scalar_mem_U1Af d h, scalar_stab _ d h1 h2⟩
 
-variable (D) in
 
+variable (D) in
 def detU (i : ℕ) (hi : i ≤ D.R.m) : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F) →* unitaryOneFiniteAdeles D.sp.cm :=
   (((Matrix.GeneralLinearGroup.scalar (Fin 1)).comp Matrix.GeneralLinearGroup.det).comp
     (UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)).subtype).codRestrict (unitaryOneFiniteAdeles D.sp.cm)
@@ -162,8 +167,8 @@ theorem det_detU (i : ℕ) (hi : i ≤ D.R.m) (x : UPts (sigD D) (gramN D i hi) 
 
 variable {i : ℕ} {hi : i ≤ D.R.m} {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def detTieOf (H : SymmetricHermitianColumns D) (S : StepLevel D.host.F D.host.E (sigD D) (gramN D i hi) T D.R.f bad) : DetTie S where
   dt := H.dt.comp (detU D i hi)
   dt_rat := by

@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.GdFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.OrbFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbFam
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreLast
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.GdFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.OrbFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbFam
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreLast
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -23,6 +27,7 @@ private theorem cop_norm {K : Type} [Field K] [NumberField K] {p N : ℕ} (hp : 
     {w : HeightOneSpectrum (𝓞 K)} (hw : (p : 𝓞 K) ∈ w.asIdeal) : (normV w).Coprime N := by
   have h := Ideal.absNorm_dvd_absNorm_of_le ((Ideal.span_singleton_le_iff_mem _).2 hw)
   rw [Ideal.absNorm_span_natCast] at h
+  rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] at *
   exact Nat.Coprime.coprime_dvd_left h (((Nat.Prime.coprime_iff_not_dvd hp).2 hN).pow_left _)
 
 private theorem frob_val {Ω K : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] [Field K] [NumberField K] [Algebra K Ω]
@@ -87,7 +92,7 @@ private theorem t_eq {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] 
       (((Chr.Psi l e (Chr.dirG ℚ Ω ψ) g⁻¹)⁻¹ : c.Oˣ) : c.O)) := by
   have e1 : ((Chr.Psi l e (Chr.dirG ℚ Ω ψ) g : c.Oˣ) : c.O) = (q : c.O) ^ e * ψ q := by
     simp [Chr.Psi, Chr.dirG, chiO, h1, h2]
-  rw [map_inv (Chr.Psi l e (Chr.dirG ℚ Ω ψ)), inv_inv, map_add, map_add, map_one, map_units_inv, e1]
+  rw [map_inv (Chr.Psi l e (Chr.dirG ℚ Ω ψ)), inv_inv, map_add (f := _), map_add (f := _), map_one, map_units_inv, e1]
   simp [Af.eis3, mul_comm]
 
 private theorem comp_inj {O O' : Type} [CommRing O] [CommRing O'] {N : ℕ} (f : O →+* O') (hf : Function.Injective f)
@@ -107,67 +112,3 @@ private theorem orb_equiv {l : ℕ} [Fact l.Prime] (c : Coef l) {N : ℕ} [NeZer
     rw [MulChar.ringHomComp_pow] at hj
     refine ⟨⟨ψ₀ ^ j, (mem_orb c).2 ?_⟩, Subtype.ext hj.symm⟩
     rw [← ker_comp f hf, ← hj, hχ]
-
-theorem UpperTheory.V.U3.propGK :
-    Af.CongruenceNumberRankThree → OneChar → PropGK := by
-  intro hNum hOne K _ _
-  by_cases hK : Module.finrank ℚ K = 2 ∧ IsTotallyComplex K
-  swap
-  · refine ⟨0, 0, fun e N _ H p _ _ _ => ⟨1, one_ne_zero, by simp, fun Ω _ _ _ _ l _ _ c h => ?_⟩⟩
-    obtain ⟨ψ, -, hψ⟩ := h
-    exact absurd ⟨hψ.quad, hψ.imag⟩ hK
-  haveI := isCM K hK.1 hK.2
-  obtain ⟨c₅, A, hC⟩ := hNum K hK.1
-  refine ⟨c₅, A, fun e N _ H p he hp hnd => ?_⟩
-  have hN : ¬ p ∣ N := fun h => hnd ((h.mul_left 30).mul_right _)
-  have hd : ¬ (p : ℤ) ∣ discr K := fun h => hnd ((Int.natCast_dvd.1 h).mul_left _)
-  have h7 : 7 ≤ p := by
-    have h30 : ¬ p ∣ 30 := fun h => hnd ((h.mul_right N).mul_right _)
-    by_contra h
-    push Not at h
-    clear hnd hN hd
-    revert hp h30
-    interval_cases p <;> decide
-  obtain ⟨w, hw⟩ := exists_w K hp
-  haveI : Fintype {χ : DirichletCharacter ℂ N // χ.toUnitHom.ker = H} := Fintype.ofFinite _
-  obtain ⟨NN, h0, hsz, hdiv⟩ := hC e he N (NeZero.pos N) p w hp hw h7 hN hd
-    {χ : DirichletCharacter ℂ N // χ.toUnitHom.ker = H} (fun χ => (χ.1 (normV w))⁻¹)
-    (fun χ => ⟨orderOf χ.1, orderOf_pos _, by
-      rw [inv_pow, ← ZMod.coe_unitOfCoprime _ (cop_norm hp hN hw), ← MulChar.pow_apply_coe, pow_orderOf_eq_one,
-        MulChar.one_apply_coe, inv_one]⟩)
-    (fun σ => ⟨⟨fun χ => ⟨χ.1.ringHomComp σ.toRingHom, (ker_comp _ σ.injective _).trans χ.2⟩,
-      fun χ => ⟨χ.1.ringHomComp σ.symm.toRingHom, (ker_comp _ σ.symm.injective _).trans χ.2⟩,
-      fun χ => Subtype.ext (MulChar.ext' fun a => σ.symm_apply_apply _),
-      fun χ => Subtype.ext (MulChar.ext' fun a => σ.apply_symm_apply _)⟩, fun χ => (map_inv₀ σ _).symm⟩)
-  refine ⟨NN, h0, hsz.trans ?_, fun Ω _ _ _ _ l hl hlp c h => ?_⟩
-  · have := card_orb H
-    rw [Nat.card_eq_fintype_card] at this
-    have hl := Real.log_natCast_nonneg p
-    gcongr
-  obtain ⟨ψ₀, h₀, hψ₀⟩ := h
-  haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
-  haveI : Algebra.IsAlgebraic K Ω := Algebra.IsAlgebraic.tower_top (K := ℚ) K
-  haveI : IsAlgClosure K Ω := ⟨inferInstance, inferInstance⟩
-  obtain ⟨ι⟩ : Nonempty (Qbar l ≃+* ℂ) := GlobalTheory.nonempty_padicAlgCl_ringEquiv_complex l
-  obtain ⟨B, hB⟩ := ReciprocityTheory.Gal.exists_isPlaceOver Ω w
-  obtain ⟨σ, hσ⟩ := ReciprocityTheory.Gal.exists_isFrob hB
-  have hD := hdiv l hψ₀.l_odd hlp Ω ι B hB σ hσ
-  obtain ⟨E, hE⟩ := orb_equiv c H (ι.toRingHom.comp (algebraMap c.O (PadicAlgCl l)))
-    (ι.injective.comp Subtype.val_injective) h₀
-  obtain ⟨f1, f2⟩ := frob_val hp hN hlp hw hB hσ
-  have key := fun ψ : orb c H => hOne Ω K l c N e ψ.1
-    ((gdFacts Ω K l e c.O N ψ₀ hψ₀).2.2.2.2.2.2.2 ψ.1 (((mem_orb c).1 ψ.2).trans ((mem_orb c).1 h₀).symm)).1 ι σ⁻¹
-    (ι.symm (Af.eis3 (normV w) e ((E ψ).1 (normV w))⁻¹))
-    (by rw [hE, map_inv (galEmb ℚ K Ω)]; exact t_eq c e _ ψ.1 ι _ f1 f2)
-    (fun ρ hρ => (hD (fun _ => {ρ}) (fun _ ρ' h => by rwa [Finset.mem_singleton.1 h])
-      (fun _ a ha b hb _ => (Finset.mem_singleton.1 ha).trans (Finset.mem_singleton.1 hb).symm)).1 (E ψ) ρ
-      (Finset.mem_singleton_self ρ))
-  refine ⟨fun ψ hψ => (key ⟨ψ, hψ⟩).1, ?_⟩
-  choose X hX1 hX2 hX3 using fun ψ => (key ψ).2
-  obtain ⟨hne, hle⟩ := hD (fun o => X (E.symm o)) (fun o => hX1 _) (fun o => hX2 _)
-  have hb := vl_bound _ _ NN h0 (fun o ρ hρ => sub_ne_zero.2 (hne o ρ hρ)) hle
-  rw [← Finset.sum_coe_sort]
-  refine (Finset.sum_le_sum fun ψ _ => hX3 ψ).trans ?_
-  rw [← Finset.mul_sum]
-  refine mul_le_mul_of_nonneg_left (le_of_eq_of_le ?_ hb) zero_le_two
-  exact Fintype.sum_equiv E _ _ fun ψ => by rw [E.symm_apply_apply]

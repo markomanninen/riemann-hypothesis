@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ExistsUnitMinor
+module
+
+public import ReciprocityTheory.DualLattices.ExistsUnitMinor
+
+@[expose] public section
 
 noncomputable section
 

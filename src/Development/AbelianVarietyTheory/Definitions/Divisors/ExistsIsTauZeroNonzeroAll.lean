@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLevWithGeometric
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
-import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardLevGrpAndSpan
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsEtaRuleExistsUniqueMemSec
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShiftNullValNeZero
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EqZeroOfEvalGridEqZeroOfTotalDegreeLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLevWithGeometric
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+public import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardLevGrpAndSpan
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsEtaRuleExistsUniqueMemSec
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShiftNullValNeZero
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EqZeroOfEvalGridEqZeroOfTotalDegreeLe
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,8 @@ def tauExpr {S : Type} [CommRing S] {k : ℕ} {J : Type} [Fintype J] {n : ℕ} (
 theorem map_tauExpr {S T : Type} [CommRing S] [CommRing T] (φ : S →+* T) {k : ℕ} {J : Type} [Fintype J] {n : ℕ}
     (cf : J → ℤ) (x : J → Fin n → LatMod Dw k) (w : LatMod Dw k → S) :
     φ (tauExpr cf x w) = tauExpr cf x (fun q => φ (w q)) := by
-  simp only [tauExpr, map_prod, map_sum, map_mul, map_intCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tauExpr, map_prod, map_sum, map_mul, map_intCast]
 
 theorem tauExpr_scale {S : Type} [CommRing S] {k : ℕ} {J : Type} [Fintype J] {n : ℕ} (cf : J → ℤ)
     (x : J → Fin n → LatMod Dw k) (w : LatMod Dw k → S) (t : S) :
@@ -48,8 +53,8 @@ theorem IsAdm.spans {R : ℕ} (hR : 1 < R) {n : ℕ} {x₀ : Fin n → Dw.La} (h
     EtaAn.Spans (shiftFam R x₀ : (Fin n → LatMod Dw R) → Fin n → LatMod Dw (R ^ 4)) := fun u =>
   (EtaCard.card_levGrp_and_span E H Dw R hR).2.2.2.2.2.2 n x₀ h u (LinearEquiv.refl _ _)
 
-variable (Dw) in
 
+variable (Dw) in
 theorem exists_isAdm {R : ℕ} (hR : 1 < R) : ∃ x₀ : Fin (Dw.p + Dw.q) → Dw.La, IsAdm R x₀ :=
   (EtaCard.card_levGrp_and_span E H Dw R hR).2.2.2.2.2.1
 
@@ -69,9 +74,6 @@ def IsTauRule (R : ℕ) {J : Type} [Fintype J] {n : ℕ} (cf : J → ℤ) (x : J
 def IsGenRule (R : ℕ) {n : ℕ} (x₀ : Fin n → Dw.La) (u : Fin n → LatMod Dw R) (f : Rul Xo c) : Prop :=
   IsTauRule Xo c R (fun _ : Unit => 1) (fun _ => shiftFam R x₀ u) f
 
-def genSpan (R : ℕ) {n : ℕ} (x₀ : Fin n → Dw.La) : Submodule c.F (Rul Xo c) :=
-  Submodule.span c.F {f | ∃ u, IsGenRule Xo c R x₀ u f}
-
 def IsTauZero (R : ℕ) [Fintype (LatMod Dw R)] {n : ℕ} (x₀ : Fin n → Dw.La) (cf : (Fin n → LatMod Dw R) → ℤ)
     (f : Rul Xo c) : Prop :=
   IsTauRule Xo c R cf (shiftFam R x₀) f
@@ -79,8 +81,6 @@ def IsTauZero (R : ℕ) [Fintype (LatMod Dw R)] {n : ℕ} (x₀ : Fin n → Dw.L
 variable {Xo c}
 
 def NonzeroOn (Z : Comp Xo c) (f : Rul Xo c) : Prop := genVal Z f ≠ 0
-
-def NonzeroAll (f : Rul Xo c) : Prop := ∀ Z : Comp Xo c, NonzeroOn Z f
 
 section Val
 
@@ -150,8 +150,8 @@ theorem exists_cover (hR : Odd R) (hM : R ^ 4 ∣ l.M) {S : Type} [CommRing S] [
   choose w hw using fun q => (existsUnique_nullVal GlobalTheory.firstFiveLaws.1 hR hev.2.1 q).exists
   exact ⟨B, inferInstance, inferInstance, φ, y', ev, w, hφ, hm, hev, hw⟩
 
-variable (cf x) in
 
+variable (cf x) in
 theorem exists_tauValAt (hR : Odd R) (hM : R ^ 4 ∣ l.M) {S : Type} [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) :
     ∃ v, TauValAt Xo c R cf x y v := by
   obtain ⟨B, _, _, φ, y', ev, w, hφ, hm, hev, hw⟩ := exists_cover hR hM y
@@ -186,8 +186,8 @@ theorem TauValAt.frBor {S : Type} [CommRing S] [Algebra c.F S] {t : Ix Dw → S�
   · exact NullValue.triangular hb (ev q) (ev' q) (he q) (hw q)
   · rw [tauExpr_scale, map_mul, map_pow, hv]
 
-variable (Xo c cf x) in
 
+variable (Xo c cf x) in
 theorem existsUnique_isTauRule (hR : Odd R) (hM : R ^ 4 ∣ l.M) : ∃! f, IsTauRule Xo c R cf x f :=
   ⟨fun _ y => (exists_tauValAt cf x hR hM y).choose, fun _ y => (exists_tauValAt cf x hR hM y).choose_spec,
     fun _ hf => funext fun p => funext fun y => (hf p y).unique hR (exists_tauValAt cf x hR hM y).choose_spec⟩
@@ -201,7 +201,7 @@ theorem IsTauRule.mem_sec (hR : Odd R) {f : Rul Xo c} (hf : IsTauRule Xo c R cf 
 theorem IsTauRule.tauValAt_evR (hR : Odd R) {f : Rul Xo c} (hf : IsTauRule Xo c R cf x f) {S : Type} [CommRing S]
     [Algebra c.F S] {y : FrPt Xo c S} (hy : Tested y) : TauValAt Xo c R cf x y (evR Xo c f y) := by
   unfold evR evalAt
-  rw [dif_pos hy]
+  rw [dite_eq_left hy]
   exact (hf _ _).map hR _ hy.choose_spec.choose_spec.choose_spec
 
 end Val
@@ -305,21 +305,5 @@ theorem nonzeroOn_thetaOn_iff (h : HasPts U Z) (s : ∀ τ, FlatSec U x Z τ) (K
     mul_ne_zero_iff_right (pow_ne_zero _ h3), pow_ne_zero_iff (by norm_num)]
 
 end Theta
-
-example (τ : Psi H) (i : Fin (Dw.mult τ.1)) (j : Fin (Dw.mult (conjEmb τ.1))) (hi : (i : ℕ) < Dw.p)
-    (hj : (j : ℕ) < Dw.q) (N : ℤ) : exOf Dw ((8 * N) • hodgeWt Dw) 0 (some ⟨τ.1, i⟩) = 0 ∧
-      exOf Dw ((8 * N) • hodgeWt Dw) 0 (some ⟨conjEmb τ.1, j⟩) = 8 * N ∧ exOf Dw ((8 * N) • hodgeWt Dw) 0 none = 0 := by
-  refine ⟨(wtOf_big _ 0 τ i hi).trans ?_, (wtOf_small _ 0 τ j hj).trans ?_, rfl⟩ <;> simp [hodgeWt, barWt, hi]
-
-example {R : ℕ} (hR : Odd R) (hM : R ^ 4 ∣ l.M) (x₀ : Fin 0 → Dw.La) (u : Fin 0 → LatMod Dw R) :
-    IsGenRule Xo c R x₀ u 1 := fun p y => by
-  obtain ⟨B, _, _, φ, y', ev, w, hφ, hm, hev, hw⟩ := exists_cover hR hM y
-  exact ⟨B, inferInstance, inferInstance, φ, y', ev, w, hφ, hm, hev, hw, by simp [tauExpr]⟩
-
-example {R : ℕ} (hR : Odd R) (hM : R ^ 4 ∣ l.M) [Fintype (LatMod Dw R)] {n : ℕ} (x₀ : Fin n → Dw.La) (Z : Comp Xo c) :
-    IsTauZero Xo c R x₀ 0 0 ∧ ¬ NonzeroOn Z 0 := by
-  refine ⟨fun p y => ?_, fun h => h.ne_zero rfl⟩
-  obtain ⟨B, _, _, φ, y', ev, w, hφ, hm, hev, hw⟩ := exists_cover hR hM y
-  exact ⟨B, inferInstance, inferInstance, φ, y', ev, w, hφ, hm, hev, hw, by simp [tauExpr]⟩
 
 end GlobalTheory.ThetaConst

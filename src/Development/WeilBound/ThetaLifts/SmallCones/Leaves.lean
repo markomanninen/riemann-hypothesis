@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
+
+@[expose] public section
 
 noncomputable section
 

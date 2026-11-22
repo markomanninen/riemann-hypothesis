@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.InvGroup
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.InvGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem vfX_eq (c : ℝ) (Z : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) : vfX c Z
 
 theorem xyC_add_smul (Z Z' : Matrix (Fin m) (Fin m) ℂ) (r : ℂ) (a : Fin m) (i : Fin n) (b : Bool) :
     xyC (Z + r • Z') a i b = xyC Z a i b + C r * xyC Z' a i b := by
-  simp only [xyC, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, add_mul, Finset.sum_add_distrib,
+  simp only [xyC, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, add_mul, Finset.sum_add_distrib,
     Finset.mul_sum, mul_assoc]
 
 theorem vfC_lin (c : ℝ) (Zh Za Zh' Za' : Matrix (Fin m) (Fin m) ℂ) (r : ℂ) (P : PX m n) :
@@ -70,7 +74,7 @@ theorem zRe_add_zIm_star (ε : Fin m → Bool) (a b : Fin m) :
   ext i j
   simp only [zRe, zIm, Matrix.add_apply, Matrix.smul_apply, Matrix.sub_apply, Matrix.map_apply,
     smul_eq_mul, Matrix.neg_apply, Matrix.single_apply, Complex.star_def]
-  split_ifs <;> simp [map_add, map_mul, map_neg, map_sub, hs, ht, h2, Complex.conj_I] <;> ring_nf <;>
+  split_ifs <;> simp [map_add (f := _), map_mul, map_neg, map_sub, hs, ht, h2, Complex.conj_I] <;> ring_nf <;>
     simp [Complex.I_sq] <;> ring
 
 theorem hOp_eq (ε : Fin m → Bool) (c : ℝ) (a b : Fin m) (P : PX m n) :

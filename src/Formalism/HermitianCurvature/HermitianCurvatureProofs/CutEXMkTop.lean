@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpNormPiLe
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCoefficientHasCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkCpt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMK2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTopKr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMKTop
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpNormPiLe
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCoefficientHasCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkCpt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMK2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTopKr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMKTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,8 +73,8 @@ section right
 variable {k p ρ : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem krI_pt (Bj : B.RealPlaceData k ρ Wp Wq) (B0 : B.RealPlaceData k (p + ρ) Wp Wq)
     (hz' : B0.z' = liftVec k p ρ Bj.z') (hπ' : ∀ y : B.Mat k ρ, Bj.π' y = B0.π' (U.embG k p ρ y))
     (b b' : U.RC k p ρ → ℝ) (β : (Fin p → Fin p → ℂ) → ℝ) (Φ : (Fin p → Fin p → ℂ) → Mt k ρ → (Wq →L[ℂ] Wp))

@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.EisensteinMeromorphy.DiffContOfReg
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.EisensteinMeromorphy.HgtMulRight
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.EisensteinMeromorphy.MeromorphicOnOfWeak
-import Development.WeilBound.ThetaLifts.LatticeBasics.EisCont
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinHeckeFunctionalStatement
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.EisensteinMeromorphy.DiffContOfReg
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.EisensteinMeromorphy.HgtMulRight
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.EisensteinMeromorphy.MeromorphicOnOfWeak
+public import Development.WeilBound.ThetaLifts.LatticeBasics.EisCont
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinHeckeFunctionalStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,6 +91,7 @@ theorem eisStrong_of : EisBL → EisStrong := by
     unfold PositivityTheory.SiegelWeilFormula.SD.eis GlobalTheory.Eis.cosetSum
     congr 1
     funext q
-    simp only [GlobalTheory.Eis.term, eisTerm, flat, PositivityTheory.SiegelWeilFormula.SD.Ht, Real.coe_toNNReal _ (hgt_nonneg d.ok.hgt _)]
+    simp only [eisTerm, flat, GlobalTheory.Eis.term, PositivityTheory.SiegelWeilFormula.SD.Ht,
+      Real.coe_toNNReal _ (hgt_nonneg d.ok.hgt _)]
 
 end PositivityTheory.SiegelWeilFormula.Khead

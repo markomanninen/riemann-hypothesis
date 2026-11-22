@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.PieceGood
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.PsiMulVec
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.PieceGood
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.PsiMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,6 +32,7 @@ theorem pi_ratio {A : Subalgebra k (Matrix (Fin N) (Fin N) k)} (hA : ∀ a ∈ A
       Module.finrank k (Module.End (Fe hA he) (Wd e)) := by
     unfold cenSub
     rw [← range_Psi hA he hid, LinearMap.finrank_range_of_inj (Psi_inj hA he)]
+  set_option synthInstance.maxHeartbeats 200000 in
   have h1 := GroundTheory.Brauer.finrank_mul_finrank_end k (Fe hA he) (Wd e)
   have h2 := Module.finrank_mul_finrank k (Fe hA he) (Wd e)
   have hr : e.rank = Module.finrank k (Wd e) := rfl

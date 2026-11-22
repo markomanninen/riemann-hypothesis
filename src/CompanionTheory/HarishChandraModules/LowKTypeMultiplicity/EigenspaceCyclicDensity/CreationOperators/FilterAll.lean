@@ -1,7 +1,11 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialCommutesWeightOperator
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.KTypeCount
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.DoubleSumReduceSecond
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialCommutesWeightOperator
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.KTypeCount
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.DoubleSumReduceSecond
+
+@[expose] public section
 
 open Finset
 open scoped InnerProductSpace
@@ -74,7 +78,8 @@ theorem cok_of (hG : GenCO) : COK := by
     ∑ c, FreeAlgebra.ι ℂ c * FreeAlgebra.ι ℂ c - ∑ c, ((2 * rhoC ε c : ℝ) : ℂ) • FreeAlgebra.ι ℂ c
   have ha : ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (E : Fin n → Fin n → Module.End ℂ V),
       evK ε E a = CasK ε E := fun V _ _ E => by
-    simp only [a, CasK, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [a, CasK, map_sum]
     refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
     split_ifs with h
     · simp [evK, h]
@@ -86,7 +91,8 @@ theorem cok_of (hG : GenCO) : COK := by
   refine ⟨w, hw, ?_⟩
   rw [← e, ha, evd_eig _ _ _ hτ]
   congr 2
-  simp only [b, map_sub, map_sum, map_mul, map_smul, FreeAlgebra.lift_ι_apply, smul_eq_mul, nsq, PI.UpqRep.dot,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [b, map_sub, map_sum, map_mul, map_smul, FreeAlgebra.lift_ι_apply, smul_eq_mul, nsq, PI.UpqRep.dot,
     Pi.sub_apply, ← Finset.sum_sub_distrib]
   push_cast
   exact Finset.sum_congr rfl fun c _ => by ring
@@ -114,7 +120,8 @@ theorem exists_poly {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] 
     simp [Module.algebraMap_end_apply]
   rw [e, show x = ∑ i, (hs.eigenvectorBasis rfl).repr ⟨x, hx⟩ i • (hs.eigenvectorBasis rfl i : V) by
     simpa using (congrArg Subtype.val ((hs.eigenvectorBasis rfl).sum_repr ⟨x, hx⟩)).symm]
-  simp only [map_sum, map_smul, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finset.smul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have h1 : T (hs.eigenvectorBasis rfl i : V) = (ev i : ℂ) • (hs.eigenvectorBasis rfl i : V) :=
     congrArg Subtype.val (hs.apply_eigenvectorBasis rfl i)
@@ -167,7 +174,7 @@ theorem vanK_of (hC : COK) (hP : WtProj) (hM : WtMajor) : VanK := by
     obtain ⟨ν, y, hy0, hy, hs, hd, hc⟩ := hM n ε V E hE hU (fun x => ⟨S x, hS x, hSt x, hmem x⟩) (τ - wt A) _ _ hne
       (fun c => by
         simp only [Pi.add_apply, lift_apply, Pi.sub_apply, Pi.smul_apply]
-        rw [map_add, ← hcq c c rfl, map_sub, map_smul, ← Module.End.mul_apply, (casK_comm hE rfl).eq,
+        rw [map_add (f := _), ← hcq c c rfl, map_sub, map_smul, ← Module.End.mul_apply, (casK_comm hE rfl).eq,
           Module.End.mul_apply, hzw A c]
         simp only [map_smul, map_sub, smul_add, smul_sub, Pi.sub_apply, smul_comm ((τ c - wt A c : ℝ) : ℂ)])
       (hq (z A) (Submodule.mem_iSup_of_mem A (hmem _)) _ rfl)
@@ -249,7 +256,8 @@ theorem inj_of (hV : VanK) (hP : WtProj) (hS : BdSq) : Inj := by
                 obtain ⟨i, hi⟩ := hBn
                 rw [← hAB] at hi
                 exact (mem_filter.1 hi).2 (mem_filter.1 (mem_filter.1 hi).1).2
-              rw [Pi.single_eq_of_ne hAo, hsum, map_sum, Finset.sum_apply, Finset.sum_eq_single B] at e
+              set_option synthInstance.maxHeartbeats 100000 in
+                rw [Pi.single_eq_of_ne hAo, hsum, map_sum, Finset.sum_apply, Finset.sum_eq_single B] at e
               · apply hne
                 by_contra h'
                 have := (s4 B _ _ (hr B) A (by rw [Pi.sub_apply, e, zero_sub]; exact neg_ne_zero.2 hne)).1
@@ -295,12 +303,14 @@ theorem inj_of (hV : VanK) (hP : WtProj) (hS : BdSq) : Inj := by
           have h2 := (hrne B A hB').1
           have h3 := (hr B A hB').1
           exact ⟨(h A fun h' => hB' (by simp [r, h'])).1, by rw [h3]; omega⟩
-      · rw [map_sub, map_sum, hw c, smul_sub, Finset.smul_sum]
-        congr 1
-        refine Finset.sum_congr rfl fun B _ => ?_
-        rw [← Module.End.mul_apply, (hc c).eq, Module.End.mul_apply, t1 B c, map_smul]
-      · rw [map_sub, map_sum, hb, Finset.sum_eq_zero, sub_zero]
-        exact fun B _ => LinearMap.congr_fun (hS n _ V E hA) _
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [map_sub, map_sum, hw c, smul_sub, Finset.smul_sum]
+          congr 1
+          refine Finset.sum_congr rfl fun B _ => ?_
+          rw [← Module.End.mul_apply, (hc c).eq, Module.End.mul_apply, t1 B c, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [map_sub, map_sum, hb, Finset.sum_eq_zero, sub_zero]
+          exact fun B _ => LinearMap.congr_fun (hS n _ V E hA) _
   obtain ⟨y', y1, y2, y3⟩ := hP n (allT n) ε V E hE hU hF _ hc τ y (fun c => funext fun A => by
     rw [hb, Ft_apply, filter_all]
     by_cases e : A = om ε

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.FormalDegreeBessel.FinalG
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselOneOfUniq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OpnFrobCompare
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.FormalDegreeBessel.FinalG
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselOneOfUniq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OpnFrobCompare
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp
 open scoped InnerProductSpace ENNReal
@@ -127,10 +131,10 @@ theorem gap_of_nodes (D : D7) (τ : D.what₂.Tau) (h : ℝ) (hanti : StrictAnti
     intro i hi hk
     have h0 := hb (i - (D.R.k - 1) + 1) (by omega) (by omega)
     unfold bOne at h0
-    rw [dif_pos (by omega), dif_pos (by omega)] at h0
+    rw [dite_eq_left (by omega), dite_eq_left (by omega)] at h0
     unfold lamD lamSH lamS
     simp only [Fin.val_cast]
-    rw [dif_neg (by omega), dif_pos (by omega), dif_neg (by omega), dif_pos (by omega)]
+    rw [dite_eq_right (by omega), dite_eq_left (by omega), dite_eq_right (by omega), dite_eq_left (by omega)]
     have e : i + 1 - (D.R.k - 1) = i - (D.R.k - 1) + 1 := by omega
     simp only [e, Nat.add_sub_cancel] at h0 ⊢
     linarith

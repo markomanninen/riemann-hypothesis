@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FrameChangeExistsUniqueInvertible
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LowerTriIsUnitDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FrameChangeExistsUniqueInvertible
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LowerTriIsUnitDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem isReduced_laurent [IsReduced R] : IsReduced (LaurentPolynomial R) := by
 theorem trunc_T_mul_aeval (m : ℤ) (hm : 0 < m) (P : Polynomial R) :
     trunc (T (-m) * Polynomial.aeval (T (-1) : LaurentPolynomial R) P) = 0 := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, mul_add, map_add, hp, hq, add_zero]
+  | add p q hp hq => rw [map_add (f := _), mul_add, map_add (f := _), hp, hq, add_zero]
   | monomial k a =>
     rw [Polynomial.aeval_monomial, T_pow, ← C_eq_algebraMap, mul_left_comm, ← T_add, trunc_C_mul_T]
     rw [if_neg (by push_cast; omega)]
@@ -212,8 +216,8 @@ end Upd
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem eq_zero_of_lt (Xo : Moduli Dw l) (c : Coeff l) (e : Ix Dw → ℤ) (τ : E →+* ℂ) (i j : Fin (Dw.mult τ))
     (hij : i < j) (he : e (some ⟨τ, i⟩) < e (some ⟨τ, j⟩)) (f : Rul Xo c) (hf : f ∈ secZ Xo c e) : f = 0 := by
   funext p y0

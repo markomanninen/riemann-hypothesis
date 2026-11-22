@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ExtChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ExtChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -168,7 +172,7 @@ private theorem ker_art (h : IsPlaceOver A v) {a : Weil h →* (v.adicCompletion
   set g := Subgroup.inclusion (Weil_le_Dec h) s with hg
   have hcl : IsClosed (κ.ker : Set (Dec (F := K) A)) := isClosed_singleton.preimage hκ
   have hWo : IsOpen ((fun x => g * x) ⁻¹' (κ.ker : Set (Dec (F := K) A))ᶜ) :=
-    hcl.isOpen_compl.preimage (continuous_mul_left g)
+    hcl.isOpen_compl.preimage (continuous_const_mul g)
   have h1W : (1 : Dec (F := K) A) ∈ (fun x => g * x) ⁻¹' (κ.ker : Set (Dec (F := K) A))ᶜ := by
     simpa using hne
   obtain ⟨U, hU⟩ := ProfiniteGrp.exist_openNormalSubgroup_sub_open_nhds_of_one hWo h1W

@@ -1,6 +1,10 @@
-import Formalism.CharacterColumnKernels.CharacterColumnKernelEqualityForm
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.ColKer
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerSmulLe
+module
+
+public import Formalism.CharacterColumnKernels.CharacterColumnKernelEqualityForm
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.ColKer
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerSmulLe
+
+@[expose] public section
 
 open Finset
 

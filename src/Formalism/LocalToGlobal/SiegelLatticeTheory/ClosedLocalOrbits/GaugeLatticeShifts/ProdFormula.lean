@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.MeasurePreservingPiProd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.MeasurePreservingPiProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,12 +38,12 @@ theorem prod_formula (mG : ∀ v, Measure (G v)) [∀ v, SigmaFinite (mG v)]
     congr 1; funext v; exact hm v
   have hYm : Measurable (fun (y : (v : ι) → (Fin (r + 1) → ℂ) × (G v × G v)) (v : ι) =>
       (y v).2.1 * h v (y v).1 * (y v).2.2⁻¹) :=
-    measurable_pi_lambda _ fun v => (hFm v).comp (measurable_pi_apply v)
+    Measurable.of_eval fun v => (hFm v).comp (measurable_pi_apply v)
   have hgm : Measurable (fun z : ((v : ι) → (Fin (r + 1) → ℂ)) × (((v : ι) → G v) × ((v : ι) → G v)) =>
       φ (z.2.1 * (fun v => h v (z.1 v)) * z.2.2⁻¹)) := by
     refine hφ.comp (((measurable_fst.comp measurable_snd).mul ?_).mul
       (measurable_snd.comp measurable_snd).inv)
-    exact measurable_pi_lambda _ fun v => (hh v).comp ((measurable_pi_apply v).comp measurable_fst)
+    exact Measurable.of_eval fun v => (hh v).comp ((measurable_pi_apply v).comp measurable_fst)
   have hE1 := measurePreserving_piProd (α := fun _ => Fin (r + 1) → ℂ) (β := fun v => G v × G v)
     ν (fun v => (μ v).prod (μ' v))
   have hE2 := (MeasurePreserving.id (Measure.pi ν)).prod

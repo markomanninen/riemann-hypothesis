@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.AuxiliaryPrimeFunction
-import GroundTheory.AutomorphicForms.AffineBruhat
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IwahoriSubgroupDefinitionsAgree
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.AuxiliaryPrimeFunction
+public import GroundTheory.AutomorphicForms.AffineBruhat
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IwahoriSubgroupDefinitionsAgree
+
+@[expose] public section
+
 open Formalism.UG GroundTheory.Automorphic GroundTheory.Automorphic.GLnLocal Matrix
 
 theorem UpperTheory.isCommensurated_iwahori_gl :

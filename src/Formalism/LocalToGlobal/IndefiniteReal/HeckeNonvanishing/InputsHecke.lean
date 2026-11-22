@@ -1,6 +1,10 @@
-import Formalism.UnipotentAdelicQuotients.ThmBInHecke
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.NotRootUnity
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
+module
+
+public import Formalism.UnipotentAdelicQuotients.ThmBInHecke
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.NotRootUnity
+public import Lean
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.SigmaFiniteAmplitudes.MeasurableMulInvInv
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.SigmaFiniteAmplitudes.MeasurableMulInvInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem op_eq_sum (T : Wp →L[ℂ] Wp) :
   rw [_root_.sum_apply]
   simp only [ContinuousLinearMap.smulRight_apply, innerSL_apply_apply]
   conv_lhs => rw [← (stdOrthonormalBasis ℂ Wp).sum_repr' x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul]
 
 def piOp (z : Fin (2 * r + k + 1) → ℂ)

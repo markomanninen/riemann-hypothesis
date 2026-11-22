@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,8 @@ theorem sec_mul (pr_sec : ∀ a, pr (sec a) = a) (sec_pr : ∀ x, sec (pr x) = e
 theorem secM_mul (pr_sec : ∀ a, pr (sec a) = a) (sec_pr : ∀ x, sec (pr x) = e * x) (Z W : Matrix m m k) :
     (Z * W).map sec = Z.map sec * W.map sec := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.mul_apply, map_sum, sec_mul e pr sec pr_sec sec_pr]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, Matrix.mul_apply, map_sum, sec_mul e pr sec pr_sec sec_pr]
 
 theorem secM_one (pr_sec : ∀ a, pr (sec a) = a) (sec_pr : ∀ x, sec (pr x) = e * x) :
     (1 : Matrix m m k).map sec = e • (1 : Matrix m m A) := by
@@ -168,7 +173,7 @@ theorem phi_map (G Gi : Matrix m m k) : (phi c e sec J Ji G Gi).map pr = G := by
     conv_lhs => rw [← hYe]
     rfl
   unfold phi
-  rw [Matrix.map_apply, Matrix.add_apply, Matrix.add_apply, map_add, map_add, hij, Matrix.smul_apply, smul_eq_mul,
+  rw [Matrix.map_apply, Matrix.add_apply, Matrix.add_apply, map_add (f := _), map_add (f := _), hij, Matrix.smul_apply, smul_eq_mul,
     map_mul, map_mul, hpf, hpu, Matrix.map_apply, pr_sec]
   ring
 

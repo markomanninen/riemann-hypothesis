@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
-import Lemmata.GeneralBFactLast.Imports
-import Lemmata.GeneralBFactTail.Imports
+module
+
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+public import Lemmata.GeneralBFactLast.Imports
+public import Lemmata.GeneralBFactTail.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

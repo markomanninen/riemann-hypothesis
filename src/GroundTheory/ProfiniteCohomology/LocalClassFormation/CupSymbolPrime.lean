@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolUnramified
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolNorm
-import GroundTheory.LocalFields.LocalArtinBaseChange
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolUnramified
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolNorm
+public import GroundTheory.LocalFields.LocalArtinBaseChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -53,8 +58,8 @@ section Subgroups
 
 variable {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] [IsSepClosure K Ω]
 
-omit [IsSepClosure K Ω] in
 
+omit [IsSepClosure K Ω] in
 instance isDiscreteRep_res_galUnitsZ (S : Subgroup Gal(Ω/K)) :
     IsDiscreteRep (Rep.res S.subtype (galUnitsZ K Ω)) :=
   isDiscreteRep_res_subtype _ _

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyTwistedFilteredColimitContinuityStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyTwistedFilteredColimitContinuityStatement
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -39,8 +43,8 @@ theorem away_ext {a : R} {S : Type} [CommRing S] {f g : Localization.Away a →+
     (h : f.comp (algebraMap R _) = g.comp (algebraMap R _)) : f = g :=
   IsLocalization.ringHom_ext (Submonoid.powers a) h
 
-variable (R) in
 
+variable (R) in
 def diag : Idx R ⥤ CommRingCat.{0} where
   obj a := CommRingCat.of (Localization.Away a.val)
   map {a b} h := CommRingCat.ofHom (tr (leOfHom h : a.val ∣ b.val))
@@ -61,8 +65,8 @@ theorem toFrac_comp (a : Idx R) : (toFrac a).comp (algebraMap R _) = algebraMap 
   IsLocalization.Away.lift_comp a.val
     (IsLocalization.map_units (FractionRing R) (⟨a.val, a.mem⟩ : nonZeroDivisors R))
 
-variable (R) in
 
+variable (R) in
 def cocone : Cocone (diag R) where
   pt := CommRingCat.of (FractionRing R)
   ι :=
@@ -83,8 +87,8 @@ theorem desc_unit (s : Cocone (diag R)) (y : nonZeroDivisors R) :
   rw [← RingHom.comp_apply (tr _), tr_comp]
   exact (IsLocalization.Away.algebraMap_isUnit (S := Localization.Away y.1) y.1).map (s.ι.app b).hom
 
-variable (R) in
 
+variable (R) in
 def isColim : IsColimit (cocone R) where
   desc s := CommRingCat.ofHom (IsLocalization.lift (M := nonZeroDivisors R) (S := FractionRing R) (desc_unit s))
   fac s a := by
@@ -110,8 +114,8 @@ theorem spMap_comp {A A' A'' : Type} [CommRing A] [CommRing A'] [CommRing A''] (
 
 end GlobalTheory.EtC.TotFracAway
 
-open GlobalTheory.EtC.TotFracAway in
 
+open GlobalTheory.EtC.TotFracAway in
 theorem GlobalTheory.EtC.classVanishesAwayNZD : ∀ (q : ℕ) (R : Type) [CommRing R], IsUnit (q : R) → ∀ (n i : ℤ)
     (z : Ht q (sp R) n i), pull _ (spMap (algebraMap R (FractionRing R))) _ _ z = 0 →
     ∃ g ∈ nonZeroDivisors R, pull _ (spMap (algebraMap R (Localization.Away g))) _ _ z = 0 := by
@@ -132,6 +136,3 @@ theorem GlobalTheory.EtC.classVanishesAwayNZD : ∀ (q : ℕ) (R : Type) [CommRi
     rw [tr_comp]
   rw [e, spMap_comp, pull_comp]
   exact hk
-
-example : ∀ (q : ℕ) (R : Type) [CommRing R], IsUnit (q : R) → ∀ (n i : ℤ) (z : Ht q (sp R) n i), pull _ (spMap (algebraMap R (FractionRing R))) _ _ z = 0 → ∃ g ∈ nonZeroDivisors R, pull _ (spMap (algebraMap R (Localization.Away g))) _ _ z = 0 :=
-  GlobalTheory.EtC.classVanishesAwayNZD

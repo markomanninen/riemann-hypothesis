@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DTauFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DTauFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,9 +59,11 @@ variable {ε : Fin n → Bool} {Λ : Fin n → ℝ}
 
 lemma dtau_upPart_w (T : KType ε Λ) {B : Matrix (Fin n) (Fin n) ℂ} (hB : IsBlock ε B) :
     T.dτ (upPart B) T.w = 0 := by
-  rw [Matrix.matrix_eq_sum_single (upPart B), map_sum, _root_.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.matrix_eq_sum_single (upPart B), map_sum, _root_.sum_apply]
   refine Finset.sum_eq_zero (fun a _ => ?_)
-  rw [map_sum, _root_.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, _root_.sum_apply]
   refine Finset.sum_eq_zero (fun b _ => ?_)
   rw [single_eq_smul, map_smul, ContinuousLinearMap.smul_apply]
   simp only [upPart, Matrix.of_apply]
@@ -69,9 +75,11 @@ lemma dtau_upPart_w (T : KType ε Λ) {B : Matrix (Fin n) (Fin n) ℂ} (hB : IsB
 
 lemma dtau_diagPart_w (T : KType ε Λ) (B : Matrix (Fin n) (Fin n) ℂ) :
     T.dτ (diagPart B) T.w = (∑ a, ((Λ a : ℝ) : ℂ) * B a a) • T.w := by
-  rw [Matrix.matrix_eq_sum_single (diagPart B), map_sum, _root_.sum_apply, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.matrix_eq_sum_single (diagPart B), map_sum, _root_.sum_apply, Finset.sum_smul]
   refine Finset.sum_congr rfl (fun a _ => ?_)
-  rw [map_sum, _root_.sum_apply, Finset.sum_eq_single a]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, _root_.sum_apply, Finset.sum_eq_single a]
   · rw [single_eq_smul, map_smul, ContinuousLinearMap.smul_apply, T.w_wt, smul_smul]
     simp only [diagPart, Matrix.diagonal_apply_eq]
     rw [mul_comm]
@@ -132,7 +140,8 @@ theorem tau_part {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) {B
     rw [Matrix.conjTranspose_apply] at h
     exact h
   have hc : (starRingEnd ℂ) (∑ a, ((Λ a : ℝ) : ℂ) * B a a) = ∑ a, ((Λ a : ℝ) : ℂ) * B a a := by
-    simp only [map_sum, map_mul, Complex.conj_ofReal, hBaa]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Complex.conj_ofReal, hBaa]
   have h1 : T.dτ (upPart B) * projW T = 0 := by
     ext v
     rw [ContinuousLinearMap.mul_apply, hP, map_smul, dtau_upPart_w T hB, smul_zero,
@@ -153,10 +162,10 @@ theorem tau_part {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) {B
       ContinuousLinearMap.smul_apply, hP, mul_smul]
   have eB1 : T.dτ B = T.dτ (lowMinusUp B) + (2 : ℂ) • T.dτ (upPart B) + T.dτ (diagPart B) := by
     conv_lhs => rw [decomp_up B]
-    rw [map_add, map_add, map_smul]
+    rw [map_add (f := _), map_add (f := _), map_smul]
   have eB2 : T.dτ B = -T.dτ (lowMinusUp B) + (2 : ℂ) • T.dτ (lowPart B) + T.dτ (diagPart B) := by
     conv_lhs => rw [decomp_low B]
-    rw [map_add, map_add, map_smul, map_neg]
+    rw [map_add (f := _), map_add (f := _), map_smul, map_neg]
   have hL : T.dτ B * projW T =
       T.dτ (lowMinusUp B) * projW T + (∑ a, ((Λ a : ℝ) : ℂ) * B a a) • projW T := by
     rw [eB1, add_mul, add_mul, smul_mul_assoc, h1, smul_zero, add_zero, h2]

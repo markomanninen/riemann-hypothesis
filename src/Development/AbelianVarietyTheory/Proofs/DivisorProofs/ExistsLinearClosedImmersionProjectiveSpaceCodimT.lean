@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothOfRelativeDimensionPspace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothOfRelativeDimensionPspace
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -21,7 +25,25 @@ theorem exists_linear_closedImmersion_two_le_ringKrullDim_stalk :
   have h2 : Function.Injective (Fin.castSucc : Fin (N + 1 + 1) → Fin (N + 2 + 1)) := Fin.castSucc_injective _
   let ℓ₁ : PSpace F N ⟶ PSpace F (N + 1) := linearι F h1
   let ℓ₂ : PSpace F (N + 1) ⟶ PSpace F (N + 2) := linearι F h2
-  refine ⟨ℓ₁ ≫ ℓ₂, inferInstance, by rw [Category.assoc, linearι_str, linearι_str], fun y => ?_⟩
+  have linear_str (A B : ℕ) {e : Fin (A + 1) → Fin (B + 1)}
+      (he : Function.Injective e) : linearι F he ≫ PSpace.str F B = PSpace.str F A := by
+    refine (Proj.mapAffineOpenCover (killHom F he)
+      (irrelevant_le_map_of_surjective _ (killHom_surjective F he))).openCover.hom_ext _ _ fun s => ?_
+    have key : ∀ (d : ℕ) (hd : 0 < d) (s : MvPolynomial (Fin (B + 1)) F) (hs : s ∈ grading F B d),
+        Proj.awayι (grading F A) (killHom F he s) ((killHom F he).2 hs) hd ≫ linearι F he ≫ PSpace.str F B =
+          Proj.awayι (grading F A) (killHom F he s) ((killHom F he).2 hs) hd ≫ PSpace.str F A := by
+      intro d hd s hs
+      rw [linearι, Proj.awayι_comp_map_assoc _ _ hd s hs, PSpace.str, PSpace.str, Proj.awayι_toSpecZero_assoc,
+        Proj.awayι_toSpecZero_assoc, ← Spec.map_comp, ← Spec.map_comp, ← Spec.map_comp]
+      congr 1
+      ext1
+      refine RingHom.ext fun r => HomogeneousLocalization.val_injective _ ?_
+      refine (congrArg HomogeneousLocalization.val (HomogeneousLocalization.Away.map_mk (killHom F he) s hs 0 (MvPolynomial.C r)
+        ((zero_smul ℕ d).symm ▸ MvPolynomial.isHomogeneous_C _ r))).trans ?_
+      rw [HomogeneousLocalization.Away.val_mk]
+      exact congrArg (Localization.mk · _) (MvPolynomial.killCompl_C he r)
+    exact key _ s.1.2 _ s.2.2
+  refine ⟨ℓ₁ ≫ ℓ₂, inferInstance, by rw [Category.assoc, linear_str _ _ h2, linear_str _ _ h1], fun y => ?_⟩
   have last1 : Fin.last (N + 1) ∉ Set.range (Fin.castSucc : Fin (N + 1) → Fin (N + 1 + 1)) := by
     rintro ⟨i, hi⟩; exact Fin.castSucc_ne_last i hi
   have last2 : Fin.last (N + 2) ∉ Set.range (Fin.castSucc : Fin (N + 1 + 1) → Fin (N + 2 + 1)) := by

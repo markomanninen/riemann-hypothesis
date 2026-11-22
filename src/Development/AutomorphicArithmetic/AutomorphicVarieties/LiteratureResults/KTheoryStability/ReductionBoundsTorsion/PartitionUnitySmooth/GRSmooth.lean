@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Locfin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Locfin
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,14 +32,15 @@ abbrev EvenPart : Subalgebra ℂ (Big n) := Algebra.adjoin ℂ (Set.range (gen n
 
 open scoped IsMulCommutative in
 instance : CommRing (EvenPart n) :=
-  have := Algebra.isMulCommutative_adjoin ℂ (gen_comm n)
+  have := Algebra.isMulCommutative_adjoin ℂ (s := Set.range (gen n))
+    (fun u hu v hv _ => gen_comm n u hu v hv)
   inferInstance
 
 def toEven : MvPolynomial (Fin n × Fin n) ℂ →ₐ[ℂ] EvenPart n :=
   aeval fun x => ⟨gen n x, Algebra.subset_adjoin ⟨x, rfl⟩⟩
 
-open Classical in
 
+open Classical in
 def topForm (i : ℕ) : (Fin n → ℂ) [⋀^Fin i]→ₗ[ℂ] ℂ :=
   if h : i = n then (Pi.basisFun ℂ (Fin n)).det.domDomCongr (finCongr h.symm) else 0
 

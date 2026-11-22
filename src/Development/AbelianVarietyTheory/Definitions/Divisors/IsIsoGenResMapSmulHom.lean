@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsEffAddNsmulDiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsVBAndClsDetOfShortExact
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineHomFromSpecResidueField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsEffAddNsmulDiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsVBAndClsDetOfShortExact
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineHomFromSpecResidueField
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -21,46 +25,6 @@ namespace GlobalTheory.Vert
 section Dim
 
 attribute [local instance low] specializationOrder
-
-theorem dim_add_dim_le {S T W : Type*} [TopologicalSpace S] [TopologicalSpace T]
-    [TopologicalSpace W] [QuasiSober S] [T0Space S] [QuasiSober T] [T0Space T] [QuasiSober W]
-    [T0Space W] [IrreducibleSpace T] {f : S → T} (hf : IsClosedMap f) {j : W → S}
-    (hj : Continuous j) (hi : Function.Injective j) (h : ∀ w, f (j w) = genericPoint T) :
-    topologicalKrullDim W + topologicalKrullDim T ≤ topologicalKrullDim S := by
-  have key (a : S) : Order.height (f a) ≤ Order.height a := by
-    refine Order.height_le_iff'.2 fun p hp => ?_
-    induction p using RelSeries.inductionOn' generalizing a with
-    | singleton x => simp
-    | snoc p x hx ih =>
-      simp only [RelSeries.last_snoc] at hp
-      subst hp
-      have hx' : p.last < f a := hx
-      obtain ⟨a', ha, e⟩ := hf.specializingMap (show f a ⤳ p.last from hx'.le)
-      have hlt : a' < a := lt_of_le_of_ne ha fun h => hx'.ne (by rw [← e, h])
-      grw [RelSeries.snoc_length, Nat.cast_add, Nat.cast_one, ih a' e.symm]
-      exact Order.height_add_one_le hlt
-  have key' (p : LTSeries W) :
-      p.length + Order.height (genericPoint T) ≤ Order.height (j p.last) := by
-    induction p using RelSeries.inductionOn' with
-    | singleton x => simpa [h] using key (j x)
-    | snoc p x hx ih =>
-      have hx' : p.last < x := hx
-      have hlt : j p.last < j x := lt_of_le_of_ne (Specializes.map hx'.le hj) (hi.ne hx'.ne)
-      rw [RelSeries.last_snoc, RelSeries.snoc_length, Nat.cast_add, Nat.cast_one, add_right_comm]
-      exact (add_le_add_left ih 1).trans (Order.height_add_one_le hlt)
-  have hT : topologicalKrullDim T = Order.height (genericPoint T) := by
-    refine (Order.krullDim_eq_of_orderIso (irreducibleSetEquivPoints (α := T))).trans ?_
-    letI : OrderTop T := { top := genericPoint T, le_top := genericPoint_specializes }
-    exact Order.height_top_eq_krullDim.symm
-  rw [hT, show topologicalKrullDim W = Order.krullDim W from
-      Order.krullDim_eq_of_orderIso (irreducibleSetEquivPoints (α := W)),
-    show topologicalKrullDim S = Order.krullDim S from
-      Order.krullDim_eq_of_orderIso (irreducibleSetEquivPoints (α := S))]
-  rcases isEmpty_or_nonempty W with _ | _
-  · simp [Order.krullDim_eq_bot]
-  rw [Order.krullDim_eq_iSup_length, ← WithBot.coe_add, ENat.iSup_add, WithBot.coe_iSup
-    (OrderTop.bddAbove _)]
-  exact iSup_le fun p => (WithBot.coe_le_coe.2 (key' p)).trans (Order.height_le_krullDim _)
 
 end Dim
 
@@ -84,71 +48,14 @@ def genFibreι : f.genFibre ⟶ Z₁.X := f.f.fiberι _
 
 def genFibreStr : f.genFibre ⟶ Sp f.fnField := f.f.fiberToSpecResidueField _
 
-instance : Algebra f.fnField Γ(f.genFibre, ⊤) := algebraΓOfHom f.genFibreStr
-
 theorem isPullback_genFibre :
     IsPullback f.genFibreι f.genFibreStr f.f (Z.X.fromSpecResidueField (genericPoint Z.X)) :=
   .of_hasPullback _ _
-
-instance : IsProper f.genFibreStr := MorphismProperty.of_isPullback f.isPullback_genFibre f.isProper
-
-instance : IsAffineHom f.genFibreι :=
-  have : IsAffineHom (Z.X.fromSpecResidueField (genericPoint Z.X) ≫ Z.str) := inferInstance
-  have : IsAffineHom (Z.X.fromSpecResidueField (genericPoint Z.X)) := .of_comp _ Z.str
-  MorphismProperty.of_isPullback f.isPullback_genFibre.flip this
-
-theorem dim_genFibre_add_le : topologicalKrullDim f.genFibre + (Z.relDim + 1 : ℕ) ≤
-    (Z₁.relDim + 1 : ℕ) := by
-  rw [← Z.dim_eq, ← Z₁.dim_eq]
-  exact dim_add_dim_le f.f.isClosedMap f.genFibreι.continuous (f.f.fiberι _).isEmbedding.injective
-    fun w => (f.f.range_fiberι _).le ⟨w, rfl⟩
 
 instance : Nonempty f.genFibre :=
   have ⟨x, hx⟩ := f.f.surjective (genericPoint Z.X)
   ((f.f.range_fiberι _).ge hx).elim fun w _ => ⟨w⟩
 
-theorem exists_dim_genFibre :
-    ∃ n : ℕ, topologicalKrullDim f.genFibre = n ∧ n + Z.relDim ≤ Z₁.relDim := by
-  have h := f.dim_genFibre_add_le
-  have h₀ : topologicalKrullDim f.genFibre ≠ ⊥ :=
-    mt topologicalKrullDim_eq_bot_iff.1 (not_isEmpty_iff.2 inferInstance)
-  generalize topologicalKrullDim f.genFibre = a at *
-  lift a to ℕ∞ using h₀
-  have h' : a + (Z.relDim + 1 : ℕ) ≤ (Z₁.relDim + 1 : ℕ) := by exact_mod_cast h
-  lift a to ℕ using by rintro rfl; simp at h'
-  have h'' : a + (Z.relDim + 1) ≤ Z₁.relDim + 1 := by exact_mod_cast h'
-  exact ⟨a, rfl, by omega⟩
-
-include f in
-
-theorem relDim_le : Z.relDim ≤ Z₁.relDim :=
-  have ⟨_, _, h⟩ := f.exists_dim_genFibre
-  le_of_add_le_right h
-
-theorem relDim_add : Z.relDim + f.relDim = Z₁.relDim := Nat.add_sub_of_le f.relDim_le
-
-theorem dim_genFibre_le : topologicalKrullDim f.genFibre ≤ f.relDim := by
-  obtain ⟨n, e, h⟩ := f.exists_dim_genFibre
-  rw [e]
-  exact_mod_cast Nat.le_sub_of_add_le h
-
-theorem diffVanish_genFibre :
-    DiffVanish (f.relDim + 1) (chiPic f.fnField (structureModule f.genFibre)) :=
-  have ⟨_, hA⟩ := Z₁.exists_isAmpleLB
-  (hA.pull_of_isAffineHom f.genFibreι).diffVanish_chiPic_of_isProper (f := f.genFibreStr)
-    (fun _ => rfl) _ (suppDim_structureModule.trans_le f.dim_genFibre_le)
-
-def fibreDeg : PicSym Z₁.X →ₗ[ℚ] ℚ :=
-  picForm f.diffVanish_genFibre ∘ₗ (picSymPull f.genFibreι).toLinearMap
-
-theorem fibreDeg_prod {ι : Type} [Fintype ι] {L : ι → LB Z₁.X} (hL : ∀ i, (L i).IsLB) :
-    f.fibreDeg (∏ i, c1 (L i) (hL i)) = if Fintype.card ι = f.relDim then
-      (interNum f.fnField (structureModule f.genFibre) fun i => (L i).pull f.genFibreι : ℚ)
-      else 0 := by
-  have h := fun i => Semi.LB.isLB_pull (hL i) f.genFibreι
-  rw [interNum_eq_multiDiff _ _ h, ← picForm_prod f.diffVanish_genFibre, fibreDeg,
-    LinearMap.comp_apply, AlgHom.toLinearMap_apply, map_prod]
-  exact congrArg _ (Finset.prod_congr rfl fun i _ => pullback_firstChern _ (hL i) (h i))
 
 end Hom
 
@@ -183,8 +90,8 @@ namespace GenIso
 
 def ofHom (ψ : E' ⟶ E) [IsIso (Z.genRes.map ψ)] : Z.GenIso E E' := (asIso (Z.genRes.map ψ)).symm
 
-variable (E) in
 
+variable (E) in
 def smul (g : O) (hg : g ≠ 0) : Z.GenIso E E :=
   haveI := isIso_genRes_map_smulHom E hg
   ofHom (smulHom E (Z.const g))
@@ -286,34 +193,6 @@ theorem genEquiv_eqn_div (c : Chart E r) (c' : Chart E' r) {W : Z.X.Opens}
 theorem vCls_div : Z.vCls (φ.div hE hE').cls = cls _ hE.isLB_det - cls _ hE'.isLB_det :=
   (VertDiv.vCls_cls _).trans (cls_div _ _ _)
 
-theorem cls_div_trans (φ' : Z.GenIso E' E'') :
-    (div (φ ≪≫ φ') hE hE'').cls = (φ.div hE hE').cls + (φ'.div hE' hE'').cls := by
-  have := hE.isQuasicoherent
-  have := hE'.isQuasicoherent
-  have := hE''.isQuasicoherent
-  refine VertDiv.IsSum.cls_eq fun i j k => ?_
-  obtain ⟨c, c'⟩ := i
-  obtain ⟨d', d''⟩ := j
-  obtain ⟨e, e''⟩ := k
-  have h₁ : c.U ⊓ c'.U ⊓ (d'.U ⊓ d''.U) ⊓ (e.U ⊓ e''.U) ≤ c.U ⊓ c'.U := inf_le_left.trans inf_le_left
-  have h₂ : c.U ⊓ c'.U ⊓ (d'.U ⊓ d''.U) ⊓ (e.U ⊓ e''.U) ≤ d'.U ⊓ d''.U :=
-    inf_le_left.trans inf_le_right
-  have h₃ : c.U ⊓ c'.U ⊓ (d'.U ⊓ d''.U) ⊓ (e.U ⊓ e''.U) ≤ e.U ⊓ e''.U := inf_le_right
-  refine ⟨e.isFrame.detUnit c.isFrame (h₃.trans inf_le_left) (h₁.trans inf_le_left) *
-    c'.isFrame.detUnit d'.isFrame (h₁.trans inf_le_right) (h₂.trans inf_le_left) *
-    d''.isFrame.detUnit e''.isFrame (h₂.trans inf_le_right) (h₃.trans inf_le_right),
-    (genEquiv inf_le_left).injective ?_⟩
-  rw [map_mul, map_mul, genEquiv_eqn_div, genEquiv_eqn_div, genEquiv_eqn_div, genEquiv_resG]
-  simp only [Units.val_mul, map_mul, ← IsFrame.val_detUnit_pullback]
-  simp only [← Units.val_mul]
-  refine congrArg Units.val ?_
-  rw [← (c'.isFrame.pullback Z.gen.ι).detUnit_map_iso _ φ.inv,
-    ← (d''.isFrame.pullback Z.gen.ι).detUnit_map_iso _ (φ ≪≫ φ').inv, detUnit, detUnit, detUnit,
-    ← (d'.isFrame.pullback Z.gen.ι).detUnit_map_iso _ φ.inv,
-    show ∀ a b c d e : Γ(Z.gen.toScheme, _)ˣ, a * b * c * (d * e) = a * d * b * e * c from
-      fun a b c d e => by ac_rfl, IsFrame.detUnit_mul, IsFrame.detUnit_mul, IsFrame.detUnit_mul]
-  exact (IsFrame.detUnit_mul _ _ _ _ _ _).symm
-
 variable {φ} {ψ : E' ⟶ E}
 
 theorem eqn_div_of_hom (hψ : φ.inv = Z.genRes.map ψ) (c : Chart E r) (c' : Chart E' r)
@@ -332,20 +211,6 @@ theorem eqn_div_of_hom (hψ : φ.inv = Z.genRes.map ψ) (c : Chart E r) (c' : Ch
     pullback_map_app_pullbackSections, app_resM]
   congr 2
   exact (res_pullbackSections _ _ _ _ _).trans (pullbackSections_res _ _ _ _ _).symm
-
-theorem isEff_cls_div (hψ : φ.inv = Z.genRes.map ψ) : IsEff (φ.div hE hE').cls := by
-  let s : (φ.div hE hE').M.Sec :=
-    ⟨fun p : Chart E r × Chart E' r => (p.1.isFrame.basis (inf_le_left : p.1.U ⊓ p.2.U ≤ _)).det
-      fun i => ψ.app _ (resM E' inf_le_right (p.2.e i)), fun p q =>
-      Z.resG_injective inf_le_right le_rfl <| by
-        change resG _ _ (resG _ _ _) = resG _ _ (_ * resG _ _ _)
-        rw [map_mul, resG_resG, resG_resG]
-        exact (eqn_div_of_hom hE hE' hψ p.1 p.2 (inf_le_inf_left _ inf_le_left) le_rfl).symm.trans
-          (((φ.div hE hE').eqn_rel p q _ _ _).trans (congrArg _
-            (eqn_div_of_hom hE hE' hψ q.1 q.2 (inf_le_inf_left _ inf_le_right) le_rfl)))⟩
-  have h : (φ.div hE hE').Extends 1 s := VertDiv.extends_one (LB.sec_ext fun p =>
-    (eqn_div_of_hom hE hE' hψ p.1 p.2 le_rfl le_rfl).symm.trans (resG_self _ _))
-  exact ⟨_, h.cls_eq_ofEff.symm⟩
 
 theorem cls_div_of_smul {φ : Z.GenIso E E} {g : O} (hg : g ≠ 0)
     (hφ : φ.inv = Z.genRes.map (smulHom E (Z.const g))) :
@@ -394,8 +259,8 @@ instance mono_ι (i : Fin (N + 1)) : Mono (fl.ι i) := (fl.isSubbundle i).mono
 
 instance mono_step (i : Fin N) : Mono (fl.step i) := mono_of_mono_fac (fl.step_ι i)
 
-include fl in
 
+include fl in
 theorem isVB_self : IsVB E N := (fl.isVB (Fin.last N)).of_iso (asIso (fl.ι _))
 
 def gr (i : Fin N) : X.Modules := cokernel (fl.step i)
@@ -422,28 +287,6 @@ def root (i : Fin N) : LB X := det (fl.gr i) 1
 
 theorem isLB_root (i : Fin N) : (fl.root i).IsLB := (fl.isVB_gr i).isLB_det
 
-theorem cls_det : cls _ fl.isVB_self.isLB_det = ∑ i, cls _ (fl.isLB_root i) := by
-  have key (i : Fin (N + 1)) : cls _ (fl.isVB i).isLB_det =
-      ∑ j : Fin N, if (j : ℕ) < i then cls _ (fl.isLB_root j) else 0 := by
-    induction i using Fin.induction with
-    | zero =>
-      have := VB.isVB_zero_iff.1 (fl.isVB 0)
-      exact (((VB.isFrame_freeFrame X (Fin 0)).map_iso ((VB.isVB_zero_iff.1
-        (VB.isVB_freeModule_fin X 0)).iso this).hom).cls_det_eq_zero _).trans (by simp)
-    | succ i ih =>
-      obtain ⟨h, e⟩ := VBExt.isVB_and_cls_det_of_shortExact X (.mk (fl.step i) (cokernel.π _)
-        (cokernel.condition _)) _ _ { exact := ShortComplex.exact_cokernel _ } (fl.isVB _)
-        (fl.isVB_gr i)
-      refine e.trans ((congrArg (· + _) ih).trans ?_)
-      refine (congrArg _ (Finset.sum_ite_eq_of_mem' Finset.univ i
-        (fun j => cls _ (fl.isLB_root j)) (Finset.mem_univ i)).symm).trans ?_
-      rw [← Finset.sum_add_distrib]
-      refine Finset.sum_congr rfl fun j _ => ?_
-      simp only [Fin.val_castSucc, Fin.val_succ, Fin.ext_iff]
-      split_ifs <;> first | omega | simp
-  exact ((cls_eq_iff (fl.isVB (Fin.last N)).isLB_det _).2
-    ((fl.isVB _).lbIso_det_of_iso (asIso (fl.ι _)))).symm.trans ((key _).trans (by simp))
-
 def ofIso {E' : X.Modules} (e : E ≅ E') : Flag E' N where
   F := fl.F
   ι i := fl.ι i ≫ e.hom
@@ -453,8 +296,8 @@ def ofIso {E' : X.Modules} (e : E ≅ E') : Flag E' N where
   step_ι i := fl.step_ι_assoc i _
   isIso_last := inferInstance
 
-open ZeroObject in
 
+open ZeroObject in
 def ofRankOne {L : X.Modules} (h : IsVB L 1) : Flag L 1 where
   F := ![0, L]
   ι := Fin.cons 0 (Fin.cons (𝟙 L) finZeroElim)
@@ -465,10 +308,8 @@ def ofRankOne {L : X.Modules} (h : IsVB L 1) : Flag L 1 where
   step_ι := Fin.cons zero_comp finZeroElim
   isIso_last := IsIso.id L
 
-def grOfRankOne {L : X.Modules} (h : IsVB L 1) : (ofRankOne h).gr 0 ≅ L := cokernelZeroIsoTarget
 
 open ZeroObject in
-
 def ofBiprod {L M : X.Modules} (hL : IsVB L 1) (hM : IsVB M 1) : Flag (L ⊞ M) 2 where
   F := ![0, L, L ⊞ M]
   ι := Fin.cons 0 (Fin.cons biprod.inl (Fin.cons (𝟙 _) finZeroElim))
@@ -509,10 +350,6 @@ instance mono_genRes_map_ι (fl : Flag E N) (i : Fin (N + 1)) : Mono (Z.genRes.m
 namespace FlagPair
 
 variable {φ : Z.GenIso E E'} (P : FlagPair φ N)
-
-theorem gen_unique (i : Fin (N + 1)) (ψ : Z.GenIso (P.fl.F i) (P.fl'.F i))
-    (h : ψ.hom ≫ Z.genRes.map (P.fl'.ι i) = Z.genRes.map (P.fl.ι i) ≫ φ.hom) : ψ = P.gen i :=
-  Iso.ext ((cancel_mono _).1 (h.trans (P.gen_ι i).symm))
 
 theorem gen_step (i : Fin N) : Z.genRes.map (P.fl.step i) ≫ (P.gen i.succ).hom =
     (P.gen i.castSucc).hom ≫ Z.genRes.map (P.fl'.step i) := by

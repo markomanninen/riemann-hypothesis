@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,10 +18,10 @@ theorem hkSum : HkSum := by
   unfold heckeVec
   rw [finsum_eq_sum_of_support_subset _ (s := Finset.univ.image (fun i : SatakeIdx w hϖ (n := n) j =>
       ((satakeB w hϖ hu i : GL (Fin n) (w.adicCompletion E)) :
-        GL (Fin n) (w.adicCompletion E) ⧸ KGL w n))) ?_]
+        GL (Fin n) (w.adicCompletion E) ⧸ KGL w (n := n)))) ?_]
   · rw [Finset.sum_image (fun i _ i' _ h => satakeB_inj w hϖ hu h)]
     refine Finset.sum_congr rfl fun i _ => ?_
-    obtain ⟨k, hk⟩ := QuotientGroup.mk_out_eq_mul (KGL w n) (satakeB w hϖ hu i)
+    obtain ⟨k, hk⟩ := QuotientGroup.mk_out_eq_mul (KGL w (n := n)) (satakeB w hϖ hu i)
     have hfix : ρ (k : GL (Fin n) (w.adicCompletion E)) x = x := GlobalTheory.LGrp.mem_fixed.1 hx _ k.2
     rw [hk, satake_Tj_eq, Set.indicator_of_mem (satake_Tset_right w (satakeB_mem w hϖ hu i) k.2),
       Pi.one_apply, one_smul, map_mul, Module.End.mul_apply, hfix]

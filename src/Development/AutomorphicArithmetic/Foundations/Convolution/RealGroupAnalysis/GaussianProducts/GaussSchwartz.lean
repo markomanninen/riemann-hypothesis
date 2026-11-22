@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.ExistsRowSec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.RationalGL2InfiniteFiniteFactor
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.ExistsRowSec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.RationalGL2InfiniteFiniteFactor
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -78,7 +82,7 @@ private theorem gauss_schwartz {F : Type} [Field F] [NumberField F] [IsTotallyRe
       rw [coord_infPart, mul_pow, Real.sq_sqrt (ha _).le]
     have hd : TR.pInf F (rt δ) w = InfinitePlace.embedding_of_isReal (IsTotallyReal.isReal w) δ :=
       congrFun (GlobalTheory.HilbertThetaSeries.RatPts.pInf_algebraMap F δ) w
-    simp only [Fin.sum_univ_four, h, map_add, map_mul, map_pow, map_sub, Pi.add_apply, Pi.mul_apply, Pi.pow_apply, Pi.sub_apply, map_ofNat, Pi.ofNat_apply, hd]
+    simp only [Fin.sum_univ_four, h, map_add (f := _), map_mul, map_pow, map_sub, Pi.add_apply, Pi.mul_apply, Pi.pow_apply, Pi.sub_apply, map_ofNat, Pi.ofNat_apply, hd]
     simp [a]
     ring
   simp only [SchwartzMap.compCLMOfContinuousLinearEquiv_apply, Function.comp_apply, gaussianSchwartz_apply, hn]
@@ -91,11 +95,12 @@ private theorem gauss_schwartz {F : Type} [Field F] [NumberField F] [IsTotallyRe
 
 theorem UpperTheory.ConvolutionTheory.R2.G.pgMem :
     ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (δ : F), (∀ e : F →+* ℝ, e δ < 0) → ∀ t : ℝ, 0 < t → ∀ p ∈ polyFn (F := F), ∀ g ∈ finiteSchwartzBruhatPi F (ι := Fin 4),
-    (fun v => p v * Complex.exp (-(t : ℂ) * (qInf δ v : ℝ)) * g (finPartPi v)) ∈ schwartzBruhatPi F (Fin 4) := by
+    (fun v => p v * Complex.exp (-(t : ℂ) * (qInf δ v : ℝ)) * g (finPartPi v)) ∈ schwartzBruhatPi (K := F) (ι := Fin 4) := by
   intro F _ _ _ δ hδ t ht p hp g hg
   obtain ⟨f, hf, hfp⟩ := poly_temperate hp
   obtain ⟨s, hs⟩ := gauss_schwartz δ hδ ht
   have h := schwartzBruhatTensorPi_mem (SchwartzMap.smulLeftCLM ℂ f s) hg
   convert h using 1
-  funext X
-  simp only [schwartzBruhatTensorPi, SchwartzMap.smulLeftCLM_apply_apply hf, hfp, hs, smul_eq_mul]
+  funext v
+  simp only [schwartzBruhatTensorPi, SchwartzMap.smulLeftCLM_apply_apply hf, smul_eq_mul]
+  rw [hfp v, hs v]

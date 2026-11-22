@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -38,8 +42,8 @@ def periods (la : Wt X.Ψ r) : AddSubgroup (X.Ψ → ℝ) :=
   AddSubgroup.closure {p | ∃ a : E, cc a = a ∧ IsIntegral ℤ a ∧
     p = fun τ => ((X.m * X.chiOrd la : ℕ) : ℝ) * (τ.1 a).re}
 
-open Classical in
 
+open Classical in
 def fj (la : Wt X.Ψ r) (ξ : Fin r → E) (ν : X.Ψ → ℝ) (P : Frame X.Ψ r → ℂ) (x : Frame X.Ψ r) : ℂ :=
   if (∀ p ∈ X.periods la, ∃ k : ℤ, 2 * ∑ τ, ν τ * p τ = k) then
   if h : ∃ D : Set (X.Ψ → ℝ), MeasurableSet D ∧ IsAddFundamentalDomain (X.periods la) D volume ∧
@@ -80,13 +84,6 @@ def FourierJacobiExpansion : Prop :=
     ∀ ξ, X.IsIso ξ → ∀ x ∈ X.dom, ∀ s : X.Ψ → ℂ, X.flow ξ s x ∈ X.dom →
       HasSum (fun ν : X.Ψ → ℝ => X.fj la ξ ν P x * cexp (4 * Real.pi * I * ∑ τ, (ν τ : ℂ) * s τ))
         (P (X.flow ξ s x))
-
-def FlowMinimumLowerBound : Prop :=
-  ∀ (r : ℕ) (X : Data E r) (B : ℝ), 0 ≤ B → ∃ C : ℝ, 0 < C ∧
-    ∀ ξ : Fin r → E, X.IsIso ξ → ∀ x ∈ X.dom, (∀ τ, X.c τ * X.maj x τ (Data.emb τ.1 ξ) ≤ 1) → ∀ s : X.Ψ → ℂ,
-      (∀ τ, |(s τ).re| ≤ B) → X.flow ξ s x ∈ X.dom → ∀ μ : ℝ, 0 ≤ μ →
-      (∀ τ, μ ≤ min (1 + (s τ).im / X.tt ξ x τ) (1 + (s τ).im / X.tt ξ x τ)⁻¹) →
-      C⁻¹ * X.la1 x * Real.sqrt μ ≤ X.la1 (X.flow ξ s x)
 
 def ModerateCoefficientPositivity : Prop :=
   ∀ (r : ℕ) (X : Data E r) (la : Wt X.Ψ r) (P : Frame X.Ψ r → ℂ) (C A : ℝ), X.IsSec la P →

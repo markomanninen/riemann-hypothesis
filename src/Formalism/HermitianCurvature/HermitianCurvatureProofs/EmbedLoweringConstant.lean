@@ -1,19 +1,17 @@
-import Formalism.HermitianCurvature.StatementFr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferMatrixFactorization
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDeterminantFromEntries
+module
+
+public import Formalism.HermitianCurvature.StatementFr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferMatrixFactorization
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDeterminantFromEntries
+
+@[expose] public section
 
 open Matrix Formalism.YangianSpanCharacter.T Formalism.YangianSpanCharacter.Y Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr
 
 namespace Formalism.FourierDecayAlt.P.Fr6
 
 set_option linter.unusedSimpArgs false
-
-local macro "noncomm_match_scalars" : tactic => `(tactic|
-  ((try simp only [mul_assoc, mul_add, add_mul, mul_sub, sub_mul, smul_mul_assoc,
-      mul_smul_comm, neg_mul, mul_neg, mul_one, one_mul, smul_add, smul_sub, smul_neg, smul_smul, mul_zero, zero_mul,
-      add_zero, zero_add, smul_zero, sub_zero, zero_sub, neg_neg, neg_zero, Algebra.algebraMap_eq_smul_one]);
-   (match_scalars <;> first | ring1 | (field_simp; ring1) | field_simp)))
 
 section Gen
 variable {B : Type} [Ring B] [Algebra ℂ B]
@@ -45,10 +43,22 @@ theorem tau_mat (D : ℂ) (hD1 : D - 1 ≠ 0) (zi zbi G la F τ s T : B)
         ((!![zi, 0; 0, zbi] * !![1, 0; G * la, G]) * !![F, 0; 0, F])) := by
   simp only [Matrix.mul_fin_two, Matrix.smul_of, Matrix.smul_cons, Matrix.smul_empty]
   refine matrix2_congr ?_ ?_ ?_ ?_
-  · linear_combination (norm := noncomm_match_scalars) ((D - 1)⁻¹ * D) • (zi * hτ) - ((D - 1)⁻¹ * D) • (hTzi * F)
+  · linear_combination (norm := (
+      simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      match_scalars <;> first | ring1 | (field_simp [hD1] <;> ring)))
+      ((D - 1)⁻¹ * D) • (zi * hτ) - ((D - 1)⁻¹ * D) • (hTzi * F)
   · simp
-  · linear_combination (norm := noncomm_match_scalars) ((D - 1)⁻¹ * D) • (zbi * G * la * hτ) - (hTw * la * F) - (D - 1)⁻¹ • (zbi * G * hcore)
-  · linear_combination (norm := noncomm_match_scalars) (zbi * G * hτ) - (hTw * F)
+  · linear_combination (norm := (
+      simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      match_scalars <;> first | ring1 | (field_simp [hD1] <;> ring)))
+      ((D - 1)⁻¹ * D) • (zbi * G * la * hτ) - (hTw * la * F) - (D - 1)⁻¹ • (zbi * G * hcore)
+  · linear_combination (norm := (
+      simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      match_scalars <;> first | ring1 | (field_simp [hD1] <;> ring)))
+      (zbi * G * hτ) - (hTw * F)
 
 end Gen
 
@@ -74,13 +84,17 @@ theorem rel1 {D : ℂ} (hD : D ≠ 0) (T m m' η : B) (hm : m' = m + D • η)
     (r1 : D • (T * m - m * T) = T * m - T * m') : m * T = T * (m + η) := by
   subst hm
   apply smul_cancel hD
-  linear_combination (norm := noncomm_match_scalars) -r1
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    module))
+    -r1
 
 theorem rel3 (T Ti Ta Tai l la η : B) (c1 : la * T = T * (la + η)) (c2 : l * Ta = Ta * (l + η))
     (r3 : T * l * (Ta * la) = Ta * la * (T * l)) (hc : T * Ta = Ta * T) (hTi : Ti * T = 1) (hTai : Tai * Ta = 1) :
     (l + η) * la = (la + η) * l := by
   have e : T * Ta * ((l + η) * la) = T * Ta * ((la + η) * l) := by
-    linear_combination (norm := noncomm_match_scalars) r3 - T * c2 * la + Ta * c1 * l - hc * ((la + η) * l)
+    linear_combination (norm := noncomm_ring) r3 - T * c2 * la + Ta * c1 * l - hc * ((la + η) * l)
   rw [mul_assoc, mul_assoc] at e
   exact lcancel hTai (lcancel hTi e)
 
@@ -90,7 +104,7 @@ theorem conj_abs (G Gi xa xai κ κi l0 β e dd : B)
     (hlx : l0 * xa = xa * l0) (hβx : β * xa = xa * β) (hκx : κ * xa = xa * κ) (hκi : κi * κ = 1)
     (hxi : xai * xa = 1) : xai * e * xa = e + dd := by
   have e1 : G * (κ * (e * xa)) = G * (κ * (xa * (e + dd))) := by
-    linear_combination (norm := noncomm_match_scalars) c2 - hlG * xa - κ * heG * xa - hκG * e * xa - G * hlx + G * hβx
+    linear_combination (norm := noncomm_ring) c2 - hlG * xa - κ * heG * xa - hκG * e * xa - G * hlx + G * hβx
       - G * hκx * (e + dd)
   have e2 := lcancel hκi (lcancel hGi e1)
   rw [mul_assoc, e2, ← mul_assoc, hxi, one_mul]
@@ -107,7 +121,11 @@ theorem entA (D : ℂ) (hD : D ≠ 0) (hD1 : D - 1 ≠ 0) (zi w β κ lam l0 ea 
     (hκw : κ * w = zi) (hz : zi + κ * t = β) :
     (D / (D - 1)) • ((l0 + κ * (e - dd + t)) * zi + κ * (-(D⁻¹ • 1)) * (w * la)) = zi * l := by
   subst hl hla he hl0
-  linear_combination (norm := noncomm_match_scalars) (D / (D - 1)) • (hlzi - D • hβzi + κ * heazi + hκzi * ea
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    match_scalars <;> first | ring1 | (field_simp [hD, hD1] <;> ring)))
+    (D / (D - 1)) • (hlzi - D • hβzi + κ * heazi + hκzi * ea
     + (D - 1) • (κ * hddzi + hκzi * dd) + κ * htzi + hκzi * t - D⁻¹ • (hκw * lam + hκw * κ * ea) + zi * hz)
 
 theorem entE (D : ℂ) (w β κ lam l0 ea e dd xa xai l η : B)
@@ -118,19 +136,27 @@ theorem entE (D : ℂ) (w β κ lam l0 ea e dd xa xai l η : B)
     (l0 + κ * (xai * e * xa)) * w = w * (l + η) := by
   rw [hconj]
   subst hl hη he hl0
-  linear_combination (norm := noncomm_match_scalars) hlw - D • hβw + κ * heaw + hκw' * ea + (D + 1) • (κ * hddw + hκw' * dd)
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    module))
+    hlw - D • hβw + κ * heaw + hκw' * ea + (D + 1) • (κ * hddw + hκw' * dd)
 
 theorem entC (D : ℂ) (hD1 : D - 1 ≠ 0) (w la l η T liftZP_unit : B) (hlη : l = la + D • η)
     (c1 : la * T = T * (la + η)) (hTw : T * w = w * T) (hE : liftZP_unit * w = w * (l + η)) :
     (D - 1)⁻¹ • (-(w * la * T) + D • (w * T * l)) = T * (liftZP_unit * w) := by
   subst hlη
-  linear_combination (norm := noncomm_match_scalars) -(D - 1)⁻¹ • (w * c1) - T * hE - hTw * (la + D • η + η)
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    match_scalars <;> first | ring1 | (field_simp [hD1] <;> ring)))
+    -(D - 1)⁻¹ • (w * c1) - T * hE - hTw * (la + D • η + η)
 
 theorem entD (w la l η T liftZP_unit : B)
     (c1 : la * T = T * (la + η)) (c3 : (l + η) * la = (la + η) * l) (hTw : T * w = w * T)
     (hE : liftZP_unit * w = w * (l + η)) :
     w * la * T * l = T * (liftZP_unit * (w * la)) := by
-  linear_combination (norm := noncomm_match_scalars) w * c1 * l - T * hE * la - hTw * (l + η) * la - w * T * c3
+  linear_combination (norm := noncomm_ring) w * c1 * l - T * hE * la - hTw * (l + η) * la - w * T * c3
 
 theorem L_mat (D : ℂ) (hD : D ≠ 0) (hD1 : D - 1 ≠ 0)
     (zi zbi G β κ lam l0 ea e dd t xa xai la l η F τ s T : B)
@@ -152,17 +178,35 @@ theorem L_mat (D : ℂ) (hD : D ≠ 0) (hD1 : D - 1 ≠ 0)
         ((!![zi, 0; 0, zbi] * !![1, 0; G * la, G]) * !![F, 0; 0, F]))) := by
   have hlη : l = la + D • η := by
     subst hl hla hη he hl0
-    noncomm_match_scalars
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      module
   have hA := entA D hD hD1 zi (zbi * G) β κ lam l0 ea e dd t la l hl0 he hla hl hlzi hβzi hκzi heazi hddzi htzi hκw hz
   have hE := entE D (zbi * G) β κ lam l0 ea e dd xa xai l η hl0 he hl hη hconj hlw hβw hκw' heaw hddw
   have hC := entC D hD1 (zbi * G) la l η T _ hlη c1 hTw hE
   have hDD := entD (zbi * G) la l η T _ c1 c3 hTw hE
   simp only [Matrix.mul_fin_two, Matrix.smul_of, Matrix.smul_cons, Matrix.smul_empty]
   refine matrix2_congr ?_ ?_ ?_ ?_
-  · linear_combination (norm := noncomm_match_scalars) zi * hs - T * hA * F - hTzi * l * F
-  · linear_combination (norm := noncomm_match_scalars) -(D - 1)⁻¹ • (zi * hτ) + (D - 1)⁻¹ • (T * hκw * F) + (D - 1)⁻¹ • (hTzi * F)
-  · linear_combination (norm := noncomm_match_scalars) zbi * G * la * hs + hDD * F
-  · linear_combination (norm := noncomm_match_scalars) -(D - 1)⁻¹ • (zbi * G * la * hτ) + ((D - 1)⁻¹ * D) • (zbi * G * hs) + hC * F
+  · linear_combination (norm := (
+      simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      match_scalars <;> first | ring1 | (field_simp [hD, hD1] <;> ring)))
+      zi * hs - T * hA * F - hTzi * l * F
+  · linear_combination (norm := (
+      simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      match_scalars <;> first | ring1 | (field_simp [hD, hD1] <;> ring)))
+      -(D - 1)⁻¹ • (zi * hτ) + (D - 1)⁻¹ • (T * hκw * F) + (D - 1)⁻¹ • (hTzi * F)
+  · linear_combination (norm := (
+      simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      match_scalars <;> first | ring1 | (field_simp [hD, hD1] <;> ring)))
+      zbi * G * la * hs + hDD * F
+  · linear_combination (norm := (
+      simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      match_scalars <;> first | ring1 | (field_simp [hD, hD1] <;> ring)))
+      -(D - 1)⁻¹ • (zbi * G * la * hτ) + ((D - 1)⁻¹ * D) • (zbi * G * hs) + hC * F
 
 end Gen3
 
@@ -171,7 +215,7 @@ variable {B : Type} [Ring B] [Algebra ℂ B]
 
 theorem commute_of_conj_alt (F Fi s sa U Ua : B) (hF : F * Fi = 1) (hs : F * s = U * F) (hsa : F * sa = Ua * F)
     (hc : s * sa = sa * s) : U * Ua = Ua * U := by
-  linear_combination (norm := noncomm_match_scalars) F * hc * Fi - hs * sa * Fi - U * hsa * Fi - U * Ua * hF + hsa * s * Fi
+  linear_combination (norm := noncomm_ring) F * hc * Fi - hs * sa * Fi - U * hsa * Fi - U * Ua * hF + hsa * s * Fi
     + Ua * hs * Fi + Ua * U * hF
 
 end Gen4
@@ -207,9 +251,6 @@ theorem freeOf2_mul_of_free {a : S} {M N : M2 (SlopeTestRemainingChoices S A)} (
   rw [Matrix.mul_apply, Fin.sum_univ_two]
   exact fr_add (fr_mul (hM _ _) (hN _ _)) (fr_mul (hM _ _) (hN _ _))
 
-theorem ins_add (a : S) (M N : M2 (SlopeTestRemainingChoices S A)) : ins a (M + N) = ins a M + ins a N := by
-  simp [ins, mul_add, Finset.sum_add_distrib]
-
 theorem ins_smul (a : S) (c : ℂ) (M : M2 (SlopeTestRemainingChoices S A)) : ins a (c • M) = c • ins a M := by
   simp [ins, Finset.smul_sum]
 
@@ -226,7 +267,11 @@ theorem tau_after_rmatrix (a : S) (M : M2 (SlopeTestRemainingChoices S A)) (hM :
   simp only [Rh0, Matrix.mul_smul, Matrix.smul_apply, Matrix.mul_sub, Matrix.sub_apply, Matrix.mul_apply,
     Fin.sum_univ_two, P0, Matrix.of_apply, ins, Matrix.one_apply]
   simp
-  linear_combination (norm := noncomm_match_scalars) (D - 1)⁻¹ • (c0 + c1 - D • (h1 * M 1 1))
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    module))
+    (D - 1)⁻¹ • (c0 + c1 - D • (h1 * M 1 1))
 
 theorem t21_after_rmatrix (a : S) (M : M2 (SlopeTestRemainingChoices S A)) (hM : FreeOf2 a M) (D : ℂ) :
     (M * Rh0 a D : M2 (SlopeTestRemainingChoices S A)) 1 0 = ins a ((D - 1)⁻¹ • !![(D - 1) • M 1 0, -M 1 1; 0, D • M 1 0]) := by
@@ -238,7 +283,11 @@ theorem t21_after_rmatrix (a : S) (M : M2 (SlopeTestRemainingChoices S A)) (hM :
   simp only [Rh0, Matrix.mul_smul, Matrix.smul_apply, Matrix.mul_sub, Matrix.sub_apply, Matrix.mul_apply,
     Fin.sum_univ_two, P0, Matrix.of_apply, ins, Matrix.one_apply]
   simp
-  linear_combination (norm := noncomm_match_scalars) (D - 1)⁻¹ • (c0 + c1 - D • (h1 * M 1 0))
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    module))
+    (D - 1)⁻¹ • (c0 + c1 - D • (h1 * M 1 0))
 
 end Slot
 
@@ -254,7 +303,7 @@ theorem ins_affine (a : S) (p κ errorNonneg bivariateExponentMonomial E11 : Slo
   have c11 := (hκ 1 1).eq
   simp only [ins, Fin.sum_univ_two]
   simp
-  linear_combination (norm := noncomm_match_scalars) -(h1 * p) - c00 * errorNonneg - c01 * bivariateExponentMonomial - c11 * E11
+  linear_combination (norm := noncomm_ring) -(h1 * p) - c00 * errorNonneg - c01 * bivariateExponentMonomial - c11 * E11
 
 end Position2
 
@@ -263,54 +312,71 @@ variable {A : Type} [Ring A] [Algebra ℂ A] {r : ℕ} (L : LevelData A r)
 
 theorem zeta_GG_mul_inv : L.ζb * L.GGi * (L.ζbi * L.GG) = 1 := by
   have h := L.fns_comm L.GGi (by simp) L.ζbi (by simp)
-  linear_combination (norm := noncomm_match_scalars) L.ζb * h * L.GG + L.ζb_ζbi * L.GGi * L.GG + L.GGi_GG
+  linear_combination (norm := noncomm_ring) L.ζb * h * L.GG + L.ζb_ζbi * L.GGi * L.GG + L.GGi_GG
 
 theorem GG_zeta_mul_inv : L.ζbi * L.GG * (L.ζb * L.GGi) = 1 := by
   have h := L.fns_comm L.GG (by simp) L.ζb (by simp)
-  linear_combination (norm := noncomm_match_scalars) L.ζbi * h * L.GGi + L.ζbi_ζb * L.GG * L.GGi + L.GG_GGi
+  linear_combination (norm := noncomm_ring) L.ζbi * h * L.GGi + L.ζbi_ζb * L.GG * L.GGi + L.GG_GGi
 
 theorem a_κw : L.ζb * L.ζi * L.GGi * (L.ζbi * L.GG) = L.ζi := by
   have h1 := L.fns_comm L.GGi (by simp) L.ζbi (by simp)
   have h2 := L.fns_comm L.ζi (by simp) L.ζbi (by simp)
-  linear_combination (norm := noncomm_match_scalars) L.ζb * L.ζi * h1 * L.GG + L.ζb * L.ζi * L.ζbi * L.GGi_GG + L.ζb * h2
+  linear_combination (norm := noncomm_ring) L.ζb * L.ζi * h1 * L.GG + L.ζb * L.ζi * L.ζbi * L.GGi_GG + L.ζb * h2
     + L.ζb_ζbi * L.ζi
 
 theorem a_κi : L.ζ * L.ζbi * L.GG * (L.ζb * L.ζi * L.GGi) = 1 := by
   have h1 := L.fns_comm L.GG (by simp) L.ζb (by simp)
   have h2 := L.fns_comm L.GG (by simp) L.ζi (by simp)
-  linear_combination (norm := noncomm_match_scalars) L.ζ * L.ζbi * h1 * L.ζi * L.GGi + L.ζ * L.ζbi_ζb * L.GG * L.ζi * L.GGi
+  linear_combination (norm := noncomm_ring) L.ζ * L.ζbi * h1 * L.ζi * L.GGi + L.ζ * L.ζbi_ζb * L.GG * L.ζi * L.GGi
     + L.ζ * h2 * L.GGi + L.ζ_ζi * L.GG * L.GGi + L.GG_GGi
 
 theorem zeta_GG_identity : L.ζi + L.ζb * L.ζi * L.GGi * (L.TT • L.ζbi) = L.ζb * L.GGi := by
   have h1 := L.fns_comm L.GGi (by simp) L.ζbi (by simp)
   have h2 := L.fns_comm L.ζi (by simp) L.ζbi (by simp)
-  linear_combination (norm := noncomm_match_scalars) L.TT • (L.ζb * L.ζi * h1 + L.ζb * h2 * L.GGi + L.ζb_ζbi * L.ζi * L.GGi)
+  linear_combination (norm := (
+    simp only [Algebra.algebraMap_eq_smul_one, mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul,
+      smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    module))
+    L.TT • (L.ζb * L.ζi * h1 + L.ζb * h2 * L.GGi + L.ζb_ζbi * L.ζi * L.GGi)
     - L.ζi * L.GG_GGi + L.ζi * L.GG_def * L.GGi + L.ζi_ζ * L.ζb * L.GGi
 
 theorem a_l0zi (Y : ℂ) : L.l0 Y * L.ζi = L.ζi * L.l0 Y + L.ζi * L.ζi := by
   have h1 := L.fns_comm L.GGi (by simp) L.ζi (by simp)
   have h2 := L.fns_comm L.ζb (by simp) L.ζi (by simp)
-  unfold LevelData.l0
-  linear_combination (norm := noncomm_match_scalars) -L.nab_ζi - (Y + 1 / 2) • (L.ζb * h1 + h2 * L.GGi)
+  simp only [LevelData.l0, ← Algebra.smul_def]
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    module))
+    -L.nab_ζi - (Y + 1 / 2) • (L.ζb * h1 + h2 * L.GGi)
 
 theorem l0_conj_zeta_GG (Y : ℂ) : L.l0 Y * (L.ζbi * L.GG) = L.ζbi * L.GG * (L.l0 Y - L.ζb * L.GGi) := by
   have u1 := zeta_GG_mul_inv L
   have u2 := GG_zeta_mul_inv L
-  unfold LevelData.l0
-  linear_combination (norm := noncomm_match_scalars) -L.nab_ζbi * L.GG - L.ζbi * L.nab_GG - (Y + 1 / 2) • (u1 - u2) + u2 - L.ζbi_ζb
+  simp only [LevelData.l0, ← Algebra.smul_def]
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    module))
+    -L.nab_ζbi * L.GG - L.ζbi * L.nab_GG - (Y + 1 / 2) • (u1 - u2) + u2 - L.ζbi_ζb
 
 theorem a_l0G (Y : ℂ) : L.l0 Y * L.GG = L.GG * (L.l0 Y - L.ζb * L.GGi) := by
   have h := L.fns_comm L.GG (by simp) L.ζb (by simp)
   have u3 : L.GG * L.ζb * L.GGi = L.ζb := by
-    linear_combination (norm := noncomm_match_scalars) h * L.GGi + L.ζb * L.GG_GGi
+    linear_combination (norm := noncomm_ring) h * L.GGi + L.ζb * L.GG_GGi
   have u4 : L.ζb * L.GGi * L.GG = L.ζb := by
-    linear_combination (norm := noncomm_match_scalars) L.ζb * L.GGi_GG
-  unfold LevelData.l0
-  linear_combination (norm := noncomm_match_scalars) -L.nab_GG - (Y + 1 / 2) • (u4 - u3) + u3
+    linear_combination (norm := noncomm_ring) L.ζb * L.GGi_GG
+  simp only [LevelData.l0, ← Algebra.smul_def]
+  linear_combination (norm := (
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+      smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+    module))
+    -L.nab_GG - (Y + 1 / 2) • (u4 - u3) + u3
 
 theorem l0_linear_in_Y (Y Ya : ℂ) : L.l0 Y = L.l0 Ya - (Y - Ya) • (L.ζb * L.GGi) := by
-  unfold LevelData.l0
-  noncomm_match_scalars
+  simp only [LevelData.l0, ← Algebra.smul_def]
+  module
 
 end Level
 
@@ -323,7 +389,6 @@ theorem fn_comm (L : LevelData A r) {g h : A} (hg : g ∈ zfns L) (hh : h ∈ zf
     (io g : SlopeTestRemainingChoices S A) * io h = io h * io g := by
   rw [← io_mul, ← io_mul, L.fns_comm g (Or.inr hg) h (Or.inr hh)]
 
-theorem mζ (L : LevelData A r) : L.ζ ∈ zfns L := by simp [zfns]
 theorem mζi (L : LevelData A r) : L.ζi ∈ zfns L := by simp [zfns]
 theorem mζb (L : LevelData A r) : L.ζb ∈ zfns L := by simp [zfns]
 theorem mζbi (L : LevelData A r) : L.ζbi ∈ zfns L := by simp [zfns]
@@ -339,7 +404,7 @@ theorem frame_x_commute {L : LevelData A r} {f : FrameData S A} (hf : IsFrame L 
   have h1 := (hf.x_fn Y _ (mG L)).eq
   have h2 := (hf.x_fn Y' _ (mG L)).eq
   have h3 := (hf.x_commute Y Y').eq
-  linear_combination (norm := noncomm_match_scalars) io L.GG * h1 * f.x Y' - io L.GG * h2 * f.x Y + io L.GG * io L.GG * h3
+  linear_combination (norm := noncomm_ring) io L.GG * h1 * f.x Y' - io L.GG * h2 * f.x Y + io L.GG * io L.GG * h3
 
 theorem frame_x_inv_mul_x {L : LevelData A r} {f : FrameData S A} (hf : IsFrame L f) {Y : ℂ} (hY : Y ∈ f.inv) :
     f.xi Y * io L.GGi * (io L.GG * f.x Y) = 1 := by
@@ -446,10 +511,12 @@ theorem plusL : PlusL := by
   have hlη : f.l L Y = f.l L Ya + (Y - Ya) • (-io (L.ζb * L.GGi) + kapL L * f.DD Y Ya) := by
     unfold FrameData.l
     rw [hl0, he]
-    noncomm_match_scalars
+    simp only [mul_add, add_mul, mul_sub, sub_mul, mul_neg, neg_mul, smul_add, smul_sub,
+        smul_mul_assoc, mul_smul_comm, mul_assoc, one_mul, mul_one, zero_mul, mul_zero, smul_zero];
+      module
   have hlη' : f.l L Ya = f.l L Y + (Ya - Y) • (-io (L.ζb * L.GGi) + kapL L * f.DD Y Ya) := by
     rw [hlη]
-    noncomm_match_scalars
+    module
   have hdd_fn : ∀ g ∈ zfns L, Commute (f.DD Y Ya) (io g) := fun g hg =>
     ((hf.ee_fn Y g hg).sub_left (hf.ee_fn Ya g hg)).smul_left _
 

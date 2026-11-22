@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThetaLawsUnitPeriod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThetaLawsUnitPeriod
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.MomOne GlobalTheory.MomN
 open scoped ComplexConjugate BigOperators Topology

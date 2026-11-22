@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkFilLevEq
-import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkFilLevEq
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
+
+@[expose] public section
 
 noncomputable section
 

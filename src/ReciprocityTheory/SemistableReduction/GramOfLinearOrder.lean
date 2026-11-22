@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.DetGramEqProdGramSchmidt
-import ReciprocityTheory.SemistableReduction.ExpTorusMeanLeL2OfLex
+module
+
+public import ReciprocityTheory.SemistableReduction.DetGramEqProdGramSchmidt
+public import ReciprocityTheory.SemistableReduction.ExpTorusMeanLeL2OfLex
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

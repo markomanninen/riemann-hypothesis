@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.RankPolData
-import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsGauss
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.RankPolData
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsGauss
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ namespace GlobalTheory.ThK.Dbl
 
 open scoped TensorProduct NNReal Matrix Cardinal Classical
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.CompanionTheory.CMAdele Dense
+open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.CompanionTheory.CMAdele _root_.GlobalTheory.ThK.Dbl.Dense
 
 namespace Herm
 
@@ -40,12 +44,12 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 def dL (p : (κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)) : Module.End ℂ (SInf F κ) where
   toFun := dOp p.1 p.2
-  map_add' f g := by simp only [dOp, LineDeriv.lineDerivOp_add, map_add, smul_add]; abel
+  map_add' f g := by simp only [dOp, LineDeriv.lineDerivOp_add, map_add (f := _), smul_add]; abel
   map_smul' c f := by
     rw [dOp, dOp, LineDeriv.lineDerivOp_smul, smul_add, RingHom.id_apply]
     congr 1
     ext y
-    simp only [SchwartzMap.smul_apply, SchwartzMap.smulLeftCLM_apply_apply (linForm p.2).hasTemperateGrowth, smul_eq_mul,
+    simp only [smul_apply, SchwartzMap.smulLeftCLM_apply_apply (linForm p.2).hasTemperateGrowth, smul_eq_mul,
       Complex.real_smul]
     ring
 

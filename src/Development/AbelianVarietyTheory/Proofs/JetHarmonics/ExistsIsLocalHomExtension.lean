@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.LocalHomExtension
 
@@ -17,7 +21,11 @@ theorem exists_isLocalHom_extension {A B O C : Type} [CommRing A] [IsDomain A] [
   have : Module.IsTorsionFree A C := Module.isTorsionFree_iff_algebraMap_injective.mpr hι
   have : Algebra.IsIntegral A B := ⟨hint⟩
 
-  let f : B →ₐ[A] C := IsAlgClosed.lift
+  let f : B →ₐ[A] C := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
 
   have hO : ∀ b : B, ∃ o : O, algebraMap O C o = f b := fun b => by
     have h1 : IsIntegral A (f b) := (Algebra.IsIntegral.isIntegral b).map f
@@ -29,7 +37,7 @@ theorem exists_isLocalHom_extension {A B O C : Type} [CommRing A] [IsDomain A] [
       map_one' := inj (by rw [hg, map_one, map_one])
       map_mul' := fun x y => inj (by rw [hg, map_mul, map_mul, hg, hg])
       map_zero' := inj (by rw [hg, map_zero, map_zero])
-      map_add' := fun x y => inj (by rw [hg, map_add, map_add, hg, hg]) }
+      map_add' := fun x y => inj (by rw [hg, map_add (f := _), map_add (f := _), hg, hg]) }
   have hcomp : ι'.comp φ = ι := by
     ext a
     apply inj
@@ -39,11 +47,12 @@ theorem exists_isLocalHom_extension {A B O C : Type} [CommRing A] [IsDomain A] [
   refine ⟨ι', ?_, hcomp⟩
 
   have hA : (IsLocalRing.maximalIdeal O).comap ι = IsLocalRing.maximalIdeal A :=
-    ((IsLocalRing.local_hom_TFAE ι).out 0 4).mp (inferInstance : IsLocalHom ι)
+    ((IsLocalRing.local_hom_TFAE ι).out 1 5).mp (inferInstance : IsLocalHom ι)
   have hp : (((IsLocalRing.maximalIdeal O).comap ι').comap (algebraMap A B)).IsMaximal := by
     rw [Ideal.comap_comap, show ι'.comp (algebraMap A B) = ι from hcomp, hA]
     exact IsLocalRing.maximalIdeal.isMaximal A
-  have hpm := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap ((IsLocalRing.maximalIdeal O).comap ι') hp
-  exact ((IsLocalRing.local_hom_TFAE ι').out 0 4).mpr (IsLocalRing.eq_maximalIdeal hpm)
+  have hpm := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap A B)
+    (show (algebraMap A B).IsIntegral from hint) ((IsLocalRing.maximalIdeal O).comap ι') hp
+  exact ((IsLocalRing.local_hom_tfae ι').out 1 5).mpr (IsLocalRing.eq_maximalIdeal hpm)
 
 end GlobalTheory.LocalHomExtension

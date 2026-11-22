@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.AinfTower
-import ReciprocityTheory.DualLattices.HtLinStatement
+module
+
+public import ReciprocityTheory.DualLattices.AinfTower
+public import ReciprocityTheory.DualLattices.HtLinStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,12 +116,8 @@ lemma root_pow_one (n : ℕ) : root p O ε (n + 1) ^ p ^ n = root p O ε 1 := by
 theorem zeta_succ_pow (n : ℕ) : zetaV p O ε (n + 1) ^ p = zetaV p O ε n := by
   rw [zetaV, zetaV, ← map_pow, ← map_pow, root_succ_pow]
 
-lemma zeta_val (n : ℕ) :
-    (((ainfTower p O hv ε hε).ζ n : ((ainfTower p O hv ε hε).O : Type)ˣ) :
-      ((ainfTower p O hv ε hε).O : Type)) = zetaV p O ε n := rfl
 
 include hv hε in
-
 theorem zeta_primitive (n : ℕ) : IsPrimitiveRoot (zetaV p O ε n) (p ^ (n + 1)) := by
   have hz1 : zetaV p O ε n ^ p ^ (n + 1) = 1 := by
     rw [zetaV, ← map_pow, ← map_pow, root_pow, fontaineTheta_teichmuller,
@@ -136,22 +136,12 @@ theorem zeta_primitive (n : ℕ) : IsPrimitiveRoot (zetaV p O ε n) (p ^ (n + 1)
   rw [← hjn, ← hj']
   exact IsPrimitiveRoot.orderOf _
 
-include hv hε in
 
+include hv hε in
 theorem c_val : v (algebraMap O C (fontaineTheta O p (nu p O ε))) ^ (p - 1) = v (p : C) := by
   obtain ⟨-, -, -, hX, -, -⟩ := a0 p C v O hv
   exact (hX ε hv hε).2.2.1
 
-include hv hε in
-
-theorem c_dvd (c' : O) (h : v (algebraMap O C c') ^ (p - 1) ≤ v (p : C)) :
-    fontaineTheta O p (nu p O ε) ∣ c' := by
-  apply hv.dvd_of_le
-  rw [← c_val p O hv ε hε] at h
-  have hp1 : p - 1 ≠ 0 := by have := hp.out.two_le; omega
-  exact (pow_le_pow_iff_left₀ zero_le zero_le hp1).1 h
-
-lemma c_eq : (ainfTower p O hv ε hε).c = fontaineTheta O p (nu p O ε) := rfl
 
 end Ainf
 

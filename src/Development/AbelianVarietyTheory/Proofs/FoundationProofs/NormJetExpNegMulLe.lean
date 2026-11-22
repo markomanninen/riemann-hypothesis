@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -27,7 +32,7 @@ theorem expPS_eq_subst (F : PowerSeries ℂ_[p]) (hF : constantCoeff F = 0) :
     simp [h0]
 
 theorem derivative_expPS (F : PowerSeries ℂ_[p]) (hF : constantCoeff F = 0) :
-    d⁄dX ℂ_[p] (expPS F) = expPS F * d⁄dX ℂ_[p] F := by
+    d⁄dX (expPS F) = expPS F * d⁄dX F := by
   rw [expPS_eq_subst F hF, PowerSeries.derivative_subst (HasSubst.of_constantCoeff_zero' hF),
     PowerSeries.derivative_exp]
 
@@ -52,7 +57,7 @@ theorem norm_jet_mul_le (A B : PowerSeries ℂ_[p]) (n : ℕ) (C : ℝ) (hC : 0 
     _ = C := one_mul C
 
 theorem jet_derivative (A : PowerSeries ℂ_[p]) (n : ℕ) :
-    (n.factorial : ℂ_[p]) * coeff n (d⁄dX ℂ_[p] A) =
+    (n.factorial : ℂ_[p]) * coeff n (d⁄dX A) =
       ((n + 1).factorial : ℂ_[p]) * coeff (n + 1) A := by
   rw [PowerSeries.coeff_derivative, Nat.factorial_succ]
   push_cast

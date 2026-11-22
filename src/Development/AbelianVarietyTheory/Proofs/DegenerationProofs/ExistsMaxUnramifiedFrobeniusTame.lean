@@ -1,15 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFiniteEtaleLocalSurjectiveOfIsSeparable
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CompositumFiniteNormalIsPGroup
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.KummerTwistRelationAndFixedField
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsArithFrobeniusAbsGalois
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GaloisOfPrimePowerDegree
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFiniteEtaleLocalSurjectiveOfIsSeparable
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CompositumFiniteNormalIsPGroup
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.KummerTwistRelationAndFixedField
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsArithFrobeniusAbsGalois
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GaloisOfPrimePowerDegree
+
+@[expose] public section
 
 namespace GlobalTheory.SS.MaxUnr
 open IsLocalRing Polynomial
@@ -156,7 +160,7 @@ theorem dvr_of_gen [Finite (ResidueField V)] {S : Type*} [CommRing S] [IsDomain 
   have hnf : ¬ IsField S := by
     rw [isField_iff_maximalIdeal_eq, ← hm, Ideal.span_singleton_eq_bot, map_eq_zero_iff _ (FaithfulSMul.algebraMap_injective V S)]
     exact hπ.ne_zero
-  exact ((IsDiscreteValuationRing.TFAE S hnf).out 0 4).2 (show (maximalIdeal S).IsPrincipal from ⟨⟨_, hm.symm⟩⟩)
+  exact ((IsDiscreteValuationRing.TFAE S hnf).out 1 5).2 (show (maximalIdeal S).IsPrincipal from ⟨⟨_, hm.symm⟩⟩)
 end
 
 section
@@ -307,7 +311,8 @@ theorem teich_inj {S : Type*} [CommRing S] [IsLocalRing S] [Algebra V S] [IsLoca
   have h4 : (∑ i ∈ Finset.range N, t ^ i * u ^ (N - 1 - i)) ∈ maximalIdeal S := by
     have h5 : residue S t = residue S u := by
       rw [← sub_eq_zero, ← map_sub, residue_eq_zero_iff]; exact h
-    rw [← residue_eq_zero_iff, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← residue_eq_zero_iff, map_sum]
     simp only [map_mul, map_pow, h5]
     rw [geom_sum₂_self, hN, zero_mul]
   have h6 := isUnit_one_sub_self_of_mem_nonunits _ h4
@@ -497,7 +502,7 @@ theorem main_of (hT : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsLocalRing R]
     | algebraMap v =>
       show (φ ^ f) (algebraMap V Ω v) = algebraMap V Ω v
       rw [IsScalarTower.algebraMap_apply V K Ω, AlgEquiv.commutes]
-    | add x y _ _ hx hy => rw [Subalgebra.coe_add, map_add, hx, hy]
+    | add x y _ _ hx hy => rw [Subalgebra.coe_add, map_add (f := _), hx, hy]
     | mul x y _ _ hx hy => rw [Subalgebra.coe_mul, map_mul, hx, hy]
   · refine ⟨⟨φ x, hφR x x.2⟩, rfl, fun hu => ?_⟩
     obtain ⟨y, hy, hy'⟩ := hφ ⟨x, hle x.2⟩
@@ -533,8 +538,8 @@ theorem main_of (hT : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsLocalRing R]
 
 end GlobalTheory.SS.MaxUnr
 
-open GlobalTheory.SS in
 
+open GlobalTheory.SS in
 theorem GlobalTheory.SS.exists_maxUnramified_frobenius_tame : ∀ (V K : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] [IsAdicComplete (IsLocalRing.maximalIdeal V) V] [Field K] [CharZero K] [Algebra V K] [IsFractionRing V K], Finite (IsLocalRing.ResidueField V) → ∀ (l : ℕ), l.Prime → IsUnit (l : V) → ∀ (Ω : Type) [Field Ω] [Algebra K Ω] [IsAlgClosure K Ω] [Algebra V Ω] [IsScalarTower V K Ω] (q : ℕ), q = Nat.card (IsLocalRing.ResidueField V) → ∃ (R : Subalgebra V Ω) (_ : IsLocalRing R) (σ φ : Ω ≃ₐ[K] Ω), SH R (FractionRing R) ∧ IsLocalHom (algebraMap V R) ∧ (∀ c : IsLocalRing.ResidueField R, ∃ m, 1 ≤ m ∧ c ^ (q ^ m) = c) ∧ (∀ s : Finset R, ∃ (W : Subalgebra V R) (_ : IsDiscreteValuationRing W), (↑s : Set R) ⊆ W ∧ IsAdicComplete (IsLocalRing.maximalIdeal W) W ∧ Module.Finite V W ∧ IsLocalHom W.val.toRingHom ∧ ∃ f, 1 ≤ f ∧ ∀ x ∈ W, (φ ^ f) ((x : R) : Ω) = x) ∧ (∀ x ∈ R, σ x = x) ∧ (∀ x : R, ∃ y : R, (y : Ω) = φ x ∧ y - x ^ q ∈ IsLocalRing.maximalIdeal R) ∧ (∀ (m : ℕ) (ζ : Ω), ζ ^ l ^ m = 1 → σ ζ = ζ ∧ φ ζ = ζ ^ q) ∧ ∀ L : IntermediateField K Ω, FiniteDimensional K L → Normal K L → IsPGroup l (L ≃ₐ[K] L) → ∀ x ∈ L, φ (σ x) = (σ ^ q) (φ x) ∧ (σ x = x → ∃ a ∈ R, ∃ b ∈ R, b ≠ 0 ∧ x * b = a) :=
   GlobalTheory.SS.MaxUnr.main_of GlobalTheory.TameKummer.galois_of_prime_power_degree GlobalTheory.compositum_finite_normal_isPGroup
     GlobalTheory.kummer_twist_relation_and_fixed_field GlobalTheory.exists_arithFrobenius_absGalois

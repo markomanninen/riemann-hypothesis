@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ structure Fam (A : C) : Type 1 where
 
 attribute [instance] Fam.fin
 
-variable (C) in
 
+variable (C) in
 structure Parts where
   Cov : ∀ {A : C}, Fam A → Prop
   triv : ∀ A : C, Cov (⟨Unit, fun _ => A, fun _ => 𝟙 A⟩ : Fam A)
@@ -40,8 +44,8 @@ def Sec (P : C ⥤ Type) (F : Coef C) : AddSubgroup (∀ A : C, P.obj A → F.ob
   add_mem' := by intro a b ha hb A B φ y; simp [ha φ y, hb φ y]
   neg_mem' := by intro a ha A B φ y; simp [ha φ y]
 
-variable (C) in
 
+variable (C) in
 structure Theory where
   H : (C ⥤ Type) → Coef C → ℕ → Type 1
   [ab : ∀ P F j, AddCommGroup (H P F j)]

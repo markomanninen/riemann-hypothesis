@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentiableAtOfPuncturedSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointInChart
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentiableAtOfPuncturedSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointInChart
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ContDiff ComplexConjugate
@@ -167,7 +171,7 @@ theorem dzb_int {Φ : X → V1 E} (h : Good Φ) (hℓ : Continuous ℓ) {f : V1 
     (fd_int μ ℓ h hℓ hτ0 1) hI2, ← integral_smul]
   congr 1
   funext v
-  rw [map_smul, map_add, map_smul]
+  rw [map_smul, map_add (f := _), map_smul]
 
 end int
 

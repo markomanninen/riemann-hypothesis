@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace UpperTheory.ConvolutionTheory.R2
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (D : Dat F E)
 
-variable (E) in
 
+variable (E) in
 abbrev am : A F →+* A E := AdeleBaseChange.adeleMap F E
 
 theorem am_rt (c : F) : am E (rt c) = rt (algebraMap F E c) := AdeleBaseChange.adeleMap_algebraMap c
@@ -29,10 +33,10 @@ theorem mkE_def (u t : A F) : D.mkE u t = am E u + am E t * rt D.θ := rfl
 @[simp] theorem mkE_base (u : A F) : D.mkE u 0 = am E u := by simp [mkE_def]
 theorem mkE_zero : D.mkE 0 0 = 0 := by simp
 theorem mkE_one : D.mkE 1 0 = 1 := by simp
-theorem mkE_add (u t u' t' : A F) : D.mkE (u + u') (t + t') = D.mkE u t + D.mkE u' t' := by simp only [mkE_def, map_add]; ring
+theorem mkE_add (u t u' t' : A F) : D.mkE (u + u') (t + t') = D.mkE u t + D.mkE u' t' := by simp only [mkE_def, map_add (f := _)]; ring
 theorem am_mul_mkE (a u t : A F) : am E a * D.mkE u t = D.mkE (a * u) (a * t) := by simp only [mkE_def, map_mul]; ring
 theorem mkE_mul (u t u' t' : A F) : D.mkE u t * D.mkE u' t' = D.mkE (u * u' + rt D.δ * (t * t')) (u * t' + t * u') := by
-  simp only [mkE_def, map_add, map_mul, ← D.rt_θ_sq]; ring
+  simp only [mkE_def, map_add (f := _), map_mul, ← D.rt_θ_sq]; ring
 @[simp] theorem mkE_co (z : A E) : D.mkE (D.co z 0) (D.co z 1) = z := by
   letI : Algebra (A F) (A E) := AdeleBaseChange.algebraAdeleRing
   have h := (AdeleBaseChange.adeleBasis D.b).sum_repr z
@@ -53,9 +57,6 @@ theorem mkE_inj {u t u' t' : A F} (h : D.mkE u t = D.mkE u' t') : u = u' ∧ t =
   have := congrArg D.co h
   rw [co_mkE, co_mkE] at this
   exact ⟨congrFun this 0, congrFun this 1⟩
-@[simp] theorem co_am (u : A F) : D.co (am E u) = ![u, 0] := by rw [← D.mkE_base, co_mkE]
-@[simp] theorem co_zero : D.co 0 = 0 := by rw [← D.mkE_zero, co_mkE]; ext i; fin_cases i <;> rfl
-@[simp] theorem co_one : D.co 1 = ![1, 0] := by rw [← D.mkE_one, co_mkE]
 theorem co_add (z z' : A E) : D.co (z + z') = D.co z + D.co z' := by
   obtain ⟨u, t, rfl⟩ := D.exists_mkE z
   obtain ⟨u', t', rfl⟩ := D.exists_mkE z'
@@ -67,7 +68,7 @@ theorem co_mul (z z' : A E) : D.co (z * z') =
     ![D.co z 0 * D.co z' 0 + rt D.δ * (D.co z 1 * D.co z' 1), D.co z 0 * D.co z' 1 + D.co z 1 * D.co z' 0] := by
   rw [← D.co_mkE, ← mkE_mul, mkE_co, mkE_co]
 theorem mkE_rt (u t : F) : D.mkE (rt u) (rt t) = rt (algebraMap F E u + algebraMap F E t * D.θ) := by
-  rw [mkE_def, am_rt, am_rt]; simp only [rt, map_add, map_mul]
+  rw [mkE_def, am_rt, am_rt]; simp only [rt, map_add (f := _), map_mul]
 theorem co_rt (z : E) (i : Fin 2) : D.co (rt z) i = rt (D.b.repr z i) := AdeleBaseChange.adeleBasis_repr_algebraMap D.b z i
 theorem continuous_mkE' {X : Type*} [TopologicalSpace X] {u t : X → A F} (hu : Continuous u) (ht : Continuous t) :
     Continuous fun x => D.mkE (u x) (t x) :=
@@ -88,7 +89,7 @@ def coE : A E ≃ₜ+ (Fin 2 → A F) where
 @[simp] theorem bar_am (a : A F) : D.bar (am E a) = am E a := AdeleBaseChange.smul_adeleMap D.σ a
 theorem bar_rt (z : E) : D.bar (rt z) = rt (D.σ z) := AdeleBaseChange.smul_algebraMap D.σ z
 theorem bar_mkE (u t : A F) : D.bar (D.mkE u t) = D.mkE u (-t) := by
-  simp only [mkE_def, map_add, map_mul, bar_am, bar_rt, D.conj, map_neg]; ring
+  simp only [mkE_def, map_add (f := _), map_mul, bar_am, bar_rt, D.conj, map_neg]; ring
 @[simp] theorem bar_bar (z : A E) : D.bar (D.bar z) = z := by
   obtain ⟨u, t, rfl⟩ := D.exists_mkE z
   rw [bar_mkE, bar_mkE, neg_neg]
@@ -102,7 +103,7 @@ theorem eq_am_of_bar_eq {z : A E} (h : D.bar z = z) : z = am E (D.co z 0) := by
   rw [bar_mkE] at h
   have h2 : (rt 2 : A F) * t = 0 := by rw [rt, map_ofNat]; linear_combination -(D.mkE_inj h).2
   have ht : t = 0 := ((IsUnit.mk0 (2 : F) two_ne_zero).map (algebraMap F (A F))).mul_right_eq_zero.1 h2
-  rw [ht]; simp
+  rw [ht, co_mkE]; simp
 
 theorem coe_ideleNorm (z : (A E)ˣ) :
     ((ideleNorm F E z : (A F)ˣ) : A F) = D.co z 0 ^ 2 - rt D.δ * D.co z 1 ^ 2 := by
@@ -124,15 +125,6 @@ theorem ideleNorm_barU (z : (A E)ˣ) : ideleNorm F E (D.barU z) = ideleNorm F E 
 include D in
 theorem ideleNorm_emb (a : (A F)ˣ) : ideleNorm F E (ideleEmbedding F E a) = a ^ 2 := by
   rw [ideleNorm_ideleEmbedding, D.finrank_eq]
-theorem norm_eq (z : E) : Algebra.norm F z = D.b.repr z 0 ^ 2 - D.δ * D.b.repr z 1 ^ 2 := by
-  haveI := AdeleBaseChange.nontrivial_adeleRing F
-  by_cases hz : z = 0
-  · haveI : Module.Finite F E := Module.Finite.of_basis D.b
-    simp [hz]
-  apply (algebraMap F (A F)).injective
-  have h := D.coe_ideleNorm (IdeleGroup.diagonal E (Units.mk0 z hz))
-  rw [ideleNorm_diagonal, coe_diagonal, coe_diagonal, co_rt, co_rt] at h
-  simpa using h
 
 end Dat
 

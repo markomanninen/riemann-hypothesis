@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem twist_left_inverse : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : S
       rw [map_zero]
       exact zero_mem _
     | add y z _ _ hy hz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hy hz
     | smul s y _ hy =>
       rw [Subring.smul_def, map_smul, smul_eq_mul]

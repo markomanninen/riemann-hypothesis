@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerInfMemLocSpan
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
-import Development.AbelianVarietyTheory.Definitions.Divisors.KerInfIntegrableOfMemRspan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactUniformBound
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerInfMemLocSpan
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KerInfIntegrableOfMemRspan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactUniformBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ namespace GlobalTheory.JSW.MirSemi
 
 open GlobalTheory.CuspRep GlobalTheory.JSW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def IsLocModerate (F : GA E a → ℂ) : Prop :=
   ∀ g₀ : GA E a, ∃ (C : ℝ) (N : ℕ), 0 ≤ C ∧ ∀ᶠ g in 𝓝 g₀, ∀ y, ‖F (g * infGL E a y)‖ ≤ C * height y ^ N
@@ -100,8 +104,8 @@ theorem isAutForm_continuous_locModerate {φ : Sm E a} (hA : IsAutForm φ) : Con
           exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hg'.le ha) (by linarith)
       _ = _ := by rw [mul_pow]; ring
 
-variable (π : CuspSub E a) in
 
+variable (π : CuspSub E a) in
 def regSpan : Submodule ℂ (GA E a → ℂ) where
   carrier := {F | F ∈ rspan π ∧ Continuous F ∧ IsLocModerate F}
   add_mem' := fun {F G} hF hG => by
@@ -129,13 +133,13 @@ theorem mem_regSpan {π : CuspSub E a} {F : GA E a → ℂ} :
 
 theorem rt_mem_regSpan {π : CuspSub E a} {F : GA E a → ℂ} (hF : F ∈ regSpan π) (h : GA E a) :
     (fun g => F (g * h)) ∈ regSpan π := by
-  refine ⟨rt_mem_rspan hF.1 h, hF.2.1.comp (continuous_mul_right h), fun g₀ => ?_⟩
+  refine ⟨rt_mem_rspan hF.1 h, hF.2.1.comp (continuous_mul_const h), fun g₀ => ?_⟩
   obtain ⟨y₀, k, rfl⟩ : ∃ y₀ k, h = infGL E a y₀ * finGL E a k := ⟨_, _, (infGL_mul_finGL h).symm⟩
   obtain ⟨C, N, h0, e⟩ := hF.2.2 (g₀ * finGL E a k)
   have hy₀ := one_le_height y₀
   refine ⟨C * ((1 + 2 * a) * height y₀) ^ N, N, mul_nonneg h0 (pow_nonneg (mul_nonneg (by positivity)
     (by linarith)) N), ?_⟩
-  have ht : Tendsto (fun g => g * finGL E a k) (𝓝 g₀) (𝓝 (g₀ * finGL E a k)) := (continuous_mul_right _).tendsto g₀
+  have ht : Tendsto (fun g => g * finGL E a k) (𝓝 g₀) (𝓝 (g₀ * finGL E a k)) := (continuous_mul_const _).tendsto g₀
   filter_upwards [ht.eventually e] with g hg z
   have ex : g * infGL E a z * (infGL E a y₀ * finGL E a k) = g * finGL E a k * infGL E a (z * y₀) := by
     rw [mul_assoc g (finGL E a k), ← infGL_comm, map_mul]; simp only [mul_assoc]
@@ -153,10 +157,11 @@ theorem kerInf_mem_regSpan {π : CuspSub E a} {F : GA E a → ℂ} (hF : F ∈ r
   refine ⟨kerInf_mem_rspan hF.1 ν hk, continuous_iff_continuousAt.2 fun g₀ => ?_, fun g₀ => ?_⟩
   · obtain ⟨C, N, h0, e⟩ := hF.2.2 g₀
     show ContinuousAt (fun g => ∫ x, k x * F (g * infGL E a (γ x)) ∂ν) g₀
+    set_option synthInstance.maxHeartbeats 200000 in
     refine continuousAt_of_dominated (bound := fun x => C * (‖k x‖ * height (γ x) ^ N))
       (Eventually.of_forall fun g => (RapidModel.integrable_of_modGr hM hk g).aestronglyMeasurable) ?_
       ((hk.2.2 N).const_mul C)
-      (Eventually.of_forall fun x => (continuous_const.mul (hF.2.1.comp (continuous_mul_right _))).continuousAt)
+      (Eventually.of_forall fun x => (continuous_const.mul (hF.2.1.comp (continuous_mul_const _))).continuousAt)
     filter_upwards [e] with g hg
     refine Eventually.of_forall fun x => ?_
     rw [norm_mul]
@@ -197,10 +202,10 @@ theorem locSpan_le_regSpan {π : CuspSub E a} {φ : Sm E a} (hφ : φ ∈ π.V) 
 
 end GlobalTheory.JSW.MirSemi
 
-open NumberField IsDedekindDomain GlobalTheory.CuspRep Formalism.UG GlobalTheory.LFun Matrix MeasureTheory in
 
+open NumberField IsDedekindDomain GlobalTheory.CuspRep Formalism.UG GlobalTheory.LFun Matrix MeasureTheory in
 theorem GlobalTheory.JSW.MirSemi.locSpan_continuous_moderate :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
       (π : CuspSub E a) (φ : Sm E a), φ ∈ π.V → ∀ F ∈ GlobalTheory.JSW.MirSemi.locSpan S φ.1, Continuous F ∧
         ∀ K : Set (GA E a), IsCompact K → ∃ (C : ℝ) (N : ℕ), ∀ g ∈ K, ∀ y : GL (Fin a) (Cinf E),
           ‖F (g * infGL E a y)‖ ≤ C * height y ^ N := by

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TwistedEisensteinNonvanishing
-import Formalism.LocalToGlobal.Columns.ChainTwFinal
-import Formalism.LocalToGlobal.Columns.ChainTw
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TwistedEisensteinNonvanishing
+public import Formalism.LocalToGlobal.Columns.ChainTwFinal
+public import Formalism.LocalToGlobal.Columns.ChainTw
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -27,7 +31,7 @@ theorem doubleCosetDatum_psi_ok (G : ChGlob X R.m) (P : rowSG Pr sel mu)
     PI.TwistedEisensteinNonvanishing.PsiOk (2 * (toTwistedEisensteinRanks R).m) P.1 (twPsiQ G.σ₀ G.xi0 P.1 (2 * R.m)) := by
   refine ⟨fun x y hx hy => hadd x y hx hy, fun x hx => hint x hx, fun x hx => ?_⟩
   unfold twPsiQ
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨b, hb, -⟩
   exact hx hb
 

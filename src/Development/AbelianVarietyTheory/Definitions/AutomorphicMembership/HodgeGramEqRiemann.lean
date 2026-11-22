@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DualGramInterpGram
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFrPtOfEigFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtEqOfPtOfFrameEq
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CabsDiagEqOne
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyUnifWitnessDataOfIsUnf
-import Formalism.LocalToGlobal.ProjectiveLattices.RecConj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OrthoStatementPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DualGramInterpGram
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFrPtOfEigFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtEqOfPtOfFrameEq
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CabsDiagEqOne
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyUnifWitnessDataOfIsUnf
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecConj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OrthoStatementPf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,7 +57,7 @@ theorem im_hermForm_orth (v w : (W.F.Di (W.ik k)).La) :
     dsimp only at h ⊢
     rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
     · rw [if_neg (by omega), Formalism.L2.PjFree.perFr, dif_pos a, dif_pos hn]
-    · rw [if_pos (by omega), Formalism.L2.PjFree.perFr, dif_neg a,
+    · rw [if_pos (by omega), Formalism.L2.PjFree.perFr, dite_eq_right a,
         dif_pos (show conjEmb (Formalism.L2.PjFree.relab c σ (W.e j).1) ∈ (U.X k).Ψ from hτ), dif_pos hn]
       rfl
   have hd : (((2 * a : ℝ) : ℂ) • 1 : Matrix _ _ ℂ) = diagonal (diagXi (U.X k) (W.e.trans f)) := by
@@ -91,6 +95,7 @@ theorem hermForm_eq_of_orth {i : Fin W.F.n} {P : (W.F.Di i).La →+ (Fin W.g →
   rw [of_apply, ← key, ← UnitDet.hermForm_mulVec, hcol, hcol]
   have hi : ∀ j j' : Fin (Dw.mult τ), W.e.symm ⟨τ, j⟩ = W.e.symm ⟨τ, j'⟩ ↔ j = j' := fun j j' => by simp
   simp [hermForm, smul_mulVec, sum_dotProduct, dotProduct_sum, star_sum, Pi.single_apply, hi, mul_apply, mul_comm]
+  simp [Matrix.mul_apply, Matrix.conjTranspose_apply, mul_comm]
 
 end Riemann
 
@@ -117,8 +122,8 @@ def IsHodgeFrame (y : CxPts (genStr Z) σ) (g : EigFrame Z σ (y.1 ≫ genι Z))
     (ψ = RingHom.id ℂ ∨ ψ = starRingEnd ℂ) ∧ σ' = ψ.comp σ ∧ Formalism.L2.PjFree.GoodEmb c σ' ∧ IsOrth ((U σ').X k) x.1 ∧
       (cxPt Z ((U σ').un k x)).1 = spMap ψ ≫ y.1 ∧ g.IsMap ψ (cxFrame Z ((U σ').un k x))
 
-open Classical in
 
+open Classical in
 def EigMet.hodge (b : ℝ) (hb : 0 < b) (G₀ : EigMet Z σ) : EigMet Z σ where
   gram y g τ := if h : ∃ f, IsHodgeFrame U y f then (b : ℂ) • ((h.choose.co g τ)ᴴ * h.choose.co g τ) else G₀.gram y g τ
   pos y g τ := by
@@ -157,7 +162,7 @@ theorem IsHodgeFrame.not_liesIn (h : IsHodgeFrame U y g) : ¬ LiesIn y (genBd Z)
 
 theorem IsHodgeFrame.conj (h : IsHodgeFrame U y g) {σ₁ : c.F →+* ℂ} {y₁ : CxPts (genStr Z) σ₁}
     {g₁ : EigFrame Z σ₁ (y₁.1 ≫ genι Z)} (hσ : σ = (starRingEnd ℂ).comp σ₁) (e : y.1 = spMap (starRingEnd ℂ) ≫ y₁.1)
-    (hg : g₁.IsMap (starRingEnd ℂ) g) : IsHodgeFrame U y₁ g₁ := by
+    (hg : (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v g₁ embτ basisIdx) (starRingEnd ℂ) g) : IsHodgeFrame U y₁ g₁ := by
   obtain ⟨ψ, σ', k, x, h1, h2, h3, h4, h5, h6⟩ := h
   refine ⟨ψ.comp (starRingEnd ℂ), σ', k, x, ?_, by rw [h2, hσ]; rfl, h3, h4, ?_, fun τ i => ?_⟩
   · rcases h1 with rfl | rfl
@@ -235,7 +240,8 @@ theorem IsHodgeFrame.unitary (hf : IsHodgeFrame U y f) (hg : IsHodgeFrame U y g)
   rw [h6.co τ hg' hx] at key
   have k2 : ((f.co g τ).map ψ)ᴴ * (f.co g τ).map ψ = 1 := smul_right_injective _ h7 (key.symm.trans (by
     ext b b'
-    simp [hermForm, smul_mulVec, Pi.single_apply, one_apply, eq_comm]))
+    simp [hermForm, smul_mulVec, Pi.single_apply, one_apply, eq_comm]
+    simp [Matrix.one_apply, eq_comm]))
   rcases h1 with rfl | rfl
   · exact k2
   · have := congrArg (fun M => M.map (starRingEnd ℂ)) k2
@@ -250,28 +256,6 @@ theorem IsHodgeFrame.gram_eq (hf : IsHodgeFrame U y f) (g : EigFrame Z σ (y.1 �
   refine (dif_pos h).trans (congrArg _ ?_)
   rw [← h.choose.co_mul f g, conjTranspose_mul, Matrix.mul_assoc, ← Matrix.mul_assoc _ _ (f.co g τ),
     h.choose_spec.unitary hU ha0 ha hf, Matrix.one_mul]
-
-theorem hodge_gram_eq_riemann (hσ : Formalism.L2.PjFree.GoodEmb c σ) (W : UnfWit (U σ)) {i : Fin W.F.n}
-    {P : (W.F.Di i).La →+ (Fin W.g → ℂ)} (hP : IsPeriod (W.F.Di i) (fun j => Formalism.L2.PjFree.relab c σ (W.e j).1) P)
-    {Hm : Matrix (Fin W.g) (Fin W.g) ℂ} (hH : IsRiem W.F i P Hm) {q : FrPt Xo c (CAt σ)}
-    {z : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → (Fin W.g → ℂ)} (hq : AnLie W.F i P q z) (τ : E →+* ℂ)
-    (hb : 0 < 2 * Real.pi * a) : (EigMet.hodge U _ hb G₀).gram (cxPt Z q) (cxFrame Z q) τ =
-      (Real.pi : ℂ) • of fun b b' => hermForm Hm (z τ b') (z τ b) := by
-  have key : ∀ (y : CxPts (genStr Z) σ) (g : EigFrame Z σ (y.1 ≫ genι Z)), y = cxPt Z q →
-      (∀ τ i, g.v τ i = (cxFrame Z q).v τ i) → (EigMet.hodge U _ hb G₀).gram y g τ =
-        (Real.pi : ℂ) • of fun b b' => hermForm Hm (z τ b') (z τ b) := fun y g e hg => by
-    obtain ⟨f, ψ, σ', k, x, rfl | rfl, h2, h3, h4, h5, -⟩ := exists_isHodgeFrame hU (y := y) (e ▸ not_liesIn_cxPt q)
-    · obtain rfl : σ' = σ := h2
-      obtain rfl : cxPt Z ((U σ').un k x) = y :=
-        Subtype.ext (h5.trans ((congrArg (· ≫ y.1) (Spec.map_id _)).trans (Category.id_comp _)))
-      have e' := (x_eq_of_cxPt (congrArg Subtype.val e)).symm
-      rw [(isHodgeFrame_cxFrame hσ h4).gram_eq hU ha0 ha,
-        hermForm_eq_of_orth hσ (hU _ hσ) W (ha σ') h4 hP hH.2.2 hq e' (isCombAt_co e' hg τ), smul_smul]
-      congr 1
-      push_cast
-      ring
-    · exact (not_good_conj c (σ := σ) hσ (h2 ▸ h3)).elim
-  exact key _ _ rfl fun _ _ => rfl
 
 end Free
 

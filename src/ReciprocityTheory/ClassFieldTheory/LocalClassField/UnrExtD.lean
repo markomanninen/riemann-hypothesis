@@ -1,4 +1,8 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -87,7 +91,10 @@ theorem exists_isFrobOn (hK : FiniteDimensional ℚ_[p] K) {n : ℕ} (hn : 0 < n
   let E : IntermediateField K (PadicAlgCl p) := IntermediateField.extendScalars (le_Kn p K n)
   have hgal : IsGalois K E := isGalois_Kn p K hK hn
   have hfr : Module.finrank K E = n := finrank_extendScalars_Kn p K hK hn
-  have hfd : FiniteDimensional K E := Module.finite_of_finrank_pos (by rw [hfr]; exact hn)
+  have hfd : FiniteDimensional K E := by
+    change FiniteDimensional K (IntermediateField.extendScalars (le_Kn p K n))
+    rw [extendScalars_Kn_eq_adjoin (p := p) (K := K) (n := n) hζ₀ hm0]
+    exact IntermediateField.finiteDimensional_adjoin (fun x _ => Algebra.IsIntegral.isIntegral x)
   have hcard : Nat.card (E ≃ₐ[K] E) = n := by rw [IsGalois.card_aut_eq_finrank, hfr]
   have hsurj := AlgEquiv.restrictNormalHom_surjective (F := K) (K₁ := E) (PadicAlgCl p)
   have hex : ∀ τ : E ≃ₐ[K] E, ∃ i : Fin n, ∃ σ : GK p K,
@@ -117,12 +124,6 @@ theorem exists_isFrobOn (hK : FiniteDimensional ℚ_[p] K) {n : ℕ} (hn : 0 < n
   intro ζ hζ
   obtain ⟨k, -, rfl⟩ := hζ₀.eq_pow_of_pow_eq_one hζ
   rw [map_pow, h0, ← pow_mul, ← pow_mul, mul_comm]
-
-theorem IsFrobOn.eqOn (hK : FiniteDimensional ℚ_[p] K) {n : ℕ} (hn : 0 < n) {φ ψ : GK p K}
-    (hφ : IsFrobOn p K n φ) (hψ : IsFrobOn p K n ψ) {x : PadicAlgCl p} (hx : x ∈ Kn p K n) :
-    φ x = ψ x := by
-  rw [isFrobOn_iff p K hK hn] at hφ hψ
-  exact UnramifiedExtensions.eqOn_Kn K (fun ζ hζ => by rw [hφ ζ hζ, hψ ζ hζ]) hx
 
 theorem IsFrobOn.exists_pow (hK : FiniteDimensional ℚ_[p] K) {n : ℕ} (hn : 0 < n) {φ : GK p K}
     (hφ : IsFrobOn p K n φ) (σ : GK p K) : ∃ i < n, ∀ x ∈ Kn p K n, σ x = (φ ^ i) x := by

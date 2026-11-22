@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.LocalFields.NormCorrespondence
-import GroundTheory.LocalFields.Existence
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
-import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.NormCorrespondence
+public import GroundTheory.LocalFields.Existence
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,8 +19,8 @@ open IntermediateField GroundTheory.LocalField
 variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
   {Ω : Type*} [Field Ω] [Algebra F Ω] [IsSepClosure F Ω]
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [IsSepClosure F Ω] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [IsSepClosure F Ω] in
 theorem exists_norm_iff_mem_range_normUnits (E : IntermediateField F Ω) [FiniteDimensional F E]
     (a : Fˣ) : (∃ y : E, Algebra.norm F y = (a : F)) ↔ a ∈ (normUnits F E).range := by
   constructor
@@ -28,8 +33,8 @@ theorem exists_norm_iff_mem_range_normUnits (E : IntermediateField F Ω) [Finite
   · rintro ⟨u, rfl⟩
     exact ⟨u, rfl⟩
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [IsSepClosure F Ω] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [IsSepClosure F Ω] in
 theorem exists_norm_of_eq {E₁ E₂ : IntermediateField F Ω} (h : E₁ = E₂) {a : F}
     (hy : ∃ y : E₁, Algebra.norm F y = a) : ∃ y : E₂, Algebra.norm F y = a := by
   subst h

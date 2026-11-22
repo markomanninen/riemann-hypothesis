@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassPAddOfNeOfDerivNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassPAddOfNeOfDerivNeZero
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.MomOne Filter PeriodPair
 open scoped ComplexConjugate BigOperators Topology
@@ -33,7 +37,7 @@ lemma g₃_eq (h : M.Ok) : M.L.g₃ = M.c ^ 6 * ((-(M.ι.symm M.W.a₁ ^ 2 + 4 *
 
 lemma x_eq (z : ℂ) : M.x z =
     ℘[M.L] z / M.c ^ 2 - (M.ι.symm M.W.a₁ ^ 2 + 4 * M.ι.symm M.W.a₂) / 12 := by
-  simp only [Mdl.x, WeierstrassCurve.b₂, map_div₀, map_add, map_mul, map_pow, map_ofNat]
+  simp only [Mdl.x, WeierstrassCurve.b₂, map_div₀, map_add (f := _), map_mul, map_pow, map_ofNat]
 
 lemma charpoly_eq_of_isIso (h : M.Ok) (z : ℂ) : ℘[M.L] z =
     M.c ^ 2 * (M.x z + (M.ι.symm M.W.a₁ ^ 2 + 4 * M.ι.symm M.W.a₂) / 12) := by
@@ -265,7 +269,7 @@ private lemma exists_analytic_u_w_factor_near_lattice (h : M.Ok) {l : ℂ} (hl :
 lemma norm_x_lt (h : M.Ok) {z : ℂ} (hz : z ∉ M.L.lattice) (hx : 1 < ‖M.ι (M.x z)‖) :
     ‖M.ι (M.x z)‖ < ‖M.ι (M.y z)‖ := by
   have heq := congrArg M.ι (equation M h hz)
-  simp only [map_add, map_mul, map_pow, RingEquiv.apply_symm_apply] at heq
+  simp only [map_add (f := _), map_mul, map_pow, RingEquiv.apply_symm_apply] at heq
   obtain ⟨-, h1, h2, h3, h4, h6, -, -, -⟩ := h
   by_contra hY'
   have hY := not_lt.mp hY'

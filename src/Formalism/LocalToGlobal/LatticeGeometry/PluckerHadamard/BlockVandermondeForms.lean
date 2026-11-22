@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.LatticeGeometry.PluckerHadamard.FlagIntegralKillsPowerSums
-import Formalism.DegreeFormula.PointDegree.PowSum
+module
+
+public import Formalism.LocalToGlobal.LatticeGeometry.PluckerHadamard.FlagIntegralKillsPowerSums
+public import Formalism.DegreeFormula.PointDegree.PowSum
+
+@[expose] public section
 
 noncomputable section
 

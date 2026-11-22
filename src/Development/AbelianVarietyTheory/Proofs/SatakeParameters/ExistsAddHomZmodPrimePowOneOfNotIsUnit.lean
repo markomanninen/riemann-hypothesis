@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+
+@[expose] public section
+
 open GlobalTheory.Cong
 
 namespace GlobalTheory
@@ -52,7 +57,7 @@ theorem exists_addHom_zmod_pow_one_of_not_isUnit :
     have := ZMod.lift_coe (l ^ m) ⟨Int.castAddHom (R ⧸ I), by simpa using hlI⟩ (k : ℤ)
     simpa using this
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     rw [← ZMod.natCast_zmod_val x, hf_nat, ← map_natCast (Ideal.Quotient.mk I),
       Ideal.Quotient.eq_zero_iff_mem, hI, Ideal.mem_span_singleton] at hx
@@ -79,7 +84,7 @@ theorem exists_addHom_zmod_pow_one_of_not_isUnit :
   let A : R ⧸ I →+ ZMod (l ^ m) := AddMonoidHom.mk' a (by
     intro x y
     apply ZMod.toAddCircle_injective
-    rw [map_add, ha, ha, ha, map_add])
+    rw [map_add (f := _), ha, ha, ha, map_add (f := _)])
   refine ⟨A.comp (Ideal.Quotient.mk I).toAddMonoidHom, ?_, ?_⟩
   · show a (Ideal.Quotient.mk I 1) = 1
     apply ZMod.toAddCircle_injective

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.NormalFormRelations
 
@@ -147,8 +151,8 @@ structure FrRel (R : SRel A A') (I : Set ℂ) (f : FrameData S A) (f' : FrameDat
   c : (R.mat (Ix S)).r f.c f'.c
   ci : (R.mat (Ix S)).r f.ci f'.ci
 
-omit [StarModule ℂ A] in
 
+omit [StarModule ℂ A] in
 theorem l_eq {L : LevelData A r} {f : FrameData S A} (hf : IsFrame L f) {Y : ℂ} (hY : Y ∈ f.inv)
     (hY1 : Y + 1 ∈ f.inv) : f.l L Y = f.xi Y * io L.GGi * (f.F * f.TT Y 1 0) * f.Fi := by
   have hG : (io L.GGi : SlopeTestRemainingChoices S A) * io L.GG = 1 := by
@@ -162,7 +166,21 @@ omit [StarModule ℂ A] [StarModule ℂ A'] in
 theorem l_rel {R : SRel A A'} {I : Set ℂ} {L : LevelData A r} {L' : LevelData A' r} (hL : FnRel R L L')
     {f : FrameData S A} {f' : FrameData S A'} (h : FrRel R I f f') (hf : IsFrame L f) (hf' : IsFrame L' f')
     {Y : ℂ} (hr : star Y = Y) (hY : Y ∈ f.inv) (hY1 : Y + 1 ∈ f.inv) : (R.mat (Ix S)).r (f.l L Y) (f'.l L' Y) := by
-  rw [l_eq hf hY hY1, l_eq hf' (h.inv ▸ hY) (h.inv ▸ hY1)]
+  have hl : f.l L Y = f.xi Y * io L.GGi * (f.F * f.TT Y 1 0) * f.Fi := by
+    have hG : (io L.GGi : SlopeTestRemainingChoices S A) * io L.GG = 1 := by
+      rw [io, io, ← map_mul, L.GGi_GG, map_one]
+    rw [hf.frame_l Y hY hY1]
+    calc f.l L Y = (f.xi Y * ((io L.GGi * io L.GG) * f.x Y)) * f.l L Y * (f.F * f.Fi) := by
+          rw [hG, one_mul, (hf.x_xi Y hY).2, hf.F_Fi, one_mul, mul_one]
+      _ = _ := by simp only [mul_assoc]
+  have hl' : f'.l L' Y = f'.xi Y * io L'.GGi * (f'.F * f'.TT Y 1 0) * f'.Fi := by
+    have hG : (io L'.GGi : SlopeTestRemainingChoices S A') * io L'.GG = 1 := by
+      rw [io, io, ← map_mul, L'.GGi_GG, map_one]
+    rw [hf'.frame_l Y (h.inv ▸ hY) (h.inv ▸ hY1)]
+    calc f'.l L' Y = (f'.xi Y * ((io L'.GGi * io L'.GG) * f'.x Y)) * f'.l L' Y * (f'.F * f'.Fi) := by
+          rw [hG, one_mul, (hf'.x_xi Y (h.inv ▸ hY)).2, hf'.F_Fi, one_mul, mul_one]
+      _ = _ := by simp only [mul_assoc]
+  rw [hl, hl']
   exact SRel.mul _ (SRel.mul _ (SRel.mul _ (h.xi Y hr (h.sub hY)) (SRel.io hL.GGi))
     (SRel.mul _ h.F (h.TT Y hr 1 0))) h.Fi
 

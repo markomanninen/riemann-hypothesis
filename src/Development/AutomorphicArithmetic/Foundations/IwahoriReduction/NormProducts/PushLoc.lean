@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
-import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleNewformZetaData
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCompletionNoPrimeTorsionStatement
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.AdicEqZeroOfMemAll
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.Bcompl
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.GaloisActionAdicClose
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.MemAOfPow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleNewformZetaData
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCompletionNoPrimeTorsionStatement
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.AdicEqZeroOfMemAll
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.Bcompl
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.GaloisActionAdicClose
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.MemAOfPow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.KA UpperTheory.Kd.K4 UpperTheory.V.Z.Kato.Sym UpperTheory.V.Z.Kato.Nb
 open scoped Matrix MatrixGroups Topology
 
@@ -42,7 +47,7 @@ private theorem sh_coc (g : G → V →ₗ[R] V) (hg : ∀ s t v, g (s * t) v = 
     group
   simp only [sh]
   rw [e1]
-  rw [map_sub, map_add, e2] at h
+  rw [map_sub, map_add (f := _), e2] at h
   exact h
 
 private theorem push_coc (g : G → V →ₗ[R] V) (hg : ∀ s t v, g (s * t) v = g s (g t v)) (c : G →* U) (rep : U → G)
@@ -61,7 +66,8 @@ private theorem push_coc (g : G → V →ₗ[R] V) (hg : ∀ s t v, g (s * t) v 
       exact ⟨fun h => by rw [h], fun h => mul_right_cancel h⟩
     · intro y _
       rfl
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   simp only [GlobalTheory.KA.push]
   rw [← Finset.sum_add_distrib, ← Finset.sum_sub_distrib]
   exact AddSubgroup.sum_mem _ fun y _ => sh_coc g hg c rep hr P hP z H s t y
@@ -421,7 +427,7 @@ theorem UpperTheory.Kd.K4.mlB :
     refine ⟨⟨d, hd⟩, Subtype.ext ?_⟩
     have ec : ((GlobalTheory.KA.push (π r) (Fs (r + 1) n) s x : X.B N l w) : X.Fn l) = GlobalTheory.KA.push (π r) (F (r + 1) n) s x := by
       simp only [GlobalTheory.KA.push]
-      rw [AddSubmonoidClass.coe_finset_sum]
+      rw [AddSubmonoidClass.coe_finsetSum]
     change ((GlobalTheory.KA.push (π r) (Fs (r + 1) n) s x : X.B N l w) : X.Fn l) -
       (F r n s x + (X.galB l s (b (x * κ r s)) - b x)) = (l : ℤ_[l]) ^ n • d
     rw [ec]
@@ -438,7 +444,7 @@ theorem UpperTheory.Kd.K4.mlB :
     funext s y
     have h := congrArg Subtype.val (congrFun (congrFun (hY3 r) s) y)
     simp only [GlobalTheory.KA.push] at h ⊢
-    rw [h, AddSubmonoidClass.coe_finset_sum]
+    rw [h, AddSubmonoidClass.coe_finsetSum]
   · intro r n
     obtain ⟨b, hb⟩ := hY4 r n
     refine ⟨bB n r, fun σ hσ => (hbB n r σ hσ).lift hA, fun y => (b y : X.Fn l), fun y => (b y).2, fun s y => ?_⟩

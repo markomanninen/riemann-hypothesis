@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Finset
 open scoped InnerProductSpace
@@ -115,7 +119,8 @@ theorem aux₃ : FRel → GFacts → GamDom → KHWExists → HWMap → PRV := b
       simp only [h2]
       simp only [c, hA, if_true]
       rw [← hφ2 a b hab, hET, h1]
-      simp only [map_sub, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_smul]
       abel
     · have h2 : ∀ B, (g a b A B : ℂ) • c B = 0 := by
         intro B

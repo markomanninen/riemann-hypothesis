@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.AdicCoord
 
@@ -54,7 +58,8 @@ theorem exists_coord : ∀ (p : ℕ) (O EE W RW : Type) [CommRing O] [CommRing E
     refine hsep _ fun N => ?_
     have h1 := map_dvd ι (hF j N)
     have h2 := map_dvd c (hV j N)
-    simp only [map_pow, map_natCast, map_sub, map_sum, map_mul, hw] at h1 h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_pow, map_natCast, map_sub, map_sum, map_mul, hw] at h1 h2
     have := dvd_sub h1 h2
     convert this using 1
     ring

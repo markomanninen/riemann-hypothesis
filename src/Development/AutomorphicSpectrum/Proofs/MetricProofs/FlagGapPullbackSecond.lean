@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HasStepCharts
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SelM
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsValueAtOfTorus
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapTorusInvariantStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapSameBaseOrbitStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HasStepCharts
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SelM
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsValueAtOfTorus
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapTorusInvariantStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapSameBaseOrbitStatement
+
+@[expose] public section
 
 noncomputable section
 

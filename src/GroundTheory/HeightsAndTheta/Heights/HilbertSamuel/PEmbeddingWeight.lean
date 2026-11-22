@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingWeight
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingWeight
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -60,18 +65,18 @@ theorem conjVec_mem_blockNonzero {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, 
   ⟨i, (map_ne_zero _).2 hi⟩
 
 theorem contDiff_conjVec : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (conjVec (ι := ι)) :=
-  contDiff_pi.2 fun p => Complex.conjCLE.contDiff.comp (contDiff_apply ℝ ℂ p)
+  contDiff_pi.2 fun p => Complex.conjCLE.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) p)
 
 theorem contDiffOn_projPt :
     ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (projPt (ι := ι)) {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := by
   refine contDiffOn_pi.2 fun q => ?_
   have hN : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) fun z : (Σ k, ι k) → ℂ => blockNormSq z q.1 :=
-    ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ _)
+    ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) _)
   have hinv := hN.contDiffOn.inv (s := {z : (Σ k, ι k) → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0})
     fun z hz => (blockNormSq_pos hz q.1).ne'
   have hconj : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) fun z : (Σ k, ι k) → ℂ => conj (z ⟨q.1, q.2.2⟩) :=
-    Complex.conjCLE.contDiff.comp (contDiff_apply ℝ ℂ _)
-  have := (((contDiff_apply ℝ ℂ ⟨q.1, q.2.1⟩).mul hconj).contDiffOn).mul
+    Complex.conjCLE.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) _)
+  have := (((contDiff_apply ℝ (fun _ => ℂ) ⟨q.1, q.2.1⟩).mul hconj).contDiffOn).mul
     (Complex.ofRealCLM.contDiff.comp_contDiffOn hinv)
   refine this.congr fun z _ => ?_
   simp [projPt, div_eq_mul_inv]
@@ -145,7 +150,7 @@ theorem isClosed_zeros (P : Ideal (MRing ι)) :
 
 theorem isCompact_sphere : IsCompact {z : (Σ k, ι k) → ℂ | ∀ k, blockNormSq z k = 1} := by
   have hN : ∀ k, Continuous fun z : (Σ k, ι k) → ℂ => blockNormSq z k := fun k =>
-    continuous_finset_sum _ fun i _ => ((continuous_apply _).norm).pow 2
+    continuous_finsetSum _ fun i _ => ((continuous_apply _).norm).pow 2
   refine Metric.isCompact_of_isClosed_isBounded ?_ ?_
   · simp only [Set.setOf_forall]
     exact isClosed_iInter fun k => isClosed_eq (hN k) continuous_const
@@ -172,8 +177,8 @@ theorem exists_smul_sphere {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k
 
 end EmbeddingWeight
 
-open EmbeddingWeight in
 
+open EmbeddingWeight in
 theorem EmbeddingWeight.proof : EmbeddingWeight.Statement := by
   intro K _ ι _ Ω _ F _ _ _ y Λ hpos hconjΛ huniq
   classical
@@ -253,7 +258,8 @@ theorem EmbeddingWeight.proof : EmbeddingWeight.Statement := by
     simp only [u, projPt_smul c hc, h2]
   refine ⟨HermLine.ofWeight (fun z => -u z) hu_smul, rfl, ?_, ?_, ?_⟩
   · have h1 := hg.comp_contDiffOn (contDiffOn_projPt (ι := ι))
-    have h2 := hg.comp_contDiffOn ((contDiffOn_projPt (ι := ι)).comp contDiff_conjVec.contDiffOn
+    have h2 := hg.comp_contDiffOn ((contDiffOn_projPt (ι := ι)).comp
+      (contDiff_conjVec.contDiffOn (s := {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0}))
       fun z hz => conjVec_mem_blockNonzero hz)
     have hu := ((h1.add h2).div_const (2 : ℝ)).neg.neg
     exact Real.contDiff_exp.comp_contDiffOn hu

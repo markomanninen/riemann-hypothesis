@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.ResAdm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddHaarLeftRightMulAdelicMatricesModule
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.ResAdm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddHaarLeftRightMulAdelicMatricesModule
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix ENNReal
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -57,14 +61,16 @@ theorem continuous_ofMixed : Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace 
     exact ((continuous_apply _).comp continuous_snd).congr fun y =>
       (congrFun (congrArg Prod.snd ((InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply y)) ⟨v, hv⟩).symm
 
-variable (F κ) in
 
+variable (F κ) in
 def glueE : (Vi F κ × Vf F κ) ≃ₜ+ (κ → AF F) where
   toFun := glue
   invFun := shiftOf
   left_inv p := by
     refine Prod.ext ?_ rfl
-    simp [shiftOf, glue]
+    change (eI F κ).symm (fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F
+      ((InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (eI F κ p.1 i))) = p.1
+    simp only [RingEquiv.apply_symm_apply, ContinuousLinearEquiv.symm_apply_apply]
   right_inv x := by
     funext i
     refine Prod.ext ?_ rfl
@@ -74,7 +80,7 @@ def glueE : (Vi F κ × Vf F κ) ≃ₜ+ (κ → AF F) where
     funext i
     refine Prod.ext ?_ rfl
     show (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (eI F κ (p.1 + q.1) i) = _
-    rw [map_add, Pi.add_apply, map_add]
+    rw [map_add (f := _), Pi.add_apply, map_add (f := _)]
     rfl
   continuous_toFun := continuous_pi fun i =>
     (continuous_ofMixed.comp ((continuous_apply i).comp ((eI F κ).continuous.comp continuous_fst))).prodMk
@@ -103,7 +109,7 @@ theorem axInt [IsTotallyReal F] : AxInt (adeleClass F) := by
       rw [hp]
       exact (cI f).integrable.mul_prod (hg g hg')
     | zero => rw [map_zero]; exact integrable_zero _ _ _
-    | add x y _ _ hx hy => rw [map_add]; exact hx.add hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact hx.add hy
     | smul c x _ hx => rw [map_smul]; exact hx.smul c
   have : (mu F κ).IsAddHaarMeasure := by unfold mu; infer_instance
   let ν : Measure (κ → AF F) := (mu F κ).map (glueE F κ)

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.FormalDegreeFromOrthogonality
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.FormalDegreeFromOrthogonality
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,10 @@ lemma unimod_of_modChar (μ : Measure G) [μ.IsHaarMeasure] [μ.InnerRegular]
   refine ⟨hR, ⟨?_⟩⟩
   let c : ℝ≥0∞ := Measure.haarScalarFactor μ.inv μ
   have hc : μ.inv = c • μ := Measure.isMulLeftInvariant_eq_smul_of_innerRegular μ.inv μ
+  have hInv : AEMeasurable Inv.inv μ := continuous_inv.measurable.aemeasurable
   have h1 : Measure.map Inv.inv (Measure.map Inv.inv μ) = c ^ 2 • μ := by
-    rw [← Measure.inv_def μ, hc, Measure.map_smul, ← Measure.inv_def μ, hc, smul_smul, pow_two]
+    rw [← Measure.inv_def μ, hc, Measure.map_smul _ hInv, ← Measure.inv_def μ, hc, smul_smul,
+      pow_two]
   have μeq : μ = c ^ 2 • μ := by
     rw [Measure.map_map continuous_inv.measurable continuous_inv.measurable] at h1
     simpa only [inv_involutive, Function.Involutive.comp_self, Measure.map_id] using h1

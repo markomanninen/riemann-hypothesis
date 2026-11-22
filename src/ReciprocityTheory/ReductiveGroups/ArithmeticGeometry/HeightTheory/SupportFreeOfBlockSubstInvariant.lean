@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.DecompBlock0
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ProdZpowEqZpowSum
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.DecompBlock0
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ProdZpowEqZpowSum
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -13,10 +17,10 @@ def degB (b : Fin (D + 1)) (s : TVar D N →₀ ℕ) : ℕ := ∑ j, s (b, j)
 
 noncomputable def compB (b : Fin (D + 1)) (k : ℕ) (p : MvPolynomial (TVar D N) K) :
     MvPolynomial (TVar D N) K :=
-  ∑ s ∈ p.support.filter (fun s => degB b s = k), monomial s (coeff s p)
+  ∑ s ∈ p.support.filter (fun s => degB b s = k), monomial s (AddMonoidAlgebra.coeff p s)
 
 theorem coeff_compB (b : Fin (D + 1)) (k : ℕ) (p : MvPolynomial (TVar D N) K) (t : TVar D N →₀ ℕ) :
-    coeff t (compB b k p) = if degB b t = k then coeff t p else 0 := by
+    AddMonoidAlgebra.coeff (compB b k p) t = if degB b t = k then AddMonoidAlgebra.coeff p t else 0 := by
   unfold compB
   rw [coeff_sum]
   simp only [coeff_monomial]
@@ -28,7 +32,7 @@ theorem coeff_compB (b : Fin (D + 1)) (k : ℕ) (p : MvPolynomial (TVar D N) K) 
       rw [if_pos hm]
     · have hn : t ∉ p.support.filter (fun s => degB b s = k) := fun h' => ht (Finset.mem_filter.mp h').1
       rw [if_neg hn]
-      exact (by simpa using ht : coeff t p = 0).symm
+      exact (by simpa using ht : AddMonoidAlgebra.coeff p t = 0).symm
   · have hn : t ∉ p.support.filter (fun s => degB b s = k) := fun h' => h (Finset.mem_filter.mp h').2
     rw [if_neg h, if_neg hn]
 
@@ -54,7 +58,8 @@ theorem scaleBlock_eq_sum (b : Fin (D + 1)) (u : Kˣ) (p : MvPolynomial (TVar D 
     (hM : ∀ s ∈ p.support, degB b s < M) :
     sigP b u p = ∑ k ∈ Finset.range M, C ((u : K) ^ k) * compB b k p := by
   conv_lhs => rw [p.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [sigP, scaleEquiv_monomial, sum_filter_block_eq_degB]
   simp only [compB, Finset.mul_sum]
   rw [← Finset.sum_fiberwise_of_maps_to (fun s hs => Finset.mem_range.mpr (hM s hs))]
@@ -88,7 +93,8 @@ theorem one_block (b : Fin (D + 1)) (z : KTf K D N)
       (algebraMap (KTp K D N) (KTf K D N) (compB b k p) - z * algebraMap (KTp K D N) (KTf K D N) (compB b k q)) * (algebraMap (KTp K D N) (KTf K D N) (C (u : K))) ^ k = 0 := by
     intro u
     have h1 := congrArg (sigF (K := K) (D := D) (N := N) b u) hpq
-    rw [map_mul, sigF_alg, sigF_alg, hz u, scaleBlock_eq_sum b u p M hMp, scaleBlock_eq_sum b u q M hMq,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, sigF_alg, sigF_alg, hz u, scaleBlock_eq_sum b u p M hMp, scaleBlock_eq_sum b u q M hMq,
       map_sum, map_sum, Finset.mul_sum] at h1
     have h2 := sub_eq_zero.mpr h1
     rw [← Finset.sum_sub_distrib] at h2
@@ -107,16 +113,14 @@ theorem one_block (b : Fin (D + 1)) (z : KTf K D N)
       have hu := hroot (Units.mk0 ((n : K) + 1) (Nat.cast_add_one_ne_zero n))
       rw [Units.val_mk0] at hu
       show Polynomial.eval _ _ = 0
-      rw [Polynomial.eval_finset_sum]
+      rw [Polynomial.eval_finsetSum]
       simp only [Polynomial.eval_monomial]
       exact hu
   have hcoef : ∀ k < M, algebraMap (KTp K D N) (KTf K D N) (compB b k p) - z * algebraMap (KTp K D N) (KTf K D N) (compB b k q) = 0 := by
     intro k hk
-    have h4 := congrArg (fun P => Polynomial.coeff P k) hQ
-    simp only [Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at h4
-    first
-    | rwa [Finset.sum_ite_eq', if_pos (Finset.mem_range.mpr hk)] at h4
-    | rwa [Finset.sum_ite_eq, if_pos (Finset.mem_range.mpr hk)] at h4
+    have h4 := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P k) hQ
+    simpa only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply,
+      Polynomial.coeff_zero, Finset.sum_ite_eq', if_pos (Finset.mem_range.mpr hk)] using h4
   have hqs : q = ∑ k ∈ Finset.range M, compB b k q := by
     ext t
     rw [MvPolynomial.coeff_sum]
@@ -165,7 +169,8 @@ theorem support_free_of_block_subst_invariant (P : KTp K D N)
   have hc : (aeval (fun v : TVar D N => if v.1 = 0 then C ((0 : Fin (N + 1) → K) v.2) else X v) :
       KTp K D N →ₐ[K] KTp K D N) P = compB 0 0 P := by
     conv_lhs => rw [P.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [aeval_block_zero_monomial]
     unfold compB
     rw [Finset.sum_filter]

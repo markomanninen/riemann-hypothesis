@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SgSegUnique
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SgSegUnique
+
+@[expose] public section
 
 noncomputable section
 

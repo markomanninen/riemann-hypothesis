@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
+
+@[expose] public section
 
 open scoped NNReal
 open NumberField GlobalTheory.IndefiniteRowSideFullHecke.QuotientEigenDifference GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Flat.ExG
@@ -29,7 +33,8 @@ theorem sum_embeddings_eq_trace (E : Type) [Field E] [NumberField E] (C : Type) 
   rw [← hbij.sum_comp (fun σ : E →ₐ[ℚ] Ω => σ x)] at key
   simp only [hf] at key
   apply (algebraMap C Ω).injective
-  rw [map_sum, ← key, eq_ratCast (algebraMap ℚ Ω), eq_ratCast (algebraMap ℚ C), map_ratCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← key, eq_ratCast (algebraMap ℚ Ω), eq_ratCast (algebraMap ℚ C), map_ratCast]
 
 theorem sum_eigProj (E : Type) [Field E] [NumberField E] (C : Type) [Field C] [CharZero C]
     [Fintype (E →+* C)] (hc : Fintype.card (E →+* C) = Module.finrank ℚ E)
@@ -41,7 +46,8 @@ theorem sum_eigProj (E : Type) [Field E] [NumberField E] (C : Type) [Field C] [C
     calc (1 : E) = algebraMap (𝓞 E) E 1 := (map_one _).symm
       _ = algebraMap (𝓞 E) E (∑ j, b.repr 1 j • b j) := by rw [b.sum_repr]
       _ = ∑ j, ((b.repr 1 j : ℤ) : ℚ) • integralBasis E j := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [integralBasis_apply, map_zsmul, Int.cast_smul_eq_zsmul]
   have htr : ∀ k, Algebra.trace ℚ E (HT.dualInt E k) = ((b.repr 1 k : ℤ) : ℚ) := by
@@ -50,7 +56,8 @@ theorem sum_eigProj (E : Type) [Field E] [NumberField E] (C : Type) [Field C] [C
           rw [Algebra.traceForm_apply, mul_one]
       _ = ∑ j, ((b.repr 1 j : ℤ) : ℚ) * Algebra.traceForm ℚ E (HT.dualInt E k) (integralBasis E j) := by
           conv_lhs => rw [h1]
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           refine Finset.sum_congr rfl fun j _ => ?_
           rw [map_smul, smul_eq_mul]
       _ = ((b.repr 1 k : ℤ) : ℚ) := by
@@ -72,7 +79,8 @@ theorem sum_eigProj (E : Type) [Field E] [NumberField E] (C : Type) [Field C] [C
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [hsum]
     _ = ρ (∑ k, b.repr 1 k • b k) y := by
-        rw [map_sum, LinearMap.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, LinearMap.sum_apply]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [map_zsmul, LinearMap.smul_apply, Int.cast_smul_eq_zsmul]
     _ = y := by

@@ -1,27 +1,31 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtInertiaAway
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtIneL
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtPoints
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtFinFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PotCrysOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbFam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrysOfInertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtInertiaAway
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtIneL
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtPoints
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtFinFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PotCrysOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbFam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrysOfInertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
 
-private theorem conj_left_block_of_right_one {Γ R : Type} [Group Γ] [CommRing R] (M : GL (Fin 3) R) (r : Γ →* GG 3 R) (g : Γ)
+private theorem conj_left_block_of_right_one {Γ R : Type} [Group Γ] [CommRing R] (M : GL (Fin 3) R) (r : Γ →* GG (m := 3) (R := R)) (g : Γ)
     (hg : (r g).right = 1) : (conjBy M r g).left = M * (r g).left * M⁻¹ := by
   simp [conjBy, hg]
 
-private theorem conj_left_block_eq_theta {Γ R : Type} [Group Γ] [CommRing R] (r : Γ →* GG 3 R) (c g : Γ)
+private theorem conj_left_block_eq_theta {Γ R : Type} [Group Γ] [CommRing R] (r : Γ →* GG (m := 3) (R := R)) (c g : Γ)
     (hc : (r c).mat = 1) (hc' : (r c).right = -1) (hg : (r g).right = 1) : (r (c⁻¹ * g * c)).left = theta (r g).left := by
   have h1 : (r c).left = 1 := Units.ext hc
   have h2 : theta (1 : GL (Fin 3) R) = 1 := map_one (thetaAut 3 R)
@@ -86,7 +90,7 @@ section
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
   {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ)
-  {U : D.ULoc} {g₁ : G ℚ Ω} {r : G ℚ Ω →* GG 3 (PadicAlgCl l)}
+  {U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))} {g₁ : G ℚ Ω} {r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)}
 
 private theorem isAlgClosure_of_number_field (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (K : Type) [Field K] [NumberField K]
     [Algebra K Ω] : IsAlgClosure K Ω :=
@@ -179,56 +183,3 @@ private theorem exists_place_over_conjugate_embedding (w : HeightOneSpectrum (�
   · exact ⟨_, Or.inr rfl, key _ (by rw [h1, hcc])⟩
 
 end
-
-theorem UpperTheory.V.U3.admissible_rank_three_type_one :
-    CohInp → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
-      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : D.ULoc} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG 3 (PadicAlgCl l)} (h : D.IsPt U g₁ r), ∀ [IsCMField K] (ι : Qbar l ≃+* ℂ),
-      TypeI D.η r → D.IsAutI ι r h.mult → Af.Adm3 ι e N (D.rhoK r h.mult) := by
-  intro hI Ω _ _ _ K _ _ _ l _ c N _ e ψ D U g₁ hM r h _ ι hT hA
-  haveI := isAlgClosure_of_number_field Ω K
-  have hη : ∀ s : G K Ω, D.η (galEmb ℚ K Ω s) = 1 := fun s => by
-    rw [← MonoidHom.mem_ker, D.η_ker]
-    exact galEmb_mem ℚ K Ω s
-  let θ : G K Ω →* (Qbar l)ˣ := (Units.map (algebraMap c.O (PadicAlgCl l)).toMonoidHom).comp
-    ((Chr.dirG ℚ Ω ψ).comp (galEmb ℚ K Ω))
-  have hθ : ∀ i : Fin 3, Af.KillsMu N (θ ^ wt1 i) := fun i s hs => by
-    have : Chr.cls ℚ Ω N (galEmb ℚ K Ω s) = 1 := (Chr.clsFacts ℚ Ω N).2.2.1 _ 1 fun ζ hζ => by
-      rw [Units.val_one, ZMod.val_one_eq_one_mod, ← pow_eq_pow_mod 1 hζ, pow_one, galEmb_apply, hs ζ hζ]
-    simp [θ, Chr.dirG, this]
-  have hΨ : ∀ s : G K Ω, D.ΨQ (galEmb ℚ K Ω s) = cycBar K Ω l s ^ (e : ℤ) * θ s := fun s => by
-    have h1 : Units.map (algebraMap c.O (PadicAlgCl l)).toMonoidHom (chiO ℚ Ω l c.O (galEmb ℚ K Ω s)) =
-        cycBar K Ω l s := Units.ext rfl
-    rw [← h1, ← map_zpow]
-    exact map_mul (Units.map (algebraMap c.O (PadicAlgCl l)).toMonoidHom) _ _
-  refine ⟨⟨top_ne_bot, fun _ _ _ => trivial, fun W _ hW => hT W fun g hg v hv => ?_⟩, hA, continuous_rho_of_point D h,
-    fun w hw => ?_, fun w hw => ?_⟩
-  · rw [D.η_ker, ← range_galEmb] at hg
-    obtain ⟨s, rfl⟩ := hg
-    exact hW s v hv
-  · have hB := isPlaceOver_placeOf Ω w
-    have hl : ¬ (placeOf Ω w).valuation (l : Ω) < 1 := fun h => hw (((places K Ω l _).2.2.1 w hB).1 h)
-    obtain ⟨M, hM⟩ := pt_inertia_away D hM h _ hl
-    refine ⟨_, hB, fun i => θ ^ wt1 i, hθ, M, fun s hs => ?_⟩
-    have h1 := hM (galEmb ℚ K Ω s) hs (hη s)
-    have h2 : cycBar K Ω l s = 1 := by
-      have : cycZ K Ω l s = 1 := (places K Ω l _).2.2.2 hl hs
-      simp [cycBar, this]
-    rw [Units.val_mul, Units.val_mul, Dat.rhoK_apply, ← GG.mat, h1, Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one,
-      GG.mat, unitaryThreeReflection_left, tor_val, hΨ, h2, _root_.one_zpow, one_mul]
-    rfl
-  · obtain ⟨g, hg, hB⟩ := exists_place_over_conjugate_embedding D w hw
-    have hl := ((places K Ω l _).2.2.1 w hB).2 hw
-    obtain ⟨-, M, h1, h2⟩ := pt_inertia_above hI D hM h _ hl
-    have hF := (galEmbFam ℚ K Ω l).1 (Loc.placeJ (D.j.comp (g : Ω →+* Ω)))
-    have hc : ∀ s : G K Ω, (conjBy M r (galEmb ℚ K Ω s)).left = M * D.rhoK r h.mult s * M⁻¹ := fun s =>
-      conj_left_block_of_right_one M r _ ((h.mult _).trans (hη s))
-    obtain ⟨κ, hκ, hκ'⟩ := exists_flag_characters_of_upper_triangular (D.rhoK r h.mult) (Dec (F := K) (Loc.placeJ (D.j.comp (g : Ω →+* Ω)))) M
-      fun s hs i j hij => by
-        rw [← hc]
-        rw [← hF.1] at hs
-        exact h1 _ hs (hη s) i j (by have : (j : ℕ) < i := hij; simp only [wt, wt1]; omega)
-    refine ⟨_, hB, fun i => θ ^ wt1 i, κ, hθ, hκ, fun i s hs => Units.ext ?_, Or.inr (potentially_crystalline_conjugate_place D hI h g hg)⟩
-    have h3 : ![(e : ℤ), 0, -(e : ℤ)] i = e * wt1 i := by fin_cases i <;> simp [wt1]
-    rw [hκ', ← hc, h3, _root_.zpow_mul, MonoidHom.zpow_apply, ← _root_.mul_zpow, ← hΨ]
-    refine (h2 _ hs i).trans ?_
-    rw [GG.mat, unitaryThreeReflection_left, tor_val, Matrix.diagonal_apply_eq]

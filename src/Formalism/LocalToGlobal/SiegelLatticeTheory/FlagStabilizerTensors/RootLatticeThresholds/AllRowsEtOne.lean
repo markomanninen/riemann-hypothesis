@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsEtAlg
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsKpp
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsWt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsEtAlg
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsKpp
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsWt
+
+@[expose] public section
 
 noncomputable section
 
@@ -200,8 +204,8 @@ section Cyl
 
 variable (ψ₀ : ∀ k : Fin 2, AddChar (ZMod (D.host.g k)) ℂ)
 
-open Classical in
 
+open Classical in
 theorem sum_cyl (k : Fin 2) (S : Finset (Tup D k)) :
     ∑ a ∈ Finset.univ.filter (fun a : CV D => tupOf a ∈ cyl D k (S : Set (Tup D k))),
         ∏ kv : (Σ k : Fin 2, D.nd.PlG k), Nc ψ₀ kv.1 (Formalism.CyclotomicNorms.monicOf (a kv)) =
@@ -292,8 +296,8 @@ theorem split_prod (F : (Σ k : Fin 2, D.nd.PlG k) → ℂ) :
     ∏ kv : (Σ k : Fin 2, D.nd.PlG k), F kv = (∏ v : D.nd.PlG 0, F ⟨0, v⟩) * ∏ v : D.nd.PlG 1, F ⟨1, v⟩ := by
   rw [Fintype.prod_sigma, Fin.prod_univ_two]
 
-include hS in
 
+include hS in
 theorem etOne_of (hK : KppShape X) (ψ₀ : ∀ k : Fin 2, AddChar (ZMod (D.host.g k)) ℂ) (hψ₀ : ∀ k, ψ₀ k ≠ 1) :
     EtOne X ψ₀ := by
   classical

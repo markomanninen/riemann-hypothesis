@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,7 +129,7 @@ theorem fourier_bound (N : ℕ) : ∃ K : ℝ, 0 ≤ K ∧ ∀ (f₁ f₂ : Schw
         simpa using (h f₁ f₂ x m (by exact_mod_cast hm)).1)
       (k := 0) (n := n) (by simp) (by exact_mod_cast hn) w
     simp only [norm_iteratedFDeriv_zero, pow_zero, one_mul, Nat.cast_zero, mul_zero, zero_add,
-      Finset.range_one, Finset.singleton_product, Finset.sum_map, Function.Embedding.coeFn_mk] at h1
+      Finset.range_one, Finset.singleton_product, Finset.sum_map, Function.Embedding.sectR_apply] at h1
     calc _ ≤ (1 + ‖x‖) ^ N * (2 ^ n * ∑ j ∈ Finset.range (n + 1), ∫ u, ‖iteratedFDeriv ℝ j (H f₁ f₂ x) u‖) :=
           mul_le_mul_of_nonneg_left h1 (by positivity)
       _ = 2 ^ n * ∑ j ∈ Finset.range (n + 1), (1 + ‖x‖) ^ N * ∫ u, ‖iteratedFDeriv ℝ j (H f₁ f₂ x) u‖ := by

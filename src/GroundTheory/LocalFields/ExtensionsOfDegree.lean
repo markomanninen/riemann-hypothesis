@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.LocalFields.FiniteExtension
-import GroundTheory.LocalFields.Eisenstein
-import GroundTheory.LocalFields.SeparableClosure
-import GroundTheory.LocalFields.UnramifiedExistence
-import GroundTheory.LocalFields.MaximalUnramified
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.FiniteExtension
+public import GroundTheory.LocalFields.Eisenstein
+public import GroundTheory.LocalFields.SeparableClosure
+public import GroundTheory.LocalFields.UnramifiedExistence
+public import GroundTheory.LocalFields.MaximalUnramified
+
+@[expose] public section
+
 set_option maxHeartbeats 4000000
 set_option synthInstance.maxHeartbeats 400000
 
@@ -79,13 +84,17 @@ theorem exists_adjoin_eq_of_norm_coeff_sub_lt (f : L[X]) (hm : f.Monic) (hirr : 
     intro a ha b hb hab
     have hmem : ‖a - b‖ ∈ D :=
       Finset.mem_image.2 ⟨(a, b), Finset.mem_filter.2 ⟨Finset.mem_product.2 ⟨ha, hb⟩, hab⟩, rfl⟩
-    rw [hr_def, dif_pos ⟨_, hmem⟩]
+    rw [hr_def, dite_eq_left ⟨_, hmem⟩]
     exact D.min'_le _ hmem
   refine ⟨r ^ f.natDegree, pow_pos hr _, ?_⟩
   intro g hgm hdeg hgc hclose β hβ
   have hβint : IsIntegral L β := ⟨g, hgm, by rwa [← aeval_def]⟩
   have : FiniteDimensional L L⟮β⟯ := adjoin.finiteDimensional hβint
-  let ψ : L⟮β⟯ →ₐ[L] C := IsAlgClosed.lift
+  let ψ : L⟮β⟯ →ₐ[L] C := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   set β' : C := ψ (AdjoinSimple.gen L β) with hβ'_def
   have hgen : aeval (AdjoinSimple.gen L β) g = 0 := by
     apply (algebraMap L⟮β⟯ Ω').injective
@@ -122,7 +131,7 @@ theorem exists_adjoin_eq_of_norm_coeff_sub_lt (f : L[X]) (hm : f.Monic) (hirr : 
     push Not at hcon
     have : r ^ f.natDegree ≤ ‖aeval β' f‖ := by
       rw [heval, norm_prod, ← hcard, ← Finset.prod_const]
-      exact Finset.prod_le_prod (fun _ _ ↦ hr.le) hcon
+      exact Finset.prod_le_prod₀ (fun _ _ ↦ hr.le) hcon
     exact absurd hsmall (not_lt.2 this)
   have hfC : f.map (algebraMap L C) ≠ 0 := (hm.map _).ne_zero
   have haroot : aeval a f = 0 := by

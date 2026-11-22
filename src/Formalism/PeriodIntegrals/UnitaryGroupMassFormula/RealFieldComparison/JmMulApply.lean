@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.AdBridgeSteps
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.AdBridgeSteps
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.BridgeRealK
 

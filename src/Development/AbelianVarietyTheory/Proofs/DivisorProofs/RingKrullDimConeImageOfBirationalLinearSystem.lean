@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeOfRingKrullDimConeIdeal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeOfRingKrullDimConeIdeal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+
+@[expose] public section
+
 open NumberField MvPolynomial GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.CompHt
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -73,7 +78,7 @@ theorem isAlgebraic_of_closure_eq_top (y : Fin N → Ω) (hy : y ≠ 0)
       apply hι
       rw [map_mul, ← hab, mul_div_cancel₀ _ ((map_ne_zero_iff ι hι).2 hb0)]
     refine ⟨Polynomial.C (⟨b, hb⟩ : A) * Polynomial.X - Polynomial.C (⟨a, ha⟩ : A), fun h => hb0 ?_, ?_⟩
-    · have := congrArg (fun q => Polynomial.coeff q 1) h
+    · have := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q 1) h
       simp at this
       exact congrArg Subtype.val this
     · simp [e]
@@ -84,7 +89,7 @@ theorem ringKrullDim_imageIdeal_of_birational : ∀ (k : Type) [Field k] (S : Li
   intro k _ S h hb ⟨η, hη, hr⟩
   have := HeightExists.isIntegral h
   let Ω := S.Y.residueField η
-  letI : Algebra k Ω := (S.baseHom (resPt η)).toAlgebra
+  let : Algebra k Ω := (S.baseHom (resPt η)).toAlgebra
   let x : S.Pt Ω := ⟨resPt η, S.comp_str _⟩
   set y : Fin S.N → Ω := S.coords (resPt η) with hy
   have hI : S.imageIdeal = coneIdeal k y :=

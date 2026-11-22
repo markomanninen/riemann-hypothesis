@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafHsRelPfSplit
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafHsRelPfSplit
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC CochainComplex

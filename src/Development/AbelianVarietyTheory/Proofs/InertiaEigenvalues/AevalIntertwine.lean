@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.AevalIntertwine
 
@@ -8,7 +12,7 @@ theorem aeval_intertwine : ∀ {K M N : Type} [inst : Field K] [inst_1 : AddComm
   · intro a x
     simp [Polynomial.aeval_C, Module.algebraMap_end_apply]
   · intro p q hp hq x
-    simp only [map_add, LinearMap.add_apply, hp, hq]
+    simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
   · intro n a ih x
     have e : ∀ {V : Type} [AddCommGroup V] [Module K V] (E : Module.End K V) (y : V),
         Polynomial.aeval E (Polynomial.C a * Polynomial.X ^ (n + 1)) y

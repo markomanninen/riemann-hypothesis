@@ -1,7 +1,11 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.MaDensCompEqZeroOfRankLt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.MaDensCompEqZeroOfRankLt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -13,7 +17,7 @@ noncomputable section
 theorem leviC_conj_of_symm {e : ℕ} (H : (Fin e → ℂ) →L[ℝ] (Fin e → ℂ) →L[ℝ] ℝ)
     (hs : ∀ v w, H v w = H w v) (a b : Fin e → ℂ) :
     starRingEnd ℂ (leviC H a b) = leviC H b a := by
-  simp only [leviC, map_div₀, map_add, map_mul, map_sub, Complex.conj_ofReal, Complex.conj_I, map_ofNat]
+  simp only [leviC, map_div₀, map_add (f := _), map_mul, map_sub, Complex.conj_ofReal, Complex.conj_I, map_ofNat]
   rw [hs b a, hs (I • b) (I • a), hs b (I • a), hs (I • b) a]
   push_cast
   ring
@@ -38,7 +42,8 @@ theorem hessC_posSemidef_of_levi {e : ℕ} (f : (Fin e → ℂ) → ℝ) (z : Fi
   · have h1 : ∀ i, ∑ j, hessC f z i j * x j =
         leviC (fderiv ℝ (fderiv ℝ f) z) (Pi.single i 1) (star x) := by
       intro i
-      rw [← leviC_conj_of_symm _ hs (star x) (Pi.single i 1),
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← leviC_conj_of_symm _ hs (star x) (Pi.single i 1),
         ← sum_mul_leviC (fderiv ℝ (fderiv ℝ f) z) (star x) (Pi.single i 1), map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hM, map_mul, leviC_conj_of_symm _ hs]

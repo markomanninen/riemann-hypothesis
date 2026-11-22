@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEWaveOut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveOperatorLeL2Subspace
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEWaveOut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveOperatorLeL2Subspace
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

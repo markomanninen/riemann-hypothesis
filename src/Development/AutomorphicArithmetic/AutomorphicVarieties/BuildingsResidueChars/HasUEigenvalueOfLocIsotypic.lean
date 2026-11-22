@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.HeckeGal UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -52,13 +57,13 @@ private theorem killed_of_mem_iSup {G V U ι J : Type} [Group G] [AddCommGroup V
         refine ⟨v, fun h => hv (by rw [h, map_zero]; exact zero_mem _), fun j => ?_⟩
         have h4 : S j v ∈ W.comap (f i) := by
           have h5 := hK j
-          rw [← e, map_add] at h5
+          rw [← e, map_add (f := _)] at h5
           rw [Submodule.mem_comap, hTS, eq_neg_of_add_eq_zero_right h5]
           exact neg_mem (hT W hW j x hx)
         rwa [hc, Submodule.mem_bot] at h4
       · refine ih _ (fun g y hy => ?_) h3 h2
         obtain ⟨x, hx, _, ⟨v, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hy
-        rw [map_add, ← hf]
+        rw [map_add (f := _), ← hf]
         exact Submodule.add_mem_sup (hW g x hx) ⟨_, rfl⟩
   exact key s ⊥ (fun g x hx => by simp_all) (by simpa using h0) (by simpa using hs)
 
@@ -74,7 +79,8 @@ private theorem dc_eigen_descend {G V U ι : Type} [Group G] [AddCommGroup V] [M
     (fun j : Option K => j.elim (Hi.dc σ K K x - lam • LinearMap.id) fun k => σ k - LinearMap.id)
     (by
       rintro (_ | k) i u
-      · simp only [Option.elim, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply, map_sub, map_smul, hs,
+      set_option synthInstance.maxHeartbeats 100000 in
+        · simp only [Option.elim, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply, map_sub, map_smul, hs,
           map_sum, hf]
       · simp only [Option.elim, LinearMap.sub_apply, LinearMap.id_apply, map_sub, hf])
     (by

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.RealTest
-import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.GeoAlg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.RealTest
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.GeoAlg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ def HasLag (M : Model σ X W) (M₁ : Model σ X₁ W₁) (ψ : AddChar (AF F) �
 
 theorem alg_inj : Function.Injective (algebraMap F (AF F)) := NumberField.AdeleRing.algebraMap_injective (𝓞 F) F
 
-variable (F E) in
 
+variable (F E) in
 def incL (α β : Type) : Matrix α β E →ₗ[F] Matrix α β (AE F E) :=
   (Algebra.TensorProduct.includeRight : E →ₐ[F] AE F E).toLinearMap.mapMatrix
 
@@ -169,8 +173,8 @@ theorem hasLag_X {B : Base F E} (hB : B.IsGood σ) (M : Model σ X W) (M₁ : Mo
     simp
   · rw [hH.rank]; ring
 
-open scoped Classical in
 
+open scoped Classical in
 theorem proj_adm (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ] (y : κ → AF F) :
     (LinearMap.proj y : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ) ∈ (adeleClass F).adm κ := by
   intro g _

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanIdealHomog
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanIdealHomog
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,13 +38,13 @@ theorem exists_limit_form (I : Ideal R) [IsPrecomplete I R] (n e : ℕ)
   classical
   have htop : ∀ k, (I ^ k • ⊤ : Submodule R R) = I ^ k := fun k => by
     rw [smul_eq_mul, Ideal.mul_top]
-  have hcoef : ∀ d i k, coeff d (G i) - coeff d (G (i + k)) ∈ I ^ (e + i + 1) := by
+  have hcoef : ∀ d i k, AddMonoidAlgebra.coeff (G i) d - AddMonoidAlgebra.coeff (G (i + k)) d ∈ I ^ (e + i + 1) := by
     intro d i k
     have h := (mem_map_C_iff.1 (sub_tail_mem I e G hd i k)) d
     rwa [coeff_sub] at h
-  have hL : ∀ d, ∃ Ld : R, ∀ i, coeff d (G i) - Ld ∈ I ^ (e + i + 1) := by
+  have hL : ∀ d, ∃ Ld : R, ∀ i, AddMonoidAlgebra.coeff (G i) d - Ld ∈ I ^ (e + i + 1) := by
     intro d
-    obtain ⟨Ld, hLd⟩ := IsPrecomplete.prec' (I := I) (fun i => coeff d (G i)) (by
+    obtain ⟨Ld, hLd⟩ := IsPrecomplete.prec' (I := I) (fun i => AddMonoidAlgebra.coeff (G i) d) (by
       intro m n hmn
       rw [SModEq.sub_mem, htop]
       obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hmn
@@ -49,8 +53,8 @@ theorem exists_limit_form (I : Ideal R) [IsPrecomplete I R] (n e : ℕ)
     have h1 := hcoef d i (e + 1)
     have h2 := hLd (i + (e + 1))
     rw [SModEq.sub_mem, htop] at h2
-    have h3 : coeff d (G i) - Ld =
-        (coeff d (G i) - coeff d (G (i + (e + 1)))) + (coeff d (G (i + (e + 1))) - Ld) := by ring
+    have h3 : AddMonoidAlgebra.coeff (G i) d - Ld =
+        (AddMonoidAlgebra.coeff (G i) d - AddMonoidAlgebra.coeff (G (i + (e + 1))) d) + (AddMonoidAlgebra.coeff (G (i + (e + 1))) d - Ld) := by ring
     rw [h3]
     exact add_mem h1 (Ideal.pow_le_pow_right (by omega) h2)
   choose Lf hLf using hL
@@ -69,7 +73,7 @@ theorem exists_limit_form (I : Ideal R) [IsPrecomplete I R] (n e : ℕ)
     · rw [if_pos hdS]
       exact hLf d i
     · rw [if_neg hdS, sub_zero]
-      have h0 : coeff d (G i) = 0 := by
+      have h0 : AddMonoidAlgebra.coeff (G i) d = 0 := by
         by_contra hne
         apply hdS
         have hw := hom i hne
@@ -106,7 +110,7 @@ theorem exists_form_in_all (I : Ideal R) [IsPrecomplete I R]
     have hex := hlift (e + i) n hn (s i) h1 h2
     rw [hsS]
     simp only [lift']
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   have hinv : ∀ i, s i ∈ L (e + i) ∧ (s i).IsHomogeneous n := by
     intro i
@@ -123,8 +127,8 @@ theorem exists_form_in_all (I : Ideal R) [IsPrecomplete I R]
   rw [h3]
   exact sub_mem h1 h2
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem exists_limit_ideal : ∀ (R : Type) [CommRing R] (I : Ideal R), IsAdicComplete I R → ∀ (N : ℕ)
     (L : ℕ → Ideal (MvPolynomial (Fin (N + 1)) R)),
     (∀ e, HomogIdeal (L e)) →

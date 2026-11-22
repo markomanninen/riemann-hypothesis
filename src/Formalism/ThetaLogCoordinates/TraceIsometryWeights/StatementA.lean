@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DivStable
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DivStable
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 

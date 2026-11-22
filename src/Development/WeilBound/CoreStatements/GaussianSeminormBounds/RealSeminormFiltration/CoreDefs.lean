@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.TensorIrr
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockHarmSplit
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockJointMult
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockOneDeg
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockWtDeg
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockRaiseLow
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.TensorIrr
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockHarmSplit
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockJointMult
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockOneDeg
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockWtDeg
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FockRaiseLow
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ def thAct (p q r s : ℕ) (c τ : ℂ) : Mat r s →ₗ[ℂ] Module.End ℂ (ThC
     change thMkC p q r s c (fockAct2 p q r s (W + W') f) + (τ * (W + W').trace) • thMkC p q r s c f =
       (thMkC p q r s c (fockAct2 p q r s W f) + (τ * W.trace) • thMkC p q r s c f) +
       (thMkC p q r s c (fockAct2 p q r s W' f) + (τ * W'.trace) • thMkC p q r s c f)
-    simp only [map_add, LinearMap.add_apply, Matrix.trace_add, mul_add, add_smul]
+    simp only [map_add (f := _), LinearMap.add_apply, Matrix.trace_add, mul_add, add_smul]
     abel
   map_smul' a W := by
     refine LinearMap.ext fun x => ?_
@@ -115,7 +119,7 @@ def thAct (p q r s : ℕ) (c τ : ℂ) : Mat r s →ₗ[ℂ] Module.End ℂ (ThC
 theorem thAct_mk (p q r s : ℕ) (c τ : ℂ) (W : Mat r s) (f : Pol p q r s) :
     thAct p q r s c τ W (thMkC p q r s c f) = thMkC p q r s c (twAct p q r s τ W f) := by
   change thMkC p q r s c (fockAct2 p q r s W f) + (τ * W.trace) • thMkC p q r s c f = _
-  rw [twAct_apply, map_add, map_smul]
+  rw [twAct_apply, map_add (f := _), map_smul]
 
 def harm1 (p q r s : ℕ) : Submodule ℂ (Pol p q r s) := Submodule.span ℂ (lowKer p q r s true false)
 

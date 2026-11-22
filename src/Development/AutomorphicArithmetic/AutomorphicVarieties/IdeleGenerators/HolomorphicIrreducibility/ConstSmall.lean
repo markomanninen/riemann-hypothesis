@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.LkDist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EulerianNumeratorThree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EPrim
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.LkDist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EulerianNumeratorThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EPrim
+
+@[expose] public section
 
 open Formalism.ConjugateSelfDual Finset UpperTheory.V.Sd
 
@@ -89,7 +93,8 @@ private theorem add_pow_N {N : ℕ} [NeZero N] (a : ZMod N) : (ZMod.stdAddChar a
 
 private theorem gauss_le (ι : Qbar l ≃+* ℂ) {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) :
     ‖ι.symm (gaussSum χ ZMod.stdAddChar)‖ ≤ 1 := by
-  rw [gaussSum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [gaussSum, map_sum]
   refine sum_le _ _ fun a _ => ?_
   rw [map_mul]
   refine mul_le (char_le ι χ a) (root_le (NeZero.ne N) ?_).le
@@ -188,7 +193,8 @@ theorem UpperTheory.V.Sd.constSmall :
   have hφw : φ⁻¹ (w : ZMod M) = 1 := by rw [MulChar.inv_apply_eq_inv', h.φw, inv_one]
   set T : ℂ := ∑ b ∈ range M, φ⁻¹ (b : ZMod M) * Lk k (ζ ^ (w * b)) with hT
   have hT1 : ‖ι.symm T‖ ≤ 1 := by
-    rw [hT, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT, map_sum]
     exact sum_le _ _ fun b _ => by rw [map_mul]; exact mul_le (char_le ι _ _) (hL _)
   have hA := sum_all h.one_lt hw0 hk φ⁻¹ hζ
   have hB := sum_multiples M w hw0 (fun n => φ⁻¹ (n : ZMod M) * Lk k (ζ ^ n))
@@ -209,7 +215,8 @@ theorem UpperTheory.V.Sd.constSmall :
       rw [Nat.cast_sub (Nat.one_le_pow _ _ hw0)]; simp
     rw [h2, map_natCast]; exact nat_lt h1
   have hSlt : ‖ι.symm (∑ a : ZMod (M * w), χ⁻¹ a * Lk k (ZMod.stdAddChar a : ℂ))‖ < 1 := by
-    rw [hS, map_add, map_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hS, map_add (f := _), map_mul, map_sum]
     refine add_lt (sum_lt _ _ fun n _ => ?_) (mul_lt hw1 hT1)
     split_ifs with hn
     · simp

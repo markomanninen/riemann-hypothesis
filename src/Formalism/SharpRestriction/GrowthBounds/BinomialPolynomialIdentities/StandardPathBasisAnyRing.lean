@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissiblePolynomialBasisProv
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissiblePolynomialBasisProv
+
+@[expose] public section
 
 noncomputable section
 open MvPolynomial Finset

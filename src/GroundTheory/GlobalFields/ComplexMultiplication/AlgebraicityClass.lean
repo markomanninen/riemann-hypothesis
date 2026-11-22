@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.Algebraicity
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.Algebraicity
+
+@[expose] public section
 
 open NumberField Module WeierstrassCurve GroundTheory.Arith.Abelian
 open scoped nonZeroDivisors
@@ -39,10 +43,10 @@ theorem image_idealLattice (σ : ℂ ≃+* ℂ) (hσ : ∀ k : K, σ (σ₀ k) =
   · rintro ⟨x, hx, rfl⟩
     exact ⟨σ₀ x, ⟨x, hx, rfl⟩, hσ x⟩
 
-variable (hK : finrank ℚ K = 2) [IsTotallyComplex K]
+variable (hK : finrank ℚ K = 2) [_root_.NumberField.IsTotallyComplex K]
 include hK
 
-theorem latticeHom_eq_idealLattice (L L' : PeriodPair) (hL : latticeEnd L = cmRing σ₀)
+theorem latticeHom_eq_idealLattice (L L' : PeriodPair) (hL : periodLatticeEnd L = cmRingOfEmbedding σ₀)
     (𝔟 : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (h : L'.lattice = idealLattice σ₀ ↑𝔟 * L.lattice) :
     (latticeHom L L' : Set ℂ) = idealLattice σ₀ ↑𝔟 := by
   obtain ⟨I, c, hc, hI⟩ := exists_idealLattice_of_latticeEnd_eq σ₀ hK L hL

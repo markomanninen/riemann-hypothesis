@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.FinCut
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleDiscreteSpaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteAutomorphicRepGLExistsLocalComponent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryDivisorDualLabel
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.FinCut
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleDiscreteSpaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteAutomorphicRepGLExistsLocalComponent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryDivisorDualLabel
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ variable {E : Type} [Field E] [NumberField E] {n : ℕ}
 
 theorem mem_glSub_iff (k : GL (Fin n) (Af E)) :
     k ∈ GlobalTheory.GLIntegral.glSub (GlobalTheory.GLIntegral.intSubring E) ↔
-      ∀ v, GeneralLinearGroup.map (pLoc E v) k ∈ GlobalTheory.LFun.KGL v n := by
+      ∀ v, GeneralLinearGroup.map (pLoc E v) k ∈ GlobalTheory.LFun.KGL v (n := n) := by
   constructor
   · rintro ⟨h1, h2⟩ v
     obtain ⟨U, hU, e⟩ := GlobalTheory.DualDivU.exists_glint (Ov E v)
@@ -40,7 +44,7 @@ theorem mem_glSub_iff (k : GL (Fin n) (Af E)) :
 
 theorem exists_finset_of_isOpen (L : Set (GL (Fin n) (Af E))) (hL : IsOpen L) (h1 : 1 ∈ L) :
     ∃ T : Finset (HeightOneSpectrum (𝓞 E)), ∀ k : GL (Fin n) (Af E),
-      (∀ v, GeneralLinearGroup.map (pLoc E v) k ∈ GlobalTheory.LFun.KGL v n) →
+      (∀ v, GeneralLinearGroup.map (pLoc E v) k ∈ GlobalTheory.LFun.KGL v (n := n)) →
       (∀ w ∈ T, GeneralLinearGroup.map (pLoc E w) k = 1) → k ∈ L := by
   by_contra h
   push Not at h
@@ -83,7 +87,7 @@ theorem exists_fixed_step {V : Submodule ℂ (Sm E N)} (hV : IsDiscrete V) (W : 
   let X : Submodule ℂ V :=
     { carrier := {y | TypeW W y.1 ∧ ∀ c ∈ C, finRep E N c y.1 = y.1}
       add_mem' := fun {a b} ha hb => ⟨fun g => W.add_mem (ha.1 g) (hb.1 g), fun c h => by
-        rw [Submodule.coe_add, map_add, ha.2 c h, hb.2 c h]⟩
+        rw [Submodule.coe_add, map_add (f := _), ha.2 c h, hb.2 c h]⟩
       zero_mem' := ⟨fun g => W.zero_mem, fun c _ => map_zero _⟩
       smul_mem' := fun r a ha => ⟨fun g => W.smul_mem r (ha.1 g), fun c h => by
         rw [Submodule.coe_smul, map_smul, ha.2 c h]⟩ }
@@ -112,7 +116,7 @@ section Level
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ}
 
 def locLevel (Kf : ∀ w : HeightOneSpectrum (𝓞 E), Subgroup (GL (Fin N) (w.adicCompletion E)))
-    (w : HeightOneSpectrum (𝓞 E)) : Subgroup (GL (Fin N) (w.adicCompletion E)) := GlobalTheory.LFun.KGL w N ⊓ Kf w
+    (w : HeightOneSpectrum (𝓞 E)) : Subgroup (GL (Fin N) (w.adicCompletion E)) := GlobalTheory.LFun.KGL w (n := N) ⊓ Kf w
 
 def adLevel (Kf : ∀ w : HeightOneSpectrum (𝓞 E), Subgroup (GL (Fin N) (w.adicCompletion E))) :
     Subgroup (GL (Fin N) (Af E)) := ⨅ v, (locLevel Kf v).comap (GeneralLinearGroup.map (pLoc E v))
@@ -128,7 +132,7 @@ theorem isCompact_locLevel {Kf : ∀ w : HeightOneSpectrum (𝓞 E), Subgroup (G
 
 theorem isOpen_adLevel {Kf : ∀ w : HeightOneSpectrum (𝓞 E), Subgroup (GL (Fin N) (w.adicCompletion E))}
     (hK : PositivityTheory.Rg.BcB.F.F5.IsLevel Kf) : IsOpen (adLevel Kf : Set (GL (Fin N) (Af E))) := by
-  have hB : {w | ¬ GlobalTheory.LFun.KGL w N ≤ Kf w}.Finite := hK.2
+  have hB : {w | ¬ GlobalTheory.LFun.KGL w (n := N) ≤ Kf w}.Finite := hK.2
   have e : (adLevel Kf : Set (GL (Fin N) (Af E))) =
       (GlobalTheory.GLIntegral.glSub (ι := Fin N) (GlobalTheory.GLIntegral.intSubring E) : Set (GL (Fin N) (Af E))) ∩
         ⋂ w ∈ hB.toFinset, (GeneralLinearGroup.map (pLoc E w) : GL (Fin N) (Af E) → _) ⁻¹' (Kf w : Set _) := by
@@ -136,7 +140,7 @@ theorem isOpen_adLevel {Kf : ∀ w : HeightOneSpectrum (𝓞 E), Subgroup (GL (F
     simp only [SetLike.mem_coe, mem_adLevel, Set.mem_inter_iff, Set.mem_iInter, mem_glSub_iff, Set.mem_preimage,
       Set.Finite.mem_toFinset, Set.mem_setOf_eq]
     refine ⟨fun h => ⟨fun v => (h v).1, fun w _ => (h w).2⟩, fun h v => ⟨h.1 v, ?_⟩⟩
-    by_cases hv : GlobalTheory.LFun.KGL v N ≤ Kf v
+    by_cases hv : GlobalTheory.LFun.KGL v (n := N) ≤ Kf v
     · exact hv (h.1 v)
     · exact h.2 v hv
   rw [e]
@@ -232,9 +236,9 @@ section Uniq
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ}
 
-open GlobalTheory.CuspRep.LocUniq in
 
-theorem isoPart_opD {V : Submodule ℂ (Sm E N)} (hs : IsStable V) (w : HeightOneSpectrum (𝓞 E)) {X : Type}
+open GlobalTheory.CuspRep.LocUniq in
+theorem isoPart_opD {V : Submodule ℂ (Sm E N)} (hs : _root_.GlobalTheory.CuspRep.IsStable V) (w : HeightOneSpectrum (𝓞 E)) {X : Type}
     [AddCommGroup X] [Module ℂ X] (σ : Representation ℂ (GL (Fin N) (w.adicCompletion E)) X) (o : Op E N) {x : V}
     (hx : x ∈ isoPart σ (locRepD hs w)) : opD hs o x ∈ isoPart σ (locRepD hs w) := by
   cases o with
@@ -248,8 +252,8 @@ theorem isoPart_opD {V : Submodule ℂ (Sm E N)} (hs : IsStable V) (w : HeightOn
     refine isoPart_comm σ _ _ (fun g y => Subtype.ext ?_) hx
     exact LinearMap.congr_fun (lie_rt_fin X (locGL E N w g)) y.1
 
-open GlobalTheory.CuspRep.LocUniq in
 
+open GlobalTheory.CuspRep.LocUniq in
 theorem isLocCompGL_unique {V : Submodule ℂ (Sm E N)} (hV : IsDiscrete V) (w : HeightOneSpectrum (𝓞 E))
     (σ σ' : SmIrr (GL (Fin N) (w.adicCompletion E))) (h : IsLocCompGL V w σ) (h' : IsLocCompGL V w σ') :
     Nonempty (σ.ρ.Equiv σ'.ρ) := by
@@ -282,15 +286,15 @@ section Iso
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ}
 
-variable (E N) in
 
+variable (E N) in
 abbrev OpAlg : Subalgebra ℂ (Module.End ℂ (Sm E N)) := Algebra.adjoin ℂ (Set.range (act : Op E N → _))
 
 def opOf (o : Op E N) : OpAlg E N := ⟨act o, Algebra.subset_adjoin ⟨o, rfl⟩⟩
 
 instance : IsScalarTower ℂ (OpAlg E N) (Sm E N) := ⟨fun _ _ _ => rfl⟩
 
-def toR (V : Submodule ℂ (Sm E N)) (hV : IsStable V) : Submodule (OpAlg E N) (Sm E N) where
+def toR (V : Submodule ℂ (Sm E N)) (hV : _root_.GlobalTheory.CuspRep.IsStable V) : Submodule (OpAlg E N) (Sm E N) where
   carrier := V
   add_mem' := V.add_mem
   zero_mem' := V.zero_mem
@@ -363,7 +367,7 @@ theorem equiv_val_smul {R M : Type*} [Ring R] [AddCommGroup M] [Module R M] {p q
   rfl
 
 theorem isLocCompGL_of_equiv {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ}
-    {V V' : Submodule ℂ (Sm E N)} (hV : IsStable V) (hV' : IsStable V')
+    {V V' : Submodule ℂ (Sm E N)} (hV : _root_.GlobalTheory.CuspRep.IsStable V) (hV' : _root_.GlobalTheory.CuspRep.IsStable V')
     (e : toR V hV ≃ₗ[OpAlg E N] toR V' hV') (w : HeightOneSpectrum (𝓞 E))
     (σ : SmIrr (GL (Fin N) (w.adicCompletion E))) (h : IsLocCompGL V w σ) : IsLocCompGL V' w σ := by
   obtain ⟨f, h0, h1, hf⟩ := h
@@ -371,13 +375,14 @@ theorem isLocCompGL_of_equiv {E : Type} [Field E] [NumberField E] [IsCMField E] 
     { toFun := fun v => (e ⟨f v, h1 v⟩).1
       map_add' := fun a b => by
         have : (⟨f (a + b), h1 (a + b)⟩ : toR V hV) = ⟨f a, h1 a⟩ + ⟨f b, h1 b⟩ := Subtype.ext (map_add f a b)
-        rw [this, map_add]
+        rw [this, e.map_add]
         rfl
       map_smul' := fun c a => by
         exact equiv_val_smul e (algebraMap ℂ (OpAlg E N) c) ⟨f a, h1 a⟩ ⟨f (c • a), h1 _⟩ (map_smul f c a) }
   refine ⟨F, fun hF => h0 (LinearMap.ext fun v => ?_), fun v => (e ⟨f v, h1 v⟩).2, fun g v => ?_⟩
   · have h2 : e ⟨f v, h1 v⟩ = 0 := Subtype.ext (LinearMap.congr_fun hF v)
-    exact congrArg Subtype.val ((map_eq_zero_iff e e.injective).1 h2)
+    have h3 : (⟨f v, h1 v⟩ : toR V hV) = 0 := e.injective (h2.trans e.map_zero.symm)
+    exact congrArg (fun x : toR V hV => (x : Sm E N)) h3
   · exact equiv_val_smul e (opOf (.fin (locGL E N w g))) ⟨f v, h1 v⟩ ⟨f (σ.ρ g v), h1 _⟩ (hf g v)
 
 theorem finDiscN : PositivityTheory.Rg.BcB.F.F5.FinDiscN := by
@@ -413,7 +418,7 @@ theorem finDiscN : PositivityTheory.Rg.BcB.F.F5.FinDiscN := by
   let c : (E →+* ℂ) → ℂ → ℂ := fun τ u => ((m τ).map (u + ·)).prod
   haveI hF := PositivityTheory.Rg.HF.GL.automorphicFormsFiniteGL E N (adLevel Kf) (isOpen_adLevel hK) (Module.Dual ℂ Y)
     (dualRep Y hYl) (isContRep_dualRep Y hYl hYc) c
-  let Sys := ∀ w : HeightOneSpectrum (𝓞 E), GlobalTheory.LocGL.IrrGL (w.adicCompletion E)
+  let Sys := ∀ w : HeightOneSpectrum (𝓞 E), GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)
   let cls : (∀ w : HeightOneSpectrum (𝓞 E), SmIrr (GL (Fin N) (w.adicCompletion E))) → Sys := fun σ' w =>
     GlobalTheory.LocGL.IrrGL.of (σ' w).ρ (σ' w).smooth (σ' w).irred
   let Good : Submodule ℂ (Sm E N) → (∀ w : HeightOneSpectrum (𝓞 E), SmIrr (GL (Fin N) (w.adicCompletion E))) → Prop :=

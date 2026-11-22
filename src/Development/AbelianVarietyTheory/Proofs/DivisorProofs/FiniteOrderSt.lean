@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EffOfSec
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsOddNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EffOfSec
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsOddNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -45,11 +49,5 @@ def SerreAmpleSt : Prop :=
       (∀ (Ω : Type) [Field Ω] [IsAlgClosed Ω] (t : Sp Ω ⟶ Sp K) (x : Over.mk t ⟶ A), x ^ N = 1 → x ≫ σ.hom = x) →
       σ.hom = 𝟙 A
 
-open GlobalTheory.RealMult in
-
-def LevelRigidSt : Prop :=
-  ∀ (F : Type) [Field F] [NumberField F] (𝔠 : FracId F) (N : ℕ), 3 ≤ N →
-    ∀ (R : Type) [CommRing R], IsUnit (N : R) → ∀ (X : Obj F 𝔠 (Sp R)) (β : X.Level N)
-      (g : X.A.left ⟶ X.A.left), X.IsPullBy X (𝟙 _) g → (∀ i, (β.pt i).left ≫ g = (β.pt i).left) → g = 𝟙 _
 
 end GlobalTheory.AmpleRigid

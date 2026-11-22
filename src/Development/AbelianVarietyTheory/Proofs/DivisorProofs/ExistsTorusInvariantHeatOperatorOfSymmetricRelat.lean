@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LeISupInfPreimage
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantVectorFieldConstFnEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantVectorFieldPreservesRaynaudTorusWeightStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusWeightScalarZeroCharacterEqOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LeISupInfPreimage
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantVectorFieldConstFnEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantVectorFieldPreservesRaynaudTorusWeightStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusWeightScalarZeroCharacterEqOneStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -175,7 +179,7 @@ theorem valR_mul {A : Type} [CommRing A] {Z : Scheme.{0}} (a : Sp A ⟶ Z) {O : 
 
 theorem valR_add {A : Type} [CommRing A] {Z : Scheme.{0}} (a : Sp A ⟶ Z) {O : Z.Opens} (ha : ⊤ ≤ a ⁻¹ᵁ O)
     (f g : Γ(Z, O)) : valR a O (f + g) = valR a O f + valR a O g := by
-  simp only [valR, dif_pos ha, map_add]
+  simp only [valR, dif_pos ha, map_add (f := _)]
 
 theorem valR_sub {A : Type} [CommRing A] {Z : Scheme.{0}} (a : Sp A ⟶ Z) {O : Z.Opens} (ha : ⊤ ≤ a ⁻¹ᵁ O)
     (f g : Γ(Z, O)) : valR a O (f - g) = valR a O f - valR a O g := by
@@ -457,7 +461,8 @@ theorem exists_basic_heat : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRin
         exact Finset.sum_congr rfl fun a _ => by ring
       simp only [hd', (hdF i).2.1 W hW, (hddF _).2.1 W le_top, s]
       ring
-    · simp only [hd', (hdF i).2.2 W W' h hW f, (hddF _).2.2 W W' h le_top f, map_sub, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [hd', (hdF i).2.2 W W' h hW f, (hddF _).2.2 W W' h le_top f, map_sub, map_sum, map_mul,
         resG_constFn]
   have hd'C : ∀ i (W : Y.H.left.Opens), W ≤ Y.q.left ⁻¹ᵁ V i → ∀ r, d' i W (constFn Y.H.hom W r) = constFn Y.H.hom W (D r) := by
     intro i W hW r

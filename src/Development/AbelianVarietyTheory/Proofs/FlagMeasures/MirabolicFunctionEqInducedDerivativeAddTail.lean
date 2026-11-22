@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem tl_apply (M : Mt g (m + 1)) (i j : Fin m) : tl m M i j = M i.castSucc j.
   have hi := i.2
   have hj := j.2
   simp only [tl, entN]
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
   rfl
 
 @[simp] theorem tl_Em (h : Mt g m) (v) : tl m (Em h v) = h := by
@@ -161,7 +165,7 @@ theorem inR_iff (M : Mt g (m + 1)) : InR m M ↔ InMir M := by
       have hi := i.2
       have hj := j.2
       simp only [br, entN]
-      rw [dif_pos ⟨by omega, by omega⟩]
+      rw [dite_eq_left ⟨by omega, by omega⟩]
       congr 1 <;> exact Fin.ext (by simp; omega)
     constructor
     · intro h
@@ -208,11 +212,6 @@ theorem exists_psi_ne {ψ : AddChar (ZMod g) ℂ} (hψ : ψ ≠ 1) {u : Fin m �
   obtain ⟨a, ha⟩ := AddChar.ne_one_iff.1 hψ
   refine ⟨Pi.single i (a / u i), ?_⟩
   rwa [dotProduct_single, mul_div_cancel₀ _ hi]
-
-theorem psi_ne_zero (ψ : AddChar (ZMod g) ℂ) (a : ZMod g) : ψ a ≠ 0 := by
-  intro h
-  have := ψ.map_add_eq_mul a (-a)
-  simp [h] at this
 
 theorem q_ne_zero : ((g : ℂ) ^ m) ≠ 0 := pow_ne_zero _ (Nat.cast_ne_zero.2 (Fact.out : g.Prime).ne_zero)
 
@@ -306,7 +305,7 @@ theorem der_eq (ψ : AddChar (ZMod g) ℂ) (F : Gn g (m + 1) → ℂ) (h : Gn g 
 
 theorem entN_Em (l : Fin m) (hl : (l : ℕ) + 1 = m) (h : Mt g m) (v) :
     entN (Em h v) (m - 1) m = Pi.single l 1 ⬝ᵥ v := by
-  rw [single_dotProduct, one_mul, ← Em_cl h v l, entN, dif_pos ⟨by omega, by omega⟩]
+  rw [single_dotProduct, one_mul, ← Em_cl h v l, entN, dite_eq_left ⟨by omega, by omega⟩]
   congr 1
   exact Fin.ext (by simp; omega)
 

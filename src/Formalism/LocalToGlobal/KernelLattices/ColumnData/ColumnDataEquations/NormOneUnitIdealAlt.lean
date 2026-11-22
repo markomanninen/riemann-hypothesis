@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.Reduction
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.DetIdealsKernelNormOne
-import Formalism.LocalRingCardinality.SpanPowerMembership.RelDet
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdLat
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.Reduction
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.DetIdealsKernelNormOne
+public import Formalism.LocalRingCardinality.SpanPowerMembership.RelDet
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdLat
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical
@@ -15,7 +19,8 @@ open Formalism.MainNotions Formalism.L2.Th1.H
 
 theorem formV_herm' (A : ℝ) (n : Type) [Fintype n] (N N' : ℕ) : IsHerm (Ker.formV A n N N') := by
   intro x y
-  simp [Ker.formV, map_sum, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Ker.formV, map_sum, mul_comm]
 
 theorem mem_ThSp_of' (D : Car) (T : TaylorLogMetric.Tor D) {N N' : ℕ} (La' : AddSubgroup (TaylorLogMetric.VC D N N'))
     (G : TaylorLogMetric.VC D N N' → ℂ)

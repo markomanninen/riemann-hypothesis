@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlatMapColonIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemSubmonoidDvdMulOfForallHeightEqOneStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightOnePrimeAssociate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlatMapColonIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemSubmonoidDvdMulOfForallHeightEqOneStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightOnePrimeAssociate
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 namespace GlobalTheory.DivDescent

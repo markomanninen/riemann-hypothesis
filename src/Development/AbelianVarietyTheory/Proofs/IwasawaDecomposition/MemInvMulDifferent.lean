@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsHalfPtIff
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ExistsPowPrincipalFractionalIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsHalfPtIff
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ExistsPowPrincipalFractionalIdeal
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem map_mem_ellLat {LL : Type} [Field LL] [NumberField LL] (embE : H.E →+*
     obtain ⟨b, hb, rfl⟩ := (FractionalIdeal.mem_coeIdeal _).1 hj
     exact Submodule.subset_span ⟨i, hi, b, hb, rfl⟩
   · intro a b ha hb
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact Submodule.add_mem _ ha hb
 
 theorem ellT_eq_ellLat : ∀ (D : D7) (M : IntermediateField ℚ ℂ) [NumberField M] (embE : D.host.E →+* M),
@@ -94,7 +98,7 @@ theorem ellT_eq_ellLat : ∀ (D : D7) (M : IntermediateField ℚ ℂ) [NumberFie
         change x * φ (b * j) = x * φ j * φ b
         rw [map_mul]; ring
       · intro a b ha hb
-        rw [map_add, mul_add]
+        rw [map_add (f := _), mul_add]
         exact Submodule.add_mem _ ha hb
     have := key 1 (hone ▸ FractionalIdeal.one_mem_one _)
     simpa using this

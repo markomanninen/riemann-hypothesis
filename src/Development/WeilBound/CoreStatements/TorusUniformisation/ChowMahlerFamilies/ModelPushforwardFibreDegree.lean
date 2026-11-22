@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.PluckerCoord
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpVerticalFibre
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDim
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDivisor
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericDimGe
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFiniteBirationalLength
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSemilocalFiniteRank
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjectionFormulaDegree
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XSDivcyclehomloc
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.PluckerCoord
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpVerticalFibre
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDim
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDivisor
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericDimGe
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFiniteBirationalLength
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSemilocalFiniteRank
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjectionFormulaDegree
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XSDivcyclehomloc
+
+@[expose] public section
+
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.Num GroundTheory.Heights₂.Heights.NumbersDVR
 open ReciprocityTheory.ChartRestriction.G.Geo (ChartBundle chartRing)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg mcIdeal chartMon joinCoord bcCoord pullDeg liftVar fnField ck rootNum SameGeneric LatLE IsPull IsPullBC IsSubQuot QuotIso IsFrobPres FlagModel modelDeg)
@@ -63,7 +68,7 @@ theorem Rep.add (hp : ∀ W ∈ 𝒲, W.IsPrime) {z z' : L} {F G F' G' : MRing �
   refine ⟨⟨b + b', IsWeightedHomogeneous.add (IsWeightedHomogeneous.mul hF hG')
     (IsWeightedHomogeneous.mul hG hF'), IsWeightedHomogeneous.mul hG hG'⟩, (h.mul hp h').ne,
     (h.mul hp h').avoid, ?_⟩
-  rw [h.eq, h'.eq, map_add, map_mul, map_mul, map_mul, div_add_div _ _ h.ne h'.ne]
+  rw [h.eq, h'.eq, map_add (f := _), map_mul, map_mul, map_mul, div_add_div _ _ h.ne h'.ne]
 
 omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem rep_C (hp : ∀ W ∈ 𝒲, W.IsPrime) (r : R) : Rep φ 𝒲 (φ (C r)) (C r) 1 :=
@@ -121,7 +126,7 @@ theorem exists_ev (hp : ∀ W ∈ 𝒲, W.IsPrime) {E : Type} [Field E] (ψ : MR
     rw [wd (hz (a * b)) ((hz a).mul hp (hz b)), map_mul, map_mul, div_mul_div_comm]
   · rw [wd (hz 0) (show Rep φ 𝒲 _ (C 0) 1 by simpa using rep_C (φ := φ) hp 0)]; simp
   · intro a b
-    rw [wd (hz (a + b)) ((hz a).add hp (hz b)), map_add, map_mul, map_mul, map_mul,
+    rw [wd (hz (a + b)) ((hz a).add hp (hz b)), map_add (f := _), map_mul, map_mul, map_mul,
       div_add_div _ _ (hne (hz a)) (hne (hz b))]
 
 def ffield (φ : MRing ι R →+* L) : Subfield L where
@@ -213,8 +218,8 @@ theorem Setup.avoid (S : Setup φ P 𝒲) (b : K → ℕ) :
   exact ⟨e', H, hH, fun h => hav P (Finset.mem_insert_self _ _) ((S.ker H _ hH).mp h),
     fun W hW => hav W (Finset.mem_insert_of_mem (S.fin.mem_toFinset.mpr hW))⟩
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem Setup.clear (S : Setup φ P 𝒲) (b : K → ℕ) {Q : Ideal (MRing ι R)}
     (hQ : IsMultiProjPrime Q) :
     ∃ u H : MRing ι R, u ∉ Q ∧ (∃ e, IsMultiHomog u e) ∧
@@ -502,7 +507,7 @@ theorem res_subring {A B : Subring L} (h : A ≤ B) [IsLocalRing A]
   let _ := inclAlg h
   rw [FiniteBirationalLength.length_quot_maximal_eq_inertiaDeg]
   have hm : (RingHom.ker e).under A = IsLocalRing.maximalIdeal A :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal _)
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal _)
   have : (RingHom.ker e).LiesOver (IsLocalRing.maximalIdeal A) := ⟨hm.symm⟩
   rw [Ideal.inertiaDeg_eq_of_isMaximal (IsLocalRing.maximalIdeal A)]
   congr 1
@@ -547,7 +552,7 @@ section Pair
 
 variable {R : Type} [CommRing R] {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type}
   [∀ k, Fintype (ι k)] {L : Type} [Field L]
-  {φ : MRing ι R →+* L} {𝒲 : Set (Ideal (MRing ι R))} {P : Ideal (MRing ι R)}
+  {φ : ReciprocityTheory.ChartRestriction.G.Geo.MRingOver R ι →+* L} {𝒲 : Set (Ideal (ReciprocityTheory.ChartRestriction.G.Geo.MRingOver R ι))} {P : Ideal (ReciprocityTheory.ChartRestriction.G.Geo.MRingOver R ι)}
 
 omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem le_of_forms {I J : Ideal (MRing ι R)} (hI : IsMultiHomogIdeal I)
@@ -579,7 +584,7 @@ theorem Setup.exists_centre (S : Setup φ P 𝒲) (V : ValuationSubring L) (hV :
     intro p
     induction p using MvPolynomial.induction_on with
     | C a => rw [dehom, eval₂Hom_C]; exact hV a
-    | add p q hp hq => rw [map_add]; exact add_mem hp hq
+    | add p q hp hq => rw [(dehom φ c).map_add]; exact add_mem hp hq
     | mul_X p v hp =>
       rw [map_mul]
       refine mul_mem hp ?_
@@ -684,7 +689,7 @@ theorem Setup.finite (S : Setup φ P 𝒲) (hne : 𝒲.Nonempty) {A : Subring L}
       refine ⟨d * d', hnm h1 h1', D.mul_mem h2 h2', ?_⟩
       have e : ((d * d' : loc φ 𝒲) : L) * dehom φ (c W) (p + q) =
           (d : L) * dehom φ (c W) p * d' + d * (d' * dehom φ (c W) q) := by
-        rw [map_add, Subring.coe_mul]; ring
+        rw [map_add (f := _), Subring.coe_mul]; ring
       rw [e]
       exact D.add_mem (D.mul_mem h3 h2') (D.mul_mem h2 h3')
     | mul_X p v hp =>
@@ -884,7 +889,7 @@ section Transfer
 
 variable {R : Type} [CommRing R] {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type}
   [∀ k, Fintype (ι k)] {L : Type} [Field L]
-  {φ : MRing ι R →+* L} {𝒲 : Set (Ideal (MRing ι R))} {P : Ideal (MRing ι R)}
+  {φ : ReciprocityTheory.ChartRestriction.G.Geo.MRingOver R ι →+* L} {𝒲 : Set (Ideal (ReciprocityTheory.ChartRestriction.G.Geo.MRingOver R ι))} {P : Ideal (ReciprocityTheory.ChartRestriction.G.Geo.MRingOver R ι)}
 
 omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem Setup.exists_equiv' {W : Ideal (MRing ι R)} (S : Setup φ P {W}) {L₀ : Type} [Field L₀]
@@ -1016,7 +1021,7 @@ theorem ffield_aeval {O : Type} [CommRing O] [Algebra O L] (y : (Σ k, ι k) →
       | C a =>
         rw [dehom, eval₂Hom_C, RingHom.comp_apply, hC]
         exact Subfield.subset_closure (Or.inl ⟨a, rfl⟩)
-      | add p q hp hq => rw [map_add]; exact add_mem hp hq
+      | add p q hp hq => rw [(dehom φ c).map_add]; exact add_mem hp hq
       | mul_X p v hp =>
         rw [map_mul]
         refine mul_mem hp ?_
@@ -1049,9 +1054,9 @@ theorem loc_facts {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing 
   have := S.mp.isPrime
   have hrel := (S.mpW W rfl).relevant
   obtain ⟨e, he⟩ := S.exists_equiv
-  obtain ⟨h1, h2, h3⟩ := A_s_divcyclehomloc.homLocRingLocal O K ι P S.mp c f hf hfP W hW hrel
   have hz : qm P f / qm P g ∈ homLocRing P W := Subring.subset_closure ⟨c, f, g, hf, hg, hgW, rfl⟩
   have h4 := t_s_divcyclehomloc O K ι P S.mp c f hf hfP W hW hrel g hg hgW hz
+  obtain ⟨h1, h2, h3⟩ := A_s_divcyclehomloc.homLocRingLocal O K ι P S.mp c f hf hfP W hW hrel
   refine ⟨e.isLocalRing, isNoetherianRing_of_ringEquiv _ e,
     (ringKrullDim_eq_of_ringEquiv e).symm.trans h3, ?_⟩
   have e1 : (⟨_, hα⟩ : loc φ {W}) = e ⟨_, hz⟩ := Subtype.ext (he ⟨_, hz⟩ f g c hf hg hgW rfl).symm
@@ -1059,7 +1064,7 @@ theorem loc_facts {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing 
   have : W.IsPrime := hW.1.1
   have htop : multAt (P ⊔ Ideal.span {f}) W ≠ ⊤ := length_localizedQuot_ne_top _ W hW
   unfold divCycle
-  rw [dif_pos ⟨hW, hrel⟩, Int.toNat_natCast, ENat.coe_toNat htop]
+  rw [dite_eq_left ⟨hW, hrel⟩, Int.toNat_natCast, ENat.coe_toNat htop]
   exact h4.symm
 
 omit [DecidableEq K] in
@@ -1068,7 +1073,7 @@ theorem divCycle_ne_zero {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuati
     (hW : W ∈ (P ⊔ Ideal.span {f}).minimalPrimes) (hrel : IsRelevant W) : divCycle P f W ≠ 0 := by
   have : W.IsPrime := hW.1.1
   unfold divCycle
-  rw [dif_pos ⟨hW, hrel⟩]
+  rw [dite_eq_left ⟨hW, hrel⟩]
   have := localizedQuot_nontrivial_of_le (P ⊔ Ideal.span {f}) W hW.1.2
   have h0 : multAt (P ⊔ Ideal.span {f}) W ≠ 0 :=
     (Module.length_pos (R := Localization.AtPrime W)
@@ -1080,7 +1085,7 @@ omit [Fintype K] [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem divCycle_supp {P W : Ideal (MRing ι R)} {f : MRing ι R} (h : divCycle P f W ≠ 0) :
     W ∈ (P ⊔ Ideal.span {f}).minimalPrimes ∧ IsRelevant W := by
   by_contra hc
-  exact h (by unfold divCycle; rw [dif_neg hc])
+  exact h (by unfold divCycle; rw [dite_eq_right hc])
 
 omit [Fintype K] [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem divCycle_nonneg (P W : Ideal (MRing ι R)) (f : MRing ι R) : 0 ≤ divCycle P f W := by
@@ -1100,19 +1105,22 @@ def rr (R : Type) [CommRing R] : MRing (fun k => ι' (j k)) R →+* MRing ι' R 
   (rename (blockIncl j ι') : MRing (fun k => ι' (j k)) R →ₐ[R] MRing ι' R).toRingHom
 
 omit [Fintype K] [Fintype K'] [∀ k, Fintype (ι' k)] in
-theorem proj_rr (R : Type) [CommRing R] : Proj (rr j ι' R) where
-  hom := ⟨fun b => Function.extend j b 0, fun F b hF => by
+theorem proj_rr (R : Type) [CommRing R] : Proj (rr j ι' R) := by
+  refine ⟨?_, ?_, ?_⟩
+  · refine ⟨fun b => Function.extend j b 0, ?_⟩
+    intro F b hF
     have h := GroundTheory.Heights₂.Heights.FieldNumbers.ContractRelevant.rename_weightedHomogeneousComponent (g := blockIncl j ι') (j := j) (fun _ => rfl)
       j.injective (blockIncl_injective j ι') b F
     rw [IsWeightedHomogeneous.weightedHomogeneousComponent_same hF] at h
     change IsMultiHomog (rename (blockIncl j ι') F) _
     rw [h]
-    exact weightedHomogeneousComponent_isWeightedHomogeneous _ _⟩
-  map_C a := rename_C _ a
-  comap y hy := GroundTheory.Heights₂.Heights.FieldNumbers.ContractRelevant.isMultiProjPrime_comap_rename (g := blockIncl j ι') (j := j) (fun _ => rfl)
-    j.injective (blockIncl_injective j ι') (by
-      rintro ⟨k', i⟩ ⟨k, rfl⟩
-      exact ⟨⟨k, i⟩, rfl⟩) hy
+    exact weightedHomogeneousComponent_isWeightedHomogeneous _ _
+  · exact rename_C _
+  · intro y hy
+    exact GroundTheory.Heights₂.Heights.FieldNumbers.ContractRelevant.isMultiProjPrime_comap_rename (g := blockIncl j ι') (j := j) (fun _ => rfl)
+      j.injective (blockIncl_injective j ι') (by
+        rintro ⟨k', i⟩ ⟨k, rfl⟩
+        exact ⟨⟨k, i⟩, rfl⟩) hy
 
 variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {ϖ : O}
 
@@ -1142,7 +1150,7 @@ attribute [local instance] MvPolynomial.algebraMvPolynomial in
 theorem mem_genFib {K₁ : Type} {ι : K₁ → Type} {P : Ideal (MRing ι O)} (hP : P.IsPrime)
     (hT : P.comap (C : O →+* MRing ι O) = ⊥) (F : MRing ι O) :
     MvPolynomial.map (algebraMap O (FractionRing O)) F ∈ genFib P ↔ F ∈ P := by
-  let M : Submonoid (MRing ι O) := (nonZeroDivisors O).map (C (σ := Σ k, ι k))
+  let M : Submonoid (ReciprocityTheory.ChartRestriction.G.Geo.MRingOver O ι) := (nonZeroDivisors O).map (C (σ := Σ k, ι k))
   have : IsLocalization M (MRing ι (FractionRing O)) :=
     MvPolynomial.isLocalization (nonZeroDivisors O) (FractionRing O)
   have hdisj : Disjoint (M : Set (MRing ι O)) P := by
@@ -1160,7 +1168,7 @@ attribute [local instance] MvPolynomial.algebraMvPolynomial in
 theorem exists_denom {K₁ : Type} {ι : K₁ → Type} (a : MRing ι (FractionRing O)) :
     ∃ (a₀ : MRing ι O) (u : MRing ι (FractionRing O)), IsUnit u ∧
       a * u = MvPolynomial.map (algebraMap O (FractionRing O)) a₀ := by
-  let M : Submonoid (MRing ι O) := (nonZeroDivisors O).map (C (σ := Σ k, ι k))
+  let M : Submonoid (ReciprocityTheory.ChartRestriction.G.Geo.MRingOver O ι) := (nonZeroDivisors O).map (C (σ := Σ k, ι k))
   have : IsLocalization M (MRing ι (FractionRing O)) :=
     MvPolynomial.isLocalization (nonZeroDivisors O) (FractionRing O)
   obtain ⟨⟨a₀, s⟩, h⟩ := IsLocalization.surj M a
@@ -1231,8 +1239,8 @@ theorem eq_of_comap_eq (hP' : IsModelOver P' d) (hP : IsModelOver (P'.comap (rr 
   rw [relDim_eq_of_dim _ _ (eq_of_le_le d3 d4)] at h1
   exact lt_irrefl _ (lt_of_le_of_lt h1 h2)
 
-open Classical in
 
+open Classical in
 def srd (j : K ↪ K') (W' : Ideal (MRing ι' O)) : ℕ :=
   if h : (specialIdeal W').IsPrime then haveI := h; relDeg j (specialIdeal W') else 0
 
@@ -1251,7 +1259,7 @@ theorem relDeg_eq (W' : Ideal (MRing ι' O)) [h : (specialIdeal W').IsPrime] :
     rw [← map_rename]
     rfl
   rw [e1, ffield_map _ hres, ffield_map _ hres, ffield_comp, ← homFrac_eq, ← homFrac_eq, srd,
-    dif_pos h]
+    dite_eq_left h]
   rfl
 
 end Blocks
@@ -1436,7 +1444,7 @@ theorem fibre_num (hϖ : Irreducible ϖ) (hP' : IsModelOver P' d)
         rw [mul_assoc]
         congr 1
         unfold vNum srd
-        rw [dif_pos hmp.isPrime, hpf', hcon]
+        rw [dite_eq_left hmp.isPrime, hpf', hcon]
       · simp
     rw [finsum_congr hterm, ← finsum_mul, fibre_degree hϖ hP' hP hf hfP hϖW hW φ hφ, mul_assoc]
   · rw [not_not] at hW

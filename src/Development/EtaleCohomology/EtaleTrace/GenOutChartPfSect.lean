@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.GenOutChartPfRing
+module
+
+public import Development.EtaleCohomology.EtaleTrace.GenOutChartPfRing
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace

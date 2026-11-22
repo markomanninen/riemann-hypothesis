@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SumFourEqTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalSubstitutionThetaHeisenbergUnitary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFdPosFin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTopologicalRingAE
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SumFourEqTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalSubstitutionThetaHeisenbergUnitary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFdPosFin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTopologicalRingAE
+
+@[expose] public section
 
 noncomputable section
 

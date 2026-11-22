@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.IntIndPow
-import Development.WeilBound.ThetaLifts.LocalTheory.IsArchimedeanLocalEquivariantMap
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.ValIffNorm
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.IntIndPow
+public import Development.WeilBound.ThetaLifts.LocalTheory.IsArchimedeanLocalEquivariantMap
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.ValIffNorm
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 

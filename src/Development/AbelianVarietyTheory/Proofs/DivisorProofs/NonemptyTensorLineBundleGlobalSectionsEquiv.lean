@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsGenOfUniqueFactorizationMonoid
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsGenOfUniqueFactorizationMonoid
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory
@@ -82,12 +87,12 @@ def mulBil (A B : LB T) :
     LB.Sec A →ₗ[Γ(T, ⊤)] LB.Sec B →ₗ[Γ(T, ⊤)] LB.Sec (CechPic.tens A B) :=
   LinearMap.mk₂ Γ(T, ⊤) (mulSec A B)
     (fun s s' t => f_injective (show mulFun A B (s + s') t = mulFun A B s t + mulFun A B s' t from
-      funext fun p => by simp only [mulFun, add_f, map_add, add_mul, Pi.add_apply]))
+      funext fun p => by simp only [mulFun, add_f, map_add (f := _), add_mul, Pi.add_apply]))
     (fun a s t => f_injective (show mulFun A B (a • s) t =
       fun (p : A.ι × B.ι) => resG T (le_top : A.U p.1 ⊓ B.U p.2 ≤ ⊤) a * mulFun A B s t p
       from funext fun p => by simp only [mulFun, smul_f, map_mul, resG_resG]; ring))
     (fun s t t' => f_injective (show mulFun A B s (t + t') = mulFun A B s t + mulFun A B s t' from
-      funext fun p => by simp only [mulFun, add_f, map_add, mul_add, Pi.add_apply]))
+      funext fun p => by simp only [mulFun, add_f, map_add (f := _), mul_add, Pi.add_apply]))
     (fun a s t => f_injective (show mulFun A B s (a • t) =
       fun (p : A.ι × B.ι) => resG T (le_top : A.U p.1 ⊓ B.U p.2 ≤ ⊤) a * mulFun A B s t p
       from funext fun p => by simp only [mulFun, smul_f, map_mul, resG_resG]; ring))
@@ -95,7 +100,7 @@ def mulBil (A B : LB T) :
 def chartLoc (L : LB T) (r : Γ(T, ⊤)) (i : L.ι) (h : T.basicOpen r ≤ L.U i) :
     LB.Sec L →ₗ[Γ(T, ⊤)] Γ(T, T.basicOpen r) where
   toFun s := resG T h (s.f i)
-  map_add' s t := by simp only [add_f, map_add]
+  map_add' s t := by simp only [add_f, map_add (f := _)]
   map_smul' a s := by
     simp only [smul_f, map_mul, resG_resG, RingHom.id_apply, Algebra.smul_def]
     rfl
@@ -109,25 +114,45 @@ open TensorProduct GlobalTheory.LB
 variable {T : Scheme.{0}}
 
 def chartEquivTop (L : LB T) (hL : L.IsLB) (r : Γ(T, ⊤)) (i : L.ι) (h : T.basicOpen r ≤ L.U i) :
-    AbLaw.SecOn L (T.basicOpen r) ≃ₗ[Γ(T, ⊤)] Γ(T, T.basicOpen r) :=
-  { chartEquiv hL i h with
-    map_smul' := fun a s => by
-      rw [AbLaw.SecOn.smul_basicOpen_def]
-      exact ((chartEquiv hL i h).map_smul _ s).trans (Algebra.smul_def a _).symm }
+    AbLaw.SecOn L (T.basicOpen r) ≃ₗ[Γ(T, ⊤)] Γ(T, T.basicOpen r) where
+  toFun s := resG T (le_inf le_rfl h) (coord s i)
+  invFun a := a • (toMod L).presheaf.map (homOfLE h).op (chartSec hL i)
+  map_add' s t := by simp only [coord_add, map_add (f := _)]
+  map_smul' a s := by
+    rw [AbLaw.SecOn.smul_basicOpen_def, Algebra.smul_def]
+    simp only [coord_smul, map_mul, resG_resG, RingHom.id_apply]
+    rfl
+  left_inv s := Subtype.ext (funext fun j => by
+    change coord (_ • _) j = coord s j
+    simp only [coord_smul, coord_map, coord_chartSec, resG_resG]
+    rw [mul_comm, ← coord_rel s j i le_rfl, resG_self])
+  right_inv a := by
+    simp only [coord_smul, coord_map, coord_chartSec, resG_resG, resG_self,
+      resG_g_self hL, map_one, mul_one]
 
 theorem isLocalizedModule_chartLoc [IsAffine T] (L : LB T) (hL : L.IsLB) (r : Γ(T, ⊤)) (i : L.ι)
     (h : T.basicOpen r ≤ L.U i) : IsLocalizedModule.Away r (chartLoc L r i h) := by
   haveI := AbLaw.SecOn.isLocalizedModule_resBasicOpen hL (isAffineOpen_top T) r
   haveI := IsLocalizedModule.of_linearEquiv (S := .powers r) (f := AbLaw.SecOn.resBasicOpen L r)
     (chartEquivTop L hL r i h)
+  let toTop : LB.Sec L →ₗ[Γ(T, ⊤)] AbLaw.SecOn L ⊤ :=
+    { toFun := fun s => ofSec s ⊤
+      map_add' := fun s t => Subtype.ext (funext fun i => by
+        change coord (ofSec (s + t) ⊤) i = coord (ofSec s ⊤ + ofSec t ⊤) i
+        simp only [coord_ofSec, coord_add, add_f, map_add (f := _)])
+      map_smul' := fun a s => Subtype.ext (funext fun i => by
+        change coord (ofSec (a • s) ⊤) i = coord (a • ofSec s ⊤) i
+        simp only [coord_ofSec, coord_smul, smul_f, map_mul, resG_resG]) }
+  let topEquiv := LinearEquiv.ofBijective toTop (AbLaw.SecOn.ofSec_bijective (M := L) rfl)
   haveI := IsLocalizedModule.of_linearEquiv_right (S := .powers r)
     (f := (chartEquivTop L hL r i h).toLinearMap ∘ₗ AbLaw.SecOn.resBasicOpen L r)
-    (globalEquiv L).symm
+    topEquiv
   have e : chartLoc L r i h = ((chartEquivTop L hL r i h).toLinearMap ∘ₗ
-      AbLaw.SecOn.resBasicOpen L r) ∘ₗ (globalEquiv L).symm.toLinearMap := by
+      AbLaw.SecOn.resBasicOpen L r) ∘ₗ topEquiv.toLinearMap := by
     ext s
-    change resG T h (s.f i) = chartEquiv hL i h (AbLaw.SecOn.restrict L _ (ofSec s ⊤))
-    rw [chartEquiv_apply, AbLaw.SecOn.restrict_eq_map, coord_map, coord_ofSec, resG_resG, resG_resG]
+    change resG T h (s.f i) = resG T (le_inf le_rfl h)
+      (coord ((toMod L).presheaf.map (homOfLE (T.basicOpen_le r)).op (ofSec s ⊤)) i)
+    rw [map_ofSec, coord_ofSec, resG_resG]
   rw [e]
   infer_instance
 

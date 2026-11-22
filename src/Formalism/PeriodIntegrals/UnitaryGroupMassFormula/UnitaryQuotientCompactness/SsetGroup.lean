@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.QuotSetU
+module
+
+public import Formalism.PeriodIntegrals.QuotSetU
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

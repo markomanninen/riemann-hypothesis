@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
 
 open GlobalTheory.UnitLemma Matrix MeasureTheory
 
@@ -11,7 +15,7 @@ noncomputable def hermLeft {K : UQ} (B : InvAlg K) (x z : B.A) : B.A →ₗ[K.E]
   toFun y := B.herm x y z
   map_add' a b := by
     unfold InvAlg.herm
-    rw [mul_add, add_mul, map_add]
+    rw [mul_add, add_mul, map_add (f := _)]
   map_smul' e y := by
     unfold InvAlg.herm
     rw [mul_smul_comm, smul_mul_assoc, map_smul, RingHom.id_apply]
@@ -46,7 +50,7 @@ private lemma coord_lemma {K : UQ} (B : InvAlg K) (n : ℕ) (e : Module.Basis (F
       exact zero_mem _
     | add a b _ _ ha hb =>
       intro j
-      rw [map_add, Finsupp.add_apply]
+      rw [map_add (f := _), Finsupp.add_apply]
       exact add_mem (ha j) (hb j)
     | smul o a _ ha =>
       intro j
@@ -76,7 +80,7 @@ theorem span_selfDual (K : UQ) (B : InvAlg K) (x : B.A) (n : ℕ) (e : Module.Ba
     | add a b _ _ ha hb =>
       have hadd : B.herm x y (a + b) = B.herm x y a + B.herm x y b := by
         unfold InvAlg.herm
-        rw [map_add, mul_add, map_add]
+        rw [map_add (f := _), mul_add, map_add (f := _)]
       rw [hadd]
       exact add_mem ha hb
     | smul o a _ ha =>

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOKEx
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatTensorDependsBelowAndSmallTranslationInvaria
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatTensorVanishesUnlessLastRowBounded
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOKEx
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatTensorDependsBelowAndSmallTranslationInvaria
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatTensorVanishesUnlessLastRowBounded
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,13 +16,13 @@ namespace GlobalTheory.StairDepth
 
 variable {k : Type} [Field k] {G : Grid k}
 
-variable (G) in
 
+variable (G) in
 def wt (ϖ : kˣ) (e : ℕ) (X : ℕ × ℕ) (a : ℕ) : kˣ :=
   if X.1 = G.m ∧ X.2 + 2 ≤ G.m then ϖ ^ (e * (a + 1 - topRank G X.2)) else 1
 
-variable (G) in
 
+variable (G) in
 def dg (ϖ : kˣ) (e : ℕ) : G.VertexGroup := fun X => diagGL fun a : Fin (G.rank X) => wt G ϖ e X a
 
 theorem wt_core (ϖ : kˣ) (e : ℕ) (X : ℕ × ℕ) {a : ℕ} (ha : a < topRank G X.2) : wt G ϖ e X a = 1 := by

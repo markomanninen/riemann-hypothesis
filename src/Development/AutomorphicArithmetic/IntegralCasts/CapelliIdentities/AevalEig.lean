@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qp10.Mat :
     Type → ℕ → Type :=
@@ -18,7 +22,7 @@ theorem UpperTheory.Reformulated.B.Qp10.aeval_eig :
       rw [pow_succ, ← Matrix.mulVec_mulVec, h, Matrix.mulVec_smul, ih, smul_smul, pow_succ']
   induction Q using Polynomial.induction_on' with
   | add p q hp hq =>
-    rw [map_add, Matrix.add_mulVec, hp, hq, Polynomial.eval_add, add_smul]
+    rw [map_add (f := _), Matrix.add_mulVec, hp, hq, Polynomial.eval_add, add_smul]
   | monomial n a =>
     rw [Polynomial.aeval_monomial, Polynomial.eval_monomial, ← Algebra.smul_def,
       Matrix.smul_mulVec, hpow, smul_smul]

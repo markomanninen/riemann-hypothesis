@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
-import Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
+public import Formalism.LocalToGlobal.ProjectiveLattices.ErealAddIInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,8 +94,8 @@ theorem cutR_zero {j : ℕ} (h : ¬ InR D j) {w : WeightFamilies.Wt D j} (F : cu
   have := F.2
   simpa [cutR_out C h w] using this
 
-open Classical in
 
+open Classical in
 def cutN (N : ∀ j, WeightFamilies.Wt D j → (K →+* ℂ) → R j → ℝ) (j : ℕ) (w : WeightFamilies.Wt D j) (σ : K →+* ℂ)
     (F : cutR C j w) : ℝ := if InR D j then N j w σ F else 0
 

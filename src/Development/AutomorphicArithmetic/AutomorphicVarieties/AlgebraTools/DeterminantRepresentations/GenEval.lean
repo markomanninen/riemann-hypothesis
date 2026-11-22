@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 
@@ -9,7 +13,8 @@ theorem UpperTheory.V.AlgebraTools.Det.genEval :
   intro n A G _ _ D B _ _ m y b
   rw [← D.nat (MvPolynomial (Fin m) A) B (MvPolynomial.aeval b)]
   congr 1
-  simp only [GDet.gen, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [GDet.gen, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   ext g
   simp [MonoidAlgebra.mapRingHom]

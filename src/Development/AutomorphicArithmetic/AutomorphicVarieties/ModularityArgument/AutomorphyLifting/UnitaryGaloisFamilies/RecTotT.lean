@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UnitaryGaloisFamilies.IrrCaseT
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UnitaryGaloisFamilies.IrrCaseT
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp
@@ -11,7 +15,7 @@ private theorem tw_sumList {E Ω : Type} [Field E] [NumberField E] [Field Ω] [A
     (sumList L).lpTw s = sumList (L.map fun x => x.lpTw s) := by
   induction L with
   | nil =>
-    change (WD.lpZero h).lpTw s = WD.lpZero h
+    change (WD.lpZero (h := h)).lpTw s = WD.lpZero (h := h)
     rw [WD.lpZero, WD.lpTw_mk]
     exact WD.sound ⟨.refl _ _, fun _ _ => Subsingleton.elim _ _, fun _ => Subsingleton.elim _ _⟩
   | cons x L ih =>

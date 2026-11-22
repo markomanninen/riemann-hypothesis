@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.Precomp
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.Precomp
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -23,7 +28,7 @@ theorem derivative_logPoly (c : ℕ → B) (hc : ∀ k : ℕ, c k * ((k : B) + 1
   rw [derivative_C_mul, derivative_X_pow, neg_pow (X : B[X]) k]
   simp only [Nat.add_sub_cancel, map_mul, map_pow, map_neg, map_one, Nat.cast_add, Nat.cast_one]
   calc _ = (-1) ^ k * (C (c k) * ((k : B[X]) + 1)) * X ^ k := by
-        simp only [map_add, map_natCast, map_one]; ring
+        simp only [map_add (f := _), map_natCast, map_one]; ring
     _ = _ := by rw [h1, mul_one]
 
 theorem one_add_mul_geom {R : Type} [CommRing R] (u : R) (s : ℕ) :
@@ -38,7 +43,7 @@ theorem geom_comp (s : ℕ) (u : B[X]) :
   | succ n ih => simp [Finset.sum_range_succ, ih]
 
 theorem eval_logPoly_zero (c : ℕ → B) (s : ℕ) : (logPoly c s).eval 0 = 0 := by
-  simp [logPoly, eval_finset_sum]
+  simp [logPoly, eval_finsetSum]
 
 theorem eval_logPoly_mul (c : ℕ → B) (hc : ∀ k : ℕ, c k * ((k : B) + 1) = 1)
     (hu : ∀ n : ℕ, n ≠ 0 → IsUnit (n : B)) (s : ℕ) {x y : B}
@@ -91,7 +96,7 @@ theorem eval_logPoly_mul (c : ℕ → B) (hc : ∀ k : ℕ, c k * ((k : B) + 1) 
     cases n with
     | zero => simp [coeff_zero_eq_eval_zero]
     | succ n =>
-      have h := congrArg (fun p => coeff p n) hderiv
+      have h := congrArg (fun (p : B[X]) => p.coeff n) hderiv
       simp only [coeff_derivative, coeff_zero] at h
       have hn : IsUnit ((n : B) + 1) := by
         have := hu (n + 1) (by omega)
@@ -113,7 +118,7 @@ theorem plogK_mul {B : Type} [CommRing B] {J : Ideal B} (δ : DividedPowers J) (
   choose c hc using fun k : ℕ => (hunit k).exists_left_inv
   have hlog : ∀ {z : B}, z ∈ J → plogK δ s z = (logPoly c s).eval z := by
     intro z hz
-    simp only [plogK, logPoly, eval_finset_sum, eval_mul, eval_C, eval_pow, eval_X]
+    simp only [plogK, logPoly, eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X]
     refine Finset.sum_congr rfl fun k _ => ?_
     have h := δ.factorial_mul_dpow_eq_pow (n := k + 1) hz
     rw [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one] at h

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenFns
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenFns
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZMir.Leib GlobalTheory.CompanionTheory.Rodier
 open scoped TensorProduct
@@ -192,12 +196,13 @@ end Entries
 theorem levi_part : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ψ : AddChar k Circle) (h N : ℕ) (d : Fin h → ℕ) (hd : ∑ a, d a = N), (∀ (a : GL (Fin N) k) (ha : a ∈ unipL k d hd) (hb : a ∈ unipB k (Fin N)), ∃ m : unipM k d, pm k (wOpen d hd) * a * (pm k (wOpen d hd))⁻¹ = leviEmb k (stdBlocks d hd) m.1 ∧ whitChar ψ N ⟨a, hb⟩ = whitM d ψ m) ∧ ∀ m : unipM k d, ∃ a ∈ unipL k d hd, pm k (wOpen d hd) * a * (pm k (wOpen d hd))⁻¹ = leviEmb k (stdBlocks d hd) m.1 := by
   intro k _ _ _ _ ψ h N d hd
   refine ⟨fun a ha hb => ?_, fun m => ?_⟩
-  · obtain ⟨m₀, hm₀⟩ := (Subgroup.mem_inf.1 ha).2
+  · obtain ⟨m₀, hm₀⟩ := MonoidHom.mem_range.mp ((OpenFactor.mem_unipL k d hd).mp ha).2
     have hm : pm k (wOpen d hd) * a * (pm k (wOpen d hd))⁻¹ = leviEmb k (stdBlocks d hd) m₀ := hm₀.symm
     have hm' := mem_unipM_of hb hm
     exact ⟨⟨m₀, hm'⟩, hm, whit_eq ψ hb hm' hm⟩
   · have hc : pm k (wOpen d hd) * ((pm k (wOpen d hd))⁻¹ * leviEmb k (stdBlocks d hd) m.1 * pm k (wOpen d hd)) *
         (pm k (wOpen d hd))⁻¹ = leviEmb k (stdBlocks d hd) m.1 := by group
-    exact ⟨_, Subgroup.mem_inf.2 ⟨mem_unipB_of m.2 hc, ⟨m.1, hc.symm⟩⟩, hc⟩
+    exact ⟨_, (OpenFactor.mem_unipL k d hd).mpr
+      ⟨mem_unipB_of m.2 hc, MonoidHom.mem_range.mpr ⟨m.1, hc.symm⟩⟩, hc⟩
 
 end GlobalTheory.CompanionTheory.Rodier.LeviPart

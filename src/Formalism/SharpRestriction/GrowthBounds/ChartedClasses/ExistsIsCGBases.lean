@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.OrbitOfPts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.OrbitOfPts
+
+@[expose] public section
 
 noncomputable section
 

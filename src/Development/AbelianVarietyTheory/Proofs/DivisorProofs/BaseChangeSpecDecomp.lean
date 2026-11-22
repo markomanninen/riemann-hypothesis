@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.Uniformised
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Uniformised
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PELU
 open scoped Matrix
@@ -67,7 +72,8 @@ theorem baseChange_specDecomp : ∀ (g a m : ℕ) (O : Type) [CommRing O] (ρ : 
     rw [← Matrix.toLin'_apply', LinearMap.trace_eq_matrix_trace k (Pi.basisFun k (Fin g)),
       LinearMap.toMatrix_eq_toMatrix', LinearMap.toMatrix'_toLin'] at h1
     have htj : ((E i).map j).trace = j (E i).trace := by
-      simp [Matrix.trace, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.trace, map_sum]
     rw [htj, htr, map_natCast] at h1
     haveI : CharZero k := (RingHom.charZero_iff j.injective).1 inferInstance
     exact_mod_cast h1.symm

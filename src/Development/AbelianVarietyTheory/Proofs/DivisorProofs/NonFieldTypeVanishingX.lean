@@ -1,8 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TestFnConstTermVanishX
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicAndConstantTermStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonFieldTypeVanishingStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EllipticPartStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TestFnConstTermVanishX
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicAndConstantTerm
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonFieldTypeVanishing
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.NonFieldTypeVanishing
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EllipticPart
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+
+@[expose] public section
 
 section
 noncomputable section
@@ -96,8 +103,8 @@ theorem productClauseX {S : D.what₂.Tau → SPar} {M : DSModel V S} {T : TypeD
   have hc := continuous_of_mem_ccAd (tensor_mem_ccAd ha.mem hf.isFinFamily)
   exact @GlobalTheory.T.classTerm_eq_volume_mul_orbitalIntegral (GA D V) _ _ _ _ _ _ _ _ (GQ V) _ (ratEmb D.sp.cm.sig V.gram γ) (ratEmb_mem_GQ γ)
     (isMulCommutative_cent_ratEmb hreg) μ hμ.2.2.1 dt htt 𝓣 h𝓣 hvol _ _ hc.1 hc.2 hO 𝓕 h𝓕
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem nonFieldTypeVanishingX : NonFieldTypeVanishingX := by
   intro D V _ S M T U hH μa μf μ hμ fa ff ha hf γ hγ
   have hL := localClause (fun v => hμ.2.1 v) hf hγ

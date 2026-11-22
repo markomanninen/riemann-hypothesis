@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.AdeleApproximation.AdeleIntA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.AdeleApproximation.AdeleIntA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.SA
 
@@ -69,7 +73,7 @@ theorem denseRange_finiteAdele : DenseRange (algebraMap K (FiniteAdeleRing R K))
   rw [mem_closure_iff_nhds]
   intro N hN
   have h0 : (fun y => b + y) ⁻¹' N ∈ 𝓝 (0 : FiniteAdeleRing R K) := by
-    have ht := (continuous_add_left b).tendsto (0 : FiniteAdeleRing R K)
+    have ht := (continuous_const_add b).tendsto (0 : FiniteAdeleRing R K)
     rw [add_zero] at ht
     exact ht hN
   obtain ⟨r, hr, hrN⟩ := nhds_zero_int h0
@@ -79,7 +83,7 @@ theorem denseRange_finiteAdele : DenseRange (algebraMap K (FiniteAdeleRing R K))
   have hx : algebraMap K (FiniteAdeleRing R K) (u + algebraMap R K a) - b =
       -((b - algebraMap K (FiniteAdeleRing R K) u) -
         algebraMap K (FiniteAdeleRing R K) (algebraMap R K a)) := by
-    rw [map_add]; ring
+    rw [map_add (f := _)]; ring
   have hmem := hrN (algebraMap K (FiniteAdeleRing R K) (u + algebraMap R K a) - b) (by
     rw [hx]
     intro v

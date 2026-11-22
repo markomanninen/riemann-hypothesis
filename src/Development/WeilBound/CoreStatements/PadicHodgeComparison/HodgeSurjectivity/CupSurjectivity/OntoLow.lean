@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HodgeTateFromSandwich
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HodgeTateFromSandwich
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -17,7 +21,8 @@ theorem ontoLow_h_basis (P : HTPre l K) (N : Model l K) (a n : ℕ) (v : N.V n) 
     (b : Module.Basis (Fin m) K (Hdg N.q a n)) (φ : Module.Dual K (Hdg N.q a n)) :
     P.h N a n v φ = ∑ t, kC K (φ (b t)) * P.h N a n v (b.coord t) := by
   conv_lhs => rw [← b.sum_dual_apply_smul_coord φ]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun t _ => P.lin' N a n (φ (b t)) v (b.coord t)
 
 theorem ontoLow_genMap_comp (M N : Model l K) (p : N.X ⟶ M.X) (s : M.X ⟶ N.X) (hp : p ≫ M.p = N.p)
@@ -52,7 +57,8 @@ theorem ontoLow_pf : OntoLow := by
   have key : ∀ x, ∑ s', z a s' * kC K ((b a).coord s' (S a x)) = 0 := by
     intro x
     rw [← (b' a).sum_repr x]
-    simp only [map_sum, map_smul, smul_eq_mul, map_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, map_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_eq_zero fun t _ => ?_
     have h0 := congrFun (hz' a ha) t

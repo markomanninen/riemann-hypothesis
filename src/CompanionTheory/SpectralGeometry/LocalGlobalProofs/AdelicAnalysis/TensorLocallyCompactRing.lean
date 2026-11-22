@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ section
 variable {F E : Type} [Field F] [Field E] [Algebra F E]
   (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] [IsTopologicalRing R]
 
-omit [IsTopologicalRing R] in
 
+omit [IsTopologicalRing R] in
 theorem isModTop : IsModuleTopology R (R ⊗[F] E) := ⟨rfl⟩
 
 def coordHomeo {d : ℕ} (b : Module.Basis (Fin d) F E) : (R ⊗[F] E) ≃ₜ (Fin d → R) :=
@@ -36,7 +40,7 @@ theorem isTopRing [Module.Finite F E] : IsTopologicalRing (R ⊗[F] E) :=
 
 omit [IsTopologicalRing R] in
 theorem continuous_sigR (σ : E →ₐ[F] E) : Continuous (sigR R σ) := by
-  haveI : IsModuleTopology R (R ⊗[F] E) := isModTop R
+  haveI : IsModuleTopology R (R ⊗[F] E) := ⟨rfl⟩
   haveI : ContinuousAdd (R ⊗[F] E) := IsModuleTopology.toContinuousAdd R _
   exact IsModuleTopology.continuous_of_linearMap
     (Algebra.TensorProduct.map (AlgHom.id R R) σ).toLinearMap
@@ -70,7 +74,7 @@ theorem topTens_props : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
     · exact continuous_id.matrix_elem a b
   · refine continuous_pi fun a => continuous_pi fun b => ?_
     unfold gramR hR hform
-    refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+    refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
     exact ((hs.comp ((continuous_apply i).comp (continuous_apply a))).mul continuous_const).mul
       ((continuous_apply j).comp (continuous_apply b))
 

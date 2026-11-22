@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointSide
-import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IwahoriRegularSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalCompactCharacterVanishing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentralSimpleAlgebraEmbeddingsConjugate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointSide
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IwahoriRegularSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalCompactCharacterVanishing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentralSimpleAlgebraEmbeddingsConjugate
+
+@[expose] public section
+
 open MeasureTheory Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKDef
 open scoped TensorProduct Classical
 
@@ -15,7 +20,7 @@ theorem torusElt_pow_eq {k : Type} [Field k] {N : ℕ} (ϖ : kˣ) (ν : Fin N �
   unfold GlobalTheory.GLDoubling.torusElt
   rw [← map_pow]
   congr 1
-  funext a
-  simp only [Pi.pow_apply, ← zpow_natCast, ← _root_.zpow_mul, mul_comm]
+  funext i
+  simp [← zpow_natCast, ← _root_.zpow_mul, mul_comm]
 
 end GlobalTheory.TorusElementPower

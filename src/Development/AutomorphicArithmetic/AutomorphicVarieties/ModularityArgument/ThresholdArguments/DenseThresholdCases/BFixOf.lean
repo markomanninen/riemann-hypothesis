@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.FxTwflag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicPointGalois
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.FxTwflag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicPointGalois
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -117,7 +121,7 @@ private theorem fx_kk {A : Type} [CommRing A] [Algebra O A] (g : G.G₀) :
   rw [map_mul, map_zpow] at h
   exact congrArg Units.val h
 private theorem fx_form {A : Type} [CommRing A] [Algebra O A] (ρ : Fr.NRep F n A) :
-    G.IsForm O n (K.tw ρ).toHomUnits (Jgl A n) := fun g => by
+    G.IsForm O n (K.tw ρ).toHomUnits (Jgl (R := A) n) := fun g => by
   have h1 : (ρ.r (K.π g))ᵀ * Jmat A n * ρ.r (F.conj (K.π g)) = Jmat A n := by
     have e : ρ.r (F.star (K.π g)) * ρ.r (F.conj (K.π g)) = 1 := by
       rw [← map_mul, Fr.Frame.star, map_inv, inv_mul_cancel, map_one]
@@ -214,7 +218,7 @@ private theorem fx_core (ρD : Fr.NRep F n (DualNumber Q))
   have c2 : Continuous fun g : G.G₀ => (ρD.map (dF Q)).r (K.π g)⁻¹ :=
     continuous_matrix fun i j => (hrc i j).comp (K.π_cont.inv)
   have hy : fxY K ρD ∈ Z1 (Loc.adGL (K.tw (ρD.map (dF Q))).toHomUnits) := ⟨c1.matrix_mul c2, fx_coc K ρD⟩
-  obtain ⟨hP, hrel⟩ := cocRel G O _ (fxY K ρD) (K.tw ρD).toHomUnits (Jgl _ n) ht (fx_form K ρD)
+  obtain ⟨hP, hrel⟩ := cocRel G O _ (fxY K ρD) (K.tw ρD).toHomUnits (Jgl (R := DualNumber Q) n) ht (fx_form K ρD)
   obtain ⟨R, hR⟩ := adExt G O _ _ hfull hP
   obtain ⟨Z, hZ'⟩ := hrel R hR
   obtain ⟨z, hz, hzy⟩ := cocExt G _ _ R hfull hcont hR _ hy Z hZ'

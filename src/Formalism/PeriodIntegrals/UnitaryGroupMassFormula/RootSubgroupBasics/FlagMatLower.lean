@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+
+@[expose] public section
 
 open Matrix
 
@@ -85,11 +89,11 @@ theorem flagMat_lower {z : Fin (2 * r + k + 1) → ℂ} {a : Matrix (Fin (2 * r 
     simp [Matrix.mulVec, dotProduct, Pi.single_apply]
   simp only [flagMat]
   by_cases hi : i.val < r
-  · rw [dif_pos hi]
+  · rw [dite_eq_left hi]
     have hj : j.val < r := lt_of_le_of_lt hji' hi
     have hf : fvec k r z j = bvec (eI k r ⟨j.val, hj⟩) := by
       unfold fvec
-      rw [dif_pos hj]
+      rw [dite_eq_left hj]
     rw [hf]
     unfold bvec
     rw [hcol, ha.2.1 ⟨j.val, hj⟩ (eI k r ⟨i.val, hi⟩) hji']
@@ -101,7 +105,7 @@ theorem flagMat_lower {z : Fin (2 * r + k + 1) → ℂ} {a : Matrix (Fin (2 * r 
       apply hij
       have h' := congrArg Fin.val h
       exact Fin.ext h'
-  · rw [dif_neg hi]
+  · rw [dite_eq_right hi]
 
 theorem flagMat_upper {z : Fin (2 * r + k + 1) → ℂ} {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
     (ha : a ∈ Nset k r) : (flagMat k r z a).BlockTriangular id := by
@@ -120,19 +124,19 @@ theorem mul_Fm {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z)
   have hF1 : ∀ c : Fin r, fvec k r z (Fin.castSucc c) = bvec (eI k r c) := by
     intro c
     unfold fvec
-    rw [dif_pos (show (Fin.castSucc c).val < r from c.isLt)]
+    rw [dite_eq_left (show (Fin.castSucc c).val < r from c.isLt)]
     rfl
   have hF2 : fvec k r z (Fin.last r) = z := by
     unfold fvec
-    rw [dif_neg (show ¬ (Fin.last r).val < r from lt_irrefl r)]
+    rw [dite_eq_right (show ¬ (Fin.last r).val < r from lt_irrefl r)]
   have hM1 : ∀ c : Fin r, flagMat k r z a (Fin.castSucc c) b = (a *ᵥ fvec k r z b) (eI k r c) := by
     intro c
     simp only [flagMat]
-    rw [dif_pos (show (Fin.castSucc c).val < r from c.isLt)]
+    rw [dite_eq_left (show (Fin.castSucc c).val < r from c.isLt)]
     rfl
   have hM2 : flagMat k r z a (Fin.last r) b = if Fin.last r = b then 1 else 0 := by
     simp only [flagMat]
-    rw [dif_neg (show ¬ (Fin.last r).val < r from lt_irrefl r)]
+    rw [dite_eq_right (show ¬ (Fin.last r).val < r from lt_irrefl r)]
   have hL : (a * Fm k r z) i b = (a *ᵥ fvec k r z b) i := by
     simp only [Matrix.mul_apply, Matrix.mulVec, dotProduct, Fm, Matrix.of_apply]
   rw [hL, Matrix.mul_apply, Fin.sum_univ_castSucc]
@@ -184,7 +188,7 @@ theorem mul_Fm {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z)
         omega
       have hfb : fvec k r z b = bvec (eI k r ⟨b.val, hbr⟩) := by
         unfold fvec
-        rw [dif_pos hbr]
+        rw [dite_eq_left hbr]
       rw [hfb]
       unfold bvec
       have hcol : (a *ᵥ Pi.single (eI k r ⟨b.val, hbr⟩) (1 : ℂ)) i = a i (eI k r ⟨b.val, hbr⟩) := by

@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.DataForms
+module
+
+public import Formalism.LocalRingCardinality.DataForms
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem wtQ_eq_wtN (j : ℕ) (hj : j ≤ R.m) (i : Fin (R.N j)) : wtQ P j hj i =
   by_cases h : i.1 < R.k
   · simp only [wtQ, wtN, dif_pos h]
   · have hb : blkN R i.1 < R.m := R.blk_lt hj i h
-    rw [wtQ, wtN, dif_neg h, dif_neg h, dif_pos hb]
+    rw [wtQ, wtN, dite_eq_right h, dite_eq_right h, dif_pos hb]
     rfl
 
 theorem u_step (i : ℕ) (hi : i + 1 < R.k) : P.u ⟨i + 1, hi⟩ + 1 ≤ P.u ⟨i, by omega⟩ := by
@@ -47,7 +51,7 @@ theorem u_step (i : ℕ) (hi : i + 1 < R.k) : P.u ⟨i + 1, hi⟩ + 1 ≤ P.u �
 private theorem wtN_eq_neg_wG_blkN (n : ℕ) (hn : ¬ n < R.k) (hb : blkN R n < R.m) :
     wtN P n = -wG R (P.e ⟨blkN R n, hb⟩) (blkN R n + 1) := by
   unfold wtN
-  rw [dif_neg hn, dif_pos hb]
+  rw [dite_eq_right hn, dif_pos hb]
 
 private theorem neg_wG_le_of_adjacent_blocks (c c' : ℕ) (hc : c < R.m) (hc' : c' < R.m) (h : c' = c ∨ c' = c + 1) :
     -wG R (P.e ⟨c', hc'⟩) (c' + 1) ≤ -wG R (P.e ⟨c, hc⟩) (c + 1) := by
@@ -139,7 +143,7 @@ theorem wtQ_int (j : ℕ) (hj : j ≤ R.m) (i : Fin (R.N j)) : ∃ z : ℤ, wtQ 
     ring
   · obtain ⟨z, hz⟩ := P.e_int ⟨(i.1 - R.k) / (R.t + 1), R.blk_lt hj i h⟩
     refine ⟨-z + a + (2 * (((i.1 - R.k) / (R.t + 1) : ℕ) : ℤ) + 1) * (c + 1), ?_⟩
-    rw [wtQ, dif_neg h]
+    rw [wtQ, dite_eq_right h]
     simp only [wG, hz]
     generalize (i.1 - R.k) / (R.t + 1) = B
     rw [hk, ht]
@@ -253,11 +257,5 @@ end Forms
 
 def gxExample (LL : Type) [Field LL] [NumberField LL] (Tau : Type) : GlobalExtra LL Tau :=
   ⟨fun _ _ => 1, fun _ _ => one_pos, fun _ => 1, fun _ => one_pos⟩
-
-theorem dGam_le_example {R : Ranks} {Tau : Type} [Fintype Tau] {hc : Tau → HCParam R}
-    (C : ColumnChain R Tau hc) (h : C.DGam = 1) :
-    Real.log (C.DGam : ℝ) ≤ 0 * R.f * R.N R.m * Real.log ((R.f : ℝ) * R.N R.m) := by
-  rw [h]
-  simp
 
 end Formalism.BasicNotions.Examples₂

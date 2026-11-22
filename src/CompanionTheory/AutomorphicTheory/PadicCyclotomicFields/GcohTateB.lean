@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohTateA
+module
+
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohTateA
+
+@[expose] public section
 
 open CategoryTheory MonoidalCategory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 
@@ -29,7 +33,7 @@ omit [DiscreteTopology M] in
 include hA in
 theorem exists_cocycle_zero [IsTopologicalAddGroup M] [ContinuousConstSMul (ZMod n) M]
     (m : H0 rho) :
-    ∃ x : cocycles A 0, ∀ s, cochainOf A (cocycleι A 0 x) s = eA m.1 := by
+    ∃ x : cocycles A 0, ∀ s, cochainOf (A := A) (cocycleι (A := A) (p := 0) x) s = eA m.1 := by
   obtain ⟨z, -, hz⟩ := exists_cocycle_H0Iso_inv A ⟨eA m.1, fun g => by
     rw [← hA, (mem_riemannRochSpace_iff_regularAt_everywhere rho m.1).1 m.2 g]⟩
   exact ⟨z, fun s => by rw [hz]⟩

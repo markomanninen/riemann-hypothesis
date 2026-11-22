@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlacesApart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHatMxHomLatIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IterPrincipalSpec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlacesApart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHatMxHomLatIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IterPrincipalSpec
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem v_le_of_mem_idS {w : Pl D.host.E} {e : ℕ} {𝔪 : Ideal (𝓞 D.host.E
     exact (v_oToS_le w a e).2 (h ha)
   · simp
   · intro x y _ _ hx hy
-    rw [Subring.coe_add, RingHom.map_add]
+    rw [Subring.coe_add, RingHom.map_add (f := _)]
     exact Valuation.map_add_le _ hx hy
   · intro c x _ hx
     rw [smul_eq_mul, Subring.coe_mul, RingHom.map_mul, Valuation.map_mul]
@@ -116,7 +120,7 @@ theorem hom_sum {A B ι : Type} [CommRing A] [CommRing B] (f : A →+* B) (s : F
 theorem v_mul_add_le {w : Pl D.host.E} {z e a b : EAf D} {c : WithZero (Multiplicative ℤ)} (h : z = e * (a + b))
     (he : cpt (D := D) w e = 1) (ha : Valued.v (cpt (D := D) w a) ≤ c) (hb : Valued.v (cpt (D := D) w b) ≤ c) :
     Valued.v (cpt (D := D) w z) ≤ c := by
-  rw [h, RingHom.map_mul, he, one_mul, RingHom.map_add]
+  rw [h, RingHom.map_mul, he, one_mul, RingHom.map_add (f := _)]
   exact Valuation.map_add_le _ ha hb
 
 theorem cpt_mul_mem {w : Pl D.host.E} {z e a : EAf D} (h : z = e * a) (he : cpt (D := D) w e = 0) :
@@ -249,15 +253,15 @@ section Red
 variable {S κ K : Type} [CommRing S] [CommRing κ] [Field K] [ValuativeRel K] [TopologicalSpace K]
   [IsNonarchimedeanLocalField K] {φ : S →+* κ} {ψ : S →+* K}
 
-variable (φ ψ) in
 
+variable (φ ψ) in
 structure IsRed : Prop where
   field : IsField κ
   int : ∀ s, ψ s ∈ 𝒪[K]
   ker : ∀ s, φ s = 0 ↔ valuation K (ψ s) < 1
 
-variable (φ ψ) in
 
+variable (φ ψ) in
 def Compat (c : κˣ →* ℂˣ) (μ : Kˣ →* ℂˣ) : Prop := ∀ (s : S) (u : κˣ) (k : Kˣ), u = φ s → k = ψ s → c u = μ k
 
 omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
@@ -312,8 +316,8 @@ theorem topL_r (ha : IsIx ea) (hb : IsIx eb) (y : Matrix (Fin b) (Fin a) κ) :
   rw [topL, dif_pos h]
   exact congrArg₂ y (Fin.ext (hb.2.1 i).symm) (Fin.ext (ha.2.1 l).symm)
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem lowZero_r (h : IsRed φ ψ) (ha : IsIx ea) (hb : IsIx eb) (N : Matrix (Fin b) (Fin a) S) :
     LowZero r (N.map φ) ↔ MaxM ((N.map ψ).submatrix eb ea).toBlocks₂₁ := by
   refine ⟨fun H i l => (h.ker _).1 (H _ _ (by rw [hb.2.2]; omega) (by rw [ha.2.1]; exact l.2)), fun H i l hi hl => ?_⟩
@@ -323,8 +327,8 @@ theorem lowZero_r (h : IsRed φ ψ) (ha : IsIx ea) (hb : IsIx eb) (N : Matrix (F
   · exact (h.ker _).2 (H i l)
   · rw [ha.2.2] at hl; omega
 
-open Classical in
 
+open Classical in
 theorem parPhi_eq (h : IsRed φ ψ) (ha : IsIx ea) (hb : IsIx eb) {c : κˣ →* ℂˣ} {μ : Kˣ →* ℂˣ} (hc : Compat φ ψ c μ)
     (N : Matrix (Fin b) (Fin a) S) : parPhi μ⁻¹ ((N.map ψ).submatrix eb ea) =
       if H : LowZero r (N.map φ) ∧ IsUnit (topL r (N.map φ)).det then (c H.2.unit : ℂ) else 0 := by
@@ -354,8 +358,8 @@ theorem topL_a (ha : IsIx ea) (hb : IsIx eb) (y : Matrix (Fin b) (Fin a) κ) (i 
   rw [topL, dif_pos h]
   exact congrArg₂ y (Fin.ext (val_succ_inl ha hb i).symm) rfl
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem lowZero_a (h : IsRed φ ψ) (ha : IsIx ea) (hb : IsIx eb) (N : Matrix (Fin b) (Fin a) S) :
     LowZero a (N.map φ) ↔ MaxM (((N.map ψ).submatrix eb ea).submatrix (ixSucc _ _ j) id).toRows₂ := by
   refine ⟨fun H i l => (h.ker _).1 (H _ _ ?_ (ea l).2), fun H i l hi _ => ?_⟩
@@ -502,8 +506,8 @@ theorem compat_of_isRes {w : Pl D.host.E} {χ : HChar D.host.E} {c : (kP w)ˣ �
   rwa [Units.val_mul, Units.val_inv_eq_inv_val, ← mul_inv_cancel₀ (atFin w (Units.mk0 _ h4)).ne_zero, ← sub_mul, h5,
     map_mul, map_inv₀, h3, inv_one, mul_one]
 
-open Classical in
 
+open Classical in
 theorem omegaG_eq_prod {a b r t j : ℕ} (hr : r ≤ a) (Pg Q : Finset (Pl D.host.E))
     (χ : ℕ → ∀ w : Pl D.host.E, (kP w)ˣ →* ℂˣ) (ξ : ∀ w : Pl D.host.E, (kP w)ˣ →* ℂˣ)
     (y : ∀ w : Pl D.host.E, Matrix (Fin b) (Fin a) (kP w)) (f : Pl D.host.E → ℂ)
@@ -523,8 +527,8 @@ theorem omegaG_eq_prod {a b r t j : ℕ} (hr : r ≤ a) (Pg Q : Finset (Pl D.hos
     exact ⟨fun w hw => h2 ⟨w, hw⟩, g, fun w => (hg w).1, fun w => (hg w).2.1,
       Subgroup.mem_bot.2 (funext fun w => (hg w).2.2)⟩
 
-open Classical in
 
+open Classical in
 theorem omegaQ_eq_prod {a b : ℕ} (r : ℕ) (Q : Finset (Pl D.host.E)) (ξ : ∀ w : Pl D.host.E, (kP w)ˣ →* ℂˣ)
     (y : ∀ w : Pl D.host.E, Matrix (Fin b) (Fin a) (kP w)) : omegaQ Q r ξ 1 y =
       ∏ w ∈ Q, if H : LowZero r (y w) ∧ IsUnit (topL r (y w)).det then (ξ w H.2.unit : ℂ) else 0 := by
@@ -554,8 +558,8 @@ theorem compat_chi {μ₀ : T} (hL : L.Is μ₀) (hw : w ∈ L.Pg) {c : ℕ} (hc
   have h := compat_of_isRes ((L.C.isMu0 ⟨c, hc⟩).tame w) (hL.chi ⟨c, hc⟩ w hw) s u k hu hk
   rw [muBase, dif_pos hc, MonoidHom.inv_apply, ← h, MonoidHom.inv_apply, inv_inv]
 
-open Classical in
 
+open Classical in
 theorem stepFn_eq_of_mem_Q {μ₀ : T} (hL : L.Is μ₀) (hw : w ∈ L.Q t) {j a b : ℕ} (ha : a = D.R.r + j * D.R.t)
     (hb : b = D.R.r + (j + 1) * D.R.t) (N : Matrix (Fin b) (Fin a) (OA D)) :
     stepFn L t w j ((N.map (cptO w)).submatrix (ixOf G t w hb) (ixOf G t w ha)) =
@@ -565,8 +569,8 @@ theorem stepFn_eq_of_mem_Q {μ₀ : T} (hL : L.Is μ₀) (hw : w ∈ L.Q t) {j a
   refine (congrFun (stepFn_of_mem_Q t w hw' hw j) _).trans ?_
   exact parPhi_eq (isRed w) (isIx_ixOf G t w ha) (isIx_ixOf G t w hb) (compat_of_isRes (hL.xi_tame t w) (hL.xiR t w hw)) N
 
-open Classical in
 
+open Classical in
 theorem omega_eq_prod_stepFn {μ₀ : T} (hL : L.Is μ₀) {j a b : ℕ} (hj : j < D.R.m) (ha : a = D.R.r + j * D.R.t)
     (hb : b = D.R.r + (j + 1) * D.R.t) (hr : D.R.r ≤ a) (N : Matrix (Fin b) (Fin a) (EAf D)) (hN : IsIntM N) :
     omegaG (Formalism.IndefR.Lev.datY a D.R.r D.R.t j hr L.Pg (L.Q t) L.triv L.chi (L.xiR t) .B) (L.chi (j + 1))
@@ -603,8 +607,8 @@ theorem givenDatum_theta_coord {G : GridData L sc} (B : Frames G) (t : T) (w : P
   rw [coord_map]
   rfl
 
-open Classical in
 
+open Classical in
 theorem local_factors {G : GridData L sc} (B : Frames G) (t : T) {μ₀ : T} (hL : L.Is μ₀) :
     (∀ e : AE D, IsIdemSum e G.pl.W0 → ∀ (i : ℕ) (hi : i < D.R.m) (κ : G.CosAt i)
       (x : Mx D (G.V (.grid i 0)).rank (G.V (.grid (i + 1) 0)).rank), IsHalf e x →

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IrreducibleKStableFiniteSubspace
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompactUnitaryFiniteInvariantSubspace
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IrreducibleKStableFiniteSubspace
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompactUnitaryFiniteInvariantSubspace
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem avg_comm (π : K →* (H →L[ℂ] H)) (hiso : ∀ k x, ‖π k x‖ = �
     ← (π g).integral_comp_comm (hFi.apply_continuousLinearMap x),
     ← integral_mul_left_eq_self (fun k => InnerProductSpace.rankOne ℂ (π k u) (π k u) (π g x)) g]
   refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
-  simp only [InnerProductSpace.rankOne_apply, map_mul, ContinuousLinearMap.mul_apply, hin, map_smul]
+  simp only [InnerProductSpace.rankOne_apply, map_mul, mul_apply_eq_comp, hin, map_smul]
 
 theorem le_of_dense (π : K →* (H →L[ℂ] H)) (hiso : ∀ k x, ‖π k x‖ = ‖x‖)
     (hc : ∀ x, Continuous fun k => π k x) (Ds : Submodule ℂ H) (hD : Dense (Ds : Set H))
@@ -166,7 +170,7 @@ def decSet (v : M.H τ) (N : ℕ) : Submodule ℂ (M.H τ) where
   add_mem' := by
     rintro a b ⟨C, hC⟩ ⟨C', hC'⟩
     refine ⟨C + C', fun g hg => ?_⟩
-    rw [map_add, inner_add_right]
+    rw [map_add (f := _), inner_add_right]
     calc ‖⟪v, M.rep τ g a⟫_ℂ + ⟪v, M.rep τ g b⟫_ℂ‖ * (1 + hsn g) ^ N
         ≤ (‖⟪v, M.rep τ g a⟫_ℂ‖ + ‖⟪v, M.rep τ g b⟫_ℂ‖) * (1 + hsn g) ^ N :=
           mul_le_mul_of_nonneg_right (norm_add_le _ _) (pow_nonneg (by linarith [hsn_nonneg g]) _)
@@ -236,7 +240,7 @@ theorem decayAt_of_kFin : GlobalTheory.Published.HarishChandraModules → ∀ (D
         rfl
       · simp
       · intro x x' _ _ h h'
-        rw [map_add]
+        rw [map_add (f := _)]
         exact S0.add_mem h h'
       · intro c x _ h
         rw [map_smul]
@@ -272,7 +276,7 @@ theorem decayAt_of_kFin : GlobalTheory.Published.HarishChandraModules → ∀ (D
     have hm : Continuous fun k : Formalism.REAL.KG (M.ε τ) => (M.fr τ)⁻¹ * (Formalism.REAL.toMK k)ᴴ * M.fr τ :=
       (continuous_const.mul hemb.matrix_conjTranspose).mul continuous_const
     unfold hsn
-    exact Real.continuous_sqrt.comp (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    exact Real.continuous_sqrt.comp (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (hm.matrix_elem i j).norm.pow 2)
   obtain ⟨B, hB⟩ := (isCompact_range hBc).bddAbove
 

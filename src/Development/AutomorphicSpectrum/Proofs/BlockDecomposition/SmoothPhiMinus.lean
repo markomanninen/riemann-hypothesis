@@ -1,7 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsSmoothTwAct
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.VectorStabilizer
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsSmoothTwAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,9 +15,6 @@ namespace GlobalTheory.CompanionTheory.BZMirSmooth
 section General
 
 variable {G M V : Type} [Group G] [Group M] [AddCommGroup V] [Module ℂ V]
-
-noncomputable def vecStab {X : Type} [AddCommGroup X] [Module ℂ X] (ρ : Representation ℂ M X) (x : X) : Subgroup M :=
-  _root_.UpperTheory.Reformulated.B.VectorStabilizer.vecStab ρ x
 
 theorem isSmooth_twAct [TopologicalSpace G] [TopologicalSpace M] [IsTopologicalGroup M]
     (ρ : Representation ℂ G V) (N : Subgroup G) (θ : N →* ℂˣ) (s : M →* G)

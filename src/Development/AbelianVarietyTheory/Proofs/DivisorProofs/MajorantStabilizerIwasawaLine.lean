@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHaarOfIsCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatHomOfGAdSymm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHaarOfIsCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatHomOfGAdSymm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,27 +17,27 @@ open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.Genus
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F E) in
 
+variable (F E) in
 def infT : AF F ⊗[F] E →ₐ[F] Ainf F ⊗[F] E := Algebra.TensorProduct.map (fstA F) (AlgHom.id F E)
 
-variable (F E) in
 
+variable (F E) in
 def finT : AF F ⊗[F] E →ₐ[F] Af F ⊗[F] E := Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)
 
-variable (F E) in
 
+variable (F E) in
 def ofInfT : Ainf F ⊗[F] E →ₗ[F] AF F ⊗[F] E := (LinearMap.inl F (Ainf F) (Af F)).rTensor E
 
-variable (F E) in
 
+variable (F E) in
 def ofFinT : Af F ⊗[F] E →ₗ[F] AF F ⊗[F] E := (LinearMap.inr F (Ainf F) (Af F)).rTensor E
 
 theorem decomp (z : AF F ⊗[F] E) : z = ofInfT F E (infT F E z) + ofFinT F E (finT F E z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | add x y hx hy =>
-    rw [map_add, map_add, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _)]
     conv_lhs => rw [hx, hy]
     abel
   | tmul a e =>
@@ -68,7 +72,7 @@ theorem mem_latHat_iff {n : ℕ} (X : Spc F E n) (z : Fin n → AE F E) :
       rw [e]; exact zero_mem _
     | add y z _ _ hy hz =>
       refine ⟨fun i => ?_, ?_⟩
-      · rw [Pi.add_apply, map_add, hy.1 i, hz.1 i, add_zero]
+      · rw [Pi.add_apply, map_add (f := _), hy.1 i, hz.1 i, add_zero]
       · have e : (fun i => finT F E ((y + z) i)) = (fun i => finT F E (y i)) + fun i => finT F E (z i) :=
           funext fun i => map_add _ _ _
         rw [e]; exact add_mem hy.2 hz.2

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIntOfVgeZero
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SecLinOfSecScal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ConstBFMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIntOfVgeZero
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SecLinOfSecScal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ConstBFMul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -102,7 +106,8 @@ theorem vge_descend (hϖ : Irreducible ϖ) (hv : ValOver ϖ F v) {vK : AddValuat
       (map_sum (chartLin (famBase D.toPre F) _ j) _ _).symm)
   have e₃ : E = ∑ i, ℓ (a i) • genericTerm D k α (σ i) := by
     have := hΛ 1 E
-    rw [one_smul, h1, one_smul, e₂, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [one_smul, h1, one_smul, e₂, map_sum] at this
     rw [← this]
     exact Finset.sum_congr rfl fun i _ => hΛ _ _
   refine ⟨n, fun i => ℓ (a i), σ, fun i => genericTerm D k α (σ i),

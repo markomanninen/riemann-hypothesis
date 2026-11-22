@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SndDualLiftAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SndDualLiftAlgebraMap
+
+@[expose] public section
 
 namespace GlobalTheory.BK
 
@@ -25,8 +29,18 @@ theorem algebraMap_mem_nonZeroDivisors_adicCompletion {B : Type} [CommRing B] {s
 
 theorem Ehat_mem_nonZeroDivisors (O K : Type) [CommRing O] [NormedField K] [IsUltrametricDist K]
     [Algebra O K] [IsUnitBall O K] (l e : ℕ) [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e]
-    [CompleteSpace K] : Ehat O K l e ∈ nonZeroDivisors (Ahat O K l e) :=
-  algebraMap_mem_nonZeroDivisors_adicCompletion (mem_nonZeroDivisors_of_ne_zero fun h =>
-    (isUnit_E (K := K) l e).ne_zero (congrArg Subtype.val h))
+    [CompleteSpace K] : Ehat O K l e ∈ nonZeroDivisors (Ahat O K l e) := by
+  have hE : E (K := K) l e ≠ 0 := by
+    intro h
+    have hcoeff := congrArg (coeff e) h
+    rw [E, map_add, coeff_X_pow_self, ← map_natCast (C : K →+* K⟦X⟧),
+      coeff_C_of_ne_zero (NeZero.ne e), add_zero, map_zero] at hcoeff
+    exact one_ne_zero hcoeff
+  let s : invL l (A O K) :=
+    ⟨E (K := K) l e, by
+      unfold E
+      exact add_mem (pow_mem HasU.X_mem e) (natCast_mem _ l)⟩
+  exact algebraMap_mem_nonZeroDivisors_adicCompletion (s := s)
+    (mem_nonZeroDivisors_of_ne_zero fun h => hE (congrArg Subtype.val h))
 
 end GlobalTheory.BK

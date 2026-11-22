@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,10 @@ theorem range_cmap (i : Fin 2) : Set.range (cmap R i) = (chart R 1 i : Set (PSpa
   rwa [chartι_eq] at e
 
 theorem cmap_str (i : Fin 2) : cmap R i ≫ PSpace.str R 1 = spMap (algebraMap R (Polynomial R)) := by
-  rw [cmap, pt_str, Polynomial.algebraMap_eq]
+  rw [cmap, pt, PSpace.str, ProjPoint.ofHom_toSpecZero_assoc, ← Spec.map_comp]
+  congr 1
+  ext1
+  exact RingHom.ext fun r => by simp [Polynomial.algebraMap_eq]
 
 theorem cmap_preimage (i : Fin 2) : cmap R i ⁻¹ᵁ chart R 1 (Fin.rev i) = spOpen (Polynomial.X : Polynomial R) := by
   rw [cmap, pt_preimage_chart]; simp [vec, ne_rev i]
@@ -97,7 +104,14 @@ theorem overlap_eq :
   set L := Localization.Away (Polynomial.X : Polynomial R)
   set s : L := IsLocalization.Away.invSelf (Polynomial.X : Polynomial R)
   have hs : algebraMap (Polynomial R) L Polynomial.X * s = 1 := IsLocalization.Away.mul_invSelf _
-  rw [cmap, cmap, spMap_pt, spMap_pt]
+  have hmap {B : Type} [CommRing B] (ψ : Polynomial R →+* B) (i : Fin 2) :
+      spMap ψ ≫ pt Polynomial.C (vec R i) (span_vec R i) =
+        pt (ψ.comp Polynomial.C) (ψ ∘ vec R i) (span_range_comp_eq_top _ (span_vec R i) ψ) := by
+    refine (ProjPoint.SpecMap_ofHom _ _ _ ψ).trans ?_
+    unfold pt
+    congr 1
+    exact MvPolynomial.ringHom_ext (fun r => by simp) (fun j => by simp)
+  rw [cmap, cmap, hmap, hmap]
   refine pt_congr R (RingHom.ext fun r => ?_) _ _ (Units.mkOfMulEqOne s _ (by rw [mul_comm]; exact hs)) ?_
   · rw [RingHom.comp_apply, RingHom.comp_apply, ← Polynomial.algebraMap_eq]
     simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, AlgHom.commutes]
@@ -137,8 +151,8 @@ theorem str_cmap (i : Fin 2) (x : Sp (Polynomial R)) :
 
 end GlobalTheory.ProjLineOpen
 
-open GlobalTheory.ProjLineOpen GlobalTheory.ProjSpace in
 
+open GlobalTheory.ProjLineOpen GlobalTheory.ProjSpace in
 theorem GlobalTheory.isOpen_setOf_charts_mem (R : Type) [CommRing R] (Y : Scheme.{0}) (g₀ g₁ : Sp (Polynomial R) ⟶ Y)
     (hg : spMap (algebraMap (Polynomial R) (Localization.Away (Polynomial.X : Polynomial R))) ≫ g₀ =
       spMap (Polynomial.aeval (IsLocalization.Away.invSelf (Polynomial.X : Polynomial R) :

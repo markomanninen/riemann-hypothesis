@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
-import Formalism.SharpRestriction.LevelLetterCocycles.RamifiedCoefficientChains
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NotDvdCondN
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
+public import Formalism.SharpRestriction.LevelLetterCocycles.RamifiedCoefficientChains
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NotDvdCondN
+
+@[expose] public section
 
 noncomputable section
 

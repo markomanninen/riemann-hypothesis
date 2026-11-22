@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerRest
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestFurther
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerRest
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestFurther
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -25,7 +30,7 @@ theorem weight_mapDomain_base (e : Fin (N + 1) →₀ ℕ) :
   rcases c with ⟨⟩ | ⟨⟩
   · simp only [Sum.elim_inl]
     rw [Finsupp.degree_eq_sum]
-    exact Finset.sum_congr rfl fun a _ => Finsupp.mapDomain_apply hinj e a
+    exact Finset.sum_congr rfl fun a _ => Finsupp.mapDomain_apply_of_injective hinj e a
   · simp only [Sum.elim_inr]
     refine Finset.sum_eq_zero fun b _ => Finsupp.mapDomain_of_notMem_range _ _ ?_
     rintro ⟨a, ha⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem fixed_int (y : 𝓞 I.E) (hy : star (y : I.E) = y) :
   obtain ⟨a, ha⟩ := (I.cm.fixed (y : I.E)).1 hy
   have hi : IsIntegral ℤ (algebraMap I.F I.E a) := by
     rw [ha]; exact y.isIntegral_coe
-  have hi' : IsIntegral ℤ a := (isIntegral_algebraMap_iff (algebraMap I.F I.E).injective).mp hi
+  have hi' : IsIntegral ℤ a := (isIntegral_algebraMap_iff ).mp hi
   let c : 𝓞 I.F := ⟨a, (mem_integralClosure_iff _ _).mpr hi'⟩
   refine ⟨c, ?_⟩
   apply NumberField.RingOfIntegers.ext
@@ -116,10 +120,5 @@ theorem cj_ne (g : ℕ) (hg : 1 ≤ g) (hS : PI.ScRefExists.Sk.SplitG I g) (P : 
   · apply hθx
     have : θ ∈ (cj I x.1).asIdeal := by rw [mem_cj]; exact h
     rwa [hcxx] at this
-
-theorem ge_of_mem (g : ℕ) (y : 𝓞 I.E) (hy : y ∈ Ideal.span {(g : 𝓞 I.E)}) :
-    PI.ScRefExists.Sk.GE I g (y : I.E) := by
-  obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.mp hy
-  exact ⟨a, by push_cast; ring⟩
 
 end PI.ScRefExists.TH

@@ -1,10 +1,14 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ContinuousAtOfClosedRel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.FsMetricFinIsSemipositive
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ContinuousAtOfClosedRel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.FsMetricFinIsSemipositive
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.PB Filter Topology
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
@@ -33,7 +37,22 @@ theorem levi_sum {κ : Type} [Fintype κ] {K : Type} (s : Finset K) (f : K → (
   rw [← Finset.sum_add_distrib, Finset.sum_div]
 
 theorem levi_fs_nonneg {κ : Type} [Fintype κ] {z : κ → ℂ} (hz : z ≠ 0) (w : κ → ℂ) :
-    0 ≤ levi (fun z => Real.log ((fsMetric κ).ρ z)) z w := fsMetric_isSemipositive.2 z hz w
+    0 ≤ levi (fun z => Real.log ((fsMetric (ι := κ)).ρ z)) z w := by
+  change 0 ≤ levi (fun z => Real.log ‖fsLp κ z‖) z w
+  have hlevi : levi (fun z => Real.log ‖fsLp κ z‖) z w =
+      (‖fsLp κ w‖ ^ 2 * ‖fsLp κ z‖ ^ 2 - ‖inner ℂ (fsLp κ z) (fsLp κ w)‖ ^ 2) /
+        (2 * (‖fsLp κ z‖ ^ 2) ^ 2) := by
+    unfold levi
+    rw [hess_logFs hz, hess_logFs hz, fsLp_smul_I, norm_smul, Complex.norm_I, one_mul,
+      ← inner_sq_add_inner_I_sq]
+    have hN := fsLp_normSq_ne_zero hz
+    field_simp
+    ring
+  rw [hlevi]
+  have hcs := norm_inner_le_norm (𝕜 := ℂ) (fsLp κ z) (fsLp κ w)
+  have hsq := pow_le_pow_left₀ (norm_nonneg _) hcs 2
+  rw [mul_pow, mul_comm (‖fsLp κ z‖ ^ 2)] at hsq
+  exact div_nonneg (sub_nonneg.mpr hsq) (by positivity)
 
 private theorem fderiv_fderiv_eq_deriv_deriv_line {κ : Type} [Fintype κ] {φ : (κ → ℂ) → ℝ} {z : κ → ℂ}
     (hφ : ContDiffAt ℝ 2 φ z) (v : κ → ℂ) :
@@ -91,21 +110,21 @@ private theorem deriv_deriv_half_log_quadratic_at_zero (N P C : ℝ) (hN : 0 < N
   field_simp <;> ring
 
 theorem levi_fs_zero {κ : Type} [Fintype κ] {z : κ → ℂ} (hz : z ≠ 0) (w : κ → ℂ)
-    (h : levi (fun z => Real.log ((fsMetric κ).ρ z)) z w = 0) : ∃ c : ℂ, w = c • z := by
+    (h : levi (fun z => Real.log ((fsMetric (ι := κ)).ρ z)) z w = 0) : ∃ c : ℂ, w = c • z := by
   have hxne : WithLp.toLp 2 z ≠ 0 := fun h => hz (by simpa using congrArg WithLp.ofLp h)
   have hN : 0 < ‖WithLp.toLp 2 z‖ ^ 2 := pow_pos (norm_pos_iff.2 hxne) 2
-  have hρ : ContDiffAt ℝ 2 (fun u : κ → ℂ => (fsMetric κ).ρ u) z := by
+  have hρ : ContDiffAt ℝ 2 (fun u : κ → ℂ => (fsMetric (ι := κ)).ρ u) z := by
     show ContDiffAt ℝ 2 (fun u => ‖WithLp.toLp 2 u‖) z
     exact (contDiffAt_norm ℂ hxne).comp z
       ((PiLp.continuousLinearEquiv 2 ℝ (fun _ : κ => ℂ)).symm.contDiff.contDiffAt)
-  have hφ : ContDiffAt ℝ 2 (fun u => Real.log ((fsMetric κ).ρ u)) z :=
-    hρ.log (ne_of_gt ((fsMetric κ).pos z hz))
-  have key : ∀ v : κ → ℂ, fderiv ℝ (fderiv ℝ (fun u => Real.log ((fsMetric κ).ρ u))) z v v =
+  have hφ : ContDiffAt ℝ 2 (fun u => Real.log ((fsMetric (ι := κ)).ρ u)) z :=
+    hρ.log (ne_of_gt ((fsMetric (ι := κ)).pos z hz))
+  have key : ∀ v : κ → ℂ, fderiv ℝ (fderiv ℝ (fun u => Real.log ((fsMetric (ι := κ)).ρ u))) z v v =
       (‖WithLp.toLp 2 v‖ ^ 2 * ‖WithLp.toLp 2 z‖ ^ 2 -
         2 * (inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 v)).re ^ 2) / (‖WithLp.toLp 2 z‖ ^ 2) ^ 2 := by
     intro v
     rw [fderiv_fderiv_eq_deriv_deriv_line hφ v]
-    have hF : (fun t : ℝ => Real.log ((fsMetric κ).ρ (z + t • v))) = fun t : ℝ =>
+    have hF : (fun t : ℝ => Real.log ((fsMetric (ι := κ)).ρ (z + t • v))) = fun t : ℝ =>
         Real.log (‖WithLp.toLp 2 z‖ ^ 2 + 2 * t * (inner ℂ (WithLp.toLp 2 z) (WithLp.toLp 2 v)).re +
           t ^ 2 * ‖WithLp.toLp 2 v‖ ^ 2) / 2 := by
       funext t
@@ -154,8 +173,9 @@ theorem levi_fs_zero {κ : Type} [Fintype κ] {z : κ → ℂ} (hz : z ≠ 0) (w
     simpa using this
 
 theorem contDiffAt_fs {κ : Type} [Fintype κ] {z : κ → ℂ} (hz : z ≠ 0) :
-    ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fsMetric κ).ρ z :=
-  ContDiffOn.contDiffAt fsMetric_isSmooth (isOpen_ne.mem_nhds hz)
+    ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fsMetric (ι := κ)).ρ z := by
+  change ContDiffAt ℝ _ (fun u => ‖fsLp κ u‖) z
+  exact (contDiffAt_norm ℂ (fsLp_ne_zero hz)).comp z (fsLp κ).contDiff.contDiffAt
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
@@ -190,7 +210,7 @@ end GP
 private theorem contDiffAt_fsMetric_rho_blk {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] (k : K)
     {z : (k : K) × ι k → ℂ} (hz : GP.blk k z ≠ 0) :
     ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞)
-      (fun z : (k : K) × ι k → ℂ => (fsMetric (ι k)).ρ (GP.blk k z)) z := by
+      (fun z : (k : K) × ι k → ℂ => (fsMetric (ι := ι k)).ρ (GP.blk k z)) z := by
   have h1 : WithLp.toLp 2 (GP.blk k z) ≠ 0 := fun h => hz (by simpa using congrArg WithLp.ofLp h)
   show ContDiffAt ℝ _ (fun z => ‖WithLp.toLp 2 (GP.blk k z)‖) z
   have hL : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞)
@@ -200,39 +220,39 @@ private theorem contDiffAt_fsMetric_rho_blk {K : Type} [Fintype K] {ι : K → T
   exact (contDiffAt_norm ℂ h1).comp z hL.contDiffAt
 
 private theorem contDiffAt_log_fsMetric_rho {κ : Type} [Fintype κ] {z : κ → ℂ} (hz : z ≠ 0) :
-    ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun v : κ → ℂ => Real.log ((fsMetric κ).ρ v)) z := by
+    ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun v : κ → ℂ => Real.log ((fsMetric (ι := κ)).ρ v)) z := by
   have h1 : WithLp.toLp 2 z ≠ 0 := fun h => hz (by simpa using congrArg WithLp.ofLp h)
-  have hρ : ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun u : κ → ℂ => (fsMetric κ).ρ u) z := by
+  have hρ : ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun u : κ → ℂ => (fsMetric (ι := κ)).ρ u) z := by
     show ContDiffAt ℝ _ (fun u => ‖WithLp.toLp 2 u‖) z
     exact (contDiffAt_norm ℂ h1).comp z
       ((PiLp.continuousLinearEquiv 2 ℝ (fun _ : κ => ℂ)).symm.contDiff.contDiffAt)
-  exact hρ.log (ne_of_gt ((fsMetric κ).pos z hz))
+  exact hρ.log (ne_of_gt ((fsMetric (ι := κ)).pos z hz))
 
 private theorem contDiffAt_log_prod_fsMetric_rho_blk {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     {z : (k : K) × ι k → ℂ} (hz : ∀ k, GP.blk k z ≠ 0) :
     ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞)
-      (fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι k)).ρ (GP.blk k z))) z := by
-  have hpos : 0 < ∏ k, (fsMetric (ι k)).ρ (GP.blk k z) :=
-    Finset.prod_pos fun k _ => (fsMetric _).pos _ (hz k)
+      (fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι := ι k)).ρ (GP.blk k z))) z := by
+  have hpos : 0 < ∏ k, (fsMetric (ι := ι k)).ρ (GP.blk k z) :=
+    Finset.prod_pos fun k _ => (fsMetric (ι := ι k)).pos _ (hz k)
   exact (contDiffAt_prod fun k _ => contDiffAt_fsMetric_rho_blk k (hz k)).log hpos.ne'
 
 private theorem levi_log_prod_fsMetric_eq_sum {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     {z : (k : K) × ι k → ℂ} (hz : ∀ k, GP.blk k z ≠ 0) (u : (k : K) × ι k → ℂ) :
-    ReciprocityTheory.AnForm.levi (fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι k)).ρ (GP.blk k z))) z u =
-      ∑ k, ReciprocityTheory.AnForm.levi (fun v : ι k → ℂ => Real.log ((fsMetric (ι k)).ρ v)) (GP.blk k z) (GP.blk k u) := by
+    ReciprocityTheory.AnForm.levi (fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι := ι k)).ρ (GP.blk k z))) z u =
+      ∑ k, ReciprocityTheory.AnForm.levi (fun v : ι k → ℂ => Real.log ((fsMetric (ι := ι k)).ρ v)) (GP.blk k z) (GP.blk k u) := by
   have h2 : (2 : WithTop ℕ∞) ≤ ((⊤ : ℕ∞) : WithTop ℕ∞) := WithTop.coe_le_coe.2 le_top
   have hev : ∀ᶠ y in 𝓝 z, ∀ k, GP.blk k y ≠ 0 := by
     rw [Filter.eventually_all]
     intro k
     exact (GP.blk k).continuous.continuousAt.eventually_ne (hz k)
-  have hcongr : (fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι k)).ρ (GP.blk k z))) =ᶠ[𝓝 z]
-      fun y => ∑ k ∈ Finset.univ, Real.log ((fsMetric (ι k)).ρ (GP.blk k y)) := by
+  have hcongr : (fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι := ι k)).ρ (GP.blk k z))) =ᶠ[𝓝 z]
+      fun y => ∑ k ∈ Finset.univ, Real.log ((fsMetric (ι := ι k)).ρ (GP.blk k y)) := by
     filter_upwards [hev] with y hy
-    exact Real.log_prod (fun k _ => ((fsMetric _).pos _ (hy k)).ne')
+    exact Real.log_prod (fun k _ => ((fsMetric (ι := ι k)).pos _ (hy k)).ne')
   rw [ReciprocityTheory.AnForm.levi_congr hcongr]
-  rw [GP.levi_sum (f := fun k y => Real.log ((fsMetric (ι k)).ρ (GP.blk k y)))]
+  rw [GP.levi_sum (f := fun k y => Real.log ((fsMetric (ι := ι k)).ρ (GP.blk k y)))]
   · refine Finset.sum_congr rfl fun k _ => ?_
-    have hc := ReciprocityTheory.AnForm.levi_comp (φ := fun v : ι k → ℂ => Real.log ((fsMetric (ι k)).ρ v))
+    have hc := ReciprocityTheory.AnForm.levi_comp (φ := fun v : ι k → ℂ => Real.log ((fsMetric (ι := ι k)).ρ v))
       (τ := GP.blk (ι := ι) k) u ((GP.blk (ι := ι) k).analyticAt z) ((contDiffAt_log_fsMetric_rho (hz k)).of_le h2)
     rw [ContinuousLinearMap.fderiv] at hc
     exact hc
@@ -306,36 +326,36 @@ private theorem exists_holo_re_eq_sub_of_log_scaling {K : Type} [Fintype K] {ι 
 
 private theorem log_prod_fsMetric_blk_smul {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     (c : K → ℂ) (z : (k : K) × ι k → ℂ) (hc : ∀ k, c k ≠ 0) (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) :
-    Real.log (∏ k, (fsMetric (ι k)).ρ (GP.blk k (fun p => c p.1 * z p))) =
-      ∑ k, Real.log ‖c k‖ + Real.log (∏ k, (fsMetric (ι k)).ρ (GP.blk k z)) := by
+    Real.log (∏ k, (fsMetric (ι := ι k)).ρ (GP.blk k (fun p => c p.1 * z p))) =
+      ∑ k, Real.log ‖c k‖ + Real.log (∏ k, (fsMetric (ι := ι k)).ρ (GP.blk k z)) := by
   have hb : ∀ k, GP.blk k (fun p : (k : K) × ι k => c p.1 * z p) = c k • GP.blk k z := by
     intro k
     ext i
     simp [GP.blk]
-  simp only [hb, (fsMetric _).smul]
+  simp only [hb, ConeMetric.smul]
   rw [Finset.prod_mul_distrib, Real.log_mul, Real.log_prod]
   · exact fun k _ => norm_ne_zero_iff.2 (hc k)
   · exact Finset.prod_ne_zero_iff.2 fun k _ => norm_ne_zero_iff.2 (hc k)
-  · exact (Finset.prod_pos fun k _ => (fsMetric _).pos _ (GP.blk_ne hz k)).ne'
+  · exact (Finset.prod_pos fun k _ => (fsMetric (ι := ι k)).pos _ (GP.blk_ne hz k)).ne'
 
 open GP HolomorphicMinorCharts ReciprocityTheory.AnForm in
 theorem g_pos : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (P J : Ideal (MRing ι)) (e : ℕ) (R : AnLogRes P J e), IsEmbedded R.A P R.U R.lift → ∃ Amp : HermLine ι, IsSmoothHerm Amp ∧ IsPotential R.A (potOf R Amp) ∧ IsPosPot R.A (potOf R Amp) := by
   intro K _ ι _ P J e R emb
   have h2 : (2 : WithTop ℕ∞) ≤ ((⊤ : ℕ∞) : WithTop ℕ∞) := WithTop.coe_le_coe.2 le_top
   have hsm : ∀ (c : K → ℂ) (z : (k : K) × ι k → ℂ), (∀ k, c k ≠ 0) →
-      (∏ k, (fsMetric (ι k)).ρ (blk k (fun p : (k : K) × ι k => c p.1 * z p))) =
-        (∏ k, ‖c k‖ ^ (1 : ℤ)) * ∏ k, (fsMetric (ι k)).ρ (blk k z) := by
+      (∏ k, (fsMetric (ι := ι k)).ρ (blk k (fun p : (k : K) × ι k => c p.1 * z p))) =
+        (∏ k, ‖c k‖ ^ (1 : ℤ)) * ∏ k, (fsMetric (ι := ι k)).ρ (blk k z) := by
     intro c z hc
     have hb : ∀ k, blk k (fun p : (k : K) × ι k => c p.1 * z p) = c k • blk k z := by
       intro k
       ext i
       simp [blk]
-    simp only [hb, (fsMetric _).smul, zpow_one]
+    simp only [hb, ConeMetric.smul, zpow_one]
     exact Finset.prod_mul_distrib
   have hpos : ∀ z : (k : K) × ι k → ℂ, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) →
-      0 < ∏ k, (fsMetric (ι k)).ρ (blk k z) := fun z hz =>
-    Finset.prod_pos fun k _ => (fsMetric _).pos _ (blk_ne hz k)
-  let Amp : HermLine ι := ⟨fun _ => 1, fun z => ∏ k, (fsMetric (ι k)).ρ (blk k z), hpos, hsm⟩
+      0 < ∏ k, (fsMetric (ι := ι k)).ρ (blk k z) := fun z hz =>
+    Finset.prod_pos fun k _ => (fsMetric (ι := ι k)).pos _ (blk_ne hz k)
+  let Amp : HermLine ι := ⟨fun _ => 1, fun z => ∏ k, (fsMetric (ι := ι k)).ρ (blk k z), hpos, hsm⟩
   have hΦ := fun c z hc hz => log_prod_fsMetric_blk_smul (ι := ι) c z hc hz
   refine ⟨Amp, ?_, ?_, ?_⟩
   · intro z hz
@@ -347,19 +367,19 @@ theorem g_pos : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι
       have hm := emb.mem x _ hv.2
       have := (contDiffAt_log_prod_fsMetric_rho_blk (fun k => blk_ne hm.1 k)).comp v (hτ.contDiffAt.restrict_scalars ℝ)
       exact this
-    · exact exists_holo_re_eq_sub_of_log_scaling emb (fun z => Real.log (∏ k, (fsMetric (ι k)).ρ (blk k z))) hΦ x x' y hy
+    · exact exists_holo_re_eq_sub_of_log_scaling emb (fun z => Real.log (∏ k, (fsMetric (ι := ι k)).ρ (blk k z))) hΦ x x' y hy
   · intro x j v hv w hw
     have hysrc : (R.A.chart j).symm v ∈ (R.A.chart j).source := (R.A.chart j).map_target hv.1
     have hyv : (R.A.chart j) ((R.A.chart j).symm v) = v := (R.A.chart j).right_inv hv.1
     obtain ⟨W, hWo, hyW, G, hG, hdiff⟩ := exists_holo_re_eq_sub_of_log_scaling emb
-      (fun z => Real.log (∏ k, (fsMetric (ι k)).ρ (blk k z))) hΦ
+      (fun z => Real.log (∏ k, (fsMetric (ι := ι k)).ρ (blk k z))) hΦ
       x ((R.A.chart j).symm v) ((R.A.chart j).symm v) ⟨hv.2, emb.mem_U _⟩
     have hτ : AnalyticAt ℂ (fun u => R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm u)) v :=
       AnalyticAt.pi (fun p => emb.holo ((R.A.chart j).symm v) p j v ⟨hv.1, emb.mem_U _⟩)
     have hmy := emb.mem ((R.A.chart j).symm v) ((R.A.chart j).symm v) (emb.mem_U _)
     have hblk : ∀ k, blk k (R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm v)) ≠ 0 :=
       fun k => blk_ne hmy.1 k
-    have hΦy : ContDiffAt ℝ 2 ((fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι k)).ρ (blk k z))) ∘
+    have hΦy : ContDiffAt ℝ 2 ((fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι := ι k)).ρ (blk k z))) ∘
         fun u => R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm u)) v :=
       ((contDiffAt_log_prod_fsMetric_rho_blk hblk).comp v (hτ.contDiffAt.restrict_scalars ℝ)).of_le h2
     have hGa : AnalyticAt ℂ (G ∘ (R.A.chart j).symm) v := by
@@ -371,7 +391,7 @@ theorem g_pos : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι
       have := HolomorphicMinorCharts.tendsto_symm (R.A.chart j) hysrc
       rwa [hyv] at this
     have hev : ((potOf R Amp).φ x ∘ (R.A.chart j).symm) =ᶠ[𝓝 v]
-        fun u => ((fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι k)).ρ (blk k z))) ∘
+        fun u => ((fun z : (k : K) × ι k → ℂ => Real.log (∏ k, (fsMetric (ι := ι k)).ρ (blk k z))) ∘
           fun u => R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm u)) u +
             1 * (G ((R.A.chart j).symm u)).re := by
       have hW' : ∀ᶠ u in 𝓝 v, (R.A.chart j).symm u ∈ W ∩ R.U x ∩ R.U ((R.A.chart j).symm v) :=
@@ -380,20 +400,20 @@ theorem g_pos : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι
       filter_upwards [hW'] with u hu
       have := hdiff _ hu
       simp only [Function.comp, one_mul]
-      show Real.log (∏ k, (fsMetric (ι k)).ρ (blk k (R.lift x ((R.A.chart j).symm u)))) = _
+      show Real.log (∏ k, (fsMetric (ι := ι k)).ρ (blk k (R.lift x ((R.A.chart j).symm u)))) = _
       linarith
     rw [levi_congr hev, levi_add_smul 1 hΦy hRe]
     have h0 : levi (fun u => (G ((R.A.chart j).symm u)).re) v w = 0 := levi_re_analytic hGa w
     rw [h0, mul_zero, add_zero, levi_comp w hτ ((contDiffAt_log_prod_fsMetric_rho_blk hblk).of_le h2)]
     beta_reduce
     rw [levi_log_prod_fsMetric_eq_sum hblk]
-    have hnn : ∀ k, 0 ≤ levi (fun z : ι k → ℂ => Real.log ((fsMetric (ι k)).ρ z))
+    have hnn : ∀ k, 0 ≤ levi (fun z : ι k → ℂ => Real.log ((fsMetric (ι := ι k)).ρ z))
         (blk k (R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm v)))
         (blk k (fderiv ℂ (fun u => R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm u)) v w)) :=
       fun k => GP.levi_fs_nonneg (hblk k) _
     by_contra hle
     push_neg at hle
-    have hz0 : ∀ k, levi (fun z : ι k → ℂ => Real.log ((fsMetric (ι k)).ρ z))
+    have hz0 : ∀ k, levi (fun z : ι k → ℂ => Real.log ((fsMetric (ι := ι k)).ρ z))
         (blk k (R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm v)))
         (blk k (fderiv ℂ (fun u => R.lift ((R.A.chart j).symm v) ((R.A.chart j).symm u)) v w)) = 0 :=
       fun k => le_antisymm ((Finset.single_le_sum (fun k _ => hnn k) (Finset.mem_univ k)).trans hle) (hnn k)

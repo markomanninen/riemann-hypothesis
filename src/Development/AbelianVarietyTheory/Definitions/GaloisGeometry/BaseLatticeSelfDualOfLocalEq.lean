@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.MemberChainFormsLevelPrimeEqMember
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitIntPI
-import Formalism.LocalToGlobal.HermitianColumns.SymAll
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.MemberChainFormsLevelPrimeEqMember
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitIntPI
+public import Formalism.LocalToGlobal.HermitianColumns.SymAll
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,8 @@ theorem mulVec_map_rho (A : Matrix (Fin N) (Fin N) E) (x : Fin N → E) (a : Fin
     ((A.map ((rho v spl).comp (inclE (F := F) (v.adicCompletion F)))) *ᵥ
       fun b => rho v spl (inclE (F := F) (v.adicCompletion F) (x b))) a =
       rho v spl (inclE (F := F) (v.adicCompletion F) ((A *ᵥ x) a)) := by
-  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, RingHom.comp_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, RingHom.comp_apply, map_sum, map_mul]
 
 theorem base_free (hs : SplitInt v spl) (hd : ∀ a : v.adicCompletion F, spl ((1 : E) ⊗ₜ[F] a) = (a, a)) (B : GL (Fin N) E)
     (Λ : Submodule (𝓞 E) (Fin N → E))
@@ -90,7 +95,7 @@ theorem base_free (hs : SplitInt v spl) (hd : ∀ a : v.adicCompletion F, spl ((
       intro a
       have e : (fun b => (spl ((x + y) b)).1) = (fun b => (spl (x b)).1) + (fun b => (spl (y b)).1) := by
         funext b
-        simp only [Pi.add_apply, map_add, Prod.fst_add]
+        simp only [Pi.add_apply, map_add (f := _), Prod.fst_add]
       rw [e, Matrix.mulVec_add]
       exact add_mem (ihx a) (ihy a)
     | smul s x _ ih =>
@@ -126,7 +131,8 @@ theorem base_free (hs : SplitInt v spl) (hd : ∀ a : v.adicCompletion F, spl ((
         rw [hc, Matrix.mulVec_mulVec, ← Matrix.map_mul, Units.mul_inv, Matrix.map_one _ (map_zero _) (map_one _),
           Matrix.one_mulVec]
       rw [← key]
-      simp only [Finset.sum_apply, Pi.smul_apply, Subring.smul_def, smul_eq_mul, map_sum, map_mul, Prod.fst_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.sum_apply, Pi.smul_apply, Subring.smul_def, smul_eq_mul, map_sum, map_mul, Prod.fst_sum,
         Prod.fst_mul, hd, Matrix.mulVec, dotProduct, Matrix.map_apply, RingHom.comp_apply]
       refine Finset.sum_congr rfl fun b _ => ?_
       exact mul_comm _ _
@@ -303,16 +309,16 @@ section Mem
 
 variable (cols : ColsTiedSym D)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem top_car (u : D.what₂.Word) (j : ℕ) (hj : j ≤ D.R.m) (h : j = D.R.m) (h1 : 1 ≤ j) :
     ∃ β' : cols.herm.base.Ch u j,
       ((cols.forms u).cls j hj (Or.inr h)).lev.Lb = reL (rankN D j hj) (cols.herm.base.lev u j h1 hj β').Lb := by
   subst h
   exact ⟨chM cols.herm.base u, (cols.carM u).Lb_eq⟩
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem base_lattice_self_dual_of_chain (u : D.what₂.Word) (dt : MemDt (cols.forms u)) (i : ℕ) (hi : i + 1 ≤ D.R.m) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
     BaseLatticeSelfDualAbove (formsInMem (cols.forms u) dt i hi) (D.what₂.places.resChar w) := by

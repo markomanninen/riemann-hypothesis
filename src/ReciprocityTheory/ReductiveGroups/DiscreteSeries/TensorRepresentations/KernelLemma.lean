@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
+
+@[expose] public section
 
 noncomputable section
 

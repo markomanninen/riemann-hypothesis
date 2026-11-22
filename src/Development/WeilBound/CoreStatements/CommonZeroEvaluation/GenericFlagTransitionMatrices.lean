@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericLuDecompositionUnique
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LuFactorsGenerateSameField
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AlgIndepOfSameAdjoin
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericFlagTriangularChange
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TowerComponentsCompatibleLaws
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericLuDecompositionUnique
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LuFactorsGenerateSameField
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AlgIndepOfSameAdjoin
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericFlagTriangularChange
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TowerComponentsCompatibleLaws
+
+@[expose] public section
 
 open scoped Matrix
 
@@ -19,7 +23,8 @@ theorem generic_flag_transition_matrices : ∀ (K L : Type) [Field K] [Field L] 
     refine Fintype.linearIndependent_iff.2 fun g hg0 k => ?_
     have h1 : ∑ l, algebraMap K L (g l) • j (e s l) = 0 := by
       have := congrArg j hg0
-      rw [map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at this
       simpa only [hj] using this
     have h2 := Fintype.linearIndependent_iff.1 (hli s) _ h1 k
     exact (map_eq_zero_iff _ (algebraMap K L).injective).1 h2

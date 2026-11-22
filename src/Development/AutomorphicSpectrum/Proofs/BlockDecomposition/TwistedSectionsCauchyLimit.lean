@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LimitOfFinite
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LimitOfFinite
+
+@[expose] public section
 
 set_option autoImplicit false
 

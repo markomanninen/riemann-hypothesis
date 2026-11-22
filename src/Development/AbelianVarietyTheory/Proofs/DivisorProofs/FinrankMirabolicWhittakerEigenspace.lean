@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem card_mul_finrank_eig [FiniteDimensional ℂ V] [Finite G] (τ : Represen
     · intro v
       rw [mem_eig]
       intro g hg
-      simp only [he, LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [he, LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum]
       rw [smul_comm]
       congr 1
       rw [Finset.smul_sum]
@@ -70,7 +75,8 @@ theorem card_mul_finrank_eig [FiniteDimensional ℂ V] [Finite G] (τ : Represen
       rw [Finset.sum_congr rfl (g := fun _ => v) fun k _ => by
         rw [hv k k.2, smul_smul, ← AddChar.map_add_eq_mul, neg_add_cancel, AddChar.map_zero_eq_one, one_smul]]
       rw [Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hc, one_smul]
-  rw [← hp.trace, he, map_smul, map_sum, smul_eq_mul, ← mul_assoc, mul_inv_cancel₀ hc, one_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hp.trace, he, map_smul, map_sum, smul_eq_mul, ← mul_assoc, mul_inv_cancel₀ hc, one_mul]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, smul_eq_mul]
 

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsOpenSubgroupMemFixedModule
-import GroundTheory.LocalFields.CompleteTrivial
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsOpenSubgroupMemFixedModule
+public import GroundTheory.LocalFields.CompleteTrivial
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 
@@ -27,10 +31,6 @@ namespace TateModel
 
 variable {A K L Γ M} (T : TateModel A K L Γ M)
 
-include T in
-
-theorem normal : (L.subgroupOf K).Normal :=
-  T.ker_hom ▸ T.hom.normal_ker
 
 theorem equiv_smul (σ : K) (a : fixedModule A L) (h : (σ : G) • (a : A) ∈ fixedModule A L) :
     T.equiv ⟨(σ : G) • (a : A), h⟩ = T.hom σ • T.equiv a := by
@@ -72,12 +72,8 @@ noncomputable def quotientEquiv : K ⧸ L.subgroupOf K ≃* Γ :=
   (QuotientGroup.quotientMulEquivOfEq T.ker_hom.symm).trans
     (QuotientGroup.quotientKerEquivOfSurjective T.hom T.surjective_hom)
 
-@[simp]
-theorem quotientEquiv_mk (σ : K) : T.quotientEquiv (σ : K ⧸ L.subgroupOf K) = T.hom σ :=
-  rfl
 
 include T in
-
 theorem relIndex_eq_natCard : L.relIndex K = Nat.card Γ :=
   Nat.card_congr T.quotientEquiv.toEquiv
 
@@ -144,8 +140,8 @@ theorem map_ker_norm [Fintype Γ] [(L.subgroupOf K).FiniteIndex] :
   · intro hm
     exact ⟨T.equiv.symm m, (T.norm_eq_one_iff _).2 (by simpa using hm), by simp⟩
 
-omit [(L.subgroupOf K).Normal] in
 
+omit [(L.subgroupOf K).Normal] in
 theorem augmentation_eq_map :
     augmentation A K L =
       (GroundTheory.LocalField.augmentation Γ M).map
@@ -166,8 +162,8 @@ theorem augmentation_eq_map :
     rw [MulEquiv.apply_symm_apply] at h
     rw [map_div, Subgroup.coe_div, h]
 
-omit [(L.subgroupOf K).Normal] in
 
+omit [(L.subgroupOf K).Normal] in
 theorem mem_augmentation_iff (a : fixedModule A L) :
     (a : A) ∈ augmentation A K L ↔ T.equiv a ∈ GroundTheory.LocalField.augmentation Γ M := by
   rw [T.augmentation_eq_map]

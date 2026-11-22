@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import ReciprocityTheory.SemistableReduction.GaussAbsMulOfMonomialOrder
-import ReciprocityTheory.SemistableReduction.LogNormCoeffSubLeBlockSphereLogMean
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussAbsMulSupportFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.GaussAbsMulOfMonomialOrder
+public import ReciprocityTheory.SemistableReduction.LogNormCoeffSubLeBlockSphereLogMean
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussAbsMulSupportFinite
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,8 +29,8 @@ theorem finPart_props : ∀ (E : Type) [Field E] [NumberField E] (σ τ : Type),
       ∀ v : FinitePlace E, 0 < gaussAbs v g) ∧
     (∀ (g : MvPolynomial σ E) (g' : MvPolynomial τ E), g ≠ 0 → g' ≠ 0 →
       (∀ v : FinitePlace E, gaussAbs v g' ≤ gaussAbs v g) → finPart g' ≤ finPart g) ∧
-    ∀ (g : MvPolynomial σ E) (m : σ →₀ ℕ), coeff m g ≠ 0 →
-      -mean E (fun s => Real.log ‖s (coeff m g)‖) ≤ finPart g := by
+    ∀ (g : MvPolynomial σ E) (m : σ →₀ ℕ), g.coeff m ≠ 0 →
+      -mean E (fun s => Real.log ‖s (g.coeff m)‖) ≤ finPart g := by
   intro E _ _ σ τ
   have hd : (0 : ℝ) < (Module.finrank ℚ E : ℝ) := by
     exact_mod_cast Module.finrank_pos
@@ -40,7 +44,7 @@ theorem finPart_props : ∀ (E : Type) [Field E] [NumberField E] (σ τ : Type),
   · intro g m hm
     have hg : g ≠ 0 := by
       rintro rfl; exact hm (by simp)
-    set c := coeff m g with hc
+    set c := g.coeff m with hc
     have h1 : ∑ᶠ v : FinitePlace E, Real.log (v c) ≤ ∑ᶠ v : FinitePlace E, Real.log (gaussAbs v g) :=
       finsum_le_finsum'
         ((FinitePlace.hasFiniteMulSupport hm).subset (by

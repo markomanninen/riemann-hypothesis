@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SigV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SigV
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl IsDedekindDomain NumberField GlobalTheory.FixedUnitNorm
 open scoped TensorProduct
 
@@ -31,19 +36,19 @@ theorem coords_unique_of_field {K E A : Type*} [Field K] [Ring E] [Nontrivial E]
   have hinj' := Module.Flat.lTensor_preserves_injective_linearMap (M := A) φ hinj
   have hx : φ.lTensor A (a ⊗ₜ[K] ((1 : K), (0 : K)) +
       b ⊗ₜ[K] ((0 : K), (1 : K))) = 0 := by
-    rw [map_add, LinearMap.lTensor_tmul, LinearMap.lTensor_tmul, hφ, hφ]
+    rw [map_add (f := _), LinearMap.lTensor_tmul, LinearMap.lTensor_tmul, hφ, hφ]
     simpa using h
   rw [← map_zero (φ.lTensor A)] at hx
   have hx0 := hinj' hx
   have ha : TensorProduct.rid K A
       ((LinearMap.fst K K K).lTensor A
         (a ⊗ₜ[K] ((1 : K), (0 : K)) + b ⊗ₜ[K] ((0 : K), (1 : K)))) = a := by
-    rw [map_add, LinearMap.lTensor_tmul, LinearMap.lTensor_tmul, LinearMap.fst_apply, LinearMap.fst_apply,
+    rw [map_add (f := _), LinearMap.lTensor_tmul, LinearMap.lTensor_tmul, LinearMap.fst_apply, LinearMap.fst_apply,
       map_add, TensorProduct.rid_tmul, TensorProduct.rid_tmul, one_smul, zero_smul, add_zero]
   have hb : TensorProduct.rid K A
       ((LinearMap.snd K K K).lTensor A
         (a ⊗ₜ[K] ((1 : K), (0 : K)) + b ⊗ₜ[K] ((0 : K), (1 : K)))) = b := by
-    rw [map_add, LinearMap.lTensor_tmul, LinearMap.lTensor_tmul, LinearMap.snd_apply, LinearMap.snd_apply,
+    rw [map_add (f := _), LinearMap.lTensor_tmul, LinearMap.lTensor_tmul, LinearMap.snd_apply, LinearMap.snd_apply,
       map_add, TensorProduct.rid_tmul, TensorProduct.rid_tmul, one_smul, zero_smul, zero_add]
   rw [hx0, map_zero, map_zero] at ha hb
   exact ⟨ha.symm, hb.symm⟩

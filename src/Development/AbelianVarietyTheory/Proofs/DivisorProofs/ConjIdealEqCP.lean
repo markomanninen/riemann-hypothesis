@@ -1,10 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTuplesOfLaws
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowWeightStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistCharacterOfArtin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharPowPrimeOrderEmbeddingsDifferByCoprimePower
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTuplesOfLaws
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LevelOfOfSameBut
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsEmptyOfNotAll
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistCharacterOfArtin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharPowPrimeOrderEmbeddingsDifferByCoprimePower
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -153,7 +161,10 @@ theorem loc_pow (χ : HChar D.host.E) (n : ℕ) (v : Pl D.host.E) (x : (v.adicCo
     (χ ^ n).loc v x = χ.loc v x ^ n := by
   induction n with
   | zero => rw [pow_zero, pow_zero]; rfl
-  | succ n ih => rw [pow_succ, pow_succ, Formalism.L2.Host.HChar.loc_mul, ih]
+  | succ n ih =>
+    rw [pow_succ, pow_succ]
+    change (χ ^ n).loc v x * χ.loc v x = _
+    rw [ih]
 
 theorem chrEq_pow {c : (AE D)ˣ →* Circle} {χ : HChar D.host.E} (h : ChrEq c χ) (n : ℕ) :
     ChrEq (c ^ (n + 1)) (χ ^ (n + 1)) := by
@@ -176,7 +187,8 @@ theorem not_unr (hδ : IsDelta q δ) (hψ : IsPsi l Q ψ) (hl : l.Prime) (a : �
       rw [← loc_pow, show ψ ^ (l ^ n) = 1 from hn]
       rfl
     have h4 := hu x hx
-    rw [Formalism.L2.Host.HChar.loc_mul, loc_pow] at h4
+    change δ.loc v x * (ψ ^ a).loc v x = 1 at h4
+    rw [loc_pow] at h4
     rw [eq_inv_of_mul_eq_one_left h4, inv_pow, ← pow_mul, mul_comm, pow_mul, h3, one_pow, inv_one]
   have h3 := (Nat.prime_dvd_prime_iff_eq Nat.prime_three hl).1 (Nat.prime_three.dvd_of_dvd_pow (dvd_trans (by norm_num) h15))
   have h5 := (Nat.prime_dvd_prime_iff_eq Nat.prime_five hl).1 (Nat.prime_five.dvd_of_dvd_pow (dvd_trans (by norm_num) h15))
@@ -193,7 +205,8 @@ theorem unr_iff (hδ : IsDelta q δ) (hψ : IsPsi l Q ψ) (hl : l.Prime) {a : �
     have h3 : ψ.loc v x ^ (l ^ n) = 1 := by
       rw [← loc_pow, show ψ ^ (l ^ n) = 1 from hn]
       rfl
-    rw [Formalism.L2.Host.HChar.loc_mul, Formalism.L2.Host.HChar.loc_mul, hδ.unr v hv x hx, one_mul, one_mul, loc_pow]
+    change δ.loc v x * (ψ ^ a).loc v x = 1 ↔ δ.loc v x * ψ.loc v x = 1
+    rw [hδ.unr v hv x hx, one_mul, one_mul, loc_pow]
     refine ⟨fun h => ?_, fun h => by rw [h, one_pow]⟩
     have := pow_gcd_eq_one.2 ⟨h, h3⟩
     rwa [Nat.Coprime.gcd_eq_one (ha.pow_right n), pow_one] at this
@@ -207,7 +220,8 @@ theorem fin_mul (hδ : IsDelta q δ) (hψ : IsPsi l Q ψ) (hl : l.Prime) (a : �
     show ψ ^ (l ^ n) = 1 from hn, one_pow]
 
 theorem tame_mul (hδ : IsDelta q δ) (hψ : IsPsi l Q ψ) (a : ℕ) (v : Pl D.host.E) : (δ * ψ ^ a).TameAt v := fun x hx h1 => by
-  rw [Formalism.L2.Host.HChar.loc_mul, loc_pow, hδ.tame v x hx h1, hψ.tame v x hx h1, one_pow, one_mul]
+  change δ.loc v x * (ψ ^ a).loc v x = 1
+  rw [loc_pow, hδ.tame v x hx h1, hψ.tame v x hx h1, one_pow, one_mul]
 
 theorem exists_over {q : ℕ} (hq : q.Prime) : ∃ v : Pl D.host.E, (q : 𝓞 D.host.E) ∈ v.asIdeal := by
   have hu : ¬ IsUnit (q : 𝓞 D.host.E) := fun h => by
@@ -263,8 +277,8 @@ theorem exists_delta (C : Formalism.L2.Host.CharFrame D) (i : D.ntw.Tw) : ∃ q 
   · rw [← Finset.mem_coe, D.ntw.pD_eq]
     rfl
 
-open Classical in
 
+open Classical in
 theorem twLev_pow (hm : RecTies p) (hF : p.R.toRealDat.IsFam) (hG : QGuard p.R.toRealDat) (hw : D.plEq w ∈ p.R.twPl) (j : Fin D.R.m)
     (hlow : ∀ P ∈ ex.nch.Q w, ((D.host.pde * D.host.pde' : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal)
     {ρ : Setup D.ntw} (hρ : ρ.Good) (hp : RealPin p.R p.cG ρ) {c : (AE D)ˣ →* Circle} {a : ℕ}
@@ -318,43 +332,5 @@ end GlobalTheory.BigOn.Exp.TwConj.LevAt
 
 namespace GlobalTheory.BigOn.Exp.TwConj
 
-open LevAt in
-
-theorem twLevAt_holds : GlobalTheory.Published.CuspRapidDecay → GlobalTheory.Published.GlobalArtinReciprocity → GlobalTheory.Published.RayClassFieldSt → TwAdm → TwChr →
-    GlobalTheory.BigOn.Exp.TwConj.TwLevAt := fun _ _ _ hA hC => by
-  refine AtTw.imp (AtTw.and hA (AtTw.and hC lowAt_holds)) fun Fm x hx i p hr hm w hw j H => ?_
-  obtain ⟨⟨a1, -, -⟩, a2, a3⟩ := H
-  intro ρ ρ' hρ hρ' hp hs hA
-  have hl := ((Fm.D x i).ntw.lPrime ((Fm.ex x hx i).nch.twI w)).out
-  have hlow : ∀ P ∈ (Fm.ex x hx i).nch.Q w,
-      (((Fm.D x i).host.pde * (Fm.D x i).host.pde' : ℕ) : 𝓞 (Fm.D x i).host.E) ∉ P.asIdeal := fun P hP h => by
-    refine Finset.disjoint_left.1 a1.2.1 hP (a3 P ?_)
-    rw [mul_assoc _ (Fm.D x i).host.pde, ← mul_assoc, Nat.cast_mul]
-    exact Ideal.mul_mem_left _ _ h
-  have pw : ∀ σ σ' : Setup (Fm.D x i).ntw, σ.Good → Adapted p w σ → σ'.rc = σ.rc →
-      ∃ a : ℕ, (a + 1).Coprime ((Fm.D x i).ntw.l ((Fm.ex x hx i).nch.twI w)) ∧
-        ChrEq (twW (Fm.ex x hx i) w σ').chi (p.Tp.psi w ^ (a + 1)) := fun σ σ' hσ hσA e => by
-    obtain ⟨a, ha, h⟩ := exists_pow e ((Fm.ex x hx i).nch.sd w) a1
-    rcases a with _ | a
-    · exact absurd (Nat.coprime_zero_left _ |>.1 ha) hl.one_lt.ne'
-    · exact ⟨a, ha, by rw [twW, h]; exact chrEq_pow (a2 σ hσ hσA).1 a⟩
-  obtain ⟨⟨a, ha, hc⟩, a', ha', hc'⟩ : (∃ a : ℕ, (a + 1).Coprime ((Fm.D x i).ntw.l ((Fm.ex x hx i).nch.twI w)) ∧
-        ChrEq (twW (Fm.ex x hx i) w ρ).chi (p.Tp.psi w ^ (a + 1))) ∧
-      ∃ a : ℕ, (a + 1).Coprime ((Fm.D x i).ntw.l ((Fm.ex x hx i).nch.twI w)) ∧
-        ChrEq (twW (Fm.ex x hx i) w ρ').chi (p.Tp.psi w ^ (a + 1)) :=
-    hA.elim (fun h => ⟨pw ρ ρ hρ h rfl, pw ρ ρ' hρ h hs.1⟩) fun h => ⟨pw ρ' ρ hρ' h hs.1.symm, pw ρ' ρ' hρ' h rfl⟩
-  obtain ⟨xiR, h1⟩ := twLev_pow hm.2.2 p.charW.base.fam p.qGuard hw j hlow hρ hp ha hc
-  obtain ⟨xiR', h2⟩ := twLev_pow hm.2.2 p.charW.base.fam p.qGuard hw j hlow hρ hp ha' hc'
-  have hQ : (twW (Fm.ex x hx i) w ρ').Q = half (ρ.ch ((Fm.ex x hx i).nch.twI w)) ((Fm.ex x hx i).nch.Q w) := by
-    simp only [Setup.tw, twistOf, hs.2.1]
-  obtain ⟨q, hq, hδ, -⟩ := exists_delta p.R.C ((Fm.ex x hx i).nch.twI w)
-  obtain ⟨v, hv⟩ := exists_over (D := Fm.D x i) hq
-  have hψ := p.Tp.psi_is w ((p.tw_iff w).1 hw)
-  rw [← (Fm.ex x hx i).nch.twI_l] at hψ
-  have hne : ∀ n : ℕ, p.R.C.delAt ((Fm.D x i).ntw.l ((Fm.ex x hx i).nch.twI w)) * p.Tp.psi w ^ n ≠ 1 := fun n e =>
-    not_unr hδ hψ hl n hv (by rw [e]; exact fun _ _ => rfl)
-  refine ⟨_, _, xiR, xiR', h1, hQ ▸ h2, hne _, hne _, or_iff_not_imp_left.2 fun e => ?_⟩
-  rw [Ne, not_not] at e
-  exact GlobalTheory.ChrEqUnique.idc_unique _ _ _ _ h1.xi (e ▸ h2.xi)
 
 end GlobalTheory.BigOn.Exp.TwConj

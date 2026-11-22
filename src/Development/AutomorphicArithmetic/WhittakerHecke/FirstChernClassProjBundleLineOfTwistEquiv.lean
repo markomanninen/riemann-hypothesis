@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.LineUnitBunF
-import Development.AutomorphicArithmetic.WhittakerHecke.FirstChernClassEqZsmulOfLineUnitEqZpow
-import Development.AutomorphicArithmetic.WhittakerHecke.ChernPowerZsmulEqPowSmul
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.LineUnitBunF
+public import Development.AutomorphicArithmetic.WhittakerHecke.FirstChernClassEqZsmulOfLineUnitEqZpow
+public import Development.AutomorphicArithmetic.WhittakerHecke.ChernPowerZsmulEqPowSmul
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CrystallineSemistableComparison CrystallineSemistableComparison.Onto Simplicial UpperTheory.Gal.KunnethLefschetz UpperTheory.Gal.KunnethLefschetz.G
@@ -81,7 +85,8 @@ theorem UpperTheory.firstChernClass_projBundle_line_of_twist_equiv :
       ((cup q) (pull _ (pullback.fst V (PGL.pr d)) (tw q (i - ((j : ℕ) : ℤ))) (n - 2 * ((j : ℕ) : ℤ)) (G a j))
         (cpow q (c1 q (pullback.snd V (PGL.pr d) ≫ PGL.line d)) (j : ℕ))) : Ht q _ n i) := by
     intro a
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     apply Finset.sum_congr rfl
     intro j _
     rw [pull_castHt, pull_castHt]

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.NbIsoPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.NbIsoPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.BuildCut

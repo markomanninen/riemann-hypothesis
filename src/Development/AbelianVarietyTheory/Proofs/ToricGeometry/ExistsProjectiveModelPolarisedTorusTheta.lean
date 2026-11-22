@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.HolFamilyOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.AlgebraMapZeroSurjective
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.HolFamilyOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.AlgebraMapZeroSurjective
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Complex Matrix Filter Topology
 open ReciprocityTheory.PTheta ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -24,8 +28,8 @@ private theorem eval_smul_of_isHomogeneous_toric_geometry {σ : Type} {P : MvPol
   simp_rw [mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, hdeg]
   ring
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem isHomogeneous_ideal_cone {σ E : Type} [Fintype σ] (f : σ → E → ℂ) (I : Ideal (MvPolynomial σ ℂ))
     (hI : ∀ F, F ∈ I ↔ ∀ (t : ℂ) (z : E), MvPolynomial.eval (fun c => t * f c z) F = 0) :
     I.IsHomogeneous (MvPolynomial.homogeneousSubmodule σ ℂ) := by
@@ -43,18 +47,19 @@ theorem isHomogeneous_ideal_cone {σ E : Type} [Fintype σ] (f : σ → E → �
   have hQ : Q = 0 := by
     apply Polynomial.funext
     intro s
-    simp only [Q, Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C,
+    simp only [Q, Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
       Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_zero]
     have hs := (hI F).1 hF s z
     conv_lhs at hs => rw [← MvPolynomial.sum_homogeneousComponent F]
-    rw [map_sum] at hs
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at hs
     rw [← hs]
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [eval_smul_of_isHomogeneous_toric_geometry (MvPolynomial.homogeneousComponent_isHomogeneous n F)]
     ring
   by_cases hi : i ≤ F.totalDegree
-  · have hc := congrArg (fun P => Polynomial.coeff P i) hQ
-    simpa [Q, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow, Finset.mem_range,
+  · have hc := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P i) hQ
+    simpa [Q, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow, Finset.mem_range,
       Nat.lt_succ_iff.mpr hi] using hc
   · rw [MvPolynomial.homogeneousComponent_eq_zero, map_zero]
     omega
@@ -92,7 +97,7 @@ theorem differentiableOn_eval_comp {σ E : Type} [NormedAddCommGroup E] [NormedS
     DifferentiableOn ℂ (fun z => MvPolynomial.eval (fun c => u c z) F) S := by
   induction F using MvPolynomial.induction_on with
   | C a => simpa using differentiableOn_const a
-  | add p q hp hq => simp only [map_add]; exact hp.add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
   | mul_X p c hp => simp only [map_mul, MvPolynomial.eval_X]; exact hp.mul (hu c)
 
 private theorem exists_ringHom_valAt'_eq {Y : Over (Sp ℂ)} (x : 𝟙_ (Over (Sp ℂ)) ⟶ Y) {U : Y.left.Opens}

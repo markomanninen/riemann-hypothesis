@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialRatAndSplit
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsIntegralBasisOfLatticeAtPlaceStable
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CompletedLatticeEqAdelicCompletionAndGram
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsDvdCoprimeMulPow
-import Formalism.SharpRestriction.CuspSpanNormBounds.JExistsNatSmulMemL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialRatAndSplit
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsIntegralBasisOfLatticeAtPlaceStable
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CompletedLatticeEqAdelicCompletionAndGram
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsDvdCoprimeMulPow
+public import Formalism.SharpRestriction.CuspSpanNormBounds.JExistsNatSmulMemL
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum
 open IsDedekindDomain NumberField
@@ -227,7 +231,8 @@ theorem mem_of_idem (hs : ∀ e, IsSplitIdem D e → ∀ g, Formalism.L2.Theta.S
     (h1 : e * e = e) (h2 : {v | e v ≠ 0}.Finite) (h3 : ∀ v, e v ≠ 0 → SplitPl (cF D) v) (g : GA D V)
     (hg : fj D e • (Formalism.L2.Theta.mt V g - 1) = Formalism.L2.Theta.mt V g - 1) : g ∈ H := by
   refine mem_of_finset H hs h2.toFinset (fun v hv => h3 v (h2.mem_toFinset.1 hv)) g ?_
-  rw [← map_sum, ← GlobalTheory.SplitReps.idem_eq_sum e h1 h2.toFinset (fun v => h2.mem_toFinset), hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← GlobalTheory.SplitReps.idem_eq_sum e h1 h2.toFinset (fun v => h2.mem_toFinset), hg]
 
 theorem mem_of_suppSplit (hs : ∀ e, IsSplitIdem D e → ∀ g, Formalism.L2.Theta.SuppAt e V g → g ∈ H) {N : ℕ}
     {h : GA D V} (hh : h ∈ GfC V) (h0 : SuppSplit (cF D) N (finHom V h).1) : h ∈ H := by
@@ -292,9 +297,9 @@ open scoped TensorProduct
 
 variable {D : D7} {V : HSp D} (H : Subgroup (GA D V))
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem mem_refl {N : ℕ} (hN : 0 < N) (hroot : ∀ g ∈ GfC V, ∀ m : ℕ, 0 < m → g ^ m ∈ H → g ∈ H)
     (hcong : ∀ k ∈ GfC V, FinCong V N k → k ∈ H)
     (hs : ∀ e, IsSplitIdem D e → ∀ g, Formalism.L2.Theta.SuppAt e V g → g ∈ H)
@@ -327,7 +332,7 @@ theorem mem_refl {N : ℕ} (hN : 0 < N) (hroot : ∀ g ∈ GfC V, ∀ m : ℕ, 0
     rw [add_sub_cancel_left, ← mul_assoc (1 - fj D e), hs1]
   rw [hy']
   have hinf : infPart D (1 + fj D (1 - e) * (incA D u - 1)) = 1 := by
-    rw [map_add, map_one, map_mul, inf_fj, zero_mul, add_zero]
+    rw [map_add (f := _), map_one, map_mul, inf_fj, zero_mul, add_zero]
   have hG : rfA hP hJ _ hn ∈ GfC V := by
     refine MonoidHom.mem_ker.2 (Units.ext ?_)
     change (Formalism.L2.Theta.mt V (rfA hP hJ _ hn)).map (infPart D) = 1

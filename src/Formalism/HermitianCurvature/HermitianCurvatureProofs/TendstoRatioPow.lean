@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLpBzOfSup
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TendstoIntegralInnerGermMoving
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLpBzOfSup
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TendstoIntegralInnerGermMoving
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBK
 
@@ -143,8 +147,9 @@ theorem GermD.propG (hG : GermD s β ε Y ut bt SS) :
     refine ⟨s * SS, fun h hh x hx => ?_⟩
     obtain ⟨hab, habS⟩ := hG.memLp_abar hh
     have hmD := hG.memLp_mainD hh x
-    have i1 : Integrable (fun D => ‖mainD s β ε (bt h) x D‖ ^ 2) := (memLp_two_iff_integrable_sq_norm hmD.1).1 hmD
-    have i2 : Integrable (fun D => abar s ε (bt h) D ^ 2) := (memLp_two_iff_integrable_sq hab.1).1 hab
+    have i1 : Integrable (fun D => ‖mainD s β ε (bt h) x D‖ ^ 2) :=
+      (memLp_two_iff_integrable_sq_norm hmD.aestronglyMeasurable).1 hmD
+    have i2 : Integrable (fun D => abar s ε (bt h) D ^ 2) := hab.integrable_sq
     calc ‖gramL volume (Ac s β ε bt) (Ac s β ε bt) (h, x) (h, x)‖
         ≤ ∫ c, ‖⟪Ac s β ε bt (h, x) c, Ac s β ε bt (h, x) c⟫_ℂ‖ := norm_integral_le_integral_norm _
       _ = ∫ c, ‖Ac s β ε bt (h, x) c‖ ^ 2 := by

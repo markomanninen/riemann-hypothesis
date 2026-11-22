@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SeparatingFamilySumClosedUnderProdStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SeparatingFamilySumClosedUnderProdStatement
+
+@[expose] public section
+
 open GlobalTheory.AlmostEt
 open scoped NNReal
 
@@ -69,7 +74,7 @@ theorem almostSep_of_moves : ∀ (L : Type) [Field L] (v : Valuation L ℝ≥0) 
         sum_out := ?_ }
     · exact prod_mem fun q _ => sub_mem (hxF q) (hyF q)
     · rw [map_prod]
-      refine Finset.prod_le_one (fun _ _ => zero_le) fun q _ => ?_
+      refine Finset.prod_le_one₀ (fun _ _ => zero_le) fun q _ => ?_
       exact (Valuation.map_sub v _ _).trans (max_le (hxv q) (hyv q))
     · intro σ hσ
       rw [hsum σ]
@@ -90,7 +95,7 @@ theorem almostSep_of_moves : ∀ (L : Type) [Field L] (v : Valuation L ℝ≥0) 
     calc r < t ^ s.card := hrt
       _ = ∏ _q ∈ s, t := by rw [Finset.prod_const]
       _ ≤ ∏ q ∈ s, v (x q - y q) := by
-        refine Finset.prod_le_prod (fun _ _ => zero_le) fun q hq => ?_
+        refine Finset.prod_le_prod₀ (fun _ _ => zero_le) fun q hq => ?_
         exact (hyt q (Finset.ne_of_mem_erase hq)).le
 
 end GlobalTheory.AlmostEt

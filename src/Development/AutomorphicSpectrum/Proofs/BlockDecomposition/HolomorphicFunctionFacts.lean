@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem contDiff_lead (j : ℕ) : ContDiff ℂ ⊤ (lead j : Matrix (Fin n) (Fin
     refine ContDiff.sum fun σ _ => ?_
     refine ContDiff.const_smul _ ?_
     refine contDiff_prod fun i _ => ?_
-    exact contDiff_apply_apply ℂ ℂ _ _
+    exact contDiff_apply_apply (𝕜 := ℂ) (E := ℂ) (ι := Fin n) (ι' := Fin n) _ _
   · have : (lead j : Matrix (Fin n) (Fin n) ℂ → ℂ) = fun _ => 0 := by
       funext z; simp [lead, h]
     rw [this]

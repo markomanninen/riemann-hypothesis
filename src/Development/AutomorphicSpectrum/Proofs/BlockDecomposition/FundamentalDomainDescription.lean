@@ -1,6 +1,10 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasureQuotient
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureQuotient
+
+@[expose] public section
 
 open NumberField MeasureTheory GroundTheory.Global GroundTheory.Global.IdeleGroup
 open scoped ENNReal

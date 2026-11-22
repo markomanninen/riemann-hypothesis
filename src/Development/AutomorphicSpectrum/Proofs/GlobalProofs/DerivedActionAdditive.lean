@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LieAlgebraOfLinearGroupClosedStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LieAlgebraOfLinearGroupClosedStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,9 @@ theorem hasDerivAt_orbit {G : Set (Matrix (Fin n) (Fin n) ℂ)} {π : Matrix (Fi
       fun t : ℝ => F (Matrix.of.symm (NormedSpace.exp (t • X))) := by
     funext t
     have hmem : Matrix.of (Matrix.of.symm (NormedSpace.exp (t • X))) ∈ G := by
-      simpa using hX t
-    simpa using hFG _ hmem
+      rw [Matrix.of.apply_symm_apply]
+      exact hX t
+    simpa only [Matrix.of.apply_symm_apply] using hFG _ hmem
   rw [hfun]
   have hdiff : DifferentiableAt ℝ F (Matrix.of.symm (NormedSpace.exp ((0 : ℝ) • X))) :=
     (hF.differentiable (by simp)) _
@@ -63,7 +68,7 @@ theorem dRep_linear : ∀ {n : ℕ} {G : Set (Matrix (Fin n) (Fin n) ℂ)} {H : 
       (hasDerivAt_orbit hF hFG hY).deriv]
     exact (fderiv ℝ F (Matrix.of.symm (1 : Matrix (Fin n) (Fin n) ℂ))).map_add
       (Matrix.of.symm X) (Matrix.of.symm Y)
-  · simp only [dRep, map_add]
+  · simp only [dRep, map_add (f := _)]
     exact deriv_add (differentiableAt_orbit hu hX) (differentiableAt_orbit hv hX)
   · intro c
     simp only [dRep, map_smul]

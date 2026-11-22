@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormEqMulInner
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolShapeOfOverK
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjFormsRescale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumUniqueOnThetaFunctions
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMulConjSelf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsThetaAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryRealPointsActFockSubstitution
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.VacuumUniqueAll
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormEqMulInner
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolShapeOfOverK
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjFormsRescale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumUniqueOnThetaFunctions
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMulConjSelf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsThetaAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryRealPointsActFockSubstitution
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.VacuumUniqueAll
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,16 +36,16 @@ open Matrix Formalism.MainNotions.S
 variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {V W : HSp D} {χV χW : (AE D)ˣ →* Circle}
   {ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)} {S : D.what₂.Tau → SPar} {M : DSModel W S}
 
-variable (ψ V W) in
 
+variable (ψ V W) in
 def thetaSub : Submodule ℂ (WO V W → ℂ) where
   carrier := {g | IsThetaFunO ψ V W g}
   add_mem' := GlobalTheory.OrientedHeis.theta_add
   zero_mem' := GlobalTheory.OrientedHeis.theta_zero
   smul_mem' c _ := GlobalTheory.OrientedHeis.theta_smul c
 
-variable (ω) in
 
+variable (ω) in
 structure IsInvForm (b : thetaSub ψ V W →ₗ⋆[ℂ] thetaSub ψ V W →ₗ[ℂ] ℂ) : Prop where
   symm : ∀ x y, b y x = conj (b x y)
   pos : ∀ x, 0 ≤ (b x x).re
@@ -64,7 +68,7 @@ theorem exists_invForm (hω : IsWeilDatumO ψ V W χV χW ω) :
   refine ⟨LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) (fun x y => ∫ w in 𝓕, y.1 w * conj (x.1 w) ∂μ)
     (fun x x' y => ?_) (fun a x y => ?_) (fun x y y' => ?_) (fun a x y => ?_),
     fun x y => ?_, fun x => ?_, fun x h0 => ?_, fun p x y x' y' hx hy => ?_⟩
-  · simp only [Submodule.coe_add, Pi.add_apply, map_add, mul_add]
+  · simp only [Submodule.coe_add, Pi.add_apply, map_add (f := _), mul_add]
     exact integral_add (hI y x) (hI y x')
   · simp only [Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, map_mul, mul_left_comm _ (conj a)]
     exact integral_const_mul _ _
@@ -121,9 +125,9 @@ theorem exists_kop (h1 : LowSm M) (h2 : GlobalTheory.IndefiniteRowSideFullHecke.
   have : u = g ⟨k, hk⟩ v := Subtype.ext (Subtype.ext hu)
   exact this ▸ hU _ v hv
 
+
 open Classical in
 variable (θ ω) in
-
 def Eqv {c : CoefA V} (F : LowT M →ₗ[ℂ] c.W →ₗ[ℂ] thetaSub ψ V W) : Prop :=
   (∀ u ∈ GinfC V, ∀ x w, (F x (c.ρ u w)).1 = ω (u, 1) (F x w).1) ∧
   ∀ τ, ∀ k ∈ Formalism.REAL.Kset (M.ε τ), ∀ (v : ∀ ρ, lowT M ρ) (u : lowT M τ),
@@ -300,7 +304,8 @@ theorem exists_isometry {K X ι : Type} [Field K] [AddCommGroup X] [Module K X] 
   refine ⟨Φ, h1, fun x => ?_, fun h x => ?_⟩
   · have : ⟪Φ x, Φ x⟫_ℂ = ⟪x, x⟫_ℂ := by
       rw [← b1.sum_repr x]
-      simp only [b1, Module.Basis.mk_apply, map_sum, map_smul, hb, sum_inner, inner_sum, inner_smul_left,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [b1, Module.Basis.mk_apply, map_sum, map_smul, hb, sum_inner, inner_sum, inner_smul_left,
         inner_smul_right, hp]
     rw [@norm_eq_sqrt_re_inner ℂ, this, ← @norm_eq_sqrt_re_inner ℂ]
   · have hrat : ∀ γ ∈ GQ V, Φ (c.ρ γ x) = c'.ρ γ (Φ x) := fun γ hγ => by

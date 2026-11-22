@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LocalizedQuotientIsSimpleModuleOfMul
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LocalizedQuotientIsSimpleModuleOfMul
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -57,8 +62,8 @@ theorem BlowUpExcessDecreases.proof (hpos : ExcessPositive.Statement.{u})
       refine ciSup_le fun G' => hterm _ _ (zero_le_divCycle _ _ _) fun hx hy => ?_
       obtain ⟨G, hG, h1, h2⟩ :=
         hres O ϖ hϖ K ι P d hP b f g hD c s hs hsP hsH e he m hm hmP hmH G'.1 G'.2 hx hy
-      have h3 := hle G hG _ _ hx.le (by linarith) h1 h2
-      nlinarith
+      have h3 := hle G hG _ _ hx.le (add_nonneg hx.le hy.le) h1 h2
+      exact (mul_lt_mul_of_pos_left (lt_add_of_pos_left _ hx) hx).trans_le h3
     omega
   ·
     have h : commonExcess ϖ (blowUpOf P (blowUpGens s g f m e)) (liftForm (f * m))
@@ -66,8 +71,8 @@ theorem BlowUpExcessDecreases.proof (hpos : ExcessPositive.Statement.{u})
       refine ciSup_le fun G' => hterm _ _ (zero_le_divCycle _ _ _) fun hx hy => ?_
       obtain ⟨G, hG, h1, h2⟩ :=
         hexc O ϖ hϖ K ι P d hP b f g hD c s hs hsP hsH e he m hm hmP hmH G'.1 G'.2 hx hy
-      have h3 := hle G hG _ _ (by linarith) hy.le h1 h2
-      nlinarith
+      have h3 := hle G hG _ _ (add_nonneg hx.le hy.le) hy.le h1 h2
+      exact (mul_lt_mul_of_pos_right (lt_add_of_pos_right _ hy) hy).trans_le h3
     omega
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

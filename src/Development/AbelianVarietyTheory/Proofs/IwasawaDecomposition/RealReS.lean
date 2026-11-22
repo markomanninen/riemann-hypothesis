@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RefilledStagesRecord
-import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RefilledStagesRecord
+public import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions GlobalTheory.Mem GlobalTheory.Mem.SRe
 
 namespace GlobalTheory.Mem.SRe

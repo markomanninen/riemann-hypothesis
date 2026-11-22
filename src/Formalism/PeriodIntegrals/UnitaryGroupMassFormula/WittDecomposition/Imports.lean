@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Anisotropic
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Anisotropic
+
+@[expose] public section
 
 namespace PI.Witt
 
@@ -17,7 +21,8 @@ theorem riesz [FiniteDimensional K V] (B : V →ₗ⋆[K] V →ₗ[K] K) (hB : �
     rw [Fintype.linearIndependent_iff]
     intro g hg i
     have h1 : B (∑ j, star (g j) • b j) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smulₛₗ, starRingEnd_apply, star_star]
       exact hg
     have h2 : ∑ j, star (g j) • b j = 0 := hnd _ (fun y => by rw [h1, LinearMap.zero_apply])
@@ -28,7 +33,8 @@ theorem riesz [FiniteDimensional K V] (B : V →ₗ⋆[K] V →ₗ[K] K) (hB : �
   let b' := basisOfLinearIndependentOfCardEqFinrank hli hcard
   refine ⟨∑ i, star (b'.repr φ i) • b i, fun z => ?_⟩
   conv_rhs => rw [← b'.sum_repr φ]
-  rw [map_sum, LinearMap.sum_apply, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smulₛₗ, LinearMap.smul_apply, LinearMap.smul_apply, starRingEnd_apply, star_star,
     coe_basisOfLinearIndependentOfCardEqFinrank]

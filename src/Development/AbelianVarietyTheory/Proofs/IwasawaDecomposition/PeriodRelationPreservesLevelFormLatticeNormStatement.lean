@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodRelationPreservesLevelFormLatticeNorm
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReadPk
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SameForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodRelationPreservesLevelFormLatticeNorm
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReadPk
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SameForm
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions NumberField IsDedekindDomain Formalism.L2.DIV Formalism.L2.Rows
 open scoped TensorProduct InnerProductSpace ComplexOrder
 open GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw

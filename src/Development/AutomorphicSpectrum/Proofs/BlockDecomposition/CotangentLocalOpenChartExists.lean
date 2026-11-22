@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TensorProduct Opposite MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR MainStatements.Hodge
 
@@ -279,7 +283,7 @@ theorem equiv_general {R : Type} [CommRing R] {X : Scheme.{0}} {s : X ⟶ Sp R} 
   have hd : ∀ a, d a = eP ((1 : R') ⊗ₜ[A] KaehlerDifferential.D C A a) := fun _ => rfl
   have hm : ∀ a b, d (a * b) = algebraMap A R' a • d b + algebraMap A R' b • d a := by
     intro a b
-    simp only [hd, Derivation.leibniz, TensorProduct.tmul_add, one_tmul_smul, map_add, map_smul]
+    simp only [hd, Derivation.leibniz, TensorProduct.tmul_add, one_tmul_smul, map_add (f := _), map_smul]
   have hc : ∀ c : C, d (algebraMap C A c) = 0 := by
     intro c
     simp [hd]

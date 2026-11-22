@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCard
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCard
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.PairCount
 
@@ -67,7 +71,7 @@ theorem annihilator_inf (n : ℕ) (X Y : Type) [AddCommGroup X] [Module (ZMod n)
   refine ⟨fun h x hx => ?_, fun h => ⟨fun x hx => h x (Submodule.mem_sup_left hx),
     fun x hx => h x (Submodule.mem_sup_right hx)⟩⟩
   obtain ⟨i, hi, l, hl, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add, h.1 i hi, h.2 l hl, add_zero]
+  rw [map_add (f := _), h.1 i hi, h.2 l hl, add_zero]
 
 theorem card_annihilator_inf (n : ℕ) [NeZero n] (X Y : Type) [AddCommGroup X]
     [Module (ZMod n) X] [Finite X] [AddCommGroup Y] [Module (ZMod n) Y] [Finite Y]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -109,7 +113,8 @@ theorem coeff_prod_pow_second_add_third_threeGroups {R : Type} [CommRing R] {d :
           (fun i => (x2 i + x3 i : MvPowerSeries (Fin d ⊕ (Fin d ⊕ Fin d)) R)) s) ^ k) =
       if α = Finsupp.sumElim a (b + e) then (∏ i, ((b + e) i).choose (b i) : R) else 0 := by
   classical
-  rw [prod_eq_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [prod_eq_sum, map_sum]
   simp only [coeff_monomial]
   have hmem : ∀ J ∈ Fintype.piFinset (fun i => Finset.range (α (Sum.inr i) + 1)),
       ∀ i, J i ≤ α (Sum.inr i) := fun J hJ i =>

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,14 +14,14 @@ open scoped ContDiff
 
 namespace GlobalTheory.ConstTermSmooth
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def invM (y : Lie E a) : Lie E a := toL (Matrix.of y)⁻¹
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem contDiffOn_invM : ContDiffOn ℝ ∞ (invM (E := E) (a := a)) (invSet E a) := by
   have h1 : ContDiffOn ℝ ∞ (fun y : Lie E a => Ring.inverse (Matrix.of y).det) (invSet E a) := fun y hy => by
     obtain ⟨u, hu⟩ := (Matrix.isUnit_iff_isUnit_det _).1 hy
@@ -55,13 +59,13 @@ theorem continuousOn_chart {φ : GA E a → ℂ} (hφ : Continuous φ) :
   refine (hφ.comp ((continuous_fst.comp continuous_subtype_val).mul (continuous_infGL.comp hu))).congr fun p => ?_
   exact (chart_val φ p.1.1 (IsUnit.unit (p.2.2 : IsUnit (Matrix.of p.1.2)))).symm
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def coef (i : Fin (Module.finrank ℝ (Lie E a))) (y : Lie E a) : Lie E a →L[ℝ] ℂ :=
   Complex.ofRealCLM ∘L LinearMap.toContinuousLinearMap ((Module.finBasis ℝ (Lie E a)).coord i) ∘L lmul (invM y)
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem contDiffOn_coef (i : Fin (Module.finrank ℝ (Lie E a))) : ContDiffOn ℝ ∞ (coef i) (invSet E a) := by
   refine contDiffOn_clm_apply.2 fun Y => ?_
   exact (Complex.ofRealCLM ∘L LinearMap.toContinuousLinearMap ((Module.finBasis ℝ (Lie E a)).coord i) ∘L
@@ -75,7 +79,8 @@ theorem fderiv_chart (φ : Sm E a) (g : GA E a) {y : Lie E a} (hy : y ∈ invSet
     rw [Matrix.mul_nonsing_inv_cancel_left _ _ ((Matrix.isUnit_iff_isUnit_det _).1 hy)]
   have e2 : ∀ X, rmul X y = lmul y X := fun _ => rfl
   conv_lhs => rw [e, e2, ← (Module.finBasis ℝ (Lie E a)).sum_repr (lmul (invM y) Y)]
-  rw [map_sum, map_sum, ContinuousLinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, ContinuousLinearMap.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, map_smul, ← e2, ← chart_lieD φ.2 _ g hy, ContinuousLinearMap.smul_apply, smul_eq_mul, mul_comm,
     Complex.real_smul]
@@ -94,8 +99,8 @@ theorem Good.lie {φ : Sm E a} (h : Good φ) (X : Lie E a) : Good (lie E a X φ)
     simp only [Module.End.mul_apply, hk'] at e
     exact e.symm
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem exists_bound {r : ℕ} {V : Type} [NormedAddCommGroup V] {Ψ : GA E a → Lie E a → V} {S : Set (Lie E a)}
     (hS : IsCompact S) (hc : ContinuousOn (fun p : GA E a × Lie E a => Ψ p.1 p.2) (Set.univ ×ˢ S))
     (hl : ∀ γ g, Ψ (ratGL E a γ * g) = Ψ g) (g : GA E a) :
@@ -123,7 +128,7 @@ theorem Good.continuousOn_chart {φ : Sm E a} (h : Good φ) :
 theorem Good.continuousOn_fderiv {φ : Sm E a} (h : Good φ) :
     ContinuousOn (fun p : GA E a × Lie E a => fderiv ℝ (chart φ.1 p.1) p.2) (Set.univ ×ˢ invSet E a) := by
   refine ContinuousOn.congr ?_ fun p hp => fderiv_chart φ p.1 hp.2
-  exact continuousOn_finset_sum _ fun i _ => (h.lie _).continuousOn_chart.smul
+  exact continuousOn_finsetSum _ fun i _ => (h.lie _).continuousOn_chart.smul
     ((contDiffOn_coef i).continuousOn.comp continuous_snd.continuousOn fun p hp => hp.2)
 
 section Integral
@@ -131,8 +136,8 @@ section Integral
 variable {r : ℕ} [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)]
   (ν : Measure (BlockIx a r → Ad E)) [IsFiniteMeasure ν]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem integrable_unip {V : Type} [NormedAddCommGroup V] {Ψ : GA E a → Lie E a → V}
     (hc : ContinuousOn (fun p : GA E a × Lie E a => Ψ p.1 p.2) (Set.univ ×ˢ invSet E a))
     (hl : ∀ γ g, Ψ (ratGL E a γ * g) = Ψ g) (g : GA E a) {y : Lie E a} (hy : y ∈ invSet E a) :
@@ -144,8 +149,8 @@ theorem integrable_unip {V : Type} [NormedAddCommGroup V] {Ψ : GA E a → Lie E
     hc.comp_continuous ((CuspidalL2GL.continuous_unip.mul continuous_const).prodMk continuous_const) fun _ => ⟨trivial, hy⟩
   exact Integrable.of_bound hf.aestronglyMeasurable C (.of_forall fun x => hC x y rfl)
 
-omit [BorelSpace (BlockIx a r → Ad E)] [IsFiniteMeasure ν] in
 
+omit [BorelSpace (BlockIx a r → Ad E)] [IsFiniteMeasure ν] in
 theorem chart_integral (φ : GA E a → ℂ) (g : GA E a) :
     chart (fun g => ∫ x, φ (unip x * g) ∂ν) g = fun y => ∫ x, chart φ (unip x * g) y ∂ν := by
   funext y
@@ -174,7 +179,7 @@ theorem Good.fderiv_integral {φ : Sm E a} (h : Good φ) (g : GA E a) {y : Lie E
       chart (fun g => ∫ x, (CuspRep.lie E a (Module.finBasis ℝ (Lie E a) i) φ).1 (unip x * g) ∂ν) g y • coef i y := by
   rw [(h.hasFDerivAt ν g hy).fderiv]
   simp only [fderiv_chart φ _ hy, chart_integral]
-  rw [integral_finset_sum _ fun i _ =>
+  rw [integral_finsetSum _ fun i _ =>
     (integrable_unip ν (h.lie _).continuousOn_chart (h.lie _).chart_left g hy).smul_const _]
   exact Finset.sum_congr rfl fun i _ => integral_smul_const _ _
 
@@ -193,7 +198,7 @@ theorem contDiffOn_integral (g : GA E a) (n : ℕ) : ∀ φ : Sm E a, Good φ �
 
 end Integral
 
-theorem constTerm_mem_Sm : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a r : ℕ)
+theorem constTerm_mem_Sm : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a r : ℕ)
     [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E))
     (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → μ 𝓕 = 1 →
     ∀ φ : Sm E a, (∀ γ g, φ.1 (ratGL E a γ * g) = φ.1 g) → IsOpen {k | finRep E a k φ = φ} →

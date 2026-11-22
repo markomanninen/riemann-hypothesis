@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe1.span_map_ringHom_eq_top :
     ∀ {k K G ι : Type} [inst : Field k] [inst_1 : Field K]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -32,7 +36,7 @@ private theorem limKer_key {G ι : Type} [Group G] [TopologicalSpace G] [IsTopol
       rw [mem_limKer]
       intro O'
       have hopen : IsOpen {y : G | l⁻¹ * y ∈ O'.toSubgroup} :=
-        O'.toOpenSubgroup.isOpen.preimage (continuous_mul_left _)
+        O'.toOpenSubgroup.isOpen.preimage (continuous_const_mul _)
       filter_upwards [hl.eventually (hopen.mem_nhds (by simp)), hk] with i h1 h2
       have heq : l = k i * (l⁻¹ * k i)⁻¹ := by group
       rw [heq]
@@ -66,7 +70,7 @@ theorem UpperTheory.V.AlgebraTools.limKer_sup :
     intro O
     obtain ⟨T, hT⟩ := isCompact_univ.elim_finite_subcover
       (fun g : G => {y : G | g⁻¹ * y ∈ O.toSubgroup})
-      (fun g => O.toOpenSubgroup.isOpen.preimage (continuous_mul_left _))
+      (fun g => O.toOpenSubgroup.isOpen.preimage (continuous_const_mul _))
       (fun y _ => Set.mem_iUnion.2 ⟨y, by simp⟩)
     have hev : ∀ᶠ i in (U : Filter ι), ∀ t ∈ T,
         (t ∈ K i ⊔ O.toSubgroup ↔ t ∈ limKer (U : Filter ι) K ⊔ O.toSubgroup) := by

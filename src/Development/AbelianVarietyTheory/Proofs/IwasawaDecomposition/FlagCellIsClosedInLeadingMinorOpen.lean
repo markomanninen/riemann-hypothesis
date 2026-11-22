@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFrameCover
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CauchyBinetPluckerAndCellCoordinatesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFrameCover
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CauchyBinetPluckerAndCellCoordinatesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,6 +28,13 @@ theorem sp_surj {A B : Type} [CommRing A] [CommRing B] (f : Sp B ⟶ Sp A) : ∃
 
 theorem unit_of_pt_eq {O A : Type} [CommRing O] [CommRing A] {N : ℕ} {b b' : O →+* A} {v v' : Fin (N + 1) → A} {hv hv'}
     (h : pt b v hv = pt b' v' hv') : ∃ u : Aˣ, v' = u • v := by
+  have pt_str : ∀ (c : O →+* A) (v : Fin (N + 1) → A) (hv : Ideal.span (Set.range v) = ⊤),
+      pt c v hv ≫ PSpace.str O N = spMap c := by
+    intro c v hv
+    rw [pt, PSpace.str, ProjPoint.ofHom_toSpecZero_assoc, ← Spec.map_comp]
+    congr 1
+    ext1
+    exact RingHom.ext fun r => MvPolynomial.eval₂Hom_C c v r
   have hb : b = b' := sp_inj (by rw [← pt_str b v hv, ← pt_str b' v' hv', h])
   subst hb
   exact (pt_eq_pt_iff b hv hv').1 h
@@ -99,6 +110,20 @@ theorem base_eq (hb : h ≫ p0 = cbase m U) {R : Type} [CommRing R] (ψ : CR m U
 theorem unit_of_eq (hp : ∀ en, ∃ hu, h ≫ p en = pt a (plk (uvec c w) en.2.1) hu) {R : Type} [CommRing R]
     (ψ : CR m U →+* R) (en : En m) {b : O →+* R} {v hv} (e : (spMap ψ ≫ h) ≫ p en = pt b v hv) :
     ∃ u : Rˣ, v = u • ψ ∘ plk (uvec c w) en.2.1 := by
+  have span_range_comp_eq_top : ∀ {A B : Type} [CommRing A] [CommRing B] {n : ℕ}
+      (v : Fin (n + 1) → A), Ideal.span (Set.range v) = ⊤ → (ψ : A →+* B) →
+      Ideal.span (Set.range (ψ ∘ v)) = ⊤ := by
+    intro A B _ _ n v hv ψ
+    rw [Set.range_comp, ← Ideal.map_span, hv, Ideal.map_top]
+  have spMap_pt : ∀ {O A B : Type} [CommRing O] [CommRing A] [CommRing B] {n : ℕ}
+      (c : O →+* A) (v : Fin (n + 1) → A) (hv : Ideal.span (Set.range v) = ⊤) (ψ : A →+* B),
+      spMap ψ ≫ pt c v hv = pt (ψ.comp c) (ψ ∘ v) (span_range_comp_eq_top v hv ψ) := by
+    intro O A B _ _ _ n c v hv ψ
+    letI := MvPolynomial.gradedAlgebra (σ := Fin (n + 1)) (R := O)
+    refine (ProjPoint.SpecMap_ofHom _ _ _ ψ).trans ?_
+    unfold pt
+    congr 1
+    exact MvPolynomial.ringHom_ext (fun r => by simp) (fun i => by simp)
   obtain ⟨hu, he⟩ := hp en
   rw [Category.assoc, he, spMap_pt] at e
   exact unit_of_pt_eq e
@@ -125,6 +150,20 @@ theorem range_le (hD : LeftInv D c) (hb : h ≫ p0 = cbase m U)
 private theorem mono_cell_lemma (hD : LeftInv D c) (hb : h ≫ p0 = cbase m U)
     (hp : ∀ en, ∃ hu, h ≫ p en = pt a (plk (uvec c w) en.2.1) hu) {R : CommRingCat}
     (t₁ t₂ : Spec R ⟶ Sp (CR m U)) (e : t₁ ≫ h = t₂ ≫ h) : t₁ = t₂ := by
+  have span_range_comp_eq_top : ∀ {A B : Type} [CommRing A] [CommRing B] {n : ℕ}
+      (v : Fin (n + 1) → A), Ideal.span (Set.range v) = ⊤ → (ψ : A →+* B) →
+      Ideal.span (Set.range (ψ ∘ v)) = ⊤ := by
+    intro A B _ _ n v hv ψ
+    rw [Set.range_comp, ← Ideal.map_span, hv, Ideal.map_top]
+  have spMap_pt : ∀ {O A B : Type} [CommRing O] [CommRing A] [CommRing B] {n : ℕ}
+      (c : O →+* A) (v : Fin (n + 1) → A) (hv : Ideal.span (Set.range v) = ⊤) (ψ : A →+* B),
+      spMap ψ ≫ pt c v hv = pt (ψ.comp c) (ψ ∘ v) (span_range_comp_eq_top v hv ψ) := by
+    intro O A B _ _ _ n c v hv ψ
+    letI := MvPolynomial.gradedAlgebra (σ := Fin (n + 1)) (R := O)
+    refine (ProjPoint.SpecMap_ofHom _ _ _ ψ).trans ?_
+    unfold pt
+    congr 1
+    exact MvPolynomial.ringHom_ext (fun r => by simp) (fun i => by simp)
   obtain ⟨ψ₁, rfl⟩ := sp_surj (A := CR m U) (B := R) t₁
   obtain ⟨ψ₂, rfl⟩ := sp_surj (A := CR m U) (B := R) t₂
   have hC : ψ₁.comp MvPolynomial.C = ψ₂.comp MvPolynomial.C :=
@@ -164,6 +203,20 @@ theorem exists_lift (hD : LeftInv D c) (hb : h ≫ p0 = cbase m U)
     (z : Sp R ⟶ P) (hz : Set.range z ⊆ W) (ψ : CR m U →+* K) (e : spMap ψ ≫ h = spMap (algebraMap R K) ≫ z) :
     ∃ χ : CR m U →+* R, (algebraMap R K).comp χ = ψ ∧ spMap χ ≫ h = z := by
   classical
+  have span_range_comp_eq_top : ∀ {A B : Type} [CommRing A] [CommRing B] {n : ℕ}
+      (v : Fin (n + 1) → A), Ideal.span (Set.range v) = ⊤ → (ψ : A →+* B) →
+      Ideal.span (Set.range (ψ ∘ v)) = ⊤ := by
+    intro A B _ _ n v hv ψ
+    rw [Set.range_comp, ← Ideal.map_span, hv, Ideal.map_top]
+  have spMap_pt : ∀ {O A B : Type} [CommRing O] [CommRing A] [CommRing B] {n : ℕ}
+      (c : O →+* A) (v : Fin (n + 1) → A) (hv : Ideal.span (Set.range v) = ⊤) (ψ : A →+* B),
+      spMap ψ ≫ pt c v hv = pt (ψ.comp c) (ψ ∘ v) (span_range_comp_eq_top v hv ψ) := by
+    intro O A B _ _ _ n c v hv ψ
+    letI := MvPolynomial.gradedAlgebra (σ := Fin (n + 1)) (R := O)
+    refine (ProjPoint.SpecMap_ofHom _ _ _ ψ).trans ?_
+    unfold pt
+    congr 1
+    exact MvPolynomial.ringHom_ext (fun r => by simp) (fun i => by simp)
   have : IsOpenImmersion U.2.fromSpec := U.2.isOpenImmersion_fromSpec
   let k := IsLocalRing.ResidueField R
   let π : R →+* k := IsLocalRing.residue R
@@ -196,12 +249,14 @@ theorem exists_lift (hD : LeftInv D c) (hb : h ≫ p0 = cbase m U)
     obtain ⟨u, hu⟩ := unit_of_eq hp ψ (vEn x) (b := (algebraMap R K).comp bO) (v := algebraMap R K ∘ V (vEn x))
       (hv := span_range_comp_eq_top _ (hV _) _) (by rw [e, Category.assoc, hzV, spMap_pt])
     have hL : algebraMap R K (∑ q, φ0 (lform D (wLet w ∘ (vEn x).2.1) q) * V (vEn x) q) = u := by
-      rw [map_sum, ← lead_eq (w := w) hD ψ (vEn x).2.2 u]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← lead_eq (w := w) hD ψ (vEn x).2.2 u]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [map_mul, ← hu, hC]
       rfl
     have hR : algebraMap R K (∑ q, φ0 (lform D (rd w x) q) * V (vEn x) q) = u * ψ (MvPolynomial.X x) := by
-      rw [map_sum, ← read_eq hD ψ x u]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← read_eq hD ψ x u]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [map_mul, ← hu, hC]
       rfl
@@ -209,7 +264,8 @@ theorem exists_lift (hD : LeftInv D c) (hb : h ≫ p0 = cbase m U)
       have := hmin x.1 (x.2.1.2 + 1) (Nat.succ_le_of_lt x.2.1.2.2) (π.comp bO) (π ∘ V (vEn x))
         (span_range_comp_eq_top _ (hV _) π) (by rw [Category.assoc, hzV, spMap_pt])
       rw [hk] at this
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_mul]
       exact this
     obtain ⟨t, ht⟩ := (IsLocalRing.residue_ne_zero_iff_isUnit _).1 hne

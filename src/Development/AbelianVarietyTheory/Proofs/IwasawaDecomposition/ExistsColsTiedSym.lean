@@ -1,10 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RedivisionStructureEq
-import Formalism.LocalToGlobal.GroupLattices.Joint0
-import Formalism.LocalToGlobal.NumberFieldFamilies.OwnStruct
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FormsRe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermRe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RedivisionStructureEq
+public import Formalism.LocalToGlobal.GroupLattices.Joint0
+public import Lean
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FormsRe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermRe
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +19,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (Z : New D)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def colsRe (C : ColsTiedSym D) : ColsTiedSym (reD D Z) := (by with_unfolding_all exact ((@ColsTiedSym.mk (reD D Z) (hermRe Z C.herm) ((by with_unfolding_all exact ((fun u => formsRe Z (C.forms u)) :)))
     ((by with_unfolding_all exact (C.eV :)))
     ((by with_unfolding_all exact (C.piU :)))
@@ -40,8 +43,8 @@ def colsRe (C : ColsTiedSym D) : ColsTiedSym (reD D Z) := (by with_unfolding_all
     ((by with_unfolding_all exact (C.frame_level_zero_const :)))
     ((by with_unfolding_all exact (C.frP_const :)))) :))
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem sameF_colsRe (C : ColsTiedSym D) :
     SameForms0LevelsAndValues Z (fun u => (C.forms u).to0) (fun u => ((colsRe Z C).forms u).to0) := by
   intro u
@@ -50,8 +53,8 @@ theorem sameF_colsRe (C : ColsTiedSym D) :
   · exact (by with_unfolding_all exact ((Eq.refl (C.forms u).to0.cls0.y) :))
   · exact (by with_unfolding_all exact ((Eq.refl (C.forms u).to0.val0.eY) :))
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_colsTiedSym (D : D7) (Z : New D) (C : ColsTiedSym D) :
     ∃ C' : ColsTiedSym (reD D Z), SameForms0LevelsAndValues Z (fun u => (C.forms u).to0) (fun u => (C'.forms u).to0) :=
   ⟨colsRe Z C, sameF_colsRe Z C⟩

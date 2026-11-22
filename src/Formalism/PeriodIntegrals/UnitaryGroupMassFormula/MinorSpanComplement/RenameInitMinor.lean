@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.MinorSpanCompl
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinorSpanComplement.ExistsCoeffNeZeroOfMemSpan
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinorSpanComplement.ShapeColumnDegreeColumnSizes
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.BideterminantMem
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.MinorSpanCompl
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinorSpanComplement.ExistsCoeffNeZeroOfMemSpan
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinorSpanComplement.ShapeColumnDegreeColumnSizes
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.BideterminantMem
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 
@@ -50,11 +54,11 @@ theorem nablaSpan_eq (R : Type) [CommRing R] (N : ℕ) (ν : YoungDiagram) :
   rw [Submodule.map_span, ← Set.range_comp]
   unfold PI.nablaSpan
   congr 1
-  congr 1
+  apply congrArg Set.range
   funext I
   simp only [Function.comp_apply, AlgHom.toLinearMap_apply, gen, bideterminant, map_prod]
   refine Finset.prod_congr rfl fun c _ => ?_
-  exact (rename_initMinor R N _ _ _ (I c)).symm
+  exact (rename_initMinor R N (ν.colLen 0) (sz0 ν c) (hsz0 ν c) (I c)).symm
 
 theorem span_map_le {σ : Type*} (R : Type) [CommRing R] {A B : Set (MvPolynomial σ ℤ)}
     (h : A ⊆ Submodule.span ℤ B) :
@@ -68,7 +72,7 @@ theorem span_map_le {σ : Type*} (R : Type) [CommRing R] {A B : Set (MvPolynomia
   | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hx hy
   | smul z x _ hx =>
     rw [map_zsmul, ← Int.cast_smul_eq_zsmul R]
@@ -106,8 +110,7 @@ theorem minorSpanCompl : PI.MinorSpanCompl := by
       rw [← Set.range_comp]
       congr 1
       funext I
-      simp only [Function.comp_apply, gen]
-      exact (map_bidet R _ _ _).symm
+      exact (map_bidet R (sz0 ν) (hsz0 ν) (fun c => I c)).symm
     have e2 : Set.range c = MvPolynomial.map (Int.castRingHom R) '' Set.range b := by
       rw [← Set.range_comp]
       rfl

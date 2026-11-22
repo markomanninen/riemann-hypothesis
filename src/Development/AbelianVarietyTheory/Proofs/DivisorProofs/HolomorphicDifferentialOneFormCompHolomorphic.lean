@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedFormsMulClosed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DelAtEqSumDOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedFormsMulClosed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DelAtEqSumDOne
+
+@[expose] public section
+
 open Set Matrix MeasureTheory Filter Topology
 open GlobalTheory.HermFrame
 open scoped ComplexOrder ContDiff ComplexConjugate
@@ -17,7 +22,7 @@ open GlobalTheory.GoodMetric (coordVec)
 
 theorem sum_coord_smul_coordVec {n : ℕ} (w : V n) : ∑ b, w b • coordVec b = w := by
   ext i
-  simp [coordVec, EuclideanSpace.single_apply, Pi.single_apply]
+  simp [coordVec, Pi.single_apply]
 
 theorem dOne_comp_holo {n : ℕ} {φ : V n → V n} {c : V n → ℂ} {v : V n}
     (hc : DifferentiableAt ℝ c (φ v)) (hφ : DifferentiableAt ℂ φ v) :
@@ -26,8 +31,10 @@ theorem dOne_comp_holo {n : ℕ} {φ : V n → V n} {c : V n → ℂ} {v : V n}
       ∑ b, fderiv ℂ φ v (coordVec a) b * del c (φ v) (coordVec b) := by
     rw [del_comp_holo hc hφ]
     conv_lhs => rw [← sum_coord_smul_coordVec (fderiv ℂ φ v (coordVec a))]
-    simp [map_sum, map_smul, smul_eq_mul]
-  simp only [dOne, map_sum, map_smul, (pull_dz _ _).1, Finset.smul_sum, smul_smul, key, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dOne, map_sum, map_smul, (pull_dz _ _).1, Finset.smul_sum, smul_smul, key, Finset.sum_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [mul_comm]

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.BlockMembershipSelfConjugate
-import Formalism.LocalToGlobal.CharacterGerms.RowTieVal
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.BlockMembershipSelfConjugate
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieVal
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PhiTTmul
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.TLTensor
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PhiTTmul
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.TLTensor
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1000000
@@ -117,7 +121,7 @@ theorem psiF_nat (r : Res l K) {N : ℕ} (F : Fac r N) {C₀ : Type} [CommRing C
 def hF (r : Res l K) {N : ℕ} (F : Fac r N) (M : Model l K) (j : ℕ) (f : HL M j →+ (per l K).B) : LW r M j →+ (per l K).B where
   toFun y := f (F.β M j ((1 : AW r) ⊗ₜ y))
   map_zero' := by rw [tmul_zero, map_zero, map_zero]
-  map_add' y y' := by rw [tmul_add, map_add, map_add]
+  map_add' y y' := by rw [tmul_add, map_add (f := _), map_add (f := _)]
 
 theorem one_tmul_smul (r : Res l K) (M : Model l K) (j : ℕ) (w : WittVector l r.k) (y : LW r M j) :
     ((1 : AW r) ⊗ₜ[WittVector l r.k] (w • y) : AL r M j) = ((show (per l K).A from r.w w) • ((1 : AW r) ⊗ₜ[WittVector l r.k] y) : AL r M j) := by
@@ -156,7 +160,7 @@ theorem psiF_fac (r : Res l K) {N : ℕ} (F : Fac r N) {C₀ : Type} [CommRing C
   refine ⟨fun s f => if hf : GMod.Fn (per l K) (M.HA true).toGMod j f then (hE f hf).choose (b s) else 0, ?_, ?_⟩
   · intro f hf s σ
     dsimp only
-    rw [dif_pos hf]
+    rw [dite_eq_left hf]
     refine Psi.E_fix k ι ((per l K).σ σ) (hF r F M j f) _ (hE f hf).choose_spec.1 (fun w => ?_) (fun y => ?_) (b s)
     · rw [hk, hιc, ← hR.i_σ, hσw]
     · change (per l K).σ σ (f (F.β M j ((1 : AW r) ⊗ₜ y))) = f (F.β M j ((1 : AW r) ⊗ₜ y))
@@ -167,7 +171,7 @@ theorem psiF_fac (r : Res l K) {N : ℕ} (F : Fac r N) {C₀ : Type} [CommRing C
     let G : AL r M j →+ (per l K).B :=
       { toFun := fun z => f (F.β M j z)
         map_zero' := by rw [map_zero, map_zero]
-        map_add' := fun z z' => by rw [map_add, map_add] }
+        map_add' := fun z z' => by rw [map_add (f := _), map_add (f := _)] }
     have hG := (hE f hf).choose_spec.2 G (fun a y => by
       change f (F.β M j (a ⊗ₜ y)) = _
       rw [tmul_eq_smul, LinearMap.map_smul, hf.1]
@@ -181,7 +185,7 @@ theorem psiF_fac (r : Res l K) {N : ℕ} (F : Fac r N) {C₀ : Type} [CommRing C
     have hG' : f (F.β M j (F.α M j x)) = _ := hG
     rw [h2, hG', Finset.mul_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
-    rw [dif_pos hf, psiF_apply, map_mul, map_pow]
+    rw [dite_eq_left hf, psiF_apply, map_mul, map_pow]
     exact (mul_assoc _ _ _).symm
 
 theorem fmap_of (r : Res l K) (Amp : ∀ M : Model l K, E.LineData M.X → Prop) (N : ℕ) (F : Fac r N)
@@ -207,29 +211,5 @@ theorem fmap_of (r : Res l K) (Amp : ∀ M : Model l K, E.LineData M.X → Prop)
             phi := fun {M} _ hM j _ b x f => psiF_phi r F c k hk hl φ hC.φ_c hφk M hM j b x f
             nat := fun {M M'} {u hu} {_ _} _ hM hM' j x f => psiF_nat r F c k hk hl M M' u hu hM hM' j x f
             fac := fun {M} _ hM j _ b => psiF_fac r F c k hk hl ι hC.ι_c hR hσw M hM j b }⟩
-
-def fmapS (r : Res l K) (Amp : ∀ M : Model l K, E.LineData M.X → Prop) (N : ℕ) (F : Fac r N)
-    (C₀ : Type) [CommRing C₀] (c : Acris l →+* C₀) (ι : C₀ →+* (per l K).B) (φ : C₀ →+* C₀)
-    (σ : K.fixingSubgroup → C₀ →+* C₀) (q : ℚ_[l] →+* C₀) (k : Wc.K₀ l r.k →+* C₀)
-    (hC : (perCOf r C₀ c ι φ σ q k).Facts) (hR : (per l K).Facts)
-    (hk : ∀ w, k (algebraMap (WittVector l r.k) (Wc.K₀ l r.k) w) = c (r.w w)) (hl : IsUnit (c l))
-    (hφk : ∀ x, φ (k x) = k (Wc.frob₀ l r.k x)) (hσk : ∀ g x, σ g (k x) = k x)
-    (hσw : ∀ g w, (per l K).σA g (r.w w) = r.w w)
-    (hfin : ∀ M : Model l K, M.Sm → ∀ j, Module.Finite (WittVector l r.k) (LW r M j))
-    (hid : ∀ M : Model l K, M.Sm → ∀ j (x : r.iso.D M j), r.iso.pull (𝟙 M.X) (Category.id_comp _) j x = x) :
-    FMap Model.Sm (perCOf r C₀ c ι φ σ q k) r.iso (dat Amp) (fun {M N u hu a b} _ j =>
-      (Model.pullH (M := M) (N := N) u hu true j).lim.toAddMonoidHom) :=
-  { k := N
-    ψ := fun {M} _ j => psiF r F c k hk hl M j
-    fin := fun M hM j => by
-      have := hfin M hM j
-      exact (inferInstance : Module.Finite (Wc.K₀ l r.k) (Wc.K₀ l r.k ⊗[WittVector l r.k] LW r M j))
-    pull_id := hid
-    lin := fun {M} _ hM j a x f => psiF_lin r F c k hk hl M hM j a x f
-    lin' := fun {M} _ _ j z x f => psiF_lin' r F c k hk hl M j z x f
-    act := fun {M} _ hM j g x f => psiF_act r F c k hk hl σ hC.σ_c hσk M hM j g x f
-    phi := fun {M} _ hM j _ b x f => psiF_phi r F c k hk hl φ hC.φ_c hφk M hM j b x f
-    nat := fun {M M'} {u hu} {_ _} _ hM hM' j x f => psiF_nat r F c k hk hl M M' u hu hM hM' j x f
-    fac := fun {M} _ hM j _ b => psiF_fac r F c k hk hl ι hC.ι_c hR hσw M hM j b }
 
 end CrystallineSemistableComparison.Pb

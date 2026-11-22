@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemTensSpanOfKilled
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemTensSpanOfKilled
+
+@[expose] public section
+
 open scoped TensorProduct
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.RealLift GlobalTheory.HoweR
 
@@ -13,9 +18,11 @@ theorem kstable_of_units {p q : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] 
     conv_lhs => rw [Matrix.matrix_eq_sum_single X]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     rw [Eab, Matrix.smul_single, smul_eq_mul, mul_one]
-  rw [hXs, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hXs, map_sum, LinearMap.sum_apply]
   refine U.sum_mem fun a _ => ?_
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   refine U.sum_mem fun b _ => ?_
   rw [map_smul, LinearMap.smul_apply]
   by_cases hab : sameBlock a b

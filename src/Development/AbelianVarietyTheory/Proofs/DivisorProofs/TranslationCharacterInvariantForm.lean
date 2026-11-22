@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzIntegralSuperpositionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFamilyPhaseBoundStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFourierRepresentationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzInnerProductContinuousStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzIntegralSuperpositionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFamilyPhaseBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFourierRepresentationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzInnerProductContinuousStatement
+
+@[expose] public section
 
 open MeasureTheory
 

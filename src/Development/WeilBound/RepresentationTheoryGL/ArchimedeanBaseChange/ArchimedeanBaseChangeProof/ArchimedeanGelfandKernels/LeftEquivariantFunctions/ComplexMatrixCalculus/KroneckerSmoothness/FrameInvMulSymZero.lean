@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.EigOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContDiffOnChartInv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.EigOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContDiffOnChartInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,22 +48,22 @@ theorem clm_apply' (M : Matrix (Ix n lam) (Ix n lam) ℂ) (u : EV n lam) :
   rw [Fintype.sum_prod_type (f := fun i : Ix n lam × Ix n lam => (M i.1 i.2 * u i.2) • EuclideanSpace.single i.1 (1 : ℂ))]
   ext r
   rw [clm_entry]
-  simp [Finset.sum_apply, EuclideanSpace.single_apply, Pi.single_apply]
+  simp [Finset.sum_apply, Pi.single_apply]
 
 theorem mem_GLs_inv' {x : Mat n} (hx : x ∈ GLs n) : x⁻¹ ∈ GLs n := by
-  simp only [GLs, Set.mem_setOf_eq] at hx ⊢
+  simp only [GLs, Set.mem_ofPred_eq] at hx ⊢
   rw [Matrix.det_nonsing_inv, Ring.inverse_eq_inv']
   exact inv_ne_zero hx
 
 theorem mem_GLs_conjInv {x : Mat n} (hx : x ∈ GLs n) : (x⁻¹)ᴴ ∈ GLs n := by
   have h := mem_GLs_inv' hx
-  simp only [GLs, Set.mem_setOf_eq] at h ⊢
+  simp only [GLs, Set.mem_ofPred_eq] at h ⊢
   rw [Matrix.det_conjTranspose]
   exact star_ne_zero.2 h
 
 theorem contDiff_conjT : ContDiff ℝ ∞ (fun y : Mat n => yᴴ) := by
   refine contDiff_pi.2 fun i => contDiff_pi.2 fun j => ?_
-  exact Complex.conjCLE.contDiff.comp ((contDiff_apply ℝ ℂ i).comp (contDiff_apply ℝ (Fin n → ℂ) j))
+  exact Complex.conjCLE.contDiff.comp ((contDiff_apply ℝ (fun _ => ℂ) i).comp (contDiff_apply ℝ (fun _ => (Fin n → ℂ)) j))
 
 theorem contDiffOn_theta : ContDiffOn ℝ ∞ (fun y : Mat n => (y⁻¹)ᴴ) (GLs n) :=
   contDiff_conjT.comp_contDiffOn GlobalTheory.CompanionTheory.MatInv.contDiffOn_inv
@@ -67,7 +71,7 @@ theorem contDiffOn_theta : ContDiffOn ℝ ∞ (fun y : Mat n => (y⁻¹)ᴴ) (GL
 theorem contDiffOn_entry {J : Type} [Fintype J] [DecidableEq J] {f : Mat n → Matrix J J ℂ} (hf : ContDiffOn ℝ ∞ f (GLs n))
     (a b : J) : ContDiffOn ℝ ∞ (fun x => (f x * (1 : Matrix J J ℂ) : Matrix J J ℂ) a b) (GLs n) := by
   simp only [Matrix.mul_one]
-  exact ((contDiff_apply ℝ ℂ b).comp (contDiff_apply ℝ (J → ℂ) a)).comp_contDiffOn hf
+  exact ((contDiff_apply ℝ (fun _ => ℂ) b).comp (contDiff_apply ℝ (fun _ => (J → ℂ)) a)).comp_contDiffOn hf
 
 end PositivityTheory.RgBcC.Cxh
 
@@ -106,7 +110,8 @@ theorem eigOf : EigOf := by
   symm
   rw [← ContinuousLinearMap.mul_apply, frame_inv_mul_sym_zero hu hG]
   change (sqQ lam * (clm lam (gamM (0 : Matrix (Md n) (Md n) ℂ) ⊗ₖ rhoW lam x⁻¹) * Ring.inverse (sqQ lam))) w = _
-  rw [ContinuousLinearMap.mul_apply, ContinuousLinearMap.mul_apply, clm_apply', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ContinuousLinearMap.mul_apply, ContinuousLinearMap.mul_apply, clm_apply', map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul]
   simp only [vv, smul_smul]

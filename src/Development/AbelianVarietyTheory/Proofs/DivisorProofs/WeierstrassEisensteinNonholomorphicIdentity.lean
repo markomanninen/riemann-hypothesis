@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+
+@[expose] public section
+
 open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate
 open GlobalTheory.QFam GlobalTheory.WpFam
 

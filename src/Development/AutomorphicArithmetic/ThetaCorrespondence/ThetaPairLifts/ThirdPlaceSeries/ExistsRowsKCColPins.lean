@@ -1,10 +1,14 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRowsOfHeqData
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkedFamiliesKernelFrame
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SquareIntegrableColumnsTied
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.DIVColPins
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ServTIff
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.DIVRecBridgeSel
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRowsOfHeqData
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkedFamiliesKernelFrame
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SquareIntegrableColumnsTied
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.DIVColPins
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ServTIff
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.DIVRecBridgeSel
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -65,24 +69,28 @@ variable {h hp l Z ht hJ hX U Xg tr} {hOk : (famC I hX U Xg tr).fam3.Ok3 1} {T :
 theorem lamOfCol_colK_eq_lamTrue : _root_.Formalism.L2.DIV.lamOfCol_alt (_root_.GlobalTheory.Mem.R3.SelC.squareIntegrableColumnsOfKernel h hp l Z ht hJ hX U Xg tr hOk T hS Sp R htup hw) = fun u i τ => B.wts.lamTrue u i τ := by
   funext u i τ
   exact congrArg (B.wts.lamTrue u i) (eq_of_heq ((cast_heq _ _).trans (iT_heq l Z hS τ)))
-theorem colPins_colK' : _root_.Formalism.L2.DIV.ColumnCharactersCompatible (_root_.GlobalTheory.Mem.R3.SelC.squareIntegrableColumnsOfKernel h hp l Z ht hJ hX U Xg tr hOk T hS Sp R htup hw) where
-  grpTie := HEq.rfl
-  psTie := ⟨HEq.rfl, HEq.rfl⟩
-  pointCharacterEq := ⟨HEq.rfl, HEq.rfl⟩
-  wOk := (base_fields_primes_ok B X).2.2.1
-  chOk := h.ch_ok
-  hcTie := fun u τ => heq_of_eq (congrArg (B.hcW u) (eq_of_heq ((cast_heq _ _).trans (iT_heq l Z hS τ))))
-  wtTie := by
-    rw [_root_.GlobalTheory.Mem.R3.SelC.lamOfCol_colK_eq_lamTrue]
-    exact ⟨_, _, wtTie_base I l Z T.ker⟩
-  xgTie := fun χ => @mem_iff_XgE _ _ _ _ _ _ _ _ (_) B.embLL R.I.eG _ Xg hOk.ok2.irr R.tied.div.grp.e0 χ
-  qNF := fun t => of_forall_ix ht (fun _ _ L => GlobalTheory.QNF.IdxMatNF L) (RcHyp.idxMatNF_of_isTw I h ht) t
-  columnEvaluationOk := ⟨rowG_ok (Pr := B.primes X) B.wts I.Ch I.sel _ hX I.Ps (Formalism.L2.DIV.twistPrimes_trivialTuple_empty (X := B.fields) (S := I.S) I.sel), fun u => by
-    have H := exists_read_fam (X := B.fields) (Pr := B.primes X) B.wts I.Ch I.sel hX (InfinitePlace.mk B.embLL) (tuOf I U) Xg ∅ (xiValOf I) tr
-      I.Ps hOk.ok2 B.embLL (rowG_ok (Pr := B.primes X) B.wts I.Ch I.sel _ hX I.Ps (Formalism.L2.DIV.twistPrimes_trivialTuple_empty (X := B.fields) (S := I.S) I.sel))
-      (A := (I.rec7 l Z).what₂.Amb) ((I.rec7 l Z).eMt u) R.I.tup R.tied.div.tup.mu0 R.tied.div.tup.inj R.I.jA
-      (fun t => (R.tied.div.sharp.forms t).li) (fun t => (R.tied.div.sharp.forms t).span) R.Zs
-    exact H⟩
+theorem colPins_colK' : _root_.Formalism.L2.DIV.ColumnCharactersCompatible (_root_.GlobalTheory.Mem.R3.SelC.squareIntegrableColumnsOfKernel h hp l Z ht hJ hX U Xg tr hOk T hS Sp R htup hw) := by
+  have hM := rowG_ok (Pr := B.primes X) B.wts I.Ch I.sel _ hX I.Ps
+    (Formalism.L2.DIV.twistPrimes_trivialTuple_empty (X := B.fields) (S := I.S) I.sel)
+  exact {
+    grpTie := HEq.rfl
+    psTie := ⟨HEq.rfl, HEq.rfl⟩
+    pointCharacterEq := ⟨HEq.rfl, HEq.rfl⟩
+    wOk := (base_fields_primes_ok B X).2.2.1
+    chOk := h.ch_ok
+    hcTie := fun u τ => heq_of_eq (congrArg (B.hcW u) (eq_of_heq ((cast_heq _ _).trans (iT_heq l Z hS τ))))
+    wtTie := by
+      rw [_root_.GlobalTheory.Mem.R3.SelC.lamOfCol_colK_eq_lamTrue]
+      exact ⟨_, _, wtTie_base I l Z T.ker⟩
+    xgTie := fun χ => @mem_iff_XgE _ _ _ _ _ _ _ _ (_) B.embLL R.I.eG _ Xg hOk.ok2.irr R.tied.div.grp.e0 χ
+    qNF := fun t => of_forall_ix ht (fun _ _ L => GlobalTheory.QNF.IdxMatNF L) (RcHyp.idxMatNF_of_isTw I h ht) t
+    columnEvaluationOk := ⟨hM, fun u => by
+      have H := exists_read_fam (X := B.fields) (Pr := B.primes X) B.wts I.Ch I.sel hX (InfinitePlace.mk B.embLL) (tuOf I U) Xg ∅ (xiValOf I) tr
+        I.Ps hOk.ok2 B.embLL hM
+        (A := (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.Amb) ((_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).eMt u) R.I.tup R.tied.div.tup.mu0 R.tied.div.tup.inj R.I.jA
+        (fun t => (R.tied.div.sharp.forms t).li) (fun t => (R.tied.div.sharp.forms t).span) R.Zs
+      exact H⟩
+  }
 end Pins
 end Main
 set_option maxHeartbeats 1000000 in
@@ -172,10 +180,11 @@ theorem args_pinned_heq_zsOf_mem_eq (t : RowsT K w Z Wt ex.p0) (a : TwArgs ex t)
     (HEq a.x.F.P0 (lev0 w.I) ∧ HEq a.x.F.ψ0 (chr0 w.I) ∧ HEq a.x.F.P1 (lev1 w.I) ∧ HEq a.x.F.ψ1 (chr1 w.I) ∧ HEq a.x.F.Dc a.Dc ∧
       HEq a.x.F.Sp a.Sp) ∧
     ∃ Zs : DefSub (famT t).fam3.amb3, HEq (zsOf a.x.R a.x.F) Zs ∧ HEq (a.x.F.Dc (zsOf a.x.R a.x.F)) (a.Dc Zs) ∧
-      HEq (a.x.F.Sp (zsOf a.x.R a.x.F)) (a.Sp Zs) ∧ (a.x.F.Dc (zsOf a.x.R a.x.F)).Mem = (a.Dc Zs).Mem :=
-  ⟨by kexactB (@pack_heq (w.st Z).toD7 _ _ a.pack).1, by kexactB (@pack_heq (w.st Z).toD7 _ _ a.pack).2.1,
-    zsOf ((t.r.z.R.updS t.r.z.R.kap a.lam).withErr a.err) (reFace t.r.z.F a.Dc a.Sp a.Zsc),
-    by kexactB (@pack_heq (w.st Z).toD7 _ _ a.pack).2.2⟩
+      HEq (a.x.F.Sp (zsOf a.x.R a.x.F)) (a.Sp Zs) ∧ (a.x.F.Dc (zsOf a.x.R a.x.F)).Mem = (a.Dc Zs).Mem := by
+  have hpack := @pack_heq (w.st Z).toD7 _ _ a.pack
+  dsimp only at hpack
+  with_unfolding_all exact ⟨hpack.1, hpack.2.1,
+    zsOf ((t.r.z.R.updS t.r.z.R.kap a.lam).withErr a.err) (reFace t.r.z.F a.Dc a.Sp a.Zsc), hpack.2.2⟩
 set_option maxHeartbeats 400000 in
 theorem exists_square_integrable_columns_of_data (t : RowsT K w Z Wt ex.p0) (pin : ColPin w) (S : _root_.Formalism.L2.TiedDataSKAlt ex) (hS : TC.StdKer w.I w.l Z S.ker)
     (a : TwArgs ex t) (hD : a.Dc = (colRecK w.ok w.pins w.l Z pin.isTw pin.jets t.hX (usedOf w.I T Wt) t.r.z.Xg t.r.z.tr S.ker).face)
@@ -190,8 +199,12 @@ theorem exists_square_integrable_columns_of_data (t : RowsT K w Z Wt ex.p0) (pin
       exact ⟨a.Sp, HEq.rfl, fun _ => HEq.rfl⟩
     exact (key (colRecK w.ok w.pins w.l Z pin.isTw pin.jets t.hX (usedOf w.I T Wt) t.r.z.Xg t.r.z.tr S.ker).face hD)
   have e1 := congrFun hD Zs
-  have e2 : (a.x.F.Dc (zsOf a.x.R a.x.F)).Mem = B.Word := by kexactB g16.trans (congrArg DefCols.Mem e1)
-  have e3 : HEq a.x.Y.tup (ixOf w.I (usedOf w.I T Wt)) := by kexactB a.tup.trans (heq_of_eq (funext t.r.tup_ix))
+  have e2 : (a.x.F.Dc (zsOf a.x.R a.x.F)).Mem = B.Word := by
+    rw [g16, e1]
+    rfl
+  have e3 : HEq a.x.Y.tup (ixOf w.I (usedOf w.I T Wt)) := by
+    have htup := funext t.r.tup_ix
+    with_unfolding_all exact a.tup.trans (heq_of_eq htup)
   have e4 : ∀ u, HEq (a.x.C.wU u) u := fun u => heq_app e2 hw u
   have e5 := g14.trans (heq_of_eq e1)
   have e6 := g15.trans (hSp.2 Zs)
@@ -204,7 +217,7 @@ theorem exists_square_integrable_columns_of_data (t : RowsT K w Z Wt ex.p0) (pin
     ?_ ?_, ?_, ?_, ?_, ?_⟩
   · exact (c5)
   · exact (d1)
-  · kexactB c3.trans (hSp.1.symm.trans g12.symm)
+  · with_unfolding_all exact c3.trans (hSp.1.symm.trans g12.symm)
   · exact (c4)
   · exact (c6)
   · exact (c1)

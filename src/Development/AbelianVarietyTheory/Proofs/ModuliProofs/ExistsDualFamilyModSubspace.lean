@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -23,7 +27,8 @@ theorem exists_dual_family_mod_subspace (K V : Type) [Field K] [AddCommGroup V] 
     rw [Fintype.linearIndependent_iff]
     intro c hc
     have h0 : B.mkQ (∑ a, c a • φ a) = 0 := by
-      simpa [map_sum, map_smul] using hc
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_smul] using hc
     have hc0 := h c ((Submodule.Quotient.mk_eq_zero B).mp h0)
     intro i
     simp [hc0]
@@ -68,7 +73,8 @@ theorem exists_symm_matrix_mod_subspace :
       by simp [LinearMap.mem_ker, (Submodule.Quotient.mk_eq_zero B).mpr hx]
     have hk := key (f.comp B.mkQ) hα b
     simp only [LinearMap.comp_apply] at hk
-    simp only [map_sub, map_sum, map_smul, smul_eq_mul, hk]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul, smul_eq_mul, hk]
     simp [mul_comm]
 
 end GlobalTheory.KS

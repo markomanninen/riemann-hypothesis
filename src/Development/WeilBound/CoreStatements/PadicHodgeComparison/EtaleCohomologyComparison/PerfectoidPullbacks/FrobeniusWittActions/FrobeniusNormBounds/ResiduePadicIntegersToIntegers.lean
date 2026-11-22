@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.TeichmullerCongruence
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.TeichmullerCongruence
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -32,7 +36,7 @@ theorem residue_padicIntegers_to_integers (r : Res l K) (z : ℤ_[l]) :
   have e : z = (((PadicInt.toZMod z).val : ℕ) : ℤ_[l]) + w * l := by
     rw [hw, ZMod.cast_eq_val]; ring
   conv_lhs => rw [e]
-  simp only [map_add, map_mul, map_natCast, CharP.cast_eq_zero r.k l, mul_zero, add_zero]
+  simp only [map_add (f := _), map_mul, map_natCast, CharP.cast_eq_zero r.k l, mul_zero, add_zero]
   rw [← map_natCast (algebraMap (ZMod l) r.k), ZMod.natCast_zmod_val]
 
 theorem residue_field_card_le_finrank (r : Res l K) [FiniteDimensional ℚ_[l] K] (s : Finset r.k)
@@ -69,7 +73,8 @@ theorem residue_field_card_le_finrank (r : Res l K) [FiniteDimensional ℚ_[l] K
       rfl
     have hk : ∑ i ∈ t, PadicInt.toZMod (hZ i) • (i : r.k) = 0 := by
       have := congrArg r.ρ hsum
-      rw [map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at this
       rw [← this]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, hy, residue_padicIntegers_to_integers, Algebra.smul_def]
@@ -239,7 +244,7 @@ theorem cong (n : ℕ) (a b : OC l) (h : ‖((a - b : OC l) : ℂ_[l])‖ ≤ �
   have z : (l : (B.bs l true n).R ⧸ (B.bs l true n).I) = 0 := by
     rw [← map_natCast (Ideal.Quotient.mk (B.bs l true n).I), Ideal.Quotient.eq_zero_iff_mem]
     exact Ideal.mem_sup_left (Ideal.mem_span_singleton_self _)
-  rw [e, map_add, map_add, map_mul, map_mul, map_natCast, map_natCast]
+  rw [e, map_add (f := _), map_add (f := _), map_mul, map_mul, map_natCast, map_natCast]
   change _ + (l : (B.bs l true n).R ⧸ (B.bs l true n).I) * _ = _
   rw [z, zero_mul, add_zero]
 

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.SubstOfLog
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.SubstOfLog
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem HD.map_frobenius_sq (hF : FrobField K l σ) (h : HD σ lam Φ A a) :
   · have hX : ∀ i : Fin 2, PowerSeries.HasSubst (MvPowerSeries.X i : MvPowerSeries (Fin 2) K) :=
       fun i => PowerSeries.HasSubst.of_constantCoeff_zero (by simp)
     unfold atX atY at e2 ⊢
-    rw [PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero h.Φ0), map_add,
+    rw [PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero h.Φ0), map_add (f := _),
       PowerSeries.map_subst (hX 0), PowerSeries.map_subst (hX 1), MvPowerSeries.map_X,
       MvPowerSeries.map_X] at e2
     exact e2
@@ -84,7 +88,7 @@ theorem hon_mu (hF : FrobField K l σ) (h : HD σ lam Φ A a) {e hh : PowerSerie
       coeff 1 (lam.subst hh) = coeff 1 hh := by
   have hl := hF.prime
   have hl1 := hF.norm_l
-  have hlam' : IntegralPS (derivative K lam) := h.toLawD.deriv_integral
+  have hlam' : IntegralPS (PowerSeries.derivative lam) := h.toLawD.deriv_integral
   have h' := h.map_frobenius_sq hF
   have Hh : PowerSeries.HasSubst hh := PowerSeries.HasSubst.of_constantCoeff_zero' hh1.g0
   have HΦ' : PowerSeries.HasSubst (MvPowerSeries.map (σ.comp σ) Φ) :=

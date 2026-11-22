@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.StepData NumberField
 open scoped Classical
 
@@ -92,21 +97,107 @@ theorem isModel_move : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topol
   have hψ := hω.std
   have e0 := infPart_e p
   have ce0 : infPart D (cA D p.e) = 0 := GlobalTheory.PlaceDatum.infPart_cA e0
+  have foldr_lin {ι X : Type} (p : (X → ℂ) → Prop) (A : ι → (X → ℂ) → (X → ℂ))
+      (hp : ∀ i f, p f → p (A i f)) (hadd : ∀ i f g, p f → p g → A i (f + g) = A i f + A i g)
+      (hsmul : ∀ i (c : ℂ) f, p f → A i (c • f) = c • A i f) (padd : ∀ f g, p f → p g → p (f + g))
+      (psmul : ∀ (c : ℂ) f, p f → p (c • f)) (c : ℂ) {f g : X → ℂ} (hf : p f) (hg : p g) (l : List ι) :
+      l.foldr (fun i h => A i h) (c • f + g) = c • l.foldr (fun i h => A i h) f + l.foldr (fun i h => A i h) g := by
+    have hm : ∀ l : List ι, p (l.foldr (fun i h => A i h) f) ∧ p (l.foldr (fun i h => A i h) g) := by
+      intro l
+      induction l with
+      | nil => exact ⟨hf, hg⟩
+      | cons i l ih => exact ⟨hp i _ ih.1, hp i _ ih.2⟩
+    induction l with
+    | nil => rfl
+    | cons i l ih =>
+      rw [List.foldr_cons, List.foldr_cons, List.foldr_cons, ih, hadd i _ _ (psmul c _ (hm l).1) (hm l).2,
+        hsmul i c _ (hm l).1]
+
+  have pureTensorO_lin (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) (hψ : IsStdChar D ψ (-1))
+      (hθ : IsInfFam θ) (sS BS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ)
+      (sT BT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ) (c : ℂ) {f g : WO S T → ℂ}
+      (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) (φ : MvPolynomial (FVar D T.rank S.rank) ℂ) :
+      pureTensorO ψ θ S T sS sT BS BT (c • f + g) φ =
+        c • pureTensorO ψ θ S T sS sT BS BT f φ + pureTensorO ψ θ S T sS sT BS BT g φ := by
+    have theta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
+        IsThetaFunO ψ S T (f + g) := by
+      refine {
+          quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+          level := by
+            obtain ⟨U, hU, h1⟩ := hf.level
+            obtain ⟨U', hU', h2⟩ := hg.level
+            refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+            funext w
+            have e1 := congrFun (h1 u hu.1 h0) w
+            have e2 := congrFun (h2 u hu.2 h0) w
+            unfold heisO at e1 e2 ⊢
+            rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+          cont := hf.cont.add hg.cont
+          smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w)
+
+      }
+    have theta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ S T (c • f) := by
+      refine {
+          quasi γ w := by
+            rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+          level := by
+            obtain ⟨U, hU, h1⟩ := hf.level
+            refine ⟨U, hU, fun u hu h0 => ?_⟩
+            funext w
+            have e1 := congrFun (h1 u hu h0) w
+            unfold heisO at e1 ⊢
+            rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+          cont := hf.cont.const_smul c
+          smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w)
+      }
+    have h : pureTensorO ψ θ S T sS sT BS BT (c • f + g) =
+        c • pureTensorO ψ θ S T sS sT BS BT f + pureTensorO ψ θ S T sS sT BS BT g := by
+      refine (MvPolynomial.basisMonomials _ ℂ).ext fun k => ?_
+      rw [LinearMap.add_apply, LinearMap.smul_apply]
+      unfold pureTensorO pureTensorL
+      rw [Module.Basis.constr_basis, Module.Basis.constr_basis, Module.Basis.constr_basis]
+      unfold opPow
+      have A1 : ∀ k f, IsThetaFunO ψ S T f →
+          IsThetaFunO ψ S T (aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT k f) :=
+        fun k f hf => GlobalTheory.FockIndep.aPlus_theta hψ hθ k.1 (cplxO (sS k.1) (sT k.1)) _ hf
+      have A2 : ∀ k f g, IsThetaFunO ψ S T f → IsThetaFunO ψ S T g →
+          aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT k (f + g) =
+            aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT k f +
+              aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT k g :=
+        fun k f g hf hg => GlobalTheory.FockIndep.aPlus_add hψ hθ k.1 (cplxO (sS k.1) (sT k.1)) _ hf hg
+      have A3 : ∀ k (c : ℂ) f, IsThetaFunO ψ S T f →
+          aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT k (c • f) =
+            c • aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT k f :=
+        fun k c f hf => GlobalTheory.FockIndep.aPlus_smul hψ hθ k.1 (cplxO (sS k.1) (sT k.1)) _ c hf
+      exact foldr_lin (IsThetaFunO ψ S T) (aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT) A1 A2 A3
+        (fun _ _ hf hg => theta_add hf hg) (fun c _ hf => theta_smul c hf) c hf hg _
+    rw [h, LinearMap.add_apply, LinearMap.smul_apply]
+
   have pt_add : ∀ f f', IsThetaFunO ψ S T f → IsThetaFunO ψ S T f' →
       pureTensorO ψ θ S T sS sT BS BT (f + f') P =
         pureTensorO ψ θ S T sS sT BS BT f P + pureTensorO ψ θ S T sS sT BS BT f' P := by
     intro f f' hf hf'
-    have := GlobalTheory.FockFiniteHeis.pureTensorO_lin ψ θ S T hψ hθ sS BS sT BT 1 hf hf' P
+    have := pureTensorO_lin ψ θ S T hψ hθ sS BS sT BT 1 hf hf' P
     rwa [one_smul, one_smul] at this
+  have theta_zero : IsThetaFunO ψ S T 0 := by
+    refine {
+      quasi γ w := by simp only [Pi.zero_apply, mul_zero]
+      level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp only [heisO, Pi.zero_apply, mul_zero]⟩
+      cont := continuous_const
+      smooth k L _ _ w := contDiff_const
+    }
+  have pt_zero : pureTensorO ψ θ S T sS sT BS BT (0 : WO S T → ℂ) P = 0 := by
+    have h := pureTensorO_lin ψ θ S T hψ hθ sS BS sT BT (-1) theta_zero theta_zero P
+    rwa [smul_zero, add_zero, neg_one_smul, neg_add_cancel] at h
   have pt_smul : ∀ (c : ℂ) f, IsThetaFunO ψ S T f →
       pureTensorO ψ θ S T sS sT BS BT (c • f) P = c • pureTensorO ψ θ S T sS sT BS BT f P := by
     intro c f hf
-    have := GlobalTheory.FockFiniteHeis.pureTensorO_lin ψ θ S T hψ hθ sS BS sT BT c hf GlobalTheory.OrientedHeis.theta_zero P
-    rwa [add_zero, GlobalTheory.FockFiniteHeis.pureTensorO_zero ψ θ S T hψ hθ sS BS sT BT P, add_zero] at this
+    have := pureTensorO_lin ψ θ S T hψ hθ sS BS sT BT c hf theta_zero P
+    rwa [add_zero, pt_zero, add_zero] at this
   let L : SB (Matrix Y Y' k) →ₗ[ℂ] (WO S T → ℂ) :=
     { toFun := fun Φ => pureTensorO ψ θ S T sS sT BS BT (T₁ Φ) P
       map_add' := fun Φ Φ' => by
-        simp only [map_add]; exact pt_add _ _ (hT₁.theta Φ) (hT₁.theta Φ')
+        simp only [map_add (f := _)]; exact pt_add _ _ (hT₁.theta Φ) (hT₁.theta Φ')
       map_smul' := fun c Φ => by
         simp only [map_smul, RingHom.id_apply]; exact pt_smul c _ (hT₁.theta Φ) }
   have comm : ∀ u : WO S T, u.map (infPart D) = 0 → ∀ Φ,

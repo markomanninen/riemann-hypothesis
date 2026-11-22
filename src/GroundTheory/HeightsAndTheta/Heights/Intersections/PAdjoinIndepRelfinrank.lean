@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StAdjoinIndepRelfinrank
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StAdjoinIndepRelfinrank
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -30,18 +35,20 @@ theorem AdjoinIndepRelfinrank.proof : AdjoinIndepRelfinrank.Statement := by
       ∑ j ∈ s, MvPolynomial.C (b j) * MvPolynomial.map (algebraMap L₀ L') (p j) with hq
     have hq0 : q = 0 := by
       apply ht'.eq_zero_of_aeval_eq_zero
-      rw [hq, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hq, map_sum]
       rw [← hg]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, MvPolynomial.aeval_C, MvPolynomial.aeval_map_algebraMap, hp, Subalgebra.smul_def,
         Function.comp_apply, mul_comm]
       rfl
-    have hcoef : ∀ m, ∀ j ∈ s, MvPolynomial.coeff m (p j) = 0 := by
+    have hcoef : ∀ m, ∀ j ∈ s, AddMonoidAlgebra.coeff (p j) m = 0 := by
       intro m
-      have h := congrArg (MvPolynomial.coeff m) hq0
-      rw [hq, MvPolynomial.coeff_sum, MvPolynomial.coeff_zero] at h
-      simp only [MvPolynomial.coeff_C_mul, MvPolynomial.coeff_map] at h
-      have hb := (linearIndependent_iff'.mp b.linearIndependent) s (fun j => MvPolynomial.coeff m (p j))
+      have h := congrArg (AddMonoidAlgebra.coeff · m) hq0
+      rw [hq, MvPolynomial.coeff_sum] at h
+      simp only [MvPolynomial.coeff_C_mul, MvPolynomial.coeff_map, AddMonoidAlgebra.coeff_zero,
+        Finsupp.zero_apply] at h
+      have hb := (linearIndependent_iff'.mp b.linearIndependent) s (fun j => AddMonoidAlgebra.coeff (p j) m)
       apply hb
       rw [← h]
       refine Finset.sum_congr rfl fun j _ => ?_
@@ -73,7 +80,10 @@ theorem AdjoinIndepRelfinrank.proof : AdjoinIndepRelfinrank.Statement := by
   · have : Algebra.IsAlgebraic L₀ L' := Algebra.IsAlgebraic.of_finite L₀ L'
     have := hdisj.adjoin_rank_eq_rank_right_of_isAlgebraic_right
     exact congrArg Cardinal.toNat this
-  · rw [finrank_of_not_finite hfin, finrank_of_not_finite]
+  · rw [finrank_of_not_finite hfin]
+    have : Module.Free A (extendScalars hle') :=
+      Module.Free.of_divisionRing (K := A) (V := extendScalars hle')
+    apply finrank_of_not_finite
     intro hfin'
     apply hfin
     let v : _ → extendScalars hle' := fun j => ⟨algebraMap L' Ω (b j), by

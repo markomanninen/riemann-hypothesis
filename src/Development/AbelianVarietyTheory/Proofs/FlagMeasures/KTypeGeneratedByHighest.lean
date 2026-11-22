@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
-import Formalism.RealPlaceAnalysis.StatementU
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactCasimirHighestWeight
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+public import Formalism.RealPlaceAnalysis.StatementU
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactCasimirHighestWeight
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants
 open scoped InnerProductSpace ContDiff
@@ -166,7 +170,7 @@ theorem inK_diag (θ : Fin n → ℝ) : inK ε (Matrix.diagonal fun a => (θ a :
   refine ⟨?_, fun a b hab => ?_⟩
   · rw [Matrix.diagonal_conjTranspose, Matrix.diagonal_neg]
     congr 1
-    funext a
+    funext i
     simp
   · have hne : a ≠ b := fun h => hab (h ▸ rfl)
     exact Matrix.diagonal_apply_ne _ hne
@@ -255,9 +259,11 @@ theorem not_cdom (Λ : Fin n → ℝ) {a b : Fin n} (hab : a < b) : ¬ CDom ε (
       ∑ i, ∑ j, ((c i j : ℕ) : ℝ) * (((i : ℕ) : ℝ) - ((j : ℕ) : ℝ)) := by
     have h1 := congrArg φ heq
     rw [hneg, map_neg, hφr] at h1
-    rw [h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun j _ => ?_)
     rw [map_smul, hφr, smul_eq_mul]
   have hle : ∑ i, ∑ j, ((c i j : ℕ) : ℝ) * (((i : ℕ) : ℝ) - ((j : ℕ) : ℝ)) ≤ 0 := by

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
-import GroundTheory.AutomorphicForms.AdelicGLn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormGLContinuous
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
+public import GroundTheory.AutomorphicForms.AdelicGLn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormGLContinuous
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.W (Plc Lp)
@@ -37,7 +41,7 @@ private theorem cont_cLoc (w : Plc L) : Continuous (cLoc w : UA L n → GL (Fin 
 private theorem snd_eq (x : UA L n) : (prodEquiv L n (x : GA L n)).2 = fp x :=
   Units.ext (Matrix.ext fun a b => by rw [prodEquiv_apply_snd]; rfl)
 
-private theorem fst_eq (x : finU L n) : (prodEquiv L n ((x : UA L n) : GA L n)).1 = 1 := by
+private theorem fst_eq (x : finU (E := L) (n := n)) : (prodEquiv L n ((x : UA L n) : GA L n)).1 = 1 := by
   refine Units.ext (Matrix.ext fun a b => ?_)
   rw [prodEquiv_apply_fst]
   have key := congrArg (fun g : GL (Fin n) (Cinf L) => g.1 a b) (MonoidHom.mem_ker.1 x.2)
@@ -48,24 +52,24 @@ private theorem fst_eq (x : finU L n) : (prodEquiv L n ((x : UA L n) : GA L n)).
   · simp [Matrix.one_apply_ne h]
 
 private theorem mem_Kall {x : UA L n} :
-    x ∈ Kall L n ↔ x ∈ finU L n ∧ ∀ w : Plc L, cLoc w x ∈ GlobalTheory.LFun.KGL w n := by
+    x ∈ Kall L n ↔ x ∈ finU (E := L) (n := n) ∧ ∀ w : Plc L, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n) := by
   simp [Kall, Subgroup.mem_inf, Subgroup.mem_iInf]
 
-private theorem exists_open {U : Subgroup (UA L n)} (hU : IsOpen {x : finU L n | (x : UA L n) ∈ U}) :
-    ∃ O : Set (GL (Fin n) (Af L)), IsOpen O ∧ 1 ∈ O ∧ ∀ x : finU L n, fp x.1 ∈ O → (x : UA L n) ∈ U := by
+private theorem exists_open {U : Subgroup (UA L n)} (hU : IsOpen {x : finU (E := L) (n := n) | (x : UA L n) ∈ U}) :
+    ∃ O : Set (GL (Fin n) (Af L)), IsOpen O ∧ 1 ∈ O ∧ ∀ x : finU (E := L) (n := n), fp x.1 ∈ O → (x : UA L n) ∈ U := by
   obtain ⟨A, hA, eA⟩ := isOpen_induced_iff.1 hU
   obtain ⟨B, hB, rfl⟩ := isOpen_induced_iff.1 hA
   let c : GL (Fin n) (Af L) → GA L n := fun k => (prodEquiv L n).symm (1, k)
   have hc : Continuous c := (prodEquiv L n).symm.continuous.comp (continuous_const.prodMk continuous_id)
-  have hx : ∀ x : finU L n, c (fp x.1) = ((x : UA L n) : GA L n) := fun x => by
+  have hx : ∀ x : finU (E := L) (n := n), c (fp x.1) = ((x : UA L n) : GA L n) := fun x => by
     change (prodEquiv L n).symm _ = _
     rw [← fst_eq x, ← snd_eq]
     exact (prodEquiv L n).symm_apply_apply _
-  have hmem : ∀ x : finU L n, (x : UA L n) ∈ U ↔ ((x : UA L n) : GA L n) ∈ B := fun x =>
+  have hmem : ∀ x : finU (E := L) (n := n), (x : UA L n) ∈ U ↔ ((x : UA L n) : GA L n) ∈ B := fun x =>
     (Set.ext_iff.1 eA x).symm
   refine ⟨c ⁻¹' B, hB.preimage hc, ?_, fun x hx' => ?_⟩
   · have h := hx 1
-    have h1 : fp ((1 : finU L n) : UA L n) = 1 := map_one _
+    have h1 : fp ((1 : finU (E := L) (n := n)) : UA L n) = 1 := map_one _
     rw [h1] at h
     rw [Set.mem_preimage, h]
     exact (hmem 1).1 (one_mem U)
@@ -99,13 +103,13 @@ private theorem nbhd {O : Set (GL (Fin n) (Af L))} (hO : IsOpen O) (h1 : 1 ∈ O
   rw [this]
   exact (hu v hv).2
 
-private theorem fp_mem {x : UA L n} (hx : ∀ w : Plc L, cLoc w x ∈ GlobalTheory.LFun.KGL w n) :
+private theorem fp_mem {x : UA L n} (hx : ∀ w : Plc L, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n)) :
     fp x ∈ integralFiniteGL L n :=
   (mem_integralFiniteGL_iff_forall L n).2 fun v => by
     rw [e_apply]
     exact GlobalTheory.StabInt.mem_integralGL_of_mem_KGL (hx v)
 
-private theorem clause1 (U : Subgroup (UA L n)) (hU : IsOpen {x : finU L n | (x : UA L n) ∈ U}) :
+private theorem clause1 (U : Subgroup (UA L n)) (hU : IsOpen {x : finU (E := L) (n := n) | (x : UA L n) ∈ U}) :
     ∃ T : Finset (Plc L), Kall L n ⊓ ⨅ w ∈ T, away n w ≤ U := by
   obtain ⟨O, hO, h1, hOU⟩ := exists_open hU
   obtain ⟨T, hT⟩ := nbhd hO h1
@@ -119,8 +123,8 @@ private theorem clause1 (U : Subgroup (UA L n)) (hU : IsOpen {x : finU L n | (x 
 
 private theorem clause2 : IsLevel (Kall L n) := by
   refine ⟨le_rfl, ?_⟩
-  have e : {x : finU L n | (x : UA L n) ∈ Kall L n} =
-      (fun x : finU L n => fp x.1) ⁻¹' (integralFiniteGL L n : Set (GL (Fin n) (Af L))) := by
+  have e : {x : finU (E := L) (n := n) | (x : UA L n) ∈ Kall L n} =
+      (fun x : finU (E := L) (n := n) => fp x.1) ⁻¹' (integralFiniteGL L n : Set (GL (Fin n) (Af L))) := by
     ext x
     refine ⟨fun h => fp_mem (mem_Kall.1 h).2, fun h => mem_Kall.2 ⟨x.2, fun w => ?_⟩⟩
     have h' := (mem_integralFiniteGL_iff_forall L n).1 h w
@@ -132,8 +136,8 @@ private theorem clause2 : IsLevel (Kall L n) := by
 private theorem clause3 (U : Subgroup (UA L n)) (hU : IsLevel U) (S : Finset (Plc L))
     (V : ∀ w : Plc L, Sig.Lev (Kw w)) : IsLevel (lev U S V) := by
   refine ⟨inf_le_left.trans hU.1, ?_⟩
-  have e : {x : finU L n | (x : UA L n) ∈ lev U S V} = {x : finU L n | (x : UA L n) ∈ U} ∩
-      ⋂ w ∈ S, (fun x : finU L n => cLoc w (x : UA L n)) ⁻¹' ((V w).J n : Set (GL (Fin n) (Kw w))) := by
+  have e : {x : finU (E := L) (n := n) | (x : UA L n) ∈ lev U S V} = {x : finU (E := L) (n := n) | (x : UA L n) ∈ U} ∩
+      ⋂ w ∈ S, (fun x : finU (E := L) (n := n) => cLoc w (x : UA L n)) ⁻¹' ((V w).J n : Set (GL (Fin n) (Kw w))) := by
     ext x
     simp [lev, Subgroup.mem_inf, Subgroup.mem_iInf]
   rw [e]
@@ -161,7 +165,7 @@ end UpperTheory.V.Z.Sym.Al.CofinalityAlt
 open UpperTheory.V.Z.Sym.Al.CofinalityAlt in
 theorem UpperTheory.V.Z.Sym.Al.cof :
     ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ),
-        (∀ U : Subgroup (UA L n), IsOpen {x : finU L n | (x : UA L n) ∈ U} → ∃ T : Finset (Plc L), Kall L n ⊓ ⨅ w ∈ T, away n w ≤ U) ∧
+        (∀ U : Subgroup (UA L n), IsOpen {x : finU (E := L) (n := n) | (x : UA L n) ∈ U} → ∃ T : Finset (Plc L), Kall L n ⊓ ⨅ w ∈ T, away n w ≤ U) ∧
         IsLevel (Kall L n) ∧ (∀ U : Subgroup (UA L n), IsLevel U → ∀ S V, IsLevel (lev U S V)) ∧
         ∀ U : Subgroup (UA L n), IsLevel U → ∀ᶠ w : Plc L in Filter.cofinite, locU n w ⊓ Kall L n ≤ U := by
   intro L _ _ _ n

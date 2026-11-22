@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.RegularHypothesesAndConclusion
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HasAffineChartId
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.QuotientOfAffineChartCoverStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FreeActionAffineChartStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.OrbitAffineNeighbourhoodStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.RegularHypothesesAndConclusion
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HasAffineChartId
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.QuotientOfAffineChartCoverStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FreeActionAffineChartStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.OrbitAffineNeighbourhoodStatement
+
+@[expose] public section
 
 noncomputable section
 

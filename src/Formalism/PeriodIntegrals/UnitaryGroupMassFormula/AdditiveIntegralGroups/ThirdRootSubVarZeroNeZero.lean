@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.CoeffWSeriesVarZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.SubstMem
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.CoeffWSeriesVarZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.SubstMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem rt_two_le_mul_right (f g : MvPowerSeries σ ℂ_[p]) (hf : 2 ≤ f.order
 theorem rt_two_le_add {f g : MvPowerSeries σ ℂ_[p]} (hf : 2 ≤ f.order) (hg : 2 ≤ g.order) :
     2 ≤ (f + g).order := by
   refine MvPowerSeries.le_order fun d hd => ?_
-  rw [map_add, MvPowerSeries.coeff_of_lt_order (hd.trans_le hf),
+  rw [map_add (f := _), MvPowerSeries.coeff_of_lt_order (hd.trans_le hf),
     MvPowerSeries.coeff_of_lt_order (hd.trans_le hg), add_zero]
 
 theorem rt_two_le_neg {f : MvPowerSeries σ ℂ_[p]} (hf : 2 ≤ f.order) : 2 ≤ (-f).order := by
@@ -181,7 +185,7 @@ theorem zwEquation_thirdRoot {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries �
 theorem rt_G_map {R R' : Type*} [CommRing R] [Algebra ℂ_[p] R] [CommRing R'] [Algebra ℂ_[p] R']
     (φ : R →ₐ[ℂ_[p]] R') (W : WeierstrassCurve ℂ_[p]) (u v : R) :
     φ (G W u v) = G W (φ u) (φ v) := by
-  simp only [G, map_add, map_sub, map_mul, map_pow, AlgHom.commutes]
+  simp only [G, map_add (f := _), map_sub, map_mul, map_pow, AlgHom.commutes]
 
 theorem subst_thirdRoot_wSeries {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : IsWq W wq) :
     PowerSeries.subst (Z3 W wq) (wser wq) = lam wq * Z3 W wq + nu wq := by

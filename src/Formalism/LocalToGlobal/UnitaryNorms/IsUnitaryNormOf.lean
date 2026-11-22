@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipB
+module
+
+public import Mathlib
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipB
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,9 +104,6 @@ def IsAbsPow (s : ℝ) : Prop :=
   (∀ v, χ.UnrAt v) ∧ (∀ v, ((χ.val v : ℂˣ) : ℂ) = ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-(s : ℂ))) ∧
     ∀ k : Lˣ, ((χ.inf k : ℂˣ) : ℂ) = ∏ φ : L →+* ℂ, ((‖φ (k : L)‖ : ℝ) : ℂ) ^ (s : ℂ)
 
-def IsUnitaryNormOf (χ' : HChar L) (s : ℝ) : Prop :=
-  χ.IsUnitary ∧ ∃ ν : HChar L, ν.IsAbsPow s ∧ χ' = χ * ν
-
 def ValuesIn (s : ℝ) {C : Type} [Field C] (e : C →+* ℂ) : Prop :=
   ∀ v, χ.UnrAt v → ∃ y : C, e y = χ.valTw s v
 
@@ -137,24 +138,12 @@ theorem val_eq {v : HeightOneSpectrum (𝓞 L)} (h : χ.UnrAt v) (x : (v.adicCom
         rw [← map_mul, inv_mul_cancel_right]
     _ = χ.loc v (atFin v (unif v)) := by rw [h1, one_mul]
 
-@[simp] theorem loc_mul (χ χ' : HChar L) (v : HeightOneSpectrum (𝓞 L)) (x) : (χ * χ').loc v x = χ.loc v x * χ'.loc v x := rfl
-@[simp] theorem loc_inv (χ : HChar L) (v : HeightOneSpectrum (𝓞 L)) (x) : (χ⁻¹).loc v x = (χ.loc v x)⁻¹ := rfl
-@[simp] theorem loc_one (v : HeightOneSpectrum (𝓞 L)) (x) : (1 : HChar L).loc v x = 1 := rfl
-@[simp] theorem locInf_mul (χ χ' : HChar L) (w : InfinitePlace L) (x) : (χ * χ').locInf w x = χ.locInf w x * χ'.locInf w x := rfl
-@[simp] theorem locInf_inv (χ : HChar L) (w : InfinitePlace L) (x) : (χ⁻¹).locInf w x = (χ.locInf w x)⁻¹ := rfl
 @[simp] theorem val_mul (χ χ' : HChar L) (v : HeightOneSpectrum (𝓞 L)) : (χ * χ').val v = χ.val v * χ'.val v := rfl
 @[simp] theorem val_inv (χ : HChar L) (v : HeightOneSpectrum (𝓞 L)) : (χ⁻¹).val v = (χ.val v)⁻¹ := rfl
 @[simp] theorem inf_mul (χ χ' : HChar L) (k : Lˣ) : (χ * χ').inf k = χ.inf k * χ'.inf k := rfl
 @[simp] theorem inf_inv (χ : HChar L) (k : Lˣ) : (χ⁻¹).inf k = (χ.inf k)⁻¹ := rfl
 
-def bar : HChar L :=
-  ⟨(Units.map (starRingEnd ℂ).toMonoidHom).comp χ.1,
-    (Continuous.units_map _ Complex.continuous_conj).comp χ.2.1, fun k => by
-      rw [MonoidHom.comp_apply, χ.2.2 k, map_one]⟩
-
 end HChar
-
-abbrev AlgHChar (L : Type) [Field L] [NumberField L] : Type := {χ : HChar L // ∃ n, χ.IsAlg n}
 
 section Res
 
@@ -174,10 +163,11 @@ theorem finite_aboveF (v : HeightOneSpectrum (𝓞 F)) :
 
 def aboveF (v : HeightOneSpectrum (𝓞 F)) : Finset (HeightOneSpectrum (𝓞 L)) := (finite_aboveF F v).toFinset
 
-open Classical in
 
-def aboveInf (w : InfinitePlace F) : Finset (InfinitePlace L) :=
-  Finset.univ.filter fun w' => w'.comap (algebraMap F L) = w
+open Classical in
+def aboveInf (w : InfinitePlace F) : Finset (InfinitePlace L) := by
+  classical
+  exact Finset.univ.filter fun w' => w'.comap (algebraMap F L) = w
 
 def upF : Fˣ →* Lˣ := Units.map (algebraMap F L).toMonoidHom
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightCentredPlacesFinite
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartResidue
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightCentredPlacesFinite
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartResidue
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

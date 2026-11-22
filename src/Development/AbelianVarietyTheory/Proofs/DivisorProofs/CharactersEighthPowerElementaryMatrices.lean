@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowCompMonHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorMatchComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorMatchIdOneMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqAddNsmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftValuationSubring
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.SemiAbelianHomExtendsUniquelyOverDvr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EighthPowerProjectionsGroupPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowCompMonHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorMatchComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorMatchIdOneMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqAddNsmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftValuationSubring
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.SemiAbelianHomExtendsUniquelyOverDvr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EighthPowerProjectionsGroupPullback
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
@@ -22,11 +27,18 @@ theorem isMonHom_of_coords {S : Scheme.{0}} {B C X : Over S} [GrpObj B] [GrpObj 
     (pr : Fin 8 → (B ⟶ C)) (hpr : ∀ a, IsMonHom (pr a))
     (huniv : ∀ (T : Over S) (y : Fin 8 → (T ⟶ C)), ∃! x : T ⟶ B, ∀ a, x ≫ pr a = y a)
     (z : X ⟶ B) (h : ∀ a, IsMonHom (z ≫ pr a)) : IsMonHom z := by
-  refine GlobalTheory.GrpPullPow.isMonHom_of_mul_pts z fun T x y => ?_
-  refine (huniv T (fun a => (x * y) ≫ z ≫ pr a)).unique (fun a => Category.assoc _ _ _) (fun a => ?_)
-  haveI := hpr a
-  haveI := h a
-  rw [MonObj.mul_comp, Category.assoc, Category.assoc, ← MonObj.mul_comp]
+  have hm : ∀ (T : Over S) (x y : T ⟶ X), (x * y) ≫ z = (x ≫ z) * (y ≫ z) := by
+    intro T x y
+    refine (huniv T (fun a => (x * y) ≫ z ≫ pr a)).unique (fun a => Category.assoc _ _ _) (fun a => ?_)
+    haveI := hpr a
+    haveI := h a
+    rw [MonObj.mul_comp, Category.assoc, Category.assoc, ← MonObj.mul_comp]
+  exact { one_hom := by
+            rw [MonObj.one_eq_one, MonObj.one_eq_one]
+            exact map_one (MonoidHom.mk' (fun x : 𝟙_ (Over S) ⟶ X ↦ x ≫ z) (hm _))
+          mul_hom := by
+            rw [MonObj.mul_eq_mul, hm, MonObj.mul_eq_mul, MonObj.comp_mul]
+            simp }
 
 theorem isMonHom_one {S : Scheme.{0}} {B C : Over S} [GrpObj B] [GrpObj C] : IsMonHom (1 : B ⟶ C) :=
   inferInstanceAs (IsMonHom (toUnit B ≫ η[C]))
@@ -66,8 +78,8 @@ end GlobalTheory.Poinc.Eq8.PowChar
 
 namespace GlobalTheory.Poinc.Eq8
 
-open PowChar in
 
+open PowChar in
 theorem characters_eighthPower_elementaryMatrices : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R], GlobalTheory.Mum.Base R → IsDiscreteValuationRing R → ∀ (G : Over (Sp R)) [GrpObj G] [IsCommMonObj G], IsSemiAbelian G → ∀ (D : DegData R (maximalIdeal R)) (A : PolAV (Sp (FractionRing R))) (U : Unif (maximalIdeal R) D A G) (G' : Over (Sp R)) [GrpObj G'] [IsCommMonObj G'], IsSemiAbelian G' → ∀ (D' : DegData R (maximalIdeal R)) (A' : PolAV (Sp (FractionRing R))) (U' : Unif (maximalIdeal R) D' A' G') (W : Matrix (Fin 8) (Fin 8) ℤ), IsE8 W → ∀ (pr : Fin 8 → (A'.A ⟶ A.A)), (∀ a, IsMonHom (pr a)) → (∀ (T' : Over (Sp (FractionRing R))) (y : Fin 8 → (T' ⟶ A.A)), ∃! z : T' ⟶ A'.A, ∀ a, z ≫ pr a = y a) → LBIso A'.L (LB.LinComb (abelian₂ A.A A.L) (K := Fin 8 × Fin 8) (fun ab => (lift (pr ab.1) (pr ab.2)).left) (fun ab => W ab.1 ab.2)) → ∀ (pG : Fin 8 → (G' ⟶ G)), (∀ v, IsMonHom (pG v)) → (∀ v, (Over.pullback (jK R)).map (pG v) ≫ U.gen.hom = U'.gen.hom ≫ pr v) → ∀ (c : Fin 8 → (D.toPre.X →+ D'.toPre.X)), (∀ v, TorMatch U U' (RingHom.id R) (pG v).left (c v)) → (Function.Bijective fun y : Fin 8 → D.toPre.X => ∑ v, c v (y v)) ∧ ∀ (a b : Fin 8) (f : G' ⟶ G') (f₁ : A'.A ⟶ A'.A) (m : D'.toPre.X →+ D'.toPre.X), IsMonHom f → MatEnd pr a b f₁ → (Over.pullback (jK R)).map f ≫ U'.gen.hom = U'.gen.hom ≫ f₁ → EndChar U' f m → ∀ w x, m (c w x) = if w = a then c b x else 0 := by
   intro R _ _ _ hR hdvr G _ _ hG D A U G' _ _ hG' D' A' U' W _ pr hpr huniv _ pG hpG hgen c hc
   haveI := hdvr
@@ -159,9 +171,10 @@ theorem characters_eighthPower_elementaryMatrices : ∀ (R : Type) [CommRing R] 
         rw [AddMonoidHom.comp_apply] at this
         rw [this]
         split_ifs <;> rfl
-      simp only [map_sum, e, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, e, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     · have := DFunLike.congr_fun hcd x
-      simpa [AddMonoidHom.finset_sum_apply] using this
+      simpa using this
   · intro a b f f₁ m hf hf₁ hff₁ hm w x
     haveI := hf
     haveI := hpG w

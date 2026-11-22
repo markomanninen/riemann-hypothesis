@@ -1,5 +1,17 @@
-import Formalism.WachLatticeTwists.ShapeRowIsomorphisms.StatBKInIso
-import Formalism.WachLatticeTwists.CupProductVanishing.CupProductProofs.PropLocGKOf
+module
+
+public import Formalism.WachLatticeTwists.ShapeRowIsomorphisms.StatBKInIso
+public import Formalism.WachLatticeTwists.CupProductVanishing.Statement
+public import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+public import Formalism.WachLatticeTwists.CharacterSplitJumps.CharacterJumpProofs.MemAnnih
+public import Formalism.WachLatticeTwists.LatticeDualFibres.LatticeDualProofs.LocDualOrth
+public import Formalism.WachLatticeTwists.LatticeDualFibres.LatticeDualProofs.QuotLen
+public import Formalism.WachLatticeTwists.LatticeDualFibres.Statement
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+public import Formalism.WachLatticeTwists.LatticeDualFibres.LatticeDualProofs.ExistsPowSmulIntegral
+public import Formalism.WachLatticeTwists.LatticeDualFibres.StatDualFibreLattice
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

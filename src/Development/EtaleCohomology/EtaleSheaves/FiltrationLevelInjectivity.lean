@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.RelDescPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.RelDescPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite Simplicial GlobalTheory.EtC LateralTheory.E.t_E3Cut LateralTheory.E.StalkCut LateralTheory.E.LeafGhostCut

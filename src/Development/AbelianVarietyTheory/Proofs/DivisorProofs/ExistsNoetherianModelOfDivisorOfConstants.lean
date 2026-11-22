@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNoetherianNormalLocalApprox
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNoetherianNormalLocalApprox
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 namespace GlobalTheory.VertUnitsNoeth
@@ -13,9 +18,12 @@ theorem essFiniteType_loc {T : Type} [CommRing T] [IsDomain T] [IsIntegrallyClos
   haveI : Module.Finite (gen S) (integralClosure (gen S) (FractionRing (gen S))) :=
     GlobalTheory.finite_integralClosure_of_essFiniteType_int (gen S)
   haveI : Algebra.EssFiniteType ℤ (gen S) := Algebra.EssFiniteType.of_finiteType ℤ _
-  haveI : Algebra.EssFiniteType (gen S) (integralClosure (gen S) (FractionRing (gen S))) := inferInstance
-  haveI h1 : Algebra.EssFiniteType ℤ (integralClosure (gen S) (FractionRing (gen S))) :=
-    Algebra.EssFiniteType.comp ℤ (gen S) _
+  haveI : Algebra.EssFiniteType (gen S) (integralClosure (gen S) (FractionRing (gen S))) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      infer_instance
+  set_option synthInstance.maxHeartbeats 200000 in
+    haveI h1 : Algebra.EssFiniteType ℤ (integralClosure (gen S) (FractionRing (gen S))) :=
+      Algebra.EssFiniteType.comp ℤ (gen S) _
   have h2 : (algebraMap ℤ (norm S)).EssFiniteType := by
     have e : algebraMap ℤ (norm S) =
         (normEquiv S).symm.toRingHom.comp (algebraMap ℤ (integralClosure (gen S) (FractionRing (gen S)))) :=

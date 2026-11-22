@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -35,14 +39,14 @@ theorem card_quot_eq_sq (c : R →+* R) (hc : ∀ x, c (c x) = x)
   let φ : R₀ × R₀ →+ R :=
     { toFun := fun z => algebraMap R₀ R z.1 + algebraMap R₀ R z.2 * ω
       map_zero' := by simp
-      map_add' := fun x y => by simp only [Prod.fst_add, Prod.snd_add, map_add]; ring }
+      map_add' := fun x y => by simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]; ring }
   have hφ : Function.Surjective φ := fun x => by
     obtain ⟨a, b, h⟩ := exists_eq_add_mul c hc hbase hfix hω x
     exact ⟨(a, b), h.symm⟩
   have hind : ∀ a b : R₀, algebraMap R₀ R a + algebraMap R₀ R b * ω = 0 → a = 0 ∧ b = 0 := by
     intro a b h
     have h' := congrArg c h
-    rw [map_add, map_mul, hbase, hbase, map_zero] at h'
+    rw [map_add (f := _), map_mul, hbase, hbase, map_zero] at h'
     have hb : algebraMap R₀ R b = 0 :=
       hω.mul_left_eq_zero.1 (by linear_combination h - h')
     have ha : algebraMap R₀ R a = 0 := by rw [hb] at h; simpa using h
@@ -76,7 +80,7 @@ theorem isPrincipalIdealRing_of_henselian [IsDomain R₀] [IsDiscreteValuationRi
     (hfix : ∀ x, c x = x → x ∈ (algebraMap R₀ R).range) {ω : R} (hω : IsUnit (ω - c ω))
     (hD : ∀ r : R₀, IsUnit (algebraMap R₀ R r) → IsUnit r) :
     IsPrincipalIdealRing R := by
-  obtain ⟨t, ht⟩ := hfix (ω + c ω) (by rw [map_add, hc, add_comm])
+  obtain ⟨t, ht⟩ := hfix (ω + c ω) (by rw [map_add (f := _), hc, add_comm])
   obtain ⟨n, hn⟩ := hfix (ω * c ω) (by rw [map_mul, hc, mul_comm])
   have hDu : IsUnit (t ^ 2 - 4 * n) := by
     refine hD _ ?_
@@ -105,7 +109,7 @@ theorem isPrincipalIdealRing_of_henselian [IsDomain R₀] [IsDiscreteValuationRi
     set g := (2 * r - t) * d
     have hr' := congrArg (algebraMap R₀ R) hr
     have hg' := congrArg (algebraMap R₀ R) hg
-    simp only [map_add, map_sub, map_mul, map_pow, map_zero, map_one, map_ofNat] at hr' hg'
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_zero, map_one, map_ofNat] at hr' hg'
     have hωω : ω * ω = algebraMap R₀ R t * ω - algebraMap R₀ R n := by rw [ht, hn]; ring
     set T := algebraMap R₀ R t
     set N := algebraMap R₀ R n
@@ -119,7 +123,7 @@ theorem isPrincipalIdealRing_of_henselian [IsDomain R₀] [IsDiscreteValuationRi
       { toFun := fun z => algebraMap R₀ R z.1 * e + algebraMap R₀ R z.2 * (1 - e)
         map_zero' := by simp
         map_one' := by simp
-        map_add' := fun x y => by simp only [Prod.fst_add, Prod.snd_add, map_add]; ring
+        map_add' := fun x y => by simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]; ring
         map_mul' := fun x y => by
           simp only [Prod.fst_mul, Prod.snd_mul, map_mul]
           linear_combination (-(algebraMap R₀ R x.1 - algebraMap R₀ R x.2)
@@ -128,7 +132,7 @@ theorem isPrincipalIdealRing_of_henselian [IsDomain R₀] [IsDiscreteValuationRi
     obtain ⟨a, b, rfl⟩ := exists_eq_add_mul c hc hbase hfix hω x
     refine ⟨(a + b * r, a + b * (t - r)), ?_⟩
     show algebraMap R₀ R _ * e + algebraMap R₀ R _ * (1 - e) = _
-    simp only [map_add, map_mul, map_sub]
+    simp only [map_add (f := _), map_mul, map_sub]
     rw [he]
     linear_combination algebraMap R₀ R b * (ω - (T - ρ)) * hg'
   · push Not at hroot
@@ -160,7 +164,7 @@ theorem isPrincipalIdealRing_of_henselian [IsDomain R₀] [IsDiscreteValuationRi
       have : algebraMap R₀ R (a ^ 2 + t * a * b + n * b ^ 2)
           = (algebraMap R₀ R a + algebraMap R₀ R b * ω)
             * (algebraMap R₀ R a + algebraMap R₀ R b * c ω) := by
-        simp only [map_add, map_mul, map_pow, ht, hn]; ring
+        simp only [map_add (f := _), map_mul, map_pow, ht, hn]; ring
       rw [this] at h2
       exact isUnit_of_mul_isUnit_left h2
     have hfac : ∀ x : R, x ≠ 0 → ∃ k : ℕ, ∃ u : R, IsUnit u ∧ x = algebraMap R₀ R ϖ ^ k * u := by
@@ -222,7 +226,8 @@ theorem algebraMap_inj (L : LocE F E) : Function.Injective (algebraMap F E) := b
   exact (algebraMap F E).injective
 
 theorem algebraMap_mem_iff (L : LocE F E) (c : F) : algebraMap F E c ∈ L.O ↔ c ∈ 𝒪[F] := by
-  rw [L.O_def, isIntegral_algebraMap_iff (algebraMap_inj L), IsIntegrallyClosed.isIntegral_iff]
+  have : Nontrivial E := Module.nontrivial_of_finrank_pos (R := F) (by rw [L.rank]; omega)
+  rw [L.O_def, isIntegral_algebraMap_iff, IsIntegrallyClosed.isIntegral_iff]
   constructor
   · rintro ⟨y, rfl⟩; exact y.2
   · intro h; exact ⟨⟨c, h⟩, rfl⟩

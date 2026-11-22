@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.ParabolicPreservesIsotropic
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.ParabolicPreservesIsotropic
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,7 +107,7 @@ theorem levi_diff (ht : FrameTab (σ := σ) (J := J) P c T) {s : HA R σ J} (hs 
     Submodule.sum_mem _ fun b _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨b, Set.mem_univ _, rfl⟩)
   set γ := c * hR R σ J (ratV (F := F) R P.z) u
   have e1 : lin R σ J s u = lin R σ J s (piW (σ := σ) (J := J) P c u) + lin R σ J s (piRest (σ := σ) (J := J) P c u) := by
-    rw [← map_add, piW_add_rest]
+    rw [← map_add (f := _), piW_add_rest]
   have e2 := piW_add_rest (σ := σ) (J := J) P c (lin R σ J s (piW (σ := σ) (J := J) P c u))
   have e3 : piRest (σ := σ) (J := J) P c (lin R σ J s (piW (σ := σ) (J := J) P c u)) =
       lin R σ J s (piW (σ := σ) (J := J) P c u) - piW (σ := σ) (J := J) P c (lin R σ J s (piW (σ := σ) (J := J) P c u)) :=
@@ -111,7 +115,7 @@ theorem levi_diff (ht : FrameTab (σ := σ) (J := J) P c T) {s : HA R σ J} (hs 
   have key : lin R σ J s u - Lh P c s u =
       piRest (σ := σ) (J := J) P c (lin R σ J s (piW (σ := σ) (J := J) P c u)) + (lin R σ J s xu - xu) +
         γ • (lin R σ J s (ratV (F := F) R P.z) - ratV (F := F) R P.z) := by
-    rw [e3, Lh_apply, e1, hr, map_add, map_smul, smul_sub]
+    rw [e3, Lh_apply, e1, hr, map_add (f := _), map_smul, smul_sub]
     abel
   rw [key]
   exact Submodule.add_mem _ (Submodule.add_mem _ (parabolic_maps_complement ht hs' (piW_inW ht u))

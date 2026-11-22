@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ExponentWindowSubsetShort
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExponentWindowSubsetShort
+
+@[expose] public section
 
 noncomputable section
 

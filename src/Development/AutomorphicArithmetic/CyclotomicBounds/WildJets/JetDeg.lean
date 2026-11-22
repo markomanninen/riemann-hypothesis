@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VwNatCastNonneg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SubDSharpInDeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VwNatCastNonneg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SubDSharpInDeg
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
@@ -56,13 +60,14 @@ private theorem weight_der (τ : ι) (μ : (ι × Fin b × Fin b) ⊕ DVar ι a 
 
 omit [DecidableEq ι] in
 private theorem jetLin_eq (J : (DVar ι a b →₀ ℕ) → K) (Q : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K) :
-    jetLin J Q = ∑ μ ∈ Q.support, coeff μ Q • (monomial (μ.comapDomain Sum.inl Sum.inl_injective.injOn)
+    jetLin J Q = ∑ μ ∈ Q.support, AddMonoidAlgebra.coeff Q μ • (monomial (μ.comapDomain Sum.inl Sum.inl_injective.injOn)
       (J (μ.comapDomain Sum.inr Sum.inr_injective.injOn)) : Pol K ι b) := by
   classical
-  conv_lhs => rw [Q.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [Q.as_sum, map_sum]
   refine Finset.sum_congr rfl fun μ _ => ?_
-  have e : (monomial μ (coeff μ Q) : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K) =
-      coeff μ Q • (basisMonomials _ K) μ := by
+  have e : (monomial μ (AddMonoidAlgebra.coeff Q μ) : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K) =
+      AddMonoidAlgebra.coeff Q μ • (basisMonomials _ K) μ := by
     rw [MvPolynomial.coe_basisMonomials, smul_monomial, smul_eq_mul, mul_one]
   rw [e, map_smul]
   simp only [jetLin, Module.Basis.constr_basis]

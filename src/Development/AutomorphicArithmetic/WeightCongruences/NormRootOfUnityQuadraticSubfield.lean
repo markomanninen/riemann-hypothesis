@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ReprMem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ReprMem
+
+@[expose] public section
 
 open NumberField IntermediateField
 
@@ -22,7 +26,7 @@ private lemma finrank_eq {F E : Type} [Field F] [Field E] [Algebra F E] (t : E) 
     (ht : t ^ 2 = algebraMap F E c) (hc : ∀ b : F, b ^ 2 ≠ c) :
     Module.finrank F F⟮t⟯ = 2 := by
   rw [IntermediateField.adjoin.finrank (isInt t c ht), minpoly_eq t c ht hc,
-    natDegree_X_pow_sub_C]
+    natDegree_X_pow_sub_C _]
 
 private lemma repr_mem {F E : Type} [Field F] [Field E] [Algebra F E] (t : E) (c : F)
     (ht : t ^ 2 = algebraMap F E c) (x : E) (hx : x ∈ F⟮t⟯) :
@@ -193,7 +197,7 @@ private lemma two_pow_norm (h4 : 4 ∣ Module.finrank ℚ E) (y : E) (a : ℕ) (
     have := Algebra.PowerBasis.norm_gen_eq_coeff_zero_minpoly
       (IntermediateField.adjoin.powerBasis (isInt i _ hi2))
     rw [IntermediateField.adjoin.powerBasis_gen, IntermediateField.adjoin.powerBasis_dim,
-      IntermediateField.minpoly_gen, minpoly_eq i _ hi2 hn, natDegree_X_pow_sub_C] at this
+      IntermediateField.minpoly_gen, minpoly_eq i _ hi2 hn, natDegree_X_pow_sub_C _] at this
     rw [this]; simp
   have hg2 : (AdjoinSimple.gen K i) ^ 2 = -1 := by
     apply Subtype.ext

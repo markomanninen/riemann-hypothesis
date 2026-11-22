@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoublingConfigurationLeviIntegralImports
-import GroundTheory.GlobalFields.TateThesis.GlobalZeta
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.EllipticTorusNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoublingConfigurationLeviIntegralImports
+public import GroundTheory.GlobalFields.TateThesis.GlobalZeta
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.EllipticTorusNorm
+
+@[expose] public section
 
 open scoped TensorProduct NNReal
 open NumberField IsDedekindDomain MeasureTheory Filter Topology
@@ -71,7 +75,8 @@ theorem eq_sum (y : AdeleRing (𝓞 E) E) :
     y = ∑ i, algebraMap E (AdeleRing (𝓞 E) E) (Module.finBasis F E i) *
       adeleMap F E (coord (Module.finBasis F E) i y) := by
   conv_lhs => rw [← adeleTensorEquiv_sum_coord (Module.finBasis F E) y]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [adeleTensorEquiv_tmul]
 
 def gfin (c : Fin (Module.finrank F E) → Af F) : FiniteAdeleRing (𝓞 E) E :=
@@ -84,7 +89,8 @@ theorem snd_eq (y : AdeleRing (𝓞 E) E) :
     y.2 = gfin F E (fun i => (coord (Module.finBasis F E) i y).2) := by
   conv_lhs => rw [eq_sum F E y]
   change sndAddHom (∑ i, _) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   rfl
 
 def infPart {K : Type} [Field K] [NumberField K] (y : AdeleRing (𝓞 K) K) : InfiniteAdeleRing K := y.1
@@ -95,7 +101,8 @@ theorem fst_apply (y : AdeleRing (𝓞 E) E) (w : InfinitePlace E) :
         ((coord (Module.finBasis F E) i y).1 (w.comap (algebraMap F E))) := by
   conv_lhs => rw [eq_sum F E y]
   change ((fstAddHom (L := E)) (∑ i, _)) w = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine (map_sum (Pi.evalAddMonoidHom (fun v : InfinitePlace E => v.Completion) w) _ (Finset.univ : Finset (Fin (Module.finrank F E)))).trans ?_
   rfl
 
@@ -180,7 +187,7 @@ theorem bound {s : ℝ} (hs : 1 < s) {U : Set (Fin (Module.finrank F E) → Af F
       have e2 : (1 + bc F E) ^ (k * r) = ∏ _w : InfinitePlace E, (1 + bc F E) ^ k := by
         rw [Finset.prod_const, Finset.card_univ, ← pow_mul]
       rw [e1, e2, ← Finset.prod_inv_distrib, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
-      refine Finset.prod_le_prod (fun w _ => by positivity) (fun w _ => ?_)
+      refine Finset.prod_le_prod₀ (fun w _ => by positivity) (fun w _ => ?_)
       have h2 : (1 + ‖a w‖) ^ k ≤ (1 + bc F E) ^ k * (1 + S) ^ k := by
         rw [← mul_pow]; exact pow_le_pow_left₀ (by positivity) (ha w) k
       have hP : 0 ≤ ‖a w‖ ^ ((w.mult : ℝ) * s) := by positivity

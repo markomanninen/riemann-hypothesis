@@ -1,12 +1,16 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped BigOperators ComplexOrder
 
 namespace GlobalTheory.CompanionTheory.CommAlg
 
-open AddMonoidAlgebra in
 
+open AddMonoidAlgebra in
 theorem ker_eq_span_single_sub_one :
     ∀ (k X A : Type) [Field k] [AddCommGroup X] [CommRing A] [Nontrivial A] [Bialgebra k A]
       (φ : AddMonoidAlgebra k X →ₐc[k] A), Function.Surjective φ →

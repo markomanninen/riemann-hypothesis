@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearChangeOfVariablesBis
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearChangeOfVariablesBis
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 

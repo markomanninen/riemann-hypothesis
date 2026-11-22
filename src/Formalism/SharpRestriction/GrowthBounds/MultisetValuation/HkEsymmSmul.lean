@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CoupledSumOfEntries
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CoupledSumOfEntries
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem hk_scal {K : Type} [Field K] (P a a' e : K) (hP : P ≠ 0) (ha : a ≠ 0
 theorem hk_esymm_smul {K σ : Type} [Field K] [Fintype σ] (c : K) (f : σ → K) (l : ℕ) :
     MvPolynomial.eval (fun x => c * f x) (MvPolynomial.esymm σ K l) =
       c ^ l * MvPolynomial.eval f (MvPolynomial.esymm σ K l) := by
-  simp only [MvPolynomial.esymm, map_sum, map_prod, MvPolynomial.eval_X, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [MvPolynomial.esymm, map_sum, map_prod, MvPolynomial.eval_X, Finset.mul_sum]
   refine Finset.sum_congr rfl (fun t ht => ?_)
   rw [Finset.prod_mul_distrib, Finset.prod_const, (Finset.mem_powersetCard.1 ht).2]
 

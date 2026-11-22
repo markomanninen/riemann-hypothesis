@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Qminor
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Qminor
+
+@[expose] public section
 
 open NumberField Neutral.B1 Formalism.L2.Host GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.TR Matrix
 
@@ -62,7 +66,7 @@ theorem UpperTheory.HilbertEisensteinWeightOne.center_finiteness_holds : SPois �
   have hcap : ∀ v u, ∃ c : ℂ, TR.cap v u φ = c • φ := fun v u => by
     have h0 : Eop v 0 0 φ + Eop v 1 1 φ = 0 := by
       classical
-      rw [← lie_scalar hω hc (Pi.single v 1), TR.Eop, TR.Eop, ← LinearMap.add_apply, ← map_add]
+      rw [← lie_scalar hω hc (Pi.single v 1), TR.Eop, TR.Eop, ← LinearMap.add_apply, ← map_add (f := _)]
       congr 2
       ext i j
       fin_cases i <;> fin_cases j <;> simp

@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PadicIntHomUnique
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.AdicMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PadicIntHomUnique
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.AdicMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.MemLoc.ActLaws
@@ -81,21 +85,6 @@ theorem endo_ext_pt {A : Type} [CommRing A] (I : Ideal R) (hI : I.FG) (i : R →
 theorem span_le_comap_pt (p : ℕ) (f : R →+* S) : Ideal.span {(p : R)} ≤ (Ideal.span {(p : S)}).comap f := by
   rw [Ideal.span_singleton_le_iff_mem, Ideal.mem_comap, map_natCast]
   exact Ideal.mem_span_singleton_self _
-
-theorem compMap_comp (I : Ideal R) (J : Ideal S) (K : Ideal T) (f : R →+* S) (g : S →+* T) (k : R →+* T)
-    (hf : I ≤ J.comap f) (hg : J ≤ K.comap g) (hk : I ≤ K.comap k) (e : ∀ x, k x = g (f x))
-    (x : AdicCompletion I R) :
-    GlobalTheory.AdicMaps.adicMap I K k hk x = GlobalTheory.AdicMaps.adicMap J K g hg (GlobalTheory.AdicMaps.adicMap I J f hf x) := by
-  refine AdicCompletion.ext_evalₐ fun n => ?_
-  obtain ⟨y, hy⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ I n x)
-  rw [GlobalTheory.AdicMaps.evalₐ_adicMap_mk I K k hk n x y hy.symm,
-    GlobalTheory.AdicMaps.evalₐ_adicMap_mk J K g hg n _ (f y) (GlobalTheory.AdicMaps.evalₐ_adicMap_mk I J f hf n x y hy.symm), e]
-
-theorem compMap_id (I : Ideal R) (f : R →+* R) (hf : I ≤ I.comap f) (e : ∀ x, f x = x)
-    (x : AdicCompletion I R) : GlobalTheory.AdicMaps.adicMap I I f hf x = x := by
-  refine AdicCompletion.ext_evalₐ fun n => ?_
-  obtain ⟨y, hy⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ I n x)
-  rw [GlobalTheory.AdicMaps.evalₐ_adicMap_mk I I f hf n x y hy.symm, e, hy]
 
 end
 
@@ -198,13 +187,9 @@ theorem endo_zA_pt (F : Per.Ainf l →+* Per.Ainf l) (z : ℤ_[l]) : F (Per.zA l
     refine Ideal.mem_span_singleton'.2 ⟨F (Per.zA l w) - Per.zA l w, ?_⟩
     generalize z.appr (m + 1) = a at hz
     rw [hz]
-    simp only [map_add, map_mul, map_pow, map_natCast]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast]
     ring
   rw [(WittVector.mem_span_p_pow_iff_le_coeff_eq_zero _ _).1 h m (Nat.lt_succ_self m), WittVector.zero_coeff]
-
-theorem map_zA (f : Per.Fl l →+* Per.Fl l) (z : ℤ_[l]) :
-    WittVector.map f (Per.zA l z) = Per.zA l z :=
-  endo_zA_pt (WittVector.map f) z
 
 theorem φA_σA (g : Per.Gq l) (a : Per.Ainf l) : Per.φA l (Per.σA g a) = Per.σA g (Per.φA l a) := by
   refine WittVector.ext fun n => ?_

@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.NormalisedThetaNormInvariant
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FirstMinimumPrincipalTorusAtOrthonormalFrame
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PeriodTorusConstantEqBase
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UnimodularSymplecticCoordinatesAndLatticeRank
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.LatDen
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.NormalisedThetaNormInvariant
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FirstMinimumPrincipalTorusAtOrthonormalFrame
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PeriodTorusConstantEqBase
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UnimodularSymplecticCoordinatesAndLatticeRank
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.LatDen
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.I2
 
@@ -112,7 +116,8 @@ def cj : Vsp T.dim ≃ₗ[ℝ] EuclideanSpace ℂ ι where
 theorem cj_apply (y : Vsp T.dim) (i : ι) : cj T e y i = conj (y (e i)) := rfl
 
 theorem Hf_cj (v w : Vsp T.dim) : Hf (cj T e v) (cj T e w) = conj (Hf v w) := by
-  simp only [Hf, cj_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hf, cj_apply, map_sum, map_mul]
   exact e.sum_comp fun j => conj (v j) * conj (conj (w j))
 
 variable (Y : GT ι) (F : EuclideanSpace ℂ ι → ℂ)
@@ -139,7 +144,7 @@ theorem cjFn_mem_Sec : cjFn T e F ∈ T.Sec 1 1 := by
       fun_prop
     exact (h2.comp h3) w
   · have h := hF.2 _ ((hL _).1 (hγ 0)) (cj T e (v 0))
-    simp only [cjFn, Pi.add_apply, map_add, h, hka _ (hγ 0), Hf_cj, map_mul, ← Complex.exp_conj,
+    simp only [cjFn, Pi.add_apply, map_add (f := _), h, hka _ (hγ 0), Hf_cj, map_mul, ← Complex.exp_conj,
       HC, Fin.sum_univ_one, Fin.prod_univ_one, pow_one, map_div₀, conj_conj, map_intCast,
       map_natCast, conj_ofReal, map_ofNat]
 
@@ -183,8 +188,8 @@ section Lattice
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
-open SemicharIndep in
 
+open SemicharIndep in
 theorem exists_sign (X : Data E r) : ∃ σ : ℤ, (σ = 1 ∨ σ = -1) ∧ ∀ u v, EF X u v = σ * B X u v := by
   rcases EF_eq_or X with h | h
   · exact ⟨-1, Or.inr rfl, fun u v => by rw [h, EFf_eq]; simp⟩
@@ -214,8 +219,8 @@ theorem finrank_lattice (X : Data E r) : Module.Free ℤ X.Λ ∧ Module.Finite 
   exact ⟨Module.Free.of_basis c, Module.Finite.of_basis c, by
     rw [Module.finrank_eq_card_basis c, Fintype.card_fin]⟩
 
-open SemicharIndep in
 
+open SemicharIndep in
 theorem exists_isSympl (X : DataX E r) :
     ∃ bas : (Fin (X.Ψ.card * r) ⊕ Fin (X.Ψ.card * r) → ℤ) ≃ₗ[ℤ] X.Λ, IsSympl X.toData bas := by
   obtain ⟨h1, h2, h3⟩ := finrank_lattice X.toData
@@ -251,7 +256,7 @@ theorem exists_isSympl (X : DataX E r) :
     rw [hβ]
     linear_combination (-σ) * h'' + φ v * hσ2
   have hinj : Function.Injective β := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     refine (Module.forall_dual_apply_eq_zero_iff ℤ x).1 fun φ => ?_
     obtain ⟨u, rfl⟩ := hsurj φ
@@ -447,7 +452,7 @@ theorem exists_char_at (hs : IsSympl X.toData bas) {x : Frame X.Ψ r} (A : Torus
     rw [h3]
     rcases hσ with rfl | rfl <;> rcases A.sg_pm with h4 | h4 <;> simp [h4, mul_comm]
   rw [h2, Real.cos_int_mul_pi] at h
-  rw [map_add, Submodule.coe_add, map_add, mul_comm (π * I : ℂ), Complex.exp_int_mul,
+  rw [map_add (f := _), Submodule.coe_add, map_add (f := _), mul_comm (π * I : ℂ), Complex.exp_int_mul,
     Complex.exp_pi_mul_I]
   have h5 := congrArg ((↑) : ℝ → ℂ) h
   push_cast at h5

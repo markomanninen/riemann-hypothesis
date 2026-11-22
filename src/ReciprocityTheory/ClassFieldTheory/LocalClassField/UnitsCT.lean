@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RestrictedMultiplicativeH1Subsingleton
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ValUnitsG
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnitsHerbrand
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.EqZeroOfResEqZeroOfCoprime
-import ReciprocityTheory.GroupCohomology.FiniteLevel
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RestrictedMultiplicativeH1Subsingleton
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ValUnitsG
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnitsHerbrand
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.EqZeroOfResEqZeroOfCoprime
+public import ReciprocityTheory.GroupCohomology.FiniteLevel
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -90,7 +94,8 @@ theorem exists_frob_sub_eq_of_sum_eq_zero_layerU (hK : FiniteDimensional ℚ_[p]
     (layerUIncl p K (Kn p K n)).equiv
   obtain ⟨w, hw⟩ := exists_sub_eq_of_cyclic_of_h1_subsingleton (layer p K (Kn p K n)) _ hg h1 ((layerUIncl p K (Kn p K n)).u u) (by
     simp only [← hI]
-    rw [← map_sum, hu, map_zero])
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hu, map_zero])
   obtain ⟨π, hπ⟩ := vOn_surjective p K hK 1
   have hπL : π.1 ∈ multOf p (Kn p K n) := hKL π.2
   let π' : (layer p K (Kn p K n)).V := toLayer p ⟨π.1, hπL⟩

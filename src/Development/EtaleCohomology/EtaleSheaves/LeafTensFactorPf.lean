@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTwPairHtpyPf
-import Development.EtaleCohomology.TateTwists.EtaleTensorHomDescendsAlongTensorPairing
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwPairHtpyPf
+public import Development.EtaleCohomology.TateTwists.EtaleTensorHomDescendsAlongTensorPairing
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -26,11 +30,11 @@ theorem uniq_mul {R : Type} [CommRing R] {I J T : Cx R} (τ : Pair I J T) (hτ :
     classical
     induction x using DirectSum.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add]; rw [ha, hb]
+    | add a b ha hb => simp only [map_add (f := _)]; rw [ha, hb]
     | of p z =>
       induction z using TensorProduct.induction_on with
       | zero => simp
-      | add a b ha hb => simp only [map_add]; rw [ha, hb]
+      | add a b ha hb => simp only [map_add (f := _)]; rw [ha, hb]
       | tmul a c =>
         obtain ⟨⟨s, t⟩, hw⟩ := p
         rw [lift_lof]
@@ -121,7 +125,7 @@ theorem factor {R : Type} [CommRing R] {I J T K : Cx R} (τ : Pair I J T) (hτ :
       rw [h1, secMap_nat]
     · intro U s t hw a b
       show Sec.map (K.d i (i + 1)) (φ i U (τ.mul U s t i hw a b)) = φ (i + 1) U (Sec.map (T.d i (i + 1)) (τ.mul U s t i hw a b))
-      rw [h2, ν.leibniz, τ.leibniz, map_add, addHom_usmul, h2, h2]
+      rw [h2, ν.leibniz, τ.leibniz, map_add (f := _), addHom_usmul, h2, h2]
   · intro U s t w hw a b
     rw [LateralTheory.E.LeafTwPairHtpyPf.secMap_id_f, LateralTheory.E.LeafTwPairHtpyPf.secMap_id_f]
     exact h2 w U s t hw a b

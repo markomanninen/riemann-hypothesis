@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLocNoetherian
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLocQuot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLocNoetherian
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLocQuot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -60,17 +65,18 @@ theorem DegZeroLocNoetherian.proof (h : DegZeroLocQuot.Statement.{u}) :
             simp [hk]
           · simp
         rw [hcs, map_pow, ← mul_pow, div_mul_cancel₀ _ (hφ _ fun hm => hv x.1 (hPW hm))]
-      rw [← mul_one (1 : F), ← monomial_mul, map_mul, map_mul, ih, map_add, hcadd, map_mul, hs]
+      rw [← mul_one (1 : F), ← monomial_mul, map_mul, map_mul, ih, map_add (f := _), hcadd, map_mul, hs]
       ring
 
   have hhom : ∀ (b : K → ℕ) (f : MRing ι F), IsMultiHomog f b → φ f = e f * φ (c b) := by
     intro b f hf
     conv_lhs => rw [f.as_sum]
     conv_rhs => rw [f.as_sum]
-    rw [map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun m hm => ?_
     have hw : Finsupp.weight (blockWeight ι) m = b := hf (mem_support_iff.mp hm)
-    have hmon : monomial m (coeff m f) = coeff m f • monomial m (1 : F) := by
+    have hmon : monomial m (AddMonoidAlgebra.coeff f m) = AddMonoidAlgebra.coeff f m • monomial m (1 : F) := by
       rw [smul_monomial, smul_eq_mul, mul_one]
     rw [hmon, map_smul, map_smul, hmono, hw, smul_mul_assoc]
   have hle : e.range ≤ degZeroLoc P {W} := by

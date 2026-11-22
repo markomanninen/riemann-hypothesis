@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NormBound
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GflagSwap
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NormBound
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GflagSwap
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem yv_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.Hermit
   have hD : Dl F F' (D.R.rS + 1) = algebraMap (𝓞 D.host.E) D.host.E
       ((FinalForm.submatrix (Fin.castLE le_rfl) (Fin.castLE le_rfl)).det) := by
     unfold Dl leadMinorE
-    rw [dif_pos le_rfl, hZo, Matrix.submatrix_map, RingHom.map_det]
+    rw [dite_eq_left le_rfl, hZo, Matrix.submatrix_map, RingHom.map_det]
     rfl
   unfold NormalVectorPairings.yv NormalVectorPairings.omp
   refine Λ.add_mem ?_ ?_
@@ -65,7 +69,8 @@ theorem yv_orth_X {T T' : D.host.E} (F : FlagG (VS D) D.R.rS T) (F' : FlagG (VS 
     rw [Matrix.mul_apply] at hm
     simp only [Matrix.smul_apply, Matrix.one_apply, Fin.castSucc_ne_last, if_false, smul_zero] at hm
     unfold NormalVectorPairings.yv NormalVectorPairings.omp
-    rw [map_add, map_smul, map_smul, F.z_orth a, smul_zero, add_zero, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_smul, map_smul, F.z_orth a, smul_zero, add_zero, map_sum]
     simp only [map_smul, smul_eq_mul, hz]
     rw [show ∑ b, (Zhat F F').adjugate b (Fin.last D.R.rS) * Zhat F F' a.castSucc b =
         ∑ b, Zhat F F' a.castSucc b * (Zhat F F').adjugate b (Fin.last D.R.rS) from

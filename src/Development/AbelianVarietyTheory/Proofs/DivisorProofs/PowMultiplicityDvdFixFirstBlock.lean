@@ -1,9 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsMultiHomogeneousFixFirstBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChowFormIntExistsAndChowFormExists
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.AlgebraMapBaseMemMaximalIdealIff
-import ReciprocityTheory.SemistableReduction.DetSubtypeCompAssociatedProd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertDegreeEqSumOverComponents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsMultiHomogeneousFixFirstBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChowFormIntExistsAndChowFormExists
+public import ReciprocityTheory.SemistableReduction.DetSubtypeCompAssociatedProd
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.ChowHt
 attribute [local instance] MvPolynomial.gradedAlgebra

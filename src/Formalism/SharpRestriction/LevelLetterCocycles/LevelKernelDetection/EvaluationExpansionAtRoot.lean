@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.TensorSumSingleEval
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.TensorSumSingleEval
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem evaluation_comm_tensor {LL D ι : Type} [Field LL] [AddCommGroup D] [Mod
   | tmul d f =>
     rw [TensorProduct.comm_tmul, evaluation_tmul, TensorProduct.piScalarRight_apply,
       TensorProduct.piScalarRightHom_tmul]
-  | add z z' hz hz' => rw [map_add, map_add, hz, hz', map_add, Pi.add_apply]
+  | add z z' hz hz' => rw [map_add (f := _), map_add (f := _), hz, hz', map_add (f := _), Pi.add_apply]
 
 variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
@@ -47,8 +51,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {Lb : LevB W} {hR : Ring9 W} {uZ : ℤ_[PD.p]ˣ} {ιZ : ℤ_[PD.p] →+* O}
     {T : LocLat G Qp LL O} {C : Coord W (baseIdOf hR) T} {c : ZMod n}
 
-open Classical in
 
+open Classical in
 theorem evaluation_expansion_at_root (s : ℕ) (D : Type) [AddCommGroup D] [Module LL D]
     (g : Rs LL PD.p s → D) (ζ : Rs LL PD.p s) : evK ζ (toKsD W s D g) = g ζ := by
   rw [toKsD, LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.coe_coe, evaluation_comm_tensor,
@@ -77,8 +81,8 @@ theorem rho_product_unit_mul {ell : ℕ}
   push_cast
   ring
 
-open Classical in
 
+open Classical in
 theorem levelCond_iff (ell : ℕ)
     (hk1b : ∀ s < ell, ∃ ε : (PowerSeries (KsW W s))ˣ,
       rhoL hR c s ((baseIdOf hR).Bs.p s) = (ε : PowerSeries (KsW W s)) * PowerSeries.X)

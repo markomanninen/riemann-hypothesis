@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.HostTraceIdentity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.HostTraceIdentity
+
+@[expose] public section
 
 open scoped BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj Formalism.L2.FormalSeriesBounds NumberField
@@ -31,7 +35,7 @@ theorem cmHost_idempotent_trace_eq_one :
   intro E _ _ _ H _ hstar
   rw [hstar]
   have hb := congrArg H.bar H.two_weight_eq_one_add_root
-  rw [map_mul, map_add, map_one, bar_rt, map_ofNat] at hb
+  rw [map_mul, map_add (f := _), map_one, bar_rt, map_ofNat] at hb
   have h2 : (2 : 𝓞 E) * (H.w0 + H.bar H.w0) = 2 * 1 := by
     linear_combination H.two_weight_eq_one_add_root + hb
   exact mul_left_cancel₀ two_ne_zero h2

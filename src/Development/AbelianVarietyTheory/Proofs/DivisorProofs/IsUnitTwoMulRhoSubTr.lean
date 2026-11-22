@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatActApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatActApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ def comaxC (b : Base D R) (i j : Fin D.a) : 𝓞 D.F →₀ R :=
 theorem comaxC_spec (b : Base D R) {i j : Fin D.a} (h : i ≠ j) :
     ((comaxC b i j).sum fun x r => r * (b.t i x - b.t j x)) = 1 := by
   unfold comaxC
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Classical.choose_spec (Finsupp.mem_span_range_iff_exists_finsupp.1
       ((b.comax i j h).symm ▸ Submodule.mem_top :
         (1 : R) ∈ Ideal.span (Set.range fun x => b.t i x - b.t j x)))

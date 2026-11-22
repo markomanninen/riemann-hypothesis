@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.Master
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.IwaInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BochnerOfLintegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import GroundTheory.AutomorphicForms.CuspidalProjection.Global
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.Master
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.IwaInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BochnerOfLintegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import GroundTheory.AutomorphicForms.CuspidalProjection.Global
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -40,12 +44,28 @@ private theorem int0 {A B : Type} [MeasurableSpace A] [MeasurableSpace B]
   filter_upwards [h, hf.prod_right_ae] with a ha hi
   exact ha hi
 
+private theorem constantTermL2_unipotent_mul {K : Type} [Field K] [NumberField K] {n : ℕ}
+    (μ : Measure (G1 K n)) [μ.IsHaarMeasure] (w : L2 μ) (r : ℕ)
+    (Y : UPos n r → 𝔸[K]) (z : G1 K n) :
+    constantTermL2 μ r w (unipOne r Y * z) = constantTermL2 μ r w z := by
+  simp only [constantTermL2, ctFun]
+  have h (X : UPos n r → 𝔸[K]) : unipOne r X * (unipOne r Y * z) = unipOne r (X + Y) * z := by
+    rw [unipOne_add, mul_assoc]
+  simp_rw [h]
+  refine setIntegral_add_right_of_periodic isAddFundamentalDomain_unipFundamentalDomain
+    (h := fun X => (w : RightCosetSpace (Gam K n) → ℂ) (RightCosetSpace.mk (Gam K n) (unipOne r X * z)))
+    (fun ξ hξ s => ?_) Y
+  rw [unipOne_add, mul_assoc, RightCosetSpace.mk_mul_of_mem (unipOne_mem_rationalGLOne r ⟨ξ, hξ⟩)]
+
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.orthCt :
     ∀ {K : Type} [Field K] [NumberField K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure] (F : G1 K (2 + 2) → ℂ), Continuous F → (∀ γ ∈ PK K, ∀ g, F (γ * g) = F g) → InBand F → Decays F → (∀ X g, F (nn X * g) = F g) → ∀ v w : L2 μ, Reps μ v (th F) →
       constantTermL2 μ 2 w =ᵐ[μ] 0 → ⟪v, w⟫_ℂ = 0 := by
   intro K _ _ μ _ F hFc hFP hFB hFD hFN v w hv hw
   obtain ⟨-, -, -, hlv, -, -, -, -, -, -, -, hcpt⟩ := blkLaws (K := K)
   haveI : CompactSpace (KG K (2 + 2)) := isCompact_iff_compactSpace.mp (hcpt (2 + 2)).1
+  haveI : LocallyCompactSpace (KG K (2 + 2)) := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      infer_instance
   let μ₂ : Measure (G1 K 2) := Measure.haar
   let κ : Measure (KG K (2 + 2)) := Measure.haar
   haveI : SecondCountableTopology (G1 K 2) := inferInstance
@@ -56,8 +76,12 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.orthCt :
   haveI : BorelSpace (ℝ × KG K (2 + 2)) := Prod.borelSpace
   haveI : BorelSpace (G1 K 2 × ℝ × KG K (2 + 2)) := Prod.borelSpace
   haveI : BorelSpace (G1 K 2 × G1 K 2 × ℝ × KG K (2 + 2)) := Prod.borelSpace
-  haveI : SFinite μ₂ := inferInstance
-  haveI : SFinite κ := inferInstance
+  haveI : SFinite μ₂ := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      infer_instance
+  haveI : SFinite κ := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      infer_instance
   haveI : SFinite (fd μ₂) := inferInstance
   haveI : SFinite ((unipMeasure K (2 + 2) 2).restrict (unipFundamentalDomain K (2 + 2) 2)) := inferInstance
   haveI : SFinite (κ.prod ((unipMeasure K (2 + 2) 2).restrict (unipFundamentalDomain K (2 + 2) 2))) :=
@@ -72,14 +96,14 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.orthCt :
   obtain ⟨c', hc', hiw⟩ := iwaInt μ μ₂ κ
   have hm : Measurable (constantTermL2 μ 2 w) :=
     (stronglyMeasurable_ctFun 2 (Lp.stronglyMeasurable w)).measurable
-  have h0 := hiw (fun g => ‖constantTermL2 μ 2 w g‖ₑ) hm.enorm
+  have h0 := hiw (fun g => ‖constantTermL2 μ 2 w g‖ₑ) hm.eNorm
   have hL : ∫⁻ g, ‖constantTermL2 μ 2 w g‖ₑ ∂μ = 0 := by
     refine lintegral_eq_zero_of_ae_eq_zero ?_
     filter_upwards [hw] with g hg
     simp [hg]
   rw [hL, eq_comm, mul_eq_zero] at h0
   have h1 := h0.resolve_left (ENNReal.ofReal_pos.mpr hc').ne'
-  simp only [mul_assoc, CuspidalProjection.constantTermL2_unipotent_mul, lintegral_const] at h1
+  simp only [mul_assoc, constantTermL2_unipotent_mul, lintegral_const] at h1
   have hcont : Continuous fun p : G1 K 2 × G1 K 2 × ℝ × KG K (2 + 2) =>
       lv p.1 p.2.1 p.2.2.1 * (p.2.2.2 : G1 K (2 + 2)) :=
     (hlv.comp (f := fun p : G1 K 2 × G1 K 2 × ℝ × KG K (2 + 2) => (p.1, p.2.1, p.2.2.1)) (by fun_prop)).mul
@@ -87,7 +111,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.orthCt :
   have h2 := ae4 μ₂ μ₂ volume κ (fun p : G1 K 2 × G1 K 2 × ℝ × KG K (2 + 2) =>
       ‖constantTermL2 μ 2 w (lv p.1 p.2.1 p.2.2.1 * (p.2.2.2 : G1 K (2 + 2)))‖ₑ *
         (ENNReal.ofReal (Real.exp (-4 * p.2.2.1)) * unipMeasure K (2 + 2) 2 univ))
-    ((hm.comp hcont.measurable).enorm.mul (Measurable.mul_const (by fun_prop) _)) h1
+    ((hm.comp hcont.measurable).eNorm.mul (Measurable.mul_const (by fun_prop) _)) h1
   have hU : unipMeasure K (2 + 2) 2 univ ≠ 0 := NeZero.ne _
   rw [heq]
   refine mul_eq_zero_of_right _ ?_
@@ -102,7 +126,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.orthCt :
   filter_upwards [h5] with k h6 _
   have h7 : constantTermL2 μ 2 w (lv m₁ m₂ t * (k : G1 K (2 + 2))) = 0 := by
     rcases mul_eq_zero.mp h6 with h | h
-    · exact enorm_eq_zero.mp h
+    · exact eNorm_eq_zero.mp h
     · exact absurd h (mul_ne_zero (ENNReal.ofReal_pos.mpr (Real.exp_pos _)).ne' hU)
   simp only [pt, mul_assoc, hFN]
   rw [integral_const_mul]

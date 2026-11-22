@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 
 namespace GlobalTheory.UniformCoboundary
@@ -38,7 +43,8 @@ theorem exists_bound {K : Type} [NormedField K] {ι : Type} [Fintype ι]
     simp [Finset.sum_apply, Pi.single_apply]
   have h2 : L w k = ∑ p, w p * L (Pi.single p 1) k := by
     conv_lhs => rw [h1]
-    simp [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Finset.sum_apply]
   have h3 : ‖L w k‖ ≤ (∑ p, ‖L (Pi.single p 1) k‖) * ε := by
     rw [h2, Finset.sum_mul]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun p _ => ?_)

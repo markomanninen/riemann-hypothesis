@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
-import Formalism.LocalToGlobal.Columns.PolyFn
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+public import Formalism.LocalToGlobal.Columns.PolyFn
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.L2.DIV
 
@@ -9,8 +13,8 @@ namespace GlobalTheory.Branching.Family
 
 variable {ι : Type} [Fintype ι]
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem exists_poly_blockAct_coef {k : ℕ} (f : MvPolynomial (ι × Fin k × Fin k) ℂ)
     (l : Module.Dual ℂ (MvPolynomial (ι × Fin k × Fin k) ℂ)) :
     ∃ P : MvPolynomial (ι × Fin k × Fin k) ℂ, ∀ g : ι → Matrix (Fin k) (Fin k) ℂ,
@@ -26,16 +30,18 @@ theorem exists_poly_blockAct_coef {k : ℕ} (f : MvPolynomial (ι × Fin k × Fi
     intro g p
     induction p using MvPolynomial.induction_on with
     | C a => simp [T, aeval_C, MvPolynomial.algebraMap_eq, map_C, eval_C]
-    | add p q hp hq => simp only [map_add, hp, hq, T]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq, T]
     | mul_X p v hp =>
       simp only [T] at hp ⊢
       simp only [map_mul, hp]
       congr 1
-      simp only [Formalism.GradedWeylDivisibility.blockAct, aeval_X, map_X, Φ, map_sum, map_mul, map_C, eval_X]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Formalism.GradedWeylDivisibility.blockAct, aeval_X, map_X, Φ, map_sum, map_mul, map_C, eval_X]
   refine ⟨∑ m ∈ (T f).support, C (l (monomial m 1)) * (T f).coeff m, fun g => ?_⟩
   rw [hT g f]
   conv_lhs => rw [(T f).as_sum]
-  rw [map_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_monomial, map_mul, eval_C]
   rw [show (monomial m (eval (fun x => g x.1 x.2.1 x.2.2) ((T f).coeff m)) : MvPolynomial (ι × Fin k × Fin k) ℂ) =

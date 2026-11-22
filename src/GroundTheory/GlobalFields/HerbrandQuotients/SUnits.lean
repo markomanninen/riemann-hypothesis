@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.GlobalFields.SUnits
-import GroundTheory.GlobalFields.HerbrandQuotients.Lattice
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsExact
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsRep
-import GroundTheory.GlobalFields.HerbrandQuotients.UnitsHerbrandValue
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SUnits
+public import GroundTheory.GlobalFields.HerbrandQuotients.Lattice
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsExact
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsRep
+public import GroundTheory.GlobalFields.HerbrandQuotients.UnitsHerbrandValue
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -17,15 +21,15 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
 
 variable (S : Set (HeightOneSpectrum (𝓞 L))) [Finite S]
 
-omit [IsGalois K L] in
 
+omit [IsGalois K L] in
 theorem hasHerbrandQuotient_sUnitRep (hS : ∀ (g : L ≃ₐ[K] L), ∀ w ∈ S, g • w ∈ S)
     {σ : L ≃ₐ[K] L} (hσ : ∀ g, g ∈ Subgroup.zpowers σ) :
     GroundTheory.GroupCoh.HasHerbrandQuotient (cycSubOne (sUnitRep S hS) σ) (cycNorm (sUnitRep S hS)) :=
   hasHerbrandQuotient_cycSubOne_of_finite _ hσ
 
-omit [IsGalois K L] in
 
+omit [IsGalois K L] in
 theorem finite_quotient_range_valuationVector :
     Finite ((S → ℤ) ⧸ (SUnit.valuationVector (K := L) S).toAddMonoidHom.range) := by
   have hn : (-(classNumber L : ℤ)) ≠ 0 := by
@@ -35,8 +39,8 @@ theorem finite_quotient_range_valuationVector :
   rw [SUnit.valuationVector_comp_placeUnitsMap]
   rfl
 
-omit [IsGalois K L] [Finite S] in
 
+omit [IsGalois K L] [Finite S] in
 theorem exact_ofUnits_valuationVector :
     Function.Exact (SUnit.ofUnits (K := L) S).toAdditive
       (SUnit.valuationVector (K := L) S).toAddMonoidHom := by
@@ -45,8 +49,8 @@ theorem exact_ofUnits_valuationVector :
   rw [LinearMap.mem_ker, LinearMap.mem_range] at h
   exact h
 
-open scoped Classical in
 
+open scoped Classical in
 theorem cycHerbrand_sUnitRep (hS : ∀ (g : L ≃ₐ[K] L), ∀ w ∈ S, g • w ∈ S)
     {σ : L ≃ₐ[K] L} (hσ : ∀ g, g ∈ Subgroup.zpowers σ) :
     cycHerbrand (sUnitRep S hS) σ =

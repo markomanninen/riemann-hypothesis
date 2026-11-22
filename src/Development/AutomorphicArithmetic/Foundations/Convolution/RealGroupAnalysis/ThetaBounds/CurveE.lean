@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.SplitA
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.SplitA
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -50,11 +54,11 @@ private theorem unipotent_placeEmbed_gl (w : InfinitePlace F) (t : ℝ) : gl (nU
   · rw [TR.pInf_infGL]
     refine Units.ext ?_
     ext i j v
-    fin_cases i <;> fin_cases j <;> simp [cU_val, Fo.at1, pInf_sInf]
+    fin_cases i <;> fin_cases j <;> simp [cU_val, Fo.at1, nU, gl, Matrix.SpecialLinearGroup.toGL, pInf_sInf]
   · rw [TR.pFin_infGL]
     refine Units.ext ?_
     ext i j
-    fin_cases i <;> fin_cases j <;> simp [Fo.at1, pFin_sInf]
+    fin_cases i <;> fin_cases j <;> simp [Fo.at1, nU, gl, Matrix.SpecialLinearGroup.toGL, pFin_sInf]
 
 private theorem character_placeEmbed_exp (w : InfinitePlace F) (t : ℝ) (q : A F) :
     ψ (Fo.at1 w t * q) = Complex.exp (Fo.cc * ((t : ℂ) * Fo.cw w q)) := by
@@ -71,7 +75,7 @@ private theorem character_placeEmbed_exp (w : InfinitePlace F) (t : ℝ) (q : A 
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.curveE :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (O : Fo.Ops F) (W : Weil D), CurveE O W := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (O : Fo.Ops F) (W : Weil D), CurveE O W := by
   intro F E _ _ _ _ _ _ _ D O W w
   refine ⟨fun t => nU (Fo.at1 w t), cU w, ⟨cU_add w, cU_der w⟩, unipotent_placeEmbed_gl w, fun φ t v => ?_⟩
   have he : (O.e D.δ w φ).1 v = Fo.cc * Fo.cw w (q4 D.δ v) * φ.1 v := by

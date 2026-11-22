@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralHalf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralHalf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Col2 Matrix
 open scoped BigOperators
@@ -87,7 +91,7 @@ theorem mem_lamOf_top (δ z : ℂ) : z ∈ Th.lamOf H ⊤ δ ↔ ∃ c : 𝓞 H.
     | add x y _ _ hx hy =>
       obtain ⟨c, rfl⟩ := hx
       obtain ⟨c', rfl⟩ := hy
-      exact ⟨c + c', by rw [map_add, mul_add]⟩
+      exact ⟨c + c', by rw [map_add (f := _), mul_add]⟩
     | neg x _ hx =>
       obtain ⟨c, rfl⟩ := hx
       exact ⟨-c, by rw [map_neg, mul_neg]⟩
@@ -103,7 +107,7 @@ theorem exists_periodPair_lamOf (δ : ℂ) (hδ : δ ≠ 0) :
     have e : embO H ⟨_, HostK.isIntegral_half H⟩ = (1 + Complex.I * (Real.sqrt H.d : ℂ)) / 2 := by
       rw [← HostK.φ₀_sqrt]
       change (H.φ₀.comp H.K.val.toRingHom) ((1 + (⟨H.sqrtMinusD, HostK.sqrt_mem H⟩ : H.K)) / 2) = _
-      rw [map_div₀, map_add, map_one, map_ofNat]
+      rw [map_div₀, map_add (f := _), map_one, map_ofNat]
       rfl
     have hd : (0 : ℝ) < Real.sqrt H.d := Real.sqrt_pos.2 (by exact_mod_cast H.hyp.2.1.pos)
     rw [e]

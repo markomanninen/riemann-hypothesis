@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorMemCocyclesPowQuot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteH1H2Local
+module
+
+public import Mathlib
+public import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorMemCocyclesPowQuot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteH1H2Local
+
+@[expose] public section
+
 open Formalism.RepresentationBoundsCohomology.LOC ReciprocityTheory.Gal GlobalTheory.LocDualInt
 open Formalism.NG (KO)
 
@@ -50,10 +55,6 @@ def toZModRep {R H Q : Type*} [CommRing R] [Group H] [AddCommGroup Q] [Module R 
   toFun h := (τ h).toAddMonoidHom.toZModLinearMap m
   map_one' := LinearMap.ext fun x => by simp
   map_mul' g h := LinearMap.ext fun x => by simp [Module.End.mul_apply]
-
-@[simp] theorem toZModRep_apply {R H Q : Type*} [CommRing R] [Group H] [AddCommGroup Q]
-    [Module R Q] (m : ℕ) [Module (ZMod m) Q] (τ : Representation R H Q) (h : H) (x : Q) :
-    toZModRep m τ h x = τ h x := rfl
 
 section Transport
 

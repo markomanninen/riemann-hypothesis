@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemBalBil
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemBalBil
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PolFan
 
 noncomputable section
@@ -10,9 +15,9 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] (H : Host E) (J : Ty
 
 def formOfFamily (φ : J → J → (𝓞 E →ₗ[ℤ] ℤ)) : LinearMap.BilinForm ℤ (J → 𝓞 E) :=
   LinearMap.mk₂ ℤ (fun y z => ∑ i, ∑ j, φ i j (H.bar (y i) * z j))
-    (by intro y y' z; simp [map_add, add_mul, Finset.sum_add_distrib])
+    (by intro y y' z; simp [map_add (f := _), add_mul, Finset.sum_add_distrib])
     (by intro c y z; simp only [Pi.smul_apply, map_zsmul, smul_mul_assoc, Finset.smul_sum])
-    (by intro y z z'; simp [map_add, mul_add, Finset.sum_add_distrib])
+    (by intro y z z'; simp [map_add (f := _), mul_add, Finset.sum_add_distrib])
     (by intro c y z; simp only [Pi.smul_apply, map_zsmul, mul_smul_comm, Finset.smul_sum])
 
 theorem formOfFamily_apply (φ : J → J → (𝓞 E →ₗ[ℤ] ℤ)) (y z : J → 𝓞 E) :
@@ -39,11 +44,13 @@ def balBilEquiv : balBil H.bar (J → 𝓞 E) ≃ₗ[ℤ] (J → J → (𝓞 E �
       ext k
       rcases eq_or_ne k i with rfl | h <;> simp [*]
     conv_rhs => rw [hy]
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [β.2 (y i) (Pi.single i 1) z]
     conv_rhs => rw [← Finset.univ_sum_single (H.bar (y i) • z)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     rfl
   right_inv φ := by
     funext i j

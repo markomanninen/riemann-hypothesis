@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatFrameApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatFrameApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem exists_extension {A B : Type} [CommRing A] [CommRing B] [Algebra A B] (f
   let e : B →+ B :=
     { toFun := fun x => (L x).snd
       map_zero' := by rw [map_zero, TrivSqZeroExt.snd_zero]
-      map_add' := fun x y => by rw [map_add, TrivSqZeroExt.snd_add] }
+      map_add' := fun x y => by rw [map_add (f := _), TrivSqZeroExt.snd_add] }
   refine ⟨Derivation.mk' e.toIntLinearMap fun x y => ?_, fun r => ?_⟩
   · change (L (x * y)).snd = x • (L y).snd + y • (L x).snd
     rw [map_mul, TrivSqZeroExt.snd_mul, hfst, hfst]

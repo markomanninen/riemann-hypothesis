@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjSumSumEmbeddingsEqTrace
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjSumSumEmbeddingsEqTrace
+
+@[expose] public section
 
 open scoped NNReal
 open NumberField GlobalTheory.IndefiniteRowSideFullHecke.QuotientEigenDifference GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Flat.ExG
@@ -52,7 +56,8 @@ variable {M : Type} [AddCommGroup M] [Module C M] [Module w.valuationSubring M]
 
 theorem rho_mem (h : HT.IsFreeOn ρ X t) (a : 𝓞 E) (j : Fin N) : ρ a (t j) ∈ X := by
   have e := congrArg (fun u => ρ u (t j)) ((RingOfIntegers.basis E).sum_repr a)
-  simp only [map_sum, LinearMap.sum_apply, map_zsmul, LinearMap.smul_apply] at e
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_zsmul, LinearMap.smul_apply] at e
   rw [← e]
   refine sum_mem fun k _ => zsmul_mem ?_ _
   rw [h.2.2]
@@ -145,14 +150,16 @@ theorem block_freeLattice : ∀ (E : Type) [Field E] [NumberField E] (C : Type) 
     have hD : ∀ s : {s // D s}, HT.eigProj ρ s.1 (∑ s, eigCoord ρ t s.1 (f s)) =
         eigCoord ρ t s.1 (f s) := by
       intro s
-      rw [map_sum, Finset.sum_eq_single s]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_eq_single s]
       · exact HT.LatBasic.eigProj_of_mem (eigCoord_mem _ _)
       · intro s' _ hne
         exact HT.LatBasic.eigProj_of_ne (fun e => hne (Subtype.ext e.symm)) (eigCoord_mem _ _)
       · simp
     have hnD : ∀ s, ¬ D s → HT.eigProj ρ s (∑ s, eigCoord ρ t s.1 (f s)) = 0 := by
       intro s hs
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_eq_zero fun s' _ =>
         HT.LatBasic.eigProj_of_ne (fun e : s = s'.1 => hs (by rw [e]; exact s'.2)) (eigCoord_mem _ _)
     have hF0 : ∀ j s, ¬ D s → F j s = 0 := by

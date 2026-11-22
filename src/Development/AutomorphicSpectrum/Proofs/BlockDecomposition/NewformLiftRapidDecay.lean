@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ theorem unit_entry {N : ℕ} [NeZero N] {u : FiniteAdelicGL ℚ 2} (hu : u ∈ G
   have hti : Valued.v (t v) ≤ 1 := ht v
   have hrel : c * y + d * x = 1 := by
     have h := congrArg (fun M : Matrix (Fin 2) (Fin 2) Af => adeleAt v (M 1 1)) (Units.mul_inv u)
-    simp only [Matrix.mul_apply, Fin.sum_univ_two, map_add, map_mul, Matrix.one_apply_eq, map_one] at h
+    simp only [Matrix.mul_apply, Fin.sum_univ_two, map_add (f := _), map_mul, Matrix.one_apply_eq, map_one] at h
     exact h
   have hcv : c = (N : Qv v) * t v := by
     have h := congrArg (adeleAt v) hc

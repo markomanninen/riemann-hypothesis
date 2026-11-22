@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory.SympModN
@@ -93,7 +98,8 @@ theorem symplecticSimilitude_modN : ∀ (h N m : ℕ) (T : (Fin h ⊕ Fin h → 
     intro x; simp [T']
   have h3 : ∀ x, T (T' x) = x + N • ∑ i, x i • b i := by
     intro x
-    rw [hT', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT', map_sum]
     simp only [map_zsmul, hvb, smul_add, Finset.sum_add_distrib]
     congr 1
     · funext j

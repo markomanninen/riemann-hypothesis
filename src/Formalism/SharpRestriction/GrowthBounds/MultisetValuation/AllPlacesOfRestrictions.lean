@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.KernelExpansionOfRestrictions
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.KernelExpansionOfRestrictions
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,12 +27,14 @@ theorem sSA_const (K' : Type) [Field K'] (j : ℕ) (v : X.Pl) (e : Fin (X.G.P.n'
 theorem hhA_const (K' : Type) [Field K'] (j : ℕ) (v : X.Pl) (u : Fin (X.G.P.n' v) → K') :
     MvPowerSeries.constantCoeff (X.hhA K' j v u) = 0 := by
   unfold Sys.hhA
-  simp only [map_sum, map_mul, sSA_const, mul_zero, Finset.sum_const_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, sSA_const, mul_zero, Finset.sum_const_zero]
 
 theorem coordZA_const (K' : Type) [Field K'] [Algebra (K0 p) K'] (j : ℕ) (x : X.EA j ⊕ X.EA j) :
     MvPowerSeries.constantCoeff (X.coordZA K' j x) = 0 := by
   rcases x with ⟨v, r, a, b⟩ | ⟨v, r, a, b⟩ <;>
-  simp only [Sys.coordZA, map_sum, map_mul, MvPowerSeries.constantCoeff_X, mul_zero, Finset.sum_const_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Sys.coordZA, map_sum, map_mul, MvPowerSeries.constantCoeff_X, mul_zero, Finset.sum_const_zero]
 
 theorem ThZA_mul (K' : Type) [Field K'] [Algebra (K0 p) K'] (j : ℕ) (f g : MvPowerSeries (X.EA j ⊕ X.EA j) K') :
     X.ThZA K' j (f * g) = X.ThZA K' j f * X.ThZA K' j g :=

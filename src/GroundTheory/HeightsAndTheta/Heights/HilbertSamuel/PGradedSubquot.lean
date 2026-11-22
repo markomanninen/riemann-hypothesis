@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGradedSubquot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGradedSubquot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -65,8 +70,8 @@ theorem isMultiHomog_monomial (d : (Σ k, ι k) →₀ ℕ) (r : S) (a : K → �
   rw [Finset.mem_singleton.mp (MvPolynomial.support_monomial_subset hm)]
   exact hd k
 
-variable (S ι) in
 
+variable (S ι) in
 def monTimes (H : Set M) : Set M :=
   {y | ∃ (u : (Σ k, ι k) →₀ ℕ) (h : M), h ∈ H ∧ y = (monomial u (1 : S) : MRingOver S ι) • h}
 
@@ -143,8 +148,8 @@ theorem mem_iSup_inf {𝓜 : (K → ℤ) → Submodule S M} (hM : KH.IsMGraded S
 
 end GradedSubquot
 
-open GradedSubquot in
 
+open GradedSubquot in
 theorem GradedSubquot.proof : GradedSubquot.Statement := by
   intro S _ K _ ι _ M _ _ _ _ 𝓜 G H hM hG hH hGH
 

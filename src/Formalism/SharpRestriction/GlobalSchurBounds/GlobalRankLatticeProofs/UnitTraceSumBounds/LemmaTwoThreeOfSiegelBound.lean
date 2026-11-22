@@ -1,12 +1,16 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.LocBasisPlace
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.KernelEntryData
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Formalism.SharpRestriction.GlobalSchurBounds.FirstClaimLemmaTwoFourOfLemmaTwoThree
-import Formalism.SharpRestriction.DesignExistsOfChoices
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ImaginaryQuadraticClassBound.GenCoprime
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ImaginaryQuadraticClassBound.ClassNum
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.GlobalSchurBounds.TaylorLogMetric
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.SharpRestriction.GlobalSchurBounds.FirstClaimLemmaTwoFourOfLemmaTwoThree
+public import Formalism.SharpRestriction.DesignExistsOfChoices
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+
+@[expose] public section
 
 namespace Formalism.MainNotions.Ext
 
@@ -41,7 +45,7 @@ theorem finrank_K : Module.finrank ℚ H.K = 2 := by
   have hmin : minpoly ℚ x = X ^ 2 - C ((-(H.d : ℤ) : ℤ) : ℚ) :=
     (minpoly.eq_of_irreducible_of_monic hirr hev hmon).symm
   have := IntermediateField.adjoin.finrank (K := ℚ) (x := x) (.of_finite ℚ x)
-  rw [hmin, natDegree_X_pow_sub_C, hadj, IntermediateField.finrank_top'] at this
+  rw [hmin, natDegree_X_pow_sub_C _, hadj, IntermediateField.finrank_top'] at this
   exact this
 
 theorem no_real_K : IsEmpty (H.K →+* ℝ) := by

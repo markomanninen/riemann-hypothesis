@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.IdealLattice
-import Formalism.PeriodIntegrals.AreaLat
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdealLatticeBasis.IdealBasisAlt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AreaLat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.IdealLattice
+public import Formalism.PeriodIntegrals.AreaLat
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdealLatticeBasis.IdealBasisAlt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AreaLat
+
+@[expose] public section
 
 open NumberField
 
@@ -15,7 +19,7 @@ theorem okBasis : OKBasis := by
 theorem im_comb (u v : ℂ) (p q r s : ℤ) :
     ((starRingEnd ℂ) ((p : ℂ) * u + (q : ℂ) * v) * ((r : ℂ) * u + (s : ℂ) * v)).im
       = ((p * s - q * r : ℤ) : ℝ) * ((starRingEnd ℂ) u * v).im := by
-  simp only [map_add, map_mul, map_intCast, Complex.mul_im, Complex.mul_re,
+  simp only [map_add (f := _), map_mul, map_intCast, Complex.mul_im, Complex.mul_re,
     Complex.add_im, Complex.add_re, Complex.intCast_re, Complex.intCast_im, Complex.conj_re,
     Complex.conj_im]
   push_cast

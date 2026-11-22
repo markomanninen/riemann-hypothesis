@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleEmptyOfGood
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsSplitOfMemAdmissibleConjugatePairPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleEmptyOfGood
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsSplitOfMemAdmissibleConjugatePairPlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N}
 
-variable (X) in
 
+variable (X) in
 def sideEmb (i : X.Tw) (b : Bool) : ↥D.LL0 →+* FractionRing (X.O i) :=
   (IsFractionRing.map (A := X.O0 i) (B := X.O i) (K := FractionRing (X.O0 i)) (L := FractionRing (X.O i))
     (X.O_inj i)).comp (if b then X.emb0 i else X.emb0b i)
@@ -203,7 +207,7 @@ def rdK (hρ : ρ.Good) (k : ℕ) : X.Ok i k ⊗[X.O i] Y.Fm i ((j : ℕ) + 1) b
     map_smul' := fun c x => by
       induction x using TensorProduct.induction_on with
       | zero => rw [smul_zero, map_zero, smul_zero]
-      | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+      | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
       | tmul a f =>
         change ρ.eOk i b k (c • a) • rd f = ρ.eOk i b k c • ρ.eOk i b k a • rd f
         rw [smul_eq_mul, map_mul, mul_smul] }
@@ -226,8 +230,7 @@ theorem Faithful.injective_rdK (h : Faithful rd) (hρ : ρ.Good) (k : ℕ) : Fun
   let v := Module.finBasis (FractionRing (X.O i)) (Y.Fm i ((j : ℕ) + 1) b)
   have key : ∀ x : X.Ok i k ⊗[X.O i] Y.Fm i ((j : ℕ) + 1) b, ∃ d : X.O i, d ≠ 0 ∧ ∃ c : _ → X.Ok i k,
       d • x = ∑ a, c a ⊗ₜ v a := fun x => by
-    induction x using TensorProduct.induction_on with
-    | zero => exact ⟨1, one_ne_zero, 0, by simp⟩
+    induction x using TensorProduct.inductionOn with
     | add x y hx hy =>
       obtain ⟨d, hd, c, e⟩ := hx
       obtain ⟨d', hd', c', e'⟩ := hy
@@ -246,7 +249,8 @@ theorem Faithful.injective_rdK (h : Faithful rd) (hρ : ρ.Good) (k : ℕ) : Fun
   obtain ⟨d, hd, c, e⟩ := key x
   have h1 : ∑ a, ρ.eOk i b k (c a) • rd (v a) = 0 := by
     have := congrArg (rdK rd hρ k) e
-    rw [← algebraMap_smul (X.Ok i k) d x, map_smulₛₗ, hx, smul_zero, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← algebraMap_smul (X.Ok i k) d x, map_smulₛₗ, hx, smul_zero, map_sum] at this
     exact this.symm
   have h2 : ∀ a, c a = 0 := fun a => ρ.eOk_injective i b k
     ((Fintype.linearIndependent_iff.1 (h _ v v.linearIndependent) _ h1 a).trans (map_zero _).symm)
@@ -254,9 +258,8 @@ theorem Faithful.injective_rdK (h : Faithful rd) (hρ : ρ.Good) (k : ℕ) : Fun
   have h4 : ∀ x : X.Ok i k ⊗[X.O i] Y.Fm i ((j : ℕ) + 1) b,
       LinearMap.lTensor (X.Ok i k) (((algebraMap (X.O i) (FractionRing (X.O i)) d)⁻¹ • LinearMap.id :
         Module.End (FractionRing (X.O i)) (Y.Fm i ((j : ℕ) + 1) b)).restrictScalars (X.O i)) (d • x) = x := fun x => by
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | add x y hx hy => rw [smul_add, map_add, hx, hy]
+    induction x using TensorProduct.inductionOn with
+    | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy]
     | tmul a f =>
       rw [← TensorProduct.tmul_smul, LinearMap.lTensor_tmul]
       congr 1
@@ -268,15 +271,15 @@ end Read
 
 section Comparison₂
 
-variable (X) in
 
+variable (X) in
 def InRange (i : X.Tw) (Q : Finset (Pl D.host.E)) : Prop :=
   (∀ P ∈ Q, IsSplitPl D.host P) ∧ ClsQ (D := D) Q ∧ Disjoint Q (X.S0 i)
 
 def normProd (s : Finset (Pl D.host.E)) : ℕ := ∏ v ∈ s, Ideal.absNorm v.asIdeal
 
-open Classical in
 
+open Classical in
 def grpSum (Y : NExp D.R D.host D.what₂ D.LL0 N X) {i : X.Tw} {j : ℕ} {b : Bool} (ch : Set (Pl D.host.E))
     (Q : Finset (Pl D.host.E)) (M : ℕ) (x : (↥(half ch (admissibleConjugatePairPlaces X i Q M)) → ZMod (X.l i ^ M)) → Y.Fm i j b) :
     Y.Fm i j b ⊗[X.O i] AddMonoidAlgebra (X.O i) (DelQM D.host (X.l i) Q M) :=
@@ -375,8 +378,8 @@ theorem nonempty_dat : Nonempty (Y.Dat i ((j : ℕ) + 1) b) := by
 
 end CellTie
 
-variable (Y) in
 
+variable (Y) in
 abbrev Rds (ρ : Setup X) : Type := ∀ i j b, Rd ρ Y i j b
 
 abbrev Comparison₂ (rd : Rds Y ρ) : Type := ∀ i j b, CellTie hρ Y (rd i j b)

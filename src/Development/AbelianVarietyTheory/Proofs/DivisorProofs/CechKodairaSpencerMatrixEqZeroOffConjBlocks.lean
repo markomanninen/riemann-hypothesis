@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLogKodairaSpencerGenericEigenFrame
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLogKodairaSpencerGenericEigenFrame
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.Vanishing GlobalTheory.CompHS
@@ -25,8 +30,8 @@ theorem ksMatrix_eq_zero_of_ne_conj : ∀ (E : Type) [Field E] [NumberField E] [
     have h := heig x (e.symm j).1 (e.symm j).2
     simp only [Sigma.eta, Equiv.apply_symm_apply] at h
     convert h using 2
-    funext m
-    simp only [A, Matrix.diagonal_apply, Pi.single_apply, eq_comm]
+    ext t
+    simp [A, Matrix.diagonal_apply, Pi.single_apply, eq_comm]
   obtain ⟨e', he'⟩ := TF.logKS U n v A htan huq hA
   have hmem : Θ ∈ LogKS.balanced H.bar A := by
     rw [(he' D Θ).1 hKS]

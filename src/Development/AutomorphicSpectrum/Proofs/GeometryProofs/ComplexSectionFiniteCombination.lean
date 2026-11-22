@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NoCommonZeroCombVal
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsResidueEval
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LinIndepDescent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NoCommonZeroCombVal
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsResidueEval
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LinIndepDescent
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -68,7 +72,8 @@ theorem vanish_descent : ∀ (F : Type) [Field F] (Y : Scheme.{0}) (p : Y ⟶ Sp
       · push Not at H
         obtain ⟨a, ha0, ha⟩ := H
         have hes : ∀ j, e j (∑ l, algX p ⊤ (a l) • b l) = 0 := fun j => by
-          simp only [map_sum, he_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, he_smul]
           exact ha0 j
         have hsO : nonzeroLocus (∑ l, algX p ⊤ (a l) • b l) ≤ O := by
           by_contra h
@@ -77,7 +82,8 @@ theorem vanish_descent : ∀ (F : Type) [Field F] (Y : Scheme.{0}) (p : Y ⟶ Sp
         have hsG : secVal p σ (∑ l, algX p ⊤ (a l) • b l) ∈ G :=
           Submodule.subset_span ⟨_, hsO, rfl⟩
         have hsv : secVal p σ (∑ l, algX p ⊤ (a l) • b l) = ∑ l, σ (a l) • secVal p σ (b l) := by
-          simp only [map_sum, secVal_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, secVal_smul]
         rw [hsv] at hsG
         obtain ⟨l₀, hl₀⟩ := Function.ne_iff.1 ha
         have hσ : σ (a l₀) ≠ 0 := (map_ne_zero σ).2 hl₀
@@ -96,7 +102,8 @@ theorem vanish_descent : ∀ (F : Type) [Field F] (Y : Scheme.{0}) (p : Y ⟶ Sp
   obtain ⟨n, f, g, hfg⟩ := Submodule.mem_span_set'.1 hxspan
   choose b hb using fun i => (g i).2
   have hval : SecC.val x = ∑ l, f l • secVal p σ (b l) + 0 := by
-    rw [← hfg, add_zero, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hfg, add_zero, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_smul, ← hb l, SecC.val_of]
   have hxZ : SecC.val x ∈ Z := hx

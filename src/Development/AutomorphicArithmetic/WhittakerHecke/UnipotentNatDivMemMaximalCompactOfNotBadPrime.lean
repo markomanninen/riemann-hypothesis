@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.XgDefs
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.XgDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -9,7 +13,7 @@ open UpperTheory.V.Af.Smo (EigAt)
 open scoped ComplexOrder
 
 private lemma nL_memK {K : Type} [Field K] [NumberField K] {v : H.P K} {c : H.Kv v} (hc : Valued.v c ≤ 1) :
-    H.nL c ∈ GlobalTheory.LFun.KGL v 2 := by
+    H.nL c ∈ GlobalTheory.LFun.KGL v (n := 2) := by
   have hc' : c ∈ v.adicCompletionIntegers K := hc
   have hn : -c ∈ v.adicCompletionIntegers K := neg_mem hc'
   rw [GlobalTheory.LFun.KGL, GlobalTheory.AdelicU.mem_GLint_iff]
@@ -80,6 +84,6 @@ theorem UpperTheory.unipotent_natDiv_mem_maximalCompact_of_not_badPrime :
     rw [Dat.mkE, map_zero, zero_add, map_mul, map_mul, completion_adele_natural, map_mul, map_inv₀, hL1, inv_one, mul_one]
     calc _ ≤ (1 : _) * 1 := mul_le_mul' (val_nat_le w a) hθ
       _ = 1 := mul_one 1
-  show Matrix.GeneralLinearGroup.map (H.cp w) (gl (nU (D.mkE 0 ((a : A ℚ) * iota L)))) ∈ GlobalTheory.LFun.KGL w 2
+  show Matrix.GeneralLinearGroup.map (H.cp w) (gl (nU (D.mkE 0 ((a : A ℚ) * iota L)))) ∈ GlobalTheory.LFun.KGL w (n := 2)
   rw [map_gl_nU]
   exact nL_memK hz

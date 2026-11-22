@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL3.Statement
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.OrderOfSignGroupDvdTwo
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CardTrivialFirstComponent
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.Statement
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.OrderOfSignGroupDvdTwo
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CardTrivialFirstComponent
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,13 +29,14 @@ private def sS (z w : VC D N N') : ℂ := ∑ τ, ∑ i, ∑ j, z τ i j * (star
 private theorem Hf_eq (T : Tor D) (z w : VC D N N') : Hf D T z w = sS z w / (area T.abelian₂ : ℂ) := rfl
 
 private theorem sS_swap (z w : VC D N N') : sS w z = (starRingEnd ℂ) (sS z w) := by
-  simp only [sS, map_sum, map_mul, starRingEnd_self_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sS, map_sum, map_mul, starRingEnd_self_apply]
   exact Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ =>
     Finset.sum_congr rfl fun j _ => mul_comm _ _
 
 private theorem sS_add (z x : VC D N N') :
     sS (z + x) (z + x) = sS z z + sS z x + sS x z + sS x x := by
-  simp only [sS, Pi.add_apply, map_add, add_mul, mul_add, Finset.sum_add_distrib]
+  simp only [sS, Pi.add_apply, map_add (f := _), add_mul, mul_add, Finset.sum_add_distrib]
   ring
 
 private theorem re_Hf_add (T : Tor D) (z x : VC D N N') :
@@ -70,6 +75,10 @@ theorem normSq_U_of_fd (T : Tor D) (La' : AddSubgroup (VC D N N')) [Countable La
     (hfd : ∃ Fd : Set (VC D N N'), IsAddFundamentalDomain La' Fd volume)
     (G : VC D N N' → ℂ) (hG : G ∈ ThSp D T La') (x : VC D N N') :
     normSq D T La' (U D T x G) = normSq D T La' G := by
+  have : (volume : Measure (VC D N N')).IsAddLeftInvariant :=
+    (instHaarVC D N N').toIsAddLeftInvariant
+  have : VAddInvariantMeasure (VC D N N') (VC D N N') volume :=
+    Measure.IsAddLeftInvariant.vaddInvariantMeasure
   have hF := Classical.epsilon_spec hfd
   show (⨍ z in _, dens D T (U D T x G) z) = ⨍ z in _, dens D T G z
   simp_rw [dens_U]
@@ -102,28 +111,6 @@ theorem normSq_U_of_full (T : Tor D) (La' : AddSubgroup (VC D N N')) (hL : FullL
   refine normSq_U_of_fd T La' ⟨_, ZLattice.isAddFundamentalDomain
     (Module.Free.chooseBasis ℤ (AddSubgroup.toIntSubmodule La')) volume⟩ G hG x
 
-theorem LinkThU_of_fd
-    (hfd : ∀ D : D7, ∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
-      ∀ N N' L L', admitted D N N' L L' →
-        Countable (La D (tor0 D cc δ) (N := N) (N' := N') L L') ∧
-        ∃ Fd : Set (VC D N N'), IsAddFundamentalDomain (La D (tor0 D cc δ) L L') Fd volume) :
-    LinkThU := by
-  intro D cc hcc δ hδ N N' L L' hA G hG x
-  obtain ⟨hc, hfd'⟩ := hfd D cc hcc δ hδ N N' L L' hA
-  haveI := hc
-  exact normSq_U_of_fd (tor0 D cc δ) _ hfd' G hG x
-
-theorem LinkThU_of_full
-    (hfull : ∀ D : D7, ∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
-      ∀ N N' L L', admitted D N N' L L' → FullLat (La D (tor0 D cc δ) (N := N) (N' := N') L L')) :
-    LinkThU := by
-  intro D cc hcc δ hδ N N' L L' hA G hG x
-  exact normSq_U_of_full (tor0 D cc δ) _ (hfull D cc hcc δ hδ N N' L L' hA) G hG x
-
-theorem LinkThUFam_of_ThU (h : LinkThU) : LinkThUFam := by
-  intro D cc hcc δ hδ e he N N' L L' hA x
-  exact h D cc hcc δ hδ N N' L L' hA _ (he N N' L L' hA).1 x
-
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity
 
 namespace Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.FL
@@ -153,7 +140,7 @@ theorem embT_K (τ : D.what₂.Tau) (x : D.host.E) (hx : x ∈ D.host.K) :
     induction hx' using IntermediateField.adjoin_induction with
     | mem y hy => rw [Set.mem_singleton_iff.mp hy]; exact hb
     | algebraMap r => rw [eq_ratCast (algebraMap ℚ D.host.E) r]; exact map_ratCast σ r
-    | add y z _ _ h1 h2 => rw [map_add, h1, h2]
+    | add y z _ _ h1 h2 => rw [map_add (f := _), h1, h2]
     | inv y _ h1 => rw [map_inv₀, h1]
     | mul y z _ _ h1 h2 => rw [map_mul, h1, h2]
   show D.host.φ₀ (σ x) = _
@@ -207,7 +194,8 @@ theorem sum_emb_zero {ι : Type*} [Fintype ι] (b : ι → D.host.E) (g : ι →
   obtain ⟨τ, rfl | rfl⟩ := emb_cases D φ
   · exact h τ
   · have h1 := congrArg (starRingEnd ℂ) (h τ)
-    simpa [map_sum, map_mul, Complex.conj_ofReal] using h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, map_mul, Complex.conj_ofReal] using h1
 
 theorem card_tau : Fintype.card D.what₂.Tau = 2 * D.R.ord := by
   rw [← Nat.card_eq_fintype_card, Nat.card_congr D.eTau, Formalism.HC.Frame.natCard_Psi]
@@ -393,7 +381,7 @@ theorem one_mem_inverse_halfDifferent : (1 : D.host.E) ∈ (D.host.AA0 : Submodu
   have hle : (1 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) ≤ D.host.AA0 := by
     have := FractionalIdeal.inv_anti_mono
       (I := (D.host.𝔟 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E)) (J := 1)
-      (FractionalIdeal.coeIdeal_ne_zero.mpr hb) one_ne_zero FractionalIdeal.coeIdeal_le_one
+      (FractionalIdeal.coeIdeal_ne_zero.mpr hb) FractionalIdeal.coeIdeal_le_one
     rwa [inv_one] at this
   exact hle (FractionalIdeal.one_mem_one _)
 
@@ -469,13 +457,9 @@ theorem hom_lower {N N' : ℕ} (L : Submodule (𝓞 D.host.E) (Fin N → D.host.
     intro i
     simp only [Matrix.mulVec, dotProduct]
     exact IsIntegral.sum _ fun k _ => (hA i k).mul (hLi x hx k)
-  have h1 := hL'o _ hz
-  convert h1 using 1
-  funext i
-  simp only [Matrix.mulVec, dotProduct, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  push_cast
-  ring
+  change (((m * m' : ℤ) : D.host.E) • A).mulVec x ∈ L'
+  rw [mul_comm m m', Int.cast_mul, Matrix.smul_mulVec, mul_smul, ← Matrix.mulVec_smul]
+  exact hL'o _ hz
 
 theorem YY_upper {N N' : ℕ} (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E))
     (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E))
@@ -724,10 +708,10 @@ theorem La_zero {N N' : ℕ} (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)
   simp
 
 theorem fd_bot {V : Type*} [AddGroup V] [MeasurableSpace V] (μ : Measure V) :
-    IsAddFundamentalDomain (⊥ : AddSubgroup V) Set.univ μ where
-  nullMeasurableSet := nullMeasurableSet_univ
-  ae_covers := Filter.Eventually.of_forall fun _ => ⟨0, Set.mem_univ _⟩
-  aedisjoint := fun a b hab => absurd (Subtype.ext ((AddSubgroup.mem_bot.mp a.2).trans
+    IsAddFundamentalDomain (⊥ : AddSubgroup V) Set.univ μ := by
+  refine ⟨nullMeasurableSet_univ, Filter.Eventually.of_forall fun _ => ⟨0, Set.mem_univ _⟩, ?_⟩
+  intro a b hab
+  exact absurd (Subtype.ext ((AddSubgroup.mem_bot.mp a.2).trans
     (AddSubgroup.mem_bot.mp b.2).symm)) hab
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.FL
@@ -747,9 +731,6 @@ theorem theta_unitary_linkage : LinkThU := by
     exact normSq_U_of_fd (tor0 D cc 0) _
       ⟨Set.univ, by rw [FL.La_zero D L L' cc]; exact FL.fd_bot _⟩ G hG x
   · exact normSq_U_of_full (tor0 D cc δ) _ (FL.fullLat D L L' hA cc hcc δ h0) G hG x
-
-theorem theta_unitary_family_linkage : LinkThUFam := by
-  exact LinkThUFam_of_ThU theta_unitary_linkage
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity
 

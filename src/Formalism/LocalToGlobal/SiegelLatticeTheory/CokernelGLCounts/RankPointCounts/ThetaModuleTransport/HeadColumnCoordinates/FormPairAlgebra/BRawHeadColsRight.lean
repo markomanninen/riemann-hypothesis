@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.AlgInj
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.AlgInj
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem bRaw_add_right (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) O) (y y' z' : Fin
   unfold bRaw
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
-  simp [map_add, add_mul]
+  simp [map_add (f := _), add_mul]
 
 theorem bRaw_smul_right (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) O) (c : O) (y y' : Fin (r + 1) → O) :
     bRaw O cj Z y (c • y') = cj (c : E) * bRaw O cj Z y y' := by
@@ -113,7 +117,8 @@ theorem bRaw_cjT (hcj : ∀ x, cj (cj x) = x) (Z : Matrix (Fin (r + 1)) (Fin (r 
     (hy' : ∀ b, (y' b : E) = ∑ a, cj ((Z.map O.subtype) a b) * w a) :
     bRaw O cj Z y y' = ∑ a, cj (w a) * (y a : E) := by
   unfold bRaw
-  simp only [hy', map_sum, map_mul, hcj, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hy', map_sum, map_mul, hcj, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => ?_
   have e : ∑ j, (Z.map O.subtype) a j * cj (w a) * ((Z.map O.subtype)⁻¹.mulVec (fun i => (y i : E))) j =
@@ -150,7 +155,8 @@ theorem bRaw_headCols_right (hcj : ∀ x, cj (cj x) = x) (hO : ∀ x ∈ O, cj x
 theorem cj_bRaw_single (hcj : ∀ x, cj (cj x) = x) (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) O)
     (y' : Fin (r + 1) → O) :
     cj (bRaw O cj Z (Pi.single (Fin.last r) 1) y') = lamS O cj Z y' := by
-  simp only [bRaw, lamS, lamStarC, coe_single, Matrix.mulVec_single_one, map_sum, map_mul, hcj,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [bRaw, lamS, lamStarC, coe_single, Matrix.mulVec_single_one, map_sum, map_mul, hcj,
     Matrix.transpose_apply]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 

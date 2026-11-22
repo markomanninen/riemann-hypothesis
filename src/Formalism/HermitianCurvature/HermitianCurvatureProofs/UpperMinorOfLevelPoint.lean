@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroKernel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddingMapApplyFirstBlock
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroKernel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddingMapApplyFirstBlock
+
+@[expose] public section
 
 open Matrix
 
@@ -54,9 +58,9 @@ theorem upper_minor_of_level_point (hj : j + 1 ≤ r) (Z : Matrix (Fin j) (Fin j
     ext; rw [Ux3.block_index_last_val]; simp [esI]; omega
   rw [hi, LeftFubiniLemmas.embedding_map_apply_last_block]
   by_cases hq : q.val < j + 1
-  · rw [dif_pos (by simpa using hq), dif_pos hq]
+  · rw [dite_eq_left (by simpa using hq), dite_eq_left hq]
     congr 1; ext; simp [Fin.val_rev]; omega
-  · rw [dif_neg (by simpa using hq), dif_neg hq]
+  · rw [dite_eq_right (by simpa using hq), dite_eq_right hq]
 
 theorem lower_minor_of_level_point (hj : j + 1 ≤ r) {Z : Matrix (Fin j) (Fin j) ℂ} {τ : ℂ} (hZ : Z.det ≠ 0) (hτ : τ ≠ 0)
     {γ : B.Mat k (r - (j + 1))} (hγ : γ ∈ B.GV k (r - (j + 1)))
@@ -76,9 +80,9 @@ theorem lower_minor_of_level_point (hj : j + 1 ≤ r) {Z : Matrix (Fin j) (Fin j
     ext; rw [Ux3.block_index_first_val]; simp [eI]
   rw [hjj, LeftFubiniLemmas.embedding_map_apply_first_block]
   by_cases hq : r + k < q.val ∧ 2 * r + k - q.val < j + 1
-  · rw [dif_pos (by simp; omega), dif_pos hq, Ux3.wMat_mul_apply, Matrix.conjTranspose_apply]
+  · rw [dite_eq_left (by simp; omega), dite_eq_left hq, Ux3.wMat_mul_apply, Matrix.conjTranspose_apply]
     congr 2 <;> ext <;> simp [Fin.val_rev] <;> omega
-  · rw [dif_neg (by simp; omega), dif_neg hq]
+  · rw [dite_eq_right (by simp; omega), dite_eq_right hq]
 
 end point
 

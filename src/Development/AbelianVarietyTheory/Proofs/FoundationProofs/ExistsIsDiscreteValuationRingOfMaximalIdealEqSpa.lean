@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -23,7 +27,9 @@ theorem isUnit_of_isUnit_map_of_henselian (I : Ideal B) [HenselianRing B I] (π 
     (hπ : Function.Surjective π) (hI : ∀ b, b ∈ I ↔ π b = 0) {b : B} (hb : IsUnit (π b)) :
     IsUnit b :=
   isUnit_of_isUnit_map_of_ker_le_jacobson π hπ
-    (fun x hx => HenselianRing.jac (I := I) ((hI x).mpr hx)) hb
+    (fun x hx => by
+      simpa only [Ideal.jacobson_bot] using
+        (HenselianRing.jac (I := I) ((hI x).mpr hx))) hb
 
 theorem isLocalRing_of_surjective_of_henselian [IsLocalRing B] (I : Ideal B) [HenselianRing B I]
     (π : B →+* C) (hπ : Function.Surjective π) (hI : ∀ b, b ∈ I ↔ π b = 0) : IsLocalRing C := by
@@ -111,7 +117,7 @@ theorem henselianLocalRing_of_le_radical [IsLocalRing B] (I : Ideal B) [Henselia
       (Ideal.mem_of_dvd _ hd (Ideal.pow_mem_of_pow_mem _ hn Nat.lt_two_pow_self.le)) (hu.map _)
     refine ⟨b, hb, ?_⟩
     have hle : I ≤ maximalIdeal B :=
-      (HenselianRing.jac (I := I)).trans (jacobson_eq_maximalIdeal ⊥ bot_ne_top).le
+      (HenselianRing.jac (I := I)).trans (ringJacobson_eq_maximalIdeal B).le
     simpa using add_mem (hle hba) ha
 
 end Lift
@@ -152,7 +158,7 @@ theorem nonempty_algHom_of_smooth_of_isSepClosed [IsSepClosed K] [Algebra.Smooth
     IsLocalization.isPrime_of_isPrime_disjoint (.powers f) _ _ ‹_› hdisj⟩
   have hp' : p'.asIdeal.comap (algebraMap R S) = RingHom.ker (algebraMap R K) := by
     rw [IsScalarTower.algebraMap_eq R A S, ← Ideal.comap_comap, ← hp]
-    exact congrArg _ (IsLocalization.comap_map_of_isPrime_disjoint (.powers f) _ ‹_› hdisj)
+    exact congrArg _ (IsLocalization.under_map_of_isPrime_disjoint (.powers f) _ ‹_› hdisj)
   have hopen := (PrimeSpectrum.isOpenMap_comap_of_hasGoingDown_of_finitePresentation
     (R := P) (S := S)).isOpen_range
   obtain ⟨_, ⟨_, ⟨h, rfl⟩, rfl⟩, hh, hsub⟩ := PrimeSpectrum.isBasis_basic_opens
@@ -169,7 +175,8 @@ theorem nonempty_algHom_of_smooth_of_isSepClosed [IsSepClosed K] [Algebra.Smooth
     refine Ideal.mul_mem_right _ _ ?_
     change algebraMap P S (algebraMap R P _) ∈ p'.asIdeal
     rw [← IsScalarTower.algebraMap_apply, ← Ideal.mem_comap, hp', RingHom.mem_ker,
-      ← MvPolynomial.coeff_map, h₀, MvPolynomial.coeff_zero]
+      ← MvPolynomial.coeff_map, h₀]
+    simp
   letI := (MvPolynomial.aeval (R := R) b).toAlgebra
   have : IsScalarTower R P K :=
     .of_algebraMap_eq fun r => ((MvPolynomial.aeval (R := R) b).commutes r).symm
@@ -275,8 +282,8 @@ theorem algebraMap_eq_zero_iff_mem_maximalIdeal (b : B) :
   rw [IsScalarTower.algebraMap_apply B (ResidueField B) K, map_eq_zero]
   exact residue_eq_zero_iff b
 
-omit [Algebra B W] [CommRing W] in
 
+omit [Algebra B W] [CommRing W] in
 theorem isUnit_adjoinRoot_mk_of_aeval_ne_zero {θ : K} (hθ : IsIntegral (ResidueField B) θ)
     {μ : B[X]} (hμm : μ.Monic) (hμ : μ.map (residue B) = minpoly (ResidueField B) θ) {g : B[X]}
     (hg : aeval θ g ≠ 0) : IsUnit (AdjoinRoot.mk μ g) := by
@@ -284,7 +291,8 @@ theorem isUnit_adjoinRoot_mk_of_aeval_ne_zero {θ : K} (hθ : IsIntegral (Residu
   by_contra hn
   obtain ⟨M, hM, hgM⟩ := exists_max_ideal_of_mem_nonunits hn
   have hM' : M.comap (algebraMap B (AdjoinRoot μ)) = maximalIdeal B :=
-    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M)
+    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal
+      (algebraMap B (AdjoinRoot μ)) (algebraMap_isIntegral_iff.mpr inferInstance) M)
   have hco : IsCoprime (minpoly (ResidueField B) θ) (g.map (residue B)) := by
     rw [(minpoly.irreducible hθ).coprime_iff_not_dvd, minpoly.dvd_iff]
     rwa [← aeval_map_algebraMap (ResidueField B)] at hg
@@ -292,16 +300,17 @@ theorem isUnit_adjoinRoot_mk_of_aeval_ne_zero {θ : K} (hθ : IsIntegral (Residu
   obtain ⟨a, rfl⟩ := map_surjective (residue B) residue_surjective a
   obtain ⟨b, rfl⟩ := map_surjective (residue B) residue_surjective b
   have h₀ : (a * μ + b * g - 1).map (residue B) = 0 := by
-    rw [Polynomial.map_sub, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, hμ, hab,
+    rw [Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, hμ, hab,
       Polynomial.map_one, sub_self]
   have h₁ : AdjoinRoot.mk μ (a * μ + b * g - 1) ∈ M := by
-    rw [(a * μ + b * g - 1).as_sum_support_C_mul_X_pow, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [(a * μ + b * g - 1).as_sum_support_C_mul_X_pow, map_sum]
     refine Ideal.sum_mem _ fun i _ => ?_
     rw [map_mul]
     refine Ideal.mul_mem_right _ _ ?_
     change algebraMap B (AdjoinRoot μ) _ ∈ M
     rw [← Ideal.mem_comap, hM', ← residue_eq_zero_iff, ← coeff_map, h₀, coeff_zero]
-  rw [map_sub, map_add, map_mul, map_mul, AdjoinRoot.mk_self, mul_zero, zero_add, map_one] at h₁
+  rw [map_sub, map_add (f := _), map_mul, map_mul, AdjoinRoot.mk_self, mul_zero, zero_add, map_one] at h₁
   have h₂ := sub_mem (M.mul_mem_left (AdjoinRoot.mk μ b) hgM) h₁
   rw [sub_sub_cancel] at h₂
   exact hM.ne_top ((Ideal.eq_top_iff_one _).mpr h₂)

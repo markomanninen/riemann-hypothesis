@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.BoxBoundAlt
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.BoxBoundAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,7 @@ theorem latCountAll_of (hB : BoxBound) (hLM : LatMap) (hLS : LatSub) (hS : Sep) 
               | exact (hC I) ▸ Fintype.card_pos
               | unfold Formalism.MainNotions.S.AutInst.f; exact Module.finrank_pos
           omega
-        exact Finset.prod_lt_prod_of_nonempty
+        exact Finset.prod_lt_prod_of_nonempty₀
           (fun v _ => lt_of_le_of_ne (hsN_nonneg _) (h0 v).symm) (fun v _ => hcon v) hne'
     simp only [hgsub] at hprod
     linarith
@@ -137,7 +141,7 @@ theorem latCountAll_of (hB : BoxBound) (hLM : LatMap) (hLS : LatSub) (hS : Sep) 
   calc (S.card : ℝ) = ((S.image g).card : ℝ) := by rw [Finset.card_image_of_injOn hinj]
     _ ≤ ∏ v, ((2 * (Real.sqrt I.n * Real.exp (r v)) + ρ) / ρ) ^ (2 * I.n ^ 2) := hpack
     _ ≤ ∏ v, ((3 * Real.sqrt I.n / ρ) * Real.exp (r v)) ^ (2 * I.n ^ 2) := by
-        refine Finset.prod_le_prod (fun v _ => pow_nonneg (div_nonneg (hnn v) hρ.le) _)
+        refine Finset.prod_le_prod₀ (fun v _ => pow_nonneg (div_nonneg (hnn v) hρ.le) _)
           (fun v _ => ?_)
         refine pow_le_pow_left₀ (div_nonneg (hnn v) hρ.le) ?_ _
         rw [div_mul_eq_mul_div]

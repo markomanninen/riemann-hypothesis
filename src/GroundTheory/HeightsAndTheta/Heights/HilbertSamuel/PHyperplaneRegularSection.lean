@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHyperplaneRegularSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHyperplaneRegularSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -53,8 +58,8 @@ def avoidSub (y : (Σ k, ι k) → Ω) (c' : ∀ k, ι k) (k : K) (p : Ideal (ch
 def twist (y : (Σ k, ι k) → Ω) (c' : ∀ k, ι k) (a : K → ℤ) : Ω :=
   ∏ k, y ⟨k, c' k⟩ ^ (-(((1 : ℕ) : ℤ) * a k))
 
-omit [∀ k, Fintype (ι k)] [CharZero Ω] in
 
+omit [∀ k, Fintype (ι k)] [CharZero Ω] in
 theorem twist_add (y : (Σ k, ι k) → Ω) {c' : ∀ k, ι k} (hc' : ∀ k, y ⟨k, c' k⟩ ≠ 0) (a a' : K → ℤ) :
     twist y c' (a + a') = twist y c' a * twist y c' a' := by
   simp only [twist, ← Finset.prod_mul_distrib]
@@ -64,13 +69,13 @@ theorem twist_add (y : (Σ k, ι k) → Ω) {c' : ∀ k, ι k} (hc' : ∀ k, y �
   simp only [Pi.add_apply]
   ring
 
-omit [∀ k, Fintype (ι k)] [CharZero Ω] in
 
+omit [∀ k, Fintype (ι k)] [CharZero Ω] in
 theorem twist_zero (y : (Σ k, ι k) → Ω) (c' : ∀ k, ι k) : twist y c' 0 = 1 := by
   simp [twist]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem coe_eqn (y : (Σ k, ι k) → Ω) (c c' : ∀ k, ι k) :
     (eqn y c c' : Ω) = (∏ k, y ⟨k, c k⟩) * twist y c' 1 := by
   simp only [eqn, gen, twist, Pi.one_apply]
@@ -78,9 +83,9 @@ theorem coe_eqn (y : (Σ k, ι k) → Ω) (c c' : ∀ k, ι k) :
 
 end HyperplaneRegularSection
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 open HyperplaneRegularSection in
-
 theorem HyperplaneRegularSection.proof : HyperplaneRegularSection.Statement := by
   intro K _ ι _ Ω _ _ y c e hc
   classical

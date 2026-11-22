@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries
 
@@ -17,14 +21,15 @@ theorem finrank_quotient_eq_of_existsUnique {R : Type} [CommRing R] [Nontrivial 
   have hL : ∀ a, L a = Ideal.Quotient.mk I (∑ i, algebraMap R _ (a i) * e i) := fun a => by
     simp [L, Fintype.linearCombination_apply, Algebra.smul_def]
   have hinj : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     rw [hL, Ideal.Quotient.eq_zero_iff_mem, hI, Ideal.mem_span_range_iff_exists_fun] at ha
     obtain ⟨g, hg⟩ := ha
     choose c hc _ using fun j => he (g j)
     have h1 : ∑ i, algebraMap R _ (a i) * e i = ∑ i, ψ (∑ j, c j i * X j) * e i := by
       rw [← hg]
-      simp only [map_sum, map_mul, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, Finset.sum_mul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hc j, Finset.sum_mul]

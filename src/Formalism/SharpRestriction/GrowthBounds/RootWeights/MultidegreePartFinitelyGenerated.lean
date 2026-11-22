@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DividedPowerMonomialExpansion
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DividedPowerMonomialExpansion
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,7 @@ theorem fock_lattice_finite_spanning_holds {p : ℕ} (hp : p.Prime) (S0 : Unifor
     exact WithTop.top_ne_coe h1
   have hv1 : vK p (1 : KK O) = 0 := by
     have h1 := hV.2.2.2.1 1 one_ne_zero
-    rw [Nat.cast_one, padicValNat.one] at h1
+    rw [Nat.cast_one, Nat.padicValNat_def, multiplicity_one_right] at h1
     simpa using h1
   have key : ∀ (x : WithTop ℚ) (a b : ℚ), 0 ≤ x + (a : WithTop ℚ) → a ≤ b → 0 ≤ (b : WithTop ℚ) + x := by
     intro x a b hx hab
@@ -143,7 +147,7 @@ theorem fock_lattice_finite_spanning_holds {p : ℕ} (hp : p.Prime) (S0 : Unifor
     unfold halfFactorialValuation at h0
     apply (hV.2.2.2.2.2 _).1
     haveI := Fact.mk hp
-    rw [hV.2.1, ← Nat.cast_pow, hV.2.2.2.1 _ (pow_ne_zero _ hp.ne_zero), padicValNat.prime_pow]
+    rw [hV.2.1, ← Nat.cast_pow, hV.2.2.2.1 _ (pow_ne_zero _ hp.ne_zero), Nat.padicValNat_def, Nat.multiplicity_prime_pow]
     refine key _ _ _ h0 ?_
     have hmS : m ∈ (multidegree_monomials_finite (ι := ι) (n := n) d).toFinset := (Set.Finite.mem_toFinset _).2 hm
     have hle := Finset.single_le_sum (f := fun m => padicValNat p (expFact m)) (fun _ _ => Nat.zero_le _) hmS

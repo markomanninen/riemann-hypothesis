@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ChainMatrices
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.PosIndexMapEqCardOfCongrDiagonal
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ChainMatrices
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.PosIndexMapEqCardOfCongrDiagonal
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
@@ -101,12 +105,14 @@ theorem gram_det_ne (S : Formalism.BasicNotions.HSpace E) : S.gram.det ≠ 0 := 
     intro i
     have h2 := congrFun hc i
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply, Formalism.BasicNotions.HSpace.gram] at h2
-    rw [← h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h2, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_eq_mul, mul_comm]
   have hy : ∀ x, S.hT x (∑ j, c j • S.frame j) = 0 := by
     intro x
-    rw [← S.frame.sum_repr x, map_sum S.hT, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← S.frame.sum_repr x, map_sum S.hT, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_smulₛₗ, LinearMap.smul_apply, h1, smul_zero]
   have hy0 := S.nondeg.2 _ hy
@@ -123,7 +129,8 @@ theorem exists_basis (X Y : Formalism.BasicNotions.HSpace E) (ι : X.V →ₗ[E]
     have h1 : ∀ i, Y.hT (ι (X.frame i)) y = 0 := fun i => by
       have := congrFun (LinearMap.mem_ker.mp hy) i
       simpa [φ] using this
-    rw [← X.frame.sum_repr x, map_sum ι, map_sum Y.hT, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← X.frame.sum_repr x, map_sum ι, map_sum Y.hT, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_smul, map_smulₛₗ, LinearMap.smul_apply, h1, smul_zero]
   have hinj : ∀ x, (∀ x', Y.hT (ι x') (ι x) = 0) → x = 0 := fun x h =>

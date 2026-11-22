@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.ExistsIdempotentHeckeOperatorWithRegularSupportAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PDatEx
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PPerfCof
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPlace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.ExistsIdempotentHeckeOperatorWithRegularSupportAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PDatEx
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.PPerfCof
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPlace
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.Gal.W2.Seed UpperTheory.Gal.Int.Geo
 open UpperTheory.Gal.CertificateRingHomMap (Plc)
@@ -72,7 +76,7 @@ private theorem eq_or_cj (A : Arith E) (w u : Plc E)
       rw [← A.bar_eq, map_mul, A.bar_bar, mul_comm]
     have hmem : ((y * A.bar y : 𝓞 E) : E) ∈ maximalRealSubfield E := (IsCMField.complexConj_eq_self_iff E _).1 ht
     have hint : IsIntegral ℤ (⟨_, hmem⟩ : maximalRealSubfield E) :=
-      (isIntegral_algebraMap_iff (A := maximalRealSubfield E) (B := E) (algebraMap (maximalRealSubfield E) E).injective).1
+      (isIntegral_algebraMap_iff (A := maximalRealSubfield E) (B := E) ).1
         (RingOfIntegers.isIntegral_coe (y * A.bar y))
     let z : 𝓞 (maximalRealSubfield E) := ⟨⟨_, hmem⟩, hint⟩
     have hz : algebraMap (𝓞 (maximalRealSubfield E)) (𝓞 E) z = y * A.bar y := RingOfIntegers.ext rfl

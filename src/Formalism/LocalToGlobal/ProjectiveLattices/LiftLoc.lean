@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftCurveSt
-import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftCurveSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,6 @@ variable (hs : ∀ ζ, SecPt ζ (y ζ))
 
 def liftC (ζ : PtsG G la) : Lc (xplus X E hM) la G.w →+* (hs ζ).T.Fr :=
   IsLocalization.Away.lift (sec (xplus X E hM) la G.w 0) (S := Lc (xplus X E hM) la G.w) (hs ζ).s0
-
-lemma liftC_eq (ζ : PtsG G la) (x : Lc (xplus X E hM) la G.w) : liftC hs ζ x = (hs ζ).lift x := rfl
 
 lemma liftC_alg (ζ : PtsG G la) (r : Rp (xplus X E hM) la G.N) :
     liftC hs ζ (algebraMap (Rp (xplus X E hM) la G.N) (Lc (xplus X E hM) la G.w) r) = (hs ζ).ev r :=
@@ -71,8 +73,6 @@ def hdList : List (Idx D j G.N →₀ ℕ) → LamL hs → LamL hs
   | [] => id
   | β :: l => fun x => hdL hs β (hdList l x)
 
-lemma hdList_nil (x : LamL hs) : hdList hs [] x = x := rfl
-
 lemma hdList_cons (β : Idx D j G.N →₀ ℕ) (l : List (Idx D j G.N →₀ ℕ)) (x : LamL hs) :
     hdList hs (β :: l) x = hdL hs β (hdList hs l x) := rfl
 
@@ -80,7 +80,7 @@ lemma hdList_add (l : List (Idx D j G.N →₀ ℕ)) (x z : LamL hs) :
     hdList hs l (x + z) = hdList hs l x + hdList hs l z := by
   induction l with
   | nil => rfl
-  | cons β l ih => rw [hdList_cons, hdList_cons, hdList_cons, ih, map_add]
+  | cons β l ih => rw [hdList_cons, hdList_cons, hdList_cons, ih, map_add (f := _)]
 
 lemma hdList_zero (l : List (Idx D j G.N →₀ ℕ)) : hdList hs l 0 = 0 := by
   induction l with
@@ -103,12 +103,6 @@ lemma hdList_one (l : List (Idx D j G.N →₀ ℕ)) : hdList hs l 1 = 0 ∨ hdL
       · exact Or.inr rfl
       · exact Or.inl rfl
 
-lemma hdList_append (l : List (Idx D j G.N →₀ ℕ)) (β : Idx D j G.N →₀ ℕ) (x : LamL hs) :
-    hdList hs l (hdL hs β x) = hdList hs (l ++ [β]) x := by
-  induction l with
-  | nil => rfl
-  | cons γ l ih => rw [List.cons_append, hdList_cons, hdList_cons, ih]
-
 def IntAllL (x : LamL hs) : Prop := ∀ ζ, 0 ≤ nval (hs ζ).T.V 1 (evL hs ζ x)
 
 lemma intAll_zero : IntAllL hs 0 := fun ζ => by rw [map_zero, nval_zero]; exact le_top
@@ -117,7 +111,7 @@ lemma intAll_one : IntAllL hs 1 := fun ζ => by
   rw [map_one, nval_of_ne one_ne_zero, vV_one']; simp
 
 lemma intAll_add {x z : LamL hs} (hx : IntAllL hs x) (hz : IntAllL hs z) : IntAllL hs (x + z) := fun ζ => by
-  rw [map_add]; exact (le_min (hx ζ) (hz ζ)).trans (nval_add 1 _ _)
+  rw [map_add (f := _)]; exact (le_min (hx ζ) (hz ζ)).trans (nval_add 1 _ _)
 
 lemma intAll_mul {x z : LamL hs} (hx : IntAllL hs x) (hz : IntAllL hs z) : IntAllL hs (x * z) := fun ζ => by
   rw [map_mul, nval_mul]; exact add_nonneg (hx ζ) (hz ζ)
@@ -135,7 +129,7 @@ lemma hdL_closure (x z : LamL hs) (β : Idx D j G.N →₀ ℕ) {u : LamL hs}
     rw [hdL_mul]
     exact AddSubmonoid.sum_mem _ fun q _ => AddSubmonoid.subset_closure ⟨q.1 :: l₁, q.2 :: l₂, rfl⟩
   | zero => rw [map_zero]; exact AddSubmonoid.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact AddSubmonoid.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact AddSubmonoid.add_mem _ ha hb
 
 lemma hdList_mul_mem (x z : LamL hs) (l : List (Idx D j G.N →₀ ℕ)) :
     hdList hs l (x * z) ∈ AddSubmonoid.closure (prodSet hs x z) := by
@@ -163,11 +157,6 @@ def RGL : Subring (LamL hs) where
   neg_mem' := fun {a} ha l => by rw [hdList_neg]; exact intAll_neg hs (ha l)
   mul_mem' := fun {a b} ha hb l => intAll_of_mem_closure hs ha hb (hdList_mul_mem hs a b l)
 
-lemma mem_RGL {r : LamL hs} : r ∈ RGL hs ↔ ∀ l, IntAllL hs (hdList hs l r) := Iff.rfl
-
-lemma RGL_hd (β : Idx D j G.N →₀ ℕ) {r : LamL hs} (hr : r ∈ RGL hs) : hdL hs β r ∈ RGL hs := fun l => by
-  rw [hdList_append]; exact hr _
-
 lemma RGL_int {r : LamL hs} (hr : r ∈ RGL hs) (ζ : PtsG G la) : 0 ≤ nval (hs ζ).T.V 1 (evL hs ζ r) := hr [] ζ
 
 lemma mem_RGL_of_stable {S : Set (LamL hs)} (hS : ∀ β, ∀ s ∈ S, hdL hs β s ∈ S) (hI : ∀ s ∈ S, IntAllL hs s)
@@ -182,29 +171,10 @@ lemma mem_RGL_of_stable {S : Set (LamL hs)} (hS : ∀ β, ∀ s ∈ S, hdL hs β
 def eFormL (F : X.Forms) : LamL hs :=
   ιL hs (algebraMap (Rp (xplus X E hM) la G.N) (Lc (xplus X E hM) la G.w) (emb (xplus X E hM) la G.N F))
 
-lemma eFormL_hd (F : X.Forms) {β : Idx D j G.N →₀ ℕ} (hβ : β ≠ 0) : hdL hs β (eFormL hs F) = 0 := by
-  unfold eFormL
-  rw [hdL_ι]
-  have : hasse (xplus X E hM) la G.w β
-      (algebraMap (Rp (xplus X E hM) la G.N) (Lc (xplus X E hM) la G.w) (emb (xplus X E hM) la G.N F)) =
-      algebraMap (Rp (xplus X E hM) la G.N) (Lc (xplus X E hM) la G.w)
-        (hasseRp (xplus X E hM) la G.N β (emb (xplus X E hM) la G.N F)) :=
-    Tay.loc_co (Submonoid.powers (sec (xplus X E hM) la G.w 0)) (Lc (xplus X E hM) la G.w)
-      (tayRp (xplus X E hM) la G.N) (tayRp_isTay _ _ _) β _
-  have h0 : hasseRp (xplus X E hM) la G.N β (emb (xplus X E hM) la G.N F) = 0 := hasseRp_emb _ _ hβ _
-  rw [this, h0, map_zero, map_zero]
-
 lemma evL_eFormL (ζ : PtsG G la) (F : X.Forms) :
     evL hs ζ (eFormL hs F) = (hs ζ).ev (emb (xplus X E hM) la G.N F) := by
   unfold eFormL
   rw [evL_ι, liftC_alg]
-
-lemma eFormL_int {w : WeightFamilies.Wt D j} (F : B.Cusp j w) (hF : ∀ ζ, 0 ≤ E.vAt' la (y ζ) (X.inc w F)) :
-    IntAllL hs (eFormL hs (X.inc w F)) := fun ζ => by
-  rw [evL_eFormL, ← e_mul_nval (hs ζ).ep_pos]
-  have h := hF ζ
-  rw [(hs ζ).hv w F] at h
-  exact EReal.mul_nonneg (by exact_mod_cast Nat.zero_le _) h
 
 def ιW : Lw (xplus X E hM) la G.w →+* LamL hs := ιL hs
 
@@ -231,7 +201,7 @@ lemma evL_eq_zero_of_mem {u : LamL hs}
     obtain ⟨i, rfl⟩ := hx
     rw [evW_ι, coe_sfr, (hs ζ).lift_frac, (hs ζ).onS i, zero_mul]
   | zero => exact map_zero _
-  | add x z _ _ hx hz => rw [map_add, hx, hz, add_zero]
+  | add x z _ _ hx hz => rw [map_add (f := _), hx, hz, add_zero]
   | smul a x _ hx => rw [smul_eq_mul, map_mul, hx, mul_zero]
 
 lemma toE_eq_top {w : WithTop ℤ} (h : toE w = ⊤) : w = ⊤ := by

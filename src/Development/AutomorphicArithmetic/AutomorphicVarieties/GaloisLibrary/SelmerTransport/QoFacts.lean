@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.RestrictScalarsTwistInvOver
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.RestrictScalarsTwistInvOver
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base
 open TensorProduct nonZeroDivisors
@@ -107,7 +111,7 @@ private theorem qo_equiv : Nonempty (QO l O ≃ₗ[O] KStar.Selmer.FracMod O (Fr
         (o y ⊗ₜ[ℤ_[l]] (Submodule.Quotient.mk (algebraMap ℤ_[l] ℚ_[l] (c y))⁻¹ : QZ l))
       rw [tmul_qz_inv_mul_eq l O (o x) (c x) (c y) (hc y), tmul_qz_inv_mul_eq l O (o y) (c y) (c x) (hc x),
         mul_comm (c y) (c x)]
-    · simp only [map_add, map_mul, ← IsScalarTower.algebraMap_apply, ← hx x, ← hx y]
+    · simp only [map_add (f := _), map_mul, ← IsScalarTower.algebraMap_apply, ← hx x, ← hx y]
       ring
   have ψ₀_smul : ∀ (a : O) x, ψ₀ (a • x) = a • ψ₀ x := by
     intro a x

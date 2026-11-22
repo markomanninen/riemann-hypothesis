@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRatPointOfFiniteType
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRatPointOfFiniteType
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+
+@[expose] public section
 
 noncomputable section
 

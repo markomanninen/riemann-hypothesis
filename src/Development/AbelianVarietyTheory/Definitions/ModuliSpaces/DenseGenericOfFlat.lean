@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MulLeftCompOfPullbackPointEquivMul
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.TopAmpExists
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelObjectPullbackExistsAndPrincipal
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPrePullbackPrincipalRingChange
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPullbackIdCompCancel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsQProjOverBaseChangeAndFiniteRestrict
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaLevelAbelianSchemePullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaLevelPullbackIdCompCancel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsPELOfTmap
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MulLeftCompOfPullbackPointEquivMul
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.TopAmpExists
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelObjectPullbackExistsAndPrincipal
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPrePullbackPrincipalRingChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPullbackIdCompCancel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsQProjOverBaseChangeAndFiniteRestrict
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaLevelAbelianSchemePullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaLevelPullbackIdCompCancel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsPELOfTmap
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -175,39 +179,6 @@ theorem SFam.exists_sRep_siegRep {p M : ℕ} (hM : M ≠ 0) (F : SFam h M (zetaZ
   · exact F.siegRep F.smooth qc F.princ _ _
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
-
-theorem PELRep.exists_point {D : Datum H} {a : J → 𝓞 E} {bas : (Fin (2 * g) → ℤ) ≃ₗ[ℤ] D.La} {ρ : o}
-    {t : TObj g k J b s} (R : PELRep D a bas ρ t) {K : Type} [Field K] (β : o →+* K) (hβ : Function.Injective β)
-    (t' : TObj g k J b (spMap β)) (τ' : SAB H (Sp K)) (h' : IsPEL D a bas ρ t' τ') :
-    ∃ x : Sp K ⟶ S, x ≫ s = spMap β ∧ TMap t' t x := by
-  have hC : Function.Injective ((PowerSeries.C (R := K)).comp β) := PowerSeries.C_injective.comp hβ
-  have e₁ : spMap (PowerSeries.C (R := K)) ≫ spMap β = spMap ((PowerSeries.C (R := K)).comp β) :=
-    (spMap_comp' β PowerSeries.C).symm
-  obtain ⟨t'', ht''⟩ := tObj_pull o g k J b (Sp K) (Sp (PowerSeries K)) (spMap β)
-    (spMap ((PowerSeries.C (R := K)).comp β)) (spMap PowerSeries.C) t' e₁
-  obtain ⟨τ'', hτ''⟩ := exists_isPEL_of_tmap E H D g J a bas k o b ρ (Sp K) (Sp (PowerSeries K)) (spMap β)
-    (spMap ((PowerSeries.C (R := K)).comp β)) t' t'' τ' (spMap PowerSeries.C) e₁ ht'' h'
-  obtain ⟨f, hf, hft⟩ := R.rep (PowerSeries K) ((PowerSeries.C (R := K)).comp β) t'' τ'' hC hτ''
-  have e₂ : spMap (PowerSeries.constantCoeff (R := K)) ≫ spMap (PowerSeries.C (R := K)) = 𝟙 (Sp K) := by
-    have : (PowerSeries.constantCoeff (R := K)).comp PowerSeries.C = RingHom.id K :=
-      RingHom.ext fun x => PowerSeries.constantCoeff_C x
-    rw [← spMap_comp', this]
-    simp
-  refine ⟨spMap PowerSeries.constantCoeff ≫ f, ?_, ?_⟩
-  · rw [Category.assoc, hf, ← e₁, ← Category.assoc, e₂, Category.id_comp]
-  · have hback : TMap t' t'' (spMap PowerSeries.constantCoeff) := by
-      refine TMap.cancel ht'' ?_
-      rw [e₂]
-      exact TMap.refl t'
-    exact TMap.comp hback hft
-
-theorem exists_hom_of_basis {G : Type} [CommGroup G] {n : ℕ} (p : Fin n → G) :
-    ∃ q : (Fin n → ℤ) → G, (∀ x y, q (x + y) = q x * q y) ∧ ∀ i, q (Pi.single i 1) = p i := by
-  refine ⟨fun x => ∏ i, p i ^ x i, fun x y => ?_, fun i => ?_⟩
-  · simp only [Pi.add_apply, zpow_add, Finset.prod_mul_distrib]
-  · show ∏ j, p j ^ (Pi.single i (1 : ℤ) : Fin n → ℤ) j = p i
-    rw [Finset.prod_eq_single i (fun j _ hj => by rw [Pi.single_eq_of_ne hj, zpow_zero])
-      (fun h => absurd (Finset.mem_univ i) h), Pi.single_eq_same, zpow_one]
 
 end GlobalTheory.ZM
 end

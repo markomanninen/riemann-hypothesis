@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothOnHOfLoc
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothOnHOfLoc
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -47,7 +51,8 @@ theorem polyTop_of (hKA : KrAA) : PBN.PolyTop := by
             rw [hc, map_smul, smul_comm]
             rfl
           · show a • L (PBG.Kr Bs (PBN.aaTop Bs y G) _) = _
-            rw [hcy y, map_sum, Finset.smul_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [hcy y, map_sum, Finset.smul_sum]
             apply Finset.sum_congr rfl
             intro n _
             rw [map_smul, smul_comm])
@@ -59,18 +64,18 @@ theorem polyTop_of (hKA : KrAA) : PBN.PolyTop := by
     · refine ⟨fun _ => 0, ?_, fun y => ?_⟩
       · show (0 : Wq →L[ℂ] Wp) = _ • D.vecV Bs p.ν' p.m₀ G q
         unfold D.vecV
-        rw [dif_pos hpos, dif_neg h', smul_zero]
+        rw [dite_eq_left hpos, dite_eq_right h', smul_zero]
       · show D.vecV Bs p.ν' p.m₀ _ q = _
         unfold D.vecV
-        rw [dif_pos hpos, dif_neg h']
+        rw [dite_eq_left hpos, dite_eq_right h']
         simp
   · refine ⟨fun _ => 0, ?_, fun y => ?_⟩
     · show (0 : Wq →L[ℂ] Wp) = _ • D.vecV Bs p.ν' p.m₀ G q
       unfold D.vecV
-      rw [dif_neg hpos, smul_zero]
+      rw [dite_eq_right hpos, smul_zero]
     · show D.vecV Bs p.ν' p.m₀ _ q = _
       unfold D.vecV
-      rw [dif_neg hpos]
+      rw [dite_eq_right hpos]
       simp
 
 end Formalism.FourierDecayAlt.P.VandermondePolynomialIntegral

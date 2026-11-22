@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LFunctionConjEqZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OrderNeTop
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ZeroFreePrincipal
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsDirichletLFunctionZeroGapNearOneStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DirichletLZerosEqPrimitiveCharacterZerosStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LFunctionConjEqZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OrderNeTop
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ZeroFreePrincipal
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsDirichletLFunctionZeroGapNearOneStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DirichletLZerosEqPrimitiveCharacterZerosStatement
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology GlobalTheory.Lin
 open scoped Classical
 

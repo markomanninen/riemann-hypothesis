@@ -1,19 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL1SpectralBounds.OneSat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL1SpectralBounds.CsdSat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.CuspidalContribution.CuspFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.FormsFiniteGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL1SpectralBounds.OneSat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL1SpectralBounds.CsdSat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.CuspidalContribution.CuspFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.FormsFiniteGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
 open PositivityTheory.Rg.BcB.G8
 open UpperTheory.V.Af.Bc (cPl)
 open UpperTheory.V.Z.Tf.GlobalTraceComparison UpperTheory.V.Z.Tf.GlobalTraceComparison.Cusp UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm UpperTheory.V.Z.Tf.GaloisFromTraceFormula
-
-open private sat_part from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL1SpectralBounds.OneSat
-open private conj_eq from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL1SpectralBounds.CsdSat
-open private isDiscrete_of_norm' from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.CuspidalContribution.CuspFin
 
 private theorem sigma_eq {E : Type} [Field E] [NumberField E] [IsCMField E] {a n : ℕ} (e : a = n) (Q : CuspSub E a)
     (π : CuspSub E n) (h : e ▸ Q.V = π.V) : (⟨a, CG.mk Q⟩ : Σ k, CG E k) = ⟨n, CG.mk π⟩ := by
@@ -31,14 +31,44 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.preOf :
     (GlobalTheory.CuspRep.LocEx.exists_isLocComp UpperTheory.V.Af.formsFiniteGL E (D.N i) (P i) w).imp fun σ h =>
       ((cuspSub_iff (P i)).2.1 w σ).2 h.1
   choose σ hσ using hl
+  have hdisc (i : Fin D.c) : IsDiscrete (P i).V :=
+    isDiscrete_of_cuspSub (P i) fun φ hφ => by
+      obtain ⟨C, hC⟩ := GlobalTheory.CompanionTheory.CuspFinGL.cuspFormsBoundedGL.of_invariant
+        ((P i).cusp φ hφ) (hnorm i φ hφ)
+      exact GlobalTheory.DiscChar.isSqInt_of_bounded (hnorm i φ hφ) (C := C) fun g => by
+        simpa using hC g
+  have hinf (i : Fin D.c) (τ : E →+* ℂ) :
+      HasInfCharGL (P i).V τ ((CG.mk (P i)).infChar τ) :=
+    ((cuspSub_iff (P i)).2.2 τ _).2 (GlobalTheory.CuspRep.ParLaws.hasInfChar_infChar (CG.mk (P i)) τ)
   let D' : PositivityTheory.Rg.BcB.F.Pre E n := ⟨D.c, D.N, D.sum, fun i => (P i).V, σ, fun i τ => (CG.mk (P i)).infChar τ,
-    D.pos, fun i => isDiscrete_of_norm' (hnorm i), hσ, fun i τ =>
-      ((cuspSub_iff (P i)).2.2 τ _).2 (GlobalTheory.CuspRep.ParLaws.hasInfChar_infChar (CG.mk (P i)) τ)⟩
+    D.pos, hdisc, hσ, hinf⟩
   have hsat : ∀ w B, D.Sat w B → D'.Sat w B := by
     rintro w B ⟨b, hb, rfl⟩
     refine ⟨b, fun i => ?_, rfl⟩
-    have h := (sat_part rfl (P i).V (P i) rfl w (σ i w) (hσ i w) (b i)).1 (by rw [hP i]; exact hb i)
-    exact ⟨h.1, h⟩
+    let part : PositivityTheory.Rg.BcB.F.Pre E (D.N i) :=
+      ⟨1, fun _ => D.N i, by simp, fun _ => (P i).V, fun _ => σ i,
+        fun _ => (CG.mk (P i)).infChar, fun _ => D.pos i, fun _ => hdisc i,
+        fun _ => hσ i, fun _ => hinf i⟩
+    have hone : GOne.One part (P i) := ⟨rfl, fun _ => ⟨rfl, rfl⟩⟩
+    have hpart := (GOne.oneSat E (D.N i) (D.pos i) (P i) part hone w (b i)).1
+      (by rw [hP i]; exact hb i)
+    obtain ⟨b', hb', hsum⟩ := hpart
+    have heq : b' 0 = b i := by simpa using hsum
+    exact heq ▸ hb' 0
+  have hconj {w u : Pl E} (h : PositivityTheory.Rg.BcB.F.ConjPl w u) : cPl u = w := by
+    obtain ⟨hunder, hsplit⟩ := h
+    by_cases e : u = w
+    · subst e
+      exact (GlobalTheory.ConjAtPlace.conjSrc_eq_iff u).2 (hsplit.resolve_left fun h => h rfl)
+    · rcases (GlobalTheory.Mem.Chr.under_eq_iff_conjPl (IsCMField.complexConj E)
+        (Algebra.IsQuadraticExtension.finrank_eq_two _ _) (IsCMField.complexConj_ne_one E) u w).1 hunder.symm with h | h
+      · exact absurd h.symm e
+      · refine (eq_conjSrc ?_).symm
+        rw [GlobalTheory.Mem.Chr.conjPl_iff_mem] at h ⊢
+        intro x y hxy
+        refine (h y x ?_).symm
+        rw [hxy]
+        exact (IsCMField.complexConj_apply_apply E _).symm
   have hcof : Tendsto (cPl : Pl E → Pl E) cofinite cofinite :=
     Function.Injective.tendsto_cofinite fun x y e => by rw [← hcc x, ← hcc y, e]
   refine ⟨D', fun τ => ?_, ?_, hSp.mono fun w hw hs => (hw hs).imp fun B hB => ⟨hsat w B hB.1, hB.2⟩, ?_⟩
@@ -52,7 +82,7 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.preOf :
       obtain ⟨B', hπ', hu⟩ := h4
       obtain rfl := CG.HasSat.unique hπ hπ'
       refine ⟨B, hsat w B hB, fun u hu' => ?_⟩
-      have e : u = cPl w := by rw [← conj_eq hu', hcc]
+      have e : u = cPl w := by rw [← hconj hu', hcc]
       have hs : IsSplitAt u := by
         rw [e]
         refine (hsp _).2 ?_
@@ -64,7 +94,7 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.preOf :
     · obtain ⟨B, hB, hinv⟩ := h1 hw
       refine ⟨B, hsat w B hB, fun u hu' => ?_⟩
       have e : u = w := by
-        rw [← hcc u, conj_eq hu']
+        rw [← hcc u, hconj hu']
         by_contra h
         exact hw ((hsp w).2 h)
       subst e

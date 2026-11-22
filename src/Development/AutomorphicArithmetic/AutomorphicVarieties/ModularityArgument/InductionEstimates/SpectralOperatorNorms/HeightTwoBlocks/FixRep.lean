@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContRep
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -73,9 +77,16 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.fixRep :
       ∀ (y : L2 μ) (Φ : G1 K n → ℂ), Continuous Φ → Reps μ (Rop μ a y) Φ → D.Fix Φ := by
   intro K _ _ n μ _ D a hH y Φ hΦ hrep g
   haveI := D.prob
-  have hc := isContRep_rconv μ a y
+  have hc : Continuous (rconv (Gam K n) μ a y) := continuous_rconv (Gam K n) μ a y
+  have hae : (fun z => (Rop μ a y) (mk (Gam K n) z)) =ᵐ[μ]
+      rconv (Gam K n) μ a y := by
+    have := isFiniteMeasure_quotientMeasure (K := K) (n := n) μ
+    filter_upwards [QuasiMeasurePreserving.ae_eq_comp (quasiMeasurePreserving_mk (Gam K n) μ)
+      (integrated_ae_eq_rconvQ (Gam K n) μ a y)] with z hz
+    simpa only [Function.comp_apply, rconvQ_mk, Rop] using hz
   have hEq : Φ = rconv (Gam K n) μ a y := by
-    refine (hΦ.ae_eq_iff_eq μ hc.1).1 ?_
-    exact Filter.EventuallyEq.trans (Filter.EventuallyEq.symm hrep) hc.2.2
+    refine (hΦ.ae_eq_iff_eq μ hc).1 ?_
+    exact Filter.EventuallyEq.trans (Filter.EventuallyEq.symm hrep) hae
   rw [hEq]
+  set_option synthInstance.maxHeartbeats 200000 in
   exact rconv_fix (Gam K n) μ D.ν (typeFin D).1 D.supp D.cont a (fun g => (hH g).1) y g

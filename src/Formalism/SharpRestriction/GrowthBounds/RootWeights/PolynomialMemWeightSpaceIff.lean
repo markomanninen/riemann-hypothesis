@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.GlOperatorPreservesMultidegree
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.GlOperatorPreservesMultidegree
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,13 +28,14 @@ theorem diagonal_derivation_monomial (LL : Letters ι) (S : Set ι) (a : Fin n) 
   rw [gl_derivation_monomial]
   simp only [monomial_shift_cancel]
   unfold wtS
-  rw [Int.cast_sum, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Int.cast_sum, Finset.sum_mul, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   split_ifs <;> simp [mul_comm]
 
 theorem diagonal_derivation_coeff (LL : Letters ι) (S : Set ι) (a : Fin n) (F : MvPolynomial (ι × Fin n) K)
     (m : ι × Fin n →₀ ℕ) :
-    coeff m (glDerivation K LL S a a F) = ((wtS LL S m a : ℤ) : K) * coeff m F := by
+    AddMonoidAlgebra.coeff (glDerivation K LL S a a F) m = ((wtS LL S m a : ℤ) : K) * AddMonoidAlgebra.coeff F m := by
   classical
   induction F using MvPolynomial.induction_on' with
   | monomial u b =>
@@ -40,7 +45,7 @@ theorem diagonal_derivation_coeff (LL : Letters ι) (S : Set ι) (a : Fin n) (F 
       rfl
     · simp
   | add p q hp hq =>
-    rw [map_add, coeff_add, hp, hq, coeff_add, mul_add]
+    rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq, MvPolynomial.coeff_add, mul_add]
 
 theorem polynomial_mem_weightSpace_iff (LL : Letters ι) (S : Set ι) (mu : Fin n → ℤ) (F : MvPolynomial (ι × Fin n) K) :
     F ∈ weightSp (glOps K n LL S) mu ↔ ∀ a, glDerivation K LL S a a F = ((mu a : ℤ) : K) • F := by
@@ -51,9 +56,9 @@ theorem polynomial_mem_weightSpace_iff (LL : Letters ι) (S : Set ι) (mu : Fin 
 theorem weight_vector_monomial_weight [CharZero K] (LL : Letters ι) (S : Set ι) (mu : Fin n → ℤ) (F : MvPolynomial (ι × Fin n) K)
     (hF : F ∈ weightSp (glOps K n LL S) mu) (m : ι × Fin n →₀ ℕ) (hm : m ∈ F.support) : wtS LL S m = mu := by
   funext a
-  have h := congrArg (coeff m) ((polynomial_mem_weightSpace_iff LL S mu F).1 hF a)
+  have h := congrArg (AddMonoidAlgebra.coeff · m) ((polynomial_mem_weightSpace_iff LL S mu F).1 hF a)
   rw [diagonal_derivation_coeff, coeff_smul, smul_eq_mul] at h
-  have hc : coeff m F ≠ 0 := mem_support_iff.1 hm
+  have hc : AddMonoidAlgebra.coeff F m ≠ 0 := mem_support_iff.1 hm
   have h2 := mul_right_cancel₀ hc h
   exact_mod_cast h2
 
@@ -70,7 +75,7 @@ theorem polynomial_isGLRep (LL : Letters ι) (S : Set ι) : IsGLRep (glOps K n L
     haveI : ∀ m : x.support, FiniteDimensional K (Pol K n (fun i => multideg (m : ι × Fin n →₀ ℕ) i)) :=
       fun m => homogeneous_multidegree_findim _
     refine ⟨⨆ m : x.support, Pol K n (fun i => multideg (m : ι × Fin n →₀ ℕ) i), inferInstance, ?_, ?_⟩
-    · have key : ∑ m ∈ x.support, monomial m (coeff m x) ∈
+    · have key : ∑ m ∈ x.support, monomial m (AddMonoidAlgebra.coeff x m) ∈
           ⨆ m : x.support, Pol K n (fun i => multideg (m : ι × Fin n →₀ ℕ) i) := by
         apply Submodule.sum_mem
         intro m hm
@@ -91,11 +96,11 @@ theorem polynomial_isGLRep (LL : Letters ι) (S : Set ι) : IsGLRep (glOps K n L
         exact Submodule.mem_iSup_of_mem m (gl_operator_preserves_multidegree LL S _ a b z hz)
       · simp
       · intro z w hz hw
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ hz hw
   · rw [eq_top_iff]
     intro F _
-    have key : ∑ m ∈ F.support, monomial m (coeff m F) ∈ ⨆ mu : Fin n → ℤ, weightSp (glOps K n LL S) mu := by
+    have key : ∑ m ∈ F.support, monomial m (AddMonoidAlgebra.coeff F m) ∈ ⨆ mu : Fin n → ℤ, weightSp (glOps K n LL S) mu := by
       apply Submodule.sum_mem
       intro m _
       exact Submodule.mem_iSup_of_mem (wtS LL S m) (monomial_mem_weightSpace LL S m _)

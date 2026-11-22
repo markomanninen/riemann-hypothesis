@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeSupportLattices
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitOffDetection
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckePrimeDetection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOnMemGoodPart
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFramedPointBaseChangeAlgHom
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
-import Formalism.LocalToGlobal.ProjectiveLattices.AxHSupA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeSupportLattices
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitOffDetection
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckePrimeDetection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOnMemGoodPart
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFramedPointBaseChangeAlgHom
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHSupA
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,7 +36,7 @@ theorem baseChange_mem {K K' M : Type} [Field K] [Field K'] [Algebra K K'] [AddC
     obtain ⟨v, hv, rfl⟩ := hx
     exact Submodule.subset_span ⟨φ v, h v hv, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem span_mem {K' M : Type} [Field K'] [AddCommGroup M] [Module K' M] (O : ValuationSubring K')
@@ -41,7 +45,7 @@ theorem span_mem {K' M : Type} [Field K'] [AddCommGroup M] [Module K' M] (O : Va
   induction hx using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span (h x hx)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx =>
     have : φ (a • x) = a • φ x := φ.map_smul (a : K') x
     rw [this]; exact Submodule.smul_mem _ _ hx
@@ -56,7 +60,8 @@ theorem keeps_of (la : HeightOneSpectrum (𝓞 Ks)) (hL : WL →ₗ[LL] WL) (hW 
     (hr : ∀ g : G, hL ∘ₗ Φ.ρ g = Φ.ρ g ∘ₗ hL) : Keeps Φ la hL hW := by
   have he : ∀ eC : G → LL, hL ∘ₗ Φ.eOp eC = Φ.eOp eC ∘ₗ hL := fun eC => by
     ext x
-    simp only [FormsL.eOp, LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [FormsL.eOp, LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
     exact Finset.sum_congr rfl fun g _ => congrArg _ (LinearMap.congr_fun (hr g) x)
   have ht : ∀ (J : Subgroup G) (lam : J →* LLˣ), ∀ x ∈ Φ.typeP J lam, hL x ∈ Φ.typeP J lam := fun J lam x hx p => by
     have h1 : Φ.ρ p (hL x) = hL (Φ.ρ p x) := (LinearMap.congr_fun (hr p) x).symm
@@ -197,7 +202,7 @@ theorem transform_integral (hI : GlobalTheory.IndefiniteRowSideFullHecke.UnusedS
     rw [← e1]
     have : evR Xo c g z = algebraMap c.F Ω s * x := e2
     rw [this, inv_mul_cancel_left₀ ((map_ne_zero _).2 hs0)]
-  rw [← e3, isIntegral_algebraMap_iff (algebraMap T.Fr Ω).injective] at hint
+  rw [← e3, isIntegral_algebraMap_iff ] at hint
   obtain ⟨w, hw⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral hint
   have e4 : evI y g = io s * algebraMap T.V T.Fr w := by
     rw [hw, mul_inv_cancel_left₀ ((map_ne_zero _).2 hs0)]

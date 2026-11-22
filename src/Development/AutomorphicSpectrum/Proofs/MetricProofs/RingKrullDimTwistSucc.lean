@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsHorizontalTwist
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsHorizontalTwist
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,11 +62,12 @@ theorem toA_quad (p : ℕ) (W : Ideal (MRing ι)) : toA p W (quad p) = 0 := by
   have h : AdjoinRoot.mk (quadP p W) (Polynomial.X ^ 2 +
       Polynomial.C (Polynomial.C ((p : ℤ) : MRing ι ⧸ W) * Polynomial.X ^ 2)) = 0 :=
     AdjoinRoot.mk_self
-  simp only [map_add, map_pow, map_mul, AdjoinRoot.mk_X, AdjoinRoot.mk_C, map_intCast,
+  set_option synthInstance.maxHeartbeats 200000 in
+  simp only [map_add (f := _), map_pow, map_mul, AdjoinRoot.mk_X, AdjoinRoot.mk_C, map_intCast,
     Int.cast_natCast, map_natCast] at h
   have hC : toA p W (MvPolynomial.C (p : ℤ)) = (p : AdjoinRoot (quadP p W)) := by
     rw [map_natCast MvPolynomial.C p, map_natCast]
-  simp only [quad, map_add, map_mul, map_pow, toA_xN, toA_yN, hC]
+  simp only [quad, map_add (f := toA p W), map_mul, map_pow, toA_xN, toA_yN, hC]
   linear_combination h
 
 theorem twist_le_ker_toA (p : ℕ) (W : Ideal (MRing ι)) : twist p W ≤ RingHom.ker (toA p W) := by
@@ -106,7 +111,7 @@ theorem quotA_baseP (p : ℕ) (W : Ideal (MRing ι)) (g : Polynomial (MRing ι �
 
 theorem baseMap_injective (p : ℕ) (W : Ideal (MRing ι)) [Nontrivial (MRing ι ⧸ W)] :
     Function.Injective (baseP p W) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro g hg
   have h0 : AdjoinRoot.of (quadP p W) g = 0 := by
     rw [← quotA_baseP, hg, map_zero]
@@ -162,7 +167,7 @@ theorem baseMap_isIntegral (p : ℕ) (W : Ideal (MRing ι)) (b : MRing (Tb ι) �
   induction f using MvPolynomial.induction_on
   · rw [eq_intCast MvPolynomial.C, map_intCast, ← map_intCast (baseP p W)]
     exact RingHom.isIntegralElem_map _
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact RingHom.IsIntegralElem.add _ ‹_› ‹_›
   · rw [map_mul]
     exact RingHom.IsIntegralElem.mul _ ‹_› (baseMap_isIntegralElem_X p W _)

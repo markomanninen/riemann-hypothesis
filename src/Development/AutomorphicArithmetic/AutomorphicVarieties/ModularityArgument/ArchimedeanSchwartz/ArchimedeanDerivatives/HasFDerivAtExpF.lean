@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.IntegralHWMul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.IntegralHWMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ private theorem detD_expF (e : ℝ) (y : Lie K n) (τ : K →+* ℂ) :
   refine Finset.sum_congr rfl fun p _ => ?_
   ring
 
-variable [IsTotallyComplex K]
+variable [_root_.NumberField.IsTotallyComplex K]
 
 private theorem four_detD (e : ℝ) (τ : K →+* ℂ) (Φ : Lie K n → ℂ) (hΦ : IsTest Φ) (y : Lie K n) :
     four e (detD τ Φ) y = (-(Complex.I * e / 2)) ^ n * detAt τ y * four e Φ y := by

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.JointServices
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.JointServices
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.BasicNotions.DV

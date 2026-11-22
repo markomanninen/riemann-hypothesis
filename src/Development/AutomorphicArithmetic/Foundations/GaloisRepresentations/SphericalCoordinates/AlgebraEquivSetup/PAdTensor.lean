@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsTensorFiniteAdeleEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixExtPLoc
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsTensorFiniteAdeleEquiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixExtPLoc
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed
 open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
 open scoped TensorProduct
@@ -35,7 +40,7 @@ private theorem valued_completionMap_le {E : Type} [Field E] [NumberField E] (P 
     exact zero_ne_one h
   rw [GroundTheory.Global.SemiLocal.valued_completionMap]
   refine le_trans ?_ ht
-  refine pow_le_of_le_one zero_le' (ht.trans ?_) he
+  refine pow_le_of_le_one zero_le (ht.trans ?_) he
   rw [← WithZero.exp_zero, WithZero.exp_le_exp]
   omega
 
@@ -54,7 +59,7 @@ private theorem ringHom_eq {E : Type} [Field E] [NumberField E] (P : Plc E) (v :
         (continuous_id.sub continuous_const)
     obtain ⟨k, hk⟩ := hd.exists_mem_open hopen ⟨x, by simp⟩
     have hk' : Valued.v (q k - x) ≤ WithZero.exp (-(n : ℤ)) := by
-      simpa only [Set.mem_setOf_eq] using hk
+      simpa only [Set.mem_ofPred_eq] using hk
     have h : φ (q k) = ψ (q k) := RingHom.congr_fun (Subsingleton.elim (φ.comp q) (ψ.comp q)) k
     have e : φ x - ψ x = ψ (q k - x) - φ (q k - x) := by
       rw [map_sub φ, map_sub ψ, h]
@@ -141,6 +146,7 @@ theorem UpperTheory.Gal.W2.Seed.pAdTensor :
     obtain ⟨m, g, hg⟩ := Module.Finite.exists_fin (R := ℤ) (M := 𝓞 E)
     obtain ⟨r, hr, e⟩ := Formalism.UG.P.levelaf_decomp g hg h
     have e' : y = c.symm (c y) := (c.symm_apply_apply y).symm
-    rw [e', e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e', e, map_sum]
     refine sum_mem fun i _ => AddSubgroup.subset_closure ⟨r i, g i, hr i, ?_⟩
     rw [hc']

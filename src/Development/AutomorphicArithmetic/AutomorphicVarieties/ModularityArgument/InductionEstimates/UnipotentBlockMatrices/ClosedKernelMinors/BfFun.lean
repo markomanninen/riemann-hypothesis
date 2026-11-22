@@ -1,16 +1,22 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum
 open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg.Tf.IntegralApplyAeEq
 open scoped ENNReal NumberField.AdeleRing InnerProductSpace ComplexConjugate
-open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial
+namespace UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial
 
-theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.bfFun :
-    ∀ {K : Type} [Field K] [NumberField K] (f : G1 K (2 + 2) → ℂ) (β : ℝ → ℂ), SFun f → Continuous β → HasCompactSupport β → PFun (bf β f) ∧ InBand (bf β f) ∧ Decays (bf β f) := by
+theorem bfFun :
+    ∀ {K : Type} [Field K] [NumberField K] (f : G1 K (2 + 2) → ℂ) (β : ℝ → ℂ),
+      SFun f → Continuous β → HasCompactSupport β →
+        PFun (bf β f) ∧ InBand (bf β f) ∧ Decays (bf β f) := by
   intro K _ _ f β hf hβ hc
   obtain ⟨h1, -, h3, h4, -⟩ := hpSpec (K := K)
   obtain ⟨-, -, hl, -⟩ := blkLaws (K := K)
@@ -60,3 +66,5 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.bfFun :
     refine (mul_le_mul_of_nonneg_right (hle x) (pow_nonneg (AutomorphicForm.height_pos _).le N)).trans ?_
     rw [mul_assoc]
     exact mul_le_mul_of_nonneg_left h hB0
+
+end UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial

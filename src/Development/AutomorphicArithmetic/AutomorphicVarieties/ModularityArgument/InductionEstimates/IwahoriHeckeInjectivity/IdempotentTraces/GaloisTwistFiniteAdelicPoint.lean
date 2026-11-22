@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitLev
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitMatch
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStableAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.T2SpaceGlCompletionsOver
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.MatchOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.GalLoc
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.OffStable
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
-import Development.AutomorphicArithmetic.AdelicQuotients.AdeleGaloisActionBaseChangeCompat
-import Development.AutomorphicArithmetic.AdelicQuotients.CentralSectionBaseChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitLev
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitMatch
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStableAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.T2SpaceGlCompletionsOver
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.MatchOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.GalLoc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.OffStable
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
+public import Development.AutomorphicArithmetic.AdelicQuotients.AdeleGaloisActionBaseChangeCompat
+public import Development.AutomorphicArithmetic.AdelicQuotients.CentralSectionBaseChange
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -147,8 +151,8 @@ end Key
 
 section Key
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-  [IsTotallyComplex E] {n : ℕ}
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+  [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 private theorem level_at (σ : E ≃ₐ[F] E) (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) (hp : (Module.finrank F E).Prime) (hn : 0 < n)
     (q : Pl F) (S : Finset (Pl F)) (hqS : q ∉ S) (hsp : ∀ v ∈ S, GM.Split E v) (U₀ : ∀ w : Pl E, Subgroup (Gw n w)) (hU₀ : Lev U₀)

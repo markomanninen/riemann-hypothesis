@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.FockSingularValues
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerivationProdPow
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PderivEqZeroOfColOp
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.FockSingularValues
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerivationProdPow
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PderivEqZeroOfColOp
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.MatrixMinorProducts MeasureTheory
 open Formalism.MainNotions.SchurIrreducible (IrrU IrrGK IsHCMod)

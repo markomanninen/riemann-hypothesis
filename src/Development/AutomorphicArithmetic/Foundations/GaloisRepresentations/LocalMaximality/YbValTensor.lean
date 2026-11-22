@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -17,7 +22,7 @@ private lemma UpperTheory.Gal.productCup_of_system.yb_val_add (hV : ValBasic) {L
   obtain ⟨-, ⟨ev, hev⟩, -, -⟩ := hV L B e
   obtain ⟨h1, rfl⟩ := (hev _ _).1 h
   obtain ⟨h2, rfl⟩ := (hev _ _).1 h'
-  exact (hev _ _).2 ⟨(loc B e).add_mem h1 h2, by rw [← map_add]; rfl⟩
+  exact (hev _ _).2 ⟨(loc B e).add_mem h1 h2, by rw [← map_add (f := _)]; rfl⟩
 
 private lemma UpperTheory.Gal.productCup_of_system.yb_val_sub (hV : ValBasic) {L : Type} [Field L] [Algebra ℂ L]
     (B : Subalgebra ℂ L) (e : B →ₐ[ℂ] ℂ) {v w : L} {a b : ℂ}
@@ -82,7 +87,7 @@ private lemma UpperTheory.Gal.productCup_of_system.yb_val_tensor (hV : ValBasic)
     have := UpperTheory.Gal.productCup_of_system.yb_val_mul hV _ e ha hb
     simpa [gS, Algebra.TensorProduct.lmul'_apply_tmul] using this
   | add a b ha hb =>
-    simpa [map_add] using UpperTheory.Gal.productCup_of_system.yb_val_add hV _ e ha hb
+    simpa [map_add (f := _)] using UpperTheory.Gal.productCup_of_system.yb_val_add hV _ e ha hb
 
 private lemma UpperTheory.Gal.productCup_of_system.yb_lmul_map (B : Subalgebra ℂ K) (t : B ⊗[ℂ] B) :
     Algebra.TensorProduct.lmul' ℂ (Algebra.TensorProduct.map B.val B.val t) =
@@ -90,7 +95,7 @@ private lemma UpperTheory.Gal.productCup_of_system.yb_lmul_map (B : Subalgebra �
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [Algebra.TensorProduct.lmul'_apply_tmul]
-  | add a b ha hb => simp [map_add, ha, hb]
+  | add a b ha hb => simp [map_add (f := _), ha, hb]
 
 private lemma UpperTheory.Gal.productCup_of_system.yb_val_diag (hV : ValBasic) (e : rB ℂ K' (xv x) {0} →ₐ[ℂ] ℂ)
     (w : rB ℂ K (xv x) {0} →ₐ[ℂ] ℂ)

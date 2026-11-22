@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -11,7 +15,8 @@ theorem semilinear_pi_eq_sum_single {K : Type} [Field K] (σ : K →+* ℂ) {W :
     ext l
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hx]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [LinearMap.map_smulₛₗ]
 
 theorem span_range_inf_ker_eq_span_rational_ker {K : Type} [Field K] (σ : K →+* ℂ) {W E : Type}
@@ -35,7 +40,8 @@ theorem span_range_inf_ker_eq_span_rational_ker {K : Type} [Field K] (σ : K →
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 (hle hw)
     have h0 : f (∑ k, c k • j (Pi.single k 1)) = 0 := hw0
     have h1 : ∑ l, (∑ k, σ (M l k) * c k) • j' (Pi.single l 1) = 0 := by
-      rw [← h0, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h0, map_sum]
       simp only [map_smul, hf, Finset.sum_smul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun k _ => ?_
@@ -70,7 +76,8 @@ theorem span_range_inf_ker_eq_span_rational_ker {K : Type} [Field K] (σ : K →
     have h4 : b.repr (∑ k, M l k • c k) i = 0 := by
       have : ∑ k, M l k • c k = 0 := h2 l
       rw [this]; simp
-    rw [map_sum, Finsupp.finset_sum_apply] at h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finsupp.finsetSum_apply] at h4
     simp only [map_smul, Finsupp.smul_apply, smul_eq_mul] at h4
     exact h4
   · rw [Submodule.span_le]

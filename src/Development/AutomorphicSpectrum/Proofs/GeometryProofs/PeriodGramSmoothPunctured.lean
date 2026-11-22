@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUncentre
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChainA
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUncentre
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChainA
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,10 +145,10 @@ theorem exists_section {n a : ℕ} (h : a ≤ n) {u₀ : Fin n → ℂ} (hu : u�
       have hs : u₀ k / u₀ k ∈ Complex.slitPlane := by
         rw [div_self (hne k hk)]; exact Complex.one_mem_slitPlane
       have hq : ContDiffAt ℝ ∞ (fun u : Fin n → ℂ => u k / u₀ k) u₀ :=
-        ((contDiff_apply ℝ ℂ k).div_const _).contDiffAt
+        ((contDiff_apply ℝ (fun _ => ℂ) k).div_const _).contDiffAt
       exact (((Complex.contDiffAt_log hs).restrict_scalars ℝ).comp u₀ hq).add contDiffAt_const
     · simp only [if_neg hk]
-      exact (contDiff_apply ℝ ℂ k).contDiffAt
+      exact (contDiff_apply ℝ (fun _ => ℂ) k).contDiffAt
   · have hP : ∀ᶠ u in 𝓝 u₀, u ∈ Flat.punct n a 1 := (isOpen_punct n a 1).mem_nhds hu
     have hS : ∀ᶠ u in 𝓝 u₀, ∀ k : Fin n, k.val < a → u k / u₀ k ∈ Complex.slitPlane := by
       refine eventually_all.2 fun k => ?_
@@ -193,7 +197,8 @@ theorem exists_basis {n a : ℕ} {Λ : Type} [AddCommGroup Λ] (L : Flat.LogPeri
     have h1 : L.E (c i) (b j) = b.coord i (b j) := by rw [hc]
     have h2 : c i = ∑ k, b.repr (c i) k • b k := (b.sum_repr (c i)).symm
     rw [h2] at h1
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul] at h1
     simp only [Matrix.mul_apply, C, M, Matrix.of_apply]
     rw [h1]
     simp [Matrix.one_apply, Finsupp.single_apply, eq_comm]

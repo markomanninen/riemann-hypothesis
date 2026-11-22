@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmissibleLagrangianTransverseFieldStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmissibleLagrangianTransverseFieldStatement
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.LocalLift
@@ -116,7 +121,8 @@ theorem lift_of_field
     have hXπ : X.map π = Xb := by
       have hmm : (X.map π)ᵀ * S.map π = (Xᵀ * S).map π := by
         ext i j
-        simp only [Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply, map_sum, map_mul]
       have e : (X.map π)ᵀ * S.map π = Xbᵀ * S.map π := by
         calc (X.map π)ᵀ * S.map π = (Xᵀ * S).map π := hmm
           _ = Z.map π := by rw [hXS]

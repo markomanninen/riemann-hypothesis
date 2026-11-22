@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapExactMiddle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapExactMiddle
+
+@[expose] public section
 
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries
@@ -54,9 +58,9 @@ theorem ext_coords {k G : Type} [Field k] [Group G] (A E : Ob k G) (z : G → Fi
     apply hi
     have h1 : E.ρ (σ * τ) e = E.ρ σ (E.ρ τ e) := by rw [map_mul]; rfl
     have key : e + a (z (σ * τ)) = e + (a (A.ρ σ (z τ)) + a (z σ)) := by
-      rw [← hz (σ * τ), h1, hz τ, map_add, hz σ, ← ha σ (z τ)]
+      rw [← hz (σ * τ), h1, hz τ, map_add (f := _), hz σ, ← ha σ (z τ)]
       abel
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_left_cancel key
   · obtain ⟨g, hg⟩ := LinearMap.exists_leftInverse_of_injective a (LinearMap.ker_eq_bot.mpr hi)
     have hga : ∀ x, g (a x) = x := fun x => by
@@ -75,7 +79,7 @@ theorem ext_coords {k G : Type} [Field k] [Group G] (A E : Ob k G) (z : G → Fi
     · apply hi
       have h1 : a (r (E.ρ σ y)) = E.ρ σ y - p y 0 • e := by rw [har, hpσ]
       have h2 : a (A.ρ σ (r y) + p y 0 • z σ) = E.ρ σ y - p y 0 • e := by
-        rw [map_add, map_smul, ha σ (r y), har, map_sub, map_smul, hz σ, smul_add]
+        rw [map_add (f := _), map_smul, ha σ (r y), har, map_sub, map_smul, hz σ, smul_add]
         abel
       rw [h1, h2]
 
@@ -154,12 +158,12 @@ theorem Repr.smul_add {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime
     fin_one_funext_of_apply_zero_eq _ _ (by simp [hpa', he'])
   have hEρ : ∀ σ x (t : Fin 1 → k), E.ρ σ (a x + t 0 • e) = a (A.ρ σ x + t 0 • z σ) + t 0 • e := by
     intro σ x t
-    simp only [map_add, map_smul, hz σ, _root_.smul_add]
+    simp only [map_add (f := _), map_smul, hz σ, _root_.smul_add]
     rw [ha σ x]
     abel
   have hEρ' : ∀ σ x (t : Fin 1 → k), E'.ρ σ (a' x + t 0 • e') = a' (A.ρ σ x + t 0 • z' σ) + t 0 • e' := by
     intro σ x t
-    simp only [map_add, map_smul, hz' σ, _root_.smul_add]
+    simp only [map_add (f := _), map_smul, hz' σ, _root_.smul_add]
     rw [ha' σ x]
     abel
   obtain ⟨P, ιP, hιP⟩ := exists_ob (E.ρ.prod E'.ρ)
@@ -184,7 +188,7 @@ theorem Repr.smul_add {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime
     rfl
   obtain ⟨E₂, ι₂, hι₂⟩ := exists_ob_extension_of_cocycle A.ρ (c • z + z') (by simp [hz1, hz1'])
     (fun σ τ => by
-      simp only [Pi.add_apply, Pi.smul_apply, hzm, hzm', map_add, map_smul, _root_.smul_add]
+      simp only [Pi.add_apply, Pi.smul_apply, hzm, hzm', map_add (f := _), map_smul, _root_.smul_add]
       abel)
   obtain ⟨j, hj⟩ : ∃ f : (Fin S.m → k) →ₗ[k] (Fin P.m → k), ∀ (x x' : Fin A.m → k) (t : Fin 1 → k),
       f (ιS ((x, x'), t)) = ιP (a x + t 0 • e, a' x' + t 0 • e') := by
@@ -241,7 +245,7 @@ theorem Repr.smul_add {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime
     obtain ⟨⟨⟨x, x'⟩, t⟩, rfl⟩ := ιS.surjective s
     rw [hSρ, hq, hq, hι₂]
     congr 2
-    simp only [Pi.add_apply, Pi.smul_apply, map_add, map_smul, _root_.smul_add, smul_smul, mul_comm c (t 0)]
+    simp only [Pi.add_apply, Pi.smul_apply, map_add (f := _), map_smul, _root_.smul_add, smul_smul, mul_comm c (t 0)]
     abel
   have hαH : IsHom A S αS := by
     intro σ x
@@ -264,7 +268,7 @@ theorem Repr.smul_add {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime
     intro w
     obtain ⟨⟨y, y'⟩, rfl⟩ := ιP.surjective w
     refine ⟨(y, y'), ?_⟩
-    rw [LinearMap.coprod_apply, hiL, hiR, ← map_add, Prod.mk_add_mk, add_zero, zero_add]
+    rw [LinearMap.coprod_apply, hiL, hiR, ← map_add (f := _), Prod.mk_add_mk, add_zero, zero_add]
   have hjinj : Function.Injective j := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
     intro s hs
@@ -326,7 +330,7 @@ theorem Repr.smul_add {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime
       exact (Prod.mk.inj (ι₂.injective hy)).2.symm
   have hρe : ∀ σ, E₂.ρ σ (ι₂ (0, fun _ => 1)) = ι₂ (0, fun _ => 1) + a₂ ((c • z + z') σ) := by
     intro σ
-    rw [hι₂, ha₂, ← map_add]
+    rw [hι₂, ha₂, ← map_add (f := _)]
     simp
   have hX : ∀ i, F.map P (chr 1) δ i (F.map E P iL i (ε i) + F.map E' P iR i (ε' i)) = 0 := by
     intro i
@@ -334,7 +338,7 @@ theorem Repr.smul_add {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime
       rw [LinearMap.comp_apply, hiL, hδ, map_zero, sub_zero]
     have hδr : δ ∘ₗ iR = (-1 : k) • p' := LinearMap.ext fun y => by
       rw [LinearMap.comp_apply, hiR, hδ, map_zero, zero_sub, LinearMap.smul_apply, neg_one_smul]
-    rw [map_add, map_map_eq_map_comp F E P (chr 1) iL δ hE hPo h1o hiLH hδH,
+    rw [map_add (f := _), map_map_eq_map_comp F E P (chr 1) iL δ hE hPo h1o hiLH hδH,
       map_map_eq_map_comp F E' P (chr 1) iR δ hE' hPo h1o hiRH hδH, hδl, hδr,
       F.map_smul E' (chr 1) p' (-1) hE' h1o hp', (hε i).1, (hε' i).1]
     simp
@@ -362,23 +366,23 @@ theorem Repr.smul_add {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime
   have rhsφ : ∀ i, F.map S P j i (F.map A S αS i (b i) + F.map A S βS i (b' i)) =
       F.map E P iL i (F.map A E a i (b i)) + F.map E' P iR i (F.map A E' a' i (b' i)) := by
     intro i
-    rw [map_add, map_map_eq_map_comp F A S P αS j hAo hSo hPo hαH hjH, map_map_eq_map_comp F A S P βS j hAo hSo hPo hβH hjH,
+    rw [map_add (f := _), map_map_eq_map_comp F A S P αS j hAo hSo hPo hαH hjH, map_map_eq_map_comp F A S P βS j hAo hSo hPo hβH hjH,
       hjα, hjβ, map_map_eq_map_comp F A E P a iL hAo hE hPo ha hiLH, map_map_eq_map_comp F A E' P a' iR hAo hE' hPo ha' hiRH]
   have rhsγ : ∀ i, F.map S P j i (F.map A S αS i (g i) + F.map A S βS i (g' i)) =
       F.map E P iL i (F.map A E a i (g i)) + F.map E' P iR i (F.map A E' a' i (g' i)) := by
     intro i
-    rw [map_add, map_map_eq_map_comp F A S P αS j hAo hSo hPo hαH hjH, map_map_eq_map_comp F A S P βS j hAo hSo hPo hβH hjH,
+    rw [map_add (f := _), map_map_eq_map_comp F A S P αS j hAo hSo hPo hαH hjH, map_map_eq_map_comp F A S P βS j hAo hSo hPo hβH hjH,
       hjα, hjβ, map_map_eq_map_comp F A E P a iL hAo hE hPo ha hiLH, map_map_eq_map_comp F A E' P a' iR hAo hE' hPo ha' hiRH]
   have hSφ : ∀ i, (F.D S).φ i (εS (i - 1)) - εS i = F.map A S αS i (b i) + F.map A S βS i (b' i) := by
     intro i
     apply F.map_inj S P j hSo hPo hjH hjinj i
-    rw [map_sub, F.map_φ S P j hSo hPo hjH, hεS, hεS, rhsφ, map_add, (hε i).2.1, (hε' i).2.1, map_sub, map_sub,
+    rw [map_sub, F.map_φ S P j hSo hPo hjH, hεS, hεS, rhsφ, map_add (f := _), (hε i).2.1, (hε' i).2.1, map_sub, map_sub,
       F.map_φ E P iL hE hPo hiLH, F.map_φ E' P iR hE' hPo hiRH]
     abel
   have hSγ : ∀ i, (F.D S).γ i (εS i) - εS i = F.map A S αS i (g i) + F.map A S βS i (g' i) := by
     intro i
     apply F.map_inj S P j hSo hPo hjH hjinj i
-    rw [map_sub, F.map_γ S P j hSo hPo hjH, hεS, rhsγ, map_add, (hε i).2.2, (hε' i).2.2, map_sub, map_sub,
+    rw [map_sub, F.map_γ S P j hSo hPo hjH, hεS, rhsγ, map_add (f := _), (hε i).2.2, (hε' i).2.2, map_sub, map_sub,
       F.map_γ E P iL hE hPo hiLH, F.map_γ E' P iR hE' hPo hiRH]
     abel
   refine ⟨E₂, a₂, p₂, ι₂ (0, fun _ => 1), fun i => F.map S E₂ q i (εS i), hE₂o, ha₂H, hp₂H, ha₂inj,
@@ -391,13 +395,13 @@ theorem Repr.smul_add {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Prime
       hπl, hπr, F.map_id E hE i, map_zero_apply_eq_zero F E' E hE' hE, LinearMap.id_apply, add_zero, (hε i).1]
   · dsimp only
     have h := congrArg (F.map S E₂ q i) (hSφ i)
-    rw [map_sub, F.map_φ S E₂ q hSo hE₂o hqH, map_add, map_map_eq_map_comp F A S E₂ αS q hAo hSo hE₂o hαH hqH,
+    rw [map_sub, F.map_φ S E₂ q hSo hE₂o hqH, map_add (f := _), map_map_eq_map_comp F A S E₂ αS q hAo hSo hE₂o hαH hqH,
       map_map_eq_map_comp F A S E₂ βS q hAo hSo hE₂o hβH hqH, hqα, hqβ, F.map_smul A E₂ a₂ c hAo hE₂o ha₂H] at h
-    rw [h, Pi.add_apply, Pi.smul_apply, map_add, LinearMap.map_smul_of_tower]
+    rw [h, Pi.add_apply, Pi.smul_apply, map_add (f := _), LinearMap.map_smul_of_tower]
   · dsimp only
     have h := congrArg (F.map S E₂ q i) (hSγ i)
-    rw [map_sub, F.map_γ S E₂ q hSo hE₂o hqH, map_add, map_map_eq_map_comp F A S E₂ αS q hAo hSo hE₂o hαH hqH,
+    rw [map_sub, F.map_γ S E₂ q hSo hE₂o hqH, map_add (f := _), map_map_eq_map_comp F A S E₂ αS q hAo hSo hE₂o hαH hqH,
       map_map_eq_map_comp F A S E₂ βS q hAo hSo hE₂o hβH hqH, hqα, hqβ, F.map_smul A E₂ a₂ c hAo hE₂o ha₂H] at h
-    rw [h, Pi.add_apply, Pi.smul_apply, map_add, LinearMap.map_smul_of_tower]
+    rw [h, Pi.add_apply, Pi.smul_apply, map_add (f := _), LinearMap.map_smul_of_tower]
 
 end GlobalTheory.TopSteps

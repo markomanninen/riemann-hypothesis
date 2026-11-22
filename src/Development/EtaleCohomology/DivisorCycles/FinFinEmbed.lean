@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.FinEmbedPf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.FinEmbedPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.FinEmbed
 theorem etale_semisimple_finite_embedding_holds_assembled : LateralTheory.DivDb.FinEmbed := by

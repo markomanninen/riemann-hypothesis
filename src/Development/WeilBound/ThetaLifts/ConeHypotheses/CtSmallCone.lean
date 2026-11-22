@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.ConeHypotheses.KeyAOf
+module
+
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.KeyAOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -184,7 +188,7 @@ theorem isConst_of (m : IsMatched B G X om om' R Rf) {c : ℂ} (h : PolConst B G
     I_sum t.weil (L.conv t) _ _ (fun i => pureA_mem _ (h1 i).1) x
   have l1 : Tendsto (fun j => G.M.I om (∑ i, pureA F (s j i) (g i)) x) atTop (𝓝 (G.M.I om (∑ i, pureA F (f i) (g i)) x)) := by
     simp only [e]
-    exact tendsto_finset_sum _ fun i _ =>
+    exact tendsto_finsetSum _ fun i _ =>
       (((L.weilConv F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (pairV t) (weilCondV t)).2 _ (h1 i).1 x).tendsto _).comp (h1 i).2
   exact tendsto_nhds_unique l1 ((l2.const_mul c).congr fun j => (h _ _ (h3 j).1 (h3 j).2 x).symm)
 

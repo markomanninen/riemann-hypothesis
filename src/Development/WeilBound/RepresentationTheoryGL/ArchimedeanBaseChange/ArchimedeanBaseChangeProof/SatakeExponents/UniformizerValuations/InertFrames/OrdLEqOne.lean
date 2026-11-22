@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameInert
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameInert
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem ordL_eq_one {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ
     ordL x = 1 := by
   unfold ordL
   have h0 : Valued.v x ≠ 0 := by rw [hx]; exact WithZero.coe_ne_zero
-  rw [dif_neg h0]
+  rw [dite_eq_right h0]
   have hu : WithZero.unzero h0 = Multiplicative.ofAdd (-1 : ℤ) :=
     WithZero.coe_injective ((WithZero.coe_unzero h0).trans hx)
   rw [hu]

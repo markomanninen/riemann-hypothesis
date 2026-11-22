@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIndepBridge
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyWeilDelignePotSemistableEnlargeCoefficie
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPotentiallySemistableCoefficientFieldEnlarge
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIndepBridge
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyWeilDelignePotSemistableEnlargeCoefficie
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPotentiallySemistableCoefficientFieldEnlarge
+
+@[expose] public section
 
 noncomputable section
 
@@ -151,8 +155,8 @@ section Conj
 variable {l : ℕ} [Fact l.Prime] (P : LocPrime l) {LL : Type} [Field LL] [Algebra ℚ_[l] LL]
   {V : Type} [AddCommGroup V] [Module LL V] [Module ℚ_[l] V] [IsScalarTower ℚ_[l] LL V]
 
-variable (LL V) in
 
+variable (LL V) in
 def conjV (g : GQ l) : End LL (V ⊗[ℚ_[l]] Bst P) := onB P LL V (actSt P g).toLinearMap
 
 theorem conjV_tmul (g : GQ l) (v : V) (b : Bst P) : conjV P LL V g (v ⊗ₜ b) = v ⊗ₜ actSt P g b := rfl
@@ -256,10 +260,14 @@ theorem wdPst_eq_of_map {L₁ L₂ : FinExt l}
     [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ₁)] [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ₂)]
     (hV₁ : IsPst P ρ₁) (hV₂ : IsPst P ρ₂) (hdim : finrank ↥L₁.1 V₁ = finrank ↥L₂.1 V₂)
     (s : ↥L₁.1 →+* ↥L₂.1) (hs : ∀ a, (s a : Om l) = (a : Om l))
-    (T : ↥(Dpst P ρ₁) →+ ↥(Dpst P ρ₂)) (hT : ∀ (a : ↥L₁.1) x, T (a • x) = s a • T x)
+    (T : ↥(Dpst P ρ₁) →+ ↥(Dpst P ρ₂))
+    (hT : ∀ (a : ↥L₁.1) (x : ↥(Dpst P ρ₁)),
+      T ((Submodule.smul (p := Dpst P ρ₁)).smul a x) =
+        (Submodule.smul (p := Dpst P ρ₂)).smul (s a) (T x))
     (hm : ∀ c x, T (mulD P ρ₁ c x) = mulD P ρ₂ c (T x))
     (hw : ∀ σ x, T (weilD B h P ρ₁ σ x) = weilD B' h P ρ₂ σ (T x))
-    (a : ↥L₂.1) (ha : a ≠ 0) (hN : ∀ x, T (monD P ρ₁ x) = a • monD P ρ₂ (T x))
+    (a : ↥L₂.1) (ha : a ≠ 0)
+    (hN : ∀ x, T (monD P ρ₁ x) = (Submodule.smul (p := Dpst P ρ₂)).smul a (monD P ρ₂ (T x)))
     (hsp : ∀ y, wdMk P ι ρ₂ y ∈ Submodule.span ℂ (Set.range fun x => wdMk P ι ρ₂ (T x))) :
     wdPst P ι B h hj ρ₁ = wdPst P ι B' h hj' ρ₂ := by
   letI := algC ι L₁
@@ -303,8 +311,8 @@ variable {l : ℕ} [Fact l.Prime] (P : LocPrime l) (ι : Om l ≃+* ℂ)
   (B : LocBridge l E Ω (Dec (F := E) A) O) (B' : LocBridge l E Ω (Dec (F := E) A) O')
   (h : IsPlaceOver A w) (hj : Induces B) (hj' : Induces B')
 
-open EnlargeCoeff in
 
+open EnlargeCoeff in
 theorem mem_span_dQ {K L₁ L₂ : FinExt l}
     {V₁ V₂ : Type} [AddCommGroup V₁] [Module ↥L₁.1 V₁] [Module ℚ_[l] V₁] [IsScalarTower ℚ_[l] ↥L₁.1 V₁]
     [AddCommGroup V₂] [Module ↥L₂.1 V₂] [Module ℚ_[l] V₂] [IsScalarTower ℚ_[l] ↥L₂.1 V₂]
@@ -313,20 +321,20 @@ theorem mem_span_dQ {K L₁ L₂ : FinExt l}
     {n : ℕ} (b : Fin n → ↥L₂.1) (π : Fin n → V₂ →ₗ[ℚ_[l]] V₁) (hπ : ∀ j g v, π j (ρ₂ g v) = ρ₁ g (π j v))
     (hsum : ∀ v, ∑ j, b j • f (π j v) = v) (x : ↥(Dpst P ρ₂)) :
     wdMk P ι ρ₂ x ∈ Submodule.span ℂ (Set.range fun y => wdMk P ι ρ₂ (dQ P hf y)) := by
-  have hx : x = ∑ j, b j • dQ P hf (dQ P (hπ j) x) := by
+  have hx : x = ∑ j, (Submodule.smul (p := Dpst P ρ₂)).smul (b j) (dQ P hf (dQ P (hπ j) x)) := by
     apply Subtype.ext
     simp only [Submodule.coe_sum, Submodule.coe_smul, coe_dQ]
     exact (sum_tensQ P b π hsum x.1).symm
   have hms := map_sum (AddMonoidHom.mk' (wdMk P ι ρ₂) (wdMk_add P ι ρ₂))
-    (fun j => b j • dQ P hf (dQ P (hπ j) x)) Finset.univ
+    (fun j => (Submodule.smul (p := Dpst P ρ₂)).smul (b j) (dQ P hf (dQ P (hπ j) x))) Finset.univ
   simp only [AddMonoidHom.mk'_apply] at hms
   rw [hx, hms]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [wdMk_smul]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
 
-open EnlargeCoeff in
 
+open EnlargeCoeff in
 theorem wdPst_enlarge {m : ℕ} {L₁ L₂ : FinExt l} (hL : L₁.1 ≤ L₂.1) (r₁ : ↥(Dec (F := E) A) →* GL (Fin m) ↥L₁.1)
     (hV₁ : IsPst P (B.repE L₁ r₁)) :
     wdPst P ι B h hj (B.repE L₁ r₁) =

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.DYhc7.Iwa :
     {G : Type} → [inst : Group G] → Subgroup G → Subgroup G → Prop :=

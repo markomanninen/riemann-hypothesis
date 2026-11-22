@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -64,7 +69,8 @@ theorem algebraicIndependent_pair_linear {R A : Type*} [CommRing R] [CommRing A]
     if μ 0 + μ 1 = D then Polynomial.C (p.coeff μ) * Polynomial.X ^ (μ 1) else 0
   have hg : Polynomial.aeval η g = ((Q.coeff D : B') : A) := by
     rw [hcoeff]
-    simp only [g, map_sum, AddSubmonoidClass.coe_finsetSum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [g, map_sum, AddSubmonoidClass.coe_finsetSum]
     refine Finset.sum_congr rfl fun μ _ => ?_
     split_ifs <;> simp [η']
   have hg0 : g ≠ 0 := by
@@ -74,7 +80,7 @@ theorem algebraicIndependent_pair_linear {R A : Type*} [CommRing R] [CommRing A]
       rw [Finsupp.sum_fintype _ _ (by simp), Fin.sum_univ_two] at hμD
       exact hμD.symm
     intro h0
-    have hc := congrArg (fun q => Polynomial.coeff q (μ 1)) h0
+    have hc := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q (μ 1)) h0
     simp only [g, Polynomial.finsetSum_coeff, Polynomial.coeff_zero] at hc
     rw [Finset.sum_eq_single μ] at hc
     · rw [if_pos hμD', Polynomial.coeff_C_mul_X_pow, if_pos rfl] at hc
@@ -268,9 +274,7 @@ theorem exists_indep {F E : Type} [Field F] [Field E] [Algebra F E] {N : ℕ} (�
   have h2 := h1.map' (f := D.val) Subtype.val_injective
   convert h2 using 1
   funext l
-  simp only [Function.comp_apply]
-  rw [← hj l]
-  rfl
+  exact congrArg Subtype.val (hj l)
 
 end GenericLinearTrdeg
 

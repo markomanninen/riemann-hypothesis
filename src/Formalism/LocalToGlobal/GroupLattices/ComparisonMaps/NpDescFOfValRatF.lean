@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NpDescOfValRat
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.TiedRec
-import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NpDescOfValRat
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.TiedRec
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
+
+@[expose] public section
 
 namespace Formalism.L2.G.Cmp
 

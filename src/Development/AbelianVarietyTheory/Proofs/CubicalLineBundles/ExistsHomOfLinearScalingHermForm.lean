@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SurjectiveOfComplexPointsLiftOfUniversallyClosed
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsReducedSchemeOfSmoothOfIsIntegrallyClosed
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.DenseClosedPoints
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SurjectiveOfComplexPointsLiftOfUniversallyClosed
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsReducedSchemeOfSmoothOfIsIntegrallyClosed
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.DenseClosedPoints
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,15 +33,11 @@ lemma val_mul {U : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ U) (f f' : Γ(X, U)) :
 lemma val_add {U : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ U) (f f' : Γ(X, U)) :
     valAt' x U (f + f') = valAt' x U f + valAt' x U f' := by
   obtain ⟨e, he⟩ := (valueRules X x).2.1 U h
-  simp only [he, map_add]
+  simp only [he, map_add (f := _)]
 
 lemma val_one {U : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ U) : valAt' x U 1 = 1 := by
   obtain ⟨e, he⟩ := (valueRules X x).2.1 U h
   simp only [he, map_one]
-
-lemma val_zero {U : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ U) : valAt' x U 0 = 0 := by
-  obtain ⟨e, he⟩ := (valueRules X x).2.1 U h
-  simp only [he, map_zero]
 
 lemma val_resG {U V : X.Opens} (hVU : V ≤ U) (h : ⊤ ≤ x ⁻¹ᵁ V) (f : Γ(X, U)) :
     valAt' x V (resG X hVU f) = valAt' x U f :=
@@ -80,46 +80,9 @@ variable {X Y : Scheme.{0}} (p : X ⟶ Sp ℂ) [LocallyOfFiniteType p] [IsReduce
   (ex : Z → (Sp ℂ ⟶ X)) (ey : Z → (Sp ℂ ⟶ Y))
   (hon : ∀ x : Sp ℂ ⟶ X, x ≫ p = 𝟙 _ → ∃ z, ex z = x)
 
-include hon in
 
-lemma exists_hom_affine {W : X.Opens} {D : Y.Opens} (hW : IsAffineOpen W) (hD : IsAffineOpen D)
-    (hin : ∀ w, ⊤ ≤ ex w ⁻¹ᵁ W → ⊤ ≤ ey w ⁻¹ᵁ D)
-    (hfn : ∀ f : Γ(Y, D), ∃ h : Γ(X, W), ∀ w, ⊤ ≤ ex w ⁻¹ᵁ W →
-      valAt' (ex w) W h = valAt' (ey w) D f) :
-    ∃ g : W.toScheme ⟶ Y, ∀ w (y : Sp ℂ ⟶ W.toScheme), y ≫ W.ι = ex w → y ≫ g = ey w := by
-  choose ρ hρ using hfn
-  have ext : ∀ a b : Γ(X, W), (∀ w, ⊤ ≤ ex w ⁻¹ᵁ W → valAt' (ex w) W a = valAt' (ex w) W b) →
-      a = b := fun a b h => eq_of_valAt'_eq p W a b fun x hx hxW => by
-    obtain ⟨w, rfl⟩ := hon x hx
-    exact h w hxW
-  let ρ' : Γ(Y, D) →+* Γ(X, W) :=
-    { toFun := ρ
-      map_one' := ext _ _ fun w hw => by rw [hρ _ w hw, val_one _ hw, val_one _ (hin w hw)]
-      map_mul' := fun a b => ext _ _ fun w hw => by
-        rw [hρ _ w hw, val_mul _ hw, val_mul _ (hin w hw), hρ _ w hw, hρ _ w hw]
-      map_zero' := ext _ _ fun w hw => by rw [hρ _ w hw, val_zero _ hw, val_zero _ (hin w hw)]
-      map_add' := fun a b => ext _ _ fun w hw => by
-        rw [hρ _ w hw, val_add _ hw, val_add _ (hin w hw), hρ _ w hw, hρ _ w hw] }
-  refine ⟨hW.isoSpec.hom ≫ Spec.map (CommRingCat.ofHom ρ') ≫ hD.fromSpec, fun w y hy => ?_⟩
-  have hw : ⊤ ≤ ex w ⁻¹ᵁ W := by
-    rw [← hy]
-    intro a _
-    exact (y a).2
-  have h1 := specMap_appLE_fromSpec hW (R := CommRingCat.of ℂ) (ex w) hw
-  have h2 := specMap_appLE_fromSpec hD (R := CommRingCat.of ℂ) (ey w) (hin w hw)
-  have h3 : y ≫ hW.isoSpec.hom =
-      Spec.map ((ex w).appLE W ⊤ hw ≫ (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom) := by
-    rw [← cancel_mono hW.fromSpec, h1, ← hy, Category.assoc, ← hW.isoSpec_inv_ι,
-      Iso.hom_inv_id_assoc]
-  rw [← Category.assoc, h3, ← h2, ← Category.assoc, ← Spec.map_comp]
-  congr 2
-  ext f
-  have := hρ f w hw
-  rw [valAt', valAt', dif_pos hw, dif_pos (hin w hw)] at this
-  exact this
 
 include hon in
-
 lemma exists_hom_of_values {S : Scheme.{0}} (q : Y ⟶ S) [IsSeparated q] [IsAffine S]
     (h : ∀ z, ∃ (W : X.Opens) (D : Y.Opens), IsAffineOpen D ∧ ⊤ ≤ ex z ⁻¹ᵁ W ∧
       (∀ w, ⊤ ≤ ex w ⁻¹ᵁ W → ⊤ ≤ ey w ⁻¹ᵁ D) ∧
@@ -151,8 +114,8 @@ lemma chart_le (j : PUnit → L.ι) :
   show κ (σ y) ∈ L.U (j PUnit.unit)
   rw [h]; exact this
 
-include e in
 
+include e in
 lemma exists_sec_pow (p : X ⟶ Sp ℂ) [LocallyOfFiniteType p] [IsReduced X]
     (s : (L.LinComb (K := Fin N) (fun _ => κ) (fun _ => 1)).Sec) :
     ∃ s' : (lbPow L N).Sec, ∀ (x : Sp ℂ ⟶ X) (j : PUnit → L.ι), ⊤ ≤ x ⁻¹ᵁ (lbPow L N).U j →
@@ -201,7 +164,7 @@ lemma isThetaFn_comp {Hm : Matrix (Fin g) (Fin g) ℂ} {χ : u.Λ → ℂ}
     rw [← Complex.exp_nat_mul]
     congr 1
     ring
-  simp only [map_add]
+  simp only [map_add (f := _)]
   rw [k₁, k₂, e]
   generalize Complex.exp _ = E
   have a₁ : χ l ^ (2 * (n * N)) = 1 := by rw [pow_mul, hχ, one_pow]
@@ -241,14 +204,13 @@ variable {A A' : Over (Sp ℂ)} [GrpObj A] [GrpObj A'] {L : LB A.left} {L' : LB 
 
 lemma isMonHom_of_additive [Smooth A.hom] [IsSeparated A'.hom]
     (F : (Fin g → ℂ) →ₗ[ℂ] (Fin g' → ℂ)) (f : A ⟶ A') (hf : ∀ z, u'.ex (F z) = u.ex z ≫ f) :
-    IsMonHom f where
-  one_hom := by
-    have h := hf 0
+    IsMonHom f := by
+  constructor
+  · have h := hf 0
     rw [map_zero, ex_zero, ex_zero, Hom.one_def, Hom.one_def, toUnit_unit, Category.id_comp,
       Category.id_comp] at h
     exact h.symm
-  mul_hom := by
-    haveI : Smooth (A ⊗ A).hom := by
+  · haveI : Smooth (A ⊗ A).hom := by
       change Smooth (pullback.fst A.hom A.hom ≫ A.hom)
       infer_instance
     haveI := isReduced_of_smooth_complex _ (A ⊗ A).hom inferInstance
@@ -256,9 +218,9 @@ lemma isMonHom_of_additive [Smooth A.hom] [IsSeparated A'.hom]
     obtain ⟨z, hz⟩ := u.ex_onto (x ≫ fst A A)
     obtain ⟨w, hw⟩ := u.ex_onto (x ≫ snd A A)
     have hx : x = lift (u.ex z) (u.ex w) := by
-      rw [hz, hw, ← comp_lift, lift_fst_snd, Category.comp_id]
-    rw [hx, lift_map_assoc, ← Category.assoc, ← Hom.mul_def, ← Hom.mul_def, ← u.ex_add, ← hf, ← hf,
-      ← hf, map_add, u'.ex_add]
+      simp only [hz, hw, lift_comp_fst_snd]
+    rw [hx, lift_map_assoc, ← Category.assoc, ← Hom.mul_def, ← Hom.mul_def, ← u.ex_add,
+      ← hf (z + w), ← hf z, ← hf w, F.map_add, u'.ex_add]
 
 lemma exists_hom [Smooth A.hom] [Smooth A'.hom] [IsSeparated A'.hom] (hL : L.IsLB) (hL' : L'.IsLB)
     (ha : Out.RelAmple A' L')
@@ -333,7 +295,7 @@ lemma exists_hom [Smooth A.hom] [Smooth A'.hom] [IsSeparated A'.hom] (hL : L.IsL
     obtain ⟨a, ha⟩ := h
     obtain ⟨a', ha'⟩ := h'
     refine ⟨a + a', fun w hw => ?_⟩
-    rw [map_add, val_add _ hw, val_add _ ((hmem i _).2 (hne w hw)), ha w hw, ha' w hw]
+    rw [map_add (f := _), val_add _ hw, val_add _ ((hmem i _).2 (hne w hw)), ha w hw, ha' w hw]
   | mul_X Q j h =>
     obtain ⟨a, ha⟩ := h
     obtain ⟨b, hb⟩ := exists_quot u (ht i j) (ht i i) fun _ => ch z
@@ -353,8 +315,8 @@ end Main
 
 end AnalyticHom
 
-open AnalyticHom in
 
+open AnalyticHom in
 theorem exists_hom_of_linear_scaling_hermForm :
     ∀ (P P' : Out.PolAV (Sp ℂ)) (u : HolUnif P.A P.L P.g) (u' : HolUnif P'.A P'.L P'.g)
       (Hm : Matrix (Fin P.g) (Fin P.g) ℂ) (χ : u.Λ → ℂ) (Hm' : Matrix (Fin P'.g) (Fin P'.g) ℂ)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,7 +37,7 @@ theorem lie_tensor_line :
   have hτ := fun c ↦ (isLieComb_one_iff _ _ _).mp (hc c)
   let e := t.lieEquivLine b hv hτ
   refine ⟨fun z ↦ (e z).hom, fun z z' h ↦ e.injective (Serre.Lie.ext h), fun u ↦ ⟨fun hu ↦ ?_, ?_⟩,
-    fun z z' ↦ by simp only [map_add, Serre.Lie.hom_add], fun r z ↦ ?_, fun m ↦ ?_⟩
+    fun z z' ↦ by simp only [map_add (f := _), Serre.Lie.hom_add], fun r z ↦ ?_, fun m ↦ ?_⟩
   · exact ⟨e.symm (Serre.Lie.mk b u hu), by simp⟩
   · rintro ⟨z, rfl⟩
     exact (e z).isTangent

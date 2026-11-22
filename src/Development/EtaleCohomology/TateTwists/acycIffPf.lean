@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.acycPf
+module
+
+public import Development.EtaleCohomology.TateTwists.acycPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 

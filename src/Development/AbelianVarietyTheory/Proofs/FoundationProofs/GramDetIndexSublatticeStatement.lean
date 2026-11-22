@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GramDetIndexSublattice
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GramDetIndexSublattice
+
+@[expose] public section
+
 open scoped Matrix
 open NumberField IsDedekindDomain
 set_option maxHeartbeats 1000000 in

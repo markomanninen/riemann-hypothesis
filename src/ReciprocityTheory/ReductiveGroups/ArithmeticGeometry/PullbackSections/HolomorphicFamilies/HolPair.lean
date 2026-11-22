@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolPairB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolPairB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -94,13 +98,13 @@ theorem holPair (X Y₁ Y₂ : Scheme.{0}) (p₁ : Y₁ ⟶ X) (p₂ : Y₂ ⟶ 
       exact hl₂ b hb
   have hwhol : IsHolTo N w := by
     refine isHolTo_pullbackSpec hN w (fun a => ?_) (fun c => ?_)
-    · refine ((h₁ W₁ a).2.mono (fun b hb => hb.1)).congr (fun b hb => ?_)
+    · refine ((h₁ W₁ a).2.mono (fun b (hb : b ∈ N) => hb.1)).congr (fun b hb => ?_)
       have h := valAt'_fromSpec hW₁' (l₁ b hb) a
       rw [hl₁ b hb] at h
       rw [hw b hb]
       simp only [wN, pullback.lift_fst]
       exact h.symm
-    · refine ((h₂ W₂ c).2.mono (fun b hb => hb.2)).congr (fun b hb => ?_)
+    · refine ((h₂ W₂ c).2.mono (fun b (hb : b ∈ N) => hb.2)).congr (fun b hb => ?_)
       have h := valAt'_fromSpec hW₂' (l₂ b hb) c
       rw [hl₂ b hb] at h
       rw [hw b hb]

@@ -1,24 +1,28 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MahPadicGeOfDvd
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MemBoundedDegreeExponentsIff
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.BinomialExpansionCoeffZeroOfDeg
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationBoundDetPowerFactor
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivativeValuationBounds
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.GenericMatrixEvaluationDet
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.FrameChangePreservesMultidegree
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.AlgHomFixesSupportedPolynomials
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.PositivityConditionHolds
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionExtremalFormula
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicLatticeCorollary
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.GeneratedWeightLemmaOfReducibility
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralPolynomialsEnvelopingStable
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.GeneratedModuleWeightLemmaPartB
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LoweringSpanHighestComponentIntegral
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LinfAdjointLeEllWtHighest
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LatticeTheoremOfAdmitted
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LatticeTheoremSingleRepLinf
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DenominatorLemmaWithoutProjector
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExtremalProjectorOfReducibility
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MahPadicGeOfDvd
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MemBoundedDegreeExponentsIff
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.BinomialExpansionCoeffZeroOfDeg
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationBoundDetPowerFactor
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivativeValuationBounds
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.GenericMatrixEvaluationDet
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.FrameChangePreservesMultidegree
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.AlgHomFixesSupportedPolynomials
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PositivityConditionHolds
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionExtremalFormula
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicLatticeCorollary
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.GeneratedWeightLemmaOfReducibility
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralPolynomialsEnvelopingStable
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.GeneratedModuleWeightLemmaPartB
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.LoweringSpanHighestComponentIntegral
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.LinfAdjointLeEllWtHighest
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorTraceFormula
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.LatticeTheoremSingleRepLinf
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DenominatorLemmaWithoutProjector
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.FiltrationAdjointStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,8 @@ open Formalism.MainNotions.G Formalism.MainNotions.CovariantDegrees
 theorem exponent_condition_holds (D : Formalism.BasicNotions.D7) : adm3 D := by
   intro p hp m k b hkm hb
   haveI : Fact p.Prime := ⟨hp⟩
-  exact padicValNat_choose hkm hb
+  rw [Nat.padicValNat_def]
+  exact multiplicity_choose hkm hb
 
 theorem key_positivity_condition (D : Formalism.BasicNotions.D7) : ArchimedeanSignatureMatching D := by
   intro A _ _ _ σ w hw F G h
@@ -42,8 +47,9 @@ theorem key_positivity_condition (D : Formalism.BasicNotions.D7) : ArchimedeanSi
       C w ∣ H ↔ MvPolynomial.map (Ideal.Quotient.mk (Ideal.span {w})) H = 0 := by
     intro H
     rw [MvPolynomial.C_dvd_iff_dvd_coeff, MvPolynomial.ext_iff]
-    simp only [MvPolynomial.coeff_map, MvPolynomial.coeff_zero, Ideal.Quotient.eq_zero_iff_mem,
-      Ideal.mem_span_singleton]
+    simp only [MvPolynomial.coeff_map]
+    change (∀ i, w ∣ H.coeff i) ↔ ∀ m, (Ideal.Quotient.mk (Ideal.span {w})) (H.coeff m) = 0
+    simp only [Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton]
   rw [key] at h
   rw [map_mul] at h
   rcases mul_eq_zero.mp h with h1 | h1
@@ -75,7 +81,8 @@ theorem true_derivative_digit_class (D : Formalism.BasicNotions.D7) : TrueDeriva
   intro R _ σ P hP rho k F hF
   have hF' : ∀ m ∈ F.support, digitOfL P m = rho := fun m hm =>
     (show (↑F.support : Set (σ →₀ ℕ)) ⊆ {m | digitOfL P m = rho} from hF) hm
-  rw [F.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [F.as_sum, map_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
   rw [MvPolynomial.pderiv_monomial, DigitClassL, MvPolynomial.monomial_mem_restrictSupport]
   by_cases hmk : m k = 0

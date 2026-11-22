@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -19,8 +24,8 @@ theorem toLp_mulVec_intVec {g : ℕ} (B : Matrix (Fin g) (Fin g) ℝ) (k : Fin g
 
 end PGaussLatticeCoords
 
-open PGaussLatticeCoords in
 
+open PGaussLatticeCoords in
 theorem GaussLatticeCoords.proof : GaussLatticeCoords.Statement := by
   intro g B hB
   refine ⟨fun k => ?_, fun x hx => ?_, fun k k' hkk' => ?_⟩

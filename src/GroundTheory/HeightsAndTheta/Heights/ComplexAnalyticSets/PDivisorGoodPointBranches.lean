@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDivisorGoodPointBranches
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GoodPointBranchExists
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDivisorGoodPointBranches
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GoodPointBranchExists
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

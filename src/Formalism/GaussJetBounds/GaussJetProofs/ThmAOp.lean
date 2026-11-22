@@ -1,6 +1,10 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.StatementI
-import Formalism.GaussJetBounds.MonoShapeTop
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.StatementI
+public import Formalism.GaussJetBounds.MonoShapeTop
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -13,7 +17,7 @@ open Formalism.IncomingBounds MvPolynomial
 
 def opInt (K : Type u) [NormedField K] [IsUltrametricDist K] (σ : Type) :
     Subring (MvPolynomial σ K) where
-  carrier := {P | ∀ κ, ‖coeff κ P‖ ≤ 1}
+  carrier := {P | ∀ κ, ‖AddMonoidAlgebra.coeff P κ‖ ≤ 1}
   mul_mem' := by
     intro P Q hP hQ κ
     classical
@@ -28,7 +32,7 @@ def opInt (K : Type u) [NormedField K] [IsUltrametricDist K] (σ : Type) :
     split_ifs <;> simp
   add_mem' := by
     intro P Q hP hQ κ
-    rw [coeff_add]
+    rw [MvPolynomial.coeff_add]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hP _) (hQ _))
   zero_mem' := by
     intro κ
@@ -345,7 +349,7 @@ theorem thmAOp : ThmAOp.{u} := by
   have hjet := thmAJetA K l d N0 N1 hl hl3 hd hde hnl h0 K0 hK0 ζ hζ be hbe x hx g hg0 hg U hU ε hε
     TT nu1 nu2 size h21 h1s a ha hsa spec κ ?_ ?_ hspec ?_ hframe
   · rw [mul_assoc, norm_mul]
-    calc ‖coeff κ (∏ s : ZMod d, minorProd (rowOp (N1 := N1) TT T s) (p s) (hp s) (I s))‖ * _
+    calc ‖AddMonoidAlgebra.coeff (∏ s : ZMod d, minorProd (rowOp (N1 := N1) TT T s) (p s) (hp s) (I s)) κ‖ * _
         ≤ 1 * _ := mul_le_mul_of_nonneg_right (hPint κ) (norm_nonneg _)
       _ ≤ _ := by rw [one_mul]; exact hjet
   · intro s hs

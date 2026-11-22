@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.FirstInequality.HerbrandClass
-import GroundTheory.GlobalFields.FirstInequalityStatement
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.FirstInequality.HerbrandClass
+public import GroundTheory.GlobalFields.FirstInequalityStatement
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -10,8 +14,8 @@ noncomputable section
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
-variable (K L) in
 
+variable (K L) in
 def ideleClassToCycTateZero (σ : Gal(L/K)) :
     Additive (IdeleClassGroup K) →+
       CycTateZero (Representation.ofMulDistribMulAction Gal(L/K) (IdeleClassGroup L)) σ :=

@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypeJumps
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CommutingEndomorphismCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedConclusionOfUsedInputs
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsCrystallineJumpsOfIsIsoMatrixGaloisRepresentat
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypeJumps
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CommutingEndomorphismCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsCrystallineJumpsOfIsIsoMatrixGaloisRepresentat
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain
 
 noncomputable section
@@ -14,22 +19,6 @@ noncomputable section
 namespace GlobalTheory.RowBoundB
 
 open Module
-
-theorem good_one {l : ℕ} [Fact l.Prime] {K LL : FinExt l} {s : ℕ} (hl : l ≠ 2) (h : Good K s LL)
-    (hK : K.1 ≤ Ks K 1) : Good K 1 LL := by
-  obtain ⟨hs, -, -, hτ⟩ := h
-  refine ⟨le_rfl, fun h2 => absurd h2 hl, hK, fun τ x => ?_⟩
-  have hle : Ks K 1 ≤ Ks K s := by
-    refine sup_le_sup_left (IntermediateField.adjoin.mono _ _ _ ?_) _
-    intro y hy
-    obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hs
-    simp only [Set.mem_setOf_eq] at hy ⊢
-    rw [pow_add, pow_mul, hy, one_pow]
-  obtain ⟨φ, hφ⟩ := IsAlgClosed.surjective_restrictDomain_of_isAlgebraic (K := ℚ_[l]) (L := ↥(Ks K 1))
-    (M := Om l) (E := Om l) τ
-  have := hτ (φ.comp (Ks K s).val) ⟨x.1, hle x.2⟩
-  rw [← hφ]
-  exact this
 
 theorem jump_windows (η Sc b : ℝ) (t : ℕ) (hη : 0 < η) (hS : 0 < Sc) (ht : 1 ≤ (t : ℝ))
     (hpar : Sc + η + t + 2 ≤ b) (s : ℤ) (Jc Jl : Finset ℤ)
@@ -193,7 +182,8 @@ theorem row_bound : ∀ (D : D7) (r : ∀ i : D.nd.Loc, D.nd.X i → (GE D.nd �
     have h := ((hLit i hi).2.2.1 w hw).2.2
     unfold Br.DegW at h
     rw [← h, ← he]
-    exact (Module.finrank_mul_finrank _ _ _).symm
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact (Module.finrank_mul_finrank _ _ _).symm
   have hT := hA (D.nd.l i) hl2 _ _ hG
   have hη := large₂.etaSz_pos
   have hS := large₂.Sc_pos

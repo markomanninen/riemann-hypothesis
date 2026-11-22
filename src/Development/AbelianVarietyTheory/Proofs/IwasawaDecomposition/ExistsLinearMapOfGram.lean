@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.GramLinearMap
 
@@ -11,12 +15,12 @@ theorem gram_comb {P : Type} [AddCommGroup P] [Module ℂ P] {B : P →ₗ⋆[�
   induction x using Finsupp.induction_linear with
   | zero => simp
   | add x₁ x₂ h₁ h₂ =>
-    simp only [map_add, LinearMap.add_apply, add_mul, mul_add, h₁, h₂]
+    simp only [map_add (f := _), LinearMap.add_apply, add_mul, mul_add, h₁, h₂]
   | single u a =>
     induction y using Finsupp.induction_linear with
     | zero => simp
     | add y₁ y₂ h₁ h₂ =>
-      simp only [map_add, add_mul, mul_add, h₁, h₂]
+      simp only [map_add (f := _), add_mul, mul_add, h₁, h₂]
     | single v b =>
       simp only [Finsupp.linearCombination_single, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
         smul_eq_mul, RingHom.id_apply]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceFibreCardinality.RepIndep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceFibreCardinality.RepIndep
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,8 @@ private lemma opF_comp (s₁ s₂ : B.Tw) {f₁ f₂ : G → ℂ} (h₁ : s₁.I
     · refine Finset.sum_congr rfl fun x _ => ?_
       have := inner x.out
       unfold Base.Tw.opF at this
-      rw [this, finsum_eq_sum_of_support_subset (s := (hfin x.out).toFinset),
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, finsum_eq_sum_of_support_subset (s := (hfin x.out).toFinset),
         finsum_eq_sum_of_support_subset (s := (hfin x.out).toFinset), map_sum, Finset.smul_sum]
       · refine Finset.sum_congr rfl fun z _ => ?_
         rw [map_smul, smul_smul]

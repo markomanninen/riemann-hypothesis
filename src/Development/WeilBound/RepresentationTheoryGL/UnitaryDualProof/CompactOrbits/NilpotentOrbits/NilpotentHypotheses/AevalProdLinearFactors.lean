@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem pow_mem (K : Submodule ℂ M) (R : Module.End ℂ M) (hK : ∀ m ∈ K, 
 theorem aeval_mem (K : Submodule ℂ M) (R : Module.End ℂ M) (hK : ∀ m ∈ K, R m ∈ K) (p : ℂ[X]) :
     ∀ m ∈ K, (aeval R p) m ∈ K := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => intro m hm; rw [map_add, LinearMap.add_apply]; exact K.add_mem (hp m hm) (hq m hm)
+  | add p q hp hq => intro m hm; rw [map_add (f := _), LinearMap.add_apply]; exact K.add_mem (hp m hm) (hq m hm)
   | monomial j a =>
     intro m hm
     rw [aeval_monomial, Module.End.mul_apply, Algebra.algebraMap_eq_smul_one, LinearMap.smul_apply,
@@ -122,13 +126,11 @@ theorem bez' {M : Type*} [AddCommGroup M] [Module ℂ M] (K : Submodule ℂ M) (
     linarith
   obtain ⟨u, v, huv⟩ := hcop
   have key := congrArg (fun p => (aeval (R : Module.End ℂ M) p) ζ) huv
-  simp only [map_add, map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply] at key
+  simp only [map_add (f := _), map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply] at key
   rw [← key]
   refine K.add_mem (aeval_mem K R hK u _ ?_) (aeval_mem K R hK v _ ?_)
   · rw [aeval_prod_lin R γ a]; exact h1
   · rw [aeval_prod_linear_factors R β γ a]
     convert hQ using 3
-    refine List.map_congr_left fun x _ => ?_
-    rfl
 
 end PositivityTheory.RgUd.T.Nil.Asm

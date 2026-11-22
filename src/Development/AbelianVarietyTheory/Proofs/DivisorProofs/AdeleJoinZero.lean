@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,9 +45,6 @@ def word (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ)
     (hs : List ((κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)))
     (Φ : (κ → AdeleRing (𝓞 F) F) → ℂ) : (κ → AdeleRing (𝓞 F) F) → ℂ :=
   hs.foldr (fun h g => dS F ψ h g) Φ
-
-@[simp] theorem word_nil (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (Φ : (κ → AdeleRing (𝓞 F) F) → ℂ) :
-    word F ψ [] Φ = Φ := rfl
 
 theorem word_cons (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (h) (hs) (Φ : (κ → AdeleRing (𝓞 F) F) → ℂ) :
     word F ψ (h :: hs) Φ = dS F ψ h (word F ψ hs Φ) := rfl

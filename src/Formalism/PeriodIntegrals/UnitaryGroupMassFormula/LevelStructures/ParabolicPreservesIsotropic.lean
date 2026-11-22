@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LeviComp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LeviComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E] {R : Type} [CommRing R] 
 theorem parabolic_preserves_isotropic {s : HA R σ J} (hs : s ∈ Ssub R σ J P) {x : Fin n → R ⊗[F] E}
     (hx : x ∈ spanR (F := F) R P.e Set.univ) : lin R σ J s x ∈ spanR (F := F) R P.e Set.univ := by
   obtain ⟨d, rfl⟩ := mem_tensor_span_iff R P.e x hx
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun b _ => ?_
   rw [map_smul]
   refine Submodule.smul_mem _ _ ?_
@@ -110,7 +115,7 @@ theorem Lh_inv (ht : FrameTab (σ := σ) (J := J) P c T) {s : HA R σ J} (hs : s
   have hp := piW_inW (c := c) ht (lin R σ J s⁻¹ w)
   have e1 : Lh P c s⁻¹ v = p + piRest (σ := σ) (J := J) P c v := rfl
   have e2 : piW (σ := σ) (J := J) P c (p + piRest (σ := σ) (J := J) P c v) = p := by
-    rw [map_add, piW_inW_eq ht hp, piW_piRest ht, add_zero]
+    rw [map_add (f := _), piW_inW_eq ht hp, piW_piRest ht, add_zero]
   have e3 : piRest (σ := σ) (J := J) P c (p + piRest (σ := σ) (J := J) P c v) = piRest (σ := σ) (J := J) P c v := by
     have := piW_add_rest (σ := σ) (J := J) P c (p + piRest (σ := σ) (J := J) P c v)
     rw [e2] at this

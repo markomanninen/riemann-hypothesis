@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
-import ReciprocityTheory.SemistableReduction.BWPolyA
+module
+
+public import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+public import ReciprocityTheory.SemistableReduction.BWPolyA
+
+@[expose] public section
 
 noncomputable section
 

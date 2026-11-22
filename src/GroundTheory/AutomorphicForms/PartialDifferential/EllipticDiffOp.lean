@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.PartialDifferential.EllipticSmooth
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.PartialDifferential.EllipticSmooth
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.Sobolev
 
@@ -134,7 +138,8 @@ theorem opST_apply_apply (A : Finset (Fin n → ℕ)) (b : (Fin n → ℕ) → �
     (u : 𝓢'(EuclideanSpace ℝ (Fin n), ℂ)) (φ : 𝓢(EuclideanSpace ℝ (Fin n), ℂ)) :
     opST A b u φ = u (∑ α ∈ A,
       SchwartzMap.smulLeftCLM ℂ (b α : EuclideanSpace ℝ (Fin n) → ℂ) (∂^{mdir α} φ)) := by
-  simp only [opST, sum_apply, smul_apply, ContinuousLinearMap.comp_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [opST, sum_apply, smul_apply, ContinuousLinearMap.comp_apply,
     iteratedLineDerivOpCLM_apply, smulLeftCLM_apply_apply, iteratedLineDerivOp_apply_apply,
     comp_rev_rev, map_sum, smul_eq_mul]
   refine Finset.sum_congr rfl fun α _ ↦ ?_
@@ -265,10 +270,6 @@ variable {n : ℕ}
 def diffOp (A : Finset (Fin n → ℕ)) (a : (Fin n → ℕ) → EuclideanSpace ℝ (Fin n) → ℂ)
     (f : EuclideanSpace ℝ (Fin n) → ℂ) (x : EuclideanSpace ℝ (Fin n)) : ℂ :=
   ∑ α ∈ A, a α x * pderiv α f x
-
-def diffOpT (A : Finset (Fin n → ℕ)) (a : (Fin n → ℕ) → EuclideanSpace ℝ (Fin n) → ℂ)
-    (φ : EuclideanSpace ℝ (Fin n) → ℂ) (x : EuclideanSpace ℝ (Fin n)) : ℂ :=
-  ∑ α ∈ A, (-1 : ℂ) ^ mabs α * pderiv α (fun y ↦ a α y * φ y) x
 
 def prinSymbol (A : Finset (Fin n → ℕ)) (a : (Fin n → ℕ) → EuclideanSpace ℝ (Fin n) → ℂ) (m : ℕ)
     (x ξ : EuclideanSpace ℝ (Fin n)) : ℂ :=

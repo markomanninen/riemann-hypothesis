@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSStageUnconditional
-import Formalism.LocalToGlobal.SiegelLatticeTheory.EFSymmCont
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSStageLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSStageUnconditional
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.EFSymmCont
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSStageLoc
+
+@[expose] public section
 
 noncomputable section
 

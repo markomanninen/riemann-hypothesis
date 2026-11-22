@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
+
+@[expose] public section
 
 noncomputable section
 

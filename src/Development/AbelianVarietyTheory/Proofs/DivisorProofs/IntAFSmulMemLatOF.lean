@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionHeisenbergInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergCMRealLineAddNoPhase
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionHeisenbergInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergCMRealLineAddNoPhase
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ namespace GlobalTheory.FinLatF
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F E) in
 
+variable (F E) in
 def finSubF (nS nT : ℕ) : Submodule (AEF F E) (WOF F E nS nT) where
   carrier := {u | u.map (infPartF F E) = 0}
   add_mem' {x y} hx hy := by
@@ -23,7 +27,7 @@ def finSubF (nS nT : ℕ) : Submodule (AEF F E) (WOF F E nS nT) where
     have h1 : infPartF F E (x i j) = 0 := congrFun (congrFun hx i) j
     have h2 : infPartF F E (y i j) = 0 := congrFun (congrFun hy i) j
     show infPartF F E (x i j + y i j) = 0
-    rw [map_add, h1, h2, add_zero]
+    rw [map_add (f := _), h1, h2, add_zero]
   zero_mem' := by
     funext i j
     exact (infPartF F E).map_zero
@@ -33,8 +37,8 @@ def finSubF (nS nT : ℕ) : Submodule (AEF F E) (WOF F E nS nT) where
     show infPartF F E (a * x i j) = 0
     rw [map_mul, h1, mul_zero]
 
-variable (F E) in
 
+variable (F E) in
 def XFF (nS nT : ℕ) : Type := finSubF F E nS nT
 
 variable {nS nT : ℕ}
@@ -45,7 +49,8 @@ instance : Module (AEF F E) (XFF F E nS nT) := inferInstanceAs (Module (AEF F E)
 
 @[coe] def XFF.val (x : XFF F E nS nT) : WOF F E nS nT := Subtype.val x
 
-instance : CoeOut (XFF F E nS nT) (WOF F E nS nT) := ⟨XFF.val⟩
+instance : Coe (XFF F E nS nT) (WOF F E nS nT) where
+  coe := XFF.val
 
 def XFF.mk (u : WOF F E nS nT) (hu : u.map (infPartF F E) = 0) : XFF F E nS nT := (⟨u, hu⟩ : finSubF F E nS nT)
 
@@ -59,8 +64,6 @@ theorem XFF.coe_add (x y : XFF F E nS nT) : ((x + y : XFF F E nS nT) : WOF F E n
 
 theorem XFF.coe_sub (x y : XFF F E nS nT) : ((x - y : XFF F E nS nT) : WOF F E nS nT) = x - y := rfl
 
-theorem XFF.coe_neg (x : XFF F E nS nT) : ((-x : XFF F E nS nT) : WOF F E nS nT) = -x := rfl
-
 theorem XFF.coe_nsmul (n : ℕ) (x : XFF F E nS nT) : ((n • x : XFF F E nS nT) : WOF F E nS nT) = n • (x : WOF F E nS nT) :=
   rfl
 
@@ -69,12 +72,12 @@ theorem XFF.coe_zero : ((0 : XFF F E nS nT) : WOF F E nS nT) = 0 := rfl
 theorem XFF.coe_asmul (a : AEF F E) (x : XFF F E nS nT) : ((a • x : XFF F E nS nT) : WOF F E nS nT) = a • (x : WOF F E nS nT) :=
   rfl
 
-variable (F E nS nT) in
 
+variable (F E nS nT) in
 def XFF.incl : XFF F E nS nT →+ WOF F E nS nT := AddMonoidHom.mk' XFF.val XFF.coe_add
 
-variable (F) in
 
+variable (F) in
 def intAF : 𝓞 E →+* AEF F E := (incAF F E).comp (algebraMap (𝓞 E) E)
 
 theorem intAF_apply (r : 𝓞 E) : intAF F r = incAF F E (r : E) := rfl
@@ -121,8 +124,8 @@ theorem actOF_mem_finSubF (g : GAF σ JS) (h : GAF σ JT) {u : WOF F E nS nT} (h
   unfold actOF
   rw [Matrix.map_mul, Matrix.map_mul, hu, Matrix.mul_zero, Matrix.zero_mul]
 
-variable (σ JS JT) in
 
+variable (σ JS JT) in
 def rhoFF : GAF σ JS × GAF σ JT →* Module.End (𝓞 E) (XFF F E nS nT) where
   toFun p :=
     { toFun := fun x => XFF.mk (actOF σ JS JT p.1 p.2 x) (actOF_mem_finSubF _ _ x.fin)
@@ -134,22 +137,22 @@ def rhoFF : GAF σ JS × GAF σ JT →* Module.End (𝓞 E) (XFF F E nS nT) wher
 theorem coe_rhoFF (p : GAF σ JS × GAF σ JT) (x : XFF F E nS nT) :
     (rhoFF σ JS JT p x : WOF F E nS nT) = actOF σ JS JT p.1 p.2 x := rfl
 
-variable (σ JS JT) in
 
+variable (σ JS JT) in
 def gamFF (ξ₀ : E) (ψ : AddChar (AF F) ℂ) (x y : XFF F E nS nT) : ℂ := ψ (symplOF σ JS JT ξ₀ x y)
 
-variable (σ JS JT) in
 
+variable (σ JS JT) in
 def phaseF (ξ₀ : E) (ψ : AddChar (AF F) ℂ) (w : 𝓞 E) (x : XFF F E nS nT) : ℂ :=
   ψ (-symplOHF σ JS JT ξ₀ (intAF F w • (x : WOF F E nS nT)) x)
 
-variable (σ JS JT) in
 
+variable (σ JS JT) in
 def HeisClosedF (ξ₀ : E) (ψ : AddChar (AF F) ℂ) : Prop :=
   ∀ (w₀ : WOF F E nS nT) (f : WOF F E nS nT → ℂ), IsThetaFunOF σ JS JT ξ₀ ψ f → IsThetaFunOF σ JS JT ξ₀ ψ (heisOF σ JS JT ξ₀ ψ w₀ f)
 
-variable (σ JS JT) in
 
+variable (σ JS JT) in
 def heisLF (ξ₀ : E) (ψ : AddChar (AF F) ℂ) (w : WOF F E nS nT) : (WOF F E nS nT → ℂ) →ₗ[ℂ] (WOF F E nS nT → ℂ) where
   toFun := heisOF σ JS JT ξ₀ ψ w
   map_add' := GlobalTheory.WeilPartsF.heisOF_add w
@@ -164,8 +167,8 @@ def opFF (hc : HeisClosedF σ JS JT ξ₀ ψ) (w : 𝓞 E) (x : XFF F E nS nT) :
 theorem coe_opFF (hc : HeisClosedF σ JS JT ξ₀ ψ) (w : 𝓞 E) (x : XFF F E nS nT) (f : GlobalTheory.WeilPartsF.thetaSubF σ JS JT ξ₀ ψ) :
     (opFF hc w x f : WOF F E nS nT → ℂ) = phaseF σ JS JT ξ₀ ψ w x • heisOF σ JS JT ξ₀ ψ x f := rfl
 
-variable (F E nS nT) in
 
+variable (F E nS nT) in
 def latOF (Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)) : AddSubgroup (WOF F E nS nT) :=
   AddSubgroup.closure {z | ∃ α ∈ Formalism.MainNotions.StandardLattice.intAf F, ∃ γ ∈ Λ, z = algebraMap (AF F) (AEF F E) (pairA F 0 α) • ratWF (F := F) γ}
 
@@ -184,8 +187,8 @@ theorem intAF_smul_mem_latOF (Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) 
   | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
   | neg x _ hx => rw [smul_neg]; exact neg_mem hx
 
-variable (F E nS nT) in
 
+variable (F E nS nT) in
 def latF (Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)) : Submodule (𝓞 E) (XFF F E nS nT) where
   carrier := {x | (x : WOF F E nS nT) ∈ latOF F E nS nT Λ}
   add_mem' hx hy := (latOF F E nS nT Λ).add_mem hx hy
@@ -195,8 +198,8 @@ def latF (Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)) : Submodule (�
 theorem mem_latF {Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)} {x : XFF F E nS nT} :
     x ∈ latF F E nS nT Λ ↔ (x : WOF F E nS nT) ∈ latOF F E nS nT Λ := Iff.rfl
 
-variable (σ) in
 
+variable (σ) in
 def InertQF (q : ℕ) : Prop :=
   ∀ P : Ideal (𝓞 E), P.IsMaximal → (q : 𝓞 E) ∈ P → ∀ r ∈ P, sgOF σ r ∈ P
 
@@ -233,7 +236,7 @@ variable (σ JS JT) in
 theorem symplOHF_add_self (ξ₀ : E) (x y : WOF F E nS nT) :
     symplOHF σ JS JT ξ₀ x y + symplOHF σ JS JT ξ₀ x y = symplOF σ JS JT ξ₀ x y := by
   unfold symplOHF
-  rw [← add_mul, ← map_add, show (1 / 2 : F) + 1 / 2 = 1 by norm_num, map_one, one_mul]
+  rw [← add_mul, ← map_add (f := _), show (1 / 2 : F) + 1 / 2 = 1 by norm_num, map_one, one_mul]
 
 variable (σ JS JT) in
 theorem symplOHF_skew (hσ : ∀ x, σ (σ x) = x) (hS : IsHermND σ JS) (hT : IsHermND σ JT) (ξ₀ : E) (hξ : σ ξ₀ = -ξ₀)
@@ -258,31 +261,41 @@ theorem heisOF_zero' (f : WOF F E nS nT → ℂ) : heisOF σ JS JT ξ₀ ψ 0 f 
 
 theorem isHeis_opFF (hσ : ∀ x, σ (σ x) = x) (hS : IsHermND σ JS) (hT : IsHermND σ JT) (hξ : σ ξ₀ = -ξ₀)
     (hc : HeisClosedF σ JS JT ξ₀ ψ) {w : 𝓞 E} (hw : w + sgOF σ w = 1) :
-    IsHeis (sgOF σ) w (gamFF σ JS JT ξ₀ ψ) (opFF hc w) where
-  sg_sg r := by
+    IsHeis (sgOF σ) w (gamFF σ JS JT ξ₀ ψ) (opFF hc w) := by
+  constructor
+  case sg_sg =>
+    intro r
     apply Subtype.ext
     show σ (σ (r : E)) = r
     exact hσ _
-  w_add := hw
-  add_left x y z := by
+  case w_add => exact hw
+  case add_left =>
+    intro x y z
     rw [gamFF, gamFF, gamFF, XFF.coe_add, GlobalTheory.HeisLineF.symplOF_add_left, AddChar.map_add_eq_mul]
-  add_right x y z := by
+  case add_right =>
+    intro x y z
     rw [gamFF, gamFF, gamFF, XFF.coe_add, GlobalTheory.HeisLineF.symplOF_add_right, AddChar.map_add_eq_mul]
-  alt x := by rw [gamFF, GlobalTheory.HeisLineF.symplOF_self σ JS JT hσ hS hT ξ₀ hξ, AddChar.map_zero_eq_one]
-  adj r x y := by rw [gamFF, gamFF, coe_smul, coe_smul, symplOF_smul σ JS JT hσ, cAF_intAF]
-  zero v := by
+  case alt =>
+    intro x
+    rw [gamFF, GlobalTheory.HeisLineF.symplOF_self σ JS JT hσ hS hT ξ₀ hξ, AddChar.map_zero_eq_one]
+  case adj =>
+    intro r x y
+    rw [gamFF, gamFF, coe_smul, coe_smul, symplOF_smul σ JS JT hσ, cAF_intAF]
+  case zero =>
+    intro v
     apply Subtype.ext
     have h : symplOHF σ JS JT ξ₀ (intAF F w • ((0 : XFF F E nS nT) : WOF F E nS nT)) ((0 : XFF F E nS nT) : WOF F E nS nT) = 0 := by
       rw [XFF.coe_zero, smul_zero]; unfold symplOHF; rw [GlobalTheory.HeisLineF.symplOF_zero_right, mul_zero]
     rw [coe_opFF, phaseF, h, neg_zero, AddChar.map_zero_eq_one, one_smul, XFF.coe_zero, heisOF_zero']
-  comp x y v := by
+  case comp =>
+    intro x y v
     apply Subtype.ext
     rw [Submodule.coe_smul, coe_opFF, coe_opFF, coe_opFF, GlobalTheory.WeilPartsF.heisOF_smul, heisOF_heisOF', smul_smul,
       smul_smul, smul_smul, XFF.coe_add, phaseF, phaseF, phaseF, gamFF, ← AddChar.map_add_eq_mul,
       ← AddChar.map_add_eq_mul, ← AddChar.map_add_eq_mul, coe_smul, XFF.coe_add]
     congr 2
     have h1 : intAF F w • (x : WOF F E nS nT) + cAF σ (intAF F w) • (x : WOF F E nS nT) = x := by
-      rw [← add_smul, cAF_intAF, ← map_add, hw, map_one, one_smul]
+      rw [← add_smul, cAF_intAF, ← map_add (f := _), hw, map_one, one_smul]
     have h2 := congrArg (fun z => symplOHF σ JS JT ξ₀ z y) h1
     simp only [GlobalTheory.HeisLineF.symplOHF_add_left] at h2
     have h3 := symplOHF_smul σ JS JT hσ ξ₀ (intAF F w) (y : WOF F E nS nT) x
@@ -293,8 +306,8 @@ theorem isHeis_opFF (hσ : ∀ x, σ (σ x) = x) (hS : IsHermND σ JS) (hT : IsH
 
 end Heis
 
-variable (σ JS JT ξ₀ ψ) in
 
+variable (σ JS JT ξ₀ ψ) in
 structure IsLatRepF (hc : HeisClosedF σ JS JT ξ₀ ψ) (Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)) (w : 𝓞 E)
     (lam : ℕ →* ℂ) (Om : GAF σ JS × GAF σ JT →* Module.End ℂ (GlobalTheory.WeilPartsF.thetaSubF σ JS JT ξ₀ ψ)) : Prop where
   hw : w + sgOF σ w = 1

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.Bridge
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.Bridge
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -136,7 +140,8 @@ theorem clSum_avgForm (hk : KernelLaws ι ρ χ k) (c : S.Cl) (x : S.V) :
   · have hg : ∀ g : S.Gam c, k (P.y c) (P.coef (S.ρ c g x)) = k (P.y c) (P.coef x) := fun g => by
       have := hk.dec (P.stabI c g : Γ) (P.y c) (stabK ι (P.stabI c g)) (P.coef x)
       rwa [stabK_spec, ← map_smul, ← P.coef_act] at this
-    simp only [avgForm, Pi.single_eq_same, map_sum, hg, Finset.sum_const, Finset.card_univ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [avgForm, Pi.single_eq_same, map_sum, hg, Finset.sum_const, Finset.card_univ]
     rw [← Nat.card_congr (P.stabI c).toEquiv, Nat.card_eq_fintype_card, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul,
       inv_mul_cancel₀ (by exact_mod_cast Fintype.card_ne_zero), one_smul]
   · intro c' _ hc
@@ -154,7 +159,8 @@ theorem clSum_act (hk : KernelLaws ι ρ χ k) {Q : Subgroup G} {ch : Q →* ℂ
   have key := sum_translate P (q : G) (hn q) (fun j hj => by simpa using hn q⁻¹ j hj)
     (fun h => k h (P.ext f h)) (hk.form (extMem P f))
   change ∑ c, _ • k (P.y c) (P.ext _ (P.y c)) = a _ (∑ c, _ • k (P.y c) (P.ext _ (P.y c)))
-  rw [← key, map_sum, T.act_eq _ q rfl]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← key, map_sum, T.act_eq _ q rfl]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_smul, ha, g0Act, map_smul]
 

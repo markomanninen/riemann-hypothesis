@@ -1,7 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSeparatedSetCoversSeminormBall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardPowLeEncardSeminormBallDigitSums
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.VolBr
 
@@ -72,8 +74,8 @@ private lemma encard_mul_encard_le_isBallFam {G : Type} [AddCommGroup G] {Λ : A
         push_cast
         gcongr
 
-open Filter Topology in
 
+open Filter Topology in
 theorem _root_.GlobalTheory.VolBr.encard_ball_pow_le : ∀ (G : Type) [AddCommGroup G]
     (Λ : AddSubgroup G) (B : ℝ → Set G), _root_.GlobalTheory.VolBr.IsBallFam Λ B → ∀ (R : ℝ) (Q e : ℕ),
     1 ≤ R → 2 * R + 1 ≤ Q → (B R).Finite →

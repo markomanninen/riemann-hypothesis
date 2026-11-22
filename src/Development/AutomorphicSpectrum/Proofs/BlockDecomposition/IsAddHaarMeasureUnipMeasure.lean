@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem isAddHaarMeasure_unipMeasure (E : Type) [Field E] [NumberField E] (a r :
     (AutomorphicForm.unipMeasure E a r).IsAddHaarMeasure := by
   infer_instance
 
-theorem isCuspidal_of_isCuspForm : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a),
+theorem isCuspidal_of_isCuspForm : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a),
     IsCuspForm φ → AutomorphicForm.IsCuspidal φ.1 := by
   intro E _ _ _ a φ h r h0 h1 g
   have h2 := h.2 r h0 h1 (AutomorphicForm.unipMeasure E a r) (AutomorphicForm.unipFundamentalDomain E a r)

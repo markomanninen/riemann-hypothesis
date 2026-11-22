@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrAdd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrAdd
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem dual_of_univ {R F W : Type} [AddCommGroup R] [Field F] [AddCommGroup W] [Module F W]
@@ -71,15 +76,15 @@ private theorem tp_abs {O R F : Type} [CommRing O] [IsLocalRing O] [CommRing R] 
         algebraMap O R (o * o') + (o • x' + o' • x) + x * x' := by
       simp only [Algebra.smul_def, map_mul]; ring
     have e1 : r (algebraMap O R o + x) = (r.comp (algebraMap O R)) o := by
-      rw [map_add, (hm x).1 hx, add_zero]; rfl
+      rw [map_add (f := _), (hm x).1 hx, add_zero]; rfl
     have e2 : r (algebraMap O R o' + x') = (r.comp (algebraMap O R)) o' := by
-      rw [map_add, (hm x').1 hx', add_zero]; rfl
+      rw [map_add (f := _), (hm x').1 hx', add_zero]; rfl
     rw [e, e1, e2, hsm, hsm]
-    simp only [map_add, hNO, hNJ _ (hsq x hx x' hx'), map_smul, zero_add, add_zero]
+    simp only [map_add (f := _), hNO, hNJ _ (hsq x hx x' hx'), map_smul, zero_add, add_zero]
   have hsurj : ∀ w : R ⧸ N, ∃ b ∈ maximalIdeal R, N.mkQ b = w := fun w => by
     obtain ⟨b, rfl⟩ := N.mkQ_surjective w
     obtain ⟨o, x, hx, rfl⟩ := hdec b
-    exact ⟨x, hx, by rw [map_add, hNO, zero_add]⟩
+    exact ⟨x, hx, by rw [map_add (f := _), hNO, zero_add]⟩
   haveI : Module.Finite F (R ⧸ N) := by
     obtain ⟨s, hs'⟩ := IsNoetherian.noetherian (maximalIdeal R)
     refine ⟨Submodule.fg_def.2 ⟨N.mkQ '' s, s.finite_toSet.image _, eq_top_iff.2 fun w _ => ?_⟩⟩
@@ -88,14 +93,14 @@ private theorem tp_abs {O R F : Type} [CommRing O] [IsLocalRing O] [CommRing R] 
     induction hb using Submodule.span_induction with
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ (hx trivial) (hy trivial)
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ (hx trivial) (hy trivial)
     | smul c x hx ih =>
       rw [hs'] at hx
       rw [smul_eq_mul, hder, (hm x).1 hx, zero_smul, add_zero]
       exact Submodule.smul_mem _ _ (ih trivial)
   obtain ⟨f1, f2, f3⟩ := dual_of_univ (F := F) N.mkQ.toAddMonoidHom T (fun φ => (hT _).2 ⟨fun b b' => by
       show φ (N.mkQ (b * b')) = r b * φ (N.mkQ b') + r b' * φ (N.mkQ b)
-      rw [hder, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul], fun o => by
+      rw [hder, map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul], fun o => by
       show φ (N.mkQ _) = 0
       rw [hNO, map_zero], fun b hb => by
       show φ (N.mkQ _) = 0
@@ -103,7 +108,7 @@ private theorem tp_abs {O R F : Type} [CommRing O] [IsLocalRing O] [CommRing R] 
     obtain ⟨a1, a2, a3⟩ := (hT α).1 hα
     let K : Ideal R :=
       { carrier := {b | r b = 0 ∧ α b = 0}
-        add_mem' := fun {x y} hx hy => ⟨by rw [map_add, hx.1, hy.1, add_zero], by rw [map_add, hx.2, hy.2, add_zero]⟩
+        add_mem' := fun {x y} hx hy => ⟨by rw [map_add (f := _), hx.1, hy.1, add_zero], by rw [map_add (f := _), hx.2, hy.2, add_zero]⟩
         zero_mem' := ⟨map_zero _, map_zero _⟩
         smul_mem' := fun c x hx => ⟨by rw [smul_eq_mul, map_mul, hx.1, mul_zero],
           by rw [smul_eq_mul, a1, hx.1, hx.2]; ring⟩ }
@@ -119,7 +124,7 @@ private theorem tp_abs {O R F : Type} [CommRing O] [IsLocalRing O] [CommRing R] 
     have hN : ∀ b ∈ N.toAddSubgroup, α b = 0 := fun b hb => by
       obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 (show b ∈ J.restrictScalars O ⊔ 1 from hb)
       obtain ⟨o, rfl⟩ := Submodule.mem_one.1 hz
-      rw [map_add, a2, (hK hy).2, add_zero]
+      rw [map_add (f := _), a2, (hK hy).2, add_zero]
     let ψ : (R ⧸ N) →+ F := QuotientAddGroup.lift N.toAddSubgroup α hN
     have hψ : ∀ b, ψ (N.mkQ b) = α b := fun _ => rfl
     refine ⟨{ toFun := ψ, map_add' := ψ.map_add, map_smul' := fun c w => ?_ }, AddMonoidHom.ext hψ⟩
@@ -142,5 +147,15 @@ theorem UpperTheory.V.Pa.tpDual :
     ∀ (l : ℕ) [Fact l.Prime] (S : Ctx l), Module.Finite S.F S.Tp ∧ (∀ b ∈ maximalIdeal S.Bh, (∀ α ∈ S.Tp, α b = 0) → b ∈ S.J2) ∧ ∀ ξ : Module.Dual S.F S.Tp, ∃ b ∈ maximalIdeal S.Bh, ∀ α : S.Tp, (α : S.Bh →+ S.F) b = ξ α := by
   intro l _ S
   haveI : IsNoetherianRing S.Bh := { noetherian := S.d6.noetherian }
-  obtain ⟨-, -, -, -, -, hI, hJ⟩ := prAdd l S
+  have hI : ired S.U.N ≤ maximalIdeal S.Bh := by
+    refine Ideal.span_le.2 ?_
+    rintro b ⟨x, hx, y, hy, e⟩
+    obtain ⟨c, hc, e'⟩ := S.U.mul_mem x hx y hy
+    have : b = c := S.U.inj (e.symm.trans e')
+    rw [this]
+    exact hc
+  have hJ : S.J2 ≤ maximalIdeal S.Bh := by
+    refine sup_le (sup_le ?_ (Ideal.pow_le_self two_ne_zero)) hI
+    exact ((IsLocalRing.local_hom_tfae (algebraMap S.OO S.Bh)).out 1 3).1
+      (IsCO.isLocalHom (O := S.OO) (R := S.Bh))
   exact tp_abs S.rF S.rF_ker S.oo_surj (ired S.U.N) S.J2 rfl hI hJ S.Tp fun _ => Iff.rfl

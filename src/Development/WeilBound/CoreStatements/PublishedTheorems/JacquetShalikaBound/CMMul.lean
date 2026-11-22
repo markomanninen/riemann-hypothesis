@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
-import GroundTheory.AutomorphicForms.MeasuresModulus
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
+public import GroundTheory.AutomorphicForms.MeasuresModulus
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem cM_mul (k : ℕ) (x y : Fin (k + 1) → F) : cM n k x * cM n k y = 0 := 
   simp only [cM, Matrix.of_apply]
   by_cases h1 : (l : ℕ) = k + 1
   · have h2 : ¬ ((l : ℕ) < k + 1) := by omega
-    rw [dif_neg (show ¬ ((j : ℕ) = k + 1 ∧ (l : ℕ) < k + 1) from fun h => h2 h.2), mul_zero]
-  · rw [dif_neg (show ¬ ((l : ℕ) = k + 1 ∧ (i : ℕ) < k + 1) from fun h => h1 h.1), zero_mul]
+    rw [dite_eq_right (show ¬ ((j : ℕ) = k + 1 ∧ (l : ℕ) < k + 1) from fun h => h2 h.2), mul_zero]
+  · rw [dite_eq_right (show ¬ ((l : ℕ) = k + 1 ∧ (i : ℕ) < k + 1) from fun h => h1 h.1), zero_mul]
 
 def col (n k : ℕ) (x : Fin (k + 1) → F) : GL (Fin n) F where
   val := 1 + cM n k x
@@ -42,8 +46,8 @@ def inU (m : ℕ) (g : GL (Fin n) F) : Prop :=
 
 def Div {ι : Type} (c : ℕ) (A : Matrix ι ι F) : Prop := ∀ i j, ∃ y ∈ 𝒪[F], A i j = (uniformizer F : F) ^ c * y
 
-variable (F) in
 
+variable (F) in
 def lat (m M : ℕ) : Set (Fin m → F) := {x | ∀ i, (uniformizer F : F) ^ M * x i ∈ 𝒪[F]}
 
 def PsiOK (ψ : AddChar F ℂ) : Prop :=

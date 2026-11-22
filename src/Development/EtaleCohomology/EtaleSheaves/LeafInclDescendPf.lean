@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafObjGluePf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafObjGluePf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut LateralTheory.E.LeafDescendFPPf
@@ -16,7 +20,7 @@ theorem bcLift_isPullback {k Ω : Type} [Field k] [Field Ω] [Algebra k Ω] {R R
     IsPullback (bcLift h hp.w) g (pullback.snd q (incl h)) (toR R'') := by
   refine IsPullback.of_right (h₁₂ := pullback.fst q (incl h)) (v₁₃ := q) (h₂₂ := incl h) ?_
     (pullback.lift_snd _ _ _) (IsPullback.of_hasPullback q (incl h))
-  simp only [bcLift]
+  dsimp only [bcLift]
   rw [pullback.lift_fst, toR_eq]
   exact hp
 

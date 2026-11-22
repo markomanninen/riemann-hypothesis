@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.WeightLevelZeroEqOne
-import Formalism.LocalToGlobal.GlobalTheory.ColValOfTiedSOfRest
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.WeightLevelZeroEqOne
+public import Formalism.LocalToGlobal.GlobalTheory.ColValOfTiedSOfRest
+
+@[expose] public section
 
 noncomputable section
 

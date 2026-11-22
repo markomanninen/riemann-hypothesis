@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DwSmoothLocalLinearStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMulIterPartialDerivEqNegPowStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DwSmoothLocalLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMulIterPartialDerivEqNegPowStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,15 +95,15 @@ theorem weakSol_of_smooth :
       ∑ w : Fin n → Fin d, u x * ((-1 : ℂ) ^ n * dw (List.ofFn w) (fun y => a n w y * φ y) x) := by
     funext x
     simp only [trOp, Finset.mul_sum]
-  rw [hsplit, integral_finset_sum _ (fun n _ => integrable_finset_sum _ (fun w _ => hI1 n w))]
+  rw [hsplit, MeasureTheory.integral_finsetSum _ (fun n _ => MeasureTheory.integrable_finsetSum _ (fun w _ => hI1 n w))]
   have hin : ∀ n ∈ Finset.range (m + 1),
       ∫ x, ∑ w : Fin n → Fin d, u x * ((-1 : ℂ) ^ n * dw (List.ofFn w) (fun y => a n w y * φ y) x) =
         ∫ x, ∑ w : Fin n → Fin d, dw (List.ofFn w) u x * (a n w x * φ x) := by
     intro n _
-    rw [integral_finset_sum _ (fun w _ => hI1 n w), integral_finset_sum _ (fun w _ => hI2 n w)]
+    rw [MeasureTheory.integral_finsetSum _ (fun w _ => hI1 n w), MeasureTheory.integral_finsetSum _ (fun w _ => hI2 n w)]
     exact Finset.sum_congr rfl fun w _ => hterm n w
   rw [Finset.sum_congr rfl hin,
-    ← integral_finset_sum _ (fun n _ => integrable_finset_sum _ (fun w _ => hI2 n w))]
+    ← MeasureTheory.integral_finsetSum _ (fun n _ => MeasureTheory.integrable_finsetSum _ (fun w _ => hI2 n w))]
   have hzero : (fun x => ∑ n ∈ Finset.range (m + 1), ∑ w : Fin n → Fin d,
       dw (List.ofFn w) u x * (a n w x * φ x)) = fun _ => (0 : ℂ) := by
     funext x

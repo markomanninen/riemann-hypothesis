@@ -1,12 +1,17 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.BasisB
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FilteredCohomologyRestrictionBijectiveStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ScalarMultiplicationShiftsFiltrationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedSplittingOverFieldStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZKApply
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothPullBasisFiltrationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuotientFiltrationBijectiveOfCoverStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.BasisB
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FilteredCohomologyRestrictionBijectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ScalarMultiplicationShiftsFiltrationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedSplittingOverFieldStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZKApply
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothPullBasisFiltrationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuotientFiltrationBijectiveOfCoverStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -43,7 +48,7 @@ theorem gr_decomp {K B : Type} [CommRing K] [CommRing B] [Algebra K B] {I : Idea
           · intro b _ hb
             simp [Pi.single_eq_of_ne hb]
           · simp
-        simp only [Pi.add_apply, map_add, Finset.sum_add_distrib, h1, ← hn]
+        simp only [Pi.add_apply, map_add (f := _), Finset.sum_add_distrib, h1, ← hn]
         ring
     intro b
     refine key m le_rfl b ?_
@@ -88,7 +93,8 @@ theorem tens_dual {K N V : Type*} {M : Type w} [Field K] [AddCommGroup N] [Modul
       rw [LinearEquiv.symm_apply_eq]; rfl
     simp [h2]
   have := congrArg (fun z => TensorProduct.rid K N (LinearMap.lTensor N ψ z)) hz
-  simpa [map_sum, h1] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, h1] using this
 
 theorem tens_span {K N V : Type*} {M : Type w} [Field K] [AddCommGroup N] [Module K N] [AddCommGroup V] [Module K V]
     [AddCommGroup M] [Module K M] (e : V →ₗ[K] M) (he : Function.Surjective e) {a : ℕ} (bs : Module.Basis (Fin a) K V)
@@ -99,7 +105,8 @@ theorem tens_span {K N V : Type*} {M : Type w} [Field K] [AddCommGroup N] [Modul
     obtain ⟨v, rfl⟩ := he y
     refine ⟨fun t => bs.repr v t • x, ?_⟩
     conv_lhs => rw [← bs.sum_repr v]
-    rw [map_sum, TensorProduct.tmul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, TensorProduct.tmul_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [map_smul, TensorProduct.tmul_smul, TensorProduct.smul_tmul']
   | add x y hx hy =>
@@ -119,8 +126,10 @@ theorem core_expand {K B : Type} [Field K] [CommRing B] [Algebra K B] {I : Ideal
     funext i
     simp only [Finset.sum_apply, Pi.single_apply]
     simp
-  rw [h1, map_sum]
-  simp only [map_sum, hG, hf, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hG, hf, Finset.sum_smul]
 
 theorem dividedPowerFiltration_anti' {B : Type} [CommRing B] {I : Ideal B} (γ : DividedPowers I) {a b : ℕ} (h : a ≤ b) :
     pdP γ b ≤ pdP γ a :=
@@ -191,7 +200,8 @@ theorem core_filt {K B : Type} [Field K] [CommRing B] [Algebra K B] {I : Ideal B
   · exact Ideal.sum_mem _ fun t _ => Ideal.mul_mem_right _ _ (dividedPowerFiltration_anti' γ hki (S.mem i _))
   · have h4 := tens_dual (e i) φ hki (fun t => n t i) bs (congrFun h2 i)
     have h3 := congrArg (S.ν i) h4
-    rw [map_sum, map_zero] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h3
     have h5 : ∑ t, S.ν i (n t i) * algebraMap K B (φ (bs t)) = 0 := by
       rw [← h3]
       refine Finset.sum_congr rfl fun t _ => ?_
@@ -253,20 +263,24 @@ theorem dividedPowerFiltration_dividedPowersBot_of_one_le' {K : Type} [Field K] 
   rw [e]
   exact (dividedPowersBot K).dpow_eval_zero h0
 
-theorem tfbase_K {K : Type} [Field K] [CharZero K] {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersBot K) 1 s where
-  nil := dividedPowerFiltration_dividedPowersBot_of_one_le' hs
-  tf r x h := by simpa using h
-  dv n hn := ⟨0, (n : K)⁻¹, by
-    have : (n : K) ≠ 0 := Nat.cast_ne_zero.2 hn
-    simp [this]⟩
+theorem tfbase_K {K : Type} [Field K] [CharZero K] {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersBot K) 1 s := by
+  refine { nil := dividedPowerFiltration_dividedPowersBot_of_one_le' hs, tf := ?_, dv := ?_ }
+  · intro r x h
+    simpa using h
+  · intro n hn
+    exact ⟨0, (n : K)⁻¹, by
+      have : (n : K) ≠ 0 := Nat.cast_ne_zero.2 hn
+      simp [this]⟩
 
 theorem tfbase_B {K B : Type} [Field K] [CharZero K] [CommRing B] [Algebra K B] {I : Ideal B} (γ : DividedPowers I) {s : ℕ}
-    (h : pdP γ s = ⊥) : TFBase γ 1 s where
-  nil := h
-  tf r x hx := by simpa using hx
-  dv n hn := ⟨0, algebraMap K B (n : K)⁻¹, by
-    have : (n : K) ≠ 0 := Nat.cast_ne_zero.2 hn
-    rw [pow_zero, ← map_natCast (algebraMap K B) n, ← map_mul, mul_inv_cancel₀ this, map_one]⟩
+    (h : pdP γ s = ⊥) : TFBase γ 1 s := by
+  refine { nil := h, tf := ?_, dv := ?_ }
+  · intro r x hx
+    simpa using hx
+  · intro n hn
+    exact ⟨0, algebraMap K B (n : K)⁻¹, by
+      have : (n : K) ≠ 0 := Nat.cast_ne_zero.2 hn
+      rw [pow_zero, ← map_natCast (algebraMap K B) n, ← map_mul, mul_inv_cancel₀ this, map_one]⟩
 
 theorem main : BcOn False → KH.KIso → BasisB := by
   intro hB hK K B _ _ _ _ I γ s m hm hms X q U hU 𝒱 h𝒱 j a bs
@@ -313,7 +327,8 @@ theorem main : BcOn False → KH.KIso → BasisB := by
     obtain ⟨E, hE⟩ := zK_transport q (TO q 1 s 𝒱) (0 - (i : ℕ)) (r - (i : ℕ)) (hne i) j
     have h0 : quoK q (KS q s 𝒱) ((r - (i : ℕ) : ℕ) : ℤ) j x = 0 := by
       have e1 : (((r - (i : ℕ) : ℕ) : ℤ)) = (r : ℤ) - (i : ℕ) := by omega
-      rw [e1, ← hE x, hx, map_zero]
+      rw [e1, ← hE x, hx]
+      exact E.toAddMonoidHom.map_zero
     have h1 := ((hK q U s hd 𝒱 h𝒱 j).2 (r - i) (by omega) x).2 h0
     exact GlobalTheory.LogCris.fil_anti _ _ (by omega) h1
 

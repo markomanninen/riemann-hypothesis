@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GapParts
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProdDetMemHaO
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FlagOfLetterNumberingRowData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GapParts
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProdDetMemHaO
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FlagOfLetterNumberingRowData
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -217,7 +221,7 @@ theorem rename_minor {J : Fin 2 → Type} [∀ g, Fintype (J g)] (o : Orb) (X : 
       (fun x : Fin N × WV (Ix r tau o) => (col x.1, x.2))
         (MvPolynomial.rename (F.letter g a) (minorK C N (X.rkF g a) k)))) =
       (GlobalTheory.CombMinor.cMat (tau o g a) k hk (ind C col k)).det := by
-  rw [minorK, dif_pos ⟨hN, hr⟩, toAll, MvPolynomial.rename_rename, MvPolynomial.rename_rename,
+  rw [minorK, dite_eq_left ⟨hN, hr⟩, toAll, MvPolynomial.rename_rename, MvPolynomial.rename_rename,
     MvPolynomial.rename_rename, AlgHom.map_det]
   congr 1
   ext ρ i : 2
@@ -225,13 +229,13 @@ theorem rename_minor {J : Fin 2 → Type} [∀ g, Fintype (J g)] (o : Orb) (X : 
     GlobalTheory.CombMinor.cMat]
   have hρ : ρ.val < N := lt_of_lt_of_le ρ.2 hN
   rw [Finset.sum_eq_single (col ⟨ρ.val, hρ⟩)]
-  · rw [ind, dif_pos hρ, if_pos rfl, map_one, one_mul]
+  · rw [ind, dite_eq_left hρ, if_pos rfl, map_one, one_mul]
     congr 1
     simp only [Function.comp, RF.Flag.letter]
     rw [sigma_eq _ a (Fin.castLE hk i) (h1 g a (Fin.castLE hr i)) (h2 g a (Fin.castLE hr i))]
     rfl
   · intro b _ hb
-    rw [ind, dif_pos hρ, if_neg hb, map_zero, zero_mul]
+    rw [ind, dite_eq_left hρ, if_neg hb, map_zero, zero_mul]
   · simp
 
 theorem sum_fin_gap (m i : ℕ) (f : ℕ → ℕ) :

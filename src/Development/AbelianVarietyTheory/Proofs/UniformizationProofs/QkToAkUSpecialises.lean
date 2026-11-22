@@ -1,24 +1,28 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifPowOf3
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigIsoCongr
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PowEqOneOfInjective
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GmMulEqOfResMulEq
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsGTransport
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkBaseChange
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PtEqOfProportional
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsPhiRelSmul
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsSecExpandsAtOfIntegralFamily
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PhiSpecialises
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsThetaOfPowEqOne
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIntegralFamiliesSpanGenerateValuationRingsStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifPowOf3
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigIsoCongr
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PowEqOneOfInjective
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GmMulEqOfResMulEq
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsGTransport
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PtEqOfProportional
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsPhiRelSmul
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsSecExpandsAtOfIntegralFamily
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PhiSpecialises
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsThetaOfPowEqOne
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIntegralFamiliesSpanGenerateValuationRingsStatement
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
@@ -33,8 +37,8 @@ namespace GlobalTheory.ThetaSpecialise
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR GlobalTheory.FieldBaseChange GlobalTheory.ThetaScalar GlobalTheory.ThetaBaseChange
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_families (hL : Laws) (hT : DVR.TwistBaseChangeStatement) {R R' : Type} [CommRing R] [IsDomain R]
     [CommRing R'] [IsDomain R'] {I : Ideal R} {I' : Ideal R'} (hR : AdmBase R I) (φ : R →+* R') (D : DegData R I)
     (D' : DegData R' I') (hD : IsPullDeg φ D.toPre D'.toPre) {S : Type} [CommRing S] [IsDomain S] [ValuationRing S]
@@ -124,19 +128,21 @@ theorem exists_families (hL : Laws) (hT : DVR.TwistBaseChangeStatement) {R R' : 
       (fun _ => b' i α - ∑ l, c i l • b l α) ?_ 0)
     · rw [Fin.sum_univ_one, _root_.mul_one] at ha
       rw [Subsingleton.elim i 0]; exact hg (ha.trans (map_zero _).symm)
-    · rw [Fin.sum_univ_one, one_smul, map_sub, map_sum, sub_eq_zero]
-      refine (eq_pullOver_of_secScal hM pb.w (c₁ α) (q₃ i α)).trans
-        ((hc' i α).trans (Finset.sum_congr rfl fun l _ => ?_))
-      rw [map_smulₛₗ]
-      exact congrArg (fun q : FamTerm D.toPre F k α => g (c i l) • q)
-        (eq_pullOver_of_secScal hM pb.w (c₁ α) (b₁ l α)).symm
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [Fin.sum_univ_one, one_smul, map_sub, map_sum, sub_eq_zero]
+        refine (eq_pullOver_of_secScal hM pb.w (c₁ α) (q₃ i α)).trans
+          ((hc' i α).trans (Finset.sum_congr rfl fun l _ => ?_))
+        rw [map_smulₛₗ]
+        exact congrArg (fun q : FamTerm D.toPre F k α => g (c i l) • q)
+          (eq_pullOver_of_secScal hM pb.w (c₁ α) (b₁ l α)).symm
   have e₃ : ∀ i, s₂' i = ∑ l, π (c i l) • s' l := fun i => fam_ext fun x j => by
     obtain ⟨mv, hmv⟩ := exists_moveMap (π := πB) (π' := famBase D'.toPre F') (fS := π) (ε := DegPre.famε k) hM
       D'.toPre.P.isLB hD.w_gen (c₂ x) (by rw [hπB]; exact hΘ₁.w)
     refine congrArg (fun q => LB.Sec.f q j) (?_ : famProj D'.toPre F' k x (s₂' i) =
       famProj D'.toPre F' k x (∑ l, π (c i l) • s' l))
     refine ((hmv _ _).1 (q₄ i x)).symm.trans ((congrArg mv (e₂ i (hD.xe x))).trans ?_)
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_smulₛₗ, map_smul, (hmv _ _).1 (b₂ l x)]
     rfl
@@ -147,7 +153,8 @@ theorem exists_families (hL : Laws) (hT : DVR.TwistBaseChangeStatement) {R R' : 
   rintro _ ⟨v, rfl⟩
   have hv : v ∈ Submodule.span (FractionRing R') (Set.range F₁) := hspan ▸ Submodule.mem_top
   obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hv
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Submodule.sum_mem _ fun i _ => by
     rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
@@ -155,10 +162,10 @@ end GlobalTheory.ThetaSpecialise
 
 namespace GlobalTheory
 
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR GlobalTheory.FieldBaseChange GlobalTheory.ThetaScalar GlobalTheory.ThetaBaseChange
   GlobalTheory.ThetaSpecialise in
 set_option maxHeartbeats 1600000 in
-
 theorem qkToAkU_specialises : Laws → Laws2 → DVR.TwistBaseChangeStatement → ∀ (R R' : Type) [CommRing R] [IsDomain R] [CommRing R'] [IsDomain R'] (I : Ideal R) (I' : Ideal R'), AdmBase R I → AdmBase R' I' → ∀ (φ : R →+* R') (D : DegData R I) (A : PolAV (Spec (CommRingCat.of (FractionRing R)))) (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G] (U : Unif I D A G) (G' : Over (Spec (CommRingCat.of R'))) [GrpObj G'] [IsCommMonObj G'] (bc : G' ≅ (Over.pullback (specOf φ)).obj G), IsMonHom bc.hom → ∀ (A' : PolAV (Spec (CommRingCat.of (FractionRing R')))) (D' : DegData R' I') (hD : IsPullDeg φ D.toPre D'.toPre) (U' : Unif I' D' A' G'), IsPullUnif φ hD bc U U' → IsSemiAbelian G → ∀ (S : Type) [CommRing S] [IsDomain S] [ValuationRing S] (σ : R →+* S) (F : Type) [Field F] [Algebra (FractionRing R) F] (ιF : S →+* F), Function.Injective ιF → ∀ (ρ : TF (R := R) F ⟶ (Over.mk (specOf σ))), ρ.left = specOf ιF → ∀ (F' : Type) [Field F'] [Algebra (FractionRing R') F'] (π : S →+* F'), IsLocalHom π → (∀ r : R, π (σ r) = algebraMap (FractionRing R') F' (algebraMap R' (FractionRing R') (φ r))) → ∀ (k : ℕ), 1 ≤ k → ∀ (gp : GtPt D.toPre (Over.mk (specOf σ))) (p₀ : QkPt D.toPre F k) (p₁ : QkPt D'.toPre F' k), GtPt.IsPullF F ρ.left gp p₀.g → p₁.y = hD.xe.symm p₀.y → p₁.g.b.left ≫ (hD.e.hom.left ≫ pullback.fst D.toPre.P.A.hom (specOf φ)) = specOf π ≫ gp.b.left → (∀ χ, Geo.Tor.PMaps hD.w (DegPre.gtφ D'.toPre F' p₁.g.b χ) (DegPre.gtφT D.toPre (Over.mk (specOf σ)) gp.b (hD.xe χ)) DegPre.gtε (p₁.g.s χ) (gp.s (hD.xe χ)) (specOf π)) → ∀ (xS : (Over.mk (specOf σ)) ⟶ G) (x : TFK (R := R) F ⟶ A.A) (x' : TFK (R := R') F' ⟶ A'.A), x.left ≫ U.gen.inv.left ≫ pullback.fst G.hom (jK R) = ρ.left ≫ xS.left → x'.left ≫ U'.gen.inv.left ≫ pullback.fst G'.hom (jK R') ≫ bc.hom.left ≫ pullback.fst G.hom (specOf φ) = specOf π ≫ xS.left → QkToAkU U.toUnifPre F k p₀ x → QkToAkU U'.toUnifPre F' k p₁ x' := by
   intro hL _ hT R R' _ _ _ _ I I' hR _ φ D A G _ _ U G' _ _ bc hbc A' D' hD U' hU hsa S _ _ _ σ F _ _ g hg ρ hρ F' _ _
     π hπl hπ k hk gp p₀ p₁ h₁ h₂ h₃ h₄ xS x x' hx hx' H w' hw'
@@ -236,13 +243,15 @@ theorem qkToAkU_specialises : Laws → Laws2 → DVR.TwistBaseChangeStatement �
   obtain ⟨l, -, hl⟩ := TorsionImage.exists_smul_of_phiVal p₀ ν ν₀ hν hν₀
   obtain ⟨Φ', hΦ'⟩ := phiFun_of_globalFns hG R' I' D' F' k hk p₁ ν' hν'
   have m : ∀ i, mv (aS (b i)) = l • mv (∑ j, c i j • b j) := fun i => e.injective (by
-    rw [map_smul, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, map_sum]
     simp only [map_smulₛₗ, RingHom.id_apply, E]
     exact hl _ _ _ ((phiRel_iff hG p₀ ν hν _ _).1 (hc i).1) ((phiRel_iff hG p₀ ν₀ hν₀ _ _).1
       (Hν _ _ _ _ ((he _ _).2 (E i)) ((he _ _).2 rfl) (act _ _ ((haS _ _).2 rfl)))))
   have m₁ : ∀ i, mv' (aS (b i)) = a' (mv' (b i)) := fun i => ((ha' _ _).1 (act' _ _ ((haS _ _).2 rfl))).symm
   have m₂ : ∀ i, e' (mv' (∑ j, c i j • b j)) = Φ' (s' i) := fun i => by
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     simp only [map_smulₛₗ, RingHom.id_apply, E']
     exact (hΦ' _ _).1 (hc i).2
   obtain ⟨l', hl', m'⟩ : ∃ l' : F', l' ≠ 0 ∧ ∀ i, e' (a' (mv' (b i))) = l' • Φ' (s' i) := by

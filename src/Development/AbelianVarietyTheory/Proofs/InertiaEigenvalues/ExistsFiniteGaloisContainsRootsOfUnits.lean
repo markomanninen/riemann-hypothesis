@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField Polynomial
 
 namespace GlobalTheory.KummerUnits
@@ -10,7 +15,7 @@ theorem exists_finite_galois_mem_of_pow_eq_unit : ∀ (E F Ω : Type) [Field E] 
   intro E F Ω _ _ _ _ _ _ _ _ _ M hM ⟨ζ, hζ⟩
   haveI : NeZero M := ⟨hM.ne'⟩
   haveI : CharZero F := charZero_of_injective_algebraMap (algebraMap E F).injective
-  obtain ⟨S, hS⟩ := Monoid.fg_def.1 (inferInstance : Monoid.FG (𝓞 E)ˣ)
+  obtain ⟨S, hS⟩ := Monoid.exists_of_isMulFG (𝓞 E)ˣ
   let c : (𝓞 E)ˣ → F := fun u => algebraMap E F ((u : 𝓞 E) : E)
   let p : F[X] := ∏ s ∈ S, (X ^ M - C (c s))
   have hp : p ≠ 0 := Finset.prod_ne_zero_iff.2 fun s _ => X_pow_sub_C_ne_zero hM _

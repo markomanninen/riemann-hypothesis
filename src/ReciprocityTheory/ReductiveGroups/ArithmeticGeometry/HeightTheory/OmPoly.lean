@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AGFrameNonneg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.DePres
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FprodNeZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AGFrameNonneg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.DePres
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FprodNeZero
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 

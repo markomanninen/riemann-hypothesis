@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOneComb
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlaceLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOneComb
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlaceLaws
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -18,8 +22,8 @@ def SameOrb {k n : Type} [Field k] [ValuativeRel k] [Fintype n] [DecidableEq n] 
     (M : Submodule 𝒪[k] (n → k)) (yb yb' : (n → k) ⧸ M) : Prop :=
   ∃ g ∈ J, ∃ y, Submodule.Quotient.mk y = yb ∧ Submodule.Quotient.mk (g.val.toBlocks₁₁ *ᵥ y) = yb'
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 structure QAt (v : VCom c) (χ : ℕ → (AE D)ˣ →* Circle) where
   k : Type
   [fld : Field k]

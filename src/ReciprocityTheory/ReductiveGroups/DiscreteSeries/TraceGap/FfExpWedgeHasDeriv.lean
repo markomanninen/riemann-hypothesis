@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.AlgebraMapInvFf
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HasDerivAtInvExpCurveEntry
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.AlgebraMapInvFf
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HasDerivAtInvExpCurveEntry
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,12 +54,16 @@ theorem isDer_sum {ι : Type*} (s : Finset ι) {O : ι → Module.End ℂ (Fock 
 
 theorem cpV_cmV_ιMulti (u w : Fin n × Fin n → ℂ) : ∀ (p : ℕ) (v : Fin p → (Fin n × Fin n → ℂ)),
     cpV u (cmV w (ExteriorAlgebra.ιMulti ℂ p v)) =
-      ∑ i, dualV w (v i) • ExteriorAlgebra.ιMulti ℂ p (Function.update v i u)
-  | 0, v => by
+      ∑ i, dualV w (v i) • ExteriorAlgebra.ιMulti ℂ p (Function.update v i u) := by
+  intro p
+  induction p with
+  | zero =>
+    intro v
     simp only [cmV, ExteriorAlgebra.ιMulti_zero_apply, CliffordAlgebra.contractLeft_one, map_zero]
     rw [Fin.sum_univ_zero]
-  | p + 1, v => by
-    have ih := cpV_cmV_ιMulti u w p (Matrix.vecTail v)
+  | succ p ih =>
+    intro v
+    specialize ih (Matrix.vecTail v)
     simp only [cmV, cpV, LinearMap.mulLeft_apply] at ih ⊢
     have hanti : ExteriorAlgebra.ι ℂ u * ExteriorAlgebra.ι ℂ (v 0) =
         -(ExteriorAlgebra.ι ℂ (v 0) * ExteriorAlgebra.ι ℂ u) :=
@@ -70,8 +78,7 @@ theorem cpV_cmV_ιMulti (u w : Fin n × Fin n → ℂ) : ∀ (p : ℕ) (v : Fin 
       rw [mul_smul_comm, ExteriorAlgebra.ιMulti_succ_apply,
         Function.update_of_ne (Fin.succ_ne_zero i).symm]
       congr 3
-      funext j
-      simp only [Matrix.vecTail, Function.comp_apply, Function.update_apply, Fin.succ_inj]
+      exact (Fin.tail_update_succ (q := v) (i := i) (y := u)).symm
 
 theorem isDer_cpV_cmV (u w : Fin n × Fin n → ℂ) :
     IsDer (cpV u * cmV w) (LinearMap.smulRight (dualV w) u) := by
@@ -201,7 +208,7 @@ theorem adPhys_one' (w : Fin n × Fin n → ℂ) : adPhys ε 1 w = w := by
   simp [adPhys, adMat_one]
 
 def wedgeCoord (p : ℕ) :
-    MultilinearMap ℂ (fun _ : Fin p => Fin n × Fin n → ℂ) (Finset (Fin (n * n)) → ℂ) :=
+    (Fin p → (Fin n × Fin n → ℂ)) →ₘₗ[ℂ] (Finset (Fin (n * n)) → ℂ) :=
   (fockBasis n).equivFun.toLinearMap.compMultilinearMap (ExteriorAlgebra.ιMulti ℂ p).toMultilinearMap
 
 theorem wedgeCoord_eq_sum (p : ℕ) (v : Fin p → (Fin n × Fin n → ℂ)) :
@@ -212,9 +219,10 @@ theorem wedgeCoord_eq_sum (p : ℕ) (v : Fin p → (Fin n × Fin n → ℂ)) :
     funext i y
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hv]
-  rw [MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun r _ => ?_
-  rw [MultilinearMap.map_smul_univ]
+  simp only [MultilinearMap.map_smul_univ, RingHom.id_apply]
 
 theorem wedgeCoord_continuous (p : ℕ) : Continuous (wedgeCoord (n := n) p) := by
   have h : (wedgeCoord (n := n) p : (Fin p → (Fin n × Fin n → ℂ)) → (Finset (Fin (n * n)) → ℂ)) =
@@ -253,7 +261,8 @@ theorem ff_exp_wedge_hasDeriv {X : Matrix (Fin n) (Fin n) ℂ} (hX : Xᴴ = -X) 
   rw [hfun]
   convert h using 1
   all_goals try rfl
-  rw [ContinuousLinearMap.coe_restrictScalars', ContinuousMultilinearMap.linearDeriv_apply, hc0, isDer_sgX,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ContinuousLinearMap.coe_restrictScalars', ContinuousMultilinearMap.linearDeriv_apply, hc0, isDer_sgX,
     map_sum]
   rfl
 
@@ -262,7 +271,8 @@ theorem ff_exp_hasDeriv {X : Matrix (Fin n) (Fin n) ℂ} (hX : Xᴴ = -X) (f : F
       ((fockBasis n).equivFun (sgX ε X f)) 0 := by
   have hf : f = ∑ S, (fockBasis n).repr f S • fockBasis n S := ((fockBasis n).sum_repr f).symm
   rw [hf]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
   refine HasDerivAt.fun_sum fun S _ => ?_
   refine HasDerivAt.const_smul ((fockBasis n).repr f S) ?_
   rw [fockBasis_eq]

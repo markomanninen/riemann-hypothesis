@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DegLiftOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DegLiftOfParts
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate
@@ -19,11 +23,12 @@ variable {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 theorem foldT_congr_open {U : Set (Mat k r)} (hU : IsOpen U) :
     ∀ (ts : List (ℂ × Fin (2 * r + k + 1) × Fin (2 * r + k + 1))) {f₁ f₂ : Mat k r → E},
       (∀ x ∈ U, x ∈ GV k r → f₁ x = f₂ x) →
-      ∀ x ∈ U, x ∈ GV k r → Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.foldT ts f₁ x = Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.foldT ts f₂ x
-  | [], _, _, h => h
-  | t :: ts, f₁, f₂, h => by
+      ∀ x ∈ U, x ∈ GV k r → Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.foldT ts f₁ x = Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.foldT ts f₂ x := by
+  intro ts f₁ f₂ h
+  induction ts with
+  | nil => exact h
+  | cons t ts ih =>
     intro x hx hxG
-    have ih := foldT_congr_open hU ts h
     show Top (Q.EH k r) t.1 t.2.1 t.2.2 (Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.foldT ts f₁) x =
       Top (Q.EH k r) t.1 t.2.1 t.2.2 (Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.foldT ts f₂) x
     rw [Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.top_apply', Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.top_apply', Formalism.FourierDecayAlt.P.CapelliWordSumExpansion.EH_apply,

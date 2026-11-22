@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
+
+@[expose] public section
 
 open scoped ComplexConjugate
 

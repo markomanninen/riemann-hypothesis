@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SubstitutionXFirstEmbedding
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SubstitutionXFirstEmbedding
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,6 @@ variable {K : Type} [Field K] (D : TwistData K) (j : Fin D.J)
 def outSeg (i : D.ML) : Prop := ¬ ∃ k, D.e0 j k = i
 
 instance : DecidablePred (D.outSeg j) := Classical.decPred _
-instance : DecidablePred (D.SegL j) := Classical.decPred _
 
 def pullE (ζ : D.EM) : Fin (D.nB j + D.r) × Fin D.r →₀ ℕ :=
   Finsupp.comapDomain (Prod.map (D.e0 j) id) ζ
@@ -43,7 +46,7 @@ theorem mapDomain_pullE (ζ : D.EM) :
     have hinj : Function.Injective (Prod.map (D.e0 j) (id : Fin D.r → Fin D.r)) :=
       (D.index_embedding_injective j).prodMap Function.injective_id
     have hout : ¬ D.outSeg j (D.e0 j k) := fun h => h ⟨k, rfl⟩
-    exact (Finsupp.mapDomain_apply hinj (D.pullE j ζ) (k, a)).trans
+    exact (Finsupp.mapDomain_apply_of_injective hinj (D.pullE j ζ) (k, a)).trans
       ((D.pullE_apply j ζ k a).trans ((eIn_apply (out := D.outSeg j) ζ (D.e0 j k, a)).trans (if_neg hout)).symm)
   · have hout : D.outSeg j i := hi
     rw [Finsupp.mapDomain_notin_range]
@@ -146,10 +149,12 @@ theorem Th_ph (p : ℕ) (Ψ : ι → MvPolynomial (Fin (D.nB j + D.r) × Fin D.r
     D.ph p (D.Th j cc PP (monomial ζ 1)) = D.ph p (monomial ζ 1) := by
   have hsum : (∑ b, cc (D.pullE j ζ) b • rename (Prod.map (D.eA j) id) (Ψ b)) =
       D.ph p (monomial (eIn (D.outSeg j) ζ) 1) := by
-    rw [← D.mapDomain_pullE j ζ, ← MvPolynomial.rename_monomial, substitution_rename_first_embedding,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← D.mapDomain_pullE j ζ, ← MvPolynomial.rename_monomial, substitution_rename_first_embedding,
       hcc _ (D.pullE_deg j ζ hζ), map_sum]
     simp only [map_smul]
-  rw [Th_monomial, map_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Th_monomial, map_mul, map_sum]
   simp only [map_smul, hPP]
   rw [hsum, ← map_mul, MvPolynomial.monomial_mul, one_mul, eOut_add_eIn]
 

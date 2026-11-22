@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsRestTer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsRestTer
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Lattice
 

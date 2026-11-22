@@ -1,12 +1,21 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.RatRgOfSecRat
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveInstSt
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsGenericComponentPointsOffMeagre
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvCEqZeroIffRdUEqZero
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CompUniqueOfReading
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CountableFractionRingMvPolynomial
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LinearDisjointAlgebraicClosure
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieGenRg
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieGenR
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnifGen
+public import Formalism.LocalToGlobal.ProjectiveLattices.ZeroWeightAlgebraicPart
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHSupA
+public import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveInstSt
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsGenericComponentPointsOffMeagre
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvCEqZeroIffRdUEqZero
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CompUniqueOfReading
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CountableFractionRingMvPolynomial
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LinearDisjointAlgebraicClosure
+
+@[expose] public section
 
 set_option maxHeartbeats 4000000
 set_option synthInstance.maxHeartbeats 400000
@@ -59,11 +68,11 @@ theorem rdU_eq_of_reads (U : Unf Xo c σ r) (h : GenFrEx Xo c) (k : U.Comp)
     hL.wt u n f hf (CAt σ) t _ _ (hL.test _ _) (hL.test _ _) hb
   have h4 : rdU U f k x = toC (evR Xo c f (U.un k x)) := by
     simp only [rdU, LinearMap.coe_mk, AddHom.coe_mk]
-    rw [dif_pos x.2]
+    rw [dite_eq_left x.2]
   rw [h4, ← h1, h2]
   rfl
 
-theorem exists_bijection (U : Unf Xo c σ r) (hσ : GoodEmb c σ) (hU : IsUnf U) (hF : FnAlgClosed Xo c)
+theorem exists_bijection (U : Unf Xo c σ r) (hσ : GoodEmb c σ) (hU : IsUnf U) (hF : FnAlgClosed (Xo := Xo) (c := c))
     (h : GenFrEx Xo c) :
     ∃ κ : Comp Xo c → U.Comp, Function.Bijective κ ∧
       (∀ Z (u : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), Dom u n → ∀ f ∈ sec Xo c u n,

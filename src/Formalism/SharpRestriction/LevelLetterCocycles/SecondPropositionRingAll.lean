@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondRankCount
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondRankCount
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
     (W : LocWach PD LL O v n)
 
-open Classical in
 
+open Classical in
 def SecondPropositionRingInput (π' Eπ : LetA O n) (h' : ℕ) (c : ZMod n) : Prop :=
   IsUnit (algebraMap (LetA O n) W.EE π') ∧ IsUnit (algebraMap (LetA O n) W.EE Eπ) ∧
   (∃ g ∈ W.AΔ, W.γA W.gamK π' = π' * g) ∧

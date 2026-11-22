@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.HeckeTheoremTrivial
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.HeckeTheoremTrivial
+
+@[expose] public section
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex Topology Filter Set
 open scoped NumberField.AdeleRing ComplexConjugate Real

@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CompactSelfAdjoint
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CutIrr
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JointNe
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CompactSelfAdjoint
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CutIrr
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JointNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,7 +141,7 @@ private lemma list_ne (h : Slots π V m ι E A U) (hall : ∀ j, ∃ v ∈ eigIn
     let M : Submodule ℂ H :=
       { carrier := {w | w ∈ eigIn V E 1 ∧ ∀ g, A k (π (ι k g) w) = 0}
         add_mem' := fun {a b} ha hb => ⟨Submodule.add_mem _ ha.1 hb.1, fun g => by
-          rw [map_add, map_add, ha.2, hb.2, add_zero]⟩
+          rw [map_add (f := _), map_add (f := _), ha.2, hb.2, add_zero]⟩
         zero_mem' := ⟨Submodule.zero_mem _, fun g => by simp⟩
         smul_mem' := fun c a ha => ⟨Submodule.smul_mem _ c ha.1, fun g => by
           rw [map_smul, map_smul, ha.2, smul_zero]⟩ }
@@ -284,7 +288,7 @@ theorem UpperTheory.ConvolutionTheory.L1.jointEx :
     CompactSelfAdjoint.exists_real_of_hasEigenvalue (IsSelfAdjoint.of_nonneg (h.A_pos 0)) hEv
   obtain ⟨hwc, hwQ⟩ := mem_eigIn.1 w.2
   have hr0 : 0 ≤ r := by
-    have hp := (ContinuousLinearMap.nonneg_iff_isPositive _).1 (h.A_pos 0)
+    have hp := ContinuousLinearMap.nonneg_iff_isPositive.1 (h.A_pos 0)
     have h3 := hp.re_inner_nonneg_right (w : H)
     have h4 : 0 < ‖(w : H)‖ ^ 2 := by positivity
     have h5 : RCLike.re (inner ℂ (w : H) ((r : ℂ) • (w : H))) = r * ‖(w : H)‖ ^ 2 := by

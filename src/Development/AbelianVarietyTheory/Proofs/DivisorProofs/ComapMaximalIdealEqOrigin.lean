@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointAtZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIffEtaleAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorFiniteProjectiveBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointAtZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIffEtaleAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorFiniteProjectiveBaseChange
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 open scoped TensorProduct
@@ -41,9 +45,6 @@ variable (EA : Type) [CommRing EA] [Algebra A[X] EA]
 
 abbrev Ext : Type := PolyOver f ⊗[A[X]] EA
 
-example : Algebra A₁[X] (Ext f EA) := inferInstance
-example : Algebra A₁ (Ext f EA) := inferInstance
-example : IsScalarTower A₁ A₁[X] (Ext f EA) := inferInstance
 instance [Algebra.Etale A[X] EA] : Algebra.Etale A₁[X] (Ext f EA) :=
   inferInstanceAs (Algebra.Etale (PolyOver f) (PolyOver f ⊗[A[X]] EA))
 
@@ -93,13 +94,13 @@ def bcAct' (q : ℕ) (act : Multiplicative (ZMod q) →* (D ≃ₐ[B] D)) :
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul b x => simp [Algebra.TensorProduct.congr_apply]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   map_mul' g h := by
     apply AlgEquiv.ext; intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul b x => simp [Algebra.TensorProduct.congr_apply, AlgEquiv.mul_apply]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 instance : Algebra B₁ (BC β D) := inferInstanceAs (Algebra (Over β) (Over β ⊗[B] D))
 
@@ -326,9 +327,9 @@ theorem comap_maximalIdeal_eq_origin {T O : Type} [CommRing T] [IsLocalRing T] [
     (maximalIdeal O).comap (algebraMap T[X] O) = GlobalTheory.KeyOriginCut.originIdeal T := by
   haveI : IsLocalHom φ := hsh.2.2.1
   have h1 : (maximalIdeal O).comap φ = maximalIdeal (Localization.AtPrime P) :=
-    ((IsLocalRing.local_hom_TFAE φ).out 0 4).mp this
+    ((IsLocalRing.local_hom_tfae φ).out 1 5).mp this
   rw [← hφ, ← Ideal.comap_comap, h1, ← hP]
-  exact Localization.AtPrime.comap_maximalIdeal (I := P)
+  exact Localization.AtPrime.under_maximalIdeal (I := P)
 
 end GlobalTheory.KeyOriginBC
 
@@ -370,7 +371,7 @@ theorem reduce_sub_glue_mem {T O : Type} [CommRing T] [CommRing O] [IsLocalRing 
         RingHom.id_apply, ← map_sub, ← neg_sub, ← Polynomial.coeff_zero_eq_eval_zero, hr, map_neg, map_mul]
       exact I.neg_mem_iff.2 (I.mul_mem_right _ (Ideal.subset_span rfl))
     rw [h1, h2]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 end GlobalTheory.KeyOriginBC
 
 namespace GlobalTheory.KeyOriginBC
@@ -509,7 +510,7 @@ theorem isZTorsor_bc {B B₁ : Type} [CommRing B] [CommRing B₁] (β : B →+* 
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul b x => rw [hact']; simp [bcAct', Algebra.TensorProduct.congr_apply]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   subst he
   exact htor'
 end GlobalTheory.KeyOriginBC

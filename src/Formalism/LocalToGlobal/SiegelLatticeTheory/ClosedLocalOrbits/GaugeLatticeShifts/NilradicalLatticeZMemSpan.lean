@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RegUnitary
-import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RrgCountableField
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RegUnitary
+public import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RrgCountableField
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem tr_span {E R M₁ M₂ : Type*} [Field E] [CommRing R] [AddCommGroup M�
   induction hx using Submodule.span_induction with
   | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
   | zero => rw [map_zero]; exact zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact add_mem ha hb
+  | add a b _ _ ha hb => rw [map_add ι]; exact add_mem ha hb
   | smul c a _ ha => rw [hs]; exact Submodule.smul_mem _ _ ha
 
 variable {E R : Type*} [Field E] [CommRing R] {n r : ℕ}
@@ -57,16 +61,19 @@ theorem tr_orth (j : E →+* R) (ι : (Fin n → E) →+ (Fin n → R)) (hs : �
   set w' : Fin n → Fin n → E := fun i => w i - ∑ a, hE (e a) (w i) • f a with hw'def
   have hw' : ∀ i b, hE (e b) (w' i) = 0 := by
     intro i b
-    simp only [hw'def, map_sub, map_sum, map_smul, hef, smul_eq_mul, mul_ite, mul_one, mul_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hw'def, map_sub, map_sum, map_smul, hef, smul_eq_mul, mul_ite, mul_one, mul_zero,
       Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_self]
   have hdec : ∀ i, ι (w i) = ι (w' i) + ∑ a, j (hE (e a) (w i)) • ι (f a) := by
     intro i
-    simp only [hw'def, map_sub, map_sum, hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hw'def, map_sub, map_sum, hs]
     abel
   have hB0 : ∀ a, ∑ i, c i * j (hE (e a) (w i)) = 0 := by
     intro a
     have := hy a
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simpa [map_smul, hB] using this
   have hsum : ∑ i, c i • ι (w i) = ∑ i, c i • ι (w' i) + ∑ a, (∑ i, c i * j (hE (e a) (w i))) • ι (f a) := by
     simp only [hdec, smul_add, Finset.sum_add_distrib, Finset.smul_sum, smul_smul, Finset.sum_smul]
@@ -117,7 +124,7 @@ def rvHom (v : InfinitePlace I.F) : (Fin I.n → I.E) →+ (Fin I.n → ℂ) whe
     rw [← Matrix.mulVec_add]
     congr 1
     funext i
-    simp
+    simpa only [Pi.add_apply] using (I.φ v).map_add (x i) (y i)
 
 theorem rvHom_apply (v : InfinitePlace I.F) (x : Fin I.n → I.E) : rvHom I v x = rv I v x := rfl
 
@@ -128,7 +135,7 @@ theorem rv_smul' (v : InfinitePlace I.F) (c : I.E) (x : Fin I.n → I.E) :
   rw [← Matrix.mulVec_smul]
   congr 1
   funext i
-  simp
+  simpa only [Pi.smul_apply, smul_eq_mul] using (I.φ v).map_mul c (x i)
 
 theorem rv_span' (v : InfinitePlace I.F) (y : Fin I.n → ℂ) :
     ∃ c : Fin I.n → ℂ, ∃ w : Fin I.n → Fin I.n → I.E, y = ∑ i, c i • rvHom I v (w i) := by
@@ -216,7 +223,7 @@ theorem orth_of_e {v : (VS D).V} (h : ∀ a, (VS D).hT (X.eX a) v = 0) :
   induction hw' using Submodule.span_induction with
   | mem y hy => obtain ⟨a, rfl⟩ := hy; exact h a
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+  | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
   | smul c a _ ha => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, ha, smul_zero]
 
 variable {Λ : Submodule (𝓞 D.host.E) (VS D).V} {n : (VS D).V ≃ₗ[D.host.E] (VS D).V}
@@ -227,8 +234,8 @@ include h3 in
 theorem mcrd (v : (VS D).V) : (M - 1) *ᵥ X.crd v = X.crd (n v - v) := by
   rw [Matrix.sub_mulVec, Matrix.one_mulVec, ← h3, crd_sub']
 
-include hn h3 in
 
+include hn h3 in
 theorem nlam_e (a : Fin D.R.rS) : (M - 1) *ᵥ X.eR a ∈ Submodule.span X.B.I.E (X.eR '' {b | b.1 < a.1}) := by
   have hx : X.eX a ∈ Xflag (lf D (X.Fu u)) (a.1 + 1) := by
     show X.eX a ∈ Submodule.span D.host.E ((X.Fu u).e '' {i | i.1 < a.1 + 1})
@@ -244,8 +251,8 @@ theorem nlam_e (a : Fin D.R.rS) : (M - 1) *ᵥ X.eR a ∈ Submodule.span X.B.I.E
   rw [mcrd X h3]
   exact this
 
-include hn h3 in
 
+include hn h3 in
 theorem nilradical_lattice_z_mem_span : (M - 1) *ᵥ X.zR u ∈ Submodule.span X.B.I.E (Set.range X.eR) := by
   have ho := orth_of_e X (u := u) (v := X.zu u) fun a => (X.zu_orth u a).1
   have h1 := hn.2.2 _ ho
@@ -257,8 +264,8 @@ theorem nilradical_lattice_z_mem_span : (M - 1) *ᵥ X.zR u ∈ Submodule.span X
   rw [mcrd X h3]
   exact this
 
-include hn h3 in
 
+include hn h3 in
 theorem nlam_orth (w : Fin X.B.I.n → X.B.I.E)
     (hw : ∀ a, hfL (starRingEnd X.B.I.E) X.B.I.J (X.eR a) w = 0) :
     (M - 1) *ᵥ w ∈ Submodule.span X.B.I.E (Set.range X.eR) := by
@@ -390,7 +397,7 @@ theorem rootCoord_mul (ε : Fin n → Bool) (e f : Fin r → Fin n → ℂ) (z :
     · exact hh.1 ⟨a.1 + 1, hlt⟩
     · exact spL_mono e (by omega) hh.2
   have L : ∀ p q : Fin n → ℂ, hJ ε (f a) (p + q) = hJ ε (f a) p + hJ ε (f a) q := fun p q => by
-    rw [← hJL_apply, map_add]; rfl
+    rw [← hJL_apply, map_add (f := _)]; rfl
   have hgd := fl_step hg.1 a.1 hd
   have e2 : h *ᵥ nxt e z a = nxt e z a + (h - 1) *ᵥ nxt e z a := by
     rw [Matrix.sub_mulVec, Matrix.one_mulVec]; abel
@@ -510,7 +517,8 @@ theorem crd_matOf (n : (VS D).V ≃ₗ[D.host.E] (VS D).V) (y : (VS D).V) :
   show X.ιE.symm (X.bas.repr (n y) i) = _
   rw [LinearEquiv.coe_coe] at h
   rw [← h]
-  simp only [matOf, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [matOf, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
   rfl
 
 theorem matOf_comp (n m : (VS D).V ≃ₗ[D.host.E] (VS D).V) (l : Fin X.B.I.n → X.B.I.E)
@@ -629,28 +637,15 @@ open Formalism.L2.SG.TermOp.Vanish
 theorem psiProd_all : ∀ (D : D7) (X : HidaSetting D) (u : D.what₂.Word), Formalism.L2.SG.PoincareInHH.Cut.PsiProd X u :=
   fun _ X u => psiProd_holds X u
 
-theorem chiTrivialC_holds (hK : NilradicalConjLevel) (hCol : ColPass) : ChiTrivialC :=
-  chiTrivialC_of nLamNinf_holds nLamNfin_holds hK hCol psiProd_all
-
 theorem ooFundIndepC_of_chi (hC : ChiTrivialC) : Formalism.L2.SG.Full.OOFundIndepC :=
   ooFundIndepC_of nLamNinf_holds hC
-
-theorem ooFundIndepC_holds (hK : NilradicalConjLevel) (hCol : ColPass) : Formalism.L2.SG.Full.OOFundIndepC :=
-  ooFundIndepC_of_chi (chiTrivialC_holds hK hCol)
 
 theorem ampWellDefC_of_chi (hK : NilradicalConjLevel) (hC : ChiTrivialC) : Formalism.L2.SG.Full.AmpWellDefC :=
   ampWellDefC_of ratPt_holds nLamNinf_holds nLamNfin_holds hC hK psiProd_all
 
-theorem ampWellDefC_holds (hK : NilradicalConjLevel) (hCol : ColPass) : Formalism.L2.SG.Full.AmpWellDefC :=
-  ampWellDefC_of_chi hK (chiTrivialC_holds hK hCol)
-
 theorem lemmaVC_of_chi (hA : AvgCore) (hC : ChiTrivialC) (h3 : RCocompactC) (h4 : NonRelCharC) :
     Formalism.L2.SG.Full.LemmaVC :=
   lemmaVC_of hA ginfUnimod_holds nLamNinf_holds hC psiInfChar_holds rClosedC_holds roDiscreteC_holds h3 h4
-
-theorem lemmaVC_holds (hA : AvgCore) (hK : NilradicalConjLevel) (hCol : ColPass) (h3 : RCocompactC) (h4 : NonRelCharC) :
-    Formalism.L2.SG.Full.LemmaVC :=
-  lemmaVC_of_chi hA (chiTrivialC_holds hK hCol) h3 h4
 
 end Final
 

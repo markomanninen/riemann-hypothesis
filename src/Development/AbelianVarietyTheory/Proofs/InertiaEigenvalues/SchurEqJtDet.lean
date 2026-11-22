@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ namespace GlobalTheory.JSW
 def padTo {m n : ℕ} (_h : m ≤ n) (l : Fin m → ℕ) : Fin n → ℕ :=
   fun i => if hi : (i : ℕ) < m then l ⟨i, hi⟩ else 0
 
-open Classical in
 
+open Classical in
 def antiParts (m d : ℕ) : Finset (Fin m → ℕ) :=
   (Finset.Nat.antidiagonalTuple m d).filter Antitone
 
@@ -31,10 +35,5 @@ theorem mem_antiParts {m d : ℕ} {l : Fin m → ℕ} : l ∈ antiParts m d ↔ 
 
 theorem padTo_self {m : ℕ} (l : Fin m → ℕ) : padTo le_rfl l = l := by
   funext i; simp [padTo, i.2]
-
-example : alternant ℤ 2 (staircase 2) = MvPolynomial.X 0 - MvPolynomial.X 1 := by
-  simp [alternant, staircase, Matrix.det_fin_two]
-
-example : (antiParts 2 2).card = 2 := by decide
 
 end GlobalTheory.JSW

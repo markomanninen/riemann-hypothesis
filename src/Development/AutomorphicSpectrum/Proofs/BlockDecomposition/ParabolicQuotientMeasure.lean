@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitHomeoApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitHomeoApply
+
+@[expose] public section
+
 open MeasureTheory Topology
 open scoped ENNReal NNReal Matrix Pointwise
 

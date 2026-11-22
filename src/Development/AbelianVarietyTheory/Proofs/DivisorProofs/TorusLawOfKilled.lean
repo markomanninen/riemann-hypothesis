@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
@@ -108,7 +112,7 @@ lemma torEl_add (h : ∀ τ, OrthFr (Hm τ) (q τ) (x₀ τ)) (s s' : ι → Fin
   rw [cd_mul hx]
   congr 1
   funext a
-  simp only [Pi.add_apply, Pi.mul_apply, Complex.ofReal_add, add_mul, Complex.exp_add]
+  simp only [Pi.add_apply, Complex.ofReal_add, add_mul, Complex.exp_add, Pi.mul_apply]
 
 omit [Fintype ι] [DecidableEq ι] in
 lemma torEl_zero (h : ∀ τ, OrthFr (Hm τ) (q τ) (x₀ τ)) : torEl x₀ 0 = 1 := by
@@ -328,8 +332,8 @@ end GlobalTheory.HolDict.TorusLaw
 
 namespace GlobalTheory.HolDict
 
-open TorusLaw in
 
+open TorusLaw in
 theorem torus_law_of_killed : ∀ (n : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι] (Hm : ι → Mt n) (q : ι → ℕ) (x₀ : ι → Mt n) (w : ι → Fin n → ℤ), (∀ τ, OrthFr (Hm τ) (q τ) (x₀ τ)) → ∀ f, SmFn Hm f → KilledFn Hm x₀ w f → ∀ u ∈ UG Hm, ∀ s, f (u * torEl x₀ s) = torCh w s * f u := by
   intro n ι _ _ Hm q x₀ w h f hs hk u hu s
   have key : ∀ S : Finset (ι × Fin n), ∀ v ∈ UG Hm,

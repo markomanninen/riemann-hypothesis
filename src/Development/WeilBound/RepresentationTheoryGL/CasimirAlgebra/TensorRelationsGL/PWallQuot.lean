@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.QdetFacts
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.QdetFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,12 +19,13 @@ variable {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B]
 theorem qdet_map (f : A →ₐ[ℂ] B) {n : ℕ} (E : Fin n → Fin n → A) (u : ℂ) :
     f (qdet E u) = qdet (fun a b => f (E a b)) u := by
   unfold qdet qminor
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_mul, map_intCast, map_list_prod, List.map_ofFn]
   congr 1
   refine congrArg List.prod (congrArg List.ofFn (funext fun k => ?_))
-  simp only [Function.comp, Tm, map_add, apply_ite f, map_zero, AlgHom.commutes]
+  simp only [Function.comp, Tm, map_add (f := _), apply_ite f, map_zero, AlgHom.commutes]
 
 theorem glRel_map (f : A →ₐ[ℂ] B) {n : ℕ} {E : Fin n → Fin n → A} (h : GlRel E) : GlRel fun a b => f (E a b) := by
   intro a b c d
@@ -78,7 +83,7 @@ theorem wallQuot_of (hQ : QdetFacts) : WallQuot := by
     { carrier := {y | ∀ w ∈ envAlg E, φ (w y) = 0}
       add_mem' := fun {x y} hx hy w hw => by
         show φ (w (x + y)) = 0
-        rw [map_add, map_add, hx w hw, hy w hw, add_zero]
+        rw [map_add (f := _), map_add (f := _), hx w hw, hy w hw, add_zero]
       zero_mem' := fun w _ => by simp
       smul_mem' := fun c y hy w hw => by
         show φ (w (c • y)) = 0

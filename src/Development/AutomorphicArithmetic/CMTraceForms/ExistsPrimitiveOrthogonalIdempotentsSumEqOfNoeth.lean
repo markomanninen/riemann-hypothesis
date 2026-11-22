@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private theorem idem_lt {R : Type} [CommRing R] {e x : R} (he : e * e = e)
     (hxe : x * e = x) (hne : x ≠ e) :

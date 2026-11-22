@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceAtIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExOneEqSelf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRowFlagTiltUnique
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemFinitePointsOfHasLocalLatticeMatrices
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmulMtCutPartCompl
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridBasePointTrivialOffTensorPlaces
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdemAtUniqueOrth
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OneSubIdemQMulSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceAtIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExOneEqSelf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRowFlagTiltUnique
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemFinitePointsOfHasLocalLatticeMatrices
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmulMtCutPartCompl
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridBasePointTrivialOffTensorPlaces
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdemAtUniqueOrth
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OneSubIdemQMulSelf
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
@@ -55,7 +59,7 @@ theorem cut_add {a b : AE D} (ha : a * a = a ∧ cA D a = a) (hb : b * b = b ∧
     (g : GA D V) : cutPart a V g * cutPart b V g = cutPart (b + a) V g := by
   have hab' : b * a = 0 := by rw [mul_comm]; exact hab
   have hba : (b + a) * (b + a) = b + a ∧ cA D (b + a) = b + a := by
-    refine ⟨?_, by rw [map_add, ha.2, hb.2]⟩
+    refine ⟨?_, by rw [map_add (f := _), ha.2, hb.2]⟩
     rw [add_mul, mul_add, mul_add, hb.1, ha.1, hab, hab', add_zero, zero_add]
   apply GlobalTheory.IdemSupport.mt_inj V
   rw [GlobalTheory.IdemSupport.mt_mul, eq_add_of_sub_eq (mt_cut ha V g), eq_add_of_sub_eq (mt_cut hb V g),
@@ -82,7 +86,7 @@ theorem loc_cut {e : AE D} {w : Pl D.host.E} (he : Formalism.L2.NTheta.IsIdemAt 
   intro i j
   simp only [GlobalTheory.StdFrames.loc, Matrix.GeneralLinearGroup.map_apply]
   rw [GlobalTheory.LevSplit.finE_val, GlobalTheory.LevSplit.finE_val, Matrix.map_apply, Matrix.map_apply, mt_cutPart hf.1 hf.2]
-  simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, map_sub, map_one, c1, c2]
+  simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, map_sub, map_one, c1, c2]
   ring
 
 theorem inBasis_cut {e : AE D} {w : Pl D.host.E} (he : Formalism.L2.NTheta.IsIdemAt e w) (V : HSp D) {n : ℕ} (h : n = V.rank)
@@ -191,16 +195,17 @@ theorem idem_sum (he : IsIdemSum e P) (h : ∀ w, Formalism.L2.NTheta.IsIdemAt (
   · rw [Finset.sum_mul_sum]
     refine Finset.sum_congr rfl fun u hu => ?_
     rw [Finset.sum_eq_single u (fun v _ hv => orth he h (Ne.symm hv)) (fun hu' => absurd hu hu'), (hi u).1]
-  · rw [map_sum]
-    exact Finset.sum_congr rfl fun u _ => (hi u).2
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      exact Finset.sum_congr rfl fun u _ => (hi u).2
 
 theorem sum_orth (he : IsIdemSum e P) (h : ∀ w, Formalism.L2.NTheta.IsIdemAt (eL w) w.1) {S : Finset P} {w : P} (hw : w ∉ S) :
     (∑ w ∈ S, (eL w + cA D (eL w))) * (eL w + cA D (eL w)) = 0 := by
   rw [Finset.sum_mul]
   exact Finset.sum_eq_zero fun u hu => orth he h (fun huw => hw (huw ▸ hu))
 
-variable (eL) in
 
+variable (eL) in
 def cutS (S : Finset P) {V : HSp D} (g : GA D V) : GA D V := cutPart (∑ w ∈ S, (eL w + cA D (eL w))) V g
 
 theorem cutS_empty {V : HSp D} (g : GA D V) : cutS eL ∅ g = 1 := by
@@ -216,7 +221,8 @@ theorem cutS_one (he : IsIdemSum e P) (h : ∀ w, Formalism.L2.NTheta.IsIdemAt (
 theorem cutS_univ (he : IsIdemSum e P) (h : ∀ w, Formalism.L2.NTheta.IsIdemAt (eL w) w.1) {V : HSp D} {g : GA D V}
     (hg : SuppAt e V g) : cutS eL Finset.univ g = g := by
   have hs : ∑ w ∈ (Finset.univ : Finset P), (eL w + cA D (eL w)) = e + cA D e := by
-    rw [Finset.sum_add_distrib, ← map_sum, ← eq_sum he h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_add_distrib, ← map_sum, ← eq_sum he h]
   have hi := idem_sum he h Finset.univ
   unfold cutS
   rw [hs] at hi ⊢
@@ -264,8 +270,8 @@ private lemma suppAt_one_twisted_operators {D : D7} {e : AE D} {V : HSp D} : Sup
 private lemma zero_not_mem_idx' {D : D7} : 0 ∉ idx D := by
   simp [idx]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem points : Big fun {D} _ _ _ _ {T} _ _ _ _ _ _ ch => ∀ (s : ℤˣ) (t : T) (β : CosFam ch.G t) (b b₀ : Pts ch.G), IsRep t ch.S.B s β b → IsBase t ch.S.B b₀ → ∀ (eL : locPl ch.G t → AE D), (∀ w, IsIdemSum (eL w) {w.1}) → ∀ p : Pts ch.G, IsRealPt p → ∃ q : Finset (locPl ch.G t) → Pts ch.G, q ∅ = p * b₀ ∧ q Finset.univ = p * b ∧ ∀ (S : Finset (locPl ch.G t)) (w : locPl ch.G t), w ∉ S → ∃ r r₀ h : Pts ch.G, OneLoc t w.1 (eL w) r (fun j => if j ∈ idx D then sgnAt ch.G t s w.1 j * (repsAt ch.G t w.1).elt (β w) (D.R.m, j) else 1) ∧ OneLoc t w.1 (eL w) r₀ (fun j => if j = 0 then (stair (locGrid ch.G t w.1) (unifAt w.1) (cosExp ch.G w.1) j)⁻¹ else 1) ∧ (∀ j, j ≤ D.R.m → ∃ δ, IsTilt ch.G j δ ∧ δ⁻¹ * h j ∈ GlobalTheory.FinPl.grpOff _ (· = w.1.under (𝓞 D.host.F))) ∧ h * r = q (insert w S) ∧ h * r₀ = q S := by
   refine Exists.intro 0 (fun ε CF _ => Exists.intro 0 ?_)
   intro D large₂ _ _ Γ _ _ Pl0 T A Ks _ _ _ R F _ ch _ _ s t β b b₀ hrep hbase eL heL p hp

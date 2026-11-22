@@ -1,7 +1,10 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsNilpotentOfTracePow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TraceMulEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsNilpotentOfTracePow
+
+@[expose] public section
 
 namespace GlobalTheory.UnipNormalTrace
 

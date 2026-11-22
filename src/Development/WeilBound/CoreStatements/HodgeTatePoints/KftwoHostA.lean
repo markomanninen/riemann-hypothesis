@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,7 @@ variable {F : Type} [Field F] [CharZero F] {m : ℕ} (B : Biq F m)
 
 theorem int_of_integral {q : ℚ} (h : IsIntegral ℤ (q : F)) : ∃ n : ℤ, q = n := by
   have h' : IsIntegral ℤ (algebraMap ℚ F q) := by simpa using h
-  obtain ⟨n, hn⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral (isIntegral_algebraMap_iff (algebraMap ℚ F).injective |>.1 h')
+  obtain ⟨n, hn⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral (isIntegral_algebraMap_iff  |>.1 h')
   exact ⟨n, by simpa using hn.symm⟩
 
 omit [CharZero F] in
@@ -130,7 +134,7 @@ theorem integral_i : IsIntegral ℤ B.i :=
 
 theorem gauss {u v : ℚ} (h : IsIntegral ℤ ((u : F) + v * B.i)) : (∃ n : ℤ, u = n) ∧ ∃ n : ℤ, v = n := by
   have h' := integral_map B.σ h
-  simp only [map_add, map_mul, map_ratCast, B.σi] at h'
+  simp only [map_add (f := _), map_mul, map_ratCast, B.σi] at h'
   obtain ⟨p, hp⟩ := int_of_integral (F := F) (q := 2 * u) (by
     refine of_eq (h.add h') ?_; push_cast; ring)
   obtain ⟨q, hq⟩ := int_of_integral (F := F) (q := 2 * v) (by
@@ -156,7 +160,7 @@ theorem gauss {u v : ℚ} (h : IsIntegral ℤ ((u : F) + v * B.i)) : (∃ n : �
 theorem quad {d : ℕ} (hd : d + 1 = 4 * m) (hp : d.Prime) {a b : ℚ} {r s : ℤ} (hr : d * a = r) (hs : d * b = s)
     (h : IsIntegral ℤ ((a : F) + b * B.w)) : (∃ n : ℤ, a = n) ∧ ∃ n : ℤ, b = n := by
   have h' := integral_map B.τ h
-  simp only [map_add, map_mul, map_ratCast, B.τw] at h'
+  simp only [map_add (f := _), map_mul, map_ratCast, B.τw] at h'
   obtain ⟨p, hp'⟩ := int_of_integral (F := F) (q := 2 * a + b) (by
     refine of_eq (h.add h') ?_; push_cast; ring)
   obtain ⟨n, hn⟩ := int_of_integral (F := F) (q := a ^ 2 + a * b + m * b ^ 2) (by
@@ -182,7 +186,7 @@ theorem coords {d : ℕ} (hd : d + 1 = 4 * m) (hp : d.Prime) {x : F} (h : IsInte
     linear_combination this
   have h1 := integral_map B.τ h
   have h2 := integral_map B.σ h
-  simp only [map_add, map_mul, map_ratCast, B.τw, B.τi, B.σw, B.σi] at h1 h2
+  simp only [map_add (f := _), map_mul, map_ratCast, B.τw, B.τi, B.σw, B.σi] at h1 h2
   have hw := B.integral_w
   have hi := B.integral_i
   obtain ⟨⟨b', hb⟩, e', he⟩ := B.gauss (u := d * b) (v := d * e) (by
@@ -244,7 +248,7 @@ theorem conj_i (φ : F →+* ℂ) : starRingEnd ℂ (φ B.i) = -φ B.i := by
 
 theorem conj_eq (hm : 0 < m) (φ : F →+* ℂ) (x : F) : φ (B.σ (B.τ x)) = starRingEnd ℂ (φ x) := by
   obtain ⟨a, b, c, e, rfl⟩ := B.span x
-  simp only [map_add, map_mul, map_ratCast, B.τw, B.τi, B.σw, B.σi, map_sub, map_one, map_neg, B.conj_w hm, B.conj_i]
+  simp only [map_add (f := _), map_mul, map_ratCast, B.τw, B.τi, B.σw, B.σi, map_sub, map_one, map_neg, B.conj_w hm, B.conj_i]
 
 theorem mem_real (hm : 0 < m) {x : F} (h : B.σ (B.τ x) = x) : x ∈ maximalRealSubfield F := by
   rw [mem_maximalRealSubfield_iff]
@@ -276,14 +280,14 @@ theorem isCMField (hm : 0 < m) : IsCMField F := by
     have hs := (mem_maximalRealSubfield_iff _).1 s.2 φ
     have ht := (mem_maximalRealSubfield_iff _).1 t.2 φ
     rw [RCLike.star_def] at hs ht
-    simp only [map_add, map_mul, map_zero, hs, ht, B.conj_i] at h1 h2
+    simp only [map_add (f := _), map_mul, map_zero, hs, ht, B.conj_i] at h1 h2
     have e1 : (s : F) = 0 := φ.injective (by rw [map_zero]; linear_combination (1 / 2 : ℂ) * (h1 + h2))
     rw [e1, zero_add] at h0
     exact ⟨Subtype.ext e1, Subtype.ext ((mul_eq_zero.1 h0).resolve_right B.i_ne_zero)⟩
   have hsp : ⊤ ≤ Submodule.span (maximalRealSubfield F) (Set.range ![(1 : F), B.i]) := fun x _ => by
     rw [Matrix.range_cons_cons_empty, Submodule.mem_span_pair]
     refine ⟨⟨(x + B.σ (B.τ x)) / 2, B.mem_real hm ?_⟩, ⟨(B.σ (B.τ x) - x) * B.i / 2, B.mem_real hm ?_⟩, ?_⟩
-    · simp only [map_div₀, map_add, map_ofNat, hc]; ring
+    · simp only [map_div₀, map_add (f := _), map_ofNat, hc]; ring
     · simp only [map_div₀, map_sub, map_mul, map_ofNat, hc, B.τi, B.σi]; ring
     · simp only [Subfield.smul_def, smul_eq_mul]
       linear_combination ((B.σ (B.τ x) - x) / 2) * B.i_sq

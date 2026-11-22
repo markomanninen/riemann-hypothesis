@@ -1,8 +1,12 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LineHigh
-import Development.EtaleCohomology.EtaleSheaves.DescIntPf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechLevelRepresentable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCechNerveBaseChangeIsPullback
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LineHigh
+public import Development.EtaleCohomology.EtaleSheaves.DescIntPf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechLevelRepresentable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCechNerveBaseChangeIsPullback
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.DescIntPf
 

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.UnitTensorPairings.GaloisRepTransportOfCopyAll
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExistsIsRepOfTw
+module
+
+public import Development.AutomorphicArithmetic.UnitTensorPairings.GaloisRepTransportOfCopyAll
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExistsIsRepOfTw
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -121,8 +125,10 @@ theorem UpperTheory.galoisRep_transport_of_copyAll_alt :
     ((1 - (D.R.nV : ℝ)) / 2) P hs n1 n3
   obtain ⟨M', m1', m2', m3'⟩ := side_data_pz _ cf' A'.chr A'.row Sb' eig' hE' S' c' rowS' hR' i s (hgood i s).1 (hgood i s).2
     π' hloc _ hj ((1 - (D.R.nV : ℝ)) / 2) P hs n2 n3
-  have hq : ((normV P : ℕ) : ℂ) ≠ 0 :=
-    Nat.cast_ne_zero.mpr fun h0 => P.ne_bot (Ideal.absNorm_eq_zero_iff.mp h0)
+  have hq : ((normV P : ℕ) : ℂ) ≠ 0 := by
+    have hn : normV P = Ideal.absNorm P.asIdeal := by
+      rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]; rfl
+    exact Nat.cast_ne_zero.mpr fun h0 => P.ne_bot (Ideal.absNorm_eq_zero_iff.mp (hn ▸ h0))
   have hM : M = M' := by
     refine multiset_eq_of_norm_pz M M' D.R.r m1 m1' _ _ (D.R.nV / 2) hq
       ((cf.mu0 ⟨D.ntw.jS i s - 1, by omega⟩).val P).ne_zero fun k a b => ?_

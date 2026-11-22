@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLargePrimeDvdIntPolynomialEvalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLargePrimeDvdIntPolynomialEvalStatement
+
+@[expose] public section
+
 open scoped TensorProduct Polynomial
 
 namespace GlobalTheory
@@ -10,23 +15,23 @@ theorem int_bezout_derivative_of_separable (f : ℤ[X])
     (hf : (f.map (Int.castRingHom ℚ)).Separable) :
     ∃ A B : ℤ[X], ∃ N : ℤ, N ≠ 0 ∧ A * f + B * derivative f = C N := by
   obtain ⟨a, b, hab⟩ := hf
-  obtain ⟨c1, hc1⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors ℤ) a
-  obtain ⟨c2, hc2⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors ℤ) b
+  obtain ⟨c1, hc1_mem, hc1⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors ℤ) a
+  obtain ⟨c2, hc2_mem, hc2⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors ℤ) b
   set A := IsLocalization.integerNormalization (nonZeroDivisors ℤ) a
   set B := IsLocalization.integerNormalization (nonZeroDivisors ℤ) b
-  refine ⟨(c2 : ℤ) • A, (c1 : ℤ) • B, (c1 : ℤ) * c2, ?_, ?_⟩
-  · exact mul_ne_zero (nonZeroDivisors.coe_ne_zero c1) (nonZeroDivisors.coe_ne_zero c2)
+  refine ⟨c2 • A, c1 • B, c1 * c2, ?_, ?_⟩
+  · exact mul_ne_zero (nonZeroDivisors.ne_zero hc1_mem) (nonZeroDivisors.ne_zero hc2_mem)
   · apply Polynomial.map_injective (Int.castRingHom ℚ) (RingHom.injective_int _)
-    have e1 : A.map (Int.castRingHom ℚ) = ((c1 : ℤ) : ℚ) • a := by
+    have e1 : A.map (Int.castRingHom ℚ) = (c1 : ℚ) • a := by
       rw [show Int.castRingHom ℚ = algebraMap ℤ ℚ from rfl, hc1]
       exact (Int.cast_smul_eq_zsmul ℚ _ _).symm
-    have e2 : B.map (Int.castRingHom ℚ) = ((c2 : ℤ) : ℚ) • b := by
+    have e2 : B.map (Int.castRingHom ℚ) = (c2 : ℚ) • b := by
       rw [show Int.castRingHom ℚ = algebraMap ℤ ℚ from rfl, hc2]
       exact (Int.cast_smul_eq_zsmul ℚ _ _).symm
-    simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_smul, Polynomial.map_C,
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_smul, Polynomial.map_C,
       ← Polynomial.derivative_map, e1, e2]
     rw [smul_eq_C_mul, smul_eq_C_mul, smul_eq_C_mul, smul_eq_C_mul]
-    calc _ = C (((c1 : ℤ) : ℚ) * ((c2 : ℤ) : ℚ)) *
+    calc _ = C ((c1 : ℚ) * (c2 : ℚ)) *
             (a * map (Int.castRingHom ℚ) f + b * derivative (map (Int.castRingHom ℚ) f)) := by
           rw [C_mul]; simp only [eq_intCast]; ring
       _ = _ := by rw [hab, mul_one]; simp

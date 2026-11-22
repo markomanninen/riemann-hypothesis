@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -44,7 +49,7 @@ theorem setIntegral_le_of_expanding (N : ℕ) (A Q : Set (Fin N → ℝ)) (K : �
   have m₁ : MeasurableSet {a | r < h₁ a} := measurableSet_lt measurable_const c₁.measurable
   have m₂ : MeasurableSet {a | r < h₂ a} := measurableSet_lt measurable_const c₂.measurable
   rw [Measure.restrict_apply m₁, Measure.restrict_apply m₂]
-  refine (volume_le_mul_volume_image_of_expanding N _ K f hK
+  refine (volume_le_mul_volume_image_of_expanding N ({a | r < h₁ a} ∩ A) K f hK
     (fun t ht t' ht' => hf t ht.2 t' ht'.2)).trans ?_
   gcongr
   rintro _ ⟨a, ⟨ha, haA⟩, rfl⟩

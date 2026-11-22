@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsHomogeneousGrL
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsHomogeneousGrL
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,40 +60,40 @@ theorem finite_mPiece (J : Ideal (MRing ι)) (a : K → ℕ) {p : ℕ} (hp : 0 <
     intro x hx
     obtain ⟨f, hf, rfl⟩ := Submodule.mem_map.mp hx
     have hq : (0 : ℤ) < ((q + 1 : ℕ) : ℤ) := by omega
-    refine ⟨fun m => ⟨((MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) % ((q + 1 : ℕ) : ℤ)).toNat, ?_⟩, ?_⟩
-    · have h0 := Int.emod_nonneg (MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) hq.ne'
-      have h1 := Int.emod_lt_of_pos (MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) hq
+    refine ⟨fun m => ⟨((AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) % ((q + 1 : ℕ) : ℤ)).toNat, ?_⟩, ?_⟩
+    · have h0 := Int.emod_nonneg (AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) hq.ne'
+      have h1 := Int.emod_lt_of_pos (AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) hq
       omega
     · show Ideal.Quotient.mk J (∑ m : monoBox (ι := ι) a, MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ)
-          ((((MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) % ((q + 1 : ℕ) : ℤ)).toNat : ℕ) : ℤ)) =
+          ((((AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) % ((q + 1 : ℕ) : ℤ)).toNat : ℕ) : ℤ)) =
         Ideal.Quotient.mk J f
       rw [Ideal.Quotient.eq]
       have hf' : f = ∑ m : monoBox (ι := ι) a,
-          MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ) (MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) := by
-        rw [Finset.sum_coe_sort (monoBox a) (fun m => MvPolynomial.monomial m (MvPolynomial.coeff m f))]
+          MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ) (AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) := by
+        rw [Finset.sum_coe_sort (monoBox a) (fun m => MvPolynomial.monomial m (AddMonoidAlgebra.coeff f m))]
         conv_lhs => rw [MvPolynomial.as_sum f]
         refine Finset.sum_subset (support_subset_monoBox hf) (fun m _ hm => ?_)
         simp only [MvPolynomial.mem_support_iff, ne_eq, not_not] at hm
         simp [hm]
       have hP : ((q + 1 : ℕ) : MRing ι) ∈ J := hpJ
       have hdiff : ∀ m : monoBox (ι := ι) a, MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ)
-          ((((MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) % ((q + 1 : ℕ) : ℤ)).toNat : ℕ) : ℤ) -
-          MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ) (MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) ∈ J := by
+          ((((AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) % ((q + 1 : ℕ) : ℤ)).toNat : ℕ) : ℤ) -
+          MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ) (AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) ∈ J := by
         intro m
-        have h0 := Int.emod_nonneg (MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) hq.ne'
+        have h0 := Int.emod_nonneg (AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) hq.ne'
         rw [Int.toNat_of_nonneg h0, ← map_sub, Int.emod_def]
-        have e : MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f - ((q + 1 : ℕ) : ℤ) *
-            (MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f / ((q + 1 : ℕ) : ℤ)) -
-            MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f =
-            ((q + 1 : ℕ) : ℤ) * (-(MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f / ((q + 1 : ℕ) : ℤ))) := by
+        have e : AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ) - ((q + 1 : ℕ) : ℤ) *
+            (AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ) / ((q + 1 : ℕ) : ℤ)) -
+            AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ) =
+            ((q + 1 : ℕ) : ℤ) * (-(AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ) / ((q + 1 : ℕ) : ℤ))) := by
           ring
         rw [e, ← MvPolynomial.C_mul_monomial, map_natCast]
         exact J.mul_mem_right _ hP
       have e2 : (∑ m : monoBox (ι := ι) a, MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ)
-          ((((MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) % ((q + 1 : ℕ) : ℤ)).toNat : ℕ) : ℤ)) - f =
+          ((((AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) % ((q + 1 : ℕ) : ℤ)).toNat : ℕ) : ℤ)) - f =
           ∑ m : monoBox (ι := ι) a, (MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ)
-          ((((MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f) % ((q + 1 : ℕ) : ℤ)).toNat : ℕ) : ℤ) -
-          MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ) (MvPolynomial.coeff (m : (Σ k, ι k) →₀ ℕ) f)) := by
+          ((((AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ)) % ((q + 1 : ℕ) : ℤ)).toNat : ℕ) : ℤ) -
+          MvPolynomial.monomial (m : (Σ k, ι k) →₀ ℕ) (AddMonoidAlgebra.coeff f (m : (Σ k, ι k) →₀ ℕ))) := by
         rw [Finset.sum_sub_distrib, ← hf']
       rw [e2]
       exact Ideal.sum_mem _ fun m _ => hdiff m
@@ -115,8 +119,8 @@ theorem card_mPiece_irrel {q : Ideal (MRing ι)} {k : K} (hk : ∀ i, (X ⟨k, i
         push_neg at hc
         have h0 : ∑ i, m ⟨k, i⟩ = 0 := Finset.sum_eq_zero fun i _ => by have := hc i; omega
         omega
-      have e : MvPolynomial.monomial m (MvPolynomial.coeff m s) =
-          MvPolynomial.X ⟨k, i⟩ * MvPolynomial.monomial (m - Finsupp.single ⟨k, i⟩ 1) (MvPolynomial.coeff m s) := by
+      have e : MvPolynomial.monomial m (AddMonoidAlgebra.coeff s m) =
+          MvPolynomial.X ⟨k, i⟩ * MvPolynomial.monomial (m - Finsupp.single ⟨k, i⟩ 1) (AddMonoidAlgebra.coeff s m) := by
         rw [MvPolynomial.X, MvPolynomial.monomial_mul, one_mul,
           add_tsub_cancel_of_le (Finsupp.single_le_iff.mpr hi)]
       rw [e]

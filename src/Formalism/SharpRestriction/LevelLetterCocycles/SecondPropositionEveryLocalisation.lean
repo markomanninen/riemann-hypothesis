@@ -1,20 +1,17 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
-import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
-import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.LemmaDetPoly
-import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.BridgeDet
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
+public import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
+public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.LemmaDetPoly
+public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.BridgeDet
+
+@[expose] public section
 
 noncomputable section
 
 open Formalism.BasicNotions
 
 namespace Formalism.MainNotions.LargeLevelLemmas
-
-theorem second_proposition_every_localisation {D : D7} (i : D.nd.Loc) : Conclusion2 i :=
-  endomorphism_bound_at_good_points (Formalism.MainNotions.TruncatedSeriesCountingIdentities.second_statement D) i
-
-theorem second_statement (D : D7) : HodgeTateFromSandwich D := by
-  show ∀ i, Conclusion2 i
-  exact fun i => second_proposition_every_localisation i
 
 namespace Br
 
@@ -124,7 +121,7 @@ def mkHom (ev : A →ₐ[O] Matrix n n (FractionRing O))
     rw [← h, map_zero, Matrix.zero_mulVec, map_zero, Matrix.map_zero _ (map_zero _),
       Matrix.zero_mulVec]
   map_add' a b := mat_uniq pr hpr _ _ fun u => by
-    rw [← h, map_add, Matrix.add_mulVec, map_add, h, h,
+    rw [← h, map_add (f := _), Matrix.add_mulVec, map_add (f := _), h, h,
       Matrix.map_add _ (map_add _), Matrix.add_mulVec]
   commutes' c := mat_uniq pr hpr _ _ fun u => by
     rw [← h, AlgHom.commutes, Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one,
@@ -132,12 +129,6 @@ def mkHom (ev : A →ₐ[O] Matrix n n (FractionRing O))
     ext a
     simp [Matrix.mulVec, dotProduct, Matrix.algebraMap_matrix_apply, Algebra.smul_def, apply_ite,
       ite_mul]
-
-@[simp] theorem mkHom_apply (ev : A →ₐ[O] Matrix n n (FractionRing O))
-    (pr : (n → FractionRing O) →ₗ[FractionRing O] (δ → FractionRing O))
-    (hpr : Function.Surjective pr) (F : A → Matrix δ δ O)
-    (h : ∀ a u, pr (ev a *ᵥ u) = ((F a).map (algebraMap O (FractionRing O))) *ᵥ pr u) (a : A) :
-    mkHom ev pr hpr F h a = F a := rfl
 
 end Hom
 
@@ -184,7 +175,8 @@ theorem len_ker_le (F : A →ₗ[O] Matrix δ δ O) (κ : (δ → KO O) →ₗ[O
       simpa [L, relMap, bigRect, Fintype.sum_prod_type, Finset.sum_apply] using hk
     rw [LinearMap.mem_ker] at hL
     have hs : ∑ j, actQ (F (θ j)) (φ v j) = κ (L θ) := by
-      simp only [L, LinearMap.coe_mk, AddHom.coe_mk, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [L, LinearMap.coe_mk, AddHom.coe_mk, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       exact hact _ _
     rw [hs, hL, map_zero]
@@ -399,7 +391,8 @@ theorem kap_act (B : Matrix δ δ O)
     funext b
     show ∑ j, B b j • (Submodule.mkQ _ (w j)) =
       Submodule.mkQ _ (∑ j, algebraMap O (FractionRing O) (B b j) * w j)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← map_smul, Algebra.smul_def]
   rw [hr, kap_mk, kap_mk]
@@ -926,7 +919,8 @@ theorem inSpan_tSpan (Kf : Type) [CommRing Kf] [Algebra (N.O i) Kf] {a : X' → 
       ∑ k, algebraMap (N.O i) Kf (f k x') • repF N i rep Kf (g k) x' := by
     rw [Finset.sum_apply]
     change (algebraMap (N.O i) Kf).mapMatrix (∑ k, f k x' • rep x' (g k)) = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [repF_apply]
     ext p q
@@ -936,7 +930,8 @@ theorem inSpan_tSpan (Kf : Type) [CommRing Kf] [Algebra (N.O i) Kf] {a : X' → 
       (fun k _ => Finset.mem_image_of_mem g (Finset.mem_univ k))]
   refine Finset.sum_congr rfl (fun γ _ => ?_)
   beta_reduce
-  rw [Finset.sum_apply, map_sum, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, map_sum, Finset.sum_smul]
   refine Finset.sum_congr rfl (fun k hk => ?_)
   rw [(Finset.mem_filter.mp hk).2]
 
@@ -990,8 +985,8 @@ theorem span_lemma_of_charpoly
         rfl⟩)
       m (fun k x' => (a k x').map (algebraMap (N.O i) (N.O i)))
       (fun k => inSpan_tSpan N i T' rep (N.O i) (ha k)) d
-    have : (fun x' => MvPolynomial.coeff d (Matrix.det (∑ k,
-        (MvPolynomial.X k : MvPolynomial (Fin m) (N.O i)) • (a k x').map MvPolynomial.C))) = t := by
+    have : (fun x' => AddMonoidAlgebra.coeff (Matrix.det (∑ k,
+        (MvPolynomial.X k : MvPolynomial (Fin m) (N.O i)) • (a k x').map MvPolynomial.C)) d) = t := by
       funext x'
       have := hx x'
       simp only [map_self] at this

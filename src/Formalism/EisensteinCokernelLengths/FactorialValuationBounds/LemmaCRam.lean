@@ -1,6 +1,19 @@
-import Formalism.EisensteinCokernelLengths.RationalTailBound
-import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.GaussRam
-import Formalism.GaussValuationBounds.NokLemmaCVal
+module
+
+public import Formalism.EisensteinCokernelLengths.RationalTailBound
+public import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.GaussRam
+public import Formalism.GaussValuationBounds.Statement
+public import Formalism.GaussValuationBounds.GaussValueContraction.TruncationExponentBounds
+public import Formalism.WindowSums.PowerSeriesRelationList
+public import Mathlib
+public import Formalism.GaussValuationBounds.GaussValueContraction.PhiIterXProof
+public import Formalism.GaussValuationBounds.GaussValueContraction.GaussValueContractionProofFactBis
+public import Formalism.GaussValuationBounds.GaussValueContraction.KapBoundProof
+public import Formalism.GaussValuationBounds.GaussValueContraction.GaussMul
+public import Formalism.GaussValuationBounds.GaussValueContraction.GaussBasic
+public import Formalism.GaussValuationBounds.GaussUnit
+
+@[expose] public section
 
 namespace Formalism.ZetaNonvanishing.EisensteinGaussValuationBounds
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.OtherEFree
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.OtherEFree
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,9 +46,9 @@ theorem op_SSt (D7 : Formalism.BasicNotions.D7) {D : BlockData N} (hT : TieOK D)
     have hsum : ((Finsupp.single a b + f).sum fun _ n => n) = b + f.sum fun _ n => n := by
       rw [Finsupp.sum_add_index' (fun _ => rfl) (fun _ _ _ => rfl), Finsupp.sum_single_index rfl]
     have hsupp : (Finsupp.single a b + f).support = insert a f.support := by
-      rw [Finsupp.support_add_eq, Finsupp.support_single_ne_zero _ hb]
+      rw [Finsupp.support_add_eq, Finsupp.support_single _ hb]
       · rfl
-      · rw [Finsupp.support_single_ne_zero _ hb, Finset.disjoint_singleton_left]
+      · rw [Finsupp.support_single _ hb, Finset.disjoint_singleton_left]
         exact ha
     have h1 := ih (fun v hvf => hv v (by rw [hsupp]; exact Finset.mem_insert_of_mem hvf)) thr
       (fun k => thr k + (((f.sum fun _ n => n : ℕ) : ℤ) : WithTop ℤ)) (fun _ => le_rfl) u hu
@@ -57,31 +61,27 @@ theorem op_SSt (D7 : Formalism.BasicNotions.D7) {D : BlockData N} (hT : TieOK D)
 end GlobalTheory
 
 theorem tieOK_blockBase (p : ℕ) {r s : ℕ} (S : SegData s) (aTop : Fin s → ℕ) (aPlus : ℕ) (b : SegBlock s r) :
-    TieOK (blockBase p S aTop aPlus b) where
-  lt := by
-    intro i
+    TieOK (blockBase p S aTop aPlus b) := by
+  refine { lt := ?_, inj := ?_, sep := ?_, uW := ?_, vecE := ?_ }
+  · intro i
     have := (uTop S i).2
     show 2 * ((uTop S i : Fin s) : ℕ) + 1 < 2 * s + 1
     omega
-  inj := by
-    intro i i' h
+  · intro i i' h
     have h' : 2 * ((uTop S i : Fin s) : ℕ) = 2 * ((uTop S i' : Fin s) : ℕ) := h
     simp only [uTop] at h'
     exact Fin.ext (by omega)
-  sep := by
-    intro i i' h
+  · intro i i' h
     have h' : 2 * ((uTop S i : Fin s) : ℕ) + 1 = 2 * ((uTop S i' : Fin s) : ℕ) := h
     omega
-  uW := by
-    intro i
+  · intro i
     have := (uTop S i).2
     constructor
     · show 2 * ((uTop S i : Fin s) : ℕ) ≠ 2 * s
       omega
     · show 2 * ((uTop S i : Fin s) : ℕ) + 1 ≠ 2 * s
       omega
-  vecE := by
-    intro i h
+  · intro i h
     show decide ((2 * ((uTop S i : Fin s) : ℕ) + 1) % 2 = 0) = false
     simp
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DwSmoothLocalLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DwSmoothLocalLinear
+
+@[expose] public section
 
 open ZetaZeros.D.EllReg GlobalTheory.HCA MeasureTheory Filter Topology
 open scoped ContDiff BoundedContinuousFunction

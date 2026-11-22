@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpMCont
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpPContPf
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpMCont
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpPContPf
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -42,10 +46,12 @@ theorem prodM_succ_right (lo n : ℕ) : prodM a c d lo (n + 1) = prodM a c d lo 
   rw [List.range_succ, List.map_append, List.prod_append]
   simp
 
-theorem bus_eq : ∀ i, (bus a c d i).1 = prodM a c d 0 i 0 0 ∧ (bus a c d i).2 = prodM a c d 0 i 0 1
-  | 0 => by simp [bus, prodM]
-  | i + 1 => by
-    obtain ⟨h1, h2⟩ := bus_eq i
+theorem bus_eq : ∀ i, (bus a c d i).1 = prodM a c d 0 i 0 0 ∧ (bus a c d i).2 = prodM a c d 0 i 0 1 := by
+  intro i
+  induction i with
+  | zero => simp [bus, prodM]
+  | succ i ih =>
+    obtain ⟨h1, h2⟩ := ih
     rw [prodM_succ_right]
     simp only [bus, h1, h2, Matrix.mul_apply, Fin.sum_univ_two, Mi, zero_add]
     simp [sub_eq_add_neg]
@@ -89,8 +95,8 @@ open ContPf
 
 variable {r : ℕ} {X : Type} [NormedAddCommGroup X] [NormedSpace ℂ X]
 
-variable (X) in
 
+variable (X) in
 def aSv (Y : ℂ) (i : ℕ) : Module.End ℂ (WSm r X) := algebraMap ℂ _ Y - eS X i 3
 
 theorem cp_vABs (Y : ℂ) : ∀ i, i ≤ r → ∀ f : WSm r X,
@@ -188,10 +194,12 @@ theorem loc_tdUv (Y : ℂ) (b : Fin 2) : ∀ m, Loc (tdUv (X := X) r Y m b)
         (loc_comp (loc_cbOp _) (loc_comp (loc_cbiOp _) ih0))
     · exact loc_zero
 
-theorem loc_vABs (Y : ℂ) : ∀ i, Loc (X := X) (Q.vABs r Y i).1 ∧ Loc (X := X) (Q.vABs r Y i).2
-  | 0 => ⟨loc_id, loc_zero⟩
-  | i + 1 => by
-    obtain ⟨h1, h2⟩ := loc_vABs Y i
+theorem loc_vABs (Y : ℂ) : ∀ i, Loc (X := X) (Q.vABs r Y i).1 ∧ Loc (X := X) (Q.vABs r Y i).2 := by
+  intro i
+  induction i with
+  | zero => exact ⟨loc_id, loc_zero⟩
+  | succ i ih =>
+    obtain ⟨h1, h2⟩ := ih
     by_cases hi : i < r
     · simp only [Q.vABs, dif_pos hi]
       exact ⟨loc_sub (loc_comp h1 (loc_sub (loc_smul Y loc_id) (loc_pbOp _))) (loc_comp h2 (loc_cbOp _)),

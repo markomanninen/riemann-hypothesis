@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.OpenNormal
-import GroundTheory.ProfiniteCohomology.OfNatRelIndexSupAntitone
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.OpenNormal
+public import GroundTheory.ProfiniteCohomology.OfNatRelIndexSupAntitone
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -22,8 +27,8 @@ theorem isProPGroup_iff {p : ℕ} :
       obtain ⟨k, hk⟩ := h g
       exact ⟨k, by rw [← QuotientGroup.mk_pow, QuotientGroup.eq_one_iff]; exact hk⟩
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem isPGroup_map_mk_iff {p : ℕ} (H U : Subgroup G) [U.Normal] :
     IsPGroup p (H.map (QuotientGroup.mk' U)) ↔ ∀ h ∈ H, ∃ k : ℕ, h ^ p ^ k ∈ U := by
   constructor
@@ -77,11 +82,6 @@ theorem isProPGroup_subgroup_iff_isPGroup_map {p : ℕ} {H : Subgroup G} :
       ∀ U : OpenNormalSubgroup G, IsPGroup p (H.map (QuotientGroup.mk' (U : Subgroup G))) := by
   rw [isProPGroup_subgroup_iff]
   exact forall_congr' fun U => (isPGroup_map_mk_iff H (U : Subgroup G)).symm
-
-theorem IsProPGroup.of_le {p : ℕ} {H K : Subgroup G} (hH : IsProPGroup p H) (hKH : K ≤ H) :
-    IsProPGroup p K := by
-  rw [isProPGroup_subgroup_iff] at hH ⊢
-  exact fun U k hk => hH U k (hKH hk)
 
 theorem isProPGroup_bot (p : ℕ) : IsProPGroup p (⊥ : Subgroup G) := by
   rw [isProPGroup_subgroup_iff]

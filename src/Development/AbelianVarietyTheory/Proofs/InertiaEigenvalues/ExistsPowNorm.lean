@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisToBdRPlusInjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGaussNormExtensionAcrisStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AcrisNormOfNonzeroStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AcrisGaussNormEventuallyMonomialStatement
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisToBdRPlusInjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGaussNormExtensionAcrisStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AcrisNormOfNonzeroStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AcrisGaussNormEventuallyMonomialStatement
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -92,11 +96,13 @@ theorem homog_eq (C : Core l) (a b : Per.Acris l) (y : Om l) (hy : ‖y‖ ≤ 1
   obtain ⟨q, hq, h0⟩ := exists_monic y hy
   refine ⟨q.natDegree, fun i => algebraMap (Per.Ainf l) (Per.Acris l) (Per.zA l (q.coeff i)), ?_⟩
   apply crisP_injective l C.j C.j_cris
-  rw [hq.as_sum, Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finset_sum] at h0
+  rw [hq.as_sum, Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finsetSum] at h0
   have h1 := congrArg (fun z => C.o z * C.j b ^ q.natDegree) h0
-  simp only [map_add, map_pow, map_sum, map_zero, zero_mul, add_mul, Finset.sum_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_pow, map_sum, map_zero, zero_mul, add_mul, Finset.sum_mul,
     Polynomial.eval₂_mul, Polynomial.eval₂_C, Polynomial.eval₂_X_pow, map_mul] at h1
-  simp only [map_add, map_pow, map_sum, map_zero, map_mul, h, j_alg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_pow, map_sum, map_zero, map_mul, h, j_alg]
   rw [← h1, mul_pow]
   congr 1
   refine Finset.sum_congr rfl fun i hi => ?_

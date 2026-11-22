@@ -1,15 +1,22 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
-import Development.AbelianVarietyTheory.Statements.HeckeInFamilies.GenericMemChart
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsClopenOfIsLocallyNoetherian
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelCoverField
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.OneAddZeta21PowSevenAddPowFourteenEqZero
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsClopenOfIsLocallyNoetherian
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelCoverField
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +64,7 @@ theorem exists_ptCond (a b : D.La) : ∃ y, PtCond I M w e f rep a b y := by
       module
     rw [hf, hf, e1]
     refine ⟨D.EF (t • (a - v • b)) (rep j), ?_⟩
-    simp only [map_add, map_nsmul, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul, smul_eq_mul]
+    simp only [map_add (f := _), map_nsmul, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul, smul_eq_mul]
     ring
 
 include hM hw hf hrep in
@@ -72,12 +79,12 @@ theorem ptCond_unique (hu : ∀ x y c c', pr M x y c → pr M x y c' → c = c')
     have h2 := (zpow_congr (I.ζ_prim M hM)).1 ((hu _ _ _ _ (I.isom M hM x _) (h.2.2 j)).trans
       (hu _ _ _ _ (h'.2.2 j) (I.isom M hM x' _)))
     rw [hf, hf, ← LinearMap.sub_apply, ← map_sub, ← smul_sub] at h2
-    rw [map_add, map_nsmul, nsmul_eq_mul]
+    rw [map_add (f := _), map_nsmul, nsmul_eq_mul]
     exact dvd_add h2 (dvd_mul_right _ _)
   choose g hg using h1
   have hM' : (M : ℤ) ≠ 0 := Nat.cast_ne_zero.2 hM.ne'
   let φ : D.La →ₗ[ℤ] ℤ := AddMonoidHom.toIntLinearMap (AddMonoidHom.mk' g fun z z' =>
-    mul_left_cancel₀ hM' (by rw [mul_add, ← hg, ← hg, ← hg, map_add]))
+    mul_left_cancel₀ hM' (by rw [mul_add, ← hg, ← hg, ← hg, map_add (f := _)]))
   obtain ⟨c', hc'⟩ := D.unimod.2 φ
   have h3 : (1 - e) • (x - x') = M • c' := D.unimod.1 (LinearMap.ext fun z => by
     rw [hg, map_nsmul, hc', LinearMap.smul_apply, nsmul_eq_mul]
@@ -103,7 +110,7 @@ theorem exists_index {y : Q} (hy : y ^ M = 1) : ∃ i j, PtCond I M w e f rep (r
     refine (zpow_congr hw).2 ?_ ▸ h
     refine ⟨D.EF d' (f • rep c), ?_⟩
     have := congrArg (fun z => D.EF z (f • rep c)) hj
-    simp only [map_add, map_nsmul, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul,
+    simp only [map_add (f := _), map_nsmul, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul,
       smul_eq_mul] at this
     linarith
 

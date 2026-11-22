@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsSSFun
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistableModel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsSSFun
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistableModel
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -25,10 +29,10 @@ def ptFun (X : Scheme.{0}) (q : X ⟶ Spec (CommRingCat.of O)) {k : Type} [CommR
     · rfl
     · simp
 
+
 set_option autoImplicit false in
 open CategoryTheory AlgebraicGeometry in
 variable {O : Type} [CommRing O] in
-
 theorem _root_.GlobalTheory.LogCris.evalAt_res {B : Type} [CommRing B] {X : Scheme.{0}}
     (y : Spec (CommRingCat.of B) ⟶ X) {U V : X.Opens}
     (hV : V ≤ U) (h : ⊤ ≤ y ⁻¹ᵁ U) (h' : ⊤ ≤ y ⁻¹ᵁ V) (a : Γ(X, U)) :
@@ -48,10 +52,10 @@ private theorem gammaSpecIso_hom_appLE_spec_map {A C : CommRingCat.{0}} (χ : A 
     rfl
   rw [h1, ← CommRingCat.comp_apply, Scheme.ΓSpecIso_naturality, CommRingCat.comp_apply]
 
+
 set_option autoImplicit false in
 open CategoryTheory AlgebraicGeometry in
 variable {O : Type} [CommRing O] in
-
 theorem _root_.GlobalTheory.LogCris.evalAt_map {B B' : CommRingCat.{0}} {X : Scheme.{0}} (φ : B ⟶ B')
     (y : Spec B ⟶ X) {U : X.Opens}
     (h : ⊤ ≤ y ⁻¹ᵁ U) (h' : ⊤ ≤ (Spec.map φ ≫ y) ⁻¹ᵁ U) (a : Γ(X, U)) :
@@ -61,10 +65,10 @@ theorem _root_.GlobalTheory.LogCris.evalAt_map {B B' : CommRingCat.{0}} {X : Sch
   rw [← Scheme.Hom.appLE_comp_appLE (Spec.map φ) y U ⊤ ⊤ h le_top, CommRingCat.comp_apply]
   exact gammaSpecIso_hom_appLE_spec_map φ _ _
 
+
 set_option autoImplicit false in
 open CategoryTheory AlgebraicGeometry in
 variable {O : Type} [CommRing O] in
-
 theorem _root_.GlobalTheory.LogCris.evalAt_base {B : Type} [CommRing B] {X : Scheme.{0}}
     (q : X ⟶ Spec (CommRingCat.of O)) {k : Type} [CommRing k]
     (κ : O →+* k) (ψ : k →+* B) (y : Spec (CommRingCat.of B) ⟶ X)
@@ -83,10 +87,10 @@ theorem _root_.GlobalTheory.LogCris.evalAt_base {B : Type} [CommRing B] {X : Sch
     simp
   exact key _ hy _
 
+
 set_option autoImplicit false in
 open CategoryTheory AlgebraicGeometry in
 variable {O : Type} [CommRing O] in
-
 theorem _root_.GlobalTheory.LogCris.le_preimage_inf {B : Type} [CommRing B] {X : Scheme.{0}}
     (y : Spec (CommRingCat.of B) ⟶ X) {U V : X.Opens}
     (h : ⊤ ≤ y ⁻¹ᵁ U) (h' : ⊤ ≤ y ⁻¹ᵁ V) : ⊤ ≤ y ⁻¹ᵁ (U ⊓ V) :=
@@ -111,8 +115,7 @@ structure SSAtlas (ϖ : O) (X : Scheme.{0}) (q : X ⟶ Spec (CommRingCat.of O)) 
   nzd : ∀ α i, F α i ∈ nonZeroDivisors Γ(X, U α)
   chart : ∀ α (x : X), x ∈ U α → ∃ (V : X.Opens) (_ : IsAffineOpen V) (_ : x ∈ V) (hV : V ≤ U α) (m r : ℕ) (_ : 1 ≤ r)
       (_ : r ≤ m) (c : Fin r ↪ ι)
-      (ψ : (MvPolynomial (Fin m) O ⧸ Ideal.span {(∏ j ∈ Finset.univ.filter (fun j : Fin m => (j : ℕ) < r),
-        MvPolynomial.X j) - MvPolynomial.C ϖ}) →+* Γ(X, V)),
+      (ψ : GlobalTheory.Et.ssModel O ϖ m r →+* Γ(X, V)),
       ψ.Etale ∧ ψ.comp (algebraMap O _) = ((Scheme.ΓSpecIso (CommRingCat.of O)).inv ≫ q.appLE ⊤ V le_top).hom ∧
       (∀ j : Fin r, ∃ u : Γ(X, V)ˣ, ψ (Ideal.Quotient.mk _ (MvPolynomial.X (Fin.castLE (by omega) j))) =
         u * X.presheaf.map (homOfLE hV).op (F α (c j))) ∧
@@ -132,7 +135,6 @@ variable {ϖ : O} {X : Scheme.{0}} {q : X ⟶ Spec (CommRingCat.of O)} {ι A : T
   (C : SSAtlas ϖ X q ι A) {k : Type} [CommRing k] (κ : O →+* k)
 
 open Classical in
-
 def logFun : LogFun k (κ ϖ) where
   ι := ι
   A := A
@@ -192,7 +194,6 @@ theorem isStrictlySemistable (C : SSAtlas ϖ X q ι A) : GlobalTheory.Et.IsStric
   exact ⟨V, hVa, hxV, m, r, h1, h2, ψ, het, hcomp⟩
 
 open Classical in
-
 theorem isSSFun_logFun (C : SSAtlas ϖ X q ι A) : IsSSFun ϖ X q κ (C.logFun κ) := by
   refine ⟨C.isStrictlySemistable, fun B => Equiv.refl _, C.U, C.F, C.G, C.affine, C.cover, C.prod_F, C.F_eq, C.nzd,
     C.chart, fun φ y => rfl, fun {B} y => ⟨rfl, fun α => ⟨Iff.rfl, fun h => ⟨fun i => dif_pos h, fun β h' i => ?_⟩⟩⟩⟩
@@ -209,32 +210,15 @@ namespace SSAtlas
 variable {ϖ : O} {X : Scheme.{0}} {q : X ⟶ Spec (CommRingCat.of O)} {ι A : Type} [Fintype ι]
   {k : Type} [CommRing k] (κ : O →+* k)
 
-theorem logFun_In (C : SSAtlas ϖ X q ι A) (α : A) {B : CommRingCat.{0}} (y : (C.logFun κ).Pt.obj B) :
-    (C.logFun κ).In α y ↔ ⊤ ≤ (show PtOver X q κ B from y).1.2 ⁻¹ᵁ C.U α := Iff.rfl
-
-theorem logFun_f (C : SSAtlas ϖ X q ι A) (α : A) (i : ι) {B : CommRingCat.{0}} (y : PtOver X q κ B)
-    (h : ⊤ ≤ y.1.2 ⁻¹ᵁ C.U α) : (C.logFun κ).f α i (B := B) y = GlobalTheory.Cris.evalAt y.1.2 (C.U α) h (C.F α i) :=
-  dif_pos h
-
-theorem logFun_g (C : SSAtlas ϖ X q ι A) (α β : A) (i : ι) {B : CommRingCat.{0}} (y : PtOver X q κ B)
-    (h : ⊤ ≤ y.1.2 ⁻¹ᵁ (C.U α ⊓ C.U β)) :
-    ((C.logFun κ).g α β i (B := B) y : B) = GlobalTheory.Cris.evalAt y.1.2 (C.U α ⊓ C.U β) h (C.G α β i) := by
-  classical
-  change ((if h : ⊤ ≤ y.1.2 ⁻¹ᵁ (C.U α ⊓ C.U β) then
-      Units.map (GlobalTheory.Cris.evalAt (B := B) y.1.2 (C.U α ⊓ C.U β) h : Γ(X, C.U α ⊓ C.U β) →* B) (C.G α β i)
-      else 1 : Bˣ) : B) = _
-  rw [dif_pos h]
-  rfl
-
 end SSAtlas
 
 section Model
 
 variable (ϖ : O)
 
+
 set_option autoImplicit false in
 variable {O : Type} [CommRing O] (ϖ : O) in
-
 theorem _root_.GlobalTheory.LogCris.model_mul_eq_zero {m r : ℕ} (hϖ : ϖ ∈ nonZeroDivisors O)
     (g : _root_.GlobalTheory.Et.ssModel O ϖ m r)
     (h : algebraMap O _ ϖ * g = 0) : g = 0 := by
@@ -243,19 +227,21 @@ theorem _root_.GlobalTheory.LogCris.model_mul_eq_zero {m r : ℕ} (hϖ : ϖ ∈ 
   set d : Fin m →₀ ℕ := ∑ i ∈ S, Finsupp.single i 1
   have hX : (∏ i ∈ S, MvPolynomial.X i : MvPolynomial (Fin m) O) = MvPolynomial.monomial d 1 := by
     simp only [d, MvPolynomial.X, MvPolynomial.monomial_sum_one]
-  rw [Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton']
+  rw [Ideal.Quotient.eq_zero_iff_mem]
+  change g ∈ Ideal.span ({((∏ i ∈ S, MvPolynomial.X i : MvPolynomial (Fin m) O) - MvPolynomial.C ϖ)} : Set _)
+  rw [Ideal.mem_span_singleton']
   have h2 : MvPolynomial.C ϖ * g ∈
-      Ideal.span {(∏ i ∈ S, MvPolynomial.X i : MvPolynomial (Fin m) O) - MvPolynomial.C ϖ} := by
+      Ideal.span (Set.singleton ((∏ i ∈ S, MvPolynomial.X i : MvPolynomial (Fin m) O) - MvPolynomial.C ϖ)) := by
     rw [← Ideal.Quotient.eq_zero_iff_mem, map_mul]
     exact h
   obtain ⟨p, hp⟩ := Ideal.mem_span_singleton'.mp h2
   rw [hX] at hp
-  have hc : ∀ s, ϖ ∣ MvPolynomial.coeff s p := by
+  have hc : ∀ s, ϖ ∣ AddMonoidAlgebra.coeff p s := by
     intro s
-    have := congrArg (MvPolynomial.coeff (d + s)) hp
+    have := congrArg (AddMonoidAlgebra.coeff · (d + s)) hp
     rw [mul_sub, MvPolynomial.coeff_sub, mul_comm p (MvPolynomial.monomial d 1), mul_comm p (MvPolynomial.C ϖ),
       MvPolynomial.coeff_monomial_mul, one_mul, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_C_mul] at this
-    exact ⟨MvPolynomial.coeff (d + s) g + MvPolynomial.coeff (d + s) p, by rw [mul_add, ← this]; ring⟩
+    exact ⟨AddMonoidAlgebra.coeff g (d + s) + AddMonoidAlgebra.coeff p (d + s), by rw [mul_add, ← this]; ring⟩
   obtain ⟨q, hq⟩ : MvPolynomial.C ϖ ∣ p := by
     rw [← Ideal.mem_span_singleton, ← Set.image_singleton, ← Ideal.map_span, MvPolynomial.mem_map_C_iff]
     intro s
@@ -263,7 +249,7 @@ theorem _root_.GlobalTheory.LogCris.model_mul_eq_zero {m r : ℕ} (hϖ : ϖ ∈ 
   refine ⟨q, ?_⟩
   rw [hX]
   ext s
-  have e := congrArg (MvPolynomial.coeff s)
+  have e := congrArg (AddMonoidAlgebra.coeff · s)
     (show MvPolynomial.C ϖ * (q * (MvPolynomial.monomial d 1 - MvPolynomial.C ϖ)) = MvPolynomial.C ϖ * g by
       rw [← hp, hq]; ring)
   rw [MvPolynomial.coeff_C_mul, MvPolynomial.coeff_C_mul] at e
@@ -348,17 +334,5 @@ theorem isSSFun_model (hr : 1 ≤ r) (hϖ : ϖ ∈ nonZeroDivisors O) {k : Type}
   (modelAtlas ϖ r hr hϖ).isSSFun_logFun κ
 
 end ModelAtlas
-
-example : IsSSFun (2 : ℤ) (Spec (CommRingCat.of (GlobalTheory.Et.ssModel ℤ 2 2 2))) (modelStr 2 2) (Int.castRingHom (ZMod 2))
-    (modelFun 2 2 (by norm_num) (mem_nonZeroDivisors_of_ne_zero (by norm_num)) (Int.castRingHom (ZMod 2))) :=
-  isSSFun_model 2 2 (by norm_num) _ _
-
-example : IsSSFun (2 : ℤ) (Spec (CommRingCat.of (GlobalTheory.Et.ssModel ℤ 2 1 1))) (modelStr 2 1) (RingHom.id ℤ)
-    (modelFun 2 1 le_rfl (mem_nonZeroDivisors_of_ne_zero (by norm_num)) (RingHom.id ℤ)) :=
-  isSSFun_model 2 1 le_rfl _ _
-
-example : Fintype.card (modelFun (2 : ℤ) 2 (by norm_num) (mem_nonZeroDivisors_of_ne_zero (by norm_num))
-    (RingHom.id ℤ)).ι = 2 := by
-  simp [modelFun, SSAtlas.logFun]
 
 end GlobalTheory.LogCris

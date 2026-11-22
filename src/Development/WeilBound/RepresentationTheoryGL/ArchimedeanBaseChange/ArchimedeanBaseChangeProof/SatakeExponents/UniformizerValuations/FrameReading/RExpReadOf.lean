@@ -1,19 +1,24 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.CosetCount
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ExpToSat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeEigenFiniteStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorHeckeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorEigenStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorEigenRealStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContractionFixedStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubEigenTailHeckeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetCountTailStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TorusExponentTailStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardBlocksExponentStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DeltaBlocksExponentStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExponentToSaturationStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.CosetCount
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ExpToSat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeEigenFiniteStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorHeckeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorEigenStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorEigenRealStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContractionFixedStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubEigenTailHeckeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetCountTailStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TorusExponentTailStatement
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardBlocksExponent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DeltaBlocksExponentStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExponentToSaturationStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,8 +71,8 @@ theorem smul_cancel {M : Type} [AddCommGroup M] [Module ℂ M] {δ dh c p d : �
   rw [e] at h
   exact (smul_right_injective M hne h).symm
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem sat_of_eig (hSub : PExp.SubEig) (hCC0 : PExp.CosetCount) (hTE : PExp.TorusExp) (hDl : PExp.DlBridge)
     (hES : PExp.ExpToSat) {m : ℕ} (P : Pre E m) (w : Pl E) (ϖ : (w.adicCompletion E)ˣ)
     (hϖ : ordL (ϖ : w.adicCompletion E) = 1) (ξ : Fin m → ℂˣ) (hm : N3.Mono ξ) (u : _)

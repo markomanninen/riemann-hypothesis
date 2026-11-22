@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.CFDefs
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.MemKerPowIff
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.CFDefs
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.MemKerPowIff
+
+@[expose] public section
 
 noncomputable section
 

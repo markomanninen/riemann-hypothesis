@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.SplitRigidity.SplitRigidAlt
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.LandauIteratedDerivatives.LandauL
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.EulerLogarithms.EulerProductLogBound
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.DiagonalTermNorms.ConvergenceOfLandauEuler
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.SplitRigidity.SplitRigidAlt
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.LandauIteratedDerivatives.LandauL
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.EulerLogarithms.EulerProductLogBound
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.DiagonalTermNorms.ConvergenceOfLandauEuler
+
+@[expose] public section
+
 open PositivityTheory.RgJS UpperTheory.V.Z.Tf.GOne UpperTheory.V.Z.Tf.SR
 
 private theorem UpperTheory.V.Z.Tf.SR.le_of_sq_le {P T c n : ℝ} (hn : 0 < n) (hc : 0 ≤ c) (hT : 0 ≤ T)
@@ -105,12 +110,13 @@ theorem UpperTheory.V.Z.Tf.SR.absShare :
       rw [sub_part I _ (hsum x x σ h1)]
       simp_rw [sub_part I _ (hsum x _ σ h1)]
       have hsj : ∀ j, Summable fun p : {p : W × ℕ // ¬ p.1 ∈ I} => lterm q (A x) (A (y j)) σ p.1 :=
-        fun j => (hsum x (y j) σ h1).subtype {p : W × ℕ | ¬ p.1 ∈ I}
+        fun j => (hsum x (y j) σ h1).subtype (fun p : W × ℕ => ¬ p.1 ∈ I)
       rw [← Summable.tsum_finsetSum (fun j _ => hsj j)]
       refine tsum_congr fun p => ?_
       have hp : (starRingEnd ℂ) (∑ a, A x p.1.1 a ^ (p.1.2 + 1)) =
           ∑ j, (starRingEnd ℂ) (∑ b, A (y j) p.1.1 b ^ (p.1.2 + 1)) := by
-        rw [h p.1.1 p.2 (p.1.2 + 1), map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [h p.1.1 p.2 (p.1.2 + 1), map_sum]
       simp only [lterm]
       rw [hp, Finset.mul_sum, Finset.sum_mul, Finset.sum_div]
     have hre := congrArg Complex.re hid

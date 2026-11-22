@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def chg₀ : F ⊗[K₁] D₁ →ₗ[F] Letter m₂ F τ :=
   haveI : IsScalarTower K₁ F (Letter m₂ F τ) := ⟨fun a c y => by rw [Algebra.smul_def, mul_smul]; rfl⟩
   LinearMap.liftBaseChange F
     { toFun := fun x => letterMk m₂ F τ (T x)
-      map_add' := fun x y => by rw [map_add, letterMk_add]
+      map_add' := fun x y => by rw [map_add (f := _), letterMk_add]
       map_smul' := fun a x => by
         rw [hT, letterMk_smul, hs]; rfl }
 
@@ -41,7 +45,7 @@ def chg : Letter m₁ F τ →ₗ[F] Letter m₂ F τ :=
     | tmul a x =>
       rw [LinearMap.sub_apply, LinearMap.baseChange_tmul, LinearMap.smul_apply, LinearMap.id_apply, map_sub,
         map_smul, chg₀_tmul, chg₀_tmul, hm, letterMk_mul, smul_smul, smul_smul, mul_comm, sub_self]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero])
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero])
 
 @[simp] theorem chg_mk (x : D₁) :
     chg m₁ m₂ F τ s hs T hT hm (letterMk m₁ F τ x) = letterMk m₂ F τ (T x) := by
@@ -79,7 +83,7 @@ theorem tensQ_onB (S : End ℚ_[l] (Bst P)) (x : V ⊗[ℚ_[l]] Bst P) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 variable {K : FinExt l} {ρ : Representation LL ↥(GK K) V} {ρ' : Representation LL' ↥(GK K) V'} {f}
 
@@ -88,7 +92,7 @@ theorem tensQ_stRep (hf : ∀ g v, f (ρ g v) = ρ' g (f v)) (g : ↥(GK K)) (x 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [hf]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tensQ_mem_Dpst (hf : ∀ g v, f (ρ g v) = ρ' g (f v)) (x : V ⊗[ℚ_[l]] Bst P) (hx : x ∈ Dpst P ρ) :
     tensQ P f x ∈ Dpst P ρ' := by
@@ -201,12 +205,14 @@ theorem exists_decomp : ∃ (n : ℕ) (b : Fin n → ↥L₂.1) (π : Fin n → 
     IsScalarTower.of_algebraMap_eq fun c => ((IntermediateField.inclusion hL).commutes c).symm
   haveI := L₂.2
   haveI : Module.Finite ↥L₁.1 ↥L₂.1 := Module.Finite.of_restrictScalars_finite ℚ_[l] ↥L₁.1 ↥L₂.1
+  set_option synthInstance.maxHeartbeats 400000 in
   let B := Module.finBasis ↥L₁.1 ↥L₂.1
   have hsm : ∀ (a : ↥L₁.1) (y : ↥L₂.1), IntermediateField.inclusion hL a * y = a • y := fun a y => rfl
   refine ⟨_, fun j => B j, fun j => ((B.coord j).restrictScalars ℚ_[l]).compLeft (Fin m), ?_, ?_⟩
   · intro j M v
     funext i
-    simp only [LinearMap.compLeft, LinearMap.coe_mk, AddHom.coe_mk, Function.comp_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.compLeft, LinearMap.coe_mk, AddHom.coe_mk, Function.comp_apply,
       LinearMap.coe_restrictScalars, Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, hsm, map_smul,
       smul_eq_mul]
   · intro v
@@ -240,7 +246,7 @@ theorem tensQ_smul (s : ↥L₁.1 →+* ↥L₂.1) {f : V₁ →ₗ[ℚ_[l]] V�
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => show f (a • v) ⊗ₜ c = s a • (f v ⊗ₜ c); rw [hfs, smul_tmul']
-  | add x y hx hy => rw [smul_add, map_add, hx, hy, map_add, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
 
 theorem sum_tensQ {f : V₁ →ₗ[ℚ_[l]] V₂} {n : ℕ} (b : Fin n → ↥L₂.1) (π : Fin n → V₂ →ₗ[ℚ_[l]] V₁)
     (hsum : ∀ v, ∑ j, b j • f (π j v) = v) (z : V₂ ⊗[ℚ_[l]] Bst P) :
@@ -252,7 +258,7 @@ theorem sum_tensQ {f : V₁ →ₗ[ℚ_[l]] V₂} {n : ℕ} (b : Fin n → ↥L�
     rw [sum_tmul]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [tensQ_tmul, tensQ_tmul, smul_tmul']
-  | add x y hx hy => simp only [map_add, smul_add, Finset.sum_add_distrib, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), smul_add, Finset.sum_add_distrib, hx, hy]
 
 variable [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ₁)] [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ₂)]
 
@@ -262,6 +268,7 @@ theorem charpoly_wdRho_eq (s : ↥L₁.1 →+* ↥L₂.1) (hs : ∀ a, (s a : Om
     (hsum : ∀ v, ∑ j, b j • f (π j v) = v)
     (hdim : finrank ℂ (WDSpace P ι ρ₁) ≤ finrank ℂ (WDSpace P ι ρ₂)) (σ : ↥(Weil h)) :
     (wdRho P ι Bw h hj ρ₂ σ).charpoly = (wdRho P ι Bw h hj ρ₁ σ).charpoly := by
+  set_option synthInstance.maxHeartbeats 400000 in
   have hT : ∀ (a : ↥L₁.1) (x : ↥(Dpst P ρ₁)), dQ P hf (a • x) = s a • dQ P hf x := fun a x =>
     Subtype.ext (tensQ_smul P s hfs a x.1)
   letI := algC ι L₁
@@ -282,6 +289,7 @@ theorem charpoly_wdRho_eq (s : ↥L₁.1 →+* ↥L₂.1) (hs : ∀ a, (s a : Om
     simp only [AddMonoidHom.mk'_apply] at hms
     rw [hx, hms]
     refine Submodule.sum_mem _ fun j _ => ?_
+    change wdMk P ι ρ₂ ((Dpst P ρ₂).module.toSMul.smul (b j) (dQ P hf (dQ P (hπ j) x))) ∈ Φ.range
     rw [wdMk_smul]
     exact Submodule.smul_mem _ _ ⟨wdMk P ι ρ₁ (dQ P (hπ j) x), chg_mk _ _ _ _ _ _ _ _ _ _⟩
   have hdvd := DpstMap.charpoly_dvd_of_surjective Φ hsurj _ _ hΦ

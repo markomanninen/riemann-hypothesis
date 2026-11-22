@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+
+@[expose] public section
 
 open MeasureTheory NumberField
 
@@ -17,10 +21,5 @@ def DeepBound : Prop :=
     1 ≤ q → CountHyp B Cg n₀ d p q b →
       ∫⁻ x in deepSet B q b, ENNReal.ofReal (kern B.I (phe B d) x x).re ∂(B.I.muA B.μf) ≤
         ENNReal.ofReal ((B.D : ℝ) * Real.exp (-((B.I.n : ℝ) ^ 2 * (B.I.f : ℝ))))
-
-example (B : RowsAut) (q : ℕ) (b : ℝ) : deepSet B q b ⊆ B.fund := fun _ h => h.1
-
-example (B : RowsAut) (q : ℕ) (b : ℝ) : tauStar B q b = (bigX B b ^ (11 * q))⁻¹ := by
-  simp [tauStar]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.DeepSet

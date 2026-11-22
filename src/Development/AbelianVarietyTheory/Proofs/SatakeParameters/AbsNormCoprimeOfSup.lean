@@ -1,18 +1,22 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DefGroup
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LevelSubgroupFiniteAdelicStandard
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stabstd
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsApprox
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEasy
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stdform
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsScale
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LevelSubgroupFiniteAdelicStandard
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stabstd
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsApprox
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEasy
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stdform
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsScale
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,18 +57,20 @@ theorem modLI_li {S V V' V'' : Type} [CommRing S] [Algebra R S] [AddCommGroup V]
   let := Classical.propDecidable
   let g' i := if h : i ∈ s then g'' i h else 0
   have hg' : ∀ i ∈ s, algebraMap _ _ (g' i) = a * g i := by
-    intro i hi; exact (congr_arg _ (dif_pos hi)).trans (hg'' i hi)
+    intro i hi; exact (congr_arg _ (dite_eq_left hi)).trans (hg'' i hi)
   have hgI : algebraMap R S (g' j) ≠ 0 := by
     simp only [FractionalIdeal.mem_coeIdeal, not_exists, not_and'] at hgI
     exact hgI _ (hg' j hjs)
   refine ⟨fun i => algebraMap R S (g' i), ?_, j, hjs, hgI⟩
   have eq : f (∑ i ∈ s, g' i • b i) = 0 := by
-    rw [map_sum, ← smul_zero a, ← eq, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← smul_zero a, ← eq, Finset.smul_sum]
     refine Finset.sum_congr rfl ?_
     intro i hi
     rw [map_smul, ← IsScalarTower.algebraMap_smul K, hg' i hi, ← smul_assoc,
       smul_eq_mul, Function.comp_apply]
-  simp only [IsScalarTower.algebraMap_smul, ← map_smul, ← map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [IsScalarTower.algebraMap_smul, ← map_smul, ← map_sum,
     (f.map_eq_zero_iff hf).mp eq, map_zero, (· ∘ ·)]
 
 theorem modLI_gen (P : Ideal R) [hP : P.IsMaximal] {n : ℕ} (L : Submodule R (Fin n → K)) (hfg : L.FG) :
@@ -102,7 +108,8 @@ theorem modLI_gen (P : Ideal R) [hP : P.IsMaximal] {n : ℕ} (L : Submodule R (F
       show Submodule.mkQ (P • (⊤ : Submodule R ↥L)) ⟨x, hx⟩ =
         Submodule.mkQ (P • (⊤ : Submodule R ↥L)) (∑ j, r j • ct j)
       conv_lhs => rw [← h1]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [← hr j, map_smul, hlift]
       rfl
@@ -115,7 +122,7 @@ theorem modLI_gen (P : Ideal R) [hP : P.IsMaximal] {n : ℕ} (L : Submodule R (F
     refine Submodule.add_mem_sup (Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ ?_) hdiff'
     refine Submodule.subset_span ⟨⟨j.val, lt_of_lt_of_le j.2 hmn⟩, ?_⟩
     dsimp only
-    rw [dif_pos j.2]
+    rw [dite_eq_left j.2]
 
 end FrAlg
 
@@ -132,7 +139,7 @@ theorem absNorm_coprime_of_sup (I : Ideal (𝓞 E)) (hI : I ≠ ⊥) (D : ℕ) (
   have : Finite (𝓞 E ⧸ I) := Ideal.finiteQuotientOfFreeOfNeBot I hI
   have := Fintype.ofFinite (𝓞 E ⧸ I)
   have hcard : p ∣ Fintype.card (𝓞 E ⧸ I) := by
-    rw [← Nat.card_eq_fintype_card]; exact h1
+    simpa only [Ideal.absNorm_eq_natCard, Nat.card_eq_fintype_card] using h1
   obtain ⟨x, hx⟩ := exists_prime_addOrderOf_dvd_card p hcard
   have hpx : p • x = 0 := by rw [← hx]; exact addOrderOf_nsmul_eq_zero x
   have hx0 : x ≠ 0 := by
@@ -145,7 +152,7 @@ theorem absNorm_coprime_of_sup (I : Ideal (𝓞 E)) (hI : I ≠ ⊥) (D : ℕ) (
   obtain ⟨t, rfl⟩ := Ideal.mem_span_singleton'.1 hb
   apply hx0
   have e1 : Ideal.Quotient.mk I (t * ((p * q : ℕ) : 𝓞 E)) = 1 := by
-    rw [← map_one (Ideal.Quotient.mk I), ← hab, map_add, Ideal.Quotient.eq_zero_iff_mem.2 ha, zero_add]
+    rw [← map_one (Ideal.Quotient.mk I), ← hab, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 ha, zero_add]
   calc x = Ideal.Quotient.mk I (t * ((p * q : ℕ) : 𝓞 E)) * x := by rw [e1, one_mul]
     _ = Ideal.Quotient.mk I t * (Ideal.Quotient.mk I (q : 𝓞 E)) * (p • x) := by
         rw [nsmul_eq_mul]; push_cast; simp only [map_mul, map_natCast]; ring
@@ -345,7 +352,8 @@ theorem frame_of_glue (L : Submodule (𝓞 E) (Fin n → E)) (B C : Matrix (Fin 
       intro i
       obtain ⟨a, ha⟩ := hdL l hl
       have e1 : (C' *ᵥ fun i => ιA (l i)) i = ιA ((C *ᵥ l) i) := by
-        simp only [Matrix.mulVec, dotProduct, hC', Matrix.map_apply, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mulVec, dotProduct, hC', Matrix.map_apply, map_sum, map_mul]
       have e2 : algebraMap (𝓞 E) E d * (C *ᵥ l) i = algebraMap (𝓞 E) E (a i) := by
         have h3 : C *ᵥ (d • l) = fun j => algebraMap (𝓞 E) E (a j) := by
           rw [ha, Matrix.mulVec_mulVec, hCB, Matrix.one_mulVec]
@@ -396,7 +404,7 @@ theorem frame_of_glue (L : Submodule (𝓞 E) (Fin n → E)) (B C : Matrix (Fin 
 end FrGlue
 
 theorem exists_frame (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n : ℕ)
-    (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsLattice E L) :
+    (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L) :
     ∃ β : GL (Fin n) (E ⊗[F] Af F), IsFrame β L := by
   classical
   have hfin : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.2 hL.fg

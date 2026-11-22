@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraitPullbackSemiAbelianModelIdentification
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFrameChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraitPullbackSemiAbelianModelIdentification
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFrameChart
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

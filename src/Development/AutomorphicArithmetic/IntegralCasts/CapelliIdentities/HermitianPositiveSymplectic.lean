@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private theorem exists_ker {n g : ℕ} (f : (Fin n → ℂ) →ₗ[ℝ] (Fin g → ℂ))
     (U : Submodule ℂ (Fin g → ℂ)) (hU : ∀ y, f y ∈ U)
@@ -9,7 +13,7 @@ private theorem exists_ker {n g : ℕ} (f : (Fin n → ℂ) →ₗ[ℝ] (Fin g �
     { carrier := {y | f y = 0}
       add_mem' := fun {a b} ha hb => by
         simp only [Set.mem_setOf_eq] at ha hb ⊢
-        rw [map_add, ha, hb, add_zero]
+        rw [map_add (f := _), ha, hb, add_zero]
       zero_mem' := by simp
       smul_mem' := fun z y hy => by
         simp only [Set.mem_setOf_eq] at hy ⊢
@@ -18,7 +22,7 @@ private theorem exists_ker {n g : ℕ} (f : (Fin n → ℂ) →ₗ[ℝ] (Fin g �
           simp only [Pi.smul_apply, Pi.add_apply, smul_eq_mul, Complex.real_smul]
           conv_lhs => rw [← Complex.re_add_im z]
           ring
-        rw [hz, map_add, map_smul, map_smul, hy, hI y hy, smul_zero, smul_zero, add_zero] }
+        rw [hz, map_add (f := _), map_smul, map_smul, hy, hI y hy, smul_zero, smul_zero, add_zero] }
   refine ⟨K, fun y => Iff.rfl, ?_⟩
   have h1 := LinearMap.finrank_range_add_finrank_ker f
   have h2 : LinearMap.ker f = K.restrictScalars ℝ := by
@@ -57,7 +61,7 @@ theorem UpperTheory.hermitian_positive_symplectic :
   intro g j j' p H S c U U' hH hS hc hp hU hU' hA hB
   let Q : (Fin (j + j') → ℂ) →ₗ[ℝ] (Fin g → ℂ) :=
     { toFun := fun y => Complex.I • p (Complex.I • y)
-      map_add' := fun a b => by rw [smul_add, map_add, smul_add]
+      map_add' := fun a b => by rw [smul_add, map_add (f := _), smul_add]
       map_smul' := fun r a => by
         rw [smul_comm Complex.I r a, map_smul, smul_comm Complex.I r]; rfl }
   have hII : ∀ {m : ℕ} (v : Fin m → ℂ), Complex.I • Complex.I • v = -v := by

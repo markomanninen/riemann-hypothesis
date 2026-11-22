@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
 
@@ -15,14 +20,14 @@ theorem tl_eq {a b : ℕ} (M : Matrix (Fin (a + b)) (Fin (a + b)) K) :
     tl a M = M.submatrix (Fin.castAdd b) (Fin.castAdd b) := by
   ext i j
   simp only [tl, ent, Matrix.submatrix_apply]
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
   rfl
 
 theorem br_eq {a b : ℕ} (M : Matrix (Fin (a + b)) (Fin (a + b)) K) :
     br a b M = M.submatrix (Fin.natAdd a) (Fin.natAdd a) := by
   ext i j
   simp only [br, ent, Matrix.submatrix_apply]
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
   rfl
 
 theorem inPar_mul {a n : ℕ} {x y : GL (Fin n) K} (hx : InPar a x) (hy : InPar a y) :
@@ -97,13 +102,13 @@ theorem isUnit_br {a b : ℕ} {x : GL (Fin (a + b)) K} (hx : InPar a x) : IsUnit
 theorem coe_tlG {a b : ℕ} {x : GL (Fin (a + b)) K} (hx : InPar a x) :
     (tlG a x).val = tl a x.val := by
   unfold tlG toG
-  rw [dif_pos (isUnit_tl hx)]
+  rw [dite_eq_left (isUnit_tl hx)]
   rfl
 
 theorem coe_brG {a b : ℕ} {x : GL (Fin (a + b)) K} (hx : InPar a x) :
     (brG a b x).val = br a b x.val := by
   unfold brG toG
-  rw [dif_pos (isUnit_br hx)]
+  rw [dite_eq_left (isUnit_br hx)]
   rfl
 
 theorem gal_val {K' : Type} [Field K'] (t : K →+* K') {n : ℕ} (x : GL (Fin n) K) :

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,7 @@ theorem countOut_of : CountOut := by
       intro e
       have h1 := LinearMap.congr_fun hs0 e
       have h2 : C.mkQ (g e : H) = 0 := (Submodule.Quotient.mk_eq_zero C).2 (g e).2
-      simp only [LinearMap.comp_apply, LinearMap.add_apply, map_add, Submodule.subtype_apply] at h1 ⊢
+      simp only [LinearMap.comp_apply, LinearMap.add_apply, map_add (f := _), Submodule.subtype_apply] at h1 ⊢
       rw [h2, add_zero, h1]⟩
   have hGb : Function.Bijective G := by
     constructor

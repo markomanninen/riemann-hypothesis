@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.EulerProd
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.EvFinIdemSelf
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.EulerProd
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.EvFinIdemSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem cartan_pm {M θ : Matrix (Fin n) (Fin n) ℂ} {r s : ℕ} (hs : HasSig M
     rw [this, Matrix.mulVec_mulVec]
   have re : ∀ a : Fin n → ℂ, a ⬝ᵥ M *ᵥ star a = ((a ⬝ᵥ M *ᵥ star a).re : ℂ) := fun a => by
     refine (Complex.conj_eq_iff_re.1 ?_).symm
-    simp only [Matrix.mulVec, dotProduct, Finset.mul_sum, map_sum, map_mul, Pi.star_apply, Complex.star_def, Complex.conj_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, Finset.mul_sum, map_sum, map_mul, Pi.star_apply, Complex.star_def, Complex.conj_conj]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by rw [← hM i j, Complex.star_def]; ring
   have p1 := h.2.2 x hu
@@ -99,7 +104,7 @@ theorem mulVec_mem (hL : Y.L.IsLattice E) {A : Matrix (Fin n) (Fin n) (AE F E)}
 theorem stab_iff (hB : B.IsGood σ) (h : Y.IsHerm σ B r s) (h0 : min r s = 0) {K : Subgroup (UA σ Y.J)} (hK : IsStab B K)
     {g : UA σ Y.J} : g ∈ K ↔ ∀ v, IntAt v g :=
   (hK g).trans ⟨fun a _ z hz _ => a.2 z hz, fun a => ⟨fun w => commute_theta hB h h0 w _, fun _ hz =>
-    ⟨mulVec_mem h.lat (fun v z h1 h2 => (a v z h1 h2).1) hz, mulVec_mem h.lat (fun v z h1 h2 => (a v z h1 h2).2) hz⟩⟩⟩
+    ⟨mulVec_mem h.lat.toIsLattice (fun v z h1 h2 => (a v z h1 h2).1) hz, mulVec_mem h.lat.toIsLattice (fun v z h1 h2 => (a v z h1 h2).2) hz⟩⟩⟩
 
 theorem emb_mem (hB : B.IsGood σ) (h : Y.IsHerm σ B r s) (h0 : min r s = 0) {K : Subgroup (G2 σ Y)} (hK : IsStab2 B K)
     {e : UA σ Y.J × UA σ Y.J →* G2 σ Y} (he : ∀ g g', IsEmb g g' (e (g, g'))) {g : UA σ Y.J} (hg : ∀ v, IntAt v g) :
@@ -110,14 +115,14 @@ theorem emb_mem (hB : B.IsGood σ) (h : Y.IsHerm σ B r s) (h0 : min r s = 0) {K
       (commute_theta hB h h0 w _).eq, (commute_theta hB h h0 w _).neg_right.eq]
   · obtain ⟨g', e1, hg'⟩ : ∃ g', k = e (g', 1) ∧ mat g' *ᵥ z ∈ latHat Y := by
       rcases hk with rfl | rfl
-      · exact ⟨g, rfl, mulVec_mem h.lat (fun v z h1 h2 => (hg v z h1 h2).1) hz⟩
-      · exact ⟨g⁻¹, by rw [← map_inv, Prod.inv_mk, inv_one], mulVec_mem h.lat (fun v z h1 h2 => (hg v z h1 h2).2) hz⟩
+      · exact ⟨g, rfl, mulVec_mem h.lat.toIsLattice (fun v z h1 h2 => (hg v z h1 h2).1) hz⟩
+      · exact ⟨g⁻¹, by rw [← map_inv, Prod.inv_mk, inv_one], mulVec_mem h.lat.toIsLattice (fun v z h1 h2 => (hg v z h1 h2).2) hz⟩
     rw [e1, he g' 1, Matrix.fromBlocks_mulVec, show mat (1 : UA σ Y.J) = 1 from rfl]
     simpa using ⟨hg', hz'⟩
 
-theorem int_nhds (hL : Y.L.IsLattice E) : {g : UA σ Y.J | ∀ v, IntAt v g} ∈ 𝓝 (1 : UA σ Y.J) := by
+theorem int_nhds (hL : Y.L.IsFullLattice E) : {g : UA σ Y.J | ∀ v, IntAt v g} ∈ 𝓝 (1 : UA σ Y.J) := by
   classical
-  obtain ⟨m, x, hs, hx⟩ := Euler.lat_gen hL
+  obtain ⟨m, x, hs, hx⟩ := Euler.lat_gen hL.toIsLattice
   have : IsTopologicalRing (AE F E) := IsModuleTopology.isTopologicalRing (AF F) _
   let U : Set (Fin m → AF F) := {a | ∀ i v, evFin F v (a i) ∈ v.adicCompletionIntegers F}
   have hO : IsOpen {a : Af F | ∀ v, a v ∈ v.adicCompletionIntegers F} :=
@@ -158,7 +163,7 @@ theorem idem_off {z : AE F E} (h : compFin F E v z = 0) : idem F v • z = 0 := 
   have : ∀ z, idem F v • z = j (compFin F E v z) := fun z => by
     induction z using TensorProduct.induction_on with
     | zero => rw [smul_zero, map_zero, map_zero]
-    | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy]
+    | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy]
     | tmul a x =>
       refine congrArg (· ⊗ₜ[F] x) (af_ext' ((evI_mul _ _).trans (by rw [evI_idem, zero_mul]; exact evI_zero.symm)) fun u => ?_)
       rcases eq_or_ne u v with rfl | h

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.FormalGroupCoeffSecondLinear
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.FormalGroupCoeffSecondLinear
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -108,7 +112,7 @@ def dActS (B : FB R d O) : O →+* Matrix (Fin d) (Fin d) k where
   map_one' := by rw [star_one, map_one, Matrix.transpose_one]
   map_mul' a b := by rw [star_mul, map_mul, Matrix.transpose_mul]
   map_zero' := by rw [star_zero, map_zero, Matrix.transpose_zero]
-  map_add' a b := by rw [star_add, map_add, Matrix.transpose_add]
+  map_add' a b := by rw [star_add, map_add (f := _), Matrix.transpose_add]
 
 theorem OactH_eq (B : FB R d O) (a : O) (ξ : (Fin d → k) × (Fin d → k)) :
     OactH k B a ξ = ((dActH k B a).mulVec ξ.1, (dActS k B a).mulVec ξ.2) := rfl
@@ -128,7 +132,7 @@ theorem hset_add {ξ η : (Fin d → k) × (Fin d → k)} (hξ : ξ ∈ Hset (R 
   obtain ⟨u', φ', rfl⟩ := hη
   refine ⟨u + u', φ + φ', Prod.ext ?_ ?_⟩ <;> funext i
   · simp
-  · simp only [Prod.snd_add, Pi.add_apply, map_add]
+  · simp only [Prod.snd_add, Pi.add_apply, map_add (f := _)]
     rw [show (fun j => algebraMap R k (u j) + algebraMap R k (u' j)) =
         (fun j => algebraMap R k (u j)) + (fun j => algebraMap R k (u' j)) from rfl, Matrix.mulVec_add, Pi.add_apply]
     ring
@@ -157,7 +161,8 @@ theorem idem_eig {d : ℕ} {O k : Type} [CommRing O] [CommRing k] (M : O →+* M
     M a * ∑ i, c i • M (b i) = χ a • ∑ i, c i • M (b i) := by
   have h1 : ∀ i, M a * (c i • M (b i)) = ∑ j, (c i * (m i j : k)) • M (b j) := by
     intro i
-    rw [Matrix.mul_smul, ← map_mul, hb i, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_smul, ← map_mul, hb i, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_zsmul, ← Int.cast_smul_eq_zsmul k, smul_smul]
   rw [Finset.mul_sum, Finset.sum_congr rfl fun i _ => h1 i, Finset.sum_comm, Finset.smul_sum]

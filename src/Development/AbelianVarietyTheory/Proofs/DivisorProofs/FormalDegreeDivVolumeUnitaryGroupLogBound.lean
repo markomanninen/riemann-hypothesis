@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalDegreeUpperC
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.VolUFactProdMulLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalDegreeUpperC
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.VolUFactProdMulLe
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT
 open scoped TensorProduct InnerProductSpace
@@ -15,7 +20,7 @@ theorem volU_ge_inv_pow_of_formalDeg (r : ℕ) (hr : 1 ≤ r) :
   have hrpos : (0 : ℝ) < (r : ℝ) ^ r := by positivity
   rw [show (((r : ℝ) ^ r)⁻¹) ^ r = ∏ _i ∈ Finset.range r, ((r : ℝ) ^ r)⁻¹ by
     rw [Finset.prod_const, Finset.card_range]]
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro i _; positivity
   · intro i hi
     have hi' : i < r := Finset.mem_range.mp hi
@@ -51,10 +56,10 @@ theorem formalDeg_div_volU_log_bound : ∀ (r n : ℕ) (d : ℝ) (lam : Fin r �
     exact abs_pos.mpr (sub_ne_zero.mpr (hlam hab).ne')
   have hD1 : 1 ≤ D := by
     have : (∏ _a : Fin r, ∏ _b ∈ Finset.univ.filter (fun b : Fin r => _a < b), (1 : ℝ)) ≤ D := by
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro a _; positivity
       · intro a _
-        apply Finset.prod_le_prod
+        apply Finset.prod_le_prod₀
         · intro b _; positivity
         · intro b hb
           have hab : a < b := (Finset.mem_filter.mp hb).2
@@ -65,12 +70,12 @@ theorem formalDeg_div_volU_log_bound : ∀ (r n : ℕ) (d : ℝ) (lam : Fin r �
   have hDpos : 0 < D := lt_of_lt_of_le one_pos hD1
   have hPle : P ≤ M ^ (r * r) := by
     have : P ≤ ∏ _a : Fin r, M ^ r := by
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro a _; exact Finset.prod_nonneg (fun b _ => abs_nonneg _)
       · intro a _
         calc (∏ b ∈ Finset.univ.filter (fun b : Fin r => a < b), |lam a - lam b|)
             ≤ ∏ _b ∈ Finset.univ.filter (fun b : Fin r => a < b), M :=
-              Finset.prod_le_prod (fun b _ => abs_nonneg _) (fun b _ => hbd a b)
+              Finset.prod_le_prod₀ (fun b _ => abs_nonneg _) (fun b _ => hbd a b)
           _ = M ^ (Finset.univ.filter (fun b : Fin r => a < b)).card := Finset.prod_const _
           _ ≤ M ^ r := by
               apply pow_le_pow_right₀ hM1

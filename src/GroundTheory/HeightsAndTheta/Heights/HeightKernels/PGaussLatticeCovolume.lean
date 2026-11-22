@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -59,8 +64,8 @@ theorem volume_fundamentalDomain_basisFun (g : ℕ) :
 
 end PGaussLatticeCovolume
 
-open PGaussLatticeCovolume in
 
+open PGaussLatticeCovolume in
 theorem GaussLatticeCovolume.proof (hL : GaussLatticeIsLattice.Statement) :
     GaussLatticeCovolume.Statement := by
   intro g B hB

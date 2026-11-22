@@ -1,9 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCharacter
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCharacter
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
@@ -25,7 +30,7 @@ theorem exists_unit_of_triv {X Y Z : Scheme.{0}} (p : X ⟶ Y) (M : LB Y) (hM : 
     (hc : ∀ (k : M.ι) (W : Z.Opens) (h₁ : W ≤ a ⁻¹ᵁ (p ⁻¹ᵁ M.U k)) (h₂ : W ≤ b ⁻¹ᵁ (p ⁻¹ᵁ M.U k)),
       res h₁ (pullU a _ (e k)) = res le_top c * res h₂ (pullU b _ (e k))) :
     ∃ f : Γ(X, ⊤)ˣ, pullTop a f = c * pullTop b f := by
-  obtain ⟨f, hf⟩ := glue_unit (X := X) ⊤ (fun k => p ⁻¹ᵁ M.U k) (fun _ => le_top)
+  obtain ⟨f, hf⟩ := glue_unit (X := X) (J := M.ι) ⊤ (fun k => p ⁻¹ᵁ M.U k) (fun _ => le_top)
     (fun x _ => by
       obtain ⟨k, hk⟩ := exists_chart hM (p x)
       exact TopologicalSpace.Opens.mem_iSup.2 ⟨k, hk⟩)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMultCellsAmongOfIsPolyFan
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultCellsAmong
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMultCellsAmongOfIsPolyFan
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultCellsAmong
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem perModule {O : Type} [CommRing O] [IsDedekindDomain O] [CharZero O] [Mod
       (Subtype.ext (by simpa using key))
     exact congrArg Subtype.val this
   refine ⟨⋃ s ∈ S, U s, hS.biUnion fun s _ => (hU s).finite, fun m δ h hli hprim => ?_⟩
-  have hB : ∑ i, (1 : ℝ) • toReal (δ i) ∈ psdCone bar X :=
+  have hB : ∑ i, (1 : ℝ) • toReal (δ i) ∈ psdCone (bar := bar) (X := X) :=
     ConeSub.sum_smul_toReal_mem_psdCone O bar X m δ (fun _ => 1) h.mem h.nonneg (fun _ => zero_le_one)
   obtain ⟨e, m', γ, c, hγ, hγS, hc, hsum⟩ := hcov _ hB
   set γ' : Fin m' → LinearMap.BilinForm ℤ X := fun j => pull e.symm.toLinearMap (γ j) with hγ'def

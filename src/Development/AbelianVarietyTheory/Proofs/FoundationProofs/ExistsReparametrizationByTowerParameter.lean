@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -182,7 +186,8 @@ theorem evalₐ_sum_eq (c : ℕ → O0 p) (k : ℕ) (y : ℕ → Lau p)
     (hy : ∀ j, AdicCompletion.evalₐ (pI p) k (c j) = Ideal.Quotient.mk _ (y j)) :
     AdicCompletion.evalₐ (pI p) k (∑ j ∈ Finset.range (p ^ n), vO p n (c j) * qO p ^ j) =
       Ideal.Quotient.mk _ (∑ j ∈ Finset.range (p ^ n), vL p n (y j) * HahnSeries.single (j : ℤ) (1 : ℤ_[p])) := by
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, map_mul, evalₐ_vO p n k _ _ (hy j), qO_pow, evalₐ_alg]
 
@@ -224,7 +229,7 @@ def fY : Polynomial (O0 p) := X ^ (p ^ n) - C (qO p)
 
 theorem fY_monic : (fY p n).Monic := monic_X_pow_sub_C _ (pow_ne_zero _ hp.out.ne_zero)
 
-theorem fY_natDegree : (fY p n).natDegree = p ^ n := natDegree_X_pow_sub_C
+theorem fY_natDegree : (fY p n).natDegree = p ^ n := natDegree_X_pow_sub_C _
 
 def phiInv : AdjoinRoot (fY p n) →+* O0 p :=
   AdjoinRoot.lift (vO p n) (qO p) (by simp [fY, vO_qO])
@@ -249,7 +254,7 @@ theorem phiInv_mk_eq (g : Polynomial (O0 p)) :
 
 theorem phiInv_bij : Function.Bijective (phiInv p n) := by
   constructor
-  · rw [injective_iff_map_eq_zero]
+  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨g, rfl⟩ := AdjoinRoot.mk_surjective x
     rw [phiInv_mk_eq] at hx
@@ -272,7 +277,8 @@ theorem phiInv_bij : Function.Bijective (phiInv p n) := by
   · intro y
     obtain ⟨c, hc⟩ := exist p n y
     refine ⟨∑ j ∈ Finset.range (p ^ n), AdjoinRoot.of (fY p n) (c j) * AdjoinRoot.root (fY p n) ^ j, ?_⟩
-    rw [hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, map_pow, phiInv, AdjoinRoot.lift_of, AdjoinRoot.lift_root]
 
@@ -291,7 +297,7 @@ theorem exists_isReb : ∀ (p : ℕ) [Fact p.Prime], ∀ (Ω : Type) [Field Ω] 
   haveI : IsDomain (AdjoinRoot (fY p n)) := Function.Injective.isDomain (phiInv p n) (phiInv_bij p n).1
   haveI : Module.Finite (O0 p) (AdjoinRoot (fY p n)) := (AdjoinRoot.powerBasis' (fY_monic p n)).finite
   have hιinj : Function.Injective ι := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra hne
     have hI := Ideal.comap_ne_bot_of_integral_mem (R := O0 p) hne (show x ∈ RingHom.ker ι from hx)

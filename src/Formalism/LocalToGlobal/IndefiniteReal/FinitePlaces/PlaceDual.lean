@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitInt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceLatDualIiiOf
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualB
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatIntFMat
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualBIv
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitInt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceLatDualIiiOf
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualB
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatIntFMat
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualBIv
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.CMTraceOnto
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.CMTraceOnto
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,13 +28,13 @@ theorem isTr_zero : IsTr (0 : 𝓞 K) := ⟨0, by rw [map_zero, add_zero]⟩
 theorem isTr_add {s t : 𝓞 K} (hs : IsTr s) (ht : IsTr t) : IsTr (s + t) := by
   obtain ⟨x, rfl⟩ := hs
   obtain ⟨y, rfl⟩ := ht
-  exact ⟨x + y, by rw [map_add]; ring⟩
+  exact ⟨x + y, by rw [map_add (f := _)]; ring⟩
 
 theorem isTr_self (x : 𝓞 K) : IsTr (x + conj x) := ⟨x, rfl⟩
 
 theorem conj_of_isTr {s : 𝓞 K} (hs : IsTr s) : conj s = s := by
   obtain ⟨x, rfl⟩ := hs
-  rw [map_add, conj_conj, add_comm]
+  rw [map_add (f := _), conj_conj, add_comm]
 
 theorem isTr_mul_fixed {b s : 𝓞 K} (hb : conj b = b) (hs : IsTr s) : IsTr (b * s) := by
   obtain ⟨x, rfl⟩ := hs
@@ -55,7 +59,7 @@ theorem isTr_mul_conj_of_mem {u : 𝓞 K} (hu : u ∈ trIdeal K) : IsTr (u * con
     exact isTr_zero
   | add x y _ _ hx hy =>
     have h := isTr_add (isTr_add hx hy) (isTr_mul_conj_add_conj_mul x y)
-    rw [map_add]
+    rw [map_add (f := _)]
     convert h using 1
     ring
   | smul a x _ hx =>

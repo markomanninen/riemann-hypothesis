@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HtCoIOfEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BoundedOrbitHasNearbyFixedPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HtCoIOfEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BoundedOrbitHasNearbyFixedPoint
+
+@[expose] public section
 
 noncomputable section
 

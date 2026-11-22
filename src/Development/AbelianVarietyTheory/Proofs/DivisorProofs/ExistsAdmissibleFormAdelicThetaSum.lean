@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 noncomputable section
@@ -85,7 +90,7 @@ theorem thetaSum_pureA_bound {κ : Type} [Fintype κ] {g : (κ → FiniteAdeleRi
     _ = ∑' ξ : S, ‖pureA F f g (fun i => algebraMap F (AdeleRing (𝓞 F) F) (ξ.1 i))‖ :=
         (tsum_subtype_eq_of_support_subset hsupp).symm
     _ ≤ ∑' ξ : S, max B 0 * ((fun z : denomLattice F κ N => ‖f z‖) ∘ j) ξ :=
-        ((summable_norm_of_mem_schA F hmem).subtype S).tsum_le_tsum hterm (hsumS.mul_left _)
+        ((summable_norm_of_mem_schA F hmem).subtype (fun x => x ∈ S)).tsum_le_tsum hterm (hsumS.mul_left _)
     _ = max B 0 * ∑' ξ : S, ((fun z : denomLattice F κ N => ‖f z‖) ∘ j) ξ := tsum_mul_left
     _ ≤ max B 0 * ∑' z : denomLattice F κ N, ‖f z‖ :=
         mul_le_mul_of_nonneg_left (tsum_comp_le_tsum_of_inj hfL (fun _ => norm_nonneg _) hj) (le_max_right _ _)

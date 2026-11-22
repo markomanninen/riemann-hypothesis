@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
-import Development.AutomorphicArithmetic.MeanSquareBounds.StagePow
-import Development.AutomorphicArithmetic.MeanSquareBounds.ExistsCoprimePrimePairSetSecondEqPPset
-import Development.AutomorphicArithmetic.MeanSquareBounds.LogOddM
-import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim
+module
+
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+public import Development.AutomorphicArithmetic.MeanSquareBounds.StagePow
+public import Development.AutomorphicArithmetic.MeanSquareBounds.ExistsCoprimePrimePairSetSecondEqPPset
+public import Development.AutomorphicArithmetic.MeanSquareBounds.LogOddM
+public import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim
+
+@[expose] public section
 
 open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
 
@@ -139,14 +143,14 @@ theorem stage2 :
       have hl2' : 0 < Real.log 2 := Real.log_pos (by norm_num)
       have hm : Real.log ((16 * oddM z q : ℕ) : ℝ) ≤ 4 * z := by
         rw [h16, h4] at hlm
-        nlinarith [mul_lt_mul_of_pos_right hl2 hzpos]
-      nlinarith [mul_le_mul_of_nonneg_left hm (sq_nonneg (Real.log Y))]
+        linarith [mul_lt_mul_of_pos_right hl2 hzpos]
+      linarith [mul_le_mul_of_nonneg_left hm (sq_nonneg (Real.log Y))]
     · rw [Real.log_exp, show 6 * ε / 5 / 6 = ε / 5 by ring]
-      nlinarith [hz]
+      linarith [hz]
     · rw [Real.log_exp, show 6 * ε / 5 / 5 = ε / 5 + ε / 25 by ring, Real.rpow_add hYpos]
       have h := mul_le_mul_of_nonneg_right hK2 (by positivity : (0:ℝ) ≤ z * Real.log Y ^ 2)
       rw [← hz]
-      nlinarith
+      linarith
   have hzle : z ≤ Y ^ (6 * ε / 5 / 5) := by
     rw [hz]
     exact Real.rpow_le_rpow_of_exponent_le hY1 (by linarith)
@@ -166,7 +170,7 @@ theorem stage2 :
         rw [(Nat.prime_dvd_prime_iff_eq hp hqp).mp h]
         exact hqK
       · left
-        obtain ⟨r, hr, hpr⟩ := (Prime.dvd_finset_prod_iff hp.prime _).mp h
+        obtain ⟨r, hr, hpr⟩ := (Prime.dvd_finsetProd_iff hp.prime _).mp h
         simp only [Finset.mem_filter, Finset.mem_Icc] at hr
         have hpr' := (Nat.prime_dvd_prime_iff_eq hp hr.2).mp hpr
         subst hpr'

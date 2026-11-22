@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopForm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutDomCutInt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DensityConstantOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopForm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutDomCutInt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DensityConstantOfParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.TDM
 
@@ -106,7 +110,7 @@ theorem topDMeasCpt_of_parts (h1 : TypeNormMeas) (h2 : VecVGPos) (h3 : DopCC) (h
   have hl : D.IsLocPt (TBB.bigPt P.r c) (P.r + 1) := Formalism.FourierDecayAlt.P.PBJ.Dens.isLocPt_bigPt c hc
   show g c = topD p X w c
   unfold topD TBB.Ew TBB.NP KB.Pl.RR D.RRplace
-  rw [dif_pos ⟨hl, hl⟩, dif_neg (by omega), if_pos rfl, if_neg hw0]
+  rw [dite_eq_left ⟨hl, hl⟩, dite_eq_right (by omega), if_pos rfl, if_neg hw0]
   unfold Top.topOf
   simp only [hg]
   congr 3

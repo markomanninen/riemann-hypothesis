@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.FlipTwoThree
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.FlipTwoThree
+
+@[expose] public section
 
 theorem UpperTheory.V.Pr.globProp :
     UpperTheory.V.Pr.GlobProp := by
@@ -12,10 +16,10 @@ theorem UpperTheory.V.Pr.globProp :
     set G : Set X := ⋃ Y ∈ {Y | M.CompI Y ∧ Y ⊆ M.Good}, Y with hG
     set B : Set X := ⋃ Y ∈ {Y | M.CompI Y ∧ ¬ Y ⊆ M.Good}, Y with hB
     have hGc : IsClosed G :=
-      (hfin.subset (fun Y hY => hY.1.1)).isClosed_biUnion
+      (hfin.subset (t := {Y | M.CompI Y ∧ Y ⊆ M.Good}) (fun Y hY => hY.1.1)).isClosed_biUnion
         (fun Y hY => isClosed_of_mem_irreducibleComponents Y hY.1.1)
     have hBc : IsClosed B :=
-      (hfin.subset (fun Y hY => hY.1.1)).isClosed_biUnion
+      (hfin.subset (t := {Y | M.CompI Y ∧ ¬ Y ⊆ M.Good}) (fun Y hY => hY.1.1)).isClosed_biUnion
         (fun Y hY => isClosed_of_mem_irreducibleComponents Y hY.1.1)
     have hcov : M.Core ⊆ G ∪ B := by
       intro x hx

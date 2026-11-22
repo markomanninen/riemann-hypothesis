@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -60,7 +64,8 @@ private lemma sum_evFull {F : Type} [Field F] [NumberField F] {g : ℕ} (ty : Fi
       (((evAt ty e (ComplexEmbedding.conjugate τ)).map (starRingEnd ℂ)).map fun r => r ^ j).sum =
       (starRingEnd ℂ) (∑ i, ty i x * e i ^ j) := by
     simp_rw [Multiset.map_map, sum_evAt, Finset.mul_sum, mul_ite, mul_zero]
-    rw [Finset.sum_comm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_comm, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.sum_eq_single (ComplexEmbedding.conjugate (ty i))]
     · rw [if_pos (cc _).symm, ComplexEmbedding.conjugate_coe_eq]
@@ -72,7 +77,7 @@ private lemma sum_evFull {F : Type} [Field F] [NumberField F] {g : ℕ} (ty : Fi
       rw [hc, cc]
     · intro hn
       exact absurd (Finset.mem_univ _) hn
-  simp_rw [evFull, Multiset.map_add, Multiset.sum_add, mul_add]
+  simp_rw [evFull, Multiset.map_add (f := _), Multiset.sum_add, mul_add]
   rw [Finset.sum_add_distrib, h1, h2]
 
 theorem UpperTheory.Gal.W2.powSumRat_of :

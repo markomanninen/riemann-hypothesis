@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DiffGenLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DiffGenLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F))
 theorem dV_isDiffVal : IsDiffVal v (dV v) := by
   have h : ∃ d, IsDiffVal v d := diffExists v
   unfold dV
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem val_pow_le (k : ℕ) (x : 𝓞 F) (hx : x ∈ differentIdeal ℤ (𝓞 F) ^ k) :
@@ -34,7 +38,7 @@ theorem val_pow_le (k : ℕ) (x : 𝓞 F) (hx : x ∈ differentIdeal ℤ (𝓞 F
       have h2 := ih b hb
       rw [show ((a * b : 𝓞 F) : F) = (a : F) * (b : F) from rfl, map_mul, map_mul, pow_succ']
       exact mul_le_mul' h1 h2
-    · rw [show ((a + b : 𝓞 F) : F) = (a : F) + (b : F) from rfl, map_add]
+    · rw [show ((a + b : 𝓞 F) : F) = (a : F) + (b : F) from rfl, map_add (f := _)]
       exact Valuation.map_add_le _ ha hb
 
 end Formalism.L2.SG.Pf.NcVal.OmVSt.OmX

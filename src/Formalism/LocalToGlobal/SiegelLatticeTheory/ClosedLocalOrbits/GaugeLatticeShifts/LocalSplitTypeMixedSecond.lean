@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -266,17 +270,18 @@ theorem localForm_smul (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
 
-theorem brS_frameAct {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+theorem brS_frameAct {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (ξ : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (𝓞 D.host.E)) (a b : Fin (D.R.rS + 1)) :
     brS (VS D) (frameAct (frame F') ξ b) (frame F a) =
       (ZhatL F F' * ξ.map (algebraMap (𝓞 D.host.E) D.host.E)) a b := by
-  simp only [frameAct, brS, map_sum, map_smul, smul_eq_mul, Matrix.mul_apply, Matrix.map_apply, ZhatL,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [frameAct, brS, map_sum, map_smul, smul_eq_mul, Matrix.mul_apply, Matrix.map_apply, ZhatL,
     Formalism.MainNotions.S.Zhat, frame]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [mul_comm]
 
-theorem zhat_loc (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (p : PlF D)
+theorem zhat_loc (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (p : PlF D)
     (a b : Fin (D.R.rS + 1)) :
     (locH Z p).Zhat (locTerm Z p Λ F F' Tn T'n).f (locTerm Z p Λ F F' Tn T'n).f' a b =
       (sgnP' D p b * frFac Z.δ p b) * (D.s.atP p).cj (sgnP D p a * frFac Z.δ p a) *
@@ -450,15 +455,6 @@ theorem modMat_apply' (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w :
   rw [ptEntry_eq, pSig_map, pTau_map _ _ _ _ (by rw [w.2.2]; exact a.2)]
   simp only [sgF, Fin.ext_iff]
 
-theorem cell_decomp (Y : TermTie D) {u u' : D.what₂.Word} (γ : D.s.Term u u') (hG : D.s.Gterm γ ≠ 0)
-    (hrel : D.s.relevant γ) :
-    ∃ L U : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E, IsLo L ∧ IsUp U ∧
-      ZhatL (Y.fl γ) (Y.fl' γ) * Sg D.host.E D.R.rS = L * ptMat (D.s.ptOf γ) * U := by
-  obtain ⟨L, U, hL, hU, h⟩ := Y.pt_cell γ hG hrel
-  refine ⟨L, U, ⟨fun a => (hL a a).2 rfl, fun a b hab => (hL a b).1 hab⟩,
-    ⟨fun a => (hU a a).2 rfl, fun a b hab => (hU b a).1 hab⟩, ?_⟩
-  rw [← zhatOM_eq]; exact h
-
 theorem inv_pow_eq (Z : LocDat D) (p : PlF D) (k : ℕ) :
     Ring.inverse ((algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (Z.δ p) * (D.s.atP p).ιE (uP p : D.host.E)) ^ k) =
       algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((yP Z p)⁻¹ ^ k) := by
@@ -473,7 +469,7 @@ theorem inv_pow_eq (Z : LocDat D) (p : PlF D) (k : ℕ) :
   unfold yP at this ⊢
   rw [this, inv_pow]
 
-theorem cell_decomp' {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+theorem cell_decomp' {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (w : Point D.host.E (D.R.rS + 1)) (hcell : IsInCell (ZhatOM (ZhatL F F')) w) :
     ∃ L U : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E, IsLo L ∧ IsUp U ∧
       ZhatL F F' * Sg D.host.E D.R.rS = L * ptMat w * U := by
@@ -492,8 +488,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
-theorem xi_up (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') :
+theorem xi_up (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') :
     IsUp (((admXi D Λ F F')⁻¹).map (algebraMap (𝓞 D.host.E) D.host.E)) := by
   obtain ⟨h0, h1⟩ := inv_unitri _ (admissibility_witness_unitriangular Λ F F').1 (admissibility_witness_unitriangular Λ F F').2
   exact isUp_map (algebraMap (𝓞 D.host.E) D.host.E) ⟨h1, fun a b hab => h0 b a hab⟩
@@ -501,8 +497,8 @@ theorem xi_up (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : L
 theorem sgn_sq' {R : Type*} [CommRing R] (r : ℕ) (a : Fin (r + 1)) :
     (-1 : R) ^ (r - a.val) * (-1) ^ (r - a.val) = 1 := by rw [← mul_pow]; simp
 
-theorem glob_fact (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (w : Point D.host.E (D.R.rS + 1)) (hcell : IsInCell (ZhatOM (ZhatL F F')) w) :
+theorem glob_fact (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (w : Point D.host.E (D.R.rS + 1)) (hcell : IsInCell (ZhatOM (ZhatL F F')) w) :
     ∃ L B : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E, IsLo L ∧ IsUp B ∧
       ZhatL F F' * ((admXi D Λ F F')⁻¹).map
         (algebraMap (𝓞 D.host.E) D.host.E) * Sg D.host.E D.R.rS = L * ptMat w * B := by
@@ -537,8 +533,8 @@ theorem modMat_blk (Z : LocDat D) (T T' : ℕ) (p : PlF D) (w : Point D.host.E (
   rw [inv_pow_eq, nu_eq, pow_add]
   simp only [cond_iff w a, cf]
 
-theorem atPt_ord (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1))
+theorem atPt_ord (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1))
     (hcell : IsInCell (ZhatOM (ZhatL F F')) w) (p : PlF D)
     (hR : (D.s.atP p).split = none) (hM : (Z.M p).split = none) :
     ∃ uL uU : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (D.s.atP p).Ep,
@@ -693,12 +689,12 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
-def Amat (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E :=
+def Amat (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E :=
   ZhatL F F' * ((admXi D Λ F F')⁻¹).map (algebraMap (𝓞 D.host.E) D.host.E)
 
 theorem local_split_type_zero_first (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
     (sg : Loc.SplitAt (D.s.atP p).Fp (D.s.atP p).Ep (D.s.atP p).cj (Loc.resChar p))
     (hR : (D.s.atP p).split = some sg) (g : Loc.SplitG (Z.M p).L) (hM : (Z.M p).split = some g)
     (hge : g.e = sg.e) (hgq : g.q = sg.q) :
@@ -729,7 +725,7 @@ theorem local_split_type_zero_first (Z : LocDat D) (Λ : Submodule (𝓞 D.host.
   split_ifs <;> ring
 
 theorem local_split_type_zero_second (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
     (sg : Loc.SplitAt (D.s.atP p).Fp (D.s.atP p).Ep (D.s.atP p).cj (Loc.resChar p))
     (hR : (D.s.atP p).split = some sg) (g : Loc.SplitG (Z.M p).L) (hM : (Z.M p).split = some g)
     (hge : g.e = sg.e) (hgq : g.q = sg.q) :
@@ -762,7 +758,7 @@ theorem local_split_type_zero_second (Z : LocDat D) (Λ : Submodule (𝓞 D.host
   split_ifs <;> ring
 
 theorem local_split_type_mixed_first (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
     (sg : Loc.SplitAt (D.s.atP p).Fp (D.s.atP p).Ep (D.s.atP p).cj (Loc.resChar p))
     (hR : (D.s.atP p).split = some sg) (g : Loc.SplitG (Z.M p).L) (hM : (Z.M p).split = some g)
     (hge : g.e = sg.e) (hgq : g.q = sg.q) :
@@ -817,7 +813,7 @@ theorem local_split_type_mixed_first (Z : LocDat D) (Λ : Submodule (𝓞 D.host
     · simp [ha]
 
 theorem local_split_type_mixed_second (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
     (sg : Loc.SplitAt (D.s.atP p).Fp (D.s.atP p).Ep (D.s.atP p).cj (Loc.resChar p))
     (hR : (D.s.atP p).split = some sg) (g : Loc.SplitG (Z.M p).L) (hM : (Z.M p).split = some g)
     (hge : g.e = sg.e) (hgq : g.q = sg.q) :
@@ -874,7 +870,7 @@ theorem local_split_type_mixed_second (Z : LocDat D) (Λ : Submodule (𝓞 D.hos
     · simp [ha]
 
 theorem atPt_typed (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D)
     (sg : Loc.SplitAt (D.s.atP p).Fp (D.s.atP p).Ep (D.s.atP p).cj (Loc.resChar p))
     (hR : (D.s.atP p).split = some sg) (g : Loc.SplitG (Z.M p).L) (hM : (Z.M p).split = some g)
     (hge : g.e = sg.e) (hgq : g.q = sg.q) (hcell : IsInCell (ZhatOM (ZhatL F F')) w) :
@@ -936,7 +932,7 @@ namespace Formalism.L2.SG.Pf
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.AtPt
 
 theorem termLoc_atPt_frame {D : D7} (Z : LocDat D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1))
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (w : Point D.host.E (D.R.rS + 1))
     (hcell : IsInCell (ZhatOM (ZhatL F F')) w) (p : PlF D) :
     ∃ uL uU : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (D.s.atP p).Ep,
       (∀ a, uL a a = 1 ∧ uU a a = 1) ∧ (∀ a b, a < b → uL a b = 0 ∧ uU b a = 0) ∧
@@ -946,10 +942,6 @@ theorem termLoc_atPt_frame {D : D7} (Z : LocDat D) (Λ : Submodule (𝓞 D.host.
     simp only [hM, hR] at hAg
   · exact atPt_ord Z Λ F F' Tn T'n w hcell p hR hM
   · exact atPt_typed Z Λ F F' Tn T'n w p sg hR g hM hAg.1 hAg.2 hcell
-
-theorem termLoc_atPtC {D : D7} (Z : LocDat D) (Y : TermTie D) (u u' : D.what₂.Word) : AtPtC D Z Y u u' := by
-  intro γ _ hG hrel p
-  exact termLoc_atPt_frame Z (Y.abelian₂ γ) (Y.fl γ) (Y.fl' γ) (Tu D u) (Tu D u') (D.s.ptOf γ) (Y.pt_cell γ hG hrel) p
 
 end Formalism.L2.SG.Pf
 
@@ -1022,7 +1014,7 @@ def epsL (r l : ℕ) (hl : l ≤ r + 1) : D.host.E := ∏ b : Fin l, (-1 : D.hos
 theorem leadMinor_Sg (Zm : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E) (l : ℕ) (hl : l ≤ D.R.rS + 1) :
     leadMinorE (Zm * Sg D.host.E D.R.rS) l = leadMinorE Zm l * epsL (D := D) D.R.rS l hl := by
   unfold leadMinorE
-  rw [dif_pos hl, dif_pos hl]
+  rw [dite_eq_left hl, dite_eq_left hl]
   have : (Zm * Sg D.host.E D.R.rS).submatrix (Fin.castLE hl) (Fin.castLE hl) =
       Zm.submatrix (Fin.castLE hl) (Fin.castLE hl) *
         Matrix.diagonal fun b : Fin l => (-1 : D.host.E) ^ (D.R.rS - (Fin.castLE hl b).val) := by
@@ -1052,39 +1044,11 @@ theorem dmin_eq' {m : ℕ} (w : Point D.host.E m) (l : ℕ) : Dmin w l = leadMin
 
 theorem conjF_star (x : D.host.E) : D.conjF x = star x := (D.conjF_eq x).trans (Formalism.BasicNotions.Examples₂.star_eq_conj (H := D.host) x).symm
 
-theorem gval_eq_aux (Y : TermTie D) {u u' : D.what₂.Word} (γ : D.s.Term u u') (hG : D.s.Gterm γ ≠ 0)
-    (hrel : D.s.relevant γ) : Gval (Y.fl γ) (Y.fl' γ) = Gpt (D.mem u).A.T (D.mem u').A.T (D.s.ptOf γ) := by
-  obtain ⟨L, U, hL, hU, hc⟩ := cell_decomp Y γ hG hrel
-  have key : ∀ l (hl : l ≤ D.R.rS + 1), leadMinorE (ZhatL (Y.fl γ) (Y.fl' γ)) l * epsL (D := D) D.R.rS l hl =
-      Dmin (D.s.ptOf γ) l := by
-    intro l hl
-    rw [← leadMinor_Sg, hc, leadMinor_LMU hL hU, dmin_eq']
-  have n1 := norm_eq_of _ _ _ (key (D.R.rS + 1) le_rfl) (epsL_sq _ _) (star_epsL _ _)
-  have n2 := norm_eq_of _ _ _ (key D.R.rS (Nat.le_succ _)) (epsL_sq _ _) (star_epsL _ _)
-  simp only [Gval, Gflag, Gpt, conjF_star]
-  unfold Dl
-  rw [n1, n2]
-  rfl
-
-variable (D) in
-
-def PtOfConv (u u' : D.what₂.Word) : Prop :=
-  ∀ γ : D.s.Term u u', ¬ (D.s.Gterm γ ≠ 0 ∧ D.s.relevant γ) → Gpt (D.mem u).A.T (D.mem u').A.T (D.s.ptOf γ) = 0
 
 end Formalism.L2.SG.Pf.AtPt
 
 namespace Formalism.L2.SG.Pf
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc Formalism.L2.SG.Pf.AtPt
-
-theorem termLoc_gPtC_of {D : D7} (Y : TermTie D) (u u' : D.what₂.Word) (hconv : PtOfConv D u u') : GPtC D u u' := by
-  intro γ
-  constructor
-  · rintro ⟨hG, hrel⟩
-    rw [← gval_eq_aux Y γ hG hrel, ← Y.G_eq γ]
-    exact (map_ne_zero _).2 hG
-  · intro h
-    by_contra hn
-    exact h (hconv γ hn)
 
 end Formalism.L2.SG.Pf

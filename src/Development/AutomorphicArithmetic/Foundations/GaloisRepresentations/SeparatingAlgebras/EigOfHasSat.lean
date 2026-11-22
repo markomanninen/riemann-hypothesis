@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StGlob
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.SphDict
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.MemIffLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationDetEqOne
-import GroundTheory.GlobalFields.LocalFieldAtPlace
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StGlob
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.SphDict
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.MemIffLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationDetEqOne
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 open GlobalTheory.GalCut GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.DefU
@@ -13,10 +18,10 @@ namespace UpperTheory.Gal.Gen
 
 private theorem eig_of_hasSat {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) {a : ℕ} {V : Type}
     [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin a) (w.adicCompletion E)) V) {B : Multiset ℂˣ}
-    (hB : GlobalTheory.LFun.HasSatGL w ρ B) {v : V} (hv : v ∈ GlobalTheory.PRep.fixed ρ (GlobalTheory.LFun.KGL w a)) (hv0 : v ≠ 0)
+    (hB : GlobalTheory.LFun.HasSatGL w ρ B) {v : V} (hv : v ∈ GlobalTheory.PRep.fixed ρ (GlobalTheory.LFun.KGL w (n := a))) (hv0 : v ≠ 0)
     (l : Module.Dual ℂ V) : UpperTheory.V.Af.Smo.Eig w B fun g => l (ρ g v) := by
   refine ⟨hB.card, fun y k hk => ?_, fun ϖ hϖ j hj y => ?_⟩
-  · rw [map_mul, Module.End.mul_apply, GlobalTheory.LGrp.mem_fixed.1 hv k hk]
+  · rw [map_mul, mul_apply_eq_comp, GlobalTheory.LGrp.mem_fixed.1 hv k hk]
   · have he := (hB.2 v hv hv0).2.2.2 ϖ hϖ j hj
     let ev : V →+ ℂ :=
       { toFun := fun ψ => l (ρ y ψ)
@@ -25,7 +30,7 @@ private theorem eig_of_hasSat {E : Type} [Field E] [NumberField E] (w : HeightOn
     have hs := ev.map_finsum (GlobalTheory.LFun.finite_heckeVec (Formalism.UG.Final.GLintComm E w a)
       (GlobalTheory.LFun.Tj_mem_hecke hϖ j) ρ v)
     refine Eq.trans (finsum_congr fun c => ?_) (hs.symm.trans ((congrArg ev he).trans ?_))
-    · simp [ev, map_mul, Module.End.mul_apply]
+    · simp [ev, map_mul]
     · simp [ev]
 
 private theorem eigen_top {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) {a : ℕ}
@@ -35,11 +40,12 @@ private theorem eigen_top {E : Type} [Field E] [NumberField E] (w : HeightOneSpe
     (hf : ∀ g, ∀ k ∈ GroundTheory.Automorphic.GLnLocal.integralGL (w.adicCompletion E) a, f (g * k) = f g) :
     eigenSubalgebra μ z f hf = ⊤ := by
   obtain ⟨hKeq, hu, hq, -⟩ := UpperTheory.V.Af.Smo.sphDict E a w
-  have hTj := UpperTheory.V.Af.Smo.tjSet UpperTheory.V.Af.Smo.sphDict E a w
+  have hTj : UpperTheory.V.Af.Smo.TjSet := UpperTheory.V.Af.Smo.tjSet UpperTheory.V.Af.Smo.sphDict
   have hT : ∀ r ≤ a, minusculeHecke μ r ∈ eigenSubalgebra μ z f hf := by
     intro r hr
     refine GlobalTheory.HenQ.ShellOp.minuscule_mem_of z hf hr fun g => ?_
-    rw [hKeq, ← hTj r hr, hE.eig _ hu r hr g, hq r hr, GlobalTheory.HenQ.ShellOp.esymm_eq, GlobalTheory.LFun.satEig]
+    rw [hKeq, ← hTj E a w r hr, hE.eig _ hu r hr g, hq r hr,
+      GlobalTheory.HenQ.ShellOp.esymm_eq, GlobalTheory.LFun.satEig]
   exact eigenSubalgebra_eq_top z hf hT (GlobalTheory.HenQ.ShellOp.central_mem_of_top z hf (hT a le_rfl))
 
 end UpperTheory.Gal.Gen
@@ -87,10 +93,11 @@ theorem UpperTheory.Gal.Gen.locOp_pf :
       exact hE.inv
     have h1 : H ∈ eigenSubalgebra μ z (fun g => l (σ.ρ g v)) hf := eigen_top w μ z hE hf ▸ Algebra.mem_top
     have h2 := h1 1
-    simp only [one_mul, map_one, Module.End.one_apply] at h2
+    simp only [one_mul, map_one, one_apply_eq_self] at h2
     have h3 := hT.2 (fun g => l (σ.ρ g v)) hf
     have h4 : l (opOf σ.ρ h v) = (m : ℂ) * ∑ g ∈ T, (H : HeckeAlgebra μ) g * l (σ.ρ g v) := by
-      rw [opOf, Finsupp.sum_of_support_subset h hsupp _ (by simp), map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [opOf, Finsupp.sum_of_support_subset h hsupp _ (by simp), map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun g hg => ?_
       rw [map_smul, hval g hg, smul_eq_mul, mul_assoc]
     rw [map_sub, map_smul, smul_eq_mul, h4, hm, ← h3, h2, sub_self]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe21.emb_two :
     ∀ {K M : Type} [inst : Field K] [NumberField K]

@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AddCharMemValuationSubring
+module
+
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AddCharMemValuationSubring
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,10 +43,6 @@ theorem Z_add {n : ℕ} (G : FGLaw R d) {a b : Pt R n d} (ha : Z a) (hb : Z b) :
 
 theorem Z_act {O : Type} [CommRing O] {G : FGLaw R d} (A : OAct O G) (a : O) : Z (A.act a) := A.const a
 
-macro "ztac" : tactic => `(tactic| repeat' (first
-  | assumption | exact ZZ_nil | exact Z_pt _ | exact Z_zero | exact Z_act _ _
-  | apply ZZ_cons | apply Z_comp1 | apply Z_add))
-
 theorem ev_ev {l m n : ℕ} {b : Fin m → Pt R n d} {a : Fin l → Pt R m d} (hb : ZZ b) (ha : ZZ a)
     (f : PS R l d) : ev b (ev a f) = ev (evV b a) f :=
   subst_comp_subst_apply (hasSubst_ev a ha) (hasSubst_ev b hb) f
@@ -78,9 +78,6 @@ theorem evalPoints_add {m n : ℕ} {b : Fin m → Pt R n d} (hb : ZZ b) (F : Fin
   change ev b (ev ![x, y] (F i)) = ev ![evP b x, evP b y] (F i)
   rw [ev_ev hb (ZZ_cons hx (ZZ_cons hy ZZ_nil)), evV_cons, evV_cons, evV_nil]
 
-macro "evs" " at " h:ident : tactic => `(tactic| simp (disch := ztac) only [FGLaw.add, ev_mul', ev_one, ev_ev, evV_cons,
-  evV_nil, evalPoints_coordinatePoint, evalPoints_zero, evalPoints_comp, evalPoints_add, Matrix.cons_val] at $h:ident)
-
 theorem comp1_eq_evalPoint {n : ℕ} (φ : Pt R 1 d) (x : Pt R n d) : comp1 φ x = evP ![x] φ := rfl
 
 theorem germComp1_germComp1_eq_substitute {n : ℕ} (φ : Pt R 1 d) {ψ : Pt R 1 d} (hψ : Z ψ) {x : Pt R n d} (hx : Z x) :
@@ -95,7 +92,35 @@ section Laws
 variable {O : Type} [CommRing O] [StarRing O] (B : FB R d O) {n : ℕ}
 
 theorem act_zero_at (x : Pt R n d) : comp1 (B.A.act ((0 : ℕ) : O)) x = 0 := by
-  rw [Nat.cast_zero, GlobalTheory.FourierChainCompare.act_zero]
+  have ha : B.A.act 0 = 0 := by
+    have hc := B.A.const 0
+    have h1 : B.A.act 0 = B.G.add (B.A.act 0) (B.A.act 0) := by rw [← B.A.add_act, add_zero]
+    have h2 : B.A.act 0 = comp1 (B.A.act 0) (B.A.act 0) := by rw [← B.A.mul_act, mul_zero]
+    have h3 : ReciprocityTheory.ChartRestriction.G.TB.dLin (B.A.act 0) = 0 := by
+      have := GlobalTheory.FormalMulN.dLin_add B.G hc hc
+      rw [← h1] at this
+      exact left_eq_add.mp this
+    have h4 : ∀ i, 2 ≤ (B.A.act 0 i).order := fun i =>
+      GlobalTheory.FormalSeries.two_le_order_iff.mpr ⟨hc i, fun j => by
+        obtain ⟨j0, j⟩ := j
+        obtain rfl : j0 = 0 := Subsingleton.elim _ _
+        exact congrFun (congrFun h3 i) j⟩
+    have h5 : ∀ (k : ℕ) i, (k : ℕ∞) ≤ (B.A.act 0 i).order := by
+      intro k
+      induction k with
+      | zero => simp
+      | succ k ih =>
+        intro i
+        have := GlobalTheory.FormalSeries.le_order_subst_sub_subst
+          (a := fun p : Fin 1 × Fin d => (![B.A.act 0] : Fin 1 → Pt R 1 d) p.1 p.2) (b := 0) (k := k)
+          (fun p => GlobalTheory.GaugeAdjoint.const_one hc p.1 p.2) (by simp)
+          (fun p => by simpa using ih p.2) (h4 i)
+        rw [subst_zero_of_constantCoeff_zero (hc i), sub_zero] at this
+        rw [congrFun h2 i]
+        exact this
+    funext i
+    exact GlobalTheory.FormalSeries.eq_of_forall_le_order_sub fun k => by simpa using h5 k i
+  rw [Nat.cast_zero, ha, comp1_eq_evalPoint]
   exact evalPoints_zero _
 
 theorem act_succ_at (k : ℕ) {x : Pt R n d} (hx : Z x) :
@@ -109,7 +134,9 @@ theorem first_power_succ_at (k : ℕ) {x z : Pt R n d} (hx : Z x) (hz : Z z) :
   have h : ev ![x, z] (pow1 B (k + 1)) = ev ![x, z] (pow1 B k *
       ev (n := 2) ![comp1 (B.A.act (k : O)) (pt R d 0), pt R d 0, pt R d 1] B.ph1) := by
     rw [pow1, Finset.prod_range_succ, pow1]
-  evs at h
+  simp (discharger := (repeat first | assumption | exact ZZ_nil | apply ZZ_cons | exact Z_pt _ | exact Z_zero | exact Z_comp1 (Z_act _ _) (Z_pt _) | exact Z_add _ (Z_pt _) (Z_pt _))) only
+    [ev_mul', ev_ev, evV_cons, evV_nil, evalPoints_coordinatePoint,
+     evalPoints_zero, evalPoints_comp, evalPoints_add, ev_one] at h
   exact h
 
 theorem second_power_succ_at (k : ℕ) {x z : Pt R n d} (hx : Z x) (hz : Z z) :
@@ -117,7 +144,9 @@ theorem second_power_succ_at (k : ℕ) {x z : Pt R n d} (hx : Z x) (hz : Z z) :
   have h : ev ![x, z] (pow2 B (k + 1)) = ev ![x, z] (pow2 B k *
       ev (n := 2) ![pt R d 0, comp1 (B.A.act (k : O)) (pt R d 1), pt R d 1] B.ph2) := by
     rw [pow2, Finset.prod_range_succ, pow2]
-  evs at h
+  simp (discharger := (repeat first | assumption | exact ZZ_nil | apply ZZ_cons | exact Z_pt _ | exact Z_zero | exact Z_comp1 (Z_act _ _) (Z_pt _) | exact Z_add _ (Z_pt _) (Z_pt _))) only
+    [ev_mul', ev_ev, evV_cons, evV_nil, evalPoints_coordinatePoint,
+     evalPoints_zero, evalPoints_comp, evalPoints_add, ev_one] at h
   exact h
 
 theorem first_power_zero : pow1 B 0 = 1 := by simp [pow1]
@@ -128,34 +157,39 @@ theorem sy_law_at {x z w : Pt R n d} (hx : Z x) (hz : Z z) (hw : Z w) :
     ev ![x, z, w] B.ph2 * ev ![x, z] B.sy * ev ![x, w] B.sy =
       ev ![x, addOf B.G.F z w] B.sy * ev ![z, w, x] B.ph1 := by
   have h := congrArg (ev ![x, z, w]) B.sy_law
-  evs at h
-  exact h
-
-theorem sy_inv_at {x z : Pt R n d} (hx : Z x) (hz : Z z) : ev ![x, z] B.sy * ev ![z, x] B.sy = 1 := by
-  have h := congrArg (ev ![x, z]) B.sy_inv
-  evs at h
+  simp (discharger := (repeat first | assumption | exact ZZ_nil | apply ZZ_cons | exact Z_pt _ | exact Z_zero | exact Z_comp1 (Z_act _ _) (Z_pt _) | exact Z_add _ (Z_pt _) (Z_pt _))) only
+    [ev_mul', ev_ev, evV_cons, evV_nil, evalPoints_coordinatePoint,
+     evalPoints_zero, evalPoints_comp, evalPoints_add, ev_one] at h
   exact h
 
 theorem symmetric_zero_right_at {x : Pt R n d} (hx : Z x) : ev ![x, 0] B.sy = 1 := by
   have h := congrArg (ev ![x]) B.symmetry_zero_snd
-  evs at h
+  simp (discharger := (repeat first | assumption | exact ZZ_nil | apply ZZ_cons | exact Z_pt _ | exact Z_zero | exact Z_comp1 (Z_act _ _) (Z_pt _) | exact Z_add _ (Z_pt _) (Z_pt _))) only
+    [ev_mul', ev_ev, evV_cons, evV_nil, evalPoints_coordinatePoint,
+     evalPoints_zero, evalPoints_comp, evalPoints_add, ev_one] at h
   exact h
 
 theorem second_form_zero_left_at {x z : Pt R n d} (hx : Z x) (hz : Z z) : ev ![0, x, z] B.ph2 = 1 := by
   have h := congrArg (ev ![x, z]) B.cocycleRight_zero_fst
-  evs at h
+  simp (discharger := (repeat first | assumption | exact ZZ_nil | apply ZZ_cons | exact Z_pt _ | exact Z_zero | exact Z_comp1 (Z_act _ _) (Z_pt _) | exact Z_add _ (Z_pt _) (Z_pt _))) only
+    [ev_mul', ev_ev, evV_cons, evV_nil, evalPoints_coordinatePoint,
+     evalPoints_zero, evalPoints_comp, evalPoints_add, ev_one] at h
   exact h
 
 theorem first_form_zero_right_at {x z : Pt R n d} (hx : Z x) (hz : Z z) : ev ![x, z, 0] B.ph1 = 1 := by
   have h := congrArg (ev ![x, z]) B.cocycleLeft_zero_thd
-  evs at h
+  simp (discharger := (repeat first | assumption | exact ZZ_nil | apply ZZ_cons | exact Z_pt _ | exact Z_zero | exact Z_comp1 (Z_act _ _) (Z_pt _) | exact Z_add _ (Z_pt _) (Z_pt _))) only
+    [ev_mul', ev_ev, evV_cons, evV_nil, evalPoints_coordinatePoint,
+     evalPoints_zero, evalPoints_comp, evalPoints_add, ev_one] at h
   exact h
 
 theorem interchange_at {x y z w : Pt R n d} (hx : Z x) (hy : Z y) (hz : Z z) (hw : Z w) :
     ev ![x, y, z] B.ph1 * ev ![x, y, w] B.ph1 * ev ![addOf B.G.F x y, z, w] B.ph2 =
       ev ![x, z, w] B.ph2 * ev ![y, z, w] B.ph2 * ev ![x, y, addOf B.G.F z w] B.ph1 := by
   have h := congrArg (ev ![x, y, z, w]) B.interchange
-  evs at h
+  simp (discharger := (repeat first | assumption | exact ZZ_nil | apply ZZ_cons | exact Z_pt _ | exact Z_zero | exact Z_comp1 (Z_act _ _) (Z_pt _) | exact Z_add _ (Z_pt _) (Z_pt _))) only
+    [ev_mul', ev_ev, evV_cons, evV_nil, evalPoints_coordinatePoint,
+     evalPoints_zero, evalPoints_comp, evalPoints_add, ev_one] at h
   exact h
 
 end Laws

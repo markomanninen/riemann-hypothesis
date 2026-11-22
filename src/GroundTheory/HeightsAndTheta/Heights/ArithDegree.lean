@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HermitianTensor
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HermitianTensor
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights
 
@@ -17,15 +21,11 @@ instance (σ : K →+* ℂ) : Module.IsTorsionFree (𝓞 K) (ComplexAt σ) := by
   simp only [smul_def] at hzw
   exact mul_left_cancel₀ (M₀ := ℂ) h1 hzw
 
-example (σ : K →+* ℂ) : Module.Flat (𝓞 K) (ComplexAt σ) := inferInstance
-
 variable {E : Type*} [AddCommGroup E] [Module (𝓞 K) E] [Module.Finite (𝓞 K) E]
   [Module.Projective (𝓞 K) E]
 
-example : Module.IsTorsionFree (𝓞 K) E := inferInstance
 
 omit [Module.Projective (𝓞 K) E] in
-
 theorem finite_quotient_span {ι : Type*} [Fintype ι] {s : ι → E} (hs : LinearIndependent (𝓞 K) s)
     (hcard : Fintype.card ι = Module.finrank (𝓞 K) E) :
     Finite (E ⧸ Submodule.span (𝓞 K) (Set.range s)) := by
@@ -65,7 +65,7 @@ section FibreVec
 variable (h : HermitianMetric K E) (σ : K →+* ℂ)
 
 theorem fibreVec_add (e f : E) : fibreVec h σ (e + f) = fibreVec h σ e + fibreVec h σ f := by
-  simp only [fibreVec, tmul_add, map_add]
+  simp only [fibreVec, tmul_add, map_add (f := _)]
 
 theorem fibreVec_smul (a : 𝓞 K) (e : E) :
     fibreVec h σ (a • e) = (σ (a : K)) • fibreVec h σ e := by
@@ -109,7 +109,7 @@ theorem gram_comb {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V] {
     [Fintype ι] (v : ι → V) (B : Matrix ι ι ℂ) :
     gram ℂ (fun j ↦ ∑ i, B i j • v i) = Bᴴ * gram ℂ v * B := by
   ext j k
-  simp only [gram_apply, sum_inner, inner_sum, inner_smul_left, inner_smul_right, mul_apply,
+  simp only [gram_apply, sum_inner, inner_sum, inner_smul_left, inner_smul_right, Matrix.mul_apply,
     conjTranspose_apply, Finset.sum_mul, Finset.mul_sum, RCLike.star_def]
   refine Finset.sum_congr rfl fun i _ ↦ Finset.sum_congr rfl fun l _ ↦ ?_
   ring
@@ -125,8 +125,9 @@ section GramDet
 variable (h : HermitianMetric K E) (σ : K →+* ℂ) {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 theorem gramDet_pos {s : ι → E} (hs : LinearIndependent (𝓞 K) s) : 0 < gramDet h σ s := by
-  have := (posDef_gram_of_linearIndependent (linearIndependent_fibreVec h σ hs)).det_pos
-  exact (RCLike.pos_iff.mp this).1
+  open scoped ComplexOrder in
+    have := (posDef_gram_of_linearIndependent (linearIndependent_fibreVec h σ hs)).det_pos
+    exact (RCLike.pos_iff.mp this).1
 
 theorem gramDet_comb (A : Matrix ι ι (𝓞 K)) (s : ι → E) :
     gramDet h σ (fun j ↦ ∑ i, A i j • s i) = ‖σ (A.det : K)‖ ^ 2 * gramDet h σ s := by
@@ -156,8 +157,8 @@ def degreeWith (h : HermitianMetric K E) {ι : Type*} [Fintype ι] [DecidableEq 
 
 section Index
 
-omit [NumberField K] [Module.Finite (𝓞 K) E] [Module.Projective (𝓞 K) E] in
 
+omit [NumberField K] [Module.Finite (𝓞 K) E] [Module.Projective (𝓞 K) E] in
 theorem card_quotient_range_comp {M : Type*} [AddCommGroup M] [Module (𝓞 K) M]
     (Φ : M →ₗ[𝓞 K] E) (hΦ : Function.Injective Φ) (g : M →ₗ[𝓞 K] M) :
     Nat.card (E ⧸ LinearMap.range (Φ ∘ₗ g)) =
@@ -215,8 +216,8 @@ section Degree
 
 variable (h : HermitianMetric K E)
 
-omit [NumberField K] [Module.Finite (𝓞 K) E] [Module.Projective (𝓞 K) E] in
 
+omit [NumberField K] [Module.Finite (𝓞 K) E] [Module.Projective (𝓞 K) E] in
 theorem linearCombination_comb {ι : Type*} [Fintype ι] (s : ι → E) (A : Matrix ι ι (𝓞 K)) :
     Fintype.linearCombination (𝓞 K) s ∘ₗ A.mulVecLin =
       Fintype.linearCombination (𝓞 K) (fun j ↦ ∑ i, A i j • s i) := by
@@ -294,8 +295,8 @@ theorem degreeWith_eq_of_linearIndependent {ι : Type*} [Fintype ι] [DecidableE
     exact ht.fintypeLinearCombination_injective (key2.trans (map_zero _).symm)
   rw [← degreeWith_comb h ht hcard D hD, hu2, ← hu1, degreeWith_comb h hs hcard A hA]
 
-omit [NumberField K] [Module.Projective (𝓞 K) E] in
 
+omit [NumberField K] [Module.Projective (𝓞 K) E] in
 theorem exists_linearIndependent_fin :
     ∃ s : Fin (Module.finrank (𝓞 K) E) → E, LinearIndependent (𝓞 K) s := by
   obtain ⟨S, hS, hli⟩ := exists_set_linearIndependent_of_isDomain (𝓞 K) E
@@ -336,13 +337,6 @@ theorem arithDegree_line (h : HermitianMetric K E) (hE : Module.finrank (𝓞 K)
     (norm_sq_eq_re_inner (𝕜 := ℂ) _).symm
   rw [hv, Real.log_pow]
   push_cast; ring
-
-theorem degree_line_indep (h : HermitianMetric K E) (hE : Module.finrank (𝓞 K) E = 1) {s t : E}
-    (hs : s ≠ 0) (ht : t ≠ 0) :
-    Real.log (Nat.card (E ⧸ Submodule.span (𝓞 K) {s})) - ∑ σ : K →+* ℂ, Real.log ‖fibreVec h σ s‖ =
-      Real.log (Nat.card (E ⧸ Submodule.span (𝓞 K) {t})) -
-        ∑ σ : K →+* ℂ, Real.log ‖fibreVec h σ t‖ := by
-  rw [← arithDegree_line h hE hs, ← arithDegree_line h hE ht]
 
 theorem arithDegree_integers : arithDegree (HermitianMetric.integers K) = 0 := by
   rw [arithDegree_line _ (Module.finrank_self (𝓞 K)) one_ne_zero]
@@ -394,10 +388,6 @@ def HermitianMetric.scale (h : HermitianMetric K E) (c : ℝ) (hc : 0 < c) : Her
   form_conj σ x y := by
     rw [coreScale_inner, coreScale_inner, h.form_conj, map_mul, Complex.conj_ofReal]
 
-theorem HermitianMetric.scale_inner (h : HermitianMetric K E) (c : ℝ) (hc : 0 < c)
-    (σ : K →+* ℂ) (x y : Fibre σ E) :
-    ((h.scale c hc).form σ).inner x y = ((c ^ 2 : ℝ) : ℂ) * (h.form σ).inner x y := rfl
-
 theorem gramDet_scale (h : HermitianMetric K E) (c : ℝ) (hc : 0 < c) (σ : K →+* ℂ) {ι : Type*}
     [Fintype ι] [DecidableEq ι] (s : ι → E) :
     gramDet (h.scale c hc) σ s = c ^ (2 * Fintype.card ι) * gramDet h σ s := by
@@ -427,15 +417,6 @@ theorem arithDegree_ratIntegers_scale (c : ℝ) (hc : 0 < c) :
     arithDegree ((HermitianMetric.integers ℚ).scale c hc) = -Real.log c := by
   rw [arithDegree_scale, arithDegree_integers, Module.finrank_self, Module.finrank_self]
   simp
-
-example (c : ℝ) (hc : 0 < c) (n : 𝓞 ℚ) (hn : n ≠ 0) :
-    Real.log (Nat.card (𝓞 ℚ ⧸ Submodule.span (𝓞 ℚ) {n})) -
-      ∑ σ : ℚ →+* ℂ, Real.log ‖fibreVec ((HermitianMetric.integers ℚ).scale c hc) σ n‖ =
-      -Real.log c := by
-  rw [← arithDegree_line _ (Module.finrank_self (𝓞 ℚ)) hn, arithDegree_ratIntegers_scale]
-
-example : arithDegree ((HermitianMetric.integers ℚ).scale 2 two_pos) = -Real.log 2 :=
-  arithDegree_ratIntegers_scale 2 two_pos
 
 end
 

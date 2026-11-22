@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem map_unip {r : ℕ} (c : R →+* S) (x : BlockIx a r → R) :
   ext i j
   change c ((1 + nilM x : Matrix (Fin a) (Fin a) R) i j) =
     (1 + nilM fun p => c (x p) : Matrix (Fin a) (Fin a) S) i j
-  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add]
+  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add (f := _)]
   split_ifs <;> simp
 
 end Ring
@@ -75,7 +79,7 @@ theorem hasSatGL_of_ringEquiv (c : v.adicCompletion K ≃+* w.adicCompletion M) 
   have hO : ∀ x, c x ∈ Ov M w ↔ x ∈ Ov K v := fun x => by
     change Valued.v (c x) ≤ 1 ↔ Valued.v x ≤ 1
     rw [hc]
-  have hK : ∀ g, g ∈ KGL v n ↔ G g ∈ KGL w n := fun g => by
+  have hK : ∀ g, g ∈ KGL v (n := n) ↔ G g ∈ KGL w (n := n) := fun g => by
     simp only [KGL, GlobalTheory.AdelicU.mem_GLint_iff, ← map_inv, hGv, hO]
   have hf : ∀ g y, T.toLinearMap ((ρ.comp G.symm.toMonoidHom) g y) = ρ' g (T.toLinearMap y) := fun g y => by
     change T (ρ (G.symm g) y) = ρ' g (T y)
@@ -103,7 +107,7 @@ theorem hasSatGL_of_ringEquiv (c : v.adicCompletion K ≃+* w.adicCompletion M) 
 
 end Sat
 
-variable {K M : Type} [Field K] [NumberField K] [IsTotallyComplex K] [Field M] [NumberField M] [IsTotallyComplex M]
+variable {K M : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M]
   {a : ℕ} (e : K ≃+* M)
 
 def mapL : Lie K a →L[ℝ] Lie M a :=
@@ -131,8 +135,8 @@ theorem mapOp_symm (o : Op K a) : mapOp e.symm (mapOp e o) = o := by
   | cpt k => exact congrArg Op.cpt (Subtype.ext (Matrix.ext fun i j => cInf_symm e _))
   | lie X => exact congrArg Op.lie (funext₂ fun i j => cInf_symm e _)
 
-variable (a) in
 
+variable (a) in
 def mapA : GA K a →* GA M a := GeneralLinearGroup.map (cAd e)
 
 theorem mapA_symm (g : GA K a) : mapA a e.symm (mapA a e g) = g := by
@@ -164,8 +168,8 @@ theorem map_mem_Sm {φ : GA M a → ℂ} (hφ : φ ∈ Sm M a) : (fun g => φ (m
   ((hφ (mapA a e g)).comp (mapL (a := a) e).contDiff.contDiffOn
     fun _ hx => (chart_map e φ g hx).2).congr fun _ hx => (chart_map e φ g hx).1
 
-variable (a) in
 
+variable (a) in
 def pull : Sm M a ≃ₗ[ℂ] Sm K a where
   toFun φ := ⟨fun g => φ.1 (mapA a e g), map_mem_Sm e φ.2⟩
   invFun φ := ⟨fun g => φ.1 (mapA a e.symm g), map_mem_Sm e.symm φ.2⟩
@@ -217,7 +221,9 @@ theorem Eop_pull (τ : M →+* ℂ) (i j : Fin a) (φ : Sm M a) :
       rw [Matrix.single_apply, Matrix.single_apply]
       split_ifs <;> simp
     rw [lieS_apply, lie_pull, e', cInf_atEmb, lieS_apply]
-  simp only [Eop, LinearMap.smul_apply, LinearMap.sub_apply, h2, map_smul, map_sub]
+  have hsub (x y : Sm M a) : pull a e (x - y) = pull a e x - pull a e y :=
+    (pull a e).toLinearMap.map_sub x y
+  simp only [Eop, LinearMap.smul_apply, LinearMap.sub_apply, h2, (pull a e).map_smul, hsub]
 
 theorem cap_pull (τ : M →+* ℂ) (u : ℂ) (φ : Sm M a) :
     cap (τ.comp e.toRingHom) u (pull a e φ) = pull a e (cap τ u φ) := by
@@ -258,8 +264,8 @@ theorem Zalg_pull {z : Module.End ℂ (Sm K a)} (hz : z ∈ Zalg K a) :
     obtain ⟨y', h3, h4⟩ := hy
     exact ⟨x' * y', mul_mem h1 h3, fun φ => by simp [h2, h4]⟩
 
-omit [IsTotallyComplex K] [IsTotallyComplex M] in
 
+omit [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex M] in
 theorem height_map_le (y : GL (Fin a) (Cinf K)) : height (GeneralLinearGroup.map (cInf e) y) ≤ height y := by
   have h1 : ∀ y : GL (Fin a) (Cinf K), ‖toL (GeneralLinearGroup.map (cInf e) y).val‖ ≤ ‖toL y.val‖ := fun y =>
     (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun i => (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun j =>
@@ -272,26 +278,25 @@ theorem height_map (y : GL (Fin a) (Cinf K)) : height (GeneralLinearGroup.map (c
   refine le_antisymm (height_map_le e y) (le_of_eq_of_le ?_ (height_map_le e.symm _))
   exact congrArg height (Units.ext (Matrix.ext fun i j => (cInf_symm e _).symm))
 
-theorem isAutForm_pull {φ : Sm M a} (h : IsAutForm φ) : IsAutForm (pull a e φ) where
-  left γ g := by rw [pull_apply, map_mul, mapA_ratGL, h.left, pull_apply]
-  level := by
-    convert h.level.preimage (continuous_mapGL (cFin e) (continuous_cFin e)) using 1
+theorem isAutForm_pull {φ : Sm M a} (h : IsAutForm φ) : IsAutForm (pull a e φ) := by
+  refine { left := ?_, level := ?_, kfin := ?_, zfin := ?_, growth := ?_ }
+  · intro γ g
+    rw [pull_apply, map_mul, mapA_ratGL, h.left, pull_apply]
+  · convert h.level.preimage (continuous_mapGL (cFin e) (continuous_cFin e)) using 1
     ext k
     exact (Eq.congr_left (act_pull e (.fin k) φ)).trans (pull a e).injective.eq_iff
-  kfin := by
-    have := h.kfin
+  · have := h.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep M a k φ)).map
       (pull a e).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.subset_span ⟨_, rfl⟩, (act_pull e (.cpt k) φ).symm⟩
-  zfin := by
-    have := h.zfin
+  · have := h.zfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm M a) => z φ) ''
       Zalg M a)).map (pull a e).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     obtain ⟨z', h1, h2⟩ := Zalg_pull e hz
     exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  growth g := by
+  · intro g
     obtain ⟨C, N, h1⟩ := h.growth (mapA a e g)
     refine ⟨C, N, fun y => ?_⟩
     rw [pull_apply, map_mul, mapA_infGL, ← height_map e]
@@ -302,8 +307,8 @@ theorem map_mem_ratN {r : ℕ} {x : BlockIx a r → Ad K} (hx : x ∈ ratN K a r
   obtain ⟨y, rfl⟩ := hx
   exact ⟨fun p => e (y p), funext fun p => (cAd_algebraMap e (y p)).symm⟩
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem isCuspidal_pull {φ : GA M a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal fun g => φ (mapA a e g) := by
   intro r h0 h1 _ _ μ 𝓕 hμ hF g
   borelize (BlockIx a r → Ad M)
@@ -324,7 +329,7 @@ theorem isCuspidal_pull {φ : GA M a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal
   have h2 := hφ r h0 h1 (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
     (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving q fun y x => by
       change β (β.symm y + x) = y + β x
-      rw [map_add, β.apply_symm_apply]) (mapA a e g)
+      rw [map_add (f := _), β.apply_symm_apply]) (mapA a e g)
   rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
   rw [← h2]
   congr 1
@@ -366,10 +371,6 @@ theorem hasSat_pullSub {π : CuspSub M a} {v : HeightOneSpectrum (𝓞 K)} {w : 
   change _ = act (.fin (GeneralLinearGroup.map (cFin e.symm) (locGL M a w g))) (pull a e x.1)
   rw [cFin_locGL hw.symm]
   rfl
-
-theorem exists_transport : ∀ (K M : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field M] [NumberField M] [IsTotallyComplex M] (e : K ≃+* M) (a : ℕ) (π : CuspSub K a), ∃ π' : CuspSub M a, (∀ (τ : M →+* ℂ) (m : Multiset ℂ), π.HasInfChar (τ.comp e.toRingHom) m → π'.HasInfChar τ m) ∧ ∀ (v : HeightOneSpectrum (𝓞 K)) (B : Multiset ℂˣ), (CG.mk π).HasSat v B → (CG.mk π').HasSat (HeightOneSpectrum.equivOfRingEquiv (RingOfIntegers.mapRingEquiv e) v) B :=
-  fun _ _ _ _ _ _ _ _ e _ π => ⟨pullSub e.symm π, fun _ _ h => hasInfChar_pullSub e.symm h,
-    fun _ _ h => hasSat_pullSub e.symm (fun _ => Iff.rfl) h⟩
 
 end GlobalTheory.IsoPull
 

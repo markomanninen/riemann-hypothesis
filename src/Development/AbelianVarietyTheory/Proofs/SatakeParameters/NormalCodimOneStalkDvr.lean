@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.X0OfStarCondition
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeakRepIso
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GaloisRepConjInvariant
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClauseAtOfRepIso
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.X0OfStarCondition
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeakRepIso
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GaloisRepConjInvariant
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClauseAtOfRepIso
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp

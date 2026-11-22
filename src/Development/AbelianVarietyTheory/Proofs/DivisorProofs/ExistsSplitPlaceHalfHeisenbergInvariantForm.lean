@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,19 +39,21 @@ theorem exists_sum_eq_zero (hadd : ∀ x ∈ Y, ∀ x' ∈ Y, ∀ f, ρ x (ρ x'
     obtain ⟨κ, t, z, hz, ⟨j, hj, hj0⟩, h'⟩ := hb
     refine ⟨ι × κ, s ×ˢ t, fun p => y p.1 + z p.2, fun p => Y.add_mem (hy _) (hz _),
       ⟨(i, j), Finset.mem_product.2 ⟨hi, hj⟩, by simp only [hi0, hj0, add_zero]⟩, ?_⟩
-    simp only [map_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), Finset.sum_add_distrib]
     have e1 : ∑ p ∈ s ×ˢ t, ρ (y p.1 + z p.2) a = 0 := by
       rw [Finset.sum_product_right]
       refine Finset.sum_eq_zero fun q _ => ?_
       have : ∀ p, ρ (y p + z q) a = ρ (z q) (ρ (y p) a) := fun p => by rw [hadd _ (hz _) _ (hy _), add_comm]
       simp only [this]
-      rw [← map_sum, h, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, h, map_zero]
     have e2 : ∑ p ∈ s ×ˢ t, ρ (y p.1 + z p.2) b = 0 := by
       rw [Finset.sum_product]
       refine Finset.sum_eq_zero fun p _ => ?_
       have : ∀ q, ρ (y p + z q) b = ρ (y p) (ρ (z q) b) := fun q => by rw [hadd _ (hy _) _ (hz _)]
       simp only [this]
-      rw [← map_sum, h', map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, h', map_zero]
     rw [e1, e2, add_zero]
   | smul c a _ ha =>
     obtain ⟨ι, s, y, hy, hi, h⟩ := ha
@@ -93,7 +99,8 @@ theorem exists_form {B : G → G → ℂ} (hadd : ∀ x ∈ Y, ∀ x' ∈ Y, ∀
       split_ifs with h1
       · rw [h1]
       · exact (hs j hj).resolve_left h1
-    rw [← map_sum, h, map_zero, Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, h, map_zero, Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ] at e
     refine smul_ne_zero (Nat.cast_ne_zero.2 (Finset.card_ne_zero.2 ⟨i, ?_⟩)) hP e.symm
     exact Finset.mem_filter.2 ⟨hi, by rw [hi0, h0]⟩
   obtain ⟨ℓ, h1, h2⟩ := Submodule.exists_dual_map_eq_bot_of_notMem hn inferInstance

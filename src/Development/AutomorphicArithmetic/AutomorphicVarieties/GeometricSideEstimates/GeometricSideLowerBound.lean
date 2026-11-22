@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+
+@[expose] public section
+
 open UpperTheory.V.Lit.Geo
 
 theorem UpperTheory.geometric_side_lower_bound :

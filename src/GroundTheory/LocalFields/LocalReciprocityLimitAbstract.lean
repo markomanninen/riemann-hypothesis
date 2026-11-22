@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ReciprocityAbelianizationRestrictReciprocityLimi
-import GroundTheory.LocalFields.AbstractLocalReciprocity.Functoriality
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ReciprocityAbelianizationRestrictReciprocityLimi
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.Functoriality
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 
@@ -22,12 +26,6 @@ theorem topologicalClosure_commutator_le_comap (f : G →* H) (hf : Continuous f
 def topologicalAbelianizationMap (f : G →* H) (hf : Continuous f) :
     TopologicalAbelianization G →* TopologicalAbelianization H :=
   QuotientGroup.map _ _ f (topologicalClosure_commutator_le_comap f hf)
-
-@[simp]
-theorem topologicalAbelianizationMap_mk (f : G →* H) (hf : Continuous f) (g : G) :
-    topologicalAbelianizationMap f hf (g : TopologicalAbelianization G) =
-      (f g : TopologicalAbelianization H) :=
-  rfl
 
 theorem continuous_topologicalAbelianizationMap (f : G →* H) (hf : Continuous f) :
     Continuous (topologicalAbelianizationMap f hf) := by
@@ -53,31 +51,6 @@ def limitRestrict {K K' : OpenSubgroup G} (hK : K' ≤ K) :
 theorem limitRestrict_mk {K K' : OpenSubgroup G} (hK : K' ≤ K) (g : (K' : Subgroup G)) :
     limitRestrict hK (g : TopologicalAbelianization (K' : Subgroup G)) =
       ((⟨g, hK g.2⟩ : (K : Subgroup G)) : TopologicalAbelianization (K : Subgroup G)) :=
-  rfl
-
-def conjHom (σ : G) (K : OpenSubgroup G) :
-    (K : Subgroup G) →* ((conjOpen σ K : OpenSubgroup G) : Subgroup G) where
-  toFun τ := ⟨σ * τ * σ⁻¹, τ, τ.2, rfl⟩
-  map_one' := Subtype.ext (by simp)
-  map_mul' τ τ' := Subtype.ext (by simp [mul_assoc])
-
-@[simp]
-theorem coe_conjHom (σ : G) (K : OpenSubgroup G) (τ : (K : Subgroup G)) :
-    ((conjHom σ K τ : ((conjOpen σ K : OpenSubgroup G) : Subgroup G)) : G) = σ * τ * σ⁻¹ :=
-  rfl
-
-theorem continuous_conjHom (σ : G) (K : OpenSubgroup G) : Continuous (conjHom σ K) :=
-  ((continuous_const.mul continuous_subtype_val).mul continuous_const).subtype_mk _
-
-def limitConj (σ : G) (K : OpenSubgroup G) :
-    TopologicalAbelianization (K : Subgroup G) →*
-      TopologicalAbelianization ((conjOpen σ K : OpenSubgroup G) : Subgroup G) :=
-  topologicalAbelianizationMap (conjHom σ K) (continuous_conjHom σ K)
-
-@[simp]
-theorem limitConj_mk (σ : G) (K : OpenSubgroup G) (g : (K : Subgroup G)) :
-    limitConj σ K (g : TopologicalAbelianization (K : Subgroup G)) =
-      (conjHom σ K g : TopologicalAbelianization ((conjOpen σ K : OpenSubgroup G) : Subgroup G)) :=
   rfl
 
 end Maps

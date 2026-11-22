@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HeckeLFunctionIdealEulerProduct
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FiniteDimensionalMram
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HeckeLFunctionIdealEulerProduct
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FiniteDimensionalMram
+
+@[expose] public section
+
 open NumberField PowerSeries Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.CohomologicalDescent Formalism.CohomologicalDescent.HeightDescentMinors Formalism.CohomologicalDescent.FrobeniusPeriodChange IsLocalRing GlobalTheory.WachPlace
 
 set_option autoImplicit false
@@ -29,7 +34,8 @@ theorem mat_identity {S M M' : Type} [CommRing S] [AddCommGroup M] [Module S M] 
     (hX : ∀ k, f (v k) = ∑ m, X m k • v' m) (hY : ∀ k, f (u k) = ∑ m, Y m k • B' m) : G' * X = Y * G := by
   ext r k
   have h := congrArg (fun z => B'.repr z r) (hX k)
-  simp only [hv, hv', hY, map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hv, hv', hY, map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply,
     Module.Basis.repr_self, Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
     Finset.mem_univ, if_true] at h
   simp only [Matrix.mul_apply]
@@ -95,7 +101,8 @@ theorem choose_max {O R : Type} [CommRing O] [CommRing R] [Algebra O R] {n : ℕ
       rwa [ZMod.natCast_zmod_val, add_sub_cancel] at this
     have h4 : ∑ j : ZMod n, (letE j : LetA O n) = 1 := Finset.univ_sum_single (1 : ZMod n → O⟦X⟧)
     apply h1
-    rw [← map_one ι, ← h4, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_one ι, ← h4, map_sum]
     exact Ideal.sum_mem _ fun j _ => h3 j
   have hee : ι (letE i) * ι (letE i) = ι (letE i) := by
     rw [← map_mul]
@@ -226,11 +233,10 @@ theorem exists_unit_tie (T : LocLat G Qp LL O) (hT : IsCrys PD T.ρ) {n : ℕ}
   rw [← E.jD_span T, Submodule.span_le]
   rintro _ ⟨x, rfl⟩
   refine (W.N_base T hT).inductionOn x
-    (fun x => E.jD T x ∈ Submodule.span RW' (Set.range fun k => E.jD T (b k : W.DD T))) ?_ ?_ ?_ ?_
-  · rw [map_zero]
-    exact Submodule.zero_mem _
+    (motive := fun x => E.jD T x ∈ Submodule.span RW' (Set.range fun k => E.jD T (b k : W.DD T))) ?_ ?_ ?_
   · intro y
-    rw [← b.sum_repr y, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr y, map_sum, map_sum]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [map_smul, ← algebraMap_smul W.EE, E.jD_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
@@ -238,11 +244,11 @@ theorem exists_unit_tie (T : LocLat G Qp LL O) (hT : IsCrys PD T.ρ) {n : ℕ}
     rw [E.jD_smul]
     exact Submodule.smul_mem _ _ hy
   · intro y z hy hz
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hy hz
 
-include E in
 
+include E in
 theorem rank_eq_of_tie (l : ℕ) [Fact l.Prime] (hl : l ≠ 2) [IsDomain O] [IsDiscreteValuationRing O] [Algebra ℤ_[l] O]
     [NeZero f] (h1 : (1 : RW') ∉ Ideal.map (algebraMap O RW') (maximalIdeal O))
     {T T' : LocLat G Qp LL O} {n n' : ℕ} (b : Module.Basis (Fin n) (LetA O f) ↥(W.N T))
@@ -264,7 +270,8 @@ theorem rank_eq_of_tie (l : ℕ) [Fact l.Prime] (hl : l ≠ 2) [IsDomain O] [IsD
       (Algebra.TensorProduct.basis RW' e') (fun k => E.jD T (b k : W.DD T)) (fun k => E.jD T' (b' k : W.DD T'))
       M M' _ _ (LinearMap.baseChange RW' ((g.f.restrictScalars O).restrict g.T_le)) hb hb' (fun k => ?_) (fun k => ?_)
     · have h1 := E.jD_map g (b k : W.DD T)
-      rw [hmap k, map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hmap k, map_sum] at h1
       refine h1.symm.trans (Finset.sum_congr rfl fun r _ => ?_)
       rw [Matrix.of_apply, hι, ← E.jD_smul, algebraMap_smul]
     · have h2 : ((g.f.restrictScalars O).restrict g.T_le) (e k) = ∑ r, a r k • e' r := by
@@ -292,9 +299,9 @@ theorem rank_eq_of_tie (l : ℕ) [Fact l.Prime] (hl : l ≠ 2) [IsDomain O] [IsD
 
 end Generic
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem main : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (hA : CaseA K LL) (T T' : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (n n' : ℕ) (b : Module.Basis (Fin n) (LetA ↥(OL LL) (Module.finrank ℚ_[l] ↥(K0 K))) ↥(((HW l).W K 1 LL hA.2.2).N T)) (b' : Module.Basis (Fin n') (LetA ↥(OL LL) (Module.finrank ℚ_[l] ↥(K0 K))) ↥(((HW l).W K 1 LL hA.2.2).N T')) (g : LatHom T.L T'.L) (A : ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → Mx (PowerSeries ↥(OL LL)) n' n) (e : Module.Basis (Fin n) ↥(OL LL) ↥T.L.T) (e' : Module.Basis (Fin n') ↥(OL LL) ↥T'.L.T) (a : Mx ↥(OL LL) n' n), IsCrys ((D.loc l).PD K) T.ρ → IsCrys ((D.loc l).PD K) T'.ρ → IsMapMat ((HW l).W K 1 LL hA.2.2) g b b' A → (∀ k, g.f (e k : T.V) = ∑ m, ((a m k : ↥(OL LL)) : ↥LL.1) • (e' m : T'.V)) → ∀ i, lrank ((A i).map (PowerSeries.map (residue ↥(OL LL)))) = (a.map (residue ↥(OL LL))).rank := by
   intro D HW F l _ K LL hA T T' n n' b b' g A e e' a hT hT' hmap ha i
   haveI : FiniteDimensional ℚ_[l] ↥K.1 := K.2

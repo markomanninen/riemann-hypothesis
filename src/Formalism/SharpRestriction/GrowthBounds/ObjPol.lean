@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,9 +31,10 @@ abbrev FF (O : Type*) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] := I
 def ramE (p : ℕ) (O : Type*) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] : ℕ :=
   (IsDiscreteValuationRing.addVal O (p : O)).toNat
 
-open Classical in
 
+open Classical in
 def ordW (x : KK O) : WithTop ℤ :=
+  open Classical in
   if x = 0 then ⊤ else
     let ab := Classical.choose (IsLocalization.surj (nonZeroDivisors O) x)
     (((IsDiscreteValuationRing.addVal O ab.1).toNat : ℤ) - ((IsDiscreteValuationRing.addVal O (ab.2 : O)).toNat : ℤ) : ℤ)
@@ -87,10 +92,11 @@ def twistMat (R : Type*) [CommRing R] (n : ℕ) (j : Fin n) (k : ℤ) : Matrix (
 def coefL (R : Type*) [CommRing R] (n : ℕ) : R →+* GLLaurent R n :=
   (LaurentPolynomial.C).comp ((algebraMap (MvPolynomial (Fin n × Fin n) R) (GLCoord R n)).comp MvPolynomial.C)
 
-open Classical in
 
+open Classical in
 def twistSub {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} (LL : Letters ι) (S : Set ι) (j : Fin n) :
     MvPolynomial (ι × Fin n) R →+* MvPolynomial (ι × Fin n) (GLLaurent R n) :=
+  open Classical in
   MvPolynomial.eval₂Hom (MvPolynomial.C.comp (coefL R n)) fun v =>
     if v.1 ∈ S then
       (if LL.vec v.1 then ∑ b : Fin n, MvPolynomial.C (twistMat R n j 1 b v.2) * X (v.1, b)
@@ -115,30 +121,16 @@ def ASet {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} [NeZero n] (LL : Letter
     Set (MvPolynomial (ι × Fin n) R) :=
   {F | ((th : ℤ) : WithTop ℤ) ≤ valS LL S F}
 
-def LamSet {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} [NeZero n] (LL : Letters ι) (S : Set ι) (M : ℤ) :
-    Set (MvPolynomial (ι × Fin n) R) :=
-  {F | lam1S LL S F ≤ ((M : ℤ) : WithBot ℤ)}
 
 open Classical in
-
 def glAct (R : Type*) [CommRing R] {ι : Type*} [Fintype ι] {n : ℕ} (LL : Letters ι) (S : Set ι) (a b : Fin n) :
     MvPolynomial (ι × Fin n) R →ₗ[R] MvPolynomial (ι × Fin n) R :=
+  open Classical in
   ∑ l : ι,
     if l ∈ S then
       (if LL.vec l then (LinearMap.mulLeft R (X (l, a))) ∘ₗ (pderiv (l, b)).toLinearMap
        else -((LinearMap.mulLeft R (X (l, b))) ∘ₗ (pderiv (l, a)).toLinearMap))
     else 0
-
-def digitOf {σ : Type*} (P : ℕ) (m : σ →₀ ℕ) : σ → ℕ := fun k => m k % P
-
-def coarseOf {σ : Type*} (P : ℕ) (m : σ →₀ ℕ) : σ → ℕ := fun k => m k / P
-
-def DigitClass (R : Type*) [CommSemiring R] {σ : Type*} (P : ℕ) (rho : σ → ℕ) :
-    Submodule R (MvPolynomial σ R) :=
-  MvPolynomial.restrictSupport R {m | digitOf P m = rho}
-
-def phDig (R : Type*) [CommSemiring R] {σ : Type*} (P : ℕ) : MvPolynomial (σ ⊕ σ) R →ₐ[R] MvPolynomial σ R :=
-  MvPolynomial.aeval (Sum.elim X fun k => X k ^ P)
 
 def cUnit (P n : ℕ) : ℚ := ((P * n).factorial : ℚ) / (((P.factorial : ℚ) ^ n) * (n.factorial : ℚ))
 
@@ -146,14 +138,9 @@ def dUnit (P n rho : ℕ) : ℚ := ∏ y ∈ Finset.Icc 1 rho, (1 + (P : ℚ) * 
 
 def digitOfL {σ : Type*} (P : σ → ℕ) (m : σ →₀ ℕ) : σ → ℕ := fun k => m k % P k
 
-def coarseOfL {σ : Type*} (P : σ → ℕ) (m : σ →₀ ℕ) : σ → ℕ := fun k => m k / P k
-
 def DigitClassL (R : Type*) [CommSemiring R] {σ : Type*} (P : σ → ℕ) (rho : σ → ℕ) :
     Submodule R (MvPolynomial σ R) :=
   MvPolynomial.restrictSupport R {m | digitOfL P m = rho}
-
-def phDigL (R : Type*) [CommSemiring R] {σ : Type*} (P : σ → ℕ) : MvPolynomial (σ ⊕ σ) R →ₐ[R] MvPolynomial σ R :=
-  MvPolynomial.aeval (Sum.elim X fun k => X k ^ P k)
 
 def divDer {R : Type*} [CommSemiring R] {σ : Type*} (be : σ →₀ ℕ) (F : MvPolynomial σ R) : MvPolynomial σ R :=
   ∑ m ∈ F.support, if be ≤ m then
@@ -163,10 +150,11 @@ def wtS {ι : Type*} [Fintype ι] {n : ℕ} (LL : Letters ι) (S : Set ι) (m : 
   open Classical in
   fun a => ∑ l : ι, if l ∈ S then (if LL.vec l then (m (l, a) : ℤ) else -(m (l, a) : ℤ)) else 0
 
-open Classical in
 
+open Classical in
 def divPowMono (R : Type*) [CommRing R] {ι : Type*} [Fintype ι] {n : ℕ} (LL : Letters ι) (S : Set ι)
     (a b : Fin n) (k : ℕ) (m : ι × Fin n →₀ ℕ) : MvPolynomial (ι × Fin n) R :=
+  open Classical in
   ∑ f ∈ Finset.finsuppAntidiag (Finset.univ.filter (· ∈ S)) k,
     MvPolynomial.monomial
       ((m - ∑ l ∈ f.support, Finsupp.single (if LL.vec l then (l, b) else (l, a)) (f l))
@@ -273,7 +261,7 @@ def NablaSub [Module O V] [Algebra O K] [IsScalarTower O K V] (E : GLOps n K V) 
     obtain ⟨d, hd⟩ := hy u hu
     refine ⟨c + d, ?_⟩
     have : u (x + y) - (algebraMap O K (c + d)) • v = (u x - (algebraMap O K c) • v) + (u y - (algebraMap O K d) • v) := by
-      rw [map_add, map_add, add_smul]; abel
+      rw [map_add (f := _), map_add (f := _), add_smul]; abel
     rw [this]; exact Submodule.add_mem _ hc hd
   smul_mem' := by
     intro a x hx u hu
@@ -322,8 +310,8 @@ def sigMat (p f : ℕ) [Fact p.Prime] (O : Type*) [CommRing O] [IsDomain O] [Alg
 
 def IsGLW {k : ℕ} (g : Matrix (Fin k) (Fin k) (WF p f)) : Prop := IsUnit g.det
 
-open Classical in
 
+open Classical in
 def liftSubst (p f : ℕ) [Fact p.Prime] (O : Type*) [CommRing O] [IsDomain O] [Algebra (WF p f) O]
     (w : O) (r : ℕ) {ι : Type*} {k : ℕ} (LL : LiftLetters ι) (g : Matrix (Fin k) (Fin k) (WF p f)) :
     MvPolynomial (ι × Fin k) (KK O) →ₐ[KK O] MvPolynomial (ι × Fin k) (KK O) :=
@@ -345,11 +333,6 @@ def InWjRg (p f : ℕ) [Fact p.Prime] (O : Type*) [CommRing O] [IsDomain O] [Alg
     (w : O) (r : ℕ) {ι : Type*} {k : ℕ} (LL : LiftLetters ι) (g : Matrix (Fin k) (Fin k) (WF p f))
     (F : MvPolynomial (ι × Fin k) (KK O)) (j : ℕ) : Prop :=
   InWj w (liftSubst p f O w r LL g F) j
-
-def ordG (p f : ℕ) [Fact p.Prime] (O : Type*) [CommRing O] [IsDomain O] [Algebra (WF p f) O]
-    (w : O) (r : ℕ) {ι : Type*} {k : ℕ} (LL : LiftLetters ι) (g : Matrix (Fin k) (Fin k) (WF p f))
-    (F : MvPolynomial (ι × Fin k) (KK O)) : ℕ∞ :=
-  ⨆ j ∈ {j : ℕ | InWjRg p f O w r LL g F j}, (j : ℕ∞)
 
 def ratPlane (p f : ℕ) [Fact p.Prime] (r : ℕ) {k : ℕ} (g : Matrix (Fin k) (Fin k) (WF p f)) :
     Submodule (GaloisField p f) (Fin k → GaloisField p f) :=
@@ -385,9 +368,11 @@ def NormalOrder (n : ℕ) (ord : List (Fin n × Fin n)) : Prop :=
       (ord.idxOf (a, b) < ord.idxOf (a, c) ∧ ord.idxOf (a, c) < ord.idxOf (b, c)) ∨
       (ord.idxOf (b, c) < ord.idxOf (a, c) ∧ ord.idxOf (a, c) < ord.idxOf (a, b))
 
-open Classical in
 
-def degIn {ι : Type*} [Fintype ι] (d : ι → ℕ) (S : Set ι) : ℕ := ∑ l, if l ∈ S then d l else 0
+open Classical in
+def degIn {ι : Type*} [Fintype ι] (d : ι → ℕ) (S : Set ι) : ℕ :=
+  open Classical in
+  ∑ l, if l ∈ S then d l else 0
 
 def glOps (K : Type*) [Field K] {ι : Type*} [Fintype ι] (n : ℕ) (LL : Letters ι) (S : Set ι) :
     GLOps n K (MvPolynomial (ι × Fin n) K) :=
@@ -400,19 +385,7 @@ variable {n : ℕ} {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 def IsIsoProjSet (E : GLOps n K V) (T : Set (Fin n → ℤ)) (e : Module.End K V) : Prop :=
   (∀ lam ∈ T, ∀ x ∈ isoSub E lam, e x = x) ∧ ∀ mu, mu ∉ T → ∀ x ∈ isoSub E mu, e x = 0
 
-def jointIsoSub {N : ℕ} (E : Fin N → GLOps n K V) (lam : Fin N → Fin n → ℤ) : Submodule K V :=
-  ⨅ i, isoSub (E i) (lam i)
-
-def IsJointProj {N : ℕ} (E : Fin N → GLOps n K V) (T : Set (Fin N → Fin n → ℤ)) (e : Module.End K V) : Prop :=
-  (∀ lam ∈ T, ∀ x ∈ jointIsoSub E lam, e x = x) ∧ ∀ mu, mu ∉ T → ∀ x ∈ jointIsoSub E mu, e x = 0
-
 end SetProj
-
-def sumLetters {ι : Type*} (LL : Letters ι) : Letters (ι ⊕ ι) := ⟨Sum.elim LL.vec LL.vec⟩
-
-def sumRename (R : Type*) [CommSemiring R] {ι : Type*} (n : ℕ) :
-    MvPolynomial ((ι × Fin n) ⊕ (ι × Fin n)) R →ₐ[R] MvPolynomial ((ι ⊕ ι) × Fin n) R :=
-  MvPolynomial.rename (Equiv.sumProdDistrib ι ι (Fin n)).symm
 
 def pEnd {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) : Fin n → ℤ := mu (Fin.last N)
 
@@ -508,9 +481,10 @@ def IsCostly (mu : Fin (N + 1) → Fin (r + K) → ℤ) (c : ℤ) (i : Fin N) : 
   (colH (mu i.castSucc) c < colH (mu i.succ) c ∧ r ≤ colH (mu i.castSucc) c) ∨
   (colH (mu i.succ) c < colH (mu i.castSucc) c ∧ colH (mu i.castSucc) c ≤ r)
 
-open Classical in
 
+open Classical in
 def oc (om : Fin N → ℕ) (mu : Fin (N + 1) → Fin (r + K) → ℤ) (c : ℤ) : ℕ :=
+  open Classical in
   ∑ i : Fin N, if IsCostly mu c i then om i else 0
 
 def IsUsed {n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) (c : ℤ) (i : Fin N) : Prop :=
@@ -522,8 +496,8 @@ section Lifts
 
 variable (p f : ℕ) [Fact p.Prime] {O : Type*} [CommRing O] [IsDomain O] [Algebra (WF p f) O] {k : ℕ}
 
-open Classical in
 
+open Classical in
 def degUS {ι : Type*} (LL : LiftLetters ι) (r : ℕ) (m : ι × Fin k →₀ ℕ) : ℕ :=
   ∑ v ∈ m.support, if (LL.vec v.1 = true ∧ r ≤ v.2.val) ∨ (LL.vec v.1 = false ∧ v.2.val < r) then m v else 0
 

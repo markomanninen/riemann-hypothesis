@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleInjectiveResolutionSectionsLocallyExact
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleInjectiveResolutionSectionsLocallyExact
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -8,8 +12,6 @@ variable (R : Type) [CommRing R]
 
 noncomputable abbrev secF (U : Scheme.{0}) : Shv R ⥤ ModuleCat.{1} (ULift.{1} R) :=
   sheafToPresheaf _ _ ⋙ (evaluation _ _).obj (op U)
-
-example (U : Scheme.{0}) : PreservesLimits (secF R U) := inferInstance
 
 lemma exact_pos (F : Shv R) (m n k : ℤ) (hn : 0 < n) (hm : m + 1 = n) (hk : n + 1 = k) :
     (ShortComplex.mk ((res R F).d m n) ((res R F).d n k) (by simp)).Exact := by

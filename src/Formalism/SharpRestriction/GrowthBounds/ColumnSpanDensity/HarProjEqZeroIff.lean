@@ -1,4 +1,8 @@
-import Formalism.PolynomialDimension.FinalHar
+module
+
+public import Formalism.PolynomialDimension.FinalHar
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ theorem smul_mem_latOf {K : Type} [Field K] {k : ℕ} (R : Subring K) (g : GL (F
   simp only [Formalism.CountingSumsFrames.latOf, Set.mem_image] at hf ⊢
   obtain ⟨h, hh, rfl⟩ := hf
   refine ⟨c • h, ?_, map_smul (Formalism.CountingSumsFrames.glAct g) c h⟩
-  show ∀ m, coeff m (c • h) ∈ R
+  show ∀ m, AddMonoidAlgebra.coeff (c • h) m ∈ R
   intro m
   rw [MvPolynomial.coeff_smul, smul_eq_mul]
   exact R.mul_mem hc (hh m)
@@ -115,7 +119,7 @@ theorem oneTop_abs (K : Type) [Field K] [CharZero K] (k P Q p : ℕ) (hk : 1 ≤
     rw [h0] at h2
     simp only [zero_mul, map_zero, sub_self, zero_add] at h2
     have h3 : ((k : ℕ) : K) = 0 := by
-      have h4 := congrArg (MvPolynomial.coeff 0) h2.symm
+      have h4 := congrArg (AddMonoidAlgebra.coeff · 0) h2.symm
       simpa using h4
     exact absurd (Nat.cast_eq_zero.1 h3) (by omega)
   have hle : ∀ A B, Formalism.CountingSumsFrames.HarAB K k A B ≤ Formalism.CountingSumsFrames.PolAB K k A B := fun A B => inf_le_left
@@ -190,7 +194,8 @@ theorem oneTop_abs (K : Type) [Field K] [CharZero K] (k P Q p : ℕ) (hk : 1 ≤
   · intro x
     apply α.injective
     apply Subtype.ext
-    rw [map_sum, Submodule.coe_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Submodule.coe_sum,
       Finset.sum_congr rfl (fun j hj => hterm j (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)) x)]
     exact (IP K k P Q hk).2.1 _ (α x).2
   · intro g j hj

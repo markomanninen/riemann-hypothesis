@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumRpowZerosLeStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RepulsionStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitFormulaDirichletZerosRightHalfStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExceptionalDirichletZeroUniqueZeroFreeRegionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumRpowZerosLeStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RepulsionStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitFormulaDirichletZerosRightHalfStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExceptionalDirichletZeroUniqueZeroFreeRegionStatement
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology GlobalTheory.Lin
 open scoped Classical
 
@@ -110,7 +115,7 @@ lemma struct (M : ℕ) [NeZero M] (b : ℕ) (hb : Nat.Coprime b M) (θ : ℤ) (�
           rw [finsum_mem_insert _ (by simp) ((h1 χ).1.diff), ho]; simp
         simp only [if_true]
         rw [this, add_sub_cancel_left]
-        refine zsum _ _ ((h1 χ).1.inter_of_left _) (fun ρ hρ => ⟨hρ.1, ?_⟩) _ u hu fun ρ hρ => hρ.1.1
+        refine zsum (zerosBox χ (1 / 2) T \ {(β : ℂ)}) _ ((h1 χ).1.inter_of_left _) (fun ρ hρ => ⟨hρ.1, ?_⟩) _ u hu fun ρ hρ => hρ.1.1
         rcases h2 χ ρ hρ.1 with h | h
         · exact absurd h.2 hρ.2
         · exact h
@@ -289,8 +294,8 @@ lemma etaChoice (c d : ℝ) (hc : 0 < c) (hd : 0 < d) :
     have := mul_le_mul_of_nonneg_right hb hR0
     nlinarith [mul_nonneg (sub_nonneg.2 h4) (sub_nonneg.2 hl)]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem psiAP_relative : ∃ c₀ : ℝ, 0 < c₀ ∧ ∀ c₁ : ℝ, 0 < c₁ → c₁ ≤ c₀ → ∃ c₂ c₃ C : ℝ, 0 < c₂ ∧ 0 < c₃ ∧ 0 < C ∧ ∀ (M : ℕ) [NeZero M] (b : ℕ) (θ : ℤ) (β u : ℝ), 3 ≤ M → Nat.Coprime b M → ExcData c₁ M b θ β → (M : ℝ) ^ c₂ ≤ u → |(M.totient : ℝ) * psiAP M b u - (u - θ * (u ^ β / β))| ≤ C * (Real.exp (-c₃ * Real.log u / Real.log M) + Real.exp (-Real.sqrt (c₃ * Real.log u))) * (u - θ * (u ^ β / β)) := by
   obtain ⟨c₀, hc₀, hX⟩ := GlobalTheory.T.exceptionalDirichletZero_unique_zeroFreeRegion
   refine ⟨c₀, hc₀, fun c₁ hc₁ hc₁' => ?_⟩

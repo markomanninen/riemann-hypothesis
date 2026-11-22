@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ThetaConstantWeber
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaLine
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DifferentiableOddTheta
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MultipliableTpFactor
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JacobiTripleFiniteProductStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JacobiTripleProductLimitStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ThetaConstantWeber
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaLine
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DifferentiableOddTheta
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MultipliableTpFactor
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JacobiTripleFiniteProductStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JacobiTripleProductLimitStatement
+
+@[expose] public section
 
 open Complex
 open UpperHalfPlane hiding I

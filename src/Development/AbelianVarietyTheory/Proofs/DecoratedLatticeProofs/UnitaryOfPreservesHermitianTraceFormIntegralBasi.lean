@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRealCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRealCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,13 +16,13 @@ variable {E : Type} [Field E] [NumberField E] {n : ℕ}
 def trBil (σ : E →+* E) (J : Matrix (Fin n) (Fin n) E) : (Fin n → E) →ₗ[ℚ] (Fin n → E) →ₗ[ℚ] ℚ :=
   LinearMap.mk₂ ℚ (fun x y => Algebra.trace ℚ E (Formalism.UG.hform σ J x y))
     (fun x x' y => by
-      rw [← map_add]; congr 1
+      rw [← map_add (f := _)]; congr 1
       simp [Formalism.UG.hform, add_mul, Finset.sum_add_distrib])
     (fun c x y => by
       rw [← map_smul]; congr 1
       simp [Formalism.UG.hform, Finset.smul_sum, Rat.smul_def, mul_assoc])
     (fun x y y' => by
-      rw [← map_add]; congr 1
+      rw [← map_add (f := _)]; congr 1
       simp [Formalism.UG.hform, mul_add, Finset.sum_add_distrib])
     (fun c x y => by
       rw [← map_smul]; congr 1

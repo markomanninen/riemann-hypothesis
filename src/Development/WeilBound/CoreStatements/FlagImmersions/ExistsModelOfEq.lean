@@ -1,11 +1,15 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLie
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PairSumFrameAtPoint
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspVolumeLimit
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.InteriorPointPolarisedStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GramMatrixChangeFrameStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.InteriorPointLatticeDataStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeLinearEquivStatement
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLie
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PairSumFrameAtPoint
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspVolumeLimit
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.InteriorPointPolarisedStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GramMatrixChangeFrameStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.InteriorPointLatticeDataStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeLinearEquivStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
@@ -93,7 +97,7 @@ theorem stalk_model [IsCommMonObj G] [Smooth G.hom] {Li : Type} [AddCommGroup Li
           rfl }
     exact ⟨hbc.lift ψl, fun t => hbc.lift_eq ψl t⟩
   · refine eq_top_iff.2 fun x _ => ?_
-    exact hbc.inductionOn x (· ∈ P) P.zero_mem hP (fun c n hn => P.smul_mem c hn) (fun _ _ => P.add_mem)
+    exact hbc.inductionOn x hP (fun c n hn => P.smul_mem c hn) (fun _ _ => P.add_mem)
 
 theorem exists_functional [IsCommMonObj G] [Smooth G.hom] {Li : Type} [AddCommGroup Li] [Module Ω Li] (M : LieModel G ξ Li)
     (hξ : IsCptGen ξ) {L : Type} [Field L] (z : Sp L ⟶ X) (h : genPt ξ ⤳ centre z) {V : Type} [AddCommGroup V]
@@ -106,7 +110,7 @@ theorem exists_functional [IsCommMonObj G] [Smooth G.hom] {Li : Type} [AddCommGr
   choose σ hσ using hs
   obtain ⟨F, hF⟩ := hlift (AddMonoidHom.mk' (fun t => (Scheme.stalkClosedPointTo z).hom (σ t)) fun t t' => by
       have : σ (t + t') = σ t + σ t' := hgi (by simp [hσ])
-      rw [this, map_add]) fun a t => by
+      rw [this, map_add (f := _)]) fun a t => by
     have : σ (a • t) = a * σ t := hgi (by rw [hσ, map_mul, hσ, hsi, map_smul, smul_eq_mul])
     show (Scheme.stalkClosedPointTo z).hom (σ (a • t)) = _ * (Scheme.stalkClosedPointTo z).hom (σ t)
     rw [this, map_mul]

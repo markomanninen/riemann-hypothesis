@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsClosedHermSVal
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsClosedHermSVal
+
+@[expose] public section
 
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
@@ -11,8 +15,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.RswEmTop
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem topX : PositivityTheory.Rg.Rsw.Em.TopX := by
   intro D a r t e
   obtain ⟨h1, h2, h3, h4, -⟩ := Formalism.IndefR.Eqv.ae_facts D
@@ -37,7 +41,7 @@ theorem topX : PositivityTheory.Rg.Rsw.Em.TopX := by
   have hC : IsClosed {z : Mx D a r × Mx D a t | e • z.1 = z.1 ∧ e • z.2 = z.2} :=
     (isClosed_eq c1 continuous_fst).inter (isClosed_eq c2 continuous_snd)
   have hE := hC.isClosedEmbedding_subtypeVal
-  exact ⟨inferInstance, hE.locallyCompactSpace, TopologicalSpace.Subtype.secondCountableTopology _,
+  exact ⟨inferInstance, hE.locallyCompactSpace, hE.isEmbedding.secondCountableTopology,
     Subtype.borelSpace _, bP, MeasurableEmbedding.subtype_coe hC.measurableSet, s4, s3, s1⟩
 
 end GlobalTheory.CompanionTheory.RswEmTop

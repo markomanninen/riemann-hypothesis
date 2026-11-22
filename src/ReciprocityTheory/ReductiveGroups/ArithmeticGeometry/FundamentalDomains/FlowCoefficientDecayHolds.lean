@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -41,11 +45,47 @@ theorem flow_coefficient_decay_holds (h1 : UnipotentVectorGroup (E := E)) (h2 : 
 
   obtain ⟨-, hL1⟩ := h1 r X.toData u hpair
   have hT1 : X.pnorm la (X.fz u X.g χ Q) (X.flowV e (fun _ => -(I / 2)) z) ≤ S1 := by
-    refine FlowCoefficientBounds.fz_bound X.toData u X.g χ Q la hTdom S1 hS10 fun b hb => ?_
-    obtain ⟨-, -, -, -, -, hnfZ, -, hD1Z, -, -⟩ := hL1 b hb
-    have hZ : X.Zb u b (X.flowV e (fun _ => -(I / 2)) z) ∈ X.FramesOverBasis ξ := hD1Z _ hTD1
-    rw [← hnfZ la _ hTdom]
-    exact (hle_hat _ hZ.1).trans (hle_S1 _ hZ)
+    have hb : ∀ b, IsHermFam b → ‖Q (X.Zb u b (X.flowV e (fun _ => -(I / 2)) z))‖ *
+        X.nfac la (X.flowV e (fun _ => -(I / 2)) z) ≤ S1 := by
+      intro b hb
+      obtain ⟨-, -, -, -, -, hnfZ, -, hD1Z, -, -⟩ := hL1 b hb
+      have hZ : X.Zb u b (X.flowV e (fun _ => -(I / 2)) z) ∈ X.FramesOverBasis ξ := hD1Z _ hTD1
+      rw [← hnfZ la _ hTdom]
+      exact (hle_hat _ hZ.1).trans (hle_S1 _ hZ)
+    have hpos := FlowCoefficientBounds.nfac_pos X.toData hTdom la
+    change ‖X.fz u X.g χ Q (X.flowV e (fun _ => -(I / 2)) z)‖ * X.nfac la (X.flowV e (fun _ => -(I / 2)) z) ≤ S1
+    unfold Data.fz
+    split_ifs with h1 h2
+    · rw [← le_div_iff₀ hpos]
+      have hpt : ∀ t : Fin (4 * Fintype.card X.Ψ) → ℝ,
+          ‖Q (X.Zb u (∑ j, (t j : ℂ) • h2.choose j) (X.flowV e (fun _ => -(I / 2)) z)) *
+          cexp (-(4 * Real.pi * I) * X.pairR χ (∑ j, (t j : ℂ) • h2.choose j))‖ ≤
+          S1 / X.nfac la (X.flowV e (fun _ => -(I / 2)) z) := by
+        intro t
+        have hherm : IsHermFam (∑ j, (t j : ℂ) • h2.choose j) := by
+          intro τ i k
+          simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Complex.conj_ofReal]
+          refine Finset.sum_congr rfl fun j _ => ?_
+          obtain ⟨β, hβ, -, he⟩ := h2.choose_spec.1 j
+          rw [he]
+          simp only [Data.embH]
+          rw [← hβ i k, cc, NumberField.IsCMField.complexEmbedding_complexConj]
+        have hexp : ‖cexp (-(4 * Real.pi * I) * X.pairR χ (∑ j, (t j : ℂ) • h2.choose j))‖ = 1 := by
+          rw [Complex.norm_exp, Real.exp_eq_one_iff]
+          simp [Complex.mul_re, Complex.mul_im]
+        rw [norm_mul, hexp, mul_one, le_div_iff₀ hpos]
+        exact hb _ hherm
+      have hvol : MeasureTheory.volume (Set.pi Set.univ fun _ : Fin (4 * Fintype.card X.Ψ) => Set.Icc (0 : ℝ) 1) = 1 := by
+        rw [MeasureTheory.volume_pi_pi]
+        simp [Real.volume_Icc]
+      haveI : MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict
+          (Set.pi Set.univ fun _ : Fin (4 * Fintype.card X.Ψ) => Set.Icc (0 : ℝ) 1)) :=
+        ⟨by rw [MeasureTheory.Measure.restrict_apply_univ, hvol]; exact ENNReal.one_lt_top⟩
+      refine (MeasureTheory.norm_integral_le_of_norm_le_const (Filter.Eventually.of_forall hpt)).trans ?_
+      rw [MeasureTheory.measureReal_def, MeasureTheory.Measure.restrict_apply_univ, hvol]
+      simp
+    · simp [hS10]
+    · simp [hS10]
   have hRHS : 0 ≤ 2 ^ (w / 2) * Real.exp (-Real.pi * (2 * ∑ τ, (X.chiAt χ a τ).re)) * S1 :=
     mul_nonneg (mul_nonneg (by positivity) (Real.exp_pos _).le) hS10
 

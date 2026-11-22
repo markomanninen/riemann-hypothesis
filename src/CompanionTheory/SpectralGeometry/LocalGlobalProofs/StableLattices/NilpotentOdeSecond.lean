@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.RightRule
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.RightRule
+
+@[expose] public section
 
 noncomputable section
 
@@ -173,7 +177,7 @@ theorem odeB : CompanionTheory.RgExh.Dec.N.OdeB := by
     intro t T ht hT
     rw [intervalIntegral.integral_of_le hT]
     exact setIntegral_mono_set hVint (ae_of_all _ hVn)
-      (Ioc_subset_Ioi_self.trans (Ioi_subset_Ioi ht)).eventuallyLE
+      (ae_of_all _ (Ioc_subset_Ioi_self.trans (Ioi_subset_Ioi ht)))
 
   have hWlin : (∫⁻ t in Ioi (0 : ℝ),
       ENNReal.ofReal (‖f t‖ ^ 2 * Real.exp (-2 * s' * t))) < ⊤ := by

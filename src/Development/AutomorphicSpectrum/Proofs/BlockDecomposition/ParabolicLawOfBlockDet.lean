@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,11 +21,11 @@ theorem stab_univ_eq_top {κ : Type} [Fintype κ] [DecidableEq κ] : stab R (Set
   refine eq_top_iff.2 fun g _ r hr => ?_
   exact absurd (Set.mem_univ r) hr
 
-theorem isCh_of_top {G : Type} [Group G] [TopologicalSpace G] {Γ P : Subgroup G} {c : G → ℂ} (h : IsCh Γ ⊤ c) : IsCh Γ P c where
-  mul := fun p _ q _ => h.mul p trivial q trivial
-  norm := fun p _ => h.norm p trivial
-  rat := fun γ hγ _ => h.rat γ hγ trivial
-  cont := (h.cont.mono (Set.subset_univ _ |>.trans (by simp)))
+theorem isCh_of_top {G : Type} [Group G] [TopologicalSpace G] {Γ P : Subgroup G} {c : G → ℂ} (h : IsCh Γ ⊤ c) : IsCh Γ P c := by
+  exact ⟨fun p _ q _ => h.mul p (Subgroup.mem_top p) q (Subgroup.mem_top q),
+    fun p _ => h.norm p (Subgroup.mem_top p),
+    fun γ hγ _ => h.rat γ hγ (Subgroup.mem_top γ),
+    h.cont.mono fun x _ => Subgroup.mem_top x⟩
 
 theorem isCh_cGL (hB : BdetLaw) (A : Ad E R) (hA : A.GoodL) (κ : Type) [Fintype κ] [DecidableEq κ] :
     IsCh (A.ratGL κ) ⊤ (A.cGL κ) := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CupProducts
-import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CupProducts
+public import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,8 +26,8 @@ end Associativity
 
 section Unit
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem d_oneCochain :
     (inhomogeneousCochains.d (𝟙_ (Rep.{u} k G)) 0).hom (oneCochain (k := k) (G := G)) = 0 := by
   funext g
@@ -31,14 +36,16 @@ theorem d_oneCochain :
 
 def unitCocycle : cocycles (𝟙_ (Rep.{u} k G)) 0 :=
   (cochainsComplex (𝟙_ (Rep.{u} k G))).cyclesMk
-    (mkCochain (𝟙_ (Rep.{u} k G)) oneCochain (IsLocallyConstant.const _)) 1 (by simp) (by
+    (mkCochain (A := 𝟙_ (Rep.{u} k G)) oneCochain (IsLocallyConstant.const _)) 1 (by simp) (by
       apply cochainOf_injective (A := 𝟙_ (Rep.{u} k G))
       exact (cochainOf_d (A := 𝟙_ (Rep.{u} k G)) _).trans d_oneCochain)
 
 @[simp]
 theorem cochainOf_cocycleι_unitCocycle :
-    cochainOf _ (cocycleι _ 0 (unitCocycle (k := k) (G := G))) = oneCochain :=
-  congrArg (cochainOf _) ((cochainsComplex (𝟙_ (Rep.{u} k G))).i_cyclesMk _ _ _ _)
+    cochainOf (A := 𝟙_ (Rep.{u} k G))
+      (cocycleι (A := 𝟙_ (Rep.{u} k G)) (p := 0) unitCocycle) = oneCochain :=
+  congrArg (cochainOf (A := 𝟙_ (Rep.{u} k G)))
+    ((cochainsComplex (𝟙_ (Rep.{u} k G))).i_cyclesMk _ _ _ _)
 
 def unitClass : cohomology (𝟙_ (Rep.{u} k G)) 0 :=
   cohomologyπ _ 0 unitCocycle

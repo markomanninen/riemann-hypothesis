@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeA
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsMonoSemiPos
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StSheetHessPSD
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeA
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsMonoSemiPos
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StSheetHessPSD
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -19,8 +24,8 @@ theorem PtsMonoSemiPos.proof (hInt : PtsIntegrableStatement) (hHess : SheetHessP
   unfold ptsIntegral
   by_cases hΨ : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ), IsGoodProj Q Ψ
   swap
-  · rw [dif_neg hΨ, dif_neg hΨ]
-  rw [dif_pos hΨ, dif_pos hΨ]
+  · rw [dite_eq_right hΨ, dite_eq_right hΨ]
+  rw [dite_eq_left hΨ, dite_eq_left hΨ]
   set Ψ := hΨ.choose with hΨdef
   have hΨg : IsGoodProj Q Ψ := hΨ.choose_spec
   unfold ptsIntegralAt
@@ -55,7 +60,7 @@ theorem PtsMonoSemiPos.proof (hInt : PtsIntegrableStatement) (hHess : SheetHessP
   refine Finset.sum_le_sum fun w _ => ?_
   unfold sheetDensity
   by_cases hγ : ∃ γ, IsSheet Q Ψ y w γ
-  · rw [dif_pos hγ, dif_pos hγ]
+  · rw [dite_eq_left hγ, dite_eq_left hγ]
     obtain ⟨-, hev⟩ := hγ.choose_spec
     obtain ⟨-, hmem, hproj⟩ := hev.self_of_nhds
     have ht0 : eval (hγ.choose y) (map (Int.castRingHom ℂ) t) ≠ 0 := by
@@ -67,6 +72,6 @@ theorem PtsMonoSemiPos.proof (hInt : PtsIntegrableStatement) (hHess : SheetHessP
       ReciprocityTheory.AnForm.A.maDens_nonneg_of_posSemidef _ _ fun j =>
         hHess K ι Q e Ψ (M j) y w hγ.choose (hMs j) (hMp j) hγ.choose_spec
     exact mul_le_mul_of_nonneg_right (hle _ hmem ht0) hma
-  · rw [dif_neg hγ, dif_neg hγ]
+  · rw [dite_eq_right hγ, dite_eq_right hγ]
 
 end GroundTheory.Heights₂.Heights.Inter

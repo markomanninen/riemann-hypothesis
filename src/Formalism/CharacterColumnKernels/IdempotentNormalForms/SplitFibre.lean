@@ -1,4 +1,8 @@
-import Formalism.CharacterColumnKernels.StatOntoLattice
+module
+
+public import Formalism.CharacterColumnKernels.StatOntoLattice
+
+@[expose] public section
 
 open Polynomial
 
@@ -162,8 +166,8 @@ theorem splitFibre : StatSplitFibre := by
         p.map (RingHom.snd T' K) = q.map (RingHom.snd T' K) → p = q := by
       intro p q h1 h2
       ext k
-      · simpa using congrArg (fun f => Polynomial.coeff f k) h1
-      · simpa using congrArg (fun f => Polynomial.coeff f k) h2
+      · simpa using congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f k) h1
+      · simpa using congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f k) h2
     apply hext
     · rw [Polynomial.map_map, Polynomial.map_prod]
       have : (RingHom.fst T' K).comp (algebraMap T (T' × K)) = algebraMap T T' := by ext; rfl
@@ -230,7 +234,8 @@ theorem splitFibre : StatSplitFibre := by
   have hexp : ∀ σ t, φ σ t = ∑ k, x (b.repr t k) * φ σ (b k) := by
     intro σ t
     conv_lhs => rw [← b.sum_repr t]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Algebra.smul_def, map_mul]
     congr 1

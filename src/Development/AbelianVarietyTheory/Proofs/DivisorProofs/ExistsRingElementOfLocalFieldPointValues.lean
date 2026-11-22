@@ -1,6 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SymTupOne
-import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.MinSt2
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SymTupOne
+public import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ZM GlobalTheory.ZH GlobalTheory.UMin GlobalTheory.UPoinc GlobalTheory.Ex.OneGen
@@ -83,7 +89,8 @@ theorem glue_field_points (R : Type) [CommRing R]
     (b.sum fun k r => π r * π (α k))
   have hb' : (b.sum fun k r => π r * π (g k)) = 1 := by
     have := congrArg π hb
-    simpa [Finsupp.sum, map_sum, smul_eq_mul] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Finsupp.sum, map_sum, smul_eq_mul] using this
   have hglue : ∀ l, IsNilpotent (g l * c0 - α l) := by
     intro l
     rw [← mem_nilradical, ← Ideal.Quotient.eq]

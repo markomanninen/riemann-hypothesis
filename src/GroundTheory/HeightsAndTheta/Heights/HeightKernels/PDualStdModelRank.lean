@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualStdModelField
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StandardModelDualRank
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualStdModelField
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StandardModelDualRank
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -9,8 +14,8 @@ open ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction
 
 noncomputable section
 
-open StandardModelDualRank in
 
+open StandardModelDualRank in
 theorem DualStdModelRank.proof : DualStdModelRank.Statement := by
   intro K _ _ i T _ _ b Φ₀ _ _ hΦ _ c
   have hrange : Set.range (dualStdModelPt b ∘ inrV (ι := dualBlocks T) (ι₂ := PBlk i)) = Set.range (u K i) := by

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+
+@[expose] public section
+
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
 private theorem adicCont_map {Γ R S : Type} [TopologicalSpace Γ] [CommRing R] [CommRing S] (j : R →+* S)
@@ -64,7 +69,7 @@ theorem UpperTheory.V.Pa.Det.pushSel :
     refine ⟨fun g => ha ▸ od_map j (h1 g), fun i k => adicCont_map j _ _ ht _ (h2 i k), fun g h => ?_,
       fun g => ?_, fun u g hg => ?_, fun v => ?_⟩
     · change j.mapMatrix (z (g * h)) = j.mapMatrix (z g) + _ * j.mapMatrix (z h) * _
-      rw [h3, eρ, eρ, map_add, map_mul, map_mul]
+      rw [h3, eρ, eρ, map_add (f := _), map_mul, map_mul]
     · ext i k : 1
       simp [h4]
     · simp [h5 u g hg]

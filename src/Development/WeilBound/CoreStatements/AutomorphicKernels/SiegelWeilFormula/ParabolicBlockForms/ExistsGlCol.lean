@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ParabolicBlockForms.QE
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ParabolicBlockForms.QE
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,17 +74,17 @@ theorem padE_emS (N : Matrix (Fin L.n ⊕ Fin L.n) (Fin L.n ⊕ Fin L.n) E) (a a
     padE L N (emS L a) (emS L a') = N a a' := by
   have h : (∃ x, emS L x = emS L a) ∧ ∃ x, emS L x = emS L a' := ⟨⟨a, rfl⟩, ⟨a', rfl⟩⟩
   simp only [padE]
-  rw [dif_pos h, emS_inj L h.1.choose_spec, emS_inj L h.2.choose_spec]
+  rw [dite_eq_left h, emS_inj L h.1.choose_spec, emS_inj L h.2.choose_spec]
 
 theorem padE_out_row (N : Matrix (Fin L.n ⊕ Fin L.n) (Fin L.n ⊕ Fin L.n) E) {r : Fin d.n ⊕ Fin d.n}
     (hr : ¬ ∃ a, emS L a = r) (c : Fin d.n ⊕ Fin d.n) : padE L N r c = (1 : Matrix _ _ E) r c := by
   simp only [padE]
-  rw [dif_neg (fun h => hr h.1)]
+  rw [dite_eq_right (fun h => hr h.1)]
 
 theorem padE_out_col (N : Matrix (Fin L.n ⊕ Fin L.n) (Fin L.n ⊕ Fin L.n) E) (r : Fin d.n ⊕ Fin d.n)
     {c : Fin d.n ⊕ Fin d.n} (hc : ¬ ∃ a, emS L a = c) : padE L N r c = (1 : Matrix _ _ E) r c := by
   simp only [padE]
-  rw [dif_neg (fun h => hc h.2)]
+  rw [dite_eq_right (fun h => hc h.2)]
 
 theorem nq_E {M : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) E}
     (hx : ∀ r, M r (Sum.inl L.i₀) = (1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) E) r (Sum.inl L.i₀))

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT
@@ -42,7 +46,7 @@ theorem rescale_mem {ι κ : Type} [Finite κ] (K0 : Subfield K) (bS : Module.Ba
     obtain ⟨i, rfl⟩ := hx
     exact Submodule.subset_span ⟨i, by simp⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _)]; exact add_mem hx hy
   | smul r x _ hx =>
     rw [Subfield.smul_def, map_smul, map_smul]
     exact Submodule.smul_mem _ r hx
@@ -59,11 +63,11 @@ theorem rescale_pair [StarRing K] {κ : Type} (b : κ → V) (σ : K →+* ℂ) 
       obtain ⟨a', rfl⟩ := hy
       exact hp a a'
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, inner_add_right, hx, hy, map_add, map_add]
+    | add x y _ _ hx hy => rw [map_add (f := _), inner_add_right, hx, hy, map_add (f := _), map_add (f := _)]
     | smul r x _ hx =>
       rw [Subfield.smul_def, LinearMap.map_smulₛₗ, inner_smul_right, hx, map_smul, smul_eq_mul, map_mul]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, inner_add_left, hx, hy, map_add, LinearMap.add_apply, map_add]
+  | add x y _ _ hx hy => rw [map_add (f := _), inner_add_left, hx, hy, map_add (f := _), LinearMap.add_apply, map_add (f := _)]
   | smul r x _ hx =>
     rw [Subfield.smul_def, LinearMap.map_smulₛₗ, inner_smul_left, hx, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
       smul_eq_mul, map_mul, ← r.2 σ]
@@ -73,7 +77,8 @@ theorem rescale_inj {κ : Type} [Finite κ] (b : Module.Basis κ K V) (σ : K �
     (h : LinearIndependent ℂ fun a => c (b a)) : Function.Injective c := by
   haveI := Fintype.ofFinite κ
   refine (injective_iff_map_eq_zero c).2 fun x hx => ?_
-  rw [← b.sum_repr x, map_sum] at hx
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← b.sum_repr x, map_sum] at hx
   simp only [LinearMap.map_smulₛₗ] at hx
   have := Fintype.linearIndependent_iff.1 h _ hx
   exact b.ext_elem fun a => by simpa using this a
@@ -86,9 +91,11 @@ theorem rescale_span_top {κ : Type} [Finite κ] (b : Module.Basis κ K V) (σ :
   rintro _ ⟨a, rfl⟩
   have : b a = ∑ k, b.repr (φ.symm (b a)) k • φ (b k) := by
     conv_lhs => rw [← φ.apply_symm_apply (b a), ← b.sum_repr (φ.symm (b a))]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   change c (b a) ∈ Submodule.span ℂ _
-  rw [this, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum]
   refine Submodule.sum_mem _ fun k _ => ?_
   rw [LinearMap.map_smulₛₗ]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)

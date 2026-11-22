@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+
+@[expose] public section
 
 open NumberField MeasureTheory Topology Set Filter IsDedekindDomain
 open scoped NumberField.AdeleRing
@@ -134,12 +138,12 @@ theorem isAddFundamentalDomain_image_of_map_vecLattice (T : (ι → 𝔸[K]) ≃
     refine ⟨⟨T g, (hL g).1 g.2⟩, ?_, ?_⟩
     · rw [himg]
       change T.symm (T g + x) ∈ vecDomain K ι
-      rw [map_add, AddEquiv.symm_apply_apply]
+      rw [map_add (f := _), AddEquiv.symm_apply_apply]
       exact hg
     · intro g' hg'
       rw [himg] at hg'
       change T.symm (g' + x) ∈ vecDomain K ι at hg'
-      rw [map_add] at hg'
+      rw [map_add (f := _)] at hg'
       have := huniq ⟨T.symm g', (hL' g').1 g'.2⟩ hg'
       refine Subtype.ext ?_
       rw [← this]
@@ -170,7 +174,8 @@ theorem matVec_one (x : ι → 𝔸[K]) : matVec (1 : Matrix ι ι K) x = x := b
 theorem matVec_algebraMap (M : Matrix ι ι K) (ξ : ι → K) :
     matVec M (fun i => algebraMap K 𝔸[K] (ξ i)) = fun i => algebraMap K 𝔸[K] (M.mulVec ξ i) := by
   funext i
-  simp [matVec_apply, Matrix.mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [matVec_apply, Matrix.mulVec, dotProduct, map_sum]
 
 theorem continuous_matVec (M : Matrix ι ι K) : Continuous (matVec M) := by
   refine continuous_pi fun i => ?_

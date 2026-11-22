@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ASmooth
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.KillCore
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.FunKill
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.DatDatum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ASmooth
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.KillCore
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.FunKill
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.DatDatum
+
+@[expose] public section
 
 open UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.BW PositivityTheory.Rg.Tf.Core
 

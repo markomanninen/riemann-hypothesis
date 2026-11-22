@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdExExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.EvIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdExExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.EvIff
+
+@[expose] public section
 
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -11,7 +15,7 @@ private theorem cont_of_ker {A Γ M : Type} [CommRing A] [Group Γ] [Topological
   rw [ContinuousAt, nhds_discrete M, Filter.tendsto_pure]
   have hg : ∀ᶠ g in nhds p.1, ∀ m, ρ g m = ρ p.1 m := by
     have ht : Filter.Tendsto (fun g => p.1⁻¹ * g) (nhds p.1) (nhds 1) := by
-      simpa using (continuous_mul_left p.1⁻¹).tendsto p.1
+      simpa using (continuous_const_mul p.1⁻¹).tendsto p.1
     filter_upwards [ht.eventually hk] with g hg m
     calc ρ g m = ρ p.1 (ρ (p.1⁻¹ * g) m) := by
           rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel_left]

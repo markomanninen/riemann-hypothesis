@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import GroundTheory.GlobalFields.Adele.IntegersLattice
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import GroundTheory.GlobalFields.Adele.IntegersLattice
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ theorem bInf_repr_infPart (a : AE D) (k : Fin (dimE D)) :
   induction a using TensorProduct.induction_on with
   | zero => simp
   | add a b ha hb =>
-    rw [(infPart D).map_add, LinearEquiv.map_add, LinearEquiv.map_add, Finsupp.add_apply, Finsupp.add_apply, ha, hb]
+    rw [map_add (infPart D), LinearEquiv.map_add (e := _), LinearEquiv.map_add (e := _), Finsupp.add_apply, Finsupp.add_apply, ha, hb]
     exact (map_add (fstA D.host.F) _ _).symm
   | tmul r e =>
     rw [infPart_tmul, bInf, bAE, Algebra.TensorProduct.basis_repr_tmul,
@@ -119,7 +123,7 @@ theorem bFin_repr_finPart (a : AE D) (k : Fin (dimE D)) :
   induction a using TensorProduct.induction_on with
   | zero => simp
   | add a b ha hb =>
-    rw [(finPart D).map_add, LinearEquiv.map_add, LinearEquiv.map_add, Finsupp.add_apply, Finsupp.add_apply, ha, hb]
+    rw [map_add (finPart D), LinearEquiv.map_add (e := _), LinearEquiv.map_add (e := _), Finsupp.add_apply, Finsupp.add_apply, ha, hb]
     exact (map_add (sndA D.host.F) _ _).symm
   | tmul r e =>
     rw [finPart_tmul, bFin, bAE, Algebra.TensorProduct.basis_repr_tmul,
@@ -171,7 +175,7 @@ def RCh (D : D7) (m n : ℕ) : Mx D m n →+ XR D m n where
     show GroundTheory.Global.homeomorphMixedSpace D.host.F (fstA D.host.F ((bAE D).repr (z i j + w i j) k)) =
       GroundTheory.Global.homeomorphMixedSpace D.host.F (fstA D.host.F ((bAE D).repr (z i j) k)) +
       GroundTheory.Global.homeomorphMixedSpace D.host.F (fstA D.host.F ((bAE D).repr (w i j) k))
-    rw [map_add, Finsupp.add_apply, map_add, hms_add]
+    rw [map_add (f := _), Finsupp.add_apply, map_add (f := _), hms_add]
 
 def FCh (D : D7) (m n : ℕ) : Mx D m n →+ XF D m n where
   toFun z i j := fc (z i j)
@@ -183,7 +187,7 @@ def FCh (D : D7) (m n : ℕ) : Mx D m n →+ XF D m n where
     funext i j k
     show sndA D.host.F ((bAE D).repr (z i j + w i j) k) =
       sndA D.host.F ((bAE D).repr (z i j) k) + sndA D.host.F ((bAE D).repr (w i j) k)
-    rw [map_add, Finsupp.add_apply, map_add]
+    rw [map_add (f := _), Finsupp.add_apply, map_add (f := _)]
 
 theorem RCh_eq_zero_iff {m n : ℕ} (u : Mx D m n) : RCh D m n u = 0 ↔ u.map (infPart D) = 0 := by
   constructor
@@ -281,8 +285,8 @@ open Topology Metric
 
 variable {D : D7}
 
-set_option synthInstance.maxSize 1024 in
 
+set_option synthInstance.maxSize 1024 in
 theorem bump_core {m n : ℕ} (x : Mx D m n) (A' : AddSubgroup (XF D m n)) (ho : IsOpen (A' : Set (XF D m n)))
     (hc : IsCompact (A' : Set (XF D m n))) {ε : ℝ} (hε : 0 < ε) :
     ∃ b : Mx D m n → ℝ, IsBump (fun z => (b z : ℂ)) ∧ b x = 1 ∧ (∀ z, 0 ≤ b z ∧ b z ≤ 1) ∧
@@ -316,10 +320,10 @@ theorem bump_core {m n : ℕ} (x : Mx D m n) (A' : AddSubgroup (XF D m n)) (ho :
   have hper : ∀ u z, RCh D m n u = 0 → FCh D m n u ∈ A' → b (z + u) = b z := by
     intro u z hu hu'
     have e1 : RCh D m n (z + u) - RCh D m n x = RCh D m n z - RCh D m n x := by
-      rw [map_add, hu, add_zero]
+      rw [map_add (f := _), hu, add_zero]
     have e2 : (z + u ∈ S) ↔ (z ∈ S) := by
       show FCh D m n (z + u) - FCh D m n x ∈ A' ↔ FCh D m n z - FCh D m n x ∈ A'
-      rw [map_add, add_sub_right_comm]
+      rw [map_add (f := _), add_sub_right_comm]
       exact A'.add_mem_cancel_right hu'
     simp only [b, e1, Set.indicator_apply, e2, Pi.one_apply]
   refine ⟨b, ⟨Complex.continuous_ofReal.comp hb, ?_, ?_, ?_⟩, ?_, fun z => ?_, hsupp, hper⟩
@@ -350,8 +354,8 @@ theorem bump_core {m n : ℕ} (x : Mx D m n) (A' : AddSubgroup (XF D m n)) (ho :
       funext t
       have e2 : (w + l t ∈ S) ↔ (w ∈ S) := by
         show FCh D m n (w + l t) - FCh D m n x ∈ A' ↔ FCh D m n w - FCh D m n x ∈ A'
-        rw [map_add, hF t, add_zero]
-      simp only [b, map_add, hL, Set.indicator_apply, e2, add_sub_right_comm, Pi.one_apply]
+        rw [map_add (f := _), hF t, add_zero]
+      simp only [b, map_add (f := _), hL, Set.indicator_apply, e2, add_sub_right_comm, Pi.one_apply]
     rw [e]
     exact Complex.ofRealCLM.contDiff.comp ((hg2.comp (contDiff_const.add L.contDiff)).mul contDiff_const)
   · show g (RCh D m n x - RCh D m n x) * S.indicator 1 x = 1
@@ -424,7 +428,7 @@ theorem _root_.GlobalTheory.AscFin.exists_bump_le {m n : ℕ} (x : Mx D m n) (A 
   refine ⟨z - x - a, (FCh_eq_zero_iff _).1 ?_, ?_, by abel_nf; exact ha⟩
   · rw [map_sub, map_sub, hae, sub_self]
   · have e : x + (z - x - a) = (coordH D m n).symm (RCh D m n z, FCh D m n x) := by
-      rw [Homeomorph.eq_symm_apply, coordH_apply, map_add, map_add, map_sub, map_sub, map_sub, map_sub, hR a ha, hae]
+      rw [Homeomorph.eq_symm_apply, coordH_apply, map_add (f := _), map_add (f := _), map_sub, map_sub, map_sub, map_sub, hR a ha, hae]
       congr 1 <;> abel
     rw [e]
     exact hball (by rw [mem_ball, dist_eq_norm]; exact h1)

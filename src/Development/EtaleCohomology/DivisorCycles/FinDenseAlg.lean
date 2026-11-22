@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.DivisorCycles.ChainPf
-import Development.EtaleCohomology.DivisorCycles.SepPolyProof
-import Development.EtaleCohomology.DivisorCycles.DenseAlg2
+module
+
+public import Development.EtaleCohomology.DivisorCycles.ChainPf
+public import Development.EtaleCohomology.DivisorCycles.SepPolyProof
+public import Development.EtaleCohomology.DivisorCycles.DenseAlg2
+
+@[expose] public section
 
 namespace LateralTheory.Fin.DenseAlg
 theorem etale_divisibility_chain_of_key : LateralTheory.DivDb.Chain := by

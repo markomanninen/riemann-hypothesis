@@ -1,9 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefVFContDiffOn
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefVFContDiffOn
+
+@[expose] public section
+
 open ZetaZeros.D.EllReg GlobalTheory.HCA MeasureTheory GroundTheory.Automorphic
 open scoped ContDiff
 

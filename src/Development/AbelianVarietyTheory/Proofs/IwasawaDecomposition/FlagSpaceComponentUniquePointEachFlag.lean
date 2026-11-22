@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagSpaceComponentCarriesEveryFrameFlagStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFlagComponentPointOverGeometricBasePointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBaseChange
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagSpaceComponentCarriesEveryFrameFlagStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFlagComponentPointOverGeometricBasePointStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,7 +49,7 @@ theorem carry_some : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
     intro q hq
     subst hq
     refine ⟨g, y, ψ, φ, fr, t, 1, rfl, hT, rfl, rfl, fun τ i => ⟨Pi.single i 1, by simp, fun k hk => Pi.single_eq_of_ne hk.ne' _, ?_⟩⟩
-    have e' : (fun k => spMap (dualMap ψ) ≫ fr.v τ k) = g.v τ := funext fun k => (hg τ k).symm
+    have e' : (fun k => spMap (Formalism.L2.Pj.dualMap ψ) ≫ fr.v τ k) = g.v τ := funext fun k => (hg τ k).symm
     rw [e']
     exact isCombAtG_single Z.t _ (g.tan τ) i
   exact key p hfac

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.InjectiveOfInjectiveCompAevalOfTrdegLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.InjectiveOfInjectiveCompAevalOfTrdegLe
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -44,7 +48,8 @@ theorem det_ne_zero_of_generic_linear_forms_vanish :
     rw [AlgHom.map_det]
     congr 1
     ext i a
-    simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
       hb v hv]
     simp [χ, D']
   have hΔ0 : Δ ≠ 0 := by

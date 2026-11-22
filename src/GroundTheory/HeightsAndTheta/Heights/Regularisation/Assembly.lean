@@ -1,54 +1,36 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMaxOscillation
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMollifierLowerBound
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartComparison
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PCutoffs
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PGlueRegularised
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.ChartFun
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.IsCompactImageClosureMid
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PExpExtension
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PosSemidefOfIntQuadNonneg
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PKernelPositive
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PImTauBounds
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PHodgeDerivative
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PAnalyticDerivBound
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PInvEntryBound
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PInvEntryDeriv
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PMatrixDetDeriv
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PGramEntryDeriv
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PLogDetGramDeriv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMaxOscillation
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMollifierLowerBound
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartComparison
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PCutoffs
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PGlueRegularised
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.ChartFun
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.IsCompactImageClosureMid
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PExpExtension
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PosSemidefOfIntQuadNonneg
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PKernelPositive
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PImTauBounds
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PHodgeDerivative
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PAnalyticDerivBound
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PInvEntryBound
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PInvEntryDeriv
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PMatrixDetDeriv
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PGramEntryDeriv
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PLogDetGramDeriv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Regular
-
-theorem PolyMaxOscillation.full : PolyMaxOscillation.Statement :=
-  PolyMaxOscillation.proof_closed
-
-theorem MollifiedLowerBound.full : MollifiedLowerBound.Statement :=
-  MollifiedLowerBound.closed
-
-theorem CutoffsExist.full : CutoffsExist.Statement :=
-  CutoffsExist.proof
 
 theorem GlueRegularised.full : GlueRegularised.Statement :=
   GlueRegularised.proof
 
 theorem KernelPositive.full : KernelPositive.Statement :=
   kernelPositive_statement
-
-theorem ChartComparison.cond (hLow : PolyMaxLowerBound.Statement) (hTP : TruncPsh.Statement)
-    (hTT : TruncTransfer.Statement) : ChartComparison.Statement :=
-  ChartComparison.proof MollifiedLowerBound.full PolyMaxOscillation.full hLow hTP hTT
-
-theorem LogLogRegularisation.cond (hLow : PolyMaxLowerBound.Statement) (hTP : TruncPsh.Statement)
-    (hTT : TruncTransfer.Statement) (hMNS : MollifiedNearSmooth.Statement)
-    (hCMB : ChartMollifiedBounds.Statement) : LogLogRegularisation.Statement :=
-  LogLogRegularisation.proof GlueRegularised.full (ChartComparison.cond hLow hTP hTT) hMNS
-    CutoffsExist.full hCMB
-
-theorem BoundedRegularisation.cond (hBC : BoundedChartComparison.Statement)
-    (hBG : BoundedGlue.Statement) : BoundedRegularisation.Statement :=
-  BoundedRegularisation.proof hBC hBG CutoffsExist.full ReciprocityTheory.AnForm.A.mollify_thm
 
 theorem Tau0Holomorphic.cond (hE : RiemannExtensionSlices.Statement)
     (hO : PuncturedExpOrder.Statement) (hD : LogCoverDescent.Statement) :

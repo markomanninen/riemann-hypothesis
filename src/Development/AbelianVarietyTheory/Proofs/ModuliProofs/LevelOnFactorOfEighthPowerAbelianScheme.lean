@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -20,7 +24,8 @@ theorem levelFactor_comp {G H Λ : Type} [CommGroup G] [CommGroup H] [AddCommGro
   have hφ : ∀ x, L x = Additive.toMul (φ x) := fun x => rfl
   have hc : bas c u = ∑ i, c i • bas (Pi.single i 1) u := by
     conv_lhs => rw [← Finset.univ_sum_single c]
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     have hs : (Pi.single i (c i) : Fin n → ℤ) = c i • (Pi.single i 1 : Fin n → ℤ) := by
       ext j
@@ -28,7 +33,8 @@ theorem levelFactor_comp {G H Λ : Type} [CommGroup G] [CommGroup H] [AddCommGro
       · subst h; simp
       · simp [h]
     rw [hs, map_zsmul, Pi.smul_apply]
-  rw [map_prod, hc, hφ, map_sum, toMul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_prod, hc, hφ, map_sum, toMul_sum]
   refine Finset.prod_congr rfl fun i _ => ?_
   rw [map_zpow, hP, map_zsmul, toMul_zsmul]
   rfl

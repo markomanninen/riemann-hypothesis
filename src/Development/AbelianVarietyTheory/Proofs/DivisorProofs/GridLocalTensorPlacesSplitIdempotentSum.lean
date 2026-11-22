@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceIdempotentUnderEqOfLiesOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceIdempotentUnderEqOfLiesOver
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -54,12 +58,13 @@ theorem main : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridDa
     rw [Finset.sum_congr rfl hf]
     refine ae_ext ?_ fun Q => ?_
     · rw [map_mul, (atPl_spec w 1).1, mul_zero]
-    · rw [map_mul, map_mul, (atPl_spec w 1).2, map_sum, map_sum]
-      by_cases hQ : Q = w
-      · subst hQ
-        rw [Pi.single_eq_same, mul_one, Finset.sum_eq_single Q (fun b _ hb => by
-          rw [(atPl_spec b 1).2, Pi.single_eq_of_ne (Ne.symm hb)]) (fun h => absurd hw h),
-          (atPl_spec Q 1).2, Pi.single_eq_same]
-      · rw [Pi.single_eq_of_ne hQ, mul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [map_mul, map_mul, (atPl_spec w 1).2, map_sum, map_sum]
+        by_cases hQ : Q = w
+        · subst hQ
+          rw [Pi.single_eq_same, mul_one, Finset.sum_eq_single Q (fun b _ hb => by
+            rw [(atPl_spec b 1).2, Pi.single_eq_of_ne (Ne.symm hb)]) (fun h => absurd hw h),
+            (atPl_spec Q 1).2, Pi.single_eq_same]
+        · rw [Pi.single_eq_of_ne hQ, mul_zero]
 
 end GlobalTheory.IdemAtPl

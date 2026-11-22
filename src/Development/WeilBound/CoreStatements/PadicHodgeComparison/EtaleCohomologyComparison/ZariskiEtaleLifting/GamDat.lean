@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.XSmulSucc
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.CmAugCocycle
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FFible
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FRiCalc
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FibInit
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.XSmulSucc
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.CmAugCocycle
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FFible
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FRiCalc
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FibInit
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Polynomial CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
@@ -30,8 +34,8 @@ structure GamDat {Γ : Type} [CommMonoid Γ] {D : C} (γ : Γ →* End D) (j : C
   il : D ⟶ S
   ir : j.obj t ⟶ S
   g : Γ →* End S
-  hil : ∀ a, il ≫ (g a : S ⟶ S) = (γ a : D ⟶ D) ≫ il
-  hir : ∀ a, ir ≫ (g a : S ⟶ S) = ir
+  hil : ∀ a, il ≫ (g a).asHom = (γ a).asHom ≫ il
+  hir : ∀ a, ir ≫ (g a).asHom = ir
   hu : ∀ (t' : C') (c : D ⟶ j.obj t') (φ : j.obj t ⟶ j.obj t'), ∃! ψ : S ⟶ j.obj t', il ≫ ψ = c ∧ ir ≫ ψ = φ
 
 namespace GamDat
@@ -49,8 +53,8 @@ theorem ψ_spec (x : StructuredArrow t (Comma.snd (SingleObj.functor γ) j)) :
   (P.hu x.right.right x.right.hom (j.map x.hom)).exists.choose_spec
 
 theorem ψ_nat {x y : StructuredArrow t (Comma.snd (SingleObj.functor γ) j)} (f : x ⟶ y) :
-    (P.g f.right.left : P.S ⟶ P.S) ≫ P.ψ y = P.ψ x ≫ j.map f.right.right := by
-  have hw : (γ f.right.left : D ⟶ D) ≫ y.right.hom = x.right.hom ≫ j.map f.right.right := f.right.w
+    (P.g f.right.left).asHom ≫ P.ψ y = P.ψ x ≫ j.map f.right.right := by
+  have hw : (γ f.right.left).asHom ≫ y.right.hom = x.right.hom ≫ j.map f.right.right := f.right.w
   have hw' : x.hom ≫ f.right.right = y.hom := StructuredArrow.w f
   apply P.uniq
   · rw [← Category.assoc, P.hil, Category.assoc, (P.ψ_spec y).1, ← Category.assoc, (P.ψ_spec x).1, hw]
@@ -62,7 +66,7 @@ noncomputable def μ (F : C ⥤ ModuleCat.{w} R) : Mor (SingleObj.functor P.g �
   G := StructuredArrow.proj t (Comma.snd (SingleObj.functor γ) j) ⋙ Comma.fst (SingleObj.functor γ) j
   τ x := (F.map (P.ψ x)).hom
   nat {x y} f a := by
-    show (F.map (P.ψ y)).hom ((F.map (P.g f.right.left : P.S ⟶ P.S)).hom a) =
+    show (F.map (P.ψ y)).hom ((F.map (P.g f.right.left).asHom).hom a) =
       (F.map (j.map f.right.right)).hom ((F.map (P.ψ x)).hom a)
     rw [← ModuleCat.comp_apply, ← F.map_comp, ← ModuleCat.comp_apply, ← F.map_comp, P.ψ_nat]
 
@@ -73,11 +77,11 @@ noncomputable def Ψ [j.Full] [j.Faithful] :
   map {X Y} f := StructuredArrow.homMk
     { left := f.left, right := f.right
       w := by
-        have hw : (P.g f.left : P.S ⟶ P.S) ≫ Y.hom = X.hom ≫ j.map f.right := f.w
-        show (γ f.left : D ⟶ D) ≫ P.il ≫ Y.hom = (P.il ≫ X.hom) ≫ j.map f.right
+        have hw : (P.g f.left).asHom ≫ Y.hom = X.hom ≫ j.map f.right := f.w
+        show (γ f.left).asHom ≫ P.il ≫ Y.hom = (P.il ≫ X.hom) ≫ j.map f.right
         rw [← Category.assoc, ← P.hil, Category.assoc, hw, Category.assoc] }
     (by
-      have hw : (P.g f.left : P.S ⟶ P.S) ≫ Y.hom = X.hom ≫ j.map f.right := f.w
+      have hw : (P.g f.left).asHom ≫ Y.hom = X.hom ≫ j.map f.right := f.w
       apply j.map_injective
       show j.map (j.preimage (P.ir ≫ X.hom) ≫ f.right) = j.map (j.preimage (P.ir ≫ Y.hom))
       rw [j.map_comp, Functor.map_preimage, Functor.map_preimage, Category.assoc, ← hw, ← Category.assoc, P.hir])
@@ -91,9 +95,9 @@ theorem ψΨ [j.Full] [j.Faithful] (T : Comma (SingleObj.functor P.g) j) : P.ψ 
 
 theorem Ψ_full [j.Full] [j.Faithful] : P.Ψ.Full where
   map_surjective {X Y} f := by
-    have w1 : (γ f.right.left : D ⟶ D) ≫ (P.il ≫ Y.hom) = (P.il ≫ X.hom) ≫ j.map f.right.right := f.right.w
+    have w1 : (γ f.right.left).asHom ≫ (P.il ≫ Y.hom) = (P.il ≫ X.hom) ≫ j.map f.right.right := f.right.w
     have w2 : j.preimage (P.ir ≫ X.hom) ≫ f.right.right = j.preimage (P.ir ≫ Y.hom) := StructuredArrow.w f
-    have w : (P.g f.right.left : P.S ⟶ P.S) ≫ Y.hom = X.hom ≫ j.map f.right.right := by
+    have w : (P.g f.right.left).asHom ≫ Y.hom = X.hom ≫ j.map f.right.right := by
       apply P.uniq
       · rw [← Category.assoc, P.hil, Category.assoc, w1, Category.assoc]
       · rw [← Category.assoc, P.hir, ← Category.assoc, ← j.map_preimage (P.ir ≫ X.hom), ← j.map_comp, w2,
@@ -152,7 +156,7 @@ end gam
 
 end CrystallineSemistableComparison.B
 
-theorem CrystallineSemistableComparison.B.P.gam : ∀ n : ℕ, ∃ N : ℕ, ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {C' : Type u'} [Category.{v'} C'] (F : C ⥤ ModuleCat.{w} R) (j : C' ⥤ C) [j.Full] [j.Faithful] (Γ : Type) [CommMonoid Γ] (D : C) (γ : Γ →* End D) (s : R), Desc s F j → (∀ t : C', ∃ (S : C) (il : D ⟶ S) (ir : j.obj t ⟶ S) (g : Γ →* End S), (∀ a, il ≫ (g a : S ⟶ S) = (γ a : D ⟶ D) ≫ il) ∧ (∀ a, ir ≫ (g a : S ⟶ S) = ir) ∧ (∀ (t' : C') (c : D ⟶ j.obj t') (φ : j.obj t ⟶ j.obj t'), ∃! ψ : S ⟶ j.obj t', il ≫ ψ = c ∧ ir ≫ ψ = φ) ∧ InjUpTo s (aug (SingleObj.functor g ⋙ F) fun _ => (F.map ir).hom) ∧ ExactUpTo s (aug (SingleObj.functor g ⋙ F) fun _ => (F.map ir).hom) (d (SingleObj.functor g ⋙ F) 0) ∧ ∀ i ≤ n, ExactUpTo s (d (SingleObj.functor g ⋙ F) i) (d (SingleObj.functor g ⋙ F) (i + 1))) → RI (s ^ N) n F (SingleObj.functor γ) := by
+theorem CrystallineSemistableComparison.B.P.gam : ∀ n : ℕ, ∃ N : ℕ, ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {C' : Type u'} [Category.{v'} C'] (F : C ⥤ ModuleCat.{w} R) (j : C' ⥤ C) [j.Full] [j.Faithful] (Γ : Type) [CommMonoid Γ] (D : C) (γ : Γ →* End D) (s : R), Desc s F j → (∀ t : C', ∃ (S : C) (il : D ⟶ S) (ir : j.obj t ⟶ S) (g : Γ →* End S), (∀ a, il ≫ (g a).asHom = (γ a).asHom ≫ il) ∧ (∀ a, ir ≫ (g a).asHom = ir) ∧ (∀ (t' : C') (c : D ⟶ j.obj t') (φ : j.obj t ⟶ j.obj t'), ∃! ψ : S ⟶ j.obj t', il ≫ ψ = c ∧ ir ≫ ψ = φ) ∧ InjUpTo s (aug (SingleObj.functor g ⋙ F) fun _ => (F.map ir).hom) ∧ ExactUpTo s (aug (SingleObj.functor g ⋙ F) fun _ => (F.map ir).hom) (d (SingleObj.functor g ⋙ F) 0) ∧ ∀ i ≤ n, ExactUpTo s (d (SingleObj.functor g ⋙ F) i) (d (SingleObj.functor g ⋙ F) (i + 1))) → RI (s ^ N) n F (SingleObj.functor γ) := by
   intro n
   refine ⟨(2 * n + 3) + ((2 * n + 3) + (2 * n + 6) * (2 * n + 3)), ?_⟩
   intro R _ C _ C' _ F j _ _ Γ _ D γ s hD hT q hq
@@ -173,7 +177,7 @@ theorem CrystallineSemistableComparison.B.P.gam : ∀ n : ℕ, ∃ N : ℕ, ∀ 
       rw [← ModuleCat.comp_apply, ← F.map_comp, (P.ψ_spec x).2]
       rfl
     · intro x y φ a
-      show (F.map (g φ : S ⟶ S)).hom ((F.map ir).hom a) = (F.map ir).hom a
+      show (F.map (g φ).asHom).hom ((F.map ir).hom a) = (F.map ir).hom a
       rw [← ModuleCat.comp_apply, ← F.map_comp, hir]
   have heq : (gamCm F j (SingleObj.functor γ)).pull q ∘ₗ (Mor.restrict F (SingleObj.functor γ)).pull q =
       (Mor.restrict (j ⋙ F) (Comma.snd (SingleObj.functor γ) j)).pull q ∘ₗ (Mor.restrict F j).pull q := by

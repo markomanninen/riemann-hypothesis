@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.CompPiVLocGSame
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BridgeFinK
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.CompPiVLocGSame
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BridgeFinK
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem LocIdxLift_tV_theta_same (p : HeightOneSpectrum (𝓞 I.F)) (t : Fv I.F 
     rw [TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul]
     show evalV I.F p (singleV I.F p a) ⊗ₜ[I.F] e = a ⊗ₜ[I.F] e
     rw [Comp_evalV, Comp_single_same]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem LocIdxLift_tV_theta_ne (p v : HeightOneSpectrum (𝓞 I.F)) (h : v ≠ p) (t : Fv I.F p ⊗[I.F] I.E) :
     tV I v (thetaP I p t) = 0 := by
@@ -37,7 +41,7 @@ theorem LocIdxLift_tV_theta_ne (p v : HeightOneSpectrum (𝓞 I.F)) (h : v ≠ p
     rw [TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul]
     show evalV I.F v (singleV I.F p a) ⊗ₜ[I.F] e = 0
     rw [Comp_evalV, Comp_single_ne I p v h, TensorProduct.zero_tmul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
 
 theorem LocIdxLift_inj (t : Af I.F ⊗[I.F] I.E) (h : ∀ v, tV I v t = 0) : t = 0 := by
   have h0 := PI.FinKW.local_vector_injective I ((Algebra.TensorProduct.comm I.F I.E (Af I.F)).symm t) (fun v => by
@@ -65,14 +69,14 @@ def liftM (p : HeightOneSpectrum (𝓞 I.F)) (Y : Matrix (Fin I.n) (Fin I.n) (Fv
 theorem LocIdxLift_liftM_same (p : HeightOneSpectrum (𝓞 I.F))
     (Y : Matrix (Fin I.n) (Fin I.n) (Fv I.F p ⊗[I.F] I.E)) : (liftM I p Y).map (tV I p) = Y := by
   ext i j
-  simp only [liftM, Matrix.map_apply, Matrix.add_apply, map_add, LocIdxLift_tV_theta_same,
+  simp only [liftM, Matrix.map_apply, Matrix.add_apply, map_add (f := _), LocIdxLift_tV_theta_same,
     Matrix.sub_apply, Matrix.one_apply]
   split_ifs <;> simp
 
 theorem LocIdxLift_liftM_ne (p v : HeightOneSpectrum (𝓞 I.F)) (h : v ≠ p)
     (Y : Matrix (Fin I.n) (Fin I.n) (Fv I.F p ⊗[I.F] I.E)) : (liftM I p Y).map (tV I v) = 1 := by
   ext i j
-  simp only [liftM, Matrix.map_apply, Matrix.add_apply, map_add, LocIdxLift_tV_theta_ne I p v h, add_zero,
+  simp only [liftM, Matrix.map_apply, Matrix.add_apply, map_add (f := _), LocIdxLift_tV_theta_ne I p v h, add_zero,
     Matrix.one_apply]
   split_ifs <;> simp
 
@@ -141,7 +145,8 @@ theorem LocIdxLift_vecV_mulVec (v : HeightOneSpectrum (𝓞 I.F)) (M : Matrix (F
     (w : Fin I.n → I.E ⊗[I.F] Af I.F) :
     PI.FinKW.vecV I v (M *ᵥ w) = (M.map (PI.FinKW.psiV I v)) *ᵥ PI.FinKW.vecV I v w := by
   funext i
-  simp [PI.FinKW.vecV, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [PI.FinKW.vecV, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 variable (hb : Formalism.L2.SG.AdBridge.AdBridgeIso I)
 
@@ -169,6 +174,10 @@ theorem LocIdxLift_Kg (p : HeightOneSpectrum (𝓞 I.F)) (g : ℕ) (hg : g ≠ 0
     let w' := (I.fmat x - 1) *ᵥ w
     let c : I.E ⊗[I.F] Af I.F := algebraMap I.F _ ((g : I.F)⁻¹)
     have hgF : (g : I.F) ≠ 0 := by exact_mod_cast hg
+    have hcg : c * (g : I.E ⊗[I.F] Af I.F) = 1 := by
+      dsimp only [c]
+      rw [← map_natCast (algebraMap I.F (I.E ⊗[I.F] Af I.F)) g, ← map_mul,
+        inv_mul_cancel₀ hgF, map_one]
     refine ⟨c • w', ?_, ?_⟩
     · apply PI.FinKW.memLocFrom_of PI.FinKW.local_vector_injective I
       intro v
@@ -184,22 +193,15 @@ theorem LocIdxLift_Kg (p : HeightOneSpectrum (𝓞 I.F)) (g : ℕ) (hg : g ≠ 0
       · subst h
         have hwv := PI.FinKW.LocTo.mem_local_lattice_iff I w hw v
         obtain ⟨z, hz, he⟩ := hy.2 _ hwv
-        rw [hsame, he]
-        convert hz using 1
-        funext i
-        simp only [Pi.smul_apply, smul_eq_mul, c, AlgHom.commutes, Nat.cast_smul_eq_nsmul, nsmul_eq_mul, Pi.mul_apply,
-          Pi.natCast_apply]
-        rw [← mul_assoc, ← map_natCast (algebraMap I.F (Fv I.F v ⊗[I.F] I.E)) g, ← map_mul,
-          inv_mul_cancel₀ hgF, map_one, one_mul]
+        rw [hsame, he, Nat.cast_smul_eq_nsmul (v.adicCompletionIntegers I.F),
+          ← Nat.cast_smul_eq_nsmul (Fv I.F v ⊗[I.F] I.E) g z,
+          smul_smul, ← map_natCast (PI.FinKW.psiV I v) g, ← map_mul, hcg, map_one, one_smul]
+        exact hz
       · rw [hcomp v h]
         have : ((HA.mat (Fv I.F v) I.cm.sig I.J (1 : HA (Fv I.F v) I.cm.sig I.J) :
             GL (Fin I.n) (Fv I.F v ⊗[I.F] I.E)) : Matrix (Fin I.n) (Fin I.n) (Fv I.F v ⊗[I.F] I.E)) = 1 := rfl
         rw [this, sub_self, Matrix.zero_mulVec, smul_zero]
         exact zero_mem _
-    · rw [smul_smul]
-      have : (g : I.E ⊗[I.F] Af I.F) * c = 1 := by
-        simp only [c]
-        rw [← map_natCast (algebraMap I.F (I.E ⊗[I.F] Af I.F)) g, ← map_mul, mul_inv_cancel₀ hgF, map_one]
-      rw [this, one_smul]
+    · rw [smul_smul, mul_comm (g : I.E ⊗[I.F] Af I.F) c, hcg, one_smul]
 
 end PI.MassDataKppVolLemmas

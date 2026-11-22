@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockOfApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockHarmonicLatticeFgAndSpansValueSpace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsScaleOfChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockOfApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockHarmonicLatticeFgAndSpansValueSpace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsScaleOfChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem sum_dual_smul_eq_zero {W ι I : Type} [AddCommGroup W] [Module ℂ W] (F
   rw [Finset.sum_congr rfl fun a ha => by rw [hv' a ha, Finset.smul_sum], Finset.sum_comm]
   refine Finset.sum_eq_zero fun k hk => ?_
   have h3 := congrArg φ (h2 k hk)
-  rw [map_sum, map_zero] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h3
   simp_rw [smul_smul]
   rw [← Finset.sum_smul, Finset.sum_congr rfl fun a _ => by rw [mul_comm, ← smul_eq_mul, ← map_smul], h3, zero_smul]
 
@@ -59,7 +64,7 @@ theorem coefLatFn_mem_span {D : D7} {n : ℕ} {K : Type} [Field K] [NumberField 
     induction hG using Submodule.span_induction with
     | mem _ h => obtain ⟨k, rfl⟩ := h; exact Submodule.subset_span ⟨k, rfl⟩
     | zero => rw [map_zero, map_zero]; exact zero_mem _
-    | add _ _ _ _ h1 h2 => rw [map_add, map_add]; exact add_mem h1 h2
+    | add _ _ _ _ h1 h2 => rw [map_add (f := _), map_add (f := _)]; exact add_mem h1 h2
     | smul a G _ h1 =>
       rw [LinearMap.map_smulₛₗ, map_smul]
       exact Submodule.smul_mem _ (⟨σ a, hσ a⟩ : F) h1
@@ -85,10 +90,12 @@ theorem linearIndependent_complex : ∀ (D : D7) (S T : HSp D) (B : Base S T), B
   · rw [Finset.sum_apply]
     exact sum_mem fun a _ => Submodule.smul_mem _ (φ (c a) : ℂ) (hf a y).1
   · have h0 := congrArg (harmFn T.rank B.w B.F.BS) (congrFun h y)
-    rw [Finset.sum_apply, map_sum, Pi.zero_apply, map_zero] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_apply, map_sum, Pi.zero_apply, map_zero] at h0
     simp only [Pi.smul_apply, map_smul] at h0
     have := sum_dual_smul_eq_zero F hb (fun a => coefLatFn_mem_span hc hF B.w.lam _ (hf a y).2) s c h0 φ
-    rw [Finset.sum_apply, map_sum, ← this]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_apply, map_sum, ← this]
     exact Finset.sum_congr rfl fun a _ => (harmFn T.rank B.w B.F.BS).map_smul (φ (c a) : ℂ) (f a y)
 
 end GlobalTheory.PlaceIndep

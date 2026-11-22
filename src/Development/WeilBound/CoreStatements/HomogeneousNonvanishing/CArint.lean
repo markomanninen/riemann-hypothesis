@@ -1,8 +1,12 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexConjugationHermCompatStatement
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.CPtsat
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexConjugationHermCompatStatement
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.CPtsat
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.AnForm.M GlobalTheory.CompanionTheory.Ar.Cmp Filter Topology
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
@@ -23,7 +27,7 @@ theorem c_arint : SheetIndepStatement → PtsIndepStatement → GoodProjExistsSt
           simp
         funext i
         show starRingEnd ℂ (hex.choose (fun c => starRingEnd ℂ ((a + b) c)) i) = _
-        rw [h, map_add]
+        rw [h, map_add (f := _)]
         simp
       map_smul' := by
         intro r a
@@ -48,7 +52,7 @@ theorem c_arint : SheetIndepStatement → PtsIndepStatement → GoodProjExistsSt
       exact ⟨i, by simpa [conjPt] using hi⟩
     have hc : ContDiff ℝ (↑(⊤ : ℕ∞)) (conjPt : ((k : K) × ι k → ℂ) → (k : K) × ι k → ℂ) := by
       refine contDiff_pi.2 fun p => ?_
-      have h1 : ContDiff ℝ (↑(⊤ : ℕ∞)) (fun z : (k : K) × ι k → ℂ => z p) := contDiff_apply ℝ ℂ p
+      have h1 : ContDiff ℝ (↑(⊤ : ℕ∞)) (fun z : (k : K) × ι k → ℂ => z p) := contDiff_apply ℝ (fun _ => ℂ) p
       have h2 : ContDiff ℝ (↑(⊤ : ℕ∞)) (fun x : ℂ => starRingEnd ℂ x) := by
         have h3 : (fun x : ℂ => starRingEnd ℂ x) = (Complex.conjCLE : ℂ → ℂ) := by
           funext x
@@ -67,7 +71,7 @@ theorem c_arint : SheetIndepStatement → PtsIndepStatement → GoodProjExistsSt
   have hind := hP K ι P e hex.choose Ψ' (fun j => conjLine (L j)) (conjLine A) s hV hgood hgood'
     hLc hAc hsc
   unfold arInt ptsIntegral
-  rw [dif_pos hex, dif_pos hex]
+  rw [dite_eq_left hex, dite_eq_left hex]
   exact hind.trans heq
 
 end PositivityTheory.UnitarySelfGeneration

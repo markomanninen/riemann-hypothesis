@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 open MeasureTheory Matrix
 
@@ -49,19 +53,24 @@ omit [Fintype I] in
 theorem op_apply {ι : Type} [Fintype ι] (a : ι → Gf) (f : X I × Gf → ℂ) (p : X I × Gf) :
     Dat.Op a f p = ∑ i, f (p.1, p.2 * a i) := rfl
 
-theorem isForm_zero (k : I → ℕ) : D.IsForm k 0 where
-  hol x := ⟨continuous_const, fun _ _ => holomorphic_on_half_plane_zero⟩
-  aut γ z x := by simp
-  lev z x h := by simp
-  bdd := ⟨0, fun z x => by simp⟩
+theorem isForm_zero (k : I → ℕ) : D.IsForm k 0 := by
+  refine ⟨fun _ => ⟨continuous_const, fun _ _ => holomorphic_on_half_plane_zero⟩, ?_, ?_, ?_⟩
+  · intro γ z x
+    simp
+  · intro z x h
+    simp
+  · exact ⟨0, fun z x => by simp⟩
 
 theorem isForm_add (k : I → ℕ) (f g : X I × Gf → ℂ) (hf : D.IsForm k f) (hg : D.IsForm k g) :
-    D.IsForm k (f + g) where
-  hol x := ⟨(hf.hol x).1.add (hg.hol x).1, fun z v => holomorphic_on_half_plane_add _ _ ((hf.hol x).2 z v) ((hg.hol x).2 z v)⟩
-  aut γ z x := by simp [Pi.add_apply, hf.aut, hg.aut, mul_add]
-  lev z x h := by simp [Pi.add_apply, hf.lev, hg.lev, mul_add]
-  bdd := by
-    obtain ⟨C₁, h₁⟩ := hf.bdd
+    D.IsForm k (f + g) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · exact fun x => ⟨(hf.hol x).1.add (hg.hol x).1,
+      fun z v => holomorphic_on_half_plane_add _ _ ((hf.hol x).2 z v) ((hg.hol x).2 z v)⟩
+  · intro γ z x
+    simp [Pi.add_apply, hf.aut, hg.aut, mul_add]
+  · intro z x h
+    simp [Pi.add_apply, hf.lev, hg.lev, mul_add]
+  · obtain ⟨C₁, h₁⟩ := hf.bdd
     obtain ⟨C₂, h₂⟩ := hg.bdd
     refine ⟨C₁ + C₂, fun z x => ?_⟩
     have hn := nrm_nonneg k z
@@ -71,12 +80,17 @@ theorem isForm_add (k : I → ℕ) (f g : X I × Gf → ℂ) (hf : D.IsForm k f)
       _ ≤ C₁ + C₂ := add_le_add (h₁ z x) (h₂ z x)
 
 theorem isForm_smul (k : I → ℕ) (c : ℂ) (f : X I × Gf → ℂ) (hf : D.IsForm k f) :
-    D.IsForm k (c • f) where
-  hol x := ⟨continuous_const.mul (hf.hol x).1, fun z v => holomorphic_on_half_plane_const_mul c _ ((hf.hol x).2 z v)⟩
-  aut γ z x := by simp [Pi.smul_apply, hf.aut]; ring
-  lev z x h := by simp [Pi.smul_apply, hf.lev]; ring
-  bdd := by
-    obtain ⟨C, h⟩ := hf.bdd
+    D.IsForm k (c • f) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · exact fun x => ⟨continuous_const.mul (hf.hol x).1,
+      fun z v => holomorphic_on_half_plane_const_mul c _ ((hf.hol x).2 z v)⟩
+  · intro γ z x
+    simp [Pi.smul_apply, hf.aut]
+    ring
+  · intro z x h
+    simp [Pi.smul_apply, hf.lev]
+    ring
+  · obtain ⟨C, h⟩ := hf.bdd
     refine ⟨‖c‖ * C, fun z x => ?_⟩
     have := h z x
     have hc := norm_nonneg c
@@ -97,24 +111,24 @@ theorem mem_M (k : I → ℕ) (f : X I × Gf → ℂ) : f ∈ D.M k ↔ D.IsForm
 
 open Classical in
 theorem isForm_op (k : I → ℕ) {ι : Type} [Fintype ι] (a : ι → Gf) (ha : D.Good a)
-    (f : X I × Gf → ℂ) (hf : D.IsForm k f) : D.IsForm k (Dat.Op a f) where
-  hol x := by
+    (f : X I × Gf → ℂ) (hf : D.IsForm k f) : D.IsForm k (Dat.Op a f) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro x
     refine ⟨?_, fun z v => ?_⟩
     · simp only [op_apply]
       exact continuous_finsetSum _ fun i _ => (hf.hol (x * a i)).1
     · simp only [op_apply]
       exact holomorphic_on_half_plane_finset_sum Finset.univ (fun i t => f (Function.update z v t, x * a i))
         (fun i _ => (hf.hol (x * a i)).2 z v)
-  aut γ z x := by
+  · intro γ z x
     simp only [op_apply]
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [mul_assoc, hf.aut]
-  lev z x h := by
+  · intro z x h
     simp only [op_apply]
     exact ha (fun y => f (z, y)) (fun y h' => hf.lev z y h') x h
-  bdd := by
-    obtain ⟨C, hC⟩ := hf.bdd
+  · obtain ⟨C, hC⟩ := hf.bdd
     refine ⟨Fintype.card ι * C, fun z x => ?_⟩
     have hn := nrm_nonneg k z
     simp only [op_apply]

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.CyclotomicNorms.StatementI
-import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.CyclotomicNorms.StatementI
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+
+@[expose] public section
 
 noncomputable section
 

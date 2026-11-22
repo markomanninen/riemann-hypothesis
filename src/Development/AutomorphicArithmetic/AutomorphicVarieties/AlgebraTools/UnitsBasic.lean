@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InvAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InvAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct UpperTheory.V.AlgebraTools
 
@@ -42,7 +46,8 @@ theorem UpperTheory.V.AlgebraTools.units_basic :
       intro i
       rw [T.tr_comm, ← mul_assoc, U.st_mul_x_eq]
     simp_rw [h]
-    rw [← map_sum, ← Finset.sum_mul, U.coi.complete, one_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← Finset.sum_mul, U.coi.complete, one_mul]
   · intro i j y h
     have h7 := key i j y
     rw [← h] at h7

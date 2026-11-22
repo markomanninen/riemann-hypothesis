@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFrameIotaA
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfM
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFrameIotaA
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfM
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,11 +62,42 @@ theorem betaL_proj {r : ℕ} (e u : Fin r → (VS D).V) (v : Vp D p) :
   exact LinearMap.congr_fun hφ v
 
 theorem loc_gen (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hL : Submodule.IsLattice D.host.E Λ)
-    (hU : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ) {T' : D.host.E} (F' : LFlag (VS D) D.R.rS T')
+    (hU : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ) {T' : D.host.E} (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (X₁ : Submodule (D.s.atP p).Ep (Vp D p)) (hX : ∀ a, baseChange₂ D p (F'.fl.e a) ∈ X₁) {x : Vp D p}
     (hx : x ∈ lattice₂ D Z.M p Λ) (hxo : x ∈ (locH Z p).perp X₁) :
     x ∈ Submodule.span (Z.M p).L.O (baseChange₂ D p '' (Lrep Λ F' : Set (VS D).V)) := by
-  obtain ⟨u, hu⟩ := proj_exists Λ hL hU F'
+  have hFull : Submodule.IsFullLattice D.host.E Λ := by
+    let := hL
+    refine { span_eq_top := ?_ }
+    let W := Submodule.span D.host.E (Λ : Set (VS D).V)
+    change W = ⊤
+    by_contra h
+    let e : (VS D).V ≃ₗ⋆[D.host.E] (VS D).V :=
+      (VS D).frame.equivFun.trans ((starLinearEquiv D.host.E).trans (VS D).frame.equivFun.symm)
+    let g : (VS D).V →ₗ[D.host.E] Module.Dual D.host.E W :=
+      (LinearMap.domRestrict' W).comp ((VS D).hT.comp e.toLinearMap)
+    have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E (VS D).V := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt h
+    obtain ⟨x, hx, hx₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    have hsmul (a : D.host.E) : a • e x ∈ Λ := by
+      rw [← hU, Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+      intro y hy
+      have hxy : (VS D).hT (e x) y = 0 :=
+        congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+      have hyx : (VS D).hT y (e x) = 0 := by
+        have hh := (VS D).herm.eq (e x) y
+        simpa [hxy] using hh.symm
+      simp [map_smul, hyx]
+    let i : D.host.E →ₗ[𝓞 D.host.E] Λ :=
+      ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict Λ hsmul
+    let : Module.Finite (𝓞 D.host.E) Λ := Module.Finite.iff_fg.mpr hL.fg
+    let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField D.host.E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 D.host.E) D.host.E) (Field.toIsField D.host.E))
+  obtain ⟨u, hu⟩ := proj_exists Λ hFull hU F'
   have hPv : ∀ v, (LinearMap.id - ∑ a, ((VS D).hT (F'.fl.e a)).smulRight (u a) :
       (VS D).V →ₗ[D.host.E] (VS D).V) v = v - ∑ a, (VS D).hT (F'.fl.e a) v • u a := fun v => by
     simp only [LinearMap.sub_apply, LinearMap.id_apply, LinearMap.sum_apply,
@@ -80,7 +115,7 @@ theorem loc_gen (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hL : Submodule.IsLatt
       rw [betaL_bc]
       exact Submodule.subset_span ⟨_, by rw [hPv]; exact hu v hv, rfl⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add y y' _ _ hy hy' => rw [map_add]; exact Submodule.add_mem _ hy hy'
+    | add y y' _ _ hy hy' => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hy'
     | smul o y _ hy =>
       rw [Subring.smul_def, map_smul, ← Subring.smul_def]
       exact Submodule.smul_mem _ _ hy
@@ -113,14 +148,14 @@ theorem g_loc (Λ : Submodule (𝓞 D.host.E) (VS D).V) (gg : Loc.SplitG (Z.M p)
     rw [e]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨baseChange₂ D p l, Submodule.subset_span ⟨l, hl, rfl⟩, rfl⟩)
 
-theorem bcP_N (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (F : LFlag (VS D) D.R.rS T)
+theorem bcP_N (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
     (gg : Loc.SplitG (Z.M p).L) (hgg : (Z.M p).split = some gg) {v : (VS D).V}
     (hv : v ∈ Ideal.span {((gS D : ℕ) : 𝓞 D.host.E)} • Λ ⊔ XLam Λ F) :
     baseChange₂ D p v ∈ (locH Z p).smulLat (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (gg.q : (D.s.atP p).Fp))
         (lattice₂ D Z.M p Λ) ⊔
       (lattice₂ D Z.M p Λ ⊓ XO Z p ((locH Z p).X (fun a => sF Z p a • baseChange₂ D p (frame F a)))) := by
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hv
-  rw [map_add]
+  rw [map_add (f := _)]
   refine Submodule.add_mem_sup ?_ ⟨Submodule.subset_span ⟨z, hz.1, rfl⟩, ?_⟩
   · obtain ⟨w, hw, rfl⟩ := (Formalism.L2.SG.Pf.mem_gSmul (gS D) Λ y).1 hy
     exact g_loc Z p Λ gg hgg hw
@@ -128,8 +163,8 @@ theorem bcP_N (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (F : LFla
     rw [Xsp_eq_Xs] at h
     exact bcP_mem_X Z p (frame F) (sF Z p) (isUnit_sF Z p) h
 
-theorem loc_beta (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
+theorem loc_beta (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (gg : Loc.SplitG (Z.M p).L) (hgg : (Z.M p).split = some gg)
     (hglob : ∀ w ∈ Lrep Λ F', β w - w ∈ Ideal.span {((gS D : ℕ) : 𝓞 D.host.E)} • Λ ⊔ XLam Λ F)
     {x : Vp D p} (hx : x ∈ Submodule.span (Z.M p).L.O (baseChange₂ D p '' (Lrep Λ F' : Set (VS D).V))) :
@@ -148,7 +183,7 @@ theorem loc_beta (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F 
     exact key w hw
   | zero => simp
   | add a b _ _ ha hb =>
-    rw [map_add, add_sub_add_comm]
+    rw [map_add (f := _), add_sub_add_comm]
     exact add_mem ha hb
   | smul c a _ ha =>
     have e : betaP p β (c • a) - c • a = c • (betaP p β a - a) := by
@@ -157,7 +192,7 @@ theorem loc_beta (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F 
     exact Submodule.smul_mem _ c ha
 
 theorem iotaG_main (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' F'' : LFlag (VS D) D.R.rS T') (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' F'' : LFlag (D.sp.Y 0) D.R.rS T') (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (hF : FixedHyp D Λ F) (hc' : IsFixedConv Λ (gS D) F') (hc'' : IsFixedConv Λ (gS D) F'')
     (ha' : IsAdmissible Λ (gS D) F F') (ha'' : IsAdmissible Λ (gS D) F F'')
     (hP : IsPair Λ F F' F'' β (gS D))
@@ -254,14 +289,5 @@ theorem iotaStep_holds : ScalarFramePf.IotaStep := by
   intro D Z Λ T T' F F' F'' β hF hl' hl'' hc' hc'' ha' ha'' hP hg' hg'' hs hsc hG' hG'' hT hT' p gg hgg
   exact ScalarFrameIota.iotaG_main Z p Λ F F' F'' β hF hc' hc'' ha' ha'' hP
     (gfacts_of Λ F F' F'' β hF hl' hl'' hc' hc'' hP hs hsc hG' hG'' hT hT') gg hgg
-
-theorem scalarFrameCT_holds : ScalarFramePf.ScalarFrameCT := by
-  intro D Z Λ T T' F F' F'' β Tn T'n hF hl' hl'' hc' hc'' ha' ha'' hP hg' hg'' hs hsc hG' hG'' hT hT' p
-  exact isScalarPair_lt (Z := Z) (p := p) Λ _ _ _ β Tn T'n
-    (gfacts_of Λ F F' F'' β hF hl' hl'' hc' hc'' hP hs hsc hG' hG'' hT hT')
-    (iotaStep_holds D Z Λ F F' F'' β hF hl' hl'' hc' hc'' ha' ha'' hP hg' hg'' hs hsc hG' hG'' hT hT' p)
-
-theorem scalarFrameCT_explicit' : type_of% (scalarFrameCT_explicit iotaStep_holds) :=
-  scalarFrameCT_explicit iotaStep_holds
 
 end Formalism.L2.SG.Pf

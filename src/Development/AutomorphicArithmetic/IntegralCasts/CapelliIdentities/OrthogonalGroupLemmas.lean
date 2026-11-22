@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ClosureSpanCoefficients
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ClosureSpanCoefficients
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.OrthogonalGroupLemmas.aux1 :
     ∀ (F : Type) [inst : Field F] [inst_1 : NumberField F] {a b : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F},
@@ -28,7 +32,7 @@ theorem UpperTheory.Reformulated.B.OrthogonalGroupLemmas.aux1 :
   · have h : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F (a + b) = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F a + GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F b :=
       map_add (NumberField.InfiniteAdeleRing.ringEquiv_mixedSpace F) a.1 b.1
     rw [h, ha.1, hb.1, add_zero]
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact add_mem (ha.2 v) (hb.2 v)
 
 theorem UpperTheory.Reformulated.B.OrthogonalGroupLemmas.aux2 :
@@ -81,7 +85,7 @@ theorem UpperTheory.Reformulated.B.OrthogonalGroupLemmas.lat_gen :
       Submodule.IsLattice E Y.L →
         ∃ (m : ℕ) (x : Fin m → ↥Y.L),
           Submodule.span ℤ (Set.range x) = ⊤ ∧
-            ∀ (z : Fin n → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E),
+            ∀ (z : Fin n → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)),
               z ∈ GlobalTheory.ThK.latHat Y ↔
                 ∃ (a : Fin m → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F),
                   (∀ (i : Fin m), a i ∈ UpperTheory.Reformulated.B.OrthogonalGroupLemmas.Oh F) ∧ ∑ i : Fin m, a i • GlobalTheory.ThK.incV F (↑(x i) : Fin n → E) = z := by
@@ -90,7 +94,7 @@ theorem UpperTheory.Reformulated.B.OrthogonalGroupLemmas.lat_gen :
   have h2 : Module.Finite ℤ Y.L := Module.Finite.trans (NumberField.RingOfIntegers E) Y.L
   obtain ⟨m, x, hx⟩ := Module.Finite.exists_fin (R := ℤ) (M := Y.L)
   refine ⟨m, x, hx, fun z => ?_⟩
-  let f : Y.L →+ (Fin n → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) :=
+  let f : Y.L →+ (Fin n → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :=
     { toFun := fun l => GlobalTheory.ThK.incV F (l : Fin n → E)
       map_zero' := funext fun _ => map_zero (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (E := E) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F))
       map_add' := fun a b => funext fun i =>

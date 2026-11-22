@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,12 +34,6 @@ def Ers (r s : Md n) : abelian₂ n →ₗ[ℂ] abelian₂ n :=
 
 def Dop (B : X n) : abelian₂ n →ₗ[ℂ] abelian₂ n := ∑ r, ∑ s, B r s • Ers r s
 
-theorem Dop_add (B B' : X n) : Dop (B + B') = Dop B + Dop B' := by
-  simp only [Dop, Pi.add_apply, add_smul, Finset.sum_add_distrib]
-
-theorem Dop_smul (c : ℂ) (B : X n) : Dop (c • B) = c • Dop B := by
-  simp only [Dop, Pi.smul_apply, smul_eq_mul, Finset.smul_sum, smul_smul]
-
 theorem Dop_apply (B : X n) (x : abelian₂ n) : Dop B x = ∑ r, ∑ s, B r s •
     (ExteriorAlgebra.ι ℂ (Pi.single r 1) * CliffordAlgebra.contractLeft (Q := (0 : QuadraticForm ℂ (Md n → ℂ)))
       (dualOf (Pi.single s 1)) x) := by
@@ -58,7 +56,8 @@ theorem Dop_ι_mul (B : X n) (m : Md n → ℂ) (x : abelian₂ n) :
   have h1 : ExteriorAlgebra.ι ℂ (mv B m) =
       ∑ r, ∑ s, (B r s * m s) • ExteriorAlgebra.ι ℂ (Pi.single r (1 : ℂ)) := by
     conv_lhs => rw [← sum_single_smul (mv B m)]
-    simp only [map_sum, map_smul, mv, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, mv, Finset.sum_smul]
   rw [Dop_apply, Dop_apply, h1, Finset.sum_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [Finset.sum_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
@@ -68,9 +67,9 @@ theorem Dop_ι_mul (B : X n) (m : Md n → ℂ) (x : abelian₂ n) :
 
 def Philin (n : ℕ) : (Md n → ℂ) →ₗ[ℂ] (Finset (Md n) → ℂ) →ₗ[ℂ] (Finset (Md n) → ℂ) :=
   LinearMap.mk₂ ℂ (fun u c => (fb n).equivFun (ExteriorAlgebra.ι ℂ u * (fb n).equivFun.symm c))
-    (fun u u' c => by simp [map_add, add_mul])
+    (fun u u' c => by simp [map_add (f := _), add_mul])
     (fun a u c => by simp [map_smul, smul_mul_assoc])
-    (fun u c c' => by simp [map_add, mul_add])
+    (fun u c c' => by simp [map_add (f := _), mul_add])
     (fun a u c => by simp [map_smul, mul_smul_comm])
 
 def Phi (n : ℕ) : (Md n → ℂ) →L[ℂ] (Finset (Md n) → ℂ) →L[ℂ] (Finset (Md n) → ℂ) :=
@@ -90,11 +89,6 @@ theorem mvL_apply (m : Md n → ℂ) (g : X n) : mvL m g = mv g m := rfl
 
 theorem mv_one' (m : Md n → ℂ) : mv (one' n) m = m := by
   ext r; simp [mv, one']
-
-def dLin (y : abelian₂ n) : X n →ₗ[ℂ] (Finset (Md n) → ℂ) where
-  toFun B := (fb n).equivFun (Dop B y)
-  map_add' B B' := by rw [Dop_add, LinearMap.add_apply, map_add]
-  map_smul' c B := by rw [Dop_smul, LinearMap.smul_apply, map_smul]; rfl
 
 theorem F_one (y : abelian₂ n) : F y (one' n) = (fb n).equivFun y := by
   have h : Matrix.of (one' n) = 1 := by
@@ -128,13 +122,13 @@ theorem key (y : abelian₂ n) : ContDiff ℂ ∞ (F y) ∧
     have hF : F (x + z) = fun g => F x g + F z g := by
       funext g
       unfold F
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
     refine ⟨?_, Lx + Lz, ?_, fun B => ?_⟩
     · rw [hF]
       exact hxc.add hzc
     · rw [hF]
       exact hxd.add hzd
-    · rw [ContinuousLinearMap.add_apply, hxL, hzL, map_add, map_add]
+    · rw [ContinuousLinearMap.add_apply, hxL, hzL, map_add (f := _), map_add (f := _)]
   · rintro x m ⟨hxc, Lx, hxd, hxL⟩
     rw [F_ι_mul]
     have hd := (Phi n).hasFDerivAt_of_bilinear (mvL m).hasFDerivAt hxd

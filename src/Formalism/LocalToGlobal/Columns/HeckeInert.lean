@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.HeckeSp
+module
+
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,9 +22,6 @@ def IsInertNbr (P : Ideal (𝓞 E)) (s : List ℕ) (N N' : Submodule (𝓞 E) (S
 
 theorem IsInertNbr.symm {P : Ideal (𝓞 E)} {s : List ℕ} {N N' : Submodule (𝓞 E) (Sp E n)}
     (h : IsInertNbr P s N N') : IsInertNbr P s N' N := ⟨h.2, h.1⟩
-
-theorem isInertNbr_comm {P : Ideal (𝓞 E)} {s : List ℕ} {N N' : Submodule (𝓞 E) (Sp E n)} :
-    IsInertNbr P s N N' ↔ IsInertNbr P s N' N := ⟨IsInertNbr.symm, IsInertNbr.symm⟩
 
 theorem IsInertNbr.gmap {P : Ideal (𝓞 E)} {s : List ℕ} {N N' : Submodule (𝓞 E) (Sp E n)}
     (h : IsInertNbr P s N N') (g : Sp E n ≃ₗ[E] Sp E n) : IsInertNbr P s (gmap g N) (gmap g N') := by
@@ -57,19 +58,16 @@ theorem IsInertNbr.smul_le {P : Ideal (𝓞 E)} {s : List ℕ} {N N' : Submodule
 
 variable {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
-def DecoSet.inertSet (P : Ideal (𝓞 E)) (s : List ℕ) (d : DecoSet E n ST SG) : Set (DecoSet E n ST SG) :=
+def DecoSet.inertSet (P : Ideal (𝓞 E)) (s : List ℕ) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : Set (DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :=
   {d' | IsInertNbr P s d.1.N d'.1.N ∧ d'.1.f = d.1.f ∧ d'.1.be = d.1.be}
 
-open Classical in
 
-def DecoSet.inertNb (P : Ideal (𝓞 E)) (s : List ℕ) (d : DecoSet E n ST SG) : Finset (DecoSet E n ST SG) :=
+open Classical in
+def DecoSet.inertNb (P : Ideal (𝓞 E)) (s : List ℕ) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : Finset (DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :=
   if h : (d.inertSet P s).Finite then h.toFinset else ∅
 
-theorem DecoSet.inertSet_symm {P : Ideal (𝓞 E)} {s : List ℕ} {d e : DecoSet E n ST SG} :
-    e ∈ d.inertSet P s ↔ d ∈ e.inertSet P s := ⟨fun h => ⟨h.1.symm, h.2.1.symm, h.2.2.symm⟩, fun h => ⟨h.1.symm, h.2.1.symm, h.2.2.symm⟩⟩
-
-theorem DecoSet.smul_mem_inertSet {P : Ideal (𝓞 E)} {s : List ℕ} (a : UF E n × GLG E n SG)
-    {d e : DecoSet E n ST SG} (h : e ∈ d.inertSet P s) : a • e ∈ (a • d).inertSet P s := by
+theorem DecoSet.smul_mem_inertSet {P : Ideal (𝓞 E)} {s : List ℕ} (a : UF E n × GLG (E := E) (n := n) (SG := SG))
+    {d e : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)} (h : e ∈ d.inertSet P s) : a • e ∈ (a • d).inertSet P s := by
   obtain ⟨h1, h2, h3⟩ := h
   refine ⟨?_, ?_, ?_⟩
   · rw [DecoSet.smul_val, DecoSet.smul_val]
@@ -79,16 +77,16 @@ theorem DecoSet.smul_mem_inertSet {P : Ideal (𝓞 E)} {s : List ℕ} (a : UF E 
   · rw [DecoSet.smul_val, DecoSet.smul_val]
     simp only [Deco.act, h3]
 
-theorem DecoSet.smul_mem_inertSet_iff {P : Ideal (𝓞 E)} {s : List ℕ} (a : UF E n × GLG E n SG)
-    {d e : DecoSet E n ST SG} : a • e ∈ (a • d).inertSet P s ↔ e ∈ d.inertSet P s := by
+theorem DecoSet.smul_mem_inertSet_iff {P : Ideal (𝓞 E)} {s : List ℕ} (a : UF E n × GLG (E := E) (n := n) (SG := SG))
+    {d e : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)} : a • e ∈ (a • d).inertSet P s ↔ e ∈ d.inertSet P s := by
   constructor
   · intro h
     have := DecoSet.smul_mem_inertSet a⁻¹ h
     simpa only [inv_smul_smul] using this
   · exact DecoSet.smul_mem_inertSet a
 
-theorem DecoSet.inertSet_smul (P : Ideal (𝓞 E)) (s : List ℕ) (a : UF E n × GLG E n SG)
-    (d : DecoSet E n ST SG) : (a • d).inertSet P s = (fun e => a • e) '' d.inertSet P s := by
+theorem DecoSet.inertSet_smul (P : Ideal (𝓞 E)) (s : List ℕ) (a : UF E n × GLG (E := E) (n := n) (SG := SG))
+    (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : (a • d).inertSet P s = (fun e => a • e) '' d.inertSet P s := by
   ext e
   constructor
   · intro he
@@ -98,17 +96,17 @@ theorem DecoSet.inertSet_smul (P : Ideal (𝓞 E)) (s : List ℕ) (a : UF E n ×
   · rintro ⟨e', he', rfl⟩
     exact DecoSet.smul_mem_inertSet a he'
 
-theorem DecoSet.smul_mem_inertNb_iff {P : Ideal (𝓞 E)} {s : List ℕ} (a : UF E n × GLG E n SG)
-    {d e : DecoSet E n ST SG} : a • e ∈ (a • d).inertNb P s ↔ e ∈ d.inertNb P s := by
+theorem DecoSet.smul_mem_inertNb_iff {P : Ideal (𝓞 E)} {s : List ℕ} (a : UF E n × GLG (E := E) (n := n) (SG := SG))
+    {d e : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)} : a • e ∈ (a • d).inertNb P s ↔ e ∈ d.inertNb P s := by
   classical
   unfold DecoSet.inertNb
   have hfin : ((a • d).inertSet P s).Finite ↔ (d.inertSet P s).Finite := by
     rw [DecoSet.inertSet_smul]
     exact Set.finite_image_iff (MulAction.injective a).injOn
   by_cases h : (d.inertSet P s).Finite
-  · rw [dif_pos (hfin.2 h), dif_pos h, Set.Finite.mem_toFinset, Set.Finite.mem_toFinset]
+  · rw [dite_eq_left (hfin.2 h), dite_eq_left h, Set.Finite.mem_toFinset, Set.Finite.mem_toFinset]
     exact DecoSet.smul_mem_inertSet_iff a
-  · rw [dif_neg (mt hfin.1 h), dif_neg h]
+  · rw [dite_eq_right (mt hfin.1 h), dite_eq_right h]
     simp
 
 end InertNbr
@@ -150,17 +148,14 @@ abbrev LevOffI (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (S0 : Set (HeightOn
 def heckeFamI (c : DecoPts S E n ST SG) (S0 : Set (HeightOneSpectrum (𝓞 E))) :
     LevOffI ST SG S0 × List ℕ → End K S.EqFun := fun x => (heckeI c x.1.1.asIdeal x.2).op
 
-variable (ST SG) in
 
+variable (ST SG) in
 abbrev HeckeIx (S0 : Set (HeightOneSpectrum (𝓞 E))) : Type :=
   (LevOff ST SG S0 × ℕ) ⊕ (LevOffI ST SG S0 × List ℕ)
 
 def heckeFamAll (c : DecoPts S E n ST SG) (S0 : Set (HeightOneSpectrum (𝓞 E))) :
     HeckeIx ST SG S0 → End K S.EqFun :=
   Sum.elim (heckeFam c S0) (heckeFamI c S0)
-
-def heckeAlgAll (c : DecoPts S E n ST SG) (S0 : Set (HeightOneSpectrum (𝓞 E))) : Subalgebra K (End K S.EqFun) :=
-  hAlg K (heckeFamAll c S0)
 
 def HeckeCommAll (c : DecoPts S E n ST SG) (S0 : Set (HeightOneSpectrum (𝓞 E))) : Prop :=
   PairComm (heckeFamAll c S0)

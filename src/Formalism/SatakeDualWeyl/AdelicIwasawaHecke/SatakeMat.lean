@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.StatementE
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeComb
+module
+
+public import Formalism.SatakeDualWeyl.StatementE
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeComb
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,24 +58,24 @@ theorem satakeN_mul_self (S : Finset (Fin n)) (c c' : satakePairs S → O) :
   rw [Matrix.mul_apply, Matrix.zero_apply]
   refine Finset.sum_eq_zero fun b _ => ?_
   by_cases hb : b ∈ S
-  · rw [satakeN_apply O S c a b, dif_neg (fun h => h.2.1 hb), zero_mul]
-  · rw [satakeN_apply O S c' b l, dif_neg (fun h => hb h.1), mul_zero]
+  · rw [satakeN_apply O S c a b, dite_eq_right (fun h => h.2.1 hb), zero_mul]
+  · rw [satakeN_apply O S c' b l, dite_eq_right (fun h => hb h.1), mul_zero]
 
 theorem satakeN_mul_diag (S S' : Finset (Fin n)) (c : satakePairs S → O) (c' : satakePairs S' → O)
     (a : Fin n) : (satakeN O S c * satakeN O S' c') a a = 0 := by
   rw [Matrix.mul_apply]
   refine Finset.sum_eq_zero fun b _ => ?_
   by_cases hab : a < b
-  · rw [satakeN_apply O S' c' b a, dif_neg (fun h => absurd h.2.2 (lt_asymm hab)), mul_zero]
-  · rw [satakeN_apply O S c a b, dif_neg (fun h => hab h.2.2), zero_mul]
+  · rw [satakeN_apply O S' c' b a, dite_eq_right (fun h => absurd h.2.2 (lt_asymm hab)), mul_zero]
+  · rw [satakeN_apply O S c a b, dite_eq_right (fun h => hab h.2.2), zero_mul]
 
 theorem satakeN_diag (S : Finset (Fin n)) (c : satakePairs S → O) (a : Fin n) :
     satakeN O S c a a = 0 := by
-  rw [satakeN_apply, dif_neg (fun h => lt_irrefl a h.2.2)]
+  rw [satakeN_apply, dite_eq_right (fun h => lt_irrefl a h.2.2)]
 
 theorem satakeN_lower (S : Finset (Fin n)) (c : satakePairs S → O) (a l : Fin n) (h : l < a) :
     satakeN O S c a l = 0 := by
-  rw [satakeN_apply, dif_neg (fun h' => absurd h'.2.2 (lt_asymm h))]
+  rw [satakeN_apply, dite_eq_right (fun h' => absurd h'.2.2 (lt_asymm h))]
 
 variable {O}
 
@@ -245,7 +249,7 @@ theorem satake_entry_of_mem {π : L} (hπ : π ≠ 0) (S : Finset (Fin n)) (c c'
   rw [satakeGL_inv_mul_apply, if_pos ha, if_neg hl, mul_one, Matrix.sub_mul, Matrix.mul_add,
     Matrix.mul_add, satakeN_mul_self, Matrix.one_mul, Matrix.one_mul, Matrix.mul_one, add_zero,
     Matrix.sub_apply, Matrix.add_apply, Matrix.one_apply_ne hal.ne, satakeN_apply O S c' a l,
-    satakeN_apply O S c a l, dif_pos ⟨ha, hl, hal⟩, dif_pos ⟨ha, hl, hal⟩, zero_add] at h1
+    satakeN_apply O S c a l, dite_eq_left ⟨ha, hl, hal⟩, dite_eq_left ⟨ha, hl, hal⟩, zero_add] at h1
   exact h1
 
 abbrev satakeRes (π : O) : Type := O ⧸ Ideal.span {π}

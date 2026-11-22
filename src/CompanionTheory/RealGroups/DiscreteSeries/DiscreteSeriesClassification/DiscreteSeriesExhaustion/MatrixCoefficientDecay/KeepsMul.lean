@@ -1,5 +1,9 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.L2Embedding
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedEmbeddingToM
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.L2Embedding
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedEmbeddingToM
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def tensCoef0 {V : Type} [AddCommGroup V] [Module ℂ V] (c : V →ₗ[ℂ] (Mat
   toFun u := fun g => ∑ i, g j i * c (u i) g
   map_add' u v := by
     funext g
-    simp only [Pi.add_apply, map_add, mul_add, sum_add_distrib]
+    simp only [Pi.add_apply, map_add (f := _), mul_add, sum_add_distrib]
   map_smul' a u := by
     funext g
     simp only [Pi.smul_apply, map_smul, smul_eq_mul, RingHom.id_apply, mul_sum]

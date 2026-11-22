@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -21,7 +26,7 @@ theorem FsLogMeasurable.proof : FsLogMeasurable.Statement := by
     (Complex.continuous_ofReal.comp hn).measurable.inv
   have hv : Measurable fun p : (Fin n → ℂ) × EuclideanSpace ℂ (Fin n) => nrmv h p.1 := by
     unfold nrmv
-    refine measurable_pi_lambda _ fun j => ?_
+    refine Measurable.of_eval fun j => ?_
     exact (hinv.comp measurable_fst).mul ((measurable_pi_apply j).comp measurable_fst)
   have hy : Measurable fun p : (Fin n → ℂ) × EuclideanSpace ℂ (Fin n) => h.pointOf p.2 :=
     hp.measurable.comp measurable_snd

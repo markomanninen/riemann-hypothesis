@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicRapidDecayOfMemAdelicSchwartzSpace
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSummableMajorantRationalVectorsLocallyUnif
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicRapidDecayOfMemAdelicSchwartzSpace
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSummableMajorantRationalVectorsLocallyUnif
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,12 +87,10 @@ theorem continuous_realAd : Continuous (realAd F) :=
   Continuous.prodMk (continuous_ofMixed.comp (continuous_algebraMap ℝ _)) continuous_const
 
 theorem realAd_add (s t : ℝ) : realAd F (s + t) = realAd F s + realAd F t := by
-  simp only [realAd, map_add]
-  rfl
+  simp only [realAd, map_add (f := _)]
 
 theorem realAd_zero : realAd F 0 = 0 := by
   simp only [realAd, map_zero]
-  rfl
 
 theorem schr_smul_add {R : Type} [CommRing R] [Invertible (2 : R)] (ψ : AddChar R ℂ) {κ : Type} [Fintype κ]
     (v : (κ → R) × (κ → R)) (a b : R) (Φ : (κ → R) → ℂ) (z : κ → R) :

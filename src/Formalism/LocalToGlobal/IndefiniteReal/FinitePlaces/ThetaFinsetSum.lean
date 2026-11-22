@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
-import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.ConjPurelyImaginaryGenerator
-import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.RealPlaceImaginaryGeneratorReEqZero
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
+public import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.ConjPurelyImaginaryGenerator
+public import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.RealPlaceImaginaryGeneratorReEqZero
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ variable {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D}
 
 lemma theta_sub {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
     IsThetaFunO ψ S T (f - g) := by
-  have := Formalism.IndefR.Fock.CCR.theta_add_smul hf hg (-1)
-  simpa [sub_eq_add_neg] using this
+  convert Formalism.IndefR.Fock.CCR.theta_add_smul hf hg (-1) using 1 <;>
+    ext x <;> simp [sub_eq_add_neg]
 
 lemma theta_finsetSum {ι : Type*} (s : Finset ι) (g : ι → WO S T → ℂ) (hg : ∀ i ∈ s, IsThetaFunO ψ S T (g i)) :
     IsThetaFunO ψ S T (∑ i ∈ s, g i) := by

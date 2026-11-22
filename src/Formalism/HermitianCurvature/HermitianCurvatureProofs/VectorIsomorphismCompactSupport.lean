@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UInvZeroAt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLevelZeroOfMemGroup
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UInvZeroAt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLevelZeroOfMemGroup
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

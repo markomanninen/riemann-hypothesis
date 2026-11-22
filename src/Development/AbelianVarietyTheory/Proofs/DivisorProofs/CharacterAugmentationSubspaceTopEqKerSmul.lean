@@ -1,47 +1,50 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
+
+@[expose] public section
+
 open scoped TensorProduct
 universe u
 
 namespace GlobalTheory.HTRho
 
-theorem mSub_top_eq_ker_smul : ∀ (k : Type) [Field k] (C : Type) [CommRing C] (H : Type u) [AddCommGroup H]
-    [Module k H] (σ : C →+* Module.End k H) (χ : C →+* k),
-    letI : Module (k ⊗[ℤ] C) H := Module.compHom H (Algebra.TensorProduct.lift (Algebra.ofId k (Module.End k H))
-      σ.toIntAlgHom (fun _ _ => Algebra.commutes _ _)).toRingHom;
-    ∀ x : H, x ∈ GlobalTheory.HTRho.mSub σ χ ⊤ ↔ x ∈ (RingHom.ker (Algebra.TensorProduct.lift (Algebra.ofId k k)
-      χ.toIntAlgHom (fun _ _ => Commute.all _ _) : k ⊗[ℤ] C →ₐ[k] k) • ⊤ : Submodule (k ⊗[ℤ] C) H) := by
+theorem mSub_top_eq_ker_smul :
+    ∀ (k : Type) [Field k] (C : Type) [CommRing C] (H : Type u) [AddCommGroup H]
+      [Module k H] (σ : C →+* Module.End k H) (χ : C →+* k),
+      letI : Module (k ⊗[ℤ] C) H := Module.compHom H
+        (Algebra.TensorProduct.lift (Algebra.ofId k (Module.End k H)) σ.toIntAlgHom
+          (fun _ _ => Algebra.commutes _ _)).toRingHom
+      ∀ x : H, x ∈ GlobalTheory.HTRho.mSub σ χ ⊤ ↔
+        x ∈ (RingHom.ker (Algebra.TensorProduct.lift (Algebra.ofId k k) χ.toIntAlgHom
+          (fun _ _ => Commute.all _ _) : k ⊗[ℤ] C →ₐ[k] k) • ⊤ : Submodule (k ⊗[ℤ] C) H) := by
   intro k _ C _ H _ _ σ χ x
-  letI : Module (k ⊗[ℤ] C) H := Module.compHom H (Algebra.TensorProduct.lift (Algebra.ofId k (Module.End k H))
+  let : Module (k ⊗[ℤ] C) H := Module.compHom H (Algebra.TensorProduct.lift (Algebra.ofId k (Module.End k H))
       σ.toIntAlgHom (fun _ _ => Algebra.commutes _ _)).toRingHom
-  set L := Algebra.TensorProduct.lift (Algebra.ofId k (Module.End k H)) σ.toIntAlgHom
-    (fun _ _ => Algebra.commutes _ _) with hLdef
+  let L := Algebra.TensorProduct.lift (Algebra.ofId k (Module.End k H)) σ.toIntAlgHom
+    (fun _ _ => Algebra.commutes _ _)
   set φ : k ⊗[ℤ] C →ₐ[k] k := Algebra.TensorProduct.lift (Algebra.ofId k k) χ.toIntAlgHom
     (fun _ _ => Commute.all _ _) with hφdef
   have hsmul : ∀ (a : k ⊗[ℤ] C) (y : H), a • y = L a y := fun _ _ => rfl
   have hLt : ∀ (l : k) (c : C) (y : H), L (l ⊗ₜ c) y = l • σ c y := by
     intro l c y
-    have h1 := LinearMap.congr_fun (Algebra.TensorProduct.lift_tmul (Algebra.ofId k (Module.End k H))
-      σ.toIntAlgHom (fun _ _ => Algebra.commutes _ _) l c) y
-    rw [hLdef]
-    refine h1.trans ?_
-    rw [Module.End.mul_apply, Algebra.ofId_apply, Module.algebraMap_end_apply]
-    rfl
+    exact congrArg (fun f : Module.End k H => f y)
+      (Algebra.TensorProduct.lift_tmul (Algebra.ofId k (Module.End k H))
+        σ.toIntAlgHom (fun _ _ => Algebra.commutes _ _) l c)
   have hφt : ∀ (l : k) (c : C), φ (l ⊗ₜ c) = l * χ c := by
     intro l c
     simp [hφdef, Algebra.TensorProduct.lift_tmul]
   have key : ∀ (a : k ⊗[ℤ] C) (y : H), L a y - φ a • y ∈ mSub σ χ ⊤ := by
     intro a y
-    induction a using TensorProduct.induction_on with
-    | zero => simp
+    induction a using TensorProduct.inductionOn with
     | tmul l c =>
       rw [hLt, hφt, mul_smul, ← smul_sub]
       refine Submodule.smul_mem _ l (Submodule.subset_span ⟨c, y, trivial, ?_⟩)
       simp
     | add a b ha hb =>
-      convert add_mem ha hb using 1
-      rw [map_add, map_add, LinearMap.add_apply, add_smul]
-      abel
+      rw [map_add L, map_add φ, LinearMap.add_apply, add_smul, add_sub_add_comm]
+      exact add_mem ha hb
   constructor
   · intro hx
     induction hx using Submodule.span_induction with

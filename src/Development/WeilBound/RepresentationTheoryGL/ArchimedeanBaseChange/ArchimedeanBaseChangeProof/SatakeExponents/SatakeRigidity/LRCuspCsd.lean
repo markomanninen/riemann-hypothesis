@@ -1,16 +1,20 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.ThetaOfCsdR
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.ResidualRigidity.AllPlaceRigidityResidual
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PInfAsc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSatGLOfInvT
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InfinitesimalCharacterConjugateStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInvariantHermitianFormStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRightHaarMeasureStatement
-import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryLocalPoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOfNodupSumMultisetOfEq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.ThetaOfCsdR
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.ResidualRigidity.AllPlaceRigidityResidual
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PInfAsc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSatGLOfInvT
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InfinitesimalCharacterConjugateStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInvariantHermitianFormStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRightHaarMeasureStatement
+public import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryLocalPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOfNodupSumMultisetOfEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,16 +81,16 @@ theorem sum_rev_map {d : ℕ} (f : Fin d → Multiset ℂˣ) :
   rw [map_inv_sum]
   exact Fintype.sum_equiv Fin.revPerm _ _ fun k => by rw [Fin.revPerm_apply]
 
-variable (E) in
 
+variable (E) in
 def nuT (s : ℝ) : Formalism.L2.Host.HChar E := GlobalTheory.ThetaPull.thetaChar (GlobalTheory.HeckeGal.Model.absPow E (-s))
 
 theorem isAbsPow_nuT (s : ℝ) : (nuT E s).IsAbsPow s := by
   have h := GlobalTheory.ThetaPull.isAbsPow_thetaChar (GlobalTheory.HeckeGal.Model.absPow_isAbsPow E (-s))
   rwa [neg_neg] at h
 
-variable (E) in
 
+variable (E) in
 def muT (d : ℕ) (k : Fin d) : Formalism.L2.Host.HChar E := GlobalTheory.HeckeGal.Model.absPow E (-spehExp d k.rev)
 
 omit [IsCMField E] in
@@ -98,8 +102,8 @@ theorem isAbsPow_muT (d : ℕ) (k : Fin d) : (muT E d k).IsAbsPow (spehExp d k) 
 
 end CuspidalConjugateSelfDual
 
-open CuspidalConjugateSelfDual in
 
+open CuspidalConjugateSelfDual in
 theorem rCuspCsd : RCuspCsd := by
   intro hJ hSS hStr E _ _ _ n D hr ht i a d P ha hd hu hn he
   have hx : ∀ j, ∃ (a' d' : ℕ) (P' : CuspSub E a'), 1 ≤ a' ∧ 1 ≤ d' ∧ P'.IsUnitary ∧ IsNormalised P' ∧
@@ -112,14 +116,14 @@ theorem rCuspCsd : RCuspCsd := by
   choose A Dd PP hA hDd hU hN hE hI using hx
   have hW : ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite, ∀ j, ∃ b : Fin (Dd j) → Multiset ℂˣ,
       (∀ k, (CG.mk ((PP j).twist (nuT E (spehExp (Dd j) k)))).HasSat w (b k)) ∧
-      GlobalTheory.LGrp.IsSpherical (D.σ j w).ρ (GlobalTheory.LFun.KGL w (D.N j)) ∧ GlobalTheory.LFun.HasSatGL w (D.σ j w).ρ (∑ k, b k) :=
+      GlobalTheory.LGrp.IsSpherical (D.σ j w).ρ (GlobalTheory.LFun.KGL w (n := (D.N j))) ∧ GlobalTheory.LFun.HasSatGL w (D.σ j w).ρ (∑ k, b k) :=
     Filter.eventually_all.2 fun j => hSS E (D.N j) (A j) (Dd j) (D.V j) (PP j) (D.σ j) (D.pos j) (D.discrete j)
       (hU j) (hN j) (hE j) (D.loc j) (fun k => nuT E (spehExp (Dd j) k)) (fun k => isAbsPow_nuT _)
   have hinj : Function.Injective (GlobalTheory.ThetaSatake.cw (E := E)) :=
     Function.LeftInverse.injective (g := GlobalTheory.ThetaSatake.cw) fun v => GlobalTheory.ThetaPull.conjSrc_conjSrc v
   have hC : ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite, ∀ j, ∃ c : Fin (Dd j) → Multiset ℂˣ,
       (∀ k, (CG.mk ((PP j).twist (muT E (Dd j) k))).HasSat (GlobalTheory.ThetaSatake.cw w) (c k)) ∧
-      GlobalTheory.LGrp.IsSpherical (D.σ j (GlobalTheory.ThetaSatake.cw w)).ρ (GlobalTheory.LFun.KGL (GlobalTheory.ThetaSatake.cw w) (D.N j)) ∧
+      GlobalTheory.LGrp.IsSpherical (D.σ j (GlobalTheory.ThetaSatake.cw w)).ρ (GlobalTheory.LFun.KGL (GlobalTheory.ThetaSatake.cw w) (n := (D.N j))) ∧
       GlobalTheory.LFun.HasSatGL (GlobalTheory.ThetaSatake.cw w) (D.σ j (GlobalTheory.ThetaSatake.cw w)).ρ (∑ k, c k) :=
     hinj.tendsto_cofinite.eventually (Filter.eventually_all.2 fun j => hSS E (D.N j) (A j) (Dd j) (D.V j) (PP j)
       (D.σ j) (D.pos j) (D.discrete j) (hU j) (hN j) (hE j) (D.loc j) (fun k => muT E (Dd j) k)
@@ -177,7 +181,7 @@ theorem rCuspCsd : RCuspCsd := by
           (Finset.mem_univ i)) (hmem z hz)
       rw [hlam] at h1
       have h2 := conj_of_mem_infOfWeight lam h1
-      rw [map_add, Complex.conj_ofReal] at h2
+      rw [map_add (f := _), Complex.conj_ofReal] at h2
       exact add_right_cancel h2
     have h20 : m2 = m0 := by
       rw [hm2.unique hθ, hconj, Multiset.map_map]

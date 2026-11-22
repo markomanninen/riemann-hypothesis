@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoeffOneAlongCvLg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoeffOneAlongCvLg
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,8 @@ theorem sum_root_pow {l : ℕ} {ζ : C} (hζ : IsPrimitiveRoot ζ l) (j : ℕ) (
 theorem coeff_sum_rescale {l : ℕ} {ζ : C} (hζ : IsPrimitiveRoot ζ l) (j : ℕ) (hj : 1 ≤ j) (f : PowerSeries C) :
     PowerSeries.coeff (l ^ j) (∑ k ∈ Finset.range l, PowerSeries.rescale (ζ ^ k) f) =
       (l : C) * PowerSeries.coeff (l ^ j) f := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [PowerSeries.coeff_rescale]
   rw [← Finset.sum_mul, sum_root_pow hζ j hj]
 
@@ -113,7 +118,8 @@ theorem good_curve_closed : GoodCurveClosed := by
             X.sg1 (X.u g c) (X.u (1 - g) q) * PowerSeries.coeff n (tyS V.l fun s => x s (Sum.inl c)) else 0) := by
       intro n
       have e := congrArg (PowerSeries.coeff n) (hγ2 q)
-      simp only [map_add, map_sub, map_sum, apply_ite (PowerSeries.coeff n), PowerSeries.coeff_smul, map_zero,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sub, map_sum, apply_ite (PowerSeries.coeff n), PowerSeries.coeff_smul, map_zero,
         smul_eq_mul] at e
       linear_combination e
     have hT1 : ∀ b : ℕ → C, PowerSeries.coeff V.l (tyS V.l b) = b 1 := fun b => by

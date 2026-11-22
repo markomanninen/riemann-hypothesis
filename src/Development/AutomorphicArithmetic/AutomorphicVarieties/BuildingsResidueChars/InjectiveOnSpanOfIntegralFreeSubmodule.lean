@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.FnIndep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.FnIndep
+
+@[expose] public section
 
 open UpperTheory.V.Hi
 
@@ -18,7 +22,8 @@ theorem UpperTheory.injective_on_span_of_integral_free_submodule :
       funext g j
       have h0 := congrFun (congrFun hsum g) j
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at h0
-      simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, Finset.sum_apply, Pi.zero_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, Finset.sum_apply, Pi.zero_apply]
       calc ∑ k ∈ s, ψ (c k • (b k : V)) g j = ∑ k ∈ s, algebraMap O Ω (c k * v k g j) := by
             refine Finset.sum_congr rfl fun k _ => ?_
             rw [← algebraMap_smul Ω (c k) (b k : V), map_smul, Pi.smul_apply, Pi.smul_apply,
@@ -47,5 +52,6 @@ theorem UpperTheory.injective_on_span_of_integral_free_submodule :
   have hc : c = 0 := by
     refine linearIndependent_iff.1 hw c ?_
     rw [Finsupp.linearCombination_apply]
-    simpa only [Finsupp.sum, map_sum, map_smul] using hψF
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [Finsupp.sum, map_sum, map_smul] using hψF
   rw [hc, Finsupp.sum_zero_index]

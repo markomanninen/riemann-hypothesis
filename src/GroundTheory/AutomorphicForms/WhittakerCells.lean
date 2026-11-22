@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FiniteBruhat
-import GroundTheory.AutomorphicForms.Iwasawa
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FiniteBruhat
+public import GroundTheory.AutomorphicForms.Iwasawa
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -127,7 +131,7 @@ theorem isUnit_det_of_isUpperTriangular {X : Matrix (Fin n) (Fin n) F} (hX : X.I
   rw [det_of_isUpperTriangular hX, isUnit_iff_ne_zero]
   exact Finset.prod_ne_zero_iff.2 fun r _ => hd r
 
-theorem llRank_mul_mul {b b' : GL (Fin n) F} (hb : b ∈ borel n F) (hb' : b' ∈ borel n F)
+theorem llRank_mul_mul {b b' : GL (Fin n) F} (hb : b ∈ Iwasawa.borel F n) (hb' : b' ∈ Iwasawa.borel F n)
     (i j : Fin n) (g : GL (Fin n) F) : llRank i j (b * g * b') = llRank i j g := by
   classical
   have hbu : (b : Matrix (Fin n) (Fin n) F).IsUpperTriangular := hb
@@ -172,14 +176,14 @@ theorem llRank_mul_mul {b b' : GL (Fin n) F} (hb : b ∈ borel n F) (hb' : b' �
     rank_mul_eq_right_of_isUnit_det X _ hX]
 
 theorem llRank_permGL (w : Equiv.Perm (Fin n)) (i j : Fin n) :
-    llRank i j (permGL F w) = (Finset.univ.filter fun r : Fin n => i ≤ r ∧ w⁻¹ r ≤ j).card := by
+    llRank i j (permGL (k := F) w) = (Finset.univ.filter fun r : Fin n => i ≤ r ∧ w⁻¹ r ≤ j).card := by
   classical
-  have hW : IsUnit ((permGL F w⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F).det :=
+  have hW : IsUnit ((permGL (k := F) w⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F).det :=
     (Matrix.isUnit_iff_isUnit_det _).1 (Units.isUnit _)
   unfold llRank
   rw [← rank_mul_eq_left_of_isUnit_det _ _ hW]
-  have e : rowsFrom i * (permGL F w : Matrix (Fin n) (Fin n) F) * colsTo j *
-      (permGL F w⁻¹ : Matrix (Fin n) (Fin n) F) =
+  have e : rowsFrom i * (permGL (k := F) w : Matrix (Fin n) (Fin n) F) * colsTo j *
+      (permGL (k := F) w⁻¹ : Matrix (Fin n) (Fin n) F) =
       diagonal fun r => if i ≤ r ∧ w⁻¹ r ≤ j then (1 : F) else 0 := by
     ext r c
     rw [mul_permGL_apply]
@@ -236,7 +240,7 @@ theorem card_filter_le_eq (w : Equiv.Perm (Fin n)) (r j : Fin n) :
 
 theorem card_filter_lt_eq (w : Equiv.Perm (Fin n)) (r j : Fin n) :
     (Finset.univ.filter fun x : Fin n => r < x ∧ w⁻¹ x ≤ j).card =
-      if h : r.val + 1 < n then llRank ⟨r.val + 1, h⟩ j (permGL F w) else 0 := by
+      if h : r.val + 1 < n then llRank ⟨r.val + 1, h⟩ j (permGL (k := F) w) else 0 := by
   split_ifs with h
   · rw [llRank_permGL]
     congr 1
@@ -247,7 +251,7 @@ theorem card_filter_lt_eq (w : Equiv.Perm (Fin n)) (r j : Fin n) :
     omega
 
 theorem perm_eq_of_llRank {w w' : Equiv.Perm (Fin n)}
-    (h : ∀ i j, llRank i j (permGL F w) = llRank i j (permGL F w')) : w = w' := by
+    (h : ∀ i j, llRank i j (permGL (k := F) w) = llRank i j (permGL (k := F) w')) : w = w' := by
   have key : ∀ r j, (w⁻¹ r ≤ j ↔ w'⁻¹ r ≤ j) := by
     intro r j
     have hA : (Finset.univ.filter fun x : Fin n => r ≤ x ∧ w⁻¹ x ≤ j).card =
@@ -283,30 +287,27 @@ noncomputable def bruhatCell (g : GL (Fin n) F) : Equiv.Perm (Fin n) :=
   (exists_mem_doubleCoset_permGL g).choose
 
 theorem mem_doubleCoset_bruhatCell (g : GL (Fin n) F) :
-    g ∈ doubleCoset (permGL F (bruhatCell g)) (borel n F) (borel n F) :=
+    g ∈ doubleCoset (permGL (k := F) (bruhatCell g)) (Iwasawa.borel F n) (Iwasawa.borel F n) :=
   (exists_mem_doubleCoset_permGL g).choose_spec
 
 theorem bruhatCell_eq_iff {g : GL (Fin n) F} {w : Equiv.Perm (Fin n)} :
-    bruhatCell g = w ↔ g ∈ doubleCoset (permGL F w) (borel n F) (borel n F) := by
+    bruhatCell g = w ↔ g ∈ doubleCoset (permGL (k := F) w) (Iwasawa.borel F n) (Iwasawa.borel F n) := by
   constructor
   · rintro rfl
     exact mem_doubleCoset_bruhatCell g
   · intro h
     exact doubleCoset_permGL_injective (mem_doubleCoset_bruhatCell g) h
 
-theorem bruhatCell_permGL (w : Equiv.Perm (Fin n)) : bruhatCell (permGL F w) = w :=
-  bruhatCell_eq_iff.2 (mem_doubleCoset_self _ _ _)
-
-theorem bruhatCell_mul_mul {a b : GL (Fin n) F} (ha : a ∈ borel n F) (hb : b ∈ borel n F)
+theorem bruhatCell_mul_mul {a b : GL (Fin n) F} (ha : a ∈ Iwasawa.borel F n) (hb : b ∈ Iwasawa.borel F n)
     (g : GL (Fin n) F) : bruhatCell (a * g * b) = bruhatCell g := by
   rw [bruhatCell_eq_iff]
   obtain ⟨x, hx, y, hy, hg⟩ := mem_doubleCoset.1 (mem_doubleCoset_bruhatCell g)
-  refine mem_doubleCoset.2 ⟨a * x, (borel n F).mul_mem ha hx, y * b, (borel n F).mul_mem hy hb, ?_⟩
-  calc a * g * b = a * (x * permGL F (bruhatCell g) * y) * b := by rw [← hg]
-    _ = a * x * permGL F (bruhatCell g) * (y * b) := by group
+  refine mem_doubleCoset.2 ⟨a * x, (Iwasawa.borel F n).mul_mem ha hx, y * b, (Iwasawa.borel F n).mul_mem hy hb, ?_⟩
+  calc a * g * b = a * (x * permGL (k := F) (bruhatCell g) * y) * b := by rw [← hg]
+    _ = a * x * permGL (k := F) (bruhatCell g) * (y * b) := by group
 
 theorem llRank_eq_llRank_bruhatCell (i j : Fin n) (g : GL (Fin n) F) :
-    llRank i j g = llRank i j (permGL F (bruhatCell g)) := by
+    llRank i j g = llRank i j (permGL (k := F) (bruhatCell g)) := by
   obtain ⟨x, hx, y, hy, hg⟩ := mem_doubleCoset.1 (mem_doubleCoset_bruhatCell g)
   conv_lhs => rw [hg]
   exact llRank_mul_mul hx hy i j _
@@ -326,17 +327,17 @@ end Cell
 
 section NormalForm
 
-theorem unipotent_le_borel : Iwasawa.unipotent F n ≤ borel n F := fun _ hg => hg.1
+theorem unipotent_le_borel : Iwasawa.unipotent F n ≤ Iwasawa.borel F n := fun _ hg => hg.1
 
-theorem diagGL_mem_borel (t : Fin n → Fˣ) : Iwasawa.diagGL F n t ∈ borel n F := by
+theorem diagGL_mem_borel (t : Fin n → Fˣ) : Iwasawa.diagGL F n t ∈ Iwasawa.borel F n := by
   show ((Iwasawa.diagGL F n t : GL (Fin n) F) : Matrix (Fin n) (Fin n) F).IsUpperTriangular
   rw [Iwasawa.coe_diagGL]
   exact blockTriangular_diagonal _
 
-noncomputable def borelDiag {b : GL (Fin n) F} (hb : b ∈ borel n F) : Fin n → Fˣ :=
+noncomputable def borelDiag {b : GL (Fin n) F} (hb : b ∈ Iwasawa.borel F n) : Fin n → Fˣ :=
   fun i => Units.mk0 _ (borel_diag_ne_zero hb i)
 
-theorem mul_inv_borelDiag_mem {b : GL (Fin n) F} (hb : b ∈ borel n F) :
+theorem mul_inv_borelDiag_mem {b : GL (Fin n) F} (hb : b ∈ Iwasawa.borel F n) :
     b * (Iwasawa.diagGL F n (borelDiag hb))⁻¹ ∈ Iwasawa.unipotent F n := by
   have hbu : (b : Matrix (Fin n) (Fin n) F).IsUpperTriangular := hb
   rw [Iwasawa.mem_unipotent F n, ← map_inv, Units.val_mul, Iwasawa.coe_diagGL]
@@ -345,7 +346,7 @@ theorem mul_inv_borelDiag_mem {b : GL (Fin n) F} (hb : b ∈ borel n F) :
   simp only [borelDiag, Pi.inv_apply, Units.val_inv_eq_inv_val, Units.val_mk0]
   exact mul_inv_cancel₀ (borel_diag_ne_zero hb i)
 
-theorem inv_borelDiag_mul_mem {b : GL (Fin n) F} (hb : b ∈ borel n F) :
+theorem inv_borelDiag_mul_mem {b : GL (Fin n) F} (hb : b ∈ Iwasawa.borel F n) :
     (Iwasawa.diagGL F n (borelDiag hb))⁻¹ * b ∈ Iwasawa.unipotent F n := by
   have hbu : (b : Matrix (Fin n) (Fin n) F).IsUpperTriangular := hb
   rw [Iwasawa.mem_unipotent F n, ← map_inv, Units.val_mul, Iwasawa.coe_diagGL]
@@ -355,7 +356,7 @@ theorem inv_borelDiag_mul_mem {b : GL (Fin n) F} (hb : b ∈ borel n F) :
   exact inv_mul_cancel₀ (borel_diag_ne_zero hb i)
 
 theorem permGL_mul_diagGL (w : Equiv.Perm (Fin n)) (d : Fin n → Fˣ) :
-    permGL F w * Iwasawa.diagGL F n d = Iwasawa.diagGL F n (fun r => d (w⁻¹ r)) * permGL F w := by
+    permGL (k := F) w * Iwasawa.diagGL F n d = Iwasawa.diagGL F n (fun r => d (w⁻¹ r)) * permGL (k := F) w := by
   ext r c
   rw [Units.val_mul, Units.val_mul, Iwasawa.coe_diagGL, Iwasawa.coe_diagGL, permGL_mul_apply,
     diagonal_apply, diagonal_mul, permGL_apply]
@@ -366,9 +367,9 @@ theorem permGL_mul_diagGL (w : Equiv.Perm (Fin n)) (d : Fin n → Fˣ) :
     rw [if_neg this, if_neg h, mul_zero]
 
 theorem mem_doubleCoset_iff_normalForm {g : GL (Fin n) F} {w : Equiv.Perm (Fin n)} :
-    g ∈ doubleCoset (permGL F w) (borel n F) (borel n F) ↔
+    g ∈ doubleCoset (permGL (k := F) w) (Iwasawa.borel F n) (Iwasawa.borel F n) ↔
       ∃ u ∈ Iwasawa.unipotent F n, ∃ t : Fin n → Fˣ, ∃ v ∈ Iwasawa.unipotent F n,
-        g = u * Iwasawa.diagGL F n t * permGL F w * v := by
+        g = u * Iwasawa.diagGL F n t * permGL (k := F) w * v := by
   constructor
   · intro h
     obtain ⟨x, hx, y, hy, rfl⟩ := mem_doubleCoset.1 h
@@ -377,27 +378,27 @@ theorem mem_doubleCoset_iff_normalForm {g : GL (Fin n) F} {w : Equiv.Perm (Fin n
       (Iwasawa.diagGL F n (borelDiag hy))⁻¹ * y, inv_borelDiag_mul_mem hy, ?_⟩
     rw [map_mul]
     have e := permGL_mul_diagGL (F := F) w (borelDiag hy)
-    calc x * permGL F w * y
-        = x * (permGL F w * Iwasawa.diagGL F n (borelDiag hy)) *
+    calc x * permGL (k := F) w * y
+        = x * (permGL (k := F) w * Iwasawa.diagGL F n (borelDiag hy)) *
             ((Iwasawa.diagGL F n (borelDiag hy))⁻¹ * y) := by group
       _ = _ := by rw [e]; group
   · rintro ⟨u, hu, t, v, hv, rfl⟩
     exact mem_doubleCoset.2 ⟨u * Iwasawa.diagGL F n t,
-      (borel n F).mul_mem (unipotent_le_borel hu) (diagGL_mem_borel t), v, unipotent_le_borel hv,
+      (Iwasawa.borel F n).mul_mem (unipotent_le_borel hu) (diagGL_mem_borel t), v, unipotent_le_borel hv,
       rfl⟩
 
 theorem exists_normalForm (g : GL (Fin n) F) :
     ∃ u ∈ Iwasawa.unipotent F n, ∃ t : Fin n → Fˣ, ∃ v ∈ Iwasawa.unipotent F n,
-      g = u * Iwasawa.diagGL F n t * permGL F (bruhatCell g) * v :=
+      g = u * Iwasawa.diagGL F n t * permGL (k := F) (bruhatCell g) * v :=
   mem_doubleCoset_iff_normalForm.1 (mem_doubleCoset_bruhatCell g)
 
 theorem bruhatCell_normalForm {u v : GL (Fin n) F} (hu : u ∈ Iwasawa.unipotent F n)
     (hv : v ∈ Iwasawa.unipotent F n) (t : Fin n → Fˣ) (w : Equiv.Perm (Fin n)) :
-    bruhatCell (u * Iwasawa.diagGL F n t * permGL F w * v) = w :=
+    bruhatCell (u * Iwasawa.diagGL F n t * permGL (k := F) w * v) = w :=
   bruhatCell_eq_iff.2 (mem_doubleCoset_iff_normalForm.2 ⟨u, hu, t, v, hv, rfl⟩)
 
 theorem bruhatCell_diag_perm (t : Fin n → Fˣ) (w : Equiv.Perm (Fin n)) :
-    bruhatCell (Iwasawa.diagGL F n t * permGL F w) = w := by
+    bruhatCell (Iwasawa.diagGL F n t * permGL (k := F) w) = w := by
   have := bruhatCell_normalForm (Iwasawa.unipotent F n).one_mem (Iwasawa.unipotent F n).one_mem t w
   rwa [one_mul, mul_one] at this
 
@@ -435,7 +436,7 @@ theorem submatrix_mul_of_isUpperTriangular {u M : Matrix (Fin n) (Fin n) F}
     (u * M).submatrix r c = u.submatrix r r * M.submatrix r c := by
   classical
   ext a b
-  simp only [submatrix_apply, mul_apply]
+  simp only [submatrix_apply, Matrix.mul_apply]
   rw [← Finset.sum_image (s := Finset.univ) (g := r) (fun x _ y _ h => hr h)
     (f := fun s => u (r a) s * M s (c b))]
   symm
@@ -464,11 +465,11 @@ theorem det_submatrix_of_mem_unipotent {v : GL (Fin n) F} (hv : v ∈ Iwasawa.un
 
 theorem cellMinor_normalForm (w : Equiv.Perm (Fin n)) {u v : GL (Fin n) F}
     (hu : u ∈ Iwasawa.unipotent F n) (hv : v ∈ Iwasawa.unipotent F n) (t : Fin n → Fˣ) :
-    cellMinor w (u * Iwasawa.diagGL F n t * permGL F w * v) =
+    cellMinor w (u * Iwasawa.diagGL F n t * permGL (k := F) w * v) =
       fun k => ∏ a : Fin (k.val + 1), (t (bottomRows k a) : F) := by
   funext k
   unfold cellMinor
-  have hX : ((Iwasawa.diagGL F n t * permGL F w * v : GL (Fin n) F) :
+  have hX : ((Iwasawa.diagGL F n t * permGL (k := F) w * v : GL (Fin n) F) :
       Matrix (Fin n) (Fin n) F).submatrix (bottomRows k) (fun a => w⁻¹ (bottomRows k a)) =
       diagonal (fun a => (t (bottomRows k a) : F)) *
         (v : Matrix (Fin n) (Fin n) F).submatrix (fun a => w⁻¹ (bottomRows k a))
@@ -478,8 +479,8 @@ theorem cellMinor_normalForm (w : Equiv.Perm (Fin n)) {u v : GL (Fin n) F}
       permGL_mul_apply]
   have hinj : Function.Injective fun a => w⁻¹ (bottomRows k a) :=
     (Equiv.injective _).comp (bottomRows_injective k)
-  rw [show u * Iwasawa.diagGL F n t * permGL F w * v =
-      u * (Iwasawa.diagGL F n t * permGL F w * v) by group, Units.val_mul,
+  rw [show u * Iwasawa.diagGL F n t * permGL (k := F) w * v =
+      u * (Iwasawa.diagGL F n t * permGL (k := F) w * v) by group, Units.val_mul,
     submatrix_mul_of_isUpperTriangular ((Iwasawa.mem_unipotent F n).1 hu).1 (bottomRows_injective k)
       (fun a s h => exists_bottomRows_eq h), det_mul, hX, det_mul, det_diagonal,
     det_submatrix_of_mem_unipotent hu (bottomRows_injective k),
@@ -538,19 +539,13 @@ theorem eq_of_prod_bottomRows_eq {t t' : Fin n → Fˣ}
   rw [hall, h2, hall (x.val + 1)] at h1
   exact Units.ext (mul_right_cancel₀ (prodFrom_ne_zero t' _) h1.symm)
 
-theorem cellMinor_diag_perm (w : Equiv.Perm (Fin n)) (t : Fin n → Fˣ) :
-    cellMinor w (Iwasawa.diagGL F n t * permGL F w) =
-      fun k => ∏ a : Fin (k.val + 1), (t (bottomRows k a) : F) := by
-  have := cellMinor_normalForm w (Iwasawa.unipotent F n).one_mem (Iwasawa.unipotent F n).one_mem t
-  rwa [one_mul, mul_one] at this
-
 theorem cellMinor_mul_mul {g : GL (Fin n) F} {w : Equiv.Perm (Fin n)} (hg : bruhatCell g = w)
     {a b : GL (Fin n) F} (ha : a ∈ Iwasawa.unipotent F n) (hb : b ∈ Iwasawa.unipotent F n) :
     cellMinor w (a * g * b) = cellMinor w g := by
   obtain ⟨u, hu, t, v, hv, hg'⟩ := exists_normalForm g
   rw [hg] at hg'
-  rw [hg', show a * (u * Iwasawa.diagGL F n t * permGL F w * v) * b =
-      (a * u) * Iwasawa.diagGL F n t * permGL F w * (v * b) by group,
+  rw [hg', show a * (u * Iwasawa.diagGL F n t * permGL (k := F) w * v) * b =
+      (a * u) * Iwasawa.diagGL F n t * permGL (k := F) w * (v * b) by group,
     cellMinor_normalForm w ((Iwasawa.unipotent F n).mul_mem ha hu)
       ((Iwasawa.unipotent F n).mul_mem hv hb),
     cellMinor_normalForm w hu hv]
@@ -573,7 +568,7 @@ theorem exists_eq_mul_mul_of_cellMinor_eq {g g' : GL (Fin n) F} {w : Equiv.Perm 
 theorem exists_eq_mul_diag_perm_mul {g : GL (Fin n) F} {w : Equiv.Perm (Fin n)}
     (hg : bruhatCell g = w) :
     ∃ t : Fin n → Fˣ, ∃ a ∈ Iwasawa.unipotent F n, ∃ b ∈ Iwasawa.unipotent F n,
-      g = a * (Iwasawa.diagGL F n t * permGL F w) * b := by
+      g = a * (Iwasawa.diagGL F n t * permGL (k := F) w) * b := by
   obtain ⟨u, hu, t, v, hv, e⟩ := exists_normalForm g
   rw [hg] at e
   exact ⟨t, u, hu, v, hv, by rw [e]; group⟩

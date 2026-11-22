@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSchurGA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroup
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDicho
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSchurGA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroup
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDicho
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,9 +64,10 @@ theorem stDichoG (h : UnitaryGroupStructuralFacts) : StDichoG := by
   have hE := measurableEmbedding_psiG k r
   let T : Mt k r → Mt k r := fun x => fun i j => th k r γ (Matrix.of x) i j
   have hT : AEMeasurable T D.μG := by
-    by_contra hne
-    rw [Measure.map_of_not_aemeasurable hne] at hμG
-    exact D.haarG.ne_zero hμG.symm
+    have hc : Continuous (fun x : Mt k r => fun i j => gbar k r γ (Matrix.of x) i j) := by
+      exact continuous_pi fun i => continuous_pi fun j =>
+        (continuous_apply j).comp ((continuous_apply i).comp (hgbar.comp continuous_id))
+    exact (InvGrp.measurable_invM.comp hc.measurable).aemeasurable
   have hcomp : psiG k r ∘ θ = T ∘ psiG k r := by
     funext u
     show Matrix.of.symm (psiM k r (θ u)) = fun i j => th k r γ (Matrix.of (psiG k r u)) i j
@@ -77,9 +82,32 @@ theorem stDichoG (h : UnitaryGroupStructuralFacts) : StDichoG := by
     calc (nuG D.μG).map θ = (((nuG D.μG).map θ).map (psiG k r)).comap (psiG k r) := (hE.comap_map _).symm
       _ = ((nuG D.μG).map (psiG k r)).comap (psiG k r) := by rw [key]
       _ = nuG D.μG := hE.comap_map _
-  have hSR := sqRep_psiG hG X.rep (fun v w => hSq v w)
+  have hSR : Formalism.MainNotions.BridgeCSchur.SqRep (nuG D.μG)
+      (fun u => X.σ (psiM k r u)) := by
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · rw [psiM_one]; exact X.rep.1.1
+    · intro a b
+      rw [psiM_mul]; exact X.rep.1.2 _ (psiM_mem a) _ (psiM_mem b)
+    · intro g v
+      exact X.rep.2.1 _ (psiM_mem g) v
+    · intro v
+      exact (X.rep.2.2 v).comp_continuous (continuous_psiM k r) psiM_mem
+    · intro v w
+      have hs := hSq v w
+      rw [← map_nuG hG] at hs
+      have hs' := (hE.memLp_map_measure_iff).mp hs
+      convert hs' using 1
+      simp [mc, Function.comp_def, of_psiG]
+  have hI : ∀ S : Submodule ℂ X.Hs, IsClosed (S : Set X.Hs) →
+      (∀ u : Formalism.REAL.UJ (epsG k r), ∀ v ∈ S, X.σ (psiM k r u) v ∈ S) →
+      S = ⊥ ∨ S = ⊤ := by
+    intro S hS hinv
+    apply X.irr S hS
+    intro g hg v hv
+    obtain ⟨u, rfl⟩ : g ∈ Set.range (psiM k r) := by rw [range_psiM]; exact hg
+    exact hinv u v hv
   rcases schurDichotomy (Formalism.REAL.UJ (epsG k r)) (nuG D.μG) X.Hs θ (fun u => X.σ (psiM k r u)) hθc hanti hinv
-      hmap hSR.one hSR.mul hSR.iso hSR.cont hSR.sq (irr_psiG X.irr) with h0 | ⟨C, hC1, hC2⟩
+      hmap hSR.one hSR.mul hSR.iso hSR.cont hSR.sq hI with h0 | ⟨C, hC1, hC2⟩
   · left
     intro x y x' y'
     rw [← map_nuG hG, hE.integral_map]

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.SpanXLeKerAevalZero
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.SpanXLeKerAevalZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,8 +17,8 @@ variable {R : Type} [CommRing R]
 
 abbrev zz {κ : Type} (m : ℕ) (j : κ) : Jet R κ m := Ideal.Quotient.mk _ (X j)
 
-variable (R) in
 
+variable (R) in
 def Ij (κ : Type) (m : ℕ) : Ideal (Jet R κ m) := Ideal.span (Set.range (zz (R := R) (κ := κ) m))
 
 theorem Ij_eq_map (κ : Type) (m : ℕ) :
@@ -73,7 +77,7 @@ theorem sub_aug_mem {κ : Type} {m : ℕ} (p : Jet R κ m) :
   next q r hq hr =>
     have h := Ideal.add_mem _ hq hr
     convert h using 1
-    simp only [map_add]
+    simp only [map_add (f := _)]
     abel
   next q j _ =>
     have hz : (Ideal.Quotient.mk (orig R κ ^ (m + 1)) (X j) : Jet R κ m) ∈ Ij R κ m :=
@@ -132,7 +136,7 @@ theorem sc_one_mem {κ : Type} (m : ℕ) (c : R) {b : Jet R κ m} (hb : b ∈ Ij
   | add x y _ _ hx hy =>
     have h := Ideal.add_mem _ hx hy
     convert h using 1
-    rw [map_add, smul_add]
+    rw [map_add (f := _), smul_add]
     abel
   | smul a x hx' hx =>
     have e1 : sc m c (a • x) - c • (a • x) =
@@ -174,7 +178,7 @@ theorem sc_pow_mem {κ : Type} (m : ℕ) (c : R) :
     · intro x y hx hy
       have h := Ideal.add_mem _ hx hy
       convert h using 1
-      rw [map_add, smul_add]
+      rw [map_add (f := _), smul_add]
       abel
 
 end Scale
@@ -208,7 +212,7 @@ theorem poly_sub_kill_mem (i : Fin 2) (P : MvPolynomial (Fin 2 × Fin n) R) :
   next a =>
     simp
   next p q hp hq =>
-    rw [map_add, add_sub_add_comm]
+    rw [map_add (f := _), add_sub_add_comm]
     exact Ideal.add_mem _ hp hq
   next p v hp =>
     rw [map_mul, aeval_X]
@@ -253,7 +257,7 @@ theorem mem_mul_of_kill (m : ℕ) (e : Jet R (Fin 2 × Fin n) m) (h0 : kill m 0 
     | add y z _ _ hy hz =>
       have h := Ideal.add_mem _ hy hz
       convert h using 1
-      rw [map_add]
+      rw [map_add (f := _)]
       abel
     | smul a y hy' hy =>
       have e1 : a • y - kill m 1 (a • y) = y * (a - kill m 1 a) + kill m 1 a * (y - kill m 1 y) := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi4.extendPt :
     ∀ (O Λ T K : Type) [inst : CommRing O] [inst_1 : CommRing Λ] [inst_2 : CommRing T]
@@ -11,13 +15,14 @@ theorem UpperTheory.Reformulated.B.Qi4.extendPt :
   haveI hprime : (RingHom.ker y).IsPrime := RingHom.ker_isPrime y
   obtain ⟨Q, hPQ, hQ, hQc⟩ :=
     Ideal.exists_ideal_over_prime_of_isIntegral (RingHom.ker y) P hP
+  change Q.comap (algebraMap Λ T) = RingHom.ker y at hQc
   have hker : ∀ a ∈ Q.comap (algebraMap Λ T), (y : Λ →+* K) a = 0 := by
     intro a ha
     rw [hQc] at ha
     exact ha
   let ybar : (Λ ⧸ Q.comap (algebraMap Λ T)) →+* K := Ideal.Quotient.lift _ (y : Λ →+* K) hker
   have hinj : Function.Injective ybar := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
     rw [Ideal.Quotient.eq_zero_iff_mem, hQc]
@@ -35,7 +40,11 @@ theorem UpperTheory.Reformulated.B.Qi4.extendPt :
     Algebra.IsIntegral.quotient
   haveI : Algebra.IsAlgebraic (Λ ⧸ Q.comap (algebraMap Λ T)) (T ⧸ Q) :=
     Algebra.IsIntegral.isAlgebraic
-  let z : (T ⧸ Q) →ₐ[Λ ⧸ Q.comap (algebraMap Λ T)] K := IsAlgClosed.lift
+  let z : (T ⧸ Q) →ₐ[Λ ⧸ Q.comap (algebraMap Λ T)] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hz : ∀ a : Λ, z (Ideal.Quotient.mk Q (algebraMap Λ T a)) = y a := fun a =>
     z.commutes (Ideal.Quotient.mk _ a)
   refine ⟨{ (z : (T ⧸ Q) →+* K).comp (Ideal.Quotient.mk Q) with commutes' := fun o => ?_ }, ?_, hz⟩

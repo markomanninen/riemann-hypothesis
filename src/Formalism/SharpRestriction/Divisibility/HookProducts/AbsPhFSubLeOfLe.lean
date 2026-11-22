@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Divisibility.RecBridge
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+module
+
+public import Formalism.LocalToGlobal.Divisibility.RecBridge
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,21 +51,21 @@ theorem nuRow_head' (D : D7) (u : D.what₂.Word) (j : ℕ) (τ : D.what₂.Tau)
     DV.nuRow D u j τ r = (((D.hcW u τ).u ⟨r, hk⟩ : ℚ) : ℝ) + DV.wSz D j τ -
       (((D.R.N (j - 1) : ℝ) + D.R.N j - 1 - 2 * (r : ℝ)) / 2) := by
   unfold DV.nuRow DV.srcPar
-  rw [dif_pos hk]
+  rw [dite_eq_left hk]
 
 theorem nuRow_eq_of_not_mid (D : D7) (u u' : D.what₂.Word) (j : ℕ) (τ : D.what₂.Tau) (r : ℕ)
     (hr : ¬ (1 ≤ r ∧ r + 1 < D.R.k)) : DV.nuRow D u j τ r = DV.nuRow D u' j τ r := by
   have hs : DV.srcPar D u τ r = DV.srcPar D u' τ r := by
     unfold DV.srcPar
     by_cases hk : r < D.R.k
-    · rw [dif_pos hk, dif_pos hk]
+    · rw [dite_eq_left hk, dite_eq_left hk]
       rcases Nat.eq_zero_or_pos r with h0 | h0
       · subst h0
         rw [D.hcW_first u τ hk, D.hcW_first u' τ hk]
       · have hr' : r = D.R.k - 1 := by omega
         have hfin : (⟨r, hk⟩ : Fin D.R.k) = ⟨D.R.k - 1, by omega⟩ := Fin.ext hr'
         rw [hfin, D.hcW_last u τ (by omega), D.hcW_last u' τ (by omega)]
-    · rw [dif_neg hk, dif_neg hk, D.hcW_e u τ, D.hcW_e u' τ]
+    · rw [dite_eq_right hk, dite_eq_right hk, D.hcW_e u τ, D.hcW_e u' τ]
   unfold DV.nuRow
   rw [hs]
 

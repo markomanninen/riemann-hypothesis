@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.LengthDet
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.LengthDet
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.PropA
 
@@ -16,7 +20,6 @@ theorem UpperTheory.V.PropA.lift :
       ext j
       simp [Matrix.mulVec_single_one]
       rw [← hs j]
-      rfl
     intro v
     simpa using LinearMap.congr_fun h v
   set A : Matrix (Fin R) (Fin R) ℤ_[l] := c • (Matrix.of fun i j => s j i) - 1 with hA

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfHaar
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,11 +18,6 @@ variable {n : ℕ}
 def KS (G s : Matrix (Fin n) (Fin n) ℂ) : Set (Fin n → Fin n → ℂ) := {k | Matrix.of k ∈ KAt G s}
 
 theorem isCompact_KS {G s : Matrix (Fin n) (Fin n) ℂ} (hs : IsCartanInv G s) : IsCompact (KS G s) := isCompact_KAt hs
-
-theorem measurableSet_KS (G s : Matrix (Fin n) (Fin n) ℂ) : MeasurableSet (KS G s) := by
-
-  have h : IsClosed (KS G s) := isClosed_KAt G s
-  exact h.measurableSet
 
 section Int
 
@@ -61,7 +60,7 @@ theorem evalMatrix_bind₁_mulLeft (A : Matrix (Fin n) (Fin n) ℂ) (q : MvPolyn
   next a =>
     simp [evP]
   next p r hp hr =>
-    simp only [evP, map_add] at hp hr ⊢
+    simp only [evP, map_add (f := _)] at hp hr ⊢
     rw [hp, hr]
   next p v hp =>
     simp only [evP, map_mul, MvPolynomial.bind₁_X_right, MvPolynomial.eval_X] at hp ⊢
@@ -69,13 +68,14 @@ theorem evalMatrix_bind₁_mulLeft (A : Matrix (Fin n) (Fin n) ℂ) (q : MvPolyn
     congr 1
     rcases v with ⟨i, j⟩ | ⟨i, j⟩
     · simp [subst, Matrix.mul_apply, Matrix.of_apply, MvPolynomial.eval_X, MvPolynomial.eval_C]
-    · simp [subst, Matrix.mul_apply, Matrix.of_apply, MvPolynomial.eval_X, MvPolynomial.eval_C, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [subst, Matrix.mul_apply, Matrix.of_apply, MvPolynomial.eval_X, MvPolynomial.eval_C, map_sum]
 
 theorem totalDegree_subst (A : Matrix (Fin n) (Fin n) ℂ) (v : Var n) : (subst A v).totalDegree ≤ 1 := by
 
   rcases v with ij | ij <;>
   · simp only [subst]
-    refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun l _ => ?_)
+    refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun l _ => ?_)
     refine (MvPolynomial.totalDegree_mul _ _).trans ?_
     simp
 
@@ -83,12 +83,13 @@ theorem totalDegree_bind_le (A : Matrix (Fin n) (Fin n) ℂ) (q : MvPolynomial (
     (MvPolynomial.bind₁ (subst A) q).totalDegree ≤ q.totalDegree := by
 
   conv_lhs => rw [q.as_sum]
-  rw [map_sum]
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun m hm => ?_)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun m hm => ?_)
   rw [MvPolynomial.bind₁_monomial]
   refine (MvPolynomial.totalDegree_mul _ _).trans ?_
   rw [MvPolynomial.totalDegree_C, zero_add]
-  refine (MvPolynomial.totalDegree_finset_prod _ _).trans ?_
+  refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
   refine le_trans (Finset.sum_le_sum fun i _ => (MvPolynomial.totalDegree_pow _ _).trans
     (Nat.mul_le_mul le_rfl (totalDegree_subst A i))) ?_
   simp only [mul_one]
@@ -117,7 +118,8 @@ theorem evalMatrix_eq_sum_monomial (q : MvPolynomial (Var n) ℂ) (k : Fin n →
 
   simp only [evP]
   conv_lhs => rw [q.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [show MvPolynomial.monomial m (q.coeff m) =
       MvPolynomial.C (q.coeff m) * MvPolynomial.monomial m (1 : ℂ) by

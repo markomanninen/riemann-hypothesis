@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem integral_coset {X G : Type*} [Group X] [MeasurableSpace X] [MeasurableMu
       exact Set.indicator_of_notMem (by intro h; exact hu (Eq.symm h)) _
     · intro h
       exact absurd (Finset.mem_univ _) h
-  rw [finsum_eq_sum_of_fintype, hdecomp, integral_finset_sum]
+  rw [finsum_eq_sum_of_fintype, hdecomp, integral_finsetSum]
   · rw [Finset.mul_sum]
     refine Finset.sum_congr rfl (fun u _ => ?_)
     rw [integral_indicator_const _ (hmeas u), hmeasure u, Complex.real_smul]

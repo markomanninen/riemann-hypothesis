@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InfiniteCoordinateUnfold
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.AdelicUnitaryHaarMeasure
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StabilizerLattices
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FundamentalDomainNeZero
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FrameTransport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InfiniteCoordinateUnfold
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.AdelicUnitaryHaarMeasure
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StabilizerLattices
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FundamentalDomainNeZero
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FrameTransport
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Topology Formalism.BasicNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice GlobalTheory.IndefiniteRowSideFullHecke.InfiniteCoordinateUnfold GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryHaarMeasure GlobalTheory.IndefiniteRowSideFullHecke.SelfDualLatticeStabilizers GlobalTheory.Mem.Vol GlobalTheory.Mem.VolExists
 open scoped ENNReal TensorProduct
 
@@ -78,7 +83,7 @@ theorem realOrbit : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Number
     haveI : SecondCountableTopology (UpqT P Q) :=
       (GlobalTheory.UpqUnimodular.modelEquiv P Q).toHomeomorph.secondCountableTopology
     rw [show pt = _ from funext hpt']
-    refine measurable_pi_lambda _ fun _ => measurable_pi_lambda _ fun i => Continuous.measurable ?_
+    refine Measurable.of_eval fun _ => Measurable.of_eval fun i => Continuous.measurable ?_
     refine Φ.symm.continuous.comp (continuous_pi fun ρ => (continuous_apply i).comp (f := fun a => N ρ *ᵥ v a ρ) ?_)
     exact continuous_const.matrix_mulVec
       ((GlobalTheory.VolPairExists.continuous_mat.comp (continuous_apply ρ).inv).matrix_mulVec continuous_const)

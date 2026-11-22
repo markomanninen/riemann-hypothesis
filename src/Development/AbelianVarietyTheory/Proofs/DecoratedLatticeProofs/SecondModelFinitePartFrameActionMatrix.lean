@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryAdelicPointInfiniteMatricesEqOneOfFinite
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicProperties
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.FundamentalContinuity.AdelicIsomorphismStatement
-import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryAdelicPointInfiniteMatricesEqOneOfFinite
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicProperties
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.FundamentalContinuity.AdelicIsomorphismStatement
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.Core.Rk GlobalTheory.Core.Mi
 open scoped TensorProduct InnerProductSpace Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -22,7 +27,7 @@ theorem eq_self_of_rat_of_int (F E : Type) [Field F] [NumberField F] [Field E] [
     refine hzero _ fun m hm => ?_
     obtain ⟨x, t, ht, rfl⟩ := hden b hb m hm
     refine ⟨ι t - t, (IntAf F E).sub_mem (hO _ ht) ht, ?_⟩
-    simp only [map_add, map_mul, map_natCast, hι]
+    simp only [map_add (f := _), map_mul, map_natCast, hι]
     ring
   obtain ⟨m, hm, hma⟩ := hdenom a
   have h := key _ hma
@@ -56,7 +61,8 @@ theorem map_cols {A R : Type} [CommRing A] [CommRing R] (f : A →+* R) {m n : �
     M.map f *ᵥ (fun k => f (N k j)) = ∑ i, f (P i j) • fun k => f (N k i) := by
   funext k
   have h3 := congrArg f (congrFun (congrFun h k) j)
-  simp only [Matrix.mul_apply, map_sum, map_mul] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, map_sum, map_mul] at h3
   simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   rw [h3]
   exact Finset.sum_congr rfl fun i _ => mul_comm _ _

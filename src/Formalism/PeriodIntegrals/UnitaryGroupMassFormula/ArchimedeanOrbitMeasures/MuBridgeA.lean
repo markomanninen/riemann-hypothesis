@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.BridgeC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DensMu
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.BridgeC
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DensMu
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem evInf_trace (v : InfinitePlace X.B.I.F) (z : Ainf X.B.I.F ⊗[X.B.I.F] X
     rw [h1, map_smul, trace_one_tmul, smul_eq_mul, map_mul, evInf_alg, emb_trace, ← h1, thetaInf_tmul, map_mul,
       evInf_conj]
     ring
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]; ring
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]; ring
 
 theorem theta_sigR (v : InfinitePlace X.B.I.F) (t : Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E) :
     PI.AprimeInfU.thetaInf X v (sigR (Ainf X.B.I.F) X.B.I.cm.sig t) = conj (PI.AprimeInfU.thetaInf X v t) := by
@@ -97,13 +101,14 @@ theorem theta_sigR (v : InfinitePlace X.B.I.F) (t : Ainf X.B.I.F ⊗[X.B.I.F] X.
   | tmul a e =>
     have h : sigR (Ainf X.B.I.F) X.B.I.cm.sig (a ⊗ₜ[X.B.I.F] e) = a ⊗ₜ[X.B.I.F] (star e) := rfl
     rw [h, thetaInf_tmul, thetaInf_tmul, map_mul, evInf_conj, phi_star]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem theta_hR (v : InfinitePlace X.B.I.F) (x y : Fin X.B.I.n → Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E) :
     PI.AprimeInfU.thetaInf X v (hR (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J x y) =
       ∑ i, ∑ j, conj (PI.AprimeInfU.thetaInf X v (x i)) * X.B.I.φ v (X.B.I.J i j) *
         PI.AprimeInfU.thetaInf X v (y j) := by
-  simp only [hR, Formalism.UG.hform, map_sum, map_mul, theta_sigR, JR, Matrix.map_apply, thetaInf_inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR, Formalism.UG.hform, map_sum, map_mul, theta_sigR, JR, Matrix.map_apply, thetaInf_inclR]
 
 end Tr
 
@@ -144,7 +149,8 @@ theorem re_evInf_BR (v : InfinitePlace X.B.I.F) (Y Z : TupI X) :
     (PI.AprimeInfU.evInf X v (BR (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J Y Z)).re =
       ∑ b, ∑ i, 2 * ((if X.B.I.ε v i then 1 else -1 : ℝ) *
         ((betaV X v Y i b).re * (betaV X v Z i b).re + (betaV X v Y i b).im * (betaV X v Z i b).im)) := by
-  simp only [BR, map_sum, Complex.re_sum, evInf_trace, Complex.add_re, Complex.conj_re]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [BR, map_sum, Complex.re_sum, evInf_trace, Complex.add_re, Complex.conj_re]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [theta_hR]
   have e1 := theta_col X v Y b

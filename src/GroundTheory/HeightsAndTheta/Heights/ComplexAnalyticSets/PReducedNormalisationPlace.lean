@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StReducedNormalisationPlace
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMinimalPrimePlace
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StReducedNormalisationPlace
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMinimalPrimePlace
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -53,8 +58,8 @@ theorem exists_idempotent [IsNoetherianRing A] [IsReduced A] (p : Ideal A) (hp :
 
 end ReducedNormalisationPlace
 
-open ReducedNormalisationPlace in
 
+open ReducedNormalisationPlace in
 theorem ReducedNormalisationPlace.proof : ReducedNormalisationPlace.Statement := by
   intro R _ _ _ P
   have hfin := minimalPrimes.finite_of_isNoetherianRing R

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableToGLEntry
-import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnipotentLowerRowsLeviSetClosedSubgroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableToGLEntry
+public import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnipotentLowerRowsLeviSetClosedSubgroup
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.JSW
 open scoped FourierTransform ContDiff
 

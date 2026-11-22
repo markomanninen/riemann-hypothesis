@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceSplitOrInert
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceSplitOrInert
+
+@[expose] public section
 
 noncomputable section
 

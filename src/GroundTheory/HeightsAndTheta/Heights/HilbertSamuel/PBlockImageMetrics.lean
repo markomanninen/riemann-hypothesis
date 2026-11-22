@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageMetrics
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageMetrics
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -36,9 +41,9 @@ theorem leviForm_comp_clm {E F : Type} [Fintype E] [Fintype F] (L : (E → ℂ) 
 
 theorem isSemipositiveRel_of_linear {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {F : Type}
     [Fintype F] (A : HermLine ι) (L : ((Σ k, ι k) → ℂ) →L[ℂ] (F → ℂ))
-    (hA : A.h = fun z => (fsMetric F).ρ (L z)) (hL : ∀ z, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) → L z ≠ 0)
+    (hA : A.h = fun z => (fsMetric (ι := F)).ρ (L z)) (hL : ∀ z, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) → L z ≠ 0)
     (P0 P : Ideal (MRing ι)) : IsSemipositiveRel P0 P A := by
-  have hsm : ∀ z, L z ≠ 0 → ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fsMetric F).ρ (L z) := fun z hz =>
+  have hsm : ∀ z, L z ≠ 0 → ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fsMetric (ι := F)).ρ (L z) := fun z hz =>
     (isSmoothMetric_fs (J := F) (L z) hz).contDiffAt (isOpen_ne.mem_nhds hz)
   refine ⟨?_, fun z hz w _ => ?_⟩
   · unfold IsSmoothHerm
@@ -46,9 +51,10 @@ theorem isSemipositiveRel_of_linear {K : Type} [Fintype K] {ι : K → Type} [�
     intro z hz
     exact ((hsm z (hL z hz)).comp z (L.restrictScalars ℝ).contDiff.contDiffAt).contDiffWithinAt
   · have hz0 := hL z hz.1
-    have hlog : ContDiffAt ℝ 2 (fun x => Real.log ((fsMetric F).ρ x)) (L z) :=
-      ((hsm z hz0).of_le (WithTop.coe_le_coe.2 le_top)).log ((fsMetric F).pos _ hz0).ne'
-    rw [show (fun z => Real.log (A.h z)) = fun y => (fun x => Real.log ((fsMetric F).ρ x)) (L y) by rw [hA]]
+    have hlog : ContDiffAt ℝ 2 (fun x => Real.log ((fsMetric (ι := F)).ρ x)) (L z) :=
+      ((hsm z hz0).of_le (WithTop.coe_le_coe.2 le_top)).log ((fsMetric (ι := F)).pos _ hz0).ne'
+    rw [show (fun z => Real.log (A.h z)) =
+      fun y => (fun x => Real.log ((fsMetric (ι := F)).ρ x)) (L y) by rw [hA]]
     rw [leviForm_comp_clm L hlog w]
     exact leviForm_log_fs_nonneg hz0 _
 

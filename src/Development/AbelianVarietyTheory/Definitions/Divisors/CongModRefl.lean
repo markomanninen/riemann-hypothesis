@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
-import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.LeCovCoeff
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+public import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.LeCovCoeff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,12 +34,12 @@ def FibConst (d : DeltaDat Xo c 0) (g : Rul d.Xo₂ d.c₂) : Prop :=
 theorem Pull.fibConst {d : DeltaDat Xo c 0} {f : Rul Xo c} {g : Rul d.Xo₂ d.c₂} (h : Pull d f g) : FibConst d g :=
   fun k _ _ _ _ hk y₂ y₂' y h₁ h₂ => (h k hk y₂ y h₁).trans (h k hk y₂' y h₂).symm
 
-variable (Dw l) in
 
+variable (Dw l) in
 abbrev LaQ : Type := Dw.La ⧸ (l.Mb • ⊤ : Submodule (𝓞 E) Dw.La)
 
-variable (Dw l) in
 
+variable (Dw l) in
 abbrev Gam : Type := LaQ Dw l ≃ₗ[𝓞 E] LaQ Dw l
 
 def IsLift (lift : Gam Dw l → Dw.La →ₗ[𝓞 E] Dw.La) : Prop :=

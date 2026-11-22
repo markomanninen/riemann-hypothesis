@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductHuaDeterminantIntegrable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableHermC
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductHuaDeterminantIntegrable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableHermC
+
+@[expose] public section
+
 open MeasureTheory
 open GlobalTheory.CompanionTheory.SiegelND.Integ.Arch
 

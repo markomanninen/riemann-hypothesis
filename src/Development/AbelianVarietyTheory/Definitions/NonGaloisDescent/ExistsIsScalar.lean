@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmQAdmissibleConjugatePairPlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SurjConj
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.RatDatOfReal
-import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmQAdmissibleConjugatePairPlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SurjConj
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.RatDatOfReal
+public import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ variable {Rl cG} {S : NX.RatDat D.ntw} (YS : NX.NExpRealS Rl cG S)
 def evW (j : Fin D.R.m) : S.WL ((j : ℕ) + 1) →+ (GA D (Wc D j) → ℂ) where
   toFun x := (Rl.HW j (sg0 D A3.A)).e ((Rl.FW j).j (sg0 D A3.A) ((YS.fi j).e x)) (v₀ j _)
   map_zero' := by rw [map_zero, map_zero, map_zero]; rfl
-  map_add' x y := by rw [map_add, map_add, map_add]; rfl
+  map_add' x y := by rw [map_add (f := _), map_add (f := _), map_add (f := _)]; rfl
 
 theorem evW_smul (j : Fin D.R.m) (c : D.what₂.LL) (x : S.WL ((j : ℕ) + 1)) :
     evW YS v₀ j (c • x) = D.what₂.embLL c • evW YS v₀ j x := by
@@ -84,7 +88,7 @@ theorem evK_tmul (a : NX.KB S i b) (f : NX.FmK S ((j : ℕ) + 1)) :
 def realRd (ν : ℂ) : Rd ρ D.nexp i j b where
   toFun f := ν⁻¹ • evK YS v₀ hρ i j b (YS.eF i _ b (Nat.le_add_left _ _) j.2 f)
   map_add' f f' := by
-    rw [map_add, ← smul_add]
+    rw [map_add (f := _), ← smul_add]
     exact congrArg _ ((evK YS v₀ hρ i j b).map_add _ _)
   map_smul' c f := by
     rw [map_smul, smul_comm]
@@ -94,7 +98,7 @@ def realRd (ν : ℂ) : Rd ρ D.nexp i j b where
         evK YS v₀ hρ i j b (c • x) = ρ.e i b c • evK YS v₀ hρ i j b x := fun c x => by
       induction x using TensorProduct.induction_on with
       | zero => rw [smul_zero, map_zero, smul_zero]
-      | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+      | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
       | tmul a f =>
         rw [TensorProduct.smul_tmul', evK_tmul, evK_tmul, smul_smul]
         exact congrArg (· • _) (map_mul (ρ.e i b) c a)
@@ -115,8 +119,8 @@ theorem realRd_apply (ν : ℂ) (f : D.nexp.Fm i ((j : ℕ) + 1) b) :
 
 end Read
 
-variable (Rl) in
 
+variable (Rl) in
 def IsScale {j : Fin D.R.m} (B : Base (Vc D j) (Wc D j)) (c : ℂ) : Prop :=
   ∃ gramR c0R c0L, Bridge.FamTie Rl.B Rl.pl (Rl.Sb : Set (Pl D.host.E)) Rl.Q (labLL D) (fun τ => Bridge.lamRdef (Ptw D) τ)
       (fun j τ => Bridge.lamLdef (Vc D j).rank ((j : ℕ) + 1) τ) gramR c0R c0L ∧
@@ -125,8 +129,8 @@ def IsScale {j : Fin D.R.m} (B : Base (Vc D j) (Wc D j)) (c : ℂ) : Prop :=
         harmFn (Wc D j).rank B.w B.F.BS (Rl.ioP j (PiTensorProduct.tprod ℂ u) (c0L j F)) =
           c • coefFn D.what₂.embLL (FWT.lamV D j) (F : Pol D.what₂.LL D.what₂.Tau (Vc D j).rank)
 
-variable (Rl) in
 
+variable (Rl) in
 def IsNorm {j : Fin D.R.m} (B : Base (Vc D j) (Wc D j)) (ν : ℂ) : Prop :=
   ν ≠ 0 ∧ ∃ c, IsScale Rl v₀ B c ∧ ∃ n : ℕ, n ≠ 0 ∧ ν ^ n = (cj (twAt D.what₂.embLL A3.A.v0) (Rl.phs j) * c) ^ n
 
@@ -181,40 +185,12 @@ def full : FullTie Z.good Z.rd := ⟨Z.tie, Z.hecke, Z.univ⟩
 
 theorem heckeRead {i j b} (h : RatHecke (Z.rd i j b)) : HeckeRead (Z.rd i j b) := (Z.hecke i j b).heckeRead h
 
-include Z in
 
-theorem delU_ine (i : D.ntw.Tw) (Q : Finset (Pl D.host.E)) (M : ℕ) (hQ : Formalism.MainNotions.NAdm.AdmQ D.ntw i Q M) (P : Pl D.host.E)
-    (hP : P ∈ Q) : (∀ A : ValuationSubring D.nd.Om, IsPlaceOver A P →
-      Function.Surjective fun σ : Ine (F := D.host.E) A => Multiplicative.toAdd (D.nexp.delU i Q M σ) ⟨P, hP⟩) ∧
-    ∀ P' ∈ Q, P' ≠ P → ¬ IsConjPl D.host P P' → ∀ A : ValuationSubring D.nd.Om, IsPlaceOver A P' →
-      ∀ σ ∈ Ine (F := D.host.E) A, Multiplicative.toAdd (D.nexp.delU i Q M σ) ⟨P, hP⟩ = 0 :=
-  GlobalTheory.UnivCharIne.delU_ine D Z.univ i Q M hQ P hP
-
-include Z in
-
-theorem delUTie (hK : GlobalTheory.TwSys.K1 D.ntw) : GlobalTheory.TwSys.DelUTie D.nexp := GlobalTheory.UnivChar.delUTie_of_isUnivChar _ hK Z.univ
 
 theorem rat {i j b} (h : RatRow YS v₀ Z.good i j b) : Rat Z.good (Z.rd i j b) := (Z.scalar i j b).rat h
 
-include Z in
-
-theorem thU_empty (i : D.ntw.Tw) (j : ℕ) (b : Bool) (M : ℕ) (d : D.nexp.Dat i j b) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) :
-    D.nexp.thU i j b ∅ M d = D.nexp.th i j b d ⊗ₜ[D.ntw.O i] 1 := by
-  obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' h1
-  exact (Z.tie i ⟨n, h2⟩ b).thU_empty M d
-
-theorem exists_dat {i j b} (h : RatRow YS v₀ Z.good i j b) {s g P} (hd : Z.ρ.IsDatum i j b s g P) :
-    ∃ d, (Z.tie i j b).cls d = g ∧ (Z.tie i j b).coef d = P ∧ Z.rd i j b (D.nexp.th i _ b d) = Z.ρ.theta i j b g P := by
-  obtain ⟨d, -, rfl, rfl⟩ := (Z.tie i j b).dat_onto s g P hd ((Z.rat h).1 s g P hd)
-  exact ⟨d, rfl, rfl, (Z.tie i j b).th_eq d⟩
 
 end ExportTie
-
-example (i : D.ntw.Tw) (b : Bool) : NX.readLL0 S i b = sideEmb D.ntw i b := rfl
-
-example (i : D.ntw.Tw) : Formalism.MainNotions.BlochKatoReduction.Gen.psiAt false (D.ntw.delta i) = (D.ntw.delta i)⁻¹ := rfl
-
-example : normProd (∅ : Finset (Pl D.host.E)) = 1 := rfl
 
 end GlobalTheory.SeriesTie
 

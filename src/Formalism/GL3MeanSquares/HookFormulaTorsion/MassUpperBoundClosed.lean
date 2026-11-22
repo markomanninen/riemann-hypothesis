@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.GL3MeanSquares.MassLowerBoundClosed
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SiegelMassRatioOfLI
-import Formalism.HermitianLattices.HermitianLatticesProofs.MassTelescope
-import Formalism.LogVandermondeBounds.HookGammaAmgmMultinomialBounds
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.MassLowerBoundClosed
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SiegelMassRatioOfLI
+public import Formalism.HermitianLattices.HermitianLatticesProofs.MassTelescope
+public import Formalism.LogVandermondeBounds.HookGammaAmgmMultinomialBounds
+
+@[expose] public section
 
 open NumberField Finset
 

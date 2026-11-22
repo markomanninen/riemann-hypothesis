@@ -1,12 +1,16 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.TensorProductsG2.PtrScalar
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.UnitarizeD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.StdGap
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.AnyDec
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.DataGenSubIrred
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.HasGelfandCharSigLam
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.TensorProductsG2.PtrScalar
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.UnitarizeD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.StdGap
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.AnyDec
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.DataGenSubIrred
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.HasGelfandCharSigLam
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,13 +98,13 @@ theorem tens_unitarize (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAd
     ∑ j, ∑ ξ, pr (Formalism.REAL.muG ε) (u j ξ (P f)) (u j ξ (P g))
   let Q : (Fin n → D) →ₗ⋆[ℂ] (Fin n → D) →ₗ[ℂ] ℂ := LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) Q0
     (fun f f' g => by
-      simp only [Q0, map_add, hu_add, ← Finset.sum_add_distrib]
+      simp only [Q0, map_add (f := _), hu_add, ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun ξ _ =>
         pr_add_left (hLP f j ξ) (hLP f' j ξ) (hLP g j ξ))
     (fun a f g => by
       simp only [Q0, map_smul, hu_smul, pr_smul_left, Finset.mul_sum, smul_eq_mul, starRingEnd_apply])
     (fun f g g' => by
-      simp only [Q0, map_add, hu_add, ← Finset.sum_add_distrib]
+      simp only [Q0, map_add (f := _), hu_add, ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun ξ _ =>
         pr_add_right (hLP f j ξ) (hLP g j ξ) (hLP g' j ξ))
     (fun a f g => by
@@ -187,10 +191,10 @@ theorem tens_unitarize (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAd
         (1 / 2 : ℂ) * Q (mx (tensF dual E) (Matrix.single a b 1 - Z) f) g +
         (Complex.I / 2) * Q (mx (tensF dual E) (Complex.I • (Matrix.single a b 1 + Z)) f) g := by
       rw [hTab]
-      simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smulₛₗ, smul_eq_mul,
+      simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smulₛₗ, smul_eq_mul,
         starRingEnd_apply, s1, s2]
     have e2 := congrArg (fun A : Module.End ℂ (Fin n → D) => Q f (A g)) hTba
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, LinearMap.neg_apply, map_add, map_smul, map_neg,
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, LinearMap.neg_apply, map_add (f := _), map_smul, map_neg,
       smul_eq_mul] at e2
     rw [e1, hskew _ hX1 f hf g hg, hskew _ hX2 f hf g hg]
     linear_combination (-1 : ℂ) * e2

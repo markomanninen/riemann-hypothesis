@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HarderNarasimhan.ShiftInvariance
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.ShiftInvariance
+
+@[expose] public section
 
 open Module
 
@@ -30,16 +34,16 @@ theorem slope_eq_of_norm_eq {R V E F : Type*} [Ring R] [AddCommGroup V] [Module 
       intro y z
       apply Subtype.ext
       show ρ₂ (pre (y + z)) = ρ₂ (pre y) + ρ₂ (pre z)
-      rw [← map_add]
+      rw [← map_add (f := _)]
       apply Formalism.HN.Rerealization.eq_of_eq ρ ρ₂ hn
-      rw [map_add, pre_eq, pre_eq, pre_eq]
+      rw [map_add (f := _), pre_eq, pre_eq, pre_eq]
       rfl)
   have f0_apply : ∀ y, ((f0 y : Formalism.HN.zl ρ₂ N) : F) = ρ₂ (pre y) := fun y => rfl
   have f0_norm : ∀ y, ‖((f0 y : Formalism.HN.zl ρ₂ N) : F)‖ = ‖(y : E)‖ := by
     intro y
     rw [f0_apply, hn, pre_eq]
   have hinj : Function.Injective f0 := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     have h0 : ‖(y : E)‖ = 0 := by
       rw [← f0_norm, hy]
@@ -72,7 +76,7 @@ theorem slope_eq_of_norm_eq {R V E F : Type*} [Ring R] [AddCommGroup V] [Module 
     · exact (Formalism.HN.Rerealization.covol_rk_eq ρ ρ₂ hn N.toAddSubgroup h (hiff.1 h)).1
     · have h' : ¬ DiscreteTopology (Formalism.HN.zl ρ₂ N) := fun h' => h (hiff.2 h')
       unfold Formalism.F.covol
-      rw [dif_neg h, dif_neg h']
+      rw [dite_eq_right h, dite_eq_right h']
   unfold Formalism.HN.slope Formalism.F.slope Formalism.F.deg
   rw [hcov, hrk]
 

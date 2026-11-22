@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.AutLzFinite
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismFiniteness.AutLzFinMain
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.AutLzFinite
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismFiniteness.AutLzFinMain
+
+@[expose] public section
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

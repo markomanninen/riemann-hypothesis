@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLCentre
-import Development.WeilBound.CoreStatements.HodgeTatePoints.McCramer
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLPulllocCentre
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MaBase
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MaSerre
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLCentre
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.McCramer
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLPulllocCentre
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MaBase
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MaSerre
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar NumberField
 
 noncomputable section
@@ -104,7 +109,7 @@ theorem span_image_span (i : Ω →+* Ω') (j : E →+ F) (hj : ∀ (a : Ω) (e 
     | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
     | zero => simp
     | add y y' _ _ hy hy' =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hy hy'
     | smul a y _ hy =>
       have e1 : j (a • y) = (⟨i a, hA a a.2⟩ : A) • j y := by
@@ -130,7 +135,8 @@ theorem ext_basis (i : Ω →+* Ω') (j : E →+ F) (hj : IsExtOver i j) (V : Su
   have hJsum : ∀ v : V, J v = ∑ k, i (b₀.repr v k) • J (b₀ k) := by
     intro v
     conv_lhs => rw [← b₀.sum_repr v]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hJs]
   have hJli : LinearIndependent Ω' (J ∘ b₀) := by
     apply LinearIndependent.of_comp (Submodule.span Ω' (j '' (V : Set E))).subtype
@@ -302,7 +308,7 @@ theorem plucker_block (o : Type) [CommRing o] (Ω : Type) [Field Ω] [Algebra o 
 
 end PositivityTheory.HtPt.Mb.LFlatten.Flatten
 
-open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar NumberField in
 
+open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar NumberField in
 theorem PositivityTheory.HtPt.Mb.flatten : ∀ (o : Type) [CommRing o] (Ω : Type) [Field Ω] [Algebra o Ω] (κ : Type) [Finite κ] (x : κ → Ω) (M : PModel o x) (E : Type) [AddCommGroup E] [Module Ω E] (L : Lat M.ξ E) (V : Submodule Ω E) [FiniteDimensional Ω V], L.IsCohOn Set.univ → (∀ p, Submodule.span Ω (L p : Set E) = V) → ∃ (κ' : Type) (_ : Finite κ') (w : κ' → Ω), (∃ l, w l ≠ 0) ∧ (∀ p : Cpt M.ξ, (∃ (r : ℕ) (b : Fin r → E), L.IsFrameAt b p) → ∃ l, InChart M.ξ w l p) ∧ ∀ (X' : Scheme.{0}) (Ω' : Type) [Field Ω'] (ξ' : Spec (CommRingCat.of Ω') ⟶ X') (i : Ω →+* Ω') (F : Type) [AddCommGroup F] [Module Ω' F] (j : E →+ F), IsExtOver i j → (L.pullLoc ξ' i j).IsVBOn {p' | p' ∈ ctrSet o x i ξ' ∧ ∃ l, InChart ξ' (fun l => i (w l)) l p'} (Module.finrank Ω V) (Submodule.span Ω' (j '' (V : Set E))) :=
   @PositivityTheory.HtPt.Mb.LFlatten.Flatten.plucker_block

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume GroundTheory.Automorphic GlobalTheory.CompanionTheory.Ar.Cusp.Dict
 open scoped ENNReal InnerProductSpace
 open scoped ComplexOrder
@@ -23,12 +28,12 @@ theorem perExt_eq_sum (R : RiemLat E g Λ) (y : Ψ → Fin (j + j') → ℂ) :
     C.perExt R y = ∑ k, C.bas.repr y k • R.P (C.lam k) := by
   simp [perExt, Module.Basis.constr_apply_fintype]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem form_antisymm {M : Type} [AddCommGroup M] (f : M →ₗ[ℤ] M →ₗ[ℤ] ℤ) (hf : ∀ x, f x x = 0) (x y : M) :
     f x y = - f y x := by
   have h := hf (x + y)
-  simp only [map_add, LinearMap.add_apply, hf] at h
+  simp only [map_add (f := _), LinearMap.add_apply, hf] at h
   linarith
 
 theorem exists_dual (R : RiemLat E g Λ) (i : Fin (2 * g)) :
@@ -39,7 +44,7 @@ theorem exists_dual (R : RiemLat E g Λ) (i : Fin (2 * g)) :
   simp [Module.Basis.coord_apply, Finsupp.single_apply]
 
 theorem perExt_injective (R : RiemLat E g Λ) : Function.Injective (C.perExt R) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   have hc : ∀ i, C.bas.repr y i = 0 := by
     intro i
@@ -68,13 +73,15 @@ def latPt (x : Λ) : Ψ → Fin (j + j') → ℂ := ∑ k, ((C.lam.repr x k : �
 theorem perExt_latPt (R : RiemLat E g Λ) (x : Λ) : C.perExt R (C.latPt x) = R.P x := by
   have hb : ∀ k, C.perExt R (C.bas k) = R.P (C.lam k) := fun k => by
     simp [perExt, Module.Basis.constr_basis]
-  conv_rhs => rw [← C.lam.sum_repr x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← C.lam.sum_repr x, map_sum]
   unfold latPt
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, hb, Int.cast_smul_eq_zsmul, map_zsmul]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem sgI_mul_self : sgI j j' * sgI j j' = 1 := by
   simp [sgI, fromBlocks_multiply]
 
@@ -107,24 +114,24 @@ theorem aPart_add_bPart {A : Ψ → Matrix (Fin (j + j')) (Sg j j') ℂ}
 def cxStr (A : Ψ → Matrix (Fin (j + j')) (Sg j j') ℂ) (y : Ψ → Fin (j + j') → ℂ) (τ : Ψ) : Fin (j + j') → ℂ :=
   (-Complex.I) • C.aPart A y τ + Complex.I • C.bPart A y τ
 
-open Classical in
 
+open Classical in
 theorem perExt_single_I_of_pPart (R : RiemLat E g Λ) (τ : Ψ) (w : Fin (j + j') → ℂ) (h : C.pPart R τ w = 0) :
     C.perExt R (Pi.single τ (Complex.I • w)) = (-Complex.I) • C.perExt R (Pi.single τ w) := by
   have h2 := (smul_eq_zero.1 h).resolve_left (by norm_num)
   rw [sub_eq_zero.1 h2, smul_smul]
   simp
 
-open Classical in
 
+open Classical in
 theorem perExt_single_I_of_pBar (R : RiemLat E g Λ) (τ : Ψ) (w : Fin (j + j') → ℂ) (h : C.pBar R τ w = 0) :
     C.perExt R (Pi.single τ (Complex.I • w)) = Complex.I • C.perExt R (Pi.single τ w) := by
   have h2 := (smul_eq_zero.1 h).resolve_left (by norm_num)
   rw [eq_neg_of_add_eq_zero_left h2, smul_neg, smul_smul]
   simp
 
-open Classical in
 
+open Classical in
 theorem perExt_single_cxStr {R : RiemLat E g Λ} {A : Ψ → Matrix (Fin (j + j')) (Sg j j') ℂ} (hA : C.IsAdapted R A)
     (y : Ψ → Fin (j + j') → ℂ) (τ : Ψ) :
     C.perExt R (Pi.single τ (C.cxStr A y τ)) = Complex.I • C.perExt R (Pi.single τ (y τ)) := by
@@ -132,16 +139,17 @@ theorem perExt_single_cxStr {R : RiemLat E g Λ} {A : Ψ → Matrix (Fin (j + j'
   have hb := C.perExt_single_I_of_pBar R τ (C.bPart A y τ) (hA.kerBar τ _)
   have hy : C.perExt R (Pi.single τ (y τ)) =
       C.perExt R (Pi.single τ (C.aPart A y τ)) + C.perExt R (Pi.single τ (C.bPart A y τ)) := by
-    rw [← map_add, ← Pi.single_add, C.aPart_add_bPart hA.unit]
+    rw [← map_add (f := _), ← Pi.single_add, C.aPart_add_bPart hA.unit]
   unfold cxStr
-  rw [neg_smul, Pi.single_add, map_add, Pi.single_neg, map_neg, ha, hb, hy, smul_add]
+  rw [neg_smul, Pi.single_add, map_add (f := _), Pi.single_neg, map_neg, ha, hb, hy, smul_add]
   simp
 
-open Classical in
 
+open Classical in
 theorem perExt_eq_sum_single (R : RiemLat E g Λ) (y : Ψ → Fin (j + j') → ℂ) :
     C.perExt R y = ∑ τ, C.perExt R (Pi.single τ (y τ)) := by
-  rw [← map_sum, Finset.univ_sum_single]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, Finset.univ_sum_single]
 
 theorem perExt_cxStr {R : RiemLat E g Λ} {A : Ψ → Matrix (Fin (j + j')) (Sg j j') ℂ} (hA : C.IsAdapted R A)
     (y : Ψ → Fin (j + j') → ℂ) : C.perExt R (C.cxStr A y) = Complex.I • C.perExt R y := by
@@ -172,7 +180,7 @@ theorem eqvBy_of_adapted (R R' : RiemLat E g Λ) {A : Ψ → Matrix (Fin (j + j'
     ring
   have hs : ∀ (c : ℂ) z, φ (c • z) = c • φ z := by
     intro c z
-    rw [hz c z, map_add, map_smul, map_smul, hI, ← hz]
+    rw [hz c z, map_add (f := _), map_smul, map_smul, hI, ← hz]
   refine ⟨{ toFun := φ, invFun := φ.symm, left_inv := φ.left_inv, right_inv := φ.right_inv,
             map_add' := φ.map_add, map_smul' := hs }, fun x => ?_⟩
   show R'.P x = φ (R.P x)

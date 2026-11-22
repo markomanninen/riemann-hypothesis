@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightTypeAction
+module
+
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightTypeAction
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 

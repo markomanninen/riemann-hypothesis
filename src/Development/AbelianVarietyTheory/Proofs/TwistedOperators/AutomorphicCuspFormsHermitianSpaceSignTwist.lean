@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignedUnitaryGroupCompatStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignedUnitaryGroupCompatStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -213,7 +217,7 @@ theorem cusp_transport {A B : HSp D} (e : GA D B ≃* GA D A) (hc : Continuous e
       right_inv := fun q => by ext; simp }
   have hq : Measure.map eM.symm (Measure.map eM μ) = μ := eM.map_symm_map
   have hFD : IsFundamentalDomain (NIQ A CA) (eN.symm ⁻¹' 𝓕) (Measure.map eN μ) := by
-    refine h𝓕.preimage_of_equiv (f := eN.symm) ⟨c2.measurable, ?_⟩ eQ.bijective ?_
+    refine h𝓕.preimage_of_equiv (f := eN.symm) ⟨c2.measurable.aemeasurable, ?_⟩ eQ.bijective ?_
     · exact (le_of_eq hq).absolutelyContinuous
     · intro q x
       show eN.symm ((eN q : NI A CA) * x) = (q : NI B CB) * eN.symm x
@@ -245,8 +249,8 @@ theorem isCuspFun_sgn_true (hL : SgnLaw θ true V) (φ : GA D V → ℂ) :
 
 end GlobalTheory.SgnFun
 
-open GlobalTheory.SgnFun in
 
+open GlobalTheory.SgnFun in
 theorem GlobalTheory.sgn_fun_cusp : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ (ε : Bool) (V : HSp D) (φ : GA D V → ℂ),
     (IsAutFunSm θ (sgn ε V) (fun g => φ (ofSgn ε V g)) ↔ IsAutFunSm θ V φ) ∧
       (IsCuspFun (sgn ε V) (fun g => φ (ofSgn ε V g)) ↔ IsCuspFun V φ) := by

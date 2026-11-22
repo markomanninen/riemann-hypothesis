@@ -1,10 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormOneReflectionCorrectionAtLevelStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryMatrixEqProdQuasiReflectionsStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryQuasiReflectionLawsStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.Imports
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNsmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormOneReflectionCorrectionAtLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryMatrixEqProdQuasiReflectionsStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryQuasiReflectionLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNsmulMem
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat GlobalTheory.UnRep
 open scoped TensorProduct Matrix
@@ -12,17 +15,6 @@ open scoped TensorProduct Matrix
 namespace GlobalTheory.UnRep.Correct
 
 variable {E : Type} [Field E] {n : ℕ}
-
-theorem exists_nat_smul_mem [NumberField E] (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : Submodule.span E (L : Set (Fin n → E)) = ⊤) (x : Fin n → E) :
-    ∃ d : ℕ, 0 < d ∧ d • x ∈ L := by
-  first
-  | exact @_root_.GlobalTheory.NatMulMem.main
-  | exact _root_.GlobalTheory.NatMulMem.main
-  | (apply _root_.GlobalTheory.NatMulMem.main <;> assumption)
-  | (intros; apply _root_.GlobalTheory.NatMulMem.main <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.NatMulMem.main <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.NatMulMem.main ..)
 
 theorem exists_nat_mulVec_mem [NumberField E] (L : Submodule (𝓞 E) (Fin n → E)) (hfg : L.FG)
     (hL : Submodule.span E (L : Set (Fin n → E)) = ⊤) (M : Matrix (Fin n) (Fin n) E) :

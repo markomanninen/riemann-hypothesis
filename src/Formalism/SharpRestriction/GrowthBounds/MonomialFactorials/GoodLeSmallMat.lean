@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.OrthCountOf
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.GoodCountMem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.OrthCountOf
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.GoodCountMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,8 +11,8 @@ namespace Formalism.MainNotions.G.SymmetricFormBlocks
 
 open MvPolynomial Finset
 
-open Classical in
 
+open Classical in
 def GoodLeSmallMat : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (n m : ℕ) (X Y : Fin n → Fin m → ℤ_[p]) (c : Fin m → ℚ_[p]) (D : ℤ),
     (∀ i j, ∑ a, (X i a : ℚ_[p]) * c a * (Y j a : ℚ_[p]) = if i = j then (p : ℚ_[p]) ^ D else 0) →

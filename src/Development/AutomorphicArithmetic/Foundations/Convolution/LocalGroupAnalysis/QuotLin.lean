@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotStage
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotStage
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -15,7 +19,9 @@ private theorem uni_smul [TopologicalSpace G] [IsTopologicalGroup G] [BorelSpace
     (h : Uni μ) {a : NNReal} (ha : a ≠ 0) : Uni (a • μ) := by
   obtain ⟨h1, h2⟩ := h
   exact ⟨Measure.IsHaarMeasure.nnreal_smul μ ha,
-    ⟨by rw [Measure.inv, Measure.map_smul, Measure.map_inv_eq_self]⟩⟩
+    ⟨by
+      rw [Measure.inv, Measure.map_smul, Measure.map_inv_eq_self]
+      exact continuous_inv.measurable.aemeasurable⟩⟩
 
 private theorem isNrm_div {j : T →* G} {ν : Measure T} {ρ : G → ℝ≥0∞} (h : IsNrm j ν ρ)
     {b : NNReal} (hb : b ≠ 0) : IsNrm j (b • ν) (fun x => (b : ℝ≥0∞)⁻¹ * ρ x) := by
@@ -76,7 +82,7 @@ theorem UpperTheory.ConvolutionTheory.G.quotLin_of :
   · have hsum : QInt μ j ν (fun g => ∑ i ∈ s, c i * F i g) := by
       refine ⟨Finset.measurable_sum s fun i hi => measurable_const.mul (hF i hi).1,
         fun t g => Finset.sum_congr rfl fun i hi => by rw [(hF i hi).2.1], fun ρ hρ => ?_⟩
-      have := integrable_finset_sum s (fun i hi => ((hF i hi).2.2 ρ hρ).const_mul (c i))
+      have := integrable_finsetSum s (fun i hi => ((hF i hi).2.2 ρ hρ).const_mul (c i))
       refine this.congr (Filter.Eventually.of_forall fun x => ?_)
       simp only [Finset.sum_mul, mul_assoc]
     refine ⟨hsum, ?_⟩
@@ -84,7 +90,7 @@ theorem UpperTheory.ConvolutionTheory.G.quotLin_of :
       Finset.sum_congr rfl fun i hi => by
         rw [(hE G T μ j ν hP _ (hF i hi).1 (hF i hi).2.1 _ hρ₀).2.2]]
     simp only [Finset.sum_mul, mul_assoc]
-    rw [integral_finset_sum s fun i hi => ((hF i hi).2.2 _ hρ₀).const_mul (c i)]
+    rw [integral_finsetSum s fun i hi => ((hF i hi).2.2 _ hρ₀).const_mul (c i)]
     exact Finset.sum_congr rfl fun i _ => integral_const_mul _ _
   · have hP' : Pair (a • μ) j (b • ν) := ⟨uni_smul hP.1 ha, hP.2.1, uni_smul hP.2.2 hb⟩
     refine ⟨hP', fun F hF hinv => ⟨qInt_iff ha hb, ?_⟩⟩

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinrankTensor
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinrankTensor
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem mem_intPol_of_coeff {O : Type} [CommRing O] [IsDomain O] {σ : Type} (P 
 
 private theorem padicValNat_le_vK_natCast {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {p : ℕ}
     (S : UniformizedDVR p O) (m : ℕ) : (((padicValNat p m : ℚ)) : WithTop ℚ) ≤ vK p (m : KK O) := by
-  obtain ⟨r, hr⟩ := pow_padicValNat_dvd (p := p) (n := m)
+  obtain ⟨r, hr⟩ := (fun {p n : ℕ} => _root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat p n)) (p := p) (n := m)
   have hp0 : (p : O) ≠ 0 := S.p_ne
   have hcast : (m : KK O) = algebraMap O (KK O) ((p : O) ^ padicValNat p m) * algebraMap O (KK O) (r : O) := by
     conv_lhs => rw [hr]
@@ -57,7 +61,9 @@ private theorem vK_coeff_add_half_padicVal_nonneg_of_bbSpec {O : Type} [CommRing
     · rw [GLWeightTheory.valuation_zero_alt]
       simp
   | zero =>
-    rw [MvPolynomial.coeff_zero, GLWeightTheory.valuation_zero_alt]
+    rw [MvPolynomial.coeff_zero]
+    change 0 ≤ vK p (0 : KK O) + _
+    rw [GLWeightTheory.valuation_zero_alt]
     simp
   | add x y _ _ hx hy =>
     rw [MvPolynomial.coeff_add]
@@ -121,7 +127,9 @@ private theorem gOp_mem_span_of_mem_span (hEig : EigAt) {O : Type} [CommRing O] 
   | zero =>
     have h0 : gOp T q (0 : MvPolynomial σ (KK O)) = 0 := by
       ext μ
-      rw [hEig, MvPolynomial.coeff_zero, mul_zero]
+      rw [hEig, MvPolynomial.coeff_zero]
+      change _ * (0 : KK O) = 0
+      exact mul_zero _
     rw [h0]
     exact zero_mem _
   | add x y _ _ hx hy =>
@@ -142,8 +150,8 @@ private theorem exists_algebraMap_eq_of_w_pow_padicVal_mul {O : Type} [CommRing 
     exact hndvd (dvd_zero p)
   have hv : padicValNat p N = e := by
     haveI := Fact.mk hp
-    rw [hN', padicValNat.mul (pow_ne_zero _ hp.ne_zero) hN'0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hndvd, add_zero]
+    rw [hN', (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hp.ne_zero) hN'0, (show padicValNat p (p ^ e) = e from by simpa only [← Nat.padicValNat_def] using Nat.multiplicity_prime_pow (p := p) (n := e)),
+      (show padicValNat p N' = 0 from by simpa only [← Nat.padicValNat_def] using multiplicity_eq_zero_of_not_dvd hndvd), add_zero]
   rw [hv] at hz
   obtain ⟨uu, huu⟩ := GLWeightTheory.natCast_isUnit_of_coprime hp DS N' hndvd
   have hpw : (algebraMap O (KK O) w ^ e) ^ 2 = (p : KK O) ^ e := by
@@ -307,7 +315,7 @@ theorem blockFormAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cm Cc H : ℝ} (hCm : 17 ≤
       obtain ⟨y, hy⟩ := bb_pair DS hwsq _ u u' hu.2 hu'.2 μ
       refine ⟨h * y, ?_⟩
       rw [MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, hEig, smul_eq_mul, smul_eq_mul]
-      simp only [map_mul, map_add, map_one, map_pow] at hh hy ⊢
+      simp only [map_mul, map_add (f := _), map_one, map_pow] at hh hy ⊢
       linear_combination (u.coeff μ * u'.coeff μ * zSeg (KK O) X j * (expFact (ioExp C0 CE1 CE2 X j b μ) : KK O) *
           algebraMap O (KK O) (gEv T q μ)) * hsc + (u.coeff μ * u'.coeff μ) * hh +
         (algebraMap O (KK O) κ * algebraMap O (KK O) w ^ X.c * algebraMap O (KK O) h) * hy
@@ -325,7 +333,8 @@ theorem blockFormAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cm Cc H : ℝ} (hCm : 17 ≤
         (u.coeff μ * u'.coeff μ * (expFact μ : KK O))) = algebraMap O (KK O) κ * algebraMap O (KK O) a := by
       rw [← Finset.mul_sum, ← Finset.mul_sum, ← ha]
       rfl
-    rw [hf, ← map_sum, ← map_mul, ← map_add]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf, ← map_sum, ← map_mul, ← map_add (f := _)]
     congr 1
     simp only [Finset.mul_sum, mul_add]
     congr 1

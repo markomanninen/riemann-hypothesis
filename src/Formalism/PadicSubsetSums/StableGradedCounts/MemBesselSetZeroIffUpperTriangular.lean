@@ -1,5 +1,9 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
-import Lemmata.TwistedIdempotents.TwistedIdem
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
+public import Lemmata.TwistedIdempotents.TwistedIdem
+
+@[expose] public section
 
 section
 open Finset
@@ -78,9 +82,11 @@ theorem antiLift_idem (σ : G → G) (hσ : ∀ x y, σ (x * y) = σ y * σ x) (
       invFun := fun u => ⟨σ u, (hJ u).1⟩
       left_inv := fun u => Subtype.ext (hσσ u)
       right_inv := fun u => Subtype.ext (hσσ u) }
-  rw [twistedIdem_def, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [twistedIdem_def, map_sum]
   show _ = MulOpposite.opAddEquiv _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Fintype.sum_equiv s _ _ (fun u => ?_)
   rw [map_smul, antiLift_of, MulOpposite.opAddEquiv_apply, MulOpposite.op_smul]
   have : χ (s u) = χ u := (hJ u).2
@@ -114,7 +120,7 @@ theorem hecke_comm (σ : G → G) (hσ : ∀ x y, σ (x * y) = σ y * σ x) (hσ
     | of g =>
       rw [map_mul, map_mul, antiLift_idem σ hσ hσσ J χ hJ, antiLift_of, ← MulOpposite.op_mul,
         ← MulOpposite.op_mul, ← mul_assoc, key]
-    | add x y hx hy => rw [mul_add, add_mul, map_add, hx, hy, MulOpposite.op_add]
+    | add x y hx hy => rw [mul_add, add_mul, map_add (f := _), hx, hy, MulOpposite.op_add]
     | smul r x hx => rw [mul_smul_comm, smul_mul_assoc, map_smul, hx, MulOpposite.op_smul]
   have h := map_mul (antiLift σ hσ) (twistedIdem J χ * MonoidAlgebra.of ℂ G g * twistedIdem J χ)
     (twistedIdem J χ * MonoidAlgebra.of ℂ G g' * twistedIdem J χ)

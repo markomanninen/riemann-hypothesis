@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
+
+@[expose] public section
 
 open scoped NNReal
 open NumberField GlobalTheory.IndefiniteRowSideFullHecke.QuotientEigenDifference GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Flat.ExG
@@ -32,7 +36,8 @@ theorem comp_eigProj_eq {E : Type} [Field E] [NumberField E] {C : Type} [Field C
     exact (mul_eq_zero.1 h2).resolve_left (sub_ne_zero.2 ha)
   have e : φ y = φ (HT.eigProj ρ s' y) := by
     conv_lhs => rw [← hsum y]
-    rw [map_sum, Finset.sum_eq_single s' (fun t _ ht => key t ht) (by simp)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single s' (fun t _ ht => key t ht) (by simp)]
   exact e.symm
 
 theorem finrank_eigSp_inf_ker_fst :

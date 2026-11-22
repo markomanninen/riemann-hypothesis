@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafGlueTwoPfFP
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafGlueTwoPfFP
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Topology GlobalTheory.GlueModels LateralTheory.E.LeafGlueTwoPfFP

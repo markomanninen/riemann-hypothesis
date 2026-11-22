@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 theorem UpperTheory.exists_factor_dual_embedding_of_ne_zero_tensor :

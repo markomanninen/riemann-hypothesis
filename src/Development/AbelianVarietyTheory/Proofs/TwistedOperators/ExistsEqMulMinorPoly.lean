@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ISupEigenspaceEqTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ISupEigenspaceEqTop
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.Capelli Formalism.BasicNotions.TH GlobalTheory.JointHarm
 
@@ -70,14 +74,14 @@ theorem exists_eq_mul_minorPoly (σ : Type) [DecidableEq σ] (p r : ℕ) (z : Fi
       have h₁ := (rowOp_apply _ _ _ _).symm.trans (hru (e i) (e j) hij)
       refine ((rowAdd_invariant_iff (fun k => z (e i, f k)) (fun k => z (e j, f k))
         (fun k l h => hfi (by simpa using hz h))
-        (fun k l h => hij.ne (hei (congrArg Prod.fst (hz h)))) P).out 2 1).1 (Eq.trans ?_ h₁)
+        (fun k l h => hij.ne (hei (congrArg Prod.fst (hz h)))) P).out 3 2).1 (Eq.trans ?_ h₁)
       refine Fintype.sum_of_injective f hfi _ _ (fun k hk => ?_) fun _ => rfl
       rw [pderiv_eq_zero_of_notMem_vars (hvf _ k hk), mul_zero])
     (fun i j hij => by
       have h₁ := (colOp_apply _ _ _ _).symm.trans (hcu (f i) (f j) hij)
       refine ((rowAdd_invariant_iff (fun k => z (e k, f i)) (fun k => z (e k, f j))
         (fun k l h => hei (by simpa using hz h))
-        (fun k l h => hij.ne (hfi (congrArg Prod.snd (hz h)))) P).out 2 1).1 (Eq.trans ?_ h₁)
+        (fun k l h => hij.ne (hfi (congrArg Prod.snd (hz h)))) P).out 3 2).1 (Eq.trans ?_ h₁)
       refine Fintype.sum_of_injective e hei _ _ (fun k hk => ?_) fun _ => rfl
       rw [pderiv_eq_zero_of_notMem_vars (hve k _ hk), mul_zero])
   have hPQ' : P = Q * minorPoly z α := hPQ

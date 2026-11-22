@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultCellsAmong
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAdmissibleFanOfCellMultOneCMField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultCellsAmong
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAdmissibleFanOfCellMultOneCMField
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan
 
 namespace GlobalTheory.PolFan
@@ -16,7 +21,8 @@ theorem cellMult_pos {O : Type} [CommRing O] [Module.Finite ℤ O] (bar : O → 
   haveI : IsNoetherian ℤ (LinearMap.BilinForm ℤ X) := inferInstance
   haveI : Module.Finite ℤ M := inferInstance
   haveI : IsNoetherian ℤ M := inferInstance
-  haveI : Module.Finite ℤ T := inferInstance
+  haveI : IsNoetherian ℤ T := isNoetherian_of_submodule_of_noetherian ℤ M T inferInstance
+  haveI : Module.Finite ℤ T := ⟨IsNoetherian.noetherian ⊤⟩
   haveI : AddGroup.FG T := by
     rw [← Module.Finite.iff_addGroup_fg]; infer_instance
   haveI : Finite T := by

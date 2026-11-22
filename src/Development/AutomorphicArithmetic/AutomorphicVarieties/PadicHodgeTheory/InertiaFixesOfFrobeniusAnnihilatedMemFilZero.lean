@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsAlgebraicElementOfAlgebraicVectorSubspace
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsAlgebraicElementOfAlgebraicVectorSubspace
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology Polynomial
 
 private theorem companion {R : Type} [CommRing R] (P : R[X]) (hP : P.Monic) (h0 : IsUnit (P.coeff 0)) :
@@ -12,7 +17,7 @@ private theorem companion {R : Type} [CommRing R] (P : R[X]) (hP : P.Monic) (h0 
   have hr : IsUnit (AdjoinRoot.root P) := by
     have h1 : AdjoinRoot.mk P (X * divX P + C (P.coeff 0)) = 0 := by
       rw [X_mul_divX_add]; exact AdjoinRoot.mk_self
-    rw [map_add, map_mul, AdjoinRoot.mk_X, AdjoinRoot.mk_C] at h1
+    rw [map_add (f := _), map_mul, AdjoinRoot.mk_X, AdjoinRoot.mk_C] at h1
     have h2 : IsUnit (AdjoinRoot.root P * AdjoinRoot.mk P (divX P)) := by
       rw [eq_neg_of_add_eq_zero_left h1]
       exact (h0.map (AdjoinRoot.of P)).neg
@@ -22,7 +27,8 @@ private theorem companion {R : Type} [CommRing R] (P : R[X]) (hP : P.Monic) (h0 
     exact hr.map _
   · rw [← AdjoinRoot.mk_eq_mk]
     have h := b.sum_repr (AdjoinRoot.root P * b i)
-    simp only [map_sum, map_mul, map_pow, AdjoinRoot.mk_X, AdjoinRoot.mk_C, Matrix.transpose_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, AdjoinRoot.mk_X, AdjoinRoot.mk_C, Matrix.transpose_apply,
       Algebra.leftMulMatrix_eq_repr_mul]
     rw [pow_succ', ← hb, ← h]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -47,7 +53,8 @@ theorem UpperTheory.inertia_fixes_of_frobenius_annihilated_mem_fil_zero :
     have h1 := congrArg (fun p : ℤ_[l][X] => aeval ((PP l).φB.toLinearMap : Module.End ℚ_[l] (Bcr l))
       (p.map (algebraMap ℤ_[l] ℚ_[l])) x) hQ
     rw [mul_comm P Q, Polynomial.map_mul, map_mul, Module.End.mul_apply, hx, map_zero] at h1
-    simp only [Polynomial.map_sub, Polynomial.map_pow, Polynomial.map_sum, Polynomial.map_mul, map_X, map_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Polynomial.map_sub, Polynomial.map_pow, Polynomial.map_sum, Polynomial.map_mul, map_X, map_C,
       map_sub, map_sum, map_mul, map_pow, aeval_X, aeval_C, LinearMap.sub_apply, LinearMap.sum_apply,
       Module.End.mul_apply, hpow, Module.algebraMap_end_apply] at h1
     rw [Function.iterate_succ_apply', sub_eq_zero] at h1
@@ -71,7 +78,8 @@ theorem UpperTheory.inertia_fixes_of_frobenius_annihilated_mem_fil_zero :
       Matrix.one_mulVec]
   have hYF : ∀ i, (PP l).ιB (Y i) ∈ ((PP l).PD (botExt l)).Fil 0 := fun i => by
     have h1 : Y i = ∑ j, N' i j * V j := rfl
-    rw [h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     rw [map_mul]
     simpa using ((PP l).PD (botExt l)).Fil_mul 0 0 _ _ (hN' i j) (hF j)

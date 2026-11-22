@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HtCoLOfEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HtCoLOfEq
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ
 
 namespace GlobalTheory.LambdaValuationPowers

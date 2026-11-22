@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.ArithOfA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SplitTransport
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.GenOfTwo
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.PhiBijective
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.ArithOfA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SplitTransport
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.GenOfTwo
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.PhiBijective
+
+@[expose] public section
 
 noncomputable section
 

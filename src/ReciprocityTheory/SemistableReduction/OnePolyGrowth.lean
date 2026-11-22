@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
-import Lemmata.IterateZero.IterZero
+module
+
+public import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+public import Lemmata.IterateZero.IterZero
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

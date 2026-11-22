@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct
@@ -11,9 +15,10 @@ open scoped TensorProduct
 namespace GlobalTheory.AdelicU
 
 theorem eventually_vecLoc_mem_latLoc {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsLattice E L) (y : Fin n → Af F ⊗[F] E) :
+    {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L) (y : Fin n → Af F ⊗[F] E) :
     ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite, vecLoc v y ∈ latLoc F L v := by
-  have := isLattice_stdLattice (E := E) (n := n)
+  letI := hL
+  haveI := isLattice_stdLattice (E := E) (n := n)
   filter_upwards [eventually_latLoc_eq F L (stdLattice E n),
     Filter.eventually_all.2 fun i => eventually_map_evalV_mem_intLoc (y i)] with v h h1
   rw [h, mem_latLoc_stdLattice]
@@ -21,7 +26,7 @@ theorem eventually_vecLoc_mem_latLoc {F E : Type} [Field F] [NumberField F] [Fie
 
 theorem indicator_latHat_eq_finprod :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n : ℕ)
-      (L : Submodule (𝓞 E) (Fin n → E)), Submodule.IsLattice E L → ∀ X : Fin 1 → Fin n → Af F ⊗[F] E,
+      (L : Submodule (𝓞 E) (Fin n → E)), Submodule.IsFullLattice E L → ∀ X : Fin 1 → Fin n → Af F ⊗[F] E,
       {X : Fin 1 → Fin n → Af F ⊗[F] E | X 0 ∈ Formalism.MainNotions.StandardLattice.latHat F E (L : Set (Fin n → E))}.indicator
         (1 : (Fin 1 → Fin n → Af F ⊗[F] E) → ℂ) X =
       ∏ᶠ v : HeightOneSpectrum (𝓞 F),

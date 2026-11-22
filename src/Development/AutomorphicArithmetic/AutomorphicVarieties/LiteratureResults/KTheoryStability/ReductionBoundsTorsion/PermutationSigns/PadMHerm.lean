@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,6 @@ def ent (w : InfinitePlace L) (a b : Fin N) : HS L N →ₗ[ℝ] ℂ where
   map_smul' c h := by simp
 
 open Classical in
-
 def tmC {q : ℕ} (σ : Equiv.Perm (Fin q)) (w : Fin q → InfinitePlace L) :
     ContinuousMultilinearMap ℝ (fun _ : Fin q => HS L N) ℂ :=
   if ∀ i, w (σ i) = w i then

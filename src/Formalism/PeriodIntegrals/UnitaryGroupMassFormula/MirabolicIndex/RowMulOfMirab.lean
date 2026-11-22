@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.MirabIndex
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.MirabIndex
+
+@[expose] public section
 
 namespace PI.MirabolicIndex₂
 

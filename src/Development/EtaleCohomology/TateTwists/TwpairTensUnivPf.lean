@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.EtaleTateTwistCupPairingOfTensorAndResolutionPro
-import Development.EtaleCohomology.TateTwists.EtaleTensorTripleProductLeibnizOfSeparated
-import Development.EtaleCohomology.TateTwists.TensorLocallyBijectiveHolds
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.EtaleTateTwistCupPairingOfTensorAndResolutionPro
+public import Development.EtaleCohomology.TateTwists.EtaleTensorTripleProductLeibnizOfSeparated
+public import Development.EtaleCohomology.TateTwists.TensorLocallyBijectiveHolds
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -30,7 +34,7 @@ noncomputable def pairPost {R : Type} [CommRing R] {I J K K' : Cx R} (μ : Pair 
     show Sec.map (K'.d w (w + 1)) (Sec.map (u.f w) (μ.mul U s t w h a b)) = _
     rw [hc, μ.leibniz U s t w h a b]
     show Sec.map (u.f (w + 1)) _ = Sec.map (u.f (w + 1)) _ + _ • Sec.map (u.f (w + 1)) _
-    rw [Sec.map, map_add, map_zsmul_unit]
+    rw [Sec.map, map_add (f := _), map_zsmul_unit]
 
 def twpair_tens_univ_uniq : Prop :=
   ∀ (R : Type) [CommRing R] {I J K : Cx R} (τ : Pair I J K), τ.IsTensor → ∀ {I' J' K' : Cx R} (ν : Pair I' J' K') (f : I ⟶ I') (g : J ⟶ J') (u u' : K ⟶ K'), τ.Compat ν f g u → τ.Compat ν f g u' → u = u'
@@ -148,7 +152,7 @@ theorem tens_univ_ex_of (hdeg : twpair_tens_univ_exdeg) : twpair_tens_univ_ex :=
     have hg : Sec.map (J'.d p.1.2 (p.1.2 + 1)) (Sec.map (g.f p.1.2) b) = Sec.map (g.f (p.1.2 + 1)) (Sec.map (J.d p.1.2 (p.1.2 + 1)) b) := by
       rw [secmap_comp, secmap_comp, g.comm]
     rw [e1, e2, τ.leibniz, hφ i, ν.leibniz, hf, hg]
-    simp only [Sec.map, map_add, map_zsmul_unit] at h1 h2 ⊢
+    simp only [Sec.map, map_add (f := _), map_zsmul_unit] at h1 h2 ⊢
     rw [h1, h2]
   exact (congrArg (fun k => k x) key).symm
 

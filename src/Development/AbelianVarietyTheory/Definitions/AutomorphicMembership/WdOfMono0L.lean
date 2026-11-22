@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RankOneUnitary
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TeichmullerInertiaLabelCondition
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WeilDeligneParamMonodromyEqZeroIff
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RankOneUnitary
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TeichmullerInertiaLabelCondition
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WeilDeligneParamMonodromyEqZeroIff
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,9 +43,9 @@ structure PlSide (D : D7) where
   plB_eq : ∀ lam (z : ℂ), z ∈ plB lam ↔ ‖(ι lam).symm z‖ ≤ 1
   plκ : ∀ lam, IsLocalRing.ResidueField (plB lam) ≃+* Formalism.CyclotomicNorms.Fbar (D.what₂.places.resChar lam)
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 structure WDSide (D : D7) (T : GlobalTheory.RowTie.WDTie D.nd D.naut) where
   wdOf : ∀ (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {a}, (G D.host.E D.nd.Om →* GL (Fin a) (Qbar l)) → ∀ w, D.naut.LP w
   wdOf_dim : ∀ (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {a} (r : G D.host.E D.nd.Om →* GL (Fin a) (Qbar l)) w, D.naut.lpDim (wdOf l ι r w) = a

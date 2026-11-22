@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsWellDefined
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ThmIExistsFamily
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsWellDefined
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ThmIExistsFamily
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter

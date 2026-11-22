@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
-import Formalism.PieriBlockIdeals.LemmaWFromLattice
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+public import Formalism.PieriBlockIdeals.LemmaWFromLattice
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,14 +47,6 @@ theorem latN_iff {ι : Type} {n : ℕ} {O L : Type} [CommRing O] [Field L] (l : 
   · intro h
     exact ⟨fun i => (h i).1, fun i => (h i).2.1, fun i => (h i).2.2⟩
 
-private lemma powerSeries_zero_subst {R : Type} [CommRing R] (p : R⟦X⟧) : (0 : R⟦X⟧).subst p = 0 := by
-  rw [show (0 : R⟦X⟧) = C (0 : R) by simp, subst_C]
-  simp
-
-private lemma subst_one_lemma_2 {R : Type} [CommRing R] (p : R⟦X⟧) : (1 : R⟦X⟧).subst p = 1 := by
-  rw [show (1 : R⟦X⟧) = C (1 : R) by simp, subst_C]
-  simp
-
 def IsExpAt {O L : Type} [CommRing O] [Field L] [Algebra ℚ L] (em : O →+* L) (ζ : O) (jj : O⟦X⟧ →+* L⟦X⟧) : Prop :=
   (∀ a, jj (C a) = C (em a)) ∧ jj X = C (em ζ) * PowerSeries.exp L - 1
 
@@ -61,15 +57,6 @@ def lrank {a b : ℕ} (A : Mx F⟦X⟧ a b) : ℕ := (A.map (algebraMap F⟦X⟧
 def RedHom (l : ℕ) (un : F⟦X⟧) {a b : ℕ} (P D : Mx F⟦X⟧ b b) (P' D' : Mx F⟦X⟧ a a) (A A' : Mx F⟦X⟧ a b) : Prop :=
   P' * A'.map (frob0 l) = A * P ∧
     (1 + (X : F⟦X⟧) • D') * A.map (gam0 0 un) = A * (1 + (X : F⟦X⟧) • D)
-
-theorem redHom_one {l : ℕ} (hl : 0 < l) (un : F⟦X⟧) {a : ℕ} (P D : Mx F⟦X⟧ a a) : RedHom l un P D P D 1 1 := by
-  unfold RedHom
-  have hf : (1 : Mx F⟦X⟧ a a).map (frob0 l) = 1 :=
-    Matrix.map_one _ (powerSeries_zero_subst _) (subst_one_lemma_2 _)
-  have hg : (1 : Mx F⟦X⟧ a a).map (gam0 0 un) = 1 :=
-    Matrix.map_one _ (powerSeries_zero_subst _) (subst_one_lemma_2 _)
-  rw [hf, hg, Matrix.mul_one, Matrix.one_mul, Matrix.mul_one, Matrix.one_mul]
-  exact ⟨rfl, rfl⟩
 
 end Series
 
@@ -163,207 +150,6 @@ theorem rank_of_mul_eq_one {k : Type} [Field k] {a b : ℕ} (A : Mx k a b) (B : 
   · calc a = (A * B).rank := h1.symm
       _ ≤ B.rank := Matrix.rank_mul_le_right A B
 
-def charMats {Γ O : Type} [Group Γ] [CommRing O] (χ : Γ →* Oˣ) (ϖ : O) : GalMats Γ O 1 1 1 where
-  rk := fun _ => GlobalTheory.TripleGal.rk1 χ
-  a := ![!![ϖ], 1]
-  bb := fun _ => !![ϖ]
-  r2 := fun _ => (Units.map (Matrix.scalar (Fin 2) : O →+* Mx O 2 2).toMonoidHom).comp χ
-  B := fun _ => !![1, ϖ]
-  B' := fun _ => !![1, ϖ]
-  C := fun _ => !![1, 0]
-  E := fun _ => !![0; 1]
-
-theorem charMats_chain {Γ O F : Type} [Group Γ] [CommRing O] [IsDomain O] [Field F] (χ : Γ →* Oˣ) (ϖ : O) (hϖ : ϖ ≠ 0)
-    (red : O →+* F) (h0 : red ϖ = 0) :
-    (charMats χ ϖ).Chain red (GlobalTheory.TripleGal.rk1 χ) (fun _ => GlobalTheory.TripleGal.rk1 χ) (fun _ => 0) ![0, 1] := by
-  have key : ∀ g, ((GlobalTheory.TripleGal.rk1 χ g : GL (Fin 1) O) : Mx O 1 1) = !![(χ g : O)] := by
-    intro g
-    ext i j
-    fin_cases i
-    fin_cases j
-    simp [GlobalTheory.TripleGal.rk1]
-  have key2 : ∀ g, (((Units.map (Matrix.scalar (Fin 2) : O →+* Mx O 2 2).toMonoidHom).comp χ g : GL (Fin 2) O) :
-      Mx O 2 2) = !![(χ g : O), 0; 0, (χ g : O)] := by
-    intro g
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp
-  have tw11 : ∀ A : Mx O 1 1, Tw (GlobalTheory.TripleGal.rk1 χ) (GlobalTheory.TripleGal.rk1 χ) A := by
-    intro A g
-    rw [key]
-    ext i j
-    fin_cases i
-    fin_cases j
-    simp [Matrix.mul_apply, mul_comm]
-  have hm0 : (!![ϖ] : Mx O 1 1).map red = 0 := by
-    ext i j
-    fin_cases i
-    fin_cases j
-    simp [h0]
-  unfold GalMats.Chain
-  refine ⟨fun k => ?_, fun k => ⟨tw11 _, ?_⟩, fun s => ?_⟩
-  · fin_cases k
-    · refine ⟨tw11 _, ?_, ?_⟩
-      · simpa [charMats] using hϖ
-      · simp only [charMats]
-        simp [hm0]
-    · refine ⟨tw11 _, ?_, ?_⟩
-      · simp [charMats]
-      · simp [charMats]
-  · fin_cases k
-    simp [charMats]
-  · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    · intro g
-      simp only [charMats, key, key2]
-      ext i j
-      fin_cases i
-      fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two, mul_comm]
-    · intro g
-      simp only [charMats, key, key2]
-      ext i j
-      fin_cases i
-      fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two, mul_comm]
-    · intro g
-      simp only [charMats, key, key2]
-      ext i j
-      fin_cases i
-      fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two, mul_comm]
-    · intro g
-      simp only [charMats, key, key2]
-      ext i j
-      fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two, mul_comm]
-    · simp only [charMats]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · simp only [charMats]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · simp [charMats]
-    · refine (rank_of_mul_eq_one (!![0, 1] : Mx F 1 2) _ ?_).2
-      simp only [charMats]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · refine (rank_of_mul_eq_one _ (!![1; 0] : Mx F 2 1) ?_).1
-      simp only [charMats]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · refine (rank_of_mul_eq_one _ (!![1; 0] : Mx F 2 1) ?_).1
-      simp only [charMats]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · intro v h1 h2
-      have e1 := congrFun h1 0
-      have e2 := congrFun h2 0
-      simp [charMats, Matrix.mulVec, dotProduct, Fin.sum_univ_two] at e1 e2
-      rw [e2, zero_add] at e1
-      have e3 : v 1 = 0 := (mul_eq_zero.mp e1).resolve_left hϖ
-      funext i
-      fin_cases i
-      · simpa using e2
-      · simpa using e3
-
-private lemma frob0_zero {R : Type} [CommRing R] (l : ℕ) : frob0 l (0 : R⟦X⟧) = 0 := powerSeries_zero_subst _
-
-private lemma frob0_one {R : Type} [CommRing R] (l : ℕ) : frob0 l (1 : R⟦X⟧) = 1 := subst_one_lemma_2 _
-
-private lemma gam0_zero {R : Type} [CommRing R] (lam : R) (un : R⟦X⟧) : gam0 lam un (0 : R⟦X⟧) = 0 :=
-  powerSeries_zero_subst _
-
-private lemma gam0_one {R : Type} [CommRing R] (lam : R) (un : R⟦X⟧) : gam0 lam un (1 : R⟦X⟧) = 1 :=
-  subst_one_lemma_2 _
-
-def unitPosition (F : Type) [Field F] : Slot F 1 1 1 where
-  Pk := fun _ => 1
-  Dk := fun _ => 0
-  A := ![0, 1]
-  Bb := fun _ => 0
-  P2 := fun _ => 1
-  D2 := fun _ => 0
-  B := fun _ => !![1, 0]
-  B' := fun _ => !![1, 0]
-  C := fun _ => !![1, 0]
-  E := fun _ => !![0; 1]
-
-theorem unitPosition_chain (F : Type) [Field F] {l : ℕ} (hl : 0 < l) (un : F⟦X⟧) :
-    (unitPosition F).Chain (unitPosition F) l un 1 0 (fun _ => 1) (fun _ => 0) (fun _ => 0) ![0, 1] := by
-  have r0 : ∀ {a b : ℕ} (A : Mx F⟦X⟧ a b), (∀ i j, A i j = 0 ∨ A i j = 1) →
-      RedHom l un 1 0 1 0 A A := by
-    intro a b A hA
-    unfold RedHom
-    have e1 : A.map (frob0 l) = A := by
-      ext i j
-      rcases hA i j with h | h <;> simp [h, frob0_zero, frob0_one]
-    have e2 : A.map (gam0 0 un) = A := by
-      ext i j
-      rcases hA i j with h | h <;> simp [h, gam0_zero, gam0_one]
-    rw [e1, e2]
-    simp
-  unfold Slot.Chain
-  refine ⟨fun k => ?_, fun k => ?_, fun s => ?_⟩
-  · fin_cases k
-    · refine ⟨r0 _ ?_, ?_⟩
-      · intro i j
-        simp [unitPosition]
-      · unfold lrank
-        simp [unitPosition]
-    · refine ⟨r0 _ ?_, ?_⟩
-      · intro i j
-        fin_cases i
-        fin_cases j
-        simp [unitPosition]
-      · unfold lrank
-        simp [unitPosition]
-  · fin_cases k
-    simp [unitPosition]
-  · refine ⟨r0 _ ?_, r0 _ ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    · intro i j
-      fin_cases i
-      fin_cases j <;> simp [unitPosition]
-    · intro i j
-      fin_cases i
-      fin_cases j <;> simp [unitPosition]
-    · simp only [unitPosition]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · simp only [unitPosition]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · simp [unitPosition]
-    · unfold lrank
-      refine (rank_of_mul_eq_one (!![0, 1] : Mx (LaurentSeries F) 1 2) _ ?_).2
-      simp only [unitPosition]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · unfold lrank
-      refine (rank_of_mul_eq_one _ (!![1; 0] : Mx (LaurentSeries F) 2 1) ?_).1
-      simp only [unitPosition]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-    · unfold lrank
-      refine (rank_of_mul_eq_one _ (!![1; 0] : Mx (LaurentSeries F) 2 1) ?_).1
-      simp only [unitPosition]
-      ext i j
-      fin_cases i
-      fin_cases j
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-
 end Chains
 
 section Local
@@ -404,15 +190,15 @@ theorem stdMap_mulVec (A : Mx ↥(OL LL) n' n) (x : Fin n → ↥(OL LL)) :
   push_cast
   rfl
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def latOf (r : ↥(GK K) →* GL (Fin n) ↥(OL LL)) (hr : Cont r) : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL) where
   V := Fin n → ↥LL.1
   ρ := repOf r
   cont := fun x => by
     refine continuous_pi fun j => ?_
     change Continuous fun g => ∑ b, (((r g : Mx ↥(OL LL) n n) j b : ↥(OL LL)) : ↥LL.1) * x b
-    exact continuous_finset_sum _ fun b _ => (hr j b).mul continuous_const
+    exact continuous_finsetSum _ fun b _ => (hr j b).mul continuous_const
   L :=
     { T := LinearMap.range (stdMap LL n)
       stable := by
@@ -430,14 +216,14 @@ def latOf (r : ↥(GK K) →* GL (Fin n) ↥(OL LL)) (hr : Cont r) : LocLat ↥(
         funext j'
         by_cases h : j' = j <;> simp [stdMap_apply, Pi.single_apply, h] }
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def basisOf (r : ↥(GK K) →* GL (Fin n) ↥(OL LL)) (hr : Cont r) :
     Module.Basis (Fin n) ↥(OL LL) ↥(latOf r hr).L.T :=
   (Pi.basisFun ↥(OL LL) (Fin n)).map (LinearEquiv.ofInjective _ stdMap_injective)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def homOf {r : ↥(GK K) →* GL (Fin n) ↥(OL LL)} (hr : Cont r) {r' : ↥(GK K) →* GL (Fin n') ↥(OL LL)} (hr' : Cont r')
     (A : Mx ↥(OL LL) n' n) (hA : Tw r r' A) : LatHom (latOf r hr).L (latOf r' hr').L where
   f := Matrix.toLin' (A.map (algebraMap ↥(OL LL) ↥LL.1))

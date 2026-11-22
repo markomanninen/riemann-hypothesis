@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOpenKerUnramMulTame
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SameOrbEquivalence
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsIsCombAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOpenKerUnramMulTame
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SameOrbEquivalence
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsIsCombAt
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
@@ -11,8 +15,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.QTw.CosExt
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_qExt_cos : ∀ (D : D7) (c : Comm D) (v : VCom c) (B : GlobalTheory.Fam.Base c) (PP : Formalism.L2.DIV.Pl D.host.E) (G : QGeo v B PP) (χ : ℕ → (AE D)ˣ →* Circle), c.Is → ∀ (δ : G.kˣ →* ℂˣ) (hδ : IsTame δ) (η : ℕ → G.kˣ →* ℂˣ), (∀ j, IsUnram (η j)) → (∀ j, j ≤ G.s + 1 → (ofSplit G.q).IsComp (χ j)⁻¹ (η (j + 1) * δ)) → ∀ A, (G.T δ hδ η).IsRepSystem A G.ψk G.ν → ∀ M : ℕ, (G.T δ hδ η).Adapted A (box _ (G.ϖ ^ M)⁻¹) (box _ (G.ϖ ^ M)) → ∀ (C : Type) [Fintype C] (cs : C → XIx (Fin D.R.k) (Fin D.R.t) (G.s + 1) → G.k), (∀ y y', SameOrb ((G.T δ hδ η).lev (G.s + 1) 0 rfl).J (box _ (G.ϖ ^ M)) (Submodule.Quotient.mk (cs y)) (Submodule.Quotient.mk (cs y')) → y = y') → (∀ z ∈ box (XIx (Fin D.R.k) (Fin D.R.t) (G.s + 1)) (G.ϖ ^ M)⁻¹, ∃ y, SameOrb ((G.T δ hδ η).lev (G.s + 1) 0 rfl).J (box _ (G.ϖ ^ M)) (Submodule.Quotient.mk (cs y)) (Submodule.Quotient.mk z)) → ∃ E : QExt G χ, E.δ = δ ∧ E.η = η ∧ E.A = A ∧ E.M = M ∧ (∃ e : C ≃ E.Ch (G.s + 1), ∀ y, E.cos (e y) = Submodule.Quotient.mk (cs y)) ∧ ∀ j, G.s + 1 + 1 < j → Nonempty (Unique (E.Ch j)) := by
   intro D c v B PP G χ hc δ hδ η hη hμ A hA M hM C _ cs hinj hall
   obtain ⟨E, rfl, rfl, rfl, rfl, -⟩ := GlobalTheory.QTw.Inh.exists_ext_of_reps D c v B PP G χ hc δ hδ η hη hμ A hA M hM
@@ -63,29 +67,29 @@ theorem exists_qExt_cos : ∀ (D : D7) (c : Comm D) (v : VCom c) (B : GlobalTheo
       dL_mid := fun j d H α γ => by
         have := E.dL_mid j d H (cast (eE j (by omega) (by omega)) α) (cast (eE (j + 1) (by omega) (by omega)) γ)
         have e : dL' j α γ = E.dL j (cast (eE j (by omega) (by omega)) α) (cast (eE (j + 1) (by omega) (by omega)) γ) := by
-          simp only [dL']; rw [dif_pos (show j + 1 ≤ G.s by omega)]
+          simp only [dL']; rw [dite_eq_left (show j + 1 ≤ G.s by omega)]
         rw [e]; exact this
       dL_pen := fun α y => by
         have e : dL' G.s α y = dPen α y := by
-          simp only [dL']; rw [dif_neg (by omega), dif_pos trivial]
+          simp only [dL']; rw [dite_eq_right (by omega), dite_eq_left trivial]
         rw [e]; exact hdPen α y
       dL_top := fun y u => by
         have e : dL' (G.s + 1) y u = dTop y := by
-          simp only [dL']; rw [dif_neg (by omega), dif_neg (by omega), dif_pos trivial]
+          simp only [dL']; rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_left trivial]
         rw [e]; exact hdTop y
       εL := εL'
       εL_at := fun j ρ hρ d h α => by
         obtain ⟨e, h1, h2⟩ := E.εL_at j ρ hρ d h (cast (eE j (by omega) (by omega)) α)
         refine ⟨e, h1, ?_⟩
-        rw [← h2]; simp only [εL']; rw [dif_pos (show j ≤ G.s by omega)]
+        rw [← h2]; simp only [εL']; rw [dite_eq_left (show j ≤ G.s by omega)]
       εL_zero := fun α => by
-        simp only [εL']; rw [dif_pos (Nat.zero_le _)]; exact E.εL_zero _
+        simp only [εL']; rw [dite_eq_left (Nat.zero_le _)]; exact E.εL_zero _
       idx := E.idx, idx_mid := E.idx_mid, idx_top := E.idx_top, m := E.m, haar := E.haar, wt := wt'
       wt_mid := fun j d h α => by
         rw [← E.wt_mid j d h (cast (eE j (by omega) (by omega)) α)]
-        simp only [wt']; rw [dif_neg (show j ≠ G.s + 1 by omega), dif_pos (show j ≤ G.s by omega)]
-      wt_pen := fun y => by simp only [wt']; rw [dif_pos trivial]
-      wt_top := fun u => by simp only [wt']; rw [dif_neg (by omega), dif_neg (by omega)] }
+        simp only [wt']; rw [dite_eq_right (show j ≠ G.s + 1 by omega), dite_eq_left (show j ≤ G.s by omega)]
+      wt_pen := fun y => by simp only [wt']; rw [dite_eq_left trivial]
+      wt_top := fun u => by simp only [wt']; rw [dite_eq_right (by omega), dite_eq_right (by omega)] }
   refine ⟨E', rfl, rfl, rfl, rfl, ⟨Equiv.cast eC.symm, fun y => ?_⟩, fun j hj => ⟨(Equiv.cast (eU j hj)).unique⟩⟩
   simp [E', cos']
 

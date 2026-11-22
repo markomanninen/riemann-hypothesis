@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.TateTwists.CupflipHomotopyPf
-import Development.EtaleCohomology.TateTwists.EtaleAlexanderWhitneyCupLeibnizOfPairing
+module
+
+public import Development.EtaleCohomology.TateTwists.CupflipHomotopyPf
+public import Development.EtaleCohomology.TateTwists.EtaleAlexanderWhitneyCupLeibnizOfPairing
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -33,7 +37,8 @@ theorem phiT_face {M : ℕ} {U : Scheme.{0}} (x : Sx E (M + 1) U) (i : Fin (M + 
 
 theorem phi_bd {M : ℕ} {U : Scheme.{0}} (x : Sx E (M + 1) U) (w : ℤ) (c : Pr M →₀ ℤ) :
     ∑ i : Fin (M + 2), (-1 : ℤ) ^ (i : ℕ) • phi μ hk α β (x.face i) w c = phi μ hk α β x w (Pr.bd c) := by
-  simp only [phi_eq, Pr.bd, map_sum, map_zsmul, Pr.push, Finsupp.lmapDomain_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [phi_eq, Pr.bd, map_sum, map_zsmul, Pr.push, Finsupp.lmapDomain_apply,
     Finsupp.linearCombination_mapDomain]
   refine Finset.sum_congr rfl fun i _ => ?_
   congr 2
@@ -84,25 +89,25 @@ theorem d_Fm {I J K : Cx R} (μ : Pair I J K) {E : Spc} {n m : ℤ} (α : Cocycl
       ((((-(p : ℤ) + n) + m).negOnePow : ℤˣ) : ℤ) • bd (fun q z' => Fm μ α.1 β.1 U t p q y z') r z := by
   by_cases h : (-(p : ℤ) + n) + (-(r : ℤ) + m) = s
   · have e : Fm μ α.1 β.1 U s p r y z = μ.mul U _ _ s h (ev α.1 p _ rfl U y) (ev β.1 r _ rfl U z) := by
-      unfold Fm; rw [dif_pos h]
+      unfold Fm; rw [dite_eq_left h]
     rw [e, leib' μ U _ _ s (-(p : ℤ) + n + 1) (-(r : ℤ) + m + 1) t h rfl rfl hst,
       d_ev α p _ _ rfl rfl, d_ev β r _ _ rfl rfl, mul_zsmul_left, mul_zsmul_right, mul_bd_left, mul_bd_right,
       Units.smul_def, smul_smul, ← Units.val_mul, ← Int.negOnePow_add]
     congr 2
     · refine bd_congr (fun q y' hq => ?_) y
       unfold Fm
-      rw [dif_pos (by omega), dif_pos (by omega)]
+      rw [dite_eq_left (by omega), dite_eq_left (by omega)]
       exact mul_congr μ U α.1 β.1 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
     · refine bd_congr (fun q z' hq => ?_) z
       unfold Fm
-      rw [dif_pos (by omega), dif_pos (by omega)]
+      rw [dite_eq_left (by omega), dite_eq_left (by omega)]
       exact mul_congr μ U α.1 β.1 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-  · have e : Fm μ α.1 β.1 U s p r y z = 0 := by unfold Fm; rw [dif_neg h]
+  · have e : Fm μ α.1 β.1 U s p r y z = 0 := by unfold Fm; rw [dite_eq_right h]
     have h0 := secmap_zsmul (K.d s t) (0 : ℤ) (0 : Sec (K.X s) U)
     rw [zero_smul, zero_smul] at h0
     rw [e, h0]
-    rw [bd_congr (g := fun _ _ => (0 : Sec (K.X t) U)) (fun q y' hq => by unfold Fm; rw [dif_neg (by omega)]) y,
-      bd_congr (g := fun _ _ => (0 : Sec (K.X t) U)) (fun q z' hq => by unfold Fm; rw [dif_neg (by omega)]) z,
+    rw [bd_congr (g := fun _ _ => (0 : Sec (K.X t) U)) (fun q y' hq => by unfold Fm; rw [dite_eq_right (by omega)]) y,
+      bd_congr (g := fun _ _ => (0 : Sec (K.X t) U)) (fun q z' hq => by unfold Fm; rw [dite_eq_right (by omega)]) z,
       bd_zero', bd_zero', smul_zero, smul_zero, add_zero]
 
 theorem secmap_add' {F G : Shv R} (φ : F ⟶ G) {U : Scheme.{0}} (a b : Sec F U) :
@@ -125,7 +130,8 @@ theorem part1 {N : ℕ} {U : Scheme.{0}} (x : Sx E N U) (t : ℤ) (p r : ℕ)
   | succ p =>
     show _ = _ • Finsupp.linearCombination ℤ _
       (∑ i : Fin (p + 2), Finsupp.single (⟨p, r, SimplexCategory.δ i ≫ a, b⟩ : Pr N) ((-1 : ℤ) ^ (i : ℕ)))
-    simp only [bd, map_sum, Finsupp.linearCombination_single, phiT_Fm, along_face, Finset.smul_sum, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bd, map_sum, Finsupp.linearCombination_single, phiT_Fm, along_face, Finset.smul_sum, smul_smul]
     refine Finset.sum_congr rfl fun i _ => ?_
     congr 1
     subst hk
@@ -145,7 +151,8 @@ theorem part2 {N : ℕ} {U : Scheme.{0}} (x : Sx E N U) (t : ℤ) (p r : ℕ)
   | succ r =>
     show _ = _ • Finsupp.linearCombination ℤ _ ((-1 : ℤ) ^ p •
       ∑ j : Fin (r + 2), Finsupp.single (⟨p, r, a, SimplexCategory.δ j ≫ b⟩ : Pr N) ((-1 : ℤ) ^ (j : ℕ)))
-    simp only [bd, map_zsmul, map_sum, Finsupp.linearCombination_single, phiT_Fm, along_face, Finset.smul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bd, map_zsmul, map_sum, Finsupp.linearCombination_single, phiT_Fm, along_face, Finset.smul_sum,
       smul_smul]
     refine Finset.sum_congr rfl fun j _ => ?_
     congr 1
@@ -160,7 +167,7 @@ theorem d_phiT {N : ℕ} {U : Scheme.{0}} (x : Sx E N U) (s t : ℤ) (hst : s + 
       ((k.negOnePow : ℤˣ) : ℤ) • Finsupp.linearCombination ℤ (phiT μ hk α.1 β.1 x t)
         (z.d₁ + (-1 : ℤ) ^ z.1 • z.d₂) := by
   obtain ⟨p, r, a, b⟩ := z
-  rw [phiT_Fm, secmap_zsmul, d_Fm μ α β U s t hst, smul_add, map_add, smul_add, part1 μ hk α β, part2 μ hk α β]
+  rw [phiT_Fm, secmap_zsmul, d_Fm μ α β U s t hst, smul_add, map_add (f := _), smul_add, part1 μ hk α β, part2 μ hk α β]
 
 theorem d_phi {N : ℕ} {U : Scheme.{0}} (x : Sx E N U) (s t : ℤ) (hst : s + 1 = t) (c : Pr N →₀ ℤ) :
     Sec.map (K.d s t) (phi μ hk α.1 β.1 x s c) = ((k.negOnePow : ℤˣ) : ℤ) • phi μ hk α.1 β.1 x t (Pr.d N c) := by
@@ -168,7 +175,7 @@ theorem d_phi {N : ℕ} {U : Scheme.{0}} (x : Sx E N U) (s t : ℤ) (hst : s + 1
   refine Finsupp.induction_linear c ?_ ?_ ?_
   · simp only [map_zero, secmap_zero', smul_zero]
   · intro f g hf hg
-    rw [map_add, map_add, map_add, secmap_add', hf, hg, smul_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), secmap_add', hf, hg, smul_add]
   · intro z a
     rw [Finsupp.linearCombination_single, secmap_zsmul, d_phiT μ hk α β x s t hst]
     unfold Pr.d
@@ -176,7 +183,7 @@ theorem d_phi {N : ℕ} {U : Scheme.{0}} (x : Sx E N U) (s t : ℤ) (hst : s + 1
 
 theorem phi_add {N : ℕ} {U : Scheme.{0}} (x : Sx E N U) (w : ℤ) (c d : Pr N →₀ ℤ) :
     phi μ hk α.1 β.1 x w (c + d) = phi μ hk α.1 β.1 x w c + phi μ hk α.1 β.1 x w d := by
-  simp only [phi_eq, map_add]
+  simp only [phi_eq, map_add (f := _)]
 
 theorem phi_sub {N : ℕ} {U : Scheme.{0}} (x : Sx E N U) (w : ℤ) (c d : Pr N →₀ ℤ) :
     phi μ hk α.1 β.1 x w (c - d) = phi μ hk α.1 β.1 x w c - phi μ hk α.1 β.1 x w d := by
@@ -186,8 +193,8 @@ end
 
 end LateralTheory.EtaleFoundations.EtaDelta
 
-open LateralTheory.KummerTheory.AW LateralTheory.EtaleFoundations.EtaDelta in
 
+open LateralTheory.KummerTheory.AW LateralTheory.EtaleFoundations.EtaDelta in
 theorem LateralTheory.EtaleFoundations.cupflip_eta_delta_of : LateralTheory.EtaleFoundations.cupflip_eta_delta := by
   intro h hs R _ I J K μ E n m k hk α β η hη N t ht U x
   cases N with

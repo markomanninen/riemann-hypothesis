@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -55,7 +60,7 @@ theorem mem_UA (γ : UE E n) : finGL E n (ratF E n γ.1) ∈ UA E n := by
 theorem toSub_of_mem {G : Type} [Group G] (H : Subgroup G) (g : G) (h : g ∈ H) : toSub H g = ⟨g, h⟩ :=
   dif_pos h
 
-theorem mem_finU (γ : UE E n) : (⟨_, mem_UA γ⟩ : UA E n) ∈ finU E n := by
+theorem mem_finU (γ : UE E n) : (⟨_, mem_UA γ⟩ : UA E n) ∈ finU (E := E) (n := n) := by
   show cInf (⟨_, mem_UA γ⟩ : UA E n) = 1
   apply Units.ext
   refine Matrix.ext fun i j => ?_
@@ -63,7 +68,7 @@ theorem mem_finU (γ : UE E n) : (⟨_, mem_UA γ⟩ : UA E n) ∈ finU E n := b
   rw [fst_entry]
   by_cases h : i = j <;> simp [Matrix.one_apply, h]
 
-theorem finPt_eq (γ : UE E n) : ((finPt γ : finU E n) : UA E n) = ⟨_, mem_UA γ⟩ := by
+theorem finPt_eq (γ : UE E n) : ((finPt γ : finU (E := E) (n := n)) : UA E n) = ⟨_, mem_UA γ⟩ := by
   have h1 : toSub (UA E n) (finGL E n (ratF E n γ.1)) = ⟨_, mem_UA γ⟩ := toSub_of_mem _ _ (mem_UA γ)
   unfold finPt
   rw [h1, toSub_of_mem _ _ (mem_finU γ)]
@@ -71,7 +76,7 @@ theorem finPt_eq (γ : UE E n) : ((finPt γ : finU E n) : UA E n) = ⟨_, mem_UA
 end GlobalTheory.BCT.FinPtLoc
 
 theorem GlobalTheory.BCT.locPt_finPt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, ∀ (γ : UE E n) (w : Pl E),
-    toSub (UL n w) (cLoc w ((finPt γ : finU E n) : UA E n)) = locPt w γ := by
+    toSub (UL n w) (cLoc w ((finPt γ : finU (E := E) (n := n)) : UA E n)) = locPt w γ := by
   intro E _ _ _ _ n γ w
   rw [FinPtLoc.finPt_eq]
   unfold locPt

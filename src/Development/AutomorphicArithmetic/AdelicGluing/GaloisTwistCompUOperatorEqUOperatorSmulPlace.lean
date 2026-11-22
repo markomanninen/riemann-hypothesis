@@ -1,11 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistUnitary
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.UiwPow
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
-import Development.AutomorphicArithmetic.AdelicGluing.ExistsGaloisTransportLocalGLPreservingIwahori
-import Development.AutomorphicArithmetic.AdelicGluing.GalTwistFinProjEqOfGalAdFinEmbEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistUnitary
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.UiwPow
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+public import Development.AutomorphicArithmetic.AdelicGluing.ExistsGaloisTransportLocalGLPreservingIwahori
+public import Development.AutomorphicArithmetic.AdelicGluing.GalTwistFinProjEqOfGalAdFinEmbEq
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo
@@ -97,7 +102,7 @@ private theorem cosets_eq {G : Type} [Group G] (J : Subgroup G) (a b x : G) (ha 
     rw [key]
     simp
 
-private theorem fixL_iff {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+private theorem fixL_iff {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (w : Pl K) (J : Subgroup (GL (Fin n) (w.adicCompletion K))) (v : LL μ) :
     v ∈ fixL μ w J ↔ ∀ k ∈ J, rhoL μ w k v = v := by
   unfold fixL
@@ -109,7 +114,7 @@ private theorem fixL_iff {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Me
 
 theorem UpperTheory.galoisTwist_comp_uOperator_eq_uOperator_smul_place :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] (σ : E ≃ₐ[F] E) (n : ℕ), 0 < n →
-          ∀ (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ → ∀ (w : Pl E) (ν : Fin n → ℤ),
+          ∀ (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ → ∀ (w : Pl E) (ν : Fin n → ℤ),
             θ.U ∘L Uiw μ w ν = Uiw μ (σ • w) ν ∘L θ.U := by
   intro F E _ _ _ _ _ _ σ n hn μ _ θ hθ w ν
   obtain ⟨s, hs1, hs2, hs3⟩ := UpperTheory.exists_galois_transport_localGL_preserving_iwahori F E σ n hn w
@@ -120,8 +125,8 @@ theorem UpperTheory.galoisTwist_comp_uOperator_eq_uOperator_smul_place :
   have hC' := GLnLocal.isCompact_iwahori ((σ • w).adicCompletion E) n
   have hrho : ∀ g v, U (rhoL μ w g v) = rhoL μ (σ • w) (s g) (U v) := fun g v => by
     have e := UpperTheory.galTwist_finProj_eq_of_galAd_finEmb_eq F E σ n hn μ θ hθ _ _ (hs1 g)
-    show U (rightRegularRep (rationalGLOne E n) μ (MultiplicityOne.finProj E n (AdelicGLn.localEmbedding w g)) v) =
-      rightRegularRep (rationalGLOne E n) μ (MultiplicityOne.finProj E n (AdelicGLn.localEmbedding (σ • w) (s g))) (U v)
+    show U (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (MultiplicityOne.finProj E n (AdelicGLn.localEmbedding w g)) v) =
+      rightRegularRep (rationalGLOne (K := E) (n := n)) μ (MultiplicityOne.finProj E n (AdelicGLn.localEmbedding (σ • w) (s g))) (U v)
     rw [hint, e]
   have hfx : ∀ v, U v ∈ fixL μ (σ • w) (GLnLocal.iwahori ((σ • w).adicCompletion E) n) ↔
       v ∈ fixL μ w (GLnLocal.iwahori (w.adicCompletion E) n) := fun v => by
@@ -145,7 +150,8 @@ theorem UpperTheory.galoisTwist_comp_uOperator_eq_uOperator_smul_place :
   have hmain : ∀ v ∈ fixL μ w (GLnLocal.iwahori (w.adicCompletion E) n),
       U (Hop μ w (GLnLocal.iwahori (w.adicCompletion E) n) (Cartan.diagPow (w.adicCompletion E) n ν) v) =
         Hop μ (σ • w) (GLnLocal.iwahori ((σ • w).adicCompletion E) n) (s (Cartan.diagPow (w.adicCompletion E) n ν)) (U v) := fun v hv => by
-    rw [hsum ι y i1 r1 v hv, hsum' ι (fun i => s (y i)) i2 r2 (U v) ((hfx v).2 hv), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum ι y i1 r1 v hv, hsum' ι (fun i => s (y i)) i2 r2 (U v) ((hfx v).2 hv), map_sum]
     exact Finset.sum_congr rfl fun i _ => hrho _ _
   obtain ⟨a, ha, b, hb, hab⟩ := hs3 ν
   have hH : Hop μ (σ • w) (GLnLocal.iwahori ((σ • w).adicCompletion E) n) (s (Cartan.diagPow (w.adicCompletion E) n ν)) =

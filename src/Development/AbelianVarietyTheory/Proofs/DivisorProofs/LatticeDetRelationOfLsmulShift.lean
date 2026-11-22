@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.QuotientEigenDifference
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.QuotientEigenDifference
+
+@[expose] public section
 
 open scoped NNReal
 

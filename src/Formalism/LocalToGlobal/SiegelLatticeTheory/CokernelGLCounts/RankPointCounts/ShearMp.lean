@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,11 +27,11 @@ private theorem measurePreserving_pi_shear_of_indep {P : Type} [Fintype P]
     fun x i => d i.1 (e.symm (x, 0))
   have hvdef : ∀ x i, v x i = d i.1 (e.symm (x, 0)) := fun _ _ => rfl
   have hv : Measurable v := by
-    refine measurable_pi_lambda _ (fun i => ?_)
+    refine Measurable.of_eval (fun i => ?_)
     exact (hd i.1).comp (e.symm.measurable.comp (measurable_id.prodMk measurable_const))
   have hgm : Measurable (Function.uncurry fun (x : ∀ i : {q // ¬ S q}, α i)
       (y : ∀ i : {q // ¬ ¬ S q}, α i) => fun i => y i + v x i) := by
-    refine measurable_pi_lambda _ (fun i => ?_)
+    refine Measurable.of_eval (fun i => ?_)
     exact Measurable.add ((measurable_pi_apply i).comp measurable_snd)
       ((measurable_pi_apply i).comp (hv.comp measurable_fst))
   have hgae : ∀ᵐ x ∂(Measure.pi fun i : {q // ¬ S q} => μ i),

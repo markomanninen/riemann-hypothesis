@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import GroundTheory.GlobalFields.TateThesis.TraceLatticePoisson
-import GroundTheory.GlobalFields.TateThesis.AdelePoisson
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import GroundTheory.GlobalFields.TateThesis.TraceLatticePoisson
+public import GroundTheory.GlobalFields.TateThesis.AdelePoisson
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualGeomDegCharts
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassGeomDegChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualGeomDegCharts
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassGeomDegChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

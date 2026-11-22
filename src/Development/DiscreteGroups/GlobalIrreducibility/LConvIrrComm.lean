@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvIrrPre
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvIrrPre
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,9 +20,9 @@ variable {M : Type} [AddCommGroup M] [Module ℂ M] (B : M →ₗ⋆[ℂ] M →�
 
 def formOf (S : Hs B hB →L[ℂ] Hs B hB) : M →ₗ⋆[ℂ] M →ₗ[ℂ] ℂ :=
   LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) (fun x y => ⟪iota B hB x, S (iota B hB y)⟫_ℂ)
-    (fun x₁ x₂ y => by simp [map_add, inner_add_left])
+    (fun x₁ x₂ y => by simp [map_add (f := _), inner_add_left])
     (fun c x y => by simp [map_smul, inner_smul_left])
-    (fun x y₁ y₂ => by simp [map_add, inner_add_right])
+    (fun x y₁ y₂ => by simp [map_add (f := _), inner_add_right])
     (fun c x y => by simp [map_smul, inner_smul_right])
 
 theorem formOf_apply (S : Hs B hB →L[ℂ] Hs B hB) (x y : M) :
@@ -50,14 +54,14 @@ theorem scalar_sa (hext : IsExtremeForm ρ B) (S : Hs B hB →L[ℂ] Hs B hB) (h
   have h1 : IsInvForm ρ (((1 / 2 : ℝ) : ℂ) • B + (a : ℂ) • formOf B hB S) := by
     refine ⟨fun x y => ?_, fun x => ?_, fun g x y => ?_⟩ <;>
       simp only [LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul]
-    · rw [map_add, map_mul, map_mul, Complex.conj_ofReal, Complex.conj_ofReal, hB.1, hherm]
+    · rw [map_add (f := _), map_mul, map_mul, Complex.conj_ofReal, Complex.conj_ofReal, hB.1, hherm]
     · rw [Complex.add_re, Complex.re_ofReal_mul, Complex.re_ofReal_mul]
       have := abs_le.1 (key x); linarith
     · rw [hext.1.2.2, hinvQ]
   have h2 : IsInvForm ρ (B - (((1 / 2 : ℝ) : ℂ) • B + (a : ℂ) • formOf B hB S)) := by
     refine ⟨fun x y => ?_, fun x => ?_, fun g x y => ?_⟩ <;>
       simp only [LinearMap.sub_apply, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul]
-    · rw [map_sub, map_add, map_mul, map_mul, Complex.conj_ofReal, Complex.conj_ofReal, hB.1, hherm]
+    · rw [map_sub, map_add (f := _), map_mul, map_mul, Complex.conj_ofReal, Complex.conj_ofReal, hB.1, hherm]
     · rw [Complex.sub_re, Complex.add_re, Complex.re_ofReal_mul, Complex.re_ofReal_mul]
       have := abs_le.1 (key x); linarith
     · rw [hext.1.2.2, hinvQ]

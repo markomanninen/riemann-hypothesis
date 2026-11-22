@@ -1,10 +1,14 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.DoublingGramFromBlocks
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.AdelicCoordinatesEvalZeroFormMemAdmissible
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.SchrodingerApplyZeroOfFst
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EvFrame
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneC
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MCSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerTransitive
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.DoublingGramFromBlocks
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.AdelicCoordinatesEvalZeroFormMemAdmissible
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.SchrodingerApplyZeroOfFst
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EvFrame
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneC
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MCSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerTransitive
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem fr_of_frame {R : Type} [CommRing R] {E : Type} [CommRing E] [Algebra R E
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {B : Base F E}
 
 theorem fr_plane (hB : B.IsGood σ) {m m₁ i₀ i₁ : ℕ} {Y : Spc F E m} {Y₁ : Spc F E m₁} {H : Plane E m m₁}
-    (hH : H.IsAdapted σ B Y Y₁ i₀ i₁) (hL : Y.L.IsLattice E) (η : ℤˣ) (hJ : ∀ i j, σ (Y.J j i) = ((η : ℤ) : E) * Y.J i j) :
+    (hH : H.IsAdapted σ B Y Y₁ i₀ i₁) (hL : Y.L.IsFullLattice E) (η : ℤˣ) (hJ : ∀ i j, σ (Y.J j i) = ((η : ℤ) : E) * Y.J i j) :
     ∃ π ρ, Fr (cA σ) (incM F Y.J) (incM F Y₁.J) (hyp Unit η) (incM F H.ι)
       (fromCols (replicateCol Unit (incV F H.x)) (replicateCol Unit (incV F H.y))) π ρ := by
   obtain ⟨Q, hPQ, hQP, -⟩ := PositivityTheory.Mix.Adapt.exists_frame_inv hH hL
@@ -117,8 +121,8 @@ theorem mul_col {R α β : Type} [CommRing R] (a : Matrix α Unit R) (x : β →
   ext i j
   simp [Matrix.mul_apply, Matrix.vecMulVec_apply, Matrix.replicateCol]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem chartW {n d d₁ r s r' s' i₀ i₁ : ℕ} {X : Spc F E n} {W : Spc F E d} {W₁ : Spc F E d₁} {H : Plane E d d₁} (M : Model σ X W)
     (M₁ : Model σ X W₁) (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) (hW : W.IsSkew σ B r' s') (hH : H.IsAdapted σ B W W₁ i₀ i₁) :
     ∃ (ε : Fin n × Fin d ≃ (Fin n × Fin 2) ⊕ Fin n × Fin d₁)
@@ -144,9 +148,11 @@ theorem chartW {n d d₁ r s r' s' i₀ i₁ : ℕ} {X : Spc F E n} {W : Spc F E
   let p : Matrix (Fin n) (Fin d) (AE F E) → Fin n × Fin 2 → AF F := fun z k => βA.repr (b z k.1) k.2
   let q : Matrix (Fin n) (Fin d) (AE F E) → Fin n × Fin 2 → AF F := fun z k => -Tr (βA k.2 * D z k.1)
   have hpq : ∀ z z', p z ⬝ᵥ q z' = -Tr (b z ⬝ᵥ D z') := fun z z' => by
-    simp only [dotProduct, Fintype.sum_prod_type, map_sum, ← Finset.sum_neg_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, Fintype.sum_prod_type, map_sum, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    conv_rhs => rw [← βA.sum_repr (b z k), Finset.sum_mul, map_sum, ← Finset.sum_neg_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← βA.sum_repr (b z k), Finset.sum_mul, map_sum, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_mul_assoc, map_smul, smul_eq_mul, ← mul_neg]
   have hTr : ∀ z, Tr (cA σ z) = Tr z := GlobalTheory.VacCocycle.trace_conj (cA σ) (cA_cA hB)
@@ -154,15 +160,15 @@ theorem chartW {n d d₁ r s r' s' i₀ i₁ : ℕ} {X : Spc F E n} {W : Spc F E
   have ts : ∀ (c : AF F) z, t (c • z) = c • t z := fun c z => Matrix.smul_mul _ _ _
   have hb : IsLinearMap (AF F) b := ⟨fun z z' => by simp only [b, ta]; rfl, fun c z => by simp only [b, ts]; rfl⟩
   have hD : IsLinearMap (AF F) D := ⟨fun z z' => funext fun k => by
-    simp only [D, DR, ta, Matrix.add_apply, map_add, mul_add, Finset.sum_add_distrib, neg_add, Pi.add_apply], fun c z => funext fun k => by
+    simp only [D, DR, ta, Matrix.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, neg_add, Pi.add_apply], fun c z => funext fun k => by
     simp only [D, DR, ts, Matrix.smul_apply, map_smul, mul_smul_comm, ← Finset.smul_sum, smul_neg, Pi.smul_apply]⟩
   have hπ : IsLinearMap (AF F) π := ⟨fun z z' => by simp only [π, ta]; rfl, fun c z => by simp only [π, ts]; rfl⟩
   let Φ : Matrix (Fin n) (Fin d) (AE F E) →ₗ[AF F] (Fin n × Fin d → AF F) × (Fin n × Fin d → AF F) :=
     { toFun := fun z => (glue ε (p z) (M₁.co.e (π z)).1, glue ε (q z) (M₁.co.e (π z)).2)
       map_add' := fun z z' => by
-        rw [Prod.mk_add_mk, glue_add, glue_add, hπ.map_add, map_add]
+        rw [Prod.mk_add_mk, glue_add, glue_add, hπ.map_add (f := _), map_add (f := _)]
         congr 2 <;> funext k <;>
-          simp only [p, q, hb.map_add, hD.map_add, Pi.add_apply, map_add, Finsupp.add_apply, mul_add, neg_add]
+          simp only [p, q, hb.map_add (f := _), hD.map_add (f := _), Pi.add_apply, map_add (f := _), Finsupp.add_apply, mul_add, neg_add]
       map_smul' := fun c z => by
         rw [Prod.smul_mk, glue_smul, glue_smul, hπ.map_smul, map_smul]
         congr 2 <;> funext k <;>
@@ -173,7 +179,7 @@ theorem chartW {n d d₁ r s r' s' i₀ i₁ : ℕ} {X : Spc F E n} {W : Spc F E
     have h1 := M₁.co.form (π z) (π z')
     show Tr _ = glue ε _ _ ⬝ᵥ glue ε _ _ - glue ε _ _ ⬝ᵥ glue ε _ _
     change Tr _ = _ at h1
-    rw [glue_dot, glue_dot, hpq, hpq, hH', mul_add, map_add, h1, neg_one_mul, map_neg, map_sub, hTr]
+    rw [glue_dot, glue_dot, hpq, hpq, hH', mul_add, map_add (f := _), h1, neg_one_mul, map_neg, map_sub, hTr]
     ring
   have hbij : Function.Bijective Φ := by
     have := (bijective_of_symp (Φ ∘ₗ M.co.e.symm.toLinearMap) fun u w => by
@@ -230,7 +236,7 @@ theorem setW {n d d₁ r s r' s' i₀ i₁ : ℕ} {X : Spc F E n} {W : Spc F E d
       subst e1
       obtain ⟨q, hq⟩ := h2 fun i => a i ()
       obtain ⟨p, hp⟩ := h3 fun i => b i ()
-      rw [map_add, map_add, mul_col, mul_col, h1, hq, hp] at p1 p2
+      rw [map_add (f := _), map_add (f := _), mul_col, mul_col, h1, hq, hp] at p1 p2
       simp only [Prod.fst_add, Prod.snd_add, add_zero, glue_add, zero_add] at p1 p2
       have hp0 : p = 0 := funext fun k => by simpa using congrFun p1 (ε.symm (.inl k))
       have hz : z' = z := M₁.co.e.injective (Prod.ext (funext fun k => by simpa using congrFun p1 (ε.symm (.inr k)))
@@ -240,7 +246,7 @@ theorem setW {n d d₁ r s r' s' i₀ i₁ : ℕ} {X : Spc F E n} {W : Spc F E d
       rw [hz, mul_col b, co.e.map_eq_zero_iff.1 hp, add_zero]
     · rintro ⟨a, rfl⟩
       obtain ⟨q, hq⟩ := h2 fun i => a i ()
-      rw [map_add, mul_col, h1, hq]
+      rw [map_add (f := _), mul_col, h1, hq]
       exact ⟨add_zero _, funext fun k => by simp [glue_add]⟩
   refine ⟨M.co.e.symm ≪≫ₗ co.e, fun k => ε.symm (.inr k), fun w w' => ?_, ε.symm.injective.comp Sum.inr_injective,
     ⟨he.maps, isEv_adm hM hM₁ he, fun w w₁ hw φ hφ => ?_,
@@ -254,7 +260,7 @@ theorem setW {n d d₁ r s r' s' i₀ i₁ : ℕ} {X : Spc F E n} {W : Spc F E d
     obtain ⟨q, hq⟩ := h2 fun i => a i ()
     have e1 := he.Heisenberg₂ z φ hφ
     rw [incM_one', Matrix.one_mul] at e1
-    rw [add_comm, map_add, mul_col, ← schr_add]
+    rw [add_comm, map_add (f := _), mul_col, ← schr_add]
     · exact (he.inv _ ⟨_, rfl⟩ _ (rho_mem hB.std M.co _ hφ)).trans e1
     · rw [← sub_eq_zero, ← M.co.form, co.form, h1, hq]
       simp [glue_dot]

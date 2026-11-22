@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementJF
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+module
+
+public import Formalism.HermitianCurvature.StatementJF
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 

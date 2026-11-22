@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHermitianLatticeLocalBases
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScaledBlockSumSelfDualTraceSkewForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarMemPolarizationIdealOfMemConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLatticeLatticeBlockDirectSumScaled
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHermitianLatticeLocalBases
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScaledBlockSumSelfDualTraceSkewForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarMemPolarizationIdealOfMemConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLatticeLatticeBlockDirectSumScaled
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open GlobalTheory.Grid GlobalTheory.Doubling GlobalTheory.ChainFr GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints
-open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
+open scoped TensorProduct nonZeroDivisors GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.SquareComm GlobalTheory.SquareAgree
@@ -131,8 +136,8 @@ namespace GlobalTheory.PlaceSpaces
 
 variable {D : D7}
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem fr_cart_isCartanInv {V : HSp D} (A : Fr V) (τ : D.what₂.Tau) : IsCartanInv (gramAt D V τ) (A.cart τ) := by
   have h1 : A.fr τ * (A.fr τ)⁻¹ = 1 := Matrix.mul_nonsing_inv _ ((Matrix.isUnit_iff_isUnit_det _).1 (A.fr_unit τ))
   have h2 : (A.fr τ)⁻¹ * A.fr τ = 1 := mul_eq_one_comm.1 h1
@@ -235,13 +240,48 @@ theorem AA_ne : D.host.AA ≠ 0 := fun h => by
 
 theorem skLat_isLattice (S : HSp D) {d : ℕ} (e : Fin S.rank ≃ Fin d) : Submodule.IsLattice D.host.E (skLat S e) := by
   have hL := GlobalTheory.SkewLat.PairLatLattice.scLat_isLattice (AA_ne (D := D)) (GlobalTheory.PlaceModel.isSelfDualC_latFrame S).1
-  refine ⟨Submodule.FG.map _ hL.fg, ?_⟩
-  unfold skLat
-  rw [Submodule.map_coe]
-  have : ⇑((LinearEquiv.funCongrLeft D.host.E D.host.E e.symm).restrictScalars (𝓞 D.host.E)).toLinearMap =
-      ⇑(LinearEquiv.funCongrLeft D.host.E D.host.E e.symm).toLinearMap := rfl
-  rw [this, Submodule.span_image, hL.span_eq_top, Submodule.map_top]
-  exact LinearMap.range_eq_top.mpr (LinearEquiv.funCongrLeft D.host.E D.host.E e.symm).surjective
+  exact Submodule.IsLattice.of_fg D.host.E (Submodule.FG.map _ hL.fg)
+
+theorem latFrame_isFullLattice (S : HSp D) :
+    (GlobalTheory.PlaceModel.latFrame S).IsFullLattice D.host.E := by
+  exact GlobalTheory.StdFrames.isFullLattice_crdLat S
+
+theorem skLat_isFullLattice (S : HSp D) {d : ℕ} (e : Fin S.rank ≃ Fin d) :
+    (skLat S e).IsFullLattice D.host.E := by
+  letI := skLat_isLattice S e
+  letI := latFrame_isFullLattice S
+  obtain ⟨a, ha, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot
+    (FractionalIdeal.coeToSubmodule_ne_bot.mpr (AA_ne (D := D)))
+  have hmem : ∀ y ∈ GlobalTheory.PlaceModel.latFrame S,
+      a • y ∈ GlobalTheory.SkewLat.scLat D.host.AA (GlobalTheory.PlaceModel.latFrame S) := by
+    intro y hy c hc
+    have hca : c * a ∈ (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := by
+      rw [← inv_mul_cancel₀ (AA_ne (D := D))]
+      exact FractionalIdeal.mul_mem_mul hc ha
+    obtain ⟨r, hr⟩ := (FractionalIdeal.mem_one_iff _).mp hca
+    rw [smul_smul, ← hr, algebraMap_smul]
+    exact (GlobalTheory.PlaceModel.latFrame S).smul_mem r hy
+  let f : (Fin S.rank → D.host.E) →ₗ[D.host.E] (Fin d → D.host.E) :=
+    ((LinearEquiv.funCongrLeft D.host.E D.host.E e.symm).toLinearMap).comp
+      (LinearMap.lsmul D.host.E (Fin S.rank → D.host.E) a)
+  have hf : ∀ y ∈ GlobalTheory.PlaceModel.latFrame S, f y ∈ skLat S e := by
+    intro y hy
+    rw [mem_skLat]
+    convert hmem y hy using 1 <;> ext i <;> simp [f]
+  have hle : Submodule.span D.host.E (GlobalTheory.PlaceModel.latFrame S : Set _) ≤
+      (Submodule.span D.host.E (skLat S e : Set _)).comap f :=
+    Submodule.span_le.mpr fun y hy => Submodule.subset_span (hf y hy)
+  constructor
+  apply top_unique
+  intro y _
+  let z := fun i => a⁻¹ • y (e i)
+  have hz : z ∈ Submodule.span D.host.E (GlobalTheory.PlaceModel.latFrame S : Set _) := by
+    rw [Submodule.IsFullLattice.span_eq_top]; trivial
+  have hz' : f z ∈ Submodule.span D.host.E (skLat S e : Set _) := hle hz
+  have heq : f z = y := by
+    ext i
+    simp [f, z, ha0]
+  rwa [heq] at hz'
 
 theorem skew_dual (S : HSp D) {d : ℕ} (e : Fin S.rank ≃ Fin d) (y : Fin d → D.host.E) :
     y ∈ skLat S e ↔ ∀ x ∈ skLat S e, ∀ o : 𝓞 D.host.E,
@@ -268,8 +308,8 @@ theorem skew_dual (S : HSp D) {d : ℕ} (e : Fin S.rank ≃ Fin d) (y : Fin d �
 
 end GlobalTheory.PlaceSpaces
 
-open GlobalTheory.PlaceSpaces in
 
+open GlobalTheory.PlaceSpaces in
 theorem GlobalTheory.PlaceSpaces.spaces_of_triple : ∀ (D : D7) (W W₁ X : HSp D) (A : Fr W) (A₁ : Fr W₁) (B : Fr X) (α β : (AE D)ˣ →* Circle), IsTriple W W₁ X α β →
     ∀ p q : ℕ, (∀ τ, Formalism.UG.HasSignature (gramAt D W τ) (W.rank - p) p ∧ Formalism.UG.HasSignature (gramAt D W₁ τ) (W₁.rank - q) q ∧
       Formalism.UG.HasSignature (gramAt D X τ) (X.rank - (p + q)) (p + q)) →
@@ -288,11 +328,11 @@ theorem GlobalTheory.PlaceSpaces.spaces_of_triple : ∀ (D : D7) (W W₁ X : HSp
   have hσ : ∀ z : D.host.E, D.sp.cm.sig z = star z := fun _ => rfl
   have hherm : ∀ (S : HSp D) (a b : Fin S.rank), star (S.gram b a) = S.gram a b := fun S a b =>
     S.herm.eq (S.frame b) (S.frame a)
-  haveI hlW : (GlobalTheory.TripleSpaceW.conjSub (GlobalTheory.PlaceModel.latFrame W)).IsLattice D.host.E :=
-    GlobalTheory.TripleSpaceW.conjSub_isLattice (GlobalTheory.PlaceModel.isSelfDualC_latFrame W).1
-  haveI hlW₁ : (GlobalTheory.TripleSpaceW.conjSub (GlobalTheory.PlaceModel.latFrame W₁)).IsLattice D.host.E :=
-    GlobalTheory.TripleSpaceW.conjSub_isLattice (GlobalTheory.PlaceModel.isSelfDualC_latFrame W₁).1
-  haveI hlX : (skLat X e).IsLattice D.host.E := skLat_isLattice X e
+  haveI hlW : (GlobalTheory.TripleSpaceW.conjSub (GlobalTheory.PlaceModel.latFrame W)).IsFullLattice D.host.E :=
+    GlobalTheory.TripleSpaceW.conjSub_isFullLattice (latFrame_isFullLattice W)
+  haveI hlW₁ : (GlobalTheory.TripleSpaceW.conjSub (GlobalTheory.PlaceModel.latFrame W₁)).IsFullLattice D.host.E :=
+    GlobalTheory.TripleSpaceW.conjSub_isFullLattice (latFrame_isFullLattice W₁)
+  haveI hlX : (skLat X e).IsFullLattice D.host.E := skLat_isFullLattice X e
   have exW := fun v : Bs.P => GlobalTheory.AdelicU.exists_isSplitBasis (Bs.τ v) (GlobalTheory.TripleSpaceW.conjSub (GlobalTheory.PlaceModel.latFrame W)) hcm
   have exW₁ := fun v : Bs.P =>
     GlobalTheory.AdelicU.exists_isSplitBasis (Bs.τ v) (GlobalTheory.TripleSpaceW.conjSub (GlobalTheory.PlaceModel.latFrame W₁)) hcm
@@ -333,7 +373,7 @@ theorem GlobalTheory.PlaceSpaces.spaces_of_triple : ∀ (D : D7) (W W₁ X : HSp
   case h5 =>
     intro v
     show GlobalTheory.AdelicU.IsSplitBasis (Bs.τ v) _ (if h : v.1 ∈ Bs.P then (exW ⟨v.1, h⟩).choose else 1)
-    rw [dif_pos v.2]
+    rw [dite_eq_left v.2]
     exact (exW v).choose_spec
   case g1 =>
     intro a b
@@ -367,7 +407,7 @@ theorem GlobalTheory.PlaceSpaces.spaces_of_triple : ∀ (D : D7) (W W₁ X : HSp
   case g5 =>
     intro v
     show GlobalTheory.AdelicU.IsSplitBasis (Bs.τ v) _ (if h : v.1 ∈ Bs.P then (exW₁ ⟨v.1, h⟩).choose else 1)
-    rw [dif_pos v.2]
+    rw [dite_eq_left v.2]
     exact (exW₁ v).choose_spec
   case k1 =>
     intro a b
@@ -392,5 +432,5 @@ theorem GlobalTheory.PlaceSpaces.spaces_of_triple : ∀ (D : D7) (W W₁ X : HSp
   case k5 =>
     intro v
     show GlobalTheory.AdelicU.IsSplitBasis (Bs.τ v) _ (if h : v.1 ∈ Bs.P then (exX ⟨v.1, h⟩).choose else 1)
-    rw [dif_pos v.2]
+    rw [dite_eq_left v.2]
     exact (exX v).choose_spec

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepHSelfInt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepExact
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepHSelfInt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepExact
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -31,7 +35,7 @@ theorem rep_sat_elt {m : Type} (l : ℕ) (Λ : AddSubgroup (m → ℂ)) (hl : l.
     SatMem l Λ ((((n : ℂ) - c * conj (cmTheta b d)) / s) • v) := by
   have hconj : conj (cmTheta b d) = b - cmTheta b d := by
     unfold cmTheta
-    simp only [map_div₀, map_add, map_mul, map_intCast, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
+    simp only [map_div₀, map_add (f := _), map_mul, map_intCast, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
     ring
   have e : (((n : ℂ) - c * conj (cmTheta b d)) / s) • v =
       (((n - c * b : ℤ) : ℂ) / s) • v + ((c : ℂ) / s) • (cmTheta b d • v) := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.MemSpanVariable.mem_span_X :
     ∀ {O σ : Type} [inst : CommRing O] [Fintype σ]
@@ -33,7 +37,8 @@ theorem UpperTheory.Reformulated.B.MemSpanVariable.mem_span_X :
       simp [h]
   have hsum : f = ∑ i, MvPowerSeries.X i * g i := by
     ext n
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [key]
     by_cases h : n = 0
     · subst h

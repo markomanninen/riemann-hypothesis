@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.TensorVanishing.TensZero
+module
+
+public import Development.EtaleCohomology.TateTwists.TensorVanishing.TensZero
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 open scoped TensorProduct DirectSum
@@ -28,7 +32,7 @@ theorem nat_tens {V U : Scheme.{0}} (g : V ⟶ U) (s s' t : ℤ) (v : Sec (C.X s
   | tmul a b =>
     simp only [TensorProduct.map_tmul, LinearMap.id_apply]
     congr 1; exact map_res (C.d s s') g a
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem lift_Dm' (τ : Pair C J T) (U : Scheme.{0}) (w w' : ℤ) (hw : w + 1 = w') (x : Tens C J U w) :
     τ.lift U w' (Dm U w w' hw x) = Sec.map (T.d w w') (τ.lift U w x) := by
@@ -89,7 +93,7 @@ theorem main (hS : Step) (τ : Pair C J T) (a : ℤ) [C.IsStrictlyGE a] (hτ : �
     refine loc_bind (hS R τ hτ hc n (n - a + 1 - ((k + 1 : ℕ) : ℤ)) V x hx hd) fun W h hW => ?_
     obtain ⟨x', Y, hv, he⟩ := hW
     have hl : τ.lift W n x' = Sec.res h (τ.lift V n x) - Sec.map (T.d (n - 1) n) (τ.lift W (n - 1) Y) := by
-      rw [← lift_res, he, map_add, lift_Dm']; abel
+      rw [← lift_res, he, map_add (f := _), lift_Dm']; abel
     have hd' : Sec.map (T.d n (n + 1)) (τ.lift W n x') = 0 := by
       rw [hl, smap_sub, map_res, hd, sres_zero, map_dd, sub_zero]
     refine loc_mono (ih W x' (fun p hp => hv p (by push_cast at hp ⊢; omega)) hd') fun W' h' hy => ?_

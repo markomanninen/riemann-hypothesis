@@ -1,14 +1,19 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceChartPresentation
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.ClosedEmbeddingIntoAffineSpace
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceChartPresentation
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.ClosedEmbeddingIntoAffineSpace
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -40,19 +45,6 @@ theorem baseChangeAffineSpaceIso_hom_comp_toSpec (k K : Type u) [Field k] [Field
       baseChangeToSpec (affineSpaceIndexedByToSpec k n) K :=
   (exists_baseChangeAffineSpaceIso k K n).choose_spec
 
-private theorem affineSpaceEmbeddingDatum_baseChange_ambient_eq
-    (hemb : AffineEmbedsIntoAffineSpace.{u}) (hsnc : NilIsStrictNormalCrossingsOnAffineSpace.{u})
-    (hsm : AffineSpaceIsSmooth.{u}) (k K : Type u) [Field k] [CharZero k] [Field K] [CharZero K]
-    [Algebra k K] (Y : Scheme.{u}) [AlgebraicGeometry.IsAffine Y]
-    (pY : Y ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.LocallyOfFiniteType pY]
-    (hker : NonzeroOnComponents
-      (Scheme.Hom.ker ((affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).baseChangeEmb K)))
-    (hsncK : InStrictNormalCrossingPosition
-      (baseChangeToSpec (affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).ambientStruct K) []) :
-    ((affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).baseChange K hker hsncK).ambient =
-      baseChange (affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin (hemb k Y pY).choose))) K :=
-  rfl
-
 def affineSpaceChartBaseChangeAmbientIso
     (hemb : AffineEmbedsIntoAffineSpace.{u}) (hsnc : NilIsStrictNormalCrossingsOnAffineSpace.{u})
     (hsm : AffineSpaceIsSmooth.{u}) (k K : Type u) [Field k] [CharZero k] [Field K] [CharZero K]
@@ -64,32 +56,7 @@ def affineSpaceChartBaseChangeAmbientIso
       (baseChangeToSpec (affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).ambientStruct K) []) :
     ((affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).baseChange K hker hsncK).ambient ≅
       affineSpaceIndexedBy K (ULift.{u, 0} (Fin (hemb k Y pY).choose)) :=
-  eqToIso (affineSpaceEmbeddingDatum_baseChange_ambient_eq hemb hsnc hsm k K Y pY hker hsncK) ≪≫
-    baseChangeAffineSpaceIso k K (ULift.{u, 0} (Fin (hemb k Y pY).choose))
-
-private theorem affineSpaceChartBaseChangeAmbientIso_hom_comp
-    (hemb : AffineEmbedsIntoAffineSpace.{u}) (hsnc : NilIsStrictNormalCrossingsOnAffineSpace.{u})
-    (hsm : AffineSpaceIsSmooth.{u}) (k K : Type u) [Field k] [CharZero k] [Field K] [CharZero K]
-    [Algebra k K] (Y : Scheme.{u}) [AlgebraicGeometry.IsAffine Y]
-    (pY : Y ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.LocallyOfFiniteType pY]
-    (hker : NonzeroOnComponents
-      (Scheme.Hom.ker ((affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).baseChangeEmb K)))
-    (hsncK : InStrictNormalCrossingPosition
-      (baseChangeToSpec (affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).ambientStruct K) []) :
-    (affineSpaceChartBaseChangeAmbientIso hemb hsnc hsm k K Y pY hker hsncK).hom ≫
-        affineSpaceIndexedByToSpec K (ULift.{u, 0} (Fin (hemb k Y pY).choose)) =
-      ((affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).baseChange K hker hsncK).ambientStruct := by
-  have hA : (baseChangeAffineSpaceIso k K (ULift.{u, 0} (Fin (hemb k Y pY).choose))).hom ≫
-      affineSpaceIndexedByToSpec K (ULift.{u, 0} (Fin (hemb k Y pY).choose)) =
-      ((affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).baseChange K hker hsncK).ambientStruct :=
-    baseChangeAffineSpaceIso_hom_comp_toSpec k K _
-  have hB : (𝟙 (baseChange (affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin (hemb k Y pY).choose))) K) ≫
-        (baseChangeAffineSpaceIso k K (ULift.{u, 0} (Fin (hemb k Y pY).choose))).hom) ≫
-      affineSpaceIndexedByToSpec K (ULift.{u, 0} (Fin (hemb k Y pY).choose)) =
-      ((affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).baseChange K hker hsncK).ambientStruct := by
-    rw [Category.id_comp]
-    exact hA
-  exact hB
+  baseChangeAffineSpaceIso k K (ULift.{u, 0} (Fin (hemb k Y pY).choose))
 
 def affineSpaceChartBaseChangePresentation
     (hemb : AffineEmbedsIntoAffineSpace.{u}) (hsnc : NilIsStrictNormalCrossingsOnAffineSpace.{u})
@@ -106,7 +73,7 @@ def affineSpaceChartBaseChangePresentation
     ((affineSpaceEmbeddingDatum hemb hsnc hsm k Y pY).baseChange K hker hsncK)
     (hemb k Y pY).choose
     (affineSpaceChartBaseChangeAmbientIso hemb hsnc hsm k K Y pY hker hsncK)
-    (affineSpaceChartBaseChangeAmbientIso_hom_comp hemb hsnc hsm k K Y pY hker hsncK)
+    (by exact baseChangeAffineSpaceIso_hom_comp_toSpec k K (ULift.{u, 0} (Fin (hemb k Y pY).choose)))
 
 end FunctorialResolution.EmbeddedResolution
 

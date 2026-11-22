@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.Block31OfBlocks
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.Block31OfBlocks
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,15 +82,5 @@ theorem card_sG (K : Type) [Field K] [Fintype K] (r k : ℕ) :
       = Nat.card {x : Matrix (Idx r k) (Idx r k) K // Par (fun h => IsUnit h.det) x} :=
         Nat.card_congr (parGEquiv (r := r) (gpUnit (A := K) (k := k)))
     _ = _ := by rw [card_par, hcN, hG]
-
-theorem card_nuG_zmod (g : ℕ) [Fact g.Prime] (r k : ℕ) :
-    Nat.card (nuG (ZMod g) r k) = nnC r k g * ukC k g := by
-  haveI : NeZero g := ⟨(Fact.out : g.Prime).ne_zero⟩
-  exact card_nuG (ZMod g) r k
-
-theorem card_sG_zmod (g : ℕ) [Fact g.Prime] (r k : ℕ) :
-    Nat.card (sG (ZMod g) r k) = glkC k g * nnC r k g := by
-  haveI : NeZero g := ⟨(Fact.out : g.Prime).ne_zero⟩
-  exact card_sG (ZMod g) r k
 
 end MassDataIdxStIm

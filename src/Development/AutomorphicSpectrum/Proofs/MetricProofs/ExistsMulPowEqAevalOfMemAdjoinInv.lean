@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.AnForm.R GlobalTheory.CompanionTheory.Ar.Cmp
 
@@ -26,7 +30,7 @@ theorem exists_mul_pow_eq_aeval_of_mem_adjoin_inv :
     obtain ⟨N, G, h⟩ := iha
     obtain ⟨M, H, h'⟩ := ihb
     refine ⟨N + M, G * F ^ M + H * F ^ N, ?_⟩
-    simp only [map_add, map_mul, map_pow, ← h, ← h']
+    simp only [map_add (f := _), map_mul, map_pow, ← h, ← h']
     ring
   | mul a b _ _ iha ihb =>
     obtain ⟨N, G, h⟩ := iha

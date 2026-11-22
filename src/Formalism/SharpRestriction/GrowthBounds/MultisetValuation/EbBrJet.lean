@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EbWMapDomain
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EbWMapDomain
+
+@[expose] public section
 
 noncomputable section
 

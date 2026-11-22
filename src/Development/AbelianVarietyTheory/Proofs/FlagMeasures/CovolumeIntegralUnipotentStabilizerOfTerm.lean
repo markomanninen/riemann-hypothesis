@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRoot
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CovolumeCongruenceStabiliser
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoveringOHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceStabUFromIntegralUnipotentIsometryStatement
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRoot
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CovolumeCongruenceStabiliser
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoveringOHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceStabUFromIntegralUnipotentIsometryStatement
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -164,7 +169,7 @@ theorem minor_pt_le {N : ℕ} (p : Point K N) (t : ℕ) (I J : Fin t → Fin N) 
   refine h.trans (le_of_eq (Finset.prod_congr rfl fun l hl => ?_))
   have hl' : l + 1 ≤ N := Finset.mem_range.1 hl
   unfold leadMinorE
-  rw [dif_pos hl']
+  rw [dite_eq_left hl']
   rfl
 
 end Pt
@@ -262,7 +267,7 @@ theorem prod_maxOneMulMaxOneInv_leadingMinors_le_sq (hN : ∀ o : 𝓞 K, o ≠ 
     ∏ v, ∏ l ∈ Finset.range N, gg2 ‖τ v (leadMinorE Z (l + 1))‖ ≤ PiZ τ Z ^ 2 := by
   unfold PiZ
   rw [Finset.prod_comm, Finset.prod_comm (s := Finset.univ), ← Finset.prod_pow]
-  refine Finset.prod_le_prod (fun l _ => Finset.prod_nonneg fun v _ =>
+  refine Finset.prod_le_prod₀ (fun l _ => Finset.prod_nonneg fun v _ =>
     zero_le_one.trans (one_le_maxOneMulMaxOneInv _)) fun l _ => ?_
   obtain ⟨o, ho⟩ := leadMinor_int hZ (l + 1)
   rw [← ho]
@@ -447,7 +452,7 @@ theorem sign_stab {Z a : Matrix (Fin (r + 1)) (Fin (r + 1)) K} (ha : a ∈ stabU
 
 end Sign
 
-theorem frame_mem (D : D7) {T : D.host.E} (Λ : LatV D) (F : LFlag (hS D) D.R.rS T) (h1 : IsLift Λ F)
+theorem frame_mem (D : D7) {T : D.host.E} (Λ : LatV D) (F : LFlag (D.sp.Y 0) D.R.rS T) (h1 : IsLift Λ F)
     (h2 : XLam Λ F = XS D F.fl) (b : Fin (D.R.rS + 1)) : frame F b ∈ Λ := by
   refine Fin.lastCases ?_ (fun a => ?_) b
   · simpa [frame, FlagG.fvec] using h1.1
@@ -476,8 +481,8 @@ theorem frame_mem (D : D7) {T : D.host.E} (Λ : LatV D) (F : LFlag (hS D) D.R.rS
     rw [← h2] at this
     simpa [frame, FlagG.fvec] using this.1
 
-theorem zhat_int (D : D7) {T T' : D.host.E} (Λ : LatV D) (F : LFlag (hS D) D.R.rS T)
-    (F' : LFlag (hS D) D.R.rS T') (hu : Formalism.HermitianLatticesTheory.IsUnimodular (hS D).hT Λ)
+theorem zhat_int (D : D7) {T T' : D.host.E} (Λ : LatV D) (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (hu : Formalism.HermitianLatticesTheory.IsUnimodular (hS D).hT Λ)
     (h : ∀ b, frame F b ∈ Λ) (h' : ∀ b, frame F' b ∈ Λ) :
     GlobalTheory.LoopV.EntIn ⊤ (ZhatOM (ZhatL F F')) := by
   intro a b
@@ -499,11 +504,11 @@ theorem PiZ_le (D : D7) (b : ℝ) (n : ℕ) (hb : 1 ≤ b) (hrd : D.host.rdE ≤
   obtain ⟨hc, -, -, hm, h1, -⟩ := GlobalTheory.real_places_facts D
   unfold PiZ sizeZ
   rw [← hc, pow_mul _ (D.R.rS + 1), ← Finset.card_univ, ← Finset.prod_const, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun v _ => Finset.prod_nonneg fun _ _ => by positivity) fun v _ => ?_
+  refine Finset.prod_le_prod₀ (fun v _ => Finset.prod_nonneg fun _ _ => by positivity) fun v _ => ?_
   rw [← Finset.Ico_add_one_right_eq_Icc, Finset.prod_Ico_eq_prod_range, Nat.add_sub_cancel]
   nth_rewrite 4 [← Finset.card_range (D.R.rS + 1)]
   rw [← Finset.prod_const, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun _ _ => by positivity) fun l hl => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => by positivity) fun l hl => ?_
   have hl' : l + 1 ≤ D.R.rS + 1 := Finset.mem_range.1 hl
   have e : b ^ ((n : ℝ) * (D.R.m : ℝ) ^ 2) = b ^ (4 * n * (D.R.rS + 1) ^ 2) := by
     rw [← Real.rpow_natCast b (4 * n * (D.R.rS + 1) ^ 2), hm]; congr 1; push_cast; ring
@@ -525,8 +530,8 @@ theorem PiZ_le (D : D7) (b : ℝ) (n : ℕ) (hb : 1 ≤ b) (hrd : D.host.rdE ≤
           b ^ (4 * n * (D.R.rS + 1) ^ 2)) := by field_simp
     _ ≤ _ := by gcongr
 
-theorem ideal_bound (D : D7) {T T' : ℕ} (F : LFlag (hS D) D.R.rS (T : D.host.E))
-    (F' : LFlag (hS D) D.R.rS (T' : D.host.E)) (hr : 1 ≤ D.R.rS) (Y : ℝ) (hY : 1 + (T : ℝ) * T' ≤ Y) :
+theorem ideal_bound (D : D7) {T T' : ℕ} (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E))
+    (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E)) (hr : 1 ≤ D.R.rS) (Y : ℝ) (hY : 1 + (T : ℝ) * T' ≤ Y) :
     (∏ τ, ‖embS D τ (Gval F F')‖) ^ 4 * ∏ τ, ‖embS D τ (Dr1 F F')‖ ^ 2 ≤
       Y ^ (4 * D.R.f) * PiZ (embS D) (ZhatL F F') ^ 10 := by
   obtain ⟨hc, -, -, -, -, hs, -⟩ := GlobalTheory.real_places_facts D

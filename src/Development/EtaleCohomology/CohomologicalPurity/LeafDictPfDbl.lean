@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafDictPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafDictPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -14,7 +18,8 @@ theorem LeafDbl_pf : LeafDbl := by
   · intro X' X f U' U h
     dsimp only
     refine (Iso.inv_comp_eq _).1 ?_
-    apply pushout.hom_ext
+    set_option synthInstance.maxHeartbeats 200000 in
+      apply pushout.hom_ext
     · have a1 : pushout.inl (opn U').hom (opn U').hom ≫ (PreservesPushout.iso disc (yoneda.map U'.ι) (yoneda.map U'.ι)).hom =
           disc.map (pushout.inl _ _) := PreservesPushout.inl_iso_hom disc _ _
       have a2 : disc.map (pushout.inl (yoneda.map U.ι) (yoneda.map U.ι)) ≫

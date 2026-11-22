@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkDerField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkDerField
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -157,7 +162,8 @@ theorem heat_term_fibre : ∀ {R : Type} [CommRing R] [IsDomain R] {Q : DegPre R
   have hX : IsUnit (gs a z (xU Y α fun j => h.j (i j)) (xc Y α fun j => h.j (i j)).val) := by
     rw [gs_unit a z _ ha.2]; exact Units.isUnit _
   rw [Sb σ', gs_eq_gsH b z U hz]
-  simp only [map_mul, map_add, map_sum, map_natCast, map_ofNat, map_intCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_add (f := _), map_sum, map_natCast, map_ofNat, map_intCast]
   simp only [← gs_eq_gsH b z U hz]
   rw [Ed, Sb σ, Cc, Fin.sum_univ_four, P 0, P 1, P 2, P 3]
   rw [T0, Category.comp_id] at hop ⊢

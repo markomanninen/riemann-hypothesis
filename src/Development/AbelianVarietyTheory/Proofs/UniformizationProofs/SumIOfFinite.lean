@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+
+@[expose] public section
 
 namespace GlobalTheory.UT
 

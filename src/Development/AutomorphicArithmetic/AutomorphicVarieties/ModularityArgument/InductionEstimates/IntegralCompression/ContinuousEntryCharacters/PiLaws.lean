@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.CoLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.CoLaws
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -20,7 +24,8 @@ private theorem T_idem (n : ℕ) (q : ℤ) (k : U2) : ∫ h, T n q h * T n q (h�
   have e : ∀ h, T n q h * T n q (h⁻¹ * k) = ((KT.normSqInt n q : ℂ))⁻¹ * (((KT.normSqInt n q : ℂ))⁻¹ *
       (conj (KT.psi n q n h) • ∑ i ∈ Finset.range (n + 1), ((n.choose i : ℂ) * KT.psi n q i h) • conj (KT.psi n q i k))) := by
     intro h
-    simp only [T, KT.psi_inv_mul, map_sum, map_mul, map_natCast, starRingEnd_self_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, KT.psi_inv_mul, map_sum, map_mul, map_natCast, starRingEnd_self_apply, smul_eq_mul]
     ring
   simp_rw [e]
   rw [integral_const_mul, integral_const_mul]
@@ -50,7 +55,7 @@ private theorem int_update {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E
 
 section
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {ι : Type} [Fintype ι] (C : Co K ι)
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {ι : Type} [Fintype ι] (C : Co K ι)
 
 private noncomputable def glH (i : ι) : GL2C →* G1 K 2 :=
   MonoidHom.mk' (fun g => C.gl i g.1) fun a b => (coLaws K ι C).2.2.2.2.1 i a.1 b.1
@@ -65,11 +70,12 @@ private theorem int_κ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (f
     ∫ k, f k ∂C.κ₂ = ∫ m, f ((C.Φ 2).symm m) ∂(Measure.pi fun _ : ι => μK) :=
   (C.Φ 2).symm.toHomeomorph.measurableEmbedding.integral_map f
 
-private theorem idemA (n : ι → ℕ) (q : ι → ℤ) : IdemA C.κ₂ (C.p n q) where
-  haar := (coLaws K ι C).1
-  cont := continuous_finset_prod _ fun i _ => (T_cont _ _).comp ((continuous_apply i).comp (C.Φ 2).continuous)
-  star k := by simp only [Co.p, map_inv, Pi.inv_apply, T_inv, map_prod]
-  idem k := by
+private theorem idemA (n : ι → ℕ) (q : ι → ℤ) : IdemA C.κ₂ (C.p n q) := by
+  refine { haar := (coLaws K ι C).1, cont := ?_, star := ?_, idem := ?_ }
+  · exact continuous_finsetProd _ fun i _ => (T_cont _ _).comp ((continuous_apply i).comp (C.Φ 2).continuous)
+  · intro k
+    simp only [Co.p, map_inv, Pi.inv_apply, T_inv, map_prod]
+  · intro k
     rw [int_κ]
     have e : ∀ m : ι → U2, C.p n q ((C.Φ 2).symm m) * C.p n q (((C.Φ 2).symm m)⁻¹ * k) =
         ∏ i, (T (n i) (q i) (m i) * T (n i) (q i) ((m i)⁻¹ * C.Φ 2 k i)) := by
@@ -142,7 +148,7 @@ private theorem part1 (i : ι) (n : ℕ) (q : ℤ) : ∃ P : H →L[ℂ] H, (∀
 private theorem part4 (i : ι) (v : H) (hv : ∀ n q g, PiH C ρ i n q (ρ g v) = 0) : v = 0 := by
   let Wd : Submodule ℂ H :=
     { carrier := {y | ∀ (n : ℕ) (q : ℤ) (g : G1 K 2), KT.P (sg C ρ i) n q (ρ g y) = 0}
-      add_mem' := fun {x y} hx hy n q g => by rw [map_add, KT.P_add, hx, hy, add_zero]
+      add_mem' := fun {x y} hx hy n q g => by rw [map_add (f := _), KT.P_add, hx, hy, add_zero]
       zero_mem' := fun n q g => by rw [map_zero]; simpa using KT.P_smul (sg C ρ i) n q 0 0
       smul_mem' := fun c x hx n q g => by rw [map_smul, KT.P_smul, hx, smul_zero] }
   have hcl : IsClosed (Wd : Set H) := by
@@ -188,7 +194,7 @@ private theorem cS_cont (S : Finset ι) : Continuous (cS C S) :=
     · simpa [Finset.piecewise, hi] using continuous_const)
 
 private theorem wS_cont (S : Finset ι) (v : H) : Continuous (wS C ρ n q S v) :=
-  (continuous_finset_prod _ fun i _ => (T_cont _ _).comp (continuous_apply i)).smul
+  (continuous_finsetProd _ fun i _ => (T_cont _ _).comp (continuous_apply i)).smul
     ((ρ.continuous_orbit v).comp (continuous_arch_compact_inclusion.comp (cS_cont C S)))
 
 private noncomputable def AS (S : Finset ι) (v : H) : H := ∫ m, wS C ρ n q S v m ∂(Measure.pi fun _ : ι => μK)
@@ -256,7 +262,7 @@ end
 end UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.piLaws :
-    ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ : Measure (G1 K 2)) [μ.IsHaarMeasure], (∀ i n q, ∃ P : LL μ →L[ℂ] LL μ, (∀ v, P v = C.Pi μ i n q v) ∧ IsSelfAdjoint P ∧ P ∘L P = P ∧
+    ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ : Measure (G1 K 2)) [μ.IsHaarMeasure], (∀ i n q, ∃ P : LL μ →L[ℂ] LL μ, (∀ v, P v = C.Pi μ i n q v) ∧ IsSelfAdjoint P ∧ P ∘L P = P ∧
         (∀ a b, Commute (P ∘L rightRegularRep (Gam K 2) μ (C.gl i a) ∘L P) (P ∘L rightRegularRep (Gam K 2) μ (C.gl i b) ∘L P)) ∧
         (∀ h : G1 K 2, (∀ b, Commute h (C.gl i b)) → Commute P (rightRegularRep (Gam K 2) μ h)) ∧
         ∀ τ : Submodule ℂ (LL μ), CuspIrr μ τ → ∀ v ∈ τ, P v ∈ τ) ∧

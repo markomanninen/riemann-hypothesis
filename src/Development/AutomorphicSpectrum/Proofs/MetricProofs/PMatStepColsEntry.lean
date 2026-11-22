@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.UpVApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.UpVApply
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.WMan
@@ -35,29 +40,29 @@ theorem pStep_reads (Ψ : Type) (N j : ℕ) (keep : Ψ × Fin N → Prop) (q : P
     ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hk, hp, hb⟩⟩
   have hm : pStep j keep τ b ∈ pSteps j keep τ b := by
     unfold pStep
-    rw [dif_pos hne]
+    rw [dite_eq_left hne]
     exact Finset.min'_mem _ _
   have hmin : ∀ i' ∈ pSteps j keep τ b, pStep j keep τ b ≤ i' := by
     intro i' hi'
     unfold pStep
-    rw [dif_pos hne]
+    rw [dite_eq_left hne]
     exact Finset.min'_le _ _ hi'
   obtain ⟨hmk, hmp, hmb⟩ := (Finset.mem_filter.mp hm).2
   refine ⟨hmk, hmp, hmb, fun hx => ha (stepCols_subset_of_le hj (hmin i ?_) hmb hb hx), fun c => ⟨?_, ?_⟩⟩
   · exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hk, hp, hb⟩
   · unfold pMat lowMat
-    rw [dif_pos (⟨hlt, hblk⟩ : b < a ∧ ((a : ℕ) < N - j ↔ (b : ℕ) < N - j))]
+    rw [dite_eq_left (⟨hlt, hblk⟩ : b < a ∧ ((a : ℕ) < N - j ↔ (b : ℕ) < N - j))]
     unfold cExt
-    rw [dif_pos hsep]
+    rw [dite_eq_left hsep]
   · intro x hx hxb
     unfold pMat lowMat
     by_cases hc : b < x ∧ ((x : ℕ) < N - j ↔ (b : ℕ) < N - j)
-    · rw [dif_pos hc]
+    · rw [dite_eq_left hc]
       unfold cExt
       refine dif_neg ?_
       rintro ⟨i', hk', hp', hb', hx'⟩
       exact hx' (stepCols_subset_of_le hj
         (hmin i' (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hk', hp', hb'⟩)) hmb hb' hx)
-    · rw [dif_neg hc, if_neg hxb]
+    · rw [_root_.dite_eq_right hc, if_neg hxb]
 
 end GlobalTheory.CompanionTheory.Ar.PB.PFl.SmallStep

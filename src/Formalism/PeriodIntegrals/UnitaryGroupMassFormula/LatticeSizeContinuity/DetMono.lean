@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatSizeContOfSteps
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HermDefON
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatSizeContOfSteps
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HermDefON
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem determinant_monotone : DetMono := by
       rw [hN.1.det_eq_prod_eigenvalues]; push_cast; rfl
     have hP : ∏ i, hN.1.eigenvalues i ≤ κ ^ j := by
       calc ∏ i, hN.1.eigenvalues i ≤ ∏ _i : Fin j, κ :=
-            Finset.prod_le_prod (fun i _ => hN.eigenvalues_nonneg i) (fun i _ => hev i)
+            Finset.prod_le_prod₀ (fun i _ => hN.eigenvalues_nonneg i) (fun i _ => hev i)
         _ = κ ^ j := by simp
     have hd0 : y.det ≠ 0 := hy.ne_zero
     have hnd : 0 < Complex.normSq y.det := Complex.normSq_pos.mpr hd0

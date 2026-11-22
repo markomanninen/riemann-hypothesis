@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PadicIntHomUnique
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgEquivRootOfUnityEqPow
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PadicIntHomUnique
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgEquivRootOfUnityEqPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -210,7 +214,7 @@ def actSt : GQ l →* (Bst P →ₐ[ℚ_[l]] Bst P) where
   map_one' := stHom_ext P (fun b => by simp) (by simp)
   map_mul' g h := stHom_ext P (fun b => by simp [AlgHom.mul_apply]) (by
     have e : (P.actQ g : P.R.B →ₐ[ℚ_[l]] P.R.B) P.tB = (P.χQ g : ℚ_[l]) • P.tB := localPrime_galoisAction_periodT P g
-    simp only [AlgHom.mul_apply, stHom_X, map_add, stHom_C, map_smul, e,
+    simp only [AlgHom.mul_apply, stHom_X, map_add (f := _), stHom_C, map_smul, e,
       kummer_mul, add_smul, smul_smul, add_assoc, mul_comm])
 
 @[simp] theorem actSt_C (g : GQ l) (b : P.R.B) : actSt P g (C b) = C (P.actQ g b) := stHom_C _ _ _ _
@@ -231,7 +235,7 @@ def monSt : Bst P →ₗ[ℚ_[l]] Bst P := -(derivative.restrictScalars ℚ_[l])
 theorem phiSt_actSt (g : GQ l) (p : Bst P) : phiSt P (actSt P g p) = actSt P g (phiSt P p) := by
   have : (phiSt P).comp (actSt P g) = (actSt P g).comp (phiSt P) :=
     stHom_ext P (fun b => by simp [phiB_actQ]) (by
-      simp only [AlgHom.comp_apply, actSt_X, phiSt_X, map_add, phiSt_C, map_smul, localPrime_frobenius_periodT, map_mul,
+      simp only [AlgHom.comp_apply, actSt_X, phiSt_X, map_add (f := _), phiSt_C, map_smul, localPrime_frobenius_periodT, map_mul,
         map_natCast, mul_add]
       rw [smul_comm, Nat.cast_smul_eq_nsmul, nsmul_eq_mul, map_mul, map_natCast])
   exact AlgHom.congr_fun this p
@@ -262,8 +266,8 @@ theorem exists_monSt_pow_eq_zero (p : Bst P) : ∃ n : ℕ, (monSt P ^ n) p = 0 
 theorem monSt_eq_zero_iff (p : Bst P) : monSt P p = 0 ↔ ∃ b, p = C b := by
   constructor
   · intro h
-    have : IsAddTorsionFree P.R.B := ⟨fun n hn a b hab => by
-      have h1 : (n : ℚ_[l]) • a = (n : ℚ_[l]) • b := by simpa only [Nat.cast_smul_eq_nsmul] using hab
+    have : HasUniqueDiv P.R.B := ⟨fun n hn a b h => by
+      have h1 : (n : ℚ_[l]) • a = (n : ℚ_[l]) • b := by simpa only [Nat.cast_smul_eq_nsmul] using h
       exact smul_right_injective _ (Nat.cast_ne_zero.mpr hn) h1⟩
     rw [monSt_apply, neg_eq_zero] at h
     exact ⟨_, eq_C_of_derivative_eq_zero h⟩
@@ -279,8 +283,6 @@ theorem phiSt_injective : Function.Injective (phiSt P) := by
       ← map_mul, ← map_natCast (algebraMap ℚ_[l] P.R.B), ← map_mul, mul_inv_cancel₀ hl, map_one,
       map_one, one_mul, comp_X]
   exact map_injective (P.φB : P.R.B →+* P.R.B) (phiB_injective P) (by rw [← e, ← e, hpq])
-
-example : monSt P X = -1 := by simp
 
 end Ring
 

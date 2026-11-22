@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LatDefs
-import Formalism.PeriodIntegrals.SigmaStarUniq
-import Formalism.PeriodIntegrals.AreaLat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LatDefs
+public import Formalism.PeriodIntegrals.SigmaStarUniq
+public import Formalism.PeriodIntegrals.AreaLat
+
+@[expose] public section
 
 noncomputable section
 

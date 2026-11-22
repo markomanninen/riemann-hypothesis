@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PairValDefs
-import Formalism.PeriodIntegrals.NormRepChange
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationChange.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationChange.NlamFrameMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationChange.CoefXOfMemXS
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PairValDefs
+public import Formalism.PeriodIntegrals.NormRepChange
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationChange.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationChange.NlamFrameMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationChange.CoefXOfMemXS
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,17 +40,6 @@ theorem intP_add {x y : D.host.E} (hx : IntP P x) (hy : IntP P y) : IntP P (x + 
   refine ⟨s1 * s2, mul_not_mem_P P hs1 hs2, o1 * s2 + o2 * s1, ?_⟩
   push_cast
   linear_combination (s2 : D.host.E) * h1 + (s1 : D.host.E) * h2
-
-theorem valuation_coeff_mul_nonneg {x y : D.host.E} (hx : IntP P x) (hy : IntP P y) : IntP P (x * y) := by
-  obtain ⟨s1, hs1, o1, h1⟩ := hx
-  obtain ⟨s2, hs2, o2, h2⟩ := hy
-  refine ⟨s1 * s2, mul_not_mem_P P hs1 hs2, o1 * o2, ?_⟩
-  push_cast
-  linear_combination ((s2 : D.host.E) * y) * h1 + (o1 : D.host.E) * h2
-
-theorem isIntegralAt_neg {x : D.host.E} (hx : IntP P x) : IntP P (-x) := by
-  have := valuation_coeff_mul_nonneg P (intP_O P (-1)) hx
-  simpa using this
 
 theorem intP_sum {ι : Type*} (s : Finset ι) (f : ι → D.host.E) (h : ∀ i ∈ s, IntP P (f i)) :
     IntP P (∑ i ∈ s, f i) := by
@@ -92,9 +85,6 @@ theorem localization_mono₃ {L L' : Submodule (𝓞 D.host.E) (VS D).V} (hle : 
   obtain ⟨s, hs, h⟩ := (mem_LP P).mp hx
   exact (mem_LP P).mpr ⟨s, hs, hle h⟩
 
-theorem add_mem_localization {L : Submodule (𝓞 D.host.E) (VS D).V} {x y : (VS D).V} (hx : x ∈ LP P L) (hy : y ∈ LP P L) :
-    x + y ∈ LP P L := add_mem hx hy
-
 theorem sub_mem_localization {L : Submodule (𝓞 D.host.E) (VS D).V} {x y : (VS D).V} (hx : x ∈ LP P L) (hy : y ∈ LP P L) :
     x - y ∈ LP P L := sub_mem hx hy
 
@@ -129,7 +119,7 @@ theorem mem_gLam {Λ : Submodule (𝓞 D.host.E) (VS D).V} {g : ℕ} {x : (VS D)
   · rintro ⟨l, hl, rfl⟩; exact ⟨l, hl, by rw [smul_eq_E, hc]⟩
   · rintro ⟨l, hl, rfl⟩; exact ⟨l, hl, by rw [smul_eq_E, hc]⟩
 
-theorem nlam_gLam {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (VS D) D.R.rS T}
+theorem nlam_gLam {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (D.sp.Y 0) D.R.rS T}
     {n : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hn : n ∈ NLam Λ G) (g : ℕ) :
     ∀ v ∈ Ideal.span {((g : ℕ) : 𝓞 D.host.E)} • Λ, (n : (VS D).V →ₗ[D.host.E] (VS D).V) v ∈
       Ideal.span {((g : ℕ) : 𝓞 D.host.E)} • Λ := by
@@ -168,7 +158,7 @@ section FixedConv
 
 variable {D : D7} (P : HeightOneSpectrum (𝓞 D.host.E))
 
-theorem fixedConv_at {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (VS D) D.R.rS T}
+theorem fixedConv_at {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (D.sp.Y 0) D.R.rS T}
     (hC : IsFixedConv Λ (gS D) G) (hP : ((gS D : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal) :
     LP P (XLam Λ G) = LP P (Submodule.span (𝓞 D.host.E) (Set.range G.fl.e)) := by
   obtain ⟨c, _, hc1, hloc⟩ := hC.1 P
@@ -176,7 +166,7 @@ theorem fixedConv_at {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G
   rw [hc] at hloc
   exact hloc
 
-theorem e_mem_LP {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (VS D) D.R.rS T}
+theorem e_mem_LP {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (D.sp.Y 0) D.R.rS T}
     (hC : IsFixedConv Λ (gS D) G) (hP : ((gS D : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal) (a : Fin D.R.rS) :
     G.fl.e a ∈ LP P Λ := by
   have h : G.fl.e a ∈ LP P (Submodule.span (𝓞 D.host.E) (Set.range G.fl.e)) :=
@@ -184,7 +174,7 @@ theorem e_mem_LP {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : L
   rw [← fixedConv_at P hC hP] at h
   exact localization_mono₃ P (fun v hv => by rw [XLam, Submodule.mem_inf] at hv; exact hv.1) h
 
-theorem coef_intP {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (VS D) D.R.rS T}
+theorem coef_intP {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (D.sp.Y 0) D.R.rS T}
     (hC : IsFixedConv Λ (gS D) G) (hP : ((gS D : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal) {w : (VS D).V}
     (hw : w ∈ LP P Λ) (hwX : w ∈ G.fl.X) (a : Fin D.R.rS) : IntP P (G.fl.coefX w a) := by
   obtain ⟨s, hs, hsw⟩ := (mem_LP P).mp hw
@@ -201,7 +191,7 @@ theorem coef_intP {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : 
   push_cast
   ring
 
-theorem coef_intP_g {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (VS D) D.R.rS T}
+theorem coef_intP_g {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {G : LFlag (D.sp.Y 0) D.R.rS T}
     (hC : IsFixedConv Λ (gS D) G) (hP : ((gS D : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal)
     (hg : ((gS D : ℕ) : D.host.E) ≠ 0) {Y : (VS D).V}
     (hY : Y ∈ LP P (Ideal.span {((gS D : ℕ) : 𝓞 D.host.E)} • Λ)) (hYX : Y ∈ G.fl.X) (a : Fin D.R.rS) :

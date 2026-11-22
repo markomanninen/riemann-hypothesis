@@ -1,7 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GaussQ
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHomeomorphRankOneTuplesStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyRealStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GaussQ
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHomeomorphRankOneTuplesStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyRealStatement
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW GlobalTheory.CompanionTheory.SW.BB NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -93,14 +98,13 @@ theorem map_coord_pi {ι κ A : Type} [Fintype ι] [Fintype κ] [MeasurableSpace
     measurable_pi_iff.2 fun p => he.comp (measurable_pi_apply p)
   have h2 : (fun (y : ι → A) (w : κ) (p : ι) => e (y p) w) =
       (fun (f : ι → κ → ℝ) (w : κ) (p : ι) => f p w) ∘ (fun (y : ι → A) (p : ι) => e (y p)) := rfl
-  rw [h2, ← Measure.map_map hsw hc, h1, hlam, pi_smul_const, Measure.map_smul]
-  congr 1
-  exact map_swap_volume ι κ
+  rw [h2, ← Measure.map_map hsw hc, h1, hlam, pi_smul_const,
+    Measure.map_smul _ hsw.aemeasurable, ← volume_pi, map_swap_volume]
 
 end GlobalTheory.CompanionTheory.SW.BB.InfPush
 
-open GlobalTheory.CompanionTheory.SW.BB.InfPush in
 
+open GlobalTheory.CompanionTheory.SW.BB.InfPush in
 theorem GlobalTheory.CompanionTheory.SW.BB.infPush : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (M d : ℕ) (b : Module.Basis (Fin d) F E) (e : Ainf F ≃+* (InfinitePlace F → ℝ)), IsHomeomorph e → ∀ (laminf : Measure (Ainf F)), laminf.IsAddHaarMeasure → laminf.map e = ENNReal.ofReal (Real.sqrt |(discr F : ℝ)|)⁻¹ • (volume : Measure (InfinitePlace F → ℝ)) → (coordW (Ainf F) b laminf 1 M).map (fun X w => xw e b X w) = ENNReal.ofReal ((Real.sqrt |(discr F : ℝ)|)⁻¹ ^ (M * d)) • (volume : Measure (InfinitePlace F → Fin M × Fin d → ℝ)) := by
   intro F E _ _ _ _ _ σ hσ M d b e he laminf hH hmap
   have hloc := GlobalTheory.T.infinite_adeles_local_ring_totally_real F hσ.1
@@ -119,6 +123,8 @@ theorem GlobalTheory.CompanionTheory.SW.BB.infPush : ∀ (F E : Type) [Field F] 
       (fun (y : Fin M × Fin d → Ainf F) (w : InfinitePlace F) (p : Fin M × Fin d) => e (y p) w) ∘
         (fun X : Fin 1 → Fin M → Ainf F ⊗[F] E => cv (Ainf F) b (X 0)) := rfl
   have hr : 0 ≤ (Real.sqrt |(discr F : ℝ)|)⁻¹ := inv_nonneg.2 (Real.sqrt_nonneg _)
-  rw [hcomp, ← Measure.map_map hΦ hemb.measurable, hcoord,
-    map_coord_pi laminf (fun x => e x) hem _ hmap, ENNReal.ofReal_pow hr]
-  simp [Fintype.card_prod, ENNReal.ofReal]
+  have hcard : Fintype.card (Fin M × Fin d) = M * d := by
+    simp only [Fintype.card_prod, Fintype.card_fin]
+  rw [hcomp, ← Measure.map_map hΦ hemb.measurable, hcoord, ENNReal.ofReal_pow hr, ← hcard]
+  exact InfPush.map_coord_pi laminf (fun x => e x) hem
+    ((Real.sqrt |(discr F : ℝ)|)⁻¹).toNNReal hmap

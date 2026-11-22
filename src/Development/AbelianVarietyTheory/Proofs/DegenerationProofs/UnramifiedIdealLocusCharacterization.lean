@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.Imports
+
+@[expose] public section
+
 open TensorProduct MvPolynomial
 noncomputable section
 namespace GlobalTheory.SS.Dil
@@ -77,7 +82,7 @@ theorem chain {R S W : Type} {n : ℕ} [CommRing R] [CommRing S] [AddCommGroup W
     have : ∀ i, σ (pderiv i (p * X j)) • D (X i) =
         (if i = j then σ p • D (X j) else 0) + σ (X j) • σ (pderiv i p) • D (X i) := by
       intro i
-      rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add, map_mul, map_mul, add_smul, mul_smul, mul_smul]
+      rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add (f := _), map_mul, map_mul, add_smul, mul_smul, mul_smul]
       by_cases h : i = j
       · subst h; simp
       · rw [pderiv_X_of_ne (Ne.symm h)]; simp [h]
@@ -123,18 +128,20 @@ theorem ker_le {R B S : Type} {n : ℕ} [CommRing R] [CommRing B] [CommRing S] [
     (by
       intro x y
       obtain ⟨x, rfl⟩ := hq x; obtain ⟨y, rfl⟩ := hq y
-      rw [← map_add, hD, hD, hD, gr_add, map_add])
+      rw [← map_add (f := _), hD, hD, hD, gr_add, map_add (f := _)])
     (by
       intro x y
       obtain ⟨x, rfl⟩ := hq x; obtain ⟨y, rfl⟩ := hq y
-      rw [← map_mul, hD, hD, hD, gr_mul, map_add, map_smul, map_smul, hσ, hσ])
+      rw [← map_mul, hD, hD, hD, gr_mul, map_add (f := _), map_smul, map_smul, hσ, hσ])
     (by
       intro r
       rw [← q.commutes, hD, algebraMap_eq, gr_C, map_zero])
   have h := congrArg l hu
-  rw [map_sum, map_zero] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h
   simp only [map_smul, dd, hl, hD, gr_X] at h
-  simp only [← map_smul, ← map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_smul, ← map_sum] at h
   have h2 : ∑ i, u i • (Pi.single i 1 : Fin n → S) = u := by
     funext j; simp [Pi.single_apply]
   rw [h2] at h
@@ -188,7 +195,7 @@ theorem factA {R k C : Type} {n : ℕ} [CommRing R] [CommRing k] [CommRing C] [A
     Algebra.FormallySmooth.liftOfSurjective_apply (AlgHom.id k C) ρ hρs hnil c
   let D : MvPolynomial (Fin n) R → A := fun p => m p - s (σ p)
   have hD : ∀ p, ρ (D p) = 0 := fun p => by simp only [D, map_sub, hs, hρ, sub_self]
-  have hch := chain (W := A) m.toRingHom D (fun x y => by simp only [D, map_add]; ring)
+  have hch := chain (W := A) m.toRingHom D (fun x y => by simp only [D, map_add (f := _)]; ring)
     (fun x y => by
       have := hsq _ _ (hD x) (hD y)
       simp only [D, map_mul, smul_eq_mul] at this ⊢
@@ -201,7 +208,8 @@ theorem factA {R k C : Type} {n : ℕ} [CommRing R] [CommRing k] [CommRing C] [A
   choose h hh using fun j => hm (D (X j))
   refine ⟨h, fun j => (hI _).2 (by rw [← hρ, hh, hD]), fun g hg => ?_⟩
   have h1 : g - ∑ j, pderiv j g * h j ∈ T := by
-    rw [← hm0, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hm0, map_sub, map_sum]
     have := hch g
     simp only [D, (hI g).1 hg, map_zero, sub_zero] at this
     rw [this, sub_eq_zero]
@@ -221,7 +229,7 @@ theorem factB {R B S : Type} {n : ℕ} [CommRing R] [CommRing B] [CommRing S] [A
   have hτ : ∀ u, τ u = ∑ i, u i • dd R B S (q (X i)) := fun u => Fintype.linearCombination_apply _ _ _
   have hτg : ∀ p, τ (gr σ p) = dd R B S (q p) := fun p => by
     rw [hτ]
-    exact (chain σ (fun p => dd R B S (q p)) (fun x y => by rw [map_add, dd_add])
+    exact (chain σ (fun p => dd R B S (q p)) (fun x y => by rw [map_add (f := _), dd_add])
       (fun x y => by rw [map_mul, dd_mul, hσ, hσ]) (fun r => by rw [← algebraMap_eq, q.commutes, dd_algebraMap]) p).symm
   have hsur : Function.Surjective τ := fun x => span_d R B S (LinearMap.range τ) (fun b => by
     obtain ⟨p, rfl⟩ := hq b
@@ -232,7 +240,7 @@ theorem factB {R B S : Type} {n : ℕ} [CommRing R] [CommRing B] [CommRing S] [A
       zero_mem' := ⟨0, map_zero _, gr_zero σ⟩
       add_mem' := by
         rintro _ _ ⟨f, hf, rfl⟩ ⟨g, hg, rfl⟩
-        exact ⟨f + g, by rw [map_add, hf, hg, add_zero], gr_add σ _ _⟩
+        exact ⟨f + g, by rw [map_add (f := _), hf, hg, add_zero], gr_add σ _ _⟩
       smul_mem' := by
         rintro c _ ⟨f, hf, rfl⟩
         obtain ⟨p, rfl⟩ := hs c
@@ -250,7 +258,8 @@ theorem factB {R B S : Type} {n : ℕ} [CommRing R] [CommRing B] [CommRing S] [A
   have h2 : ∑ i, gr σ f i • (Pi.single i 1 : Fin n → S) = gr σ f := by
     funext j; simp [Pi.single_apply]
   rw [gr_sub, gr_sum, sub_eq_zero, ← h1]
-  conv_lhs => rw [← h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← h2, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [gr_mul, hσ (h j), hh1, map_zero, zero_smul, add_zero, hh2, map_smul]; rfl
 
@@ -280,7 +289,7 @@ theorem core {R B B' S : Type} {n : ℕ} [CommRing R] [CommRing B] [CommRing B']
   have hψ : ∀ u, ψ u = ∑ i, u i • dd R B' S (φ (q (X i))) := fun u => Fintype.linearCombination_apply _ _ _
   have hψg : ∀ p, ψ (gr σ p) = dd R B' S (φ (q p)) := fun p => by
     rw [hψ]
-    exact (chain σ (fun p => dd R B' S (φ (q p))) (fun x y => by rw [map_add, map_add, dd_add])
+    exact (chain σ (fun p => dd R B' S (φ (q p))) (fun x y => by rw [map_add (f := _), map_add (f := _), dd_add])
       (fun x y => by rw [map_mul, map_mul, dd_mul, hσ', hσ'])
       (fun r => by rw [← algebraMap_eq, q.commutes, φ.commutes, dd_algebraMap]) p).symm
   let j : (Fin n → S) →ₗ[S] (Fin n → S) × (S ⊗[B'] KaehlerDifferential R B') := LinearMap.prod (ϖ • LinearMap.id) ψ
@@ -321,12 +330,12 @@ theorem core {R B B' S : Type} {n : ℕ} [CommRing R] [CommRing B] [CommRing B']
       obtain ⟨b', hb'⟩ := hβ g' hg'
       refine ⟨φ (q g) * b', by rw [map_mul, map_mul, ← hb']; ring,
         algebraMap B' S b • gr σ g' + algebraMap B' S b' • gr σ g, ?_⟩
-      rw [hj, gr_mul, dd_mul, ← hσ', hval g b hb, hval g' b' hb', map_add, map_smul, map_smul, ← hdd g' b' hb', hψg]
+      rw [hj, gr_mul, dd_mul, ← hσ', hval g b hb, hval g' b' hb', map_add (f := _), map_smul, map_smul, ← hdd g' b' hb', hψg]
       congr 1
       · rw [smul_add, mul_smul, mul_smul]
       · rw [mul_comm, mul_smul]
     · rintro x y ⟨b, hb, hx⟩ ⟨b', hb', hy⟩
-      refine ⟨b + b', by rw [mul_add, hb, hb', map_add, map_add], ?_⟩
+      refine ⟨b + b', by rw [mul_add, hb, hb', map_add (f := _), map_add (f := _)], ?_⟩
       rw [gr_add, dd_add]
       exact Submodule.add_mem _ hx hy
   have hΔ : ∀ g ∈ I, ∀ b', algebraMap R B' π * b' = φ (q g) → (gr σ g, dd R B' S b') ∈ W := by
@@ -336,7 +345,8 @@ theorem core {R B B' S : Type} {n : ℕ} [CommRing R] [CommRing B] [CommRing B']
     have e1 : b' = e + ∑ i, φ (q (pderiv i g)) * β i + φ (q p) := by
       apply huniq
       rw [mul_add, mul_add, he, hb', Finset.mul_sum]
-      simp only [map_sub, map_sum, map_mul, hCπ, ← hβh]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_mul, hCπ, ← hβh]
       simp only [mul_left_comm (algebraMap R B' π)]
       ring
     have ddsum : ∀ f : Fin n → B', dd R B' S (∑ i, f i) = ∑ i, dd R B' S (f i) := fun f => by
@@ -375,7 +385,7 @@ theorem core {R B B' S : Type} {n : ℕ} [CommRing R] [CommRing B] [CommRing B']
       · rw [dd_mul]
         exact W.add_mem (W.smul_mem _ (hΔ g' hg' b' hb')) (W.smul_mem _ (hΔ g hg b hb))
     · rintro x y ⟨b, hb, u, hu, hx⟩ ⟨b', hb', u', hu', hy⟩
-      refine ⟨b + b', by rw [mul_add, mul_add, hb, hb', map_add, map_add], u + u', by rw [smul_add, hu, hu', gr_add], ?_⟩
+      refine ⟨b + b', by rw [mul_add, mul_add, hb, hb', map_add (f := _), map_add (f := _)], u + u', by rw [smul_add, hu, hu', gr_add], ?_⟩
       rw [dd_add]
       exact W.add_mem hx hy
   let θ' : (Fin n → S) →ₗ[S] (Fin n → S) := Fintype.linearCombination S (fun i => gr σ (h' i))
@@ -467,13 +477,13 @@ theorem tors {R B B' S : Type} [CommRing R] [CommRing B] [CommRing B'] [CommRing
       apply (hbij (N x + N y)).1
       simp only
       rw [hD' _ (algebraMap R B π ^ N y * c x + algebraMap R B π ^ N x * c y) _ (by
-        simp only [map_add, map_mul, map_pow, φ.commutes, ← hc]; ring), dd_add, hpow, hpow, map_add, map_smul,
+        simp only [map_add (f := _), map_mul, map_pow, φ.commutes, ← hc]; ring), dd_add, hpow, hpow, map_add (f := _), map_smul,
         map_smul, ← hD' _ _ _ (hc x), ← hD' _ _ _ (hc y), smul_add, smul_smul, smul_smul, ← pow_add, ← pow_add, add_comm (N y)])
     (fun x y => by
       apply (hbij (N x + N y)).1
       simp only
       rw [hD' _ (c x * c y) _ (by
-        simp only [map_mul, ← hc]; ring), dd_mul, map_add, map_smul,
+        simp only [map_mul, ← hc]; ring), dd_mul, map_add (f := _), map_smul,
         map_smul, ← hD' _ _ _ (hc x), ← hD' _ _ _ (hc y), hval, hval, smul_add, smul_smul, smul_smul, smul_smul, smul_smul]
       congr 2 <;> ring)
     (fun r => by
@@ -486,9 +496,11 @@ theorem tors {R B B' S : Type} [CommRing R] [CommRing B] [CommRing B'] [CommRing
   obtain ⟨r, hr⟩ := hu
   have h1 : ι ((r : S) • ∑ i, u i • dd R B S (x i)) = 0 := by
     have := congrArg l hr
-    rw [Submonoid.smul_def, map_smul, map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Submonoid.smul_def, map_smul, map_sum, map_zero] at this
     simp only [map_smul, hlφ] at this
-    rw [map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
     simpa only [map_smul] using this
   obtain ⟨s, hs⟩ := (IsLocalizedModule.eq_zero_iff (nonZeroDivisors S) ι).1 h1
   exact ⟨s * r, by rw [mul_smul]; exact hs⟩
@@ -520,8 +532,8 @@ theorem exists_ext {R B B' S : Type} [CommRing R] [CommRing B] [CommRing B'] [Co
   have radd : ∀ x y s t, Rel x s → Rel y t → Rel (x + y) (s + t) := by
     rintro x y s t ⟨k, b, h1, h2⟩ ⟨l, c, h3, h4⟩
     refine ⟨k + l, algebraMap R B π ^ l * b + algebraMap R B π ^ k * c, ?_, ?_⟩
-    · simp only [map_add, map_mul, map_pow, φ.commutes, ← h1, ← h3]; ring
-    · simp only [map_add, map_mul, map_pow, a.commutes, ← h2, ← h4]; ring
+    · simp only [map_add (f := _), map_mul, map_pow, φ.commutes, ← h1, ← h3]; ring
+    · simp only [map_add (f := _), map_mul, map_pow, a.commutes, ← h2, ← h4]; ring
   have rmul : ∀ x y s t, Rel x s → Rel y t → Rel (x * y) (s * t) := by
     rintro x y s t ⟨k, b, h1, h2⟩ ⟨l, c, h3, h4⟩
     refine ⟨k + l, b * c, ?_, ?_⟩
@@ -603,7 +615,7 @@ theorem dilatation_lowers_defect : ∀ (R : Type) [CommRing R] [IsDomain R] [IsD
           (fun x hx y hy => by
             rw [map_mul, map_mul]
             exact mul_dvd_mul ((hI _).1 hx R' a ha) ((hI _).1 hy R' a ha))
-          (fun x y hx hy => by rw [map_add, map_add]; exact dvd_add hx hy)
+          (fun x y hx hy => by rw [map_add (f := _), map_add (f := _)]; exact dvd_add hx hy)
       have h6 := h5 _ h3
       rw [map_sub, h1, zero_sub, map_neg, dvd_neg, map_mul, map_mul, hCπ, a.commutes] at h6
       exact (mul_dvd_mul_iff_left hirr.ne_zero).1 h6

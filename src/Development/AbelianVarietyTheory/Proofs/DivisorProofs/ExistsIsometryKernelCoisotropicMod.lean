@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfIsometryApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveModOfSurjectiveModOppositeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearSectionOppositeCongrModStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsotropicShearOfAdjointStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerModEqOrthogonalRangeShearAddNsmulStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsometryExtendingIsotropicShearStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfIsometryApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveModOfSurjectiveModOppositeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearSectionOppositeCongrModStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsotropicShearOfAdjointStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerModEqOrthogonalRangeShearAddNsmulStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsometryExtendingIsotropicShearStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,9 +45,9 @@ theorem GlobalTheory.LowFilt.exists_isometry_kerIs : ∀ {E : Type} [Field E] [N
       rw [← hgt ⟨z, hz⟩, ← G.apply_symm_apply b, hG, hg] at this
       exact this
     · apply G.injective
-      rw [map_add, map_nsmul, G.apply_symm_apply, G.apply_symm_apply, hG, he]
+      rw [map_add (f := _), map_nsmul, G.apply_symm_apply, G.apply_symm_apply, hG, he]
   · rintro ⟨b, hb, e, rfl⟩
-    refine ⟨g b, ?_, g e, by rw [map_add, map_nsmul]⟩
+    refine ⟨g b, ?_, g e, by rw [map_add (f := _), map_nsmul]⟩
     rintro _ ⟨z, rfl⟩
     rw [← hgt z, hg]
     exact hb z z.2

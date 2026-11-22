@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,16 +24,16 @@ theorem ee_mul (h : D.H) (u : Gf) : D.ee ((h : Gf)⁻¹ * u) * (D.χ h : ℂ) = 
   unfold Dat.ee
   by_cases hu : u ∈ D.H
   · have hu' : (h : Gf)⁻¹ * u ∈ D.H := D.H.mul_mem (D.H.inv_mem h.2) hu
-    rw [dif_pos hu', dif_pos hu, mul_comm, ← Units.val_mul, ← map_mul]
+    rw [dite_eq_left hu', dite_eq_left hu, mul_comm, ← Units.val_mul, ← map_mul]
     congr 2
     apply Subtype.ext
     simp
   · have hu' : (h : Gf)⁻¹ * u ∉ D.H := fun hh => hu (by simpa using D.H.mul_mem h.2 hh)
-    rw [dif_neg hu', dif_neg hu, zero_mul]
+    rw [dite_eq_right hu', dite_eq_right hu, zero_mul]
 
 theorem ee_one : D.ee 1 = 1 := by
   unfold Dat.ee
-  rw [dif_pos D.H.one_mem]
+  rw [dite_eq_left D.H.one_mem]
   exact congrArg Units.val (map_one D.χ)
 
 theorem smul_fst (γ : PG F) (ω : D.Om) : γ • ω = (((D.j γ.out * D.rep ω : Gf)) : Gf ⧸ D.H) := by
@@ -72,7 +76,7 @@ theorem supp (k : I → ℕ) (f : X I × Gf → ℂ) (hf : D.IsForm k f) (z : X 
       exact h1.symm.trans (QuotientGroup.eq.2 hm)
     have h0 : D.ee ((D.rep y.1)⁻¹ * x) = 0 := by
       unfold Dat.ee
-      rw [dif_neg hn]
+      rw [dite_eq_right hn]
     rw [h0, zero_mul]
 
 end UpperTheory.Esk.ReproducingKernelExpansion

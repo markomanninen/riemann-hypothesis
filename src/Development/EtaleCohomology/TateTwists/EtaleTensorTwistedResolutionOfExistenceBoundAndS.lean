@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleTensorPairTwistResolutionMul
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTensorPairTwistResolutionMul
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 

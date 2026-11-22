@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StepZeroTwistReferenceTupleEqId
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelFunctionalLevelVectorLaws
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimeNotMemOfMemQE
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsDefiniteLaws
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NarrowJetMoments
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPointOfRationalUnitaryAdelicMul
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CouplingCosetFramesInvariantRationalUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedInvMulLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BcPrVEqOneOfAdAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpKeepsChart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNotMemConjMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DualLOneEqDual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InvMapMulMapMulCancelComplexEmbedding
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepGamMemUJ
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CosetInMvUp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StepZeroTwistReferenceTupleEqId
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelFunctionalLevelVectorLaws
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimeNotMemOfMemQE
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsDefiniteLaws
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NarrowJetMoments
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPointOfRationalUnitaryAdelicMul
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CouplingCosetFramesInvariantRationalUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedInvMulLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BcPrVEqOneOfAdAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpKeepsChart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNotMemConjMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DualLOneEqDual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InvMapMulMapMulCancelComplexEmbedding
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepGamMemUJ
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CosetInMvUp
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -85,7 +89,7 @@ theorem f_kill {d : Deco E n ST SG} (hd : d.Ok) (P : ST) (r : Sp E n → Sp E n)
 
 theorem deco_up {d d' : Deco E n ST SG} (hd : d.Ok) (P : ST) (hP : MoveHyp ST SG P) {q : 𝓞 E} (hq : q ∈ P.1.asIdeal)
     (hq2 : q ∉ P.1.asIdeal ^ 2) {x₀ : Sp E n} (hx₀ : x₀ ∈ d.N) (hf : d.f P x₀ = 1) {γ : Sp E n ≃ₗ[E] Sp E n} (hγ : γ ∈ UF E n)
-    {h : GLG E n SG} (hact : d'.act γ h = d.up P q x₀) {z : Sp E n} (hz : z - x₀ ∈ P.1.asIdeal • dual (hStd E n) d.L) :
+    {h : GLG (E := E) (n := n) (SG := SG)} (hact : d'.act γ h = d.up P q x₀) {z : Sp E n} (hz : z - x₀ ∈ P.1.asIdeal • dual (hStd E n) d.L) :
     localization₂ P.1.asIdeal (gmap γ d'.L) = localization₂ P.1.asIdeal (dual (hStd E n) d.L) ∧
     localization₂ P.1.asIdeal (gmap γ (dual (hStd E n) d'.L)) =
       localization₂ P.1.asIdeal (dual (hStd E n) d.L ⊔ Submodule.span (𝓞 E) {(algebraMap (𝓞 E) E q)⁻¹ • z}) ∧
@@ -109,7 +113,7 @@ theorem deco_up {d d' : Deco E n ST SG} (hd : d.Ok) (P : ST) (hP : MoveHyp ST SG
       exact (Formalism.L2.Col.mem_gmap γ _ _).2 (by rwa [γ.symm_apply_apply])
     have k1 := f_kill hd P id (fun _ _ => rfl) (fun _ _ => rfl) (M := dual (hStd E n) d.L)
       (fun m hm => h2.le (Formalism.L2.Col.le_locP P.1 _ hm)) hx'
-    have k2 := f_kill hd P (fun m => q • γ m) (fun a b => by rw [map_add, smul_add])
+    have k2 := f_kill hd P (fun m => q • γ m) (fun a b => by rw [map_add (f := _), smul_add])
       (fun a b => by rw [equiv_osmul, smul_comm]) (M := dual (hStd E n) d'.L) (fun m hm => by
         have a1 : γ m ∈ gmap γ (dual (hStd E n) d'.L) := (Formalism.L2.Col.mem_gmap γ _ _).2 (by rwa [γ.symm_apply_apply])
         rw [hD] at a1
@@ -162,8 +166,8 @@ theorem cosetIn_upP (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (i : ℕ) (
   exact _root_.GlobalTheory.Mem.Col2.cosetIn_mv_up B.fields (B.primes X) B.R I.sel I.S (I.tup a) (I.cst a) u i (FieldsLaws.fields_ok B) l.pr
     (T_notMem_QE I.sel (I.tup a) u l.pr hI.sel_ok (hI.T_mem u)) ((I.stp u a i).rep c) P _ (Quotient.out x).2 (f_out I l u a i P c x hx)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_level (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (i : ℕ) {Ch : Type} {chOf : (I.stp u a i).Cl → Ch}
     {Lb : Ch → Submodule (𝓞 B.host.E) (Fin (B.R.N i) → B.host.E)} {U : Ch → Subgroup (GA B (B.R.N i))} {chi : ∀ β, U β →* ℂˣ}
     {y : (I.stp u a i).Cl → GA B (B.R.N i)} {st : ∀ c, (I.stp u a i).Stab c → GL (Fin (B.R.N i)) B.host.E} {k : Ch → GA B (B.R.N i)}
@@ -206,8 +210,8 @@ theorem exists_level (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (i : ℕ) 
   unfold ratAd
   rw [← map_mul, ← map_mul, mul_inv_cancel, map_one, map_one, one_mul]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem upAt_spec (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (i : ℕ) (P : (B.primes X).vT u) (c : (I.stp u a i).Cl)
     (x : ((I.atIn u a).A i).lv P c) (hx : ((I.atIn u a).A i).fv P c x = 1) :
     (upperParabolic I u a i P c x).1.1.deco.1 = ((I.stp u a i).rep c).1.1.deco.1.up P (B.T u : 𝓞 B.fields.E)
@@ -219,8 +223,8 @@ theorem upAt_spec (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (i : ℕ) (P 
     (f_out I l u a i P c x hx)
   exact ⟨h.1, h.2.1⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem isPt_up (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (i : ℕ) {Ch : Type} {chOf : (I.stp u a i).Cl → Ch}
     {Lb : Ch → Submodule (𝓞 B.host.E) (Fin (B.R.N i) → B.host.E)} {U : Ch → Subgroup (GA B (B.R.N i))} {chi : ∀ β, U β →* ℂˣ}
     {y : (I.stp u a i).Cl → GA B (B.R.N i)} {st : ∀ c, (I.stp u a i).Stab c → GL (Fin (B.R.N i)) B.host.E} {k : Ch → GA B (B.R.N i)}
@@ -257,8 +261,8 @@ theorem isPt_up (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (i : ℕ) {Ch :
   · rw [← mul_assoc, ← mul_assoc, inv_mul_cancel_right]
     exact h2
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem sub_mem (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m)
     (L : LevelCompatibleLattices (D := (I.rec7 l Z)) (I.fm l u a) (B.T u) (I.resT l u a) i hi fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c))
     (hL : I.IdL l Z u a i hi L) (v : (I.atT l u a).vT) (c : (I.stp u a i).Cl)
@@ -273,11 +277,11 @@ theorem sub_mem (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (I.c
     e.ge (((I.stp u a i).rep c).1.1.deco.2.N_le_Lsh x.2)
   have h1 : L.pr v c ⟨x.1, hm⟩ = L.pr v c z := (hL.1 v c ⟨x.1, hm⟩ x.2).trans hx
   have h2 := (L.pr_ker v c (z - ⟨x.1, hm⟩)).1 (by rw [map_sub, h1, sub_self])
-  have e2 : PvG (D := I.rec7 l Z) (I.resT l u a) v = v.1.asIdeal := Ideal.mk_ker (R := 𝓞 B.fields.E) (I := v.1.asIdeal)
+  have e2 : PvG (D := _root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G) (I.resT l u a) v = v.1.asIdeal := Ideal.mk_ker (R := 𝓞 B.fields.E) (I := v.1.asIdeal)
   exact (congrArg₂ (fun (J : Ideal (𝓞 B.host.E)) (M : Submodule (𝓞 B.host.E) (Sp B.host.E (B.R.N i))) => J • M) e2 e).le h2
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem upNatTie : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m) (bad : Set (HeightOneSpectrum (𝓞 B.host.F))) (Ch : Type) (chOf : (I.stp u a i).Cl → Ch) (K : ∀ β : Ch, LevelChart (I.rec7 l Z) (B.T u) bad i hi (fun c : {c // chOf c = β} => (I.chain l u a).stab i c.1) (fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c.1))) (eY : (I.chain l u a).Y i ≃ Formalism.L2.Forms.Fr (I.rec7 l Z) i hi) (eV : (I.atT l u a).vT ≃ {v : HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F) // (B.T u : 𝓞 (I.rec7 l Z).host.F) ∈ v.asIdeal}) (L : LevelCompatibleLattices (D := (I.rec7 l Z)) (I.fm l u a) (B.T u) (I.resT l u a) i hi fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c)), I.ReadsK l Z u a i hi chOf K → I.IdY l Z u a i hi eY → I.IdV l u a eV → I.IdL l Z u a i hi L → UpNatTieG L eY eV K := by
   intro B X I hI hP l Z u a i hi bad Ch chOf K eY eV L hK hY hV hL
   rintro v _ ⟨c, rfl⟩ z hz
@@ -291,7 +295,7 @@ theorem upNatTie : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.P
   have hy : ∀ β (c : {c // chOf c = β}), ((K β).y c).1 = ((K (chOf c.1)).y ⟨c.1, rfl⟩).1 := by
     rintro _ ⟨c, rfl⟩
     rfl
-  have e2 : PvG (D := I.rec7 l Z) (I.resT l u a) v = v.1.asIdeal := Ideal.mk_ker (R := 𝓞 B.fields.E) (I := v.1.asIdeal)
+  have e2 : PvG (D := _root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G) (I.resT l u a) v = v.1.asIdeal := Ideal.mk_ker (R := 𝓞 B.fields.E) (I := v.1.asIdeal)
   obtain ⟨δ, hδ, hδ1, hδ2⟩ := isPt_up I hI l u a i hR v c (L.pr v c z) hz
   obtain ⟨κ, hκ1, hκ2⟩ := exists_level I hI l u a i hR v c (L.pr v c z) hz hch δ hδ2 (chOf c) hch
   have hδ' : δ ∈ UPts (sigD (I.rec7 l Z)) (gramN (I.rec7 l Z) i hi) (FiniteAdeleRing (𝓞 (I.rec7 l Z).host.F) (I.rec7 l Z).host.F) := by

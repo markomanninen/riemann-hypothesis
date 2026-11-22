@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDvrConeDimTrdeg
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyDimensionInequality
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDvrConeDimTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyDimensionInequality
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
@@ -114,7 +118,7 @@ theorem dim_le (P : Ideal (MRing ι ℤ)) :
       rw [Ideal.comap_comap, Ideal.comap_comap, algebraMap_eq]
       congr 1
     rw [e]
-    have e2 := IsLocalization.map_comap (consts ι p) (MRing ι (ZP p))
+    have e2 := IsLocalization.map_under (consts ι p) (MRing ι (ZP p))
       (J.asIdeal.comap (Ideal.Quotient.mk (extTo (ZP p) P)))
     erw [e2]
     exact Ideal.map_comap_of_surjective _ Ideal.Quotient.mk_surjective _
@@ -200,7 +204,7 @@ theorem dim_le_trdeg [Fintype K] [∀ k, Fintype (ι k)] (hP : P.IsPrime)
   haveI : N.IsPrime := hN.isPrime
   have key := DimensionInequality.full.{0, 0} ℤ (MRing ι ℤ ⧸ P) hinj N
   have key' := OrderHomClass.mono Cardinal.toENat key
-  rw [map_add, map_add, Cardinal.toENat_ofENat, Cardinal.toENat_ofENat] at key'
+  rw [map_add (f := _), map_add (f := _), Cardinal.toENat_ofENat, Cardinal.toENat_ofENat] at key'
   have hu : (N.under ℤ).height ≤ 1 := by
     have h := Ideal.height_le_ringKrullDim_of_ne_top (I := N.under ℤ) (Ideal.IsPrime.ne_top inferInstance)
     rw [IsPrincipalIdealRing.ringKrullDim_eq_one ℤ Int.not_isField] at h

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothVectorsSubspaceStableSobolevFormDeriv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JacobianCommutation.PCkPartials
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothVectorsSubspaceStableSobolevFormDeriv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JacobianCommutation.PCkPartials
+
+@[expose] public section
+
 open Matrix
 open scoped InnerProductSpace ContDiff
 
@@ -19,7 +24,7 @@ theorem contDiff_expM : ContDiff ℝ ∞ (NormedSpace.exp : Matrix (Fin n) (Fin 
   contDiff_iff_contDiffAt.2 fun x => (NormedSpace.exp_analytic (𝕂 := ℝ) x).contDiffAt
 
 theorem contDiff_init {k : ℕ} : ContDiff ℝ ∞ fun t : Fin (k + 1) → ℝ => Fin.init t :=
-  contDiff_pi.2 fun j => contDiff_apply ℝ ℝ (Fin.castSucc j)
+  contDiff_pi.2 fun j => contDiff_apply ℝ (fun _ => ℝ) (Fin.castSucc j)
 
 theorem contDiff_pr : ∀ {k : ℕ} (Xs : Fin k → Matrix (Fin n) (Fin n) ℂ), ContDiff ℝ ∞ (pr Xs)
   | 0, Xs => by
@@ -31,27 +36,30 @@ theorem contDiff_pr : ∀ {k : ℕ} (Xs : Fin k → Matrix (Fin n) (Fin n) ℂ),
       funext (pr_succ Xs)
     rw [e]
     exact ((contDiff_pr (Fin.init Xs)).comp contDiff_init).mul
-      (contDiff_expM.comp ((contDiff_apply ℝ ℝ (Fin.last k)).smul contDiff_const))
+      (contDiff_expM.comp ((contDiff_apply ℝ (fun _ => ℝ) (Fin.last k)).smul contDiff_const))
 
 theorem coord {Hm : Matrix (Fin n) (Fin n) ℂ} (hu : IsUnit Hm.det) : ∀ {k : ℕ} (Xs : Fin k → Matrix (Fin n) (Fin n) ℂ),
     (∀ j, Xs j ∈ lieH Hm) → ∀ m : Fin k, ∃ Y : (Fin k → ℝ) → Matrix (Fin n) (Fin n) ℂ, ContDiff ℝ ∞ Y ∧
       (∀ t, Y t ∈ lieH Hm) ∧
-      ∀ (t : Fin k → ℝ) (s : ℝ), pr Xs (t + s • Pi.single m 1) = pr Xs t * NormedSpace.exp (s • Y t)
-  | 0, _, _, m => m.elim0
-  | k + 1, Xs, hX, m => by
+      ∀ (t : Fin k → ℝ) (s : ℝ), pr Xs (t + s • Pi.single m 1) = pr Xs t * NormedSpace.exp (s • Y t) := by
+  intro k
+  induction k with
+  | zero => exact fun _ _ m => m.elim0
+  | succ k ih =>
+    intro Xs hX m
     refine Fin.lastCases ?_ (fun m' => ?_) m
     · refine ⟨fun _ => Xs (Fin.last k), contDiff_const, fun _ => hX _, fun t s => ?_⟩
       have e1 : Fin.init (t + s • Pi.single (Fin.last k) (1:ℝ)) = Fin.init t := by
         funext j
-        simp [Fin.init, Pi.single_apply, Fin.castSucc_ne_last]
+        simp [Fin.init, Fin.castSucc_ne_last]
       have e2 : (t + s • Pi.single (Fin.last k) (1:ℝ) : Fin (k + 1) → ℝ) (Fin.last k) = t (Fin.last k) + s := by simp
       rw [pr_succ, pr_succ Xs t, e1, e2, add_smul,
         Matrix.exp_add_of_commute _ _ (((Commute.refl (Xs (Fin.last k))).smul_left _).smul_right _), mul_assoc]
-    · obtain ⟨Y', hY', hYl, hYe⟩ := coord hu (Fin.init Xs) (fun j => hX _) m'
+    · obtain ⟨Y', hY', hYl, hYe⟩ := ih (Fin.init Xs) (fun j => hX (Fin.castSucc j)) m'
       refine ⟨fun t => NormedSpace.exp (-(t (Fin.last k) • Xs (Fin.last k))) * Y' (Fin.init t) *
         NormedSpace.exp (t (Fin.last k) • Xs (Fin.last k)), ?_, ?_, ?_⟩
       · have hl : ContDiff ℝ ∞ fun t : Fin (k+1) → ℝ => t (Fin.last k) • Xs (Fin.last k) :=
-          (contDiff_apply ℝ ℝ (Fin.last k)).smul contDiff_const
+          (contDiff_apply ℝ (fun _ => ℝ) (Fin.last k)).smul contDiff_const
         exact ((contDiff_expM.comp hl.neg).mul (hY'.comp contDiff_init)).mul (contDiff_expM.comp hl)
       · intro t
         have hg := exp_mem hu (hX (Fin.last k)) (t (Fin.last k))
@@ -62,7 +70,7 @@ theorem coord {Hm : Matrix (Fin n) (Fin n) ℂ} (hu : IsUnit Hm.det) : ∀ {k : 
           funext j
           simp [Fin.init, Pi.single_apply]
         have e2 : (t + s • Pi.single (Fin.castSucc m') (1:ℝ) : Fin (k + 1) → ℝ) (Fin.last k) = t (Fin.last k) := by
-          simp [Pi.single_apply, (Fin.castSucc_lt_last m').ne']
+          simp [(Fin.castSucc_lt_last m').ne']
         rw [pr_succ, pr_succ Xs t, e1, e2, hYe]
         beta_reduce
         rw [Matrix.exp_neg]
@@ -143,11 +151,13 @@ theorem crit_nat (hu : IsUnit Hm.det) (hσ : Formalism.MainNotions.S.IsURepOn (F
         ((σ (pr Xs y)).restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt (0 : ℝ) (hd _ (hYl m y) i)
       convert h1 using 1
       show _ = σ (pr Xs y) (v (δ (Y m y) i))
-      rw [v_expand ha hs (Y m y) i, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [v_expand ha hs (Y m y) i, map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun c _ => ?_
-      rw [map_add, map_smul, map_smul, Complex.coe_smul, Complex.coe_smul]
+      rw [map_add (f := _), map_smul, map_smul, Complex.coe_smul, Complex.coe_smul]
     rw [Nat.cast_succ, contDiff_succ_iff_hasFDerivAt]
     refine ⟨fun y => ∑ m, (ContinuousLinearMap.proj m : (Fin k → ℝ) →L[ℝ] ℝ).smulRight (D m y), ?_, fun y => ?_⟩
     · exact ContDiff.sum fun m _ => contDiff_const.smulRight (hD m)

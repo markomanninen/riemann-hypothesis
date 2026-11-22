@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementU
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
+module
+
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
+
+@[expose] public section
 
 open MeasureTheory Matrix
 
@@ -111,7 +115,7 @@ theorem continuous_upper {p : ℕ} : Continuous (G.upper (d := p)) := by
 theorem continuous_subS {p : ℕ} : Continuous (subS (p := p)) := by
   show Continuous fun l : Matrix (Fin p) (Fin p) ℂ => subS l
   unfold subS
-  refine continuous_finset_sum _ fun i _ => ?_
+  refine continuous_finsetSum _ fun i _ => ?_
   by_cases h : i.val + 1 < p
   · simp only [dif_pos h]
     exact continuous_id.matrix_elem _ _
@@ -121,7 +125,7 @@ theorem continuous_subS {p : ℕ} : Continuous (subS (p := p)) := by
 theorem continuous_supS {p : ℕ} : Continuous (supS (p := p)) := by
   show Continuous fun l : Matrix (Fin p) (Fin p) ℂ => supS l
   unfold supS
-  refine continuous_finset_sum _ fun i _ => ?_
+  refine continuous_finsetSum _ fun i _ => ?_
   by_cases h : i.val + 1 < p
   · simp only [dif_pos h]
     exact continuous_id.matrix_elem _ _
@@ -177,14 +181,6 @@ theorem continuous_zjH {p s : ℕ} (σ : Equiv.Perm (Fin p)) (d : Fin p → ℂ)
   exact hZ
 
 def iotaC (p s : ℕ) : G.Mat s →L[ℝ] G.Mat (p + s) := LinearMap.toContinuousLinearMap (iotaL p s)
-
-def gA {p s : ℕ} (T : G.Mat (p + s)) : G.Mat s →ᴬ[ℝ] G.Mat (p + s) where
-  toFun x := T + iotaC p s x
-  linear := iotaL p s
-  map_vadd' x v := by
-    show T + iotaL p s (v + x) = iotaL p s v + (T + iotaL p s x)
-    rw [map_add]; abel
-  cont := continuous_const.add (iotaC p s).continuous
 
 def Lc {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V] (c : ℂ) : V →L[ℝ] V :=
   (c • ContinuousLinearMap.id ℂ V).restrictScalars ℝ
@@ -320,7 +316,7 @@ theorem topCells_of (hZ : ZjAffine) (hST : SizesTop) (hIT : IntTop) : TopCells :
       ((hcd.continuous_iteratedFDeriv (by exact_mod_cast hm)).comp (hTc.add continuous_const))
   have hbndI : Integrable (fun η : XiH p s σ => ∑ k ∈ Finset.range (q + 1),
       ‖iotaC p s‖ ^ k * K * |C k| * wtH η ^ (-(e k / (5 * ((p + s : ℕ) : ℝ))))) (muXiH p s σ) :=
-    integrable_finset_sum _ fun k hk => by
+    MeasureTheory.integrable_finsetSum _ fun k hk => by
       have hkq : k ≤ q := Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
       exact (hIT p s σ _ (he k hkq)).const_mul _
   have hle : ∀ m ≤ q, ∀ (η : XiH p s σ) (x : G.Mat s),
@@ -397,14 +393,7 @@ theorem topCells_of (hZ : ZjAffine) (hST : SizesTop) (hIT : IntTop) : TopCells :
           ring
       _ ≤ _ := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hsum hK) hr
 
-theorem topCellsOfParts : TopCellsOfParts := by
-  intro hZ _ hST hIT
-  exact topCells_of hZ hST hIT
-
 end Formalism.FourierDecayAlt.P.Ux13
-
-theorem Formalism.FourierDecayAlt.P.top_cells_of_parts : Formalism.FourierDecayAlt.U.TopCellsOfParts := by
-  exact Formalism.FourierDecayAlt.P.Ux13.topCellsOfParts
 
 theorem Formalism.FourierDecayAlt.P.top_cells : Formalism.FourierDecayAlt.U.TopCells := by
   exact Formalism.FourierDecayAlt.P.Ux13.topCells_of Formalism.FourierDecayAlt.P.level_z_affine Formalism.FourierDecayAlt.P.sizes_top_level Formalism.FourierDecayAlt.P.integrability_top_level

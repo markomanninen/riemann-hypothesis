@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.PadicComplexRingOfIntegers.intRing :
     (p : ℕ) → [inst : Fact (Nat.Prime p)] → Subring ℂ_[p] :=

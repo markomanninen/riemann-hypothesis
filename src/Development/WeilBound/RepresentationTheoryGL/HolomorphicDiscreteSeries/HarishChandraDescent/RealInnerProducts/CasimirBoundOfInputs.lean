@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Commutant
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Commutant
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,11 +23,13 @@ variable {n : ℕ} {M : Type} [AddCommGroup M] [Module ℂ M]
 
 theorem comm_casimir (E : Fin n → Fin n → Module.End ℂ M) (f : Module.End ℂ M)
     (hf : ∀ a b x, f (E a b x) = E a b (f x)) (x : M) : f (casimir E x) = casimir E (f x) := by
-  simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum, hf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum, hf]
 
 theorem comm_casimirK (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) (f : Module.End ℂ M)
     (hf : ∀ a b x, f (E a b x) = E a b (f x)) (x : M) : f (casimirK ε E x) = casimirK ε E (f x) := by
-  simp only [casimirK, LinearMap.sum_apply, Module.End.mul_apply, map_sum, hf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [casimirK, LinearMap.sum_apply, Module.End.mul_apply, map_sum, hf]
 
 end Comm
 
@@ -93,7 +99,7 @@ theorem comm_uOp {f : Module.End ℂ M} (hf : ∀ x, f (Ω x) = Ω (f x)) (κ : 
 
 theorem comm_bOp {f : Module.End ℂ M} (hf : ∀ x, f (Ω x) = Ω (f x)) (κ R : ℝ) (x : M) :
     f (bOp Ω κ R x) = bOp Ω κ R (f x) := by
-  rw [bOp_apply, bOp_apply, map_add, map_smul, comm_uOp hf, comm_uOp hf]
+  rw [bOp_apply, bOp_apply, map_add (f := _), map_smul, comm_uOp hf, comm_uOp hf]
 
 end Ops
 
@@ -175,7 +181,8 @@ theorem casimir_bound_of_inputs : SqId → Markov → PosNeg → Inv → Commuta
     have key : ∀ x, T' (casimir (smE ε ρ) x) = casimir (smE ε ρ) (T' x) := fun x => by
       calc T' (casimir (smE ε ρ) x) = ∑ a, ∑ b, T' (actM (smE ε ρ) (Matrix.single a b 1)
               (actM (smE ε ρ) (Matrix.single b a 1) x)) := by
-            simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum, actM_single']
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum, actM_single']
         _ = ∑ a, ∑ b, actM (smE ε ρ) (i.1 * Matrix.single a b 1 * i.1⁻¹)
               (actM (smE ε ρ) (i.1 * Matrix.single b a 1 * i.1⁻¹) (T' x)) := by
             simp only [hT'2]

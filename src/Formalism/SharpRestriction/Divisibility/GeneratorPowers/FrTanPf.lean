@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.SatLeaves
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanAlg
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.SatLeaves
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanAlg
+
+@[expose] public section
 
 set_option autoImplicit false
 

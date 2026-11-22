@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerTail
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsBisBis
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsUnitOfNumMem
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingFrac
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingLocal
-import GroundTheory.HeightsAndTheta.Heights.Intersections.SpanSingletonEqRangeLsmul
-import GroundTheory.HeightsAndTheta.Heights.Intersections.CardLength
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerTail
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsBisBis
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsUnitOfNumMem
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingFrac
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingLocal
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.SpanSingletonEqRangeLsmul
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.CardLength
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -23,7 +28,9 @@ theorem RegularityLocalFinite.proof (hD : regularityLocalDimension_holds.Stateme
   have : P.IsPrime := hP.2.1.1
   have : IsDomain (locRing P W) := inferInstance
   have : Ring.KrullDimLE 1 (locRing P W) := ReciprocityTheory.ChartRestriction.G.AI.krullDimLE_one_of_krullDim_eq hdim
-  obtain ⟨hfinRes, -⟩ := regularityLocalResidue_holds.proof K ι P s a W (fun i => i.elim0) hP hs hsP hW
+  have hfinRes : Finite (IsLocalRing.ResidueField (locRing P W)) :=
+    (regularityLocalResidue_holds.proof K ι P s a W (fun i => i.elim0) hP hs hsP hW).1
+  letI := hfinRes
   have hy0' : (⟨y, hy⟩ : locRing P W) ≠ 0 := fun h => hy0 (congrArg Subtype.val h)
   have hfin : Module.length (locRing P W) (locRing P W ⧸ locIdeal P W y) ≠ ⊤ := by
     rw [locIdeal_eq_span hy, span_singleton_eq_range_lsmul]

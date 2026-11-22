@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevelIffSymmetricPositionEntryPattern
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricLevelChainPatternIterated
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SelfDualFrameConjIntegralSmulOfIntegral
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevelIffSymmetricPositionEntryPattern
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricLevelChainPatternIterated
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SelfDualFrameConjIntegralSmulOfIntegral
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 1000000
@@ -39,7 +43,7 @@ theorem pr_e : q.pr q.e = 1 := by rw [← sec_one, q.pr_sec]
 theorem toEAf_finEmb (t : EAf D) : toEAf D (finEmb D t) = t := by
   induction t using TensorProduct.induction_on with
   | zero => rw [map_zero, RingHom.map_zero]
-  | add a b ha hb => rw [map_add, RingHom.map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), RingHom.map_add (f := _), ha, hb]
   | tmul x α => rfl
 
 theorem toEAf_mem_iff (a : AE D) : toEAf D a ∈ Formalism.L2.Herm.intAf D.host.F D.host.E ↔ finPart D a ∈ intAE D :=
@@ -79,7 +83,7 @@ theorem exists_chart {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) :
       map_one' := pr_finEmb_one q h
       map_mul' := fun x y => by rw [finEmb_mul', map_mul]
       map_zero' := by rw [map_zero, map_zero]
-      map_add' := fun x y => by rw [map_add, map_add] }
+      map_add' := fun x y => by rw [map_add (f := _), map_add (f := _)] }
   have h1 : ∀ a, π (toEAf D a) = q.pr a := fun a => by
     change q.pr (finEmb D _) = _
     rw [← mul_one (toEAf D a), finEmb_mul, map_mul, pr_finEmb_one q h, mul_one]
@@ -100,7 +104,7 @@ theorem exists_chart {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) :
       exact (pr_lt q h a).1 ha
     · simp
     · intro x y _ _ hx hy
-      rw [Subring.coe_add, RingHom.map_add]
+      rw [Subring.coe_add, RingHom.map_add (f := _)]
       exact Valuation.map_add_lt _ hx hy
     · intro c x _ hx
       rw [smul_eq_mul, Subring.coe_mul, RingHom.map_mul, Valuation.map_mul]
@@ -132,7 +136,7 @@ theorem pr_other {k' : Type} [Field k'] [ValuativeRel k'] [TopologicalSpace k'] 
   have h2 : q'.pr (cA D q.e) = 0 := by
     have := congrArg q'.pr h1
     rwa [map_mul, pr_e, one_mul, map_zero] at this
-  rw [map_add, h2, add_zero]
+  rw [map_add (f := _), h2, add_zero]
   have i1 : IsIdempotentElem (q'.pr q.e) := by rw [IsIdempotentElem, ← map_mul, he.1.1]
   have i2 : IsIdempotentElem (q.pr q'.e) := by rw [IsIdempotentElem, ← map_mul, he'.1.1]
   refine (IsIdempotentElem.iff_eq_zero_or_one.1 i1).resolve_right fun h3 => ?_
@@ -208,11 +212,26 @@ theorem red_of_pattern {s κ t j n r : ℕ} (S : SymData k s κ) (hr0 : r = κ +
     rw [GeneralLinearGroup.val_det_apply, h4] at h6
     exact not_isUnit_zero h6
   let x₀ : GL (Fin κ ⊕ Fin (s + 1)) 𝒪[k] := ((isUnit_iff_isUnit_det _).2 hd).unit
-  refine ⟨⟨GeneralLinearGroup.map (algebraMap 𝒪[k] k) x₀, (SymData.mem_J_iff_pattern k s κ S _).2 ⟨⟨x₀, rfl⟩, fun a b hab => ?_⟩⟩,
+  have mem_J_iff_pattern (g : GL (Fin κ ⊕ Fin (s + 1)) k) :
+      g ∈ S.P.J ↔ g ∈ KO k _ ∧ ∀ a b, ¬ FreeTop S.ρ a b →
+        valuation k (g.val a b - (1 : Matrix _ _ k) a b) < 1 := by
+    rw [S.sym.1 g]
+    constructor
+    · rintro ⟨u, hu, γ, hγ, g₀, hg₀, hgb⟩
+      refine ⟨⟨g₀, hg₀⟩, fun a b hab => ?_⟩
+      rw [← hg₀, SymPattern.entry_lt_iff, hgb]
+      exact SymPattern.pat_of_mul S.ρ u ((Radical.mem_N_iff u).mp hu) γ hγ a b hab
+    · rintro ⟨⟨g₀, hg₀⟩, hpat⟩
+      obtain ⟨u, hu, γ, hγ, he⟩ := SymPattern.exists_of_pat S.ρ
+        (Matrix.GeneralLinearGroup.map (IsLocalRing.residue 𝒪[k]) g₀) (fun a b hab => by
+          rw [← SymPattern.entry_lt_iff, hg₀]; exact hpat a b hab)
+      exact ⟨u, (Radical.mem_N_iff u).mpr hu, γ, hγ, g₀, hg₀, he⟩
+  refine ⟨⟨GeneralLinearGroup.map (algebraMap 𝒪[k] k) x₀, (mem_J_iff_pattern _).2 ⟨⟨x₀, rfl⟩, fun a b hab => ?_⟩⟩,
     fun a b a' b' ha hb z hz => ?_⟩
   · have := hy (Sum.inl a) (Sum.inl b) hab
     rw [show (1 : Matrix (Ix (Fin κ ⊕ Fin (s + 1)) (Fin t) j) _ k) (Sum.inl a) (Sum.inl b) = (1 : Matrix _ _ k) a b by
-      simp [one_apply]] at this
+      change (if Sum.inl a = Sum.inl b then (1 : k) else 0) = (if a = b then 1 else 0)
+      simp] at this
     exact this
   · change valuation k (ψ (Z a b) - ψ z) < 1
     rw [← map_sub, ← h2, map_sub, hz, hZ a b a' b' ha hb, sub_self]
@@ -261,7 +280,7 @@ theorem exists_int_ring {R : Type} [CommRing R] (O : Subring R) {f f' : R} (hf :
       linear_combination -c4
     rw [c5]
     refine add_mem (add_mem (c2 i j) (c3 i j)) (mul_mem (sub_mem (one_mem _) (add_mem hf hf')) ?_)
-    rw [one_apply]
+    change (if i = j then (1 : R) else 0) ∈ O
     split_ifs
     · exact one_mem _
     · exact zero_mem _
@@ -312,13 +331,13 @@ theorem exists_int {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [I
       rw [Matrix.map_sub _ (toEAf D).map_sub, Matrix.map_one _ (toEAf D).map_zero (toEAf D).map_one]
       rfl
     intro i j
-    rw [e, ← RingHom.map_add]
+    rw [e, ← RingHom.map_add (f := _)]
     exact ((toEAf D).map_mul _ _).symm.trans (congrArg (toEAf D) (hx i j))
   obtain ⟨Y, hY, hY1⟩ := exists_int_ring _ hf hf' (Lev.finE V t * β) (Lev.finE V x) _ (by
     rw [MonoidHom.map_mul, MonoidHom.map_mul, MonoidHom.map_inv, conj_conj]) b0 a1 a2 a3 a4
   refine ⟨Y, ?_, fun i j => congrArg (fun g : GL (Fin V.rank) (EAf D) => g.val i j) hY, fun i j => ?_⟩
   · exact (congrArg (fun g => β * g * β⁻¹) hY).trans (conj_back _ _)
-  · rw [RingHom.map_add]
+  · rw [RingHom.map_add (f := _)]
     exact hY1 i j
 
 variable {u : D.what₂.Word} {d : Dat D u} {τ : ∀ j h, Matrix (Fin (d.bes j 0 h).L.rank) (Fin d.Lz.rank) D.host.E}
@@ -341,73 +360,6 @@ theorem red_at {PP : Formalism.L2.DIV.Pl D.host.E} (G : GAt d τ PP) {j n : ℕ}
     (ofSplit G.q).pr (z : D.host.E) from h1 (incA D (z : D.host.E))] at this
 
 end Glob
-
-theorem lev_of_pin : ∀ (D : D7) (u : D.what₂.Word) (d : Dat D u) τ cG (G : ∀ PP : d.c.Pg, GAt d τ PP.1), d.Base → PinGBy G cG →
-    ∀ PP, (G PP).Lev := by
-  intro D u d τ cG G hB hP PP j c hc x xk hx hxk
-  have hs := (G PP).hs
-  have hst := hB.st j (by omega)
-  obtain ⟨hr, ξ, hL⟩ := hst.lev
-  obtain ⟨a, ha⟩ := hB.com.split
-  obtain ⟨e, he, hmv⟩ := (G PP).frame j c hc
-  obtain ⟨π, h1, h2, h3, h4⟩ := exists_chart (G PP).q (G PP).idem
-  let L := typeFrame (G PP).S.ϖ (stdOrd (Fin D.R.k) (Fin D.R.t) j c hc)
-  obtain ⟨hyK, hyP⟩ := (pattern_iter _ _ _ (G PP).S (Fin D.R.t) j (L.conj.symm xk)).1 hxk
-  have hmap : ∀ M : Matrix (Fin (d.st j).V.rank) (Fin (d.st j).V.rank) (AE D),
-      (M.map (toEAf D)).map π = M.map (G PP).q.pr := fun M => Matrix.ext fun _ _ => h1 _
-  have hγ : GeneralLinearGroup.map π ((d.st j).β⁻¹ * Lev.finE (d.st j).V ((d.t j)⁻¹ * x * d.t j) * (d.st j).β) =
-      reGL e (L.conj.symm xk) := by
-    rw [← conj_frame ((G PP).FY j c hc) L e (GeneralLinearGroup.map π (Lev.finE (d.st j).V (d.t j) * (d.st j).β))
-      (GeneralLinearGroup.map π (Lev.finE (d.st j).V x)) (L.conj.symm xk) ?_ ?_]
-    · rw [MonoidHom.map_mul (Lev.finE (d.st j).V), MonoidHom.map_mul (Lev.finE (d.st j).V), MonoidHom.map_inv, conj_conj, MonoidHom.map_mul, MonoidHom.map_mul, MonoidHom.map_inv]
-    · have hb : ((d.st j).β.val.map (finEmb D)).map (toEAf D) = (d.st j).β.val := Matrix.ext fun _ _ => toEAf_finEmb _
-      refine Eq.trans ?_ (hmv _ hb)
-      refine Eq.trans ?_ (hmap _)
-      rw [Matrix.map_mul, hb]
-      rfl
-    · rw [MulEquiv.apply_symm_apply]
-      exact (hmap _).trans hx.2
-  obtain ⟨Y, hY, hYv, hY1⟩ := exists_int (G PP).q π h2 (d.st j).V hst.selfDual hst.frame (t := d.t j) hx.1 (by
-    rw [hγ, mem_KO, ← map_inv]
-    rw [mem_KO] at hyK
-    exact ⟨fun _ _ => hyK.1 _ _, fun _ _ => hyK.2 _ _⟩)
-  have hall : ∀ PP' : d.c.Pg, Formalism.UG.bc (resS D.host.F PP'.1) Y ∈ blockTri (blkOf D.R.r D.R.t) ∧
-      ∃ x, (G PP').Red x (upperLeftBlock hr (Formalism.UG.bc (resS D.host.F PP'.1) Y)) := fun PP' => by
-    by_cases hne : PP' = PP
-    · subst hne
-      refine red_at (G PP') hr he π h1 h3 h4 Y fun a b hab => ?_
-      have e1 : π (Y.val (e a) (e b)) = (L.conj.symm xk).val a b := by
-        rw [hYv]
-        refine (congrArg (fun g : GL _ _ => g.val (e a) (e b)) hγ).trans ?_
-        simp only [reGL_val, submatrix_apply, Equiv.symm_apply_apply]
-      rw [e1]
-      exact hyP a b hab
-    · have hs' := (G PP').hs
-      obtain ⟨e', he', -⟩ := (G PP').frame j c (by omega)
-      obtain ⟨π', k1, -, k3, k4⟩ := exists_chart (G PP').q (G PP').idem
-      refine red_at (G PP') hr he' π' k1 k3 k4 Y fun a b _ => ?_
-      have e1 := congrArg π' (hY1 (e' a) (e' b))
-      rw [RingHom.map_mul, k1, pr_other (G PP).q (G PP').q ha PP.2 PP'.2 (fun h => hne (Subtype.ext h)) (G PP).idem (G PP').idem,
-        zero_mul, RingHom.map_sub] at e1
-      have e2 : π' ((1 : Matrix _ _ (EAf D)) (e' a) (e' b)) = (1 : Matrix _ _ (G PP').k) a b := by
-        simp only [one_apply, e'.injective.eq_iff]
-        split_ifs
-        · exact π'.map_one
-        · exact π'.map_zero
-      rw [← e2, ← e1, Valuation.map_zero]
-      exact zero_lt_one
-  change _ ∈ Lev.levG _ _ (d.st j).L
-  rw [hL]
-  refine ⟨(GfC _).mul_mem ((GfC _).mul_mem ((GfC _).inv_mem (hB.t j))
-    (GlobalTheory.WeilProduct.mem_GfC_of_suppAt (G PP).q.split hx.1)) (hB.t j), ?_⟩
-  change Lev.finE (d.st j).V _ ∈ Formalism.L2.DIV.lev _ _ _ _
-  refine ⟨Formalism.L2.DIV.mem_parLev.2 ⟨GlobalTheory.LevSplit.finE_mem_UA _ _, ⟨Y, hY⟩, fun PP' hPP' => ?_, fun _ h => absurd h (Finset.notMem_empty _)⟩, ?_⟩
-  · rw [← hY, Formalism.L2.DIV.redFn_frGL]
-    exact (hall ⟨PP', hPP'⟩).1
-  · refine (hP.grp _).2 fun PP' => ?_
-    change ∃ z, (G PP').Red z (upperLeftBlock hr (redFn _ PP'.1 _))
-    rw [← hY, Formalism.L2.DIV.redFn_frGL]
-    exact (hall PP').2
 
 end GlobalTheory.LocMod.LevBack
 end

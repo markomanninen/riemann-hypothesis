@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfCharInfCharOfCommute
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfCharInfCharOfCommute
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ theorem commute_cap_Eop (τ τ' : InfinitePlace E) (u : ℂ) (i j : Fin a) : Com
   · subst h; exact cap_comm τ u i j
   · exact commute_cap_of_commute_Eop τ u _ fun k l => Eop_comm h k l i j
 
-open Classical in
 
+open Classical in
 theorem lieS_single (v : InfinitePlace E) (i j : Fin a) (t : ℝ) :
     lieS E a i j (Pi.single v t) = (t : ℂ) • Eop v i j := by
   have e : (Pi.single v t : Rinf E) = t • Pi.single v 1 := by
@@ -44,11 +48,13 @@ theorem lieS_single (v : InfinitePlace E) (i j : Fin a) (t : ℝ) :
 theorem commute_cap_lie (τ : InfinitePlace E) (u : ℂ) (X : Lie E a) : Commute (cap τ u) (lie E a X) := by
   classical
   have hX : lie E a X = ∑ i, ∑ j, lieS E a i j (X i j) := by
-    simp only [lieS_apply, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [lieS_apply, ← map_sum]
     exact congrArg _ (Matrix.matrix_eq_sum_single (Matrix.of X))
   rw [hX]
   refine Commute.sum_right _ _ _ fun i _ => Commute.sum_right _ _ _ fun j _ => ?_
-  rw [← Finset.univ_sum_single (X i j), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.univ_sum_single (X i j), map_sum]
   refine Commute.sum_right _ _ _ fun w _ => ?_
   rw [lieS_single]
   exact (commute_cap_Eop τ w u i j).smul_right _

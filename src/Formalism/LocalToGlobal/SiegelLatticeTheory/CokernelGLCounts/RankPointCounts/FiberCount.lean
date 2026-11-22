@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCount
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepNormOneOfLeaves
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensAtGoodOf
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCount
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepNormOneOfLeaves
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensAtGoodOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -255,8 +259,9 @@ theorem leadingMinors_of_matrix (u u' : D.what₂.Word) : GOfMat (D := D) u u' :
     unfold Dmin Formalism.MainNotions.S.ThB.leadMinorK
     rw [dif_pos hq]
   unfold CntLocal.GZ Gpt
-  rw [hD _ le_rfl, hD _ (Nat.le_succ _), ← PI.UnitaryGroupMassFormula.CntFormula.star_eq_conjF D,
-    ← PI.UnitaryGroupMassFormula.CntFormula.star_eq_conjF D]
+  have hstar (x : D.host.E) : D.conjF x = star x :=
+    (D.conjF_eq x).trans (Formalism.BasicNotions.Examples₂.star_eq_conj (H := D.host) x).symm
+  rw [hD _ le_rfl, hD _ (Nat.le_succ _), hstar, hstar]
   have h1 := Formalism.L2.SG.NGCut.LeadingMinorIntegrality.sign_mul_star (D := D) (r := D.R.rS) (q := D.R.rS + 1)
   have h0 := Formalism.L2.SG.NGCut.LeadingMinorIntegrality.sign_mul_star (D := D) (r := D.R.rS) (q := D.R.rS)
   simp only [star_mul]

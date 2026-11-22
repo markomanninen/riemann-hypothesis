@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.Triple
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IsTripleAtOfConj
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FrobMatchRho
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FrobMatchT
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HkSat
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.Triple
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IsTripleAtOfConj
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FrobMatchRho
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FrobMatchT
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HkSat
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -70,8 +74,9 @@ theorem triple_att_n_of_is_triple_with (hF : FrobDense D) (hG : UpperTheory.GalS
     exact UpperTheory.GalS.nc_of_sep T (by rw [D.naut.lpDim_char _ _ (D.naut.locG_dim _ _), D.naut.locG_dim]; exact hthr k v hk)
       (UpperTheory.GalS.sep_char (GlobalTheory.RowTieLP.main D T) (D.naut.locG_dim _ _)
       (hG.2.2.2 _ S _ v (by rwa [rankOneCuspidal_unitaryChar_equiv_apply_symm])) (UpperTheory.GalS.inePol_coeff_zero T _) (hsep k v hk))
-  have tinv : ∀ {ξ : HChar D.host.E} v, ξ.TameAt v → ξ⁻¹.TameAt v := fun v ht x h1 h2 => by
-    rw [Formalism.L2.Host.HChar.loc_inv, ht x h1 h2, inv_one]
+  have tinv : ∀ {ξ : HChar D.host.E} v, ξ.TameAt v → ξ⁻¹.TameAt v := fun {ξ} v ht x h1 h2 => by
+    change (ξ.loc v x)⁻¹ = 1
+    rw [ht x h1 h2, inv_one]
   have n1 : ∀ v ∈ placesOver D.host.E (D.ntw.l i),
       UpperTheory.GalS.Nc D.nd D.naut (D.naut.locG (twBy S π C.isEta.unitary.inv) v) := fun v _ => by
     by_cases hv : ∀ k, v ∉ placesOver D.host.E (D.host.g k)

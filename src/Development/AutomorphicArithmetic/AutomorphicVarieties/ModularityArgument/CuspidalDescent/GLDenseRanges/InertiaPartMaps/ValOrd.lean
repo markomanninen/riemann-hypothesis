@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IndexNeZero
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsCuspSpaceBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIwasawaDecompositionUpperUnitriangularInte
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IndexNeZero
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCuspSpaceBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIwasawaDecompositionUpperUnitriangularInte
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,14 +51,16 @@ private theorem avg (ρ : Representation ℂ G W) (A B : Subgroup G) (hfin : B.r
       rw [QuotientGroup.out_eq']
       conv_rhs => rw [← QuotientGroup.out_eq' q]
       rfl
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     simp only [hρ a ha, e]
     exact Equiv.sum_comp (MulAction.toPerm (⟨a, ha⟩ : A)) (fun q : A ⧸ C => χ a • F q.out)
   · have hq : ∀ q : A ⧸ C, l (F q.out) = l w := by
       intro q
       simp only [F, map_smul, smul_eq_mul, hl _ q.out.2]
       rw [← mul_assoc, inv_mul_cancel₀ (h0 _ q.out.2), one_mul]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hq, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     congr 1
     simp [Subgroup.relIndex, Subgroup.index, Nat.card_eq_fintype_card, C]

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.StokesSimplices.SubSlice
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.StokesSimplices.SubSlice
+
+@[expose] public section
 
 open Function MeasureTheory
 
@@ -69,8 +73,10 @@ lemma preimage_invC (i : Fin (n + 1)) : invC i ⁻¹' Δ (n + 1) = Δ (n + 1) :=
     rwa [invC_invC] at this
   · exact invC_mem i
 
-lemma continuous_invC (i : Fin (n + 1)) : Continuous (invC i) :=
-  continuous_id.update i (continuous_const.sub (continuous_finsetSum _ fun j _ => continuous_apply j))
+lemma continuous_invC (i : Fin (n + 1)) : Continuous (invC i) := by
+  have hsum : Continuous (fun s : Fin (n + 1) → ℝ => ∑ j, s j) :=
+    continuous_finsetSum Finset.univ fun j _ => continuous_apply j
+  exact continuous_id.update i (continuous_const.sub hsum)
 
 def invCE (i : Fin (n + 1)) : (Fin (n + 1) → ℝ) ≃ᵐ (Fin (n + 1) → ℝ) where
   toFun := invC i
@@ -85,8 +91,9 @@ lemma mp_reflect : MeasurePreserving (fun p : ℝ × (Fin n → ℝ) => (1 - ∑
   have hT : MeasurePreserving (fun p : (Fin n → ℝ) × ℝ => (p.1, 1 - ∑ j, p.1 j - p.2))
       (volume.prod volume) (volume.prod volume) := by
     refine (MeasurePreserving.id volume).skew_product (g := fun (r : Fin n → ℝ) (x : ℝ) => 1 - ∑ j, r j - x) ?_ ?_
-    · exact (Continuous.sub (continuous_const.sub (continuous_finsetSum _ fun j _ =>
-        (continuous_apply j).comp continuous_fst)) continuous_snd).measurable
+    · have hsum : Continuous (fun p : (Fin n → ℝ) × ℝ => ∑ j, p.1 j) :=
+        continuous_finsetSum Finset.univ fun j _ => (continuous_apply j).comp continuous_fst
+      exact ((continuous_const.sub hsum).sub continuous_snd).measurable
     · exact Filter.Eventually.of_forall fun r => (Measure.measurePreserving_sub_left volume _).map_eq
   exact (Measure.measurePreserving_swap.comp hT).comp Measure.measurePreserving_swap
 

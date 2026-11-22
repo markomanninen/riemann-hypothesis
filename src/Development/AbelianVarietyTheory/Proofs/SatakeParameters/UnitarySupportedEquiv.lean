@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 open Formalism.UG
 
@@ -132,7 +136,7 @@ theorem unitary_supported_equiv (A L : Type) [CommRing A] [CommRing L] (n : ℕ)
       linear_combination -this
     · ext i j
       change π (M i j) = (g : Matrix (Fin n) (Fin n) L) i j
-      simp only [hM, hX, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, hπe,
+      simp only [hM, hX, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, hπe,
         hπc, hπf, Matrix.map_apply, hπ]
       ring
   · intro G hG G' hG' h1 h2 h

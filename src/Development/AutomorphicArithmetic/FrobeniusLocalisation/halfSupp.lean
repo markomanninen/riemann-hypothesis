@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffEKSupp
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiscrK
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffEKSupp
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiscrK
+
+@[expose] public section
 
 open UpperTheory.HF
 

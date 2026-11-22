@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.XSmulSucc
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.XSmulSucc
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Polynomial CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
@@ -20,16 +24,14 @@ def clAct {D : Type u} [Category.{v} D] (H : D ⥤ ModuleCat.{w} R) (ρ : ∀ X,
   map_zero' := LinearMap.ext fun f => funext fun s => by simp
   map_add' a b := LinearMap.ext fun f => funext fun s => by simp
 
-theorem clAct_apply {D : Type u} [Category.{v} D] (H : D ⥤ ModuleCat.{w} R) (ρ : ∀ X, A →+* Module.End R (H.obj X))
-    (p : ℕ) (a : A) (f : Cn H p) (s : ComposableArrows D p) : clAct H ρ p a f s = ρ _ a (f s) := rfl
-
 theorem clAct_d {D : Type u} [Category.{v} D] (H : D ⥤ ModuleCat.{w} R) (ρ : ∀ X, A →+* Module.End R (H.obj X))
     (hρ : ∀ {X Y : D} (h : X ⟶ Y) a x, (H.map h).hom (ρ X a x) = ρ Y a ((H.map h).hom x)) (p : ℕ) (a : A) (f : Cn H p) :
     d H p (clAct H ρ p a f) = clAct H ρ (p + 1) a (d H p f) := by
   funext s
   change ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • (H.map (GlobalTheory.CatH.toLast i s)).hom (ρ _ a (f (GlobalTheory.CatH.face i s))) =
     ρ _ a (∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • (H.map (GlobalTheory.CatH.toLast i s)).hom (f (GlobalTheory.CatH.face i s)))
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul, hρ]
 
@@ -41,7 +43,7 @@ theorem cl_mem_of_pow {X : Type w} [AddCommGroup X] [Module R X] (act : A →+* 
     { carrier := {a | act a z ∈ V}
       add_mem' := fun {a b} ha hb => by
         change act (a + b) z ∈ V
-        rw [map_add, LinearMap.add_apply]; exact V.add_mem ha hb
+        rw [map_add (f := _), LinearMap.add_apply]; exact V.add_mem ha hb
       zero_mem' := by
         change act 0 z ∈ V
         rw [map_zero, LinearMap.zero_apply]; exact V.zero_mem
@@ -157,9 +159,6 @@ def clNat (k : Fin m) : G ⟶ clL k ⋙ clU k ⋙ G where
     exact congrArg G.map (Subsingleton.elim _ _)
 
 def clα (k : Fin m) (p : ℕ) : Cn G p →ₗ[R] Cn (clL k ⋙ clU k ⋙ G) p := (Mor.ofNatTrans (clNat G k)).hom.f p
-
-theorem clα_apply (k : Fin m) (p : ℕ) (z : Cn G p) (s : ComposableArrows (NE m) p) :
-    clα G k p z s = (G.map (leIns k _)).hom (z s) := rfl
 
 theorem clα_d (k : Fin m) (p : ℕ) (z : Cn G p) :
     d (clL k ⋙ clU k ⋙ G) p (clα G k p z) = clα G k (p + 1) (d G p z) :=

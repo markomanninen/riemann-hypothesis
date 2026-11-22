@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ContinuousInvLeadingBlockEntry
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.APrimeLoc
-import ReciprocityTheory.L2DbarEstimates.NormFibrations.MvBlowup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ContinuousInvLeadingBlockEntry
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.APrimeLoc
+public import ReciprocityTheory.L2DbarEstimates.NormFibrations.MvBlowup
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -14,12 +18,6 @@ namespace GlobalTheory.Up.PoleValue
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
 variable {X : Data E r} {x0 x1 : Frame X.Ψ r}
-
-theorem dmin_cpt_eq (h0 : IsOrth X x0) (h1 : IsOrth X x1) (z : V (nd X)) (τ : X.Ψ) (i : Fin (r + 1)) :
-    dmin X.Gm (cpt X x1 z) τ i = dmin X.Gm (cpt X x0 z) τ i := by
-  have e : ∀ x : Frame X.Ψ r, mat (cpt X x z) τ = mat x τ * mat (nmat X z) τ := fun _ => rfl
-  unfold dmin
-  rw [e, e, FrameDegreeData.gram_mul, FrameDegreeData.gram_mul, h0 τ, h1 τ]
 
 open NumberField MeasureTheory Topology in
 open scoped ContDiff ENNReal Matrix in
@@ -71,10 +69,6 @@ theorem _root_.GlobalTheory.Up.PoleValue.rhF_eq (h0 : _root_.ReciprocityTheory.C
   unfold _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.rhF
   simp only [dmin_cpt_eq_of_isOrth h0 h1]
 
-theorem densF_eq (h0 : IsOrth X x0) (h1 : IsOrth X x1) : densF X x1 = densF X x0 := by
-  funext z
-  simp only [densF, dmin_cpt_eq h0 h1]
-
 open NumberField MeasureTheory Topology in
 open scoped ContDiff ENNReal Matrix in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
@@ -92,10 +86,10 @@ namespace GlobalTheory.Up
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
+
 open NumberField MeasureTheory Topology in
 open scoped ContDiff ENNReal Matrix in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] in
-
 theorem _root_.GlobalTheory.Up.polePoint_holds : _root_.GlobalTheory.Up.PolePoint (E := E) := by
   unfold _root_.GlobalTheory.Up.PolePoint
   intro r X ρ c hdim hρ hc
@@ -114,7 +108,7 @@ theorem _root_.GlobalTheory.Up.polePoint_holds : _root_.GlobalTheory.Up.PolePoin
       exact _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.IW.dmin_ne_zero X (_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.IW.orth_mem_dom X x0 h0) τ i
     have hcont : ContinuousAt (_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.densF X x0) 0 := by
       unfold _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.densF
-      refine tendsto_finset_prod _ fun τ _ ↦ tendsto_finset_prod _ fun i _ ↦ ?_
+      refine tendsto_finsetProd _ fun τ _ ↦ tendsto_finsetProd _ fun i _ ↦ ?_
       exact ((hc' τ _).continuousAt.norm).zpow₀ _ (Or.inl (norm_ne_zero_iff.2 (hne τ _)))
     have hpos : 0 < _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.densF X x0 0 := by
       unfold _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.densF

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPairApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAtEvIPiInfEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfAtOfPiInf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPairApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAtEvIPiInfEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfAtOfPiInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem mkD_mulP (d : Darboux B κ) (u : AF F)
 
 theorem mkD_add (d : Darboux B κ) (y y' : (κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)) :
     mkD d (y + y') = mkD d y + mkD d y' := by
-  rw [mkD, mkD, mkD, ← map_add]
+  rw [mkD, mkD, mkD, ← map_add (f := _)]
   congr 1
   refine Prod.ext (funext fun i => ?_) (funext fun i => ?_)
   · exact infAd_add (y.1 i) (y'.1 i)

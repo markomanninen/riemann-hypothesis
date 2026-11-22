@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.PullDominateStatement
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.TendstoLocallyUniformlyOnOfNhds
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.PullDominateStatement
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.TendstoLocallyUniformlyOnOfNhds
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 
@@ -47,15 +52,6 @@ theorem regular_family_C2_pullback_of_open {e e' : ℕ} {X X' : Type} [Topologic
     (ph ∘ h) hph (fun _ _ => rfl) hT (fun k K hK hKs => hC k K hKs hK)
   intro j K hKs hK
   exact key j K hK hKs
-
-theorem regular_family_C2_pullback_of_section {e e' : ℕ} {X X' : Type} [TopologicalSpace X] [TopologicalSpace X']
-    (A : FinHolAtlas e X) (A' : FinHolAtlas e' X') (h : X' → X) (hh : HoloMap A' A h)
-    (L : LocPot X) (s : X → X → ℂ) (ph : X → ℝ) (phT : ℝ → X → ℝ) (hs : IsSection A L s)
-    (hph : A.SmoothOn (bdry s)ᶜ ph)
-    (hT : ∀ᶠ t in nhdsWithin 0 (Set.Ioi 0), A.Smooth (phT t))
-    (hC : IsRegFamilyC2 A s ph phT) :
-    IsRegFamilyC2 A' (fun x y => s (h x) (h y)) (ph ∘ h) (fun t => phT t ∘ h) :=
-  regular_family_C2_pullback_of_open A A' h hh s ph phT (isOpen_compl_bdry hs) hph hT hC
 
 end
 

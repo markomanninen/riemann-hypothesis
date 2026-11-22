@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SigmaFiniteParameterProductMeasure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitIdelesOpen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdelesCompactOfLocalBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AddHaarCharLeftRightMatrixMulAdeleTensor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TensorIdeleAbsDetUnitaryAdelicEqOne
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SigmaFiniteParameterProductMeasure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitIdelesOpen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdelesCompactOfLocalBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AddHaarCharLeftRightMatrixMulAdeleTensor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TensorIdeleAbsDetUnitaryAdelicEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem abs_map (f : M → X) (hf : Measurable f) {B : Set M} (hB : MeasurableSe
     have e2 := Measure.restrict_map (μ := P) hT hB
     rw [hBT, hP] at e2
     rw [← e2, Measure.restrict_smul]
-  rw [h1, Measure.map_smul]
+  rw [h1, Measure.map_smul k hf.aemeasurable]
 
 open Pointwise in
 theorem abs_finite [AddCommGroup M] [TopologicalSpace M] [ContinuousAdd M] [TopologicalSpace X] [T2Space X]
@@ -85,7 +89,7 @@ theorem topRing (D : D7) : IsTopologicalRing (AE D) :=
 
 def offS (S : Finset (Pl D)) : AddSubgroup (AE D) where
   carrier := {z | ∀ v ∉ S, cv D v z ∈ intLoc D.host.F D.host.E v}
-  add_mem' := fun hx hy v hv => by rw [RingHom.map_add]; exact add_mem (hx v hv) (hy v hv)
+  add_mem' := fun hx hy v hv => by rw [RingHom.map_add (f := _)]; exact add_mem (hx v hv) (hy v hv)
   zero_mem' := fun v _ => by rw [RingHom.map_zero]; exact zero_mem _
   neg_mem' := fun hx v hv => by rw [RingHom.map_neg]; exact neg_mem (hx v hv)
 
@@ -115,8 +119,8 @@ theorem measurableSet_box (S : Finset (Pl D)) :
   have o : OpensMeasurableSpace (Mx D a r × Mx D a t) := g1.opensMeasurable
   exact (((isOpen_intOff S).preimage continuous_fst).inter ((isOpen_intOff S).preimage continuous_snd)).measurableSet
 
-open Classical in
 
+open Classical in
 theorem exists_box (S : Finset (Pl D)) {e : AE D} (hS : IsIdem S e) (a b : ℕ) :
     ∃ T : Set (Mx D a b), IsCompact T ∧ ∀ x, IntOff S x → (1 - e) • x ∈ T := by
   have hL : ∀ v : Pl D, IsCompact (if v ∈ S then ({0} : Set (Fv D.host.F v ⊗[D.host.F] D.host.E))

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.PlaneRemovalConfiguration
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.PlaneRemovalConfiguration
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+
+@[expose] public section
 
 noncomputable section
 

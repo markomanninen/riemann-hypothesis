@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgClosureTensorBcrisToBdRInjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BcrisRegularOfTensorInj
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgClosureTensorBcrisToBdRInjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BcrisRegularOfTensorInj
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ section Eigen
 
 variable {I LL : Type} [Group I] [Field LL]
 
-open Classical in
 
+open Classical in
 theorem exists_separating (S : Finset (I →* LLˣ)) (a : I →* LLˣ) :
     ∃ e : I →₀ LL, ∀ b ∈ S, (e.sum fun g c => c * (b g : LL)) = if b = a then 1 else 0 := by
   have h1 : LinearIndependent LL (fun b : S => fun g : I => ((b.1 g : LLˣ) : LL)) := by
@@ -94,8 +98,8 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     {U : Type} [AddCommGroup U] [Module LL U] [Module Qp U] [IsScalarTower Qp LL U]
     {W : Type} [AddCommGroup W] [Module LL W] [Module Qp W] [IsScalarTower Qp LL W]
 
-variable (Qp B) in
 
+variable (Qp B) in
 def pairB (m : V →ₗ[LL] U →ₗ[LL] W) : V ⊗[Qp] B →ₗ[LL] U ⊗[Qp] B →ₗ[LL] W ⊗[Qp] B :=
   (TensorProduct.mk LL _ _).compr₂ (tensorB (TensorProduct.lift m) ∘ₗ prodB)
 
@@ -107,11 +111,11 @@ theorem pairB_mB (m : V →ₗ[LL] U →ₗ[LL] W) (b : B) (x : V ⊗[Qp] B) (y 
     pairB Qp B m x (mB LL b y) = mB LL b (pairB Qp B m x y) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a c ha hc => simp only [map_add, LinearMap.add_apply, ha, hc]
+  | add a c ha hc => simp only [map_add (f := _), LinearMap.add_apply, ha, hc]
   | tmul v c =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a c ha hc => simp only [map_add, ha, hc]
+    | add a c ha hc => simp only [map_add (f := _), ha, hc]
     | tmul v' c' => simp [mul_left_comm]
 
 theorem act_pairB {ρ : Representation LL G V} {σ : Representation LL G U} {τ : Representation LL G W}
@@ -120,11 +124,11 @@ theorem act_pairB {ρ : Representation LL G V} {σ : Representation LL G U} {τ 
     pairB Qp B m (actVB PD ρ g x) (actVB PD σ g y) = actVB PD τ g (pairB Qp B m x y) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a c ha hc => simp only [map_add, LinearMap.add_apply, ha, hc]
+  | add a c ha hc => simp only [map_add (f := _), LinearMap.add_apply, ha, hc]
   | tmul v c =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a c ha hc => simp only [map_add, ha, hc]
+    | add a c ha hc => simp only [map_add (f := _), ha, hc]
     | tmul v' c' => simp [actVB, hm]
 
 theorem pairB_sep [FiniteDimensional LL U] {m : V →ₗ[LL] U →ₗ[LL] W} (hm : Function.Injective m)
@@ -138,13 +142,14 @@ theorem pairB_sep [FiniteDimensional LL U] {m : V →ₗ[LL] U →ₗ[LL] W} (hm
       refine u.ext fun j => ?_
       simp [Finsupp.single_apply]
     simp only [s, LinearMap.comp_apply]
-    rw [← map_sum, h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, h1]
     exact LinearMap.congr_fun hr v
   have key : ∀ x : V ⊗[Qp] B, ∑ i, tensorB (s i) (pairB Qp B m x (u i ⊗ₜ 1)) = x := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add a c ha hc => simp only [map_add, LinearMap.add_apply, Finset.sum_add_distrib, ha, hc]
+    | add a c ha hc => simp only [map_add (f := _), LinearMap.add_apply, Finset.sum_add_distrib, ha, hc]
     | tmul v c => simp [tensorB, ← TensorProduct.sum_tmul, hs]
   rw [← key x]
   simp [hx]
@@ -153,7 +158,7 @@ theorem actVB_mul (ρ : Representation LL G V) (g h : G) (x : V ⊗[Qp] B) :
     actVB PD ρ (g * h) x = actVB PD ρ g (actVB PD ρ h x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a c ha hc => simp only [map_add, ha, hc]
+  | add a c ha hc => simp only [map_add (f := _), ha, hc]
   | tmul v c => simp [actVB]
 
 theorem isCrys_of_pair [IsDomain B] [FiniteDimensional Qp LL] [FiniteDimensional LL V] [FiniteDimensional LL U]
@@ -180,7 +185,7 @@ theorem tate_twist_multiplication_intertwines (g : G) (x : LL ⊗[Qp] B) :
       mB LL PD.t (actVB PD (WeaklyAdmissibleFiltrations.charRep (cycLL PD LL)) g x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a c ha hc => simp only [map_add, ha, hc]
+  | add a c ha hc => simp only [map_add (f := _), ha, hc]
   | tmul v c =>
     simp [actVB, PD.t_act, WeaklyAdmissibleFiltrations.charRep, cycLL, ← Algebra.smul_def, smul_tmul]
 
@@ -230,7 +235,7 @@ theorem actVB_resH (ρ : Representation LL G V) (h : PC.H) (x : V ⊗[Qp] B) :
     actVB PC.PD' (PC.resH ρ) h x = actVB PC.PD ρ h x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a c ha hc => simp only [map_add, ha, hc]
+  | add a c ha hc => simp only [map_add (f := _), ha, hc]
   | tmul v c => simp [actVB, PC.actB_eq, PotCrysData.resH]
 
 theorem mem_Dpcris (ρ : Representation LL G V) (x : V ⊗[Qp] B) :
@@ -246,9 +251,6 @@ theorem act_mem_Dpcris (ρ : Representation LL G V) (g : G) (x : V ⊗[Qp] B) (h
   rw [← actVB_mul, ← actVB_mul]
   congr 2
   group
-
-theorem Eig_eq (ρ : Representation LL G V) (a : PC.Iner →* LLˣ) :
-    PC.Eig ρ PC.Iner a = PC.Dpcris ρ ⊓ eig (fun g : PC.Iner => actVB PC.PD ρ g) a := rfl
 
 variable [IsDomain B] [FiniteDimensional Qp LL]
 
@@ -296,7 +298,7 @@ theorem inertia_of_pair [FiniteDimensional LL V] [FiniteDimensional LL U] [Finit
     refine pairB_sep hi x fun y => ?_
     induction y using cmp_ind PC.PD' (comparison_bijective PC.PD' hf hu _ hσ) with
     | h0 => simp
-    | hadd y y' h h' => rw [map_add, h, h', add_zero]
+    | hadd y y' h h' => rw [map_add (f := _), h, h', add_zero]
     | hb b d => rw [pairB_mB, h1 d.2, map_zero]
 
 theorem inertia_cyc (hf : FracInv PC.PD') (hu : LineUnit PC.PD') :
@@ -321,7 +323,7 @@ theorem inertia_cyc (hf : FracInv PC.PD') (hu : LineUnit PC.PD') :
   clear hy
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add a c ha hc => simp only [map_add, ha, hc]
+  | add a c ha hc => simp only [map_add (f := _), ha, hc]
   | tmul v c => simp [actVB, g.2 c]
 
 theorem inertia_twist [FiniteDimensional LL V] [FiniteDimensional LL W]
@@ -347,7 +349,7 @@ theorem inertia_dual [FiniteDimensional LL V] [FiniteDimensional LL W]
   obtain ⟨h1, h2⟩ := inertia_cyc (LL := LL) _ hf hu
   refine inertia_of_pair _ hf hu (m := P.flip) (fun g v u => hP.1 g u v) ?_ hA h1 hI h2
     fun b => by simpa using hs b
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   exact fun y hy => hP.2.2.1 y fun x => LinearMap.congr_fun hy x
 
 end Pot

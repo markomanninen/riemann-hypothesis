@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DefiniteBound
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIdempotentIsUnitOneAddOrSubAdele
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Hilbert90AdeleRingTensorQuadratic
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DefiniteBound
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIdempotentIsUnitOneAddOrSubAdele
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Hilbert90AdeleRingTensorQuadratic
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+
+@[expose] public section
 
 namespace GlobalTheory.UCls.NormOne
 
@@ -22,10 +26,10 @@ theorem sg_sg (c : E ≃ₐ[F] E) (hcc : ∀ x, c (c x) = x) (z : RA F E) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rw [sg_tmul, sg_tmul, hcc]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
+
 
 omit [NumberField E] in
-
 theorem finiteAdele_quadratic_exists_unit_eq_mul_sg (c : E ≃ₐ[F] E) (hcc : ∀ x, c (c x) = x)
     (hfix : ∀ x, c x = x → ∃ t : F, x = algebraMap F E t) (hc : c ≠ 1) (u : RA F E)
     (hu : u * sg (FiniteAdeleRing (𝓞 F) F) c u = 1) :
@@ -36,7 +40,7 @@ theorem finiteAdele_quadratic_exists_unit_eq_mul_sg (c : E ≃ₐ[F] E) (hcc : �
     induction z using TensorProduct.induction_on with
     | zero => exact ⟨0, by simp⟩
     | tmul a x =>
-      obtain ⟨t, ht⟩ := hfix (x + c x) (by rw [map_add, hcc, add_comm])
+      obtain ⟨t, ht⟩ := hfix (x + c x) (by rw [map_add (f := _), hcc, add_comm])
       refine ⟨t • a, ?_⟩
       rw [sg_tmul, ← TensorProduct.tmul_add, ht, Algebra.algebraMap_eq_smul_one,
         TensorProduct.smul_tmul]
@@ -44,7 +48,7 @@ theorem finiteAdele_quadratic_exists_unit_eq_mul_sg (c : E ≃ₐ[F] E) (hcc : �
       obtain ⟨t, ht⟩ := hx
       obtain ⟨t', ht'⟩ := hy
       refine ⟨t + t', ?_⟩
-      rw [map_add, TensorProduct.add_tmul, ← ht, ← ht']; ring
+      rw [map_add (f := _), TensorProduct.add_tmul, ← ht, ← ht']; ring
   obtain ⟨y, hy⟩ : ∃ y, c y ≠ y := by
     by_contra h
     push Not at h
@@ -67,10 +71,10 @@ theorem finiteAdele_quadratic_exists_unit_eq_mul_sg (c : E ≃ₐ[F] E) (hcc : �
   · change sg _ c _ = _
     rw [hι, sg_tmul, map_one]
   · change u + sg _ c u = _
-    rw [ht, two_mul, ← map_add, ← add_smul, hι]
+    rw [ht, two_mul, ← map_add (f := _), ← add_smul, hι]
     norm_num
   · have := hun.map ι
-    simpa only [map_add, map_mul, map_sub, map_one] using this
+    simpa only [map_add (f := _), map_mul, map_sub, map_one] using this
 
 omit [NumberField E] in
 theorem one_tmul_natCast (d : ℕ) :
@@ -151,8 +155,8 @@ theorem exists_ideal (z w : RA F E) (hzw : z * w = 1)
   · rw [hx', heE, one_tmul_natCast]
     exact hz'
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_quot {z w' : RA F E} {I I' : Ideal (𝓞 E)} {a b : 𝓞 E}
     (hab : Ideal.span {a} * I ≤ Ideal.span {b} * I')
     (hz : ∃ x ∈ I, ∃ e ∈ I, ∃ h ∈ hat1 F (Set.range (algebraMap (𝓞 E) E)),

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial IsLocalRing
 
 namespace GlobalTheory
@@ -9,9 +14,8 @@ theorem monic_splits_of_separable_residue (Ω : Type) [Field Ω] [IsSepClosed Ω
     ∃ s : Multiset V, q = (s.map fun b => Polynomial.X - Polynomial.C b).prod := by
   have hinj : Function.Injective (algebraMap V Ω) := IsFractionRing.injective V Ω
 
-  have hQ : (q.map (algebraMap V Ω)).Splits := by
-    rw [splits_iff_splits]
-    right
+  have hdegree : ∀ g : Polynomial Ω, Irreducible g → g ∣ q.map (algebraMap V Ω) →
+      g.degree = 1 := by
     intro g hg hgd
     obtain ⟨g₀, hg₀⟩ := IsIntegrallyClosed.eq_map_mul_C_of_dvd Ω hq hgd
     have hg0 : g ≠ 0 := hg.ne_zero
@@ -52,6 +56,15 @@ theorem monic_splits_of_separable_residue (Ω : Type) [Field Ω] [IsSepClosed Ω
       rw [h2, Polynomial.map_zero]
     exact IsSepClosed.degree_eq_one_of_irreducible Ω hg
       ((separable_iff_derivative_ne_zero hg).mpr hder)
+  have hQ : (q.map (algebraMap V Ω)).Splits := by
+    by_cases hq0 : q.map (algebraMap V Ω) = 0
+    · simp [hq0]
+    obtain ⟨u, hu⟩ := UniqueFactorizationMonoid.factors_prod hq0
+    rw [← hu]
+    refine (Splits.multisetProd fun f hf ↦ ?_).mul u.isUnit.splits
+    let h := UniqueFactorizationMonoid.irreducible_of_factor f hf
+    exact Splits.of_degree_eq_one (hdegree f h
+      (UniqueFactorizationMonoid.dvd_of_mem_factors hf))
   have hroots : ∀ a ∈ (q.map (algebraMap V Ω)).roots, a ∈ (algebraMap V Ω).range := by
     intro a ha
     have hne : q.map (algebraMap V Ω) ≠ 0 := (hq.map _).ne_zero

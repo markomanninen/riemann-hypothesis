@@ -1,17 +1,23 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeIntCut
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffAddFirstSecond
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.BilLActRight
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GermExCut
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CanonB
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffAddFirstSecond
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.BilLActRight
+
+@[expose] public section
 
 set_option autoImplicit false
 
 noncomputable section
 
 open MvPowerSeries NumberField TensorProduct Matrix
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 Formalism.MainNotions.ModuliIntegralCharts.H1.GaugeIntCut
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
 open ReciprocityTheory.ChartRestriction.G.TB (dAct bilinPart dLin)
 
 namespace GlobalTheory.GaugeShift
@@ -31,7 +37,7 @@ theorem cz2 {n : ℕ} {a b : Pt S n d} (ha : ∀ i, constantCoeff (a i) = 0) (hb
 
 theorem coeff_mixed (g : PS S 2 d) (i l : Fin d) :
     coeff (Finsupp.single ((0 : Fin 2), i) 1 + Finsupp.single ((1 : Fin 2), l) 1) g =
-      constantCoeff (pderiv S ((0 : Fin 2), i) (pderiv S ((1 : Fin 2), l) g)) := by
+      constantCoeff (pderiv (R := S) ((0 : Fin 2), i) (pderiv (R := S) ((1 : Fin 2), l) g)) := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, coeff_pderiv, zero_add]
   simp
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -49,7 +53,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.signMs :
   obtain ⟨B', hB'⟩ := half_of_neg_stable _ A le_rfl hs
   refine ⟨B', ?_, hB'⟩
   have h : B'.map (· ^ 2) + B'.map (· ^ 2) = B + B := by
-    rw [← hq, hB', Multiset.map_add, Multiset.map_map]
+    rw [← hq, hB', Multiset.map_add (f := _), Multiset.map_map]
     congr 1
     exact Multiset.map_congr rfl fun x _ => by simp
   ext x

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits Opposite AlgebraicGeometry TopologicalSpace
@@ -64,12 +69,6 @@ theorem restrictIdeal_comap_eq_comap_resLE_restrictIdeal {X Y : Scheme.{u}} (f :
   have hcomp : f.resLE U V h ≫ U.ι = V.ι ≫ f := by simp
   show (I.comap f).comap V.ι = (I.comap U.ι).comap (f.resLE U V h)
   rw [← Scheme.IdealSheafData.comap_comp, ← Scheme.IdealSheafData.comap_comp, hcomp]
-
-abbrev zeroLocus {X : Scheme.{u}} (I : X.IdealSheafData) : TopologicalSpace.Closeds X :=
-  I.support
-
-theorem zeroLocus_eq_support {X : Scheme.{u}} (I : X.IdealSheafData) :
-    zeroLocus I = I.support := rfl
 
 def VanishesAlong {X : Scheme.{u}} (I J : X.IdealSheafData) : Prop := I ≤ J
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvBasicNEvalSubCoeffMem
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvBasicNEvalSubCoeffMem
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -46,7 +50,8 @@ theorem jet_hom_spec : ∀ (V Ω A : Type) [CommRing V] [CommRing Ω] [CommRing 
       rw [MvPolynomial.monomial_eq, Finsupp.prod_fintype _ _ (fun _ => pow_zero _), ← hψ]
       simp only [map_mul, map_prod, map_pow]
       rfl
-    rw [GlobalTheory.evBasic_nEval_eq_tEval _ a (m + 1) h1, psJet, psTrunc, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [GlobalTheory.evBasic_nEval_eq_tEval _ a (m + 1) h1, psJet, psTrunc, map_sum, map_sum]
     simp only [hm]
     rw [degLE, Finset.sum_filter, Finset.sum_image, ReciprocityTheory.PGsh.Be2.tEval]
     · refine Finset.sum_congr rfl fun e _ => ?_

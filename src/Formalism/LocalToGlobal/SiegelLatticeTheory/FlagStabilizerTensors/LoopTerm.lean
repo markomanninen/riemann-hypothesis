@@ -1,19 +1,23 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LoopTieOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LoopTieOfInhab
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TermTieOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WittExistsHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LeadingMinors
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.SharpRestriction.CuspSpanNormBounds.BesselShellMomentBounds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPinG
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LatSpanLeSpan
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormRepX
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RightInvOfLattice
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.UnipotentInLevelSubgroup
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LoopTieOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LoopTieOfInhab
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TermTieOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WittExistsHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LeadingMinors
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BesselShellMomentBounds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPinG
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LatSpanLeSpan
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormRepX
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RightInvOfLattice
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.UnipotentInLevelSubgroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -220,14 +224,14 @@ theorem volRC_pos {u u' : D.what₂.Word} (hPin : PinAll (Y := Y) u u') (hCv : C
       rw [gterm_val hI t, h0, map_zero]
     have hp := hPin _ hr hg
     unfold covR
-    rw [dif_pos hp]
+    rw [dite_eq_left hp]
     exact hCv _ hr hg _ _ _ hp.choose_spec.1 hp.choose_spec.2.1 hp.choose_spec.2.2
   · exact one_pos
 
 theorem ptC_spec {u u' : D.what₂.Word} (t : D.s.Term u u') (τ : D.what₂.Tau)
     (h : ∃ p, RelPt D (zB X (C.Qi τ) u τ) (zB X (C.Qi τ) u' τ) (gamR hI C t τ) p) :
     RelPt D (zB X (C.Qi τ) u τ) (zB X (C.Qi τ) u' τ) (gamR hI C t τ) (ptC hI C t τ) := by
-  rw [ptC, dif_pos h]
+  rw [ptC, dite_eq_left h]
   exact h.choose_spec
 
 variable (hB : WuBessel C)
@@ -247,7 +251,7 @@ theorem rmeas_nuR {u u' : D.what₂.Word} (hPin : PinAll (Y := Y) u u') (hCv : C
     RMeas D (locW C u u' τ) (gamR hI C t τ) (thetaS hI C hB t) (nuR hI C hB t τ) := by
   have hν : RMeas D (locW C u u' τ) (gamR hI C t τ) 1 (nu1 hI C t τ) := by
     unfold nu1
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact h.choose_spec
   obtain ⟨p, μR, hp, hq⟩ := hν
   have hθ := thetaS_pos hI C hB hPin hCv t
@@ -362,12 +366,12 @@ theorem gram_holds {u u' : D.what₂.Word} (hL : FrameLiftEx hI u u') : GramTr W
   obtain ⟨_, hQQi, hH, _⟩ := C.isT τ
   have hlin : IsFrameLift hI t (linOf hI t) := by
     unfold linOf
-    rw [dif_pos (hL t)]
+    rw [dite_eq_left (hL t)]
     exact (hL t).choose_spec
   have hrat : Formalism.L2.SG.TermOp.RatLink X (ptR hI t) (linOf hI t) := by
     have hex := Formalism.L2.SG.Pf.ratPt_holds D X (linOf hI t) hlin.1
     unfold ptR
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   obtain ⟨M, _, hM1, _, hM3⟩ := hrat
   have hA : Formalism.QuantumDeterminants.Zhat D.R.k D.R.rS (zB X (C.Qi τ) u τ) (zB X (C.Qi τ) u' τ) (gamR hI C t τ) a b =
@@ -596,8 +600,8 @@ theorem rho_mul (D : D7) (a b : Fin (D.R.rS + 1)) :
   push_cast
   ring
 
-include W in
 
+include W in
 theorem inCell_real (hAt : ∀ u u', AtSome Y u u') {u u' : D.what₂.Word} (t : D.s.Term u u') (hG : D.s.Gterm t ≠ 0)
     (hr : D.s.relevant t) (τ : D.what₂.Tau) :
     IsInCell (Formalism.MainNotions.S.ZhatO D.R.k D.R.rS (zB X (C.Qi τ) u τ) (zB X (C.Qi τ) u' τ) (gamR hI C t τ))
@@ -625,7 +629,7 @@ theorem tz_zB (u : D.what₂.Word) (τ : D.what₂.Tau) :
   obtain ⟨_, _, hH, _⟩ := C.isT τ
   have hz : Formalism.QuantumDeterminants.fvec D.R.k D.R.rS (zB X (C.Qi τ) u τ) (Fin.last D.R.rS) = zB X (C.Qi τ) u τ := by
     unfold Formalism.QuantumDeterminants.fvec
-    rw [dif_neg (by simp)]
+    rw [dite_eq_right (by simp)]
   have hQ := Q_fvec C u τ (Fin.last D.R.rS)
   rw [hz, rhoF_last, Complex.ofReal_one, one_smul] at hQ
   have hl : (X.Fu u).fvec (Fin.last D.R.rS) = X.zu u := by
@@ -680,8 +684,8 @@ theorem normSq_sub_scaled_eq_zero {P x y : ℂ} {T T' : ℝ}
     linear_combination h
   exact (mul_eq_zero.1 h2).resolve_left hP'
 
-include W in
 
+include W in
 theorem gf_ne {u u' : D.what₂.Word} (t : D.s.Term u u') (hG : D.s.Gterm t ≠ 0) (τ : D.what₂.Tau) :
     Formalism.QuantumDeterminants.Gf D.R.k D.R.rS (zB X (C.Qi τ) u τ) (zB X (C.Qi τ) u' τ) (gamR hI C t τ) ≠ 0 := by
   have hGv : Gval (lf D (FlagOfWord W u)) (fl'Of W hI t) ≠ 0 := by
@@ -700,7 +704,7 @@ theorem gf_ne {u u' : D.what₂.Word} (t : D.s.Term u u') (hG : D.s.Gterm t ≠ 
   apply (embS D τ).injective
   show embS D τ (Gflag (FlagOfWord W u) (fl'Of W hI t).fl) = embS D τ 0
   unfold Gflag Dl leadMinorE
-  rw [dif_pos le_rfl, dif_pos (Nat.le_succ _), map_zero, map_sub, map_mul, map_mul, map_mul, map_mul,
+  rw [dite_eq_left le_rfl, dite_eq_left (Nat.le_succ _), map_zero, map_sub, map_mul, map_mul, map_mul, map_mul,
     embS_star' D τ, embS_star' D τ, Complex.mul_conj, Complex.mul_conj, map_natCast,
     map_natCast]
   exact_mod_cast h1
@@ -784,16 +788,6 @@ end ThetaCut
 section Assembly
 
 variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} (W : WittDat X) (hI : SIso D.s (sOf hF))
-
-def loopTieOf (H : TieHyp W hI) (A : AmpDat X) (hV : PvalForm W hI A) (hRR : RowRepsIso D) (large₂ : SizeData₂ D) (C1 : ℝ)
-    {θ : ℝ} (C : Choice X θ) (hB : WuBessel C) (u u' : D.what₂.Word)
-    (hTI : FrameEqvInj (termTieOf W hI H A hV) (u' := u') (FlagOfWord W u)) (hθ : normWin D large₂ C1 θ)
-    (hW : ∀ τ, GoodW D τ u u' θ (locW C u u' τ)) (hS : ∀ τ, GoodS D (lamD D τ) (locS hB u u' τ))
-    (hR : RMeasEx hI C u u') (hPin : PinAll (Y := Y) u u') (hCv : CovolPos (Y := Y) u u')
-    (hZ : JZeroIff hI C hB u u') (hT : ThetaWin hI C hB large₂ C1 u u') :
-    LoopTie D large₂ (termTieOf W hI H A hV) u u' C1 :=
-  loopTieOfParts (loopRowsOf W hI H A hV hRR u u' hTI) (locB large₂ C1 C hB u u' hθ hW hS)
-    (loopTermOf W hI H A hV large₂ C1 C hB u u' hθ hW hS hR hPin hCv hZ hT)
 
 end Assembly
 

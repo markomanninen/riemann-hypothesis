@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
-import GroundTheory.HeightsAndTheta.Heights.LocalDensities.PChartPartitionExists
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithRes
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+public import GroundTheory.HeightsAndTheta.Heights.LocalDensities.PChartPartitionExists
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithRes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel.ChartVolume

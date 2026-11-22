@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.DualNontriv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StDesc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.DualNontriv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StDesc
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Pr UpperTheory.V.Fr UpperTheory.V
 

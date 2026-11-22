@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesVecReduceModUMulVec
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsUltrametricDistFinExt
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAdicCompleteOfPowLe
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusSubOneWittTensorLatticeSurjectiveFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesVecReduceModUMulVec
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsUltrametricDistFinExt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAdicCompleteOfPowLe
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusSubOneWittTensorLatticeSurjectiveFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem idem_mul_of_ne {τ σ : ZMod a} (h : τ ≠ σ) : idem c τ * idem c σ 
 
 theorem sum_idem : ∑ τ, idem c τ = 1 := by
   simp only [idem]
-  rw [← map_sum, Finset.univ_sum_single (fun _ : ZMod a => (1 : O))]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, Finset.univ_sum_single (fun _ : ZMod a => (1 : O))]
   exact map_one c
 
 theorem idem_mul_sum (x : ZMod a → R) (τ : ZMod a) : idem c τ * ∑ σ, idem c σ * x σ = idem c τ * x τ := by
@@ -40,7 +45,8 @@ theorem idem_mul_sum (x : ZMod a → R) (τ : ZMod a) : idem c τ * ∑ σ, idem
     rw [← mul_assoc, idem_mul_of_ne c h.symm, zero_mul]) (by simp), ← mul_assoc, idem_mul_self]
 
 theorem eq_sum_idem (x : ZMod a → O) : c x = ∑ τ, idem c τ * algebraMap O R (x τ) := by
-  conv_lhs => rw [← Finset.univ_sum_single x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← Finset.univ_sum_single x, map_sum]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [mul_comm, ← Algebra.smul_def, idem, ← map_smul, ← Pi.single_smul, smul_eq_mul, mul_one]
 
@@ -66,13 +72,14 @@ theorem glue_const (b : B) : glue c f (fun _ => b) = f b := by
 theorem idem_mul_glue (x : ZMod a → B) (τ : ZMod a) : idem c τ * glue c f x = idem c τ * f (x τ) :=
   idem_mul_sum c _ τ
 
-variable {c f} in
 
+variable {c f} in
 theorem map_glue {B' R' : Type} [CommRing B'] [CommRing R'] [Algebra O B'] [Algebra O R']
     {c' : (ZMod a → O) →ₐ[O] R'} {f' : B' →ₐ[O] R'} (s : R →+* R') (k : ZMod a)
     (hs : ∀ τ, s (idem c τ) = idem c' (τ + k)) {x : ZMod a → B} {y : ZMod a → B'}
     (h : ∀ τ, s (f (x (τ - k))) = f' (y τ)) : s (glue c f x) = glue c' f' y := by
-  rw [glue_apply, glue_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [glue_apply, glue_apply, map_sum]
   refine Fintype.sum_equiv (Equiv.addRight k) _ _ fun τ => ?_
   rw [map_mul, hs, Equiv.coe_addRight, ← h, add_sub_cancel_right]
 
@@ -84,15 +91,14 @@ theorem tensor_hom_ext {Z W J : Type} [CommRing Z] [CommRing W] [Algebra Z O] [A
     induction hw using Submodule.span_induction with
     | mem x hx => obtain ⟨i, rfl⟩ := hx; exact h i
     | zero => simp
-    | add x y _ _ hx hy => simp only [tmul_add, map_add, hx, hy]
+    | add x y _ _ hx hy => simp only [tmul_add, map_add (f := _), hx, hy]
     | smul c x _ hx => rw [tmul_smul, ← algebraMap_smul O c, map_smul, map_smul, hx]
   ext1 x
   induction x with
-  | zero => simp
   | tmul o w =>
     have : o ⊗ₜ[Z] w = o • ((1 : O) ⊗ₜ[Z] w) := by rw [smul_tmul', smul_eq_mul, mul_one]
     rw [this, map_smul, map_smul, h1]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem bijective_lift {Z W J I : Type} [CommRing Z] [CommRing W] [Algebra Z O] [Algebra Z W] [Fintype I]
     (emb : I → W →ₐ[Z] O) {v : J → W} (hv : Submodule.span Z (Set.range v) = ⊤) (t : W)
@@ -132,8 +138,8 @@ section Sigma
 
 variable (a : ℕ) [NeZero a]
 
-variable (l) in
 
+variable (l) in
 def sigmaNeg (τ : ZMod a) : Wq l a ≃ₐ[ℤ_[l]] Wq l a := sigma l a ^ (-τ).val
 
 theorem sigmaNeg_zero : sigmaNeg l a 0 = 1 := by simp [sigmaNeg]
@@ -160,7 +166,7 @@ theorem exists_monic (t : Wq l a) : ∃ f : Polynomial ℤ_[l], f.Monic ∧ f.na
     rw [Polynomial.lifts_iff_coeff_lifts]
     intro n
     obtain ⟨y, hy⟩ := GlobalTheory.ArtinSchreierWitt.fixed_frob l (Fq l a) (P.coeff n)
-      ((Polynomial.coeff_map _ n).symm.trans (congrArg (Polynomial.coeff · n) hPσ))
+      ((Polynomial.coeff_map _ n).symm.trans (congrArg (AddMonoidAlgebra.coeff · n) hPσ))
     exact ⟨y, hy.symm⟩
   obtain ⟨f, hf, hfd, hfm⟩ := Polynomial.lifts_and_natDegree_eq_and_monic hPl hPm
   have hroot : ∀ τ, Polynomial.aeval (sigmaNeg l a τ t) f = 0 := fun τ => by
@@ -235,33 +241,33 @@ def galA (g : GQ l) : Ainf l →ₐ[ℤ_[l]] Ainf l where
       ((galW_inclW g _).symm.trans (((congrArg (galW l g) ((inclWA l).commutes r)).trans
         ((galW l g).commutes r)).trans ((inclWA l).commutes r).symm))
 
-variable (l O) in
 
+variable (l O) in
 abbrev OA : Type := O ⊗[ℤ_[l]] Ainf l
 
-variable (l O) in
 
+variable (l O) in
 abbrev OW : Type := O ⊗[ℤ_[l]] WCb l
 
-variable (l O) in
 
+variable (l O) in
 def inclO : OA l O →ₐ[O] OW l O := Algebra.TensorProduct.map (AlgHom.id _ _) (inclWA l)
 
-variable (l O) in
 
+variable (l O) in
 def frobOW : OW l O →ₐ[O] OW l O := Algebra.TensorProduct.map (AlgHom.id _ _) (frobW l)
 
-variable (l O) in
 
+variable (l O) in
 def frobOA : OA l O →ₐ[O] OA l O :=
   Algebra.TensorProduct.map (AlgHom.id _ _) (GlobalTheory.Cyc.IoMap.frobA l)
 
-variable (O) in
 
+variable (O) in
 def galOA (g : GQ l) : OA l O →ₐ[O] OA l O := Algebra.TensorProduct.map (AlgHom.id _ _) (galA g)
 
-variable (O) in
 
+variable (O) in
 def galOW (g : GQ l) : OW l O →ₐ[O] OW l O :=
   Algebra.TensorProduct.map (AlgHom.id _ _) (galW l g).toAlgHom
 
@@ -281,25 +287,25 @@ theorem galOW_one (x : OW l O) : galOW O 1 x = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul o w => rw [galOW_tmul, map_one, AlgEquiv.one_apply]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem galOW_mul (g h : GQ l) (x : OW l O) : galOW O (g * h) x = galOW O g (galOW O h x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul o w => rw [galOW_tmul, galOW_tmul, galOW_tmul, map_mul, AlgEquiv.mul_apply]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem frobOW_inclO (x : OA l O) : frobOW l O (inclO l O x) = inclO l O (frobOA l O x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul o w => rw [frobOA_tmul, inclO_tmul, inclO_tmul, frobOW_tmul, frobW_inclW]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem galOW_inclO (g : GQ l) (x : OA l O) : galOW O g (inclO l O x) = inclO l O (galOA O g x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul o w => rw [galOA_tmul, inclO_tmul, inclO_tmul, galOW_tmul, galW_inclW]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem galOW_frobOW (g : GQ l) (x : OW l O) : galOW O g (frobOW l O x) = frobOW l O (galOW O g x) := by
   induction x using TensorProduct.induction_on with
@@ -308,7 +314,7 @@ theorem galOW_frobOW (g : GQ l) (x : OW l O) : galOW O g (frobOW l O x) = frobOW
     rw [frobOW_tmul, galOW_tmul, galOW_tmul, frobOW_tmul]
     exact congrArg (fun y : WCb l => o ⊗ₜ[ℤ_[l]] y)
       (WittVector.ext fun n => map_pow (autCb l (galTilt l g)) (w.coeff n) l)
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem inclO_injective [Module.Free ℤ_[l] O] : Function.Injective (inclO l O) :=
   Module.Flat.lTensor_preserves_injective_linearMap (M := O) (inclWA l).toLinearMap inclW_injective
@@ -339,7 +345,7 @@ theorem frobOA_constA (x : ZMod a → O) :
     rw [this, constA_splitHom, constA_splitHom]
     exact (frobOA_tmul o _).trans (congrArg (fun y : Ainf l => o ⊗ₜ[ℤ_[l]] y) (wA_sigma l a w).symm)
   | add y y' h h' =>
-    rw [map_add, map_add, map_add, h, h', ← map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), h, h', ← map_add (f := _)]
     rfl
 
 theorem frobOA_idem (τ : ZMod a) : frobOA l O (idem (constA t) τ) = idem (constA t) (τ + 1) := by
@@ -350,9 +356,6 @@ theorem frobOA_idem (τ : ZMod a) : frobOA l O (idem (constA t) τ) = idem (cons
 
 theorem inclO_idem (τ : ZMod a) : inclO l O (idem (constA t) τ) = idem (constW t) τ := rfl
 
-theorem frobOW_idem (τ : ZMod a) : frobOW l O (idem (constW t) τ) = idem (constW t) (τ + 1) := by
-  rw [← inclO_idem, frobOW_inclO, frobOA_idem, inclO_idem]
-
 theorem galOA_constA {g : GQ l} (hg : ∀ x ∈ Kunr l a, g x = x) (x : ZMod a → O) :
     galOA O g (constA t x) = constA t x := by
   obtain ⟨y, rfl⟩ := (splitHom_bijective t).2 x
@@ -360,17 +363,17 @@ theorem galOA_constA {g : GQ l} (hg : ∀ x ∈ Kunr l a, g x = x) (x : ZMod a �
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul o w => exact congrArg (fun y : Ainf l => o ⊗ₜ[ℤ_[l]] y) (gal_wA l a hg w)
-  | add y y' h h' => simp only [map_add, h, h']
+  | add y y' h h' => simp only [map_add (f := _), h, h']
 
 variable (K : Type) [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K]
 
-variable {K} (l) in
 
+variable {K} (l) in
 def frobAc (f : ZMod a → A O K) : ZMod a → A O K :=
   fun τ => ⟨frob _ l (f (τ - 1)), frob_mem_A l (f (τ - 1)).2⟩
 
-omit [NeZero a] [Algebra ℤ_[l] O] in
 
+omit [NeZero a] [Algebra ℤ_[l] O] in
 theorem coe_frobAc (f : ZMod a → A O K) (τ : ZMod a) :
     (frobAc l f τ : K⟦X⟧) = frobTot _ a l (fun σ => (f σ : K⟦X⟧)) τ := rfl
 
@@ -388,7 +391,8 @@ theorem exists_eq_sum_toAc {J : Type} [Fintype J] (o : Module.Basis J ℤ_[l] O)
   refine ⟨fun j => mk fun n => GlobalTheory.Decompl.crd o j (y n), funext fun τ => ?_⟩
   refine (equivA O K).symm.injective (PowerSeries.ext fun n => ?_)
   rw [← congrFun (hy n) τ, ← GlobalTheory.Decompl.sum_crd o (y n)]
-  simp only [map_sum, Finset.sum_apply, Pi.smul_apply, map_smul, splitHom_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_apply, Pi.smul_apply, map_smul, splitHom_tmul]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [show toAc t K (mk fun n => GlobalTheory.Decompl.crd o j (y n)) τ =
     equivA O K (PowerSeries.map (emb t τ).toRingHom _) from rfl, AlgEquiv.symm_apply_apply,
@@ -427,11 +431,11 @@ theorem iA_u : ϖ.iA O K (uIn _) = ϖ.teichR O := by
   rw [← evO_X, ← ϖ.iA_equivA O K]
   exact congrArg _ (Subtype.ext (PowerSeries.map_X _).symm)
 
-variable (a) in
 
+variable (a) in
 theorem iA_E : ϖ.iA O K (EIn l e _) = 1 ⊗ₜ ϖ.ev a (eis l a e) := by
   have : EIn l e (A O K) = uIn _ ^ e + (l : A O K) := Subtype.ext (by simp [E])
-  rw [this, map_add, map_pow, iA_u, map_natCast, eis, map_add, map_pow, ev_X, map_natCast, tmul_add, teichR,
+  rw [this, map_add (f := _), map_pow, iA_u, map_natCast, eis, map_add (f := _), map_pow, ev_X, map_natCast, tmul_add, teichR,
     Algebra.TensorProduct.tmul_pow, one_pow]
   exact congrArg _ (map_natCast (Algebra.TensorProduct.includeRight : Ainf l →ₐ[ℤ_[l]] OA l O) l).symm
 
@@ -459,8 +463,8 @@ theorem iTot_toAc (x : (Wq l a)⟦X⟧) : ϖ.iTot t K (toAc t K x) = 1 ⊗ₜ ϖ
   · change ϖ.iTot t K (toAc t K X) = 1 ⊗ₜ ϖ.ev a X
     rw [hX, ev_X, teichR]
 
-variable (O) in
 
+variable (O) in
 theorem iA_frob (f : A O K) : ϖ.iA O K ⟨frob _ l f, frob_mem_A l f.2⟩ = frobOA l O (ϖ.iA O K f) := by
   obtain ⟨f, rfl⟩ := (equivA O K).surjective f
   have h0 : (⟨frob _ l (equivA O K f), frob_mem_A l (equivA O K f).2⟩ : A O K) =
@@ -482,8 +486,8 @@ theorem iTot_frob (f : ZMod a → A O K) : ϖ.iTot t K (frobAc l f) = frobOA l O
 
 variable [NeZero e]
 
-variable (O) in
 
+variable (O) in
 theorem galOA_teichR (g : GQ l) : galOA O g (ϖ.teichR O) = (1 + 1 ⊗ₜ ϖ.mu g) * ϖ.teichR O := by
   rw [teichR, galOA_tmul, gal_teich, Algebra.TensorProduct.one_def, ← tmul_add,
     Algebra.TensorProduct.tmul_mul_tmul, one_mul]
@@ -491,12 +495,13 @@ theorem galOA_teichR (g : GQ l) : galOA O g (ϖ.teichR O) = (1 + 1 ⊗ₜ ϖ.mu 
 theorem galOA_iTot {g : GQ l} (hg : g ∈ ϖ.GfieldInf a) (f : ZMod a → A O K) :
     galOA O g (ϖ.iTot t K f) = ϖ.iTot t K f := by
   obtain ⟨x, rfl⟩ := exists_eq_sum_toAc t K (Module.Free.chooseBasis ℤ_[l] O) f
-  simp only [map_sum, map_smul, iTot_toAc, galOA_tmul, ϖ.gal_ev l a hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, iTot_toAc, galOA_tmul, ϖ.gal_ev l a hg]
 
 variable (O)
 
-omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 
+omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 theorem isUnit_inclO_teichR : IsUnit (inclO l O (ϖ.teichR O)) :=
   ϖ.isUnit_inclW_teich.map (Algebra.TensorProduct.includeRight : WCb l →ₐ[ℤ_[l]] OW l O)
 
@@ -545,17 +550,17 @@ theorem iTot_injective : Function.Injective (ϖ.iTot t K) := by
       induction y using TensorProduct.induction_on with
       | zero => simp only [map_zero]
       | tmul o w => rfl
-      | add y y' h h' => simp only [map_add, h, h']
+      | add y y' h h' => simp only [map_add (f := _), h, h']
     rw [Module.Flat.lTensor_preserves_injective_linearMap (M := O) _ hr (h1.trans (h.trans (map_zero _).symm)),
       map_zero]
   have key : ∀ (τ : ZMod a) (n : ℕ) (f : O⟦X⟧), idem (constA t) τ * ϖ.evO O f = 0 → coeff n f = 0 := by
     intro τ n
     have h0 : ∀ f : O⟦X⟧, idem (constA t) τ * ϖ.evO O f = 0 → constantCoeff f = 0 := fun f hf => by
       have h2 : ϖ.evO O (C (constantCoeff f)) = algebraMap O _ (constantCoeff f) := (ϖ.evO O).commutes _
-      rw [f.eq_X_mul_shift_add_const, map_add, map_mul, evO_X, mul_add, h2, mul_comm _ (algebraMap _ _ _),
+      rw [f.eq_X_mul_shift_add_const, map_add (f := _), map_mul, evO_X, mul_add, h2, mul_comm _ (algebraMap _ _ _),
         ← Algebra.smul_def, idem, ← map_smul] at hf
       have h1 := congrArg R hf
-      rw [map_add, map_mul, map_mul, hR, zero_mul, mul_zero, zero_add, map_zero] at h1
+      rw [map_add (f := _), map_mul, map_mul, hR, zero_mul, mul_zero, zero_add, map_zero] at h1
       simpa using congrFun (hc _ h1) τ
     induction n with
     | zero => exact fun f hf => by simpa using h0 f hf
@@ -622,8 +627,6 @@ class HasUnr (a : ℕ) (LL : FinExt l) : Prop where
 
 instance : HasUnr a (unrExt l a) := ⟨le_rfl⟩
 
-instance {e : ℕ} (ϖ : PiSys l e) : HasUnr a (ϖ.field a) := ⟨ϖ.Kunr_le_field a⟩
-
 theorem intToOC_injective (LL : FinExt l) : Function.Injective (intToOC LL) := fun _ _ h =>
   Subtype.ext (Subtype.ext ((algebraMap (Om l) ℂ_[l]).injective (congrArg Subtype.val h)))
 
@@ -657,7 +660,7 @@ theorem exists_intToOC_eq (w : Wq l a) : ∃ y, intToOC LL y = Per.θ l (wA l a 
   | add x y _ _ hx hy =>
     obtain ⟨x', hx⟩ := hx
     obtain ⟨y', hy⟩ := hy
-    exact ⟨x' + y', by rw [map_add, map_add, map_add, hx, hy]⟩
+    exact ⟨x' + y', by rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]⟩
   | smul c x _ hx =>
     obtain ⟨x', hx⟩ := hx
     exact ⟨algebraMap _ _ c * x', by
@@ -675,17 +678,6 @@ theorem intToOC_thetaW (w : Wq l a) : intToOC LL (thetaW a LL w) = Per.θ l (wA 
 instance free_OL : Module.Free ℤ_[l] ↥(OL LL) := GlobalTheory.Decompl.free_OL LL
 
 instance finite_OL : Module.Finite ℤ_[l] ↥(OL LL) := GlobalTheory.Decompl.finite_OL LL
-
-theorem inclO_eq : inclO l ↥(OL LL) = inclR LL := rfl
-
-theorem frobOW_eq : frobOW l ↥(OL LL) = φRW LL := rfl
-
-theorem galOW_eq {P : LocPrime l} (AI : LocAinf l P) (g : GQ l) : galOW ↥(OL LL) g = AI.gRW LL g := by
-  rw [LocAinf.gRW, locAinf_actWCbHom_eq]
-  rfl
-
-example {e : ℕ} [NeZero e] (ϖ : PiSys l e) : Function.Injective (ϖ.iW (thetaW a LL) ↥LL.1) :=
-  ϖ.iW_injective _ _
 
 end FinExt
 

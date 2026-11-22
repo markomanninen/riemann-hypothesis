@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.TrCMemZ1D
+module
+
+public import Formalism.AdmissibleDesigns.TrCMemZ1D
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -81,7 +85,7 @@ theorem tb_zero {e t cB ℓ : ℕ} {I : Subgroup G} {J : (K →ₐ[Qp] LL) → S
   refine ⟨Cd.u.symm (x + y), fun g hg => back_cob Cd hp (z : Dw → M) (x + y) g ?_⟩
   have hb := congrFun hy (eG g)
   simp only [LinearMap.pi_apply, LinearMap.sub_apply, LinearMap.id_apply] at hb
-  rw [← hab, Pi.add_apply, hx (eG g) (hI g hg), ← hb, map_add]
+  rw [← hab, Pi.add_apply, hx (eG g) (hI g hg), ← hb, map_add (f := _)]
   abel
 
 end Transport

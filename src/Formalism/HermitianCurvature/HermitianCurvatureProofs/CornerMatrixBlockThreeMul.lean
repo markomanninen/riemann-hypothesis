@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NegMulCCancel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerBZero
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NegMulCCancel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerBZero
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -88,10 +92,10 @@ theorem nblk_upper (nn : B.Mat k (p + ρ)) (hn : nn ∈ Nset k (p + ρ)) :
   ext c b
   simp only [Matrix.of_apply, G.upper, G.strictUpper, Matrix.add_apply, Matrix.one_apply]
   rcases lt_trichotomy c b with hcb | rfl | hcb
-  · rw [if_neg (ne_of_lt hcb), dif_pos hcb, zero_add]
-  · rw [LeftFubiniLemmas.n_col nn hn c _ le_rfl, if_pos rfl, if_pos rfl, dif_neg (lt_irrefl _), add_zero]
+  · rw [if_neg (ne_of_lt hcb), dite_eq_left hcb, zero_add]
+  · rw [LeftFubiniLemmas.n_col nn hn c _ le_rfl, if_pos rfl, if_pos rfl, dite_eq_right (lt_irrefl _), add_zero]
   · rw [LeftFubiniLemmas.n_col nn hn b _ (le_of_lt hcb), if_neg (by simp only; omega), if_neg (ne_of_gt hcb),
-      dif_neg (not_lt.mpr (le_of_lt hcb)), add_zero]
+      dite_eq_right (not_lt.mpr (le_of_lt hcb)), add_zero]
 
 end zh
 

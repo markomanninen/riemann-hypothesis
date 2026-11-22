@@ -1,6 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RelevantSetZeroGNotIdentity
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdentityCellAdmissibleOfNormalisation
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RelevantSetZeroGNotIdentity
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.UnitriangularFrameLift
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdScal
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdUnit
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdRoot
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,11 +86,15 @@ theorem one_le_index_of_relevant (hTg : ∀ u : D.what₂.Word, (D.mem u).A.T �
   subst hj0
   obtain ⟨k1, -, k3⟩ := Formalism.HermitianLatticeCounting.Final.S6.nFJZero _ _ _ _ _ _ c hN.1
   have hXa : ∀ a, (frq X t.rep).fl.Xa a = (lf D (X.Fu u)).fl.Xa a := fun a => by
-    have h := k1 a
-    rwa [nf_Xa, nf_Xa] at h
-  rw [nf_X, normal_form_z_eq, normal_form_z_eq] at k3
+    exact (nf_Xa (frq X t.rep).fl (nf_T_ne D u) a).symm.trans
+      ((k1 a).trans (nf_Xa (lf D (X.Fu u)).fl (fixedFlag_level_ne_zero D u) a))
+  have k3' : (frq X t.rep).fl.z - c • (lf D (X.Fu u)).fl.z ∈ (lf D (X.Fu u)).fl.X := by
+    rw [← normal_form_z_eq (frq X t.rep).fl (nf_T_ne D u),
+      ← normal_form_z_eq (lf D (X.Fu u)).fl (fixedFlag_level_ne_zero D u),
+      ← nf_X (lf D (X.Fu u)).fl (fixedFlag_level_ne_zero D u)]
+    exact k3
   have hXp : (frq X t.rep).fl.Xplus = (lf D (X.Fu u)).fl.Xplus :=
-    nf_Xplus_eq _ _ (by rw [nf_X_eq, nf_X_eq]; exact hXa _) c hN.1.1 k3
+    nf_Xplus_eq _ _ (by rw [nf_X_eq, nf_X_eq]; exact hXa _) c hN.1.1 k3'
   exact hid (isIdentity_of_equal_flags hTg Y t hXa hXp (relRepC D X Y u u t hr hG).1)
 
 end ZsC1c

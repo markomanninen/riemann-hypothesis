@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.LocallyConstantCocyclesFiniteOfPhi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.LocallyConstantCocyclesFiniteOfPhi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.HV UpperTheory.V.Alg GlobalTheory.GalOfCusp
 
@@ -70,7 +74,7 @@ private theorem cocycles_finitely_generated (l : ℕ) [Fact l.Prime] {R G M : Ty
     have hle : Ideal.span {t} ≤ (⊥ : Ideal R).jacobson := by
       rw [IsLocalRing.jacobson_eq_maximalIdeal ⊥ bot_ne_top]
       exact IsLocalRing.le_maximalIdeal hIne
-    have h := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := M) _ hle
+    have h := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := M) _ (by simpa only [Ideal.jacobson_bot] using hle)
     have hx' : x ∈ ⨅ i, Ideal.span {t} ^ i • (⊤ : Submodule R M) :=
       (Submodule.mem_iInf _).mpr fun n => (mem_pow_smul t n x).mpr (hx n)
     rw [h] at hx'
@@ -81,9 +85,9 @@ private theorem cocycles_finitely_generated (l : ℕ) [Fact l.Prime] {R G M : Ty
       add_mem' := by
         rintro a b ⟨ha1, ha2⟩ ⟨hb1, hb2⟩
         refine ⟨fun N => ?_, fun g h => ?_⟩
-        · simp only [Pi.add_apply, map_add]
+        · simp only [Pi.add_apply, map_add (f := _)]
           exact (ha1 N).add (hb1 N)
-        · simp only [Pi.add_apply, ha2, hb2, map_add]
+        · simp only [Pi.add_apply, ha2, hb2, map_add (f := _)]
           abel
       zero_mem' := ⟨fun N => by
           simp only [Pi.zero_apply, map_zero]
@@ -221,7 +225,8 @@ theorem UpperTheory.V.Th.Det.continuousCocycles_fg_integral_of_phiCond :
     rw [IsLocallyConstant.iff_eventually_eq]
     intro g
     filter_upwards [Filter.eventually_all.2 fun j => (hσ i j N).eventually_eq g] with g' hg'
-    simp only [hρ, Matrix.mulVec, dotProduct, map_sum, map_mul, hg']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hρ, Matrix.mulVec, dotProduct, map_sum, map_mul, hg']
   · rw [lc_iff]
     exact fun i => (hZ z hz).1 i N
   · rw [hρ]; exact (hZ z hz).2 g h

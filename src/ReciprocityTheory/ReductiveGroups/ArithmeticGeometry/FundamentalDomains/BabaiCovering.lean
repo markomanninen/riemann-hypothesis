@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Transference
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Transference
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.BabaiCovering
 
@@ -83,7 +87,8 @@ theorem cover {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Basis ι ℝ V) (b
     intro x hx hx0
     obtain ⟨c, rfl⟩ := (mem_span_range_iff_exists_fun ℤ).1 hx
     have hw : (∑ i, c i • B' i) = φ (∑ i, c i • bd (e.symm i)) := by
-      simp [hB', map_sum, map_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [hB', map_sum, map_zsmul]
     have hwmem : (∑ i, c i • bd (e.symm i)) ∈ span ℤ (Set.range bd) :=
       sum_mem fun i _ => zsmul_mem (subset_span (Set.mem_range_self _)) _
     rw [hw, LinearIsometryEquiv.norm_map]

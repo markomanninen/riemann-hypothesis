@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -116,8 +120,8 @@ theorem dn_const (n : ℕ) (z : Cn F n) :
   congr 1
   exact mp_id F (op a₀) _
 
-include hb in
 
+include hb in
 theorem pointed (hH : HtpySt) (n : ℕ) (z : Cn F (n + 1)) (hz : dn F (n + 1) z = 0) :
     ∃ y, dn F n y = z := by
   obtain ⟨-, h1⟩ := hH R Pᵒᵖ F Pᵒᵖ F (CoefMap.id F) (m1 F a₀ hb) (th a₀)
@@ -147,7 +151,7 @@ theorem pointed (hH : HtpySt) (n : ℕ) (z : Cn F (n + 1)) (hz : dn F (n + 1) z 
           E F a₀ hb (n + 1) t c := by rw [s]
       _ = _ := by rw [add_smul, this, add_zero]
   refine ⟨y₁ - y₂ + E F a₀ hb n t, ?_⟩
-  rw [map_add, map_sub, ← e₁, ← e₂, ← e3, e0, e2]
+  rw [map_add (f := _), map_sub, ← e₁, ← e₂, ← e3, e0, e2]
   abel
 
 end Pointed
@@ -228,9 +232,9 @@ theorem exact_of_span {B : Type} [CommRing B] (F : C ⥤ CommAlgCat.{0} R) (io' 
       add_mem' := by
         rintro a b ⟨y, hy⟩ ⟨y', hy'⟩
         refine ⟨y + y', ?_⟩
-        rw [map_add, hy, hy']
+        rw [map_add (f := _), hy, hy']
         funext c
-        simp only [sc, Pi.add_apply, map_add, add_mul]
+        simp only [sc, Pi.add_apply, map_add (f := _), add_mul]
       zero_mem' := ⟨0, by
         rw [map_zero]; funext c; simp [sc]⟩
       smul_mem' := by
@@ -327,8 +331,8 @@ theorem uf_bij (hinf : ∀ a b, (u (a ⊓ b)).1 = (u a).1 ⊓ (u b).1) (f : Γ(X
   rw [hinf, inf_assoc, inf_eq_right.2 hf]
   rfl
 
-include hle in
 
+include hle in
 theorem pos [Finite P] (hC : CxSt) (hH : HtpySt) (hinf : ∀ a b, (u (a ⊓ b)).1 = (u a).1 ⊓ (u b).1)
     (hcov : ⨆ a, (u a).1 = W.1) (n : ℕ) (z : Cn (FF s u) (n + 1))
     (hz : dn (FF s u) (n + 1) z = 0) : ∃ y, dn (FF s u) n y = z := by

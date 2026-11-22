@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.TsumTruncatedShiftLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.TsumTruncatedShiftLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -260,14 +264,14 @@ theorem card_reps_mul_nP_le (X : Inst D L) (p : ℕ) : ((reps X p).card : ℝ) *
   have h := card_reps_mul_le X p
   have hf : D.R.f = 2 * D.R.n := rfl
   by_cases hs : IsSg D p
-  · have h1 : stepP D p = 2 • hP D p := by unfold stepP; rw [if_pos hs]
-    have h2 : nP D p = 2 * addOrderOf (2 • hP D p) := by unfold nP; rw [if_pos hs]
+  · have h1 : stepP D p = 2 • hP D p := by unfold stepP; rw [ite_eq_left hs]
+    have h2 : nP D p = 2 * addOrderOf (2 • hP D p) := by unfold nP; rw [ite_eq_left hs]
     rw [h1] at h
     rw [h2, hf]
     have : (reps X p).card * (2 * addOrderOf (2 • hP D p)) ≤ 2 * D.R.n := by nlinarith
     exact_mod_cast this
-  · have h1 : stepP D p = hP D p := by unfold stepP; rw [if_neg hs]
-    have h2 : nP D p = addOrderOf (hP D p) := by unfold nP; rw [if_neg hs]
+  · have h1 : stepP D p = hP D p := by unfold stepP; rw [ite_eq_right hs]
+    have h2 : nP D p = addOrderOf (hP D p) := by unfold nP; rw [ite_eq_right hs]
     rw [h1] at h
     rw [h2, hf]
     have : (reps X p).card * addOrderOf (hP D p) ≤ 2 * D.R.n := by omega
@@ -420,9 +424,9 @@ theorem g_zero_ge_ask_sum (P : ParameterChoice' D L) (X : Inst D L) (K : Consts)
     funext e
     by_cases ho : Odd e
     · by_cases hx : Excl D p s e
-      · rw [if_pos ho, if_neg (fun h => h.2 hx), max_eq_left (by linarith [hEx s hs e hx])]
-      · rw [if_pos ho, if_pos ⟨ho, hx⟩]
-    · rw [if_neg ho, if_neg (fun h => ho h.1)]
+      · rw [ite_eq_left ho, ite_eq_right (fun h => h.2 hx), max_eq_left (by linarith [hEx s hs e hx])]
+      · rw [ite_eq_left ho, ite_eq_left ⟨ho, hx⟩]
+    · rw [ite_eq_right ho, ite_eq_right (fun h => ho h.1)]
   rw [hask]
   unfold al
   exact @tsum_truncated_shift_le (p : ℝ) (a s : ℝ) (cG L) (2 * L.sc.a) hp2 hcG ha3 (by linarith) (by linarith)
@@ -634,10 +638,10 @@ theorem gain_bound_at_of_star (P : ParameterChoice' D L) (X : Inst D L) (K : Con
   have hgain0 : 0 ≤ ∑ j ∈ SizeData₂.lifts D, gainP X K a b p j :=
     Finset.sum_nonneg (fun j hj => (gain_bounds P X K hK a b hW p hp j hj).1)
   by_cases hVV : VV X K a b p = ∅
-  · have htau : tauP X K a b p = 0 := by unfold tauP; rw [if_pos hVV]
+  · have htau : tauP X K a b p = 0 := by unfold tauP; rw [ite_eq_left hVV]
     rw [htau, sub_zero]
     by_cases hfull : IsSg D p ∨ L.sc.X' ≤ (p : ℝ)
-    · have hTTP : TTP X K a b p = D.host.TT := by unfold TTP; rw [if_pos hfull]
+    · have hTTP : TTP X K a b p = D.host.TT := by unfold TTP; rw [ite_eq_left hfull]
       rw [hTTP]
       by_cases hc : IsResidueClassZero D p ∧ hP D p = 0
       ·
@@ -656,7 +660,7 @@ theorem gain_bound_at_of_star (P : ParameterChoice' D L) (X : Inst D L) (K : Con
         have hg : ∀ j, gainP X K a b p j = ∑ t0 ∈ reps X p, max (g0 X K a b p j t0) 0 := by
           intro j
           unfold gainP
-          rw [if_neg (fun h => h.elim hc (fun h' => absurd hpX'' (not_le.2 h'))), hVV]
+          rw [ite_eq_right (fun h => h.elim hc (fun h' => absurd hpX'' (not_le.2 h'))), hVV]
           simp
         simp only [hg]
         apply noop P X K hK Ce C bo hCe hN a b hW p hp (h9 p hp hpX'')
@@ -667,7 +671,7 @@ theorem gain_bound_at_of_star (P : ParameterChoice' D L) (X : Inst D L) (K : Con
     ·
       have hTTP : TTP X K a b p = ∅ := by
         unfold TTP
-        rw [if_neg hfull, hVV]
+        rw [ite_eq_right hfull, hVV]
         simp
       rw [hTTP]
       simp only [Finset.sum_empty, Finset.sum_const_zero]
@@ -687,16 +691,16 @@ theorem gain_bound_at_of_star (P : ParameterChoice' D L) (X : Inst D L) (K : Con
       · exact not_singular_of_central p hc.2.2.1 h
       · exact absurd hc.2.1 (not_lt.2 h)
     have hTTP : TTP X K a b p = D.host.TT.filter (fun t => X.bs (stepP D p) t ∈ VV X K a b p) := by
-      unfold TTP; rw [if_neg hnfull]
+      unfold TTP; rw [ite_eq_right hnfull]
     set V := VV X K a b p with hVdef
     have htau : tauP X K a b p = (X.ep p : ℝ) + (D.R.m : ℝ) * ∑ t0 ∈ V,
         ((⌈tv X K a b p t0⌉₊ : ℝ) + (Dp K L p : ℝ) + 1) := by
       unfold tauP
-      rw [if_neg hVV, Finset.mul_sum]
+      rw [ite_eq_right hVV, Finset.mul_sum]
     have hgain : ∀ j ∈ SizeData₂.lifts D, ∑ t0 ∈ V, (gU X K a b p j t0 - Pr X K b p j t0) ≤ gainP X K a b p j := by
       intro j _
       unfold gainP
-      rw [if_neg (fun h => h.elim (fun h' => hP_ne_zero_of_cand K p hc h'.2) (fun h' => absurd hpX'' (not_le.2 h')))]
+      rw [ite_eq_right (fun h => h.elim (fun h' => hP_ne_zero_of_cand K p hc h'.2) (fun h' => absurd hpX'' (not_le.2 h')))]
       have h1 : ∑ t0 ∈ V, (gU X K a b p j t0 - Pr X K b p j t0) ≤
           ∑ t0 ∈ V, max (gU X K a b p j t0 - Pr X K b p j t0) (max (g0 X K a b p j t0) 0) :=
         Finset.sum_le_sum (fun t0 _ => le_max_left _ _)

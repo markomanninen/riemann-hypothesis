@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateChartDualActionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeCmTypeWeight
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateChartDualActionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeCmTypeWeight
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -69,7 +74,7 @@ theorem seqHyp_of_mod (R : Subalgebra o Ω) {r s n : ℕ}
     obtain ⟨y, hy, e⟩ := h4 a ha
     refine mem_mulLat.2 ⟨u • y + q x, om.add_mem (hos u hu _ hy) (h2 x hx), ?_⟩
     have e1 : b = i a + w • x := by rw [hxe]; abel
-    rw [e1, map_add, map_smul, e, hP, smul_add, smul_smul]
+    rw [e1, map_add (f := _), map_smul, e, hP, smul_add, smul_smul]
   · intro z hz
     obtain ⟨b, hb, y, hy, e⟩ := h6 z hz
     refine ⟨b, hb, mem_mulLat.2 ⟨u • y, hos u hu _ hy, ?_⟩⟩
@@ -92,11 +97,6 @@ theorem mem_lat {V : Submodule Ω Li} {e : Li} :
   ⟨fun h => ⟨h.1, fun u hu => by simpa [mem_range_iff] using h.2 u hu⟩,
     fun h => ⟨h.1, fun u hu => by simpa [mem_range_iff] using h.2 u hu⟩⟩
 
-theorem mem_lat' {V : Submodule Ω Li} {e : Li} :
-    e ∈ HTL.latOn D V 1 (algebraMap R Ω).range ↔ e ∈ V ∧ ∀ u ∈ D.om', u e ∈ R :=
-  ⟨fun h => ⟨h.1, fun u hu => by simpa [mem_range_iff] using h.2 u hu⟩,
-    fun h => ⟨h.1, fun u hu => by simpa [mem_range_iff] using h.2 u hu⟩⟩
-
 variable (hc : ∀ x, c (c x) = x)
   (hact : ∀ (a : 𝓞 E) (w : Module.Dual Ω Li), D.ρΩ a w = w ∘ₗ ρ (RingOfIntegers.mapRingEquiv c a))
 
@@ -112,30 +112,9 @@ theorem form_mem (σ : E →+* Ω) {e : Li} (he : e ∈ GlobalTheory.CompanionTh
 
 theorem eq_zero_of_forms [CharZero Ω] [Fact p.Prime] (σ : E →+* Ω) {e : Li} (he : e ∈ GlobalTheory.CompanionTheory.Ar.HT.eigSp ρ (σ.comp c.toRingHom))
     (h : ∀ f ∈ D.omHT σ, f e = 0) : e = 0 := by
-  have hp : ((p : Ω) ^ Rr) ≠ 0 := pow_ne_zero _ (Nat.cast_ne_zero.2 (Fact.out : p.Prime).ne_zero)
-  have h1 : ∀ u ∈ D.om, u e = 0 := by
-    intro u hu
-    have hm : ((p : R) ^ Rr) • u ∈ D.om' :=
-      Submodule.mem_sup_right ⟨u, hu, rfl⟩
-    have h2 := h _ ⟨_, hm, rfl⟩
-    have h3 : GlobalTheory.CompanionTheory.Ar.HT.eigProj D.ρΩ σ (((p : R) ^ Rr) • u) e = (((p : R) ^ Rr) • u) e :=
-      HTL.eigProj_apply D ρ hc hact σ he _
-    have h4 : (((p : R) ^ Rr) • u) e = (p : Ω) ^ Rr * u e := by
-      simp [Subalgebra.smul_def]
-    have h5 : (p : Ω) ^ Rr * u e = 0 := by
-      rw [← h4, ← h3]
-      exact h2
-    exact (mul_eq_zero.1 h5).resolve_left hp
-  have h2 : ∀ u : Module.Dual Ω Li, u e = 0 := by
-    intro u
-    have hu : u ∈ Submodule.span Ω (D.om : Set (Module.Dual Ω Li)) := by
-      rw [D.om_lat.span_eq_top]; trivial
-    induction hu using Submodule.span_induction with
-    | mem x hx => exact h1 x hx
-    | zero => simp
-    | add x y _ _ hx hy => simp [hx, hy]
-    | smul a x _ hx => simp [hx]
-  exact (Module.forall_dual_apply_eq_zero_iff Ω e).1 h2
+  refine HTL.eq_zero_of_forall_om' D D.om_lat.span_eq_top fun u hu => ?_
+  rw [← HTL.eigProj_apply D ρ hc hact σ he u]
+  exact h _ ⟨u, hu, rfl⟩
 
 theorem form_eq_zero (σ : E →+* Ω) {f : Module.Dual Ω Li} (hf : f ∈ D.omHT σ)
     (h : ∀ e ∈ GlobalTheory.CompanionTheory.Ar.HT.eigSp ρ (σ.comp c.toRingHom), f e = 0) : f = 0 := by
@@ -194,7 +173,8 @@ theorem exists_form [IsNoetherianRing R] [IsFractionRing R Ω] [CharZero Ω] [Fa
     simpa [Basis.span_apply, Basis.constr_basis, Finsupp.single_apply, ite_mul] using this
   have hψ : ∀ l : Fin s → Ω, ψ (∑ k, l k • v' k) = l ⬝ᵥ z := by
     intro l
-    simp [map_sum, hψk, dotProduct]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hψk, dotProduct]
   have hψR : ∀ e ∈ V', (∀ u ∈ D.om', u e ∈ R) → ψ e ∈ R := by
     intro e he hl
     obtain ⟨l, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun Ω).1 (hs ▸ he)
@@ -230,7 +210,7 @@ theorem exists_form [IsNoetherianRing R] [IsFractionRing R Ω] [CharZero Ω] [Fa
       map_add' := fun g g' => by
         apply Subtype.ext
         have : ev (g + g') = ev g + ev g' := huniq _ _ (hev _) (V'.add_mem (hev g) (hev g')) (fun y => by
-          rw [map_add, hevg, hevg, hevg, LinearMap.add_apply, map_add])
+          rw [map_add (f := _), hevg, hevg, hevg, LinearMap.add_apply, map_add (f := _)])
         simp [this]
       map_smul' := fun a g => by
         apply Subtype.ext
@@ -317,14 +297,16 @@ theorem seqHyp_chart : ∀ (o Ω Li : Type) [CommRing o] [Field Ω] [CharZero Ω
     · rintro ⟨f, hf, hfz⟩
       refine mem_dotDual.2 fun l hl => ?_
       have h1 : l ⬝ᵥ z = f (∑ k, l k • v' k) := by
-        simp [dotProduct, map_sum, hfz, mul_comm]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [dotProduct, map_sum, hfz, mul_comm]
       rw [h1]
       exact form_mem D ρ hc hact σ (hVv' l) ((hW' l).1 hl) hf
   have hci : ∀ f ∈ D.omHT σ, ∀ f' ∈ D.omHT σ, (∀ k, f (v' k) = f' (v' k)) → f = f' := by
     intro f hf f' hf' h
     refine sub_eq_zero.1 (form_eq_zero D ρ hc hact σ ((D.omHT σ).sub_mem hf hf') fun e he => ?_)
     obtain ⟨a, rfl⟩ := hSv' e he
-    simp [map_sum, h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, h]
   have hlift : ∀ b ∈ stdLat R (Fin N), ∃ b₀ : Fin N → R, (fun n => (b₀ n : Ω)) = b :=
     fun b hb => ⟨fun n => ⟨b n, mem_std.1 hb n⟩, rfl⟩
   let Lv := Fintype.linearCombination Ω v
@@ -371,7 +353,8 @@ theorem seqHyp_chart : ∀ (o Ω Li : Type) [CommRing o] [Field Ω] [CharZero Ω
       ext j
       simp [Finset.sum_apply, Pi.single_apply]
     conv_rhs => rw [hx]
-    simp only [Rt, Fintype.linearCombination_apply, map_sum, map_smul, hakL]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Rt, Fintype.linearCombination_apply, map_sum, map_smul, hakL]
   have hRt : ∀ x ∈ stdLat R (Fin N), Rt x ∈ W := by
     intro x hx
     simp only [Rt, Fintype.linearCombination_apply]
@@ -382,7 +365,7 @@ theorem seqHyp_chart : ∀ (o Ω Li : Type) [CommRing o] [Field Ω] [CharZero Ω
     obtain ⟨a', ha'⟩ := hSv _ ((hLat _).1 he').1
     refine ⟨a', (hWl a').2 (by rw [ha']; exact he'), hIv _ _ ?_⟩
     have e1 : Lv (Rt ((J ∘ₗ Lv) a)) = Lv (a + (p : Ω) ^ m • a') := by
-      rw [hRtL, LinearMap.comp_apply, hLv a, h, map_add, map_smul, hLv, hLv, ha']
+      rw [hRtL, LinearMap.comp_apply, hLv a, h, map_add (f := _), map_smul, hLv, hLv, ha']
     rwa [hLv, hLv] at e1
   have h4 : ∀ a ∈ W, ∃ y ∈ dotDual R W', q ((J ∘ₗ Lv) a) = (p : Ω) ^ m • y := by
     intro a ha
@@ -443,7 +426,7 @@ theorem seqHyp_chart : ∀ (o Ω Li : Type) [CommRing o] [Field Ω] [CharZero Ω
     rw [hf1 y]
     exact hEσ _ (hVv a) _
   simp only [LinearMap.comp_apply, hf2]
-  rw [hz, map_add, e1, map_mul, map_pow, map_natCast]
+  rw [hz, map_add (f := _), e1, map_mul, map_pow, map_natCast]
   rfl
 
 end GlobalTheory.CompanionTheory.Ar.Num.FamEx.SeqPure

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PZCombLimit
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMixedNumberPolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMultigradedHilbertPolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEventualPolynomial
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PZCombLimit
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMixedNumberPolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMultigradedHilbertPolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEventualPolynomial
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Swarm

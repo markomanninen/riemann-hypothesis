@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.SplTApply
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.SplTApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,12 +54,13 @@ theorem mapV_mem_spanR {m : ℕ} (Y : Fin m → Fin n → E) (s : Set (Fin m)) (
     rw [mapV_ratV]
     exact Submodule.subset_span ⟨a, ha, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [mapV_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem hR_mapV (x y : Fin n → R ⊗[F] E) :
     hR R' σ J (mapV (E := E) φ x) (mapV (E := E) φ y) = tensMap (E := E) φ (hR R σ J x y) := by
-  simp only [hR, Formalism.UG.hform, map_sum, map_mul, mapV_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR, Formalism.UG.hform, map_sum, map_mul, mapV_apply]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   have h1 : tensMap (E := E) φ (sigR R σ (x i)) = sigR R' σ (tensMap (E := E) φ (x i)) := by
     have := congrArg (fun f : R ⊗[F] E →+* R' ⊗[F] E => f (x i)) (tensMap_sigR (E := E) φ σ)
@@ -107,12 +112,14 @@ theorem mem_spanR_of_split (hbij : Function.Bijective (splT (F := F) (E := E))) 
   have hw : w = ∑ a, c a • ratV (F := F) (AF F) (Y a) := by
     rw [eq_iff_split hbij.1]
     constructor
-    · rw [← hc1, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc1, map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [mapV_smul, mapV_ratV]
       congr 1
       exact (congrArg Prod.fst (hc a)).symm
-    · rw [← hc2, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc2, map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [mapV_smul, mapV_ratV]
       congr 1

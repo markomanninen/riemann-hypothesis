@@ -1,14 +1,8 @@
-import Mathlib
+module
 
-theorem UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.aux1 :
-    ∀ (Ω : Type) [inst : Field Ω] [inst_1 : CharZero Ω], Module.IsTorsionFree ℚ Ω := by
-  intro Ω _ _
-  infer_instance
+public import Mathlib
 
-theorem UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.aux2 :
-    ∀ (L Ω : Type) [inst : Field L] [inst_1 : Field Ω] [inst_2 : Algebra L Ω], Module.IsTorsionFree L Ω := by
-  intro L Ω _ _ _
-  infer_instance
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G.{u_1, u_2} :
     (F : Type u_1) → (Ω : Type u_2) → [inst : Field F] → [inst_1 : Field Ω] → [Algebra F Ω] → Type u_2 :=
@@ -25,11 +19,6 @@ noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.Dec.{u_1,
           [inst_1 : Field Ω] → [inst_2 : Algebra F Ω] → ValuationSubring Ω → Subgroup (UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.G F Ω) :=
     fun {F : Type u_1} {Ω : Type u_2} [Field F] [Field Ω] [Algebra F Ω] (A : ValuationSubring Ω) ↦
       ValuationSubring.decompositionSubgroup F A
-
-theorem UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.aux6.{u_1} :
-    ∀ (Ω : Type u_1) [inst : Field Ω], IsDomain Ω := by
-  intro Ω _
-  infer_instance
 
 noncomputable def UpperTheory.Reformulated.B.FreeAtCompGaloisEmbedding.cycZ.{u_1, u_2} :
     (F : Type u_1) →

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GTBranch
-import Formalism.PeriodIntegrals.HwIrred
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.GTBranch
+public import Formalism.PeriodIntegrals.HwIrred
+
+@[expose] public section
 
 noncomputable section
 

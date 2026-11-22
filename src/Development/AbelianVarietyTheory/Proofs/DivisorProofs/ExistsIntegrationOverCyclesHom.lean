@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FamUnif
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodsExistAffineZeroSectionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodsOfDeRhamClassesUniqueStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FamUnif
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodsExistAffineZeroSectionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodsOfDeRhamClassesUniqueStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,12 +23,13 @@ namespace GlobalTheory.AnPer
 theorem perCl_add' {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ] {F : Fam I g Λ} (K : Charts F)
     (p q r : Λ →+ Hol F.V) (h : ∀ l, r l = p l + q l) : K.perCl r = K.perCl p + K.perCl q := by
   unfold Charts.perCl
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   refine Subtype.ext ?_
   funext T T' f
   change algebraMap (Hol F.V) T'.C (r f.deg) = algebraMap (Hol F.V) T'.C (p f.deg) + algebraMap (Hol F.V) T'.C (q f.deg)
-  rw [h, map_add]
+  rw [h]
+  exact (algebraMap (Hol F.V) T'.C).map_add _ _
 
 theorem perCl_smul' {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ] {F : Fam I g Λ} (K : Charts F)
     (a : Hol F.V) (p r : Λ →+ Hol F.V) (h : ∀ l, r l = a * p l) : K.perCl r = a • K.perCl p := by
@@ -53,7 +58,7 @@ theorem pHom_of (hE : PExist) (hU : PUniq) : PHom := by
   choose per hper using fun c : primDR A ↦ hE _ _ _ _ _ _ _ _ (fibUnif u) hB c.1
   have hadd : ∀ c c' : primDR A, per (c + c') = per c + per c' := fun c c' ↦
     hU _ _ _ _ _ _ _ _ (fibUnif u) _ _ _ (hper (c + c')) fun K r hr ↦ by
-      rw [perCl_add' K (per c) (per c') _ fun _ ↦ rfl, ← hper c K r hr, ← hper c' K r hr, ← map_add]
+      rw [perCl_add' K (per c) (per c') _ fun _ ↦ rfl, ← hper c K r hr, ← hper c' K r hr, ← map_add (f := _)]
       rfl
   have hsmul : ∀ (a : ℂ) (c : primDR A), per (a • c) =
       (AddMonoidHom.mulLeft (algebraMap ℂ (Hol (fibFam u).V) a)).comp (per c) := fun a c ↦
@@ -63,7 +68,7 @@ theorem pHom_of (hE : PExist) (hU : PUniq) : PHom := by
   let ev : Hol (fibFam u).V →ₐ[ℂ] ℂ := Hol.ev 0 trivial
   refine ⟨{ toFun x :=
               { toFun c := ev (per c x)
-                map_add' c c' := by rw [hadd, AddMonoidHom.add_apply, map_add]
+                map_add' c c' := by rw [hadd, AddMonoidHom.add_apply, map_add (f := _)]
                 map_smul' a c := by
                   rw [hsmul]
                   change ev (algebraMap ℂ _ a * per c x) = a * _
@@ -73,7 +78,7 @@ theorem pHom_of (hE : PExist) (hU : PUniq) : PHom := by
               rw [map_zero, map_zero]
             map_add' x y := LinearMap.ext fun c ↦ by
               change ev (per c (x + y)) = ev (per c x) + ev (per c y)
-              rw [map_add, map_add] }, fun c ↦ ?_⟩
+              rw [map_add (f := _), map_add (f := _)] }, fun c ↦ ?_⟩
   convert hper c using 1
   refine AddMonoidHom.ext fun x ↦ ?_
   change algebraMap ℂ (Hol (fibFam u).V) (ev (per c x)) = per c x

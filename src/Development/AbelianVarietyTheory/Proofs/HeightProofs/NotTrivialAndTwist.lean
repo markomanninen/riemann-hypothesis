@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.TorusWeightVectorIffCartanWeightVector
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.FiniteDimKStableSubspaceKFiniteLie
-import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.LogDetSt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.TorusWeightVectorIffCartanWeightVector
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.FiniteDimKStableSubspaceKFiniteLie
+public import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.LogDetSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -187,7 +191,7 @@ theorem trivial_or_twist (R : DSRep T) :
     rw [ext_of (hy.trans hx.symm) (e'.trans e.symm)]
     ext w
     have := central_scalar R hc (c := 1) (v := R.U.π x v + v) (fun h0 => hv (eq_neg_of_add_eq_zero_left h0))
-      (by rw [map_add, ← ContinuousLinearMap.mul_apply, ← map_mul, h2, map_one]; simp [add_comm]) w
+      (by rw [map_add (f := _), ← ContinuousLinearMap.mul_apply, ← map_mul, h2, map_one]; simp [add_comm]) w
     simpa using this
   change ((T.sq x : ℂˣ) : ℂ)⁻¹ • R.U.π x = 1
   ext v
@@ -201,7 +205,8 @@ theorem sum_weight_eq (R : DSRep T) {μ ν : Ix p q → ℚ} {v w : R.HK.V} (hv 
     apply TorusWt.flow_eq R (TorusWt.torX_mem _)
     have h1 : ∀ a, R.HK.act (Eab a a) v = ((μ a : ℚ) : ℂ) • v := by
       simpa [wtSub, sub_eq_zero] using hv.2.1
-    rw [TorusWt.torX_eq_sum, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [TorusWt.torX_eq_sum, map_sum, LinearMap.sum_apply]
     simp only [map_smul, LinearMap.smul_apply, h1, smul_smul, ← Finset.sum_smul, ← Finset.mul_sum]
     push_cast
     rfl

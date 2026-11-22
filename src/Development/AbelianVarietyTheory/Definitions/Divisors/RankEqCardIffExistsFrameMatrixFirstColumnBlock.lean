@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped NNReal ENNReal Pointwise
@@ -86,16 +90,9 @@ structure IsCoeffRing (ϖ : kˣ) (ψ : AddChar k Circle) (α β : kˣ →* ℂˣ
   units : ∀ x : kˣ, valuation k (x : k) = 1 → (α x : ℂ) ∈ R ∧ (β x : ℂ) ∈ R ∧ ((α / β) x : ℂ) ∈ R
   unif : ((α / β) ϖ : ℂ) ∈ R ∧ ((α / β) ϖ⁻¹ : ℂ) ∈ R
 
-example (ϖ : kˣ) (ψ : AddChar k Circle) (α β : kˣ →* ℂˣ) (e : ℕ) : IsCoeffRing ϖ ψ α β e ⊤ :=
-  ⟨trivial, fun _ _ => trivial, fun _ _ => ⟨trivial, trivial, trivial⟩, trivial, trivial⟩
-
 theorem IsRightTranslationIsometric.inv {ϖ : kˣ} {ψ : AddChar k Circle} {α β : kˣ →* ℂˣ} {e : ℕ} (h : IsRightTranslationIsometric ϖ ψ α β e) :
     IsRightTranslationIsometric ϖ ψ⁻¹ α β e :=
   { h with cond := fun x => by simpa only [AddChar.inv_apply', inv_eq_one] using h.cond x }
-
-theorem IsCoeffRing.inv {ϖ : kˣ} {ψ : AddChar k Circle} {α β : kˣ →* ℂˣ} {e : ℕ} {R : Subring ℂ}
-    (h : IsCoeffRing ϖ ψ α β e R) : IsCoeffRing ϖ ψ⁻¹ α β e R :=
-  { h with psi := fun x hx => h.psi (-x) (by rwa [mul_neg, Valuation.map_neg]) }
 
 theorem exists_isUnif : ∃ ϖ : kˣ, IsUnif ϖ := by
   obtain ⟨t, ht⟩ := ValuativeRel.valuation_surjective (uniformizer k)
@@ -134,7 +131,7 @@ theorem exists_ramified {ϖ : kˣ} (hϖ : IsUnif ϖ) :
     { toFun := fun x => Circle.toUnits (AddCircle.toCircle (ratCircle (c' (Additive.ofMul (QuotientGroup.mk x)))))
       map_one' := by simp
       map_mul' := fun x y => by
-        rw [QuotientGroup.mk_mul, ofMul_mul, map_add, map_add, AddCircle.toCircle_add, map_mul] }
+        rw [QuotientGroup.mk_mul, ofMul_mul, map_add (f := _), map_add (f := _), AddCircle.toCircle_add, map_mul] }
   refine ⟨f, fun h => hc (ratCircle_eq_zero _ (AddCircle.injective_toCircle one_ne_zero ?_)), fun x hx => ?_,
     fun x => Circle.norm_coe _⟩
   · have := congrArg Units.val (h u h1)
@@ -143,21 +140,15 @@ theorem exists_ramified {ϖ : kˣ} (hϖ : IsUnif ϖ) :
   · show Circle.toUnits (AddCircle.toCircle (ratCircle (c' (Additive.ofMul (QuotientGroup.mk x))))) = 1
     rw [(QuotientGroup.eq_one_iff x).2 hx]; simp
 
-theorem exists_localSetting : ∃ (ϖ : kˣ) (ψ : AddChar k Circle) (α : kˣ →* ℂˣ), IsRightTranslationIsometric ϖ ψ α 1 2 := by
-  obtain ⟨ϖ, hϖ⟩ := exists_isUnif (k := k)
-  obtain ⟨ψ, hψ⟩ := exists_hasConductor (k := k)
-  obtain ⟨ν, h1, h2, h3⟩ := exists_ramified hϖ
-  exact ⟨ϖ, ψ, ν, hϖ, hψ, by simpa using h1, by simpa using h3, one_le_two, h2, fun _ _ => rfl⟩
-
 section Models
 variable {A A' D : Type*} [Fintype A] [DecidableEq A] [Fintype A'] [DecidableEq A'] [Fintype D] [DecidableEq D]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 abbrev gdet (g : GL D k) : kˣ := Matrix.GeneralLinearGroup.det g
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def invT : GL D k →* GL D k where
   toFun h := ⟨(h⁻¹).valᵀ, h.valᵀ, by rw [← transpose_mul, Units.mul_inv, transpose_one],
     by rw [← transpose_mul, Units.inv_mul, transpose_one]⟩
@@ -232,6 +223,7 @@ theorem omB_mul (ν α : kˣ →* ℂˣ) (g g' : GL A' k) (h h' : GL D k) (Ψ : 
 
 theorem comp_mul_mem_SB (g : GL A k) (h : GL D k) {Φ : Matrix A D k → ℂ} (hΦ : Φ ∈ SB (Matrix A D k)) :
     (fun X => Φ (g.val * X * h.val)) ∈ SB (Matrix A D k) := by
+  borelize k
   have := (SB (Matrix A D k)).smul_mem (om 1 h g⁻¹ (fun _ => 1) 0)⁻¹ (om_mem_SB 1 h g⁻¹ hΦ)
   convert this using 1
   funext X
@@ -251,39 +243,39 @@ theorem omB_mem_SB (ν α : kˣ →* ℂˣ) (g : GL A' k) (h : GL D k) {Ψ : Mat
 section
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 def X0 (σ : A ⊕ A' ≃ D) : Matrix A D k := Matrix.of fun i j => if σ (Sum.inl i) = j then 1 else 0
 
-variable (k) in
 
+variable (k) in
 def Y0 (σ : A ⊕ A' ≃ D) : Matrix A' D k := Matrix.of fun i j => if σ (Sum.inr i) = j then 1 else 0
 
 def stdSplit {a a' d₁ d₂ : ℕ} (h : a + a' = d₁ + d₂) : Fin a ⊕ Fin a' ≃ Fin d₁ ⊕ Fin d₂ :=
   finSumFinEquiv.trans ((finCongr h).trans finSumFinEquiv.symm)
 
-omit [Fintype A] [DecidableEq A] [Fintype A'] [DecidableEq A'] in
 
+omit [Fintype A] [DecidableEq A] [Fintype A'] [DecidableEq A'] in
 theorem frameMatrixFirstColumnBlock_mul_apply {B : Type*} (σ : A ⊕ A' ≃ D) (M : Matrix D B k) (i : A) (j : B) :
-    (X0 k σ * M) i j = M (σ (Sum.inl i)) j := by simp [X0, Matrix.mul_apply]
+    (X0 (k := k) σ * M) i j = M (σ (Sum.inl i)) j := by simp [X0, Matrix.mul_apply]
+
 
 omit [Fintype A] [DecidableEq A] [Fintype A'] [DecidableEq A'] in
-
 theorem frameMatrixSecondColumnBlock_mul_apply {B : Type*} (σ : A ⊕ A' ≃ D) (M : Matrix D B k) (i : A') (j : B) :
-    (Y0 k σ * M) i j = M (σ (Sum.inr i)) j := by simp [Y0, Matrix.mul_apply]
+    (Y0 (k := k) σ * M) i j = M (σ (Sum.inr i)) j := by simp [Y0, Matrix.mul_apply]
+
 
 omit [Fintype A] [DecidableEq A] [Fintype A'] [DecidableEq A'] in
-
 theorem frameSecondBlock_mul_frameFirstBlock_transpose_eq_zero (σ : A ⊕ A' ≃ D) (h : GL D k) :
-    (Y0 k σ * h.val) * (X0 k σ * (invT h).val)ᵀ = 0 := by
+    (Y0 (k := k) σ * h.val) * (X0 (k := k) σ * (invT h).val)ᵀ = 0 := by
   rw [transpose_mul, invT_val, transpose_transpose, Matrix.mul_assoc, ← Matrix.mul_assoc h.val, Units.mul_inv,
     Matrix.one_mul]
   ext i j; simp [frameMatrixSecondColumnBlock_mul_apply, X0]
 
-omit [DecidableEq A] [DecidableEq A'] in
 
+omit [DecidableEq A] [DecidableEq A'] in
 theorem rank_eq_card_iff_exists_frameMatrixFirstColumnBlock (σ : A ⊕ A' ≃ D) (X : Matrix A D k) :
-    X.rank = Fintype.card A ↔ ∃ h : GL D k, X = X0 k σ * (invT h).val := by
+    X.rank = Fintype.card A ↔ ∃ h : GL D k, X = X0 (k := k) σ * (invT h).val := by
   have hli : X.rank = Fintype.card A ↔ LinearIndependent k X.row := by
     rw [rank_eq_finrank_span_row, linearIndependent_iff_card_eq_finrank_span, eq_comm]; rfl
   rw [hli]
@@ -320,8 +312,8 @@ theorem mem_smul_lat (c : kˣ) (Λ : Submodule 𝒪[k] (D → k)) (x : D → k) 
   refine (Submodule.mem_smul_pointwise_iff_exists x c Λ).trans ?_
   exact ⟨by rintro ⟨y, hy, rfl⟩; simpa using hy, fun h => ⟨_, h, by simp⟩⟩
 
-variable (A) in
 
+variable (A) in
 def matLat (Λ : Submodule 𝒪[k] (D → k)) : Submodule 𝒪[k] (Matrix A D k) where
   carrier := {X | ∀ i, X.row i ∈ Λ}
   add_mem' hX hY i := Λ.add_mem (hX i) (hY i)
@@ -341,8 +333,8 @@ def diagLat (c : D → kˣ) : Submodule 𝒪[k] (D → k) where
 theorem mem_diagLat {c : D → kˣ} {x : D → k} :
     x ∈ diagLat c ↔ ∀ j, valuation k (x j) ≤ valuation k (c j : k) := Iff.rfl
 
-variable (k D) in
 
+variable (k D) in
 def stdLat : Submodule 𝒪[k] (D → k) := diagLat 1
 
 theorem mem_stdLat {x : D → k} : x ∈ stdLat k D ↔ ∀ j, x j ∈ 𝒪[k] := by
@@ -361,7 +353,7 @@ theorem smul_diagLat (u : kˣ) (c : D → kˣ) : u • diagLat c = diagLat fun j
 
 variable [Fintype D]
 
-instance isLattice_diagLat (c : D → kˣ) : Submodule.IsLattice k (diagLat c) := by
+instance isLattice_diagLat (c : D → kˣ) : Submodule.IsFullLattice k (diagLat c) := by
   classical
   have hmem : ∀ j, (Pi.single j (c j : k) : D → k) ∈ diagLat c := fun j l => by
     by_cases h : l = j
@@ -369,7 +361,7 @@ instance isLattice_diagLat (c : D → kˣ) : Submodule.IsLattice k (diagLat c) :
     · simp [h]
   have hx : ∀ x : D → k, x = ∑ j, (x j / c j) • (Pi.single j (c j : k) : D → k) := fun x => by
     funext l; simp [Finset.sum_apply, Pi.single_apply]
-  refine ⟨?_, ?_⟩
+  refine { toIsLattice := Submodule.IsLattice.of_fg k ?_, span_eq_top := ?_ }
   · refine Submodule.fg_def.2 ⟨Set.range fun j => (Pi.single j (c j : k) : D → k), Set.finite_range _, le_antisymm ?_ ?_⟩
     · exact Submodule.span_le.2 (by rintro _ ⟨j, rfl⟩; exact hmem j)
     · intro x h
@@ -383,8 +375,6 @@ instance isLattice_diagLat (c : D → kˣ) : Submodule.IsLattice k (diagLat c) :
     intro x _
     rw [hx x]
     exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span (hmem j))
-
-instance isLattice_stdLat : Submodule.IsLattice k (stdLat k D) := isLattice_diagLat 1
 
 def dualLat (Λ : Submodule 𝒪[k] (D → k)) : Submodule 𝒪[k] (D → k) :=
   LinearMap.BilinForm.dualSubmodule (dotProductBilin k k) Λ
@@ -417,20 +407,6 @@ def IsPrimFrame [Fintype A] (Λ : Submodule 𝒪[k] (D → k)) (X : Matrix A D k
   X.rank = Fintype.card A ∧ X ∈ matLat A Λ ∧
     Submodule.span 𝒪[k] (Set.range X.row) = (Submodule.span k (Set.range X.row)).restrictScalars 𝒪[k] ⊓ Λ
 
-theorem isPrimitiveFrame_standardBasis [Fintype A] [DecidableEq D] {A' : Type*} [Fintype A'] (σ : A ⊕ A' ≃ D) :
-    IsPrimFrame (stdLat k D) (X0 k σ) := by
-  have hm : X0 k σ ∈ matLat A (stdLat k D) := mem_matLat_stdLat.2 fun i j => by
-    simp only [X0, of_apply]; split_ifs <;> simp
-  refine ⟨(rank_eq_card_iff_exists_frameMatrixFirstColumnBlock σ _).2 ⟨1, by simp⟩, hm, le_antisymm ?_ ?_⟩
-  · exact Submodule.span_le.2 (by rintro _ ⟨i, rfl⟩; exact ⟨Submodule.subset_span ⟨i, rfl⟩, hm i⟩)
-  · rintro x ⟨hx, hx'⟩
-    obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun k).1 hx
-    refine Submodule.sum_mem _ fun i _ => ?_
-    have h1 : c i ∈ 𝒪[k] := by
-      classical
-      simpa [X0, Finset.sum_apply, Matrix.row] using mem_stdLat.1 hx' (σ (Sum.inl i))
-    exact Submodule.smul_mem _ (⟨_, h1⟩ : 𝒪[k]) (Submodule.subset_span ⟨i, rfl⟩)
-
 variable [DecidableEq D]
 
 def glLat (Λ : Submodule 𝒪[k] (D → k)) : Subgroup (GL D k) where
@@ -438,22 +414,6 @@ def glLat (Λ : Submodule 𝒪[k] (D → k)) : Subgroup (GL D k) where
   one_mem' x := by simp
   mul_mem' {g h} hg hh x := by rw [Units.val_mul, ← vecMul_vecMul, hh, hg]
   inv_mem' {h} hh x := by rw [← hh, vecMul_vecMul, Units.inv_mul, vecMul_one]
-
-theorem mem_glLat {Λ : Submodule 𝒪[k] (D → k)} {h : GL D k} : h ∈ glLat Λ ↔ ∀ x, x ᵥ* h.val ∈ Λ ↔ x ∈ Λ := Iff.rfl
-
-theorem mem_glLat_iff_image {Λ : Submodule 𝒪[k] (D → k)} {h : GL D k} :
-    h ∈ glLat Λ ↔ (fun x => x ᵥ* h.val) '' Λ = Λ := by
-  constructor
-  · intro hh
-    ext y
-    exact ⟨by rintro ⟨x, hx, rfl⟩; exact (hh x).2 hx, fun hy => ⟨y ᵥ* (h⁻¹).val, ((glLat Λ).inv_mem hh y).2 hy, by
-      simp only [vecMul_vecMul, Units.inv_mul, vecMul_one]⟩⟩
-  · intro hh x
-    refine ⟨fun hx => ?_, fun hx => hh.le ⟨x, hx, rfl⟩⟩
-    obtain ⟨y, hy, hxy⟩ := hh.ge hx
-    have := congrArg (· ᵥ* (h⁻¹).val) hxy
-    simp only [vecMul_vecMul, Units.mul_inv, vecMul_one] at this
-    exact this ▸ hy
 
 def glLatCong (c : kˣ) (Λ : Submodule 𝒪[k] (D → k)) : Subgroup (GL D k) where
   carrier := {h | h ∈ glLat Λ ∧ ∀ x ∈ Λ, x ᵥ* (h.val - 1) ∈ c • Λ}
@@ -485,18 +445,15 @@ theorem glLat_stdLat : glLat (stdLat k D) = KO k D := by
   refine ⟨fun hh => ⟨fun x hx => (hh x).2 hx, fun x hx => ((glLat _).inv_mem hh x).2 hx⟩, fun hh x => ⟨fun hx => ?_, hh.1 x⟩⟩
   simpa only [vecMul_vecMul, Units.mul_inv, vecMul_one] using hh.2 _ hx
 
-omit [Fintype D] in
 
+omit [Fintype D] in
 def blockUnits (ϖ : kˣ) (e : ℕ) (P : Finset D) : D → kˣ := fun j => if j ∈ P then (ϖ ^ e)⁻¹ else 1
 
-omit [Fintype D] in
 
+omit [Fintype D] in
 def blockLat (ϖ : kˣ) (e : ℕ) (P : Finset D) : Submodule 𝒪[k] (D → k) := diagLat (blockUnits ϖ e P)
 
 def blockScale (ϖ : kˣ) (e : ℕ) (P : Finset D) : GL D k := diagGL (blockUnits ϖ e P)
-
-instance isLattice_blockLat (ϖ : kˣ) (e : ℕ) (P : Finset D) : Submodule.IsLattice k (blockLat ϖ e P) :=
-  isLattice_diagLat _
 
 theorem vecMul_blockScale_mem (ϖ : kˣ) (e : ℕ) (P : Finset D) (x : D → k) :
     x ᵥ* (blockScale ϖ e P).val ∈ blockLat ϖ e P ↔ x ∈ stdLat k D := by
@@ -506,13 +463,9 @@ theorem vecMul_blockScale_mem (ϖ : kˣ) (e : ℕ) (P : Finset D) (x : D → k) 
   rw [blockScale, diagGL_val, vecMul_diagonal, map_mul, Valuation.mem_integer_iff]
   exact mul_le_iff_le_one_left h0
 
-omit [Fintype D] in
 
-theorem blockLat_empty (ϖ : kˣ) (e : ℕ) : blockLat ϖ e (∅ : Finset D) = stdLat k D := by
-  unfold blockLat stdLat; congr 1
 
 omit [DecidableEq D] in
-
 def latA (ϖ : kˣ) (e : ℕ) (Λ' : Submodule 𝒪[k] (D → k)) : Submodule 𝒪[k] (D → k) := (ϖ ^ e)⁻¹ • dualLat Λ'
 
 theorem latA_blockLat (ϖ : kˣ) (e : ℕ) (P : Finset D) : latA ϖ e (blockLat ϖ e P) = blockLat ϖ e Pᶜ := by
@@ -526,8 +479,8 @@ omit [Fintype D] [DecidableEq D]
 def HasDepth (ϖ : kˣ) (e : ℕ) (Λ : Submodule 𝒪[k] (D → k)) (Φ : Matrix A D k → ℂ) : Prop :=
   (∀ X, X ∉ matLat A Λ → Φ X = 0) ∧ ∀ X, ∀ Z ∈ matLat A (ϖ ^ e • Λ), Φ (X + Z) = Φ X
 
-variable (A) in
 
+variable (A) in
 def depthSpace (ϖ : kˣ) (e : ℕ) (Λ : Submodule 𝒪[k] (D → k)) : Submodule ℂ (Matrix A D k → ℂ) where
   carrier := {Φ | HasDepth ϖ e Λ Φ}
   add_mem' h h' := ⟨fun X hX => by simp [h.1 X hX, h'.1 X hX], fun X Z hZ => by simp [h.2 X Z hZ, h'.2 X Z hZ]⟩
@@ -557,37 +510,37 @@ end Lattices
 section Fourier
 variable {A D : Type*}
 
-variable (k) in
 
+variable (k) in
 abbrev Res (e : ℕ) : Type _ := 𝒪[k] ⧸ IsLocalRing.maximalIdeal 𝒪[k] ^ e
 
-instance finite_Res (e : ℕ) : Finite (Res k e) :=
+instance finite_Res (e : ℕ) : Finite (Res (k := k) e) :=
   haveI : Finite (𝒪[k] ⧸ IsLocalRing.maximalIdeal 𝒪[k]) := inferInstanceAs (Finite 𝓀[k])
   Ideal.finite_quotient_pow (IsNoetherian.noetherian _) e
 
-instance fintype_Res (e : ℕ) : Fintype (Res k e) := Fintype.ofFinite _
+instance fintype_Res (e : ℕ) : Fintype (Res (k := k) e) := Fintype.ofFinite _
 
-def liftRes {B : Type*} {e : ℕ} (T : A → B → Res k e) : Matrix A B k :=
+def liftRes {B : Type*} {e : ℕ} (T : A → B → Res (k := k) e) : Matrix A B k :=
   Matrix.of fun i j => ((Quotient.out (T i j) : 𝒪[k]) : k)
 
-theorem liftRes_mem {B : Type*} {e : ℕ} (T : A → B → Res k e) (i : A) (j : B) : liftRes T i j ∈ 𝒪[k] :=
+theorem liftRes_mem {B : Type*} {e : ℕ} (T : A → B → Res (k := k) e) (i : A) (j : B) : liftRes T i j ∈ 𝒪[k] :=
   (Quotient.out (T i j) : 𝒪[k]).2
 
 variable [DecidableEq D]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def setCols (P : Finset D) (Y : Matrix A D k) (T : Matrix A P k) : Matrix A D k :=
   Matrix.of fun i j => if h : j ∈ P then T i ⟨j, h⟩ else Y i j
 
 variable [Fintype A]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [DecidableEq D] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [DecidableEq D] in
 def pairCols (P : Finset D) (Y : Matrix A D k) (T : Matrix A P k) : k := ∑ i, ∑ j : P, T i j * Y i j
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [DecidableEq D] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [DecidableEq D] in
 theorem pairCols_eq_trace (P : Finset D) (Y : Matrix A D k) (T : Matrix A P k) :
     pairCols P Y T = trace (T * (Y.submatrix id (Subtype.val : P → D))ᵀ) := by
   simp [pairCols, trace, Matrix.mul_apply]
@@ -598,13 +551,14 @@ def fourierInt [MeasurableSpace k] [BorelSpace k] (ψ : AddChar k Circle) (m : M
 
 variable [DecidableEq A]
 
-open Classical in
+open scoped Classical
 
+open Classical in
 def fourierSum (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (P : Finset D) :
     (Matrix A D k → ℂ) →ₗ[ℂ] (Matrix A D k → ℂ) where
   toFun Φ Y := if ∀ i, ∀ j ∈ P, ((ϖ ^ e : kˣ) : k) * Y i j ∈ 𝒪[k] then
     ((resCard k : ℂ) ^ (e * Fintype.card A * P.card))⁻¹ *
-      ∑ T : A → P → Res k e, Φ (setCols P Y (liftRes T)) * (ψ (pairCols P Y (liftRes T)) : ℂ) else 0
+      ∑ T : A → P → Res (k := k) e, Φ (setCols P Y (liftRes T)) * (ψ (pairCols P Y (liftRes T)) : ℂ) else 0
   map_add' Φ Φ' := by
     funext Y; simp only [Pi.add_apply]; split_ifs <;> simp [add_mul, Finset.sum_add_distrib, mul_add]
   map_smul' c Φ := by
@@ -613,12 +567,12 @@ def fourierSum (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (P : Finset D) :
     · simp only [mul_assoc, ← Finset.mul_sum]; ring
     · simp
 
-open Classical in
 
+open Classical in
 def invFourierSum (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (P : Finset D) :
     (Matrix A D k → ℂ) →ₗ[ℂ] (Matrix A D k → ℂ) where
   toFun Ψ T := if ∀ i, ∀ j ∈ P, T i j ∈ 𝒪[k] then
-    ∑ S : A → P → Res k e, Ψ (setCols P T ((ϖ ^ e)⁻¹ • liftRes S)) *
+    ∑ S : A → P → Res (k := k) e, Ψ (setCols P T ((ϖ ^ e)⁻¹ • liftRes S)) *
       (ψ (-pairCols P T ((ϖ ^ e)⁻¹ • liftRes S)) : ℂ) else 0
   map_add' Φ Φ' := by
     funext Y; simp only [Pi.add_apply]; split_ifs <;> simp [add_mul, Finset.sum_add_distrib]
@@ -628,53 +582,27 @@ def invFourierSum (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (P : Finset D) :
     · simp only [mul_assoc, ← Finset.mul_sum]
     · simp
 
-open Classical in
 
+open Classical in
 theorem fourierSum_apply (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (P : Finset D) (Φ : Matrix A D k → ℂ)
     (Y : Matrix A D k) : fourierSum ψ ϖ e P Φ Y = if ∀ i, ∀ j ∈ P, ((ϖ ^ e : kˣ) : k) * Y i j ∈ 𝒪[k] then
     ((resCard k : ℂ) ^ (e * Fintype.card A * P.card))⁻¹ *
-      ∑ T : A → P → Res k e, Φ (setCols P Y (liftRes T)) * (ψ (pairCols P Y (liftRes T)) : ℂ) else 0 := rfl
+      ∑ T : A → P → Res (k := k) e, Φ (setCols P Y (liftRes T)) * (ψ (pairCols P Y (liftRes T)) : ℂ) else 0 := rfl
+
 
 open Classical in
-
 theorem invFourierSum_apply (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (P : Finset D) (Ψ : Matrix A D k → ℂ)
     (T : Matrix A D k) : invFourierSum ψ ϖ e P Ψ T = if ∀ i, ∀ j ∈ P, T i j ∈ 𝒪[k] then
-    ∑ S : A → P → Res k e, Ψ (setCols P T ((ϖ ^ e)⁻¹ • liftRes S)) *
+    ∑ S : A → P → Res (k := k) e, Ψ (setCols P T ((ϖ ^ e)⁻¹ • liftRes S)) *
       (ψ (-pairCols P T ((ϖ ^ e)⁻¹ • liftRes S)) : ℂ) else 0 := rfl
 
-open Classical in
 
+open Classical in
 theorem invFourierSum_inv_apply (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (P : Finset D) (Ψ : Matrix A D k → ℂ)
     (T : Matrix A D k) : invFourierSum ψ⁻¹ ϖ e P Ψ T = if ∀ i, ∀ j ∈ P, T i j ∈ 𝒪[k] then
-    ∑ S : A → P → Res k e, Ψ (setCols P T ((ϖ ^ e)⁻¹ • liftRes S)) *
+    ∑ S : A → P → Res (k := k) e, Ψ (setCols P T ((ϖ ^ e)⁻¹ • liftRes S)) *
       (ψ (pairCols P T ((ϖ ^ e)⁻¹ • liftRes S)) : ℂ) else 0 := by
   simp only [invFourierSum_apply, AddChar.inv_apply, neg_neg]
-
-theorem invFourierSum_inv_eq_neg (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (P : Finset D) (Ψ : Matrix A D k → ℂ)
-    (T : Matrix A D k) : invFourierSum ψ⁻¹ ϖ e P Ψ T =
-      invFourierSum ψ ϖ e P Ψ (setCols P T (Matrix.of fun i j => -T i j)) := by
-  have h1 : ∀ S, setCols P (setCols P T (Matrix.of fun i j => -T i j)) S = setCols P T S := fun S => by
-    ext i j; by_cases h : j ∈ P <;> simp [setCols, h]
-  have h2 : ∀ S, -pairCols P (setCols P T (Matrix.of fun i j => -T i j)) S = pairCols P T S := fun S => by
-    simp [pairCols, setCols]
-  have h3 : (∀ i, ∀ j ∈ P, setCols P T (Matrix.of fun i j => -T i j) i j ∈ 𝒪[k]) ↔ ∀ i, ∀ j ∈ P, T i j ∈ 𝒪[k] :=
-    forall_congr' fun i => forall₂_congr fun j h => by simp [setCols, h]
-  classical
-  rw [invFourierSum_inv_apply, invFourierSum_apply]
-  simp only [h1, h2]
-  exact if_congr h3.symm rfl rfl
-
-theorem fourierSum_empty (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (Φ : Matrix A D k → ℂ) :
-    fourierSum ψ ϖ e ∅ Φ = Φ := by
-  funext Y
-  have h : ∀ T, setCols ∅ Y T = Y := fun T => by ext i j; simp [setCols]
-  simp [fourierSum_apply, h, pairCols]
-
-theorem invFourierSum_empty (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (Φ : Matrix A D k → ℂ) :
-    invFourierSum ψ ϖ e ∅ Φ = Φ := by
-  funext Y
-  have h : ∀ T, setCols ∅ Y T = Y := fun T => by ext i j; simp [setCols]
-  simp [invFourierSum_apply, h, pairCols]
 
 end Fourier
 
@@ -694,9 +622,6 @@ theorem shellSet_zero (ϖ : kˣ) : shellSet ϖ (0 : A → ℤ) = KO k A := by
   rw [mem_shellSet, h1]
   exact ⟨by rintro ⟨x, hx, y, hy, rfl⟩; simpa using mul_mem hx hy, fun h => ⟨g, h, 1, one_mem _, by simp⟩⟩
 
-def boxSet (ϖ : kˣ) (e : ℕ) : Set (GL A k) :=
-  {g | ∃ n : A → ℤ, (∀ i, 0 ≤ n i ∧ n i < e) ∧ g ∈ shellSet ϖ n}
-
 variable [MeasurableSpace k] [BorelSpace k]
 
 def shell (μ : Measure (GL A k)) (ϖ : kˣ) (ν : kˣ →* ℂˣ) (z : ℂ) (φ : Matrix A A k → ℂ) (n : A → ℤ) : ℂ :=
@@ -715,32 +640,32 @@ def smallF (μ : Measure (GL A' k)) (ν : kˣ →* ℂˣ) (Ψ : Matrix A' D k �
 
 def bigP {a : ℕ} (μ : Measure (GL (Fin a) k)) (ϖ : kˣ) (σ : Fin a ⊕ A' ≃ D) (ν β : kˣ →* ℂˣ)
     (Φ : Matrix (Fin a) D k → ℂ) (h : GL D k) : ℂ :=
-  bigF μ ϖ ν (omA ν β 1 h Φ) (X0 k σ)
+  bigF μ ϖ ν (omA ν β 1 h Φ) (X0 (k := k) σ)
 
 def smallP (μ : Measure (GL A' k)) (σ : A ⊕ A' ≃ D) (ν α : kˣ →* ℂˣ) (Ψ : Matrix A' D k → ℂ) (h : GL D k) : ℂ :=
-  (α (gdet h) : ℂ) * apow (gdet h) ((Fintype.card A' : ℂ) / 2) * smallF μ ν Ψ (Y0 k σ * h.val)
+  (α (gdet h) : ℂ) * apow (gdet h) ((Fintype.card A' : ℂ) / 2) * smallF μ ν Ψ (Y0 (k := k) σ * h.val)
+
 
 omit [BorelSpace k] in
-
 theorem shellSum_smul {a : ℕ} (μ : Measure (GL (Fin a) k)) (ϖ : kˣ) (ν : kˣ →* ℂˣ) (z c : ℂ)
     (φ : Matrix (Fin a) (Fin a) k → ℂ) : shellSum μ ϖ ν z (fun g => c * φ g) = c * shellSum μ ϖ ν z φ := by
   simp only [shellSum, shell, mul_finsum, mul_assoc, integral_const_mul]
 
-omit [BorelSpace k] [Fintype A'] [DecidableEq A'] in
 
+omit [BorelSpace k] [Fintype A'] [DecidableEq A'] in
 theorem bigZetaIntegral_eq {a : ℕ} (μ : Measure (GL (Fin a) k)) (ϖ : kˣ) (σ : Fin a ⊕ A' ≃ D) (ν β : kˣ →* ℂˣ)
     (Φ : Matrix (Fin a) D k → ℂ) (h : GL D k) : bigP μ ϖ σ ν β Φ h =
-      (β (gdet h) : ℂ) * apow (gdet h) (-(a : ℂ) / 2) * bigF μ ϖ ν Φ (X0 k σ * (invT h).val) := by
+      (β (gdet h) : ℂ) * apow (gdet h) (-(a : ℂ) / 2) * bigF μ ϖ ν Φ (X0 (k := k) σ * (invT h).val) := by
   simp [bigP, bigF, omA, ← shellSum_smul, Matrix.mul_assoc]
 
-omit [BorelSpace k] [Fintype A] [DecidableEq A] in
 
+omit [BorelSpace k] [Fintype A] [DecidableEq A] in
 theorem smallP_eq (μ : Measure (GL A' k)) (σ : A ⊕ A' ≃ D) (ν α : kˣ →* ℂˣ) (Ψ : Matrix A' D k → ℂ) (h : GL D k) :
-    smallP μ σ ν α Ψ h = smallF μ ν (omB ν α 1 h Ψ) (Y0 k σ) := by
+    smallP μ σ ν α Ψ h = smallF μ ν (omB ν α 1 h Ψ) (Y0 (k := k) σ) := by
   simp [smallP, smallF, omB, Matrix.mul_assoc, mul_assoc, integral_const_mul]
 
-omit [DecidableEq D] in
 
+omit [DecidableEq D] in
 theorem smallF_mul_left (μ : Measure (GL A' k)) [μ.IsHaarMeasure] (ν : kˣ →* ℂˣ) (Ψ : Matrix A' D k → ℂ)
     (g₀ : GL A' k) (Y : Matrix A' D k) :
     (ν (gdet g₀) : ℂ) * apow (gdet g₀) ((Fintype.card D : ℂ) / 2) * smallF μ ν Ψ (g₀.val * Y) = smallF μ ν Ψ Y := by
@@ -749,22 +674,24 @@ theorem smallF_mul_left (μ : Measure (GL A' k)) [μ.IsHaarMeasure] (ν : kˣ �
     Ψ (g.val * Y) * (ν (gdet g) : ℂ) * apow (gdet g) ((Fintype.card D : ℂ) / 2)) g₀, ← integral_const_mul]
   congr 1
   funext g
-  simp only [Units.val_mul, map_mul, apow_mul, Matrix.mul_assoc]
+  simp only [Units.val_mul, Matrix.mul_assoc, map_mul, apow_mul]
   ring
 
-open Classical in
 
+open scoped Classical
+
+open Classical in
 def fFun (μ : Measure (GL A' k)) (σ : A ⊕ A' ≃ D) (ν : kˣ →* ℂˣ) (Ψ : Matrix A' D k → ℂ) (X : Matrix A D k) : ℂ :=
-  if hX : ∃ h : GL D k, X = X0 k σ * (invT h).val then
+  if hX : ∃ h : GL D k, X = X0 (k := k) σ * (invT h).val then
     (ν (gdet hX.choose) : ℂ) * apow (gdet hX.choose) ((Fintype.card D : ℂ) / 2) *
-      smallF μ ν Ψ (Y0 k σ * hX.choose.val) else 0
+      smallF μ ν Ψ (Y0 (k := k) σ * hX.choose.val) else 0
+
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
-
-theorem exists_secondBlock_of_frameFirstBlock_eq (σ : A ⊕ A' ≃ D) {h h' : GL D k} (H : X0 k σ * (invT h').val = X0 k σ * (invT h).val) :
-    ∃ C : GL A' k, Y0 k σ * h'.val = C.val * (Y0 k σ * h.val) ∧ gdet h' = gdet C * gdet h := by
+theorem exists_secondBlock_of_frameFirstBlock_eq (σ : A ⊕ A' ≃ D) {h h' : GL D k} (H : X0 (k := k) σ * (invT h').val = X0 (k := k) σ * (invT h).val) :
+    ∃ C : GL A' k, Y0 (k := k) σ * h'.val = C.val * (Y0 (k := k) σ * h.val) ∧ gdet h' = gdet C * gdet h := by
   obtain ⟨u, rfl⟩ : ∃ u, h' = u * h := ⟨h' * h⁻¹, by simp⟩
-  have H1 : X0 k σ * u.valᵀ = X0 k σ := by
+  have H1 : X0 (k := k) σ * u.valᵀ = X0 (k := k) σ := by
     have h1 := congrArg (· * ((invT h)⁻¹).val) H
     simp only [map_mul, Units.val_mul, Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one] at h1
     rw [← invT_inv_val]
@@ -779,7 +706,7 @@ theorem exists_secondBlock_of_frameFirstBlock_eq (σ : A ⊕ A' ≃ D) {h h' : G
     rw [← det_submatrix_equiv_self σ, show u.val.submatrix σ σ =
       fromBlocks 1 (Matrix.of fun i j => u.val (σ (Sum.inl i)) (σ (Sum.inr j))) 0 C from ?_,
       det_fromBlocks_zero₂₁, det_one, one_mul]
-    ext (i | i) (j | j) <;> simp [H2, C, one_apply, eq_comm]
+    ext (i | i) (j | j) <;> simp [H2, C, Matrix.one_apply, eq_comm]
   refine ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero C (hdet ▸ u.det_ne_zero), ?_, ?_⟩
   · rw [Units.val_mul, ← Matrix.mul_assoc, ← Matrix.mul_assoc]
     congr 1
@@ -788,15 +715,15 @@ theorem exists_secondBlock_of_frameFirstBlock_eq (σ : A ⊕ A' ≃ D) {h h' : G
   · rw [gdet_mul]; congr 1; exact Units.ext hdet
 
 theorem splitTheta_fFun_frameFirstBlock_mul (μ : Measure (GL A' k)) [μ.IsHaarMeasure] (σ : A ⊕ A' ≃ D) (ν : kˣ →* ℂˣ)
-    (Ψ : Matrix A' D k → ℂ) (h : GL D k) : fFun μ σ ν Ψ (X0 k σ * (invT h).val) =
-      (ν (gdet h) : ℂ) * apow (gdet h) ((Fintype.card D : ℂ) / 2) * smallF μ ν Ψ (Y0 k σ * h.val) := by
-  have hX : ∃ h' : GL D k, X0 k σ * (invT h).val = X0 k σ * (invT h').val := ⟨h, rfl⟩
+    (Ψ : Matrix A' D k → ℂ) (h : GL D k) : fFun μ σ ν Ψ (X0 (k := k) σ * (invT h).val) =
+      (ν (gdet h) : ℂ) * apow (gdet h) ((Fintype.card D : ℂ) / 2) * smallF μ ν Ψ (Y0 (k := k) σ * h.val) := by
+  have hX : ∃ h' : GL D k, X0 (k := k) σ * (invT h).val = X0 (k := k) σ * (invT h').val := ⟨h, rfl⟩
   obtain ⟨C, h1, h2⟩ := exists_secondBlock_of_frameFirstBlock_eq σ hX.choose_spec.symm
-  rw [fFun, dif_pos hX, h1, h2, ← smallF_mul_left μ ν Ψ C (Y0 k σ * h.val), map_mul, apow_mul, Units.val_mul]
+  rw [fFun, dite_eq_left hX, h1, h2, ← smallF_mul_left μ ν Ψ C (Y0 (k := k) σ * h.val), map_mul, apow_mul, Units.val_mul]
   ring
 
-open Classical in
 
+open Classical in
 def phiA (μ : Measure (GL A' k)) (σ : A ⊕ A' ≃ D) (ν : kˣ →* ℂˣ) (ϖ : kˣ) (e : ℕ) (Λ' : Submodule 𝒪[k] (D → k))
     (Ψ : Matrix A' D k → ℂ) (X : Matrix A D k) : ℂ :=
   if IsPrimFrame (latA ϖ e Λ') X then fFun μ σ ν Ψ X else 0
@@ -805,43 +732,19 @@ def squareFlip (μ : Measure (GL A' k)) (σ : A ⊕ A' ≃ D) (ψ : AddChar k Ci
     (P : Finset D) (ΦB : Matrix A' D k → ℂ) : Matrix A D k → ℂ :=
   invFourierSum ψ⁻¹ ϖ e Pᶜ (phiA μ σ ν ϖ e (blockLat ϖ e P) (fourierSum ψ ϖ e P ΦB))
 
-theorem shell_zero_example (ϖ : kˣ) (ν : kˣ →* ℂˣ) (z : ℂ) (φ : Matrix A A k → ℂ)
-    (hφ : ∀ g ∈ KO k A, φ g.val * (ν (gdet g) : ℂ) = 1) : shell (haarVol (KO k A)) ϖ ν z φ 0 = 1 := by
-  rw [shell, shellSet_zero, setIntegral_congr_fun isOpen_KO.measurableSet (g := fun _ => (1 : ℂ))]
-  · simp [Measure.real, haarVol_self isOpen_KO le_rfl]
-  · intro g hg
-    simp only [hφ g hg, apow_of_valuation_eq_one (valuation_gdet_of_mem_KO hg), one_mul]
-
-theorem smallF_of_isEmpty [IsEmpty A'] (ν : kˣ →* ℂˣ) (Ψ : Matrix A' D k → ℂ) (Y : Matrix A' D k) :
-    smallF (haarVol (KO k A')) ν Ψ Y = Ψ 0 := by
-  have h1 : (KO k A' : Set (GL A' k)) = Set.univ :=
-    Set.eq_univ_of_forall fun g => Subsingleton.elim 1 g ▸ one_mem _
-  have h2 := haarVol_self (k := k) (n := A') isOpen_KO le_rfl
-  rw [h1] at h2
-  have h3 : ∀ g : GL A' k, gdet g = 1 := fun g => Subsingleton.elim 1 g ▸ map_one _
-  have h4 : ∀ g : GL A' k, g.val * Y = 0 := fun g => by ext i; exact isEmptyElim i
-  simp [smallF, h3, h4, Measure.real, h2]
-
-theorem schwartzDatum_standardBasis_of_isEmpty [IsEmpty A'] (σ : A ⊕ A' ≃ D) (ν : kˣ →* ℂˣ) (ϖ : kˣ) (e : ℕ) (Ψ : Matrix A' D k → ℂ) :
-    phiA (haarVol (KO k A')) σ ν ϖ e (blockLat ϖ e Finset.univ) Ψ (X0 k σ) = Ψ 0 := by
-  have := splitTheta_fFun_frameFirstBlock_mul (haarVol (KO k A')) σ ν Ψ 1
-  rw [phiA, latA_blockLat, Finset.compl_univ, blockLat_empty, if_pos (isPrimitiveFrame_standardBasis σ)]
-  simpa [smallF_of_isEmpty] using this
-
 end Maps
 
 inductive Assignment
   | one
   | two
-  deriving DecidableEq
 
 def Assignment.block (s : Assignment) (D₁ D₂ : Type*) [Fintype D₁] [Fintype D₂] : Finset (D₁ ⊕ D₂) :=
   match s with
   | .one => Finset.univ.filter fun j => j.isLeft
   | .two => Finset.univ.filter fun j => j.isRight
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def Assignment.read (s : Assignment) {n : Type*} [Fintype n] [DecidableEq n] : GL n k →* GL n k :=
   match s with
   | .one => invT
@@ -854,14 +757,6 @@ theorem mem_blockLat_two (ϖ : kˣ) (e : ℕ) (x : D₁ ⊕ D₂ → k) :
     x ∈ blockLat ϖ e (Assignment.two.block D₁ D₂) ↔ (∀ j, valuation k (x (.inl j)) ≤ 1) ∧
       ∀ j, valuation k (x (.inr j)) ≤ valuation k (((ϖ ^ e)⁻¹ : kˣ) : k) := by
   simp [blockLat, mem_diagLat, blockUnits, Assignment.block]
-
-theorem mem_blockLat_one (ϖ : kˣ) (e : ℕ) (x : D₁ ⊕ D₂ → k) :
-    x ∈ blockLat ϖ e (Assignment.one.block D₁ D₂) ↔
-      (∀ j, valuation k (x (.inl j)) ≤ valuation k (((ϖ ^ e)⁻¹ : kˣ) : k)) ∧ ∀ j, valuation k (x (.inr j)) ≤ 1 := by
-  simp [blockLat, mem_diagLat, blockUnits, Assignment.block]
-
-theorem compl_block_two : (Assignment.two.block D₁ D₂)ᶜ = Assignment.one.block D₁ D₂ := by
-  ext (j | j) <;> simp [Assignment.block]
 
 theorem compl_block_one : (Assignment.one.block D₁ D₂)ᶜ = Assignment.two.block D₁ D₂ := by
   ext (j | j) <;> simp [Assignment.block]
@@ -882,10 +777,6 @@ inductive Edge
   | .theta i j => (i, j)
   | .ex i j => (i + 1, j)
 
-def Edge.InGrid (m : ℕ) : Edge → Prop
-  | .theta i j => i ≤ m ∧ j < m
-  | .ex i j => i < m ∧ j ≤ m
-
 def IsPath (γ : List Edge) : Prop := γ.IsChain fun e e' => e.tgt = e'.src
 
 def innerVertices (γ : List Edge) : List (ℕ × ℕ) := γ.tail.map Edge.src
@@ -905,15 +796,8 @@ def givenPath (m : ℕ) : List Edge := (List.range m).reverse.map (Edge.theta 0)
 def oppositePath (m : ℕ) : List Edge :=
   (List.range m).map (Edge.ex · m) ++ (List.range m).reverse.map (Edge.theta m)
 
-example : IsPath (givenPath 2) ∧ innerVertices (givenPath 2) = [(0, 1), (0, 0), (1, 0)] := by
-  unfold IsPath; decide
-
-example : CanFlip (givenPath 2) [(0, 0), (0, 1), (1, 0), (1, 1)] ∧
-    [(0, 0), (0, 1), (1, 0), (1, 1)].foldl (fun γ x => flipPath x.1 x.2 γ) (givenPath 2) = oppositePath 2 := by
-  refine ⟨.cons ?_ (.cons ?_ (.cons ?_ (.cons ?_ (.nil _)))), by decide⟩ <;> unfold PassesThrough <;> decide
 
 variable (k) in
-
 structure Grid where
 
   m : ℕ
@@ -931,7 +815,7 @@ structure Grid where
   eta : kˣ →* ℂˣ
 
 namespace Grid
-variable (G : Grid k)
+variable (G : Grid (k := k))
 
 section
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -955,14 +839,6 @@ def nu (i j : ℕ) : kˣ →* ℂˣ := G.mu (j + 1) / G.chi (G.m - i)
 
 theorem alpha_div_beta (i j : ℕ) : G.alpha i j / G.beta i j = G.nu i j := mul_div_mul_right_eq_div _ _ _
 
-theorem kappa_inner (i j : ℕ) :
-    G.kappa (.ex i j) (i, j) / G.kappa (.theta i j) (i, j) = (G.nu i j)⁻¹ := by
-  simp [kappa, blockChar, nu]
-
-theorem kappa_outer (i j : ℕ) :
-    G.kappa (.theta (i + 1) j) (i + 1, j + 1) / G.kappa (.ex i (j + 1)) (i + 1, j + 1) = G.nu i j := by
-  simp [kappa, blockChar, nu]
-
 abbrev Args : Type _ := ∀ e : Edge, Matrix (Fin (G.rank e.tgt)) (Fin (G.rank e.src)) k
 
 abbrev VertexGroup : Type _ := ∀ X : ℕ × ℕ, GL (Fin (G.rank X)) k
@@ -977,24 +853,12 @@ structure IsGood (ϖ : kˣ) (ψ : AddChar k Circle) (e : ℕ) : Prop where
   eta : IsUnram G.eta
   square : ∀ i < G.m, ∀ j < G.m, IsRightTranslationIsometric ϖ ψ (G.alpha i j) (G.beta i j) e
 
-theorem exists_isGood (m r t s : ℕ) (ht : Odd t) (hs : Odd s) : ∃ (G : Grid k) (ϖ : kˣ) (ψ : AddChar k Circle),
-    G.m = m ∧ G.r = r ∧ G.t = t ∧ G.s = s ∧ G.IsGood ϖ ψ 2 := by
-  obtain ⟨ϖ, ψ, α, h⟩ := exists_localSetting (k := k)
-  exact ⟨⟨m, r, t, s, fun _ => α, fun _ => 1, 1⟩, ϖ, ψ, rfl, rfl, rfl, rfl, ht, hs, fun _ _ => rfl,
-    fun i _ j _ => by simpa [alpha, beta] using h⟩
-
 def edgeFactor (s : Assignment) (g : G.VertexGroup) (e : Edge) : ℂ :=
   (G.kappa e e.src (gdet (g e.src)) : ℂ) * (((G.kappa e e.tgt (gdet (g e.tgt)))⁻¹ : ℂˣ) : ℂ) *
     apow (gdet (s.read (g e.src))) ((G.rank e.tgt : ℂ) / 2) * apow (gdet (s.read (g e.tgt))) (-(G.rank e.src : ℂ) / 2)
 
 def pathAct (s : Assignment) (γ : List Edge) (g : G.VertexGroup) (T : G.Args → ℂ) : G.Args → ℂ := fun x =>
   (γ.map (G.edgeFactor s g)).prod * T (G.moveArgs s g x)
-
-theorem pathAct_one (s : Assignment) (γ : List Edge) (T : G.Args → ℂ) : G.pathAct s γ 1 T = T := by
-  funext x
-  have h1 : G.edgeFactor s 1 = fun _ => 1 := by funext e; simp [edgeFactor]
-  have h2 : G.moveArgs s 1 x = x := by funext e; simp [moveArgs]
-  simp [pathAct, h1, h2]
 
 theorem pathAct_mul (s : Assignment) (γ : List Edge) (g g' : G.VertexGroup) (T : G.Args → ℂ) :
     G.pathAct s γ (g * g') T = G.pathAct s γ g (G.pathAct s γ g' T) := by
@@ -1012,8 +876,8 @@ def IsTensor (ϖ : kˣ) (e : ℕ) (γ : List Edge) (T : G.Args → ℂ) : Prop :
   DependsOn T {b | b ∈ γ} ∧ (∀ x : G.Args, ∀ b ∈ γ, x b ∉ matLat _ (stdLat k _) → T x = 0) ∧
     ∀ x z : G.Args, (∀ b, z b ∈ matLat _ (ϖ ^ e • stdLat k _)) → T (x + z) = T x
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def lines₂ (γ : List Edge) (φ : ∀ b : Edge, Matrix (Fin (G.rank b.tgt)) (Fin (G.rank b.src)) k → ℂ) :
     G.Args → ℂ := fun x => (γ.map fun b => φ b (x b)).prod
 
@@ -1025,8 +889,8 @@ theorem isTensor_pureTensor (ϖ : kˣ) (e : ℕ) (γ : List Edge)
   · exact List.prod_eq_zero (List.mem_map.2 ⟨b, hb, (hφ b hb).1 _ hx⟩)
   · exact congrArg List.prod (List.map_congr_left fun b hb => (hφ b hb).2 _ _ (hz b))
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 abbrev Level : Type _ := ∀ X : ℕ × ℕ, Subgroup (GL (Fin (G.rank X)) k)
 
 def IsLevel (γ : List Edge) (J : G.Level) : Prop :=
@@ -1056,8 +920,8 @@ def flipTensor (s : Assignment) (ψ : AddChar k Circle) (ϖ : kˣ) (e : ℕ) (i 
   squareFlip (haarVol ((J (i, j)).map invT)) (stdSplit (G.rank_square i j)) ψ (G.nu i j) ϖ e
     (s.block _ _) (G.sliceB i j T x) (G.joinA i j x)
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 structure PiLocalization₂ where
 
   path : List Edge
@@ -1068,8 +932,8 @@ structure PiLocalization₂ where
 
 variable {G}
 
-omit [MeasurableSpace k] [BorelSpace k] in
 
+omit [MeasurableSpace k] [BorelSpace k] in
 structure PiLocalization₂.IsAdmissible (S : G.PiLocalization₂) (s : Assignment) (ϖ : kˣ) (e : ℕ) : Prop where
   path : IsPath S.path
   level : G.IsLevel S.path S.level
@@ -1100,7 +964,8 @@ theorem isOpen_detCong (c : kˣ) (n : Type*) [Fintype n] [DecidableEq n] : IsOpe
 theorem mul_mul_mem_matLat_iff {m n : Type*} [Fintype m] [DecidableEq m] [Fintype n] [DecidableEq n]
     {g : GL m k} {h : GL n k} (hg : g ∈ KO k m) (hh : h ∈ KO k n) (X : Matrix m n k) :
     g.val * X * h.val ∈ matLat m (stdLat k n) ↔ X ∈ matLat m (stdLat k n) := by
-  have key : ∀ {g : GL m k} {h : GL n k}, g ∈ KO k m → h ∈ KO k n → ∀ X ∈ matLat m (stdLat k n),
+  have key : ∀ {g : GL m k} {h : GL n k}, g ∈ KO k m → h ∈ KO k n →
+      ∀ (X : Matrix m n k), X ∈ matLat m (stdLat k n) →
       g.val * X * h.val ∈ matLat m (stdLat k n) := fun hg hh X hX =>
     mem_matLat_stdLat.2 fun i j => Subring.sum_mem _ fun l _ => mul_mem (Subring.sum_mem _ fun l' _ =>
       mul_mem (((mem_KO_iff _).1 hg).1 _ _) (mem_matLat_stdLat.1 hX _ _)) (((mem_KO_iff _).1 hh).1 _ _)
@@ -1114,47 +979,6 @@ theorem Assignment.read_mem_KO (s : Assignment) {n : Type*} [Fintype n] [Decidab
   cases s
   · exact invT_mem_KO hg
   · exact hg
-
-theorem Grid.IsGood.condLE_kappa {G : Grid k} {ϖ : kˣ} {ψ : AddChar k Circle} {e : ℕ} (h : G.IsGood ϖ ψ e)
-    {b : Edge} (hb : b.InGrid G.m) (X : ℕ × ℕ) : CondLE ϖ e (G.kappa b X) := by
-  intro x hx
-  have h1 : G.eta x = 1 := h.eta x hx.1
-  cases b with
-  | theta i j =>
-    have := (h.square 0 (by have := hb.2; omega) j hb.2).condα x hx
-    simpa [Grid.kappa, Grid.blockChar, Grid.alpha, h1] using this
-  | ex i j =>
-    have := (h.square i hb.1 0 (by have := hb.1; omega)).condβ x hx
-    simpa [Grid.kappa, Grid.blockChar, Grid.beta, h1] using this
-
-theorem Grid.IsGood.exists_isAdmissible {G : Grid k} {ϖ : kˣ} {ψ : AddChar k Circle} {e : ℕ} (h : G.IsGood ϖ ψ e)
-    (hϖ : IsUnif ϖ) (s : Assignment) {γ : List Edge} (hγ : IsPath γ) (hm : ∀ b ∈ γ, b.InGrid G.m) :
-    ∃ S : G.PiLocalization₂, S.path = γ ∧ S.IsAdmissible s ϖ e ∧ S.tensor 0 = 1 := by
-  refine ⟨⟨γ, fun X => detCong (ϖ ^ e) _, G.lines₂ γ fun b =>
-      Set.indicator (SetLike.coe (matLat (Fin (G.rank b.tgt)) (stdLat k (Fin (G.rank b.src))))) 1⟩, rfl,
-    ⟨hγ, fun X _ => ⟨isOpen_detCong _ _, inf_le_left⟩,
-      G.isTensor_pureTensor ϖ e γ _ fun b _ => hasDepth_indicator hϖ e _, fun X _ u hu => ?_⟩, ?_⟩
-  · have hg : ∀ Y, (Pi.mulSingle X u : G.VertexGroup) Y ∈ detCong (ϖ ^ e) _ := fun Y => by
-      by_cases hY : Y = X
-      · subst hY; simpa using hu
-      · simp [hY, one_mem]
-    generalize (Pi.mulSingle X u : G.VertexGroup) = g at hg
-    funext x
-    have h1 : (γ.map (G.edgeFactor s g)).prod = 1 := List.prod_eq_one fun c hc => by
-      obtain ⟨b, hb, rfl⟩ := List.mem_map.1 hc
-      simp only [Grid.edgeFactor, h.condLE_kappa (hm b hb) _ _ (hg _).2,
-        apow_of_valuation_eq_one (valuation_gdet_of_mem_KO (s.read_mem_KO (hg _).1))]
-      simp
-    simp only [Grid.pathAct, h1, one_mul, Grid.lines₂]
-    refine congrArg List.prod (List.map_congr_left fun b _ => ?_)
-    have h2 := mul_mul_mem_matLat_iff (inv_mem (s.read_mem_KO (hg b.tgt).1)) (s.read_mem_KO (hg b.src).1) (x b)
-    simp only [Grid.moveArgs]
-    by_cases hx : x b ∈ matLat _ (stdLat k _)
-    · rw [Set.indicator_of_mem hx, Set.indicator_of_mem (h2.2 hx)]; rfl
-    · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem (fun H => hx (h2.1 H))]
-  · refine List.prod_eq_one fun c hc => ?_
-    obtain ⟨b, _, rfl⟩ := List.mem_map.1 hc
-    exact Set.indicator_of_mem (zero_mem (matLat _ (stdLat k _))) _
 
 theorem isOpen_map_invT {n : Type*} [Fintype n] [DecidableEq n] {J : Subgroup (GL n k)}
     (ho : IsOpen (J : Set (GL n k))) (hK : J ≤ KO k n) :

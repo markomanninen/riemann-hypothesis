@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.ProfCoh
 
@@ -39,18 +43,9 @@ theorem isDiscreteRep_iff (A : Rep.{w} k G) :
     IsDiscreteRep A ↔ ∀ a : A, IsOpen (stabilizer A.ρ a : Set G) :=
   ⟨fun h => h.isOpen_stabilizer, fun h => ⟨h⟩⟩
 
-variable (k G) in
 
+variable (k G) in
 def isDiscreteRep : ObjectProperty (Rep.{w} k G) := fun A => IsDiscreteRep A
 
-@[simp]
-theorem isDiscreteRep_apply (A : Rep.{w} k G) : isDiscreteRep k G A ↔ IsDiscreteRep A :=
-  Iff.rfl
-
-variable (k G) in
-
-abbrev DiscreteRep := (isDiscreteRep.{w} k G).FullSubcategory
-
-instance (A : DiscreteRep.{w} k G) : IsDiscreteRep A.obj := A.property
 
 end GroundTheory.ProfCoh

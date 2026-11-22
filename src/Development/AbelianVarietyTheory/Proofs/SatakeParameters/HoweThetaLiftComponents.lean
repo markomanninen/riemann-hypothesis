@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HeckeSplitOne
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.ThetaGramMatrix
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.ThetaLiftUniqueness
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HeckeSplitOne
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.ThetaGramMatrix
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.ThetaLiftUniqueness
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,14 +58,5 @@ theorem eachRowHasThetaLift_of_howe :
     fun k hk y hy => ?_
   by_contra hne
   exact hk (hhowe i σ k P ⟨g, hg, y, hy, hne⟩ ⟨f, hf, F, hF, hFf⟩)
-
-def HasComponent {R : Ranks} {H : Host R} {what₂ : Rows.Data R} (N : NData R H what₂) (A : NAut N)
-    (i : N.Loc) (σ : what₂.FT) (P : A.AV i) : Prop :=
-  ∃ f ∈ what₂.isot (N.j i) σ,
-    what₂.thetaT (N.mu i) (N.j i) f ∉ ⨆ P', ⨆ _ : P' ≠ P, A.typeV i P'
-
-def HoweComponent {R : Ranks} {H : Host R} {what₂ : Rows.Data R} (N : NData R H what₂) (A : NAut N)
-    (i : N.Loc) : Prop :=
-  ∀ σ P P', HasComponent N A i σ P → HasComponent N A i σ P' → P = P'
 
 end GlobalTheory.Proof.HoweThetaLiftComponents

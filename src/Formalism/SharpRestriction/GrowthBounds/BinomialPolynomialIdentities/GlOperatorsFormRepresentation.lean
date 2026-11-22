@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LowerSetTypesSpan
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.IntegralJointTypeSum
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LowerSetTypesSpan
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.IntegralJointTypeSum
+
+@[expose] public section
 
 noncomputable section
 

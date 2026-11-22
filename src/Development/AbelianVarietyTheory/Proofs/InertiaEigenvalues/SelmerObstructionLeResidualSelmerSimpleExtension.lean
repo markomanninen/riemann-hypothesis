@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalConditionAboveLCoeffMapFunctorial
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalConditionAboveLSaturatedOfSelmerSetup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelmerFunctorLeftExactTorsionCoefficients
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RepOnEqOfEqOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GlobalEulerChar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptySubquotEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.H0TwDualEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelAllLeInf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfComm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalDegreeSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalConditionAboveLCoeffMapFunctorial
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalConditionAboveLSaturatedOfSelmerSetup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelmerFunctorLeftExactTorsionCoefficients
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RepOnEqOfEqOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GlobalEulerChar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptySubquotEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.H0TwDualEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelAllLeInf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfComm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalDegreeSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,12 +99,12 @@ theorem exists_isConn [ContinuousMul Γ] (x : H1 ρ'') : ∃ k, IsConn ρ' ρ ρ
   have h1 : ∀ p, u (Function.invFun u (d1 ρ (s ∘ z.1) p)) = d1 ρ (s ∘ z.1) p := fun p => by
     refine Function.invFun_eq ((hex _).1 ?_)
     obtain ⟨g, h⟩ := p
-    simp only [d1_apply, map_add, map_sub, hw, Function.comp_apply, hs, z.2.2 g h]
+    simp only [d1_apply, map_add (f := _), map_sub, hw, Function.comp_apply, hs, z.2.2 g h]
     abel
   refine ⟨_, z, s ∘ z.1, ⟨fun p => Function.invFun u (d1 ρ (s ∘ z.1) p),
     (continuous_of_discreteTopology (f := Function.invFun u)).comp hZ.1, fun g h k => hinj ?_⟩, hcont, rfl,
     fun g => hs _, h1, rfl⟩
-  rw [map_sub, map_add, map_sub, hu, h1, h1, h1, h1, map_zero]
+  rw [map_sub, map_add (f := _), map_sub, hu, h1, h1, h1, h1, map_zero]
   exact hZ.2 g h k
 
 include hu hex in
@@ -112,7 +116,7 @@ theorem IsConn.lift {x : H1 ρ''} (h : IsConn ρ' ρ ρ'' u w x 0) :
     hc.sub ((continuous_of_discreteTopology (f := u)).comp hc'), fun g h => ?_⟩, ?_⟩
   · have e1 := h2 (g, h)
     have e2 : t.1 (g, h) = _ := (congrFun e (g, h)).symm
-    rw [e2, d1_apply, d1_apply, map_add, map_sub, hu] at e1
+    rw [e2, d1_apply, d1_apply, map_add (f := _), map_sub, hu] at e1
     change c (g * h) - u (c' (g * h)) = c g - u (c' g) + ρ g (c h - u (c' h))
     rw [map_sub]
     rw [← sub_eq_zero] at e1 ⊢
@@ -140,24 +144,24 @@ theorem IsConn.eq_zero {a : H1 ρ} {k : H2 ρ'}
   funext ⟨g, h⟩
   refine hinj ?_
   change _ = u (t.1 (g, h))
-  rw [h2, d1_apply, d1_apply, map_add, map_sub, hu, h3, h3, h3, a.2.2, hb.2, map_sub, map_sub]
+  rw [h2, d1_apply, d1_apply, map_add (f := _), map_sub, hu, h3, h3, h3, a.2.2, hb.2, map_sub, map_sub]
   abel
 
 variable {I : Type} {D : I → Type} [∀ i, Group (D i)] [∀ i, TopologicalSpace (D i)]
   (φ : ∀ i, D i →* Γ) (hφ : ∀ i, Continuous (φ i))
 
-variable (ρ') in
 
+variable (ρ') in
 def res1 : H1 ρ' →ₗ[R] ∀ i, H1 (ρ'.comp (φ i)) := LinearMap.pi fun i => resH1 ρ' (φ i) (hφ i)
 
-variable (ρ') in
 
+variable (ρ') in
 abbrev Cok (L' : LocCond ρ' φ) : Type :=
   ((∀ i, H1 (ρ'.comp (φ i))) ⧸ Submodule.pi Set.univ L') ⧸
     LinearMap.range ((Submodule.pi Set.univ L').mkQ ∘ₗ res1 ρ' φ hφ)
 
-include hinj hex hsurj hc in
 
+include hinj hex hsurj hc in
 theorem exists_obstruction [ContinuousMul Γ] (L' : LocCond ρ' φ) (L : LocCond ρ φ) (L'' : LocCond ρ'' φ)
     (hL : ∀ i, ∀ x ∈ L' i, mapH1 (ρ'.comp (φ i)) (ρ.comp (φ i)) u continuous_of_discreteTopology
       (fun g m => hu (φ i g) m) x ∈ L i)
@@ -244,17 +248,17 @@ end Conn
 
 section Count
 
-variable {F Ω : Type} [Field F] [NumberField F] [IsTotallyComplex F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
+variable {F Ω : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
   (l : ℕ) [Fact l.Prime] {Λ M : Type} [CommRing Λ] [AddCommGroup M] [Module Λ M] [TopologicalSpace M] [DiscreteTopology M]
   (S : Finset (HeightOneSpectrum (𝓞 F))) (A : Formalism.GaloisCohomology.Places F Ω)
 
-variable (F) in
 
+variable (F) in
 abbrev Ab : Type := {v : HeightOneSpectrum (𝓞 F) // ((l : ℕ) : 𝓞 F) ∈ v.asIdeal}
 
 abbrev locAb (v : Ab F l) : Dec (F := F) (A.1 v.1) →* GS Ω (S : Set (HeightOneSpectrum (𝓞 F))) := locHom _ (A.1 v.1)
 
-omit [IsTotallyComplex F] [IsAlgClosure F Ω] [Fact l.Prime] in
+omit [_root_.NumberField.IsTotallyComplex F] [IsAlgClosure F Ω] [Fact l.Prime] in
 theorem continuous_locAb (v : Ab F l) : Continuous (locAb l S A v) := continuous_locHom _ _
 
 theorem card_sel (hPT : PoitouTateTotallyComplex) (hLF : LocalFiniteness) (hLE : LocalEulerChar)
@@ -298,8 +302,8 @@ theorem ine_le_NS {S : Set (HeightOneSpectrum (𝓞 F))} {v : HeightOneSpectrum 
   simp only [Set.mem_iUnion]
   exact ⟨v, hv, A, hA, hσ⟩
 
-omit [IsAlgClosure F Ω] in
 
+omit [IsAlgClosure F Ω] in
 theorem exists_descent (S : Set (HeightOneSpectrum (𝓞 F))) (ρ : Representation Λ (G F Ω) M) (hc : ContAction ρ)
     (h : ∀ v ∉ S, ∀ A : ValuationSubring Ω, IsPlaceOver A v → ∀ σ ∈ Ine (F := F) A, ∀ m, ρ σ m = m) :
     ∃ ρS : Representation Λ (GS Ω S) M, ContAction ρS ∧ ρS.comp (toGS Ω S) = ρ := by
@@ -368,20 +372,20 @@ section General
 
 open Formalism.GaloisCohomology
 
-variable {F Ω : Type} [Field F] [NumberField F] [IsTotallyComplex F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
+variable {F Ω : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
   (l : ℕ) [Fact l.Prime] {Λ M' M M'' : Type} [CommRing Λ]
   [AddCommGroup M'] [Module Λ M'] [TopologicalSpace M'] [DiscreteTopology M']
   [AddCommGroup M] [Module Λ M] [TopologicalSpace M] [DiscreteTopology M]
   [AddCommGroup M''] [Module Λ M''] [TopologicalSpace M''] [DiscreteTopology M'']
 
-omit [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex F] in
 theorem finite_above : (placesOver F l).Finite := by
   have h0 : Ideal.span {((l : ℕ) : 𝓞 F)} ≠ ⊥ := by
     rw [Ne, Ideal.span_singleton_eq_bot]
     exact_mod_cast (Fact.out : l.Prime).ne_zero
   exact (Ideal.finite_factors h0).subset fun v hv => Ideal.dvd_span_singleton.2 hv
 
-omit [IsTotallyComplex F] [Fact l.Prime] in
+omit [_root_.NumberField.IsTotallyComplex F] [Fact l.Prime] in
 theorem finprod_above [Fintype (Ab F l)] (f : HeightOneSpectrum (𝓞 F) → ℕ) :
     ∏ᶠ v ∈ placesOver F l, f v = ∏ v : Ab F l, f v.1 := by
   rw [← finprod_eq_prod_of_fintype]

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SetUnipotentTranslate
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LFunctionPositiveConductorFourEight
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HostSzOfSizes
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.XLeZBaseOfPowLeN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SetUnipotentTranslate
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LFunctionPositiveConductorFourEight
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HostSzOfSizes
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.XLeZBaseOfPowLeN
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.DqStmt
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.DqStmt
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
+
+@[expose] public section
 
 open Complex GlobalTheory.CompanionTheory.OM.SchDiff
 open scoped ContDiff

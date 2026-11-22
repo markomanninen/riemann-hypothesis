@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementT
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementT
+
+@[expose] public section
 
 open PowerSeries
 
@@ -130,10 +134,6 @@ theorem translate_power : TransPower := by
     (fun j => C (constantCoeff (G t) ^ 2) * (C (px W (π t)) - xT W (π (j • t)))) (C ε) X k
     (by simpa using h0) hne hrec k le_rfl
   simpa using h
-
-theorem parallelogram_sum : ParSum := by
-  intro A _ _ M h Q hQ
-  exact Power.sum_zero M Q (M Q) fun P => h P Q hQ
 
 theorem parallelogram_sum_two : ParSumTwo := by
   intro A _ _ M₀ m h

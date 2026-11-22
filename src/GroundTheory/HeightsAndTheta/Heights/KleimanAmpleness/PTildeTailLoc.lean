@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeTailCone
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeTailCone
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -107,7 +112,7 @@ theorem locCone_degLoc (c : ℤ) (I : StdCell N) (hI : I.1 ⊆ support x) {z : L
     exact (M.eq_coneSingle_of_mem_conePiece hm).symm
   · exact ⟨0, zero_mem _, by rw [map_zero, map_zero]⟩
   · rintro _ _ _ _ ⟨v, hv, hzv⟩ ⟨v', hv', hzv'⟩
-    exact ⟨v + v', add_mem hv hv', by rw [map_add, map_add, hzv, hzv']⟩
+    exact ⟨v + v', add_mem hv hv', by rw [map_add (f := _), map_add (f := _), hzv, hzv']⟩
   · rintro s _ _ ⟨v, hv, hzv⟩
     exact ⟨s • v, (M.tilde c _).smul_of_tower_mem s hv, by rw [LinearMap.map_smul_of_tower, hzv, map_smul]⟩
 
@@ -153,7 +158,7 @@ theorem exists_locCone_eq (c : ℤ) (I : StdCell N) (hI : I.1 ⊆ support x) {y 
     rw [smul_coneSingle hse, smul_eq_mul, mul_inv_cancel_left₀ hs0, show c + (e : ℤ) = a by omega]
   · exact ⟨0, zero_mem _, by rw [map_zero, map_zero]⟩
   · rintro _ _ _ _ ⟨z, hz, hzy⟩ ⟨z', hz', hzy'⟩
-    exact ⟨z + z', add_mem hz hz', by rw [map_add, map_add, hzy, hzy']⟩
+    exact ⟨z + z', add_mem hz hz', by rw [map_add (f := _), map_add (f := _), hzy, hzy']⟩
   · rintro t _ _ ⟨z, hz, hzy⟩
     exact ⟨t • z, Submodule.smul_mem _ t hz, by rw [LinearMap.map_smul_of_tower, hzy, map_smul]⟩
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemIntRing
-open IsDedekindDomain GlobalTheory.TauNorm Polynomial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+
+@[expose] public section
+
+open IsDedekindDomain Polynomial
 open scoped TensorProduct
 
 namespace GlobalTheory.FinRingNorm

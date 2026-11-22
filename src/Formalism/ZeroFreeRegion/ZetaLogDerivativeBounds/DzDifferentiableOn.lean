@@ -1,4 +1,8 @@
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormCpowSubLePoint
+module
+
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormCpowSubLePoint
+
+@[expose] public section
 
 open Complex Filter Topology
 

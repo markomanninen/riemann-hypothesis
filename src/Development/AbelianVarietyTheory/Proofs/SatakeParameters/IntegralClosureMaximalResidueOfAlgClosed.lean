@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+
+@[expose] public section
+
 open GlobalTheory.EtC
 
 namespace GlobalTheory
@@ -26,7 +31,10 @@ theorem integralClosure_maximal_residue_algClosed : ∀ (k K : Type) [Field k] [
     obtain ⟨c, hc, hdc⟩ := hres d
     refine ⟨c, ?_⟩
     have hmem : algebraMap D A (d - ⟨φ c, hc⟩) ∈ 𝔪 := by
-      rw [← Ideal.mem_comap, h𝔪comap]; exact hdc
+      rw [← Ideal.mem_comap]
+      change d - ⟨φ c, hc⟩ ∈ Ideal.under D 𝔪
+      rw [h𝔪comap]
+      exact hdc
     change Ideal.Quotient.mk 𝔪 (φA c) = Ideal.Quotient.mk 𝔪 (algebraMap D A d)
     symm
     rw [map_sub] at hmem

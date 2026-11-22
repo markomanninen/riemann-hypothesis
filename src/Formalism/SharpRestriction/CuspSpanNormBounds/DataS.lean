@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+
+@[expose] public section
 
 noncomputable section
 

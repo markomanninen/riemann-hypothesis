@@ -1,11 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SysExOfPol
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsLocalExtension
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabDescentOfFieldExtension
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoOfAmpleDeterminantFrames
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ValuationFormPsiBalancedSymmetricPeriodForm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsProperSemiAbelianTripleOfAbelianLocusEqUniv
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllSixAbelianSchemeLawsHold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SysExOfPol
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubicalPullBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegUnif
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsFormalGroupLawOfChartOfJetChart
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UniformisationTriplesCompleteDVRTorsion
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ModuliModelUltrametricPoints
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DegenerationDataCoordsNeZeroLatticesIsomorphic
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabDescentOfFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoOfAmpleDeterminantFrames
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ValuationFormPsiBalancedSymmetricPeriodForm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsProperSemiAbelianTripleOfAbelianLocusEqUniv
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllSixAbelianSchemeLawsHold
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,9 +50,9 @@ theorem exists_periodForm {W : Type} [CommRing W] [IsDomain W] [IsDiscreteValuat
     · exact zero_le_one.trans (QForm.Q_pos hϖ P.D hQ' ha)
   let be : LinearMap.BilinForm ℤ P.D.toPre.X :=
     LinearMap.mk₂ ℤ (fun a b => QForm.bHom hϖ P.D hQ' a b)
-      (fun a a' b => by simp only [map_add, AddMonoidHom.add_apply])
+      (fun a a' b => by simp only [map_add (f := _), AddMonoidHom.add_apply])
       (fun c a b => by simp only [map_zsmul, AddMonoidHom.smul_apply, smul_eq_mul, zsmul_eq_mul, Int.cast_id])
-      (fun a b b' => by simp only [map_add])
+      (fun a b b' => by simp only [map_add (f := _)])
       (fun c a b => by simp only [map_zsmul, smul_eq_mul, zsmul_eq_mul, Int.cast_id])
   have hbe : ∀ a b, be a b = QForm.bOf P.D.toPre Q a b := fun _ _ => rfl
   refine ⟨be, ⟨fun a b => ?_, fun x a b => ?_, fun a b => ?_⟩, fun y => ?_, fun y hy => ?_⟩
@@ -63,28 +76,6 @@ theorem exists_periodForm {W : Type} [CommRing W] [IsDomain W] [IsDiscreteValuat
     omega
 
 end Form
-
-theorem mem_support_iff_of_idlAlong {X : Scheme.{0}} (J : X.IdealSheafData) {W : Type} [CommRing W] [IsDomain W]
-    [IsLocalRing W] (χ : Sp W ⟶ X) {ϖ : W} (hϖ : Irreducible ϖ) {n : ℕ} (h : idlAlong J χ = Ideal.span {ϖ ^ n}) :
-    χ (closedPoint W : Sp W) ∈ J.support ↔ n ≠ 0 := by
-  refine (mem_support_iff_stalkId J _).trans (not_congr ?_)
-  unfold idlAlong at h
-  constructor
-  · intro hne
-    rw [hne, Ideal.map_top] at h
-    have hu : IsUnit (ϖ ^ n) := Ideal.span_singleton_eq_top.1 h.symm
-    by_contra hn
-    exact hϖ.not_isUnit ((isUnit_pow_iff hn).1 hu)
-  · rintro rfl
-    by_contra hne
-    rw [pow_zero, Ideal.span_singleton_one] at h
-    have hle : (FinalTheorems.stalkId J (χ (closedPoint W : Sp W))).map (Scheme.stalkClosedPointTo χ).hom ≤ maximalIdeal W := by
-      rw [Ideal.map_le_iff_le_comap]
-      intro a ha hua
-      have : IsUnit a := isUnit_of_map_unit (Scheme.stalkClosedPointTo χ).hom a hua
-      exact hne (Ideal.eq_top_of_isUnit_mem _ ha this)
-    rw [h] at hle
-    exact (maximalIdeal.isMaximal W).ne_top (top_le_iff.1 hle)
 
 section Trait
 
@@ -143,8 +134,8 @@ theorem charZero_of_point {K : CommRingCat.{0}} [Nontrivial K] (y : Spec K ⟶ X
   let f := Spec.preimage (y ≫ pullback.snd Xo.s (spMap (IntermediateField.inclusion c.le).toRingHom))
   exact charZero_of_injective_ringHom f.hom.injective
 
-open GlobalTheory.HomExt in
 
+open GlobalTheory.HomExt in
 theorem exists_base_trait (Z : Model Xo c β) (hβ : IsDedFrac β) (x : Z.X) :
     ∃ (T : CDVR) (χ : Sp T.V ⟶ Z.X) (y : Sp (FractionRing T.V) ⟶ Xo.XF c),
       χ (closedPoint T.V : Sp T.V) = x ∧ y ≫ Z.j = jK T.V ≫ χ := by
@@ -181,7 +172,7 @@ theorem exists_trait (Z : Model Xo c β) (hβ : IsDedFrac β) (x : Z.X) :
     ∃ (T : CDVR) (χ : Sp T.V ⟶ Z.X) (t : SAB H (Sp T.V)) (_ : SABMap t Z.t χ) (_ : PELUnif (maximalIdeal T.V) t),
       χ (closedPoint T.V : Sp T.V) = x ∧ Set.range (jK T.V ≫ χ) ⊆ Set.range Z.j := by
   obtain ⟨T, χ, y, hx, hy⟩ := exists_base_trait Z hβ x
-  obtain ⟨_, _, _, _, _, m, -⟩ := sabPull CubePf.cubePull χ Z.t
+  obtain ⟨_, ⟨m⟩⟩ := exists_sab χ Z.t
   have hp := GlobalTheory.GoodTrait.polAt_of_point Z m (jK T.V) y hy
   obtain ⟨T', φ, t', hi, hl, ⟨m'⟩, ⟨P⟩⟩ := exists_unif_ext T _ hp
   obtain ⟨n, -⟩ := sabComp pullCubComp E H _ _ _ _ _ _ _ _ m m'
@@ -198,27 +189,5 @@ theorem exists_trait (Z : Model Xo c β) (hβ : IsDedFrac β) (x : Z.X) :
     rw [← Scheme.Hom.comp_apply, Category.assoc, hy, ← Category.assoc, ← e, Category.assoc]
 
 end Trait
-
-theorem polSuppSt : PolSuppSt := by
-  intro E _ _ _ H D l Xo c O _ β Z BD φ hβ hpos hdiv x
-  obtain ⟨T, χ, t, m, P, rfl, hr⟩ := exists_trait Z hβ x
-  have hW : CDvr T.V := ⟨T.dvr, T.cpl, T.ch0⟩
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible T.V
-  obtain ⟨be, hbe, hmon, hpd⟩ := exists_periodForm P hϖ
-  obtain ⟨n, hn, hid⟩ := hdiv T.V hW ϖ hϖ χ t m P hr be hbe hmon
-  refine (mem_support_iff_of_idlAlong BD.idealSheaf χ hϖ hid).trans ?_
-  refine Iff.trans ?_ (not_congr (abLocus_pullback abLocusOne Z.t.semi m.cart.1 _)).symm
-  refine Iff.trans ?_ (not_congr (closed_mem_abLocus_iff T P)).symm
-  constructor
-  · intro hn0 hs
-    apply hn0
-    have h0 : φ.evalZ be = 0 := φ.eval_of_subsingleton _
-    rw [h0] at hn
-    exact_mod_cast hn
-  · intro hs hn0
-    have hnt : Nontrivial P.D.toPre.X := not_subsingleton_iff_nontrivial.1 hs
-    have := hpos P.D.toPre.X be hbe hpd
-    rw [← hn, hn0] at this
-    simp at this
 
 end GlobalTheory.TorRef

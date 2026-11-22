@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.FpDualUnram
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.FpDualUnram
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,12 +94,13 @@ theorem Phi_coe (hcont : Continuous (algebraMap ℚ_[l] K)) (c : Fin (fdim K l) 
 
 theorem Phi_add (hcont : Continuous (algebraMap ℚ_[l] K)) (c c' : Fin (fdim K l) → ℤ_[l]) (s : ℤ_[l]) :
     Phi K l hcont (c + s • c') = Phi K l hcont c + iotaR K l hcont s * Phi K l hcont c' := by
-  simp only [Phi, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul, add_mul,
+  simp only [Phi, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul, add_mul,
     Finset.sum_add_distrib, Finset.mul_sum, mul_assoc]
 
 theorem res_Phi (hcont : Continuous (algebraMap ℚ_[l] K)) (c : Fin (fdim K l) → ℤ_[l]) :
     residue 𝒪[K] (Phi K l hcont c) = ∑ i, PadicInt.toZMod (c i) • bb K l i := by
-  simp only [Phi, map_sum, map_mul, res_iotaR, res_blift, Algebra.smul_def]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Phi, map_sum, map_mul, res_iotaR, res_blift, Algebra.smul_def]
 
 theorem one_step (hcont : Continuous (algebraMap ℚ_[l] K)) (huni : Irreducible ((l : ℕ) : 𝒪[K]))
     (x : 𝒪[K]) : ∃ c, ∃ y : 𝒪[K], x = Phi K l hcont c + (l : 𝒪[K]) * y := by
@@ -137,7 +142,7 @@ theorem span (hcont : Continuous (algebraMap ℚ_[l] K)) (huni : Irreducible ((l
       funext c
       exact Phi_coe K l hcont c
     rw [this]
-    refine continuous_finset_sum _ (fun i _ => ?_)
+    refine continuous_finsetSum _ (fun i _ => ?_)
     exact (hcont.comp (continuous_subtype_val.comp (continuous_apply i))).mul continuous_const
   have hcl : IsClosed (Set.range F) := (isCompact_range hF).isClosed
   have h0 : Filter.Tendsto (fun j => (l : K) ^ j * (y j : K)) Filter.atTop (nhds 0) := by

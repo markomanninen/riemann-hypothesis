@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatLevel
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.IsThetaFunOPull
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatLevel
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.IsThetaFunOPull
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 100000
 
@@ -53,8 +57,8 @@ theorem symplO_nsmul_right (t y : WO S T) (k : ℕ) : symplO S T t (k • y) = s
   | zero => rw [zero_smul, zero_smul, symplO_zero_right, symplO_zero_left]
   | succ n ih => rw [succ_nsmul, succ_nsmul, symplO_add_right, symplO_add_left, ih]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem actO_fix {e e₁ : AE D} (he : e * cA D e = 0) (h1 : e₁ * e = e₁) {g : GA D S} {h : GA D T}
     (hg : SuppAt e₁ S g) (hh : SuppAt e₁ T h) {t : WO S T} (ht : IsHalf e t) (h0 : ∀ i j, e₁ * t i j = 0) :
     actO S T g h t = t := by
@@ -89,8 +93,8 @@ theorem actO_fix {e e₁ : AE D} (he : e * cA D e = 0) (h1 : e₁ * e = e₁) {g
   unfold actO
   rw [hL, hR']
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem evalYZero_zero (ψ : AddChar (AF D.host.F) ℂ) {e e₁ : AE D} (he₁ : IsSplitIdem D e₁) (h1 : e₁ * e = e₁)
     (Λ : AddSubgroup (WO S T))
     (hΛe₁ : ∀ u ∈ Λ, u.map (fun a => e₁ * a) ∈ Λ)
@@ -180,7 +184,8 @@ theorem evalYZero_zero (ψ : AddChar (AF D.host.F) ℂ) {e e₁ : AE D} (he₁ :
     rw [Finset.sum_sub_distrib, hA t, sub_zero, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, smul_eq_mul,
       inv_mul_cancel_left₀ hM]
   conv_lhs => rw [hfun]
-  rw [map_smul, map_sum, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum, map_smul, map_sum]
   refine (smul_eq_zero.2 (Or.inr (Finset.sum_eq_zero fun g _ => ?_)))
   rw [map_sub, map_sub, hmo Ψ ⟨hs, k, hk, hi, hl⟩ _ (chalf_sub_of S T h1 (hgY g)),
     hℓ _ (hgY g) _ (hth Ψ ⟨hs, k, hk, hi, hl⟩), sub_self]

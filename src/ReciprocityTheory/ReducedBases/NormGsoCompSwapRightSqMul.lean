@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReducedBases.LatticeReduction
+module
+
+public import ReciprocityTheory.ReducedBases.LatticeReduction
+
+@[expose] public section
 
 noncomputable section
 

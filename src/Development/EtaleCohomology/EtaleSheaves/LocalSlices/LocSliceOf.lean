@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LocalSlices
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LocalSlices
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4 HomologicalComplex

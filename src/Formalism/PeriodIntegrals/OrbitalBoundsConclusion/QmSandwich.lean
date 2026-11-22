@@ -1,6 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RTTIndependence
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.EntrywiseSandwichCommute.Imports
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RTTIndependence
+public import Formalism.YangianSpanCharacter.YangianRTTProofs.RttRelation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstEmbeddingOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.EntrywiseSandwichCommute.BlockEmbeddingMulEntrySwap
+
+@[expose] public section
 
 private theorem rtt_commutator_sandwich_eq_of_relations {M : Type} [Ring M] (R e2b e1b' e1q' e2q e1a' e2a : M)
     (h1 : e2q * e1a' = e1a' * e2q) (h2 : e2b * e1q' = e1q' * e2b) (h3 : e2b * e1a' = e1a' * e2b)

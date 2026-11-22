@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Rd1.sum_comp_surj :
     ∀ {A B : Type} [inst : AddCommGroup A] [inst_1 : AddCommGroup B]

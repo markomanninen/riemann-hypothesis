@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenter
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenter
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -17,11 +22,5 @@ def OrbitLocalSum.Statement : Prop :=
         (Module.finrank ℚ (ratioField x) : ℝ) *
           ∑ᶠ v ∈ {v : FinitePlace (coordField x) | orbitCenter x v = V},
             (finiteTerm A v (coordVec x) - Real.log (v (evalCone (coordVec x) s)))
-
-example : BlockNonzero samplePoint ∧
-    Geo.IsSectionOn (orbitIdeal samplePoint) (HermLine.standard _).toGeo
-      (chartMonomial (fun _ ↦ 0) 1) :=
-  ⟨samplePoint_blockNonzero,
-    isSectionOn_chartMonomial _ _ _ (fun _ ↦ by simp [samplePoint]) 1 (fun _ ↦ rfl)⟩
 
 end GroundTheory.Heights₂.Heights

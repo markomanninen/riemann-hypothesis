@@ -1,10 +1,14 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.ExistsDoubledUnitaryBlock
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.DetConjMulVec
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.FrOfFrame
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.AdelInt
-import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.LagLine
-import Development.WeilBound.ThetaLifts.LeviDeterminants.DoubledUnitaryCharacterTrivialOfSiegel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitDetGramOfHermitianSelfDualLatticeSpace
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.ExistsDoubledUnitaryBlock
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.DetConjMulVec
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.FrOfFrame
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.AdelInt
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.LagLine
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.DoubledUnitaryCharacterTrivialOfSiegel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitDetGramOfHermitianSelfDualLatticeSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,23 @@ open Matrix
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {B : Base F E}
 
 theorem ax_of (hA : PositivityTheory.Mix.AdelSt) {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) : Ax (adeleClass F) ψ :=
-  { axB hψ with delta := axDelta_of lagLine hψ, imp := axImp_of hA hψ }
+  by
+    have hb : AxB (adeleClass F) ψ := by
+      constructor
+      · exact fun κ _ => (GlobalTheory.T.theta_distribution_heisenberg_invariant F κ ψ hψ.1 (isStd_ne_one hψ) hψ.2.1).1
+      · intro κ _
+        obtain ⟨φ, h, h0⟩ := GlobalTheory.SchANonzero.exists_mem_schA_ne_zero F κ
+        exact ⟨φ, h, fun e => h0 (congrFun e 0)⟩
+      · exact fun κ _ => adelicCoordinatesEvalZeroForm_mem_admissible κ
+      · exact fun κ₁ κ _ _ j hj φ hφ => GlobalTheory.RestrSchA.mem_schA_comp_extend F j hj φ hφ
+      · intro κ₁ κ _ _ j hj l hl g hg
+        obtain ⟨T, hT⟩ := hl _ (GlobalTheory.RestrSchA.sb_comp_extend F hj hg)
+        refine ⟨T.comp (GlobalTheory.RestrSchA.restrS F hj), fun f => ?_⟩
+        rw [ContinuousLinearMap.comp_apply, ← hT]
+        exact congrArg l (funext fun y => GlobalTheory.RestrSchA.pureA_extend F hj f g y)
+      · exact fun κ κ' _ _ => GlobalTheory.SchwartzBox.boxFun_mem_schA F κ κ'
+      · exact fun κ κ' _ _ => box_adm κ κ'
+    exact ⟨hb, axDelta_of lagLine hψ, axImp_of hA hψ⟩
 
 theorem det_ne_of_sig {n r s : ℕ} {J : Matrix (Fin n) (Fin n) E} (τ : E →+* ℂ) {a : ℂ} (h : HasSig (a • J.map τ) r s) : J.det ≠ 0 :=
   fun h0 => GlobalTheory.det_ne_zero_of_hasSig h (by rw [det_smul, ← RingHom.mapMatrix_apply, ← RingHom.map_det, h0, map_zero, mul_zero])
@@ -85,6 +105,6 @@ theorem lawW_left (hA : PositivityTheory.Mix.AdelSt) (hP : IsPair B M χX χW om
     rw [add_assoc]
     congr 1
     ext i k
-    simp [mul_apply (M := fromCols _ _), vecMulVec_apply]
+    simp [Matrix.mul_apply, vecMulVec_apply]
 
 end PositivityTheory.ThKF0.Chr

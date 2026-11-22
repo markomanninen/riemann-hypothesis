@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.XLeSpanEXLam
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.XLeSpanEXLam
+
+@[expose] public section
 
 noncomputable section
 
@@ -178,11 +182,11 @@ theorem sg_map (δ : S.V ≃ₗ[E] S.V) (hδ : δ ∈ Formalism.HermitianLattice
   · rintro ⟨_, ⟨x, hx, rfl⟩, _, ⟨x', hx', rfl⟩, h⟩
     refine ⟨x, hx, x', hx', ?_⟩
     have h2 := congrArg δ.symm h
-    simpa [Formalism.L2.SG.Saturated.mapL, map_add, map_sub, map_smul] using h2
+    simpa [Formalism.L2.SG.Saturated.mapL, map_add (f := _), map_sub, map_smul] using h2
   · rintro ⟨x, hx, x', hx', h⟩
     refine ⟨δ x, ⟨x, hx, rfl⟩, δ x', ⟨x', hx', rfl⟩, ?_⟩
     have h2 := congrArg δ h
-    simpa [Formalism.L2.SG.Saturated.mapL, map_add, map_sub, map_smul] using h2
+    simpa [Formalism.L2.SG.Saturated.mapL, map_add (f := _), map_sub, map_smul] using h2
 
 theorem scal_map_fwd {Λ : Submodule (𝓞 E) S.V} {F : LFlag S r T} {F' F'' : LFlag S r T'} (δ B : S.V ≃ₗ[E] S.V)
     (hδ : δ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (hS : IsScalar Λ F F' F'' B) :
@@ -361,7 +365,7 @@ theorem mv_spec {s : TT Y u u'} {t : RT Y u u'} (h : s.toTerm = t) :
   refine ⟨hl, hdc'.choose, hdc'.choose_spec.1, hdc'.choose_spec.2.choose, hdc'.choose_spec.2.choose_spec.1,
     hdc'.choose_spec.2.choose_spec.2.1, hdc'.choose_spec.2.choose_spec.2.2, ?_⟩
   unfold mvOf
-  rw [dif_pos hdc']
+  rw [dite_eq_left hdc']
 
 theorem beta_Xsp (s₁ s₂ : TT Y u u') :
     (Xsp s₁.frame).map ((s₂.lin * s₁.lin⁻¹ : (VS D).V ≃ₗ[D.host.E] (VS D).V) : (VS D).V →ₗ[D.host.E] (VS D).V) =
@@ -390,7 +394,7 @@ theorem beta_aut (s₁ s₂ : TT Y u u') (hl : s₁.lam = s₂.lam) (hl' : s₁.
   refine ⟨(Formalism.HermitianLatticesTheory.isom (VS D).hT).mul_mem (lin_isom s₂) ((Formalism.HermitianLatticesTheory.isom (VS D).hT).inv_mem (lin_isom s₁)), ?_⟩
   rw [gmap_mul, gmap_inv (lin_lam s₁), hl', lin_lam s₂, hl]
 
-theorem xflag_map_of_frame {T₀ T₁ : D.host.E} {K : LFlag (VS D) D.R.rS T₀} {K' : LFlag (VS D) D.R.rS T₁}
+theorem xflag_map_of_frame {T₀ T₁ : D.host.E} {K : LFlag (D.sp.Y 0) D.R.rS T₀} {K' : LFlag (D.sp.Y 0) D.R.rS T₁}
     {φ : (VS D).V ≃ₗ[D.host.E] (VS D).V} (h : ∀ a, φ (frame K a) = frame K' a) (j : ℕ) :
     (Xflag K j).map (φ : (VS D).V →ₗ[D.host.E] (VS D).V) = Xflag K' j := by
 
@@ -411,14 +415,14 @@ theorem rp_data (q : RP Y u u') :
       rowOf Y.TR (Y.cs u) (Y.cs u') q.l1 = rowOf Y.TR (Y.cs u) (Y.cs u') q.l2 :=
   ⟨q.2.choose.2, q.2.choose_spec.choose.2, q.2.choose_spec.choose_spec⟩
 
-open Formalism.L2.SG.TermTieOf in
 
+open Formalism.L2.SG.TermTieOf in
 def Bof (q : RP Y u u') : (VS D).V ≃ₗ[D.host.E] (VS D).V :=
   mvOf q.1.2.lam (lf D (X.Fu u)) q.l2.frame (repF q.1.2) * (q.l2.lin * q.l1.lin⁻¹) *
     (mvOf q.1.1.lam (lf D (X.Fu u)) q.l1.frame (repF q.1.1))⁻¹
 
-open Formalism.L2.SG.TermTieOf in
 
+open Formalism.L2.SG.TermTieOf in
 theorem rp_moves (q : RP Y u u') :
     ∃ n₁ n₂ m₁ m₂ : (VS D).V ≃ₗ[D.host.E] (VS D).V,
       n₁ ∈ NLam q.l1.lam (lf D (X.Fu u)) ∧ n₂ ∈ NLam q.l1.lam (lf D (X.Fu u)) ∧
@@ -498,9 +502,9 @@ theorem rp_pair (hι : IotaRowC) (q : RP Y u u') :
 
 end Rec
 
+
 open Formalism.L2.SG.TermTieOf in
 set_option maxHeartbeats 800000 in
-
 theorem pairTies_of (hι : IotaRowC) : Formalism.L2.SG.TermTieOf.PairTiesAll := by
   intro D X Y hF W hI
   have hlf : ∀ u, lf D (FlagOfWord W u) = Formalism.L2.SG.Saturated.mapL (W.δ u) (W.isom u) (lf D (X.Fu u)) := fun u => rfl

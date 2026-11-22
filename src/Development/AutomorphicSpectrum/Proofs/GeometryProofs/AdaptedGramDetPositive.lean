@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsAdapted
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GramDetNeZeroOfIndep
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsAdapted
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GramDetNeZeroOfIndep
+
+@[expose] public section
 
 open NumberField TensorProduct Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
 open GlobalTheory.CompanionTheory.Ar.RootHt GroundTheory.Heights₂.Heights
@@ -51,7 +55,7 @@ theorem eq_zero_of_mem_finset (ρ : O →+* Module.End k V) (σ : O →+* k)
     have hkey : (σ a - τ.1 a) • x = ρ a z - τ.1 a • z := by
       have e1 := eigSp_apply hx a
       have e2 := eigSp_apply hy a
-      rw [← hyz, map_add, e2] at e1
+      rw [← hyz, map_add (f := _), e2] at e1
       have e3 : ρ a z = σ a • (y + z) - τ.1 a • y := by rw [← e1]; abel
       rw [e3, ← hyz, sub_smul]
       simp only [smul_add]
@@ -76,10 +80,10 @@ theorem eigComp_spec {ρ : O →+* Module.End k V} {σ : O →+* k} {x : V} (h0 
   by_cases h : ∃ p ∈ eigSp ρ σ, x - p ∈ ⨆ σ' ∈ {σ' : O →+* k | σ' ≠ σ}, eigSp ρ σ'
   · have e : eigComp ρ σ x = h.choose := by
       unfold eigComp
-      rw [dif_pos h]
+      rw [dite_eq_left h]
     rw [e]
     exact h.choose_spec
-  · exact absurd (by unfold eigComp; rw [dif_neg h]) h0
+  · exact absurd (by unfold eigComp; rw [dite_eq_right h]) h0
 
 end Field
 
@@ -135,7 +139,8 @@ theorem linearIndependent_f (A : LinPt E L Ψ V) (s : Ψ ⊕ Ψ) {r k : ℕ} (v 
   have hwV : (w : V) = ∑ c, g c • (q c : V) := by
     simp [hw]
   have hfw : A.f w = 0 := by
-    simpa [hw, map_sum] using hg
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [hw, map_sum] using hg
   have hwI : (w : V) ∈ Submodule.span (𝓞 L) (A.I : Set V) := (A.ker w).1 hfw
   have hwe : (w : V) ∈ eigSp A.ρ (A.σ s) := by
     have : (w : V) ∈ (eigSp A.ρ (A.σ s)).restrictScalars (𝓞 L) := by
@@ -173,8 +178,8 @@ end GlobalTheory.CompanionTheory.Ar.Cusp.Adapted
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem gramDet_pos_of_adapted : ∀ (E L Ψ : Type) [Field E] [NumberField E] [Field L] [NumberField L] (V : Type)
     [AddCommGroup V] [Module L V] [Module (𝓞 L) V] [IsScalarTower (𝓞 L) L V] (A : LinPt E L Ψ V) (s : Ψ ⊕ Ψ) (r k : ℕ)
     (v : Fin r → V) (q : Fin k → A.Λ), IsOFamily A.ρ A.I v → A.IsAdapted s v q → (∀ i, (q i : V) ∈ A.eig s) →

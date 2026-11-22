@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TaylorCoefficientForms
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TensorCoordinateForms
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSumTaylorCoordinateSpaceEntire
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TaylorCoefficientForms
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TensorCoordinateForms
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSumTaylorCoordinateSpaceEntire
+
+@[expose] public section
 
 open Finset
 open scoped ComplexConjugate Real
@@ -39,8 +43,8 @@ theorem wordDeriv_perm (v : κ → E) {F : E → ℂ} (hF : Differentiable ℂ F
 def stdWord [Fintype κ] (e : κ → ℕ) : List κ :=
   (univ : Finset κ).toList.flatMap fun x => List.replicate (e x) x
 
-omit [FiniteDimensional ℂ E] in
 
+omit [FiniteDimensional ℂ E] in
 theorem monoDeriv_eq_wordDeriv [Fintype κ] (v : κ → E) (e : κ → ℕ) (F : E → ℂ) :
     TaylorCoefficientForms.monoDeriv v e F = TensorCoordinateForms.wordDeriv v (stdWord e) F := by
   unfold TaylorCoefficientForms.monoDeriv TensorCoordinateForms.wordDeriv stdWord
@@ -117,75 +121,6 @@ variable {Pl : Type} [Fintype Pl] {X₀ X₁ : Pl → Type}
   [∀ τ, NormedAddCommGroup (X₁ τ)] [∀ τ, InnerProductSpace ℂ (X₁ τ)] [∀ τ, FiniteDimensional ℂ (X₁ τ)]
   {n₀ n₁ : ℕ}
 
-def ClausesFixedOrder (ξ D lam : Pl → ℂ) (b₀ : ∀ τ, OrthonormalBasis (Fin n₀) ℂ (X₀ τ))
-    (b₁ : ∀ τ, OrthonormalBasis (Fin n₁) ℂ (X₁ τ)) : Prop :=
-  (∀ z, TaylorCoefficientForms.ofUnitCoord ξ b₀ b₁ (TaylorCoefficientForms.unitCoord ξ b₀ b₁ z) = z) ∧
-  (∀ u, TaylorCoefficientForms.unitCoord ξ b₀ b₁ (TaylorCoefficientForms.ofUnitCoord ξ b₀ b₁ u) = u) ∧
-  (∀ z, (nsq (TaylorCoefficientForms.unitCoord ξ b₀ b₁ z) : ℂ) = π * TaylorCoefficientForms.bigForm ξ z z) ∧
-  (∀ (τ : Pl) (d d' : ℂ) (x x' : X₀ τ →L[ℂ] X₁ τ),
-    TaylorCoefficientForms.bigForm ξ (TaylorCoefficientForms.letterTensor τ d x) (TaylorCoefficientForms.letterTensor τ d' x') =
-      TaylorCoefficientForms.lineForm (ξ τ) d d' * TaylorCoefficientForms.homForm x x') ∧
-  ∀ Θ : (∀ τ, X₀ τ →L[ℂ] X₁ τ) → ℂ, Differentiable ℂ Θ →
-    (∀ (x : Pl × (Fin n₁ × Fin n₀)) (z : ∀ τ, X₀ τ →L[ℂ] X₁ τ),
-      TaylorCoefficientForms.dirDeriv (TaylorCoefficientForms.letterUnit D b₀ b₁ x) Θ z =
-        lam x.1 * TaylorCoefficientForms.dirDeriv (TaylorCoefficientForms.coordVec x) (Θ ∘ TaylorCoefficientForms.ofUnitCoord ξ b₀ b₁)
-          (TaylorCoefficientForms.unitCoord ξ b₀ b₁ z)) ∧
-    (∀ u, HasSum (fun e => TaylorCoefficientForms.taylorCoeff (Θ ∘ TaylorCoefficientForms.ofUnitCoord ξ b₀ b₁) e * mono u e)
-      (Θ (TaylorCoefficientForms.ofUnitCoord ξ b₀ b₁ u))) ∧
-    ∀ (W : Type) [NormedAddCommGroup W] [NormedSpace ℂ W] (n : Pl → ℕ)
-      (Rc : (Pl × (Fin n₁ × Fin n₀) → ℕ) →₀ W),
-      (∀ e ∈ Rc.support, ∀ τ, ∑ p, e (τ, p) = n τ) →
-      TaylorCoefficientForms.polyJet (TaylorCoefficientForms.letterUnit D b₀ b₁) Rc Θ =
-          (∏ τ, lam τ ^ n τ) • TaylorCoefficientForms.polyJet TaylorCoefficientForms.coordVec Rc (Θ ∘ TaylorCoefficientForms.ofUnitCoord ξ b₀ b₁) ∧
-        TaylorCoefficientForms.polyJet (TaylorCoefficientForms.letterUnit D b₀ b₁) Rc Θ =
-          liftBlock (TaylorCoefficientForms.taylorCoeff (Θ ∘ TaylorCoefficientForms.ofUnitCoord ξ b₀ b₁)) Rc lam ∧
-        ∀ c : (Pl × (Fin n₁ × Fin n₀) → ℕ) → ℂ,
-          (∀ u, HasSum (fun e => c e * mono u e) (Θ (TaylorCoefficientForms.ofUnitCoord ξ b₀ b₁ u))) →
-          TaylorCoefficientForms.polyJet (TaylorCoefficientForms.letterUnit D b₀ b₁) Rc Θ = liftBlock c Rc lam
-
-def ClausesAllOrders [DecidableEq Pl] (a : Pl → ℝ) (D lam : Pl → ℂ)
-    (b : ∀ τ, OrthonormalBasis (Fin n₀) ℂ (X₀ τ)) (b' : ∀ τ, OrthonormalBasis (Fin n₁) ℂ (X₁ τ)) : Prop :=
-  (∀ u, TensorCoordinateForms.unitCoord a b b' (TensorCoordinateForms.ofUnitCoord a b b' u) = u) ∧
-  (∀ z, TensorCoordinateForms.ofUnitCoord a b b' (TensorCoordinateForms.unitCoord a b b' z) = z) ∧
-  (∀ z, ((nsq (TensorCoordinateForms.unitCoord a b b' z) : ℝ) : ℂ) = (π : ℂ) * TensorCoordinateForms.totalForm a z z) ∧
-  (∀ (τ : Pl) (d d' : ℂ) (x x' : X₀ τ →L[ℂ] X₁ τ),
-    TensorCoordinateForms.totalForm a (TensorCoordinateForms.tensorVec τ d x) (TensorCoordinateForms.tensorVec τ d' x') =
-      TensorCoordinateForms.lineForm (a τ) d d' * TensorCoordinateForms.traceForm x x') ∧
-  ∀ Th : (∀ τ, X₀ τ →L[ℂ] X₁ τ) → ℂ, Differentiable ℂ Th →
-    (∀ (p : Pl × (Fin n₁ × Fin n₀)) (z : ∀ τ, X₀ τ →L[ℂ] X₁ τ),
-      TensorCoordinateForms.dirDeriv (TensorCoordinateForms.frameVec D b b' p) Th z =
-        lam p.1 * TensorCoordinateForms.dirDeriv (TensorCoordinateForms.coordVec p) (Th ∘ TensorCoordinateForms.ofUnitCoord a b b')
-          (TensorCoordinateForms.unitCoord a b b' z)) ∧
-    ∀ (W : Type) [NormedAddCommGroup W] [NormedSpace ℂ W]
-      (Rc : (Pl × (Fin n₁ × Fin n₀) → ℕ) →₀ W) (n : Pl → ℕ)
-      (w : (Pl × (Fin n₁ × Fin n₀) → ℕ) → List (Pl × (Fin n₁ × Fin n₀))),
-      TensorCoordinateForms.IsSpelling w → (∀ e ∈ Rc.support, ∀ τ, ∑ q, e (τ, q) = n τ) →
-      TensorCoordinateForms.substJet w (TensorCoordinateForms.frameVec D b b') Rc Th =
-          (∏ τ, lam τ ^ n τ) • TensorCoordinateForms.substJet w TensorCoordinateForms.coordVec Rc (Th ∘ TensorCoordinateForms.ofUnitCoord a b b') ∧
-      ∀ c : (Pl × (Fin n₁ × Fin n₀) → ℕ) → ℂ,
-        (∀ u, HasSum (fun e => c e * mono u e) (Th (TensorCoordinateForms.ofUnitCoord a b b' u))) →
-        TensorCoordinateForms.substJet w (TensorCoordinateForms.frameVec D b b') Rc Th = liftBlock c Rc lam
-
 end Clauses
-
-def ConclusionFixedOrder (Pl : Type) [Fintype Pl] (ξ D : Pl → ℂ) : Prop :=
-  (∀ τ, 0 < TaylorCoefficientForms.period (ξ τ) (D τ)) ∧
-  ∃ lam : Pl → ℂ, (∀ τ, ‖lam τ‖ ^ 2 = (TaylorCoefficientForms.period (ξ τ) (D τ))⁻¹) ∧
-    ∀ (X₀ X₁ : Pl → Type)
-      [∀ τ, NormedAddCommGroup (X₀ τ)] [∀ τ, InnerProductSpace ℂ (X₀ τ)] [∀ τ, FiniteDimensional ℂ (X₀ τ)]
-      [∀ τ, NormedAddCommGroup (X₁ τ)] [∀ τ, InnerProductSpace ℂ (X₁ τ)] [∀ τ, FiniteDimensional ℂ (X₁ τ)]
-      (n₀ n₁ : ℕ) (b₀ : ∀ τ, OrthonormalBasis (Fin n₀) ℂ (X₀ τ))
-      (b₁ : ∀ τ, OrthonormalBasis (Fin n₁) ℂ (X₁ τ)), ClausesFixedOrder ξ D lam b₀ b₁
-
-def ConclusionAllOrders (Pl : Type) [Fintype Pl] [DecidableEq Pl] (a : Pl → ℝ) (D : Pl → ℂ) : Prop :=
-  ∃ ζ : Pl → ℂ,
-    (∀ τ, ‖ζ τ‖ = 1) ∧ (∀ τ, 0 < TensorCoordinateForms.omega (a τ) (D τ)) ∧
-    (∀ τ, ‖TensorCoordinateForms.letter (TensorCoordinateForms.omega (a τ) (D τ)) (ζ τ)‖ ^ 2 = (TensorCoordinateForms.omega (a τ) (D τ))⁻¹) ∧
-    ∀ (X₀ X₁ : Pl → Type)
-      [∀ τ, NormedAddCommGroup (X₀ τ)] [∀ τ, InnerProductSpace ℂ (X₀ τ)] [∀ τ, FiniteDimensional ℂ (X₀ τ)]
-      [∀ τ, NormedAddCommGroup (X₁ τ)] [∀ τ, InnerProductSpace ℂ (X₁ τ)] [∀ τ, FiniteDimensional ℂ (X₁ τ)]
-      (n₀ n₁ : ℕ) (b₀ : ∀ τ, OrthonormalBasis (Fin n₀) ℂ (X₀ τ))
-      (b₁ : ∀ τ, OrthonormalBasis (Fin n₁) ℂ (X₁ τ)),
-      ClausesAllOrders a D (fun τ => TensorCoordinateForms.letter (TensorCoordinateForms.omega (a τ) (D τ)) (ζ τ)) b₀ b₁
 
 end GlobalTheory.JetFrameCompare

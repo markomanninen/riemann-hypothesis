@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SmallCones.RightOfCompact
-import Development.WeilBound.CoreStatements.ThetaDilations.Nuabs
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryRationalPointsCountableDiscreteFundDomain
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.RightOfCompact
+public import Development.WeilBound.CoreStatements.ThetaDilations.Nuabs
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryRationalPointsCountableDiscreteFundDomain
+
+@[expose] public section
 
 open MeasureTheory Topology Set
 open scoped ENNReal NNReal Pointwise

@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AlgHomEqEval
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AlgHomEqEval
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory.ThetaTrace GlobalTheory.HkFam GlobalTheory.Frames GlobalTheory.HeckeEx
@@ -72,7 +77,7 @@ theorem exists_trace_eq_finsum : ∀ (R B : Type) [CommRing R] [CommRing B] [Alg
         rw [show a ⊗ₜ[R] y = a • (1 ⊗ₜ[R] y : Ω ⊗[R] B) by
           rw [TensorProduct.smul_tmul', smul_eq_mul, _root_.mul_one], map_smul, Pi.smul_apply,
           Pi.smul_apply, h' y]
-      | add x y hx hy => rw [map_add, Pi.add_apply, Pi.add_apply, hx, hy]
+      | add x y hx hy => rw [map_add (f := _), Pi.add_apply, Pi.add_apply, hx, hy]
     have := h'' (e.symm (Pi.single p 1))
     rw [e.apply_symm_apply, Pi.single_eq_same] at this
     by_contra hne

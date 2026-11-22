@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataNChTie
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FractionalBaseInclusion
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataNChTie
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FractionalBaseInclusion
+
+@[expose] public section
 
 noncomputable section
 

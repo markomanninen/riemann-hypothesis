@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSumsVanishAtPlaces
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
-import Development.AbelianVarietyTheory.BlockTheory.AbelianSchemeLaw.SemiAbelianSchemes
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSumsVanishAtPlaces
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.SplitTori.SplitTorusAff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham
 set_option maxHeartbeats 1000000 in
@@ -15,5 +19,5 @@ theorem _root_.GlobalTheory.T.l_power_torsion_endomorphism_evaluation : ∀ (k :
     (∀ j x, ev j (φ x) = ev j x ≫ f.hom) →
     (∀ j x, ev j x = 1 ↔ ∃ y, x = l ^ j • y) →
     (∀ j (q : Over.mk (𝟙 (Sp k)) ⟶ B.X), q ^ (l ^ j) = 1 ↔ ∃ x, ev j x = q) →
-    LinearMap.charpoly φ = GlobalTheory.AV.AbVar.charpoly f := by
-  first | (exact @GlobalTheory.AV.AbVar.charpoly_eq_lattice_model) | (exact GlobalTheory.AV.AbVar.charpoly_eq_lattice_model) | (intros; apply GlobalTheory.AV.AbVar.charpoly_eq_lattice_model  <;> assumption)
+    LinearMap.charpoly φ = GlobalTheory.AV.AbVar.charpoly (End.of f) :=
+  GlobalTheory.AV.AbVar.charpoly_eq_lattice_model

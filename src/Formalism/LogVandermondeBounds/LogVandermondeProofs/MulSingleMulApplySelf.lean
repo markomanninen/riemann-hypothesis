@@ -1,4 +1,8 @@
-import Formalism.LogVandermondeBounds.FinrankFiberSumZero
+module
+
+public import Formalism.LogVandermondeBounds.FinrankFiberSumZero
+
+@[expose] public section
 
 namespace Formalism.LogVandermondeBounds.product_first_zeroth_parts
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
+module
+
+public import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
+
+@[expose] public section
 
 open Formalism.HC UpperTheory.Top
 

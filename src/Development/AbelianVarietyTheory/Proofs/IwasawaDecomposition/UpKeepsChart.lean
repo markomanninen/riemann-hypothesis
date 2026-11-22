@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsForgetsFrames
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MoveDownLevelPrimeKeepsChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsForgetsFrames
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MoveDownLevelPrimeKeepsChart
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -42,8 +47,39 @@ theorem TC.cosetIn_rep_up (hX : B.fields.Ok) (hPr : (B.primes X).Ok) (u : B.Word
   by_cases hj : i + 1 = B.R.m
   · refine GStep.prefRep_eq_of_normal (I.stp0 u a i) c.1 (fun q' : (I.stp0 u a i).D c.1 => cosetIn q') (I.pref u a i c.1)
       (GStep.prefRep_normal (I.stp0 u a i) c.1 _ _ (fun p hp => hp.2.1 hj) (I.pref_of_normalFor u a i hj c.1)) c.2 _ fun h => ?_
-    exact cosetIn_eq_of_sameG hX hPr (SameG.smul h (SameG.up' ((I.stp u a i).rep c) v (moveHyp_of_ok hPr u v) _
-      (Quotient.out x).2))
+    have r : SameG ((I.stp u a i).rep c) (((I.atIn u a).A i).upPt v c x) :=
+      SameG.up' ((I.stp u a i).rep c) v (moveHyp_of_ok hPr u v) _ (Quotient.out x).2
+    apply cosetIn_eq_of_sameG hX hPr
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · exact congrArg (fun F => fun P => (FrmG.incl _ _ h).1.1 * F P * ((FrmG.incl _ _ h).2.2 P)⁻¹.1) r.fr
+    · exact congrArg (fun S => (fun v => h.1.1 v) '' S) r.ys
+    · intro w
+      have locP_gmap_eq_of_locP_eq {E : Type} [Field E] [NumberField E] {n : ℕ} (P : HeightOneSpectrum (𝓞 E))
+          (g : Sp E n ≃ₗ[E] Sp E n) {N N' : Submodule (𝓞 E) (Sp E n)}
+          (h : Formalism.HermitianLatticesTheory.localization₂ P.asIdeal N' = Formalism.HermitianLatticesTheory.localization₂ P.asIdeal N) :
+          Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Formalism.HermitianLatticesTheory.gmap g N') = Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Formalism.HermitianLatticesTheory.gmap g N) := by
+        have hs : ∀ (s : 𝓞 E) (z : Sp E n), g.symm (s • z) = s • g.symm z := fun s z =>
+          ((g.symm : Sp E n →ₗ[E] Sp E n).restrictScalars (𝓞 E)).map_smul s z
+        have hmemL : ∀ (M : Submodule (𝓞 E) (Sp E n)) (x : Sp E n),
+            x ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal M ↔ ∃ s ∈ P.asIdeal.primeCompl, s • x ∈ M := fun _ _ => Iff.rfl
+      
+        have hmemg : ∀ (M : Submodule (𝓞 E) (Sp E n)) (x : Sp E n),
+            x ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Formalism.HermitianLatticesTheory.gmap g M) ↔ g.symm x ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal M := by
+          intro M x
+          rw [hmemL, hmemL]
+          constructor
+          · rintro ⟨s, hs0, hx⟩
+            obtain ⟨z, hz, hzx⟩ := Submodule.mem_map.mp hx
+            have hz' : z = g.symm (s • x) := by
+              rw [← hzx]
+              simp
+            exact ⟨s, hs0, by rw [← hs, ← hz']; exact hz⟩
+          · rintro ⟨s, hs0, hx⟩
+            refine ⟨s, hs0, Submodule.mem_map.mpr ⟨g.symm (s • x), by rw [hs]; exact hx, by simp⟩⟩
+        ext x
+        rw [hmemg, hmemg, h]
+      exact locP_gmap_eq_of_locP_eq w.1 h.1.1 (r.at_eq w)
+    · exact congrArg (fun B => fun w x => ((FrmG.incl _ _ h).2.1 w).1.mulVec (B w (h.1.1.symm x))) r.be
   · have h0 : ∀ q : PtAt B.R I.sel (I.tup a) (I.cst a) u i, cosetIn q = fun _ => ∅ := by
       intro q
       funext P

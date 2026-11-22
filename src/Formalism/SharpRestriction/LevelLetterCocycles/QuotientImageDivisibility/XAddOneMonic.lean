@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -55,7 +59,7 @@ private theorem algHom_coe_polynomial_eq_of_X_eq {A B : Type} [CommRing A] [Comm
           | simp [PowerSeries.algebraMap_eq]
         rw [e, AlgHom.commutes, AlgHom.commutes]
      refine Polynomial.induction_on r (fun a => hC a) (fun p q hp hq => ?_) (fun n a _ => ?_)
-     · rw [Polynomial.coe_add, map_add, map_add, hp, hq]
+     · rw [Polynomial.coe_add, map_add (f := _), map_add (f := _), hp, hq]
      · rw [Polynomial.coe_mul, Polynomial.coe_pow, Polynomial.coe_X, map_mul, map_mul, map_pow,
          map_pow, h, hC])
 
@@ -85,7 +89,7 @@ theorem Zs_res : PowerSeries.map (IsLocalRing.residue O) (Zs p m) = PowerSeries.
     first
     | infer_instance
     | exact charP_of_injective_algebraMap' (IsLocalRing.ResidueField O) p
-  simp only [Zs, map_sub, map_pow, map_add, map_one, PowerSeries.map_X]
+  simp only [Zs, map_sub, map_pow, map_add (f := _), map_one, PowerSeries.map_X]
   first
   | (rw [add_pow_char_pow]; simp)
   | (rw [add_pow_expChar_pow]; simp)
@@ -232,7 +236,7 @@ theorem evR_subst {x y : F} (hx : Polynomial.aeval x (Zp (O := O) p m) = 0)
       f = Zs p m * q + (r : PowerSeries O) :=
     ⟨_, _, (f.isWeierstrassDivision_weierstrassDiv_weierstrassMod
       (Zs_res_ne p m hlm)).eq_mul_add⟩
-  rw [hψ, hf, map_add, map_add, map_mul, map_mul, hS, evR_Zs p m hlm hy, hpoly]
+  rw [hψ, hf, map_add (f := _), map_add (f := _), map_mul, map_mul, hS, evR_Zs p m hlm hy, hpoly]
   simp
 
 end EvF

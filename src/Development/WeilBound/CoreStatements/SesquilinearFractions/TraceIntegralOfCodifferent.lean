@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.SesqSesquilinearSkewHermitian
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.SesqSesquilinearSkewHermitian
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -39,7 +44,7 @@ theorem sesq_unimodular (D : Datum H) :
     have hadd : ∀ x x', n (x + x') = n x + n x' := by
       intro x x'
       have := hn (x + x')
-      rw [map_add, add_mul, map_add, ← hn x, ← hn x'] at this
+      rw [map_add (f := _), add_mul, map_add (f := _), ← hn x, ← hn x'] at this
       exact_mod_cast this
     let φ : D.La →+ ℤ := AddMonoidHom.mk' n hadd
     obtain ⟨w, hw⟩ := D.unimod.2 φ.toIntLinearMap

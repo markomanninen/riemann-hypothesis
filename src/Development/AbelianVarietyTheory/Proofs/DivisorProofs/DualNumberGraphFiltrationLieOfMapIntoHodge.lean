@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoords
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CanonicalOfAbelianDeRham
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoords
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CanonicalOfAbelianDeRham
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
@@ -16,12 +21,16 @@ theorem push_coords (g : A₀ ⟶ A₀) [IsMonHom g] {d : Crys (epsDP k) (Global
     (c : primDR A₀) :
     push (epsDP k) (GlobalTheory.DeRham.epsRed k) g d ((constMor A₀).pull c) =
       TrivSqZeroExt.inl (push (dp0 k) (𝟙 _) g u c) + TrivSqZeroExt.inr (push (dp0 k) (𝟙 _) g v c) := by
-  have k' := (homMor (dp0 k) (𝟙 _) g).comp (constMor A₀)
-  have e1 : primPull (epsDP k) (GlobalTheory.DeRham.epsRed k) g ((constMor A₀).pull c) = k'.pull c :=
-    GrpMor.pull_pull (constMor A₀) (homMor _ _ g) k' (fun _ => rfl) (by simp) c
-  have e2 : (constMor A₀).pull (primPull (dp0 k) (𝟙 _) g c) = k'.pull c :=
-    GrpMor.pull_pull (homMor _ _ g) (constMor A₀) k' (fun _ => rfl) rfl c
-  rw [push_apply, e1, ← e2, h]
+  have e : primPull (epsDP k) (GlobalTheory.DeRham.epsRed k) g ((constMor A₀).pull c) =
+      (constMor A₀).pull (primPull (dp0 k) (𝟙 _) g c) := by
+    apply Subtype.ext
+    have m := (homMor (dp0 k) (𝟙 _) g).isMor
+    have n := (constMor A₀).isMor
+    have q := m.comp n
+    exact ((IsMor.pullback1_comp m n q (fun _ => rfl) rfl c.1).trans
+      (IsMor.pullback1_comp n (homMor (epsDP k) (GlobalTheory.DeRham.epsRed k) g).isMor q
+        (fun _ => rfl) (by simp) c.1).symm).symm
+  rw [push_apply, e, h]
   rfl
 
 theorem smul_coords (r : k) {d : Crys (epsDP k) (GlobalTheory.DeRham.epsRed k) A₀} {u v : HdR A₀}
@@ -123,7 +132,7 @@ theorem chars_ne (β : R →+* k) : ∀ i j : Fin D.a, i ≠ j → ∃ x, β (b.
 
 theorem delta_ne (β : R →+* k) : β b.ρ - ((D.tr : k) - β b.ρ) ≠ 0 := by
   have hρ := congrArg β b.ρ_root
-  simp only [map_add, map_sub, map_pow, map_mul, map_intCast, map_zero] at hρ
+  simp only [map_add (f := _), map_sub, map_pow, map_mul, map_intCast, map_zero] at hρ
   set n : ℕ := (4 * D.nm - D.tr ^ 2).toNat
   have hpos : 0 < 4 * D.nm - D.tr ^ 2 := by linarith [D.disc_neg]
   have hn : (n : ℤ) = 4 * D.nm - D.tr ^ 2 := Int.toNat_of_nonneg hpos.le
@@ -177,7 +186,7 @@ theorem inv_sub_smul_sub_sub_inv_sub_smul_sub_eq {k V : Type*} [Field k] [AddCom
 
 theorem smul_add_sub_linearMap_smul_add_eq {k V : Type*} [Field k] [AddCommGroup V] [Module k V] (f : V →ₗ[k] V) (a : k)
     (X Y P Q : V) : (a • Y + Q) - f (a • X + P) = a • (Y - f X) + (Q - f P) := by
-  rw [map_add, map_smul, smul_sub]
+  rw [map_add (f := _), map_smul, smul_sub]
   abel
 
 theorem sub_eq_neg_smul_add_of_sub_smul_eq {k V : Type*} [Field k] [AddCommGroup V] [Module k V] (u u' S X : V) (a : k)
@@ -217,9 +226,9 @@ end GlobalTheory.HTRealise.LieCond
 
 namespace GlobalTheory.HTRealise
 
+
 set_option maxHeartbeats 2000000 in
 open LieCond in
-
 theorem eigen_decomp_graphFil : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (R : Type) [CommRing R]
     (b : GlobalTheory.UPel.HT.Base D R) (N : ℕ) (k : Type) [Field k] (β : R →+* k) (s : Sp k ⟶ Sp R)
     (o₀ : GlobalTheory.UPel.HT.Obj b N s) (f : HdR o₀.A →ₗ[k] HdR o₀.A), GlobalTheory.HTCount.lieZ o₀ β ≤ Fil o₀.A →
@@ -278,14 +287,16 @@ theorem eigen_decomp_graphFil : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.U
     rw [mem_graphFil_iff_coords hs]
     have hg0 : ∀ j, algChar b β j (1 - ∑ i, e i) = 0 := by
       intro j
-      rw [map_sub, map_one, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_one, map_sum]
       simp [he]
     obtain ⟨k1, k2⟩ := key _ hg0
     have decu : u' - δ⁻¹ • (Ω u - ρ • u) = u := by rw [hu'def]; exact inv_sub_smul_sub_sub_inv_sub_smul_sub_eq _ _ _ _ hδ
     have decv : v' - δ⁻¹ • (Ω v - ρ • v) = v := by rw [hv'def]; exact inv_sub_smul_sub_sub_inv_sub_smul_sub_eq _ _ _ _ hδ
     have hsum : ∀ z, algAct o₀ (1 - ∑ i, e i) z = z - ∑ i, algAct o₀ (e i) z := by
       intro z
-      rw [map_sub, map_one, map_sum, LinearMap.sub_apply, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_one, map_sum, LinearMap.sub_apply, LinearMap.sum_apply]
       rfl
     rw [sub_eq_neg_smul_add_of_sub_smul_eq u u' _ _ _ decu, sub_eq_neg_smul_add_of_sub_smul_eq v v' _ _ _ decv, ← hsum, ← hsum]
     refine ⟨add_mem (Submodule.smul_mem _ _ hx) k1, ?_⟩

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SemiCharBasic
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.LineTransport
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SemiCharBasic
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.LineTransport
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate

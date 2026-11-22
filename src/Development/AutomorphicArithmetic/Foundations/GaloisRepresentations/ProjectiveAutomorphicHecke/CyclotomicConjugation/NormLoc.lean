@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CyclotomicConjugation.QuadConjAlt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PolarizedPairBaseChangePolarizedSameWeight
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CyclotomicConjugation.QuadConjAlt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PolarizedPairBaseChangePolarizedSameWeight
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU Formalism.L2.Host GlobalTheory.HeckeGal
 open GlobalTheory.SplitPts (conjE)
@@ -18,7 +22,8 @@ private theorem fN_sgl (K L : Type) [Field K] [NumberField K] [Field L] [NumberF
   rw [h] at hm
   have hm' := congrArg Subtype.val hm
   rw [GroundTheory.Global.IdeleGroup.ideleModule_finiteEmbedding, GroundTheory.Global.IdeleGroup.ideleModule_finiteEmbedding] at hm'
-  refine ⟨_, ?_, fun f hf => GlobalTheory.LiftPolar.val_of_norm _ w _ y hm' f hf⟩
+  refine ⟨_, ?_, fun f hf => GlobalTheory.LiftPolar.val_of_norm _ w _ y hm' f (by
+    simpa only [Formalism.ConjugateSelfDual.normV, ← Ideal.absNorm_eq_natCard] using hf)⟩
   have h0 : Units.map (MonoidHom.inr (InfiniteAdeleRing L) (FiniteAdeleRing (𝓞 L) L)) (sgl w y) = finiteEmbedding w y := by
     apply Units.ext
     rfl
@@ -41,7 +46,9 @@ theorem UpperTheory.Gal.CertificateRingHomMap.ZetaNonvanishing₂.normLoc :
   intro K L _ _ _ _ _ w y u
   obtain ⟨n, hn, hv⟩ := fN_sgl K L w y
   have hN : Ideal.absNorm w.asIdeal = Ideal.absNorm (below K w).asIdeal ^ w.asIdeal.inertiaDeg (𝓞 K) :=
-    GlobalTheory.LiftPolar.normV_under (K := K) w
+    by simpa only [Formalism.ConjugateSelfDual.normV, ← Ideal.absNorm_eq_natCard,
+      HeightOneSpectrum.under, below] using
+      GlobalTheory.LiftPolar.normV_under (K := K) w
   have hu' : ∀ h : below K u = below K w, Valued.v (finiteAdeleMap K L (finiteAdeleSingle (below K w) (n : (below K w).adicCompletion K)) u) =
       (Valued.v (y : w.adicCompletion L) ^ w.asIdeal.inertiaDeg (𝓞 K)) ^ u.asIdeal.ramificationIdx (𝓞 K) := fun h => by
     rw [finiteAdeleMap_apply, valued_completionMap, v_single h, hv _ hN]

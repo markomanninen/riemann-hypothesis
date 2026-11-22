@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.LSBase
-import Formalism.PeriodIntegrals.UnitaryApproxFin
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.LSBase
+public import Formalism.PeriodIntegrals.UnitaryApproxFin
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UnitaryGroupMassFormula.UJClassFin IsDedekindDomain
 open scoped TensorProduct RestrictedProduct
@@ -20,11 +24,8 @@ theorem af_mul_apply (a b : Af F) (w : HeightOneSpectrum (𝓞 F)) : (a * b) w =
 theorem af_add_apply (a b : Af F) (w : HeightOneSpectrum (𝓞 F)) : (a + b) w = a w + b w := rfl
 theorem af_sub_apply (a b : Af F) (w : HeightOneSpectrum (𝓞 F)) : (a - b) w = a w - b w := rfl
 theorem af_one_apply (w : HeightOneSpectrum (𝓞 F)) : (1 : Af F) w = 1 := rfl
-theorem af_zero_apply (w : HeightOneSpectrum (𝓞 F)) : (0 : Af F) w = 0 := rfl
 theorem af_alg_apply (c : F) (w : HeightOneSpectrum (𝓞 F)) :
     (algebraMap F (Af F) c) w = algebraMap F (w.adicCompletion F) c := rfl
-
-theorem mem_intAf_iff (a : Af F) : a ∈ intAf F ↔ ∀ w, a w ∈ w.adicCompletionIntegers F := Iff.rfl
 
 variable (v : HeightOneSpectrum (𝓞 F))
 
@@ -89,17 +90,11 @@ theorem evT_int (T : Set (HeightOneSpectrum (𝓞 F))) : evT T ∈ intAf F := by
   · exact one_mem _
   · exact zero_mem _
 
-theorem one_sub_evT_int (T : Set (HeightOneSpectrum (𝓞 F))) : 1 - evT T ∈ intAf F := by
-  intro w
-  show (1 - evT T) w ∈ w.adicCompletionIntegers F
-  rw [af_sub_apply, evT_apply, af_one_apply]; split_ifs
-  · rw [sub_self]; exact zero_mem _
-  · rw [sub_zero]; exact one_mem _
-
 theorem evT_eq_sum (T : Finset (HeightOneSpectrum (𝓞 F))) : evT (T : Set _) = ∑ w ∈ T, sgl w 1 := by
   apply af_ext
   intro w
-  rw [evT_apply, show (∑ w' ∈ T, sgl w' 1) w = evalV F w (∑ w' ∈ T, sgl w' 1) from rfl, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [evT_apply, show (∑ w' ∈ T, sgl w' 1) w = evalV F w (∑ w' ∈ T, sgl w' 1) from rfl, map_sum]
   simp only [show ∀ w', evalV F w (sgl w' 1) = Pi.single w' 1 w from fun _ => rfl]
   by_cases hw : w ∈ T
   · rw [if_pos (by exact_mod_cast hw), Finset.sum_eq_single w]
@@ -147,23 +142,20 @@ theorem Phi_tmul (e : E) (x : Fv F v) : Phi v (e ⊗ₜ[F] x) = sgl v x ⊗ₜ[F
   simp [Phi]; rfl
 
 theorem Phi_Psi (r : Af F ⊗[F] E) : Phi v (Psi v r) = (sgl v 1 ⊗ₜ[F] (1 : E)) * r := by
-  induction r using TensorProduct.induction_on with
-  | zero => simp
+  induction r using TensorProduct.inductionOn with
   | tmul a e =>
     rw [Psi_tmul, Phi_tmul, Algebra.TensorProduct.tmul_mul_tmul, sgl_one_mul, one_mul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, mul_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, mul_add]
 
 theorem Phi_mul (x y : E ⊗[F] Fv F v) : Phi v (x * y) = Phi v x * Phi v y := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
+  induction x using TensorProduct.inductionOn with
   | tmul e a =>
-    induction y using TensorProduct.induction_on with
-    | zero => simp
+    induction y using TensorProduct.inductionOn with
     | tmul e' a' =>
       rw [Algebra.TensorProduct.tmul_mul_tmul, Phi_tmul, Phi_tmul, Phi_tmul,
         Algebra.TensorProduct.tmul_mul_tmul, sgl_mul]
-    | add y y' hy hy' => rw [mul_add, map_add, hy, hy', map_add, mul_add]
-  | add x x' hx hx' => rw [add_mul, map_add, hx, hx', map_add, add_mul]
+    | add y y' hy hy' => rw [mul_add, map_add (f := _), hy, hy', map_add (f := _), mul_add]
+  | add x x' hx hx' => rw [add_mul, map_add (f := _), hx, hx', map_add (f := _), add_mul]
 
 theorem Phi_inclE (e : E) : Phi v (PI.UnitaryApproxDefs.inclE (F := F) (Fv F v) e) = sgl v 1 ⊗ₜ[F] e := by
   show Phi v (e ⊗ₜ[F] (1 : Fv F v)) = _

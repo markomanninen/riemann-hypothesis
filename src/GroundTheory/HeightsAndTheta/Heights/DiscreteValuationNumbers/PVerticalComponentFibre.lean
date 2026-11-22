@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsVerticalComponentFibre
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.SwapLoc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsVerticalComponentFibre
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.SwapLoc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -49,7 +54,7 @@ theorem VerticalComponentFibre.proof (h : FibreVarieties.Statement.{0}) :
 
   have hdiv : divCycle P (C ϖ) W ≠ 0 := by
     unfold divCycle
-    rw [dif_pos ⟨hmin, hrel⟩]
+    rw [dite_eq_left ⟨hmin, hrel⟩]
     have hm : IsLocalRing.maximalIdeal (Localization.AtPrime W) ∈
         ((P ⊔ Ideal.span {(C ϖ : MRing ι O)}).map
           (algebraMap (MRing ι O) (Localization.AtPrime W))).minimalPrimes := by

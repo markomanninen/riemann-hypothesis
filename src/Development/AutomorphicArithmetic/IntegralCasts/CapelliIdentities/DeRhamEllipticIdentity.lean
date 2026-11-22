@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.InvariantSumOfTranslates.main :
     ∀ {K S : Type} [inst : Group K] [inst_1 : TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K]
@@ -50,6 +54,7 @@ theorem UpperTheory.Reformulated.B.InvariantSumOfTranslates.main :
   let e : Fin (m + 1) ≃ K ⧸ H := (Fintype.equivFinOfCardEq hm).symm
   refine ⟨m, fun i => (e i).out, fun g => ?_⟩
   have hsum : ∑ i : Fin (m + 1), ω (e i).out f₀ = ∑ q, F q := Equiv.sum_comp e F
-  rw [hsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum]
   simp_rw [hF]
   exact Equiv.sum_comp (MulAction.toPerm g) F

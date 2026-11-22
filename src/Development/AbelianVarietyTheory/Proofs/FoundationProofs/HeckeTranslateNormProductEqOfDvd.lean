@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ GlobalTheory.KZ.ES
 
@@ -9,7 +14,7 @@ theorem toGQ_mul_pos' (m m' : Matrix (Fin 2) (Fin 2) ℤ) (h : 0 < m.det) (h' : 
     toGQ (m * m') = toGQ m * toGQ m' := by
   have hmm : 0 < (m * m').det := by rw [Matrix.det_mul]; exact mul_pos h h'
   unfold toGQ
-  rw [dif_pos hmm, dif_pos h, dif_pos h']
+  rw [dite_eq_left hmm, dite_eq_left h, dite_eq_left h']
   apply Subtype.ext
   apply Units.ext
   simp only [Matrix.GeneralLinearGroup.mkOfDetNeZero, Units.val_mul] at *

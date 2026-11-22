@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartIntegral
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreCoordGoodProj
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsIntegralProjIndep
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsIntegralSegreChartProj
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartIntegral
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreCoordGoodProj
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsIntegralProjIndep
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsIntegralSegreChartProj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -45,7 +50,7 @@ theorem SegreChartIntegral.proof (hGood : SegreCoordGoodProj.Statement)
     goodProjExists K ι P (e + 1) hP
   have hpts : ptsIntegral P (pot L) g = ptsIntegralAt P hex.choose (pot L) g := by
     unfold ptsIntegral
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   rw [hpts]
   by_cases hne : ∃ z ∈ mcPts P, segre z i ≠ 0
   · obtain ⟨Ψ, hΨ, hΨ0⟩ := hGood K ι P (e + 1) i hP hne

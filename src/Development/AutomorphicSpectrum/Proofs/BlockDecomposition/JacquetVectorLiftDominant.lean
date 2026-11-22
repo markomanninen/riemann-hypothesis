@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.IsJointGenEig
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactFixedVectorProjectionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactGroupFiniteCosetRepsStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.IsJointGenEig
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactFixedVectorProjectionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactGroupFiniteCosetRepsStatement
+
+@[expose] public section
 
 open GlobalTheory.PRep PositivityTheory.SphericalProduct
 
@@ -28,7 +32,8 @@ theorem mem_fixed_iff (π : Representation ℂ G V) (H : Subgroup G) (v : V) :
 theorem mkQ_avg (W : Submodule ℂ V) (r : ℕ) (hr : 0 < r) (f : Fin r → V) (m : V ⧸ W)
     (h : ∀ i, W.mkQ (f i) = m) : W.mkQ (((r : ℂ)⁻¹) • ∑ i, f i) = m := by
   have hr' : (r : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hr.ne'
-  rw [map_smul, map_sum, Finset.sum_congr rfl (fun i _ => h i), Finset.sum_const, Finset.card_univ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum, Finset.sum_congr rfl (fun i _ => h i), Finset.sum_const, Finset.card_univ,
     Fintype.card_fin, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hr', one_smul]
 
 end SlopeTestRemainingChoices
@@ -145,7 +150,8 @@ theorem exists_fixed_proj_eq_piN_pow : ∀ (G : Type) [Group G] [TopologicalSpac
     exact (mem_fixed_iff _ _ _).1 (hE1fix x)
   have hyNm : ∀ n ∈ D.J ⊓ D.Nm, π n y = y := by
     intro n hn
-    rw [hy, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_smul, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     have hbi := hb i

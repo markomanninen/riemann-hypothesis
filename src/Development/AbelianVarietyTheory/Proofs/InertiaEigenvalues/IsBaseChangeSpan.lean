@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitSumTensorDualOfCrys
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitSumTensorDualOfCrys
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices GlobalTheory.WachTensor
 
@@ -21,7 +25,7 @@ theorem range_of_approx {E E' R : Type} [CommRing E] [CommRing E'] [CommRing R] 
     | zero => simp [S]
     | succ k ih =>
       rw [ih, hyz (z^[k] x), Function.iterate_succ_apply']
-      simp only [S, Finset.sum_range_succ, map_add, map_mul, map_pow, map_natCast]
+      simp only [S, Finset.sum_range_succ, map_add (f := _), map_mul, map_pow, map_natCast]
       ring
   have hmem : ∀ (k : ℕ) (a : E'), a ∈ (Ideal.span {(p : E')} ^ k • ⊤ : Submodule E' E') ↔ (p : E') ^ k ∣ a := by
     intro k a
@@ -51,7 +55,7 @@ theorem series_ext {O R : Type} [CommRing O] [CommRing R] [Algebra O R] (f g : P
   | zero => simp
   | succ k ih =>
     have hC : ∀ (u : PowerSeries O →ₐ[O] R) c, u (PowerSeries.C c) = algebraMap O R c := fun u c => u.commutes c
-    rw [PowerSeries.eq_X_mul_shift_add_const a, map_add, map_add, map_mul, map_mul, hf, hg, hC, hC,
+    rw [PowerSeries.eq_X_mul_shift_add_const a, map_add (f := _), map_add (f := _), map_mul, map_mul, hf, hg, hC, hC,
       add_sub_add_right_eq_sub, ← mul_sub, pow_succ']
     exact mul_dvd_mul_left _ (ih _)
 
@@ -72,7 +76,7 @@ theorem map_id_smul {O R M M' : Type} [CommRing O] [CommRing R] [Algebra O R] [A
     TensorProduct.map (LinearMap.id : R →ₗ[O] R) e (r • x) = r • TensorProduct.map LinearMap.id e x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [smul_add, map_add, hx, hx']
+  | add x x' hx hx' => simp only [smul_add, map_add (f := _), hx, hx']
   | tmul r' u => simp [TensorProduct.smul_tmul']
 
 theorem map_id_comm {O R M M' : Type} [CommRing O] [CommRing R] [Algebra O R] [AddCommGroup M] [Module O M]
@@ -82,7 +86,7 @@ theorem map_id_comm {O R M M' : Type} [CommRing O] [CommRing R] [Algebra O R] [A
       TensorProduct.map f a' (TensorProduct.map LinearMap.id e x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
   | tmul r' u => simp [h]
 
 theorem map_id_symm {O R M M' : Type} [CommRing O] [CommRing R] [Algebra O R] [AddCommGroup M] [Module O M]
@@ -91,7 +95,7 @@ theorem map_id_symm {O R M M' : Type} [CommRing O] [CommRing R] [Algebra O R] [A
       (TensorProduct.map LinearMap.id e.toLinearMap x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
   | tmul r' u => simp
 
 theorem mem_GK_of_chi {l : ℕ} [Fact l.Prime] (P : LocPrime l) {K K' : FinExt l} {s : ℕ} (h' : K'.1 ≤ Ks K' s)
@@ -170,8 +174,10 @@ theorem io_mem (hO : Function.Injective (algebraMap O LL)) (hd : Descends E') (h
       series_ext (E'.io.comp (AlgHom.pi fun _ => AlgHom.id O _)) (E.io.comp (AlgHom.pi fun _ => AlgHom.id O _)) πA
         E'.io_π E.io_π hsep f
     refine ⟨∑ i, u i * fun _ => a i, ?_⟩
-    simp only [map_sum, map_mul, hu, h3]
-    simp only [← map_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hu, h3]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_mul, ← map_sum]
     congr 1
     funext k
     simp [letE, Finset.sum_apply, Pi.single_apply]
@@ -218,13 +224,15 @@ theorem jD_mem (hd : Descends E') (hm : ∀ m : Ideal W.EE, m.IsMaximal → m.ma
   · choose y hy using h1
     refine ⟨∑ a, θ (b.repr x a) • y a, ?_⟩
     conv_rhs => rw [← b.sum_repr x]
-    simp only [map_sum, E.jD_smul, E'.jD_smul, hθ, hy, map_id_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, E.jD_smul, E'.jD_smul, hθ, hy, map_id_smul]
   · intro g' hg' a
     obtain ⟨g, hg, e1, e2⟩ := hH g' hg'
     rw [TWact, ← map_id_comm e _ (T.actT g) _ e2, ← e1]
     exact congrArg _ (jD_fixed E T g hg _)
   · intro a
-    conv_lhs => rw [hU a, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [hU a, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [map_id_smul, hθ, TWmap, TWmap, map_id_comm e _ LinearMap.id LinearMap.id (fun _ => rfl)]
 
@@ -265,7 +273,8 @@ theorem N_eq (T : LocLat G Qp LL O) (T' : LocLat G' Qp LL O) (e : ↥T'.L.T ≃�
     rw [Fintype.linearIndependent_iff]
     intro c hc j
     have h1 := congrArg J hc
-    simp only [map_sum, JE, hψ, map_zero, ← hb, ← hC] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, JE, hψ, map_zero, ← hb, ← hC] at h1
     exact hinj ((Fintype.linearIndependent_iff.1 C.linearIndependent _ h1 j).trans (map_zero _).symm)
   have hsp : ⊤ ≤ Submodule.span W'.EE (Set.range fun j => ψ (b j : W.DD T)) := by
     intro y _
@@ -274,7 +283,8 @@ theorem N_eq (T : LocLat G Qp LL O) (T' : LocLat G' Qp LL O) (e : ↥T'.L.T ≃�
       ⟨fun j => θE (((W.N_base T hT).basis b).repr x j), Jinj ?_⟩
     rw [← hx]
     conv_rhs => rw [← ((W.N_base T hT).basis b).sum_repr x]
-    simp only [map_sum, JE, E.jD_smul, hθE, hψ, hb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, JE, E.jD_smul, hθE, hψ, hb]
   let c := Module.Basis.mk hli hsp
   have hc : ∀ j, J (c j) = E.jD T (b j : W.DD T) := fun j => by rw [Module.Basis.mk_apply, hψ]
   have hliA : LinearIndependent (LetA O n') c := by
@@ -286,13 +296,15 @@ theorem N_eq (T : LocLat G Qp LL O) (T' : LocLat G' Qp LL O) (e : ↥T'.L.T ≃�
     constructor
     · rintro ⟨a, rfl⟩
       refine ⟨∑ j, θ' (a j) • (b j : W.DD T), Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (b j).2, ?_⟩
-      simp only [map_sum, JA, jD_smulA, hθ', hc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, JA, jD_smulA, hθ', hc]
     · rintro ⟨x, hx, hy⟩
       refine ⟨fun j => θ (b.repr ⟨x, hx⟩ j), Jinj ?_⟩
       have h1 := congrArg Subtype.val (b.sum_repr ⟨x, hx⟩)
       rw [← hy]
       conv_rhs => rw [show x = _ from h1.symm]
-      simp only [map_sum, JA, hθ, hc, AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, jD_smulA]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, JA, hθ, hc, AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, jD_smulA]
   have hψN : ∀ x ∈ W.N T, ψ x ∈ Submodule.span (LetA O n') (Set.range c) :=
     fun x hx => (hmem _).2 ⟨x, hx, (hψ x).symm⟩
   obtain ⟨g', hg'⟩ := W'.resΓ_onto W'.gam
@@ -339,7 +351,7 @@ theorem N_eq (T : LocLat G Qp LL O) (T' : LocLat G' Qp LL O) (e : ↥T'.L.T ≃�
       | add z z' _ _ h1 h2 =>
         obtain ⟨w, hw, e1⟩ := h1
         obtain ⟨w', hw', e2⟩ := h2
-        exact ⟨w + w', add_mem hw hw', by rw [map_add, map_add, e1, e2]⟩
+        exact ⟨w + w', add_mem hw hw', by rw [map_add (f := _), map_add (f := _), e1, e2]⟩
       | smul a z _ h1 =>
         obtain ⟨w, hw, e1⟩ := h1
         exact ⟨θ a • w, Submodule.smul_mem _ _ hw, by rw [JA, jD_smulA, hθ, e1]⟩

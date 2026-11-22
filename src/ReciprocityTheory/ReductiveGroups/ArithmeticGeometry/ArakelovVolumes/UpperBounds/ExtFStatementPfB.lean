@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.ExtFPf
 
@@ -25,9 +29,9 @@ theorem nfac_contOn (la : Wt X.Ψ r) : ContinuousOn (X.nfac la) X.dom := by
     rw [h0] at h1
     simp at h1
   unfold Data.nfac
-  apply continuousOn_finset_prod
+  apply continuousOn_finsetProd
   intro τ _
-  apply continuousOn_finset_prod
+  apply continuousOn_finsetProd
   intro i _
   apply ContinuousOn.rpow_const
   · exact (((hd τ i.succ).continuousOn).div ((hd τ i.castSucc).continuousOn)
@@ -70,7 +74,7 @@ private lemma continuous_cpt' : Continuous (cpt X x0) := by
         exact continuous_const
   refine continuous_pi fun τ => continuous_pi fun a => continuous_pi fun b => ?_
   show Continuous fun z => ∑ k, mat x0 τ a k * mat (nmat X z) τ k b
-  exact continuous_finset_sum _ fun k _ => continuous_const.mul (hn τ k b)
+  exact continuous_finsetSum _ fun k _ => continuous_const.mul (hn τ k b)
 
 private lemma bor_diag_ne_zero {Ψ : Finset (E →+* ℂ)} {b : Frame Ψ r} (hb : b ∈ Bor Ψ r) (τ : Ψ)
     (i : Fin r) : b τ i i ≠ 0 := by
@@ -93,9 +97,9 @@ theorem Gf_meas (hF : DifferentiableOn ℂ F (OmF X x0)) : Measurable (Gf D la F
       fun x hx => ⟨(D.split x hx.1 hx.2).1, (D.split x hx.1 hx.2).2.1⟩
     refine ContinuousOn.mul ?_ (hF.continuousOn.comp hzc fun x hx => (hsplit x hx).1)
     unfold bchar
-    apply continuousOn_finset_prod
+    apply continuousOn_finsetProd
     intro τ _
-    apply continuousOn_finset_prod
+    apply continuousOn_finsetProd
     intro i _
     apply ContinuousOn.zpow₀
     · have hent : Continuous fun y : Frame X.Ψ r => y τ i i := by

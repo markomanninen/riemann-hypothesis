@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.MeanHeightDescent.MuMaxMinkowski
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeIneq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtImage
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+module
+
+public import Mathlib
+public import Formalism.MeanHeightDescent.MuMaxMinkowski
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeIneq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtImage
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+
+@[expose] public section
 
 open Module NumberField
 
@@ -16,7 +20,7 @@ namespace Formalism.ExtensionFiltration
 open Formalism.HN
 
 theorem slope_image_injective
-    {K V ι W κ : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+    {K V ι W κ : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι]
     [DecidableEq ι] [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
     [Fintype κ] [DecidableEq κ] (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)

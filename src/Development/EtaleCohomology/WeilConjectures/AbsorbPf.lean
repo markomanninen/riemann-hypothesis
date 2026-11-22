@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.AbsorbPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AbsorbPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits LateralTheory.E.t_E3Cut
@@ -50,10 +54,6 @@ instance cat : SmallCategory (Obj ι M tM) where
   id_comp f := Subtype.ext (Category.id_comp _)
   comp_id f := Subtype.ext (Category.comp_id _)
   assoc f g h := Subtype.ext (Category.assoc _ _ _)
-
-@[simp] theorem comp_val {X Y Z : Obj ι M tM} (f : X ⟶ Y) (g : Y ⟶ Z) :
-    (show Hm X Z from f ≫ g).1 = (show Hm X Y from f).1 ≫ (show Hm Y Z from g).1 := rfl
-@[simp] theorem id_val (X : Obj ι M tM) : (show Hm X X from 𝟙 X).1 = 𝟙 _ := rfl
 
 def Dfun : Obj ι M tM ⥤ CommRingCat.{0} where
   obj X := M X.n

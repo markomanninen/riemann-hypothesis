@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,8 @@ private theorem isWeightedHomogeneous_rename_chainEmb_of_mem_Pol {K : Type} [Com
     (ωL : Fin (N + 1) → ℕ) (h1 : ∀ a c, ω (Sum.inl (a, c)) = ωL a) (dd : Fin N → ℕ)
     (y : MvPolynomial (Fin N × Fin r) K) (hy : y ∈ Pol K r dd) :
     IsWeightedHomogeneous ω (rename (chainEmb N r t) y) (∑ a : Fin N, dd a * ωL a.castSucc) := by
-  rw [y.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [y.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
   rw [rename_monomial]
   apply isWeightedHomogeneous_monomial

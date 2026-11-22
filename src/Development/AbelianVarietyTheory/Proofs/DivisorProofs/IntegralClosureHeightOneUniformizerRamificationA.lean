@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+
+@[expose] public section
+
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 namespace GlobalTheory
@@ -15,7 +20,7 @@ theorem exists_localUniformizer_and_order {B : Type} [CommRing B] [IsDomain B]
   have hle : Q.primeCompl ≤ nonZeroDivisors B := Q.primeCompl_le_nonZeroDivisors
   have hinj : Function.Injective (algebraMap B L) := IsLocalization.injective L hle
   have hcomap : (IsLocalRing.maximalIdeal L).comap (algebraMap B L) = Q :=
-    IsLocalization.AtPrime.comap_maximalIdeal L Q
+    IsLocalization.AtPrime.under_maximalIdeal L Q
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible L
   obtain ⟨⟨s, r0⟩, hs⟩ := IsLocalization.surj Q.primeCompl ϖ
   simp only at hs
@@ -69,7 +74,10 @@ theorem integralClosure_height_one_uniformizer_ramification :
     exact IsIntegrallyClosed.of_equiv hu.aevalEquiv.toRingEquiv
   have : CharZero F := charZero_of_injective_algebraMap (algebraMap k F).injective
   subst hB
-  have hNB : IsNoetherianRing (integralClosure A K) := IsIntegralClosure.isNoetherianRing A F K _
+  have hNB : IsNoetherianRing (integralClosure A K) := by
+    letI : IsNoetherianRing A := hN
+    letI : IsIntegrallyClosed A := hI
+    exact integralClosure.isNoetherianRing (A := A) (K := F) (L := K)
   have hIB : IsIntegrallyClosed (integralClosure A K) :=
     integralClosure.isIntegrallyClosedOfFiniteExtension F
   haveI : IsNoetherianRing ((integralClosure A K).restrictScalars k) := hNB

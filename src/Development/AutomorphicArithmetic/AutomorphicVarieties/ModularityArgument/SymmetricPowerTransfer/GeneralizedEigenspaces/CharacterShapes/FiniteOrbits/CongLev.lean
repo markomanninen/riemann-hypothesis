@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.LocalLevelOutsideSigma
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.BdMul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.LocalLevelOutsideSigma
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.BdMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,11 +81,12 @@ private theorem val_norm {F : Type} [Field F] [NumberField F] (v : Pl F) :
   have h := (HeightOneSpectrum.valuation_lt_one_iff_mem (K := F) v ((Ideal.absNorm v.asIdeal : ℕ) : 𝓞 F)).2 (Ideal.absNorm_mem _)
   have h2 : (Valued.v : Valuation (Kv v) _) ((Ideal.absNorm v.asIdeal : ℕ) : Kv v) < 1 := by
     have e := HeightOneSpectrum.valuedAdicCompletion_eq_valuation' (K := F) v ((Ideal.absNorm v.asIdeal : ℕ) : F)
-    rw [map_natCast] at e
     have e2 : ((Ideal.absNorm v.asIdeal : ℕ) : Kv v) = algebraMap F (Kv v) ((Ideal.absNorm v.asIdeal : ℕ) : F) := (map_natCast _ _).symm
     rw [e2]
     refine e.trans_lt ?_
-    simpa using h
+    change v.valuation F (algebraMap (𝓞 F) F ((Ideal.absNorm v.asIdeal : ℕ) : 𝓞 F)) < 1 at h
+    rw [map_natCast] at h
+    exact h
   haveI : (Valued.v : Valuation (Kv v) (WithZero (Multiplicative ℤ))).Compatible := Valuation.Compatible.ofValuation _
   have he : (valuation (Kv v)).IsEquiv (Valued.v : Valuation (Kv v) (WithZero (Multiplicative ℤ))) := isEquiv _ _
   simp only [← not_le] at h2 ⊢

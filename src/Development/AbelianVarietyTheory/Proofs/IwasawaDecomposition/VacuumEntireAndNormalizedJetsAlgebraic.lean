@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilOThZeroTriv
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoefInTranslate
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlgebraicTaylorTorsionTranslateEvenTheta
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetIndicatorThetaTorsionTranslates
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivAtZeroReindexEqTaylorCoefficient
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilOThZeroTriv
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoefInTranslate
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlgebraicTaylorTorsionTranslateEvenTheta
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetIndicatorThetaTorsionTranslates
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivAtZeroReindexEqTaylorCoefficient
+
+@[expose] public section
 
 noncomputable section
 
@@ -150,13 +154,15 @@ theorem alg_of_span {κ : Type} (s : κ → n → ℂ) (hs : ∀ k i, s k i ∈ 
   have e : w.1 = ∑ k ∈ c.support, (pr (c k) : ℂ) • s k := by
     funext i
     have h1 : (pr (w.1 i) : ℂ) = w.1 i := congrArg Subtype.val (hp ⟨_, w.2 i⟩)
-    rw [← h1, ← hc, Finsupp.sum, Finset.sum_apply, Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1, ← hc, Finsupp.sum, Finset.sum_apply, Finset.sum_apply, map_sum]
     push_cast
     refine Finset.sum_congr rfl fun k _ => ?_
     have : (c k • s k) i = (⟨_, hs k i⟩ : Qbar) • c k := mul_comm _ _
     rw [this, map_smul]
     exact mul_comm _ _
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   exact sum_mem fun k _ => by rw [map_smul]; exact mul_mem (pr (c k)).2 (hl k)
 
 end Germs

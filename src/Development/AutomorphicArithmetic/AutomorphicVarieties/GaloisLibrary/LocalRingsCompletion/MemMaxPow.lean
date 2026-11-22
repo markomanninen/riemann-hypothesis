@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.IsCharOneOfSubsingleton
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.IsCharOneOfSubsingleton
+
+@[expose] public section
 
 open PowerSeries IsLocalRing UpperTheory.V.abelian₂
 open IsDiscreteValuationRing (addVal)
@@ -47,7 +51,7 @@ theorem UpperTheory.V.abelian₂.mem_max_pow :
         rw [← pow_add] at h3
         exact Ideal.pow_le_pow_right (by omega) h3
       · intro x y hx hy i
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Ideal.add_mem _ (hx i) (hy i)
   · intro h
     induction n generalizing f with

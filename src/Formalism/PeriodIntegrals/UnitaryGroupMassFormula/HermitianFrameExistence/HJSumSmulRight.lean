@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScPiExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScPiExists
+
+@[expose] public section
 
 noncomputable section
 

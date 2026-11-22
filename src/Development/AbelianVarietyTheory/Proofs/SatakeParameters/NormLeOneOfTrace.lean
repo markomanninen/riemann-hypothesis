@@ -1,15 +1,19 @@
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactTer
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PFamily
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.HalfPeriodStandardCM
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.IsTorsionPointStandardCM
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.DetMemOfEntries
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.GlobalLUnit
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactTer
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PFamily
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.HalfPeriodStandardCM
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.IsTorsionPointStandardCM
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.DetMemOfEntries
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.GlobalLUnit
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -95,7 +99,7 @@ theorem norm_eq_one {a : ℕ} {b c : ℤ} {d : ℕ} (hok : PI.UnitDetRootDefs.Cm
       _ = -(d : ℂ) := by rw [Complex.I_mul_I, h2]; ring
   have hcs : conj s = -s := by simp [hs_def]
   have hconj : conj ((p : ℂ) + (q : ℂ) * s) = (p : ℂ) - (q : ℂ) * s := by
-    rw [map_add, map_mul, hcs, map_ratCast, map_ratCast]; ring
+    rw [map_add (f := _), map_mul, hcs, map_ratCast, map_ratCast]; ring
   rw [hconj] at h1
 
   have hpq : (p ^ 2 + d * q ^ 2 : ℚ) = 1 := by
@@ -114,7 +118,7 @@ theorem norm_eq_one {a : ℕ} {b c : ℤ} {d : ℕ} (hok : PI.UnitDetRootDefs.Cm
     intro r
     rw [← PadicComplex.norm_extends', map_ratCast, PadicComplex.coe_eq, map_ratCast]
   have hsum : y + y' = ((2 * p : ℚ) : ℂ_[l]) := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     have : (p : ℂ) + (q : ℂ) * s + ((p : ℂ) - (q : ℂ) * s) = ((2 * p : ℚ) : ℂ) := by push_cast; ring
     rw [this, map_ratCast]
   have htr : ‖y + y'‖ ≤ 1 := by rw [hsum, hnr]; exact hT'

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HilbertSchmidt
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HilbertSchmidt
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -25,7 +29,7 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 section Abs
 
 theorem isSelfAdjoint_of_nonneg {A : H →L[ℂ] H} (hA : 0 ≤ A) : IsSelfAdjoint A :=
-  ((nonneg_iff_isPositive A).1 hA).isSelfAdjoint
+  (nonneg_iff_isPositive.1 hA).isSelfAdjoint
 
 theorem adjoint_eq_of_nonneg {A : H →L[ℂ] H} (hA : 0 ≤ A) : A† = A :=
   (isSelfAdjoint_of_nonneg hA).adjoint_eq
@@ -310,15 +314,6 @@ theorem IsTraceClass.comp_right {T : H →L[ℂ] H} (hT : IsTraceClass T) (C : H
 theorem IsTraceClass.adjoint {T : H →L[ℂ] H} (hT : IsTraceClass T) : IsTraceClass (T†) := by
   rw [IsTraceClass, traceNorm_adjoint]; exact hT
 
-variable (H) in
-
-def traceClass : Submodule ℂ (H →L[ℂ] H) where
-  carrier := {T | IsTraceClass T}
-  add_mem' hS hT := hS.add hT
-  zero_mem' := by
-    show traceNorm (0 : H →L[ℂ] H) < ∞
-    rw [traceNorm_zero]; exact ENNReal.zero_lt_top
-  smul_mem' c _ hT := hT.smul c
 
 theorem two_mul_traceNorm_comp_le (A B : H →L[ℂ] H) :
     2 * traceNorm (A.comp B) ≤ hsNormSq A + hsNormSq B := by

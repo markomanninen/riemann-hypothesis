@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceOfAt
-import Formalism.LocalToGlobal.GroupLattices.JointServices.VwResChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceOfAt
+public import Formalism.LocalToGlobal.GroupLattices.JointServices.VwResChar
+
+@[expose] public section
+
 open GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.BigOn.Exp GlobalTheory.BigOn.Exp.SerBase
 
 open NumberField IsDedekindDomain Formalism.BasicNotions

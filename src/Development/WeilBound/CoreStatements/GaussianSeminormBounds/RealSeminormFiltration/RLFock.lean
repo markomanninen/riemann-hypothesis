@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLActs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsBoundPolyMulExp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLActs
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsBoundPolyMulExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,7 +162,7 @@ open MvPolynomial
 variable {L : Type} {S : Type} [AddCommGroup S] [Module ℂ S]
 
 theorem eq_zero_of_stable (K : Submodule ℂ (MvPolynomial L ℂ)) (hK : ∀ l, ∀ P ∈ K, pderiv l P ∈ K)
-    (hC : ∀ a : ℂ, C a ∈ K → a = 0) (n : ℕ) : ∀ P ∈ K, (∀ α, coeff α P ≠ 0 → α.degree < n) → P = 0 := by
+    (hC : ∀ a : ℂ, C a ∈ K → a = 0) (n : ℕ) : ∀ P ∈ K, (∀ α, AddMonoidAlgebra.coeff P α ≠ 0 → α.degree < n) → P = 0 := by
   classical
   induction n with
   | zero => exact fun P _ h => MvPolynomial.ext _ _ fun α => by simpa using h α
@@ -167,16 +171,16 @@ theorem eq_zero_of_stable (K : Submodule ℂ (MvPolynomial L ℂ)) (hK : ∀ l, 
     have h1 : ∀ l, pderiv l P = 0 := fun l => ih _ (hK l P hP) fun α hα => by
       rw [coeff_pderiv] at hα
       have := h _ (left_ne_zero_of_mul hα)
-      simp only [map_add, Finsupp.degree_single] at this
+      simp only [map_add (f := _), Finsupp.degree_single] at this
       omega
-    have h2 : P = C (coeff 0 P) := by
+    have h2 : P = C (AddMonoidAlgebra.coeff P 0) := by
       refine MvPolynomial.ext _ _ fun α => ?_
       rw [coeff_C]
       split_ifs with h0
       · rw [h0]
       · obtain ⟨l, hl⟩ := Finsupp.ne_iff.1 (Ne.symm h0)
-        have h3 := congrArg (coeff (α - Finsupp.single l 1)) (h1 l)
-        rw [coeff_pderiv, Finsupp.sub_add_single_one_cancel hl, coeff_zero] at h3
+        have h3 := congrArg (AddMonoidAlgebra.coeff · (α - Finsupp.single l 1)) (h1 l)
+        rw [coeff_pderiv, Finsupp.sub_add_single_one_cancel hl, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h3
         exact (mul_eq_zero.1 h3).resolve_right (Nat.cast_add_one_ne_zero _)
     rw [h2] at hP
     rw [h2, hC _ hP, map_zero]
@@ -188,7 +192,9 @@ theorem exists_fock [DecidableEq L] (Z d : L → Module.End ℂ S) (hZ : ∀ l l
   have hc : ∀ a ∈ Set.range Z, ∀ b ∈ Set.range Z, a * b = b * a := by
     rintro _ ⟨l, rfl⟩ _ ⟨l', rfl⟩
     exact hZ l l'
-  letI : CommRing (Algebra.adjoin ℂ (Set.range Z)) := Algebra.adjoinCommRingOfComm ℂ hc
+  letI : IsMulCommutative (Algebra.adjoin ℂ (Set.range Z)) :=
+    Algebra.isMulCommutative_adjoin ℂ (fun a ha b hb _ => hc a ha b hb)
+  open scoped IsMulCommutative in
   let e : MvPolynomial L ℂ →ₐ[ℂ] Module.End ℂ S := (Algebra.adjoin ℂ (Set.range Z)).val.comp
     (aeval fun l => (⟨Z l, Algebra.subset_adjoin ⟨l, rfl⟩⟩ : Algebra.adjoin ℂ (Set.range Z)))
   have he : ∀ l, e (X l) = Z l := fun l => by simp [e]
@@ -200,9 +206,9 @@ theorem exists_fock [DecidableEq L] (Z d : L → Module.End ℂ S) (hZ : ∀ l l
   have hp : ∀ l P, φ (pderiv l P) = d l (φ P) := fun l P => by
     induction P using MvPolynomial.induction_on with
     | C a => rw [pderiv_C, map_zero, hCa, map_smul, h0, smul_zero]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p j hp =>
-      rw [mul_comm p, hX, pderiv_mul, map_add, hX, hp, ← Module.End.mul_apply (d l), hd, add_comm]
+      rw [mul_comm p, hX, pderiv_mul, map_add (f := _), hX, hp, ← Module.End.mul_apply (d l), hd, add_comm]
       by_cases h : l = j
       · subst h; simp
       · simp [h, pderiv_X_of_ne (Ne.symm h)]
@@ -281,7 +287,8 @@ theorem iota_hop [Fintype N] (P : W → MvPolynomial N ℂ) (c : W × N → ℂ)
   have h : ∀ w, iota W N (PiTensorProduct.tprod ℂ P) =
       rename (Prod.mk w) (P w) * ∏ w' ∈ Finset.univ.erase w, rename (Prod.mk w') (P w') := fun w => by
     rw [← iota_update, Function.update_eq_self]
-  simp only [iota_update, hop, LinearMap.smul_apply, LinearMap.sum_apply, Fintype.sum_prod_type, map_smul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [iota_update, hop, LinearMap.smul_apply, LinearMap.sum_apply, Fintype.sum_prod_type, map_smul, map_sum,
     smul_mul_assoc, Finset.sum_mul, ← Finset.smul_sum]
   congr 1
   refine Finset.sum_congr rfl fun w _ => Finset.sum_congr rfl fun l _ => ?_
@@ -306,7 +313,7 @@ variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] {L : Type} [Finty
 
 theorem D_add (c c' : L → ℂ) (f : 𝓢(V, ℂ)) : H.D (c + c') f = H.D c f + H.D c' f := by
   ext x
-  simp only [SchwartzMap.add_apply, H.hD, map_add, ContinuousLinearMap.add_apply]
+  simp only [SchwartzMap.add_apply, H.hD, map_add (f := _), ContinuousLinearMap.add_apply]
   push_cast
   ring
 
@@ -447,7 +454,7 @@ theorem exists_sec : ∃ s : V →L[ℝ] (L → ℂ), (∀ y, H.v (s y) = 0) ∧
   let T : LinearMap.ker H.v →ₗ[ℝ] V := (H.v.comp (mulI L)).comp (LinearMap.ker H.v).subtype
   have hT : ∀ k, T k = H.v (I • k.1) := fun k => rfl
   have hi : Function.Injective T := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro k hk
     by_contra hne
     have := H.lam_neg k.2 (fun e => hne (Subtype.ext e))
@@ -593,10 +600,12 @@ theorem exists_fockMap : ∃ φ : MvPolynomial L ℂ →ₗ[ℂ] 𝓢(V, ℂ), F
     simp [Finset.sum_apply, Pi.single_apply, Finset.sum_add_distrib]
   have e2 : H.Dl c = ∑ l, (((c l).re : ℂ) • a l + ((c l).im : ℂ) • b l) := by
     conv_lhs => rw [e]
-    simp only [map_sum, map_add, map_smul, coe_smul, a, b]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_smul, coe_smul, a, b]
   change H.Dl c (φ P) = _
   rw [e2]
-  simp only [hop, ← hr, LinearMap.smul_apply, LinearMap.sum_apply, LinearMap.sub_apply, LinearMap.add_apply, map_smul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hop, ← hr, LinearMap.smul_apply, LinearMap.sum_apply, LinearMap.sub_apply, LinearMap.add_apply, map_smul, map_sum,
     map_sub, LinearMap.mulLeft_apply, Derivation.coeFn_coe, h2, h3, Finset.smul_sum, LinearMap.neg_apply]
   refine Finset.sum_congr rfl fun l _ => ?_
   have e3 : c l = (c l).re + (c l).im * I := (re_add_im _).symm
@@ -621,26 +630,8 @@ theorem Jm_eq : Jm R S = Matrix.diagonal (Sum.elim (fun _ => (1 : ℂ)) fun _ =>
   have h : Jm R S = Matrix.fromBlocks 1 0 0 (-1) := rfl
   rw [h, ← Matrix.fromBlocks_diagonal, Matrix.diagonal_one, ← Matrix.diagonal_neg, Matrix.diagonal_one]
 
-theorem Jm_mul_self : Jm R S * Jm R S = 1 := by
-  rw [Jm_eq, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1
-  funext a
-  rcases a with a | a <;> simp
-
 theorem map_star_mul {l m n : Type} [Fintype m] (A : Matrix l m ℂ) (B : Matrix m n ℂ) :
     (A * B).map star = A.map star * B.map star := Matrix.map_mul (f := starRingEnd ℂ)
-
-theorem frame_inv {M : Matrix β β ℂ} {C : Matrix β (Ix R S) ℂ} (h : IsFrame M C) :
-    ∃ C' : Matrix (Ix R S) β ℂ, C * C' = 1 ∧ C' * C = 1 := by
-  obtain ⟨h1, C', h2⟩ := h
-  refine ⟨C', h2, ?_⟩
-  have h3 : (M * C.map star * Jm R S)ᵀ * C = 1 := by
-    have : Cᵀ * (M * C.map star * Jm R S) = 1 := by
-      rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, h1, Jm_mul_self]
-    rw [← Matrix.transpose_one, ← this, Matrix.transpose_mul Cᵀ, Matrix.transpose_transpose]
-  have h4 : C' = (M * C.map star * Jm R S)ᵀ := by
-    rw [← Matrix.one_mul C', ← h3, Matrix.mul_assoc, h2, Matrix.mul_one]
-  rw [h4, h3]
 
 end Frame
 
@@ -708,7 +699,7 @@ theorem piInf_cA {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {w : InfinitePlace F}
     piInf τ (cA σ z) = star (piInf τ z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb, star_add]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, star_add]
   | tmul a e =>
     show piInf τ (a ⊗ₜ[F] σ e) = _
     rw [piInf_tmul, piInf_tmul, h.2.2.2, star_mul']
@@ -731,7 +722,7 @@ theorem eq_zero_of_piInf {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : ∀ w :
     exact (one_mul _).symm.trans h3
   have hre : ∀ w i, (C.repr x i).1 w = 0 := fun w => by
     have e := hinf w
-    rw [hdec, map_add, piInf_tmul, piInf_tmul, hB0, hB1, map_one, mul_one] at e
+    rw [hdec, map_add (f := _), piInf_tmul, piInf_tmul, hB0, hB1, map_one, mul_one] at e
     have hi := congrArg Complex.im e
     have him := im_ne_zero h hβ (τ w).1
     set p := InfinitePlace.Completion.extensionEmbedding w ((C.repr x 0).1 w) with hp
@@ -796,7 +787,7 @@ theorem exists_section {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : ∀ w : I
         piInf (τ w) (ofInf c • ((1 : AF F) ⊗ₜ[F] y)) = ((e w (c w) : ℝ) : ℂ) * (τ w).1 y := fun c y => by
       rw [← he, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
       rfl
-    rw [map_add, hc, hc]
+    rw [map_add (f := _), hc, hc]
     simp only [(e w).apply_symm_apply, map_one, mul_one]
     apply Complex.ext
     · simp only [Complex.add_re, Complex.ofReal_re, Complex.re_ofReal_mul, r]; ring
@@ -857,7 +848,7 @@ theorem trace_AE {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (z : AE F E) :
   rw [Algebra.trace_eq_matrix_trace b, Matrix.trace_fin_two]
   simp only [Algebra.leftMulMatrix_eq_repr_mul, e0, e1]
   rw [map_add (cA σ), map_mul (cA σ), AlgHom.commutes, AlgHom.commutes, q.anti]
-  simp only [map_add, map_smul, Module.Basis.repr_self, Finsupp.add_apply, Finsupp.smul_apply, Finsupp.single_eq_same,
+  simp only [map_add (f := _), map_smul, Module.Basis.repr_self, Finsupp.add_apply, Finsupp.smul_apply, Finsupp.single_eq_same,
     Finsupp.single_eq_of_ne (zero_ne_one' (Fin 2)), Finsupp.single_eq_of_ne (zero_ne_one' (Fin 2)).symm, smul_eq_mul, mul_one, mul_zero,
     add_zero, zero_add]
   ring
@@ -872,15 +863,15 @@ theorem trace_trace {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : ∀ w : Infi
       ∑ w, 2 * (piInf (τ w) z).re := by
   rw [trace_mixed h.1]
   refine Finset.sum_congr rfl fun w _ => ?_
-  rw [← piInf_algebraMap (τ w), trace_AE h, map_add, piInf_cA h]
+  rw [← piInf_algebraMap (τ w), trace_AE h, map_add (f := _), piInf_cA h]
   simp [two_mul]
 
 theorem evI_add (a b : AF F) : evI F (a + b) = evI F a + evI F b := map_add (InfiniteAdeleRing.ringEquiv_mixedSpace F) _ _
 
 theorem evI_mul (a b : AF F) : evI F (a * b) = evI F a * evI F b := map_mul (InfiniteAdeleRing.ringEquiv_mixedSpace F) _ _
 
-variable (F) in
 
+variable (F) in
 def evIh : AF F →+* mixedEmbedding.mixedSpace F :=
   (InfiniteAdeleRing.ringEquiv_mixedSpace F).toRingHom.comp (RingHom.fst _ _)
 
@@ -979,14 +970,14 @@ section Main
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
   {α β κ : Type} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β] [Fintype κ] {P Q R S : ℕ}
 
-variable (F κ) in
 
+variable (F κ) in
 def trB : (κ → mixedEmbedding.mixedSpace F) →ₗ[ℝ] ((κ → mixedEmbedding.mixedSpace F) →L[ℝ] ℝ) :=
   (LinearMap.toContinuousLinearMap (𝕜 := ℝ) (E := κ → mixedEmbedding.mixedSpace F) (F' := ℝ)).toLinearMap.comp
     (LinearMap.mk₂ ℝ (fun y x => Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (∑ i, x i * y i))
-      (fun y y' x => by simp only [Pi.add_apply, mul_add, Finset.sum_add_distrib, map_add])
+      (fun y y' x => by simp only [Pi.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)])
       (fun t y x => by simp only [Pi.smul_apply, mul_smul_comm, ← Finset.smul_sum, map_smul])
-      (fun y x x' => by simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add])
+      (fun y x x' => by simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _)])
       (fun t y x => by simp only [Pi.smul_apply, smul_mul_assoc, ← Finset.smul_sum, map_smul]))
 
 theorem trB_apply (y x : κ → mixedEmbedding.mixedSpace F) :
@@ -1038,7 +1029,7 @@ theorem exists_heis (hD : DerEx) {ψ : AddChar (AF F) ℂ} {τ : ∀ w : Infinit
     { toFun := fun z i => evI F ((d.e (U z)).1 i)
       map_add' := fun z z' => by
         funext i
-        rw [hadd, map_add]
+        rw [hadd, map_add (f := _)]
         exact evI_add _ _
       map_smul' := fun t z => by
         funext i
@@ -1050,7 +1041,7 @@ theorem exists_heis (hD : DerEx) {ψ : AddChar (AF F) ℂ} {τ : ∀ w : Infinit
     { toFun := fun z i => evI F ((d.e (U z)).2 i)
       map_add' := fun z z' => by
         funext i
-        rw [hadd, map_add]
+        rw [hadd, map_add (f := _)]
         exact evI_add _ _
       map_smul' := fun t z => by
         funext i
@@ -1062,7 +1053,8 @@ theorem exists_heis (hD : DerEx) {ψ : AddChar (AF F) ℂ} {τ : ∀ w : Infinit
     have e1 : trB F κ (y c') (v c) - trB F κ (y c) (v c') =
         Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (evI F (symp (R := AF F) (cA σ) (-1) JA JB (U c) (U c'))) := by
       rw [d.form, ← evIh_apply, trB_apply, trB_apply, ← map_sub]
-      simp only [dotProduct, map_sub, map_sum, map_mul, evIh_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, map_sub, map_sum, map_mul, evIh_apply]
       rfl
     rw [e1, symp, trace_trace h τ, Fintype.sum_prod_type, im_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun w _ => ?_
@@ -1072,7 +1064,8 @@ theorem exists_heis (hD : DerEx) {ψ : AddChar (AF F) ℂ} {τ : ∀ w : Infinit
       congrFun (tw_untw z) (w, l)
     simp only [e3, ← h2, Matrix.map_apply] at e2
     rw [← e2, hTens, neg_one_mul, map_neg, neg_re]
-    simp only [map_sum, map_mul, piInf_cA h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, piInf_cA h]
     ring
   have hdim : Module.finrank ℝ (κ → mixedEmbedding.mixedSpace F) ≤ Module.finrank ℝ (LinearMap.ker v) := by
     refine LinearMap.finrank_le_finrank_of_surjective (f := y.comp (LinearMap.ker v).subtype) fun y0 => ?_
@@ -1109,7 +1102,8 @@ theorem iota_sumPl (c : InfinitePlace F → Matrix (Ix P Q) (Ix R S) ℂ) (T : T
       hop (tw c) (iota (InfinitePlace F) (Ln P Q R S) T) := by
   induction T using PiTensorProduct.induction_on with
   | smul_tprod r p =>
-    rw [map_smul, map_smul, map_smul, map_smul, ← iota_hop, sumPl, LinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_smul, map_smul, map_smul, ← iota_hop, sumPl, LinearMap.sum_apply, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [atPl, PiTensorProduct.map_tprod, heisOp_eq]
@@ -1121,7 +1115,7 @@ theorem iota_sumPl (c : InfinitePlace F → Matrix (Ix P Q) (Ix R S) ℂ) (T : T
       rfl
     · rw [Function.update_of_ne h, Function.update_of_ne h]
       rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Main
 

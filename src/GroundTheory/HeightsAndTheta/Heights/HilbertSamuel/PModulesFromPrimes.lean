@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDegLTGrowth
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFiltrationHilbSum
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDegLTGrowth
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFiltrationHilbSum
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -171,7 +176,7 @@ theorem ModulesFromPrimes.proof (hF : MultigradedFiltration.Statement.{u, v})
       rw [Finset.coe_image, Finset.coe_univ, Set.image_univ]
       by_contra hnot
       apply hW
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨h1, h2, h3⟩
       obtain ⟨-, j, hj⟩ := hmin W h1 h2 h3
       exact hnot ⟨j, hj⟩
@@ -189,13 +194,13 @@ theorem ModulesFromPrimes.proof (hF : MultigradedFiltration.Statement.{u, v})
     · have hc : IsMultiProjPrime (q j₀) ∧ Module.annihilator (MRing ι F) M ≤ q j₀ ∧
           ringKrullDim (MRing ι F ⧸ q j₀) = ((d + Fintype.card K : ℕ) : WithBot ℕ∞) :=
         ⟨⟨hprime, hhom, htop.1⟩, hann j₀, htop.2⟩
-      rw [dif_pos hc, if_pos htop]
+      rw [dite_eq_left hc, if_pos htop]
       have hm := (hmin _ hc.1 hc.2.1 hc.2.2).1
       have hct := hcount (q j₀) hm
       congr 1
       rw [← hct]
       simp
-    · rw [dif_neg (fun h => htop ⟨h.1.relevant, h.2.2⟩), if_neg htop, mul_zero]
+    · rw [dite_eq_right (fun h => htop ⟨h.1.relevant, h.2.2⟩), if_neg htop, mul_zero]
   have hfin : (Module.finrank F (piece fun k => (a k : ℤ)) : ℝ) =
       ∑ j, (hilbFn (q j) ((fun k => (a k : ℤ)) - c j) : ℝ) := by
     have := hsum (fun k => (a k : ℤ))

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Sym.Glob
 
@@ -22,7 +26,7 @@ private theorem exists_int_eq_mul_of_ne_zero_lattice {Λ : Type} [Ring Λ] [IsDo
     simpa only [map_mul, Polynomial.aeval_X] using e1
   refine ⟨q.coeff 0, hq0, -Polynomial.aeval y q.divX, ?_⟩
   have e2 := congrArg (Polynomial.aeval y) (Polynomial.divX_mul_X_add q)
-  rw [map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C, hqy, hcomm, algebraMap_int_eq,
+  rw [map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C, hqy, hcomm, algebraMap_int_eq,
     eq_intCast] at e2
   rw [mul_neg]
   exact (eq_neg_of_add_eq_zero_right e2).symm
@@ -120,8 +124,11 @@ private theorem short_lattice (Λ : Type) [Ring Λ] [IsDomain Λ] [Module.Free �
     have e : b.repr ((AddMonoidHom.mulLeft y).toIntLinearMap (b l)) k = ∑ i, g i * T i k l := by
       show b.repr (y * b l) k = _
       rw [hy, Finset.sum_mul]
-      simp only [smul_mul_assoc, map_sum, map_zsmul, Finsupp.coe_finset_sum, Finset.sum_apply,
-        Finsupp.smul_apply, smul_eq_mul, T]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [smul_mul_assoc, map_sum, map_zsmul, T]
+      change (Finsupp.applyAddHom k) (∑ i, g i • b.repr (b i * b l)) = _
+      rw [map_sum]
+      simp only [Finsupp.applyAddHom_apply, Finsupp.smul_apply, smul_eq_mul]
     rw [e]
     calc |∑ i, g i * T i k l| ≤ ∑ i, |g i * T i k l| := Finset.abs_sum_le_sum_abs _ _
       _ ≤ ∑ i, (m : ℤ) * ((T i k l).natAbs : ℤ) := by
@@ -180,7 +187,7 @@ private theorem short_abs {D M Γ G : Type} [Ring D] [IsDomain D] [CharZero D] [
       { carrier := {x | w * j (x : D) ∈ R}
         add_mem' := fun {a b} ha hb => by
           show w * j ((a : D) + b) ∈ R
-          rw [map_add, mul_add]
+          rw [map_add (f := _), mul_add]
           exact R.add_mem ha hb
         zero_mem' := by
           show w * j 0 ∈ R
@@ -348,7 +355,7 @@ theorem cls_abs_unit {D M Γ G : Type} [Ring D] [IsDomain D] [CharZero D] [Ring 
         simpa [zsmul_eq_mul] using this
       rw [h2]
       abel
-    rw [h1, map_add, map_mul, map_natCast]
+    rw [h1, map_add (f := _), map_mul, map_natCast]
   set a : M := (ψ (g⁻¹ * ι (γf g)) : M) with ha
   set a' : M := (ψ (g'⁻¹ * ι (γf g')) : M) with ha'
   set b : M := (ψ ((ι (γf g))⁻¹ * g) : M) with hb

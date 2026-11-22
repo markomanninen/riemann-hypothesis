@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.SecSHPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.SecSHPf
+
+@[expose] public section
 
 open Polynomial IsLocalRing CategoryTheory AlgebraicGeometry GlobalTheory.EtC
 

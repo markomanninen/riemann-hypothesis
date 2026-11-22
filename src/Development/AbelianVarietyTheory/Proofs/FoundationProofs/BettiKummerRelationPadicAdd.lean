@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HsCodiscreteNeBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HsCodiscreteNeBot
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem kum_add (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n : ℕ) {x x' : X.K
   obtain ⟨f', a', b', M', hM', hx', ⟨ha', hb', hb0', hr'⟩, hδ'⟩ := h'
   refine ⟨f * f', a * a', b * b', M * M', Nat.mul_pos hM hM', ?_,
     ⟨ha.mul ha', hb.mul hb', germ_mul_ne_zero hb hb' hb0 hb0', ?_⟩, ?_⟩
-  · rw [map_add, hx, hx', cls_mul]
+  · rw [map_add (f := _), hx, hx', cls_mul]
   · rw [Units.val_mul, map_mul, Filter.Germ.coe_mul, Filter.Germ.coe_mul, mul_pow, mul_pow, ← hr, ← hr']
     ring
   · intro δ hδM z hz
@@ -89,7 +93,7 @@ theorem btZ_add : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ
   refine ⟨χ + χ', kum_add X l n hχ hχ', M * M', Nat.mul_pos hM hM', fun δ hδM => ?_⟩
   have e1 := hδ δ (mem_gamma_of_dvd (dvd_mul_right M M') hδM)
   have e2 := hδ' δ (mem_gamma_of_dvd (dvd_mul_left M' M) hδM)
-  simp only [Pi.add_apply, map_add]
+  simp only [Pi.add_apply, map_add (f := _)]
   rw [e1, e2]
 
 end GlobalTheory.KZ.BettiB.Add

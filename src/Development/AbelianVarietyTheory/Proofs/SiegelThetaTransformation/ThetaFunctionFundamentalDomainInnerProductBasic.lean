@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaNormSqSumHeisenbergTranslatesDistinctChars
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaNormSqSumHeisenbergTranslatesDistinctChars
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.L2.Pj MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker
@@ -23,7 +27,7 @@ theorem mul_conj_polar (a b : ℂ) : a * conj b =
   have h : ∀ z : ℂ, ((‖z‖ ^ 2 : ℝ) : ℂ) = z * conj z := fun z => by
     rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
   rw [h, h, h, h]
-  simp only [map_add, map_mul, map_neg, map_one, Complex.conj_I]
+  simp only [map_add (f := _), map_mul, map_neg, map_one, Complex.conj_I]
   linear_combination ((a * conj b - b * conj a) / 2) * Complex.I_sq
 
 section Meas
@@ -169,7 +173,9 @@ theorem ip_basic : ∀ (D : D7) (S T : HSp D) (C : Ctx S T), (∃ (μ : Measure 
     have hU : IsOpen {w : WO S T | f w ≠ 0} := isOpen_compl_singleton.preimage hf'.cont
     have hae' : ∀ᵐ w ∂(μ.restrict 𝓕), ‖f w‖ ^ 2 = 0 := hae
     have h0r : μ.restrict 𝓕 {w : WO S T | f w ≠ 0} = 0 :=
-      measure_mono_null (fun a (ha : f a ≠ 0) (h : ‖f a‖ ^ 2 = 0) => ha (by simpa using h)) (ae_iff.1 hae')
+      measure_mono_null (by
+        intro a ha h
+        exact ha (by simpa using h)) (ae_iff.1 hae')
     rw [Measure.restrict_apply hU.measurableSet] at h0r
     open Pointwise in
     have hμU : μ {w : WO S T | f w ≠ 0} = 0 := by
@@ -226,8 +232,33 @@ theorem ip_basic : ∀ (D : D7) (S T : HSp D) (C : Ctx S T), (∃ (μ : Measure 
     have key : ∀ c : ℂ, ∫ x, ‖(om p f + c • om p f') x‖ ^ 2 ∂(μ.restrict 𝓕) =
         ∫ x, ‖(f + c • f') x‖ ^ 2 ∂(μ.restrict 𝓕) := by
       intro c
-      have hg : C.IsTh (f + c • f') := GlobalTheory.WeilVacMove.isTheta_add hf (GlobalTheory.WeilVacMove.isTheta_smul c hf2)
-      have e : om p f + c • om p f' = om p (f + c • f') := by rw [map_add, map_smul]
+      have hs : C.IsTh (c • f') := by
+        refine ⟨?_, ?_, hf2.cont.const_smul c, ?_⟩
+        · intro γ w
+          rw [Pi.smul_apply, Pi.smul_apply, hf2.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+        · obtain ⟨U, hU, h1⟩ := hf2.level
+          refine ⟨U, hU, fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu h0) w
+          unfold heisO at e1 ⊢
+          rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+        · intro k L h1 h2 w
+          exact contDiff_const.mul (hf2.smooth k L h1 h2 w)
+      have hg : C.IsTh (f + c • f') := by
+        refine ⟨?_, ?_, hf.cont.add hs.cont, ?_⟩
+        · intro γ w
+          simp only [Pi.add_apply, hf.quasi, hs.quasi, mul_add]
+        · obtain ⟨U, hU, h1⟩ := hf.level
+          obtain ⟨U', hU', h2⟩ := hs.level
+          refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu.1 h0) w
+          have e2 := congrFun (h2 u hu.2 h0) w
+          unfold heisO at e1 e2 ⊢
+          rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+        · intro k L h1 h2 w
+          exact (hf.smooth k L h1 h2 w).add (hs.smooth k L h1 h2 w)
+      have e : om p f + c • om p f' = om p (f + c • f') := by rw [map_add (f := _), map_smul]
       rw [e, integral_normSq_eq _ (hbm _ (hth _ hg)).1, integral_normSq_eq _ (hbm _ hg).1,
         hw.om_unit μ 𝓕 hH hFD p _ hg]
     unfold ipO

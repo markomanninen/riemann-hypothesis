@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.IsBand
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.ConvEig
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.ConvAssoc
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BandCc
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.KillsOfIdem
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BandKill
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.Unfold
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.EqZeroOfTest
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.IsBand
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.ConvEig
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.ConvAssoc
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BandCc
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.KillsOfIdem
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BandKill
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.Unfold
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.EqZeroOfTest
+
+@[expose] public section
 
 open MeasureTheory Filter UpperTheory.Lit.Cusp
 open scoped Topology

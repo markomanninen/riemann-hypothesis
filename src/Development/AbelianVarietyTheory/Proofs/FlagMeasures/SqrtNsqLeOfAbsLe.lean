@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementU
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.SumOfSquaresIdentityHolds
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RhoNNormLeAndCasimirArith
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KtypesWithinSteps
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementU
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.SumOfSquaresIdentityHolds
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RhoNNormLeAndCasimirArith
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KtypesWithinSteps
+
+@[expose] public section
 
 open Formalism.REAL Finset
 open scoped InnerProductSpace
@@ -53,7 +57,8 @@ theorem casK_form_le (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V]
   have hy' : y ∈ ⨆ i ∈ (univ : Finset (Fin m)), kSpan ε F (x i) := by simpa [h3] using hy
   obtain ⟨v, hv⟩ := (Submodule.mem_iSup_finset_iff_exists_sum _ y).1 hy'
   have hC : CasK ε F y = ∑ i, ((ckv ε (μ i) : ℝ) : ℂ) • (v i : V) := by
-    rw [← hv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hv, map_sum]
     exact Finset.sum_congr rfl fun i _ => kCasSpan V n ε F (μ i) (x i) hr (h1 i).2.2 _ (v i).2
   have key : ∀ c : Fin m → ℂ,
       ⟪y, ∑ i, c i • (v i : V)⟫_ℂ = ∑ i, c i * ⟪(v i : V), (v i : V)⟫_ℂ := by

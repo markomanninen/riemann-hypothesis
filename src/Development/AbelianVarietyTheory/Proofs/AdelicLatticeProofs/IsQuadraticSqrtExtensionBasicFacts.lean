@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.QNorm
 open scoped WithZero
 
@@ -7,10 +12,6 @@ namespace GlobalTheory.QNorm
 
 section
 variable {F E : Type} [Field F] [Field E] [Algebra F E] {δ : F} {θ : E} {σ : E ≃ₐ[F] E}
-
-theorem IsQuad.conj_coord (h : IsQuad δ θ σ) (a b : F) :
-    σ (algebraMap F E a + algebraMap F E b * θ) = algebraMap F E a - algebraMap F E b * θ := by
-  rw [map_add, map_mul, AlgEquiv.commutes, AlgEquiv.commutes, h.conj]; ring
 
 open NumberField IsDedekindDomain in
 open scoped WithZero in
@@ -44,31 +45,11 @@ theorem _root_.GlobalTheory.QNorm.IsQuad.root_ne_zero (h : _root_.GlobalTheory.Q
   rw [← h.sq, hθ]
   simp
 
-theorem IsQuad.conj_conj (h : IsQuad δ θ σ) (x : E) : σ (σ x) = x := by
-  obtain ⟨a, b, rfl⟩ := h.span x
-  rw [h.conj_coord, map_sub, map_mul, AlgEquiv.commutes, AlgEquiv.commutes, h.conj]; ring
-
-theorem IsQuad.finrank_eq_two (h : IsQuad δ θ σ) : Module.finrank F E = 2 := by
-  have hli : LinearIndependent F ![(1 : E), θ] := by
-    rw [LinearIndependent.pair_iff]
-    intro s t hst
-    apply h.coord_indep
-    simpa [Algebra.smul_def] using hst
-  have hsp : ⊤ ≤ Submodule.span F (Set.range ![(1 : E), θ]) := by
-    intro x _
-    obtain ⟨a, b, rfl⟩ := h.span x
-    refine Submodule.add_mem _ ?_ ?_
-    · rw [Algebra.algebraMap_eq_smul_one]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨0, rfl⟩)
-    · rw [← Algebra.smul_def]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨1, rfl⟩)
-  simpa using Module.finrank_eq_card_basis (Module.Basis.mk hli hsp)
-
 end
+
 
 open NumberField IsDedekindDomain in
 open scoped WithZero in
-
 theorem _root_.GlobalTheory.QNorm.isQuad_basic : ∀ (F E : Type) [Field F] [CharZero F] [Field E]
     [Algebra F E] (δ : F) (θ : E) (σ : E ≃ₐ[F] E), _root_.GlobalTheory.QNorm.IsQuad δ θ σ →
     (∀ x, σ (σ x) = x) ∧ (∀ x, σ x = x → ∃ a : F, x = algebraMap F E a) ∧
@@ -88,14 +69,14 @@ theorem _root_.GlobalTheory.QNorm.isQuad_basic : ∀ (F E : Type) [Field F] [Cha
     simp [AlgEquiv.commutes, hc]
   · intro x hx
     obtain ⟨a, b, rfl⟩ := h.span x
-    simp only [map_add, map_mul, AlgEquiv.commutes, hc] at hx
+    simp only [map_add (f := _), map_mul, AlgEquiv.commutes, hc] at hx
     have := t1 0 (2 * b) (by simp only [map_zero, map_mul, map_ofNat]; linear_combination -hx)
     have hb : b = 0 := by simpa using this.2
     exact ⟨a, by simp [hb]⟩
   · intro x
     obtain ⟨a, b, rfl⟩ := h.span x
     refine ⟨a, b, ?_⟩
-    simp only [map_add, map_mul, AlgEquiv.commutes, hc, map_sub, map_pow]
+    simp only [map_add (f := _), map_mul, AlgEquiv.commutes, hc, map_sub, map_pow]
     linear_combination (-(algebraMap F E b) ^ 2) * hs
   · intro x hx
     by_cases h1 : x = -1
@@ -105,7 +86,7 @@ theorem _root_.GlobalTheory.QNorm.isQuad_basic : ∀ (F E : Type) [Field F] [Cha
       have hσy : σ (1 + x) ≠ 0 := by
         rwa [ne_eq, map_eq_zero_iff _ σ.injective]
       refine ⟨1 + x, hy, ?_⟩
-      rw [eq_div_iff hσy, map_add, map_one]
+      rw [eq_div_iff hσy, map_add (f := _), map_one]
       linear_combination hx
   · rintro u ⟨y, hy⟩
     obtain ⟨a, b, rfl⟩ := h.span y

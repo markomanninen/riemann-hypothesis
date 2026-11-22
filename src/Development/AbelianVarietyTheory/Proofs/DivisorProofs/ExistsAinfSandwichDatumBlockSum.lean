@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+
+@[expose] public section
 
 noncomputable section
 

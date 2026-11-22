@@ -1,21 +1,26 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartAndRightWordsSmooth
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatrixExpCurveDerivativeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularRepresentationContinuousStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LpIntegralAePointwiseStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ApproximateIdentityExistsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MollificationDifferentiableStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MollificationRightTranslateStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MollificationEvaluationContinuousStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeRightBasisExpansionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.L2LimitEqPointwiseLimitHoldsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeftConvolutionApproximationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MollificationAeEqConvolutionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosedDerivativeSystemSmoothStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RightTranslateDerivativeIntegralStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevSequenceUniformCauchyStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformLimitRightDerivativesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RwAppend
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartAndRightWordsSmooth
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatrixExpCurveDerivativeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularRepresentationContinuousStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LpIntegralAePointwiseStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ApproximateIdentityExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MollificationDifferentiableStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MollificationRightTranslateStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MollificationEvaluationContinuousStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeRightBasisExpansionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.L2LimitEqPointwiseLimitHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeftConvolutionApproximationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MollificationAeEqConvolutionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosedDerivativeSystemSmoothStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RightTranslateDerivativeIntegralStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevSequenceUniformCauchyStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformLimitRightDerivativesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RwAppend
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset Filter Topology
 open scoped ContDiff ComplexConjugate InnerProductSpace ZeroAtInfty
 open PositivityTheory.RgTw (Mat G)
@@ -102,8 +107,8 @@ theorem limit_sob (hS : SobG) (g : ℕ → Mat n → V) (x : List (Bool × Fin n
 
 end GlobalTheory.CompanionTheory.PresSobA
 
-open GlobalTheory.CompanionTheory.PresSobA in
 
+open GlobalTheory.CompanionTheory.PresSobA in
 theorem GlobalTheory.CompanionTheory.PresSobA.presSob : PresSob := by
   intro n _ _ μ _ V _ _ _ S hLg hU hRC hS hcomm f hf
   have hsob : ∀ w, ContDiffOn ℝ ∞ (Rw w f) (GLs n) := fun w => GlobalTheory.CompanionTheory.SobGL.Smooth.Rw_contDiffOn' hf.1 w

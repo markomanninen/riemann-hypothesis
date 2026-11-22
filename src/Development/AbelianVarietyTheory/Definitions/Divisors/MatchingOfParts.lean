@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+
+@[expose] public section
 
 namespace GlobalTheory.ThK
 
@@ -37,9 +41,12 @@ theorem agree_of_parts (h1 : KDecay) (h2 : KConst) (h3 : KCoinv) (h4 : KBeta) (h
   ⟨fun F E _ _ _ _ _ σ B a a' G X om om' h => ⟨h1 F E σ B a a' G X om om' h,
     fun R Rf m => ⟨h2 F E σ B a a' G X om om' R Rf m, h3 F E σ B a a' G X om om' R Rf m⟩⟩, h4, h5⟩
 
-theorem matching_of_parts (h1 : KReal) (h2 : KFin) : LocalMatching := fun F E _ _ _ _ _ σ B a a' G X om om' h =>
-  let ⟨R, r⟩ := h1 F E σ B a a' G X om om' h
-  let ⟨Rf, f⟩ := h2 F E σ B a a' G X om om' h
-  ⟨R, Rf, h, r, f⟩
+theorem matching_of_parts (h1 : KReal) (h2 : KFin) : LocalMatching := by
+  unfold KReal at h1
+  unfold KFin at h2
+  intro F E _ _ _ _ _ σ B a a' G X om om' h
+  obtain ⟨R, r⟩ := h1 F E σ B a a' G X om om' h
+  obtain ⟨Rf, f⟩ := h2 F E σ B a a' G X om om' h
+  exact ⟨R, Rf, h, r, f⟩
 
 end GlobalTheory.ThK

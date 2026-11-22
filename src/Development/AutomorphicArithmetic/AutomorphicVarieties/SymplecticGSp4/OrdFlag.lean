@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocDefs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OrderedFlagDiagonal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocDefs
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OrderedFlagDiagonal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 private theorem UpperTheory.V.GradeZeroInterpolatingElement.ordFlag_diag {K : Type} [Field K] (c : Fin 4 → K) (hc : Function.Injective c) (X : M4 K)
@@ -15,7 +20,7 @@ private theorem UpperTheory.V.GradeZeroInterpolatingElement.ordFlag_aeval {K : T
     ext i j
     simp [Matrix.mul_diagonal, Algebra.algebraMap_eq_smul_one, mul_comm]
   | add p q hp hq =>
-    rw [map_add, add_mul, hp, hq, ← mul_add, Matrix.diagonal_add]
+    rw [map_add (f := _), add_mul, hp, hq, ← mul_add, Matrix.diagonal_add]
     simp
   | monomial n a hn =>
     rw [pow_succ, ← mul_assoc, map_mul, Polynomial.aeval_X, mul_assoc, h, ← mul_assoc, hn, mul_assoc,

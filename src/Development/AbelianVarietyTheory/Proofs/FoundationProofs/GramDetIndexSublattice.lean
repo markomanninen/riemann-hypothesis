@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 open NumberField IsDedekindDomain
 
@@ -18,7 +23,8 @@ theorem gram_det_index_sublattice (U V ι κ : Type) [AddCommGroup U] [NormedAdd
   have hAr : ∀ i j, Ar i j = (A i j : ℝ) := fun _ _ => rfl
   have hphi : ∀ i, φ (v (e i)) = ∑ j, (A i j : ℝ) • φ (u j) := by
     intro i
-    rw [← hA i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hA i, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_zsmul, Int.cast_smul_eq_zsmul]
   have h1 : (Matrix.gram ℝ fun k => φ (v k)).submatrix e e

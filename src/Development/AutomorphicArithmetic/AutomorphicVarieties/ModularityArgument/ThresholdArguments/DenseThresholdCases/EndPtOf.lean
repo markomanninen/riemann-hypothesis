@@ -1,18 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.OffSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicPointGalois
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BFixOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TNiceSmall
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.IsAutCsdA
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.IrrArithPointsAutomorphicAway
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.ArithmeticPointClassicality
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.OffSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicPointGalois
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BFixOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TNiceSmall
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.IsAutCsdA
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.IrrArithPointsAutomorphicAway
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.ArithmeticPointClassicality
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Pr UpperTheory.V.Alg UpperTheory.V.J UpperTheory.V.Th
-open private det_comap tw_flag unramified_at_base_place irr_of_mat pt_flag w_ne from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.NiceAt
 namespace UpperTheory.Gal.projectedFormsSystemPart
 private theorem la_move {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] {l : ℕ} [Fact l.Prime] {n : ℕ}
     {A A' : ValuationSubring Ω} {w w' : W.Plc F} (h : IsPlaceOver A w) (h' : IsPlaceOver A' w') (e : A = A')
@@ -40,14 +43,28 @@ private theorem off_self (R : CReal k c₁ f 3 ka) {ι : Qbar l ≃+* ℂ} {φ :
     {J : Ideal R.B₀.B} (hg : AllGood R.S (J.map φ)) (hE : R.B₀.arithmeticPointClassicalityDense ι J) (h : R.s.Wt 3) (ξ : R.S.A →ₐ[c₁.O] Qbar l)
     (hV : VPt R.S ξ) (hTI : R.S.u.TI (RingHom.ker ξ)) (ha : W.UniversalOrdinaryDeterminantRing.Pt.Arith (B := R.B₀) ((ξ.comp R.S.inc).comp φ) h) :
     _root_.UpperTheory.Gal.projectedFormsSystemPart.AutOffN R.s.v0 ι ((R.K.tw (ptRep R.S ξ)).toHomUnits.comp R.V.pr) := by
-  have hD : W.UniversalOrdinaryDeterminantRing.Pt.D (B := R.B₀) ((ξ.comp R.S.inc).comp φ) = W.GDet.ofRep (R.K.tw (ptRep R.S ξ)) :=
+  let ρ := R.K.tw (ptRep R.S ξ)
+  let p : G L Ω →* R.V.frame.G₀ := R.V.pr
+  have hD : W.UniversalOrdinaryDeterminantRing.Pt.D (B := R.B₀) ((ξ.comp R.S.inc).comp φ) = W.GDet.ofRep ρ :=
     (TwLink.IsPhi.maps R.K hφ ξ).1
-  have hrep : W.UniversalOrdinaryDeterminantRing.Pt.IsRep (B := R.B₀) ((ξ.comp R.S.inc).comp φ) ((R.K.tw (ptRep R.S ξ)).toHomUnits.comp R.V.pr) := by
-    refine (congrArg (fun D : W.GDet 3 (Qbar l) R.V.frame.G₀ => D.comap R.V.pr) hD).trans
-      (det_comap (R.K.tw (ptRep R.S ξ)) R.V.pr (W.mat ((R.K.tw (ptRep R.S ξ)).toHomUnits.comp R.V.pr)) fun g => rfl)
+  have hrep : W.UniversalOrdinaryDeterminantRing.Pt.IsRep (B := R.B₀) ((ξ.comp R.S.inc).comp φ) (ρ.toHomUnits.comp p) := by
+    refine (congrArg (fun D : W.GDet 3 (Qbar l) R.V.frame.G₀ => D.comap p) hD).trans ?_
+    change (W.GDet.ofRep ρ).comap p = W.GDet.ofRep (ρ.comp p)
+    refine W.GDet.ext fun C _ _ y => ?_
+    change (W.GDet.repAlg ρ C (MonoidAlgebra.mapDomainRingHom C p y)).det =
+      (W.GDet.repAlg (ρ.comp p) C y).det
+    congr 1
+    induction y using MonoidAlgebra.induction_linear with
+    | zero => simp
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
+    | single g r => simp [W.GDet.repAlg]
+  have hirr : Af.IsIrr (ρ.toHomUnits.comp p) := by
+    have hMat := R.K.tw_irr _ (irrTI l c₁ _ R.C₀ 3 R.ok (Or.inr rfl) R.S ξ hV.1 hTI)
+    refine ⟨top_ne_bot, fun _ _ _ => Submodule.mem_top, fun U _ hU => hMat U fun g _ v hv => ?_⟩
+    obtain ⟨t, rfl⟩ := Pr.pr_surj R.V g
+    exact hU t v hv
   exact _root_.UpperTheory.Gal.projectedFormsSystemPart.end2oN R.v0 hE ((ξ.comp R.S.inc).comp φ) h _
-    (fun b hb => hg _ (RingHom.ker_isPrime _) hTI (Ideal.mem_map_of_mem φ hb)) ha hrep
-    (irr_of_mat _ R.V.pr (Pr.pr_surj R.V) (R.K.tw_irr _ (irrTI l c₁ _ R.C₀ 3 R.ok (Or.inr rfl) R.S ξ hV.1 hTI)))
+    (fun b hb => hg _ (RingHom.ker_isPrime _) hTI (Ideal.mem_map_of_mem φ hb)) ha hrep hirr
 private theorem kap (R : CReal k c₁ f 3 ka) (g : G L Ω) : R.K.κA (Qbar l) (R.V.pr g) = ka g := Units.ext (R.κ_pr g)
 private theorem psi_j (ρ : Fr.NRep (Φ.ext f) 3 (Qbar l)) {u u' : Φ.V} (e : u = u') (j : Fin 3) (a : Φ.Gv u) (a' : Φ.Gv u')
     (h : (k.j u a).1 = (k.j u' a').1) : ρ.ψ u j a = ρ.ψ u' j a' := by
@@ -113,7 +130,18 @@ theorem niceAt2_alt :
     exact Units.continuous_iff.2 ⟨h1, h1.comp continuous_inv⟩
   have hirr : MatIrr ⊤ (W.mat ρ0) := R.K.tw_irr ρQ (irrTI l c₁ _ R.C₀ 3 R.ok hn R.S ξ hV.1 hTI)
   have hrep : W.UniversalOrdinaryDeterminantRing.Pt.IsRep x (ρ0.comp R.V.pr) := by
-    refine (congrArg (fun D => D.comap R.V.pr) hD).trans (det_comap (R.K.tw ρQ) R.V.pr (W.mat (ρ0.comp R.V.pr)) fun g => rfl)
+    let ρ := R.K.tw ρQ
+    let p : G L Ω →* R.V.frame.G₀ := R.V.pr
+    refine (congrArg (fun D => D.comap p) hD).trans ?_
+    change (W.GDet.ofRep ρ).comap p = W.GDet.ofRep (ρ.comp p)
+    refine W.GDet.ext fun C _ _ y => ?_
+    change (W.GDet.repAlg ρ C (MonoidAlgebra.mapDomainRingHom C p y)).det =
+      (W.GDet.repAlg (ρ.comp p) C y).det
+    congr 1
+    induction y using MonoidAlgebra.induction_linear with
+    | zero => simp
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
+    | single g r => simp [W.GDet.repAlg]
   have harith : W.UniversalOrdinaryDeterminantRing.Pt.Arith x h := ⟨hGood.1, fun v j => by
     obtain ⟨ph, hph, -⟩ := hGood.2 v
     exact ⟨ph j, hph j⟩⟩
@@ -122,7 +150,27 @@ theorem niceAt2_alt :
     · rintro _ ⟨g, hg, rfl⟩
       have h1 : R.K.π (R.V.pr g) = 1 := by
         rw [R.π_pr]
-        exact unramified_at_base_place e ψ H.dvd k _ R.v0M g hg
+        let A := R.s.A R.s.v0
+        have valuation_lt_of_dvd {a b : ℕ} (hab : a ∣ b)
+            (ha : A.valuation (a : Ω) < 1) : A.valuation (b : Ω) < 1 := by
+          obtain ⟨d, rfl⟩ := hab
+          rw [Nat.cast_mul, map_mul]
+          exact mul_lt_one_of_lt_of_le ha ((A.valuation_le_one_iff _).2 (natCast_mem A d))
+        have hl : ¬ A.valuation (l : Ω) < 1 :=
+          fun h' => R.v0M (valuation_lt_of_dvd ((dvd_mul_right l N).trans H.dvd) h')
+        have hg' : galEmb ℚ L Ω g ∈ Ine (F := ℚ) A := hg
+        have hc : cycZ ℚ Ω l (galEmb ℚ L Ω g) = 1 := (Base.places ℚ Ω l A).2.2.2 hl hg'
+        have hd : Chr.cls ℚ Ω N (galEmb ℚ L Ω g) = 1 :=
+          (Chr.clsFacts ℚ Ω N).2.2.2.2 A
+            (fun h' => R.v0M (valuation_lt_of_dvd ((dvd_mul_left N l).trans H.dvd) h')) hg'
+        have hψg : Chr.Psi l e (Chr.dirG ℚ Ω ψ) (galEmb ℚ L Ω g) = 1 := by
+          simp [Chr.Psi, Chr.dirG, chiO, hc, hd]
+        refine Subtype.ext ?_
+        change toUpl Ω L (W.resP L Ω g) ∈ k.p.ker
+        rw [k.p_ker]
+        refine Subgroup.le_topologicalClosure _ (Subgroup.subset_normalClosure ⟨A, hl, hg', ?_, ?_⟩)
+        · exact (k.mem_range_resP _).1 ⟨_, rfl⟩
+        · exact (congrArg (Units.map (residue c.O).toMonoidHom) hψg).trans (map_one _)
       have h2 : R.K.κ (R.V.pr g) = 1 := R.K.ramκ _ ⟨g, hg, rfl⟩
       refine Units.ext ?_
       change ((R.K.κA (Qbar l) (R.V.pr g) : (Qbar l)ˣ) : Qbar l) • ρQ.r (R.K.π (R.V.pr g)) = 1
@@ -131,8 +179,21 @@ theorem niceAt2_alt :
         rw [h2, Units.val_one, map_one]
       rw [h1, map_one, h3, one_smul]
     · rw [hψ v]
-      obtain ⟨g₀, hg⟩ := R.ok.f3 (R.K.e v)
-      exact tw_flag R.K ρQ v (pt_flag R.S ξ hV hn _ g₀ hg)
+      obtain ⟨P, hP⟩ := Fr.flag R.ok hn R.S (Qbar l) (ξ : R.S.A →+* Qbar l) (R.K.e v)
+      refine ⟨P, fun s => ?_⟩
+      have entry (i j : Fin 3) : (P * (ρ0.comp (R.V.frame.φ v)) s * P⁻¹ : GL (Fin 3) (Qbar l)) i j =
+          (R.K.κA (Qbar l) (R.V.frame.φ v s) : Qbar l) *
+            (P * (ρQ.r.comp ((Φ.ext f).loc0 (R.K.e v))).toHomUnits (R.K.lam v s) * P⁻¹ : GL (Fin 3) (Qbar l)) i j := by
+        change ((P : Matrix (Fin 3) (Fin 3) (Qbar l)) *
+          ((R.K.κA (Qbar l) (R.V.frame.φ v s) : Qbar l) • ρQ.r (R.K.π (R.V.frame.φ v s))) *
+          ((P⁻¹ : GL (Fin 3) (Qbar l)) : Matrix (Fin 3) (Fin 3) (Qbar l))) i j =
+          _ * ((P : Matrix (Fin 3) (Fin 3) (Qbar l)) * ρQ.r ((Φ.ext f).loc0 (R.K.e v) (R.K.lam v s)) *
+            ((P⁻¹ : GL (Fin 3) (Qbar l)) : Matrix (Fin 3) (Fin 3) (Qbar l))) i j
+        rw [R.K.lam_loc, Matrix.mul_smul, Matrix.smul_mul, Matrix.smul_apply, smul_eq_mul]
+      refine ⟨fun i j hij => ?_, fun i => ?_⟩
+      · rw [entry, (hP _).1 i j hij, mul_zero]
+      · rw [entry, (hP _).2 i, mul_comm]
+        rfl
   have hVne : Nonempty Φ.V := by
     by_contra hV'
     rw [not_nonempty_iff] at hV'
@@ -143,9 +204,13 @@ theorem niceAt2_alt :
   obtain ⟨v, hv⟩ := R.K.e.surjective v'
   obtain ⟨s, hs⟩ := R.ok.f3 (R.K.e v)
   obtain ⟨g, rfl⟩ := (R.K.lam v).surjective s
-  refine ⟨v, 0, 1, g, fun h' => w_ne hn _ hs 0 1 (by decide) ?_⟩
+  refine ⟨v, 0, 1, g, fun h' => ?_⟩
   rw [R.K.psib, R.K.psib, R.K.chib, R.K.chib, ← R.K.lam_loc] at h'
-  exact mul_right_cancel h'
+  have hw : (Φ.ext f).Ψ ((Φ.ext f).loc (R.K.e v) (R.K.lam v g)) ^ Fr.w 3 0 =
+      (Φ.ext f).Ψ ((Φ.ext f).loc (R.K.e v) (R.K.lam v g)) ^ Fr.w 3 1 := mul_right_cancel h'
+  have hζ : (Φ.ext f).Ψ ((Φ.ext f).loc (R.K.e v) (R.K.lam v g)) = 1 := by
+    simpa [show Fr.w 3 0 = 1 by decide, show Fr.w 3 1 = 0 by decide] using hw
+  exact hs (by rw [hζ, one_pow])
 def Red2Alt : Prop :=
   ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (c : Coef l)
     [CharP (ResidueField c.O) l] (N : ℕ) [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N)

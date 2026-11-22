@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPrimeComplexRadical
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPrimeComplexRadical
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -20,8 +25,8 @@ theorem isReduced_tensor_domain_of_formallyEtale (E L D : Type*) [Field E] [Fiel
     (Algebra.TensorProduct.map (AlgHom.id E L) (IsScalarTower.toAlgHom E D (FractionRing D)))
     (Module.Flat.lTensor_preserves_injective_linearMap _ (IsFractionRing.injective D _))
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem isReduced_tensor_field_of_perfectField (K L F : Type*) [Field K] [PerfectField K]
     [Field L] [Algebra K L] [Algebra.EssFiniteType K L] [Field F] [Algebra K F] :
     IsReduced (L ⊗[K] F) := by
@@ -29,6 +34,14 @@ theorem isReduced_tensor_field_of_perfectField (K L F : Type*) [Field K] [Perfec
   obtain ⟨s, hs, hsep⟩ := exists_isTranscendenceBasis_and_isSeparable_of_perfectField K L
   let R := Algebra.adjoin K (s : Set L)
   let E := IntermediateField.adjoin K (s : Set L)
+  letI : Algebra R E :=
+    (Subalgebra.inclusion (IntermediateField.algebra_adjoin_le_adjoin K (s : Set L))).toAlgebra
+  have : IsScalarTower K R E := IsScalarTower.of_algebraMap_eq' rfl
+  have : FaithfulSMul R E :=
+    Subalgebra.inclusion.faithfulSMul (IntermediateField.algebra_adjoin_le_adjoin K (s : Set L))
+  have : IsFractionRing R E := IsFractionRing.of_field _ _ fun ⟨_, h⟩ => by
+    obtain ⟨x, hx, y, hy, eq⟩ := IntermediateField.mem_adjoin_iff_div.mp h
+    exact ⟨⟨x, hx⟩, ⟨y, hy⟩, Subtype.ext eq⟩
 
   have eR : R ≃ₐ[K] MvPolynomial s K :=
     (Subalgebra.equivOfEq R (Algebra.adjoin K (Set.range ((↑) : s → L))) (by simp [R])).trans hs.1.aevalEquiv.symm

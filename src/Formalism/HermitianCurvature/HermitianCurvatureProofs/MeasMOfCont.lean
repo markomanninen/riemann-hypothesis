@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MatExtMulVec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SubMulRight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MatExtMulVec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SubMulRight
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.MM
 
@@ -89,7 +93,7 @@ theorem measM_tau (z : Fin (2 * r + k + 1) → ℂ) {v : X → Matrix (Fin (r + 
   show MeasM fun x => C2.nEich k r z (fun a => v x a.castSucc (Fin.last r)) *
     C2.mX k r ((v x).submatrix Fin.castSucc Fin.castSucc)
   refine measM_mul (measM_nEich z ?_) (measM_mX (measM_submatrix_castSucc hv))
-  exact measurable_pi_lambda _ fun a => (measM_iff.1 hv) _ _
+  exact Measurable.of_eval fun a => (measM_iff.1 hv) _ _
 
 end
 

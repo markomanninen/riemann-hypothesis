@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialOfLocal
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HermitianDarbouxSplitProductStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CmAlgebraSplitInvolution
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialOfLocal
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HermitianDarbouxSplitProductStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CmAlgebraSplitInvolution
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix TensorProduct
@@ -41,7 +45,7 @@ theorem split_conj (s : A ≃ₐ[F] R₁ × R₂) (σ : E →ₐ[F] E) (x : A �
     rw [Algebra.TensorProduct.map_tmul, split_tmul, split_tmul]
     rfl
   | add x y hx hy =>
-    rw [map_add, map_add, hx, hy, map_add]
+    rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
     simp
 
 end Split
@@ -82,8 +86,8 @@ variable {F : Type} [Field F] [NumberField F]
 
 open GlobalTheory.LocalGlobalChar
 
-variable (F) in
 
+variable (F) in
 abbrev RS (S : Finset (HeightOneSpectrum (𝓞 F))) : Type := Ainf F × ((v : S) → Fv F v.1)
 
 def toRS (S : Finset (HeightOneSpectrum (𝓞 F))) : AF F →ₐ[F] RS F S :=
@@ -115,7 +119,7 @@ theorem toRS_surj (S : Finset (HeightOneSpectrum (𝓞 F))) : Function.Surjectiv
     apply hv
     have hvS' : v ∉ S := fun h => hvS (Finset.mem_coe.mpr h)
     beta_reduce
-    rw [dif_neg hvS']
+    rw [dite_eq_right hvS']
     exact zero_mem (v.adicCompletionIntegers F)⟩
   refine ⟨pairA F r.1 y, Prod.ext rfl (funext fun v => ?_)⟩
   exact dif_pos v.2
@@ -135,10 +139,10 @@ def splitS (S : Finset (HeightOneSpectrum (𝓞 F))) : AF F ≃ₐ[F] RS F S × 
       Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _)
     refine ⟨eps S * a + (1 - eps S) * b, Prod.ext ?_ ?_⟩
     · change toRS S _ = toRS S a
-      rw [map_add, map_mul, map_mul, map_sub, map_one, toRS_eps]
+      rw [map_add (f := _), map_mul, map_mul, map_sub, map_one, toRS_eps]
       ring
     · change Ideal.Quotient.mk (Ideal.span {eps S}) _ = Ideal.Quotient.mk (Ideal.span {eps S}) b
-      rw [map_add, map_mul, map_mul, map_sub, map_one, h0]
+      rw [map_add (f := _), map_mul, map_mul, map_sub, map_one, h0]
       ring⟩
 
 theorem splitS_eps (S : Finset (HeightOneSpectrum (𝓞 F))) : (splitS S (eps S)).2 = 0 :=
@@ -170,7 +174,7 @@ theorem triv_piece (hσ : IsCMExt F E σ) {β : Type} [Fintype β] [DecidableEq 
   · induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a e => simp [hi]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   · obtain ⟨y, hy⟩ := hg i j
     change (split E (splitS S) ((g.1.1 - 1 : Matrix _ _ (AE F E)) i j)).2 = 0
     have e : algebraMap (AF F) (AE F E) (eps S) = eps S ⊗ₜ[F] (1 : E) := rfl

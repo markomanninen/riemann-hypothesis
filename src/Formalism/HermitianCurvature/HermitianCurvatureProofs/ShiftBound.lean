@@ -1,13 +1,14 @@
-import Formalism.HermitianCurvature.StatementLE
+module
+
+public import Formalism.HermitianCurvature.StatementLE
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.LEx2.A
 open Formalism.FourierDecayAlt.LE
 open MeasureTheory Filter Topology Finset
 open scoped ComplexConjugate
 noncomputable section
-
-theorem mulF_one' (B : Base) {A : Type} (u : Fn B A) : mulF B (fun x => x ^ (0:ℝ)) u = u := by
-  funext ω a; simp [mulF]
 
 theorem dS_zero (B : Base) {A A' : Type} (T : Fn B A → Fn B A') (u : Fn B A) : dS B T u 0 = T u := by
   funext ω a

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralActionUnitCharacterEigen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralActionUnitCharacterEigen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Classical Pointwise
@@ -44,7 +48,7 @@ theorem inId_of_mem {𝔪 : Ideal (𝓞 D.host.E)} {y : Formalism.MainNotions.St
   | add a b _ _ ha hb =>
     obtain ⟨h1, h2⟩ := ha
     obtain ⟨h3, h4⟩ := hb
-    rw [RingHom.map_add]
+    rw [RingHom.map_add (f := _)]
     exact ⟨add_mem h1 h3, Ideal.add_mem _ h2 h4⟩
   | neg a _ ha =>
     obtain ⟨h1, h2⟩ := ha
@@ -62,7 +66,7 @@ theorem exists_of_mem_idS {𝔪 : Ideal (𝓞 D.host.E)} {u : Formalism.L2.Herm.
     obtain ⟨y, hy, e⟩ := ha
     obtain ⟨z, hz, e'⟩ := hb
     refine ⟨y + z, add_mem hy hz, ?_⟩
-    rw [RingHom.map_add, e, e']
+    rw [RingHom.map_add (f := _), e, e']
     exact (AddMemClass.coe_add _ a b).symm
   | smul s a _ ha =>
     obtain ⟨y, hy, e⟩ := ha

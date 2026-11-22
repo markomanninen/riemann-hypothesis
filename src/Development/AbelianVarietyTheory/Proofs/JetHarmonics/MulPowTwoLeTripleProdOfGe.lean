@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RingHomPointBijective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormXLeOneOfNsmulEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RingHomPointBijective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormXLeOneOfNsmulEqZero
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.MomOne
 open scoped ComplexConjugate BigOperators Topology
@@ -410,8 +414,8 @@ theorem norm_x_sub_eq_one {W : Affine K} (h₁ : ‖W.a₁‖ ≤ 1) (h₂ : ‖
 
 end General
 
-open Classical in
 
+open Classical in
 theorem torsion_integral_and_distinct (q : ℕ) [Fact q.Prime] (M : Mdl q) (N : ℕ) (hM : M.Ok)
     (hN : Nat.Coprime N q) :
     (∀ p : ℂ, (N : ℂ) * p ∈ M.L.lattice → p ∉ M.L.lattice → ‖M.ι (M.x p)‖ ≤ 1) ∧
@@ -440,12 +444,12 @@ theorem torsion_integral_and_distinct (q : ℕ) [Fact q.Prime] (M : Mdl q) (N : 
       simp only [Affine.Point.some.injEq]
       exact ⟨hx, hy⟩
     · refine ns ((hker _).1 ?_)
-      rw [map_add, e, e', Affine.Point.add_of_Y_eq hx hy]
+      rw [map_add (f := _), e, e', Affine.Point.add_of_Y_eq hx hy]
   refine norm_x_sub_eq_one (W := M.W.toAffine) h₁ h₂ h₃ h₄ h₆ hΔ h.1 h'.1 hx (int p _ _ h hp e)
     (int p' _ _ h' hp' e') ?_ ?_
   · rw [← Affine.slope_of_X_ne (W := M.W.toAffine) hx]
     exact int (p + p') _ _ _ (by rw [mul_add]; exact add_mem hp hp')
-      (by rw [map_add, e, e', Affine.Point.add_of_X_ne hx])
+      (by rw [map_add (f := _), e, e', Affine.Point.add_of_X_ne hx])
   · rw [← Affine.slope_of_X_ne (W := M.W.toAffine) hx]
     exact int (p - p') _ _ _ (by rw [mul_sub]; exact sub_mem hp hp')
       (by rw [map_sub, e, e', sub_eq_add_neg, Affine.Point.neg_some, Affine.Point.add_of_X_ne hx])

@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
-import Formalism.SatakeDualWeyl.DefsCS
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsApprox
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+public import Formalism.SatakeDualWeyl.DefsCS
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsApprox
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem submatrix_mul_of_zero {ι : Type} [Fintype ι] (e : ι → Fin n) (he : 
     (M N : Matrix (Fin n) (Fin n) κ) (h : ∀ i j l, l ∉ Set.range e → M (e i) l * N l (e j) = 0) :
     (M * N).submatrix e e = M.submatrix e e * N.submatrix e e := by
   ext i j
-  simp only [submatrix_apply, mul_apply]
+  simp only [submatrix_apply, Matrix.mul_apply]
   exact (Fintype.sum_of_injective e he _ _ (fun l hl => h i j l hl) (fun _ => rfl)).symm
 
 def blkMat (b : Fin n → ℕ) (c : ℕ) :
@@ -99,7 +103,7 @@ def ext1 {G N : Type} [Group G] [One N] [Mul N] (P : Subgroup G) (f : P → N) (
 
 theorem extendOne_of_mem {G N : Type} [Group G] [One N] [Mul N] {P : Subgroup G} (f : P → N) {x : G} (h : x ∈ P) :
     ext1 P f x = f ⟨x, h⟩ := by
-  unfold ext1; rw [dif_pos h]
+  unfold ext1; rw [dite_eq_left h]
 
 theorem blockDiagonalExtendByOnePrimeField_one {G N : Type} [Group G] [MulOneClass N] (P : Subgroup G) (f : P →* N) : ext1 P f 1 = 1 := by
   rw [extendOne_of_mem _ P.one_mem]; exact f.map_one
@@ -142,7 +146,7 @@ def unip (κ : Type) [CommRing κ] (r : ℕ) : Subgroup (GL (Fin r) κ) where
   mul_mem' := by
     rintro x y ⟨hx, hx1⟩ ⟨hy, hy1⟩
     refine ⟨Subgroup.mul_mem _ hx hy, fun i => ?_⟩
-    rw [Units.val_mul, mul_apply, Finset.sum_eq_single i, hx1, hy1, one_mul]
+    rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single i, hx1, hy1, one_mul]
     · intro l _ hl
       rcases lt_or_gt_of_ne hl with h | h
       · rw [hx (show l.val < i.val from h), zero_mul]
@@ -153,7 +157,7 @@ def unip (κ : Type) [CommRing κ] (r : ℕ) : Subgroup (GL (Fin r) κ) where
     have hi := Subgroup.inv_mem _ hx
     refine ⟨hi, fun i => ?_⟩
     have h1 : ((x * x⁻¹ : GL (Fin r) κ) : Matrix (Fin r) (Fin r) κ) i i = 1 := by simp
-    rw [Units.val_mul, mul_apply, Finset.sum_eq_single i, hx1, one_mul] at h1
+    rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single i, hx1, one_mul] at h1
     · exact h1
     · intro l _ hl
       rcases lt_or_gt_of_ne hl with h | h
@@ -172,7 +176,7 @@ theorem unip_mul_entry {x y : GL (Fin r) κ} (hx : x ∈ unip κ r) (hy : y ∈ 
       (x : Matrix (Fin r) (Fin r) κ) i l * (y : Matrix (Fin r) (Fin r) κ) l j = 0) :
     ((x * y : GL (Fin r) κ) : Matrix (Fin r) (Fin r) κ) i j =
       (x : Matrix (Fin r) (Fin r) κ) i j + (y : Matrix (Fin r) (Fin r) κ) i j := by
-  rw [Units.val_mul, mul_apply, Finset.sum_eq_add i j (ne_of_lt hij), unip_diag hx, unip_diag hy, one_mul, mul_one,
+  rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_add i j (ne_of_lt hij), unip_diag hx, unip_diag hy, one_mul, mul_one,
     add_comm]
   · rintro l _ ⟨hli, hlj⟩
     rcases lt_or_gt_of_ne hli with h | h
@@ -524,9 +528,6 @@ structure IsDefUnimod (hc : CMData F E) (J : Matrix (Fin n) (Fin n) E) (L : Subm
   lat : Submodule.IsLattice E L
   selfdual : dualSet (hc.sig : E →+* E) J L = (L : Set (Fin n → E))
 
-def IsPosUnimod (hc : CMData F E) (J : Matrix (Fin n) (Fin n) E) (L : Submodule (𝓞 E) (Fin n → E)) : Prop :=
-  IsDefUnimod hc J L ∧ IsTotPosDef hc.sig J
-
 abbrev UR (hc : CMData F E) (J : Matrix (Fin n) (Fin n) E) : Subgroup (GL (Fin n) E) := UJ (hc.sig : E →+* E) J
 
 abbrev UA (hc : CMData F E) (J : Matrix (Fin n) (Fin n) E) : Subgroup (GL (Fin n) (E ⊗[F] Af F)) :=
@@ -535,20 +536,14 @@ abbrev UA (hc : CMData F E) (J : Matrix (Fin n) (Fin n) E) : Subgroup (GL (Fin n
 abbrev UQ (hc : CMData F E) (J : Matrix (Fin n) (Fin n) E) : Subgroup (UA hc J) :=
   (ratPts hc.sig J (Af F)).subgroupOf (UA hc J)
 
-theorem UA_gram (hc : CMData F E) (S : HSpace E) : UA hc S.gram = UAf hc S := rfl
-
-theorem UQ_gram (hc : CMData F E) (S : HSpace E) : UQ hc S.gram = UFin hc S := rfl
-
-theorem UR_gram (hc : CMData F E) (S : HSpace E) : UR hc S.gram = UF hc S := rfl
-
 end Spaces
 
 section G0
 
 variable {E : Type} [Field E] [NumberField E]
 
-open Classical in
 
+open Classical in
 def primesOf (a : 𝓞 E) : Finset (Pl E) :=
   if h : a = 0 then ∅ else
     (Ideal.finite_factors (I := Ideal.span {a}) (by
@@ -840,11 +835,6 @@ theorem conjIn_apply (y : GL (Fin n) (E ⊗[F] Af F)) (γ : UR hc J) :
 
 def Gam (c : Cl hc J K) : Subgroup (UR hc J) :=
   K.comap (conjIn hc J ((rep c : UA hc J) : GL (Fin n) (E ⊗[F] Af F)))
-
-def gamTo (c : Cl hc J K) : Gam c →* K :=
-  ((conjIn hc J ((rep c : UA hc J) : GL (Fin n) (E ⊗[F] Af F))).comp (Gam c).subtype).codRestrict K (fun x => x.2)
-
-def gamChar {LL : Type} [CommRing LL] (lam : K →* LLˣ) (c : Cl hc J K) : Gam c →* LLˣ := lam.comp (gamTo c)
 
 def minkExp (N p : ℕ) : ℕ := ∑ i ∈ Finset.range (N + 1), N / (p ^ i * (p - 1))
 

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ variable (F : Type) [Field F] [NumberField F]
 
 abbrev kv (v : HeightOneSpectrum (𝓞 F)) : Type := IsLocalRing.ResidueField (v.adicCompletionIntegers F)
 
-open Classical in
 
+open Classical in
 def redM {n : ℕ} (v : HeightOneSpectrum (𝓞 F)) (X : Matrix (Fin n) (Fin n) (v.adicCompletion F)) :
     Matrix (Fin n) (Fin n) (kv F v) :=
   fun a b => if h : X a b ∈ v.adicCompletionIntegers F then

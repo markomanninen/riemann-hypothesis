@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Residue
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Residue
+
+@[expose] public section
 
 noncomputable section
 

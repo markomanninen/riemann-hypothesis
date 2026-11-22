@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.InstCommRingBcris
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.InstCommRingBcris
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+
+@[expose] public section
 
 noncomputable section
 

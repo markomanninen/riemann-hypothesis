@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.ZK UpperTheory.V.ZK.Ct
 
@@ -99,7 +103,7 @@ theorem UpperTheory.V.ZK.Ct.kerF :
     simp only [LinearMap.smul_apply, LinearMap.id_apply] at hab
     have hdel : (q : ℤ) • ((-u) • D.g v - D.del z) = D.del b := by
       have e1 := congrArg D.del hab
-      rw [map_add, map_smul, hdn] at e1
+      rw [map_add (f := _), map_smul, hdn] at e1
       rw [smul_sub, smul_smul, ← e1]
       abel
     have htor : (-u) • D.g v - D.del z ∈ Submodule.torsion ℤ Y :=
@@ -116,7 +120,7 @@ theorem UpperTheory.V.ZK.Ct.kerF :
     have hstab : ∀ x ∈ R, (D.g ^ (D.n - 1)) x ∈ R := by
       intro x hx
       obtain ⟨c, ⟨z', rfl⟩, e, he, rfl⟩ := Submodule.mem_sup.mp hx
-      rw [map_add, ← Module.End.mul_apply, hcomm.eq, Module.End.mul_apply]
+      rw [map_add (f := _), ← Module.End.mul_apply, hcomm.eq, Module.End.mul_apply]
       exact R.add_mem (Submodule.mem_sup_left ⟨_, rfl⟩) (Submodule.mem_sup_right (kerF_tors _ he))
     have hgv : (D.g ^ (D.n - 1)) ((u : ℤ) • D.g v) = (u : ℤ) • v := by
       rw [map_smul, ← Module.End.mul_apply, ← pow_succ, Nat.sub_add_cancel D.n_pos, D.g_pow,

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
 namespace GlobalTheory
@@ -31,7 +36,7 @@ theorem wittDual_reduction : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [
       map_add' := fun v w => by
         obtain ⟨m, rfl⟩ := hr v
         obtain ⟨m', rfl⟩ := hr w
-        rw [← map_add r, hg0, hg0, hg0, map_add, map_add]
+        rw [← map_add r, hg0, hg0, hg0, map_add (f := _), map_add (f := _)]
       map_smul' := fun c v => by
         obtain ⟨a, rfl⟩ := hσs c
         obtain ⟨m, rfl⟩ := hr v
@@ -44,7 +49,7 @@ theorem wittDual_reduction : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [
       map_add' := fun l l' => by
         ext v
         obtain ⟨m, rfl⟩ := hr v
-        rw [LinearMap.add_apply, hg, hg, hg, LinearMap.add_apply, map_add]
+        rw [LinearMap.add_apply, hg, hg, hg, LinearMap.add_apply, map_add (f := _)]
       map_smul' := fun a l => by
         ext v
         obtain ⟨m, rfl⟩ := hr v
@@ -58,7 +63,7 @@ theorem wittDual_reduction : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [
     let l : Module.Dual (WittVector p k) M := b.constr (WittVector p k) a
     let F1 : M →ₛₗ[(WittVector.constantCoeff : WittVector p k →+* k)] k :=
       { toFun := fun m => WittVector.constantCoeff (l m)
-        map_add' := fun m m' => by rw [map_add, map_add]
+        map_add' := fun m m' => by rw [map_add (f := _), map_add (f := _)]
         map_smul' := fun c m => by rw [map_smul, smul_eq_mul, map_mul, smul_eq_mul] }
     have hF : F1 = f.comp r := by
       refine b.ext fun i => ?_

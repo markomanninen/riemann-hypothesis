@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import GroundTheory.GlobalFields.TateThesis.Nonvanishing
-import GroundTheory.GlobalFields.TateThesis.HeckeTheorem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import GroundTheory.GlobalFields.TateThesis.Nonvanishing
+public import GroundTheory.GlobalFields.TateThesis.HeckeTheorem
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,9 +35,6 @@ def hc (χ : HChar E) (hu : χ.IsUnitary) : HeckeCharacter E where
     rw [χ.2.2 x, Units.val_one])
   continuous_toFun := (QuotientGroup.isQuotientMap_mk (diagonal E).range).continuous_iff.2
     ((Units.continuous_val.comp χ.2.1).subtype_mk _)
-
-theorem hc_toIdele (χ : HChar E) (hu : χ.IsUnitary) (x : IdeleGroup E) :
-    ((hc χ hu).toIdele x : ℂ) = ((χ.1 x : ℂˣ) : ℂ) := rfl
 
 theorem hc_loc (χ : HChar E) (hu : χ.IsUnitary) (v : HeightOneSpectrum (𝓞 E)) (x : (v.adicCompletion E)ˣ) :
     ((hc χ hu).localComponent v x : ℂ) = ((χ.loc v x : ℂˣ) : ℂ) := rfl
@@ -89,13 +90,14 @@ theorem dense_atInf : DenseRange fun (k : Eˣ) (w : InfinitePlace E) => atInf w 
   have hk : k ≠ 0 := fun h => hy w₀ (by rw [h, map_zero]; rfl)
   exact ⟨_, ⟨Units.mk0 k hk, rfl⟩, rfl⟩
 
-theorem ext_alg (w : InfinitePlace E) (k : E) : extensionEmbedding w (algebraMap E w.Completion k) = w.embedding k :=
-  extensionEmbedding_coe w (WithAbs.toAbs w.1 k)
+theorem ext_alg (w : InfinitePlace E) (k : E) : extensionEmbedding w (algebraMap E w.Completion k) = w.embedding k := by
+  rw [InfinitePlace.Completion.algebraMap_apply, extensionEmbedding_coe]
+  rfl
 
 theorem norm_ext (w : InfinitePlace E) (a : w.Completion) : ‖extensionEmbedding w a‖ = ‖a‖ :=
   (isometry_extensionEmbedding w).norm_map_of_map_zero (map_zero _) a
 
-theorem params_of (χ : HChar E) (hu : χ.IsUnitary) [IsTotallyComplex E] (m : InfinitePlace E → ℤ)
+theorem params_of (χ : HChar E) (hu : χ.IsUnitary) [_root_.NumberField.IsTotallyComplex E] (m : InfinitePlace E → ℤ)
     (h : ∀ k : Eˣ, ((χ.inf k : ℂˣ) : ℂ) = ∏ w : InfinitePlace E, (w.embedding k / ((‖w.embedding k‖ : ℝ) : ℂ)) ^ m w)
     (w : InfinitePlace E) : (hc χ hu).infiniteParams w = (m w, 0) := by
   classical
@@ -170,7 +172,7 @@ theorem exists_weights {I : Type} [Fintype I] {φ : I → E →+* ℂ} (hφ : Is
       push_cast
       ring
 
-theorem heckeL_ne_zero [IsTotallyComplex E] {I : Type} [Fintype I] {φ : I → E →+* ℂ} (hφ : IsCMType φ)
+theorem heckeL_ne_zero [_root_.NumberField.IsTotallyComplex E] {I : Type} [Fintype I] {φ : I → E →+* ℂ} (hφ : IsCMType φ)
     {χ : HChar E} {n : I → ℤ} (hu : χ.IsUnitary) (hn : χ.HasInf φ n) (h0 : ∃ i, n i ≠ 0) :
     ∃ L, IsHeckeL χ L ∧ ∀ z : ℤ, (∀ i, 0 < 2 * z + |n i|) → L z ≠ 0 := by
   obtain ⟨e, m, hm, hk⟩ := exists_weights hφ hn

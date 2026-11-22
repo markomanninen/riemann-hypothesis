@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePHaDefs
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePHaDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,7 +54,7 @@ theorem rowInvUp : RowInvUpSt := by
       rw [MvPolynomial.algebraMap_eq] at h1 h2
       rw [h1, h2, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq, Polynomial.eval_C]
     | add p q hp hq =>
-      rw [map_add, map_add, Polynomial.eval_add, hp, hq]
+      rw [map_add (f := _), map_add (f := _), Polynomial.eval_add, hp, hq]
     | mul_X p ℓ hp =>
       rw [map_mul, map_mul, Polynomial.eval_mul, hp, hΦ]
       congr 1

@@ -1,6 +1,10 @@
-import Formalism.AdmissibleDesigns.IsDROfWpIso
-import Formalism.AdmissibleDesigns.KernelLengthHigherColumns
-import Formalism.AdmissibleDesigns.FgTopContinuousLinearMap
+module
+
+public import Formalism.AdmissibleDesigns.IsDROfWpIso
+public import Formalism.AdmissibleDesigns.KernelLengthHigherColumns
+public import Formalism.AdmissibleDesigns.FgTopContinuousLinearMap
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core] [hH0Fin : Fact Formalism.MainNotions.N.K.H0.FinCore]
 
@@ -73,7 +77,8 @@ theorem wpIso_dat (hD : Formalism.RepresentationBoundsCohomology.ringDataObjects
     ∑ b, Br.loc D.nbr i _ hn (WpO D.nd i ρ π) g a b * eK (D.nbr i _ hn) ((x : {a // RepresentationBoundsCohomology.blk D.R a = 0} → FractionRing (D.nd.O i)) (H0.e0 b))
   refine (congrArg (eK (D.nbr i _ hn)) (KLat.matK_mulVec (Dd.ρk 0 (uElt Dd.r Dd.χ ((Br.iota D.nbr i _ hn g : _) : GE D.nd)))
     (show {a // RepresentationBoundsCohomology.blk D.R a = 0} → FractionRing (D.nd.O i) from x) (H0.e0 a))).trans ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine (Equiv.sum_comp (H0.e0 (D := D)) _).symm.trans (Finset.sum_congr rfl fun b _ => ?_)
   rw [Algebra.smul_def, map_mul, loc_apply, H0.unipotent_block_zero_entry hD hN]
 

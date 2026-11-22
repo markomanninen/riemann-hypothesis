@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondEmbeddingAlgebraMap
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondEmbeddingAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem hform_zero_left (x : Fin X.B.I.n → X.B.I.E) :
 theorem hform_add_left (y y' x : Fin X.B.I.n → X.B.I.E) :
     Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J (y + y') x =
       Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J y x + Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J y' x := by
-  simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_smul_left (a : 𝓞 X.B.I.E) (y x : Fin X.B.I.n → X.B.I.E) :
     Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J (a • y) x =
@@ -79,7 +83,7 @@ theorem locGlob_of (hN : DenomP X p θ) : LocGlob X p θ := by
     | add y y' _ _ h1 h2 =>
         obtain ⟨c1, e1⟩ := h1
         obtain ⟨c2, e2⟩ := h2
-        exact ⟨c1 + c2, by rw [map_add, e1, e2, hform_add_left]⟩
+        exact ⟨c1 + c2, by rw [map_add (f := _), e1, e2, hform_add_left]⟩
     | smul a y _ h1 =>
         obtain ⟨c1, e1⟩ := h1
         exact ⟨starE X a * c1, by rw [map_mul, e1, hform_smul_left]; rfl⟩

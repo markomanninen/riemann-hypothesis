@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.PrimeSumBounded
-import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
-import GroundTheory.GlobalFields.TateThesis.DegreeOneDensity
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.PrimeSumBounded
+public import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+public import GroundTheory.GlobalFields.TateThesis.DegreeOneDensity
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set
 
@@ -39,10 +43,6 @@ def circleChar (φ : AddChar (Additive G) ℂ) : G →* Circle where
     change φ (Additive.ofMul (g * h)) = φ (Additive.ofMul g) * φ (Additive.ofMul h)
     rw [ofMul_mul, AddChar.map_add_eq_mul])
 
-theorem coe_circleChar (φ : AddChar (Additive G) ℂ) (g : G) :
-    (circleChar φ g : ℂ) = φ (Additive.ofMul g) :=
-  rfl
-
 end FiniteCharacters
 
 variable {K : Type*} [Field K] [NumberField K]
@@ -62,22 +62,18 @@ def ofHom (q : IdeleGroup K →* G) (hq : IsOpen (q.ker : Set (IdeleGroup K)))
       continuous_of_discreteTopology
     exact hc.comp (QuotientGroup.continuous_mk (N := q.ker))
 
-theorem ofHom_toIdele (q : IdeleGroup K →* G) (hq : IsOpen (q.ker : Set (IdeleGroup K)))
-    (hK : (IdeleGroup.diagonal K).range ≤ q.ker) (ψ : G →* Circle) (x : IdeleGroup K) :
-    (ofHom q hq hK ψ).toIdele x = ψ (q x) :=
-  rfl
-
 end HeckeCharacter
 
 def uniformizerClass {G : Type*} [Group G] (q : IdeleGroup K →* G) (v : HeightOneSpectrum (𝓞 K)) :
     G :=
   q (finiteEmbedding v (exists_uniformizer v).choose)
 
+open private HasDirichletDensity.eq_1 from Mathlib.NumberTheory.NumberField.DirichletDensity in
 theorem hasDirichletDensity_of_isBoundedUnder_abs_sub {S : Set (HeightOneSpectrum (𝓞 K))} {δ : ℝ}
     (h : IsBoundedUnder (· ≤ ·) (𝓝[>] 1) fun s ↦
       |S.primeIdealZetaSum s - δ * (univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s|) :
     S.HasDirichletDensity δ := by
-  have hZ := tendsto_primeIdealZetaSum_univ_atTop K
+  have hZ := GroundTheory.Global.tendsto_primeIdealZetaSum_univ_atTop (K := K)
   have h0 : Tendsto (fun s ↦ ((univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s)⁻¹ *
       (S.primeIdealZetaSum s - δ * (univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s))
       (𝓝[>] 1) (𝓝 0) :=
@@ -85,7 +81,7 @@ theorem hasDirichletDensity_of_isBoundedUnder_abs_sub {S : Set (HeightOneSpectru
       (by simpa only [Function.comp_def, Real.norm_eq_abs] using h)
   have h1 := h0.const_add δ
   rw [add_zero] at h1
-  unfold Set.HasDirichletDensity
+  rw [HasDirichletDensity.eq_1]
   refine h1.congr' ?_
   filter_upwards [hZ.eventually_gt_atTop 0] with s hs
   field_simp
@@ -120,9 +116,11 @@ theorem coeff_classChar {v : HeightOneSpectrum (𝓞 K)} (hv : v ∉ ramifiedPri
     (φ : AddChar (Additive G) ℂ) :
     (classChar q hq hK φ).coeff v.asIdeal = φ (Additive.ofMul (uniformizerClass q v)) := by
   have hv' : ¬ v.asIdeal ∣ (classChar q hq hK φ).conductor := fun h ↦ hv ⟨φ, h⟩
-  rw [(classChar q hq hK φ).coeff_asIdeal_eq_toIdele hv' (exists_uniformizer v).choose_spec,
-    classChar_toIdele]
-  rfl
+  calc
+    (classChar q hq hK φ).coeff v.asIdeal =
+        ((classChar q hq hK φ).toIdele (finiteEmbedding v (exists_uniformizer v).choose) : ℂ) :=
+      (classChar q hq hK φ).coeff_asIdeal_eq_toIdele hv' (exists_uniformizer v).choose_spec
+    _ = φ (Additive.ofMul (uniformizerClass q v)) := classChar_toIdele q hq hK φ _
 
 theorem map_finiteEmbedding_eq_uniformizerClass {v : HeightOneSpectrum (𝓞 K)}
     (hv : v ∉ ramifiedPrimes q hq hK) {π : (v.adicCompletion K)ˣ}
@@ -331,26 +329,6 @@ theorem hasDirichletDensity_setOf_map_eq (hqs : Function.Surjective q) (c : G) :
     (isBoundedUnder_primeIdealZetaSum_of_finite (hR.subset hdiff)) _).1 hT
 
 end Density
-
-theorem hasDirichletDensity_setOf_mk_eq {H : Subgroup (IdeleGroup K)}
-    (hH : IsOpen (H : Set (IdeleGroup K))) (hK : (IdeleGroup.diagonal K).range ≤ H) [H.FiniteIndex]
-    (c : IdeleGroup K ⧸ H) :
-    {v : HeightOneSpectrum (𝓞 K) | ∀ π : (v.adicCompletion K)ˣ,
-      Valued.v (π : v.adicCompletion K) = WithZero.exp (-1 : ℤ) →
-        ((finiteEmbedding v π : IdeleGroup K) : IdeleGroup K ⧸ H) = c}.HasDirichletDensity
-      (1 / Nat.card (IdeleGroup K ⧸ H)) := by
-  have : Finite (IdeleGroup K ⧸ H) := Subgroup.finite_quotient_of_finiteIndex
-  let _ : CommGroup (IdeleGroup K ⧸ H) := QuotientGroup.Quotient.commGroup H
-  let q : IdeleGroup K →* IdeleGroup K ⧸ H :=
-    { toFun := fun x ↦ (x : IdeleGroup K ⧸ H)
-      map_one' := rfl
-      map_mul' := fun _ _ ↦ rfl }
-  have hker : q.ker = H := by
-    ext x
-    exact QuotientGroup.eq_one_iff x
-  have hH' : IsOpen (q.ker : Set (IdeleGroup K)) := by rw [hker]; exact hH
-  have hK' : (IdeleGroup.diagonal K).range ≤ q.ker := by rw [hker]; exact hK
-  exact hasDirichletDensity_setOf_map_eq q hH' hK' QuotientGroup.mk_surjective c
 
 end
 

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRStepALevel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpPTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianInvariantCellAction
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRStepALevel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpPTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianInvariantCellAction
+
+@[expose] public section
 
 open Matrix Filter Topology
 
@@ -198,9 +202,11 @@ theorem stepA_core (Wp Wq : Type) [NormedAddCommGroup Wp] [NormedSpace ℂ Wp] [
           mulB (Wq →L[ℂ] Wp) l.succ (ho1 l hD'.1) (aCi k l) * tB (Wq →L[ℂ] Wp) l.succ (ho1 l hD'.1) z z' Y 1 1) := by
     rw [← capelli_key_first_term hD'.1 z z' Y, ← capelli_key_second_identity hD'.1 z z' Y, ← Finset.sum_sub_distrib]
     simp only [← Finset.sum_sub_distrib, ← smul_sub, ← mul_sub]
-    rw [NL_re, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [NL_re, map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [map_smul, stp_ev_mul (ho1 l hD'.1) (sf_aY z t) _ hc hg hgD, smul_smul, inv_w1_mul_mulVec_of_inWb l (hc l) hz g,
       quantum_minor_point_evaluation R hz hz' hD' hs hle hri (skip1 s) (skip1 t) _ hc hg hgD]
@@ -221,7 +227,7 @@ theorem stepA_core (Wp Wq : Type) [NormedAddCommGroup Wp] [NormedSpace ℂ Wp] [
       -(uC k (r + 1) l.castSucc Y • WorkedExample c + pOp l WorkedExample c) - (c l)⁻¹ • LargeParameterEstimates c := by
     rw [map_sub, map_neg, stp_ev_mul (ho1 l hD'.1) (sf_aCi l) _ hc hg hgD]
     unfold bTee
-    rw [add_mul, map_add, smul_mul_assoc, one_mul, map_smul, e1]
+    rw [add_mul, map_add (f := _), smul_mul_assoc, one_mul, map_smul, e1]
     rfl
 
   have hnear := near_pt (ho1 l hD'.1) hc hgD

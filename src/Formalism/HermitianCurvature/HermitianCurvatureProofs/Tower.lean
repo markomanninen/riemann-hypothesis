@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockRelationTwistedHeight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockRelationTwistedHeight
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ContDiff ENNReal

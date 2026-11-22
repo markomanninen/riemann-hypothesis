@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.TateCohomology.InducedNorm
-import GroundTheory.TateCohomology.TateAddEquivAbelianizationTateClass
-import GroundTheory.TateCohomology.PGroupFixed
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.InducedNorm
+public import GroundTheory.TateCohomology.TateAddEquivAbelianizationTateClass
+public import GroundTheory.TateCohomology.PGroupFixed
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -19,7 +24,7 @@ theorem d₁₀_mapRange (y : G →₀ A) :
     d₁₀ B (Finsupp.mapRange.linearMap f.hom.toLinearMap y) = f.hom (d₁₀ A y) := by
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y₁ y₂ h₁ h₂ => simp only [map_add, h₁, h₂]
+  | add y₁ y₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
   | single g a =>
     rw [Finsupp.mapRange.linearMap_apply, Finsupp.mapRange_single, d₁₀_single, d₁₀_single,
       map_sub, Rep.hom_comm_apply]
@@ -30,7 +35,7 @@ theorem d₂₁_mapRange (c : G × G →₀ A) :
       Finsupp.mapRange.linearMap f.hom.toLinearMap (d₂₁ A c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add c₁ c₂ h₁ h₂ => simp only [map_add, h₁, h₂]
+  | add c₁ c₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
   | single g a =>
     rw [Finsupp.mapRange.linearMap_apply, Finsupp.mapRange_single, d₂₁_single, d₂₁_single,
       map_add, map_sub, Finsupp.mapRange.linearMap_apply, Finsupp.mapRange.linearMap_apply,
@@ -160,13 +165,13 @@ theorem exists_iso_free_of_isZero_groupHomology_one (hG : IsPGroup p G) (M : Rep
     induction y using Finsupp.induction_linear with
     | zero => simp
     | add y₁ y₂ h₁ h₂ =>
-      rw [map_add, map_add, map_add, add_sub_add_comm]
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), add_sub_add_comm]
       exact add_mem h₁ h₂
     | single i a =>
       induction a using MonoidAlgebra.induction_linear with
       | zero => simp
       | add a₁ a₂ h₁ h₂ =>
-        rw [Finsupp.single_add, map_add, map_add, map_add, add_sub_add_comm]
+        rw [Finsupp.single_add, map_add (f := _), map_add (f := _), map_add (f := _), add_sub_add_comm]
         exact add_mem h₁ h₂
       | single g r =>
         refine Coinvariants.mem_ker_of_eq g (single i (MonoidAlgebra.single 1 r)) _ ?_

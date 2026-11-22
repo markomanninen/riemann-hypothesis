@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PointwiseBoundDiscreteSeriesCoefficientsStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselXiIntegrableHolds
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ActualClassesCompactSupport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PointwiseBoundDiscreteSeriesCoefficientsStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselXiIntegrableHolds
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ActualClassesCompactSupport
+
+@[expose] public section
 
 open BpJoin
 

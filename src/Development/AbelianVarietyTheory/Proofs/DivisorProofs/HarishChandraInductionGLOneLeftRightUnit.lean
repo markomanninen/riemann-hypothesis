@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ variable {F : Type} [Field F]
 
 theorem toG_val {n : ℕ} (x : GL (Fin n) F) : toG (x : Matrix (Fin n) (Fin n) F) = x := by
   unfold toG
-  rw [dif_pos x.isUnit]
+  rw [dite_eq_left x.isUnit]
   exact Units.ext (IsUnit.unit_spec _)
 
 theorem brG_zero {a : ℕ} (x : GL (Fin a) F) : brG 0 a x = x := by

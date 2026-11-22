@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RamFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ContTw
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RamFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ContTw
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -37,9 +41,20 @@ theorem UpperTheory.exists_finite_place_set_factoring_through_GS :
   intro Ω _ _ _ K _ _ _ l _ c N _ e ψ D
   classical
   have hlp : l.Prime := Fact.out
-  obtain ⟨-, -, -, hηlc, -, -, -, -, -, -, -⟩ := dat_facts D
   haveI : IsScalarTower ℚ K Ω := inferInstance
   haveI : IsAlgClosure K Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) K⟩
+  have hηopen : IsOpen (D.η.ker : Set (G ℚ Ω)) := by
+    rw [D.η_ker]
+    let b := Module.finBasis ℚ K
+    have heq : (galOf ℚ K Ω : Set (G ℚ Ω)) = ⋂ i, {σ : G ℚ Ω | σ (algebraMap K Ω (b i)) = algebraMap K Ω (b i)} := by
+      ext σ
+      simp only [Set.mem_iInter, Set.mem_setOf_eq, SetLike.mem_coe, mem_galOf]
+      refine ⟨fun h i => h _, fun h x => ?_⟩
+      have h' := b.ext (f₁ := σ.toLinearMap ∘ₗ (IsScalarTower.toAlgHom ℚ K Ω).toLinearMap)
+        (f₂ := (IsScalarTower.toAlgHom ℚ K Ω).toLinearMap) h
+      exact LinearMap.congr_fun h' x
+    rw [heq]
+    exact isOpen_iInter_of_finite fun i => isOpen_setOf_apply (F := ℚ) _ (fun t => t = algebraMap K Ω (b i))
   obtain ⟨⟨T, hT⟩, -⟩ := ramFinite ℚ ℚ K Ω
   have hlN0 : ((l * N : ℕ) : 𝓞 ℚ) ≠ 0 :=
     Nat.cast_ne_zero.mpr (Nat.mul_ne_zero hlp.ne_zero (NeZero.ne N))
@@ -79,7 +94,7 @@ theorem UpperTheory.exists_finite_place_set_factoring_through_GS :
     · rw [MonoidHom.coe_ker]
       exact isClosed_singleton.preimage (contTw ℚ Ω l).1
     · exact Subgroup.isClosed_of_isOpen _ (Chr.clsFacts ℚ Ω N).1
-    · exact Subgroup.isClosed_of_isOpen _ (hηlc.isOpen_fiber 1)
+    · exact Subgroup.isClosed_of_isOpen _ hηopen
   have hNS : NS Ω (S : Set (HeightOneSpectrum (𝓞 ℚ))) ≤ H := by
     apply Subgroup.topologicalClosure_minimal _ _ hHclosed
     apply Subgroup.normalClosure_le_normal

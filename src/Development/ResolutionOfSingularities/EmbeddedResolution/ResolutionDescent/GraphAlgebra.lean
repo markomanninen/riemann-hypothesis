@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u
 
@@ -30,15 +34,6 @@ theorem algebraMap_graphAlgebra (f : τ → MvPolynomial σ R) (p : MvPolynomial
     algebraMap (MvPolynomial τ R) (GraphAlgebra f) p = graphAlgebraEquiv f (MvPolynomial.aeval f p) :=
   rfl
 
-private theorem algebraMap_graphAlgebra_eq_algebraMap_mvPolynomial (f : τ → MvPolynomial σ R) (r : R) :
-    algebraMap R (GraphAlgebra f) r
-      = algebraMap (MvPolynomial τ R) (GraphAlgebra f) (algebraMap R (MvPolynomial τ R) r) := by
-  rw [algebraMap_graphAlgebra, AlgHom.commutes, AlgEquiv.commutes]
-
-instance instIsScalarTowerGraphAlgebra (f : τ → MvPolynomial σ R) :
-    IsScalarTower R (MvPolynomial τ R) (GraphAlgebra f) :=
-  IsScalarTower.of_algebraMap_eq (algebraMap_graphAlgebra_eq_algebraMap_mvPolynomial f)
-
 def graphRelation (f : τ → MvPolynomial σ R) (i : τ) : MvPolynomial σ (MvPolynomial τ R) :=
   MvPolynomial.C (MvPolynomial.X i)
     - MvPolynomial.map (MvPolynomial.C : R →+* MvPolynomial τ R) (f i)
@@ -68,14 +63,14 @@ private theorem graphAlgebraAeval_map_C (f : τ → MvPolynomial σ R) (p : MvPo
   | C r =>
       simp only [MvPolynomial.map_C, graphAlgebraAeval_C, MvPolynomial.aeval_C,
         MvPolynomial.algebraMap_eq]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp => simp only [map_mul, MvPolynomial.map_X, hp, graphAlgebraAeval_X]
 
 theorem graphAlgebraAeval_graphRelation (f : τ → MvPolynomial σ R) (i : τ) :
     graphAlgebraAeval f (graphRelation f i) = 0 := by
   simp only [graphRelation, map_sub, graphAlgebraAeval_C, graphAlgebraAeval_map_C, MvPolynomial.aeval_X, sub_self]
 
-private theorem graphAlgebraAeval_map_C_graphAlgebraEquiv_symm (f : τ → MvPolynomial σ R) (x : GraphAlgebra f) :
+theorem graphAlgebraAeval_map_C_graphAlgebraEquiv_symm (f : τ → MvPolynomial σ R) (x : GraphAlgebra f) :
     graphAlgebraAeval f (MvPolynomial.map (MvPolynomial.C : R →+* MvPolynomial τ R)
       ((graphAlgebraEquiv f).symm x)) = x := by
   rw [graphAlgebraAeval_map_C, AlgEquiv.apply_symm_apply]
@@ -99,7 +94,7 @@ private theorem graphAlgebraAeval_eq_graphAlgebraEquiv_graphSubstitutionHom (f :
     graphAlgebraAeval f p = graphAlgebraEquiv f (graphSubstitutionHom f p) := by
   induction p using MvPolynomial.induction_on with
   | C a => rw [graphAlgebraAeval_C, graphSubstitutionHom_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X q i hq => simp only [map_mul, hq, graphAlgebraAeval_X, graphSubstitutionHom_X]
 
 private theorem C_sub_map_C_aeval_mem_graphRelationIdeal (f : τ → MvPolynomial σ R) (a : MvPolynomial τ R) :
@@ -122,7 +117,7 @@ private theorem C_sub_map_C_aeval_mem_graphRelationIdeal (f : τ → MvPolynomia
               (MvPolynomial.aeval f p))
             + (MvPolynomial.C q - MvPolynomial.map (MvPolynomial.C : R →+* MvPolynomial τ R)
               (MvPolynomial.aeval f q)) := by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         ring
       rw [key]
       exact Ideal.add_mem _ hp hq
@@ -154,7 +149,7 @@ private theorem sub_map_C_mem_graphRelationIdeal (f : τ → MvPolynomial σ R)
           = (p - MvPolynomial.map (MvPolynomial.C : R →+* MvPolynomial τ R) (graphSubstitutionHom f p))
             + (q - MvPolynomial.map (MvPolynomial.C : R →+* MvPolynomial τ R)
                 (graphSubstitutionHom f q)) := by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         ring
       rw [key]
       exact Ideal.add_mem _ hp hq
@@ -180,7 +175,7 @@ private theorem mem_ker_graphAlgebraGenerators_iff (f : τ → MvPolynomial σ R
     (p : MvPolynomial σ (MvPolynomial τ R)) :
     p ∈ (graphAlgebraGenerators f).ker ↔ graphAlgebraAeval f p = 0 := Iff.rfl
 
-private theorem span_range_graphRelation_eq_ker (f : τ → MvPolynomial σ R) :
+theorem span_range_graphRelation_eq_ker (f : τ → MvPolynomial σ R) :
     Ideal.span (Set.range (graphRelation f)) = (graphAlgebraGenerators f).ker := by
   apply le_antisymm
   · rw [Ideal.span_le]

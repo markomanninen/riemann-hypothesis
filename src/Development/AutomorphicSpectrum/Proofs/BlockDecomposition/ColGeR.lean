@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+
+@[expose] public section
 
 open ReciprocityTheory.Ty.Fin
 

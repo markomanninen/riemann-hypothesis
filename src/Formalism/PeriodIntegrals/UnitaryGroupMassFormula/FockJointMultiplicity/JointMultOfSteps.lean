@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.FockDegreeTwoParts
+module
+
+public import Formalism.PeriodIntegrals.FockDegreeTwoParts
+
+@[expose] public section
 
 noncomputable section
 

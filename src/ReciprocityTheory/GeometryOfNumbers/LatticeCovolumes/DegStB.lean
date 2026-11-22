@@ -1,4 +1,8 @@
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.DegStA
+module
+
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.DegStA
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 

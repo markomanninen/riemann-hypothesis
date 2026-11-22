@@ -1,7 +1,11 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.IsProbabilityMeasureComplexPart
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ToRHomeomorphMixedSpace
-import GroundTheory.AutomorphicForms.GL2.AdelicFourier2TensorCosetIndicatorAlgebraMap
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.IsProbabilityMeasureComplexPart
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ToRHomeomorphMixedSpace
+public import GroundTheory.AutomorphicForms.GL2.AdelicFourier2TensorCosetIndicatorAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -160,8 +164,8 @@ theorem UpperTheory.HilbertEisensteinWeightOne.poisson_summation_holds : SPois :
     rw [rowA_zero, Matrix.mulVec_zero, phiH_zero]
   have hC : ‖cst c‖ ≠ 0 := norm_ne_zero_iff.mpr (cst_ne_zero c)
   refine ⟨?_, ?_, ?_⟩
-  · exact (S1.subtype {ξ | ξ ≠ 0} : _)
-  · exact (((summable_mul_left_iff hC).mp S2).subtype {ξ | ξ ≠ 0} : _)
+  · exact (S1.subtype (fun ξ : Fin 2 → F => ξ ≠ 0) : _)
+  · exact (((summable_mul_left_iff hC).mp S2).subtype (fun ξ : Fin 2 → F => ξ ≠ 0) : _)
   · rw [thetaS, thetaT]
     rw [show (∑' ξ : {ξ : Fin 2 → F // ξ ≠ 0}, Phi c (rowA ξ.1 ᵥ* (h : Matrix (Fin 2) (Fin 2) (Ad F)))) =
         ∑' ξ : ({ξ | ξ ≠ 0} : Set (Fin 2 → F)), Phi c (rowA (ξ : Fin 2 → F) ᵥ* (h : Matrix (Fin 2) (Fin 2) (Ad F))) from rfl,

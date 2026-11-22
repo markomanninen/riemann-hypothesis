@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Topology Matrix
 open scoped ComplexOrder ENNReal Pointwise
@@ -10,13 +14,6 @@ namespace GramSubmodular
 variable {m α β γ : Type} [Fintype m] [Fintype α] [Fintype β] [Fintype γ]
   [DecidableEq α] [DecidableEq β] [DecidableEq γ]
 
-lemma gram_det_re_nonneg (U : Matrix m α ℂ) : 0 ≤ (Uᴴ * U).det.re :=
-  (Complex.nonneg_iff.mp (Matrix.posSemidef_conjTranspose_mul_self U).det_nonneg).1
-
-omit [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β] in
-lemma gram_fromCols (U : Matrix m α ℂ) (V : Matrix m β ℂ) :
-    (fromCols U V)ᴴ * fromCols U V = fromBlocks (Uᴴ * U) (Uᴴ * V) (Vᴴ * U) (Vᴴ * V) := by
-  rw [conjTranspose_fromCols_eq_fromRows_conjTranspose, fromRows_mul_fromCols]
 
 end GramSubmodular
 
@@ -136,11 +133,11 @@ private lemma gram_det_koteljanskii_inequality
       ((1 - X * (Xᴴ * X)⁻¹ * Xᴴ) * Z)
     nlinarith [mul_le_mul_of_nonneg_left hF (mul_self_nonneg (Xᴴ * X).det.re)]
 
+
 open MeasureTheory Topology Matrix in
 open scoped ComplexOrder ENNReal Pointwise in
 variable {m α β γ n : Type} [Fintype m] [Fintype α] [Fintype β] [Fintype γ] [Fintype n]
   [DecidableEq α] [DecidableEq β] [DecidableEq γ] [DecidableEq n] in
-
 theorem _root_.GlobalTheory.gram_det_submodular :
     (∀ (n : Type) [Fintype n] [DecidableEq n] (P Q : Matrix n n ℂ), P.PosSemidef → Q.PosSemidef → 0 ≤ P.det.re ∧ P.det.re ≤ (P + Q).det.re ∧ (P.det ≠ 0 → (P + Q).det.re ≤ P.det.re → Q = 0)) → (∀ (m α β γ : Type) [Fintype m] [Fintype α] [Fintype β] [Fintype γ] [DecidableEq α] [DecidableEq β] [DecidableEq γ] (M : Matrix m (α ⊕ β ⊕ γ) ℂ), (((M.submatrix id (Sum.inl : α → α ⊕ β ⊕ γ))ᴴ * (M.submatrix id (Sum.inl : α → α ⊕ β ⊕ γ))).det.re) * (((M)ᴴ * (M)).det.re) ≤ (((M.submatrix id (Sum.map id Sum.inl : α ⊕ β → α ⊕ β ⊕ γ))ᴴ * (M.submatrix id (Sum.map id Sum.inl : α ⊕ β → α ⊕ β ⊕ γ))).det.re) * (((M.submatrix id (Sum.map id Sum.inr : α ⊕ γ → α ⊕ β ⊕ γ))ᴴ * (M.submatrix id (Sum.map id Sum.inr : α ⊕ γ → α ⊕ β ⊕ γ))).det.re)) := by
   intro hmono m α β γ _ _ _ _ _ _ _ M

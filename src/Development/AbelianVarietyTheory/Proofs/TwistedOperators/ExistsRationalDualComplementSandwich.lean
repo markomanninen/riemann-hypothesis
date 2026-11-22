@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,34 +37,48 @@ def pr {a b : ℕ} (A : Matrix (Fin W.rank) (Fin a) D.host.E) (B : Matrix (Fin b
 
 theorem hO_emb_right {a b : ℕ} (A : Matrix (Fin W.rank) (Fin a) D.host.E) (B : Matrix (Fin b) (Fin V.rank) D.host.E)
     (x : WO V W) (y : Mx D a b) : hO V W x (GlobalTheory.IsoMean.emb V W A B y) = (adj y * pr V W A B x).trace := by
-  rw [hO_eq_trace]
+  have adj_mul {l m n : ℕ} (u : Mx D l m) (v : Mx D m n) : adj (u * v) = adj v * adj u :=
+    Formalism.UG.cT_mul (cA D) u v
+  have ht (u v : WO V W) : hO V W u v = (giA V * (adj v * (gA W * u))).trace := by
+    simp only [hO, Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, Finset.mul_sum, mul_assoc]
+    rfl
+  rw [ht]
   have e : adj (GlobalTheory.IsoMean.emb V W A B y) = rat Bᴴ * (adj y * rat Aᴴ) := by
     show adj (rat A * y * rat B) = _
     rw [adj_mul, adj_mul, ← rat_conjTranspose, ← rat_conjTranspose]
   rw [e, pr]
-  rw [show giA V ⬝ (rat Bᴴ ⬝ (adj y ⬝ rat Aᴴ) ⬝ (gA W ⬝ x)) =
-      (giA V ⬝ rat Bᴴ) ⬝ (adj y ⬝ (rat Aᴴ ⬝ gA W ⬝ x)) by simp only [Matrix.mul_assoc], Matrix.trace_mul_comm]
+  rw [show giA V * (rat Bᴴ * (adj y * rat Aᴴ) * (gA W * x)) =
+      (giA V * rat Bᴴ) * (adj y * (rat Aᴴ * gA W * x)) by simp only [Matrix.mul_assoc], Matrix.trace_mul_comm]
   simp only [Matrix.mul_assoc]
 
 theorem hO_emb_left {a b : ℕ} (A : Matrix (Fin W.rank) (Fin a) D.host.E) (B : Matrix (Fin b) (Fin V.rank) D.host.E)
     (s : Mx D a b) (z : WO V W) : hO V W (GlobalTheory.IsoMean.emb V W A B s) z = (adj (pr V W A B z) * s).trace := by
   change hO V W (rat A * s * rat B) z = _
-  rw [hO_eq_trace]
+  have adj_mul {l m n : ℕ} (u : Mx D l m) (v : Mx D m n) : adj (u * v) = adj v * adj u :=
+    Formalism.UG.cT_mul (cA D) u v
+  have ht (u v : WO V W) : hO V W u v = (giA V * (adj v * (gA W * u))).trace := by
+    simp only [hO, Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, Finset.mul_sum, mul_assoc]
+    rfl
+  rw [ht]
   have e : adj (pr V W A B z) = rat B * (giA V * (adj z * (gA W * rat A))) := by
     rw [pr]
     simp only [adj_mul, adj_giA, adj_gA, ← rat_conjTranspose, conjTranspose_conjTranspose, Matrix.mul_assoc]
   rw [e]
-  rw [show giA V ⬝ (adj z ⬝ (gA W ⬝ (rat A ⬝ s ⬝ rat B))) =
-      (giA V ⬝ (adj z ⬝ (gA W ⬝ rat A)) ⬝ s) ⬝ rat B by simp only [Matrix.mul_assoc], Matrix.trace_mul_comm]
+  rw [show giA V * (adj z * (gA W * (rat A * s * rat B))) =
+      (giA V * (adj z * (gA W * rat A)) * s) * rat B by simp only [Matrix.mul_assoc], Matrix.trace_mul_comm]
   simp only [Matrix.mul_assoc]
 
 theorem pr_emb {a b : ℕ} {P P' : Matrix (Fin W.rank) (Fin a) D.host.E} {Q Q' : Matrix (Fin b) (Fin V.rank) D.host.E}
     (hA : Pᴴ * W.gram * P' = 1) (hB : Q' * V.gram⁻¹ * Qᴴ = 1) (s : Mx D a b) :
     pr V W P Q (GlobalTheory.IsoMean.emb V W P' Q' s) = s := by
-  change rat Pᴴ ⬝ gA W ⬝ (rat P' ⬝ s ⬝ rat Q') ⬝ giA V ⬝ rat Qᴴ = s
-  have e1 : rat Pᴴ ⬝ gA W ⬝ rat P' = 1 := by rw [gA, ← rat_mul, ← rat_mul, hA, rat_one]
-  have e2 : rat Q' ⬝ giA V ⬝ rat Qᴴ = 1 := by rw [giA, ← rat_mul, ← rat_mul, hB, rat_one]
-  calc _ = (rat Pᴴ ⬝ gA W ⬝ rat P') ⬝ s ⬝ (rat Q' ⬝ giA V ⬝ rat Qᴴ) := by simp only [Matrix.mul_assoc]
+  change rat Pᴴ * gA W * (rat P' * s * rat Q') * giA V * rat Qᴴ = s
+  have e1 : rat Pᴴ * gA W * rat P' = 1 := by
+    change rat Pᴴ * rat W.gram * rat P' = 1
+    rw [show rat Pᴴ * rat W.gram * rat P' = rat (Pᴴ * W.gram * P') by simp only [rat, Matrix.map_mul], hA, rat_one]
+  have e2 : rat Q' * giA V * rat Qᴴ = 1 := by
+    change rat Q' * rat V.gram⁻¹ * rat Qᴴ = 1
+    rw [show rat Q' * rat V.gram⁻¹ * rat Qᴴ = rat (Q' * V.gram⁻¹ * Qᴴ) by simp only [rat, Matrix.map_mul], hB, rat_one]
+  calc _ = (rat Pᴴ * gA W * rat P') * s * (rat Q' * giA V * rat Qᴴ) := by simp only [Matrix.mul_assoc]
     _ = s := by rw [e1, e2, Matrix.one_mul, Matrix.mul_one]
 
 theorem pr_sub {a b : ℕ} (A : Matrix (Fin W.rank) (Fin a) D.host.E) (B : Matrix (Fin b) (Fin V.rank) D.host.E)
@@ -70,7 +88,7 @@ theorem pr_sub {a b : ℕ} (A : Matrix (Fin W.rank) (Fin a) D.host.E) (B : Matri
 theorem pr_rat {a b : ℕ} (A : Matrix (Fin W.rank) (Fin a) D.host.E) (B : Matrix (Fin b) (Fin V.rank) D.host.E)
     {x : WO V W} (hx : x ∈ ratMx D W.rank V.rank) : pr V W A B x ∈ ratMx D a b := by
   obtain ⟨M, rfl⟩ := mem_ratMx.1 hx
-  exact ⟨Aᴴ * W.gram * M * V.gram⁻¹ * Bᴴ, by show rat _ = _; simp only [pr, gA, giA, rat_mul]⟩
+  exact ⟨Aᴴ * W.gram * M * V.gram⁻¹ * Bᴴ, by show rat _ = _; simp only [pr, gA, giA, rat, Matrix.map_mul]⟩
 
 theorem trace_adj_mul {a b : ℕ} (y s : Mx D a b) : (adj y * s).trace = ∑ i, ∑ j, cA D (y i j) * s i j := by
   simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, adj, Matrix.transpose_apply, Matrix.map_apply]
@@ -139,8 +157,8 @@ theorem emb_rat {a b : ℕ} (P : Matrix (Fin W.rank) (Fin a) D.host.E) (Q : Matr
 
 end GlobalTheory.PerfectCompl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem GlobalTheory.PerfectCompl.exists_dual_complement : ∀ (D : D7) (V W : HSp D) (a b : ℕ) (P : Matrix (Fin W.rank) (Fin a) D.host.E) (Q : Matrix (Fin b) (Fin V.rank) D.host.E), P.rank = a → Q.rank = b → ∀ (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∃ (P' : Matrix (Fin W.rank) (Fin a) D.host.E) (Q' : Matrix (Fin b) (Fin V.rank) D.host.E), (∀ x : WO V W, ∃ s : Mx D a b, ∀ y : Mx D a b, symplO V W (x - GlobalTheory.IsoMean.emb V W P' Q' s) (GlobalTheory.IsoMean.emb V W P Q y) = 0) ∧ (∀ s : Mx D a b, (∀ y : Mx D a b, symplO V W (GlobalTheory.IsoMean.emb V W P' Q' s) (GlobalTheory.IsoMean.emb V W P Q y) = 0) → s = 0) ∧ (∀ s : Mx D a b, (∀ γ ∈ GlobalTheory.MixModel.ratMx D a b, ψ (symplO V W (GlobalTheory.IsoMean.emb V W P' Q' s) (GlobalTheory.IsoMean.emb V W P Q γ)) = 1) ↔ s ∈ GlobalTheory.MixModel.ratMx D a b) ∧ (∀ γ ∈ GlobalTheory.MixModel.ratMx D a b, (∀ s : Mx D a b, ψ (symplO V W (GlobalTheory.IsoMean.emb V W P' Q' s) (GlobalTheory.IsoMean.emb V W P Q γ)) = 1) → γ = 0) := by
   intro D V W a b P Q hP hQ ψ hψ
   haveI : Module.Finite D.host.F D.host.E := Module.finite_of_finrank_pos (by rw [D.sp.cm.deg2]; norm_num)

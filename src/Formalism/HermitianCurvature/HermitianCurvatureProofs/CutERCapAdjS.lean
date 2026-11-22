@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjSCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjFrom
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliUnderIntegral
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjSCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjFrom
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliUnderIntegral
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.ER
 

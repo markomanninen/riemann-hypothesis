@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
+
+@[expose] public section
 
 open Matrix Polynomial NumberField IsDedekindDomain UpperTheory.ConvolutionTheory.D
 open scoped TensorProduct
@@ -46,6 +50,6 @@ theorem UpperTheory.ConvolutionTheory.D.nmPoly :
     have h2 : cp (sg σ (nm σ q δ)) = (cp (nm σ q δ)).map (σ : R →+* R) := Matrix.charpoly_map _ _
     rw [← h2, h1, cp, cp, Units.val_mul, Units.val_mul, Matrix.coe_units_inv, Matrix.charpoly_units_conj']
   have hl : cp (nm σ q δ) ∈ Polynomial.lifts (algebraMap k R) := (Polynomial.lifts_iff_coeff_lifts _).2 fun i =>
-    h.fix _ (by simpa [Polynomial.coeff_map] using congrArg (fun p => Polynomial.coeff p i) e)
+    h.fix _ (by simpa [Polynomial.coeff_map] using congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p i) e)
   obtain ⟨p, hp⟩ := hl
   exact ⟨p, Polynomial.monic_of_injective h.inj (by rw [show p.map (algebraMap k R) = _ from hp]; exact Matrix.charpoly_monic _), hp.symm⟩

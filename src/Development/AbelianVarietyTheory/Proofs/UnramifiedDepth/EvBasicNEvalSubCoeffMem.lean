@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.FormalChartAtZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.FormalChartAtZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,8 @@ lemma evBasic_nEval_eq_tEval (f : MvPowerSeries ι R₀) (a : ι → S) (N : ℕ
   · exact evBasic_tEval_indep f a (Nat.find_spec h) ha
   · exact absurd ⟨N, ha⟩ h
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 lemma evBasic_exists_pow (a : ι → S) (ha : ∀ i, IsNilpotent (a i)) :
     ∃ N : ℕ, 0 < N ∧ ∀ i, a i ^ N = 0 := by
   have ha' : ∀ i, ∃ m : ℕ, a i ^ m = 0 := ha
@@ -73,7 +77,8 @@ lemma evBasic_map_tEval {S' : Type} [CommRing S'] [Algebra R₀ S'] (φ : S →�
     (f : MvPowerSeries ι R₀) (a : ι → S) :
     φ (tEval N f a) = tEval N f (fun i => φ (a i)) := by
   unfold tEval
-  simp only [map_sum, map_mul, map_prod, map_pow, AlgHom.commutes]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_prod, map_pow, AlgHom.commutes]
 
 lemma evBasic_map_nEval {S' : Type} [CommRing S'] [Algebra R₀ S'] (φ : S →ₐ[R₀] S')
     (f : MvPowerSeries ι R₀) (a : ι → S) (ha : ∀ i, IsNilpotent (a i)) :

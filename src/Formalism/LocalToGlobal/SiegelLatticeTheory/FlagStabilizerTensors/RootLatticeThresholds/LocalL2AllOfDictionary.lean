@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocFactorCR
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocFactorCR
+
+@[expose] public section
 
 noncomputable section
 
@@ -205,7 +209,7 @@ theorem exists_const_l2SG_transport_eq_mul_lintegral {n : ℕ} (hn : n = 2 * r +
     · rw [Function.extend_apply' F0 (0 : Formalism.QuantumDeterminants.Mt k r → ℝ≥0∞) y (by simpa using hy)]
       have : wTg Q Qi f (Matrix.of y) = 0 := by
         unfold wTg
-        rw [dif_neg]
+        rw [dite_eq_right]
         rintro ⟨γ, hγ⟩
         apply hy
         refine ⟨γ, ?_⟩

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.MulLatSupSpan
-import Formalism.LocalToGlobal.GlobalTheory.GL6.BwAValIntegralNonneg
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnkLkLocP
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.MulLatSupSpan
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.BwAValIntegralNonneg
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnkLkLocP
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +15,9 @@ open scoped TensorProduct Classical
 
 variable {D : D7} {u : D.what₂.Word}
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem t_notin_sq (T : Forms0 D u) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls 0) :
     (((D.mem u).A.T : ℕ) : 𝓞 D.host.E) ∉ T.atT.Pv v ^ 2 := by
   intro hT
@@ -38,9 +42,9 @@ theorem t_notin_sq (T : Forms0 D u) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls 0)
   rw [hte] at h0
   exact (D.fm u).te_ne 0 v c h0
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem exists_not_mem_Pv_mul_mem_span_T (T : Forms0 D u) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls 0) :
     ∃ s : 𝓞 D.host.E, s ∉ T.atT.Pv v ∧ ∀ p ∈ T.atT.Pv v, ∃ e : 𝓞 D.host.E,
       s * p = e * (((D.mem u).A.T : ℕ) : 𝓞 D.host.E) := by

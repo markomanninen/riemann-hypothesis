@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SiegelSetUnitary
-import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SiegelSetUnitary
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
+
+@[expose] public section
 
 namespace PositivityTheory.Prw
 

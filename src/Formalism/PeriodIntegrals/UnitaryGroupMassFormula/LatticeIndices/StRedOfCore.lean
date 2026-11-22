@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.StRedOfParts
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondSplitSmul
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ReindexGl
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.StRedOfParts
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondSplitSmul
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ReindexGl
+
+@[expose] public section
 
 noncomputable section
 

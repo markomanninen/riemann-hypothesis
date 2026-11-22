@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.ConeVal
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.SmallFSing
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedDeterminedBySpherical
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitCharacterFacts
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ResCardAndUniformizer
-import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.ConeVal
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.SmallFSing
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedDeterminedBySpherical
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitCharacterFacts
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ResCardAndUniformizer
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem plane' (hσ : IsCMExt F E σ) {n n₁ : ℕ} {X : Spc F E n} {X₁ : Spc
 
 theorem cond_ex {ν : (Fv F v)ˣ →* ℂˣ} (h : ∃ e, CondLE (unifAt v) e ν) (hr : ¬ GlobalTheory.SplitWeil.IsUnram ν) :
     ∃ κ, condExp ν = κ + 1 ∧ CondLE (unifAt v) (κ + 1) ν ∧ ¬ CondLE (unifAt v) κ ν := by
-  have m : CondLE (unifAt v) (condExp ν) ν := Nat.sInf_mem h
+  have m : CondLE (unifAt v) (condExp ν) ν := Nat.sInf_mem (show {e | CondLE (unifAt v) e ν}.Nonempty from h)
   have h0 : condExp ν ≠ 0 := fun e => hr fun x hx => by
     rw [e] at m
     exact m x ⟨hx, by simpa using (valuation (Fv F v)).map_sub_le hx.le (map_one _).le⟩
@@ -106,6 +110,46 @@ theorem data {a a' : ℕ} {G : Geo σ a a'} {X : Chars F E} {om om' R Rf} (T : I
       ι' φ' = std (chrW X.ν (B.τ w)) (unifAt w.1) (κ + 1) (eB a a') ∧ Rf.p w φ = Rf.p' w φ' ∧ Rf.p w φ ≠ 0 ∧
       (∀ K, IsStab B K → ∀ k ∈ kAt K (evFin F w), Acts (evFin F w) (om (k, 1)) φ φ) ∧
       ∀ K, IsStab B K → ∀ k ∈ kAt K (evFin F w), Acts (evFin F w) (om' (k, 1)) φ' φ' := by
+  have inB_mem {v : Pl F} {t : E →ₐ[F] Fv F v} {sec : Fv F v × Fv F v → AE F E} {n : ℕ} {Y : Spc F E n} {b : GL (Fin n) (Fv F v)} (h : IsSec σ t sec) {B : Base F E} (hb : IsSplitBasis t Y.L b) {K : Subgroup (UA σ Y.J)} (hK : IsStab B K) {k}
+      (hk : k ∈ K) : inB t b k ∈ GlobalTheory.SplitWeil.KO (Fv F v) (Fin n) := by
+    have to' : ∀ z ∈ latHat Y, (fun i => piW t (z i)) ∈ splitLat t Y.L := fun z hz => by
+      induction hz using AddSubgroup.closure_induction with
+      | mem z hz =>
+        obtain ⟨a, -, ha, x, hx, rfl⟩ := hz
+        exact ⟨fun i => evFin F v a ⊗ₜ[F] x i, AddSubgroup.subset_closure ⟨_, ha v, x, hx, rfl⟩, funext fun i => by
+          rw [Pi.smul_apply, (h.smul _ _).1, incV, (h.inc _).1]; rfl⟩
+      | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
+      | add a b _ _ ha hb => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem ha hb
+      | neg a _ ha => simp only [Pi.neg_apply, map_neg]; exact neg_mem ha
+    have fr : ∀ y ∈ latLoc F Y.L v, ∃ z ∈ latHat Y, (fun i => piW t (z i)) = splitVec t y := fun y hy => by
+      induction hy using AddSubgroup.closure_induction with
+      | mem y hy =>
+        obtain ⟨a, ha, x, hx, rfl⟩ := hy
+        refine ⟨sgl v a • incV F x, AddSubgroup.subset_closure ⟨sgl v a, map_zero (InfiniteAdeleRing.ringEquiv_mixedSpace F), fun u => ?_,
+          x, hx, rfl⟩, funext fun i => by rw [Pi.smul_apply, (h.smul _ _).1, incV, (h.inc _).1, ev_sgl]; rfl⟩
+        rcases eq_or_ne u v with rfl | hu
+        · rwa [ev_sgl]
+        · rw [show evFin F u (sgl v a) = 0 from evalV_singleFin_ne hu a]; exact zero_mem _
+      | zero => exact ⟨0, zero_mem _, funext fun _ => (map_zero _).trans (map_zero _).symm⟩
+      | add a b _ _ ha hb =>
+        obtain ⟨p, p1, p2⟩ := ha
+        obtain ⟨q, q1, q2⟩ := hb
+        exact ⟨p + q, add_mem p1 q1, funext fun i => by
+          rw [Pi.add_apply, map_add (f := _), congrFun p2 i, congrFun q2 i]; exact (map_add _ _ _).symm⟩
+      | neg a _ ha =>
+        obtain ⟨p, p1, p2⟩ := ha
+        exact ⟨-p, neg_mem p1, funext fun i => by rw [Pi.neg_apply, map_neg, congrFun p2 i]; exact (map_neg _ _).symm⟩
+    have key : ∀ k ∈ K, ∀ i j, (inB t b k).1 i j ∈ 𝒪[Fv F v] := fun k hk i j => by
+      obtain ⟨y, hy, e⟩ := (hb (Pi.single j 1)).1 fun i => by rw [Pi.single_apply]; split_ifs; exacts [one_mem _, zero_mem _]
+      obtain ⟨z, hz, e'⟩ := fr y hy
+      have := hb.mem_iff.1 (to' _ (((hK k).1 hk).2 z hz).1) i
+      rw [show (fun i => piW t ((mat k *ᵥ z) i)) = (mat k).map (piW t) *ᵥ fun i => piW t (z i) from
+        funext fun i => RingHom.map_mulVec _ _ _ i, e', e, mulVec_mulVec, mulVec_mulVec, mulVec_single_one] at this
+      exact (int_iff _).1 this
+    refine (mem_KO_iff _).2 ⟨key k hk, ?_⟩
+    rw [show (inB t b k)⁻¹ = inB t b k⁻¹ by simp [inB, mul_assoc]]
+    exact key _ (inv_mem hk)
+  
   have t := T.triple
   have hB := t.base
   obtain ⟨m, hm⟩ := exists_vol w.1

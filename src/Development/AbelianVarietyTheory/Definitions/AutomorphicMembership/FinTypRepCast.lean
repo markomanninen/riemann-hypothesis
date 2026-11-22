@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodPartEq
-import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodPartEq
+public import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,23 +25,17 @@ def rowPsi {V : HSp a.D} {n : ℕ} (P : principalLevelFrame.RowPsi V n) : @princ
   into := (by with_unfolding_all exact (P.into :))
   onto := (by with_unfolding_all exact (P.onto :))
 
-variable (a) in
 
+variable (a) in
 def isotLB : type_of% (@principalLevelFrame.isotL b.D) := @fun V n S θ P M J χ e π =>
   (by with_unfolding_all exact ((@principalLevelFrame.isotL a.D ((V)) n ((S)) ((θ)) (((rowPsi a P))) (((ds a M))) ((J)) ((χ)) ((e)) ((π))) : _))
 
-variable (a) in
 
+variable (a) in
 theorem isotL_eq : @principalLevelFrame.isotL b.D = @isotLB B C a b := by
   funext V n S θ P M J χ e π
   exact (by with_unfolding_all exact ((congrArg₂ (fun (g : type_of% (@goodPart b.D)) (m : type_of% (@Mult.Mult b.D)) =>
     g θ M J χ e ⊓ principalLevelFrame.isotIn (principalLevelFrame.actM P M) (⨆ N : ℕ, m θ M (principalLevelFrame.levN P (N + 1)) fun _ => 1) π) (goodPart_eq a b) (mult_eq a b)) :))
-
-theorem finTypRep_cast {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {S S' : Set (Formalism.L2.NG.FinTyp E n)} (e : S = S')
-    (σ : Formalism.L2.Col.FinTypCls S) :
-    Formalism.L2.Col.finTypRep S σ = Formalism.L2.Col.finTypRep S' (cast (congrArg Formalism.L2.Col.FinTypCls e) σ) := by
-  subst e
-  rfl
 
 section General
 
@@ -80,7 +78,7 @@ section Chain
 variable {A : FamIn a.D.what₂.LL G Pl0 T a.D.R.m} {R : RealDat a.D A Ks}
 
 theorem topMult_tr (h : TopMultH R) : letI := alg b iK; TopMultH (real b R) := by
-  tr_via (fun m : type_of% (@MultT a.D) => topW (@m) R) (multT_eq b a) h
+  with_unfolding_all exact (cast (congrArg (fun m : type_of% (@MultT a.D) => topW (@m) R) (multT_eq b a)) h : _)
 
 variable (F : Face a.D A) (tupT : a.D.what₂.Tup → T) (hm : 0 < a.D.R.m) (hTop : TopMultH R)
 
@@ -133,8 +131,8 @@ theorem chain_ioOK {c : Bool} {μ : a.D.what₂.Tup} (h : (chainB b F tupT hm hT
 
 variable (hinj : ∀ i t, Function.Injective (R.extV i t))
 
-include hinj in
 
+include hinj in
 theorem inj_tr : letI := alg b iK; ∀ i t, Function.Injective ((real b R).extV i t) := (by with_unfolding_all exact (hinj :))
 
 abbrev liftB : LiftReal b.D (chainB b F tupT hm hTop) :=

@@ -1,11 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HomSymplecticHalfFormAlgebraicLawsContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HomSymplecticHalfFormAlgebraicLawsContinuous
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,6 +36,7 @@ theorem ratW_sub (A T : HSp D) (γ γ₀ : Matrix (Fin T.rank) (Fin A.rank) D.ho
 theorem finite_ratW_mem (A T : HSp D) (K : Set (WO A T)) (hK : IsCompact K) :
     {γ : Matrix (Fin T.rank) (Fin A.rank) D.host.E | ratW T A γ ∈ K}.Finite := by
   obtain ⟨hg, hlc, hsc, ht2, hdisc, -⟩ := GlobalTheory.AdelicMatrixLattice.lattice D T A
+  haveI : T1Space (WA T A) := @T2Space.t1Space _ _ ht2
   have hcl : IsClosed (ratL T A : Set (WA T A)) := AddSubgroup.isClosed_of_discrete
   have hS : IsCompact ((Subtype.val : ratL T A → WA T A) ⁻¹' K) :=
     hcl.isClosedEmbedding_subtypeVal.isCompact_preimage hK
@@ -69,16 +76,17 @@ theorem poincare_law : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar 
     obtain ⟨U, hU, hUn⟩ := exists_compact_mem_nhds u₀
     have hF := finite_ratW_mem A T _ ((hs.isCompact.prod hU).image continuous_sub)
     have hcont : Continuous fun u => ∑ γ ∈ hF.toFinset, ψ (symplOH A T (ratW T A γ) u) * h (ratW T A γ + u) :=
-      continuous_finset_sum _ fun γ _ =>
+      continuous_finsetSum _ fun γ _ =>
         (hψ.1.1.comp (laws.2.2.2.2.1.comp (continuous_const.prodMk continuous_id))).mul
-          (hc.comp (continuous_add_left (ratW T A γ)))
+          (hc.comp (continuous_const_add (ratW T A γ)))
     refine hcont.continuousAt.congr (Filter.eventually_of_mem hUn fun u hu => ?_)
     refine (tsum_eq_sum fun γ hγ => ?_).symm
     rw [vanish U u hu γ (fun h' => hγ (hF.mem_toFinset.2 h')), mul_zero]
   · rw [← (Equiv.subRight γ₀).tsum_eq, ← tsum_mul_left]
     congr 1
     funext γ
-    simp only [Equiv.subRight_apply]
+    change ψ (symplOH A T (ratW T A (γ - γ₀)) (ratW T A γ₀ + u)) *
+      h (ratW T A (γ - γ₀) + (ratW T A γ₀ + u)) = _
     rw [ratW_sub]
     have e1 : ratW T A γ - ratW T A γ₀ + (ratW T A γ₀ + u) = ratW T A γ + u := by abel
     have e2 : symplOH A T (ratW T A γ - ratW T A γ₀) (ratW T A γ₀ + u) =

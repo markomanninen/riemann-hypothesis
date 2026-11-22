@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.Normal
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RightIdealImageOfSurjective
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.Normal
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RightIdealImageOfSurjective
+
+@[expose] public section
 
 open Finset Classical
 
@@ -13,9 +17,9 @@ theorem eCore {K : Type} [Field K] {S : Type} [Fintype S] [DecidableEq S] (A : M
     (α : ℕ → K) (ht : 1 ≤ t)
     (hA : A.charpoly = ∏ i ∈ Finset.range t, (Polynomial.X - Polynomial.C (α i)))
     (hα : ∀ i j, i < t → j < t → α i = α j → i = j) :
-    let EA := ((List.range t).tail.map fun i => A - α i • (1 : Matrix S S K)).prod
-    let δ := ∏ i ∈ Finset.Ioo 0 t, (α 0 - α i)
-    EA * EA = δ • EA ∧ EA.rank = 1 ∧ A * EA = α 0 • EA ∧ δ ≠ 0 := by
+    (let EA := ((List.range t).tail.map fun i => A - α i • (1 : Matrix S S K)).prod
+     let δ := ∏ i ∈ Finset.Ioo 0 t, (α 0 - α i)
+     EA * EA = δ • EA ∧ EA.rank = 1 ∧ A * EA = α 0 • EA ∧ δ ≠ 0) := by
   intro EA δ
   let q : Polynomial K := ∏ i ∈ Finset.Ioo 0 t, (Polynomial.X - Polynomial.C (α i))
   have hEA : EA = Polynomial.aeval A q := by
@@ -50,7 +54,7 @@ theorem eCore {K : Type} [Field K] {S : Type} [Fintype S] [DecidableEq S] (A : M
       have : q = Polynomial.C δ + (Polynomial.X - Polynomial.C (α 0)) * h := by rw [← hh]; ring
       calc q * q = (Polynomial.C δ + (Polynomial.X - Polynomial.C (α 0)) * h) * q := by rw [← this]
         _ = _ := by ring
-    rw [hEA, ← map_mul, h3, map_add, map_mul, map_mul _ h, hCH, mul_zero, add_zero,
+    rw [hEA, ← map_mul, h3, map_add (f := _), map_mul, map_mul _ h, hCH, mul_zero, add_zero,
       Polynomial.aeval_C, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul]
   refine ⟨hsq, ?_, hAE, hδ⟩
   let φ : Module.End K (S → K) := Matrix.toLin' A

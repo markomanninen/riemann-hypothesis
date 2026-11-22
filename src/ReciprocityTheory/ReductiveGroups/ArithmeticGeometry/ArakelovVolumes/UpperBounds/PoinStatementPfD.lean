@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfC
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MeasurableEmbeddingRotAbout
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfC
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MeasurableEmbeddingRotAbout
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf
 
@@ -113,7 +117,7 @@ theorem nfw_zero (X : Data E r) (la : Wt X.Ψ r) : nfw X la 0 = 1 := by
 
 theorem nfw_contAt (X : Data E r) (la : Wt X.Ψ r) : ContinuousAt (nfw X la) 0 := by
   unfold nfw
-  refine tendsto_finset_prod _ fun τ _ => tendsto_finset_prod _ fun i _ => ?_
+  refine tendsto_finsetProd _ fun τ _ => tendsto_finsetProd _ fun i _ => ?_
   have h1 : ContinuousAt (fun w => lminor (Gw X w τ) i.succ / lminor (Gw X w τ) i.castSucc) 0 :=
     ((cont_lminor X τ i.succ).continuousAt).div ((cont_lminor X τ i.castSucc).continuousAt)
       (by rw [← norm_ne_zero_iff, norm_lminor_zero]; exact one_ne_zero)

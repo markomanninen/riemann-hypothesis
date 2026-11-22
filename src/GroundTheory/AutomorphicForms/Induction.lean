@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SmoothRep
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SmoothRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,33 +55,11 @@ theorem mem_indSpace {f : G → W} :
       ∃ K : Subgroup G, IsOpen (K : Set G) ∧ ∀ k ∈ K, ∀ g : G, f (g * k) = f g :=
   Iff.rfl
 
-def cindSpace : Submodule ℂ (G → W) :=
-  indSpace H σ ⊓
-  { carrier := {f | ∃ C : Set G, IsCompact C ∧ ∀ g, f g ≠ 0 → g ∈ (H : Set G) * C}
-    add_mem' := by
-      rintro f₁ f₂ ⟨C₁, hC₁, hf₁⟩ ⟨C₂, hC₂, hf₂⟩
-      refine ⟨C₁ ∪ C₂, hC₁.union hC₂, fun g hg => ?_⟩
-      by_cases h : f₁ g = 0
-      · have : f₂ g ≠ 0 := by simpa [h] using hg
-        exact Set.mul_subset_mul_left Set.subset_union_right (hf₂ g this)
-      · exact Set.mul_subset_mul_left Set.subset_union_left (hf₁ g h)
-    zero_mem' := ⟨∅, isCompact_empty, fun g hg => (hg rfl).elim⟩
-    smul_mem' := by
-      rintro c f ⟨C, hC, hf⟩
-      exact ⟨C, hC, fun g hg => hf g fun h0 => hg (by simp [h0])⟩ }
-
-variable {H σ} in
-theorem mem_cindSpace {f : G → W} :
-    f ∈ cindSpace H σ ↔ f ∈ indSpace H σ ∧
-      ∃ C : Set G, IsCompact C ∧ ∀ g, f g ≠ 0 → g ∈ (H : Set G) * C :=
-  Iff.rfl
-
-theorem cindSpace_le : cindSpace H σ ≤ indSpace H σ := inf_le_left
 
 variable [IsTopologicalGroup G]
 
-variable {H σ} in
 
+variable {H σ} in
 theorem rightTranslation_mem_indSpace {f : G → W} (hf : f ∈ indSpace H σ) (g : G) :
     rightTranslation g f ∈ indSpace H σ := by
   obtain ⟨h₁, K, hK, hfK⟩ := hf
@@ -97,32 +79,14 @@ theorem rightTranslation_mem_indSpace {f : G → W} (hf : f ∈ indSpace H σ) (
     congr 1
     group
 
-variable {H σ} in
-
-theorem rightTranslation_mem_cindSpace {f : G → W} (hf : f ∈ cindSpace H σ) (g : G) :
-    rightTranslation g f ∈ cindSpace H σ := by
-  obtain ⟨hf, C, hC, hfC⟩ := mem_cindSpace.1 hf
-  refine mem_cindSpace.2 ⟨rightTranslation_mem_indSpace hf g, (· * g⁻¹) '' C,
-    hC.image (continuous_mul_const g⁻¹), fun x hx => ?_⟩
-  obtain ⟨h, hh, c, hc, hxc⟩ := Set.mem_mul.1 (hfC (x * g) hx)
-  refine Set.mem_mul.2 ⟨h, hh, c * g⁻¹, ⟨c, hc, rfl⟩, ?_⟩
-  rw [← mul_assoc, hxc, mul_inv_cancel_right]
 
 def indRep : Representation ℂ G (indSpace H σ) :=
-  (rightTranslation (W := W)).subrepresentation (indSpace H σ) fun g _ hf =>
-    rightTranslation_mem_indSpace hf g
+  (rightTranslation (W := W)).subrepresentation (indSpace H σ) fun g f hf =>
+    rightTranslation_mem_indSpace (H := H) (σ := σ) (f := f) hf g
 
 @[simp]
 theorem coe_indRep_apply (g : G) (f : indSpace H σ) (x : G) :
     (indRep H σ g f : G → W) x = (f : G → W) (x * g) := rfl
-
-def cindRep : Representation ℂ G (cindSpace H σ) :=
-  (rightTranslation (W := W)).subrepresentation (cindSpace H σ) fun g _ hf =>
-    rightTranslation_mem_cindSpace hf g
-
-@[simp]
-theorem coe_cindRep_apply (g : G) (f : cindSpace H σ) (x : G) :
-    (cindRep H σ g f : G → W) x = (f : G → W) (x * g) := rfl
 
 theorem isSmooth_indRep : IsSmooth (indRep H σ) := by
   intro f
@@ -130,10 +94,6 @@ theorem isSmooth_indRep : IsSmooth (indRep H σ) := by
   refine Subgroup.isOpen_mono (fun k hk => ?_) hK
   rw [mem_stabilizerOf]
   exact Subtype.ext (funext fun x => hfK k hk x)
-
-def cindToInd : Representation.IntertwiningMap (cindRep H σ) (indRep H σ) :=
-  (Submodule.inclusion (cindSpace_le H σ)).intertwiningMap_of_isIntertwiningMap _ _
-    fun _ _ => rfl
 
 section Frobenius
 
@@ -195,15 +155,6 @@ def frobenius (hπ : IsSmooth π) :
   right_inv φ := Representation.IntertwiningMap.ext (LinearMap.ext fun v => by
     show (evalOne H σ) (frobeniusInv H σ hπ φ v) = φ v
     simp)
-
-@[simp]
-theorem frobenius_apply (hπ : IsSmooth π) (Φ : Representation.IntertwiningMap π (indRep H σ))
-    (v : V) : frobenius H σ hπ Φ v = (Φ v : G → W) 1 := rfl
-
-@[simp]
-theorem frobenius_symm_apply (hπ : IsSmooth π)
-    (φ : Representation.IntertwiningMap (π.comp H.subtype) σ) (v : V) (g : G) :
-    ((frobenius H σ hπ).symm φ v : G → W) g = φ (π g v) := rfl
 
 end Frobenius
 

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
@@ -90,7 +94,7 @@ private lemma case_two_finite_lemma
   rw [hKF, htr, ← hD] at hsum
   have hFΩ : Algebra.trdeg F Ω = 1 := by
     have hlt : Algebra.trdeg F Ω < Cardinal.aleph0 := by
-      have h := Cardinal.nat_lt_aleph0 (n + 1)
+      have h : (↑(n + 1) : Cardinal) < Cardinal.aleph0 := Cardinal.natCast_lt_aleph0
       rw [← hsum] at h
       exact lt_of_le_of_lt le_add_self h
     obtain ⟨m, hm⟩ := Cardinal.lt_aleph0.1 hlt
@@ -169,7 +173,7 @@ private lemma exists_algebraicIndependent_fin_of_trdeg_adjoin_eq {k L : Type} [F
   have hcard := ht.cardinalMk_eq_trdeg
   rw [h] at hcard
   have hfin : Finite t :=
-    Cardinal.lt_aleph0_iff_finite.1 (by rw [hcard]; exact Cardinal.nat_lt_aleph0 D)
+    Cardinal.lt_aleph0_iff_finite.1 (by rw [hcard]; exact Cardinal.natCast_lt_aleph0)
   have hnc : Nat.card t = D := by simp [Nat.card, hcard]
   let e : Fin D ≃ t := (finCongr hnc.symm).trans (Finite.equivFin t).symm
   refine ⟨fun i => ((e i : E) : L), fun i => hts (e i).2, ?_⟩
@@ -244,12 +248,12 @@ private lemma polynomial_value_over_prime_lemma_4 {K Ω : Type} [Field K] [Numbe
       rw [this]; exact zero_mem _
     set P : MvPolynomial (Fin D) K :=
       MvPolynomial.C (a : K)⁻¹ * MvPolynomial.map (algebraMap (𝓞 K) K) p
-    have hcoeffP : ∀ β, MvPolynomial.coeff β P = (a : K)⁻¹ * p.coeff β := fun β => by
+    have hcoeffP : ∀ β, AddMonoidAlgebra.coeff P β = (a : K)⁻¹ * p.coeff β := fun β => by
       simp [P, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_map]
-    have hnn : ∀ β, 0 ≤ v (algebraMap K Ω (MvPolynomial.coeff β P)) := fun β => by
+    have hnn : ∀ β, 0 ≤ v (algebraMap K Ω (AddMonoidAlgebra.coeff P β)) := fun β => by
       rw [hcoeffP, map_mul, v.map_mul, map_inv₀, v.map_inv, ha0, neg_zero, zero_add]
       exact addValuation_algebraMap_ringOfIntegers_nonneg v _
-    have h1 : MvPolynomial.coeff m P = 1 := by rw [hcoeffP]; exact inv_mul_cancel₀ hane
+    have h1 : AddMonoidAlgebra.coeff P m = 1 := by rw [hcoeffP]; exact inv_mul_cancel₀ hane
     have hzero := _root_.ReciprocityTheory.ChartRestriction.G.T0.ValuationResidueLemmas.val_eval_eq_zero v x hx hind P hnn m h1
     have heval : MvPolynomial.eval₂ ((algebraMap K Ω).comp (algebraMap (𝓞 K) K)) x p =
         algebraMap K Ω a * MvPolynomial.aeval x P := by
@@ -263,10 +267,10 @@ private lemma polynomial_value_over_prime_lemma_4 {K Ω : Type} [Field K] [Numbe
     rw [v.map_mul]
     exact lt_of_lt_of_le ((hla _).2 (hcoeff m)) (le_add_of_nonneg_right (hmono m))
 
+
 open NumberField in
 open scoped TensorProduct in
 attribute [local instance] _root_.ReciprocityTheory.ChartRestriction.G.T0.resAlg in
-
 theorem _root_.GlobalTheory.finite_support_admissible :
     (∀ (K Ω : Type) [Field K] [NumberField K] [Field Ω] [Algebra K Ω] (D : ℕ) (x : Fin D → Ω), (⊤ : IntermediateField K Ω).FG → Algebra.trdeg K Ω = D → ∀ g : Ω, g ≠ 0 → {v : AddValuation Ω (WithTop ℤ) | _root_.ReciprocityTheory.ChartRestriction.G.T0.IsNormDiscrete v ∧ v g ≠ 0 ∧ ∃ la : IsDedekindDomain.HeightOneSpectrum (𝓞 K), ∀ p : MvPolynomial (Fin D) (𝓞 K), 0 ≤ v (MvPolynomial.eval₂ ((algebraMap K Ω).comp (algebraMap (𝓞 K) K)) x p) ∧ (0 < v (MvPolynomial.eval₂ ((algebraMap K Ω).comp (algebraMap (𝓞 K) K)) x p) ↔ ∀ m, p.coeff m ∈ la.asIdeal)}.Finite) → (∀ (F Ω : Type) [Field F] [CharZero F] [Field Ω] [Algebra F Ω] (t : Ω), (⊤ : IntermediateField F Ω).FG → Algebra.trdeg F Ω = 1 → Transcendental F t → ∀ g : Ω, g ≠ 0 → {v : AddValuation Ω (WithTop ℤ) | _root_.ReciprocityTheory.ChartRestriction.G.T0.IsNormDiscrete v ∧ _root_.ReciprocityTheory.ChartRestriction.G.T0.IsTrivOn F v ∧ 0 ≤ v t ∧ v g ≠ 0}.Finite) → ∀ (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (Ω : ι → Type) [∀ c, Field (Ω c)] [∀ c, Algebra K (Ω c)] (WT : Type) [AddCommGroup WT] (A : ι → Type) [∀ c, CommRing (A c)] [∀ c, Algebra (Ω c) (A c)] [∀ c, Algebra K (A c)] [∀ c, Algebra (𝓞 K) (A c)] (𝒜 : (c : ι) → WT → Submodule (Ω c) (A c)) (d : _root_.ReciprocityTheory.ChartRestriction.G.T0.Data K ι Ω WT A), ∀ c : ι, 1 ≤ d.D → (⊤ : IntermediateField K (Ω c)).FG → Algebra.trdeg K (Ω c) = d.D → (∀ G, Module.finrank (Ω c) (𝒜 c G) = 1) → (∀ j, d.w j c ∈ 𝒜 c d.wL) → d.w (d.jc c) c ≠ 0 → _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.TrdegD d c → (∀ g : Ω c, g ≠ 0 → {v | d.admitted c v ∧ v g ≠ 0}.Finite) ∧ ∀ (G : WT) (e : A c) (S : Finset (Ω c)), e ∈ 𝒜 c G → e ≠ 0 → (∀ v, d.admitted c v → ∀ a : Ω c, a ≠ 0 → ((d.ord c v G (a • e) : ℤ) : WithTop ℤ) = v a + (d.ord c v G e : WithTop ℤ)) → (∀ v, d.admitted c v → (∀ s ∈ S, 0 ≤ v s) → d.ord c v G e = 0) → ∀ f ∈ 𝒜 c G, f ≠ 0 → {v | d.admitted c v ∧ d.ord c v G f ≠ 0}.Finite := by
   intro H1 H2 K _ _ ι _ Ω _ _ WT _ A _ _ _ _ 𝒜 d c hD hfg htr hrk hwL hjc hT

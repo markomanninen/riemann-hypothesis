@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeAdaptedBasis
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RestCloudOfX
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeAdaptedBasis
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RestCloudOfX
+
+@[expose] public section
 
 noncomputable section
 

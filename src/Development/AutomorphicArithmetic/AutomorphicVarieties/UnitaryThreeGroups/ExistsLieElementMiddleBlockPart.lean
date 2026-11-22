@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
@@ -47,7 +51,7 @@ private theorem corner_theta' {R : Type} [CommRing R] (a : GL (Fin 3) R)
       Matrix.diagonal, e00, e01, e10, e11]
 
 theorem UpperTheory.V.U3.exists_lieElement_middleBlockPart :
-    ∀ {G R : Type} [Group G] [CommRing R] (η : G →* ℤˣ) (r : G →* GG 3 R) (c : G), HasMult η r → η c = -1 → (r c).mat = 1 → Block η r →
+    ∀ {G R : Type} [Group G] [CommRing R] (η : G →* ℤˣ) (r : G →* GG (m := 3) (R := R)) (c : G), HasMult η r → η c = -1 → (r c).mat = 1 → Block η r →
       (∀ g ∈ η.ker, (corner (r g).mat).det = 1) →
       ∃ W : G →* GL (Fin 2) R, (∀ g, (W g : Matrix (Fin 2) (Fin 2) R) = Wfun r g) ∧ ∀ g, (W g : Matrix (Fin 2) (Fin 2) R).det = ((η g : ℤˣ) : ℤ) := by
   intro G R _ _ η r c hm hc hrc hB hd

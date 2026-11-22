@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.DoubleCollapse
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RamifiedOperatorBijectiveFiniteTranslationCombin
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairOperatorStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SumWithLatKerEqMulSumWithKerLat
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientPara
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.DoubleCollapse
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RamifiedOperatorBijectiveFiniteTranslationCombin
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairOperatorStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SumWithLatKerEqMulSumWithKerLat
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientPara
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem sum_pet_FFStar (vS : Vol S) (hS : CoCpt S) (q : Unif k) (χ : AddChar �
     unfold pet
     rw [FFStar_apply, hP]
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul, mul_assoc]
-    rw [integral_finset_sum _ (fun P₁ _ => (hint P₁ P).const_mul _)]
+    rw [integral_finsetSum _ (fun P₁ _ => (hint P₁ P).const_mul _)]
     exact Finset.sum_congr rfl fun P₁ _ => integral_const_mul _ _
   have e2 : ∀ P₁ ∈ withKer L, pet vS φ (FF q χ ψ) P₁ =
       ∑ P ∈ withLat L, χ (-cross q P₁ P) * ∫ g in vS.𝓕, φ P₁ g * star (ψ P g) ∂vS.μ := by
@@ -66,7 +70,7 @@ theorem sum_pet_FFStar (vS : Vol S) (hS : CoCpt S) (q : Unif k) (χ : AddChar �
       change φ P₁ g * ((starRingEnd ℂ) (χ (cross q P₁ P)) * star (ψ P g)) = _
       ring
     simp only [this]
-    rw [integral_finset_sum _ (fun P _ => (hint P₁ P).const_mul _)]
+    rw [integral_finsetSum _ (fun P _ => (hint P₁ P).const_mul _)]
     exact Finset.sum_congr rfl fun P _ => integral_const_mul _ _
   rw [Finset.sum_congr rfl e1, Finset.sum_congr rfl e2, Finset.sum_comm]
 
@@ -104,8 +108,18 @@ theorem ramUnitary_holds : ∀ D : D7, GlobalTheory.FinPl.RamUnitary D := by
   have k2 : ∀ Q ∈ withKer P.lat, pet vS φ (FF q (resChar χ hχ q) X') Q = pet vS φ (FF q (resChar χ hχ q) X') P :=
     fun Q _ => pet_const vS β hφ.1 (FF_mem_EqForm q _ (FFStar_mem_EqForm q _ hφ'.1)) (fun Q => (hφ.2.2 Q).1)
       (fun Q => (c2 Q).1) Q P
+  have hcard : (withLat P.lat).card = (withKer P.lat).card := by
+    classical
+    have e : Red P.lat ≃ₗ[𝓀[k]] Module.Dual 𝓀[k] (Red P.lat) :=
+      (Module.Free.chooseBasis 𝓀[k] (Red P.lat)).toDualEquiv
+    have e' : {x : Red P.lat // x ≠ 0} ≃ {f : Module.Dual 𝓀[k] (Red P.lat) // f ≠ 0} :=
+      e.toEquiv.subtypeEquiv (fun x => by simp)
+    refine Finset.card_eq_of_equiv ?_
+    exact (Equiv.subtypeEquivRight (fun P => mem_withLat)).trans
+      ((latEquiv P.lat).symm.trans (e'.symm.trans ((kerEquiv P.lat q).trans
+        (Equiv.subtypeEquivRight (fun P => mem_withKer.symm)))))
   rw [Finset.sum_congr rfl k1, Finset.sum_congr rfl k2, Finset.sum_const, Finset.sum_const,
-    ← card_withLat_eq_card_withKer] at hsum
+    ← hcard] at hsum
   have hN : (withLat P.lat).card ≠ 0 := (Finset.card_pos.2 ⟨P, mem_withLat.2 rfl⟩).ne'
   have hpe : pet vS X X' (ε • P) = pet vS φ (FF q (resChar χ hχ q) X') P := by
     rw [← Nat.cast_smul_eq_nsmul ℂ, ← Nat.cast_smul_eq_nsmul ℂ] at hsum

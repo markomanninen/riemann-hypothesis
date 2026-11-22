@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshBasic
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshBasic
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ private theorem log_max_norm_le_circleAverage_of_analyticOnNhd {h : ℂ → ℂ}
   · have hne : h 0 ≠ 0 := by intro e; rw [e, norm_zero] at h0; linarith
     have hh' : AnalyticOnNhd ℂ h (closedBall 0 |1|) := by rwa [abs_one]
     rw [max_eq_left h0.le]
-    have hJ := AnalyticOnNhd.circleAverage_log_norm (c := 0) (R := 1) one_ne_zero hh' hne
+    have hJ := AnalyticOnNhd.circleAverage_log_norm (c := 0) (R := 1) hh' hne
     have hdn := MeromorphicOn.AnalyticOnNhd.divisor_nonneg hh'
     have hsum : 0 ≤ ∑ᶠ u, ((MeromorphicOn.divisor h (closedBall 0 |1|)) u : ℝ) *
         Real.log (1 * ‖0 - u‖⁻¹) := by
@@ -39,7 +43,7 @@ private theorem log_max_norm_le_circleAverage_of_analyticOnNhd {h : ℂ → ℂ}
           exact hu ((MeromorphicOn.divisor h _).supportWithinDomain hz)
         rw [hz]; simp
     have hlog : CircleIntegrable (fun ζ => Real.log ‖h ζ‖) 0 1 :=
-      circleIntegrable_log_norm_meromorphicOn (fun x hx => (hh x (hs hx)).meromorphicAt)
+      MeromorphicOn.circleIntegrable_log_norm (fun x hx => (hh x (hs hx)).meromorphicAt)
     calc Real.log ‖h 0‖ ≤ Real.circleAverage (fun ζ => Real.log ‖h ζ‖) 0 1 := by
           rw [hJ]; linarith
       _ ≤ _ := Real.circleAverage_mono hlog hI (fun x _ => by

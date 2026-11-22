@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.SumInvMulTrace
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CardLe
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.SumInvMulTrace
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CardLe
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix
@@ -46,7 +50,7 @@ def ltOneIdeal {C : Type} [Field C] (v : Valuation C NNReal) (R : Type) [CommRin
     [Algebra R C] (hv : v.Integers R) : Ideal R where
   carrier := {r | v (algebraMap R C r) < 1}
   add_mem' := fun {a b} ha hb => by
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact v.map_add_lt ha hb
   zero_mem' := by simp
   smul_mem' := fun c x hx => by
@@ -89,7 +93,7 @@ theorem gauss_value : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgCl
       map_mul' := fun a b => by simp
       map_zero' := by simp [MulChar.map_zero]
       map_add' := fun a b => by
-        rw [← map_add, Ideal.Quotient.eq]
+        rw [← map_add (f := _), Ideal.Quotient.eq]
         have := hspan (hσ a b)
         rwa [sub_sub] at this }
 
@@ -135,7 +139,8 @@ theorem gauss_value : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgCl
   have hG : ∑ b, algebraMap R C (σ⁻¹ b) * ψ₀ b =
       (algebraMap R C z - 1) * (algebraMap R C y - 1) := by
     have := congrArg (algebraMap R C) hy
-    simp only [map_sum, map_mul, map_pow, map_sub, map_one] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, map_sub, map_one] at this
     rw [← this]
     exact Finset.sum_congr rfl fun a _ => by rw [hψ₀]
   have hvy : v (algebraMap R C y - 1) = 1 := by

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermHyperbolic
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermHyperbolic
+
+@[expose] public section
+
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct Matrix
 
@@ -30,7 +35,7 @@ theorem quadAlg_isField_or_split {K A : Type} [Field K] [CommRing A] [Algebra K 
       linear_combination (p + p * q * δ) * h1 + p ^ 2 * q ^ 2 * hδ + p ^ 2 * (q * t + 1) * h3
     have hτe : τ e = 1 - e := by
       rw [he]
-      simp only [map_add, map_mul, hτ, hs]
+      simp only [map_add (f := _), map_mul, hτ, hs]
       linear_combination h1
     have hτe' : τ (1 - e) = e := by
       rw [map_sub, map_one, hτe]; ring
@@ -52,7 +57,7 @@ theorem quadAlg_isField_or_split {K A : Type} [Field K] [CommRing A] [Algebra K 
       { toFun := fun x => algebraMap K A x.1 * e + algebraMap K A x.2 * (1 - e)
         map_one' := by simp
         map_zero' := by simp
-        map_add' := by intro x y; simp only [Prod.fst_add, Prod.snd_add, map_add]; ring
+        map_add' := by intro x y; simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]; ring
         map_mul' := by
           intro x y
           simp only [Prod.fst_mul, Prod.snd_mul, map_mul]
@@ -63,7 +68,7 @@ theorem quadAlg_isField_or_split {K A : Type} [Field K] [CommRing A] [Algebra K 
           linear_combination (-(a - b) * (c - f)) * hee }
     have hψ : ∀ x, ψ x = algebraMap K A x.1 * e + algebraMap K A x.2 * (1 - e) := fun _ => rfl
     have hinj : Function.Injective ψ := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       rw [hψ] at hx
       have ha : algebraMap K A x.1 * e = 0 := by
@@ -77,14 +82,14 @@ theorem quadAlg_isField_or_split {K A : Type} [Field K] [CommRing A] [Algebra K 
       obtain ⟨a, b, rfl⟩ := hsp x
       refine ⟨(a + b * s, a - b * s), ?_⟩
       rw [hψ]
-      simp only [map_add, map_sub, map_mul]
+      simp only [map_add (f := _), map_sub, map_mul]
       rw [map_neg] at hδe
       linear_combination (-algebraMap K A b) * hδe
     refine ⟨(RingEquiv.ofBijective ψ ⟨hinj, hsurj⟩).symm, fun x => ?_⟩
     obtain ⟨y, rfl⟩ := (RingEquiv.ofBijective ψ ⟨hinj, hsurj⟩).surjective x
     rw [RingEquiv.symm_apply_apply, RingEquiv.symm_apply_eq]
     change τ (ψ y) = ψ y.swap
-    simp only [hψ, map_add, map_mul, hτ, hτe, hτe', Prod.fst_swap,
+    simp only [hψ, map_add (f := _), map_mul, hτ, hτe, hτe', Prod.fst_swap,
       Prod.snd_swap]
     ring
   · left
@@ -120,7 +125,7 @@ theorem quadExt_exists_skew {F E : Type} [Field F] [CharZero F] [Field E] [Algeb
     rw [LinearIndependent.pair_iff]
     intro a b h
     have h' := congrArg σ h
-    rw [map_add, Algebra.smul_def, Algebra.smul_def, map_mul, map_mul, σ.commutes, σ.commutes, hs,
+    rw [map_add (f := _), Algebra.smul_def, Algebra.smul_def, map_mul, map_mul, σ.commutes, σ.commutes, hs,
       map_one, map_zero, ← Algebra.smul_def, ← Algebra.smul_def, smul_neg] at h'
     have ha : (2 * a) • (1 : E) = 0 := by
       rw [two_mul, add_smul]; linear_combination h + h'
@@ -140,7 +145,7 @@ theorem quadExt_exists_skew {F E : Type} [Field F] [CharZero F] [Field E] [Algeb
     exact h.symm
   obtain ⟨a, b, hab⟩ := hsp (δ * δ)
   have h' := congrArg σ hab
-  simp only [map_add, map_mul, hs, AlgHom.commutes] at h'
+  simp only [map_add (f := _), map_mul, hs, AlgHom.commutes] at h'
   have hd : δ * δ = algebraMap F E a := by
     have h2 : (2 : E) ≠ 0 := two_ne_zero
     apply mul_left_cancel₀ h2
@@ -177,7 +182,7 @@ theorem quadBaseChange_isField_or_split :
     | add x y hx hy =>
       obtain ⟨a, b, rfl⟩ := hx
       obtain ⟨c, e, rfl⟩ := hy
-      exact ⟨a + c, b + e, by simp only [map_add]; ring⟩
+      exact ⟨a + c, b + e, by simp only [map_add (f := _)]; ring⟩
   refine ⟨quadAlg_isField_or_split two_ne_zero (sigR K σ) (fun k => ?_) _ _ hd' hδ' hs' hsp',
     _, _, hd', hδ', hs', hsp'⟩
   rw [Algebra.TensorProduct.algebraMap_apply, hsig, map_one]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -26,7 +31,7 @@ theorem isAdIso_eq_afIso (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
       show ι (y ⊗ₜ[F] 1) = afIso F E (y ⊗ₜ[F] 1)
       rw [hι.1, afIso_tmul_one]
     have hd2 : d = (N : P.adicCompletion E) * (ι r P - afIso F E r P) := by
-      rw [hd, e, map_add, map_add, h1, map_mul, map_mul, map_natCast, map_natCast]
+      rw [hd, e, map_add (f := _), map_add (f := _), h1, map_mul, map_mul, map_natCast, map_natCast]
       rw [ev, ev, evm, evm, evn]
       ring
     have hr1 : Valued.v (ι r P) ≤ 1 := (hι.2 r).1 hr P

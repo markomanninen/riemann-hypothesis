@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsEmbeddingSumPlaces
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsEmbeddingSumPlaces
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
 
 open NumberField NumberField.InfinitePlace
 
-open scoped Classical in
 
+open scoped Classical in
 theorem EmbeddingSumPlaces.proof : EmbeddingSumPlaces.Statement := by
   intro F _ _ g hg
   rw [← Finset.univ.sum_fiberwise (fun σ => InfinitePlace.mk σ)]

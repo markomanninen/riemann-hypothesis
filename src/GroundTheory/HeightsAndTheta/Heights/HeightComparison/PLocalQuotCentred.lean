@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalQuotCentred
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightCentredRingNormal
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalNormalIndex
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalQuotCentred
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightCentredRingNormal
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalNormalIndex
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

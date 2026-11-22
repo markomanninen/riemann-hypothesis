@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartBottomLeftBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartBottomLeftBlock
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.L2DbarEstimates ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.ChartGraph
 
 namespace GlobalTheory.ChartGraph
@@ -47,7 +52,7 @@ theorem entry_eq (X : Data E r) (z : V (nd X)) (τ : X.Ψ) (m : Fin r) (a : Fin 
       simp only [Data.lowBlock, Matrix.of_apply]
       have hne : m ≠ Fin.castLE X.p0_le c := by
         intro h; have := congrArg Fin.val h; simp at this; have := c.isLt; omega
-      rw [if_neg hne, dif_pos ⟨hm', c.isLt⟩, zero_add]
+      rw [if_neg hne, dite_eq_left ⟨hm', c.isLt⟩, zero_add]
       rfl
     simp only [hrow]
     have hdet : IsUnit (chartMatrixTopBlock X z τ).det := by rw [chartMatrixTopBlock_det_eq_one]; exact isUnit_one

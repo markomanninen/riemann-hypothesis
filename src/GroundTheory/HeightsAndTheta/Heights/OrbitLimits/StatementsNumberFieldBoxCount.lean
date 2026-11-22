@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -13,7 +18,5 @@ def NumberFieldBoxCount.Statement : Prop :=
       ∀ ρ : (F →+* ℂ) → ℝ, (∀ σ, 0 < ρ σ) → (∀ σ, ρ (ComplexEmbedding.conjugate σ) = ρ σ) →
         ∑ σ : F →+* ℂ, Real.log (ρ σ) + Real.log (genIndex L B) - C ≤
           Real.log (Nat.card {x : L // ∀ σ : F →+* ℂ, ‖σ (x : F)‖ ≤ ρ σ})
-
-def NumberFieldBoxCount.intLattice : AddSubgroup ℚ := AddSubgroup.zmultiples 1
 
 end GroundTheory.Heights₂.Heights.Targets

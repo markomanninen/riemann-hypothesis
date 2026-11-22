@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.HermGram
@@ -49,7 +54,8 @@ theorem gram_posDef {g n : ℕ} (e : Module.Basis (Fin n) ℝ (Fin g → ℂ))
         = reForm H v v := by
       rw [hvdef]
       change star x ⬝ᵥ (Matrix.of fun k l => reForm H (e k) (e l)) *ᵥ x = _
-      simp only [star_trivial, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [star_trivial, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
         smul_eq_mul, dotProduct, mulVec, of_apply, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
       rw [reForm_symm hH (e l) (e k)]; ring
@@ -70,11 +76,12 @@ theorem gram_posDef_pair (g n : ℕ) (e : Module.Basis (Fin n) ℝ (Fin g → �
       LinearMap.toMatrix e e (γ.restrictScalars ℝ) =
       Matrix.of fun k l => (e k ⬝ᵥ H₂.mulVec (star (e l))).re := by
     ext k l
-    rw [of_apply, hγ, mul_apply]
+    rw [of_apply, hγ, Matrix.mul_apply]
     have hs : γ (e l) = ∑ m, e.repr (γ (e l)) m • e m := (e.sum_repr _).symm
     have : (e k ⬝ᵥ H₁.mulVec (star (γ (e l)))).re = reForm H₁ (e k) (γ (e l)) := rfl
     rw [this, hs]
-    simp only [map_sum, map_smul, smul_eq_mul, LinearMap.toMatrix_apply, of_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, LinearMap.toMatrix_apply, of_apply,
       LinearMap.restrictScalars_apply, reForm_apply]
     refine Finset.sum_congr rfl fun m _ => ?_
     ring

@@ -1,9 +1,13 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpRelAtPt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpRootJac
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpRootHaar
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpOrbQuot
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpRootCut
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpRelAtPt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpRootJac
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpRootHaar
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpOrbQuot
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpRootCut
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
+
+@[expose] public section
 
 namespace Formalism.MainNotions.S.Pv.LemmaJ
 

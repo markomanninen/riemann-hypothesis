@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafComplexMappingConeAcyclicOfQuasiIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AcyclicTensorAcyclicFlatEtaleComplexStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafComplexMappingConeAcyclicOfQuasiIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AcyclicTensorAcyclicFlatEtaleComplexStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -192,7 +197,7 @@ theorem tDecomp (f : I ⟶ I') (U : Scheme.{0}) (w : ℤ) (x : Tens (mappingCone
         (Sec.map ((mappingCone.inr f).f s) (Sec.map ((mappingCone.snd f).v s s (add_zero s)) a) ⊗ₜ b) =
       DirectSum.lof (ULift.{1} R) {p : ℤ × ℤ // p.1 + p.2 = w}
         (fun q => Sec ((mappingCone f).X q.1.1) U ⊗[ULift.{1} R] Sec (J.X q.1.2) U) ⟨(s, t), hp⟩ (a ⊗ₜ b)
-    rw [lof_shift f U w s t hp _ (by omega), ← map_add, ← TensorProduct.add_tmul, ← cone_eta]
+    rw [lof_shift f U w s t hp _ (by omega), ← map_add (f := _), ← TensorProduct.add_tmul, ← cone_eta]
   exact congrArg (fun k => k x) this
 
 theorem res_tInl (f : I ⟶ I') {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) (x : Tens I J U (w + 1)) :
@@ -233,9 +238,9 @@ theorem conePair_isTensor (τ : Pair I J T) (τ' : Pair I' J T') (f : I ⟶ I') 
     refine loc_mono _ _ _ (loc_and _ _ _ h1 h2) ?_
     rintro V g ⟨⟨x1, hx1⟩, ⟨x2, hx2⟩⟩
     refine ⟨tInl f V w x1 + tInr f V w x2, ?_⟩
-    rw [map_add, lift_tInl, lift_tInr, hx1, hx2, sm_res, sm_res, ← rs_madd, ← cone_eta]
+    rw [map_add (f := _), lift_tInl, lift_tInr, hx1, hx2, sm_res, sm_res, ← rs_madd, ← cone_eta]
   · intro U w x hx
-    rw [← tDecomp f U w x, map_add, lift_tInl, lift_tInr] at hx
+    rw [← tDecomp f U w x, map_add (f := _), lift_tInl, lift_tInr] at hx
     have e1 : τ.lift U (w + 1) (tFst f U w x) = 0 := by
       have := congrArg (fun z => Sec.map ((mappingCone.fst u).1.v w (w + 1) rfl) z) hx
       simpa only [sm_madd, fst_inl, fst_inr, add_zero, sm_mzero] using this
@@ -244,7 +249,7 @@ theorem conePair_isTensor (τ : Pair I J T) (τ' : Pair I' J T') (f : I ⟶ I') 
       simpa only [sm_madd, snd_inl, snd_inr, zero_add, sm_mzero] using this
     refine loc_mono _ _ _ (loc_and _ _ _ (hτ.2 U (w + 1) _ e1) (hτ'.2 U w _ e2)) ?_
     rintro V g ⟨h1, h2⟩
-    rw [← tDecomp f U w x, map_add, res_tInl, res_tInr, h1, h2, map_zero, map_zero, add_zero]
+    rw [← tDecomp f U w x, map_add (f := _), res_tInl, res_tInr, h1, h2, map_zero, map_zero, add_zero]
 
 theorem quasiIso_of_cone_acyclic {𝒜 : Type*} [Category 𝒜] [Abelian 𝒜]
     {K L : CochainComplex 𝒜 ℤ} (u : K ⟶ L) (h : (CochainComplex.mappingCone u).Acyclic) : QuasiIso u := by

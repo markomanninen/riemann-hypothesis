@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,6 +67,7 @@ def PcrisTensorL (LT : LocTheory) : Prop :=
 
 variable {D : D7}
 
+set_option synthInstance.maxHeartbeats 400000 in
 def TieInePoly (D : D7) : Prop :=
   ∀ (i : D.nd.Loc) (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i))
     (K' : FinExt (D.nd.l i)) (h : (D.nbr i w hw).Kw.1 ≤ K'.1) (hN : (GKin h).Normal)
@@ -85,15 +90,6 @@ def TieInePoly (D : D7) : Prop :=
 def InertEq (D : D7) : Prop :=
   ∀ (i : D.nd.Loc) (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i)),
     Br.inert D.nbr i w hw = IK (D.nbr i w hw).Kw
-
-def IneLGC (D : D7) : Prop :=
-  ∀ (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))), GoodR D.nd i r →
-    ∀ (x : D.nd.X i) (PI : D.naut.AV i), D.naut.ptV i PI = some x →
-    ∀ w ∈ placesOver D.host.E (D.nd.l i), IsSplitPl D.host w →
-      D.naut.IsdRW i (mapRep (iotaOQ D.nd D.naut i) (r x)) w ∧
-      ∀ σ ∈ Ine (F := D.host.E) (D.nd.plOm.1 w),
-        D.naut.inePol (D.naut.wdOf i (mapRep (iotaOQ D.nd D.naut i) (r x)) w) σ =
-          D.naut.inePol (D.naut.locV i PI w) σ
 
 section AtW
 
@@ -132,17 +128,17 @@ def cutCoc {k : ℕ} (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i)) :
       c = fun g => Br.phi (D.nbr i w hw) k
         (φ ⟨_, hE ((Br.iota D.nbr i w hw g : Gw D.nd w) : GE D.nd)⟩)}
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 def LocBound {k : ℕ} (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i)) (e : ℕ) : Prop :=
   lenModN (Submodule.span (Br.OLL D.nbr i w hw) (cutCoc i w hw r Xs M))
       (HfD (Br.PD D.loc D.nbr i w hw) (Br.locLat D.nbr i w hw M)) ≤
     (e : ℕ∞) * lenOl (Br.PD D.loc D.nbr i w hw) (O := Br.OLL D.nbr i w hw)
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 def HfChar : Prop :=
   (∀ c ∈ Finset.Icc 2 D.R.t,
     HfD (Br.PD D.loc D.nbr i w hw) (Br.locLat D.nbr i w hw (chiRatO D.nd i c)) ≤

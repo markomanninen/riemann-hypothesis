@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx GlobalTheory.SWQ
 open scoped TensorProduct NNReal ENNReal Pointwise
@@ -44,7 +48,7 @@ theorem modrat_main : ∀ (F : Type) [Field F] [NumberField F] (N : ℕ) (ν : M
       right_inv := fun g => by
         ext; simp only; rw [← mul_assoc, ← map_mul, inv_mul_cancel₀ ht, map_one, one_mul] }
   have hqmp : Measure.QuasiMeasurePreserving (MulAction.toPerm u).symm ν ν := by
-    refine ⟨measurable_const_smul u⁻¹, ?_⟩
+    refine ⟨(measurable_const_smul u⁻¹).aemeasurable, ?_⟩
     have : ⇑(MulAction.toPerm u).symm = fun x : AF F => u⁻¹ • x := rfl
     rw [this, map_unit_mul_eq F ν u⁻¹]
     exact Measure.AbsolutelyContinuous.smul_left (Measure.AbsolutelyContinuous.refl _) _

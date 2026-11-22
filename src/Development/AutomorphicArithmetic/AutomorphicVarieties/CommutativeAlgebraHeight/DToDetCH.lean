@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -11,7 +15,8 @@ private theorem D_congr {n : ℕ} {A G : Type} [CommRing A] [Group G] (D : GDet 
 
 private theorem ofT_gen {A G : Type} [CommRing A] [Group G] {m : ℕ} (y : Fin m → MonoidAlgebra A G) :
     ofT A G (MvPolynomial (Fin m) A) (Det.gen (A := A) y) = GDet.gen y := by
-  simp only [Det.gen, GDet.gen, map_sum, ofT_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Det.gen, GDet.gen, map_sum, ofT_tmul]
   rfl
 
 private theorem ofT_map {A G : Type} [CommRing A] [Group G] (S : Type) [CommRing S] [Algebra A S]
@@ -19,8 +24,7 @@ private theorem ofT_map {A G : Type} [CommRing A] [Group G] (S : Type) [CommRing
     ofT A G S[X] (Algebra.TensorProduct.map (IsScalarTower.toAlgHom A S S[X]) (AlgHom.id A _) x) =
       MonoidAlgebra.mapRingHom G (C : S →+* S[X]) (ofT A G S x) := by
   induction x with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul s y => ext1; ext1 g; simp [ofT_tmul]
 
 private theorem chiS_eq {n : ℕ} {A G : Type} [CommRing A] [Group G] (D : GDet n A G) {m : ℕ}
@@ -39,17 +43,16 @@ private theorem chiS_eq {n : ℕ} {A G : Type} [CommRing A] [Group G] (D : GDet 
 private theorem coeff_lid {A G : Type} [CommRing A] [Group G] {m : ℕ} (β : Fin m →₀ ℕ)
     (w : MvPolynomial (Fin m) A ⊗[A] MonoidAlgebra A G) (g : G) :
     (TensorProduct.lid A (MonoidAlgebra A G) ((MvPolynomial.lcoeff A β).rTensor _ w)).coeff g =
-      MvPolynomial.coeff β ((ofT A G _ w).coeff g) := by
+      AddMonoidAlgebra.coeff ((ofT A G _ w).coeff g) β := by
   induction w with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, MonoidAlgebra.coeff_add, Finsupp.add_apply, MvPolynomial.coeff_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), MonoidAlgebra.coeff_add, Finsupp.add_apply, MvPolynomial.coeff_add, ha, hb]
   | tmul s y => simp [ofT_tmul, mul_comm s, MvPolynomial.coeff_C_mul, mul_comm (y.coeff g)]
 
 private theorem chElt_coeff {n : ℕ} {A G : Type} [CommRing A] [Group G] (D : GDet n A G) {m : ℕ}
     (y : Fin m → MonoidAlgebra A G) (β : Fin m →₀ ℕ) (g : G) :
-    (D.toDet.chElt y β).coeff g = MvPolynomial.coeff β
-      ((Polynomial.aeval (GDet.gen y)
-        ((D.map (MvPolynomial.C : A →+* MvPolynomial (Fin m) A)).chi (GDet.gen y))).coeff g) := by
+    (D.toDet.chElt y β).coeff g = AddMonoidAlgebra.coeff ((Polynomial.aeval (GDet.gen y)
+        ((D.map (MvPolynomial.C : A →+* MvPolynomial (Fin m) A)).chi (GDet.gen y))).coeff g)
+      β := by
   rw [Det.chElt, coeff_lid, chiS_eq, ← Polynomial.aeval_algHom_apply, ofT_gen]
 
 theorem UpperTheory.V.CA.d_toDet_CH :

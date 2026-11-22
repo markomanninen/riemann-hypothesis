@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DivisionHeightBoundStatement
-import Formalism.LocalToGlobal.Divisibility.Numbers
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TopPlaceLogTheta
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DivisionHeightBoundStatement
+public import Formalism.LocalToGlobal.Divisibility.Numbers
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TopPlaceLogTheta
+
+@[expose] public section
 
 noncomputable section
 

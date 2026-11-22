@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,12 +19,12 @@ variable {F : Type} [Field F] {n : ℕ}
 theorem cM_apply_pos (k : ℕ) (x : Fin (k + 1) → F) {i j : Fin n} (hj : (j : ℕ) = k + 1)
     (hi : (i : ℕ) < k + 1) : cM n k x i j = x ⟨i, hi⟩ := by
   simp only [cM, Matrix.of_apply]
-  rw [dif_pos ⟨hj, hi⟩]
+  rw [dite_eq_left ⟨hj, hi⟩]
 
 theorem cM_apply_neg (k : ℕ) (x : Fin (k + 1) → F) {i j : Fin n}
     (h : ¬((j : ℕ) = k + 1 ∧ (i : ℕ) < k + 1)) : cM n k x i j = 0 := by
   simp only [cM, Matrix.of_apply]
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 theorem cM_add (k : ℕ) (x y : Fin (k + 1) → F) :
     cM n k (x + y) = cM n k x + cM n k y := by
@@ -226,12 +230,12 @@ def extM {k : ℕ} (n : ℕ) (t : Matrix (Fin (k + 1)) (Fin (k + 1)) F) : Matrix
 
 theorem extM_pos {k : ℕ} (t : Matrix (Fin (k + 1)) (Fin (k + 1)) F) {i j : Fin n}
     (h : (i : ℕ) < k + 1 ∧ (j : ℕ) < k + 1) : extM n t i j = t ⟨i, h.1⟩ ⟨j, h.2⟩ := by
-  rw [extM, Matrix.of_apply, dif_pos h]
+  rw [extM, Matrix.of_apply, dite_eq_left h]
 
 theorem extM_neg {k : ℕ} (t : Matrix (Fin (k + 1)) (Fin (k + 1)) F) {i j : Fin n}
     (h : ¬((i : ℕ) < k + 1 ∧ (j : ℕ) < k + 1)) :
     extM n t i j = (1 : Matrix (Fin n) (Fin n) F) i j := by
-  rw [extM, Matrix.of_apply, dif_neg h]
+  rw [extM, Matrix.of_apply, dite_eq_right h]
 
 theorem extM_submatrix {k : ℕ} (hk : k + 1 ≤ n) (t : Matrix (Fin (k + 1)) (Fin (k + 1)) F) :
     (extM n t).submatrix (Fin.castLE hk) (Fin.castLE hk) = t := by

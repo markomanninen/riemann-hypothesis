@@ -1,38 +1,43 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateBlowupChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafSmoothPullback
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.DisjointUnionOfOpens
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.MaxContactHypersurface
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.MaxContactIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.CoverMapSurjective
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactReduction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.DerivedAndCoverTriples
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactCover
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.PolynomialCoordinateExtension
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealEtaleBaseChange
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothRegular
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.JacobianCriterion
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.LocalParameters
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateBlowupChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafSmoothPullback
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.DisjointUnionOfOpens
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.MaxContactHypersurface
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.MaxContactIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.CoverMapSurjective
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactReduction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.DerivedAndCoverTriples
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactCover
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.PolynomialCoordinateExtension
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealEtaleBaseChange
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothRegular
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.JacobianCriterion
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.LocalParameters
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
@@ -41,32 +46,58 @@ noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
 
-private theorem comapEtale_map_comp_affineSpaceFinToSpec {k : Type u} [Field k] {X Y : Scheme.{u}}
-    {q : Y ⟶ Spec (CommRingCat.of k)} (g : X ⟶ Y) {U : Y.Opens} {n : ℕ}
-    (c : EtaleChart q U n) :
-    (morphismRestrict g U ≫ c.map) ≫ affineSpaceFinToSpec k n =
-      AlgebraicGeometry.Scheme.Opens.ι ((TopologicalSpace.Opens.map g.base).obj U) ≫ (g ≫ q) := by
-  rw [Category.assoc, c.comp_struct, ← Category.assoc, morphismRestrict_ι, Category.assoc]
+private theorem local_chart_comp (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible)
+    (i : (MaxContactCoverData.chosenCoverData T hv).idx) {n : ℕ}
+    (c : EtaleChart T.structMap ((MaxContactCoverData.chosenCoverData T hv).opens i) n) :
+    ((MaxContactOpenCover.coverPieceIso T hv i).inv ≫ c.map) ≫ affineSpaceFinToSpec T.base n =
+      (MaxContactOpenCover.coverTripleOpen T hv i).ι ≫ (MaxContactCoverData.coverMap T hv ≫ T.structMap) := by
+  have h1 : c.map ≫ affineSpaceFinToSpec T.base n =
+      ((MaxContactCoverData.chosenCoverData T hv).opens i).ι ≫ T.structMap := c.comp_struct
+  have h2 := MaxContactOpenCover.coverTripleOpen_ι_comp_coverMap T hv i
+  calc ((MaxContactOpenCover.coverPieceIso T hv i).inv ≫ c.map) ≫ affineSpaceFinToSpec T.base n
+      = (MaxContactOpenCover.coverPieceIso T hv i).inv ≫ (c.map ≫ affineSpaceFinToSpec T.base n) := Category.assoc _ _ _
+    _ = (MaxContactOpenCover.coverPieceIso T hv i).inv ≫ (((MaxContactCoverData.chosenCoverData T hv).opens i).ι ≫ T.structMap) := by
+        rw [h1]
+    _ = ((MaxContactOpenCover.coverPieceIso T hv i).inv ≫ ((MaxContactCoverData.chosenCoverData T hv).opens i).ι) ≫ T.structMap :=
+        (Category.assoc _ _ _).symm
+    _ = ((MaxContactOpenCover.coverTripleOpen T hv i).ι ≫ MaxContactCoverData.coverMap T hv) ≫ T.structMap := by rw [h2]
+    _ = (MaxContactOpenCover.coverTripleOpen T hv i).ι ≫ (MaxContactCoverData.coverMap T hv ≫ T.structMap) :=
+        Category.assoc _ _ _
 
-private theorem etale_comapEtale_map {k : Type u} [Field k] {X Y : Scheme.{u}}
-    {q : Y ⟶ Spec (CommRingCat.of k)} (g : X ⟶ Y) [AlgebraicGeometry.Etale g]
-    {U : Y.Opens} {n : ℕ} (c : EtaleChart q U n) :
-    AlgebraicGeometry.Etale (morphismRestrict g U ≫ c.map) := by
-  have := c.isEtale
+private theorem local_chart_etale (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible)
+    (i : (MaxContactCoverData.chosenCoverData T hv).idx) {n : ℕ}
+    (c : EtaleChart T.structMap ((MaxContactCoverData.chosenCoverData T hv).opens i) n) :
+    AlgebraicGeometry.Etale ((MaxContactOpenCover.coverPieceIso T hv i).inv ≫ c.map) := by
+  have : AlgebraicGeometry.Etale c.map := c.isEtale
+  have : IsIso (MaxContactOpenCover.coverPieceIso T hv i).inv := inferInstance
+  have : IsOpenImmersion (MaxContactOpenCover.coverPieceIso T hv i).inv := inferInstance
+  have : AlgebraicGeometry.Etale (MaxContactOpenCover.coverPieceIso T hv i).inv := inferInstance
   infer_instance
 
-def EtaleChart.comapEtale {k : Type u} [Field k] {X Y : Scheme.{u}}
-    {q : Y ⟶ Spec (CommRingCat.of k)} (g : X ⟶ Y) [AlgebraicGeometry.Etale g]
-    {U : Y.Opens} {n : ℕ} (c : EtaleChart q U n) :
-    EtaleChart (g ≫ q) ((TopologicalSpace.Opens.map g.base).obj U) n where
-  map := morphismRestrict g U ≫ c.map
-  comp_struct := comapEtale_map_comp_affineSpaceFinToSpec g c
-  isEtale := etale_comapEtale_map g c
+private def localCoverEtaleChart (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible)
+    (i : (MaxContactCoverData.chosenCoverData T hv).idx) {n : ℕ}
+    (c : EtaleChart T.structMap ((MaxContactCoverData.chosenCoverData T hv).opens i) n) :
+    EtaleChart (MaxContactCoverData.coverMap T hv ≫ T.structMap) (MaxContactOpenCover.coverTripleOpen T hv i) n where
+  map := (MaxContactOpenCover.coverPieceIso T hv i).inv ≫ c.map
+  comp_struct := by
+    exact local_chart_comp T hv i c
+  isEtale := local_chart_etale T hv i c
 
-@[simp] theorem EtaleChart.comapEtale_map {k : Type u} [Field k] {X Y : Scheme.{u}}
-    {q : Y ⟶ Spec (CommRingCat.of k)} (g : X ⟶ Y) [AlgebraicGeometry.Etale g]
-    {U : Y.Opens} {n : ℕ} (c : EtaleChart q U n) :
-    (EtaleChart.comapEtale g c).map = morphismRestrict g U ≫ c.map := rfl
+private theorem localCoverEtaleChart_coordIdeal (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible)
+    (i : (MaxContactCoverData.chosenCoverData T hv).idx) {n : ℕ}
+    (c : EtaleChart T.structMap ((MaxContactCoverData.chosenCoverData T hv).opens i) n)
+    (S : Finset (Fin n)) :
+    (localCoverEtaleChart T hv i c).coordIdeal S = (c.coordIdeal S).comap (MaxContactOpenCover.coverPieceIso T hv i).inv := by
+  have key : (coordSubspaceIdeal T.base n S).comap ((MaxContactOpenCover.coverPieceIso T hv i).inv ≫ c.map)
+      = ((coordSubspaceIdeal T.base n S).comap c.map).comap (MaxContactOpenCover.coverPieceIso T hv i).inv := by
+    rw [Scheme.IdealSheafData.comap_comp]
+  have h1 : (localCoverEtaleChart T hv i c).coordIdeal S
+      = (coordSubspaceIdeal T.base n S).comap ((MaxContactOpenCover.coverPieceIso T hv i).inv ≫ c.map) :=
+    EtaleChart.coordIdeal_eq_comap_coordSubspaceIdeal (localCoverEtaleChart T hv i c) S
+  have h2 : (c.coordIdeal S).comap (MaxContactOpenCover.coverPieceIso T hv i).inv
+      = ((coordSubspaceIdeal T.base n S).comap c.map).comap (MaxContactOpenCover.coverPieceIso T hv i).inv :=
+    congrArg (fun J => J.comap (MaxContactOpenCover.coverPieceIso T hv i).inv) (EtaleChart.coordIdeal_eq_comap_coordSubspaceIdeal c S)
+  exact h1.trans (key.trans h2.symm)
 
 private theorem range_ι_base_subset {X : Scheme.{u}} (U : X.Opens) :
     Set.range U.ι.base ⊆ (U : Set ↥X) :=
@@ -149,9 +180,9 @@ theorem isMaxContactHypersurface_coverMaxContactIdeal_of_comap_eq (T : MarkedIde
     · rw [restrictIdeal_coverTripleOpen_coverMaxContactIdeal T hv hres i, htop]
       exact Scheme.IdealSheafData.comap_top _
   · right
-    refine ⟨n, MaxContactOpenCover.coverEtaleChart T hv i c, j, ?_, ?_⟩
+    refine ⟨n, localCoverEtaleChart T hv i c, j, ?_, ?_⟩
     · rw [restrictIdeal_coverTripleOpen_coverMaxContactIdeal T hv hres i, hloc]
-      exact (MaxContactOpenCover.coverEtaleChart_coordIdeal T hv i c {j}).symm
+      exact (localCoverEtaleChart_coordIdeal T hv i c {j}).symm
     · have hmc' : c.coordIdeal {j} ≤
           (maxContactIdeal T.base T.structMap (MaxContactCoverData.balancedTunedIdeal T hv)
             (MaxContactCoverData.tunedMult T)).comap
@@ -163,9 +194,9 @@ theorem isMaxContactHypersurface_coverMaxContactIdeal_of_comap_eq (T : MarkedIde
             (MaxContactCoverData.tunedMult T)).comap (MaxContactCoverData.coverMap T hv) :=
         derivIdealSheafIterate_comap T.base T.structMap (MaxContactCoverData.coverMap T hv)
           (MaxContactCoverData.tunedMult T - 1) (MaxContactCoverData.balancedTunedIdeal T hv)
-      have h1 : (MaxContactOpenCover.coverEtaleChart T hv i c).coordIdeal {j}
+      have h1 : (localCoverEtaleChart T hv i c).coordIdeal {j}
           = (c.coordIdeal {j}).comap (MaxContactOpenCover.coverPieceIso T hv i).inv :=
-        MaxContactOpenCover.coverEtaleChart_coordIdeal T hv i c {j}
+        localCoverEtaleChart_coordIdeal T hv i c {j}
       have h2 := comap_comap_eq_of_comp_eq (MaxContactOpenCover.coverTripleOpen T hv i).ι
         (MaxContactCoverData.coverMap T hv)
         (MaxContactOpenCover.coverPieceIso T hv i).inv ((MaxContactCoverData.chosenCoverData T hv).opens i).ι
@@ -178,7 +209,7 @@ theorem isMaxContactHypersurface_coverMaxContactIdeal_of_comap_eq (T : MarkedIde
               ((MaxContactCoverData.chosenCoverData T hv).opens i).ι).comap
             (MaxContactOpenCover.coverPieceIso T hv i).inv :=
         Scheme.IdealSheafData.comap_mono _ hmc'
-      show (MaxContactOpenCover.coverEtaleChart T hv i c).coordIdeal {j} ≤
+      show (localCoverEtaleChart T hv i c).coordIdeal {j} ≤
         restrictIdeal (maxContactIdeal (MaxContactCoverData.coverTriple T hv).base
           (MaxContactCoverData.coverTriple T hv).structMap
           (MaxContactCoverData.coverTriple T hv).ideal (MaxContactCoverData.tunedMult T))
@@ -217,27 +248,27 @@ theorem inStrictNormalCrossingPositionAt_coverMaxContactIdeal (T : MarkedIdealWi
     · intro r _hr s _hs t hrt _hst
       simp at hrt
     · intro r hr _hnone
-      have hr1 : r < 1 := by simpa using hr
+      have hr1 : r < 1 := hr
       have hr0 : r = 0 := by omega
       subst hr0
       exact keyU
     · intro r _hr t hrt
       simp at hrt
   · have h2 : ((MaxContactCoverData.coverMaxContactIdeal T hv).comap (MaxContactOpenCover.coverPieceι T hv i)).comap
-        (MaxContactOpenCover.coverPieceIso T hv i).inv = (MaxContactOpenCover.coverEtaleChart T hv i c).coordIdeal {j} := by
-      rw [hres i, hlocal, MaxContactOpenCover.coverEtaleChart_coordIdeal]
+        (MaxContactOpenCover.coverPieceIso T hv i).inv = (localCoverEtaleChart T hv i c).coordIdeal {j} := by
+      rw [hres i, hlocal, localCoverEtaleChart_coordIdeal]
     have key := h1.trans h2
     refine inStrictNormalCrossingPositionAt_of_exists_etaleChart
-      ⟨MaxContactOpenCover.coverTripleOpen T hv i, hxi, n, MaxContactOpenCover.coverEtaleChart T hv i c, fun _ => some j,
+      ⟨MaxContactOpenCover.coverTripleOpen T hv i, hxi, n, localCoverEtaleChart T hv i c, fun _ => some j,
         ?_, ?_, ?_⟩
     · intro r hr s hs t _hrt _hst
-      have hr1 : r < 1 := by simpa using hr
-      have hs1 : s < 1 := by simpa using hs
+      have hr1 : r < 1 := hr
+      have hs1 : s < 1 := hs
       omega
     · intro r _hr hnone
       simp at hnone
     · intro r hr t hrt
-      have hr1 : r < 1 := by simpa using hr
+      have hr1 : r < 1 := hr
       have hr0 : r = 0 := by omega
       subst hr0
       obtain rfl : j = t := Option.some.inj hrt

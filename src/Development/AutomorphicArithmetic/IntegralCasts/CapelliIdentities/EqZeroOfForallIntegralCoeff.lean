@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Gwa7.U2 :
     Type :=
@@ -712,7 +716,7 @@ private theorem UpperTheory.Reformulated.B.Gwa7.mul_lin (φ : A →L[ℂ] ℂ) (
       refine UpperTheory.Reformulated.B.Gwa7.step_one φ _ _ _ _ fun u => ?_
       rw [← h (n + 1 + 1) m (a + u * a') (b + u * b') (c + t * c') (d + t * d'), ← mul_assoc]
       congr 4
-      simp only [UpperTheory.Reformulated.B.Gwa7.lin, Algebra.smul_def, map_mul, map_add]
+      simp only [UpperTheory.Reformulated.B.Gwa7.lin, Algebra.smul_def, map_mul, map_add (f := _)]
       ring
     · rw [← h n (m + 1) a b c d, hD]
       congr 1
@@ -815,6 +819,7 @@ private theorem UpperTheory.Reformulated.B.Gwa7.functional_zero [CompactSpace U2
     (h : ∀ (n : ℕ) (m : ℤ) (a b c d : ℂ),
       φ (lin (entry 0 0) (entry 0 1) (entry 1 0) (entry 1 1) a b c d ^ n * detPow m * 1) = 0)
     (f : C(U2, ℂ)) : φ f = 0 := by
+  open scoped Pointwise in
   let P : C(U2, ℂ) → Prop := fun z => ∀ (n : ℕ) (m : ℤ) (a b c d : ℂ),
     φ (lin (entry 0 0) (entry 0 1) (entry 1 0) (entry 1 1) a b c d ^ n * detPow m * z) = 0
   have hD : ∀ m, detPow (m + 1) = (entry 0 0 * entry 1 1 - entry 0 1 * entry 1 0) * detPow m := by
@@ -853,7 +858,7 @@ private theorem UpperTheory.Reformulated.B.Gwa7.functional_zero [CompactSpace U2
       rw [← Algebra.smul_def, mul_smul_comm, map_smul, hz, smul_zero]
     | add x y _ _ hx hy =>
       intro z hz n m a b c d
-      rw [add_mul, mul_add, map_add, hx z hz, hy z hz, add_zero]
+      rw [add_mul, mul_add, map_add (f := _), hx z hz, hy z hz, add_zero]
     | mul x y _ _ hx hy =>
       intro z hz
       rw [mul_assoc]

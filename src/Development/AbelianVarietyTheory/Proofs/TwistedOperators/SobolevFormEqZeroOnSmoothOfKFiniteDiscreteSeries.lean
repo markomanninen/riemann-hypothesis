@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.KTypeExtension
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemKFinOfMemLowT
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSmoothCuspFormFrechetModerateGrowthRepStatement
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsKFinDRep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousWordTranslate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.KTypeExtension
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemKFinOfMemLowT
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSmoothCuspFormFrechetModerateGrowthRepStatement
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsKFinDRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousWordTranslate
+
+@[expose] public section
 
 open Classical Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -114,7 +118,8 @@ theorem eq_zero_of_iteratedDeriv_eq_zero : ∀ f : ℝ → ℂ, AnalyticOnNhd �
     simp only [smul_eq_mul, mul_one] at e3
     rw [e3, e2, smul_zero]
   have hev : f =ᶠ[nhds 0] 0 := by
-    filter_upwards [EMetric.ball_mem_nhds (0 : ℝ) hp.r_pos] with y hy
+    have hb : Metric.eball (0 : ℝ) r ∈ nhds 0 := Metric.eball_mem_nhds 0 hp.r_pos
+    filter_upwards [hb] with y hy
     have := hp.hasSum (y := y) (by simpa using hy)
     simp only [hc, zero_add] at this
     exact (this.unique hasSum_zero).symm ▸ rfl
@@ -140,7 +145,8 @@ theorem analyticAt_coef (hHC : GlobalTheory.Published.HarishChandraModules) (h :
     have e1 := Dw_translate h.1 hg hsm (hS i)
     have e2 : (NormedSpace.exp (t • X))⁻¹ = NormedSpace.exp (-(t • X)) := (Matrix.exp_neg _).symm
     simp only [Dw] at e1
-    rw [e1, e2, he i t, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, e2, he i t, map_sum, map_sum]
     simp only [map_smul, smul_eq_mul]
   have ha : ∀ i j, AnalyticAt ℝ (fun t : ℝ => Λ i (σ (NormedSpace.exp (t • X)) (w i j))) 0 := by
     intro i j

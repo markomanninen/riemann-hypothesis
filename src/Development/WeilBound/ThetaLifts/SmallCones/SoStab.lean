@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
+
+@[expose] public section
 
 noncomputable section
 

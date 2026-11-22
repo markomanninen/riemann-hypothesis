@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.InitialPairs.SquareIntegrableOfLatticeTorus
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.InitialPairs.SquareIntegrableOfLatticeTorus
+
+@[expose] public section
 
 noncomputable section
 

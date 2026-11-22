@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CMFieldDegreeEqTwiceCardStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenusEqCardMulSignatureStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LatticeRationalEmbeddingStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AlternatingFormHermitianDescentStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SkewHermitianFormExistsStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AlternatingFormLatticeCompatibleStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RealBasisFromLatticeBasisStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.EmbeddingInverseRootImaginaryStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CMFieldDegreeEqTwiceCardStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenusEqCardMulSignatureStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LatticeRationalEmbeddingStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AlternatingFormHermitianDescentStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SkewHermitianFormExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AlternatingFormLatticeCompatibleStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RealBasisFromLatticeBasisStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.EmbeddingInverseRootImaginaryStatement
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume GroundTheory.Automorphic GlobalTheory.CompanionTheory.Ar.Cusp.Dict
 open scoped ENNReal InnerProductSpace
 open scoped ComplexOrder
@@ -44,8 +49,8 @@ theorem exists_latEmb : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
   intro E _ _ _ Ψ _ j j' n g Λ _ _ H F
   have h0 : (0 : Fin n → ℂ) ∈ ballDom F.q := zero_mem_ballDom F.q
   obtain ⟨R, hR⟩ : ∃ R, R = F.R 0 := ⟨_, rfl⟩
-  haveI := R.free
-  haveI := R.fin
+  have := R.free
+  have := R.fin
   have hform : R.form = F.form := by rw [hR]; exact F.form_eq 0
   have hrk := GlobalTheory.T.CM_field_degree_eq_twice_card E Ψ F.σ F.cm
   have hg := GlobalTheory.T.genus_eq_card_mul_signature E Ψ g j j' R.B F.σ F.cm (by rw [hR]; exact F.sig 0 h0)
@@ -84,7 +89,7 @@ theorem exists_latEmb : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
     · rintro a _ ⟨x, rfl⟩
       exact ⟨a • x, esmul a x⟩
     · have : AddGroup.FG Λ := Module.Finite.iff_addGroup_fg.1 inferInstance
-      exact (AddGroup.fg_iff_addSubgroup_fg _).1 (AddGroup.fg_range e)
+      exact (AddGroup.fg_iff_addSubgroup_fg _).1 (inferInstance : AddGroup.FG e.range)
     · rw [eq_top_iff]
       intro v _
       obtain ⟨k, x, hk, hx⟩ := hspan v

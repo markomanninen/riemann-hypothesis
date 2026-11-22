@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -58,7 +62,8 @@ theorem Perf.exists_relation {X : Scheme.{0}} {K : Type} [Field K] {f : X ⟶ Sp
     intro j
     simp only [hv, Finset.mul_sum, ← _root_.mul_assoc, ← map_mul]
     rw [Finset.sum_comm]
-    simp only [← Finset.sum_mul, ← map_sum, hc', map_zero, zero_mul, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← Finset.sum_mul, ← map_sum, hc', map_zero, zero_mul, Finset.sum_const_zero]
   refine ⟨c, fun h => hk₀ (congrFun h k₀), fun i => ?_⟩
   refine finSec_eq_zero_of_cover Q.W Q.cover _ fun j => ?_
   have h₁ : ∀ k, rs X (inf_le_left : M.U i ⊓ Q.W j ≤ M.U i) ((s k).f i) =
@@ -71,8 +76,10 @@ theorem Perf.exists_relation {X : Scheme.{0}} {K : Type} [Field K] {f : X ⟶ Sp
     simp only [rs_rs] at h ⊢
     exact h
   have h₂ := congrArg (rs X (inf_le_right : M.U i ⊓ Q.W j ≤ Q.W j)) (hW j)
-  simp only [map_sum, map_mul, rs_cst, map_zero] at h₂
-  simp only [map_sum, map_mul, rs_cst, h₁]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, rs_cst, map_zero] at h₂
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, rs_cst, h₁]
   simp only [mul_left_comm (cst f _ _), ← Finset.mul_sum, h₂, mul_zero]
 
 theorem sections_finite_of_perf

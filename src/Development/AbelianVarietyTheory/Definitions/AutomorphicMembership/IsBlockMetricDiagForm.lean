@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeE
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentVectorsUniversalBasis
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeE
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentVectorsUniversalBasis
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,7 +28,8 @@ def gramOf (h : M →ₗ[ℂ] M →ₗ⋆[ℂ] ℂ) (u : n → M) : Matrix n n �
 
 theorem form_sum (h : M →ₗ[ℂ] M →ₗ⋆[ℂ] ℂ) (u : n → M) (v w : n → ℂ) :
     h (∑ a, v a • u a) (∑ a, w a • u a) = star w ⬝ᵥ gramOf h u *ᵥ v := by
-  simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, RingHom.id_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, RingHom.id_apply, smul_eq_mul,
     dotProduct, mulVec, gramOf, of_apply, Pi.star_apply, Finset.mul_sum, RCLike.star_def]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
 
@@ -93,8 +98,8 @@ section Push
 
 variable {f : X' ⟶ X} (m : SABMap t' t f) (x' : Sp S ⟶ X') (hx : x' ≫ f = x)
 
-include hx in
 
+include hx in
 theorem isTan_push {v : Sp (DualNumber S) ⟶ t'.G.left} (hv : IsTanAtG t' x' v) : IsTanAtG t x (v ≫ m.φ) := by
   subst hx
   exact ⟨by rw [Category.assoc, m.cart.1.w, ← Category.assoc, hv.1, Category.assoc],
@@ -111,8 +116,6 @@ def pushL : TanM x' t'.G →ₗ[S] TanM x t.G where
       exact m.cart.2 _ _ _ a b ha hb
     exact (key _ e _ _ rfl rfl).symm)
   map_smul' a v := tan_ext (Category.assoc _ _ _)
-
-theorem left_pushL (v : TanM x' t'.G) : (tv (pushL m x' hx v)).left = (tv v).left ≫ m.φ := rfl
 
 theorem pushL_bijective : Function.Bijective (pushL m x' hx) := by
   refine ⟨fun v w h => tan_ext (m.cart.1.hom_ext (congrArg (fun z => (tv z).left) h)
@@ -185,8 +188,8 @@ instance finite_tanM (y : Sp ℂ ⟶ X) : Module.Finite ℂ (TanM y t.G) := by
   rw [(isComb_iff (fun i => tanOf (isTan_map _ e (hD i))) a w).1 ha]
   exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
-variable (t) in
 
+variable (t) in
 theorem exists_isBlockMetric (y : Sp ℂ ⟶ X) : ∃ h : TanM y t.G →ₗ[ℂ] TanM y t.G →ₗ⋆[ℂ] ℂ, IsBlockMetric h := by
   classical
   let χ : (E →+* ℂ) → (𝓞 E →+* ℂ) := fun τ => τ.comp (algebraMap (𝓞 E) E)
@@ -202,7 +205,8 @@ theorem exists_isBlockMetric (y : Sp ℂ ⟶ X) : ∃ h : TanM y t.G →ₗ[ℂ]
   have hf : ∀ v w, (∑ τ, (g.compl₂ (e τ)).comp (e τ)) v w = ∑ τ, g (e τ v) (e τ w) := fun v w => by
     simp [LinearMap.sum_apply]
   refine ⟨∑ τ, (g.compl₂ (e τ)).comp (e τ), fun v w => ?_, fun v hv => ?_, fun ρ ρ' v w h hv hw => ?_⟩
-  · rw [hf, hf, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf, hf, map_sum]
     exact Finset.sum_congr rfl fun τ _ => diagForm_symm _ _ _ _
   · obtain ⟨τ, hτ⟩ : ∃ τ, e τ v ≠ 0 := by
       by_contra! h
@@ -236,11 +240,6 @@ def IsLieMetric (t : SAB H X) (f : Z ⟶ X) (R : AnRead p σ D)
       R.SmoothOn (ptsIn p σ V.1) (fun y => (g y).im) ∧
       ∀ y (hy : y ∈ ptsIn p σ V.1), g y = h y (valAt f v hy) (valAt f w hy)
 
-theorem IsLieMetric.of_anRead {f : Z ⟶ X} {R : AnRead p σ D} {h} (hh : IsLieMetric t f R h) (R' : AnRead p σ D) :
-    IsLieMetric t f R' h :=
-  ⟨hh.1, fun V v w => (hh.2 V v w).imp fun _ hg => ⟨(AnRead.smoothOn_iff R R' (isOpen_ptsIn _)).1 hg.1,
-    (AnRead.smoothOn_iff R R' (isOpen_ptsIn _)).1 hg.2.1, hg.2.2⟩⟩
-
 theorem smoothOn_dim_zero (hD : D = 0) (R : AnRead p σ D) (T : Set (CxPts p σ)) (g : CxPts p σ → ℝ) :
     R.SmoothOn T g := fun i => by
   subst hD
@@ -252,8 +251,5 @@ theorem isLieMetric_dim_zero (hD : D = 0) (f : Z ⟶ X) (R : AnRead p σ D)
   classical
   exact ⟨hh, fun V v w => ⟨fun y => if hy : y ∈ ptsIn p σ V.1 then h y (valAt f v hy) (valAt f w hy) else 0,
     smoothOn_dim_zero hD R _ _, smoothOn_dim_zero hD R _ _, fun y hy => dif_pos hy⟩⟩
-
-example (f : Z ⟶ X) (R : AnRead p σ 0) : ∃ h, IsLieMetric t f R h :=
-  ⟨_, isLieMetric_dim_zero rfl f R fun y => (exists_isBlockMetric t (y.1 ≫ f)).choose_spec⟩
 
 end GlobalTheory.LieMet

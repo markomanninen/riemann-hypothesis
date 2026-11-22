@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSplitIdempotentsOfRelTraceOneModTwo
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSplitIdempotentsOfRelTraceOneModTwo
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open scoped TensorProduct Matrix
@@ -44,16 +48,16 @@ theorem idem_tensor {F A E K : Type} [Field F] [CommRing A] [Algebra F A] [CommR
   have h1 : e = j (φ u) * k a - j (φ u) * j (φ r) := by
     rw [he, hjk, hjk, map_neg, map_mul, map_neg, map_mul, map_one]; ring
   have h2 : c e = j (φ u) * k b - j (φ u) * j (φ r) := by
-    rw [he, map_add, hc1, hca, hjk, hjk, map_neg, map_mul, map_neg, map_mul, map_one]; ring
+    rw [he, map_add (f := _), hc1, hca, hjk, hjk, map_neg, map_mul, map_neg, map_mul, map_one]; ring
   rw [h2, h1]
   refine idem_alg (j (φ 1)) _ _ _ _ ?_ ?_ ?_
   · rw [← map_mul, ← map_mul, one_mul]
   · have : φ r * φ r - algebraMap F A t * φ r + algebraMap F A n * φ 1 = 0 := by
-      rw [← hφ, ← hφ, ← map_mul, ← map_sub, ← map_add, mul_one, hr, map_zero]
+      rw [← hφ, ← hφ, ← map_mul, ← map_sub, ← map_add (f := _), mul_one, hr, map_zero]
     have h := congrArg j this
     rwa [map_add, map_sub, map_mul, map_mul, map_mul, hF, hF, ht, hn, map_add, map_mul, map_zero] at h
   · have : algebraMap F A t * φ u - 2 * (φ u * φ r) = φ 1 := by
-      rw [two_mul, ← hφ, ← map_mul, ← map_add, ← map_sub, ← hu]; congr 1; ring
+      rw [two_mul, ← hφ, ← map_mul, ← map_add (f := _), ← map_sub, ← hu]; congr 1; ring
     have h := congrArg j this
     rwa [map_sub, map_mul, map_mul, map_mul, map_ofNat, hF, ht, map_add] at h
 
@@ -90,8 +94,9 @@ theorem exists_int (D : D7) (x : 𝓞 D.host.E) (hx : star (x : D.host.E) = x) :
     ∃ t : 𝓞 D.host.F, algebraMap (𝓞 D.host.F) (𝓞 D.host.E) t = x ∧
       algebraMap D.host.F D.host.E (t : D.host.F) = x := by
   obtain ⟨t, ht⟩ := exists_of_star_eq D hx
+  have hxint : IsIntegral ℤ (x : D.host.E) := x.2
   have hi : IsIntegral ℤ t :=
-    (isIntegral_algebraMap_iff (algebraMap D.host.F D.host.E).injective).1 (ht ▸ x.2)
+    (isIntegral_algebraMap_iff).1 (ht ▸ hxint)
   exact ⟨⟨t, hi⟩, RingOfIntegers.ext ht, ht⟩
 
 theorem exists_splitAt : ∀ (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)), GlobalTheory.UnRep.SplitPl (GlobalTheory.Member.cF D) v → ∃ e : Formalism.L2.Theta.AE D, GlobalTheory.IdemModTwo.SplitAt D v e := by

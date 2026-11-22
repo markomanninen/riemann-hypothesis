@@ -1,29 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalComponentsNontrivialAdelicCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FourierInversionHaarSymmForm
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsUniqueNormed
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralCompContinuousLinearEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalComponentsNontrivialAdelicCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FourierInversionHaarSymmForm
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralCompContinuousLinearEquiv
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx
 open scoped TensorProduct NNReal ENNReal
 
 namespace GlobalTheory.GaugeEx.SdInf
-
-theorem selfDual_map {V W : Type} [AddCommGroup V] [TopologicalSpace V] [IsTopologicalAddGroup V]
-    [MeasurableSpace V] [BorelSpace V] [AddCommGroup W] [TopologicalSpace W] [IsTopologicalAddGroup W]
-    [MeasurableSpace W] [BorelSpace W] (e : V ≃+ W) (he : Continuous e) (he' : Continuous e.symm)
-    {μ : Measure V} {χ : V → V → ℂ} {χ' : W → W → ℂ} (h : ∀ x y, χ' (e x) (e y) = χ x y)
-    (hμ : SelfDual μ χ) : SelfDual (μ.map e) χ' := by
-  haveI := hμ.1
-  let T : V ≃ₜ W := { e.toEquiv with continuous_toFun := he, continuous_invFun := he' }
-  have hm : MeasurableEmbedding e := T.measurableEmbedding
-  refine ⟨e.isAddHaarMeasure_map μ he he', fun Φ hΦ hsup hI z => ?_⟩
-  obtain ⟨z, rfl⟩ := e.surjective z
-  rw [hm.integrable_map_iff] at hI
-  simp only [hm.integral_map, Function.comp_def, h] at hI ⊢
-  rw [← map_neg]
-  exact hμ.2 (fun x => Φ (e x)) (hΦ.comp he) (hsup.comp_homeomorph T) hI z
 
 theorem existsUnique_of_equiv {V W : Type} [AddCommGroup V] [TopologicalSpace V] [IsTopologicalAddGroup V]
     [MeasurableSpace V] [BorelSpace V] [NormedAddCommGroup W] [NormedSpace ℝ W] [FiniteDimensional ℝ W]
@@ -90,7 +78,7 @@ theorem trace_nondeg [Algebra.IsSeparable F E] (z : R ⊗[F] E)
     intro k z
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy, add_mul]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy, add_mul]
     | tmul a e =>
       rw [Algebra.TensorProduct.tmul_mul_tmul, trace_tmul, Algebra.TensorProduct.basis_repr_tmul]
       simp [b', LinearMap.BilinForm.dualBasis_repr_apply, Algebra.traceForm_apply]
@@ -103,7 +91,7 @@ omit [FiniteDimensional F E] in
 theorem sigR_sigR (hσ : ∀ x, σ (σ x) = x) (z : R ⊗[F] E) : sigR R σ (sigR R σ z) = z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a e =>
     show a ⊗ₜ[F] σ (σ e) = _
     rw [hσ]
@@ -112,7 +100,7 @@ theorem trace_sigR (z : R ⊗[F] E) :
     Algebra.trace R (R ⊗[F] E) (sigR R σ z) = Algebra.trace R (R ⊗[F] E) z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a e =>
     show Algebra.trace R (R ⊗[F] E) (a ⊗ₜ[F] σ e) = _
     rw [trace_tmul, trace_tmul]
@@ -125,7 +113,7 @@ variable {M : ℕ} (J : Matrix (Fin M) (Fin M) E)
 omit [FiniteDimensional F E] in
 theorem BR_add (X X' Y : Fin 1 → Fin M → R ⊗[F] E) :
     BR R σ J (X + X') Y = BR R σ J X Y + BR R σ J X' Y := by
-  simp only [BR, hR, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [BR, hR, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 omit [FiniteDimensional F E] in
 theorem BR_smul (t : R) (X Y : Fin 1 → Fin M → R ⊗[F] E) :
@@ -138,7 +126,8 @@ theorem BR_symm (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) (X Y : Fin 1 �
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [← trace_sigR R σ]
   congr 1
-  simp only [hR, Formalism.UG.hform, map_sum, map_mul, sigR_sigR R σ hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR, Formalism.UG.hform, map_sum, map_mul, sigR_sigR R σ hσ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   have : sigR R σ (JR R J j i) = JR R J i j := by
@@ -197,12 +186,12 @@ theorem existsUnique_selfDual_inf : ∀ (F E : Type) [Field F] [NumberField F] [
   have hpc : Continuous (psiInf F ψ) := hψ.1.comp (continuous_id.prodMk continuous_const)
   obtain ⟨L₀, hL₀c, hL₀a, hL₀⟩ := exists_log_char (fun u => psiInf F ψ (a.symm u)) (hpc.comp ha')
     (fun u => hψ.2.1 _) (fun u v => by
-      simp only [psiInf, map_add, ← AddChar.map_add_eq_mul]
+      simp only [psiInf, map_add (f := _), ← AddChar.map_add_eq_mul]
       congr 1
       exact Prod.ext rfl (add_zero _).symm)
   let L : Ainf F → ℝ := fun x => L₀ (a x)
   have hLc : Continuous L := hL₀c.comp ha
-  have hLa : ∀ x y, L (x + y) = L x + L y := fun x y => by simp only [L, map_add, hL₀a]
+  have hLa : ∀ x y, L (x + y) = L x + L y := fun x y => by simp only [L, map_add (f := _), hL₀a]
   have hL : ∀ x, psiInf F ψ x = Complex.exp (2 * Real.pi * Complex.I * ((L x : ℝ) : ℂ)) :=
     fun x => by simpa using hL₀ (a x)
   have hLn : ∀ x, (∀ y, L (x * y) = 0) → x = 0 := fun x h => hnd x fun y => by simp [hL, h]

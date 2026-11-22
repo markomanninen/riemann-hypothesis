@@ -1,6 +1,10 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.UncutHalf
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFundamentalDomainRangeProdMap
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.UncutHalf
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFundamentalDomainRangeProdMap
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.SHenCutPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.SHenCutPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.StrictHenselization
 theorem etale_strict_henselization_cohomology_stalk_in_local_homotopy_assembly : LateralTheory.KummerTheory.StrictHenselization := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OrdLeQS
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OrdLeQS
+
+@[expose] public section
 
 theorem UpperTheory.Ram.ord_le_totient_QS :
     ∀ {φ : Formalism.HC.Frame} (H : Formalism.HC.HostAx φ), φ.ord ≤ H.QS.totient ∧ 2 * φ.ord ≤ H.QS := by

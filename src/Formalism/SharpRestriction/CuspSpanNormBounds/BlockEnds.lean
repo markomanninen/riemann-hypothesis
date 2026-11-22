@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def perpS (U : Submodule E S.V) : Submodule E S.V where
   carrier := {y | ∀ x ∈ U, S.hT x y = 0}
   add_mem' := by
     intro a b ha hb x hx
-    simp [map_add, ha x hx, hb x hx]
+    simp [map_add (f := _), ha x hx, hb x hx]
   zero_mem' := by intro x _; simp
   smul_mem' := by
     intro c a ha x hx
@@ -82,7 +86,7 @@ def Relevant (K : Type) [Field K] [Algebra K E] {T' : E} (F : FlagG S r T) (F' :
 
 def xv (S : HSpace E) (x v : S.V) : S.V →ₗ[E] S.V where
   toFun y := brS S y v • x - brS S y x • v
-  map_add' y y' := by simp only [brS, map_add, add_smul]; abel
+  map_add' y y' := by simp only [brS, map_add (f := _), add_smul]; abel
   map_smul' c y := by simp [brS, map_smul, smul_sub, mul_smul]
 
 def blockEnds {T' : E} (F : FlagG S r T) (F' : FlagG S r T') (j : ℕ) : Finset ℕ := by

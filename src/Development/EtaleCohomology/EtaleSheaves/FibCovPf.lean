@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LineHighPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LineHighPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC

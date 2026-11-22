@@ -1,14 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsAffineHomOfIsPullbackSpecMap
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPullSecSval
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalSecComb
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpFOfExpT
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsExpansionSectionLineBundlePowerStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsAffineHomOfIsPullbackSpecMap
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPullSecSval
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalSecComb
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpFOfExpT
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsExpansionSectionLineBundlePowerStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -35,7 +40,8 @@ theorem gs_comb (U : X.Opens) (a : Fin n → Γ(X, U)) {Z : Scheme.{0}} (r : Z �
     refine congrArg (· * _) ?_
     exact (gs_res r z (U := q ⁻¹ᵁ ⊤) le_top h ((q.app ⊤).hom (cst (b i)))).trans (gs_pull r q z ⊤ trivial _)
   rw [← Finset.sum_congr rfl fun i _ => e i]
-  simp only [comb, gs_eq r z _ h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [comb, gs_eq r z _ h, map_sum]
 
 variable (H : IsPullback π q p (Spec.map (CommRingCat.ofHom (algebraMap V W))))
 include H

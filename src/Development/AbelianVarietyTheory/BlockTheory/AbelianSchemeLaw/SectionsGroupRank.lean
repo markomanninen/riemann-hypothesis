@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -77,7 +81,7 @@ theorem map_liftFun {W W' : (T ⊗ A).left.Opens} (e : W' ≤ W) (r : Γ(T.left,
 instance : Zero (Secs A L a T) := ⟨⟨fun _ => 0, fun _ _ => by simp⟩⟩
 instance : Add (Secs A L a T) :=
   ⟨fun s t => ⟨fun j => s.f j + t.f j, fun i j => by
-    rw [map_add, map_add, s.compat i j, t.compat i j, mul_add]⟩⟩
+    rw [map_add (f := _), map_add (f := _), s.compat i j, t.compat i j, mul_add]⟩⟩
 instance : Neg (Secs A L a T) :=
   ⟨fun s => ⟨fun j => - s.f j, fun i j => by rw [map_neg, map_neg, s.compat i j, mul_neg]⟩⟩
 instance : SMul Γ(T.left, ⊤) (Secs A L a T) :=
@@ -86,7 +90,6 @@ instance : SMul Γ(T.left, ⊤) (Secs A L a T) :=
 
 theorem zero_f (j) : LB.Sec.f (0 : Secs A L a T) j = 0 := rfl
 theorem add_f (s t : Secs A L a T) (j) : LB.Sec.f (s + t) j = LB.Sec.f s j + LB.Sec.f t j := rfl
-theorem neg_f (s : Secs A L a T) (j) : LB.Sec.f (-s) j = - LB.Sec.f s j := rfl
 theorem smul_f (r : Γ(T.left, ⊤)) (s : Secs A L a T) (j) :
     LB.Sec.f (r • s) j = liftFun A _ r * LB.Sec.f s j := rfl
 
@@ -106,7 +109,7 @@ instance : Module Γ(T.left, ⊤) (Secs A L a T) where
   smul_zero r := Secs.ext fun j => mul_zero _
   smul_add r s t := Secs.ext fun j => mul_add _ _ _
   add_smul r r' s := Secs.ext fun j => by
-    rw [add_f, smul_f, smul_f, smul_f, liftFun_eq, liftFun_eq, liftFun_eq, map_add, add_mul]
+    rw [add_f, smul_f, smul_f, smul_f, liftFun_eq, liftFun_eq, liftFun_eq, map_add (f := _), add_mul]
   zero_smul s := Secs.ext fun j => by rw [smul_f, liftFun_eq, map_zero, zero_mul, zero_f]
 
 theorem appLE_liftFun {T' : Over S} (H : T' ⊗ A ⟶ T ⊗ A) (u : T' ⟶ T)
@@ -135,9 +138,6 @@ def pullSec {T' : Over S} (u : T' ⟶ T) (s : Secs A L a T) : Secs A L a T' wher
     refine (map_ev _ _ _ _).trans ((ev_map _ e _ _ _).symm.trans (h.trans ?_))
     exact congrArg₂ (· * ·) hg ((ev_map _ e _ _ _).trans (map_ev _ _ _ _).symm)
 
-theorem isPullSec_pullSec {T' : Over S} (u : T' ⟶ T) (s : Secs A L a T) :
-    IsPullSec A L a (u ▷ A) (whiskerRight_snd _ _) s (pullSec u s) := fun _ => rfl
-
 theorem pullSec_zero {T' : Over S} (u : T' ⟶ T) : pullSec u (0 : Secs A L a T) = 0 :=
   Secs.ext fun _ => map_zero _
 
@@ -157,7 +157,7 @@ theorem twist_comb {R R' C : Type} [CommRing R] [CommRing R'] [CommRing C] (F : 
     (hr : F r' = G r) :
     F 0 = c * G 0 ∧ F (x' + y') = c * G (x + y) ∧ F (r' * x') = c * G (r * x) := by
   refine ⟨by simp, ?_, ?_⟩
-  · rw [map_add, map_add, hx, hy, mul_add]
+  · rw [map_add (f := _), map_add (f := _), hx, hy, mul_add]
   · rw [map_mul, map_mul, hx, hr, mul_left_comm]
 
 theorem isActOf_comb (θ : ThetaGrp A L a T) {s t s' t' : Secs A L a T} (hs : IsActOf A L a θ s s')
@@ -206,25 +206,5 @@ def VVWeight (P : PolAV S) (N m : ℕ) {T : Over S} (_hodd : Odd N)
     (_hinv : IsUnit (N : Γ(T.left, ⊤))) {I : Type} (h : I → (T ⟶ P.A)) (_hh : ∀ i, h i ^ N = 1)
     (χ : I → Γ(T.left, ⊤)ˣ) : Submodule Γ(T.left, ⊤) (Secs P.A P.L N T) :=
   VV P N m T ⊓ eigenSecs P N h χ
-
-abbrev de (P : PolAV S) (T : Over S) : Type := Module.Dual Γ(T.left, ⊤) (Secs P.A P.L 1 T)
-
-def VVLocallyFree (P : PolAV S) (N m n : ℕ) (T : Over S) : Prop :=
-  ∀ p : T.left, ∃ V : T.left.Opens, p ∈ V ∧ ∃ b : Fin n → Secs P.A P.L N (overRes V),
-    ∀ W : (overRes V).left.Opens,
-      ∃ β : Module.Basis (Fin n) Γ((overRes W).left, ⊤) (VV P N m (overRes W)),
-        ∀ l, (β l : Secs P.A P.L N (overRes W)) = pullSec (overResι W) (b l)
-
-def VVRank (S : Scheme.{0}) : Prop :=
-  ∀ (P : PolAV S) (m : ℕ) (ze : Γ(S, ⊤)ˣ), Odd m → IsUnit (m : Γ(S, ⊤)) →
-    Nonempty (Level P (m ^ 2) ze) →
-    ∀ T : Over S, VVLocallyFree P (m ^ 2) m ((m ^ 2) ^ P.g) T
-
-example (P : PolAV S) (N m : ℕ) {T : Over S} (ho : Odd N) (hi : IsUnit (N : Γ(T.left, ⊤))) :
-    VVWeight P N m ho hi (I := Empty) Empty.elim (fun i => i.elim) Empty.elim = VV P N m T :=
-  inf_eq_left.2 fun _ _ _ i => i.elim
-
-example (P : PolAV S) (N m : ℕ) {T : Over S} (s : Secs P.A P.L N T) (hs : InVV P N m s) :
-    s ∈ VV P N m T := Submodule.subset_span hs
 
 end GlobalTheory.IndefiniteRowSideFullHecke.SectionsGroupRank

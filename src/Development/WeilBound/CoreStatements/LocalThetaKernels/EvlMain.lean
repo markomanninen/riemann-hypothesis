@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlLoc
-import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlDual
-import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlBridge
+module
+
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlLoc
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlDual
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem evVac : PositivityTheory.ThK.EvVac := by
   refine core hc hn h1 hS hne (lagr M v Cy) l hl (fun w => ?_) h0 φ hφ
   obtain ⟨u, rfl⟩ := exists_locCo M.co w
   obtain ⟨z, z', e⟩ := space_split hX.lat hW.lat hsp u
-  refine ⟨_, ⟨z, rfl⟩, locCo M.co v (z' * Cxᵀ), by rw [e, map_add], ?_⟩
+  refine ⟨_, ⟨z, rfl⟩, locCo M.co v (z' * Cxᵀ), by rw [e, map_add (f := _)], ?_⟩
   by_cases hz : z' * Cxᵀ ∈ latAtV X W v
   · exact Or.inl ⟨_, ((acts_iff M.co B.ψ (hat _ hz) hS).1 (hvac _ hz)).symm⟩
   · right

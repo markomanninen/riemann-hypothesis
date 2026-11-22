@@ -1,27 +1,236 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsHorizontalGeneratorOfCharts
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactification
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InjectiveOfSmulMemRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateKernelAtPointStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PropZStatementStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoverStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectionStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateLocalOfKernelAtPointStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericStatementOfCanonicalExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComparisonStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistenceOfComparisonStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftingOfComparisonStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValueStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointwiseOfTateValueBoundStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConnectednessStatementHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GluingOfConnectednessStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PackingStatementHoldsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsHorizontalGeneratorOfCharts
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactification
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InjectiveOfSmulMemRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HodgeTateLatticePointFinrankTateModule
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgeTateKernel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateSandwichOfPrismaticDieudonne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilCharSurjectiveAndMapRangeAl
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCobOneOfIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateInclusionRaynaudExtensionAlgebraicPoint
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicCompleteOfFiniteBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicCompleteDualNumber
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LePreimageOfClosedPoint
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicCompleteOfPowLeOfPowLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecialFibreNotInClosureOfValuationRing
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RigidifiedOfChart
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsIntegralOfSmoothFieldOfConnectedSpace
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ValuationRingHenselianAndSmoothPointsLift
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.WeilRos
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowEqScaleAndExistsUniqueTorsion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsPullbackBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentPhiSqZeroNaturality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentPhiSmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SqZeroPointEqOfCotangentFormEqStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteProjectiveCotangentGlobalSectionsGroupScheStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCotangentFrameSmoothGroupSchemeStatement
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.NonemptyTorusExtensionOfIsGt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusExtensionPointsDivisible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupOmegaFiniteFreeAndPSqMemDlogSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTatePairingSandwich
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegrallyClosedInOfIntegers
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IotaScalarOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaFreeFiniteBijectiveOfSmooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTorusLeLieSpan
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StAvDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CotangentBidualToTangentFunctionInjective
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GeometricallyConnectedOfIsPullbackOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NonemptyPadicIntRingHomOfIsAdicComplete
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomProperTrivialLocal
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ScholzeWeinsteinB
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EigenvectorLieDegree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.SpecialFibreUnits
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsEqnIffGeneratesAtInv
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobalFunctionsDvrOpen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RegularOfRegularAtCodimOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReducedSpecialFibreGlobalField
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.MemRangeOfIsAlgebraicRatFun
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliSchemeLevelMapsHeckePointsStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompactifiedModuliPartOneStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsValuationSubringComplexComapValEq
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LevelOfSplitAndLevelCoeffExist
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComponentGeometricallyIrreducible
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalSystemBasesNonempty
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelChangeMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartStatementHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectionStatementHolds
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsIsComplEigenSubOfValuationRing
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.DetCondTensorDefinite
+public import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LineModel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalSystemModelMap
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsNatDiagIffIsDiag
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsDiscreteValuationRingAndFiniteResidueFieldValu
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.BcField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFrameBaseChangeRingHom
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIsoOfIsProperOfExistsUniqueFieldPointOfIsInteg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNormalisedGraphClosure
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLiftOfRangeSubset
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GenericPartDenseProOpen
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoOfDensePartOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsJoinNormalProjectiveModels
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFrameCover
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntegralFlagCellOfValuedFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothBaseAndNormalCoordinateRing
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAffineLieBasisBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CocycleTrivialOnProjectiveCover
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineEigenframeNearImage
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LetterConjugation
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjOverCompFinite
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPluckerFlagEmbeddingOfProjectiveBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagCellsGlueLocallyClosedPluckerProductStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompactNormalNoetherianOfFlagCellCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PreimageIUnionOpensEqRangeFlagCellsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSpanOfPluckerProportional
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PluckerVectorBlockTriangularFrameChange
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PreModelChartFrame
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIntegralPivotDecomposition
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AffineOpenChartCompStructureEqSpMap
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyAdaptedOfIntStep
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyClosureOfEmbedding
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GrNormPush
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFlagFrame
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProperToroidalModelStructureMap
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DividesOfNormBoundedPoints
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSectionOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIdealSheafAwayFromP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsTanBasisOfUniqueCombination
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmpleOnAbelianBase
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TangentBasisOfSplitTorsion
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrameCombinationCoeffUnique
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GradedLineBundleExists
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTangentPresentationPrime
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationSubringDedekindOpenImmersion
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocallyOfFiniteTypeKer
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsCommVOfLe
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionSectionCoordsThetaTimesRoots
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsWithoutCohomology
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.WeilIsGrpPullbackIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DvrArcExtensionMonoBase
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSpecialisationWithThetaPoint
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SysExOfPol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MapSmulOfIsHausdorff
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtMapDualBCLeft
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentBasisFrameMapImports
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateMapPowEqOneStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateMapOpenImmersionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateSchemeFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateSchemeFlatStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateDifferenceSectionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateGluedSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PropertyOfCodimOneLocalUnits
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralPointPullbackComparison
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentFrameBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatSectionFrameInvariance
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsCombAtGMulVec
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueFrameChangeByMatrices
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstLengthArchSectionEqSmulOfSameWeightStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadsZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsModelRuleSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFlatWeightRuleReadsNonvanishingDetSectionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantLengthOfReadingHorizontalSectionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RuleSectionNowhereVanishingReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDvrOverHeightOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntFrExtension
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModuliPointIntegralFrameAfterFiniteExtension
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GrNormPosOfBasis
+public import Formalism.LocalToGlobal.ProjectiveLattices.SatLeaves
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ChartFlagBaseHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralPointModelOverDvr
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ExistsNotIntegralLie
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.SemiAbelianDvrExtensionsIsoCompatible
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GenericPointMemModuliOfMeetsAbelianLocus
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHTFrameCpAndNonempty
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsUniformisedChartAfterValuationRingExt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsCdvrFiniteExtension
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralFramedPointBaseChangeStable
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SupCLeISupGeneric
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.VVAlgebraMapNonneg
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ArcFamilyFourthConditionInvertiblePushforward
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteGaloisInertiaLiftsAbsoluteInertiaRat
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteSubextensionPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteDvrExtension
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeC
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PluckerMinorsProportional
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundStatementHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralModelPAdicOverInclusion
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAbsoluteValueOfIsDiscreteValuationRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecialFibreConnectedOfProper
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.FormalAlgebraisation
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIntegralPointThrough
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIsMaximalTensorProductOfIsLocalHom
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.InjectiveAlgebraMapOfDvrOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEmbeddingPadicComplexInt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEighthPowerPrincipalSiegelOfDenseStatement
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RangeSubsetAbLocusOfIsProper
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProjOverLocallyOfFiniteTypeStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsIntegralCoeffZeroMulOfAevalInv
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.SiegelPullbackTransfer.ExistsGenTransfer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPointFactorsOpenImmersion
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteDvrIntegralClosureFinite
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -80,7 +289,8 @@ theorem exists_unit (hG : GenSt) (hL : Laws U x) (s : ArchSec U x Z (flatWt Dw �
       rw [pairDet, pairDet, RingHom.map_det]
       congr 1
       ext i j
-      simp [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum]
   haveI : IsOpenImmersion (spMap ρ) := IsOpenImmersion.of_isLocalization q
   obtain ⟨f, hf⟩ := hG E H Dw l l' Xo Xo' c c' W Y r ν hle r₀ U x hL Z τ s la p Xw Fact.out hc (Localization.Away q)
     (spMap ρ ≫ ξ) (ρ.comp β) inferInstance (by rw [Category.assoc, hβ, spMap_spMap]) (isUnit_of_mul_isUnit_left hu')
@@ -107,69 +317,6 @@ variable {l l' : Level H} {Xo : Moduli Dw l} {Xo' : Moduli Dw l'} {c : Coeff l} 
   {hle : c.F ≤ c'.F} {r₀ : ℕ} {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r₀} {x : ℝ} {Z : Comp Xo c} {τ : Psi H}
   {la : HeightOneSpectrum (𝓞 c.F)} {p : ℕ} [Fact p.Prime] {Xw : Y.X.Opens} [StarRing (𝓞 E)]
 
-variable (Y r ν) in
-
-def kapSet (τ : E →+* ℂ) (f : Rul Xo c) (n : ℕ) {N : ℕ} (a : Fin N → Dw.La) (T S : Ind Dw τ → Fin N → c'.V W)
-    (yb : Sp 𝓞_ℂ_[p] ⟶ Y.X) : Set ℂ_[p] :=
-  {κ | ∃ (_ : Algebra c.F ℂ_[p]) (yy : Sp ℂ_[p] ⟶ Xo'.XF c') (P : PtP E p) (π : P.G.left ⟶ Y.t.G.left)
-    (ψ : P.A.A.left ⟶ Y.oF.t.G.left), PtOn Y yb yy P π ψ ∧ KapSpec Y r ν τ f n a T S yb yy P π ψ κ}
-
-theorem chartAt (hC : ChartSt) (hP : ProjSt) (hT : HTLocSt) (hG : GenSt) (hs : ∀ a : 𝓞 E, star a = H.bar a)
-    (hL : Laws U x) (s : ArchSec U x Z (flatWt Dw τ)) (hc : IsCover Y r hle Z la p Xw) {n : ℕ} (hn : l'.A = p ^ n)
-    {N : ℕ} (a : Fin N → Dw.La) (T S : Ind Dw τ.1 → Fin N → c'.V W)
-    (hK : ∀ yb, IsTest p Xw yb → (kapSet Y r ν τ.1 s.sig n a T S yb).Nonempty) {z : Y.X}
-    (hz : z ∈ closure (Xw : Set Y.X)) : ChartAt p n Xw (kapSet Y r ν τ.1 s.sig n a T S) z := by
-  obtain ⟨R₀, _, _, _, ξ₀, g, e₀, hξ₀, ⟨z₀, rfl⟩, he₀⟩ := hC E H Dw l' Xo' c' W Y p Fact.out hc.2.2.1 z
-  obtain ⟨_, ⟨z₁, rfl⟩, hz₁⟩ := mem_closure_iff.1 hz _ ξ₀.isOpenEmbedding.isOpen_range ⟨z₀, rfl⟩
-  have hb₀ := bot_mem ξ₀ hz₁
-  let β₀ : c'.V W →+* R₀ := (Spec.preimage (ξ₀ ≫ Y.s)).hom
-  have hβ₀ : ξ₀ ≫ Y.s = spMap β₀ := (Spec.map_preimage _).symm
-  obtain ⟨V₁, hV₁⟩ := hP E H l' c' W Y.X Y.t R₀ ξ₀ β₀ g e₀ he₀ τ.1
-  obtain ⟨V₂, hV₂⟩ := hP E H l' c' W Y.X Y.t R₀ ξ₀ β₀ g e₀ he₀ (conjEmb τ.1)
-  obtain ⟨f, h, hf, hh⟩ := hT E H Dw l' Xo' c' W Y p n hs hc.2.2.1 hn R₀ ξ₀ (hc.2.2.2.2.1 hb₀) g e₀ he₀ N a
-    (PrimeSpectrum.asIdeal z₀) (PrimeSpectrum.isPrime z₀)
-  have h0 : f ≠ 0 := by rintro rfl; exact hf (Ideal.zero_mem _)
-  have hle' : Submonoid.powers f ≤ nonZeroDivisors R₀ := powers_le_nonZeroDivisors_of_noZeroDivisors h0
-  haveI : IsDomain (Localization.Away f) := IsLocalization.isDomain_localization hle'
-  haveI : IsIntegrallyClosed (Localization.Away f) := isIntegrallyClosed_of_isLocalization _ _ hle'
-  have hinj : Function.Injective (algebraMap R₀ (Localization.Away f)) := IsLocalization.injective _ hle'
-  let ρ := algebraMap R₀ (Localization.Away f)
-  haveI : IsOpenImmersion (spMap ρ) := IsOpenImmersion.of_isLocalization f
-  let U₁ : Fin g → Fin g → Localization.Away f := fun k b => ρ (V₁ k b)
-  let U₂ : Fin g → Fin g → Localization.Away f := fun k b => ρ (V₂ k b)
-  have hU₁ : EigFam Y.t (spMap ρ ≫ ξ₀) ((ρ.comp β₀).comp (embV c' W τ.1)) (bcV Y.t ρ e₀) U₁ := fun S _ φ => by
-    rw [sp_sp, bcV_bcV]; exact hV₁ S (φ.comp ρ)
-  have hU₂ : EigFam Y.t (spMap ρ ≫ ξ₀) ((ρ.comp β₀).comp (embV c' W (conjEmb τ.1))) (bcV Y.t ρ e₀) U₂ := fun S _ φ => by
-    rw [sp_sp, bcV_bcV]; exact hV₂ S (φ.comp ρ)
-  have hβ : (spMap ρ ≫ ξ₀) ≫ Y.s = spMap (ρ.comp β₀) := by rw [Category.assoc, hβ₀, spMap_spMap]
-  have he := isTanBasis_bc he₀ ρ
-  let J : Type := Equiv.Perm (Ind Dw τ.1) × (Fin (Dw.mult τ.1) → Fin g) × (Fin (Dw.mult (conjEmb τ.1)) → Fin g)
-  choose u hu using fun j : J => exists_unit (ν := ν) hG hL s hc hβ (by rw [bot_map hinj]; exact hb₀) he hU₁ hU₂
-    j.2.1 j.2.2 (covec (ρ.comp β₀) T h (j.1 ∘ Sum.inl)) (covec (ρ.comp β₀) S h (j.1 ∘ Sum.inr)) (Equiv.Perm.sign j.1)
-  refine ⟨Localization.Away f, inferInstance, spMap ρ ≫ ξ₀, J, inferInstance, _, u, inferInstance, ?_, fun φ ht => ?_⟩
-  · obtain ⟨z', hz'⟩ : z₀ ∈ Set.range (PrimeSpectrum.comap ρ) := by
-      rw [PrimeSpectrum.localization_away_comap_range (Localization.Away f) f]; exact hf
-    exact ⟨z', (Scheme.Hom.comp_apply _ _ _).trans (congrArg ξ₀ hz')⟩
-  have hA : ∀ {yy P π ψ}, PtOn Y (spMap φ ≫ spMap ρ ≫ ξ₀) yy P π ψ →
-      HTApprox Y n yy P π ψ a (bcV Y.t φ (bcV Y.t ρ e₀)) fun m k => φ (h m k) := fun {yy P π ψ} hPt => by
-    rw [bcV_bcV]
-    exact hh φ yy P π ψ (by rw [← sp_sp]; exact hPt)
-  have hφ : (spMap φ ≫ spMap ρ ≫ ξ₀) ≫ Y.s = spMap (φ.comp (ρ.comp β₀)) := by rw [Category.assoc, hβ, spMap_spMap]
-  constructor
-  · obtain ⟨κ, alg, yy, P, π, ψ, hPt, hκ⟩ := hK _ ht
-    obtain ⟨⟨σ, K₁, K₂, hj⟩, -⟩ := hκ _ hφ g _ _ _ _ (isTanBasis_bc he φ) (hU₁ _ φ) (hU₂ _ φ) (hA hPt)
-    refine ⟨(σ, K₁, K₂), ?_⟩
-    rw [map_mul, map_pairDet_covec, map_pairDet_covec]
-    exact hj
-  · rintro ⟨σ, K₁, K₂⟩ hj ψ hψ κ ⟨alg, yy, P, π, ψ', hPt, hκ⟩
-    obtain ⟨-, hv⟩ := hκ _ hφ g _ _ _ _ (isTanBasis_bc he φ) (hU₁ _ φ) (hU₂ _ φ) (hA hPt)
-    rw [map_mul, map_pairDet_covec, map_pairDet_covec] at hj
-    obtain ⟨fv, hfv, hu'⟩ := hu (σ, K₁, K₂) ℂ_[p] ψ yy (by rw [hψ, ← hPt.1, sp_sp])
-    have hψ' : ∀ b, ψ (algebraMap _ _ b) = (φ b : ℂ_[p]) := fun b => RingHom.congr_fun hψ b
-    simp only [hψ'] at hfv hu'
-    rw [hψ, ← bcV_bcV] at hfv
-    rw [hu', map_pairDet_covec, map_pairDet_covec]
-    exact hv σ K₁ K₂ hj fv hfv
 
 end Charts
 
@@ -180,127 +327,9 @@ variable {l l' : Level H} {Xo : Moduli Dw l} {Xo' : Moduli Dw l'} {c : Coeff l} 
   {hle : c.F ≤ c'.F} {r₀ : ℕ} {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r₀} {x : ℝ} {Z : Comp Xo c} {τ : Psi H}
   {la : HeightOneSpectrum (𝓞 c.F)} {p : ℕ} [Fact p.Prime] {Xw : Y.X.Opens}
 
-theorem evR_ne_zero [StarRing (𝓞 E)] [Algebra c.F ℂ_[p]] (s : ArchSec U x Z (flatWt Dw τ)) (hc : IsCover Y r hle Z la p Xw)
-    {yb yy} {P : PtP E p} {π ψ y} (ht : IsTest p Xw yb) (h : HTAt Y r ν yb yy P π ψ y) : evR Xo c s.sig y ≠ 0 := by
-  have hZ : LiesOn Z y := fun z => by
-    rw [h.2.2.1, Scheme.Hom.comp_apply]
-    refine hc.2.2.2.2.2.2.1 _ (ht.2 ⟨z, ?_⟩)
-    rw [h.1.1, Scheme.Hom.comp_apply]
-  have h1 : evR Xo c s.sig y * evR Xo c s.inv y = 1 := by
-    rw [← CompSplitPfB.cspB_evR_mul, s.mul_inv, evR_idem hZ h.2.1]
-  exact left_ne_zero_of_mul_eq_one h1
-
-theorem exists_norm (hCov : CoverSt) (hC : ChartSt) (hP : ProjSt) (hLat : LatSt) (hT : HTLocSt) (hG : GenSt) (hEx : ExSt)
-    (hLift : LiftSt) (hPt : PtSt) (hGl : GlueSt) (hL : Laws U x) (s : ArchSec U x Z (flatWt Dw τ))
-    (hp : (p : 𝓞 c.F) ∈ la.asIdeal) : ∃ ρ : ℝ, ∀ [Algebra c.F ℂ_[p]] (T : CDVR) (io : c.F →+* T.Fr) (e : ℕ)
-      (y₀ : IntFr Xo c T io), OverLa la T.V io e → algOn Z T io y₀ →
-      ∀ (k : letI := io.toAlgebra; T.Fr →ₐ[c.F] ℂ_[p]) (y : FrPt Xo c ℂ_[p]), IsHTFrameCp p y₀ k y →
-        evR Xo c s.sig y ≠ 0 ∧ ‖evR Xo c s.sig y‖ = ρ := by
-  letI := H.starRing
-  have hs : ∀ a : 𝓞 E, star a = H.bar a := fun _ => rfl
-  obtain ⟨n, hn⟩ := hPt E H Dw τ p hs
-  obtain ⟨l', Xo', c', W, Y, r, ν, hle, Xw, hA, hc⟩ := hCov E H Dw l Xo c hL.pos hL.lev hL.good hL.geo Z la p n Fact.out hp
-  obtain ⟨N, a, T, S, hTS⟩ := hLat E H Dw l' c' W p Fact.out hc.2.2.1 τ
-  have hk : ∀ [Algebra c.F ℂ_[p]] {yb yy} {P : PtP E p} {π ψ y}, IsTest p Xw yb → HTAt Y r ν yb yy P π ψ y →
-      ∃ κ ∈ kapSet Y r ν τ.1 s.sig n a T S yb, ‖κ‖ = ‖evR Xo c s.sig y‖ := fun {alg yb yy P π ψ y} ht h => by
-    obtain ⟨κ, h1, h2⟩ := hn l l' Xo Xo' c c' W Y r ν hle hc.1 hA N a T S hTS s.sig yb yy P π ψ y h (evR_ne_zero s hc ht h)
-    exact ⟨κ, ⟨alg, yy, P, π, ψ, h.1, h2⟩, h1⟩
-  have hK : ∀ yb, IsTest p Xw yb → (kapSet Y r ν τ.1 s.sig n a T S yb).Nonempty := fun yb ht => by
-    obtain ⟨alg, yy, y, P, π, ψ, h⟩ := hEx E H Dw l l' Xo Xo' c c' W Y r ν hle hL.pos hL.lev hL.good Z la p Xw hc yb ht
-    obtain ⟨κ, hκ, -⟩ := hk ht h
-    exact ⟨κ, hκ⟩
-  obtain ⟨ρ, hρ⟩ := hGl c'.F (c'.V W) p hc.2.2.2.1 Y.X Y.s Xw Y.normal Y.proj Y.flat hc.2.2.2.2.2.1 hc.2.2.2.2.2.2.2.1 n _
-    hK fun z hz => chartAt hC hP hT hG hs hL s hc hA a T S hK hz
-  refine ⟨ρ, fun T₀ io e y₀ ho hZ k y hy => ?_⟩
-  obtain ⟨yb, yy, ht, P, π, ψ, h⟩ := hLift E H Dw l l' Xo Xo' c c' W Y r ν hle Z la p Xw hc T₀ io e y₀ ho hZ k y hy
-  obtain ⟨κ, hκ, h1⟩ := hk ht h
-  exact ⟨evR_ne_zero s hc ht h, h1 ▸ hρ yb ht κ hκ⟩
-
 end Top
 
-theorem exists_prime_mem {K : Type} [Field K] [NumberField K] (la : HeightOneSpectrum (𝓞 K)) :
-    ∃ p : ℕ, p.Prime ∧ (p : 𝓞 K) ∈ la.asIdeal ∧ ∀ q : ℕ, q.Prime → (q : 𝓞 K) ∈ la.asIdeal → q = p := by
-  haveI := la.isPrime
-  haveI : Finite (𝓞 K ⧸ la.asIdeal) := Ideal.finiteQuotientOfFreeOfNeBot _ la.ne_bot
-  haveI : Nontrivial (𝓞 K ⧸ la.asIdeal) := Ideal.Quotient.nontrivial_iff.2 la.isPrime.ne_top
-  have hp : (ringChar (𝓞 K ⧸ la.asIdeal)).Prime := CharP.char_prime_of_ne_zero (𝓞 K ⧸ la.asIdeal) (CharP.ringChar_ne_zero_of_finite _)
-  refine ⟨_, hp, Ideal.Quotient.eq_zero_iff_mem.1 (by rw [map_natCast]; exact ringChar.Nat.cast_ringChar), fun q hq h => ?_⟩
-  have := Ideal.Quotient.eq_zero_iff_mem.2 h
-  rw [map_natCast, ringChar.spec] at this
-  exact ((Nat.prime_dvd_prime_iff_eq hp hq).1 this).symm
 
-open Module Formalism.BasicNotions GlobalTheory.IndefiniteRowSideFullHecke.SpecialFibreUnits in
-
-theorem model_of_steps (hCov : CoverSt) (hC : ChartSt) (hP : ProjSt) (hLat : LatSt) (hT : HTLocSt) (hG : GenSt) (hEx : ExSt)
-    (hLift : LiftSt) (hPt : PtSt) (hGl : GlueSt) (hPk : PackSt) :
-    ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H)
-    (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (x : ℝ), Laws U x →
-  ∀ (Z : Comp Xo c) (τ : Psi H) (s : ArchSec U x Z (flatWt Dw τ)) (la : HeightOneSpectrum (𝓞 c.F)),
-  ∃ (O : Type) (_ : CommRing O) (_ : IsDomain O) (_ : IsDiscreteValuationRing O)
-    (_ : IsAdicComplete (IsLocalRing.maximalIdeal O) O) (ϖ : O) (_ : Irreducible ϖ) (Zs : Scheme.{0})
-    (f : Zs ⟶ Spec (.of O)) (D : LB Zs),
-    IsIntegral Zs ∧ (∀ z : Zs, IsIntegrallyClosed (Zs.presheaf.stalk z)) ∧ IsProper f ∧ Flat f ∧ D.IsLB ∧
-    (∃ t : (D.pull (reducedSpecialι f)).Gen, t.IsGen) ∧
-    ∃ (sig : (D.pull (genericι f)).Gen) (κ : ℝ), sig.IsGen ∧
-      ∀ w ∈ htValOn Z la, ∃ (p : ℕ) (_ : Fact p.Prime) (R : Type) (_ : CommRing R) (_ : Algebra R ℂ_[p])
-        (φ : O →+* R), (Valued.v : Valuation ℂ_[p] NNReal).Integers R ∧ Function.Injective φ ∧ IsLocalHom φ ∧
-        ∃ (ybar : Spec (.of R) ⟶ Zs) (y : Spec (.of ℂ_[p]) ⟶ genericFibre f) (e : (D.pull ybar).Gen)
-          (cc : ℂ_[p]ˣ),
-          ybar ≫ f = Spec.map (CommRingCat.ofHom φ) ∧
-          y ≫ genericι f = Spec.map (CommRingCat.ofHom (algebraMap R ℂ_[p])) ≫ ybar ∧
-          e.IsGen ∧ GlobalTheory.IndefiniteRowSideFullHecke.SpecialFibreUnits.IsCoord f D sig ybar y e cc ∧
-          w s.sig = val_vw la p (Valued.v : Valuation ℂ_[p] NNReal) (cc : ℂ_[p]) ∧
-          val_vw la p (Valued.v : Valuation ℂ_[p] NNReal) (algebraMap R ℂ_[p] (φ ϖ)) = (κ : EReal) := by
-  intro E _ _ _ H Dw l Xo c r U x hL Z τ s la
-  obtain ⟨p, hp, hm, huniq⟩ := exists_prime_mem la
-  haveI := Fact.mk hp
-  obtain ⟨ρ, hρ⟩ := exists_norm hCov hC hP hLat hT hG hEx hLift hPt hGl hL s hm
-  have hw : ∀ w ∈ htValOn Z la, ∃ z : ℂ_[p], z ≠ 0 ∧ ‖z‖ = ρ ∧
-      w s.sig = val_vw la p (Valued.v : Valuation ℂ_[p] NNReal) z := by
-    rintro w ⟨T, io, e, y₀, ho, hZ, q, hq, alg, k, y, hy, rfl⟩
-    obtain rfl := huniq q hq.out (hy.mem ho)
-    exact ⟨_, (hρ T io e y₀ ho hZ k y hy).1, (hρ T io e y₀ ho hZ k y hy).2, rfl⟩
-  obtain ⟨z₀, hz₀, h₀⟩ : ∃ z₀ : ℂ_[p], z₀ ≠ 0 ∧ ∀ w ∈ htValOn Z la, ‖z₀‖ = ρ := by
-    by_cases h : (htValOn Z la).Nonempty
-    · obtain ⟨z, h1, h2, -⟩ := hw _ h.choose_spec
-      exact ⟨z, h1, fun _ _ => h2⟩
-    · exact ⟨1, one_ne_zero, fun w hw => absurd ⟨w, hw⟩ h⟩
-  obtain ⟨O, i1, i2, i3, i4, ϖ, hϖ, Zs, f, D, a1, a2, a3, a4, a5, a6, sig, hsig, φ, hφ, hloc, ybar, y, e, cc, b1, b2, b3, b4,
-    b5⟩ := hPk p z₀ hz₀
-  have hne : algebraMap 𝓞_ℂ_[p] ℂ_[p] (φ ϖ) ≠ 0 := fun h =>
-    hϖ.ne_zero (hφ (by rw [map_zero]; exact Subtype.ext h))
-  refine ⟨O, i1, i2, i3, i4, ϖ, hϖ, Zs, f, D, a1, a2, a3, a4, a5, a6, sig, _, hsig, fun w hw' => ⟨p, inferInstance, 𝓞_ℂ_[p],
-    inferInstance, inferInstance, φ, PadicComplexInt.integers p, hφ, hloc, ybar, y, e, cc, b1, b2, b3, b4, ?_,
-    val_vw_of_ne la p _ hne⟩⟩
-  obtain ⟨z, h1, h2, h3⟩ := hw w hw'
-  rw [h3, val_vw_of_ne la p _ h1, val_vw_of_ne la p _ cc.ne_zero, coe_valued p z, coe_valued p cc, b5, h₀ w hw', h2]
-
-open Module Formalism.BasicNotions GlobalTheory.IndefiniteRowSideFullHecke.SpecialFibreUnits in
-
-theorem exists_model : GlobalTheory.CovTop.Hypotheses2 → GlobalTheory.Published.CanonicalExtensionRankOne → GlobalTheory.Published.DeRhamCanonicalExtension →
-  GlobalTheory.Published.PrismaticDieudonneHodge →
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H)
-    (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (x : ℝ), Laws U x →
-  ∀ (Z : Comp Xo c) (τ : Psi H) (s : ArchSec U x Z (flatWt Dw τ)) (la : HeightOneSpectrum (𝓞 c.F)),
-  ∃ (O : Type) (_ : CommRing O) (_ : IsDomain O) (_ : IsDiscreteValuationRing O)
-    (_ : IsAdicComplete (IsLocalRing.maximalIdeal O) O) (ϖ : O) (_ : Irreducible ϖ) (Zs : Scheme.{0})
-    (f : Zs ⟶ Spec (.of O)) (D : LB Zs),
-    IsIntegral Zs ∧ (∀ z : Zs, IsIntegrallyClosed (Zs.presheaf.stalk z)) ∧ IsProper f ∧ Flat f ∧ D.IsLB ∧
-    (∃ t : (D.pull (reducedSpecialι f)).Gen, t.IsGen) ∧
-    ∃ (sig : (D.pull (genericι f)).Gen) (κ : ℝ), sig.IsGen ∧
-      ∀ w ∈ htValOn Z la, ∃ (p : ℕ) (_ : Fact p.Prime) (R : Type) (_ : CommRing R) (_ : Algebra R ℂ_[p])
-        (φ : O →+* R), (Valued.v : Valuation ℂ_[p] NNReal).Integers R ∧ Function.Injective φ ∧ IsLocalHom φ ∧
-        ∃ (ybar : Spec (.of R) ⟶ Zs) (y : Spec (.of ℂ_[p]) ⟶ genericFibre f) (e : (D.pull ybar).Gen)
-          (cc : ℂ_[p]ˣ),
-          ybar ≫ f = Spec.map (CommRingCat.ofHom φ) ∧
-          y ≫ genericι f = Spec.map (CommRingCat.ofHom (algebraMap R ℂ_[p])) ≫ ybar ∧
-          e.IsGen ∧ GlobalTheory.IndefiniteRowSideFullHecke.SpecialFibreUnits.IsCoord f D sig ybar y e cc ∧
-          w s.sig = val_vw la p (Valued.v : Valuation ℂ_[p] NNReal) (cc : ℂ_[p]) ∧
-          val_vw la p (Valued.v : Valuation ℂ_[p] NNReal) (algebraMap R ℂ_[p] (φ ϖ)) = (κ : EReal) := fun hP h₂ h₃ _ =>
-  model_of_steps GlobalTheory.T.cover_statement_holds GlobalTheory.T.chart_statement_holds GlobalTheory.T.projection_statement_holds GlobalTheory.T.lattice_statement_holds (GlobalTheory.T.hodge_tate_local_of_kernel_at_point (GlobalTheory.T.hodge_tate_kernel_at_point hP)) (GlobalTheory.T.generic_statement_of_canonical_extension hP h₂ h₃)
-    (GlobalTheory.T.existence_of_comparison GlobalTheory.T.comparison_statement_holds) (GlobalTheory.T.lifting_of_comparison GlobalTheory.T.comparison_statement_holds)
-    (GlobalTheory.T.pointwise_of_tate_value_bound (GlobalTheory.T.hodge_tate_kernel_at_point hP) GlobalTheory.T.tate_statement_holds GlobalTheory.T.value_statement_holds GlobalTheory.T.bound_statement_holds)
-    (GlobalTheory.T.gluing_of_connectedness (GlobalTheory.T.connectedness_statement_holds hP) GlobalTheory.T.prop_z_statement) GlobalTheory.T.packing_statement_holds
 
 end GlobalTheory.FlatModel
 

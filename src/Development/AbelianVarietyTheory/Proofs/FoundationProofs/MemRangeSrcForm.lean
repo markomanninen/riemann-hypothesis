@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GoodLiftOnto
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InjAndRatOfLi
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EOpEqAsAlgebraHom
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralEqSumOfSurjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MulVecMemHatSwap
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ResidueCharIsOfFinOrder
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlDetEqOneOfMemUnip
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GoodFormsCoordinateMapMemOfLiftsMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaKernelFiniteAdelicLawsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GoodLiftOnto
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InjAndRatOfLi
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EOpEqAsAlgebraHom
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralEqSumOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MulVecMemHatSwap
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ResidueCharIsOfFinOrder
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlDetEqOneOfMemUnip
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GoodFormsCoordinateMapMemOfLiftsMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaKernelFiniteAdelicLawsStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,8 +32,8 @@ section Level
 variable {K G M : Type} [Field K] [NumberField K] [Group G] [Fintype G] [AddCommGroup M] [Module K M]
   (r : Representation K G M) (U : Subgroup G) (ψ : U →* Kˣ)
 
-open Classical in
 
+open Classical in
 def invChar (g : G) : K := if hg : g ∈ U then (((ψ ⟨g, hg⟩)⁻¹ : Kˣ) : K) else 0
 
 def trU : M →ₗ[K] M := ∑ g, invChar U ψ g • r g
@@ -43,15 +47,16 @@ theorem invChar_int (g : G) : ∃ a : 𝓞 K, (a : K) = invChar U ψ g := by
   · exact ⟨0, rfl⟩
 
 theorem trU_eigen (f : M) (u : U) : r u (trU r U ψ f) = ((ψ u : Kˣ) : K) • trU r U ψ f := by
-  rw [trU_apply, map_sum, Finset.smul_sum, ← Equiv.sum_comp (Equiv.mulLeft (u : G)) fun g => ((ψ u : Kˣ) : K) • _]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [trU_apply, map_sum, Finset.smul_sum, ← Equiv.sum_comp (Equiv.mulLeft (u : G)) fun g => ((ψ u : Kˣ) : K) • _]
   refine Finset.sum_congr rfl fun g _ => ?_
   simp only [Equiv.coe_mulLeft, map_smul, map_mul, Module.End.mul_apply, smul_smul]
   congr 1
   unfold invChar
   by_cases hg : g ∈ U
-  · rw [dif_pos hg, dif_pos (U.mul_mem u.2 hg), ← Units.val_mul,
+  · rw [dite_eq_left hg, dite_eq_left (U.mul_mem u.2 hg), ← Units.val_mul,
       show (⟨u * g, U.mul_mem u.2 hg⟩ : U) = u * ⟨g, hg⟩ from rfl, map_mul, mul_inv, mul_inv_cancel_left]
-  · rw [dif_neg hg, dif_neg (fun h => hg ((U.mul_mem_cancel_left u.2).1 h)), mul_zero]
+  · rw [dite_eq_right hg, dite_eq_right (fun h => hg ((U.mul_mem_cancel_left u.2).1 h)), mul_zero]
 
 theorem trU_of_eigen {f : M} (hf : ∀ u : U, r u f = ((ψ u : Kˣ) : K) • f) : trU r U ψ f = (Nat.card U : K) • f := by
   classical
@@ -110,6 +115,91 @@ theorem lvlNab_isLattice {s : ℕ} (h : (A.MtCSD i t).Good s) :
     Submodule.IsLattice D.what₂.LL ((A.MtCSD i t).lvlNab (A.leftGroupActionLift i t) U ψ) :=
   Formalism.DivisionValues.ValuationLatticeField.valLatF_isLattice ((A.MtCSD i t).lvlI (A.leftGroupActionLift i t) U ψ)
     (Subtype.val_injective.comp (srcForm_injective i t U ψ)) (A.MtCSD i t).Nab h.nab_lat
+
+private theorem goodNab_span_eq_top {K : Type} [Field K] [NumberField K] [StarRing K]
+    {S : CSD K} {s : ℕ} (h : S.Good s) (c : S.Cl) :
+    Submodule.span K (S.Nab c : Set S.V) = ⊤ := by
+  let P := Submodule.span K (S.Nab c : Set S.V)
+  change P = ⊤
+  by_contra hP
+  have hinj : Function.Injective S.pair := by
+    intro x y hxy
+    apply sub_eq_zero.mp
+    apply h.nondeg.1
+    intro z
+    simp [map_sub, hxy]
+  have hproper : P.map S.pair < ⊤ := by
+    apply lt_top_iff_ne_top.mpr
+    intro he
+    apply hP
+    calc
+      P = (P.map S.pair).comap S.pair := (Submodule.comap_map_eq_of_injective hinj P).symm
+      _ = ⊤ := by rw [he, Submodule.comap_top]
+  obtain ⟨f, hf, hker⟩ := Submodule.exists_le_ker_of_lt_top _ hproper
+  obtain ⟨w, hw⟩ := (Module.evalEquiv K S.V).surjective f
+  have hw0 : w ≠ 0 := by
+    intro he
+    subst w
+    exact hf (hw.symm.trans (map_zero _))
+  have hz (y : S.V) (hy : y ∈ S.Nab c) : S.pair y w = 0 := by
+    have hy' := hker (Submodule.mem_map_of_mem (f := S.pair) (Submodule.subset_span hy))
+    rw [LinearMap.mem_ker, ← hw] at hy'
+    exact hy'
+  -- A vector orthogonal to `Nab c` would put an entire K-line in this finitely generated module.
+  have hs : (s : K) ≠ 0 := Nat.cast_ne_zero.mpr h.s_pos.ne'
+  have hline (a : K) : a • w ∈ S.Nab c := by
+    have hd : ((s : K)⁻¹ * a) • w ∈ Formalism.HermitianLatticesTheory.dual S.pair (S.Nab c) := by
+      apply (Formalism.HermitianLatticesTheory.dualBasic_mem_dual _ _ _).2
+      intro y hy
+      rw [map_smul, hz y hy, smul_zero]
+      exact Submodule.zero_mem _
+    have hm := h.del_le c (h.dual_le c _ hd)
+    rwa [← algebraMap_smul K, map_natCast, smul_smul, ← mul_assoc, mul_inv_cancel₀ hs, one_mul] at hm
+  have hnonzero : ∃ u, S.pair u w ≠ 0 := by
+    by_contra! hz'
+    exact hw0 (h.nondeg.2 w hz')
+  obtain ⟨u, hu⟩ := hnonzero
+  let p := (S.pair u).restrictScalars (𝓞 K)
+  have hp : (S.Nab c).map p = ⊤ := by
+    refine eq_top_iff.mpr fun a _ => ⟨(a / S.pair u w) • w, hline _, ?_⟩
+    change S.pair u ((a / S.pair u w) • w) = a
+    rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hu]
+  have : Module.Finite (𝓞 K) K := ⟨by rw [← hp]; exact (h.nab_lat c).fg.map p⟩
+  have := Algebra.IsIntegral.of_finite (𝓞 K) K
+  exact RingOfIntegers.not_isField K
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 K) K) (Field.toIsField K))
+
+private theorem lvlNab_span_eq_top {s : ℕ} (h : (A.MtCSD i t).Good s) :
+    Submodule.span D.what₂.LL ((A.MtCSD i t).lvlNab (A.leftGroupActionLift i t) U ψ :
+      Set (Fin (srcDim A i t U ψ) → D.what₂.LL)) = ⊤ := by
+  classical
+  let K := D.what₂.LL
+  let S := A.MtCSD i t
+  let I := S.lvlI (A.leftGroupActionLift i t) U ψ
+  let N := Formalism.DivisionValues.valLatF I S.Nab
+  change Submodule.span K (N : Set (Fin (srcDim A i t U ψ) → K)) = ⊤
+  rw [eq_top_iff]
+  intro z _
+  have hz (c : S.Cl) : ∃ d ∈ nonZeroDivisors (𝓞 K), d • I z c ∈ S.Nab c := by
+    have htop := Formalism.HermitianLatticesTheory.indexBasic_locS_top (K := K) (S.Nab c)
+      (goodNab_span_eq_top h c)
+    have hm : I z c ∈ Formalism.HermitianLatticesTheory.locS (nonZeroDivisors (𝓞 K)) (S.Nab c) := by
+      rw [htop]
+      exact Submodule.mem_top
+    exact hm
+  choose d hd hdz using hz
+  have hd0 : algebraMap (𝓞 K) K (∏ c, d c) ≠ 0 :=
+    IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors (Submonoid.prod_mem _ fun c _ => hd c)
+  have hmem : (∏ c, d c) • z ∈ N := by
+    change (∏ c, d c) • z ∈ Formalism.DivisionValues.valLatF I S.Nab
+    rw [Formalism.DivisionValues.ValuationLatticeField.mem_valLatF]
+    intro c
+    rw [LinearMap.map_smul_of_tower, Pi.smul_apply, ← Finset.mul_prod_erase _ _ (Finset.mem_univ c),
+      mul_comm (d c), ← smul_smul]
+    exact (S.Nab c).smul_mem _ (hdz c)
+  apply (Submodule.smul_mem_iff _ hd0).mp
+  rw [algebraMap_smul K]
+  exact Submodule.subset_span hmem
 
 theorem exists_src_trU (h : (A.MtCSD i t).ActGood (A.leftGroupActionLift i t)) {f : (A.MtCSD i t).Forms}
     (hf : ∀ c, (f : (A.MtCSD i t).Cl → (A.MtCSD i t).V) c ∈ (A.MtCSD i t).Nab c) :
@@ -270,7 +360,8 @@ theorem clSum_trU [Nontrivial (Fin (R.nW i) → D.what₂.LL)] (f : (A.MtCSD i t
     clSum (presV R i t) (kern R i t) (trU (A.leftGroupActionLift i t) U ψ f) v =
       levelTrace R i U ψ (clSum (presV R i t) (kern R i t) f v) := by
   unfold levelTrace gaL
-  rw [trU_apply, map_sum, Finset.sum_apply, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [trU_apply, map_sum, Finset.sum_apply, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [map_smulₛₗ, h.clSum_equiv, LinearMap.smul_apply, invChar, apply_dite D.what₂.embLL, map_zero]
   rfl
@@ -337,10 +428,13 @@ theorem theta_mem_span {θ} (hθ : OnTies.IsClassSum R i t U ψ ph θ) {y : Fin 
       exact (congrArg (fun g' => kern R i t g' _ v) eg.symm).trans (h.kern_fin hg _ v)
   have hsum : (Nat.card U : D.what₂.LL) • y = ∑ c, (Fintype.card ((A.MtCSD i t).Gam c) : D.what₂.LL)⁻¹ • z c := by
     apply srcForm_injective i t U ψ
-    rw [map_smul, ← trU_of_eigen _ U ψ ((mem_range_srcForm i t U ψ _).1 ⟨y, rfl⟩), map_sum]
-    conv_lhs => rw [← sum_avgForm _ (srcForm A i t U ψ y), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, ← trU_of_eigen _ U ψ ((mem_range_srcForm i t U ψ _).1 ⟨y, rfl⟩), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← sum_avgForm _ (srcForm A i t U ψ y), map_sum]
     exact Finset.sum_congr rfl fun c _ => by rw [map_smul, map_smul, ez]
-  rw [← Submodule.smul_mem_iff _ (Nat.cast_ne_zero.2 Nat.card_pos.ne' : (Nat.card U : D.what₂.LL) ≠ 0), ← map_smul, hsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Submodule.smul_mem_iff _ (Nat.cast_ne_zero.2 Nat.card_pos.ne' : (Nat.card U : D.what₂.LL) ≠ 0), ← map_smul, hsum, map_sum]
   exact Submodule.sum_mem _ fun c _ => by
     rw [map_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span (hmem c))
@@ -369,6 +463,8 @@ section Comparison₂
 variable {Bs : DefBase D.what₂.LL} {Df : DefSide Bs} {S : IndefData Df} {P : Type} [Group P] [Finite P] {oc : OnConst}
 
 section Local
+
+attribute [local instance 2000] Submodule.module
 
 variable {T : Full D} [inst : Algebra T.J.Q.c.F D.what₂.LL] {R : RealDat D A T.J.Q.c.F}
   {κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)} {v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec}
@@ -456,7 +552,7 @@ theorem lattices_of_tie (t : OnTie h fw hinj EX p ι wL wF nT O v i z act inc �
         intro a e
         obtain ⟨b, rfl⟩ := hb.2 b
         obtain ⟨c, rfl⟩ := hb.2 c
-        rw [hb.1 (e.trans (map_add _ _ _).symm), map_add]
+        rw [hb.1 (e.trans (map_add _ _ _).symm), map_add (f := _)]
         exact Submodule.add_mem _ (ib _ rfl) (ic _ rfl)
       | smul r b _ ib =>
         intro a e
@@ -468,7 +564,7 @@ theorem lattices_of_tie (t : OnTie h fw hinj EX p ι wL wF nT O v i z act inc �
         (Submodule.span D.what₂.LL (thetaTuple R ι U ψ ph (R.mu v) : Set (Fin (R.nW ι) → D.what₂.LL))).comap
           (toForms h fw ι z ∘ₗ O.θ' v i ∘ₗ y.symm.toLinearMap) :=
       Submodule.span_le.2 fun m hm => hS.theta_mem_span hθ hm
-    exact h4 (hM.span_eq_top.ge trivial)
+    exact h4 ((lvlNab_span_eq_top ι (R.mu v) U ψ hG).ge Submodule.mem_top)
   haveI : IsNoetherian (𝓞 D.what₂.LL) (O.Im v i) := isNoetherian_of_fg_of_noetherian _ hfg
   exact ⟨⟨hfg.of_le hle, le_antisymm ((Submodule.span_mono hle).trans h1) h2⟩,
     ⟨hfg, le_antisymm h1 (h2.trans (Submodule.span_mono hle))⟩, hle⟩

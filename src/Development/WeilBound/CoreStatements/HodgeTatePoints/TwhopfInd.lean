@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.BT TensorProduct
 
 namespace PositivityTheory.HtPt.Twhopf
@@ -98,7 +103,7 @@ theorem ind_hopf : ∀ (R : Type) [CommRing R] [IsDomain R] (T : Type) [CommGrou
         Subalgebra.sum_mem _ (fun c _ => hext_mem c (a c) (a c).2)⟩
       map_add' := fun a b => by
         apply Subtype.ext
-        simp only [Pi.add_apply, Subalgebra.coe_add, map_add, Finset.sum_add_distrib]
+        simp only [Pi.add_apply, Subalgebra.coe_add, map_add (f := _), Finset.sum_add_distrib]
       map_smul' := fun r a => by
         apply Subtype.ext
         simp only [Pi.smul_apply, Subalgebra.coe_smul, map_smul, Finset.smul_sum,
@@ -147,13 +152,15 @@ theorem ind_hopf : ∀ (R : Type) [CommRing R] [IsDomain R] (T : Type) [CommGrou
       | add x y _ _ hx hy =>
         convert (prodSpan (indOrder ι A)).add_mem hx hy using 1
         funext z
-        simp only [Pi.add_apply]
-        split_ifs <;> simp
+        by_cases h1 : (QuotientGroup.mk z.1 : T ⧸ ι.range) = c <;>
+          by_cases h2 : (QuotientGroup.mk z.2 : T ⧸ ι.range) = c' <;>
+          simp [h1, h2]
       | smul r x _ hx =>
         convert (prodSpan (indOrder ι A)).smul_mem r hx using 1
         funext z
-        simp only [Pi.smul_apply, smul_eq_mul]
-        split_ifs <;> simp
+        by_cases h1 : (QuotientGroup.mk z.1 : T ⧸ ι.range) = c <;>
+          by_cases h2 : (QuotientGroup.mk z.2 : T ⧸ ι.range) = c' <;>
+          simp [h1, h2]
     have hsum : (fun z : T × T => f (z.1 * z.2)) = ∑ c : T ⧸ ι.range, ∑ c' : T ⧸ ι.range,
         (fun z : T × T => if (QuotientGroup.mk z.1 : T ⧸ ι.range) = c ∧
           (QuotientGroup.mk z.2 : T ⧸ ι.range) = c' then
@@ -207,14 +214,14 @@ theorem res_ind {R T : Type} [CommRing R] [CommGroup T] (H : Subgroup T) (A : Su
       · have e : (fun h : H => f (t * H.subtype h)) = fun h => a (⟨t, ht⟩ * h) := by
           funext h
           simp only [f, Subgroup.coe_subtype]
-          rw [dif_pos (H.mul_mem ht h.2)]
+          rw [dite_eq_left (H.mul_mem ht h.2)]
           rfl
         rw [e]
         exact translate_mem R H A hA a ha ⟨t, ht⟩
       · have e : (fun h : H => f (t * H.subtype h)) = 0 := by
           funext h
           simp only [f, Subgroup.coe_subtype, Pi.zero_apply]
-          rw [dif_neg]
+          rw [dite_eq_right]
           intro hm
           exact ht (by simpa using H.mul_mem hm (H.inv_mem h.2))
         rw [e]

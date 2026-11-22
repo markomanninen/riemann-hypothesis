@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.FinPart
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.FinPart
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,8 @@ theorem finPart : FinPart := by
         χ q.out • GlobalTheory.CharForm.cosetInd P q from hmul, map_smul, smul_eq_mul] at e
       have : (χ q.out - 1) * a (GlobalTheory.CharForm.cosetInd P q) = 0 := by rw [sub_mul, e, one_mul, sub_self]
       rw [(mul_eq_zero.mp this).resolve_left (sub_ne_zero.mpr hy), mul_zero]
-  rw [hsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum]
   refine Finset.sum_eq_zero fun q _ => ?_
   rw [map_smul, smul_eq_mul, hterm q]
 

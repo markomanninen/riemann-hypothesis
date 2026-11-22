@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MvPolynomialEqZeroOfEventually
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MvPolynomialEqZeroOfEventually
+
+@[expose] public section
 
 namespace RootFieldNumerics
 

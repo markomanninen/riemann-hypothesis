@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepFin
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.WeightPositive
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepFin
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.WeightPositive
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,11 +46,7 @@ theorem pW_eq (D : Formalism.BasicNotions.D7) (v : (VS D).V) : pW D v = pWL D v 
   simp only [pW, pWL, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.id_apply,
     LinearMap.sum_apply, LinearMap.smulRight_apply, LinearMap.smul_apply, smul_smul, div_eq_inv_mul]
 
-theorem pW_add (D : Formalism.BasicNotions.D7) (u v : (VS D).V) : pW D (u + v) = pW D u + pW D v := by simp only [pW_eq, map_add]
 theorem pW_sub (D : Formalism.BasicNotions.D7) (u v : (VS D).V) : pW D (u - v) = pW D u - pW D v := by simp only [pW_eq, map_sub]
-theorem pW_smul (D : Formalism.BasicNotions.D7) (k : D.host.E) (v : (VS D).V) : pW D (k • v) = k • pW D v := by simp only [pW_eq, map_smul]
-theorem pW_sum (D : Formalism.BasicNotions.D7) {ι : Type} (s : Finset ι) (v : ι → (VS D).V) :
-    pW D (∑ i ∈ s, v i) = ∑ i ∈ s, pW D (v i) := by simp only [pW_eq, map_sum]
 
 private theorem hT_hypF_hypE (D : Formalism.BasicNotions.D7) (a i : Fin D.R.rS) :
     (VS D).hT (D.sp.hypF a) (D.sp.hypE i) = if a = i then 1 else 0 := by
@@ -56,21 +56,16 @@ private theorem hT_hypF_hypE (D : Formalism.BasicNotions.D7) (a i : Fin D.R.rS) 
     simp
   · simp [h, Ne.symm h]
 
-theorem pW_e (D : Formalism.BasicNotions.D7) (i : Fin D.R.rS) : pW D (D.sp.hypE i) = 0 := by
-  simp [pW, hT_hypF_hypE, D.sp.hyp_ee, hZE, ite_smul, Finset.sum_ite_eq']
-
-theorem pW_inW (D : Formalism.BasicNotions.D7) {y : (VS D).V} (hy : InW D y) : pW D y = y := by
-  unfold InW at hy
-  obtain ⟨h1, h2, h3⟩ := hy
-  simp [pW, h1, h2, h3]
-
 theorem inW_pW (D : Formalism.BasicNotions.D7) (v : (VS D).V) : InW D (pW D v) := by
   have hT0 := T_ne D
   unfold InW
   refine ⟨fun b => ?_, fun b => ?_, ?_⟩
-  · simp [pW, map_sum, D.sp.hyp_ee, D.sp.hyp_ef, hEZ, mul_ite, Finset.sum_ite_eq]
-  · simp [pW, map_sum, hT_hypF_hypE, D.sp.hyp_ff, hFZ, mul_ite, Finset.sum_ite_eq']
-  · simp [pW, map_sum, hZE, hZF, D.sp.zm_norm, div_mul_cancel₀, hT0]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp [pW, map_sum, D.sp.hyp_ee, D.sp.hyp_ef, hEZ, mul_ite, Finset.sum_ite_eq]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp [pW, map_sum, hT_hypF_hypE, D.sp.hyp_ff, hFZ, mul_ite, Finset.sum_ite_eq']
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp [pW, map_sum, hZE, hZF, D.sp.zm_norm, div_mul_cancel₀, hT0]
 
 def eichL (D : Formalism.BasicNotions.D7) (e y : (VS D).V) (c : D.host.E) : (VS D).V →ₗ[D.host.E] (VS D).V :=
   LinearMap.id + ((VS D).hT e).smulRight y - ((VS D).hT y).smulRight e + c • ((VS D).hT e).smulRight e
@@ -105,7 +100,7 @@ theorem eich_isom (D : Formalism.BasicNotions.D7) {e y : (VS D).V} {c : D.host.E
     rw [hT_star D y u, hT_star D e u]
     simp [eichL_apply] <;> ring
   rw [eichL_apply D e y c u]
-  simp only [map_add, map_sub, map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply,
+  simp only [map_add (f := _), map_sub, map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply,
     LinearMap.smul_apply, smul_eq_mul, hE, hY, hU, starRingEnd_apply, star_mul']
   linear_combination (star ((VS D).hT e u) * (VS D).hT e v) * hc
 

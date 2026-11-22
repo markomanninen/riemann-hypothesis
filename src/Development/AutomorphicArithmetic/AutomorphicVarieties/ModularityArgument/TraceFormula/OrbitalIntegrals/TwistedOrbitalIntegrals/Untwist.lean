@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+
+@[expose] public section
 
 open MeasureTheory Topology PositivityTheory.Rg.Tf.Loc UpperTheory.V.Z.Tf.Orb
 
@@ -23,6 +27,7 @@ theorem UpperTheory.V.Z.Tf.Orb.untwist :
   · have e : twCent (sigmaGL (1 : k ≃ₐ[k] k)) γ = Subgroup.centralizer {γ} := by
       ext x
       rw [mem_twCent, h1, Subgroup.mem_centralizer_singleton_iff, mul_assoc, inv_mul_eq_iff_eq_mul, eq_comm]
+      rw [commute_iff_eq]
     obtain ⟨μ', a, b, c⟩ := aux μk _ _ e μ hμ
     refine ⟨μ', a, b, fun f => ?_⟩
     rw [twOrbIntegralC, orbIntegralC, c]

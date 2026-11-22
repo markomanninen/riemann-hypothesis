@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem pow_sub_pow_mem_succ {A : Type} [CommRing A] {J : Ideal A} (p : ℕ) (hp
   have hs : (∑ i ∈ Finset.range p, y ^ i * z ^ (p - 1 - i)) ∈ J := by
     rw [← Ideal.Quotient.eq_zero_iff_mem]
     have hyz : Ideal.Quotient.mk J y = Ideal.Quotient.mk J z := Ideal.Quotient.eq.2 h1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_mul, map_pow, hyz]
     rw [geom_sum₂_self, ← map_natCast (Ideal.Quotient.mk J), Ideal.Quotient.eq_zero_iff_mem.2 hp, zero_mul]
   have e := geom_sum₂_mul y z p
@@ -57,7 +62,7 @@ theorem padicInt_ringHom_eq {A : Type} [CommRing A] {J : Ideal A} [IsHausdorff J
   obtain ⟨v, hv⟩ := Ideal.mem_span_singleton'.1 (PadicInt.appr_spec n u)
   have hu : u = ((u.appr n : ℕ) : ℤ_[p]) + v * (p : ℤ_[p]) ^ n := by linear_combination -hv
   have e : φ u - ψ u = (φ v - ψ v) * (p : A) ^ n := by
-    rw [hu]; simp only [map_add, map_mul, map_pow, map_natCast]; ring
+    rw [hu]; simp only [map_add (f := _), map_mul, map_pow, map_natCast]; ring
   rw [e]
   exact Ideal.mul_mem_left _ _ (Ideal.pow_mem_pow hp n)
 
@@ -96,7 +101,7 @@ theorem hf_C_eq_of_pair : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K
   induction hw using Submodule.span_induction with
   | mem x hx => obtain ⟨y, rfl⟩ := hx; exact hT y
   | zero => simp
-  | add x y _ _ hx hy => simp only [map_add, hx, hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), hx, hy]
   | smul c x _ hx => rw [Algebra.smul_def]; simp only [map_mul, hx, hZ]
 
 end GlobalTheory.BSP

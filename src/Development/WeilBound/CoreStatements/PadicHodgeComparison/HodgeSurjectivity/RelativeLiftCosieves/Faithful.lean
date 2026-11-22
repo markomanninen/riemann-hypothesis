@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveBot
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveBot
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -91,8 +95,8 @@ end CrystallineSemistableComparison.Onto.EquivalenceOnIso
 
 namespace CrystallineSemistableComparison.Onto
 
-open EquivalenceOnIso in
 
+open EquivalenceOnIso in
 theorem onIso_pf : OnIso := by
   intro K _ W Z q i _ U U' h hU a n
   have := faithful h a

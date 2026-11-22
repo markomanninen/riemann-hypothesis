@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.DiscSpec GlobalTheory.CompanionTheory.CTFin PositivityTheory.Rg.Rs PositivityTheory.Rg.Rs.InducedTensorMap
 open PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation GlobalTheory.CompanionTheory.LimV
@@ -12,7 +17,7 @@ open GlobalTheory.Mem.Chr.CharModel
 
 section
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem logFin_eq_zero_of_integral (t : (Af E)ˣ)
     (h1 : (t : Af E) ∈ GroundTheory.Global.integralFiniteAdeles (𝓞 E) E)
@@ -74,7 +79,7 @@ theorem chiDet_absC_cf (N : ℕ) (w : ℂ) (k : Kinf E N) {c : GL (Fin N) (Af E)
 
 end
 
-theorem absFn_flat : ∀ {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ) (w : ℂ),
+theorem absFn_flat : ∀ {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ) (w : ℂ),
     FlatFn (absFn (E := E) N w) := by
   intro E _ _ _ N w
   refine ⟨fun x => Units.ne_zero _, fun x k c hc => ?_, ?_⟩

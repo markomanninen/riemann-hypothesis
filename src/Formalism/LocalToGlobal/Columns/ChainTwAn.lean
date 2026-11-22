@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.ChainTwCst
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainTwCst
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -50,7 +54,7 @@ theorem twAn_phiQ_int (q : ℕ) (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ r
     unfold LocE.entB at h1
     rw [frameIndex_framePos hk l.2, frameIndex_framePos hk' s.2, basisVec_eq_single s.2] at h1
     unfold Loc.atN at h1
-    rw [dif_pos l.2] at h1
+    rw [dite_eq_left l.2] at h1
     have e0 : ∀ (N : ℕ) (p : ℕ), LocE.scE N (0 : ℕ → ℕ) p = 0 := fun N p => by
       unfold LocE.scE
       split_ifs <;> rfl
@@ -72,7 +76,7 @@ theorem integral_of_firstUnfolding_ne_zero {n' c' n c : ℕ} (Ψ : Loc.SF E K (n
     unfold Loc.xx1
     rw [← LinearMap.toMatrix'_apply, LinearMap.toMatrix'_toLin', Matrix.of_apply]
     have hf : ¬ Loc.IsFree n' n c (Fin.castAdd c l).1 (Fin.castAdd c' s).1 := fun hf => absurd s.2 (not_lt.2 hf.1)
-    rw [dif_neg hf, dif_pos (show (Fin.castAdd c' s).1 < n' from s.2), dif_pos (show (Fin.castAdd c l).1 < n from l.2),
+    rw [dite_eq_right hf, dite_eq_left (show (Fin.castAdd c' s).1 < n' from s.2), dite_eq_left (show (Fin.castAdd c l).1 < n from l.2),
       LinearMap.toMatrix'_apply]
     rfl
   rw [e] at h3
@@ -131,7 +135,7 @@ theorem frameEntry_unscaled_eq_coord (q : ℕ) {k₀ c' n' c n : ℕ} (hk' : k�
   unfold LocE.entB
   rw [basisVec_eq_single (symFIdx_lt hk' hp')]
   unfold Loc.atN
-  rw [dif_pos (symFIdx_lt hk hp)]
+  rw [dite_eq_left (symFIdx_lt hk hp)]
   have e0 : ∀ (N : ℕ) (p : ℕ), LocE.scE N (0 : ℕ → ℕ) p = 0 := fun N p => by
     unfold LocE.scE
     split_ifs <;> rfl
@@ -171,7 +175,7 @@ theorem twAn_joinCol {n' c' n c : ℕ} (hc : 1 ≤ c') (x₀ : HomE E n' n) (y' 
       omega
   have h2 : atNL E (n' + c') n' (Pi.single (⟨n', by omega⟩ : Fin (n' + c')) (1 : E)) = 1 := by
     unfold atNL
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     show (Pi.single (⟨n', by omega⟩ : Fin (n' + c')) (1 : E) : Fin (n' + c') → E) ⟨n', by omega⟩ = 1
     exact Pi.single_eq_same _ _
   simp only [LinearMap.comp_apply, LinearMap.add_apply, LinearMap.smulRight_apply, h1, h2, map_zero, one_smul, zero_add]
@@ -179,14 +183,14 @@ theorem twAn_joinCol {n' c' n c : ℕ} (hc : 1 ≤ c') (x₀ : HomE E n' n) (y' 
 theorem twAn_joinCol_sub_y {n' c' n c : ℕ} (x₀ : HomE E n' n) (y' z : Sp E n) (v : Sp E (n' + c')) :
     joinCol (c' := c') (c := c) x₀ (y' + z) v - joinCol (c' := c') (c := c) x₀ y' v = Loc.inX E n c (atNL E (n' + c') n' v • z) := by
   unfold joinCol
-  simp only [LinearMap.comp_apply, LinearMap.add_apply, LinearMap.smulRight_apply, smul_add, map_add]
+  simp only [LinearMap.comp_apply, LinearMap.add_apply, LinearMap.smulRight_apply, smul_add, map_add (f := _)]
   abel
 
 theorem joinColumn_add_sub {n' c' n c : ℕ} (x₀ z : HomE E n' n) (y' : Sp E n) (v : Sp E (n' + c')) :
     joinCol (c' := c') (c := c) (x₀ + z) y' v - joinCol (c' := c') (c := c) x₀ y' v =
       Loc.inX E n c (z (LinearMap.funLeft E E (Fin.castAdd c') v)) := by
   unfold joinCol
-  simp only [LinearMap.comp_apply, LinearMap.add_apply, LinearMap.smulRight_apply, map_add]
+  simp only [LinearMap.comp_apply, LinearMap.add_apply, LinearMap.smulRight_apply, map_add (f := _)]
   abel
 
 theorem columns_twAn_fact {n' c' n c : ℕ} (xj xj' : (Fin n' → E) →ₗ[E] (Fin n → E)) (t : Loc.FC n' c' n c → E)
@@ -206,12 +210,12 @@ theorem unipotentExtension_add_sub {n' c' n c : ℕ} (xj z : (Fin n' → E) →�
     LinearMap.toMatrix'_toLin', Matrix.of_apply]
   by_cases hs : s.1 < n'
   · have hf : ¬ Loc.IsFree n' n c l.1 s.1 := fun hf => absurd hs (not_lt.2 hf.1)
-    rw [dif_neg hf, dif_neg hf, dif_pos hs, dif_pos hs, dif_pos hs]
+    rw [dite_eq_right hf, dite_eq_right hf, dite_eq_left hs, dite_eq_left hs, dite_eq_left hs]
     by_cases hl : l.1 < n
-    · rw [dif_pos hl, dif_pos hl, dif_pos hl, LinearMap.toMatrix'_apply, LinearMap.toMatrix'_apply, LinearMap.add_apply, Pi.add_apply]
+    · rw [dite_eq_left hl, dite_eq_left hl, dite_eq_left hl, LinearMap.toMatrix'_apply, LinearMap.toMatrix'_apply, LinearMap.add_apply, Pi.add_apply]
       ring
-    · rw [dif_neg hl, dif_neg hl, dif_neg hl, sub_self]
-  · rw [dif_neg hs]
+    · rw [dite_eq_right hl, dite_eq_right hl, dite_eq_right hl, sub_self]
+  · rw [dite_eq_right hs]
     split_ifs <;> simp
 
 theorem charArg_unipotentExtension_indep {n' c' n c : ℕ} (xj xj' : (Fin n' → E) →ₗ[E] (Fin n → E)) (t : Loc.FC n' c' n c → E) :
@@ -246,7 +250,7 @@ theorem twAn_funLeft_int {n' c' : ℕ} (s : Fin (n' + c')) (l : Fin n') :
 theorem unipotentExtension_freeCoord {n' c' n c : ℕ} (xj : (Fin n' → E) →ₗ[E] (Fin n → E)) (t : Loc.FC n' c' n c → E) (f : Loc.FC n' c' n c) :
     Loc.xx1 xj t (Pi.single f.1.2 1) f.1.1 = t f := by
   unfold Loc.xx1
-  rw [← LinearMap.toMatrix'_apply, LinearMap.toMatrix'_toLin', Matrix.of_apply, dif_pos f.2]
+  rw [← LinearMap.toMatrix'_apply, LinearMap.toMatrix'_toLin', Matrix.of_apply, dite_eq_left f.2]
 
 theorem xx1_add_sub_xx1_single_eq_dite {n' c' n c : ℕ} (xj : (Fin n' → E) →ₗ[E] (Fin n → E)) (t δ : Loc.FC n' c' n c → E)
     (s : Fin (n' + c')) (l : Fin (n + c)) :
@@ -256,9 +260,9 @@ theorem xx1_add_sub_xx1_single_eq_dite {n' c' n c : ℕ} (xj : (Fin n' → E) �
   rw [← LinearMap.toMatrix'_apply, LinearMap.toMatrix'_toLin', Matrix.of_apply, ← LinearMap.toMatrix'_apply,
     LinearMap.toMatrix'_toLin', Matrix.of_apply]
   by_cases hf : Loc.IsFree n' n c l.1 s.1
-  · rw [dif_pos hf, dif_pos hf, dif_pos hf, Pi.add_apply]
+  · rw [dite_eq_left hf, dite_eq_left hf, dite_eq_left hf, Pi.add_apply]
     ring
-  · rw [dif_neg hf, dif_neg hf, dif_neg hf, sub_self]
+  · rw [dite_eq_right hf, dite_eq_right hf, dite_eq_right hf, sub_self]
 
 theorem twAn_chArg_term {n' c' n c : ℕ} (x : (Fin (n' + c') → E) →ₗ[E] (Fin (n + c) → E)) (i : ℕ) :
     Loc.atN (x (Loc.eN E (n' + c') (n' + i + 1))) (n + i) =
@@ -267,14 +271,14 @@ theorem twAn_chArg_term {n' c' n c : ℕ} (x : (Fin (n' + c') → E) →ₗ[E] (
   · rw [basisVec_eq_single h1]
     unfold Loc.atN
     by_cases h2 : n + i < n + c
-    · rw [dif_pos h2, dif_pos ⟨h1, h2⟩]
-    · rw [dif_neg h2, dif_neg (fun h => h2 h.2)]
+    · rw [dite_eq_left h2, dite_eq_left ⟨h1, h2⟩]
+    · rw [dite_eq_right h2, dite_eq_right (fun h => h2 h.2)]
   · have e : Loc.eN E (n' + c') (n' + i + 1) = 0 := by
       funext l
       unfold Loc.eN
       rw [if_neg (by omega)]
       rfl
-    rw [e, map_zero, dif_neg (fun h => h1 h.1)]
+    rw [e, map_zero, dite_eq_right (fun h => h1 h.1)]
     unfold Loc.atN
     split_ifs <;> rfl
 
@@ -717,14 +721,17 @@ theorem twAn_deep {m2 : ℕ} (hm : R.m = m2 + 2) (hd : ∀ P : rowSG Pr sel mu, 
 
 theorem twAnQ_of {m2 : ℕ} (hm : R.m = m2 + 2) (hd : ∀ P : rowSG Pr sel mu, P.1 ∉ Pr.vGs → TwDegOne X P.1) (hc : cst.Ok)
     (hA : m2 + 1 ≤ cst.A) (hB : m2 + 1 ≤ cst.B) (hM : m2 + 1 ≤ cst.M) (hD : ∀ P : rowSG Pr sel mu, P.1 ∉ Pr.vGs → m2 ≤ cst.D P)
-    (hqK : ∀ P : rowSG Pr sel mu, P.1 ∉ Pr.vGs → (qOf P.1 : X.K) ≠ 0) : TwAnQ Ch sel mu cst m2 where
-  deep := twAn_deep hm hd hc (fun i hi => by omega) (fun i hi => by omega) (fun i hi P hP => by have := hD P hP; omega) hqK
-  psiSupp := twAn_psiSupp hm hM
-  psiInv := twAn_psiInv hm hM hd
-  xiSupp := twAn_xiSupp (fun i hi => by omega)
-  xiInv := twAn_xiInv hm (fun i hi => by omega) hd
-  psiSuppX := twAn_psiSuppX hA
-  psiInvX := twAn_psiInvX hm hB hd
+    (hqK : ∀ P : rowSG Pr sel mu, P.1 ∉ Pr.vGs → (qOf P.1 : X.K) ≠ 0) : TwAnQ Ch sel mu cst m2 := by
+  refine
+    { deep := ?_
+      psiSupp := twAn_psiSupp hm hM
+      psiInv := twAn_psiInv hm hM hd
+      xiSupp := twAn_xiSupp (fun i hi => by omega)
+      xiInv := twAn_xiInv hm (fun i hi => by omega) hd
+      psiSuppX := twAn_psiSuppX hA
+      psiInvX := twAn_psiInvX hm hB hd }
+  exact twAn_deep hm hd hc (fun i hi => by omega) (fun i hi => by omega)
+    (fun i hi P hP => by have := hD P hP; omega) hqK
 
 theorem twAnQ_twCst {G : ChGlob X R.m} {m2 : ℕ} (hm : R.m = m2 + 2) (hPr : Pr.Ok) (hCh : Ch.Ok) (h4 : ∀ w ∈ Pr.vGs, qOf w % 4 = 1)
     (hK : TwCstQ (Pr := Pr) sel mu G) (hd : ∀ P : rowSG Pr sel mu, P.1 ∉ Pr.vGs → TwDegOne X P.1) :

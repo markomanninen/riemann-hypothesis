@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.TendstoUniformlyOnDoublingLogOfContraction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.TendstoUniformlyOnDoublingLogOfContraction
+
+@[expose] public section
 
 open Metric Set Filter Asymptotics
 open scoped Topology
@@ -25,8 +29,8 @@ theorem isLocalHomeomorph_addMonoidHom_of_eventuallyEq {ψ : OpenPartialHomeomor
     simp only [map_sub] at this
     simp [← this]
 
-omit [IsTopologicalAddGroup A] in
 
+omit [IsTopologicalAddGroup A] in
 theorem discreteTopology_ker_of_isLocalHomeomorph (he : IsLocalHomeomorph e) :
     DiscreteTopology e.ker := by
   obtain ⟨U, hU, hU0, hinj⟩ := he.isLocallyInjective 0
@@ -107,7 +111,7 @@ theorem of_unit (ha : AnalyticAt ℂ m 0) (hu : ∀ᶠ x in 𝓝 (0 : V), m (x, 
   have e : p = (p.1, 0) + (0, p.2) := by simp
   have e1 : fderiv ℂ m 0 (p.1, 0) = p.1 := DFunLike.congr_fun h1 p.1
   have e2 : fderiv ℂ m 0 (0, p.2) = p.2 := DFunLike.congr_fun h2 p.2
-  conv_lhs => rw [show fderiv ℂ m 0 p = fderiv ℂ m 0 ((p.1, 0) + (0, p.2)) by rw [← e], map_add,
+  conv_lhs => rw [show fderiv ℂ m 0 p = fderiv ℂ m 0 ((p.1, 0) + (0, p.2)) by rw [← e], map_add (f := _),
     e1, e2]
 
 variable (h : IsLocalCommGroupLaw m)
@@ -140,8 +144,8 @@ theorem doubling_law :
 theorem analyticAt_doubling : AnalyticAt ℂ (fun x => m (x, x)) 0 :=
   AnalyticAt.comp (f := fun x : V => (x, x)) h.analyticAt (analyticAt_id.prod analyticAt_id)
 
-omit h in
 
+omit h in
 noncomputable def twoEquiv (V : Type*) [NormedAddCommGroup V] [NormedSpace ℂ V] : V ≃L[ℂ] V :=
   ContinuousLinearEquiv.equivOfInverse ((2 : ℂ) • ContinuousLinearMap.id ℂ V)
     ((2 : ℂ)⁻¹ • ContinuousLinearMap.id ℂ V) (fun x => by simp [smul_smul])
@@ -389,8 +393,6 @@ noncomputable def localExp : OpenPartialHomeomorph V A :=
 theorem localExp_apply (v : V) :
     h.localExp v = φ.symm (h.isLocalCommGroupLaw.logChart.symm v) := rfl
 
-theorem localExp_symm_apply (a : A) : h.localExp.symm a = h.log (φ a) := rfl
-
 theorem zero_mem_localExp_source : (0 : V) ∈ h.localExp.source :=
   ⟨h.isLocalCommGroupLaw.zero_mem_logChart_target, by simpa using h.zero_mem_target⟩
 
@@ -432,16 +434,6 @@ theorem exp_log : ∀ᶠ a in 𝓝 (0 : A), h.exp (h.log (φ a)) = a := by
   filter_upwards [h.log_exp] with v hv
   rw [hv]
 
-omit [FiniteDimensional ℂ V] in
-
-theorem log_add :
-    ∀ᶠ p in 𝓝 (0 : A × A), h.log (φ (p.1 + p.2)) = h.log (φ p.1) + h.log (φ p.2) := by
-  have t1 : Tendsto (fun p : A × A => p.1) (𝓝 0) (𝓝 0) := continuous_fst.tendsto 0
-  have t2 : Tendsto (fun p : A × A => p.2) (𝓝 0) (𝓝 0) := continuous_snd.tendsto 0
-  have hl := φ.eventually_left_inverse h.zero_mem_source
-  filter_upwards [((h.tendsto.comp t1).prodMk_nhds (h.tendsto.comp t2)).eventually
-    h.isLocalCommGroupLaw.log_law, t1.eventually hl, t2.eventually hl] with p h1 h2 h3
-  simpa [chartLaw, h2, h3] using h1
 
 theorem chart_exp_eventuallyEq :
     (fun v => φ (h.exp v)) =ᶠ[𝓝 0] h.isLocalCommGroupLaw.logChart.symm := by
@@ -457,12 +449,6 @@ theorem analyticAt_chart_exp : AnalyticAt ℂ (fun v => φ (h.exp v)) 0 :=
 theorem hasFDerivAt_chart_exp :
     HasFDerivAt (fun v => φ (h.exp v)) (ContinuousLinearMap.id ℂ V) 0 :=
   h.isLocalCommGroupLaw.hasFDerivAt_logChart_symm.congr_of_eventuallyEq h.chart_exp_eventuallyEq
-
-theorem eq_exp_of_log {e : V →+ A} (he : ∀ᶠ a in 𝓝 (0 : A), e (h.log (φ a)) = a) :
-    e = h.exp := by
-  refine addMonoidHom_eq_of_eventuallyEq ?_
-  filter_upwards [Tendsto.eventually h.map_exp_nhds_zero.le he, h.log_exp] with v h1 h2
-  rwa [h2] at h1
 
 noncomputable def periodLattice : Submodule ℤ V := AddSubgroup.toIntSubmodule h.exp.ker
 
@@ -480,15 +466,6 @@ instance isZLattice_periodLattice [CompactSpace A] : IsZLattice ℝ h.periodLatt
 theorem exp_surjective [CompactSpace A] (hdiv : ∀ n : ℕ, n ≠ 0 → ∀ a : A, ∃ b : A, n • b = a) :
     Function.Surjective h.exp :=
   surjective_of_isOpenMap_of_compact_of_divisible h.isOpenMap_exp hdiv
-
-noncomputable def quotientKerExpEquiv (hs : Function.Surjective h.exp) : (V ⧸ h.exp.ker) ≃ₜ+ A where
-  __ := QuotientAddGroup.quotientKerEquivOfSurjective h.exp hs
-  continuous_toFun :=
-    (QuotientAddGroup.isQuotientMap_mk h.exp.ker).continuous_iff.mpr h.continuous_exp
-  continuous_invFun := by
-    refine (h.isOpenMap_exp.isQuotientMap h.continuous_exp hs).continuous_iff.mpr ?_
-    refine (QuotientAddGroup.continuous_mk (N := h.exp.ker)).congr fun v => ?_
-    exact ((QuotientAddGroup.quotientKerEquivOfSurjective h.exp hs).symm_apply_apply v).symm
 
 end IsAnalyticGroupChart
 

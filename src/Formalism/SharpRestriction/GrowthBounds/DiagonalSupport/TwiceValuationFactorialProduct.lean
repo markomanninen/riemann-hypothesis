@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.Proposition5Gram
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemLin
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.Proposition5Gram
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemLin
+
+@[expose] public section
 
 noncomputable section
 

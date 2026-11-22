@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsFolnerUWset
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetNotGG
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EqSmulOfTwoSided
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FibreVolumeNormalFormStabiliserStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StabilizerMeasureNormalisationSymmStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TwoSidedSizeFunctionPosInvariantContinuousStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagGramNumberNormalizedInvarianceStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableFlagGramNumberNormalizedIndicatorStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CutoffComputesBesselQuotientIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmplitudeOneSideUnfoldingStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsFolnerUWset
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetNotGG
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EqSmulOfTwoSided
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FibreVolumeNormalFormStabiliserStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StabilizerMeasureNormalisationSymmStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TwoSidedSizeFunctionPosInvariantContinuousStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagGramNumberNormalizedInvarianceStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableFlagGramNumberNormalizedIndicatorStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CutoffComputesBesselQuotientIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmplitudeOneSideUnfoldingStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp
 open scoped InnerProductSpace ENNReal
@@ -133,7 +137,7 @@ theorem side_bound : ∀ (k r j : ℕ) (hj : j ≤ r) (z z' : (Fin (2 * r + k + 
     have hA0 : μG A = 0 := by
       refine null_of_fibres hz' hT' hW hN hqS hA fun g => ?_
       by_cases hg : g ∈ GG k r
-      · rw [Measure.smul_apply, measure_mono_null (t := {n | Yj k r hj z z' γ (Matrix.of n * g) = 0}) (fun n hn => hn.2)
+      · rw [Measure.smul_apply, measure_mono_null (s := rmulM g ⁻¹' A) (t := {n | Yj k r hj z z' γ (Matrix.of n * g) = 0}) (fun n hn => hn.2)
           (hV g hg).1, smul_zero]
       · refine measure_mono_null (t := {x | Matrix.of x ∉ Nset k r}) (fun n hn hn' => hg ?_) hN.2.2.1
         exact (WUnfold.mul_mem_GG_iff hn'.1).1 hn.1
@@ -188,7 +192,8 @@ theorem side_bound : ∀ (k r j : ℕ) (hj : j ≤ r) (z z' : (Fin (2 * r + k + 
         (ENNReal.continuous_pow 2).comp_continuousOn
           (ENNReal.continuous_coe.comp_continuousOn (ContinuousOn.inner (𝕜 := ℂ) continuousOn_const hΦc).nnnorm)
       have h2 := (measurable_indicator_GG h1).indicator ((hEm R₀ y).inter hQ)
-      rwa [Set.indicator_indicator, Set.inter_eq_left.2 (fun x hx => hx.2.1)] at h2
+      rwa [Set.indicator_indicator, (Set.inter_eq_left (t := {x : Mt k r | Matrix.of x ∈ GG k r})).2
+        (fun x (hx : x ∈ E ∩ Q) => hx.2.1)] at h2
     have hFi : ∀ ρ ∈ Rset k r γ, ∀ x, Matrix.of x ∈ GG k r →
         (E ∩ Q).indicator g (lmulM ρ x) = (E ∩ Q).indicator g x := by
       intro ρ hρ x hx
@@ -202,7 +207,7 @@ theorem side_bound : ∀ (k r j : ℕ) (hj : j ≤ r) (z z' : (Fin (2 * r + k + 
       (hφ.1.mul (measurable_one.indicator (hEm R₀ y))) hQ hQi (fun g hg => by
         rw [lintegral_smul_measure, smul_eq_mul]
         exact mul_le_mul_right ((hV g hg).2 φ hφ R₀ y hR hy) _) w hw
-    have hTl := tail hz' hT' hH ht i hQ fun x hx => hx.2
+    have hTl := tail hz' hT' hH ht i (Q := Q) hQ fun x hx => hx.2
     have hfib : 0 ≤ fibVol0 k r j R₀ De y := by
       have := hDe.1
       unfold fibVol0

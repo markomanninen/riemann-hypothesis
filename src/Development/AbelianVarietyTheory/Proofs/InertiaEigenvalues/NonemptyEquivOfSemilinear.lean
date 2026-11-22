@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleOfSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReductionSameSSOfLattices
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleStd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSeriesOfExact
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PhiGammaLatticeFamiliesShiftInclusion
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReductionSameSSOfLattices
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleStd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSeriesOfExact
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PhiGammaLatticeFamiliesShiftInclusion
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,14 +119,14 @@ def twSemi (θ : G →* Oˣ) (π : Representation O G M) (α : Representation k 
     (he : ∀ g x, e (twistRep π θ g x) = α g (e x)) :
     π.asModule →ₛₗ[(twHom k θ : MonoidAlgebra O G →+* MonoidAlgebra k G)] α.asModule where
   toFun x := α.asModuleEquiv.symm (e (π.asModuleEquiv x))
-  map_add' x y := by simp only [map_add]
+  map_add' x y := by simp only [map_add (f := _)]
   map_smul' r x := by
     apply α.asModuleEquiv.injective
     rw [Representation.asModuleEquiv_map_smul, Representation.asModuleEquiv_map_smul,
       LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
     induction r using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
     | single g c =>
       rw [RingHom.coe_coe, twHom_single, Representation.asAlgebraHom_single, Representation.asAlgebraHom_single,
         LinearMap.smul_apply, LinearMap.smul_apply, ← he, twistRep_apply, algebraMap_smul, map_smul, map_smul,
@@ -197,7 +201,7 @@ theorem pre_push_sup (F : DFun R n G) (A B C : Ob k G) (a : (Fin A.m → k) →�
   have hp : ∀ x y, p (a x + b y) = x := fun x y => congrArg Prod.fst (e.symm_apply_apply (x, y))
   have hpH : IsHom C A p := fun g z => by
     obtain ⟨⟨x, y⟩, rfl⟩ := hab.2 z
-    rw [LinearMap.coprod_apply, map_add, ← ha, ← hb, hp, hp]
+    rw [LinearMap.coprod_apply, map_add (f := _), ← ha, ← hb, hp, hp]
   have h1 : p ∘ₗ a = LinearMap.id := LinearMap.ext fun x => by simpa using hp x 0
   have h2 : p ∘ₗ b = (0 : k) • (p ∘ₗ b) := LinearMap.ext fun y => by simpa using hp 0 y
   have hpb : IsHom B A (p ∘ₗ b) := fun g x => by
@@ -214,7 +218,7 @@ theorem pre_push_sup (F : DFun R n G) (A B C : Ob k G) (a : (Fin A.m → k) →�
     obtain ⟨_, ⟨y, hy, rfl⟩, _, ⟨z, -, rfl⟩, h⟩ := Submodule.mem_sup.1 (show F.map A C a i x ∈ _ from hx)
     have h' := congrArg (F.map C A p i) h
     change F.map C A p i (F.map A C a i y + F.map B C b i z) = _ at h'
-    rw [map_add, h3, h3, h4, add_zero] at h'
+    rw [map_add (f := _), h3, h3, h4, add_zero] at h'
     exact h' ▸ hy
   · intro hx
     exact Submodule.mem_sup_left ⟨x, hx, rfl⟩
@@ -370,7 +374,8 @@ def piLattice {μ : ℕ} (T : LocLat G Qp LL O) (F : Fin μ → LocLat G Qp LL O
   · rw [eq_top_iff]
     intro x _
     obtain ⟨y, rfl⟩ := e.symm.surjective x
-    rw [← Finset.univ_sum_single y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.univ_sum_single y, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     have hy : y j ∈ Submodule.span LL ((F j).L.T : Set (F j).V) := by rw [(F j).L.span]; trivial
     have h1 := Submodule.mem_map_of_mem
@@ -451,11 +456,11 @@ theorem exists_sum_reduction {lam : O} (T T' Z : LocLat G Qp LL O) (u : ↥Z.L.T
     rw [← he]
     exact congrArg e (Prod.ext (map_zero (A.ρ g)).symm rfl)
   · have : ⇑((e.toLinearMap ∘ₗ LinearMap.inl k _ _).coprod (e.toLinearMap ∘ₗ LinearMap.inr k _ _)) = e :=
-      funext fun x => by simp [← map_add]
+      funext fun x => by simp [← map_add (f := _)]
     rw [this]
     exact e.bijective
   · change e (q (u z).1, q' (u z).2) = e (q (u z).1, 0) + e (0, q' (u z).2)
-    rw [← map_add, Prod.mk_add_mk, add_zero, zero_add]
+    rw [← map_add (f := _), Prod.mk_add_mk, add_zero, zero_add]
 
 theorem exists_char_reduction {lam : O} (hs : Function.Surjective (algebraMap O k))
     (hk : ∀ x, algebraMap O k x = 0 ↔ lam ∣ x) (T : LocLat G Qp LL O) (u : O ≃ₗ[O] ↥T.L.T) (χ : G →* Oˣ)

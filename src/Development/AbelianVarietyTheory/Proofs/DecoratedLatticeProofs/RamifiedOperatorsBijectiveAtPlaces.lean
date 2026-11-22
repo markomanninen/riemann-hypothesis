@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RamifiedOperatorBijectiveFiniteTranslationCombinStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFramePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacuaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RamifiedOperatorBijectiveFiniteTranslationCombinStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFramePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacuaStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,8 @@ theorem ramAt_act (β : Frame p S n) (P : Pair k n) (c : GA D S →₀ ℂ)
   · let _ := Fintype.ofFinite 𝓀[k]ˣ
     refine (mem_Mram _).2 fun Q => ?_
     have h0 := (mem_Mram φ).1 hram Q
-    rw [← map_sum, h0, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, h0, map_zero]
 
 end Frames
 
@@ -191,8 +196,8 @@ end GlobalTheory.FinPl.AllBij
 
 namespace GlobalTheory.FinPl
 
-open AllBij in
 
+open AllBij in
 theorem allBijective_all : ∀ D : D7, AllBijective D := by
   intro D k _ _ _ _ ι p q χ hχ ε n _ _ A S a hinj I
   have hsub : ∀ i, grpAt A (· = (p i).v) ≤ grpAt A fun v => ∃ i, v = (p i).v :=

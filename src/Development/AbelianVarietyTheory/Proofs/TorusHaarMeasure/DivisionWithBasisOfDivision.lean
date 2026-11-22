@@ -1,15 +1,33 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.CuspStatementPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalDecayHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ModeHalfStatementPfB
-import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SpanSubtraction
-import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.UnitriangularCharts
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.KronHolPsiInterpInterpC
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.NormLeOfDet
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.BasePsiLeviLowerBound
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EnormPowLeInvMeasureMulLintegralBall
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.CuspStatementPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalDecayHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ModeHalfStatementPfB
+public import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SpanSubtraction
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfB
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MeasureStatements
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.UnfoldPoincareOnto
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.DetFderivNeZeroOrbit
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.KronHolPsiOf
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ContinuousOnOfCharts
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MeasurableIndicatorOfContOn
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.LintegralLtTopOfCutoff
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.WeightContDiffOn
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.NormBcharMulNfacRmul
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.VanishOfSimpleZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.NormLeOfDet
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.BasePsiLeviLowerBound
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EnormPowLeInvMeasureMulLintegralBall
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates
 open MeasureTheory Topology Asymptotics Filter Metric
@@ -32,8 +50,8 @@ section Hyp
 
 variable {X : Data E r}
 
-open Classical in
 
+open Classical in
 def unitVec (e : Ent X) : Fin (nd X) → ℂ := fun k => if (Fintype.equivFin (Ent X)).symm k = e then 1 else 0
 
 open NumberField in
@@ -192,12 +210,12 @@ private lemma sum_mul_norm_unitVec_sq_eq (c : _root_.ReciprocityTheory.ChartRest
   · intro h
     exact absurd (Finset.mem_univ e) h
 
+
 open NumberField in
 open MeasureTheory Topology Asymptotics Filter Metric in
 open scoped ENNReal in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
 variable {X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r} in
-
 theorem _root_.GlobalTheory.DivisionVolume.margin_iff (h0 : 0 < X.p0) (h1 : X.p0 < r)
     (la : _root_.ReciprocityTheory.ChartRestriction.G.FD.Wt X.Ψ r) (m : ℝ) :
     (∀ x0, _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.IsOrth X x0 → ∀ z ∈ _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.OmF X x0, ∀ ξ : Fin (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nd X) → ℂ,
@@ -271,65 +289,13 @@ theorem _root_.GlobalTheory.DivisionVolume.margin_iff (h0 : 0 < X.p0) (h1 : X.p0
       push_cast at h
       exact h
 
-def LeviHyp (Xa : ArchInM X) : Prop :=
-  PropDisc X ∧ FinMu X ∧
-    (∃ bb m : ℝ, 4 * (X.Ψ.card : ℝ) * (r : ℝ) ^ 2 < bb ∧
-      bb ^ 2 * ((X.Ψ.card * min X.p0 (r - X.p0) : ℕ) : ℝ) + bb < m ∧
-      ∀ x0, IsOrth X x0 → ∀ z ∈ OmF X x0, ∀ ξ : Fin (nd X) → ℂ,
-        m * leviRh X x0 z ξ ≤ leviO X x0 (phla X Xa.Fp) z ξ - leviDens X x0 z ξ) ∧
-    (∀ x0, IsOrth X x0 → ∀ z ∈ OmF X x0, ∀ ξ : Fin (nd X) → ℂ, 0 ≤ leviO X x0 (phla X Xa.L) z ξ) ∧
-    (∀ P, X.IsBddSec (Xa.Fp + nd X • Xa.L) P → P ∈ X.SS (Xa.Fp + nd X • Xa.L)) ∧
-    (∀ P, X.IsBddSec Xa.Fp P → P ∈ X.SS Xa.Fp) ∧
-    (∀ P, X.IsBddSec (Xa.Fp + Xa.T • Xa.L) P → P ∈ X.SS (Xa.Fp + Xa.T • Xa.L)) ∧
-    (∃ (K : ℕ) (g : Fin K → Frame X.Ψ r → ℂ), ∀ f ∈ X.SS (Xa.Fp + Xa.T • Xa.L),
-      ∃ c : Fin K → ℂ, ∀ x ∈ X.dom, f x = ∑ i, c i * g i x)
-
-def WeightHyp (Xa : ArchInM X) : Prop :=
-  PropDisc X ∧ FiniteVolume X ∧ FiniteDimCusp X (wtTop Xa) ∧
-    ∃ bb m : ℝ, 4 * (X.Ψ.card : ℝ) * (r : ℝ) ^ 2 < bb ∧
-      bb ^ 2 * ((X.Ψ.card * min X.p0 (r - X.p0) : ℕ) : ℝ) + bb < m ∧ GapsPairing X (Xa.Fp - kapW X) m
-
 end Hyp
 
 section Size
 
 variable {X : Data E r}
 
-def InV (Xa : ArchInM X) (f : Frame X.Ψ r → ℂ) : Prop :=
-  ∃ x0, IsOrth X x0 ∧ ∃ FF, IsFundSet X x0 FF ∧
-    ∫⁻ z in FF, ENNReal.ofReal (X.pnorm (Xa.Fp + Xa.T • Xa.L) f (cpt X x0 z) ^ 2 *
-      (∑ k, X.pnorm Xa.L (Xa.w k) (cpt X x0 z) ^ 2) ^ (-(Xa.T : ℝ))) ∂muF X x0 < ⊤
-
 end Size
-
-def HasBasis {X : Data E r} {Xa : ArchInM X} (Fl : FlatM X Xa) : Prop :=
-  ∃ t : Fin Fl.δ → Frame X.Ψ r → ℂ, (∀ i, t i ∈ X.SS Xa.Fp) ∧ BasisOnS Fl t
-
-def SubtractWide (E : Type) [Field E] [NumberField E] [IsCMField E] : Prop :=
-  ∀ (r : ℕ) (X : Data E r) (Xa : ArchInM X) (Fl : FlatM X Xa) (t : Fin Fl.δ → Frame X.Ψ r → ℂ),
-    (∀ i, X.IsSec Xa.Fp (t i)) → BasisOnS Fl t →
-    ∀ f, X.IsSec (wtTop Xa) f →
-      ∃ cc : (Fin (nd X) → ℕ) → Fin Fl.δ → ℂ,
-        VanOrd Fl (Xa.T - nd X) fun x => f x - lead Fl t cc x
-
-def DivisionWide (E : Type) [Field E] [NumberField E] [IsCMField E] : Prop :=
-  ∀ (r : ℕ) (X : Data E r) (Xa : ArchInM X) (Fl : FlatM X Xa), LeviHyp Xa → HasBasis Fl →
-    ∀ f ∈ X.SS (wtTop Xa), InV Xa f → VanOrd Fl (Xa.T - nd X) f →
-      ∃ h : (Fin (nd X) → ℕ) → Frame X.Ψ r → ℂ,
-        (∀ α ∈ Finset.Nat.antidiagonalTuple (nd X) (Xa.T - nd X), h α ∈ X.SS (wtLow Xa)) ∧
-        ∀ x ∈ X.dom, f x = tail Fl h x
-
-def DivisionWithBasis (E : Type) [Field E] [NumberField E] [IsCMField E] : Prop :=
-  ∀ (r : ℕ) (X : Data E r) (Xa : ArchInM X) (Fl : FlatM X Xa), DivHyp Xa → HasBasis Fl →
-    ∀ f ∈ X.SS (wtTop Xa), BddByPow Xa f → VanOrd Fl (Xa.T - nd X) f →
-      ∃ h : (Fin (nd X) → ℕ) → Frame X.Ψ r → ℂ,
-        (∀ α ∈ Finset.Nat.antidiagonalTuple (nd X) (Xa.T - nd X), h α ∈ X.SS (wtLow Xa)) ∧
-        ∀ x ∈ X.dom, f x = tail Fl h x
-
-def SpanWide (E : Type) [Field E] [NumberField E] [IsCMField E] : Prop :=
-  ∀ (r : ℕ) (X : Data E r) (Xa : ArchInM X) (Fl : FlatM X Xa), LeviHyp Xa →
-    ∀ t : Fin Fl.δ → Frame X.Ψ r → ℂ, (∀ i, t i ∈ X.SS Xa.Fp) → BasisOnS Fl t →
-    ∀ f ∈ X.SS (wtTop Xa), InV Xa f → InSpan Fl t f
 
 end
 

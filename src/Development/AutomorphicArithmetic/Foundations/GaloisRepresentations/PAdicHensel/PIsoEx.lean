@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OnlyStableSubspaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClopenKGLInvEntries
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OnlyStableSubspaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClopenKGLInvEntries
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed UpperTheory.Gal.G1
 open scoped TensorProduct
 
@@ -25,7 +30,7 @@ theorem UpperTheory.Gal.G1.pIsoEx :
       rw [Matrix.diagonal_map (map_zero _)]
       congr 1
       funext i
-      simp only [Function.comp_apply, Arith.dg]
+      simp only [Arith.dg]
       split_ifs <;> simp
     rw [hd]
     exact ha

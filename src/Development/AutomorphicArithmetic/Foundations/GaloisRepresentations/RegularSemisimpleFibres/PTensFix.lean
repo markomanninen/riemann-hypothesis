@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Stabilizer
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmoothOf
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmoothTensorFactor
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmoothTensorFactor
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.L2.Host
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
 open GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.V.Published UpperTheory.CBC UpperTheory.Gal.InertialTypesAlt
@@ -15,9 +19,6 @@ namespace UpperTheory.Gal.InertialTypesAlt.TensorFixedVectors
 section Rep
 
 variable {Γ X : Type} [Group Γ] [AddCommGroup X] [Module ℂ X]
-
-private noncomputable def stab (π : Representation ℂ Γ X) (x : X) : Subgroup Γ :=
-  _root_.UpperTheory.Reformulated.B.RepresentationVectorStabilizer.stab π x
 
 private theorem idem_comm [TopologicalSpace Γ] [IsTopologicalGroup Γ] {π : Representation ℂ Γ X}
     (hπ : GlobalTheory.PRep.IsSmooth π) {H : Subgroup Γ} (hH : IsCompact (H : Set Γ)) {g : Γ}
@@ -34,7 +35,7 @@ private theorem idem_comm [TopologicalSpace Γ] [IsTopologicalGroup Γ] {π : Re
     simpa using this
   have h4 : π u (π g (idem hπ hH v)) = π g (π (g⁻¹ * u * g) (idem hπ hH v)) := by
     have e1 : u * g = g * (g⁻¹ * u * g) := by group
-    rw [← Module.End.mul_apply (π u), ← map_mul, e1, map_mul, Module.End.mul_apply]
+    rw [← mul_apply_eq_comp (π u), ← map_mul, e1, map_mul, mul_apply_eq_comp]
   rw [h4, mem_fixed.1 (idem_mem hπ hH v) _ hu']
 
 end Rep
@@ -85,7 +86,7 @@ private theorem oneMap_fix [∀ a, TopologicalSpace (G a)] [∀ a, IsTopological
       rw [oneMap_tprod]
       refine mem_fixed.2 fun u hu => ?_
       rw [position_tprod, Function.update_self, mem_fixed.1 (he (f a)) u hu, Function.update_idem]
-    | add x y hx hy => rw [map_add]; exact add_mem hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact add_mem hx hy
   have h2 : ∀ f : ∀ b, V b, (twKer (σ a) H 1).map
       ((PiTensorProduct.tprod ℂ).toLinearMap f a) ≤ twKer (intersection_update_fsHerm_neg_one σ a) H 1 := fun f => by
     rw [Submodule.map_le_iff_le_comap]
@@ -101,7 +102,7 @@ private theorem oneMap_fix [∀ a, TopologicalSpace (G a)] [∀ a, IsTopological
       rw [oneMap_tprod, map_sub]
       simp [MultilinearMap.toLinearMap]
     | add x y hx hy =>
-      rw [map_add, add_sub_add_comm]; exact add_mem hx hy
+      rw [map_add (f := _), add_sub_add_comm]; exact add_mem hx hy
   have h4 := Submodule.disjoint_def.1 (isCompl_fixed_twKer (position_smooth σ hσ a) hH).disjoint
     (w - oneMap a e w) (sub_mem hw (h1 w)) (h3 w)
   exact (sub_eq_zero.1 h4).symm
@@ -148,7 +149,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.tensFix :
       refine Subtype.ext ?_
       rw [redLevi_apply, levelZero_apply]
       exact idem_comm (hσ a) (hK a) (KO_le_normalizer (x.2 a trivial)) (f a)
-    | add x' y hx hy => simp only [map_add, hx, hy]
+    | add x' y hx hy => simp only [map_add (f := _), hx, hy]
   · have hk : ∀ a v, v - e a v ∈ twKer (σ a) (KOne k (Fin (d a))) 1 := fun a v => by
       rw [← idem_eq_zero_iff (hσ a) (hK a), map_sub, idem_of_mem (hσ a) (hK a) (idem_mem (hσ a) (hK a) v), sub_self]
     have h1 : ∀ a, oneMap a (e a) w = w := fun a =>

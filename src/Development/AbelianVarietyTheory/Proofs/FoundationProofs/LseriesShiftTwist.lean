@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Complex Filter Topology
 
 namespace GlobalTheory
@@ -9,7 +14,7 @@ theorem lseries_shift_twist (e : ℕ) (ψ g : ℕ → ℂ) (s : ℝ) (he : 1 ≤
   unfold LSeries
   congr 1
   funext n
-  simp only [LSeries.term]
+  simp only [LSeries.term_def]
   split_ifs with hn
   · rfl
   have hn' : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hn

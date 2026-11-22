@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -9,18 +13,7 @@ section Additive
 variable {O Y M : Type*} [CommRing O] [StarRing O] [AddCommGroup Y] [Module O Y]
   [AddCommGroup M]
 
-def addRefine (τ : Y →+ Y →+ M) (w : O) (y : Y) : M := τ y (w • y)
-
 variable {τ : Y →+ Y →+ M} {w : O}
-
-def subHom {ψ ψ' : Y → M} (hψ : ∀ y y', ψ (y + y') = ψ y + ψ y' + τ y y')
-    (hψ' : ∀ y y', ψ' (y + y') = ψ' y + ψ' y' + τ y y') : Y →+ M :=
-  AddMonoidHom.mk' (fun y => ψ y - ψ' y) fun y y' => by
-    rw [hψ, hψ']; abel
-
-@[simp] theorem subHom_apply {ψ ψ' : Y → M} (hψ : ∀ y y', ψ (y + y') = ψ y + ψ y' + τ y y')
-    (hψ' : ∀ y y', ψ' (y + y') = ψ' y + ψ' y' + τ y y') (y : Y) :
-    subHom hψ hψ' y = ψ y - ψ' y := rfl
 
 end Additive
 
@@ -38,37 +31,12 @@ section HalfElement
 
 variable {K : Type*} [Field K] [CharZero K] [StarRing K] {d : ℤ} {s : K}
 
-omit [StarRing K] in
-
-theorem isIntegral_half (hd : d % 4 = 3) (hs : s ^ 2 = -(d : K)) :
-    IsIntegral ℤ ((1 + s) / 2) := by
-  obtain ⟨k, hk⟩ : ∃ k : ℤ, d = 4 * k - 1 := ⟨(1 + d) / 4, by omega⟩
-  refine ⟨Polynomial.X ^ 2 - Polynomial.X + Polynomial.C k, by monicity!, ?_⟩
-  rw [hk] at hs
-  push_cast at hs
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_sub, Polynomial.eval₂_X_pow,
-    Polynomial.eval₂_X, Polynomial.eval₂_C]
-  rw [eq_intCast]
-  linear_combination (1 / 4 : K) * hs
 
 end HalfElement
 
 section Example
 
 open QuadraticAlgebra
-
-def traceFormSeven :
-    QuadraticAlgebra ℤ (-2) 1 →+ QuadraticAlgebra ℤ (-2) 1 →+ Additive (Multiplicative ℤ) :=
-  AddMonoidHom.mk'
-    (fun y => AddMonoidHom.mk'
-      (fun y' => Additive.ofMul (Multiplicative.ofAdd
-        (2 * y.re * y'.re + y.re * y'.im + y.im * y'.re + 4 * y.im * y'.im)))
-      fun a b => by
-        rw [← ofMul_mul, ← ofAdd_add]; congr 2; simp only [re_add, im_add]; ring)
-    fun a b => by
-      ext y'
-      simp only [AddMonoidHom.mk'_apply, AddMonoidHom.add_apply]
-      rw [← ofMul_mul, ← ofAdd_add]; simp only [re_add, im_add]; ring_nf
 
 end Example
 
@@ -79,7 +47,7 @@ variable {τ : Y →+ Y →+ Additive A} {w : O} in
 private theorem apply_smul_add_apply_smul_eq_of_add_star_eq_one (hsymm : ∀ y y', τ y y' = τ y' y)
     (hadj : ∀ (a : O) y y', τ (a • y) y' = τ y (star a • y')) (hw : w + star w = 1) (y y' : Y) :
     τ y (w • y') + τ y' (w • y) = τ y y' := by
-  rw [hsymm y' (w • y), hadj, ← (τ y).map_add, ← add_smul, hw, one_smul]
+  rw [hsymm y' (w • y), hadj, ← map_add (τ y), ← add_smul, hw, one_smul]
 
 variable {O Y A : Type*} [CommRing O] [StarRing O] [AddCommGroup Y] [Module O Y] [CommGroup A] in
 variable {τ : Y →+ Y →+ Additive A} {w : O} in
@@ -87,7 +55,7 @@ private theorem apply_add_smul_add_eq_add_add (hsymm : ∀ y y', τ y y' = τ y'
     (hadj : ∀ (a : O) y y', τ (a • y) y' = τ y (star a • y')) (hw : w + star w = 1) (y y' : Y) :
     τ (y + y') (w • (y + y')) = τ y (w • y) + τ y' (w • y') + τ y y' := by
   rw [← apply_smul_add_apply_smul_eq_of_add_star_eq_one hsymm hadj hw y y']
-  simp only [smul_add, map_add, AddMonoidHom.add_apply]
+  simp only [smul_add, map_add (f := _), AddMonoidHom.add_apply]
   abel
 
 variable {O Y A : Type*} [CommRing O] [StarRing O] [AddCommGroup Y] [Module O Y] [CommGroup A] in

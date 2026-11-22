@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KaehlerOneFormsToExtensionDeRhamMulSelf
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffCoverSpec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KaehlerOneFormsToExtensionDeRhamMulSelf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffCoverSpec
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.W1 GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 set_option autoImplicit false
@@ -23,7 +28,7 @@ theorem dv_mem_span_of_formallyUnramified : ∀ (k K L : Type) [Field k] [Field 
     rintro x -
     obtain ⟨y, rfl⟩ :=
       (KaehlerDifferential.exact_mapBaseChange_map k B B' x).mp (Subsingleton.elim _ _)
-    induction y with
+    induction y using TensorProduct.induction_on with
     | zero => simp
     | add _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
     | tmul b m =>
@@ -48,7 +53,8 @@ theorem dv_mem_span_of_formallyUnramified : ∀ (k K L : Type) [Field k] [Field 
   refine ⟨n, fun j => (f j : L), fun j => (w j : K), fun j => ⟨(f j).2, (w j).2⟩, ?_⟩
   have key : KaehlerDifferential.D k L v = ∑ j, (f j : L) • KaehlerDifferential.D k L (algebraMap K L (w j)) := by
     have h := congrArg (KaehlerDifferential.map k k B' L) hsum
-    rw [map_sum, KaehlerDifferential.map_D] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, KaehlerDifferential.map_D] at h
     refine h.symm.trans ?_
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, ← hw j, KaehlerDifferential.map_D, ← hφ]
@@ -57,6 +63,7 @@ theorem dv_mem_span_of_formallyUnramified : ∀ (k K L : Type) [Field k] [Field 
     intro a
     rw [mapDR, ExteriorAlgebra.lift_ι_apply]
     simp [map1]
-  simp_rw [hpull, key, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [hpull, key, map_sum, map_smul]
 
 end GlobalTheory.W1

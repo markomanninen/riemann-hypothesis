@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,7 @@ theorem evL_fb {n M : ℕ} (lev : Fin n → ℕ) (d : Fin M → ℕ) (h : ∑ i,
   rw [map_list_prod, List.map_ofFn]
   congr 2
   funext i
-  simp only [Function.comp]
-  rw [map_qdet, shift, add_sub_assoc]
+  rw [Function.comp_apply, map_qdet, shift, add_sub_assoc]
   congr 1
   funext p q
   simp [evL, hlev]

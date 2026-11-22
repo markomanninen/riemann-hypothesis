@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 open scoped InnerProductSpace
@@ -19,7 +23,7 @@ theorem absOpInt : ∀ (G : Type) [Group G] [TopologicalSpace G] [SecondCountabl
   let L : Hp →ₗ[ℂ] Hp :=
     { toFun := fun y => ∫ g, φ g • π g y ∂μ
       map_add' := fun y z => by
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
         exact integral_add (absOpInt_integrable μ π hn hc φ hφ y)
           (absOpInt_integrable μ π hn hc φ hφ z)
       map_smul' := fun c y => by

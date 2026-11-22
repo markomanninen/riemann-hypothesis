@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HasBareNormDisc
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
-import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
-import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatLineIdempotentSectionsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatLineIdempotentSections
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FramePointVectors
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameBorelChangeVectors
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HasBareNormDisc
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatLineIdempotentSectionsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatLineIdempotentSections
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FramePointVectors
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameBorelChangeVectors
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Br
 
@@ -35,7 +40,7 @@ theorem eq_cspB_rule {C : Set (Xo.XF c)} (hC : IsClopen C) (e : Formalism.L2.Pj.
   rw [hl, ← range_fpt_subset_iff] at hsp
   have hi : Formalism.L2.Pj.CompSplitPfB.cspB_rule Xo c C hC p z =
       Formalism.L2.Pj.CompSplitPfB.cspB_idem C hC z.x z.x_over := rfl
-  rw [hi, map_sub]
+  rw [hi, ψ.map_sub]
   set i := Formalism.L2.Pj.CompSplitPfB.cspB_idem C hC z.x z.x_over
   have hker : i ∉ (kerPt ψ).asIdeal ↔ ψ i ≠ 0 := Iff.rfl
   rw [hker] at hsp
@@ -116,8 +121,8 @@ namespace GlobalTheory.CompanionTheory.Ar.Br
 
 open GlobalTheory.CompanionTheory.Ar.Flat.RuleGlue GlobalTheory.CompanionTheory.Ar.Br.CvRule
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_flat_sec : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (Z : Formalism.L2.Pj.Comp Xo c) (Z' : CptOver Y (Z : Set (Xo.XF c))) (τ : GlobalTheory.AllWt.Psi H) (φ : FrameFn Xo c), FlatOnModel Z' τ.1 φ → ∃ s s' : Formalism.L2.Pj.Rul Xo c, s ∈ GlobalTheory.AllWt.secZ Xo c (GlobalTheory.AllWt.exOf D (GlobalTheory.FlatLine.flatWt D τ) 0) ∧ s' ∈ GlobalTheory.AllWt.secZ Xo c (-GlobalTheory.AllWt.exOf D (GlobalTheory.FlatLine.flatWt D τ) 0) ∧ GlobalTheory.FlatLine.idem Z * s = s ∧ GlobalTheory.FlatLine.idem Z * s' = s' ∧ s * s' = GlobalTheory.FlatLine.idem Z ∧ Reads (Z : Set (Xo.XF c)) τ.1 s φ := by
   intro E _ _ _ H D l Xo c O _ β Y Z Z' τ φ hf
   have hτ := τ.2
@@ -177,8 +182,8 @@ theorem exists_flat_sec : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
         · rw [ew j, h.2.1, ← Category.assoc, dualMap_spMap_comp]
       · rw [(D1.1 hr).1, (D1.1 hr).2, (D2.1 hr).1, (D2.1 hr).2]
         exact ⟨rfl, rfl⟩
-    exact ⟨sub_eq_zero.1 (zero q _ fun F _ ψ => by rw [map_sub, (key F ψ).1, sub_self]),
-      sub_eq_zero.1 (zero q _ fun F _ ψ => by rw [map_sub, (key F ψ).2, sub_self])⟩
+    exact ⟨sub_eq_zero.1 (zero q _ fun F _ ψ => by rw [ψ.map_sub, (key F ψ).1, sub_self]),
+      sub_eq_zero.1 (zero q _ fun F _ ψ => by rw [ψ.map_sub, (key F ψ).2, sub_self])⟩
   have hnat' : ∀ (p q : Formalism.L2.Pj.TRing c.F) (f : p.R →ₐ[c.F] q.R) (y : Formalism.L2.Pj.FrPt Xo c p.R)
       (z : Formalism.L2.Pj.FrPt Xo c q.R), Formalism.L2.Pj.FrMap f y z → s' q z = f (s' p y) := fun p q f y z h => by
     obtain ⟨h1, h2⟩ := hnat p q f y z h
@@ -210,11 +215,11 @@ theorem exists_flat_sec : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
         exact hl.chg F _ _ v w v' w' A B (hfr _ hr) (hfr' _ hr) hA hB
       · rw [(D1.1 hr).1, (D1.1 hr).2, (D2.1 hr).1, (D2.1 hr).2]
         simp
-    have k1 : e p y' - e p y = 0 := zero p _ fun F _ ψ => by rw [map_sub, (key F ψ).1, sub_self]
+    have k1 : e p y' - e p y = 0 := zero p _ fun F _ ψ => by rw [ψ.map_sub, (key F ψ).1, sub_self]
     have k2 : s p y' * Formalism.L2.Pj.wchar (detE D τ.1) t - s p y * Formalism.L2.Pj.wchar (detE D (ComplexEmbedding.conjugate τ.1)) t = 0 :=
       zero p _ fun F _ ψ => by
         have := (key F ψ).2
-        exact (map_sub ψ _ _).trans (sub_eq_zero.2 this)
+        exact (ψ.map_sub _ _).trans (sub_eq_zero.2 this)
     exact ⟨sub_eq_zero.1 k1, sub_eq_zero.1 k2⟩
   have hunitW : ∀ (p : Formalism.L2.Pj.TRing c.F) (t : Formalism.L2.Pj.Ix D → (p.R)ˣ) (b : Formalism.L2.Pj.Ix D → ℕ),
       IsUnit (Formalism.L2.Pj.wchar b t) := fun p t b => IsUnit.prod_univ_iff.2 fun i => (t i).isUnit.pow _

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousResQ
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarMeasureNormOneProductStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FundamentalDomainSplitCentreProductStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralSplitCentreInvariantStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalRestrictMemCuspidalL2Statement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSupportSplitCentreFactorStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousResQ
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarMeasureNormOneProductStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FundamentalDomainSplitCentreProductStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralSplitCentreInvariantStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalRestrictMemCuspidalL2Statement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSupportSplitCentreFactorStatement
+
+@[expose] public section
+
 open NumberField MeasureTheory Topology GlobalTheory.AutomorphicL2Unitary GlobalTheory.DiscreteSum GlobalTheory.OpTrace GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.UnitaryBC
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.CuspidalSpectrum
 
@@ -13,9 +18,9 @@ namespace GlobalTheory.CompanionTheory.CuspTransfer
 
 theorem sq_norm_toLp {X : Type*} [MeasurableSpace X] {m : Measure X} {F : X → ℂ} (h : MemLp F 2 m) :
     ENNReal.ofReal (‖h.toLp F‖ ^ 2) = ∫⁻ q, ‖F q‖ₑ ^ 2 ∂m := by
-  have h1 := eLpNorm_nnreal_pow_eq_lintegral (f := F) (μ := m) (p := 2) (by norm_num)
+  have h1 := eLpNorm_nnreal_pow_eq_lintegral (f := F) (μ := m) (p := 2) (by norm_num) h.aestronglyMeasurable
   have h2 : ENNReal.ofReal ‖h.toLp F‖ = eLpNorm F 2 m := by
-    rw [Lp.norm_toLp, ENNReal.ofReal_toReal h.2.ne]
+    rw [Lp.norm_toLp, ENNReal.ofReal_toReal h.ne]
   rw [ENNReal.ofReal_pow (norm_nonneg _), h2]
   simpa using h1
 
@@ -40,14 +45,14 @@ theorem exists_extend_equivariant {S H K X : Type*} [AddCommGroup S] [Module ℂ
   · exact (ρ x).continuous.comp Φ.continuous
   · rw [hπ, hΦ, hΦ, hρ]
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-theorem lintegral_resQ (ha : 0 < a) (μ : Measure (GA E a)) [μ.IsHaarMeasure] (ν : Measure (normOneGL E a))
+theorem lintegral_resQ (ha : 0 < a) (μ : Measure (GA E a)) [μ.IsHaarMeasure] (ν : Measure (normOneGL (K := E) (n := a)))
     [ν.IsHaarMeasure] (c : ENNReal)
-    (hmap : Measure.map (fun p : normOneGL E a × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ)
+    (hmap : Measure.map (fun p : normOneGL (K := E) (n := a) × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ)
     (φ : GA E a → ℂ) (hc : Continuous φ) (hl : ∀ γ g, φ (ratGL E a γ * g) = φ g)
     (hz : ∀ t g, φ (splitCentre E a t * g) = φ g) :
-    ∫⁻ q, ‖resQ φ q‖ₑ ^ 2 ∂(RightCosetSpace.quotientMeasure (rationalGLOne E a) ν) =
+    ∫⁻ q, ‖resQ φ q‖ₑ ^ 2 ∂(RightCosetSpace.quotientMeasure (rationalGLOne (K := E) (n := a)) ν) =
       c * ∫⁻ q, ‖descend (latticeGL E a) φ q‖ₑ ^ 2 ∂(GlobalTheory.AutomorphicL2Unitary.quotMeasure (latticeGL E a) μ) := by
   have hd := GlobalTheory.T.fundamental_domain_split_centre_product E a ha μ
   have hL : LeftInv (latticeGL E a) φ := leftInv_latticeGL hl hz
@@ -66,7 +71,7 @@ def cuspidalL2Functions (μ : Measure (GA E a)) [μ.IsHaarMeasure] : Submodule �
 
 section Maps
 
-variable (μ : Measure (GA E a)) [μ.IsHaarMeasure] (ν : Measure (normOneGL E a)) [ν.IsHaarMeasure]
+variable (μ : Measure (GA E a)) [μ.IsHaarMeasure] (ν : Measure (normOneGL (K := E) (n := a))) [ν.IsHaarMeasure]
 
 def toL2cusp : cuspidalL2Functions μ →ₗ[ℂ] L2cusp μ where
   toFun φ := ⟨φ.2.2.toL2, toL2_mem_cuspidal φ.2.2 φ.2.1⟩
@@ -85,18 +90,18 @@ theorem denseRange_toL2cusp : DenseRange (toL2cusp μ) := by
   rw [coe_toL2cusp]
   exact l2DiscreteQuotient_ext_iff_lift_ae_eq.2 (h2.lift_toL2_ae_eq.trans e.symm)
 
-variable {μ ν} in
 
-def toCusp (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne E a) ν)) :
+variable {μ ν} in
+def toCusp (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne (K := E) (n := a)) ν)) :
     cuspidalL2Functions μ →ₗ[ℂ] cuspidalL2 ν where
   toFun φ := ⟨(hm φ).toLp _, GlobalTheory.T.cuspidal_restrict_mem_cuspidal_l2 E a ν φ.1 φ.2.1 (hm φ)⟩
   map_add' φ ψ := Subtype.ext (MemLp.toLp_add (hm φ) (hm ψ))
   map_smul' z φ := Subtype.ext (MemLp.toLp_const_smul z (hm φ))
 
 variable {μ ν} in
-theorem coe_toCusp (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne E a) ν))
+theorem coe_toCusp (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne (K := E) (n := a)) ν))
     (φ : cuspidalL2Functions μ) :
-    (toCusp hm φ : Lp ℂ 2 (RightCosetSpace.quotientMeasure (rationalGLOne E a) ν)) = (hm φ).toLp _ := rfl
+    (toCusp hm φ : Lp ℂ 2 (RightCosetSpace.quotientMeasure (rationalGLOne (K := E) (n := a)) ν)) = (hm φ).toLp _ := rfl
 
 end Maps
 
@@ -106,8 +111,8 @@ end
 noncomputable section
 namespace GlobalTheory.CompanionTheory.CuspTransfer
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
-variable {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant] {ν : Measure (normOneGL E a)} [ν.IsHaarMeasure]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+variable {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant] {ν : Measure (normOneGL (K := E) (n := a))} [ν.IsHaarMeasure]
 
 def trFn (x : GA E a) (φ : cuspidalL2Functions μ) : cuspidalL2Functions μ :=
   ⟨fun g => φ.1 (g * x), mul_right_mem_cuspCont φ.2.1 x, φ.2.2.mul_right x⟩
@@ -115,11 +120,11 @@ def trFn (x : GA E a) (φ : cuspidalL2Functions μ) : cuspidalL2Functions μ :=
 theorem Rcusp_toL2cusp (x : GA E a) (φ : cuspidalL2Functions μ) : Rcusp μ x (toL2cusp μ φ) = toL2cusp μ (trFn x φ) :=
   Subtype.ext (right_translate_toL2 φ.2.2 x)
 
-theorem cuspRep_toCusp (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne E a) ν))
-    (x : normOneGL E a) (φ : cuspidalL2Functions μ) : cuspRep ν x (toCusp hm φ) = toCusp hm (trFn (x : GA E a) φ) := by
+theorem cuspRep_toCusp (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne (K := E) (n := a)) ν))
+    (x : normOneGL (K := E) (n := a)) (φ : cuspidalL2Functions μ) : cuspRep ν x (toCusp hm φ) = toCusp hm (trFn (x : GA E a) φ) := by
   refine Subtype.ext (Lp.ext ?_)
-  have e0 : ((cuspRep ν x (toCusp hm φ) : cuspidalL2 ν) : Lp ℂ 2 (RightCosetSpace.quotientMeasure (rationalGLOne E a) ν)) =
-      RightCosetSpace.rightRegularRep (rationalGLOne E a) ν x (toCusp hm φ) := rfl
+  have e0 : ((cuspRep ν x (toCusp hm φ) : cuspidalL2 ν) : Lp ℂ 2 (RightCosetSpace.quotientMeasure (rationalGLOne (K := E) (n := a)) ν)) =
+      RightCosetSpace.rightRegularRep (rationalGLOne (K := E) (n := a)) ν x (toCusp hm φ) := rfl
   rw [e0, coe_toCusp, coe_toCusp]
   refine (RightCosetSpace.coeFn_rightRegularRep _ ν x _).trans ?_
   refine (((RightCosetSpace.measurePreserving_rightMul ν x).quasiMeasurePreserving.ae_eq_comp
@@ -132,17 +137,17 @@ theorem cuspRep_toCusp (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 
     simp only [trFn, mul_assoc, φ.2.1.2.1]) y).symm
 
 theorem memLp_resQ (ha : 0 < a) (c : ENNReal) (hct : c ≠ ⊤)
-    (hmap : Measure.map (fun p : normOneGL E a × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ)
-    (φ : cuspidalL2Functions μ) : MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne E a) ν) := by
-  refine ⟨(continuous_resQ φ.2.1.1 φ.2.1.2.1).aestronglyMeasurable, ?_⟩
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top two_ne_zero ENNReal.ofNat_ne_top]
+    (hmap : Measure.map (fun p : normOneGL (K := E) (n := a) × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ)
+    (φ : cuspidalL2Functions μ) : MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne (K := E) (n := a)) ν) := by
+  rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top two_ne_zero ENNReal.ofNat_ne_top
+    (continuous_resQ φ.2.1.1 φ.2.1.2.1).aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_ofNat]
   rw [lintegral_resQ ha μ ν c hmap φ.1 φ.2.1.1 φ.2.1.2.1 φ.2.1.2.2.1, ← sq_norm_toLp φ.2.2.2]
   exact ENNReal.mul_lt_top hct.lt_top ENNReal.ofReal_lt_top
 
 theorem norm_toCusp (ha : 0 < a) (c : ENNReal)
-    (hmap : Measure.map (fun p : normOneGL E a × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ)
-    (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne E a) ν))
+    (hmap : Measure.map (fun p : normOneGL (K := E) (n := a) × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ)
+    (hm : ∀ φ : cuspidalL2Functions μ, MemLp (resQ φ.1) 2 (RightCosetSpace.quotientMeasure (rationalGLOne (K := E) (n := a)) ν))
     (φ : cuspidalL2Functions μ) : ‖toCusp hm φ‖ = Real.sqrt c.toReal * ‖toL2cusp μ φ‖ := by
   have h3 : ‖toCusp hm φ‖ ^ 2 = c.toReal * ‖toL2cusp μ φ‖ ^ 2 := by
     have h4 := lintegral_resQ ha μ ν c hmap φ.1 φ.2.1.1 φ.2.1.2.1 φ.2.1.2.2.1
@@ -157,16 +162,16 @@ end
 
 noncomputable section
 namespace GlobalTheory.CompanionTheory.CuspTransfer
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
-variable {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant] {ν : Measure (normOneGL E a)} [ν.IsHaarMeasure]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+variable {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant] {ν : Measure (normOneGL (K := E) (n := a))} [ν.IsHaarMeasure]
 
 theorem exists_transfer_op (ha : 0 < a) (c : ENNReal) (hct : c ≠ ⊤)
-    (hmap : Measure.map (fun p : normOneGL E a × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ) :
+    (hmap : Measure.map (fun p : normOneGL (K := E) (n := a) × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ) :
     ∃ Φ : L2cusp μ →L[ℂ] cuspidalL2 ν, (∀ F, ‖Φ F‖ = Real.sqrt c.toReal * ‖F‖) ∧
-      ∀ (x : normOneGL E a) (F : L2cusp μ), Φ (Rcusp μ (x : GA E a) F) = cuspRep ν x (Φ F) :=
+      ∀ (x : normOneGL (K := E) (n := a)) (F : L2cusp μ), Φ (Rcusp μ (x : GA E a) F) = cuspRep ν x (Φ F) :=
   have hm := memLp_resQ (μ := μ) (ν := ν) ha c hct hmap
   exists_extend_equivariant (toL2cusp μ) (toCusp hm) (denseRange_toL2cusp μ) (Real.sqrt c.toReal)
-    (norm_toCusp ha c hmap hm) (fun x : normOneGL E a => Rcusp μ (x : GA E a)) (fun x => cuspRep ν x)
+    (norm_toCusp ha c hmap hm) (fun x : normOneGL (K := E) (n := a) => Rcusp μ (x : GA E a)) (fun x => cuspRep ν x)
     (fun x => trFn (x : GA E a)) (fun x s => Rcusp_toL2cusp _ s) (fun x s => cuspRep_toCusp hm x s)
 
 end GlobalTheory.CompanionTheory.CuspTransfer
@@ -193,17 +198,17 @@ theorem comp_repOp_eq_integrated {G Y H K : Type*} [Group G] [TopologicalSpace G
   rw [h₁]
   exact integral_congr_ae (.of_forall fun x => by simp only [hact])
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
-variable {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant] {ν : Measure (normOneGL E a)} [ν.IsHaarMeasure]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+variable {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant] {ν : Measure (normOneGL (K := E) (n := a))} [ν.IsHaarMeasure]
 
 theorem comp_repOp_eq (Φ : L2cusp μ →L[ℂ] cuspidalL2 ν)
-    (hact : ∀ (x : normOneGL E a) (F : L2cusp μ), Φ (Rcusp μ (x : GA E a) F) = cuspRep ν x (Φ F))
+    (hact : ∀ (x : normOneGL (K := E) (n := a)) (F : L2cusp μ), Φ (Rcusp μ (x : GA E a) F) = cuspRep ν x (Φ F))
     {f : GA E a → ℂ} (hf : Continuous f) (hfc : HasCompactSupport f)
-    (f₁ : CompactlySupportedContinuousMap (normOneGL E a) ℂ)
+    (f₁ : CompactlySupportedContinuousMap (normOneGL (K := E) (n := a)) ℂ)
     (h₁ : ∀ (K : Type) [NormedAddCommGroup K] [NormedSpace ℂ K] [CompleteSpace K] (W : GA E a → K), Continuous W →
       (∀ t g, W (splitCentre E a t * g) = W g) → ∫ g, f g • W g ∂μ = ∫ x, f₁ x • W (x : GA E a) ∂ν) :
     Φ ∘L repOp (Rcusp μ) μ f = (cuspRep ν).integrated ν (UnitaryRep.ccToL1 ν f₁) ∘L Φ :=
-  comp_repOp_eq_integrated (isUnitaryRep_Rcusp μ) (cuspRep ν) (fun x : normOneGL E a => (x : GA E a)) Φ hact hf hfc f₁
+  comp_repOp_eq_integrated (isUnitaryRep_Rcusp μ) (cuspRep ν) (fun x : normOneGL (K := E) (n := a) => (x : GA E a)) Φ hact hf hfc f₁
     fun v => h₁ (cuspidalL2 ν) (fun g => Φ (Rcusp μ g v)) (Φ.continuous.comp ((isUnitaryRep_Rcusp μ).continuous_apply v))
       (fun t g => by simp only [map_mul, Rcusp_splitCentre, one_mul])
 
@@ -212,12 +217,12 @@ end
 
 namespace GlobalTheory.CompanionTheory.CuspTransfer
 
-theorem transfer : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 0 < a →
+theorem transfer : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 0 < a →
     ∀ (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
-      (ν : Measure (GroundTheory.Automorphic.Reduction.normOneGL E a)) [ν.IsHaarMeasure],
+      (ν : Measure (GroundTheory.Automorphic.Reduction.normOneGL (K := E) (n := a))) [ν.IsHaarMeasure],
       ∃ (Φ : L2cusp μ →L[ℂ] GroundTheory.Automorphic.CuspidalSpectrum.cuspidalL2 ν) (c : ℝ), 0 < c ∧ (∀ F, ‖Φ F‖ = c * ‖F‖) ∧
         ∀ f : GA E a → ℂ, Continuous f → HasCompactSupport f →
-          ∃ f₁ : CompactlySupportedContinuousMap (GroundTheory.Automorphic.Reduction.normOneGL E a) ℂ,
+          ∃ f₁ : CompactlySupportedContinuousMap (GroundTheory.Automorphic.Reduction.normOneGL (K := E) (n := a)) ℂ,
             Φ ∘L repOp (Rcusp μ) μ f = (GroundTheory.Automorphic.CuspidalSpectrum.cuspRep ν).integrated ν
               (GroundTheory.Automorphic.UnitaryRep.ccToL1 ν f₁) ∘L Φ := fun E _ _ _ a ha μ _ _ ν _ =>
   (GlobalTheory.T.haar_measure_norm_one_product E a ha μ ν).elim fun c h =>

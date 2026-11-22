@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMassStA
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartDensityIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartMassAffine
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMassStA
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartDensityIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartMassAffine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -131,8 +136,8 @@ theorem integrable_comp_affine {D : ℕ} {f : (Fin D → ℂ) → ℝ} (hf : Int
 
 end ChartDensityIntegrableAlt
 
-open ChartDensityIntegrableAlt in
 
+open ChartDensityIntegrableAlt in
 theorem ChartDensityIntegrable.proof : ChartDensityIntegrable.Statement := by
   intro e M hM
   obtain ⟨c, P, κ, hP, hpot⟩ := hermChartPot_eq_gbPot_affine M hM

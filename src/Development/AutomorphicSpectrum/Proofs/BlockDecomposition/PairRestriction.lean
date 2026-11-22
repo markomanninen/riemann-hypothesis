@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemProdSpanInf
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemProdSpanInf
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
+module
+
+public import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
+
+@[expose] public section
 
 open GlobalTheory.Mem.An
 
 namespace UpperTheory.T3
 
-open Filter in
 
+open Filter in
 private theorem ev_log_le {a k : ℝ} (ha : 0 < a) (hk : 0 < k) (A D : ℝ) (hD : 0 < D) :
     ∀ᶠ x : ℝ in atTop, A + D * Real.log x ≤ k * x ^ a := by
   have h1 := (isLittleO_log_rpow_atTop ha).bound (show (0:ℝ) < k / (2 * (|D| + 1)) by positivity)

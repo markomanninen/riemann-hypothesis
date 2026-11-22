@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.FormulaF
-import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.FormulaF
+public import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem psi_weighted_memLp {v₀ : T.V} (hgap : StdGap ε lam) (hP : IsPsiFor ε
     Submodule.mem_sInf.2 (fun S hS => hS.1 (Submodule.mem_comap.2 (Submodule.subset_span ⟨u, rfl⟩)))
   have h := (hW _ (hmem v) _ (hmem w)).const_mul (((‖uniformisationL2 ε Ψ v₀ T.w‖ ^ 2 : ℝ) : ℂ)⁻¹)
   refine h.congr_norm ?_ (Filter.Eventually.of_forall fun g => ?_)
-  · exact h.1.congr (Filter.Eventually.of_forall fun g => by
+  · exact h.aestronglyMeasurable.congr (Filter.Eventually.of_forall fun g => by
       simp only
       rw [formulaF hgap hP hv₀ (g := Formalism.MainNotions.S.umat g) g.2 v w]
       field_simp)
@@ -93,7 +97,7 @@ variable {ε : Fin n → Bool} {lam lam' : Fin n → ℝ} {T : S7.KType ε (lowK
 theorem aestronglyMeasurable_psi_inner (hP : IsPsiFor ε lam T Ψ) (x y : T.V) :
     AEStronglyMeasurable (fun g : Formalism.REAL.UJ ε => inner ℂ x (Ψ (Formalism.MainNotions.S.umat g) y)) (Formalism.REAL.muG ε) := by
   have hΨm : AEStronglyMeasurable (fun g : Formalism.REAL.UJ ε => Ψ (Formalism.MainNotions.S.umat g)) (Formalism.REAL.muG ε) :=
-    (hP.2.2.2.2 (Formalism.REAL.muG ε) (Formalism.REAL.instIsHaarMuG n ε)).1
+    (memLp_muG_of_haar ε Ψ 2 hP.2.2.2.2).aestronglyMeasurable
   exact (continuous_const.inner (continuous_id.clm_apply continuous_const)).comp_aestronglyMeasurable hΨm
 
 theorem psi_inner_memLp (hP : IsPsiFor ε lam T Ψ) (x y : T.V) :

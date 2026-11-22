@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenInvertibleMatrices
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothTimeRightDerivativesCommute
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveTimeReversal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveSolutionExistence
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveUniqOfWaveSpeed
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenInvertibleMatrices
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothTimeRightDerivativesCommute
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveTimeReversal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveSolutionExistence
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveUniqOfWaveSpeed
+
+@[expose] public section
 
 noncomputable section
 
@@ -204,7 +208,7 @@ theorem good_smul (c : ℂ) {L : (Mat n → V) → (Mat n → V)} (h : Good L) :
     congr 1
     funext s
     simp only [Pi.smul_apply]
-    rw [smul_comm]
+    exact smul_comm c (g s : ℂ) _
 
 theorem good_comp {L₁ L₂ : (Mat n → V) → (Mat n → V)} (h₁ : Good L₁) (h₂ : Good L₂) :
     Good (fun f => L₁ (L₂ f)) := by

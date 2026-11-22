@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementLW
-import Formalism.PieriBlockIdeals.WEChain
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.WEChain
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal
 
@@ -155,8 +160,8 @@ theorem measurableSet_cone (r : ℕ) (c : ℝ) : MeasurableSet (GlobalTheory.Sie
 
 end GlobalTheory.SiegelSet.ConeConv
 
-open GlobalTheory.SiegelSet.ConeConv in
 
+open GlobalTheory.SiegelSet.ConeConv in
 theorem GlobalTheory.SiegelSet.lintegral_cone_modulus_lt_top : ∀ (F : Type) [Field F] [NumberField F] (n r d : ℕ) {c : ℝ}, 0 < c →
     d < 2 * (n - r) → ∫⁻ t in GlobalTheory.SiegelSet.cone r c, ENNReal.ofReal (∏ i, t i ^ (Module.finrank ℚ F * d)) *
       ENNReal.ofReal ((GlobalTheory.SiegelSet.modulus F n t * ∏ i, t i)⁻¹) < ⊤ := by

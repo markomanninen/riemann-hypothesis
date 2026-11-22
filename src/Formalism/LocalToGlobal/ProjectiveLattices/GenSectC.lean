@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.GenSectB
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenSectB
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem Phi_mk'_spec (x : Fin m → Ω) (j₀ : Fin m)
 
 theorem ker_Phi (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ ≠ 0)
     (hinj : ∀ q : KT K D m, q ≠ 0 → aeval (gs x j₀) q ≠ 0) :
-    Is K x = RingHom.ker (Phi x j₀ hinj) := by
+    Is (K := K) x = RingHom.ker (Phi x j₀ hinj) := by
   apply le_antisymm
   · rw [Is, Ideal.span_le]
     rintro _ ⟨i, rfl⟩
@@ -61,7 +65,8 @@ theorem ker_Phi (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ ≠ 0)
       psi_eq_zero_iff x j₀ hx₀] at hr
     rw [IsLocalization.mk'_eq_mul_mk'_one]
     apply Ideal.mul_mem_right
-    have hle : Ideal.map (algebraMap (ΩT Ω D m) (RS K Ω D m)) (Ideal.span (Set.range (sec x))) ≤ Is K x := by
+    have hle : Ideal.map (algebraMap (ΩT Ω D m) (RS K Ω D m)) (Ideal.span (Set.range (sec x))) ≤
+        Is (K := K) x := by
       rw [Ideal.map_span, Is]
       apply Ideal.span_mono
       rintro _ ⟨_, ⟨i, rfl⟩, rfl⟩
@@ -72,7 +77,7 @@ theorem quotient_generic_section_field [CharZero K] (hfg : (⊤ : IntermediateFi
     (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ ≠ 0)
     (hbig : Algebra.trdeg K (IntermediateField.adjoin K (Set.range fun j => x j / x j₀)) = D) :
     ∃ (E : Type) (_ : Field E) (_ : Algebra (KTf K D m) E), FiniteDimensional (KTf K D m) E ∧
-      Nonempty ((RS K Ω D m ⧸ Is K x) ≃ₐ[KTf K D m] E) := by
+      Nonempty ((RS K Ω D m ⧸ Is (K := K) x) ≃ₐ[KTf K D m] E) := by
   classical
   have halg := halg_of x j₀ htr hbig
   have hind := gs_indep x j₀ hx₀ htr halg
@@ -85,10 +90,15 @@ theorem quotient_generic_section_field [CharZero K] (hfg : (⊤ : IntermediateFi
       (aeval (gs x j₀) : KT K D m →ₐ[K] CT Ω D j₀).toRingHom
   have hχ : Function.Injective χ :=
     (IsFractionRing.injective (CT Ω D j₀) (FractionRing (CT Ω D j₀))).comp hI
-  letI : Algebra (KT K D m) (FractionRing (CT Ω D j₀)) := χ.toAlgebra
-  letI : Algebra (KTf K D m) (FractionRing (CT Ω D j₀)) := (IsFractionRing.lift hχ).toAlgebra
-  haveI : IsScalarTower (KT K D m) (KTf K D m) (FractionRing (CT Ω D j₀)) :=
-    IsScalarTower.of_algebraMap_eq fun q => (IsFractionRing.lift_algebraMap hχ q).symm
+  let baseAlgebra : Algebra (KT K D m) (FractionRing (CT Ω D j₀)) := χ.toAlgebra
+  let baseModule : Module (KT K D m) (FractionRing (CT Ω D j₀)) :=
+    @Algebra.toModule _ _ _ _ baseAlgebra
+  let baseSMul : SMul (KT K D m) (FractionRing (CT Ω D j₀)) := baseAlgebra.toSMul
+  let fractionAlgebra : Algebra (KTf K D m) (FractionRing (CT Ω D j₀)) :=
+    (IsFractionRing.lift hχ).toAlgebra
+  have tower : IsScalarTower (KT K D m) (KTf K D m) (FractionRing (CT Ω D j₀)) :=
+    IsScalarTower.of_algebraMap_eq (S := KTf K D m) (A := FractionRing (CT Ω D j₀))
+      fun q => (IsFractionRing.lift_algebraMap (K := KTf K D m) hχ q).symm
   have key : ∀ r : KTf K D m, Phi x j₀ hinj (algebraMap (KTf K D m) (RS K Ω D m) r) =
       IsFractionRing.lift hχ r := by
     have h : (Phi x j₀ hinj).comp (algebraMap (KTf K D m) (RS K Ω D m)) = IsFractionRing.lift hχ := by
@@ -157,7 +167,7 @@ theorem quotient_generic_section_field [CharZero K] (hfg : (⊤ : IntermediateFi
     · intro ω
       exact hΩ ω
     · intro p q hp hq
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hp hq
     · intro p v hp
       rw [map_mul]
@@ -192,8 +202,7 @@ theorem quotient_generic_section_field [CharZero K] (hfg : (⊤ : IntermediateFi
       intro a b h
       have h' := congrArg (fun e : E' => (e : FractionRing (CT Ω D j₀))) h
       exact Subtype.ext h')
-  have hSf : IsField S :=
-    (Algebra.IsIntegral.isField_iff_isField (algebraMap (KTf K D m) S).injective).1 (Field.toIsField _)
+  have hSf : IsField S := IsField.of_isDomain_of_finite (KTf K D m) S
   let E := S.toIntermediateField' hSf
   let g : RS K Ω D m →ₐ[KTf K D m] E :=
     { toFun := fun r => ⟨ΦK r, ΦK.mem_range_self r⟩
@@ -206,7 +215,7 @@ theorem quotient_generic_section_field [CharZero K] (hfg : (⊤ : IntermediateFi
     rintro ⟨v, hv⟩
     obtain ⟨r, rfl⟩ := (AlgHom.mem_range ΦK).1 (show v ∈ S from hv)
     exact ⟨r, rfl⟩
-  have hker : RingHom.ker g = Is K x := by
+  have hker : RingHom.ker g = Is (K := K) x := by
     rw [ker_Phi x j₀ hx₀ hinj]
     ext r
     simp only [RingHom.mem_ker]

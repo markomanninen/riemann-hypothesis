@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function
 open NumberField IsDedekindDomain
@@ -15,24 +19,24 @@ open Reduction AutomorphicForm RightCosetSpace
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-local notation "Γ₁" => rationalGLOne K n
+local notation "Γ₁" => rationalGLOne (K := K) (n := n)
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 instance completeSpace_cuspidalL2 : CompleteSpace (cuspidalL2 μ) :=
   (isClosed_cuspidalL2 μ).completeSpace_coe
 
-def cuspRep : UnitaryRep (normOneGL K n) (cuspidalL2 μ) :=
+def cuspRep : UnitaryRep (normOneGL (K := K) (n := n)) (cuspidalL2 μ) :=
   (rightRegularRep Γ₁ μ).restrict (cuspidalL2 μ) (isInvariant_cuspidalL2 μ)
 
-theorem subtypeL_comp_integrated (f : (normOneGL K n) →₁[μ] ℂ) :
+theorem subtypeL_comp_integrated (f : (normOneGL (K := K) (n := n)) →₁[μ] ℂ) :
     (cuspidalL2 μ).subtypeL ∘L (cuspRep μ).integrated μ f =
       (rightRegularRep Γ₁ μ).integrated μ f ∘L (cuspidalL2 μ).subtypeL :=
   UnitaryRep.comp_integrated_of_mem_intertwiners (cuspRep μ) μ
     (UnitaryRep.subtypeL_mem_intertwiners _ _ _) f
 
 theorem isCompactOperator_of_forall_norm_rconv_le
-    (f : CompactlySupportedContinuousMap (normOneGL K n) ℂ) (B : ℝ)
+    (f : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) (B : ℝ)
     (hB : ∀ φ ∈ cuspidalL2 μ, ∀ x, ‖rconv Γ₁ μ f φ x‖ ≤ B * ‖φ‖) :
     IsCompactOperator ((cuspRep μ).integrated μ (UnitaryRep.ccToL1 μ f)) := by
   have := isFiniteMeasure_quotientMeasure (K := K) (n := n) μ

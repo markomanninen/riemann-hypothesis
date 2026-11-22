@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -88,7 +92,7 @@ theorem exists_selfDual (B : LinearMap.BilinForm ℝ V) (hB : B.Nondegenerate) (
     have e5 : B w w = 0 := hA w
     have e6 : B (D.subtype (x₁ + a • ⟨w, hwD⟩)) (D.subtype (y₁ + c • ⟨w, hwD⟩)) =
         B (D.subtype x₁) (D.subtype y₁) + a • B w (D.subtype y₁) - c • B w (D.subtype x₁) := by
-      simp only [Submodule.subtype_apply, Submodule.coe_add, Submodule.coe_smul, map_add, map_zsmul,
+      simp only [Submodule.subtype_apply, Submodule.coe_add, Submodule.coe_smul, map_add (f := _), map_zsmul,
         LinearMap.add_apply, LinearMap.smul_apply, e4, e5, smul_zero, smul_neg, add_zero]
       ring
     rw [e6]
@@ -117,7 +121,8 @@ theorem dualSubmoduleToDual_surjective (B : LinearMap.BilinForm ℝ V) (hB : B.N
   have hspec := LinearMap.BilinForm.dualSubmoduleParing_spec B ⟨y, hymem⟩ (bΛ j)
   simp only [algebraMap_int_eq, Int.coe_castRingHom] at hspec
   rw [LinearMap.BilinForm.dualSubmoduleToDual_apply_apply, hspec]
-  simp only [hbΛ, hy, map_sum, LinearMap.sum_apply, map_zsmul, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hbΛ, hy, map_sum, LinearMap.sum_apply, map_zsmul, LinearMap.smul_apply,
     LinearMap.BilinForm.apply_dualBasis_left, smul_ite, smul_zero, zsmul_eq_mul, mul_one,
     Finset.sum_ite_eq, Finset.mem_univ, if_true]
   congr 2

@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.AlgRepEndIrreducible
 open scoped TensorProduct
 
 theorem UpperTheory.V.AlgRepEndIrreducible.tensDer :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (π : CuspSub E a) (Ξ : AlgRep E a), SepDer (tensorK π Ξ) (tensorLie π Ξ) := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (π : CuspSub E a) (Ξ : AlgRep E a), SepDer (tensorK π Ξ) (tensorLie π Ξ) := by
   intro E _ _ _ a π Ξ k Z h0 hk m' hm
   let e := TensorProduct.piScalarRight ℂ ℂ π.V (Fin Ξ.d)
   have h1 : e m' ≠ 0 := fun h => hm (e.map_eq_zero_iff.1 h)
@@ -13,7 +18,7 @@ theorem UpperTheory.V.AlgRepEndIrreducible.tensDer :
   obtain ⟨g, hg⟩ := Function.ne_iff.1 h2
   let l : π.V ⊗[ℂ] (Fin Ξ.d → ℂ) →ₗ[ℂ] ℂ :=
     { toFun := fun m => (e m j).1.1 g
-      map_add' := fun x y => by rw [map_add]; rfl
+      map_add' := fun x y => by rw [map_add (f := _)]; rfl
       map_smul' := fun c x => by rw [map_smul]; rfl }
   have hl : ∀ (φ : π.V) (v : Fin Ξ.d → ℂ), l (φ ⊗ₜ v) = φ.1.1 g * v j := fun φ v => by
     have h : e (φ ⊗ₜ v) j = v j • φ := by
@@ -25,14 +30,14 @@ theorem UpperTheory.V.AlgRepEndIrreducible.tensDer :
   refine ⟨l, hg, fun m => ?_⟩
   induction m using TensorProduct.induction_on with
   | zero => simpa only [map_zero] using hasDerivAt_const (0 : ℝ) (0 : ℂ)
-  | add x y hx hy => simpa only [map_add] using hx.fun_add hy
+  | add x y hx hy => simpa only [map_add (f := _)] using hx.fun_add hy
   | tmul φ v =>
     have h3 := GlobalTheory.CuspRep.hasDerivAt_curve φ.1 g (fun t => Unitary.toUnits (k t)) (toL Z) hc0 hk
     have h4 := HasDerivAt.fun_sum (u := Finset.univ) fun i _ =>
       (Ξ.hasDerivAt_curve (fun t => Unitary.toUnits (k t)) (toL Z) hc0 hk j i).mul_const (v i)
     have h5 := h3.fun_mul h4
     simp only [h0, map_one, mul_one] at h5
-    simp only [tensorK, tensorLie_tmul, TensorProduct.map_tmul, map_add, hl, Matrix.toLin'_apply]
+    simp only [tensorK, tensorLie_tmul, TensorProduct.map_tmul, map_add (f := _), hl, Matrix.toLin'_apply]
     have h6 : ∑ i, (1 : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ) j i * v i = v j := congrFun (Matrix.one_mulVec v) j
     rw [h6] at h5
     exact h5

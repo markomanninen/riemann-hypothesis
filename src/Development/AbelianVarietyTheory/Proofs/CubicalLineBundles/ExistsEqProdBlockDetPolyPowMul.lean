@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IntegralOf
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointBaseChangeUniqueReflIff
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueFrameChangeByMatrices
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeByMatricesReflAndComp
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeCommBaseChange
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LowerTriIsUnitDet
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.DetDvdEquivariantFramePolynomial
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ChartCoverFOfSecBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IntegralOf
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointBaseChangeUniqueReflIff
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueFrameChangeByMatrices
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeByMatricesReflAndComp
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeCommBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LowerTriIsUnitDet
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.DetDvdEquivariantFramePolynomial
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ChartCoverFOfSecBaseChange
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.LamCM Formalism.L2.Pj
@@ -268,8 +272,8 @@ theorem exists_isFrPoly_field : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   exact hu.mul_left_cancel h1
 
 theorem coeff_aeval_scale {K σ : Type} [CommRing K] (t : K) (G : MvPolynomial σ K) (m : σ →₀ ℕ) :
-    MvPolynomial.coeff m (MvPolynomial.aeval (fun v => MvPolynomial.C t * MvPolynomial.X v : σ → MvPolynomial σ K) G) =
-      t ^ m.degree * MvPolynomial.coeff m G := by
+    AddMonoidAlgebra.coeff (MvPolynomial.aeval (fun v => MvPolynomial.C t * MvPolynomial.X v : σ → MvPolynomial σ K) G) m =
+      t ^ m.degree * AddMonoidAlgebra.coeff G m := by
   classical
   induction G using MvPolynomial.induction_on' with
   | monomial u r =>
@@ -283,7 +287,7 @@ theorem coeff_aeval_scale {K σ : Type} [CommRing K] (t : K) (G : MvPolynomial �
     split_ifs with hu
     · rw [hu]
     · simp
-  | add p q hp hq => simp only [map_add, MvPolynomial.coeff_add, hp, hq, mul_add]
+  | add p q hp hq => simp only [map_add (f := _), MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem isHomogeneous_of_scaling {K σ : Type} [Field K] [CharZero K] (G D : MvPolynomial σ K) (hD : D ≠ 0) (d : ℕ)
     (h : ∀ x : σ → K, MvPolynomial.eval x D ≠ 0 →
@@ -300,13 +304,13 @@ theorem isHomogeneous_of_scaling {K σ : Type} [Field K] [CharZero K] (G D : MvP
         clear h
         induction G using MvPolynomial.induction_on with
         | C r => simp
-        | add p q hp hq => simp only [map_add, hp, hq]
+        | add p q hp hq => simp only [map_add (f := _), hp, hq]
         | mul_X p v hp => simp only [map_mul, hp, MvPolynomial.aeval_X, MvPolynomial.eval_C, MvPolynomial.eval_X]
       rw [map_mul, map_sub, e, h x hx]
       simp
   have h2 := sub_eq_zero.1 ((mul_eq_zero.1 h1).resolve_left hD)
   intro m hm
-  have h3 := congrArg (MvPolynomial.coeff m) h2
+  have h3 := congrArg (AddMonoidAlgebra.coeff · m) h2
   rw [coeff_aeval_scale, MvPolynomial.coeff_C_mul] at h3
   have h4 : (2 : K) ^ m.degree = 2 ^ d := mul_right_cancel₀ hm h3
   have h5 : (2 : ℕ) ^ m.degree = 2 ^ d := by exact_mod_cast h4
@@ -358,8 +362,7 @@ theorem exists_isFrPoly_isHomogeneous : ∀ (E : Type) [Field E] [NumberField E]
       unfold evalFr
       congr 2
       funext v
-      simp only [T, Matrix.mul_diagonal, X, Matrix.of_apply]
-      exact mul_comm _ _
+      simp [X, T, Matrix.mul_diagonal, mul_comm]
     rw [← p₂, ← e₂, e₃, p₁, e₁]
     rfl
 

@@ -1,5 +1,9 @@
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
-import Formalism.FrobeniusContraction.FrobeniusContractionProofs.LenBound
+module
+
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+public import Formalism.FrobeniusContraction.FrobeniusContractionProofs.LenBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +96,8 @@ theorem submodule_generator_count : SubGen := by
     have hx : (Submodule.Quotient.mk x : ↥F ⧸ Q) =
         ∑ i, bF.repr x i • Submodule.Quotient.mk (bF i) := by
       conv_lhs => rw [← bF.sum_repr x]
-      rw [← Submodule.mkQ_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Submodule.mkQ_apply, map_sum]
       simp only [map_smul, Submodule.mkQ_apply]
     rw [hx]
     simp only [ψ, φ, LinearMap.sum_apply, LinearMap.comp_apply,

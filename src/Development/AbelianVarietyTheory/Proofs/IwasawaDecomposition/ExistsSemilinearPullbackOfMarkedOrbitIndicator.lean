@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan
 
 noncomputable section
@@ -24,7 +29,7 @@ theorem exists_semilinear_pull_of_evalZ_eq_one : ∀ {O : Type} [CommRing O] (w0
       map_zero' := by rw [twv_zero, map_zero]
       map_add' := fun a b => by
         have e : twv σ (a + b) = twv σ a + twv σ b := funext fun _ => map_add σ _ _
-        rw [e, map_add] }
+        rw [e, map_add (f := _)] }
   have hg : ∀ a, g a = r (twv σ a) := fun _ => rfl
   have hgs : ∀ (c : O) a, g (c • a) = σ c • g a := fun c a => by
     rw [hg, hg, twv_smul, map_smul]
@@ -57,8 +62,8 @@ theorem exists_semilinear_pull_of_evalZ_eq_one : ∀ {O : Type} [CommRing O] (w0
         rw [this, map_zero]
       map_add' := fun x y => by
         have := hf (pre x + pre y)
-        rw [map_add, hpre, hpre] at this
-        rw [this, map_add] }
+        rw [map_add (f := _), hpre, hpre] at this
+        rw [this, map_add (f := _)] }
   have hfg : ∀ a, f (g a) = s a := hf
   refine ⟨σ.symm, f, by rw [RingEquiv.symm_apply_eq, hσ], fun q => ?_, fun c x => ?_, fun x y x₀ y₀ hx hy => ?_⟩
   · obtain ⟨a, rfl⟩ := hs q

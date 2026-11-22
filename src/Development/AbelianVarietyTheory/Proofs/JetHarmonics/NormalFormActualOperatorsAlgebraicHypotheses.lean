@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
+
+@[expose] public section
 
 namespace GlobalTheory.HatNF
 
@@ -33,7 +37,7 @@ theorem kappa_commute_of_qq {A : Type} [Ring A] [StarRing A] [Algebra ℂ A] {P 
     exact (ggi_commute_siteOps d.L g hg).mul_left (hq _)
   generalize Lagrange.interpolate Finset.univ (fun ρ : M.Ty P => M.xC P ρ (Y₀ : ℂ)) f = p
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact hp.add_left hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add_left hq
   | monomial n a =>
     rw [Polynomial.aeval_monomial]
     exact (Algebra.commute_algebraMap_left a g).mul_left (hx.pow_left n)

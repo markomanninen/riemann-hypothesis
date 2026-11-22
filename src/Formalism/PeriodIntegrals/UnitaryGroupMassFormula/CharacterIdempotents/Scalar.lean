@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.CharIdem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CharacterIdempotents.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.CharIdem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CharacterIdempotents.Development
+
+@[expose] public section
 
 open CategoryTheory
 
@@ -19,7 +23,8 @@ theorem act_single (W : FDRep ℂ G) (g : G) (c : ℂ) :
 theorem act_charIdem (V W : FDRep ℂ G) :
     act W (charIdem V) = ∑ g : G,
       (((Module.finrank ℂ V : ℂ) / (Fintype.card G : ℂ)) * V.character g⁻¹) • W.ρ g := by
-  rw [PI.CharIdem.charIdem, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PI.CharIdem.charIdem, map_sum]
   simp only [act_single]
 
 theorem comm_of_class (W : FDRep ℂ G) (f : G → ℂ) (hf : ∀ g h : G, f (h * g * h⁻¹) = f g)
@@ -83,7 +88,8 @@ theorem trace_act_charIdem (V W : FDRep ℂ G) [Simple V] [Simple W] :
     (Nat.cast_ne_zero.mpr (by rw [Nat.card_eq_fintype_card]; exact Fintype.card_ne_zero))
   have horth := FDRep.char_orthonormal W V
   rw [Nat.card_eq_fintype_card] at horth
-  rw [act_charIdem, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [act_charIdem, map_sum]
   simp only [map_smul, smul_eq_mul]
   have h1 : ∀ x : G, (Module.finrank ℂ V : ℂ) / (Fintype.card G : ℂ) * V.character x⁻¹ *
       LinearMap.trace ℂ W (W.ρ x) = (Module.finrank ℂ V : ℂ) *

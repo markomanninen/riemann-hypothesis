@@ -1,18 +1,22 @@
-import Development.EtaleCohomology.KummerTheory.PlaceResGoodPf
-import Development.EtaleCohomology.KummerTheory.PlaceStepPf
-import Development.EtaleCohomology.KummerTheory.PlaceExPfZorn
-import Development.EtaleCohomology.KummerTheory.PlacePfVal
-import Development.EtaleCohomology.KummerTheory.AlgExtPf
-import Development.EtaleCohomology.KummerTheory.SHInsepLocPf
-import Development.EtaleCohomology.KummerTheory.SHInsepHensPf
-import Development.EtaleCohomology.KummerTheory.SHInsepResPf
-import Development.EtaleCohomology.KummerTheory.SHInsepPf
-import Development.EtaleCohomology.KummerTheory.PrimTorsPf
-import Development.EtaleCohomology.KummerTheory.ShSectPf
-import Development.EtaleCohomology.KummerTheory.SecSHPf
-import Development.EtaleCohomology.KummerTheory.TwSecPf
-import Development.EtaleCohomology.KummerTheory.InsepPf
-import Development.EtaleCohomology.KummerTheory.SHInvPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.PlaceResGoodPf
+public import Development.EtaleCohomology.KummerTheory.PlaceStepPf
+public import Development.EtaleCohomology.KummerTheory.PlaceExPfZorn
+public import Development.EtaleCohomology.KummerTheory.PlacePfVal
+public import Development.EtaleCohomology.KummerTheory.AlgExtPf
+public import Development.EtaleCohomology.KummerTheory.SHInsepLocPf
+public import Development.EtaleCohomology.KummerTheory.SHInsepHensPf
+public import Development.EtaleCohomology.KummerTheory.SHInsepResPf
+public import Development.EtaleCohomology.KummerTheory.SHInsepPf
+public import Development.EtaleCohomology.KummerTheory.PrimTorsPf
+public import Development.EtaleCohomology.KummerTheory.ShSectPf
+public import Development.EtaleCohomology.KummerTheory.SecSHPf
+public import Development.EtaleCohomology.KummerTheory.TwSecPf
+public import Development.EtaleCohomology.KummerTheory.InsepPf
+public import Development.EtaleCohomology.KummerTheory.SHInvPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.SHInv
 theorem etale_cohomology_place_restriction_good_reduction : LateralTheory.KummerTheory.PlaceResGood := by

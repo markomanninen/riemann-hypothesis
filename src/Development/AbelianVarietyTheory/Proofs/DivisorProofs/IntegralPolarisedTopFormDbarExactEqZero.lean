@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EndValuedForm11Coeffs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAntiholomorphicJacobianEqZeroPoincareGroStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EndValuedForm11Coeffs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAntiholomorphicJacobianEqZeroPoincareGroStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,19 +33,19 @@ theorem integral_mixTop_mdbar_eq_zero : ∀ {n : ℕ} {r : Type} [Fintype r] [De
   have hI2 : ∀ (p : Fin n → r) (π : Equiv.Perm (Fin n)),
       Integrable (fun v => ∑ u : Equiv.Perm (Fin n), ((Equiv.Perm.sign π : ℤ) : ℂ) * ((Equiv.Perm.sign u : ℤ) : ℂ) *
         (Matrix.of fun i b => mdbar (θ i (u i)) v (coordVec b) (p i) (p (π i))).det)
-        (volume.restrict (offHyp S U)) := fun p π => integrable_finset_sum _ fun u _ => hI p π u
+        (volume.restrict (offHyp S U)) := fun p π => integrable_finsetSum _ fun u _ => hI p π u
   have hI3 : ∀ (p : Fin n → r),
       Integrable (fun v => ∑ π : Equiv.Perm (Fin n), ∑ u : Equiv.Perm (Fin n),
         ((Equiv.Perm.sign π : ℤ) : ℂ) * ((Equiv.Perm.sign u : ℤ) : ℂ) *
         (Matrix.of fun i b => mdbar (θ i (u i)) v (coordVec b) (p i) (p (π i))).det)
-        (volume.restrict (offHyp S U)) := fun p => integrable_finset_sum _ fun π _ => hI2 p π
+        (volume.restrict (offHyp S U)) := fun p => integrable_finsetSum _ fun π _ => hI2 p π
   unfold mixTop
-  refine ⟨Integrable.const_mul (integrable_finset_sum _ fun p _ => hI3 p) _, ?_⟩
-  rw [integral_const_mul, integral_finset_sum _ fun p _ => hI3 p]
+  refine ⟨Integrable.const_mul (integrable_finsetSum _ fun p _ => hI3 p) _, ?_⟩
+  rw [integral_const_mul, integral_finsetSum _ fun p _ => hI3 p]
   refine mul_eq_zero_of_right _ (Finset.sum_eq_zero fun p _ => ?_)
-  rw [integral_finset_sum _ fun π _ => hI2 p π]
+  rw [integral_finsetSum _ fun π _ => hI2 p π]
   refine Finset.sum_eq_zero fun π _ => ?_
-  rw [integral_finset_sum _ fun u _ => hI p π u]
+  rw [integral_finsetSum _ fun u _ => hI p π u]
   refine Finset.sum_eq_zero fun u _ => ?_
   rw [integral_const_mul, (key p π u).2, mul_zero]
 

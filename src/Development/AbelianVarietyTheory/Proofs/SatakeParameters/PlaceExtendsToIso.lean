@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MkLeContinuumOfDenseRange
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MkLeContinuumOfDenseRange
+
+@[expose] public section
 
 namespace GlobalTheory.ThLoc
 

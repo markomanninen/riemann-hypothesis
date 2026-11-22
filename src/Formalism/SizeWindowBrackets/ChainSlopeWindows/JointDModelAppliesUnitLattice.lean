@@ -1,8 +1,19 @@
-import Formalism.SizeWindowBrackets.FrameTraceRatioFinEquiv
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.TraceConjTransposeMulSelf
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.CorollaryModelSideCondition
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.ExistsNsmulMem
+module
+
+public import Formalism.SizeWindowBrackets.FrameTraceRatioFinEquiv
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.TraceConjTransposeMulSelf
+public import Formalism.SizeWindowBrackets.SlopeExcessBoundExponentZero
+public import Formalism.SizeWindowBrackets.RealSlopeBoundsSplit
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+public import Mathlib.Data.Fintype.BigOperators
+public import Formalism.RankGapBounds.RankGapProofs.WeightedMeanData
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.ExistsNsmulMem
+
+@[expose] public section
 
 open Module NumberField Matrix
 open Formalism.CorankShareLayerCake.FR Formalism.HN
@@ -59,7 +70,8 @@ theorem weighted_frame_operator_to_lin {I α : Type} [Fintype I] [Fintype α] [D
     [∀ i, Fintype (ι i)] [∀ i, DecidableEq (ι i)] (B : ∀ i, Matrix α (ι i) ℂ) (ga : I → ℝ) :
     frQ ga (fun i => Matrix.toEuclideanLin (B i)) = Matrix.toEuclideanLin (QmG B ga) := by
   unfold frQ QmG
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, to_euclidean_lin_mul, to_euclidean_lin_adjoint_eq]
 
@@ -103,7 +115,8 @@ theorem quadratic_matrix_fin_reindex {I α : Type} [Fintype I] [Fintype α] {ι 
     HilbertSchmidtNormSquare.Qm (toFin B) ga
       = Matrix.reindex (Fintype.equivFin α) (Fintype.equivFin α) (QmG B ga) := by
   unfold HilbertSchmidtNormSquare.Qm QmG toFin
-  rw [← Matrix.coe_reindexLinearEquiv ℂ ℂ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Matrix.coe_reindexLinearEquiv ℂ ℂ, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply, Matrix.conjTranspose_submatrix,
     Matrix.submatrix_mul_equiv, Matrix.submatrix_smul, Pi.smul_apply]
@@ -156,11 +169,6 @@ theorem second_family_transfer_holds : FrameDeviationFinEquiv := by
   simp only [h2, fun i => hilbert_schmidt_transfer_holds I α ι B ga i (hga i)]
   rfl
 
-theorem transfer_conclusion_holds : BridgeConcl := by
-  intro s mu logI δ u HH η e
-  unfold PhiMonotonicityLemmas.ConclF PhiMonotonicityLemmas.ErrF PhiMonotonicityLemmas.phi
-  rw [mul_assoc 4 u]
-
 theorem ramification_linear_case_holds : RamLin := by
   intro I α _ _ ιf ι _ _ _ _ Bf Vr ga Dstar sg η0 η1 e0 de hV hga hD hsg hsg20 hR h0 h0' h1 he0 hse
     hde hde4 hcor hS
@@ -192,7 +200,7 @@ theorem flat_lattice_theorem_holds : TheoremFLat := by
     g9 g10 g11 n1 n2 n3 n4 n5 g12 g13 g14 g15 hγ hF2 he he4 hF1 hη
 
 theorem sharp_flat_lattice_theorem_holds :
-  ∀ (K W κ κ₁ I : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+  ∀ (K W κ κ₁ I : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
     [Fintype κ] [DecidableEq κ] [Fintype κ₁] [DecidableEq κ₁] [Fintype I] [Nonempty I]
     (V ι : I → Type) [∀ i, AddCommGroup (V i)] [∀ i, Module K (V i)] [∀ i, Module (𝓞 K) (V i)]
@@ -213,7 +221,7 @@ theorem sharp_flat_lattice_theorem_holds :
     g7 g8 g9 g10 g11 n1 n2 n3 n4 n5 g12 g13 g14 g15 hγ hF2 he he4 hF1 hη
 
 theorem ramification_condition_holds :
-  ∀ (K W κ κ₁ I : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+  ∀ (K W κ κ₁ I : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
     [Fintype κ] [DecidableEq κ] [Fintype κ₁] [DecidableEq κ₁] [Fintype I] [Nonempty I]
     (V ι : I → Type) [∀ i, AddCommGroup (V i)] [∀ i, Module K (V i)] [∀ i, Module (𝓞 K) (V i)]

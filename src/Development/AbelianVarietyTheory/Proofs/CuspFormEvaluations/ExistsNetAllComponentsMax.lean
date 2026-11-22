@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.JFDFree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MaxBoundPf
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsNetAllComponents
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.JFDFree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MaxBoundPf
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsNetAllComponents
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.PjFree
 

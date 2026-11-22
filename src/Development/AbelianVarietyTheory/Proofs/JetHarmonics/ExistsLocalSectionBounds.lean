@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SupWOfSup
-import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ThresholdProductsBounded
-import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPlaceOfLocalBesselDatumInterlacingStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UpqRepVocabularyAgree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SupWOfSup
+public import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ThresholdProductsBounded
+public import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPlaceOfLocalBesselDatumInterlacingStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UpqRepVocabularyAgree
+
+@[expose] public section
+
 open BpJoin Formalism.FourierDecayAlt Formalism.MainNotions.S Formalism.MainNotions.S.ThB Formalism.BasicNotions Formalism.QuantumDeterminants GlobalTheory.ThA
 
 namespace GlobalTheory

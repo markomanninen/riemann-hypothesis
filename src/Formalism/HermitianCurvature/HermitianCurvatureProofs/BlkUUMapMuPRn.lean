@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerCoordinateProd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RearrSymm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellDiagonalMap
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerCoordinateProd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RearrSymm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellDiagonalMap
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 open scoped ComplexConjugate
@@ -22,7 +26,7 @@ theorem blkU_uMap (z : Fin (2 * r + k + 1) → ℂ) (g : B.Mat k r) :
     blkU (C2.uMap k r z g) = Matrix.of fun a b => g (eI k r a) (eI k r b) := by
   ext a b
   simp only [blkU, Matrix.submatrix_apply, C2.uMap, Matrix.of_apply]
-  rw [dif_pos (by simp), fvec_low z b.castSucc (by simp), herm_bvec_esI', mulVec_bvec_apply]
+  rw [dite_eq_left (by simp), fvec_low z b.castSucc (by simp), herm_bvec_esI', mulVec_bvec_apply]
   rfl
 
 theorem muP_Rn_blk (W : Matrix (Fin r) (Fin r) ℂ) (y : U.RC k r 0) (a b : Fin r) :
@@ -83,21 +87,6 @@ theorem simpleUp_mul {m : ℕ} {A B : Matrix (Fin m) (Fin m) ℂ} (hA : A ∈ C2
           simp [b]; omega
         rw [hB.1 c b hc', mul_zero]
   · simp
-
-theorem simpleUp_inv {m : ℕ} {A : Matrix (Fin m) (Fin m) ℂ} (hA : A ∈ C2.UTset m) :
-    C2.simpleUp A⁻¹ = -C2.simpleUp A := by
-  have hAi := Formalism.FourierDecayAlt.P.C2x2.ut_inv hA
-  have hdet : IsUnit A.det := by rw [StabilizerDisintegration.UC.det_UT hA]; exact isUnit_one
-  have h := simpleUp_mul hA hAi
-  rw [Matrix.mul_nonsing_inv _ hdet] at h
-  have h1 : C2.simpleUp (1 : Matrix (Fin m) (Fin m) ℂ) = 0 := by
-    unfold C2.simpleUp
-    refine Finset.sum_eq_zero fun a _ => ?_
-    split_ifs with h'
-    · rw [Matrix.one_apply_ne]; intro e; have := congrArg Fin.val e; simp at this
-    · rfl
-  rw [h1] at h
-  linear_combination (-1 : ℂ) * h
 
 theorem gaXi_zero (σ : Equiv.Perm (Fin r)) (d : Fin r → ℂ) (ξ : U.Xi k r 0 0 σ) (γ : B.Mat k 0) :
     U.gaXi k 0 σ d ξ (fun a => a.elim0) γ =

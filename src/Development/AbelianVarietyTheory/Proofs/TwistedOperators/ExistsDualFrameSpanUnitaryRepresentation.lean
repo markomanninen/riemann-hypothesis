@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -123,7 +127,8 @@ theorem dual_frame : ∀ {G H : Type} [Mul G] [NormedAddCommGroup H] [InnerProdu
     set A' := ∑ j, LinearMap.trace ℂ H (ρ (k j) ∘ₗ A) • (D j : H →ₗ[ℂ] H) with hA'
     have hbi : ∀ i, LinearMap.trace ℂ H (ρ (k i) ∘ₗ A') = LinearMap.trace ℂ H (ρ (k i) ∘ₗ A) := by
       intro i
-      simp only [A', comp_sum', LinearMap.comp_smul, map_sum, map_smul, hdual, smul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [A', comp_sum', LinearMap.comp_smul, map_sum, map_smul, hdual, smul_eq_mul,
         mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
     have hvan : ∀ C ∈ W, LinearMap.trace ℂ H (C ∘ₗ A') = LinearMap.trace ℂ H (C ∘ₗ A) := by
       intro C hC
@@ -131,9 +136,11 @@ theorem dual_frame : ∀ {G H : Type} [Mul G] [NormedAddCommGroup H] [InnerProdu
       rw [Submodule.coe_sum] at h1
       change _ = C at h1
       rw [← h1]
-      simp only [Submodule.coe_smul, sum_comp', LinearMap.smul_comp, map_sum, map_smul, ← hk, hbi]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Submodule.coe_smul, sum_comp', LinearMap.smul_comp, map_sum, map_smul, ← hk, hbi]
     rw [← hvan (ρ g) (Submodule.subset_span ⟨g, hg, rfl⟩)]
-    simp only [A', comp_sum', LinearMap.comp_smul, map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [A', comp_sum', LinearMap.comp_smul, map_sum, map_smul, smul_eq_mul]
   · intro i h hh
     exact expand _ (comp_mem_span K ρ hmul hρ hh (D i).2)
 

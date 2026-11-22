@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.Honda
 
 noncomputable section
@@ -44,7 +49,7 @@ theorem pow_le_norm_natCast (l : ℕ) (hp : l.Prime) (hl1 : ‖(l : K)‖ < 1) (
   exact pow_le_pow_of_le_one (norm_nonneg _) hl1.le hvk
 
 theorem coeff_mul_pow_le (l : ℕ) (hp : l.Prime) (hl1 : ‖(l : K)‖ < 1) (f : K⟦X⟧)
-    (hder : CoefLe 1 (derivative K f)) (k : ℕ) (hk : 1 ≤ k) :
+    (hder : CoefLe 1 (derivative f)) (k : ℕ) (hk : 1 ≤ k) :
     ‖coeff k f‖ * ‖(l : K)‖ ^ k ≤ ‖(l : K)‖ := by
   obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
   have hd := hder k'

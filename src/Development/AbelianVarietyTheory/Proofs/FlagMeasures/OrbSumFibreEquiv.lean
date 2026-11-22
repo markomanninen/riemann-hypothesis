@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsForallHomEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitStabilizerMassEqWeightedSumFibres
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitWeightedStabilizerSumTransportEquivariant
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatsDiscStable
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteUnitaryStabilizerSubspaceProd
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnimodularOverlatticeCyclicSplitDiscrimina
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmDataMaximalRealSubfield
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsForallHomEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitStabilizerMassEqWeightedSumFibres
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitWeightedStabilizerSumTransportEquivariant
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatsDiscStable
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteUnitaryStabilizerSubspaceProd
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnimodularOverlatticeCyclicSplitDiscrimina
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmDataMaximalRealSubfield
+
+@[expose] public section
 
 namespace GlobalTheory.Mass.RowMean
 
@@ -132,7 +136,7 @@ theorem cyclic_of_genus (h : V →ₗ⋆[K] V →ₗ[K] K) (hK : IsCMUnram K) (h
     refine genusBasic_lg (K := K) M _ fun P hP => ?_
     obtain ⟨g, hg, hgL⟩ := hM.2 P hP
     have h1 : y ∈ loc (K := K) P (dual h M) := locBasic_le_locS _ _ hy
-    rw [← gmap_loc_dual h hs L M hL.1 hM.1 P hP.isPrime g hg hgL] at h1
+    rw [← gmap_loc_dual h hs L M hL.1.toIsLattice hM.1.toIsLattice P hP.isPrime g hg hgL] at h1
     obtain ⟨w, ⟨s, hs', hw⟩, rfl⟩ := h1
     rw [← hgL]
     refine ⟨r • w, ⟨s, hs', ?_⟩, sm g r w⟩
@@ -144,7 +148,7 @@ theorem cyclic_of_genus (h : V →ₗ⋆[K] V →ₗ[K] K) (hK : IsCMUnram K) (h
     obtain ⟨g, hg, hgL⟩ := hM.2 _ hP
     have h1 : g x₀ ∈ gmap g (loc (K := K) (RingHom.ker ψ) (dual h L)) :=
       ⟨x₀, locBasic_le_locS _ _ hx₀, rfl⟩
-    rw [gmap_loc_dual h hs L M hL.1 hM.1 _ hP.isPrime g hg hgL] at h1
+    rw [gmap_loc_dual h hs L M hL.1.toIsLattice hM.1.toIsLattice _ hP.isPrime g hg hgL] at h1
     obtain ⟨s, hs', hw⟩ := h1
     refine ⟨_, hw, fun r hr => ?_⟩
     have h2 : r • s • g x₀ ∈ loc (K := K) (RingHom.ker ψ) M := locBasic_le_locS _ _ hr
@@ -235,7 +239,7 @@ theorem card_classes (hK : IsCMUnram K) {T : ℕ} (hT : T.Prime)
   have key := card_norm_classes _ K hcm T hT hsp c (by rw [← sp, hc]) hcop
   have hf : Module.finrank ℚ (maximalRealSubfield K) = fDeg K := by
     haveI := hK.1
-    have h1 := Module.finrank_mul_finrank ℚ (maximalRealSubfield K) K
+    have h1 := (letI : Module.Free (maximalRealSubfield K) K := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield K) K)
     have h2 := IsTotallyComplex.finrank K
     have h3 := InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces K
     rw [IsTotallyComplex.nrRealPlaces_eq_zero] at h3
@@ -288,7 +292,7 @@ include hT hz hU in
 theorem decomp (v : V) : ∃ (u : U) (t : K), v = u + t • z := by
   have T0 : (T : K) ≠ 0 := Nat.cast_ne_zero.2 hT.ne_zero
   refine ⟨⟨v + (h z v / T) • z, (hU _).2 ?_⟩, -(h z v / T), by simp⟩
-  rw [map_add, map_smul, hz, smul_eq_mul]
+  rw [map_add (f := _), map_smul, hz, smul_eq_mul]
   field_simp
   ring
 
@@ -299,7 +303,7 @@ theorem pair (u u' : U) (t t' : K) :
   have h1 : ∀ u : U, h z u = 0 := fun u => (hU _).1 u.2
   have h2 : ∀ u : U, h u z = 0 := fun u => by rw [← hs.eq, h1, map_zero]
   have h3 : hRes h U u u' = h u u' := rfl
-  simp only [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, h1, h2, hz, h3,
+  simp only [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, h1, h2, hz, h3,
     smul_eq_mul, starRingEnd_apply, RingHom.id_apply]
   ring
 
@@ -309,7 +313,7 @@ theorem decomp_unique {u u' : U} {t t' : K} (e : (u : V) + t • z = u' + t' •
   have T0 : (T : K) ≠ 0 := Nat.cast_ne_zero.2 hT.ne_zero
   have h1 : ∀ u : U, h z u = 0 := fun u => (hU _).1 u.2
   have := congrArg (h z) e
-  simp only [map_add, map_smul, h1, hz, smul_eq_mul, zero_add] at this
+  simp only [map_add (f := _), map_smul, h1, hz, smul_eq_mul, zero_add] at this
   have ht : t = t' := mul_right_cancel₀ (neg_ne_zero.2 T0) this
   rw [ht] at e
   exact ⟨Subtype.ext (add_right_cancel e), ht⟩
@@ -320,9 +324,9 @@ variable {M : Submodule (𝓞 K) U} (hM : IsIntLat (hRes h U) M) {x : U} (hx : x
   {c : 𝓞 K} (hc : algebraMap (𝓞 K) K c = T * hRes h U x x)
   (hc' : ∀ r : 𝓞 K, r * c ∈ Ideal.span {(T : 𝓞 K)} → r ∈ Ideal.span {(T : 𝓞 K)})
 
+
 omit [FiniteDimensional K V] in
 include hs hT hz hU hM hx g1 g2 hc hc' in
-
 theorem glue_spec (b : 𝓞 K) (hb : b * cj b - c ∈ Ideal.span {(T : 𝓞 K)}) :
     Submodule.IsLattice K (glue U M x z (algebraMap (𝓞 K) K b / T)) ∧
     IsUnimodular h (glue U M x z (algebraMap (𝓞 K) K b / T)) ∧
@@ -367,23 +371,18 @@ theorem glue_spec (b : 𝓞 K) (hb : b * cj b - c ∈ Ideal.span {(T : 𝓞 K)})
     have hγ' : hRes h U x m' = algebraMap (𝓞 K) K (cj γ) := by
       rw [← sp, hγ]; exact (hsU.eq _ _).symm
     rw [pair h hs hz hU]
-    simp only [map_add, LinearMap.add_apply, genusBasic_hsmul_right,
+    simp only [map_add (f := _), LinearMap.add_apply, genusBasic_hsmul_right,
       genusBasic_hsmul_left genusCovol_hinj star_algebraMap_ringOfIntegers_mem_range]
     rw [← hα, ← hβ, hγ', hxx, hkk]
     refine Submodule.mem_one.2 ⟨α + r' * β + cj r * cj γ - cj r * r' * k - cj r * cj b * s' -
       cj s * r' * b - T * cj s * s', ?_⟩
-    simp only [map_add, map_sub, map_mul, map_natCast, star_add, star_mul', star_div₀, star_natCast, sp]
+    simp only [map_add (f := _), map_sub, map_mul, map_natCast, star_add, star_mul', star_div₀, star_natCast, sp]
     field_simp
     ring
   refine ⟨⟨?_, ?_⟩, ?_, fun t => ⟨fun ht => ?_, ?_⟩, ?_⟩
   · exact ((hM.1.fg.map _).sup (Submodule.fg_span_singleton _)).sup (Submodule.fg_span_singleton _)
-  · rw [eq_top_iff]
-    intro v _
-    obtain ⟨u, t, rfl⟩ := decomp h hT hz hU v
-    refine Submodule.add_mem _ ?_ (Submodule.smul_mem _ _ (Submodule.subset_span mz))
-    have hu : u ∈ Submodule.span K (M : Set U) := by rw [hM.1.span_eq_top]; trivial
-    exact Submodule.span_mono (by rintro _ ⟨m, hm, rfl⟩; exact mM m hm)
-      (Submodule.apply_mem_span_image_of_mem_span U.subtype hu)
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · refine ((dualBasic (𝓞 K) K V h hs star_algebraMap_ringOfIntegers_mem_range).2.2.2.2 L).2 ⟨hint, fun w hw => ?_⟩
     obtain ⟨u, t, rfl⟩ := decomp h hT hz hU w
     have hw' := (dualBasic_mem_dual h L _).1 hw
@@ -408,7 +407,7 @@ theorem glue_spec (b : 𝓞 K) (hb : b * cj b - c ∈ Ideal.span {(T : 𝓞 K)})
     have ht : t = -(algebraMap (𝓞 K) K s) / T := by rw [hs']; field_simp
     have : (s + r * b) * cj b ∈ Ideal.span {(T : 𝓞 K)} := by
       refine Ideal.mem_span_singleton'.2 ⟨p, genusCovol_hinj (K := K) ?_⟩
-      simp only [map_add, map_mul, map_natCast]
+      simp only [map_add (f := _), map_mul, map_natCast]
       rw [hp, ht]
       simp only [star_div₀, star_natCast, sp, map_zero]
       field_simp
@@ -418,7 +417,7 @@ theorem glue_spec (b : 𝓞 K) (hb : b * cj b - c ∈ Ideal.span {(T : 𝓞 K)})
     rw [sub_add_cancel]
     congr 2
     have := congrArg (algebraMap (𝓞 K) K) hq
-    simp only [map_add, map_mul, map_natCast] at this
+    simp only [map_add (f := _), map_mul, map_natCast] at this
     rw [ht, map_neg]
     field_simp
     linear_combination this
@@ -430,7 +429,7 @@ theorem glue_spec (b : 𝓞 K) (hb : b * cj b - c ∈ Ideal.span {(T : 𝓞 K)})
       exact M.neg_mem hm
     obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton'.1 ((g2 r).1 this)
     refine Submodule.mem_one.2 ⟨q * b + s, ?_⟩
-    simp only [map_add, map_mul, map_natCast]
+    simp only [map_add (f := _), map_mul, map_natCast]
     field_simp
   · intro ht
     obtain ⟨s, rfl⟩ := Submodule.mem_one.1 ht
@@ -446,8 +445,8 @@ theorem glue_spec (b : 𝓞 K) (hb : b * cj b - c ∈ Ideal.span {(T : 𝓞 K)})
     field_simp at e2
     linear_combination e2
 
-include hs hT hz hU hM hx g1 g2 hc hc' in
 
+include hs hT hz hU hM hx g1 g2 hc hc' in
 theorem exists_eq_glue (hn : (hRes h U).Nondegenerate) (L : Submodule (𝓞 K) V)
     (hL : Submodule.IsLattice K L) (hLu : IsUnimodular h L)
     (hLz : ∀ t : K, t • z ∈ L ↔ t ∈ (1 : Submodule (𝓞 K) K)) (hLM : latIn U L = M) :
@@ -472,9 +471,19 @@ theorem exists_eq_glue (hn : (hRes h U).Nondegenerate) (L : Submodule (𝓞 K) V
     exact (decomp_unique h hT hz hU e).1.symm⟩
   let N : Submodule (𝓞 K) U := L.map (pr.restrictScalars (𝓞 K))
   have hN : Submodule.IsLattice K N := by
-    refine ⟨hL.fg.map _, ?_⟩
-    have h1 : (N : Set U) = pr '' (L : Set V) := rfl
-    rw [h1, Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearMap.range_eq_top.2 hsur]
+    exact Submodule.IsLattice.of_fg K (hL.fg.map _)
+  have hNfull : Submodule.IsFullLattice K N := by
+    letI : Submodule.IsFullLattice K M := hM.1
+    letI : Submodule.IsLattice K N := hN
+    apply Submodule.IsFullLattice.of_le K (M := M) (N := N)
+    intro u hu
+    have huL : (u : V) ∈ L := by
+      rw [← hLM] at hu
+      exact hu
+    refine ⟨u, huL, ?_⟩
+    have e : (u : V) + (0 : K) • z = _ :=
+      (by simp : (u : V) + (0 : K) • z = u).trans (hpr u)
+    exact (decomp_unique h hT hz hU e).1.symm
   have hp : ∀ (l : V) (y : U), h l y = hRes h U (pr l) y := fun l y => by
     have := pair h hs hz hU (pr l) y (-((T : K)⁻¹ * h z l)) 0
     rw [← hpr] at this
@@ -491,7 +500,7 @@ theorem exists_eq_glue (hn : (hRes h U).Nondegenerate) (L : Submodule (𝓞 K) V
     · rintro H _ ⟨l, hl, rfl⟩
       exact hp l y ▸ H l hl
   have hxN : x ∈ N := by
-    rw [← (dualLattice (𝓞 K) K U _ hsU hn star_algebraMap_ringOfIntegers_mem_range N hN).2.1, hd]
+    rw [← (dualLattice (𝓞 K) K U _ hsU hn star_algebraMap_ringOfIntegers_mem_range N hNfull).2.1, hd]
     exact hx
   obtain ⟨l, hl, e⟩ := hxN
   have e' : pr l = x := e
@@ -525,8 +534,8 @@ theorem exists_eq_glue (hn : (hRes h U).Nondegenerate) (L : Submodule (𝓞 K) V
   rw [← hLu', ← hu]
   exact an _ _ hle
 
-include hs hT hz hU hM hx g1 g2 in
 
+include hs hT hz hU hM hx g1 g2 in
 theorem fibre_card (hK : IsCMUnram K) (hn : (hRes h U).Nondegenerate)
     (hsp : ∀ P : Ideal (𝓞 K), P.IsMaximal → (T : 𝓞 K) ∈ P → Ideal.absNorm P = T ∧ (T : 𝓞 K) ∉ P ^ 2) :
     {L : Submodule (𝓞 K) V | Submodule.IsLattice K L ∧ IsUnimodular h L ∧
@@ -553,7 +562,7 @@ theorem fibre_card (hK : IsCMUnram K) (hn : (hRes h U).Nondegenerate)
     rw [← g2, ← (dualLattice (𝓞 K) K U _ hsU hn star_algebraMap_ringOfIntegers_mem_range M hM.1).2.1, dualBasic_mem_dual]
     intro y hy
     obtain ⟨a, ha⟩ := g1 y hy
-    rw [← sub_add_cancel y (a • x), map_add, LinearMap.add_apply]
+    rw [← sub_add_cancel y (a • x), map_add (f := _), LinearMap.add_apply]
     refine Submodule.add_mem _ ?_ ?_
     · rw [genusBasic_hsmul_right]
       exact genusBasic_mem_one_mul _ (hx' _ ha) _
@@ -586,7 +595,7 @@ theorem fibre_card (hK : IsCMUnram K) (hn : (hRes h U).Nondegenerate)
       congr 2
       have := congrArg (algebraMap (𝓞 K) K) hq
       simp only [map_sub, map_mul, map_natCast] at this
-      simp only [map_add, map_mul]
+      simp only [map_add (f := _), map_mul]
       field_simp
       linear_combination (-algebraMap (𝓞 K) K r) * this
   haveI : Finite (𝓞 K ⧸ Ideal.span {(T : 𝓞 K)}) := Ideal.finiteQuotientOfFreeOfNeBot _ (by
@@ -642,7 +651,7 @@ theorem resZ_bijective : Function.Bijective (resZ h hU) := by
     have k1 : γ.1.1 u = δ.1.1 u := congrArg (fun t : isom (hRes h U) => ((t.1 u : U) : V)) e
     have k2 : γ.1.1 z = z := γ.2
     have k3 : δ.1.1 z = z := δ.2
-    rw [map_add, map_add, map_smul, map_smul, k1, k2, k3]
+    rw [map_add (f := _), map_add (f := _), map_smul, map_smul, k1, k2, k3]
   · intro a
     have hc : IsCompl U (Submodule.span K {z}) := by
       constructor
@@ -704,7 +713,7 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
   have hY := Transp.genus_stable (h := hRes h U) L₀
   rw [← Nat.cast_pow]
   refine orbSum_fibre_equiv (MulEquiv.ofBijective _ (resZ_bijective h hs hT hz hU)) _ _ (latIn U) hπ ?_ hY
-    (fun L hL => hL.2.2.2) _ (fun M hM => ?_) φ hφ
+    (fun L (hL : L ∈ {L : Submodule (𝓞 K) V | Submodule.IsLattice K L ∧ Formalism.HermitianLatticesTheory.IsUnimodular h L ∧ (∀ t : K, t • z ∈ L ↔ t ∈ (1 : Submodule (𝓞 K) K)) ∧ latIn U L ∈ Formalism.HermitianLatticesTheory.genus (hRes h U) L₀}) => hL.2.2.2) _ (fun M hM => ?_) φ hφ
   · rintro g L ⟨h1, h2, h3, h4⟩
     have H := Formalism.HermitianLatticesTheory.isomAct (𝓞 K) K V h g.1.1 g.1.2 L
     refine ⟨H.2.2.2.2.2 h1, H.2.2.2.1.2 h2, fun t => ?_, hπ g L ▸ hY _ _ h4⟩

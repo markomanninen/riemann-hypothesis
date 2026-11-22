@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.KcBase
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.KcBase
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise nonZeroDivisors

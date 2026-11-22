@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DiscreteSpectrumResidual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsQr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DiscreteSpectrumResidual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsQr
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Host
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.DiscSpec
 
@@ -112,10 +117,10 @@ theorem exists_upper_mul_unitary_inf (E : Type) [Field E] (N : ℕ) (y : GL (Fin
     rw [Matrix.map_mul, hbm, hkm]
     exact hyK v
 
-theorem infGL_eq (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ) :
+theorem infGL_eq (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ) :
     infGL E N = cornerGL N (GlobalTheory.CuspRep.sInf E) := rfl
 
-theorem infGL_mem_unipRad (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] {c N : ℕ}
+theorem infGL_mem_unipRad (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {c N : ℕ}
     (n : Fin c → ℕ) (h : ∑ i, n i = N) (u : GL (Fin N) (Cinf E))
     (hu : u ∈ unipRad (Cinf E) (stdBlocks n h)) : infGL E N u ∈ unipRad (Ad E) (stdBlocks n h) := by
   rw [mem_unipRad] at hu ⊢
@@ -133,10 +138,18 @@ theorem infGL_mem_unipRad (E : Type) [Field E] [NumberField E] [IsTotallyComplex
       rw [infGL_eq, cornerGL_entry_ne _ _ hne, hD a i j, Matrix.one_apply_ne hij, Matrix.one_apply_ne hij,
         map_zero]
 
-theorem infGL_leviEmb (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] {c N : ℕ}
+theorem infGL_leviEmb (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {c N : ℕ}
     (n : Fin c → ℕ) (h : ∑ i, n i = N) (l : ∀ i, GL (Fin (n i)) (Cinf E)) :
     infGL E N (leviEmb (Cinf E) (stdBlocks n h) l)
       = leviEmb (Ad E) (stdBlocks n h) (fun i => infGL E (n i) (l i)) := by
+  have leviEmb_apply_same : ∀ (R : Type) [CommRing R] (l : ∀ i, GL (Fin (n i)) R) a i j,
+      (leviEmb R (stdBlocks n h) l : Matrix (Fin N) (Fin N) R) (stdBlocks n h ⟨a, i⟩) (stdBlocks n h ⟨a, j⟩) = (l a : Matrix _ _ R) i j := by
+    intro R _ l a i j
+    simp [leviEmb, blockDiagonal'_apply_eq]
+  have leviEmb_apply_ne : ∀ (R : Type) [CommRing R] (l : ∀ i, GL (Fin (n i)) R) {a b}, a ≠ b → ∀ i j,
+      (leviEmb R (stdBlocks n h) l : Matrix (Fin N) (Fin N) R) (stdBlocks n h ⟨a, i⟩) (stdBlocks n h ⟨b, j⟩) = 0 := by
+    intro R _ l a b hab i j
+    simp [leviEmb, blockDiagonal'_apply, hab]
   apply Units.ext
   ext p q
   obtain ⟨⟨a, i⟩, rfl⟩ := (stdBlocks n h).surjective p
@@ -152,19 +165,38 @@ theorem infGL_leviEmb (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] 
       rw [infGL_eq, infGL_eq, cornerGL_entry_ne _ _ hne, cornerGL_entry_ne _ _ hij, leviEmb_apply_same]
   · have hne : stdBlocks n h ⟨a, i⟩ ≠ stdBlocks n h ⟨b, j⟩ := fun he =>
       hab (congrArg Sigma.fst ((stdBlocks n h).injective he))
-    rw [leviEmb_apply_ne _ _ _ hab, infGL_eq, cornerGL_entry_ne _ _ hne, leviEmb_apply_ne _ _ _ hab, map_zero]
+    rw [leviEmb_apply_ne _ _ hab, infGL_eq, cornerGL_entry_ne _ _ hne, leviEmb_apply_ne _ _ hab, map_zero]
 
-theorem iwasawa : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i = N) (x : GA E N), ∃ u ∈ unipRad (Ad E) (stdBlocks n h), ∃ (m : ∀ i, GA E (n i)) (k : Kinf E N) (g : GL (Fin N) (Af E)), x = u * leviEmb (Ad E) (stdBlocks n h) m * (infGL E N (Unitary.toUnits k) * finGL E N g) := by
+theorem iwasawa : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i = N) (x : GA E N), ∃ u ∈ unipRad (Ad E) (stdBlocks n h), ∃ (m : ∀ i, GA E (n i)) (k : Kinf E N) (g : GL (Fin N) (Af E)), x = u * leviEmb (Ad E) (stdBlocks n h) m * (infGL E N (Unitary.toUnits k) * finGL E N g) := by
   intro E _ _ _ c N n h x
   obtain ⟨b, hb, k, hy⟩ := exists_upper_mul_unitary_inf E N (Matrix.GeneralLinearGroup.map (pInf E) x)
-  obtain ⟨u, hu, hbu⟩ := exists_levi_mul_unip (Cinf E) (stdBlocks n h) ⟨b, mem_parab_of_upper n h b hb⟩
+  let p : parab (Cinf E) (stdBlocks n h) := ⟨b, mem_parab_of_upper n h b hb⟩
+  let l := leviProj (Cinf E) (stdBlocks n h) p
+  have hLp : leviEmb (Cinf E) (stdBlocks n h) l ∈ parab (Cinf E) (stdBlocks n h) := by
+    apply mem_parab_iff.2
+    intro a b i j hab
+    simp [leviEmb, blockDiagonal'_apply, hab.ne']
+  let Lp : parab (Cinf E) (stdBlocks n h) := ⟨leviEmb (Cinf E) (stdBlocks n h) l, hLp⟩
+  have hproj : leviProj (Cinf E) (stdBlocks n h) Lp = l := by
+    funext a
+    ext i j
+    simp [leviProj_apply, Lp, leviEmb, blockDiagonal'_apply_eq]
+  let u : GL (Fin N) (Cinf E) := ((Lp⁻¹ * p : parab (Cinf E) (stdBlocks n h)) : GL (Fin N) (Cinf E))
+  have hu : u ∈ unipRad (Cinf E) (stdBlocks n h) := by
+    apply (coe_mem_unipRad (Cinf E) (Lp⁻¹ * p)).2
+    simp [hproj, l]
+  have hbu : b = leviEmb (Cinf E) (stdBlocks n h) l * u := by
+    change (p : GL (Fin N) (Cinf E)) = (Lp : GL (Fin N) (Cinf E)) * ((Lp⁻¹ * p : parab (Cinf E) (stdBlocks n h)) : GL (Fin N) (Cinf E))
+    simp
   set L := leviEmb (Cinf E) (stdBlocks n h) (leviProj (Cinf E) (stdBlocks n h) ⟨b, mem_parab_of_upper n h b hb⟩) with hL
-  have hN := leviEmb_mem_normalizer (Cinf E) (stdBlocks n h) (leviProj (Cinf E) (stdBlocks n h) ⟨b, mem_parab_of_upper n h b hb⟩)
-  have hu' : L * u * L⁻¹ ∈ unipRad (Cinf E) (stdBlocks n h) := (Subgroup.mem_normalizer_iff.1 hN u).1 hu
+  have hu' : L * u * L⁻¹ ∈ unipRad (Cinf E) (stdBlocks n h) := by
+    let U : parab (Cinf E) (stdBlocks n h) := ⟨u, (mem_unipRad.1 hu).1⟩
+    have hU : leviProj (Cinf E) (stdBlocks n h) U = 1 := (coe_mem_unipRad (Cinf E) U).1 hu
+    change ((Lp * U * Lp⁻¹ : parab (Cinf E) (stdBlocks n h)) : GL (Fin N) (Cinf E)) ∈ _
+    rw [coe_mem_unipRad, map_mul, map_mul, map_inv, hU, mul_one, mul_inv_cancel]
   refine ⟨infGL E N (L * u * L⁻¹), infGL_mem_unipRad E n h _ hu', fun i => infGL E (n i) (leviProj (Cinf E) (stdBlocks n h) ⟨b, mem_parab_of_upper n h b hb⟩ i), k, Matrix.GeneralLinearGroup.map (pFin E) x, ?_⟩
   rw [← infGL_leviEmb, ← hL]
   conv_lhs => rw [← infGL_mul_finGL x, hy]
-  simp only [Subtype.coe_mk] at hbu
   rw [hbu]
   simp only [map_mul, map_inv]
   group

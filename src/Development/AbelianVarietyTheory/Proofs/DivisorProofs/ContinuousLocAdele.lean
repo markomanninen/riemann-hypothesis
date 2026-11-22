@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
-import GroundTheory.GlobalFields.Adele.WeakApprox
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+public import GroundTheory.GlobalFields.Adele.WeakApprox
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.QSA GlobalTheory.Published
 open Matrix
 open scoped Quaternion Topology TensorProduct
@@ -14,8 +19,8 @@ namespace GlobalTheory.PlaceApprox
 
 variable {F : Type} [Field F] [NumberField F]
 
-open Classical in
 
+open Classical in
 def locAdele (S₁ : Finset (InfinitePlace F)) (S₂ : Finset (HeightOneSpectrum (𝓞 F)))
     (p : ((v : S₂) → Fv F v.1) × ((w : S₁) → w.1.Completion)) : AF F :=
   ((fun u : InfinitePlace F => if h : u ∈ S₁ then p.2 ⟨u, h⟩ else 0 : InfiniteAdeleRing F),
@@ -31,7 +36,7 @@ theorem continuous_locAdele (S₁ : Finset (InfinitePlace F)) (S₂ : Finset (He
       exact (continuous_apply _).comp continuous_snd
     · simp only [h, dite_false]
       exact continuous_const
-  · exact continuous_finset_sum _ fun v _ =>
+  · exact continuous_finsetSum _ fun v _ =>
       (GlobalTheory.AdelicU.continuous_singleFin v.1).comp ((continuous_apply v).comp continuous_fst)
 
 open Classical in
@@ -42,7 +47,6 @@ theorem locAdele_zero (S₁ : Finset (InfinitePlace F)) (S₂ : Finset (HeightOn
     change (if h : u ∈ S₁ then (0 : u.Completion) else 0) = 0
     split_ifs <;> rfl
   · simp [locAdele]
-    rfl
 
 open Classical in
 theorem mul_eq_locAdele {S₁ : Finset (InfinitePlace F)} {S₂ : Finset (HeightOneSpectrum (𝓞 F))} {ε : AF F}
@@ -58,7 +62,8 @@ theorem mul_eq_locAdele {S₁ : Finset (InfinitePlace F)} {S₂ : Finset (Height
   · apply GlobalTheory.AdelicU.af_ext
     intro u
     change evalV F u (sndA F ε) * evalV F u (sndA F a) = _
-    simp only [locAdele, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [locAdele, map_sum]
     by_cases h : u ∈ S₂
     · rw [h3 u h, one_mul, Finset.sum_eq_single ⟨u, h⟩]
       · exact (GlobalTheory.AdelicU.evalV_singleFin_self u _).symm

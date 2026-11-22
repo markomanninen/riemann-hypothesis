@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ComplexDoubleCosets.CplxDC
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldDCUnfold
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldUnfold
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldMult
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FoldingUnfolding.TranslationIndependent
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ComplexDoubleCosets.CplxDC
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldDCUnfold
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldUnfold
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldMult
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FoldingUnfolding.TranslationIndependent
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal ComplexConjugate

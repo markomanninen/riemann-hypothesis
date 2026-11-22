@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFactsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitNorm
+
+@[expose] public section
 
 open GlobalTheory.UnitLemma Polynomial
 
@@ -70,7 +74,8 @@ theorem exists_orthonormal_basis : ∀ (K : UQ) (V : Type) [AddCommGroup V] [Mod
     rw [Fintype.linearIndependent_iff]
     intro g hg i
     have := congrArg (formL hadd hsmul (v i)) hg
-    simp only [map_sum, map_smul, map_zero, smul_eq_mul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_zero, smul_eq_mul] at this
     change ∑ j, g j * h (v j) (v i) = 0 at this
     simpa [hvo] using this
   have hsp : ⊤ ≤ Submodule.span K.E (Set.range v) := by

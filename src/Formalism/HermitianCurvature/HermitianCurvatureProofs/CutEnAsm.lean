@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCVPresFF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOrbitSet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaCutoffLimit
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCVPresFF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOrbitSet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaCutoffLimit
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 open Formalism.REAL Formalism.QuantumDeterminants

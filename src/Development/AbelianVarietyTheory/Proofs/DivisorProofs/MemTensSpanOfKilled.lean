@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterPartTensorSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowestDegreeComponentInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarmonicHighestWeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CasimirLtAddRoot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonIrreducibleQuotient
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlBlockFiniteDimModuleStructure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicHomogeneousOfKType
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinFirst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicsGradedCompactStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterPartTensorSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowestDegreeComponentInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarmonicHighestWeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicHomogeneousOfKType
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinFirst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonIrreducibleQuotient
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlBlockFiniteDimModuleStructure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicsGradedCompactStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,11 +105,11 @@ theorem atPl_comm {w w' : ι} (h : w ≠ w') (L L' : Module.End ℂ V) (T : ⨂[
   | smul_tprod r f =>
     simp only [map_smul, atPl_tprod, Function.update_of_ne h, Function.update_of_ne h.symm]
     rw [Function.update_comm h]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def actAt {p q : ℕ} (a : Mat p q →ₗ[ℂ] Module.End ℂ V) (w : ι) : Mat p q →ₗ[ℂ] Module.End ℂ (⨂[ℂ] _ : ι, V) where
   toFun Z := atPl (V := fun _ : ι => V) w (a Z)
-  map_add' Z Z' := by rw [map_add, GlobalTheory.RealLift.Main.atPl_add]
+  map_add' Z Z' := by rw [map_add (f := _), GlobalTheory.RealLift.Main.atPl_add]
   map_smul' c Z := by rw [map_smul, GlobalTheory.RealLift.Main.atPl_smul]; rfl
 
 theorem actAt_apply {p q : ℕ} (a : Mat p q →ₗ[ℂ] Module.End ℂ V) (w : ι) (Z : Mat p q) :
@@ -205,7 +210,7 @@ theorem mem_tensSpan_of_killed (F : ι → Set (Module.End ℂ V)) (A : ι → S
   | smul_tprod r f =>
     rw [map_smul, PiTensorProduct.map_tprod]
     exact Submodule.smul_mem _ _ (tprod_mem_tensSpan _ _ fun w => hpK w _)
-  | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
 
 end Tensor
 
@@ -234,8 +239,8 @@ theorem le_deg_of_hw {μ : Ix R S → ℚ} {f : Formalism.BasicNotions.TH.Pol P 
     intro c
     have h := hmem.1 c
     rw [sub_eq_zero] at h
-    have hd : ∀ g : Formalism.BasicNotions.TH.Pol P Q R S, coeff α (fockAct2 P Q R S (Eab c c) g) =
-        (∑ a, lineSign a c * (((α (a, c) : ℕ) : ℂ) + 1 / 2)) * coeff α g := by
+    have hd : ∀ g : Formalism.BasicNotions.TH.Pol P Q R S, AddMonoidAlgebra.coeff (fockAct2 P Q R S (Eab c c) g) α =
+        (∑ a, lineSign a c * (((α (a, c) : ℕ) : ℂ) + 1 / 2)) * AddMonoidAlgebra.coeff g α := by
       intro g
       induction g using MvPolynomial.induction_on' with
       | monomial β z =>
@@ -244,7 +249,7 @@ theorem le_deg_of_hw {μ : Ix R S → ℚ} {f : Formalism.BasicNotions.TH.Pol P 
         by_cases h : β = α
         · subst h; simp only [if_true, smul_eq_mul]; ring
         · simp [h]
-      | add p q hp hq => rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+      | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
     have h' := hd f
     rw [h, coeff_smul, smul_eq_mul] at h'
     exact (mul_right_cancel₀ hα h').symm
@@ -325,7 +330,7 @@ theorem exists_harm (q : (⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S
     obtain ⟨W, fW, sW, hW, T, hT, e⟩ := hx
     obtain ⟨W', fW', sW', hW', T', hT', e'⟩ := hy
     exact ⟨W ⊔ W', inferInstance, fun w => GlobalTheory.BlockReps.stable_sup (sW w) (sW' w), sup_le hW hW', T + T',
-      Submodule.add_mem_sup hT hT', by rw [map_add, map_add, e, e']⟩
+      Submodule.add_mem_sup hT hT', by rw [map_add (f := _), map_add (f := _), e, e']⟩
 
 theorem mem_degLE_of_hw (μ : ι → Ix R S → ℚ) (T : ⨂[ℂ] _ : ι, Formalism.BasicNotions.TH.Pol P Q R S)
     (hT : T ∈ tensSpan (fun _ : ι => Submodule.span ℂ (harm2 P Q R S)))

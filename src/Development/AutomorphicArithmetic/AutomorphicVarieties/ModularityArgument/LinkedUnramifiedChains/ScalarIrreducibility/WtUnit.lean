@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.ComplY
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormEmbeddingIntegerLeOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousExtensionAdicCompletion
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.ComplY
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormEmbeddingIntegerLeOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousExtensionAdicCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,7 +132,7 @@ theorem emb_lt_iff (j : Emb l w) (x : 𝓞 F) :
           exact h
   have h2 : ‖c (i : F)‖ < 1 := emb_lt j hi
   have e' : c ((y : F) * (x : F)) + c (i : F) = 1 := by
-    rw [← map_add, ← map_one c]
+    rw [← map_add (f := _), ← map_one c]
     congr 1
     exact_mod_cast congrArg (fun t : 𝓞 F => (t : F)) e
   have h3 := IsUltrametricDist.norm_add_le_max (c ((y : F) * (x : F))) (c (i : F))
@@ -270,7 +274,7 @@ theorem exists_unit (hl : ((l : ℕ) : 𝓞 F) ∈ w.asIdeal) (x : 𝓞 F) (τ�
     have h3 : τ₁.1 z = τ₂.1 z := (div_eq_one_iff_eq hz2).1 h2
     apply hne
     rw [hze] at h3
-    simp only [map_add, map_one, map_mul, map_pow, map_natCast, add_right_inj] at h3
+    simp only [map_add (f := _), map_one, map_mul, map_pow, map_natCast, add_right_inj] at h3
     exact mul_left_cancel₀ (pow_ne_zero _ (Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero)) h3
 
 end Unit

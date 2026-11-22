@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -39,7 +43,7 @@ theorem exists_pow_le_span_of_fg_of_integers {C : Type*} [Field C] {v : Valuatio
     induction hx using Submodule.span_induction with
     | mem x hx => exact Finset.le_sup (f := fun s => v (algebraMap O C s)) hx
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact v.map_add_le hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact v.map_add_le hx hy
     | smul c x _ hx =>
       rw [smul_eq_mul, map_mul, map_mul]
       exact (mul_le_of_le_one_left' (hv.map_le_one c)).trans hx
@@ -53,7 +57,7 @@ theorem exists_pow_le_span_of_fg_of_integers {C : Type*} [Field C] {v : Valuatio
       refine Submodule.mul_induction_on hx (fun y hy z hz => ?_) (fun y z hy hz => ?_)
       · rw [map_mul, map_mul, pow_succ]
         exact mul_le_mul' (ih y hy) (hS z hz)
-      · rw [map_add]; exact v.map_add_le hy hz
+      · rw [map_add (f := _)]; exact v.map_add_le hy hz
   obtain ⟨n, hn⟩ := NNReal.exists_pow_lt_of_lt_one (pos_iff_ne_zero.mpr ha) hr1
   refine ⟨n, fun x hx => ?_⟩
   rw [Ideal.mem_span_singleton]

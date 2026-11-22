@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.RelDescPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.RelDescPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -57,7 +61,7 @@ theorem main {A B A' B' I : CochainComplex C ℤ} (φ : A ⟶ B) (φ' : A' ⟶ B
     (hαi : Function.Injective (pl α I m)) (hβi : Function.Injective (pl β I n))
     (hβs : Function.Surjective (pl β I m)) :
     Function.Injective (pl (mappingCone.map φ' φ α β comm) I n) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   obtain ⟨c, rfl⟩ := y.mk_surjective
   change CohomologyClass.mk (zcomp _ c _) = 0 at hy

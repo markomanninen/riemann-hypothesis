@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+
+@[expose] public section
+
 open MvPolynomial
 open scoped ContDiff
 open GlobalTheory.PsCo.Pc1
@@ -18,7 +23,8 @@ theorem sb_derivcut (H : ℝ → ℝ) (hH : IsCutFn H) : IsCutFn (deriv H) := by
   simp
 
 theorem sb_evrp {n : ℕ} (ε : Fin n → Bool) (g : Mat n) : ev g (rP ε) = ((rM ε g : ℝ) : ℂ) := by
-  simp only [rP, rM, map_sum, map_mul, ev, eval_X, Sum.elim_inl, Sum.elim_inr]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rP, rM, map_sum, map_mul, ev, eval_X, Sum.elim_inl, Sum.elim_inr]
   push_cast
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]
@@ -59,7 +65,8 @@ theorem sb_degmono {n : ℕ} (ε : Fin n → Bool) (Z : Mat n) (s : _) (a : ℂ)
 theorem sb_degdz {n : ℕ} (ε : Fin n → Bool) (Z : Mat n) (P : Poly n) :
     (dZ ε Z P).totalDegree ≤ P.totalDegree := by
   conv_lhs => rw [P.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun m hm => ?_)
   refine (sb_degmono ε Z m _).trans ?_
   exact (totalDegree_monomial_le _ _).trans (le_totalDegree hm)
@@ -80,13 +87,13 @@ theorem sb_evderiv {σ : Type} (D : Derivation ℂ (MvPolynomial σ ℂ) (MvPoly
     simp only [this, eval_C, map_zero]
     exact hasDerivAt_const _ _
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p v hp =>
     have h := hp.fun_mul (hγ v)
     simp only [map_mul, eval_X]
     refine h.congr_deriv ?_
-    rw [Derivation.leibniz, map_add, smul_eq_mul, smul_eq_mul, map_mul, map_mul, eval_X]
+    rw [Derivation.leibniz, map_add (f := _), smul_eq_mul, smul_eq_mul, map_mul, map_mul, eval_X]
     ring
 
 theorem sb_curve {n : ℕ} (Z g : Matrix (Fin n) (Fin n) ℂ) (s : ℝ) (a b : Fin n) :

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VanishOfExact
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceSnocCastSucc
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VanishOfExact
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceSnocCastSucc
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -24,7 +28,8 @@ theorem exact_of_app (S : ShortComplex (Coef C))
 variable {P : C ⥤ Type}
 
 def snG {m : ℕ} {B : C} (g : Gen P m B) (z : P.obj B) (h : (P.map g.2) (g.1.obj (Fin.last m)).2 = z) : Gen P (m + 1) B :=
-  ⟨snoc g.1 (X := (⟨B, z⟩ : P.Elements)) ⟨g.2, h⟩, (snε g.1 (X := (⟨B, z⟩ : P.Elements)) ⟨g.2, h⟩).1⟩
+  let a : g.1.obj (Fin.last m) ⟶ P.elementsMk B z := Functor.Elements.homMk g.2 h
+  ⟨snoc g.1 a, (snε g.1 a).1⟩
 
 theorem snG_eq {m : ℕ} {B : C} (g : Gen P m B) {z : P.obj B} (h : (P.map g.2) (g.1.obj (Fin.last m)).2 = z) :
     snG g z h = snG g _ rfl := by
@@ -34,14 +39,14 @@ def sn {m : ℕ} {B : C} (g : Gen P m B) : Gen P (m + 1) B := snG g _ rfl
 
 theorem gFace_snG_last {m : ℕ} {B : C} (g : Gen P m B) (z : P.obj B) (h : (P.map g.2) (g.1.obj (Fin.last m)).2 = z) :
     gFace P (Fin.last (m + 1)) (snG g z h) = g :=
-  congrArg (fun p : (Σ t : ComposableArrows P.Elements m, t.obj (Fin.last m) ⟶ (⟨B, z⟩ : P.Elements)) =>
-    (⟨p.1, p.2.1⟩ : Gen P m B)) (gen_snoc_last g.1 (X := (⟨B, z⟩ : P.Elements)) ⟨g.2, h⟩)
+  congrArg (fun p : (Σ t : ComposableArrows P.Elements m, t.obj (Fin.last m) ⟶ P.elementsMk B z) =>
+    (⟨p.1, p.2.1⟩ : Gen P m B)) (gen_snoc_last g.1 (X := P.elementsMk B z) (Functor.Elements.homMk g.2 h))
 
 theorem gFace_snG_castSucc {m : ℕ} {B : C} (g : Gen P (m + 1) B) (z : P.obj B) (h : (P.map g.2) (g.1.obj (Fin.last (m + 1))).2 = z)
     (i : Fin (m + 2)) (h' : (P.map (gFace P i g).2) ((gFace P i g).1.obj (Fin.last m)).2 = z) :
     gFace P i.castSucc (snG g z h) = snG (gFace P i g) z h' :=
-  congrArg (fun p : (Σ t : ComposableArrows P.Elements (m + 1), t.obj (Fin.last (m + 1)) ⟶ (⟨B, z⟩ : P.Elements)) =>
-    (⟨p.1, p.2.1⟩ : Gen P (m + 1) B)) (gen_snoc_castSucc g.1 (X := (⟨B, z⟩ : P.Elements)) ⟨g.2, h⟩ i)
+  congrArg (fun p : (Σ t : ComposableArrows P.Elements (m + 1), t.obj (Fin.last (m + 1)) ⟶ P.elementsMk B z) =>
+    (⟨p.1, p.2.1⟩ : Gen P (m + 1) B)) (gen_snoc_castSucc g.1 (X := P.elementsMk B z) (Functor.Elements.homMk g.2 h) i)
 
 theorem gFace_sn_last {m : ℕ} {B : C} (g : Gen P m B) : gFace P (Fin.last (m + 1)) (sn g) = g := gFace_snG_last g _ rfl
 
@@ -64,7 +69,8 @@ def ofL {k : ℕ} {B : C} (g : Gen P k B) : (L P k).obj B := FreeAbelianGroup.of
 theorem d_hh_of (B : C) (k : ℕ) (g : Gen P (k + 1) B) :
     ((dL P (k + 1)).app B).hom (hh B (k + 1) (ofL g)) = hh B k (((dL P k).app B).hom (ofL g)) + (-1 : ℤ) ^ (k + 2) • ofL g := by
   unfold ofL
-  rw [hh_of, dL_of, dL_of, Fin.sum_univ_castSucc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hh_of, dL_of, dL_of, Fin.sum_univ_castSucc, map_sum]
   congr 1
   · refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, hh_of, gFace_sn_castSucc]

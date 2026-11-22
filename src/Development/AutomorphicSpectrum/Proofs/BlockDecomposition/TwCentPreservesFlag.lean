@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotVanish
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotVanish
+
+@[expose] public section
 
 open Matrix PositivityTheory.Rg.BcB PositivityTheory.Rg.Tf.Loc
 
@@ -26,7 +30,8 @@ theorem mem_img_iff (g : GL (Fin n) K) (W : Submodule K (Fin n → K)) (y : Fin 
 
 theorem form_mulVec (σ : K →+* K) (A : Matrix (Fin n) (Fin n) K) (x y : Fin n → K) :
     ∑ i, σ ((A *ᵥ x) i) * y i = ∑ j, σ (x j) * ((A.map σ)ᵀ *ᵥ y) j := by
-  simp only [mulVec, dotProduct, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, transpose_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mulVec, dotProduct, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, transpose_apply,
     map_apply]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => by ring
@@ -48,7 +53,8 @@ theorem perp_img (σ : K →+* K) (g : GL (Fin n) K) (X : Submodule K (Fin n →
 theorem le_perp_perp (σ : K →+* K) (hσ : ∀ x, σ (σ x) = x) (W : Submodule K (Fin n → K)) :
     W ≤ perp σ (perp σ W) := fun z hz y hy => by
   have h2 := congrArg σ (hy z hz)
-  simp only [map_sum, map_mul, hσ, map_zero] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hσ, map_zero] at h2
   simpa [mul_comm] using h2
 
 theorem perp_perp (σ : K →+* K) (hσ : ∀ x, σ (σ x) = x) (W : Submodule K (Fin n → K)) :
@@ -63,7 +69,8 @@ theorem perp_perp (σ : K →+* K) (hσ : ∀ x, σ (σ x) = x) (W : Submodule K
     have h0 : f x = 0 := hf hx
     rw [hfa] at h0
     have := congrArg σ h0
-    simpa only [map_sum, map_mul, map_zero] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_mul, map_zero] using this
   have h1 := hz _ hy
   simp only [hσ] at h1
   exact hf0 (by rw [hfa]; simpa [mul_comm] using h1)

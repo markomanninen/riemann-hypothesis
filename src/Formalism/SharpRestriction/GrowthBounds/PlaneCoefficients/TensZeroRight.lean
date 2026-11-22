@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem tens_monomial (mo : σ →₀ ℕ) (c : Kf) (G : MvPolynomial τ Kf) :
 def tensH (G : MvPolynomial τ Kf) (mo : σ →₀ ℕ) : Kf →+ MvPolynomial σ (MvPolynomial τ Kf) where
   toFun c := monomial mo (c • G)
   map_zero' := by simp
-  map_add' c c' := by rw [add_smul, map_add]
+  map_add' c c' := by rw [add_smul, map_add (f := _)]
 
 theorem tens_add_left (A A' : MvPolynomial σ Kf) (G : MvPolynomial τ Kf) :
     tens (A + A') G = tens A G + tens A' G :=
@@ -33,7 +37,7 @@ theorem tens_add_right (A : MvPolynomial σ Kf) (G G' : MvPolynomial τ Kf) :
   unfold tens
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun mo _ => ?_
-  rw [smul_add, map_add]
+  rw [smul_add, map_add (f := _)]
 
 theorem tens_zero_left (G : MvPolynomial τ Kf) : tens (0 : MvPolynomial σ Kf) G = 0 := by simp [tens]
 

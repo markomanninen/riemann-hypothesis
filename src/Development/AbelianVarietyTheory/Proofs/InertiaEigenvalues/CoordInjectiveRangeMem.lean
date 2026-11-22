@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordApply
+
+@[expose] public section
+
 open PowerSeries Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.NB GlobalTheory.CycFr GlobalTheory.WachTie
 
 noncomputable section
@@ -30,7 +35,8 @@ theorem coord_injective_range_mem : ∀ {G : Type} [Group G] [TopologicalSpace G
   have hγ : ∀ δ ∈ W.DelF, ∀ y : Fin r → W.EE, W.γD T δ (∑ k, y k • (b k : W.DD T)) =
       ∑ k, W.γE δ (y k) • (b k : W.DD T) := by
     intro δ hδ y
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [W.γD_smul, (hb k).2 δ hδ]
   have hinv : ∀ x, ∀ δ ∈ W.DelF, W.γD T δ (coord W R jE T (fun k => (b k : W.DD T)) x) =
@@ -63,7 +69,8 @@ theorem coord_injective_range_mem : ∀ {G : Type} [Group G] [TopologicalSpace G
       have h1 : ∑ k, algebraMap (LetA O n) W.EE (a k) • (b k : W.DD T) =
           ∑ k, jE (fun i => x i k) • (b k : W.DD T) := by
         have := congrArg (W.N T).subtype (b.sum_repr ⟨_, hN⟩)
-        rw [map_sum] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum] at this
         simp only [algebraMap_smul]
         exact this
       have h2 := huniq _ _ h1

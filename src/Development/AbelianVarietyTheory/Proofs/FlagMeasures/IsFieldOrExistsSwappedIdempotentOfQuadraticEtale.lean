@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.InFrameStabilizer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.InFrameStabilizer
+
+@[expose] public section
 
 open GlobalTheory.SgAlg Matrix
 
@@ -22,7 +26,7 @@ theorem isField_or_exists_idempotent_of_isQA {E : Type} [CommRing E] (σ : E →
     push Not at hN
     obtain ⟨y, hy, hyy⟩ := hN
     have hsfix : σ (y + σ y) = y + σ y := by
-      rw [map_add, hinv, add_comm]
+      rw [map_add (f := _), hinv, add_comm]
     have hs : y + σ y ≠ 0 := by
       intro h0
       have h1 : σ y = -y := eq_neg_of_add_eq_zero_right h0
@@ -55,7 +59,7 @@ theorem isField_or_exists_idempotent_of_isQA {E : Type} [CommRing E] (σ : E →
     refine ⟨e, hidem, hadd, ?_⟩
     intro x hx
     have hufix : σ (e * x + σ (e * x)) = e * x + σ (e * x) := by
-      rw [map_add, hinv, add_comm]
+      rw [map_add (f := _), hinv, add_comm]
     have heu : e * (e * x + σ (e * x)) = e * x := by
       rw [map_mul, mul_add, ← mul_assoc, hidem, ← mul_assoc, horth, zero_mul, add_zero]
     have hu0 : e * x + σ (e * x) ≠ 0 := by

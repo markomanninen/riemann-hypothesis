@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set Function
 open scoped ENNReal
@@ -128,7 +132,7 @@ theorem tsum_setLIntegral_left (h : Hyp ν u L D Λ E S) {q : G} (hq : q ∈ Λ)
     intro X η
     have e1 : ((h.latticeEquiv hq η : L) : V) = S q (-(η : V)) := rfl
     have e2 : S q (-((η : V) + X)) = S q (-X) + S q (-(η : V)) := by
-      rw [neg_add, (S q).map_add, add_comm]
+      rw [neg_add, _root_.map_add (S q), add_comm]
     rw [e1, e2, h.map_add, ← h.conj q hq (-X)]
     simp only [mul_assoc, mul_inv_cancel_left]
   rw [← (h.latticeEquiv hq).tsum_eq]

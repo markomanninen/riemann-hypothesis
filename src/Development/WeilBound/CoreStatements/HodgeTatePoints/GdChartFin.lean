@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GdChart
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GcIncl
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GcDescend
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RedOmHTBc
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GdChart
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GcIncl
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GcDescend
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RedOmHTBc
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumMeas
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumMeas
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -69,7 +74,7 @@ theorem map_eq_of_fundamentalDomain (L : AddSubgroup G) [Countable L] (ν : Meas
         left_inv := fun γ => Subtype.ext (T.apply_symm_apply _)
         right_inv := fun γ => Subtype.ext (T.symm_apply_apply _) }
     refine hF.image_of_equiv T.toEquiv ?_ g fun γ x => ?_
-    · refine ⟨(T.symm.continuous.measurable : Measurable (T.symm : G → G)), ?_⟩
+    · refine ⟨(T.symm.continuous.measurable : Measurable (T.symm : G → G)).aemeasurable, ?_⟩
       have : (ν.map T).map T.symm = ν := by
         have hs : Measurable (T.symm : G → G) := T.symm.continuous.measurable
         have ht : Measurable (T : G → G) := T.continuous.measurable
@@ -78,7 +83,7 @@ theorem map_eq_of_fundamentalDomain (L : AddSubgroup G) [Countable L] (ν : Meas
         rw [this, Measure.map_id]
       exact this.absolutelyContinuous
     · change T (T.symm γ + x) = γ + T x
-      rw [map_add, T.apply_symm_apply]
+      rw [map_add (f := _), T.apply_symm_apply]
   have h3 : ν.map T F = ν.map T (T '' F) := hF2.measure_eq hF3
   have h4 : ν.map T (T '' F) = ν F := by
     rw [hemb.map_apply, Set.preimage_image_eq _ T.injective]

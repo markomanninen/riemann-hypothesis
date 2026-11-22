@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -145,9 +149,9 @@ private theorem det_blk (a b : AdelicGLn.AdelicGL K 2) :
     detModule K (2 + 2) (blk a b) = detModule K 2 a * detModule K 2 b := by
   simp only [detModule, MonoidHom.comp_apply, AdelicGLn.det, blk_det, map_mul]
 
-private theorem coe_ret {n : ℕ} {g : AdelicGLn.AdelicGL K n} (h : g ∈ normOneGL K n) :
+private theorem coe_ret {n : ℕ} {g : AdelicGLn.AdelicGL K n} (h : g ∈ normOneGL (K := K) (n := n)) :
     (retractOne g : AdelicGLn.AdelicGL K n) = g :=
-  congrArg Subtype.val (retractOne_coe (⟨g, h⟩ : normOneGL K n))
+  congrArg Subtype.val (retractOne_coe (⟨g, h⟩ : normOneGL (K := K) (n := n)))
 
 private theorem zt_add (s t : ℝ) : zt K (s + t) = zt K s * zt K t := by
   rw [zt, zt, zt, ← map_mul]
@@ -178,7 +182,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.blkLaws :
       ((w0 K : G1 K (2 + 2)) : AdelicGLn.AdelicGL K (2 + 2)) = wGL 𝔸[K] ∧ w0 K ∈ Gam K (2 + 2) ∧ w0 K ∈ KG K (2 + 2) ∧
       (∀ (m₁ m₂ : G1 K 2) (t : ℝ), w0 K * lv m₁ m₂ t = lv m₂ m₁ (-t) * w0 K) ∧
       (∀ u₁ ∈ KG K 2, ∀ u₂ ∈ KG K 2, lv u₁ u₂ 0 ∈ KG K (2 + 2)) ∧ ∀ n, IsCompact (KG K n : Set (G1 K n)) ∧
-        ∀ k ∈ (maxCompact : Subgroup (AdelicGLn.AdelicGL K n)), k ∈ normOneGL K n := by
+        ∀ k ∈ (maxCompact : Subgroup (AdelicGLn.AdelicGL K n)), k ∈ normOneGL (K := K) (n := n) := by
   intro K _ _
   have hw : ((w0 K : G1 K (2 + 2)) : AdelicGLn.AdelicGL K (2 + 2)) = wGL 𝔸[K] :=
     coe_ret (maxCompact_le_normOneGL w_max)

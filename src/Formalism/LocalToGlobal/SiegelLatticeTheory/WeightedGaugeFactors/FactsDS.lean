@@ -1,13 +1,17 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.BesselNVG
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLitG
-import Formalism.SharpRestriction.CuspSpanNormBounds.DiscreteSeriesWeylDimension
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CoefLoc
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.BesselVectors.Closed
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.BesselVectors.DecLow
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.FinalClosed
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HWExists
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.BesselNVG
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLitG
+public import Formalism.SharpRestriction.CuspSpanNormBounds.DiscreteSeriesWeylDimension
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CoefLoc
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.BesselVectors.Closed
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.BesselVectors.DecLow
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.FinalClosed
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HWExists
+
+@[expose] public section
 
 namespace Formalism.L2.SG.OwnFacts
 
@@ -29,12 +33,6 @@ instance factExists : Fact DiscreteSeriesWeylDimension.DiscreteSeriesExistsG := 
   exact ⟨H, i1, i2, σ, hσ⟩⟩
 
 instance factMultOne : Fact DiscreteSeriesWeylDimension.LowKMultOneG := ⟨ReciprocityTheory.ChartRestriction.DS.final_lowKMultOneG⟩
-
-instance factUniq : Fact BridgeLemma₂.deg_DSUniqG := ⟨ReciprocityTheory.ChartRestriction.DS.final_deg_DSUniqG⟩
-
-instance factDiscreteSeriesUnique : Fact LeviCoordinates.DiscreteSeriesUniqueBesselGapped := ⟨ReciprocityTheory.ChartRestriction.DS.discrete_series_unique_large_gap⟩
-
-instance factHCMult : Fact BridgeCPX.HCMultDSG := ⟨ReciprocityTheory.ChartRestriction.DS.final_HCMultDSG⟩
 
 instance factHighestWeight : Fact DiscreteSeriesWeylDimension.HighestWeightExists :=
   ⟨fun k u h => ReciprocityTheory.ChartRestriction.DS.HW.highest_weight_exists k u h⟩

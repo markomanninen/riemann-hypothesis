@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MorphismsSpreadOutToFgSubalgebra
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsFgForallOverLbIso
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MorphismsSpreadOutToFgSubalgebra
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsFgForallOverLbIso
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,10 +28,10 @@ open Spread
 private theorem lbIso_pull_iff_lbIso_pull_pull_of_eq_comp {W X Y : Scheme.{0}} {M N : LB X} (hM : M.IsLB) (hN : N.IsLB) {a : Y ⟶ X}
     (j : W ⟶ Y) {a' : W ⟶ X} (ha : a' = j ≫ a) :
     LBIso (M.pull a') (N.pull a') ↔ LBIso ((M.pull a).pull j) ((N.pull a).pull j) := by
-  have hM' := pull_isLB hM a'
-  have hN' := pull_isLB hN a'
-  have hMj := pull_isLB (pull_isLB hM a) j
-  have hNj := pull_isLB (pull_isLB hN a) j
+  have hM' := LB.isLB_pull hM a'
+  have hN' := LB.isLB_pull hN a'
+  have hMj := LB.isLB_pull (LB.isLB_pull hM a) j
+  have hNj := LB.isLB_pull (LB.isLB_pull hN a) j
   constructor
   · intro h
     exact LBIso.trans hMj hM' hNj (LBIso.symm (lbIso_pull_pull hM j ha))
@@ -42,13 +46,12 @@ theorem exists_finset_lbIso {k A : Type} [CommRing k] [CommRing A] [Algebra k A]
     ∃ s : Finset A, LBIso (M.pull (pullback.fst pB (spMap (algebraMap k (Algebra.adjoin k (s : Set A))))))
       (N.pull (pullback.fst pB (spMap (algebraMap k (Algebra.adjoin k (s : Set A)))))) := by
   classical
-  obtain ⟨j, g, hg⟩ := exists_lbIso_of_isLimit (D := bcDiagram pB A)
-    (π := fun s => bcMap pB (Algebra.adjoin k (s.unop : Set A)).val)
-    (w := fun {s t} f => bcMap_comp_of_eq pB _ _ _ fun _ => rfl)
-    (hc := isLimitBcCone pB A) (i := Opposite.op ∅)
-    (M := M.pull (pullback.fst _ _)) (N := N.pull (pullback.fst _ _))
-    (hM := pull_isLB hM _) (hN := pull_isLB hN _)
-    (h := (lbIso_pull_iff_lbIso_pull_pull_of_eq_comp hM hN _ (bcMap_fst pB _).symm).mp H)
+  obtain ⟨j, g, hg⟩ := exists_lbIso_of_isLimit (bcDiagram pB A)
+    (bcCone pB A).π.app (fun {_ _} f => (bcCone pB A).w f) (isLimitBcCone pB A)
+    (i := Opposite.op ∅)
+    (M.pull (pullback.fst _ _)) (N.pull (pullback.fst _ _))
+    (LB.isLB_pull hM _) (LB.isLB_pull hN _)
+    ((lbIso_pull_iff_lbIso_pull_pull_of_eq_comp hM hN _ (bcMap_fst pB _).symm).mp H)
   exact ⟨j.unop, (lbIso_pull_iff_lbIso_pull_pull_of_eq_comp hM hN ((bcDiagram pB A).map g) (bcMap_fst pB _).symm).mpr hg⟩
 
 theorem exists_denom {R K : Type} [CommRing R] [IsDomain R] [Field K] [Algebra R K] [IsFractionRing R K]

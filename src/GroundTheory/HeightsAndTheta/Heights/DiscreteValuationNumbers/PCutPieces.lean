@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -33,8 +38,8 @@ instance finiteDimensional [∀ k, Fintype (ι k)] (m : K → ℕ) :
 
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
 
-open Classical in
 
+open Classical in
 theorem component_mul {x : MRing ι F} {e : K → ℕ} (hx : IsMultiHomog x e) (y : MRing ι F)
     (m : K → ℕ) :
     weightedHomogeneousComponent (blockWeight ι) m (x * y) =
@@ -81,7 +86,7 @@ theorem CutPieces.proof : CutPieces.Statement := by
       ⟨weightedHomogeneousComponent_mem _ _ _, hI i hi m⟩, y, ?_⟩
     classical
     have h1 := weightedHomogeneousComponent_of_mem (m := m) hf
-    rw [if_pos rfl, map_add] at h1
+    rw [if_pos rfl, map_add (f := _)] at h1
     exact h1.symm
   by_cases hem : e ≤ m
   · rw [if_pos hem]

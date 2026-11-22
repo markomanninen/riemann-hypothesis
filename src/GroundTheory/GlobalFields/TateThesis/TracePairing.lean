@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.IntegersLattice
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.IntegersLattice
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -91,9 +95,6 @@ theorem mixedTraceForm_separatingLeft : (mixedTraceForm K).SeparatingLeft := by
 theorem mixedTraceForm_nondegenerate : (mixedTraceForm K).Nondegenerate :=
   ⟨mixedTraceForm_separatingLeft K, fun y hy =>
     mixedTraceForm_separatingLeft K y fun x => by rw [mixedTraceForm_comm]; exact hy x⟩
-
-def infiniteTraceForm (x y : InfiniteAdeleRing K) : ℝ :=
-  mixedTraceForm K (homeomorphMixedSpace K x) (homeomorphMixedSpace K y)
 
 end
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DualRestrictSurjectiveOfIsTorsionFreeQuotient
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DualRestrictSurjectiveOfIsTorsionFreeQuotient
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory
@@ -44,7 +49,7 @@ theorem exists_lattice_map_of_symplecticBasis {La : Type} [AddCommGroup La] {g :
       b.equivFun.symm (Sum.elim (fun i => -(t i * b.repr x (Sum.inl i))) 0), ?_⟩
     apply b.repr.injective
     ext j
-    rw [map_add, Finsupp.add_apply, hL, map_nsmul, Finsupp.smul_apply]
+    rw [map_add (f := _), Finsupp.add_apply, hL, map_nsmul, Finsupp.smul_apply]
     rcases j with i | i
     · simp only [w, Sum.elim_inl, hrepr, nsmul_eq_mul]
       linear_combination (-(b.repr x (Sum.inl i))) * ht i

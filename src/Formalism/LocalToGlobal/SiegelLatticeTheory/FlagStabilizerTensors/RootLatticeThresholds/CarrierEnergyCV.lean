@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyPlace
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -258,6 +262,7 @@ theorem map_phiE (lam : Fin r → ℝ) (hlam : ∀ a, 0 < lam a) :
     (dcC (r := r)).map (PhiE lam hlam) = (∏ i, (cN lam i : ℝ≥0∞)) • (volume : Measure ((Fin r → ℂ) × ℂ)) := by
   rw [PhiE, MeasurableEquiv.coe_trans, ← Measure.map_map (e2 (r := r)).measurable (e1 lam hlam).measurable, map_scaled_coordinates_pi,
     pi_smul_const, Measure.map_smul, map_coordinate_change_volume]
+  exact (e2 (r := r)).measurable.aemeasurable
 
 theorem const_eq (k : ℕ) (lam : Fin r → ℝ) (hlam : ∀ a, 0 < lam a) :
     (∏ i : Fin (r + 1), 2 * ((muS lam i) ^ 2)⁻¹) * kapC k lam =

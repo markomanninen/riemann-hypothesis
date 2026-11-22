@@ -1,10 +1,14 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 
 open Matrix in
-
 private def Dz {E ι : Type} [Field E] [StarRing E] [Fintype ι] [DecidableEq ι]
     (T : Matrix ι ι E) : Prop :=
-  ∃ g : Matrix ι ι E, g.det ≠ 0 ∧ ∃ D : ι → E, gᴴ * T * g = diagonal D
+  ∃ g : Matrix ι ι E, g.det ≠ 0 ∧ ∃ D : ι → E, Matrix.conjTranspose g * T * g = Matrix.diagonal D
 
 open Matrix in
 private theorem Dz.of_submatrix {E ι κ : Type} [Field E] [StarRing E] [Fintype ι] [DecidableEq ι]
@@ -68,7 +72,7 @@ private theorem Dz.sum {E A B : Type} [Field E] [StarRing E] [Fintype A] [Decida
   rw [key]
   obtain ⟨gA, hgA, DA, hDA⟩ := hA X h1
   obtain ⟨gB, hgB, DB, hDB⟩ := hB S hSH
-  refine ⟨fromBlocks gA 0 0 gB, ?_, Sum.elim DA DB, ?_⟩
+  refine ⟨fromBlocks gA (0 : Matrix A B E) (0 : Matrix B A E) gB, ?_, Sum.elim DA DB, ?_⟩
   · rw [det_fromBlocks_zero₂₁]; exact mul_ne_zero hgA hgB
   · rw [fromBlocks_conjTranspose, fromBlocks_multiply, fromBlocks_multiply, ← fromBlocks_diagonal]
     simp [hDA, hDB]
@@ -110,7 +114,7 @@ private theorem Dz.all {E : Type} [Field E] [StarRing E] [CharZero E] :
   push_neg at hd
   by_cases h0 : T = 0
   · subst h0
-    exact ⟨1, by simp, 0, by simp⟩
+    exact ⟨1, by simp, 0, by ext i j; simp [Matrix.diagonal]⟩
   obtain ⟨i, j, hij⟩ : ∃ i j, T i j ≠ 0 := by
     by_contra hc
     push_neg at hc

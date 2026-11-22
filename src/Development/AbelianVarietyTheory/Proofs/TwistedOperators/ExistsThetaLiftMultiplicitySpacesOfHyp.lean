@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralForm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaLiftCuspFormAutomorphicSmoothModerateGrowth
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacuumFockFromSquareIntegrability
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaChainLiftsAreCuspFormsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaModelsAreCoverDiscreteSeriesOfHarishChandraStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GkMapCuspFormsExtendsToSmoothVectorsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaVacuumCharactersRealPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRealPlaceThetaObjectsTheoremARPartsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralForm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaLiftCuspFormAutomorphicSmoothModerateGrowth
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacuumFockFromSquareIntegrability
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaChainLiftsAreCuspFormsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaModelsAreCoverDiscreteSeriesOfHarishChandraStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GkMapCuspFormsExtendsToSmoothVectorsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaVacuumCharactersRealPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRealPlaceThetaObjectsTheoremARPartsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem exists_factor_kFin_of_rapid (hdec : GlobalTheory.Published.CuspRapidDeca
   have s3 : ∀ τ (A : Module.End ℂ (kFin M' τ)) (y : KVec M') z, PiTensorProduct.tprod ℂ (Function.update y τ (A z)) =
       intersection_update_fsHerm_neg_one τ A (PiTensorProduct.tprod ℂ (Function.update y τ z)) := fun τ A y z => by
     rw [position_tprod, Function.update_idem, Function.update_self]
-  have pI : ∀ τ L, IsContr τ L → ∀ p y,
+  have pI : ∀ τ L, IsContr (K := fun τ => kFin M τ) τ L → ∀ p y,
       IsLocPair M M' τ (aS τ) (aT τ) (a' τ) ((slice (multi I) τ p y).compr₂ L) := fun τ L hL p y => by
     refine ⟨fun X hX P P' z z' => ?_, fun Y hY P z => ?_⟩
     · have hL' := fun x => LinearMap.congr_fun (hL (a τ X)) x
@@ -110,20 +114,21 @@ theorem exists_factor_kFin_of_rapid (hdec : GlobalTheory.Published.CuspRapidDeca
       simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s1, hIs τ X hX, hL']
       exact (ha τ).skew X hX _ _
     · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s2, s3]
-      rw [← map_add, hIt τ Y hY, map_zero]
+      rw [← map_add (f := _), hIt τ Y hY, map_zero]
   have pB : ∀ τ p y, IsLocPair M M' τ (aS τ) (aT τ) (a' τ) ((slice (multi B) τ p y).compr₂ E) := fun τ p y => by
     refine ⟨fun X hX P P' z z' => ?_, fun Y hY P z => ?_⟩
     · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s1, hBs τ X hX]
       exact hE τ X hX _ _ (hBg _ _) (hBg _ _) (hBs τ X hX _ _ ▸ hBg _ _) (hBs τ X hX _ _ ▸ hBg _ _)
     · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s2, s3]
-      rw [← map_add, hBt τ Y hY, map_zero]
+      rw [← map_add (f := _), hBt τ Y hY, map_zero]
   obtain ⟨⟨T, hT⟩, hs⟩ := exists_factor (fun τ (X : lieAt V τ) => sOp M M' τ (aT τ) X) _ hirr (multi I) (multi B)
     (by by_contra hn; exact h0 (span_multi I fun p y => by_contra fun h => hn ⟨p, y, h⟩))
     (fun τ X p y => by rw [multi_apply, multi_apply, ← srcOp_glue, hIs τ X X.2])
     fun τ L hL p y hne => ⟨fun L' hL' p' y' => hker τ _ _ _ _ (pI τ L hL p y) (pI τ L' hL' p' y') hne,
       fun p' y' n x z h => by
         refine (hE0 _ (GlobalTheory.Chain.CuspGrowSpace.isCuspGrow_of_mem_span D θ V _ (sum_mem fun i _ => Submodule.subset_span (hBg _ _)))).2 ?_
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact hker τ _ _ _ _ (pI τ L hL p y) (pB τ p' y') hne n x z h⟩
   refine ⟨⟨T, fun φ y => ?_⟩, eq_top_iff.2 (hs ▸ Submodule.span_mono ?_)⟩
   · have := span_multi (I.compr₂ T - B) fun p y => sub_eq_zero.2 (hT p y)
@@ -171,7 +176,7 @@ theorem exists_mult_of_rapid (hG : GlobalTheory.IndefiniteRowSideFullHecke.KType
       obtain ⟨φ, y, h0⟩ := h0
       exact h0 (by rw [← hI, e]; simp)) hIs'
     (fun τ Y hY φ y => inj (by
-      rw [map_add, hI, hI, map_zero]
+      rw [map_add (f := _), hI, hI, map_zero]
       exact hIt τ Y hY φ _ _ ((GlobalTheory.Chain.IoLift.FinTensor.kFinTensor D W S' M' τ h').2.1 _ (ha' τ) Y hY _)))
     (fun φ y => hBg _ _) (fun τ X hX φ y => hBs τ X hX _ _) fun τ Y hY φ y => by
       rw [LinearMap.compl₂_apply, LinearMap.compl₂_apply, position_tprod, inclK_update, inclK_tprod]
@@ -193,12 +198,12 @@ theorem exists_mult_of_rapid (hG : GlobalTheory.IndefiniteRowSideFullHecke.KType
   obtain ⟨U, ⟨hU, hUe⟩, -⟩ := hG θ hθ V S M J χ μ 𝓕 hμ h𝓕 (T.compMultilinearMap (PiTensorProduct.tprod ℂ))
     ⟨fun u => (hg _).1, fun u => (hg _).2.1, fun u => (hg _).2.2.1, fun u => (hE0 _ (hg _)).1, fun u => (hg _).2.2.2,
       fun u => hind (fun x => ∀ k ∈ J, ∀ g, T x (g * k) = χ k * T x g) (fun φ y => hT φ y ▸ hlev _ _)
-        (fun x y a b k hk g => by simp only [map_add, Pi.add_apply, a k hk g, b k hk g, mul_add]) _,
+        (fun x y a b k hk g => by simp only [map_add (f := _), Pi.add_apply, a k hk g, b k hk g, mul_add]) _,
       fun τ k hk u w hw => by
         obtain rfl : w = kOp M τ hk (u τ) := Subtype.ext hw
         rw [LinearMap.compMultilinearMap_apply, ← position_tprod]
         refine hind (fun x => T (intersection_update_fsHerm_neg_one τ (kOp M τ hk) x) = rTr V (atTau θ V τ k) (T x)) (fun φ y => ?_)
-          (fun x y a b => by rw [map_add, map_add, map_add, a, b]; rfl) _
+          (fun x y a b => by rw [map_add (f := _), map_add (f := _), map_add (f := _), a, b]; rfl) _
         obtain ⟨φ', -, h2⟩ := hK τ φ k hk
         rw [hT, ← (h2 _).2, ← hT]
         refine congrArg T (inj ((tensorLaw D V S M).inj ?_))
@@ -208,7 +213,7 @@ theorem exists_mult_of_rapid (hG : GlobalTheory.IndefiniteRowSideFullHecke.KType
         rw [LinearMap.compMultilinearMap_apply, ← position_tprod]
         refine hind (fun x => T (intersection_update_fsHerm_neg_one τ (a τ X) x) = Rder θ V τ X (T x)) (fun φ y => ?_)
           (fun x y a b => by
-            rw [map_add, map_add, map_add, a, b, (GlobalTheory.Mem.AutSpace.linOnSm_Rder hX).add _ (hg _).2.1 _ (hg _).2.1]) _
+            rw [map_add (f := _), map_add (f := _), map_add (f := _), a, b, (GlobalTheory.Mem.AutSpace.linOnSm_Rder hX).add _ (hg _).2.1 _ (hg _).2.1]) _
         rw [← hIs' τ X hX, hT, hT, hBs τ X hX]⟩
   refine ⟨PiTensorProduct.lift U, ⟨U, Submodule.subset_span hU, rfl⟩, fun φ y => ?_⟩
   have e : PiTensorProduct.lift U ∘ₗ inclK h = T := PiTensorProduct.ext (MultilinearMap.ext fun u => by
@@ -218,8 +223,8 @@ theorem exists_mult_of_rapid (hG : GlobalTheory.IndefiniteRowSideFullHecke.KType
 
 end Factor
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem ioPair_of_rapid (D : D7) (X : ProvA) (hX : ChosenSeries X) (h3 : Formalism.MainNotions.SchurIrreducible.ArchimedeanRallisUpDownLine X) (hC : LiftCusp D)
     (hL : GlobalTheory.IndefiniteRowSideFullHecke.RapidDecayLift.LiftProps D) (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension.GKExtension D) (hF : GlobalTheory.IndefiniteRowSideFullHecke.VacuumFockVectors.VacuumFock D)
     (hV : VacChar D) (hB : ModelsAreCoverSeries D) (hdec : GlobalTheory.Published.CuspRapidDecay)
@@ -256,7 +261,7 @@ theorem ioPair_of_rapid (D : D7) (X : ProvA) (hX : ChosenSeries X) (h3 : Formali
       beta_reduce
       rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_left_comm, rTr, mul_one]
       rfl
-    | add x y hx hy => simp only [map_add, Pi.add_apply, mul_add]; exact hx.add hy
+    | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, mul_add]; exact hx.add hy
   obtain ⟨B, hB⟩ := exists_trilinear ν 𝓕 (fun g h => LinearMap.proj 0 ∘ₗ ω (g, h)) pt C hint
   replace hB : ∀ φ v F, B φ v F =
       GlobalTheory.IndefiniteRowSideFullHecke.RapidDecayLift.lift ω ν 𝓕 (pt φ) ((F : SmT M' →ₗ[ℂ] (GA D W → ℂ)) v) := hB
@@ -302,7 +307,8 @@ theorem ioPair_of_rapid (D : D7) (X : ProvA) (hX : ChosenSeries X) (h3 : Formali
       refine GlobalTheory.Chain.IoLift.AvgLift.liftInt_eq_sum_average D V W _ M' θ ψ χS χT ω ν 𝓕 hθ hω hν h𝓕 τ n c _ _ _ _ hc.1 (hpt φ) (fun κ => ?_)
         (hcl v).1.toIsAutFun (fun i x => apply_kMean (hM F) τ (hc.1 i) v _ rfl x) g (hint F _ _ g) fun i => hint F _ _ g
       rw [hφ, hp]
-      simp only [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul]
   obtain ⟨u, hu, hue⟩ := exists_mult_of_rapid hG.1 hdec hθ h h' ha ha' hirr hker It BF (J := J) (χ := χ)
     (by
       by_contra hn
@@ -328,7 +334,7 @@ theorem ioPair_of_rapid (D : D7) (X : ProvA) (hX : ChosenSeries X) (h3 : Formali
         congr 2
         exact funext fun z => (hS τ X hX φ z).deriv.symm
       | add x y hx hy =>
-        rw [map_add, map_add, hx, hy, (GlobalTheory.Mem.AutSpace.linOnSm_Rder hX).add _ (hBg _ _).2.1 _ (hBg _ _).2.1])
+        rw [map_add (f := _), map_add (f := _), hx, hy, (GlobalTheory.Mem.AutSpace.linOnSm_Rder hX).add _ (hBg _ _).2.1 _ (hBg _ _).2.1])
     (fun τ Y hY φ v w hw => by
       have e1 := GlobalTheory.MultGelf.rder_apply (hM F) τ v hY (v τ) w hw
       rw [Function.update_eq_self] at e1

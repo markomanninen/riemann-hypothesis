@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineZero
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineZero
+
+@[expose] public section
 
 noncomputable section
 open LateralTheory.E.StandardEtaleChartsIdempotentGluing

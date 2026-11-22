@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+
+@[expose] public section
+
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots GlobalTheory.TrEll
@@ -44,7 +49,11 @@ def Psi (i : Fin r) : w.Completion ⊗[F] Fld P →+* ℂ :=
   letI : Algebra F ℂ := w.embedding.toAlgebra
   (Algebra.TensorProduct.productMap
     ({ InfinitePlace.Completion.extensionEmbedding w with
-        commutes' := fun a => InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm a) } :
+        commutes' := fun a => by
+          change InfinitePlace.Completion.extensionEmbedding w (algebraMap F w.Completion a) = w.embedding a
+          rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+            Algebra.algebraMap_self_apply, InfinitePlace.Completion.extensionEmbedding_coe,
+            ← WithAbs.equiv_symm_apply, RingEquiv.apply_symm_apply] } :
       w.Completion →ₐ[F] ℂ)
     ({ psiL P τ i with commutes' := fun a => psiL_algebraMap_F P τ i a } : Fld P →ₐ[F] ℂ)).toRingHom
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,8 @@ lemma norm_fib (hb : Orthonormal ℂ b) (f : V →ₗ[ℂ] ℂ) (F : Finset ι) 
 lemma eig_fib (hb : ∀ i, Eig ε E (μ i) (b i)) (ν : ℝ) (F : Finset ι) (hF : ∀ j ∈ F, μ j = ν)
     (a : ι → ℂ) : Eig ε E ν (∑ j ∈ F, a j • b j) := by
   unfold Eig
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun j hj => ?_
   rw [map_smul, hb j, hF j hj, smul_comm]
 

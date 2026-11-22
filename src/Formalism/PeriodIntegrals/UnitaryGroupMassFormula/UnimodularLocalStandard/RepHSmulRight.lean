@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepPrimPair
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepRepModl
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepNewton
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepRamDef
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepPrimPair
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepRepModl
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepNewton
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepRamDef
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -12,8 +16,8 @@ open PI.ULS
 theorem rep_H_add_self (L : PeriodPair) (m : Type) [Fintype m] [DecidableEq m] (u v : m → ℂ) :
     stdH L m (u + v) (u + v) = stdH L m u u + stdH L m u v + stdH L m v u + stdH L m v v := by
   first
-  | (simp only [map_add, LinearMap.add_apply]; ring)
-  | (simp only [stdH, matH, LinearMap.mk₂'ₛₗ_apply, Pi.add_apply, map_add, add_mul, mul_add,
+  | (simp only [map_add (f := _), LinearMap.add_apply]; ring)
+  | (simp only [stdH, matH, LinearMap.mk₂'ₛₗ_apply, Pi.add_apply, map_add (f := _), add_mul, mul_add,
       Finset.sum_add_distrib]; ring)
 
 theorem rep_H_smul_left (L : PeriodPair) (m : Type) [Fintype m] [DecidableEq m] (ξ : ℂ) (u v : m → ℂ) :
@@ -150,7 +154,7 @@ theorem keyStart_of_ram (hR : KeyStartRam) : KeyStart := by
     have e2 := rep_theta_mul_conj a b c d hOK.1
     have hX : ((s : ℂ) + t * cmTheta b d) * conj ((s : ℂ) + t * cmTheta b d) =
         ((s ^ 2 + b * s * t + a * c * t ^ 2 : ℤ) : ℂ) := by
-      simp only [map_add, map_mul, map_intCast]; push_cast
+      simp only [map_add (f := _), map_mul, map_intCast]; push_cast
       linear_combination ((s : ℂ) * t) * e1 + (t : ℂ) ^ 2 * e2
     have hpC : (l : ℂ) ^ 1 * (p : ℂ) = ((s ^ 2 + b * s * t + a * c * t ^ 2 : ℤ) : ℂ) * N - (Q0 : ℂ) * S := by
       rw [pow_one]; exact_mod_cast hp.symm

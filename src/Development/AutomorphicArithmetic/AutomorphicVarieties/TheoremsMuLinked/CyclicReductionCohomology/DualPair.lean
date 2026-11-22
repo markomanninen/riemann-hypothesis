@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.ArPresAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.ArPresAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ def LocCnt (D : Type) [Group D] [TopologicalSpace D] (ε : D →* ℤ_[l]ˣ) (d 
     (ρ : Representation R D M) (ρ' : Representation R D M') (b : M →+ M' →+ ZMod (l ^ k)), LC ρ → DualPair k ε ρ ρ' b →
     Finite (Zl ρ) ∧ Nat.card (Zl ρ) = Nat.card M ^ (1 + d) * Nat.card ρ'.invariants
 
-variable (l) in
 
+variable (l) in
 def UnrCnt (D : Type) [Group D] [TopologicalSpace D] (J : Subgroup D) : Prop :=
   ∀ (k : ℕ) (R M : Type) [CommRing R] [AddCommGroup M] [Module R M] [Finite M] (ρ : Representation R D M), LC ρ →
     (∀ m : M, l ^ k • m = 0) → (∀ g ∈ J, ρ g = 1) →
@@ -68,8 +72,8 @@ variable {O : Type} [CommRing O] [IsLocalRing O] [Algebra ℤ_[l] O] {n : ℕ}
 
 abbrev Mm (O : Type) [CommRing O] [IsLocalRing O] (n m : ℕ) : Type := Matrix (Fin n) (Fin n) (Om O m)
 
-variable (O) in
 
+variable (O) in
 def epsm (G : Glob l L) (m : ℕ) (g : G.Γ) : Om O m := algebraMap O (Om O m) (algebraMap ℤ_[l] O (G.ε g : ℤ_[l]))
 
 variable {G G0 : Glob l L} (h : G.Hom G0) (y : Pt G0.frame O n) (m : ℕ)

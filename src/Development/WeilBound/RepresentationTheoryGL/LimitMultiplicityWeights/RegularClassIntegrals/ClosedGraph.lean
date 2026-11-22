@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.ContinuousOfMemCcSmooth
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ContinuousOfMemCcSmooth
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AutomorphicL2Unitary GlobalTheory.Orb Matrix
 open scoped ContDiff ComplexConjugate
@@ -130,10 +134,6 @@ def FDRight : Prop :=
     [BorelSpace G] (Γ : Subgroup G) [Countable Γ] (μ : Measure G) [μ.IsMulLeftInvariant] [μ.IsMulRightInvariant]
     (𝓕 : Set G), IsFundamentalDomain Γ 𝓕 μ → ∀ F : G → ℂ, (∀ γ ∈ Γ, ∀ x, F (γ * x) = F x) → ∀ g : G,
       ∫ x in 𝓕, F (x * g) ∂μ = ∫ x in 𝓕, F x ∂μ
-
-example {H : Type} [Group H] [TopologicalSpace H] [MeasurableSpace H] {n : ℕ} (ι : H →* Matrix (Fin n) (Fin n) ℂ) :
-    IsKer ι (Measure.dirac ()) (fun _ : Unit => fun _ => (1 : ℂ)) (fun _ _ => (1 : H)) :=
-  ⟨fun _ => measurable_const, fun _ => measurable_const, fun _ _ _ => Set.toFinite _, fun _ _ => Integrable.of_finite⟩
 
 end MainStatements.WeightKernel
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ImportsAlt
-import Formalism.HermitianCurvature.HerGenC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ImportsAlt
+public import Formalism.HermitianCurvature.HerGenC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.TopVec Filter Topology MeasureTheory
 

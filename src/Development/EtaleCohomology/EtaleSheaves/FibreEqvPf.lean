@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.FibStalkPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.FibStalkPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.FibPf LateralTheory.E.FibClosedPf LateralTheory.E.FibStalkPf

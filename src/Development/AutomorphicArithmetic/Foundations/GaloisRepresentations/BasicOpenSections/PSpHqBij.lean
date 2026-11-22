@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 namespace UpperTheory.Gal.Mod
@@ -8,8 +13,10 @@ private theorem pullHl_bijective (l : ℕ) [Fact l.Prime] {E E' : Spc} (f : E �
     Function.Bijective (pullHl l f n i) := by
   constructor
   · intro x y hxy
-    refine Subtype.ext (funext fun k => (h k).1 ?_)
-    exact congrArg (fun z : Hl l E n i => z.1 k) hxy
+    apply Subtype.ext
+    funext k
+    apply (h k).1
+    exact congrFun (congrArg Subtype.val hxy) k
   · intro y
     choose g hg using fun k => (h k).2 (y.1 k)
     refine ⟨⟨g, fun k => (h k).1 ?_⟩, Subtype.ext (funext hg)⟩

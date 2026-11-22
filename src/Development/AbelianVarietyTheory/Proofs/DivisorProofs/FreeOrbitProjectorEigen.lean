@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
-import Formalism.PolynomialDimension.WeylDim
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+public import Formalism.PolynomialDimension.WeylDim
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Pj GlobalTheory.DualWeyl GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.DefPt MvPolynomial
 open scoped Matrix
 
@@ -55,7 +60,8 @@ theorem freeOrbit_projector_eigen : ∀ (K V G C : Type) [Field K] [AddCommGroup
   · intro f hf
     refine ⟨?_, ?_⟩
     · intro h
-      simp only [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl (fun o _ => ?_)
       refine Fintype.sum_equiv (Equiv.mulLeft h) _ _ (fun g => ?_)
       simp only [Equiv.coe_mulLeft]
@@ -78,13 +84,16 @@ theorem freeOrbit_projector_eigen : ∀ (K V G C : Type) [Field K] [AddCommGroup
           intro hZ
           obtain ⟨h1, h2⟩ := hinj g o g' o' ho ho' hZ
           exact hc ⟨h1.symm, h2.symm⟩
-      rw [map_sum, Finset.sum_eq_single_of_mem o ho]
-      · rw [map_sum, Fintype.sum_eq_single g]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_eq_single_of_mem o ho]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Fintype.sum_eq_single g]
         · rw [key o ho g, if_pos ⟨rfl, rfl⟩]
         · intro g' hg'
           rw [key o ho g', if_neg (fun h => hg' h.1)]
       · intro o' ho' hne
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_eq_zero (fun g' _ => ?_)
         rw [key o' ho' g', if_neg (fun h => hne h.2)]
 

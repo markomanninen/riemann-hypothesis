@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjTransposeVecMulVecSelf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCompactIntMatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjTransposeVecMulVecSelf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCompactIntMatrix
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -251,7 +255,7 @@ theorem char_eq_one [hU : Unram F E] (r : ℕ) (ch : unitaryGroup (Fin r) E →*
     exact (le_abs_self _).trans ((Real.norm_eq_abs _) ▸ hT _ fun i j => (hB' n i j).trans (le_max_right _ _))
 
 theorem isMulRightInvariant [hU : Unram F E] (r : ℕ) (M : Meas r F E) :
-    letI := M.mU; M.μU.IsMulRightInvariant := by
+    @Measure.IsMulRightInvariant (unitaryGroup (Fin r) E) M.mU _ M.μU := by
   letI := M.mU
   haveI := M.bU
   haveI := M.haarU
@@ -332,7 +336,7 @@ end Top
 theorem posChar_trivial_and_unimodular : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedField E]
     [NormedAlgebra F E] [StarRing E] [Unram F E] (r : ℕ),
     (∀ ch : Matrix.unitaryGroup (Fin r) E →* ℝ, Continuous ch → (∀ g, 0 < ch g) → ∀ g, ch g = 1) ∧
-      ∀ M : Meas r F E, (letI := M.mU; M.μU.IsMulRightInvariant) := by
+      ∀ M : Meas r F E, @Measure.IsMulRightInvariant (unitaryGroup (Fin r) E) M.mU _ M.μU := by
   intro F E _ _ _ _ _ r
   exact ⟨fun ch hc hpos g => char_eq_one (F := F) r ch hc hpos g, fun M => isMulRightInvariant r M⟩
 

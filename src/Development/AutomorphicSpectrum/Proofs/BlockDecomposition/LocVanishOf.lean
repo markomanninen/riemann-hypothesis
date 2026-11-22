@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousConjNilSymm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NilradicalChangeOfVariablesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuotientVanishingStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousConjNilSymm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NilradicalChangeOfVariables
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableNilrad
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralNonnegNormaliserEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,8 +69,6 @@ theorem locVanish_of (hN : NilChange) (hQ : QuotVanish) : LocVanish := by
     congr 1
     simp only [twConj]
     group
-
-theorem locVanish : LocVanish := locVanish_of GlobalTheory.T.nilradical_change_of_variables GlobalTheory.T.quotient_vanishing
 
 end GlobalTheory.CompanionTheory.LocVan
 end

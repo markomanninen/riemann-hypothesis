@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InjectiveOfSmulMemRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FontaineAinfLocalDomainXiAdicOrder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InjectiveOfSmulMemRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FontaineAinfLocalDomainXiAdicOrder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem equivFun_semilinear {R S X Y n m : Type*} [CommRing R] [CommRing S] [Add
     (f : X →ₛₗ[σ] Y) (bx : Module.Basis n R X) (bz : Module.Basis m S Y) (x : X) :
     bz.equivFun (f x) = (Matrix.of fun i j => bz.repr (f (bx j)) i) *ᵥ (σ ∘ bx.equivFun x) := by
   have h1 : f x = ∑ j, σ (bx.repr x j) • f (bx j) := by
-    conv_lhs => rw [← bx.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← bx.sum_repr x, map_sum]
     simp only [map_smulₛₗ]
   funext i
   rw [h1]
@@ -41,7 +46,8 @@ theorem exists_basis_reduction {A O M D n : Type*} [CommRing A] [CommRing O] [Ad
   have sp : ⊤ ≤ Submodule.span O (Set.range fun i => r (b i)) := by
     intro y _
     obtain ⟨m, rfl⟩ := hr y
-    rw [← b.sum_repr m, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr m, map_sum]
     exact Submodule.sum_mem _ fun i _ => by
       rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
   refine ⟨Module.Basis.mk li sp, fun m => ?_⟩
@@ -80,25 +86,25 @@ theorem form_map_smul (M : PDivGroup p O ⥤ ModuleCat.{0} (Ainf p O)) [M.Additi
   haveI : IsAdicComplete (span {(p : Ainf p O)}) (Ainf p O) := WittVector.isAdicCompleteIdealSpanP
   let T : (G ⟶ G') →+ Ainf p O :=
     AddMonoidHom.mk' (fun f => l (M.map f m)) fun f g => by
-      rw [M.map_add, ← map_add]; rfl
+      rw [M.map_add (f := _), ← map_add (f := _)]; rfl
   exact Dieudonne.map_padic_smul (ofPadic p O) T a f
 
 def tateToM (M : PDivGroup p O ⥤ ModuleCat.{0} (Ainf p O)) [M.Additive] {G : PDivGroup p O}
     {h : ℕ} (b : Module.Basis (Fin h) (Ainf p O) (M.obj G)) (m₀ : M.obj (const p O)) :
     G.Tate →ₛₗ[ofPadic p O] M.obj G where
   toFun t := M.map (constHom G t) m₀
-  map_add' s t := by rw [map_add, M.map_add]; rfl
+  map_add' s t := by rw [map_add (f := _), M.map_add (f := _)]; rfl
   map_smul' a t := b.ext_elem fun i => by
     rw [map_smul, map_smul]
     exact form_map_smul M (b.coord i) m₀ a _
 
 def endMap (M : PDivGroup p O ⥤ ModuleCat.{0} (Ainf p O)) [M.Additive] (G : PDivGroup p O) :
     End G →+* Module.End (Ainf p O) (M.obj G) where
-  toFun f := (M.map f).hom
+  toFun f := (M.map f.asHom).hom
   map_one' := congrArg ModuleCat.Hom.hom (M.map_id G)
-  map_mul' f g := congrArg ModuleCat.Hom.hom (M.map_comp g f)
+  map_mul' f g := congrArg ModuleCat.Hom.hom (M.map_comp g.asHom f.asHom)
   map_zero' := congrArg ModuleCat.Hom.hom (M.map_zero G G)
-  map_add' f g := congrArg ModuleCat.Hom.hom (M.map_add (f := f) (g := g))
+  map_add' f g := congrArg ModuleCat.Hom.hom (M.map_add (f := f.asHom) (g := g.asHom))
 
 theorem exists_dual_basis [IsDomain O] {ε : PreTilt O p} (hε : IsPrimitiveSystem ε)
     {G : PDivGroup p O} (hG : Bijective (pairing G O).flip) {h : ℕ}
@@ -112,12 +118,15 @@ theorem exists_dual_basis [IsDomain O] {ε : PreTilt O p} (hε : IsPrimitiveSyst
   refine ⟨χ, h1, fun χ' => hG.1 (LinearMap.ext fun t => ?_)⟩
   have ht : t = ∑ i, e t i • e.symm (Pi.single i 1) := by
     apply e.injective
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     ext j
     simp [Finset.sum_apply, Pi.single_apply]
   change pairing G O t χ' = pairing G O t _
-  rw [map_sum]
-  conv_lhs => rw [ht, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [ht, map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, map_smul, h1, LinearMap.smul_apply, ← epsPairing_smul hε, smul_comm]
 
@@ -183,7 +192,8 @@ theorem sandwichAt_of_covariant {C : Type} [Field C] [IsAlgClosed C] [CharZero C
     Matrix.of fun i k => ofPadic p O ↑u⁻¹ * e₁ (M.map (charHom G (χ i)) (b k))
   have hG : ∀ m i, (Gm *ᵥ b.equivFun m) i =
       ofPadic p O ↑u⁻¹ * e₁ (M.map (charHom G (χ i)) m) := fun m i => by
-    conv_rhs => rw [← b.sum_repr m, map_sum, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← b.sum_repr m, map_sum, map_sum, Finset.mul_sum]
     simp only [Gm, Matrix.mulVec, dotProduct, Matrix.of_apply, map_smul, smul_eq_mul,
       Module.Basis.equivFun_apply]
     exact Finset.sum_congr rfl fun k _ => by ring
@@ -193,11 +203,11 @@ theorem sandwichAt_of_covariant {C : Type} [Field C] [IsAlgClosed C] [CharZero C
     (equivFun_semilinear (ψ G) b b m).symm
   let ρT : Λ →ₐ[ℤ_[p]] Matrix (Fin G.height) (Fin G.height) ℤ_[p] :=
     (LinearMap.toMatrixAlgEquiv tb).toAlgHom.comp (ρ.onTateAlg O)
-  have hρT : ∀ a t, ρT a *ᵥ e t = e (tateMap G G O (ρ a) t) := fun a t =>
+  have hρT : ∀ a t, ρT a *ᵥ e t = e (tateMap G G O (ρ a).asHom t) := fun a t =>
     LinearMap.toMatrix_mulVec_repr tb tb _ t
   let ρM : Λ →+* Matrix (Fin G.height) (Fin G.height) (Ainf p O) :=
     (LinearMap.toMatrixAlgEquiv b).toAlgHom.toRingHom.comp ((endMap M G).comp ρ)
-  have hρM : ∀ a m, ρM a *ᵥ b.equivFun m = b.equivFun (M.map (ρ a) m) := fun a m =>
+  have hρM : ∀ a m, ρM a *ᵥ b.equivFun m = b.equivFun (M.map (ρ a).asHom m) := fun a m =>
     LinearMap.toMatrix_mulVec_repr b b _ m
   have hGF : ∀ t i, (Gm *ᵥ b.equivFun (Φ t)) i = ofPadic p O (e t i) * Sandwich.mu ε := by
     intro t i
@@ -244,7 +254,7 @@ theorem sandwichAt_of_covariant {C : Type} [Field C] [IsAlgClosed C] [CharZero C
   have hal : ∀ t, D.al (toO e t) = (u₁ : O) • c.equivFun (ι G (hodgeTate G t)) := fun t => by
     refine (red F (ofPadic p O ∘ e t)).trans ?_
     rw [hF, ← hc, hΦ, ← nr, hu₁, map_smul, map_smul, nι, hodgeTate_eq_omegaDualMap]
-  have hact : ∀ a y, actH D a (c.equivFun y) = c.equivFun (H.map (ρ a) y) := fun a y => by
+  have hact : ∀ a y, actH D a (c.equivFun y) = c.equivFun (H.map (ρ a).asHom y) := fun a y => by
     obtain ⟨m, rfl⟩ := (hr G).1 y
     rw [nr, hc, hc, ← hρM]
     exact red _ _
@@ -267,7 +277,8 @@ theorem sandwichAt_of_covariant {C : Type} [Field C] [IsAlgClosed C] [CharZero C
       have hx : x = ∑ j, x j • toO e (tb j) := by
         funext i
         simp [toO, e, Finset.sum_apply, Finsupp.single_apply, apply_ite (padicToO p O)]
-      rw [hx, map_sum, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx, map_sum, map_sum, map_sum]
       refine Finset.sum_eq_zero fun j _ => ?_
       rw [map_smul, hal, map_smul, map_smul, map_smul, map_smul, LinearEquiv.symm_apply_apply,
         (hex G).2.1.apply_apply_eq_zero, smul_zero, smul_zero]
@@ -295,16 +306,17 @@ theorem sandwichAt_of_covariant {C : Type} [Field C] [IsAlgClosed C] [CharZero C
     congrArg (π G) (c.equivFun.symm_apply_apply y)
   refine ⟨D, e, LinearEquiv.ofBijective fil₀ hfil, lie, fun a t => (hρT a t).symm,
     fun a w => ?_, fun a m => ?_, fun t => ?_, fun x χ' => ?_⟩
-  · exact (congrArg c.equivFun (nι _ _ (ρ a) w).symm).trans (hact a _).symm
+  · exact (congrArg c.equivFun (nι _ _ (ρ a).asHom w).symm).trans (hact a _).symm
   · obtain ⟨y, rfl⟩ := c.equivFun.surjective m
     rw [hact, hlie, hlie]
-    exact nπ _ _ (ρ a) y
+    exact nπ _ _ (ρ a).asHom y
   · rw [hal, hodgeTate_eq_omegaMap]
     rfl
   · obtain ⟨y, rfl⟩ := (hex G).2.2 x
     rw [← dlog_eq_omegaMap]
     conv_lhs => rw [← hlie, LinearEquiv.symm_apply_apply]
-    conv_rhs => rw [hχ' χ', map_sum, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [hχ' χ', map_sum, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [dlog_smul (padicToO p O), map_smul, smul_eq_mul]
     have : bQuot D (D.Fil.mkQ (c.equivFun y)) i = _ := hbb y i

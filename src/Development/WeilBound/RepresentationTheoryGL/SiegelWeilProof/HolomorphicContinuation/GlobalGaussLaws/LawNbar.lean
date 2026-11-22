@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LawNbarA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LawNbarA
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem lawNbar_of (hU : UnipTau) (hW : WEx) (hF : FTfact) (hTI : TensInj) (hLNe
       Subtype.ext (hFΨ g hg).2.2.2
     have h2 := (kA.2.2 _ ((hFΨ g hg).2.1)).2.2.1
     have h3 : ω w (ω w⁻¹ ⟨tens θ τ fr g Ψ, hΨ.2 g hg⟩) = ⟨tens θ τ fr g Ψ, hΨ.2 g hg⟩ := by
-      rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
+      rw [← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self]
     rw [h1] at h3
     rw [← h2, h3]
   have hAA : ∀ x, A (A' Ψ) x = (K * K)⁻¹ * Ψ x := by
@@ -57,7 +61,7 @@ theorem lawNbar_of (hU : UnipTau) (hW : WEx) (hF : FTfact) (hTI : TensInj) (hLNe
 
   rw [← hL.2 y Ψ hΨ f hf]
   have hE : IsSch (fun u => chN ε (tLoc l τ) (-c) u * (κ⁻¹ * ftLoc ε (-tLoc l τ) f u)) :=
-    OpGenAH.isSch_phase ε (tLoc l τ) (-c) hc' (hFΨ f hf).2.1
+    (schOps V.rank n).2.2.2.1 ε (tLoc l τ) (-c) _ hc' (hFΨ f hf).2.1
   have s1 : ω w⁻¹ ⟨tens θ τ fr f Ψ, hΨ.2 f hf⟩ =
       ⟨tens θ τ fr (fun u => κ⁻¹ * ftLoc ε (-tLoc l τ) f u) (A' Ψ), hA'Ψ.2 _ ((hFΨ f hf).2.1)⟩ :=
     Subtype.ext (hFΨ f hf).2.2.2
@@ -68,7 +72,7 @@ theorem lawNbar_of (hU : UnipTau) (hW : WEx) (hF : FTfact) (hTI : TensInj) (hLNe
     rw [hU D n V ψ χ θ μ ω H l s ν τ ε fr ι hC yn (-c) hc' hyn]
     simp only [tens, chN, mul_assoc]
   have s3 := (kA.2.2 _ hE).2.2.1
-  rw [hιy, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, s1, s2, s3]
+  rw [hιy, map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp, s1, s2, s3]
   funext x
   simp only [tens]
   rw [hAA x]

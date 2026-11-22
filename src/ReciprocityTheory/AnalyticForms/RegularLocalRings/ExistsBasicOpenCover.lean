@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLoc
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IsOpenAlt
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsMulMemOfAlgebraMapLocRingEqZero
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLoc
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IsOpenAlt
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsMulMemOfAlgebraMapLocRingEqZero
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

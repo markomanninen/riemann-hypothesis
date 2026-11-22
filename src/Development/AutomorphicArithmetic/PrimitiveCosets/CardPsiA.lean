@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
+module
+
+public import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
+
+@[expose] public section
 
 open UpperTheory.Comparison₂ Deduction.CH Formalism Formalism.HC Formalism.D5 Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.WeightedSlopeBounds Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds Formalism.LFunctionChainParameters.LErr
   Formalism.LFunctionChainParameters.LChain Formalism.LFunctionChainParameters.LHost
@@ -19,7 +23,7 @@ private theorem exists_comp_eq {G Q M : Type} [AddCommGroup G] [AddCommGroup Q] 
   refine ⟨{ toFun := fun q => ψ (s q), map_zero_eq_one' := ?_, map_add_eq_mul' := ?_ }, ?_⟩
   · rw [wd (s 0) 0 (by rw [hs, map_zero]), AddChar.map_zero_eq_one]
   · intro a b
-    rw [← AddChar.map_add_eq_mul, wd (s (a + b)) (s a + s b) (by rw [hs, map_add, hs, hs])]
+    rw [← AddChar.map_add_eq_mul, wd (s (a + b)) (s a + s b) (by rw [hs, map_add (f := _), hs, hs])]
   · ext x
     exact wd _ _ (hs _)
 

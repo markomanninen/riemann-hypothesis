@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InstSecondCountable
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasDerivAtDetOfOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InstSecondCountable
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasDerivAtDetOfOne
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH GlobalTheory.HolDS Matrix MeasureTheory Filter Topology
 open scoped InnerProductSpace

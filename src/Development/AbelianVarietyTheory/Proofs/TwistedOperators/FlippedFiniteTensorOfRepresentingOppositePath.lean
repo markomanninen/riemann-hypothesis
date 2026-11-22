@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -25,15 +30,20 @@ theorem append_inj (p : Path T X Y) : ∀ {Z : Node} (q : Path T Y Z) (d d' : p.
   | _, .nil, _, _, _, _, h => ⟨h, rfl⟩
   | _, .snoc _ q, d, d', e, e', h => by
       have h' : (Path.Fam.append (q := q) d e.1, e.2) = (Path.Fam.append (q := q) d' e'.1, e'.2) := h
-      obtain ⟨h1, h2⟩ := Prod.mk.inj h'
-      obtain ⟨r1, r2⟩ := append_inj p q d d' e.1 e'.1 h1
-      exact ⟨r1, Prod.ext r2 h2⟩
+      have hprod := Prod.mk.inj h'
+      have hrec : d = d' ∧ e.1 = e'.1 := append_inj p q d d' e.1 e'.1 hprod.1
+      exact ⟨hrec.1, Prod.ext hrec.2 hprod.2⟩
 
 theorem append_surj (p : Path T X Y) : ∀ {Z : Node} (q : Path T Y Z) (f : (p.comp q).Fam S),
     ∃ d e, Path.Fam.append (q := q) d e = f
   | _, .nil, f => ⟨f, (), rfl⟩
   | _, .snoc a q, f => by
-      obtain ⟨d, e, h⟩ := append_surj p q f.1
+      have hrec : ∃ (d : p.Fam S) (e : q.Fam S), Path.Fam.append (q := q) d e = f.1 :=
+        append_surj p q f.1
+      cases hrec
+      rename_i d hrec
+      cases hrec
+      rename_i e h
       refine ⟨d, ((e, f.2) : (Path.snoc a q).Fam S), ?_⟩
       show (Path.Fam.append (q := q) d e, f.2) = f
       rw [h]
@@ -43,17 +53,19 @@ theorem rowFam_inj (j : ℕ) : ∀ n (f g : ∀ i : Fin n, S (.right i j)), rowF
   | 0, _, _, _ => funext fun i => i.elim0
   | n + 1, f, g, h => by
       have h' : (rowFam j n (fun i => f i.castSucc), f (Fin.last n)) = (rowFam j n (fun i => g i.castSucc), g (Fin.last n)) := h
-      obtain ⟨h1, h2⟩ := Prod.mk.inj h'
-      have h3 := rowFam_inj j n _ _ h1
+      have hprod := Prod.mk.inj h'
+      have h3 := rowFam_inj j n _ _ hprod.1
       funext i
       induction i using Fin.lastCases with
-      | last => exact h2
+      | last => exact hprod.2
       | cast i => exact congrFun h3 i
 
 theorem rowFam_surj (j : ℕ) : ∀ n (d : (rowPath T j n).Fam S), ∃ f, rowFam j n f = d
   | 0, _ => ⟨fun i => i.elim0, rfl⟩
   | n + 1, d => by
-      obtain ⟨f, hf⟩ := rowFam_surj j n d.1
+      have hrec : ∃ f : ∀ i : Fin n, S (.right i j), rowFam j n f = d.1 := rowFam_surj j n d.1
+      cases hrec
+      rename_i f hf
       refine ⟨Fin.lastCases (motive := fun i : Fin (n + 1) => S (.right i j)) d.2 f, ?_⟩
       show (rowFam j n (fun i => Fin.lastCases (motive := fun i : Fin (n + 1) => S (.right i j)) d.2 f i.castSucc),
         Fin.lastCases (motive := fun i : Fin (n + 1) => S (.right i j)) d.2 f (Fin.last n)) = d
@@ -63,9 +75,11 @@ theorem rowFam_surj (j : ℕ) : ∀ n (d : (rowPath T j n).Fam S), ∃ f, rowFam
 theorem downFam_inj (t : T) (i : ℕ) : ∀ n (f g : ∀ j : Fin n, S (.down t i j)), downFam t i n f = downFam t i n g → f = g
   | 0, _, _, _ => funext fun j => j.elim0
   | n + 1, f, g, h => by
-      obtain ⟨h1, h2⟩ := append_inj (Path.one (.down t i n)) (downPath t i n) _ _ _ _ h
-      have h3 := downFam_inj t i n _ _ h2
-      have h4 : f (Fin.last n) = g (Fin.last n) := congrArg Prod.snd h1
+      have hApp := append_inj (S := S) (Path.one (.down t i n)) (downPath t i n)
+        ((), f (Fin.last n)) ((), g (Fin.last n))
+        (downFam t i n fun j => f j.castSucc) (downFam t i n fun j => g j.castSucc) h
+      have h3 := downFam_inj t i n _ _ hApp.2
+      have h4 : f (Fin.last n) = g (Fin.last n) := congrArg Prod.snd hApp.1
       funext j
       induction j using Fin.lastCases with
       | last => exact h4
@@ -74,8 +88,14 @@ theorem downFam_inj (t : T) (i : ℕ) : ∀ n (f g : ∀ j : Fin n, S (.down t i
 theorem downFam_surj (t : T) (i : ℕ) : ∀ n (d : (downPath t i n).Fam S), ∃ f, downFam t i n f = d
   | 0, _ => ⟨fun j => j.elim0, rfl⟩
   | n + 1, d => by
-      obtain ⟨d0, e, he⟩ := append_surj (Path.one (.down t i n)) (downPath t i n) d
-      obtain ⟨f, hf⟩ := downFam_surj t i n e
+      have hApp := append_surj (S := S) (Path.one (.down t i n)) (downPath t i n) d
+      cases hApp
+      rename_i d0 hApp
+      cases hApp
+      rename_i e he
+      have hrec : ∃ f : ∀ j : Fin n, S (.down t i j), downFam t i n f = e := downFam_surj t i n e
+      cases hrec
+      rename_i f hf
       refine ⟨Fin.lastCases (motive := fun j : Fin (n + 1) => S (.down t i j)) d0.2 f, ?_⟩
       rw [← he]
       show Path.Fam.append (p := Path.one (.down t i n)) ((), Fin.lastCases (motive := fun j : Fin (n + 1) => S (.down t i j)) d0.2 f (Fin.last n))
@@ -184,11 +204,15 @@ theorem pathArgs_down (i : ℕ) : ∀ (n : ℕ) (y : ∀ j : Fin n, WO (G.pS (Ar
       · exact (hc.1 ((mem_edges_down t i n _).2 ⟨j, hj, rfl⟩)).trans (pathArgs_down i n _ j hj)
       · have hj' : j = n := by omega
         subst hj'
-        refine (hc.2 fun h' => ?_).trans ?_
-        · obtain ⟨k, hk, hk'⟩ := (mem_edges_down t i j _).1 h'
+        have hnot : GlobalTheory.SplitFlip.Edge.theta i j ∉ edges (downPath t i j) := by
+          rw [mem_edges_down]
+          rintro ⟨k, hk, hk'⟩
           simp only [GlobalTheory.SplitFlip.Edge.theta.injEq] at hk'
           omega
-        · exact dif_pos rfl
+        refine (hc.2 hnot).trans ?_
+        change argAt B t w (.down t i j) (y (Fin.last j)) (.theta i j) _ = _
+        rw [argAt]
+        exact dite_eq_left rfl
 
 end Args
 

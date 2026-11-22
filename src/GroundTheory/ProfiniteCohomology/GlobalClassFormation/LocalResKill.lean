@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolSep
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantRes
-import GroundTheory.LocalFields.LocalArtinBaseChange
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolSep
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantRes
+public import GroundTheory.LocalFields.LocalArtinBaseChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

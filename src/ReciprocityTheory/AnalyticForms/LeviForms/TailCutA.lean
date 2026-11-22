@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.P.LeviFormBoundaryTopology
 

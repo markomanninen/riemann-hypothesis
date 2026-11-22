@@ -1,4 +1,8 @@
-import Formalism.EisensteinCokernelLengths.RationalTailBound
+module
+
+public import Formalism.EisensteinCokernelLengths.RationalTailBound
+
+@[expose] public section
 
 open scoped ENNReal
 

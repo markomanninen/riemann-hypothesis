@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.HeightTwoBlocks.Blo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.HeightTwoBlocks.BloAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ParEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.HeightTwoBlocks.Blo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.HeightTwoBlocks.BloAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ParEx
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -8,7 +12,7 @@ open GroundTheory.Automorphic.CuspidalSpectrum PositivityTheory.Rg.Fx UpperTheor
 
 namespace UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (BW.Pl E)}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (BW.Pl E)}
 
 noncomputable def bloV {r : ℕ} (b : Blo S r) : Submodule ℂ (LL (mu1 E r)) := b.summand.choose
 
@@ -63,7 +67,7 @@ noncomputable def datB {n : ℕ} (d : Dat S n) (h2 : 2 ≤ d.len) : Datum E n wh
   two := h2
   d := fun j => (d.blo j).1
   pos := fun j => (d.blo j).2.pos
-  sum := blo_sum d
+  sum := by exact blo_sum d
   μ := fun j => mu1 E (d.blo j).1
   haar := fun _ => inferInstance
   V := fun j => bloV (d.blo j).2
@@ -110,7 +114,7 @@ theorem datB_pt {n : ℕ} (d : Dat S n) (h2 : 2 ≤ d.len) (Λ : (E →+* ℂ) �
 end UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.datOn :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (S : Set (BW.Pl E)) (n : ℕ) (d : Dat S n), 2 ≤ d.len →
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (S : Set (BW.Pl E)) (n : ℕ) (d : Dat S n), 2 ≤ d.len →
       ∃ b : Datum E n, ∀ Λ t, b.Pt S Λ t ↔ d.On Λ t := by
   intro E _ _ _ S n d h2
   exact ⟨UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.datB d h2, UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.datB_pt d h2⟩

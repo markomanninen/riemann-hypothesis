@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -12,7 +16,7 @@ theorem krull_inter_ideal_local (B : Type) [CommRing B] [IsNoetherianRing B] (I 
     have h1 : Submodule.mkQ a' (y + z) = z • Submodule.mkQ a' 1 := by
       have hy0 : Submodule.mkQ a' y = 0 := by
         rw [Submodule.mkQ_apply]; exact (Submodule.Quotient.mk_eq_zero a').2 hy
-      rw [map_add, hy0, zero_add, ← map_smul, smul_eq_mul, mul_one]
+      rw [map_add (f := _), hy0, zero_add, ← map_smul, smul_eq_mul, mul_one]
     rw [h1]
     exact Submodule.smul_mem_smul hz Submodule.mem_top
   have hNI : N ≤ I • N := by

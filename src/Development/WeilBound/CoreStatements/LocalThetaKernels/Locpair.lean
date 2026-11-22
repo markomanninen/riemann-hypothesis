@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.LocalThetaKernels.LocpairRep
+module
+
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.LocpairRep
+
+@[expose] public section
 
 noncomputable section
 

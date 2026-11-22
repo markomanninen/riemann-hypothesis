@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FderivIntegralMulKernelApply
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FderivIntegralMulKernelApply
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

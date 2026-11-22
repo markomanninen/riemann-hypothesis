@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.ExistsTorusPointOneLeNormSum
+module
+
+public import ReciprocityTheory.SemistableReduction.ExistsTorusPointOneLeNormSum
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank.UnitPointLiftBall
 
@@ -6,13 +10,13 @@ open MvPolynomial ReciprocityTheory.MultiplicativeHeights
 
 variable {K : Type*} [NormedField K] [IsUltrametricDist K] {ι : Type*} [Fintype ι]
 
-lemma lift_ball (P : MvPolynomial ι K) (hP : ∀ μ, ‖coeff μ P‖ ≤ 1) :
+lemma lift_ball (P : MvPolynomial ι K) (hP : ∀ μ, ‖AddMonoidAlgebra.coeff P μ‖ ≤ 1) :
     ∃ PO : MvPolynomial ι (unitBallRing K), MvPolynomial.map (unitBallRing K).subtype PO = P := by
   have hmem : P ∈ Set.range (MvPolynomial.map (unitBallRing K).subtype) := by
     rw [MvPolynomial.mem_range_map_iff_coeffs_subset]
     intro c hc
     obtain ⟨μ, -, rfl⟩ := MvPolynomial.mem_coeffs_iff.1 hc
-    refine ⟨⟨coeff μ P, ?_⟩, rfl⟩
+    refine ⟨⟨AddMonoidAlgebra.coeff P μ, ?_⟩, rfl⟩
     rw [Valuation.mem_valuationSubring_iff, NormedField.valuation_apply]
     exact_mod_cast hP μ
   obtain ⟨PO, hPO⟩ := hmem
@@ -27,8 +31,8 @@ lemma eval_lift (PO : MvPolynomial ι (unitBallRing K)) (σ : ι → unitBallRin
   | mul_X p i hp => simp [hp]
 
 theorem exists_unit_point (K₀ : Subfield K) (hK₀ : ResidueFieldInfiniteOn (K₀ : Set K))
-    (P δ : MvPolynomial ι K) (hP : ∀ μ, ‖coeff μ P‖ ≤ 1) (hP1 : ∃ μ, ‖coeff μ P‖ = 1)
-    (hδ : ∀ μ, ‖coeff μ δ‖ ≤ 1) (hδ1 : ∃ μ, ‖coeff μ δ‖ = 1) :
+    (P δ : MvPolynomial ι K) (hP : ∀ μ, ‖AddMonoidAlgebra.coeff P μ‖ ≤ 1) (hP1 : ∃ μ, ‖AddMonoidAlgebra.coeff P μ‖ = 1)
+    (hδ : ∀ μ, ‖AddMonoidAlgebra.coeff δ μ‖ ≤ 1) (hδ1 : ∃ μ, ‖AddMonoidAlgebra.coeff δ μ‖ = 1) :
     ∃ x : ι → K, (∀ i, x i ∈ K₀ ∧ ‖x i‖ = 1) ∧ ‖eval x P‖ = 1 ∧ ‖eval x δ‖ = 1 := by
   classical
   obtain ⟨PO, hPO⟩ := lift_ball P hP
@@ -64,7 +68,7 @@ theorem exists_unit_point (K₀ : Subfield K) (hK₀ : ResidueFieldInfiniteOn (K
     refine le_antisymm ha1 ?_
     nlinarith [norm_nonneg (a : K), norm_nonneg (b : K)]
   have hcoeff : ∀ (Q : MvPolynomial ι (unitBallRing K)) (R : MvPolynomial ι K),
-      MvPolynomial.map (unitBallRing K).subtype Q = R → ∀ μ, ((coeff μ Q : unitBallRing K) : K) = coeff μ R := by
+      MvPolynomial.map (unitBallRing K).subtype Q = R → ∀ μ, ((AddMonoidAlgebra.coeff Q μ : unitBallRing K) : K) = AddMonoidAlgebra.coeff R μ := by
     intro Q R hQR μ
     rw [← hQR, MvPolynomial.coeff_map]
     rfl
@@ -78,11 +82,11 @@ theorem exists_unit_point (K₀ : Subfield K) (hK₀ : ResidueFieldInfiniteOn (K
     | add p q hp hq => simp [hp, hq]
     | mul_X p i hp => simp [hp]
   have hbar : ∀ (Q : MvPolynomial ι (unitBallRing K)) (R : MvPolynomial ι K),
-      MvPolynomial.map (unitBallRing K).subtype Q = R → (∃ μ, ‖coeff μ R‖ = 1) →
+      MvPolynomial.map (unitBallRing K).subtype Q = R → (∃ μ, ‖AddMonoidAlgebra.coeff R μ‖ = 1) →
         MvPolynomial.map (IsLocalRing.residue (unitBallRing K)) Q ≠ 0 := by
     intro Q R hQR hR h0
     obtain ⟨μ, hμ⟩ := hR
-    have h := congrArg (coeff μ) h0
+    have h := congrArg (AddMonoidAlgebra.coeff · μ) h0
     rw [MvPolynomial.coeff_map, MvPolynomial.coeff_zero] at h
     exact (IsLocalRing.residue_ne_zero_iff_isUnit _).2
       (unit_of_norm _ (by rw [hcoeff Q R hQR μ]; exact hμ)) h

@@ -1,4 +1,8 @@
-import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 

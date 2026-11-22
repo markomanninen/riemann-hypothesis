@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.NormEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.NormEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotEq
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open MeasureTheory
 
@@ -22,7 +27,7 @@ theorem UpperTheory.haar_quotient_subgroup :
     simp only [e]
     exact hρ₀.2 x
   unfold quotInt
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hn : IsNrm j ν (fun x : H => hex.choose (x : G)) :=
     ⟨hex.choose_spec.1.comp measurable_subtype_coe, fun x => by
       simpa only [Subgroup.coe_mul] using hex.choose_spec.2 x⟩

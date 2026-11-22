@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FundamentalDomainFibrationVolume
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FundamentalDomainFibrationVolume
+
+@[expose] public section
+
 open MeasureTheory Topology
 open scoped ENNReal NNReal Matrix
 set_option maxHeartbeats 1000000 in

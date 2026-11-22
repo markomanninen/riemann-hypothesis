@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial in
 private theorem UpperTheory.V.Th.product_factors_aeval {S : Type} [CommRing S] {n : ℕ}

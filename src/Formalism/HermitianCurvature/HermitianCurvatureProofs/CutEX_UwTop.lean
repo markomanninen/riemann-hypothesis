@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcUnrOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcGalIdx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcUnrOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcGalIdx
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.X
 
 theorem UpperTheory.V.X.h1cZero :
@@ -25,7 +30,7 @@ theorem UpperTheory.V.X.h1cZero :
       intro g h
       have := h2 (toGS Ω SP g) (toGS Ω SP h)
       simp only at this
-      rw [map_mul, this, hρ, map_add, map_smul, smul_eq_mul]
+      rw [map_mul, this, hρ, map_add (f := _), map_smul, smul_eq_mul]
     have hu := unrOf Ω k γ K hKγ SP T (fun s => f (c s)) hz (by
       intro v hv
       obtain ⟨y, hy⟩ := e.surjective ⟨v, by rw [hS] at hv; exact hv⟩

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.Generators
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.PieceAdd
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.Generators
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.PieceAdd
+
+@[expose] public section
 
 open MvPolynomial Filter Topology PositivityTheory.Rg.Fx
 
@@ -39,14 +43,15 @@ theorem UpperTheory.ConvolutionTheory.FX.piece_sum :
     simp only [fun k => (UpperTheory.ConvolutionTheory.FX.piece_add ι k).2.1, map_zero]
     exact hasSum_zero
   | add f g hf hg =>
-    simp only [fun k => (UpperTheory.ConvolutionTheory.FX.piece_add ι k).1 f g, map_add]
+    simp only [fun k => (UpperTheory.ConvolutionTheory.FX.piece_add ι k).1 f g, map_add (f := _)]
     exact hf.add hg
   | single v p =>
     have hv : ev Λ (AddMonoidAlgebra.single v p : EP ι) = Complex.exp (eval Λ (lin v)) * eval Λ p := by
       simp [ev, PositivityTheory.Rg.Fx.lift, expChar, lin, mul_comm, aeval_eq_eval]
     rw [hv]
     convert hasSum_single' v p Λ using 2 with k
-    rw [(UpperTheory.ConvolutionTheory.FX.piece_add ι k).2.2 v p, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [(UpperTheory.ConvolutionTheory.FX.piece_add ι k).2.2 v p, map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     simp only [map_mul, map_pow, eval_C]
     ring

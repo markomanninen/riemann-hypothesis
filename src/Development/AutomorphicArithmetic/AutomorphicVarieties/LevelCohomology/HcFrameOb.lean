@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.X
 
 noncomputable section
@@ -62,11 +67,11 @@ private theorem mem_coboundaries_compact (x : F.C2 M) : x ∈ F.framedTwoCobound
     obtain ⟨h', y', e', b1, b2, b3, b4, b5⟩ := hx'
     refine ⟨h + h', y + y', e + e', a1.add b1, fun q => ⟨(a2 q).1.add (b2 q).1, fun s t => ?_, fun n hn => ?_⟩,
       ?_, fun v s => ?_, fun q s => ?_⟩
-    · simp only [Pi.add_apply, (a2 q).2.1, (b2 q).2.1, map_add]; abel
+    · simp only [Pi.add_apply, (a2 q).2.1, (b2 q).2.1, map_add (f := _)]; abel
     · simp [(a2 q).2.2 n hn, (b2 q).2.2 n hn]
     · funext p
-      simp only [Prod.fst_add, Pi.add_apply, a3, b3, Alg.dOne, map_add]; abel
-    · simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, a4, b4, map_add]; abel
+      simp only [Prod.fst_add, Pi.add_apply, a3, b3, Alg.dOne, map_add (f := _)]; abel
+    · simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, a4, b4, map_add (f := _)]; abel
     · simp only [Prod.snd_add, Pi.add_apply, a5, b5]; abel
   | smul c x _ hx =>
     obtain ⟨h, y, e, a1, a2, a3, a4, a5⟩ := hx
@@ -119,7 +124,7 @@ private def pL : WW F ρ →ₗ[k] LL F ρ where
 
 private def fL : H1 ρ →ₗ[k] LL F ρ where
   toFun a := (fun v => resH1 ρ (F.φ v) (F.hφ v) a, fun q => Submodule.Quotient.mk (resH1 ρ (F.ψ q) (F.hψ q) a))
-  map_add' _ _ := by simp only [map_add]; rfl
+  map_add' _ _ := by simp only [map_add (f := _)]; rfl
   map_smul' _ _ := by simp only [map_smul]; rfl
 
 private theorem pL_surj : Function.Surjective (pL F ρ) := by

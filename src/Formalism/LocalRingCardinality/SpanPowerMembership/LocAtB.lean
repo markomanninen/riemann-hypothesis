@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Formalism.LocalRingCardinality.SpanPowerMembership.Places
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Places
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,9 @@ def locAtC : LocAt F E sig v :=
     dense := v.denseRange_algebraMap F
     val := fun x y => by
       show Valued.v (algebraMap F (v.adicCompletion F) x) ≤ Valued.v (algebraMap F (v.adicCompletion F) y) ↔ _
-      rw [adicCompl_val_algebraMap, adicCompl_val_algebraMap]
+      have hval (a : F) : Valued.v (algebraMap F (v.adicCompletion F) a) = v.valuation F a :=
+        valuedAdicCompletion_eq_valuation' v a
+      rw [hval x, hval y]
     free := inferInstance
     rank := by rw [Module.finrank_baseChange, h2]
     span := by
@@ -111,7 +117,7 @@ theorem splitAt_nonempty (φ : E →ₐ[F] v.adicCompletion F) (b : E) (hb0 : b 
     rintro ⟨x, y⟩
     refine ⟨((x + y) / 2) ⊗ₜ 1 + ((x - y) / (2 * φ b)) ⊗ₜ b, ?_⟩
     have h2K : (2 : K) ≠ 0 := two_ne_zero
-    rw [map_add, he, he, hb, map_one sig, map_one φ, map_neg]
+    rw [map_add (f := _), he, he, hb, map_one sig, map_one φ, map_neg]
     have aux : ∀ r : K, r ≠ 0 → ((x + y) / 2 * 1 + (x - y) / (2 * r) * r = x ∧
         (x + y) / 2 * 1 + (x - y) / (2 * r) * -r = y) := fun r hr => by
       have h1 : (x - y) / (2 * r) * r = (x - y) / 2 := by
@@ -127,7 +133,8 @@ theorem splitAt_nonempty (φ : E →ₐ[F] v.adicCompletion F) (b : E) (hb0 : b 
   have hinj : Function.Injective e :=
     (LinearMap.injective_iff_surjective_of_finrank_eq_finrank hdim (f := e.toLinearMap)).mpr hsurj
   have hval : Valued.v ((resChar v : ℕ) : K) = exp (-1 : ℤ) := by
-    rw [← map_natCast (algebraMap F K), adicCompl_val_algebraMap, hv]
+    rw [← map_natCast (algebraMap F K)]
+    exact (valuedAdicCompletion_eq_valuation' v ((resChar v : ℕ) : F)).trans hv
   have hmem : ∀ x : K, x ∈ 𝒪[K] ↔ x ∈ v.adicCompletionIntegers F := fun x => by
     rw [Valuation.mem_integer_iff, mem_adicCompletionIntegers]
     exact (ValuativeRel.isEquiv (valuation K) (Valued.v : Valuation K ℤᵐ⁰)).le_one_iff_le_one
@@ -138,14 +145,25 @@ theorem splitAt_nonempty (φ : E →ₐ[F] v.adicCompletion F) (b : E) (hb0 : b 
       right_inv := fun _ => rfl
       map_mul' := fun _ _ => rfl
       map_add' := fun _ _ => rfl }
-  have hirr : Irreducible ((resChar v : ℕ) : v.adicCompletionIntegers F) :=
-    (IsDiscreteValuationRing.irreducible_iff_uniformizer _).mpr
-      (adicInt_max_eq_span v _ (by simpa using hval))
+  have hirr : Irreducible ((resChar v : ℕ) : v.adicCompletionIntegers F) := by
+    apply (IsDiscreteValuationRing.irreducible_iff_uniformizer _).mpr
+    have hI := adicCompletionIntegers.integers (K := F) (v := v)
+    ext x
+    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, Ideal.mem_span_singleton,
+      hI.isUnit_iff_valuation_eq_one, hI.dvd_iff_le]
+    change Valued.v (x : K) ≠ 1 ↔ Valued.v (x : K) ≤ Valued.v ((resChar v : ℕ) : K)
+    have hle : Valued.v (x : K) ≤ 1 := hI.map_le_one x
+    rw [hval, ← hle.lt_iff_ne]
+    generalize Valued.v (x : K) = γ
+    rcases eq_or_ne γ 0 with rfl | hγ
+    · exact iff_of_true zero_lt_one zero_le'
+    · rw [← WithZero.exp_log hγ, WithZero.exp_lt_one_iff, WithZero.exp_le_exp]
+      omega
   refine ⟨⟨AlgEquiv.ofBijective e ⟨hinj, hsurj⟩, fun x => ?_, ((resChar v : ℕ) : 𝒪[K]), ?_, ?_⟩⟩
   · show e (cjT sig hsig v x) = (e x).swap
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, map_add, ha, hb, Prod.swap_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb, Prod.swap_add]
     | tmul a x => rw [cjT_tmul, he, he, hsig]; rfl
   · show Irreducible ((resChar v : ℕ) : 𝒪[K])
     rw [← MulEquiv.irreducible_iff ι.toMulEquiv]
@@ -180,7 +198,7 @@ theorem exists_emb {K : Type} [Field K] [Algebra F K]
       apply hbF
       have ha' : a ^ 2 + (d : F) = 0 := by simpa using ha
       have hx : (algebraMap F E a) ^ 2 + (d : E) = 0 := by
-        rw [← map_pow, ← map_natCast (algebraMap F E) d, ← map_add, ha', map_zero]
+        rw [← map_pow, ← map_natCast (algebraMap F E) d, ← map_add (f := _), ha', map_zero]
       have hsq : (b - algebraMap F E a) * (b + algebraMap F E a) = 0 := by
         linear_combination hb2 - hx
       rcases mul_eq_zero.mp hsq with h | h
@@ -193,7 +211,7 @@ theorem exists_emb {K : Type} [Field K] [Algebra F K]
     rw [eq_top_iff]
     intro x _
     have hA : sig ((x + sig x) / 2) = (x + sig x) / 2 := by
-      rw [map_div₀, map_add, hsig, map_ofNat]
+      rw [map_div₀, map_add (f := _), hsig, map_ofNat]
       ring
     have hB : sig ((x - sig x) / (2 * b)) = (x - sig x) / (2 * b) := by
       rw [map_div₀, map_sub, map_mul, hsig, map_ofNat, hb]
@@ -356,7 +374,7 @@ theorem finrank_FE : Module.finrank H.F H.E = 2 := by
       apply hbF
       have ha' : a ^ 2 + (H.d : H.F) = 0 := by simpa using ha
       have hx : (algebraMap H.F H.E a) ^ 2 + (H.d : H.E) = 0 := by
-        rw [← map_pow, ← map_natCast (algebraMap H.F H.E) H.d, ← map_add, ha', map_zero]
+        rw [← map_pow, ← map_natCast (algebraMap H.F H.E) H.d, ← map_add (f := _), ha', map_zero]
       have hsq : (H.sqd - algebraMap H.F H.E a) * (H.sqd + algebraMap H.F H.E a) = 0 := by
         linear_combination H.sqd_sq - hx
       rcases mul_eq_zero.mp hsq with h | h
@@ -369,7 +387,7 @@ theorem finrank_FE : Module.finrank H.F H.E = 2 := by
     rw [eq_top_iff]
     intro x _
     have hA : conjF H ((x + conjF H x) / 2) = (x + conjF H x) / 2 := by
-      rw [map_div₀, map_add, hcc, map_ofNat]
+      rw [map_div₀, map_add (f := _), hcc, map_ofNat]
       ring
     have hB : conjF H ((x - conjF H x) / (2 * H.sqd)) = (x - conjF H x) / (2 * H.sqd) := by
       rw [map_div₀, map_sub, map_mul, hcc, map_ofNat, hb]
@@ -397,8 +415,8 @@ theorem finrank_FE : Module.finrank H.F H.E = 2 := by
 def slocH (v : HeightOneSpectrum (𝓞 H.F)) : LocAt H.F H.E (conjF H) v :=
   locAtC (conjF H) (conjF_conjF H) (finrank_FE H) v
 
-open Ideal in
 
+open Ideal in
 theorem val_eq_of_split (p : ℕ) (hp : p.Prime)
     (h : (placesOver H.E p).ncard = Module.finrank ℚ H.E) (v : HeightOneSpectrum (𝓞 H.F))
     (hv : (p : 𝓞 H.F) ∈ v.asIdeal) : v.valuation H.F (p : H.F) = exp (-1 : ℤ) := by

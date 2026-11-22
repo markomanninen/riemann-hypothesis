@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfSpecializesSameFibreIsIntegralHom
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainFibFinite
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainOfKernelsUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfSpecializesSameFibreIsIntegralHom
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Subsingleton
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistableAlt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainOfKernelsUnique
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -32,7 +37,7 @@ theorem maximalIdeal_pow_le : ∀ (k : Type) [Field k] [IsAlgClosed k] (A B : Ov
     haveI := hP
     obtain ⟨z, hz⟩ := (hJ (A.left.presheaf.stalk ((η[A]).left.base s) ⧸ P) (Ideal.Quotient.mk P)).2
       (by rw [Ideal.mk_ker]; exact hJP)
-    let q : Sp (A.left.presheaf.stalk ((η[A]).left.base s) ⧸ P) := ⟨⊥, Ideal.bot_prime⟩
+    let q : Sp (A.left.presheaf.stalk ((η[A]).left.base s) ⧸ P) := ⟨⊥, Ideal.isPrime_bot⟩
     set g := Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk P)) with hg
     have hgq : g q = ⟨P, hP⟩ := by
       apply PrimeSpectrum.ext

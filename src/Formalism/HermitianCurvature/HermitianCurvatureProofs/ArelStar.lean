@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockRelationTwistedHeight
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockRelationTwistedHeight
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
+
+@[expose] public section
 
 open Matrix
 
@@ -150,24 +154,28 @@ theorem corr_word (G : Gen T L₀ L) (hQ : ∀ Y, MRel T (st₀.QQ Y) (st.QQ Y))
     (hinv : st₀.inv = st.inv) (hL₀ : IsStarLevel L₀) (hL : IsStarLevel L) (hs₀ : IsLevelStart L₀ st₀)
     (hs : IsLevelStart L st) :
     ∀ w : List (Letter ℂ S), AdmRec L₀ st₀ w → AdmRec L st w →
-      Corr T st₀.inv (ofWord L₀ st₀ w) (ofWord L st w)
-  | [], _, _ => by
+      Corr T st₀.inv (ofWord L₀ st₀ w) (ofWord L st w) := by
+  intro w
+  induction w with
+  | nil =>
+    intro _ _
     refine ⟨arel_one, arel_one, arel_one, arel_one, fun Y => arel_io (x_rel G hQ hs₀ hs Y), fun Y hY => ?_,
       fun Y => brel_lift0 (hQ Y), rfl, hq, hinv, subset_rfl⟩
     exact arel_io (rel_inv (x_rel G hQ hs₀ hs Y) (hs₀.x_xi Y hY).1 (hs₀.x_xi Y hY).2
       (hs.x_xi Y (hinv ▸ hY)).1 (hs.x_xi Y (hinv ▸ hY)).2)
-  | ⟨pl, a, Ya⟩ :: w, h₀, h => by
+  | cons l w ih =>
+    intro h₀ h
+    unfold AdmRec at h₀ h
     obtain ⟨hw₀, -, -, hp0, hp1, hrest⟩ := h₀
     obtain ⟨hw, -⟩ := h
-    have ih := corr_word G hQ hq hinv hL₀ hL hs₀ hs w hw₀ hw
     have hf₀ := Formalism.FourierDecayAlt.P.frame_of_recursive_word (Pr V) S r₀ L₀ st₀ w hL₀ hs₀ hw₀
     have hf := Formalism.FourierDecayAlt.P.frame_of_recursive_word (Pr V') S r₁ L st w hL hs hw
-    cases pl
-    · have hm : Ya - 1 ∈ (ofWord L₀ st₀ w).inv := by
-        simp only [Bool.false_eq_true, if_false] at hrest
-        exact hrest.1
-      exact corr_minus G ih hf₀ hf a Ya hp0 hm
-    · exact corr_plus G ih hf₀ hf a Ya hp0 hp1
+    by_cases hp : l.plus
+    · simpa only [ofWord, ite_eq_left hp] using
+        corr_plus G (ih hw₀ hw) hf₀ hf l.intersection_update_fsHerm_neg_one l.pt hp0 hp1
+    · rw [ite_eq_right hp] at hrest
+      simpa only [ofWord, ite_eq_right hp] using
+        corr_minus G (ih hw₀ hw) hf₀ hf l.intersection_update_fsHerm_neg_one l.pt hp0 hrest.1
 
 theorem act_frame (G : Gen T L₀ L) (hQ : ∀ Y, MRel T (st₀.QQ Y) (st.QQ Y)) (hq : st₀.q = st.q)
     (hinv : st₀.inv = st.inv) (hL₀ : IsStarLevel L₀) (hL : IsStarLevel L) (hs₀ : IsLevelStart L₀ st₀)

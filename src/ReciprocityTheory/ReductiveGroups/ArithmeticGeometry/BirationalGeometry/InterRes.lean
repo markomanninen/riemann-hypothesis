@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,8 +80,5 @@ def ResBridgeStatement : Prop :=
     IsSectionOn P A s →
     ptsIntegralAt P Ψ (pot L) (logNorm A s) =
       mInt R.A (fun j => potOf R (L j)) (fun x => logNorm A s (R.lift x x))
-
-def ResInhabitStatement : Prop :=
-  Nonempty (AnLogRes (⊥ : Ideal (MRing (PBlk 2))) (Ideal.span {Xc 2 0}) 1)
 
 end ReciprocityTheory.ChartRestriction.G.Geo

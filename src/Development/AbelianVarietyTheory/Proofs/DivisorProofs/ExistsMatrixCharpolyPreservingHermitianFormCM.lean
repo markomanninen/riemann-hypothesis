@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter Formalism.UG GlobalTheory.BCT
 open scoped Classical
 
@@ -49,7 +54,7 @@ theorem vandermonde_diag_herm {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (l : Fi
         _ = trace (V⁻¹ * ((D' ^ (i : ℕ) * diagonal l ^ (j : ℕ)) * V)) := by rw [hM]
         _ = trace (D' ^ (i : ℕ) * diagonal l ^ (j : ℕ)) := by
             rw [trace_mul_comm, mul_assoc, hVinv', mul_one]
-    rw [of_apply, htr, diagonal_pow, diagonal_pow, diagonal_mul_diagonal, trace_diagonal, mul_apply]
+    rw [of_apply, htr, diagonal_pow, diagonal_pow, diagonal_mul_diagonal, trace_diagonal, Matrix.mul_apply]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp [V, D', vandermonde_apply, conjTranspose_apply, hconj, inv_pow]
   · rw [det_mul, det_conjTranspose]
@@ -104,7 +109,8 @@ theorem exists_mat_herm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
       ∑ i : Fin pb.dim, l k ^ (i : ℕ) * τ (pb.basis.repr x i) = AdjoinRoot.lift τ (l k) (hlr k) x := by
     intro k x
     conv_rhs => rw [← pb.basis.sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.smul_def, map_mul, PowerBasis.coe_basis]
     simp only [pb, AdjoinRoot.powerBasis_gen, map_pow, AdjoinRoot.lift_root, AdjoinRoot.algebraMap_eq,
@@ -112,7 +118,7 @@ theorem exists_mat_herm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     ring
   have hVA : vandermonde l * Cm.map τ = diagonal l * vandermonde l := by
     ext k j
-    rw [mul_apply, diagonal_mul, vandermonde_apply]
+    rw [Matrix.mul_apply, diagonal_mul, vandermonde_apply]
     show ∑ i : Fin pb.dim, l k ^ (i : ℕ) * τ (Algebra.leftMulMatrix pb.basis pb.gen i j) = l k * l k ^ (j : ℕ)
     have hC : ∀ i : Fin pb.dim, Algebra.leftMulMatrix pb.basis pb.gen i j = pb.basis.repr (pb.gen * pb.basis j) i :=
       fun i => Algebra.leftMulMatrix_eq_repr_mul _ _ _ _

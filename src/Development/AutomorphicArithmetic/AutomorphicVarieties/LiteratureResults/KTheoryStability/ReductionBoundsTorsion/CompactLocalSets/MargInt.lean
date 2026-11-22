@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CompactLocalSets.OverlapG
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CompactLocalSets.OverlapG
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem marg_int {X : Type} [MeasurableSpace X] (P : Measure X) [IsProbabilityMe
     Integrable (fun x => f (fun j => x (i.succAbove j))) (Measure.pi fun _ : Fin (n + 1) => P) := by
   have he := measurePreserving_piFinSuccAbove (fun _ : Fin (n + 1) => P) i
   have hφ : Measurable fun x : Fin (n + 1) → X => fun j => x (i.succAbove j) :=
-    measurable_pi_lambda _ fun j => measurable_pi_apply _
+    Measurable.of_eval fun j => measurable_pi_apply _
   have hmap : Measure.map (fun x : Fin (n + 1) → X => fun j => x (i.succAbove j))
       (Measure.pi fun _ : Fin (n + 1) => P) = Measure.pi fun _ : Fin n => P := by
     have hcomp : (fun x : Fin (n + 1) → X => fun j => x (i.succAbove j))
@@ -75,7 +79,7 @@ theorem avgS_of (hEv : SEv) : AvgS := by
           rw [hterm i, integral_const_mul]
       _ = ∫ x, ∑ i : Fin (k + 3), (-1 : ℝ) ^ (i : ℕ) * F (fun j => Q x (i.succAbove j))
             ∂(Measure.pi fun _ => P) :=
-          (integral_finset_sum _ fun i _ => (hint' i).const_mul _).symm
+          (integral_finsetSum _ fun i _ => (hint' i).const_mul _).symm
       _ = ∫ x, dC F (Q x) ∂(Measure.pi fun _ => P) := rfl
       _ = 0 := by simp [hcoc]
   let b₀ : Yb H := ((1 : H), false)

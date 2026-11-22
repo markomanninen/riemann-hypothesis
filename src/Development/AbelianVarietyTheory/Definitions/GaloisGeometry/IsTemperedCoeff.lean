@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ namespace GlobalTheory.LocGL
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {V : Type} [AddCommGroup V] [Module ℂ V] {N : ℕ}
 
-variable (k N) in
 
+variable (k N) in
 abbrev AdGL : Type := GL (Fin N) k ⧸ Subgroup.center (GL (Fin N) k)
 
 def CoeffLp (p : ℝ) (π : Representation ℂ (GL (Fin N) k) V) : Prop :=

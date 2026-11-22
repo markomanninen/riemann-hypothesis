@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL
 open scoped TensorProduct Topology
@@ -35,7 +39,7 @@ theorem fixed_sup_eq_zero [TopologicalSpace G] [IsTopologicalGroup G] {π : Repr
       ((A.mkQ).comp B.subtype) ⟨b, hb⟩ := by
     intro h hh
     have hx' := (mem_fixed_iff_forall.mp hf) h hh
-    rw [map_add] at hx'
+    rw [map_add (f := _)] at hx'
     have e : (S.toRepresentation h ⟨b, hb⟩ : V) = π h b := rfl
     have e2 : π h b - b = a - π h a := by
       rw [sub_eq_sub_iff_add_eq_add, add_comm, hx']
@@ -213,7 +217,7 @@ theorem exists_fixed_of_ne_bot (ρ : Representation ℂ (G × H) V) (hi : ρ.IsI
       refine ⟨?_, ?_⟩
       · intro g x hx
         obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem_sup (hTinv a g hy) (ih.1 g hz)
       · intro x hx hxK
         exact fixed_sup_eq_zero hs hK (hTinv a) ih.1 (hT0 a) ih.2 hx hxK

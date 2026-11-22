@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageCochainExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageCochainExists
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -10,7 +15,8 @@ namespace GlobalTheory.EtC.OpComp
 
 theorem ev_comp_ofHom' {R : Type} [CommRing R] {E : Spc} {I K : Cx R} {n : ℤ} (α : Cochain ((chains R).obj E) I n)
     (u : I ⟶ K) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (α.comp (Cochain.ofHom u) (add_zero n)) p s h U x = Sec.map (u.f s) (ev α p s h U x) := by
+    ev (R := R) (α.comp (Cochain.ofHom u) (add_zero n)) p s h U x =
+      Sec.map (u.f s) (ev (R := R) α p s h U x) := by
   simp only [ev, Cochain.comp_zero_cochain_v, Cochain.ofHom_v]
   rfl
 
@@ -56,7 +62,7 @@ theorem op_comp_bij : ∀ (S R : Type) [CommRing S] [CommRing R] {I : Cx S} {J J
     rw [ρ.op_spec E n α β hβ]
     change _ = CohomologyClass.mk (zcomp β (Cocycle.ofHom u) (add_zero n))
     refine ρ'.op_spec E n α _ (fun p s h U y => ?_)
-    change ev (β.1.comp (Cochain.ofHom u) (add_zero n)) p s h U y = _
+    change ev (R := R) (β.1.comp (Cochain.ofHom u) (add_zero n)) p s h U y = _
     rw [ev_comp_ofHom', hβ, hu]
   · set σ := invSemi ρ hb
     have h1 : ∀ x, σ.op.app E n (ρ.op.app E n x) = x := by

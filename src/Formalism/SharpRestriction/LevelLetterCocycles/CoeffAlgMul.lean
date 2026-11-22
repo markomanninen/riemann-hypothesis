@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineFiltrationAntitone
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineFiltrationAntitone
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,8 @@ theorem secIn_of_fil (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (A : Ar
     show dv W T (e + 1) b c ∈ FilS W T a 0 (-(H : ℤ))
     have hc : c = ∑ m, c m • (Pi.single m (1 : LL) : Fin d → LL) := by
       ext k; simp [Finset.sum_apply, Pi.single_apply]
-    rw [hc, ← dvL_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, ← dvL_apply, map_sum]
     refine Submodule.sum_mem _ fun m _ => ?_
     rw [map_smul, dvL_apply]
     refine Submodule.smul_mem _ _ ?_
@@ -104,7 +109,8 @@ theorem secIn_of_fil (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (A : Ar
       intro m
       rw [map_mul, AlgHom.commutes, coeff_alg_mul, hQ']
       ring
-    rw [e1, map_sum, map_sum, Finset.sum_congr rfl (fun m _ => e2 m), ← Finset.mul_sum, hz, mul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum, map_sum, Finset.sum_congr rfl (fun m _ => e2 m), ← Finset.mul_sum, hz, mul_zero]
 
   have hdiv : ∀ i, ∃ h' ∈ W.AΔ, letE a * Vp i = ps W 0 ^ k i * h' := fun i =>
     Formalism.MainNotions.UnusedSlot80.DivLevR.divLev_of (W := W) C.hR (not_isUnit_p W C.hV) C.hinj a ζ hζ (Vp i) (hVpA i)
@@ -114,7 +120,8 @@ theorem secIn_of_fil (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (A : Ar
   have hgV : ∀ i, algebraMap (LetA O n) W.EE (ps W 0 ^ H) * g i =
       algebraMap (LetA O n) W.EE (letE a * (W.π₀ * LU) * Vp i) := by
     intro i
-    simp only [g, Vp, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [g, Vp, Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [IsScalarTower.algebraMap_apply O (LetA O n) W.EE, mul_left_comm, hf m, ← map_mul]
     congr 1; ring
@@ -173,7 +180,8 @@ theorem secIn_of_fil (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (A : Ar
       have h2 : ∀ i, ∑ m'', Q i m'' * (Pi.single m' (1 : LL) : Fin d → LL) m'' = Q i m' := by
         intro i; simp [Pi.single_apply]
       simp only [h2, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at h1
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp_rw [map_mul, hQ', hP']
       have h3 : ∑ i, (PD.p : LL) ^ κ2 * Q i m' * ((PD.p : LL) ^ κ1 * P i m) =
           (PD.p : LL) ^ (κ1 + κ2) * ∑ i, Q i m' * P i m := by
@@ -188,7 +196,8 @@ theorem secIn_of_fil (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (A : Ar
     have h4 : ∀ m', ∑ i, algebraMap O W.EE (Q' (i, m')) * f m' * algebraMap O W.EE (P' (i, m)) =
         f m' * algebraMap O W.EE (∑ i, Q' (i, m') * P' (i, m)) := by
       intro m'
-      rw [map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.mul_sum]
       exact Finset.sum_congr rfl fun i _ => by rw [map_mul]; ring
     simp_rw [h4, hδ]
     rw [Finset.sum_eq_single m]

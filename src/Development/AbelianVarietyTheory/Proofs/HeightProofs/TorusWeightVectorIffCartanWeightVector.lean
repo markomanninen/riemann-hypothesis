@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem flow_eq {T : GrpData p q} (R : DSRep T) {X : Mat p q} (hX : X ∈ upq p 
       have := HasDerivAt.comp_sub_const t t (f := f) (f' := c • R.ι v) (by rw [sub_self]; exact h0)
       exact this
     have h2 := ((R.U.π (T.expt (t • X))).restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt t h1
-    convert h2 using 1
+    convert (preTransparency := .reducible) h2 using 1
     · funext s
       simp only [hf, Function.comp, ContinuousLinearMap.coe_restrictScalars']
       rw [← ContinuousLinearMap.mul_apply, ← map_mul, ← T.expt_add X hX, add_sub_cancel]
@@ -132,7 +136,8 @@ theorem isWtOn_iff : ∀ (p q n : ℕ) (e : Ix p q ≃ Fin n) (ε : Fin n → Bo
   · intro h θ _
     rw [← key]
     apply flow_eq R (torX_mem _)
-    rw [torX_eq_sum, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [torX_eq_sum, map_sum, LinearMap.sum_apply]
     simp only [map_smul, LinearMap.smul_apply, h, smul_smul, ← Finset.sum_smul]
     congr 1
     rw [← e.sum_comp]

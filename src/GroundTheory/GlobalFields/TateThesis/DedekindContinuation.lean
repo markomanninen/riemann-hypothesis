@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.HeckeTheorem
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.HeckeTheorem
+
+@[expose] public section
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex Topology Filter Set
 open scoped NumberField.AdeleRing Real
@@ -22,8 +26,8 @@ theorem discrNormConductor_one : (1 : HeckeCharacter K).discrNormConductor = |(d
   rw [discrNormConductor, conductor_eq_top_of_forall one_toIdele_eq_cpow, Ideal.absNorm_top]
   simp
 
-open Classical in
 
+open Classical in
 theorem gammaFactor_one (s : ℂ) :
     (1 : HeckeCharacter K).gammaFactor s =
       Gammaℝ s ^ nrRealPlaces K * Gammaℂ s ^ nrComplexPlaces K := by
@@ -167,16 +171,6 @@ theorem normOneClassMeasure_univ_toReal_eq :
   rw [← h, Real.sqrt_eq_rpow, ← mul_assoc, ← Real.rpow_add ha]
   norm_num
 
-open NumberField.Units in
-
-theorem normOneClassMeasure_univ_toReal_eq_classNumber :
-    (normOneClassMeasure K univ).toReal = 2 ^ nrRealPlaces K * (2 * π) ^ nrComplexPlaces K *
-      regulator K * classNumber K / torsionOrder K := by
-  rw [normOneClassMeasure_univ_toReal_eq, dedekindZeta_residue_def]
-  have h1 : 0 < Real.sqrt |(discr K : ℝ)| :=
-    Real.sqrt_pos.2 (abs_pos.2 (Int.cast_ne_zero.2 (discr_ne_zero K)))
-  have h2 : (0 : ℝ) < torsionOrder K := Nat.cast_pos.2 (torsionOrder_pos K)
-  field_simp
 
 theorem completedDedekindZeta_one_sub {s : ℂ} (hs₀ : s ≠ 0) (hs₁ : s ≠ 1) :
     completedDedekindZeta K (1 - s) = completedDedekindZeta K s := by

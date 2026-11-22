@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumUniqueOnThetaFunctions
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ApplyAddInfRat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorNegSpaceFrameChangeConjSubst
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignedUnitaryGroupCompat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorBasisChangeEqSubstitution
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusMassSignature
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LawsRescaleWithS
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumUniqueOnThetaFunctions
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ApplyAddInfRat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorNegSpaceFrameChangeConjSubst
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignedUnitaryGroupCompat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorBasisChangeEqSubstitution
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusMassSignature
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LawsRescaleWithS
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset
 open Formalism.DivisionValues (vw)
@@ -133,8 +137,8 @@ theorem ker'_left (hX : X.Is ψ θ α β νH S) (t : T) (P h) : ∀ γ ∈ GQ A'
   fun γ hγ g => thetaKO_left (hX.weil' t) (GlobalTheory.GalLift.Vec.theta_pureTensorO hX.isVac.1 hX.isVac.2.inf _ _ _ _
     (GlobalTheory.GalLift.Vec.theta_of_thetaAt hX.isVac.1 hX.isVac.2.inf (hX.snd t) hX.isVac'.2.theta) P) hγ g h
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem ker_eq (hX : X.Is ψ θ α β νH S) (hY : Y.Is ψ θ α β νH S) (sA : X.rA.IsStd) (sW : X.rW.IsStd)
     (l1 : Y.rA.Λ = X.rA.Λ) (l3 : Y.rW.Λ = X.rW.Λ) (b1 : Y.rA.β = X.rA.β) (b3 : Y.rW.β = X.rW.β) :
     ∃ a : ℂ, a ≠ 0 ∧ ∀ P, ∃ Q, ∀ t h g, Y.ker ψ θ t P h g = a * X.ker ψ θ t Q h g := by
@@ -170,8 +174,8 @@ theorem ker_eq (hX : X.Is ψ θ α β νH S) (hY : Y.Is ψ θ α β νH S) (sA :
   exact congrFun (GlobalTheory.WeilUniq.weilDatum_unique D ψ hψ (neg A) WW _ _ _ _ (hY.weil t) (hX.weil t)
     ((ofSgn true A).symm g, h) _ (GlobalTheory.GalLift.Vec.theta_pureTensorO (S := neg A) hψ hθ _ _ _ _ tX _)) 0
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem ker'_eq (hX : X.Is ψ θ α β νH S) (hY : Y.Is ψ θ α β νH S) (sA : X.rA'.IsStd) (sW : X.rW.IsStd)
     (l1 : Y.rA'.Λ = X.rA'.Λ) (l3 : Y.rW.Λ = X.rW.Λ) (b1 : Y.rA'.β = X.rA'.β) (b3 : Y.rW.β = X.rW.β) :
     ∃ a : ℂ, a ≠ 0 ∧ ∀ P, ∃ Q, ∀ t h g, Y.ker' ψ θ t P h g = a * X.ker' ψ θ t Q h g := by

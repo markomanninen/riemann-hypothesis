@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RestHLTransport
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RestHLTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ theorem lpRingIndep_of (h1 : RestRSIso) (h2 : RestHLTransport) : LPRingIndep := 
           apply Subtype.ext
           apply LinearMap.ext
           intro v
-          simp only [hx, map_add, Submodule.coe_add, LinearMap.add_apply, hdTv]
+          simp only [hx, map_add (f := _), Submodule.coe_add, LinearMap.add_apply, hdTv]
         map_smul' := by
           intro c x
           have hx : (fun j => I.φO.symm ((c • x) j)) = I.φO.symm c • (fun j => I.φO.symm (x j)) := by

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

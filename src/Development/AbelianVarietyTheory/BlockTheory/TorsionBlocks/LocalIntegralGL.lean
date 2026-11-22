@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.DoubleCosetMeasures.StatementV
+module
+
+public import Mathlib
+public import Formalism.DoubleCosetMeasures.StatementV
+
+@[expose] public section
 
 noncomputable section
 

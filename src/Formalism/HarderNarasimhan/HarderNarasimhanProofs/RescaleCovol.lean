@@ -1,8 +1,12 @@
-import Formalism.HarderNarasimhan.DefsPl
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.GramBlock
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+module
+
+public import Formalism.HarderNarasimhan.DefsPl
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.GramBlock
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+
+@[expose] public section
 
 open Module NumberField
 

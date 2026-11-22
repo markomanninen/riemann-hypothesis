@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedFlatCoordinates
-import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedFlatCoordinates
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
+
+@[expose] public section
 
 set_option autoImplicit false
 

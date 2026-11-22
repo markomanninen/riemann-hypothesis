@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+
+@[expose] public section
 
 set_option autoImplicit false
 

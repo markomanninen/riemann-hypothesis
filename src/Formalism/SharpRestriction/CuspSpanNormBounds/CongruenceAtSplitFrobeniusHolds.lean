@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
-import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
-import Formalism.HermitianLattices.StatementMass
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+public import Formalism.HermitianLattices.StatementMass
+
+@[expose] public section
 
 noncomputable section
 
@@ -176,20 +180,6 @@ def stGlue (D : D7) : Prop :=
           (Λ ⊓ toO (hS D) (orth (hS D) U)).comap
             (dualIn (hS D) (Λ ⊓ toO (hS D) (orth (hS D) U))).subtype)) ∧
     latDet (hS D) (Λ ⊓ toO (hS D) U) = latDet (hS D) (Λ ⊓ toO (hS D) (orth (hS D) U))
-
-def stGlueDisc (D : D7) : Prop :=
-  ∀ Λ : Lt D, Submodule.IsLattice D.host.E Λ → Formalism.HermitianLatticesTheory.IsUnimodular (hS D).hT Λ →
-  ∀ U : Submodule D.host.E (hS D).V, U ⊓ orth (hS D) U = ⊥ →
-    Nonempty
-      ((dualIn (hS D) (Λ ⊓ toO (hS D) U) ⧸
-          (Λ ⊓ toO (hS D) U).comap (dualIn (hS D) (Λ ⊓ toO (hS D) U)).subtype) ≃ₗ[𝓞 D.host.E]
-        (dualIn (hS D) (Λ ⊓ toO (hS D) (orth (hS D) U)) ⧸
-          (Λ ⊓ toO (hS D) (orth (hS D) U)).comap
-            (dualIn (hS D) (Λ ⊓ toO (hS D) (orth (hS D) U))).subtype)) ∧
-    latDet (hS D) (Λ ⊓ toO (hS D) U) = latDet (hS D) (Λ ⊓ toO (hS D) (orth (hS D) U))
-
-def stKron (D : D7) : Prop :=
-  ∀ α : 𝓞 D.host.E, (∀ τ : D.host.E →+* ℂ, ‖τ (α : D.host.E)‖ = 1) → ∃ n : ℕ, 0 < n ∧ α ^ n = 1
 
 section Cores
 
@@ -617,24 +607,6 @@ def cExp : Prop := ∀ u u' : D.what₂.Word, KExpansion D.s u u' ∧ KAbsConv D
 
 def cIdOne : Prop := ∀ u : D.what₂.Word, IdCellDiag D.s u
 
-def cIdFlag (X : TermTie D) : Prop :=
-  ∀ (u : D.what₂.Word) (t : D.s.Term u u),
-    ((∀ j, Xflag (X.fl' t) j = Xflag (X.fl t) j) ∧ Xplus (X.fl' t) = Xplus (X.fl t)) → D.s.relevant t → D.s.isId t
-
-def cIrr : Prop :=
-  ∀ (u u' : D.what₂.Word) (t : D.s.Term u u'), ¬ D.s.relevant t → D.s.aTerm u u' t = 0
-
-def cGpos (X : TermTie D) : Prop :=
-  ∀ (u u' : D.what₂.Word) (t : D.s.Term u u'), D.s.Gterm t ≠ 0 →
-    Dl (X.fl t).fl (X.fl' t).fl (D.R.rS + 1) ≠ 0 ∧
-    (Dl (X.fl t).fl (X.fl' t).fl D.R.rS ≠ 0 → ∀ τ, 0 < (embS D τ (Gval (X.fl t) (X.fl' t))).re)
-
-def cCells (X : TermTie D) : Prop :=
-  ∀ (u u' : D.what₂.Word) (t : D.s.Term u u'), D.s.relevant t →
-    ∀ (j : ℕ) (hj : j ≤ D.R.rS + 1), Dl (X.fl t).fl (X.fl' t).fl j ≠ 0 →
-      ∃ p : Point D.host.E j,
-        IsInCell ((ZhatOM (ZhatL (X.fl t) (X.fl' t))).submatrix (Fin.castLE hj) (Fin.castLE hj)) p
-
 def f3 : ℝ := ∏ᶠ p ∈ typedPl D, (1 + 3 / (Ideal.absNorm p.asIdeal : ℝ))
 
 def c2aG : Prop :=
@@ -642,20 +614,7 @@ def c2aG : Prop :=
     Summable (fun p : pairsIn D.s Φ => ‖D.s.pval p.1‖) →
     hsNormSq (KOf D.s u u' Φ) ≤ f3 D * gaG D * (∑' p : pairsIn D.s Φ, D.s.pval p.1).re
 
-def c2aAny : Prop :=
-  ∀ (u u' : D.what₂.Word) (Φ : Set (D.s.Term u u')), IsSat D Φ →
-  Summable (fun p : pairsIn D.s Φ => ‖D.s.pval p.1‖) →
-    hsNormSq (KOf D.s u u' Φ) ≤
-      (∏ i : Fin 2, (1 + 3 / (D.host.g i : ℝ))) ^ D.R.f * gaG D * (∑' p : pairsIn D.s Φ, D.s.pval p.1).re
-
-def TermsPP (u u' : D.what₂.Word) : Set (D.s.Term u u') := {t | D.s.Gterm t = 0 ∧ ¬ D.s.isId t}
-
 def Kpp (u u' : D.what₂.Word) : D.s.Cu u' →L[ℂ] D.s.Cu u := KOf D.s u u' {t | D.s.Gterm t = 0 ∧ ¬ D.s.isId t}
-
-def cK2diag : Prop :=
-  ∀ u : D.what₂.Word,
-    Summable (fun t : TermsPP D u u => D.s.aTerm u u t.1) ∧
-    hsNormSq (Kpp D u u) ≤ (D.duS u : ℝ) * Real.exp (-((D.R.k : ℝ) * D.R.f * Real.log D.R.k))
 
 def cK2off : Prop :=
   ∀ u u' : D.what₂.Word, u ≠ u' →
@@ -696,12 +655,6 @@ def cTvD (D : D7) (C3 : ℝ) : Prop :=
   ∀ u τ, gg D ^ D.R.m * D.host.ka ^ (-((D.R.m : ℝ) - 1)) * (∏ j ∈ Finset.Icc 1 D.R.m, bOne D τ j) *
       (D.R.k : ℝ) ^ (-C3) / aEff D u τ ≤ Tcrit D u τ
 
-def cTvE (D : D7) (C4 : ℝ) : Prop :=
-  ∀ u u' τ (l : ℕ), 1 ≤ l → l ≤ D.R.k - 2 → uOne D u τ (l + 1) ≠ uOne D u' τ (l + 1) →
-    ∀ d : ℝ, 5 / 2 ≤ d → d ≤ (D.s.Del : ℝ) / 2 →
-      gg D ^ D.R.m * beUU D D.host.ka u u' τ (d - vOne D τ l) ≤
-        tV D u u' τ * (D.R.k : ℝ) ^ C4 * Real.sqrt (d / D.s.Del)
-
 def cTvF (D : D7) (large₂ : SizeData₂ D) (c5 CA : ℝ) : Prop :=
   ∀ u u' (l : ℕ), 1 ≤ l → l ≤ D.R.k - 2 → (∀ τ, uOne D u τ (l + 1) ≠ uOne D u' τ (l + 1)) →
     ∀ (x : D.what₂.Tau → LocalDataRealPlace D) (L : LatticeDataWithDual D), IsLocC D u u' l x → IsLatGLOB D L →
@@ -737,53 +690,7 @@ def KTwoParameterConditions (Cl Cg CT : ℝ) : Prop :=
     Nat.Coprime (D.mem u).A.T (D.host.g 0 * D.host.g 1)) ∧
   Formalism.HermitianLatticesTheory.IsCMUnram D.host.E
 
-def KTwoHypotheses (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 ∧ KTwoParameterConditions D large₂ Cl Cg CT
-
-def stK2diag (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  KTwoHypotheses D large₂ C' Cl Cg cb Cu cT CT C0 → cK2diag D
-
-def stK2off (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  KTwoHypotheses D large₂ C' Cl Cg cb Cu cT CT C0 → cK2off D
-
-def st2aAny (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 → c2aAny D
-
-def stExp (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 → cExp D
-
-def stIdFlag (X : TermTie D) (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 → cIdFlag D X
-
-def stIdCell (X : TermTie D) (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 → cIdFlag D X ∧ cIdOne D
-
-def stExpId (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 → cExp D ∧ cIdOne D
-
-def stIrr (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 → cIrr D
-
-def stGpos (X : TermTie D) (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 → cGpos D X
-
-def stCells (X : TermTie D) (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 → cCells D X
-
-def stMass2K (C' Cl Cg cb Cu cT CT C0 C : ℝ) : Prop :=
-  KTwoHypotheses D large₂ C' Cl Cg cb Cu cT CT C0 → Mass2At D large₂ C
-
-def stFormK (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  KTwoHypotheses D large₂ C' Cl Cg cb Cu cT CT C0 → ∀ u : D.what₂.Word, FormAt D u
-
 end K2
-
-def stSchurLem : Prop :=
-  ∀ (k : ℕ) (u u' : Fin k → ℝ) (H H' : Type)
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [NormedAddCommGroup H'] [InnerProductSpace ℂ H']
-    (π : Matrix (Fin k) (Fin k) ℂ → (H →L[ℂ] H)) (ρ : Matrix (Fin k) (Fin k) ℂ → (H' →L[ℂ] H')),
-    IsHCTypeU k u π → IsHCTypeU k u' ρ → u ≠ u' →
-    ∀ P : H' →L[ℂ] H, (∀ h ∈ UJset (allPos k), P.comp (ρ h) = (π h).comp P) → P = 0
 
 section Size
 
@@ -791,37 +698,7 @@ open MeasureTheory Formalism.QuantumDeterminants
 
 variable (D : D7) (large₂ : SizeData₂ D)
 
-def hNC (τ : D.what₂.Tau) : ℝ :=
-  sInf {x | ∃ a b, epsSH D.R a ≠ epsSH D.R b ∧ x = |lamD D τ a - lamD D τ b|}
-
-def CloudNodeShape (τ : D.what₂.Tau) (Cq bv : ℝ) : Prop :=
-  Cq * (D.R.r : ℝ) ^ 7 ≤ bv ∧
-  (∀ l, 1 ≤ l → l ≤ D.R.k - 1 → 0 ≤ vOne D τ l ∧ vOne D τ l ≤ bv / 8) ∧
-  ∀ j, 1 ≤ j → j ≤ D.R.m → bv ≤ bOne D τ j ∧ bOne D τ j ≤ 2 * bv
-
-def q0 (τ : D.what₂.Tau) (cq Cq : ℝ) : ℝ :=
-  min (cq * hNC D τ * (D.R.m : ℝ) ^ (-(1 / 2 : ℝ))) (4 * (D.s.Del : ℝ)) / Cq
-
-def stSIZE (C' Cl Cg cb Cu cT CT C0 Cθ C1 cq Cq CH : ℝ) : Prop :=
-  Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0 →
-  ∀ (τ : D.what₂.Tau) (u : D.what₂.Word) (bv : ℝ), CloudNodeShape D τ Cq bv →
-  ∀ θ, normWin D large₂ Cθ θ → ∀ W, GoodW D τ u u θ W → ∀ A : LocS W, GoodS D (lamD D τ) A →
-    IsLowUnitH D.R.k D.R.rS (epsSH D.R) (lamD D τ) A.σ A.v0 →
-    ∀ q : ℕ, (q : ℝ) ≤ C1 * D.R.k * D.R.rS → (D.R.m : ℝ) * q ≤ q0 D τ cq Cq →
-      (D.R.m : ℝ) * q ≤ bv / (Cq * (D.R.r : ℝ) ^ 4) →
-    ∀ la : ℝ, 0 < la →
-      ∫⁻ x, Set.indicator {x | ∃ a : Fin (D.R.rS + 1), la * large₂.sc.b ^ (CH * (D.R.m : ℝ)) ≤
-              max (lA D.R.k D.R.rS W.z (Matrix.of x) a) (lA D.R.k D.R.rS W.z (Matrix.of x) a)⁻¹}
-            (fun x => (‖A.Φ (Matrix.of x)‖₊ : ℝ≥0∞) ^ 2) x ∂W.νS ≤
-        ENNReal.ofReal (2 * (D.R.m : ℝ) * la ^ (-(2 * (q : ℝ)))) * l2SG W.νS A.Φ
-
 end Size
-
-def minkM (N : ℕ) : ℕ :=
-  ∏ p ∈ (Finset.range (N + 2)).filter Nat.Prime, p ^ (∑ j ∈ Finset.range (N + 1), N / (p ^ j * (p - 1)))
-
-def stMinkM : Prop :=
-  ∀ (N : ℕ) (G : Subgroup (GL (Fin N) ℤ)), Finite G → Nat.card G ∣ minkM N
 
 end Formalism.MainNotions.S.UnitaryVolumeMass
 

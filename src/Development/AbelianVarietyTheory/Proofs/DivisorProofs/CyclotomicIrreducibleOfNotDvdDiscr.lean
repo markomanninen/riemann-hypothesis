@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.Chebotarev.CyclotomicIrreducibleOfForallIsUnramifiedAt
+module
+
+public import Mathlib
+public import ReciprocityTheory.Chebotarev.CyclotomicIrreducibleOfForallIsUnramifiedAt
+
+@[expose] public section
 
 namespace GlobalTheory
 

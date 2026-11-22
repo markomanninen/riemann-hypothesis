@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthonormalBasisAndOneOrbit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelVolMul
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelativeLatticeVolumeOfDetValuationStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthonormalBasisAndOneOrbit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelVolMul
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelativeLatticeVolumeOfDetValuationStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -28,7 +32,7 @@ theorem exists_int_basis [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F
     intro a b h
     simp only [Algebra.smul_def, mul_one] at h
     have h' := congrArg L.cj h
-    simp only [map_add, map_mul, AlgEquiv.commutes, map_zero] at h'
+    simp only [map_add (f := _), map_mul, AlgEquiv.commutes, map_zero] at h'
     have hb : algebraMap F E b = 0 := hu.mul_left_eq_zero.1 (by linear_combination h - h')
     have ha : algebraMap F E a = 0 := by rw [hb] at h; simpa using h
     exact ⟨hinj (by simpa using ha), hinj (by simpa using hb)⟩
@@ -50,7 +54,7 @@ theorem exists_int_basis [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F
     simp
   refine ⟨c, fun x => ⟨fun h => ?_, fun h => ?_⟩, fun x => ?_⟩
   · have h1 := congrArg L.cj (hx x)
-    simp only [map_add, map_mul, AlgEquiv.commutes] at h1
+    simp only [map_add (f := _), map_mul, AlgEquiv.commutes] at h1
     have hb : algebraMap F E (c.repr x 1) ∈ L.O := by
       have : algebraMap F E (c.repr x 1) = (x - L.cj x) * e := by
         linear_combination (-e) * hx x + e * h1 - algebraMap F E (c.repr x 1) * hωe
@@ -73,10 +77,10 @@ theorem exists_int_basis [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F
     obtain ⟨a, b, rfl⟩ : ∃ a b : F, x = algebraMap F E a + algebraMap F E b * ω := ⟨_, _, hx x⟩
     have h2 : (algebraMap F E a + algebraMap F E b * ω) * ω
         = algebraMap F E (-(b * N)) + algebraMap F E (a + b * t) * ω := by
-      simp only [map_add, map_mul, map_neg, ht, hN]; ring
+      simp only [map_add (f := _), map_mul, map_neg, ht, hN]; ring
     rw [Algebra.norm_eq_matrix_det c, Matrix.det_fin_two]
     simp only [Algebra.leftMulMatrix_eq_repr_mul, hc0, hc1, mul_one, h2, (hr _ _).1, (hr _ _).2]
-    simp only [map_add, map_mul, map_neg, map_sub, ht, hN, AlgEquiv.commutes]
+    simp only [map_add (f := _), map_mul, map_neg, map_sub, ht, hN, AlgEquiv.commutes]
     ring
 
 theorem exists_lat_basis [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F E) {n : ℕ}
@@ -93,7 +97,8 @@ theorem exists_lat_basis [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F
         map_smul' := fun c x => by simp [hf, Finset.mul_sum, mul_assoc] }
     have hfb : ∀ i, f (b i) = if i = j then 1 else 0 := fun i => hb i j
     have := congrArg f hg
-    simpa [map_sum, hfb] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, hfb] using this
   have hsp : ⊤ ≤ Submodule.span E (Set.range b) := by
     rw [← hΛ.1.2, Submodule.span_span_of_tower]
   refine ⟨Module.Basis.mk hli hsp, fun x => ?_⟩
@@ -181,7 +186,7 @@ theorem det_isom (L : LocE F E) {n : ℕ} (Hm : Matrix (Fin n) (Fin n) E) (hH : 
   rw [mul_one]
   conv_rhs => rw [← h3]
   simp only [RingEquiv.toRingHom_eq_coe, RingHom.coe_coe, AlgEquiv.coe_ringEquiv,
-    AlgEquiv.toRingEquiv_eq_coe]
+    AlgEquiv.coe_toRingEquiv]
   ring
 
 end GlobalTheory.HL.TupleJac

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QCoreH
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.GlobQuotPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QCoreH
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.GlobQuotPf
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
 

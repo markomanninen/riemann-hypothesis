@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.Artin.LogCharpoly
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Artin.LogCharpoly
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -37,8 +42,10 @@ theorem chernAt_newton (n : ℕ) (r : Type) [Fintype r] [DecidableEq r] (G : V n
       have e : curvEv G v ^ k = (curvPoly G v ^ k).map (MvPolynomial.aeval (R := ℂ) (sym (n := n))) :=
         (map_pow (MvPolynomial.aeval (R := ℂ) (sym (n := n))).mapMatrix (curvPoly G v) k).symm
       rw [← neg_one_smul ℂ (curvPoly G v), smul_pow, Matrix.trace_smul, map_smul, powAt, e]
-      simp only [Matrix.trace, Matrix.diag, map_sum, Matrix.map_apply]
-    rw [map_mul, map_natCast, map_neg, map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.trace, Matrix.diag, map_sum, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_natCast, map_neg, map_sum] at h
     simp only [map_mul, hp] at h
     simp only [chernAt, chernPoly]
     rw [smul_comm, Nat.cast_smul_eq_nsmul, nsmul_eq_mul, h, smul_neg, Finset.smul_sum]

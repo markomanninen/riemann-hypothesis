@@ -1,5 +1,9 @@
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
-import Lemmata.GeneralBFactSide.Imports
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+public import Lemmata.GeneralBFactSide.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 
@@ -166,23 +170,5 @@ theorem ModDepthGE.quotSMulTop {x : R} (hx : x ∈ maximalIdeal R) (reg : IsSMul
     {n : ℕ} (h : ModDepthGE R M (n + 1)) : ModDepthGE R (QuotSMulTop x M) n := by
   obtain ⟨rs, hl, hm, hr⟩ := exists_isRegular_cons_of_modDepthGE hx reg h
   exact ⟨rs, hl, hm, ((isRegular_cons_iff M x rs).mp hr).2⟩
-
-theorem exists_isRegular_append_of_modDepthGE {rs : List R} (hrs : ∀ r ∈ rs, r ∈ maximalIdeal R)
-    (reg : IsRegular M rs) {n : ℕ} (h : ModDepthGE R M (rs.length + n)) :
-    ∃ rs' : List R, rs'.length = n ∧ (∀ r ∈ rs', r ∈ maximalIdeal R) ∧
-      IsRegular M (rs ++ rs') := by
-  induction rs generalizing M with
-  | nil =>
-    simp only [List.length_nil, zero_add] at h
-    obtain ⟨rs', hl, hm, hr⟩ := h
-    exact ⟨rs', hl, hm, hr⟩
-  | cons r rs ih =>
-    have hr : r ∈ maximalIdeal R := hrs r (by simp)
-    obtain ⟨rreg, hq⟩ := (isRegular_cons_iff M r rs).mp reg
-    have hlen : (r :: rs).length + n = rs.length + n + 1 := by simp; omega
-    rw [hlen] at h
-    obtain ⟨rs', hl, hm, hreg'⟩ := ih (M := QuotSMulTop r M)
-      (fun s hs => hrs s (List.mem_cons_of_mem _ hs)) hq (ModDepthGE.quotSMulTop hr rreg h)
-    exact ⟨rs', hl, hm, (isRegular_cons_iff M r _).mpr ⟨rreg, hreg'⟩⟩
 
 end ReciprocityTheory.CA

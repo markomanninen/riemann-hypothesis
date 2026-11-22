@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.SliceVanishing.Pieces
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.SliceVanishing.Pieces
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ theorem sliceVan_of_frob' [CharZero k] (hFr : FrobeniusReciprocity) (hU : Unimod
       right_inv := fun q => by rw [← act_mul, mul_inv_cancel, act_one]
       continuous_toFun := continuous_act.comp (continuous_const.prodMk continuous_id)
       continuous_invFun := continuous_act.comp (continuous_const.prodMk continuous_id) }
-  have hDeqv : D ∈ eqv (Xs F) (1 : GzS Z →* ℂˣ) := by
+  have hDeqv : D ∈ eqv (X := Xs F) (1 : GzS Z →* ℂˣ) := by
     intro g φ0
     obtain ⟨f0, rfl⟩ := restr_surjective hXc φ0
     let f1 : SC (Sp k n) := pullL (actH g⁻¹.1) f0

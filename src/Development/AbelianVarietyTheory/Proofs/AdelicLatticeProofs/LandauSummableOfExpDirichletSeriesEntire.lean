@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical
 open scoped ContDiff nonZeroDivisors
 
@@ -40,9 +45,9 @@ private theorem hasSum_prod_fin_pow {ι : Type} (z : ι → ℂ) (g : ℂ)
       rw [← hnorm] at H
       exact (Equiv.summable_iff e).mp H
 
+
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical in
 open scoped ContDiff nonZeroDivisors in
-
 theorem _root_.GlobalTheory.hasSum_tuple_prod_exp {ι : Type} (z : ι → ℂ) (g : ℂ) (h : HasSum z g) :
     HasSum (fun p : (Σ n : ℕ, Fin n → ι) => (∏ k, z (p.2 k)) / (p.1.factorial : ℂ))
       (Complex.exp g) := by
@@ -78,9 +83,9 @@ theorem _root_.GlobalTheory.hasSum_tuple_prod_exp {ι : Type} (z : ι → ℂ) (
   exact HasSum.sigma_of_hasSum hexp
     (fun n => ((hasSum_prod_fin_pow z g hz h n).1.div_const (n.factorial : ℂ))) hsum
 
+
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical in
 open scoped ContDiff nonZeroDivisors in
-
 theorem _root_.GlobalTheory.landau_exp_summable : ∀ (ι : Type) (a l : ι → ℝ) (F : ℂ → ℂ),
     (∀ i, 0 ≤ a i) → (∀ i, 0 ≤ l i) → Differentiable ℂ F →
     (∀ s : ℂ, 1 < s.re → ∃ g : ℂ, HasSum (fun i => (a i : ℂ) * Complex.exp (-(l i : ℂ) * s)) g ∧
@@ -189,15 +194,14 @@ theorem _root_.GlobalTheory.landau_exp_summable : ∀ (ι : Type) (a l : ι → 
       simp only [r, ← tsum_mul_right]
       congr 1
       funext p
-      simp only [T]
-      rw [mul_pow, mul_pow, one_pow]
+      simp only [T, mul_one]
       ring
     rw [hcn, hrn]
     exact (hK2' ρ hρ0 hρ1).le_tsum n fun m _ => tsum_nonneg fun p => hT ρ hρ0 (p, m)
   have hps : HasFPowerSeriesOnBall F (FormalMultilinearSeries.ofScalars ℂ c) 2 1 := by
     refine ⟨hrad, one_pos, fun {y} hy => ?_⟩
     have hy1 : ‖y‖ < 1 := by
-      simpa [EMetric.mem_ball, edist_zero_right, ← ofReal_norm, ENNReal.ofReal_lt_one] using hy
+      simpa [Metric.mem_eball, edist_zero_right, ← ofReal_norm, ENNReal.ofReal_lt_one] using hy
     simp only [FormalMultilinearSeries.ofScalars_apply_eq, smul_eq_mul]
     let E : (Σ n : ℕ, Fin n → ι) × ℕ → ℂ := fun q =>
       ((b q.1 * Real.exp (-(2 * L q.1)) : ℝ) : ℂ) * ((-(L q.1 : ℂ) * y) ^ q.2 / (q.2.factorial : ℂ))
@@ -252,7 +256,7 @@ theorem _root_.GlobalTheory.landau_exp_summable : ∀ (ι : Type) (a l : ι → 
   have hent := hF.hasFPowerSeriesOnBall 2 (R := 1) one_pos
   have hpeq := hps.hasFPowerSeriesAt.eq_formalMultilinearSeries hent.hasFPowerSeriesAt
   rw [← hpeq] at hent
-  have H0 := hent.hasSum (y := -2) (EMetric.mem_ball.mpr (edist_lt_top _ _))
+  have H0 := hent.hasSum (y := -2) (Metric.mem_eball.mpr (edist_lt_top _ _))
   simp only [FormalMultilinearSeries.ofScalars_apply_eq, smul_eq_mul] at H0
   have hterm : ∀ n, c n * (-2) ^ n = ((∑' p, T 2 (p, n) : ℝ) : ℂ) := by
     intro n

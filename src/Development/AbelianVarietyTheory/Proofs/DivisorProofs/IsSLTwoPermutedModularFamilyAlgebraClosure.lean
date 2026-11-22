@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+
+@[expose] public section
 
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators
 open GlobalTheory.QFam
@@ -17,10 +21,10 @@ private lemma isFam_apply_smul_mul_denom_zpow {w : ℤ} {f : ι → ℍ → ℂ}
       ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ)) γ)) ↑τ ^ (-w) = f (act i γ) τ := by
   rw [← SL_slash_apply, hf i γ]
 
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators in
 open ModularForm in
 variable {ι : Type} {act : ι → SL(2, ℤ) → ι} in
-
 theorem _root_.GlobalTheory.QFam.IsFam.const_mul_fun {w : ℤ} {f : ι → ℍ → ℂ} (c : ℂ)
     (hf : _root_.GlobalTheory.QFam.IsFam act w f) :
     _root_.GlobalTheory.QFam.IsFam act w fun i τ => c * f i τ := by
@@ -30,10 +34,10 @@ theorem _root_.GlobalTheory.QFam.IsFam.const_mul_fun {w : ℤ} {f : ι → ℍ �
   rw [← isFam_apply_smul_mul_denom_zpow hf i γ τ]
   ring
 
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators in
 open ModularForm in
 variable {ι : Type} {act : ι → SL(2, ℤ) → ι} in
-
 theorem _root_.GlobalTheory.QFam.IsFam.mul_fun {w w' : ℤ} {f g : ι → ℍ → ℂ}
     (hf : _root_.GlobalTheory.QFam.IsFam act w f) (hg : _root_.GlobalTheory.QFam.IsFam act w' g) :
     _root_.GlobalTheory.QFam.IsFam act (w + w') fun i τ => f i τ * g i τ := by
@@ -44,10 +48,10 @@ theorem _root_.GlobalTheory.QFam.IsFam.mul_fun {w w' : ℤ} {f g : ι → ℍ �
     zpow_add₀ (UpperHalfPlane.denom_ne_zero _ _)]
   ring
 
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators in
 open ModularForm in
 variable {ι : Type} {act : ι → SL(2, ℤ) → ι} in
-
 theorem _root_.GlobalTheory.QFam.IsFam.pow_fun {w : ℤ} {f : ι → ℍ → ℂ} (k : ℕ)
     (hf : _root_.GlobalTheory.QFam.IsFam act w f) :
     _root_.GlobalTheory.QFam.IsFam act (k * w) fun i τ => f i τ ^ k := by
@@ -57,10 +61,10 @@ theorem _root_.GlobalTheory.QFam.IsFam.pow_fun {w : ℤ} {f : ι → ℍ → ℂ
   rw [← isFam_apply_smul_mul_denom_zpow hf i γ τ, mul_pow, ← zpow_natCast, ← zpow_natCast, ← zpow_mul,
     show -((k : ℤ) * w) = -w * k by ring]
 
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators in
 open ModularForm in
 variable {ι : Type} {act : ι → SL(2, ℤ) → ι} in
-
 theorem _root_.GlobalTheory.QFam.IsFam.sum_fun {κ : Type} (t : Finset κ) {w : ℤ}
     {f : κ → ι → ℍ → ℂ} (hf : ∀ k ∈ t, _root_.GlobalTheory.QFam.IsFam act w (f k)) :
     _root_.GlobalTheory.QFam.IsFam act w fun i τ => ∑ k ∈ t, f k i τ := by
@@ -69,10 +73,10 @@ theorem _root_.GlobalTheory.QFam.IsFam.sum_fun {κ : Type} (t : Finset κ) {w : 
   simp only [SL_slash_apply, Finset.sum_mul]
   exact Finset.sum_congr rfl fun k hk => isFam_apply_smul_mul_denom_zpow (hf k hk) i γ τ
 
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators in
 open ModularForm in
 variable {ι : Type} {act : ι → SL(2, ℤ) → ι} in
-
 theorem _root_.GlobalTheory.QFam.isFam_algebra : ∀ (ι : Type) (act : ι → SL(2, ℤ) → ι),
     (∀ c : ℂ, _root_.GlobalTheory.QFam.IsFam act 0 fun _ _ => c) ∧
     (∀ w f g, _root_.GlobalTheory.QFam.IsFam act w f → _root_.GlobalTheory.QFam.IsFam act w g →

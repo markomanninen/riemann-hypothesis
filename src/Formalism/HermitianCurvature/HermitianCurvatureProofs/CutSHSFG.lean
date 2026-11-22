@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ComplexConjugate ContDiff

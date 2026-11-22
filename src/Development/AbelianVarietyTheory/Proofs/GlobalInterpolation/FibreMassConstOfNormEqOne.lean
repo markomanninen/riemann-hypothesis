@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
+
 open scoped TensorProduct
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 
@@ -74,7 +79,6 @@ theorem fibre_mass_const_of_norm_eq_one {K : Type} [NormedField K] [ProperSpace 
       · rw [Set.indicator_of_mem hb]
         refine measure_congr ?_
         filter_upwards [hae] with v hv
-        apply propext
         constructor
         · exact fun h => h.1
         · exact fun h => ⟨h, show q v ∈ S from hv ▸ hb⟩

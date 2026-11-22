@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSheetSimpleNull
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSheetSimpleNull
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

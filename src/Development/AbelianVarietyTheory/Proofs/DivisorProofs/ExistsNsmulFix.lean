@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionHeisenbergInvariant
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionHeisenbergInvariant
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -16,8 +21,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 variable {σ : E →ₐ[F] E} {nS nT : ℕ} {JS : Matrix (Fin nS) (Fin nS) E} {JT : Matrix (Fin nT) (Fin nT) E} {xi0 : E}
   {ψ : AddChar (AF F) ℂ}
 
-variable (σ) in
 
+variable (σ) in
 def conjHalf (e : AEF F E) (nS nT : ℕ) : AddSubgroup (WOF F E nS nT) where
   carrier := {u | ∀ i j, cAF σ e * u i j = u i j}
   add_mem' := fun {a b} ha hb i j => by
@@ -28,15 +33,15 @@ def conjHalf (e : AEF F E) (nS nT : ℕ) : AddSubgroup (WOF F E nS nT) where
     simp only [Set.mem_setOf_eq] at ha
     rw [Matrix.neg_apply, mul_neg, ha i j]
 
-variable (σ JS JT xi0 ψ) in
 
+variable (σ JS JT xi0 ψ) in
 def heisL (w : WOF F E nS nT) : (WOF F E nS nT → ℂ) →ₗ[ℂ] (WOF F E nS nT → ℂ) where
   toFun := heisOF σ JS JT xi0 ψ w
   map_add' := GlobalTheory.WeilPartsF.heisOF_add w
   map_smul' := fun c f => GlobalTheory.WeilPartsF.heisOF_smul c w f
 
-variable (σ JS JT xi0 ψ) in
 
+variable (σ JS JT xi0 ψ) in
 def commF (u y : WOF F E nS nT) : ℂ :=
   ψ (symplOHF σ JS JT xi0 u y - symplOHF σ JS JT xi0 y u)
 
@@ -61,7 +66,7 @@ theorem heisOF_zero (f : WOF F E nS nT → ℂ) : heisOF σ JS JT xi0 ψ 0 f = f
 theorem cAF_cAF {e : AEF F E} (he : IsSplitIdemF σ e) : cAF σ (cAF σ e) = e := by
   obtain ⟨-, -, v, ε, -, h⟩ := he
   have h2 := congrArg (cAF σ) h
-  rw [map_add, GlobalTheory.HeisThetaF.cAF_algebraMap] at h2
+  rw [map_add (f := _), GlobalTheory.HeisThetaF.cAF_algebraMap] at h2
   linear_combination h2 - h
 
 theorem hOF_half {e : AEF F E} (he : IsSplitIdemF σ e) {x y : WOF F E nS nT} (hx : x ∈ conjHalf σ e nS nT)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,8 @@ theorem exists_basis (hinj : Function.Injective (algebraMap A Ω)) (N : Submodul
       { carrier := {s | ∃ n ∈ N, (∀ j < i, φ j n = 0) ∧ φ i n = algebraMap A Ω s * t i}
         add_mem' := by
           rintro a b ⟨n, hn, h0, h⟩ ⟨n', hn', h0', h'⟩
-          refine ⟨n + n', N.add_mem hn hn', fun j hj => by rw [map_add, h0 j hj, h0' j hj, add_zero], ?_⟩
-          rw [map_add, map_add, h, h', add_mul]
+          refine ⟨n + n', N.add_mem hn hn', fun j hj => by rw [map_add (f := _), h0 j hj, h0' j hj, add_zero], ?_⟩
+          rw [map_add (f := _), map_add (f := _), h, h', add_mul]
         zero_mem' := ⟨0, N.zero_mem, fun j _ => map_zero _, by simp⟩
         smul_mem' := by
           rintro c a ⟨n, hn, h0, h⟩
@@ -52,7 +56,7 @@ theorem exists_basis (hinj : Function.Injective (algebraMap A Ω)) (N : Submodul
       { carrier := {s | ∃ a : A, algebraMap A Ω s * φ i n = algebraMap A Ω a * t i}
         add_mem' := by
           rintro a b ⟨x, h⟩ ⟨y, h'⟩
-          exact ⟨x + y, by rw [map_add, map_add, add_mul, add_mul, h, h']⟩
+          exact ⟨x + y, by rw [map_add (f := _), map_add (f := _), add_mul, add_mul, h, h']⟩
         zero_mem' := ⟨0, by simp⟩
         smul_mem' := by
           rintro c a ⟨x, h⟩
@@ -71,7 +75,8 @@ theorem exists_basis (hinj : Function.Injective (algebraMap A Ω)) (N : Submodul
     induction i using WellFoundedLT.induction with
     | _ i ih =>
       have := congrArg (φ i) hg'
-      rw [map_sum, map_zero, Finset.sum_eq_single i] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero, Finset.sum_eq_single i] at this
       · rw [map_smul_alg, hnt] at this
         exact hinj (by rw [map_zero]; exact (mul_eq_zero.1 this).resolve_right (ht i))
       · intro j _ hj
@@ -286,10 +291,12 @@ theorem shape_alt {r : ℕ} (b₀ : Fin r → L) (e : Fin r → Ω) (he : ∀ a,
     · simp
   · have hz : (z : Module.Dual Ω L) = ∑ i, n.repr z i • (n i).1 := by
       have := congrArg N.subtype (n.sum_repr z)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       exact this.symm
     rw [Module.Basis.dualBasis_apply, hz]
-    simp only [map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.mul_sum]
     simp only [fun a' i => map_smul_alg (Module.Dual.eval Ω L (e a' • b₀ a')) (n.repr z i) (n i).1]
     rw [Finset.sum_comm]
     have : ∀ i, ∑ a', U⁻¹ a' a / e a' * (algebraMap A Ω (n.repr z i) * Module.Dual.eval Ω L (e a' • b₀ a') (n i).1) =

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.CyclotomicCharacters.Degree
-import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicCompositum
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.CyclotomicCharacters.Degree
+public import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicCompositum
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -9,11 +14,11 @@ open NumberField IntermediateField GroundTheory.Global GroundTheory.Global.Cyclo
 
 open scoped GroundTheory.LocalField.Abstract
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 namespace CyclotomicLayer
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 def degreeMod (r : ℕ+) : Gal(ℚ̄/ℚ) →* Multiplicative (ZMod r) :=
   (AddMonoidHom.toMultiplicative (ProfiniteInteger.proj r).toAddMonoidHom).comp degree

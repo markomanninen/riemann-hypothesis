@@ -1,11 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalRingOfIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalRingOfIdem
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma GlobalTheory.UnitLemma.Unr Polynomial
 
 namespace GlobalTheory.UnitLemma.Unr
 
-theorem conj_matrix_det_isUnit : ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), (∀ x, φ (K.c x) = K'.c (φ x)) → letI : Algebra K.E K'.E := φ.toAlgebra; ∀ w : Module.Basis (Fin d) K.E K'.E, (∀ z : K'.E, (∃ y : K'.O, algebraMap K'.O K'.E y = z) ↔ ∀ k, ∃ a : K.O, algebraMap K.O K.E a = w.repr z k) → ∃ u : K.O, IsUnit u ∧ algebraMap K.O K.E u = (Matrix.of fun m l => w.repr (K'.c (w l)) m).det := by
+theorem conj_matrix_det_isUnit :
+    ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), (∀ x, φ (K.c x) = K'.c (φ x)) →
+      (letI : Algebra K.E K'.E := φ.toAlgebra
+       ∀ w : Module.Basis (Fin d) K.E K'.E,
+         (∀ z : K'.E, (∃ y : K'.O, algebraMap K'.O K'.E y = z) ↔
+           ∀ k, ∃ a : K.O, algebraMap K.O K.E a = w.repr z k) →
+         ∃ u : K.O, IsUnit u ∧
+           algebraMap K.O K.E u = (Matrix.of fun m l => w.repr (K'.c (w l)) m).det) := by
   intro K K' d φ hφ
   letI : Algebra K.E K'.E := φ.toAlgebra
   intro w hw
@@ -29,10 +41,12 @@ theorem conj_matrix_det_isUnit : ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E)
     intro x n
     have hx : K'.c x = ∑ m, K.c (w.repr x m) • K'.c (w m) := by
       conv_lhs => rw [← w.sum_repr x]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [hsm, hsm, map_mul, ← hφ]
-    rw [hx, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, Finsupp.finsetSum_apply]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
     rfl

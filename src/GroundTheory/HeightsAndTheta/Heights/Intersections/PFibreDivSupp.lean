@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.CycDim
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreDivSupp
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreIncomp
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.CycDim
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreDivSupp
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreIncomp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

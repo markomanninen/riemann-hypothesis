@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoFromNormalization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyHomologyEquiv
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MonoPullbackMapOfFlatStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoFromNormalization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyHomologyEquiv
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MonoPullbackMapOfFlatStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ theorem semiNeg_descends_baseChange : ∀ (k : Type) [Field k] (C : Scheme.{0}) 
     have : IsProper f := by
       obtain ⟨N, j, hj, e⟩ := h2
       have := isProper_str k N
-      change IsProper (strHom k C)
+      change IsProper (strHom k (X := C))
       rw [← e]
       infer_instance
     have hinst : (‹Algebra k Γ(C, ⊤)›) = algebraΓOfHom f :=

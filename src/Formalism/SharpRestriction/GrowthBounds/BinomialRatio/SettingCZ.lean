@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SettingCharZeroAt
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinrankTensor
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SettingCharZeroAt
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinrankTensor
+
+@[expose] public section
 
 noncomputable section
 

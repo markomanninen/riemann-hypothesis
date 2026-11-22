@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.PushforwardPreservesSelmerCocycles
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.PushforwardPreservesSelmerCocycles
+
+@[expose] public section
 
 open ReciprocityTheory.Gal UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -41,7 +45,7 @@ private theorem lift_two_cocycle_surjection [IsTopologicalGroup Γ] (r : D.Hom D
     have e := congrFun hb' (g, h)
     rw [d1_apply] at e
     change _ = r.f (z0.1 (g, h)) - z'.1 (g, h) at e
-    simp only [b, Pi.sub_apply, map_sub, map_add, d1_apply, r.equiv, hσ]
+    simp only [b, Pi.sub_apply, map_sub, map_add (f := _), d1_apply, r.equiv, hσ]
     rw [e]
     abel
 
@@ -64,7 +68,7 @@ private theorem defect_ex [IsTopologicalGroup Γ] {k : D0.Hom D} {r : D.Hom D'} 
   have he : ∀ w s, r.fq w (e w s) = 0 := by
     intro w s
     obtain ⟨g, h⟩ := s
-    simp only [e, q, map_sub, map_add, d1_apply, r.comm, hzr, r.equivq, hσ]
+    simp only [e, q, map_sub, map_add (f := _), d1_apply, r.comm, hzr, r.equivq, hσ]
     rw [(hp2 w).2 g h, d1_apply, sub_self]
   have hex : ∀ w s, ∃ x, k.fq w x = e w s := fun w s => (S.exq w (e w s)).mp (he w s)
   let τ : ∀ w, (D.Q w).X → (D0.Q w).X := fun w => Function.invFun (k.fq w)
@@ -85,15 +89,15 @@ private theorem defect_ex [IsTopologicalGroup Γ] {k : D0.Hom D} {r : D.Hom D'} 
       - e w (g, h) = 0 := by
     intro w g h t
     have key := congrArg (D.π w) (hz.2 (P.φ w g) (P.φ w h) (P.φ w t))
-    simp only [map_sub, map_add, map_zero, D.equiv] at key
-    simp only [e, d1_apply, map_sub, map_add, map_mul, Module.End.mul_apply, mul_assoc]
+    simp only [map_sub, map_add (f := _), map_zero, D.equiv] at key
+    simp only [e, d1_apply, map_sub, map_add (f := _), map_mul, Module.End.mul_apply, mul_assoc]
     refine (sub_eq_zero.mp ?_).trans key
     abel
   let c : ∀ w, Z2 (D0.Q w).ρ := fun w =>
     ⟨fun s => τ w (e w s), (continuous_of_discreteTopology (f := τ w)).comp (hec w), by
       intro g h t
       apply S.injq w
-      simp only [map_sub, map_add, map_zero, k.equivq, hτ]
+      simp only [map_sub, map_add (f := _), map_zero, k.equivq, hτ]
       exact hE w g h t⟩
   refine ⟨c, q, hz, hqc, ?_, fun w g h => hτ w (g, h)⟩
   refine Prod.ext ?_ ?_
@@ -129,7 +133,7 @@ private theorem defect_zero {k : D0.Hom D} {r : D.Hom D'} (S : Dat.SES k r) (p :
     · exact (hq2 w).sub ((continuous_of_discreteTopology (f := k.fq w)).comp (hbc w))
     · have e1 := hq4 w g h
       rw [hbe w g h] at e1
-      simp only [Pi.sub_apply, map_sub, map_add, d1_apply, k.comm, k.equivq] at e1 ⊢
+      simp only [Pi.sub_apply, map_sub, map_add (f := _), d1_apply, k.comm, k.equivq] at e1 ⊢
       refine sub_eq_zero.mp (Eq.trans ?_ (sub_eq_zero.mpr e1.symm))
       abel
   refine ⟨Submodule.Quotient.mk ⟨_, hZ⟩, ?_⟩

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLeadIdealDim
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLeadIdealDim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -15,10 +20,11 @@ theorem leadForm_ne_zero {f : MvPolynomial (Fin n) ℂ} (hf : f ≠ 0) : leadFor
   obtain ⟨d, hd, hdeg⟩ := Finset.exists_mem_eq_sup f.support (support_nonempty.mpr hf)
     (fun m => m.sum fun _ e => e)
   intro h0
-  have hc := congrArg (coeff d) h0
-  rw [leadForm, coeff_homogeneousComponent, coeff_zero] at hc
+  have hc := congrArg (AddMonoidAlgebra.coeff · d) h0
+  rw [leadForm, coeff_homogeneousComponent] at hc
   rw [if_pos (by rw [totalDegree, hdeg]; rfl)] at hc
-  exact (mem_support_iff.mp hd) hc
+  apply (mem_support_iff.mp hd)
+  simpa [AddMonoidAlgebra.coeff] using hc
 
 theorem vars_leadForm_subset (f : MvPolynomial (Fin n) ℂ) : (leadForm f).vars ⊆ f.vars := by
   intro i hi

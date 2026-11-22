@@ -1,16 +1,20 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TypeEx
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NameLaws
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NameCentral
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ExtEx
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.FinrankK
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ResBase
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ResIndep
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.IsSemisimpleInducedParam
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.IsoUniq
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameUniq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TypeEx
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NameLaws
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NameCentral
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ExtEx
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.FinrankK
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ResBase
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ResIndep
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.IsSemisimpleInducedParam
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.IsoUniq
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameUniq
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,9 +45,9 @@ theorem parEx : ParEx := by
   haveI : CharZero (HeightOneSpectrum.adicCompletion E w) :=
     (RingHom.charZero_iff (ϕ := i.toRingHom) i.injective).1 inferInstance
   obtain ⟨n, c⟩ := y
-  have hcls : GlobalTheory.LocLanglands.cls c.rep = (⟨n, c⟩ : IrrGL _) := by
+  have hcls : GlobalTheory.LocLanglands.cls c.rep = (⟨n, c⟩ : IrrGL (k := _)) := by
     simp [GlobalTheory.LocLanglands.cls, IrrCl.cl_rep]
-  obtain ⟨⟨ω, -, hω, hωu⟩, -, -, hpos, -⟩ := clBasic _ (⟨n, c⟩ : IrrGL _)
+  obtain ⟨⟨ω, -, hω, hωu⟩, -, -, hpos, -⟩ := clBasic _ (⟨n, c⟩ : IrrGL (k := _))
   have hn : 0 < n := hpos hy
   obtain ⟨φ, hφ⟩ := deg_surjective (h := h) 1
   rw [← hcls] at hy hdz

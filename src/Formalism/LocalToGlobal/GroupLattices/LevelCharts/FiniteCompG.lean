@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.IdemMulCompl
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.FiniteClassSetOfLe
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.IdemMulCompl
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.FiniteClassSetOfLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem trivG_rel (p : ℕ) (y : UPts σE J (FiniteAdeleRing (𝓞 F) F)) :
 theorem mk_trivG (p : ℕ) (y : UPts σE J (FiniteAdeleRing (𝓞 F) F)) :
     (Quotient.mk'' (trivG σE J p y) : compG σE J Uloc p) = Quotient.mk'' y := by
   symm
-  refine (DoubleCoset.eq _ _ y (trivG σE J p y)).2 ⟨1, Subgroup.one_mem _, y⁻¹ * trivG σE J p y, ?_, ?_⟩
+  refine (@DoubleCoset.eq _ _ _ _ y (trivG σE J p y)).2 ⟨1, Subgroup.one_mem _, y⁻¹ * trivG σE J p y, ?_, ?_⟩
   · exact Subgroup.mem_subgroupOf.2 (trivG_rel σE J Uloc p y)
   · rw [one_mul, mul_inv_cancel_left]
 

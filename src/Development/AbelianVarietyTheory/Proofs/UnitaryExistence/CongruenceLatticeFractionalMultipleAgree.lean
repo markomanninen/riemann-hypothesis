@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Formalism.LocalToGlobal.ProjectiveLattices.ValSetAlgSubset
-import Formalism.LocalToGlobal.ProjectiveLattices.IntAll
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Formalism.LocalToGlobal.ProjectiveLattices.VolProofs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Formalism.LocalToGlobal.ProjectiveLattices.ValSetAlgSubset
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntAll
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Formalism.LocalToGlobal.ProjectiveLattices.VolProofs
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj
 open scoped TensorProduct Matrix Topology
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -139,7 +144,7 @@ theorem stab_iff (L : Submodule (𝓞 E) (Fin n → E)) {A : FractionalIdeal (�
       rw [map_smul, e]
       exact AddSubgroup.subset_closure ⟨a, ha, _, add_mem hy hz, rfl⟩
     | zero => rw [map_zero]; exact zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := k)]; exact add_mem hx hy
     | neg x _ hx => rw [map_neg]; exact neg_mem hx
 
 theorem cong_iff (L : Submodule (𝓞 E) (Fin n → E)) {A : FractionalIdeal (𝓞 E)⁰ E} (hA : A ≠ 0)
@@ -176,13 +181,13 @@ theorem cong_iff (L : Submodule (𝓞 E) (Fin n → E)) {A : FractionalIdeal (�
       | add x y _ _ hx hy =>
         obtain ⟨x', hx', e⟩ := hx
         obtain ⟨y', hy', e'⟩ := hy
-        exact ⟨x' + y', add_mem hx' hy', by rw [smul_add, map_add, e, e', smul_add]⟩
+        exact ⟨x' + y', add_mem hx' hy', by rw [smul_add, map_add (f := _), e, e', smul_add]⟩
       | neg x _ hx =>
         obtain ⟨x', hx', e⟩ := hx
         exact ⟨-x', neg_mem hx', by rw [smul_neg, map_neg, e, smul_neg]⟩
     · obtain ⟨x', hx', e⟩ := hx
       obtain ⟨y', hy', e'⟩ := hy
-      exact ⟨x' + y', add_mem hx' hy', by rw [fv_add, map_add, e, e', smul_add]⟩
+      exact ⟨x' + y', add_mem hx' hy', by rw [fv_add, map_add (f := _), e, e', smul_add]⟩
   · intro h b hb z hz
     induction hz using AddSubgroup.closure_induction with
     | mem z hz =>
@@ -208,7 +213,7 @@ theorem cong_iff (L : Submodule (𝓞 E) (Fin n → E)) {A : FractionalIdeal (�
     | add x y _ _ hx hy =>
       obtain ⟨x', hx', e⟩ := hx
       obtain ⟨y', hy', e'⟩ := hy
-      exact ⟨x' + y', add_mem hx' hy', by rw [smul_add, map_add, e, e', smul_add]⟩
+      exact ⟨x' + y', add_mem hx' hy', by rw [smul_add, map_add (f := _), e, e', smul_add]⟩
     | neg x _ hx =>
       obtain ⟨x', hx', e⟩ := hx
       exact ⟨-x', neg_mem hx', by rw [smul_neg, map_neg, e, smul_neg]⟩

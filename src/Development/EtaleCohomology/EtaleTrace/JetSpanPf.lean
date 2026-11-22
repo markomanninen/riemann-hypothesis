@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LCoverCut
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LCoverCut
+
+@[expose] public section
 
 noncomputable section
 open MvPolynomial
@@ -49,7 +53,7 @@ lemma dpoly_mem {n : ℕ} (v : Fin n → K) (i : Fin n) (hi : v i = 1) (g : MvPo
     KaehlerDifferential.D k K (aeval v g) ∈ T v := by
   induction g using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => rw [map_add, map_add]; exact Submodule.add_mem _ hp hq
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ hp hq
   | mul_X p j hp =>
     rw [map_mul, aeval_X, Derivation.leibniz]
     exact Submodule.add_mem _ (Submodule.smul_mem _ _ (dv_mem v i hi j)) (Submodule.smul_mem _ _ hp)

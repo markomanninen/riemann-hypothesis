@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AreaBoundedOfDiscrEqOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeanLogPeriodConjugatesEqChowlaSelbergStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaNormUnimodularLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaHalfPeriodValueIsIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SigmaStarValueLeMeanSquareGenusOneStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicDataStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationDenominatorsAndHostFieldSizesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatumStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTwoTorsionCMPointAllConjugates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AreaBoundedOfDiscrEqOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeanLogPeriodConjugatesEqChowlaSelbergStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaNormUnimodularLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaHalfPeriodValueIsIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SigmaStarValueLeMeanSquareGenusOneStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicDataStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationDenominatorsAndHostFieldSizesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatumStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTwoTorsionCMPointAllConjugates
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -117,7 +121,7 @@ theorem posLog_nrm_le (Λ : AddSubgroup ℂ)
     linarith
   have e2 : Real.posLog (‖U1 Λ t (sgStar Λ) 0‖ ^ 2)⁻¹ ≤
       2 * (Real.posLog B + Real.posLog (nrm1Sq Λ (sgStar Λ))) := by
-    refine (Real.posLog_le_posLog (by positivity) hi).trans ?_
+    refine (Real.posLog_le_posLog (by linarith [show 0 ≤ (‖U1 Λ t (sgStar Λ) 0‖ ^ 2)⁻¹ from by positivity]) hi).trans ?_
     rw [Real.posLog_pow]
     have := Real.posLog_mul (x := B) (y := nrm1Sq Λ (sgStar Λ))
     push_cast
@@ -221,7 +225,7 @@ theorem not_mem_lattice_of_isCMTorsionBasePoint {D : D7} {Λ : AddSubgroup ℂ} 
       simp [Polynomial.eval₂_sub, Polynomial.eval₂_add, hc]⟩
   have h1 : D.host.φ₀ ((1 + D.host.sqrtMinusD) / 2) * t ∈ Λ :=
     hO ⟨⟨_, hmem⟩, (isIntegral_algHom_iff (D.host.K.val.toRingHom.toIntAlgHom) Subtype.val_injective).1 hint⟩ t ht
-  rw [map_div₀, map_add, map_one, map_ofNat] at h1
+  rw [map_div₀, map_add (f := _), map_one, map_ofNat] at h1
   have h2 : D.host.φ₀ D.host.sqrtMinusD ^ 2 = (Complex.I * (Real.sqrt D.host.d : ℂ)) ^ 2 := by
     rw [← map_pow, hs, mul_pow, Complex.I_sq, ← Complex.ofReal_pow, Real.sq_sqrt (Nat.cast_nonneg _)]
     simp
@@ -248,7 +252,7 @@ theorem means_le : ∃ C : ℝ, 0 < C ∧ ∀ (D : D7), Inp D → ∀ (cc : Idea
   have hl2p : 0 ≤ Real.log (2 * Real.pi) := Real.log_nonneg (by linarith)
   rw [Real.log_div (by positivity) (by positivity), Real.log_sqrt hd0.le, div_eq_iff hn.ne'] at hper
   have hB : Real.posLog (3 * (2 * D.host.rdE + 1)) ≤ 9 * L := by
-    refine (Real.posLog_le_posLog (by positivity) (show _ ≤ 9 * D.host.rdE by linarith)).trans ?_
+    refine (Real.posLog_le_posLog (by linarith [show (0 : ℝ) ≤ 3 * (2 * D.host.rdE + 1) from by positivity]) (show _ ≤ 9 * D.host.rdE by linarith)).trans ?_
     rw [Real.posLog_eq_log (by rw [abs_of_pos (by positivity)]; linarith),
       Real.log_mul (by norm_num) (by positivity)]
     have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 9 by norm_num)
@@ -267,7 +271,7 @@ theorem means_le : ∃ C : ℝ, 0 < C ∧ ∀ (D : D7), Inp D → ∀ (cc : Idea
     obtain ⟨ha0, haC⟩ := hA _ hΛ hdisc
     constructor
     · rw [Real.log_div ha0.ne' (by positivity)]
-      have h1 := Real.posLog_le_posLog ha0.le haC
+      have h1 := Real.posLog_le_posLog (by linarith [ha0.le]) haC
       have h4 := Real.posLog_sub_posLog_inv (x := area (lamOf D cc' δ'))
       linarith
     · have := posLog_nrm_le _ hΛ hdisc ((GlobalTheory.T.admJ_and_torsion_data_algebraic D hI.g1).1 cc' δ' hc'.1 hc'.2)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTiedOfIsRecG
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConcrete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTiedOfIsRecG
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConcrete
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ def IsLocalFamily (sc : Scale) (D : D7) (L0 : LevelData D) (T : ∀ u : D.what�
         (embRec D w (nFr D (D.what₂.places.resChar w))) (ψ u w hg)) ∧
     g = gatOf D L0 I ψ sc
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_isLocalFamily (sc : Scale) {D : D7} {L0 : LevelData D} (T : ∀ u : D.what₂.Word, Forms0 D u)
     (hS : Formalism.L2.Herm.StdTied D) (hC : Companion D L0) (hJ : ∀ u, Joint0 L0 u (T u)) (hψ : ∀ u, LevelZeroCharacterRational T u) :
     ∃ g, (∀ u w h, (g u w h).d = Module.finrank ℂ (D.mem u).A.Mu0) ∧ IsLocalFamily sc D L0 T g :=
@@ -47,8 +51,8 @@ theorem exists_isLocalFamily (sc : Scale) {D : D7} {L0 : LevelData D} (T : ∀ u
     embK_embAlg D L0, posOK_placeId hS hC _,
     fun u w hg => Classical.choose_spec (GlobalTheory.Mem.AwayChar.exists_psi D L0 T hJ hψ u w hg), rfl⟩
 
-set_option maxHeartbeats 32000000 in
 
+set_option maxHeartbeats 32000000 in
 theorem isRecG_of_isLocalFamily {sc : Scale} {D : D7} {L0 : LevelData D} {T : ∀ u : D.what₂.Word, Forms0 D u}
     (hJ : ∀ u, Joint0 L0 u (T u)) (hψ : ∀ u, LevelZeroCharacterRational T u) {g} (hd : ∀ u w h, (g u w h).d = Module.finrank ℂ (D.mem u).A.Mu0)
     (h : IsLocalFamily sc D L0 T g) :

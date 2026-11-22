@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -121,8 +125,8 @@ lemma eta_rel (hP : IsogenyP) (hd : ZetaHasDeriv) (hq : ZetaQuasi) (L : PeriodPa
 
 end S2IsogenyPsi
 
-open S2IsogenyPsi in
 
+open S2IsogenyPsi in
 theorem quasiPeriodConstIsogeny_of (hP : IsogenyP) (hd : ZetaHasDeriv) (hq : ZetaQuasi) (he : EtaSplit)
     (hc : KerRepsCard) : QuasiPeriodConstIsogeny := by
   intro L α S hα hst hS
@@ -133,7 +137,7 @@ theorem quasiPeriodConstIsogeny_of (hP : IsogenyP) (hd : ZetaHasDeriv) (hq : Zet
     rw [LinearIndependent.pair_iff] at hli
     have h1 := (hli 1 0 (by rw [h0]; simp)).1
     exact one_ne_zero h1
-  have hrel := eta_rel hP hd hq L α S hα hst hS L.ω₁ hω₁
+  have hrel := S2IsogenyPsi.eta_rel hP hd hq L α S hα hst hS L.ω₁ hω₁
   rw [he L (α * L.ω₁), he L L.ω₁] at hrel
   have hcard : ((S.card : ℂ) + 1) = (Complex.normSq α : ℂ) := by
     have h2 := hc L α S hα hst hS

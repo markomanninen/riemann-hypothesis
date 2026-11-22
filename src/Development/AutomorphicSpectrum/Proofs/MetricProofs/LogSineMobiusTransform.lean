@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.XGramGrad
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.XGramGrad
+
+@[expose] public section
+
 open Matrix GlobalTheory.CompanionTheory.Ar.PB
 open scoped ComplexOrder
 

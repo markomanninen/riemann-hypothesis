@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlock
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SupBoundCountLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlock
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SupBoundCountLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -53,12 +58,12 @@ theorem cast_single {r : ℕ} (k : Fin r) :
 
 end BlockChiCovolume
 
-open BlockChiCovolume in
 
+open BlockChiCovolume in
 theorem BlockChiCovolume.proof : BlockChiCovolume.Statement := by
   intro D K _ _ ι _ Ω _ _ d n E hE r ψ hψ hnorm _ _
   have hex := exists_isSecBasisM d.y d.k₀ n
-  rw [blockChi, dif_pos hex]
+  rw [blockChi, dite_eq_left hex]
   have hb := hex.choose_spec
   generalize hex.choose = p at hb ⊢
   obtain ⟨hbf, hli, hspan⟩ := hb
@@ -94,7 +99,8 @@ theorem BlockChiCovolume.proof : BlockChiCovolume.Statement := by
     intro m
     rw [hnorm _ (∑ j, m j • f j) (isMultiHomog_zsum f m hf), blockL2Norm_sum_eq_sqrt_gram d n f hf m,
       Real.sq_sqrt (quad_nonneg d n f hf _)]
-    simp [ε, hw, aeval_map_int, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [ε, hw, aeval_map_int, map_sum]
   have hgram : Matrix.gram ℝ (fun i => (B i : EuclideanSpace ℝ (Fin r))) = G := by
     ext k l
     rw [entry_of_quad G (gram_symm d n f hf) k l, ← cast_single_add, ← cast_single, ← cast_single, ← key, ← key,

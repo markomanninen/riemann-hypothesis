@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ def annOp (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (M : DSModel V S) (M'
 
 def multiFact {ι : Type} (α : ι →₀ ℕ) : ℕ := α.prod fun _ k => k.factorial
 
-open Classical in
 
+open Classical in
 def FockLaws (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (M : DSModel V S) (M' : DSModel W S')
     (f : WO V W → ℂ) : Prop :=
   (∀ P : PolF D W.rank V.rank, IsThetaFunO ψ V W (ptOf ψ θ M M' f P)) ∧
@@ -51,9 +55,6 @@ theorem ptOf_one (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (M : DSModel V
   unfold ptOf pureTensorO pureTensorL
   rw [h, Module.Basis.constr_basis]
   simp [opPow]
-
-example : multiFact (Finsupp.single () 3) = 6 := by
-  rw [multiFact, Finsupp.prod_single_index (by simp)]; rfl
 
 end GlobalTheory.IndefiniteRowSideFullHecke.VacuumFockVectors
 

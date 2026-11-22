@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
-import Development.EtaleCohomology.EtaleTrace.FrobTraceOf
-import Development.EtaleCohomology.EtaleTrace.LPdCut
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+public import Development.EtaleCohomology.EtaleTrace.FrobTraceOf
+public import Development.EtaleCohomology.EtaleTrace.LPdCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace UpperTheory.Gal.KunnethLefschetz

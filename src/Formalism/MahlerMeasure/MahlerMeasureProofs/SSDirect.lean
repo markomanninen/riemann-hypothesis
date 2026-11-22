@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.LevelLattice
+module
+
+public import Formalism.MahlerMeasure.LevelLattice
+
+@[expose] public section
 
 namespace Formalism.GM.M.SSD
 
@@ -153,12 +157,12 @@ lemma SFree.rename {τ : Type} (e : τ → σ) (he : ∀ x k, e x ≠ sv k) (y :
     SFree sv (rename e y) := by
   induction y using MvPolynomial.induction_on with
   | C a => rw [rename_C]; exact SFree.C sv a
-  | add f g hf hg => rw [map_add]; exact hf.add sv hg
+  | add f g hf hg => rw [map_add (f := _)]; exact hf.add sv hg
   | mul_X f x hf => rw [map_mul, rename_X]; exact hf.mul sv (SFree.X sv (he x))
 
 lemma Good.mul_sfree {f Q : MvPolynomial σ K} {a : ι → ℕ} {s : σ →₀ ℕ} (hf : Good sv f a s)
     (hQ : SFree sv Q) :
-    (∀ m ∈ (f * Q).support, sd sv m ≤ a) ∧ (∀ n, coeff (s + n) (f * Q) = coeff n Q) := by
+    (∀ m ∈ (f * Q).support, sd sv m ≤ a) ∧ (∀ n, AddMonoidAlgebra.coeff (f * Q) (s + n) = AddMonoidAlgebra.coeff Q n) := by
   have hid : f * Q = monomial s 1 * Q + (f - monomial s 1) * Q := by ring
   have hR : ∀ m ∈ ((f - monomial s 1) * Q).support, sd sv m ≤ a ∧ sd sv m ≠ a := by
     intro m hm
@@ -172,9 +176,9 @@ lemma Good.mul_sfree {f Q : MvPolynomial σ K} {a : ι → ℕ} {s : σ →₀ �
       rw [mem_support_monomial_one hu, sd_add, hQ w hw, add_zero, hf.1]
     · exact (hR m hm).1
   · intro n
-    rw [hid, coeff_add, coeff_monomial_mul, one_mul]
+    rw [hid, MvPolynomial.coeff_add, coeff_monomial_mul, one_mul]
     by_cases hn : n ∈ Q.support
-    · have hz : coeff (s + n) ((f - monomial s 1) * Q) = 0 := by
+    · have hz : AddMonoidAlgebra.coeff ((f - monomial s 1) * Q) (s + n) = 0 := by
         by_contra h
         have := hR _ (mem_support_iff.mpr h)
         rw [sd_add, hQ n hn, add_zero, hf.1] at this
@@ -208,7 +212,7 @@ lemma topcoeff (a : ι' → ι → ℕ) (ha : Function.Injective a) (P : ι' →
     (h1 : ∀ L v, P L v → ∀ m ∈ v.support, sd sv m ≤ a L)
     (s : Finset ι') (v : ι' → MvPolynomial σ K) (hv : ∀ L ∈ s, P L (v L)) (L : ι') (hL : L ∈ s)
     (hmax : ∀ L' ∈ s, ∑ k, a L' k ≤ ∑ k, a L k) (m : σ →₀ ℕ) (hm : sd sv m = a L) :
-    coeff m (∑ L' ∈ s, v L') = coeff m (v L) := by
+    AddMonoidAlgebra.coeff (∑ L' ∈ s, v L') m = AddMonoidAlgebra.coeff (v L) m := by
   rw [coeff_sum, Finset.sum_eq_single L]
   · intro L' hL' hne'
     by_contra hc'
@@ -219,7 +223,7 @@ lemma topcoeff (a : ι' → ι → ℕ) (ha : Function.Injective a) (P : ι' →
 
 theorem absDirect (V : ι' → Submodule K (MvPolynomial σ K)) (a : ι' → ι → ℕ) (ha : Function.Injective a)
     (h1 : ∀ L, ∀ v ∈ V L, ∀ m ∈ v.support, sd sv m ≤ a L)
-    (h2 : ∀ L, ∀ v ∈ V L, (∀ m, sd sv m = a L → coeff m v = 0) → v = 0) : iSupIndep V := by
+    (h2 : ∀ L, ∀ v ∈ V L, (∀ m, sd sv m = a L → AddMonoidAlgebra.coeff v m = 0) → v = 0) : iSupIndep V := by
   classical
   rw [iSupIndep_iff_finsetSum_eq_zero_imp_eq_zero]
   intro s
@@ -233,8 +237,8 @@ theorem absDirect (V : ι' → Submodule K (MvPolynomial σ K)) (a : ι' → ι 
     apply h2 L (v L) (hv L hL)
     intro m hm
     have := topcoeff sv a ha (fun L v => v ∈ V L) h1 s v hv L hL hmax m hm
-    rw [hsum, coeff_zero] at this
-    exact this.symm
+    rw [hsum] at this
+    simpa using this.symm
   have hrest : ∀ i ∈ s.erase L, v i = 0 :=
     ih (s.erase L) (Finset.erase_ssubset hL) v (fun i hi => hv i (mem_of_mem_erase hi))
       (by rw [← Finset.add_sum_erase s v hL, key, zero_add] at hsum; exact hsum)
@@ -246,10 +250,10 @@ theorem absDirect (V : ι' → Submodule K (MvPolynomial σ K)) (a : ι' → ι 
 theorem absSat (V : ι' → Submodule K (MvPolynomial σ K)) (a : ι' → ι → ℕ) (ha : Function.Injective a)
     (C : AddSubgroup K) (T : AddSubgroup (MvPolynomial σ K))
     (h1 : ∀ L, ∀ v ∈ V L, ∀ m ∈ v.support, sd sv m ≤ a L)
-    (hT : ∀ f ∈ T, ∀ m, coeff m f ∈ C)
-    (h2 : ∀ L, ∀ v ∈ V L, (∀ m, sd sv m = a L → coeff m v ∈ C) → v ∈ T)
+    (hT : ∀ f ∈ T, ∀ m, AddMonoidAlgebra.coeff f m ∈ C)
+    (h2 : ∀ L, ∀ v ∈ V L, (∀ m, sd sv m = a L → AddMonoidAlgebra.coeff v m ∈ C) → v ∈ T)
     (s : Finset ι') (v : ι' → MvPolynomial σ K) (hv : ∀ L ∈ s, v L ∈ V L)
-    (hC : ∀ m, coeff m (∑ L ∈ s, v L) ∈ C) : ∑ L ∈ s, v L ∈ T := by
+    (hC : ∀ m, AddMonoidAlgebra.coeff (∑ L ∈ s, v L) m ∈ C) : ∑ L ∈ s, v L ∈ T := by
   classical
   induction s using Finset.strongInduction with
   | H s ih =>
@@ -284,10 +288,10 @@ variable {σ τ K : Type} [Field K] [DecidableEq σ]
 
 noncomputable def kap (F : (τ →₀ ℕ) → (σ →₀ ℕ)) (hF : Function.Injective F) (Q : MvPolynomial σ K) :
     MvPolynomial τ K :=
-  ∑ n ∈ Q.support.preimage F hF.injOn, monomial n (coeff (F n) Q)
+  ∑ n ∈ Q.support.preimage F hF.injOn, monomial n (AddMonoidAlgebra.coeff Q (F n))
 
 lemma coeff_kap (F : (τ →₀ ℕ) → (σ →₀ ℕ)) (hF : Function.Injective F) (Q : MvPolynomial σ K) (n : τ →₀ ℕ) :
-    coeff n (kap F hF Q) = coeff (F n) Q := by
+    AddMonoidAlgebra.coeff (kap F hF Q) n = AddMonoidAlgebra.coeff Q (F n) := by
   classical
   rw [kap, coeff_sum]
   simp only [coeff_monomial]
@@ -298,7 +302,7 @@ lemma coeff_kap (F : (τ →₀ ℕ) → (σ →₀ ℕ)) (hF : Function.Injecti
 
 lemma kap_add (F : (τ →₀ ℕ) → (σ →₀ ℕ)) (hF : Function.Injective F) (Q Q' : MvPolynomial σ K) :
     kap F hF (Q + Q') = kap F hF Q + kap F hF Q' := by
-  ext n; simp only [coeff_kap, coeff_add]
+  ext n; simp only [coeff_kap, MvPolynomial.coeff_add]
 
 lemma kap_smul (F : (τ →₀ ℕ) → (σ →₀ ℕ)) (hF : Function.Injective F) (c : K) (Q : MvPolynomial σ K) :
     kap F hF (c • Q) = c • kap F hF Q := by
@@ -306,13 +310,13 @@ lemma kap_smul (F : (τ →₀ ℕ) → (σ →₀ ℕ)) (hF : Function.Injectiv
 
 lemma kap_zero (F : (τ →₀ ℕ) → (σ →₀ ℕ)) (hF : Function.Injective F) :
     kap F hF (0 : MvPolynomial σ K) = 0 := by
-  ext n; simp only [coeff_kap, coeff_zero]
+  ext n; simp [coeff_kap, AddMonoidAlgebra.coeff_zero]
 
 variable (e : τ → σ)
 
 lemma coeff_rename_mul (he : Function.Injective e) (n : τ →₀ ℕ) (μ : σ →₀ ℕ) (hμ : ∀ x, μ (e x) = 0) (y : MvPolynomial τ K)
     (g : MvPolynomial σ K) (hg : ∀ w ∈ g.support, ∀ x, w (e x) = 0) :
-    coeff (Finsupp.mapDomain e n + μ) (rename e y * g) = coeff n y * coeff μ g := by
+    AddMonoidAlgebra.coeff (rename e y * g) (Finsupp.mapDomain e n + μ) = AddMonoidAlgebra.coeff y n * AddMonoidAlgebra.coeff g μ := by
   classical
   rw [coeff_mul, Finset.sum_eq_single (Finsupp.mapDomain e n, μ)]
   · rw [coeff_rename_mapDomain e he]
@@ -320,8 +324,8 @@ lemma coeff_rename_mul (he : Function.Injective e) (n : τ →₀ ℕ) (μ : σ 
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at huw
     simp only at huw
     by_contra hc
-    have hu : coeff u (rename e y) ≠ 0 := left_ne_zero_of_mul hc
-    have hw : coeff w g ≠ 0 := right_ne_zero_of_mul hc
+    have hu : AddMonoidAlgebra.coeff (rename e y) u ≠ 0 := left_ne_zero_of_mul hc
+    have hw : AddMonoidAlgebra.coeff g w ≠ 0 := right_ne_zero_of_mul hc
     have hu' := mem_support_iff.mpr hu
     rw [support_rename_of_injective he, Finset.mem_image] at hu'
     obtain ⟨u0, _, rfl⟩ := hu'
@@ -331,9 +335,9 @@ lemma coeff_rename_mul (he : Function.Injective e) (n : τ →₀ ℕ) (μ : σ 
       by_cases hv : v ∈ Set.range e
       · obtain ⟨x, rfl⟩ := hv
         have hx := DFunLike.congr_fun huw (e x)
-        rw [Finsupp.add_apply, Finsupp.add_apply, Finsupp.mapDomain_apply he, Finsupp.mapDomain_apply he,
+        rw [Finsupp.add_apply, Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective he, Finsupp.mapDomain_apply_of_injective he,
           hμ x, hw0 x] at hx
-        rw [Finsupp.mapDomain_apply he, Finsupp.mapDomain_apply he]
+        rw [Finsupp.mapDomain_apply_of_injective he, Finsupp.mapDomain_apply_of_injective he]
         omega
       · rw [Finsupp.mapDomain_of_notMem_range _ _ hv, Finsupp.mapDomain_of_notMem_range _ _ hv]
     rw [h1] at huw
@@ -348,7 +352,7 @@ lemma F_inj (he : Function.Injective e) (zm μ : σ →₀ ℕ) : Function.Injec
 
 lemma kap_gen (he : Function.Injective e) (zm μ : σ →₀ ℕ) (hμ : ∀ x, μ (e x) = 0) (y : MvPolynomial τ K)
     (g : MvPolynomial σ K) (hg : ∀ w ∈ g.support, ∀ x, w (e x) = 0) :
-    kap _ (F_inj e he zm μ) (monomial zm 1 * rename e y * g) = coeff μ g • y := by
+    kap _ (F_inj e he zm μ) (monomial zm 1 * rename e y * g) = AddMonoidAlgebra.coeff g μ • y := by
   ext n
   rw [coeff_kap, coeff_smul, smul_eq_mul, mul_assoc, add_assoc, coeff_monomial_mul, one_mul,
     coeff_rename_mul e he n μ hμ y g hg, mul_comm]
@@ -358,7 +362,7 @@ end Kap
 section TSat
 variable {p : ℕ} [Fact p.Prime] {σ τ : Type} [DecidableEq σ] (e : τ → σ)
 
-def IsInt {υ : Type} (f : MvPolynomial υ ℚ_[p]) : Prop := ∀ m, coeff m f ∈ (algebraMap ℤ_[p] ℚ_[p]).range
+def IsInt {υ : Type} (f : MvPolynomial υ ℚ_[p]) : Prop := ∀ m, AddMonoidAlgebra.coeff f m ∈ (algebraMap ℤ_[p] ℚ_[p]).range
 
 theorem tensorSat (he : Function.Injective e) (Yq : Submodule ℚ_[p] (MvPolynomial τ ℚ_[p])) (YZs : Submodule ℤ_[p] (MvPolynomial τ ℚ_[p]))
     (hYZ : ∀ y ∈ YZs, y ∈ Yq) (hYZ' : ∀ y ∈ Yq, IsInt y → y ∈ YZs)
@@ -378,17 +382,17 @@ theorem tensorSat (he : Function.Injective e) (Yq : Submodule ℚ_[p] (MvPolynom
     induction hQ using Submodule.span_induction with
     | mem x hx =>
       obtain ⟨y, hy, g, hg, rfl⟩ := hx
-      have hgs : g = ∑ μ ∈ Mb, monomial μ (coeff μ g) := by
+      have hgs : g = ∑ μ ∈ Mb, monomial μ (AddMonoidAlgebra.coeff g μ) := by
         conv_lhs => rw [g.as_sum]
         exact Finset.sum_subset (hG1 g hg) (fun μ _ hμ => by rw [notMem_support_iff.mp hμ, monomial_zero])
       conv_lhs => rw [hgs, Finset.mul_sum]
       refine Finset.sum_congr rfl (fun μ hμ => ?_)
       rw [kap_gen e he zm μ (hG3 μ hμ) y g (hGs g hg), map_smul, smul_eq_C_mul,
-        show monomial μ (coeff μ g) = C (coeff μ g) * monomial μ 1 by rw [C_mul_monomial, mul_one]]
+        show monomial μ (AddMonoidAlgebra.coeff g μ) = C (AddMonoidAlgebra.coeff g μ) * monomial μ 1 by rw [C_mul_monomial, mul_one]]
       ring
     | zero => simp [kap_zero]
     | add x y _ _ hx hy =>
-      simp only [kap_add, map_add, mul_add, add_mul, Finset.sum_add_distrib]
+      simp only [kap_add, map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib]
       exact congrArg₂ (· + ·) hx hy
     | smul c x _ hx =>
       simp only [kap_smul, map_smul, mul_smul_comm, smul_mul_assoc, ← Finset.smul_sum]
@@ -624,7 +628,7 @@ lemma topV (j : Fin D.T.t → ℕ) (jp : ℕ) (v : MvPolynomial (BVar N r D.T.t)
     (hv : v ∈ Submodule.span ℚ_[p] (D.gens p (r := r) j jp)) :
     ∃ s Q, Q ∈ Submodule.span ℚ_[p] (Bset (p := p) D j jp) ∧ v = pre D j jp * Q ∧
       sd (scalS N r D.T.t) s = lv j jp ∧ (∀ m ∈ v.support, sd (scalS N r D.T.t) m ≤ lv j jp) ∧
-      ∀ n, coeff (s + n) v = coeff n Q := by
+      ∀ n, AddMonoidAlgebra.coeff v (s + n) = AddMonoidAlgebra.coeff Q n := by
   obtain ⟨Q, hQ, rfl⟩ := memV D j jp v hv
   obtain ⟨s, hs⟩ := good_pre (p := p) (r := r) D j jp
   obtain ⟨h1, h2⟩ := hs.mul_sfree _ (sfree_span D j jp Q hQ)
@@ -632,8 +636,8 @@ lemma topV (j : Fin D.T.t → ℕ) (jp : ℕ) (v : MvPolynomial (BVar N r D.T.t)
 
 lemma Q_of_top (j : Fin D.T.t → ℕ) (jp : ℕ) (v : MvPolynomial (BVar N r D.T.t) ℚ_[p])
     (hv : v ∈ Submodule.span ℚ_[p] (D.gens p (r := r) j jp)) (P : ℚ_[p] → Prop) (hP0 : P 0)
-    (htop : ∀ m, sd (scalS N r D.T.t) m = lv j jp → P (coeff m v)) :
-    ∃ Q ∈ Submodule.span ℚ_[p] (Bset (p := p) D j jp), v = pre D j jp * Q ∧ ∀ n, P (coeff n Q) := by
+    (htop : ∀ m, sd (scalS N r D.T.t) m = lv j jp → P (AddMonoidAlgebra.coeff v m)) :
+    ∃ Q ∈ Submodule.span ℚ_[p] (Bset (p := p) D j jp), v = pre D j jp * Q ∧ ∀ n, P (AddMonoidAlgebra.coeff Q n) := by
   obtain ⟨s, Q, hQ, hvQ, hs, _, hc⟩ := topV D j jp v hv
   refine ⟨Q, hQ, hvQ, fun n => ?_⟩
   by_cases hn : n ∈ Q.support

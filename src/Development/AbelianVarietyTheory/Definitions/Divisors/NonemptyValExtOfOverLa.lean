@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FormalGroupLawLogarithm
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NonemptyClosedValuedExtensionOfCDVR
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ChartLocalDepthLeOfValuedExtensionBound
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProdDetMemHaO
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
-import Formalism.LocalToGlobal.ProjectiveLattices.SatLeaves
-import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfB
-import Formalism.LocalToGlobal.ProjectiveLattices.TowerOfAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FormalGroupLawLogarithm
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NonemptyClosedValuedExtensionOfCDVR
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ChartLocalDepthLeOfValuedExtensionBound
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProdDetMemHaO
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+public import Formalism.LocalToGlobal.ProjectiveLattices.SatLeaves
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfB
+public import Formalism.LocalToGlobal.ProjectiveLattices.TowerOfAt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -136,8 +140,6 @@ theorem rk_le (f : Lt1 Dw) : rk f ≤ Dw.mult f.1 := f.2.isLt
 def gap (Dw : Datum H) (a : (E →+* ℂ) × ℕ → ℕ) (f : Lt1 Dw) : ℕ :=
   a (f.1, f.2.val) - if rk f < Dw.mult f.1 then a (f.1, rk f) else 0
 
-def degP (cx : Lt1 Dw → ℕ) : ℕ := ∑ f, rk f * cx f
-
 theorem sum_gap_tail (g : ℕ → ℕ) (hg : Antitone g) (m i : ℕ) (hi : i < m) :
     ∑ j ∈ Finset.range m, (if i < j + 1 then g j - (if j + 1 < m then g (j + 1) else 0) else 0) = g i := by
   obtain ⟨k, rfl⟩ : ∃ k, m = k + 1 := ⟨m - 1, by omega⟩
@@ -156,8 +158,8 @@ theorem sum_gap_tail (g : ℕ → ℕ) (hg : Antitone g) (m i : ℕ) (hi : i < m
   refine Finset.sum_congr rfl fun j hj => ?_
   rw [if_pos (show j + 1 < k + 1 by have := Finset.mem_range.1 hj; omega)]
 
-open Classical in
 
+open Classical in
 theorem sum_gap_row {a : (E →+* ℂ) × ℕ → ℕ} (ha : ∀ τ, Antitone fun i => a (τ, i)) (τ : E →+* ℂ)
     (i : Fin (Dw.mult τ)) :
     ∑ f ∈ Finset.univ.filter (fun f : Lt1 Dw => f.1 = τ ∧ i.val < rk f), gap Dw a f = a (τ, i) := by
@@ -201,10 +203,6 @@ def fgl : LogFGL (vX_vp X) (chD Ch.ch) :=
       simp [twoVars]
     rw [e, MvPowerSeries.coeff_map]
     exact isIntV_jX X _
-
-theorem fgl_F (a : Fin (chD Ch.ch)) :
-    (fgl Ch X).F a = MvPowerSeries.subst (twoVars X.C _) (MvPowerSeries.map (jX X) (Ch.FT a)) := by
-  rw [← lawX_F]; rfl
 
 def actX (a : 𝓞 E) : Fin (chD Ch.ch) → MvPowerSeries (Fin (chD Ch.ch)) X.C :=
   fun i => MvPowerSeries.subst (oneVar X.C _) (MvPowerSeries.map (jX X) (Ch.actT a i))
@@ -291,8 +289,8 @@ theorem le_nuFac {f : Lt1 Dw} {k : ℕ} {r : EReal}
     (h : ∀ (Ch : IntegralChartA3 Xo c T io y) (X : ValExt T p), r ≤ nuFacC Ch X f k) : r ≤ nuFac p y f k :=
   le_iInf₂ h
 
-omit [StarRing (𝓞 E)] in
 
+omit [StarRing (𝓞 E)] in
 theorem not_isUnit_of_overLa (la : PointsOfFlagModel.abelian₂ p c) {e : ℕ} (ho : OverLa la.1 T.V io e) : ¬ IsUnit (p : T.V) := by
   intro hu
   have hp0 : (p : 𝓞 c.F) ≠ 0 := Nat.cast_ne_zero.2 (Fact.out : p.Prime).ne_zero
@@ -315,8 +313,8 @@ theorem not_isUnit_of_overLa (la : PointsOfFlagModel.abelian₂ p c) {e : ℕ} (
   have h6 : (0 : ℤ) < e := by exact_mod_cast ho.1
   nlinarith [mul_pos h6 h2]
 
-omit [StarRing (𝓞 E)] in
 
+omit [StarRing (𝓞 E)] in
 theorem nonempty_valExt_of_overLa (la : PointsOfFlagModel.abelian₂ p c) {e : ℕ} (ho : OverLa la.1 T.V io e) : Nonempty (ValExt T p) :=
   nonempty_valExt T p (not_isUnit_of_overLa la ho)
 
@@ -419,9 +417,9 @@ def IsGen (Y : Model Xo c β) (y : IntFr Xo c T io) : Prop :=
 def GenEx (Y : Model Xo c β) (Z : Comp Xo c) (la : HeightOneSpectrum (𝓞 c.F)) : Prop :=
   ∃ (T : CDVR) (io : c.F →+* T.Fr) (e : ℕ) (_ : OverLa la T.V io e) (y : IntFr Xo c T io), OnComp Z y ∧ IsGen Y y
 
+
 attribute [local instance] Over.cartesianMonoidalCategory in
 open MonObj in
-
 theorem isTanAtG_map {X0 : Scheme.{0}} (t : SAB H X0) {S S' : Type} [CommRing S] [CommRing S'] (φ : S →+* S')
     {x : Sp S ⟶ X0} {v : Sp (DualNumber S) ⟶ t.G.left} (hv : IsTanAtG t x v) :
     IsTanAtG t (spMap φ ≫ x) (spMap (dualMap φ) ≫ v) := by
@@ -455,10 +453,6 @@ def eLoc {O : Type} [CommRing O] {β : O →+* c.F} (Y : Model Xo c β) (Z : Com
     (cx : Lt1 Dw → ℕ) : EReal :=
   nuPSup (fun _ _ y => OnComp Z y ∧ y.IsAlg) la cx - nuPInf (fun _ _ y => OnComp Z y ∧ IsGen Y y) la cx
 
-def ePLoc {O : PointsOfFlagModel.abelian₂ p c → Type} [∀ la, CommRing (O la)] {β : ∀ la, O la →+* c.F}
-    (Y : ∀ la, Model Xo c (β la)) (cx : Lt1 Dw → ℕ) : EReal :=
-  ⨆ (la : PointsOfFlagModel.abelian₂ p c) (Z : Comp Xo c), eLoc (Y la) Z la cx
-
 variable {cls : ∀ (T : CDVR) (io : c.F →+* T.Fr), IntFr Xo c T io → Prop} {la : PointsOfFlagModel.abelian₂ p c} {cx : Lt1 Dw → ℕ}
 
 theorem nuPSup_le {r : EReal} (h : ∀ (T : CDVR) (io : c.F →+* T.Fr) (e : ℕ), OverLa la.1 T.V io e →
@@ -470,22 +464,5 @@ theorem le_nuPInf {r : EReal} (h : ∀ (T : CDVR) (io : c.F →+* T.Fr) (e : ℕ
   le_iInf fun T => le_iInf fun io => le_iInf fun e => le_iInf fun ho => le_iInf₂ (h T io e ho)
 
 end Osc
-
-example : ∑ j ∈ Finset.range 3, (if 0 < j + 1 then (fun i => if i = 0 then 5 else 2) j -
-    (if j + 1 < 3 then (fun i => if i = 0 then 5 else 2) (j + 1) else 0) else 0) = 5 := by decide
-
-example (n : ℕ) (f : Lt1 Dw) : gap Dw (fun _ => n) f = if rk f < Dw.mult f.1 then 0 else n := by
-  unfold gap; split_ifs <;> simp
-
-example {k : Type} [Field k] {n : ℕ} (B : ∀ f : Lt1 Dw, Fin (rk f) → Fin n → k) : polyP B 0 = 1 := by
-  simp [polyP]
-
-example (k : Type) [Field k] : TrdegGe (RatFunc k) 1 :=
-  ⟨fun _ => RatFunc.X, algebraicIndependent_unique_type_iff.2 fun h => by
-    let e := (algebraMap k (RatFunc k)).rangeRestrictFieldEquiv
-    let g : (⊥ : Subfield (RatFunc k)) →+* k := e.symm.toRingHom.comp (Subfield.inclusion bot_le)
-    refine RatFunc.transcendental_X (K := k) (h.ringHom_of_comp_eq g (RingHom.id _) g.injective ?_)
-    ext z
-    exact congrArg Subtype.val (e.apply_symm_apply (Subfield.inclusion bot_le z))⟩
 
 end GlobalTheory.FactorDepth

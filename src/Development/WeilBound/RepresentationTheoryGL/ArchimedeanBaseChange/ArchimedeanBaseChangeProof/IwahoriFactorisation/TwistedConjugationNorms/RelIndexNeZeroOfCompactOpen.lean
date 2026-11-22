@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralEqSumSmallerLevelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralEqSumSmallerLevelStatement
+
+@[expose] public section
 
 open GlobalTheory.BCT
 open scoped Classical
@@ -98,7 +102,7 @@ theorem twOrb_indicator_eq_inv_index [TopologicalSpace G] [IsTopologicalGroup G]
       by_contra h
       exact hq (Set.indicator_of_notMem h _)
     obtain ⟨c, hc, i, hi, he⟩ := (hP _).1 hm
-    rw [← DoubleCoset.out_eq' (twCent θ δ) I q, DoubleCoset.eq]
+    rw [← DoubleCoset.out_eq' q, DoubleCoset.eq]
     exact ⟨c⁻¹, (twCent θ δ).inv_mem hc, i⁻¹, I.inv_mem hi, by rw [he]; group⟩
   have hfin : {q : DoubleCoset.Quotient (twCent θ δ : Set G) (I : Set G) |
       X.indicator (1 : G → ℂ) ((Quotient.out q)⁻¹ * δ * θ (Quotient.out q)) ≠ 0}.Finite :=
@@ -118,8 +122,8 @@ theorem twOrb_indicator_eq_inv_index [TopologicalSpace G] [IsTopologicalGroup G]
   have key := GlobalTheory.T.twistedOrbitalIntegral_eq_sum_smallerLevel G θ K hKo hKc hθK I ⟨hIo, hIK, hθI⟩ δ (X.indicator 1) hH hb hfin
   rw [key.1, key.2]
   rw [finsum_eq_single _ (DoubleCoset.mk (twCent θ δ) I p0)]
-  · obtain ⟨h, hh, k, hk, hq0⟩ := (DoubleCoset.eq (twCent θ δ) I _ _).1
-      (DoubleCoset.out_eq' (twCent θ δ) I (DoubleCoset.mk (twCent θ δ) I p0))
+  · obtain ⟨h, hh, k, hk, hq0⟩ := (@DoubleCoset.eq _ _ (twCent θ δ) I _ _).1
+      (DoubleCoset.out_eq' (DoubleCoset.mk (twCent θ δ) I p0))
     have ho : Quotient.out (DoubleCoset.mk (twCent θ δ) I p0) = h⁻¹ * p0 * k⁻¹ :=
       calc Quotient.out (DoubleCoset.mk (twCent θ δ) I p0)
           = h⁻¹ * (h * Quotient.out (DoubleCoset.mk (twCent θ δ) I p0) * k) * k⁻¹ := by group

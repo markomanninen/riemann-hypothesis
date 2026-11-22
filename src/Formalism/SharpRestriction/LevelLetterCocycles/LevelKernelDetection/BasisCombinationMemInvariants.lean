@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.IdempotentMemInvariants
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.ExistsBasisOfSurjective
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.IdempotentMemInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.ExistsBasisOfSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ theorem basis_repr_gamma (x : W.DD T) (δ : W.Gam) (hδ : δ ∈ W.DelF) (j : Fi
     B.repr (W.γD T δ x) j = W.γE δ (B.repr x j) := by
   have h1 : W.γD T δ x = ∑ j, W.γE δ (B.repr x j) • B j := by
     conv_lhs => rw [← B.sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [W.γD_smul, hB _ δ hδ]
   rw [h1, Module.Basis.repr_sum_self]
 
@@ -63,23 +68,24 @@ theorem basis_repr_idempotent_smul (x : W.DD T) (i : ZMod n) (j : Fin r) :
     simp only [smul_assoc]
   rw [h1, Module.Basis.repr_sum_self]
 
-include hB in
 
+include hB in
 theorem basis_repr_mem_letter (i : ZMod n) (x : W.DD T) (hx : x ∈ DDl W T i) (j : Fin r) :
     B.repr x j ∈ EEl W i := by
   refine ⟨?_, fun δ hδ => ?_⟩
   · rw [← basis_repr_idempotent_smul, hx.1]
   · rw [← basis_repr_gamma B hB x δ hδ, hx.2 δ hδ]
 
-include hB in
 
+include hB in
 theorem basis_combination_mem_invariants (i : ZMod n) (d : Fin r → W.EE) (hd : ∀ j, d j ∈ EEl W i) :
     ∑ j, d j • B j ∈ DDl W T i := by
   refine ⟨?_, fun δ hδ => ?_⟩
   · rw [Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← smul_assoc, (hd j).1]
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [W.γD_smul, hB j δ hδ, (hd j).2 δ hδ]
 
@@ -107,11 +113,12 @@ theorem letterRing_mul_idempotent (i : ZMod n) (r : k17R W i) : letterRingVal W 
 theorem letterRing_sum_mul {i : ZMod n} {ι : Type} [Fintype ι] (a : ι → k17R W i)
     (C : ι → Fin r → k17R W i) (l : Fin r) :
     ∑ t, letterRingVal W i (a t) * letterRingVal W i (C t l) = letterRingVal W i ((∑ t, a t • C t) l) := by
-  rw [Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, map_sum]
   simp only [Pi.smul_apply, smul_eq_mul, letterRing_val_mul]
 
-include hB in
 
+include hB in
 theorem letter_invariants_basis (i : ZMod n) {ι : Type} [Fintype ι]
     (C : Module.Basis ι (k17R W i) (Fin r → k17R W i)) :
     LBasis W T i (fun t => ∑ l, letterRingVal W i (C t l) • B l) := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.SkolemNoether
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.SkolemNoether
+
+@[expose] public section
 
 namespace KStar.Tree
 
@@ -50,14 +54,16 @@ private theorem squareTopTwistPlaces_coprime_splitPlaces {S A : Type} [CommRing 
     intro z
     have h0 : f' (z - ∑ i, ∑ j, f' z i j • s i j) = 0 := by
       rw [map_sub, sub_eq_zero]
-      simp only [map_sum, map_smul, hs, Matrix.smul_single, smul_eq_mul, mul_one]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, hs, Matrix.smul_single, smul_eq_mul, mul_one]
       exact Matrix.matrix_eq_sum_single _
     have h1 : π (f (z - ∑ i, ∑ j, f' z i j • s i j)) = 0 := by
       ext i j
       exact Ideal.Quotient.eq_zero_iff_mem.mpr (key _ h0 i j)
     rw [map_sub, map_sub, sub_eq_zero] at h1
     rw [h1]
-    simp only [map_sum, map_smul, hπs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hπs]
     rfl
   let θ : Matrix (Fin r) (Fin r) (A ⧸ c) →ₐ[A ⧸ c] Matrix (Fin r) (Fin r) (A ⧸ c) :=
     AlgHom.ofLinearMap L (by simpa using hL 1) (by
@@ -105,7 +111,7 @@ theorem twist_smul_eq_zero (Γ A : Type) [Group Γ] [CommRing A] [IsLocalRing A]
   · intro z
     induction z using MonoidAlgebra.induction_on with
     | of g => rw [e, e', hU, Matrix.smul_mul, Matrix.trace_smul, smul_eq_mul]
-    | add x y hx hy => simp only [map_add, Matrix.add_mul, Matrix.trace_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Matrix.add_mul, Matrix.trace_add, hx, hy]
     | smul a x hx => simp only [map_smul, Matrix.smul_mul, Matrix.trace_smul, hx]
   · rw [e]
     exact (Matrix.isUnit_iff_isUnit_det _).mp ((Group.isUnit g₀).map T)

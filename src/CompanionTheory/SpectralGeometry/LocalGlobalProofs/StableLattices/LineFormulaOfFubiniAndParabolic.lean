@@ -1,7 +1,12 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.Fub2
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InitialStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HaarExistence
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.AbsoluteL2Bound
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.Fub2
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InitialStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HaarExistence
+
+@[expose] public section
 
 noncomputable section
 

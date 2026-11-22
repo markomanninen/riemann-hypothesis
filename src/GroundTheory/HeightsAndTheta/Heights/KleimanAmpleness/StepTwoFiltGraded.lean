@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -16,14 +21,14 @@ section Laurent
 
 variable (x : Fin (N + 1) → Ω) (E : Type v) [AddCommGroup E] [Module Ω E]
 
-set_option linter.unusedVariables false in
 
+set_option linter.unusedVariables false in
 abbrev LaurentSpace (x : Fin (N + 1) → Ω) (E : Type v) [Zero E] : Type v := ℤ →₀ E
 
 def laurentShift : Module.End Ω (LaurentSpace x E) := Finsupp.lmapDomain E Ω (· + 1)
 
-variable (S) in
 
+variable (S) in
 def laurentAct : Poly S N →+* Module.End Ω (LaurentSpace x E) :=
   (Polynomial.aeval (laurentShift x E)).toRingHom.comp (cone (S := S) x).toRingHom
 
@@ -31,8 +36,8 @@ instance : Module (Poly S N) (LaurentSpace x E) := Module.compHom _ (laurentAct 
 
 variable {x E}
 
-variable (x) in
 
+variable (x) in
 def laurentSingle (c : ℤ) (m : E) : LaurentSpace x E := Finsupp.single c m
 
 theorem laurentSingle_apply (c a : ℤ) (m : E) :
@@ -178,10 +183,6 @@ def quotProj (c : ℤ) : quotLaurent M₁ M₂ →+ quotLaurent M₁ M₂ :=
   QuotientAddGroup.lift _ ((quotIota M₁ M₂ c).comp (laurentCoeff M₁ c)).toAddMonoidHom
     fun _ hm => AddMonoidHom.mem_ker.mpr ((quotIota_eq_zero_iff M₁ M₂ _).mpr (hm c))
 
-theorem quotProj_mk (c : ℤ) (m : M₁.laurent) :
-    quotProj M₁ M₂ c (Submodule.Quotient.mk m) =
-      quotIota M₁ M₂ c ⟨(m : LaurentSpace x E) c, m.2 c⟩ := rfl
-
 theorem quotProj_iota_self (c : ℤ) (z : M₁.piece c) :
     quotProj M₁ M₂ c (quotIota M₁ M₂ c z) = quotIota M₁ M₂ c z := by
   have h : (⟨laurentSingle x c (z : E) c, FinGradedSub.mem_laurent.mp (laurentSingle_mem z.2) c⟩ :
@@ -198,10 +199,6 @@ theorem quotProj_iota_ne {c c' : ℤ} (h : c' ≠ c) (z : M₁.piece c') :
 
 def quotPiece (c : ℤ) : Submodule S (quotLaurent M₁ M₂) := LinearMap.range (quotIota M₁ M₂ c)
 
-theorem quotProj_mem (c : ℤ) (y : quotLaurent M₁ M₂) : quotProj M₁ M₂ c y ∈ quotPiece M₁ M₂ c := by
-  obtain ⟨m, rfl⟩ := Submodule.Quotient.mk_surjective _ y
-  exact ⟨_, (quotProj_mk M₁ M₂ c m).symm⟩
-
 theorem quotProj_coe (c : ℤ) (v : DirectSum ℤ fun c => quotPiece M₁ M₂ c) :
     quotProj M₁ M₂ c (DirectSum.coeAddMonoidHom (quotPiece M₁ M₂) v) = (v c : quotLaurent M₁ M₂) := by
   induction v using DirectSum.induction_on with
@@ -214,7 +211,7 @@ theorem quotProj_coe (c : ℤ) (v : DirectSum ℤ fun c => quotPiece M₁ M₂ c
       rw [DirectSum.of_eq_same, ← hz, quotProj_iota_self]
     · rw [DirectSum.of_eq_of_ne _ _ _ (Ne.symm h), ← hz, quotProj_iota_ne M₁ M₂ h]
       rfl
-  | add a b ha hb => rw [map_add, map_add, ha, hb, DirectSum.add_apply, Submodule.coe_add]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, DirectSum.add_apply, Submodule.coe_add]
 
 theorem laurent_eq_sum (m : M₁.laurent) :
     m = ∑ c ∈ (m : LaurentSpace x E).support,
@@ -231,7 +228,8 @@ theorem quotPiece_isInternal : DirectSum.IsInternal (quotPiece M₁ M₂) := by
   · intro y
     obtain ⟨m, rfl⟩ := Submodule.Quotient.mk_surjective _ y
     refine AddMonoidHom.mem_mrange.mp ?_
-    rw [laurent_eq_sum M₁ m, ← Submodule.mkQ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [laurent_eq_sum M₁ m, ← Submodule.mkQ_apply, map_sum]
     refine AddSubmonoid.sum_mem _ fun c _ => ⟨DirectSum.of (fun c => quotPiece M₁ M₂ c) c
       ⟨quotIota M₁ M₂ c ⟨_, FinGradedSub.mem_laurent.mp m.2 c⟩, LinearMap.mem_range_self _ _⟩, ?_⟩
     rw [DirectSum.coeAddMonoidHom_of]
@@ -357,7 +355,8 @@ theorem filtPiece_smul_mem (A : Submodule (Poly S N) (quotLaurent M₁ M₂)) {d
 theorem quotProj_smul_iota (r : Poly S N) {e : ℤ} (g : M₁.piece e) (c : ℤ) :
     quotProj M₁ M₂ c (r • quotIota M₁ M₂ e g) = ∑ i ∈ Finset.range (r.totalDegree + 1),
       if e + i = c then homogeneousComponent i r • quotIota M₁ M₂ e g else 0 := by
-  conv_lhs => rw [← sum_homogeneousComponent r, Finset.sum_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← sum_homogeneousComponent r, Finset.sum_smul, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   split_ifs with h
   · subst h
@@ -372,8 +371,8 @@ theorem quotProj_smul_iota_mem (r : Poly S N) {e : ℤ} (g : M₁.piece e) (c : 
   · exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self _)
   · exact zero_mem _
 
-variable (M₁ M₂) in
 
+variable (M₁ M₂) in
 def IsProjStable (A : Submodule (Poly S N) (quotLaurent M₁ M₂)) : Prop :=
   ∀ y ∈ A, ∀ c, quotProj M₁ M₂ c y ∈ A
 
@@ -388,7 +387,7 @@ theorem isProjStable_sup {A : Submodule (Poly S N) (quotLaurent M₁ M₂)} (hA 
   intro y hy c
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hy
   obtain ⟨r, rfl⟩ := Submodule.mem_span_singleton.mp hb
-  rw [map_add]
+  rw [map_add (f := _)]
   exact add_mem (Submodule.mem_sup_left (hA a ha c))
     (Submodule.mem_sup_right (quotProj_smul_iota_mem r g c))
 
@@ -415,7 +414,7 @@ theorem filtPiece_sup {A : Submodule (Poly S N) (quotLaurent M₁ M₂)} (hA : I
     have hw1 : w ∈ M₁.piece c :=
       FinGradedSub.mem_laurent.mp (M₁.laurent.smul_mem r (laurentSingle_mem g.2)) c
     have key : quotIota M₁ M₂ c ⟨z, hz1⟩ = quotProj M₁ M₂ c a + quotIota M₁ M₂ c ⟨w, hw1⟩ := by
-      rw [← quotProj_iota_self M₁ M₂ c ⟨z, hz1⟩, ← hab, map_add]
+      rw [← quotProj_iota_self M₁ M₂ c ⟨z, hz1⟩, ← hab, map_add (f := _)]
       congr 1
     have hzw : z - w ∈ filtPiece M₁ M₂ A c := by
       refine mem_filtPiece.mpr ⟨sub_mem hz1 hw1, ?_⟩
@@ -433,8 +432,8 @@ theorem filtPiece_sup {A : Submodule (Poly S N) (quotLaurent M₁ M₂)} (hA : I
     rw [smul_quotIota M₁ M₂ hf] at h2
     exact h2
 
-variable (M₁ M₂) in
 
+variable (M₁ M₂) in
 def filtSub (A : Submodule (Poly S N) (quotLaurent M₁ M₂))
     (hfg : ∃ (n : ℕ) (deg : Fin n → ℤ) (gen : Fin n → E), (∀ j, gen j ∈ filtPiece M₁ M₂ A (deg j)) ∧
       ∀ c, filtPiece M₁ M₂ A c ≤ Submodule.span S {z | ∃ (j : Fin n) (f : Poly S N) (e : ℕ),

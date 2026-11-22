@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseOneAddPreservingAdelicCompletion
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseOneAddPreservingAdelicCompletion
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem exists_half (c : E ≃ₐ[ℚ] E) (hcc : c * c = 1) {q : ℕ} (hq : q �
     conv_lhs => rw [← hinvI P]
     exact Ideal.smul_mem_pointwise_smul_iff
   have hcq : c • (q : 𝓞 E) = q := map_natCast (MulSemiringAction.toRingHom _ (𝓞 E) c) q
-  obtain ⟨o, -⟩ := exists_wellOrder (Ideal (𝓞 E))
+  obtain ⟨o, -⟩ := exists_wellFoundedLT (Ideal (𝓞 E))
   let lt : Ideal (𝓞 E) → Ideal (𝓞 E) → Prop := o.lt
   let T : Finset (HeightOneSpectrum (𝓞 E)) := (Ideal.finite_factors hI).toFinset
   have hT : ∀ P : Ideal (𝓞 E), (hP : P.IsPrime) → (hqP : (q : 𝓞 E) ∈ P) →
@@ -148,8 +152,8 @@ theorem mkInt_mem (f h) : mkInt f h ∈ intAd ℚ := h
 
 variable {E : Type} [Field E] [NumberField E]
 
-local notation "𝒜" => E ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ
-local notation "𝒮" => tensInt (F := ℚ) (FiniteAdeleRing (𝓞 ℚ) ℚ) (intOE E) (intAd ℚ)
+local notation "𝒜" => E ⊗[ℚ] 𝔸
+local notation "𝒮" => tensInt (F := ℚ) 𝔸 (intOE E) (intAd ℚ)
 
 theorem ext_prV {x y : 𝒜} (h : ∀ v, prV (E := E) v x = prV (E := E) v y) : x = y :=
   sub_eq_zero.1 (afsplit_inj _ fun v => by rw [map_sub, h v, sub_self])
@@ -167,9 +171,11 @@ theorem exists_asm (a : HeightOneSpectrum (𝓞 ℚ) → 𝓞 E) :
   let b := Module.finBasis ℤ (𝓞 E)
   refine ⟨∑ j, algebraMap (𝓞 E) E (b j) ⊗ₜ[ℚ] mkInt (fun v => ((b.repr (a v) j : ℤ) : v.adicCompletion ℚ))
     (fun v => intCast_mem _ _), sum_mem fun j _ => levelaf_tmul_mem _ (mkInt_mem _ _), fun v => ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   conv_rhs => rw [← b.sum_repr (a v)]
-  rw [show ∀ x : 𝓞 E, (x : E) = algebraMap (𝓞 E) E x from fun _ => rfl, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show ∀ x : 𝓞 E, (x : E) = algebraMap (𝓞 E) E x from fun _ => rfl, map_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [afsplit_prV_tmul, mkInt_apply, map_zsmul, ← zsmul_one, ← TensorProduct.smul_tmul]
   rfl
@@ -189,7 +195,7 @@ theorem exists_inv_one_add {s : 𝒜} (hs : s ∈ 𝒮) : ∃ t ∈ 𝒮, (1 + (
     obtain ⟨r, hr, rfl⟩ := levelaf_decomp (fun j => Module.finBasis ℤ (𝓞 E) j) (Module.Basis.span_eq _) hx
     have e : (⟨_, hx⟩ : 𝒮) = ∑ j, (φ ⟨r j, hr j⟩ * ψ (Module.finBasis ℤ (𝓞 E) j) : 𝒮) := by
       apply Subtype.ext
-      rw [AddSubmonoidClass.coe_finset_sum]
+      rw [AddSubmonoidClass.coe_finsetSum]
       dsimp only
       refine Finset.sum_congr rfl fun j _ => ?_
       show _ = ((1 : E) ⊗ₜ[ℚ] r j) * (algebraMap (𝓞 E) E (Module.finBasis ℤ (𝓞 E) j) ⊗ₜ[ℚ] (1 : 𝔸))
@@ -210,15 +216,15 @@ theorem exists_inv_one_add {s : 𝒜} (hs : s ∈ 𝒮) : ∃ t ∈ 𝒮, (1 + (
   rw [add_comm]
   exact congrArg Subtype.val ht
 
-open Classical in
 
+open Classical in
 def idem (P : ℕ → Prop) : 𝔸 := mkInt (fun v => if P (pr v) then 1 else 0) fun v => by
   split_ifs
   · exact one_mem _
   · exact zero_mem _
 
-variable (E) in
 
+variable (E) in
 def eps (P : ℕ → Prop) : 𝒜 := (1 : E) ⊗ₜ[ℚ] idem P
 
 theorem eps_mem (P : ℕ → Prop) : eps E P ∈ 𝒮 := one_tmul_mem (mkInt_mem _ _)
@@ -294,9 +300,9 @@ theorem exists_half_adele (c : E ≃ₐ[ℚ] E) (hcc : c * c = 1) (P : ℕ → P
     rw [map_mul, map_mul, hσ, ha, hr, prV_unif]
     exact this
   · have := congrArg ((inclE (F := ℚ) (v.adicCompletion ℚ)).comp (algebraMap (𝓞 E) E)) (h2 v)
-    rw [map_add, map_add, map_mul, map_natCast, apply_ite ((inclE (F := ℚ) (v.adicCompletion ℚ)).comp _),
+    rw [map_add (f := _), map_add (f := _), map_mul, map_natCast, apply_ite ((inclE (F := ℚ) (v.adicCompletion ℚ)).comp _),
       map_one, map_zero] at this
-    rw [map_add, map_add, map_mul, hσ, ha, hs, prV_unif, prV_eps]
+    rw [map_add (f := _), map_add (f := _), map_mul, hσ, ha, hs, prV_unif, prV_eps]
     exact this
 
 theorem hilbert90_integral_ideles_of_moved_primes (c : E ≃ₐ[ℚ] E) (hcc : c * c = 1) (P : ℕ → Prop)
@@ -312,7 +318,7 @@ theorem hilbert90_integral_ideles_of_moved_primes (c : E ≃ₐ[ℚ] E) (hcc : c
     | tmul x y =>
       have : c (c x) = x := DFunLike.congr_fun hcc x
       simp [sigR, this]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hε := sig_eps (c : E →ₐ[ℚ] E) P
   have hεε := eps_idem (E := E) P
   have hεm := eps_mem (E := E) P
@@ -336,7 +342,7 @@ theorem hilbert90_integral_ideles_of_moved_primes (c : E ≃ₐ[ℚ] E) (hcc : c
   refine ⟨Units.mkOfMulEqOne _ _ hxy, add_mem (add_mem ha (mul_mem hu ha')) (sub_mem (one_mem _) hεm),
     mul_mem (add_mem (add_mem ha (mul_mem hu' ha')) (sub_mem (one_mem _) hεm)) ht, ?_,
     a + u * σ a - 1, sub_mem (add_mem ha (mul_mem hu ha')) (one_mem _), ?_⟩
-  · rw [Units.val_mkOfMulEqOne, map_add, map_add, map_mul, map_sub, map_one, hσσ, hε]
+  · rw [Units.val_mkOfMulEqOne, map_add (f := _), map_add (f := _), map_mul, map_sub, map_one, hσσ, hε]
     linear_combination (-a) * hn + hs
   · rw [Units.val_mkOfMulEqOne]
     linear_combination - h0 - u * h0'
@@ -373,7 +379,7 @@ theorem cT_cutM (σ : R →+* R) (e : R) (he : e * e = e) (hσ : σ e = e) (A : 
   ext i j
   have := congrFun (congrFun (cT_one (n := n) σ) i) j
   simp only [cT, transpose_apply, Matrix.map_apply] at this
-  simp only [cT, transpose_apply, Matrix.map_apply, cutM_apply, map_add, map_mul, map_sub, map_one, hσ, this]
+  simp only [cT, transpose_apply, Matrix.map_apply, cutM_apply, map_add (f := _), map_mul, map_sub, map_one, hσ, this]
 
 theorem det_cutM (e : R) (he : e * e = e) (A : Matrix n n R) :
     e * ((cutM e he A).det - 1) = (cutM e he A).det - 1 := by

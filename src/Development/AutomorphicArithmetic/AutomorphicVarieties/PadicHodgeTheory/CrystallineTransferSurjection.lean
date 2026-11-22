@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SnocZeroLastCoordinateLast
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DeformCr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fDescAvg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SnocZeroLastCoordinateLast
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DeformCr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fDescAvg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 private theorem crystalline_transfer_surjection {l : ℕ} [Fact l.Prime] {G G' A A' V V' : Type} [Group G] [Group G'] [CommRing A]
@@ -18,7 +23,7 @@ private theorem crystalline_transfer_surjection {l : ℕ} [Fact l.Prime] {G G' A
     intro g x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul v b => simp [F, actC, resCoef, hf]
   have hD : (Dcr φ (resCoef ℚ_[l] ρ)).map F.toLinearMap = Dcr (φ.comp e) (resCoef ℚ_[l] ρ') := by
     ext x
@@ -79,7 +84,7 @@ theorem UpperTheory.V.Loc.pr6 :
     (IsModuleTopology.continuous_of_linearMap (ι.restrictScalars ℚ_[l])).comp (hy.1.comp continuous_subtype_val)
   have hy' : (fun g : H => ι (y g)) ∈ Z1 (adGL r) := ⟨hyc, fun g k => by
     simp only []
-    rw [Subgroup.coe_mul, hy.2, map_add, hι]⟩
+    rw [Subgroup.coe_mul, hy.2, map_add (f := _), hι]⟩
   have hr'c : Continuous fun g => (r' g : Matrix (Fin n) (Fin n) (DualNumber E)) := by
     refine continuous_matrix fun i j => ?_
     simp only [hr']

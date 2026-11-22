@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsInfEmbUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsInfEmbUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,10 @@ theorem infEmb_exists (τ : E →+* ℂ) (w : InfinitePlace F) (hw : w.embedding
   let _ : Algebra F ℂ := (τ.comp (algebraMap F E)).toAlgebra
   let f : Ainf F →ₐ[F] ℂ :=
     { toRingHom := (InfinitePlace.Completion.extensionEmbedding w).comp (Pi.evalRingHom _ w)
-      commutes' := fun x =>
-        (InfinitePlace.Completion.extensionEmbedding_coe w _).trans (DFunLike.congr_fun hw x) }
+      commutes' := fun x => by
+        change InfinitePlace.Completion.extensionEmbedding w ((algebraMap F (Ainf F) x) w) = _
+        rw [InfiniteAdeleRing.algebraMap_apply, InfinitePlace.Completion.extensionEmbedding_coe]
+        exact DFunLike.congr_fun hw x }
   let g : E →ₐ[F] ℂ := { toRingHom := τ, commutes' := fun _ => rfl }
   refine ⟨(Algebra.TensorProduct.lift f g (fun _ _ => Commute.all _ _)).toRingHom, fun x => ?_, ?_⟩
   · show f 1 * g x = τ x

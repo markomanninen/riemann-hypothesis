@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SpecialisationNumberFieldAndCountableValues
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFormDegreeLeHilbertDegreeEvalNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowCardLeNormProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SpecialisationNumberFieldAndCountableValues
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFormDegreeLeHilbertDegreeEvalNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowCardLeNormProd
+
+@[expose] public section
 
 open Polynomial Filter Topology
 
@@ -25,7 +29,11 @@ theorem exists_extend_of_ker_le {R B Ω : Type*} [CommRing R] [CommRing B]
   haveI : Algebra.IsIntegral (R ⧸ RingHom.ker φ) (B ⧸ Q) :=
     Algebra.IsIntegral.tower_top (R := R)
   haveI : Algebra.IsAlgebraic (R ⧸ RingHom.ker φ) (B ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let σ : (B ⧸ Q) →ₐ[R ⧸ RingHom.ker φ] Ω := IsAlgClosed.lift
+  let σ : (B ⧸ Q) →ₐ[R ⧸ RingHom.ker φ] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨σ.toRingHom.comp (Ideal.Quotient.mk Q), RingHom.ext fun r => ?_⟩
   exact (σ.commutes (Ideal.Quotient.mk _ r)).trans (RingHom.kerLift_mk φ r)
 
@@ -99,7 +107,7 @@ theorem exists_small_of_curve {R B : Type*} [CommRing R] [IsDomain R] [IsIntegra
   have hF := minpoly.monic hint
   have h0 : (Ψ ((minpoly R u).coeff 0)).eval 0 = 0 := by
     have h := congrArg p (minpoly.aeval R u)
-    rw [aeval_def, hom_eval₂, hu, eval₂_at_zero, hp, map_zero] at h
+    rw [aeval_def, hom_eval₂, hu, eval₂_at_zero, hp, p.map_zero] at h
     exact h
   have h1 : ∀ᶠ s in 𝓝 (0 : ℂ),
       ‖(Ψ ((minpoly R u).coeff 0)).eval s‖ < ε ^ (minpoly R u).natDegree :=

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.ElevenLe
-import Formalism.SharpRestriction.Divisibility.SlopeExcess.FamilyStatementOfScaledLemmas
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ElevenLe
+public import Formalism.SharpRestriction.Divisibility.SlopeExcess.FamilyStatementOfScaledLemmas
+
+@[expose] public section
 
 noncomputable section
 

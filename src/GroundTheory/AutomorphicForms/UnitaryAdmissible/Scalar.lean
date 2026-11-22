@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.GKTensor
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.GKTensor
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -102,7 +106,8 @@ theorem σ_mul_casimirOp [DecidableEq ι] (M : h.GKModule K V)
     have e2 := congrArg A e
     rw [AdLie_AdLie_inv] at e2
     conv_lhs => rw [e2]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul]
     congr 2
@@ -111,7 +116,8 @@ theorem σ_mul_casimirOp [DecidableEq ι] (M : h.GKModule K V)
   have hsum : ∀ j l, ∑ i, ε i * B (b j) (f i) * B (b l) (f i) = B (b j) (b l) := by
     intro j l
     conv_rhs => rw [hexp (b l)]
-    rw [map_sum, Finset.sum_congr rfl]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_congr rfl]
     intro i _
     rw [map_smul, smul_eq_mul]
     ring
@@ -119,7 +125,8 @@ theorem σ_mul_casimirOp [DecidableEq ι] (M : h.GKModule K V)
   have hρf : ∀ i, M.ρ (f i) = ∑ j, (ε j * B (b j) (f i)) • M.ρ (b j) := by
     intro i
     conv_lhs => rw [eq_sum_of_orthogonal hε horth (f i)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul]
   have hcas : ∑ i, ε i • (M.ρ (f i) * M.ρ (f i)) = casimirOp M b ε := by
@@ -203,7 +210,7 @@ def toSub (M : h.GKModule K V) (m : Submodule (MonoidAlgebra ℂ K) M.σ.asModul
   carrier := {v | M.σ.asModuleEquiv.symm v ∈ m}
   add_mem' {x y} hx hy := by
     show M.σ.asModuleEquiv.symm (x + y) ∈ m
-    rw [map_add]
+    rw [map_add (f := _)]
     exact m.add_mem hx hy
   zero_mem' := by
     show M.σ.asModuleEquiv.symm 0 ∈ m
@@ -227,7 +234,7 @@ def ofStable (M : h.GKModule K V) (O : Submodule ℂ V) (hO : ∀ k, ∀ v ∈ O
   carrier := {x | M.σ.asModuleEquiv x ∈ O}
   add_mem' {x y} hx hy := by
     show M.σ.asModuleEquiv (x + y) ∈ O
-    rw [map_add]
+    rw [map_add (f := _)]
     exact O.add_mem hx hy
   zero_mem' := by
     show M.σ.asModuleEquiv 0 ∈ O
@@ -242,7 +249,7 @@ def ofStable (M : h.GKModule K V) (O : Submodule ℂ V) (hO : ∀ k, ∀ v ∈ O
     | add a b ha hb =>
       rw [add_smul]
       show M.σ.asModuleEquiv (a • x + b • x) ∈ O
-      rw [map_add]
+      rw [map_add (f := _)]
       exact O.add_mem ha hb
     | smul r a ha =>
       rw [smul_assoc]
@@ -277,7 +284,7 @@ theorem aeval_eq_zero_of_equiv (M : h.GKModule K V) {ι : Type*} [Fintype ι]
         have e : (⟨M.σ.asModuleEquiv.symm ((w + w' : toSub M S) : V), (w + w').2⟩ : S) =
             ⟨M.σ.asModuleEquiv.symm (w : V), w.2⟩ + ⟨M.σ.asModuleEquiv.symm (w' : V), w'.2⟩ :=
           Subtype.ext (map_add _ _ _)
-        rw [e, map_add, Submodule.coe_add, map_add]
+        rw [e, map_add (f := _), Submodule.coe_add, map_add (f := _)]
       map_smul' := fun a w => by
         have e : (⟨M.σ.asModuleEquiv.symm ((a • w : toSub M S) : V), (a • w).2⟩ : S) =
             a • (⟨M.σ.asModuleEquiv.symm (w : V), w.2⟩ : S) :=
@@ -306,7 +313,8 @@ theorem aeval_eq_zero_of_equiv (M : h.GKModule K V) {ι : Type*} [Fintype ι]
       show (∑ i, M.ρ (Z i) * M.ρ (Z i)) (w : V) = _
       rw [LinearMap.sum_apply]
       rfl
-    rw [e, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Module.End.mul_apply]
     rw [map_ρ_of_equivariant M hFs fm hfm (hZ i) ⟨_, ρ_mem_of_stable M hFs (hZ i) w.2⟩,
@@ -346,7 +354,7 @@ theorem finiteDimensional_toSub_of_isSimpleModule (M : h.GKModule K V)
       rw [← Module.End.mul_apply, ← map_mul]
       exact Submodule.subset_span ⟨k * k', rfl⟩
     | zero => rw [map_zero]; exact O.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact O.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact O.add_mem hx hy
     | smul a x _ hx => rw [map_smul]; exact O.smul_mem a hx
   have hs₀O : M.σ.asModuleEquiv (s₀ : M.σ.asModule) ∈ O :=
     Submodule.subset_span ⟨1, show M.σ 1 _ = _ by rw [map_one, Module.End.one_apply]⟩
@@ -402,7 +410,7 @@ theorem exists_aeval_eq_zero_of_mem_isotypic (M : h.GKModule K V) {ι : Type*} [
     Polynomial.aeval (∑ i, M.ρ (Z i) * M.ρ (Z i)) A.charpoly (M.σ.asModuleEquiv x) = 0) hv'
     (fun m x hx => aeval_eq_zero_of_equiv M Z hZ m.2.some A.charpoly hvanF hx)
     (by rw [map_zero, map_zero])
-    (fun x y hx hy => by rw [map_add, map_add, hx, hy, add_zero])
+    (fun x y hx hy => by rw [map_add (f := _), map_add (f := _), hx, hy, add_zero])
   rwa [LinearEquiv.apply_symm_apply] at key
 
 end KType

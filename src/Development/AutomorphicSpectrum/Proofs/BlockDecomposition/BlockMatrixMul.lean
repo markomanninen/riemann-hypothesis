@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.HeisSch
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.HeisSch
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ namespace GlobalTheory.CompanionTheory.EisCovar
 
 def CovAt {D : D7} {n : ℕ} (ψ : AddChar (AF D.host.F) ℂ) (V : HSp D) {θ : InfFam D}
     (ω : G D n →* Module.End ℂ (schwartzA θ V.rank n)) (γ : G D n) : Prop :=
-  ∀ (v : Mx D V.rank (n + n)) (Φ Ψ : schwartzA θ V.rank n), Ψ.1 = Heisenberg₂ ψ V v Φ.1 →
-    (ω γ Ψ).1 = Heisenberg₂ ψ V (HMul.hMul v (mat γ⁻¹)) (ω γ Φ).1
+  ∀ (v : Mx D V.rank (n + n)) (Φ Ψ : schwartzA θ V.rank n), Ψ.1 = EC.Heisenberg₂ ψ V v Φ.1 →
+    (ω γ Ψ).1 = EC.Heisenberg₂ ψ V (HMul.hMul v (mat γ⁻¹)) (ω γ Φ).1
 
 def FieldGen (K : Type) [Field K] (σ : K →+* K) (n : ℕ) : Prop :=
   ∀ T : Matrix (Fin (n + n)) (Fin (n + n)) K → Prop, (∀ g h, T g → T h → T (g * h)) →

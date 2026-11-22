@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleLocalIffAffineEtaleCoverPointwise
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleLocalIffAffineEtaleCoverPointwise
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 

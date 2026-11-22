@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FiniteLiftDualNumberOfPhiCond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ExistsLiftDominatingPairOfMaximalIdealPowEqBot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ExistsLimitOfSuccessiveDiffMemFiltration
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FiniteLiftDualNumberOfPhiCond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ExistsLiftDominatingPairOfMaximalIdealPowEqBot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ExistsLimitOfSuccessiveDiffMemFiltration
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -215,7 +219,7 @@ private theorem level [Finite (ResidueField O)] (hs : Seps rbar s) (hc : IsLocal
     rw [AlgHom.comp_apply, hy, map_zero]
   have heq : J ≤ RingHom.ker FC := hJmin.2 hkC hle
   have hinj : Function.Injective p1 := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨y, rfl⟩ := hFCs x
     have hy : y ∈ RingHom.ker FB := by
@@ -397,10 +401,12 @@ private theorem assemble (hs : Seps rbar s) (A : ℕ → Type) [∀ N, CommRing 
           (Matrix.of (fun a b => Ideal.Quotient.mk J (xe (g, a, b))) *
             Matrix.of (fun a b => Ideal.Quotient.mk J (xe (h, a, b)))) a b
         rw [Matrix.mul_apply]
-        simp only [Matrix.of_apply, ← map_mul, ← map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.of_apply, ← map_mul, ← map_sum]
         rw [hq]
         intro N
-        simp only [map_sum, map_mul, hxe', Matrix.mul_apply] }
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul, hxe', Matrix.mul_apply] }
   have hhom : ∀ g a b, hom g a b = Ideal.Quotient.mk J (xe (g, a, b)) := fun g a b => rfl
   have hJ0 : ∀ x ∈ J, F 0 x = 0 := fun x hx => (hmemJ x).1 hx 0
   have hred : ∀ g a b, res O (MvPowerSeries (σ × ι × ι) O ⧸ J) (hom g a b) = rbar g a b := by
@@ -408,7 +414,8 @@ private theorem assemble (hs : Seps rbar s) (A : ℕ → Type) [∀ N, CommRing 
     have e0 : Ideal.Quotient.liftₐ J (F 0) hJ0 (hom g a b) = (r 0).hom g a b := by
       rw [hhom, Ideal.Quotient.liftₐ_apply]
       exact hxe' g a b 0
-    rw [← res_map (Ideal.Quotient.liftₐ J (F 0) hJ0), e0, (r 0).red]
+    rw [← res_map (O := O) (R := MvPowerSeries (σ × ι × ι) O ⧸ J)
+      (Ideal.Quotient.liftₐ J (F 0) hJ0), e0, (r 0).red]
   have hcont : ∀ a b, AdicCont (maximalIdeal (MvPowerSeries (σ × ι × ι) O ⧸ J)) fun g => hom g a b := by
     intro a b K
     have hloc : IsLocallyConstant fun g => (r K).hom g a b := by
@@ -424,7 +431,7 @@ private theorem assemble (hs : Seps rbar s) (A : ℕ → Type) [∀ N, CommRing 
       have hd : xe (g, a, b) - Function.surjInv (hsurj K) ((r K).hom g a b) ∈ RingHom.ker (F K) := by
         rw [RingHom.mem_ker, map_sub, Function.surjInv_eq (hsurj K), hxe', sub_self]
       obtain ⟨j, hj, m, hm, hjm⟩ := Submodule.mem_sup.1 (hJ3 K hd)
-      rw [← hjm, map_add, Ideal.Quotient.eq_zero_iff_mem.2 hj, zero_add]
+      rw [← hjm, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 hj, zero_add]
       exact Ideal.pow_le_pow_right (Nat.le_succ K) (mem_pow_map (Ideal.Quotient.mkₐ O J) (K + 1) hm)
     have hfin := hloc.comp (fun u => Ideal.Quotient.mk (maximalIdeal (MvPowerSeries (σ × ι × ι) O ⧸ J) ^ K)
           (Ideal.Quotient.mk J (Function.surjInv (hsurj K) u)))
@@ -486,7 +493,7 @@ private theorem assemble (hs : Seps rbar s) (A : ℕ → Type) [∀ N, CommRing 
 end
 
 theorem UpperTheory.V.Alg.univ_lift :
-    ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O] [Finite (ResidueField O)] [CharP (ResidueField O) l] (Γ ι : Type) [Group Γ] [TopologicalSpace Γ] [Fintype ι] [DecidableEq ι] (rbar : Γ →* Matrix ι ι (ResidueField O)) [IsTopologicalGroup Γ] [CompactSpace Γ] [TotallyDisconnectedSpace Γ] [T2Space Γ], PhiCond Γ l → IsLocallyConstant rbar →
+    ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O] [Finite (ResidueField O)] [CharP (ResidueField O) l] (Γ ι : Type) [Group Γ] [TopologicalSpace Γ] [Fintype ι] [DecidableEq ι] (rbar : Γ →* Matrix ι ι (ResidueField O)) [IsTopologicalGroup Γ] [CompactSpace Γ] [TotallyDisconnectedSpace Γ] [T2Space Γ], PhiCond (Γ := Γ) l → IsLocallyConstant rbar →
       ∃ (R : Type) (_ : CommRing R) (_ : Algebra O R) (_ : IsCO O R) (r : Lift O rbar R), Represents (fun _ _ _ _ _ => True) r := by
   intro l _ O _ _ _ _ _ _ Γ ι _ _ _ _ rbar _ _ _ _ hphi hc
   haveI hD : IsCO O (DualNumber (ResidueField O)) := (co_res O).2

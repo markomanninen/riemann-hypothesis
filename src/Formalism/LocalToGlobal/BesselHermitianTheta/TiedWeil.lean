@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+
+@[expose] public section
 
 noncomputable section
 

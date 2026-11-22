@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsDegenerationPreDataOverSubfield
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsDegenerationPreDataOverSubfield
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,8 +93,8 @@ theorem exists_isPullDeg_of_val {i : R →+* R'} (hi : Function.Injective i) (D 
     rw [pw, Fintype.prod_unique]
     exact (map_zpow _ _ _).trans (congrArg (· ^ (-1 : ℤ)) (gm_pull (𝟙 _) _ y _ hy _))
 
-attribute [local instance] TorusExt.gtGroup in
 
+attribute [local instance] TorusExt.gtGroup in
 theorem exists_qkExt_of_inverse {D : DegPre R} {F F' : Type} [Field F] [Field F'] [Algebra (FractionRing R) F]
     [Algebra (FractionRing R) F'] (f : F →+* F') (σ : F' →+* F) (h : f.comp σ = RingHom.id F')
     (hσ : σ.comp (algebraMap (FractionRing R) F') = algebraMap (FractionRing R) F) {k : ℕ} (q : QkPt D F' k) :
@@ -131,8 +135,8 @@ theorem isOpenImmersion_generic : IsOpenImmersion (jK V) := by
     exact ⟨ϖ ^ n, ⟨n, rfl⟩, hn.dvd⟩
   exact IsOpenImmersion.of_isLocalization ϖ
 
-omit [IsDiscreteValuationRing V] in
 
+omit [IsDiscreteValuationRing V] in
 theorem exists_fracInv : ∃ σ : FractionRing K →+* FractionRing V,
     (fracMap (IsFractionRing.injective V K)).comp σ = RingHom.id _ ∧
     σ.comp (fracMap (IsFractionRing.injective V K)) = RingHom.id _ := by

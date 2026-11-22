@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Loc4DivOf
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyMinorDvd
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Loc4DivOf
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyMinorDvd
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
+
+@[expose] public section
 
 noncomputable section
 

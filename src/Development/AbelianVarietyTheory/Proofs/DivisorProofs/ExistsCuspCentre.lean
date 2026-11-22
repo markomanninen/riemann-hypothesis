@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.SumRangeBlocks
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ContDiffAtLogMinorProd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockDetGe
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsPhlaBound
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsMixedProj
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.OneAddLeLminorSq
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.DivisionWithBasisOfDivision
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.CuspStatementPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.PointwiseNormInvarianceHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KronHolPsiStatementHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.SumRangeBlocks
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ContDiffAtLogMinorProd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockDetGe
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsPhlaBound
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsMixedProj
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.OneAddLeLminorSq
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.DivisionWithBasisOfDivision
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.CuspStatementPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.PointwiseNormInvarianceHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KronHolPsiStatementHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPf
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -44,7 +48,7 @@ theorem poleSolve' (hI : MeasInvStatement (E := E)) (r : ℕ) (X : Data E r) (G 
   set S : Set (V (nd X)) := rhF X x0 ⁻¹' Set.Icc (ε / 2) ε with hS
   have hSm : MeasurableSet S := measurable_rhF X x0 measurableSet_Icc
   have hfin : muF X x0 S < ⊤ :=
-    (measure_mono fun z hz => hz.2).trans_lt (SublevelFin.muF_sublevel_lt_top hI r X x0 h0 ε)
+    (measure_mono fun z (hz : z ∈ S) => hz.2).trans_lt (SublevelFin.muF_sublevel_lt_top hI r X x0 h0 ε)
   refine ⟨χ, ENNReal.ofReal (K * Real.exp (A + C + bb * ε)) * muF X x0 S, hχ.continuous, h1, h2, h3,
     ENNReal.mul_lt_top ENNReal.ofReal_lt_top hfin, fun δ ψ hψ => ?_⟩
   obtain ⟨hψs, hψl⟩ := hψ.2.2.1 x0 h0
@@ -100,7 +104,8 @@ theorem poleSolve' (hI : MeasInvStatement (E := E)) (r : ℕ) (X : Data E r) (G 
           deriv χ (rhF X x0 z) ^ 2 * Complex.normSq
             (∑ j, wd (nd X) j (fun w => ((rhF X x0 w : ℝ) : ℂ)) z * ξ j) := by
         simp only [wdb_ofReal_comp hcd hrd, wdb_ofReal hrd, mul_assoc, ← map_mul]
-        rw [← Finset.mul_sum, ← map_sum, norm_mul, Complex.norm_conj, mul_pow,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← Finset.mul_sum, ← map_sum, norm_mul, Complex.norm_conj, mul_pow,
           Complex.normSq_eq_norm_sq, Complex.norm_real, Real.norm_eq_abs, sq_abs]
       rw [e]
       by_cases hzS : z ∈ S
@@ -399,8 +404,8 @@ theorem orbitInterp' (r : ℕ) (X : Data E r) (G : Subgroup (GL (Fin r) E)) (x0 
   rw [e', FundSetPf.lact_mul, hu'.1.1.2.2 _ (X.Γ.inv_mem hs) _
     (MajInv.lact_mem_dom X (hG.isUStab h1) hx0), h3, mul_zero]
 
-open GlobalTheory.Up.BallExPf in
 
+open GlobalTheory.Up.BallExPf in
 theorem frame_bound3 {r : ℕ} (X : Data E r) {x0 x1 : Frame X.Ψ r} (h0 : IsOrth X x0)
     (h1 : IsOrth X x1) (hρ : rhX X x0 x1 ≤ 1 / 4) (τ : X.Ψ) (u : Fin r → ℂ) :
     ReciprocityTheory.MultiplicativeHeights.normSq (((mat x0 τ)⁻¹ * mat x1 τ)⁻¹ *ᵥ u) ≤ 3 * ReciprocityTheory.MultiplicativeHeights.normSq u ∧
@@ -530,9 +535,9 @@ theorem normSq_sub_le {r : ℕ} (v w : Fin r → ℂ) :
   have h : ‖(v - w) k‖ ≤ ‖v k‖ + ‖w k‖ := norm_sub_le _ _
   nlinarith [norm_nonneg ((v - w) k), norm_nonneg (v k), norm_nonneg (w k), sq_nonneg (‖v k‖ - 3 * ‖w k‖)]
 
+
 open ReciprocityTheory.MultiplicativeHeights in
 open scoped ComplexOrder in
-
 theorem eq_one_of_cong {K : Type} [Field K] [NumberField K] {r M : ℕ} (hM : 5 ≤ M)
     (H : (K →+* ℂ) → Matrix (Fin r) (Fin r) ℂ) (hH : ∀ σ, (H σ).PosDef)
     (L : Submodule (𝓞 K) (Fin r → K)) (γ : Matrix (Fin r) (Fin r) K) (hNC : NoContraction H L)
@@ -573,8 +578,8 @@ theorem eq_one_of_cong {K : Type} [Field K] [NumberField K] {r M : ℕ} (hM : 5 
       nlinarith
   exact sub_eq_zero.1 ((smul_eq_zero.1 hN).resolve_left (inv_ne_zero hM0))
 
-open GlobalTheory.Up.BallExPf in
 
+open GlobalTheory.Up.BallExPf in
 theorem exists_freeBall {r : ℕ} (X : DataX E r) {N : ℕ} (hN : 5 ≤ N)
     (hL : ∀ γ ∈ X.Γ, ∀ x ∈ X.L', ∃ y ∈ X.L', (γ : Matrix (Fin r) (Fin r) E) *ᵥ x - x = (N : E) • y) :
     ∃ x0, IsOrth X.toData x0 ∧ FreeBall X.toData X.Γ x0 (1 / 4) := by

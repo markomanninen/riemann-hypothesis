@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantRes
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantRes
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -25,8 +30,8 @@ theorem index_openSubgroup (U : OpenSubgroup Gal(Ksep/K)) :
     (U : Subgroup Gal(Ksep/K)).index = Module.finrank K (fixedField (U : Subgroup Gal(Ksep/K))) := by
   rw [finrank_eq_fixingSubgroup_index, fixingSubgroup_fixedField_openSubgroup]
 
-omit [IsGalois K Ksep] in
 
+omit [IsGalois K Ksep] in
 theorem fixedField_le_fixedField {U V : OpenSubgroup Gal(Ksep/K)} (h : V ≤ U) :
     fixedField (U : Subgroup Gal(Ksep/K)) ≤ fixedField (V : Subgroup Gal(Ksep/K)) :=
   fun _ hx => (mem_fixedField_iff _ _).2 fun σ hσ => (mem_fixedField_iff _ _).1 hx σ (h hσ)
@@ -39,8 +44,7 @@ theorem relIndex_eq_finrank {U V : OpenSubgroup Gal(Ksep/K)} (h : V ≤ U) :
   have : IsScalarTower K (fixedField (U : Subgroup Gal(Ksep/K)))
       (fixedField (V : Subgroup Gal(Ksep/K))) := IsScalarTower.of_algebraMap_eq' rfl
   have h1 := Subgroup.relIndex_mul_index (show (V : Subgroup Gal(Ksep/K)) ≤ U from h)
-  rw [index_openSubgroup, index_openSubgroup, ← Module.finrank_mul_finrank K
-    (fixedField (U : Subgroup Gal(Ksep/K))) (fixedField (V : Subgroup Gal(Ksep/K))), mul_comm] at h1
+  rw [index_openSubgroup, index_openSubgroup, ← (letI : Module.Free (fixedField (U : Subgroup Gal(Ksep/K))) (fixedField (V : Subgroup Gal(Ksep/K))) := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank K (fixedField (U : Subgroup Gal(Ksep/K))) (fixedField (V : Subgroup Gal(Ksep/K)))), mul_comm] at h1
   exact Nat.eq_of_mul_eq_mul_left Module.finrank_pos h1
 
 def galFixedFieldToOpen (U : OpenSubgroup Gal(Ksep/K)) :
@@ -48,12 +52,6 @@ def galFixedFieldToOpen (U : OpenSubgroup Gal(Ksep/K)) :
   (AlgEquiv.restrictScalarsHom K).codRestrict (U : Subgroup Gal(Ksep/K)) fun σ =>
     (fixingSubgroup_fixedField_openSubgroup U).le
       ((mem_fixingSubgroup_iff _ _).2 fun x hx => σ.commutes ⟨x, hx⟩)
-
-@[simp]
-theorem coe_galFixedFieldToOpen_apply (U : OpenSubgroup Gal(Ksep/K))
-    (σ : Gal(Ksep/fixedField (U : Subgroup Gal(Ksep/K)))) (x : Ksep) :
-    ((galFixedFieldToOpen U σ : Gal(Ksep/K)) : Ksep → Ksep) x = σ x :=
-  rfl
 
 theorem continuous_galFixedFieldToOpen (U : OpenSubgroup Gal(Ksep/K)) :
     Continuous (galFixedFieldToOpen U) :=
@@ -70,10 +68,6 @@ theorem galFixedFieldToOpen_bijective (U : OpenSubgroup Gal(Ksep/K)) :
 noncomputable def galFixedFieldEquivOpen (U : OpenSubgroup Gal(Ksep/K)) :
     Gal(Ksep/fixedField (U : Subgroup Gal(Ksep/K))) ≃* (U : Subgroup Gal(Ksep/K)) :=
   MulEquiv.ofBijective (galFixedFieldToOpen U) (galFixedFieldToOpen_bijective U)
-
-theorem galFixedFieldEquivOpen_toMonoidHom (U : OpenSubgroup Gal(Ksep/K)) :
-    (galFixedFieldEquivOpen U).toMonoidHom = galFixedFieldToOpen U :=
-  rfl
 
 theorem continuous_galFixedFieldEquivOpen (U : OpenSubgroup Gal(Ksep/K)) :
     Continuous (galFixedFieldEquivOpen U).toMonoidHom :=
@@ -155,9 +149,9 @@ theorem localInv_bijective (U : OpenSubgroup Gal(Ksep/K)) : Function.Bijective (
   (brauerInv_bijective _ Ksep).comp
     ⟨(ModuleCat.mono_iff_injective _).1 inferInstance, (ModuleCat.epi_iff_surjective _).1 inferInstance⟩
 
+
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel Ksep]
   [TopologicalSpace Ksep] [IsValuativeTopology Ksep] [ValuativeExtension K Ksep] in
-
 theorem isZero_H1_open (U : OpenSubgroup Gal(Ksep/K)) :
     Limits.IsZero (cohomology (Rep.res (U : Subgroup Gal(Ksep/K)).subtype (galUnits.{0} K Ksep)) 1) :=
   (isZero_cohomology_one_galUnits (K := fixedField (U : Subgroup Gal(Ksep/K))) (L := Ksep)).of_iso
@@ -186,10 +180,6 @@ noncomputable def localClassFormation : ClassFormation (galUnits.{0} K Ksep) whe
   isZero_H1_open_subgroups := isZero_H1_open K Ksep
   inv_res := localInv_res K Ksep
   inv_bijective := localInv_bijective K Ksep
-
-theorem localClassFormation_inv (U : OpenSubgroup Gal(Ksep/K)) :
-    (localClassFormation K Ksep).inv U = localInv K Ksep U := by
-  simp only [localClassFormation]
 
 end Formation
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -59,7 +63,8 @@ theorem mem_sq_localization_of_pderiv_mem :
   have h0 : KaehlerDifferential.kerCotangentToTensor Λ R F
       ((RingHom.ker (algebraMap R F)).toCotangent ⟨_, hym⟩) = 0 := by
     rw [KaehlerDifferential.kerCotangentToTensor_toCotangent]
-    rw [← KaehlerDifferential.map_D Λ Λ (MvPolynomial σ Λ) R, hD, map_sum, tmul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← KaehlerDifferential.map_D Λ Λ (MvPolynomial σ Λ) R, hD, map_sum, tmul_sum]
     refine Finset.sum_eq_zero fun s _ => ?_
     rw [LinearMap.map_smul_of_tower, ← algebraMap_smul R, ← smul_tmul, Algebra.smul_def, mul_one,
       RingHom.mem_ker.mp (hmem _ (hd s)), zero_tmul]

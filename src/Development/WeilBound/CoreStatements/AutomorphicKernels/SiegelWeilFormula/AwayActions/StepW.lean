@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.FinBase
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.VolumeIsAddHaar
-import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.FinBase
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.VolumeIsAddHaar
+public import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ theorem stepW (hT : TAll) (hA : AuxiliaryPrimeFunction) (ε : ℤˣ) (w : d.G) (
     TopologicalSpace.Subtype.secondCountableTopology ((VI : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n))
   haveI : SecondCountableTopology VF :=
     TopologicalSpace.Subtype.secondCountableTopology ((VF : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n))
-  haveI : BorelSpace VI := Subtype.borelSpace ((VI : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n))
-  haveI : BorelSpace VF := Subtype.borelSpace ((VF : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n))
+  haveI : BorelSpace VI := Subtype.borelSpace (fun x' => x' ∈ ((VI : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n)))
+  haveI : BorelSpace VF := Subtype.borelSpace (fun x' => x' ∈ ((VF : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n)))
   have h₁ : ∀ Z : Mx F E d.m d.n, eInf F • Z ∈ VI := fun Z => by
     show finOne F • eInf F • Z = 0
     rw [smul_smul, finOne_mul_eInf, zero_smul]

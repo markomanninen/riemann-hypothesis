@@ -1,8 +1,35 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLineFubiniStudyFacts
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListTailLog
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListTailLogSmooth
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.SystemIndependence
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShift
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.SNCAtlas
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenSt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLCurveA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLLocalStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PushAFinsumInter
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Pullback
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Measure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AtlasIndep
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Degree
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffFubiniStudyRatioCompChart0
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLinePartitionContinuousCoe
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListTailLog
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListTailLogSmooth
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.SystemIndependence
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -146,7 +173,8 @@ theorem tailLogBound_of_le [CompactSpace X] [T2Space X] {Yo : Set X} (hYo : IsOp
   have hlin := ReciprocityTheory.AnForm.M.mIntLinear A T hpot (-1) gs gb hI' hI
   have h0 := SystemIndependence.mInt_nonneg_on A Yo T hpot hnn (fun x => -1 * gs x + gb x)
     (fun x => by linarith [hg x]) (fun x hx => by
-      rw [hgs, hgb, indicator_of_notMem (fun h => hx h.1), indicator_of_notMem (fun h => hx h.1)]
+      rw [hgs, hgb, indicator_of_notMem (fun (h : x ∈ tail Yo r R₀) => hx h.1),
+        indicator_of_notMem (fun (h : x ∈ tail Yo r' R₀) => hx h.1)]
       ring)
   linarith
 

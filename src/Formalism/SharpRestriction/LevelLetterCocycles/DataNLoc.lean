@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.CoboundaryTransfers.Statement
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.WeaklyAdmissibleFiltrations.StatementPC
+module
+
+public import Mathlib
+public import Formalism.CoboundaryTransfers.Statement
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.WeaklyAdmissibleFiltrations.StatementPC
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,8 +163,8 @@ def herrZ1Δ {O D ι : Type} [CommRing O] [AddCommGroup D] [Module O D] (γ φ :
     (S : Finset ι) (δ : ι → D →ₗ[O] D) : Submodule O (D × D) :=
   herrCocycles γ φ ⊓ ⨅ d ∈ S, LinearMap.ker (LinearMap.prodMap (δ d) (δ d) - LinearMap.id)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure LocWach (PD : PeriodData G Qp K₀ K B BdR) (LL O : Type) [Field LL] [Algebra Qp LL]
     [CommRing O] [Algebra O LL] [TopologicalSpace LL] (v : AddValuation LL (WithTop ℚ)) (n : ℕ) where
 
@@ -278,7 +282,7 @@ structure LocWach (PD : PeriodData G Qp K₀ K B BdR) (LL O : Type) [Field LL] [
   lev : ZMod n → LL → (LetA O n →ₐ[O] PowerSeries LL)
   lev_letter : ∀ i ζ a, a i = 0 → lev i ζ a = 0
   lev_π : ∀ i (ζ : LL), (∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j)) → ∃ E : PowerSeries LL, PowerSeries.constantCoeff E = 1 ∧
-    PowerSeries.derivative LL E = E ∧ 1 + lev i ζ letπ = PowerSeries.C ζ * E
+    PowerSeries.derivative E = E ∧ 1 + lev i ζ letπ = PowerSeries.C ζ * E
 
   lev_cont : ∀ (i : ZMod n) (ζ : LL) (a : LetA O n) (k r : ℕ), ∃ m₀ : ℕ, ∀ m ≥ m₀, (r : WithTop ℚ) ≤
     v (PowerSeries.coeff k (lev i ζ a) -
@@ -334,8 +338,6 @@ def X : LetA O n := (W.φA ^ (W.s - 1)) letπ
 
 def Q : LetA O n := (W.φA ^ (W.s - 1)) W.q
 
-def lvl (j : ℕ) : LetA O n := (W.φA ^ j) W.q
-
 def Nl (T : LocLat G Qp LL O) (i : ZMod n) : Submodule (LetA O n) (W.DD T) :=
   (W.N T).map ((letE i : LetA O n) • LinearMap.id)
 
@@ -359,7 +361,7 @@ def AΔ : Subalgebra O (LetA O n) where
     rw [map_mul, ha δ hδ, hb δ hδ]
   add_mem' := by
     intro a b ha hb δ hδ
-    rw [map_add, ha δ hδ, hb δ hδ]
+    rw [map_add (f := _), ha δ hδ, hb δ hδ]
   algebraMap_mem' := by
     intro r δ _
     exact AlgHom.commutes _ r
@@ -369,7 +371,7 @@ def NΔ (T : LocLat G Qp LL O) : Submodule O (W.DD T) where
   zero_mem' := ⟨(W.N T).zero_mem, fun δ _ => map_zero _⟩
   add_mem' := by
     rintro a b ⟨ha, ha'⟩ ⟨hb, hb'⟩
-    exact ⟨(W.N T).add_mem ha hb, fun δ hδ => by rw [map_add, ha' δ hδ, hb' δ hδ]⟩
+    exact ⟨(W.N T).add_mem ha hb, fun δ hδ => by rw [map_add (f := _), ha' δ hδ, hb' δ hδ]⟩
   smul_mem' := by
     rintro c a ⟨ha, ha'⟩
     refine ⟨?_, fun δ hδ => by rw [map_smul, ha' δ hδ]⟩
@@ -391,16 +393,6 @@ theorem φA_X : W.φA W.X = W.X * W.Q := by
   rw [X, this, φA_π, map_mul]
   rfl
 
-def base : Formalism.CoboundaryTransfers.Base O (LetA O n) where
-  p := PD.p
-  hp := PD.hp
-  φ := W.φA
-  γ := W.γA W.gam
-  X := W.X
-  Q := W.Q
-  comm := fun a => W.φA_γA W.gam a
-  φX := ⟨W.Q, W.φA_X⟩
-
 def divisibleCocycles (T : LocLat G Qp LL O) : Submodule O (W.DD T × W.DD T) :=
   herrCocycles (W.γ T) (W.φD T)
 
@@ -416,32 +408,6 @@ def ClKNat : Prop :=
   ∀ {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) (pr : ↥(W.wachCocyclesDelta T)) (pr' : ↥(W.wachCocyclesDelta T')),
     (pr' : W.DD T' × W.DD T') = (W.map f (pr : W.DD T × W.DD T).1, W.map f (pr : W.DD T × W.DD T).2) →
       (LatHom.H1map f (W.clK T pr) : LatticeCohomology T'.L) = W.clK T' pr'
-
-def wachOf (T : LocLat G Qp LL O) (M : ℕ)
-    (hX : ∀ x : W.DD T, W.X • x = 0 → x = 0)
-    (hQ : Function.Bijective (fun x : W.DD T => W.Q • x))
-    (hφN : ∀ x ∈ W.N T, W.Q ^ M • W.φD T x ∈ W.N T)
-    (hγN : ∀ x ∈ W.N T, ∃ x' ∈ W.N T, W.γ T x - x = W.X • x')
-    (hγQN : ∀ y : W.DD T, W.Q ^ M • y ∈ W.N T →
-      ∃ y' : W.DD T, W.Q ^ M • y' ∈ W.N T ∧ W.γ T y - y = W.X • y') :
-    Formalism.CoboundaryTransfers.WachMod W.base M (W.DD T) where
-  N := W.N T
-  φ := W.φD T
-  γ := W.γ T
-  φ_smul := fun a x => by
-    have := W.φD_smul T (algebraMap (LetA O n) W.EE a) x
-    rw [algebraMap_smul, W.φE_ext, algebraMap_smul] at this
-    exact this
-  γ_smul := fun a x => by
-    have := W.γD_smul T W.gam (algebraMap (LetA O n) W.EE a) x
-    rw [algebraMap_smul, W.γE_ext, algebraMap_smul] at this
-    exact this
-  comm := fun x => W.φγ_comm T W.gam x
-  X_inj := hX
-  Q_bij := hQ
-  φ_N := hφN
-  γ_N := hγN
-  γ_QN := hγQN
 
 end LocWach
 
@@ -723,7 +689,8 @@ def IsJumpW (P : LocPrime l) {m : ℕ} (r : ↥Gw →* Matrix.GeneralLinearGroup
   IsJumpV (P.PD Bw.Kw) (Bw.rep r) τ a
 
 def IsdRW (P : LocPrime l) {m : ℕ} (r : ↥Gw →* Matrix.GeneralLinearGroup (Fin m) O) : Prop :=
-  Module.finrank ↥Bw.LL.1 ↥(DdR (P.PD Bw.Kw) (Bw.rep r)) = Module.finrank ℚ_[l] ↥Bw.Kw.1 * m
+  let D := DdR (P.PD Bw.Kw) (Bw.rep r)
+  @Module.finrank ↥Bw.LL.1 ↥D _ _ (Submodule.module D) = Module.finrank ℚ_[l] ↥Bw.Kw.1 * m
 
 def IsPotCrysW (P : LocPrime l) {m : ℕ} (r : ↥Gw →* Matrix.GeneralLinearGroup (Fin m) O) : Prop :=
   ∃ (K' : FinExt l) (h : Bw.Kw.1 ≤ K'.1),
@@ -863,8 +830,6 @@ instance algZlWCb : Algebra ℤ_[l] (WCb l) := (zlW l (Cb l)).toAlgebra
 
 instance algZlAinf : Algebra ℤ_[l] (Ainf l) := (zlW l (OCb l)).toAlgebra
 
-example : algebraMap ℤ_[l] (WCb l) ((l : ℕ) : ℤ_[l]) = ((l : ℕ) : WCb l) := map_natCast _ _
-
 theorem map_zlW {R S : Type} [CommRing R] [CommRing S] [CharP R l] [CharP S l] (f : R →+* S)
     (x : ℤ_[l]) : WittVector.map f (zlW l R x) = zlW l S x := by
   simp only [zlW, RingHom.comp_apply]
@@ -1002,9 +967,11 @@ theorem isUnit_inclW_ξ : IsUnit (inclW l AI.ξ) := by
   rw [inclW, WittVector.map_coeff]
   have h0 : AI.ξ.coeff 0 = ∑ i ∈ Finset.range l, AI.ε1 ^ i := by
     have := congrArg (fun x => WittVector.constantCoeff x) (show AI.ξ = AI.ξ from rfl)
-    simp only [ξ, map_sum, map_pow] at this ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ξ, map_sum, map_pow] at this ⊢
     change WittVector.constantCoeff (∑ i ∈ Finset.range l, (WittVector.teichmuller l AI.ε1) ^ i) = _
-    simp [map_sum, map_pow, WittVector.teichmuller_coeff_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_pow, WittVector.teichmuller_coeff_zero]
   rw [h0]
   intro hz
   have hz' : ∑ i ∈ Finset.range l, AI.ε1 ^ i = 0 :=

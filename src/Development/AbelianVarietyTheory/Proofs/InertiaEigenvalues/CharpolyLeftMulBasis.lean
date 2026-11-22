@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.TraceDetSplit
@@ -48,7 +53,8 @@ theorem det_trace_monic {E A : Type} [Field E] [CommRing A] [Algebra E A] {n : �
         Matrix.of fun k l : Fin n => Algebra.trace E A (g ^ (k : ℕ) * e l) := by
     ext k l
     simp only [Matrix.of_apply, Matrix.mul_apply]
-    rw [aeval_eq_sum_range' (n := n) (by rw [hd k]; exact k.isLt), Finset.sum_mul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [aeval_eq_sum_range' (n := n) (by rw [hd k]; exact k.isLt), Finset.sum_mul, map_sum,
       ← Fin.sum_univ_eq_sum_range]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [smul_mul_assoc, map_smul, smul_eq_mul]
@@ -78,14 +84,15 @@ theorem trace_mul_eq {E A : Type} [Field E] [CommRing A] [Algebra E A] {n : ℕ}
   ext k l
   simp only [Matrix.of_apply, Matrix.mul_apply, Algebra.leftMulMatrix_eq_repr_mul]
   conv_lhs => rw [mul_assoc, ← w.sum_repr (h * w l)]
-  rw [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [mul_smul_comm, map_smul, smul_eq_mul, mul_comm]
 
 end GlobalTheory.TraceDetSplit
 
-open GlobalTheory.TraceDetSplit in
 
+open GlobalTheory.TraceDetSplit in
 theorem GlobalTheory.det_trace_pow_prod : ∀ (E A₁ A₂ : Type) [Field E] [CommRing A₁] [CommRing A₂] [Algebra E A₁] [Algebra E A₂] [Module.Finite E A₁] [Module.Finite E A₂] (g₁ : A₁) (g₂ : A₂) (a b : ℕ) (u : Module.Basis (Fin a) E A₁) (w : Module.Basis (Fin b) E A₂), ((LinearMap.mulLeft E g₁).charpoly * (LinearMap.mulLeft E g₂).charpoly).Separable → ∃ ε : E, ε * ε = 1 ∧ (Matrix.of fun k l : Fin (a + b) => Algebra.trace E (A₁ × A₂) ((g₁, g₂) ^ (k : ℕ) * Fin.addCases (fun i => (u i, 0)) (fun j => (0, w j)) l)).det = ε * resultant (LinearMap.mulLeft E g₁).charpoly (LinearMap.mulLeft E g₂).charpoly * (Matrix.of fun k l : Fin a => Algebra.trace E A₁ (g₁ ^ (k : ℕ) * u l)).det * (Matrix.of fun k l : Fin b => Algebra.trace E A₂ (g₂ ^ (k : ℕ) * w l)).det := by
   intro E A₁ A₂ _ _ _ _ _ _ _ g₁ g₂ a b u w _
   classical

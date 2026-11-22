@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+
+@[expose] public section
 
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Matrix
 open NumberField MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift
@@ -101,7 +105,7 @@ theorem rho_split : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Number
       rw [← Matrix.smul_mul, hu, Matrix.zero_mul, map_zero]
     rw [← hyp, hw]
     unfold Darboux.rho
-    rw [map_add, map_smul, schr_add_of_orth, schr_pureA]
+    rw [map_add (f := _), map_smul, schr_add_of_orth, schr_pureA]
     · exact dot_eq_zero _ _ _ (congrArg Prod.fst ha)
     · rw [dotProduct_comm]
       exact dot_eq_zero _ _ _ (congrArg Prod.snd ha)

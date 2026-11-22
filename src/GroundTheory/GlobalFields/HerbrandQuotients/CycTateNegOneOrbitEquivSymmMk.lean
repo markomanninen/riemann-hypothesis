@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.HerbrandAbstract
-import GroundTheory.GlobalFields.HerbrandQuotients.CycTate
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.HerbrandAbstract
+public import GroundTheory.GlobalFields.HerbrandQuotients.CycTate
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -47,42 +51,42 @@ theorem PermutesFactors.eq_zero_of_invariant [MulAction.IsPretransitive G X]
 
 variable [MulAction.IsPretransitive G X]
 
-variable (G) in
 
+variable (G) in
 noncomputable def orbitRep (x₀ y : X) : G :=
   (MulAction.exists_smul_eq G x₀ y).choose
 
-theorem orbitRep_smul (x₀ y : X) : orbitRep G x₀ y • x₀ = y :=
+theorem orbitRep_smul (x₀ y : X) : (orbitRep (G := G)) x₀ y • x₀ = y :=
   (MulAction.exists_smul_eq G x₀ y).choose_spec
 
-variable (G) in
 
+variable (G) in
 theorem finite_of_isPretransitive [Finite G] (x₀ : X) : Finite X :=
   Finite.of_surjective (fun g : G => g • x₀) fun y => MulAction.exists_smul_eq G x₀ y
 
 noncomputable def stabProdEquiv (x₀ : X) (D : Subgroup G) (hD : ∀ g, g ∈ D ↔ g • x₀ = x₀) :
     D × X ≃ G where
-  toFun p := (p.1 : G) * (orbitRep G x₀ p.2)⁻¹
-  invFun g := (⟨g * orbitRep G x₀ (g⁻¹ • x₀), (hD _).2 (by
+  toFun p := (p.1 : G) * ((orbitRep (G := G)) x₀ p.2)⁻¹
+  invFun g := (⟨g * (orbitRep (G := G)) x₀ (g⁻¹ • x₀), (hD _).2 (by
     rw [mul_smul, orbitRep_smul, smul_inv_smul])⟩, g⁻¹ • x₀)
   left_inv p := by
     obtain ⟨d, y⟩ := p
     have hd : (d : G)⁻¹ • x₀ = x₀ := (hD _).1 (inv_mem d.2)
-    have hy : ((d : G) * (orbitRep G x₀ y)⁻¹)⁻¹ • x₀ = y := by
+    have hy : ((d : G) * ((orbitRep (G := G)) x₀ y)⁻¹)⁻¹ • x₀ = y := by
       rw [mul_inv_rev, inv_inv, mul_smul, hd, orbitRep_smul]
     refine Prod.ext (Subtype.ext ?_) hy
-    show (d : G) * (orbitRep G x₀ y)⁻¹ * orbitRep G x₀ (((d : G) * (orbitRep G x₀ y)⁻¹)⁻¹ • x₀) = d
+    show (d : G) * ((orbitRep (G := G)) x₀ y)⁻¹ * (orbitRep (G := G)) x₀ (((d : G) * ((orbitRep (G := G)) x₀ y)⁻¹)⁻¹ • x₀) = d
     rw [hy, inv_mul_cancel_right]
   right_inv g := mul_inv_cancel_right g _
 
 noncomputable def orbitCores [Fintype X] (ρ : Representation k G (∀ x, M x)) (x₀ : X) :
     (∀ x, M x) →+ M x₀ where
-  toFun f := ∑ y, ρ (orbitRep G x₀ y)⁻¹ f x₀
+  toFun f := ∑ y, ρ ((orbitRep (G := G)) x₀ y)⁻¹ f x₀
   map_zero' := by simp
   map_add' f f' := by simp [Finset.sum_add_distrib]
 
 theorem orbitCores_apply [Fintype X] (ρ : Representation k G (∀ x, M x)) (x₀ : X)
-    (f : ∀ x, M x) : orbitCores ρ x₀ f = ∑ y, ρ (orbitRep G x₀ y)⁻¹ f x₀ :=
+    (f : ∀ x, M x) : orbitCores ρ x₀ f = ∑ y, ρ ((orbitRep (G := G)) x₀ y)⁻¹ f x₀ :=
   rfl
 
 theorem cycNorm_apply_base [Fintype G] [Fintype X] (ρ : Representation k G (∀ x, M x)) (x₀ : X)
@@ -90,12 +94,13 @@ theorem cycNorm_apply_base [Fintype G] [Fintype X] (ρ : Representation k G (∀
     (hρ₀ : ∀ (d : D) (f : ∀ x, M x), ρ d f x₀ = ρ₀ d (f x₀)) (f : ∀ x, M x) :
     cycNorm ρ f x₀ = cycNorm ρ₀ (orbitCores ρ x₀ f) := by
   rw [cycNorm_apply, cycNorm_apply, Finset.sum_apply, orbitCores_apply]
-  rw [show (∑ g : G, ρ g f x₀) = ∑ p : D × X, ρ ((p.1 : G) * (orbitRep G x₀ p.2)⁻¹) f x₀ from
+  rw [show (∑ g : G, ρ g f x₀) = ∑ p : D × X, ρ ((p.1 : G) * ((orbitRep (G := G)) x₀ p.2)⁻¹) f x₀ from
     (Fintype.sum_equiv (stabProdEquiv x₀ D hD)
-      (fun p => ρ ((p.1 : G) * (orbitRep G x₀ p.2)⁻¹) f x₀) (fun g => ρ g f x₀) fun p => rfl).symm]
+      (fun p => ρ ((p.1 : G) * ((orbitRep (G := G)) x₀ p.2)⁻¹) f x₀) (fun g => ρ g f x₀) fun p => rfl).symm]
   rw [Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun d _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [map_mul, Module.End.mul_apply, hρ₀]
 
@@ -127,7 +132,7 @@ theorem orbitCores_single [Fintype X] [DecidableEq X] {ρ : Representation k G (
     {ρ₀ : Representation k D (M x₀)} (hρ₀ : ∀ (d : D) (f : ∀ x, M x), ρ d f x₀ = ρ₀ d (f x₀))
     (b : M x₀) :
     orbitCores ρ x₀ (Pi.single x₀ b) =
-      ρ₀ ⟨(orbitRep G x₀ x₀)⁻¹, (hD _).2 (by rw [inv_smul_eq_iff, orbitRep_smul])⟩ b := by
+      ρ₀ ⟨((orbitRep (G := G)) x₀ x₀)⁻¹, (hD _).2 (by rw [inv_smul_eq_iff, orbitRep_smul])⟩ b := by
   rw [orbitCores_apply, Finset.sum_eq_single x₀]
   · exact (hρ₀ ⟨_, (hD _).2 (by rw [inv_smul_eq_iff, orbitRep_smul])⟩ _).trans
       (by rw [Pi.single_eq_same])
@@ -144,20 +149,20 @@ theorem orbitCores_apply_sub_mem [Fintype X] {ρ : Representation k G (∀ x, M 
     (hρ₀ : ∀ (d : D) (f : ∀ x, M x), ρ d f x₀ = ρ₀ d (f x₀)) {τ : D}
     (hτ : ∀ d, d ∈ Subgroup.zpowers τ) (g : G) (h : ∀ x, M x) :
     orbitCores ρ x₀ (ρ g h) - orbitCores ρ x₀ h ∈ (cycSubOne ρ₀ τ).range := by
-  have hmem : ∀ y, (orbitRep G x₀ y)⁻¹ * g * orbitRep G x₀ (g⁻¹ • y) ∈ D := fun y =>
+  have hmem : ∀ y, ((orbitRep (G := G)) x₀ y)⁻¹ * g * (orbitRep (G := G)) x₀ (g⁻¹ • y) ∈ D := fun y =>
     (hD _).2 (by rw [mul_smul, mul_smul, orbitRep_smul, smul_inv_smul, inv_smul_eq_iff,
       orbitRep_smul])
-  have hterm : ∀ y, ρ (orbitRep G x₀ y)⁻¹ (ρ g h) x₀ =
-      ρ₀ ⟨_, hmem y⟩ (ρ (orbitRep G x₀ (g⁻¹ • y))⁻¹ h x₀) := by
+  have hterm : ∀ y, ρ ((orbitRep (G := G)) x₀ y)⁻¹ (ρ g h) x₀ =
+      ρ₀ ⟨_, hmem y⟩ (ρ ((orbitRep (G := G)) x₀ (g⁻¹ • y))⁻¹ h x₀) := by
     intro y
     rw [← hρ₀ ⟨_, hmem y⟩, ← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul]
     simp [mul_assoc]
   have e1 : orbitCores ρ x₀ (ρ g h) =
-      ∑ y, ρ₀ ⟨_, hmem y⟩ (ρ (orbitRep G x₀ (g⁻¹ • y))⁻¹ h x₀) :=
+      ∑ y, ρ₀ ⟨_, hmem y⟩ (ρ ((orbitRep (G := G)) x₀ (g⁻¹ • y))⁻¹ h x₀) :=
     Finset.sum_congr rfl fun y _ => hterm y
-  have e2 : orbitCores ρ x₀ h = ∑ y, ρ (orbitRep G x₀ (g⁻¹ • y))⁻¹ h x₀ :=
-    (Fintype.sum_equiv (MulAction.toPerm g⁻¹) (fun y => ρ (orbitRep G x₀ (g⁻¹ • y))⁻¹ h x₀)
-      (fun y => ρ (orbitRep G x₀ y)⁻¹ h x₀) fun y => rfl).symm
+  have e2 : orbitCores ρ x₀ h = ∑ y, ρ ((orbitRep (G := G)) x₀ (g⁻¹ • y))⁻¹ h x₀ :=
+    (Fintype.sum_equiv (MulAction.toPerm g⁻¹) (fun y => ρ ((orbitRep (G := G)) x₀ (g⁻¹ • y))⁻¹ h x₀)
+      (fun y => ρ ((orbitRep (G := G)) x₀ y)⁻¹ h x₀) fun y => rfl).symm
   rw [e1, e2, ← Finset.sum_sub_distrib]
   exact sum_mem fun y _ => apply_sub_self_mem_range_cycSubOne ρ₀ hτ _ _
 
@@ -194,7 +199,7 @@ theorem orbitZeroMap_surjective [Fintype G] (ρ : Representation k G (∀ x, M x
     (hσ : ∀ g, g ∈ Subgroup.zpowers σ) (τ : D) (hτ : ∀ d, d ∈ Subgroup.zpowers τ) :
     Function.Surjective (orbitZeroMap ρ x₀ D ρ₀ hρ₀ σ hσ τ) := by
   classical
-  have := finite_of_isPretransitive G x₀
+  have := finite_of_isPretransitive (G := G) x₀
   have := Fintype.ofFinite X
   intro c
   induction c using QuotientAddGroup.induction_on with
@@ -203,20 +208,21 @@ theorem orbitZeroMap_surjective [Fintype G] (ρ : Representation k G (∀ x, M x
   have hbD : ∀ d : D, ρ₀ d b = b := by
     rw [AddMonoidHom.mem_ker, cycSubOne_apply, sub_eq_zero] at hb
     exact apply_eq_self_of_generator ρ₀ hτ hb
-  let F : ∀ x, M x := ∑ y, ρ (orbitRep G x₀ y) (Pi.single x₀ b)
+  let F : ∀ x, M x := ∑ y, ρ ((orbitRep (G := G)) x₀ y) (Pi.single x₀ b)
   have hF : ∀ g, ρ g F = F := by
     intro g
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine (Finset.sum_congr rfl fun y _ => ?_).trans (Fintype.sum_equiv (MulAction.toPerm g)
-      (fun y => ρ (orbitRep G x₀ (g • y)) (Pi.single x₀ b))
-      (fun y => ρ (orbitRep G x₀ y) (Pi.single x₀ b)) fun y => rfl)
+      (fun y => ρ ((orbitRep (G := G)) x₀ (g • y)) (Pi.single x₀ b))
+      (fun y => ρ ((orbitRep (G := G)) x₀ y) (Pi.single x₀ b)) fun y => rfl)
     rw [← Module.End.mul_apply, ← map_mul]
     exact apply_single_eq_of_smul_eq hρ hD hρ₀ hbD
       (by rw [mul_smul, orbitRep_smul, orbitRep_smul])
   have hF0 : F x₀ = b := by
     simp only [F, Finset.sum_apply]
     rw [Finset.sum_eq_single x₀]
-    · have hm : orbitRep G x₀ x₀ ∈ D := (hD _).2 (orbitRep_smul x₀ x₀)
+    · have hm : (orbitRep (G := G)) x₀ x₀ ∈ D := (hD _).2 (orbitRep_smul x₀ x₀)
       exact (hρ₀ ⟨_, hm⟩ _).trans (by rw [Pi.single_eq_same, hbD])
     · intro y _ hy
       apply hρ.apply_single_of_ne
@@ -236,7 +242,7 @@ theorem orbitZeroMap_eq_zero_iff [Fintype G] (ρ : Representation k G (∀ x, M 
     (hσ : ∀ g, g ∈ Subgroup.zpowers σ) (τ : D) (f : (cycSubOne ρ σ).ker) :
     orbitZeroMap ρ x₀ D ρ₀ hρ₀ σ hσ τ f = 0 ↔ (f : ∀ x, M x) ∈ (cycNorm ρ).range := by
   classical
-  have := finite_of_isPretransitive G x₀
+  have := finite_of_isPretransitive (G := G) x₀
   have := Fintype.ofFinite X
   have hf : ∀ g, ρ g f = f := (mem_ker_cycSubOne_iff ρ hσ _).1 f.2
   rw [orbitZeroMap_apply, KerModRange.mk_eq_zero_iff]
@@ -264,16 +270,6 @@ noncomputable def cycTateZeroOrbitEquiv [Fintype G] (ρ : Representation k G (�
   kerModRangeEquivOfSurjective (orbitZeroMap ρ x₀ D ρ₀ hρ₀ σ hσ τ)
     (orbitZeroMap_surjective ρ hρ x₀ D hD ρ₀ hρ₀ σ hσ τ hτ)
     (orbitZeroMap_eq_zero_iff ρ hρ x₀ D hD ρ₀ hρ₀ σ hσ τ)
-
-theorem cycTateZeroOrbitEquiv_mk [Fintype G] (ρ : Representation k G (∀ x, M x))
-    (hρ : PermutesFactors ρ) (x₀ : X) (D : Subgroup G) [Fintype D]
-    (hD : ∀ g, g ∈ D ↔ g • x₀ = x₀) (ρ₀ : Representation k D (M x₀))
-    (hρ₀ : ∀ (d : D) (f : ∀ x, M x), ρ d f x₀ = ρ₀ d (f x₀)) (σ : G)
-    (hσ : ∀ g, g ∈ Subgroup.zpowers σ) (τ : D) (hτ : ∀ d, d ∈ Subgroup.zpowers τ)
-    (f : (cycSubOne ρ σ).ker) :
-    cycTateZeroOrbitEquiv ρ hρ x₀ D hD ρ₀ hρ₀ σ hσ τ hτ (QuotientAddGroup.mk f) =
-      QuotientAddGroup.mk ⟨(f : ∀ x, M x) x₀, base_mem_ker_cycSubOne hρ₀ hσ τ f⟩ :=
-  rfl
 
 theorem orbitCores_mem_ker_cycNorm [Fintype G] [Fintype X] {ρ : Representation k G (∀ x, M x)}
     {x₀ : X} {D : Subgroup G} [Fintype D] (hD : ∀ g, g ∈ D ↔ g • x₀ = x₀)
@@ -303,7 +299,7 @@ theorem single_mem_ker_cycNorm [Fintype G] [DecidableEq X] {ρ : Representation 
     (hD : ∀ g, g ∈ D ↔ g • x₀ = x₀) {ρ₀ : Representation k D (M x₀)}
     (hρ₀ : ∀ (d : D) (f : ∀ x, M x), ρ d f x₀ = ρ₀ d (f x₀)) {b : M x₀}
     (hb : b ∈ (cycNorm ρ₀).ker) : Pi.single x₀ b ∈ (cycNorm ρ).ker := by
-  have := finite_of_isPretransitive G x₀
+  have := finite_of_isPretransitive (G := G) x₀
   have := Fintype.ofFinite X
   rw [AddMonoidHom.mem_ker]
   refine hρ.eq_zero_of_invariant (fun g => ρ.self_norm_apply g _) x₀ ?_
@@ -340,18 +336,18 @@ theorem orbitNegOneMap_eq_zero_iff [Fintype G] [Fintype X] (ρ : Representation 
   constructor
   · rintro ⟨c, hc⟩
     have e1 : (f : ∀ x, M x) =
-        ∑ y, ρ (orbitRep G x₀ y) (Pi.single x₀ (ρ (orbitRep G x₀ y)⁻¹ f x₀)) := by
+        ∑ y, ρ ((orbitRep (G := G)) x₀ y) (Pi.single x₀ (ρ ((orbitRep (G := G)) x₀ y)⁻¹ f x₀)) := by
       conv_lhs => rw [← Finset.univ_sum_single (f : ∀ x, M x)]
       refine Finset.sum_congr rfl fun y _ => ?_
-      have := hρ.single_eq x₀ (orbitRep G x₀ y) f
+      have := hρ.single_eq x₀ ((orbitRep (G := G)) x₀ y) f
       rwa [orbitRep_smul] at this
     have e2 : Pi.single x₀ (orbitCores ρ x₀ f) =
-        ∑ y, Pi.single x₀ (ρ (orbitRep G x₀ y)⁻¹ f x₀) :=
+        ∑ y, Pi.single x₀ (ρ ((orbitRep (G := G)) x₀ y)⁻¹ f x₀) :=
       map_sum (AddMonoidHom.single M x₀) _ _
     have step1 : (f : ∀ x, M x) - Pi.single x₀ (orbitCores ρ x₀ f) ∈ (cycSubOne ρ σ).range := by
       have : (f : ∀ x, M x) - Pi.single x₀ (orbitCores ρ x₀ f) =
-          ∑ y, (ρ (orbitRep G x₀ y) (Pi.single x₀ (ρ (orbitRep G x₀ y)⁻¹ f x₀)) -
-            Pi.single x₀ (ρ (orbitRep G x₀ y)⁻¹ f x₀)) := by
+          ∑ y, (ρ ((orbitRep (G := G)) x₀ y) (Pi.single x₀ (ρ ((orbitRep (G := G)) x₀ y)⁻¹ f x₀)) -
+            Pi.single x₀ (ρ ((orbitRep (G := G)) x₀ y)⁻¹ f x₀)) := by
         rw [Finset.sum_sub_distrib, ← e1, ← e2]
       rw [this]
       exact sum_mem fun y _ => apply_sub_self_mem_range_cycSubOne ρ hσ _ _
@@ -370,39 +366,11 @@ noncomputable def cycTateNegOneOrbitEquiv [Fintype G] (ρ : Representation k G (
     (hρ₀ : ∀ (d : D) (f : ∀ x, M x), ρ d f x₀ = ρ₀ d (f x₀)) (σ : G)
     (hσ : ∀ g, g ∈ Subgroup.zpowers σ) (τ : D) (hτ : ∀ d, d ∈ Subgroup.zpowers τ) :
     CycTateNegOne ρ σ ≃+ CycTateNegOne ρ₀ τ :=
-  letI : Finite X := finite_of_isPretransitive G x₀
+  letI : Finite X := finite_of_isPretransitive (G := G) x₀
   letI : Fintype X := Fintype.ofFinite X
   kerModRangeEquivOfSurjective (orbitNegOneMap ρ x₀ D hD ρ₀ hρ₀ τ)
     (orbitNegOneMap_surjective ρ hρ x₀ D hD ρ₀ hρ₀ τ hτ)
     (orbitNegOneMap_eq_zero_iff ρ hρ x₀ D hD ρ₀ hρ₀ σ hσ τ hτ)
-
-theorem cycTateNegOneOrbitEquiv_symm_mk [Fintype G] [DecidableEq X]
-    (ρ : Representation k G (∀ x, M x))
-    (hρ : PermutesFactors ρ) (x₀ : X) (D : Subgroup G) [Fintype D]
-    (hD : ∀ g, g ∈ D ↔ g • x₀ = x₀) (ρ₀ : Representation k D (M x₀))
-    (hρ₀ : ∀ (d : D) (f : ∀ x, M x), ρ d f x₀ = ρ₀ d (f x₀)) (σ : G)
-    (hσ : ∀ g, g ∈ Subgroup.zpowers σ) (τ : D) (hτ : ∀ d, d ∈ Subgroup.zpowers τ)
-    (b : (cycNorm ρ₀).ker) :
-    (cycTateNegOneOrbitEquiv ρ hρ x₀ D hD ρ₀ hρ₀ σ hσ τ hτ).symm (QuotientAddGroup.mk b) =
-      QuotientAddGroup.mk ⟨Pi.single x₀ (b : M x₀), single_mem_ker_cycNorm hρ hD hρ₀ b.2⟩ := by
-  rw [AddEquiv.symm_apply_eq, eq_comm]
-  let _ : Finite X := finite_of_isPretransitive G x₀
-  let _ : Fintype X := Fintype.ofFinite X
-  show orbitNegOneMap ρ x₀ D hD ρ₀ hρ₀ τ _ = _
-  rw [orbitNegOneMap_apply, KerModRange.mk_eq_mk_iff]
-  show orbitCores ρ x₀ (Pi.single x₀ (b : M x₀)) - (b : M x₀) ∈ (cycSubOne ρ₀ τ).range
-  rw [orbitCores_single hρ hD hρ₀]
-  exact apply_sub_self_mem_range_cycSubOne ρ₀ hτ _ _
-
-theorem cycHerbrand_orbit [Fintype G] (ρ : Representation k G (∀ x, M x))
-    (hρ : PermutesFactors ρ) (x₀ : X) (D : Subgroup G) [Fintype D]
-    (hD : ∀ g, g ∈ D ↔ g • x₀ = x₀) (ρ₀ : Representation k D (M x₀))
-    (hρ₀ : ∀ (d : D) (f : ∀ x, M x), ρ d f x₀ = ρ₀ d (f x₀)) (σ : G)
-    (hσ : ∀ g, g ∈ Subgroup.zpowers σ) (τ : D) (hτ : ∀ d, d ∈ Subgroup.zpowers τ) :
-    cycHerbrand ρ σ = cycHerbrand ρ₀ τ := by
-  rw [cycHerbrand_eq, cycHerbrand_eq,
-    Nat.card_congr (cycTateZeroOrbitEquiv ρ hρ x₀ D hD ρ₀ hρ₀ σ hσ τ hτ).toEquiv,
-    Nat.card_congr (cycTateNegOneOrbitEquiv ρ hρ x₀ D hD ρ₀ hρ₀ σ hσ τ hτ).toEquiv]
 
 end Orbit
 

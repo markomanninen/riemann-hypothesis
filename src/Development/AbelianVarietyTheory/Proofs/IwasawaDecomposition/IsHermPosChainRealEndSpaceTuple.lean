@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Formalism.LocalToGlobal.IndefiniteReal.BridgeSeed
-import Formalism.LocalToGlobal.IndefiniteReal.LinksExistW
-import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.OneLeAPlLast
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Formalism.LocalToGlobal.IndefiniteReal.BridgeSeed
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksExistW
+public import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.OneLeAPlLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -160,30 +164,26 @@ theorem ipVia_apply {H N : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H
   classical
   have h : e a ∈ LinearMap.range e ∧ e b ∈ LinearMap.range e := ⟨⟨a, rfl⟩, ⟨b, rfl⟩⟩
   unfold ipVia
-  rw [dif_pos h, he h.1.choose_spec, he h.2.choose_spec]
+  rw [dite_eq_left h, he h.1.choose_spec, he h.2.choose_spec]
 
 theorem isHermPos_ipVia {H N : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]
     [AddCommGroup N] [Module ℂ N] (e : H →ₗ[ℂ] N) (he : Function.Injective e) :
-    IsHermPos (LinearMap.range e) (ipVia e) where
-  fd := inferInstance
-  add := by
-    rintro ⟨_, a, rfl⟩ ⟨_, a', rfl⟩ ⟨_, c, rfl⟩
-    simp only
-    rw [← map_add, ipVia_apply e he, ipVia_apply e he, ipVia_apply e he, inner_add_left]
-  smul := by
-    rintro s ⟨_, a, rfl⟩ ⟨_, c, rfl⟩
-    simp only
-    rw [← map_smul, ipVia_apply e he, ipVia_apply e he, inner_smul_left]
-  herm := by
-    rintro ⟨_, a, rfl⟩ ⟨_, c, rfl⟩
-    simp only
-    rw [ipVia_apply e he, ipVia_apply e he, inner_conj_symm]
-  pos := by
-    rintro ⟨_, a, rfl⟩ hx
-    simp only
+    IsHermPos (LinearMap.range e) (ipVia e) := by
+  refine ⟨inferInstance, ?_, ?_, ?_, ?_⟩
+  · rintro ⟨_, a, rfl⟩ ⟨_, a', rfl⟩ ⟨_, c, rfl⟩
+    change ipVia e (e a + e a') (e c) = _
+    rw [← map_add e, ipVia_apply e he, ipVia_apply e he, ipVia_apply e he, inner_add_left]
+  · rintro s ⟨_, a, rfl⟩ ⟨_, c, rfl⟩
+    change ipVia e (s • e a) (e c) = _
+    rw [← map_smul e, ipVia_apply e he, ipVia_apply e he, inner_smul_left]
+  · rintro ⟨_, a, rfl⟩ ⟨_, c, rfl⟩
+    exact (congrArg (starRingEnd ℂ) (ipVia_apply e he a c)).trans
+      ((inner_conj_symm c a).trans (ipVia_apply e he c a).symm)
+  · rintro ⟨_, a, rfl⟩ hx
     have ha : a ≠ 0 := fun h => hx (Subtype.ext (by simp [h]))
     have h1 : 0 < ‖a‖ := norm_pos_iff.2 ha
     have h2 : (⟪a, a⟫_ℂ).re = ‖a‖ ^ 2 := inner_self_eq_norm_sq (𝕜 := ℂ) a
+    change 0 < (ipVia e (e a) (e a)).re
     rw [ipVia_apply e he, h2]
     positivity
 
@@ -203,8 +203,18 @@ theorem nP_pos (F : Face D A) (b : Bool) : 0 < RealDat.nP F b := by
 
 theorem scaled {V : HSp D} {μ : Measure (GA D V)} {𝓕 : Set (GA D V)} {c : ℝ} (hc : 0 < c) (hH : μ.IsHaarMeasure)
     (hF : IsFundamentalDomain (GQ V) 𝓕 μ) :
-    (ENNReal.ofReal c • μ).IsHaarMeasure ∧ IsFundamentalDomain (GQ V) 𝓕 (ENNReal.ofReal c • μ) :=
-  ⟨Measure.IsHaarMeasure.smul μ (by simpa using hc) ENNReal.ofReal_ne_top,
+    (ENNReal.ofReal c • μ).IsHaarMeasure ∧ IsFundamentalDomain (GQ V) 𝓕 (ENNReal.ofReal c • μ) := by
+  have : BorelSpace (GA D V) := ⟨rfl⟩
+  have : IsModuleTopology (AF D.host.F) (AF D.host.F ⊗[D.host.F] D.host.E) := ⟨rfl⟩
+  have : IsTopologicalRing (AF D.host.F ⊗[D.host.F] D.host.E) :=
+    IsModuleTopology.isTopologicalRing (AF D.host.F) _
+  have : IsTopologicalGroup (GL (Fin V.rank) (AF D.host.F ⊗[D.host.F] D.host.E)) :=
+    inferInstanceAs (IsTopologicalGroup (Matrix (Fin V.rank) (Fin V.rank) (AF D.host.F ⊗[D.host.F] D.host.E))ˣ)
+  have : IsTopologicalGroup (GA D V) :=
+    inferInstanceAs (IsTopologicalGroup ↥(HR (AF D.host.F) D.sp.cm.sig V.gram))
+  have : MeasurableConstSMul (GA D V) (GA D V) :=
+    ⟨fun g => (continuous_const.mul continuous_id : Continuous (g * ·)).measurable⟩
+  exact ⟨Measure.IsHaarMeasure.smul μ (by simpa using hc) ENNReal.ofReal_ne_top,
     hF.mono Measure.smul_absolutelyContinuous⟩
 
 theorem rank_lowerChainSpace_zero_le : (Yc D 0).rank ≤ D.R.r := by
@@ -269,7 +279,19 @@ theorem hermX (hI : Inputs D) (hB : R.BaseW F) (b : Bool) (μ : D.what₂.Tup) :
   have h0 := hB.models.νX (tupT μ)
   have hd : 0 < (∏ τ, (Module.finrank ℂ (R.MX.H τ) : ℝ)) / (1 : ℝ) :=
     div_pos (Finset.prod_pos fun τ _ => by exact_mod_cast finrank_model_pos D.sp.X'_sig hI.sp.2 R.MX τ) one_pos
-  exact isHermPos_scale (isHermPos_scale (herm_lev hI hB.models.inf D.sp.X'_sig R.MX R.βX (R.datXt (tupT μ)) h0.1.1 h0.2) hd)
+  have hscale {N : Type} [AddCommGroup N] [Module ℂ N] {C : Submodule ℂ N}
+      {ip : N → N → ℂ} (h : IsHermPos C ip) {s : ℝ} (hs : 0 < s) :
+      IsHermPos C (fun x y => (s : ℂ) * ip x y) := by
+    refine ⟨h.fd, ?_, ?_, ?_, ?_⟩
+    · intro x x' y
+      simp only [h.add x x' y, mul_add]
+    · intro a x y
+      simp only [h.smul a x y, mul_left_comm (s : ℂ)]
+    · intro x y
+      simp only [map_mul, Complex.conj_ofReal, h.herm x y]
+    · intro x hx
+      simpa only [Complex.re_ofReal_mul] using mul_pos hs (h.pos x hx)
+  exact hscale (hscale (herm_lev hI hB.models.inf D.sp.X'_sig R.MX R.βX (R.datXt (tupT μ)) h0.1.1 h0.2) hd)
     (inv_pos.2 (nP_pos F b))
 
 theorem ccp_le (b : Bool) (μ : D.what₂.Tup) {j : ℕ} (hj : j < D.R.m) :
@@ -282,7 +304,19 @@ theorem hermP (hI : Inputs D) (hB : R.BaseW F) (b : Bool) (μ : D.what₂.Tup) {
     IsHermPos ((toChainReal R F tupT hm hTop).CC b μ j) ((toChainReal R F tupT hm hTop).ipP b μ j) := by
   have h0 := measY R hB.models (tupT μ) hj hm
   rw [cc_eq R F tupT hm hTop b μ (by omega)]
-  exact isHermPos_scale (herm_lev hI hB.models.inf (D.sp.Y_sig _) (R.MY j) (R.βY j) (R.datYt (tupT μ) j R.triv) h0.1 h0.2)
+  have hscale {N : Type} [AddCommGroup N] [Module ℂ N] {C : Submodule ℂ N}
+      {ip : N → N → ℂ} (h : IsHermPos C ip) {s : ℝ} (hs : 0 < s) :
+      IsHermPos C (fun x y => (s : ℂ) * ip x y) := by
+    refine ⟨h.fd, ?_, ?_, ?_, ?_⟩
+    · intro x x' y
+      simp only [h.add x x' y, mul_add]
+    · intro a x y
+      simp only [h.smul a x y, mul_left_comm (s : ℂ)]
+    · intro x y
+      simp only [map_mul, Complex.conj_ofReal, h.herm x y]
+    · intro x hx
+      simpa only [Complex.re_ofReal_mul] using mul_pos hs (h.pos x hx)
+  exact hscale (herm_lev hI hB.models.inf (D.sp.Y_sig _) (R.MY j) (R.βY j) (R.datYt (tupT μ) j R.triv) h0.1 h0.2)
     (inv_pos.2 (nP_pos F b))
 
 variable (hinj : ∀ i t, Function.Injective (R.extV i t))
@@ -309,13 +343,37 @@ theorem hermW (hI : Inputs D) (hB : R.BaseW F) (i : Fin D.R.m) :
     push_cast
     rfl
   rw [e]
-  exact isHermPos_scale (hermPos_mono (herm_lev hI hB.models.inf (D.sp.W_sig _) (R.MW i (sg0 D A)) (R.βW i)
+  have hscale {N : Type} [AddCommGroup N] [Module ℂ N] {C : Submodule ℂ N}
+      {ip : N → N → ℂ} (h : IsHermPos C ip) {s : ℝ} (hs : 0 < s) :
+      IsHermPos C (fun x y => (s : ℂ) * ip x y) := by
+    refine ⟨h.fd, ?_, ?_, ?_, ?_⟩
+    · intro x x' y
+      simp only [h.add x x' y, mul_add]
+    · intro a x y
+      simp only [h.smul a x y, mul_left_comm (s : ℂ)]
+    · intro x y
+      simp only [map_mul, Complex.conj_ofReal, h.herm x y]
+    · intro x hx
+      simpa only [Complex.re_ofReal_mul] using mul_pos hs (h.pos x hx)
+  exact hscale (hermPos_mono (herm_lev hI hB.models.inf (D.sp.W_sig _) (R.MW i (sg0 D A)) (R.βW i)
       (R.datWp i (R.levL F false (sg0 D A))) hs.1 hs.2) (Submodule.map_mono (goodPart_le R.θ (R.MW i (sg0 D A)) _ _ _)))
     (Finset.prod_pos fun ρ _ => by exact_mod_cast hI.dim i (sg0 D A) ρ)
 
 theorem hermA (μ : D.what₂.Tup) (i : Fin D.R.m) :
-    IsHermPos ((toLiftReal R F tupT hm hTop hinj).Amt μ i) ((toLiftReal R F tupT hm hTop hinj).ipA μ i) :=
-  isHermPos_scale (hermPos_mono (isHermPos_ipVia (R.extV i (tupT μ)) (hinj i (tupT μ))) inf_le_left)
+    IsHermPos ((toLiftReal R F tupT hm hTop hinj).Amt μ i) ((toLiftReal R F tupT hm hTop hinj).ipA μ i) := by
+  have hscale {N : Type} [AddCommGroup N] [Module ℂ N] {C : Submodule ℂ N}
+      {ip : N → N → ℂ} (h : IsHermPos C ip) {s : ℝ} (hs : 0 < s) :
+      IsHermPos C (fun x y => (s : ℂ) * ip x y) := by
+    refine ⟨h.fd, ?_, ?_, ?_, ?_⟩
+    · intro x x' y
+      simp only [h.add x x' y, mul_add]
+    · intro a x y
+      simp only [h.smul a x y, mul_left_comm (s : ℂ)]
+    · intro x y
+      simp only [map_mul, Complex.conj_ofReal, h.herm x y]
+    · intro x hx
+      simpa only [Complex.re_ofReal_mul] using mul_pos hs (h.pos x hx)
+  exact hscale (hermPos_mono (isHermPos_ipVia (R.extV i (tupT μ)) (hinj i (tupT μ))) inf_le_left)
     (inv_pos.2 (nP_pos F false))
 
 end Main

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
@@ -140,7 +144,7 @@ private theorem eii_abs {O R H : Type} [CommRing O] [IsLocalRing O] [CommRing R]
       (Submodule.smul_mem _ _ (Submodule.subset_span ⟨g⁻¹, rfl⟩))
   refine eii_alg _ hmul hone hadj (r φ) (Submodule.subset_span ⟨φ, rfl⟩) hb ?_ _ hHm h02 h20 ?_ i
   · apply eii_unit (O := O)
-    simp only [map_mul, map_add, map_sub, hdiag, hoff φ 0 2 (by decide), hoff φ 2 0 (by decide),
+    simp only [map_mul, map_add (f := _), map_sub, hdiag, hoff φ 0 2 (by decide), hoff φ 2 0 (by decide),
       hoff φ 1 3 (by decide), hoff φ 3 1 (by decide)]
     have n01 := sub_ne_zero.2 (hφ 0 1 (by simp [lamW]))
     have n03 := sub_ne_zero.2 (hφ 0 3 (by simp [lamW]))
@@ -158,7 +162,7 @@ private theorem eii_abs {O R H : Type} [CommRing O] [IsLocalRing O] [CommRing R]
         Units.val_one, map_one]
     have e0 : residue O (ps 0 g : O) = residue O (ps 2 g : O) * residue O (ps 1 g : O) := by
       rw [h0, Units.val_mul, map_mul]
-    simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_sub, map_add, map_mul, hc, hdiag]
+    simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_sub, map_add (f := _), map_mul, hc, hdiag]
     intro h
     have hp : (residue O (ps 1 g : O) - 1) * (residue O (ps 2 g : O) - 1) = 0 := by
       linear_combination h - e0 * (1 - residue O (ps 2 g⁻¹ : O)) - hi 0 + residue O (ps 1 g : O) * hi 2

@@ -1,23 +1,27 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.EtaKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.EtaKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.X
 
 section SlopeTestRemainingChoices
 open UpperTheory.V.U3 UpperTheory.V.UnitaryThreeInertia
 
-private def eGb {k : Type} [CommRing k] (a : k) : Gb k (-2) :=
+private def eGb {k : Type} [CommRing k] (a : k) : Gb (k := k) (-2) :=
   (⟨Matrix.single 2 0 a, by
     intro i j h
-    fin_cases i <;> fin_cases j <;> first | (exfalso; revert h; decide) | simp⟩ : gw k (-2))
+    fin_cases i <;> fin_cases j <;> first | (exfalso; revert h; decide) | simp⟩ : gw (R := k) (-2))
 
 private theorem eGb_val {k : Type} [CommRing k] (a : k) : (eGb a).val 2 0 = a := by
   show Matrix.single 2 0 a 2 0 = a
   exact Matrix.single_apply_same _ _ _
 
-private theorem gb_ext {k : Type} [CommRing k] {X Y : Gb k (-2)} (h : X.val 2 0 = Y.val 2 0) : X = Y := by
+private theorem gb_ext {k : Type} [CommRing k] {X Y : Gb (k := k) (-2)} (h : X.val 2 0 = Y.val 2 0) : X = Y := by
   have hX : ∀ a b, UpperTheory.V.U3.wt a b ≠ -2 → (X.val : Matrix (Fin 3) (Fin 3) k) a b = 0 := X.2
   have hY : ∀ a b, UpperTheory.V.U3.wt a b ≠ -2 → (Y.val : Matrix (Fin 3) (Fin 3) k) a b = 0 := Y.2
   apply Subtype.ext
@@ -27,15 +31,15 @@ private theorem gb_ext {k : Type} [CommRing k] {X Y : Gb k (-2)} (h : X.val 2 0 
     exact h
   · have hw : UpperTheory.V.U3.wt a b ≠ -2 := by
       revert hab
-      fin_cases a <;> fin_cases b <;> first | decide | simp [UpperTheory.V.U3.wt, UpperTheory.V.U3.wt1]
+      fin_cases a <;> fin_cases b <;> decide
     exact (hX a b hw).trans (hY a b hw).symm
 
-private theorem gb_add {k : Type} [CommRing k] (X Y : Gb k (-2)) : (X + Y).val 2 0 = X.val 2 0 + Y.val 2 0 := rfl
-private theorem gb_sub {k : Type} [CommRing k] (X Y : Gb k (-2)) : (X - Y).val 2 0 = X.val 2 0 - Y.val 2 0 := rfl
+private theorem gb_add {k : Type} [CommRing k] (X Y : Gb (k := k) (-2)) : (X + Y).val 2 0 = X.val 2 0 + Y.val 2 0 := rfl
+private theorem gb_sub {k : Type} [CommRing k] (X Y : Gb (k := k) (-2)) : (X - Y).val 2 0 = X.val 2 0 - Y.val 2 0 := rfl
 
-private theorem gb_rep {k D : Type} [CommRing k] [Group D] (η : D →* ℤˣ) (Ψ : D →* kˣ) (g : D) (X : Gb k (-2))
+private theorem gb_rep {k D : Type} [CommRing k] [Group D] (η : D →* ℤˣ) (Ψ : D →* kˣ) (g : D) (X : Gb (k := k) (-2))
     (c : k) (hc : c * (Ψ g : k) ^ 2 = ((η g : ℤ) : k)) :
-    (gRep η Ψ (-2) g X).val 2 0 = c * X.val 2 0 := by
+    (UnitaryThreeInertia.gRep η Ψ (-2) g X).val 2 0 = c * X.val 2 0 := by
   rw [gRep_val, adRep_baseLift_apply]
   have hw : UpperTheory.V.U3.wt 2 0 = -2 := by decide
   have r0 : Fin.rev (0 : Fin 3) = 2 := rfl
@@ -48,10 +52,10 @@ private theorem gb_rep {k D : Type} [CommRing k] [Group D] (η : D →* ℤˣ) (
     exact h0.symm
   rw [hc']
   rcases Int.units_eq_one_or (η g) with h1 | h1
-  · rw [if_pos h1, h1]
+  · rw [ite_eq_left h1, h1]
     simp only [Units.val_one, Int.cast_one]
     ring
-  · rw [if_neg (by rw [h1]; decide), h1]
+  · rw [ite_eq_right (by rw [h1]; decide), h1]
     simp only [Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one]
     ring
 
@@ -74,7 +78,7 @@ theorem UpperTheory.V.X.xppOf :
     fun v => (Submodule.mem_iInf _).1 hL v
   have hlc : IsLocallyConstant (fun g => (f g).val 2 0) :=
     ((IsLocallyConstant.iff_continuous _).2 hcont).comp
-      (fun X : UpperTheory.V.UnitaryThreeInertia.Gb (ResidueField O) (-2) => X.val 2 0)
+      (fun X : UpperTheory.V.UnitaryThreeInertia.Gb (k := ResidueField O) (-2) => X.val 2 0)
   obtain ⟨m, hm⟩ := hmain (fun g => (f g).val 2 0) hlc
     (by
       intro g h

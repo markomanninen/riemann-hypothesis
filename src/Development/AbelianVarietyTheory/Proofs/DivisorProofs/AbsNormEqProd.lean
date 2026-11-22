@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+
+@[expose] public section
 
 open NumberField Complex
 open scoped nonZeroDivisors ContDiff
@@ -122,7 +126,7 @@ namespace GlobalTheory.HeckeTwoExp
 
 variable {F : Type} [Field F] [NumberField F]
 
-theorem kFac_zero_mul : kFac F 0 * (-4 * (Real.pi : ℂ) ^ 2) ^ Fintype.card (Emb F) = 1 := by
+theorem kFac_zero_mul : kFac (F := F) 0 * (-4 * (Real.pi : ℂ) ^ 2) ^ Fintype.card (Emb F) = 1 := by
   have hπ : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
   have h1 : (2 * (Real.pi : ℂ) * I)⁻¹ ^ 2 * (-4 * (Real.pi : ℂ) ^ 2) = 1 := by
     rw [inv_pow, mul_pow, mul_pow, I_sq]

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,31 +52,29 @@ variable (hee : ∀ a b, S.hT (e a) (e b) = 0) (hff : ∀ a b, S.hT (f a) (f b) 
 
 include hef in
 theorem hT_f_pX (v : S.V) (b : Fin r) : S.hT (f b) (pX e f v) = S.hT (f b) v := by
-  simp [pX_apply, map_sum, hfe' hef]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pX_apply, map_sum, hfe' hef]
 
 include hee in
 theorem hT_e_pX (v : S.V) (b : Fin r) : S.hT (e b) (pX e f v) = 0 := by
-  simp [pX_apply, map_sum, hee]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pX_apply, map_sum, hee]
 
 include hef in
 theorem hT_e_pY (v : S.V) (b : Fin r) : S.hT (e b) (pY e f v) = S.hT (e b) v := by
-  simp [pY_apply, map_sum, hef]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pY_apply, map_sum, hef]
 
 include hff in
 theorem hT_f_pY (v : S.V) (b : Fin r) : S.hT (f b) (pY e f v) = 0 := by
-  simp [pY_apply, map_sum, hff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pY_apply, map_sum, hff]
 
 include hff in
 theorem pX_pY (v : S.V) : pX e f (pY e f v) = 0 := by
   rw [pX_apply]; simp [hT_f_pY hff]
 
-include hee in
-theorem pY_pX (v : S.V) : pY e f (pX e f v) = 0 := by
-  rw [pY_apply]; simp [hT_e_pX hee]
 
-include hef in
-theorem pX_pX (v : S.V) : pX e f (pX e f v) = pX e f v := by
-  rw [pX_apply e f (pX e f v)]; simp only [hT_f_pX hef]; rw [pX_apply]
 
 include hef in
 theorem pY_pY (v : S.V) : pY e f (pY e f v) = pY e f v := by
@@ -82,13 +84,7 @@ include hff hef in
 theorem pX_pj (v : S.V) : pX e f (pj e f v) = 0 := by
   rw [pX_apply]; simp [hT_f_pj hff hef]
 
-include hee hef in
-theorem pY_pj (v : S.V) : pY e f (pj e f v) = 0 := by
-  rw [pY_apply]; simp [hT_e_pj hee hef]
 
-include hee hef in
-theorem pj_pX (v : S.V) : pj e f (pX e f v) = 0 := by
-  rw [pj_eq, pX_pX hef, pY_pX hee]; abel
 
 include hff hef in
 theorem pj_pY (v : S.V) : pj e f (pY e f v) = 0 := by
@@ -98,13 +94,15 @@ include hef in
 theorem pX_of_mem (x : S.V) (hx : x ∈ Submodule.span E (Set.range e)) : pX e f x = x := by
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hx
   rw [pX_apply]
-  simp [map_sum, hfe' hef]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, hfe' hef]
 
 include hef in
 theorem pY_of_mem (y : S.V) (hy : y ∈ Submodule.span E (Set.range f)) : pY e f y = y := by
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hy
   rw [pY_apply]
-  simp [map_sum, hef]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, hef]
 
 include hee in
 theorem pY_of_memX (x : S.V) (hx : x ∈ Submodule.span E (Set.range e)) : pY e f x = 0 := by
@@ -132,14 +130,17 @@ theorem pj_of_memY (y : S.V) (hy : y ∈ Submodule.span E (Set.range f)) : pj e 
 
 theorem hT_pX_left (v w : S.V) :
     S.hT (pX e f v) w = ∑ a, starRingEnd E (S.hT (f a) v) * S.hT (e a) w := by
-  simp [pX_apply, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pX_apply, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
 
 theorem hT_pY_left (v w : S.V) :
     S.hT (pY e f v) w = ∑ a, starRingEnd E (S.hT (e a) v) * S.hT (f a) w := by
-  simp [pY_apply, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pY_apply, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
 
 theorem hT_pY_right (w v : S.V) : S.hT w (pY e f v) = S.hT (pX e f w) v := by
-  rw [hT_pX_left, pY_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hT_pX_left, pY_apply, map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [map_smul, smul_eq_mul, ← S.herm.eq (f a) w, mul_comm]
 
@@ -151,18 +152,20 @@ theorem hT_pj_left (v w : S.V) : S.hT (pj e f v) w = S.hT (pj e f v) (pj e f w) 
   have h0' : ∀ a, S.hT (pj e f v) (f a) = 0 := fun a => by
     rw [← S.herm.eq (f a) (pj e f v), hT_f_pj hff hef, map_zero]
   have h1 : S.hT (pj e f v) (pX e f w) = 0 := by
-    simp [pX_apply, map_sum, h0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [pX_apply, map_sum, h0]
   have h2 : S.hT (pj e f v) (pY e f w) = 0 := by
-    simp [pY_apply, map_sum, h0']
-  simp [map_add, h1, h2]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [pY_apply, map_sum, h0']
+  simp [map_add (f := _), h1, h2]
+
 
 include hee hff hef in
-
 theorem hT_coord (v w : S.V) :
     S.hT v w = ∑ a, starRingEnd E (S.hT (f a) v) * S.hT (e a) w +
       ∑ a, starRingEnd E (S.hT (e a) v) * S.hT (f a) w + S.hT (pj e f v) (pj e f w) := by
   conv_lhs => rw [decomp (e := e) (f := f) v]
-  rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hT_pX_left, hT_pY_left,
+  rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hT_pX_left, hT_pY_left,
     hT_pj_left hee hff hef]
 
 end Levi
@@ -178,21 +181,21 @@ variable (hee : ∀ a b, S.hT (e a) (e b) = 0) (hff : ∀ a b, S.hT (f a) (f b) 
 include hff hef in
 theorem lmap_coordX (v : S.V) (b : Fin r) : S.hT (f b) (lmap e f δ v) = S.hT (f b) (δ (pX e f v)) := by
   rw [lmap_apply]
-  simp [map_add, hT_f_pj hff hef, hT_f_pY hff]
+  simp [map_add (f := _), hT_f_pj hff hef, hT_f_pY hff]
 
 include hee hef hX in
 theorem lmap_coordY (v : S.V) (b : Fin r) : S.hT (e b) (lmap e f δ v) = S.hT (e b) (δ (pY e f v)) := by
   rw [lmap_apply]
-  simp [map_add, hT_e_pj hee hef, hT_e_pY hef, perpX_of_X hee _ (hX _ (pX_mem v))]
+  simp [map_add (f := _), hT_e_pj hee hef, hT_e_pY hef, perpX_of_X hee _ (hX _ (pX_mem v))]
 
 include hee hff hef hX in
 theorem pj_lmap (v : S.V) : pj e f (lmap e f δ v) = pj e f v := by
-  rw [lmap_apply, map_add, map_add, pj_pj hee hff hef, pj_of_memX hee hef _ (hX _ (pX_mem v)),
+  rw [lmap_apply, map_add (f := _), map_add (f := _), pj_pj hee hff hef, pj_of_memX hee hef _ (hX _ (pX_mem v)),
     pj_pY hff hef]
   abel
 
-include hee hff hef hδ hX in
 
+include hee hff hef hδ hX in
 theorem lmap_isom (v w : S.V) : S.hT (lmap e f δ v) (lmap e f δ w) = S.hT v w := by
   rw [hT_coord hee hff hef (lmap e f δ v), hT_coord hee hff hef v w]
   simp only [lmap_coordX hff hef, lmap_coordY hee hef hX, pj_lmap hee hff hef hX]
@@ -206,7 +209,7 @@ theorem lmap_isom (v w : S.V) : S.hT (lmap e f δ v) (lmap e f δ w) = S.hT v w 
     rw [← hT_pY_left]
     have h0 : S.hT (pY e f (δ (pY e f v))) (δ (pX e f w)) = S.hT (δ (pY e f v)) (δ (pX e f w)) := by
       conv_rhs => rw [decomp (e := e) (f := f) (δ (pY e f v))]
-      rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hT_pX_left,
+      rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hT_pX_left,
         hT_pj_left hee hff hef, pj_of_memX hee hef _ (hx w)]
       simp [perpX_of_X hee _ (hx w)]
     rw [h0, isom_apply hδ, hT_pY_left]
@@ -274,8 +277,8 @@ variable (hee : ∀ a b, S.hT (e a) (e b) = 0) (hff : ∀ a b, S.hT (f a) (f b) 
   (hLp : ∀ x ∈ L, ∀ a, S.hT (e a) x = 0 ∧ S.hT (f a) x = 0) (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT Λ)
   (hδ1 : ∀ x ∈ latSpan aa e, δ x ∈ Λ) (hδ2 : ∀ x ∈ latSpan aa e, δ.symm x ∈ Λ)
 
-include hee hff hef hδ hX hΛ hLp hU hδ1 hδ2 in
 
+include hee hff hef hδ hX hΛ hLp hU hδ1 hδ2 in
 theorem lmap_mem (v : S.V) (hv : v ∈ Λ) : lmap e f δ v ∈ Λ := by
   have hXΛ : latSpan aa e ≤ Λ := by rw [hΛ]; exact le_sup_left.trans le_sup_left
   have hLΛ : L ≤ Λ := by rw [hΛ]; exact le_sup_right.trans le_sup_left
@@ -289,7 +292,7 @@ theorem lmap_mem (v : S.V) (hv : v ∈ Λ) : lmap e f δ v ∈ Λ := by
   have hpXw : ∀ x ∈ latSpan aa e, ∀ l ∈ L, ∀ y ∈ latSpan (fun a => (aa a)⁻¹) f, pX e f (x + l + y) = x := by
     intro x hx l hl y hy
     have hl0 : pX e f l = 0 := by rw [pX_apply]; simp [(hLp l hl _).2]
-    rw [map_add, map_add, pX_of_mem hef _ (latSpan_le_span aa e x hx), hl0,
+    rw [map_add (f := _), map_add (f := _), pX_of_mem hef _ (latSpan_le_span aa e x hx), hl0,
       pX_of_memY hff _ (latSpan_le_span _ f y hy)]
     abel
   obtain ⟨x, hx, l, hl, y, hy, rfl⟩ := hdec v hv
@@ -300,7 +303,7 @@ theorem lmap_mem (v : S.V) (hv : v ∈ Λ) : lmap e f δ v ∈ Λ := by
   have el : lmap e f δ l = l := lmap_perp l (hLp l hl)
   have ey : lmap e f δ y = pY e f (δ y) := by
     rw [lmap_apply, pj_of_memY hff hef _ hyE, pX_of_memY hff _ hyE, pY_of_mem hef _ hyE]; simp
-  rw [map_add, map_add, ex, el, ey]
+  rw [map_add (f := _), map_add (f := _), ex, el, ey]
   refine Λ.add_mem (Λ.add_mem (hδ1 x hx) (hLΛ hl)) ?_
   have hd : pY e f (δ y) ∈ Formalism.HermitianLatticesTheory.dual S.hT Λ := by
     refine mem_dual'.2 fun w hw => ?_
@@ -309,8 +312,8 @@ theorem lmap_mem (v : S.V) (hv : v ∈ Λ) : lmap e f δ v ∈ Λ := by
     exact int_of_unimod hU (hδ2 xw hxw) (hYΛ hy)
   rwa [hU] at hd
 
-include hee hff hef hδ hX hΛ hLp hU hδ1 hδ2 in
 
+include hee hff hef hδ hX hΛ hLp hU hδ1 hδ2 in
 theorem gmap_lequiv : Formalism.HermitianLatticesTheory.gmap (lequiv hee hff hef hδ hX) Λ = Λ := by
   ext x
   rw [mem_gmap_iff]
@@ -373,7 +376,8 @@ theorem frame_witt {T : E} (hT : T ≠ 0) (F1 F2 : FlagG S r T) :
   have fiso : ∀ x y : Submodule.span E (Set.range F1.fvec), S.hT (fm x) (fm y) = S.hT x y := by
     intro x y
     rw [← b.sum_repr x, ← b.sum_repr y]
-    simp only [map_sum, map_smul, hfm, Submodule.coe_sum, Submodule.coe_smul, hb, map_smulₛₗ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hfm, Submodule.coe_sum, Submodule.coe_smul, hb, map_smulₛₗ,
       LinearMap.sum_apply, LinearMap.smul_apply, gram_fvec]
   obtain ⟨g, hg, hgf⟩ := witt_extension_theorem E S.V S.hT (fun x y => S.herm.eq x y) (fun x hx => S.nondeg.1 x hx)
     _ fm finj fiso
@@ -411,9 +415,9 @@ theorem mapLF_eq {γ : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hγ : γ ∈ Formali
     {T : D.host.E} (F F' : FlagG (VS D) D.R.rS T) (he : ∀ a, γ (F.e a) = F'.e a) (hz : γ F.z = F'.z) :
     mapLF γ (lf D F) = lf D F' := by
   unfold mapLF
-  rw [dif_pos hγ]
+  rw [dite_eq_left hγ]
   have hfl : Formalism.L2.SG.TermOp.mapFlag γ hγ F = F' := flagG_ext (funext he) hz
-  show (⟨Formalism.L2.SG.TermOp.mapFlag γ hγ F, γ F.z⟩ : LFlag (VS D) D.R.rS T) = ⟨F', F'.z⟩
+  show (⟨Formalism.L2.SG.TermOp.mapFlag γ hγ F, γ F.z⟩ : LFlag (D.sp.Y 0) D.R.rS T) = ⟨F', F'.z⟩
   rw [hfl, hz]
 
 theorem rowLat_map' (hLI : ∀ (β : (VS D).V ≃ₗ[D.host.E] (VS D).V), β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT →

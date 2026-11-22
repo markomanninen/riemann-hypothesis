@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped Pointwise
@@ -15,19 +19,15 @@ def scaledInt (ϖ : kˣ) (a : ℕ) (m : ℤ) : Set (Matrix (Fin a) (Fin a) k) :=
   {Z | ∀ i j, valuation k (Z i j) ≤ valuation k ((ϖ ^ m : kˣ) : k)}
 
 theorem mem_scaledInt_iff (ϖ : kˣ) (a : ℕ) (m : ℤ) (Z : Matrix (Fin a) (Fin a) k) :
-    Z ∈ scaledInt ϖ a m ↔ Z ∈ matLat (Fin a) (ϖ ^ m • stdLat k (Fin a)) := by
-  rw [stdLat, smul_diagLat, mem_matLat]
+    Z ∈ scaledInt ϖ a m ↔ Z ∈ matLat (A := Fin a) (ϖ ^ m • stdLat (k := k) (D := Fin a)) := by
+  have hmem {Λ : Submodule 𝒪[k] (Fin a → k)} :
+      Z ∈ matLat (A := Fin a) Λ ↔ ∀ i, Z.row i ∈ Λ := Iff.rfl
+  rw [stdLat, smul_diagLat, hmem]
   simp only [mem_diagLat, Pi.one_apply, mul_one]
   rfl
 
 def IsPeriodic (ϖ : kˣ) {a : ℕ} (M : ℤ) (φ : Matrix (Fin a) (Fin a) k → ℂ) : Prop :=
   ∀ X, ∀ Z ∈ scaledInt ϖ a M, φ (X + Z) = φ X
-
-example (ϖ : kˣ) (hϖ : IsUnif ϖ) (a : ℕ) :
-    IsPeriodic ϖ 0 ((matLat (Fin a) (stdLat k (Fin a)) : Set (Matrix (Fin a) (Fin a) k)).indicator 1) := by
-  intro X Z hZ
-  refine (hasDepth_indicator hϖ 0 (stdLat k (Fin a))).2 X Z ?_
-  simpa using (mem_scaledInt_iff ϖ a 0 Z).1 hZ
 
 end Defs
 
@@ -43,11 +43,5 @@ def ShellLemma : Prop :=
       (∀ M' : ℕ, Function.support φ ⊆ scaledInt ϖ a (-(M' : ℤ)) →
         ∀ n : Fin a → ℤ, ¬ (∀ i, -(M' : ℤ) ≤ n i) → ∀ z : ℂ, shell μ ϖ ν z φ n = 0) ∧
       {n : {n : Fin a → ℤ // Antitone n} | ∃ z : ℂ, shell μ ϖ ν z φ n.1 ≠ 0}.Finite
-
-example (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] :
-    ∃ (ϖ : kˣ) (ν : kˣ →* ℂˣ) (e : ℕ), IsUnif ϖ ∧ ¬ IsUnram ν ∧ CondLE ϖ e ν := by
-  obtain ⟨ϖ, hϖ⟩ := exists_isUnif (k := k)
-  obtain ⟨ν, h1, h2, -⟩ := exists_ramified hϖ
-  exact ⟨ϖ, ν, 2, hϖ, h1, h2⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.ScaledIntegerPeriodic

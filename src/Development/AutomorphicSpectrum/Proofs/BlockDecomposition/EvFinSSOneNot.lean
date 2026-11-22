@@ -1,4 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -31,38 +36,38 @@ theorem rTensor_lTensor_comm₂ (p : A →ₐ[F] R) (σ : E →ₐ[F] E) (x : A 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a y => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tQ_sigR (s : R →ₗ[F] A) (σ : E →ₐ[F] E) (y : R ⊗[F] E) :
     tQ s (sigR R σ y) = sigR A σ (tQ s y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a y => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem rTensor_rTensor_of_rightInverse (p : A →ₐ[F] R) (s : R →ₗ[F] A) (h : ∀ r, p (s r) = r) (y : R ⊗[F] E) :
     tP p (tQ s y) = y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a y => rw [tQ_tmul, rTensor_tmul₂, h]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tQ_tP (p : A →ₐ[F] R) (s : R →ₗ[F] A) (b : A) (h : ∀ a, s (p a) = b * a) (x : A ⊗[F] E) :
     tQ s (tP p x) = (b ⊗ₜ[F] (1 : E)) * x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a y => rw [rTensor_tmul₂, tQ_tmul, h, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-  | add x y hx hy => simp only [map_add, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add]
 
 theorem tQ_mul (s : R →ₗ[F] A) (h : ∀ r r', s (r * r') = s r * s r') (y y' : R ⊗[F] E) :
     tQ s (y * y') = tQ s y * tQ s y' := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, add_mul]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, add_mul]
   | tmul a z =>
     induction y' using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy, mul_add]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add]
     | tmul b w =>
       rw [Algebra.TensorProduct.tmul_mul_tmul, tQ_tmul, tQ_tmul, tQ_tmul, h,
         Algebra.TensorProduct.tmul_mul_tmul]
@@ -82,14 +87,16 @@ variable {S}
 theorem evalV_finOf (c : ∀ v : S, Fv F v.1) (u : HeightOneSpectrum (𝓞 F)) (h : u ∈ S) :
     evalV F u (finOf S c) = c ⟨u, h⟩ := by
   unfold finOf
-  rw [map_sum, Finset.sum_eq_single (⟨u, h⟩ : S)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single (⟨u, h⟩ : S)
     (fun b _ hb => evalV_singleFin_ne (fun e => hb (Subtype.ext e.symm)) _) (by simp)]
   exact evalV_singleFin_self u _
 
 theorem evalV_finOf_not (c : ∀ v : S, Fv F v.1) (u : HeightOneSpectrum (𝓞 F)) (h : u ∉ S) :
     evalV F u (finOf S c) = 0 := by
   unfold finOf
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun b _ => evalV_singleFin_ne (fun e => h (by rw [e]; exact b.2)) _
 
 theorem af_ext {x y : Af F} (h : ∀ u, evalV F u x = evalV F u y) : x = y :=

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrSqz
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrSqz
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -16,7 +20,7 @@ theorem UpperTheory.V.Fr.pr_correct :
   intro l _ k _ _ F C₀ n hF O _ _ C' _ _ _ C _ _ _ p B D μ hμ hpμ β Y a hβ hom ha hb
   obtain ⟨e, he1, he2, he3, he4, he5⟩ := pr_sqz O C' n μ hμ
   have hres : ∀ z : C', res O C (p z) = res O C' z := fun z => res_map p z
-  let x : F.Γ → GG n C' := fun s => SemidirectProduct.mk (D.r s) (F.del s)
+  let x : F.Γ → GG (m := n) (R := C') := fun s => SemidirectProduct.mk (D.r s) (F.del s)
   have hK1 : ∀ s, GG.map (res O C' : C' →+* ResidueField O) (x s) = (B.bar O).r s := by
     intro s
     apply SemidirectProduct.ext
@@ -45,7 +49,7 @@ theorem UpperTheory.V.Fr.pr_correct :
           exact Matrix.map_one _ (map_zero _) (map_one _)
   have hxmul : ∀ s t, x s * x t = GG.ofGL (e (dOne (B.bar O).ad β (s, t))) * x (s * t) := by
     intro s t
-    have hu : D.r s * sgnAct n C' (F.del s) (D.r t) * (D.r (s * t))⁻¹ = e (dOne (B.bar O).ad β (s, t)) := by
+    have hu : D.r s * sgnAct (m := n) (R := C') (F.del s) (D.r t) * (D.r (s * t))⁻¹ = e (dOne (B.bar O).ad β (s, t)) := by
       apply Units.ext
       rw [he1, ← hom (s, t)]
       simp [SetLift.om]
@@ -57,7 +61,7 @@ theorem UpperTheory.V.Fr.pr_correct :
     intro s X
     rw [he5 (x s) X, hK1 s]
     rfl
-  let R' : F.Γ → GG n C' := fun s => GG.ofGL (e (-β s)) * x s
+  let R' : F.Γ → GG (m := n) (R := C') := fun s => GG.ofGL (e (-β s)) * x s
   have hmul : ∀ s t, R' (s * t) = R' s * R' t := by
     intro s t
     symm
@@ -77,7 +81,7 @@ theorem UpperTheory.V.Fr.pr_correct :
           congr 3
           simp only [dOne, map_neg]
           abel
-  let rr : F.Γ →* GG n C' := MonoidHom.mk' R' hmul
+  let rr : F.Γ →* GG (m := n) (R := C') := MonoidHom.mk' R' hmul
   have hneg : ∀ Z : Matrix (Fin n) (Fin n) (ResidueField O), (-Z).map μ = -(Z.map μ) := by
     intro Z
     ext i j
@@ -85,7 +89,7 @@ theorem UpperTheory.V.Fr.pr_correct :
   have hpe : ∀ X, GeneralLinearGroup.map (p : C' →+* C) (e X) = 1 := by
     intro X
     ext i j
-    simp only [GeneralLinearGroup.map_apply, he1, Matrix.add_apply, Matrix.map_apply, Units.val_one, map_add]
+    simp only [GeneralLinearGroup.map_apply, he1, Matrix.add_apply, Matrix.map_apply, Units.val_one, map_add (f := _)]
     have h0 : (p : C' →+* C) (μ (X i j)) = 0 := hpμ _
     rw [h0, add_zero, Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp
@@ -168,7 +172,9 @@ theorem UpperTheory.V.Fr.pr_correct :
     have hM := (IsLocallyConstant.comp₂ hA hB (· * ·)).comp (fun M => M i j)
     convert hM using 1
     funext s
-    simp only [Function.comp_apply]
+    change Ideal.Quotient.mk (maximalIdeal C' ^ N) ((R' s).mat i j) =
+      (((1 + (-β s).map μ).map (Ideal.Quotient.mk (maximalIdeal C' ^ N))) *
+        (D.r s : Matrix (Fin n) (Fin n) C').map (Ideal.Quotient.mk (maximalIdeal C' ^ N))) i j
     rw [← Matrix.map_mul, Matrix.map_apply]
     congr 1
     show (R' s).mat i j = _

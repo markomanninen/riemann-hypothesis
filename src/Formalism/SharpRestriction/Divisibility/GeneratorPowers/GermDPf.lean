@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDVal
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDVal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -135,8 +139,8 @@ theorem ptSec_trunc (hch : IsChartG t x0 d F act tg uvec x) (m : ℕ) :
 
 end GermD
 
-open GermD in
 
+open GermD in
 theorem germSt_holds : GermSt := by
   intro E _ _ _ H X0 t S _ x0 d F act κ _ tg uvec x ph1 ph2 sy ad e wP hch hfr hpr htr k Fs
   have hL := t.PP.isLB

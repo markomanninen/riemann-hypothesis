@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BadPrimesPeriodBound
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StepBoxIffStepSuppDeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BadPrimesPeriodBound
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StepBoxIffStepSuppDeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ section Deg
 
 variable {T : Type} {a b : ℕ}
 
-open Classical in
 
+open Classical in
 def monoDeg (e : DVar T a b →₀ ℕ) (τ : T) : ℕ := ∑ k ∈ e.support.filter (fun k => k.1 = τ), e k
 
 theorem monoDeg_eq_sum [Fintype T] (e : DVar T a b →₀ ℕ) (τ : T) : monoDeg e τ = ∑ β, ∑ α, e (τ, β, α) := by
@@ -128,13 +132,6 @@ theorem jetsIn_iff : I.JetsIn ↔ ∀ (a : I.ι) (u : B.Word) (i : ℕ), i < B.R
     rw [I.A_σ₀]
     exact hy
 
-theorem jetRange_std (a : I.ι) (u : B.Word) (i : ℕ) :
-    I.JetRange a u i (stdLat B.fields.E (B.R.N i)) (stdLat B.fields.E (B.R.N (i + 1))) 1 0 := by
-  letI := B.fields.starE
-  show IsSdLat _ ∧ IsSdLat _ ∧ 0 < 1 ∧ 1 ∣ _ ∧ _
-  exact ⟨And.intro Formalism.L2.Col.stdLat_lattice Formalism.L2.Col.stdLat_unimodular,
-    And.intro Formalism.L2.Col.stdLat_lattice Formalism.L2.Col.stdLat_unimodular, Nat.one_pos, one_dvd _, zero_mem _⟩
-
 variable {I} {a : I.ι} {u : B.Word} {i : ℕ} {N : Submodule (𝓞 B.fields.E) (Sp B.fields.E (B.R.N i))}
   {N' : Submodule (𝓞 B.fields.E) (Sp B.fields.E (B.R.N (i + 1)))} {c : ℕ} {x : HomE B.fields.E (B.R.N i) (B.R.N (i + 1))}
   {e : DVar B.fields.Tau (B.R.N i) (B.R.N (i + 1)) →₀ ℕ}
@@ -143,35 +140,7 @@ theorem JetsIn.exists_eq (h : I.JetsIn) (hi : i < B.R.m) (hx : I.JetRange a u i 
     (he : ∀ τ, (monoDeg e τ : ℤ) = nuDeg B u i τ) : ∃ y : B.LL, B.embLL y = I.jetNum a u i N N' c x e := by
   exact RingHom.mem_fieldRange.mp ((jetsIn_iff I).mp h a u i hi N N' c x hx e he)
 
-theorem JetsIn.isAlgebraic (h : I.JetsIn) (hi : i < B.R.m) (hx : I.JetRange a u i N N' c x)
-    (he : ∀ τ, (monoDeg e τ : ℤ) = nuDeg B u i τ) : IsAlgebraic ℚ (I.jetNum a u i N N' c x e) := by
-  obtain ⟨y, hy⟩ := h.exists_eq hi hx he
-  rw [← hy]
-  exact IsAlgebraic.algHom B.embLL.toRatAlgHom (Algebra.IsAlgebraic.isAlgebraic y)
-
 end ColIn
-
-example {B : Base} {X : PreX B.toPre} (I : ColIn B X) (h : I.JetsIn) (u : B.Word) (i : ℕ) (hi : i < B.R.m) :
-    ∃ e, (∀ τ, (monoDeg e τ : ℤ) = nuDeg B u i τ) ∧
-      I.jetNum I.mu0 u i (stdLat _ _) (stdLat _ _) 1 0 e ∈ B.embLL.fieldRange := by
-  obtain ⟨e, he⟩ := exists_monoDeg_nuDeg B u hi
-  exact ⟨e, he, h.exists_eq hi (I.jetRange_std _ u i) he⟩
-
-example {B : Base} {X : PreX B.toPre} (I : ColIn B X) (u : B.Word) (i : ℕ) (hi : i < B.R.m) (e)
-    (he : ∀ τ, (monoDeg e τ : ℤ) = nuDeg B u i τ)
-    (ht : Transcendental ℚ (I.jetNum I.mu0 u i (stdLat _ _) (stdLat _ _) 1 0 e)) : ¬ I.JetsIn :=
-  fun h => ht (h.isAlgebraic hi (I.jetRange_std _ u i) he)
-
-example : monoDeg (Finsupp.single ((true, 0, 1) : DVar Bool 2 1) 3) true = 3 ∧
-    monoDeg (Finsupp.single ((true, 0, 1) : DVar Bool 2 1) 3) false = 0 := by
-  simp [monoDeg_eq_sum, Finsupp.single_apply, Prod.ext_iff]
-
-example {T : Type} [Fintype T] {a b : ℕ} (cD : T → ℂ) (G : VCx T a b → ℂ) : jetC cD G 0 = G 0 := by
-  have h : ∀ (n : ℕ) (_ : n = 0) (v : Fin n → VCx T a b), iteratedFDeriv ℂ n G 0 v = G 0 := by
-    rintro _ rfl v
-    simp
-  simp only [jetC, derivAt0, Finsupp.prod_zero_index, one_mul]
-  exact h _ (by simp) _
 
 end GlobalTheory.Mem.Col2
 

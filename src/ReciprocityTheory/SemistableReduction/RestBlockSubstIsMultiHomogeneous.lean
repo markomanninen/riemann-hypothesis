@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.AevalIsWeightedHomogeneous
+module
+
+public import ReciprocityTheory.SemistableReduction.AevalIsWeightedHomogeneous
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem eval_aeval_alt {σ τ : Type*} (v : σ → MvPolynomial τ ℂ) (x : τ 
     (g : MvPolynomial σ ℂ) : eval x (aeval v g) = eval (fun i => eval x (v i)) g := by
   induction g using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp => simp only [map_mul, aeval_X, eval_X, hp]
 
 theorem measurable_eval_blockCoords {B n : ℕ} (g : MvPolynomial (Fin B × Fin n) ℂ) :
@@ -135,7 +139,8 @@ private theorem aeval_whom_lemma {σ τ : Type*} {M : Type*} [AddCommMonoid M] (
     (g : MvPolynomial σ ℂ) (m : M) (hg : ∀ s ∈ g.support, ∑ i ∈ s.support, s i • d i = m) :
     IsWeightedHomogeneous w (aeval v g) m := by
   classical
-  rw [g.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun s hs => ?_
   rw [aeval_monomial, MvPolynomial.algebraMap_eq, ← hg s hs,
     ← zero_add (∑ i ∈ s.support, s i • d i), Finsupp.prod]

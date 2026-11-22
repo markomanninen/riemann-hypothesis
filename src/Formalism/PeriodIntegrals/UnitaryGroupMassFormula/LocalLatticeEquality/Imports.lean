@@ -1,15 +1,15 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocLatEq
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocLatEq
+
+@[expose] public section
 
 noncomputable section
 
 open ValuativeRel IsDedekindDomain NumberField Formalism.MainNotions.S.Loc
 
 namespace PI.LocLatEq.W
-
-def ιO {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    {sig : E →ₐ[F] E} {p : HeightOneSpectrum (𝓞 F)} (A : LocAt F E sig p) (d : 𝓞 F) : A.Ep :=
-  A.ιE ((algebraMap (𝓞 F) (𝓞 E) d : 𝓞 E) : E)
 
 def IntP : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E],

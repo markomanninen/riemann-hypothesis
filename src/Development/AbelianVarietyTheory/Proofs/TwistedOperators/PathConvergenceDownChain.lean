@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsChainPols
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsBplusNeZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKORatLeftAndEigenRight
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LiftSchurMultiplierCompatibility
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaIntegrandIntegrable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsChainPols
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsBplusNeZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKORatLeftAndEigenRight
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LiftSchurMultiplierCompatibility
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaIntegrandIntegrable
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -160,12 +165,18 @@ theorem stepX {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.IsM
 theorem col_ind {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.IsModels) {t : T}
     {q : ∀ j : ℕ, PolF D (ch.G.V (.grid 0 (j + 1))).rank (ch.G.V (.grid 0 j)).rank} (hq : ChainPols ch q)
     {M : Vol ch.G} (hM : M.Is t) : ∀ n, n + 1 ≤ D.R.m → ∀ (g : ∀ j : Fin n, Sch ch.G (.down t 0 j)),
-    (∀ j : Fin n, ∃ fj, HEq fj (R.vY t j) ∧ g j = ch.W.fock (.mu t 0 j) fj (q j)) →
+    (∀ j : Fin n, ∃ fj : Sch ch.G (.down t 0 j),
+      HEq fj (R.vY t j) ∧ g j = ch.W.fock (.mu t 0 j) fj (q j)) →
     ∀ (F : Fn ch.G (.grid 0 n)) (F₀ : R.CC t n) (v : SmT (R.MY n)), HEq F (F₀.1 v) →
     PathConv ch.W M (downPath t 0 n) (downFam t 0 n g) F ∧
-      HEq (liftP ch.W M (downPath t 0 n) (downFam t 0 n g) F) (ch.cv.dnFun t n (F₀.1 v))
-  | 0, _, _, _, _, _, _, hF => ⟨trivial, hF⟩
-  | n + 1, hn, g, hg, F, F₀, v, hF => by
+      HEq (liftP ch.W M (downPath t 0 n) (downFam t 0 n g) F) (ch.cv.dnFun t n (F₀.1 v)) := by
+  intro n
+  induction n with
+  | zero =>
+    intro _ _ _ _ _ _ hF
+    exact ⟨trivial, hF⟩
+  | succ n ih =>
+    intro hn g hg F F₀ v hF
     obtain ⟨fj, hfj, hgj⟩ := hg (Fin.last n)
     have hgj' : g (Fin.last n) = ch.W.fock (.mu t 0 n) fj (q n) := hgj
     have hio := hch.ioY t n (by omega)
@@ -174,13 +185,13 @@ theorem col_ind {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.I
     have e1 : Lift.liftInt (R.νY t (n + 1)) (R.fdY t (n + 1)) (thetaKO (R.ωY t n)) (R.ptY t n (ch.cv.polY n)) (F₀.1 v) =
         (R.ioY t n F₀).1 (R.ItY n (ch.cv.polY n) v) := funext fun g' => hio.eq F₀ _ v g'
     rw [e1] at hst
-    have ih := col_ind hW hch hmod hq hM n (by omega) (fun j => g j.castSucc) (fun j => hg j.castSucc) _ (R.ioY t n F₀)
+    have hprev := ih (by omega) (fun j => g j.castSucc) (fun j => hg j.castSucc) _ (R.ioY t n F₀)
       (R.ItY n (ch.cv.polY n) v) hst.2
     refine ⟨(pathConv_comp ch.W M (Path.one (.down t 0 n)) ((), g (Fin.last n)) F (downPath t 0 n)
-      (downFam t 0 n fun j => g j.castSucc)).2 ⟨⟨trivial, hst.1⟩, ih.1⟩, ?_⟩
+      (downFam t 0 n fun j => g j.castSucc)).2 ⟨⟨trivial, hst.1⟩, hprev.1⟩, ?_⟩
     refine HEq.trans (heq_of_eq (pathLift_comp ch.W M (Path.one (.down t 0 n)) ((), g (Fin.last n)) F (downPath t 0 n)
       (downFam t 0 n fun j => g j.castSucc))) ?_
-    refine ih.2.trans (heq_of_eq ?_)
+    refine hprev.2.trans (heq_of_eq ?_)
     show _ = ch.cv.dnFun t n _
     rw [e1]
 
@@ -196,7 +207,8 @@ theorem formX_inv (hmod : R.IsModels) (d : ChainVec R) (t : T) (y : (R.HX t).H) 
 theorem col_ind' {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.IsModels) {t : T}
     {q : ∀ j : ℕ, PolF D (ch.G.V (.grid 0 (j + 1))).rank (ch.G.V (.grid 0 j)).rank} (hq : ChainPols ch q)
     {M : Vol ch.G} (hM : M.Is t) {n n' : ℕ} (hn : n = n') (hn1 : n + 1 ≤ D.R.m) (g : ∀ j : Fin n, Sch ch.G (.down t 0 j))
-    (hg : ∀ j : Fin n, ∃ fj, HEq fj (R.vY t j) ∧ g j = ch.W.fock (.mu t 0 j) fj (q j))
+    (hg : ∀ j : Fin n, ∃ fj : Sch ch.G (.down t 0 j),
+      HEq fj (R.vY t j) ∧ g j = ch.W.fock (.mu t 0 j) fj (q j))
     (F : Fn ch.G (.grid 0 n)) (F₀ : R.CC t n') (v : SmT (R.MY n')) (hF : HEq F (F₀.1 v)) :
     PathConv ch.W M (downPath t 0 n) (downFam t 0 n g) F ∧
       HEq (liftP ch.W M (downPath t 0 n) (downFam t 0 n g) F) (ch.cv.dnFun t n' (F₀.1 v)) := by
@@ -206,13 +218,21 @@ theorem col_ind' {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.
 theorem col_top {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.IsModels) {t : T}
     {q : ∀ j : ℕ, PolF D (ch.G.V (.grid 0 (j + 1))).rank (ch.G.V (.grid 0 j)).rank} (hq : ChainPols ch q)
     {M : Vol ch.G} (hM : M.Is t) (y : (R.HX t).H) : ∀ N, N = D.R.m → ∀ (g : ∀ j : Fin N, Sch ch.G (.down t 0 j)),
-    (∀ j : Fin N, ((j : ℕ) + 1 < D.R.m → ∃ fj, HEq fj (R.vY t j) ∧ g j = ch.W.fock (.mu t 0 j) fj (q j)) ∧
-      ((j : ℕ) + 1 = D.R.m → ∃ fj, HEq fj (R.vX t) ∧ g j = ch.W.fock (.mu t 0 j) fj (q j))) →
+    (∀ j : Fin N, ((j : ℕ) + 1 < D.R.m → ∃ fj : Sch ch.G (.down t 0 j),
+      HEq fj (R.vY t j) ∧ g j = ch.W.fock (.mu t 0 j) fj (q j)) ∧
+      ((j : ℕ) + 1 = D.R.m → ∃ fj : Sch ch.G (.down t 0 j),
+        HEq fj (R.vX t) ∧ g j = ch.W.fock (.mu t 0 j) fj (q j))) →
     ∀ F : Fn ch.G (.grid 0 N), HEq F (ch.cv.formX t y) →
     PathConv ch.W M (downPath t 0 N) (downFam t 0 N g) F ∧
-      HEq (liftP ch.W M (downPath t 0 N) (downFam t 0 N g) F) (ch.cv.lift t y)
-  | 0, h, _, _, _, _ => absurd h (by have := D.R.two_le_m; omega)
-  | k + 1, hk, g, hg, F, hF => by
+      HEq (liftP ch.W M (downPath t 0 N) (downFam t 0 N g) F) (ch.cv.lift t y) := by
+  intro N
+  cases N with
+  | zero =>
+    intro h
+    have := D.R.two_le_m
+    omega
+  | succ k =>
+    intro hk g hg F hF
     obtain ⟨fj, hfj, hgj⟩ := (hg (Fin.last k)).2 (by simp only [Fin.val_last]; omega)
     have hgj' : g (Fin.last k) = ch.W.fock (.mu t 0 k) fj (q k) := hgj
     have hio := hch.ioX t
@@ -234,15 +254,5 @@ theorem col_top {ch : Choice R} (hW : ch.W.Over R) (hch : R.IsChain) (hmod : R.I
 
 end GlobalTheory.FlipStart.Col
 
-open GlobalTheory.FlipStart GlobalTheory.FlipStart.Col in
-
-theorem GlobalTheory.FlipStart.column : GlobalTheory.FunPr.Hypotheses₂ → GlobalTheory.IndefiniteRowSideFullHecke.CuspAlongSmoothLifts.LiftsCuspidal → GlobalTheory.RowClaim.Big fun {D} _ _ _ _ {T} _ _ _ _ _ {R} ch => ∀ (t : T) (f : ∀ j : Fin D.R.m, Sch ch.G (.down t 0 j)) (q : ∀ j : ℕ, PolF D (ch.G.V (.grid 0 (j + 1))).rank (ch.G.V (.grid 0 j)).rank), GlobalTheory.FlipStart.ChainVecs ch t f → GlobalTheory.FlipStart.ChainPols ch q → ∀ M : Vol ch.G, M.Is t → ∀ y : (R.HX t).H, PathConv ch.W M (downPath t 0 D.R.m) (GlobalTheory.FlipStart.colPure ch.W t f fun j => q j) (formTop ch t y) ∧ liftP ch.W M (downPath t 0 D.R.m) (GlobalTheory.FlipStart.colPure ch.W t f fun j => q j) (formTop ch t y) = ch.cv.lift t y := by
-  intro _ _
-  refine ⟨0, fun _ _ _ => ⟨0, fun D large₂ _ _ Γ _ _ Pl0 T A Ks _ _ _ R F s ch hch _ => ?_⟩⟩
-  intro t f q hf hq M hM y
-  have h := col_top hch.weil s.core.chain s.core.models hq hM y D.R.m rfl (fun j => ch.W.fock (.mu t 0 j) (f j) (q j))
-    (fun j => ⟨fun h => ⟨f j, (hf j).1 h, rfl⟩, fun h => ⟨f j, (hf j).2 h, rfl⟩⟩) (formTop ch t y)
-    (by unfold formTop; exact cast_fun_heq _ _)
-  exact ⟨h.1, eq_of_heq h.2⟩
 
 end

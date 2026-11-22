@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TensorProductVectors
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TensorProductVectors
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaGeCOfNorm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaGeCOfNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ variable {n' ν : ℕ} [NeZero ν] (hn : n' = 2 * ν)
 theorem ea_eS_val (s : Fin n') : (ea_eS hn s).val = s.val := by
   show (((s.val : ℕ) : ZMod (2 * ν))).val = s.val
   rw [ZMod.val_natCast, Nat.mod_eq_of_lt (hn ▸ s.isLt)]
-
-theorem ea_eS_symm_val (x : ZMod (2 * ν)) : ((ea_eS hn).symm x).val = x.val := rfl
 
 theorem ea_eS_posAdd (s : Fin n') (k : ℕ) : ea_eS hn (posAdd s k) = ea_eS hn s + (k : ZMod (2 * ν)) := by
   subst hn

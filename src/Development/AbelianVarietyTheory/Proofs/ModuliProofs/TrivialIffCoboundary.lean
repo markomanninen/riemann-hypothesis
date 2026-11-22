@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ConstThickeningComplexFunctionsStructureStatement
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ConstThickeningComplexFunctionsStructureStatement
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct ContDiff
@@ -53,7 +58,7 @@ theorem unit_form {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (e : B
   have h1 : (u : B) * (u⁻¹ : Bˣ) = 1 := u.mul_inv
   rw [h', h] at h1
   refine (uniq φ e H (a := b * b') (b := b * c' + c * b') (a' := 1) (b' := 0) ?_).1
-  simp only [map_mul, map_add, map_one, map_zero] at h1 ⊢
+  simp only [map_mul, map_add (f := _), map_one, map_zero] at h1 ⊢
   linear_combination h1 - (φ c * φ c') * he
 
 theorem overlap {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (e : B) (he : e * e = 0)
@@ -61,7 +66,7 @@ theorem overlap {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (e : B) 
     (hb : b * b' = 1) (hd : d * d' = 1)
     (h : φ b + e * φ c = (1 + e * φ k) * (φ d + e * φ c')) : k = c * b' - c' * d' := by
   obtain ⟨h1, h2⟩ := uniq φ e H (a := b) (b := c) (a' := d) (b' := c' + k * d) (by
-    simp only [map_mul, map_add]
+    simp only [map_mul, map_add (f := _)]
     linear_combination h + (φ k * φ c') * he)
   subst h1
   have h3 : b' = d' := by linear_combination d' * hb - b' * hd + (0 : A)
@@ -84,7 +89,7 @@ theorem trivial_iff_coboundary : ∀ (Y Y' : Scheme.{0}) (q : Y ⟶ Sp ℂ) (π 
     have l₂ : j ⁻¹ᵁ (Q.U i ⊓ Q.U i') ≤ j ⁻¹ᵁ Q.U i' := fun _ hy => hy.2
     have E : resG Y' inf_le_left (t.s i : Γ(Y', Q.U i)) =
         (Q.g i i').val * resG Y' inf_le_right (t.s i' : Γ(Y', Q.U i')) := congrArg Units.val (ht i i')
-    rw [hg i i' (le _), hs, hs, map_add, map_add, map_mul, map_mul, res_constFn', res_constFn',
+    rw [hg i i' (le _), hs, hs, map_add (f := _), map_add (f := _), map_mul, map_mul, res_constFn', res_constFn',
       res_appLE ρ _ l₁ _ (le _), res_appLE ρ _ l₁ _ (le _), res_appLE ρ _ l₂ _ (le _),
       res_appLE ρ _ l₂ _ (le _)] at E
     rw [map_mul, map_mul]
@@ -101,7 +106,7 @@ theorem trivial_iff_coboundary : ∀ (Y Y' : Scheme.{0}) (q : Y ⟶ Sp ℂ) (π 
       change resG Y' inf_le_left (1 + constFn π _ DualNumber.eps * (ρ.appLE _ (Q.U i) (le _)).hom (a i)) =
         (Q.g i i').val * resG Y' inf_le_right
           (1 + constFn π _ DualNumber.eps * (ρ.appLE _ (Q.U i') (le _)).hom (a i'))
-      rw [hg i i' (le _), map_add, map_add, map_mul, map_mul, map_one, map_one, res_constFn', res_constFn',
+      rw [hg i i' (le _), map_add (f := _), map_add (f := _), map_mul, map_mul, map_one, map_one, res_constFn', res_constFn',
         res_appLE ρ _ l₁ _ (le _), res_appLE ρ _ l₂ _ (le _), ha i i', map_sub]
       linear_combination (-((ρ.appLE _ _ (le _)).hom (resG Y l₁ (a i)) -
         (ρ.appLE _ _ (le _)).hom (resG Y l₂ (a i'))) * (ρ.appLE _ _ (le _)).hom (resG Y l₂ (a i'))) *

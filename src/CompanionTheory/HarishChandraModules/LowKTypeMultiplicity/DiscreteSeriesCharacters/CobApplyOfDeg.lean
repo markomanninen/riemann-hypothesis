@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -92,7 +96,8 @@ theorem algCore_of (hF : FRel) (hB : BdFacts) (hCO : CO) (hZ : ZetaHW) (hW : WLe
     rw [hA n ε V E hu, hcob]; simp [ip]
   have h1 : (∑ A, ‖T c A‖ ^ 2 : ℝ) = 0 := by
     have h := congrArg (RCLike.re (K := ℂ)) h0
-    simp only [ip, map_sum, inner_self_eq_norm_sq, map_zero] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ip, map_sum, inner_self_eq_norm_sq, map_zero] at h
     exact h
   have h2 := (Finset.sum_eq_zero_iff_of_nonneg fun A _ => sq_nonneg _).1 h1 (A1 ε) (Finset.mem_univ _)
   have h3 : T c (A1 ε) = 0 := by simpa using h2

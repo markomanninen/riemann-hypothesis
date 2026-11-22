@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGoodOfBddAll
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspidalSectionBoundedNonzeroMultipleStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CdvrExtSt
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralFramedPointBaseChangeStable
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFrameAfterExtIffAnd
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGoodOfBddAll
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspidalSectionBoundedNonzeroMultipleStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CdvrExtSt
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralFramedPointBaseChangeStable
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFrameAfterExtIffAnd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,7 +45,8 @@ theorem eq_zero_of_forall_conj {k F Ω ι : Type} [Field k] [Field F] [Field Ω]
   have : ∑ g : F ≃ₐ[k] F, τ (g c) * ∑ j, τ (g (b j)) * x j = x m := by
     simp only [Finset.mul_sum, ← mul_assoc, ← map_mul τ]
     rw [Finset.sum_comm]
-    simp only [← Finset.sum_mul, ← map_sum τ, hc']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← Finset.sum_mul, ← map_sum τ, hc']
     rw [Finset.sum_eq_single m] <;> simp +contextual [eq_comm]
   rw [← this]
   simp [h]
@@ -81,7 +86,8 @@ theorem le_one_of_forall_conj {F ι : Type} [Field F] [Fintype ι] (v : Valuatio
     choose c' hc' using fun j => Ideal.Quotient.mk_surjective (c j)
     rw [← hc', Ideal.Quotient.eq_zero_iff_mem]
     refine hb c' (Ideal.Quotient.eq_zero_iff_mem.1 ?_) j
-    rw [← hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← hc', Algebra.smul_def, Algebra.smul_def, map_mul]
     rfl
@@ -91,7 +97,8 @@ theorem le_one_of_forall_conj {F ι : Type} [Field F] [Fintype ι] (v : Valuatio
   obtain ⟨g, rfl⟩ := Ideal.Quotient.stabilizerHom_surjective (L ≃ₐ[K] L) la.asIdeal μ.asIdeal g
   have h4 : ∀ j, τ (Ideal.Quotient.stabilizerHom μ.asIdeal la.asIdeal (L ≃ₐ[K] L) g
       (Ideal.Quotient.mk μ.asIdeal (b j))) = ρ (ψ (g.1 • b j)) := fun j => rfl
-  simp only [h4, ← map_mul, ← map_sum, hρ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h4, ← map_mul, ← map_sum, hρ]
   have h5 : ((∑ j, ψ (g.1 • b j) * z j : v.valuationSubring) : F) = (∑ j, σ (g.1 (b j)) * x j) / x j₀ := by
     rw [Finset.sum_div]
     push_cast
@@ -189,7 +196,8 @@ theorem exists_residue_basis [la'.asIdeal.LiesOver la.asIdeal] : ∃ (d : ℕ) (
   choose b hb using fun j => Ideal.Quotient.mk_surjective (B j)
   have e : ∀ x : Fin _ → 𝓞 K, Ideal.Quotient.mk la'.asIdeal (∑ j, x j • b j) =
       ∑ j, Ideal.Quotient.mk la.asIdeal (x j) • B j := fun x => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← hb, Algebra.smul_def, Algebra.smul_def, map_mul]
     rfl
@@ -216,7 +224,8 @@ theorem exists_approx (hv : ∀ x : K, vLa la' (algebraMap K K' x) = vLa la x) {
     have h1 := (la'.valuation_lt_one_iff_mem (K := K') _).2 hx
     have h2 : a - ∑ j, algebraMap K K' (x j) * b j =
         algebraMap (𝓞 K') K' (a₀ - ∑ j, x j • b j) - (algebraMap (𝓞 K') K' a₀ - a) := by
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp only [Algebra.smul_def, map_mul]
       have : ∀ j, algebraMap (𝓞 K') K' (algebraMap (𝓞 K) (𝓞 K') (x j)) = algebraMap K K' (x j) := fun j => rfl
       simp only [this]
@@ -249,13 +258,13 @@ theorem exists_approx (hv : ∀ x : K, vLa la' (algebraMap K K' x) = vLa la x) {
       ⟨0, by simpa using (WithZero.le_exp_log (x := la'.valuation K' a)).trans (WithZero.exp_le_exp.2 (le_neg.1 hN))⟩
     rcases le_total N (-WithZero.log (la'.valuation K' a)) with h | h
     · exact h0 N h
-    induction N, h using Int.le_induction with
+    induction N, h using Int.leInduction with
     | base => exact h0 _ le_rfl
     | succ n _ ih =>
       obtain ⟨x, hx⟩ := ih
       obtain ⟨y, hy⟩ := step n _ hx
       refine ⟨x + y, ?_⟩
-      simpa only [Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib, sub_sub] using hy
+      simpa only [Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib, sub_sub] using hy
   have hκ' : algebraMap K K' κ ≠ 0 := by simpa using hκ
   have hκv : la'.valuation K' (algebraMap K K' κ) ≠ 0 := by simpa using hκ
   obtain ⟨x, hx⟩ := all (-WithZero.log (la'.valuation K' (algebraMap K K' κ)))
@@ -305,7 +314,8 @@ theorem inV_of_forall_emb [la'.asIdeal.LiesOver la.asIdeal] {d : ℕ} {b : Fin d
     have h3 := (GoodPtsModel.inV_iff_vV T' ((map_ne_zero i).2 h0)).1 ((GoodPtsModel.inV_iff_val T' _).2 key)
     rw [hv'] at h3
     exact (GoodPtsModel.inV_iff_vV T h0).2 ((mul_nonneg_iff_of_pos_left (by exact_mod_cast he')).1 h3)
-  · rw [hQl.over, Ideal.under_def, Ideal.mem_comap, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [hQl.over, Ideal.under_def, Ideal.mem_comap, map_sum]
     simpa only [Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply] using hc
   · let σ : K' →+* T'.Fr := (σ₁.comp (g : L →+* L)).comp (algebraMap K' L)
     obtain ⟨e'', ho''⟩ := exists_overLa_of_mem (la := la') (io := σ) hT' fun a => by
@@ -341,6 +351,7 @@ theorem exists_intFr_ext (hle : c.F ≤ c'.F) {T : CDVR} {io : c.F →+* T.Fr} (
 
 end Forms
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem supSet_descent : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r), (∀ σ, GoodEmb c σ → IsUnf (U σ)) → ∀ (la : HeightOneSpectrum (𝓞 c.F)) (p : ℕ), p.Prime → (p : 𝓞 c.F) ∈ la.asIdeal → l.GoodAt p → ∀ (c' : Coeff l) (hle : c.F ≤ c'.F) (la' : HeightOneSpectrum (𝓞 c'.F)), (∀ x : c.F, vLa la' (incF c c' hle x) = vLa la x) → CuspBC hle U → ∀ (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), Dom a n → FiniteDimensional c.F (cusp Xo c U a n) → ∀ f' ∈ cusp Xo c' (unfBC hle U) a n, BddAll Xo c' la' 1 f' → ∃ (m : ℕ) (as : Fin m → c'.F) (fs : Fin m → Rul Xo c), (∀ i, la'.valuation c'.F (as i) ≤ 1) ∧ (∀ i, fs i ∈ supSet Xo c la (cusp Xo c U a n)) ∧ IsBC hle f' as fs := by
   intro E _ _ _ H Dw l Xo c r U hU la p hp hpl hgood c' hle la' hv hBC a n hD _ f' hf' hb
   obtain ⟨m, as, fs, hfs, hIs⟩ := hBC a n f' hf'
@@ -365,7 +376,8 @@ theorem supSet_descent : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
     rw [Finset.sum_comm, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hx i]
-    simp only [map_add, map_sum, map_mul, h', add_mul, Finset.sum_mul, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_mul, h', add_mul, Finset.sum_mul, mul_assoc]
     congr 1
     exact Finset.sum_congr rfl fun j _ => by ring
   refine ⟨d + m, Fin.append (fun j => (b j : c'.F)) ρ, Fin.append F fun i => κ i • fs i, fun i => ?_, fun i => ?_, ?_⟩

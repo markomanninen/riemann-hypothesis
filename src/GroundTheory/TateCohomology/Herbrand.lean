@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.HerbrandTate
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.HerbrandTate
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -13,8 +18,8 @@ section CommGroup
 variable {R G : Type u} [CommRing R] [CommGroup G] [Fintype G] (A : Rep.{u} R G) {σ : G}
   (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
-include hσ in
 
+include hσ in
 theorem invariants_eq_ker_normHomCompSub_g :
     A.ρ.invariants = LinearMap.ker (normHomCompSub A σ).g.hom := by
   ext x
@@ -45,7 +50,7 @@ theorem normRangeInvariants_map :
 
 noncomputable def tateCohomologyZeroIsoHomology :
     tateCohomology A 0 ≅ (normHomCompSub A σ).homology :=
-  (tateCohomologyZeroIso R G).app A ≪≫
+  (tateCohomologyZeroIso (R := R) (G := G)).app A ≪≫
     (Submodule.Quotient.equiv _ _ (LinearEquiv.ofEq _ _ (invariants_eq_ker_normHomCompSub_g A hσ))
       (normRangeInvariants_map A hσ)).toModuleIso ≪≫
     (normHomCompSub A σ).moduleCatHomologyIso.symm
@@ -82,7 +87,7 @@ theorem augmentationKerNorm_map :
 
 noncomputable def tateCohomologyNegOneIsoHomology :
     tateCohomology A (-1) ≅ (subCompNormHom A σ).homology :=
-  (tateCohomologyNegOneIso R G).app A ≪≫
+  (tateCohomologyNegOneIso (R := R) (G := G)).app A ≪≫
     (Submodule.Quotient.equiv _ _ (LinearEquiv.ofEq _ _ (ker_norm_eq_ker_subCompNormHom_g A))
       (augmentationKerNorm_map A hσ)).toModuleIso ≪≫
     (subCompNormHom A σ).moduleCatHomologyIso.symm

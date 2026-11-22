@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RelAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsUnobstructed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ConjPushMat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RelAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsUnobstructed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ConjPushMat
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -38,7 +42,7 @@ private theorem map_eq_of_linear {O σ B : Type} [CommRing O] [IsLocalRing O] [F
         simp
   have h3 : ∀ g ∈ maximalIdeal (MvPowerSeries σ O) ^ 2, a g = b g := fun g hg => by
     rw [pow_two] at hg
-    refine Submodule.mul_induction_on hg (fun x hx y hy => ?_) fun x y hx hy => by rw [map_add, map_add, hx, hy]
+    refine Submodule.mul_induction_on hg (fun x hx y hy => ?_) fun x y hx hy => by rw [map_add (f := _), map_add (f := _), hx, hy]
     have hb : b y ∈ maximalIdeal B := by simpa using sub_mem (ha y hy) (hN (hab y))
     have e1 := hk _ (ha x hx) _ (hab y)
     have e2 := hk _ hb _ (hab x)
@@ -55,7 +59,7 @@ private theorem card_ker_le
     {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
     [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι) (hF : F.Ok)
     (hv : F.LocVan) (hc : F.Count) (g₁ : Γ) (hg : F.Marked g₁) {R : Type} [CommRing R] [Algebra O R] [IsCO O R]
-    (u : Γ →* GG 3 R) (hu : F.IsUniv g₁ u) (W : WPres O ℤ R) (hW : F.Adapted u W) (hm : Frame.Minimal W)
+    (u : Γ →* GG (m := 3) (R := R)) (hu : F.IsUniv g₁ u) (W : WPres O ℤ R) (hW : F.Adapted u W) (hm : Frame.Minimal W)
     {A A' : Type} [CommRing A] [Algebra O A] [IsCO O A] [CommRing A'] [Algebra O A'] [IsCO O A']
     (𝒜 : ℤ → Submodule O A) [GradedAlgebra 𝒜] (p : A →ₐ[O] A') (j : ℤ) (hp : Function.Surjective p)
     (hs : SmallExt O 𝒜 (RingHom.ker p) j) (φ : MvPowerSeries W.σ O →ₐ[O] A) (hφ : Function.Surjective φ)
@@ -122,7 +126,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_relations :
     ∀ {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    F.LocVan → F.Count → ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (u : Γ →* GG 3 R), F.IsUniv g₁ u →
+    F.LocVan → F.Count → ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (u : Γ →* GG (m := 3) (R := R)), F.IsUniv g₁ u →
     ∀ (W : WPres O ℤ R), F.Adapted u W → Frame.Minimal W →
     ∃ f : (j : ℤ) → Fin (Module.finrank (ResidueField O) (F.Ob j)) → MvPowerSeries W.σ O, (∀ j i, f j i ∈ wtPart O W.wt j) ∧ RingHom.ker W.π = Ideal.span (⋃ j, Set.range (f j)) := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF hv hc g₁ hg R _ _ _ u hu W hW hm

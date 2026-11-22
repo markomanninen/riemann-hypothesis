@@ -1,4 +1,8 @@
-import Formalism.EllipticTorsion.WSeriesUnique
+module
+
+public import Formalism.EllipticTorsion.WSeriesUnique
+
+@[expose] public section
 
 open PowerSeries
 

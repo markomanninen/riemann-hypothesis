@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.DefsKer
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.IteratedDerivLine
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.DefsKer
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.IteratedDerivLine
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

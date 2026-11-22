@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FrameEntry
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FrameEntry
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem one_mem_ddPow (k : ℕ) : (1 : D.host.E) ∈ ddS D ^ (-(k : ℤ)) := by
   have hne := Formalism.L2.SG.Pf.StabIntSh.lg_ddS_ne (D := D)
   have h1 : ddS D ^ k ≤ 1 := pow_le_one' FractionalIdeal.coeIdeal_le_one k
   have h2 : (1 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E)⁻¹ ≤ (ddS D ^ k)⁻¹ :=
-    FractionalIdeal.inv_anti_mono (pow_ne_zero k hne) one_ne_zero h1
+    FractionalIdeal.inv_anti_mono (pow_ne_zero k hne) h1
   rw [inv_one] at h2
   rw [_root_.zpow_neg, zpow_natCast]
   exact h2 (FractionalIdeal.mem_one_iff _ |>.2 ⟨1, map_one _⟩)

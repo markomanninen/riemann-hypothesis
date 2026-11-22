@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdDecomp
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.FockLatticeInjective
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.OppositeUnipotentWeylConj
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.OmSch
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdDecomp
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.FockLatticeInjective
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.OppositeUnipotentWeylConj
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.OmSch
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ namespace PositivityTheory.SiegelWeilFormula.KAway
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-variable (F) in
 
+variable (F) in
 def eInf : AF F := 1 - finOne F
 
 theorem finOne_mul_eInf : finOne F * eInf F = 0 := by
@@ -124,10 +128,10 @@ theorem gram_inf_fin {X Z : Mx F E d.m d.n} (hX : finOne F • X = 0) (hZ : eInf
   simp [SD.gram]
 
 theorem tt_add (M M' : Mx F E d.n d.n) : d.tt (M + M') = d.tt M + d.tt M' := by
-  simp only [SD.tt, Matrix.trace_add, map_add]
+  simp only [SD.tt, Matrix.trace_add, map_add (f := _)]
 
 theorem crd_add (X Z : Mx F E d.m d.n) (k) : d.crd (X + Z) k = d.crd X k + d.crd Z k := by
-  simp only [SD.crd, Matrix.add_apply, map_add, Finsupp.add_apply]
+  simp only [SD.crd, Matrix.add_apply, map_add (f := _), Finsupp.add_apply]
 
 theorem crd_smul (c : AF F) (X : Mx F E d.m d.n) (k) : d.crd (c • X) k = c * d.crd X k := by
   simp only [SD.crd, Matrix.smul_apply, map_smul, Finsupp.smul_apply, smul_eq_mul]

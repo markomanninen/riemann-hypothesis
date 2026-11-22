@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLines
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLines
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -12,8 +17,8 @@ theorem toAddSubgroup_span {V : Type} [AddCommGroup V] (s : Set V) :
 
 end KLinesGenIndexTrans
 
-open KLinesGenIndexTrans in
 
+open KLinesGenIndexTrans in
 theorem LinesGenIndexTrans.proof (h1 : LinesLatticeBasis.Statement)
     (h2 : LinesGenIndexDet.Statement) : LinesGenIndexTrans.Statement := by
   intro V _ _ _ A B C hA hB hC

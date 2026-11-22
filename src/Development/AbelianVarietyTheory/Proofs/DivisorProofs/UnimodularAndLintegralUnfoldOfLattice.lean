@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
+
+@[expose] public section
+
 open MeasureTheory Filter Topology GlobalTheory.ResLine
 open scoped ENNReal
 
@@ -40,7 +45,8 @@ theorem isInvInvariant_of_right {G : Type} [Group G] [TopologicalSpace G]
   let c : ENNReal := Measure.haarScalarFactor μ.inv μ
   have hc : μ.inv = c • μ := Measure.isMulLeftInvariant_eq_smul μ.inv μ
   have h1 : Measure.map Inv.inv (Measure.map Inv.inv μ) = c ^ 2 • μ := by
-    rw [← Measure.inv_def μ, hc, Measure.map_smul, ← Measure.inv_def μ, hc, smul_smul, pow_two]
+    rw [← Measure.inv_def μ, hc, Measure.map_smul c continuous_inv.measurable.aemeasurable,
+      ← Measure.inv_def μ, hc, smul_smul, pow_two]
   have μeq : μ = c ^ 2 • μ := by
     rw [Measure.map_map continuous_inv.measurable continuous_inv.measurable] at h1
     simpa only [inv_involutive, Function.Involutive.comp_self, Measure.map_id] using h1

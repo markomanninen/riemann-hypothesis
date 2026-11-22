@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -31,6 +35,7 @@ private theorem cd_meas {E : Type} [Field E] [NumberField E] (N : MeasE E) (t : 
     have : (cD (t * t) : G1 E → G1 E) = cD t ∘ cD t := by
       funext g; exact (M.cD_cD t t g).symm
     rw [this, ← Measure.map_map (hm t) (hm t), hc, Measure.map_smul, hc, smul_smul]
+    exact (hm t).aemeasurable
   obtain ⟨K, hK, hK1⟩ := exists_compact_mem_nhds (1 : G1 E)
   have hpos : N.μ K ≠ 0 := (Measure.measure_pos_of_mem_nhds N.μ hK1).ne'
   have hfin : N.μ K ≠ ∞ := hK.measure_lt_top.ne

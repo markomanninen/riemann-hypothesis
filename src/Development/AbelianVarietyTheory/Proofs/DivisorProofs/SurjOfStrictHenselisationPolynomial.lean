@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictHenselisation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndEtaleLocalizedPiecesTrans
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgHomExtLocalization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveResidueCompEtaleHenselian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSpecialisationToStrictlyHenselian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictHenselisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndEtaleLocalizedPiecesTrans
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgHomExtLocalization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveResidueCompEtaleHenselian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSpecialisationToStrictlyHenselian
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open GlobalTheory.EtC
 
@@ -26,6 +31,7 @@ theorem surj_of_strictHenselisation_polynomial : ∀ (T : Type) [CommRing T] (A 
   obtain ⟨hHA, hsepA⟩ := hSH
   let y : Ideal (Polynomial T) := (maximalIdeal A).comap (algebraMap (Polynomial T) A)
   haveI : y.IsPrime := Ideal.comap_isPrime _ _
+  set_option synthInstance.maxHeartbeats 400000 in
   obtain ⟨O, _, algRO, _, hloc, hsc, -, -, -, hind⟩ :=
     GlobalTheory.exists_strictHenselisation (Localization.AtPrime y)
       (SeparableClosure (ResidueField (Localization.AtPrime y)))
@@ -49,7 +55,7 @@ theorem surj_of_strictHenselisation_polynomial : ∀ (T : Type) [CommRing T] (A 
   have hyO : (maximalIdeal O).comap (algebraMap (Polynomial T) O) = y := by
     rw [IsScalarTower.algebraMap_eq (Polynomial T) (Localization.AtPrime y) O, ← Ideal.comap_comap,
       hRO]
-    exact Localization.AtPrime.comap_maximalIdeal
+    exact Localization.AtPrime.under_maximalIdeal
   have hkO : ∀ r : Polynomial T, algebraMap (Polynomial T) (ResidueField O) r = 0 ↔ r ∈ y := by
     intro r
     rw [IsScalarTower.algebraMap_apply (Polynomial T) O (ResidueField O), ResidueField.algebraMap_eq,

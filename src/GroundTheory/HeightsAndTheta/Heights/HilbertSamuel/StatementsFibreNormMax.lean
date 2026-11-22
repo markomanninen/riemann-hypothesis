@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -27,30 +32,11 @@ def FibreNormMax.Statement : Prop :=
               (∀ k, (dg k : ℤ) = dh k + τ * a k) ∧ aeval y g = u * aeval y h ∧
               eval z (map (Int.castRingHom ℂ) h) ≠ 0 ∧
               ‖eval z (map (Int.castRingHom ℂ) g)‖ ≤
-                M * (HermLine.ofMetrics (fun k => maxMetric ℂ (ι k)) a).h z ^ τ *
+                M * (HermLine.ofMetrics (fun k => maxMetric (C := ℂ) (ι := ι k)) a).h z ^ τ *
                   ‖eval z (map (Int.castRingHom ℂ) h)‖) →
             ‖eval ζ (map (Int.castRingHom ℂ) F)‖ ≤ B ^ (τ + 1) * M ^ n
 
-open ProjLine in
 
-theorem FibreNormMax.coords_inhabited :
-    (∀ k : Unit, 1 ≤ (fun _ : Unit => 1) k) ∧
-      (∀ j : Fin 2, IsMultiHomog (X ⟨(), j⟩ : MRing (GlobalTheory (Fin 2))) (fun _ => 1)) ∧
-      ∀ z ∈ mcPts (mCoordIdeal (ι := GlobalTheory (Fin 2)) y), ∃ j : Fin 2,
-        eval z (map (Int.castRingHom ℂ) (X ⟨(), j⟩ : MRing (GlobalTheory (Fin 2)))) ≠ 0 := by
-  classical
-  refine ⟨fun _ => le_rfl, fun j m hm k => ?_, fun z hz => ?_⟩
-  · rw [support_X, Finset.mem_singleton] at hm
-    subst hm
-    fin_cases j <;> simp [Finsupp.single_apply]
-  · obtain ⟨i, hi⟩ := hz.1 ()
-    exact ⟨i, by simpa using hi⟩
-
-open ProjLine in
-
-theorem FibreNormMax.hyps_inhabited :
-    IsArithVar (mCoordIdeal (ι := GlobalTheory (Fin 2)) y) (1 + 1) ∧ Birational (ι := GlobalTheory (Fin 2)) y :=
-  ⟨isArithVar_y', birational_y⟩
 
 end
 

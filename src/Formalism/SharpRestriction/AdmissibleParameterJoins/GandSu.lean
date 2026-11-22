@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSt
+module
+
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,7 @@ theorem be_at (hex : PowerSeries.constantCoeff g.ex = 0)
   have hlg : ∀ {σ' : Type} {c : σ' → MvPowerSeries τ ℂ_[p]}, HasSubst c → ∀ i : σ',
       subst c (C ep * g.lg (X i)) = C ep * g.lg (c i) := by
     intro σ' c hc i
-    have hXi : HasSubst (fun _ : Unit => (X i : MvPowerSeries σ' ℂ_[p])) :=
-by
+    have hXi : HasSubst (fun _ : Unit => (X i : MvPowerSeries σ' ℂ_[p])) := by
       have hz : ∀ _ : Unit, constantCoeff (X i : MvPowerSeries σ' ℂ_[p]) = 0 := fun _ => constantCoeff_X i
       first
         | exact hasSubst_of_constantCoeff_zero hz
@@ -87,10 +90,10 @@ theorem logOf_add (hex : PowerSeries.constantCoeff g.ex = 0)
     rw [map_mul, cc_l, mul_zero]
   have hla : constantCoeff (g.lg a) = 0 := PowerSeries.constantCoeff_subst_eq_zero ha0 _ (cc_l g)
   have hlb : constantCoeff (g.lg b) = 0 := PowerSeries.constantCoeff_subst_eq_zero hb0 _ (cc_l g)
-  have hs : constantCoeff (g.lg a + g.lg b) = 0 := by rw [map_add, hla, hlb, add_zero]
-  refine ⟨by rw [map_add, hx0, hy0, add_zero], ?_, ?_⟩
+  have hs : constantCoeff (g.lg a + g.lg b) = 0 := by rw [map_add (f := _), hla, hlb, add_zero]
+  refine ⟨by rw [map_add (f := _), hx0, hy0, add_zero], ?_, ?_⟩
   · exact PowerSeries.constantCoeff_subst_eq_zero hs _ hex
-  · rw [map_add, subst_add (hs_dg hc), hx1, hy1, G1.add, lg_pt g hex hinv hs, mul_add]
+  · rw [map_add (f := _), subst_add (hs_dg hc), hx1, hy1, G1.add, lg_pt g hex hinv hs, mul_add]
 
 theorem logOf_mul (hex : PowerSeries.constantCoeff g.ex = 0)
     (hinv : PowerSeries.subst g.ex g.l = PowerSeries.X) (c : K0 p) {x : MvPowerSeries τ (K0 p)}

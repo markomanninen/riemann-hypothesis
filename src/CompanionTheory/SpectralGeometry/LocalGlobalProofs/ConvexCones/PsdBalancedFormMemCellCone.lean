@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InRealConeCellOfInFaceOfCellFormCMField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MarkValEqZeroOrOne
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.ConvexCones.CellFaceRestriction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InRealConeCellOfInFaceOfCellFormCMField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MarkValEqZeroOrOne
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.ConvexCones.CellFaceRestriction
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem inRCone_of_add : ∀ (O : Type) [CommRing O] [IsDedekindDomain O] [CharZ
   have hsp : ∀ y, 0 ≤ (β + x) y y := fun y => add_nonneg (hβp y) (hxp y)
   have hne : {k : ℕ | ∃ (m : ℕ) (γ : Fin m → LinearMap.BilinForm ℤ X), IsCell bar ψ γ ∧ InRCone γ (β + x) ∧
       genRank γ = k}.Nonempty := by
-    have hR : toReal (β + x) ∈ psdCone bar X := by
+    have hR : toReal (β + x) ∈ psdCone (bar := bar) (X := X) := by
       simpa using GlobalTheory.PolFan.ConeSub.sum_smul_toReal_mem_psdCone O bar X 1 ![β + x] ![1] (by simp [hs])
         (by simpa using hsp) (by simp)
     obtain ⟨S, -, hcov⟩ := (hψ X hX).finite
@@ -38,7 +42,7 @@ theorem inRCone_of_add : ∀ (O : Type) [CommRing O] [IsDedekindDomain O] [CharZ
   have hNr : (0 : ℝ) < N := by exact_mod_cast hN
   have hN'r : (0 : ℝ) < N' := by exact_mod_cast hN'
   have e0 := apply_eq_of_inRCone hγ.linear h1 hγs
-  rw [map_add, Int.cast_add, hadd, mul_add] at e0
+  rw [map_add (f := _), Int.cast_add, hadd, mul_add] at e0
   have eβ : (N : ℝ) * ψ.evalZ β = ℓ β := by linarith [h2 β hβ hβp, h2 x hx hxp]
   have ex : (N : ℝ) * ψ.evalZ x = ℓ x := by linarith [h2 β hβ hβp, h2 x hx hxp]
   have hγβ : InRCone γ β := by

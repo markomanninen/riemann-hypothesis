@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
-import Formalism.HermitianLattices.HermitianLatticesProofs.AutFinite
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
+public import Formalism.HermitianLattices.HermitianLatticesProofs.AutFinite
+
+@[expose] public section
 
 open NumberField Module
 
@@ -46,7 +50,7 @@ theorem sum_inv_card_stab {G X : Type*} [Group G] [Finite G] [MulAction G X] (A 
     intro t ht
     have hset : MulAction.orbit G t = ↑(A'.filter (fun x => ∃ g : G, g • t = x)) := by
       ext x
-      simp only [MulAction.mem_orbit_iff, Finset.coe_filter, Set.mem_setOf_eq]
+      simp only [MulAction.mem_orbit_iff, Finset.coe_filter, Set.mem_ofPred_eq]
       constructor
       · rintro ⟨g, rfl⟩
         exact ⟨(hA' _).mpr (hA g t (hTA t ht)), g, rfl⟩
@@ -85,21 +89,5 @@ def autSub (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (𝓞 K) V) : Subgr
     refine ⟨inv_mem ha.1, ?_⟩
     conv_lhs => rw [← ha.2]
     rw [← autSub_gmap_mul, inv_mul_cancel, autSub_gmap_one]
-
-theorem finite_autL_of_ortho (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {h : V →ₗ⋆[K] V →ₗ[K] K}
-    (hs : h.IsSymm) {I : Submodule (𝓞 K) V} {n : ℕ} (hI : Formalism.HermitianLatticesTheory.IsOrthoLattice h I n)
-    {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L) : (Formalism.ThetaLiftIndependence.autL h L).Finite := by
-  have := finiteDimensional_of_ortho hI
-  exact Formalism.HermitianLatticesTheory.autFinite K V h hs (trace_pos_of_ortho hK hs hI) L hL
-
-theorem finite_repSet_of_ortho (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {h : V →ₗ⋆[K] V →ₗ[K] K}
-    (hs : h.IsSymm) {I : Submodule (𝓞 K) V} {n : ℕ} (hI : Formalism.HermitianLatticesTheory.IsOrthoLattice h I n)
-    {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L) (t : K) :
-    {x : V | x ∈ L ∧ h x x = t}.Finite := by
-  have := hL
-  refine (Formalism.HermitianLatticesTheory.autFinite_short h (trace_pos_of_ortho hK hs hI) L
-    (Algebra.trace ℚ K t)).subset ?_
-  rintro x ⟨hx, rfl⟩
-  exact ⟨hx, le_rfl⟩
 
 end Formalism.HermitianLattices.Ext.L3

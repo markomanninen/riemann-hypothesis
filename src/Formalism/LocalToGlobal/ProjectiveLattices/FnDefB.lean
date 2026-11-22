@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CBaseYPDef
-import Formalism.LocalToGlobal.ProjectiveLattices.AxHSupA
-import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CBaseYPDef
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHSupA
+public import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c : Coeff l} {r : ℕ}
 
-open Classical in
 
+open Classical in
 def toGoodR (c : Coeff l) (σ : c.F →+* ℂ) : ℂ →+* ℂ := if GoodEmb c σ then RingHom.id ℂ else starRingEnd ℂ
 
 theorem toGoodR_apply (c : Coeff l) (σ : c.F →+* ℂ) (x : c.F) : toGoodR c σ (σ x) = goodOf c σ x := by
@@ -42,13 +46,5 @@ theorem rdEx_of (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (hU : ∀ σ, GoodEm
   obtain ⟨k, x, t, ht⟩ := (hU _ hg).2.2.1 z
   exact ⟨⟨k, x, t⟩, z, toGood c σ, isIdOrConj_toGood c σ, hm, ht⟩
 
-variable (Xo c) in
-
-def LetId (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (xR : ℝ) : Prop :=
-  ∀ (σ : c.F →+* ℂ), GoodEmb c σ → ∀ (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), Dom a n →
-    ∀ (k : (U σ).Comp) (x : Frame ((U σ).X k).Ψ r), x ∈ ((U σ).X k).dom →
-      ∏ i, |letNrm (U σ) xR k x i|⁻¹ ^ ex Dw a n i =
-        lieFac Dw xR a * ∏ τ, ∏ j : Fin r,
-          ‖dmin ((U σ).X k).Gm x τ j.succ / dmin ((U σ).X k).Gm x τ j.castSucc‖ ^ (-(laU (U σ) a n k τ j : ℝ) / 2)
 
 end Formalism.L2.Pj

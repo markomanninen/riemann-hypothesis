@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicValuationAtLeastAtEmbeddingRingOps
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHilbertEisensteinFourierCoeffFamilyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaFactorPowTwoMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasQExpansionOfLevelHilbertEisensteinQuasiPeriodStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitOfHilbertLatticeHasLevelStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicValuationAtLeastInverseDifferentElement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicValuationAtLeastRatCastAndExpRat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PartialZetaConstTermEqRationalValueStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicValuationAtLeastAtEmbeddingRingOps
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHilbertEisensteinFourierCoeffFamilyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaFactorPowTwoMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasQExpansionOfLevelHilbertEisensteinQuasiPeriodStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitOfHilbertLatticeHasLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicValuationAtLeastInverseDifferentElement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicValuationAtLeastRatCastAndExpRat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PartialZetaConstTermEqRationalValueStatement
+
+@[expose] public section
+
 open NumberField UpperHalfPlane GlobalTheory.HilbFam GlobalTheory.QFam
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization (Emb Frac latM qPow upperHalf cK omegaFactor IsPartialZeta HasExpansion)
 open GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates (iterD partialD)
@@ -59,16 +64,16 @@ private theorem valBound_embedding_mem_mul_lemma_2 {l : ℕ} [Fact l.Prime] {lam
           (_root_.GlobalTheory.DiffSize.sz_invDiff l lam F _ i (hdual α hα)) (h𝔟 β hβ i)
       · intro y z hy hz
         show _root_.GlobalTheory.LatVal.Sz l lam _ _
-        rw [mul_add, map_add, Complex.ofReal_add]
+        rw [mul_add, map_add (f := _), Complex.ofReal_add]
         exact ((_root_.GlobalTheory.QFam.SzSum.sz_ring l lam).2.1 _ _ _ hy hz).1
     exact hmul
   have hl0 : l ≠ 0 := (Fact.out : l.Prime).ne_zero
   have hMl : M * l ^ b ≠ 0 := Nat.mul_ne_zero (by rintro rfl; exact hM (dvd_zero l)) (pow_ne_zero _ hl0)
   have hq : _root_.GlobalTheory.LatVal.Sz l lam b (((1 / (M * l ^ b : ℕ) : ℚ)) : ℂ) := by
     refine (_root_.GlobalTheory.SizeRat.sz_rat_exp l lam).1 _ _ ?_
-    rw [one_div, padicValRat.inv, padicValRat.of_nat, padicValNat.mul
-      (by rintro rfl; exact hM (dvd_zero l)) (pow_ne_zero _ hl0), padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hM]
+    rw [one_div, padicValRat.inv, padicValRat.of_nat, Nat.multiplicity_mul
+      (by rintro rfl; exact hM (dvd_zero l)) (pow_ne_zero _ hl0), Nat.multiplicity_prime_pow,
+      multiplicity_eq_zero_of_not_dvd hM]
     simp
   have heq : ((i ξ : ℝ) : ℂ) = (((1 / (M * l ^ b : ℕ) : ℚ)) : ℂ) * ((i (t * ξ) : ℝ) : ℂ) := by
     have : ((M * l ^ b : ℕ) : ℂ) ≠ 0 := by exact_mod_cast hMl
@@ -181,9 +186,9 @@ private theorem neg_padicValRat_le_of_mul_eq_natCast {l : ℕ} [hl : Fact l.Prim
   have hn' : (n : ℚ) ≠ 0 := by exact_mod_cast hn
   have hprod' : (((M * l ^ b) ^ d * D.natAbs : ℕ) : ℚ) ≠ 0 := by exact_mod_cast hprod
   rw [hA, hAbs1, hAbs2, ← Nat.cast_mul, padicValRat.div hn' hprod',
-    padicValRat.of_nat, padicValRat.of_nat, padicValNat.mul (pow_ne_zero _ hMl) hDn,
-    padicValNat.pow, padicValNat.mul hM0 (pow_ne_zero _ hl0), padicValNat.prime_pow,
-    padicValNat.eq_zero_of_not_dvd hM]
+    padicValRat.of_nat, padicValRat.of_nat, Nat.multiplicity_mul (pow_ne_zero _ hMl) hDn,
+    Nat.multiplicity_pow, Nat.multiplicity_mul hM0 (pow_ne_zero _ hl0), Nat.multiplicity_prime_pow,
+    multiplicity_eq_zero_of_not_dvd hM]
   simp only [padicValInt]
   push_cast
   have h0 : (0 : ℤ) ≤ padicValRat l n := by rw [padicValRat.of_nat]; positivity
@@ -219,10 +224,10 @@ private theorem sz_coeff_pow {r : ℝ} {φ : PowerSeries ℂ}
     push_cast
     ring
 
+
 open NumberField UpperHalfPlane FractionalIdeal in
 open scoped nonZeroDivisors in
 open scoped Classical MatrixGroups in
-
 theorem _root_.GlobalTheory.HilbFam.sz_hfun_coef : _root_.GlobalTheory.LatJet.EisExp →
     ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F], 2 ≤ Module.finrank ℚ F →
     ∀ (s N : ℕ) (L : _root_.GlobalTheory.HilbFam.Lat F), 1 ≤ s → 0 < N → _root_.GlobalTheory.HilbFam.HasLevel N L →
@@ -335,7 +340,8 @@ theorem _root_.GlobalTheory.HilbFam.sz_hfun_coef : _root_.GlobalTheory.LatJet.Ei
     nlinarith
 
   unfold _root_.GlobalTheory.HilbFam.hser
-  rw [PowerSeries.coeff_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PowerSeries.coeff_smul, map_sum]
   simp only [PowerSeries.coeff_smul, smul_eq_mul, zsmul_eq_mul]
   have hsum : _root_.GlobalTheory.LatVal.Sz l lam (e + (∑ i, κ i : ℕ) * ρ)
       (∑ μ ∈ Finset.Iic κ, ((∏ i, _root_.GlobalTheory.HilbFam.rco (2 * s) (κ i) (μ i) *

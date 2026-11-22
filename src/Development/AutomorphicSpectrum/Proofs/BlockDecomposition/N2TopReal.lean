@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ExpansionTerms
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CyclicStandardTournament
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ExpansionTerms
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CyclicStandardTournament
+
+@[expose] public section
 
 noncomputable section
 

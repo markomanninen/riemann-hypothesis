@@ -1,17 +1,22 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerLocalDefs
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerOrd
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.DivisorModule
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.MulDistribMulActionGalUnitsFiniteSubfield
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerLocalDefs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerOrd
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.DivisorModule
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.MulDistribMulActionGalUnitsFiniteSubfield
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain IntermediateField GroundTheory.Global groupCohomology
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1))) {v : HeightOneSpectrum (𝓞 K.1)}
   (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1)) (hv : v ∉ S)
@@ -66,9 +71,6 @@ theorem levelRes_apply (σ : galUnramifiedOutside K.1 ℚ̄ S) (x : N.1) :
     ((levelRes S N hN σ x : N.1) : ℚ̄) = ((σ ⟨x, hN x x.2⟩ : maxUnramifiedOutside K.1 ℚ̄ S) : ℚ̄) :=
   congrArg Subtype.val (decompHom_apply (Kv := K.1) (levelIncl S N hN) σ x)
 
-theorem continuous_levelRes : Continuous (levelRes S N hN) :=
-  continuous_decompHom _
-
 theorem levelRes_surjective : Function.Surjective (levelRes S N hN) := by
   intro γ
   refine ⟨(γ.liftNormal ℚ̄).restrictNormal (maxUnramifiedOutside K.1 ℚ̄ S), ?_⟩
@@ -102,14 +104,9 @@ def unitOfMem {N : FiniteSubfield} (y : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ)
     y.ne_zero (Subtype.ext (congrArg Subtype.val h : ((y : maxUnramifiedOutside K.1 ℚ̄ S) : ℚ̄) =
       ((0 : N.1) : ℚ̄)))
 
-theorem coe_unitOfMem {N : FiniteSubfield} (y : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ)
-    (hy : ((y : maxUnramifiedOutside K.1 ℚ̄ S) : ℚ̄) ∈ N.1) :
-    (((unitOfMem S y hy : N.1ˣ) : N.1) : ℚ̄) = ((y : maxUnramifiedOutside K.1 ℚ̄ S) : ℚ̄) :=
-  rfl
 
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 4000000 in
-
 theorem exists_level_cocycle (f : (Fin 2 → galUnramifiedOutside K.1 ℚ̄ S) →
       Additive (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) (hf : IsLocallyConstant f)
     (hcoc : ∀ u : Fin 3 → galUnramifiedOutside K.1 ℚ̄ S,
@@ -159,7 +156,8 @@ theorem exists_level_cocycle (f : (Fin 2 → galUnramifiedOutside K.1 ℚ̄ S) �
       simp only [IntermediateField.coe_sum, IntermediateField.coe_smul] at this
       exact this.symm
     have h1 : σ' x = σ x := by
-      rw [hsum, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsum, map_sum, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       have hs : ∀ (τ : galUnramifiedOutside K.1 ℚ̄ S) (r : K.1) (y : maxUnramifiedOutside K.1 ℚ̄ S),
           τ (r • y) = r • τ y := fun τ r y => τ.toLinearEquiv.map_smul r y
@@ -255,9 +253,9 @@ theorem ordEmb_eq_ordPlace (N : FiniteSubfield) [Fact (K ≤ N)]
   have hu : (u : N.1) = ⟨(maxUnitsToUnits S y : ℚ̄), hy⟩ := Subtype.ext hyu.symm
   rw [ordEmb_apply, ordPlace, hu, hv', WithZero.log_exp, neg_neg]
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 4000000 in
-
 theorem coboundary_iff_of_level (N : FiniteSubfield) [Fact (K ≤ N)] [Normal K.1 N.1]
     (he : (placeOfEmbedding ι N).1.asIdeal.ramificationIdx (𝓞 K.1) = 1)
     (c : Gal(N.1/K.1) × Gal(N.1/K.1) → N.1ˣ) (hc : IsMulCocycle₂ c)
@@ -322,9 +320,9 @@ theorem coboundary_iff_of_level (N : FiniteSubfield) [Fact (K ≤ N)] [Normal K.
     rw [ha u, ← hbc (u 0) (u 1)]
     rfl
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 4000000 in
-
 theorem gsLocalRes_eq_zero_iff (x : cohomology (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2) :
     (gsLocalRes S ι 2).hom (cohomologyULiftIntAddEquiv _ 2 x) = 0 ↔
       (cohomologyMapAlong (decompHomS (v.adicCompletion K.1) S ι)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.EtaleCohomologyThirdStatementHolds
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.EtaleCohomologyThirdStatementHolds
+
+@[expose] public section
 
 namespace UpperTheory.Et.D3
 

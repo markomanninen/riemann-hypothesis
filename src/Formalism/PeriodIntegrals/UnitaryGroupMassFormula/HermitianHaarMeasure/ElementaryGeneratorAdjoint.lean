@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Development
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Development
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+
+@[expose] public section
 
 open Matrix Finset MeasureTheory Filter Topology
 open scoped ContDiff
@@ -276,7 +280,7 @@ lemma hpart2_smul (c : ℂ) (W : Mx k r) :
 def phiL (L : Mx k r →L[ℝ] ℂ) (g : Mx k r) : Mx k r →ₗ[ℂ] ℂ where
   toFun W := L (g * hpart1 (Hpk k r) W) + Complex.I * L (g * hpart2 (Hpk k r) W)
   map_add' A B := by
-    simp only [hpart1_add, hpart2_add, Matrix.mul_add, map_add]
+    simp only [hpart1_add, hpart2_add, Matrix.mul_add, map_add (f := _)]
     ring
   map_smul' c W := by
     simp only [RingHom.id_apply, smul_eq_mul, hpart1_smul, hpart2_smul, Matrix.mul_sub,
@@ -385,9 +389,11 @@ lemma ec_expand {i : Fin (r + 1)} {f : Mx k r → ℂ} (hf : SmoothLev k r i Set
         (Hpk k r * (Matrix.single (posL k r i a) (posL k r i b) (1 : ℂ))ᴴ * Hpk k r)) f g =
     ∑ c, ∑ d, (Hm k r i c b * Hm k r i a d) • EH k r (posL k r i c) (posL k r i d) f g := by
   obtain ⟨L, hL⟩ := rd_ext hf hg
-  rw [ec_phi hL (supp_conj (supp_single i a b)), conj_single_expand, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ec_phi hL (supp_conj (supp_single i a b)), conj_single_expand, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun d _ => ?_
   rw [map_smul, ← ec_phi hL (supp_single i c d)]
   rfl

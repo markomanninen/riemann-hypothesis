@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspLinesIrr
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.DerUnipLeUnipB
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicFourierExpansion
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicCharacterEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsGlLastRowEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedKernelConjugation
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspLinesIrr
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.DerUnipLeUnipB
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicFourierExpansion
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicCharacterEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsGlLastRowEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedKernelConjugation
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,8 +121,8 @@ theorem exists_descent (N : Subgroup G) (T : Representation ℂ G V) (T' : Repre
 
 end Descent
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem pair_psi : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (ψ : AddChar k Circle), Continuous ψ → ψ ≠ 1 → ∀ (n s : ℕ) (V V' : Type) [AddCommGroup V] [Module ℂ V]
     [AddCommGroup V'] [Module ℂ V'] (T : Representation ℂ (Mir k (n + 1)) V) (T' : Representation ℂ (Mir k (n + 1)) V'),

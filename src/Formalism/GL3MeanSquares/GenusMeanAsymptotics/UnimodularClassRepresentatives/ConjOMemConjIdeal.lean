@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AlgebraMapConjO
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AlgebraMapConjO
+
+@[expose] public section
 
 open NumberField Module
 
@@ -86,7 +90,7 @@ theorem det_add_smul {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Basis ι K 
     ← Matrix.det_transpose (b.toMatrix x)]
   refine Matrix.det_eq_of_forall_row_eq_smul_add_const (fun k => e k) i₀ he ?_
   intro i j
-  simp [Matrix.transpose_apply, Basis.toMatrix_apply, map_add, map_smul]
+  simp [Matrix.transpose_apply, Basis.toMatrix_apply, map_add (f := _), map_smul]
 
 theorem conjO_mem_conjIdeal {P : Ideal (𝓞 K)} {π : 𝓞 K} (hπ : π ∈ P) :
     conjO K π ∈ Formalism.HermitianLatticesTheory.conjIdeal (K := K) P := by

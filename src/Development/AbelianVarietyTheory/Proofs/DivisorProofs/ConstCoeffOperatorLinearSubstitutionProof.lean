@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivAt0EqSumOfSubset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupOperatorDepthMulDisjointColumns
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChgPfTP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivAt0EqSumOfSubset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupOperatorDepthMulDisjointColumns
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChgPfTP
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,7 +67,8 @@ theorem derivAt0_smulG (b : K) (P : MvPolynomial σ K) (g : MvPowerSeries σ K) 
 theorem derivAt0_sumG {κ : Type} (s : Finset κ) (P : MvPolynomial σ K) (f : κ → MvPowerSeries σ K) :
     derivAt0 P (∑ i ∈ s, f i) = ∑ i ∈ s, derivAt0 P (f i) := by
   unfold derivAt0
-  simp_rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_sum, Finset.mul_sum]
   exact Finset.sum_comm
 
 theorem derivAt0_C' (a : K) (g : MvPowerSeries σ K) :
@@ -72,7 +77,7 @@ theorem derivAt0_C' (a : K) (g : MvPowerSeries σ K) :
     MvPowerSeries.coeff_zero_eq_constantCoeff_apply, mul_one]
 
 theorem derivAt0_mul_X [Fintype σ] (P : MvPolynomial σ K) (l : σ) (g : MvPowerSeries σ K) :
-    derivAt0 (P * MvPolynomial.X l) g = derivAt0 P (pderiv K l g) := by
+    derivAt0 (P * MvPolynomial.X l) g = derivAt0 P (pderiv l g) := by
   classical
   have hP : P * MvPolynomial.X l =
       ∑ α ∈ P.support, MvPolynomial.monomial (α + Finsupp.single l 1) (P.coeff α) := by
@@ -97,8 +102,9 @@ private theorem constantCoeff_subst_of_constantCoeff_zero' {K ι Λ : Type} [Fie
 
 private theorem pderiv_sum_smul_X_eq_C {K ι Λ : Type} [Field K] [Fintype Λ] [DecidableEq Λ] (β : Λ → ι → K)
     (lam : Λ) (l : ι) :
-    pderiv K lam (∑ lam', β lam' l • (X lam' : MvPowerSeries Λ K)) = C (β lam l) := by
-  rw [map_sum, Finset.sum_eq_single lam]
+    pderiv lam (∑ lam', β lam' l • (X lam' : MvPowerSeries Λ K)) = C (β lam l) := by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single lam]
   · rw [Derivation.map_smul, pderiv_X_self, MvPowerSeries.smul_eq_C_mul, mul_one]
   · intro b _ hb
     rw [Derivation.map_smul, pderiv_X_of_ne hb, smul_zero]
@@ -127,7 +133,7 @@ theorem linSt_holds : LinSt := by
       constantCoeff_subst_of_constantCoeff_zero' _ hA0]
   · rename_i p q hp hq
     intro Ψ
-    rw [map_add, derivAt0_add', derivAt0_add', hp, hq]
+    rw [map_add (f := _), derivAt0_add', derivAt0_add', hp, hq]
   · rename_i p lam hp
     intro Ψ
     have hterm : ∀ l : ι, MvPolynomial.aeval

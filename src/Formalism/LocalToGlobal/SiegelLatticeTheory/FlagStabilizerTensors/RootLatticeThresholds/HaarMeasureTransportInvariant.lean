@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotTrHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinCut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotTrHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,7 @@ theorem haar_measure_transport_invariant (hH : IsHaarLoc (StSet (Formalism.L2.SG
         exact continuous_const.matrix_mul continuous_id
       exact this.measurable
     rw [Measure.map_map hcont_l hme.measurable, hcomp,
-      ← Measure.map_map hme.measurable (continuous_mul_left y0).measurable, hinv y0 hy0S]
+      ← Measure.map_map hme.measurable (continuous_const_mul y0).measurable, hinv y0 hy0S]
   · intro h0
     apply hne
     have h := congrArg (fun m : Measure (Formalism.QuantumDeterminants.Mt D.R.k D.R.rS) => m Set.univ) h0

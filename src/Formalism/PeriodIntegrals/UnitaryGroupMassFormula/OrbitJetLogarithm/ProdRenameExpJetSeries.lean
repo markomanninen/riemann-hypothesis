@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetLogarithm.ConstantCoeffZeroOfBoundTwo
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetLogarithm.ConstantCoeffZeroOfBoundTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,10 +37,10 @@ def kz (D : D7) {N0 N1 : ℕ} (z : Pl D) (k : Pl D × Fin N0 × Fin N1 →₀ �
 theorem sum_mapDomain_kz (D : D7) {N0 N1 : ℕ} (k : Pl D × Fin N0 × Fin N1 →₀ ℕ) :
     ∑ z, Finsupp.mapDomain (pEmb (ptE D z) (Fin N0 × Fin N1)) (kz D z k) = k := by
   ext ⟨z0, w⟩
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single z0]
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single z0]
   · have h : ((z0, w) : Pl D × Fin N0 × Fin N1) =
         pEmb (ptE D z0) (Fin N0 × Fin N1) ((0 : ZMod 1), w) := rfl
-    rw [h, Finsupp.mapDomain_apply (pEmb (ptE D z0) _).injective]
+    rw [h, Finsupp.mapDomain_apply_of_injective (pEmb (ptE D z0) _).injective]
     rfl
   · intro z _ hz
     apply Finsupp.mapDomain_notin_range
@@ -78,7 +82,8 @@ theorem prod_rename_exp_jet_series (D : D7) (hn : nP D p = 1) (N0 N1 : ℕ) (ep 
   have hgc : ∀ z, constantCoeff (g z) = 0 := fun z => by
     simp only [hg]
     rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, map_smul]
-    simp only [map_sum, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, cc_gSub _ _ _ (hcc z),
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, cc_gSub _ _ _ (hcc z),
       Finset.sum_const_zero, smul_zero]
   have hz : ∀ z, rename (pEmb (ptE D z) (Fin N0 × Fin N1)) (Y1 N0 N1 (ep z) (sg z) (be z)) =
       subst (logPl D p (β := Fin N0 × Fin N1)) (OJ.expS ℂ_[p] (g z)) := by

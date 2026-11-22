@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.MemberChainFormsLevelPrimeEqMember
-import Formalism.LocalToGlobal.HermitianForms.DefsGH
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FinIdx
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.MemberChainFormsLevelPrimeEqMember
+public import Formalism.LocalToGlobal.HermitianForms.DefsGH
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FinIdx
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,8 +65,8 @@ variable {D : D7} {u : D.what₂.Word} {w : D.what₂.places.Pl} {hg : GIdx D.ho
   {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P} {i : ℕ} {hi : i + 1 ≤ D.R.m}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def kap (Fo : FormsIn M (i + 1) hi) (β : Fo.Ch) (p : ℕ) :
     awayG D.sp.cm.sig (D.sp.X (i + 1)).gram (ulocOf Fo β) p →* (Fo.K β).lev.U :=
   ((glue (epsP D.host.F p D.host.E) (isIdempotentElem_placeIdempotent D.host.F p D.host.E)).comp
@@ -101,8 +105,8 @@ theorem kap_off (Fo : FormsIn M (i + 1) hi) (β : Fo.Ch) (p : ℕ) (a : awayG D.
   rw [bc_glue_zero _ _ _ (epsP_off D.host.F p D.host.E v hv)]
   rfl
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem chi_kap (Fo : FormsIn M (i + 1) hi) (β : Fo.Ch) (p : ℕ) (a : awayG D.sp.cm.sig (D.sp.X (i + 1)).gram (ulocOf Fo β) p)
     (κ : (Fo.K β).lev.U)
     (hκp : ∀ v : HeightOneSpectrum (𝓞 D.host.F), ((p : ℕ) : 𝓞 D.host.F) ∈ v.asIdeal → bc (prV (E := D.host.E) v) κ.1 = 1)
@@ -117,8 +121,8 @@ theorem chi_kap (Fo : FormsIn M (i + 1) hi) (β : Fo.Ch) (p : ℕ) (a : awayG D.
     · rw [hκo v hv, kap_off Fo β p a v hv, mul_inv_cancel]
   rwa [map_mul, map_inv, mul_inv_eq_one] at h1
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem psiEx_of (Fo : FormsIn M (i + 1) hi) (e : D.what₂.LL →+* (D.gat u w hg).Kf)
     (hfr : IsFractionRing (D.gat u w hg).O (D.gat u w hg).Kf)
     (hrat : ∀ β, ChiRatAll (Fo.K β).lev D.what₂.embLL)
@@ -156,8 +160,8 @@ theorem finite_glk (v : HeightOneSpectrum (𝓞 F)) : Finite (GL (Fin n) (kv F v
   have : Finite (Matrix (Fin n) (Fin n) (kv F v)) := inferInstanceAs (Finite (Fin n → Fin n → kv F v))
   exact Finite.of_injective (fun u : GL (Fin n) (kv F v) => (u : Matrix (Fin n) (Fin n) (kv F v))) (fun _ _ h => Units.ext h)
 
-open Classical in
 
+open Classical in
 theorem chi_fin_of_glevH {S : StepLevel F E σ J T f bad} {G : GLoc F E σ gp}
     {H : ∀ (a : Fin 2) (v : HeightOneSpectrum (𝓞 F)), (gp a : 𝓞 F) ∈ v.asIdeal → Subgroup (GL (Fin n) (kv F v))}
     {lam : ∀ a v h, H a v h →* ℂˣ} (L : GLevH S G H lam) (hgp : ∀ a, gp a ≠ 0) :
@@ -178,12 +182,12 @@ theorem chi_fin_of_glevH {S : StepLevel F E σ J T f bad} {G : GLoc F E σ gp}
     rw [Function.mem_mulSupport, finprod_eq_dif] at hv
     by_cases h : (gp a : 𝓞 F) ∈ v.asIdeal
     · exact Finset.mem_coe.2 ((Set.Finite.mem_toFinset (hfin a)).2 h)
-    · rw [dif_neg h] at hv
+    · rw [dite_eq_right h] at hv
       exact absurd rfl hv
   rw [finprod_eq_prod_of_mulSupport_subset _ hsup, ← Finset.prod_pow]
   refine Finset.prod_eq_one fun v hv => ?_
   have h : (gp a : 𝓞 F) ∈ v.asIdeal := (Set.Finite.mem_toFinset (hfin a)).1 hv
-  rw [finprod_eq_dif, dif_pos h]
+  rw [finprod_eq_dif, dite_eq_left h]
   have hd : Nat.card (GL (Fin n) (kv F v)) ∣ ∏ a : Fin 2, ∏ v ∈ (hfin a).toFinset, Nat.card (GL (Fin n) (kv F v)) :=
     (Finset.dvd_prod_of_mem _ hv).trans (Finset.dvd_prod_of_mem (fun a : Fin 2 => ∏ v ∈ (hfin a).toFinset, Nat.card (GL (Fin n) (kv F v)))
       (Finset.mem_univ a))
@@ -206,8 +210,8 @@ theorem chi_fin_top (F : FormsTiedSym D u Ch chOf) (j : ℕ) (hj : j ≤ D.R.m) 
   subst h
   exact chi_fin_of_glevH F.glevM fun a => (D.host.g_prime a).ne_zero
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem finMem_of (F : FormsTiedSym D u Ch chOf) (dt : MemDt F) (i : ℕ) (hi : i + 1 ≤ D.R.m) :
     ∀ β, ∃ m : ℕ, 0 < m ∧ ∀ κ, ((formsInMem F dt i hi).K β).lev.chi κ ^ m = 1 := by
   by_cases h : i + 1 = D.R.m
@@ -238,46 +242,10 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 variable {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F))}
   {gp : Fin 2 → ℕ} {LL : Type} [Field LL]
 
-theorem chiRat_of_glevH {S : StepLevel F E σ J T f bad} {G : GLoc F E σ gp}
-    {H : ∀ (a : Fin 2) (v : HeightOneSpectrum (𝓞 F)), (gp a : 𝓞 F) ∈ v.asIdeal → Subgroup (GL (Fin n) (kv F v))}
-    {lam : ∀ a v h, H a v h →* ℂˣ} (L : GLevH S G H lam) (emb : LL →+* ℂ)
-    (hl : ∀ a v h (M : H a v h), ∃ k : LL, emb k = ((lam a v h M : ℂˣ) : ℂ)) : ChiRatAll S emb := by
-  intro κ
-  have h : (S.chi κ : ℂ) ∈ emb.fieldRange := by
-    rw [L.chi_eq κ]
-    refine prod_mem fun a _ => ?_
-    refine finprod_induction (fun z : ℂ => z ∈ emb.fieldRange) (one_mem _) (fun x y hx hy => mul_mem hx hy) fun v => ?_
-    refine finprod_induction (fun z : ℂ => z ∈ emb.fieldRange) (one_mem _) (fun x y hx hy => mul_mem hx hy) fun hv => ?_
-    obtain ⟨k, hk⟩ := hl a v hv (L.red a v hv κ)
-    exact inv_mem (RingHom.mem_fieldRange.2 ⟨k, hk⟩)
-  exact RingHom.mem_fieldRange.1 h
-
 end Gen
 
 variable {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
 
-def LamCRat (F : FormsTiedSym D u Ch chOf) : Prop :=
-  ∀ i β a v h (M : F.H i β a v h), ∃ k : D.what₂.LL, D.what₂.embLL k = ((F.lamC i β a v h M : ℂˣ) : ℂ)
-
-def LamMRat (F : FormsTiedSym D u Ch chOf) : Prop :=
-  ∀ a v h (M : HSym D (D.R.N D.R.m) true v), ∃ k : D.what₂.LL, D.what₂.embLL k = ((F.lamM a v h M : ℂˣ) : ℂ)
-
-theorem chiRat_top (F : FormsTiedSym D u Ch chOf) (hM : LamMRat F) (j : ℕ) (hj : j ≤ D.R.m) (h : j = D.R.m) :
-    ChiRatAll (F.cls j hj (Or.inr h)).lev D.what₂.embLL := by
-  subst h
-  exact chiRat_of_glevH F.glevM D.what₂.embLL hM
-
-set_option maxHeartbeats 2000000 in
-
-theorem ratMem_of (F : FormsTiedSym D u Ch chOf) (hC : LamCRat F) (hM : LamMRat F) (dt : MemDt F) (i : ℕ) (hi : i + 1 ≤ D.R.m) :
-    ∀ β, ChiRatAll ((formsInMem F dt i hi).K β).lev D.what₂.embLL := by
-  by_cases h : i + 1 = D.R.m
-  · rw [formsInMem_top F dt i hi h]
-    intro β
-    exact chiRat_top F hM (i + 1) hi h
-  · rw [formsInMem_mid F dt i hi (by omega)]
-    intro β
-    exact chiRat_of_glevH (F.glevC (i + 1) _ _ β) D.what₂.embLL (hC (i + 1) β)
 
 end GlobalTheory.Port
 

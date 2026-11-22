@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsNsmulIffEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsNsmulIffEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,37 @@ theorem IsRos.val_sum {Lr : RigLB A} (c : CubicalStr A Lr) {f g f₁ g₁ f₂ g
     apply Additive.ofMul.injective
     simp only [ofMul_mul, ofMul_inv]
     abel
-  · have C : IsCub (cubV c y I) := isCub_cubV c hI
+  · have C : IsCub (cubV c y I) := by
+      refine ⟨?_, ?_, ?_, ?_⟩
+      · intro x y
+        have e := val_corr hI (c.face 0) (lift x y).left
+        rw [val_one] at e
+        refine Eq.trans ?_ e
+        refine Eq.trans ?_ (val_cub c (lift x y) hI (pzero A _) (x2 A 0) (x2 A 1)).symm
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
+      · intro x y w
+        have e := (val_corr hI c.cubeSymmetric_swap_first (lift x (lift y w)).left).trans
+          (val_cub c (lift x (lift y w)) hI _ _ _)
+        refine e.trans ?_
+        congr 1 <;> simp [x3]
+      · intro x y w
+        have e := (val_corr hI c.cubeSymmetric_swap_last (lift x (lift y w)).left).trans
+          (val_cub c (lift x (lift y w)) hI _ _ _)
+        refine e.trans ?_
+        congr 1 <;> simp [x3]
+      · intro x x' x'' y
+        have e := val_corr hI c.cocycle (lift x (lift x' (lift x'' y))).left
+        have e' := ((val_mul hI _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hI _ _ _) (val_cub c _ hI _ _ _))).symm.trans
+          (e.trans ((val_mul hI _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hI _ _ _) (val_cub c _ hI _ _ _))))
+        have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 A 0 = x := by simp [x4]
+        have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 A 1 = x' := by simp [x4]
+        have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 A 2 = x'' := by simp [x4]
+        have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 A 3 = y := by simp [x4]
+        have b₀ : lift x (lift x' (lift x'' y)) ≫ padd A (x4 A 0) (x4 A 1) = x * x' :=
+          (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+        have b₁ : lift x (lift x' (lift x'' y)) ≫ padd A (x4 A 1) (x4 A 2) = x' * x'' :=
+          (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+        rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e'
     refine (ev hI 1 1).1.trans (Eq.trans ?_ (ev hI 1 1).2.symm)
     rw [hu.val_origin hI, hu₁.val_origin hI, hu₂.val_origin hI, C.face, C.face₃, _root_.mul_one, _root_.mul_one]
 
@@ -200,7 +234,37 @@ theorem exists_gtAct (hG : GlobalFnsSt) (oa : D.OAct O) (a : O) (g : GtPtF D F) 
       apply Additive.ofMul.injective
       simp only [ofMul_mul, ofMul_inv]
       abel) (fun y J hJ => by
-      have C : IsCub (th D (T := TF (R := R) F) y J) := isCub_cubV D.cub hJ
+      have C : IsCub (th D (T := TF (R := R) F) y J) := by
+        refine ⟨?_, ?_, ?_, ?_⟩
+        · intro x y
+          have e := val_corr hJ (D.cub.face 0) (lift x y).left
+          rw [val_one] at e
+          refine Eq.trans ?_ e
+          refine Eq.trans ?_ (val_cub D.cub (lift x y) hJ (pzero D.P.A _) (x2 D.P.A 0) (x2 D.P.A 1)).symm
+          congr 1 <;> simp [x2, pzero, Hom.one_def]
+        · intro x y w
+          have e := (val_corr hJ D.cub.cubeSymmetric_swap_first (lift x (lift y w)).left).trans
+            (val_cub D.cub (lift x (lift y w)) hJ _ _ _)
+          refine e.trans ?_
+          congr 1 <;> simp [x3]
+        · intro x y w
+          have e := (val_corr hJ D.cub.cubeSymmetric_swap_last (lift x (lift y w)).left).trans
+            (val_cub D.cub (lift x (lift y w)) hJ _ _ _)
+          refine e.trans ?_
+          congr 1 <;> simp [x3]
+        · intro x x' x'' y
+          have e := val_corr hJ D.cub.cocycle (lift x (lift x' (lift x'' y))).left
+          have e' := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub D.cub _ hJ _ _ _) (val_cub D.cub _ hJ _ _ _))).symm.trans
+            (e.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub D.cub _ hJ _ _ _) (val_cub D.cub _ hJ _ _ _))))
+          have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 0 = x := by simp [x4]
+          have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 1 = x' := by simp [x4]
+          have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 2 = x'' := by simp [x4]
+          have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 3 = y := by simp [x4]
+          have b₀ : lift x (lift x' (lift x'' y)) ≫ padd D.P.A (x4 D.P.A 0) (x4 D.P.A 1) = x * x' :=
+            (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+          have b₁ : lift x (lift x' (lift x'' y)) ≫ padd D.P.A (x4 D.P.A 1) (x4 D.P.A 2) = x' * x'' :=
+            (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+          rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e'
       have e := (rosGen_add hG oa a hJ 1 1 g.b).1
       rw [_root_.mul_one, MonObj.one_comp, C.face, C.face, _root_.mul_one, _root_.one_mul] at e
       refine (vv 0 y J hJ).trans ?_

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate

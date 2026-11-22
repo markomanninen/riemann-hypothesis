@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.LemmaFiveOneOfTheoremTwo
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.LemmaFiveOneOfTheoremTwo
+
+@[expose] public section
 
 noncomputable section
 namespace Formalism.MainNotions.StandardLattice

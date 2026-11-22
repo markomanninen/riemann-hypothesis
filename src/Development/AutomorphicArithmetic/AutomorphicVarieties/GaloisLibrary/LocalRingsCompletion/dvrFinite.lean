@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.IsCharOneOfSubsingleton
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.IsCharOneOfSubsingleton
+
+@[expose] public section
 
 open PowerSeries IsLocalRing UpperTheory.V.abelian₂
 open IsDiscreteValuationRing (addVal)
@@ -12,7 +16,7 @@ private theorem mem_smul_top_iff_repr {R M ι : Type*} [CommRing R] [AddCommGrou
     refine Submodule.smul_induction_on hx (fun r hr m _ => ?_) (fun a c ha hc => ?_)
     · rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
       exact I.mul_mem_right _ hr
-    · rw [map_add, Finsupp.add_apply]
+    · rw [map_add (f := _), Finsupp.add_apply]
       exact I.add_mem ha hc
   · intro h
     rw [← b.sum_repr x]
@@ -64,7 +68,7 @@ theorem UpperTheory.V.abelian₂.dvr_finite :
   intro l hl O _ _ _ _ _ _
   have hl0 : (l : O) ≠ 0 := Nat.cast_ne_zero.2 hl.out.ne_zero
   have hinj : Function.Injective (algebraMap ℤ_[l] O) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra h0
     rw [PadicInt.unitCoeff_spec h0, map_mul, map_pow, map_natCast] at hx

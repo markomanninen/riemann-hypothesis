@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsUnitaryWFrameToFrame
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsUnitaryWFrameToFrame
+
+@[expose] public section
+
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 open Formalism.REAL (qdet GlRel IsHW)
 
@@ -124,8 +129,9 @@ private theorem swapMat_mulVec' {k r : ℕ} (H : Matrix (Fin (2 * r + k + 1)) (F
   rw [swapMat_eq_one_add_sub_mul, add_mulVec, one_mulVec, ← mulVec_mulVec]
   congr 2
   funext c
-  simp only [mulVec, dotProduct, _root_.Formalism.QuantumDeterminants.herm, Matrix.mul_apply, _root_.Formalism.FourierDecayAlt.P.HermitianFormRankFour.colM, conjTranspose_apply, Matrix.of_apply,
-    Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  simp only [Matrix.mulVec, dotProduct, Matrix.mul_apply, Matrix.conjTranspose_apply,
+    _root_.Formalism.FourierDecayAlt.P.HermitianFormRankFour.colM, Matrix.of_apply,
+    _root_.Formalism.QuantumDeterminants.herm, Finset.sum_mul, Finset.mul_sum, mul_assoc]
   exact Finset.sum_comm
 
 open Matrix in
@@ -184,8 +190,8 @@ private theorem swapMat_mem_UWset_of_isFrameOf {k r : ℕ} {z : Fin (2 * r + k +
         abel
     _ = H := by rw [hQ]; simp
 
-open Matrix in
 
+open Matrix in
 theorem _root_.GlobalTheory.frame_exists_and_vector_eq_smul_translate :
     ∀ (n r : ℕ) (z : (Fin (2 * r + (n + 1) + 1) → ℂ)), _root_.Formalism.QuantumDeterminants.inWb (n + 1) r z → 0 < _root_.Formalism.QuantumDeterminants.Tz (n + 1) r z →
       (∃ B : Fin (n + 1) → (Fin (2 * r + (n + 1) + 1) → ℂ), _root_.Formalism.FourierDecayAlt.Q.IsFrameOf (n + 1) r [z] B) ∧

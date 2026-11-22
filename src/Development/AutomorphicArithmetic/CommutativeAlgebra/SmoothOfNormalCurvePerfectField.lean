@@ -1,6 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafModelCurveCut
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafModelCurveCut
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
+
+@[expose] public section
 
 open IsLocalRing AlgebraicGeometry CategoryTheory
 

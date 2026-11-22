@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DetJacMatCoordsEqTransitionJacobianDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DetJacMatCoordsEqTransitionJacobianDet
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,8 +25,8 @@ namespace CxPts
 
 variable {A B : LB Y} {y : CxPts p σ} {U W : Y.Opens}
 
-variable (p σ) in
 
+variable (p σ) in
 def gv (B : LB Y) (i j : B.ι) : CxPts p σ → ℂ := ev p σ (B.U i ⊓ B.U j) (B.g i j).val
 
 def pick (hB : B.IsLB) (y : CxPts p σ) : B.ι := (exists_mem_ptsIn hB.cover y).choose
@@ -120,10 +124,6 @@ private theorem ev_units_val_eq_evHom {V₁ : Y.Opens} {y₁ : CxPts p σ} (h : 
   rw [ev_eq h]
   rfl
 
-private theorem pullU_val' {Y₁ : Scheme.{0}} (g : Y₁ ⟶ Y) (W₁ : Y.Opens) (u : Γ(Y, W₁)ˣ) :
-    (pullU g W₁ u).val = (g.app W₁).hom u.val :=
-  rfl
-
 private theorem ev_app_pullback_eq_ev {k₁ : Type} [CommRing k₁] {Y₁ : Scheme.{0}} {p₁ : Y₁ ⟶ Sp k₁}
     {σ₁ : k₁ →+* ℂ} (g : Y₁ ⟶ Y) {W₁ : Y.Opens} {z₁ : CxPts p₁ σ₁} {y₁ : CxPts p σ}
     (hm : y₁.1 = z₁.1 ≫ g) (a : Γ(Y, W₁)) :
@@ -132,10 +132,10 @@ private theorem ev_app_pullback_eq_ev {k₁ : Type} [CommRing k₁] {Y₁ : Sche
   rw [hm]
   by_cases h : ⊤ ≤ (z₁.1 ≫ g) ⁻¹ᵁ W₁
   · have h' : ⊤ ≤ z₁.1 ⁻¹ᵁ (g ⁻¹ᵁ W₁) := h
-    rw [dif_pos h, dif_pos h', Scheme.Hom.comp_appLE]
+    rw [dite_eq_left h, dite_eq_left h', Scheme.Hom.comp_appLE]
     rfl
   · have h' : ¬ ⊤ ≤ z₁.1 ⁻¹ᵁ (g ⁻¹ᵁ W₁) := h
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
 
 theorem gv_linComb (hm : ∀ a, (m a).1 = z.1 ≫ f a) {ε : κ → ℤ} {j j' : κ → B.ι}
     (h : z ∈ ptsIn p' σ' ((LB.LinComb B f ε).U j)) (h' : z ∈ ptsIn p' σ' ((LB.LinComb B f ε).U j')) :
@@ -173,8 +173,8 @@ section Ratio
 variable {D : ℕ} {U' U'' : Y.Opens} {η : FormsOn p D U} {η' : FormsOn p D U'}
   {η'' : FormsOn p D U''}
 
-variable (σ) in
 
+variable (σ) in
 def rv (hη : IsFrame η) (hη' : IsFrame η') : CxPts p σ → ℂ := ev p σ (U ⊓ U') (hη.ratio hη').val
 
 theorem rv_ne_zero (hη : IsFrame η) (hη' : IsFrame η') (h : y ∈ ptsIn p σ U)
@@ -204,8 +204,8 @@ theorem rv_chart (c c' : AlgChart p σ D) (hy : y ∈ c.e.source) (hy' : y ∈ c
 
 end Ratio
 
-variable (p σ B) in
 
+variable (p σ B) in
 def fibSec : Submodule ℂ (B.ι → CxPts p σ → ℂ) where
   carrier := {s | (∀ i j y, y ∈ ptsIn p σ (B.U i) → y ∈ ptsIn p σ (B.U j) →
     s i y = gv p σ B i j y * s j y) ∧ ∀ i y, y ∉ ptsIn p σ (B.U i) → s i y = 0}
@@ -217,8 +217,8 @@ def fibSec : Submodule ℂ (B.ι → CxPts p σ → ℂ) where
     simp only [Pi.smul_apply, hs.1 i j y hi hj, smul_eq_mul, mul_left_comm],
     fun i y h => by simp only [Pi.smul_apply, hs.2 i y h, smul_zero]⟩
 
-variable (p σ) in
 
+variable (p σ) in
 def secVal : B.Sec →+ (B.ι → CxPts p σ → ℂ) where
   toFun s i := ev p σ (B.U i) (s.f i)
   map_zero' := funext₂ fun i y => by
@@ -300,8 +300,8 @@ instance : Module ℂ (SecC p σ B) :=
   letI := secModuleBase p B
   (inferInstance : Module ℂ (ℂ ⊗[k] B.Sec))
 
-variable (p σ) in
 
+variable (p σ) in
 def of : B.Sec →+ SecC p σ B :=
   letI := σ.toAlgebra
   letI := secModuleBase p B
@@ -380,11 +380,6 @@ theorem log_normSq_mul {a b : ℂ} (ha : a ≠ 0) (hb : b ≠ 0) :
     Real.log (‖a * b‖ ^ 2) = Real.log (‖a‖ ^ 2) + Real.log (‖b‖ ^ 2) := by
   rw [norm_mul, mul_pow, Real.log_mul (pow_ne_zero 2 (norm_ne_zero_iff.2 ha))
     (pow_ne_zero 2 (norm_ne_zero_iff.2 hb))]
-
-theorem log_normSq_zpow (a : ℂ) (n : ℤ) : Real.log (‖a ^ n‖ ^ 2) = n * Real.log (‖a‖ ^ 2) := by
-  have e : ‖a ^ n‖ ^ 2 = (‖a‖ ^ 2) ^ n := by
-    rw [norm_zpow, ← zpow_natCast, ← zpow_natCast, ← zpow_mul, ← zpow_mul, mul_comm]
-  rw [e, Real.log_zpow]
 
 theorem normSq_mul_exp {u : ℂ} (hu : u ≠ 0) (s : ℂ) (φ : ℝ) :
     ‖u * s‖ ^ 2 * Real.exp (-(φ + Real.log (‖u‖ ^ 2))) = ‖s‖ ^ 2 * Real.exp (-φ) := by
@@ -538,25 +533,6 @@ def fs (hB : B.IsLB) (e : α → B.ι → CxPts p σ → ℂ) (he : ∀ a, e a �
     rw [Real.log_mul (by positivity) (h.sum_pos hj).ne']
     ring
 
-theorem nsq_fs {hB : B.IsLB} {he : ∀ a, e a ∈ fibSec p σ B} {h : NoCommonZero e}
-    (hs : s ∈ fibSec p σ B) {i : B.ι} (hi : y ∈ ptsIn p σ (B.U i)) :
-    (fs hB e he h).nsq s y = ‖s i y‖ ^ 2 / ∑ a, ‖e a i y‖ ^ 2 := by
-  rw [nsq_eq _ hs hi]
-  simp only [fs]
-  rw [Real.exp_neg, Real.exp_log (h.sum_pos hi), div_eq_mul_inv]
-
-theorem nsq_fs_le {hB : B.IsLB} {he : ∀ a, e a ∈ fibSec p σ B} {h : NoCommonZero e} (c : α → ℂ)
-    (y : CxPts p σ) : (fs hB e he h).nsq (∑ a, c a • e a) y ≤ ∑ a, ‖c a‖ ^ 2 := by
-  have hi := mem_pick hB y
-  have hpos := h.sum_pos hi
-  simp only [nsq, fs]
-  rw [Real.exp_neg, Real.exp_log hpos, ← div_eq_mul_inv, div_le_iff₀ hpos]
-  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-  calc ‖∑ a, c a * e a (pick hB y) y‖ ^ 2 ≤ (∑ a, ‖c a‖ * ‖e a (pick hB y) y‖) ^ 2 := by
-        gcongr
-        exact (norm_sum_le _ _).trans_eq (by simp [norm_mul])
-    _ ≤ _ := Finset.sum_mul_sq_le_sq_mul_sq _ _ _
-
 theorem sum_nsq_fs {hB : B.IsLB} {he : ∀ a, e a ∈ fibSec p σ B} {h : NoCommonZero e}
     (y : CxPts p σ) : ∑ a, (fs hB e he h).nsq (e a) y = 1 := by
   have hpos := h.sum_pos (mem_pick hB y)
@@ -565,16 +541,17 @@ theorem sum_nsq_fs {hB : B.IsLB} {he : ∀ a, e a ∈ fibSec p σ B} {h : NoComm
 
 variable [DecidableEq α]
 
-variable (p σ) in
 
+variable (p σ) in
 def combVal (b : α → B.Sec) (M : Matrix α α ℂ) (a : α) : B.ι → CxPts p σ → ℂ :=
   ∑ j, M j a • secVal p σ (b j)
 
-omit [DecidableEq α] in
 
+omit [DecidableEq α] in
 theorem combVal_eq (b : α → B.Sec) (M : Matrix α α ℂ) (a : α) :
     combVal p σ b M a = SecC.val (∑ j, M j a • SecC.of p σ (b j)) := by
-  simp only [combVal, map_sum, map_smul, SecC.val_of]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [combVal, map_sum, map_smul, SecC.val_of]
 
 theorem noCommonZero_combVal {b : α → B.Sec} (hb : ⨆ j, nonzeroLocus (b j) = ⊤)
     {M : Matrix α α ℂ} (hM : M.det ≠ 0) : NoCommonZero (combVal p σ b M) := by
@@ -591,8 +568,8 @@ theorem noCommonZero_combVal {b : α → B.Sec} (hb : ⨆ j, nonzeroLocus (b j) 
     simp [combVal, Matrix.vecMul, dotProduct, Finset.sum_apply, mul_comm]
   exact hj' (congrFun (Matrix.eq_zero_of_vecMul_eq_zero hM hv) j)
 
-variable (p σ) in
 
+variable (p σ) in
 def fsBasis (hB : B.IsLB) (b : α → B.Sec) (hb : ⨆ j, nonzeroLocus (b j) = ⊤) (M : Matrix α α ℂ)
     (hM : M.det ≠ 0) : Weight p σ B :=
   fs hB (combVal p σ b M) (fun a => combVal_eq (p := p) (σ := σ) b M a ▸ SecC.val_mem _)

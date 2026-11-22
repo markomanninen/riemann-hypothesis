@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
 
@@ -16,7 +21,7 @@ private theorem psi0_eq_one_of_conj_eq_neg {F : Type} [Field F] [ValuativeRel F]
   have hcw : L.cj w = -w := by
     rw [hw, map_mul, AlgEquiv.commutes, hz, mul_neg]
   have hzw : z = w + w := by
-    rw [hw, ← add_mul, ← map_add]
+    rw [hw, ← add_mul, ← map_add (f := _)]
     norm_num
   have h1 : L.psi0 w = L.psi0 (-w) := by rw [← hcw, _root_.Formalism.MainNotions.S.Loc.LocE.local_additive_char_conj]
   rw [hzw, AddChar.map_add_eq_mul]
@@ -135,9 +140,9 @@ private theorem exists_nat_mul_mem_integer (x : F) : ∃ N : ℕ, 0 < N ∧ (N :
   rw [this]
   exact (w * ((u⁻¹ : (𝒪[F])ˣ) : 𝒪[F])).2
 
+
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
-
 theorem _root_.GlobalTheory.TraceChar.exists_trace_char : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] (L : _root_.Formalism.MainNotions.S.Loc.LocE F E), ∃ ψ : AddChar F ℂ, (∀ x : F, ‖ψ x‖ = 1) ∧ (∀ x : F, (∀ y : 𝒪[F], ψ (x * y) = 1) ↔ x ∈ 𝒪[F]) ∧ ∀ (y : E) (c : F), y + L.cj y = algebraMap F E c → L.psi0 y = ψ c := by
   intro F _ _ _ _ _ E _ _ _ L
   let ψ : AddChar F ℂ := L.psi0.compAddMonoidHom
@@ -150,7 +155,7 @@ theorem _root_.GlobalTheory.TraceChar.exists_trace_char : ∀ {F : Type} [Field 
       have : L.cj y = algebraMap F E c - y := by rw [← h]; ring
       rw [this]
       have : algebraMap F E c = algebraMap F E (1 / 2 * c) + algebraMap F E (1 / 2 * c) := by
-        rw [← map_add]; congr 1; ring
+        rw [← map_add (f := _)]; congr 1; ring
       rw [this]; ring
     have := psi0_eq_one_of_conj_eq_neg L hz
     rw [hψ, ← one_mul (L.psi0 (algebraMap F E _)), ← this, ← AddChar.map_add_eq_mul, sub_add_cancel]

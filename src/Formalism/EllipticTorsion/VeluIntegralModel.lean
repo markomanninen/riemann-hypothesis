@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.EllipticTorsion.Statement
-import Formalism.EllipticTorsion.WSeriesUnique
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.Statement
+public import Formalism.EllipticTorsion.WSeriesUnique
+
+@[expose] public section
 
 open PowerSeries
 

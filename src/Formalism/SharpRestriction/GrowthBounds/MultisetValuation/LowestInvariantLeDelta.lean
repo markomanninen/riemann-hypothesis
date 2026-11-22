@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.KernelSumOfClassData
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.GShiftRowGenMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.KernelSumOfClassData
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.GShiftRowGenMonomial
+
+@[expose] public section
 
 noncomputable section
 

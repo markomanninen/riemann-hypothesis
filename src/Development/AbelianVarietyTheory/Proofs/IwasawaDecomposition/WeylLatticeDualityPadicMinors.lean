@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.WeylLatDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramInjectivity.InstFintypeColChoice
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WwCauchyBinet
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WwInjective
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnMinorProductsFockReproducingDualWeylStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnProductTransitionMatricesStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeylLatticeIntegralColumnMinorExpansionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFockFunctionalOnNablaXProductsStatement
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.WeylLatDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramInjectivity.InstFintypeColChoice
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WwCauchyBinet
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WwInjective
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnMinorProductsFockReproducingDualWeylStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnProductTransitionMatricesStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeylLatticeIntegralColumnMinorExpansionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFockFunctionalOnNablaXProductsStatement
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -110,7 +114,8 @@ theorem canExpand (p : ℕ) [Fact p.Prime] {Lt T : Type} [Fintype Lt] [Decidable
   have h := PI.WwInjectiveWork.deX_eq_sum N nu cauchy_binet_minors (K := ℂ_[p])
     (fun s => WeylLatticeDuality.colsOf (y (e s)))
   change φ (PI.WwInjective.DeX N nu fun s => WeylLatticeDuality.colsOf (y (e s))) = _
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   let eqv : PI.WwInjective.KM.ColChoice N nu ≃ (∀ s, ∀ c : Fin ((nu s).rowLen 0), Fin ((nu s).colLen c) ↪o Fin N) :=
     ⟨id, id, fun _ => rfl, fun _ => rfl⟩
   refine Fintype.sum_equiv eqv _ _ fun J => ?_
@@ -136,7 +141,7 @@ theorem nsum {p : ℕ} [Fact p.Prime] {α : Type} (s : Finset α) (f : α → �
 theorem nprod {p : ℕ} [Fact p.Prime] {α : Type} (s : Finset α) (f : α → ℂ_[p]) (h : ∀ i ∈ s, ‖f i‖ ≤ 1) :
     ‖∏ i ∈ s, f i‖ ≤ 1 := by
   rw [norm_prod]
-  exact Finset.prod_le_one (fun i _ => norm_nonneg _) h
+  exact Finset.prod_le_one₀ (fun i _ => norm_nonneg _) h
 
 theorem nint {p : ℕ} [Fact p.Prime] (z : ℤ) : ‖(z : ℂ_[p])‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one _ z
 
@@ -166,7 +171,8 @@ theorem expand_prod (p : ℕ) [Fact p.Prime] {Lt : Type} [Fintype Lt] [Decidable
     Finset.sum_congr rfl fun k _ => by rw [map_prod, ← Finset.prod_mul_distrib]]
   rw [sum_prod_eq (fun s k => C (M s (i s) k : ℂ_[p]) * rho p N s (v s k))]
   refine Finset.prod_congr rfl fun s _ => ?_
-  rw [h s (i s), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h s (i s), map_sum]
   exact Finset.sum_congr rfl fun k _ => rho_zsmul p N s _ _
 
 theorem stmt_holds : WeylLatticeDuality.Stmt := by
@@ -185,14 +191,16 @@ theorem stmt_holds : WeylLatticeDuality.Stmt := by
         (∏ s, (Cm s (i s) (J s) : ℂ_[p])) * φ (map (Int.castRingHom ℂ_[p]) (WeylLatticeDuality.nablaX N nu J)) := by
       intro i
       simp only [hβdef]
-      rw [expand_prod p N b _ Cm hCm i, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [expand_prod p N b _ Cm hCm i, map_sum]
       refine Finset.sum_congr rfl fun J _ => ?_
       rw [← smul_eq_C_mul, map_smul, smul_eq_mul, hnab]
     have hnabβ : ∀ J : (∀ s, ∀ c : Fin ((nu s).rowLen 0), Fin ((nu s).colLen c) ↪o Fin N),
         φ (map (Int.castRingHom ℂ_[p]) (WeylLatticeDuality.nablaX N nu J)) =
           ∑ i : (∀ s, ι s), (∏ s, (B s (J s) (i s) : ℂ_[p])) * φ (β i) := by
       intro J
-      rw [hnab, expand_prod p N _ b B hB J, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hnab, expand_prod p N _ b B hB J, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← smul_eq_C_mul, map_smul, smul_eq_mul]
 
@@ -213,7 +221,8 @@ theorem stmt_holds : WeylLatticeDuality.Stmt := by
       have hds : ∀ s, ev s (d s (i s)) =
           ∑ j, (B s j (i s) : ℂ_[p]) * ev s (GlobalTheory.WeylMinorDual.colProd ℤ N (nu s) (hY s) j) := by
         intro s
-        rw [← hd s (i s), map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hd s (i s), map_sum]
         exact Finset.sum_congr rfl fun j _ => by rw [map_zsmul, zsmul_eq_mul]
       simp only [hds]
       rw [← sum_prod_eq (fun s j => (B s j (i s) : ℂ_[p]) * ev s (GlobalTheory.WeylMinorDual.colProd ℤ N (nu s) (hY s) j)),
@@ -289,7 +298,8 @@ theorem stmt_holds : WeylLatticeDuality.Stmt := by
           have hfs : ∀ s, ev s (f (e s)) = ∑ j, (z s j : ℂ_[p]) * ev s (GlobalTheory.WeylMinorDual.colProd ℤ N (nu s) (hY s) j) := by
             intro s
             conv_lhs => rw [← hz2 s]
-            rw [map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum]
             exact Finset.sum_congr rfl fun j _ => by rw [map_zsmul, zsmul_eq_mul]
           rw [LinearMap.smul_apply, canExpand p e N nu hY Ψ y, smul_eq_mul]
           simp only [hev', hψJ]

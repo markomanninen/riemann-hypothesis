@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -17,7 +21,7 @@ theorem exists_lattice_norm_one_of_norm_one_mod (K V : Type) [Field K] [CharZero
   obtain ⟨e, heW, hee⟩ := he
   obtain ⟨y₀, hy₀L, hy₀W, u₀, hu₀, hr⟩ := hy
   have hσω : σ ((1 + θ) / 2) = (1 - θ) / 2 := by
-    rw [map_div₀, map_add, map_one, hσ, map_ofNat, sub_eq_add_neg]
+    rw [map_div₀, map_add (f := _), map_one, hσ, map_ofNat, sub_eq_add_neg]
   have hn : padicNorm p ((1 + d) / 4) ≤ 1 := by
     rw [← hO]
     have := O.mul_mem hω (hOσ _ hω)
@@ -39,7 +43,7 @@ theorem exists_lattice_norm_one_of_norm_one_mod (K V : Type) [Field K] [CharZero
     refine ⟨(1 + ((1 - u : ℚ) : K) * ((1 + θ) / 2)) • y,
       hL _ (O.add_mem O.one_mem (O.mul_mem hc hω)) y hyL, W.smul_mem _ hyW,
       1 + (u - 1) * (u - 1) * ((1 + d) / 4 * u - 1), ?_, ?_⟩
-    · simp only [map_smul, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hu, map_add, map_mul,
+    · simp only [map_smul, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hu, map_add (f := _), map_mul,
         map_one, hσω, map_ratCast]
       push_cast
       linear_combination (-(1 - (u : K)) ^ 2 * u / 4) * hθ
@@ -101,7 +105,7 @@ theorem exists_lattice_norm_one_of_norm_one_mod (K V : Type) [Field K] [CharZero
     refine ⟨y + ((t : K) * (p : K) ^ m) • y - (t : K) • ((p : K) ^ m • e),
       L.sub_mem (L.add_mem hyL (hL _ (O.mul_mem htO hpO) y hyL)) (hL _ htO _ hm),
       W.sub_mem (W.add_mem hyW (W.smul_mem _ hyW)) (W.smul_mem _ (W.smul_mem _ heW)), ?_⟩
-    simp only [map_smul, map_smulₛₗ, map_add, map_sub, LinearMap.smul_apply, LinearMap.add_apply,
+    simp only [map_smul, map_smulₛₗ, map_add (f := _), map_sub, LinearMap.smul_apply, LinearMap.add_apply,
       LinearMap.sub_apply, smul_eq_mul, hu, hee, map_mul, map_pow, map_ratCast, map_natCast,
       RingHom.id_apply]
     linear_combination (1 + (t : K) * (p : K) ^ m) * hs' -
@@ -109,7 +113,7 @@ theorem exists_lattice_norm_one_of_norm_one_mod (K V : Type) [Field K] [CharZero
   obtain ⟨T, hT⟩ : ∃ T : ℚ, h e y + h y e = (T : K) := by
     obtain ⟨a, b, hab⟩ := hK (h e y)
     refine ⟨2 * a, ?_⟩
-    rw [hh e y, hab, map_add, map_mul, map_ratCast, map_ratCast, hσ]
+    rw [hh e y, hab, map_add (f := _), map_mul, map_ratCast, map_ratCast, hσ]
     push_cast
     ring
   by_cases hQ : padicNorm p 4 ≤ padicNorm p (u + 1 - T)

@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -15,9 +20,6 @@ def TorusInvLevi.Statement : Prop :=
       u (fun p => c p.1 * z p) = u z) →
     ∃ C : ℝ, ∀ z : (Σ k, ι k) → ℂ, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) → ∀ w : (Σ k, ι k) → ℂ,
       |leviForm u z w| ≤
-        C * leviForm (fun y => ∑ k, Real.log ((fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩))) z w
-
-def TorusInvLevi.projectiveLineModulusRatio (z : (Σ _ : Unit, Fin 2) → ℂ) : ℝ :=
-  ‖z ⟨(), 0⟩‖ ^ 2 / (‖z ⟨(), 0⟩‖ ^ 2 + ‖z ⟨(), 1⟩‖ ^ 2)
+        C * leviForm (fun y => ∑ k, Real.log ((fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩))) z w
 
 end GroundTheory.Heights₂.Heights.Inter

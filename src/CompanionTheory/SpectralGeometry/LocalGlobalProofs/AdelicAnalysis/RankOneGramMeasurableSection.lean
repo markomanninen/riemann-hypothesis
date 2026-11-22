@@ -1,10 +1,14 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorInvolutionAlgebraPropertiesStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitsOpenEmbeddingLocalTensorStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.WittExtensionArtinianRingStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorInvolutionAlgebraPropertiesStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitsOpenEmbeddingLocalTensorStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.WittExtensionArtinianRingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem hform_sub_right (τ : A →+* A) (J : Matrix n n A) (x y z : n → A) :
 
 theorem map_hform (τ : A →+* A) (hτ : ∀ a, τ (τ a) = a) (J : Matrix n n A)
     (hJ : ∀ i j, τ (J j i) = J i j) (x y : n → A) : τ (hform τ J x y) = hform τ J y x := by
-  simp only [hform, map_sum, map_mul, hτ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hτ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJ i j]; ring
@@ -67,7 +72,8 @@ theorem reflM_unitary (τ : A →+* A) (hτ : ∀ a, τ (τ a) = a) (J : Matrix 
     rw [Matrix.vecMulVec_mul]; rfl
   have hJd : J.mulVec d = fun i => τ (w i) := by
     ext i
-    simp only [hw, rowOf, Matrix.mulVec, Matrix.vecMul, dotProduct, map_sum, map_mul, hτ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hw, rowOf, Matrix.mulVec, Matrix.vecMul, dotProduct, map_sum, map_mul, hτ]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hJ i j]; ring
   have h2 : J * Matrix.vecMulVec d w = Q := by
@@ -116,8 +122,8 @@ def selP {W : Type*} (Z : Set W) (V : ℕ → Set W) : ℕ → W → Prop
   | 0, y => y ∉ Z
   | k + 1, y => y ∈ V k
 
-open Classical in
 
+open Classical in
 def selT {W G : Type*} (g₁ : G) (Z : Set W) (V : ℕ → Set W) (f : ℕ → W → G) : ℕ → W → G
   | 0, _ => g₁
   | k + 1, y => (V k ∩ Z).piecewise (f k) (fun _ => g₁) y
@@ -248,7 +254,7 @@ theorem reflM_cont [TopologicalSpace K] [IsTopologicalRing K] {X : Type*} [Topol
   simp only [reflM, Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul, Matrix.vecMulVec_apply, rowOf,
     Matrix.vecMul, dotProduct]
   exact continuous_const.sub (ha.mul ((hd' i).mul
-    (continuous_finset_sum _ fun k _ => (hτ.comp (hd' k)).mul continuous_const)))
+    (continuous_finsetSum _ fun k _ => (hτ.comp (hd' k)).mul continuous_const)))
 
 theorem continuousAt_ringInverse [TopologicalSpace K] [IsTopologicalRing K]
     (hU : IsOpenEmbedding (Units.val : Kˣ → K)) {a : K} (ha : IsUnit a) :
@@ -272,7 +278,7 @@ theorem local_refl [TopologicalSpace K] [IsTopologicalRing K] (τ : K →+* K) (
   have hcf : Continuous cf := by
     refine continuous_const.sub ?_
     simp only [hform]
-    exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       ((hτc.comp (continuous_apply i)).mul continuous_const).mul continuous_const
   have hopen : IsOpen {a : K | IsUnit a} := by
     have : {a : K | IsUnit a} = Set.range (Units.val : Kˣ → K) := by

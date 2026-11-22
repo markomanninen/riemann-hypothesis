@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+
+@[expose] public section
 
 private lemma UpperTheory.Reformulated.B.LatticeCoordinatesCommonDenominator.denom_of_fg {R K ι : Type} [CommRing R] [IsDomain R] [Field K] [Algebra R K]
     [IsFractionRing R K] [Finite ι] (L : Submodule R (ι → K)) (hL : L.FG) :
@@ -17,7 +21,7 @@ private lemma UpperTheory.Reformulated.B.LatticeCoordinatesCommonDenominator.den
   | add x y _ _ hx hy =>
     obtain ⟨c, hc⟩ := hx
     obtain ⟨d, hd⟩ := hy
-    exact ⟨c + d, by rw [map_add, hc, hd, Pi.add_apply, mul_add]⟩
+    exact ⟨c + d, by rw [map_add (f := _), hc, hd, Pi.add_apply, mul_add]⟩
   | smul a x _ hx =>
     obtain ⟨c, hc⟩ := hx
     exact ⟨a * c, by rw [map_mul, hc, Pi.smul_apply, Algebra.smul_def]; ring⟩

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleHerbrand.Product
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Decomposition
-import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrandInfinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleHerbrand.Product
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Decomposition
+public import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrandInfinite
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -20,8 +24,8 @@ section Finite
 
 variable (v : HeightOneSpectrum (𝓞 K))
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 theorem mem_stabilizer_iff_smul_placesOver (w : PlacesOver L v) (σ : Gal(L/K)) :
     σ ∈ MulAction.stabilizer Gal(L/K) w.1.asIdeal ↔ σ • w = w := by
   rw [MulAction.mem_stabilizer_iff, Subtype.ext_iff, coe_smul_placesOver,
@@ -35,8 +39,8 @@ theorem finiteUnitsAbove_smul_apply_of_eq (σ : Gal(L/K))
   subst h
   exact finiteUnitsAbove_smul_apply v σ y w
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem galHom_eq_decomposition_smul (w : PlacesOver L v)
     (σ : MulAction.stabilizer Gal(L/K) w.1.asIdeal) (h : w.1 = (σ : Gal(L/K)) • w.1)
     (x : w.1.adicCompletion L) : galHom (σ : Gal(L/K)) w.1 w.1 h x = σ • x := by
@@ -80,8 +84,8 @@ theorem integerUnitsAbove_smul_apply_eq_one (σ : Gal(L/K))
 
 variable [IsGalois K L] [Fintype Gal(L/K)]
 
-open AdicLiesOver in
 
+open AdicLiesOver in
 theorem cycHerbrand_finiteUnitsAbove (σ : Gal(L/K)) (hσ : ∀ g, g ∈ Subgroup.zpowers σ)
     (w : PlacesOver L v) :
     cycHerbrand (Representation.ofMulDistribMulAction Gal(L/K)
@@ -146,7 +150,8 @@ theorem continuous_infiniteCompletionMap {M M' : Type*} [Field M] [NumberField M
     [NumberField M'] (τ : M ≃+* M') (w' : InfinitePlace M') :
     Continuous (infiniteCompletionMap τ w') := by
   let _ : Algebra M M' := (τ : M →+* M').toAlgebra
-  exact NumberField.LiesOver.continuous_completionMap
+  change Continuous (algebraMap (w'.comap (algebraMap M M')).Completion w'.Completion)
+  exact continuous_algebraMap _ _
 
 variable (v : InfinitePlace K)
 
@@ -171,14 +176,14 @@ theorem infiniteUnitsAbove_smul_apply_eq_one (σ : Gal(L/K))
   rw [infiniteUnitsAbove_smul_apply_of_eq v σ y w (σ • w) (eq_comap_smul_placesOver v σ w), hy,
     Units.val_one, map_one, map_one, Units.val_one]
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 theorem mem_stabilizer_iff_smul_placesOver_infinite (w : v.placesOver L) (σ : Gal(L/K)) :
     σ ∈ MulAction.stabilizer Gal(L/K) w.1 ↔ σ • w = w := by
   rw [MulAction.mem_stabilizer_iff, Subtype.ext_iff, InfinitePlace.coe_smul_placesOver]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem infiniteCompletionMap_eq_decomposition_smul (w : v.placesOver L)
     (σ : MulAction.stabilizer Gal(L/K) w.1)
     (h : w.1 = w.1.comap (((σ : Gal(L/K)) : L ≃+* L) : L →+* L)) (x : w.1.Completion) :
@@ -191,6 +196,14 @@ theorem infiniteCompletionMap_eq_decomposition_smul (w : v.placesOver L)
     ((continuous_infiniteCompletionMap _ _).comp (continuous_infiniteCompletionCongr h))
     (continuous_completionRingHomOf σ.2) fun y ↦ by
       rw [completionRingHomOf_coe]
+      have hy : (y : w.1.Completion) = algebraMap L w.1.Completion y.ofAbs := by
+        rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
+        rfl
+      have hy' : ((withAbsMapOf w.1 (σ : Gal(L/K)) y : WithAbs w.1.1) : w.1.Completion) =
+          algebraMap L w.1.Completion (withAbsMapOf w.1 (σ : Gal(L/K)) y).ofAbs := by
+        rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
+        rfl
+      rw [hy, hy']
       change infiniteCompletionMap _ w.1
           (infiniteCompletionCongr h (algebraMap L w.1.Completion y.ofAbs)) =
         algebraMap L w.1.Completion (withAbsMapOf w.1 (σ : Gal(L/K)) y).ofAbs

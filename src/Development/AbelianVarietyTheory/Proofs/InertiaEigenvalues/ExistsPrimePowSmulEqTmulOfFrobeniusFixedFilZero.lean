@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -15,7 +20,7 @@ theorem coordLeft_lTensor {R : Type} [CommRing R] {V M N : Type}
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v m => simp
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem coordRight_map {R : Type} [CommRing R] {M P N : Type}
     [AddCommGroup M] [Module R M] [AddCommGroup P] [Module R P] [AddCommGroup N] [Module R N]
@@ -24,7 +29,7 @@ theorem coordRight_map {R : Type} [CommRing R] {M P N : Type}
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v m => simp
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 variable {l : ℕ} [Fact l.Prime]
 
@@ -38,7 +43,7 @@ theorem padicInt_ringHom_ext_pt {R : Type} [CommRing R] [IsHausdorff (Ideal.span
   refine ⟨f c - g c, ?_⟩
   have hf := congrArg f e
   have hg := congrArg g e
-  rw [map_add, map_mul, map_pow, map_natCast, map_natCast] at hf hg
+  rw [map_add (f := _), map_mul, map_pow, map_natCast, map_natCast] at hf hg
   rw [hf, hg]
   ring
 
@@ -56,7 +61,7 @@ def filZero (C : GlobalTheory.MemLoc.Core l) : Submodule ℤ_[l] (Per.Bcris l) w
   zero_mem' := by simp
   add_mem' := by
     intro a b ha hb
-    simp only [Set.mem_ofPred_eq, map_add] at *
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at *
     exact add_mem ha hb
   smul_mem' := by
     intro a b hb
@@ -89,7 +94,7 @@ theorem frobOB_eq_lTensor {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Alge
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem exists_pow_smul_eq_one_tmul : GlobalTheory.Published.FontaineBcris → ∀ (l : ℕ) [Fact l.Prime] (O K : Type) [CommRing O] [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NormedField K] [Algebra O K] [NormedAlgebra ℚ_[l] K] (G : Type) [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[l] K O) (C : GlobalTheory.MemLoc.Core l) (z : TW (OB l O) T), TWmap (frobOB l O) T z = z → z ∈ Submodule.span O {w : TW (OB l O) T | ∃ (β : Per.Bcris l) (x : ↥T.L.T), C.ι β ∈ Per.FilD l 0 ∧ w = ((1 : O) ⊗ₜ[ℤ_[l]] β) ⊗ₜ[O] x} → ∃ (n : ℕ) (x : ↥T.L.T), (l : O) ^ n • z = (1 : OB l O) ⊗ₜ[O] x := by
   intro hF l _ O K _ _ _ _ _ _ _ G _ _ T C z hφ hz
@@ -122,7 +127,7 @@ theorem exists_pow_smul_eq_one_tmul : GlobalTheory.Published.FontaineBcris → �
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a f => simp [TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
   have key : ∀ w, w ∈ Submodule.span O {w : TW (OB l O) T | ∃ (β : Per.Bcris l) (x : ↥T.L.T), C.ι β ∈ Per.FilD l 0 ∧ w = ((1 : O) ⊗ₜ[ℤ_[l]] β) ⊗ₜ[O] x} → ∀ j, eR w j ∈ RQ := by
     intro w hw
     induction hw using Submodule.span_induction with
@@ -133,7 +138,7 @@ theorem exists_pow_smul_eq_one_tmul : GlobalTheory.Published.FontaineBcris → �
       refine hsmul _ _ ⟨(1 : O) ⊗ₜ[ℤ_[l]] (⟨β, hβ⟩ : F0), ?_⟩
       simp
     | zero => intro j; simp
-    | add x y _ _ hx hy => intro j; rw [map_add, Finsupp.add_apply]; exact add_mem (hx j) (hy j)
+    | add x y _ _ hx hy => intro j; rw [map_add (f := _), Finsupp.add_apply]; exact add_mem (hx j) (hy j)
     | smul o x _ hx => intro j; rw [map_smul, Finsupp.smul_apply]; exact hsmul o _ (hx j)
   have hzR : ∀ j, eR z j ∈ RQ := key z hz
   have hcF : ∀ j i, C.ι (c j i) ∈ Per.FilD l 0 := by

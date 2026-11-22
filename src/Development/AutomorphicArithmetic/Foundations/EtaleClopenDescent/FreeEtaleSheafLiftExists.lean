@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.ZeroSheafMaps.LeafShMapZeroOf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.ZeroSheafMaps.LeafShMapZeroOf
+
+@[expose] public section
 
 open CategoryTheory Limits
 
@@ -78,7 +82,7 @@ private theorem exists_cycles (K : DerivedCategory C) :
           (DerivedCategory.homologyFunctor C 0).map e.hom := by
     rw [n', hφ']
     exact comp_reassoc_six _ _ _ _ _ _
-  exact key
+  simpa only [Category.assoc] using key
 
 end UpperTheory.Cb.HomologyEvaluation
 

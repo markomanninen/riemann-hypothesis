@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseReverse
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseFormal
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseReverse
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseFormal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

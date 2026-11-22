@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -127,7 +131,8 @@ theorem exists_quotient : ∀ (R : Type) [CommRing R] (I : Ideal R) (κ : Divide
   intro R _ I κ X t T 𝔟 h𝔟
   refine ⟨quot T h𝔟, proj T h𝔟, Ideal.Quotient.mkₐ_surjective R 𝔟, fun b ↦ Ideal.Quotient.eq_zero_iff_mem,
     rfl, fun n hn ↦ isLev_qdp T.δ h𝔟 hn, fun S a ha ↦
-      ⟨desc T h𝔟 a ha, Thick.hom_ext fun _ ↦ rfl, fun g hg ↦ Thick.hom_ext fun b ↦ ?_⟩⟩
+      ⟨desc T h𝔟 a ha, Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl), fun g hg ↦
+        Thick.Hom.ext' (AlgHom.ext fun b ↦ ?_)⟩⟩
   obtain ⟨c, rfl⟩ := Ideal.Quotient.mk_surjective b
   exact congrArg (fun f : T ⟶ S ↦ f.φ c) hg
 

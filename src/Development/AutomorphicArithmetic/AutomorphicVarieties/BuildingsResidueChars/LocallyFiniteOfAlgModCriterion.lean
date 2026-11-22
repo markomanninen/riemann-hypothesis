@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
+
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
 attribute [local instance 100] LieRing.ofAssociativeRing
@@ -31,11 +36,12 @@ theorem UpperTheory.locallyFinite_of_algMod_criterion :
     have h1 : ∀ x, F x y = ∑ i, b.coord i ⟨F x, hF x⟩ * ((b i : V) : Y → ℂ) y := by
       intro x
       have h := congrArg (ev y) (b.sum_repr ⟨F x, hF x⟩)
-      rw [map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h
       simp only [map_smul] at h
       exact h.symm
     simp only [h1, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-    rw [integral_finset_sum _ (fun i _ => (hint (b.coord i)).mul_const _)]
+    rw [integral_finsetSum _ (fun i _ => (hint (b.coord i)).mul_const _)]
     exact Finset.sum_congr rfl fun i _ => integral_mul_const _ _
   rw [key]
   exact V.sum_mem fun i _ => V.smul_mem _ (b i).2

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.GrowthExclusionSumEq
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.GrowthExclusionSumEq
+
+@[expose] public section
 
 noncomputable section
 

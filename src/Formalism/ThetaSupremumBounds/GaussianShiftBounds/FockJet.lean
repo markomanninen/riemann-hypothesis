@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaSupremumBounds.StatementA
+module
+
+public import Mathlib
+public import Formalism.ThetaSupremumBounds.StatementA
+
+@[expose] public section
 
 open Finset MeasureTheory Filter Topology
 open scoped ComplexConjugate Real Nat
@@ -122,7 +126,7 @@ theorem measurable_productCutoff {κ : Type} [Fintype κ] (N : ℕ) : Measurable
 
 theorem norm_productCutoff_le_one {κ : Type} [Fintype κ] (N : ℕ) (u : κ → ℂ) : ‖fjChiP N u‖ ≤ 1 := by
   rw [fjChiP, norm_prod]
-  exact Finset.prod_le_one (fun _ _ => norm_nonneg _) fun x _ => fjChi_norm_le N (u x)
+  exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun x _ => fjChi_norm_le N (u x)
 
 theorem productCutoff_eventually_eq_one {κ : Type} [Fintype κ] (u : κ → ℂ) :
     ∀ᶠ N : ℕ in atTop, fjChiP N u = 1 := by
@@ -191,7 +195,7 @@ theorem fjProd_orth {κ : Type} [Fintype κ] (N : ℕ) (a b : κ → ℕ) (hab :
 theorem fjMono_cut {κ : Type} [Fintype κ] (N : ℕ) (a : κ → ℕ) (u : κ → ℂ) :
     ‖fjChiP N u * mono u a‖ ≤ ‖mono (fun _ : κ => (N : ℂ)) a‖ := by
   simp only [fjChiP, mono, ← Finset.prod_mul_distrib, norm_prod]
-  refine Finset.prod_le_prod (fun x _ => norm_nonneg _) fun x _ => ?_
+  refine Finset.prod_le_prod₀ (fun x _ => norm_nonneg _) fun x _ => ?_
   rw [norm_mul, norm_pow, norm_pow, Complex.norm_natCast]
   unfold fjChi
   split_ifs with h

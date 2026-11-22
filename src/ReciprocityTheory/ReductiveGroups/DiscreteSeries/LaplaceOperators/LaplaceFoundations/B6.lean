@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.Laplace
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.Laplace
+
+@[expose] public section
 
 noncomputable section
 

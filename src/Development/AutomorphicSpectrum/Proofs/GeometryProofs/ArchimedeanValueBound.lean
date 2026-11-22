@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemOfAevalEqZero
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GfForms
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemOfAevalEqZero
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GfForms
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,10 +41,10 @@ theorem exists_form {F₁ F₂ : Type} [Field F₁] [Field F₂] (y₁ : (Σ k, 
     refine ⟨df + dg, Gf * PositivityTheory.HtPt.Gf.mon c dg + Gg * PositivityTheory.HtPt.Gf.mon c df,
       homog_add (homog_mul hGf (PositivityTheory.HtPt.Gf.hom_mon c dg))
         (by rw [add_comm df dg]; exact homog_mul hGg (PositivityTheory.HtPt.Gf.hom_mon c df)), ?_, ?_⟩
-    · simp only [map_add, map_mul, PositivityTheory.HtPt.Gf.aeval_mon, a₁, b₁, Pi.add_apply, pow_add,
+    · simp only [map_add (f := _), map_mul, PositivityTheory.HtPt.Gf.aeval_mon, a₁, b₁, Pi.add_apply, pow_add,
         Finset.prod_mul_distrib]
       ring
-    · simp only [map_add, map_mul, PositivityTheory.HtPt.Gf.aeval_mon, a₂, b₂, Pi.add_apply, pow_add,
+    · simp only [map_add (f := _), map_mul, PositivityTheory.HtPt.Gf.aeval_mon, a₂, b₂, Pi.add_apply, pow_add,
         Finset.prod_mul_distrib]
       ring
   | mul_X f p hf =>
@@ -69,7 +73,7 @@ theorem exists_bound (f : MRing ι) :
     obtain ⟨B₁, p₁, h₁⟩ := hf
     obtain ⟨B₂, p₂, h₂⟩ := hg
     refine ⟨B₁ + B₂, add_nonneg p₁ p₂, fun w hw => ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (norm_add_le _ _).trans (add_le_add (h₁ w hw) (h₂ w hw))
   | mul_X f p hf =>
     obtain ⟨B, p₀, h⟩ := hf

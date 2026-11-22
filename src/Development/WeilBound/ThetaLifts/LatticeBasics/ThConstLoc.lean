@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem boxL_ker : LinearMap.ker (boxL (A := A) (B := B)) = ⊥ := by
   have h : ∀ i ∈ c.support, c i = 0 := fun i hi => Subtype.ext (funext fun y => by
     refine linearIndependent_iff'.1 e.linearIndependent c.support (fun i => (c i).1 y) (Subtype.ext (funext fun z => ?_)) i hi
     have := congrFun hx (z, y)
-    simp only [Finsupp.sum, map_sum, boxL_tmul, Finset.sum_apply] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finsupp.sum, map_sum, boxL_tmul, Finset.sum_apply] at this
     simpa [mul_comm] using this)
   exact Finset.sum_eq_zero fun i hi => by simp [h i hi]
 
@@ -141,8 +146,8 @@ theorem locBil (hL : LocDist) {F : Type} [Field F] [NumberField F] (v : Pl F) {n
     induction x using TensorProduct.induction_on with
     | zero => simp [← Pi.zero_def]
     | add x y hx hy =>
-      simp only [map_add, Pi.add_apply]
-      rw [← Pi.add_def, ← Pi.add_def, map_add, map_add, hx, hy, mul_add]
+      simp only [map_add (f := _), Pi.add_apply]
+      rw [← Pi.add_def, ← Pi.add_def, map_add (f := _), map_add (f := _), hx, hy, mul_add]
     | tmul a b =>
       rw [hl, TensorProduct.lift.tmul, ← hβ, ← TensorProduct.lift.tmul, ← hl]
       rfl

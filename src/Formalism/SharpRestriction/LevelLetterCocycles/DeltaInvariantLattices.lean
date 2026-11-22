@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ def BlochKatoCocyclesSubgroup : Submodule LL (H → T.V) where
   add_mem' := by
     rintro a b ⟨ha, x, hx⟩ ⟨hb, y, hy⟩
     refine ⟨(continuousCocycles _).add_mem ha hb, x + y, fun g => ?_⟩
-    simp only [Pi.add_apply, TensorProduct.add_tmul, hx, hy, map_add]
+    simp only [Pi.add_apply, TensorProduct.add_tmul, hx, hy, map_add (f := _)]
     abel
   smul_mem' := by
     rintro c a ⟨ha, x, hx⟩
@@ -102,11 +106,6 @@ def IsTensLat (T T' T'' : LocLat G Qp LL O) (b : T.V →ₗ[LL] T'.V →ₗ[LL] 
   Function.Bijective (TensorProduct.lift b) ∧
     (∀ g x y, T''.ρ g (b x y) = b (T.ρ g x) (T'.ρ g y)) ∧
     T''.L.T = Submodule.span O {z | ∃ x ∈ T.L.T, ∃ y ∈ T'.L.T, z = b x y}
-
-def χL : G →* LLˣ := (Units.map (algebraMap Qp LL : Qp →* LL)).comp PD.χ
-
-def XjN (T : LocLat G Qp LL O) (j : ℤ) : Submodule (LetA O n) (W.DD T) :=
-  if 0 ≤ j then (invN W) T (W.X ^ j.toNat) else (aN W) T (W.X ^ (-j).toNat)
 
 def wachFree (T : LocLat G Qp LL O) : Prop :=
   W.N T = ⨆ i, W.Nl T i ∧ ∀ i, (FreeLetter W) T (W.Nl T i) i
@@ -248,12 +247,6 @@ def p10 (T : LocLat G Qp LL O) : Prop :=
     (∀ y ∈ N₁, ∃ k : ℕ, W.Q ^ k • y ∈ (φspan W) T N₁) →
     N₁ = W.N T
 
-def wachTwistIso (T T' : LocLat G Qp LL O) (j : ℤ) : Prop :=
-  IsTwist (χL (PD := PD) ^ j) T.L T'.L →
-    ∃ ψ : W.DD T ≃ₗ[W.EE] W.DD T', (∀ x, ψ (W.φD T x) = W.φD T' (ψ x)) ∧
-      (∀ g x, W.γD T' g (ψ x) = (((W.χΓ g) ^ j : Oˣ) : O) • ψ (W.γD T g x)) ∧
-      ((XjN W) T j).map ((ψ : W.DD T →ₗ[W.EE] W.DD T').restrictScalars (LetA O n)) = W.N T'
-
 def uU : Oˣ := W.χΓ W.gam
 
 def Jumps (T : LocLat G Qp LL O) : Set ℤ := {a | ∃ τ : K →ₐ[Qp] LL, IsJumpV PD T.ρ τ a}
@@ -371,10 +364,6 @@ def WachMaxJumpBound : Prop :=
 
 def P9W : Prop := ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → p9 W T
 
-def WachTwistCharacterisation : Prop :=
-  (∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → p10 W T) ∧
-  (∀ (T T' : LocLat G Qp LL O) (j : ℤ), IsCrys PD T.ρ → IsCrys PD T'.ρ → wachTwistIso W T T' j)
-
 def ConsW : Prop := ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → consT W Pt T
 
 def HerrComplexFirstProperty : Prop := ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → p2a W T ∧ p2aK W T
@@ -392,12 +381,7 @@ def WachLatticeLengthLemma : Prop :=
   ∀ (T₁ T₂ : LocLat G Qp LL O) (π : LatHom T₁.L T₂.L) (M h : ZMod n → ℕ),
     IsCrys PD T₁.ρ → IsCrys PD T₂.ρ → wachLengthLatticeMap W π M h
 
-def WachMainTheorem : Prop :=
-  WachFreeDualTensor W ∧ P2W W ∧ P3W W ∧ P4W W Pt ∧ P5W W ∧ WachSaturationExactness W ∧ WachCrystallineExtension W ∧ WachMaxJumpBound W ∧ P9W W ∧ WachTwistCharacterisation W
-
 def Prop2W : Prop := HerrComplexFirstProperty W ∧ HerrComplexSecondProperty W ∧ HerrComplexThirdProperty W ∧ HerrComplexFourthProperty W
-
-def ConclusionW₂ : Prop := WachMainTheorem W Pt ∧ ConsW W Pt ∧ Prop2W W ∧ WachLatticeLengthLemma W
 
 def Adm2W (Font : LocLat G Qp LL O → Prop) : Prop :=
   ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → Font T → p2a W T ∧ p2aK W T
@@ -440,60 +424,11 @@ def WachInfiniteLevelBound : Prop :=
   ∀ (T : LocLat G Qp LL O) (M h : ZMod n → ℕ), IsCrys PD T.ρ → JumpsLet W T M h →
     wachInfiniteLevelJumpBound W E T (mx M) (mx h)
 
-def Adm1W : Prop :=
-  ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ →
-    (W.N T).FG ∧ IsBaseChange W.EE (W.N T).subtype ∧
-    (∀ g, ∀ x ∈ W.N T, W.γD T g x ∈ W.N T) ∧
-    (∀ g, ∀ x ∈ W.N T, W.γD T g x - x ∈ (aN W) T letπ) ∧
-    Function.Injective (E.jD T) ∧ Submodule.span RW (Set.range (E.jD T)) = ⊤ ∧
-    (∀ x, E.jD T (W.φD T x) = TWmap φR T (E.jD T x)) ∧
-    ∀ (g : G) x, E.jD T (W.γD T (W.resΓ g) x) = TWact (gR g) T g (E.jD T x)
-
-theorem prismatic_comparison_holds : Adm1W W E := fun T hT =>
-  ⟨W.N_fg T, W.N_base T hT, (wach_gamma_stable_first W T).1, (wach_gamma_stable_first W T).2, E.jD_inj T, E.jD_span T, E.jD_φ T,
-    E.jD_act T⟩
-
 end Etale
 
 section Disc
 
-def ConvD (v : AddValuation LL (WithTop ℚ)) (f : PowerSeries LL) : Prop :=
-  ∀ r : ℚ, 0 < r → ∀ C : ℚ, ∃ k₀ : ℕ, ∀ k ≥ k₀,
-    (C : WithTop ℚ) ≤ v (PowerSeries.coeff k f) + (((k : ℚ) * r : ℚ) : WithTop ℚ)
-
-def AtoLL (a : LetA O n) : ZMod n → PowerSeries LL := fun i => (a i).map (algebraMap O LL)
-
-def γPS (g : W.Gam) (f : ZMod n → PowerSeries LL) : ZMod n → PowerSeries LL :=
-  fun i => PowerSeries.subst ((W.γ₀ g PowerSeries.X).map (algebraMap O LL)) (f i)
-
-def φPS (f : ZMod n → PowerSeries LL) : ZMod n → PowerSeries LL :=
-  fun i => PowerSeries.subst ((W.φ₀ PowerSeries.X).map (algebraMap O LL)) (f (i - 1))
-
 variable {Zl Ai : Type} [CommRing Zl] [CommRing Ai] [Algebra Zl O] [Algebra Zl Ai]
-
-structure RRTie {RW : Type} [CommRing RW] [Algebra O RW]
-    {inclR : (O ⊗[Zl] Ai) →ₐ[O] RW} {φR : RW →ₐ[O] RW} {gR : G → (RW →ₐ[O] RW)} {πA : O ⊗[Zl] Ai}
-    (E : EtTie W (O ⊗[Zl] Ai) RW inclR φR gR πA) (ιA : Ai →+* B) (tS : B) where
-  RR : Type
-  [rRR : CommRing RR]
-
-  toPS : RR →+* (ZMod n → PowerSeries LL)
-  toPS_inj : Function.Injective toPS
-  toPS_range : ∀ f, f ∈ Set.range toPS ↔ ∀ i, ConvD v (f i)
-
-  βA : (O ⊗[Zl] Ai) →+* LL ⊗[Qp] B
-  βA_tmul : ∀ (a : O) (w : Ai), βA (a ⊗ₜ[Zl] w) = algebraMap O LL a ⊗ₜ[Qp] ιA w
-  ioR : RR →+* LL ⊗[Qp] B
-  ioR_A : ∀ (a : LetA O n) (r : RR), toPS r = AtoLL a → ioR r = βA (E.io a)
-  ioR_LL : ∀ (c : LL) (r : RR), (toPS r = fun _ => PowerSeries.C c) → ioR r = c ⊗ₜ[Qp] (1 : B)
-  ioR_G : ∀ (g : G) (r r' : RR), toPS r' = γPS W (W.resΓ g) (toPS r) →
-    ioR r' = Algebra.TensorProduct.map (AlgHom.id Qp LL)
-      ((PD.actB g).toAlgHom.restrictScalars Qp) (ioR r)
-  ioR_φ : ∀ r r' : RR, toPS r' = φPS W (toPS r) →
-    ioR r' = Algebra.TensorProduct.map (AlgHom.id Qp LL) PD.φ (ioR r)
-  constant_coeff_zero_tie : ∀ r : RR, (∀ i, PowerSeries.constantCoeff (toPS r i) = 0 ∧
-    (1 + PowerSeries.X) * PowerSeries.derivative LL (toPS r i) = 1) → ioR r = (1 : LL) ⊗ₜ[Qp] tS
-  ioX_unit : ∀ j : ℕ, IsUnit (βA (E.io ((W.φA ^ j) W.X)))
 
 end Disc
 
@@ -552,11 +487,6 @@ def p9L (LT : LocTheory) (HW : HWOf LT) (AI : ∀ (l : ℕ) [Fact l.Prime], LocA
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     P9W ((HW l).W K s LL h)
 
-def p10L (LT : LocTheory) (HW : HWOf LT) (AI : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (LT l))
-    (_F : FonOf LT AI HW) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
-    WachTwistCharacterisation ((HW l).W K s LL h)
-
 def consL (LT : LocTheory) (HW : HWOf LT) (AI : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (LT l))
     (_F : FonOf LT AI HW) : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
@@ -587,20 +517,10 @@ def wachLengthLocal (LT : LocTheory) (HW : HWOf LT) (AI : ∀ (l : ℕ) [Fact l.
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     WachLatticeLengthLemma ((HW l).W K s LL h)
 
-def wachTheoremLocal (LT : LocTheory) (HW : HWOf LT) (AI : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (LT l))
-    (F : FonOf LT AI HW) (_C : CmpOf LT AI HW F) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
-    WachMainTheorem ((HW l).W K s LL h) (ptK LT HW h)
-
 def prop2L (LT : LocTheory) (HW : HWOf LT) (AI : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (LT l))
     (_F : FonOf LT AI HW) : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     Prop2W ((HW l).W K s LL h)
-
-def ConclusionL (LT : LocTheory) (HW : HWOf LT) (AI : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (LT l))
-    (F : FonOf LT AI HW) (_C : CmpOf LT AI HW F) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
-    ConclusionW₂ ((HW l).W K s LL h) (ptK LT HW h)
 
 variable (LT : LocTheory) (AI : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (LT l))
   (HW : HWOf LT) (Et : FonOf LT AI HW)
@@ -613,12 +533,6 @@ def p5eL : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     WachInfiniteLevelBound ((HW l).W K s LL h) ((Et l).E K s LL h).tie
 
-def PrismaticComparisonLocal : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
-    Adm1W ((HW l).W K s LL h) ((Et l).E K s LL h).tie
-
-theorem prismatic_comparison_local_holds : PrismaticComparisonLocal LT AI HW Et := fun l _ K s LL h => prismatic_comparison_holds _ _
-
 def HerrDescriptionLocal : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     Adm2W ((HW l).W K s LL h) (p1et ((HW l).W K s LL h) ((Et l).E K s LL h).tie)
@@ -626,8 +540,6 @@ def HerrDescriptionLocal : Prop :=
 end Theory
 
 section Design
-
-def P1 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := p1L D.loc HW D.locA F
 
 def P2 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := p2L D.loc HW D.locA F
 
@@ -645,8 +557,6 @@ def P8 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA
 
 def P9 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := p9L D.loc HW D.locA F
 
-def product_first_zeroth_parts (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := p10L D.loc HW D.locA F
-
 def Pr2a (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := p2aL D.loc HW D.locA F
 
 def Pr2b (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := p2bL D.loc HW D.locA F
@@ -655,54 +565,16 @@ def Pr2c (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.lo
 
 def Pr2d (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := p2dL D.loc HW D.locA F
 
-def thm1 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (C : CmpOf D.loc D.locA HW F) : Prop := wachTheoremLocal D.loc HW D.locA F C
-
 def cons (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := consL D.loc HW D.locA F
 
 def prop2 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := prop2L D.loc HW D.locA F
 
 def lem3 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := wachLengthLocal D.loc HW D.locA F
 
-def adm1 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := PrismaticComparisonLocal D.loc D.locA HW F
-
-theorem chebyshev_bounds_one_fifth (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : adm1 D HW F :=
-  prismatic_comparison_local_holds D.loc D.locA HW F
-
 def adm2 (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := HerrDescriptionLocal D.loc D.locA HW F
-
-def admitted (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := adm1 D HW F ∧ adm2 D HW F
-
-def aux₃ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (C : CmpOf D.loc D.locA HW F) : Prop :=
-  thm1 D HW F C ∧ cons D HW F ∧ prop2 D HW F ∧ lem3 D HW F
 
 def ConclusionE (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
   p1eL D.loc D.locA HW F ∧ p5eL D.loc D.locA HW F
-
-structure Pend (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) where
-  rr : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
-    RRTie ((HW l).W K s LL h) ((F l).E K s LL h).tie (D.locA l).ιA
-      ((((l : ℚ_[l]) ^ s)⁻¹) • (D.loc l).tB)
-
-def Stmt (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (C : CmpOf D.loc D.locA HW F) : Prop :=
-  admitted D HW F → aux₃ D HW F C ∧ ConclusionE D HW F
-
-theorem wach_theorem_iff_properties (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (C : CmpOf D.loc D.locA HW F) : thm1 D HW F C ↔ P1 D HW F ∧ P2 D HW F ∧ P3 D HW F C ∧ P4 D HW F C ∧
-    P5 D HW F ∧ P6 D HW F ∧ P7 D HW F ∧ P8 D HW F ∧ P9 D HW F ∧ product_first_zeroth_parts D HW F := by
-  unfold thm1 wachTheoremLocal WachMainTheorem P1 P2 P3 P4 P5 P6 P7 P8 P9 product_first_zeroth_parts p1L p2L p3L p4L p5L p6L p7L p8L p9L p10L
-  constructor
-  · intro h
-    exact ⟨fun l _ K s LL hg => (h l K s LL hg).1,
-      fun l _ K s LL hg => (h l K s LL hg).2.1,
-      fun l _ K s LL hg => (h l K s LL hg).2.2.1,
-      fun l _ K s LL hg => (h l K s LL hg).2.2.2.1,
-      fun l _ K s LL hg => (h l K s LL hg).2.2.2.2.1,
-      fun l _ K s LL hg => (h l K s LL hg).2.2.2.2.2.1,
-      fun l _ K s LL hg => (h l K s LL hg).2.2.2.2.2.2.1,
-      fun l _ K s LL hg => (h l K s LL hg).2.2.2.2.2.2.2.1,
-      fun l _ K s LL hg => (h l K s LL hg).2.2.2.2.2.2.2.2.1,
-      fun l _ K s LL hg => (h l K s LL hg).2.2.2.2.2.2.2.2.2⟩
-  · rintro ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ l _ K s LL hg
-    exact ⟨h1 l K s LL hg, h2 l K s LL hg, h3 l K s LL hg, h4 l K s LL hg, h5 l K s LL hg, h6 l K s LL hg, h7 l K s LL hg, h8 l K s LL hg, h9 l K s LL hg, h10 l K s LL hg⟩
 
 theorem herr_prop_two_iff (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : prop2 D HW F ↔ Pr2a D HW F ∧ Pr2b D HW F ∧ Pr2c D HW F ∧ Pr2d D HW F := by
   unfold prop2 prop2L Prop2W Pr2a Pr2b Pr2c Pr2d p2aL p2bL p2cL p2dL

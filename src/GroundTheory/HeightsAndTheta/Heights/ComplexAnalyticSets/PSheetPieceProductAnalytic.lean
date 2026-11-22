@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSheetPieceProductAnalytic
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StUnbranchedFibreSections
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSheetPieceProductAnalytic
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StUnbranchedFibreSections
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -178,14 +183,14 @@ theorem isBounded_prodFn {σ : Type} [Fintype σ] {X : Set (σ → ℂ)} {w : σ
   unfold prodFn
   rw [finprod_mem_eq_finite_toFinset_prod _ hsfin]
   calc ‖∏ x ∈ hsfin.toFinset, (p 0 - ℓ x)‖ ≤ ∏ x ∈ hsfin.toFinset, ‖p 0 - ℓ x‖ := Finset.norm_prod_le _ _
-    _ ≤ ∏ _x ∈ hsfin.toFinset, C := Finset.prod_le_prod (fun _ _ => norm_nonneg _) hbd
+    _ ≤ ∏ _x ∈ hsfin.toFinset, C := Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) hbd
     _ = C ^ hsfin.toFinset.card := Finset.prod_const C
     _ ≤ C ^ N := pow_le_pow_right₀ (le_max_left _ _) hcardle
 
 end SheetPieceProductAnalytic
 
-open SheetPieceProductAnalytic in
 
+open SheetPieceProductAnalytic in
 theorem SheetPieceProductAnalytic.proof (hsec : UnbranchedFibreSections.Statement) :
     SheetPieceProductAnalytic.Statement := by
   intro σ _ X w B d A D δ N U V ℓ hP hU hV hcov hdisj

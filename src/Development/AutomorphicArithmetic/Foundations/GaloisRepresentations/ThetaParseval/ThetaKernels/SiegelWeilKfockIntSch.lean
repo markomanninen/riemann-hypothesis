@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.IntSch
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.IntSch
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -33,7 +37,7 @@ theorem continuous_cmb_k : Continuous d.cmb := by
   obtain ⟨i1, -, -, -⟩ := (PositivityTheory.ThKCT.ideleTop F E).1
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [_root_.PositivityTheory.SiegelWeilFormula.KFock.cmb_eq_k]
-  exact continuous_finset_sum _ fun k _ => ((continuous_apply (i, j, k)).smul continuous_const)
+  exact continuous_finsetSum _ fun k _ => ((continuous_apply (i, j, k)).smul continuous_const)
 theorem continuous_crd_k : Continuous d.crd := by
   obtain ⟨i1, -, -, -⟩ := (PositivityTheory.ThKCT.ideleTop F E).1
   refine continuous_pi fun k => ?_

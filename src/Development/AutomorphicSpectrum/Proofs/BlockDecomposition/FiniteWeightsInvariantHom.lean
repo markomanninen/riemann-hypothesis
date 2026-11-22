@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HighestVectorsRegularLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumMemOfStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryEuclideanModelStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantIntertwinesDualStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HighestVectorsRegularLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumMemOfStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryEuclideanModelStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantIntertwinesDualStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,7 +153,7 @@ theorem exists_stable_compl (E : KMod n) (K : Submodule ℂ (E.V →L[ℂ] ℂ))
     · show e (e.symm q) ∈ Keᗮ
       simpa using hq
     · apply e.injective
-      rw [map_add, e.apply_symm_apply, hpq, ← hxp]
+      rw [map_add (f := _), e.apply_symm_apply, hpq, ← hxp]
       rfl
 
 end Dual
@@ -239,7 +243,7 @@ theorem eq_zero_of_hw : ∀ {n : ℕ} (V : Type) [NormedAddCommGroup V] [InnerPr
   obtain ⟨N, hNs, hdisj, hsum⟩ := exists_stable_compl E (LinearMap.ker t) hKs
   obtain ⟨x, hx, y, hy, hxy⟩ := hsum ξ
   have hty : t y = t ξ := by
-    rw [hxy, map_add, LinearMap.mem_ker.1 hx, zero_add]
+    rw [hxy, map_add (f := _), LinearMap.mem_ker.1 hx, zero_add]
   have hyw : y ∈ wtDual E μ := by
     intro k z hk
     have h1 := hξ k z hk

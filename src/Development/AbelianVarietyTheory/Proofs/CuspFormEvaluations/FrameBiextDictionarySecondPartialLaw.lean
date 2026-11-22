@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubicalLawRight
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBGen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.LevelFrameOfLaws
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullFEPf
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FormalPointSubstitutionSeriesValueAtTwoPoints
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubicalLawRight
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.LevelFrameOfLaws
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullFEPf
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FormalPointSubstitutionSeriesValueAtTwoPoints
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,12 +124,12 @@ section Dict
 variable {G : FGLaw S d} {A : Germ.OAct (𝓞 E) G} {κ : Type} [Fintype κ] {tg : κ → (Sp (DualNumber S) ⟶ t.G.left)}
   {uvec : κ → Fin d → S} {x} (hc : IsChartG t x0 d G.F A.act tg uvec x)
 
-variable (G) in
 
+variable (G) in
 abbrev FQ : Q S d 2 := ⟨G.F, G.const⟩
 
-variable (A) in
 
+variable (A) in
 abbrev AQ (a : 𝓞 E) : Q S d 1 := ⟨A.act a, A.const a⟩
 
 include hc
@@ -208,7 +212,35 @@ theorem frame_biext_dictionary_second_partial_law (u v w : Q S d n) : VV m y (E3
     (ee x e y J u (op (FQ G) v w))⁻¹ * ee x e y J u v * ee x e y J u w).val := by
   obtain ⟨U, hU, h⟩ := hf.ph2 m
   have hc := gm_unit (y := y) U ![u, v, w]
-  have C := isCub_cubV t.cub hJ
+  have C : IsCub (cubV t.cub y J) := by
+    constructor
+    · intro x y
+      have e := val_corr hJ (t.cub.face 0) (lift x y).left
+      rw [val_one] at e
+      refine Eq.trans ?_ e
+      refine Eq.trans ?_ (val_cub t.cub (lift x y) hJ (pzero t.G _) (x2 t.G 0) (x2 t.G 1)).symm
+      congr 1 <;> simp [x2, pzero, Hom.one_def]
+    · intro x y w
+      have e := (val_corr hJ t.cub.cubeSymmetric_swap_first (lift x (lift y w)).left).trans (val_cub t.cub (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans e ?_
+      congr 1 <;> simp [x3]
+    · intro x y w
+      have e := (val_corr hJ t.cub.cubeSymmetric_swap_last (lift x (lift y w)).left).trans (val_cub t.cub (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans e ?_
+      congr 1 <;> simp [x3]
+    · intro x x' x'' y
+      have e₀ := val_corr hJ t.cub.cocycle (lift x (lift x' (lift x'' y))).left
+      have e := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub t.cub _ hJ _ _ _) (val_cub t.cub _ hJ _ _ _))).symm.trans
+        (e₀.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub t.cub _ hJ _ _ _) (val_cub t.cub _ hJ _ _ _))))
+      have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 t.G 0 = x := by simp [x4]
+      have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 t.G 1 = x' := by simp [x4]
+      have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 t.G 2 = x'' := by simp [x4]
+      have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 t.G 3 = y := by simp [x4]
+      have b₀ : lift x (lift x' (lift x'' y)) ≫ padd t.G (x4 t.G 0) (x4 t.G 1) = x * x' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+      have b₁ : lift x (lift x' (lift x'' y)) ≫ padd t.G (x4 t.G 1) (x4 t.G 2) = x' * x'' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+      rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e
   have e₀ := val_peG x hJ e ![u, v, w] ![fun j => MvPolynomial.X ((0 : Fin 3), j), fun j => psIn d m ![1, 2] (G.F j)] (gen 0) (op (FQ G) (gen 1) (gen 2))
     (by rintro ⟨l, j⟩; fin_cases l; exacts [hX 0 j, hF 1 2 j])
     (by rintro ⟨l, j⟩; fin_cases l; exacts [MvPolynomial.constantCoeff_X _ _, (cc_psIn d m _ _).trans (G.const j)])
@@ -314,6 +346,37 @@ end Law
 set_option maxHeartbeats 4000000 in
 theorem fbId : FBIdSt := by
   intro E _ _ _ H X0 t hPow _ hs S _ x0 d G A κ _ tg uvec x e ph1 ph2 sy ad hc hf ha had
+  have localCub : ∀ {T : Over X0} {z : T.left} {J : (T.left ⟶ t.G.left) → t.PP.L.ι},
+      Good t.PP.L z J → IsCub (cubV t.cub z J) := by
+    intro T z J hJ
+    constructor
+    · intro x y
+      have e := val_corr hJ (t.cub.face 0) (lift x y).left
+      rw [val_one] at e
+      refine Eq.trans ?_ e
+      refine Eq.trans ?_ (val_cub t.cub (lift x y) hJ (pzero t.G _) (x2 t.G 0) (x2 t.G 1)).symm
+      congr 1 <;> simp [x2, pzero, Hom.one_def]
+    · intro x y w
+      have e := (val_corr hJ t.cub.cubeSymmetric_swap_first (lift x (lift y w)).left).trans (val_cub t.cub (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans e ?_
+      congr 1 <;> simp [x3]
+    · intro x y w
+      have e := (val_corr hJ t.cub.cubeSymmetric_swap_last (lift x (lift y w)).left).trans (val_cub t.cub (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans e ?_
+      congr 1 <;> simp [x3]
+    · intro x x' x'' y
+      have e₀ := val_corr hJ t.cub.cocycle (lift x (lift x' (lift x'' y))).left
+      have e := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub t.cub _ hJ _ _ _) (val_cub t.cub _ hJ _ _ _))).symm.trans
+        (e₀.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub t.cub _ hJ _ _ _) (val_cub t.cub _ hJ _ _ _))))
+      have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 t.G 0 = x := by simp [x4]
+      have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 t.G 1 = x' := by simp [x4]
+      have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 t.G 2 = x'' := by simp [x4]
+      have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 t.G 3 = y := by simp [x4]
+      have b₀ : lift x (lift x' (lift x'' y)) ≫ padd t.G (x4 t.G 0) (x4 t.G 1) = x * x' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+      have b₁ : lift x (lift x' (lift x'' y)) ≫ padd t.G (x4 t.G 1) (x4 t.G 2) = x' * x'' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+      rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e
   have hL := t.PP.isLB
   have hp := (hPow 3).2
   have := t.act.hom
@@ -349,7 +412,7 @@ theorem fbId : FBIdSt := by
   have op0' : ∀ {n} (u : Q S d n), op (FQ G) u 0 = u := fun u => by rw [opc, op0]
   refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩⟩
   · have : E3 ph1 (0 : Q S d 2) (gen 0) (gen 1) = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -358,7 +421,7 @@ theorem fbId : FBIdSt := by
       abel
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E3 ph1 (gen 0 : Q S d 2) 0 (gen 1) = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -367,7 +430,7 @@ theorem fbId : FBIdSt := by
       abel
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E3 ph1 (gen 0 : Q S d 2) (gen 1) 0 = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -376,7 +439,7 @@ theorem fbId : FBIdSt := by
       abel
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E3 ph2 (0 : Q S d 2) (gen 0) (gen 1) = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -385,7 +448,7 @@ theorem fbId : FBIdSt := by
       abel
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E3 ph2 (gen 0 : Q S d 2) 0 (gen 1) = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -394,7 +457,7 @@ theorem fbId : FBIdSt := by
       abel
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E3 ph2 (gen 0 : Q S d 2) (gen 1) 0 = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -403,7 +466,7 @@ theorem fbId : FBIdSt := by
       abel
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E2 sy (0 : Q S d 1) (gen 0) = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -412,7 +475,7 @@ theorem fbId : FBIdSt := by
       abel
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E2 sy (gen 0 : Q S d 1) 0 = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -423,7 +486,7 @@ theorem fbId : FBIdSt := by
   · exact had
   · intro a
     have : E2 (ad a) (0 : Q S d 1) (gen 0) = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (cubical_law_left t.cub hp t.act wL hw hW hJ (h1 hJ) a 1 1 (PP m x (gen 0)))
@@ -434,7 +497,7 @@ theorem fbId : FBIdSt := by
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · intro a
     have : E2 (ad a) (gen 0 : Q S d 1) 0 = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (cubical_law_right t.cub hp t.act wL hw hW hJ (h1 hJ) a (PP m x (gen 0)) 1 1)
@@ -444,7 +507,7 @@ theorem fbId : FBIdSt := by
       linear_combination (norm := abel) -f0
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E3 ph1 (gen 0 : Q S d 4) (gen 1) (gen 3) * E3 ph1 (op (FQ G) (gen 0) (gen 1)) (gen 2) (gen 3) = E3 ph1 (gen 1) (gen 2) (gen 3) * E3 ph1 (gen 0) (op (FQ G) (gen 1) (gen 2)) (gen 3) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (C.coc (PP m x (gen 0)) (PP m x (gen 1)) (PP m x (gen 2)) (PP m x (gen 3)))
@@ -453,7 +516,7 @@ theorem fbId : FBIdSt := by
       linear_combination (norm := abel) f0
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E3 ph1 (gen 1) (gen 0 : Q S d 3) (gen 2) = E3 ph1 (gen 0) (gen 1) (gen 2) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (C.s01 (PP m x (gen 1)) (PP m x (gen 0)) (PP m x (gen 2)))
@@ -463,7 +526,7 @@ theorem fbId : FBIdSt := by
       linear_combination (norm := abel) f0
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero, g3] using this
   · have : E3 ph2 (gen 0 : Q S d 4) (gen 1) (gen 2) * E3 ph2 (gen 0) (op (FQ G) (gen 1) (gen 2)) (gen 3) = E3 ph2 (gen 0) (gen 2) (gen 3) * E3 ph2 (gen 0) (gen 1) (op (FQ G) (gen 2) (gen 3)) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (C.coc (PP m x (gen 1)) (PP m x (gen 2)) (PP m x (gen 3)) (PP m x (gen 0)))
@@ -473,7 +536,7 @@ theorem fbId : FBIdSt := by
       linear_combination (norm := abel) f0
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E3 ph2 (gen 0 : Q S d 3) (gen 2) (gen 1) = E3 ph2 (gen 0) (gen 1) (gen 2) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (C.s12 (PP m x (gen 0)) (PP m x (gen 2)) (PP m x (gen 1)))
@@ -483,7 +546,7 @@ theorem fbId : FBIdSt := by
       linear_combination (norm := abel) f0
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero, g3] using this
   · have : E3 ph1 (gen 0 : Q S d 4) (gen 1) (gen 2) * E3 ph1 (gen 0) (gen 1) (gen 3) * E3 ph2 (op (FQ G) (gen 0) (gen 1)) (gen 2) (gen 3) = E3 ph2 (gen 0) (gen 2) (gen 3) * E3 ph2 (gen 1) (gen 2) (gen 3) * E3 ph1 (gen 0) (gen 1) (op (FQ G) (gen 2) (gen 3)) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (C.compat (PP m x (gen 0)) (PP m x (gen 1)) (PP m x (gen 2)) (PP m x (gen 3)))
@@ -492,7 +555,7 @@ theorem fbId : FBIdSt := by
       linear_combination (norm := abel) f0
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E2 sy (gen 0 : Q S d 2) (gen 1) * E2 sy (gen 1) (gen 0) = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
 
@@ -501,7 +564,7 @@ theorem fbId : FBIdSt := by
       abel
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero, g2] using this
   · have : E3 ph2 (gen 0 : Q S d 3) (gen 1) (gen 2) * E2 sy (gen 0) (gen 1) * E2 sy (gen 0) (gen 2) = E2 sy (gen 0) (op (FQ G) (gen 1) (gen 2)) * E3 ph1 (gen 1) (gen 2) (gen 0) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul ((C.s01 (PP m x (gen 0)) (PP m x (gen 1)) (PP m x (gen 2))).trans (C.s12 _ _ _))
@@ -511,7 +574,7 @@ theorem fbId : FBIdSt := by
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero, g3] using this
   · intro a
     have : E3 ph1 (ac (AQ A a) (gen 0 : Q S d 3)) (ac (AQ A a) (gen 1)) (gen 2) * E2 (ad a) (op (FQ G) (gen 0) (gen 1)) (gen 2) = E2 (ad a) (gen 0) (gen 2) * E2 (ad a) (gen 1) (gen 2) * E3 ph1 (gen 0) (gen 1) (ac (AQ A (star a)) (gen 2)) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (cubical_law_left t.cub hp t.act wL hw hW hJ (h1 hJ) a (PP m x (gen 0)) (PP m x (gen 1)) (PP m x (gen 2)))
@@ -521,7 +584,7 @@ theorem fbId : FBIdSt := by
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · intro a
     have : E3 ph2 (ac (AQ A a) (gen 0 : Q S d 3)) (gen 1) (gen 2) * E2 (ad a) (gen 0) (op (FQ G) (gen 1) (gen 2)) = E2 (ad a) (gen 0) (gen 1) * E2 (ad a) (gen 0) (gen 2) * E3 ph2 (gen 0) (ac (AQ A (star a)) (gen 1)) (ac (AQ A (star a)) (gen 2)) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (cubical_law_right t.cub hp t.act wL hw hW hJ (h1 hJ) a (PP m x (gen 0)) (PP m x (gen 1)) (PP m x (gen 2)))
@@ -530,7 +593,7 @@ theorem fbId : FBIdSt := by
       linear_combination (norm := abel) f0
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero] using this
   · have : E2 (ad 1) (gen 0 : Q S d 2) (gen 1) = 1 := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (adv_one t.cub hp t.act wL hw hW hJ (h1 hJ) (PP m x (gen 0)) (PP m x (gen 1)))
@@ -540,7 +603,7 @@ theorem fbId : FBIdSt := by
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero, g2] using this
   · intro a b
     have : E2 (ad (a * b)) (gen 0 : Q S d 2) (gen 1) = E2 (ad a) (ac (AQ A b) (gen 0)) (gen 1) * E2 (ad b) (gen 0) (ac (AQ A (star a)) (gen 1)) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (adv_mul t.cub hp t.act wL hw hW hJ (h1 hJ) a b (PP m x (gen 0)) (PP m x (gen 0)) (PP m x (gen 1)))
@@ -550,7 +613,7 @@ theorem fbId : FBIdSt := by
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero, g2] using this
   · intro a b
     have : E3 ph1 (ac (AQ A a) (gen 0 : Q S d 2)) (ac (AQ A b) (gen 0)) (gen 1) * E2 (ad (a + b)) (gen 0) (gen 1) = E2 (ad a) (gen 0) (gen 1) * E2 (ad b) (gen 0) (gen 1) * E3 ph2 (gen 0) (ac (AQ A (star a)) (gen 1)) (ac (AQ A (star b)) (gen 1)) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (adv_add t.cub hp t.act wL hw hW hJ (h1 hJ) a b (PP m x (gen 0)) (PP m x (gen 0)) (PP m x (gen 1)))
@@ -560,7 +623,7 @@ theorem fbId : FBIdSt := by
     simpa only [formalSeriesValueAtTwoPoints_eq_ev, formalSeriesValueAtThreePoints_eq_ev, op_val, ac_val, gen_val, ZeroMemClass.coe_zero, g2] using this
   · intro a
     have : E2 (ad a) (gen 0 : Q S d 2) (gen 1) * E2 (ad (star a)) (gen 1) (gen 0) * E2 sy (ac (AQ A a) (gen 0)) (gen 1) = E2 sy (gen 0) (ac (AQ A (star a)) (gen 1)) := VV_ext hL fun m y J hJ => by
-      have C := isCub_cubV t.cub (T := jOG x0 d m _) hJ
+      have C := localCub (T := jOG x0 d m _) hJ
       simp only [VV_mul, VV_one, frame_biext_dictionary_first_partial_law hJ hf, frame_biext_dictionary_second_partial_law hJ hf, dict_sy hJ hf, dA hJ, ← Units.val_mul]
       refine (congrArg Units.val (Additive.ofMul.injective ?_)).trans (by first | exact Units.val_one | rfl)
       have f0 := congrArg Additive.ofMul (adv_sy t.cub hp t.act wL hw hW hJ (h1 hJ) a (PP m x (gen 0)) (PP m x (gen 0)) (PP m x (gen 1)))

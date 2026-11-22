@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KvFintype
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KvFintype
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -50,7 +55,7 @@ theorem main : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (v : Pl D), GoodPsi
   set f : Ov D v → ℂ := fun c => psiV D.host.F ψ v (((w⁻¹ : (Lv D v)ˣ) : Lv D v) * algebraMap (Ov D v) (Lv D v) c) with hf
   have hadd : ∀ a b, f (a + b) = f a * f b := by
     intro a b
-    simp only [hf, map_add, mul_add]
+    simp only [hf, map_add (f := _), mul_add]
     exact local_component_additive_character_add ψ v _ _
   have hker : ∀ d, f (ϖ * d) = 1 := by
     intro d
@@ -78,7 +83,7 @@ theorem main : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (v : Pl D), GoodPsi
         intro z z'
         show f (g (z + z')) = f (g z) * f (g z')
         rw [← hadd]
-        exact hwd _ _ (by rw [hg, map_add, hg, hg]) }
+        exact hwd _ _ (by rw [hg, map_add (f := _), hg, hg]) }
   have hψ₀ : ∀ c, ψ₀ (IsLocalRing.residue (Ov D v) c) = f c := fun c => by
     show f (g _) = f c
     exact hwd _ _ (hg _)

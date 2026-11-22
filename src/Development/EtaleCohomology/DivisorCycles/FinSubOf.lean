@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCount
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCount
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div
 
@@ -15,7 +19,7 @@ theorem pow_tw (X : Matrix (Fin N) (Fin N) K) (Y : Matrix (Fin n) (Fin n) K) (T 
 theorem aeval_tw (X : Matrix (Fin N) (Fin N) K) (Y : Matrix (Fin n) (Fin n) K) (T : Matrix (Fin N) (Fin n) K)
     (h : X * T = T * Y) (q : Polynomial K) : Polynomial.aeval X q * T = T * Polynomial.aeval Y q := by
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, Matrix.add_mul, Matrix.mul_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), Matrix.add_mul, Matrix.mul_add, hp, hq]
   | monomial k c =>
     rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, Algebra.algebraMap_eq_smul_one,
       Algebra.algebraMap_eq_smul_one, smul_mul_assoc, smul_mul_assoc, one_mul, one_mul, Matrix.smul_mul,

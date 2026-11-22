@@ -1,7 +1,11 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.PCuspFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.GlobFixed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.PCuspFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.GlobFixed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Matrix UpperTheory.V UpperTheory.V.Af UpperTheory.V.Af.GlobalFixedVectors UpperTheory.V.Sd
 open Neutral.B1 Formalism.L2.Host UpperTheory.V.Base
@@ -20,7 +24,7 @@ theorem exists_rep {K ι A : Type} [Group K] [TopologicalSpace K] [IsTopological
       smul_mem' := fun c f hf => ⟨hf.1.const_smul c, fun x a => by simp [hf.2, mul_left_comm]⟩ }
   haveI : FiniteDimensional ℂ V := by
     refine Module.Finite.of_injective ((LinearMap.funLeft ℂ ℂ e).comp V.subtype) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro f hf
     ext x
     obtain ⟨i, a, rfl⟩ := h x
@@ -172,7 +176,8 @@ theorem rot_eig (φ : TR.Sm F 2) (z : InfinitePlace F → ℂ) (h : ∀ v, TR.Eo
     ext i j u
     fin_cases i <;> fin_cases j <;> simp [X, Finset.sum_apply, Pi.single_apply]
   have hL : TR.lie F 2 X φ = μ • φ := by
-    rw [hX, map_sum, LinearMap.sum_apply, hμ, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hX, map_sum, LinearMap.sum_apply, hμ, Finset.sum_smul]
     refine Finset.sum_congr rfl fun v _ => ?_
     rw [map_smul, map_sub, LinearMap.smul_apply, LinearMap.sub_apply, mul_comm, mul_smul, Complex.coe_smul, ← h v]
     simp only [TR.Eop]

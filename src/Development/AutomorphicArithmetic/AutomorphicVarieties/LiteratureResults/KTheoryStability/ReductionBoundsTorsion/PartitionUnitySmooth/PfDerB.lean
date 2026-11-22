@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.QuadBd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.QuadBd
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem pf_DerB : DerB := by
   have hcl : Cl (K * t) p (p + t • u) := by
     intro z
     have e : qR (p + t • u) z = qR p z + t * qR u z := by
-      rw [← evR_apply, map_add, map_smul, evR_apply, evR_apply, smul_eq_mul]
+      rw [← evR_apply, map_add (f := _), map_smul, evR_apply, evR_apply, smul_eq_mul]
     rw [e, add_sub_cancel_left, abs_mul, abs_of_pos ht0]
     have := d_key x v z
     rw [← hu, ← hp] at this

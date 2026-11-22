@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalPrimitiveFrame.StepsTop
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalPrimitiveFrame.StepsTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem DiffLoc_span_le (Q : Submodule (v.adicCompletionIntegers F) (Fv F v ⊗[
   induction hx using Submodule.span_induction with
   | mem x hx => exact hT x hx
   | zero => rw [SetLike.mem_coe, map_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [SetLike.mem_coe, map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [SetLike.mem_coe, map_add (f := _)]; exact add_mem hx hy
   | smul o x _ hx => rw [SetLike.mem_coe, Algebra.smul_def, map_mul]; exact hQ o _ hx
 
 theorem DiffLoc_frac_closed (I : FractionalIdeal (nonZeroDivisors (𝓞 E)) E) :
@@ -147,7 +151,7 @@ theorem DiffLoc_exists : ∃ d, IsDiffVal v d := by
 theorem DiffLoc_isDiffVal : IsDiffVal v (dV v) := by
   have h := DiffLoc_exists v
   unfold dV
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem DiffLoc_sc_eq (x : Fv F v) : sc (E := E) v x = algebraMap (Fv F v) (Fv F v ⊗[F] E) x := rfl

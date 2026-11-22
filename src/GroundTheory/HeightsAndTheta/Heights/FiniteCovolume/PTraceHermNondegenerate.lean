@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StTraceHermNondegenerate
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StTraceHermNondegenerate
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -9,8 +13,8 @@ variable {F E : Type*} [Field F] [Field E] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem HermitianForm.eq_zero_of_toSesq_eq_zero (h : HermitianForm F E W) {x : W}
     (hx : ∀ w, h.toSesq x w = 0) : x = 0 := by
   apply h.nonsingular.1

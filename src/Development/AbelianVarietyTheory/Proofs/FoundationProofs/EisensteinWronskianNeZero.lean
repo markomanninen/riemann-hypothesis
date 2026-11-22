@@ -1,15 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIndexOfGammaLe
-import ReciprocityTheory.DualLattices.HasSumNormalizedDeriv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIndexOfGammaLe
+public import ReciprocityTheory.DualLattices.HasSumNormalizedDeriv
+
+@[expose] public section
 
 open UpperHalfPlane hiding I
 open Complex ModularForm ModularFormClass MatrixGroups Function Filter EisensteinSeries
-open scoped Real Manifold Topology ModularForm
+open scoped Real Manifold Topology ModularForm Derivative
 
 namespace GlobalTheory.EisWronskian
 
 local notation "𝕢" => Periodic.qParam
-local notation "D" => Derivative.normalizedDerivOfComplex
 
 private lemma qParam_add_one (z : ℂ) : 𝕢 1 (z + 1) = 𝕢 1 z := by
   simp only [Periodic.qParam, Complex.ofReal_one, div_one, mul_add, mul_one, Complex.exp_add,

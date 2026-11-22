@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.GalOfKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.GalOfKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
+
+@[expose] public section
 
 set_option autoImplicit false
 

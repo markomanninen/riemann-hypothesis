@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCoreDef
-import Formalism.SharpRestriction.GrowthBounds.PolBridge
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCoreDef
+public import Formalism.SharpRestriction.GrowthBounds.PolBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem HomW.mul {φ : MonH X →+ ℕ} {d d' : ℕ} {P Q : RHH O X} (hP : HomW 
   classical
   intro m hm
   obtain ⟨a, ha, b, hb, rfl⟩ := Finset.mem_add.mp (support_mul P Q hm)
-  rw [map_add, hP a ha, hQ b hb]
+  rw [map_add (f := _), hP a ha, hQ b hb]
 
 theorem HomW.one (φ : MonH X →+ ℕ) : HomW φ 0 (1 : RHH O X) := by
   classical
@@ -86,8 +90,8 @@ theorem hom_total (φ : MonH X →+ ℕ) {κ : Type} [Fintype κ] (sg : κ → R
 
 end Hom
 
-open Formalism.MainNotions.G.PolBridge Formalism.MainNotions.G.GLWeightTheory in
 
+open Formalism.MainNotions.G.PolBridge Formalism.MainNotions.G.GLWeightTheory in
 theorem ycond_factor (D : Formalism.BasicNotions.D7) {K : Type} [Field K] [CharZero K] {N r : ℕ} [NeZero r] (LL : ChainLetters N) (jj : ℕ)
     (M : WithTop ℤ) (Gu Gr : MvPolynomial (Fin N × Fin r) K) (dr : Fin N → ℕ) (hr : Gr ∈ Pol K r dr) (hne : Gr ≠ 0)
     (h : Gu * Gr ∈ YCond K (r := r) LL jj M) (cov : ℕ) (hcov : ∑ i, (if LL.vec i then 0 else dr i) ≤ cov) :

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct
 
@@ -24,7 +28,7 @@ theorem one_tmul_mem_nonZeroDivisors_of_flat (O A B : Type*) [CommRing O] [CommR
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a c => simp [Algebra.TensorProduct.tmul_mul_tmul]
-    | add x y hx hy => rw [map_add, hx, hy, add_mul]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, add_mul]
   rw [mem_nonZeroDivisors_iff_right]
   intro x hx
   exact hinj (by rw [key, map_zero, hx])
@@ -39,7 +43,7 @@ theorem tmul_one_mem_nonZeroDivisors_of_flat (O A B : Type*) [CommRing O] [CommR
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul c d => simp [Algebra.TensorProduct.tmul_mul_tmul]
-    | add x y hx hy => rw [map_add, hx, hy, add_mul]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, add_mul]
   rw [mem_nonZeroDivisors_iff_right]
   intro x hx
   exact hinj (by rw [key, map_zero, hx])
@@ -86,7 +90,7 @@ theorem exists_integral_point_of_complete_case :
   haveI : P.IsPrime := hPmin.isPrime
   haveI : IsDomain (O' ⊗[O] B ⧸ P) := Ideal.Quotient.isDomain P
   have hinj : Function.Injective (algebraMap O' (O' ⊗[O] B ⧸ P)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     by_contra ha0
     have ha' : Ideal.Quotient.mk P (a ⊗ₜ[O] (1 : B)) = 0 := ha

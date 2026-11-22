@@ -1,8 +1,12 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.SubquotientNontrivial
-import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.SobApproxHolds
-import Formalism.LocalToGlobal.IndefiniteReal.SmExpSmulContDiff
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CasScalar
-import CompanionTheory.AutomorphicTheory.HarishChandraMultiplicity.HCMult
+module
+
+public import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.SobApproxHolds
+public import Formalism.LocalToGlobal.IndefiniteReal.SmExpSmulContDiff
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Smooth
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.WeylBridge
+
+@[expose] public section
 
 open Matrix Topology Filter
 open scoped InnerProductSpace ComplexOrder
@@ -40,10 +44,8 @@ theorem isGRep_A (hσ : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.
   ⟨hσ.1.1, hσ.1.2, hσ.2.1, hσ.2.2⟩
 
 theorem cartan_A : Formalism.IndefR.Datum.IsCartanInv (Formalism.REAL.Jm ε) (Formalism.REAL.Jm ε) := by
-  have h2 : Formalism.REAL.Jm ε * Formalism.REAL.Jm ε = 1 := by
-    rw [Formalism.REAL.Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1; funext a; split_ifs <;> norm_num
-  have hh : (Formalism.REAL.Jm ε)ᴴ = Formalism.REAL.Jm ε := Jm_conjTranspose_self
+  have h2 : Formalism.REAL.Jm ε * Formalism.REAL.Jm ε = 1 := Jm_mul_Jm ε
+  have hh : (Formalism.REAL.Jm ε)ᴴ = Formalism.REAL.Jm ε := Jm_conjTranspose ε
   refine ⟨h2, ?_, ?_⟩
   · rw [hh, h2, Matrix.one_mul]
   · rw [h2]; exact Matrix.PosDef.one
@@ -51,7 +53,7 @@ theorem cartan_A : Formalism.IndefR.Datum.IsCartanInv (Formalism.REAL.Jm ε) (Fo
 theorem kfin_of_kfinG_A {a : H}
     (h : Formalism.IndefR.Tow.SobPf.KFinG (Formalism.REAL.Jm ε) (Formalism.REAL.Jm ε) σ a) : Formalism.MainNotions.S.IsKFin ε σ a := by
   obtain ⟨W, hW, haW, hst⟩ := h
-  refine ⟨W, hW, haW, fun g hg x hx => hst g ⟨mem_UJset_of_mem_kset hg, hg.2⟩ x hx⟩
+  exact ⟨W, hW, haW, fun g hg x hx => hst g ⟨HW.hw_kset_subset ε hg, hg.2⟩ x hx⟩
 
 theorem exists_kfin_near_A [CompleteSpace H] (hσ : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.UJset ε) σ) {w : H}
     (hw : w ∈ smD ε σ) {δ : ℝ} (hδ : 0 < δ) : ∃ a : H, Formalism.MainNotions.S.IsKFin ε σ a ∧ ‖a - w‖ < δ := by
@@ -77,7 +79,7 @@ theorem eq_zero_of_perp_A [CompleteSpace H] (hσ : Formalism.MainNotions.S.IsURe
 theorem casimir_symm_A (hσ : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.UJset ε) σ) (x y : smD ε σ) :
     ⟪casimir (smE ε σ) x, y⟫_ℂ = ⟪x, casimir (smE ε σ) y⟫_ℂ := by
   have hU := isInfUnitary_of_isDerivedOn hσ (isDerivedOn_smE hσ)
-  simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, sum_inner, inner_sum]
+  simp only [casimir, LinearMap.sum_apply, mul_apply_eq_comp, sum_inner, inner_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [hU, hU, ← mul_assoc]
   have : adjSign ε a b * adjSign ε b a = 1 := by

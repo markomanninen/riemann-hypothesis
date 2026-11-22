@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SplitRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SplitRep
+
+@[expose] public section
+
 open Formalism.ConjugateSelfDual Formalism.MainNotions.N Polynomial
 
 namespace GlobalTheory
@@ -34,10 +39,12 @@ theorem matrix_system_nonzero_solution_descends {k L Γ : Type} [Field k] [Field
   · intro g
     ext i j
     have := congrArg φ (congrFun (congrFun (hAB g) i) j)
-    simpa only [Matrix.mul_apply, Matrix.map_apply, map_sum, key, key'] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [Matrix.mul_apply, Matrix.map_apply, map_sum, key, key'] using this
   · ext i j
     have := congrArg φ (congrFun (congrFun hQ i) j)
-    simpa only [Matrix.mul_apply, Matrix.map_apply, map_sum, key, Matrix.zero_apply, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [Matrix.mul_apply, Matrix.map_apply, map_sum, key, Matrix.zero_apply, map_zero]
       using this
 
 end GlobalTheory

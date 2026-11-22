@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.HeckeExpl
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.HeckeExpl
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -25,7 +29,7 @@ private lemma dL_nL {K : Type} [Field K] [NumberField K] {v : P K} (a : (Kv v)ˣ
   fin_cases i <;> fin_cases j <;> simp [dL, nL, Matrix.mul_apply, Fin.sum_univ_two]
 
 private lemma nL_mem {K : Type} [Field K] [NumberField K] {v : P K} {c : Kv v} (hc : IsInt c) :
-    nL c ∈ GlobalTheory.LFun.KGL v 2 := by
+    nL c ∈ GlobalTheory.LFun.KGL v (n := 2) := by
   have hc' : c ∈ v.adicCompletionIntegers K := hc
   have hn : -c ∈ v.adicCompletionIntegers K := neg_mem hc'
   rw [GlobalTheory.LFun.KGL, GlobalTheory.AdelicU.mem_GLint_iff]

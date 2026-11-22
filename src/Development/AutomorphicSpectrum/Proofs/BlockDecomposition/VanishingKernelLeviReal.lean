@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.InjectiveDecompositionAction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPermOfMapEq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.InjectiveDecompositionAction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPermOfMapEq
+
+@[expose] public section
 
 open Finset
 
@@ -206,7 +210,8 @@ theorem bdL_isK (E1 E2 : Fin n → Fin n → Module.End ℂ V) :
 theorem frC_bd (B : Finset (Lt n)) (E1 E2 : Fin n → Fin n → Module.End ℂ V) (y : Cn n V) :
     frC B (bd (allT n) (kA E1 E2) y) = bdL isK E1 E2 (frC B y) := by
   rw [bdL_isK]
-  simp only [bd, cpt, true_and, if_true, LinearMap.add_apply, LinearMap.sum_apply, map_add, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [bd, cpt, true_and, if_true, LinearMap.add_apply, LinearMap.sum_apply, map_add (f := _), map_sum,
     Module.End.mul_apply]
   congr 1
   · refine Finset.sum_congr rfl fun i _ => ?_
@@ -304,8 +309,8 @@ theorem isN2_of_gelfand_values_eq (lam : Fin n → ℤ) (lev : Fin n → ℕ) (B
     rw [h1]
     ring
 
-open CompanionTheory.D.LK (LocFin) in
 
+open CompanionTheory.D.LK (LocFin) in
 theorem van_cn {lam : Fin n → ℤ} {lev : Fin n → ℕ} {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
     {E1 E2 : Fin n → Fin n → Module.End ℂ V} (h : AdmFor lam lev E1 E2) (B : Finset (Fin n × Fin n)) (hB : B.Nonempty)
     (hBl : ∀ p ∈ B, lev p.1 < lev p.2) (j : ℕ) (z : Cn n V) (hz : Sup (allT n) ∅ j z)

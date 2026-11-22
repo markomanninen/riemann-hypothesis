@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalSpanTwo
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.Inhabit
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalSpanTwo
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

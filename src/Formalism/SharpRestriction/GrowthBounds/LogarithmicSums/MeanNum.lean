@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.SlopeEstimateOfLemmaBSlopeLine
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.SlopeEstimateOfLemmaBSlopeLine
+
+@[expose] public section
 
 noncomputable section
 
@@ -344,8 +348,6 @@ theorem big_le_b' (s : Scale) (n : ℕ) (u : ℝ) (h : n * Real.log s.x + u + s.
   rw [this, ← Real.exp_add]
   exact Real.exp_le_exp.2 (by linarith)
 
-theorem rpow_nat_lit (x : ℝ) (n : ℕ) : x ^ ((n : ℕ) : ℝ) = x ^ n := Real.rpow_natCast x n
-
 theorem parameter_product_le_arith (x k Y2 Yb N La la X' : ℝ) (hx : 2 ≤ x) (hk0 : 0 ≤ k) (hYb0 : 0 ≤ Yb) (hN0 : 0 ≤ N) (hLa0 : 0 ≤ La)
     (hla0 : 0 ≤ la) (hk : k ≤ x ^ 6) (hY2 : Y2 = x ^ 26) (hYb : Yb ≤ x) (hN : N ≤ x ^ 3) (hLa : La ≤ x) (hla : la ≤ 2 * x)
     (hX : x ^ 39 ≤ X') : k * Y2 * Yb * N * La * la ≤ X' := by
@@ -411,8 +413,8 @@ theorem ord_le_n (D : D7) (h : HH D) : addOrderOf h ≤ D.R.n := by
   have := addOrderOf_le_card_univ (x := h)
   rwa [Formalism.HC.Frame.card_A] at this
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem restHypI_ev (eps : ℝ) (K : Consts) (hK : K.Nonneg) (Cm C31 : ℝ) :
     ∀ᶠ x : ℝ in atTop, ∀ (D : D7) (L : SizeData₂ D) (X : Inst D L), L.sc.x = x → L.sc.eps = eps → TypePrimeSizeConds D L K →
       adm5 D L K (eps / 48) → ArchimedeanSignatureMatching D L K → adm1 D L X C31 → NumMean D L K Cm → RestHypI X K := by

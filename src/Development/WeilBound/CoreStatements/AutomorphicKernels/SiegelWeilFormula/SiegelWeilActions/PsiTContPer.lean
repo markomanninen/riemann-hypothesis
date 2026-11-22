@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PadZeroMemNilradical
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ParabolicUnipotents
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PadZeroMemNilradical
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ParabolicUnipotents
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem psiT_cont_per (T' : nF σ L.Y L.b) :
       IsModuleTopology.continuous_of_linearMap (Algebra.trace (AF F) (AE F E))
     exact hstd.1.comp (htr.comp ((continuous_const.matrix_mul continuous_subtype_val).matrix_trace)).neg
   · have h1 := kunf.psi_rat hstd T' ⟨β₀, h₀⟩
-    rw [AddSubgroup.coe_add, Matrix.mul_add, Matrix.trace_add, map_add, neg_add, AddChar.map_add_eq_mul,
+    rw [AddSubgroup.coe_add, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add, AddChar.map_add_eq_mul,
       AddChar.map_neg_eq_inv, h1, inv_one, one_mul]
 
 theorem firstEq_of : AbsConv → FirstEq := by

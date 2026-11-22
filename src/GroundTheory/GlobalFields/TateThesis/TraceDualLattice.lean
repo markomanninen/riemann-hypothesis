@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.TraceFourier
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.TraceFourier
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

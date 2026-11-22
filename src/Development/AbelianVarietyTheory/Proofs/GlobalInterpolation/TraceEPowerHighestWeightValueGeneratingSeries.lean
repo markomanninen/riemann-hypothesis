@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.GoodTopBot
-import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.WeylDualWeylLatticesAgreeOfLowestAlcove
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.GoodTopBot
+public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.WeylDualWeylLatticesAgreeOfLowestAlcove
+
+@[expose] public section
+
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BasicNotions GlobalTheory.Alc
 
 namespace GlobalTheory.Alc
@@ -39,7 +44,8 @@ theorem hcRowSeries_eq (R : Type) [CommRing R] (N : ℕ) (μ : Fin N → R) (i :
   cases n with
   | zero => simp [hcRowSeries, sub_mul, mul_assoc, Matrix.one_apply]
   | succ k =>
-    simp [hcRowSeries, sub_mul, mul_assoc, PowerSeries.coeff_succ_X_mul, map_sum, hcRow_succ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hcRowSeries, sub_mul, mul_assoc, PowerSeries.coeff_succ_X_mul, map_sum, hcRow_succ]
 
 end GlobalTheory.Alc
 
@@ -71,7 +77,7 @@ theorem hcTelescope (R : Type) [CommRing R] (N : ℕ) (μ : Fin N → R) :
     rw [hgt] at h
     have IH := ih (by omega)
     rw [hS, Finset.sum_insert hnot, Finset.prod_insert hnot, Finset.prod_insert hnot]
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     linear_combination (1 - PowerSeries.C (shift R μ i) * PowerSeries.X - PowerSeries.X) * IH
       - PowerSeries.X * (∏ j ∈ Finset.univ.filter (fun j : Fin N => N - d ≤ j.val), (1 - PowerSeries.C (shift R μ j) * PowerSeries.X)) * h
 

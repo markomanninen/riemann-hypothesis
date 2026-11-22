@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HarishChandraFormulaStatement
-import GroundTheory.PAdicHodge.ACrisLog
-import GroundTheory.PAdicHodge.UntiltFrobeniusEquivSymmEpsilonNeOne
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GalOCOkToOC
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsKumCoc
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HarishChandraFormulaStatement
+public import GroundTheory.PAdicHodge.ACrisLog
+public import GroundTheory.PAdicHodge.UntiltFrobeniusEquivSymmEpsilonNeOne
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GalOCOkToOC
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsKumCoc
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -48,8 +52,8 @@ def Lift.IsCoc (Λ : Lift G D) (n : ℕ) (z : Cn (G ⋙ modF (AcrEl (PX q κ) n)
   ∀ s : ComposableArrows C 2, IsLog (G.obj (s.obj (Fin.last 2))).1.obj n (tei (G.obj (s.obj (Fin.last 2))).1.obj (Λ.r s))
     (acrVal G n (s.obj (Fin.last 2)) (z s))
 
-variable (q κ D) in
 
+variable (q κ D) in
 def IsFirstChernClassOfLineBundle (y : ∀ n, MH (PX q κ) n 2) : Prop :=
   ∀ (C : Type 1) [Category.{0} C] (G : C ⥤ El (PX q κ)) (Λ : Lift G D) (n : ℕ),
     ∃ (z : Cn (G ⋙ modF (AcrEl (PX q κ) n)) 2) (hz : d _ 2 z = 0), Λ.IsCoc n z ∧
@@ -57,8 +61,8 @@ def IsFirstChernClassOfLineBundle (y : ∀ n, MH (PX q κ) n 2) : Prop :=
 
 end Line
 
-variable (l) in
 
+variable (l) in
 structure RIn : Prop where
   splitUg : ∀ A : PAlg l, A.IsTest → Splits (Spec (CommRingCat.of A.Ug))
   splitU : ∀ A : PAlg l, A.IsTest → Splits (Spec (CommRingCat.of A.U))
@@ -71,8 +75,8 @@ variable {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
 
 abbrev gb (M : Model l K) : Scheme.{0} := GlobalTheory.Et.geom (PadicAlgCl l) M.q
 
-variable (l K) in
 
+variable (l K) in
 abbrev EtFam : Type 1 := ∀ (M : Model l K) (n j : ℕ), Ht (l ^ n) (sch.obj (gb M)) j 0 →+ M.MH n j
 
 namespace EtFam
@@ -113,8 +117,8 @@ structure Good : Prop where
 
 end EtFam
 
-variable (l K) in
 
+variable (l K) in
 def EtMap : Prop := ∃ e : EtFam l K, e.Good
 
 def LiftEx : Prop := ∀ (l : ℕ) [Fact l.Prime], RIn l → ∀ (O : Type) [CommRing O] (X : Scheme.{0}) (q : X ⟶ Spec (CommRingCat.of O))

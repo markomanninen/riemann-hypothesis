@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStableGauss
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyMeasAndReps
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticWeilUnipotentTorusPreserveTest
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStableGauss
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyMeasAndReps
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticWeilUnipotentTorusPreserveTest
+
+@[expose] public section
+
 open GlobalTheory.JR GlobalTheory.JR.WeilQuad Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -14,7 +19,7 @@ theorem NL_add [Unram F E] (A : Et F E) (y m : A.L) :
     A.NL (y + m) = A.NL y + Algebra.trace A.K A.L (star m * y) + A.NL m := by
   obtain ⟨-, hinj, hN, htr, -⟩ := GlobalTheory.JR.Et.quadratic_structure F E A
   apply hinj
-  rw [map_add, map_add, hN, hN, hN, htr, star_add, star_mul, star_star]
+  rw [map_add (f := _), map_add (f := _), hN, hN, hN, htr, star_add, star_mul, star_star]
   ring
 
 theorem NL_zero [Unram F E] (A : Et F E) : A.NL 0 = 0 := by
@@ -40,8 +45,9 @@ theorem formL_symm_nondeg [U : Unram F E] (A : Et F E) (v : A.Kˣ) :
     simpa using h1
   exact ⟨hs, ⟨hl, fun y h => hl y fun y' => by rw [hs.eq]; exact h y'⟩⟩
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem integral_indicator_char {V : Type} [AddCommGroup V] [TopologicalSpace V] [IsTopologicalAddGroup V]
     [MeasurableSpace V] [BorelSpace V] (μ : Measure V) [μ.IsAddHaarMeasure] (M : AddSubgroup V)
     (hMo : IsOpen (M : Set V)) (χ : V → ℂ) (hχ : ∀ a b, χ (a + b) = χ a * χ b) :
@@ -61,8 +67,8 @@ theorem integral_indicator_char {V : Type} [AddCommGroup V] [TopologicalSpace V]
 
 end GlobalTheory.JR.WeilQuad.GaussStable
 
-open GlobalTheory.JR.WeilQuad.GaussStable in
 
+open GlobalTheory.JR.WeilQuad.GaussStable in
 theorem GlobalTheory.JR.WeilQuad.exists_stableGauss : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedField E]
     [NormedAlgebra F E] [StarRing E] [Unram F E] (A : Et F E) (ψ : AddChar F ℂ) (x : A.Kˣ) (μ : Measure A.L)
     (ω : A.K → ℂ), Hyp A ψ x μ ω → ∀ u : A.Kˣ, ∃ G, IsStableGauss A ψ x μ u G := by
@@ -83,7 +89,7 @@ theorem GlobalTheory.JR.WeilQuad.exists_stableGauss : ∀ (F E : Type) [Nontrivi
   have hfc : Continuous f := hflc.continuous
   have hkey : ∀ y m, f (y + m) = f y * ψ (β m y) * f m := by
     intro y m
-    simp only [hf, hβ, EtMeas.formL_apply, Units.val_mul, NL_add A, Et.psiK, mul_add, map_add,
+    simp only [hf, hβ, EtMeas.formL_apply, Units.val_mul, NL_add A, Et.psiK, mul_add, map_add (f := _),
       AddChar.map_add_eq_mul]
   have hf0 : f 0 = 1 := by simp [hf, NL_zero A, Et.psiK]
   obtain ⟨-, hsmall⟩ := GlobalTheory.JR.exists_small_dual_lattices F ψ hψ A.L β
@@ -155,7 +161,7 @@ theorem GlobalTheory.JR.WeilQuad.exists_stableGauss : ∀ (F E : Type) [Nontrivi
         rw [h1, h2]; ring
     simp_rw [e]
     rw [integral_const_mul, integral_indicator_char μ M hMo (fun m => ψ (β m y))
-      (fun a b => by simp [map_add, AddChar.map_add_eq_mul])]
+      (fun a b => by simp [map_add (f := _), AddChar.map_add_eq_mul])]
     by_cases hy : y ∈ N
     · rw [if_pos ((hN y).1 hy), Set.indicator_of_mem (by exact hy), hiΛ, Set.indicator_of_mem (by exact hNΛ hy)]
       ring

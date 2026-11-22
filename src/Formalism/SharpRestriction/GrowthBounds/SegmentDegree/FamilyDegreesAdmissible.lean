@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FactorialMulChooseEqProdRange
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FactorialMulChooseEqProdRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem sum_one_le_bin (r K n : ℕ) : 1 ≤ sumBin r K n := by
 
 theorem sum_one_le_prod {ι : Type*} (s : Finset ι) (f : ι → ℝ) (h1 : ∀ i ∈ s, 1 ≤ f i) : 1 ≤ ∏ i ∈ s, f i := by
   calc (1 : ℝ) = ∏ _i ∈ s, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) h1
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) h1
 
 theorem sum_single_le_prod {ι : Type*} (s : Finset ι) (f : ι → ℝ) (h1 : ∀ i ∈ s, 1 ≤ f i) {a : ι} (ha : a ∈ s) :
     f a ≤ ∏ i ∈ s, f i := by
@@ -38,8 +42,8 @@ def sumhT (t : Fin n') (v : Fin (r + K) → ℕ) : ℝ :=
 
 def sumSt (t : Fin n') : ℝ := ∑ v ∈ X.laSet p K t, X.sumhT p K t v
 
-omit [NeZero n'] in
 
+omit [NeZero n'] in
 def firstSumFactor : ℝ := 1 - 1 / X.a ^ (X.Ns ^ 2)
 
 def sumWf (j : ℤ) : ℝ := ∏ i : Fin r, sumBin r K ((X.Bw p K j (X.F.fr (j - 1) i.val) - (X.m0 K : ℤ)).toNat)
@@ -81,7 +85,7 @@ omit [NeZero n'] in
 theorem sum_eZ_val (e : Fin X.F.J → Fin r → ℕ) (j : Fin X.F.J) : X.eZ e (j.val : ℤ) = e j := by
   have hJ : 0 < X.F.J := lt_of_le_of_lt (Nat.zero_le _) j.isLt
   unfold Dat.eZ
-  rw [dif_pos hJ]
+  rw [dite_eq_left hJ]
   congr 1
   apply Fin.ext
   have h1 : ((j.val : ℤ) % (X.F.J : ℤ)) = j.val := Int.emod_eq_of_lt (by omega) (by exact_mod_cast j.isLt)

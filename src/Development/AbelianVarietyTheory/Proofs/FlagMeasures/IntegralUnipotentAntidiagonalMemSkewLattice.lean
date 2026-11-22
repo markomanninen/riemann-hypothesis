@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,9 +14,9 @@ open scoped TensorProduct ENNReal nonZeroDivisors Pointwise
 
 namespace GlobalTheory.SnMass.VolN.IntG
 
+
 open NumberField IsDedekindDomain MeasureTheory Matrix in
 open scoped TensorProduct ENNReal nonZeroDivisors Pointwise in
-
 theorem _root_.GlobalTheory.SnMass.VolN.IntG.Hpk_mulVec_esI (k r : ℕ) (a : Fin r) (y : Fin (2 * r + k + 1) → ℂ) :
     (_root_.Formalism.QuantumDeterminants.Hpk k r *ᵥ y) (_root_.Formalism.QuantumDeterminants.esI k r a) = y (_root_.Formalism.QuantumDeterminants.eI k r a) := by
   have ha := a.isLt
@@ -95,13 +99,13 @@ private lemma map_mem_differentIdeal_pow_of_involutive {E : Type} [Field E] [Num
       rw [map_mul]
       exact FractionalIdeal.mul_mem_mul (ih hi) (map_mem_differentIdeal_of_involutive t ht hj)
     · intro a b ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ ha hb
+
 
 open NumberField IsDedekindDomain MeasureTheory Matrix in
 open scoped TensorProduct ENNReal nonZeroDivisors Pointwise in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.SnMass.VolN.IntG.mem_dInv_two_mul (t : E ≃ₐ[ℚ] E) (ht : ∀ x, t (t x) = x) (m : ℕ) (c : E)
     (h : ∀ x ∈ ((differentIdeal ℤ (𝓞 E) : FractionalIdeal (𝓞 E)⁰ E)) ^ m,
       ∀ y ∈ ((differentIdeal ℤ (𝓞 E) : FractionalIdeal (𝓞 E)⁰ E)) ^ m,
@@ -163,7 +167,8 @@ private lemma modelEntry_eq_sq_mul_pairing_lemma_6 (σ : E →+* E) {k r : ℕ}
       ((s a : ℂ))⁻¹ * (A w *ᵥ (γ.map w.embedding *ᵥ fw)) (_root_.Formalism.QuantumDeterminants.eI k r a) := by
     have e1 : w.embedding ((fun i => σ (f i a)) ⬝ᵥ (J *ᵥ (γ *ᵥ fun i => f i a))) =
         star fw ⬝ᵥ (J.map w.embedding *ᵥ (γ.map w.embedding *ᵥ fw)) := by
-      simp [dotProduct, Matrix.mulVec, map_sum, hconj, hfw]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [dotProduct, Matrix.mulVec, map_sum, hconj, hfw]
     rw [e1, ← hA, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec,
       ← Matrix.star_mulVec, hf, star_smul, smul_dotProduct,
       show star (Pi.single (_root_.Formalism.QuantumDeterminants.esI k r a) 1 : Fin (2 * r + k + 1) → ℂ) =
@@ -174,9 +179,9 @@ private lemma modelEntry_eq_sq_mul_pairing_lemma_6 (σ : E →+* E) {k r : ℕ}
   rw [h1, h2]
   field_simp
 
+
 open NumberField IsDedekindDomain MeasureTheory Matrix in
 open scoped TensorProduct ENNReal nonZeroDivisors Pointwise in
-
 theorem _root_.GlobalTheory.SnMass.VolN.IntG.antidiag_mem_skewLat (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (σ : E →ₐ[F] E) (k r : ℕ) (J : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) E)
     (Λ : Submodule (𝓞 E) (Fin (2 * r + k + 1) → E)) (P : Matrix (Fin (2 * r + k + 1)) (Fin (r + 1)) E)

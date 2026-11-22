@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTermOrigin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTermOrigin
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates GlobalTheory.DeformedSum
 
 noncomputable section
@@ -10,12 +15,12 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 def riemannBil (ξ : E) : LinearMap.BilinForm ℚ E :=
   LinearMap.mk₂ ℚ (riemann ξ)
-    (fun x x' y => by simp [riemann, mul_add, add_mul, map_add])
+    (fun x x' y => by simp [riemann, mul_add, add_mul, map_add (f := _)])
     (fun q x y => by
       simp only [riemann, smul_eq_mul]
       rw [show ξ * (q • x) * IsCMField.complexConj E y = q • (ξ * x * IsCMField.complexConj E y) by
         rw [mul_smul_comm, smul_mul_assoc], map_smul, smul_eq_mul])
-    (fun x y y' => by simp [riemann, mul_add, map_add])
+    (fun x y y' => by simp [riemann, mul_add, map_add (f := _)])
     (fun q x y => by
       have h : IsCMField.complexConj E (q • y) = q • IsCMField.complexConj E y := map_rat_smul _ q y
       simp only [riemann, smul_eq_mul, h]
@@ -36,7 +41,7 @@ theorem riemann_left_nondeg (ξ : E) (hξ : ξ ≠ 0) (x : E) (hx : ∀ y, riema
 def riemannClL (ξ : E) : E →ₗ[ℚ] Coh E where
   toFun := riemannCl ξ
   map_add' x x' := by
-    ext y; simp [riemannCl, riemann, mul_add, add_mul, map_add]
+    ext y; simp [riemannCl, riemann, mul_add, add_mul, map_add (f := _)]
   map_smul' q x := by
     ext y
     show ((riemann ξ (q • x) y : ℚ) : ℂ) = q • ((riemann ξ x y : ℚ) : ℂ)
@@ -61,7 +66,8 @@ theorem gram_det_ne_zero (ξ : E) (hξ : ξ ≠ 0) : (gram ξ).det ≠ 0 := by
     apply riemann_left_nondeg ξ hξ
     intro y
     rw [← riemannBil_apply, ← b.sum_repr y]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
     apply Finset.sum_eq_zero
     intro j _
     have := congrFun hv0 j
@@ -107,7 +113,8 @@ theorem clBasis_repr (ξ : E) (hξ : ξ ≠ 0) (x : E) (i) :
   have h : riemannCl ξ x = (clBasis ξ hξ).equivFun.symm (fun i => (((Module.finBasis ℚ E).repr x i : ℚ) : ℂ)) := by
     rw [Module.Basis.equivFun_symm_apply]
     conv_lhs => rw [← riemannClL_apply, ← (Module.finBasis ℚ E).sum_repr x]
-    simp only [map_sum, map_smul, clBasis_apply, riemannClL_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, clBasis_apply, riemannClL_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
     ext y
     simp [Rat.smul_def]

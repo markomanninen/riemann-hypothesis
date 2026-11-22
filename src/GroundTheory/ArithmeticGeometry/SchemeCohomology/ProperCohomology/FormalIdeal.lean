@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.HasFiniteBiproductsModules
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.HasFiniteBiproductsModules
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -20,10 +25,11 @@ lemma smulHom_comp_smulHom (F : X.Modules) (r s : Γ(X, ⊤)) :
   rw [smul_comm]
 
 lemma smulHom_sum (F : X.Modules) {ι : Type*} (s : Finset ι) (r : ι → Γ(X, ⊤)) :
-    smulHom F (∑ i ∈ s, r i) = ∑ i ∈ s, smulHom F (r i) :=
-  map_sum (smulRingHom F) r s
+    smulHom F (∑ i ∈ s, r i) = ∑ i ∈ s, smulHom F (r i) := by
+  simp only [← smulRingHom_apply, map_sum, End.sum_asHom]
 
-lemma smulHom_one (F : X.Modules) : smulHom F 1 = 𝟙 F := map_one (smulRingHom F)
+lemma smulHom_one (F : X.Modules) : smulHom F 1 = 𝟙 F := by
+  rw [← smulRingHom_apply, map_one, End.one_asHom]
 
 def imageMapOf {P₁ P₂ G : X.Modules} (f₁ : P₁ ⟶ G) (f₂ : P₂ ⟶ G) (φ : G ⟶ G) (h : P₁ ⟶ P₂)
     (w : f₁ ≫ φ = h ≫ f₂) : kernel (cokernel.π f₁) ⟶ kernel (cokernel.π f₂) :=
@@ -34,7 +40,6 @@ def imageMapOf {P₁ P₂ G : X.Modules} (f₁ : P₁ ⟶ G) (f₂ : P₂ ⟶ G)
     have hfac : Abelian.factorThruImage f₁ ≫ kernel.ι (cokernel.π f₁) = f₁ := Abelian.image.fac f₁
     rw [hfac, w, Category.assoc, cokernel.condition, comp_zero])
 
-@[reassoc (attr := simp)]
 lemma imageMapOf_ι {P₁ P₂ G : X.Modules} (f₁ : P₁ ⟶ G) (f₂ : P₂ ⟶ G) (φ : G ⟶ G) (h : P₁ ⟶ P₂)
     (w : f₁ ≫ φ = h ≫ f₂) : imageMapOf f₁ f₂ φ h w ≫ kernel.ι _ = kernel.ι _ ≫ φ :=
   kernel.lift_ι _ _ _
@@ -78,7 +83,8 @@ lemma exists_idealSumMap_smulHom (J₁ J₂ : Ideal A) (a : A)
     ?_⟩
   apply biproduct.hom_ext'
   intro i
-  simp only [idealSumMap, biproduct.ι_desc_assoc, biproduct.lift_desc, smulHom_comp_smulHom,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [idealSumMap, biproduct.ι_desc_assoc, biproduct.lift_desc, smulHom_comp_smulHom,
     ← map_mul, ← smulHom_sum, ← map_sum]
   rw [hc i, mul_comm]
 
@@ -99,7 +105,6 @@ def idealPowSucc (n : ℕ) : idealPow I F (n + 1) ⟶ idealPow I F n :=
       rw [one_mul]
       exact Ideal.pow_le_pow_right (Nat.le_succ n) (idealGen_mem _ i)).choose_spec
 
-@[reassoc (attr := simp)]
 lemma idealPowSucc_ι (n : ℕ) : idealPowSucc I F n ≫ idealPowι I F n = idealPowι I F (n + 1) := by
   rw [idealPowSucc, imageMapOf_ι, map_one, smulHom_one, Category.comp_id]
 
@@ -112,7 +117,6 @@ def idealPowMul {k n : ℕ} (a : A) (ha : a ∈ I ^ k) : idealPow I F n ⟶ idea
       have := Ideal.mul_mem_mul ha (idealGen_mem (I ^ n) i)
       rwa [← pow_add, add_comm] at this).choose_spec
 
-@[reassoc (attr := simp)]
 lemma idealPowMul_ι {k n : ℕ} (a : A) (ha : a ∈ I ^ k) :
     idealPowMul I F a ha ≫ idealPowι I F (n + k) =
       idealPowι I F n ≫ smulHom F (algebraMap A Γ(X, ⊤) a) :=
@@ -126,17 +130,17 @@ def quotPowMap (n : ℕ) : quotPow I F (n + 1) ⟶ quotPow I F n :=
   cokernel.desc _ (quotPowπ I F n) (by
     rw [← idealPowSucc_ι, Category.assoc, cokernel.condition, comp_zero])
 
-@[reassoc (attr := simp)]
 lemma quotPowπ_map (n : ℕ) : quotPowπ I F (n + 1) ≫ quotPowMap I F n = quotPowπ I F n :=
   cokernel.π_desc _ _ _
 
 def quotPowSC (n : ℕ) : ShortComplex X.Modules :=
   ShortComplex.mk (idealPowι I F (n + 1)) (quotPowπ I F n) (cokernel.condition _)
 
-lemma quotPowSC_shortExact (n : ℕ) : (quotPowSC I F n).ShortExact where
-  exact := ShortComplex.exact_cokernel _
-  mono_f := by change Mono (idealPowι I F (n + 1)); infer_instance
-  epi_g := by change Epi (quotPowπ I F n); infer_instance
+lemma quotPowSC_shortExact (n : ℕ) : (quotPowSC I F n).ShortExact :=
+  ShortComplex.ShortExact.mk' (S := quotPowSC I F n)
+    (ShortComplex.exact_cokernel (idealPowι I F (n + 1)))
+    (inferInstanceAs (Mono (idealPowι I F (n + 1))))
+    (inferInstanceAs (Epi (quotPowπ I F n)))
 
 section Qcoh
 
@@ -146,8 +150,6 @@ instance (J : Ideal A) : (⨁ fun _ : Fin (idealGenNum J) => F).IsQuasicoherent 
   isQuasicoherent_biproduct _
 
 instance (n : ℕ) : (idealPow I F n).IsQuasicoherent := inferInstance
-
-instance (n : ℕ) : (quotPow I F n).IsQuasicoherent := inferInstance
 
 abbrev toFunctions (V : X.Opens) : A →+* Γ(X, V) := (restrictTop V).comp (algebraMap A Γ(X, ⊤))
 
@@ -168,7 +170,8 @@ theorem range_idealPowι_app {V : X.Opens} (hV : IsAffineOpen V) (n : ℕ) :
       change (∑ k, toFunctions V (g k) •
         (biproduct.π (fun _ : Fin (idealGenNum (I ^ n)) => F) k).app V p) = _
       conv_rhs => rw [biproduct_app_eq_sum _ V p]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [← ConcreteCategory.comp_apply, ← Scheme.Modules.Hom.comp_app, idealSumMap,
         biproduct.ι_desc, smulHom_app_apply]
@@ -176,7 +179,8 @@ theorem range_idealPowι_app {V : X.Opens} (hV : IsAffineOpen V) (n : ℕ) :
     · rintro ⟨x, rfl⟩
       refine ⟨∑ k, (biproduct.ι (fun _ : Fin (idealGenNum (I ^ n)) => F) k).app V (x k), ?_⟩
       change _ = ∑ k, toFunctions V (g k) • x k
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [← ConcreteCategory.comp_apply, ← Scheme.Modules.Hom.comp_app, idealSumMap,
         biproduct.ι_desc, smulHom_app_apply]

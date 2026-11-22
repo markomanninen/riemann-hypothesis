@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ theorem exists_UG {J g : Matrix β β E} (hJ : IsUnit J.det) (hg : gᵀ * J * g.
       _ = J.det := hd
   exact ⟨⟨Matrix.nonsingInvUnit g (isUnit_iff_exists_inv.mpr ⟨_, h1⟩), hg⟩, rfl⟩
 
-omit [DecidableEq α] in
 
+omit [DecidableEq α] in
 theorem rule_of_conj [Invertible (2 : R)] {C : TestClass R} {ψ : AddChar R ℂ} {ξ : E} {JA : Matrix α α E} {JB : Matrix β β E}
     {κ : Type} [Fintype κ] {d : Darboux (symp c ξ JA JB) κ} {χ : Eˣ →* Circle} {C1 : Matrix β ν E} {C2 : Matrix β ν' E}
     {om : UG c JB →* Module.End ℂ ((κ → R) → ℂ)} (hs : IsSplitting C ψ d (actB c) om) (γ : UG c JB) (s : Matrix ν' ν E)
@@ -150,7 +154,8 @@ theorem exists_gamma (hc : ∀ z, c (c z) = z) {J : Matrix β β E} (hsk : ∀ i
       Qᵀ * J * P.map c = -((Pᵀ * J * Q.map c).map c)ᵀ := by
     intro m n P Q
     ext i j
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.neg_apply, map_sum, map_mul, hc,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.neg_apply, map_sum, map_mul, hc,
       hsk, Finset.sum_mul]
     rw [Finset.sum_comm]
     simp only [← Finset.sum_neg_distrib]

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.ValNonnegLeadingCoeffOfMemTySet
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.ValNonnegLeadingCoeffOfMemTySet
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {C : Type} [Field C]
 
 theorem tyS_add {l : ℕ} (hl : 2 ≤ l) (a b : ℕ → C) : tyS l (fun s => a s + b s) = tyS l a + tyS l b := by
   ext n
-  simp only [tyS, PowerSeries.coeff_mk, map_add, ← Finset.sum_add_distrib]
+  simp only [tyS, PowerSeries.coeff_mk, map_add (f := _), ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun s _ => ?_
   split_ifs <;> simp
 
@@ -29,11 +33,6 @@ def AddCvSt (V : VF C) : Prop :=
         PowerSeries.constantCoeff (alongCv γ'' (X.sg v) - alongCv γ (X.sg v) - alongCv γ' (X.sg v)) = 0 ∧
         ∀ n, V.Ge 0 (PowerSeries.coeff n (alongCv γ'' (X.sg v) - alongCv γ (X.sg v) - alongCv γ' (X.sg v)))
 
-private theorem ge_add_lemma (V : VF C) {a b : C} (ha : V.Ge 0 a) (hb : V.Ge 0 b) :
-    V.Ge 0 (a + b) := by
-  unfold VF.Ge at *
-  exact le_trans (le_min ha hb) (V.v.map_add a b)
-
 theorem add_mem (V : VF C) (g : Fin 2) (hA : X.AddCvSt V) (hu : ∀ g c i, V.Ge 0 (X.u g c i))
     (x y : ℕ → I g ⊕ JJ I g → C) (hx : x ∈ X.TySet V g) (hy : y ∈ X.TySet V g) : x + y ∈ X.TySet V g := by
   have hl2 := V.l_prime.two_le
@@ -47,9 +46,9 @@ theorem add_mem (V : VF C) (g : Fin 2) (hA : X.AddCvSt V) (hu : ∀ g c i, V.Ge 
   · intro q
     obtain ⟨c0, cI⟩ := hS (X.u (1 - g) q) (hu (1 - g) q)
     refine ⟨?_, fun n => ?_⟩
-    · rw [map_add, map_add, (hlam q).1, (hlam' q).1, c0]
+    · rw [map_add (f := _), map_add (f := _), (hlam q).1, (hlam' q).1, c0]
       simp
-    · rw [map_add, map_add]
+    · rw [map_add (f := _), map_add (f := _)]
       exact (((hlam q).2 n).add ((hlam' q).2 n)).add (cI n)
   · intro i
     rw [hL i, h1 i, h1' i, ← Finset.sum_add_distrib]
@@ -123,13 +122,15 @@ theorem neg_mem (V : VF C) (g : Fin 2) (hodd : V.l ≠ 2) (x : ℕ → I g ⊕ J
     isCv_rescale_neg_one V hγ, isCv_rescale_neg_one V hlam, ?_, ?_⟩
   · intro i
     simp only [Pi.neg_apply]
-    rw [alongCv_rescale_eq_rescale_alongCv hγ0, hlg i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [alongCv_rescale_eq_rescale_alongCv hγ0, hlg i, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [tyS_neg_eq_rescale_neg_one_of_odd hl, powerSeries_rescale_smul]
   · intro q
     simp only [Pi.neg_apply]
     rw [tyS_neg_eq_rescale_neg_one_of_odd hl, hq q, alongCv_rescale_eq_rescale_alongCv hγ0]
-    simp only [tyS_neg_eq_rescale_neg_one_of_odd hl, map_add, map_sub, map_sum, apply_ite ⇑(PowerSeries.rescale (-1 : C)), map_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [tyS_neg_eq_rescale_neg_one_of_odd hl, map_add (f := _), map_sub, map_sum, apply_ite ⇑(PowerSeries.rescale (-1 : C)), map_zero,
       powerSeries_rescale_smul]
 
 theorem sum_mem (V : VF C) (g : Fin 2) (h0 : (0 : ℕ → I g ⊕ JJ I g → C) ∈ X.TySet V g)

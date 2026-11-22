@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleSemilinearCohomologyOperationExistsOfEvalua
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleSemilinearCohomologyOperationExistsOfEvalua
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -60,7 +64,7 @@ theorem aux {s : ℤ} (j k : ℕ) (e : j = k) (hjk : -(k : ℤ) = -(j : ℤ)) (h
 theorem comp_neg (k : ℕ) (s : ℤ) (h : -(k : ℤ) + n = s) :
     comp a ha (-(k : ℤ)) s h = (chainsXIso R E k).hom ≫ phi k s (fun U x => a k s h U x) (fun V U g x => ha _ _ _ V U g x) := by
   unfold comp
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   exact aux a ha _ _ (by omega) _ _ _
 
 end LateralTheory.EtaleFoundations.EvMkPf

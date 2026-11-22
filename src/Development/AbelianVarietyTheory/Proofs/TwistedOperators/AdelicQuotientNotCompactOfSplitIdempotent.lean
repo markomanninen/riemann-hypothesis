@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
-import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+public import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,9 +32,6 @@ theorem exists_one_lt_ideleNorm (F : Type) [Field F] [NumberField F] :
   obtain ⟨ϖ, hϖ⟩ := exists_isUniformiser P
   have h1 : ‖(ϖ : P.adicCompletion F)‖ = (Ideal.absNorm P.asIdeal : ℝ)⁻¹ := by
     rw [FinitePlace.norm_def, hϖ, WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero]
-    have : Multiplicative.toAdd (WithZero.unzero
-        (WithZero.exp_ne_zero : WithZero.exp (-1 : ℤ) ≠ 0)) = -1 := rfl
-    rw [this]
     simp
   refine ⟨(localIdele P ϖ)⁻¹, ?_⟩
   rw [map_inv, UnitaryHeckeChar.ideleNorm_localIdele, h1, inv_inv]

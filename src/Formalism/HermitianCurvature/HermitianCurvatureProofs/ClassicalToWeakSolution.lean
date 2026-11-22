@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfLeaves
-import Mathlib
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfLeaves
+public import Mathlib
+
+@[expose] public section
 
 open scoped ContDiff
 open MeasureTheory

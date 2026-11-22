@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.HoloSectionStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.HoloSectionStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Norm
 
@@ -93,7 +97,7 @@ theorem lineVanish : lineVanishStatement := by
       rw [div_le_iff₀ hxn]
       exact hx
     · have hcont : ContinuousAt (fun x : ℂ => |A| * (1 + ‖x‖) ^ K / ‖x‖ ^ N) c := by
-        apply ContinuousAt.div (by fun_prop) (by fun_prop)
+        apply ContinuousAt.div₀ (by fun_prop) (by fun_prop)
         exact pow_ne_zero N (norm_ne_zero_iff.mpr hc0')
       refine ⟨|A| * (1 + ‖c‖) ^ K / ‖c‖ ^ N + 1, ?_⟩
       have h1 : ∀ᶠ x in 𝓝 c, |A| * (1 + ‖x‖) ^ K / ‖x‖ ^ N < |A| * (1 + ‖c‖) ^ K / ‖c‖ ^ N + 1 :=

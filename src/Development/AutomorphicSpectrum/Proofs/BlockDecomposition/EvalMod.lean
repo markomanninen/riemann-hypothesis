@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.DeRhamJacobian.IsdRJ
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasPeriods
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.TiedAInvOfTheta
-import GroundTheory.PAdicHodge.BCrisEigen
-import GroundTheory.PAdicHodge.BCrisRegularSenTate
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.DeRhamJacobian.IsdRJ
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasPeriods
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.TiedAInvOfTheta
+public import GroundTheory.PAdicHodge.BCrisEigen
+public import GroundTheory.PAdicHodge.BCrisRegularSenTate
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
+
+@[expose] public section
 
 noncomputable section
 

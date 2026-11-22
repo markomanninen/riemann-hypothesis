@@ -1,19 +1,13 @@
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.TheoremMXB
+module
+
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.TheoremMXB
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.MC
 
-open Polynomial Finset Formalism.GM Formalism.GM.M Formalism.GM.MeanGammaLemmas Formalism.InvariantFactorPaths.OddLevelGainBounds.TB
-
-private lemma neg_logb_norm_natCast_eq_padicValNat (p : ℕ) [hp : Fact p.Prime] (n : ℕ) (hn : n ≠ 0) :
-    -Real.logb p ‖(n : ℚ_[p])‖ = (padicValNat p n : ℝ) := by
-  have h0 : ((n : ℚ) : ℚ_[p]) = (n : ℚ_[p]) := by push_cast; rfl
-  have h1 : ‖(n : ℚ_[p])‖ = (p : ℝ) ^ (-(padicValNat p n : ℤ)) := by
-    rw [← h0, Padic.eq_padicNorm, padicNorm.eq_zpow_of_nonzero (by exact_mod_cast hn),
-      padicValRat.of_nat]
-    push_cast <;> simp [padicValRat.of_nat]
-  have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.out.one_lt
-  rw [h1, ← Real.rpow_intCast, Real.logb_rpow (by positivity) hp1.ne']
-  simp only [Int.cast_neg, Int.cast_natCast, neg_neg]
+open Polynomial Finset Formalism.GM Formalism.GM.M Formalism.GM.MeanGammaLemmas
 
 private lemma digits_sum_le_sub_one_mul_log_add_one (p : ℕ) [hp : Fact p.Prime] (n Xb : ℕ) (hn : n ≤ Xb) :
     ((p.digits n).sum : ℝ) ≤ ((p : ℝ) - 1) * ((Nat.log p Xb : ℝ) + 1) := by
@@ -21,9 +15,9 @@ private lemma digits_sum_le_sub_one_mul_log_add_one (p : ℕ) [hp : Fact p.Prime
   rcases Nat.eq_zero_or_pos n with rfl | hpos
   · simp only [Nat.digits_zero, List.sum_nil, Nat.cast_zero]
     exact mul_nonneg (by linarith) (by positivity)
-  · have hlen := Nat.digits_len p n hp.out.one_lt hpos.ne'
+  · have hlen := Nat.length_digits p n hp.out.one_lt hpos.ne'
     have hsum : (p.digits n).sum ≤ (p.digits n).length * (p - 1) := by
-      have := List.sum_le_card_nsmul (p.digits n) (p - 1)
+      have := List.sum_le_length_nsmul (p.digits n) (p - 1)
         (fun x hx => Nat.le_sub_one_of_lt (Nat.digits_lt_base hp.out.one_lt hx))
       simpa [smul_eq_mul] using this
     rw [hlen] at hsum
@@ -42,38 +36,37 @@ lemma per_rowX (p : ℕ) [hp : Fact p.Prime] (Xb S o z e Mm : ℕ) (κ κ4 lgv :
       κ + 3 * lgv + κ4 := by
   have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.out.one_lt
   have hq : 0 < (p : ℝ) - 1 := by linarith
+  have hpow : p ^ Mm ≠ 0 := pow_ne_zero _ hp.out.ne_zero
+  have hchoose : (z + e).choose e ≠ 0 := (Nat.choose_pos (Nat.le_add_left e z)).ne'
+  have hfac : e.factorial * (z + e).choose e ≠ 0 :=
+    mul_ne_zero (Nat.factorial_ne_zero _) hchoose
   have hA : p ^ Mm * (e.factorial * (z + e).choose e) ≠ 0 :=
-    mul_ne_zero (pow_ne_zero _ hp.out.ne_zero)
-      (mul_ne_zero (Nat.factorial_ne_zero _) (Nat.choose_pos (Nat.le_add_left e z)).ne')
+    mul_ne_zero hpow hfac
   have hB : o.factorial * S.factorial ≠ 0 :=
     mul_ne_zero (Nat.factorial_ne_zero _) (Nat.factorial_ne_zero _)
   have hβ : betaT p Mm z o S e = ((p ^ Mm * (e.factorial * (z + e).choose e) : ℕ) : ℚ_[p]) /
       ((o.factorial * S.factorial : ℕ) : ℚ_[p]) := by
-    simp only [betaT]; push_cast; ring
+    simp only [betaT, Nat.cast_mul, Nat.cast_pow]
   have hA' : ‖((p ^ Mm * (e.factorial * (z + e).choose e) : ℕ) : ℚ_[p])‖ ≠ 0 :=
     norm_ne_zero_iff.mpr (by exact_mod_cast hA)
   have hB' : ‖((o.factorial * S.factorial : ℕ) : ℚ_[p])‖ ≠ 0 :=
     norm_ne_zero_iff.mpr (by exact_mod_cast hB)
   rw [hβ, norm_div, Real.logb_div hA' hB']
-  have e1 := neg_logb_norm_natCast_eq_padicValNat p _ hA
-  have e2 := neg_logb_norm_natCast_eq_padicValNat p _ hB
-  rw [padicValNat.mul (pow_ne_zero _ hp.out.ne_zero)
-      (mul_ne_zero (Nat.factorial_ne_zero _) (Nat.choose_pos (Nat.le_add_left e z)).ne'),
-    padicValNat.prime_pow, padicValNat.mul (Nat.factorial_ne_zero _)
-      (Nat.choose_pos (Nat.le_add_left e z)).ne'] at e1
-  rw [padicValNat.mul (Nat.factorial_ne_zero _) (Nat.factorial_ne_zero _)] at e2
-  simp only [Nat.cast_add] at e1 e2
-  have hC : (padicValNat p ((z + e).choose e) : ℝ) ≤ Nat.log p Xb := by
+  have e1 := neglog_nat p _ hA
+  have e2 := neglog_nat p _ hB
+  simp only [Nat.padicValNat_def, Nat.multiplicity_mul hpow hfac, Nat.multiplicity_prime_pow,
+    Nat.multiplicity_mul (Nat.factorial_ne_zero _) hchoose, Nat.cast_add] at e1
+  simp only [Nat.padicValNat_def, Nat.multiplicity_mul (Nat.factorial_ne_zero o)
+    (Nat.factorial_ne_zero S), Nat.cast_add] at e2
+  have hC : (multiplicity p ((z + e).choose e) : ℝ) ≤ Nat.log p Xb := by
     have h := @Nat.factorization_choose_le_log p (z + e) e
     rw [Nat.factorization_def _ hp.out] at h
     exact_mod_cast h.trans (Nat.log_mono_right (by omega))
-  have L : ∀ n : ℕ, ((p : ℝ) - 1) * (padicValNat p n.factorial : ℝ) = n - ((p.digits n).sum : ℝ) := by
+  have L : ∀ n : ℕ, ((p : ℝ) - 1) * (multiplicity p n.factorial : ℝ) = n - ((p.digits n).sum : ℝ) := by
     intro n
-    have h := sub_one_mul_padicValNat_factorial (p := p) n
-    have h' : (((p - 1) * padicValNat p n.factorial : ℕ) : ℝ) = ((n - (p.digits n).sum : ℕ) : ℝ) := by
-      rw [h]
-    rw [Nat.cast_mul, Nat.cast_sub (Nat.digit_sum_le p n), Nat.cast_sub hp.out.one_lt.le] at h'
-    simpa using h'
+    have h := congrArg (fun a : ℕ => (a : ℝ)) (hp.out.sub_one_mul_multiplicity_factorial (n := n))
+    simpa only [Nat.cast_mul, Nat.cast_sub (Nat.digit_sum_le p n),
+      Nat.cast_sub hp.out.one_lt.le, Nat.cast_one] using h
   have dso := digits_sum_le_sub_one_mul_log_add_one p o Xb ho
   have dsS := digits_sum_le_sub_one_mul_log_add_one p S Xb hS
   have dse : (0 : ℝ) ≤ ((p.digits e).sum : ℝ) := by positivity
@@ -85,7 +78,7 @@ lemma per_rowX (p : ℕ) [hp : Fact p.Prime] (Xb S o z e Mm : ℕ) (κ κ4 lgv :
   have hlv : ((p : ℝ) - 1) * ((Nat.log p Xb : ℝ) + 1) ≤ ((p : ℝ) - 1) * lgv :=
     mul_le_mul_of_nonneg_left hL hq.le
   have hdiv : ((S + o - e : ℕ) : ℝ) / ((p : ℝ) - 1) ≤
-      2 * lgv - ((padicValNat p e.factorial : ℝ) - padicValNat p o.factorial - padicValNat p S.factorial) := by
+      2 * lgv - ((multiplicity p e.factorial : ℝ) - multiplicity p o.factorial - multiplicity p S.factorial) := by
     rw [div_le_iff₀ hq, hsub]
     nlinarith
   have hceil : (Mm : ℝ) < κ + 1 := by rw [hM]; exact Nat.ceil_lt_add_one hκ0
@@ -217,10 +210,12 @@ theorem meanGamX_of (hDeg : GamDeg) (hLead : GamLead) (hC : GamIntC) (hW : Forma
       have hfe := congrFun (congrFun hfac x) y
       simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.mul_diagonal] at hfe
       simp only [Matrix.map_apply, hpt, eval_natCast_map, Matrix.mul_apply, Matrix.mul_diagonal]
-      rw [hAeval x y (s + d * j) (le_trans hSs (Nat.le_add_right _ _)), hm, hfe, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hAeval x y (s + d * j) (le_trans hSs (Nat.le_add_right _ _)), hm, hfe, map_sum]
       apply Finset.sum_congr rfl
       intro b _
-      simp [Matrix.diagonal_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.diagonal_apply, map_sum]
   have hcop' : IsCoprime (d : ℤ) (p : ℤ) := hcop
   have hE0 : (0 : ℝ) < E := by linarith
   have key := hW p (PadicAlgCl p) n₀ (2 * S) h E c' (binMatK (PadicAlgCl p) (2 * S) c').det.leadingCoeff

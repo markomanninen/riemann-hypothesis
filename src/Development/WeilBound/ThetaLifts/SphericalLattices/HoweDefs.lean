@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+
+@[expose] public section
 
 noncomputable section
 

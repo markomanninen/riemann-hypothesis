@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DeterminantProjection
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
-import Development.WeilBound.ThetaLifts.LatticeBasics.ConstIdele
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DeterminantProjection
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ConstIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem exists_sec (hc : IsCMExt F E σ) {J : Matrix (Fin n) (Fin n) E} (hJ : Is
     fun z ⟨k, k0, hk⟩ => ⟨Units.map (sec _ hR) (Units.mk0 k k0), Units.ext (Matrix.ext fun a b => ?_)⟩, fun z t ht => ?_⟩
   · change i ((1 : Matrix _ _ E) a b + (k - 1) * R a b) =
       (1 : Matrix _ _ (AE F E)) a b + (((z.1 : (AE F E)ˣ) : AE F E) - 1) * i (R a b)
-    rw [hk, map_add, map_mul, map_sub, map_one, Matrix.one_apply, Matrix.one_apply, apply_ite i, map_one, map_zero]
+    rw [hk, map_add (f := _), map_mul, map_sub, map_one, Matrix.one_apply, Matrix.one_apply, apply_ite i, map_one, map_zero]
   · change t • (1 + (((z.1 : (AE F E)ˣ) : AE F E) - 1) • R.map i - 1) = 0
     rw [add_sub_cancel_left, ← smul_assoc, ht, zero_smul]
 

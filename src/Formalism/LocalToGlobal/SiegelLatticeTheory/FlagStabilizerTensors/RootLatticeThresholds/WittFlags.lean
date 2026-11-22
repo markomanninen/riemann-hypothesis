@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TermTieOf
-import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TermTieOf
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,15 @@ theorem LatIso_holds (D : D7) : Formalism.L2.SG.TermTieOf.LatIso D := by
   refine ⟨fun hΛ => ?_, hLat.2, hU.2⟩
   simp only [Formalism.HermitianLatticesTheory.genus, Set.mem_setOf_eq] at hΛ ⊢
   obtain ⟨hΛL, hΛG⟩ := hΛ
-  refine ⟨hLat.2 hΛL, fun p hp => ?_⟩
+  letI := hLat.2 hΛL.toIsLattice
+  refine ⟨?_, fun p hp => ?_⟩
+  · refine { span_eq_top := ?_ }
+    have he : ((Formalism.HermitianLatticesTheory.gmap β Λ : _) : Set _) =
+        (β.toLinearMap : _ → _) '' (Λ : Set _) := by
+      ext x
+      simp [Formalism.HermitianLatticesTheory.gmap]
+    rw [he, Submodule.span_image β.toLinearMap, hΛL.span_eq_top, Submodule.map_top]
+    exact LinearMap.range_eq_top.mpr β.surjective
   obtain ⟨g, hg, hgΛ⟩ := hΛG p hp
   refine ⟨β * g, (Formalism.HermitianLatticesTheory.isom _).mul_mem hβ hg, ?_⟩
   rw [gmap_mul, hgΛ, hloc p]

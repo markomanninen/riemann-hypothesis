@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.ToHLatLemmas
-import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeightedNormSquareRows
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.ToHLatLemmas
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeightedNormSquareRows
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+
+@[expose] public section
 
 namespace GlobalTheory.FamilyFrames
 
@@ -107,6 +111,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.
 theorem famFramed_chF : ∀ (X : Fields) (hX : X.Ok) (Pr : Primes X) (R : Ranks) (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (Sg : Set ℕ) (mu : Tup X.F X.E X.K Sg) (I : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))) (u : Pr.Word) (j : ℕ) (h : (chF W sel mu I u j).Ok), FamFramed (chF W sel mu I u j) h := by
   intro X hX Pr R W _ sel Sg mu I u j h
   exact famFramed_of_pos _ h fun _ v =>
-    (roundPk_ratP (W.lamTrue u j) (fun d : DecoSet X.E (R.N j) (Pr.vT u) Pr.vGs => d.1.Lsh) hX).pos v
+    (roundPk_ratP (W.lamTrue u j) (fun d : DecoSet (E := X.E) (n := R.N j) (ST := Pr.vT u) (SG := Pr.vGs) => d.1.Lsh) hX).pos v
 
 end GlobalTheory.FamilyFrames

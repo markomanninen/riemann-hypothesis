@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeSemisimpleGeneralisedEigenNewformGamma1Gamm
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
-import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeSemisimpleGeneralisedEigenNewformGamma1Gamm
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices Polynomial
 open scoped MatrixGroups
 set_option maxHeartbeats 1000000 in

@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ClosedSt
+module
+
+public import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ClosedSt
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -76,7 +80,7 @@ private theorem db_eq_wdb_of_mem_chart_source (n : ℕ) {M : Type*} [Topological
     (hx : x ∈ e.source) : db n z j f x = wdb n j (f ∘ e.symm) (z x) := by
   have hex : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source := ⟨e, he, hx⟩
   unfold db
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hspec := Classical.choose_spec hex
   have heq : (f ∘ (Classical.choose hex).symm) =ᶠ[𝓝 (z x)] (f ∘ e.symm) :=
     (chart_symm_eventuallyEq_of_mem_sources n z hspec.1 he hspec.2 hx).fun_comp f
@@ -208,12 +212,6 @@ theorem integral_holo_mul_db (n : ℕ) {M : Type*} [TopologicalSpace M] [T2Space
     funext fun x => by simp [Holo.db_eq_zero n z F hF j x]
   rw [h0, integral_zero] at h
   exact neg_eq_zero.mp h.symm
-
-theorem sq_eLpNorm_two {α : Type*} [MeasurableSpace α] (μ : Measure α) (g : α → ℂ) :
-    eLpNorm g 2 μ ^ 2 = ∫⁻ x, ‖g x‖ₑ ^ 2 ∂μ := by
-  have h := MeasureTheory.eLpNorm_nnreal_pow_eq_lintegral (f := g) (μ := μ) (p := (2 : NNReal)) two_ne_zero
-  norm_num at h
-  simpa [ENNReal.rpow_two] using h
 
 end
 

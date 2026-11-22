@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatAdXMulLev
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiAtCongInvariant
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralDivUniformizerOfRedZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatAdXMulLev
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiAtCongInvariant
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralDivUniformizerOfRedZero
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.Ker Formalism.L2.DIV GlobalTheory.TwU GlobalTheory.TwV
 open GlobalTheory.TopStep Formalism.L2.Forms Formalism.UG
 
@@ -181,8 +186,8 @@ theorem congAt_one_of_redGL {D : D7} {X : Fields} (s : Seam D X) {n : ℕ} {P : 
   congr 1
   split_ifs <;> simp
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem funMoved_mul_lev {D : D7} {X : Fields} (s : Seam D X) {i : ℕ} {hi : i ≤ D.R.m} {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))}
     (lev : StepLevel D.host.F D.host.E (sigD D) (gramN D i hi) T D.R.f bad) {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (P : ST)
     (v : HeightOneSpectrum (𝓞 D.host.F)) (h : (T : 𝓞 D.host.F) ∈ v.asIdeal) (ι : lev.fM v h →+ 𝓞 X.E ⧸ P.1.asIdeal)
@@ -224,7 +229,7 @@ theorem exists_pt_frames (p : ChPt (R := R) sel mu u j) (g : ∀ P : rowSG Pr se
       q.deco.1.N = p.deco.1.N ∧ q.deco.1.f = p.deco.1.f ∧ (∀ P, frsF sel mu q P = frsF sel mu p P * ((κ P)⁻¹).1) ∧
       ∀ P, redGL _ P.1 ((g P)⁻¹ * (κ P)⁻¹) = 1 ∧ (P.1 ∉ Pr.vGs → (κ P)⁻¹ = g P) := by
   classical
-  let h : GLG X.E (R.N j) Pr.vGs := fun w => redGL _ w.1 (g ⟨w.1, Finset.mem_union_left _ w.2⟩)⁻¹
+  let h : GLG (E := X.E) (n := R.N j) (SG := Pr.vGs) := fun w => redGL _ w.1 (g ⟨w.1, Finset.mem_union_left _ w.2⟩)⁻¹
   let k : GLQ X.E (R.N j) (QE sel (mu : Chr X.F X.E X.K)) := fun P => (g ⟨P.1, Finset.mem_union_right _ P.2⟩)⁻¹
   let q : ChPt (R := R) sel mu u j := ((1 : UF X.E (R.N j)), h, k) • p
   have hl : ∀ w : Pr.vGs, IsLiftFr (p.deco.1.act 1 h) w (q.deco.1.liftFr w) := fun w => liftFr_spec q.deco.2 w

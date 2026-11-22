@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
-import Formalism.LocalToGlobal.KernelLattices.TopPin
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianChartComplexRationalIntegralFormsStatement
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
-import Formalism.UnipotentAdelicQuotients.WeylLatDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FormsSharpAtOfValTied
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+public import Formalism.LocalToGlobal.KernelLattices.TopPin
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianChartComplexRationalIntegralFormsStatement
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
+public import Formalism.UnipotentAdelicQuotients.WeylLatDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FormsSharpAtOfValTied
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -50,11 +55,11 @@ theorem wt0 : ∀ (D : D7) (u : D.what₂.Word) (μ : D.what₂.Tup) {C : Column
   have hw : ∀ r : Fin (D.R.N 0), (((M.lam 0 τ).w r : ℤ) : ℚ) =
       (D.hcW u τ).u ⟨r.1, by omega⟩ - (((D.R.k : ℚ) - 1) / 2 - (r.1 : ℚ)) := by
     intro r
-    rw [M.lam_eq 0 (Nat.zero_le _) τ r, dif_pos (by omega)]
+    rw [M.lam_eq 0 (Nat.zero_le _) τ r, dite_eq_left (by omega)]
     rfl
   have hds0 : (M.lam 0 τ).detShift = (M.lam 0 τ).w ⟨D.R.N 0 - 1, by omega⟩ := by
     unfold DomWeight.detShift
-    rw [dif_pos hN0]
+    rw [dite_eq_left hN0]
   have hds : ((M.lam 0 τ).detShift : ℚ) = (D.hcW u τ).u ⟨D.R.k - 1, by omega⟩ + ((D.R.k : ℚ) - 1) / 2 := by
     rw [hds0, hw]
     have e1 : (D.hcW u τ).u ⟨D.R.N 0 - 1, by omega⟩ = (D.hcW u τ).u ⟨D.R.k - 1, by omega⟩ :=
@@ -102,7 +107,7 @@ theorem wt0 : ∀ (D : D7) (u : D.what₂.Word) (μ : D.what₂.Tup) {C : Column
   have hnu2 : ((nuT D u 0 τ r : ℕ) : ℝ) = (((D.hcW u τ).u ⟨r.1, hr⟩ + (D.hcW u τ).e ⟨0, hm⟩ + r.1 - D.R.k - (D.R.t : ℚ) / 2 : ℚ) : ℝ) := by
     rw [hnu]
     unfold DV.nuRow DV.srcPar DV.wSz
-    rw [dif_pos hr, dif_pos ⟨le_rfl, by omega⟩, ← D.hcW_e u τ]
+    rw [dite_eq_left hr, dite_eq_left ⟨le_rfl, by omega⟩, ← D.hcW_e u τ]
     unfold Ranks.N
     push_cast
     ring
@@ -127,7 +132,7 @@ theorem wtS : ∀ (D : D7) (u : D.what₂.Word) (μ : D.what₂.Tup) {C : Column
           omega
         omega⟩) ((r.1 - D.R.k) / (D.R.t + 1) + 1) := by
     intro r h
-    rw [M.lam_eq (j + 1) hj.le τ r, dif_neg (by omega)]
+    rw [M.lam_eq (j + 1) hj.le τ r, dite_eq_right (by omega)]
   have hblk : ∀ r : Fin (D.R.N (j + 1)), D.R.N j ≤ r.1 → ((M.lam (j + 1) τ).w r : ℚ) = -wG D.R ((D.hcW u τ).e ⟨j, hj'⟩) (j + 1) := by
     intro r hr
     have h2 : r.1 < D.R.k + (j + 1) * (D.R.t + 1) := r.2
@@ -140,7 +145,7 @@ theorem wtS : ∀ (D : D7) (u : D.what₂.Word) (μ : D.what₂.Tup) {C : Column
     rw [e1, hdiv]
   have hds0 : (M.lam (j + 1) τ).detShift = (M.lam (j + 1) τ).w ⟨D.R.N (j + 1) - 1, by omega⟩ := by
     unfold DomWeight.detShift
-    rw [dif_pos hN0]
+    rw [dite_eq_left hN0]
   have hds : ((M.lam (j + 1) τ).detShift : ℚ) = -wG D.R ((D.hcW u τ).e ⟨j, hj'⟩) (j + 1) := by
     rw [hds0]
     exact hblk _ (by simp only []; omega)
@@ -176,7 +181,7 @@ theorem wtS : ∀ (D : D7) (u : D.what₂.Word) (μ : D.what₂.Tup) {C : Column
     Int.toNat_of_nonneg (by omega)
   unfold extNu
   by_cases hr : r.1 < D.R.N j
-  · rw [dif_pos hr]
+  · rw [dite_eq_left hr]
     have hnu := (nu_t_identity D u j hj' τ ⟨r.1, hr⟩).1
     have key : (((M.lam (j + 1) τ).natW r : ℕ) : ℝ) = ((nuT D u j τ ⟨r.1, hr⟩ : ℕ) : ℝ) := by
       rw [hnu]
@@ -188,22 +193,22 @@ theorem wtS : ∀ (D : D7) (u : D.what₂.Word) (μ : D.what₂.Tup) {C : Column
         rw [this]; push_cast; rfl
       rw [q1, hds]
       unfold DV.nuRow DV.srcPar DV.wSz
-      rw [dif_pos (show 1 ≤ j + 1 ∧ j + 1 ≤ D.R.m from ⟨by omega, by omega⟩), ← D.hcW_e u τ]
+      rw [dite_eq_left (show 1 ≤ j + 1 ∧ j + 1 ≤ D.R.m from ⟨by omega, by omega⟩), ← D.hcW_e u τ]
       have ej : (D.hcW u τ).e ⟨j + 1 - 1, by omega⟩ = (D.hcW u τ).e ⟨j, hj'⟩ := rfl
       rw [ej]
       by_cases hrk : r.1 < D.R.k
-      · rw [dif_pos hrk, M.lam_eq (j + 1) hj.le τ r, dif_pos hrk]
+      · rw [dite_eq_left hrk, M.lam_eq (j + 1) hj.le τ r, dite_eq_left hrk]
         unfold hcToWeightQ rhoVec wG Ranks.N
         simp only [Nat.add_sub_cancel]
         push_cast
         ring
-      · rw [dif_neg hrk]
+      · rw [dite_eq_right hrk]
         have hb : (r.1 - D.R.k) / (D.R.t + 1) < D.R.m := by
           have : (r.1 - D.R.k) / (D.R.t + 1) < j := by
             rw [Nat.div_lt_iff_lt_mul (by omega)]
             rw [hNj] at hr; omega
           omega
-        rw [dif_pos hb, hgen r (by omega)]
+        rw [dite_eq_left hb, hgen r (by omega)]
         have hdm := Nat.div_add_mod (r.1 - D.R.k) (D.R.t + 1)
         have hr_eq : (r.1 : ℝ) = D.R.k + ((D.R.t : ℝ) + 1) * (((r.1 - D.R.k) / (D.R.t + 1) : ℕ) : ℝ) + (((r.1 - D.R.k) % (D.R.t + 1) : ℕ) : ℝ) := by
           have : r.1 = D.R.k + (D.R.t + 1) * ((r.1 - D.R.k) / (D.R.t + 1)) + (r.1 - D.R.k) % (D.R.t + 1) := by omega
@@ -215,7 +220,7 @@ theorem wtS : ∀ (D : D7) (u : D.what₂.Word) (μ : D.what₂.Tup) {C : Column
         push_cast
         linear_combination (-1 : ℝ) * hr_eq
     exact_mod_cast key
-  · rw [dif_neg hr]
+  · rw [dite_eq_right hr]
     have h0 : ((M.lam (j + 1) τ).w r : ℚ) - ((M.lam (j + 1) τ).detShift : ℚ) = 0 := by
       rw [hblk r (by omega), hds]; ring
     have h1 : (M.lam (j + 1) τ).w r - (M.lam (j + 1) τ).detShift = 0 := by exact_mod_cast h0

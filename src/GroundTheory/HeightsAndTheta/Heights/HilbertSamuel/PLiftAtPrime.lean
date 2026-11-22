@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLiftAtPrime
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedPow
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreSectionLift
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreRelLift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLiftAtPrime
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedPow
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreSectionLift
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreRelLift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

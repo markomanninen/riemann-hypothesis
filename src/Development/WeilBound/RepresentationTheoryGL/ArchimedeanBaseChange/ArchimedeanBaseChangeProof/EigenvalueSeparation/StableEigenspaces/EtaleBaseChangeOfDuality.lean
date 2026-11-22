@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.FrobeniusUniformizerIdentity
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TendstoExpMulPoly
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.FrobeniusUniformizerIdentity
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TendstoExpMulPoly
+
+@[expose] public section
 
 namespace PositivityTheory.Rg.BcB.E.E3
 

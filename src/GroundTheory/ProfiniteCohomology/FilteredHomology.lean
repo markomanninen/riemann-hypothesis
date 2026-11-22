@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -70,8 +75,7 @@ theorem iCycles_cyclesMap_apply (φ : K ⟶ L) (i : ι) (z : K.cycles i) :
 
 theorem homologyMap_homologyπ_apply (φ : K ⟶ L) (i : ι) (z : K.cycles i) :
     (HomologicalComplex.homologyMap φ i).hom ((K.homologyπ i).hom z) =
-      (L.homologyπ i).hom ((HomologicalComplex.cyclesMap φ i).hom z) :=
-by
+      (L.homologyπ i).hom ((HomologicalComplex.cyclesMap φ i).hom z) := by
   rw [← LinearMap.comp_apply, ← ModuleCat.hom_comp, HomologicalComplex.homologyπ_naturality]
   rfl
 
@@ -88,8 +92,8 @@ theorem cocone_w_apply {j j' : J} (f : j ⟶ j') (i : ι) (y : (F.obj j).X i) :
     ((t.ι.app j').f i).hom (((F.map f).f i).hom y) = ((t.ι.app j).f i).hom y :=
   congrArg (fun φ : F.obj j ⟶ t.pt => (φ.f i).hom y) (t.w f)
 
-omit [IsFiltered J] in
 
+omit [IsFiltered J] in
 theorem exists_homologyMap_eq_of_cocone (i : ι)
     (hsurj : ∀ x : t.pt.X i, ∃ (j : J) (y : (F.obj j).X i), ((t.ι.app j).f i).hom y = x)
     (hinj : ∀ (j : J) (y : (F.obj j).X (c.next i)), ((t.ι.app j).f (c.next i)).hom y = 0 →
@@ -141,28 +145,6 @@ theorem exists_homologyMap_map_eq_zero_of_cocone (i : ι)
   simp only [ModuleCat.hom_comp, LinearMap.comp_apply]
   rw [← hom_f_d_apply]
   exact hg.symm
-
-noncomputable def isColimitHomologyMapCocone (i : ι)
-    (hsurj : ∀ (n : ι) (x : t.pt.X n),
-      ∃ (j : J) (y : (F.obj j).X n), ((t.ι.app j).f n).hom y = x)
-    (hinj : ∀ (n : ι) (j : J) (y : (F.obj j).X n), ((t.ι.app j).f n).hom y = 0 →
-      ∃ (j' : J) (f : j ⟶ j'), ((F.map f).f n).hom y = 0) :
-    IsColimit ((HomologicalComplex.homologyFunctor (ModuleCat.{u} R) c i).mapCocone t) :=
-  isColimitOfReflects (forget (ModuleCat.{u} R)) <|
-    Types.FilteredColimit.isColimitOf' _ _
-      (fun z => by
-        obtain ⟨j, y, hy⟩ := exists_homologyMap_eq_of_cocone t i (hsurj i) (hinj (c.next i)) z
-        exact ⟨j, y, hy.symm⟩)
-      (fun j (x y : (F.obj j).homology i) hxy => by
-        have hxy' : (HomologicalComplex.homologyMap (t.ι.app j) i).hom x =
-            (HomologicalComplex.homologyMap (t.ι.app j) i).hom y := hxy
-        obtain ⟨j', f, h⟩ := exists_homologyMap_map_eq_zero_of_cocone t i (hsurj (c.prev i))
-          (hinj i) j (x - y) (by rw [map_sub, hxy', sub_self])
-        have h' : (HomologicalComplex.homologyMap (F.map f) i).hom x =
-            (HomologicalComplex.homologyMap (F.map f) i).hom y := by
-          rw [← sub_eq_zero, ← map_sub]
-          exact h
-        exact ⟨j', f, h'⟩)
 
 end Filtered
 

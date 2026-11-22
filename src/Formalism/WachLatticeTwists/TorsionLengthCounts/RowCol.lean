@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.Statement
+module
+
+public import Formalism.WachLatticeTwists.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem length_le_of_killed {O : Type*} [CommRing O] (b : O) {X : Type*} [AddCom
     simp only [h, LinearMap.sum_apply, LinearMap.comp_apply, LinearMap.proj_apply,
       Submodule.liftQ_apply, gi, LinearMap.toSpanSingleton_apply]
     conv_rhs => rw [pi_eq_sum_univ v]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul]
   calc Module.length O X ≤ Module.length O (ι → O ⧸ Ideal.span {b}) :=
         Module.length_le_of_surjective h hs
@@ -107,7 +112,8 @@ theorem Formalism.RepresentationBoundsCohomology.rowColength : Formalism.Represe
     obtain ⟨x, rfl⟩ := I.mkQ_surjective z
     refine ⟨fun i => bQ.repr (T.mkQ x) i, ?_⟩
     have h1 : T.mkQ (G0 (fun i => bQ.repr (T.mkQ x) i)) = T.mkQ x := by
-      rw [hG0, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hG0, map_sum]
       simp only [map_smul, hm]
       exact bQ.sum_repr (T.mkQ x)
     have h2 : G0 (fun i => bQ.repr (T.mkQ x) i) - x ∈ T := by

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.FunctionFieldPoint
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.FunctionFieldPoint
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -30,8 +34,8 @@ theorem coordReduce_algebraMap (a : 𝒪) :
     map_one, ← algebraMap_smul (A := (ResidueField 𝒪)[X]) (residue 𝒪 a)]
   simp
 
-omit [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪] in
 
+omit [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪] in
 theorem smul_basis_mul (c : 𝒪) (p q : 𝒪[X]) :
     (C c * p) • (1 : W.toAffine.CoordinateRing) + (C c * q) • CoordinateRing.mk W Y =
       algebraMap 𝒪 W.toAffine.CoordinateRing c * (p • 1 + q • CoordinateRing.mk W Y) := by
@@ -51,7 +55,7 @@ theorem gaussPrime_eq {ϖ : 𝒪} (hϖ : Irreducible ϖ) :
   · intro y hy
     obtain ⟨p, q, rfl⟩ := CoordinateRing.exists_smul_basis_eq y
     have hy' : coordReduce W (p • 1 + q • CoordinateRing.mk W Y) = 0 := hy
-    simp_rw [map_add, CoordinateRing.map_smul, map_one, CoordinateRing.map_mk, Polynomial.map_X]
+    simp_rw [map_add (f := _), CoordinateRing.map_smul, map_one, CoordinateRing.map_mk, Polynomial.map_X]
       at hy'
     obtain ⟨hp, hq⟩ := CoordinateRing.smul_basis_eq_zero hy'
     have hker : ∀ r : 𝒪[X], r.map (residue 𝒪) = 0 → ∃ r' : 𝒪[X], r = C ϖ * r' := by
@@ -83,8 +87,9 @@ theorem algebraMap_gaussRing_injective :
 
 instance : IsDiscreteValuationRing (gaussRing W) := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪
-  have hmax : maximalIdeal (gaussRing W) = Ideal.span {algebraMap W.toAffine.CoordinateRing
-      (gaussRing W) (algebraMap 𝒪 W.toAffine.CoordinateRing ϖ)} := by
+  have hmax : maximalIdeal (gaussRing W) = Ideal.span
+      {(algebraMap W.toAffine.CoordinateRing (gaussRing W)
+        (algebraMap 𝒪 W.toAffine.CoordinateRing ϖ))} := by
     have e := congrArg (Ideal.map (algebraMap W.toAffine.CoordinateRing (gaussRing W)))
       (gaussPrime_eq W hϖ)
     refine (Localization.AtPrime.map_eq_maximalIdeal (I := gaussPrime W)).symm.trans ?_
@@ -93,7 +98,7 @@ instance : IsDiscreteValuationRing (gaussRing W) := by
     rw [isField_iff_maximalIdeal_eq, hmax, Ideal.span_singleton_eq_bot]
     exact (map_ne_zero_iff _ (algebraMap_gaussRing_injective W)).2
       ((map_ne_zero_iff _ (algebraMap_coordinateRing_injective W)).2 hϖ.ne_zero)
-  refine ((IsDiscreteValuationRing.TFAE (gaussRing W) hnf).out 0 4).mpr ?_
+  refine ((IsDiscreteValuationRing.TFAE (gaussRing W) hnf).out 1 5).mpr ?_
   rw [hmax]
   exact ⟨⟨_, rfl⟩⟩
 
@@ -102,7 +107,6 @@ section Fraction
 variable (K : Type*) [Field K] [Algebra 𝒪 K] [IsFractionRing 𝒪 K]
 
 omit [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪] in
-
 theorem coordinateRing_map_algebraMap {S : Type*} [CommRing S] (f : 𝒪 →+* S) (a : 𝒪) :
     CoordinateRing.map W f (algebraMap 𝒪 W.toAffine.CoordinateRing a) =
       algebraMap S (W.map f).toAffine.CoordinateRing (f a) := by
@@ -149,7 +153,7 @@ theorem exists_map_eq_smul (α : (W.baseChange K).toAffine.CoordinateRing) :
     (b • IsLocalization.integerNormalization (nonZeroDivisors 𝒪) q) • CoordinateRing.mk W Y,
     mul_ne_zero (nonZeroDivisors.ne_zero hb) (nonZeroDivisors.ne_zero hb'), ?_⟩
   change CoordinateRing.map W (algebraMap 𝒪 K) _ = _
-  rw [map_add, CoordinateRing.map_smul, CoordinateRing.map_smul, map_one, CoordinateRing.map_mk,
+  rw [map_add (f := _), CoordinateRing.map_smul, CoordinateRing.map_smul, map_one, CoordinateRing.map_mk,
     Polynomial.map_X, Polynomial.map_smul, Polynomial.map_smul, hbp, hbq, smul_add]
   simp only [algebraMap_smul, smul_assoc, smul_smul, mul_comm b b']
   rfl

@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSpanTprodOfCommuteAtEachPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSpanTprodOfCommuteAtEachPlace
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.FactorKernel
 
 variable {ι : Type} [Fintype ι] [hd : DecidableEq ι] {V : Type} [AddCommGroup V] [Module ℂ V]
 
-noncomputable def contrML (w₀ : ι) (μ : ι → Module.Dual ℂ V) : MultilinearMap ℂ (fun _ : ι => V) V where
+noncomputable def contrML (w₀ : ι) (μ : ι → Module.Dual ℂ V) : (ι → V) →ₘₗ[ℂ] V where
   toFun x := (∏ i ∈ Finset.univ.erase w₀, μ i (x i)) • x w₀
   map_update_add' := by
     intro inst x i a b
@@ -24,10 +29,11 @@ noncomputable def contrML (w₀ : ι) (μ : ι → Module.Dual ℂ V) : Multilin
         rw [← Finset.mul_prod_erase _ _ hi, Function.update_self]
         congr 1
         exact Finset.prod_congr rfl fun k hk => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
-      simp only [e, Function.update_of_ne (Ne.symm h), map_add, add_mul, add_smul]
+      simp only [e, Function.update_of_ne (Ne.symm h), map_add (f := _), add_mul, add_smul]
   map_update_smul' := by
     intro inst x i c a
     obtain rfl : inst = hd := Subsingleton.elim _ _
+    simp only [RingHom.id_apply]
     by_cases h : i = w₀
     · subst h
       have e : ∀ c, ∏ k ∈ Finset.univ.erase i, μ k (Function.update x i c k) =
@@ -60,7 +66,7 @@ theorem dual_contr (w₀ : ι) (μ : ι → Module.Dual ℂ V) (ν : Module.Dual
     rw [mul_comm]
     congr 1
     exact Finset.prod_congr rfl fun k hk => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
-  | add a b ha hb => rw [map_add, map_add, ha, hb, map_add]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _)]
 
 theorem contr_atPl (w₀ : ι) (μ : ι → Module.Dual ℂ V) (L : Module.End ℂ V) (T : ⨂[ℂ] _ : ι, V) :
     contr w₀ μ (GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w₀ L T) = L (contr w₀ μ T) := by
@@ -71,17 +77,6 @@ theorem contr_atPl (w₀ : ι) (μ : ι → Module.Dual ℂ V) (L : Module.End �
     congr 2
     exact Finset.prod_congr rfl fun k hk => by
       simp [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
-  | add a b ha hb => simp only [map_add, ha, hb]
-
-theorem atPl_noCommonKernel : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (V : Type) [AddCommGroup V] [Module ℂ V] (J : Type)
-    (L : J → Module.End ℂ V) (w₀ : ι), (∀ v : V, (∀ j, L j v = 0) → v = 0) →
-    ∀ T : ⨂[ℂ] _ : ι, V, (∀ j, GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w₀ (L j) T = 0) → T = 0 := by
-  intro ι _ _ V _ _ J L w₀ hL T hT
-  apply GlobalTheory.PiTensorCommute.eq_zero_of_forall_dualDistrib (M := fun _ : ι => V)
-  intro f
-  have hv : contr w₀ f T = 0 := hL _ fun j => by rw [← contr_atPl, hT j, map_zero]
-  have h := dual_contr w₀ f (f w₀) T
-  rw [hv, map_zero, Function.update_eq_self] at h
-  exact h.symm
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end GlobalTheory.FactorKernel

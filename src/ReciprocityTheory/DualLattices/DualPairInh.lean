@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.ModuliPointsState
-import ReciprocityTheory.DualLattices.AinfFacts
+module
+
+public import ReciprocityTheory.DualLattices.ModuliPointsState
+public import ReciprocityTheory.DualLattices.AinfFacts
+
+@[expose] public section
 
 noncomputable section
 

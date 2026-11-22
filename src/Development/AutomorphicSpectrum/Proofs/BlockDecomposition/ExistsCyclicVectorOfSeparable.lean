@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
-import GroundTheory.AutomorphicForms.AnisotropicHeight
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
+public import GroundTheory.AutomorphicForms.AnisotropicHeight
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D4 GlobalTheory.CompanionTheory.TorusCh
 open scoped Pointwise
@@ -92,7 +96,7 @@ theorem exists_vector_annihilator_dvd {K : Type} [Field K] {n : ℕ}
     obtain ⟨a, b, hab⟩ := hcop
     apply (hw p hp).1
     have hval := congrArg (fun t => aeval γ t *ᵥ w p) hab
-    simp only [map_add, map_mul, map_one, Matrix.one_mulVec, Matrix.add_mulVec] at hval
+    simp only [map_add (f := _), map_mul, map_one, Matrix.one_mulVec, Matrix.add_mulVec] at hval
     rw [← hval, ← Matrix.mulVec_mulVec, (hw p hp).2, ← Matrix.mulVec_mulVec (M := aeval γ b),
       ← map_mul, hker]
     simp
@@ -117,7 +121,7 @@ theorem exists_cyclic_vector : ∀ (K : Type) [Field K] (n : ℕ) (γ : Matrix (
   let F : (Fin n → K) →ₗ[K] (Fin n → K) :=
     T ∘ₗ (degreeLT K n).subtype ∘ₗ (degreeLTEquiv K n).symm.toLinearMap
   have hinj : Function.Injective F := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     have hd : γ.charpoly ∣ (((degreeLTEquiv K n).symm c : degreeLT K n) : K[X]) := hv _ hc
     have hdeg : (((degreeLTEquiv K n).symm c : degreeLT K n) : K[X]).degree < γ.charpoly.degree := by

@@ -1,6 +1,10 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatWPrimeExt
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.Letters
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.ResidueSeriesExpansionHolds
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatWPrimeExt
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.Letters
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.ResidueSeriesExpansionHolds
+
+@[expose] public section
 
 noncomputable section
 

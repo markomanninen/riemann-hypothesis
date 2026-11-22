@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalCharacterH1FiniteLevels
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitCharacterOfIntegralCyclotomicProduct
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLePowIffDvd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GreenbergOrdinaryOfVanishingOnCycloKernel
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalCharacterH1FiniteLevels
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitCharacterOfIntegralCyclotomicProduct
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLePowIffDvd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GreenbergOrdinaryOfVanishingOnCycloKernel
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.Ord2.GwIneq
 open scoped Matrix
 
@@ -116,7 +121,7 @@ theorem card_ordCond_le (c : Coef l) (n : ℕ) (W : R2 Ω l) (hint : ∀ s i j, 
     have hw : w ∈ Z1 τ := by
       refine ⟨(continuous_of_discreteTopology (f := fun y : Mn c n => (levEquiv c n).symm (y 0))).comp zb.2.1,
         fun g h => lineInc_injective c n ?_⟩
-      rw [map_add, heq, ← hzbι, ← hzbι, ← hzbι]
+      rw [map_add (f := _), heq, ← hzbι, ← hzbι, ← hzbι]
       exact zb.2.2 g h
     refine ⟨Submodule.Quotient.mk ⟨w, hw⟩, ?_⟩
     rw [hΦ, UpperTheory.V.X.h1MapOfAdditive_mk]

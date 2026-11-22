@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.UnitaryLatticeOrthogonal
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeActions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.UnitaryLatticeOrthogonal
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeActions
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,11 +45,11 @@ theorem exists_of_conj_eq (h : IsCMExt F E σ) (e : E) (he : σ e = e) :
 theorem trace_field (h : IsCMExt F E σ) (e : E) :
     algebraMap F E (Algebra.trace F E e) = e + σ e := by
   have hσ := conj_conj h
-  obtain ⟨a, ha⟩ := exists_of_conj_eq h (e + σ e) (by rw [map_add, hσ, add_comm])
+  obtain ⟨a, ha⟩ := exists_of_conj_eq h (e + σ e) (by rw [map_add (f := _), hσ, add_comm])
   have h1 : Algebra.trace F E (σ e) = Algebra.trace F E e :=
     Algebra.trace_eq_of_algEquiv (AlgEquiv.ofAlgHom σ σ (AlgHom.ext hσ) (AlgHom.ext hσ)) e
   have h3 := congrArg (Algebra.trace F E) ha
-  rw [Algebra.trace_algebraMap, h.2.2.1, map_add, h1, two_smul, ← two_mul, ← two_mul] at h3
+  rw [Algebra.trace_algebraMap, h.2.2.1, map_add (f := _), h1, two_smul, ← two_mul, ← two_mul] at h3
   rw [← ha, mul_left_cancel₀ two_ne_zero h3]
 
 variable (R : Type) [CommRing R] [Algebra F R]
@@ -54,7 +58,7 @@ theorem trace_tensor (h : IsCMExt F E σ) (z : R ⊗[F] E) :
     algebraMap R (R ⊗[F] E) (Algebra.trace R (R ⊗[F] E) z) = z + sigR R σ z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]; ring
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]; ring
   | tmul a e =>
     have h1 : a ⊗ₜ[F] e = a • ((1 : R) ⊗ₜ[F] e) := by
       rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -70,7 +74,7 @@ theorem trace_tensor (h : IsCMExt F E σ) (z : R ⊗[F] E) :
 theorem sigR_sigR (h : IsCMExt F E σ) (z : R ⊗[F] E) : sigR R σ (sigR R σ z) = z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul a e =>
     show a ⊗ₜ[F] σ (σ e) = _
     rw [conj_conj h]
@@ -82,7 +86,8 @@ theorem hR_self (h : IsCMExt F E σ) {M : ℕ} {J : Matrix (Fin M) (Fin M) E} (h
     show (1 : R) ⊗ₜ[F] σ (J j i) = (1 : R) ⊗ₜ[F] J i j
     rw [hJ.1]
   have hs : sigR R σ (hR R σ J x x) = hR R σ J x x := by
-    simp only [hR, Formalism.UG.hform, map_sum, map_mul, sigR_sigR R h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hR, Formalism.UG.hform, map_sum, map_mul, sigR_sigR R h]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [hJ']
@@ -112,36 +117,8 @@ theorem unram_iff : UnitaryLatticeOrthogonal.UnramAt F E v ↔ SelfDualLatticeAc
   haveI := w.isMaximal
   exact Ideal.ramificationIdx_eq_one_iff
 
-theorem oEv_eq : UnitaryLatticeOrthogonal.OEv F E v = SelfDualLatticeActions.OEv E v := rfl
-
-theorem act_eq : UnitaryLatticeOrthogonal.act σ J v = SelfDualLatticeActions.act v σ J := rfl
-
-theorem perp_eq : UnitaryLatticeOrthogonal.perp σ J v = SelfDualLatticeActions.perp v σ J := rfl
-
-theorem perpLat_eq (L : Submodule (SelfDualLatticeActions.OEv E v) (SelfDualLatticeActions.Wv E v M)) (x : SelfDualLatticeActions.Wv E v M) :
-    UnitaryLatticeOrthogonal.perpLat σ J v L x = SelfDualLatticeActions.perpLat v σ J x L := rfl
-
-theorem isSDLatIn_iff (P : Submodule (SelfDualLatticeActions.Ev E v) (SelfDualLatticeActions.Wv E v M))
-    (L : Submodule (SelfDualLatticeActions.OEv E v) (SelfDualLatticeActions.Wv E v M)) :
-    UnitaryLatticeOrthogonal.IsSDLatIn σ J v P L ↔ SelfDualLatticeActions.IsSelfDualIn v σ J P L := Iff.rfl
-
 theorem isSDLat_iff (L : Submodule (SelfDualLatticeActions.OEv E v) (SelfDualLatticeActions.Wv E v M)) :
     UnitaryLatticeOrthogonal.IsSDLat σ J v L ↔ SelfDualLatticeActions.IsSelfDualLat v σ J L := Iff.rfl
-
-theorem stabLat_eq (L : Submodule (SelfDualLatticeActions.OEv E v) (SelfDualLatticeActions.Wv E v M)) :
-    UnitaryLatticeOrthogonal.stabLat σ J v L = SelfDualLatticeActions.latStab v σ J L := rfl
-
-theorem stabVec_eq (x : SelfDualLatticeActions.Wv E v M) :
-    UnitaryLatticeOrthogonal.stabVec σ J v x = SelfDualLatticeActions.vecStab v σ J x := rfl
-
-theorem unitaryLatIn_eq (P : Submodule (SelfDualLatticeActions.Ev E v) (SelfDualLatticeActions.Wv E v M))
-    (L : Submodule (SelfDualLatticeActions.OEv E v) (SelfDualLatticeActions.Wv E v M)) :
-    UnitaryLatticeOrthogonal.unitaryLatIn σ J v P L = SelfDualLatticeActions.latUnitaryIn v σ J P L := rfl
-
-theorem xb_eq (β : Fv F v) : UnitaryLatticeOrthogonal.Xb σ J v β = SelfDualLatticeActions.Xbeta v σ J β := rfl
-
-theorem sL_eq (L : Submodule (SelfDualLatticeActions.OEv E v) (SelfDualLatticeActions.Wv E v M)) (β : Fv F v) :
-    UnitaryLatticeOrthogonal.SL σ J v L β = SelfDualLatticeActions.sphere v σ J L β := rfl
 
 theorem hasONB_iff (L : Submodule (SelfDualLatticeActions.OEv E v) (SelfDualLatticeActions.Wv E v M)) :
     UnitaryLatticeOrthogonal.HasONB σ J v L ↔ SelfDualLatticeActions.HasOrthonormalBasis v σ J L := by

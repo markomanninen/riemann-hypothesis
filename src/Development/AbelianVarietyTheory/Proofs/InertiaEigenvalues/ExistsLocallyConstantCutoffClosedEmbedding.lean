@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.CutOff
@@ -10,7 +15,7 @@ theorem exists_isClopen_isCompact_superset {R : Type} [TopologicalSpace R] [Loca
   have h : ∀ z : R, ∃ V : Set R, IsClopen V ∧ IsCompact V ∧ z ∈ V := by
     intro z
     obtain ⟨K, hK, hKz⟩ := exists_compact_mem_nhds z
-    obtain ⟨V, hV, hzV, hVK⟩ := loc_compact_Haus_tot_disc_of_zero_dim.mem_nhds_iff.1 hKz
+    obtain ⟨V, hV, hzV, hVK⟩ := isTopologicalBasis_isClopen.mem_nhds_iff.1 hKz
     exact ⟨V, hV, hK.of_isClosed_subset hV.isClosed hVK, hzV⟩
   choose V hVc hVk hzV using h
   obtain ⟨t, -, ht⟩ := hZ.elim_nhds_subcover V (fun z _ => (hVc z).isOpen.mem_nhds (hzV z))
@@ -20,6 +25,7 @@ theorem exists_isClopen_isCompact_superset {R : Type} [TopologicalSpace R] [Loca
 theorem exists_nhds_one_mul_mem_iff {R : Type} [Group R] [TopologicalSpace R]
     [IsTopologicalGroup R] {U : Set R} (hUo : IsOpen U) (hUk : IsCompact U) :
     ∃ W ∈ 𝓝 (1 : R), ∀ w ∈ W, ∀ x, w * x ∈ U ↔ x ∈ U := by
+  open scoped Pointwise in
   obtain ⟨V, hV, hVU⟩ := compact_open_separated_mul_left hUk hUo subset_rfl
   refine ⟨V ∩ V⁻¹, inter_mem hV (inv_mem_nhds_one R hV), ?_⟩
   rintro w ⟨hw, hw'⟩ x
@@ -64,7 +70,7 @@ theorem exists_cutoff : ∀ (R S : Type) [Group R] [TopologicalSpace R] [IsTopol
     rw [IsLocallyConstant.iff_eventually_eq]
     intro g
     have hc : Tendsto (fun y => y * g⁻¹) (𝓝 g) (𝓝 1) := by
-      simpa using (continuous_mul_right g⁻¹).tendsto g
+      simpa using (continuous_mul_const g⁻¹).tendsto g
     filter_upwards [hc hW] with y hy
     have := hFW _ hy g
     rwa [inv_mul_cancel_right] at this

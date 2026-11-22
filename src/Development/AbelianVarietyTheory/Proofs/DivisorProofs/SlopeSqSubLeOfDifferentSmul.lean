@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SlopeSqSubLeOfGaloisStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SlopeSqSubLeOfGaloisStable
+
+@[expose] public section
 
 open NumberField GlobalTheory.AllWt Module TensorProduct Matrix GlobalTheory.SlopeExt GlobalTheory.SlopeGalois
 open scoped nonZeroDivisors
@@ -25,10 +29,10 @@ theorem slope_sq_bot {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Mo
     slope_sq N (⊥ : Submodule (𝓞 K) V) = -Real.log 2 + Real.log |(discr K : ℝ)| / (Module.finrank ℚ K : ℝ) := by
   unfold slope_sq
   letI : StarRing K := starRingOfComm
-  rw [dif_pos hN]
+  rw [dite_eq_left hN]
   exact muDef_bot _ _
 
-theorem slope_sq_sub_le_of_different_smul {K K' V V' : Type} [Field K] [NumberField K] [IsTotallyComplex K]
+theorem slope_sq_sub_le_of_different_smul {K K' V V' : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
     [Field K'] [NumberField K'] [Algebra K K'] [AddCommGroup V] [Module K V] [Module (𝓞 K) V]
     [IsScalarTower (𝓞 K) K V] [AddCommGroup V'] [Module K' V'] [Module (𝓞 K') V'] [IsScalarTower (𝓞 K') K' V']
     (N : (K →+* ℂ) → V → ℝ) (N' : (K' →+* ℂ) → V' → ℝ) (ι : V →ₛₗ[algebraMap K K'] V') (L : Submodule (𝓞 K) V)
@@ -117,7 +121,8 @@ theorem slope_sq_sub_le_of_different_smul {K K' V V' : Type} [Field K] [NumberFi
     refine le_antisymm (Submodule.span_le.2 (hsM.trans (Submodule.span_le.2 ?_))) (Submodule.span_mono ?_)
     · rintro _ ⟨x, hx, rfl⟩
       obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 (hsp ▸ hx)
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Submodule.sum_mem _ fun k _ => by
         rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
     · rintro _ ⟨k, rfl⟩; exact hιM _ (heL k)

@@ -1,14 +1,19 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SuperDiagEqSdM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockUnipotentMemUpperUnipotent
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SuperDiagEqSdM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockUnipotentMemUpperUnipotent
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Matrix MeasureTheory GlobalTheory.WhitBump
 open scoped ContDiff
 
 namespace GlobalTheory.WhitBump.FinBump
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 theorem psiFin_add (a b : Af E) : psiFin (a + b) = psiFin a * psiFin b := by
-  simp only [psiFin, map_add, AddChar.map_add_eq_mul, Circle.coe_mul]
+  simp only [psiFin, map_add (f := _), AddChar.map_add_eq_mul, Circle.coe_mul]
 
 theorem bumpFin_eq (hK : ∀ u ∈ GlobalTheory.SmGL.unipB (Af E) (Fin n),
       u ∈ GroundTheory.Automorphic.AdelicGLn.integralFiniteGL E n → psiFin (GlobalTheory.Whittaker.superDiag u) = 1)
@@ -18,7 +23,7 @@ theorem bumpFin_eq (hK : ∀ u ∈ GlobalTheory.SmGL.unipB (Af E) (Fin n),
   have h : ∃ u ∈ GlobalTheory.SmGL.unipB (Af E) (Fin n), u⁻¹ * g ∈ GroundTheory.Automorphic.AdelicGLn.integralFiniteGL E n :=
     ⟨u, hu, hg⟩
   unfold bumpFin
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨hu', hg'⟩ := h.choose_spec
   set u' := h.choose
   have hw : u⁻¹ * u' ∈ GlobalTheory.SmGL.unipB (Af E) (Fin n) := mul_mem (inv_mem hu) hu'
@@ -32,13 +37,13 @@ end GlobalTheory.WhitBump.FinBump
 
 namespace GlobalTheory.WhitBump.FinBump
 
-theorem bumpFin_zero_of_not {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+theorem bumpFin_zero_of_not {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
     {g : GL (Fin n) (Af E)}
     (h : ¬ ∃ u ∈ GlobalTheory.SmGL.unipB (Af E) (Fin n), u⁻¹ * g ∈ GroundTheory.Automorphic.AdelicGLn.integralFiniteGL E n) :
     bumpFin g = 0 := by
-  unfold bumpFin; rw [dif_neg h]
+  unfold bumpFin; rw [dite_eq_right h]
 
-theorem bumpFin_props : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ),
+theorem bumpFin_props : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ),
     (∀ u ∈ GlobalTheory.SmGL.unipB (Af E) (Fin n), u ∈ GroundTheory.Automorphic.AdelicGLn.integralFiniteGL E n →
       psiFin (GlobalTheory.Whittaker.superDiag u) = 1) →
     bumpFin (E := E) (n := n) 1 = 1 ∧

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LongWeylElementSquare
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaussianUniqueness.MulMApply
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LongWeylElementSquare
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaussianUniqueness.MulMApply
+
+@[expose] public section
 
 noncomputable section
 

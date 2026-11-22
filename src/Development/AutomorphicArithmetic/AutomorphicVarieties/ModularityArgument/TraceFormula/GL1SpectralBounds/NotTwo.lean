@@ -1,20 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL1SpectralBounds.CuspOrTwoAlt
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatAsc
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.EventuallySatV
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepC
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL1SpectralBounds.CuspOrTwoAlt
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatAsc
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.EventuallySatV
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepC
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSpec PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.F UpperTheory.V.Z.Tf.GOne
 
-private theorem satV_of_locComp {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+private theorem satV_of_locComp {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
     {V : Submodule ℂ (Sm E N)} (hV : IsDiscrete V) {w : HeightOneSpectrum (𝓞 E)}
     {σ : SmIrr (Matrix.GeneralLinearGroup (Fin N) (w.adicCompletion E))} (hσ : IsLocCompGL V w σ) {B : Multiset ℂˣ}
     (hB : GlobalTheory.LFun.HasSatGL w σ.ρ B) {φ : Sm E N} (hφ : φ ∈ V) (h0 : φ ≠ 0)
-    (hfix : ∀ k ∈ GlobalTheory.LFun.KGL w N, finRep E N (locGL E N w k) φ = φ) : SatV V w B := by
+    (hfix : ∀ k ∈ GlobalTheory.LFun.KGL w (n := N), finRep E N (locGL E N w k) φ = φ) : SatV V w B := by
   have hmem : ∀ ψ ∈ V, ψ ∈ ⨆ f : SatakeVectors.SatakeVectorEventually.MapsD V w σ, LinearMap.range f.1 := fun ψ hψ => by
     rw [SatakeVectors.SatakeVectorEventually.iSup_range_eq hV w σ hσ]; exact hψ
-  have key : ∀ ψ ∈ V, (∀ k ∈ GlobalTheory.LFun.KGL w N, finRep E N (locGL E N w k) ψ = ψ) → ψ ≠ 0 →
+  have key : ∀ ψ ∈ V, (∀ k ∈ GlobalTheory.LFun.KGL w (n := N), finRep E N (locGL E N w k) ψ = ψ) → ψ ≠ 0 →
       GlobalTheory.LFun.IsSatVecGL w ((finRep E N).comp (locGL E N w)) ψ B := fun ψ hψ hψK hψ0 =>
     GlobalTheory.HeightCounting.Blocks.isSatVecGL_of_mem_iSup σ.irred hB (fun f : SatakeVectors.SatakeVectorEventually.MapsD V w σ => f.1) (fun f => f.2.2)
       (hmem ψ hψ) (GlobalTheory.LGrp.mem_fixed.2 hψK) hψ0
@@ -38,7 +42,7 @@ theorem UpperTheory.V.Z.Tf.GOne.notTwo :
     filter_upwards [h, satAsc_holds E N a d V P hV hA, hlev] with w hw hs hl
     obtain ⟨σ, B, hσ, hB, hπ⟩ := hw
     obtain ⟨B₀, hB₀, hall⟩ := hs
-    have hfix : ∀ k ∈ GlobalTheory.LFun.KGL w N, finRep E N (locGL E N w k) φ = φ := fun k hk => by
+    have hfix : ∀ k ∈ GlobalTheory.LFun.KGL w (n := N), finRep E N (locGL E N w k) φ = φ := fun k hk => by
       obtain ⟨g, rfl⟩ := hk
       exact hl g
     have e := hall B (satV_of_locComp hV hσ hB hφ h0 hfix)

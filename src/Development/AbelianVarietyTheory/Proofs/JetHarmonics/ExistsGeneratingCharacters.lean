@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsExtensionCharacter
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsExtensionCharacter
+
+@[expose] public section
 
 namespace GlobalTheory.PrimaryCharacter
 

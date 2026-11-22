@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptAwayFromPrimesStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyExpDerivativeLie
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinearStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPushAlongMap
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicHomDetermined
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsEigAtIffOfIsDerivAt0
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsValueBasis
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptAwayFromPrimesStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyExpDerivativeLie
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinearStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPushAlongMap
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicHomDetermined
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsEigAtIffOfIsDerivAt0
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsValueBasis
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -47,7 +52,8 @@ theorem eig_sum_zero {K V O I : Type} [Field K] [AddCommGroup V] [Module K V] [C
       have hg : ∑ u ∈ A, (σ u a - σ t a) • f u = 0 := by
         have e : ∑ u ∈ A, (σ u a - σ t a) • f u =
             ρ a (f t + ∑ u ∈ A, f u) - σ t a • (f t + ∑ u ∈ A, f u) := by
-          rw [map_add, map_sum, mem_eig (hf t (Finset.mem_insert_self _ _)) a, smul_add, Finset.smul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_add (f := _), map_sum, mem_eig (hf t (Finset.mem_insert_self _ _)) a, smul_add, Finset.smul_sum]
           simp only [sub_smul, Finset.sum_sub_distrib]
           rw [Finset.sum_congr rfl fun u hu => (mem_eig (hf u (Finset.mem_insert_of_mem hu)) a).symm]
           abel
@@ -71,7 +77,7 @@ def modelOfEquiv {S : Scheme.{0}} {R : Type} [CommRing R] {G : Over S} [GrpObj G
   onto v hv := by
     obtain ⟨w, h⟩ := M.onto v hv
     exact ⟨e.symm w, by simpa using h⟩
-  add v w := by rw [map_add, M.add]
+  add v w := by rw [map_add (f := _), M.add]
   smul c v := by rw [map_smul, M.smul]
 
 theorem exists_basis_of_base {S : Scheme.{0}} {G : Over S} [GrpObj G] [Smooth G.hom] {R C : Type} [CommRing R]
@@ -84,7 +90,6 @@ theorem exists_basis_of_base {S : Scheme.{0}} {G : Over S} [GrpObj G] [Smooth G.
   obtain ⟨j, hj, -⟩ := GlobalTheory.T.lie_model_existsUnique_semilinear S G R C φ x E F M M'
   have hj' : ∀ e, (M'.pt (j e)).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap φ) ≫ (M.pt e).left := fun e => by
     have := hj e
-    unfold LieModel.Lifts at this
     rwa [Category.comp_id] at this
   letI : Algebra R C := φ.toAlgebra
   letI : Module R F := Module.compHom F φ
@@ -110,7 +115,8 @@ theorem exists_model_at {R : Type} [CommRing R] {G : Over (Sp R)} [GrpObj G] [Is
       funext c
       simp [Finset.sum_apply, Pi.single_apply]
     conv_rhs => rw [hu]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [Module.Basis.equivFun_symm_apply, map_smulₛₗ, hβ]
   show (MF.pt (β.equivFun.symm _)).left = _
   rw [h, hj]
@@ -217,22 +223,40 @@ theorem eig_of_value (hξ : IsCptGen ξ) (M : LieModel G ξ Li) (z : Sp ℂ ⟶ 
   rw [LinearMap.mem_ker]
   show Bz a y - c a • y = 0
   refine sub_eq_zero.2 (Mz.inj ?_)
-  obtain ⟨h, v, hv, hw⟩ := (M.valAt_iff z e _).1 hy
+  obtain ⟨h, v, hv, hw⟩ := hy
   obtain ⟨_, s, hs, hcs⟩ := hc a
   have := act.hom a
   have e1 : M.Extends ⟨centre z, h⟩ (ρ a e) (v ≫ act.act a) := by
-    have hv' := hv
-    rw [LieModel.extends_iff] at hv' ⊢
     refine ⟨?_, ?_⟩
-    · have h1 := hv'.1
-      rw [LieTangent.isTanAt_iff] at h1 ⊢
-      rw [← Category.assoc, h1, MonObj.one_comp]
-    · rw [hρ a e, hv'.2, Category.assoc]
+    · change _ ≫ v.left ≫ (act.act a).left = _
+      rw [← Category.assoc, hv.1]
+      exact congrArg (fun q : Over.mk (X.fromSpecStalk (centre z)) ⟶ G => q.left) (MonObj.one_comp (act.act a))
+    · change (M.pt (ρ a e)).left = _ ≫ (v.left ≫ (act.act a).left)
+      rw [hρ a e, Over.comp_left, hv.2, Category.assoc]
   have e2 := hv.smul s
   rw [hs, ← mem_eig he a] at e2
   have e3 := e1.unique (hξ.inj _) e2
-  rw [hB, Mz.pt_smul, hw, Category.assoc, e3, ← Category.assoc, LieTangent.base_scale, Category.assoc]
-  exact congrArg (fun c' : ℂ => LieTangent.epsScale z c' ≫ LieTangent.epsBase _ (LieTangent.spec_centre z) ≫ v) hcs
+  apply Over.OverMorphism.ext
+  change (Mz.pt (Bz a y)).left = (Mz.pt (c a • y)).left
+  rw [hB, Mz.pt_smul, Over.comp_left, hw]
+  have e3' := congrArg (fun q => q.left) e3
+  change v.left ≫ (act.act a).left = _ at e3'
+  rw [Category.assoc, e3', Over.comp_left, Over.comp_left, hw]
+  change _ ≫ (Spec.map (CommRingCat.ofHom (epsMul s)) ≫ v.left) =
+    Spec.map (CommRingCat.ofHom (epsMul (c a))) ≫ (_ ≫ v.left)
+  rw [← hcs, ← Category.assoc, ← Category.assoc]
+  congr 1
+  rw [← Spec.map_comp, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp]
+  congr 2
+  refine RingHom.ext fun x => ?_
+  apply TrivSqZeroExt.ext
+  · simp [GlobalTheory.CompanionTheory.Ar.dualMap, epsMul]
+    change (Scheme.stalkClosedPointTo z).hom (TrivSqZeroExt.fst (TrivSqZeroExt.map (s • (LinearMap.id : X.presheaf.stalk (centre z) →ₗ[X.presheaf.stalk (centre z)] X.presheaf.stalk (centre z))) x)) = _
+    exact congrArg (Scheme.stalkClosedPointTo z).hom (TrivSqZeroExt.fst_map (s • LinearMap.id) x)
+  · simp [GlobalTheory.CompanionTheory.Ar.dualMap, epsMul]
+    change (Scheme.stalkClosedPointTo z).hom (TrivSqZeroExt.snd (TrivSqZeroExt.map (s • (LinearMap.id : X.presheaf.stalk (centre z) →ₗ[X.presheaf.stalk (centre z)] X.presheaf.stalk (centre z))) x)) = _
+    have eq := congrArg (Scheme.stalkClosedPointTo z).hom (TrivSqZeroExt.snd_map (s • (LinearMap.id : X.presheaf.stalk (centre z) →ₗ[X.presheaf.stalk (centre z)] X.presheaf.stalk (centre z))) x)
+    exact eq.trans (by simp [mul_comm])
 
 end Core
 

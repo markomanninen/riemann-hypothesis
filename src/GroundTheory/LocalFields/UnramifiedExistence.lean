@@ -1,11 +1,15 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.FiniteExtension
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.Integers
-import GroundTheory.LocalFields.UnitsPowers
-import GroundTheory.LocalFields.UnramifiedRootsOfUnity
-import GroundTheory.LocalFields.UnramifiedGalois
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.FiniteExtension
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.Integers
+public import GroundTheory.LocalFields.UnitsPowers
+public import GroundTheory.LocalFields.UnramifiedRootsOfUnity
+public import GroundTheory.LocalFields.UnramifiedGalois
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ variable (K L : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarc
   [Field L] [ValuativeRel L] [TopologicalSpace L] [IsNonarchimedeanLocalField L]
   [Algebra K L] [ValuativeExtension K L] [FiniteDimensional K L]
 
-theorem card_residueField_of_unramified (h : ramificationIndex K L = 1) :
+theorem card_residueField_of_unramified (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
     Nat.card 𝓀[L] = Nat.card 𝓀[K] ^ Module.finrank K L := by
   have := Fintype.ofFinite 𝓀[K]
   have := Fintype.ofFinite 𝓀[L]
@@ -33,8 +37,8 @@ section SeparableClosure
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
   {Ksep : Type*} [Field Ksep] [Algebra K Ksep]
 
-omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem adjoin_gen_eq_top (α : Ksep) : K⟮AdjoinSimple.gen K α⟯ = ⊤ := by
   apply map_injective K⟮α⟯.val
   rw [adjoin_map, Set.image_singleton, ← AlgHom.fieldRange_eq_map, fieldRange_val]
@@ -43,12 +47,12 @@ theorem adjoin_gen_eq_top (α : Ksep) : K⟮AdjoinSimple.gen K α⟯ = ⊤ := by
 def IsUnramifiedSubextension (E : IntermediateField K Ksep) : Prop :=
   FiniteDimensional K E ∧
     ∀ (_ : ValuativeRel E) (_ : TopologicalSpace E) (_ : IsNonarchimedeanLocalField E)
-      (_ : ValuativeExtension K E), ramificationIndex K E = 1
+      (_ : ValuativeExtension K E), (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1
 
 theorem isUnramifiedSubextension_iff_exists (E : IntermediateField K Ksep) :
     IsUnramifiedSubextension E ↔ FiniteDimensional K E ∧
       ∃ (_ : ValuativeRel E) (_ : TopologicalSpace E) (_ : IsNonarchimedeanLocalField E)
-        (_ : ValuativeExtension K E), ramificationIndex K E = 1 := by
+        (_ : ValuativeExtension K E), (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1 := by
   constructor
   · rintro ⟨hfin, h⟩
     exact ⟨hfin, (finiteExtensionStructure K E).rel, (finiteExtensionStructure K E).top,
@@ -62,11 +66,11 @@ theorem isUnramifiedSubextension_iff_exists (E : IntermediateField K Ksep) :
     obtain rfl := valuativeRel_unique K h₁ h₂ e₁ e₂
     exact h
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem IsUnramifiedSubextension.ramificationIndex_eq_one {E : IntermediateField K Ksep}
     (hE : IsUnramifiedSubextension E) [ValuativeRel E] [TopologicalSpace E]
-    [IsNonarchimedeanLocalField E] [ValuativeExtension K E] : ramificationIndex K E = 1 :=
+    [IsNonarchimedeanLocalField E] [ValuativeExtension K E] : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1 :=
   hE.2 inferInstance inferInstance inferInstance inferInstance
 
 theorem IsUnramifiedSubextension.isGalois {E : IntermediateField K Ksep}

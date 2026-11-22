@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerIntegralFromISlashChangeOfVariables
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerIntegralFromISlashChangeOfVariables
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
 open scoped Manifold
@@ -10,7 +15,7 @@ open GlobalTheory.EichlerChange
 
 lemma toGL_entry (g : Matrix (Fin 2) (Fin 2) ℤ) (h : g.det ≠ 0) (i j : Fin 2) :
     (toGL g : GL (Fin 2) ℝ) i j = ((g i j : ℤ) : ℝ) := by
-  unfold toGL; rw [dif_neg h]; rfl
+  unfold toGL; rw [dite_eq_right h]; rfl
 
 lemma toGL_det (g : Matrix (Fin 2) (Fin 2) ℤ) (h : g.det ≠ 0) :
     (toGL g).det.val = ((g.det : ℤ) : ℝ) := by
@@ -67,8 +72,8 @@ theorem polySlash_eichler_toGL_smul : ∀ (k : ℕ), 2 ≤ k → ∀ (f : ℍ �
   set q : ℕ → ℂ := fun i => ((C a * X + C b) ^ i * (C c * X + C d) ^ (w - i)).coeff n with hq
   have hslP : ∀ p : ℂ[X], (slP w β p).coeff n = ∑ i ∈ Finset.range (w + 1), p.coeff i * q i := by
     intro p
-    rw [polySlash_apply, finset_sum_coeff]
-    simp only [coeff_smul, smul_eq_mul]
+    rw [polySlash_apply, finsetSum_coeff]
+    simp only [Polynomial.coeff_smul, smul_eq_mul]
     rfl
   set Φ : ℂ → ℂ := fun v => ∑ i ∈ Finset.range (w + 1),
       (w.choose i : ℂ) * ecoef w f i ((a * v + b) / (c * v + d)) * q i -

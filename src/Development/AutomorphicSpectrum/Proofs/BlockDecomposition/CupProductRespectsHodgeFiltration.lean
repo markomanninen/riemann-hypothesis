@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -30,9 +35,30 @@ theorem term_mem {b : Base} {L : b.Fun} {p n r : ℕ} (t : ComposableArrows (Thi
 theorem cup_bilinear_filtered {K : Type} [CommRing K] {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of K)) (i j : ℕ) :
     (∃ b : HdR q i →ₗ[K] HdR q j →ₗ[K] HdR q (i + j), ∀ x y, b x y = cupK q rfl x y) ∧
     ∀ r s, ∀ x ∈ FilR q i r, ∀ y ∈ FilR q j s, cupK q rfl x y ∈ FilR q (i + j) (r + s) := by
-  refine ⟨CrystallineSemistableComparison.P.cup_bilin (CH.mulP (thA (smFun X q))) (rfl : i + j = i + j), ?_⟩
+  let P := CH.mulP (thA (smFun X q))
+  let Q := CrystallineSemistableComparison.Auxff.toCx P
+  have cup_eq_local : ∀ x y, P.cup (rfl : i + j = i + j) x y = Q.cup (rfl : i + j = i + j) x y := by
+    intro x y
+    unfold CrystallineSemistableComparison.CH.Pairing.cup CrystallineSemistableComparison.CxPairing.cup
+    split_ifs with hz
+    · rfl
+    · exact absurd ((Q.leib (rfl : i + j = i + j) _ _).trans (by
+        rw [show (CH.cx (CH.modF (thA (smFun X q)))).d i (Quotient.out x).1 = 0 from (Quotient.out x).2,
+          show (CH.cx (CH.modF (thA (smFun X q)))).d j (Quotient.out y).1 = 0 from (Quotient.out y).2]
+        simp)) hz
+  have hb : ∃ b : HdR q i →ₗ[K] HdR q j →ₗ[K] HdR q (i + j), ∀ x y, b x y = cupK q rfl x y := by
+    obtain ⟨b, hb⟩ := CrystallineSemistableComparison.Auxff.cx_bilin Q (rfl : i + j = i + j)
+    refine ⟨b, fun x y => ?_⟩
+    change b x y = P.cup (rfl : i + j = i + j) x y
+    exact (hb x y).trans (cup_eq_local x y).symm
+  refine ⟨hb, ?_⟩
   rintro r s x ⟨z, rfl, hz⟩ y ⟨w, rfl, hw⟩
-  obtain ⟨hc, e⟩ := CrystallineSemistableComparison.P.cup_cls (CH.mulP (thA (smFun X q))) (rfl : i + j = i + j) z.1 w.1 z.2 w.2
+  let F := CH.modF (thA (smFun X q))
+  have hc := CrystallineSemistableComparison.Auxff.closed Q (rfl : i + j = i + j) z.1 w.1 z.2 w.2
+  have e : P.cup (rfl : i + j = i + j) ((CH.cx F).cls z.1 z.2) ((CH.cx F).cls w.1 w.2) =
+      (CH.cx F).cls (P.cupC (rfl : i + j = i + j) z.1 w.1) hc := by
+    rw [cup_eq_local]
+    exact CrystallineSemistableComparison.P.cxcup_cls Q (rfl : i + j = i + j) z.1 w.1 z.2 w.2 hc
   refine ⟨⟨_, hc⟩, e.symm, fun t => ?_⟩
   exact dividedPowerFiltration_mul _ r s (Ideal.mul_mem_mul
     (term_mem t z.1 hz (CH.front rfl) (CH.front_mono rfl)) (term_mem t w.1 hw (CH.back rfl) (CH.back_mono rfl)))

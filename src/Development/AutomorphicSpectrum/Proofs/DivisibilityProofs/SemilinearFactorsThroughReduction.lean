@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Div
 
@@ -19,8 +23,8 @@ theorem semilinear_factors_through_reduction :
   have hs : ∀ d, r (s d) = d := Function.surjInv_eq hr
   refine ⟨{ toFun := fun d => q (s d), map_add' := ?_, map_smul' := ?_ }, fun m => hq _ _ (hs _)⟩
   · intro d d'
-    rw [← map_add]
-    exact hq _ _ (by rw [map_add, hs, hs, hs])
+    rw [← map_add (f := _)]
+    exact hq _ _ (by rw [map_add (f := _), hs, hs, hs])
   · intro o d
     obtain ⟨a, rfl⟩ := hθ o
     simp only [RingHom.id_apply]

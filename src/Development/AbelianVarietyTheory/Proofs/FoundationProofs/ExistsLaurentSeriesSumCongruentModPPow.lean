@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlgebraMapZpInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlgebraMapZpInjective
+
+@[expose] public section
+
 open scoped MatrixGroups
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois GlobalTheory.GeoFix
 
@@ -32,13 +37,25 @@ theorem exists_lau_approx (p : ℕ) [Fact p.Prime] (K : ℕ) (x : O0 p) :
   obtain ⟨c, hc⟩ := hmem
   exact ⟨a, c, by rw [mul_comm, hc]; ring⟩
 
-theorem exists_cong_lau : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω] (T : Tower p Ω) (n : ℕ) (ψ : O0 p →+* Ω), IsReb T n ψ → ∀ (d : ℕ) (e : Fin d → Ω) (b : Fin d → O0 p), (∀ t, IsInt p (e t)) → ∀ K : ℕ, ∃ a : Fin d → Lau p, Cong p K (∑ t, e t * ψ (b t)) (∑ t, e t * ψ (algebraMap (Lau p) (O0 p) (a t))) := by
-  intro p _ Ω _ _ T n ψ h d e b he K
+theorem exists_cong_lau :
+    ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω]
+      (T : Tower p Ω) (n : ℕ) (ψ : O0 p →+* Ω), IsReb T n ψ →
+      ∀ (d : ℕ) (e : Fin d → Ω) (b : Fin d → O0 p), (∀ t, IsInt (p := p) (e t)) →
+      ∀ K : ℕ, ∃ a : Fin d → Lau p,
+        Cong (p := p) K (∑ t, e t * ψ (b t))
+          (∑ t, e t * ψ (algebraMap (Lau p) (O0 p) (a t))) := by
+  intro p hp Ω _ _ T n ψ h d e b he K
   choose a c hac using fun t => exists_lau_approx p K (b t)
-  refine ⟨a, ∑ t, e t * ψ (c t), IsIntegral.sum _ fun t _ => IsIntegral.mul (he t) (isInt_psi h (c t)), ?_⟩
+  have hq : IsIntegral (O0 p) (T.qq n) :=
+    IsIntegral.of_pow (pow_pos hp.out.pos n) (by rw [Basic.qq_pow]; exact isIntegral_algebraMap)
+  have hψ (x : O0 p) : IsIntegral (O0 p) (ψ x) := by
+    have hx : ψ x ∈ ψ.range := ⟨x, rfl⟩
+    rw [h.rng] at hx
+    exact adjoin_le_integralClosure hq hx
+  refine ⟨a, ∑ t, e t * ψ (c t), IsIntegral.sum _ fun t _ => IsIntegral.mul (he t) (hψ (c t)), ?_⟩
   rw [← Finset.sum_sub_distrib, Finset.mul_sum]
   refine Finset.sum_congr rfl fun t _ => ?_
-  rw [hac t, map_add, map_mul, map_pow, map_natCast]
+  rw [hac t, map_add (f := _), map_mul, map_pow, map_natCast]
   ring
 
 end GlobalTheory.GeoFix

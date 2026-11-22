@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.AdicCompleteness.IsAdicCompleteComapConstantCoeff
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstantCoeffTeichSub
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIntegersTensorEqLetterwiseProductAinf
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsPolynomialSubMem
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.AdicMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import ReciprocityTheory.AdicCompleteness.IsAdicCompleteComapConstantCoeff
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstantCoeffTeichSub
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIntegersTensorEqLetterwiseProductAinf
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsPolynomialSubMem
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.AdicMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,18 +29,18 @@ def liftInj {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* C
     rw [map_mul g, (h _).choose_spec, (h _).choose_spec, (h _).choose_spec, map_mul])
   map_zero' := hg (by rw [(h 0).choose_spec, map_zero, map_zero])
   map_add' x y := hg (by
-    rw [map_add g, (h _).choose_spec, (h _).choose_spec, (h _).choose_spec, map_add])
+    rw [map_add g, (h _).choose_spec, (h _).choose_spec, (h _).choose_spec, map_add (f := _)])
 
 theorem liftInj_spec {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* C) (g : B →+* C)
     (hg : Function.Injective g) (h : ∀ x, ∃ y, g y = f x) (x : A) : g (liftInj f g hg h x) = f x :=
   (h x).choose_spec
 
 theorem isAdicComplete_of_pow_le {A : Type} [CommRing A] {I J : Ideal A} {N : ℕ} (h : I ^ (N + 1) ≤ J)
-    (hJ : J ≤ I) [IsAdicComplete I A] : IsAdicComplete J A where
+    (hJ : J ≤ I) [IsAdicComplete I A] : IsAdicComplete J A := {
   haus' x hx := IsHausdorff.haus' (I := I) x fun n => by
     have := hx n
     simp only [SModEq.zero, smul_eq_mul, Ideal.mul_top] at this ⊢
-    exact Ideal.pow_right_mono hJ n this
+    exact Ideal.pow_right_mono hJ n this,
   prec' f hf := by
     simp only [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top] at hf ⊢
     obtain ⟨L, hL⟩ := IsPrecomplete.prec' (I := I) f fun {m n} hmn => by
@@ -47,7 +51,7 @@ theorem isAdicComplete_of_pow_le {A : Type} [CommRing A] {I J : Ideal A} {N : �
     have h1 := hf (m := n) (n := (N + 1) * n) (Nat.le_mul_of_pos_left n N.succ_pos)
     have h2 := hL ((N + 1) * n)
     rw [pow_mul] at h2
-    simpa using add_mem h1 (Ideal.pow_right_mono h n h2)
+    simpa using add_mem h1 (Ideal.pow_right_mono h n h2) }
 
 theorem ringHom_ext_of_sep {R B : Type} [CommRing R] [CommRing B] (f g : R⟦X⟧ →+* B)
     (hC : ∀ r, f (C r) = g (C r)) (hX : f X = g X) (hs : ∀ x : B, (∀ n, f X ^ n ∣ x) → x = 0) : f = g := by
@@ -61,8 +65,8 @@ variable (l : ℕ) [hl : Fact l.Prime] (a : ℕ)
 
 def resSub : Subring (OCb l) := RingHom.eqLocus (iterateFrobenius (OCb l) l a) (RingHom.id _)
 
-variable {l a} in
 
+variable {l a} in
 theorem mem_resSub {x : OCb l} : x ∈ resSub l a ↔ x ^ l ^ a = x := Iff.rfl
 
 variable [NeZero a]
@@ -89,8 +93,8 @@ def Fq.val : Fq l a →+* OCb l := (resSub l a).subtype
 
 theorem Fq.val_injective : Function.Injective (Fq.val l a) := Subtype.val_injective
 
-variable {l a} in
 
+variable {l a} in
 theorem Fq.pow_card (x : Fq l a) : x ^ l ^ a = x :=
   (Fq.val_injective l a) (by rw [map_pow]; exact x.2)
 
@@ -98,7 +102,7 @@ instance : CharP (Fq l a) l := (Fq.val l a).charP (Fq.val_injective l a) l
 
 theorem finite_sol (R : Type) [CommRing R] [IsDomain R] : {x : R | x ^ l ^ a = x}.Finite := by
   have h : (Polynomial.X ^ l ^ a - Polynomial.X : Polynomial R) ≠ 0 := fun h => by
-    have := congrArg (Polynomial.coeff · 1) h
+    have := congrArg (fun p : Polynomial R => p.coeff 1) h
     simp [Polynomial.coeff_X_pow, (one_lt_pow_l l a).ne] at this
   refine (Polynomial.finite_setOf_isRoot h).subset fun x hx => ?_
   simpa [sub_eq_zero] using hx
@@ -162,8 +166,6 @@ def wA : Wq l a →ₐ[ℤ_[l]] Ainf l where
   toRingHom := WittVector.map (Fq.val l a)
   commutes' := map_zlW l _
 
-theorem wA_injective : Function.Injective (wA l a) := WittVector.map_injective _ (Fq.val_injective l a)
-
 theorem wA_teich (x : Fq l a) :
     wA l a (WittVector.teichmuller l x) = WittVector.teichmuller l (Fq.val l a x) :=
   WittVector.map_teichmuller l _ x
@@ -223,8 +225,8 @@ theorem dvd_of_not_isUnit {w : Wq l a} (h : ¬ IsUnit w) : (l : Wq l a) ∣ w :=
   by_contra h0
   exact h (WittVector.isUnit_of_coeff_zero_ne_zero w h0)
 
-omit [NeZero a] in
 
+omit [NeZero a] in
 def Kunr : IntermediateField ℚ_[l] (Om l) := IntermediateField.adjoin ℚ_[l] {x | x ^ l ^ a = x}
 
 def unrExt : FinExt l :=
@@ -289,9 +291,6 @@ theorem seqO_zero : ϖ.seqO 0 ^ e = -(l : OC l) :=
 def flat : OCb l :=
   (⟨fun n => Ideal.Quotient.mk _ (ϖ.seqO n), fun n => by rw [← map_pow, seqO_succ]⟩ :
     Perfection (ModP (OC l) l) l)
-
-theorem coeff_flat (n : ℕ) :
-    PreTilt.coeff n ϖ.flat = Ideal.Quotient.mk (Ideal.span {((l : ℕ) : OC l)}) (ϖ.seqO n) := rfl
 
 theorem untilt_flat : ϖ.flat.untilt = ϖ.seqO 0 := by
   refine Perfection.teichmuller_spec (I := Ideal.span {((l : ℕ) : OC l)}) fun n => ⟨ϖ.seqO n, rfl, ?_⟩
@@ -493,7 +492,7 @@ theorem l_mem_eis : (l : (Wq l a)⟦X⟧) ∈
   obtain ⟨v, hv⟩ := hu.exists_left_inv
   obtain ⟨c, hc⟩ := sub_dvd_pow_sub_pow (X ^ e : (Wq l a)⟦X⟧) (-(l : (Wq l a)⟦X⟧)) l
   have h1 : frobS l a (eis l a e) = ((X : (Wq l a)⟦X⟧) ^ e) ^ l + l := by
-    rw [eis, map_add, map_pow, frobS_X, map_natCast, ← pow_mul, ← pow_mul, mul_comm]
+    rw [eis, map_add (f := _), map_pow, frobS_X, map_natCast, ← pow_mul, ← pow_mul, mul_comm]
   have h2 : (-(l : (Wq l a)⟦X⟧)) ^ l = -(l : (Wq l a)⟦X⟧) * (-(l : (Wq l a)⟦X⟧)) ^ (k + 1) := by
     rw [← pow_succ' (-(l : (Wq l a)⟦X⟧)), show k + 1 + 1 = l by omega]
   have h3 : (l : (Wq l a)⟦X⟧) = eis l a e * (-(v * c)) + v * frobS l a (eis l a e) := by
@@ -507,16 +506,16 @@ namespace PiSys
 
 variable {l e} (ϖ : PiSys l e)
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem theta_ev_eis : Per.θ l (ϖ.ev a (eis l a e)) = 0 := by
-  rw [eis, map_add, map_pow, ev_X, map_natCast, map_add, map_pow, theta_teich, seqO_zero, map_natCast,
+  rw [eis, map_add (f := _), map_pow, ev_X, map_natCast, map_add (f := _), map_pow, theta_teich, seqO_zero, map_natCast,
     neg_add_cancel]
 
 theorem theta_ev_eq_zero_iff (x : (Wq l a)⟦X⟧) : Per.θ l (ϖ.ev a x) = 0 ↔ eis l a e ∣ x := by
   refine ⟨fun h => (dvd_or_unit l a e x).resolve_right ?_, ?_⟩
   · rintro ⟨m, v, y, hv, rfl⟩
-    simp only [map_add, map_mul, map_pow, ev_X, theta_teich, theta_ev_eis, zero_mul, add_zero] at h
+    simp only [map_add (f := _), map_mul, map_pow, ev_X, theta_teich, theta_ev_eis, zero_mul, add_zero] at h
     rcases mul_eq_zero.1 h with h | h
     · exact ((hv.map _).map _).ne_zero h
     · exact ϖ.seq_ne_zero 0 ((map_eq_zero (algebraMap (Om l) ℂ_[l])).1
@@ -564,7 +563,7 @@ theorem expand {l : ℕ} [Fact l.Prime] (F : IntermediateField ℚ_[l] (PadicAlg
   have h2 : aeval π (P %ₘ (X ^ e + C (l : F))) = x := by
     rw [← hP']
     conv_rhs => rw [← modByMonic_add_div P (X ^ e + C (l : F))]
-    rw [map_add, map_mul, hQ0, zero_mul, add_zero]
+    rw [map_add (f := _), map_mul, hQ0, zero_mul, add_zero]
   refine ⟨fun i => ((P %ₘ (X ^ e + C (l : F))).coeff i : F), fun i => Subtype.property _, ?_⟩
   rw [← h2, aeval_eq_sum_range' hdeg]
   rfl
@@ -641,7 +640,7 @@ theorem norm_l_lt' {l : ℕ} [Fact l.Prime] : ‖(l : ℂ_[l])‖ < 1 := by
 
 theorem mem_int_iff {l : ℕ} [Fact l.Prime] (x : ℂ_[l]) : x ∈ PadicComplexInt l ↔ ‖x‖ ≤ 1 := by
   rw [PadicComplexInt, Valuation.mem_valuationSubring_iff, PadicComplex.norm_eq_norm,
-    Valuation.norm_def, ← NNReal.coe_one, NNReal.coe_le_coe, PadicComplex.RankOne.hom_eq_embedding,
+    Valuation.norm_def, ← NNReal.coe_one, NNReal.coe_le_coe, (show Valuation.RankLeOne.hom' Valued.v = MonoidWithZeroHom.ValueGroup₀.embedding from rfl),
     Valuation.embedding_restrict]
 
 theorem hom_padicInt {l : ℕ} [Fact l.Prime] (f : ℤ_[l] →+* ℂ_[l]) (hf : ∀ z, ‖f z‖ ≤ 1)
@@ -659,7 +658,7 @@ theorem hom_padicInt {l : ℕ} [Fact l.Prime] (f : ℤ_[l] →+* ℂ_[l]) (hf : 
     have hz : z = (PadicInt.appr z k : ℤ_[l]) + y * (l : ℤ_[l]) ^ k := by rw [hy]; ring
     have : f z - g z = (f y - g y) * (l : ℂ_[l]) ^ k := by
       conv_lhs => rw [hz]
-      simp only [map_add, map_mul, map_pow, map_natCast]
+      simp only [map_add (f := _), map_mul, map_pow, map_natCast]
       ring
     rw [this, norm_mul, norm_pow]
     have h1 := norm_sub_le (f y) (g y)
@@ -702,7 +701,7 @@ theorem frac {l : ℕ} [hl : Fact l.Prime] {W : Type} [CommRing W] (g : ℤ_[l] 
     obtain ⟨n, w, hw⟩ := hx
     obtain ⟨m, v, hv⟩ := hy
     refine ⟨n + m, (l : W) ^ m * w + (l : W) ^ n * v, ?_⟩
-    simp only [map_add, map_mul, map_pow, map_natCast, hw, hv]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast, hw, hv]
     ring
   | mul x y _ _ hx hy =>
     obtain ⟨n, w, hw⟩ := hx
@@ -861,7 +860,8 @@ theorem Bridge.exists_powerSeries_eval_eq : ∀ {l : ℕ} [hl : Fact (Nat.Prime 
   choose w hw using hw
   refine ⟨∑ i ∈ Finset.range e, PowerSeries.C (w i) * PowerSeries.X ^ i, ?_⟩
   apply Subtype.ext
-  rw [hx0, hsum, map_sum (algebraMap (PadicAlgCl l) ℂ_[l])]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx0, hsum, map_sum (algebraMap (PadicAlgCl l) ℂ_[l])]
   let Θ : PowerSeries (Wq l a) →+* ℂ_[l] :=
     (PadicComplexInt l).subtype.comp ((Formalism.Per.θ l).comp (PiSys.ev a ϖ))
   have hΘX : Θ PowerSeries.X = algebraMap (PadicAlgCl l) ℂ_[l] (ϖ.seq 0) := by
@@ -872,7 +872,8 @@ theorem Bridge.exists_powerSeries_eval_eq : ∀ {l : ℕ} [hl : Fact (Nat.Prime 
       ((Formalism.Per.θ l (wA l a v) : Formalism.Per.OC l) : ℂ_[l])
     rw [hspec.2]
   change Θ _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i hi => ?_
   rw [map_mul, map_pow, hΘX, hΘC, hw i (Finset.mem_range.mp hi), map_mul, map_pow]
 end
@@ -926,8 +927,8 @@ def prism : Obj l ↥(OL (ϖ.field a)) where
     exact ϖ.quotToOC_injective a (h2.trans (map_zero _).symm)⟩
   str := ϖ.strMap a
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem ev_frobS (x : (Wq l a)⟦X⟧) : ϖ.ev a (frobS l a x) = WittVector.frobenius (ϖ.ev a x) := by
   have h1 : WittVector.frobenius ϖ.teich = ϖ.teich ^ l := by
     rw [WittVector.frobenius_eq_map_frobenius, teich, WittVector.map_teichmuller, frobenius_def, map_pow]
@@ -943,10 +944,12 @@ def toAinf : Hom (ϖ.prism a) (ainfObj (ϖ.field a)) where
   f := ϖ.ev a
   f_δ := (deltaS l a).map_δ_of_map_φ (ainfDelta l) ainf_torsionFree (ϖ.ev a) (ϖ.ev_frobS a)
   f_I x hx := (ϖ.theta_ev_eq_zero_iff a x).2 (Ideal.mem_span_singleton.1 hx)
-  f_str r x h := ((isAinf_ainfObj _).mk_eq_str_iff r (ϖ.ev a x)).2
-    ((congrArg (ϖ.quotToOC a) h).trans (ϖ.quotToOC_strMap a r))
-
-theorem toAinf_f (x : (Wq l a)⟦X⟧) : (ϖ.toAinf a).f x = ϖ.ev a x := rfl
+  f_str r x h := by
+    have hθ : Per.θ l (ϖ.ev a x) = intToOC (ϖ.field a) r :=
+      (congrArg (ϖ.quotToOC a) h).trans (ϖ.quotToOC_strMap a r)
+    apply (ainfQuot l).injective
+    change Per.θ l (ϖ.ev a x) = (ainfQuot l) ((ainfQuot l).symm (intToOC (ϖ.field a) r))
+    rw [RingEquiv.apply_symm_apply, hθ]
 
 theorem span_ev_eis : Ideal.span {ϖ.ev a (eis l a e)} = RingHom.ker (Per.θ l) := by
   obtain ⟨ξ, h, -, h1⟩ := exists_generator l
@@ -957,7 +960,7 @@ theorem span_ev_eis : Ideal.span {ϖ.ev a (eis l a e)} = RingHom.ker (Per.θ l) 
   rw [Ideal.map_span, Set.image_singleton, ← Ideal.span_insert, Ideal.mem_span_pair] at h2
   obtain ⟨x, y, hxy⟩ := h2
   have h3 := congrArg (fun z => Per.θ l (ϖ.ev a z)) hxy
-  simp only [map_add, map_mul, theta_ev_eis, mul_zero, zero_add, map_natCast] at h3
+  simp only [map_add (f := _), map_mul, theta_ev_eis, mul_zero, zero_add, map_natCast] at h3
   rw [show (deltaS l a).φ (eis l a e) = frobS l a (eis l a e) from rfl, ev_frobS, hc, map_mul, map_mul,
     h1] at h3
   have h4 : ϖ.ev a y * WittVector.frobenius c - 1 ∈ Ideal.span {ξ} := by
@@ -974,11 +977,6 @@ theorem span_ev_eis : Ideal.span {ϖ.ev a (eis l a e)} = RingHom.ker (Per.θ l) 
 theorem isUnit_inclW_ev_eis : IsUnit (inclW l (ϖ.ev a (eis l a e))) :=
   isUnit_inclW_of_span (ϖ.span_ev_eis a)
 
-example : ((l : ℕ) : (Wq l a)⟦X⟧) ∉ (ϖ.prism a).I := fun h => by
-  have h1 : Per.θ l (ϖ.ev a (l : (Wq l a)⟦X⟧)) = 0 := (ϖ.toAinf a).f_I _ h
-  rw [map_natCast, map_natCast] at h1
-  exact Nat.cast_ne_zero.2 hl.out.ne_zero h1
-
 end PiSys
 
 namespace PiSys
@@ -991,13 +989,13 @@ def ratio (g : GQ l) (n : ℕ) : OC l :=
       PadicComplex.norm_extends, norm_div, GlobalTheory.RingBasics.norm_gal]
     exact div_self_le_one _)⟩
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem coe_ratio (g : GQ l) (n : ℕ) :
     (ϖ.ratio g n : ℂ_[l]) = algebraMap (Om l) ℂ_[l] (g (ϖ.seq n) / ϖ.seq n) := rfl
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem ratio_succ (g : GQ l) (n : ℕ) : ϖ.ratio g (n + 1) ^ l = ϖ.ratio g n :=
   Subtype.ext (by
     rw [SubmonoidClass.coe_pow, coe_ratio, coe_ratio, ← map_pow, div_pow, ← map_pow, ϖ.seq_succ])
@@ -1006,8 +1004,8 @@ def kummer (g : GQ l) : OCb l :=
   (⟨fun n => Ideal.Quotient.mk _ (ϖ.ratio g n), fun n => by rw [← map_pow, ratio_succ]⟩ :
     Perfection (ModP (OC l) l) l)
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem coeff_kummer (g : GQ l) (n : ℕ) :
     PreTilt.coeff n (ϖ.kummer g) = Ideal.Quotient.mk (Ideal.span {((l : ℕ) : OC l)}) (ϖ.ratio g n) := rfl
 
@@ -1022,8 +1020,8 @@ theorem gal_flat (g : GQ l) : Per.σF g ϖ.flat = ϖ.kummer g * ϖ.flat :=
     rw [MulMemClass.coe_mul, coe_ratio, coe_seqO, ← map_mul, div_mul_cancel₀ _ (ϖ.seq_ne_zero n)]
     rfl
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem untilt_kummer (g : GQ l) : (ϖ.kummer g).untilt = ϖ.ratio g 0 := by
   refine Perfection.teichmuller_spec (I := Ideal.span {((l : ℕ) : OC l)}) fun n => ⟨ϖ.ratio g n, rfl, ?_⟩
   have : ϖ.ratio g n ^ l ^ n = ϖ.ratio g 0 :=
@@ -1040,52 +1038,6 @@ theorem gal_teich (g : GQ l) : Per.σA g ϖ.teich = (1 + ϖ.mu g) * ϖ.teich := 
 theorem theta_mu {g : GQ l} (hg : g (ϖ.seq 0) = ϖ.seq 0) : Per.θ l (ϖ.mu g) = 0 := by
   rw [mu, map_sub, map_one, WittVector.fontaineTheta_teichmuller, untilt_kummer, sub_eq_zero]
   exact Subtype.ext (by rw [coe_ratio, hg, div_self (ϖ.seq_ne_zero 0), map_one]; rfl)
-
-def IsExponent (ζ : ℕ → Om l) (g : GQ l) (x : ℤ_[l]) : Prop :=
-  ∀ n, g (ϖ.seq n) = ζ n ^ (PadicInt.toZModPow n x).val * ϖ.seq n
-
-theorem existsUnique_isExponent (ζ : ℕ → Om l) (h0 : ζ 0 = 1) (hs : ∀ n, ζ (n + 1) ^ l = ζ n) (h1 : ζ 1 ≠ 1)
-    {g : GQ l} (hg : g (ϖ.seq 0) = ϖ.seq 0) : ∃! x, ϖ.IsExponent ζ g x := by
-  have hp : ∀ n k, ζ (n + k) ^ l ^ n = ζ k := fun n k => by
-    induction n with
-    | zero => simp
-    | succ n ih => rw [pow_succ', pow_mul, show n + 1 + k = n + k + 1 by omega, hs, ih]
-  have hprim : ∀ n, IsPrimitiveRoot (ζ n) (l ^ n) := fun n => by
-    rcases n with _ | n
-    · simp [h0]
-    · rw [← orderOf_eq_prime_pow (x := ζ (n + 1)) (p := l) (n := n) (by rw [hp n 1]; exact h1)
-        (by rw [← h0]; exact hp (n + 1) 0)]
-      exact IsPrimitiveRoot.orderOf _
-  have hN : ∀ n, NeZero (l ^ n) := fun n => ⟨(pow_pos hl.out.pos n).ne'⟩
-  have hk : ∀ n, ∃ k : ℕ, ζ n ^ k = g (ϖ.seq n) / ϖ.seq n := fun n =>
-    ((hprim n).eq_pow_of_pow_eq_one (by
-      rw [div_pow, ← map_pow, seq_pow, hg, div_self (ϖ.seq_ne_zero 0)])).imp fun _ h => h.2
-  choose k hk using hk
-  have hd : ∀ n, (l : ℤ) ^ n ∣ (k (n + 1) : ℤ) - k n := fun n => by
-    have h2 : ζ n ^ k (n + 1) = ζ n ^ k n := by
-      rw [hk, ← hs n, ← pow_mul, mul_comm, pow_mul, hk, div_pow, ← map_pow, ϖ.seq_succ]
-    have h3 := (hprim n).isUnit_unit (pow_pos hl.out.pos n).ne'
-    have h4 : ((hprim n).isUnit (pow_pos hl.out.pos n).ne').unit ^ k n =
-        ((hprim n).isUnit (pow_pos hl.out.pos n).ne').unit ^ k (n + 1) := Units.ext (by simpa using h2.symm)
-    rw [pow_eq_pow_iff_modEq, ← h3.eq_orderOf] at h4
-    exact_mod_cast h4.dvd
-  refine ⟨PadicInt.ofIntSeq _ (PadicInt.isCauSeq_padicNorm_of_pow_dvd_sub (fun n => (k n : ℤ)) l hd),
-    fun n => ?_, fun y hy => PadicInt.ext_of_toZModPow.1 fun n => ?_⟩
-  · rw [PadicInt.toZModPow_ofIntSeq_of_pow_dvd_sub (fun n => (k n : ℤ)) l hd n, Int.cast_natCast,
-      ZMod.val_natCast, ← pow_eq_pow_mod _ (hprim n).pow_eq_one, hk, div_mul_cancel₀ _ (ϖ.seq_ne_zero n)]
-  · rw [PadicInt.toZModPow_ofIntSeq_of_pow_dvd_sub (fun n => (k n : ℤ)) l hd n, Int.cast_natCast]
-    refine ZMod.val_injective _ ((hprim n).pow_inj (ZMod.val_lt _) (ZMod.val_lt _) ?_)
-    rw [ZMod.val_natCast, ← pow_eq_pow_mod _ (hprim n).pow_eq_one, hk, hy n,
-      mul_div_cancel_right₀ _ (ϖ.seq_ne_zero n)]
-
-theorem IsExponent.coeff_kummer {ϖ : PiSys l e} {ζ : ℕ → Om l} {g : GQ l} {x : ℤ_[l]}
-    (h : ϖ.IsExponent ζ g x) (n : ℕ) (z : OC l) (hz : (z : ℂ_[l]) = algebraMap (Om l) ℂ_[l] (ζ n)) :
-    PreTilt.coeff n (ϖ.kummer g) = Ideal.Quotient.mk (Ideal.span {((l : ℕ) : OC l)}) z ^
-      (PadicInt.toZModPow n x).val := by
-  rw [PiSys.coeff_kummer, ← map_pow]
-  congr 1
-  exact Subtype.ext (by
-    rw [coe_ratio, h n, mul_div_cancel_right₀ _ (ϖ.seq_ne_zero n), map_pow, SubmonoidClass.coe_pow, hz])
 
 end PiSys
 

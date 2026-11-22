@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.InertCharpoly.CharPolOfInert
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.WeightsConjBis
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalGaloisCompatibility.PAdicSplitting.LocalGlobalCompatAtIwahoriFixedPlaces
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIsWeight
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalContragredientMonomial
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspRepSatakeIffLocalComponentSatakeStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationNatCastLtOneOfInduces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.InertCharpoly.CharPolOfInert
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.WeightsConjBis
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalGaloisCompatibility.PAdicSplitting.LocalGlobalCompatAtIwahoriFixedPlaces
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIsWeight
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalContragredientMonomial
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspRepSatakeIffLocalComponentSatakeStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationNatCastLtOneOfInduces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ def LocalGlobalCompatibilityAtPlaceClass (Q : PlaceClass) : Prop :=
     InScope .all l π χ → ∀ r : G E Ω →* GL (Fin n) (Qbar l), Weak π ι r →
     ∀ (w : HeightOneSpectrum (𝓞 E)) (σ : SmIrr (GL (Fin n) (w.adicCompletion E))), π.IsLocComp w σ →
       fixed σ.ρ (KOne (w.adicCompletion E) (Fin n)) ≠ ⊥ → Q E w n → IsQg w → Apart (algNorm σ) →
-    ∀ (A : ValuationSubring Ω) (h : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion E) → WD h), IsRecT h rc →
+    ∀ (A : ValuationSubring Ω) (h : IsPlaceOver A w) (rc : IrrGL (k := w.adicCompletion E) → WD h), IsRecT h rc →
       (rc (algNorm σ)).mono0 →
       (∀ hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal, (wdOf h hl ι r).mono0 ∧
         ∀ t : Ine (F := E) A, (wdOf h hl ι r).charPol (ineIncl h t) = (rc (algNorm σ)).charPol (ineIncl h t)) ∧
@@ -38,9 +42,6 @@ def LocalGlobalCompatibilityAtPlaceClass (Q : PlaceClass) : Prop :=
           IsPstAt P Bw (r.comp (Dec (F := E) A).subtype) ∧ (wdAt P ι Bw h hj (r.comp (Dec (F := E) A).subtype)).mono0 ∧
           ∀ t : Ine (F := E) A,
             (wdAt P ι Bw h hj (r.comp (Dec (F := E) A).subtype)).charPol (ineIncl h t) = (rc (algNorm σ)).charPol (ineIncl h t))
-
-theorem rank_two_general_of_rank_two (H : R2) : LocalGlobalCompatAtIwahoriFixedPlaces := fun E Ω _ _ _ _ _ _ l _ ι n hn π χ hI r hW w σ hσ hf g =>
-  H E Ω l ι n hn π χ hI r hW w σ hσ hf (g.imp id And.left)
 
 theorem localGlobalAtPlaceClass_of_localGlobal (H : LocalGlobalCompatAtIwahoriFixedPlaces) (Q : PlaceClass) : LocalGlobalCompatibilityAtPlaceClass Q := fun E Ω _ _ _ _ _ _ l _ ι n hn π χ hI r hW w σ hσ hf _ q g =>
   H E Ω l ι n hn π χ hI r hW w σ hσ hf (Or.inr ⟨q, g⟩)
@@ -61,7 +62,7 @@ theorem dim_of_ine {x y : WD h} (k : ∀ t : Ine (F := E) A, x.charPol (ineIncl 
   rw [← WD.charPol_natDegree x (ineIncl h 1), k, WD.charPol_natDegree]
 
 variable [IsCMField E] {a : ℕ} {π : CuspSub E a} {σ : SmIrr (GL (Fin a) (w.adicCompletion E))}
-  {rc : IrrGL (w.adicCompletion E) → WD h}
+  {rc : IrrGL (k := w.adicCompletion E) → WD h}
 
 theorem generic_algNorm (hσ : π.IsLocComp w σ) : IsGeneric (algNorm σ).rep :=
   (isGeneric_congr (IrrGL.twEquiv _ _ (isSmoothChar_absPow _))).1 ((isGeneric_twist_iff _).2
@@ -91,7 +92,7 @@ section Global
 variable {Q : PlaceClass} {E Ω : Type} [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {l : ℕ} [Fact l.Prime] {ι : Qbar l ≃+* ℂ} {a : ℕ} {π : CuspSub E a} {χ : HChar (maximalRealSubfield E)}
   {r : G E Ω →* GL (Fin a) (Qbar l)} {w : HeightOneSpectrum (𝓞 E)} {A : ValuationSubring Ω} {h : IsPlaceOver A w}
-  {σ : SmIrr (GL (Fin a) (w.adicCompletion E))} {rc : IrrGL (w.adicCompletion E) → WD h}
+  {σ : SmIrr (GL (Fin a) (w.adicCompletion E))} {rc : IrrGL (k := w.adicCompletion E) → WD h}
 
 theorem away (H1 : R1) (H2 : LocalGlobalCompatibilityAtPlaceClass Q) (ha : 1 ≤ a) (hI : InScope .all l π χ) (hW : Weak π ι r)
     (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (hrc : IsRecT h rc) (hσ : π.IsLocComp w σ) :
@@ -170,29 +171,7 @@ theorem galoisLocalGlobal_of_placeClassCompatibility (C : CoreAll) (H1 : R1) (H2
     have k3 := k1 P AI T A h O Bw hj
     exact ⟨k3.1, k2, fun τ LL' τ' hτ => k3.2 τ LL' τ' hτ _ (w1 τ), k4⟩
 
-theorem galois_realisation_of_rank_two (C : CoreAll) (H1 : R1) (H2 : LocalGlobalCompatibilityAtPlaceClass fun _ _ _ w n => IsQpBig w n) :
-    Row0b (fun h rc => IsRecT h rc) := fun E Ω _ _ _ _ _ _ l _ ι a ha π χ hr hp => by
-  have hI : InScope .all l π χ := ⟨hr, hp, trivial⟩
-  obtain ⟨r, hW⟩ := C.1 E Ω l ι a ha π χ hI
-  obtain ⟨wt, HT, w1, w2⟩ := exists_weights ha hI ι
-  refine ⟨r, wt, HT, hW.1, hW.2.1, fun w hl A h rc hrc σ hσ => ?_, w1, w2, fun P AI T w A h O _ _ _ Bw hj =>
-    ⟨fun σ hσ hs => ?_, fun σ hσ rc hrc g hm => ?_⟩⟩
-  · have k := away H1 H2 ha hI hW hl hrc hσ
-    have d : (rc (algNorm σ)).lpDim = a := by
-      obtain ⟨_, _, L⟩ := hrc
-      exact L.dim _
-    exact ⟨k.1, k.2.1, fun q => k.2.2 (d ▸ q) q.isQp⟩
-  · obtain ⟨k1, k2⟩ := crys C ha hI hW hσ hs
-    have k3 := k2 P AI T A h O Bw hj
-    exact ⟨k1 P AI T A h O Bw hj σ hσ hs, k3.1, fun τ LL' τ' hτ => k3.2 τ LL' τ' hτ _ (w1 τ)⟩
-  · obtain ⟨k1, k2, k4⟩ := above H1 H2 ha hI hW T Bw hj hrc hσ (g.imp (fun q => ⟨q.1, q.1.isQp, q.2⟩) id) hm
-    have k3 := k1 P AI T A h O Bw hj
-    exact ⟨k3.1, k2, fun τ LL' τ' hτ => k3.2 τ LL' τ' hτ _ (w1 τ), k4.big⟩
-
 theorem galoisLocalGlobal_of_localGlobalCompatibility (C : CoreAll) (H1 : R1) (H2 : LocalGlobalCompatAtIwahoriFixedPlaces) : Row0 (fun h rc => IsRecT h rc) :=
   galoisLocalGlobal_of_placeClassCompatibility C H1 (localGlobalAtPlaceClass_of_localGlobal H2 _)
-
-theorem galois_realisation_of_top (C : CoreAll) (H : GlobalTheory.DeRhamOfPlainTorus.Top) : Row0 (fun h rc => IsRecT h rc) :=
-  galoisLocalGlobal_of_localGlobalCompatibility C H.1 (rank_two_general_of_rank_two H.2)
 
 end UpperTheory.Gal.Int.Row

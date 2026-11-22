@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -55,6 +60,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι] (𝔪 : ι → Ideal B) [h�
 
 omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem length_tensor_quot (hinj : Function.Injective 𝔪) (i j : ι) :
     Module.length (C i) (C i ⊗[B] (B ⧸ 𝔪 j)) = if i = j then 1 else 0 := by
   have : IsLocalRing (C i) := IsLocalization.AtPrime.isLocalRing (C i) (𝔪 i)
@@ -76,10 +82,11 @@ theorem length_tensor_quot (hinj : Function.Injective 𝔪) (i j : ι) :
 
 omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem pi_mk_injective (hall : ∀ M : Ideal B, M.IsMaximal → ∃ i, M = 𝔪 i) (N : Type*)
     [AddCommGroup N] [Module B N] :
     Function.Injective (LinearMap.pi fun i => TensorProduct.mk B (C i) N 1) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro n hn
   by_contra hne
   have hlt : LinearMap.ker (LinearMap.toSpanSingleton B N n) ≠ ⊤ := by
@@ -126,7 +133,7 @@ theorem length_eq_sum_of_isFiniteLength (hinj : Function.Injective 𝔪)
         length_tensor_quot 𝔪 C hinj i j]
     rw [Module.length_eq_add_of_exact (f.restrictScalars A) (g.restrictScalars A) hf hg hfg, ih]
     simp only [key, add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+      Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 theorem length_eq_sum (hinj : Function.Injective 𝔪)
     (hall : ∀ M : Ideal B, M.IsMaximal → ∃ i, M = 𝔪 i) (A : Type*) [CommRing A] [Algebra A B]

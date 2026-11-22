@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemUniq
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemUniq
+
+@[expose] public section
 
 noncomputable section
 

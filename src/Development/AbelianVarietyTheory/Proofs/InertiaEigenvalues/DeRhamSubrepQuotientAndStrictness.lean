@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndepOnOfInvariant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdaptedOfSurjective
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndepOnOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdaptedOfSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,8 @@ theorem mem_of_invariant {G K B M ι : Type} [Field K] [CommRing B] [Algebra K B
     refine (E a).sum_mem fun i hi => ?_
     obtain ⟨c, hc⟩ := hinv (b i) fun g => sub_eq_zero.1 (hB (fun j => σ g (b j) - b j) (by
       have := hy g
-      simp only [map_sum, hρ, hei] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, hρ, hei] at this
       simp only [sub_smul, Finset.sum_sub_distrib, this, sub_self]) i hi)
     by_cases hc0 : c = 0
     · rw [← hc, hc0, map_zero, zero_smul]
@@ -98,7 +103,8 @@ theorem spans_of_surjective (hs : Function.Surjective f) (h : Spans PD ρ) : Spa
   obtain ⟨x, -, rfl⟩ := exists_ext_mem_FilV PD f hs ha
   obtain ⟨m, b, d, hd, rfl⟩ := h x
   exact ⟨m, b, fun i => ext Qp F f (d i), fun i => ext_mem_DdR PD ρ ρ' f hf (hd i), by
-    simp only [map_sum, ext_mulR]⟩
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, ext_mulR]⟩
 
 theorem spans_of_injective [FiniteDimensional Qp LL] [FiniteDimensional Qp K] [CharZero Qp]
     [FiniteDimensional LL V] [FiniteDimensional LL V'] (hF : IsField F)
@@ -126,7 +132,8 @@ theorem strict_of_surjective (hF : IsField F) (hs : Function.Surjective f) (h : 
   obtain ⟨x, hx, rfl⟩ := exists_ext_mem_FilV PD f hs hy.2
   obtain ⟨m, k, b, d, hd, rfl⟩ := h a x hx
   have hsum : ext Qp F f (∑ i, mulR Qp F LL V (b i) (d i)) = ∑ i, b i • ext Qp F f (d i) := by
-    simp only [map_sum, ext_mulR, hsm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, ext_mulR, hsm]
   have hinv := (mem_DdR PD _ _).1 hy.1
   rw [hsum] at hinv ⊢
   exact mem_of_invariant (K := K) hF (fun g b => PD.actdR g b) (fun g => (actVdR PD ρ' g).toAddMonoidHom)

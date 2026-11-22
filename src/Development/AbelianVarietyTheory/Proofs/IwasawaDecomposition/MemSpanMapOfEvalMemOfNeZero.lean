@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -10,37 +15,39 @@ theorem mem_span_map_of_eval_mem (k : Type) [Field k] [Infinite k] (σ τ : Type
     P ∈ Submodule.span (MvPolynomial τ k)
       (MvPolynomial.map (algebraMap k (MvPolynomial τ k)) '' (M : Set (MvPolynomial σ k))) := by
   classical
-  let Γ : Finset (τ →₀ ℕ) := P.support.biUnion (fun m => (coeff m P).support)
+  let Γ : Finset (τ →₀ ℕ) := P.support.biUnion (fun m => (AddMonoidAlgebra.coeff P m).support)
   let Q : (τ →₀ ℕ) → MvPolynomial σ k := fun γ =>
-    ∑ m ∈ P.support, monomial m (coeff γ (coeff m P))
-  have hQ : ∀ γ m, coeff m (Q γ) = coeff γ (coeff m P) := by
+    ∑ m ∈ P.support, monomial m (AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff P m) γ)
+  have hQ : ∀ γ m, AddMonoidAlgebra.coeff (Q γ) m = AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff P m) γ := by
     intro γ m
     simp only [Q, coeff_sum, coeff_monomial]
     rw [Finset.sum_ite_eq']
     split_ifs with h
     · rfl
-    · rw [notMem_support_iff.mp h, coeff_zero]
+    · simp only [notMem_support_iff.mp h, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   have hdec : P = ∑ γ ∈ Γ, (monomial γ (1 : k) : MvPolynomial τ k) • map (algebraMap k (MvPolynomial τ k)) (Q γ) := by
     ext m : 1
     rw [coeff_sum]
     simp only [coeff_smul, coeff_map, hQ, smul_eq_mul, MvPolynomial.algebraMap_eq]
-    have : ∀ γ, (monomial γ (1 : k) : MvPolynomial τ k) * C (coeff γ (coeff m P)) = monomial γ (coeff γ (coeff m P)) := by
+    have : ∀ γ, (monomial γ (1 : k) : MvPolynomial τ k) * C (AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff P m) γ) = monomial γ (AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff P m) γ) := by
       intro γ; rw [mul_comm, C_mul_monomial, mul_one]
     simp only [this]
     by_cases hm : m ∈ P.support
-    · conv_lhs => rw [as_sum (coeff m P)]
+    · conv_lhs => rw [as_sum (AddMonoidAlgebra.coeff P m)]
       apply Finset.sum_subset
       · intro γ hγ; exact Finset.mem_biUnion.mpr ⟨m, hm, hγ⟩
       · intro γ _ hγ; rw [notMem_support_iff.mp hγ, monomial_zero]
     · rw [notMem_support_iff.mp hm]
-      simp only [coeff_zero, monomial_zero, Finset.sum_const_zero]
+      simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, monomial_zero,
+        Finset.sum_const_zero]
   have hevid : ∀ y : τ → k, (eval y).comp (algebraMap k (MvPolynomial τ k)) = RingHom.id k := by
     intro y; ext c; simp only [RingHom.comp_apply, MvPolynomial.algebraMap_eq, eval_C, RingHom.id_apply]
   have hevP : ∀ y : τ → k, map (eval y) P =
       ∑ γ ∈ Γ, (eval y (monomial γ (1 : k) : MvPolynomial τ k)) • Q γ := by
     intro y
     conv_lhs => rw [hdec]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun γ _ => ?_)
     rw [smul_eq_C_mul, map_mul, map_C, map_map, hevid, map_id, smul_eq_C_mul]
   have hQM : ∀ γ ∈ Γ, Q γ ∈ M := by
@@ -50,7 +57,8 @@ theorem mem_span_map_of_eval_mem (k : Type) [Field k] [Infinite k] (σ τ : Type
     let R : MvPolynomial τ k := ∑ γ ∈ Γ, monomial γ (L (Q γ))
     have hR : ∀ y : τ → k, eval y R = L (map (eval y) P) := by
       intro y
-      rw [hevP, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hevP, map_sum, map_sum]
       refine Finset.sum_congr rfl (fun γ _ => ?_)
       rw [map_smul, smul_eq_mul, eval_monomial, eval_monomial, mul_comm, one_mul]
     have hRD : R * D = 0 := by
@@ -61,10 +69,10 @@ theorem mem_span_map_of_eval_mem (k : Type) [Field k] [Infinite k] (σ τ : Type
       · rw [hy, mul_zero]
       · rw [hR, LinearMap.mem_ker.mp (hLM (hP y hy)), zero_mul]
     have hR0 : R = 0 := (mul_eq_zero.mp hRD).resolve_right hD
-    have hcoef : coeff β R = L (Q β) := by
+    have hcoef : AddMonoidAlgebra.coeff R β = L (Q β) := by
       simp only [R, coeff_sum, coeff_monomial]
-      rw [Finset.sum_ite_eq', if_pos hβ]
-    exact hLβ (by rw [← hcoef, hR0, coeff_zero])
+      rw [Finset.sum_ite_eq', ite_eq_left hβ]
+    exact hLβ (by simp only [← hcoef, hR0, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply])
   suffices h : (∑ γ ∈ Γ, (monomial γ (1 : k) : MvPolynomial τ k) • map (algebraMap k (MvPolynomial τ k)) (Q γ)) ∈
       Submodule.span (MvPolynomial τ k)
         (MvPolynomial.map (algebraMap k (MvPolynomial τ k)) '' (M : Set (MvPolynomial σ k))) by

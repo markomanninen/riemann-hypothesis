@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -32,8 +36,8 @@ theorem spectral_parts_of_diag {n : Type} [Fintype n] [DecidableEq n] (Y J U : M
     simp only [hφ]
     rw [← Matrix.smul_mul, ← Matrix.mul_smul, ← diagonal_smul]
     congr 3
-    funext j
-    simp
+    ext j
+    simp [Pi.smul_apply, smul_eq_mul]
   have hherm : ∀ f : ℝ → ℝ, (φ f).IsHermitian := by
     intro f
     simp only [hφ]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,7 +37,7 @@ theorem in_add {N : Ideal B} {f g : MvPowerSeries σ Q} (hf : In N f) (hg : In N
     In N (f + g) := fun α => by
   obtain ⟨a, ha, ea⟩ := hf α
   obtain ⟨b, hb, eb⟩ := hg α
-  exact ⟨a + b, N.add_mem ha hb, by rw [map_add, ea, eb, map_add]⟩
+  exact ⟨a + b, N.add_mem ha hb, by rw [map_add (f := _), ea, eb, map_add (f := _)]⟩
 
 theorem in_neg {N : Ideal B} {f : MvPowerSeries σ Q} (hf : In N f) : In N (-f) := fun α => by
   obtain ⟨a, ha, ea⟩ := hf α
@@ -66,7 +70,7 @@ theorem hasSubst_X_pow : HasSubst (fun i : σ => (X i : MvPowerSeries σ Q) ^ p)
 
 theorem frob_add (f g : MvPowerSeries σ Q) : frob p s (f + g) = frob p s f + frob p s g := by
   unfold frob
-  rw [map_add, subst_add (hasSubst_X_pow p)]
+  rw [map_add (f := _), subst_add (hasSubst_X_pow p)]
 
 theorem frob_zero : frob p s (0 : MvPowerSeries σ Q) = 0 := by
   have h := frob_add p s (0 : MvPowerSeries σ Q) 0
@@ -152,13 +156,13 @@ theorem ql_add_smul (hμ : ∀ i, constantCoeff (μ i) = 0) {N : Ideal B}
     {f g : MvPowerSeries (Fin d) Q} (hf : QL μ N f) (hg : QL μ N g) (b : B) :
     QL μ N (f + algebraMap B Q b • g) := by
   refine ⟨?_, fun i => ?_, ?_⟩
-  · rw [← coeff_zero_eq_constantCoeff_apply, map_add, map_smul, coeff_zero_eq_constantCoeff_apply,
+  · rw [← coeff_zero_eq_constantCoeff_apply, map_add (f := _), map_smul, coeff_zero_eq_constantCoeff_apply,
       coeff_zero_eq_constantCoeff_apply, hf.1, hg.1, smul_zero, add_zero]
   · obtain ⟨a, ha, ea⟩ := hf.2.1 i
     obtain ⟨a', ha', ea'⟩ := hg.2.1 i
     refine ⟨a + b * a', N.add_mem ha (N.mul_mem_left b ha'), ?_⟩
     simp only [lin] at ea ea' ⊢
-    rw [map_add, map_smul, ea, ea', smul_eq_mul, map_add, map_mul]
+    rw [map_add (f := _), map_smul, ea, ea', smul_eq_mul, map_add (f := _), map_mul]
   · rw [formalCoboundary_add (constantCoeff_up hμ), formalCoboundary_smul (constantCoeff_up hμ)]
     exact in_add hf.2.2 (in_smul hg.2.2 b)
 

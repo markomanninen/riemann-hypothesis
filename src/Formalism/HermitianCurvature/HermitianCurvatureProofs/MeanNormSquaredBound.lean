@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ lemma normSq_mean {X α : Type} (L : E →ₗ[ℂ] E) (k : ℂ) (hk : conj k = k
         (k ^ 2 * ∑ p ∈ P, ∑ p' ∈ P, c p * conj (c p') * inner ℂ (L (u h' p')) (L (u h p))) := by
   have h1 : L (k • ∑ p ∈ P, c p • ∑ h ∈ F, a h • u h p) =
       ∑ p ∈ P, (k * c p) • ∑ h ∈ F, a h • L (u h p) := by
-    simp only [map_smul, map_sum, Finset.smul_sum, smul_smul, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, Finset.smul_sum, smul_smul, mul_assoc]
   rw [h1, normSq_sum]
   simp only [inner_sum_sum, Finset.mul_sum]
   rw [sum_sum_sum_sum_comm]

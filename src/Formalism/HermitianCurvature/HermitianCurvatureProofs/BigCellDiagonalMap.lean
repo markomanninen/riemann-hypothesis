@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellDecomposition
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LduDecompositionExists
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellDecomposition
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LduDecompositionExists
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 
@@ -174,7 +178,5 @@ theorem big_cell_decomposition : BigCellDecomposition.CellDecomp := by
   exact BigCellDiagonalMap.cellDecomp
 
 theorem psiOnto_true : Formalism.FourierDecayAlt.JF.PsiOnto := jf_psiOnto_of_cellDecomp BigCellDiagonalMap.cellDecomp
-
-theorem equiv_det : Formalism.FourierDecayAlt.JF.EquivDet := jf_equivDet_of_cellDecomp BigCellDiagonalMap.cellDecomp
 
 end Formalism.FourierDecayAlt.P

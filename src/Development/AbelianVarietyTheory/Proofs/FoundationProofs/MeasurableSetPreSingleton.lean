@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.GLVolumeIndex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.GLVolumeIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,7 +116,7 @@ theorem cell_eq (y : 𝒪[F]) :
   · rintro ⟨z, rfl, hz⟩
     exact ⟨z - y, by simp [sub_eq_add_neg], by rw [map_sub, hz, sub_self]⟩
   · rintro ⟨z, hz, h0⟩
-    refine ⟨z + y, ?_, by rw [map_add, h0, zero_add]⟩
+    refine ⟨z + y, ?_, by rw [map_add (f := _), h0, zero_add]⟩
     push_cast
     rw [hz]; ring
 

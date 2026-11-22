@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementE
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.WhittakerZeroStatement
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantEquality
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementE
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.WhittakerZeroStatement
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantEquality
+
+@[expose] public section
 
 open Finset Formalism.REAL ReciprocityTheory.ChartRestriction.DS.Lap.Capelli CompanionTheory.RgExh
 
@@ -95,7 +99,8 @@ theorem key_identity :
       ∑ i : Fin (q + 2), ∑ k : Fin (q + 1), ∑ l : Fin (q + 1), ((-1 : ℂ) ^ (i : ℕ)) •
         capEntry E x (R i) (C 0) (if d = R (i.succAbove k) then
           ((-1 : ℂ) ^ ((k : ℕ) + (l : ℕ))) • dbl E R C x f i k l else 0) := by
-    simp only [map_sum, Finset.smul_sum, Function.comp]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.smul_sum, Function.comp]
   have h2 : (∑ i : Fin (q + 2), ((-1 : ℂ) ^ (i : ℕ)) • (if d = R i then
         (∑ k : Fin (q + 1), ∑ l : Fin (q + 1), if C 0 = (R ∘ i.succAbove) k then
           ((-1 : ℂ) ^ ((k : ℕ) + (l : ℕ))) • dbl E R C x f i k l else 0) else 0)) =
@@ -179,7 +184,7 @@ theorem cminor_tensE_apply (X : GMod n) (q : ℕ) : ∀ (R C : Fin (q + 1) → F
         (if p then a + b else 0) = (if p then a else 0) + (if p then b else 0) := by
       intro p _ a b
       split_ifs <;> simp
-    simp only [ih, hit, map_add, smul_add, Finset.sum_add_distrib, LinearMap.sum_apply, LinearMap.smul_apply,
+    simp only [ih, hit, map_add (f := _), smul_add, Finset.sum_add_distrib, LinearMap.sum_apply, LinearMap.smul_apply,
       Module.End.mul_apply]
     simp only [dbl, Function.comp_apply]
     abel

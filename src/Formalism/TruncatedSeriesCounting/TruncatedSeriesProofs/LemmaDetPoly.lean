@@ -1,4 +1,8 @@
-import Formalism.TruncatedSeriesCounting.LemmaDetPoly
+module
+
+public import Formalism.TruncatedSeriesCounting.LemmaDetPoly
+
+@[expose] public section
 
 open Finset Classical Polynomial
 
@@ -141,7 +145,7 @@ lemma key (ρ : G →* Matrix n n R) (L0 : R × ℕ × G) (h0 : 1 ≤ L0.2.1) (r
   have hnew : ∀ L k, φ (term ρ (newL L0 L (k + 1))) = φ (term ρ L0) ^ (k + 1) * φ (term ρ L) := by
     intro L k
     rw [term_newL, map_mul, map_pow]
-  simp only [map_sub, map_one, map_add, map_list_sum, List.map_cons, List.sum_cons, elim,
+  simp only [map_sub, map_one, map_add (f := _), map_list_sum, List.map_cons, List.sum_cons, elim,
     List.map_append, List.sum_append, sum_flat, List.map_map]
   rw [← alg_identity (φ (term ρ L0)) N hx]
   congr 3
@@ -335,9 +339,6 @@ def S1 (T : Subalgebra O (Xs → O)) (m : ℕ) : Subring (Xs → MvPolynomial (F
     show (fun x => ((-f) x).coeff α) ∈ MainNotions T
     rw [e]; exact (MainNotions T).neg_mem (hf α)
 
-lemma S1_mem_OmF {T : Subalgebra O (Xs → O)} {m : ℕ} {f : Xs → MvPolynomial (Fin m) K} :
-    f ∈ S1 T m ↔ ∀ α, FromT T (fun x => (f x).coeff α) := Iff.rfl
-
 end
 
 section
@@ -462,6 +463,6 @@ theorem det_poly_statement : LemmaDetPoly := by
     refine Finset.sum_congr rfl (fun g _ => ?_)
     rw [Algebra.smul_def, map_mul]
   obtain ⟨t, ht, htx⟩ := hdet s
-  exact ⟨t, ht, fun x => by rw [htx x]; exact congrArg (MvPolynomial.coeff s) (hx x)⟩
+  exact ⟨t, ht, fun x => by rw [htx x]; exact congrArg (AddMonoidAlgebra.coeff · s) (hx x)⟩
 
 end Formalism.TruncatedSeriesCounting.TruncatedSeriesCountingIdentities

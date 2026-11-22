@@ -1,25 +1,27 @@
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
-import GroundTheory.AutomorphicForms.ReductionMahler
-import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdBasic
+module
+
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+public import GroundTheory.AutomorphicForms.ReductionMahler
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdBasic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GroundTheory.Automorphic GroundTheory.Automorphic.Reduction Formalism.L2.Host
 open scoped NumberField.AdeleRing
 
 private theorem denseInf {K : Type} [Field K] (u : InfinitePlace K) :
     DenseRange (algebraMap K u.Completion) := by
-  have h1 : DenseRange (fun x : WithAbs u.1 => (x : UniformSpace.Completion (WithAbs u.1))) :=
-    UniformSpace.Completion.denseRange_coe
-  have h2 : DenseRange (InfinitePlace.Completion.ofCompletion : _ → u.Completion) :=
-    (InfinitePlace.Completion.equiv u).symm.surjective.denseRange
-  have h3 := h2.comp h1 (InfinitePlace.Completion.continuous_ofCompletion u)
-  refine h3.mono ?_
+  refine (AbsoluteValue.Completion.denseRange_coe u.1).mono ?_
   rintro _ ⟨x, rfl⟩
-  exact ⟨x.ofAbs, rfl⟩
+  refine ⟨x.ofAbs, ?_⟩
+  rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
+  simp
 
 private theorem normAlg {K : Type} [Field K] [NumberField K] (w : InfinitePlace K) (x : K) :
-    ‖algebraMap K w.Completion x‖ = w x :=
-  InfinitePlace.Completion.norm_coe (K := K) (v := w) _
+    ‖algebraMap K w.Completion x‖ = w x := by
+  rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
+  simpa using (InfinitePlace.Completion.norm_coe (v := w) (WithAbs.toAbs w.1 x))
 
 private theorem norm_infEquiv {K : Type} [Field K] [NumberField K] (j : K ≃+* K) (u : InfinitePlace K)
     (y : (u.comap j.toRingHom).Completion) : ‖CT.infEquiv j u y‖ = ‖y‖ := by
@@ -99,7 +101,7 @@ private theorem map_rational {K : Type} [Field K] [NumberField K] (n : ℕ) (σ 
 
 theorem UpperTheory.ConvolutionTheory.K.adNormOne :
     ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (σ : K ≃+* K) (g : AdelicGLn.AdelicGL K n),
-      ((Matrix.GeneralLinearGroup.map (CT.adMap σ) g : AdelicGLn.AdelicGL K n) ∈ normOneGL K n ↔ g ∈ normOneGL K n) ∧
+      ((Matrix.GeneralLinearGroup.map (CT.adMap σ) g : AdelicGLn.AdelicGL K n) ∈ normOneGL (K := K) (n := n) ↔ g ∈ normOneGL (K := K) (n := n)) ∧
       ((Matrix.GeneralLinearGroup.map (CT.adMap σ) g : AdelicGLn.AdelicGL K n) ∈ AdelicGLn.rationalGL K n ↔ g ∈ AdelicGLn.rationalGL K n) := by
   intro K _ _ n σ g
   refine ⟨?_, fun h => ?_, map_rational n σ g⟩

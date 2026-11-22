@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLocalUnramifiedOfIsIndEtale
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLocalUnramifiedOfIsIndEtale
+
+@[expose] public section
 
 open CategoryTheory Limits IsLocalRing
 
@@ -40,7 +44,8 @@ theorem flat_of_isIndEtale {A S : Type} [CommRing A] [CommRing S] [Algebra A S]
       intro a ha
       obtain ⟨b, rfl⟩ := Ideal.mem_span_singleton'.mp ha
       have : MvPolynomial.aeval x p = 0 := by
-        simp only [p, map_sum, map_smul, MvPolynomial.aeval_X, hfx]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [p, map_sum, map_smul, MvPolynomial.aeval_X, hfx]
       rw [map_mul, this, mul_zero])
   obtain ⟨W, _, _, _, u, v, huv⟩ := exists_etale_factor h g
   let w : Fin l → W := fun i => u (Ideal.Quotient.mkₐ A I (MvPolynomial.X i))
@@ -51,10 +56,12 @@ theorem flat_of_isIndEtale {A S : Type} [CommRing A] [CommRing S] [Algebra A S]
     have h0 : Ideal.Quotient.mkₐ A I p = 0 :=
       Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mem_span_singleton_self p)
     have : u (Ideal.Quotient.mkₐ A I p) = 0 := by rw [h0, map_zero]
-    simpa only [p, map_sum, map_smul] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [p, map_sum, map_smul] using this
   obtain ⟨k, a, y, hy, ha⟩ := Module.Flat.isTrivialRelation_of_sum_smul_eq_zero (R := A) (M := W) hrel
   refine ⟨k, a, fun j => v (y j), fun i => ?_, ha⟩
-  rw [← hw, hy, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hw, hy, map_sum]
   simp only [map_smul]
 
 theorem exists_local_unramified {A S : Type} [CommRing A] [IsLocalRing A] [CommRing S]
@@ -77,7 +84,7 @@ theorem flat_map_maximalIdeal_isSeparable (A S : Type) [CommRing A] [IsLocalRing
     Module.Flat A S ∧ (maximalIdeal A).map (algebraMap A S) = maximalIdeal S ∧
       Algebra.IsSeparable (ResidueField A) (ResidueField S) := by
   refine ⟨flat_of_isIndEtale h, le_antisymm ?_ fun s hs => ?_, ⟨fun r => ?_⟩⟩
-  · exact ((local_hom_TFAE (algebraMap A S)).out 0 2 rfl rfl).mp inferInstance
+  · exact ((local_hom_tfae (algebraMap A S)).out 1 3 rfl rfl).mp inferInstance
   · obtain ⟨L, _, _, _, _, _, _, φ, hφ, x, rfl⟩ := exists_local_unramified h s
     have hx : x ∈ maximalIdeal L := fun hx => hs (hx.map φ)
     rw [← Algebra.FormallyUnramified.map_maximalIdeal (R := A)] at hx

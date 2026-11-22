@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.ConvGGlob
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.SettingExistsOfGap
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WFLStepsLocHNProps
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.ConvGGlob
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.SettingExistsOfGap
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WFLStepsLocHNProps
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,10 +23,6 @@ def Kv {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (w : D.what₂.W
     (a : Formalism.REAL.UJ (X.B.I.ε v)) : ℝ≥0∞ :=
   ‖X.Wloc w v a‖ₑ * ∫⁻ b, ‖⟪X.B.σ v (uMat a) (X.B.w v), X.B.σ v (uMat b) (X.B.w v)⟫_ℂ‖ₑ * ‖X.Wloc w v b‖ₑ
     ∂(Formalism.REAL.muG (X.B.I.ε v))
-
-def LocQuad1 : Prop :=
-  ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (w : D.what₂.Word) (μS νl : ∀ v, Measure (Formalism.REAL.UJ (X.B.I.ε v)))
-    (C : ℝ≥0∞), Formalism.L2.SG.Pf.WuDec.QuotWit X w μS νl C → ∀ v, ∫⁻ a, Kv X w v a ∂(νl v) < ⊤
 
 section Pf
 
@@ -67,7 +67,9 @@ theorem H_eq (w : D.what₂.Word) (z y : X.B.I.Ginf) :
   rw [hσ, hσ, hi, Formalism.L2.SG.Pf.WuDec.enorm_Wu]
   have hprod : ‖∏ v, ⟪X.B.σ v (uMat (z v)) (X.B.w v), X.B.σ v (uMat (y v)) (X.B.w v)⟫_ℂ‖ₑ =
       ∏ v, ‖⟪X.B.σ v (uMat (z v)) (X.B.w v), X.B.σ v (uMat (y v)) (X.B.w v)⟫_ℂ‖ₑ := by
-    simp only [enorm_eq_nnnorm, nnnorm_prod, ENNReal.coe_finset_prod]
+    simp only [enorm_eq_nnnorm, nnnorm_prod]
+    push_cast
+    rfl
   rw [hprod, ← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun v _ => ?_
   unfold hv

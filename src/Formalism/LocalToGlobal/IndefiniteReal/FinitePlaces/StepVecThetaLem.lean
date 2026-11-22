@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceS
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceS
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,9 +38,5 @@ def ThPVecThetaSD (D : D7) : Prop :=
     IsThetaFunO ψ S T f
 
 def VecThetaSD (D : D7) : Prop := StepVecThetaSD D ∧ ThPVecThetaSD D
-
-def StepVecThetaLem (D : D7) : Prop := PlaceLatDual D → StepVecThetaSD D
-
-def ThPVecThetaLem (D : D7) : Prop := PlaceLatDual D → ThPVecThetaSD D
 
 end Formalism.IndefR.Fin

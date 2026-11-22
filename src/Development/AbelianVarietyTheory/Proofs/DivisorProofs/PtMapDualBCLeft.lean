@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTangentPresentationPrime
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitOfBijectiveMulNatural
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EqOneOfPowEqOneOfCompEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTangentPresentationPrime
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitOfBijectiveMulNatural
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EqOneOfPowEqOneOfCompEqOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,8 +45,6 @@ instance : SMulCommClass (Localization.Away P'.f) O (OL P' x0 hu) :=
 
 abbrev Bt : Type := OL P' x0 hu ⊗[Localization.Away P'.f] P'.B
 
-example : Algebra O (Bt P' x0 hu) := inferInstance
-
 def inB : P'.B →+* Bt P' x0 hu :=
   (Algebra.TensorProduct.includeRight : P'.B →ₐ[Localization.Away P'.f] Bt P' x0 hu).toRingHom
 
@@ -78,12 +80,6 @@ theorem jH_ι [GrpObj G'] (hπ : IsPullback π G'.hom t.G.hom (spMap x0 ≫ ξ))
     jH P' x0 hu hπ h ≫ torsion.ι G' q = aH P' x0 hu hπ :=
   GlobalTheory.KernelNoTorsion.torsionLift_ι _ h
 
-def chi (b : P'.Bˣ) : Hs P' x0 hu ⟶ Gm (Sp O) :=
-  (GlobalTheory.GmPoints.unitOf_bijective.2 (Units.map (inB P' x0 hu).toMonoidHom b)).choose
-
-theorem unitOf_chi (b : P'.Bˣ) : unitOf (chi P' x0 hu b) = Units.map (inB P' x0 hu).toMonoidHom b :=
-  (GlobalTheory.GmPoints.unitOf_bijective.2 (Units.map (inB P' x0 hu).toMonoidHom b)).choose_spec
-
 def liftB {D : Type} [CommRing D] [Algebra O D] (β : P'.B →+* D) (hβ : β.comp P'.str = (algebraMap O D).comp x0) :
     Bt P' x0 hu →ₐ[O] D :=
   letI : Algebra (Localization.Away P'.f) D := ((algebraMap O D).comp (lo P' x0 hu)).toAlgebra
@@ -111,12 +107,6 @@ def ptOf {D : Type} [CommRing D] [Algebra O D] (β : P'.B →+* D) (hβ : β.com
     specO O D ⟶ Hs P' x0 hu :=
   ptMap (liftB P' x0 hu β hβ)
 
-theorem unitOf_ptOf_chi {D : Type} [CommRing D] [Algebra O D] (β : P'.B →+* D)
-    (hβ : β.comp P'.str = (algebraMap O D).comp x0) (b : P'.Bˣ) :
-    (unitOf (ptOf P' x0 hu β hβ ≫ chi P' x0 hu b) : D) = β b := by
-  rw [ptOf, GlobalTheory.GmPoints.unitOf_ptMap, unitOf_chi]
-  exact liftB_inB P' x0 hu β hβ b
-
 theorem ptOf_aH_π {D : Type} [CommRing D] [Algebra O D] (β : P'.B →+* D)
     (hβ : β.comp P'.str = (algebraMap O D).comp x0) (hπ : IsPullback π G'.hom t.G.hom (spMap x0 ≫ ξ)) :
     (ptOf P' x0 hu β hβ ≫ aH P' x0 hu hπ).left ≫ π = spMap β ≫ P'.u.left := by
@@ -142,7 +132,7 @@ theorem dualBC_eq {O : Type} [CommRing O] (I : Ideal O) :
     (dualBC (Algebra.ofId O (O ⧸ I))).toRingHom = dualMap (Ideal.Quotient.mk I) := by
   refine RingHom.ext fun z => ?_
   conv_lhs => rw [← TrivSqZeroExt.inl_fst_add_inr_snd_eq z]
-  simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_add, dualBC, TrivSqZeroExt.lift_apply_inl,
+  simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_add (f := _), dualBC, TrivSqZeroExt.lift_apply_inl,
     TrivSqZeroExt.lift_apply_inr]
   refine TrivSqZeroExt.ext ?_ ?_ <;> simp [dualMap] <;> rfl
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthBaseChangeQuotientOfMapMaximalIdeal
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthBaseChangeQuotientOfMapMaximalIdeal
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -56,7 +60,7 @@ theorem lenR_baseChange_subquotient (hinj : Function.Injective (algebraMap O O')
       (A.baseChange O' ⧸ (B.baseChange O').comap (A.baseChange O').subtype) =
       Module.length O (A ⧸ B.comap A.subtype) *
         (((IsLocalRing.maximalIdeal O').ramificationIdx O : ℕ) : ℕ∞) :=
-    length_baseChange_subquotient_dvr O O' A B
+    length_baseChange_subquotient_dvr O O' (X := W) A B
   have h2 := addVal_algebraMap (R := O) O' (l : O)
   rw [map_natCast] at h2
   have he : (((IsLocalRing.maximalIdeal O').ramificationIdx O : ℕ) : ℝ) ≠ 0 := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.FibreMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.Intersections.LiftZComponent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.FibreMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.LiftZComponent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

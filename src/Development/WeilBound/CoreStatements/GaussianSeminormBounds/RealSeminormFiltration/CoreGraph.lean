@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCyc
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCyc
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,8 @@ theorem graph_orth_stable {p q : ℕ} {A : Type} [NormedAddCommGroup A] [InnerPr
   intro v hv
   have hu' := (Submodule.mem_orthogonal' K u).1 hu
   rw [Matrix.matrix_eq_sum_single W]
-  simp only [map_sum, LinearMap.sum_apply, sum_inner]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, sum_inner]
   refine Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun b _ => ?_
   have hs : Matrix.single a b (W a b) = W a b • Eab a b := by
     simp [Eab, Matrix.smul_single]
@@ -156,7 +161,8 @@ theorem graph_sub {p q : ℕ} {A : Type} [NormedAddCommGroup A] [InnerProductSpa
   have hall : ∀ W, ∀ n ∈ R, P W n ∈ R := by
     intro W n hn
     rw [Matrix.matrix_eq_sum_single W]
-    simp only [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply]
     refine R.sum_mem fun a _ => R.sum_mem fun b _ => ?_
     have hs : Matrix.single a b (W a b) = W a b • Eab a b := by
       simp [Eab, Matrix.smul_single]
@@ -281,7 +287,7 @@ theorem graph_map {p q : ℕ} {A : Type} [NormedAddCommGroup A] [InnerProductSpa
       rw [hproj]
       trivial
     obtain ⟨g, hgG, g', hgO, rfl⟩ := Submodule.mem_sup.1 hu
-    rw [map_add, map_add, map_add, hΦO g' hgO, hΦO _ (hOinv Z g' hgO), add_zero, add_zero]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hΦO g' hgO, hΦO _ (hOinv Z g' hgO), add_zero, add_zero]
     refine huniq (ρA Z g) _ _ (hΦG _ (hGinv Z g hgG)) ?_
     have h3 := hNinv Z _ (hΦG g hgG)
     rwa [prodAct_apply] at h3

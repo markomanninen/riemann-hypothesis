@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.QmStar
-import Formalism.PeriodIntegrals.QmRowForm
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+module
+
+public import Formalism.PeriodIntegrals.QmStar
+public import Formalism.PeriodIntegrals.QmRowForm
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+
+@[expose] public section
 
 open Formalism.REAL
 
@@ -117,7 +121,5 @@ theorem qmStar_of (hrow : PI.RowForm) : PI.QmStar := by
   unfold PI.QmStar PI.StarMinor
   intro A _ _ _ _ n t E ε hE hs a b w
   rw [star_qminor E ε hs, ← hrow A n t E hE, qminor_rev_rev E hE]
-
-theorem qmStar_of_rowForm (h : PI.QmRowForm) : PI.QmStar := qmStar_of h
 
 end PI.UnitaryGroupMassFormula.QmStar

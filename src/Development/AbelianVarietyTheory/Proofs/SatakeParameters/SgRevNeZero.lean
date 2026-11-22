@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RkLe
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SharpPoly
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RkLe
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SharpPoly
+
+@[expose] public section
 
 noncomputable section
 

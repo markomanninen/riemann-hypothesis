@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThConstLoc
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.IndicatorMem
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfActs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThConstLoc
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.IndicatorMem
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfActs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+
+@[expose] public section
 
 noncomputable section
 

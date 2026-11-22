@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ExistsLintegralCompactLe
-import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.RegMDbEqZeroOfNotMem
+module
+
+public import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ExistsLintegralCompactLe
+public import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.RegMDbEqZeroOfNotMem
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 

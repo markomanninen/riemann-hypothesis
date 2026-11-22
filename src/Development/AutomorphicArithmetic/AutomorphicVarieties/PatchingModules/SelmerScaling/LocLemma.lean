@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagTriangular
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.OrdExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TriProdZero
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TriDiag
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagTriangular
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.OrdExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TriProdZero
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TriDiag
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem tri_diag {R : Type} [CommRing R] {n : ℕ} (A B : Matrix (Fin n) (Fin n) R)
@@ -142,7 +147,8 @@ private theorem move_idem {A B ι : Type} [Ring A] [Ring B] [Fintype ι] (π : A
   have h0 : π Y = 0 := by
     have : ∑ i, π (f' i * f i) = ∑ i, π (f i) :=
       Finset.sum_congr rfl fun i _ => by rw [map_mul, hπ, ← map_mul, (hf.idem i).eq]
-    rw [hY, map_sub, map_sum, this, ← map_sum, hf.complete, sub_self]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hY, map_sub, map_sum, this, ← map_sum, hf.complete, sub_self]
   have hYY : Y * Y = 0 := hsq _ _ h0 h0
   have hU : 1 - Y = ∑ i, f' i * f i := by rw [hY, sub_sub_cancel]
   have h1 : ∀ a, (1 - Y) * f a = f' a * (1 - Y) := by
@@ -201,7 +207,7 @@ private theorem sep_good {F R H : Type} [Field F] [Infinite F] [CommRing R] [Alg
     | add x y _ _ hx hy =>
       obtain ⟨a, h1, ha⟩ := hx
       obtain ⟨b, h2, hb⟩ := hy
-      exact ⟨a + b, ga _ _ h1 h2, fun i => by rw [map_add, map_add, ha, hb]; rfl⟩
+      exact ⟨a + b, ga _ _ h1 h2, fun i => by rw [map_add (f := _), map_add (f := _), ha, hb]; rfl⟩
     | smul c x _ hx =>
       obtain ⟨a, h1, ha⟩ := hx
       exact ⟨algebraMap F R c • a, gs _ _ h1, fun i => by
@@ -281,7 +287,7 @@ theorem UpperTheory.V.Pa.locLemma :
     (by simp [Matrix.blockTriangular_zero])
     (by
       rintro x y ⟨⟨x1, x2, x3, x4⟩, ⟨x5, x6⟩, x7, x8⟩ ⟨⟨y1, y2, y3, y4⟩, ⟨y5, y6⟩, y7, y8⟩
-      simp only [map_add, Matrix.add_apply, add_sub_add_comm]
+      simp only [map_add (f := _), Matrix.add_apply, add_sub_add_comm]
       exact ⟨⟨E.add_mem x1 y1, E.add_mem x2 y2, fun i => E.add_mem (x3 i) (y3 i),
         fun i => E.add_mem (x4 i) (y4 i)⟩, ⟨fun i j => I.add_mem (x5 i j) (y5 i j),
         fun i => I.add_mem (x6 i) (y6 i)⟩, x7.add y7, fun i => by rw [x8, y8]⟩)

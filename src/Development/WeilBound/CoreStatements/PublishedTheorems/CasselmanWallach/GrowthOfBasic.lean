@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem growth_of_basic : A0 → B1 := by
         ((1 - Complex.I) / 2 * ((1 + Complex.I) / 2)) • E b a (E a b v) + ((1 - Complex.I) / 2) ^ 2 • E b a (E b a v) := by
       intro a b
       rw [actM_Xp]
-      simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul]
+      simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul]
       module
     rw [Finset.sum_congr rfl (fun p _ => hterm p.1 p.2)]
     simp only [Finset.sum_add_distrib, ← Finset.smul_sum]
@@ -90,7 +94,7 @@ theorem growth_of_basic : A0 → B1 := by
   · have key : ∀ p ∈ nc ε, ‖f (actM E (Xp p.1 p.2) w)‖ ^ 2 + ‖f (actM E (Xp p.2 p.1) w)‖ ^ 2 =
         ‖f (E p.1 p.2 w)‖ ^ 2 + ‖f (E p.2 p.1 w)‖ ^ 2 := by
       intro p _
-      simp only [actM_Xp, LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, smul_eq_mul]
+      simp only [actM_Xp, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, smul_eq_mul]
       exact norm_id _ _
     have h1 := sum_nc_swap ε (fun p => ‖f (actM E (Xp p.1 p.2) w)‖ ^ 2)
     have h2 := sum_nc_swap ε (fun p => ‖f (E p.1 p.2 w)‖ ^ 2)

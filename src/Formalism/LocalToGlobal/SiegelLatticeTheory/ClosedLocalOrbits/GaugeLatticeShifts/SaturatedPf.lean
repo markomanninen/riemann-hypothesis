@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Saturated
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Saturated
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,9 +24,6 @@ variable (β : S.V ≃ₗ[E] S.V)
 theorem smul_O (s : 𝓞 E) (x : S.V) : s • x = ((s : E)) • x := (algebraMap_smul E s x).symm
 
 theorem symm_smul_O (s : 𝓞 E) (x : S.V) : β.symm (s • x) = s • β.symm x := by
-  rw [smul_O, smul_O, map_smul]
-
-theorem apply_smul_O (s : 𝓞 E) (x : S.V) : β (s • x) = s • β x := by
   rw [smul_O, smul_O, map_smul]
 
 theorem gmap_apply_mem (M : Submodule (𝓞 E) S.V) (x : S.V) : β x ∈ Formalism.HermitianLatticesTheory.gmap β M ↔ x ∈ M := by
@@ -116,7 +117,6 @@ theorem Xflag_mapL (F : LFlag S r T) (j : ℕ) :
 
 theorem zt_mapL (F : LFlag S r T) : (mapL β hβ F).zt = β F.zt := rfl
 theorem z_mapL (F : LFlag S r T) : (mapL β hβ F).fl.z = β F.fl.z := rfl
-theorem e_mapL (F : LFlag S r T) (a : Fin r) : (mapL β hβ F).fl.e a = β (F.fl.e a) := rfl
 
 theorem XLam_mapL (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T) :
     XLam (Formalism.HermitianLatticesTheory.gmap β Λ) (mapL β hβ F) = Formalism.HermitianLatticesTheory.gmap β (XLam Λ F) := by
@@ -148,7 +148,8 @@ theorem NgX_mapL (g : ℕ) (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T) (F' :
 
 theorem frameAct_map {n : ℕ} (f : Fin n → S.V) (ξ : Matrix (Fin n) (Fin n) (𝓞 E)) (b : Fin n) :
     frameAct (fun a => β (f a)) ξ b = β (frameAct f ξ b) := by
-  simp only [frameAct, map_sum, LinearEquiv.map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [frameAct, map_sum, LinearEquiv.map_smul]
 
 theorem frame_mapL' (F : LFlag S r T) : frame (mapL β hβ F) = fun a => β (frame F a) := by
   funext a; exact frame_mapL β hβ F a
@@ -160,7 +161,7 @@ theorem Mplus_mapL (g : ℕ) (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T) (F'
     Set.image_singleton, zt_mapL, ← Set.range_comp, frame_mapL' β hβ, frame_mapL' β hβ]
   congr 3
   funext b
-  simp only [Function.comp_apply, frameAct_map, map_smul, map_sub]
+  simp only [Function.comp_apply, frameAct_map, map_sub, map_smul]
 
 theorem ModG_map (g : ℕ) (Λ : Submodule (𝓞 E) S.V) (x : S.V) :
     ModG S (Formalism.HermitianLatticesTheory.gmap β Λ) g (β x) ↔ ModG S Λ g x := by
@@ -246,14 +247,6 @@ theorem generic_isomorphism_holds (g : ℕ) : GenIso S r g := by
   intro T T' β hβ Λ F F'
   simp only [IsGeneric, AdmWit_mapL β hβ, BLat_mapL β hβ, Mplus_mapL β hβ, UU_mapL β hβ, gmap_locP, gmap_inj]
 
-theorem big_block_isomorphism_holds (g : ℕ) : BBIso S r g := by
-  intro T T' P β hβ Λ F F'
-  simp only [BBneP, AdmWit_mapL β hβ, BLat_mapL β hβ, Mplus_mapL β hβ, UU_mapL β hβ, gmap_locP, ne_eq, gmap_inj]
-
-theorem iota_isomorphism_holds (g : ℕ) : IotaIso S r g := by
-  intro T T' β hβ Λ F F' l' l
-  simp only [IotaG, Lrep_mapL β hβ, NgX_mapL β hβ, ← map_sub, gmap_apply_mem]
-
 theorem flag_equivalence_isomorphism : FeqFIso S r := by
   intro T T' β hβ Λ F F'
   simp only [frame_mapL' β hβ]
@@ -334,7 +327,7 @@ theorem coefX_mapFlag (F : FlagG S r T) (y : S.V) (a : Fin r) :
     rw [this, mem_map_apply]
   unfold FlagG.coefX
   by_cases h : y ∈ Submodule.span E (Set.range F.e)
-  · rw [dif_pos ((hsp y).2 h), dif_pos h]
+  · rw [dite_eq_left ((hsp y).2 h), dite_eq_left h]
     congr 1
     apply LinearIndependent.repr_eq
     have e1 := F.e_indep.linearCombination_repr ⟨y, h⟩
@@ -342,7 +335,7 @@ theorem coefX_mapFlag (F : FlagG S r T) (y : S.V) (a : Fin r) :
     have : (mapFlag β hβ F).e = (β : S.V →ₗ[E] S.V) ∘ F.e := rfl
     rw [this, ← Finsupp.apply_linearCombination, e1]
     rfl
-  · rw [dif_neg (fun h' => h ((hsp y).1 h')), dif_neg h]
+  · rw [dite_eq_right (fun h' => h ((hsp y).1 h')), dite_eq_right h]
 
 theorem ell_mapFlag (F : FlagG S r T) (Y : S.V →ₗ[E] S.V) :
     (mapFlag β hβ F).ell (conjL β Y) = F.ell Y := by
@@ -394,10 +387,6 @@ theorem relevant_mapFlag (K : Type) [Field K] [Algebra K E] (F : FlagG S r T) (F
 
 end Rel
 
-theorem relative_isomorphism_holds (K : Type) [Field K] [Algebra K E] : RelIso S r K := by
-  intro T T' β hβ Λ F F'
-  exact relevant_mapFlag β hβ K F.fl F'.fl
-
 section Conv
 
 variable (β : S.V ≃ₗ[E] S.V) (hβ : β ∈ Formalism.HermitianLatticesTheory.isom S.hT) {T : E}
@@ -443,7 +432,7 @@ theorem XS_mapFlag (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hβ : β ∈ Forma
 theorem positive_definite_isomorphism : PDIso D := by
   intro u' β hβ Λ T F F'
   simp only [PD, FrameOK, IsLift_mapL β hβ, IsAdmissible_mapL β hβ, IsFixedConv_mapL β hβ, XLam_mapL β hβ]
-  rw [show (mapL β hβ F').fl = mapFlag β hβ F'.fl from rfl, XS_mapFlag D β hβ, gmap_inj]
+  simp only [show (mapL β hβ F').fl = mapFlag β hβ F'.fl from rfl, XS_mapFlag D β hβ, gmap_inj]
 
 end D7
 
@@ -514,39 +503,6 @@ theorem mem_of_forall_prime (N : Submodule (𝓞 E) S.V) (x : S.V)
 theorem mem_gSmul (g : ℕ) (Λ : Submodule (𝓞 E) S.V) (v : S.V) :
     v ∈ Ideal.span {(g : 𝓞 E)} • Λ ↔ ∃ w ∈ Λ, (g : 𝓞 E) • w = v := by
   rw [Submodule.ideal_span_singleton_smul, Submodule.mem_smul_pointwise_iff_exists]
-
-theorem gSmul_le (g : ℕ) (Λ : Submodule (𝓞 E) S.V) : Ideal.span {(g : 𝓞 E)} • Λ ≤ Λ :=
-  Submodule.smul_le_right
-
-theorem iota_integral_holds (g : ℕ) : IotaZ S r g := by
-  rintro T T' Λ F F' hL hL' ⟨ξ, -, hdiag, hmod⟩
-  refine ⟨⟨hL'.1, isotropicSpan_orthogonal_anisotropicVector F'⟩, ⟨hL.1, isotropicSpan_orthogonal_anisotropicVector F⟩, ?_⟩
-  apply mem_of_forall_prime
-  intro P
-  by_cases hg : (g : 𝓞 E) ∈ P.asIdeal
-  · obtain ⟨s, hs, hw⟩ := hmod (Fin.last r) P hg
-    refine ⟨s, hs, ?_⟩
-    rw [frame_last_sat, frameAct_split, hdiag, show ((1 : 𝓞 E) : E) = 1 from rfl, one_smul] at hw
-    set y := ∑ i : Fin r, ((ξ (Fin.castSucc i) (Fin.last r) : 𝓞 E) : E) • F.fl.e i
-    set w := s • (F'.fl.z - (y + F.fl.z))
-    have hwΛ : w ∈ Λ := gSmul_le g Λ hw
-    have hsy : s • y ∈ XLam Λ F := by
-      refine ⟨?_, ?_⟩
-      · have : s • y = s • F'.fl.z - s • F.fl.z - w := by
-          simp only [w, smul_sub, smul_add]; abel
-        rw [this]
-        exact Λ.sub_mem (Λ.sub_mem (Λ.smul_mem s hL'.1) (Λ.smul_mem s hL.1)) hwΛ
-      · exact (Xsp F).smul_of_tower_mem s (sum_e_mem_X F _)
-    have : s • (F.fl.z - F'.fl.z) = -w - s • y := by
-      simp only [w, smul_sub, smul_add]; abel
-    rw [this, NgX]
-    refine Submodule.sub_mem _ (Submodule.neg_mem _ ?_) ?_
-    · exact Submodule.mem_sup_left (Submodule.mem_sup_left hw)
-    · exact Submodule.mem_sup_left (Submodule.mem_sup_right hsy)
-  · refine ⟨g, hg, ?_⟩
-    rw [NgX]
-    refine Submodule.mem_sup_left (Submodule.mem_sup_left ?_)
-    exact Submodule.smul_mem_smul (Ideal.mem_span_singleton_self _) (Λ.sub_mem hL.1 hL'.1)
 
 end Loc
 
@@ -708,10 +664,6 @@ theorem frameAct_mem {P : Ideal (𝓞 E)} [P.IsPrime] {M : Submodule (𝓞 E) S.
   refine Submodule.sum_mem _ fun a _ => ?_
   rw [← smul_O]
   exact Submodule.smul_mem _ _ (hf a)
-
-theorem mem_localization_gSmul {P : Ideal (𝓞 E)} [P.IsPrime] {g : ℕ} {Λ : Submodule (𝓞 E) S.V} {v : S.V}
-    (h : v ∈ Formalism.HermitianLatticesTheory.localization₂ P (Ideal.span {(g : 𝓞 E)} • Λ)) :
-    ∃ s ∈ P.primeCompl, s • v ∈ Ideal.span {(g : 𝓞 E)} • Λ := h
 
 variable (g : ℕ) (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T) (F' : LFlag S r T')
 
@@ -1054,7 +1006,7 @@ theorem hT_modX {y y' q q' : S.V} (hy : ∀ a, S.hT (e a) y = 0) (hy' : ∀ a, S
   have h1 : S.hT x y' = 0 := hT_X_left y' hy' x hxX
   have h2 : S.hT x x' = 0 := hT_X_left x' (perpX_of_X hee x' hxX') x hxX
   have h4 : S.hT y x' = 0 := hT_X_right y hy x' hxX'
-  simp [map_add, LinearMap.add_apply, h1, h2, h4]
+  simp [map_add (f := _), LinearMap.add_apply, h1, h2, h4]
 
 theorem cross_l (v w : S.V) (hw : ∀ a, S.hT (e a) w = 0 ∧ S.hT (f a) w = 0) :
     S.hT (v - pj e f v) w = 0 := by
@@ -1073,10 +1025,10 @@ theorem bmap_isom (δ : S.V ≃ₗ[E] S.V) (hδ : δ ∈ Formalism.HermitianLatt
     fun w a => ⟨hT_e_pj hee hef w a, hT_f_pj hff hef w a⟩
   have ev : S.hT v v' = S.hT (v - pj e f v) (v' - pj e f v') + S.hT (pj e f v) (pj e f v') := by
     conv_lhs => rw [← sub_add_cancel v (pj e f v), ← sub_add_cancel v' (pj e f v')]
-    simp only [map_add, LinearMap.add_apply, cross_l v _ (hP v'), cross_r v' _ (hP v)]
+    simp only [map_add (f := _), LinearMap.add_apply, cross_l v _ (hP v'), cross_r v' _ (hP v)]
     abel
   rw [ev, bmap_apply, bmap_apply]
-  simp only [map_add, LinearMap.add_apply, cross_l v _ (hP _), cross_r v' _ (hP _)]
+  simp only [map_add (f := _), LinearMap.add_apply, cross_l v _ (hP _), cross_r v' _ (hP _)]
   have hy := fun a => (hP v a).1
   have hy' := fun a => (hP v' a).1
   have hdy := perpX_map δ hδ hX' _ hy
@@ -1090,13 +1042,13 @@ theorem bmap_inv (δ : S.V ≃ₗ[E] S.V) (hδ : δ ∈ Formalism.HermitianLatti
     bmap e f δ.symm (bmap e f δ v) = v := by
   have hpw : pj e f (pj e f v) = pj e f v := pj_pj hee hff hef v
   have hq : pj e f (bmap e f δ v) = pj e f (δ (pj e f v)) := by
-    rw [bmap_apply, map_add, map_sub, hpw, sub_self, zero_add, pj_pj hee hff hef]
+    rw [bmap_apply, map_add (f := _), map_sub, hpw, sub_self, zero_add, pj_pj hee hff hef]
   have hu := perpX_map δ hδ hX' _ (fun a => hT_e_pj hee hef v a)
   have hx₁ := pj_sub_mem (e := e) (f := f) _ hu
   have key : pj e f (δ.symm (pj e f (δ (pj e f v)))) = pj e f v := by
     have : δ.symm (pj e f (δ (pj e f v))) = pj e f v + δ.symm (pj e f (δ (pj e f v)) - δ (pj e f v)) := by
       rw [map_sub, LinearEquiv.symm_apply_apply]; abel
-    rw [this, map_add, hpw, pj_X hee hef _ (hX' _ hx₁), add_zero]
+    rw [this, map_add (f := _), hpw, pj_X hee hef _ (hX' _ hx₁), add_zero]
   rw [bmap_apply, hq, key, bmap_apply]
   abel
 
@@ -1134,12 +1086,6 @@ def bEquiv (hee : ∀ a b, S.hT (e a) (e b) = 0) (hff : ∀ a b, S.hT (f a) (f b
       rw [LinearEquiv.symm_symm] at this
       simpa using this)
     (LinearMap.ext fun v => by simpa using bmap_inv hee hff hef δ hδ hX' v)
-
-theorem bEquiv_apply (hee hff hef) (δ : S.V ≃ₗ[E] S.V) (hδ hX hX') (v : S.V) :
-    bEquiv (e := e) (f := f) hee hff hef δ hδ hX hX' v = bmap e f δ v := rfl
-
-theorem bEquiv_symm_apply (hee hff hef) (δ : S.V ≃ₗ[E] S.V) (hδ hX hX') (v : S.V) :
-    (bEquiv (e := e) (f := f) hee hff hef δ hδ hX hX').symm v = bmap e f δ.symm v := rfl
 
 end SplitEquiv
 
@@ -1263,21 +1209,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
-theorem saturated_term_classes {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
-    {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (hrows : IsRowReps D F0 what₂) (hTF : TermFun D u u')
-    (p : HeightOneSpectrum (𝓞 D.host.F)) :
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | t.G = 0} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | t.G ≠ 0} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | t.generic} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | ¬ t.generic} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | t.relevant} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | ¬ t.relevant} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | t.FeqF} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | ¬ t.FeqF} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | termBBne t p} ∧
-    TSat (what₂ := what₂) {t : Term D u u' F0 what₂ | ¬ termBBne t p} :=
-  saturated_term_classes_of_iso hrows hTF (big_block_function_holds D u u') (generic_isomorphism_holds _) (relative_isomorphism_holds _) flag_equivalence_isomorphism (big_block_isomorphism_holds _) p
-
 end D7
 
 section Int
@@ -1378,24 +1309,6 @@ theorem Mplus_eq_MplusInt (hL : IsLift Λ F) (hF : IsFixedConv Λ g F) (hL' : Is
   exact le_antisymm (localization_mono' Mint_le_MplusInt)
     (locP_le_locP' (MplusInt_le_locP_Mint hL hF hL' hF' P hg ξ hξ))
 
-theorem MplusInt_away (P : HeightOneSpectrum (𝓞 E)) (hg : (g : 𝓞 E) ∉ P.asIdeal) :
-    (haveI := P.isPrime; Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (MplusInt Λ g F F') =
-      Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (UU Λ F F')) := by
-  have := P.isPrime
-  have hgE : (((g : 𝓞 E)) : E) = (g : E) := by simp
-  have hg0 : (g : E) ≠ 0 := by
-    intro h0
-    apply hg
-    have : (g : 𝓞 E) = 0 := by simpa using h0
-    rw [this]
-    exact P.asIdeal.zero_mem
-  refine le_antisymm (locP_le_locP' (sup_le (le_locP' _ _) ?_)) (localization_mono' le_sup_left)
-  rw [Submodule.span_le]
-  rintro v ⟨u', hu', u, hu, -, rfl⟩
-  refine ⟨(g : 𝓞 E), hg, ?_⟩
-  rw [smul_O, hgE, smul_smul, mul_inv_cancel₀ hg0, one_smul, UU_eq]
-  exact Submodule.sub_mem _ (Submodule.mem_sup_right hu') (Submodule.mem_sup_left hu)
-
 theorem eq_of_locP {A B : Submodule (𝓞 E) S.V}
     (h : ∀ P : HeightOneSpectrum (𝓞 E), (haveI := P.isPrime; Formalism.HermitianLatticesTheory.localization₂ P.asIdeal A =
       Formalism.HermitianLatticesTheory.localization₂ P.asIdeal B)) : A = B := by
@@ -1410,22 +1323,6 @@ theorem eq_of_locP {A B : Submodule (𝓞 E) S.V}
     exact ⟨s, hs, hsx⟩
   exact le_antisymm (key A B h) (key B A fun P => (h P).symm)
 
-theorem isGeneric_iff_MplusInt (hL : IsLift Λ F) (hF : IsFixedConv Λ g F) (hL' : IsLift Λ F')
-    (hF' : IsFixedConv Λ g F') (hadm : IsAdmissible Λ g F F') :
-    IsGeneric Λ g F F' ↔ BLat Λ F F' = MplusInt Λ g F F' := by
-  constructor
-  · rintro ⟨ξ, hξ, h⟩
-    apply eq_of_locP
-    intro P
-    by_cases hg : (g : 𝓞 E) ∈ P.asIdeal
-    · rw [(h P).1 hg, Mplus_eq_MplusInt hL hF hL' hF' P hg ξ hξ]
-    · rw [(h P).2 hg, MplusInt_away P hg]
-  · intro h
-    obtain ⟨ξ, hξ⟩ := hadm
-    refine ⟨ξ, hξ, fun P => ⟨fun hg => ?_, fun hg => ?_⟩⟩
-    · rw [h, Mplus_eq_MplusInt hL hF hL' hF' P hg ξ hξ]
-    · rw [h, MplusInt_away P hg]
-
 end Int
 
 section D7
@@ -1433,23 +1330,6 @@ section D7
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7)
-
-theorem m_plus_integral_admissible {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
-    {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hΛ : IsRowLat D F0 Λ)
-    {F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} (hF' : PD D Λ (lf D F0) u' F') :
-    (∀ (P : HeightOneSpectrum (𝓞 D.host.E)) (ξ : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (𝓞 D.host.E)),
-      ((gS D : 𝓞 D.host.E) ∈ P.asIdeal) → AdmWit Λ (gS D) (lf D F0) F' ξ →
-        (haveI := P.isPrime; Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Mplus Λ (gS D) (lf D F0) F' ξ) =
-          Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (MplusInt Λ (gS D) (lf D F0) F'))) ∧
-    (∀ P : HeightOneSpectrum (𝓞 D.host.E), ((gS D : 𝓞 D.host.E) ∉ P.asIdeal) →
-        (haveI := P.isPrime; Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (MplusInt Λ (gS D) (lf D F0) F') =
-          Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (UU Λ (lf D F0) F'))) ∧
-    (IsGeneric Λ (gS D) (lf D F0) F' ↔ BLat Λ (lf D F0) F' = MplusInt Λ (gS D) (lf D F0) F') := by
-  have hL : IsLift Λ (lf D F0) := hΛ.2.1.2.2.1
-  have hC : IsFixedConv Λ (gS D) (lf D F0) := hΛ.2.1.2.2.2
-  obtain ⟨hL', hA', hC', -⟩ := hF'
-  exact ⟨fun P ξ hg hξ => Mplus_eq_MplusInt hL hC hL' hC' P hg ξ hξ, fun P hg => MplusInt_away P hg,
-    isGeneric_iff_MplusInt hL hC hL' hC' hA'⟩
 
 end D7
 

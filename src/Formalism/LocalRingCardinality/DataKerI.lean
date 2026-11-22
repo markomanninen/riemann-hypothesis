@@ -1,6 +1,10 @@
-import Formalism.LocalRingCardinality.DataKerP
-import Formalism.LocalRingCardinality.DataDIVDefs
-import Formalism.LocalRingCardinality.DataForced
+module
+
+public import Formalism.LocalRingCardinality.DataKerP
+public import Formalism.LocalRingCardinality.DataDIVDefs
+public import Formalism.LocalRingCardinality.DataForced
+
+@[expose] public section
 
 open Formalism.MainNotions.G NumberField
 
@@ -30,7 +34,7 @@ def Gxz (nu : Lt → YoungDiagram) (I : ColChoice N1 nu) : MvPolynomial (XZ Lt N
 def applyAt0 (l : ℕ) [Fact l.Prime] (Th : MvPowerSeries (Lt × Fin N0 × Fin N1) ℂ_[l])
     (P : MvPolynomial (XZ Lt N0 N1) ℤ) : MvPolynomial (Lt × ℕ × Fin N0) ℂ_[l] :=
   ∑ μ ∈ P.support, MvPolynomial.monomial (Finsupp.sumFinsuppEquivProdFinsupp μ).1
-    (((MvPolynomial.coeff μ P : ℤ) : ℂ_[l]) *
+    (((AddMonoidAlgebra.coeff P μ : ℤ) : ℂ_[l]) *
       ((Finsupp.sumFinsuppEquivProdFinsupp μ).2.prod fun _ n => (n.factorial : ℂ_[l])) *
       MvPowerSeries.coeff (Finsupp.sumFinsuppEquivProdFinsupp μ).2 Th)
 
@@ -66,8 +70,8 @@ def LevFree {D : D7} (Dx : DivX D) (u : D.what₂.Word) (μ : D.what₂.Tup) (w 
   D.what₂.places.resChar w ≠ (D.mem u).A.T ∧ D.what₂.places.resChar w ∉ ({D.host.g 0, D.host.g 1} : Finset ℕ) ∧
     D.what₂.places.resChar w ∉ Dx.Qp μ
 
-open Classical in
 
+open Classical in
 def lamV {p : ℕ} [Fact p.Prime] (lam : (algebraicClosure ℚ ℂ) →+* ℂ_[p]) (x : ℂ) : ℂ_[p] :=
   if h : x ∈ algebraicClosure ℚ ℂ then lam ⟨x, h⟩ else 0
 
@@ -134,10 +138,6 @@ def valS (u : D.what₂.Word) (μ : D.what₂.Tup) (w : D.what₂.places.Pl) (i 
   E.ev u μ i c '' {v | ∀ J : KM.ColChoice (D.R.N i) (nuD D u i),
     ‖E.prS u μ w i c v (MvPolynomial.map (Int.castRingHom _) (KM.nablaX (D.R.N i) (nuD D u i) J))‖ ≤ 1}
 
-def valT (u : D.what₂.Word) (μ : D.what₂.Tup) (w : D.what₂.places.Pl) (i : ℕ) (c' : (D.chTw u μ).cls (i + 1)) :
-    Set ((D.chTw u μ).Y (i + 1) → ℂ) :=
-  E.ev u μ (i + 1) c' '' {v' | ∀ I, ‖E.prT u μ w i c' v' I‖ ≤ 1}
-
 end KerEnt
 
 def linAt {σ κ : Type*} [Fintype κ] {p : ℕ} [Fact p.Prime] (c : σ → κ → ℂ_[p]) (F : MvPowerSeries σ ℂ_[p]) :
@@ -159,8 +159,8 @@ def rhoMat {D : D7} {Gt : GatTies D} {c : LatCmp D} {Tw : TwForms D} {u : D.what
     Kp.iK ((Fl.Pj j).ι ((posJ Gt u w h Fl j).symm τ).1
       ((((Fl.Pj j).σ ((posJ Gt u w h Fl j).symm τ).1) ^ ((posJ Gt u w h Fl j).symm τ).2.val) y))
 
-open Classical in
 
+open Classical in
 def ThAtServed {D : D7} {Dx : DivX D} {Gt : GatTies D} {c : LatCmp D} {Tw : TwForms D} {u : D.what₂.Word}
     {w : D.what₂.places.Pl} {h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)} {Fl : Fills (D.gat u w h)}
     {Lv : Levels Fl} {Ch : Chain Lv} (Kp : LocalToGlobal₂ D Gt c Tw u w h Ch) (E : KerEnt D Dx Tw) : Prop :=

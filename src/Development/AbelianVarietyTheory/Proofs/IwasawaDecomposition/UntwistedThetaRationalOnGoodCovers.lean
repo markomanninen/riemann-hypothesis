@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SeriesRatSOf
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.TwistSeries
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SerIntAtOfSeriesRat
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExtLinearIndependent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjIdempotentSumOverLevelStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharacterQuotientValuesInEmbeddingFieldStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SeriesRatSOf
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.TwistSeries
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SerIntAtOfSeriesRat
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExtLinearIndependent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjIdempotentSumOverLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharacterQuotientValuesInEmbeddingFieldStatement
+
+@[expose] public section
 
 open NumberField Matrix Complex IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
@@ -27,7 +31,7 @@ theorem exists_of_mem_ratVec {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 :
     (R : RealDat D A Ks) (i : Fin D.R.m) {c0L : VsV D i D.what₂.LL →ₛₗ[D.what₂.embLL] (R.cV i).W}
     {c0 : VsV D i ℂ →ₗ[ℂ] (R.cV i).W} (hc : CoefficientBaseChange R i D.what₂.embLL (RingHom.id ℂ) c0L c0) (k : Subfield ℂ)
     {w : (R.cV i).W} (hw : w ∈ ratVec R i c0L k) :
-    ∃ v : VsV D i ℂ, (∀ m, MvPolynomial.coeff m (v : Formalism.L2.DIV.Pol ℂ D.what₂.Tau (Vc D i).rank) ∈ k) ∧ w = c0 v := by
+    ∃ v : VsV D i ℂ, (∀ m, AddMonoidAlgebra.coeff (v : Formalism.L2.DIV.Pol ℂ D.what₂.Tau (Vc D i).rank) m ∈ k) ∧ w = c0 v := by
   induction hw using Submodule.span_induction with
   | mem x hx =>
     obtain ⟨v, hv, rfl⟩ := hx
@@ -50,14 +54,16 @@ theorem sum_mem_ratForms {D : D7} {T : CoreJ D} {j : ℕ} {σ : T.Q.c.F →+* �
     ∑ k, β k • C.rd a (fs k) ∈ C.ratForms a n := by
   choose b hb using fun k => RingHom.mem_range.1 (hβ k)
   refine ⟨∑ k, b k • fs k, ⟨sum_mem fun k _ => (sec _ _ _ _).smul_mem _ (hf k).1, ?_⟩, ?_⟩
-  · rw [map_sum]
-    exact sum_mem fun k _ => by rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (hf k).2
-  · simp only [Cover.rd, map_sum, map_smulₛₗ, hb, Finset.smul_sum]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [RingHom.id_apply, smul_comm]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
+      exact sum_mem fun k _ => by rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (hf k).2
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Cover.rd, map_sum, map_smulₛₗ, hb, Finset.smul_sum]
+      refine Finset.sum_congr rfl fun k _ => ?_
+      rw [RingHom.id_apply, smul_comm]
+
 
 set_option maxHeartbeats 2000000 in
-
 theorem untwRatS : UntwRatS := by
   intro D G _ _ Pl0 T0 A T _ R F κ v₀ hL hLev hG hFam hMod hTh hTie i hV hFP hstd gramR c0R c0L hFT u hu
   obtain ⟨c0, hc0, -⟩ := GlobalTheory.RationalValuesObj.existsUnique_c0BC R i D.what₂.embLL (RingHom.id ℂ) rfl (c0L i)

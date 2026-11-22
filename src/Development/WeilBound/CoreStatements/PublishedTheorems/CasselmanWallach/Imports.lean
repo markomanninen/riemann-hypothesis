@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
-import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.PCDense
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.HarishChandraModulesIndefiniteUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CasselmanWallachOfHyp
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+public import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.PCDense
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.HarishChandraModulesIndefiniteUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CasselmanWallachOfHyp
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.LowTypeDetermined GlobalTheory.TypeSum
 open scoped ComplexOrder
@@ -42,10 +46,10 @@ theorem c5 : C5 := by
     have hL : (S.length : ℝ) * δ' < δ := by
       rw [hδ', mul_div_assoc', div_lt_iff₀ (by positivity)]
       nlinarith
-    unfold sobNorm
+    delta sobNorm
     calc (S.map fun l => ‖l.foldr (dRep σ) (w - v)‖).sum
         ≤ (S.map fun l => ‖l.foldr (dRep σ) (w - v)‖).length • δ' :=
-          List.sum_le_card_nsmul _ _ (fun x hx => by
+          List.sum_le_length_nsmul _ _ (fun x hx => by
             obtain ⟨l, hl, rfl⟩ := List.mem_map.1 hx
             exact key l hl)
       _ = S.length * δ' := by simp

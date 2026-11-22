@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementQ
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsHarishChandraParamOfTypeOfUnitaryW
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SupExistsOfInterlaced
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementQ
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsHarishChandraParamOfTypeOfUnitaryW
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SupExistsOfInterlaced
+
+@[expose] public section
+
 open Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 
 namespace GlobalTheory

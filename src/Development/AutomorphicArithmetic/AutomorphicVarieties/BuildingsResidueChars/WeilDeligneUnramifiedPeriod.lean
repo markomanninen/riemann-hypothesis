@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GaloisRepresentationIntegralLattice
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CrystallineFrobeniusAlgebraicElements
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIsCrysAndJumpEqZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GaloisRepresentationIntegralLattice
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CrystallineFrobeniusAlgebraicElements
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIsCrysAndJumpEqZero
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Module TensorProduct GlobalTheory.Pst Polynomial
 
@@ -18,13 +22,15 @@ private theorem key {Q V B B' : Type} [Field Q] [AddCommGroup V] [Module Q V] [C
   simp only [h1]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [← tmul_sum, ← map_sum, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← tmul_sum, ← map_sum, h]
 
 private theorem eq_zero {Q V B' : Type} [Field Q] [AddCommGroup V] [Module Q V]
     [AddCommGroup B'] [Module Q B'] {n : ℕ} (e : Basis (Fin n) Q V) (w : Fin n → B')
     (h : ∑ i, e i ⊗ₜ[Q] w i = 0) (k : Fin n) : w k = 0 := by
   have := congrArg (fun x => TensorProduct.lid Q B' (LinearMap.rTensor B' (e.coord k) x)) h
-  simpa [map_sum, Finsupp.single_apply, ite_smul] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, Finsupp.single_apply, ite_smul] using this
 
 private theorem phiV_pow {l : ℕ} [Fact l.Prime] (P : LocPrime l)
     (LL : Type) [Field LL] [Algebra ℚ_[l] LL] (k : ℕ) (v : LL) (b : P.R.B) :
@@ -45,7 +51,6 @@ theorem UpperTheory.weilDeligne_unramified_period :
   obtain ⟨W, hW, hWg, hWφ⟩ := UpperTheory.crystalline_frobenius_algebraic_elements l K n M hMc (fun g hg => by
     rw [← map_one M]
     ext i j
-    apply PadicInt.ext
     rw [hM, hM, map_one]
     congr 2
     change (η g : ↥L.1) * e j = e j
@@ -64,9 +69,11 @@ theorem UpperTheory.weilDeligne_unramified_period :
   refine ⟨∑ i, e i ⊗ₜ[ℚ_[l]] C (W i j₀), fun h0 => ?_, fun g => ?_, fun g k hg => ?_⟩
   · refine hW.ne_zero (Matrix.det_eq_zero_of_column_eq_zero j₀ fun i => ?_)
     exact C_eq_zero.1 (eq_zero e (fun i => (C (W i j₀) : Bst (V.Loc.PP l))) h0 i)
-  · rw [map_sum]
-    simp only [stRep_tmul, actSt_C]
-    exact hk g _ (hWg g)
-  · rw [map_sum, Finset.smul_sum]
-    simp only [phiV_pow, smul_tmul']
-    exact hk g _ (hWφ g k hg)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      simp only [stRep_tmul, actSt_C]
+      exact hk g _ (hWg g)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, Finset.smul_sum]
+      simp only [phiV_pow, smul_tmul']
+      exact hk g _ (hWφ g k hg)

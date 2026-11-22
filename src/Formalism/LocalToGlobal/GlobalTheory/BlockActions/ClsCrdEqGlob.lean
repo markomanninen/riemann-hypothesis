@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.SelfDualPHolds
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassMapPropertiesOfSymmetricForms
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ColSpanMap
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.SelfDualPHolds
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassMapPropertiesOfSymmetricForms
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ColSpanMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,9 +16,10 @@ open IsDedekindDomain
 
 theorem isLat_dlN (D : D7) (i : ℕ) (hi : i ≤ D.R.m) (M : Submodule (𝓞 D.host.E) (Fin (D.R.N i) → D.host.E)) (hM : Comp.IsLat M) :
     Comp.IsLat (Comp.dl (sigD D) (gramN D i hi) M) := by
-  have hL : Submodule.IsLattice D.host.E M := ⟨Module.Finite.iff_fg.1 hM.1, hM.2⟩
+  have hL : Submodule.IsLattice D.host.E M := Submodule.IsLattice.of_fg _ (Module.Finite.iff_fg.1 hM.1)
+  have hFull : Submodule.IsFullLattice D.host.E M := { hL with span_eq_top := hM.2 }
   obtain ⟨d, hd, hle⟩ := Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.dual_le_bnd (sigD D : D.host.E →+* D.host.E) (gramN D i hi)
-    (Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.bwB_gramN_det D i hi) M hL
+    (Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.bwB_gramN_det D i hi) M hFull
   exact ⟨Module.Finite.iff_fg.2 (Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.fg_of_le_bnd hd hle),
     Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.dual_span (sigD D : D.host.E →+* D.host.E) (gramN D i hi) M hL⟩
 

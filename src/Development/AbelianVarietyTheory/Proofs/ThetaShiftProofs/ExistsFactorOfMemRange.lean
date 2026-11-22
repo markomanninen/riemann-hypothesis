@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames
 
@@ -68,7 +73,8 @@ theorem tsum_mem_range_of_norm_cut (T : CDVR) {K : Type} [NormedField K] [Comple
     have h3 := hL n
     rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top] at h3
     have h4 := hpow n _ h3
-    simpa [S, map_sub, map_sum] using h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [S, map_sub, map_sum] using h4
   exact tendsto_nhds_unique h2 h1
 
 theorem exists_factor_of_mem_range {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* C) (g : B →+* C)
@@ -97,7 +103,7 @@ theorem eval_factors_through_cdvr : ∀ (E : Type) [Field E] [NumberField E] [Is
     | C p =>
       obtain ⟨b, hb⟩ := h0 p
       exact ⟨_, hb⟩
-    | add p q hp' hq' => rw [map_add, map_add]; exact add_mem hp' hq'
+    | add p q hp' hq' => rw [map_add (f := _), map_add (f := _)]; exact add_mem hp' hq'
     | mul_X p x hp' =>
       rw [map_mul (algebraMap _ (ArcSR Dw Tv.V ϖ)) p, map_mul ev]
       exact mul_mem hp' ⟨_, (hX x).symm⟩

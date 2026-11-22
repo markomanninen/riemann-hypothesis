@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
-import Lemmata.MiscLemmasP.Imports
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
+public import Lemmata.MiscLemmasP.Imports
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulOfMemSmulLocF
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulOfMemSmulLocF
+
+@[expose] public section
 
 open NumberField Module IsDedekindDomain Function
 
@@ -137,8 +141,15 @@ theorem form_mem_locF (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} {L : 
   obtain ⟨t, ht, hty⟩ := (LocF.mem_locF_iff hp L y').mp hy'
   rw [← ex', ← ey', hg x' y', LocF.mem_locF_iff hp]
   refine ⟨s * t, fun hm => (hp.mem_or_mem hm).elim hs ht, ?_⟩
-  have := hLi _ hsx _ hty
-  rw [localizedQuotients.form_smul hF] at this
-  rwa [Algebra.smul_def]
+  have hsmul :
+      h (algebraMap (𝓞 F) (𝓞 K) s • x') (algebraMap (𝓞 F) (𝓞 K) t • y') =
+        algebraMap (𝓞 F) (𝓞 K) (s * t) • h x' y' := by
+    rw [← algebraMap_smul K (algebraMap (𝓞 F) (𝓞 K) s),
+      ← algebraMap_smul K (algebraMap (𝓞 F) (𝓞 K) t),
+      Algebra.smul_def (algebraMap (𝓞 F) (𝓞 K) (s * t))]
+    simp only [LinearMap.map_smulₛₗ₂, map_smul, smul_eq_mul, starRingEnd_apply,
+      MeanB.algebraMap_comp, MeanB.star_algebraMap hF, map_mul, mul_assoc]
+    exact mul_left_comm _ _ _
+  exact hsmul ▸ hLi _ hsx _ hty
 
 end Formalism.HermitianLattices.Ext.L3.BrA

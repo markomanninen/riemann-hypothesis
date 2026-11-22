@@ -1,12 +1,17 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ArakelovCycleHeights.QpSndStr
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ArFormExists
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapPrBPtMP
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiprojectivePointOfNonvanishingCoordsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiprojectiveChartHolomorphicCoordinatesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HolomorphicSectionSmoothCompositionStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ArakelovCycleHeights.QpSndStr
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ArFormExists
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapPrBPtMP
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiprojectivePointOfNonvanishingCoordsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiprojectiveChartHolomorphicCoordinatesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HolomorphicSectionSmoothCompositionStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry Limits TopologicalSpace MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.ProjSpace GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.ArInt
@@ -47,7 +52,7 @@ theorem smooth_of_isHermRep : ∀ (m : ℕ) (n : Fin (m + 1) → ℕ) (M : HermL
         fun v => ‖v ()‖, {v | v () ≠ 0}, hV, isOpen_ne_fun (continuous_apply _) continuous_const,
         ev_ne_zero hV (u i c).isUnit, ?_, Filter.EventuallyEq.rfl⟩
       intro v hv
-      exact ((contDiffAt_norm ℝ hv).comp v ((contDiff_apply ℝ ℂ ()).contDiffAt)).contDiffWithinAt
+      exact ((contDiffAt_norm ℝ hv).comp v ((contDiff_apply ℝ (fun _ => ℂ) ()).contDiffAt)).contDiffWithinAt
     have h2 := (M.cInf σ₀) i (s z₀) hi
     exact h1.comp₂ h2 (G := fun x => x.1 * Real.exp (x.2 / 2))
       (contDiff_fst.mul (Real.contDiff_exp.comp (contDiff_snd.div_const 2)))
@@ -55,7 +60,7 @@ theorem smooth_of_isHermRep : ∀ (m : ℕ) (n : Fin (m + 1) → ℕ) (M : HermL
   have hP : ContDiffAt ℝ ∞ (fun z : (Σ k, Bk n k) → ℂ => ∏ k, ‖z ⟨k, c k⟩‖ ^ A.a k) z₀ := by
     refine contDiffAt_prod fun k _ => ?_
     have hn : ContDiffAt ℝ ∞ (fun z : (Σ k, Bk n k) → ℂ => ‖z ⟨k, c k⟩‖) z₀ :=
-      (contDiffAt_norm ℝ (hc k)).comp z₀ ((contDiff_apply ℝ ℂ (⟨k, c k⟩ : Σ k, Bk n k)).contDiffAt)
+      (contDiffAt_norm ℝ (hc k)).comp z₀ ((contDiff_apply ℝ (fun _ => ℂ) (⟨k, c k⟩ : Σ k, Bk n k)).contDiffAt)
     have hx : ‖z₀ ⟨k, c k⟩‖ ≠ 0 := norm_ne_zero_iff.2 (hc k)
     cases h : A.a k with
     | ofNat j =>

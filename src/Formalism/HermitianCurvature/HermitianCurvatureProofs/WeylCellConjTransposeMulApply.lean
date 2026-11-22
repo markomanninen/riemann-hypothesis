@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 open scoped ContDiff
@@ -425,7 +429,7 @@ theorem fam_differentiableAt {Φ : Fn k r E} (h : SmoothFam k r i U₀ Φ) {x : 
   obtain ⟨U, F, hU, hxU, hF, hΦ⟩ := h x hx hxG
   exact (fam_hasFDerivAt hU hF hΦ hxU hxG).differentiableAt
 
-theorem cd_coord (a : Fin r) : ContDiff ℝ ∞ (fun c : Fin r → ℂ => c a) := contDiff_apply ℝ ℂ a
+theorem cd_coord (a : Fin r) : ContDiff ℝ ∞ (fun c : Fin r → ℂ => c a) := contDiff_apply ℝ (fun _ => ℂ) a
 
 theorem cd_coordBar (a : Fin r) : ContDiff ℝ ∞ (fun c : Fin r → ℂ => star (c a)) :=
   Complex.conjCLE.contDiff.comp (cd_coord a)
@@ -480,7 +484,7 @@ theorem opL_equiv (a : Fin r) (j : Fin 6) {f f' : (Fin r → ℂ) → E} (L : E 
   · show pbOp a f' c = L (pbOp a f c)
     unfold pbOp wirtBar
     split_ifs
-    · simp only [hfd, map_smul, map_add]
+    · simp only [hfd, map_smul, map_add (f := _)]
     · simp
   · show star (c a) • f' c = L (star (c a) • f c)
     rw [h0, map_smul]
@@ -863,7 +867,7 @@ theorem transfer_joint_smooth : Formalism.FourierDecayAlt.Q.TJointSmooth := by
 theorem family_operators : Formalism.FourierDecayAlt.Q.FamOps := by
   intro Wp Wq _ _ _ _ k r z z' π π' i Dc Φ _ _ hopen hΦ a j
   obtain ⟨hS, hFF⟩ := hΦ
-  have hS' := Qx3.sf_opL (fun x hx => hx.1) a j hS
+  have hS' := Qx3.sf_opL (by exact fun x hx => hx.1) a j hS
   refine ⟨hS', fun c hc => ?_⟩
   have hnear : ∀ g ∈ Dc c, ∀ᶠ c' in nhds c, c' ∈ OmX r ∧ g ∈ Dc c' := by
     intro g hg

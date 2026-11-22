@@ -1,16 +1,21 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionMetricPair
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergmanDensChartSum
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResolutionPotentials
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
-import ReciprocityTheory.AnalyticForms.PotentialTheory.AtlasIndep
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
-import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ADensStC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeStA
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionMetricPair
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergmanDensChartSum
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResolutionPotentials
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AtlasIndep
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ADensStC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeStA
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -94,7 +99,7 @@ def blockRatio (k₀ : K) (z z' : (Σ k, ι k) → ℂ) : ℂ :=
 
 theorem blockRatio_eq {k₀ : K} {z' : (Σ k, ι k) → ℂ} (c : K → ℂ) (h : ∃ i : ι k₀, z' ⟨k₀, i⟩ ≠ 0) :
     blockRatio k₀ (fun p => c p.1 * z' p) z' = c k₀ := by
-  rw [blockRatio, dif_pos h]
+  rw [blockRatio, dite_eq_left h]
   exact mul_div_cancel_right₀ _ h.choose_spec
 
 theorem blockRatio_eq_div {k₀ : K} {z z' : (Σ k, ι k) → ℂ} (hzz : SameOrbit z z') {i : ι k₀}
@@ -329,8 +334,8 @@ theorem locDens_eq_chernTopDens (m₁ : ConeMetric ℂ (Ix κ)) (hm₁ : IsSmoot
     have hne := gaamix_ne_zero_of_mcPts (d.R.mem (pt j) _ (mem_atlas_target d pt hcov hy').2)
     have h0 := d.m.pos _ hne
     have h1 := m₁.pos _ hne
-    simp only [Function.comp_apply, Weight.lerp, weight, hψ, interp_rho]
-    rw [Real.log_mul (Real.rpow_pos_of_pos h0 _).ne' (Real.rpow_pos_of_pos h1 _).ne', Real.log_rpow h0,
+    simp only [Function.comp_apply, Weight.lerp, weight, hψ]
+    rw [interp_rho, Real.log_mul (Real.rpow_pos_of_pos h0 _).ne' (Real.rpow_pos_of_pos h1 _).ne', Real.log_rpow h0,
       Real.log_rpow h1]
     ring
   rw [hL]
@@ -347,8 +352,8 @@ end Datum
 
 end ResolutionMetricPair
 
-open ResolutionMetricPair in
 
+open ResolutionMetricPair in
 theorem ResolutionMetricPair.proof (h : BergmanDensChartSum.Statement) : ResolutionMetricPair.Statement := by
   intro D Ω _ _ κ _ d m₁ P0₁ hm₁ hP0₁ hsp₁
   obtain ⟨t, ht⟩ := isCompact_univ.elim_finite_subcover (nbhd d) (isOpen_nbhd d)
@@ -378,11 +383,25 @@ theorem ResolutionMetricPair.proof (h : BergmanDensChartSum.Statement) : Resolut
     have hMI := mIntegrableCont d.R.A _ hΦ g hg
     have hcomp := refine_compatible d.R.A (fun i => chartIdx d.R.A (pt i)) (fun i => d.R.U (pt i))
       (fun i => d.R.isOpen_U (pt i)) fun x => (hcov x).imp fun _ hx => ⟨hx.2, hx.1⟩
-    rw [(mIntAtlasIndep d.R.A (atlas d pt hcov) ⟨hcomp.2, hcomp.1⟩ _ hΦ g hMI).2]
+    have hIndep : MIntAtlasIndepStatement := by
+      intro e X _ _ _ A B hab Φ hΦ' f hf
+      have hfB : MIntegrable B Φ f := mIntegrable_of_compatible hab Φ hΦ' hf
+      refine ⟨hfB, ?_⟩
+      have hU : ∀ i, IsPotential (unionAtlas A B hab) (Φ i) := fun i =>
+        isPotential_of_compatible (compatible_unionAtlas_left A B hab) (hΦ' i)
+      have hfU : MIntegrable (unionAtlas A B hab) Φ f :=
+        mIntegrable_of_compatible (compatible_unionAtlas_left A B hab) Φ hΦ' hf
+      have hΦB : ∀ i, IsPotential B (Φ i) := fun i => isPotential_of_compatible hab (hΦ' i)
+      obtain ⟨P⟩ := existsPartition A
+      obtain ⟨Q⟩ := existsPartition B
+      rw [mIntEq A P Φ hΦ' f hf, mIntEq B Q Φ hΦB f hfB, ← integralWith_extendLeft hab P Φ f,
+        ← integralWith_extendRight hab Q Φ f]
+      exact integralWithIndep _ _ _ Φ hU f hfU
+    rw [(hIndep d.R.A (atlas d pt hcov) ⟨hcomp.2, hcomp.1⟩ _ hΦ g hMI).2]
     have hP : Nonempty (ChartPartition (atlas d pt hcov)) := existsPartition _
     rw [h (atlas d pt hcov) (bundle d pt hcov) _ (smoothVol d pt hcov) hP.some g hg]
     unfold mInt
-    rw [dif_pos hP]
+    rw [dite_eq_left hP]
     unfold integralWith
     congr 1
     refine Finset.sum_congr rfl fun j _ => setIntegral_congr_fun (((atlas d pt hcov).chart j).open_target.measurableSet)

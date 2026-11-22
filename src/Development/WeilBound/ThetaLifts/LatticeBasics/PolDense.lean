@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsGauss
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsGauss
+
+@[expose] public section
 
 noncomputable section
 

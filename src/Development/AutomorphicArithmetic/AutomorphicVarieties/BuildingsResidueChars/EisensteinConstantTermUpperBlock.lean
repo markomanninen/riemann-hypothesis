@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import GroundTheory.GlobalFields.Adele.Compact
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import GroundTheory.GlobalFields.Adele.Compact
+
+@[expose] public section
+
 open UpperTheory.V.Sd.Eis
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep in

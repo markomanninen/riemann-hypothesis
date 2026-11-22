@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.AEConst
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.AEConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,8 @@ theorem memLp_lift {u : S → ℝ} (h : Good j B μ DB u) : MemLp (lift j B u) 2
   have : (lift j B u ∘ pr j B) = u := funext fun x => lift_pr hi x
   rw [this]; exact hmem
 
-variable (j B μ DB) in
 
+variable (j B μ DB) in
 def cls (u : S → ℝ) : HL j B μ DB := by
   classical exact if h : Good j B μ DB u then (memLp_lift h).toLp (lift j B u) else 0
 
@@ -74,13 +78,13 @@ theorem good_sub {u v : S → ℝ} (hu : Good j B μ DB u) (hv : Good j B μ DB 
 theorem cls_sub {u v : S → ℝ} (hu : Good j B μ DB u) (hv : Good j B μ DB v) :
     cls j B μ DB (fun x => u x - v x) = cls j B μ DB u - cls j B μ DB v := by
   unfold cls
-  rw [dif_pos (good_sub hu hv), dif_pos hu, dif_pos hv]
+  rw [dite_eq_left (good_sub hu hv), dite_eq_left hu, dite_eq_left hv]
   exact MemLp.toLp_sub (memLp_lift hu) (memLp_lift hv)
 
 theorem cls_inner {u v : S → ℝ} (hu : Good j B μ DB u) (hv : Good j B μ DB v) :
     ⟪cls j B μ DB u, cls j B μ DB v⟫_ℝ = ∫ x in DB, u x * v x ∂μ := by
   unfold cls
-  rw [dif_pos hu, dif_pos hv, L2.inner_def]
+  rw [dite_eq_left hu, dite_eq_left hv, L2.inner_def]
   have h1 := (memLp_lift hu).coeFn_toLp
   have h2 := (memLp_lift hv).coeFn_toLp
   have hcongr : (fun q => ⟪((memLp_lift hu).toLp (lift j B u) : Qt j B → ℝ) q,
@@ -121,14 +125,14 @@ theorem cls_surj (f : HL j B μ DB) : ∃ u, Good j B μ DB u ∧ cls j B μ DB 
     show g (Quotient.mk _ q.out) = g q
     rw [Quotient.out_eq]
   unfold cls
-  rw [dif_pos hgood]
+  rw [dite_eq_left hgood]
   apply Lp.ext
   filter_upwards [(memLp_lift hgood).coeFn_toLp, hfg] with q h1 h2
   rw [h1, hl, h2]
 
 theorem cls_eq_iff {u v : S → ℝ} (hu : Good j B μ DB u) (hv : Good j B μ DB v) :
     cls j B μ DB u = cls j B μ DB v ↔ u =ᵐ[μ.restrict DB] v := by
-  unfold cls; rw [dif_pos hu, dif_pos hv, MemLp.toLp_eq_toLp_iff]
+  unfold cls; rw [dite_eq_left hu, dite_eq_left hv, MemLp.toLp_eq_toLp_iff]
   unfold nu Filter.EventuallyEq
   rw [ae_map_iff measurable_pr.aemeasurable
     (measurableSet_eq_fun (measurable_lift hu.1 hu.2.1) (measurable_lift hv.1 hv.2.1))]

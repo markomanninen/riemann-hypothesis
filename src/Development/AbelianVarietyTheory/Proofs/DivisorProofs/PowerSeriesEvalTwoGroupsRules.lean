@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,7 @@ theorem constantCoeff_subst_of_zero {σ τ : Type} [Finite σ] {a : σ → MvPow
   have hs : HasSubst a := hasSubst_of_constantCoeff_zero ha
   have h1 : f = (f - C (constantCoeff f)) + C (constantCoeff f) := by ring
   conv_lhs => rw [h1]
-  rw [subst_add hs, map_add, constantCoeff_subst_eq_zero hs ha (by simp), subst_C, zero_add]
+  rw [subst_add hs, map_add (f := _), constantCoeff_subst_eq_zero hs ha (by simp), subst_C, zero_add]
   simp
 
 theorem hasSubst_elim {d : ℕ} {τ : Type} {u v : Fin d → MvPowerSeries τ R}

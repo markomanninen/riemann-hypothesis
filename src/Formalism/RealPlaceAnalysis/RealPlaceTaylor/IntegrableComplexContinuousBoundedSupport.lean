@@ -1,12 +1,16 @@
-import Formalism.RealPlaceAnalysis.SmoothVectorGrowthBound
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CasComm
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmoothOnGroupSum
+module
+
+public import Formalism.RealPlaceAnalysis.SmoothVectorGrowthBound
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CasComm
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmoothOnGroupSum
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology
 open scoped ContDiff ENNReal
@@ -256,7 +260,7 @@ lemma lie_derivative_conj {f : Matrix (Fin n) (Fin n) ℂ → ℂ} (a b : Fin n)
   rw [lie_derivative_swap a b hf hg, lie_derivative_def, right_derivative_conj hf (real_part_single_mem ε a b) hg,
     right_derivative_conj hf (imaginary_part_single_mem ε a b) hg]
   have hs := signature_sign_mul_self ε a b
-  simp only [map_add, map_mul, map_neg, Complex.conj_ofReal, Complex.conj_I]
+  simp only [map_add (f := _), map_mul, map_neg, Complex.conj_ofReal, Complex.conj_I]
   linear_combination (starRingEnd ℂ (Rd (cpart1 ε (Matrix.single a b 1)) f g) +
     Complex.I * starRingEnd ℂ (Rd (cpart2 ε (Matrix.single a b 1)) f g)) * (-hs)
 
@@ -696,7 +700,8 @@ lemma sum_weighted_lie_derivative_bound (hl : HhLip) (hz : IntRdZero) {a : ℝ} 
         ∑ i, ∑ j, ((sgn ε i j : ℝ) : ℂ) * (radialWeight a R (toM g) * u (toM g) *
           starRingEnd ℂ (Eab ε j i (Eab ε i j u) (toM g))) := by
       intro g
-      simp only [signedCasimirDifference, map_sum, map_mul, Complex.conj_ofReal]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [signedCasimirDifference, map_sum, map_mul, Complex.conj_ofReal]
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Finset.mul_sum]
@@ -1303,10 +1308,11 @@ lemma weight_vectors_stable (hsm : ∀ w ∈ W, SmoothOnG ε w)
 lemma lie_operator_word_mem_filtration (hsm : ∀ w ∈ W, SmoothOnG ε w)
     (hstab : ∀ w ∈ W, ∀ i j : Fin n, ε i = ε j → ∃ w' ∈ W, ∀ g, inUJ ε g → Eab ε i j w g = w' g)
     {c d : Fin n} (hcd : ε c = ε d) {m : SmoothFunctionsModGroup ε} (hm : m ∈ weightVectorsQuotient ε W) :
-    ∀ w : List (Fin n × Fin n), lieOperatorQuotient ε c d (wordActionQuotient ε w m) ∈ wordFiltration ε W w.length
-  | [] => word_mem_filtration (w := []) (weight_vectors_stable hsm hstab hm hcd) le_rfl
-  | p :: w => by
-    have ih := lie_operator_word_mem_filtration hsm hstab hcd hm w
+    ∀ w : List (Fin n × Fin n), lieOperatorQuotient ε c d (wordActionQuotient ε w m) ∈ wordFiltration ε W w.length := by
+  intro w
+  induction w with
+  | nil => exact word_mem_filtration (w := []) (weight_vectors_stable hsm hstab hm hcd) le_rfl
+  | cons p w ih =>
     have hgl := lie_operators_gl_relations (ε := ε) c d p.1 p.2
     have key : lieOperatorQuotient ε c d (lieOperatorQuotient ε p.1 p.2 (wordActionQuotient ε w m)) =
         lieOperatorQuotient ε p.1 p.2 (lieOperatorQuotient ε c d (wordActionQuotient ε w m)) +

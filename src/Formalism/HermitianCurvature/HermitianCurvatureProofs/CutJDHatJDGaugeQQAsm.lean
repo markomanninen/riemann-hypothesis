@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDGaugeQQCore
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLam
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutAdm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBesselEigen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCutTr
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDGaugeQQCore
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLam
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutAdm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBesselEigen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCutTr
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

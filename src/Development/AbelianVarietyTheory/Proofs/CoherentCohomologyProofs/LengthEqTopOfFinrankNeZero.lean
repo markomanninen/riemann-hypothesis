@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1 u_2
 
@@ -39,7 +43,7 @@ theorem length_eq_top_of_finrank_ne_zero [Module.Finite R M] (h : finrank R M �
     exact ⟨⟨a, mem_nonZeroDivisors_of_ne_zero ha0⟩, ha⟩
   obtain ⟨x, hx⟩ := hx
   have hinj : Function.Injective (LinearMap.toSpanSingleton R M x) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     exact hx a (by simpa using ha)
   have hle := Module.length_le_of_injective _ hinj

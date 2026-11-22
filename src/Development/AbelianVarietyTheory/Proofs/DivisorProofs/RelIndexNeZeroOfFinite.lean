@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActOMemFinSub
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWeilRepresentationHeisenberg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActOMemFinSub
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWeilRepresentationHeisenberg
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem normOp_comm (h : IsHeis σ w γ W) (lam : ℕ →* ℂ) {A B : Submodule
     normOp lam W A B (L e) = L (normOp lam W A B e) := by
   obtain ⟨n, f, hf, hu⟩ := ((sumOp_transversal h A B hB).2.1 hi).1
   have he' : Fixes W A (L e) := fun a ha => by rw [← hL, he a ha]
-  rw [normOp, normOp, ((sumOp_transversal h A B hB).1 _ he' _ f hf hu).1,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [normOp, normOp, ((sumOp_transversal h A B hB).1 _ he' _ f hf hu).1,
     ((sumOp_transversal h A B hB).1 _ he _ f hf hu).1, map_smul, map_sum]
   simp only [hL]
 
@@ -166,7 +171,7 @@ theorem exists_half_of_nonSplit {v : HeightOneSpectrum (𝓞 D.host.F)} {η : AF
   have hy' : (2 : Fv D.host.F v) * y = 1 := congrArg Subtype.val hy
   refine ⟨algebraMap (AF D.host.F) (AE D) (GlobalTheory.SplitIdem.placeHom D.host.F v y), ?_, ?_⟩
   · exact AddSubgroup.subset_closure ⟨_, GlobalTheory.SplitIdem.singleV_mem_intAf D.host.F v y, 1, rfl⟩
-  · rw [two_mul, ← map_add, ← map_add, ← two_mul, hy', hα]
+  · rw [two_mul, ← map_add (f := _), ← map_add (f := _), ← two_mul, hy', hα]
     rfl
 
 theorem finPart_placeIdem {v : HeightOneSpectrum (𝓞 D.host.F)} {η : AF D.host.F} (h : IsPlaceIdem D v η) :

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsJoinIntNum
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PEventualValueFacts
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsJoinIntNum
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PEventualValueFacts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -18,12 +23,14 @@ theorem isWeightedHomogeneous_algHom {R : Type*} [CommRing R] {σ τ M N : Type*
     (hφ : ∀ s, IsWeightedHomogeneous w' (φ (X s)) (L (w s)))
     {f : MvPolynomial σ R} {m : M} (hf : IsWeightedHomogeneous w f m) :
     IsWeightedHomogeneous w' (φ f) (L m) := by
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
   have hw : Finsupp.weight w d = m := hf (mem_support_iff.mp hd)
   rw [monomial_eq, map_mul, algHom_C, algebraMap_eq, map_finsuppProd]
   have h1 : IsWeightedHomogeneous w' (d.prod fun s e => φ (X s ^ e)) (L m) := by
-    rw [← hw, Finsupp.weight_apply, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hw, Finsupp.weight_apply, Finsupp.sum, map_sum]
     unfold Finsupp.prod
     refine IsWeightedHomogeneous.prod _ _ _ fun s _ => ?_
     show IsWeightedHomogeneous w' (φ (X s ^ d s)) (L (d s • w s))
@@ -38,8 +45,8 @@ variable {F : Type} [Field F] {K : Type} [Fintype K] [DecidableEq K] {ι : K →
 
 def newVar : (Σ k : K ⊕ Unit, Sum.elim ι ptIdx k) := ⟨.inr (), (0 : Fin 1)⟩
 
-variable (F) in
 
+variable (F) in
 def dropPt : (Σ k : K ⊕ Unit, Sum.elim ι ptIdx k) → MRing ι F
   | ⟨.inl k, i⟩ => X ⟨k, i⟩
   | ⟨.inr _, _⟩ => 1
@@ -119,7 +126,8 @@ theorem rename_dropPt_of_homog {g : MRing (Sum.elim ι ptIdx) F} {M : K ⊕ Unit
     rename (liftVar (ι := ι) ptIdx) (aeval (dropPt F) g) * X newVar ^ (M (.inr ())) = g := by
   conv_rhs => rw [g.as_sum]
   conv_lhs => rw [g.as_sum]
-  rw [map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hw : Finsupp.weight (blockWeight (Sum.elim ι ptIdx)) d = M := hg (mem_support_iff.mp hd)
   have ht : M (.inr ()) = d newVar := by rw [← hw, weight_newBlock]
@@ -302,7 +310,7 @@ theorem proof : JoinIntNum.Statement := by
       · rintro (k | u)
         · exact hm k
         · exact le_abs_self _
-    rw [eventualValue, eventualValue, dif_neg hc, dif_neg hc']
+    rw [eventualValue, eventualValue, dite_eq_right hc, dite_eq_right hc']
 
 end JoinIntNum
 

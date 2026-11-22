@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubMemOfMkEq
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneEqSumPlaceIdempotentsOverTwoAddTwoMul
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubMemOfMkEq
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneEqSumPlaceIdempotentsOverTwoAddTwoMul
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSum
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum NumberField GlobalTheory.FinDecomp IsDedekindDomain
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -86,7 +91,8 @@ theorem exists_idem_half : ∀ (D : D7), ∃ e : AE D, e * e = e ∧ e * cA D e 
     rw [Finset.sum_eq_single v (fun w hw hwv => cross _ _ v w (Ne.symm hwv) (absE v hv) (absE w hw))
       (fun h => absurd hv h), hEE v hv]
   have hec : (∑ v ∈ P, E v) * cA D (∑ v ∈ P, E v) = 0 := by
-    rw [map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul_sum]
     refine Finset.sum_eq_zero fun v hv => ?_
     rw [Finset.sum_eq_single v (fun w hw hwv => cross _ _ v w (Ne.symm hwv) (absE v hv) (absC w hw))
       (fun h => absurd hv h), hEc v hv]
@@ -110,11 +116,13 @@ theorem exists_idem_half : ∀ (D : D7), ∃ e : AE D, e * e = e ∧ e * cA D e 
   · have key : 2 * pairA D.host.F (algebraMap D.host.F _ (1 / 2)) β =
         1 - ∑ v ∈ P, pairA D.host.F 0 (singleV D.host.F v 1) := by
       refine AF_ext ?_ ?_
-      · rw [map_mul, map_sub, map_sum, map_one, map_ofNat, fstA_pairA]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_mul, map_sub, map_sum, map_one, map_ofNat, fstA_pairA]
         simp only [fstA_pairA, Finset.sum_const_zero, sub_zero]
         rw [← map_ofNat (algebraMap D.host.F (Ainf D.host.F)) 2, ← map_mul]
         norm_num
-      · rw [map_mul, map_sub, map_sum, map_one, map_ofNat, sndA_pairA]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_mul, map_sub, map_sum, map_one, map_ofNat, sndA_pairA]
         simp only [sndA_pairA]
         linear_combination -h1
     calc (2 : AE D) * algebraMap (AF D.host.F) (AE D) (pairA D.host.F (algebraMap D.host.F _ (1 / 2)) β)

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTwPairUniquePf
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwPairUniquePf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

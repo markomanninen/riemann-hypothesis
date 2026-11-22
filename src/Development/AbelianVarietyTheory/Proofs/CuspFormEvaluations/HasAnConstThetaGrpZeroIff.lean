@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsUniqueSecIsFnAt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsUniqueSecIsFnAt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -52,24 +56,16 @@ private theorem exists_algChart_mem_source (hL : L.IsLB) (f : Sp ℂ ⟶ A.left)
 private theorem valAt'_unit_ne_zero_cusp_form_evaluations {X : Scheme.{0}} (y : Sp ℂ ⟶ X) (U : X.Opens)
     (h : ⊤ ≤ y ⁻¹ᵁ U) (f : Γ(X, U)ˣ) : valAt' y U f.val ≠ 0 := by
   unfold valAt'
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   unfold valAt
   exact (Units.map ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom.comp (y.appLE U ⊤ h).hom).toMonoidHom f).ne_zero
-
-private theorem valAt'_mul_of_top_le_preimage_open {X : Scheme.{0}} (y : Sp ℂ ⟶ X) (U : X.Opens) (a b : Γ(X, U)) :
-    valAt' y U (a * b) = valAt' y U a * valAt' y U b := by
-  unfold valAt'
-  split_ifs with h
-  · unfold valAt
-    simp only [map_mul]
-  · simp
 
 private theorem valAt'_resG {X : Scheme.{0}} (y : Sp ℂ ⟶ X) {U V : X.Opens} (hVU : V ≤ U)
     (h : ⊤ ≤ y ⁻¹ᵁ V) (f : Γ(X, U)) :
     valAt' y V (X.presheaf.map (homOfLE hVU).op f) = valAt' y U f := by
   have h' : ⊤ ≤ y ⁻¹ᵁ U := fun a ha => hVU (h ha)
   unfold valAt'
-  rw [dif_pos h, dif_pos h']
+  rw [dite_eq_left h, dite_eq_left h']
   unfold valAt
   exact congrArg (fun F => (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom (F.hom f))
     (Scheme.Hom.map_appLE y h (homOfLE hVU).op)
@@ -79,12 +75,12 @@ private theorem valAt'_app_eq_valAt'_comp {X Y : Scheme.{0}} (y : Sp ℂ ⟶ X) 
   unfold valAt'
   by_cases h : ⊤ ≤ (y ≫ φ) ⁻¹ᵁ U
   · have h' : ⊤ ≤ y ⁻¹ᵁ (φ ⁻¹ᵁ U) := h
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     unfold valAt
     rw [Scheme.Hom.comp_appLE]
     rfl
   · have h' : ¬ ⊤ ≤ y ⁻¹ᵁ (φ ⁻¹ᵁ U) := h
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
 
 private theorem exAt_eq_ex_comp_lift (z : Fin g → ℂ) :
     exAt u p z = (u.ex z).left ≫ (lift (toUnit A ≫ p) (𝟙 A)).left := by
@@ -96,7 +92,7 @@ private theorem exists_ringHom_eq_valAt' {X : Scheme.{0}} (y : Sp ℂ ⟶ X) (U 
     ∃ φ : Γ(X, U) →+* ℂ, ∀ f, φ f = valAt' y U f :=
   ⟨(Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom.comp (y.appLE U ⊤ h).hom, fun f => by
     unfold valAt'
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     rfl⟩
 
 private theorem preimage_inf_eq_univ {X : Scheme.{0}} (y : Sp ℂ ⟶ X) {U V : X.Opens}
@@ -259,8 +255,8 @@ theorem exists_entire_twist (hL : L.IsLB) {m : T ⊗ A ⟶ A} {a b : ℤ}
     rw [← compat j (J z) z h0 h1 (hJ0 z) (hJ1 z), hQ,
       div_mul_cancel₀ _ (zpow_ne_zero _ (u.fr_ne _ _ h0))]
 
-variable {p} in
 
+variable {p} in
 theorem exAt_translPt {y : T ⟶ A} {x : Fin g → ℂ} (hy : p ≫ y = u.ex x) (z : Fin g → ℂ) :
     exAt u p z ≫ (translPt A y).left = (u.ex (z + x)).left := by
   have h : lift p (u.ex z) ≫ translPt A y = u.ex (z + x) := by
@@ -269,8 +265,8 @@ theorem exAt_translPt {y : T ⟶ A} {x : Fin g → ℂ} (hy : p ≫ y = u.ex x) 
   unfold exAt
   rw [← Over.comp_left, h]
 
-variable {p} in
 
+variable {p} in
 theorem exAt_translT {y : T ⟶ A} {x : Fin g → ℂ} (hy : p ≫ y = u.ex x) (z : Fin g → ℂ) :
     exAt u p z ≫ (translT A y).left = exAt u p (z + x) := by
   have h : lift p (u.ex z) ≫ translPt A y = u.ex (z + x) := by
@@ -285,11 +281,6 @@ theorem exAt_translT {y : T ⟶ A} {x : Fin g → ℂ} (hy : p ≫ y = u.ex x) (
 def fockFactor (Hm : Matrix (Fin g) (Fin g) ℂ) (k : ℤ) (x z : Fin g → ℂ) : ℂ :=
   Complex.exp (-(k * Real.pi * hermForm Hm z x) - k * Real.pi * hermForm Hm x x / 2)
 
-theorem fockFactor_ne_zero (Hm : Matrix (Fin g) (Fin g) ℂ) (k : ℤ) (x z : Fin g → ℂ) :
-    fockFactor Hm k x z ≠ 0 := by
-  unfold fockFactor
-  exact Complex.exp_ne_zero _
-
 def HasAnConst (Hm : Matrix (Fin g) (Fin g) ℂ) {k : ℤ} (Θ : ThetaGrp A L k T) (x : Fin g → ℂ)
     (c : ℂ) : Prop :=
   p ≫ Θ.pt = u.ex x ∧
@@ -299,66 +290,6 @@ def HasAnConst (Hm : Matrix (Fin g) (Fin g) ℂ) {k : ℤ} (Θ : ThetaGrp A L k 
         u.fr (j 1) (z + x) ^ k = c * fockFactor Hm k x z * u.fr (j 0) z ^ k
 
 variable {u p} {Hm : Matrix (Fin g) (Fin g) ℂ} {k : ℤ} {Θ : ThetaGrp A L k T} {x : Fin g → ℂ}
-
-theorem HasAnConst.unique (hL : L.IsLB) {c c' : ℂ} (h : HasAnConst u p Hm Θ x c)
-    (h' : HasAnConst u p Hm Θ x c') : c = c' := by
-  obtain ⟨i0, hi0⟩ := exists_algChart_mem_source hL (u.ex 0).left
-  obtain ⟨i1, hi1⟩ := exists_algChart_mem_source hL (u.ex (0 + x)).left
-  have e := h.2 ![i0, i1] 0 hi0 hi1
-  have e' := h'.2 ![i0, i1] 0 hi0 hi1
-  rw [e] at e'
-  have hF := fockFactor_ne_zero Hm k x 0
-  have hfr : u.fr (![i0, i1] 0) 0 ^ k ≠ 0 := zpow_ne_zero _ (u.fr_ne _ _ hi0)
-  exact mul_right_cancel₀ hF (mul_right_cancel₀ hfr e')
-
-theorem HasAnConst.ne_zero (hL : L.IsLB) {c : ℂ} (h : HasAnConst u p Hm Θ x c) : c ≠ 0 := by
-  obtain ⟨i0, hi0⟩ := exists_algChart_mem_source hL (u.ex 0).left
-  obtain ⟨i1, hi1⟩ := exists_algChart_mem_source hL (u.ex (0 + x)).left
-  have e := h.2 ![i0, i1] 0 hi0 hi1
-  intro hc
-  rw [hc, zero_mul, zero_mul] at e
-  have hch := (exAt_mem_twist_chart_iff u p (exAt_translPt u h.1 0) ![i0, i1]).2 ⟨hi0, hi1⟩
-  have hv := valAt'_unit_ne_zero_cusp_form_evaluations (exAt u p 0) _ hch (Θ.φ.s ![i0, i1])
-  exact mul_ne_zero hv (zpow_ne_zero k (u.fr_ne _ _ hi1)) e
-
-private theorem exAt_preimage_wchart_eq_univ (z : Fin g → ℂ) (i : L.ι)
-    (h : ⊤ ≤ (u.ex z).left ⁻¹ᵁ L.U i) :
-    ⊤ ≤ exAt u p z ⁻¹ᵁ LB.wchart L (fun _ : Fin 1 => (snd T A).left) (fun _ => i) := by
-  have h0 : exAt u p z ≫ (snd T A).left = (u.ex z).left := by
-    unfold exAt
-    rw [← Over.comp_left, lift_snd]
-  rw [← h0] at h
-  intro a ha
-  refine Set.mem_iInter.2 (fun _ => ?_)
-  simpa using h ha
-
-theorem HasAnConst.act (hL : L.IsLB) {c : ℂ} (h : HasAnConst u p Hm Θ x c)
-    {s s' : LB.Sec (LPow A L k T)} (hs : IsActOf A L k Θ s s') {θ θ' : (Fin g → ℂ) → ℂ}
-    (hθ : IsFnAt u p k s θ) (hθ' : IsFnAt u p k s' θ') (z : Fin g → ℂ) :
-    θ' z = c * fockFactor Hm k x z * θ (z + x) := by
-  obtain ⟨i0, hi0⟩ := exists_algChart_mem_source hL (u.ex z).left
-  obtain ⟨i1, hi1⟩ := exists_algChart_mem_source hL (u.ex (z + x)).left
-  have hch := (exAt_mem_twist_chart_iff u p (exAt_translPt u h.1 z) ![i0, i1]).2 ⟨hi0, hi1⟩
-  have e : valAt' (exAt u p z) (LB.wchart L ![(snd T A).left, (translPt A Θ.pt).left] ![i0, i1])
-      (Θ.φ.s ![i0, i1]).val * u.fr i1 (z + x) ^ k = c * fockFactor Hm k x z * u.fr i0 z ^ k :=
-    h.2 ![i0, i1] z hi0 hi1
-  unfold IsActOf IsTwistPull at hs
-  have hs1 := congrArg (valAt' (exAt u p z) _) (hs ![i0, i1])
-  erw [valAt'_mul_of_top_le_preimage_open, valAt'_resG _ _ hch, valAt'_resG _ _ hch, valAt'_app_eq_valAt'_comp,
-    exAt_translT u h.1 z] at hs1
-  have A1 : valAt' (exAt u p z) ((LPow A L k T).U fun _ => i0) (s'.f fun _ => i0) = θ' z * u.fr i0 z ^ k :=
-    hθ' (fun _ => i0) z (exAt_preimage_wchart_eq_univ z i0 hi0)
-  have A2 : valAt' (exAt u p (z + x)) ((LPow A L k T).U fun _ => i1) (s.f fun _ => i1) =
-      θ (z + x) * u.fr i1 (z + x) ^ k :=
-    hθ (fun _ => i1) (z + x) (exAt_preimage_wchart_eq_univ (z + x) i1 hi1)
-  have key : θ' z * u.fr i0 z ^ k = valAt' (exAt u p z)
-      (LB.wchart L ![(snd T A).left, (translPt A Θ.pt).left] ![i0, i1]) (Θ.φ.s ![i0, i1]).val *
-      (θ (z + x) * u.fr i1 (z + x) ^ k) := by
-    rw [← A1, ← A2]
-    exact hs1
-  have hfr0 : u.fr i0 z ^ k ≠ 0 := zpow_ne_zero _ (u.fr_ne _ _ hi0)
-  apply mul_right_cancel₀ hfr0
-  linear_combination key + θ (z + x) * e
 
 theorem exists_int_of_exp_eq_one {t : ℝ}
     (h : Complex.exp (-(2 * Real.pi * Complex.I * t)) = 1) : ∃ n : ℤ, t = n := by
@@ -485,17 +416,5 @@ theorem exists_hasAnConst (hL : L.IsLB) {χ : u.Λ → ℂ} (hAH : u.IsAH Hm χ)
     ring
   linear_combination (-(r z * u.fr (j 0) z ^ k)) * hEF
 
-variable (L) in
-
-def thetaGrpZero (y : T ⟶ A) : ThetaGrp A L 0 T where
-  pt := y
-  φ := ⟨fun _ => 1⟩
-  isGen j j' := by
-    have : (thetaLB A L 0 y).g j j' = 1 := by
-      unfold thetaLB LB.LinComb
-      dsimp only
-      exact Finset.prod_eq_one fun i _ => by fin_cases i <;> exact zpow_zero _
-    rw [this, _root_.one_mul]
-    exact (map_one _).trans (map_one _).symm
 
 end GlobalTheory.ThetaFn

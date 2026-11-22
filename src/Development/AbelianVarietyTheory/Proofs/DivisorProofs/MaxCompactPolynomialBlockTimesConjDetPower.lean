@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+
+@[expose] public section
 
 section
 
@@ -93,8 +97,8 @@ lemma good (ε : Fin n → Bool) (P : Poly n) : Good ε P := by
     · exact add_mem (mul_mem h1 (pow_mem (dB_mem ε) _)) (mul_mem h2 (pow_mem (dB_mem ε) _))
     · have hc : ∀ m : ℕ, conj k.det ^ m * k.det ^ m = 1 := fun m => by
         rw [← mul_pow, conj_det_mul hk, one_pow]
-      rw [map_add, e1 k hk, e2 k hk]
-      simp only [map_mul, map_pow, map_add, ev_detbP, ev_dB hk]
+      rw [map_add (f := _), e1 k hk, e2 k hk]
+      simp only [map_mul, map_pow, map_add (f := _), ev_detbP, ev_dB hk]
       rw [pow_add]
       linear_combination (-(conj k.det ^ M1 * ev k Q1)) * hc M2 + (-(conj k.det ^ M2 * ev k Q2)) * hc M1
   · rintro p i ⟨M, Q, hQ, e⟩

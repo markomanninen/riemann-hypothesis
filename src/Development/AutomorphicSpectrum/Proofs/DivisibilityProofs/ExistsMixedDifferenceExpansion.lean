@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num
 
@@ -34,7 +38,7 @@ theorem exists_monomial_mixExpansion {σ : Type} [Fintype σ] (d : ℕ) :
       ⟨s - Finsupp.single i 1, (tsub_add_cancel_of_le hle).symm⟩
     have hdeg : s'.degree = d := by
       have e : (s' + Finsupp.single i 1).degree = s'.degree + 1 := by
-        rw [Finsupp.degree_eq_weight_one, map_add]
+        rw [Finsupp.degree_eq_weight_one, map_add (f := _)]
         simp [Finsupp.weight_apply, Finsupp.sum_single_index]
       omega
     obtain ⟨G', hG', hG'h⟩ := ih s' hdeg
@@ -74,7 +78,8 @@ theorem exists_mixExpansion_mixDiff (σ : Type) [Fintype σ] (n : ℕ) (F : MvPo
     exact hF (mem_support_iff.mp hs)
   have hlin : mixDiff F = ∑ s ∈ F.support, C (F.coeff s) * mixDiff (monomial s (1 : ℝ)) := by
     conv_lhs => rw [F.as_sum]
-    simp only [mixDiff, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [mixDiff, map_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [show monomial s (F.coeff s) = C (F.coeff s) * monomial s (1 : ℝ) by rw [C_mul_monomial, mul_one],
       map_mul, map_mul, rename_C, rename_C]

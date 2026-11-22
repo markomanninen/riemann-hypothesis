@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Yoa3.exists_perm_of_map_eq :
     ∀ {n : ℕ} {z z' : Fin n → ℂˣ},

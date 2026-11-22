@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UniformizationPeriodLatticeChange
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsInvariantNatLengthLattice
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IdealPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UniformizationPeriodLatticeChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsInvariantNatLengthLattice
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IdealPart
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.ArcPts
 open scoped CategoryTheory.Obj LaurentSeries PowerSeries
@@ -21,18 +26,18 @@ theorem exp_eq_of_matching_markings : ∀ (E : Type) [Field E] [NumberField E] [
       obtain ⟨e₁, he₁⟩ := hM (v • c) (Submodule.smul_mem_smul hv Submodule.mem_top)
       obtain ⟨r, hr⟩ : l.M ∣ l.M' := Nat.dvd_lcm_left _ _
       refine ⟨e₁ + r • (gam (v • e) - v • e), ?_⟩
-      rw [smul_add, ← map_smul, smul_comm v, map_add, he₁, map_nsmul, hr, smul_add, smul_smul,
+      rw [smul_add, ← map_smul, smul_comm v, map_add (f := _), he₁, map_nsmul, hr, smul_add, smul_smul,
         smul_sub]
       abel
     · rintro x y ⟨e, he⟩ ⟨e', he'⟩
-      exact ⟨e + e', by rw [map_add, he, he', smul_add]; abel⟩
+      exact ⟨e + e', by rw [map_add (f := _), he, he', smul_add]; abel⟩
   have hA' : ∀ a, ∃ e, gam a = a + l.A • e := by
     intro b
     obtain ⟨c, e, rfl⟩ := Fu.t_surj i b
     obtain ⟨e₁, he₁⟩ := hA c
     obtain ⟨r, hr⟩ : l.A ∣ l.M' := Nat.dvd_lcm_right _ _
     refine ⟨e₁ + r • (gam e - e), ?_⟩
-    rw [map_add, he₁, map_nsmul, hr, smul_add, smul_smul, smul_sub]
+    rw [map_add (f := _), he₁, map_nsmul, hr, smul_add, smul_smul, smul_sub]
     abel
   have hm : ∀ z, (LinearMap.toMatrix' h.toLinearMap).mulVec z = h z := fun z =>
     LinearMap.toMatrix'_mulVec _ z

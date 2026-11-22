@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Alg
 
 theorem UpperTheory.exists_derivations_dual_to_cotangent_parameters :
@@ -33,7 +38,7 @@ theorem UpperTheory.exists_derivations_dual_to_cotangent_parameters :
         + (x a • b + x b • a) := by
       simp only [Algebra.smul_def, map_mul]
       ring
-    rw [h2, map_add, hπN _ (N.sub_mem h1 (N.smul_mem _ h1N))]
+    rw [h2, map_add (f := _), hπN _ (N.sub_mem h1 (N.smul_mem _ h1N))]
     simp
   have hker : ∀ a, x a = 0 → π a = 0 → ∃ e : O, e ≠ 0 ∧ e • a ∈ J := by
     intro a ha h
@@ -58,7 +63,8 @@ theorem UpperTheory.exists_derivations_dual_to_cotangent_parameters :
       intro a ha
       rw [← hg] at ha
       obtain ⟨r, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun R).1 ha
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [smul_eq_mul, hder, hgp, zero_smul, add_zero, ← IsScalarTower.algebraMap_smul E]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -69,7 +75,6 @@ theorem UpperTheory.exists_derivations_dual_to_cotangent_parameters :
     rw [eq_top_iff]
     rintro v -
     induction v with
-    | zero => exact Submodule.zero_mem _
     | add u v hu hv => exact Submodule.add_mem _ hu hv
     | tmul e q =>
       obtain ⟨a, rfl⟩ := N.mkQ_surjective q
@@ -89,7 +94,7 @@ theorem UpperTheory.exists_derivations_dual_to_cotangent_parameters :
     simp [b, b0, t]
   refine ⟨n, fun i => ((b.coord i).restrictScalars O) ∘ₗ π, t, 1, one_ne_zero, ?_, ?_, ?_, ?_, ?_⟩
   · intro i u v
-    rw [LinearMap.comp_apply, hder, map_add, map_smul, map_smul, Algebra.smul_def, Algebra.smul_def]
+    rw [LinearMap.comp_apply, hder, map_add (f := _), map_smul, map_smul, Algebra.smul_def, Algebra.smul_def]
     rfl
   · intro i u hu
     simp [hπN u (hJN u (Submodule.mem_sup_right hu))]
@@ -102,7 +107,8 @@ theorem UpperTheory.exists_derivations_dual_to_cotangent_parameters :
       (fun i => b.repr (π u) i)
     choose o ho using hd
     have h0 : π ((d : O) • u - ∑ i, o i • t i) = 0 := by
-      rw [map_sub, map_smul, map_sum, sub_eq_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_smul, map_sum, sub_eq_zero]
       conv_lhs => rw [← b.sum_repr (π u), Finset.smul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, hbt, ← IsScalarTower.algebraMap_smul E (o i), ho, smul_assoc]

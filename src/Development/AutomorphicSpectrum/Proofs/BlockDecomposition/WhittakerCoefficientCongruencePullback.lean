@@ -1,7 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsBlockNFZeroOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertie
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.DetLift
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsBlockNFZeroOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertie
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ContinuousCoB
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC
@@ -24,7 +31,7 @@ theorem measurePreserving_of_covol {G : Type*} [AddCommGroup G] [TopologicalSpac
   have hpos := Measure.addHaarScalarFactor_pos_of_isAddHaarMeasure (μ.map e) μ
   set c := Measure.addHaarScalarFactor (μ.map e) μ with hcdef
   have hq : Measure.QuasiMeasurePreserving e μ μ := by
-    refine ⟨e.measurable, ?_⟩
+    refine ⟨e.measurable.aemeasurable, ?_⟩
     rw [hs]
     exact Measure.smul_absolutelyContinuous
   let σ : Γ → Γ := fun g => ⟨T.symm g, hT' g g.2⟩

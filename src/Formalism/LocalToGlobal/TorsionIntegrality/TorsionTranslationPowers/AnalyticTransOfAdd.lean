@@ -1,22 +1,24 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.FacShapeZero
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.GeneralIntegrality
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Taylor0ConstMul
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.AnaSys
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.CmIntegralityOfTorsionPoints
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.OpUTh0RootOf
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ExistsFinitePartOneIdeleSplitCongruenceQuotient
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ScaledTorsionPointNonsingular
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.FacShapeZero
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.GeneralIntegrality
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Taylor0ConstMul
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.AnaSys
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.CmIntegralityOfTorsionPoints
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.OpUTh0RootOf
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ExistsFinitePartOneIdeleSplitCongruenceQuotient
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ScaledTorsionPointNonsingular
+
+@[expose] public section
 
 namespace Formalism.L2.Th1.E
 
-theorem fourthPower : FourthPower := fourth_power
 theorem generalIntOf : GeneralIntOf := general_integrality
 theorem torsionIntegral : TorsionIntegral := torsion_integral
 theorem ptOfZero : PtOfZero := PtOfZero_of
 theorem wpBridge : WpBridge := AnaSys.wpBridge
 theorem transWpBridge : TransWpBridge := AnaSys.transWpBridge
 theorem analyticSys : AnalyticSys := AnalyticSys_of transWpBridge
-theorem cm4OfHalves : CMTorsionValuesOfIntegralAndUnramified := cm_integrality_of_halves
 theorem opUTh0Root : OpUTh0Root := OpUTh0Root_of
 
 theorem ptOfInt_of_add (hA : PtOfAdd) : PtOfInt := PtOfInt_of hA ptOfZero torsionIntegral
@@ -33,6 +35,5 @@ theorem kernelPtInt : KernelPtInt := kernelPtInt_of_add ptOfAdd
 theorem cm4Int : CMIntegrality := cm4Int_of_add ptOfAdd
 theorem analyticTrans : AnalyticTrans := analyticTrans_of_add ptOfAdd
 theorem th0Analytic : ThetaZeroAnalytic := th0Analytic_of_add ptOfAdd
-theorem cm4Pt : ScaledTorsionPointNonsingular := scaled_torsion_point_of_add ptOfAdd
 
 end Formalism.L2.Th1.E

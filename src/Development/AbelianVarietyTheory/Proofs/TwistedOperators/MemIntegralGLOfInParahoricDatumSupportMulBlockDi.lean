@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound
 
 namespace GlobalTheory.SuppFirstBlock
@@ -8,7 +13,12 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 theorem toBlocks₁₁_mul_diag {A D E : Type} [Fintype A] [DecidableEq A] [Fintype D] [DecidableEq D]
     (z : Matrix (A ⊕ E) (A ⊕ D) k) (x : GL A k) (y : GL D k) :
     (z * (emb₂ k (Equiv.refl (A ⊕ D)) (x, y) : Matrix (A ⊕ D) (A ⊕ D) k)).toBlocks₁₁ = z.toBlocks₁₁ * x.val := by
-  rw [val_emb₂]
+  have he : (emb₂ k (Equiv.refl (A ⊕ D)) (x, y) : Matrix (A ⊕ D) (A ⊕ D) k) =
+      fromBlocks x.val 0 0 y.val := by
+    ext i j
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp [emb₂, leviEmb, leviTwo, two, Matrix.blockDiagonal']
+  rw [he]
   conv_lhs => rw [← fromBlocks_toBlocks z]
   simp [fromBlocks_multiply]
 

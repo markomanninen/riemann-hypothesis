@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.RestScalar
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SphRank
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CutIrr
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.PiHomExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.RestScalar
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SphRank
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CutIrr
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.PiHomExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -58,7 +62,7 @@ private theorem mem_of_translates (π : UnitaryRep G H) {τ Q : Submodule ℂ H}
       exact Submodule.subset_span ⟨g * γ, by simp [UnitaryRep.map_mul_apply]⟩
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact S.add_mem hx hy
     | smul a x _ hx =>
       rw [map_smul]
@@ -83,7 +87,7 @@ private theorem mem_of_translates (π : UnitaryRep G H) {τ Q : Submodule ℂ H}
       exact key γ
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Q.add_mem hx hy
     | smul a x _ hx =>
       rw [map_smul]
@@ -119,7 +123,7 @@ private theorem exists_clm {κ : Measure (archCompact K n)} {e : archCompact K n
       map_add' := fun x y => by
         unfold pOp
         rw [← integral_add (integrable_orbit μ hI x) (integrable_orbit μ hI y)]
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
       map_smul' := fun c x => by
         unfold pOp
         rw [RingHom.id_apply, ← integral_smul]
@@ -248,7 +252,7 @@ end SlopeTestRemainingChoices
 end UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.xTop :
-    ∀ {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] (τ : Submodule ℂ (L2 μ)) (κ : Measure (archCompact K 2)) (p : archCompact K 2 → ℂ), CuspIrr μ τ → RankInf μ τ κ p → ∀ {r : ℕ} (w : Fin r → Pl K) (ι : GS 2 w →* FA K 2), Function.Injective w → IsEmb w ι → ∀ Q : Submodule ℂ (L2 μ), IsClosed (Q : Set (L2 μ)) →
+    ∀ {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] (τ : Submodule ℂ (L2 μ)) (κ : Measure (archCompact K 2)) (p : archCompact K 2 → ℂ), CuspIrr μ τ → RankInf μ τ κ p → ∀ {r : ℕ} (w : Fin r → Pl K) (ι : GS 2 w →* FA K 2), Function.Injective w → IsEmb w ι → ∀ Q : Submodule ℂ (L2 μ), IsClosed (Q : Set (L2 μ)) →
       (∀ v ∈ Q, InH μ τ κ p (im w) v) → (∀ g, ∀ v ∈ Q, rhoF μ (ι g) v ∈ Q) → Q = ⊥ ∨ ∀ v, InH μ τ κ p (im w) v → v ∈ Q := by
   intro K _ _ _ μ _ τ κ p hτ hR r w ι hw hι Q hQc hQ hQι
   by_cases hbot : Q = ⊥

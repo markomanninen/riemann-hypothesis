@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+
+@[expose] public section
 
 open NumberField Formalism.L2.Host UpperTheory.V UpperTheory.V.Af GlobalTheory.HeckeGal.Model GlobalTheory.Mem.Chr.CharModel
 open GlobalTheory.CuspRep (Af)

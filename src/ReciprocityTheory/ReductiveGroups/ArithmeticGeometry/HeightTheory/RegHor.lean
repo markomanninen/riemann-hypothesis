@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegHorPf
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegHorPf
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 

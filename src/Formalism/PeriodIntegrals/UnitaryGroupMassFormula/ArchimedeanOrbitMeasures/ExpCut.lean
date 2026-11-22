@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ExpProdSt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ChartChg
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ExpProdSt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ChartChg
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem locChart_of_contDiff {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ 
     ∃ U ∈ 𝓝 (0 : E), (∀ p ∈ U, HasFDerivWithinAt ψ (fderiv ℝ ψ p) U p) ∧ Set.InjOn ψ U ∧
       ContinuousAt ψ 0 ∧ ContinuousAt (fun p => (fderiv ℝ ψ p).det) 0 ∧ |(fderiv ℝ ψ 0).det| = 1 := by
   have hs : HasStrictFDerivAt ψ ((ContinuousLinearEquiv.refl ℝ E : E ≃L[ℝ] E) : E →L[ℝ] E) 0 := by
-    have := hψ.hasStrictFDerivAt one_ne_zero
+    have := hψ.hasStrictFDerivAt_fderiv one_ne_zero
     rw [hd, ← ContinuousLinearEquiv.coe_refl] at this
     exact this
   have hev : ∀ᶠ p in 𝓝 (0 : E), ContDiffAt ℝ 1 ψ p := hψ.eventually (by simp)

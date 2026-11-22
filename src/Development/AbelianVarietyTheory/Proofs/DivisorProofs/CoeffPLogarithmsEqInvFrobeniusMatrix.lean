@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat GlobalTheory.LawDer
 
 set_option autoImplicit false
@@ -54,7 +59,8 @@ theorem coef_logs_inv_frob : ∀ (p : ℕ) [Fact p.Prime] (B Q : Type) [CommRing
       s (lin (e i) j) - ∑ l, algebraMap B Q (U l i * Sum.elim (fun _ => (p : B)) (fun _ => 1) i) *
         coeff (Finsupp.single j p) (e l) := by
     intro i j
-    rw [map_sub, GlobalTheory.FrobCoef.coeff_frob_single, comb, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, GlobalTheory.FrobCoef.coeff_frob_single, comb, map_sum]
     simp_rw [coeff_smul, hD]
   have key : ∀ j, ∃ y : Fin d ⊕ Fin k → B, (∀ i, ∑ l, algebraMap B Q (U l i) * x j l =
       algebraMap B Q (y i)) ∧ ∀ i, ∃ t, y i - (Pi.single (Sum.inl j) (1 : B) : Fin d ⊕ Fin k → B) i = p * t := by
@@ -98,9 +104,11 @@ theorem coef_logs_inv_frob : ∀ (p : ℕ) [Fact p.Prime] (B Q : Type) [CommRing
       intro m
       calc algebraMap B Q (∑ i, U⁻¹ i m * y j i)
           = ∑ i, algebraMap B Q (U⁻¹ i m) * ∑ l, algebraMap B Q (U l i) * x j l := by
-            simp only [map_sum, map_mul, hy1]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [map_sum, map_mul, hy1]
         _ = ∑ l, algebraMap B Q ((U * U⁻¹) l m) * x j l := by
-            simp only [Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
             rw [Finset.sum_comm]
             refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun i _ => by ring
         _ = x j m := by

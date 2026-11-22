@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankRiemannRochNsmulHyperplane
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExtFormAdjEqNegSecondForm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankRiemannRochNsmulHyperplane
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExtFormAdjEqNegSecondForm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,8 +22,8 @@ namespace GlobalTheory.ProjVar.Var
 
 variable {F : Type} [Field F] (Y : Var F) {κ : Type} (Δ : κ → Y.Dv)
 
-open Classical in
 
+open Classical in
 def interPoly : MvPolynomial κ ℝ →ₗ[ℝ] ℝ :=
   (basisMonomials κ ℝ).constr ℝ fun d =>
     if h : ∃ s : Fin Y.dim → κ, ∑ i, Finsupp.single (s i) 1 = d then (Y.inter (Δ ∘ h.choose) : ℝ) else 0
@@ -49,15 +53,19 @@ theorem interPoly_prod (s : Fin Y.dim → κ) : Y.interPoly Δ (∏ i, MvPolynom
   have h : ∃ t : Fin Y.dim → κ, ∑ i, Finsupp.single (t i) 1 = ∑ i, Finsupp.single (s i) 1 := ⟨s, rfl⟩
   rw [hprod]
   unfold interPoly
-  rw [Module.Basis.constr_basis, dif_pos h]
+  rw [Module.Basis.constr_basis, dite_eq_left h]
   exact_mod_cast inter_comp_eq_of_sum_single_eq Y Δ s h.choose h.choose_spec
 
 theorem interPoly_prod_sum [Fintype κ] (a : Fin Y.dim → κ → ℤ) :
     Y.interPoly Δ (∏ i, ∑ x, C (a i x : ℝ) * MvPolynomial.X x) = Y.inter fun i => ∑ x, a i x • Δ x := by
   classical
-  rw [Fintype.prod_sum, map_sum, ← interForm_apply, MultilinearMap.map_sum, Int.cast_sum]
+  let form := Y.diffVanish_chi.form
+  have hform (d : Fin Y.dim → Y.Dv) : form d = Y.inter d :=
+    (Y.diffVanish_chi.form_apply d 0).trans (Y.inter_eq_multiDiff d).symm
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Fintype.prod_sum, map_sum, ← hform, MultilinearMap.map_sum, Int.cast_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [interForm_apply]
+  rw [hform]
   have e1 : (∏ i, C (a i (p i) : ℝ) * MvPolynomial.X (p i) : MvPolynomial κ ℝ) =
       ((∏ i, a i (p i) : ℤ) : ℝ) • ∏ i, MvPolynomial.X (p i) := by
     rw [Finset.prod_mul_distrib, ← map_prod, C_mul']
@@ -77,7 +85,7 @@ section Forms
 variable {n : ℕ} {r : Type} [Fintype r] [DecidableEq r]
 
 def topCoeff (P : MvPolynomial (Fin n × Fin n) ℂ) : ℂ :=
-  ∑ w : Equiv.Perm (Fin n), ((Equiv.Perm.sign w : ℤ) : ℂ) * coeff (∑ a, Finsupp.single (a, w a) 1) P
+  ∑ w : Equiv.Perm (Fin n), ((Equiv.Perm.sign w : ℤ) : ℂ) * AddMonoidAlgebra.coeff P (∑ a, Finsupp.single (a, w a) 1)
 
 abbrev coordVec (a : Fin n) : V n := EuclideanSpace.single a 1
 
@@ -155,9 +163,9 @@ def fibrePoint : MvPolynomial (Root m) ℝ := ∏ x : Root m, (-X x) ^ (m x.1 - 
 def rootDiscr : MvPolynomial (Root m) ℝ :=
   ∏ τ, ∏ j : Fin (m τ), ∏ i ∈ Finset.Iio j, (X ⟨τ, j⟩ - X ⟨τ, i⟩)
 
+
 variable {m} in
 open Classical in
-
 def antisymm (Q : MvPolynomial (Root m) ℝ) : MvPolynomial (Root m) ℝ :=
   ∑ w : ∀ τ, Equiv.Perm (Fin (m τ)),
     ((∏ τ, Equiv.Perm.sign (w τ) : ℤˣ) : ℤ) • rename (fun x : Root m => (⟨x.1, w x.1 x.2⟩ : Root m)) Q

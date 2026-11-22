@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocalEnd
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalEndomorphisms.ValSurjective
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocalEnd
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalEndomorphisms.ValSurjective
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

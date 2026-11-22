@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.InstAddCommMonoidFibreFst
+module
+
+public import ReciprocityTheory.DualLattices.InstAddCommMonoidFibreFst
+
+@[expose] public section
 
 noncomputable section
 

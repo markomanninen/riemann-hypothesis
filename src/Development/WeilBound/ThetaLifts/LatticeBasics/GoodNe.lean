@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceSplitOrInert
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedCharacterAtUniformizer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterOfIdeleClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeValueNotFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPrimeDegreeOne
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceSplitOrInert
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedCharacterAtUniformizer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterOfIdeleClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeValueNotFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPrimeDegreeOne
+
+@[expose] public section
 
 noncomputable section
 

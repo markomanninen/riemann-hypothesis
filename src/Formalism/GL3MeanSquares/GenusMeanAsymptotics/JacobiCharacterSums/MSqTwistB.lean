@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MSqTwistA
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MSqTwistA
+
+@[expose] public section
 
 open Finset Classical
 
@@ -31,7 +35,7 @@ private theorem sum_clsB_mul_mod_eq_sum {M : Type*} [AddCommMonoid M] (m₀ s a�
     refine ⟨Nat.mod_lt _ hN, ?_, ?_⟩
     · rw [Nat.mod_mod_of_dvd _ (dvd_mul_right m₀ s), Nat.mul_mod, hb.2.1, hu1, ← Nat.mul_mod, mul_one]
     · rw [hcm, Nat.mod_mod_of_dvd _ (dvd_mul_left s m₀), ← hcm]
-      exact Nat.Coprime.mul hb.2.2 hus
+      exact Nat.Coprime.mul_left hb.2.2 hus
   have hinj : Set.InjOn (fun b => (b * u) % (m₀ * s)) (clsB m₀ s a₀) := by
     intro x hx y hy hxy
     simp only [Finset.mem_coe, clsB, Finset.mem_filter, Finset.mem_range] at hx hy
@@ -75,7 +79,7 @@ private theorem exists_jacobiSym_neg_one_in_residue_class (m₀ s : ℕ) (h1 : 1
     have hu := hsq s.minFac ⟨v, by rw [mul_assoc, ← hv]; exact ht⟩
     exact hp.one_lt.ne' (Nat.isUnit_iff.mp hu)
   have hmp : (m₀ * t).Coprime s.minFac :=
-    Nat.Coprime.mul (Nat.Coprime.coprime_dvd_right (Nat.minFac_dvd s) hcop) hpt.symm
+    Nat.Coprime.mul_left (Nat.Coprime.coprime_dvd_right (Nat.minFac_dvd s) hcop) hpt.symm
   obtain ⟨g, hg⟩ := FiniteField.exists_nonsquare (F := ZMod s.minFac)
     (by rw [ZMod.ringChar_zmod_n]; exact hp2)
   let c := Nat.chineseRemainder hmp 1 g.val

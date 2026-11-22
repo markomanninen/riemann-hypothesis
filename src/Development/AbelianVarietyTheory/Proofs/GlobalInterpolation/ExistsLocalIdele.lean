@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSupportedIdele
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSupportedIdele
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.DIV Formalism.L2.Ker
 open TensorProduct Formalism.UG Formalism.UG.P
@@ -55,7 +59,7 @@ theorem val_le_of_mem (P : HeightOneSpectrum (𝓞 E)) (n : ℕ) (z : RInt F E)
   | zero =>
     rw [Subring.coe_zero, map_zero, afsplit_zero_apply, map_zero]; exact zero_le
   | add x y _ _ hx hy =>
-    rw [Subring.coe_add, map_add, afsplit_add_apply]
+    rw [Subring.coe_add, map_add (f := _), afsplit_add_apply]
     exact Valuation.map_add_le _ hx hy
   | smul a x _ hx =>
     rw [smul_eq_mul, Subring.coe_mul, map_mul, afsplit_mul_apply, map_mul]
@@ -100,8 +104,8 @@ theorem val_of_unif (P : HeightOneSpectrum (𝓞 E)) (y₀ : RInt F E) (b : 𝓞
     rw [map_one, ← WithZero.exp_zero, WithZero.exp_lt_exp]
     norm_num
 
-include h1 h2 in
 
+include h1 h2 in
 theorem exists_unif {K : Type} [Field K] (ξ : Chr F E K) (v : HeightOneSpectrum (𝓞 F)) (hξ : inertAt E v ≤ ξ.ker)
     (P : HeightOneSpectrum (𝓞 E)) (hP : P.asIdeal.under (𝓞 F) = v.asIdeal) :
     ∃ y ∈ Formalism.L2.DIV.suppAt E v, Valued.v (ι (y : AfE F E) P) = WithZero.exp (-1 : ℤ) ∧
@@ -123,7 +127,7 @@ theorem exists_unif {K : Type} [Field K] (ξ : Chr F E K) (v : HeightOneSpectrum
     · rw [hQ, hz.1, hv.1]
     · rw [hz.2 Q hQ, hv.2 Q hQ]
   unfold unifVal
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact (hex.choose_spec v hP y y₀ b e1 hb hb2 e2 e3 e4).symm
 
 end

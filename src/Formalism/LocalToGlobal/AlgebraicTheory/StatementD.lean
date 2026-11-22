@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementC
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.UnitaryConstant
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementC
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.UnitaryConstant
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate

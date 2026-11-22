@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SubalgebraMulVecZero
 
@@ -15,7 +19,8 @@ theorem mulVec_frac_eq_zero {B : Type} [CommRing B] [IsDomain B] {ι κ : Type} 
     rw [Pi.zero_apply, map_zero]
     have e : algebraMap B (FractionRing B) (A.mulVec u k) =
         (A.map (algebraMap B (FractionRing B))).mulVec (fun i => algebraMap B (FractionRing B) (u i)) k := by
-      simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
     rw [e]
     have e2 : (fun i => algebraMap B (FractionRing B) (u i)) = b • v := funext hu
     rw [e2, Matrix.mulVec_smul, hv, smul_zero]

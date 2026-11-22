@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdealPowerMembershipDivisible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EisensteinMulBijectiveShiftsFiltrationVStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEisensteinPowMulPhiMatrixInvAhatStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HsumMulEisensteinCompletionPowIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BdRImageBcrisEqAinfHatCoordinates
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinBasisImagesBasisBdRplusStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdealPowerMembershipDivisible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EisensteinMulBijectiveShiftsFiltrationVStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEisensteinPowMulPhiMatrixInvAhatStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HsumMulEisensteinCompletionPowIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BdRImageBcrisEqAinfHatCoordinates
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinBasisImagesBasisBdRplusStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -21,15 +26,15 @@ theorem amulG {l : ℕ} [Fact l.Prime] {O K V R : Type} [CommRing O] [Algebra �
     (x y : OD l O) (v : V ⊗[ℚ_[l]] R) : A (x * y) v = A x (A y v) := by
   induction v using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add v w hv hw => simp only [map_add, hv, hw]
+  | add v w hv hw => simp only [map_add (f := _), hv, hw]
   | tmul v c =>
     induction x using TensorProduct.induction_on with
     | zero => simp only [zero_mul, map_zero, AddMonoidHom.zero_apply]
-    | add x x' hx hx' => simp only [add_mul, map_add, AddMonoidHom.add_apply, hx, hx']
+    | add x x' hx hx' => simp only [add_mul, map_add (f := _), AddMonoidHom.add_apply, hx, hx']
     | tmul o b =>
       induction y using TensorProduct.induction_on with
       | zero => simp only [mul_zero, map_zero, AddMonoidHom.zero_apply]
-      | add y y' hy hy' => simp only [mul_add, map_add, AddMonoidHom.add_apply, hy, hy']
+      | add y y' hy hy' => simp only [mul_add, map_add (f := _), AddMonoidHom.add_apply, hy, hy']
       | tmul o' b' =>
         rw [Algebra.TensorProduct.tmul_mul_tmul, hA, hA, hA, map_mul, mul_assoc, h1, mul_smul]
 
@@ -41,7 +46,7 @@ theorem aoneG {l : ℕ} [Fact l.Prime] {O K V R : Type} [CommRing O] [Algebra �
     (v : V ⊗[ℚ_[l]] R) : A 1 v = v := by
   induction v using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add v w hv hw => simp only [map_add, hv, hw]
+  | add v w hv hw => simp only [map_add (f := _), hv, hw]
   | tmul v c => rw [Algebra.TensorProduct.one_def, hA, map_one, one_mul, h1, one_smul]
 
 set_option synthInstance.maxHeartbeats 400000 in
@@ -108,7 +113,8 @@ theorem coreG {l : ℕ} [Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero e] {O K : 
       obtain ⟨z, rfl⟩ := (hspan v').1 h0
       have h4 : ∑ i, A (d i - (ϖ.iD t K (fun _ => Ehat O K l e)) ^ kk * z i) (f i) = 0 := by
         simp only [map_sub, AddMonoidHom.sub_apply, Finset.sum_sub_distrib, amul]
-        rw [← map_sum, hv', sub_self]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, hv', sub_self]
       intro i
       have h5 := hind _ h4 i
       rw [sub_eq_zero] at h5
@@ -117,7 +123,8 @@ theorem coreG {l : ℕ} [Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero e] {O K : 
     · intro hd
       choose z hz using fun i => Ideal.mem_span_singleton'.1 (hd i)
       have h6 : ∑ i, A (d i) (f i) = A ((ϖ.iD t K (fun _ => Ehat O K l e)) ^ kk) (∑ i, A (z i) (f i)) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [← hz i, mul_comm, amul]
       have h7 := (hSh kk _ 0).1 ((hspan _).2 ⟨z, rfl⟩)
@@ -133,25 +140,30 @@ theorem coreG {l : ℕ} [Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero e] {O K : 
       simp only [GlobalTheory.BKGal.JumpDR.hsum, s', Pi.mul_apply, Pi.pow_apply, map_mul, map_pow, Finset.mul_sum, mul_assoc]
     have hc : ∀ τ j, algebraMap (Ahat O K l e) (AhatE O K l e) (c τ j) = ∑ i, hat O l e (P.mxInv τ j i) * GlobalTheory.BKGal.JumpDR.hsum P s' (fun k => (m k).1) τ i := by
       intro τ j
-      simp only [c, map_sum, map_mul, hy, hx, hw]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [c, map_sum, map_mul, hy, hx, hw]
       refine Finset.sum_congr rfl fun i _ => ?_
       ring
     have hC' := hC s' c hc
     have h1 : ∑ k, A (ϖ.iD t K (s' k)) (g k) = A ((ϖ.iD t K (fun _ => Ehat O K l e)) ^ (N + β)) (∑ k, A (ϖ.iD t K (s k)) (g k)) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       simp only [s', map_mul, map_pow]
       rw [amul]
     have h2' : ∑ j, A (ϖ.iD t K (fun τ => c τ j)) (gB j) = ∑ i, A (ϖ.iD t K (fun τ => x τ i)) (A ((ϖ.iD t K (fun _ => Ehat O K l e)) ^ β) (f i)) := by
       have h3 : ∀ j, (fun τ => c τ j) = ∑ i, (fun τ => x τ i) * (fun τ => y τ j i) := by
         intro j; funext τ; simp only [c, Finset.sum_apply, Pi.mul_apply, mul_comm]
-      simp only [h3, map_sum, AddMonoidHom.finset_sum_apply, map_mul, amul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [h3, map_sum, AddMonoidHom.finsetSum_apply, map_mul, amul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [hf1 i, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hf1 i, map_sum]
     rw [h1, h2'] at hC'
     have h3 : ∑ i, A (ϖ.iD t K (fun τ => x τ i)) (A ((ϖ.iD t K (fun _ => Ehat O K l e)) ^ β) (f i)) = A ((ϖ.iD t K (fun _ => Ehat O K l e)) ^ β) (∑ i, A (ϖ.iD t K (fun τ => x τ i)) (f i)) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← amul, ← amul, mul_comm]
     rw [h3, pow_add, mul_comm, amul] at hC'

@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HcParamGapGeIndex
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTau
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTwist
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HcParamGapGeIndex
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTau
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTwist
+
+@[expose] public section
 
 noncomputable section
 

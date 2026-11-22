@@ -1,19 +1,18 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.WindowSums
-import Formalism.WindowSums.PowerSeriesRelationList
-import Formalism.FrobeniusContraction.FrobeniusContractionProofs.ContractBij
-import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.ToolsB
-import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.FactorialValuationBoundsProofFact
-import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.LagrangeIdealSgProof
-import Mathlib
-import Formalism.GaloisIrreducibility.NoSolvableTransitive
-import Formalism.ResultantValuation.ResultantAdjugateProofs.Adjugate
-import Formalism.ResultantValuation.ResultantAdjugateProofs.Mobius
-import Formalism.ResultantValuation.ResultantAdjugateProofs.Window
-import Formalism.ResultantValuation.ResultantAdjugateProofs.Koszul
-import Formalism.ResultantValuation.ResultantAdjugateProofs.Parabolic
-import Formalism.ResultantValuation.BoundedCubic
-import Formalism.ResultantValuation.ResultantAdjugateProofs.Laplace
-import Formalism.ResultantValuation.PrimePairDyadicDisjointAlt
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.WindowSums
+public import Formalism.WindowSums.PowerSeriesRelationList
+public import Formalism.FrobeniusContraction.FrobeniusContractionProofs.ContractBij
+public import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.ToolsB
+public import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.FactorialValuationBoundsProofFact
+public import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.LagrangeIdealSgProof
+public import Mathlib
+public import Formalism.GaloisIrreducibility.NoSolvableTransitive
+public import Formalism.ResultantValuation.ResultantAdjugateProofs.Window
+public import Formalism.ResultantValuation.ResultantAdjugateProofs.Laplace
+public import Formalism.CyclotomicNorms.StatementI
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.WindowSums
 
@@ -77,7 +76,7 @@ theorem aeval_mapQ {R V : Type} [CommRing R] [AddCommGroup V] [Module R V] (T : 
       have : (W.mapQ W T hW : Module.End R (V ⧸ W)) (W.mkQ z) = W.mkQ (T z) := rfl
       rw [this, ih]
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, LinearMap.add_apply, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
   | monomial n r =>
     simp only [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply, hpow,
       map_smul]

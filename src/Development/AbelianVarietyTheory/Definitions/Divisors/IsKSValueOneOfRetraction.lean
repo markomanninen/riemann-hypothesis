@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CrystallineConnectionFormCoboundaryZero
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CrystallineConnectionFormCoboundaryZero
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ def pullOver {Y X : Over S} (f : Y ⟶ X) : Cris.H1 κ (X.hom ≫ t) →ₗ[R] C
 def prim (A : Over S) [GrpObj A] : Submodule R (Cris.H1 κ (A.hom ≫ t)) where
   carrier := {c | ∀ (Y : Over S) (f g : Y ⟶ A),
     pullOver κ t (f * g) c = pullOver κ t f c + pullOver κ t g c}
-  add_mem' {a b} ha hb Y f g := by rw [map_add, ha, hb, map_add, map_add]; abel
+  add_mem' {a b} ha hb Y f g := by rw [map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]; abel
   zero_mem' Y f g := by simp
   smul_mem' r c hc Y f g := by rw [map_smul, hc, map_smul, map_smul, smul_add]
 
@@ -50,16 +54,12 @@ theorem mem_prim_iff (A : Over S) [GrpObj A] (c : Cris.H1 κ (A.hom ≫ t)) :
     intro Y f g
     have e : f * g = lift f g ≫ μ[A] := by
       rw [MonObj.mul_eq_mul, MonObj.comp_mul, lift_fst, lift_snd]
-    rw [e, ← pullOver_pullOver, hc, map_add, pullOver_pullOver, pullOver_pullOver, lift_fst,
+    rw [e, ← pullOver_pullOver, hc, map_add (f := _), pullOver_pullOver, pullOver_pullOver, lift_fst,
       lift_snd]
 
 def AllPrim (A : Over S) [GrpObj A] : Prop := prim κ t A = ⊤
 
 abbrev Crys (A : Over S) [GrpObj A] : Type 1 := Module.Dual R (prim κ t A)
-
-def AllPrim.dualEquiv {A : Over S} [GrpObj A] (h : AllPrim κ t A) :
-    Module.Dual R (Cris.H1 κ (A.hom ≫ t)) ≃ₗ[R] Crys κ t A :=
-  (LinearEquiv.ofTop _ h).dualMap
 
 end Prim
 
@@ -88,11 +88,13 @@ private theorem mul_left_eq_lift_comp_mu {X : Scheme.{0}} {G : Over X} [GrpObj G
   rw [Hom.mul_def, Over.comp_left, Over.lift_left]
 
 theorem of_hom {u : S ⟶ Sp R'} {B : Over S} [GrpObj B] (hσ : IsDPMorphism κ κ' σ)
-    (hb : t = u ≫ spMap σ) (f : B ⟶ A) [IsMonHom f] : GrpMor κ t A κ' u B σ (𝟙 S) f.left where
-  dp := hσ
-  base := by rw [Category.id_comp]; exact hb
-  w := by rw [Category.comp_id]; exact Over.w f
-  mul T x y x₀ y₀ hx hy := by
+    (hb : t = u ≫ spMap σ) (f : B ⟶ A) [IsMonHom f] : GrpMor κ t A κ' u B σ (𝟙 S) f.left := by
+  refine { dp := hσ, base := ?_, w := ?_, mul := ?_ }
+  · rw [Category.id_comp]
+    exact hb
+  · rw [Category.comp_id]
+    exact Over.w f
+  · intro T x y x₀ y₀ hx hy
     rw [← Over.comp_left, MonObj.mul_comp, mul_left_eq_lift_comp_mu, mul_left_eq_lift_comp_mu]
     congr 1
     apply pullback.hom_ext
@@ -127,7 +129,7 @@ theorem pullback_mem_primitive (m : GrpMor κ t A κ' t' A' σ b φ) {c : Cris.H
   let f₀ : Over.mk (Y.hom ≫ b) ⟶ A := Over.homMk (f.left ≫ φ) (pt f)
   let g₀ : Over.mk (Y.hom ≫ b) ⟶ A := Over.homMk (g.left ≫ φ) (pt g)
   have hfg : (f₀ * g₀).left = (f * g).left ≫ φ := m.mul Y f g f₀ g₀ rfl rfl
-  rw [key f₀ f rfl, key g₀ g rfl, key (f₀ * g₀) (f * g) hfg, hc' _ f₀ g₀, map_add]
+  rw [key f₀ f rfl, key g₀ g rfl, key (f₀ * g₀) (f * g) hfg, hc' _ f₀ g₀, map_add (f := _)]
 
 def pull (m : GrpMor κ t A κ' t' A' σ b φ) : prim κ t A →ₛₗ[σ] prim κ' t' A' :=
   (m.isMor.pull1.domRestrict _).codRestrict _ fun c ↦ m.pullback_mem_primitive c.2
@@ -143,11 +145,11 @@ theorem pull_pull {τ : R' →+* R''} {b' : S'' ⟶ S'} {ψ : A''.left ⟶ A'.le
 
 theorem comp {τ : R' →+* R''} {b' : S'' ⟶ S'} {ψ : A''.left ⟶ A'.left}
     (m : GrpMor κ t A κ' t' A' σ b φ) (m' : GrpMor κ' t' A' κ'' t'' A'' τ b' ψ) :
-    GrpMor κ t A κ'' t'' A'' (τ.comp σ) (b' ≫ b) (ψ ≫ φ) where
-  dp := IsDPMorphism.comp _ m'.dp m.dp
-  base := by rw [Category.assoc, m.base, ← Category.assoc, m'.base, Category.assoc, Cris.spMap_comp]
-  w := by rw [Category.assoc, m.w, ← Category.assoc, m'.w, Category.assoc]
-  mul T x y x₀ y₀ hx hy := by
+    GrpMor κ t A κ'' t'' A'' (τ.comp σ) (b' ≫ b) (ψ ≫ φ) := by
+  refine { dp := IsDPMorphism.comp _ m'.dp m.dp, base := ?_, w := ?_, mul := ?_ }
+  · rw [Category.assoc, m.base, ← Category.assoc, m'.base, Category.assoc, Cris.spMap_comp]
+  · rw [Category.assoc, m.w, ← Category.assoc, m'.w, Category.assoc]
+  · intro T x y x₀ y₀ hx hy
     let x₁ : Over.mk (T.hom ≫ b') ⟶ A' := Over.homMk (x.left ≫ ψ) (by
       simp only [Over.mk_hom, Category.assoc]; rw [m'.w, reassoc_of% (Over.w x)])
     let y₁ : Over.mk (T.hom ≫ b') ⟶ A' := Over.homMk (y.left ≫ ψ) (by
@@ -200,7 +202,7 @@ theorem push_mul (f g : A ⟶ B) [IsMonHom f] [IsMonHom g] [IsMonHom (f * g)] :
   have hc : ∀ (Y : Over S) (f g : Y ⟶ B),
       pullOver κ t (f * g) c.1 = pullOver κ t f c.1 + pullOver κ t g c.1 := c.2
   show h (primPull κ t (f * g) c) = h (primPull κ t f c) + h (primPull κ t g c)
-  rw [← map_add]
+  rw [← map_add (f := _)]
   exact congrArg h (Subtype.ext (hc A f g))
 
 theorem push_congr {f g : A ⟶ B} [IsMonHom f] [IsMonHom g] (e : f = g) : push κ t f = push κ t g := by
@@ -284,7 +286,7 @@ theorem GrpMor.IsBC.unique (hm : m.IsBC) {h : Crys κ t A} {h₁ h₂ : Crys κ'
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x c => rw [liftSemi_tmul, map_smul, map_smul, e₁ c, e₂ c]
-  | add z w hz hw => rw [map_add, map_add, map_add, hz, hw]
+  | add z w hz hw => rw [map_add (f := _), map_add (f := _), map_add (f := _), hz, hw]
 
 theorem GrpMor.IsBC.exists (hm : m.IsBC) (h : Crys κ t A) : ∃ h', m.Corr h h' := by
   let g : prim κ t A →ₛₗ[algebraMap R R'] R' :=
@@ -375,8 +377,8 @@ theorem push_mem_Fil (f : A ⟶ B) [IsMonHom f] {h : HdR A} (hh : h ∈ Fil A) :
   rw [e']
   exact hh _ hg'
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem pt_w {D : Type} [CommRing D] [Algebra R D] (v : Over.mk (spMap (algebraMap R D)) ⟶ A) :
     v.left ≫ A.hom ≫ 𝟙 _ = spMap (algebraMap R D) := by
   rw [Category.comp_id]
@@ -385,13 +387,13 @@ theorem pt_w {D : Type} [CommRing D] [Algebra R D] (v : Over.mk (spMap (algebraM
 def tanVal {A : Over (Sp R)} (v : epsR R ⟶ A) : Form (A.hom ≫ 𝟙 _) →ₗ[R] R :=
   TrivSqZeroExt.sndHom R R ∘ₗ (SqExt.dual R).val v.left (pt_w v) ∘ₗ (Form _).subtype
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem tanVal_apply (v : epsR R ⟶ A) (f : Form (A.hom ≫ 𝟙 _)) :
     tanVal v f = TrivSqZeroExt.snd (R := R) ((SqExt.dual R).val v.left (pt_w v) f.1) := rfl
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem tanVal_epsScale (r : R) (v : epsR R ⟶ A) (f : Form (A.hom ≫ 𝟙 _)) :
     tanVal (epsScale r ≫ v) f = r * tanVal v f := by
   have hl : (epsScale r).left = spMap (TrivSqZeroExt.map (r • (LinearMap.id : R →ₗ[R] R))).toRingHom :=
@@ -414,8 +416,8 @@ theorem tanVal_one (f : Form (A.hom ≫ 𝟙 _)) : tanVal (1 : epsR R ⟶ A) f =
   rw [tanVal_apply, SqExt.val_const (SqExt.dual R) η[A].left hx _ _ hy f]
   rfl
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem tanVal_comp (v : epsR R ⟶ A) (g : A ⟶ B)
     (m : IsMor (dp0 R) (B.hom ≫ 𝟙 _) (dp0 R) (A.hom ≫ 𝟙 _) (RingHom.id R) g.left)
     (f : Form (B.hom ≫ 𝟙 _)) : tanVal (v ≫ g) f = tanVal v (m.pullForm f) := by
@@ -575,8 +577,8 @@ theorem IsLieImage.sub_mem {h h' : HdR A} {v : epsR R ⟶ A} (e : IsLieImage h v
   intro f hf
   rw [LinearMap.sub_apply, e.2 f hf, e'.2 f hf, sub_self]
 
-variable (A) in
 
+variable (A) in
 def LieExact : Prop :=
   (∀ h : HdR A, ∃! v, IsLieImage h v) ∧ ∀ v : epsR R ⟶ A, IsTangent v → ∃ h, IsLieImage h v
 
@@ -680,37 +682,24 @@ theorem crysToDR_corr (h : IsGrpPullback A₀ A t i) {κ' : DividedPowers I'} {t
     ((IsMor.pullback1_comp n.isMor (liftMor κ' h').isMor H (fun _ ↦ rfl) rfl c.1).trans
       (IsMor.pullback1_comp (liftMor κ h).isMor m.isMor H (fun _ ↦ rfl) e.symm c.1).symm))
 
-def IsGM (h : IsGrpPullback A₀ A t i) (h' : IsGrpPullback A₀ A' t i') (x : HdR A) (x' : HdR A') : Prop :=
-  ∃ d : Crys κ t A₀, crysToDR κ h d = x ∧ crysToDR κ h' d = x'
-
-theorem IsGM.symm {h : IsGrpPullback A₀ A t i} {h' : IsGrpPullback A₀ A' t i'} {x : HdR A}
-    {x' : HdR A'} (e : IsGM κ h h' x x') : IsGM κ h' h x' x := by
-  obtain ⟨d, h₁, h₂⟩ := e
-  exact ⟨d, h₂, h₁⟩
-
-def gmEquiv {h : IsGrpPullback A₀ A t i} {h' : IsGrpPullback A₀ A' t i'}
-    (H : Function.Bijective (crysToDR κ h)) (H' : Function.Bijective (crysToDR κ h')) :
-    HdR A ≃ₗ[R] HdR A' :=
-  (LinearEquiv.ofBijective _ H).symm.trans (LinearEquiv.ofBijective _ H')
-
 end Lift
 
 section KS
 
-variable (R) in
 
+variable (R) in
 abbrev epsRed : Sp R ⟶ Sp (DualNumber R) := spMap (TrivSqZeroExt.fstHom R R R).toRingHom
 
-variable (R) in
 
+variable (R) in
 def epsDP : DividedPowers (RingHom.ker (TrivSqZeroExt.fstHom R R R).toRingHom) :=
   divided₂ (SqExt.dual R).sq
 
 variable {A : Over (Sp R)} [GrpObj A] {A' : Over (Sp (DualNumber R))} [GrpObj A']
   {i : A.left ⟶ A'.left}
 
-variable (A) in
 
+variable (A) in
 theorem constMor : GrpMor (dp0 R) (𝟙 _) A (epsDP R) (epsRed R) A (algebraMap R (DualNumber R)) (𝟙 _)
     (Over.Hom.left (𝟙 A)) :=
   { dp := Cris.isDPMorphism_of_eq_bot _ rfl _ _
@@ -756,18 +745,11 @@ theorem IsKSValue.smul {f : HdR A} {v : epsR R ⟶ A} (e : IsKSValue h f v) (r :
     smul_eq_mul, smul_eq_mul]
   ext <;> simp
 
-variable (h) in
 
+variable (h) in
 def KSRegular : Prop := ∀ f ∈ Fil A, ∃! v, IsKSValue h f v
 
 variable [IsCommMonObj A] {O : Type} [CommRing O]
-
-def KSRegular.ks (H : KSRegular h) (a : OAct O A) : Fil A →ₗ[R] Serre.Lie a where
-  toFun f := Serre.Lie.mk a (H f.1 f.2).choose (H f.1 f.2).choose_spec.1.choose_spec.2.1
-  map_add' f g := Serre.Lie.ext ((H _ (f + g).2).unique (H _ (f + g).2).choose_spec.1
-    ((H f.1 f.2).choose_spec.1.add (H g.1 g.2).choose_spec.1))
-  map_smul' r f := Serre.Lie.ext ((H _ (r • f).2).unique (H _ (r • f).2).choose_spec.1
-    ((H f.1 f.2).choose_spec.1.smul r))
 
 end KS
 
@@ -863,78 +845,26 @@ theorem IsPolForm.pull {L : LB A.left} {ψ : LinearMap.BilinForm R (Crys κ t A)
   · unfold IsPolForm
     refine ⟨n, fun k ↦ m.pull (a k), fun k ↦ m.pull (b k), ?_, rfl⟩
     have hc := isChern_pull m.isMor hL
-    simp only [map_sum, IsMor.pullCohomologyTwo_cup] at hc
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, IsMor.pullCohomologyTwo_cup] at hc
     exact hc
   · intro x x' y y' hx hy
-    rw [wedgeForm_apply, wedgeForm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [wedgeForm_apply, wedgeForm_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ ↦ ?_
     rw [hx (a k), hy (b k), hx (b k), hy (a k), map_sub, map_mul, map_mul]
-
-theorem isPolForm_zero (L : LB A.left) (h : ∀ i j, L.g i j = 1) : IsPolForm κ t A L 0 := by
-  unfold IsPolForm
-  refine ⟨0, Fin.elim0, Fin.elim0, ?_, ?_⟩
-  · simpa using Cris.isChern_zero κ (A.hom ≫ t) L h
-  · ext x y
-    simp [wedgeForm_apply]
 
 def eig {O : Type} [CommRing O] (κ : DividedPowers I) (t : S ⟶ Sp R) {A : Over S} [GrpObj A]
     (a : OAct O A) (τ : O →+* R) : Submodule R (Crys κ t A) :=
   ⨅ x : O, LinearMap.ker (act κ t a x - τ x • (1 : Module.End R (Crys κ t A)))
 
-theorem mem_eig {O : Type} [CommRing O] {a : OAct O A} {τ : O →+* R} {h : Crys κ t A} :
-    h ∈ eig κ t a τ ↔ ∀ x, act κ t a x h = τ x • h := by
-  simp only [eig, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.smul_apply,
-    Module.End.one_apply, sub_eq_zero]
-
 def IsAdjointFor {O : Type} [CommRing O] (a : OAct O A) (c : O → O)
     (ψ : LinearMap.BilinForm R (Crys κ t A)) : Prop :=
   ∀ (z : O) x y, ψ (act κ t a z x) y = ψ x (act κ t a (c z) y)
 
-def LieExact.filToDual {A : Over (Sp R)} [GrpObj A] [IsCommMonObj A] {O : Type} [CommRing O]
-    (H : LieExact A) (a : OAct O A) (ψ : LinearMap.BilinForm R (HdR A))
-    (hψ : ∀ f ∈ Fil A, ∀ g ∈ Fil A, ψ f g = 0) : Fil A →ₗ[R] Module.Dual R (Serre.Lie a) :=
-  (((Fil A).liftQ (ψ ∘ₗ (Fil A).subtype).flip fun g hg ↦ LinearMap.ext fun f ↦ hψ f.1 f.2 g hg) ∘ₗ
-    (H.quotEquiv a).symm.toLinearMap).flip
-
-theorem LieExact.filToDual_toLie {A : Over (Sp R)} [GrpObj A] [IsCommMonObj A] {O : Type}
-    [CommRing O] (H : LieExact A) (a : OAct O A) (ψ : LinearMap.BilinForm R (HdR A))
-    (hψ : ∀ f ∈ Fil A, ∀ g ∈ Fil A, ψ f g = 0) (f : Fil A) (x : HdR A) :
-    H.filToDual a ψ hψ f (H.toLie a x) = ψ f x := by
-  rw [← H.quotEquiv_mk a x]
-  simp [LieExact.filToDual]
-  rfl
-
 end Pairing
 
 section Zero
-
-theorem primDR_unit (c : primDR (𝟙_ (Over (Sp R)))) : c = 0 := by
-  haveI : IsIso ((𝟙_ (Over (Sp R))).hom ≫ 𝟙 (Sp R)) := by
-    simp only [Over.tensorUnit_hom, Category.comp_id]; exact IsIso.id _
-  exact Subtype.ext (Cris.firstDeRham_base_eq_zero _ c.1)
-
-theorem HdR_unit (h : HdR (𝟙_ (Over (Sp R)))) : h = 0 := by
-  ext c
-  rw [primDR_unit c, map_zero]
-  rfl
-
-theorem lieExact_unit : LieExact (𝟙_ (Over (Sp R))) := by
-  have key : ∀ (h : HdR (𝟙_ (Over (Sp R)))) (v : epsR R ⟶ 𝟙_ (Over (Sp R))), IsLieImage h v := by
-    intro h v
-    have hv : v = 1 := toUnit_unique _ _
-    subst hv
-    rw [HdR_unit h, isLieImage_one_iff]
-    exact Submodule.zero_mem _
-  unfold LieExact
-  exact ⟨fun h ↦ ⟨1, key h 1, fun v _ ↦ toUnit_unique _ _⟩, fun v _ ↦ ⟨0, key 0 v⟩⟩
-
-theorem allPrim_unit : AllPrim (dp0 R) (𝟙 _) (𝟙_ (Over (Sp R))) := by
-  haveI : IsIso ((𝟙_ (Over (Sp R))).hom ≫ 𝟙 (Sp R)) := by
-    simp only [Over.tensorUnit_hom, Category.comp_id]; exact IsIso.id _
-  rw [AllPrim, eq_top_iff]
-  intro c _
-  rw [Cris.firstDeRham_base_eq_zero _ c]
-  exact Submodule.zero_mem _
 
 end Zero
 

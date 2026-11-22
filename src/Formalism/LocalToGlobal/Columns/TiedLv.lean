@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.TiedAtT
-import Formalism.LocalToGlobal.Columns.BtExistsSmulLeOfFg
+module
+
+public import Formalism.LocalToGlobal.Columns.TiedAtT
+public import Formalism.LocalToGlobal.Columns.BtExistsSmulLeOfFg
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -90,10 +94,10 @@ end Pr
 section Dec
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
-  (d : DecoSet E n ST SG) {a : 𝓞 E} (ha : SepElt ST a) (P : ST)
+  (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) {a : 𝓞 E} (ha : SepElt ST a) (P : ST)
+
 
 include ha in
-
 theorem lv_LshKer_eq : d.1.LshKer P = d.1.L ⊔ P.1.asIdeal • d.1.Lsh := by
   classical
   apply le_antisymm
@@ -160,8 +164,8 @@ def dPrk (t : 𝓞 E) : ↥(d.1.LshKer P) →ₗ[𝓞 E] d.lk P :=
 
 variable {t : 𝓞 E} (hat : a * t - 1 ∈ P.1.asIdeal)
 
-include hat in
 
+include hat in
 theorem fv_dPr (z : ↥d.1.Lsh) : d.fv P (dPr d ha P t z) = d.1.f P z.1 := by
   unfold DecoSet.fv dPr
   rw [lvPr_apply, modP.lift_mk]
@@ -173,14 +177,14 @@ theorem fv_dPr (z : ↥d.1.Lsh) : d.fv P (dPr d ha P t z) = d.1.f P z.1 := by
     exact hat
   rw [h1, one_mul]
 
-include hat in
 
+include hat in
 theorem dPrk_te {q : 𝓞 E} (hq : q ∈ P.1.asIdeal) (z : Sp E n) (hz : z ∈ d.1.Lsh) (hf : d.1.f P z = 1)
     (h : q • z ∈ d.1.LshKer P) : dPrk d ha P t ⟨q • z, h⟩ = d.te P q := by
   have hm : q • d.e1 P ∈ d.1.kerAt P := d.2.smul_mem_kerAt P hq (d.first_raising_mem_equivariant P)
   have h1 : d.te P q = dPrk d ha P t ⟨q • d.e1 P, lv_kerAt_le d ha P hm⟩ := by
     unfold DecoSet.te
-    rw [dif_pos hm]
+    rw [dite_eq_left hm]
     exact (lvPr_of_mem P.1 (M := d.1.kerAt P) (M' := d.1.LshKer P) (fun _ hx => lv_smul_LshKer_mem d ha P hx) hat
       ⟨q • d.e1 P, lv_kerAt_le d ha P hm⟩ hm).symm
   rw [h1, ← sub_eq_zero, ← map_sub]
@@ -199,14 +203,14 @@ end Dec
 section Comparison₂
 
 variable {X : Fields} {Pr : Primes X} (hc : CMData X.F X.E) (hPr : Pr.Ok) (σ₀ : X.K →+* ℂ) (u : Pr.Word) {n : ℕ} [NeZero n]
-  {cls : Type} (s : cls → DecoSet X.E n (Pr.vT u) Pr.vGs) (Q : StepCrd Pr σ₀ n fun c => (s c).1.L)
+  {cls : Type} (s : cls → DecoSet (E := X.E) (n := n) (ST := Pr.vT u) (SG := Pr.vGs)) (Q : StepCrd Pr σ₀ n fun c => (s c).1.L)
 
 theorem tie_Ld_eq (c : cls) : Formalism.L2.Forms.dualL (hc.sig : X.E →+* X.E) Q.J (Q.lat c) = (s c).1.Lsh := by
   obtain ⟨J, f, bad, emb, lat, l0, rfl, rfl, rfl, rfl, rfl, rfl⟩ := Q
   exact rlc_span_dualSet hc n _
 
-include hPr in
 
+include hPr in
 theorem tie_Lk_eq (c : cls) (P : Pr.vT u) (I : Ideal (𝓞 X.E)) (hI : I = P.1.asIdeal) :
     Q.lat c ⊔ I • Formalism.L2.Forms.dualL (hc.sig : X.E →+* X.E) Q.J (Q.lat c) = (s c).1.LshKer P := by
   rw [tie_Ld_eq, hI, lv_LshKer_eq (s c) (sepElt_of_ok hPr u) P, Q.hlat]
@@ -300,13 +304,11 @@ section Rec
 variable {d : ColDat} (a : ColArgs d)
 
 theorem lv_Pv_eq (hH : HostHyp d) (u : d.what₂.Word) (v : d.Pr.vT u) : (atTTied a hH u).Pv v = v.1.asIdeal := by
-  first
-    | rfl
-    | exact Ideal.mk_ker
-    | (show RingHom.ker (Ideal.Quotient.mk v.1.asIdeal) = v.1.asIdeal; exact Ideal.mk_ker)
+  change RingHom.ker (Ideal.Quotient.mk v.1.asIdeal) = v.1.asIdeal
+  exact Ideal.mk_ker
+
 
 set_option maxHeartbeats 1000000 in
-
 def levelAgreement (hS : SpStd d.toColBase) (hH : HostHyp d) (u : d.what₂.Word) (i : ℕ) (hi : i ≤ d.R.m) :
     CF.LvTied (D := d.colRec a) u (atTTied a hH u) i hi where
   pr := fun v c => tiePr d.sp.cm d.hPr d.σ₀ u (d.repr u i) (stepCrd a hS hH u i hi) v c

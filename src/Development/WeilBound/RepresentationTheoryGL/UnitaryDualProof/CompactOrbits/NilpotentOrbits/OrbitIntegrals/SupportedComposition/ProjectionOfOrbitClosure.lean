@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ZNClosed
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import GroundTheory.AutomorphicForms.ContragredientTranspose.GelfandKazhdan
-import GroundTheory.AutomorphicForms.WhittakerDistribution
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ZNClosed
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import GroundTheory.AutomorphicForms.ContragredientTranspose.GelfandKazhdan
+public import GroundTheory.AutomorphicForms.WhittakerDistribution
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem piZ_spec (h2 : FibZN (k := k)) (hZ : CR Z) (x : Matrix (Fin n) (Fin n) k
     piZ Z x ∈ Z ∧ qZ Z (piZ Z x) = qZ Z x := by
   have h : ∃ c ∈ Z, qZ Z c = qZ Z x := qZ_Z_exists h2 hZ (qZ Z x)
   unfold piZ
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem piZ_eq_of (h2 : FibZN (k := k)) (hZ : CR Z) {x c : Matrix (Fin n) (Fin n) k} (hc : c ∈ Z)
@@ -119,8 +123,8 @@ omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 theorem continuous_qZ [IsTopologicalRing k] : Continuous (qZ Z) :=
   continuous_pi fun _ => (continuous_const.matrix_mul continuous_id).matrix_trace
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def qLin (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) : Z →ₗ[k] (Fin (Module.finrank k Z) → k) where
   toFun c := qZ Z c
   map_add' a b := by simp [qZ_add]
@@ -310,18 +314,10 @@ section Supp
 
 local instance instT2k'' : T2Space k := GlobalTheory.SplitWeil.t2Space k
 local instance instTDk : TotallyDisconnectedSpace k := GroundTheory.Automorphic.Whittaker.totallyDisconnectedSpace_localField
-local instance instSCk : SecondCountableTopology k := GlobalTheory.SplitWeil.secondCountable k
 local instance instTDM : TotallyDisconnectedSpace (Matrix (Fin n) (Fin n) k) :=
   inferInstanceAs (TotallyDisconnectedSpace (Fin n → Fin n → k))
-local instance instSCM : SecondCountableTopology (Matrix (Fin n) (Fin n) k) :=
-  inferInstanceAs (SecondCountableTopology (Fin n → Fin n → k))
 
 variable {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)}
-
-example : LocallyCompactSpace (Sp k n) := inferInstance
-example : TotallyDisconnectedSpace (Sp k n) := inferInstance
-example : LocallyCompactSpace (GL (Fin n) k) := inferInstance
-example : SecondCountableTopology (Matrix (Fin n) (Fin n) k) := inferInstance
 
 theorem support_in_orbit_closure (h1 : ZNClosed (k := k)) (h2 : FibZN (k := k)) (hZ : CR Z) {c : Matrix (Fin n) (Fin n) k}
     (hc : c ∈ Z) {ξ : (Sp k n → ℂ) →ₗ[ℂ] ℂ} (hs : Supp ξ (Fib Z (qZ Z c))) (hk : Kills ξ (UU ∩ {p | p.1 ∉ ZN Z})) :
@@ -344,7 +340,7 @@ theorem support_in_orbit_closure (h1 : ZNClosed (k := k)) (h2 : FibZN (k := k)) 
   have e : f = (fun q => W.indicator 1 q * f q) + (fun q => Wᶜ.indicator 1 q * f q) := by
     funext q
     by_cases hq : q ∈ W <;> simp [hq]
-  rw [e, map_add]
+  rw [e, map_add (f := _)]
   have z1 : ξ (fun q => W.indicator 1 q * f q) = 0 := by
     refine hs _ hf1 fun q hq => ?_
     have : q ∉ W := fun hqW => hWF hqW hq
@@ -365,9 +361,6 @@ end Supp
 section Baire
 
 local instance instT2k3 : T2Space k := GlobalTheory.SplitWeil.t2Space k
-local instance instSCk3 : SecondCountableTopology k := GlobalTheory.SplitWeil.secondCountable k
-local instance instSCM3 : SecondCountableTopology (Matrix (Fin n) (Fin n) k) :=
-  inferInstanceAs (SecondCountableTopology (Fin n → Fin n → k))
 
 variable {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)}
 
@@ -598,10 +591,8 @@ end Main
 
 section Final
 
-local instance instT2k6 : T2Space k := GlobalTheory.SplitWeil.t2Space k
 
 variable (k) in
-
 theorem orbP_of [CharZero k] (h1 : ZNClosed (k := k)) (h2 : FibZN (k := k)) (h3 : Reps (k := k))
     (h4 : StepMod (k := k)) (h5 : ModBound (k := k)) : OrbP (k := k) := by
   classical

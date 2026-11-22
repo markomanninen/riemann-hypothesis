@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.KummerTheory.KummerIndexLemma.PowerKernel
-import GroundTheory.GlobalFields.ExistenceTheorem.IndexRangePowMonoidHomAdicCompletionMulNorm
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.KummerTheory.KummerIndexLemma.PowerKernel
+public import GroundTheory.GlobalFields.ExistenceTheorem.IndexRangePowMonoidHomAdicCompletionMulNorm
+
+@[expose] public section
 
 noncomputable section
 

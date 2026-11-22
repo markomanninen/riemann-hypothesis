@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsImagQuadIntegers
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimeIdealsCountingBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsImagQuadIntegers
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimeIdealsCountingBounds
+
+@[expose] public section
 
 open Complex ArithmeticFunction MeasureTheory Filter Topology NumberField GlobalTheory.Hk GlobalTheory.Mem
 open scoped Classical
@@ -79,8 +83,8 @@ theorem sum_lamIdeal_le (hK : Module.finrank ℚ K = 2) (n : ℕ) (S : Finset (I
   rw [Real.log_pow] at h4
   exact_mod_cast h4
 
-open QuadraticZeta in
 
+open QuadraticZeta in
 theorem exists_gen {d : ℕ} (hp : d.Prime) (hd : d % 4 = 3) {r : K} (hr : r ^ 2 = -(d : K))
     (h2 : Module.finrank ℚ K = 2) : ∃ ω : 𝓞 K, (∀ z : 𝓞 K, ∃ a b : ℤ, z = a + b * ω) ∧
       ∀ a b : ℤ, Algebra.norm ℤ ((a : 𝓞 K) + b * ω) * 4 = (2 * a + b) ^ 2 + d * b ^ 2 := by
@@ -93,12 +97,12 @@ theorem exists_gen {d : ℕ} (hp : d.Prime) (hd : d % 4 = 3) {r : K} (hr : r ^ 2
   rw [← Algebra.coe_norm_int] at h1
   have h3 : σ (w : K) = (1 + Complex.I * √d) / 2 := by
     have := congrArg σ hw
-    rw [map_mul, map_add, map_one, map_ofNat, hσr] at this
+    rw [map_mul, map_add (f := _), map_one, map_ofNat, hσr] at this
     linear_combination this / 2
   have h4 : σ (((a : 𝓞 K) + b * w : 𝓞 K) : K)
       = ((a + b / 2 : ℝ) : ℂ) + ((b * √d / 2 : ℝ) : ℂ) * Complex.I := by
     have h7 : (((a : 𝓞 K) + b * w : 𝓞 K) : K) = a + b * (w : K) := by simp
-    rw [h7, map_add, map_mul, map_intCast, map_intCast, h3]
+    rw [h7, map_add (f := _), map_mul, map_intCast, map_intCast, h3]
     push_cast
     ring
   rw [h4, Complex.sq_norm, Complex.normSq_add_mul_I] at h1

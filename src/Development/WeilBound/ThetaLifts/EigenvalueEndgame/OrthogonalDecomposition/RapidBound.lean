@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.HodgeTateFromSandwich
-import Development.WeilBound.ThetaLifts.FrameEstimates.ThickFrames
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.HodgeTateFromSandwich
+public import Development.WeilBound.ThetaLifts.FrameEstimates.ThickFrames
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem rapid_bound {φ : UA σ W.J → ℂ} (hφ : IsRapid (Y := W) φ) (N : �
   obtain ⟨C, hC⟩ := hφ.2.2 N
   refine ⟨2 ^ N * max C 0, by positivity, fun T A hi hb h => ?_⟩
   have q1 : 1 ≤ qht h := le_ciInf fun γ => one_le_heightGL F _
-  obtain ⟨γ, hγ⟩ := exists_lt_of_ciInf_lt (f := fun γ : ratU σ W.J => ht (γ.1 * h)) (a := 2 * qht h)
+  obtain ⟨γ, hγ⟩ := exists_lt_of_ciInf_lt (f := fun γ : ratU σ W.J => ht (γ.1 * h))
     (lt_two_mul_self (zero_lt_one.trans_le q1))
   have h2 : (ht (γ.1 * h) : ℝ) ≤ 2 * qht h := by exact_mod_cast hγ.le
   calc _ ≤ ‖φ h‖ * (max A 0 * (2 * qht h : ℝ) ^ N) := by

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ThresholdGeDimension
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ThresholdGeDimension
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -65,7 +69,7 @@ theorem term_shift (γ : X.L) (c : Qc X I) (v : Vsp X.dim) :
       (YB_lat hI hP P.q).2 (neg_mem (wmap_mem_GB hd))
     have e : wmap (IR I) (v - ((Quotient.out c' : X.L) : Vsp X.dim)) =
         -wmap (IR I) d + wmap (IR I) (v + γ - ((Quotient.out c : X.L) : Vsp X.dim)) := by
-      rw [← map_neg, ← map_add]; congr 1; simp only [d, Submodule.coe_sub]; abel
+      rw [← map_neg, ← map_add (f := _)]; congr 1; simp only [d, Submodule.coe_sub]; abel
     rw [e, lemS_periodic _ _ hβ hlat]
 
 theorem PhiE_periodic (γ : Vsp X.dim) (hγ : γ ∈ X.L) (v : Vsp X.dim) :
@@ -90,14 +94,14 @@ theorem cont_wc (c : Qc X I) : Continuous (wc X I P.q c) := by
 
 theorem meas_PhiE : Measurable (PhiE hI hP β) := by
   unfold PhiE
-  refine Measurable.ennreal_tsum fun c => ?_
+  refine Measurable.tsum fun c => ?_
   refine Continuous.measurable ?_ |>.ennreal_ofReal
   exact (cont_wc c).mul ((continuous_pointNormSq_quotient hI hP hβ).comp
     ((wmap (IR I)).continuous.comp (continuous_id.sub continuous_const)))
 
 omit hβ in
 theorem meas_AE : Measurable (AE X I P.q) :=
-  Measurable.ennreal_tsum fun c => (cont_wc c).measurable.ennreal_ofReal
+  Measurable.tsum fun c => (cont_wc c).measurable.ennreal_ofReal
 
 omit hβ in
 theorem wc_nonneg (c : Qc X I) (v : Vsp X.dim) : 0 ≤ wc X I P.q c v := (Real.exp_pos _).le

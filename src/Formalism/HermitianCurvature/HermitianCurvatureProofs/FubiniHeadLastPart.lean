@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostDensOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopCellsOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostDensOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopCellsOfParts
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -188,15 +192,15 @@ theorem lowW_sigQ (v : U.LW (sigQ σh σb) → ℂ) :
       · have h' : Fin.castAdd s j < Fin.castAdd s i ∧
             (sigQ σh σb).symm (Fin.castAdd s j) < (sigQ σh σb).symm (Fin.castAdd s i) := by
           rw [sigQ_symm_castAdd, sigQ_symm_castAdd]; exact h
-        rw [dif_pos h, dif_pos h']; rfl
+        rw [dite_eq_left h, dite_eq_left h']; rfl
       · have h' : ¬ (Fin.castAdd s j < Fin.castAdd s i ∧
             (sigQ σh σb).symm (Fin.castAdd s j) < (sigQ σh σb).symm (Fin.castAdd s i)) := by
           rw [sigQ_symm_castAdd, sigQ_symm_castAdd]; exact h
-        rw [dif_neg h, dif_neg h']
+        rw [dite_eq_right h, dite_eq_right h']
     | right j =>
       rw [Dx2.SL.b_cn]
       simp only [U.lowW, Matrix.add_apply, Matrix.of_apply, Dx2.SL.one_cn, Matrix.zero_apply, zero_add]
-      rw [dif_neg]; intro h; have : p + j.val < i.val := h.1; omega
+      rw [dite_eq_right]; intro h; have : p + j.val < i.val := h.1; omega
   | right i =>
     induction b using Fin.addCases with
     | left j =>
@@ -208,7 +212,7 @@ theorem lowW_sigQ (v : U.LW (sigQ σh σb) → ℂ) :
         rw [sigQ_symm_castAdd, sigQ_symm_natAdd]
         show (σh.symm j).val < p + (σb.symm i).val
         have := (σh.symm j).isLt; omega
-      rw [dif_pos h']; rfl
+      rw [dite_eq_left h']; rfl
     | right j =>
       rw [Dx2.SL.b_nn]
       simp only [U.lowW, Matrix.add_apply, Matrix.of_apply, Dx2.SL.one_nn]
@@ -220,7 +224,7 @@ theorem lowW_sigQ (v : U.LW (sigQ σh σb) → ℂ) :
           exact ⟨show p + j.val < p + i.val by have : j.val < i.val := h.1; omega,
             show p + (σb.symm j).val < p + (σb.symm i).val by
               have : (σb.symm j).val < (σb.symm i).val := h.2; omega⟩
-        rw [dif_pos h, dif_pos h']; rfl
+        rw [dite_eq_left h, dite_eq_left h']; rfl
       · have h' : ¬ (Fin.natAdd p j < Fin.natAdd p i ∧
             (sigQ σh σb).symm (Fin.natAdd p j) < (sigQ σh σb).symm (Fin.natAdd p i)) := by
           rw [sigQ_symm_natAdd, sigQ_symm_natAdd]
@@ -229,7 +233,7 @@ theorem lowW_sigQ (v : U.LW (sigQ σh σb) → ℂ) :
           exact ⟨show j.val < i.val by have : p + j.val < p + i.val := h1; omega,
             show (σb.symm j).val < (σb.symm i).val by
               have : p + (σb.symm j).val < p + (σb.symm i).val := h2; omega⟩
-        rw [dif_neg h, dif_neg h']
+        rw [dite_eq_right h, dite_eq_right h']
 
 end blocks
 
@@ -252,20 +256,20 @@ theorem upper_split (u : G.UT (p + s) → ℂ) :
       congr 1
     | right j =>
       rw [Dx2.SL.b_cn]; simp only [G.upper, Matrix.add_apply, Dx2.SL.one_cn, G.strictUpper, Matrix.of_apply, zero_add]
-      rw [dif_pos (show Fin.castAdd s i < Fin.natAdd p j from show i.val < p + j.val by omega)]; rfl
+      rw [dite_eq_left (show Fin.castAdd s i < Fin.natAdd p j from show i.val < p + j.val by omega)]; rfl
   | right i =>
     induction b using Fin.addCases with
     | left j =>
       rw [Dx2.SL.b_nc]; simp only [G.upper, Matrix.add_apply, Dx2.SL.one_nc, G.strictUpper, Matrix.of_apply,
         zero_add, Matrix.zero_apply]
-      rw [dif_neg]; intro h; have : p + i.val < j.val := h; omega
+      rw [dite_eq_right]; intro h; have : p + i.val < j.val := h; omega
     | right j =>
       rw [Dx2.SL.b_nn]; simp only [G.upper, Matrix.add_apply, Dx2.SL.one_nn, G.strictUpper, Matrix.of_apply]
       congr 1
       by_cases h : i < j
-      · rw [dif_pos h, dif_pos (show Fin.natAdd p i < Fin.natAdd p j from show p + i.val < p + j.val by
+      · rw [dite_eq_left h, dite_eq_left (show Fin.natAdd p i < Fin.natAdd p j from show p + i.val < p + j.val by
           have : i.val < j.val := h; omega)]; rfl
-      · rw [dif_neg h, dif_neg (show ¬ (Fin.natAdd p i < Fin.natAdd p j) from fun h' => h (show i.val < j.val by
+      · rw [dite_eq_right h, dite_eq_right (show ¬ (Fin.natAdd p i < Fin.natAdd p j) from fun h' => h (show i.val < j.val by
           have : p + i.val < p + j.val := h'; omega))]
 
 end ublocks
@@ -506,10 +510,6 @@ def lwSplit : (U.LW (sigQ σh σb) → ℂ) ≃ᵐ ((U.LW σh → ℂ) × (Fin s
       (MeasurableEquiv.prodCongr (MeasurableEquiv.refl _) (MeasurableEquiv.curry (Fin s) (Fin p) ℂ)))
       (MeasurableEquiv.refl _)))
 
-theorem lwSplit_apply (v : U.LW (sigQ σh σb) → ℂ) :
-    lwSplit σh σb v = ((v1 σh σb v, Matrix.of.symm (Am σh σb v)), v2 σh σb v) := by
-  rfl
-
 theorem lwSplit_mp : MeasurePreserving (lwSplit σh σb) volume ((volume.prod volume).prod volume) := by
   have h1 := Dx2.SL.reindex_mp (X := ℂ) (lwEquiv σh σb).symm
   have h2 := measurePreserving_sumPiEquivProdPi
@@ -524,17 +524,13 @@ theorem lwSplit_mp : MeasurePreserving (lwSplit σh σb) volume ((volume.prod vo
     (((MeasurePreserving.id _).prod (Dx2.SL.curry_mp (Fin s) (Fin p))).comp h3).prod (MeasurePreserving.id _)
   exact h4.comp (h2.comp h1)
 
-variable (p s) in
 
+variable (p s) in
 def utSplit : (G.UT (p + s) → ℂ) ≃ᵐ ((G.UT p → ℂ) × (Fin p → Fin s → ℂ)) × (G.UT s → ℂ) :=
   (Dx2.SL.reE (X := ℂ) (utEquiv p s).symm).trans ((MeasurableEquiv.sumPiEquivProdPi (fun _ => ℂ)).trans
     (MeasurableEquiv.prodCongr ((MeasurableEquiv.sumPiEquivProdPi (fun _ => ℂ)).trans
       (MeasurableEquiv.prodCongr (MeasurableEquiv.refl _) (MeasurableEquiv.curry (Fin p) (Fin s) ℂ)))
       (MeasurableEquiv.refl _)))
-
-theorem utSplit_apply (u : G.UT (p + s) → ℂ) :
-    utSplit p s u = ((u1 p s u, Matrix.of.symm (Bm p s u)), u2 p s u) := by
-  rfl
 
 theorem utSplit_mp : MeasurePreserving (utSplit p s) volume ((volume.prod volume).prod volume) := by
   have h1 := Dx2.SL.reindex_mp (X := ℂ) (utEquiv p s).symm
@@ -646,7 +642,7 @@ theorem fub_core (β : ℂ) (σh : Equiv.Perm (Fin p)) (dh : Fin p → ℂ) (σb
   rw [show U.muXiH s 0 σb = volume from rfl]
   congr 1
   funext y
-  simp only [g]
+  dsimp only [g]
   rw [integral_smul]
   rfl
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.CrystallineSubrepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.CrystallineSubrepresentation
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
     (PD : PeriodData G Qp K₀ K B BdR) (LL : Type) [Field LL] [Algebra Qp LL]
 
-include PD in
 
+include PD in
 theorem nontrivial_B : Nontrivial B := by
   by_contra h
   rw [not_nontrivial_iff_subsingleton] at h
@@ -43,7 +47,7 @@ theorem dcris_trivial [FiniteDimensional Qp LL] :
         refine Finset.sum_congr rfl fun i _ => ?_
         simp [c, TensorProduct.smul_tmul]
       | add a b ha hb =>
-        simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, ← ha, ← hb]
+        simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, ← ha, ← hb]
     have hc : ∀ i g y, c i (actVB PD (Representation.trivial LL G LL) g y) = PD.actB g (c i y) := by
       intro i g y
       induction y using TensorProduct.induction_on with
@@ -54,7 +58,7 @@ theorem dcris_trivial [FiniteDimensional Qp LL] :
         simp only [c, actVB, LinearMap.comp_apply, AlgebraTensorModule.map_tmul,
           LinearMap.rTensor_tmul, LinearEquiv.coe_coe, TensorProduct.lid_tmul, h2]
         simp
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
     rw [hsum x]
     refine Submodule.sum_mem _ fun i _ => ?_
     obtain ⟨k, hk⟩ := PD.invB (c i x) fun g => by rw [← hc, hx]
@@ -63,7 +67,7 @@ theorem dcris_trivial [FiniteDimensional Qp LL] :
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [actVB]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem isCrys_trivial [FiniteDimensional Qp LL] : IsCrys PD (Representation.trivial LL G LL) := by
   haveI := nontrivial_B PD
@@ -73,37 +77,5 @@ theorem isCrys_trivial [FiniteDimensional Qp LL] : IsCrys PD (Representation.tri
   · simp
   · exact Module.Flat.lTensor_preserves_injective_linearMap (M := LL)
       (IsScalarTower.toAlgHom Qp K₀ B).toLinearMap (algebraMap K₀ B).injective
-
-def cyc : G →* LLˣ := (Units.map (algebraMap Qp LL).toMonoidHom).comp PD.χ
-
-theorem isCrys_cyc [FiniteDimensional Qp LL] : IsCrys PD (charRep (cyc PD LL)) := by
-  obtain ⟨u, hu⟩ := PD.t_unit
-  let m : LL ⊗[Qp] B ≃ₗ[LL] LL ⊗[Qp] B :=
-    AlgebraTensorModule.congr (LinearEquiv.refl LL LL) (u.mulLeftLinearEquiv Qp B)
-  have hm : ∀ g y, actVB PD (Representation.trivial LL G LL) g (m y) =
-      m (actVB PD (charRep (cyc PD LL)) g y) := by
-    intro g y
-    induction y using TensorProduct.induction_on with
-    | zero => simp
-    | tmul v b =>
-      have hmq : ∀ (q : Qp) (z : LL ⊗[Qp] B), m (q • z) = q • m z := fun q z =>
-        (m : LL ⊗[Qp] B →ₗ[LL] LL ⊗[Qp] B).map_smul_of_tower q z
-      simp [actVB, charRep, cyc, ← Algebra.smul_def, TensorProduct.smul_tmul, hmq]
-      simp [m, hu, PD.t_act]
-    | add a b ha hb => simp only [map_add, ha, hb]
-  have h : (Dcris PD (charRep (cyc PD LL))).map (m : LL ⊗[Qp] B →ₗ[LL] LL ⊗[Qp] B) =
-      Dcris PD (Representation.trivial LL G LL) := by
-    ext x
-    obtain ⟨y, rfl⟩ := m.surjective x
-    simp only [Submodule.mem_map, LinearEquiv.coe_coe, m.injective.eq_iff, exists_eq_right,
-      mem_Dcris, hm]
-  have h1 := isCrys_trivial PD LL
-  unfold IsCrys at h1 ⊢
-  rw [← h1, ← h, LinearEquiv.finrank_map_eq]
-
-theorem exists_crys (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K LL : FinExt l) :
-    IsCrys (P.PD K) (Representation.trivial ↥LL.1 ↥(GK K) ↥LL.1) :=
-  haveI := LL.2
-  isCrys_trivial (P.PD K) ↥LL.1
 
 end GlobalTheory.Survey.CrystallineCyclotomic

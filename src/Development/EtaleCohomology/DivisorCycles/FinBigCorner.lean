@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.BigCorner2
+module
+
+public import Development.EtaleCohomology.DivisorCycles.BigCorner2
+
+@[expose] public section
 
 namespace LateralTheory.Fin.BigCorner
 theorem etale_big_corner_statement_holds_assembled : LateralTheory.DivDb.BigCorner := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DetMulRCReal
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PiCoord
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DetMulRCReal
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PiCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem pi_map_smul {V : Type} [Fintype V] {X Y : V → Type} [∀ v, Measurable
   symm
   refine Measure.pi_eq fun s hs => ?_
   have hmeas : Measurable (fun x : ∀ v, X v => fun v => f v (x v)) :=
-    measurable_pi_lambda _ fun v => (hf v).comp (measurable_pi_apply v)
+    Measurable.of_eval fun v => (hf v).comp (measurable_pi_apply v)
   rw [Measure.map_apply hmeas (MeasurableSet.univ_pi hs)]
   have hpre : (fun x : ∀ v, X v => fun v => f v (x v)) ⁻¹' Set.univ.pi s =
       Set.univ.pi (fun v => f v ⁻¹' s v) := by
@@ -111,8 +115,8 @@ theorem norm_reimE_sq {a b : ℕ} (M : Matrix (Fin a) (Fin b) ℂ) :
   rw [Fintype.sum_bool, Complex.sq_norm, Complex.normSq_apply]
   simp [reimE, reim, Real.norm_eq_abs, sq_abs, sq]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem place_split {V : Type} [Fintype V] {a b : ℕ} {ι : Type} [Fintype ι]
     (L : EuclideanSpace ℝ ι →ₗ[ℝ] (V → Matrix (Fin a) (Fin b) ℂ)) (Q : V → Matrix (Fin a) (Fin b) ℂ → Prop)
     (hQ : ∀ x v, Q v (L x v)) (hQ0 : ∀ v, Q v 0)

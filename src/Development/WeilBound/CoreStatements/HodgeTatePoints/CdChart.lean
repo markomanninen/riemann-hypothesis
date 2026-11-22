@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartOfBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLieBc
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartOfBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLieBc
+
+@[expose] public section
 
 noncomputable section
 namespace PositivityTheory.HtPt.Cd

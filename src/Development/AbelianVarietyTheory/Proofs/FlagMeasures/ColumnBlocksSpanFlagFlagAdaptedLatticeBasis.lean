@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SigmaFiniteOfRealSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SigmaFiniteOfRealSmul
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase GlobalTheory.LeviIso
 
@@ -43,7 +48,44 @@ theorem eq_top_of_map_lattice_mem {E : Type} [Field E] [NumberField E] (φ : E �
 
 theorem spansFlag_flagAt : ∀ (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I.Gf) (a : ℕ) (j : Fin a → ℕ) (S : Fin (a + 1) → Submodule (𝓞 I.E) (Fin I.n → I.E)) (Λ : ∀ i, Submodule (𝓞 I.E) (Fin (j i) → I.E)) (x₀ : I₀.Gf) (T T' : ∀ i, Matrix (Fin I.n) (Fin (j i)) I.E) (T₀ : Matrix (Fin I.n) (Fin I₀.n) I.E), IsAdapted I I₀ e xf j S Λ x₀ T T' T₀ → ∀ v, SpansFlag (fun i => (I.P v)⁻¹ * (T i).map (I.φ v)) (flagAt I S v) := by
   intro I I₀ e xf a j S Λ x₀ T T' T₀ hA v k y
-  obtain ⟨-, -, hlat, -, -, -, -, hS⟩ := hA
+  obtain ⟨-, -, -, hiso, hpair, -, hlam, hS⟩ := hA
+
+  have hspan (i : Fin a) : Submodule.span I.E (Λ i : Set (Fin (j i) → I.E)) = ⊤ := by
+    -- The dual frame projects the ambient lattice onto the i-th coordinate block.
+    let p := ((T' i)ᴴ * I.J).mulVecLin
+    have hJ : I.Jᴴ = I.J := by
+      ext r s
+      simpa [Formalism.UG.cT, starRingEnd_apply] using congrFun (congrFun I.J_herm r) s
+    have hswap (b : Fin a) : (T' i)ᴴ * I.J * T b = ((T b)ᴴ * I.J * T' i)ᴴ := by
+      simp [hJ, Matrix.mul_assoc]
+    have hpT (x : Fin (j i) → I.E) : p (T i *ᵥ x) = x := by
+      simp only [p, Matrix.mulVecLin_apply, Matrix.mulVec_mulVec]
+      rw [hswap, (hpair i).1, Matrix.conjTranspose_one, Matrix.one_mulVec]
+    have hple : Submodule.span I.E (lamX I (1, xf) : Set (Fin I.n → I.E)) ≤
+        (Submodule.span I.E (Λ i : Set (Fin (j i) → I.E))).comap p := by
+      refine Submodule.span_le.2 fun z hz => ?_
+      obtain ⟨u, u', z₀, hu, -, -, rfl⟩ := (hlam z).1 hz
+      have hsum : p (∑ b, T b *ᵥ u b) = u i := by
+        rw [map_sum, Finset.sum_eq_single i, hpT]
+        · intro b _ hbi
+          simp only [p, Matrix.mulVecLin_apply, Matrix.mulVec_mulVec]
+          rw [hswap, (hiso b i).2.2 hbi, Matrix.conjTranspose_zero, Matrix.zero_mulVec]
+        · simp
+      have hsum' : p (∑ b, T' b *ᵥ u' b) = 0 := by
+        rw [map_sum]
+        refine Finset.sum_eq_zero fun b _ => ?_
+        simp only [p, Matrix.mulVecLin_apply, Matrix.mulVec_mulVec]
+        rw [(hiso i b).2.1, Matrix.zero_mulVec]
+      have hp₀ (x : Fin I₀.n → I.E) : p (T₀ *ᵥ x) = 0 := by
+        simp only [p, Matrix.mulVecLin_apply, Matrix.mulVec_mulVec]
+        rw [(hpair i).2.2, Matrix.zero_mulVec]
+      change p _ ∈ Submodule.span I.E (Λ i : Set (Fin (j i) → I.E))
+      rw [map_add, map_add, hsum, hsum', hp₀, add_zero, add_zero]
+      exact Submodule.subset_span (hu i)
+    rw [(GlobalTheory.PointLattice.lamX_selfDual I (1, xf)).2.2.1] at hple
+    refine eq_top_iff.2 fun x _ => ?_
+    have hx := hple (Submodule.mem_top (x := T i *ᵥ x))
+    rwa [Submodule.mem_comap, hpT] at hx
 
   have himg : ∀ u : ∀ i, Fin (j i) → I.E,
       ((I.P v)⁻¹ *ᵥ fun l => I.φ v ((∑ i, T i *ᵥ u i) l)) =
@@ -52,7 +94,8 @@ theorem spansFlag_flagAt : ∀ (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I
     have e1 : (fun l => I.φ v ((∑ i, T i *ᵥ u i) l)) =
         ∑ i, (T i).map (I.φ v) *ᵥ (fun l => I.φ v (u i l)) := by
       funext l
-      simp only [Finset.sum_apply, map_sum, RingHom.map_mulVec, Function.comp_def]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.sum_apply, map_sum, RingHom.map_mulVec, Function.comp_def]
     rw [e1, Matrix.mulVec_sum]
     exact Finset.sum_congr rfl fun i _ => Matrix.mulVec_mulVec _ _ _
   constructor
@@ -79,8 +122,7 @@ theorem spansFlag_flagAt : ∀ (I I₀ : AutInst) (e : I₀.E ≃+* I.E) (xf : I
   · rintro ⟨u, hu, rfl⟩
     refine Submodule.sum_mem _ fun i _ => ?_
     by_cases hik : i.castSucc < k
-    ·
-      have htop := eq_top_of_map_lattice_mem (I.φ v) (Λ i) (hlat i).span_eq_top
+    · have htop := eq_top_of_map_lattice_mem (I.φ v) (Λ i) (hspan i)
         ((flagAt I S v k).comap (Matrix.mulVecLin ((I.P v)⁻¹ * (T i).map (I.φ v)))) (by
           intro t ht
           rw [Submodule.mem_comap, Matrix.mulVecLin_apply]

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory
@@ -40,11 +45,11 @@ theorem weyl_number_operator_commutation
     rw [h]
     exact Finset.sum_congr rfl fun j _ => hFs _ _
   have hca : ∀ u v, c (u + v) = c u + c v := by
-    intro u v; rw [hc, hc, hc, map_add, hadd, hadd, smul_add]; abel
+    intro u v; rw [hc, hc, hc, map_add (f := _), hadd, hadd, smul_add]; abel
   have hcs : ∀ (r : ℝ) v, c (r • v) = (r : ℂ) • c v := by
     intro r v; rw [hc, hc, map_smul, hsmul, hsmul, smul_sub, smul_comm Complex.I (r : ℂ)]
   have haa' : ∀ u v, a (u + v) = a u + a v := by
-    intro u v; rw [ha, ha, ha, map_add, hadd, hadd, smul_add]; abel
+    intro u v; rw [ha, ha, ha, map_add (f := _), hadd, hadd, smul_add]; abel
   have has : ∀ (r : ℝ) v, a (r • v) = (r : ℂ) • a v := by
     intro r v
     rw [ha, ha, map_smul, hsmul, hsmul, smul_comm Complex.I (r : ℂ), ← smul_add, smul_neg]

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.EqZeroOfNotPrimary
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.EqZeroOfNotPrimary
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,7 +143,7 @@ theorem valuation_conj (x : K.E) : (IsDiscreteValuationRing.maximalIdeal K.O).va
   have hmono : ∀ a b : K.E, b ≠ 0 → v a ≤ v b → v (K.c a) ≤ v (K.c b) := by
     intro a b hb h
     have h1 : v (a / b) ≤ 1 := by
-      rw [map_div₀]; exact div_le_one_of_le₀ h zero_le'
+      rw [map_div₀]; exact div_le_one_of_le₀ h zero_le
     have h2 := val_conj_le _ h1
     rw [map_div₀, map_div₀, div_le_one₀ (zero_lt_iff.2 (by simpa using hb))] at h2
     exact h2
@@ -193,9 +197,11 @@ theorem eta_gram (B : InvAlg K) (x : B.A) (b : Module.Basis (Fin (Module.finrank
     ext i j
     simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.transpose_apply, RingHom.mapMatrix_apply,
       Matrix.map_apply, InvAlg.herm, RingHom.coe_coe]
-    rw [hb i, hb j, map_sum, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hb i, hb j, map_sum, Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
-    rw [Finset.mul_sum, Finset.sum_mul, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, Finset.sum_mul, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Algebra.smul_def (M l j), map_mul B.σ, B.σ_alg, ← Algebra.smul_def, mul_smul_comm, mul_smul_comm,
       smul_mul_assoc, map_smul, map_smul]
@@ -432,7 +438,7 @@ theorem adjoin_stable (B : InvAlg K) (hu : B.g * B.σ B.g = 1) (hi : IsIntegral 
     have h1 : eval₂ (algebraMap K.O B.A) B.g p.reverse = 0 :=
       (eval₂_reverse_eq_zero_iff (algebraMap K.O B.A) (B.σ B.g) p).2 h0
     rw [← X_mul_divX_add p.reverse, coeff_zero_reverse, hp.leadingCoeff, ← aeval_def] at h1
-    simp only [map_add, map_mul, aeval_X, map_one] at h1
+    simp only [map_add (f := _), map_mul, aeval_X, map_one] at h1
     have h2 : B.σ B.g = -aeval B.g p.reverse.divX := by
       linear_combination B.σ B.g * h1 - aeval B.g p.reverse.divX * hu
     rw [h2]

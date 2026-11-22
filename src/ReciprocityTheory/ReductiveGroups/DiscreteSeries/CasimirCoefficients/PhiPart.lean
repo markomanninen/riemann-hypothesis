@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCas
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCas
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ private theorem fderiv_PhiM_of_lead_curve (μ : Fin n → ℤ) {z V : Matrix (Fi
     simp only [Function.comp_apply, PhiM, hlead, mul_zpow, Finset.prod_mul_distrib, hp]
   have hpd : ∀ i : Fin n, HasDerivAt (p i) (∑ a ∈ Finset.range ((i : ℕ) + 1), D a) 0 := by
     intro i
-    have h := HasDerivAt.finset_prod (u := Finset.range ((i : ℕ) + 1)) (x := (0 : ℂ))
+    have h := HasDerivAt.finsetProd (u := Finset.range ((i : ℕ) + 1)) (x := (0 : ℂ))
       (f := fun a t => 1 + t * D a) (f' := fun a => D a)
       (fun a _ => by simpa using ((hasDerivAt_id (0 : ℂ)).mul_const (D a)).const_add 1)
     refine (h.congr_deriv (by simp [Finset.prod_apply])).congr_of_eventuallyEq
@@ -86,7 +90,7 @@ private theorem fderiv_PhiM_of_lead_curve (μ : Fin n → ℤ) {z V : Matrix (Fi
   have h2 : HasDerivAt (fun t => (∏ i : Fin n, p i t ^ (-(μ i - muNext μ i))) * PhiM μ z)
       ((∑ i : Fin n, (((-(μ i - muNext μ i)) : ℤ) : ℂ) * ∑ a ∈ Finset.range ((i : ℕ) + 1), D a) *
         PhiM μ z) 0 := by
-    have h := (HasDerivAt.finset_prod (u := Finset.univ) (fun i _ => hfd i)).mul_const (PhiM μ z)
+    have h := (HasDerivAt.finsetProd (u := Finset.univ) (fun i _ => hfd i)).mul_const (PhiM μ z)
     refine (h.congr_deriv (by simp [hp0, Finset.prod_apply])).congr_of_eventuallyEq
       (Filter.Eventually.of_forall fun t => ?_)
     simp [Finset.prod_apply]
@@ -254,7 +258,7 @@ theorem phiM_part (μ : Fin n → ℤ) {z B : Matrix (Fin n) (Fin n) ℂ} (hz : 
     abel
   have d1 : ∑ a, (μ a : ℂ) * X1 a a = ∑ a, (μ a : ℂ) * B a a := by simp [hX1]
   have d2 : ∑ a, (μ a : ℂ) * X2 a a = ∑ a, (μ a : ℂ) * B a a := by simp [hX2]
-  rw [hsplit, map_add, map_add, fderiv_phiM_lower μ hz hL, fderiv_phiM_upper μ hz hU, d1, d2]
+  rw [hsplit, map_add (f := _), map_add (f := _), fderiv_phiM_lower μ hz hL, fderiv_phiM_upper μ hz hU, d1, d2]
   ring
 
 end ReciprocityTheory.ChartRestriction.DS.S7

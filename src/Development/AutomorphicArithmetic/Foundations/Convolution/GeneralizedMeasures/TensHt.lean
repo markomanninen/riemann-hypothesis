@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdelicNormDetLeHeightPow
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocalHeightDeterminant
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdelicNormDetLeHeightPow
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocalHeightDeterminant
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -89,7 +93,7 @@ private theorem module_le (q : Pl F) (x : AdelicGLn.FiniteAdelicGL E n)
     IdeleGroup.ideleModule_eq, heightOff, hP, one_mul]
   simp only [hg, hi, norm_one, one_pow, Finset.prod_const_one, one_mul]
   rw [e1, e2, ← Finset.prod_pow]
-  refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun v _ => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun v _ => ?_
   rw [hf]
   by_cases hb : AdeleBaseChange.below F v = q
   · have := hq ⟨v, liesOver_of_below hb⟩

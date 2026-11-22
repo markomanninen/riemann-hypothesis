@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtLAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtLAlgebraMap
+
+@[expose] public section
+
 open GlobalTheory.LogDerProj
 
 noncomputable section
@@ -40,7 +45,7 @@ theorem exists_pow_smul_eq_of_res_eq {k R S : Type} [Field k] [CommRing R] [Comm
       have e2 : D₂.1 (φ a) = 0 := D₂.2.1 a
       show (c : R) * E (φ a) = 0
       rw [hE, Derivation.sub_apply, e1, e2, sub_self, mul_zero]
-    | add x y _ _ hx hy => rw [map_add, mul_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), mul_add, hx, hy, add_zero]
     | mul x y _ _ hx hy =>
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, mul_add]
       calc (c : R) * (x * E y) + (c : R) * (y * E x) = x * ((c : R) * E y) + y * ((c : R) * E x) := by ring

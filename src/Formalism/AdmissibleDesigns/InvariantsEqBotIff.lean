@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem isCrys_congr (h : IsCrys PD ρ) : IsCrys PD ρ' := by
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [E, actVB, he]
-    | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
   have hD : Dcris PD ρ = (Dcris PD ρ').comap (E : V ⊗[Qp] B →ₗ[LL] V' ⊗[Qp] B) := by
     ext x
     simp only [Dcris, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
@@ -124,7 +128,7 @@ theorem filV_map_tmul (a : ℤ) (y : V ⊗[Qp] ↥((PD.Fil a).restrictScalars Qp
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
 
 omit he in
 theorem congr_symm_tmul (x : V ⊗[Qp] BdR) :
@@ -133,7 +137,7 @@ theorem congr_symm_tmul (x : V ⊗[Qp] BdR) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 theorem mem_fildR_iff (τ : K →ₐ[Qp] LL) (a : ℤ) (x : V ⊗[Qp] BdR) :
     x ∈ FildR PD ρ τ a ↔ AlgebraTensorModule.congr e (LinearEquiv.refl Qp BdR) x ∈ FildR PD ρ' τ a := by
@@ -143,14 +147,14 @@ theorem mem_fildR_iff (τ : K →ₐ[Qp] LL) (a : ℤ) (x : V ⊗[Qp] BdR) :
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [E, actVdR, he]
-    | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
   have hM : ∀ c x, E (mulVdR (K := K) (BdR := BdR) (V := V) (LL := LL) c x) =
       mulVdR (K := K) (BdR := BdR) (V := V') (LL := LL) c (E x) := by
     intro c x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [E, mulVdR]
-    | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
   have hF : x ∈ FilV PD (LL := LL) (V := V) a ↔ E x ∈ FilV PD (LL := LL) (V := V') a := by
     simp only [FilV, LinearMap.mem_range]
     constructor
@@ -245,21 +249,6 @@ variable {Kf : Type} [Field Kf] {Γ : Type} [Group Γ] {V V' : Type} [AddCommGro
   (e : V ≃ₗ[Kf] V') (he : ∀ g x, e (ρ g x) = ρ' g (e x))
 include he
 
-theorem isSS_congr (h : IsSS ρ) : IsSS ρ' := by
-  intro W hW
-  obtain ⟨W', hW', hc⟩ := h (W.comap (e : V →ₗ[Kf] V')) (fun g v hv => by
-    simp only [Submodule.mem_comap, LinearEquiv.coe_coe, he] at hv ⊢
-    exact hW g _ hv)
-  refine ⟨W'.map (e : V →ₗ[Kf] V'), ?_, ?_⟩
-  · rintro g _ ⟨v, hv, rfl⟩
-    exact ⟨ρ g v, hW' g v hv, he g v⟩
-  · have h1 : IsCompl ((W.comap (e : V →ₗ[Kf] V')).map (e : V →ₗ[Kf] V')) (W'.map (e : V →ₗ[Kf] V')) :=
-      (Submodule.orderIsoMapComap e).isCompl_iff.1 hc
-    have h2 : (W.comap (e : V →ₗ[Kf] V')).map (e : V →ₗ[Kf] V') = W :=
-      Submodule.map_comap_eq_of_surjective e.surjective W
-    rw [h2] at h1
-    exact h1
-
 end SS
 
 section Abs
@@ -268,53 +257,6 @@ variable {Kf : Type} [Field Kf] {Γ : Type} [Group Γ] {V V' : Type} [AddCommGro
   [AddCommGroup V'] [Module Kf V'] {ρ : Representation Kf Γ V} {ρ' : Representation Kf Γ V'}
   (e : V ≃ₗ[Kf] V') (he : ∀ g x, e (ρ g x) = ρ' g (e x))
 include he
-
-theorem absIrrDistinct_congr (h : AbsIrrDistinct ρ) : AbsIrrDistinct ρ' := by
-  obtain ⟨ι, hι, hd, Vs, hs, hint, hne, hspan, hdist⟩ := h
-  let Vs' : ι → Submodule Kf V' := fun j => (Vs j).map (e : V →ₗ[Kf] V')
-  have hs' : ∀ j, Stable ρ' (Vs' j) := by
-    rintro j g _ ⟨v, hv, rfl⟩
-    exact ⟨ρ g v, hs j g v hv, he g v⟩
-  let ej : ∀ j, Vs j ≃ₗ[Kf] Vs' j := fun j => e.submoduleMap (Vs j)
-  have hej : ∀ j g (v : Vs j), ej j ((ρ g).restrict (hs j g) v) = (ρ' g).restrict (hs' j g) (ej j v) := by
-    intro j g v
-    apply Subtype.ext
-    exact he g v
-  refine ⟨ι, hι, hd, Vs', hs', ?_, ?_, ?_, ?_⟩
-  · rw [DirectSum.isInternal_submodule_iff_iSupIndep_and_iSup_eq_top] at hint ⊢
-    obtain ⟨hind, htop⟩ := hint
-    refine ⟨hind.map_orderIso (Submodule.orderIsoMapComap e), ?_⟩
-    show ⨆ j, (Vs j).map (e : V →ₗ[Kf] V') = ⊤
-    rw [← Submodule.map_iSup, htop, Submodule.map_top, LinearEquiv.range]
-  · intro j hj
-    apply hne j
-    have h1 := congrArg (Submodule.comap (e : V →ₗ[Kf] V')) hj
-    rwa [Submodule.comap_map_eq_of_injective e.injective, Submodule.comap_bot, LinearEquiv.ker] at h1
-  · intro j
-    let c : Module.End Kf (Vs j) ≃ₗ[Kf] Module.End Kf (Vs' j) := LinearEquiv.conj (ej j)
-    have hc : ∀ g, c ((ρ g).restrict (hs j g)) = (ρ' g).restrict (hs' j g) := by
-      intro g
-      apply LinearMap.ext
-      intro v
-      rw [LinearEquiv.conj_apply]
-      simp only [LinearMap.comp_apply, LinearEquiv.coe_coe]
-      rw [hej, LinearEquiv.apply_symm_apply]
-    have hr : Set.range (fun g => (ρ' g).restrict (hs' j g)) =
-        (c : Module.End Kf (Vs j) →ₗ[Kf] Module.End Kf (Vs' j)) '' Set.range (fun g => (ρ g).restrict (hs j g)) := by
-      ext f
-      simp only [Set.mem_range, Set.mem_image]
-      constructor
-      · rintro ⟨g, rfl⟩
-        exact ⟨_, ⟨g, rfl⟩, hc g⟩
-      · rintro ⟨_, ⟨g, rfl⟩, rfl⟩
-        exact ⟨g, (hc g).symm⟩
-    rw [hr, ← Submodule.map_span, hspan j, Submodule.map_top, LinearEquiv.range]
-  · intro j j' hjj f hf
-    apply hdist j j' hjj (((ej j).trans f).trans (ej j').symm)
-    intro g v
-    simp only [LinearEquiv.trans_apply]
-    rw [hej, hf]
-    conv_lhs => rw [← LinearEquiv.apply_symm_apply (ej j') (f (ej j v)), ← hej, LinearEquiv.symm_apply_apply]
 
 end Abs
 

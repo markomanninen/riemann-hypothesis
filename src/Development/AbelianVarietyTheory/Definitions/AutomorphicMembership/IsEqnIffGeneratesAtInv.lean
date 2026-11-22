@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
-import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothOfRelativeDimensionPspace
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimOfEtaleMvPolynomial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothOfRelativeDimensionPspace
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimOfEtaleMvPolynomial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,8 +26,8 @@ variable {X : Scheme.{0}} [IsIntegral X]
 theorem gen_mem {U : X.Opens} {x : X} (hx : x ∈ U) : genericPoint X ∈ U :=
   ((genericPoint_spec X).mem_open_set_iff U.isOpen).2 ⟨x, trivial, hx⟩
 
-omit [IsIntegral X] in
 
+omit [IsIntegral X] in
 theorem memInf {U V : X.Opens} {x : X} (h : x ∈ U) (h' : x ∈ V) : x ∈ U ⊓ V := ⟨h, h'⟩
 
 def fnOf (U : X.Opens) (h : genericPoint X ∈ U) : Γ(X, U) →+* X.functionField :=
@@ -227,8 +231,8 @@ theorem germOf_eq_iff {x : X} {f g : X.functionFieldˣ} :
   change UnitAt x ((f⁻¹ * g : X.functionFieldˣ) : X.functionField) ↔ _
   rw [Units.val_mul, Units.val_inv_eq_inv_val, div_eq_inv_mul]
 
-variable (X) in
 
+variable (X) in
 def cartierGroup : AddSubgroup (∀ x : X, Germ x) where
   carrier := {D | ∀ x, ∃ U : X.Opens, x ∈ U ∧ ∃ f, ∀ y ∈ U, D y = germOf y f}
   zero_mem' _ := ⟨⊤, trivial, 1, fun _ _ => rfl⟩
@@ -240,8 +244,8 @@ def cartierGroup : AddSubgroup (∀ x : X, Germ x) where
     have ⟨U, hU, f, hf⟩ := hD x
     ⟨U, hU, f⁻¹, fun y hy => congrArg (- ·) (hf y hy)⟩
 
-variable (X) in
 
+variable (X) in
 def CartierDiv : Type := cartierGroup X
 
 instance : AddCommGroup (CartierDiv X) := inferInstanceAs (AddCommGroup (cartierGroup X))
@@ -319,8 +323,6 @@ def principal (g : X.functionFieldˣ) : CartierDiv X :=
   show cartierGroup X from ⟨fun x => germOf x g, fun _ => ⟨⊤, trivial, g, fun _ _ => rfl⟩⟩
 
 theorem isEqn_principal (g : X.functionFieldˣ) (x : X) : (principal g).IsEqn x g := rfl
-
-theorem principal_one : principal (1 : X.functionFieldˣ) = 0 := rfl
 
 theorem principal_mul (g g' : X.functionFieldˣ) :
     principal (g * g') = principal g + principal g' := rfl
@@ -508,12 +510,6 @@ theorem notMem_supp_iff : x ∉ D.supp ↔ D.GeneratesAt x 1 := by
   obtain ⟨g, hg⟩ := D.exists_isEqn x
   rw [hg.mem_supp_iff, not_not, hg.generatesAt_iff, one_mul]
 
-theorem Eff.mem_supp_iff (h : D.Eff) : x ∈ D.supp ↔ D.VanishesAt x 1 := by
-  obtain ⟨g, hg⟩ := D.exists_isEqn x
-  rw [hg.mem_supp_iff, hg.vanishesAt_iff, one_mul, zeroAt_iff]
-  have r := eff_iff.1 h x g hg
-  exact ⟨fun hn => ⟨r, hn⟩, fun hz => hz.2⟩
-
 theorem genericPoint_notMem_supp (D : CartierDiv X) : genericPoint X ∉ D.supp := notMem_supp_iff.2 (generatesAt_genericPoint D one_ne_zero)
 
 theorem supp_ne_top (D : CartierDiv X) : D.supp ≠ ⊤ := by
@@ -609,8 +605,8 @@ theorem Presents.unique (h : Presents D L r) (h' : Presents E L r) : D = E := by
   obtain ⟨i, hi⟩ := exists_chart h.isLB x
   exact ⟨r i, h.isEqn i x hi, h'.isEqn i x hi⟩
 
-open Classical in
 
+open Classical in
 def frameRat (L : LB X) (i₀ : L.ι) (h₀ : genericPoint X ∈ L.U i₀) (i : L.ι) : X.functionFieldˣ :=
   if h : genericPoint X ∈ L.U i then
     Units.map (fnOf (L.U i ⊓ L.U i₀) (memInf h h₀)).toMonoidHom (L.g i i₀) else 1
@@ -618,7 +614,7 @@ def frameRat (L : LB X) (i₀ : L.ι) (h₀ : genericPoint X ∈ L.U i₀) (i : 
 theorem val_frameRat (i₀ : L.ι) (h₀ : genericPoint X ∈ L.U i₀) (i : L.ι)
     (h : genericPoint X ∈ L.U i) :
     (frameRat L i₀ h₀ i : X.functionField) = fnOf _ (memInf h h₀) (L.g i i₀ : Γ(X, L.U i ⊓ L.U i₀)) := by
-  rw [frameRat, dif_pos h]
+  rw [frameRat, dite_eq_left h]
   rfl
 
 private theorem units_val_res_eq_resG {U V : X.Opens} (e : V ≤ U) (u : Γ(X, U)ˣ) :
@@ -676,22 +672,22 @@ private theorem val_res_eq_resG {U V : X.Opens} (e : V ≤ U) (u : Γ(X, U)ˣ) :
     ((res e u : Γ(X, V)ˣ) : Γ(X, V)) = resG X e (u : Γ(X, U)) := by
   rfl
 
-theorem isLB_toLB (D : CartierDiv X) : (toLB D).IsLB where
+theorem isLB_toLB (D : CartierDiv X) : (toLB D).IsLB := {
   cover := (by
       refine eq_top_iff.2 fun x _ => ?_
       obtain ⟨U, hx, g, hg⟩ := D.exists_isEqn_nhds x
       exact TopologicalSpace.Opens.mem_iSup.2 ⟨⟨(U, g), gen_mem hx, hg⟩, hx⟩)
-    ; g_self := fun i => (by
+    , g_self := fun i => (by
       apply Units.ext
       apply fn_ext
       intro hU
       rw [val_res_eq_resG, fnOf_resG, fnOf_toLB_g, div_self (Units.ne_zero _), Units.val_one, map_one])
-    ; cocycle := fun i j k => (by
+    , cocycle := fun i j k => (by
       apply Units.ext
       apply fn_ext
       intro hU
       simp only [Units.val_mul, map_mul, val_res_eq_resG, fnOf_resG, fnOf_toLB_g]
-      rw [div_mul_div_cancel₀ (Units.ne_zero _)])
+      rw [div_mul_div_cancel₀ (Units.ne_zero _)]) }
 
 theorem presents_toLB (D : CartierDiv X) : Presents D (toLB D) fun i => i.1.2 := by
   exact ⟨isLB_toLB D, fun i j h => by rw [fnOf_toLB_g i j h, div_mul_cancel₀ _ (Units.ne_zero _)],
@@ -706,7 +702,7 @@ namespace Presents
 def rat (h : Presents D L r) : L.Sec →ₗ[Γ(X, ⊤)] X.functionField where
   toFun s := fnOf _ (exists_chart h.isLB (genericPoint X)).choose_spec (s.f _) /
     r (exists_chart h.isLB (genericPoint X)).choose
-  map_add' s t := by rw [LB.add_f, map_add, add_div]
+  map_add' s t := by rw [LB.add_f, map_add (f := _), add_div]
   map_smul' a s := by
     rw [LB.smul_f, map_mul, fnOf_resG, mul_div_assoc]
     rfl
@@ -1010,8 +1006,8 @@ theorem isDivOfForm_canonical : IsDivOfForm (canonical p d) (baseForm p d) := by
   rw [hE.iff_unitAt, key, mul_div_cancel_left₀ _ (Units.ne_zero _)]
   exact hu
 
-variable {p d} in
 
+variable {p d} in
 theorem IsDivOfForm.unique {η : RatForms p d} (hη : η ≠ 0) (h : IsDivOfForm D η)
     (h' : IsDivOfForm E η) : D = E := by
   apply ext_of_isEqn
@@ -1025,9 +1021,9 @@ theorem IsDivOfForm.unique {η : RatForms p d} (hη : η ≠ 0) (h : IsDivOfForm
   exact ⟨Units.mk0 a ha0, h U ω hω x hx _ (by rw [Units.val_mk0, ha]),
     h' U ω hω x hx _ (by rw [Units.val_mk0, ha])⟩
 
+
 omit [SmoothOfRelativeDimension d p] in
 variable {p d} in
-
 theorem IsDivOfForm.smul {η : RatForms p d} (h : IsDivOfForm D η) (g : X.functionFieldˣ) :
     IsDivOfForm (D + principal g) ((g : X.functionField) • η) := by
   intro U ω hω x hx g' e

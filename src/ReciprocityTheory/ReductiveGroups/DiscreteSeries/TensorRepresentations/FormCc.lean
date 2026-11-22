@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CcARatioZero
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.FmFormBAddLeft
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CoefOfEmb
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DataGenSubIrred
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CcARatioZero
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.FmFormBAddLeft
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CoefOfEmb
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DataGenSubIrred
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -70,9 +74,9 @@ theorem form_cc (dual : Bool) {ε : Fin n → Bool} {lam lam' : Fin n → ℝ} {
 
   let b : smD ε (rreg ε) →ₗ⋆[ℂ] smD ε (rreg ε) →ₗ[ℂ] ℂ :=
     LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) (fun x y => formB ε (ι x) (ι y))
-      (fun x x' y => by simp only [map_add, fm_formB_add_left])
+      (fun x x' y => by simp only [map_add (f := _), fm_formB_add_left])
       (fun a x y => by simp only [map_smul, formB_smul_left, smul_eq_mul])
-      (fun x y y' => by simp only [map_add, formB_add_right])
+      (fun x y y' => by simp only [map_add (f := _), formB_add_right])
       (fun a x y => by simp only [map_smul, formB_smul_right, RingHom.id_apply, smul_eq_mul])
   have hb : ∀ x y, b x y = formB ε (ι x) (ι y) := fun _ _ => rfl
   obtain ⟨c, hcb⟩ := data_form_scalar hgap' hσ hD hV' hc' hVK' b
@@ -109,7 +113,7 @@ theorem form_cc (dual : Bool) {ε : Fin n → Bool} {lam lam' : Fin n → ℝ} {
       q f ∈ genSub (smE ε (rreg ε)) (datumV ε Ψ' v₀') ∧ P f = ι (q f) := by
     intro f hf
     have h := hqex f hf
-    have e : q f = h.choose := dif_pos h
+    have e : q f = h.choose := dite_eq_left h
     rw [e]
     exact h.choose_spec
   refine ⟨c.re, q, ?_, hform, hq, ?_, ?_, ?_⟩

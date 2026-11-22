@@ -1,21 +1,25 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndVerb
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartOf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpActOf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTiePf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqChart
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.EvalSinglePointId
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.KillAddVal
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PsiCover
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HarmInvPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFixAsm
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrRatio
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpGauge
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartDirectionsAreEigenvectors
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.FrTruncFixIff
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndVerb
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartOf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpActOf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTiePf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqChart
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.EvalSinglePointId
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.KillAddVal
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PsiCover
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HarmInvPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFixAsm
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrRatio
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpGauge
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartDirectionsAreEigenvectors
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.FrTruncFixIff
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+
+@[expose] public section
 
 namespace GlobalTheory
 

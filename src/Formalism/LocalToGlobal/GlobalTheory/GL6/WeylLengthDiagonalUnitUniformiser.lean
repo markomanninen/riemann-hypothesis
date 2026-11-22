@@ -1,9 +1,16 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.BwAValIntegralNonneg
-import Formalism.GL3MeanSquares.PrimeOrderRamificationResults
-import Mathlib
-import Formalism.GL3MeanSquares.HookFormulaTorsion.DoubleCosetDecompositionAll
-import Formalism.GL3MeanSquares.HookFormulaTorsion.InvariantKernelTraceVanishes
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.BwAValIntegralNonneg
+public import Mathlib
+public import Formalism.GL3MeanSquares.FourierTransformKernelSurjective
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.FourierCommutesHeckeScalar
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.LengthQuotientBoundGeneral
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.LemmaCTwistRamified
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.DoubleCosetDecompositionAll
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.InvariantKernelTraceVanishes
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +58,7 @@ theorem weyl_word_homogeneous_nat (hn : n ≤ r) (ν : Fin n → ℕ) (hν : Ant
     intro d hd
     simp at hd
   · obtain ⟨d, hd⟩ := MvPolynomial.ne_zero_iff.mp h0
-    have key : ∀ d', MvPolynomial.coeff d' (Formalism.GradedWeylDivisibility.applyWord R w (Formalism.GradedWeylDivisibility.hw R hn ν)) ≠ 0 →
+    have key : ∀ d', AddMonoidAlgebra.coeff (Formalism.GradedWeylDivisibility.applyWord R w (Formalism.GradedWeylDivisibility.hw R hn ν)) d' ≠ 0 →
         Finsupp.weight (Formalism.GradedWeylDivisibility.rowW r n) d' = Finsupp.weight (Formalism.GradedWeylDivisibility.rowW r n) d := by
       intro d' hd'
       funext a
@@ -102,7 +109,7 @@ theorem weyl_homogeneous_component_mem (hn : n ≤ r) (ν : Fin n → ℕ) (hν 
     rw [map_zero]
     exact Submodule.zero_mem _
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [map_smul]
@@ -110,7 +117,7 @@ theorem weyl_homogeneous_component_mem (hn : n ≤ r) (ν : Fin n → ℕ) (hν 
 
 theorem weyl_support_row_weight_sum (hn : n ≤ r) (ν : Fin n → ℕ) (hν : Antitone ν)
     (f : MvPolynomial (Fin r × Fin n) R) (hf : f ∈ Formalism.GradedWeylDivisibility.weyl R r n hn ν) :
-    ∀ d, coeff d f ≠ 0 → ∑ a, Finsupp.weight (Formalism.GradedWeylDivisibility.rowW r n) d a = ∑ a, Formalism.GradedWeylDivisibility.rowNu (r := r) ν a := by
+    ∀ d, AddMonoidAlgebra.coeff f d ≠ 0 → ∑ a, Finsupp.weight (Formalism.GradedWeylDivisibility.rowW r n) d a = ∑ a, Formalism.GradedWeylDivisibility.rowNu (r := r) ν a := by
   unfold Formalism.GradedWeylDivisibility.weyl at hf
   induction hf using Submodule.span_induction with
   | mem x hx =>
@@ -124,7 +131,7 @@ theorem weyl_support_row_weight_sum (hn : n ≤ r) (ν : Fin n → ℕ) (hν : A
   | add x y _ _ hx hy =>
     intro d hd
     rw [MvPolynomial.coeff_add] at hd
-    by_cases h : MvPolynomial.coeff d x = 0
+    by_cases h : AddMonoidAlgebra.coeff x d = 0
     · rw [h, zero_add] at hd
       exact hy d hd
     · exact hx d h
@@ -135,7 +142,7 @@ theorem weyl_support_row_weight_sum (hn : n ≤ r) (ν : Fin n → ℕ) (hν : A
 
 theorem weyl_support_row_weight_le (hn : n ≤ r) (ν : Fin n → ℕ) (hν : Antitone ν)
     (f : MvPolynomial (Fin r × Fin n) R) (hf : f ∈ Formalism.GradedWeylDivisibility.weyl R r n hn ν) (d : Fin r × Fin n →₀ ℕ)
-    (hd : coeff d f ≠ 0) : ∀ a, Finsupp.weight (Formalism.GradedWeylDivisibility.rowW r n) d a ≤ ∑ a, Formalism.GradedWeylDivisibility.rowNu (r := r) ν a := by
+    (hd : AddMonoidAlgebra.coeff f d ≠ 0) : ∀ a, Finsupp.weight (Formalism.GradedWeylDivisibility.rowW r n) d a ≤ ∑ a, Formalism.GradedWeylDivisibility.rowNu (r := r) ν a := by
   intro a
   rw [← weyl_support_row_weight_sum R hn ν hν f hf d hd]
   exact Finset.single_le_sum (f := fun a => Finsupp.weight (Formalism.GradedWeylDivisibility.rowW r n) d a)
@@ -183,9 +190,9 @@ theorem weyl_lattice_finite (hν : Antitone ν) : Module.Finite ℤ (Formalism.G
     intro f hf
     rw [MvPolynomial.as_sum f]
     refine Submodule.sum_mem _ fun d hd => ?_
-    have hd' : MvPolynomial.coeff d f ≠ 0 := MvPolynomial.mem_support_iff.mp hd
-    have hmono : MvPolynomial.monomial d (MvPolynomial.coeff d f) =
-        MvPolynomial.coeff d f • MvPolynomial.monomial d (1 : ℤ) := by
+    have hd' : AddMonoidAlgebra.coeff f d ≠ 0 := MvPolynomial.mem_support_iff.mp hd
+    have hmono : MvPolynomial.monomial d (AddMonoidAlgebra.coeff f d) =
+        AddMonoidAlgebra.coeff f d • MvPolynomial.monomial d (1 : ℤ) := by
       rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
     rw [hmono]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨d, ?_, rfl⟩)
@@ -216,9 +223,9 @@ theorem weyl_lattice_internal_sum (hν : Antitone ν) :
           rw [weightedHomogeneousComponent_of_mem hy', if_neg]
           intro h; exact hj (Subtype.ext h.symm)
         | zero => simp
-        | add y z _ _ hy hz => rw [Submodule.coe_add, map_add, hy, hz, add_zero]
+        | add y z _ _ hy hz => rw [Submodule.coe_add, map_add (f := _), hy, hz, add_zero]
       | zero => simp
-      | add y z _ _ hy hz => rw [Submodule.coe_add, map_add, hy, hz, add_zero]
+      | add y z _ _ hy hz => rw [Submodule.coe_add, map_add (f := _), hy, hz, add_zero]
     have h1 := key x hx'
     have hx2 : (x : MvPolynomial (Fin r × Fin n) ℤ) ∈
         weightedHomogeneousSubmodule ℤ (Formalism.GradedWeylDivisibility.rowW r n) (i : Fin r → ℕ) := hx
@@ -321,7 +328,7 @@ theorem row_weight_rename_perm (σ : Equiv.Perm (Fin r)) (d : Fin r × Fin n →
   · funext a
     simp
   · intro f g hf hg
-    rw [Finsupp.mapDomain_add, map_add, map_add, hf, hg]
+    rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), hf, hg]
     rfl
   · intro v k
     funext a
@@ -333,7 +340,7 @@ theorem weighted_homogeneous_rename_perm (σ : Equiv.Perm (Fin r)) (f : MvPolyno
     IsWeightedHomogeneous (Formalism.GradedWeylDivisibility.rowW r n) (MvPolynomial.rename (t2wE σ) f) (m ∘ σ.symm) := by
   classical
   intro d hd
-  have : ∃ u, Finsupp.mapDomain (t2wE σ) u = d ∧ MvPolynomial.coeff u f ≠ 0 := by
+  have : ∃ u, Finsupp.mapDomain (t2wE σ) u = d ∧ AddMonoidAlgebra.coeff f u ≠ 0 := by
     by_contra hcon
     push_neg at hcon
     apply hd
@@ -501,7 +508,7 @@ theorem dominant_natWeight_antitone {N : ℕ} (lam : DomWeight N) : Antitone lam
 
 theorem rowNu_self_alt {N : ℕ} (ν : Fin N → ℕ) (a : Fin N) : Formalism.GradedWeylDivisibility.rowNu (r := N) ν a = ν a := by
   unfold Formalism.GradedWeylDivisibility.rowNu
-  rw [dif_pos a.isLt]
+  rw [dite_eq_left a.isLt]
 
 theorem dominant_natWeight_sum {N : ℕ} (lam : DomWeight N) :
     ((∑ a, lam.natW a : ℕ) : ℤ) = ∑ a, lam.w a - N * lam.detShift := by
@@ -519,23 +526,6 @@ theorem dominant_natWeight_sum {N : ℕ} (lam : DomWeight N) :
     · exact absurd (lt_of_le_of_lt (Nat.zero_le _) a.isLt) hN
   rw [Nat.cast_sum, Finset.sum_congr rfl (fun a _ => h a), Finset.sum_sub_distrib]
   simp
-
-theorem dominant_weight_basis_row_weights {N : ℕ} (lam : DomWeight N) :
-    ∃ (ι : Type) (_ : Fintype ι) (b : Module.Basis ι ℤ (delSq ℤ N lam)) (μ : ι → Fin N → ℕ),
-      (∀ i, IsWeightedHomogeneous (Formalism.GradedWeylDivisibility.rowW N N) ((b i : delSq ℤ N lam) : MvPolynomial (Fin N × Fin N) ℤ) (μ i)) ∧
-      (∀ i, ∑ a, μ i a = ∑ a, lam.natW a) ∧
-      ∀ j, (N : ℚ) * ∑ i, ((μ i j : ℚ) + lam.detShift) = (Fintype.card ι : ℚ) * ((∑ a, lam.w a : ℤ) : ℚ) := by
-  obtain ⟨ι, hι, b, μ, hh, hs, hc⟩ := weyl_homogeneous_basis le_rfl lam.natW (dominant_natWeight_antitone lam)
-  refine ⟨ι, hι, b, μ, hh, fun i => by rw [hs i]; simp [rowNu_self_alt], fun j => ?_⟩
-  have havg := weyl_weight_average le_rfl lam.natW (dominant_natWeight_antitone lam) μ hs hc j
-  simp only [rowNu_self_alt] at havg
-  have hq : ((N * ∑ i, μ i j : ℕ) : ℚ) = ((Fintype.card ι * ∑ a, lam.natW a : ℕ) : ℚ) := by rw [havg]
-  have hsum := dominant_natWeight_sum lam
-  have hsumQ : ((∑ a, lam.natW a : ℕ) : ℚ) = ((∑ a, lam.w a : ℤ) : ℚ) - N * lam.detShift := by
-    exact_mod_cast hsum
-  push_cast at hq hsumQ ⊢
-  rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_add, hq, hsumQ]
-  ring
 
 end abelian₂
 
@@ -567,7 +557,8 @@ theorem row_action_diagonal_homogeneous (d : Fin r → R) (f : MvPolynomial (Fin
     · simp
   conv_lhs => rw [MvPolynomial.as_sum f]
   conv_rhs => rw [MvPolynomial.as_sum f]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hw : Finsupp.weight (Formalism.GradedWeylDivisibility.rowW r n) m = μ := hf (MvPolynomial.mem_support_iff.mp hm)
   simp only [Formalism.GradedWeylDivisibility.rowAct, MvPolynomial.aeval_monomial, hg, Finsupp.prod, mul_pow,
@@ -625,7 +616,7 @@ theorem weyl_basis_lin_indep_field (hν : Antitone ν) (K : Type) [Field K] [Cha
   set Kb := ∑ a, Formalism.GradedWeylDivisibility.rowNu (r := r) ν a
   set S : Set (Fin r × Fin n →₀ ℕ) := {d | ∀ v, d v ≤ Kb}
   have : Finite S := (bounded_monomials_finite Kb).to_subtype
-  have hsupp : ∀ x ∈ Formalism.GradedWeylDivisibility.weyl ℤ r n hn ν, ∀ d, d ∉ S → coeff d x = 0 := by
+  have hsupp : ∀ x ∈ Formalism.GradedWeylDivisibility.weyl ℤ r n hn ν, ∀ d, d ∉ S → AddMonoidAlgebra.coeff x d = 0 := by
     intro x hx d hd
     by_contra h
     exact hd fun v => (variable_le_row_weight d v).trans (weyl_support_row_weight_le ℤ hn ν hν x hx d h v.1)
@@ -673,80 +664,6 @@ theorem prod_update_pow_alt {R : Type} [CommRing R] (j : Fin r) (p : R) (μ : Fi
   · intro h
     exact absurd (Finset.mem_univ j) h
 
-theorem weyl_length_diagonal_uniformiser (hν : Antitone ν) (K : Type) [Field K] [CharZero K] (O : Subring K)
-    [IsDiscreteValuationRing O] (ϖ : O) (hϖ : Irreducible ϖ) (j : Fin r) (a : ℕ) :
-    ∃ N : ℕ, Module.length O (bwA_span O hn ν ⧸ ((bwA_span O hn ν).map
-        ((Formalism.GradedWeylDivisibility.rowAct K (Matrix.diagonal (Function.update 1 j ((ϖ : K) ^ a)))).toLinearMap.restrictScalars O)).comap
-          (bwA_span O hn ν).subtype) = N ∧
-      r * N = a * Module.finrank ℤ (Formalism.GradedWeylDivisibility.weyl ℤ r n hn ν) * ∑ c, Formalism.GradedWeylDivisibility.rowNu (r := r) ν c := by
-  classical
-  obtain ⟨ι, hι, b, μ, hh, hs, hc⟩ := weyl_homogeneous_basis hn ν hν
-  set Λ := bwA_span O hn ν with hΛ
-  set e : ι → MvPolynomial (Fin r × Fin n) K := fun i =>
-    MvPolynomial.map (Int.castRingHom K) ((b i : Formalism.GradedWeylDivisibility.weyl ℤ r n hn ν) : MvPolynomial (Fin r × Fin n) ℤ) with he
-  have hliK : LinearIndependent K e := weyl_basis_lin_indep_field hn ν hν K b
-  have hinjO : Function.Injective fun c : O => c • (1 : K) := by
-    intro x y h; simpa using h
-  have hliO : LinearIndependent O e := hliK.restrict_scalars hinjO
-  have hspan : Submodule.span O (Set.range e) = Λ := by
-    apply le_antisymm
-    · rw [Submodule.span_le]
-      rintro _ ⟨i, rfl⟩
-      exact Submodule.subset_span ⟨_, (b i).2, rfl⟩
-    · rw [hΛ, bwA_span, Submodule.span_le]
-      rintro _ ⟨x, hx, rfl⟩
-      have hxx : x = ∑ i, b.repr ⟨x, hx⟩ i • ((b i : Formalism.GradedWeylDivisibility.weyl ℤ r n hn ν) : MvPolynomial (Fin r × Fin n) ℤ) := by
-        have h1 := congrArg Subtype.val (b.sum_repr ⟨x, hx⟩)
-        rw [Submodule.coe_sum] at h1
-        simp only [Submodule.coe_smul] at h1
-        exact h1.symm
-      rw [hxx, map_sum]
-      refine Submodule.sum_mem _ fun i _ => ?_
-      have : MvPolynomial.map (Int.castRingHom K) (b.repr ⟨x, hx⟩ i • ((b i : Formalism.GradedWeylDivisibility.weyl ℤ r n hn ν) :
-          MvPolynomial (Fin r × Fin n) ℤ)) = ((b.repr ⟨x, hx⟩ i : ℤ) : O) • e i := by
-        rw [map_zsmul, Int.cast_smul_eq_zsmul]
-      try dsimp only
-      rw [this]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
-  let bS : Module.Basis ι O (Submodule.span O (Set.range e)) := Module.Basis.span hliO
-  let bΛ : Module.Basis ι O Λ := bS.map (LinearEquiv.ofEq _ _ hspan)
-  have hbΛ : ∀ i, ((bΛ i : Λ) : MvPolynomial (Fin r × Fin n) K) = e i := by
-    intro i
-    simp [bΛ, bS, Module.Basis.span_apply]
-  set φ := (Formalism.GradedWeylDivisibility.rowAct K (Matrix.diagonal (Function.update 1 j ((ϖ : K) ^ a)))).toLinearMap.restrictScalars O
-  have hφe : ∀ i, φ (e i) = (ϖ ^ (a * μ i j) : O) • e i := by
-    intro i
-    have hom := weighted_homogeneous_map (Int.castRingHom K) _ (μ i) (hh i)
-    show Formalism.GradedWeylDivisibility.rowAct K _ (e i) = _
-    rw [row_action_diagonal_homogeneous K _ (e i) (μ i) hom, prod_update_pow_alt, ← pow_mul]
-    rw [Subring.smul_def]
-    simp
-  set W : Submodule O Λ := Submodule.span O (Set.range fun i => ϖ ^ (a * μ i j) • bΛ i) with hW
-  have hmapW : W.map Λ.subtype = Λ.map φ := by
-    rw [hW, Submodule.map_span]
-    conv_rhs => rw [← hspan, Submodule.map_span]
-    congr 1
-    ext y
-    simp only [Set.mem_image, Set.mem_range, exists_exists_eq_and]
-    constructor
-    · rintro ⟨i, rfl⟩
-      refine ⟨i, ?_⟩
-      rw [hφe]
-      simp [hbΛ]
-    · rintro ⟨i, rfl⟩
-      refine ⟨i, ?_⟩
-      rw [hφe]
-      simp [hbΛ]
-  have hcomap : (Λ.map φ).comap Λ.subtype = W := by
-    rw [← hmapW, Submodule.comap_map_eq_of_injective (Submodule.injective_subtype _)]
-  refine ⟨∑ i, a * μ i j, ?_, ?_⟩
-  · rw [hcomap, hW]
-    exact length_quotient_dvr_basis O ϖ hϖ bΛ (fun i => a * μ i j)
-  · have havg := weyl_weight_average hn ν hν μ hs hc j
-    rw [Module.finrank_eq_card_basis b, ← Finset.mul_sum]
-    calc r * (a * ∑ i, μ i j) = a * (r * ∑ i, μ i j) := by ring
-      _ = _ := by rw [havg]; ring
-
 theorem weyl_length_diagonal_unit_uniformiser (hν : Antitone ν) (K : Type) [Field K] [CharZero K] (O : Subring K)
     [IsDiscreteValuationRing O] (ϖ : O) (hϖ : Irreducible ϖ) (u : Oˣ) (j : Fin r) (a : ℕ) :
     ∃ N : ℕ, Module.length O (bwA_span O hn ν ⧸ ((bwA_span O hn ν).map
@@ -774,7 +691,8 @@ theorem weyl_length_diagonal_unit_uniformiser (hν : Antitone ν) (K : Type) [Fi
         rw [Submodule.coe_sum] at h1
         simp only [Submodule.coe_smul] at h1
         exact h1.symm
-      rw [hxx, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hxx, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       have : MvPolynomial.map (Int.castRingHom K) (b.repr ⟨x, hx⟩ i • ((b i : Formalism.GradedWeylDivisibility.weyl ℤ r n hn ν) :
           MvPolynomial (Fin r × Fin n) ℤ)) = ((b.repr ⟨x, hx⟩ i : ℤ) : O) • e i := by

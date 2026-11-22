@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasTraitsOnOfHasTraitsP
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkZeta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDividingLabelsIffClassZeroStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTraitsOnOfHasTraitsP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkZeta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDividingLabelsIffClassZeroStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -37,22 +42,57 @@ theorem qkSub {I : Type} (X₁ : GSet) (z₁ : X₁.M.Z) (act : I → (X₁.ρ.P
     (AlgebraicClosure (FractionRing V)) _ hk
   have e := (hto p x).1 hx
   have e' := (hto p' x').1 hx'
-  have h0 : f (GlobalTheory.TorusExt.qkZero hB _ _) = 1 := by
-    have := hadd _ _ _ (GlobalTheory.TorusExt.qkAdd_qkAdd hB (GlobalTheory.TorusExt.qkZero hB (AlgebraicClosure (FractionRing V)) (X₁.S.r * X₁.S.N))
-      (GlobalTheory.TorusExt.qkZero hB _ _))
-    rw [show GlobalTheory.TorusExt.qkAdd hB (GlobalTheory.TorusExt.qkZero hB (AlgebraicClosure (FractionRing V)) (X₁.S.r * X₁.S.N))
-        (GlobalTheory.TorusExt.qkZero hB _ _) = GlobalTheory.TorusExt.qkZero hB _ _ from
-      GlobalTheory.TorusExt.qk_ext (by simp [GlobalTheory.TorusExt.qkAdd, GlobalTheory.TorusExt.qkZero]) (by simp [GlobalTheory.TorusExt.qkAdd, GlobalTheory.TorusExt.qkZero])] at this
-    exact left_eq_mul.1 this
-  have hneg : f (GlobalTheory.TorusExt.qkNeg hB p') = (f p')⁻¹ := by
-    have := hadd _ _ _ (GlobalTheory.TorusExt.qkAdd_qkAdd hB p' (GlobalTheory.TorusExt.qkNeg hB p'))
-    rw [show GlobalTheory.TorusExt.qkAdd hB p' (GlobalTheory.TorusExt.qkNeg hB p') = GlobalTheory.TorusExt.qkZero hB _ _ from
-      GlobalTheory.TorusExt.qk_ext (by simp [GlobalTheory.TorusExt.qkAdd, GlobalTheory.TorusExt.qkNeg, GlobalTheory.TorusExt.qkZero])
-        (by simp [GlobalTheory.TorusExt.qkAdd, GlobalTheory.TorusExt.qkNeg, GlobalTheory.TorusExt.qkZero]), h0] at this
-    exact (eq_inv_of_mul_eq_one_right this.symm)
-  refine ⟨GlobalTheory.TorusExt.qkAdd hB p (GlobalTheory.TorusExt.qkNeg hB p'), ?_, ?_⟩
-  · simp [GlobalTheory.TorusExt.qkAdd, GlobalTheory.TorusExt.qkNeg, hp]
-  · rw [hto, hadd _ _ _ (GlobalTheory.TorusExt.qkAdd_qkAdd hB _ _), hneg, e, e']
+  let F := AlgebraicClosure (FractionRing V)
+  have gen_ext {K : Type} [Fintype K] {φ : K → ((TF (R := V) F).left ⟶ 𝔪.D.toPre.P.A.left)} {ε : K → ℤ}
+      {u v : LB.Gen (LB.LinComb 𝔪.D.toPre.P.L φ ε)} (hu : u.IsGen) (hv : v.IsGen)
+      (h : ∀ y J, Good 𝔪.D.toPre.P.L y J → val u (𝟙 _) y J = val v (𝟙 _) y J) : u = v := by
+    obtain ⟨s⟩ := u
+    obtain ⟨s'⟩ := v
+    congr 1
+    funext j
+    refine unit_ext (V := LB.wchart 𝔪.D.toPre.P.L φ j) fun y hy => ?_
+    choose J hJ using fun χ : (TF (R := V) F).left ⟶ 𝔪.D.toPre.P.A.left =>
+      exists_chart 𝔪.D.toPre.P.isLB (χ y)
+    exact (gen_trans hu (𝟙 _) y hy (Good.mem hJ φ (𝟙 _))).trans
+      ((congrArg _ (h y J hJ)).trans (gen_trans hv (𝟙 _) y hy (Good.mem hJ φ (𝟙 _))).symm)
+  have uniq {a b : GtPtF 𝔪.D.toPre F} {y : 𝔪.D.toPre.X}
+      (ha : a.IsIota y) (hb : b.IsIota y) : a = b := by
+    obtain ⟨ba, va⟩ := (isIota_iff y a).1 ha
+    obtain ⟨bb, vb⟩ := (isIota_iff y b).1 hb
+    have be : a.b = b.b := ba.trans bb.symm
+    cases a with
+    | mk a sa hsa za ma =>
+      cases b with
+      | mk b sb hsb zb mb =>
+        cases be
+        congr 1
+        funext χ
+        exact gen_ext (hsa χ) (hsb χ) (fun y J hJ => (va χ y J hJ).trans (vb χ y J hJ).symm)
+  obtain ⟨h, hn, hi⟩ := p.eq
+  obtain ⟨h', hn', hi'⟩ := p'.eq
+  have he : h = h' := uniq hi (hp.symm ▸ hi')
+  have hg : (X₁.S.r * X₁.S.N) • p.g = (X₁.S.r * X₁.S.N) • p'.g := by
+    rw [← (GlobalTheory.TorusExt.isNsmul_iff_eq _ _ _).1 hn,
+      ← (GlobalTheory.TorusExt.isNsmul_iff_eq _ _ _).1 hn', he]
+  have iz : GtPtF.IsIota 0 (0 : GtPtF 𝔪.D.toPre F) := by
+    have hz : (0 : GtPtF 𝔪.D.toPre F).IsZero := (GlobalTheory.TorusExt.isZero_iff_eq _).2 rfl
+    obtain ⟨hb, hv⟩ := (isZero_iff _).1 hz
+    refine (isIota_iff 0 _).2 ⟨hb.trans (cPoint_zero _).symm, fun χ y J hJ => ?_⟩
+    have C : IsCub (th 𝔪.D.toPre (T := TF (R := V) F) y J) := isCub_cubV 𝔪.D.toPre.cub hJ
+    have tt := tau_mul (𝟙 (TF (R := V) F)) hJ hB 0 0 χ
+    rw [add_zero, cPoint_zero, C.face, _root_.mul_one] at tt
+    exact (hv χ y J hJ).trans (mul_eq_left.1 tt.symm).symm
+  let q : QkPt 𝔪.D.toPre F (X₁.S.r * X₁.S.N) :=
+    ⟨0, p.g - p'.g, 0, (GlobalTheory.TorusExt.isNsmul_iff_eq _ _ _).2 (by simp [smul_sub, hg]), iz⟩
+  have hrel : QkAdd q p' p := by
+    refine ⟨p, ?_, ?_, qk_equiv_refl hB p⟩
+    · simp [q, hp]
+    · apply (GlobalTheory.TorusExt.isAdd_iff_eq _ _ _).2
+      simp [q]
+  have hf := hadd _ _ _ hrel
+  refine ⟨q, rfl, (hto _ _).2 ?_⟩
+  rw [e, e']
+  exact ((eq_mul_inv_iff_mul_eq).2 hf.symm).symm
 
 section
 variable {I : Type} {X₁ : GSet} {z₁ : X₁.M.Z} {act : I → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)}

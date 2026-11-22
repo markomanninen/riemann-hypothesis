@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.PairingEqLimitPairing
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.PairingEqLimitPairing
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem intSubm_eq (w : D.what₂.places.Pl) {N : ℕ} (lam : D.what₂.Tau → 
         rw [Submodule.coe_sum] at h2
         simp only [Submodule.coe_smul] at h2
         conv_lhs => rw [← h2]
-        rw [map_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum]
         simp only [map_zsmul]
       simp only [hfe]
       rw [Finset.prod_univ_sum, Fintype.piFinset_univ]
@@ -66,7 +71,8 @@ theorem bwA_span_basis (O : Subring ℂ) {N : ℕ} (ν : Fin N → ℕ) {κ : Ty
     have h2 := congrArg Subtype.val (b.sum_repr ⟨p, hp⟩)
     rw [Submodule.coe_sum] at h2
     simp only [Submodule.coe_smul] at h2
-    rw [← h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h2, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_zsmul]
     apply zsmul_mem
@@ -113,7 +119,7 @@ theorem cls_len_D (A : AtTTied u) (w : D.what₂.places.Pl) (hw : OverT D u w)
   have ho : ∀ τ, τ ≠ (D.fm u).tauOf w v → bwA_N D ((D.fm u).tauOf w v) B B' τ = 1 := by
     intro τ h
     unfold bwA_N
-    rw [if_neg h]
+    rw [ite_eq_right h]
   have hcard : ∀ τ, Module.finrank ℤ (delSq ℤ (D.R.N 0) ((D.fm u).lam 0 τ)) = Fintype.card (κ τ) := fun τ =>
     Module.finrank_eq_card_basis (b τ)
   refine ⟨(∏ τ : {τ // τ ≠ (D.fm u).tauOf w v}, Fintype.card (κ τ.1)) * n, ?_, ?_⟩

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionHypothesis
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionHypothesis
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousSandwichedProduct
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousSandwichedProduct
+
+@[expose] public section
 
 noncomputable section
 

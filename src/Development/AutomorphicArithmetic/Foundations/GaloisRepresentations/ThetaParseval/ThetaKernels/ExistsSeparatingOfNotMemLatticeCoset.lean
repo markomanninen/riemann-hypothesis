@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.BumpLat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfDualLocalImageLatticeSupportedAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorLatticeLocalDarbouxCoordsBounded
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianLatticeOpenCompact
-import Development.WeilBound.ThetaLifts.LatticeBasics.MemLam
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LatAtVSelfDualK
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.BumpLat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfDualLocalImageLatticeSupportedAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorLatticeLocalDarbouxCoordsBounded
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianLatticeOpenCompact
+public import Development.WeilBound.ThetaLifts.LatticeBasics.MemLam
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LatAtVSelfDualK
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -142,7 +146,8 @@ private theorem sep_dual_pk (v : HeightOneSpectrum (𝓞 F)) {κ : Type} [Fintyp
     have e : w = t⁻¹ • (t • w) := by rw [smul_smul, inv_mul_cancel₀ ht0, one_smul]
     rw [e]
     exact Submodule.smul_mem _ _ (Submodule.subset_span hw)
-  haveI : L'.IsLattice (Fv F v) := ⟨hfg, hspan⟩
+  haveI : L'.IsLattice (Fv F v) := Submodule.IsLattice.of_fg (Fv F v) hfg
+  haveI : L'.IsFullLattice (Fv F v) := ⟨hspan⟩
   let ψ' : AddChar (Fv F v) ℂ := ψ₀.compAddMonoidHom (AddMonoidHom.mulLeft c)
   have hψ' : ∀ x, ψ' x = ψ₀ (c * x) := fun _ => rfl
   have hsep : ∀ x, (∀ y : O, ψ' (x * algebraMap O (Fv F v) y) = 1) ↔ x ∈ (algebraMap O (Fv F v)).range := by
@@ -172,7 +177,7 @@ private theorem sep_dual_pk (v : HeightOneSpectrum (𝓞 F)) {κ : Type} [Fintyp
     have h2 := LinearMap.pi_apply_eq_sum_univ Bm z.2
     simp only [smul_eq_mul] at h1 h2
     rw [← h1, ← h2]
-    conv_lhs => rw [hz, map_add]
+    conv_lhs => rw [hz, map_add (f := _)]
     rfl
   have hu : ∀ z, ψ₀ ((fun k => c * Bm (e k)) ⬝ᵥ z.2 - z.1 ⬝ᵥ (fun k => -(c * A (e k)))) = ψ' (l z) := by
     intro z
@@ -280,8 +285,8 @@ theorem UpperTheory.exists_separating_of_not_mem_lattice_coset :
   have hSat : ∀ z ∈ S, At (evFin F v) z := by
     rintro _ ⟨a, ha, b, hb, rfl⟩ u hu
     rw [smul_add, hat a ha u hu, hmulat _ b (hat b hb) u hu, add_zero]
-  obtain ⟨c₁, hc₁0, hc₁⟩ := GlobalTheory.LatBound.locCo_latAtV_bounded X W v M.co hX.lat hW.lat
-  obtain ⟨Mt, _, gm, hgm⟩ := GlobalTheory.LatParam.latAtV_param X W hX.lat hW.lat v
+  obtain ⟨c₁, hc₁0, hc₁⟩ := GlobalTheory.LatBound.locCo_latAtV_bounded X W v M.co hX.lat.toIsLattice hW.lat.toIsLattice
+  obtain ⟨Mt, _, gm, hgm⟩ := GlobalTheory.LatParam.latAtV_param X W hX.lat.toIsLattice hW.lat.toIsLattice v
   obtain ⟨c₂, hc₂0, hc₂⟩ := GlobalTheory.LatBound.exists_mul_mem_integers v
     (fun t : Bool × Mt × (Fin n × Fin d) =>
       if t.1 then (GlobalTheory.LatVac.locCo M.co v (mat g⁻¹ * incM F (gm t.2.1))).1 t.2.2
@@ -290,7 +295,8 @@ theorem UpperTheory.exists_separating_of_not_mem_lattice_coset :
       c₂ * (GlobalTheory.LatVac.locCo M.co v (mat g⁻¹ * b)).2 i ∈ v.adicCompletionIntegers F := by
     intro b hb i
     obtain ⟨a, rfl⟩ := (hgm b).1 hb
-    simp only [Matrix.mul_sum, Matrix.mul_smul, map_sum, locCo_smul'_pk, GlobalTheory.EmbChart.evFin_atPlace, Prod.fst_sum, Prod.snd_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_sum, Matrix.mul_smul, map_sum, locCo_smul'_pk, GlobalTheory.EmbChart.evFin_atPlace, Prod.fst_sum, Prod.snd_sum,
       Finset.sum_apply, Prod.smul_fst, Prod.smul_snd, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
     constructor
     · refine sum_mem fun m _ => ?_
@@ -303,7 +309,7 @@ theorem UpperTheory.exists_separating_of_not_mem_lattice_coset :
   have hbd : ∀ l ∈ S.map (GlobalTheory.LatVac.locCo M.co v), ∀ i, c₀ * l.1 i ∈ v.adicCompletionIntegers F ∧
       c₀ * l.2 i ∈ v.adicCompletionIntegers F := by
     rintro _ ⟨_, ⟨a, ha, b, hb, rfl⟩, rfl⟩ i
-    rw [map_add]
+    rw [map_add (f := _)]
     simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, mul_add]
     exact ⟨add_mem (hb₁ _ (hc₁ a ha i).1) (hb₂ _ (hb2 b hb i).1), add_mem (hb₁ _ (hc₁ a ha i).2) (hb₂ _ (hb2 b hb i).2)⟩
   have hst : ∀ t ∈ v.adicCompletionIntegers F, ∀ l ∈ S.map (GlobalTheory.LatVac.locCo M.co v),

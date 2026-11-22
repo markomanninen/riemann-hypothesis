@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorPartTorusExtension
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsToricRankOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorPartTorusExtension
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsToricRankOne
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
@@ -54,7 +59,7 @@ theorem fibre_const_of_specializes_invariant : ∀ (Y Z : Type) [TopologicalSpac
   obtain ⟨T, hTf, hTz, hTs⟩ := fibre_exists_finite_generizing q hq z
   by_contra hPb
   have closed : ∀ R : Y → Prop, IsClosed (⋃ e ∈ {e ∈ T | R e}, closure ({e} : Set Y)) :=
-    fun R => (hTf.subset (fun _ h => h.1)).isClosed_biUnion (fun _ _ => isClosed_closure)
+    fun R => (hTf.subset (show {e ∈ T | R e} ⊆ T from fun _ h => h.1)).isClosed_biUnion (fun _ _ => isClosed_closure)
   have mem : ∀ (R : Y → Prop) (e w : Y), e ∈ T → R e → e ⤳ w →
       w ∈ ⋃ e ∈ {e ∈ T | R e}, closure ({e} : Set Y) := by
     intro R e w he hR hs

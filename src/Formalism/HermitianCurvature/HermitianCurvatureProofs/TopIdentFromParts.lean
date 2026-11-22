@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.CompositeFormulaLevelZero
+module
+
+public import Formalism.HermitianCurvature.CompositeFormulaLevelZero
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -29,7 +33,7 @@ variable {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [Normed
 
 theorem tprod_ge (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (Y : ℂ) (i : ℕ) (h : r ≤ i) :
     tprod L Y i = 1 := by
-  rw [tprod, dif_neg (by omega)]
+  rw [tprod, dite_eq_right (by omega)]
 
 theorem QQi_last (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (st : Fr.Start (Pr (RadSp k r z z' π π')))
     (Y : ℂ) : QQi L st (Fin.last r) Y = st.QQ Y := by

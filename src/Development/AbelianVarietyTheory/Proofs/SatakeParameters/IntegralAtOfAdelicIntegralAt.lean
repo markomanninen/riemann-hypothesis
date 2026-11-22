@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.UG Formalism.L2.Col
 open scoped TensorProduct
 open Matrix

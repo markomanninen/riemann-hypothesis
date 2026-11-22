@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.StatementT
-import Formalism.LocalToGlobal.UnitaryNorms.CharProd
-import Development.AutomorphicArithmetic.DivisorFrames.ExistsPowLocKMulInfEqOneOfLevelLeTwo
-import Development.AutomorphicArithmetic.DivisorFrames.IsIntegralCmTypeUnitaryPartMulAbsNormPow
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.StatementT
+public import Formalism.LocalToGlobal.UnitaryNorms.CharProd
+public import Development.AutomorphicArithmetic.DivisorFrames.ExistsPowLocKMulInfEqOneOfLevelLeTwo
+public import Development.AutomorphicArithmetic.DivisorFrames.IsIntegralCmTypeUnitaryPartMulAbsNormPow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open Formalism.DivisionValues (vw)
 

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.PendingAdmissibility.LocalFDerivAdmissibility.AdmRed
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.PendingAdmissibility.LocalFDerivAdmissibility.AdmRed
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,10 +14,10 @@ def LowZC {p : ℕ} [Fact p.Prime] (X : Sys p) (be : MvPowerSeries (Fin 2) (Form
   letI := wittFractionAlgebraCp p
   ∀ U : MvPowerSeries (X.EA j ⊕ X.EA j) ℂ_[p], IntR (OcC p) (inParamK p ℂ_[p] U) →
     ∀ (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-      GeZ (MvPolynomial.coeff n (applyD (X.PIv j I v)
+      GeZ (AddMonoidAlgebra.coeff (applyD (X.PIv j I v)
         (X.ThZA ℂ_[p] j (MvPowerSeries.map (algebraMap (Formalism.MainNotions.FormalGroupSystem.K0 p) ℂ_[p])
           (expS p (-(∑ e : Eidx (X.G.P.n' v) (NN X.G.P.m X.t j) (NN X.G.P.m X.t (j + 1)),
-            sub2 p be (MvPowerSeries.X (Sum.inl (⟨v, e⟩ : X.EA j))) (MvPowerSeries.X (Sum.inr (⟨v, e⟩ : X.EA j)))))) * U))))
+            sub2 p be (MvPowerSeries.X (Sum.inl (⟨v, e⟩ : X.EA j))) (MvPowerSeries.X (Sum.inr (⟨v, e⟩ : X.EA j)))))) * U))) n)
 
 def FirstKernelLocalOfGeneral : Prop :=
   ∀ {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : CEmbC X.G)

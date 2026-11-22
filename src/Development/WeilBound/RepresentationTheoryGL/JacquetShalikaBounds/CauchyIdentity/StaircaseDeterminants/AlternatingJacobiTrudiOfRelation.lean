@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+
+@[expose] public section
 
 noncomputable section
 

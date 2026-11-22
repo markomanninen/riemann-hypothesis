@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.KroneckerWeber
-import GroundTheory.LocalFields.LocalReciprocityUniversal
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.KroneckerWeber
+public import GroundTheory.LocalFields.LocalReciprocityUniversal
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,17 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 attribute [local instance] isDiscreteModule_units
 
-include hf in
+local instance explicitQp_isGalois_lubinTateField (n : ℕ) :
+    IsGalois K (lubinTateField Ω hπ hf n) := by
+  refine isGalois_iff.mpr ⟨inferInstance, normal_iff_forall_map_le'.mpr fun σ => ?_⟩
+  rw [lubinTateField, adjoin_map, adjoin_le_iff]
+  rintro _ ⟨_, ⟨x, hx, rfl⟩, rfl⟩
+  change σ x.val ∈ lubinTateField Ω hπ hf n
+  rw [← lubinTateGalPointMap_val hf σ x]
+  apply val_mem_lubinTateField hπ hf
+  rw [mem_lubinTateTorsion, ← map_smul, (mem_lubinTateTorsion hf n x).mp hx, map_zero]
 
+include hf in
 theorem localReciprocity_symm_lubinTateField {n : ℕ} (hn : 0 < n) (u : 𝒪[K]ˣ) (k : ℤ)
     {τ : Ω ≃ₐ[K] Ω} (hτd : unramifiedDegree K Ω τ = Multiplicative.ofAdd (k : ℤ̂))
     (hτ : ∀ x ∈ lubinTateTorsion Ω (hπ := hπ) hf n,
@@ -28,7 +41,7 @@ theorem localReciprocity_symm_lubinTateField {n : ℕ} (hn : 0 < n) (u : 𝒪[K]
     haveI : IsSepClosed Ω := IsSepClosure.sep_closed K
     (localReciprocity (lubinTateField Ω hπ hf n)).symm
         (unitUniformizerPow hπ u k : Kˣ ⧸ (normUnits K (lubinTateField Ω hπ hf n)).range) =
-      Abelianization.of (τ.restrictNormal (lubinTateField Ω hπ hf n)) := by
+      Group.Abelianization.of (τ.restrictNormal (lubinTateField Ω hπ hf n)) := by
   have : IsSepClosed Ω := IsSepClosure.sep_closed K
   set L := lubinTateField Ω hπ hf n
   have hr := reciprocity_lubinTate hπ hf hn (fixingOpenSubgroup L)
@@ -38,14 +51,14 @@ theorem localReciprocity_symm_lubinTateField {n : ℕ} (hn : 0 < n) (u : 𝒪[K]
   rw [← ha, localReciprocity_symm_mk_baseUnitsEquiv]
   have e : ((localClassFieldData K Ω).reciprocityAbEquiv (le_top : fixingOpenSubgroup L ≤ ⊤)
       (classFieldAxiom_units K Ω)).symm (a : tateZero Ωˣ _ _) =
-      Abelianization.of (QuotientGroup.mk ⟨τ, Subgroup.mem_top τ⟩) := by
+      Group.Abelianization.of (QuotientGroup.mk ⟨τ, Subgroup.mem_top τ⟩) := by
     rw [MulEquiv.symm_apply_eq, ClassFieldData.reciprocityAbEquiv_of]
     exact hr.symm
   rw [e]
   rfl
 
-include hf in
 
+include hf in
 theorem apply_val_of_mk_eq_localReciprocityLimit {n : ℕ} (hn : 0 < n) (u : 𝒪[K]ˣ) (k : ℤ)
     {g : Ω ≃ₐ[K] Ω}
     (hg : (g : TopologicalAbelianization (Ω ≃ₐ[K] Ω)) =
@@ -104,7 +117,7 @@ theorem lubinTateFormalGroup_multiplicative :
     have hs : MvPowerSeries.HasSubst (substEach (multiplicativeLTPoly p : PowerSeries 𝒪[ℚ_[p]]) :
         Fin 2 → MvPowerSeries (Fin 2) 𝒪[ℚ_[p]]) :=
       hasSubst_substEach (isLubinTateSeries_multiplicativeLTPoly p).constantCoeff_eq_zero
-    rw [subst_multiplicativeLTPoly p h0, ← MvPowerSeries.coe_substAlgHom hs, map_add, map_add,
+    rw [subst_multiplicativeLTPoly p h0, ← MvPowerSeries.coe_substAlgHom hs, map_add (f := _), map_add (f := _),
       map_mul, MvPowerSeries.coe_substAlgHom hs, MvPowerSeries.subst_X hs,
       MvPowerSeries.subst_X hs, substEach_apply, substEach_apply,
       subst_multiplicativeLTPoly p (by simp), subst_multiplicativeLTPoly p (by simp)]
@@ -128,7 +141,7 @@ omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel Ω] [Topo
 theorem psTerm_add {σ : Type*} (f g : MvPowerSeries σ 𝒪[K]) (x : σ → Ω) :
     psTerm (f + g) x = psTerm f x + psTerm g x := by
   funext d
-  simp only [psTerm, map_add, Subring.coe_add, Pi.add_apply, add_mul]
+  simp only [psTerm, map_add (f := _), Subring.coe_add, Pi.add_apply, add_mul]
 
 theorem psEval_add {σ : Type*} [Finite σ] (f g : MvPowerSeries σ 𝒪[K]) {x : σ → Ω}
     (hx : ∀ i, valuation Ω (x i) < 1) :
@@ -137,9 +150,9 @@ theorem psEval_add {σ : Type*} [Finite σ] (f g : MvPowerSeries σ 𝒪[K]) {x 
   have h := (hasSum_psEval' f x hx).add (hasSum_psEval' g x hx)
   exact (hasSum_psEval' (f + g) x hx).unique (by rw [psTerm_add]; exact h)
 
+
 omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel Ω] [TopologicalSpace Ω]
   [IsValuativeTopology Ω] [ValuativeExtension K Ω] [Algebra.IsAlgebraic K Ω] in
-
 theorem psEval_X_mul_X [TopologicalSpace Ω] (x : Fin 2 → Ω) :
     psEval (MvPowerSeries.X 0 * MvPowerSeries.X 1 : MvPowerSeries (Fin 2) 𝒪[K]) x = x 0 * x 1 := by
   classical
@@ -197,8 +210,8 @@ theorem val_smul_of_mem_torsion {n : ℕ}
     rw [← sub_eq_zero, ← sub_smul, hc, mul_comm, mul_smul, h0, smul_zero]
   rw [this, val_natCast_smul]
 
-omit [TopologicalSpace Ω] [IsValuativeTopology Ω] [Algebra.IsAlgebraic ℚ_[p] Ω] in
 
+omit [TopologicalSpace Ω] [IsValuativeTopology Ω] [Algebra.IsAlgebraic ℚ_[p] Ω] in
 theorem valuation_sub_one_lt_one {n : ℕ} {ζ : Ω} (hζ : ζ ^ (p ^ n) = 1) :
     valuation Ω (ζ - 1) < 1 := by
   have hp1 : valuation Ω (p : Ω) < 1 := by
@@ -320,10 +333,6 @@ theorem frobenius_zpow_apply_of_pow_eq_one {m : ℕ} (hm : m.Coprime p) (r : ℤ
 
 def integerUnit (u : ℤ_[p]ˣ) : 𝒪[ℚ_[p]]ˣ :=
   Units.map (PadicRank.padicIntEquivInteger p : ℤ_[p] →* 𝒪[ℚ_[p]]) u
-
-theorem coe_integerUnit (u : ℤ_[p]ˣ) :
-    (((integerUnit p u : 𝒪[ℚ_[p]]ˣ) : 𝒪[ℚ_[p]]) : ℚ_[p]) = ((u : ℤ_[p]) : ℚ_[p]) :=
-  rfl
 
 theorem unitUniformizerPow_integerUnit (x : ℚ_[p]ˣ) (u : ℤ_[p]ˣ) (r : ℤ)
     (hx : (x : ℚ_[p]) = ((u : ℤ_[p]) : ℚ_[p]) * (p : ℚ_[p]) ^ r) :

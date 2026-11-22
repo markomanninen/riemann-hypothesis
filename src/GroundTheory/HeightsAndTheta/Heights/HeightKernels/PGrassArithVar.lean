@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -15,7 +20,7 @@ theorem det_submatrix_sign {R : Type*} [CommRing R] {j N : ℕ} (A : Matrix (Fin
     (hr : Set.range h = Set.range g) :
     ∃ s : ℤˣ, (A.submatrix id h).det = ((s : ℤ) : R) * (A.submatrix id g).det := by
   let σ : Equiv.Perm (Fin j) :=
-    (Equiv.ofInjective h hh).trans ((Equiv.setCongr hr).trans (Equiv.ofInjective g hg).symm)
+    (Equiv.ofInjective h hh).trans ((Equiv.subtypeEquivRight (fun x => by rw [hr])).trans (Equiv.ofInjective g hg).symm)
   have hσ : ∀ i, g (σ i) = h i := by
     intro i
     simp [σ, Equiv.apply_ofInjective_symm]
@@ -65,8 +70,8 @@ theorem colsOf_anchor {R : Type*} [CommRing R] {j m : ℕ} (Z : Matrix (Fin j) (
 
 end GrassmannianArithmeticVariety
 
-open GrassmannianArithmeticVariety in
 
+open GrassmannianArithmeticVariety in
 theorem GrassArithVar.proof (h : CoordConeArithVar.Statement) : GrassArithVar.Statement := by
   intro f j m hf
   let e : Fin (f * j * m) ≃ Fin f × Fin j × Fin m :=

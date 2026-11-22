@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementR
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversalLaw
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.HurwitzB
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementR
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversalLaw
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.HurwitzB
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -20,7 +24,7 @@ theorem coeff_one_subst1 (g : PowerSeries K) {a : PowerSeries K}
     PowerSeries.coeff 1 (PowerSeries.subst a g : PowerSeries K) =
       PowerSeries.coeff 1 g * PowerSeries.coeff 1 a := by
   have key : ∀ f : PowerSeries K, PowerSeries.coeff 1 f =
-      PowerSeries.constantCoeff (PowerSeries.derivative K f) := by
+      PowerSeries.constantCoeff (PowerSeries.derivative (R := K) f) := by
     intro f
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_derivative]
     simp
@@ -122,7 +126,7 @@ theorem ramified_shape_holds : RamifiedShape := by
     rw [norm_inv, h2, inv_one]
   have hdK : (d : K) ≠ 0 := Nat.cast_ne_zero.mpr hd
   obtain ⟨⟨H, hH, hexp⟩, hS⟩ := jetsShape K (unitBall K) l linv ph hFr hF1 hNeg h2i
-  have hl' : IsOneUnit (unitBall K) (PowerSeries.derivative K l) :=
+  have hl' : IsOneUnit (unitBall K) (PowerSeries.derivative (R := K) l) :=
     logDerivInt K (unitBall K) l linv hlp hFr.2.1
   refine ⟨half_valuation_holds K _ (a - b) d hab hdK (hS a b hAdj), ?_, ?_⟩
   · intro i hi hi2

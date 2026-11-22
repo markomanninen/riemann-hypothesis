@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSpanStepHomog
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSpanStepLocal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSpanStepHomog
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSpanStepLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -110,8 +115,8 @@ theorem mul_pow_mem_forms_of_le {q : ℕ} {w : Fin q → Ω} {j : Fin q} {c : Ω
 
 end SpanStepHomog
 
-open SpanStepHomog in
 
+open SpanStepHomog in
 theorem SpanStepHomog.proof (hL : SpanStepLocal.Statement) : SpanStepHomog.Statement := by
   intro K _ ι _ Ω _ y a q w hy hw hgen
   have H : ∀ j, ∃ (r : ℕ) (b : Fin r → Ω), (∀ l, ∃ n : ℕ, b l * w j ^ n ∈ chartLat y a n) ∧

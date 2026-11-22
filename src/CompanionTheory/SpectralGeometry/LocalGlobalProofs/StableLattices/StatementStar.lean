@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.SmallPI
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.SmallPI
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ private theorem map_word_one {A B : Type} [Ring A] [Ring B] [Algebra ℂ A] [Alg
 private theorem map_stdPoly_one {A B : Type} [Ring A] [Ring B] [Algebra ℂ A] [Algebra ℂ B]
     (f : A →ₐ[ℂ] B) {M : ℕ} (b : Fin M → A) : f (stdPoly 1 b) = stdPoly 1 (fun i => f (b i)) := by
   unfold stdPoly
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun π _ => ?_
   rw [map_mul, map_intCast, map_word_one, List.map_ofFn]
   rfl
@@ -141,6 +146,6 @@ theorem stStar : StStar := by
     rw [htop]
     exact Submodule.mem_top
   obtain ⟨w, hw, x, hx, rfl⟩ := Submodule.mem_sup.mp hv
-  rw [map_add, hPW w hw, hPperp x hx, add_zero, LinearMap.zero_apply]
+  rw [map_add (f := _), hPW w hw, hPperp x hx, add_zero, LinearMap.zero_apply]
 
 end GlobalTheory.CompanionTheory.RgFl.StarPf

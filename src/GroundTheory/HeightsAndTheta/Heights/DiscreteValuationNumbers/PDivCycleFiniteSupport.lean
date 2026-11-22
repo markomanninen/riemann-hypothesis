@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -13,7 +18,7 @@ theorem DivCycleFiniteSupport.proof : DivCycleFiniteSupport.Statement.{u} := by
   by_contra hmin
   apply hW
   unfold divCycle
-  rw [dif_neg]
+  rw [dite_eq_right]
   exact fun h => hmin h.1
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TopDegreeComparison
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TopDegreeComparison
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,8 +78,8 @@ section Lab
 
 variable {n' r : ℕ} [NeZero n'] [NeZero r] (X : Dat n' r) (p K : ℕ)
 
-open Classical in
 
+open Classical in
 def ellExp (l : Fin n' × Fin (r + K) →₀ ℕ) (j : ℤ) : ℤ × Fin (r + K) →₀ ℕ :=
   Finsupp.onFinset (X.toLate j ×ˢ (Finset.univ : Finset (Fin (r + K))))
     (fun v => if v.1 ∈ X.toLate j then l (posOf n' v.1, v.2) / p ^ X.F.dist j v.1 else 0)
@@ -194,7 +198,7 @@ theorem coarse_label_factorisation : CoarseLabelFactorisation := by
   have hSval : ∀ t c, S (t, c) = ∑ j ∈ Finset.range D.F.J, ∑ x ∈ D.toLate (j : ℤ),
       if posOf n' x = t then p ^ D.F.dist (j : ℤ) x * (l (t, c) / p ^ D.F.dist (j : ℤ) x) else 0 := by
     intro t c
-    rw [hS, Finsupp.finset_sum_apply]
+    rw [hS, Finsupp.finsetSum_apply]
     exact Finset.sum_congr rfl (fun j _ => img_ellExp D p K l j t c)
   have hS1 : ∀ t c (j0 : ℕ) (x0 : ℤ), j0 < D.F.J → x0 ∈ D.toLate (j0 : ℤ) → posOf n' x0 = t →
       S (t, c) = p ^ D.F.dist (j0 : ℤ) x0 * (l (t, c) / p ^ D.F.dist (j0 : ℤ) x0) := by

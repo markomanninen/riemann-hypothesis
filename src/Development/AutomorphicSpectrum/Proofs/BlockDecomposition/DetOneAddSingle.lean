@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.DeterminantPowerSmoothness.DetPowSmooth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowIrreducibleKStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.DeterminantPowerSmoothness.DetPowSmooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowIrreducibleKStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ def Qf (e : Fin n → ℤ) (g : Mat n) : ℂ := ∏ j, GlobalTheory.CompanionThe
 def wf (e : Fin n → ℤ) (m : ℤ) (p : MvPolynomial (Fin n × Fin n) ℂ) : Mat n → ℂ :=
   (GLs n).indicator fun g => Qf e g * g.det ^ m * evP p g
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem gm_ne_zero (j : Fin n) {g : Mat n} (hg : g ∈ GLs n) : GlobalTheory.CompanionTheory.ModelS.gm j g ≠ 0 := by
   unfold GlobalTheory.CompanionTheory.ModelS.gm
   have hli : LinearIndependent ℂ g.row := by
@@ -37,12 +41,14 @@ theorem gm_ne_zero (j : Fin n) {g : Mat n} (hg : g ∈ GLs n) : GlobalTheory.Com
   have hinj : Function.Injective (g.submatrix (GlobalTheory.CompanionTheory.ModelS.ini j) id).vecMul := by
     rw [Matrix.vecMul_injective_iff]
     exact hli.comp _ (Fin.castLE_injective _)
-  have hp := Matrix.PosDef.mul_conjTranspose_self _ hinj
-  exact ((Matrix.isUnit_iff_isUnit_det _).1 hp.isUnit).ne_zero
+  open scoped ComplexOrder in
+  exact (by
+    have hp := Matrix.PosDef.mul_conjTranspose_self _ hinj
+    exact ((Matrix.isUnit_iff_isUnit_det _).1 hp.isUnit).ne_zero)
 
 theorem gm_smooth (j : Fin n) : ContDiff ℝ ∞ (GlobalTheory.CompanionTheory.ModelS.gm j : Mat n → ℂ) := by
   have hent : ∀ a b : Fin n, ContDiff ℝ ∞ (fun x : Mat n => x a b) := fun a b =>
-    (contDiff_apply_apply ℝ ℂ a b).restrict_scalars ℝ
+    (contDiff_apply_apply ℂ a b : ContDiff ℂ ∞ (fun x : Mat n => x a b)).restrict_scalars ℝ
   unfold GlobalTheory.CompanionTheory.ModelS.gm
   refine Cxc.det_smooth.comp ?_
   refine contDiff_pi.2 fun a => contDiff_pi.2 fun b => ?_
@@ -115,7 +121,7 @@ theorem fderiv_evalMatrix (p : MvPolynomial (Fin n × Fin n) ℂ) (g v : Mat n) 
       rw [e]
       exact (differentiable_evalMatrix p g).hasFDerivAt.add (differentiable_evalMatrix q g).hasFDerivAt
     rw [h.fderiv]
-    simp only [ContinuousLinearMap.add_apply, hp, hq, map_add, evalPoints_add, add_mul, Finset.sum_add_distrib]
+    simp only [ContinuousLinearMap.add_apply, hp, hq, map_add (f := _), evalPoints_add, add_mul, Finset.sum_add_distrib]
   | mul_X p i hp =>
     have e : (evP (p * MvPolynomial.X i) : Mat n → ℂ) = evP p * ⇑(entryL i.1 i.2) := by
       funext g
@@ -281,7 +287,7 @@ theorem Qf_kill (e : Fin n → ℤ) (X : Mat n) (hX : Xᴴ = -X) {g : Mat n} (hg
       funext s
       simp [Ψ, Finset.prod_apply]
     rw [this]
-    refine DifferentiableAt.finset_prod fun j _ => ?_
+    refine DifferentiableAt.finsetProd fun j _ => ?_
     have hne : M j 0 ≠ 0 := by rw [hM0]; exact gm_ne_zero j hg
     have hD := hMd j
     generalize e j = c
@@ -396,7 +402,7 @@ theorem muZ_antitone (lam : Fin n → ℤ) (hl : Antitone lam) (lev : Fin n → 
 theorem dif_nonneg {v : Fin n → ℤ} (hv : Antitone v) (j : Fin n) (hj : (j : ℕ) + 1 < n) :
     0 ≤ GlobalTheory.CompanionTheory.ModelS.dif v j := by
   unfold GlobalTheory.CompanionTheory.ModelS.dif
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
   have : j ≤ ⟨j + 1, hj⟩ := Fin.mk_le_mk.2 (Nat.le_succ _)
   have := hv this
   omega

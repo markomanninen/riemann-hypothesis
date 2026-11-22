@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIdealCoprimeConjMulEqSpanSingletonStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIdealCoprimeConjMulEqSpanSingletonStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions
 
@@ -116,13 +120,13 @@ theorem exists_primitive_norm_neg : ∀ (F E : Type) [Field F] [NumberField F] [
     show ((-(T : 𝓞 E) * RingOfIntegers.mapRingHom (starRingEnd E) o : 𝓞 E) : E) = _
     push_cast
     rfl
-  · simp only [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
+  · simp only [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
       LinearMap.map_smul, smul_eq_mul, hee, hff, hef, hfe, mul_zero, mul_one, zero_add, add_zero,
       starRingEnd_apply]
     linear_combination h1 + h2 - (T : E) * hwE
   · intro γ hγ
     have hfz : S.hT f (γ • (α • e + b • f)) = γ * α := by
-      simp only [map_add, LinearMap.map_smul, smul_eq_mul, hff, hfe, RingHom.id_apply]; ring
+      simp only [map_add (f := _), LinearMap.map_smul, smul_eq_mul, hff, hfe, RingHom.id_apply]; ring
     have hγα : γ * α ∈ c := hfz ▸ hfc _ hγ
     obtain ⟨o1, ho1⟩ := hPc p0 hp0 _ hγα
     obtain ⟨o2, ho2⟩ := hPc w hwP _ hγα
@@ -131,7 +135,7 @@ theorem exists_primitive_norm_neg : ∀ (F E : Type) [Field F] [NumberField F] [
     have E2 : (o2 : E) = w * γ := mul_right_cancel₀ hα0 (by rw [ho2]; ring)
     have E3 : (o3 : E) = -(T : E) * γ * star (w : E) := by
       have hez : S.hT (α • e) (γ • (α • e + b • f)) = γ * (star α * b) := by
-        simp only [map_add, LinearMap.map_smulₛₗ, LinearMap.smul_apply, LinearMap.map_smul,
+        simp only [map_add (f := _), LinearMap.map_smulₛₗ, LinearMap.smul_apply, LinearMap.map_smul,
           smul_eq_mul, hee, hef, starRingEnd_apply, RingHom.id_apply]; ring
       rw [hez, h1] at ho3
       change (o3 : E) = _ at ho3

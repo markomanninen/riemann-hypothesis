@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 TensorProduct
 
@@ -20,7 +24,7 @@ theorem exists_real_add (θ : L) (h0 : θ ≠ 0) (hθ : IsCMField.complexConj L 
     ∃ a b : maximalRealSubfield L, x = a • (1 : L) + b • θ := by
   have h2 : IsCMField.complexConj L (2 : L) = 2 := map_ofNat _ 2
   have ha : (x + IsCMField.complexConj L x) / 2 ∈ maximalRealSubfield L := by
-    rw [← IsCMField.complexConj_eq_self_iff, map_div₀, map_add, IsCMField.complexConj_apply_apply, h2]
+    rw [← IsCMField.complexConj_eq_self_iff, map_div₀, map_add (f := _), IsCMField.complexConj_apply_apply, h2]
     ring
   have hb : (x - IsCMField.complexConj L x) / (2 * θ) ∈ maximalRealSubfield L := by
     rw [← IsCMField.complexConj_eq_self_iff, map_div₀, map_sub, map_mul,

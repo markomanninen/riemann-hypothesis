@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.GermLiftSelfSt
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.GermLiftSelfSt
+
+@[expose] public section
 
 noncomputable section
 

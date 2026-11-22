@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CokernelCoherent
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CokernelCoherent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -42,14 +47,6 @@ lemma biproduct_app_eq_sum (U : X.Opens) (m : Γ(⨁ M, U)) :
       rfl
   exact this Finset.univ
 
-lemma biproduct_π_app_ι_app (U : X.Opens) (i j : ι) (x : Γ(M i, U)) :
-    (biproduct.π M j).app U ((biproduct.ι M i).app U x) =
-      if h : i = j then (eqToHom (congrArg M h)).app U x else 0 := by
-  rw [← ConcreteCategory.comp_apply, ← Scheme.Modules.Hom.comp_app, biproduct.ι_π]
-  split_ifs with h
-  · rfl
-  · rfl
-
 theorem isQuasicoherent_biproduct [∀ i, (M i).IsQuasicoherent] : (⨁ M).IsQuasicoherent := by
   refine isQuasicoherent_of_affineCover _ (fun V : X.affineOpens => (V : X.Opens)) (fun V => V.2)
     (iSup_affineOpens_eq_top X) ?_ ?_
@@ -60,7 +57,8 @@ theorem isQuasicoherent_biproduct [∀ i, (M i).IsQuasicoherent] : (⨁ M).IsQua
       fun j => qcoh_exists_res_eq (M j) V.2 f _
     choose e m' hm' using key
     refine ⟨∑ j, e j, ∑ j, (biproduct.ι M j).app _ (f ^ (∑ k, e k - e j) • m' j), ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [biproduct_app_eq_sum M _ m, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [resF_app, resF_smul, hm' j, smul_smul, map_pow, ← pow_add,

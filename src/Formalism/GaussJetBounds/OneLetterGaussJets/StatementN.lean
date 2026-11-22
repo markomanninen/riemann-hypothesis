@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.OneLetterGaussJets.OddLevelGainSum
+module
+
+public import Formalism.GaussJetBounds.OneLetterGaussJets.OddLevelGainSum
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

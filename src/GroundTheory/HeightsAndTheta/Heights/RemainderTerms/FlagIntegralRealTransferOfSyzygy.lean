@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.FlagIntegralRealRootRingToRealAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.FlagIntegralRealRootRingToRealAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -28,7 +33,7 @@ theorem flagIntegral_add_smul (f N : ℕ) (A B : RootRing f N) (t : ℚ) :
     flagIntegral f N (A + t • B) = flagIntegral f N A + t * flagIntegral f N B := by
   rw [flagIntegral, flagIntegral, flagIntegral, mul_sum, ← sum_add_distrib]
   refine sum_congr rfl fun α _ => ?_
-  rw [coeff_add, coeff_smul, smul_eq_mul]
+  rw [MvPolynomial.coeff_add, coeff_smul, smul_eq_mul]
   ring
 
 theorem syzygy_term_zero (hA : RestBound.Statement) (f r a : ℕ) (c : SmallBlock)

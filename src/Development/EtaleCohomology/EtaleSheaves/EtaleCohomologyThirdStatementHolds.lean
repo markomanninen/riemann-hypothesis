@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ValSuccAbove
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ValSuccAbove
+
+@[expose] public section
 
 namespace LateralTheory.Fin.EtaleChapterDThree
 theorem etale_cohomology_third_statement_holds_alt : LateralTheory.E.EtaleChapterDThree := by

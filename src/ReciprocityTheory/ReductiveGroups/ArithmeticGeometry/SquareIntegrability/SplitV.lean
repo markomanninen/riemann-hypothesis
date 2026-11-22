@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitVB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitVC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitVB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitVC
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -61,7 +65,8 @@ theorem sum_sq_norm_ge_of_span [IsCMField E] (X : PT E) (I : Submodule ℤ (Vsp 
   have ha0 : ∀ σ, 0 ≤ a σ := fun σ => Finset.sum_nonneg fun _ _ => by positivity
   have hσl : ∀ σ : E →+* ℂ, σ l = (a σ : ℂ) := by
     intro σ
-    simp only [hldef, hadef, map_sum, map_mul, IsCMField.complexEmbedding_complexConj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hldef, hadef, map_sum, map_mul, IsCMField.complexEmbedding_complexConj]
     push_cast
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Complex.mul_conj']

@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Formalism.PeriodIntegrals.QuotInv
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RankOneEmbeddings
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsHaarOnIffGroupsUnitaryUnipotent
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MatGroupHaarUniqueFiniteCompactOpenPos
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsFrameConjUnitaryBlockEqUnitaryComplement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarVolumeThinTubeUnitaryProductAsymptoticStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasDensityAtIdentityUnitaryGroupProbabilityStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Formalism.PeriodIntegrals.QuotInv
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RankOneEmbeddings
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsHaarOnIffGroupsUnitaryUnipotent
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MatGroupHaarUniqueFiniteCompactOpenPos
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsFrameConjUnitaryBlockEqUnitaryComplement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarVolumeThinTubeUnitaryProductAsymptoticStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasDensityAtIdentityUnitaryGroupProbabilityStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp
 open scoped InnerProductSpace ENNReal
@@ -101,7 +105,7 @@ def blk (k r : ℕ) : Mb k × ℂ →+* Mat k r where
       pad_mul_q, q_mul_pad, smul_zero, add_zero, zero_add, smul_smul, mul_comm]
   map_zero' := by simp
   map_add' p q := by
-    simp only [Prod.fst_add, Prod.snd_add, map_add, add_smul]; abel
+    simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), add_smul]; abel
 
 theorem pad_cont : Continuous (pad k r) := LinearMap.continuous_of_finiteDimensional _
 
@@ -231,8 +235,6 @@ theorem norm_padL (x : Eu (k + 1)) : ‖padL k r x‖ = ‖x‖ := by
   · rintro ⟨a, b, c⟩
     rw [padL_apply, dif_pos ⟨wI_mid a, wI_mid b⟩]
     simp [wI]
-
-def padI (k r : ℕ) : Eu (k + 1) →ₗᵢ[ℝ] Eu (2 * r + k + 1) := ⟨padL k r, norm_padL⟩
 
 theorem lieE_uwb : lieE (UWb k r) = (lieE (UH (Hb k))).map (padL k r) := by
   unfold lieE

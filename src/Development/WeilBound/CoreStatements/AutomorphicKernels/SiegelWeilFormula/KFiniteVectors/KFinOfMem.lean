@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
-import Development.WeilBound.ThetaLifts.LatticeBasics.BoxFinC
-import Development.WeilBound.ThetaLifts.LatticeBasics.FinLevel
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.CompactStandardSubgroup.KCptPf
-import GroundTheory.PAdicHodge.NormalizedTrace
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BoxFinC
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FinLevel
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.CompactStandardSubgroup.KCptPf
+public import GroundTheory.PAdicHodge.NormalizedTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def kfS : Submodule ℂ d.Fn where
     rintro f g ⟨N, _, h0, h1, h2⟩ ⟨N', _, h0', h1', h2'⟩
     refine ⟨N ⊔ N', inferInstance, sup_le h0 h0', Submodule.add_mem_sup h1 h1', fun k hk g hg => ?_⟩
     obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 hg
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (h2 k hk x hx) (h2' k hk y hy)
   smul_mem' := fun c _ ⟨N, h, h0, h1, h2⟩ => ⟨N, h, h0, N.smul_mem c h1, h2⟩
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem Pf_MapLoc_ιV_inj (T : LocLat G Qp LL O) : Function.Injective (ιV PD (L
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul x b => simp [ιV]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hi : Function.Injective (PD.ι.toLinearMap.restrictScalars Qp) := PD.ι_inj
   intro a b hab
   rw [h, h] at hab
@@ -34,7 +38,7 @@ theorem Pf_MapLoc_ιV_map {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp [ιV]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem Pf_MapLoc_levB_map {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L)
     (crys₁ : IsCrys PD T₁.ρ) (crys₂ : IsCrys PD T₂.ρ)
@@ -60,7 +64,7 @@ theorem Pf_MapLoc_toKsD_map (s : ℕ) {D₁ D₂ : Type} [AddCommGroup D₁] [Mo
       funext ζ
       have e1 := congrFun hy ζ
       have e2 := congrFun hy' ζ
-      simp only [map_add, Pi.add_apply] at e1 e2 ⊢
+      simp only [map_add (f := _), Pi.add_apply] at e1 e2 ⊢
       rw [e1, e2]
   simp only [toKsD, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
     LinearEquiv.symm_apply_apply]
@@ -69,7 +73,7 @@ theorem Pf_MapLoc_toKsD_map (s : ℕ) {D₁ D₂ : Type} [AddCommGroup D₁] [Mo
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x a => simp [LinearMap.baseChange_tmul]
-  | add y y' hy hy' => simp only [map_add, hy, hy']
+  | add y y' hy hy' => simp only [map_add (f := _), hy, hy']
 
 theorem Pf_MapLoc_ambF_expN (s : ℕ) {T₁ T₂ : LocLat G Qp LL O} {F : LatHom T₁.L T₂.L} {c : ZMod n}
     (h : MemD W F c) (x : ↥(W.N T₁)) (y : ↥(W.N T₂))

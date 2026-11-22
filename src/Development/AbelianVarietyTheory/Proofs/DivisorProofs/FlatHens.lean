@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleNbhdLocalRingToHenselisationAlgebraMapStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleNbhdLocalRingToHenselisationInjectiveOfNbhdStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointedEtaleNeighbourhoodLocalRingIsDirectedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatLocalRingPointedEtaleNeighbourhoodStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleNbhdLocalRingToHenselisationAlgebraMapStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleNbhdLocalRingToHenselisationInjectiveOfNbhdStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointedEtaleNeighbourhoodLocalRingIsDirectedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatLocalRingPointedEtaleNeighbourhoodStatement
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Henselisation
 
@@ -51,12 +55,14 @@ theorem flat_hens_of_stages (hdir : IsDirected (EtNbhd R) (· ≤ ·))
   obtain ⟨i, y, hy⟩ := Hens.exists_of_fin hdir l x
   have h0 : ∑ k, f k • y k = 0 := by
     apply hinj i
-    rw [map_zero, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum]
     simp only [hsmul, hy]
     exact hfx
   obtain ⟨k, a, z, hya, haf⟩ := Module.Flat.iff_forall_isTrivialRelation.mp (hflat i) h0
   refine ⟨k, a, fun j => Hens.of i (z j), fun m => ?_, haf⟩
-  rw [← hy m, hya m, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hy m, hya m, map_sum]
   simp only [hsmul]
 
 theorem flat_hens : ∀ (R : Type) [CommRing R] [IsLocalRing R], Module.Flat R (Hens R) :=

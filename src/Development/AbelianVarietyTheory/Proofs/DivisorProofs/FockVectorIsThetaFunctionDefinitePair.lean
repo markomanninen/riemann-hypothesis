@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacTheta
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ThetaFinsetSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacTheta
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ThetaFinsetSum
+
+@[expose] public section
 
 open NumberField MeasureTheory
 open scoped Classical

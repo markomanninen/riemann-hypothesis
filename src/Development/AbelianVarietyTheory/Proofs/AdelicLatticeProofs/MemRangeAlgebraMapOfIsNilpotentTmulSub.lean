@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -10,7 +15,11 @@ theorem exists_algHom_algebraicClosure_ker_le (K A : Type) [Field K] [CommRing A
     ∃ φ : A →ₐ[K] AlgebraicClosure K, ∀ x, φ x = 0 → x ∈ m := by
   letI : Field (A ⧸ m) := Ideal.Quotient.field m
   haveI : Module.Finite K (A ⧸ m) := finite_of_finite_type_of_isJacobsonRing K (A ⧸ m)
-  let ι : (A ⧸ m) →ₐ[K] AlgebraicClosure K := IsAlgClosed.lift
+  let ι : (A ⧸ m) →ₐ[K] AlgebraicClosure K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨ι.comp (Ideal.Quotient.mkₐ K m), fun x hx => ?_⟩
   have h : ι (Ideal.Quotient.mk m x) = 0 := hx
   have h2 : Ideal.Quotient.mk m x = 0 := ι.toRingHom.injective (by simpa using h)

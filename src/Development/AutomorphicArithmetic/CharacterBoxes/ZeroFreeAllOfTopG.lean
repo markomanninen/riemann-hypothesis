@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CharacterBoxes.Supply
-import Development.AutomorphicArithmetic.CharacterBoxes.DivinNOfHypV
-import Development.AutomorphicArithmetic.PrimitiveCosets.LevelGmLeOnFamilyScales
-import Development.AutomorphicArithmetic.PrimitiveCosets.Imports
+module
+
+public import Development.AutomorphicArithmetic.CharacterBoxes.Supply
+public import Development.AutomorphicArithmetic.CharacterBoxes.DivinNOfHypV
+public import Development.AutomorphicArithmetic.PrimitiveCosets.LevelGmLeOnFamilyScales
+public import Development.AutomorphicArithmetic.PrimitiveCosets.Imports
+
+@[expose] public section
 
 noncomputable section
 

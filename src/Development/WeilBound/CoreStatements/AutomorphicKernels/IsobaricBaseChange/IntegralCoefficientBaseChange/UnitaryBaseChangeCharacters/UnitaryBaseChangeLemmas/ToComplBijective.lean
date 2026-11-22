@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonsplitCentraliserNormElement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetGramRatOneNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonsplitCentraliserNormElement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetGramRatOneNeZero
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.UnitaryClasses
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -14,16 +19,16 @@ open GlobalTheory.IndefiniteRowSideFullHecke.SelfReciprocalLocalField
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem eq_of_not_split {w : Pl E} (hw : ¬ IsSplitAt w) {v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))}
     (hv : w.under (𝓞 (maximalRealSubfield E)) = v) :
     ∀ u : Pl E, u.under (𝓞 (maximalRealSubfield E)) = v → u = w := fun u hu => by
   by_contra h
   exact hw ⟨u, h, hu.trans hv.symm⟩
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem toCompl_bijective {w : Pl E} (hw : ¬ IsSplitAt w) {v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))}
     (hv : w.under (𝓞 (maximalRealSubfield E)) = v) : Function.Bijective (GlobalTheory.LFun.toCompl hv) := by
   classical
@@ -85,7 +90,7 @@ theorem locJ_cj (hU : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w)
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => simp [GlobalTheory.LFun.toCompl_tmul, hF, hσ]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   obtain ⟨y, rfl⟩ := (locJ hU w hw v hv).symm.surjective x
   rw [RingEquiv.apply_symm_apply, locJ_symm_apply, hcomp, ← locJ_symm_apply hU w hw v hv,
     RingEquiv.apply_symm_apply]

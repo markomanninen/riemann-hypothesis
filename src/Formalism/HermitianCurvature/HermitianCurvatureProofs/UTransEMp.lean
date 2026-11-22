@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerCoordinateProd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerCoordinateProd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 
@@ -49,10 +53,10 @@ theorem ut_of_mem {A : Matrix (Fin r) (Fin r) ℂ} (hA : A ∈ C2.UTset r) : G.u
   ext i j
   simp only [G.upper, G.strictUpper, StabilizerDisintegration.utc, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply]
   rcases lt_trichotomy i j with h | h | h
-  · rw [if_neg (ne_of_lt h), dif_pos h, zero_add]
+  · rw [if_neg (ne_of_lt h), dite_eq_left h, zero_add]
   · subst h
-    rw [if_pos rfl, dif_neg (lt_irrefl _), add_zero, hA.2 i]
-  · rw [if_neg (ne_of_gt h), dif_neg (not_lt.2 h.le), add_zero, hA.1 i j h]
+    rw [if_pos rfl, dite_eq_right (lt_irrefl _), add_zero, hA.2 i]
+  · rw [if_neg (ne_of_gt h), dite_eq_right (not_lt.2 h.le), add_zero, hA.1 i j h]
 
 theorem ut_inv_mem {A : Matrix (Fin r) (Fin r) ℂ} (hA : A ∈ C2.UTset r) : A⁻¹ ∈ C2.UTset r := by
   have hT : Matrix.BlockTriangular A id := fun i j hij => hA.1 i j hij
@@ -94,14 +98,14 @@ def uTransE (A : X → Matrix (Fin r) (Fin r) ℂ) (hA : ∀ x, A x ∈ C2.UTset
         Matrix.nonsing_inv_mul _ (ut_det (hA p.1)), Matrix.one_mul, StabilizerDisintegration.UC.utc_upper]
   measurable_toFun := by
     refine measurable_fst.prodMk ?_
-    refine measurable_pi_lambda _ fun q => ?_
+    refine Measurable.of_eval fun q => ?_
     simp only [StabilizerDisintegration.utc, Matrix.mul_apply]
     refine Finset.measurable_sum _ fun c _ => Measurable.mul ?_ ?_
     · exact (hAi _ _).comp measurable_fst
     · exact ((StabilizerDisintegration.UC.cont_upper.matrix_elem _ _).measurable).comp measurable_snd
   measurable_invFun := by
     refine measurable_fst.prodMk ?_
-    refine measurable_pi_lambda _ fun q => ?_
+    refine Measurable.of_eval fun q => ?_
     simp only [StabilizerDisintegration.utc, Matrix.mul_apply]
     refine Finset.measurable_sum _ fun c _ => Measurable.mul ?_ ?_
     · exact (hAc _ _).comp measurable_fst

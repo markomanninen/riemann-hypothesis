@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CoeLatFrameOfEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnfoldingLevelsAndStepsHaarMeasuresExist
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CoCptOfIsAnisoOrPosDef
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PsiTContinuous
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsCompactGinfCOfOntoUni
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CoeLatFrameOfEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnfoldingLevelsAndStepsHaarMeasuresExist
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CoCptOfIsAnisoOrPosDef
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PsiTContinuous
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsCompactGinfCOfOntoUni
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.L2.Ker
@@ -21,13 +25,16 @@ def stdSp {D : D7} (V : HSp D) : DefSp V :=
 theorem gramAt_one {D : D7} {V : HSp D} (h : V.gram = 1) (τ : D.what₂.Tau) : gramAt D V τ = 1 := by
   rw [gramAt, h, Matrix.map_one _ (map_zero _) (map_one _)]
 
-theorem stdSp_is {D : D7} {V : HSp D} (hs : V.SigOK) (h : V.gram = 1) : (stdSp V).Is where
-  sig := hs
-  cpt := (GlobalTheory.Unf.CoCptOf.coCpt_of_isAniso_or_posDef D V).2 fun τ => by rw [gramAt_one h]; exact Matrix.PosDef.one
-  cart := fun τ => VacStd.cartan_of_gram h τ
-  pm := fun _ => Or.inl rfl
-  onb := fun τ => ⟨V.rank, fun _ => 1, fun a => Or.inl ⟨rfl, a.2⟩, by simp [gramAt_one h, stdSp], by simp [stdSp]⟩
-  sd := GlobalTheory.PlaceModel.isSelfDualC_latFrame V
+theorem stdSp_is {D : D7} {V : HSp D} (hs : V.SigOK) (h : V.gram = 1) : (stdSp V).Is := by
+  refine ⟨hs, ?_, fun τ => VacStd.cartan_of_gram h τ, fun _ => Or.inl rfl, ?_,
+    GlobalTheory.PlaceModel.isSelfDualC_latFrame V⟩
+  · apply (GlobalTheory.Unf.CoCptOf.coCpt_of_isAniso_or_posDef D V).2
+    intro τ
+    rw [gramAt_one h]
+    exact Matrix.PosDef.one
+  · intro τ
+    exact ⟨V.rank, fun _ => 1, fun a => Or.inl ⟨rfl, a.2⟩,
+      by simp [gramAt_one h, stdSp], by simp [stdSp]⟩
 
 variable {B : Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {u : B.Word} {a : I.ι}
 

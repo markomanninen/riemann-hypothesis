@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DropPlInsert
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalThetaPairExistence
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFinsetOfMemNhds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiVNeOneOfTrace
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCartanInvOneOfOnb
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DropPlInsert
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalThetaPairExistence
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFinsetOfMemNhds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiVNeOneOfTrace
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCartanInvOneOfOnb
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -77,8 +82,8 @@ theorem rel_indep {G M : Type} [AddCommGroup G] [AddCommGroup M] [Module ℂ M] 
 
 variable {D : D7}
 
-open GlobalTheory.ThetaVacuumAE in
 
+open GlobalTheory.ThetaVacuumAE in
 theorem exists_latO_le (S T : HSp D) (U : AddSubgroup (WO S T)) (hU : IsOpen (U : Set (WO S T))) :
     ∃ Sb : Finset (HeightOneSpectrum (𝓞 D.host.F)), latO S T (L0c D S) (L0c D T) (fun v => v ∉ Sb) ≤ U := by
   classical
@@ -139,7 +144,8 @@ theorem evalV_offIdem {F : Type} [Field F] [NumberField F] (Sb : Finset (HeightO
   have e1 : evalV F w (singleV F w 1) = 1 := GlobalTheory.StdCharTotReal.single_same w 1
   have e2 : ∀ v, v ≠ w → evalV F w (singleV F v 1) = 0 := fun v hv => GlobalTheory.StdCharTotReal.single_ne v 1 hv.symm
   unfold offIdem
-  rw [map_sub, map_one, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_one, map_sum]
   refine ⟨fun hw => ?_, fun hw => ?_⟩
   · rw [Finset.sum_eq_single_of_mem w hw fun v _ hv => e2 v hv, e1, sub_self]
   · rw [Finset.sum_eq_zero fun v hv => e2 v fun h => hw (h ▸ hv), sub_zero]
@@ -214,11 +220,12 @@ theorem half_of_offPl (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F))) {u : WO 
     exact Prod.ext (show (0 : Ainf D.host.F) = 1 - 1 - 0 by ring)
       (show 1 - ∑ v ∈ Sb, singleV D.host.F v 1 = 1 - 0 - ∑ v ∈ Sb, singleV D.host.F v 1 by rw [sub_zero])
   unfold offE
-  rw [e, RingHom.map_sub, RingHom.map_sub, RingHom.map_one, map_sum, sub_mul, sub_mul, one_mul, h1, Finset.sum_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, RingHom.map_sub, RingHom.map_sub, RingHom.map_one, map_sum, sub_mul, sub_mul, one_mul, h1, Finset.sum_mul,
     Finset.sum_eq_zero h2, sub_zero, sub_zero]
 
-open GlobalTheory.PlaceModel in
 
+open GlobalTheory.PlaceModel in
 theorem exists_rel_off {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {s f : WO S T → ℂ}
     (hs : IsThetaFunO ψ S T s) (hs0 : s ≠ 0) (hf : IsThetaFunO ψ S T f) :
     ∃ Sb : Finset (HeightOneSpectrum (𝓞 D.host.F)), ∀ c : WO S T →₀ ℂ, (∀ u ∈ c.support, OffPl Sb u) →

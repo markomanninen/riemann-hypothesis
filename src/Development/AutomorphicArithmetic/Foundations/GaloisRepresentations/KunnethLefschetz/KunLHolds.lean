@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace UpperTheory.Gal.KunnethLefschetz
@@ -26,10 +30,10 @@ theorem UpperTheory.Gal.KunnethLefschetz.kunL_holds :
         rw [← DirectSum.lof_eq_of ℚ_[l], kun_lof l p n i (by omega) u v]
         exact Submodule.subset_span ⟨i, n - i, by omega, u, v, rfl⟩
       | add s t hs ht =>
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
         exact Submodule.add_mem _ hs ht
     | add x y hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
   · let e := LinearEquiv.ofBijective (kun l p p n) (hb n)
     have he : ∀ a (ha : a + (n - a) = n) (u : V l X a) (v : V l X (n - a)),

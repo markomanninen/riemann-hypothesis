@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteOfPerfectPairingZmodStatement
+module
+
+public import Mathlib
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteOfPerfectPairingZmodStatement
+
+@[expose] public section
+
 open Formalism.GaloisCohomology ReciprocityTheory.Gal
 
 namespace GlobalTheory

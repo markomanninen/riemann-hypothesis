@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestRankLProved
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestRankLProved
+
+@[expose] public section
 
 noncomputable section
 

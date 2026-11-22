@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CMTraceForms.Places
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CMTraceForms.Places
+
+@[expose] public section
 
 open NumberField TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs Formalism.L2.Pj UpperTheory.Depth
@@ -29,7 +33,7 @@ private theorem cmHost_bar_halfIntegerGenerator (H : Host E) : H.bar H.w0 = 1 - 
     · exact h
   apply mul_left_cancel₀ (by norm_num : (2 : 𝓞 E) ≠ 0)
   have := congrArg H.bar H.two_weight_eq_one_add_root
-  rw [map_mul, map_add, map_one, hrt, map_ofNat] at this
+  rw [map_mul, map_add (f := _), map_one, hrt, map_ofNat] at this
   linear_combination this + H.two_weight_eq_one_add_root
 
 private theorem exists_root_two (k : ℕ) : ∃ β γ : ℤ_[2], β * β = β - 2 * k ∧ γ * (1 - 2 * β) = 1 := by
@@ -49,7 +53,7 @@ private theorem exists_root_two (k : ℕ) : ∃ β γ : ℤ_[2], β * β = β - 
     exact hlt β
   obtain ⟨γ, hγ⟩ := hu.exists_left_inv
   refine ⟨β, γ, ?_, hγ⟩
-  simp only [map_add, map_sub, map_pow, Polynomial.aeval_X, Polynomial.aeval_C,
+  simp only [map_add (f := _), map_sub, map_pow, Polynomial.aeval_X, Polynomial.aeval_C,
     Algebra.algebraMap_self, RingHom.id_apply] at hβ
   linear_combination hβ
 
@@ -91,7 +95,7 @@ private theorem exists_root (p : ℕ) [hp : Fact p.Prime] (d k : ℕ) (hk : d + 
         simp [one_add_one_eq_two]
       rw [e1, e2, hder, one_pow]
       exact hlt)
-  simp only [map_add, map_pow, Polynomial.aeval_X, Polynomial.aeval_C,
+  simp only [map_add (f := _), map_pow, Polynomial.aeval_X, Polynomial.aeval_C,
     Algebra.algebraMap_self, RingHom.id_apply] at hα
   obtain ⟨u, hu⟩ := (PadicInt.isUnit_iff.2 (hunit 2 h2')).exists_left_inv
   obtain ⟨v, hv⟩ := (PadicInt.isUnit_iff.2 (hunit _ hne)).exists_left_inv
@@ -165,7 +169,7 @@ theorem UpperTheory.exists_splitIdempotent_of_splitAt :
       simpa only [map_mul, map_sub, map_ofNat, map_one] using this
     have hr : 2 * σ H.w0 = 1 + σ H.rt := by
       have := congrArg σ H.two_weight_eq_one_add_root
-      simpa only [map_mul, map_add, map_ofNat, map_one] using this
+      simpa only [map_mul, map_add (f := _), map_ofNat, map_one] using this
     have ha : algebraMap ℤ_[p] O (1 - 2 * β) = 1 - 2 * algebraMap ℤ_[p] O β := by
       simp only [map_mul, map_sub, map_ofNat, map_one]
     have h2 : (2 : O) ≠ 0 := two_ne_zero

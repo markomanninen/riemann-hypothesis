@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobSubMulSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobSubMulSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL
 
@@ -50,7 +54,7 @@ theorem tensor_flat {R W T : Type} [CommRing R] [CommRing W] [Algebra R W] [AddC
     | tmul r t =>
       simp only [LinearMap.rTensor_tmul, TensorProduct.lid_tmul, i, Algebra.linearMap_apply]
       rw [Algebra.algebraMap_eq_smul_one (A := W) r, TensorProduct.smul_tmul]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, TensorProduct.tmul_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, TensorProduct.tmul_add]
   refine ⟨fun y => ?_, fun b => ?_, ?_⟩
   · obtain ⟨b, hb⟩ := LinearMap.rTensor_surjective T gsurj y
     exact ⟨b, by rw [key]; exact hb⟩
@@ -86,7 +90,7 @@ theorem baseChange_flat {R W O : Type} [CommRing R] [CommRing W] [Algebra R W] [
     induction b using TensorProduct.induction_on with
     | zero => simp
     | tmul o w => simp [g, TensorProduct.tmul_sub]
-    | add x y hx hy => rw [map_add, map_add, ← hx, ← hy]; abel
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), ← hx, ← hy]; abel
   have gsurj : Function.Surjective g := fun y => by
     obtain ⟨b, hb⟩ := hs y
     exact ⟨b, by simpa [g] using hb⟩
@@ -114,7 +118,7 @@ theorem baseChange_flat {R W O : Type} [CommRing R] [CommRing W] [Algebra R W] [
       simp only [LinearMap.lTensor_tmul, TensorProduct.rid_tmul, i, Algebra.linearMap_apply,
         Algebra.TensorProduct.algebraMap_apply, Algebra.algebraMap_self_apply]
       rw [Algebra.algebraMap_eq_smul_one (A := W) r, ← TensorProduct.smul_tmul]
-    | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
   refine ⟨fun y => ?_, fun b hb => ?_, ?_⟩
   · obtain ⟨b, hb⟩ := LinearMap.lTensor_surjective O gsurj y
     exact ⟨b, by rw [key]; exact hb⟩
@@ -129,7 +133,7 @@ theorem baseChange_flat {R W O : Type} [CommRing R] [CommRing W] [Algebra R W] [
 theorem algebraMap_WCb_injective (l : ℕ) [Fact l.Prime] :
     Function.Injective (algebraMap ℤ_[l] (WCb l)) := by
 
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra hne
   have hker : RingHom.ker (algebraMap ℤ_[l] (WCb l)) ≠ ⊥ := by
@@ -186,8 +190,8 @@ theorem ring_fixed (l : ℕ) [Fact l.Prime] (LL : FinExt l) :
   unfold RW φRW
   exact baseChange_flat (frobW l) hs hk (algebraMap_WCb_injective l)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem main : ∀ (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)), (∀ y : TW (RW LL) T, ∃ b, TWmap (φRW LL) T b - b = y) ∧ (∀ b : TW (RW LL) T, TWmap (φRW LL) T b = b ↔ ∃ t : ↥T.L.T, b = (1 : RW LL) ⊗ₜ[↥(OL LL)] t) ∧ Function.Injective (fun t : ↥T.L.T => (1 : RW LL) ⊗ₜ[↥(OL LL)] t) := by
   intro l _ K LL T
   obtain ⟨hdvr, -⟩ := GlobalTheory.Per.integers_completeDVR l LL

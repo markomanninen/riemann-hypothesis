@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriDens
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriDens
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ open ReciprocityTheory.ChartRestriction.DS.S7
 variable {N : ℕ}
 
 theorem gaussB_hs_eq_re_trace (M : Matrix (Fin N) (Fin N) ℂ) : hs M = (trace (Mᴴ * M)).re := by
-  simp only [hs, trace, Matrix.diag, mul_apply, conjTranspose_apply, Complex.re_sum]
+  simp only [hs, trace, Matrix.diag, Matrix.mul_apply, conjTranspose_apply, Complex.re_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
   rw [Complex.star_def, Complex.conj_mul']

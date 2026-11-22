@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+
+@[expose] public section
 
 noncomputable section
 

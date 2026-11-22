@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsHomOpenPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsHomOpenPart
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH
@@ -79,7 +84,8 @@ theorem immBy_of_div : ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] 
       choose r hr using hr
       refine ⟨hUa, r, fun j l => ?_, ?_⟩
       · by_cases hl : ((W ⊓ H.U l : M.Z.Opens) : Set M.Z).Nonempty
-        · have hl' : (H.U l : Set M.Z).Nonempty := hl.mono fun z hz => hz.2
+        · have hl' : (H.U l : Set M.Z).Nonempty :=
+            Set.Nonempty.mono (show (W ⊓ H.U l : M.Z.Opens) ≤ H.U l from inf_le_right) hl
           apply M.res_injective _ hl
           rw [map_mul, res_apply, res_apply, res_apply, M.valF_resG _ hl, M.valF_resG _ hl, M.valF_resG _ hl,
             hv j l hl', hv i l hl', hr]

@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.BOfNsmulLeft
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsFamRep
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsLeastOfDiscrete
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsRepresentativesModNsmul
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBasisOfEq
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FamEqOnClassOfEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.BOfNsmulLeft
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsFamRep
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsLeastOfDiscrete
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsRepresentativesModNsmul
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBasisOfEq
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FamEqOnClassOfEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,7 +36,8 @@ theorem exists_basis_of_coord {F : Type} [Field F] (v : AddValuation F (WithTop 
 
   have key : ∀ (c : Fin n → F) (p : J), φ (∑ i, c i • (t (e i) • B (e i))) p = c (e.symm p) * t p := by
     intro c p
-    simp only [map_sum, map_smul, hB, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hB, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply]
     rw [Finset.sum_eq_single (e.symm p)]
     · simp
     · intro i _ hi
@@ -82,7 +87,7 @@ theorem main : GlobalFnsSt → TwistBaseChangeStatement → UUStatement := by
     rw [add_f, crd_spec s i j, crd_spec t i j, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [constBF_eq, constBF_eq, constBF_eq]
-    simp only [map_add, resTop, add_mul]
+    simp only [map_add (f := _), resTop, add_mul]
   have hsmul : ∀ (ζ : F) (s : Fam D.toPre F k) i, crd (ζ • s) i = fun c => ζ * crd s i c := by
     intro ζ s i
     refine ((hbb i).1 _).unique (crd_spec _ i) ?_

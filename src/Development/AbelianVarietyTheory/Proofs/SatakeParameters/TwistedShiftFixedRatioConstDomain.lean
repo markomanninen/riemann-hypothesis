@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Polynomial GlobalTheory.Pst GlobalTheory.MemLoc GlobalTheory.Pst.StLat GlobalTheory.Pst.NoLog
 open scoped Formalism.Per
 
@@ -59,7 +64,7 @@ theorem natDegree_eq_zero_of_fixed {ι : Type} (s : ι → F ≃+* F) (t : ι �
   change _ - s g (r.coeff e) = t g * (e + 1) * s g c at hsub
   rw [hsc g] at hsub
   have he1 : (e + 1 : F) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero e
-  rw [map_div₀, map_neg, map_mul, hsc g, map_add, map_natCast, map_one]
+  rw [map_div₀, map_neg, map_mul, hsc g, map_add (f := _), map_natCast, map_one]
   field_simp
   linear_combination hsub
 

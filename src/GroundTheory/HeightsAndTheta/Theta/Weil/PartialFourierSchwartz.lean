@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Theta
 
@@ -26,7 +30,7 @@ theorem norm_iteratedFDeriv_slice_le {f : V₁ × (EuclideanSpace ℝ ι) → E}
     iteratedFDeriv_comp_add_right]
   refine (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans ?_
   have h1 : ∏ _i : Fin n, ‖ContinuousLinearMap.inr ℝ V₁ (EuclideanSpace ℝ ι)‖ ≤ 1 :=
-    Finset.prod_le_one (fun _ _ ↦ by positivity) fun _ _ ↦ ContinuousLinearMap.norm_inr_le_one ℝ V₁ (EuclideanSpace ℝ ι)
+    Finset.prod_le_one₀ (fun _ _ ↦ by positivity) fun _ _ ↦ ContinuousLinearMap.norm_inr_le_one ℝ V₁ (EuclideanSpace ℝ ι)
   have h2 : (ContinuousLinearMap.inr ℝ V₁ (EuclideanSpace ℝ ι)) v + (x, 0) = (x, v) := by simp
   rw [h2]
   calc _ ≤ ‖iteratedFDeriv ℝ n f (x, v)‖ * 1 := by gcongr
@@ -44,9 +48,6 @@ def schwartzSlice (F : 𝓢(V₁ × (EuclideanSpace ℝ ι), E)) (x : V₁) : �
           · exact norm_snd_le (x, v)
           · exact norm_iteratedFDeriv_slice_le (F.smooth ⊤) x v n
       _ ≤ C := hC _
-
-theorem schwartzSlice_apply (F : 𝓢(V₁ × (EuclideanSpace ℝ ι), E)) (x : V₁) (v : (EuclideanSpace ℝ ι)) :
-    schwartzSlice F x v = F (x, v) := rfl
 
 theorem seminorm_smul_schwartzSlice_le (F : 𝓢(V₁ × (EuclideanSpace ℝ ι), E)) (x : V₁) (j k n : ℕ) :
     SchwartzMap.seminorm ℝ k n ((‖x‖ ^ j) • schwartzSlice F x) ≤
@@ -133,13 +134,13 @@ theorem exists_bound_partialFourierSnd (F : 𝓢(V₁ × (EuclideanSpace ℝ ι)
     _ ≤ C₀ * (s.sup (schwartzSeminormFamily ℝ (EuclideanSpace ℝ ι) E)) g := h3
     _ ≤ C₀ * M := by gcongr
 
-variable (V₁ ι) in
 
+variable (V₁ ι) in
 abbrev fstIncl : V₁ × (EuclideanSpace ℝ ι) →L[ℝ] V₁ × (EuclideanSpace ℝ ι) :=
   (ContinuousLinearMap.inl ℝ V₁ (EuclideanSpace ℝ ι)).comp (ContinuousLinearMap.fst ℝ V₁ (EuclideanSpace ℝ ι))
 
-variable (V₁ ι) in
 
+variable (V₁ ι) in
 def sndInnerCLM : V₁ × (EuclideanSpace ℝ ι) →L[ℝ] (V₁ × (EuclideanSpace ℝ ι) →L[ℝ] ℝ) :=
   ((ContinuousLinearMap.compL ℝ (V₁ × (EuclideanSpace ℝ ι)) (EuclideanSpace ℝ ι) ℝ).flip (ContinuousLinearMap.snd ℝ V₁ (EuclideanSpace ℝ ι))).comp
     ((innerSL ℝ).comp (ContinuousLinearMap.snd ℝ V₁ (EuclideanSpace ℝ ι)))
@@ -150,7 +151,7 @@ theorem sndInnerCLM_apply (p q : V₁ × (EuclideanSpace ℝ ι)) :
 
 def partialFourierDeriv (F : 𝓢(V₁ × (EuclideanSpace ℝ ι), E)) : 𝓢(V₁ × (EuclideanSpace ℝ ι), V₁ × (EuclideanSpace ℝ ι) →L[ℝ] E) :=
   SchwartzMap.postcompCLM ((ContinuousLinearMap.compL ℝ (V₁ × (EuclideanSpace ℝ ι)) (V₁ × (EuclideanSpace ℝ ι)) E).flip
-      (fstIncl V₁ ι)) (SchwartzMap.fderivCLM ℝ (V₁ × (EuclideanSpace ℝ ι)) E F) +
+      (fstIncl (V₁ := V₁) (ι := ι))) (SchwartzMap.fderivCLM ℝ (V₁ × (EuclideanSpace ℝ ι)) E F) +
     (-(2 * π * I) : ℂ) • SchwartzMap.bilinLeftCLM
       (ContinuousLinearMap.smulRightL ℝ (V₁ × (EuclideanSpace ℝ ι)) E).flip
       (sndInnerCLM V₁ ι).hasTemperateGrowth F
@@ -168,18 +169,20 @@ theorem hasFDerivAt_partialFourierSnd_integrand (F : 𝓢(V₁ × (EuclideanSpac
       (((-2 * π * I * 𝐞 (-(innerSL ℝ) v q.2)) • (ofRealCLM ∘L ((innerSL ℝ) v))).comp
         (ContinuousLinearMap.snd ℝ V₁ (EuclideanSpace ℝ ι))) q :=
     (hasFDerivAt_fourierChar_neg_bilinear_right (innerSL ℝ) v q.2).comp q hasFDerivAt_snd
-  have hpair : HasFDerivAt (fun q' : V₁ × (EuclideanSpace ℝ ι) ↦ (q'.1, v)) (fstIncl V₁ ι) q := by
+  have hpair : HasFDerivAt (fun q' : V₁ × (EuclideanSpace ℝ ι) ↦ (q'.1, v))
+      (fstIncl (V₁ := V₁) (ι := ι)) q := by
     have h : (fun q' : V₁ × (EuclideanSpace ℝ ι) ↦ (q'.1, v)) =
-        fun q' ↦ fstIncl V₁ ι q' + ((0 : V₁), v) := by
+        fun q' ↦ fstIncl (V₁ := V₁) (ι := ι) q' + ((0 : V₁), v) := by
       funext q'
       simp
     rw [h]
-    exact (fstIncl V₁ ι).hasFDerivAt.add_const _
+    exact (ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ) (fstIncl (V₁ := V₁) (ι := ι))).add_const _
   have hF : HasFDerivAt (fun q' : V₁ × (EuclideanSpace ℝ ι) ↦ F (q'.1, v))
-      ((fderiv ℝ F (q.1, v)).comp (fstIncl V₁ ι)) q :=
+      ((fderiv ℝ F (q.1, v)).comp (fstIncl (V₁ := V₁) (ι := ι))) q :=
     (F.differentiableAt.hasFDerivAt).comp q hpair
   have hs : HasFDerivAt (fun q' : V₁ × (EuclideanSpace ℝ ι) ↦ ((𝐞 (-inner ℝ v q'.2) : ℂ)) • F (q'.1, v))
-      ((((𝐞 (-inner ℝ v q.2) : Circle) : ℂ)) • (fderiv ℝ F (q.1, v)).comp (fstIncl V₁ ι) +
+      ((((𝐞 (-inner ℝ v q.2) : Circle) : ℂ)) • (fderiv ℝ F (q.1, v)).comp
+        (fstIncl (V₁ := V₁) (ι := ι)) +
         (((-2 * π * I * 𝐞 (-(innerSL ℝ) v q.2)) • (ofRealCLM ∘L ((innerSL ℝ) v))).comp
           (ContinuousLinearMap.snd ℝ V₁ (EuclideanSpace ℝ ι))).smulRight (F (q.1, v))) q := he.smul hF
   refine hs.congr_fderiv (ContinuousLinearMap.ext fun r ↦ ?_)
@@ -300,10 +303,6 @@ def partialFourierSndSchwartz (F : 𝓢(V₁ × (EuclideanSpace ℝ ι), E)) : �
   toFun := partialFourierSnd (F : V₁ × (EuclideanSpace ℝ ι) → E)
   smooth' := contDiff_infty.mpr fun n ↦ contDiff_partialFourierSnd n E F
   decay' k n := exists_bound_iteratedFDeriv_partialFourierSnd n E F k
-
-theorem partialFourierSndSchwartz_apply (F : 𝓢(V₁ × (EuclideanSpace ℝ ι), E)) (x : V₁) (w : (EuclideanSpace ℝ ι)) :
-    partialFourierSndSchwartz F (x, w) = ∫ v, 𝐞 (-inner ℝ v w) • F (x, v) :=
-  partialFourierSnd_apply _ _ _
 
 end
 

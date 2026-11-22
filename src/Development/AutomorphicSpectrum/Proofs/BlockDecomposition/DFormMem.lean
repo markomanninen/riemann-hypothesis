@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.DpZeroRight
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.DpZeroRight
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 open GlobalTheory.CatH (face toLast)
@@ -16,7 +21,7 @@ theorem tele {B : Type*} [CommRing B] (P : ℕ → B) (m : ℕ) :
     ring
 
 variable {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] {Φ : PDF R C} {d : ℕ}
-  (E : Frame Φ d) (σ : ∀ T : C, E.D ⟶ T)
+  (E : Frame (Φ := Φ) d) (σ : ∀ T : C, E.D ⟶ T)
 
 theorem a_comp (i : Fin d) {T T' T'' : C} (φ : T ⟶ T') (ψ : T' ⟶ T'') :
     E.a σ i (φ ≫ ψ) = (Φ.A.map ψ).hom (E.a σ i φ) + E.a σ i ψ := by
@@ -34,7 +39,7 @@ theorem ga_add (i : Fin d) {n : ℕ} (s : ComposableArrows C n) (p q r : Fin (n 
     rw [← s.map_comp]; rfl
   have e2 : s.map (homOfLE (Fin.le_last q)) = s.map (homOfLE h') ≫ s.map (homOfLE (Fin.le_last r)) := by
     rw [← s.map_comp]; rfl
-  rw [e, a_comp, map_add, e2, Functor.map_comp]
+  rw [e, a_comp, map_add (f := _), e2, Functor.map_comp]
   rfl
 
 theorem ga_mem {Fil : ℤ → IdF Φ.A} (hF : IsFil Φ Fil) (i : Fin d) {n : ℕ} (s : ComposableArrows C n)
@@ -81,9 +86,6 @@ theorem sa_val {n : ℕ} (i : Fin (n + 1)) (m : Fin n) :
     ((i.succAbove m : Fin (n + 1)) : ℕ) = if (m : ℕ) < i then (m : ℕ) else m + 1 := by
   unfold Fin.succAbove
   split_ifs <;> simp_all [Fin.lt_def]
-
-local macro "fa" : tactic =>
-  `(tactic| (simp only [sa_val, Fin.val_castSucc, Fin.val_succ, Fin.val_last]; split_ifs <;> omega))
 
 theorem ga_congr (i : Fin d) {n : ℕ} (s : ComposableArrows C n) {p q p' q' : Fin (n + 1)} (h : p ≤ q) (h' : p' ≤ q')
     (hp : (p : ℕ) = p') (hq : (q : ℕ) = q') : ga E σ i s p q h = ga E σ i s p' q' h' := by
@@ -139,12 +141,12 @@ theorem d_form_mem {Fil : ℤ → IdF Φ.A} (hF : IsFil Φ Fil) (hc : E.GrConst 
       · rw [hu, hv]
         dsimp only
         rw [← ga_add]
-        refine ga_congr E σ _ s _ _ ?_ ?_ <;> fa
+        refine ga_congr E σ _ s _ _ ?_ ?_ <;> simp only [sa_val, Fin.val_castSucc, Fin.val_succ] <;> split_ifs <;> omega
       · refine Finset.prod_congr rfl fun k hk => ?_
         have hki : (k : ℕ) ≠ i := fun h => Finset.ne_of_mem_erase hk (Fin.ext h)
         split_ifs with h
-        · refine ga_congr E σ _ s _ _ ?_ ?_ <;> fa
-        · refine ga_congr E σ _ s _ _ ?_ ?_ <;> fa
+        · refine ga_congr E σ _ s _ _ ?_ ?_ <;> simp only [sa_val, Fin.val_castSucc, Fin.val_succ] <;> split_ifs <;> omega
+        · refine ga_congr E σ _ s _ _ ?_ ?_ <;> simp only [sa_val, Fin.val_castSucc, Fin.val_succ] <;> split_ifs <;> omega
     have hE : ∏ k ∈ Finset.univ.erase i, (if (k : ℕ) < i + 1 then u k else v k) =
         ∏ k ∈ Finset.univ.erase i, (if (k : ℕ) < i then u k else v k) := by
       refine Finset.prod_congr rfl fun k hk => ?_
@@ -200,7 +202,7 @@ theorem d_form_mem {Fil : ℤ → IdF Φ.A} (hF : IsFil Φ Fil) (hc : E.GrConst 
   rwa [e] at h
 
 theorem rep_form {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] {Φ : PDF R C} {Fil : ℤ → IdF Φ.A} (hF : IsFil Φ Fil)
-    {d : ℕ} (E : Frame Φ d) (σ : ∀ T : C, E.D ⟶ T) (hc : E.GrConst Fil) (j q : ℕ) (r : ℤ) (hr : r = j + q)
+    {d : ℕ} (E : Frame (Φ := Φ) d) (σ : ∀ T : C, E.D ⟶ T) (hc : E.GrConst Fil) (j q : ℕ) (r : ℤ) (hr : r = j + q)
     (I : Fin j → Fin d) (x : Φ.A.obj E.D) (hx : x ∈ (Fil q).S E.D) :
     ∃ c, Rep (Fil r) (Fil (r + 1)) (E.form σ I x) c := by
   subst hr
@@ -215,7 +217,8 @@ theorem rep_form {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] {Φ : PDF
     funext s
     apply Subtype.ext
     have h := Ideal.Quotient.eq_zero_iff_mem.2 (d_form_mem E σ hF hc j q I x hx s)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     refine Eq.trans ?_ h
     change Subtype.val (∑ i : Fin (j + 2), (-1 : ℤ) ^ (i : ℕ) • ((sq (Fil ((j : ℤ) + q)) (Fil ((j : ℤ) + q + 1))).map (toLast i s)).hom (f (face i s)) :
       sqM (Fil ((j : ℤ) + q)) (Fil ((j : ℤ) + q + 1)) _) = _

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 namespace UpperTheory.Reformulated.B.OrderedFlagDiagonal
 abbrev M4 (R : Type) : Type := Matrix (Fin 4) (Fin 4) R
 

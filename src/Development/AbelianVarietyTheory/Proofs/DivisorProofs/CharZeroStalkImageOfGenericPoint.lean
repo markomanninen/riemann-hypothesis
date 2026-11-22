@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FamIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FamIdeal
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits
 
 namespace GlobalTheory.NormSheafDescent
 
 theorem charZero_stalk_genPt : ∀ (Y Z : Scheme.{0}) (π : Y ⟶ Z) [IsIntegral Y], CharZero Γ(Y, ⊤) →
     ∀ (hK : IsField (Z.presheaf.stalk (GlobalTheory.NormSheafDescent.genPt π))),
-    letI := GlobalTheory.NormSheafDescent.fieldK π hK
-    CharZero (Z.presheaf.stalk (GlobalTheory.NormSheafDescent.genPt π)) := by
+    (letI := GlobalTheory.NormSheafDescent.fieldK π hK
+     CharZero (Z.presheaf.stalk (GlobalTheory.NormSheafDescent.genPt π))) := by
   intro Y Z π _ hY hK
   haveI : Nonempty (⊤ : Y.Opens) := ⟨⟨genericPoint Y, trivial⟩⟩
   have hL : CharZero Y.functionField :=

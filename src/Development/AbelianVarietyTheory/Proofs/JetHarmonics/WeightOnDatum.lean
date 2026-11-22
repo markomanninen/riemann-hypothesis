@@ -1,17 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ExistsSecTieFOfTies
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.H1algDefStatement
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.RPfVal
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConjugateMinimaInstance
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GramSpace
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.QBound
-import Formalism.LocalToGlobal.ProjectiveLattices.DepRun
-import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
-import Formalism.LocalToGlobal.ProjectiveLattices.Adm3OfExtension
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroSplitOfLocalAndSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ExistsSecTieFOfTies
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.RPfVal
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConjugateMinimaInstance
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GramSpace
+public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepRun
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.Adm3OfExtension
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroSplitOfLocalAndSum
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField IsLocalRing IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.DVR.QForm Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.MainNotions.Gaps.EtaleWeightGaps
@@ -35,8 +42,9 @@ theorem weight_on_datum : ∀ (D : D7) (T : Core D), T.Q.Pins → ∀ (j : ℕ),
     rw [hp, hq]
     simp only [Ranks.sigW, Ranks.r]; omega
   have hf : 1 ≤ D.R.f := by
+    have := D.R.m_le_f
     unfold Ranks.f Ranks.n
-    exact Nat.succ_le_of_lt (by positivity)
+    omega
   have hp0 : 0 < (D.R.sigW j).1 := by
     simp only [Ranks.sigW]; omega
   have hlast : w.LastPos → ∀ t, 1 ≤ w.aP t ⟨(D.R.sigW j).1 - 1, by omega⟩ := fun hw t =>
@@ -52,7 +60,7 @@ theorem weight_on_datum : ∀ (D : D7) (T : Core D), T.Q.Pins → ∀ (j : ℕ),
       rw [if_pos hτ', hp]
     rw [hmult, (hwt t _).1]
     unfold ext0
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     exact hlast hw t
   · have ht : Nonempty D.what₂.Tau := by
       by_cases h : InPsi T.Q.H D.host.φ₀

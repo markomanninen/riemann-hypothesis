@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsConjOfNotMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsConjOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU GlobalTheory.PRep Formalism.L2.Host GlobalTheory.HeckeGal UpperTheory.Gal.CertificateRingHomMap
 open scoped Classical
 
@@ -25,7 +30,20 @@ private theorem val_sim {E : Type} [Field E] [NumberField E] [IsCMField E] {n : 
 theorem UpperTheory.Gal.CertificateRingHomMap.pIntConj_of :
     UpperTheory.Gal.CertificateRingHomMap.IntConj := by
   intro E _ _ _ n k w hs ha
-  rw [← GlobalTheory.CompanionTheory.LFixDPf.mem_KGL_map_conj w]
+  have hmap : ∀ g : Matrix.GeneralLinearGroup (Fin n) ((cj w).adicCompletion E),
+      Matrix.GeneralLinearGroup.map (conjLoc (GlobalTheory.SplitPts.conjE E) w) g ∈ GlobalTheory.LFun.KGL w n ↔
+        g ∈ GlobalTheory.LFun.KGL (cj w) n := by
+    intro g
+    have hv : ∀ x : (cj w).adicCompletion E,
+        conjLoc (GlobalTheory.SplitPts.conjE E) w x ∈ w.adicCompletionIntegers E ↔
+          x ∈ (cj w).adicCompletionIntegers E := fun x => by
+      rw [HeightOneSpectrum.mem_adicCompletionIntegers, HeightOneSpectrum.mem_adicCompletionIntegers,
+        (conjLoc_spec (GlobalTheory.SplitPts.conjE E) w).2.2 x]
+    rw [GlobalTheory.AdelicU.mem_GLint_iff, GlobalTheory.AdelicU.mem_GLint_iff]
+    refine and_congr (forall₂_congr fun a b => hv _) (forall₂_congr fun a b => ?_)
+    rw [← map_inv]
+    exact hv _
+  rw [← hmap]
   set s := pLoc E w (GroundTheory.Global.AdeleBaseChange.finiteAdeleMap ℚ E ((sim k : AfQˣ) : AfQ)) with hsdef
   have hv : Valued.v s = 1 := val_sim k hs w
   have hs0 : s ≠ 0 := by

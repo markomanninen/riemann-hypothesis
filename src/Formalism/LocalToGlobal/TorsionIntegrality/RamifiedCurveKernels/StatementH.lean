@@ -1,6 +1,10 @@
-import Formalism.GaussJetBounds.StatementQ
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.JetExpShape
-import Formalism.FormalGroupLog.Statement
+module
+
+public import Formalism.GaussJetBounds.StatementQ
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.JetExpShape
+public import Formalism.FormalGroupLog.Statement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -38,10 +42,6 @@ def IntJets : Prop :=
   ∀ (K : Type) [Field K] (R : Subring K) (ι : Type) (f : MvPowerSeries ι K),
     Formalism.L2.Th1.C.IntMv R f → JetsIn R f
 
-def JetsDeriv : Prop :=
-  ∀ (K : Type) [Field K] (R : Subring K) (ι : Type) (f : MvPowerSeries ι K),
-    JetsIn R f ↔ MvPowerSeries.constantCoeff f ∈ R ∧ ∀ i, JetsIn R (MvPowerSeries.pderiv K i f)
-
 def JetsDivPow : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (R : Subring K) (ι : Type) (a : MvPowerSeries ι K),
     MvPowerSeries.constantCoeff a = 0 → JetsIn R a →
@@ -73,12 +73,12 @@ def JetsOfDJets : Prop :=
 
 def IntDJets : Prop :=
   ∀ (K : Type) [Field K] (R : Subring K) (l f : PowerSeries K),
-    Formalism.L2.Th1.C.IsOneUnit R (PowerSeries.derivative K l) → Formalism.L2.Th1.C.IntPS R f →
+    Formalism.L2.Th1.C.IsOneUnit R (PowerSeries.derivative (R := K) l) → Formalism.L2.Th1.C.IntPS R f →
     ∀ i : ℕ, Formalism.L2.Th1.C.jet l f i ∈ R
 
 def IntMvZ : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (R : Subring K) (l linv : PowerSeries K),
-    Formalism.L2.Th1.C.IsLogPair l linv → Formalism.L2.Th1.C.IsOneUnit R (PowerSeries.derivative K l) →
+    Formalism.L2.Th1.C.IsLogPair l linv → Formalism.L2.Th1.C.IsOneUnit R (PowerSeries.derivative (R := K) l) →
     ∀ (n : Type) [Fintype n] (G : MvPowerSeries n K), Formalism.L2.Th1.C.IntMv R G →
     JetsIn R (MvPowerSeries.subst
       (fun i : n => (PowerSeries.subst (MvPowerSeries.X i : MvPowerSeries n K) linv :

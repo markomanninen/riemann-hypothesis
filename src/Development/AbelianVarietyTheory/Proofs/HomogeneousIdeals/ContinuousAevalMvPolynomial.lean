@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.AffinePoints
 
@@ -76,14 +80,13 @@ variable {R A B C : Type*} [CommRing R] [CommRing A] [Algebra R A] [CommRing B] 
 
 noncomputable def coords (g : MvPolynomial σ R →ₐ[R] A) (p : A →ₐ[R] C) : σ → C := fun i => p (g (X i))
 
-omit [TopologicalSpace C] in
-@[simp] theorem coords_apply (g : MvPolynomial σ R →ₐ[R] A) (p : A →ₐ[R] C) (i : σ) :
-    coords g p i = p (g (X i)) := rfl
 
 omit [TopologicalSpace C] in
 theorem aeval_coords (g : MvPolynomial σ R →ₐ[R] A) (p : A →ₐ[R] C) (q : MvPolynomial σ R) :
     aeval (coords g p) q = p (g q) := by
-  have : (aeval (coords g p) : MvPolynomial σ R →ₐ[R] C) = p.comp g := by ext i; simp
+  have : (aeval (coords g p) : MvPolynomial σ R →ₐ[R] C) = p.comp g := by
+    ext i
+    simp [coords]
   rw [this]; rfl
 
 theorem continuous_coords (g : MvPolynomial σ R →ₐ[R] A) :
@@ -94,11 +97,11 @@ theorem continuous_aeval_mvPolynomial [IsTopologicalRing C] (q : MvPolynomial σ
     Continuous fun z : σ → C => aeval z q := by
   induction q using MvPolynomial.induction_on with
   | C a => simpa using continuous_const
-  | add P Q hP hQ => simp only [map_add]; exact hP.add hQ
+  | add P Q hP hQ => simp only [map_add (f := _)]; exact hP.add hQ
   | mul_X P i hP => simp only [map_mul, aeval_X]; exact hP.mul (continuous_apply i)
 
-variable (σ R C) in
 
+variable (σ R C) in
 noncomputable def mvPolynomialHomeomorph [IsTopologicalRing C] :
     (MvPolynomial σ R →ₐ[R] C) ≃ₜ (σ → C) where
   toFun p i := p (X i)
@@ -108,8 +111,8 @@ noncomputable def mvPolynomialHomeomorph [IsTopologicalRing C] :
   continuous_toFun := continuous_pi fun _ => continuous_eval _
   continuous_invFun := continuous_iff.2 continuous_aeval_mvPolynomial
 
-omit [TopologicalSpace C] in
 
+omit [TopologicalSpace C] in
 theorem exists_comap_eq_of_surjective (φ : A →ₐ[R] B) (hφ : Function.Surjective φ)
     (p : A →ₐ[R] C) (hp : ∀ a, φ a = 0 → p a = 0) : ∃ q : B →ₐ[R] C, comap φ q = p := by
   refine ⟨(Ideal.Quotient.liftₐ (RingHom.ker φ) p hp).comp
@@ -146,19 +149,8 @@ theorem isClosedEmbedding_comap [T1Space C] (φ : A →ₐ[R] B) (hφ : Function
 theorem isClosedEmbedding_coords [T1Space C] [IsTopologicalRing C]
     (g : MvPolynomial σ R →ₐ[R] A) (hg : Function.Surjective g) :
     IsClosedEmbedding (coords g : (A →ₐ[R] C) → σ → C) :=
-  (mvPolynomialHomeomorph R C σ).isClosedEmbedding.comp (isClosedEmbedding_comap g hg)
-
-scoped instance secondCountableTopology [T1Space C] [IsTopologicalRing C]
-    [SecondCountableTopology C] [Algebra.FiniteType R A] :
-    SecondCountableTopology (A →ₐ[R] C) := by
-  obtain ⟨n, g, hg⟩ := Algebra.FiniteType.iff_quotient_mvPolynomial''.1 ‹Algebra.FiniteType R A›
-  exact (isClosedEmbedding_coords g hg).isEmbedding.secondCountableTopology
-
-scoped instance locallyCompactSpace [T1Space C] [IsTopologicalRing C]
-    [LocallyCompactSpace C] [Algebra.FiniteType R A] :
-    LocallyCompactSpace (A →ₐ[R] C) := by
-  obtain ⟨n, g, hg⟩ := Algebra.FiniteType.iff_quotient_mvPolynomial''.1 ‹Algebra.FiniteType R A›
-  exact (isClosedEmbedding_coords g hg).locallyCompactSpace
+  (mvPolynomialHomeomorph (R := R) (C := C) (σ := σ)).isClosedEmbedding.comp
+    (isClosedEmbedding_comap g hg)
 
 end Comm
 

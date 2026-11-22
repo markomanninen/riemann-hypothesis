@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SubstCongrModPrimeOfIntegralDerivativeStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PowPrimePowSubFrobeniusTwistNormLeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SubstCongrModPrimeOfIntegralDerivativeStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PowPrimePowSubFrobeniusTwistNormLeStatement
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.Honda
 
@@ -66,12 +70,12 @@ theorem frobLog_eigen : ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [Ch
     have := congrArg (MvPowerSeries.map (σ ^ i)) hef
     rw [PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero' h0'), hXm] at this
     exact this
-  have hd' : CoefLe 1 (d⁄dX K g) := by
+  have hd' : CoefLe 1 (d⁄dX g) := by
     intro k
     rw [PowerSeries.coeff_derivative, hg, PowerSeries.coeff_map]
     have hk : (σ ^ i) ((PowerSeries.coeff (k + 1)) f) * ((k : K) + 1)
         = (σ ^ i) ((PowerSeries.coeff (k + 1)) f * ((k : K) + 1)) := by
-      rw [map_mul, map_add, map_one, map_natCast]
+      rw [map_mul, map_add (f := _), map_one, map_natCast]
     rw [hk, hτ, ← PowerSeries.coeff_derivative]
     exact hd k
   set M := Formalism.L2.Th1.C.mulBy f e w with hMdef

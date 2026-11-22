@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PositivityTheory.RgUd.Form.U.Lift2.KerOpen
 

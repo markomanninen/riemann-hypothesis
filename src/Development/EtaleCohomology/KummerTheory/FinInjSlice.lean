@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.KummerTheory.ForgetInjPf
-import Development.EtaleCohomology.KummerTheory.InjSlicePf
+module
+
+public import Development.EtaleCohomology.KummerTheory.ForgetInjPf
+public import Development.EtaleCohomology.KummerTheory.InjSlicePf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.InjSlice
 theorem etale_forget_preservesInjectiveObjects : LateralTheory.KummerTheory.ForgetInj := by

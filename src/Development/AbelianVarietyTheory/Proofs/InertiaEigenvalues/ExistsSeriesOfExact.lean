@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,10 +140,6 @@ theorem SameFactors.pi {ι : Type} [Finite ι] {N N' : ι → Type} [∀ j, AddC
   exact (SameFactors.pi_fin (N := fun j => N (e.symm j)) (N' := fun j => N' (e.symm j))
     fun j => h (e.symm j)).congr (LinearEquiv.piCongrLeft R N e.symm) (LinearEquiv.piCongrLeft R N' e.symm)
 
-theorem SameFactors.prod_comm (hA : IsFiniteLength R A) (hC : IsFiniteLength R C) :
-    SameFactors R (A × C) (C × A) :=
-  ((SameFactors.refl hA).prod (SameFactors.refl hC)).congr (LinearEquiv.refl _ _) (LinearEquiv.prodComm R A C)
-
 end Ss
 
 section Rep
@@ -153,10 +153,6 @@ def asModuleMap {π : Representation O G M} {π' : Representation O G M'} (f : M
     (hf : ∀ g x, f (π g x) = π' g (f x)) : π.asModule →ₗ[MonoidAlgebra O G] π'.asModule :=
   Representation.IntertwiningMap.equivLinearMapAsModule π π'
     { toLinearMap := f, isIntertwining' := fun g => LinearMap.ext (hf g) }
-
-theorem asModuleMap_apply {π : Representation O G M} {π' : Representation O G M'} (f : M →ₗ[O] M')
-    (hf : ∀ g x, f (π g x) = π' g (f x)) (x : π.asModule) :
-    π'.asModuleEquiv (asModuleMap f hf x) = f (π.asModuleEquiv x) := rfl
 
 def equivAsModule {π : Representation O G M} {π' : Representation O G M'} (e : M ≃ₗ[O] M')
     (he : ∀ g x, e (π g x) = π' g (e x)) : π.asModule ≃ₗ[MonoidAlgebra O G] π'.asModule :=

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.RealTrOfAll
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryExistsSkewLog
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.RealTrOfAll
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryExistsSkewLog
+
+@[expose] public section
 
 noncomputable section
 

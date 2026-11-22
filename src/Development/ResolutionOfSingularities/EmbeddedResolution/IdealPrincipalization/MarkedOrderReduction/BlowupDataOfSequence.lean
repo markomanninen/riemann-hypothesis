@@ -1,42 +1,47 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderAtMultiplicativity
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DimensionRecursion
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.MarkedPullbackSquare
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.GeometryHypotheses
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderAlongBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderReductionResolution
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderReductionAlgorithm
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.SequencePrefix
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.NonMonomialOrderReduction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.CompanionIdealReduction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.DisjointCentersPullback
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.SequenceOfBlowupsPullback
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.MapToEarlierScheme
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialGeometryHypotheses
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.CenterInvariant
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.LocallyMonomial
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialNearPoint
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.BoundaryRelabeling
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IrreducibleComponentsAlongSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SupportsAlongSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceTransforms
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderAtMultiplicativity
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderPullback
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DimensionRecursion
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.MarkedPullbackSquare
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.GeometryHypotheses
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderAlongBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderReductionResolution
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderReductionAlgorithm
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.SequencePrefix
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.NonMonomialOrderReduction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.CompanionIdealReduction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.DisjointCentersPullback
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.SequenceOfBlowupsPullback
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.MapToEarlierScheme
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialGeometryHypotheses
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.CenterInvariant
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.LocallyMonomial
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialNearPoint
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.BoundaryRelabeling
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IrreducibleComponentsAlongSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SupportsAlongSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceTransforms
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
@@ -95,18 +100,19 @@ namespace SequenceOfBlowupsPullback
 
 variable {X X' : Scheme.{u}} {φ : X' ⟶ X} {s' : SequenceOfBlowups X'} {s : SequenceOfBlowups X}
 
-private def ofSequenceOfBlowupsMap (c : SequenceOfBlowupsPullback φ s' s) (j : ℕ)
+def ofSequenceOfBlowupsMap (c : SequenceOfBlowupsPullback φ s' s) (j : ℕ)
     (hj : j ≤ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length) :
     (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.schemeAt j ⟶ (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups.schemeAt (c.idx j) :=
-  eqToHom (ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s' j) ≫ c.map j (le_length_of_le_ofSequenceOfBlowups_length s' hj) ≫
-    eqToHom (ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s (c.idx j)).symm
+  eqToHom (by exact ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s' j) ≫
+    c.map j (by exact le_length_of_le_ofSequenceOfBlowups_length s' hj) ≫
+    eqToHom (by exact (ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s (c.idx j)).symm)
 
-private theorem index_ofSequenceOfBlowups_length (c : SequenceOfBlowupsPullback φ s' s) :
+theorem index_ofSequenceOfBlowups_length (c : SequenceOfBlowupsPullback φ s' s) :
     c.idx (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length = (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups.length := by
   rw [BlowupSequenceData.toSequenceOfBlowups_ofSequenceOfBlowups_length s', BlowupSequenceData.toSequenceOfBlowups_ofSequenceOfBlowups_length s]
   exact c.idx_length
 
-private theorem index_lt_ofSequenceOfBlowups_length (c : SequenceOfBlowupsPullback φ s' s) :
+theorem index_lt_ofSequenceOfBlowups_length (c : SequenceOfBlowupsPullback φ s' s) :
     ∀ j : ℕ, j < (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length →
       c.idx j < (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups.length := by
   intro j hj
@@ -114,7 +120,7 @@ private theorem index_lt_ofSequenceOfBlowups_length (c : SequenceOfBlowupsPullba
   rw [BlowupSequenceData.toSequenceOfBlowups_ofSequenceOfBlowups_length]
   exact c.idx_lt j hj
 
-private theorem index_lt_index_succ_of_lt_length_ofSequenceOfBlowups (c : SequenceOfBlowupsPullback φ s' s) :
+theorem index_lt_index_succ_of_lt_length_ofSequenceOfBlowups (c : SequenceOfBlowupsPullback φ s' s) :
     ∀ j : ℕ, j < (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length → c.idx j < c.idx (j + 1) := by
   intro j hj
   rw [BlowupSequenceData.toSequenceOfBlowups_ofSequenceOfBlowups_length] at hj
@@ -136,7 +142,7 @@ private theorem isPullback_congr {A B C D : Scheme.{u}} {f f' : A ⟶ B} {g g' :
   subst hk
   exact H
 
-private theorem isPullback_projectionToBase_ofSequenceOfBlowups (c : SequenceOfBlowupsPullback φ s' s) :
+theorem isPullback_projectionToBase_ofSequenceOfBlowups (c : SequenceOfBlowupsPullback φ s' s) :
     ∀ (j : ℕ) (hj : j ≤ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length),
       IsPullback (ofSequenceOfBlowupsMap c j hj) ((BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.projectionToBase j)
         ((BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups.projectionToBase (c.idx j)) φ := by
@@ -182,7 +188,7 @@ private theorem ofSequenceOfBlowups_toSequenceOfBlowups_blowupMorphism {W : Sche
     ((ofSequenceOfBlowups_toSequenceOfBlowups_transitionMap t (Nat.le_succ i)).trans
       (SequenceOfBlowups.blowupMorphism_eq_transitionMap t i).symm)
 
-private theorem ofSequenceOfBlowups_blowupMorphism_comp_map (c : SequenceOfBlowupsPullback φ s' s) :
+theorem ofSequenceOfBlowups_blowupMorphism_comp_map (c : SequenceOfBlowupsPullback φ s' s) :
     ∀ (j : ℕ) (hj : j < (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length),
       (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.transitionMapSucc j ≫ ofSequenceOfBlowupsMap c j (le_of_lt hj) =
         ofSequenceOfBlowupsMap c (j + 1) hj ≫
@@ -200,7 +206,7 @@ private theorem eqToHom_refl_comp_comp_eqToHom_refl {A B : Scheme.{u}} (hA : A =
     (f : A ⟶ B) : eqToHom hA ≫ f ≫ eqToHom hB = f := by
   simp only [eqToHom_refl, Category.id_comp, Category.comp_id]
 
-private theorem center_ofSequenceOfBlowups_eq_comap (c : SequenceOfBlowupsPullback φ s' s) :
+theorem center_ofSequenceOfBlowups_eq_comap (c : SequenceOfBlowupsPullback φ s' s) :
     ∀ (j : ℕ) (hj : j < (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length),
       (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.center j =
         ((BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups.center (c.idx j)).comap (ofSequenceOfBlowupsMap c j (le_of_lt hj)) := by
@@ -212,14 +218,14 @@ private theorem center_ofSequenceOfBlowups_eq_comap (c : SequenceOfBlowupsPullba
   rw [hmap]
   exact c.center_comap j hj'
 
-private theorem center_ofSequenceOfBlowups_ne_top (c : SequenceOfBlowupsPullback φ s' s) :
+theorem center_ofSequenceOfBlowups_ne_top (c : SequenceOfBlowupsPullback φ s' s) :
     ∀ j : ℕ, j < (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length →
       (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.center j ≠ ⊤ := by
   intro j hj
   have hj' : j < s'.length := lt_of_lt_of_le hj (le_of_eq (BlowupSequenceData.toSequenceOfBlowups_ofSequenceOfBlowups_length s'))
   exact c.center_ne_top j hj'
 
-private theorem ofSequenceOfBlowups_ne_of_mem_unmatched_center (c : SequenceOfBlowupsPullback φ s' s) :
+theorem ofSequenceOfBlowups_ne_of_mem_unmatched_center (c : SequenceOfBlowupsPullback φ s' s) :
     ∀ i : ℕ, i < (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups.length →
       (∀ j : ℕ, j < (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups.length → c.idx j ≠ i) →
       ∀ z : ↥((BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups.schemeAt i),
@@ -251,20 +257,21 @@ def toBlowupDataOfSeq (c : SequenceOfBlowupsPullback φ s' s) :
   center_ne_top := center_ofSequenceOfBlowups_ne_top c
   omitted := ofSequenceOfBlowups_ne_of_mem_unmatched_center c
 
-private def transportedMap
+def transportedMap
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups)
     (j : ℕ) (hj : j ≤ s'.length) : s'.schemeAt j ⟶ s.schemeAt (c.idx j) :=
-  eqToHom (ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s' j).symm ≫ c.map j (le_ofSequenceOfBlowups_length_of_le_length s' hj) ≫
-    eqToHom (ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s (c.idx j))
+  eqToHom (by exact (ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s' j).symm) ≫
+    c.map j (by exact le_ofSequenceOfBlowups_length_of_le_length s' hj) ≫
+    eqToHom (by exact ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s (c.idx j))
 
-private theorem ofSequenceOfBlowups_index_length
+theorem ofSequenceOfBlowups_index_length
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups) :
     c.idx s'.length = s.length := by
   have h := c.idx_length
   rw [BlowupSequenceData.toSequenceOfBlowups_ofSequenceOfBlowups_length s', BlowupSequenceData.toSequenceOfBlowups_ofSequenceOfBlowups_length s] at h
   exact h
 
-private theorem ofSequenceOfBlowups_index_lt_length
+theorem ofSequenceOfBlowups_index_lt_length
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups) :
     ∀ j : ℕ, j < s'.length → c.idx j < s.length := by
   intro j hj
@@ -275,7 +282,7 @@ private theorem ofSequenceOfBlowups_index_lt_length
   rw [BlowupSequenceData.toSequenceOfBlowups_ofSequenceOfBlowups_length] at h
   exact h
 
-private theorem index_lt_index_succ_of_lt_length
+theorem index_lt_index_succ_of_lt_length
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups) :
     ∀ j : ℕ, j < s'.length → c.idx j < c.idx (j + 1) := by
   intro j hj
@@ -290,7 +297,7 @@ private theorem transportedMap_eq_map
   eqToHom_refl_comp_comp_eqToHom_refl (ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s' j).symm (ofSequenceOfBlowups_toSequenceOfBlowups_schemeAt s (c.idx j))
     (c.map j (le_ofSequenceOfBlowups_length_of_le_length s' hj))
 
-private theorem isPullback_transportedMap
+theorem isPullback_transportedMap
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups) :
     ∀ (j : ℕ) (hj : j ≤ s'.length),
       IsPullback (transportedMap c j hj) (s'.projectionToBase j) (s.projectionToBase (c.idx j)) φ := by
@@ -299,7 +306,7 @@ private theorem isPullback_transportedMap
     (BlowupSequenceData.projectionToBase_toSequenceOfBlowups_ofSequenceOfBlowups s (c.idx j)) rfl
     (c.isPullback j (le_ofSequenceOfBlowups_length_of_le_length s' hj))
 
-private theorem blowupMorphism_comp_map_of_ofSequenceOfBlowups
+theorem blowupMorphism_comp_map_of_ofSequenceOfBlowups
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups) :
     ∀ (j : ℕ) (hj : j < s'.length),
       s'.transitionMapSucc j ≫ transportedMap c j (le_of_lt hj) =
@@ -313,7 +320,7 @@ private theorem blowupMorphism_comp_map_of_ofSequenceOfBlowups
   rw [transportedMap_eq_map c j (le_of_lt hj), transportedMap_eq_map c (j + 1) hj]
   exact key
 
-private theorem center_eq_comap_transportedMap
+theorem center_eq_comap_transportedMap
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups) :
     ∀ (j : ℕ) (hj : j < s'.length),
       s'.center j = (s.center (c.idx j)).comap (transportedMap c j (le_of_lt hj)) := by
@@ -327,7 +334,7 @@ private theorem center_eq_comap_transportedMap
   rw [hmap]
   exact c.center_comap j hj'
 
-private theorem center_ne_top_of_pullback_ofSequenceOfBlowups
+theorem center_ne_top_of_pullback_ofSequenceOfBlowups
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups) :
     ∀ j : ℕ, j < s'.length → s'.center j ≠ ⊤ := by
   intro j hj
@@ -336,7 +343,7 @@ private theorem center_ne_top_of_pullback_ofSequenceOfBlowups
     exact hj
   exact c.center_ne_top j hj'
 
-private theorem ofSequenceOfBlowups_projectionToBase_ne
+theorem ofSequenceOfBlowups_projectionToBase_ne
     (c : SequenceOfBlowupsPullback φ (BlowupSequenceData.ofSequenceOfBlowups s').toSequenceOfBlowups (BlowupSequenceData.ofSequenceOfBlowups s).toSequenceOfBlowups) :
     ∀ i : ℕ, i < s.length → (∀ j : ℕ, j < s'.length → c.idx j ≠ i) →
       ∀ z : ↥(s.schemeAt i), z ∈ (s.center i).support →

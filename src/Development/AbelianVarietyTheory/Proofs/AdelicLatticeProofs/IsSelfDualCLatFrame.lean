@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemHermitianStandardLatticeIffPairingIntegral
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LinearIndependentWave
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemHermitianStandardLatticeIffPairingIntegral
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LinearIndependentWave
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,8 @@ theorem gram_inv_star (a b : Fin S.rank) : star (S.gram⁻¹ a b) = S.gram⁻¹ 
 
 theorem hO_herm (x y : WO S T) : cA D (hO S T x y) = hO S T y x := by
   unfold hO
-  simp only [map_sum, map_mul, cA_cA, cA_incA, gram_star, gram_inv_star]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, cA_cA, cA_incA, gram_star, gram_inv_star]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [Finset.sum_comm]
@@ -53,11 +58,11 @@ theorem symplO_skew (x y : WO S T) : symplO S T y x = -symplO S T x y := by
 
 theorem symplO_add_left (x x' y : WO S T) : symplO S T (x + x') y = symplO S T x y + symplO S T x' y := by
   unfold symplO hO
-  simp only [Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem symplO_add_right (x y y' : WO S T) : symplO S T x (y + y') = symplO S T x y + symplO S T x y' := by
   unfold symplO hO
-  simp only [Matrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem symplO_smul (a : AE D) (x y : WO S T) : symplO S T (a • x) y = symplO S T x (cA D a • y) := by
   unfold symplO
@@ -69,11 +74,16 @@ theorem symplO_zero_right (x : WO S T) : symplO S T x 0 = 0 := by
 theorem symplO_zero_left (x : WO S T) : symplO S T 0 x = 0 := by
   simpa using symplO_add_left S T 0 0 x
 
-theorem isBichar_symplO (ψ : AddChar (AF D.host.F) ℂ) : IsBichar fun x y : WO S T => ψ (symplO S T x y) where
-  left a b y := by rw [symplO_add_left, AddChar.map_add_eq_mul]
-  right a b y := by rw [symplO_add_right, AddChar.map_add_eq_mul]
-  zero_left y := by rw [symplO_zero_left, AddChar.map_zero_eq_one]
-  zero_right y := by rw [symplO_zero_right, AddChar.map_zero_eq_one]
+theorem isBichar_symplO (ψ : AddChar (AF D.host.F) ℂ) : IsBichar fun x y : WO S T => ψ (symplO S T x y) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro a b y
+    rw [symplO_add_left, AddChar.map_add_eq_mul]
+  · intro a y z
+    rw [symplO_add_right, AddChar.map_add_eq_mul]
+  · intro y
+    rw [symplO_zero_left, AddChar.map_zero_eq_one]
+  · intro a
+    rw [symplO_zero_right, AddChar.map_zero_eq_one]
 
 def heisL (ψ : AddChar (AF D.host.F) ℂ) (w : WO S T) : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ) where
   toFun := heisO ψ S T w
@@ -145,17 +155,15 @@ theorem coe_latFrame : (latFrame S : Set (Fin S.rank → D.host.E)) = L0c D S :=
   Set.ext fun y => mem_latFrame S y
 
 theorem isSelfDualC_latFrame : IsSelfDualC S (latFrame S) := by
-  refine ⟨⟨S.standardTuple_isLattice.fg.map _, ?_⟩, fun y => ?_⟩
-  · change Submodule.span _ (S.frame.equivFun.toLinearMap '' (S.L0 : Set S.V)) = ⊤
-    rw [← Submodule.map_span, S.standardTuple_isLattice.span_eq_top, Submodule.map_top, LinearEquiv.range]
-  · rw [mem_latFrame, mem_hermitianStandardLattice_iff_pairing_integral]
-    constructor
-    · intro h x hx
-      rw [← hT_coord]
-      exact h _ ((mem_latFrame S x).1 hx)
-    · intro h x hx
-      have := h (S.frame.equivFun x) ⟨x, hx, rfl⟩
-      rwa [← hT_coord, S.frame.sum_equivFun] at this
+  refine ⟨Submodule.IsLattice.of_fg D.host.E (S.standardTuple_isLattice.fg.map _), fun y => ?_⟩
+  rw [mem_latFrame, mem_hermitianStandardLattice_iff_pairing_integral]
+  constructor
+  · intro h x hx
+    rw [← hT_coord]
+    exact h _ ((mem_latFrame S x).1 hx)
+  · intro h x hx
+    have := h (S.frame.equivFun x) ⟨x, hx, rfl⟩
+    rwa [← hT_coord, S.frame.sum_equivFun] at this
 
 variable {S T} {LS : Set (Fin S.rank → D.host.E)} {LT : Set (Fin T.rank → D.host.E)}
   {v : HeightOneSpectrum (𝓞 D.host.F)} {ε : AF D.host.F}
@@ -247,33 +255,6 @@ theorem mem_of_dual {ψ : AddChar (AF D.host.F) ℂ} (hε : IsPlaceIdem D v ε)
     have := h _ (idem_smul_mem hε (by rw [← map_mul, ha]) h2 hu)
     rwa [← symplO_smul, (mem_half S T).1 hx] at this)
   rwa [(mem_half S T).1 hx] at this
-
-theorem placeModelExistsO : ∀ D : D7, PlaceModelExistsO D := by
-  intro D ψ hψ S T e v ε hs hε heq c f₀ hc _ hvac
-  have he := hs.1
-  have hec := hs.2.1
-  have he' : cA D e * cA D e = cA D e := by rw [← map_mul, he]
-  have heε : algebraMap (AF D.host.F) (AE D) ε * e = e := by rw [← heq]; linear_combination he + hec
-  have heε' : algebraMap (AF D.host.F) (AE D) ε * cA D e = cA D e := by rw [← heq]; linear_combination he' + hec
-  have hs' : IsSplitIdem D (cA D e) :=
-    ⟨he', by rw [cA_cA, mul_comm, hec], v, ε, hε, by rw [cA_cA, add_comm, heq]⟩
-  have hdual := (GlobalTheory.LatVac.latO_selfDual_approx_sign D ψ S T _ _ hψ (isSelfDualC_latFrame S) (isSelfDualC_latFrame T)).1
-  have hfin := GlobalTheory.LatFinMod.latO_finite_mod D S T _ _ (isSelfDualC_latFrame S).1.fg (isSelfDualC_latFrame T).1.fg fun w => w = v
-  rw [coe_latFrame, coe_latFrame] at hdual hfin
-  refine exists_placeModel ψ hec _
-    (fun u hu y hy => (hdual u (infPart_half hε heε hu.2)).1 (latO_le_top _ hu.1) y (latO_le_top _ hy.1))
-    (mem_of_dual hε hdual he heε heε') (fun y hy h => ?_) (fun k hk => ?_) hc f₀
-    (fun u hu => hvac.2 e hs u hu.1 ((isHalf_iff S T).2 hu.2))
-    (fun u hu => hvac.2 _ hs' u hu.1 ((isHalf_iff S T).2 hu.2))
-  · refine mem_of_dual hε hdual he' heε' (by rwa [cA_cA]) y hy fun u hu => ?_
-    rw [cA_cA] at hu
-    rw [symplO_skew, AddChar.map_neg_eq_inv, h u hu, inv_one]
-  · obtain ⟨R, hR, h⟩ := hfin k hk
-    refine ⟨(fun r => e • r) '' R, hR.image _, fun t ht => ?_⟩
-    obtain ⟨r, hr, u, hu, htr⟩ := h t ht.1
-    refine ⟨_, ⟨r, hr, rfl⟩, e • u, idem_smul_mem hε he heε (latO_le_top _ hu), ?_⟩
-    have := (mem_half S T).1 ht.2
-    rw [← this, htr, smul_add, smul_comm e k u]
 
 end GlobalTheory.PlaceModel
 

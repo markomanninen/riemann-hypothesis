@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafKillCut
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafKillCut
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+
+@[expose] public section
+
 open Formalism.BasicNotions IsDedekindDomain NumberField
 
 namespace GlobalTheory.LocGen
@@ -20,7 +25,8 @@ theorem exists_gen_mul_of_isIntegral {R S : Type*} [CommRing R] [CommRing S] [Is
     intro h
     obtain ⟨Q, hKQ, hQ, hQp⟩ := Ideal.exists_ideal_over_prime_of_isIntegral p K h
     have hrQ : algebraMap R S r ∈ Q := by
-      rw [← Ideal.mem_comap, hQp]; exact hr
+      change r ∈ Ideal.under R Q
+      rw [hQp]; exact hr
     have h1 : J * Ideal.span {algebraMap R S r} ≤ J * Q :=
       Ideal.mul_mono_right ((Ideal.span_singleton_le_iff_mem _).mpr hrQ)
     have h2 : Ideal.span {y} ≤ J * Q := hK ▸ Ideal.mul_mono_right hKQ
@@ -47,8 +53,8 @@ end GlobalTheory.LocGen
 
 namespace GlobalTheory
 
-open GlobalTheory.LocGen in
 
+open GlobalTheory.LocGen in
 theorem fracIdeal_locGen : ∀ (D : D7) (I : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E), I ≠ 0 →
     ∀ v : HeightOneSpectrum (𝓞 D.host.F), ∃ a : D.host.E, a ≠ 0 ∧ ∃ c : 𝓞 D.host.F, c ∉ v.asIdeal ∧
       ((c : D.host.F) : D.host.E) * a ∈ I ∧

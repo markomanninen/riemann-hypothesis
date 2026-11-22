@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootsCharpolyPowEqMapPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootsCharpolyPowEqMapPow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne
 
 namespace GlobalTheory.TracePowCharpoly
@@ -12,7 +17,8 @@ theorem newton_fn {σ : Type} [Fintype σ] (f : σ → ℂ) (k : ℕ) :
       ∑ a ∈ antidiagonal k with a.1 < k,
         (-1) ^ a.1 * (univ.val.map f).esymm a.1 * ∑ i, f i ^ a.2 := by
   have h := congrArg (MvPolynomial.aeval f) (MvPolynomial.mul_esymm_eq_sum σ ℂ k)
-  simpa only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast,
     MvPolynomial.aeval_esymm_eq_multiset_esymm, MvPolynomial.psum, MvPolynomial.aeval_X] using h
 
 theorem newton_multiset (s : Multiset ℂ) (k : ℕ) :

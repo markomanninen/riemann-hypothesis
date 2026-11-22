@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodProjectorSmallestSpaceForms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.IoUniq
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.RightInv
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodGA
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodProjectorSmallestSpaceForms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.IoUniq
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.RightInv
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodGA
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -32,7 +37,7 @@ theorem stepLev_change : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 I0 T
       simp only [map_smul, Pi.smul_apply, smul_eq_mul, this]
       ring
     | add a a' ha ha' =>
-      simp only [map_add, Pi.add_apply, ha, ha']
+      simp only [map_add (f := _), Pi.add_apply, ha, ha']
       ring
   have hleft : ∀ (u : SmT (R.MY (k + 1))), ∀ γ ∈ GQ (Yc D (k + 1)), ∀ h, y.1 u (γ * h) = y.1 u h := by
     intro u γ hγ h
@@ -42,7 +47,7 @@ theorem stepLev_change : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 I0 T
       simp only [PiTensorProduct.lift_symm, LinearMap.compMultilinearMap_apply] at this
       simp only [map_smul, Pi.smul_apply, smul_eq_mul, this]
     | add a a' ha ha' =>
-      simp only [map_add, Pi.add_apply, ha, ha']
+      simp only [map_add (f := _), Pi.add_apply, ha, ha']
   have hω := hch.ωY t k hk
   have hpt := hch.ptY t k hk φ
   have hθ1 : ∀ h, thetaKO (R.ωY t k) (g * κ) h (R.toRealDat.ptY t k φ) =

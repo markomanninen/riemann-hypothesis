@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalVAlgebraMapMem
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalVAlgebraMapMem
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.Genus
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
 
-omit [NumberField E] in
+omit [NumberField F] [NumberField E] in
 theorem tens_map_map {R R' R'' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algebra F R'] [CommRing R'']
     [Algebra F R''] (φ : R →ₐ[F] R') (ψ : R' →ₐ[F] R'') (y : R ⊗[F] E) :
     Algebra.TensorProduct.map ψ (AlgHom.id F E) (Algebra.TensorProduct.map φ (AlgHom.id F E) y) =
@@ -33,6 +37,7 @@ theorem adTens_eq_one' {y : AF F ⊗[F] E} (h1 : ∀ w, compInf F E w y = 1) (h2
         (tens_map_map _ _ y).trans ((h2 v).trans (map_one _).symm))
   exact congrFun (congrFun this 0) 0
 
+omit [NumberField E] in
 theorem mul_idem_iff_mem_range_emb {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (v : HeightOneSpectrum (𝓞 F)) (ε : AF F)
     (e0 : ∀ w, evInf F w ε = 0) (e1 : evFin F v ε = 1) (e2 : ∀ u, u ≠ v → evFin F u ε = 0) (g : GAd σ J) :
     (∀ i j, algebraMap (AF F) (AF F ⊗[F] E) ε * ((matHom _ σ J g).1 - 1) i j = ((matHom _ σ J g).1 - 1) i j) ↔
@@ -64,14 +69,14 @@ theorem mul_idem_iff_mem_range_emb {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (v :
   · rintro ⟨h1, h2⟩ i j
     rw [← sub_eq_zero, ← add_eq_right (b := 1)]
     refine adTens_eq_one' (fun w => ?_) fun u => ?_
-    · rw [map_add, map_sub, map_mul, h1, map_one]; simp
-    · rw [map_add, map_sub, map_mul, map_one]
+    · rw [map_add (f := _), map_sub, map_mul, h1, map_one]; simp
+    · rw [map_add (f := _), map_sub, map_mul, map_one]
       by_cases hu : u = v
       · subst hu; rw [c1]; simp
       · rw [h2 u hu]; simp
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem adTens_ext {y z : AF F ⊗[F] E} (h1 : ∀ w, compInf F E w y = compInf F E w z)
     (h2 : ∀ v, compFin F E v y = compFin F E v z) : y = z := by
   rw [← sub_eq_zero, ← add_eq_right (b := 1)]
@@ -83,8 +88,8 @@ section Single
 
 omit [NumberField E]
 
-variable (E) in
 
+variable (E) in
 def singleTens (v : HeightOneSpectrum (𝓞 F)) : Fv F v ⊗[F] E →ₙ+* AF F ⊗[F] E :=
   GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.tensNU (R' := AF F) ((LinearMap.inr F (Ainf F) (Af F)).comp (singleFin v))
     fun a b => Prod.ext (mul_zero _).symm (singleFin_mul v a b)
@@ -113,10 +118,9 @@ theorem singleTens_mul (v : HeightOneSpectrum (𝓞 F)) (y : Fv F v ⊗[F] E) (z
 
 theorem sigR_singleTens (v : HeightOneSpectrum (𝓞 F)) (y : Fv F v ⊗[F] E) :
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ σ (singleTens E v y) = singleTens E v (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ σ y) := by
-  induction y using TensorProduct.induction_on with
-  | zero => simp
+  induction y using TensorProduct.inductionOn with
   | tmul a x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Single
 
@@ -156,22 +160,10 @@ theorem suppF_iff_mem_range {ε : AF D.host.F} (h : IsPlaceIdem D v ε) (g : GA 
   obtain ⟨α, rfl, h1, h2⟩ := h
   exact mul_idem_iff_mem_range_emb _ _ v _ (fun _ => rfl) h1 h2 g
 
-theorem suppAt_iff_mem_range {ε : AF D.host.F} (h : IsPlaceIdem D v ε) {e : AE D}
-    (he : e + cA D e = algebraMap (AF D.host.F) (AE D) ε) (g : GA D V) :
-    SuppAt e V g ↔ g ∈ (emb D.sp.cm.sig V.gram v).range := by
-  rw [← suppF_iff_mem_range V h, ← he]; rfl
-
 theorem emb_mem_KsphC (x : GLoc D.sp.cm.sig V.gram v) :
     emb D.sp.cm.sig V.gram v x ∈ KsphC V ∅ ↔ x ∈ stabLoc D.sp.cm.sig V.gram (frameLat V) v := by
   rw [KsphC_eq]
   exact ⟨fun h => by simpa using (mem_levelOff.1 h).2.2 v (by simp), emb_mem_levelOff (by simp)⟩
-
-theorem suppF_and_mem_KsphC {ε : AF D.host.F} (h : IsPlaceIdem D v ε) (g : GA D V) :
-    (SuppF V (algebraMap (AF D.host.F) (AE D) ε) g ∧ g ∈ KsphC V ∅) ↔
-      g ∈ (stabLoc D.sp.cm.sig V.gram (frameLat V) v).map (emb D.sp.cm.sig V.gram v) := by
-  rw [suppF_iff_mem_range V h]
-  exact ⟨fun ⟨⟨x, e⟩, hk⟩ => ⟨x, (emb_mem_KsphC V x).1 (e ▸ hk), e⟩,
-    fun ⟨x, hx, e⟩ => ⟨⟨x, e⟩, e ▸ (emb_mem_KsphC V x).2 hx⟩⟩
 
 theorem fj_singleV (y : Fv D.host.F v) :
     fj D (singleV D.host.F v y) = singleTens D.host.E v (y ⊗ₜ[D.host.F] (1 : D.host.E)) := rfl
@@ -187,7 +179,7 @@ theorem splitAt_splitIdemAd (τ : D.host.E →ₐ[D.host.F] Fv D.host.F v) :
     exact congrArg _ (split_ext h τ (by simp [splitIdem]) (by simp [splitIdem]))
   · rw [splitIdemAd, cA, sigR_singleTens, ← map_mul, ← map_zero (singleTens D.host.E v)]
     exact congrArg _ (split_ext h τ (by simp [← splitProj_comp]) (by simp))
-  · rw [splitIdemAd, cA, sigR_singleTens, ← map_add, sigR_splitIdem, add_sub_cancel]
+  · rw [splitIdemAd, cA, sigR_singleTens, ← map_add (f := _), sigR_splitIdem, add_sub_cancel]
     rfl
 
 theorem isIdemAt_splitIdemAd (τ : D.host.E →ₐ[D.host.F] Fv D.host.F v) :
@@ -216,7 +208,7 @@ theorem exists_eq_splitIdemAd {e : AE D} (he : SplitAt D v e) :
   rw [← hy] at h0
   have inj : Function.Injective (singleTens D.host.E v) := Function.LeftInverse.injective (compFin_singleTens_self v)
   have h1 : y + Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ D.sp.cm.sig y = 1 := inj (by
-    rw [map_add, ← sigR_singleTens, ← h0]; exact he.2.2)
+    rw [map_add (f := _), ← sigR_singleTens, ← h0]; exact he.2.2)
   obtain ⟨d, hd⟩ := exists_cm_conj_ne h
   have h2 : y * (1 ⊗ₜ d) = (τ d ⊗ₜ 1) * y := inj (by
     rw [map_mul (singleTens D.host.E v) (τ d ⊗ₜ 1), ← h0]
@@ -229,7 +221,7 @@ theorem exists_eq_splitIdemAd {e : AE D} (he : SplitAt D v e) :
       ← sub_mul] at this
     exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 fun e => hd (τ.toRingHom.injective e))
   have h4 := congrArg (splitProj τ) h1
-  rw [map_add, ← splitProj_comp, h3, add_zero, map_one] at h4
+  rw [map_add (f := _), ← splitProj_comp, h3, add_zero, map_one] at h4
   rw [h0]
   exact congrArg _ (split_ext h τ (by simp [splitIdem, h4]) (by simp [splitIdem, h3]))
 
@@ -248,10 +240,6 @@ theorem isIdemAt_iff_exists {e : AE D} {P : HeightOneSpectrum (𝓞 D.host.E)} :
   by_cases hx : x = 0
   · simp [hx]
   · exact (h.2 x hx).trans ((isIdemAt_splitIdemAd τ).2 x hx).symm
-
-theorem suppAt_splitIdemAd (τ : D.host.E →ₐ[D.host.F] Fv D.host.F v) (g : GA D V) :
-    SuppAt (D := D) (splitIdemAd (isCMExt_host D) τ) V g ↔ g ∈ (emb D.sp.cm.sig V.gram v).range :=
-  suppAt_iff_mem_range V (isPlaceIdem_placeIdem D v) ((splitAt_splitIdemAd τ).2.2.trans (pl_eq D v)) g
 
 theorem finPart_fj_mem_iff (y : Fv D.host.F v) :
     finPart D (fj D (singleV D.host.F v y)) ∈ intAE D ↔ Valued.v y ≤ 1 := by

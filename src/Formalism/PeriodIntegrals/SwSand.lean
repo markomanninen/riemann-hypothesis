@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LongWeylElementSquare
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LongWeylElementSquare
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.LocalToGlobal.Divisibility.LiftLat
-import Formalism.PieriBlockIdeals.StatementE
-import Formalism.PieriBlockIdeals.TailInequalityEventually
-import Formalism.SharpRestriction.Divisibility.JumpSets
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SingleIndexPlacesAreTwisted
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalToGlobal.Divisibility.LiftLat
+public import Formalism.PieriBlockIdeals.StatementE
+public import Formalism.PieriBlockIdeals.TailInequalityEventually
+public import Formalism.SharpRestriction.Divisibility.JumpSets
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SingleIndexPlacesAreTwisted
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -54,12 +58,6 @@ structure Dict (L : SizeData₂ D) (j : Fin D.R.m) (P : Par) (W : Wts D.what₂.
 def NumOk {ι : Type} (P : Par) (W : Wts ι) : Prop :=
   P.Hyp ∧ P.Large ∧ W.Ok P ∧ ∃ X' A : ℝ, Formalism.CohomologicalDescent.LargeParameterEstimates.Rows P X' A ∧ Formalism.CohomologicalDescent.LargeParameterEstimates.Big P.L P.x X' A
 
-theorem LIncl.succ {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] [Fintype G] {Pl0 : Type}
-    {B : BlockDat K G Pl0} {ℓ : Lvl K G} {Z : Submodule K B.S.Forms} {w : HeightOneSpectrum (𝓞 K)} {J : ℕ}
-    (h : LIncl B ℓ Z w J) : LIncl B ℓ Z w (J + 1) := fun z hz => by
-  rw [pow_succ', mul_smul]
-  exact Submodule.smul_mem _ _ (h z hz)
-
 section Point
 
 variable {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts}
@@ -72,8 +70,8 @@ abbrev lvlL := p.P.A3.A.fam.lvlA p.P.P0 p.P.ψ0
 abbrev subZ (j : Fin D.R.m) (t : p.P.T) : Submodule D.what₂.LL (blk p j t).S.Forms :=
   (p.P.A3.fam3.toSub2 (p.R.toCx3 p.F).zs).Zl j t
 
-open Classical in
 
+open Classical in
 def ModelAt (j : Fin D.R.m) (P : Par) (W : Wts D.what₂.Tau) (w : HeightOneSpectrum (𝓞 D.what₂.LL)) : Prop :=
   ∃ (fr : ℕ → D.what₂.Tau → D.what₂.Tau) (cj : ℕ → D.what₂.Tau → Bool) (I : Type) (X : I → HidaSetting D.what₂.Tau P.Nr W.lam),
     Covers (blk p j (p.R.mu w)) (lvlL p) (subZ p j (p.R.mu w)) w X ∧
@@ -81,15 +79,6 @@ def ModelAt (j : Fin D.R.m) (P : Par) (W : Wts D.what₂.Tau) (w : HeightOneSpec
 
 end Point
 
-def NumSt : Prop := AtPts fun Fm x _ i _ => ∀ j, ∃ (P : Par) (W : Wts (Fm.D x i).what₂.Tau), Dict (Fm.L x i) j P W ∧ NumOk P W
-
-open Classical in
-
-def SumExpSt : Prop := AtPts fun Fm x _ i p => ∀ j (P : Par) (W : Wts (Fm.D x i).what₂.Tau), Dict (Fm.L x i) j P W → NumOk P W →
-  ∀ t w, LIncl (blk p j t) (lvlL p) (subZ p j t) w (W.JA P (Formalism.EigenvalueLevelCeiling.plc w))
-
-def ModelSt : Prop := AtPts fun Fm x _ i p => ∀ j (P : Par) (W : Wts (Fm.D x i).what₂.Tau), Dict (Fm.L x i) j P W → NumOk P W →
-  ∀ w ∈ p.R.twPl, W.WRange P (Formalism.EigenvalueLevelCeiling.plc w) → ModelAt p j P W w
 
 end GlobalTheory.ExpTie
 

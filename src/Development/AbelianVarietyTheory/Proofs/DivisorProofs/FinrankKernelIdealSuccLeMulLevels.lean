@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupMulPUnitFibreEqLevelOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHopfIdealKerIdealOfBialgHomStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupMulPUnitFibreEqLevelOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHopfIdealKerIdealOfBialgHomStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -71,7 +75,7 @@ namespace PDivGroup
 theorem resOne_app {p : ℕ} {R : Type} [CommRing R] {G H : PDivGroup p R} (f : G ⟶ H) (n : ℕ)
     (a : H.A (n + 1)) : G.resOne n (f.app (n + 1) a) = f.app 1 (H.resOne n a) := by
   induction n with
-  | zero => rfl
+  | zero => simp only [resOne_zero]
   | succ n ih => rw [resOne_succ, resOne_succ, res_app, ih]
 
 theorem finrank_quot_kerIdeal_succ_le (p : ℕ) [Fact p.Prime] (k : Type) [Field k]
@@ -79,8 +83,47 @@ theorem finrank_quot_kerIdeal_succ_le (p : ℕ) [Fact p.Prime] (k : Type) [Field
     Module.finrank k (G.A (n + 1) ⧸ kerIdeal (u.app (n + 1))) ≤
       Module.finrank k (G.A 1 ⧸ kerIdeal (u.app 1)) *
         Module.finrank k (G.A n ⧸ kerIdeal (u.app n)) :=
-  finrank_quot_kerIdeal_le_mul (G.mulP n) (G.resOne n) (G.resOne_surjective n)
-    ((G.ker_resOne n).trans (G.kerIdeal_mulP n).symm).le _ _ _ (app_mulP u n) (resOne_app u n)
+  by
+    have hker (n : ℕ) : RingHom.ker (G.resOne n : G.A (n + 1) →ₐ[k] G.A 1) =
+        torsionIdeal (R := k) (A := G.A (n + 1)) p := by
+      induction n with
+      | zero =>
+        have hid : (G.resOne 0 : G.A 1 →ₐ[k] G.A 1) = AlgHom.id k _ := by
+          ext a; exact G.resOne_zero a
+        rw [hid]
+        refine le_antisymm ?_ ?_
+        · intro a ha
+          have : a = 0 := ha
+          simp [this]
+        · refine (torsionIdeal_le_ker_iff p (AlgHom.id k (G.A (0 + 1)))).2 ?_
+          simpa using G.pts_pow_self 1 (WithConv.toConv (AlgHom.id k (G.A 1)))
+      | succ n ih =>
+        have hcomp : (G.resOne (n + 1) : G.A (n + 2) →ₐ[k] G.A 1) =
+            (G.resOne n : G.A (n + 1) →ₐ[k] G.A 1).comp
+              (G.res (n + 1) : G.A (n + 2) →ₐ[k] G.A (n + 1)) := by
+          ext a; exact G.resOne_succ n a
+        have hsurj : Function.Surjective (G.res (n + 1) :
+            G.A (n + 2) →ₐ[k] G.A (n + 1)) := G.res_surjective (n + 1)
+        have hk : RingHom.ker ((G.resOne n : G.A (n + 1) →ₐ[k] G.A 1).comp
+            (G.res (n + 1) : G.A (n + 2) →ₐ[k] G.A (n + 1))) =
+            Ideal.comap (G.res (n + 1) : G.A (n + 2) →ₐ[k] G.A (n + 1))
+              (RingHom.ker (G.resOne n : G.A (n + 1) →ₐ[k] G.A 1)) := by
+          ext a; exact Iff.rfl
+        rw [hcomp, hk, ih, ← map_torsionIdeal (G.res_surjective (n + 1)) p]
+        erw [Ideal.comap_map_of_surjective _ hsurj]
+        refine sup_eq_left.mpr ?_
+        have h0 : Ideal.comap (G.res (n + 1) : G.A (n + 2) →ₐ[k] G.A (n + 1)) ⊥ =
+            torsionIdeal (R := k) (A := G.A (n + 2)) (p ^ (n + 1)) := by
+          rw [← G.ker_res (n + 1)]
+          ext a; exact Iff.rfl
+        rw [h0]
+        exact torsionIdeal_le_of_dvd (dvd_pow_self p (Nat.succ_ne_zero n))
+    have hmul : kerIdeal (G.mulP n) =
+        torsionIdeal (R := k) (A := G.A (n + 1)) p := by
+      unfold torsionIdeal
+      rw [← G.mulP_comp_res n, kerIdeal_comp_of_surjective _ (G.res_surjective n)]
+    exact finrank_quot_kerIdeal_le_mul (G.mulP n) (G.resOne n) (G.resOne_surjective n)
+      ((hker n).trans hmul.symm).le _ _ _ (app_mulP u n) (resOne_app u n)
 
 end PDivGroup
 

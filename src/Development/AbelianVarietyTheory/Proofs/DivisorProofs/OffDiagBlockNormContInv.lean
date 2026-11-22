@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OffDiagonalBlockSumSqNormBlockUnitaryInvariantStatement
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OffDiagonalBlockSumSqNormBlockUnitaryInvariantStatement
+
+@[expose] public section
+
 open MeasureTheory Matrix
 open Formalism.REAL (UJ KG toM toMK muK expG inG Jm Kset)
 
@@ -11,7 +16,7 @@ theorem offDiagBlockNorm_cont_inv : ∀ (n : ℕ) (ε : Fin n → Bool), (Contin
   refine ⟨?_, ?_⟩
   · have hM : Continuous fun g : UJ ε => toM g :=
       Units.continuous_val.comp continuous_subtype_val
-    refine continuous_finset_sum _ fun z _ => ?_
+    refine continuous_finsetSum _ fun z _ => ?_
     exact ((continuous_apply z.1.2).comp ((continuous_apply z.1.1).comp hM)).norm.pow 2
   · intro k k' g
     have hk : toM (k : UJ ε) ∈ Kset ε := k.2

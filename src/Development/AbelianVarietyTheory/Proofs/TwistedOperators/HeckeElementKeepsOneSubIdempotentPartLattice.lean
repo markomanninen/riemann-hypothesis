@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAnti
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceHeckeDoubleCosetCardGaussBinom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitDeterminantCongruentElement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingSecond
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAnti
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceHeckeDoubleCosetCardGaussBinom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitDeterminantCongruentElement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingSecond
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.L2.Pj
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
@@ -34,7 +39,7 @@ theorem inv_part_mem {D : D7} {e : AE D} (he : IsSplitIdem D e) {V : HSp D} {ϖ 
   have h3' : ∀ y ∈ Formalism.L2.NTheta.LamHat V, finPart D e • fm V a₀ *ᵥ y ∈ Formalism.L2.NTheta.LamHat V := h3
   have hadj := adj_mem V (finPart D e) a₀ h3' z hz
   have h6 := mulVec_parts (finPart D) ((suppAt_iff e V a₀⁻¹).1 (suppAt_inv hs)) z
-  rw [RingHom.map_add, fin_cA, ← fm_eq] at h6
+  rw [RingHom.map_add (f := _), fin_cA, ← fm_eq] at h6
   have e1 : finPart D e * finPart D e = finPart D e := by rw [← map_mul, he.1]
   have e2 : finPart D e * cf D (finPart D e) = 0 := by rw [← fin_cA, ← map_mul, he.2.1, map_zero]
   rw [mulVec_one_sub_idempotent_of_split_sum_identity _ _ e1 e2 _ z h6]
@@ -50,7 +55,7 @@ theorem hat_one_mem {D : D7} {e : AE D} (he : IsSplitIdem D e) {V : HSp D} {ϖ :
     ∀ w ∈ latGHat V 1, fm V a₀⁻¹ *ᵥ ((1 - finPart D e) • w) ∈ latGHat V 1 := by
   intro w hw
   let f : (Fin V.rank → RF D) →+ (Fin V.rank → RF D) :=
-    (Matrix.mulVecLin (fm V a₀⁻¹)).toAddMonoidHom.comp (DistribMulAction.toAddMonoidHom _ (1 - finPart D e))
+    (Matrix.mulVecLin (fm V a₀⁻¹)).toAddMonoidHom.comp (DistribSMul.toAddMonoidHom _ (1 - finPart D e))
   change f w ∈ latGHat V 1
   unfold latGHat at hw ⊢
   refine AddSubgroup.mem_comap.1 ((AddSubgroup.closure_le (K := AddSubgroup.comap f _)).2 ?_ hw)

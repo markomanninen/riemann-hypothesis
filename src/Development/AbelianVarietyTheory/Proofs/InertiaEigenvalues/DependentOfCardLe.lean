@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
+
+@[expose] public section
 
 open GlobalTheory.Cyc GlobalTheory.Cyc.TwistLift
 
@@ -52,8 +56,8 @@ theorem dependent_of_card_le : ∀ (l : ℕ) [Fact l.Prime] (G : Type) [Group G]
         ReciprocityTheory.Gal.Z1 (ReciprocityTheory.Gal.charRep (redChar ψ (r + v))) := fun c =>
       ⟨fun g => PadicInt.toZModPow (r + v) (∑ i, ((c i : ℕ) : ℤ_[l]) * w i g),
         (continuous_toZModPow _).comp
-          (continuous_finset_sum _ fun i _ => continuous_const.mul (hw i)), fun g h => by
-        rw [ReciprocityTheory.Gal.charRep_apply, redChar_apply, ← map_mul, ← map_add, Finset.mul_sum,
+          (continuous_finsetSum _ fun i _ => continuous_const.mul (hw i)), fun g h => by
+        rw [ReciprocityTheory.Gal.charRep_apply, redChar_apply, ← map_mul, ← map_add (f := _), Finset.mul_sum,
           ← Finset.sum_add_distrib]
         refine congrArg (PadicInt.toZModPow (r + v)) ?_
         exact Finset.sum_congr rfl fun i _ => by rw [hwc]; ring⟩

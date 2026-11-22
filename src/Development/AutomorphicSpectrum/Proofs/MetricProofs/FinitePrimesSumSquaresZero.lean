@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsHorizontalTwist
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsHorizontalTwist
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.QuadFin
 
@@ -18,11 +22,11 @@ theorem exists_eq_add_mul_of_mem_adjoin {E : Type*} [Field E] [Algebra ℚ E] (x
   · exact ⟨r, 0, by simp⟩
   · obtain ⟨a, b, rfl⟩ := hu
     obtain ⟨a', b', rfl⟩ := hv
-    exact ⟨a + a', b + b', by simp only [map_add]; ring⟩
+    exact ⟨a + a', b + b', by simp only [map_add (f := _)]; ring⟩
   · obtain ⟨a, b, rfl⟩ := hu
     obtain ⟨a', b', rfl⟩ := hv
     refine ⟨a * a' + b * b' * c, a * b' + a' * b, ?_⟩
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
     linear_combination (algebraMap ℚ E b * algebraMap ℚ E b') * hx
 
 theorem not_sq_eq_of_prime {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q) (b : ℚ)
@@ -45,7 +49,7 @@ theorem false_of_sq_eq {E : Type*} [Field E] [CharZero E] [Algebra ℚ E] {p q :
     (h : (algebraMap ℚ E a + algebraMap ℚ E b * x) ^ 2 = -(p : E)) : False := by
   have hφ : Function.Injective (algebraMap ℚ E) := (algebraMap ℚ E).injective
   have key : algebraMap ℚ E (a ^ 2 - q * b ^ 2 + p) + algebraMap ℚ E (2 * a * b) * x = 0 := by
-    simp only [map_add, map_sub, map_mul, map_pow, map_natCast, map_ofNat]
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_natCast, map_ofNat]
     linear_combination h - algebraMap ℚ E b ^ 2 * hx
   have hq0 : (0 : ℚ) < q := by exact_mod_cast hq.pos
   have hp0 : (0 : ℚ) < p := by exact_mod_cast hp.pos
@@ -110,7 +114,7 @@ theorem finite_primes_of_isFractionRing (A F : Type*) [CommRing A] [IsDomain A] 
     hb (IsFractionRing.injective A F (by rw [h0, map_zero]))
   refine ⟨hp, algebraMap A F a / algebraMap A F b, ?_⟩
   have e := congrArg (algebraMap A F) hab
-  simp only [map_add, map_mul, map_pow, map_natCast, map_zero] at e
+  simp only [map_add (f := _), map_mul, map_pow, map_natCast, map_zero] at e
   rw [div_pow, div_eq_iff (pow_ne_zero 2 hb')]
   linear_combination e
 

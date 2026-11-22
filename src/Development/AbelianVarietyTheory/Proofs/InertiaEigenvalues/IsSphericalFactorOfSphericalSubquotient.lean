@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalLanglandsExists
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroCuspidalLL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalConverseGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInduction
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BrauerDegreeZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContractNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalLanglandsExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroCuspidalLL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalConverseGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInduction
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BrauerDegreeZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContractNeZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Published
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -213,7 +217,7 @@ private theorem exists_fixed_ne_zero_of_piTensor_fixed {Γ X : α → Type} [∀
   let S : Finset α := Finset.univ.erase a
   have hSne : ∀ b ∈ S, b ≠ a := fun b hb => Finset.ne_of_mem_erase hb
   have hSmem : ∀ b, b ≠ a → b ∈ S := fun b hb => Finset.mem_erase.2 ⟨hb, Finset.mem_univ _⟩
-  let C : MultilinearMap ℂ X (X a) :=
+  let C : (∀ i, X i) →ₘₗ[ℂ] X a :=
     { toFun := fun x => (∏ b ∈ S, (B b).repr (x b) (t b)) • x a
       map_update_add' := by
         intro _ x i y z
@@ -242,7 +246,7 @@ private theorem exists_fixed_ne_zero_of_piTensor_fixed {Γ X : α → Type} [∀
               (∏ b ∈ S, (B b).repr (Function.update x i u b) (t b)) =
               ∏ b ∈ S, (B b).repr (x b) (t b) := fun u =>
             Finset.prod_congr rfl fun b hb => by rw [Function.update_of_ne (hSne b hb)]
-          rw [hp, hp, Function.update_self, Function.update_self, smul_comm]
+          rw [hp, hp, Function.update_self, Function.update_self, smul_comm, RingHom.id_apply]
         · have hia : i ∈ S := hSmem i hi
           have hp : ∀ [DecidableEq α] (u : X i),
               (∏ b ∈ S, (B b).repr (Function.update x i u b) (t b)) =
@@ -252,7 +256,7 @@ private theorem exists_fixed_ne_zero_of_piTensor_fixed {Γ X : α → Type} [∀
             congr 1
             exact Finset.prod_congr rfl fun b hb => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hb)]
           rw [hp, hp, Function.update_of_ne (Ne.symm hi), Function.update_of_ne (Ne.symm hi), map_smul,
-            Finsupp.smul_apply, smul_eq_mul, mul_assoc, mul_smul] }
+            Finsupp.smul_apply, smul_eq_mul, mul_assoc, mul_smul, RingHom.id_apply] }
   let C' := PiTensorProduct.lift C
   have hC : ∀ y, C' y = 0 → (Bt.repr y) t = 0 := by
     intro y hy
@@ -266,7 +270,7 @@ private theorem exists_fixed_ne_zero_of_piTensor_fixed {Γ X : α → Type} [∀
         show (B a).repr ((∏ b ∈ S, (B b).repr (x b) (t b)) • x a) (t a) = _
         rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
         exact Finset.prod_erase_mul _ _ (Finset.mem_univ a)
-      | add y z hy hz => simp only [map_add, Finsupp.add_apply, hy, hz]
+      | add y z hy hz => simp only [map_add (f := _), Finsupp.add_apply, hy, hz]
     rw [← key, hy, map_zero, Finsupp.zero_apply]
   have hequi : ∀ (κ : Γ a) y, C' (piTensor ρ (Pi.mulSingle a κ) y) = ρ a κ (C' y) := by
     intro κ y
@@ -280,7 +284,7 @@ private theorem exists_fixed_ne_zero_of_piTensor_fixed {Γ X : α → Type} [∀
       congr 1
       exact Finset.prod_congr rfl fun b hb => by
         rw [Pi.mulSingle_eq_of_ne (Finset.ne_of_mem_erase hb), map_one, Module.End.one_apply]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   refine ⟨C' w, GlobalTheory.Parabolic.mem_fixed.2 fun κ hκ => ?_, fun h => ht (hC w h)⟩
   rw [← hequi]
   congr 1
@@ -369,7 +373,7 @@ theorem fixed_KO_of_isSubquotient (e : (Σ a, m a) ≃ n) {X : α → Type} [∀
   obtain ⟨w, hw0, hw⟩ := exists_fixed_of_parInd_KO e (piTensor σ) hf hf0
   exact exists_fixed_ne_zero_of_piTensor_fixed σ (fun a => KO k (m a)) hw0 hw a
 
-theorem isSpherical_factor : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (h N : ℕ) (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), GlobalTheory.SmGL.IsSubquotient π (prodIrr x hd) → IsSpherical π → ∀ a, IsSpherical (x a).rep := by
+theorem isSpherical_factor : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (h N : ℕ) (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), GlobalTheory.SmGL.IsSubquotient π (prodIrr x hd) → IsSpherical π → ∀ a, IsSpherical (x a).rep := by
   intro k _ _ _ _ _ h N x hd V _ _ π hsub hsph a
   obtain ⟨v, hv, hv0⟩ := (Submodule.ne_bot_iff _).1 hsph
   obtain ⟨w, hw, hw0⟩ := fixed_KO_of_isSubquotient (stdBlocks (fun a => (x a).1) hd) (fun a => (x a).rep) hsub

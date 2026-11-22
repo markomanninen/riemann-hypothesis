@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.RealWeil
 open scoped SchwartzMap
 open scoped FourierTransform ContDiff RealInnerProductSpace Real
@@ -68,7 +73,7 @@ theorem norm_iteratedFDeriv_prodTrans_le (g g' : Sch (Fin n)) (p : EuclideanSpac
 
 theorem integrable_derivBound (g g' : Sch (Fin n)) (j : ℕ) : Integrable (derivBound g g' j) := by
   unfold derivBound
-  refine integrable_finset_sum _ fun i _ => ?_
+  refine MeasureTheory.integrable_finsetSum _ fun i _ => ?_
   have := SchwartzMap.integrable_pow_mul_iteratedFDeriv volume g' 0 (j - i)
   simp only [pow_zero, one_mul] at this
   exact this.const_mul _

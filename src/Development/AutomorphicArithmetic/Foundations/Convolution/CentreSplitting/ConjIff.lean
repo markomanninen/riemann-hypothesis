@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsTw
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ConjCarries
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExSummand
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.GalCentral
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSpaceC
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsTw
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ConjCarries
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExSummand
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.GalCentral
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSpaceC
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace

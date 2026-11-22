@@ -1,22 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.HolFamilyOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsTopologicalGroupComplexPoints
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CompactSpacePointsPolAV
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsTestFunctionsSubsetOfMemNhds
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEtaleCoordsVanishing
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ContinuousOnValue
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianTorsionFiniteAndMulNSurjective
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteMulByNatAbelianVarietyAlgClosed
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueLinearLiftOfHolomorphicAbelianVariet
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLinearOfIsMonHom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqZeroOfFderivEqZero
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRingHomLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.HolFamilyOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsTopologicalGroupComplexPoints
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CompactSpacePointsPolAV
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsTestFunctionsSubsetOfMemNhds
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEtaleCoordsVanishing
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ContinuousOnValue
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianTorsionFiniteAndMulNSurjective
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteMulByNatAbelianVarietyAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueLinearLiftOfHolomorphicAbelianVariet
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLinearOfIsMonHom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqZeroOfFderivEqZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRingHomLift
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.RealMult
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -103,8 +108,8 @@ theorem compactSpace_points (A : Over (Sp ℂ)) (L : LB A.left) (hL : Out.RelAmp
 
 def trivLB (A : Over (Sp ℂ)) : LB A.left := ⟨PUnit, fun _ => ⊤, fun _ _ => 1⟩
 
-open AbelianExp in
 
+open AbelianExp in
 theorem exists_holUnif_of_compact (A : Over (Sp ℂ)) [GrpObj A] [IsCommMonObj A] (g : ℕ)
     (hs : SmoothOfRelativeDimension g A.hom)
     (hcpt : @CompactSpace (𝟙_ (Over (Sp ℂ)) ⟶ A) (PointsCompact.pointTopology A))
@@ -154,44 +159,16 @@ theorem exists_holUnif_of_compact (A : Over (Sp ℂ)) [GrpObj A] [IsCommMonObj A
       hmulHol _ _ _ _ (HolOn.const hWz _) (HolOn.comp (HolOn.comp hσ hW' hL hLm) hWz
         (differentiableOn_id.sub_const z) fun v hv => hv), ?_⟩
     filter_upwards [(hs.tendsto' z 0 (sub_self z)).eventually hLe] with v hv
-    rw [← hv, ← toMul_add, ← map_add, add_sub_cancel]
+    rw [← hv, ← toMul_add, ← map_add (f := _), add_sub_cancel]
   · obtain ⟨e, he⟩ := (hval _ _).2.1 _ hz
     rw [he]
     show (1 : ℂ) = e (((1 : Γ(A.left, ⊤ ⊓ ⊤)ˣ)) : Γ(A.left, ⊤ ⊓ ⊤)) * 1
     rw [Units.val_one]
     exact ((_root_.mul_one _).trans e.map_one).symm
 
-theorem exists_isTotPos {F : Type} [Field F] [NumberField F] (𝔠 : FracId F) :
-    ∃ c : 𝔠.elt, IsTotPos (c : F) := by
-  obtain ⟨x, hx0, hx⟩ := FractionalIdeal.exists_ne_zero_mem_isInteger (𝔠.ne_zero)
-  refine ⟨⟨x • algebraMap (𝓞 F) F x, Submodule.smul_mem _ x hx⟩, fun τ => ?_⟩
-  have hx' : algebraMap (𝓞 F) F x ≠ 0 := (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective (𝓞 F) F)).2 hx0
-  have hτ : τ (algebraMap (𝓞 F) F x) ≠ 0 := (map_ne_zero τ).2 hx'
-  show 0 < τ (x • algebraMap (𝓞 F) F x)
-  rw [Algebra.smul_def, map_mul]
-  exact mul_self_pos.2 hτ
-
 end GlobalTheory.RealMultChart
 
 namespace GlobalTheory.RealMult
 
-open GlobalTheory.RealMultChart in
-
-theorem Obj.exists_holUnif_ringHom_lift : ∀ (F : Type) [Field F] [NumberField F] (𝔠 : FracId F) (X : Obj F 𝔠 (Sp ℂ)),
-    ∃ (L : LB X.A.left) (u : HolUnif X.A L (Module.finrank ℚ F))
-      (Fa : 𝓞 F →+* Module.End ℂ (Fin (Module.finrank ℚ F) → ℂ)),
-      ∀ (a : 𝓞 F) (z : Fin (Module.finrank ℚ F) → ℂ), u.ex (Fa a z) = u.ex z ≫ X.rm.act a := by
-  intro F _ _ 𝔠 X
-  obtain ⟨c, hc⟩ := exists_isTotPos 𝔠
-  have hcpt := compactSpace_points X.A (X.diag c) (X.pos c hc)
-  obtain ⟨u⟩ := exists_holUnif_of_compact X.A (Module.finrank ℚ F) X.dim hcpt
-    (fun a n hn => exists_pow_eq X.A X.ab a n hn)
-  obtain ⟨h₁, h₂⟩ := TorusTransfer.tangent_bijective u X.dim
-  have hlift : ∀ f : X.A ⟶ X.A, IsMonHom f →
-      ∃ F' : (Fin (Module.finrank ℚ F) → ℂ) →ₗ[ℂ] (Fin (Module.finrank ℚ F) → ℂ), ∀ z, u.ex (F' z) = u.ex z ≫ f :=
-    fun f hf => (existsUnique_linear_lift_of_isHolTo X.A X.ab _ _ _ u h₁ h₂ (fun z => u.ex z ≫ f)
-      (fun z w => by simp only [u.ex_add]; exact MonObj.mul_comp _ _ f) (HomLinear.isHolTo_ex_comp u f)).exists
-  obtain ⟨Fa, hFa⟩ := ArcModel.exists_ringHom_lift u X.rm.toRingAct hlift
-  exact ⟨_, u, Fa, hFa⟩
 
 end GlobalTheory.RealMult

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CbFrob
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CbFrob
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,12 +15,12 @@ section
 
 variable {R : Type} [CommRing R] {d : ℕ}
 
-def Lz (j : Fin d) (f : PS R 2 d) : PS R 1 d := ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), j) f)
+def Lz (j : Fin d) (f : PS R 2 d) : PS R 1 d := ev (n := 1) ![pt R d 0, 0] (pderiv ((1 : Fin 2), j) f)
 
 theorem coeff_Lz (f : PS R 2 d) (i j : Fin d) :
     coeff (Finsupp.single ((0 : Fin 1), i) 1) (Lz j f) = bil f 1 1 i j := by
-  rw [← cc_pderiv, Lz, d2 (by zz) (by zz)]
-  simp [dpt, ccev (show ZZ (![pt R d 0, 0] : Fin 2 → Pt R 1 d) by zz), cc_pderiv, coeff_pderiv, bil]
+  rw [← cc_pderiv, Lz, d2 (Z_pt 0) Z_zero]
+  simp [dpt, ccev (show ZZ (![pt R d 0, 0] : Fin 2 → Pt R 1 d) from ZZ_cons (Z_pt 0) (ZZ_cons Z_zero ZZ_nil)), cc_pderiv, coeff_pderiv, bil]
 
 theorem Lz_mul (j : Fin d) (f g : PS R 2 d) : Lz j (f * g) =
     Lz j f * ev (n := 1) ![pt R d 0, 0] g + ev (n := 1) ![pt R d 0, 0] f * Lz j g := by
@@ -111,7 +115,7 @@ private theorem Lz_ev_ptPow_pt {R : Type} [CommRing R] {d : ℕ} (p : ℕ) [Fact
     Lz j (ev ![ptPow R d p 0, pt R d 1] g) = ev (n := 1) ![ptPow R d p 0] (Lz j g) := by
   have hb : ZZ (n := 1) ![pt R d 0, (0 : Pt R 1 d)] := ZZ_cons (Z_pt 0) (ZZ_cons Z_zero ZZ_nil)
   have hq : ZZ (n := 1) ![ptPow R d p 0] := ZZ_cons (Z_ptPow p 0) ZZ_nil
-  have hp0 : ∀ c, pderiv R ((1 : Fin 2), j) (ptPow R d p (0 : Fin 2) c) = 0 := fun c =>
+  have hp0 : ∀ c, pderiv ((1 : Fin 2), j) (ptPow R d p (0 : Fin 2) c) = 0 := fun c =>
     d_pow_p p _ (X ((0 : Fin 2), c))
   simp only [Lz]
   rw [d2 (Z_ptPow p 0) (Z_pt 1)]
@@ -175,7 +179,8 @@ private theorem sum_am_mul_rho_pow_add_bil_ad_mul_hw {R : Type} [CommRing R] {d 
     rw [hg, Lz_ev_ptPow_pt]
   have e := congrArg (coeff (Finsupp.single ((0 : Fin 1), i) p)) (ev_act_Lz_pow1_add_ev_act_prime_Lz_ad p B a j)
   simp only [hLP] at e
-  rw [map_add, coeff_single_prime_ev_of_Z p (Z_act B.A a), hχ, ev_comp1_ptPow_eq_ev p h hh, coeff_ev_pow_one,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), coeff_single_prime_ev_of_Z p (Z_act B.A a), hχ, ev_comp1_ptPow_eq_ev p h hh, coeff_ev_pow_one,
     coeff_lin_ev hh, map_sum] at e
   simp only [coeff_mul_C, coeff_ev_pow_one, coeff_Lz, hgb, hhw] at e
   exact e

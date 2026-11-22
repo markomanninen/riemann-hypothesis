@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology GlobalTheory.Lin
 open scoped Classical
 
 namespace GlobalTheory.Lin
 
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 open scoped Classical in
-
 theorem _root_.GlobalTheory.Lin.zeros_eq_zeros_primitiveCharacter :
     ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (s : ℂ), 0 < s.re → (χ ≠ 1 ∨ s ≠ 1) →
       haveI : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩;
@@ -49,7 +54,7 @@ theorem _root_.GlobalTheory.Lin.zeros_eq_zeros_primitiveCharacter :
   have hEd : Differentiable ℂ E := by
     have h : Differentiable ℂ (∏ p ∈ q.primeFactors,
         fun z : ℂ => 1 - χ.primitiveCharacter p * (p : ℂ) ^ (-z)) :=
-      Differentiable.finset_prod (fun p hp => by
+      Differentiable.finsetProd (fun p hp => by
         have hp0 : (p : ℂ) ≠ 0 := by exact_mod_cast (Nat.prime_of_mem_primeFactors hp).ne_zero
         fun_prop (disch := exact Or.inl hp0))
     rw [hE]

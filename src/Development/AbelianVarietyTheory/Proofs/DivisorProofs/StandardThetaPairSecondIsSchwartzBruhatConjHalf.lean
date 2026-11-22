@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulCutSubOneEntry
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstStandardPairMemberHasThetaFunction
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramMapMulInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulCutSubOneEntry
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstStandardPairMemberHasThetaFunction
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramMapMulInv
+
+@[expose] public section
 
 namespace GlobalTheory.StdSndSB
 
@@ -72,7 +76,7 @@ private theorem stdSnd_shift {ν : (AE D)ˣ →* Circle} {e : AE D} {S : Finset 
       (rightBlock_shift (c := ((n * c : ℕ) : EAf D)) fun i j => ?_)).symm
     rw [h, Nat.cast_mul n₀]
     ring
-  · rw [if_neg hcnd, if_neg fun h' => hcnd ⟨hh.1 h'.1, hint.1 h'.2.1, hid.1 h'.2.2⟩]
+  · rw [ite_eq_right hcnd, ite_eq_right fun h' => hcnd ⟨hh.1 h'.1, hint.1 h'.2.1, hid.1 h'.2.2⟩]
 
 private theorem dualCoord_add (A WW : HSp D) (βA : GL (Fin A.rank) (EAf D)) (βW : GL (Fin WW.rank) (EAf D))
     (x y : WO A WW) : dualCoord A WW βA βW (x + y) = dualCoord A WW βA βW x + dualCoord A WW βA βW y := by
@@ -116,8 +120,8 @@ private theorem dualCoord_down (A WW : HSp D) (βA : GL (Fin A.rank) (EAf D)) (�
   rw [inv_aux d h1]
   exact mul_mem hx (hi i j)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 private theorem stdSnd_isSB {ν : (AE D)ˣ →* Circle} (hν : Continuous ν) {e : AE D} {S : Finset (Pl D.host.E)}
     (he : IsIdemSum e S) {I : Ideal (𝓞 D.host.E)} (hI : I ≠ ⊥) (a : ℕ) (A WW : HSp D) (βA : GL (Fin A.rank) (EAf D))
     (βW : GL (Fin WW.rank) (EAf D)) (Λ : AddSubgroup (WO A WW))
@@ -136,7 +140,7 @@ private theorem stdSnd_isSB {ν : (AE D)ˣ →* Circle} (hν : Continuous ν) {e
     fun u hu hh t => ?_, fun t ht => ?_⟩
   · unfold stdSnd at ht
     by_contra h
-    exact ht (if_neg fun h' => h h'.1)
+    exact ht (ite_eq_right fun h' => h h'.1)
   · refine stdSnd_shift he hnI hl hcS a A WW βA βW (W := K • dualCoord A WW βA βW (M • u))
       ?_ (GlobalTheory.PlaceVec.isIntM_nsmul (hB u hu) K) fun i j => ?_
     · rw [GlobalTheory.PlaceModel.isHalf_iff A WW, GlobalTheory.PlaceModel.isHalf_iff A WW]
@@ -145,7 +149,7 @@ private theorem stdSnd_isSB {ν : (AE D)ˣ →* Circle} (hν : Continuous ν) {e
   · have h : IsHalf (cA D e) t ∧ IsIntM (dualCoord A WW βA βW t) := by
       unfold stdSnd at ht
       by_contra h
-      exact ht (if_neg fun h' => h ⟨h'.1, h'.2.1⟩)
+      exact ht (ite_eq_right fun h' => h ⟨h'.1, h'.2.1⟩)
     rw [show (n₀ * (n * c)) * (K * M) = ((n₀ * (n * c)) * M) * K by ring, mul_smul]
     exact nsmul_mem (hC t h.1 h.2) _
 
@@ -160,7 +164,8 @@ private theorem main (ν : (AE D)ˣ →* Circle) (hν : Continuous ν) (e : AE D
   obtain ⟨k₁, hk₁, h₁⟩ := dualCoord_up A WW βA βW
   obtain ⟨k₂, hk₂, h₂⟩ := dualCoord_down A WW βA βW
   obtain ⟨k₃, hk₃, h₃⟩ := GlobalTheory.PlaceVec.exists_nsmul_latO_int (S := A) (T := WW) hA.1.fg hW.1.fg
-  obtain ⟨k₄, hk₄, h₄⟩ := GlobalTheory.PlaceVec.exists_nsmul_int_mem_latO hA.1 hW.1
+  obtain ⟨k₄, hk₄, h₄⟩ := GlobalTheory.PlaceVec.exists_nsmul_int_mem_latO
+    (GlobalTheory.PlaceVec.selfDual_isFullLattice A ΛA hA) (GlobalTheory.PlaceVec.selfDual_isFullLattice WW ΛW hW)
   refine stdSnd_isSB hν he hI a A WW βA βW _ ⟨k₁ * k₃, mul_pos hk₁ hk₃, fun u hu => ?_⟩
     ⟨k₄ * k₂, mul_pos hk₄ hk₂, fun t ht hi => ?_⟩
   · have hn : dualCoord A WW βA βW (k₁ • k₃ • u) = k₁ • dualCoord A WW βA βW (k₃ • u) :=

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ def goodSub (w : O) (δ : (σ →₀ ℕ) → ℕ) (h0 : δ 0 = 0) (hadd : ∀ a
     choose a ha using hP
     choose b hb using hQ
     refine ⟨∑ x ∈ antidiagonal m, a x.1 * b x.2, ?_⟩
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun x hx => ?_
     rw [ha, hb, ← map_mul]
     congr 1
@@ -28,7 +33,7 @@ def goodSub (w : O) (δ : (σ →₀ ℕ) → ℕ) (h0 : δ 0 = 0) (hadd : ∀ a
   add_mem' := by
     intro P Q hP hQ m
     obtain ⟨a, ha⟩ := hP m; obtain ⟨b, hb⟩ := hQ m
-    exact ⟨a + b, by rw [coeff_add, ha, hb, ← map_add]; congr 1; ring⟩
+    exact ⟨a + b, by rw [MvPolynomial.coeff_add, ha, hb, ← map_add (f := _)]; congr 1; ring⟩
   algebraMap_mem' := by
     intro c m
     classical
@@ -74,7 +79,8 @@ lemma aeval_mem_sub {τ : Type} (Sg : Subalgebra O (MvPolynomial τ (KK O))) (φ
     (hφ : ∀ v, φ v ∈ Sg) (F : MvPolynomial σ (KK O)) (hF : InA F) :
     (aeval φ : MvPolynomial σ (KK O) →ₐ[KK O] MvPolynomial τ (KK O)) F ∈ Sg := by
   classical
-  rw [F.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [F.as_sum, map_sum]
   refine Subalgebra.sum_mem _ (fun m _ => ?_)
   rw [MvPolynomial.aeval_monomial]
   obtain ⟨c, hc⟩ := hF m
@@ -202,7 +208,8 @@ lemma plane_block (r : ℕ) (g g' : Matrix (Fin k) (Fin k) (WF p f)) (hg' : IsGL
       omega
     have e : ∑ j, WittVector.constantCoeff (g'⁻¹ i j) * WittVector.constantCoeff (g' j c) =
         WittVector.constantCoeff ((g'⁻¹ * g') i c) := by
-      rw [Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Matrix.mul_apply, map_sum]
       simp only [map_mul]
     rw [e, Matrix.nonsing_inv_mul g' hg', Matrix.one_apply_ne hic, map_zero]
   have hv : (fun j => WittVector.constantCoeff (g⁻¹ b j)) ∈ ratPlane p f r g :=
@@ -210,7 +217,8 @@ lemma plane_block (r : ℕ) (g g' : Matrix (Fin k) (Fin k) (WF p f)) (hg' : IsGL
   have h2 : ℓ (fun j => WittVector.constantCoeff (g⁻¹ b j)) = 0 := hspan (h hv)
   have e : WittVector.constantCoeff ((g⁻¹ * g') b c) =
       ∑ j, WittVector.constantCoeff (g⁻¹ b j) * WittVector.constantCoeff (g' j c) := by
-    rw [Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum]
     simp only [map_mul]
   rw [e]
   exact h2
@@ -240,8 +248,8 @@ lemma w_dvd_psi (S : UniformizedDVR p O) (s : ℤ) (x : WF p f) (h : WittVector.
   refine ⟨t * psiO p f O s y, ?_⟩
   rw [map_mul, map_natCast, ht, mul_assoc]
 
-open Classical in
 
+open Classical in
 def dW {ι : Type} (w : O) (LL : LiftLetters ι) (r : ℕ) (l : ι) (b : Fin k) : O :=
   if (LL.vec l = true ∧ r ≤ b.val) ∨ (LL.vec l = false ∧ b.val < r) then w else 1
 
@@ -339,7 +347,8 @@ lemma Theta_comp {ι : Type} (w : O) (LL : LiftLetters ι) (r : ℕ)
   rw [AlgHom.comp_apply]
   by_cases hv : LL.vec l = true
   · rw [liftSubst_X_vec p f O w LL r g hg l a hv, liftSubst_X_vec p f O w LL r g' hg' l a hv]
-    simp only [map_sum, map_mul, Theta_C, Theta_X, Finset.mul_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Theta_C, Theta_X, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun c _ => ?_)
     have hNO : ∀ b, NO p f O LL g g' l c b = psiO p f O (LL.pos l) ((g'⁻¹ * g) c b) := by
@@ -357,7 +366,8 @@ lemma Theta_comp {ι : Type} (w : O) (LL : LiftLetters ι) (r : ℕ)
       simp only [map_mul]
       linear_combination (X (l, c) * C (sigMat p f O g⁻¹ (LL.pos l) b a)) * h1
     simp only [hterm]
-    rw [← Finset.mul_sum, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.mul_sum, ← map_sum]
     have hsum : ∑ b, algebraMap O (KK O) (dW O w LL r l c) * sigMat p f O (g'⁻¹ * g) (LL.pos l) c b *
         sigMat p f O g⁻¹ (LL.pos l) b a = algebraMap O (KK O) (dW O w LL r l c) * sigMat p f O g'⁻¹ (LL.pos l) c a := by
       simp only [mul_assoc]
@@ -366,7 +376,8 @@ lemma Theta_comp {ι : Type} (w : O) (LL : LiftLetters ι) (r : ℕ)
     ring
   · have hv' : LL.vec l = false := by simpa using hv
     rw [liftSubst_X_cov p f O w LL r g l a hv', liftSubst_X_cov p f O w LL r g' l a hv']
-    simp only [map_sum, map_mul, Theta_C, Theta_X, Finset.mul_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Theta_C, Theta_X, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun c _ => ?_)
     have hNO : ∀ b, NO p f O LL g g' l c b = psiO p f O (LL.pos l) ((g⁻¹ * g') b c) := by
@@ -384,7 +395,8 @@ lemma Theta_comp {ι : Type} (w : O) (LL : LiftLetters ι) (r : ℕ)
       simp only [map_mul]
       linear_combination (X (l, c) * C (sigMat p f O g (LL.pos l) a b)) * h1
     simp only [hterm]
-    rw [← Finset.mul_sum, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.mul_sum, ← map_sum]
     have hsum : ∑ b, algebraMap O (KK O) (dW O w LL r l c) * sigMat p f O g (LL.pos l) a b *
         sigMat p f O (g⁻¹ * g') (LL.pos l) b c = algebraMap O (KK O) (dW O w LL r l c) * sigMat p f O g' (LL.pos l) a c := by
       simp only [mul_assoc]

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActLevOfLiftsOfEqOne
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingSecond
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActLevOfLiftsOfEqOne
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingSecond
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -29,7 +33,8 @@ variable {A B : Type} [CommRing A] [CommRing B] {n : ℕ} (e : A ≃+* B) (S : S
 theorem equiv_mulVec (m : Matrix (Fin n) (Fin n) A) (z : Fin n → A) :
     (fun i => e ((m *ᵥ z) i)) = m.map e *ᵥ fun i => e (z i) := by
   funext i
-  simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
 
 theorem mulVec_mem_of_frame (hP : ∀ z, z ∈ P ↔ ∀ i, ((β⁻¹).val *ᵥ fun i => e (z i)) i ∈ S)
     (hQ : Q = AddSubgroup.closure {w | ∃ a ∈ 𝔞, ∃ z ∈ P, w = a • z}) (m : Matrix (Fin n) (Fin n) A)
@@ -152,7 +157,7 @@ theorem mem_latHat_iff {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)}
       show ∑ i, V.frame.repr x i • V.frame i ∈ V.L0
       rw [V.frame.sum_repr]; exact hx
     | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-    | add x y _ _ hx hy => simp only [Pi.add_apply, map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem hx hy
     | neg x _ hx => simp only [Pi.neg_apply, map_neg]; exact neg_mem hx
   · intro hz
     have key : ∀ y ∈ AddSubgroup.closure (GlobalTheory.AdelicLatMove.pureSet Λ), (fun i => (sw D).symm (y i)) ∈ latHat V := by
@@ -165,7 +170,7 @@ theorem mem_latHat_iff {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)}
         rw [V.frame.repr_sum_self]
         rfl
       | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-      | add x y _ _ hx hy => simp only [Pi.add_apply, map_add]; exact add_mem hx hy
+      | add x y _ _ hx hy => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem hx hy
       | neg x _ hx => simp only [Pi.neg_apply, map_neg]; exact neg_mem hx
     have := key _ (GlobalTheory.AdelicLatMove.mem_closure_of_mem_hatL Λ _ hz)
     simpa only [RingEquiv.symm_apply_apply] using this
@@ -206,7 +211,7 @@ def fvec (V : HSp D) {La : Type} [AddCommGroup La] [Module (𝓞 D.host.E) La]
     (ι : La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)) : La →+ (Fin V.rank → Af D.host.F ⊗[D.host.F] D.host.E) :=
   AddMonoidHom.mk' (fun a => finVec V (ι a)) fun a b => by
     funext i
-    simp only [finVec, map_add, Pi.add_apply, TensorProduct.tmul_add]
+    simp only [finVec, map_add (f := _), Pi.add_apply, TensorProduct.tmul_add]
 
 theorem fvec_smul (V : HSp D) {La : Type} [AddCommGroup La] [Module (𝓞 D.host.E) La]
     (ι : La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)) (b : 𝓞 D.host.E) (a : La) :
@@ -268,7 +273,7 @@ theorem lift_one_congr {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)}
       (((GlobalTheory.MarkCoset.latG_spec D V 1).1 _).1 (hι.2 ▸ LinearMap.mem_range_self ι x))
   · rintro x x' ⟨w, hw, e⟩ ⟨w', hw', e'⟩
     refine ⟨w + w', add_mem hw hw', ?_⟩
-    rw [smul_add, ← e, ← e', map_add, Matrix.mulVec_add]
+    rw [smul_add, ← e, ← e', map_add (f := _), Matrix.mulVec_add]
     abel
 
 theorem congr_of_lifts {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)}
@@ -316,27 +321,6 @@ theorem congr_of_levIs {ι : Dw.La →ₗ[𝓞 D.host.E] (Fin (Wc D i).rank → 
   congr_of_lifts (L := R.datWp i R.triv) hβ (rank_Wc i) hι (by have := l.three_le; omega) hMb l.prod l.coprime
     R.eG.toMonoidHom hlev
 
-theorem actLev_of_levIs (Xo : Moduli Dw l) (c : Coeff l) (hpq : 1 ≤ Dw.p + Dw.q) (hA : l.A = 1)
-    {ι : Dw.La →ₗ[𝓞 D.host.E] (Fin (Wc D i).rank → D.host.E)} (hι : LatEmb (Wc D i) ι)
-    (hβ : IsSDFrame (Wc D i) (R.βW i) (R.ΛW i) 1) (hMb : l.Mb = ∏ PP ∈ R.Pg, PP.asIdeal)
-    {lev : G → Dw.La →ₗ[𝓞 D.host.E] Dw.La} (hlev : LevIs R i ι l.M (Mfr l) lev) :
-    ActLev (Xo := Xo) c (fun g => (lev g, (LinearMap.id : Dw.La →ₗ[𝓞 D.host.E] Dw.La))) :=
-  GlobalTheory.LevelActionOfLifts.actLev_of_lifts_of_eq_one D H Dw l Xo c G lev hpq hA (congr_of_levIs R i hι hβ hMb hlev).1 (congr_of_levIs R i hι hβ hMb hlev).2
-
 end Record
-
-theorem actLev_record {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : Formalism.L2.DIV.FamIn D.what₂.LL G Pl0 T0 D.R.m}
-    (C : Core D) [Algebra C.Q.c.F D.what₂.LL] (R : RealDat D A C.Q.c.F) (i : Fin D.R.m) {Tp : Type} {tup : Tp → T0}
-    (O : OMDat C R i Tp tup) {μ₀ t : T0} {I : Ideal (𝓞 D.host.E)}
-    {ι : (C.Q.Dw ((i : ℕ) + 1)).La →ₗ[𝓞 D.host.E] (Fin (Wc D i).rank → D.host.E)}
-    (hQ : C.Q.Pins) (hR : R.toLevCh.Is μ₀) (hι : LatEmb (Wc D i) ι) (hh : HalfIs R t C.Q.l.Mb I)
-    (hlev : LevIs R i ι C.Q.l.M (Mfr C.Q.l) O.lev) :
-    ActLev (Xo := C.Q.Xo ((i : ℕ) + 1)) C.Q.c O.lev2 ∧ ActLev (Xo := C.Q.Xo ((i : ℕ) + 1)) O.c' O.lev2 := by
-  have hpq : 1 ≤ (C.Q.Dw ((i : ℕ) + 1)).p + (C.Q.Dw ((i : ℕ) + 1)).q := by
-    have h : (C.Q.Dw ((i : ℕ) + 1)).p = D.R.k + ((i : ℕ) + 1) - 1 := (hQ.2.2.2 _ ⟨Nat.le_add_left _ _, i.2⟩).1
-    have := D.R.m_add_three_le_k
-    omega
-  exact ⟨actLev_of_levIs R i _ _ hpq hQ.2.1.2 hι (hR.βW i) hh.1 hlev,
-    actLev_of_levIs R i _ _ hpq hQ.2.1.2 hι (hR.βW i) hh.1 hlev⟩
 
 end GlobalTheory.LevelActionPinned

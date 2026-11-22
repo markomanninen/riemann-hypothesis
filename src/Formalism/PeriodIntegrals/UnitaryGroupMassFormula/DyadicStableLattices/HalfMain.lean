@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.GoodTwo
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
-import Formalism.EllipticTorsion.EllipticTorsionProofs.Deuring
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJInt
+module
+
+public import Formalism.PeriodIntegrals.GoodTwo
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.Deuring
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,69 +70,5 @@ theorem twist : Twist := by
   refine ⟨u, fun hu0 => hw (by rw [← hu, hu0]; ring), ?_, ?_⟩
   · rw [show u ^ 4 = (u ^ 2) ^ 2 by ring, hu, hw2]
   · rw [show u ^ 6 = (u ^ 2) ^ 3 by ring, hu, hw3]
-
-theorem norm_three : ‖(3 : ℂ_[2])‖ = 1 := by
-  have h2 : ‖(3 : ℚ_[2])‖ = 1 := by
-    first
-      | have e := Padic.eq_padicNorm (p := 2) (3 : ℚ)
-        have h3 : padicNorm 2 ((3 : ℕ) : ℚ) = 1 := (padicNorm.nat_eq_one_iff 3).mpr (by norm_num)
-        push_cast at e h3
-        rw [e, h3]; norm_num
-      | have hle : ‖(3 : ℚ_[2])‖ ≤ 1 := by
-          have := Padic.norm_int_le_one (p := 2) 3
-          push_cast at this; exact this
-        have h2n : ‖(2 : ℚ_[2])‖ = 1 / 2 := by
-          have := Padic.norm_p (p := 2)
-          push_cast at this; rw [this]; norm_num
-        have hm : ‖(1 : ℚ_[2])‖ ≤ max ‖(3 : ℚ_[2])‖ ‖(2 : ℚ_[2])‖ := by
-          have := IsUltrametricDist.norm_sub_le_max (3 : ℚ_[2]) 2
-          norm_num at this ⊢; exact this
-        rw [norm_one, h2n] at hm
-        have : 1 ≤ ‖(3 : ℚ_[2])‖ := by
-          rcases le_max_iff.mp hm with h | h
-          · exact h
-          · norm_num at h
-        exact le_antisymm hle this
-  have h1 : ((algebraMap ℚ_[2] (PadicAlgCl 2) 3 : PadicAlgCl 2) : ℂ_[2]) = 3 := by
-    rw [map_ofNat]
-    exact map_ofNat UniformSpace.Completion.coeRingHom 3
-  rw [← h1, PadicComplex.norm_extends, PadicAlgCl.norm_extends, h2]
-
-theorem half : Half := by
-  intro d L hsq hd hcm ι
-  have hd4 : d % 4 = 3 := by omega
-  have hj : ‖ι (jInv L)‖ ≤ 1 := ReciprocityTheory.ChartRestriction.L1.jInt d L hsq hd4 hcm 2 ι
-  obtain ⟨a, ha, hc4, hΔ⟩ := Formalism.ELL.deuring_model ℂ_[2] norm_three (ι (jInv L)) hj
-  have hD : L.g₂ ^ 3 - 27 * L.g₃ ^ 2 ≠ 0 := Formalism.L2.Th1.F.discNeZero L
-  have hΔ0 : (Formalism.ELL.deuring a).Δ ≠ 0 := by
-    intro h
-    rw [h, norm_zero] at hΔ
-    exact zero_ne_one hΔ
-  have hDι : ι L.g₂ ^ 3 - 27 * ι L.g₃ ^ 2 ≠ 0 := by
-    intro h
-    apply hD
-    apply ι.injective
-    simpa [map_sub, map_mul, map_pow, map_ofNat] using h
-  have hjD : ι (jInv L) * (ι L.g₂ ^ 3 - 27 * ι L.g₃ ^ 2) = 1728 * ι L.g₂ ^ 3 := by
-    have e : jInv L * (L.g₂ ^ 3 - 27 * L.g₃ ^ 2) = 1728 * L.g₂ ^ 3 := by
-      unfold jInv
-      field_simp
-    have e' := congrArg ι e
-    simpa [map_mul, map_sub, map_pow, map_ofNat] using e'
-  have hrel : (Formalism.ELL.deuring a).c₄ ^ 3 * (ι L.g₂ ^ 3 - 27 * ι L.g₃ ^ 2) =
-      1728 * ι L.g₂ ^ 3 * (Formalism.ELL.deuring a).Δ := by
-    rw [hc4]
-    linear_combination (Formalism.ELL.deuring a).Δ * hjD
-  obtain ⟨u, hu, h4, h6⟩ := twist ℂ_[2] (Formalism.ELL.deuring a) (ι L.g₂) (ι L.g₃) hΔ0 hDι hrel
-  have hu' : ι.symm u ≠ 0 := by simpa using hu
-  have hc : (ι.symm u)⁻¹ ≠ 0 := inv_ne_zero hu'
-  have hh := Formalism.L2.Th1.F.homogeneity L (ι.symm u)⁻¹ hc
-  refine ⟨(ι.symm u)⁻¹, hc, Formalism.ELL.deuring a, ⟨?_, ?_⟩, ?_⟩
-  · rw [h4, hh.2.2.2.2.2.2.2.2.2.1]
-    simp
-  · rw [h6, hh.2.2.2.2.2.2.2.2.2.2]
-    simp
-  · refine ⟨by simpa [Formalism.ELL.deuring] using ha, by simp [Formalism.ELL.deuring], by simp [Formalism.ELL.deuring],
-      by simp [Formalism.ELL.deuring], by simp [Formalism.ELL.deuring], hΔ⟩
 
 end PI.GoodTwo.HalfW

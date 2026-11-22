@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.Assembly
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorHasse
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.Assembly
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorHasse
+
+@[expose] public section
 
 noncomputable section
 

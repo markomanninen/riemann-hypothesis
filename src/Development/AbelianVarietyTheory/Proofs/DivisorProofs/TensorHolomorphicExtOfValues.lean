@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConstantCoeffDpolyOfAdditiveTaylorPts
-import Development.AbelianVarietyTheory.Definitions.Divisors.FderivFnCongr
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConstantCoeffDpolyOfAdditiveTaylorPts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FderivFnCongr
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+
+@[expose] public section
+
 open Filter Topology TopologicalSpace GlobalTheory.AnPer TensorProduct
 
 namespace GlobalTheory
 
+
 open Filter Topology in
 open Filter Topology TopologicalSpace TensorProduct in
-
 theorem _root_.GlobalTheory.tensor_hol_ext_of_values :
     ∀ {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] (W : Opens E) (D : Type) [CommRing D] [Algebra ℂ D] (x y : D ⊗[ℂ] _root_.GlobalTheory.AnPer.Hol W), (∀ (p : E) (hp : p ∈ W), Algebra.TensorProduct.lift (AlgHom.id ℂ D) ((Algebra.ofId ℂ D).comp (_root_.GlobalTheory.AnPer.Hol.ev p hp)) (fun _ _ ↦ Commute.all _ _) x = Algebra.TensorProduct.lift (AlgHom.id ℂ D) ((Algebra.ofId ℂ D).comp (_root_.GlobalTheory.AnPer.Hol.ev p hp)) (fun _ _ ↦ Commute.all _ _) y) → x = y := by
   intro E _ _ W D _ _ x y h
@@ -30,7 +35,8 @@ theorem _root_.GlobalTheory.tensor_hol_ext_of_values :
     have hzero : (0 : _root_.GlobalTheory.AnPer.Hol W).fn p = 0 := by
       rw [← _root_.GlobalTheory.AnPer.Hol.ev_apply p hp, map_zero]
     have h0 := hzp p hp
-    rw [← e.symm_apply_apply z, TensorProduct.equivFinsuppOfBasisLeft_symm_apply, Finsupp.sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e.symm_apply_apply z, TensorProduct.equivFinsuppOfBasisLeft_symm_apply, Finsupp.sum,
       map_sum] at h0
     simp only [Algebra.TensorProduct.lift_tmul, AlgHom.id_apply, AlgHom.comp_apply,
       _root_.GlobalTheory.AnPer.Hol.ev_apply, Algebra.ofId_apply] at h0

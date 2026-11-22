@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SelfDualCovolume
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RepsProd
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SelfDualCovolume
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RepsProd
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -81,13 +85,13 @@ theorem tripleSum_indep (hT : TripleData H α Λ₁ Λ₂ Λ₃)
 
 def partP (p : V →+ V) (Λ : AddSubgroup V) : AddSubgroup V where
   carrier := {x | x ∈ Λ ∧ p x = x}
-  add_mem' := fun {a b} ha hb => ⟨Λ.add_mem ha.1 hb.1, by rw [map_add, ha.2, hb.2]⟩
+  add_mem' := fun {a b} ha hb => ⟨Λ.add_mem ha.1 hb.1, by rw [map_add (f := _), ha.2, hb.2]⟩
   zero_mem' := ⟨Λ.zero_mem, map_zero p⟩
   neg_mem' := fun {a} ha => ⟨Λ.neg_mem ha.1, by rw [map_neg, ha.2]⟩
 
 def partQ (p : V →+ V) (Λ : AddSubgroup V) : AddSubgroup V where
   carrier := {x | x ∈ Λ ∧ p x = 0}
-  add_mem' := fun {a b} ha hb => ⟨Λ.add_mem ha.1 hb.1, by rw [map_add, ha.2, hb.2, add_zero]⟩
+  add_mem' := fun {a b} ha hb => ⟨Λ.add_mem ha.1 hb.1, by rw [map_add (f := _), ha.2, hb.2, add_zero]⟩
   zero_mem' := ⟨Λ.zero_mem, map_zero p⟩
   neg_mem' := fun {a} ha => ⟨Λ.neg_mem ha.1, by rw [map_neg, ha.2, neg_zero]⟩
 
@@ -162,14 +166,14 @@ theorem psi_split (hT : TripleData H α Λ₁ Λ₂ Λ₃) (p : V →+ V) (hport
   have hH3 : H a₃ b₃ = 0 := orthH p hporth ha₃.2 hb₃.2
   have hH4 : H a₂ b₂ = 0 := orthH p hporth ha₂.2 hb₂.2
   have hH5 : H (a₃ + a₂) (b₃ + b₂) = 0 :=
-    orthH p hporth (by rw [map_add, ha₃.2, ha₂.2]) (by rw [map_add, hb₃.2, hb₂.2, add_zero])
+    orthH p hporth (by rw [map_add (f := _), ha₃.2, ha₂.2]) (by rw [map_add (f := _), hb₃.2, hb₂.2, add_zero])
   have e3 := hT.sc₃.2 a₃ ha₃.1 b₃ hb₃.1
   have e2 := hT.sc₂.2 a₂ ha₂.1 b₂ hb₂.1
   have e1 := hT.sc₁.2 _ h1 _ h1'
   simp only [altE, hH3, hH4, hH5, Complex.zero_im, Complex.ofReal_zero, mul_zero, Complex.exp_zero,
     mul_one] at e1 e2 e3
   have him : altE H (a₃ + b₃) (a₂ + b₂) = altE H a₃ a₂ + altE H b₃ b₂ := by
-    simp only [altE, map_add, LinearMap.add_apply, hH1, hH2, add_zero, zero_add, Complex.add_im]
+    simp only [altE, map_add (f := _), LinearMap.add_apply, hH1, hH2, add_zero, zero_add, Complex.add_im]
   unfold psiT
   rw [e3, e2, show a₃ + b₃ + (a₂ + b₂) = (a₃ + a₂) + (b₃ + b₂) by abel, e1, him, Complex.ofReal_add, mul_add,
     Complex.exp_add]
@@ -185,7 +189,7 @@ theorem tripleSum_prod (hT : TripleData H α Λ₁ Λ₂ Λ₃) (p : V →+ V) (
     intro A B hA hB w hw w' hw' h
     rw [Finset.coe_product, Set.mem_prod] at hw hw'
     have h' := congrArg p h
-    simp only [map_add, hA _ hw.1, hB _ hw.2, hA _ hw'.1, hB _ hw'.2, add_zero] at h'
+    simp only [map_add (f := _), hA _ hw.1, hB _ hw.2, hA _ hw'.1, hB _ hw'.2, add_zero] at h'
     have h2 : w.2 = w'.2 := by simp only at h; rw [h'] at h; exact add_left_cancel h
     exact Prod.ext h' h2
   have hS2 : ∀ g : V → ℂ, ∑ y ∈ (A₂ ×ˢ B₂).image (fun w => w.1 + w.2), g y = ∑ w ∈ A₂ ×ˢ B₂, g (w.1 + w.2) :=
@@ -209,7 +213,7 @@ theorem tripleSum_prod (hT : TripleData H α Λ₁ Λ₂ Λ₃) (p : V →+ V) (
     · rw [if_neg c1, zero_mul, if_neg]
       intro h; apply c1
       have := hp1 _ h
-      simp only [map_add, (hA₃ _ ha₃).2, (hB₃ _ hb₃).2, (hA₂ _ ha₂).2, (hB₂ _ hb₂).2, add_zero] at this
+      simp only [map_add (f := _), (hA₃ _ ha₃).2, (hB₃ _ hb₃).2, (hA₂ _ ha₂).2, (hB₂ _ hb₂).2, add_zero] at this
       exact this
   rw [tripleSum_eq, tripleSum_eq, tripleSum_eq]
   simp only [hS2, hS3]
@@ -229,13 +233,13 @@ theorem tripleSum_inv (σ : V →+ V) (hσσ : ∀ x, σ (σ x) = x) (hσH : ∀
   rw [Finset.sum_image (hinj A₂)]
   refine Finset.sum_congr rfl fun y _ => ?_
   have hc : σ z + σ y ∈ Λ₁ ↔ z + y ∈ Λ₁ := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     exact ⟨fun h => by have := hσ1 _ h; rwa [hσσ] at this, fun h => hσ1 _ h⟩
   unfold tf
   by_cases h : z + y ∈ Λ₁
   · rw [if_pos (hc.2 h), if_pos h]
     unfold psiT altE
-    rw [← map_add, hσα, hσα, hσα, hσH]
+    rw [← map_add (f := _), hσα, hσα, hσα, hσH]
   · rw [if_neg (fun h' => h (hc.1 h')), if_neg h]
 
 theorem tripleSum_conj (hT : TripleData H α Λ₁ Λ₂ Λ₃) (m m' r : V →+ V) (e : ℕ)
@@ -249,9 +253,11 @@ theorem tripleSum_conj (hT : TripleData H α Λ₁ Λ₂ Λ₃) (m m' r : V →+
   have hreal : ∀ {Λ : AddSubgroup V}, IsSemiChar H Λ α → ∀ x ∈ Λ, conj (α x) = α x := by
     intro Λ hs x hx
     rcases hs.1 x hx with h | h <;> rw [h] <;> simp
-  rw [tripleSum_eq, tripleSum_eq, Finset.sum_image hi₃, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [tripleSum_eq, tripleSum_eq, Finset.sum_image hi₃, map_sum]
   refine Finset.sum_congr rfl fun z hz => ?_
-  rw [Finset.sum_image hi₂, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_image hi₂, map_sum]
   refine Finset.sum_congr rfl fun y hy => ?_
   have hz3 := hA₃ z hz
   have hy2 := hA₂ y hy
@@ -259,7 +265,7 @@ theorem tripleSum_conj (hT : TripleData H α Λ₁ Λ₂ Λ₃) (m m' r : V →+
     rw [show m z + m y = m (z + y) from (map_add m z y).symm]
     refine ⟨fun h => ?_, fun h => hm1 _ h⟩
     have a1 := hm'1 _ h
-    rw [inv, map_add, smul_add] at a1
+    rw [inv, map_add (f := _), smul_add] at a1
     have := Λ₁.sub_mem a1 (Λ₁.add_mem (her3 z hz3) (her2 y hy2))
     rwa [show z + y + (e • r z + e • r y) - (e • r z + e • r y) = z + y by abel] at this
   unfold tf

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+module
+
+public import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -26,7 +30,8 @@ theorem residue_linearEquiv_apply_eq_sum {N : ℕ} (φ : (Fin N → k) ≃ₗ[k]
     funext i
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hv]
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun l' _ => ?_
   rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
 
@@ -166,7 +171,7 @@ theorem residueR1_lifts_to_stabilizer (hq0 : (q : E) ≠ 0) {n c : ℕ}
   have hRR : ob2rMat ρ * ob2rMat ρ⁻¹ = 1 := by rw [← ob2rMat_mul, mul_inv_cancel, ob2rMat_one]
   have hRR' : ob2rMat ρ⁻¹ * ob2rMat ρ = 1 := by rw [← ob2rMat_mul, inv_mul_cancel, ob2rMat_one]
   let U : GL (Fin (n + c)) (𝓞 E ⧸ P.asIdeal) := ⟨ob2rMat ρ, ob2rMat ρ⁻¹, hRR, hRR'⟩
-  obtain ⟨L, hL⟩ : ∃ L, L = ciLiftM P (ob2rMat ρ) := ⟨_, rfl⟩
+  obtain ⟨L, hL⟩ : ∃ L : Matrix (Fin (n + c)) (Fin (n + c)) E, L = ciLiftM P (ob2rMat ρ) := ⟨_, rfl⟩
   have hL0 : ∀ l s, ob2rMat ρ l s = 0 → L l s = 0 := fun l s h => by rw [hL, ciLiftM_apply, h, ciLift_zero, map_zero]
   have hL1 : ∀ l s, ob2rMat ρ l s = 1 → L l s = 1 := fun l s h => by rw [hL, ciLiftM_apply, h, ciLift_one, map_one]
   have hdet : IsUnit L.det := isUnit_iff_ne_zero.2 (by rw [hL]; exact ciLiftM_det_ne U)
@@ -278,7 +283,7 @@ theorem reducedMatrix_eq_of_isReduction {E : Type} [Field E] [NumberField E] [St
   ext l s
   have h1 := (h l.1 s.1 l.2 s.2).2
   unfold Loc.atN at h1
-  rw [dif_pos l.2, dif_pos l.2, residue_basisVec_eq_single s.2, residue_basisVec_eq_single s.2] at h1
+  rw [dite_eq_left l.2, dite_eq_left l.2, residue_basisVec_eq_single s.2, residue_basisVec_eq_single s.2] at h1
   exact h1.symm
 
 theorem residueFrameEntry_eq_coord {k : Type} [Field k] {k₀ n c : ℕ} (hk : k₀ ≤ n) (κ : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)) (l l' : Fin (n + c)) :
@@ -286,7 +291,7 @@ theorem residueFrameEntry_eq_coord {k : Type} [Field k] {k₀ n c : ℕ} (hk : k
   unfold ocbEnt
   rw [frameIndex_framePos hk l.2, frameIndex_framePos hk l'.2, residue_basisVec_eq_single l'.2]
   unfold Loc.atN
-  rw [dif_pos l.2]
+  rw [dite_eq_left l.2]
   rfl
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)

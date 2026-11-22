@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
 
@@ -15,11 +20,13 @@ open GlobalTheory.UnimodQuot
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-omit [StarRing K] in
 
-theorem exists_mult {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (v : V) :
+omit [StarRing K] in
+theorem exists_mult {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.span K (Λ : Set V) = ⊤) (v : V) :
     ∃ c : K, c ≠ 0 ∧ c • v ∈ Λ := by
-  obtain ⟨s, hs⟩ := exists_smul_mem hΛ v
+  have hv : v ∈ Submodule.span K (Λ : Set V) := by rw [hΛ]; trivial
+  obtain ⟨s, hs⟩ := multiple_mem_span_of_mem_localization_span (nonZeroDivisors (𝓞 K)) K (Λ : Set V) v hv
+  rw [Submodule.span_eq] at hs
   refine ⟨algebraMap (𝓞 K) K s, IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors s.2, ?_⟩
   rw [algebraMap_smul]
   exact hs
@@ -53,7 +60,7 @@ theorem unimod_transfer [FiniteDimensional K V] (H : HermSpace K V) {Λ : Submod
     · rw [Submodule.span_le]
       exact fun y hy => hy.1
     · intro v hv
-      obtain ⟨c, hc, h⟩ := exists_mult hΛ v
+      obtain ⟨c, hc, h⟩ := exists_mult hΛ.2 v
       rw [← Submodule.smul_mem_iff _ hc]
       exact Submodule.subset_span ⟨U.smul_mem c hv, Submodule.mem_sup_left h⟩
   refine ⟨⟨?_, hspan⟩, ?_⟩
@@ -157,7 +164,7 @@ theorem inner [FiniteDimensional K V] (F : FlagD H r) {Λ : Submodule (𝓞 K) V
       obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hw
       have e1 : H.B a x = 0 := by rw [← H.herm, (mem_perp_iff H S x).1 hp a ha, star_zero]
       have e2 : H.B b x = 0 := (mem_perp_iff H S b).1 (hZ b hb) x (hXS hx)
-      rw [map_add, LinearMap.add_apply, e1, e2, add_zero]
+      rw [map_add (f := _), LinearMap.add_apply, e1, e2, add_zero]
     · intro hx
       refine ⟨(mem_perp_iff H S x).2 fun v hv => ?_, hIX hx⟩
       rw [← H.herm, (hI x (hIX hx)).2 hx v (Submodule.mem_sup_left hv), star_zero]
@@ -237,8 +244,8 @@ theorem span_hermFramePair_lattice_eq_sup (N : NF H r) : Submodule.span K (N.P0 
     exact mem_span_of_line (ipow_ne_bot N.𝔡_ne _) (le_sup_of_le_right
       (le_iSup₂_of_le (f := fun (a : Fin r) (_ : N.j ≤ a.val) => line (ipow N.𝔡 ((r : ℤ) - a.val)) (N.ist a)) a ha le_rfl))
 
-omit [StarRing K] in
 
+omit [StarRing K] in
 theorem fg_inf {L : Submodule (𝓞 K) V} {S I T : Submodule K V} (hL : IsLatMod L S I) (hT : ∀ x ∈ T, x ∈ I → x = 0) :
     (L ⊓ rs (𝓞 K) T).FG := by
   obtain ⟨⟨N, hN, rfl⟩, -⟩ := hL
@@ -286,20 +293,14 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
   refine ⟨a1, hsw ▸ b1, a2, hsw ▸ b2, ⟨(hermFramePairNormalForm_baseLattice_fg N).sup (fg_inf a1.1 fun x hx hxI => ?_), ?_⟩, ?_⟩
   · obtain ⟨w, hw, t, rfl⟩ := hdec x hx
     have h1 := z_X N.F _ hxI.1
-    rw [map_add, hL.1 w hw _ hzV, zero_add, LinearMap.map_smulₛₗ, show H.B N.F.z N.F.z = -N.F.T from N.F.zz,
+    rw [map_add (f := _), hL.1 w hw _ hzV, zero_add, LinearMap.map_smulₛₗ, show H.B N.F.z N.F.z = -N.F.T from N.F.zz,
       smul_eq_mul, mul_eq_zero, neg_eq_zero, map_eq_zero] at h1
     have ht : t = 0 := h1.resolve_right N.F.hT
     subst ht
     rw [zero_smul, add_zero] at hxI ⊢
     exact (Submodule.mem_bot K).1 (hL.2.1 ▸ ⟨hw, hxI⟩)
-  · rw [eq_top_iff, ← hC.sup_eq_top]
-    refine sup_le (fun w hw => ?_) ?_
-    · obtain ⟨c, hc, h⟩ := exists_mult hΛ w
-      have hwn : c • w ∈ N.Wn := by rw [hWn]; exact Submodule.mem_sup_left (N.Wt.smul_mem c hw)
-      rw [← Submodule.smul_mem_iff _ hc]
-      exact Submodule.subset_span (Submodule.mem_sup_right ⟨⟨hWU hwn, Submodule.mem_sup_left h⟩, hwn⟩)
-    · rw [hPi, ← span_hermFramePair_lattice_eq_sup]
-      exact Submodule.span_mono (le_sup_left : N.P0 ≤ N.Ref _)
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · refine le_antisymm ?_ (inf_le_inf_right _ le_sup_left)
     rintro x ⟨hx, hxV⟩
     refine ⟨?_, hxV⟩

@@ -1,7 +1,11 @@
-import Formalism.WachLatticeTwists.LatticeDualFibres.Statement
-import Formalism.WachLatticeTwists.TorsionLengthCounts.RowCol
-import Formalism.WachLatticeTwists.TorsionLengthCounts.SubmoduleLengthBoundStatement
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthEqKerAddRange
+module
+
+public import Formalism.WachLatticeTwists.LatticeDualFibres.Statement
+public import Formalism.WachLatticeTwists.TorsionLengthCounts.RowCol
+public import Formalism.WachLatticeTwists.TorsionLengthCounts.SubmoduleLengthBoundStatement
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthEqKerAddRange
+
+@[expose] public section
 
 universe u
 

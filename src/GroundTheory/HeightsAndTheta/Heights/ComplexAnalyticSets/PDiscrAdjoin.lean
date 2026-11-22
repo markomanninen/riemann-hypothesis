@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDiscrAdjoin
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDiscrAdjoin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -45,7 +50,7 @@ theorem DiscrAdjoin.proof : DiscrAdjoin.Statement := by
     obtain ⟨p, q, -, -, hpq⟩ := exists_mul_add_mul_eq_C_resultant (minpoly R ℓ)
       (derivative (minpoly R ℓ)) le_rfl hF'deg (Or.inl hpos.ne')
     have hev := congrArg (aeval ℓ) hpq
-    simp only [map_add, map_mul, minpoly.aeval, zero_mul, zero_add, aeval_C] at hev
+    simp only [map_add (f := _), map_mul, minpoly.aeval, zero_mul, zero_add, aeval_C] at hev
     have hadjK : Algebra.adjoin K {ℓ} = ⊤ := by
       rw [← IntermediateField.adjoin_simple_toSubalgebra_of_isAlgebraic hK.isAlgebraic, hadj,
         IntermediateField.top_toSubalgebra]

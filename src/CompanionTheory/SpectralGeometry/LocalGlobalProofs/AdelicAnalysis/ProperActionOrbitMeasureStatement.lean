@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ProperActionOrbitMeasure
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ProperActionOrbitMeasure
+
+@[expose] public section
+
 open MeasureTheory Topology
 open scoped ENNReal NNReal Matrix
 set_option maxHeartbeats 1000000 in

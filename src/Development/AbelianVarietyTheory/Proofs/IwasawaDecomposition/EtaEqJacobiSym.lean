@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Formalism.FrobeniusOrbits.HostCorollaries
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Formalism.FrobeniusOrbits.HostCorollaries
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.FrobeniusOrbits Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.L2.Host
 open scoped Pointwise
@@ -116,8 +120,8 @@ theorem card_aboveF {L : Type} [Field L] [NumberField L] (F : Type) [Field F] [N
     exact ⟨⟨Q, h1, Ideal.ne_bot_of_liesOver_of_ne_bot v.ne_bot Q⟩,
       HeightOneSpectrum.ext h2.over.symm, rfl⟩
 
-open Classical in
 
+open Classical in
 theorem eta_eq_jacobiSym : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (v : HeightOneSpectrum (𝓞 H.F)),
     ((H.d : ℕ) : 𝓞 H.F) ∉ v.asIdeal →
     (if (aboveF (L := H.E) H.F v).card = 1 then (-1 : ℤ) else 1) =

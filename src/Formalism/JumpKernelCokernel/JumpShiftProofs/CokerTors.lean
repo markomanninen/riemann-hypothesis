@@ -1,5 +1,9 @@
-import Formalism.JumpKernelCokernel.Statement
-import Formalism.JumpKernelCokernel.JumpShiftProofs.DetLen
+module
+
+public import Formalism.JumpKernelCokernel.Statement
+public import Formalism.JumpKernelCokernel.JumpShiftProofs.DetLen
+
+@[expose] public section
 
 open Polynomial Module
 
@@ -113,7 +117,7 @@ theorem Formalism.KernelCokernelLengths.cokernel_torsion_holds : Formalism.Kerne
   have hsplit : ∀ m, aeval d Q m = Q.coeff 0 • m + d (aeval d Q.divX m) := by
     intro m
     conv_lhs => rw [← Polynomial.X_mul_divX_add Q]
-    rw [map_add, map_mul, aeval_X, aeval_C, LinearMap.add_apply, Module.End.mul_apply,
+    rw [map_add (f := _), map_mul, aeval_X, aeval_C, LinearMap.add_apply, Module.End.mul_apply,
       Module.algebraMap_end_apply, add_comm]
   have hcommR : ∀ m, d (aeval d Q.divX m) = aeval d Q.divX (d m) := by
     intro m
@@ -146,7 +150,7 @@ theorem Formalism.KernelCokernelLengths.cokernel_torsion_holds : Formalism.Kerne
       have := congrArg Subtype.val hs
       simpa [dS] using this
     have hs2 : aeval d Q (s : M) = 0 := s.2
-    rw [hsplit, hcommR, hs1, map_zero, add_zero] at hs2
+    rw [hsplit, hcommR, hs1, map_zero (aeval d Q.divX), add_zero] at hs2
     exact Subtype.ext ((smul_eq_zero.mp hs2).resolve_left hQc)
   have hdet : LinearMap.det dS ≠ 0 := fun h => (LinearMap.det_eq_zero_iff_ker_ne_bot.mp h) hker
   have hPc : dS.charpoly.coeff 0 ≠ 0 := by

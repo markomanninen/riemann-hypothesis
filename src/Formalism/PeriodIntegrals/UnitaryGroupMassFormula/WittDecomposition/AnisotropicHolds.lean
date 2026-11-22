@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Anisotropic
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Anisotropic
+
+@[expose] public section
 
 namespace PI.Witt
 
@@ -20,7 +24,7 @@ theorem anisotropic' : Anisotropic := by
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star, hyx]
   have e3 : B (x + star (B x y) • y) (x + star (B x y) • y) =
       B x x + B x (star (B x y) • y) + (B (star (B x y) • y) x + B (star (B x y) • y) (star (B x y) • y)) := by
-    rw [LinearMap.map_add₂, map_add, map_add]
+    rw [LinearMap.map_add₂, map_add (f := _), map_add (f := _)]
   rw [e3, hxx, hyy, e1, e2] at h0
   have h2 : (2 : K) * (B x y * star (B x y)) = 0 := by linear_combination h0
   rcases mul_eq_zero.mp h2 with h | h

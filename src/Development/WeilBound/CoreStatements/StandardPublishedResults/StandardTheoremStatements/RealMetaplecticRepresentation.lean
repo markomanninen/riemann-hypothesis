@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.RealMetaplecticRepresentationHolds
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.RealMetaplecticRepresentationHolds
+
+@[expose] public section
 
 namespace PositivityTheory.Stage1.PM
 

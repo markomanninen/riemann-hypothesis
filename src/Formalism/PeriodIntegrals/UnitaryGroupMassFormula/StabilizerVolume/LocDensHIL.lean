@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHI
-import ReciprocityTheory.Automorphisms.InstMainA
-import ReciprocityTheory.ResidueCardinality.ArtinOntoB
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHI
+public import ReciprocityTheory.Automorphisms.InstMainA
+public import ReciprocityTheory.ResidueCardinality.ArtinOntoB
+
+@[expose] public section
 
 noncomputable section
 

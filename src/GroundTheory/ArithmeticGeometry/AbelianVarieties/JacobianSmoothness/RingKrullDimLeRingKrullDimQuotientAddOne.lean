@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.ToricVarieties.Dimension
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.ToricVarieties.Dimension
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian.Jacobian
 
@@ -44,16 +48,16 @@ theorem ringKrullDim_eq_trdeg [IsDomain A] : ringKrullDim A = (trdeg k A).toENat
   rw [h1, h2]
   simp
 
-include k in
 
+include k in
 theorem ringKrullDim_lt_top : ringKrullDim A < ⊤ := by
   nontriviality A
   obtain ⟨s, g, hinj, hint⟩ := exists_integral_inj_algHom_of_fg k A
   rw [ringKrullDim_eq_of_normalization k g hinj hint]
   exact WithBot.coe_lt_coe.mpr (ENat.natCast_lt_top s)
 
-omit [Algebra.FiniteType k A] in
 
+omit [Algebra.FiniteType k A] in
 theorem trdeg_eq_of_isFractionRing [IsDomain A] (K : Type u) [Field K] [Algebra A K]
     [IsFractionRing A K] [Algebra k K] [IsScalarTower k A K] : trdeg k K = trdeg k A := by
   have _ : FaithfulSMul A K :=
@@ -134,8 +138,8 @@ section Formula
 variable (k : Type u) [Field k] {A : Type u} [CommRing A] [IsDomain A] [Algebra k A]
   [Algebra.FiniteType k A]
 
-include k in
 
+include k in
 theorem ringKrullDim_le_ringKrullDim_quotient_add_one (p : Ideal A) [p.IsPrime]
     (hp : p.height = 1) : ringKrullDim A ≤ ringKrullDim (A ⧸ p) + 1 := by
   obtain ⟨s, g, hinj, hint⟩ := exists_integral_inj_algHom_of_fg k A
@@ -187,8 +191,8 @@ theorem ringKrullDim_le_ringKrullDim_quotient_add_one (p : Ideal A) [p.IsPrime]
   have : s ≤ m + 1 := by omega
   exact_mod_cast this
 
-omit [IsDomain A] [Algebra k A] [Algebra.FiniteType k A] in
 
+omit [IsDomain A] [Algebra k A] [Algebra.FiniteType k A] in
 lemma coheight_eq_ringKrullDim_quotient (p : PrimeSpectrum A) :
     (Order.coheight p : WithBot ℕ∞) = ringKrullDim (A ⧸ p.asIdeal) := by
   rw [ringKrullDim_quotient, Order.coheight_eq_krullDim_Ici]
@@ -196,8 +200,8 @@ lemma coheight_eq_ringKrullDim_quotient (p : PrimeSpectrum A) :
   ext q
   simp [PrimeSpectrum.mem_zeroLocus, ← PrimeSpectrum.asIdeal_le_asIdeal]
 
-omit [Algebra k A] [Algebra.FiniteType k A] in
 
+omit [Algebra k A] [Algebra.FiniteType k A] in
 lemma height_map_quotient_add_one_le [IsNoetherianRing A] {p₁ p : Ideal A} [p₁.IsPrime]
     [p.IsPrime] (h : p₁ ≤ p) (h0 : p₁ ≠ ⊥) :
     (p.map (Ideal.Quotient.mk p₁)).height + 1 ≤ p.height := by
@@ -269,10 +273,10 @@ theorem ringKrullDim_le_height_add_ringKrullDim_quotient : ∀ (n : ℕ) (A : Ty
     _ = (((p.map (Ideal.Quotient.mk p₁)).height + 1 : ℕ∞) : WithBot ℕ∞) + ringKrullDim (A ⧸ p) := by
       push_cast
       ring
-    _ ≤ p.height + ringKrullDim (A ⧸ p) := by gcongr; exact_mod_cast hh
+    _ ≤ p.height + ringKrullDim (A ⧸ p) := by gcongr
+
 
 include k in
-
 theorem height_add_ringKrullDim_quotient (p : Ideal A) [p.IsPrime] :
     (p.height : WithBot ℕ∞) + ringKrullDim (A ⧸ p) = ringKrullDim A := by
   refine le_antisymm ?_ ?_

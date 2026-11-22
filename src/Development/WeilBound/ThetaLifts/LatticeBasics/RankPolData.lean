@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.FinOrbit
-import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
-import Development.WeilBound.ThetaLifts.LatticeBasics.NonZero
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
-import Development.WeilBound.ThetaLifts.CartanFactorisation.IntegrableOnRight
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CountableCompactOpen
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FinOrbit
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
+public import Development.WeilBound.ThetaLifts.LatticeBasics.NonZero
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.IntegrableOnRight
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CountableCompactOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem exists_form {J : Matrix (Fin n) (Fin n) E} (c : Cpt σ J) {μ : Measure 
   haveI : IsFiniteMeasure (μ.restrict D) := isFiniteMeasure_restrict.2 (c.fin _ _ hμ hD).ne
   have ii : ∀ x y, Integrable (fun g => u y g * star (u' x g)) (μ.restrict D) := fun x y => by
     have h := (hc y).mul (hc' x).star
-    obtain ⟨C, hC⟩ := c.bdd h fun γ hγ g => by simp only [Pi.mul_apply, hi y γ hγ, hi' x γ hγ]
+    obtain ⟨C, hC⟩ := c.bdd h fun γ hγ g => by simp only [Pi.mul_apply, Pi.star_apply, hi y γ hγ, hi' x γ hγ]
     exact Integrable.of_bound h.aestronglyMeasurable C (Eventually.of_forall hC)
   haveI := c.cnt
   haveI := c.right μ hμ

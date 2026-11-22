@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExpSeriesContDiffAndHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CharSeriesExistsNeZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SummableGaussianCoset
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPosMulNormSqLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExpSeriesContDiffAndHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CharSeriesExistsNeZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SummableGaussianCoset
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPosMulNormSqLe
+
+@[expose] public section
+
 open scoped ContDiff
 
 namespace GlobalTheory.HeisenbergGaussianSeries
@@ -99,7 +104,7 @@ theorem series_quasi
   rw [← tsum_mul_left]
   refine Eq.trans ?_ ((Equiv.addRight (⟨g₀, hg₀⟩ : Γ)).tsum_eq _)
   refine tsum_congr fun g => ?_
-  have e1 : p g + (a + p (g₀ + w)) = p (g + g₀) + (a + p w) := by simp only [map_add]; abel
+  have e1 : p g + (a + p (g₀ + w)) = p (g + g₀) + (a + p w) := by simp only [map_add (f := _)]; abel
   simp only [Equiv.coe_addRight, AddSubgroup.coe_add]
   rw [e1, hr g g₀ w, hΓ g g.2 g₀ hg₀, hl g g₀ w, add_assoc (g : G) g₀ w]
   ring
@@ -137,7 +142,7 @@ theorem series_expand (hp : ∀ v, p (ι v) = v)
   unfold series
   rw [← tsum_mul_left, ← tsum_mul_left]
   refine tsum_congr fun g => ?_
-  have e1 : p g + (a + p (w + ι v)) = (p g + (a + p w)) + v := by rw [map_add, hp]; abel
+  have e1 : p g + (a + p (w + ι v)) = (p g + (a + p w)) + v := by rw [map_add (f := _), hp]; abel
   have e2 : β w (ι v) * β g (ι v) * β (ι a) (ι v) =
       Complex.exp (-(Real.pi * Complex.I) * (om (p g + (a + p w)) v : ℝ)) := by
     rw [← hl, ← hl, hβ, map_add p, map_add p, hp]
@@ -151,7 +156,7 @@ theorem series_expand (hp : ∀ v, p (ι v) = v)
       Complex.exp (-(Real.pi : ℂ) * (Complex.I * (om y v : ℝ) + (om y (J v) : ℝ))) := by
     rw [← Complex.exp_add, ← Complex.exp_add, ← Complex.exp_add]
     congr 1
-    simp only [map_add, LinearMap.add_apply, hsym v y]
+    simp only [map_add (f := _), LinearMap.add_apply, hsym v y]
     push_cast; ring
   linear_combination (β g w * β (ι a) (g + w) * χ (g + w) *
       Complex.exp (-(Real.pi / 2 : ℂ) * (om (y + v) (J (y + v)) : ℝ))) * e2 +
@@ -192,7 +197,7 @@ theorem exists_theta : ∀ (G V : Type) [AddCommGroup G] [TopologicalSpace G] [I
     obtain ⟨a, ha⟩ := GlobalTheory.charSeries_exists_ne_zero V Γ
       (fun g a => Complex.exp (2 * Real.pi * Complex.I * (om (p g) a : ℝ)))
       (fun g => χ g * Complex.exp (-(Real.pi / 2 : ℂ) * (om (p g) (J (p g)) : ℝ))) 0
-      (fun g a b => by rw [← Complex.exp_add]; congr 1; simp only [map_add]; push_cast; ring)
+      (fun g a b => by rw [← Complex.exp_add]; congr 1; simp only [map_add (f := _)]; push_cast; ring)
       (fun g a => by
         have : (2 * Real.pi * Complex.I * (om (p g) a : ℝ) : ℂ)
           = ((2 * Real.pi * om (p g) a : ℝ) : ℂ) * Complex.I := by push_cast; ring

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
+
+@[expose] public section
 
 noncomputable section
 

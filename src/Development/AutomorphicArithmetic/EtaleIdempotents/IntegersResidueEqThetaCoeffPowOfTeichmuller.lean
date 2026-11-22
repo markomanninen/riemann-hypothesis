@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PhiAZero
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TorsionOfVec
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NatCastQb
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PhiAZero
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TorsionOfVec
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NatCastQb
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison TensorProduct GlobalTheory.LogCris DividedPowers UpperTheory.Ru.crystallineComparison
 

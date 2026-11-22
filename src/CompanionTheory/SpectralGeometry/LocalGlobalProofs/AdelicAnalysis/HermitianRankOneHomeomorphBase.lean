@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GaussQ
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GaussQ
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem add_sig_eq_trace (hcm : IsCMExt F E σ) (y : E) :
     intro s t hst
     have hσs : ∀ (c : F) (w : E), σ (c • w) = c • σ w := fun c w => by simp [Algebra.smul_def]
     have h2 := congrArg σ hst
-    rw [map_add, hσs, hσs, map_one, hσθ, map_zero] at h2
+    rw [map_add (f := _), hσs, hσs, map_one, hσθ, map_zero] at h2
     have h3 : (2 * t) • θ = 0 := by
       have : (2 * t) • θ = (s • (1 : E) + t • θ) - (s • (1 : E) + t • -θ) := by
         simp only [smul_neg, mul_smul, two_smul]
@@ -120,7 +124,7 @@ theorem add_sigR_eq_trace (hcm : IsCMExt F E σ) (z : R ⊗[F] E) :
       Algebra.algebraMap_eq_smul_one, TensorProduct.tmul_smul, TensorProduct.smul_tmul',
       Algebra.smul_def, mul_comm]
   | add a c ha hc =>
-    rw [map_add, map_add, TensorProduct.add_tmul, ← ha, ← hc]
+    rw [map_add (f := _), map_add (f := _), TensorProduct.add_tmul, ← ha, ← hc]
     abel
 
 end Ring
@@ -187,8 +191,8 @@ theorem map_coordHerm (hcm : IsCMExt F E σ) {d : ℕ} (b : Module.Basis (Fin d)
     fun r => (fun _ => r, fun p => hT.elim p)
   have hψ : MeasurableEmbedding ψ := by
     refine MeasurableEmbedding.of_measurable_inverse (g := fun q => q.1 0) ?_ ?_ ?_ ?_
-    · refine Measurable.prodMk (measurable_pi_lambda _ fun _ => measurable_id) ?_
-      exact measurable_pi_lambda _ fun p => hT.elim p
+    · refine Measurable.prodMk (Measurable.of_eval fun _ => measurable_id) ?_
+      exact Measurable.of_eval fun p => hT.elim p
     · have : Set.range ψ = Set.univ := by
         ext q
         simp only [Set.mem_range, Set.mem_univ, iff_true]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -31,9 +35,9 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.occUnit 
       have : v ∈ Q := by rw [h]; trivial
       exact this
   refine ⟨LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun x y => inner ℂ (f y) (f x)) ?_ ?_ ?_ ?_, ?_, ?_, ?_⟩
-  · intro a b c; simp only [map_add, inner_add_right]
+  · intro a b c; simp only [map_add (f := _), inner_add_right]
   · intro a b c; simp only [map_smul, inner_smul_right, RingHom.id_apply, smul_eq_mul]
-  · intro a b c; simp only [map_add, inner_add_left]
+  · intro a b c; simp only [map_add (f := _), inner_add_left]
   · intro a b c; simp only [map_smul, inner_smul_left, smul_eq_mul]
   · intro v u; simp only [LinearMap.mk₂'ₛₗ_apply, inner_conj_symm]
   · intro v hv

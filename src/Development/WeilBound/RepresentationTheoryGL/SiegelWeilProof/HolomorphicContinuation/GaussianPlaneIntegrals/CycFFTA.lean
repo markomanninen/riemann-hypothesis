@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,17 +37,17 @@ theorem sum_rw {R : Type*} [AddCommMonoid R] (β : Bool) (F : Rw ε β → R) :
   have h2 : ∑ b : {b : Fin m // ¬ ε b = β}, (if h : ε b.1 = β then F ⟨b.1, h⟩ else 0) = 0 :=
     Finset.sum_eq_zero (fun b _ => dif_neg b.2)
   rw [h2, add_zero]
-  exact Finset.sum_congr rfl (fun b _ => by rw [dif_pos b.2])
+  exact Finset.sum_congr rfl (fun b _ => by rw [dite_eq_left b.2])
 
 theorem blk_block (β : Bool) (v : Matrix (Rw ε β) (Rw ε β) ℂ) (a b : Fin m) (h : ε a ≠ ε b) : blk ε β v a b = 0 := by
   unfold blk
   by_cases ha : ε a = β
-  · rw [dif_pos ha, dif_neg (fun hb => h (ha.trans hb.symm))]
+  · rw [dite_eq_left ha, dif_neg (fun hb => h (ha.trans hb.symm))]
   · rw [dif_neg ha, if_neg (fun e : a = b => h (congrArg ε e))]
 
 theorem blk_of (β : Bool) (v : Matrix (Rw ε β) (Rw ε β) ℂ) {a : Fin m} (ha : ε a = β) (b : Fin m) :
     blk ε β v a b = if hb : ε b = β then v ⟨a, ha⟩ ⟨b, hb⟩ else 0 := by
-  unfold blk; rw [dif_pos ha]
+  unfold blk; rw [dite_eq_left ha]
 
 theorem blk_of_not (β : Bool) (v : Matrix (Rw ε β) (Rw ε β) ℂ) {a : Fin m} (ha : ¬ ε a = β) (b : Fin m) :
     blk ε β v a b = if a = b then 1 else 0 := by
@@ -65,7 +69,7 @@ theorem blk_unitary (β : Bool) (v : Matrix (Rw ε β) (Rw ε β) ℂ) (hv : v �
         intro b
         rw [blk_of β v ha, blk_of β v hc]
         by_cases hb : ε b = β
-        · rw [dif_pos hb, dif_pos hb, dif_pos hb]
+        · rw [dite_eq_left hb, dite_eq_left hb, dite_eq_left hb]
         · rw [dif_neg hb, dif_neg hb, dif_neg hb, zero_mul]
       rw [Finset.sum_congr rfl (fun b _ => e1 b), sum_rw β (fun j => v ⟨a, ha⟩ j * star (v ⟨c, hc⟩ j)), key]
       by_cases hac : a = c

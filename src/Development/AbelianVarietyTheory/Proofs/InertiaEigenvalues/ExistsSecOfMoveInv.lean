@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSectionOneClassSeriesDescends
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ShortThetaValueLinearInPolynomial
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ChartIndependenceUnconditional
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsTestRingInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSectionOneClassSeriesDescends
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ShortThetaValueLinearInPolynomial
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ChartIndependenceUnconditional
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsTestRingInjective
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
@@ -117,8 +121,8 @@ theorem evR_frBor {a : (E →+* ℂ) × ℕ → ℕ} {f : Rul Xo c} (hf : f ∈ 
   have hAT := GlobalTheory.Frames.allTest_of_secBaseChange GlobalTheory.firstFiveLaws.1.secBaseChange E H Dw l Xo c
   exact (GlobalTheory.borDesc_and_wtField E H Dw l Xo c).2 a n f hf k t y y' (hAT k y) (hAT k y') h
 
-open GlobalTheory.ShortDescent in
 
+open GlobalTheory.ShortDescent in
 theorem exists_sec_of_moveInv (d : DeltaDat Xo c n) (hlev : d.IsLev) {a : (E →+* ℂ) × ℕ → ℕ} {n' : ℕ}
     (G : Rul d.Xo₂ d.c₂) (hG : G ∈ sec d.Xo₂ d.c₂ a n') (hinv : MoveInv d G) :
     ∃ f ∈ sec Xo c a n', ∀ (k : Type) [Field k] [IsAlgClosed k] [Algebra c.F k] [Algebra d.c₂.F k],
@@ -144,7 +148,7 @@ theorem exists_sec_of_moveInv (d : DeltaDat Xo c n) (hlev : d.IsLev) {a : (E →
   · intro k _ _ _ _ hk y y₂ ho
     have hy := hAll k y
     conv_lhs => unfold evR evalAt
-    rw [dif_pos hy]
+    rw [dite_eq_left hy]
     exact (hd _ _).exists.choose_spec k hk _ y y₂ hy.choose_spec.choose_spec.choose_spec ho
 
 theorem exists_sec_theta [StarRing (𝓞 E)] (nab : NabV Xo c) (hnab : IsNab Xo c nab) (Λ : GenLat E n) (N : ℕ)
@@ -165,7 +169,7 @@ theorem exists_sec_theta [StarRing (𝓞 E)] (nab : NabV Xo c) (hnab : IsNab Xo 
   · have hy := hAll k y
     obtain ⟨v, hv, -⟩ := hex k y
     unfold evR evalAt
-    rw [dif_pos hy, hnat _ _ _ _ y hy.choose_spec.choose_spec.choose_spec _ v (hex _ _).exists.choose_spec hv]
+    rw [dite_eq_left hy, hnat _ _ _ _ y hy.choose_spec.choose_spec.choose_spec _ v (hex _ _).exists.choose_spec hv]
     exact hv
 
 theorem formula_eq {V F S Qt J : Type} [Field F] [CommRing S] [Algebra F S] [Fintype Qt] [Fintype J]
@@ -211,13 +215,15 @@ theorem sum_values_eq [StarRing (𝓞 E)] (nab : NabV Xo c) (hnab : IsNab Xo c n
         (Finset.univ.biUnion fun t => (P t).support) (Finset.subset_biUnion_of_mem (fun t => (P t).support) (Finset.mem_univ t)))
   apply hf.injective
   change φ _ = φ _
-  simp only [map_sum, map_mul φ, hu _ _ _ (hv _), hu _ _ _ (hv' _), Finset.mul_sum _ _ (φ _)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul φ, hu _ _ _ (hv _), hu _ _ _ (hv' _), Finset.mul_sum _ _ (φ _)]
   rw [Finset.sum_comm, Finset.sum_comm (s := (Finset.univ : Finset T))]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [Finset.sum_comm, Finset.sum_comm (s := (Finset.univ : Finset T))]
   refine Finset.sum_congr rfl fun mo _ => ?_
   have e := congrArg φ (h q mo)
-  simp only [map_sum, map_mul φ, φ.commutes] at e
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul φ, φ.commutes] at e
   simp only [← _root_.mul_assoc (φ _), ← Finset.sum_mul, e]
 
 def SumInv (d : DeltaDat Xo c n) {T : Type} [Fintype T] (cs : T → Rul d.Xo₂ d.c₂)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaFunctionsAllLevelsClosure
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActAApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaFunctionsAllLevelsClosure
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActAApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,12 +91,12 @@ theorem la_skew_nsmul (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (𝔪 : Ideal (�
   obtain ⟨M, hM0, hM⟩ := skewLat_smul (D := D) 𝔪 d
   refine ⟨M, hM0, fun x hx => ?_⟩
   have key : La D (tor0 D cc δ) (stdL D a) (skewLat D 𝔪 d) ≤
-      (La0 D (tor0 D cc δ) a d).comap (DistribMulAction.toAddMonoidHom (VC D a d) M) := by
+      (La0 D (tor0 D cc δ) a d).comap (DistribSMul.toAddMonoidHom (VC D a d) M) := by
     refine (AddSubgroup.closure_le _).2 fun z hz => ?_
     obtain ⟨w, hw, A, hA, rfl⟩ := hz
     have hA' := YYl_smul (a := a) hM hA
     simp only [Submodule.mem_comap, LinearMap.lsmul_apply] at hA'
-    simp only [SetLike.mem_coe, AddSubgroup.mem_comap, DistribMulAction.toAddMonoidHom_apply]
+    simp only [SetLike.mem_coe, AddSubgroup.mem_comap, DistribSMul.toAddMonoidHom_apply]
     refine AddSubgroup.subset_closure ⟨w, hw, _, hA', ?_⟩
     funext τ i j
     simp [embV, tor0, Algebra.smul_def, nsmul_eq_mul]

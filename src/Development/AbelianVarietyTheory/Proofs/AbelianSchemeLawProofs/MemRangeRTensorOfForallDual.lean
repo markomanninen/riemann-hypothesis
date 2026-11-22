@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitsOfIsAffineOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitsOfIsAffineOpen
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace TensorProduct
 
@@ -25,7 +29,7 @@ theorem mem_range_rTensor_of_forall_dual {R C₀ C₁ B : Type} [CommRing R] (hR
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 variable {S X Y Z T : Scheme.{0}}
 
@@ -108,7 +112,7 @@ theorem MM_eq [Fintype ι] [DecidableEq ι] (U : ι → X.Opens) (W : Y.Opens) (
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero, Pi.zero_apply]; rfl
   | tmul x y => rw [MM_tmul]; simp [mm]; rfl
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy]; rfl
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy]; rfl
 
 theorem MM_surj [IsAffine S] [Finite ι] {U : ι → X.Opens} {W : Y.Opens}
     (hU : ∀ i, IsAffineOpen (U i)) (hW : IsAffineOpen W)
@@ -139,7 +143,7 @@ theorem rs_MM (U : ι → X.Opens) (W : Y.Opens) (i : ι) {O O' : Z.Opens} (h : 
   | tmul x y =>
     rw [MM_tmul, MM_tmul, map_mul]
     exact congrArg₂ _ (rs_appLE p h hU _) (rs_appLE q h hW _)
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem MM_lTensor (U : ι → X.Opens) {W W' : Y.Opens} (h : W' ≤ W) (i : ι) (O : Z.Opens)
     (hU : O ≤ p ⁻¹ᵁ U i) (hW : O ≤ q ⁻¹ᵁ W') (z) :
@@ -150,7 +154,7 @@ theorem MM_lTensor (U : ι → X.Opens) {W W' : Y.Opens} (h : W' ≤ W) (i : ι)
   | tmul x y =>
     rw [LinearMap.lTensor_tmul, MM_tmul, MM_tmul]
     exact congrArg _ (appLE_rs q h hW y)
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 noncomputable def dlt (iX : X ⟶ S) (U : ι → X.Opens) :
     (∀ i, Fn iX (U i)) →ₗ[Γ(S, ⊤)] ∀ k : ι × ι, Fn iX (U k.1 ⊓ U k.2) :=
@@ -170,7 +174,7 @@ theorem MM_dlt (U : ι → X.Opens) (W : Y.Opens) (k : ι × ι) (O : Z.Opens)
   | tmul x y =>
     rw [LinearMap.rTensor_tmul, MM_tmul, MM_tmul, MM_tmul, dlt_apply, map_sub, sub_mul]
     exact congrArg₂ _ (congrArg (· * _) (appLE_rs p _ hU _)) (congrArg (· * _) (appLE_rs p _ hU _))
-  | add x y hx hy => simp only [map_add, hx, hy]; ring
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]; ring
 
 theorem section_MM {y : S ⟶ Y} (hy : y ≫ iY = 𝟙 S) {s : X ⟶ Z} (hs : s ≫ p = 𝟙 X)
     (hs' : s ≫ q = iX ≫ y) (U : ι → X.Opens) (W : Y.Opens) (e : ⊤ ≤ y ⁻¹ᵁ W) (i : ι)
@@ -186,6 +190,6 @@ theorem section_MM {y : S ⟶ Y} (hy : y ≫ iY = 𝟙 S) {s : X ⟶ Z} (hs : s 
     exact congrArg₂ _ ((appLE_appLE s q _ hs' hW hO h3 b).trans
       (appLE_appLE iX y _ rfl e le_top h3 b).symm)
       (((appLE_appLE s p _ hs hU hO le_rfl (a i)).trans (id_appLE _ _)).trans (rs_self _ _))
-  | add x y hx hy => simp only [map_add, hx, hy]; rfl
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]; rfl
 
 end GlobalTheory.KuennethOne

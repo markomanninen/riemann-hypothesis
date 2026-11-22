@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.SubsetUpperHessenberg
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.SubsetUpperHessenberg
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -90,7 +94,7 @@ theorem coef_left_aa : CoefLeftAA := by
       (Matrix.of fun a b : Fin m => s (esI k r (Fin.castLE hm a)) (esI k r (Fin.castLE hm b))) *
       (Matrix.of fun a l : Fin m => herm (Hpk k r) (g *ᵥ bvec (c l)) (bvec (eI k r (Fin.castLE hm a)))) := by
     ext a l
-    simp only [of_apply, mul_apply, key]
+    simp only [of_apply, Matrix.mul_apply, key]
   rw [hM]
   apply lx_det_tri
   · intro a b hab

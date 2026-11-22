@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialModelIsometry.PolyExtLem
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialModelIsometry.PolyExtLem
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,8 @@ theorem polyExt_of (hp : PI.PolyCoef) (hu : PI.UnitaryDense) : PolyExt := by
     let D := Q' - ∑ r, Q i r * C (Pm h r j)
     have hD : ∀ g', evM g' D = (Pm (g' * h) - Pm g' * Pm h) i j := by
       intro g'
-      simp only [D, evM, map_sub, map_sum, map_mul, eval_C] at hQ' ⊢
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [D, evM, map_sub, map_sum, map_mul, eval_C] at hQ' ⊢
       rw [hQ']
       simp [Pm, evM, Matrix.mul_apply]
     have hD0 : D = 0 := hu N D fun u hu' => by
@@ -82,7 +87,8 @@ theorem polyExt_of (hp : PI.PolyCoef) (hu : PI.UnitaryDense) : PolyExt := by
     let D := Q' - ∑ r, C (Pm g i r) * Q r j
     have hD : ∀ h', evM h' D = (Pm (g * h') - Pm g * Pm h') i j := by
       intro h'
-      simp only [D, evM, map_sub, map_sum, map_mul, eval_C] at hQ' ⊢
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [D, evM, map_sub, map_sum, map_mul, eval_C] at hQ' ⊢
       rw [hQ']
       simp [Pm, evM, Matrix.mul_apply]
     have hD0 : D = 0 := hu N D fun u hu' => by
@@ -104,7 +110,8 @@ theorem polyExt_of (hp : PI.PolyCoef) (hu : PI.UnitaryDense) : PolyExt := by
     refine ⟨∑ i, ∑ j, Q i j * C (fL (Matrix.single i j 1)), fun g => ?_⟩
     have hf : ⟪y, Pl g x⟫_ℂ = fL (Pm g) := rfl
     rw [hf, Matrix.matrix_eq_sum_single (Pm g)]
-    simp only [map_sum, evM, map_mul, eval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, evM, map_mul, eval_C]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [show Matrix.single i j (Pm g i j) = Pm g i j • Matrix.single i j (1 : ℂ) by
       rw [Matrix.smul_single, smul_eq_mul, mul_one], map_smul, smul_eq_mul]

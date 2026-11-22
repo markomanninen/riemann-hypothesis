@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsQuotientOfFiniteGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsQuotientOfFiniteGroup
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -28,9 +32,9 @@ theorem exists_quotient_of_invariant_open {Γ : Type} [Group Γ] [Finite Γ] {Y 
     rw [← cancel_mono H.ι, hr, hm, Category.assoc, hr, reassoc_of% hr]
   let ρ : Γ →* Aut H.toScheme := MonoidHom.mk'
     (fun σ => ⟨r σ⁻¹, r σ, by rw [← rm, inv_mul_cancel, r1], by rw [← rm, mul_inv_cancel, r1]⟩)
-    (fun σ τ => Iso.ext (show r (σ * τ)⁻¹ = r τ⁻¹ ≫ r σ⁻¹ by rw [mul_inv_rev, rm]))
-  have hρ : ∀ σ, (ρ σ).hom = r σ⁻¹ := fun _ => rfl
-  have hρ' : ∀ σ, r σ = (ρ σ⁻¹).hom := fun σ => by rw [hρ, inv_inv]
+    (fun σ τ => Aut.ext (Iso.ext (show r (σ * τ)⁻¹ = r τ⁻¹ ≫ r σ⁻¹ by rw [mul_inv_rev, rm])))
+  have hρ : ∀ σ, (ρ σ).asIso.hom = r σ⁻¹ := fun _ => rfl
+  have hρ' : ∀ σ, r σ = (ρ σ⁻¹).asIso.hom := fun σ => by rw [hρ, inv_inv]
   have hpt : ∀ σ (x : H.toScheme), H.ι (r σ x) = act σ (H.ι x) := fun σ x => congr($(hr σ) x)
   have : OrbitsInAffineOpens ρ := ⟨fun x => by
     obtain ⟨O, hO₁, hO₂, hO₃⟩ := hO (H.ι x) x.2
@@ -39,7 +43,7 @@ theorem exists_quotient_of_invariant_open {Γ : Type} [Group Γ] [Finite Γ] {Y 
     rw [hpt]
     exact hO₃ _⟩
   obtain ⟨X', π, hπ⟩ := QuotientGluing.exists_isAffineQuotient ρ
-  have hinv : ∀ g, (ρ g).hom ≫ H.ι ≫ s = H.ι ≫ s := fun g => by
+  have hinv : ∀ g, (ρ g).asIso.hom ≫ H.ι ≫ s = H.ι ≫ s := fun g => by
     rw [hρ, reassoc_of% hr, hs]
   refine ⟨Over.mk (hπ.desc (H.ι ≫ s) hinv), π, hπ.comp_desc _ hinv, hπ.isAffineHom, hπ.surjective, fun σ => ?_,
     fun x y hxy => ?_, fun V => ⟨hπ.app_injective V, fun f hf => ?_⟩⟩

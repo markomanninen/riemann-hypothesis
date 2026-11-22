@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.OrdStatement
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndTop
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.OrdStatement
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndTop
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,8 +22,8 @@ attribute [local instance] Over.cartesianMonoidalCategory
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l} {c : Coeff l}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem jetD_twist {S : Type} [CommRing S] [Algebra c.F S] [Algebra ℚ S] [StarRing (𝓞 E)] (y : FrPt Xo c S)
     (C : ChartAt Xo c y) (e' : ∀ m, FrTy y C.d C.x m) (m : ℕ) (cc : Fin C.d → Fin C.d → S)
     (he : ∃ u : (Jet S (Fin 2 × Fin C.d) m)ˣ,

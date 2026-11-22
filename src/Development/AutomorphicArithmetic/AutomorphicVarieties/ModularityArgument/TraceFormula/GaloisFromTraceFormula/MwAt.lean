@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
@@ -24,5 +28,5 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.mwAt :
     simp only [hmk, hne, decide_false, Multiset.map_map]
     congr 1
     funext k
-    simp only [Function.comp, Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false, Function.comp_apply]
     ring

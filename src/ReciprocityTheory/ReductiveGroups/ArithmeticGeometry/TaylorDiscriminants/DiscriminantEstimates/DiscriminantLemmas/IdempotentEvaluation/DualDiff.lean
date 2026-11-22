@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.IdemDen
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.IdemDen
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.TBIdemDen
 
@@ -27,7 +31,8 @@ theorem dualDiff : DualDiffSt := by
     obtain ⟨c, hc⟩ := hspan x
     refine ⟨c i, ?_⟩
     have hx : algebraMap (𝓞 E) E x = ∑ k, (c k : ℚ) • b k := hc
-    rw [hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum]
     simp only [map_smul, key, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
       Finset.mem_univ, if_true, eq_intCast]
   have hd : (δ : E) ∈ (FractionalIdeal.dual ℤ ℚ (1 : FractionalIdeal (nonZeroDivisors (𝓞 E)) E))⁻¹ := by

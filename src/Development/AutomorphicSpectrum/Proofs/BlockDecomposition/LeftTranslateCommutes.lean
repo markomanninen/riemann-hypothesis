@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem lTrL_cls {n : ℕ} [MeasurableSpace (G n)] [BorelSpace (G n)] (μ : Meas
     [NormedAddCommGroup V] [InnerProductSpace ℂ V] (x : G n) {f : Mat n → V}
     (hf : MemLp (fun y : G n => f y.val) 2 μ) : lTrL μ V x (cls μ f) = cls μ (lTr x f) := by
   unfold cls
-  rw [dif_pos hf, dif_pos (memLp_lTr μ x hf)]
+  rw [dite_eq_left hf, dite_eq_left (memLp_lTr μ x hf)]
   exact Lp.toLp_compMeasurePreserving hf (measurePreserving_mul_left μ x)
 
 theorem ltComm_of_ltSob : LtSob → LtComm := by

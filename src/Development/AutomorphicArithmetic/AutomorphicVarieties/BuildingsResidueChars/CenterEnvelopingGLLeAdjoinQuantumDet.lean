@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HarishChandraProjQuantumDetEqProd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.SymmetricSubalgebraLeAdjoinRangeProdCAddXComplex
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HarishChandraProjQuantumDetEqProd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.SymmetricSubalgebraLeAdjoinRangeProdCAddXComplex
+
+@[expose] public section
 
 open GroundTheory.Automorphic.HarishChandra in
 private theorem qdet_mem_center (n : ℕ) (u : ℂ) :
@@ -20,7 +24,7 @@ private theorem hc_qdet (n : ℕ) (u : ℂ) :
   rw [UpperTheory.harishChandraProj_quantumDet_eq_prod, map_prod]
   refine Finset.prod_congr rfl fun k _ => ?_
   unfold GroundTheory.Automorphic.HarishChandra.translate
-  rw [map_add, MvPolynomial.aeval_C, MvPolynomial.aeval_X, MvPolynomial.algebraMap_eq,
+  rw [map_add (f := _), MvPolynomial.aeval_C, MvPolynomial.aeval_X, MvPolynomial.algebraMap_eq,
     add_comm (MvPolynomial.X k), ← add_assoc, ← map_add]
   congr 2
   simp only [rhoVec, Pi.neg_apply]

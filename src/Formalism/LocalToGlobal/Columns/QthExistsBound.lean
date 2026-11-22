@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.TwQLevU
-import Formalism.LocalToGlobal.Columns.ChainTwZero
+module
+
+public import Formalism.LocalToGlobal.Columns.TwQLevU
+public import Formalism.LocalToGlobal.Columns.ChainTwZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

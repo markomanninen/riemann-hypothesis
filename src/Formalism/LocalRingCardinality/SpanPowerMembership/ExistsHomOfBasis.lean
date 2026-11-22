@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocG
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocG
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,11 @@ theorem exists_lamExt {K : Type} [Field K] [NumberField K] (e : K →+* ℂ) {C 
   let _ : Algebra K C := f.toAlgebra
   have h0 : Algebra.IsAlgebraic ℚ (algebraicClosure ℚ ℂ) := algebraicClosure.isAlgebraic ℚ ℂ
   have : Algebra.IsAlgebraic K (algebraicClosure ℚ ℂ) := Algebra.IsAlgebraic.tower_top (K := ℚ) K
-  let l : algebraicClosure ℚ ℂ →ₐ[K] C := IsAlgClosed.lift
+  let l : algebraicClosure ℚ ℂ →ₐ[K] C := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   exact ⟨l.toRingHom, fun x => ⟨hmem x, (l.commutes x).symm⟩⟩
 
 theorem exists_placeEmb (D : D7) (w : D.what₂.places.Pl) [Fact (D.what₂.places.resChar w).Prime] :
@@ -87,46 +95,5 @@ theorem exists_placeEmb (D : D7) (w : D.what₂.places.Pl) [Fact (D.what₂.plac
   have h2 := (Valuation.integer.integers (NormedField.valuation (K := PadicAlgCl (D.what₂.places.resChar w)))
     ).isIntegral_iff_v_le_one.mp hi.tower_top
   exact_mod_cast (show ‖φ (y : D.what₂.LL)‖₊ ≤ 1 from h2)
-
-theorem exists_hom_of_basis {L S M ι : Type} [Field L] [Field S] [Field M] [Algebra L S] [Algebra L M]
-    [IsAlgClosed M] (x : ι → S) (y : ι → M) (hx : IsTranscendenceBasis L x) (hy : AlgebraicIndependent L y) :
-    Nonempty (S →ₐ[L] M) := by
-  let _ : Algebra (MvPolynomial ι L) S := (MvPolynomial.aeval x : MvPolynomial ι L →ₐ[L] S).toRingHom.toAlgebra
-  let _ : Algebra (MvPolynomial ι L) M := (MvPolynomial.aeval y : MvPolynomial ι L →ₐ[L] M).toRingHom.toAlgebra
-  have : FaithfulSMul (MvPolynomial ι L) S := (faithfulSMul_iff_algebraMap_injective _ _).mpr hx.1
-  have : FaithfulSMul (MvPolynomial ι L) M := (faithfulSMul_iff_algebraMap_injective _ _).mpr hy
-  have hA := hx.isAlgebraic
-  have : Algebra.IsAlgebraic (MvPolynomial ι L) S := ⟨fun s => by
-    obtain ⟨q, hq0, hq⟩ := hA.isAlgebraic s
-    let e := hx.1.aevalEquiv.symm.toRingEquiv.toRingHom
-    refine ⟨q.map e, (Polynomial.map_ne_zero_iff hx.1.aevalEquiv.symm.injective).mpr hq0, ?_⟩
-    rw [Polynomial.aeval_def, Polynomial.eval₂_map, ← hq, Polynomial.aeval_def]
-    congr 1
-    ext t
-    obtain ⟨r, rfl⟩ := hx.1.aevalEquiv.surjective t
-    show MvPolynomial.aeval x (hx.1.aevalEquiv.symm (hx.1.aevalEquiv r)) = _
-    rw [AlgEquiv.symm_apply_apply]
-    exact (hx.1.algebraMap_aevalEquiv r).symm⟩
-  let l : S →ₐ[MvPolynomial ι L] M := IsAlgClosed.lift
-  exact ⟨{ l.toRingHom with
-    commutes' := fun a => by
-      have h := l.commutes (MvPolynomial.C a)
-      simpa [RingHom.algebraMap_toAlgebra] using h }⟩
-
-theorem exists_endo {L C : Type} [Field L] [NumberField L] [Field C] [CharZero C] [IsAlgClosed C]
-    (a b : L →+* C) : ∃ α : C →+* C, α.comp a = b := by
-  obtain ⟨s, hs⟩ := exists_isTranscendenceBasis ℚ C
-  have ind : ∀ f : L →+* C, letI := f.toAlgebra; IsTranscendenceBasis L ((↑) : s → C) := fun f => by
-    let _ := f.toAlgebra
-    have : IsScalarTower ℚ L C := IsScalarTower.of_algebraMap_eq' (Subsingleton.elim _ _)
-    exact (Algebra.IsAlgebraic.isTranscendenceBasis_iff ℚ L).mp hs
-  obtain ⟨α⟩ := @exists_hom_of_basis L C C s _ _ _ a.toAlgebra b.toAlgebra _ _ _ (ind a) (ind b).1
-  exact ⟨@AlgHom.toRingHom L C C _ _ _ a.toAlgebra b.toAlgebra α,
-    RingHom.ext fun x => @AlgHom.commutes L C C _ _ _ a.toAlgebra b.toAlgebra α x⟩
-
-theorem exists_iK {L K C : Type} [Field L] [NumberField L] [Field K] [Field C] [CharZero C] [IsAlgClosed C]
-    (f : L →+* K) (i0 : K →+* C) (iL : L →+* C) : ∃ iK : K →+* C, ∀ x, iK (f x) = iL x := by
-  obtain ⟨α, h⟩ := exists_endo (i0.comp f) iL
-  exact ⟨α.comp i0, fun x => RingHom.congr_fun h x⟩
 
 end Formalism.BasicNotions.Examples₂

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,9 +108,5 @@ private theorem exists_holo_re_eq_potOf_sub_on_overlap (R : AnLogRes P J e) (L :
 theorem isPotential_potOf (R : AnLogRes P J e) {L : HermLine ι} (hL : IsSmoothHerm L) :
     IsPotential R.A (potOf R L) :=
   ⟨smoothOn_potOf_of_isSmoothHerm R hL, fun x x' y hy => exists_holo_re_eq_potOf_sub_on_overlap R L x x' y hy⟩
-
-theorem potOfPotential : PotOfPotentialStatement := by
-  intro K _ ι _ P J e R L hL
-  exact isPotential_potOf R hL
 
 end ReciprocityTheory.ChartRestriction.G.Geo

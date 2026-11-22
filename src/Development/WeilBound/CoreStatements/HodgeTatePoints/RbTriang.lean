@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import ReciprocityTheory.DualLattices.UpSmith
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ComapFgOfValuationRing
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import ReciprocityTheory.DualLattices.UpSmith
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ComapFgOfValuationRing
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
@@ -92,10 +96,5 @@ theorem triang_strong (C : Type) [Field C] (v : Valuation C NNReal) (R : Type) [
   have := Smith.hasLen_coker_det hv X
   rw [hrange, hdet, map_prod, map_prod] at this
   exact this
-
-theorem triang : ∀ (C : Type) [Field C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → ∀ (n : ℕ) (L : Submodule R (Fin n → R)), L.FG → ∃ d : Fin n → R, (∀ i c, c ∈ Ideal.span {d i} ↔ ∃ l ∈ L, (∀ j, j < i → l j = 0) ∧ l i = c) ∧ ((∀ i, d i ≠ 0) → HasLen v R ((Fin n → R) ⧸ L) (∏ i, v (algebraMap R C (d i)))) := by
-  intro C _ v R _ _ hv n L hL
-  obtain ⟨d, h1, h2⟩ := triang_strong C v R hv n L hL
-  exact ⟨d, h1, fun _ => h2⟩
 
 end PositivityTheory.HtPt.Rb

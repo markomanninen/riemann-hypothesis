@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacobianCoordinates
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RootPatterns
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RootHaarLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGPinLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocFactorAll
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RightInvOfLattice
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarMeasureUniqueness
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootMeasureTransportDoubleCoset
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacobianCoordinates
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RootPatterns
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RootHaarLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGPinLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocFactorAll
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RightInvOfLattice
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarMeasureUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootMeasureTransportDoubleCoset
+
+@[expose] public section
 
 open scoped Classical ENNReal
 open Matrix MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.Full Formalism.L2.SG.PackageTie2 Formalism.L2.SG.LocWSOf
@@ -181,7 +185,7 @@ theorem haar_smul {S : Set G} {μ : Measure G}
     exact (mul_ne_zero h0 (Measure.measure_univ_ne_zero.mpr h0')) h1
   · rw [Measure.smul_apply, hS, smul_zero]
   · intro s hs
-    rw [Measure.map_smul, hinv s hs]
+    rw [Measure.map_smul d (measurable_const_mul s).aemeasurable, hinv s hs]
 
 end Gen
 
@@ -307,17 +311,25 @@ theorem pin_pi (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (γ : X
   let m : ∀ v, Measure (Formalism.REAL.UJ (X.B.I.ε v)) := fun v => (K / cv v) • μv v
   have hmH : ∀ v, IsHaarLoc (Formalism.L2.SG.NGPin.StV X u u' γ v) (m v) := fun v =>
     haar_smul (hμv v) (hd0 v) (hdt v)
+  have hcoord : ∀ v, Measurable (Formalism.L2.SG.NGPin.stCoordV X u' w γ v) := by
+    intro v
+    apply Continuous.measurable
+    unfold Formalism.L2.SG.NGPin.stCoordV Formalism.L2.SG.HidaSetting.hJ
+    have hu : Continuous fun y : Formalism.REAL.UJ (X.B.I.ε v) =>
+        uMat ((γ v)⁻¹ * y * γ v) :=
+      (Units.continuous_val.comp continuous_subtype_val).comp
+        ((continuous_const.mul continuous_id).mul continuous_const)
+    apply continuous_pi
+    intro p
+    exact continuous_const.mul
+      (continuous_const.dotProduct (continuous_const.matrix_mulVec (hu.matrix_mulVec continuous_const)))
   have hmmap : ∀ v, (m v).map (Formalism.L2.SG.NGPin.stCoordV X u' w γ v) =
       Measure.pi (fun _ : FreeE w => kst X • (volume : Measure ℂ)) := by
     intro v
     simp only [m]
-    rw [Measure.map_smul, hmap v, smul_smul, ENNReal.div_mul_cancel (hc0 v) (hctop v), hpiK]
-  have hae : ∀ v, AEMeasurable (Formalism.L2.SG.NGPin.stCoordV X u' w γ v) (m v) := by
-    intro v
-    by_contra hn
-    have h0 := Measure.map_of_not_aemeasurable hn
-    rw [hmmap v, hpiK] at h0
-    exact smul_measure_ne_zero hK0 hpv0 h0
+    rw [Measure.map_smul _ (hcoord v).aemeasurable, hmap v, smul_smul, ENNReal.div_mul_cancel (hc0 v) (hctop v), hpiK]
+  have hae : ∀ v, AEMeasurable (Formalism.L2.SG.NGPin.stCoordV X u' w γ v) (m v) :=
+    fun v => (hcoord v).aemeasurable
   haveI : ∀ v, SigmaFinite (m v) := fun v => (hmH v).1
   haveI : ∀ v, SigmaFinite ((m v).map (Formalism.L2.SG.NGPin.stCoordV X u' w γ v)) := fun v => by
     rw [hmmap v]; infer_instance
@@ -357,11 +369,6 @@ theorem pin_pi (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (γ : X
     exact ⟨(Formalism.L2.SG.NGPin.StG X u u' γ).one_mem, fun a ha b hb => (Formalism.L2.SG.NGPin.StG X u u' γ).mul_mem ha hb,
       fun a ha => (Formalism.L2.SG.NGPin.StG X u u' γ).inv_mem ha⟩
   obtain ⟨c, hc0', hct', hμc⟩ := QPK.haar_measure_uniqueness X.B.I.Ginf (StInf X u u' γ) hclosed hgrp μ (Measure.pi m) hH hpiH
-  have hS : muStab X w = c • muStab X w := by
-    have e := congrArg (fun μ' : Measure X.B.I.Ginf => μ'.map (stCoord X u' w γ)) hμc
-    simp only [Measure.map_smul] at e
-    rw [hm, hpimap] at e
-    exact e
   obtain ⟨K', hK'0, hK't, hK'⟩ := Formalism.L2.SG.NGPin.muStab_eq X w
   haveI : SigmaFinite (muStab X w) := by
     rw [hK']; exact Formalism.L2.SG.NGPin.sf_smul _ hK't
@@ -372,6 +379,14 @@ theorem pin_pi (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (γ : X
     have h2 := congrArg (fun μ' : Measure (InfinitePlace X.B.I.F → FreeE w → ℂ) => μ' Set.univ) h1
     simp only [Measure.pi_univ, Measure.coe_zero, Pi.zero_apply] at h2
     exact (Finset.prod_ne_zero_iff.mpr (fun _ _ => Finset.prod_ne_zero_iff.mpr (fun _ _ => by simp))) h2
+  have hS : muStab X w = c • muStab X w := by
+    have e := congrArg (fun μ' : Measure X.B.I.Ginf => μ'.map (stCoord X u' w γ)) hμc
+    have hf : AEMeasurable (stCoord X u' w γ) (Measure.pi m) := by
+      rw [Formalism.L2.SG.NGPin.stCoord_eq]
+      exact (Measurable.of_eval fun v => (hcoord v).comp (measurable_pi_apply v)).aemeasurable
+    rw [Measure.map_smul c hf] at e
+    rw [hm, hpimap] at e
+    exact e
   have hc1 := eq_one_of_smul (muStab X w) hne hS
   rw [hμc, hc1, one_smul]
 

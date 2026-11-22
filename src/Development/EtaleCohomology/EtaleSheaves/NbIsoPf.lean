@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SysOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SysOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.BuildCut

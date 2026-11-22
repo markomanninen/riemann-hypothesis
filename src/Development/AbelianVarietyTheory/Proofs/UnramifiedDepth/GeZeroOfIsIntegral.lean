@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.HostTraceIdentity
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartDirectionsAreEigenvectors
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EigenvectorMemSpanBlockOfBasis
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.SaturatedBlocksSummand
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.VVAlgebraMapNonnegDvr
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.HostTraceIdentity
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartDirectionsAreEigenvectors
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EigenvectorMemSpanBlockOfBasis
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.SaturatedBlocksSummand
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.VVAlgebraMapNonnegDvr
+
+@[expose] public section
 
 open scoped BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj Formalism.L2.FormalSeriesBounds NumberField
@@ -70,7 +74,8 @@ theorem labGeoSt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : H
     intro a ℓ
     funext i
     have h := congrArg ι (GlobalTheory.EigDir.linEig_holds E H Dw l Xo c T.Fr y.1 C3.ch a ℓ i)
-    rw [map_sum, map_mul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_mul] at h
     refine Eq.trans ?_ h
     show ∑ j, M a i j * ι (chartUnitVectors C3 ℓ j) = _
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -102,7 +107,8 @@ theorem labGeoSt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : H
         obtain ⟨W, hW⟩ := exists_dual w emb hw2
         refine ⟨fun s i => ι (algebraMap T.V T.Fr (W s i)), fun s i => hval _, fun i i' => ?_⟩
         have := congrArg (ι.comp (algebraMap T.V T.Fr)) (hW i i')
-        rw [map_sum, apply_ite (ι.comp (algebraMap T.V T.Fr)), map_one, map_zero] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, apply_ite (ι.comp (algebraMap T.V T.Fr)), map_one, map_zero] at this
         refine Eq.trans ?_ this
         refine Finset.sum_congr rfl fun s _ => ?_
         rw [map_mul, hw1]
@@ -123,7 +129,7 @@ theorem labGeoSt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : H
     rw [hb, Fintype.sum_sigma, Finset.sum_eq_single a]
     · refine Finset.sum_congr rfl fun i _ => ?_
       dsimp only
-      rw [dif_pos rfl]
+      rw [dite_eq_left rfl]
       rfl
     · intro a' _ ha'
       refine Finset.sum_eq_zero fun i _ => ?_

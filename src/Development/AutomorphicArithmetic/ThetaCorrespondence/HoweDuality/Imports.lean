@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.PartStable
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.NakAll
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TensorEqTopOrLeKerFiniteLengthModulesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.PartStable
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.NakAll
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TensorEqTopOrLeKerFiniteLengthModulesStatement
+
+@[expose] public section
+
 open scoped TensorProduct
 open UpperTheory.Lit.HoweDuality
 

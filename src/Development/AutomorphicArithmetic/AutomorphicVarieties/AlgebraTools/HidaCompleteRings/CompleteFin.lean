@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.OrdBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.OrdBasic
+
+@[expose] public section
 
 open UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite TensorProduct
 
 theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.completeFin :
     ∀ {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M] [Module R M] [IsNoetherianRing R] (I : Ideal R) [IsAdicComplete I R] [Module.Finite R M], IsAdicComplete I M := by
   intro R _ M _ _ _ I _ _
-  have hH : IsHausdorff I M := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson_bot I)
+  have hH : IsHausdorff I M := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson I)
   have hP : IsPrecomplete I M := by
     rw [← AdicCompletion.of_surjective_iff]
     have hR : Function.Surjective (AdicCompletion.of I R) := AdicCompletion.of_surjective_iff.mpr inferInstance
@@ -25,5 +29,5 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.completeFin :
     | add a b ha hb =>
       obtain ⟨u, hu⟩ := ha
       obtain ⟨v, hv⟩ := hb
-      exact ⟨u + v, by rw [map_add, map_add, hu, hv]⟩
+      exact ⟨u + v, by rw [map_add (f := _), map_add (f := _), hu, hv]⟩
   exact { toIsHausdorff := hH, toIsPrecomplete := hP }

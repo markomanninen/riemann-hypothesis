@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.SecondNormalTransport
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.OrthogonalComplementRational
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PairCorankPositivity.FinrankOrthAddLe
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.SecondNormalTransport
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.OrthogonalComplementRational
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PairCorankPositivity.FinrankOrthAddLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ variable {D : D7} (X : HidaSetting D) (u u' : D.what₂.Word)
 theorem hE_comb (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) (c : Fin (D.R.rS + 1) → X.B.I.E)
     (a : Fin (D.R.rS + 1)) :
     Formalism.L2.SG.Pf.Level.hE X (famE X u a) (∑ b, c b • (M *ᵥ famE X u' b)) = (ZE X u u' M *ᵥ c) a := by
-  rw [← Formalism.L2.SG.Pf.Level.hEl_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Formalism.L2.SG.Pf.Level.hEl_apply, map_sum]
   simp only [map_smul, Formalism.L2.SG.Pf.Level.hEl_apply, smul_eq_mul, Matrix.mulVec, dotProduct, ZE]
   exact Finset.sum_congr rfl fun b _ => mul_comm _ _
 
@@ -51,7 +56,8 @@ def x2E (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) : Fin X.B.I.n → X.B.I
 theorem hE_sum_left {m : ℕ} (k : Fin m → X.B.I.E) (f : Fin m → Fin X.B.I.n → X.B.I.E) (y : Fin X.B.I.n → X.B.I.E) :
     Formalism.L2.SG.Pf.Level.hE X (∑ a, star (k a) • f a) y = ∑ a, k a * Formalism.L2.SG.Pf.Level.hE X (f a) y := by
   conv_lhs => rw [Formalism.L2.SG.Pf.Level.hE_symm]
-  rw [← Formalism.L2.SG.Pf.Level.hEl_apply, map_sum, star_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Formalism.L2.SG.Pf.Level.hEl_apply, map_sum, star_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [map_smul, Formalism.L2.SG.Pf.Level.hEl_apply, smul_eq_mul, star_mul', star_star, ← Formalism.L2.SG.Pf.Level.hE_symm]
 
@@ -138,19 +144,19 @@ theorem lin_iso : s.lin ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := 
 
 theorem frame_e (b : Fin D.R.rS) : s.frame.fl.e b = s.lin (X.eX b) := by
   unfold Formalism.L2.SG.TermOp.GTerm.frame Formalism.L2.SG.TermOp.mapLF
-  rw [dif_pos (lin_iso X Y u u' s)]
+  rw [dite_eq_left (lin_iso X Y u u' s)]
   show s.lin ((X.Fu u').e b) = _
   rw [X.Fu_e]
 
 theorem frame_z_eq_lin_zu : s.frame.fl.z = s.lin (X.zu u') := by
   unfold Formalism.L2.SG.TermOp.GTerm.frame Formalism.L2.SG.TermOp.mapLF
-  rw [dif_pos (lin_iso X Y u u' s)]
+  rw [dite_eq_left (lin_iso X Y u u' s)]
   show s.lin ((X.Fu u').z) = _
   rw [X.flagZVector]
 
 theorem frame_zt : s.frame.zt = s.frame.fl.z := by
   unfold Formalism.L2.SG.TermOp.GTerm.frame Formalism.L2.SG.TermOp.mapLF
-  rw [dif_pos (lin_iso X Y u u' s)]
+  rw [dite_eq_left (lin_iso X Y u u' s)]
   rfl
 
 theorem frame_fvec (b : Fin (D.R.rS + 1)) : s.frame.fl.fvec b = s.lin ((X.Fu u').fvec b) := by
@@ -266,8 +272,8 @@ theorem det_of_lker {d : (VS D).V} (hd : d ∈ (X.Fu u).Xplus) (hdO : ∀ b, (VS
     simp [Formalism.L2.SG.Pf.Level.toV]
   exact Matrix.exists_vecMul_eq_zero_iff.1 ⟨k, hk0, hZ⟩
 
-theorem uue_le {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) :
+theorem uue_le {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) :
     UUE Λ F F' ≤ F.fl.Xplus ⊔ F'.fl.Xplus := by
   unfold UUE spanE
   rw [Submodule.span_le]
@@ -295,10 +301,10 @@ theorem orthogonal_toV {Λ : Submodule (𝓞 D.host.E) (VS D).V} {y : Fin X.B.I.
   rw [PI.UnitaryGroupMassFormula.ScalEquivGen.memOrthQ]
   intro x hx
   obtain ⟨x1, hx1, x2, hx2, rfl⟩ := Submodule.mem_sup.mp hx
-  rw [map_add, LinearMap.add_apply, PI.UnitaryGroupMassFormula.ScalEquivGen.memOrthQ.mp o1 x1 hx1,
+  rw [map_add (f := _), LinearMap.add_apply, PI.UnitaryGroupMassFormula.ScalEquivGen.memOrthQ.mp o1 x1 hx1,
     PI.UnitaryGroupMassFormula.ScalEquivGen.memOrthQ.mp o2 x2 hx2, add_zero]
 
-theorem orthogonal_ofV {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hΛ : Submodule.IsLattice D.host.E Λ)
+theorem orthogonal_ofV {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hΛ : Submodule.IsFullLattice D.host.E Λ)
     (hL : IsLift Λ (lf D (X.Fu u))) (hL' : IsLift Λ s.frame) {y : (VS D).V}
     (hy : y ∈ Hp Λ (lf D (X.Fu u)) s.frame) : orthogonalComplementRational X u u' (Mof X Y u u' s) (X.crd y) := by
   have hm := PI.PairCorankPos.W.frame_mem_UUE Λ hΛ (lf D (X.Fu u)) s.frame hL hL'
@@ -328,7 +334,8 @@ theorem fixedX (v : (VS D).V) (hv : v ∈ (X.Fu u).X) : v ∈ Submodule.span D.h
 
 theorem symm_frameX {v : (VS D).V} (hv : v ∈ s.frame.fl.X) : s.lin.symm v ∈ Submodule.span D.host.E (Set.range X.eX) := by
   obtain ⟨c, hc⟩ := x_sum _ hv
-  rw [← hc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hc, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [map_smul, frame_e, LinearEquiv.symm_apply_apply]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSpreadVCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSpreadVCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafGeoVCut
@@ -98,10 +102,6 @@ theorem geoV_of (hC : LeafCurveV) (hS : CurveThroughGenericPointSpreadsToSmoothP
   refine surj_of_generic (g2 ≫ g1 ≫ h) ⟨u2 x2, ?_⟩
   rw [← Scheme.Hom.comp_apply, key, ← hx0]
   simp only [Scheme.Hom.comp_apply]
-
-theorem goal_of (hC : LeafCurveV) (hD : LeafDescendQF) (hB : LateralTheory.E.LeafSpreadVCut.LeafCloseB)
-    (hE : LeafExtendZMT) : LateralTheory.E.LeafGeoCut.LeafGeoV :=
-  geoV_of hC (spread_of hD hB hE)
 
 end LateralTheory.E.LeafGeoVV2Cut
 

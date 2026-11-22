@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfWdMkPhiDPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonVEqZeroIffMemRangeCrisIncl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemClosureMulVOfFinrankEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSstResToOfIsPst
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTopologicalClosureZpowersSupInertia
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfWdMkPhiDPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonVEqZeroIffMemRangeCrisIncl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemClosureMulVOfFinrankEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSstResToOfIsPst
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTopologicalClosureZpowersSupInertia
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,13 +47,15 @@ theorem mem_span_invariants {G F D : Type*} [Group G] [Field F] [AddCommGroup D]
     have hy : ∀ s ∈ S, a s ((c : F) • x) = (c : F) • x := fun s h => by rw [hs, c.2 s h, hS s h]
     have hinv : ∑ q : G ⧸ S, a q.out ((c : F) • x) ∈ Submodule.span F {y | ∀ g, a g y = y} := by
       refine Submodule.subset_span fun g => ?_
-      rw [map_sum, ← Equiv.sum_comp (MulAction.toPerm g) fun q : G ⧸ S => a q.out ((c : F) • x)]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← Equiv.sum_comp (MulAction.toPerm g) fun q : G ⧸ S => a q.out ((c : F) • x)]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [← ha]
       refine hcos _ hy _ _ ?_
       rw [QuotientGroup.out_eq', MulAction.toPerm_apply, ← smul_eq_mul, MulAction.Quotient.mk_smul_out]
     have h2 := LinearMap.mem_ker.mp (hker hinv)
-    rw [map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h2
     simp only [hs, map_smul, smul_eq_mul] at h2
     rw [Finset.sum_apply, Pi.zero_apply, ← h2]
     exact Finset.sum_congr rfl fun q _ => mul_comm _ _) ((1 : G) : G ⧸ S)
@@ -173,14 +179,14 @@ theorem isSst_of_ineTriv (hV : IsPst P ρ) (hI : IneTriv P ρ) : IsSst P ρ := b
   rw [IsSst, mul_comm]
   exact Nat.eq_of_mul_eq_mul_left finrank_pos h1
 
-omit [FiniteDimensional ↥LL.1 V] in
 
+omit [FiniteDimensional ↥LL.1 V] in
 theorem finrank_map_crisIncl :
     finrank ↥LL.1 ↥((Dcris (P.PD K) ρ).map (crisIncl P ↥LL.1 V)) = finrank ↥LL.1 ↥(Dcris (P.PD K) ρ) :=
   (Submodule.equivMapOfInjective _ (crisIncl_injective P) _).finrank_eq.symm
 
-omit [FiniteDimensional ↥LL.1 V] in
 
+omit [FiniteDimensional ↥LL.1 V] in
 theorem isCrys_of_isSst (hV : IsSst P ρ) (hN : ∀ x ∈ Dpst P ρ, monV P ↥LL.1 V x = 0) :
     IsCrys (P.PD K) ρ := by
   have e : (Dcris (P.PD K) ρ).map (crisIncl P ↥LL.1 V) = Dst P ρ := by
@@ -208,7 +214,7 @@ theorem monV_eq_zero_of_isCrys (hV : IsPst P ρ) (hc : IsCrys (P.PD K) ρ) (x : 
     (mem_closure_of_isCrys P ρ hV hc x hx)
   · rintro _ ⟨c, s, hs, rfl⟩
     rw [← End.mul_apply, monV_mulV, End.mul_apply, ((hk s).mpr hs).2, map_zero]
-  · intro y z _ _ hy hz; rw [map_add, hy, hz, add_zero]
+  · intro y z _ _ hy hz; rw [map_add (f := _), hy, hz, add_zero]
   · intro y _ hy; rw [map_neg, hy, neg_zero]
 
 theorem ineTriv_of_isCrys (hV : IsPst P ρ) (hc : IsCrys (P.PD K) ρ) : IneTriv P ρ := by
@@ -220,11 +226,11 @@ theorem ineTriv_of_isCrys (hV : IsPst P ρ) (hc : IsCrys (P.PD K) ρ) : IneTriv 
   · rintro _ ⟨c, s, hs, rfl⟩
     rw [← End.mul_apply, stRep_mulV P ρ g c c ((IntermediateField.mem_fixingSubgroup_iff _ _).mp hg _ c.2),
       End.mul_apply, (mem_Dst P ρ).mp ((hk s).mpr hs).1 g]
-  · intro y z _ _ hy hz; rw [map_add, hy, hz]
+  · intro y z _ _ hy hz; rw [map_add (f := _), hy, hz]
   · intro y _ hy; rw [map_neg, hy]
 
-omit [FiniteDimensional ↥LL.1 V] in
 
+omit [FiniteDimensional ↥LL.1 V] in
 theorem isPst_resTo_iff {K' : FinExt l} (h : K.1 ≤ K'.1) : IsPst P (resTo ρ h) ↔ IsPst P ρ := by
   let e : DpstUr P (resTo ρ h) ≃ₗ[↥(MaximalUnramifiedExtension l)] DpstUr P ρ :=
     { toFun := fun x => toUr P ρ ⟨((toUr P _).symm x).1, (Dpst_resTo P ρ h).le ((toUr P _).symm x).2⟩
@@ -254,8 +260,8 @@ theorem isPotCrys_iff (hV : IsPst P ρ) :
 
 variable (ι : Om l ≃+* ℂ)
 
-omit [FiniteDimensional ↥LL.1 V] in
 
+omit [FiniteDimensional ↥LL.1 V] in
 theorem wdN_eq_zero_iff : wdN P ι ρ = 0 ↔ monD P ρ = 0 := by
   constructor
   · intro h
@@ -273,8 +279,8 @@ theorem wdN_eq_zero_iff : wdN P ι ρ = 0 ↔ monD P ρ = 0 := by
     rw [wdN_mk, h]
     exact wdMk_zero P ι ρ
 
-omit [FiniteDimensional ↥LL.1 V] in
 
+omit [FiniteDimensional ↥LL.1 V] in
 theorem actD_eq_one_of_wdMk (g : ↥(GK K)) (h : ∀ x, wdMk P ι ρ (actD P ρ g x) = wdMk P ι ρ x) :
     actD P ρ g = 1 := by
   refine LinearMap.ext fun x => sub_eq_zero.mp ?_
@@ -282,7 +288,7 @@ theorem actD_eq_one_of_wdMk (g : ↥(GK K)) (h : ∀ x, wdMk P ι ρ (actD P ρ 
   have hc : phiD P ρ ^ n * actD P ρ g = actD P ρ g * phiD P ρ ^ n :=
     Commute.pow_left (phiD_actD P ρ g) n
   have h1 := wdMk_add P ι ρ ((phiD P ρ ^ n) (actD P ρ g x - x)) ((phiD P ρ ^ n) x)
-  rw [← map_add, sub_add_cancel, ← End.mul_apply, hc, End.mul_apply, h] at h1
+  rw [← map_add (f := _), sub_add_cancel, ← End.mul_apply, hc, End.mul_apply, h] at h1
   exact left_eq_add.mp (h1.trans (add_comm _ _))
 
 end Rep
@@ -295,8 +301,8 @@ variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω]
   (Bw : LocBridge l E Ω (Dec (F := E) A) O) (h : IsPlaceOver A w) (hj : Induces Bw)
 include hj
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem exists_ine_of_fix (g : ↥(GK Bw.Kw)) (hg : (g : GQ l) ∈ (MaximalUnramifiedExtension l).fixingSubgroup) :
     ∃ σ : ↥(Ine (F := E) A), weilToGK Bw h (ineIncl h σ) = g := by
   obtain ⟨τ, rfl⟩ := Bw.e.surjective g

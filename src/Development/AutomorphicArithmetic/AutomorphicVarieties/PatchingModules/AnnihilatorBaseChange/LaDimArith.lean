@@ -1,22 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaMvpsCot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaRegPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplReg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaMvpsCot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaRegPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplReg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+
+@[expose] public section
+
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Core
 open scoped TensorProduct
 
 private theorem laDim_co (O : Type) [CommRing O] [IsLocalRing O] (K : Type) [Field K] [Algebra O K]
-    (h : Function.Surjective (algebraMap O K)) : IsCO O K where
-  toIsLocalRing := inferInstance
-  toIsNoetherian := inferInstance
-  complete := by
-    rw [IsLocalRing.maximalIdeal_eq_bot]
+    (h : Function.Surjective (algebraMap O K)) : IsCO O K := by
+  refine { complete := ?_, isLocalHom := IsLocalHom.of_surjective _ h, res_surj := ?_ }
+  · rw [IsLocalRing.maximalIdeal_eq_bot]
     infer_instance
-  isLocalHom := IsLocalHom.of_surjective _ h
-  res_surj x := by
+  · intro x
     obtain ⟨a, rfl⟩ := h x
     exact ⟨a, by simp⟩
 

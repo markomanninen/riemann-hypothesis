@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N
 
 namespace GlobalTheory
@@ -104,7 +109,7 @@ theorem _root_.GlobalTheory.isIrrSub_mapRep_of_span_restrict_eq_top {k Γ : Type
         funext j
         simp [E, φ]
       | zero => simp
-      | add y z _ _ hy hz => rw [map_add, hy, hz, Pi.add_apply, add_smul]
+      | add y z _ _ hy hz => rw [map_add (f := _), hy, hz, Pi.add_apply, add_smul]
       | smul c y _ hy => rw [map_smul, hy, Pi.smul_apply, smul_eq_mul, mul_smul]
     have hmem : M x ∈ W' := hA W' hst M hMA x hx
     rw [key x (hle hx)] at hmem

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.ModelIndexPairings.MovesU
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.ModelIndexPairings.MovesU
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -46,7 +50,8 @@ theorem GenModelXi_of (hXE : XiExists) (hMU : MovesU) (hExt : ExtendLin) : GenMo
     rw [← Complex.ofReal_mul, mul_inv_cancel₀ hs0, Complex.ofReal_one, one_smul]
   rw [Finset.sum_congr rfl fun i hi => by rw [hterm i hi]]
   simp_rw [← map_smul]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   have hz : ∑ i ∈ s, r i • (ind (((Λ i).addSubgroupOf A : AddSubgroup A) : Set A) : A → ℂ) = 0 := by
     funext a
     have := congrFun hr (φ a)

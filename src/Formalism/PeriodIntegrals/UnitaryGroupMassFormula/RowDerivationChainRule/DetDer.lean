@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RowLetter
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RowLetter
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -38,7 +42,8 @@ theorem derivation_det {n : Type*} [Fintype n] [DecidableEq n] (D : Derivation R
       by_cases h : j = i
       · subst h; simp
       · simp [Matrix.updateRow_ne h, Function.update_of_ne h]
-  rw [key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, map_sum]
   simp_rw [key, hrow, Derivation.leibniz, hc, smul_zero, add_zero, derivation_finset_prod, smul_eq_mul,
     Finset.mul_sum]
   exact Finset.sum_comm

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PermRepSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PermRepSingle
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits GlobalTheory.HomStab
 
@@ -15,7 +19,7 @@ theorem homStab_step : ∀ (k G : Type) [CommRing k] [Group G] (C₃ C₂ Z₁ C
     fun f g n => (groupHomology.functor k G n).map_comp f g
   have hzero : hMap (0 : C₃ ⟶ Z₁) q = 0 := (groupHomology.functor k G q).map_zero _ _
   have hinj : Function.Injective (hMap ι q).hom := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     obtain ⟨y, rfl⟩ := hb z
     have hy : (hMap (b ≫ ι) q).hom y = 0 := by

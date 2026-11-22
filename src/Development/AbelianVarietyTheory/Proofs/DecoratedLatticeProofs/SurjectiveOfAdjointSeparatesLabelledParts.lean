@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped ComplexConjugate
 
@@ -126,9 +130,11 @@ theorem surjective_of_adjoint_separates : ∀ (A C I J : Type) [AddCommGroup A] 
     (fun i i' hne hR => hp i i.2 i' i'.2 (fun h => hne (Subtype.ext h)) (hRCA _ _ hR))
   have hzy : ∀ y, ip y (∑ i, x i) = 0 := by
     intro y
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [hx1]
-    rw [← map_sum, Finset.sum_coe_sort s v, ← hus, horth']
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Finset.sum_coe_sort s v, ← hus, horth']
   have hz : ∑ i, x i = 0 := by
     by_contra h
     have := hpos _ h

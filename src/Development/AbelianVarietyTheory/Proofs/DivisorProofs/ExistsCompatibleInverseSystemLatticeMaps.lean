@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowEqPowOfModEqSim
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowEqPowOfModEqSim
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.AV GlobalTheory.AV.AbVar GlobalTheory.PDivGroup GlobalTheory.Dieu GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKGeo GlobalTheory.LKRes
@@ -17,7 +22,7 @@ theorem exists_nsmul_of_basis {M κ : Type} [AddCommGroup M] (b : Module.Basis �
   | zero => exact ⟨0, by simp⟩
   | add y w _ _ hy hw =>
     obtain ⟨z1, h1⟩ := hy; obtain ⟨z2, h2⟩ := hw
-    exact ⟨z1 + z2, by rw [map_add, h1, h2, smul_add]⟩
+    exact ⟨z1 + z2, by rw [map_add (f := _), h1, h2, smul_add]⟩
   | smul a y _ hy =>
     obtain ⟨z, h⟩ := hy
     exact ⟨a • z, by rw [map_smul, h, smul_comm]⟩

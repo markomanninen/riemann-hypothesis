@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsTerRest
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsTerRest
+
+@[expose] public section
 
 open Polynomial IntermediateField
 
@@ -23,7 +27,7 @@ theorem exists_separable_specialization {D : ℕ} (P : (MvPolynomial (Fin D) ℚ
       rw [hA, ← algebraMap_smul F da a, smul_eq_C_mul]
     have hB' : B.map (algebraMap R F) = C (algebraMap R F db) * b := by
       rw [hB, ← algebraMap_smul F db b, smul_eq_C_mul]
-    simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, hA', hB',
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, hA', hB',
       ← derivative_map, map_mul]
     linear_combination (C (algebraMap R F da) * C (algebraMap R F db)) * hab
   have hδ : da * db ≠ 0 := mul_ne_zero (nonZeroDivisors.ne_zero hda) (nonZeroDivisors.ne_zero hdb)
@@ -33,7 +37,7 @@ theorem exists_separable_specialization {D : ℕ} (P : (MvPolynomial (Fin D) ℚ
     exact hδ (MvPolynomial.funext fun c => by simpa using hno c)
   refine ⟨c, ?_⟩
   have key' := congrArg (Polynomial.map (MvPolynomial.eval c)) key
-  simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, ← derivative_map] at key'
+  simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, ← derivative_map] at key'
   have hinv : C (MvPolynomial.eval c (da * db))⁻¹ * C (MvPolynomial.eval c (da * db)) = 1 := by
     rw [← C_mul, inv_mul_cancel₀ hc, C_1]
   refine ⟨C (MvPolynomial.eval c (da * db))⁻¹ * (C (MvPolynomial.eval c db) * A.map (MvPolynomial.eval c)),

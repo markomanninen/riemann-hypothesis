@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolAsm
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolAsm
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem orbitAction_holds : Formalism.L2.SG.Pf.ZsVolOrb.OrbActE M δ u u' F0 wha
   set S := (PairVal.stabAut D u u' F0 what₂ γ F' L).subgroupOf C with hS
 
   have hdat : ∀ g : C, ∃ (a' : GLR D) (b : MatR D) (ν m : (VS D).V ≃ₗ[D.host.E] (VS D).V)
-      (F₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)),
+      (F₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)),
       ((g : GLR D) : MatR D) = L⁻¹ * (a' : MatR D) * L ∧ LiftData u u' F0 what₂ γ F' a' b ν m F₂ := by
     intro g
     have hg := (Formalism.L2.SG.Pf.ZsVolGrp.mem_CZ M δ u u' _ L hLd g).1 g.2
@@ -31,12 +35,12 @@ theorem orbitAction_holds : Formalism.L2.SG.Pf.ZsVolOrb.OrbActE M δ u u' F0 wha
     exact ⟨a', b, ν, m, F₂, ha, hd⟩
   choose A Bm Nu Mu F2 hAL hD using hdat
   set Z := ZhatL (lf D F0) F' with hZdef
-  let cls : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → Set (LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) :=
+  let cls : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) → Set (LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) :=
     fun F => {F'' | F'' ∈ CntLocal.EZ (D := D) ((Tu D u' : ℕ) : D.host.E) F0 γ.lam Z ∧ CntLocal.NilradicalFlagMoved F0 γ.lam F F''}
   have hmem : ∀ g : C, cls (F2 g) ∈ PairVal.orbT D u u' F0 what₂ γ Z := fun g =>
     ⟨F2 g, (hD g).2.2.2.2.2.2.2.2.1, (hD g).2.2.2.2.2.2.2.2.2.1, rfl⟩
   let ψ : C → PairVal.orbT D u u' F0 what₂ γ Z := fun g => ⟨cls (F2 g), hmem g⟩
-  have hcls : ∀ F₁ F₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E),
+  have hcls : ∀ F₁ F₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E),
       F₂ ∈ CntLocal.EZ (D := D) ((Tu D u' : ℕ) : D.host.E) F0 γ.lam Z →
       (cls F₁ = cls F₂ ↔ CntLocal.NilradicalFlagMoved F0 γ.lam F₁ F₂) := by
     intro F₁ F₂ h₂
@@ -91,7 +95,7 @@ theorem orbitAction_holds : Formalism.L2.SG.Pf.ZsVolOrb.OrbActE M δ u u' F0 wha
     rw [inv_mul_cancel]
     exact Subgroup.one_mem _
   refine ⟨C ⧸ S, inferInstance, ((1 : C) : C ⧸ S), MulAction.stabilizer_quotient S, ⟨?_⟩⟩
-  exact (Equiv.setCongr (MulAction.orbit_eq_univ C ((1 : C) : C ⧸ S))).trans
+  exact (Set.equivOfEq (MulAction.orbit_eq_univ C ((1 : C) : C ⧸ S))).trans
     ((Equiv.Set.univ _).trans (Equiv.ofBijective φ ⟨hinj, hsurj⟩))
 
 theorem orbitStabilizerIndex_holds : OrbStabE M δ u u' F0 what₂ (CZ M δ u u') :=

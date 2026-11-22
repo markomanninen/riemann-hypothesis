@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CstSApply
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CstSApply
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Filter GlobalTheory.CrysPrism
 open scoped Formalism.Per
 

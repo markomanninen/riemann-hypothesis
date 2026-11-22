@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.ThFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.WeightDeterminantTwists.FinMH
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.ThFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.WeightDeterminantTwists.FinMH
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.Z.Sym.Wt
 
@@ -27,7 +31,7 @@ private theorem cont_m {K T : Type} [Fintype K] [TopologicalSpace T] {d : ℕ} (
       simp only [eval_mRep]
       refine (MvPolynomial.continuous_eval (x : MvPolynomial (K × Fin d) ℂ)).comp ?_
       refine continuous_pi fun p => ?_
-      exact continuous_finset_sum _ fun j _ => continuous_const.mul (hγ p.1 j p.2)
+      exact continuous_finsetSum _ fun j _ => continuous_const.mul (hγ p.1 j p.2)
     show Continuous fun t => (MvPolynomial.aeval y) ((mRep d n (γ t) x : MH d n) : MvPolynomial (K × Fin d) ℂ)
     convert hc using 2 with t
     exact DFunLike.congr_fun (MvPolynomial.coe_aeval_eq_eval y) _
@@ -64,9 +68,10 @@ theorem UpperTheory.V.Z.Sym.Wt.contRep :
   refine ⟨fun j x f => ?_, fun n e x f => ?_⟩
   · have hsplit : (fun g => f (repG I j g x)) = fun g => ∑ S, f (Pi.single S (repG I j g x S)) := by
       funext g
-      rw [← map_sum, Finset.univ_sum_single]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, Finset.univ_sum_single]
     rw [hsplit]
-    refine continuous_finset_sum _ fun S _ => ?_
+    refine continuous_finsetSum _ fun S _ => ?_
     have hent : ∀ (k : I × Bool) (i i' : Fin 3),
         Continuous fun g : I → GL (Fin 3) ℂ => ((dbl 3 g k : GL (Fin 3) ℂ) : Matrix (Fin 3) (Fin 3) ℂ) i i' := by
       intro k i i'
@@ -98,7 +103,7 @@ theorem UpperTheory.V.Z.Sym.Wt.contRep :
         exact ((Units.continuous_coe_inv (M := Matrix (Fin 2) (Fin 2) ℂ)).comp (continuous_apply v)).matrix_det
     have hd : Continuous fun g : I → GL (Fin 2) ℂ => detE 2 e g := by
       show Continuous fun g : I → GL (Fin 2) ℂ => ∏ v, Matrix.GeneralLinearGroup.det (g v) ^ e
-      exact continuous_finset_prod _ fun v _ => (hdet v).zpow e
+      exact continuous_finsetProd _ fun v _ => (hdet v).zpow e
     simp only [repD_apply, LinearMap.smul_apply, map_smul, smul_eq_mul]
     exact (Units.continuous_val.comp hd).mul
       (cont_m (fun _ : I => n) (fun g : I → GL (Fin 2) ℂ => g) (fun k i j => entc 2 k i j) x f)

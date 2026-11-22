@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ParRowZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceInvariantFormsSeparateThetaFunctions
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmSplitHalves
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EigenOfLocalComponentsFiniteAdelicPair
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsUnramifiedAtPlaceIdempotentOfHeckeCharUnramifi
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentComponentMemFrameStabilizer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedGridArrowLatticeIffIntegralFrameMatr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatLConjIIffHform
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProdSubProdLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ParRowZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceInvariantFormsSeparateThetaFunctions
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmSplitHalves
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EigenOfLocalComponentsFiniteAdelicPair
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsUnramifiedAtPlaceIdempotentOfHeckeCharUnramifi
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentComponentMemFrameStabilizer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedGridArrowLatticeIffIntegralFrameMatr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatLConjIIffHform
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProdSubProdLe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NsmulProjectionXColumnsMemSelfDualLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +31,8 @@ namespace GlobalTheory.DepthFix
 
 variable {D : D7}
 
-open GlobalTheory.SplitScalar GlobalTheory.SplitHecke in
 
+open GlobalTheory.SplitScalar GlobalTheory.SplitHecke in
 theorem om_split_cong {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D}
     {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
     {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
@@ -101,13 +106,13 @@ theorem cpt_eq_finAd (Q : Pl D.host.E) (z : AE D) :
     have h2 := congrArg (fun s : FiniteAdeleRing (𝓞 D.host.E) D.host.E => s Q)
       ((GlobalTheory.LFun.toFinAd_tmul (F := D.host.F) a.2 x).trans (mul_comm _ _))
     exact h1.trans h2.symm
-  | add a b ha hb => rw [RingHom.map_add, RingHom.map_add, RingHom.map_add, RingEquiv.map_add, ha, hb]; rfl
+  | add a b ha hb => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), RingHom.map_add (f := _), RingEquiv.map_add (e := _), ha, hb]; rfl
 
 theorem exp_lt_one {n : ℕ} (hn : 0 < n) : WithZero.exp (-(n : ℤ)) < (1 : WithZero (Multiplicative ℤ)) := by
   rw [← WithZero.exp_zero, WithZero.exp_lt_exp]; omega
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem char_eq_one {c : (AE D)ˣ →* Circle} {χ : Formalism.L2.Host.HChar D.host.E} (hc : ChrEq c χ) {w : Pl D.host.E} {n : ℕ}
     (hn : 0 < n) (hl : χ.LevelLe w n) {e : AE D} (he : Formalism.L2.NTheta.IsIdemAt e w) {x : (AE D)ˣ} {a : AE D}
     (hx : (x : AE D) = e * a + (1 - e))
@@ -124,10 +129,10 @@ theorem char_eq_one {c : (AE D)ˣ →* Circle} {χ : Formalism.L2.Host.HChar D.h
   have e1 : x = GlobalTheory.LFun.locIdele D.host.F w (Units.mk0 _ h0) := by
     refine GlobalTheory.LFun.eq_locIdele ?_ (FiniteAdeleRing.ext _ fun P => ?_)
     · change infPart D (x : AE D) = 1
-      rw [hx, RingHom.map_add, RingHom.map_mul, RingHom.map_sub, d0, zero_mul, zero_add, RingHom.map_one, sub_zero]
+      rw [hx, RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, d0, zero_mul, zero_add, RingHom.map_one, sub_zero]
     · change GlobalTheory.LFun.finAdEquiv D.host.F D.host.E (finPart D (x : AE D)) P =
         Neutral.B1.finiteSingle D.host.E w (cpt (D := D) w (toEAf D a)) P
-      rw [← cpt_eq_finAd, hx, RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one, RingHom.map_add,
+      rw [← cpt_eq_finAd, hx, RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one, RingHom.map_add (f := _),
         RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
       by_cases hP : P = w
       · subst hP
@@ -175,7 +180,8 @@ variable {v φ}
 
 theorem Sm.mul {m n p : Type} [Fintype n] {c c' : Γ} {M : Matrix m n R} {N : Matrix n p R} (h : Sm v φ c M)
     (h' : Sm v φ c' N) : Sm v φ (c * c') (M * N) := fun i j => by
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   refine v.map_sum_le fun k _ => ?_
   rw [map_mul, map_mul]
   exact mul_le_mul' (h i k) (h' k j)
@@ -205,7 +211,8 @@ theorem Sm.det {n : Type} [Fintype n] [DecidableEq n] {c : Γ} (hc : c ≤ 1) {M
   have h3 : ∀ i j, v (φ (M i j)) ≤ 1 := fun i j => by
     have := v.map_add_le ((h2 i j).trans hc) (h1 i j)
     rwa [sub_add_cancel] at this
-  rw [← map_one φ, ← Matrix.det_one (n := n), Matrix.det_apply', Matrix.det_apply', map_sum, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_one φ, ← Matrix.det_one (n := n), Matrix.det_apply', Matrix.det_apply', map_sum, map_sum,
     ← Finset.sum_sub_distrib]
   refine v.map_sum_le fun σ _ => ?_
   rw [map_mul, map_mul, ← mul_sub, map_prod, map_prod, map_mul]
@@ -256,7 +263,7 @@ theorem smAt_cong {n : ℕ} {Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)
     (hx : ∀ y ∈ Formalism.L2.Herm.hatL (F := D.host.F) Λ, x.1 *ᵥ y - y ∈ Formalism.L2.Herm.hatL (F := D.host.F) (𝔪 • Λ))
     {w : Pl D.host.E} {k : ℕ} (h : 𝔪 ≤ w.asIdeal ^ k) :
     SmAt w (WithZero.exp (-(k : ℤ))) (Comparison₂.fr β β (x.val - 1)) := fun i j => by
-  obtain ⟨s, hs, e⟩ := (GlobalTheory.FrameIdeal.mem_hatL_smul_iff β Λ hβ 𝔪 _).1 (hx _ (HatFrame.col_mem_hat hβ j)) i
+  obtain ⟨s, hs, e⟩ := (GlobalTheory.FrameIdeal.mem_hatL_smul_iff β Λ hβ 𝔪 _).1 (hx _ (GlobalTheory.FrameIdeal.col_mem_hatL hβ j)) i
   have e2 : Comparison₂.fr β β (x.val - 1) i j = s := by
     have e3 : x.val *ᵥ (β.val *ᵥ Pi.single j 1) - β.val *ᵥ Pi.single j 1 = (x.val - 1) *ᵥ (β.val *ᵥ Pi.single j 1) := by
       rw [Matrix.sub_mulVec, Matrix.one_mulVec]
@@ -273,7 +280,7 @@ theorem smAt_piece {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)} {g g' : GA D V
   have e1 : (Lev.finE V g').val - 1 = toEAf D a • ((Lev.finE V g).val - 1) := by
     rw [GlobalTheory.VecInv.finE_val, GlobalTheory.VecInv.finE_val, hg]
     ext k l
-    simp only [Matrix.sub_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, RingHom.map_add,
+    simp only [Matrix.sub_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, RingHom.map_add (f := _),
       RingHom.map_mul, RingHom.map_sub, RingHom.map_one, Matrix.one_apply, apply_ite (toEAf D), RingHom.map_zero]
     ring
   rw [e1, Comparison₂.fr_smul, Matrix.smul_apply, smul_eq_mul, RingHom.map_mul, ha, one_mul]
@@ -288,8 +295,8 @@ theorem det_cong {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)} {g : GA D V} {w 
   rw [RingHom.map_det (toEAf D)]
   exact h1
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem smAt_act {S T : HSp D} {βS : GL (Fin S.rank) (Lev.EAf D)} {βT : GL (Fin T.rank) (Lev.EAf D)} {g : GA D S}
     {h : GA D T} {w : Pl D.host.E} {c : WithZero (Multiplicative ℤ)} (hg0 : Lev.finE S g ∈ St βS)
     (hg : SmAt w c (Comparison₂.fr βS βS ((Lev.finE S g).val - 1))) (hh : SmAt w c (Comparison₂.fr βT βT ((Lev.finE T h).val - 1)))
@@ -397,8 +404,8 @@ theorem depthLe_att {μ₀ : T₀} (hL : L.Is μ₀) (G : GridData L sc) {i : �
   · exact a.mul_inv b
   · exact a
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem fix_pair {μ₀ : T₀} (hL : L.Is μ₀) (hq : OffQ D) (G : GridData L sc) {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D}
     {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
     {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
@@ -414,8 +421,8 @@ theorem fix_pair {μ₀ : T₀} (hL : L.Is μ₀) (hq : OffQ D) (G : GridData L 
   have g2 := (mem_congLev.1 gc).2.2
   have h1 := (mem_congLev.1 hc).2.1
   have h2 := (mem_congLev.1 hc).2.2
-  obtain ⟨βS, hβS⟩ := frame_exists_alt D.host.F D.host.E _ ΛS hS.1
-  obtain ⟨βT, hβT⟩ := frame_exists_alt D.host.F D.host.E _ ΛT hT.1
+  obtain ⟨βS, hβS⟩ := frame_exists_alt D.host.F D.host.E _ ΛS (GlobalTheory.ProjXCols.selfDual_isFullLattice S ΛS hS)
+  obtain ⟨βT, hβT⟩ := frame_exists_alt D.host.F D.host.E _ ΛT (GlobalTheory.ProjXCols.selfDual_isFullLattice T ΛT hT)
   rw [← stabilizer_eq_stabilizer_lattice _ _ _ _ _ hβS] at g1
   rw [← stabilizer_eq_stabilizer_lattice _ _ _ _ _ hβT] at h1
   have key := GlobalTheory.PlaceProduct.eigen_of_local_components D S T om f (hW.om_cont f hf) g g0 h h0 ∅ (fun _ => 1)

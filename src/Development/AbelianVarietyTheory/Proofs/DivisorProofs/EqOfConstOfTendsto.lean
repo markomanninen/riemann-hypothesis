@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+
+@[expose] public section
 
 noncomputable section
 

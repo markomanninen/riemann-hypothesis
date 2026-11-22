@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneLeHtE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneLeHtE
+
+@[expose] public section
 
 open NumberField
 
@@ -13,11 +17,11 @@ theorem nnnorm_entry_le_opNorm {n : Type} [Fintype n] [DecidableEq n] (A : Matri
   unfold opNorm
   have h1 : (Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ) A (EuclideanSpace.single j 1)) i = A i j := by
     change ∑ d, A i d * (EuclideanSpace.single j (1 : ℂ) : EuclideanSpace ℂ n) d = A i j
-    simp [EuclideanSpace.single_apply]
+    simp [PiLp.single_apply]
   have h2 := ContinuousLinearMap.le_opNNNorm (Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ) A) (EuclideanSpace.single j 1)
-  rw [PiLp.nnnorm_single, nnnorm_one, mul_one] at h2
+  rw [PiLp.nnNorm_single, nnNorm_one, mul_one] at h2
   rw [← h1]
-  exact (PiLp.nnnorm_apply_le _ i).trans h2
+  exact (PiLp.nnNorm_apply_le _ i).trans h2
 
 theorem htE_entry_le_heightGL (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (N : ℕ) (γ : GL (Fin N) E) (i j : Fin N) :
@@ -46,7 +50,7 @@ theorem htE_entry_le_heightGL (F E : Type) [Field F] [NumberField F] [Field E] [
     rw [← he]
     exact (nnnorm_entry_le_opNorm _ i j).trans ((normInf_le_iff F w).1 le_rfl τ)
   unfold htE heightGL
-  refine mul_le_mul' (Finset.prod_le_prod' fun w _ => hinf w) ?_
+  refine mul_le_mul' (Finset.prod_le_prod fun w _ => hinf w) ?_
   have hg' := finite_mulSupport_htFin F g
   refine finprod_le_finprod' (hg'.subset fun v hv hv' => hv ?_) hg' hfin
   exact le_antisymm ((hfin v).trans (le_of_eq hv')) (le_max_left _ _)

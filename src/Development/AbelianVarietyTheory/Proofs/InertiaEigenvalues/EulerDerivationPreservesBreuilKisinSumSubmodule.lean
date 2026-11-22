@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiagScaleApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiagScaleApply
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.BK
 
 namespace GlobalTheory.CokerL.Tconn
@@ -34,7 +39,7 @@ theorem GlobalTheory.CokerL.Tsub_conn : ∀ (O K : Type) [CommRing O] [NormedFie
       rw [Nat.cast_smul_eq_nsmul]; exact V.nsmul_mem hq n
   obtain ⟨x12, h12, x3, h3, rfl⟩ := Submodule.mem_sup.1 hx
   obtain ⟨x1, h1, x2, h2, rfl⟩ := Submodule.mem_sup.1 h12
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
   refine add_mem (add_mem ?_ ?_) ?_
   · obtain ⟨y, hy, rfl⟩ := h1
     change D₂.toPhiMod.conn (((X : K⟦X⟧) ^ e) ^ A' • y) ∈ _

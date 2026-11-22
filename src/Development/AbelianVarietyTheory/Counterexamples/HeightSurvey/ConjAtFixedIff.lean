@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,8 @@ theorem gram_det_ne : V.gram.det ≠ 0 := by
   have hx : ∀ y, V.hT y (∑ j, v j • V.frame j) = 0 := by
     intro y
     rw [← V.frame.sum_repr y]
-    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, RingHom.id_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, RingHom.id_apply, smul_eq_mul]
     simp only [Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_eq_zero fun i _ => ?_
@@ -117,14 +122,6 @@ theorem RderC_eq (τ : D.what₂.Tau) {X : Matrix (Fin V.rank) (Fin V.rank) ℂ}
     simp [Rder, oneP]
   rw [this]
   simp
-
-theorem oneP_spec {X : ThetaX D} (T : ThetaTied D X) (hθ : IsInfFam (D := D) θ) (τ : D.what₂.Tau)
-    {Y : Matrix (Fin V.rank) (Fin V.rank) ℂ} (hY : Y ∈ lieAt V τ) (t : ℝ) :
-    IsAtTau θ V τ (NormedSpace.exp (t • Y)) (oneP θ V τ Y t) := by
-  have h := (T.actR.2 θ hθ V τ _ (exp_mem_UH (gramAt_unit V τ) hY t)).1
-  unfold oneP atTau
-  rw [dif_pos h]
-  exact h.choose_spec
 
 def reSig (s : (D.host.E →+* ℂ) → ℕ × ℕ) : HSp D := { V with sig := s }
 

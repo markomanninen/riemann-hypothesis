@@ -1,14 +1,17 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.UnitaryMemGLs
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.KerComm
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.KerNId
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.SecondCountableG
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.TrZero
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.GelFlag
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOnOfIteratedFDerivZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LengthFunctionCompact
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsWaveTranslateSub
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IteratedDerivTwoClm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjMemNilSet
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.UnitaryMemGLs
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.KerComm
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.KerNId
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.SecondCountableG
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.TrZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOnOfIteratedFDerivZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LengthFunctionCompact
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsWaveTranslateSub
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IteratedDerivTwoClm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjMemNilSet
+
+@[expose] public section
 
 namespace PositivityTheory.RgBcC.VC
 
@@ -77,10 +80,11 @@ theorem vcOf : PositivityTheory.RgBcC.VCOf := by
       ∑ i, c i * trT T (ks i ((u : RgTw.G n) * (d : RgTw.Mat n))) := by
     intro u
     have hm : (((u : RgTw.G n) * d : RgTw.G n) : RgTw.Mat n) ∈ GLs n := mem_GLs _
-    rw [phiOf, ← trT_apply, hk _ hm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [phiOf, ← trT_apply, hk _ hm, map_sum]
     simp only [map_smul, smul_eq_mul, Units.val_mul]
   simp only [hsum]
-  rw [MeasureTheory.integral_finset_sum _ (fun i _ => (hone i).1.const_mul (c i))]
+  rw [MeasureTheory.integral_finsetSum _ (fun i _ => (hone i).1.const_mul (c i))]
   simp [MeasureTheory.integral_const_mul, (hone _).2]
 
 end PositivityTheory.RgBcC.VC

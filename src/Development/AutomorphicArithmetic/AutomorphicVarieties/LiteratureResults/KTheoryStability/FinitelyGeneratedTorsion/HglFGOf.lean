@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.FinitelyGeneratedTorsion.TensTorsion
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Assembly
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.FinitelyGeneratedTorsion.TensTorsion
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Assembly
+
+@[expose] public section
 
 noncomputable section
 

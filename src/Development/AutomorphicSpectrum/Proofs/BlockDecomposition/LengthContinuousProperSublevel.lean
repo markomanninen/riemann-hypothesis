@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DwCons
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DwCons
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset
 open scoped ContDiff
 open PositivityTheory.RgTw (Mat G)
@@ -15,7 +20,7 @@ def lgArg {n : ℕ} (p : Mat n × Mat n) : ℝ :=
 
 theorem lgArg_continuous {n : ℕ} : Continuous (lgArg (n := n)) := by
   unfold lgArg
-  refine continuous_const.add (continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ => ?_)
+  refine continuous_const.add (continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun b _ => ?_)
   have h1 : Continuous fun p : Mat n × Mat n => p.1 a b :=
     (continuous_id.matrix_elem a b).comp continuous_fst
   have h2 : Continuous fun p : Mat n × Mat n => p.2 a b :=

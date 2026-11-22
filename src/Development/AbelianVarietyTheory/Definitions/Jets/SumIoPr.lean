@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementKT
-import Formalism.FormalDegreeBessel.StatementDS
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementKT
+public import Formalism.FormalDegreeBessel.StatementDS
+
+@[expose] public section
 
 open Finset
 open scoped InnerProductSpace

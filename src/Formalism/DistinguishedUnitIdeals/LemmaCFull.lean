@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.ArcLiftOfLocalizationData
-import Formalism.DistinguishedUnitIdeals.Statement
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.ArcLiftOfLocalizationData
+public import Formalism.DistinguishedUnitIdeals.Statement
+
+@[expose] public section
 
 noncomputable section
 

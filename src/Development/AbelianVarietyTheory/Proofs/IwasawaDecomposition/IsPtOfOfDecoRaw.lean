@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
-import Formalism.LocalToGlobal.Columns.RecLevelLoc
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitStab
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitIntLoc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemIdSOfResSEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
+public import Formalism.LocalToGlobal.Columns.RecLevelLoc
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitStab
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitIntLoc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemIdSOfResSEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,16 +43,16 @@ theorem isPtOf_of_decoRaw [IsEmpty Q] {x : GL (Fin n) (AfE F E)} (hx : x ∈ UAd
     exact PtExist.hasRes_redA _ ((mem_globLat x v).1 hv i)
 
 theorem isPtOf_mul_inv [IsEmpty Q] {g : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} (h : IsPtOf hc g p) (z : J0 hc n ST) :
-    IsPtOf hc (g * z.1⁻¹) (((1, redG hc n ST SG z, 1) : UF E n × GLG E n SG × GLQ E n Q) • p) := by
+    IsPtOf hc (g * z.1⁻¹) (((1, redG hc n ST SG z, 1) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p) := by
   refine isPtOf_of_decoRaw (mul_mem h.uni (inv_mem (congruence_le_adelic_unitary hc n ST z.2))) ?_
   have := decoRaw_rawSm hc ST SG 1 z g
   rw [map_one, OneMemClass.coe_one, map_one, one_mul, (ColAd.near_of_isPtOf h 0).deco] at this
   exact this
 
-omit [NeZero n] in
 
-theorem glg_free {p : DecoF E n ST SG Q} {a b : GLG E n SG} {c d : GLQ E n Q}
-    (h : ((1, a, c) : UF E n × GLG E n SG × GLQ E n Q) • p = ((1, b, d) : UF E n × GLG E n SG × GLQ E n Q) • p) : a = b := by
+omit [NeZero n] in
+theorem glg_free {p : DecoF E n ST SG Q} {a b : GLG (E := E) (n := n) (SG := SG)} {c d : GLQ E n Q}
+    (h : ((1, a, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p = ((1, b, d) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p) : a = b := by
   funext w
   refine Units.ext (Matrix.ext_of_mulVec_single fun j => ?_)
   obtain ⟨x, -, hx⟩ := p.deco.2.be_surj w (Pi.single j 1)
@@ -56,8 +60,8 @@ theorem glg_free {p : DecoF E n ST SG Q} {a b : GLG E n SG} {c d : GLQ E n Q}
   rw [← hx]
   exact this
 
-variable (hc) in
 
+variable (hc) in
 def RdLev {K : Type} [Field K] (U : Subgroup (GL (Fin n) (AfE F E))) (chi : U →* ℂˣ) (bad : Set (HeightOneSpectrum (𝓞 F)))
     (Λ : LevFam E K n SG) (emb : K →+* ℂ) : Prop :=
   ∀ (z : GL (Fin n) (AfE F E)) (hz : z ∈ St (1 : GL (Fin n) (AfE F E))), z ∈ UAd hc n → (∀ v ∉ bad, bc (prV (E := E) v) z = 1) →
@@ -100,8 +104,8 @@ theorem rdLev_of_reads {X : Fields} {hc : CMData X.F X.E} {n : ℕ} [NeZero n] {
       Finset.prod_inv_distrib]
     rfl
 
-omit [StarRing E] [NeZero n] in
 
+omit [StarRing E] [NeZero n] in
 theorem int_iff (v : HeightOneSpectrum (𝓞 F)) (d : GL (Fin n) (v.adicCompletionIntegers F)) (x : Fin n → v.adicCompletion F) :
     (∀ b, x b ∈ v.adicCompletionIntegers F) ↔
       ∀ b, (((bc (algebraMap (v.adicCompletionIntegers F) (v.adicCompletion F)) d)⁻¹ : GL (Fin n) (v.adicCompletion F)) :
@@ -149,8 +153,8 @@ theorem redM_mat {σ : E →ₐ[F] E} {gp : Fin 2 → ℕ} (G : GLoc F E σ gp) 
   rw [GLoc.mat, e1, e2, ← map_inv, ← map_mul, ← map_mul, ← map_inv, ← map_mul, ← map_mul]
   exact Formalism.L2.G.redM_bc v _
 
-variable (hc) in
 
+variable (hc) in
 theorem exists_trunc (x : ∀ v : HeightOneSpectrum (𝓞 F), GL (Fin n) (E ⊗[F] v.adicCompletion F)) (s : Finset (HeightOneSpectrum (𝓞 F)))
     (h1 : ∀ v ∈ s, x v ∈ UPts hc.sig (1 : Matrix (Fin n) (Fin n) E) (v.adicCompletion F))
     (h2 : ∀ v ∈ s, x v ∈ stabGL (Formalism.L2.Herm.locL v (Formalism.L2.Col.stdLat E n))) :
@@ -185,8 +189,8 @@ structure Cmp {σ : E →ₐ[F] E} {gp : Fin 2 → ℕ} (G : GLoc F E σ gp) (SG
   ρ_eq : ∀ j v h s, ((ρ j v h s : v.adicCompletionIntegers F) : v.adicCompletion F) = G.phi j v h (prV (E := E) v s.1)
   e_eq : ∀ j v h s, IsLocalRing.residue _ (ρ j v h s) = e j v h (resS F (W j v h).1 s)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 
+attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem nonempty_cmp {R : Ranks} (H : Formalism.BasicNotions.Host R) (hc : CMData H.F H.E) {SG : Finset (HeightOneSpectrum (𝓞 H.E))}
     (hl : LevOk H SG ∅) (G : GLoc H.F H.E hc.sig H.g) (hne : H.g 0 ≠ H.g 1)
     (h1 : ∀ w ∈ SG, ∃ j, (H.g j : 𝓞 H.E) ∈ w.asIdeal)
@@ -228,8 +232,8 @@ theorem nonempty_cmp {R : Ranks} (H : Formalism.BasicNotions.Host R) (hc : CMDat
     rw [← e]
     exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ (by simpa using a)) (Ideal.mul_mem_left _ _ (by simpa using b))
 
-omit [StarRing E] [NeZero n] in
 
+omit [StarRing E] [NeZero n] in
 theorem Cmp.prod_eq {σ : E →ₐ[F] E} {gp : Fin 2 → ℕ} {G : GLoc F E σ gp} (C : Cmp G SG) (f : SG → ℂ) :
     ∏ w, f w = ∏ j : Fin 2, ∏ᶠ (v : HeightOneSpectrum (𝓞 F)) (h : (gp j : 𝓞 F) ∈ v.asIdeal), f (C.W j v h) := by
   classical
@@ -240,7 +244,7 @@ theorem Cmp.prod_eq {σ : E →ₐ[F] E} {gp : Fin 2 → ℕ} {G : GLoc F E σ g
     Finset.prod_image]
   · refine Finset.prod_congr rfl fun w hw => ?_
     obtain rfl : jj w = j := (Finset.mem_filter.1 hw).2
-    rw [finprod_eq_dif, dif_pos (hj w), ← C.uniq _ _ _ w rfl]
+    rw [finprod_eq_dif, dite_eq_left (hj w), ← C.uniq _ _ _ w rfl]
   · intro w _ w' _ e
     exact (C.uniq _ _ (hj w') w e).trans (C.uniq _ _ (hj w') w' rfl).symm
   · intro v hv
@@ -248,7 +252,7 @@ theorem Cmp.prod_eq {σ : E →ₐ[F] E} {gp : Fin 2 → ℕ} {G : GLoc F E σ g
       by_contra h
       apply hv
       show (∏ᶠ (h : (gp j : 𝓞 F) ∈ v.asIdeal), f (C.W j v h)) = 1
-      rw [finprod_eq_dif, dif_neg h]
+      rw [finprod_eq_dif, dite_eq_right h]
     refine Finset.mem_coe.2 (Finset.mem_image.2 ⟨C.W j v h, Finset.mem_filter.2 ⟨Finset.mem_univ _, ?_⟩, C.ov j v h⟩)
     exact C.one _ _ v (by have := hj (C.W j v h); rwa [C.ov] at this) h
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertRIndexSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveDivVertical
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.CharacterNondegenerate
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertRIndexSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveDivVertical
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.CharacterNondegenerate
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -18,8 +23,8 @@ theorem aeval_mem_sectionMod (y : (Σ _ : Unit, T) → K') {s : MRing (fun _ : U
     (hs : IsMultiHomog s (fun _ => 1)) : aeval y s ∈ sectionMod y :=
   HilbertSamuel.NormCountBounded.secM_le_chartLat y 1 (Submodule.subset_span ⟨s, hs, rfl⟩)
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem span_toAddSubgroup (y : (Σ _ : Unit, T) → K') (x : K') :
     (Submodule.span (curveRing y) {x}).toAddSubgroup = curveMul y x := by
   ext z
@@ -31,8 +36,8 @@ theorem span_toAddSubgroup (y : (Σ _ : Unit, T) → K') (x : K') :
   · rintro ⟨b, hb, rfl⟩
     exact ⟨⟨b, hb⟩, by rw [Subring.smul_def, smul_eq_mul, mul_comm]⟩
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem genIndex_eq_card (y : (Σ _ : Unit, T) → K') {x : K'} (hx : x ∈ sectionMod y) :
     genIndex (chartLat y (fun _ => 1) 1) (curveMul y x) = Nat.card (sectionQuot y x) := by
   have hle : curveMul y x ≤ chartLat y (fun _ => 1) 1 := by
@@ -44,8 +49,8 @@ theorem genIndex_eq_card (y : (Σ _ : Unit, T) → K') {x : K'} (hx : x ∈ sect
 
 end VerticalIndex
 
-open IndefiniteRowSideFullHecke.HeightsSet in
 
+open IndefiniteRowSideFullHecke.HeightsSet in
 theorem VertRIndex.proof (hL : LogCardLength.Statement) (hF : SectionQuotFinite.Statement)
     (hV : VertPointLength.Statement) (hR : VertPointResidue.Statement) : VertRIndex.Statement := by
   intro T _ K' _ _ y s hP hs hsP

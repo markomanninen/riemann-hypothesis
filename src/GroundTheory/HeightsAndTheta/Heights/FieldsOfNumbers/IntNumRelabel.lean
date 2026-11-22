@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumBaseChange
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumBaseChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -35,13 +40,13 @@ theorem eventualValue_congr {K K' : Type*} {f : (K → ℤ) → ℤ} {g : (K' �
   unfold eventualValue
   by_cases hf : ∃ c, ∀ᶠ m in atTop, f m = c
   · have hg : ∃ c, ∀ᶠ m in atTop, g m = c := hf.imp fun c hc => (h c).1 hc
-    rw [dif_pos hf, dif_pos hg]
+    rw [dite_eq_left hf, dite_eq_left hg]
     have h1 := (h _).1 hf.choose_spec
     have h2 := hg.choose_spec
     obtain ⟨m, hm1, hm2⟩ := (h1.and h2).exists
     exact hm1.symm.trans hm2
   · have hg : ¬ ∃ c, ∀ᶠ m in atTop, g m = c := fun ⟨c, hc⟩ => hf ⟨c, (h c).2 hc⟩
-    rw [dif_neg hf, dif_neg hg]
+    rw [dite_eq_right hf, dite_eq_right hg]
 
 theorem eventualValue_precomp (g : (K₁ → ℤ) → ℤ) :
     eventualValue (fun m : K₂ → ℤ => g (m ∘ e)) = eventualValue g := by
@@ -71,15 +76,15 @@ variable {K₁ K₂ : Type*} [DecidableEq K₁] [DecidableEq K₂] {ι₁ : K₁
   (e : K₁ ≃ K₂) (φ : (Σ k, ι₁ k) ≃ (Σ k, ι₂ k)) (hφ : ∀ v, (φ v).1 = e v.1)
   {F : Type*} [Field F]
 
-include hφ in
 
+include hφ in
 theorem weight_mapDomain (d : (Σ k, ι₁ k) →₀ ℕ) :
     Finsupp.weight (blockWeight ι₂) (Finsupp.mapDomain φ d) =
       Finsupp.weight (blockWeight ι₁) d ∘ e.symm := by
   induction d using Finsupp.induction_linear with
   | zero => funext k; simp
   | add a b ha hb =>
-    rw [Finsupp.mapDomain_add, map_add, map_add, ha, hb]
+    rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), ha, hb]
     rfl
   | single v c =>
     rw [Finsupp.mapDomain_single, Finsupp.weight_single, Finsupp.weight_single]
@@ -87,8 +92,8 @@ theorem weight_mapDomain (d : (Σ k, ι₁ k) →₀ ℕ) :
     simp only [blockWeight, hφ, Pi.smul_apply, Function.comp_apply, Pi.single_apply,
       Equiv.symm_apply_eq]
 
-include hφ in
 
+include hφ in
 theorem gradedPiece_map_rename (I : Ideal (MRing ι₁ F)) (d : K₂ → ℕ) :
     gradedPiece (I.map (renameEquiv F φ)) d =
       (gradedPiece I (d ∘ e)).map
@@ -114,15 +119,15 @@ theorem gradedPiece_map_rename (I : Ideal (MRing ι₁ F)) (d : K₂ → ℕ) :
     funext k
     simp
 
-include hφ in
 
+include hφ in
 theorem finrank_gradedPiece_map_rename (I : Ideal (MRing ι₁ F)) (d : K₂ → ℕ) :
     Module.finrank F (gradedPiece (I.map (renameEquiv F φ)) d) =
       Module.finrank F (gradedPiece I (d ∘ e)) := by
   rw [gradedPiece_map_rename e φ hφ, LinearEquiv.finrank_map_eq]
 
-include hφ in
 
+include hφ in
 theorem hilbFn_map_rename (I : Ideal (MRing ι₁ F)) (m : K₂ → ℤ) :
     hilbFn (I.map (renameEquiv F φ)) m = hilbFn I (m ∘ e) := by
   unfold hilbFn
@@ -133,8 +138,8 @@ theorem hilbFn_map_rename (I : Ideal (MRing ι₁ F)) (m : K₂ → ℤ) :
     exact congrArg _ (finrank_gradedPiece_map_rename e φ hφ I (fun k => (m k).toNat))
   · rw [if_neg h, if_neg (mt hpos.2 h)]
 
-include hφ in
 
+include hφ in
 theorem intNum_map_rename (I : Ideal (MRing ι₁ F)) {n : ℕ} (bs : Fin n → K₂ → ℤ) :
     intNum F (I.map (renameEquiv F φ)) bs = intNum F I (fun i => bs i ∘ e) := by
   unfold intNum

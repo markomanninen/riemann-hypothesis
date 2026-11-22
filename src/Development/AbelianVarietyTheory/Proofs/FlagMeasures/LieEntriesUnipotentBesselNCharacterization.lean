@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Dchart
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalBlockUnitriangularFlag
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Dchart
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalBlockUnitriangularFlag
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp GlobalTheory.CellDens
 open scoped InnerProductSpace ENNReal Nat
@@ -12,15 +16,6 @@ namespace GlobalTheory.CellDens.LieN
 
 def Cond (k r : ℕ) (X : Mat k r) : Prop :=
   Xᴴ * Hpk k r + Hpk k r * X = 0 ∧ ∀ i j : Fin (2 * r + k + 1), lev k r j ≤ lev k r i → X i j = 0
-
-theorem Cond.smul {k r : ℕ} {X : Mat k r} (h : Cond k r X) (t : ℝ) : Cond k r ((t : ℂ) • X) := by
-  refine ⟨?_, fun i j hij => by rw [Matrix.smul_apply, h.2 i j hij, smul_zero]⟩
-  rw [conjTranspose_smul, smul_mul_assoc, mul_smul_comm, Complex.star_def, Complex.conj_ofReal, ← smul_add, h.1,
-    smul_zero]
-
-theorem Cond.add {k r : ℕ} {X Y : Mat k r} (h : Cond k r X) (h' : Cond k r Y) : Cond k r (X + Y) := by
-  refine ⟨?_, fun i j hij => by rw [Matrix.add_apply, h.2 i j hij, h'.2 i j hij, add_zero]⟩
-  rw [conjTranspose_add, add_mul, mul_add, add_add_add_comm, h.1, h'.1, add_zero]
 
 open MeasureTheory Matrix Filter Topology in
 open scoped InnerProductSpace ENNReal Nat in
@@ -218,9 +213,9 @@ private lemma equiv_symm_realifyFun_unrealify {m : ℕ} (x : EuclideanSpace ℝ 
   obtain ⟨i, j, b⟩ := p
   cases b <;> simp [_root_.Formalism.MainNotions.S.unrealify, _root_.Formalism.MainNotions.S.realifyFun]
 
+
 open MeasureTheory Matrix Filter Topology in
 open scoped InnerProductSpace ENNReal Nat in
-
 theorem _root_.GlobalTheory.CellDens.LieN.lieE_Nset : ∀ (k r : ℕ)
     (x : EuclideanSpace ℝ (Fin (2 * r + k + 1) × Fin (2 * r + k + 1) × Bool)),
     (x ∈ _root_.Formalism.MainNotions.S.lieE (_root_.Formalism.QuantumDeterminants.Nset k r) ↔ ((_root_.Formalism.MainNotions.S.unrealify x)ᴴ * _root_.Formalism.QuantumDeterminants.Hpk k r + _root_.Formalism.QuantumDeterminants.Hpk k r * _root_.Formalism.MainNotions.S.unrealify x = 0 ∧

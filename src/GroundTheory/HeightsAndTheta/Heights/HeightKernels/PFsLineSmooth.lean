@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,7 +19,7 @@ theorem contDiffAt_blockNorm {K : Type} [Fintype K] (ι : K → Type) [∀ k, Fi
       (fun w : (Σ k, ι k) → ℂ => ‖WithLp.toLp 2 (fun i => w ⟨k, i⟩)‖) z := by
   have hL : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞)
       (fun w : (Σ k, ι k) → ℂ => WithLp.toLp 2 (fun i => w ⟨k, i⟩)) :=
-    PiLp.contDiff_toLp.comp (contDiff_pi.2 fun i => contDiff_apply ℝ ℂ (⟨k, i⟩ : Σ k, ι k))
+    PiLp.contDiff_toLp.comp (contDiff_pi.2 fun i => contDiff_apply ℝ (fun _ => ℂ) (⟨k, i⟩ : Σ k, ι k))
   have hne : WithLp.toLp 2 (fun i => z ⟨k, i⟩) ≠ 0 := by
     obtain ⟨i, hi⟩ := hz
     intro h0

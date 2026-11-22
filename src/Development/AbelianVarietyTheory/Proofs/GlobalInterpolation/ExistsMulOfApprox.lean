@@ -1,10 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SubstitutionAdjoint
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RenameMemDualWeyl
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SubDSharpInDeg
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsDenOfValLeOne
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValDetLe
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemExtLatOfMemLocP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SubstitutionAdjoint
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RenameMemDualWeyl
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SubDSharpInDeg
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsDenOfValLeOne
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemExtLatOfMemLocP
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.SubstitutionAdjoint
 open scoped Matrix
@@ -34,7 +37,8 @@ omit [Fintype ι] in
 theorem jetLin_eq_sum (J : (DVar ι a b →₀ ℕ) → K) (Q : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K) :
     jetLin J Q = ∑ μ ∈ Q.support, J (expR μ) • monomial (expL μ) (Q.coeff μ) := by
   conv_lhs => rw [Q.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [jetLin, constr_monomial, smul_monomial, smul_monomial, smul_eq_mul, smul_eq_mul, mul_comm]
 
@@ -61,12 +65,13 @@ theorem ptEval_subD (hab : a ≤ b) (σ : K →+* L) (ap : ι → Matrix (Fin a)
     ptEval σ ap (subD K ι a b P) = substAdj hab ap (map σ P) := by
   induction P using MvPolynomial.induction_on with
   | C c => simp [ptEval, subD, substAdj]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp, map_X]
     congr 1
     have h : v.2.2.1 < b := lt_of_lt_of_le v.2.2.2 hab
-    simp only [subD, substAdj, aeval_X, dif_pos h, map_sum, map_mul, ptEval, eval₂Hom_X', Sum.elim_inl, Sum.elim_inr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [subD, substAdj, aeval_X, dite_eq_left h, map_sum, map_mul, ptEval, eval₂Hom_X', Sum.elim_inl, Sum.elim_inr]
     exact Finset.sum_congr rfl fun β _ => mul_comm _ _
 
 theorem sum_ptTable (hab : a ≤ b) (σ : K →+* L) (ap : ι → Matrix (Fin a) (Fin b) L) (P : Pol K ι a) :
@@ -74,7 +79,8 @@ theorem sum_ptTable (hab : a ≤ b) (σ : K →+* L) (ap : ι → Matrix (Fin a)
       substAdj hab ap (map σ P) := by
   rw [← ptEval_subD]
   conv_rhs => rw [(subD K ι a b P).as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun μ _ => (ptEval_monomial σ ap μ _).symm
 
 theorem jetMap_ptTable (hab : a ≤ b) (ap : ι → Matrix (Fin a) (Fin b) K) (n : ι → ℕ) (P : Pol K ι a) :
@@ -94,14 +100,18 @@ theorem jetMap_mem [Infinite K] (hab : a ≤ b) (n : ι → ℕ) (P : Pol K ι a
       MvPolynomial (DVar ι a b) K) = 0 := by
     refine MvPolynomial.funext fun x => ?_
     have h1 := hφ _ (h fun τ => Matrix.of fun α β => x (τ, β, α))
-    rw [← jetMap_ptTable, jetMap_eq_sum, map_sum] at h1
-    rw [map_zero, map_sum, ← h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← jetMap_ptTable, jetMap_eq_sum, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum, ← h1]
     refine Finset.sum_congr rfl fun μ _ => ?_
     rw [eval_monomial, map_smul, smul_eq_mul, mul_comm]
     rfl
   have h2 := congrArg ((basisMonomials (DVar ι a b) K).constr K J) h0
-  rw [map_zero, map_sum] at h2
-  rw [jetMap_eq_sum, map_sum, ← h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [jetMap_eq_sum, map_sum, ← h2]
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [constr_monomial, map_smul, smul_eq_mul, smul_eq_mul, mul_comm]
 
@@ -114,7 +124,7 @@ theorem coe_jetOp (lam : ι → DomWeight a) (lam' : ι → DomWeight b) (J : (D
 omit [Fintype ι] in
 theorem detShift_eq {hab : a < b} {lam : ι → DomWeight a} {lam' : ι → DomWeight b} {s s' : ι → ℤ} {n : ι → ℕ}
     (h : WtCompat hab lam lam' s s' n) (τ : ι) : (lam' τ).detShift = -s τ := by
-  rw [DomWeight.detShift, dif_pos (by omega)]
+  rw [DomWeight.detShift, dite_eq_left (by omega)]
   exact h.2.1 τ _ (by simp only; omega)
 
 omit [Fintype ι] in
@@ -123,39 +133,8 @@ theorem map_frDet {R : Type} [CommRing R] (φ : Pol K ι a →+* R) (τ : ι) :
   rw [frDet, RingHom.map_det]
   rfl
 
-omit [Fintype ι] in
-theorem evalFr_substAdj (hab : a ≤ b) (ap : ι → Matrix (Fin a) (Fin b) K) (y : ι → Matrix (Fin b) (Fin b) K)
-    (P : Pol K ι a) :
-    evalFr y (substAdj hab ap P) = evalFr (fun τ => (ap τ * y τ).submatrix id (Fin.castLE hab)) P := by
-  unfold evalFr
-  induction P using MvPolynomial.induction_on with
-  | C c => simp [substAdj]
-  | add p q hp hq => simp only [map_add, hp, hq]
-  | mul_X p v hp =>
-    simp only [map_mul, hp]
-    simp [substAdj, Matrix.mul_apply]
 
 end Expand
-
-theorem substitution : Substitution := by
-  intro K _ ι _ a b hab lam lam' s s' n hw ap F
-  have h1 : ((jetOp lam lam' (ptTable ap) n F : VV K lam') : Pol K ι b) =
-      substAdj hab.le ap (sharp n (F : Pol K ι a)) := by
-    rw [coe_jetOp, jetMap_ptTable hab.le]
-    rw [jetMap_ptTable hab.le]
-    exact GlobalTheory.SubstMem.substAdj_sharp_mem K ι a b hab lam lam' s s' n hw ap _ F.2
-  refine ⟨h1, fun y => ?_, fun y => ?_⟩
-  · unfold fnOf sharp evalFr
-    rw [map_mul, map_prod, mul_assoc, ← Finset.prod_mul_distrib]
-    congr 1
-    refine Finset.prod_congr rfl fun τ _ => ?_
-    rw [map_pow, map_frDet, ← zpow_add₀ (y τ).det_ne_zero, ← hw.2.2 τ, zpow_natCast]
-    congr 2
-    ext α t
-    simp
-  · rw [h1, fnOf, evalFr_substAdj, div_eq_mul_inv, ← Finset.prod_inv_distrib]
-    congr 1
-    exact Finset.prod_congr rfl fun τ _ => by rw [detShift_eq hw, zpow_neg]
 
 section Integral
 
@@ -180,7 +159,7 @@ theorem substAdj_int (v : Valuation L Γ) (hab : a ≤ b) (A : ι → Matrix (Fi
   obtain ⟨Q, rfl⟩ := hP
   induction Q using MvPolynomial.induction_on with
   | C c => exact ⟨C c, by simp [substAdj]⟩
-  | add p q hp hq => rw [map_add, map_add]; exact add_mem hp hq
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _)]; exact add_mem hp hq
   | mul_X p x hp =>
     rw [map_mul, map_mul, map_X]
     refine mul_mem hp ?_
@@ -199,7 +178,8 @@ theorem blockAct_substAdj (hab : a ≤ b) (ap : ι → Matrix (Fin a) (Fin b) L)
   have h : (blockAct L g).comp (substAdj hab ap) = substAdj hab (fun τ => ap τ * g τ) := by
     apply MvPolynomial.algHom_ext
     intro x
-    simp only [AlgHom.comp_apply, blockAct, substAdj, aeval_X, map_sum, map_mul, algHom_C, Matrix.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, blockAct, substAdj, aeval_X, map_sum, map_mul, algHom_C, Matrix.mul_apply]
     simp only [algebraMap_eq, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     simp [mul_assoc]
@@ -211,7 +191,8 @@ theorem substAdj_blockAct (hab : a ≤ b) (A : ι → Matrix (Fin a) (Fin b) L) 
   have h : (substAdj hab A).comp (blockAct L g) = substAdj hab (fun τ => g τ * A τ) := by
     apply MvPolynomial.algHom_ext
     intro x
-    simp only [AlgHom.comp_apply, blockAct, substAdj, aeval_X, map_sum, map_mul, algHom_C, Matrix.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, blockAct, substAdj, aeval_X, map_sum, map_mul, algHom_C, Matrix.mul_apply]
     simp only [algebraMap_eq, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     simp [mul_assoc]
@@ -222,7 +203,7 @@ theorem map_blockAct (σ : K →+* L) (g : ι → Matrix (Fin a) (Fin a) K) (P :
     map σ (blockAct K g P) = blockAct L (fun τ => (g τ).map σ) (map σ P) := by
   induction P using MvPolynomial.induction_on with
   | C c => simp [blockAct]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p x hp =>
     simp only [map_mul, hp]
     simp [blockAct]
@@ -320,7 +301,8 @@ theorem closureIntegral : ClosureIntegral := by
   set T := blockAct K (n := b) (fun τ => (BW τ : Matrix (Fin b) (Fin b) K)) with hT
   set d := fun μ => T (monomial (expL μ) (Q.coeff μ)) with hd
   have hH : T (jetMap J n (F : Pol K ι a)) = ∑ μ ∈ Q.support, J (expR μ) • d μ := by
-    rw [jetMap_eq_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [jetMap_eq_sum, map_sum]
     exact Finset.sum_congr rfl fun μ _ => map_smul _ _ _
   have hpt : ∀ ap : ι → Matrix (Fin a) (Fin b) L, admitted v σ M MW ap → ∀ p, ∃ z : L, v z ≤ 1 ∧
       ∑ μ ∈ Q.support, ptTable ap (expR μ) * σ ((d μ).coeff p) = σ D * z := by
@@ -329,8 +311,9 @@ theorem closureIntegral : ClosureIntegral := by
       (fun τ => (GlobalTheory.ExtLatMatrix.extLat_matrix_integral K w L Γ v σ hσ).2 a b (M τ) (MW τ) (B τ) (BW τ) (hM τ).2 (hMW τ).2 (ap τ) (hap τ))
       F fun m => (hσ _).mpr (hF m)
     refine ⟨Z.coeff p, hZ p, ?_⟩
-    have h1 := congrArg (coeff p) hZ'
-    rw [← sum_ptTable, map_sum, coeff_sum, coeff_smul, smul_eq_mul] at h1
+    have h1 := congrArg (AddMonoidAlgebra.coeff · p) hZ'
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_ptTable, map_sum, coeff_sum, coeff_smul, smul_eq_mul] at h1
     rw [← h1]
     refine Finset.sum_congr rfl fun μ _ => ?_
     rw [map_smul, coeff_smul, smul_eq_mul, ← map_monomial, ← map_blockAct, coeff_map]
@@ -354,7 +337,8 @@ theorem closureIntegral : ClosureIntegral := by
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [mul_left_comm, ← hz' i, Finset.mul_sum]
         simp only [mul_assoc]
-      rw [hH, coeff_sum, map_sum, map_mul, mul_assoc, h2, Finset.mul_sum, ← Finset.sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hH, coeff_sum, map_sum, map_mul, mul_assoc, h2, Finset.mul_sum, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun μ _ => ?_
       rw [coeff_smul, smul_eq_mul, map_mul]
       ring
@@ -379,7 +363,7 @@ theorem closureIntegral : ClosureIntegral := by
     have h0 : T (jetMap J n (F : Pol K ι a)) = 0 := by
       ext p
       obtain ⟨u, -, hu'⟩ := hu p
-      rw [hu', hκ, zero_mul, zero_mul, coeff_zero]
+      rw [hu', hκ, zero_mul, zero_mul, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     have h1 := congrArg (blockAct K (n := b) fun τ => (((BW τ)⁻¹ : GL (Fin b) K) : Matrix (Fin b) (Fin b) K)) h0
     rw [map_zero, hT, ← AlgHom.comp_apply, blockAct_comp] at h1
     simp only [Units.mul_inv, blockAct_one, AlgHom.id_apply] at h1
@@ -397,25 +381,6 @@ theorem closureIntegral : ClosureIntegral := by
       rw [hfac]
       exact mul_ne_zero hκ (mul_ne_zero hD0 hW0)
 
-theorem pointIntegral : PointIntegral := by
-  intro K _ _ w ι _ a b hab lam lam' s s' n hw M MW B BW hM hMW ap hap F hF
-  have hσ : ∀ x : K, w.valuation K (RingHom.id K x) ≤ 1 ↔ w.valuation K x ≤ 1 := fun _ => Iff.rfl
-  have hadm : admitted (w.valuation K) (RingHom.id K) M MW ap := by
-    intro τ y hy
-    induction hy using Submodule.span_induction with
-    | mem y hy =>
-      obtain ⟨x, hx, rfl⟩ := hy
-      exact (GlobalTheory.ExtLatMatrix.extLat_matrix_integral K w K _ (w.valuation K) (RingHom.id K) hσ).1 a (M τ) _ (hap τ x hx)
-    | zero => rw [Matrix.mulVec_zero]; exact zero_mem _
-    | add x y _ _ hx hy => rw [Matrix.mulVec_add]; exact add_mem hx hy
-    | smul c x _ hx => rw [Matrix.mulVec_smul]; exact Submodule.smul_mem _ _ hx
-  have h := closureIntegral K w K _ (w.valuation K) (RingHom.id K) hσ ι a b hab lam lam' s s' n hw M MW B BW hM hMW
-    1 (ptTable ap) (fun _ _ => ⟨1, fun _ => 1, fun _ => ap, fun _ => by simp, fun _ => hadm, fun m _ => by simp⟩) F hF
-  rwa [one_mul] at h
-
 end Closure
-
-theorem jetPointStatement : JetPointStatement :=
-  ⟨substitution, GlobalTheory.DetIndexPf.detIndex, pointIntegral, closureIntegral⟩
 
 end GlobalTheory.JetPoint

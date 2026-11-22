@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEtLevOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEtLevOver
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.EtLev
 
@@ -30,7 +35,7 @@ theorem exists_unique_quotAut {O M G : Type*} [Ring O] [AddCommGroup M] [Module 
   let f₀ : M →ₗ[O] M ⧸ W :=
     { toFun := fun y => W.mkQ (z y)
       map_add' := fun a b => by
-        rw [← map_add, ← eq, hadd, hz, hz, hz, hadd']
+        rw [← map_add (f := _), ← eq, hadd, hz, hz, hz, hadd']
       map_smul' := fun c a => by
         rw [RingHom.id_apply, ← LinearMap.map_smul, ← eq, hsm, hz, hz, hsm'] }
   have hf₀ : W ≤ LinearMap.ker f₀ := by

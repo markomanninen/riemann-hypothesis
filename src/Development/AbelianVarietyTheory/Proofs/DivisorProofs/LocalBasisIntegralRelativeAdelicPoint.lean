@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,7 +55,7 @@ theorem norm_ev_latHat_le_one (inc : E →+* PadicAlgCl l)
   | zero => simp
   | add y w _ _ hy hw =>
     show ‖ev (y a + w a)‖ ≤ 1
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hy hw)
   | neg y _ hy =>
     show ‖ev (-(y a))‖ ≤ 1
@@ -111,7 +115,7 @@ theorem norm_ev_hLat_le_one (V : Formalism.BasicNotions.TH.HSp D) (hL0 : V.L0 = 
         (fun i => (1 : FiniteAdeleRing (𝓞 D.host.F) D.host.F) ⊗ₜ[D.host.F] x i) +
           (fun i => (1 : FiniteAdeleRing (𝓞 D.host.F) D.host.F) ⊗ₜ[D.host.F] w i) := by
       funext i; simp [TensorProduct.tmul_add]
-    rw [e, Matrix.mulVec_add, Pi.add_apply, map_add]
+    rw [e, Matrix.mulVec_add, Pi.add_apply, map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hw)
   | smul r x _ hx =>
     have e : (fun i => (1 : FiniteAdeleRing (𝓞 D.host.F) D.host.F) ⊗ₜ[D.host.F] (r • x) i) =
@@ -147,7 +151,8 @@ theorem locBasis_integral : ∀ {D : D7} (V : Formalism.BasicNotions.TH.HSp D) (
     norm_natCast_eq_one' hs, one_mul] at h
   rw [← map_inv, Units.val_mul, Matrix.mul_apply]
   refine le_of_eq_of_le (congrArg norm ?_) h
-  rw [Matrix.mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mulVec, dotProduct, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, hev.1]
   rfl

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassLevels
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalInvariants
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassLevels
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalInvariants
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -9,8 +14,6 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory NumberField GroundTheory.Global FiniteSubfield
 
 open scoped DirectSum
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -38,11 +41,6 @@ theorem exists_unitsToIdeles_eq (n : ℕ) (y : cohomology (limitRep K) n)
     (hy : (idelesToClasses K n).hom y = 0) : ∃ x, (unitsToIdeles K n).hom x = y :=
   ((ShortComplex.moduleCat_exact_iff_ker_sub_range _).1
     (cohomology_exact₂ (idelesShortComplexRes_shortExact K) n)) hy
-
-theorem exists_idelesToClasses_eq (n : ℕ) (c : cohomology (classLimitRep K) n)
-    (hc : (classesToUnits K n).hom c = 0) : ∃ y, (idelesToClasses K n).hom y = c :=
-  ((ShortComplex.moduleCat_exact_iff_ker_sub_range _).1
-    (cohomology_exact₃ (idelesShortComplexRes_shortExact K) n (n + 1) rfl)) hc
 
 theorem exists_classesToUnits_eq (n : ℕ) (x : cohomology (unitsLimitRep K) (n + 1))
     (hx : (unitsToIdeles K (n + 1)).hom x = 0) : ∃ c, (classesToUnits K n).hom c = x :=

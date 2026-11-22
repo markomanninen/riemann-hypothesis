@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.finite_span_add_smul :
     ∀ {ι V : Type} [AddCommGroup V] [Module ℂ V] (T : ι → V →ₗ[ℂ] V) (S : Set ι) (a b : V) (z : ℂ),
@@ -10,7 +14,7 @@ theorem UpperTheory.finite_span_add_smul :
       Submodule.span ℂ ((fun i => T i a) '' S) ⊔ Submodule.span ℂ ((fun i => T i b) '' S) := by
     rw [Submodule.span_le]
     rintro _ ⟨i, hi, rfl⟩
-    simp only [map_add, map_smul, SetLike.mem_coe]
+    simp only [map_add (f := _), map_smul, SetLike.mem_coe]
     exact Submodule.add_mem_sup (Submodule.subset_span ⟨i, hi, rfl⟩)
       (Submodule.smul_mem _ z (Submodule.subset_span ⟨i, hi, rfl⟩))
   exact Submodule.finiteDimensional_of_le hle

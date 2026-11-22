@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+
+@[expose] public section
 
 open Set Filter Topology
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -21,7 +25,8 @@ theorem coefwise_dbar_sum_smul {n : ℕ} {ι : Type} [Fintype ι] {c : ι → V 
     have e : (fun x => (bas n).repr (∑ i, c i x • F i x) S) =
         fun x => ∑ i, c i x * (bas n).repr (F i x) S := by
       funext x
-      simp [map_sum, Finsupp.finset_sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, Finsupp.finsetSum_apply]
     rw [e, GlobalTheory.dbar_sum (A := fun i x => c i x * (bas n).repr (F i x) S) (fun i _ => (hc i).mul (hF i S)),
       ContinuousLinearMap.sum_apply]
     exact Finset.sum_congr rfl fun i _ => GlobalTheory.dbar_mul (hc i) (hF i S) w

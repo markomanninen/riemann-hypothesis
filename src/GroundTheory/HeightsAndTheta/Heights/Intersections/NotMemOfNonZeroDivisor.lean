@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ExistsFunFieldMulEq
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ExistsFunFieldMulEq
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -22,8 +27,8 @@ theorem toFrac_eq_zero {P : Ideal (MRing ι)} [P.IsPrime] {f : MRing ι} : toFra
   rw [RingHom.comp_apply, ← map_zero (algebraMap (MRing ι ⧸ P) (FractionRing (MRing ι ⧸ P))),
     (IsFractionRing.injective (MRing ι ⧸ P) _).eq_iff, Ideal.Quotient.eq_zero_iff_mem]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_X_single [DecidableEq K] (k : K) (i : ι k) :
     IsMultiHomog (X ⟨k, i⟩ : MRing ι) (Pi.single k 1) := by
   intro m hm k'
@@ -146,7 +151,8 @@ theorem chartHom_mul {P : Ideal (MRing ι)} (j : ∀ k, ι k) (r : (Σ k, ι k) 
   rw [chartHom_coe]
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   have hdeg := hf μ hμ
   rw [monomial_eq, map_mul, map_mul, mul_assoc]
@@ -165,8 +171,8 @@ theorem chartHom_mul {P : Ideal (MRing ι)} (j : ∀ k, ι k) (r : (Σ k, ι k) 
 
 end regularityEmbedding_holds
 
-open regularityEmbedding_holds in
 
+open regularityEmbedding_holds in
 theorem regularityEmbedding_holds.proof : regularityEmbedding_holds.Statement := by
   intro K _ ι _ P R hP hR hRu
   classical
@@ -174,7 +180,7 @@ theorem regularityEmbedding_holds.proof : regularityEmbedding_holds.Statement :=
   have hne : ∀ t ∈ mcPts P, ∀ (v : MRing ι) (a : K → ℕ), IsMultiHomog v a → v ∉ P →
       eval t (map (Int.castRingHom ℂ) v) ≠ 0 := fun t ht v a hv hvP =>
     eval_ne_zero_of_dimOne arithVarZero hP
-      (A := HermLine.ofMetrics (fun k => fsMetric (ι k)) (fun k => (a k : ℤ))) ⟨a, fun _ => rfl, hv, hvP⟩ ht
+      (A := HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (fun k => (a k : ℤ))) ⟨a, fun _ => rfl, hv, hvP⟩ ht
   let σ : R → (funField P →+* ℂ) := fun t => sigmaAt P (t : (Σ k, ι k) → ℂ) (hR t t.2) (hne t (hR t t.2))
   have hσ : ∀ (t : R) (x : funField P) (u v : MRing ι),
       (x : FractionRing (MRing ι ⧸ P)) * toFrac P v = toFrac P u →

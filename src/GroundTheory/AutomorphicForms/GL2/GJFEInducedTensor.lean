@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFEInducedChar
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFEInducedChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,8 @@ section Unip
 
 variable [MeasurableSpace F] [BorelSpace F] (ψ : AddChar F Circle)
 
-variable (β) in
 
+variable (β) in
 def unipMeasure : Measure (UnipotentIndex n β → F) :=
   Measure.pi fun _ => LocalField.selfDualMeasure ψ
 
@@ -55,16 +59,16 @@ instance : (unipMeasure β ψ).IsAddHaarMeasure := by
   unfold unipMeasure
   infer_instance
 
-variable (β) in
 
+variable (β) in
 def tensorConst (g : Fin n × Fin n → F → ℂ) : ℂ :=
   (∏ s : UnipotentIndex n β,
     LocalField.localFourier (LocalField.selfDualMeasure ψ) ψ (g s.1) 0) *
       ∏ ij : Fin n × Fin n, if β ij.2 < β ij.1 then g ij 0 else 1
 
+
 omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [MeasurableSpace F]
   [BorelSpace F] in
-
 theorem prod_not_unip_eq {X : Matrix (Fin n) (Fin n) F} (hX : ∀ i j, β i ≠ β j → X i j = 0)
     (g : Fin n × Fin n → F → ℂ) :
     ∏ s : {ij : Fin n × Fin n // ¬ β ij.1 < β ij.2}, g s.1 (X s.1.1 s.1.2) =
@@ -123,9 +127,9 @@ theorem localMatrixFourier_matrixTensor_eq (g : Fin n × Fin n → F → ℂ) :
   rw [localMatrixFourier_matrixTensor, matrixTensor]
   exact Fintype.prod_equiv (Equiv.prodComm _ _) _ _ fun ij => rfl
 
+
 omit [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
   [MeasurableSpace F] [BorelSpace F] in
-
 theorem leviTensor_swap_eq (h : Fin n × Fin n → F → ℂ) (Y : Matrix (Fin n) (Fin n) F) :
     leviTensor β (fun s => h s.1.swap) Y = ∏ s : LeviIndex n β, h s.1 (Y s.1.2 s.1.1) := by
   rw [leviTensor]
@@ -155,8 +159,8 @@ theorem integral_norm_matrixTensor_add_unip (g : Fin n × Fin n → F → ℂ)
   congr 1
   simp [leviTensor, norm_prod]
 
-variable {ψ} in
 
+variable {ψ} in
 theorem integral_norm_fourier_matrixTensor_add_unip (g : Fin n × Fin n → F → ℂ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ {Y : Matrix (Fin n) (Fin n) F}, (∀ i j, β i ≠ β j → Y i j = 0) →
       ∫ u, ‖localMatrixFourier ψ (matrixTensor g) (Y + unipMatrix F u)‖ ∂unipMeasure β ψ =
@@ -167,8 +171,8 @@ theorem integral_norm_fourier_matrixTensor_add_unip (g : Fin n × Fin n → F �
   rw [localMatrixFourier_matrixTensor_eq, integral_norm_matrixTensor_add_unip ψ g' hY,
     leviTensor_swap_eq_hat]
 
-variable {ψ} in
 
+variable {ψ} in
 theorem integral_fourier_matrixTensor_add_unip (hψ : Continuous ψ) (hψ1 : ψ ≠ 1)
     {g : Fin n × Fin n → F → ℂ} (hg : ∀ ij, g ij ∈ LocalField.schwartzBruhat F)
     {Y : Matrix (Fin n) (Fin n) F} (hY : ∀ i j, β i ≠ β j → Y i j = 0) :
@@ -214,8 +218,8 @@ section Translate
 
 variable [MeasurableSpace F] [BorelSpace F] (ψ : AddChar F Circle)
 
-omit [TopologicalSpace F] [IsNonarchimedeanLocalField F] [MeasurableSpace F] [BorelSpace F] in
 
+omit [TopologicalSpace F] [IsNonarchimedeanLocalField F] [MeasurableSpace F] [BorelSpace F] in
 theorem mul_mem_integer_iff {y : GL (Fin n) F} (hy : y ∈ integralGL F n)
     (X : Matrix (Fin n) (Fin n) F) :
     (∀ i j, (X * (y : Matrix (Fin n) (Fin n) F)) i j ∈ 𝒪[F]) ↔ ∀ i j, X i j ∈ 𝒪[F] := by

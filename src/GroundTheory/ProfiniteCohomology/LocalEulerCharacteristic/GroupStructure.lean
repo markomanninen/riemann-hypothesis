@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.GroupStructureDefs
-import GroundTheory.LocalFields.RamificationStructure
-import GroundTheory.LocalFields.UnramifiedRootsOfUnity
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.GroupStructureDefs
+public import GroundTheory.LocalFields.RamificationStructure
+public import GroundTheory.LocalFields.UnramifiedRootsOfUnity
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -317,8 +322,8 @@ theorem natCast_residueField_ne_zero {l : ℕ} (hl : l.Prime) (hlp : l ≠ ringC
   intro h
   exact hlp ((Nat.prime_dvd_prime_iff_eq (CharP.char_is_prime 𝓀[K] _) hl).1 h).symm
 
-variable {K L} in
 
+variable {K L} in
 theorem apply_eq_of_mem_lowerRamificationGroup_zero {m : ℕ} (hm : (m : 𝓀[L]) ≠ 0)
     {σ : L ≃ₐ[K] L} (hσ : σ ∈ lowerRamificationGroup K L 0) {ζ : L} (hζ : ζ ^ m = 1) :
     σ ζ = ζ := by

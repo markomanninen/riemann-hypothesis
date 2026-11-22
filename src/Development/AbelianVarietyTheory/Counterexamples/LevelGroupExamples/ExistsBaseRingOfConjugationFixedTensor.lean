@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsDetRoot
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsDetRoot
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj
 open scoped TensorProduct
@@ -27,7 +31,7 @@ theorem exists_baseRing_of_conjugation_fixed_tensor {F E R : Type} [Field F] [Ch
       obtain ⟨t, ht⟩ := hx
       obtain ⟨t', ht'⟩ := hy
       refine ⟨t + t', ?_⟩
-      rw [map_add, TensorProduct.add_tmul, ← ht, ← ht']; ring
+      rw [map_add (f := _), TensorProduct.add_tmul, ← ht, ← ht']; ring
   obtain ⟨t, ht⟩ := hT y
   refine ⟨(2 : F)⁻¹ • t, ?_⟩
   rw [hy] at ht

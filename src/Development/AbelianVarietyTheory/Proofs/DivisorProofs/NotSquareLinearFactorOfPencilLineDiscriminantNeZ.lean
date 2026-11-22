@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedLatticeZeroCycleHeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapLine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapLine
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,7 +29,7 @@ theorem line_eq_lineSubst {F K : Type} [Field F] [Field K] [Algebra F K] {D N : 
     simp only [aeval_C, lineSubst]
     rw [IsScalarTower.algebraMap_apply F K (MvPolynomial (Fin 1 × Fin N) K),
       IsScalarTower.algebraMap_apply F K (Polynomial K), AlgHom.commutes]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n ih =>
     simp only [map_mul, ih, aeval_X]
     congr 1
@@ -40,7 +45,7 @@ theorem eval_spec {F K : Type} [Field F] [Field K] [Algebra F K] {D N : ℕ}
     simp only [aeval_C]
     rw [IsScalarTower.algebraMap_apply F K (MvPolynomial (Fin 1 × Fin N) K)]
     simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n ih =>
     simp only [map_mul, ih, aeval_X]
     congr 1
@@ -49,7 +54,8 @@ theorem eval_spec {F K : Type} [Field F] [Field K] [Algebra F K] {D N : ℕ}
 
 theorem lineSubst_lin {K : Type} [Field K] {N : ℕ} (a b y : Fin N → K) :
     lineSubst a b (lin y) = Polynomial.C (∑ j, a j * y j) + Polynomial.C (∑ j, b j * y j) * Polynomial.X := by
-  simp only [lin, lineSubst, map_sum, map_mul, aeval_X, aeval_C, Polynomial.algebraMap_eq, add_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lin, lineSubst, map_sum, map_mul, aeval_X, aeval_C, Polynomial.algebraMap_eq, add_mul,
     Finset.sum_add_distrib, Polynomial.C_mul, Finset.sum_mul, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun j _ => ?_

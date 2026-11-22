@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S
 
@@ -174,9 +178,9 @@ theorem ellA_conj (z : Fin (2 * r + k + 1) → ℂ)
   have hrow : ∀ p, h (eI k r a) p = if eI k r a = p then 1 else 0 :=
     fun p => hh.2 _ p (by simp only [eI]; omega)
   by_cases ha : a.val + 1 < r
-  · rw [dif_pos ha, dif_pos ha, mul_apply_of_col _ _ _ (fun q => hh'.1 q _ (by simp only [eI]; omega)),
+  · rw [dite_eq_left ha, dite_eq_left ha, mul_apply_of_col _ _ _ (fun q => hh'.1 q _ (by simp only [eI]; omega)),
       mul_apply_of_row _ _ _ hrow]
-  · rw [dif_neg ha, dif_neg ha, ← Matrix.mulVec_mulVec, hz, ← Matrix.mulVec_mulVec,
+  · rw [dite_eq_right ha, dite_eq_right ha, ← Matrix.mulVec_mulVec, hz, ← Matrix.mulVec_mulVec,
       mulVec_apply_of_row _ _ hrow]
 
 theorem uw_conj_mem {z : Fin (2 * r + k + 1) → ℂ}

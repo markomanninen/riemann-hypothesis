@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ThetaSetupStructureMapComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedLatticeQuadraticSumGeDiagonal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.ConvexCones.FinitePosDefFormSublevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ThetaSetupStructureMapComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedLatticeQuadraticSumGeDiagonal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.ConvexCones.FinitePosDefFormSublevel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
@@ -67,7 +72,8 @@ theorem exists_invariant [Finite (B ≃ₐ[A] B)] (𝔷 : Ideal B) (hz : 𝔷.Is
   set x := u * F with hx
   set T : Finset B := Finset.univ.image (fun σ : B ≃ₐ[A] B => σ x) with hT
   refine ⟨∑ b ∈ T, b, fun σ => ?_, ?_⟩
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_equiv σ.toEquiv (fun b => ?_) (fun b _ => rfl)
     simp only [hT, Finset.mem_image, Finset.mem_univ, true_and]
     constructor
@@ -125,7 +131,7 @@ theorem exists_pow_le [IsLocalRing A] [IsNoetherianRing A] [Module.Finite A B] (
   have hm' : (P.comap (algebraMap A B)).IsMaximal := by
     rw [← (maximalIdeal.isMaximal A).eq_of_le (Ideal.IsPrime.ne_top inferInstance) hm]
     infer_instance
-  have hPm : P.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap P hm'
+  have hPm : P.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under P hm'
   have hPe : P = 𝔷 := hPm.eq_of_le hz.ne_top hPz
   exact Set.disjoint_left.1 hPd (hPe ▸ hzz : z ∈ P) (Submonoid.mem_sup_right (Submonoid.mem_powers z))
 
@@ -138,7 +144,7 @@ theorem exists_norm_le [IsNoetherianRing A] (m : Ideal A) (φ : B →+* K) (hφ 
     { carrier := {b | ‖φ b‖ ≤ |r|}
       add_mem' := by
         intro a b ha hb
-        simp only [Set.mem_setOf_eq, map_add] at *
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at *
         exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
       zero_mem' := by simp
       smul_mem' := by
@@ -184,7 +190,7 @@ theorem norm_eq_one (𝔷 : Ideal B) (hz : 𝔷.IsMaximal) (φ : B →+* K) (hφ
   by_contra hne
   have hlt : ‖φ s‖ < 1 := lt_of_le_of_ne (hφ s) hne
   have h1 : ‖φ (y * s + i)‖ = 1 := by rw [h]; simp
-  rw [map_add, map_mul] at h1
+  rw [map_add (f := _), map_mul] at h1
   have h2 := IsUltrametricDist.norm_add_le_max (φ y * φ s) (φ i)
   have h3 : ‖φ y * φ s‖ < 1 := by
     rw [norm_mul]; exact (mul_le_of_le_one_left (norm_nonneg _) (hφ y)).trans_lt hlt
@@ -209,7 +215,7 @@ theorem norm_prod_sub_le {ι : Type} (s : Finset ι) (a b : ι → K) (ε : ℝ)
     · rw [norm_mul]; exact (mul_le_of_le_one_left (norm_nonneg _) (ha j)).trans ih
     · rw [norm_mul]
       refine (mul_le_of_le_one_right (norm_nonneg _) ?_).trans (hab j)
-      rw [norm_prod]; exact Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun i _ => hb i)
+      rw [norm_prod]; exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun i _ => hb i)
 
 end Descent
 
@@ -251,10 +257,10 @@ theorem exists_rep [Module.Free ℤ X] [Module.Finite ℤ X] (hN : 1 ≤ N) :
   refine ⟨fun x => b.equivFun.symm (fun i => b.equivFun x i % N), fun x => ?_, ?_, ?_⟩
   · refine ⟨b.equivFun.symm (fun i => -(b.equivFun x i / N)), b.equivFun.injective ?_⟩
     ext i
-    simp only [LinearEquiv.apply_symm_apply, map_add, map_nsmul, Pi.add_apply, nsmul_eq_mul, Pi.mul_apply, Pi.natCast_apply]
+    simp only [LinearEquiv.apply_symm_apply, map_add (f := _), map_nsmul, Pi.add_apply, nsmul_eq_mul, Pi.mul_apply, Pi.natCast_apply]
     rw [Int.emod_def]; ring
   · rintro x y ⟨w, rfl⟩
-    simp only [map_add, map_nsmul, Pi.add_apply, nsmul_eq_mul, Pi.mul_apply, Pi.natCast_apply, Int.add_mul_emod_self_left]
+    simp only [map_add (f := _), map_nsmul, Pi.add_apply, nsmul_eq_mul, Pi.mul_apply, Pi.natCast_apply, Int.add_mul_emod_self_left]
   · refine ((Set.finite_Icc (fun _ => (0 : ℤ)) (fun _ => (N : ℤ))).image b.equivFun.symm).subset ?_
     rintro _ ⟨x, rfl⟩
     have : (0 : ℤ) < N := by exact_mod_cast hN
@@ -308,8 +314,8 @@ theorem sum_comp_eq [Module.Free ℤ X] [Module.Finite ℤ X] {ι M : Type} [Add
   have hbij := (C.finite_toSet.injOn_iff_bijOn_of_mapsTo hmaps).1 hinj
   exact Finset.sum_nbij _ hmaps hinj hbij.surjOn fun c hc => (hg _ _ (hρ2 _ (hm c hc))).symm
 
-open Classical in
 
+open Classical in
 theorem sum_orbit_eq [Module.Free ℤ X] [Module.Finite ℤ X] {m s : ℕ} {K : Type} [CommRing K] {a : Fin m × Fin s → X}
     (C : Finset (Fin m × Fin s → X))
     (hC1 : ∀ c ∈ C, c ∈ orbit O N₁ N LinearMap.id a) (hC2 : ∀ c ∈ C, ∀ c' ∈ C, (∀ i, CongMod N (c i) (c' i)) → c = c')
@@ -359,7 +365,8 @@ theorem orbitSums_of_classSums : ∀ (O : Type) [CommRing O] (bar : O → O) (q 
   set F : B := ∑ c ∈ C, ∏ i, f (fun u => c (i, u)) (κ i) with hF
   obtain ⟨g, hg1, hg2⟩ := exists_invariant (A := A) 𝔷 hz E F (fun σ hσ => by
     obtain ⟨γ, h1, h2, h3, h4⟩ := hγ σ hσ
-    rw [hF, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hF, map_sum]
     simp only [map_prod, h4]
     exact sum_comp_eq C hC1 hC2 hC3 γ h1 h2 h3 (fun c => ∏ i, f (fun u => c (i, u)) (κ i))
       (fun c c' h => Finset.prod_congr rfl fun i _ => hf _ _ _ fun u => h _))
@@ -415,7 +422,8 @@ theorem orbitSums_of_classSums : ∀ (O : Type) [CommRing O] (bar : O → O) (q 
   · rw [sum_orbit_eq C hC1 hC2 hC3 (k y) (hk y) T _ (fun μ => hSfin.mem_toFinset) (fun i ν => t y ν (κ i))]
     rw [← sub_add_sub_cancel _ (ev' y F), max_comm]
     refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le_max hgF ?_)
-    rw [hF, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hF, map_sum, ← Finset.sum_sub_distrib]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hε.le fun c hc => ?_
     rw [map_prod]
     refine (norm_prod_sub_le _ _ _ _ hε'.le (min_le_right _ _) (fun i => hle y _) fun i => ?_).trans (min_le_left _ _)

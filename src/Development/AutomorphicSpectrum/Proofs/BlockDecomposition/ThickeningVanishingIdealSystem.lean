@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsFormOfEqRatioPowMul
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanIdealHomog
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemVanishingIdealIffKillsForm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartVanishingKillsFormMulPow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosedImmersionPullbackKernelSup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningSectionHomogeneousForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsFormOfEqRatioPowMul
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanIdealHomog
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemVanishingIdealIffKillsForm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartVanishingKillsFormMulPow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosedImmersionPullbackKernelSup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningSectionHomogeneousForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,8 +51,8 @@ theorem killsForm_of_X_pow_mul {Y : Scheme.{0}} (φ : Y ⟶ PSpace R N) {n : ℕ
   have := (GlobalTheory.CompanionTheory.GE.mem_vanIdeal_iff_killsForm φ (m + n) _ hh).1 hm k
   rwa [formOn_X_pow_mul k hf hh] at this
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem homogeneousComponent_X_pow_mul (k : Fin (N + 1)) (m d : ℕ)
     (f : MvPolynomial (Fin (N + 1)) R) :
     homogeneousComponent (m + d) (X k ^ m * f) = X k ^ m * homogeneousComponent d f := by
@@ -122,7 +126,7 @@ theorem exists_X_pow_mul_mem {Y Z : Scheme.{0}} (φ : Y ⟶ PSpace R N) [QuasiCo
       · have := (isHomogeneous_X_pow (R := R) k (n + a)).mul ht
         rwa [show n + a + c = a + c + n by ring] at this
     refine (formOn_chart_inj R N k hL hR).1 ?_
-    simp only [formOn_eq_aeval, map_add, map_mul, map_pow, aeval_X, ratioOn_self, one_pow,
+    simp only [formOn_eq_aeval, map_add (f := _), map_mul, map_pow, aeval_X, ratioOn_self, one_pow,
       one_mul] at hss ⊢
     exact hss.symm
   refine ⟨m + a + c, ?_⟩

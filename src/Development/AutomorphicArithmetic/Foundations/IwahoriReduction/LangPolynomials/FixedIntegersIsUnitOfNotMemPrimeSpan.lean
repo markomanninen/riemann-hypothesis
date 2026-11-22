@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FrobeniusCompatInclusion
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FrobeniusCompatInclusion
+
+@[expose] public section
 
 noncomputable section
 

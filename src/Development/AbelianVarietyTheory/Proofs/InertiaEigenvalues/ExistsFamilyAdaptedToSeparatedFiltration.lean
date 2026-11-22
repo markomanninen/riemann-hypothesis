@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc TensorProduct
 
 namespace GlobalTheory
@@ -71,7 +76,8 @@ theorem exists_family_adapted_filtration :
         by_cases ha : lo = a
         · subst ha
           have h3 := hf hs
-          rw [LinearMap.mem_ker, map_add, map_sum, map_smul] at h3
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [LinearMap.mem_ker, map_add (f := _), map_sum, map_smul] at h3
           have h4 : ∑ j : Fin d, f (c j.succ • x j) = 0 :=
             Finset.sum_eq_zero fun j _ => by
               rw [map_smul, (LinearMap.mem_ker.mp (h1 j).1.2), smul_zero]

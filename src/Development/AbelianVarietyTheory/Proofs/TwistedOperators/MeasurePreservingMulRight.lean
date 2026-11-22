@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowSizesNR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AtPlaceIffEqAtTau
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPermOfCardFalse
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitVacuumStandardLatticesDefinitePair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DefNodeIsV
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealMeasureUniformInTupleOfThetaLiftScalar
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsRealFnNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowSizesNR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AtPlaceIffEqAtTau
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPermOfCardFalse
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitVacuumStandardLatticesDefinitePair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DefNodeIsV
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealMeasureUniformInTupleOfThetaLiftScalar
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsRealFnNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,19 +34,11 @@ def infMatHom (V : HSp D) (φ : Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ) 
   map_mul' := GlobalTheory.PointAtPlaceHom.infMat_mul V φ
 
 theorem list_prod_map_ite {α M : Type} [Monoid M] [DecidableEq α] (a : M) (σ : α) :
-    ∀ l : List α, l.Nodup → σ ∈ l → (l.map fun ρ => if ρ = σ then a else 1).prod = a
-  | [], _, h => by simp at h
-  | x :: l, hn, h => by
-    rw [List.map_cons, List.prod_cons]
-    rw [List.nodup_cons] at hn
-    by_cases hx : x = σ
-    · subst hx
-      rw [if_pos rfl, List.prod_eq_one, mul_one]
-      intro y hy
-      obtain ⟨z, hz, rfl⟩ := List.mem_map.1 hy
-      exact if_neg fun (e : z = x) => hn.1 (e ▸ hz)
-    · rw [if_neg hx, one_mul]
-      exact list_prod_map_ite a σ l hn.2 ((List.mem_cons.1 h).resolve_left fun e => hx e.symm)
+    ∀ l : List α, l.Nodup → σ ∈ l → (l.map fun ρ => if ρ = σ then a else 1).prod = a := by
+  intro l hn h
+  rw [List.prod_map_eq_pow_single σ (fun ρ => if ρ = σ then a else 1)
+    (fun _ hρ _ => ite_eq_right hρ), hn.count_of_mem h]
+  simp
 
 def IsRealAll (θ : InfFam D) (V : HSp D) (M : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ) (h : GA D V) : Prop :=
   h ∈ GinfC V ∧ ∀ ρ, infMat D.sp.cm.sig V.gram (θ ρ) h = M ρ
@@ -83,10 +79,9 @@ theorem IsRealAll.unique (hθ : IsInfFam θ) {M : D.what₂.Tau → Matrix (Fin 
   have e := (GlobalTheory.PointAtPlace.existsUnique_isAtTau V τ θ hθ 1 (GlobalTheory.PointAtPlaceHom.one_mem_UH _)).unique hc h1
   exact (mul_inv_eq_one.1 e).symm
 
-variable (θ V) in
-open Classical in
 
-def realAll (M : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ) : GA D V :=
+open Classical in
+def realAll (θ : InfFam D) (V : HSp D) (M : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ) : GA D V :=
   if h : ∃ x, IsRealAll θ V M x then h.choose else 1
 
 theorem realAll_mem (M : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ) : realAll θ V M ∈ GinfC V := by
@@ -99,7 +94,7 @@ theorem realAll_spec (hθ : IsInfFam θ) {M : D.what₂.Tau → Matrix (Fin V.ra
     (hM : ∀ ρ, M ρ ∈ Formalism.QuantumDeterminants.UH (gramAt D V ρ)) : IsRealAll θ V M (realAll θ V M) := by
   have h := exists_isRealAll hθ M hM
   unfold realAll
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem realAll_eq (hθ : IsInfFam θ) {M : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ}
@@ -120,8 +115,8 @@ theorem realAll_mul (hθ : IsInfFam θ) {M M' : D.what₂.Tau → Matrix (Fin V.
     ⟨mul_mem (realAll_spec hθ hM).1 (realAll_spec hθ hM').1, fun ρ => ?_⟩
   rw [GlobalTheory.PointAtPlaceHom.infMat_mul, (realAll_spec hθ hM).2 ρ, (realAll_spec hθ hM').2 ρ]
 
-open Classical in
 
+open Classical in
 theorem realAll_eq_atTau_mul (hθ : IsInfFam θ) {M : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ}
     (hM : ∀ ρ, M ρ ∈ Formalism.QuantumDeterminants.UH (gramAt D V ρ)) (τ : D.what₂.Tau) :
     realAll θ V M = atTau θ V τ (M τ) * realAll θ V (Function.update M τ 1) := by
@@ -225,8 +220,8 @@ theorem onbConj_mul {W : G.Weil} {X : Node} (hX : PosOnb W X) (u v : UG D.what�
         rw [h2, Matrix.mul_one]; simp only [Matrix.mul_assoc]
     _ = _ := by simp only [Matrix.mul_assoc]
 
-open Classical in
 
+open Classical in
 def vtxPt (W : G.Weil) (X : Node) : UG D.what₂.Tau (G.V X).rank →* GA D (G.V X) where
   toFun u := if PosOnb W X then realAll W.θ (G.V X) (onbConj W X u) else 1
   map_one' := by
@@ -270,14 +265,14 @@ section Kappa
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}
 
-variable (G) in
 
+variable (G) in
 def rowU (j : Fin D.R.m) : Gc D.what₂.Tau (rowSizes D) →* UG D.what₂.Tau (G.V (.top j)).rank :=
   (MonoidHom.compLeft (castU (rank_top G (j := j) j.2.le).symm) D.what₂.Tau).comp
     ((Pi.evalMonoidHom (fun j : Fin (rowSizes D).m => UG D.what₂.Tau ((rowSizes D).nR j)) j).comp (MonoidHom.fst _ _))
 
-variable (G) in
 
+variable (G) in
 def colU (i : Fin (D.R.m + 1)) : Gc D.what₂.Tau (rowSizes D) →* UG D.what₂.Tau (G.V (.grid i D.R.m)).rank :=
   (MonoidHom.compLeft (castU (rank_gridM G (i := i) (Nat.lt_succ_iff.1 i.2)).symm) D.what₂.Tau).comp
     ((Pi.evalMonoidHom (fun i : Fin ((rowSizes D).m + 1) => UG D.what₂.Tau ((rowSizes D).nC i)) i).comp (MonoidHom.snd _ _))

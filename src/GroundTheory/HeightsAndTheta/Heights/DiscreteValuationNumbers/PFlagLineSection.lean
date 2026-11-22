@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagLineSectionSplit
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagLineSectionSplit
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -25,8 +30,8 @@ theorem chartMon_not_mem {W : Ideal (MRing (bundleIdx ι M) F)} [hW : W.IsPrime]
 
 end FlagLineSectionProof
 
-open FlagLineSectionProof in
 
+open FlagLineSectionProof in
 theorem FlagLineSection.proof : FlagLineSection.Statement := by
   intro F _ Ω _ _ K _ _ ι _ y e hy _ N E _ _ B w b hB M a φ hφ Φ _ _ t ht h0
   have hXn : ∀ l : Fin M, projMap F y w φ (truncCoord t 1) (X ⟨none, l⟩) =
@@ -109,7 +114,8 @@ theorem FlagLineSection.proof : FlagLineSection.Statement := by
       have htm : (tMon (fun _ : K => m + m) : MvPolynomial (Option K) Φ) =
           tMon (fun _ => m) * tMon (fun _ => m) := tMon_add (fun _ => m) (fun _ => m)
       have hR0 : ∑ l, V l * Ξ l - chartMon F M c (fun _ => m + m) ∈ projIdeal F y w φ (truncCoord t 1) := by
-        rw [mem_projIdeal_iff, map_sub, map_sum, projMap_chartMon, htm, sub_eq_zero]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [mem_projIdeal_iff, map_sub, map_sum, projMap_chartMon, htm, sub_eq_zero]
         have e1 : ∀ l, projMap F y w φ (truncCoord t 1) (V l * Ξ l) =
             C (algebraMap Ω Φ (vc l * (φ l (w ⟨0, h0⟩) * chartZ y c (b ⟨0, h0⟩ - a)))) *
               (C (algebraMap Ω Φ (segreVec y c ^ (m + m))) * (tMon (fun _ => m) * tMon (fun _ => m))) := by
@@ -117,7 +123,8 @@ theorem FlagLineSection.proof : FlagLineSection.Statement := by
           rw [map_mul, (hV l).2, (hΞ l).2]
           simp only [map_mul, map_pow, pow_add]
           ring
-        rw [Finset.sum_congr rfl (fun l _ => e1 l), ← Finset.sum_mul, ← map_sum, ← map_sum, hsumc,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.sum_congr rfl (fun l _ => e1 l), ← Finset.sum_mul, ← map_sum, ← map_sum, hsumc,
           map_one, map_one, one_mul]
         simp [segreVec, Finset.prod_pow]
       have hS : chartMon F M c (fun _ => m + m) ∉ W := chartMon_not_mem hcW _

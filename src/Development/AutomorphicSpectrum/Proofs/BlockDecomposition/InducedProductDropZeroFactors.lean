@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DropHom
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardBlocksReindexStrictMono
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorProductDropZeroFactors
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityJacquetEqBorelJacquetOfS
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DropHom
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardBlocksReindexStrictMono
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorProductDropZeroFactors
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityJacquetEqBorelJacquetOfS
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,8 +67,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
   {r r' N : ℕ} (d : Fin r → ℕ) (hd : ∑ a, d a = N) (o : Fin r' → Fin r)
   (ho : StrictMono o) (hz : ∀ j, d j ≠ 0 → j ∈ Set.range o) (hd' : ∑ a, d (o a) = N)
 
-include ho hz in
 
+include ho hz in
 theorem deltaHalf_drop (g : Levi k fun j => Fin (d j)) :
     deltaHalf k (fun j => Fin (d j)) g = deltaHalf k (fun a => Fin (d (o a))) (dropHom d o g) := by
   rw [deltaHalf_apply, deltaHalf_apply]
@@ -76,8 +80,8 @@ theorem deltaHalf_drop (g : Levi k fun j => Fin (d j)) :
   · rw [modExp_drop d o ho hz]
     rfl
 
-include ho hz in
 
+include ho hz in
 theorem parInd_comp_dropHom_equiv {W : Type} [AddCommGroup W] [Module ℂ W]
     (τ : Representation ℂ (Levi k fun a => Fin (d (o a))) W) :
     Nonempty ((parInd (stdBlocks d hd) (τ.comp (dropHom d o) : Representation ℂ (Levi k fun j => Fin (d j)) W)).Equiv
@@ -97,9 +101,9 @@ theorem parInd_comp_dropHom_equiv {W : Type} [AddCommGroup W] [Module ℂ W]
 
 end Local
 
-set_option maxHeartbeats 1000000 in
 
-theorem prodIrr_drop : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {r r' N : ℕ} (y : Fin r → IrrGL k) (hd : ∑ a, (y a).1 = N) (o : Fin r' → Fin r), StrictMono o → (∀ j, (y j).1 ≠ 0 → j ∈ Set.range o) → ∀ (hd' : ∑ a, (y (o a)).1 = N), Nonempty ((prodIrr y hd).Equiv (prodIrr (fun a => y (o a)) hd')) := by
+set_option maxHeartbeats 1000000 in
+theorem prodIrr_drop : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {r r' N : ℕ} (y : Fin r → IrrGL (k := k)) (hd : ∑ a, (y a).1 = N) (o : Fin r' → Fin r), StrictMono o → (∀ j, (y j).1 ≠ 0 → j ∈ Set.range o) → ∀ (hd' : ∑ a, (y (o a)).1 = N), Nonempty ((prodIrr y hd).Equiv (prodIrr (fun a => y (o a)) hd')) := by
   intro k _ _ _ _ r r' N y hd o ho hz hd'
   obtain ⟨φ⟩ := GlobalTheory.CompanionTheory.FineProd.TensorLine.piTensor_drop_equiv y o ho hz
   obtain ⟨χ⟩ := parInd_comp_dropHom_equiv (k := k) (fun j => (y j).1) hd o ho hz hd'

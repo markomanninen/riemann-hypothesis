@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotModEqOfLt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotModEqOfLt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.L2.Host
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
@@ -174,7 +178,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.sepOf :
     blk_nodup hq hf a.L (fun p hp => ⟨(hL p hp).2, hdiv p hp⟩) hP
   have hDn := d_nodup hq hf a.D hDlt hDnd
   unfold Lbl.Sep Lbl.blocks
-  rw [Multiset.map_add, Multiset.nodup_add]
+  rw [Multiset.map_add (f := _), Multiset.nodup_add]
   refine ⟨?_, hB, ?_⟩
   · rw [Multiset.map_coe, Multiset.coe_nodup, List.map_map]
     exact hDn

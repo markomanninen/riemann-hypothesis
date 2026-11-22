@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
-import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
-import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+public import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
+public import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -14,8 +18,8 @@ namespace UpperTheory.ConvolutionTheory.R2.D
 variable {F : Type} [Field F] [NumberField F]
 
 private theorem comp_signed_mem {ι κ : Type} [Fintype ι] [Fintype κ] (e : κ ≃ ι) (ε : κ → F)
-    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi F κ) :
-    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi F ι := by
+    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi (K := F) (ι := κ)) :
+    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi (K := F) (ι := ι) := by
   have hD : Matrix.diagonal ε * Matrix.diagonal ε = (1 : Matrix κ κ F) := by
     rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
@@ -65,8 +69,8 @@ private theorem sg_mul (k) : (sg k : F) * sg k = 1 := by
 
 private def FF (φ : V4 F → ℂ) (z : Fin 3 ⊕ Unit → A F) : ℂ := φ fun i => z (eS.symm i)
 
-private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4)) :
-    FF φ ∈ schwartzBruhatPi F (Fin 3 ⊕ Unit) := by
+private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) :
+    FF φ ∈ schwartzBruhatPi (K := F) (ι := Fin 3 ⊕ Unit) := by
   have h := comp_signed_mem (F := F) eS.symm (fun _ => 1) (fun _ => by simp) hφ
   have he : FF φ = fun x => φ fun k => rt ((fun _ => 1 : Fin 4 → F) k) * x (eS.symm k) := by
     funext x
@@ -106,7 +110,7 @@ end UpperTheory.ConvolutionTheory.R2.D
 end
 
 theorem UpperTheory.ConvolutionTheory.R2.D.hatMem :
-    ∀ (F : Type) [Field F] [NumberField F] (φ : S4 F), hat φ.1 ∈ schwartzBruhatPi F (Fin 4) ∧ Th φ.1 = Th (hat φ.1) := by
+    ∀ (F : Type) [Field F] [NumberField F] (φ : S4 F), hat φ.1 ∈ schwartzBruhatPi (K := F) (ι := Fin 4) ∧ Th φ.1 = Th (hat φ.1) := by
   intro F _ _ φ
   have hF := FF_mem φ.2
   constructor

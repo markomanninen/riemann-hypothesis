@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutOneGeneratorSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GlobalFunctionsIntegralSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PRestriction
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PDimTie
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutOneGeneratorSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GlobalFunctionsIntegralSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PRestriction
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PDimTie
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -113,8 +118,8 @@ theorem exists_algHom_ker_eq {R : Type w} [CommRing R] [Algebra k R] (P : Ideal 
 
 end CutOneGenerator
 
-open CutOneGenerator in
 
+open CutOneGenerator in
 theorem CutOneGenerator.proof (hG : GlobalFunctionsIntegral.Statement.{u, w}) :
     CutOneGenerator.Statement.{u, w} := by
   intro k _ Ω _ _ N x n pp L s hW hL hs hgen

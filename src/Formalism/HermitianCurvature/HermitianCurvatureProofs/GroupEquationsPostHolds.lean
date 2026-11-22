@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfLeaves
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliCoordinates
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CvRhoOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfLeaves
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliCoordinates
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CvRhoOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField Matrix
 open scoped ContDiff Topology
@@ -129,13 +133,18 @@ theorem gp_foldr (ℓ : E →L[ℂ] ℂ) (EopE : Fin m → Fin m → (B.Mat k r 
       ContDiff ℝ ((j + qs.length : ℕ) : WithTop ℕ∞) f →
       ContDiff ℝ (j : WithTop ℕ∞) ((qs.map (gpLtr EopE)).foldr (fun T h => T h) f) ∧
       (fun g => ℓ ((qs.map (gpLtr EopE)).foldr (fun T h => T h) f g)) =
-        (qs.map (gpLtr EopC)).foldr (fun T h => T h) (fun g => ℓ (f g))
-  | [], j, f, hf => ⟨by simpa using hf, rfl⟩
-  | q :: qs, j, f, hf => by
+        (qs.map (gpLtr EopC)).foldr (fun T h => T h) (fun g => ℓ (f g)) := by
+  intro qs
+  induction qs with
+  | nil =>
+    intro j f hf
+    exact ⟨by simpa using hf, rfl⟩
+  | cons q qs ih =>
+    intro j f hf
     have hf' : ContDiff ℝ ((j + 1 + qs.length : ℕ) : WithTop ℕ∞) f := by
       have e : j + 1 + qs.length = j + (q :: qs).length := by simp only [List.length_cons]; omega
       rw [e]; exact hf
-    obtain ⟨h1, h2⟩ := gp_foldr ℓ EopE EopC h qs (j + 1) f hf'
+    obtain ⟨h1, h2⟩ := ih (j + 1) f hf'
     simp only [List.map_cons, List.foldr_cons]
     set F := (qs.map (gpLtr EopE)).foldr (fun T h => T h) f
     obtain ⟨h3, h4⟩ := h q.2.1 q.2.2 j F h1
@@ -144,7 +153,7 @@ theorem gp_foldr (ℓ : E →L[ℂ] ℂ) (EopE : Fin m → Fin m → (B.Mat k r 
     · rw [← h2]
       funext g
       have h5 : ℓ (EopE q.2.1 q.2.2 F g) = EopC q.2.1 q.2.2 (fun g => ℓ (F g)) g := congrFun h4 g
-      simp only [gpLtr, Pi.add_apply, Pi.smul_apply, map_add, map_smul]
+      simp only [gpLtr, Pi.add_apply, Pi.smul_apply, map_add (f := _), map_smul]
       rw [h5]
 
 theorem gp_foldl (ℓ : E →L[ℂ] ℂ) (EopE : Fin m → Fin m → (B.Mat k r → E) → B.Mat k r → E)
@@ -156,9 +165,14 @@ theorem gp_foldl (ℓ : E →L[ℂ] ℂ) (EopE : Fin m → Fin m → (B.Mat k r 
       ContDiff ℝ ((j + qs.length : ℕ) : WithTop ℕ∞) f →
       ContDiff ℝ (j : WithTop ℕ∞) ((qs.map (gpLtr EopE)).foldl (fun h T => T h) f) ∧
       (fun g => ℓ ((qs.map (gpLtr EopE)).foldl (fun h T => T h) f g)) =
-        (qs.map (gpLtr EopC)).foldl (fun h T => T h) (fun g => ℓ (f g))
-  | [], j, f, hf => ⟨by simpa using hf, rfl⟩
-  | q :: qs, j, f, hf => by
+        (qs.map (gpLtr EopC)).foldl (fun h T => T h) (fun g => ℓ (f g)) := by
+  intro qs
+  induction qs with
+  | nil =>
+    intro j f hf
+    exact ⟨by simpa using hf, rfl⟩
+  | cons q qs ih =>
+    intro j f hf
     have hf' : ContDiff ℝ ((j + qs.length + 1 : ℕ) : WithTop ℕ∞) f := by
       have e : j + qs.length + 1 = j + (q :: qs).length := by simp only [List.length_cons]; omega
       rw [e]; exact hf
@@ -168,9 +182,9 @@ theorem gp_foldl (ℓ : E →L[ℂ] ℂ) (EopE : Fin m → Fin m → (B.Mat k r 
     have hq : (fun g => ℓ (gpLtr EopE q f g)) = gpLtr EopC q (fun g => ℓ (f g)) := by
       funext g
       have h5 : ℓ (EopE q.2.1 q.2.2 f g) = EopC q.2.1 q.2.2 (fun g => ℓ (f g)) g := congrFun h4 g
-      simp only [gpLtr, Pi.add_apply, Pi.smul_apply, map_add, map_smul]
+      simp only [gpLtr, Pi.add_apply, Pi.smul_apply, map_add (f := _), map_smul]
       rw [h5]
-    obtain ⟨h6, h7⟩ := gp_foldl ℓ EopE EopC h qs j _ h1
+    obtain ⟨h6, h7⟩ := ih j _ h1
     simp only [List.map_cons, List.foldl_cons]
     refine ⟨h6, ?_⟩
     rw [h7, hq]
@@ -183,7 +197,8 @@ theorem gp_qmF (ℓ : E →L[ℂ] ℂ) (EopE : Fin m → Fin m → (B.Mat k r �
     {t : ℕ} (a b : Fin t → Fin m) (u : ℂ) (f : B.Mat k r → E) (hf : ContDiff ℝ (t : WithTop ℕ∞) f) :
     (fun g => ℓ (Q.qmF EopE a b u f g)) = Q.qmF EopC a b u (fun g => ℓ (f g)) := by
   funext g
-  simp only [Q.qmF, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Q.qmF, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 1
   rw [gp_ofFn EopE a b u σ, gp_ofFn EopC a b u σ]
@@ -197,7 +212,8 @@ theorem gp_qmFrev (ℓ : E →L[ℂ] ℂ) (EopE : Fin m → Fin m → (B.Mat k r
     {t : ℕ} (a b : Fin t → Fin m) (u : ℂ) (f : B.Mat k r → E) (hf : ContDiff ℝ (t : WithTop ℕ∞) f) :
     (fun g => ℓ (Q.qmFrev EopE a b u f g)) = Q.qmFrev EopC a b u (fun g => ℓ (f g)) := by
   funext g
-  simp only [Q.qmFrev, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Q.qmFrev, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 1
   rw [gp_ofFn EopE a b u σ, gp_ofFn EopC a b u σ]

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.HaarTrHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RowsBij
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.HaarTrHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RowsBij
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ theorem y_inv_mem (τ : D.what₂.Tau) : (C.y τ)⁻¹ ∈ Formalism.QuantumDete
         rw [Matrix.nonsing_inv_mul _ (by rw [Matrix.det_conjTranspose]; exact hu.star),
           Matrix.mul_nonsing_inv _ hu, Matrix.one_mul, Matrix.mul_one]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem quotTr_holds (u u' : D.what₂.Word) (τ : D.what₂.Tau) : QuotTr C u u' τ := by
   intro γ μRv ν hH hq
   obtain ⟨hσ, -, -, -⟩ := hH
@@ -94,7 +98,7 @@ theorem quotTr_holds (u u' : D.what₂.Word) (τ : D.what₂.Tau) : QuotTr C u u
     rw [key]
   simp only [hin]
   have hg : Measurable fun w : Formalism.REAL.UJ (X.B.I.ε (vOf X τ)) => f (F (γ⁻¹ * w * y')) :=
-    hf.comp (hFm.comp ((continuous_mul_right y').measurable.comp (continuous_mul_left γ⁻¹).measurable))
+    hf.comp (hFm.comp ((continuous_mul_const y').measurable.comp (continuous_const_mul γ⁻¹).measurable))
   rw [← hq _ hg]
   symm
   calc ∫⁻ x, f (F (γ⁻¹ * x * y')) ∂(Formalism.REAL.muG (X.B.I.ε (vOf X τ)))

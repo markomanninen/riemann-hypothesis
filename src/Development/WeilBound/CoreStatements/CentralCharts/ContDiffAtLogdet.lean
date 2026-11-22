@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.CentralCharts.TraceMulReNonneg
-import Development.WeilBound.CoreStatements.CentralCharts.ContDiffAtLogNorm
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodGramSmoothPuncturedStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodGramComparisonBoundStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GramMatrixSubScalarPosSemidefStatement
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.TraceMulReNonneg
+public import Development.WeilBound.CoreStatements.CentralCharts.ContDiffAtLogNorm
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodGramSmoothPuncturedStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodGramComparisonBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GramMatrixSubScalarPosSemidefStatement
+
+@[expose] public section
 
 noncomputable section
 

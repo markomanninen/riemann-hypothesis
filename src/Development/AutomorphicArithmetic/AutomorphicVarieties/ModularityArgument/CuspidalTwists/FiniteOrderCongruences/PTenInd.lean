@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.FiniteOrderCongruences.TwistIne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.FiniteOrderCongruences.TwistIne
+
+@[expose] public section
 
 noncomputable section
 
@@ -217,7 +221,7 @@ theorem tenInd : TenInd := by
       rw [mapRep_apply, mapRep_apply, ← map_pow, ← map_pow, ← map_sub,
         show τ x 0 0 ^ 2 - τ x 1 0 ^ 2 = 1 by linear_combination h, map_one]
     · intro h
-      rw [hτ.val h, mapRep_apply, mapRep_apply, ← map_add]
+      rw [hτ.val h, mapRep_apply, mapRep_apply, ← map_add (f := _)]
       first | rfl | simp
   exact ⟨fun t ht g g' hg' => TenInd.ti_on hy t ht g g' hg', fun t ht g hg => TenInd.ti_off hy t ht g hg,
     fun t ht g g' hg' h1 h1' => TenInd.ti_ker hy t ht g g' hg' h1 h1'⟩

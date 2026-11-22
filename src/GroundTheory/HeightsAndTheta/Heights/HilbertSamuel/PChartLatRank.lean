@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartLatRank
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartDenominator
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartLatRank
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartDenominator
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

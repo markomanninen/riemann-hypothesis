@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
+
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
 
@@ -50,11 +55,13 @@ theorem solv_at_stage {A : Type} [CommRing A] {G : ℕ → Type} [∀ n, CommRin
   obtain ⟨N₀, z, hz⟩ := h.surj n y
   have hd : ∀ i, ι N₀ ((∑ j, a i j • z j) - algebraMap A (G N₀) (c i)) = 0 := by
     intro i
-    simp only [map_sub, map_sum, map_smul, AlgHom.commutes, hz, hy i, sub_self]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul, AlgHom.commutes, hz, hy i, sub_self]
   obtain ⟨k, hk⟩ := h.ker N₀ m _ hd
   refine ⟨N₀ + k, fun j => tr f N₀ k (z j), fun i => ?_⟩
   have := hk i
-  simp only [map_sub, map_sum, map_smul, AlgHom.commutes, sub_eq_zero] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_smul, AlgHom.commutes, sub_eq_zero] at this
   exact this
 
 end GlobalTheory.CompanionTheory.SeqColim

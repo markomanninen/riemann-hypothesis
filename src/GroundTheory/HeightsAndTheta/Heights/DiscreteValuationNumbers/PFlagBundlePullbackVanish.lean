@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundle
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundle
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -38,7 +43,7 @@ theorem contract_projIdeal {F : Type} [Field F] {Ω : Type} [Field Ω] [Algebra 
   induction x using MvPolynomial.induction_on with
   | C r =>
     simp [ψ, pointConeMap, MvPolynomial.algebraMap_eq]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp, rename_X, eval₂Hom_X', pointConeMap, aeval_X]
     simp [ψ, FieldNumbers.blockIncl, projCoord]

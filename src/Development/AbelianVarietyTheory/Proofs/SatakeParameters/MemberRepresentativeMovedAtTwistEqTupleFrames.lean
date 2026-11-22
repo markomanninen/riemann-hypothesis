@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ReadsMove
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Formalism.LocalToGlobal.GroupLattices.Joint0
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepZeroClassesBijectiveSameDeco
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdelicPointDecoratedLatticeAllTwists
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemberLevelPrimeNotMemUnderLevelPrimes
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalGroupElementEqLevelComponentBadPrime
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalMoveClassRepIffLocalConditions
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitC
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyEquivClassSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ReadsMove
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Formalism.LocalToGlobal.GroupLattices.Joint0
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepZeroClassesBijectiveSameDeco
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdelicPointDecoratedLatticeAllTwists
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemberLevelPrimeNotMemUnderLevelPrimes
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalGroupElementEqLevelComponentBadPrime
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalMoveClassRepIffLocalConditions
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitC
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyEquivClassSet
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix GlobalTheory.TwU GlobalTheory.TwU.AtTrue
 open scoped TensorProduct
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -37,7 +42,8 @@ theorem adAt_entry_one {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) {η : GL (Fin 
 
 theorem adAt_mul_entry {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) (g κ : GL (Fin n) (AfE F E)) (i j : Fin n) :
     adAt F P ((g * κ).1 i j) = ∑ l, adAt F P (g.1 i l) * adAt F P (κ.1 l j) := by
-  rw [Units.val_mul, Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Units.val_mul, Matrix.mul_apply, map_sum]
   simp only [map_mul]
 
 theorem adAt_mul_of_one {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) (g : GL (Fin n) (AfE F E)) {κ : GL (Fin n) (AfE F E)}
@@ -57,7 +63,8 @@ theorem adAt_pullV_mul {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) (g : GL (Fin n
     adAt F P (pullV (g * κ) x i) = adAt F P (pullV g x i) := by
   have h' : bc (prV (E := E) (P.under (𝓞 F))) κ⁻¹ = 1 := by rw [map_inv, h, inv_one]
   unfold pullV
-  rw [_root_.mul_inv_rev, Units.val_mul, ← Matrix.mulVec_mulVec, Matrix.mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [_root_.mul_inv_rev, Units.val_mul, ← Matrix.mulVec_mulVec, Matrix.mulVec, dotProduct, map_sum]
   simp only [map_mul, adAt_entry_one P h', ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
 
 theorem comm_of_bc {n : ℕ} (κ k : GL (Fin n) (AfE F E))
@@ -147,8 +154,8 @@ theorem carries_of_local [StarRing E] {n : ℕ} (x z : GL (Fin n) (E ⊗[F] Fini
     rfl
   rw [e]
 
-omit [NumberField F] [Algebra F E] in
 
+omit [NumberField F] [Algebra F E] in
 theorem ptFr_eq [StarRing E] {n : ℕ} {ST SG Q Q' : Finset (HeightOneSpectrum (𝓞 E))} (p : DecoF E n ST SG Q)
     (p' : DecoF E n ST SG Q') (hd : p.deco = p'.deco) {P : HeightOneSpectrum (𝓞 E)} (h : P ∉ Q) (h' : P ∉ Q') :
     ptFr p P = ptFr p' P := by
@@ -166,8 +173,8 @@ section Core
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 4000000 in
 theorem coreGen (hc : CMData F E) {n : ℕ} {ST SG Q0 Q1 SQ : Finset (HeightOneSpectrum (𝓞 E))}
     (W : Finset (HeightOneSpectrum (𝓞 F))) (p0 : DecoF E n ST SG Q0) (p1 : DecoF E n ST SG Q1)
     (hdeco : p1.deco = p0.deco) (hQ0 : ∀ P, P ∉ Q0) (hQ1 : ∀ P ∈ Q1, P.under (𝓞 F) ∈ W)
@@ -248,8 +255,8 @@ theorem not_underQ {B : Base} {X : PreX B.toPre} (I : TC B X) (hOk : I.Ok) (u : 
     exact hg (e2 ▸ hOk.T_mem u)
   · exact hg (LevTwist.plc_mem hOk hP)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 4000000 in
 theorem main : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) {Ch0 : ℕ → Type} {chOf0 : ∀ i, ((I.rec7 l Z).mem u).C.cls i → Ch0 i} (F : FormsTiedSym (I.rec7 l Z) u Ch0 chOf0) (a : I.ι) (Q : Finset (HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F))), (∀ v, v ∈ Q ↔ I.UnderQ a v) → I.StdF l Z u F → ∀ (k : GA B (B.R.N 0)), I.Reads u I.mu0 0 (fun _ => ()) (fun _ => F.to0.cls0.lev.Lb) (fun _ => F.to0.cls0.lev.U) (fun _ => F.to0.cls0.lev.chi) (fun c => (F.to0.cls0.y c).1) (fun c s => (F.to0.cls0.stabI c s).1) (fun _ => k) → ∀ c, ∃ κ : F.to0.cls0.lev.U, (∀ v, v ∉ Q → bc (prV (E := (I.rec7 l Z).host.E) v) κ.1 = 1) ∧ F.to0.cls0.lev.chi κ = 1 ∧ PtOf (B := B) ((show GA B (B.R.N 0) from (F.to0.cls0.y c).1 * κ.1) * k) (extTo I.SQ ((I.stp u a 0).rep (I.eCls0 l u a c)).1.1) := by
   intro B X I hOk hPins l Z u Ch0 chOf0 F a Q hQ hStd k hR c
   classical

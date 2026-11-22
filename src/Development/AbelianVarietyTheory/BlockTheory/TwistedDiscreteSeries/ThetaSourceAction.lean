@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,8 +120,6 @@ variable (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D)
 
 def IsAdapted {n : ℕ} (G s B : Mat n) : Prop :=
   ∃ ε : Fin n → Bool, Bᴴ * G * B = Formalism.REAL.Jm ε ∧ s * B = B * Formalism.REAL.Jm ε
-
-example (n : ℕ) : IsAdapted (1 : Mat n) 1 1 := ⟨fun _ => true, by simp [Formalism.REAL.Jm], by simp [Formalism.REAL.Jm]⟩
 
 def ptAt (τ : D.what₂.Tau) (sS : Mat S.rank) (sT : Mat T.rank) (BS : Mat S.rank) (BT : Mat T.rank) (f : WO S T → ℂ) :
     MvPolynomial (Fin T.rank × Fin S.rank) ℂ → (WO S T → ℂ) :=

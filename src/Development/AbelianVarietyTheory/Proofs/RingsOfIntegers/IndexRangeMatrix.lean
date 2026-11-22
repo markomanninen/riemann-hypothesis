@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -72,7 +76,8 @@ theorem mem_std {v : Fin n → E} : v ∈ stdLat E n ↔ ∃ u, incl E n u = v :
 theorem incl_mulVec (m : Matrix (Fin n) (Fin n) (𝓞 E)) (v : Fin n → 𝓞 E) :
     incl E n (m.mulVec v) = (m.map (algebraMap (𝓞 E) E)).mulVec (incl E n v) := by
   funext i
-  simp only [incl_apply, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [incl_apply, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
 
 variable [IsCMField E]
 

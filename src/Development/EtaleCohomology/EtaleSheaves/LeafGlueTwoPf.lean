@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafObjGluePf
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GlueModelsOverSubfield
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafObjGluePf
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GlueModelsOverSubfield
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut LateralTheory.E.LeafDescendFPPf

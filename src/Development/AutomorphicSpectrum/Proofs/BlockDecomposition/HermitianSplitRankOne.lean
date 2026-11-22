@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR GlobalTheory.CompanionTheory.KFin
 open Formalism.UG (cT)
@@ -17,7 +21,7 @@ theorem swapHerm_zero_right (hH : IsHerm c h) (x : V) : h x 0 = 0 := by
   simpa using this
 
 theorem swapHerm_add_left (hH : IsHerm c h) (x y z : V) : h (x + y) z = h x z + h y z := by
-  rw [hH.symm z (x + y), hH.add_right, map_add, ← hH.symm z x, ← hH.symm z y]
+  rw [hH.symm z (x + y), hH.add_right, map_add (f := _), ← hH.symm z x, ← hH.symm z y]
 
 theorem swapHerm_smul_left (hH : IsHerm c h) (a : R) (x y : V) : h (a • x) y = c a * h x y := by
   rw [hH.symm y (a • x), hH.smul_right, map_mul, ← hH.symm y x]
@@ -163,7 +167,7 @@ theorem hermitian_split_rank_one_struct {k R V : Type} [Field k] [CommRing R] [A
   obtain ⟨e', he'_def⟩ : ∃ e' : R, e' = φ.symm (0, 1) := ⟨_, rfl⟩
   have hφe : φ e = (1, 0) := by rw [he_def]; simp
   have hφe' : φ e' = (0, 1) := by rw [he'_def]; simp
-  have he : e + e' = 1 := φ.injective (by rw [map_add, hφe, hφe', map_one]; ext <;> simp)
+  have he : e + e' = 1 := φ.injective (by rw [map_add (f := _), hφe, hφe', map_one]; ext <;> simp)
   have hee : e * e' = 0 := φ.injective (by rw [map_mul, hφe, hφe', map_zero]; ext <;> simp)
   have hce : c e = e' := φ.injective (by rw [hc, hφe, hφe']; rfl)
   have hce' : c e' = e := φ.injective (by rw [hc, hφe, hφe']; rfl)

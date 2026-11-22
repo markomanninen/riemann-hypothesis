@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRk
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LastColsVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRk
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LastColsVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem integral_comp_finite {G V : Type*} [MeasurableSpace G] (μ : Measure G) 
     · intro v _ hv
       exact Set.indicator_of_notMem (by simpa using hv.symm) _
     · exact fun h => absurd hg h
-  rw [integral_congr_ae h1, integral_finset_sum _ fun v _ => (integrable_const _).indicator (hm v)]
+  rw [integral_congr_ae h1, integral_finsetSum _ fun v _ => (integrable_const _).indicator (hm v)]
   refine Finset.sum_congr rfl fun v _ => ?_
   rw [integral_indicator_const _ (hm v), Complex.real_smul]
 

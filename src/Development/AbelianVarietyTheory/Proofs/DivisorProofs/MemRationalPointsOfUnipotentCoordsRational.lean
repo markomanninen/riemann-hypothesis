@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemUnitaryRationalPointsOfFrameImagesRationalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemUnitaryRationalPointsOfFrameImagesRationalStatement
+
+@[expose] public section
+
 open scoped TensorProduct NNReal ENNReal Matrix
 open NumberField MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut GlobalTheory.EisLine GlobalTheory.SphEis
 open GlobalTheory.ResLine (IsHt SemiLat)
@@ -14,7 +19,7 @@ theorem mem_ratPts_of_crd_rat : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
   have hmul : ∀ {a b c : ℕ} (X : Matrix (Fin a) (Fin b) E) (Y : Matrix (Fin b) (Fin c) E),
       adMat F (X * Y) = adMat F X * adMat F Y := fun X Y => by
     unfold adMat
-    exact Matrix.map_mul (f := (inclR (F := F) (AF F) : E →+* _))
+    exact Matrix.map_mul (L := X) (M := Y) (f := (inclR (F := F) (AF F) : E →+* _))
   have hadd : ∀ {a b : ℕ} (X Y : Matrix (Fin a) (Fin b) E),
       adMat F (X + Y) = adMat F X + adMat F Y := fun X Y => by
     ext i k; simp [adMat]

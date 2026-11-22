@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.EulerContractionCartanFormula
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CartierProjectionPthPower
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogCoordinateWedgeLinearIndependentSpanEqTopStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.EulerContractionCartanFormula
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CartierProjectionPthPower
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogCoordinateWedgeLinearIndependentSpanEqTopStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -240,7 +244,8 @@ theorem cartier_projector_homotopic : ∀ (K : Type) [Field K] (p : ℕ) [Fact p
     refine e1.trans ?_
     have hb := logWedge_basis K n x hx
     let b := Module.Basis.mk hb.1 (by rw [hb.2])
-    rw [← b.sum_repr η, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr η, map_sum, map_sum]
     refine Finset.sum_eq_zero fun I _ => ?_
     rw [Module.Basis.mk_apply, hQact]
     obtain ⟨g, hg⟩ := hπ1 (b.repr η I)

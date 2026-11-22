@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorResIEqResS
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicElementLatticeFullAndCompletion
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorResIEqResS
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicElementLatticeFullAndCompletion
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -217,14 +221,14 @@ theorem coord_frame {O K R' R : Type} [CommRing O] [Field K] [Algebra O K] [Comm
     (N.map ψ)
     (fun w hw => by
       have := hind ((AddSubgroup.pi Set.univ fun _ => S.toAddSubgroup).comap
-        (DistribMulAction.toAddMonoidHom (Fin n → R) (σ (j t)))) (fun a ha s hs i _ => by
+        (DistribSMul.toAddMonoidHom (Fin n → R) (σ (j t)))) (fun a ha s hs i _ => by
           obtain ⟨b, hb⟩ := ht a ha
           show σ (j t) * (σ (j a) * s i) ∈ S
           rw [← mul_assoc, ← map_mul, ← map_mul, hb, ← ho]
           exact S.mul_mem (o b).2 (hs i)) hw
       exact fun i => this i trivial)
     (fun s => hgen a₀ ha₀ _ fun i => (s i).2)
-    (fun b w hw => hind ((N.map ψ).comap (DistribMulAction.toAddMonoidHom (Fin n → R) (o b : R)))
+    (fun b w hw => hind ((N.map ψ).comap (DistribSMul.toAddMonoidHom (Fin n → R) (o b : R)))
       (fun a ha s hs => by
         have := hgen _ (hA b a ha) s hs
         show (fun i => (o b : R) * (σ (j a) * s i)) ∈ N.map ψ
@@ -248,7 +252,7 @@ theorem coord_frame {O K R' R : Type} [CommRing O] [Field K] [Algebra O K] [Comm
     (by
       rintro _ ⟨z, hz, rfl⟩
       obtain ⟨_, ⟨a, rfl⟩, w, hw, rfl⟩ := happ z hz
-      exact ⟨a, _, AddSubgroup.mem_map_of_mem _ hw, by rw [map_add, map_nsmul, hφ]⟩)
+      exact ⟨a, _, AddSubgroup.mem_map_of_mem _ hw, by rw [map_add (f := _), map_nsmul, hφ]⟩)
     (by
       rintro a _ ⟨w, hw, rfl⟩ h
       rw [hφ, ← map_nsmul] at h
@@ -329,7 +333,8 @@ theorem coord_adelic (F E : Type) [Field F] [NumberField F] [Field E] [NumberFie
 
 end Adelic
 
-open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.IndefR.Lev GlobalTheory.IndefiniteRowSideFullHecke
+open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.IndefR.Lev
+open GlobalTheory.IndefiniteRowSideFullHecke
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem gLat_one_eq {D : D7} (V : HSp D) :
@@ -342,8 +347,8 @@ theorem gLat_one_eq {D : D7} (V : HSp D) :
 theorem finR_rfl_val {D : D7} (V : HSp D) (κ : GA D V) :
     (LatticeBasisLifts.finR V rfl κ).1 = (finHom V κ).1.map (swapAE D) := rfl
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_lattice_coord : ∀ (D : D7) (V : HSp D) (r : ℕ) (hr : V.rank = r) (β : GL (Fin r) (EAf D)), LatticeBasisLifts.IsLatBasis V hr β → ∀ (La : Type) [AddCommGroup La] [Module (𝓞 D.host.E) La] (ι : La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)), LatEmb V ι → ∀ M : ℕ, 0 < M → ∃ ρ : La →+ (Fin r → LatticeBasisLifts.OAf D), (∀ (b : 𝓞 D.host.E) (a : La), ρ (b • a) = Formalism.L2.DIV.oToS D.host.F D.host.E b • ρ a) ∧ (∀ s : Fin r → LatticeBasisLifts.OAf D, ∃ (a : La) (s' : Fin r → LatticeBasisLifts.OAf D), s = ρ a + M • s') ∧ (∀ I J : Ideal (𝓞 D.host.E), I * J = Ideal.span {(M : 𝓞 D.host.E)} → ∀ a : La, (∀ i, ρ a i ∈ Formalism.L2.DIV.idS D.host.F I) → a ∈ I • (⊤ : Submodule (𝓞 D.host.E) La)) ∧ ∀ (κ : GA D V) (y : GL (Fin r) (LatticeBasisLifts.OAf D)), LatticeBasisLifts.finR V hr κ = Formalism.L2.DIV.frGL β y → ∀ a a' : La, (∃ w ∈ latGHat V 1, (finHom V κ).1.mulVec (finVec V (ι a)) - finVec V (ι a') = M • w) ↔ ∃ s : Fin r → LatticeBasisLifts.OAf D, y.1.mulVec (ρ a) - ρ a' = M • s := by
   intro D V r hr β hβ La _ _ ι hι M hM
   subst hr

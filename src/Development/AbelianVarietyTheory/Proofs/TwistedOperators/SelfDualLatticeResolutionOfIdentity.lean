@@ -1,5 +1,10 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCommonDenominator
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCommonDenominator
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes NumberField Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -53,7 +58,8 @@ theorem exists_extension {N : ℕ} (L : Submodule (𝓞 E) (Fin N → E)) (hL : 
       rw [show (algebraMap (𝓞 E) E) (ub j) = (b : E) * x j from this]
       ring
     have h2 := congrArg (fun z => ((φ z : 𝓞 E) : E)) h1
-    simp only [map_smul, map_sum, smul_eq_mul] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, smul_eq_mul] at h2
     push_cast at h2
     apply mul_left_cancel₀ (mul_ne_zero hbE hc0)
     have h3 : (b : E) * star (b : E) * (φ ⟨x, hx⟩ : E) =
@@ -89,7 +95,8 @@ theorem exists_decomp {N : ℕ} (L : Submodule (𝓞 E) (Fin N → E)) (hL : IsS
   have hrec : ∀ y : L, (y : Fin N → E) = ∑ k, ((g y k : 𝓞 E) : E) • (f (Pi.single k 1) : Fin N → E) := by
     intro y
     have h1 : f (g y) = y := LinearMap.congr_fun hfg y
-    conv_lhs => rw [← h1, pi_eq_sum_univ' (g y), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← h1, pi_eq_sum_univ' (g y), map_sum]
     simp only [map_smul, Submodule.coe_sum, Submodule.coe_smul, algebraMap_smul]
   apply Matrix.toLin'.injective
   apply LinearMap.ext_on hspan

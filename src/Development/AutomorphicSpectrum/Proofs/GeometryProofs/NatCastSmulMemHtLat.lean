@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenPtSpecializes
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZeroOfValuesStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCharacterSectionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumberStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsStalkFractionOfGenericStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusPointOverFractionFieldStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionLiftIsClosedImmersionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionExtendsFromStalkPullbackStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenPtSpecializes
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZeroOfValuesStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCharacterSectionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumberStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsStalkFractionOfGenericStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusPointOverFractionFieldStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionLiftIsClosedImmersionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionExtendsFromStalkPullbackStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT
@@ -443,11 +447,11 @@ theorem core_le (hfull : FullTorsion G ξ N) (w : Module.Dual Ω E)
     rw [hval, hv3] at e3
     obtain ⟨r', e5⟩ := snd_of_mod N _ _ e3
     refine ⟨r', ?_⟩
-    rw [← hje, hwj, e5, map_add, map_mul, map_natCast]
+    rw [← hje, hwj, e5, map_add (f := _), map_mul, map_natCast]
 
 include hkx in
 theorem exists_data {w : Module.Dual Ω E}
-    (hom : ∀ e' (v : epsAt x ⟶ G), IsTanAt G x v → (M.pt e').left = Spec.map (CommRingCat.ofHom (dualMap g)) ≫ v.left →
+    (hom : ∀ e' (v : epsAt x ⟶ G), IsTanAt G x v → (M.pt e').left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap g)) ≫ v.left →
       ∃ r, g r = w e') (hg : Function.Injective g) :
     ∃ (L₀ : Type) (_ : AddCommGroup L₀) (_ : Module R L₀) (M₀ : LieModel G x L₀) (j : L₀ → E)
       (w₀ : Module.Dual R L₀), (∀ l, (M.pt (j l)).left = Spec.map (CommRingCat.ofHom (dualMap g)) ≫ (M₀.pt l).left) ∧
@@ -478,7 +482,7 @@ theorem exists_data {w : Module.Dual Ω E}
     rw [M.smul, hjl, hjl, M₀.smul, ← Category.assoc, ← Category.assoc, ← spec_comp, ← spec_comp, dual_eps]))
   let w₀ : Module.Dual R L₀ :=
     { toFun := c
-      map_add' := fun a b => hg (by rw [map_add, hc, hc, hc, jadd, map_add])
+      map_add' := fun a b => hg (by rw [map_add (f := _), hc, hc, hc, jadd, map_add (f := _)])
       map_smul' := fun r a => hg (by
         rw [hc, jsmul, map_smul, smul_eq_mul, RingHom.id_apply, smul_eq_mul, map_mul, hc]) }
   exact ⟨L₀, _, _, M₀, j, w₀, hjl, fun l => (hc l).symm⟩
@@ -494,7 +498,7 @@ theorem core_ge [IsDomain R] [IsIntegrallyClosed R] [IsNoetherianRing R] (hN : N
           Out.WeilIs G L N xk g' (unitOn c) → secVal (B := k) g'.left W h f = c)
     (hb : ∀ e' (v : epsAt x ⟶ G), IsTanAt G x v → (M.pt e').left = Spec.map (CommRingCat.ofHom (dualMap g)) ≫ v.left →
         ∀ h : ⊤ ≤ v.left ⁻¹ᵁ W, ∃ r, w e' = g (BT.valAt v.left W h f).snd + N * g r)
-    (hom : ∀ e' (v : epsAt x ⟶ G), IsTanAt G x v → (M.pt e').left = Spec.map (CommRingCat.ofHom (dualMap g)) ≫ v.left →
+    (hom : ∀ e' (v : epsAt x ⟶ G), IsTanAt G x v → (M.pt e').left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap g)) ≫ v.left →
       ∃ r, g r = w e') :
     M.IsHTFormOver N x g w := by
   have hkg : ∀ r, kL hg (algebraMap R (FractionRing R) r) = g r := fun r => RingHom.congr_fun (kL_comp hg) r
@@ -574,7 +578,7 @@ theorem core_ge [IsDomain R] [IsIntegrallyClosed R] [IsNoetherianRing R] (hN : N
     exact fun z _ => hl (by trivial)
   obtain ⟨r, hr⟩ := hb (j l) _ (M₀.tan l) (hjl l) hl
   have e5 : w₀ l = (BT.valAt (M₀.pt l).left W hl f).snd + N * r := hg (by
-    rw [← hwj, hr, map_add, map_mul, map_natCast])
+    rw [← hwj, hr, map_add (f := _), map_mul, map_natCast])
   have e6 : BT.valAt v' ⊤ le_top s = BT.valAt (v' ≫ i) W h2 f := by
     rw [valAt_comp, agree]
     exact (valAt_res v' (i ⁻¹ᵁ W) ⊤ le_top h2 le_top s).symm
@@ -584,7 +588,7 @@ theorem core_ge [IsDomain R] [IsIntegrallyClosed R] [IsNoetherianRing R] (hN : N
 include hkx hg in
 theorem core_smul [IsDomain R] {T : Type} [CommGroup T] [Finite T] (Γ' : QFGroup R T) (i : Γ'.G.left ⟶ G.left)
     (htor : Γ'.IsTorsionAlong G x N i) {w : Module.Dual Ω E}
-    (hom : ∀ e' (v : epsAt x ⟶ G), IsTanAt G x v → (M.pt e').left = Spec.map (CommRingCat.ofHom (dualMap g)) ≫ v.left →
+    (hom : ∀ e' (v : epsAt x ⟶ G), IsTanAt G x v → (M.pt e').left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap g)) ≫ v.left →
       ∃ r, g r = w e') :
     M.IsHTFormOver N x g ((N : Ω) • w) := by
   obtain ⟨L₀, _, _, M₀, j, w₀, hjl, hwj⟩ := exists_data hkx M hom hg

@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import Mathlib
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+public import Mathlib
+
+@[expose] public section
 
 section
 

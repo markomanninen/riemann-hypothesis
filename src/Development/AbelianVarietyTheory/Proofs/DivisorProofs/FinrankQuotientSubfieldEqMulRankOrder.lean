@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+
+@[expose] public section
 
 open GlobalTheory.HSAmp
 
@@ -48,17 +52,18 @@ theorem finrank_ratF_eq_mul_rank (k K : Type) [CommRing k] [IsDomain k] [Module.
     have hcomp : ι.comp (Int.castRingHom k) = Int.castRingHom K := RingHom.ext_int _ _
     have hev : MvPolynomial.eval₂Hom ι y
         (∑ i, MvPolynomial.C (b i) * MvPolynomial.map (Int.castRingHom k) (P i)) = 0 := by
-      simp only [map_sum, map_mul, MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂Hom_map_hom, hcomp, hP]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂Hom_map_hom, hcomp, hP]
       refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) hsum
       ring
     have hP0 := hinj (hev.trans (map_zero _).symm)
     have hPi : ∀ i, P i = 0 := by
       intro i
       ext m
-      have hm := congrArg (MvPolynomial.coeff m) hP0
+      have hm := congrArg (AddMonoidAlgebra.coeff · m) hP0
       simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_map,
-        MvPolynomial.coeff_zero, eq_intCast] at hm
-      have hm' : ∑ j, MvPolynomial.coeff m (P j) • b j = 0 := by
+        MvPolynomial.coeff_zero, Finsupp.zero_apply, eq_intCast] at hm
+      have hm' : ∑ j, AddMonoidAlgebra.coeff (P j) m • b j = 0 := by
         rw [← hm]; refine Finset.sum_congr rfl fun j _ => ?_
         rw [zsmul_eq_mul, mul_comm]
       rw [MvPolynomial.coeff_zero]
@@ -82,7 +87,8 @@ theorem finrank_ratF_eq_mul_rank (k K : Type) [CommRing k] [IsDomain k] [Module.
       obtain ⟨a, rfl⟩ := hcl hz
       have hsr := b.sum_repr a
       change ι a ∈ _
-      rw [← hsr, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hsr, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [map_zsmul]
       exact zsmul_mem (Submodule.subset_span (Set.mem_range_self (f := fun i => ι (b i)) i)) _

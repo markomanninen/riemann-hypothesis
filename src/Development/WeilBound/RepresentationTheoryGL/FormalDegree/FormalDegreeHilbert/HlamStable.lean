@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.MomB
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.InConeRefl
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ProdSubLtEqFactorial
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.PolarJmConjTranspose
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.MomB
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.InConeRefl
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ProdSubLtEqFactorial
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.PolarJmConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,10 +29,6 @@ def hI {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (μ : Fin n 
     (p : KG ε × KG ε) : ℝ := phiK μ x p.1 * phiK μ x p.2 * cK T (p.1⁻¹ * p.2) ^ 2
 
 def Dz (n : ℕ) : Fin n → ℤ := fun a => (n : ℤ) - 1 - ((a : ℕ) : ℤ)
-
-def CoefMul : Prop :=
-  ∀ (n : ℕ) (ε : Fin n → Bool) (Λ₁ Λ₂ Λ₃ : Fin n → ℝ) (T₁ : KType ε Λ₁) (T₂ : KType ε Λ₂) (T₃ : KType ε Λ₃),
-    Λ₃ = Λ₁ + Λ₂ → ∀ k, cK T₃ k = cK T₁ k * cK T₂ k
 
 def CoefPow : Prop :=
   ∀ (n : ℕ) (ε : Fin n → Bool) (lam : Fin n → ℝ), IsHCParam lam → ∀ (T : KType ε (lowK ε lam)) (TD : KType ε (Dvec n))

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAGrp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCVPresFF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAGrp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCVPresFF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -67,8 +71,8 @@ def TVCrd : Prop :=
     ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun c' => gaugeF k r c' • Φ c') U →
       gaugeF k r c • kvC r (kvTop k r y) r Φ c = (vABm r y r).1 (fun c' => gaugeF k r c' • Φ c') c
 
-open scoped ContDiff in
 
+open scoped ContDiff in
 theorem jDACapTodaV_of_parts (h1 : TVCoef) (h2 : TVGrp) (h3 : TVCrd) : JDACapTodaV := by
   intro Wp Wq _ _ _ _ _ _ P Bs hpl hk y J hJ c hc g hg hcg
   have e1 := h1 Wp Wq P Bs hpl hk y J hJ c hc g hg hcg
@@ -86,7 +90,7 @@ theorem jDACapTodaV_of_parts (h1 : TVCoef) (h2 : TVGrp) (h3 : TVCrd) : JDACapTod
     simp only [gaugeF, Q.resG, smul_eq_mul, mul_one]
   have hsm : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞)
       (fun c' => gaugeF P.k P.r c' • J (Q.wCell P.k P.r (Fin.last P.r) c' * g)) U' := by
-    refine ((hF.comp hemb.contDiffOn (fun c' hc' => hc'.1))).congr (fun c' hc' => ?_)
+    refine ((hF.comp (s := U') hemb.contDiffOn (fun c' hc' => hc'.1))).congr (fun c' hc' => ?_)
     rw [hgauge c']
     exact hFeq (c', g) hc'.1 hg
   have e3 := h3 P.k P.r (Wq →L[ℂ] Wp) y (fun c' => J (Q.wCell P.k P.r (Fin.last P.r) c' * g)) U' c hU'o

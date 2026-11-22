@@ -1,7 +1,11 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
-import Development.WeilBound.CoreStatements.SesquilinearFractions.GBridge
-import Development.WeilBound.CoreStatements.SesquilinearFractions.GModel
-import Development.WeilBound.CoreStatements.SesquilinearFractions.FrameBCLin
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.GBridge
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.GModel
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.FrameBCLin
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor

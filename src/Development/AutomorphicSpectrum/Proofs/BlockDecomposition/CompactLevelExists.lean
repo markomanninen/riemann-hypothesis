@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.IsPairLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBallSubset
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSat2InvTConj
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsNormalisedOfDualIsConj
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockIntegralIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockInverseIntegralIff
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.IsPairLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBallSubset
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSat2InvTConj
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsNormalisedOfDualIsConj
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockIntegralIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockInverseIntegralIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ namespace GlobalTheory.CompanionTheory.KExLevel
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-theorem congSub_le_KGL (w : Pl E) (n k : ℕ) : congSub w n k ≤ KGL w n :=
+theorem congSub_le_KGL (w : Pl E) (n k : ℕ) : congSub w n k ≤ KGL w (n := n) :=
   fun g hg => ((mem_congSub_iff w n k g).1 hg).1
 
 theorem eventually_congSub_le (w : Pl E) (a : ℕ) (U : Subgroup (GLw a w)) (hU : IsOpen (U : Set (GLw a w))) :
@@ -94,7 +98,7 @@ theorem blocks_mem_congSub {n a b : ℕ} (h : a + b = n) (w : Pl E) (m : GLw a w
   · rw [← i22]; exact h2 _ _
   · rw [← v22, ← o22]; exact hc _ _
 
-theorem conj_mem_congSub (w : Pl E) (n k : ℕ) {x g : GLw n w} (hx : x ∈ KGL w n) (hg : g ∈ congSub w n k) :
+theorem conj_mem_congSub (w : Pl E) (n k : ℕ) {x g : GLw n w} (hx : x ∈ KGL w (n := n)) (hg : g ∈ congSub w n k) :
     x * g * x⁻¹ ∈ congSub w n k := by
   obtain ⟨y, hy, rfl⟩ := hg
   obtain ⟨z, rfl⟩ := hx
@@ -143,8 +147,8 @@ theorem kEx : KEx := by
   obtain ⟨M, hA, hB⟩ := (((Filter.eventually_all_finset _).2 fun a ha =>
     (Filter.eventually_all_finset _).2 (A a ha)).and ((Filter.eventually_all_finset _).2 fun a ha =>
     (Filter.eventually_all_finset _).2 (B a ha))).exists
-  have hT : ∀ w, w ∈ T → (if w ∈ T then congSub w n M else KGL w n) = congSub w n M := fun w hw => if_pos hw
-  refine ⟨fun w => if w ∈ T then congSub w n M else KGL w n, ⟨fun w => ?_, ?_⟩, fun w => ?_, fun w hw => ?_,
+  have hT : ∀ w, w ∈ T → (if w ∈ T then congSub w n M else KGL w (n := n)) = congSub w n M := fun w hw => if_pos hw
+  refine ⟨fun w => if w ∈ T then congSub w n M else KGL w (n := n), ⟨fun w => ?_, ?_⟩, fun w => ?_, fun w hw => ?_,
     fun a ha w hw m X hm => ?_, fun a ha w hw hs u hc m X hm => ?_⟩
   · by_cases h : w ∈ T
     · simp only [if_pos h]; exact isOpen_congSub w n M
@@ -185,7 +189,7 @@ theorem kEx : KEx := by
     let p : ∀ c : ℕ, GLw c u → GLw c (cw u) := fun c g =>
       (invT (cloc u) c).symm ((PhiU c (u.adicCompletion E))⁻¹ * g * PhiU c (u.adicCompletion E))
     have hp : ∀ c (g : GLw c u), g ∈ congSub u c M → p c g ∈ congSub (cw u) c M := fun c g hg => by
-      have hk : (PhiU c (u.adicCompletion E))⁻¹ ∈ KGL u c := inv_mem (GlobalTheory.ThetaSatake.phiU_mem _ c)
+      have hk : (PhiU c (u.adicCompletion E))⁻¹ ∈ KGL u (n := c) := inv_mem (GlobalTheory.ThetaSatake.phiU_mem _ c)
       have h1 := conj_mem_congSub u c M hk hg
       rw [inv_inv] at h1
       change (invT (cloc u) c).symm _ ∈ _

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisNewtonFrac
-import GroundTheory.PAdicHodge.BCrisRegular
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisNewtonFrac
+public import GroundTheory.PAdicHodge.BCrisRegular
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -58,8 +63,8 @@ theorem natCast_p_ne_zero_bdR : (p : 𝔹) ≠ 0 := by
   exact fun h => (Nat.cast_ne_zero.2 hp.out.ne_zero : (p : ℚ_[p]) ≠ 0)
     ((algebraMap ℚ_[p] 𝔹).injective (by rw [h, map_zero]))
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_iotaB_mul_eq (u : BCris hε) : ∃ w s : ACris ℂ_[p] p, s ≠ 0 ∧
     iotaB hε hζ u * algebraMap 𝔹 𝔹dR (iota ℂ_[p] p s) = algebraMap 𝔹 𝔹dR (iota ℂ_[p] p w) := by
   obtain ⟨w, n, m, h⟩ := exists_mul_eq_of_away_away (iota ℂ_[p] p) (iotaPlus ℂ_[p] p)
@@ -73,8 +78,8 @@ theorem exists_iotaB_mul_eq (u : BCris hε) : ∃ w s : ACris ℂ_[p] p, s ≠ 0
   rw [map_mul, map_pow, map_pow, iota_periodT, map_natCast, map_zero] at this
   exact mul_ne_zero (pow_ne_zero _ (fontaineT_ne_zero hε hζ)) (pow_ne_zero _ natCast_p_ne_zero_bdR) this
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem isACrisFraction_of_mem_fracBCris {y : PadicAlgCl p}
     (hy : algClToBdRField p y ∈ fracBCris hε hζ) : IsACrisFraction y := by
   by_cases hy0 : y = 0
@@ -103,8 +108,8 @@ theorem mem_unramifiedClosure_of_mem_fracBCris {y : PadicAlgCl p}
 
 variable {K : IntermediateField ℚ_[p] (PadicAlgCl p)}
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem fracBCris_fixed [FiniteDimensional ℚ_[p] K] {x : 𝔹dR} (hx : x ∈ fracBCris hε hζ)
     (hfix : ∀ σ : Gal(PadicAlgCl p/K), σ • x = x) :
     ∃ k ∈ maxUnramified p K, x = algClToBdRField p k := by
@@ -113,27 +118,6 @@ theorem fracBCris_fixed [FiniteDimensional ℚ_[p] K] {x : 𝔹dR} (hx : x ∈ f
   refine ⟨k, ⟨k.2, ?_⟩, e⟩
   exact mem_unramifiedClosure_of_mem_fracBCris hε hζ (e ▸ hx)
 
-set_option maxHeartbeats 1600000 in
-
-theorem mem_fracBCris_of_mem_maxUnramified {k : PadicAlgCl p} (hk : k ∈ maxUnramified p K) :
-    algClToBdRField p k ∈ fracBCris hε hζ ∧
-      ∀ σ : Gal(PadicAlgCl p/K), σ • algClToBdRField p k = algClToBdRField p k := by
-  obtain ⟨x, -, hx⟩ := exists_bCris_fixed hε hζ hk
-  refine ⟨?_, fun σ => gal_smul_algebraMap_intermediateField_bDeRham σ (⟨k, hk.1⟩ : K)⟩
-  have e : algClToBdRField p k = iotaB hε hζ x := hx.symm
-  rw [e]
-  exact iotaB_mem_fracBCris hε hζ x
-
-theorem fixed_fracBCris_eq [FiniteDimensional ℚ_[p] K] :
-    {x : 𝔹dR | x ∈ fracBCris hε hζ ∧ ∀ σ : Gal(PadicAlgCl p/K), σ • x = x} =
-      algClToBdRField p '' (maxUnramified p K : Set (PadicAlgCl p)) := by
-  ext x
-  constructor
-  · rintro ⟨hx, hfix⟩
-    obtain ⟨k, hk, rfl⟩ := fracBCris_fixed hε hζ hx hfix
-    exact ⟨k, hk, rfl⟩
-  · rintro ⟨k, hk, rfl⟩
-    exact mem_fracBCris_of_mem_maxUnramified hε hζ hk
 
 end ACris
 

@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
-import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
-import Development.EtaleCohomology.KummerTheory.InjSlice
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.WtDegConst
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+public import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
+public import Development.EtaleCohomology.KummerTheory.InjSlice
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.WtDegConst
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace
@@ -48,8 +52,8 @@ def Off {Z X : Scheme.{0}} (ι : Z ⟶ X) (U : X.Opens) : Prop := (U : Set X) = 
 def cup0 (q : ℕ) {X : Scheme.{0}} {n m r : ℤ} (h : n + m = r) (a : Ht q (sch.obj X) n 0) (b : Ht q (sch.obj X) m 0) :
     Ht q (sch.obj X) r 0 := (cup q a b).cast h (add_zero 0)
 
-variable (k) in
 
+variable (k) in
 structure Gys0 (l : ℕ) where
   g : ∀ (j : ℕ) {d e : ℕ} {Z X : Scheme.{0}} {p : X ⟶ S k} {ι : Z ⟶ X}, IsPair d e p ι → ∀ {n m : ℤ}, n + 2 * d = m →
     Ht (l ^ j) (sch.obj Z) n 0 →+ Ht (l ^ j) (sch.obj X) m 0
@@ -84,8 +88,8 @@ def Gys0.hl (G : Gys0 k l) {d e : ℕ} {Z X : Scheme.{0}} {p : X ⟶ S k} {ι : 
 def Gys0.q (G : Gys0 k l) {d e : ℕ} {Z X : Scheme.{0}} {p : X ⟶ S k} {ι : Z ⟶ X} (h : IsPair d e p ι) {n m : ℤ}
     (hn : n + 2 * d = m) : V l Z n →ₗ[ℚ_[l]] V l X m := (G.hl h hn).baseChange ℚ_[l]
 
-variable (k l) in
 
+variable (k l) in
 structure GysQ where
   g : ∀ {d e : ℕ} {Z X : Scheme.{0}} {p : X ⟶ S k} {ι : Z ⟶ X}, IsPair d e p ι → ∀ {n m : ℤ}, n + 2 * d = m →
     V l Z n →ₗ[ℚ_[l]] V l X m
@@ -102,8 +106,8 @@ structure GysQ where
     (h1 : n + m = r) (h2 : r + 2 * d = t) (h3 : m + 2 * d = s) (h4 : n + s = t) (a : V l X n) (b : V l Z m),
     g h h2 (cupV l Z h1 (pb l ι n a) b) = cupV l X h4 a (g h h3 b)
 
-open Classical in
 
+open Classical in
 def GysQ.cls (G : GysQ k l) (d e : ℕ) {Z X : Scheme.{0}} (p : X ⟶ S k) (ι : Z ⟶ X) : V l X (2 * d) :=
   if h : IsPair d e p ι then G.g h (zero_add _) (oneV l Z) else 0
 
@@ -112,25 +116,25 @@ abbrev GysQ.pt (G : GysQ k l) (d : ℕ) {X : Scheme.{0}} {p : X ⟶ S k} (y : Pt
 abbrev GysQ.diag (G : GysQ k l) (d : ℕ) {X : Scheme.{0}} (p : X ⟶ S k) : V l (pullback p p) (2 * d) :=
   G.cls d d (pullback.fst p p ≫ p) (pullback.diagonal p)
 
-variable (l) in
 
+variable (l) in
 abbrev ext2 {X : Scheme.{0}} (p : X ⟶ S k) {a b n : ℤ} (h : a + b = n) (u : V l X a) (v : V l X b) : V l (pullback p p) n :=
   cupV l (pullback p p) h (pb l (pullback.fst p p) a u) (pb l (pullback.snd p p) b v)
 
-variable (l) in
 
+variable (l) in
 def IsInt {d : ℕ} {X : Scheme.{0}} (p : X ⟶ S k) (lam : V l X (2 * d) →ₗ[ℚ_[l]] ℚ_[l]) {m n : ℤ} (h : 2 * d + m = n)
     (Λ : V l (pullback p p) n →ₗ[ℚ_[l]] V l X m) : Prop :=
   (∀ u v, Λ (ext2 l p h u v) = lam u • v) ∧ ∀ (a b : ℤ) (h' : a + b = n), b ≠ m → ∀ u v, Λ (ext2 l p h' u v) = 0
 
-variable (l) in
 
+variable (l) in
 def powV {X : Scheme.{0}} (x : V l X 2) : ∀ j : ℕ, V l X (2 * j)
   | 0 => oneV l X
   | j + 1 => cupV l X (by push_cast; ring) (powV x j) x
 
-variable (l) in
 
+variable (l) in
 structure PBQ {E Z : Scheme.{0}} (r : E ⟶ Z) (ξ : V l E 2) : Prop where
   span : ∀ n : ℤ, Submodule.span ℚ_[l] {z : V l E n | ∃ (j : ℕ) (a : ℤ) (h : a + 2 * j = n) (u : V l Z a),
     z = cupV l E h (pb l r a u) (powV l ξ j)} = ⊤

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SectionDecompositionOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InverseSplitting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZhatSectionExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerSplit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerPairs
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SectionDecompositionOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InverseSplitting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZhatSectionExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerSplit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerPairs
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

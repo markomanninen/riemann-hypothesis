@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -69,7 +73,7 @@ def Dsum {I : Type w} [DecidableEq I] (E : I → Cx.{w} K) : Cx.{w} K where
     induction x using DirectSum.induction_on with
     | zero => simp
     | of i x => simp [← DirectSum.lof_eq_of K, DirectSum.lmap_lof, (E i).dd]
-    | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
 
 variable {ι : Type} [DecidableEq ι]
 
@@ -99,7 +103,7 @@ def Dsum.map {I : Type w} [DecidableEq I] {E E' : I → Cx.{w} K} (f : ∀ i, Cx
     | of i x =>
       change DirectSum.lmap _ (DirectSum.lmap _ _) = DirectSum.lmap _ (DirectSum.lmap _ _)
       simp [← DirectSum.lof_eq_of K, DirectSum.lmap_lof, (f i).comm]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def sumSy {I : Type w} [DecidableEq I] (A : I → Sy.{w} K ι) : Sy.{w} K ι where
   K S := Dsum fun i => (A i).K S
@@ -110,14 +114,14 @@ def sumSy {I : Type w} [DecidableEq I] (A : I → Sy.{w} K ι) : Sy.{w} K ι whe
     | of i x =>
       change DirectSum.lmap _ _ = _
       simp [← DirectSum.lof_eq_of K, DirectSum.lmap_lof, (A i).res_id]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   res_comp h h' n x := by
     induction x using DirectSum.induction_on with
     | zero => simp
     | of i x =>
       change DirectSum.lmap _ (DirectSum.lmap _ _) = DirectSum.lmap _ _
       simp [← DirectSum.lof_eq_of K, DirectSum.lmap_lof, (A i).res_comp]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 structure XD (K : Type) [Field K] where
   C₁ : Type 1

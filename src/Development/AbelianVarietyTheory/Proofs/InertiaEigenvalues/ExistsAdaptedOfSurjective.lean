@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DualExactSequence
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AssociatedPowOfUnits
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsComponentEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AntitoneFiltrationExistsAdaptedLinearIndepSet
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndepOfLinearIndependentDdRE
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankMulLeFinrankDdROfSpans
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinBasisSubsetOfIsField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanDOfFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFilteredStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConcretePeriodDeRhamModuleFinrankLeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveTensorBcrisToBdR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyThetaOnBdRPlusPeriodData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DualExactSequence
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AssociatedPowOfUnits
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsComponentEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AntitoneFiltrationExistsAdaptedLinearIndepSet
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndepOfLinearIndependentDdRE
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankMulLeFinrankDdROfSpans
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinBasisSubsetOfIsField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanDOfFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFilteredStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConcretePeriodDeRhamModuleFinrankLeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveTensorBcrisToBdR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyThetaOnBdRPlusPeriodData
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem exists_adapted_of_surjective (hF : IsField F) [FiniteDimensional LL V'] 
     have qa : ∀ x y, q x → q y → q (x + y) := by
       rintro x y ⟨r, hr, hx⟩ ⟨s, hs, hy⟩
       exact ⟨r + s, fun p => Submodule.add_mem _ (hr p) (hs p), by
-        simp only [map_add, hx, hy, Pi.add_apply, LinearMap.add_apply, Finset.sum_add_distrib]⟩
+        simp only [map_add (f := _), hx, hy, Pi.add_apply, LinearMap.add_apply, Finset.sum_add_distrib]⟩
     have qs : ∀ (c : LL) x, q x → q (c • x) := by
       rintro c x ⟨r, hr, hx⟩
       exact ⟨c • r, fun p => Submodule.smul_mem _ _ (hr p), by
@@ -68,7 +72,7 @@ theorem exists_adapted_of_surjective (hF : IsField F) [FiniteDimensional LL V'] 
       intro a b hb x hx
       induction hx using Submodule.span_induction with
       | zero => simpa using q0
-      | add x y _ _ hx hy => rw [map_add]; exact qa _ _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact qa _ _ hx hy
       | smul c x _ hx => rw [map_smul]; exact qs _ _ hx
       | mem x hx =>
         obtain ⟨i, hi, rfl⟩ := hx
@@ -84,7 +88,8 @@ theorem exists_adapted_of_surjective (hF : IsField F) [FiniteDimensional LL V'] 
     obtain ⟨x, hx, rfl⟩ := exists_ext_mem_FilV PD g hs hy
     obtain ⟨m', k', b, e, he, rfl⟩ := h n x hx
     change q _
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_induction _ q qa q0 fun i _ => ?_
     rw [ext_mulR, ← sm_one_tmul, sm_comm, sm_one_tmul, ← ext_sm]
     refine qm (k' i) (b i) (he i).2.2 _ ((hA (k' i)).le ⟨_, ⟨?_, ?_⟩, rfl⟩)
@@ -199,9 +204,6 @@ theorem ddRSpanAt : DdRSpanAt P K LL := by
   · rintro _ ⟨c, x, hx, rfl⟩
     exact mulR_mem_DdR (P.PD K) L.ρ c (ιV_mem_DdR (P.PD K) L.ρ hx)
 
-theorem ddRInjAt : DdRInjAt P K LL := fun _ _ m c x hc _ h =>
-  (tensInj T K).tensor (LL := ↥LL.1) m c hc x h
-
 theorem componentIsoAt : ComponentIsoAt P K LL := by
   intro L h τ
   have := K.2
@@ -296,8 +298,8 @@ theorem potCrysDeRhamAt : PotCrysDeRhamAt P K LL := fun L K' hK h =>
   isDR_of_spans T K LL L.ρ (GlobalTheory.DRFil.spans_descent l P K K' LL hK L.V L.ρ
     ((filSpans T K' LL _ (crys T K' LL _ h).1).spans _))
 
-omit T in
 
+omit T in
 theorem deRhamComparison (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P)
     (h : GlobalTheory.Per.IsStd P AI) : DeRhamComparison l P := by
   obtain ⟨T⟩ := h

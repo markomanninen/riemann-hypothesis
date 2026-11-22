@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory
@@ -47,9 +52,9 @@ theorem exists_derivation_eq_one_of_pow_mem : ∀ (p : ℕ) [Fact p.Prime] (K : 
   let Dl : K →ₗ[L] K :=
     { toFun := fun x => aeval f (derivative (G x))
       map_add' := fun x y => by
-        rw [← map_add, ← derivative_add]
+        rw [← map_add (f := _), ← derivative_add]
         apply hwd
-        rw [hG, map_add, hG, hG]
+        rw [hG, map_add (f := _), hG, hG]
       map_smul' := fun c x => by
         simp only [RingHom.id_apply]
         rw [← map_smul (aeval f), ← map_smul derivative]
@@ -57,7 +62,7 @@ theorem exists_derivation_eq_one_of_pow_mem : ∀ (p : ℕ) [Fact p.Prime] (K : 
         rw [hG, map_smul, hG] }
   refine ⟨Derivation.mk' Dl (fun x y => ?_), ?_⟩
   · show aeval f (derivative (G (x * y))) = x • aeval f (derivative (G y)) + y • aeval f (derivative (G x))
-    rw [hwd (G (x * y)) (G x * G y) (by rw [hG, map_mul, hG, hG]), derivative_mul, map_add, map_mul, map_mul, hG, hG, smul_eq_mul, smul_eq_mul]
+    rw [hwd (G (x * y)) (G x * G y) (by rw [hG, map_mul, hG, hG]), derivative_mul, map_add (f := _), map_mul, map_mul, hG, hG, smul_eq_mul, smul_eq_mul]
     ring
   · show aeval f (derivative (G f)) = 1
     rw [hwd (G f) X (by rw [hG, aeval_X]), derivative_X, map_one]

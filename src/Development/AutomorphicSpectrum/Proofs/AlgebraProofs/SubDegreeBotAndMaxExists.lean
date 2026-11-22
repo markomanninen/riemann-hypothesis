@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BundleDegreeEqSumValuationsStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DegreeMonoLatticeLeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubAndQuotientBundlesStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubDegreeNonposTrivialLatticeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BundleDegreeEqSumValuationsStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DegreeMonoLatticeLeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubAndQuotientBundlesStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubDegreeNonposTrivialLatticeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def latOf (i : C.I) {n : ℕ} (b : Module.Basis (Fin n) K V) : AddSubgroup V whe
   carrier := {x | ∀ q, C.v i (b.repr x q) ≤ 1}
   zero_mem' := fun q => by simp
   add_mem' := fun {x y} hx hy q => by
-    rw [map_add, Finsupp.add_apply]; exact (C.v i).map_add_le (hx q) (hy q)
+    rw [map_add (f := _), Finsupp.add_apply]; exact (C.v i).map_add_le (hx q) (hy q)
   neg_mem' := fun {x} hx q => by
     rw [map_neg, Finsupp.neg_apply, Valuation.map_neg]; exact hx q
 
@@ -108,7 +112,8 @@ theorem exists_scale (i : C.I) {n m : ℕ} (b : Module.Basis (Fin n) K V)
   have hle : C.v i (b.repr x q) ≤ C.v i c := by
     have hx' : b.repr x q = ∑ j, b'.repr x j * b.repr (b' j) q := by
       conv_lhs => rw [← b'.sum_repr x]
-      rw [map_sum, Finsupp.finset_sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finsupp.finsetSum_apply]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
     rw [hx']

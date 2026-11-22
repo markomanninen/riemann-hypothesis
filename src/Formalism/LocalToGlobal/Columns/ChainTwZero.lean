@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.ChainTwMain
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainTwMain
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -27,7 +31,7 @@ theorem twZrMap_apply (g : (Fin n → k) →ₗ[k] (Fin n → k)) (v : Fin (n + 
     twZrMap g v = Loc.inX k n c (g (twZrPr v)) + (v - Loc.inX k n c (twZrPr v)) := rfl
 
 theorem twZrPr_map (g : (Fin n → k) →ₗ[k] (Fin n → k)) (v : Fin (n + c) → k) : twZrPr (twZrMap g v) = g (twZrPr v) := by
-  rw [twZrMap_apply, map_add, map_sub, twZrPr_inX, twZrPr_inX, sub_self, add_zero]
+  rw [twZrMap_apply, map_add (f := _), map_sub, twZrPr_inX, twZrPr_inX, sub_self, add_zero]
 
 theorem twZrMap_comp (g g' : (Fin n → k) →ₗ[k] (Fin n → k)) (v : Fin (n + c) → k) :
     twZrMap g (twZrMap g' v) = twZrMap (g ∘ₗ g') v := by
@@ -119,11 +123,11 @@ theorem twZrExt_stab (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (S
     by_cases hl : l.1 < n
     · have := (hgv.1 fun i => by
         have h1 := h (Fin.castAdd c i)
-        rw [twZrExt_apply, twZrMap_coord, dif_pos (by simp)] at h1
+        rw [twZrExt_apply, twZrMap_coord, dite_eq_left (by simp)] at h1
         exact h1) ⟨l.1, hl⟩
       exact this
     · have h1 := h l
-      rwa [twZrExt_apply, twZrMap_coord, dif_neg hl] at h1
+      rwa [twZrExt_apply, twZrMap_coord, dite_eq_right hl] at h1
   · intro h l
     rw [twZrExt_apply, twZrMap_coord]
     split_ifs with hl
@@ -195,7 +199,7 @@ theorem twZr_chr (hc : cst.Ok) (P : rowSG Pr sel mu) (hP : P.1 ∉ Pr.vGs) (r : 
   rw [Matrix.det_isEmpty]
   unfold LocE.unitV
   have hu : IsUnit (redP P.1 (1 : X.E)) := by rw [redP_one]; exact isUnit_one
-  rw [dif_pos hu]
+  rw [dite_eq_left hu]
   have : hu.unit = 1 := Units.ext (by rw [IsUnit.unit_spec, redP_one]; rfl)
   rw [this, map_one, Units.val_one, inv_one]
 

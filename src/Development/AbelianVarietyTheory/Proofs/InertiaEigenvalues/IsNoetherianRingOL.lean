@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Saturated
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.LettersFreeOfRank
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.PointRingCommRing
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachModuleUniqueness
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubstInvariants
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Saturated
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.LettersFreeOfRank
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.PointRingCommRing
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubstInvariants
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.WachUse Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.AdmLoc GlobalTheory.SenLines
 
@@ -22,7 +26,7 @@ theorem exists_gamma_q (l : ℕ) (q : O⟦X⟧) (hq : X * q = (1 + X) ^ l - 1) (
   have h1 : γ X = X * (1 + (1 + X) * q) := by rw [hγ, pow_add, hy]; ring
   have h2 : γ X * γ q = X * q * S := by
     have := geom_sum_mul (1 + X * q : O⟦X⟧) (1 + l)
-    rw [← map_mul, hq, map_sub, map_pow, map_add, map_one, hγ, add_sub_cancel, ← pow_mul, mul_comm (1 + l),
+    rw [← map_mul, hq, map_sub, map_pow, map_add (f := _), map_one, hγ, add_sub_cancel, ← pow_mul, mul_comm (1 + l),
       pow_mul, hy, ← this, ← hS]
     ring
   have h3 : (1 + (1 + X) * q) * γ q = q * S := by
@@ -57,7 +61,7 @@ theorem dvd_of_comm [IsNoetherianRing O] (l : ℕ) (q : O⟦X⟧) (hq0 : q ≠ 0
   simp only [map_mul, map_pow, hh, hh', hw', hu, map_one, mul_one] at E2
   rw [map_sub, ← Ideal.mem_span_singleton, ← Ideal.Quotient.eq]
   apply (u.isUnit.map (Ideal.Quotient.mk (Ideal.span {q}))).mul_left_cancel
-  simp only [map_mul, map_pow, map_add, map_one, map_natCast] at E2 ⊢
+  simp only [map_mul, map_pow, map_add (f := _), map_one, map_natCast] at E2 ⊢
   linear_combination E2
 
 variable {ι : Type} (J : O⟦X⟧ →ₐ[O] O⟦X⟧) (hJ : Function.Injective J) (S : Finset ι)
@@ -204,11 +208,11 @@ theorem pow_eq_of_frob [IsNoetherianRing O] {g : W.Gam} {J : O⟦X⟧ →ₐ[O] 
     (h6.symm.dvd.trans ⟨W.π₀₁ * z i + C c, by
       rw [map_sub, map_mul, map_natCast, map_one]
       linear_combination W.π₀₁ * e4 - C c * h3⟩)
-    ⟨X * W.φ₀ (r' (i - 1)), by rw [map_add, map_one, map_mul, W.φ₀_X]; ring⟩ e6
+    ⟨X * W.φ₀ (r' (i - 1)), by rw [map_add (f := _), map_one, map_mul, W.φ₀_X]; ring⟩ e6
   exact sub_eq_zero.1 (eq_zero_of_dvd_C J h1 W.DelF (fun δ => W.γ₀ δ) h2 _ (h6.dvd.trans e7))
 
-omit [IsDomain O] in
 
+omit [IsDomain O] in
 theorem lines_of_frob (hq : IsUnit (algebraMap (LetA O n) W.EE W.q)) {β : W.DD T}
     (hN : W.N T = Submodule.span (LetA O n) {β}) {k : ℕ} {f : LetA O n} (hf : W.q ^ k • W.φD T β = f • β)
     {i : ZMod n} {m : ℕ} {u : (O⟦X⟧)ˣ} (hu : f i = W.q₀ ^ m * u) {a : ℤ} (ha : (m : ℤ) = k + a) :
@@ -276,7 +280,7 @@ theorem rankOne_of_qFrame [IsNoetherianRing O] [CharZero LL] (hs : W.s = 1) {g :
   rw [Fin.sum_univ_one, hA0] at hz'
   have e := pow_eq_of_frob W T hJ hg hN hi hf hu (ν ⟨b 0, hb1 0⟩).2.1 hz (hν ⟨b 0, hb1 0⟩) hz'
   have e1 := congrArg (algebraMap O LL) e
-  simp only [map_pow, map_mul, map_add, map_sub, map_one, map_natCast] at e1
+  simp only [map_pow, map_mul, map_add (f := _), map_sub, map_one, map_natCast] at e1
   rw [hc, sub_sub_cancel] at e1
   have e2 : (1 + (PD.p : ℚ)) ^ (k : ℤ) = (1 + (PD.p : ℚ)) ^ ((m : ℤ) + -a i) := by
     rw [zpow_add₀ (by positivity), zpow_natCast, zpow_natCast]
@@ -302,7 +306,7 @@ theorem dvd_one_sub_zpow {O : Type} [CommRing O] (x : O) (u : Oˣ) (hu : (u : O)
   have h : Units.map (Ideal.Quotient.mk (Ideal.span {x}) : O →* O ⧸ Ideal.span {x}) u = 1 := by
     apply Units.ext
     change Ideal.Quotient.mk (Ideal.span {x}) (u : O) = 1
-    rw [hu, map_add, map_one, Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self x), add_zero]
+    rw [hu, map_add (f := _), map_one, Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self x), add_zero]
   have h2 := congrArg Units.val (map_zpow
     (Units.map (Ideal.Quotient.mk (Ideal.span {x}) : O →* O ⧸ Ideal.span {x})) u a)
   rw [h, one_zpow] at h2
@@ -315,7 +319,7 @@ theorem exists_c {O LL : Type} [CommRing O] [Field LL] [Algebra O LL] (p : ℕ) 
   choose c hc using dvd_one_sub_zpow (p : O) u hu
   refine ⟨c, fun a => ?_⟩
   have h2 := congrArg (algebraMap O LL) (hc a)
-  rw [map_mul, map_natCast, map_sub, map_one] at h2
+  rw [map_mul, map_natCast, RingHom.map_sub, map_one] at h2
   rw [← h2]
   congr 1
   have h3 := congrArg Units.val (map_zpow (chiLL LL (MonoidHom.id Oˣ)) u a)
@@ -338,7 +342,7 @@ theorem exists_gam (h : K.1 ≤ Ks K 1) : ∃ g : W.Gam, (W.χΓ g : ↥(OL LL))
   refine ⟨W.resΓ ⟨g₀, hg₀⟩, ?_⟩
   have hinj : Function.Injective (algebraMap ↥(OL LL) ↥LL.1) := Subtype.val_injective
   apply hinj
-  rw [W.χΓ_res, P.PD_χ, ← hχ, hg₀', hu.unit_spec, map_add, map_one, map_natCast, PadicInt.coe_add,
+  rw [W.χΓ_res, P.PD_χ, ← hχ, hg₀', hu.unit_spec, map_add (f := _), map_one, map_natCast, PadicInt.coe_add,
     PadicInt.coe_one, PadicInt.coe_natCast, map_add, map_one, map_natCast]
 
 theorem gam_X {g : W.Gam} (hg : (W.χΓ g : ↥(OL LL)) = 1 + (l : ↥(OL LL))) :

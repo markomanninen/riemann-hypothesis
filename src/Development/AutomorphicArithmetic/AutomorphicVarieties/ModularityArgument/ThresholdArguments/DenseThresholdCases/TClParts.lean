@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.ClParts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryPointProperties
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.ClParts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryPointProperties
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -13,7 +17,7 @@ section Abstract
 variable {M : Type} [AddCommGroup M] [Module ℂ M]
 private def clE {G : Type} [Group G] (ρ : Representation ℂ G M) (K : Subgroup G) (F : M) : Submodule ℂ M where
   carrier := {y | ∀ k ∈ K, ∀ a : ℂ, ρ k F = a • F → ρ k y = a • y}
-  add_mem' ha hb k hk a h := by rw [map_add, ha k hk a h, hb k hk a h, smul_add]
+  add_mem' ha hb k hk a h := by rw [map_add (f := _), ha k hk a h, hb k hk a h, smul_add]
   zero_mem' k _ a _ := by simp
   smul_mem' c v hv k hk a h := by rw [map_smul, hv k hk a h, smul_comm]
 private theorem clE_stab {G : Type} [Group G] (ρ : Representation ℂ G M) (K : Subgroup G) (F : M) (φ : M →ₗ[ℂ] M)
@@ -26,17 +30,18 @@ private theorem cl_proj {S : Type} [Group S] (ρ : Representation ℂ S M) (U : 
   haveI : Fintype (S ⧸ U) := Fintype.ofFinite _
   have hc : (Fintype.card (S ⧸ U) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
   refine ⟨(Fintype.card (S ⧸ U) : ℂ)⁻¹ • ∑ q : S ⧸ U, ρ q.out, fun y hy s => ?_, fun y hy => ?_, fun Y hY y hy => ?_⟩
-  · simp only [LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum]
-    congr 1
-    refine Fintype.sum_equiv (MulAction.toPerm s) _ _ fun q => ?_
-    have h1 : (((s • q : S ⧸ U).out : S) : S ⧸ U) = ((s * q.out : S) : S ⧸ U) := by
-      rw [QuotientGroup.out_eq']
-      conv_lhs => rw [← QuotientGroup.out_eq' q]
-      rfl
-    have h2 := hy _ (QuotientGroup.eq.1 h1)
-    change ρ s (ρ q.out y) = ρ (s • q : S ⧸ U).out y
-    conv_rhs => rw [← h2]
-    rw [← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, mul_inv_cancel_left]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum]
+      congr 1
+      refine Fintype.sum_equiv (MulAction.toPerm s) _ _ fun q => ?_
+      have h1 : (((s • q : S ⧸ U).out : S) : S ⧸ U) = ((s * q.out : S) : S ⧸ U) := by
+        rw [QuotientGroup.out_eq']
+        conv_lhs => rw [← QuotientGroup.out_eq' q]
+        rfl
+      have h2 := hy _ (QuotientGroup.eq.1 h1)
+      change ρ s (ρ q.out y) = ρ (s • q : S ⧸ U).out y
+      conv_rhs => rw [← h2]
+      rw [← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, mul_inv_cancel_left]
   · simp only [LinearMap.smul_apply, LinearMap.sum_apply, hy, Finset.sum_const, Finset.card_univ]
     rw [← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hc, one_smul]
   · simp only [LinearMap.smul_apply, LinearMap.sum_apply]
@@ -86,12 +91,14 @@ private theorem cl_avg {G : Type} [Group G] (ρ : Representation ℂ G M) (K : S
   have hfi : ∀ s ∈ (⨅ i : f.support, U i).subgroupOf S, ∀ i ∈ f.support, ρ s (f i) = f i := fun s hs i hi =>
     hfix i _ (Subgroup.mem_iInf.1 (Subgroup.mem_subgroupOf.1 hs) ⟨i, hi⟩)
   have hχ1 : ∀ s ∈ (⨅ i : f.support, U i).subgroupOf S, χ s = 1 := fun s hs => hinj _ _ (by
-    rw [← hχ, one_smul, ← hsum, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hχ, one_smul, ← hsum, Finsupp.sum, map_sum]
     exact Finset.sum_congr rfl (hfi s hs))
   have hPF : P F = F := hP2 F fun s => by
     rw [hρ', hχ, smul_smul, inv_mul_cancel₀ (hne _ _ (hχ s)), one_smul]
   have : F = ∑ i ∈ f.support, P (f i) := by
-    rw [← map_sum, ← hPF, ← hsum]; rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← hPF, ← hsum]; rfl
   have key : ∀ i ∈ f.support, P (f i) ∈ ⨆ i, Y i ⊓ clE ρ K F := fun i hi => by
     refine Submodule.mem_iSup_of_mem i ⟨hP3 _ (fun s y hy => ?_) _ (hf i), fun k hk a ha => ?_⟩
     · exact (Y i).smul_mem _ (hst i s s.2.1 y hy)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem small_acts : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D
     change algebraMap (X.O0 i) A (algebraMap ℤ_[X.l i] (X.O0 i) (cycZ D.host.E N.Om (X.l i) g : ℤ_[X.l i]ˣ)) = 1
     have h2 : algebraMap (X.O0 i) A ((X.l i : X.O0 i) ^ nu X i * (X.l i : X.O0 i)) = 0 :=
       hK _ (Ideal.mul_mem_mul (Ideal.mem_span_singleton_self _) hmem)
-    rw [sub_eq_iff_eq_add.1 h1, map_add, map_add, map_one, map_one, map_mul, map_pow, map_natCast, pow_succ, map_mul, h2,
+    rw [sub_eq_iff_eq_add.1 h1, map_add (f := _), map_add (f := _), map_one, map_one, map_mul, map_pow, map_natCast, pow_succ, map_mul, h2,
       zero_mul, zero_add]
   have hinv : (Tmat i s g)⁻¹ = Tmat i s g⁻¹ := by
     rw [← Tgl_coe, ← Tgl_coe, map_inv, Matrix.coe_units_inv]

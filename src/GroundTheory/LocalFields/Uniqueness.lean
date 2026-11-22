@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,9 +31,6 @@ def nontriviallyNormedField : NontriviallyNormedField K :=
     strictMono' := IsRankLeOne.nonempty.some.strictMono.comp
         MonoidWithZeroHom.ValueGroup₀.embedding_strictMono }
   Valued.toNontriviallyNormedField K (ValueGroupWithZero K)
-
-example : (nontriviallyNormedField K).toUniformSpace.toTopologicalSpace = ‹TopologicalSpace K› :=
-  rfl
 
 theorem completeSpace_nontriviallyNormedField :
     @CompleteSpace K (nontriviallyNormedField K).toUniformSpace := by
@@ -120,14 +121,9 @@ theorem vlt_map_iff (f : L →ₐ[K] M) (x y : L) : f x <ᵥ f y ↔ x <ᵥ y :=
   rw [← not_vle, vle_map_iff, not_vle]
 
 theorem valuativeExtension_algHom (f : L →ₐ[K] M) :
-    letI := f.toRingHom.toAlgebra
-    ValuativeExtension L M :=
+    @ValuativeExtension L M _ _ _ _ f.toRingHom.toAlgebra :=
   letI := f.toRingHom.toAlgebra
-  ⟨vle_map_iff f⟩
-
-theorem valuativeExtension_of_isScalarTower [Algebra L M] [IsScalarTower K L M] :
-    ValuativeExtension L M :=
-  ⟨vle_map_iff (IsScalarTower.toAlgHom K L M)⟩
+  ⟨fun {a b} => vle_map_iff f a b⟩
 
 end Maps
 
@@ -180,21 +176,9 @@ theorem valuation_map_lt_iff (f : L →ₐ[K] M) (x y : L) :
     valuation M (f x) < valuation M (f y) ↔ valuation L x < valuation L y := by
   rw [← (valuation M).vlt_iff_lt, ← (valuation L).vlt_iff_lt, vlt_map_iff]
 
-theorem valuation_map_eq_iff (f : L →ₐ[K] M) (x y : L) :
-    valuation M (f x) = valuation M (f y) ↔ valuation L x = valuation L y := by
-  rw [le_antisymm_iff, le_antisymm_iff, valuation_map_le_iff, valuation_map_le_iff]
-
 theorem map_mem_integer_iff (f : L →ₐ[K] M) (x : L) : f x ∈ 𝒪[M] ↔ x ∈ 𝒪[L] := by
   simp only [Valuation.mem_integer_iff]
   rw [← map_one (valuation M), ← map_one f, valuation_map_le_iff, map_one]
-
-def continuousAlgHom (f : L →ₐ[K] M) : L →A[K] M where
-  __ := f
-  cont := continuous_algHom f
-
-@[simp]
-theorem coe_continuousAlgHom (f : L →ₐ[K] M) : ⇑(continuousAlgHom f) = f :=
-  rfl
 
 def integerAlgHom (f : L →ₐ[K] M) : 𝒪[L] →ₐ[𝒪[K]] 𝒪[M] where
   toFun x := ⟨f x, (map_mem_integer_iff f x).mpr x.2⟩
@@ -204,28 +188,13 @@ def integerAlgHom (f : L →ₐ[K] M) : 𝒪[L] →ₐ[𝒪[K]] 𝒪[M] where
   map_add' x y := by ext; simp
   commutes' r := by ext; simp
 
-@[simp]
-theorem coe_integerAlgHom_apply (f : L →ₐ[K] M) (x : 𝒪[L]) :
-    (integerAlgHom f x : M) = f x :=
-  rfl
-
-instance isLocalHom_integerAlgHom (f : L →ₐ[K] M) : IsLocalHom (integerAlgHom f) where
-  map_nonunit x hx := by
-    rw [(Valuation.integer.integers (valuation M)).isUnit_iff_valuation_eq_one] at hx
-    rw [(Valuation.integer.integers (valuation L)).isUnit_iff_valuation_eq_one]
-    have hx' : valuation M (f x) = valuation M (f 1) := by
-      rw [map_one, map_one]
-      exact hx
-    exact ((valuation_map_eq_iff f x 1).mp hx').trans (map_one _)
-
 def residueAlgHom (f : L →ₐ[K] M) : 𝓀[L] →ₐ[𝓀[K]] 𝓀[M] :=
+  letI : IsLocalHom (integerAlgHom f) :=
+    ⟨fun x => by
+      rw [← not_imp_not, Valuation.Integer.not_isUnit_iff_valuation_lt_one,
+        Valuation.Integer.not_isUnit_iff_valuation_lt_one]
+      exact (valuation_map_lt_one_iff f x).mpr⟩
   IsLocalRing.ResidueField.mapAlgHom' (integerAlgHom f)
-
-@[simp]
-theorem residueAlgHom_residue (f : L →ₐ[K] M) (x : 𝒪[L]) :
-    residueAlgHom f (IsLocalRing.residue 𝒪[L] x) =
-      IsLocalRing.residue 𝒪[M] (integerAlgHom f x) :=
-  rfl
 
 variable (K L)
 
@@ -250,28 +219,10 @@ theorem valuation_algEquiv_apply (σ : L ≃ₐ[K] L) (x : L) : valuation L (σ 
   · refine (key σ.symm (σ x) ?_).elim
     simpa using h
 
-theorem vle_algEquiv_iff (σ : L ≃ₐ[K] L) (x y : L) : σ x ≤ᵥ σ y ↔ x ≤ᵥ y :=
-  vle_map_iff σ.toAlgHom x y
-
-def continuousAlgEquiv (σ : L ≃ₐ[K] L) : L ≃A[K] L where
-  toAlgEquiv := σ
-  continuous_toFun := continuous_algHom σ.toAlgHom
-  continuous_invFun := continuous_algHom σ.symm.toAlgHom
-
-@[simp]
-theorem coe_continuousAlgEquiv (σ : L ≃ₐ[K] L) : ⇑(continuousAlgEquiv K L σ) = σ :=
-  rfl
-
-def homeomorph (σ : L ≃ₐ[K] L) : L ≃ₜ L :=
-  (continuousAlgEquiv K L σ).toHomeomorph
-
-@[simp]
-theorem coe_homeomorph (σ : L ≃ₐ[K] L) : ⇑(homeomorph K L σ) = σ :=
-  rfl
-
 def integerAlgEquiv : (L ≃ₐ[K] L) →* (𝒪[L] ≃ₐ[𝒪[K]] 𝒪[L]) where
   toFun σ := AlgEquiv.ofAlgHom (integerAlgHom σ.toAlgHom) (integerAlgHom σ.symm.toAlgHom)
-    (by ext; simp) (by ext; simp)
+    (AlgHom.ext fun x => Subtype.ext (σ.apply_symm_apply (x : L)))
+    (AlgHom.ext fun x => Subtype.ext (σ.symm_apply_apply (x : L)))
   map_one' := by ext; rfl
   map_mul' _ _ := by ext; rfl
 

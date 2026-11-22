@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LaTIsPrime
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LaTIsPrime
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 
@@ -17,7 +21,7 @@ theorem injective_of_injective_comp_aeval_of_trdeg_le {k A κ ι : Type} [Field 
     exact Function.Injective.of_comp (f := χ) hχ
   have hT := hb.isTranscendenceBasis_of_trdeg_le_of_finite hA
   have := hT.isAlgebraic
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra hne
   have hmem : a ∈ RingHom.ker χ := ha
@@ -34,18 +38,5 @@ theorem injective_of_injective_comp_aeval_of_trdeg_le {k A κ ι : Type} [Field 
   subst hq
   apply Subtype.ext
   simp
-
-private def elimEmb (D N : ℕ) (j0 : Fin (N + 1)) :
-    Fin (N + 1) ⊕ (Fin D × Fin N) → TVar D N
-  | Sum.inl j => (0, j)
-  | Sum.inr q => (q.1.succ, j0.succAbove q.2)
-
-private noncomputable def elimImg {F : Type} [Field F] (D N : ℕ) (j0 : Fin (N + 1))
-    (xx : Fin (N + 1) → F) (p : TVar D N) : MvPolynomial (Fin (N + 1) ⊕ (Fin D × Fin N)) F :=
-  Fin.cases (motive := fun _ => MvPolynomial (Fin (N + 1) ⊕ (Fin D × Fin N)) F)
-    (X (Sum.inl p.2))
-    (fun i => Fin.insertNth (α := fun _ => MvPolynomial (Fin (N + 1) ⊕ (Fin D × Fin N)) F) j0
-      (-∑ j : Fin N, X (Sum.inr (i, j)) * C (xx (j0.succAbove j)))
-      (fun j => X (Sum.inr (i, j))) p.2) p.1
 
 end GlobalTheory

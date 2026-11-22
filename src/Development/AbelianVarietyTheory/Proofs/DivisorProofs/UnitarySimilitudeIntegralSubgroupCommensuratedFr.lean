@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.MapInclKMemTwCentResOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommensurableConjRangeGLSubringStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePadicIntegersQuotPrimePowOfFiniteDimStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePadicTensorUnramifiedIntegersQuotPrimePowStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPadicPowMulMemTensorUnramifiedIntegersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommensurableMapConjProdPiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MapInclKMemTwCentResOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommensurableConjRangeGLSubringStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePadicIntegersQuotPrimePowOfFiniteDimStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePadicTensorUnramifiedIntegersQuotPrimePowStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPadicPowMulMemTensorUnramifiedIntegersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommensurableMapConjProdPiStatement
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount
 open scoped TensorProduct Classical
 
@@ -130,8 +135,8 @@ theorem Kres_commensurable (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [Finit
 
 end GlobalTheory.HeckeP
 
-open GlobalTheory.HeckeP in
 
+open GlobalTheory.HeckeP in
 theorem GlobalTheory.heckeOperator_integral :
     ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (r : ℕ), 0 < r →
       (∀ g : Gr G r, Subgroup.Commensurable ((KHT p G.m G.n r G.Fw).map (MulAut.conj g).toMonoidHom)

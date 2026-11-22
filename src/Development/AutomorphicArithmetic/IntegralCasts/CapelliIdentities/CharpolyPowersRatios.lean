@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.CharpolyPowersRatios.FreeRatios :
     {κ ι : Type} → [inst : Field κ] → (ι → κˣ) → Prop :=

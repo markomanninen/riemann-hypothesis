@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantUniformizer
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantUniformizer
+
+@[expose] public section
 
 noncomputable section
 

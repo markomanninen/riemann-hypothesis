@@ -1,6 +1,10 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.CutTailC
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.KerSplitLIntSub
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.DomOneMeasure
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.CutTailC
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.KerSplitLIntSub
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.DomOneMeasure
+
+@[expose] public section
 
 noncomputable section
 

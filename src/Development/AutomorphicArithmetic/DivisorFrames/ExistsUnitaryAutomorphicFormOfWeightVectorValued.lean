@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicArithmetic.DivisorFrames.ExistsAdmissibleEquivariantFormsRep
-import Development.AutomorphicArithmetic.DivisorFrames.SpanHighestWeightRepUnitaryGroupRealPointsImageE
-import Development.AutomorphicArithmetic.DivisorFrames.HasWeightAtOfNeZeroIntertwining
-import Development.AutomorphicArithmetic.DivisorFrames.ExistsInvariantNondegeneratePairingWeightRepNabl
-import Development.AutomorphicArithmetic.DivisorFrames.FiniteDimensionalNablaTAndContinuousWtOp
-import Development.AutomorphicArithmetic.DivisorFrames.IsAutFormUOfVectorValuedInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSystemOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearActionDualWeylTensor
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.DivisorFrames.ExistsAdmissibleEquivariantFormsRep
+public import Development.AutomorphicArithmetic.DivisorFrames.SpanHighestWeightRepUnitaryGroupRealPointsImageE
+public import Development.AutomorphicArithmetic.DivisorFrames.HasWeightAtOfNeZeroIntertwining
+public import Development.AutomorphicArithmetic.DivisorFrames.ExistsInvariantNondegeneratePairingWeightRepNabl
+public import Development.AutomorphicArithmetic.DivisorFrames.FiniteDimensionalNablaTAndContinuousWtOp
+public import Development.AutomorphicArithmetic.DivisorFrames.IsAutFormUOfVectorValuedInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSystemOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearActionDualWeylTensor
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.BasicNotions GlobalTheory.DefU GlobalTheory.FrameAut Formalism.CohomologicalDescent.DepthNonnegative
 
 private theorem cont_cEmb {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (τ : E →+* ℂ) :
@@ -31,18 +36,18 @@ theorem UpperTheory.exists_unitaryAutomorphicForm_of_weightVectorValued :
     ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι] (emb : ι → (E →+* ℂ)), Function.Injective (fun τ => InfinitePlace.mk (emb τ)) →
         ∀ (mu : ι → ℕ → ℕ) (sh : ι → ℤ) (lam : ι → DomWeight n), (∀ τ (a : Fin n), (lam τ).w a = (mu τ a : ℤ) + sh τ) →
         ∀ (B : (UA E n → ℂ) →ₗ⋆[ℂ] (UA E n → ℂ) →ₗ[ℂ] ℂ), (∀ φ, IsAutFormU φ → φ ≠ 0 → 0 < (B φ φ).re) →
-        (∀ k ∈ finU E n, ∀ φ ψ, IsAutFormU φ → IsAutFormU ψ → B (RU E n k φ) (RU E n k ψ) = B φ ψ) →
+        (∀ k ∈ finU (E := E) (n := n), ∀ φ ψ, IsAutFormU φ → IsAutFormU ψ → B (RU E n k φ) (RU E n k ψ) = B φ ψ) →
         ∀ F1 : UA E n → NablaT ℂ n mu, F1 ≠ 0 →
         (∀ γ ∈ ratU E n, ∀ g, F1 (γ * g) = wtOp ℂ n mu sh (fun τ => cEmb (emb τ) γ) (F1 g)) →
         (∀ x ∈ infU E n, ∀ g, F1 (g * x) = F1 g) → (∀ᶠ y in nhds (1 : UA E n), ∀ g, F1 (g * y) = F1 g) →
         ∃ π : Submodule ℂ (UA E n → ℂ), IsAutRepU π ∧ (∀ τ, HasWeightAt π (emb τ) (lam τ)) ∧ ∃ φ ∈ π, φ ≠ 0 ∧
-          ∀ (κ : Type) (s : Finset κ) (y : κ → UA E n) (c : ℂ), (∀ i ∈ s, y i ∈ finU E n) →
+          ∀ (κ : Type) (s : Finset κ) (y : κ → UA E n) (c : ℂ), (∀ i ∈ s, y i ∈ finU (E := E) (n := n)) →
             (∀ g, ∑ i ∈ s, F1 (g * y i) = c • F1 g) → ∑ i ∈ s, RU E n (y i) φ = c • φ := by
   intro E _ _ _ n ι _ _ emb hinj mu sh lam hl B hpos hinv F1 hF0 hrat hinf hev
   let C : UA E n →* (ι → GL (Fin n) ℂ) := MonoidHom.pi fun τ => cEmb (E := E) (n := n) (emb τ)
   let R : UA E n →* Module.End ℂ (NablaT ℂ n mu) := (wtHom ℂ n mu sh).comp C
   have hR : ∀ g, R g = wtOp ℂ n mu sh (C g) := fun _ => rfl
-  have hRfin : ∀ k ∈ finU E n, R k = 1 := fun k hk => by
+  have hRfin : ∀ k ∈ finU (E := E) (n := n), R k = 1 := fun k hk => by
     have h1 : C k = 1 := by
       funext τ
       change Matrix.GeneralLinearGroup.map (coord (emb τ)) (cInf k) = 1
@@ -84,6 +89,7 @@ theorem UpperTheory.exists_unitaryAutomorphicForm_of_weightVectorValued :
   refine ⟨π, hπ, UpperTheory.hasWeightAt_of_ne_zero_intertwining E n ι emb hinj lam π f' hf'0 hf'π (fun x hx v => hf'e ⟨x, hx⟩ v), f' v, hf'π v, hv,
     fun κ s y c hy hs => hsum κ s y c hy (fun w => ?_) v⟩
   funext g
-  rw [Finset.sum_apply, Pi.smul_apply, hf, ← map_smul, ← map_smul, ← hs g, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, Pi.smul_apply, hf, ← map_smul, ← map_smul, ← hs g, map_sum, map_sum]
   refine Finset.sum_congr rfl fun i hi => ?_
-  rw [hRU, hf, mul_inv_rev, map_mul, hRfin _ ((finU E n).inv_mem (hy i hi)), one_mul]
+  rw [hRU, hf, mul_inv_rev, map_mul, hRfin _ ((finU (E := E) (n := n)).inv_mem (hy i hi)), one_mul]

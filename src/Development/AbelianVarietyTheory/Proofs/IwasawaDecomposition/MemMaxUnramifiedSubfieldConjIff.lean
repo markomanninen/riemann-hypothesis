@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,16 +22,13 @@ def rightCongr (LL V : Type) [Field LL] [Algebra Qp LL] [AddCommGroup V] [Module
     [IsScalarTower Qp LL V] (s : B ≃ₗ[Qp] B) : V ⊗[Qp] B ≃ₗ[LL] V ⊗[Qp] B :=
   AlgebraTensorModule.congr (LinearEquiv.refl LL V) s
 
-@[simp] theorem rightCongr_tmul (s : B ≃ₗ[Qp] B) (v : V) (b : B) :
-    rightCongr LL V s (v ⊗ₜ b) = v ⊗ₜ s b := rfl
-
 theorem rightCongr_map (s : B ≃ₗ[Qp] B) (f : V →ₗ[LL] V) (u u' : B →ₗ[Qp] B) (h : ∀ b, s (u b) = u' (s b))
     (x : V ⊗[Qp] B) :
     rightCongr LL V s (AlgebraTensorModule.map f u x) = AlgebraTensorModule.map f u' (rightCongr LL V s x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | tmul v b => simp [h]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | tmul v b => simp [rightCongr, h]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem rightCongr_mem_range (s : B ≃ₗ[Qp] B) (F F' : Submodule Qp B) (h : ∀ b ∈ F, s b ∈ F') {x : V ⊗[Qp] B}
     (hx : x ∈ LinearMap.range (AlgebraTensorModule.map (LinearMap.id : V →ₗ[LL] V) F.subtype)) :
@@ -36,14 +37,14 @@ theorem rightCongr_mem_range (s : B ≃ₗ[Qp] B) (F F' : Submodule Qp B) (h : �
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => exact ⟨v ⊗ₜ[Qp] ⟨s b.1, h _ b.2⟩, rfl⟩
-  | add x y hx hy => rw [map_add, map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy => simp only [map_add]; exact Submodule.add_mem _ hx hy
 
 theorem rightCongr_symm_apply (s : B ≃ₗ[Qp] B) (x : V ⊗[Qp] B) :
     rightCongr LL V s.symm (rightCongr LL V s x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | tmul v b => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | tmul v b => simp [rightCongr]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem finrank_eq_of_mem_iff {M : Type} [AddCommGroup M] [Module LL M] (T : M ≃ₗ[LL] M) (S S' : Submodule LL M)
     (h : ∀ x, x ∈ S ↔ T x ∈ S') : finrank LL ↥S = finrank LL ↥S' := by
@@ -102,8 +103,8 @@ theorem exists_conj_right (σ₂ : ↥(GK K₂)) : ∃ σ₁ : ↥(GK K₁), (σ
 variable {LL : Type} [Field LL] [Algebra ℚ_[l] LL] {V : Type} [AddCommGroup V] [Module LL V] [Module ℚ_[l] V]
   [IsScalarTower ℚ_[l] LL V] {ρ₁ : Representation LL ↥(GK K₁) V} {ρ₂ : Representation LL ↥(GK K₂) V}
 
-omit hK in
 
+omit hK in
 theorem actQdR_mem_Fil (K K' : FinExt l) (a : ℤ) {b : P.R.BdR} (hb : b ∈ (P.PD K).Fil a) :
     P.actQdR g b ∈ (P.PD K').Fil a := by
   obtain ⟨K₀, hg⟩ : ∃ K₀ : FinExt l, g ∈ GK K₀ := by
@@ -118,8 +119,8 @@ theorem actQdR_mem_Fil (K K' : FinExt l) (a : ℤ) {b : P.R.BdR} (hb : b ∈ (P.
   rw [P.PD_actdR, ← SetLike.mem_coe, P.PD_Fil K₀ K'] at h2
   exact h2
 
-omit hK in
 
+omit hK in
 theorem mem_FilV_iff (K K' : FinExt l) (a : ℤ) (x : V ⊗[ℚ_[l]] P.R.BdR) :
     x ∈ FilV (P.PD K) (LL := LL) (V := V) a ↔
       rightCongr LL V (P.actQdR g).toLinearEquiv x ∈ FilV (P.PD K') (LL := LL) (V := V) a := by
@@ -225,8 +226,8 @@ variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAl
   [CommRing O₂] [Algebra ℤ_[l] O₂] [TopologicalSpace O₂]
   (B₁ : LocBridge l E Ω (Dec (F := E) A) O₁) (B₂ : LocBridge l E Ω (Dec (F := E) A) O₂)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_conj (h₁ : GlobalTheory.Pst.Induces B₁) (h₂ : GlobalTheory.Pst.Induces B₂) :
     ∃ g : GQ l, (∀ x, g (B₁.j x) = B₂.j x) ∧ (∀ x, x ∈ B₁.Kw.1 ↔ g x ∈ B₂.Kw.1) ∧
       ∀ (σ₁ : ↥(GK B₁.Kw)) (σ₂ : ↥(GK B₂.Kw)), (σ₂ : GQ l) * g = g * σ₁ → B₁.e.symm σ₁ = B₂.e.symm σ₂ := by

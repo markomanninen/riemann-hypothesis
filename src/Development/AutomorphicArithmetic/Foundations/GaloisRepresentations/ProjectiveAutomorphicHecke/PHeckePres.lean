@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,17 +44,17 @@ private theorem tj_one {L : Type} [Field L] {n : ℕ} {O : Subring L} {ϖ : L} {
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 private theorem sum_mem_forms (hC : LocComm) (hM : LocMem) {w : Plc E} (hw : IsSplitAt w) {h : GLw n w → ℂ}
-    (hh : h ∈ Formalism.UG.Hecke ℂ (KGL w n)) {R : Finset (GLw n w)}
+    (hh : h ∈ Formalism.UG.Hecke ℂ (KGL w (n := n))) {R : Finset (GLw n w)}
     (hR : ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GLw n w) V) (v : V),
-      heckeVec ρ (KGL w n) h v = ∑ g ∈ R, ρ g v)
+      heckeVec ρ (KGL w (n := n)) h v = ∑ g ∈ R, ρ g v)
     {S : Finset (Plc E)} {Kw : ∀ w : Plc E, Subgroup (GLw n w)} (hS : w ∉ S) (hcS : cj w ∉ S)
     {V : Type} [AddCommGroup V] [Module ℂ V] {ξ : Representation ℂ (Gam0 E n) V} {Φ : GUf E n → V}
     (hΦ : Φ ∈ forms rat (lev S Kw) ξ) :
     (fun g => ∑ y ∈ R, Φ (g * loc hw y)) ∈ forms rat (lev S Kw) ξ := by
-  have hloc : ∀ y ∈ KGL w n, loc hw y ∈ lev S Kw := fun y hy => (hM E n S Kw w hw hcS y).2 hS hy
+  have hloc : ∀ y ∈ KGL w (n := n), loc hw y ∈ lev S Kw := fun y hy => (hM E n S Kw w hw hcS y).2 hS hy
   let ρ : Representation ℂ (GLw n w) (GUf E n → V) := (rightReg ℂ (GUf E n) V).comp (loc hw)
   have hρ : ∀ y (f : GUf E n → V) g, ρ y f g = f (g * loc hw y) := fun _ _ _ => rfl
-  have hfix : Φ ∈ fixed ρ (KGL w n) := GlobalTheory.LGrp.mem_fixed.2 fun k hk => by
+  have hfix : Φ ∈ fixed ρ (KGL w (n := n)) := GlobalTheory.LGrp.mem_fixed.2 fun k hk => by
     funext g
     rw [hρ]
     exact hΦ.2 _ (hloc k hk) g
@@ -61,9 +65,10 @@ private theorem sum_mem_forms (hC : LocComm) (hM : LocMem) {w : Plc E} (hw : IsS
     rw [Finset.sum_apply]
     rfl
   refine ⟨fun γ g => ?_, fun k hk g => ?_⟩
-  · simp only [map_sum, mul_assoc]
-    exact Finset.sum_congr rfl fun y _ => hΦ.1 γ _
-  · have hx : comp w k ∈ KGL w n := (mem_lev.1 hk).2.2 w hS hcS
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, mul_assoc]
+      exact Finset.sum_congr rfl fun y _ => hΦ.1 γ _
+  · have hx : comp w k ∈ KGL w (n := n) := (mem_lev.1 hk).2.2 w hS hcS
     set x := comp w k with hxdef
     set k' := (loc hw x)⁻¹ * k with hk'def
     have hk'm : k' ∈ lev S Kw := (lev S Kw).mul_mem ((lev S Kw).inv_mem (hloc x hx)) hk
@@ -84,7 +89,7 @@ private theorem sum_mem_forms (hC : LocComm) (hM : LocMem) {w : Plc E} (hw : IsS
 theorem pHeckePres_of (hC : LocComm) (hM : LocMem) : HeckePres := by
   intro E _ _ _ n w hw ϖ hϖ i
   have hh := GlobalTheory.LFun.Tj_mem_hecke (n := n) hϖ i
-  obtain ⟨R, hR⟩ := hecke_eq_sum (KGL w n) (Tj ℂ n (Ov E w) ϖ i) (fun g hg => tj_one g hg)
+  obtain ⟨R, hR⟩ := hecke_eq_sum (KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ i) (fun g hg => tj_one g hg)
     (Formalism.UG.P.finite_support_cosets (Formalism.UG.Final.GLintComm E w n) hh.2)
   exact ⟨R, hR, fun S Kw hS hcS V _ _ ξ Φ hΦ => sum_mem_forms hC hM hw hh hR hS hcS hΦ⟩
 

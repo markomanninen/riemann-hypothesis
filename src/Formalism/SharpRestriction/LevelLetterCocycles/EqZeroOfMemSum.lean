@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LatticeBoundsOfThreeParts
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LatticeBoundsOfThreeParts
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem eq_zero_of_mem_sum (τ : K →ₐ[Qp] LL) :
     rw [Finset.iSup_insert, Submodule.mem_sup] at hy
     obtain ⟨ya, hya, z, hz, hyz⟩ := hy
     have h1 : φ y ∈ ⨆ τ' ∈ s, DdRE PD ρ τ' := by
-      rw [← hyz, map_add, hφ a ya hya, sub_self, zero_smul, zero_add]
+      rw [← hyz, map_add (f := _), hφ a ya hya, sub_self, zero_smul, zero_add]
       exact hW z hz
     rw [hφ τ y hyτ] at h1
     have h2 := ih hτs _ (Submodule.smul_mem _ _ hyτ) h1

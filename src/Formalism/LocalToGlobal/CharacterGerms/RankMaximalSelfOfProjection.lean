@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CharacterGerms.RankMaximalSelfCore
-import Formalism.LocalToGlobal.CharacterGerms.MmOfUnitMul
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjLieSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RankMaximalSelfCore
+public import Formalism.LocalToGlobal.CharacterGerms.MmOfUnitMul
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjLieSelf
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,8 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ClassNumImQ
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticDedekindZeta.Development
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ClassNumImQInt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticInvariants.QuadPolyIrreducible
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ClassNumImQ
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ClassNumImQInt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticInvariants.QuadPolyIrreducible
+
+@[expose] public section
 
 open NumberField
 
@@ -38,7 +41,5 @@ theorem coeff_unique (hq : QuadData d K b) {m n m' n' : ℤ}
     push_cast
     rw [div_eq_iff hne]
     linear_combination (-2 : K) * hK
-
-noncomputable def bb (hq : QuadData d K b) : 𝓞 K := 2 * om hq - 1
 
 end PI.ClassNumImQ.ZetaNonvanishing₂.Loc

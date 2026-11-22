@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem grdB_mul' (τ : Ks ≃ₐ[LL] Ks) (a : LLˣ) (x y : HahnSeries ℤ Ks) :
     grdB τ a (x * y) = grdB τ a x * grdB τ a y := by
   ext n
   show algebraMap LL Ks ((a ^ n : LLˣ) : LL) * τ ((x * y).coeff n) = (grdB τ a x * grdB τ a y).coeff n
-  rw [HahnSeries.coeff_mul, HahnSeries.coeff_mul, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [HahnSeries.coeff_mul, HahnSeries.coeff_mul, map_sum, Finset.mul_sum]
   symm
   have hsub : ∀ ij : ℤ × ℤ, ij ∈ Finset.antidiagonal (grdB τ a x).isPWO_support
       (grdB τ a y).isPWO_support n → ij ∈ Finset.antidiagonal x.isPWO_support y.isPWO_support n := by
@@ -153,7 +158,8 @@ theorem loclInv_holds (hR : Ring9 W) (uZ : ℤ_[PD.p]ˣ) (ιZ : ℤ_[PD.p] →+*
   intro s y j
   rw [Level.δ]
   unfold locLF
-  rw [graded_semilinear_holds, grdB_ringInverse _ _ (hΔ s j Λ), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [graded_semilinear_holds, grdB_ringInverse _ _ (hΔ s j Λ), map_sum]
   congr 1
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [graded_semilinear_holds, hΔ s j (y k), SlopeTestRemainingChoices.grd_cst]

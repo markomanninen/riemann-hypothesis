@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LaurentBlockInduction.LdDefs
-import GroundTheory.AutomorphicForms.GL2.GJFEBlockPoint
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LaurentBlockInduction.LdDefs
+public import GroundTheory.AutomorphicForms.GL2.GJFEBlockPoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ private def shellForm (ν : Measure (GL (Fin m) F)) (σ : Representation ℂ (GL
       {g : GL (Fin m) F | ordDet g = k} ν) : Module.Dual ℂ W where
   toFun w := ∫ g in {g : GL (Fin m) F | ordDet g = k}, ℓ (σ (g, 1) w) ∂ν
   map_add' a b := by
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact integral_add (hint a) (hint b)
   map_smul' c w := by
     simp only [map_smul, smul_eq_mul, RingHom.id_apply]
@@ -44,7 +48,7 @@ private theorem lc_lemma {G β : Type*} [Group G] [TopologicalSpace G] [IsTopolo
   intro x
   have h1 : (K : Set G) ∈ nhds (1 : G) := hK.mem_nhds K.one_mem
   have h2 : Filter.Tendsto (fun y => x⁻¹ * y) (nhds x) (nhds 1) := by
-    simpa using (continuous_mul_left x⁻¹).tendsto x
+    simpa using (continuous_const_mul x⁻¹).tendsto x
   have h3 : ∀ᶠ y in nhds x, f y = f x := by
     filter_upwards [h2 h1] with y hy
     have := hf x (x⁻¹ * y) hy
@@ -207,7 +211,7 @@ private theorem eq_zero_of_ordDet_eq_of_compact_support_of_mul_ne_zero {F : Type
     ∀ g, ordDet g = k → φ g = 0 := by
   intro g0 hg0
   by_contra hne
-  refine not_ordDet_eq_zero_subset_compact_of_two_le hm ((fun y => y * g0⁻¹) '' T) (hT.image (continuous_mul_right g0⁻¹)) ?_
+  refine not_ordDet_eq_zero_subset_compact_of_two_le hm ((fun y => y * g0⁻¹) '' T) (hT.image (continuous_mul_const g0⁻¹)) ?_
   intro h hh
   exact ⟨h * g0, hTφ _ (by rw [ordDet_mul, hh, hg0, zero_add]) (hinv h g0 hh hne), by simp⟩
 
@@ -221,7 +225,7 @@ private theorem exists_isCompact_ordDet_eq_centralUnif_zpow_mul_mem {F : Type*} 
     hfin.preimage (fun a _ b _ hab => mul_right_cancel₀ hm (add_right_cancel hab))
   refine ⟨⋃ j ∈ (fun j : ℤ => j * (m : ℤ) + k) ⁻¹' (ordDet '' C),
     (fun y => (centralUnif F m ^ j)⁻¹ * y) '' C,
-    hJ.isCompact_biUnion (fun j _ => hC.image (continuous_mul_left _)), ?_⟩
+    hJ.isCompact_biUnion (fun j _ => hC.image (continuous_const_mul _)), ?_⟩
   rintro g hg ⟨j, hj⟩
   refine Set.mem_iUnion₂.2 ⟨j, ?_, ⟨_, hj, by simp⟩⟩
   exact ⟨_, hj, by rw [ordDet_mul, ordDet_zpow', ordDet_centralUnif, hg]⟩
@@ -264,6 +268,7 @@ theorem UpperTheory.local_zeta_integral_shell_mean :
     obtain ⟨C, hC, hCw⟩ := hcpt w ℓ hℓ
     obtain ⟨T, hT, hTC⟩ := exists_isCompact_ordDet_eq_centralUnif_zpow_mul_mem C hC k
     exact ⟨T, hT, fun g hg hne => hTC g hg (hCw g hne)⟩
+  open scoped Pointwise in
   have hT2 : ∀ w, ∃ T : Set (GL (Fin m) F), IsCompact T ∧
       ∀ g, ordDet g = k → ℓ (σ (g⁻¹, 1) w) ≠ 0 → g ∈ T := by
     intro w
@@ -285,7 +290,7 @@ theorem UpperTheory.local_zeta_integral_shell_mean :
   let Λ2 : Module.Dual ℂ W :=
     { toFun := fun w => ∫ g in {g : GL (Fin m) F | ordDet g = k}, ℓ (σ (g⁻¹, 1) w) ∂μ
       map_add' := fun a b => by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact integral_add (hint2 a) (hint2 b)
       map_smul' := fun c w => by
         simp only [map_smul, smul_eq_mul, RingHom.id_apply]

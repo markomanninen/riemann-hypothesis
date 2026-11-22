@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LinearIndependentWave
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MatrixIntegersModNatFinite
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsNeZeroOfEventually
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LinearIndependentWave
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MatrixIntegersModNatFinite
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsNeZeroOfEventually
+
+@[expose] public section
+
 open ValuativeRel GlobalTheory.SplitWeil Matrix
 
 noncomputable section
@@ -77,13 +82,15 @@ theorem exists_intertwiner_span {G V : Type} [AddCommGroup G] [AddCommGroup V] [
           simp
         rw [e, map_zero, map_zero]
     | add Ψ₁ Ψ₂ _ _ ih₁ ih₂ =>
-      refine ⟨fun x hx => ?_, fun y hy => ?_, by rw [map_add]; exact add_mem ih₁.2.2 ih₂.2.2⟩
+      refine ⟨fun x hx => ?_, fun y hy => ?_, ?_⟩
       · have e : (fun t => (Ψ₁ + Ψ₂) (t + x)) = (fun t => Ψ₁ (t + x)) + fun t => Ψ₂ (t + x) := rfl
-        rw [e, map_add, map_add, map_add, ih₁.1 x hx, ih₂.1 x hx]
+        rw [e, map_add (f := _), map_add (f := _), map_add (f := _), ih₁.1 x hx, ih₂.1 x hx]
       · have e : (fun t => χ t y * (Ψ₁ + Ψ₂) t) = (fun t => χ t y * Ψ₁ t) + fun t => χ t y * Ψ₂ t := by
           funext t
           simp [mul_add]
-        rw [e, map_add, map_add, map_add, ih₁.2.1 y hy, ih₂.2.1 y hy]
+        rw [e, map_add (f := _), map_add (f := _), map_add (f := _), ih₁.2.1 y hy, ih₂.2.1 y hy]
+      · rw [T.map_add]
+        exact add_mem ih₁.2.2 ih₂.2.2
     | smul c Ψ _ ih =>
       refine ⟨fun x hx => ?_, fun y hy => ?_, by rw [map_smul]; exact Submodule.smul_mem _ c ih.2.2⟩
       · have e : (fun t => (c • Ψ) (t + x)) = c • fun t => Ψ (t + x) := rfl
@@ -135,8 +142,9 @@ theorem inv_nsmul_nsmul {k : Type} [Field k] [CharZero k] {Y Y' : Type} (n : ℕ
     (m : Matrix Y Y' k) : (n : k)⁻¹ • (n • m) = m := by
   rw [← Nat.cast_smul_eq_nsmul k n m, smul_smul, inv_mul_cancel₀ (Nat.cast_ne_zero.2 hn.ne'), one_smul]
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def liftZ {A Z : Type} [AddCommGroup Z] [TopologicalSpace A] : SB A →ₗ[ℂ] (A × Z → ℂ) where
   toFun := fun Φ g => if g.2 = 0 then Φ.1 g.1 else 0
   map_add' := by

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CoordFibreDeg
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.FibreMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CoordRatioDeg
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GenFibreChartDeg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PChartRankAdjoin
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CoordFibreDeg
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.FibreMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CoordRatioDeg
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GenFibreChartDeg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PChartRankAdjoin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

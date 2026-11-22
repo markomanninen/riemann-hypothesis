@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaFlatReg
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaFlatReg
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 

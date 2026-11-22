@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiMLocal
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasLPsM
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChain
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiMLocal
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasLPsM
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChain
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,18 +41,6 @@ lemma lhol_neg (X : Matrix (Fin n) (Fin n) ℂ) (G : Matrix (Fin n) (Fin n) ℂ 
     exact congrArg (fun A : Matrix (Fin n) (Fin n) ℂ →L[ℂ] E => A (X * z)) h2
   · have h3 : ¬ DifferentiableAt ℂ (fun w => -G w) z := fun h => hG (differentiableAt_neg_iff.1 h)
     simp [fderiv_zero_of_not_differentiableAt hG, fderiv_zero_of_not_differentiableAt h3]
-
-lemma lhol_congr (X : Matrix (Fin n) (Fin n) ℂ) {G G' : Matrix (Fin n) (Fin n) ℂ → E}
-    {z : Matrix (Fin n) (Fin n) ℂ} (h : G =ᶠ[nhds z] G') : Lhol X G z = Lhol X G' z := by
-  unfold Lhol
-  rw [h.fderiv_eq]
-
-lemma lhol_clm_eventually (L : E →L[ℂ] E') (X : Matrix (Fin n) (Fin n) ℂ)
-    {G : Matrix (Fin n) (Fin n) ℂ → E} {V : Set (Matrix (Fin n) (Fin n) ℂ)} (hV : IsOpen V)
-    (hG : DifferentiableOn ℂ G V) {z : Matrix (Fin n) (Fin n) ℂ} (hz : z ∈ V) :
-    Lhol X (fun w => L (G w)) =ᶠ[nhds z] fun w => L (Lhol X G w) := by
-  filter_upwards [hV.mem_nhds hz] with w hw
-  exact lhol_clm L X (hG.differentiableAt (hV.mem_nhds hw))
 
 end CasG
 

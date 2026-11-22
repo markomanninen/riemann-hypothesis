@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.RelationsStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UniformizerModelPermModuleLatticeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DescentRelationsFromModelsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.RelationsStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UniformizerModelPermModuleLatticeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DescentRelationsFromModelsStatement
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.TopRel
 

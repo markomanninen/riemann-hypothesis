@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
+
+@[expose] public section
 
 noncomputable section
 

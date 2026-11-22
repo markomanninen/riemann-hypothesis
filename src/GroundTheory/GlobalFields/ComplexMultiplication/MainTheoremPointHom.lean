@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionAtPoint
-import GroundTheory.GlobalFields.ComplexMultiplication.InseparableFrobenius
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionAtPoint
+public import GroundTheory.GlobalFields.ComplexMultiplication.InseparableFrobenius
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -34,7 +39,7 @@ theorem pointHomOver_comp {E E' E'' : WeierstrassCurve F} [E.IsElliptic] [E'.IsE
 
   have e : φ.1 + constMap E' E.toAffine.FunctionField R' =
       Point.map φ.comap (genericPoint E' + constMap E' E'.toAffine.FunctionField R') := by
-    rw [map_add, Isogeny.map_comap_genericPoint, map_constMap]
+    rw [map_add (f := _), Isogeny.map_comap_genericPoint, map_constMap]
   have hY : IsGenPt E' (φ.1 + constMap E' E.toAffine.FunctionField R') := by
     rw [e]
     exact isGenPt_map E' φ.comap hX'
@@ -42,7 +47,7 @@ theorem pointHomOver_comp {E E' E'' : WeierstrassCurve F} [E.IsElliptic] [E'.IsE
       Point.map φ.comap (ψ.1 + constMap E'' E'.toAffine.FunctionField (pointHomOver Ω ψ R')) := by
     rw [← app_genericPoint_add_constMap Ω ψ R', Isogeny.map_app]
     exact app_eq_of_eq ψ e _ _
-  rw [Isogeny.app_comp, app_eq_of_eq ψ e0 _ hY, h2, map_add, map_constMap, ← Isogeny.comp_val,
+  rw [Isogeny.app_comp, app_eq_of_eq ψ e0 _ hY, h2, map_add (f := _), map_constMap, ← Isogeny.comp_val,
     add_right_inj] at h1
   exact h1.symm
 

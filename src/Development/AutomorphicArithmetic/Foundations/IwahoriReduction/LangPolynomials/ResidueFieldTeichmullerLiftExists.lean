@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.InertiaInvariantValuationUniformizerBound
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.InertiaInvariantValuationUniformizerBound
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 
@@ -34,7 +38,8 @@ private theorem eq_of_pow_eq_self_of_valuation_sub_lt_one {Ω : Type} [Field Ω]
     rw [IsLocalRing.residue_eq_zero_iff, A.valuation_lt_one_iff]
     simpa using hq
   have := congrArg (IsLocalRing.residue A) hS'
-  rw [map_sum, map_one] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_one] at this
   simp only [map_mul, map_pow, ← hr] at this
   rw [Finset.sum_congr rfl (fun i hi => by rw [← pow_add, Nat.add_sub_cancel' (by have := Finset.mem_range.1 hi; omega)])] at this
   rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, ← map_natCast (IsLocalRing.residue A), hq', zero_mul] at this
@@ -72,7 +77,7 @@ private theorem fin_lemma_3 {Ω : Type} [Field Ω] [Algebra ℚ Ω] (A : Valuati
   set Q2 := Q.primPart.map (Int.castRingHom (ZMod l))
   have hQ2 : Q2 ≠ 0 := by
     intro h
-    have := congrArg (fun p => Polynomial.coeff p i) h
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p i) h
     simp only [Q2, Polynomial.coeff_map, Polynomial.coeff_zero, eq_intCast] at this
     exact hi ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).1 this)
   have hev : Polynomial.aeval (IsLocalRing.residue A a) Q2 = 0 := by
@@ -159,7 +164,7 @@ theorem UpperTheory.Kd.C7.residue_field_teichmuller_lift_exists :
       rw [← not_le, A.valuation_le_one_iff]
       exact hn
     have h0 : Pm.eval α = 0 := hα
-    rw [hmon.as_sum, Polynomial.eval_add, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_finset_sum] at h0
+    rw [hmon.as_sum, Polynomial.eval_add, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_finsetSum] at h0
     simp only [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X] at h0
     have e : α ^ Pm.natDegree = -∑ i ∈ Finset.range Pm.natDegree, Pm.coeff i * α ^ i := eq_neg_of_add_eq_zero_left h0
     have hle : A.valuation (∑ i ∈ Finset.range Pm.natDegree, Pm.coeff i * α ^ i) ≤ A.valuation α ^ (Pm.natDegree - 1) := by

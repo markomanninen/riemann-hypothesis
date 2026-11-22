@@ -1,6 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGSTop
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.SplitCount
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.GramIff
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGSO
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DoubleSumEqDotProduct
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.SplitCount
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,7 +129,7 @@ theorem diag_red (F E : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [C
       Matrix.diagonal fun i => IsLocalRing.residue 𝒪[F] (a ((Fintype.equivFin ι).symm i)) := by
   have hc : ∀ x : 𝒪[F], resF F (x : F) = IsLocalRing.residue 𝒪[F] x := fun x => by
     unfold resF
-    rw [dif_pos x.2]
+    rw [dite_eq_left x.2]
   have h0 : resF F 0 = 0 := by simpa using hc 0
   ext i j
   rw [Matrix.of_apply, Matrix.diagonal_apply, Matrix.diagonal_apply]

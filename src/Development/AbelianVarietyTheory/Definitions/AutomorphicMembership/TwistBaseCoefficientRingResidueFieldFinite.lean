@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEqAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEqAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.ConjugateSelf
 
 variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} [NumberField what₂.LL] [StarRing what₂.LL]
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure TwR (LL0 : IntermediateField ℚ what₂.LL) (N : NData R H what₂) where
   cc : N.Om ≃+* N.Om
   cc_cm : IsCMConjOm H.E N.Om cc
@@ -99,8 +103,8 @@ attribute [instance] TwR.lPrime TwR.crO0 TwR.twistBaseCoefficientRing_isDomain T
 
 variable {LL0 : IntermediateField ℚ what₂.LL} {N : NData R H what₂}
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure TwF (T : TwR LL0 N) where
   Sig : T.Tw → Type
   [finSig : ∀ i, Fintype (Sig i)]
@@ -123,8 +127,8 @@ structure TwF (T : TwR LL0 N) where
   hk_zero : ∀ i j b P, hk i j b 0 P = 1
   hEig : ∀ i, Sig i → ℕ → HeightOneSpectrum (𝓞 H.E) → T.O i
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure TwL (T : TwR LL0 N) where
   abelian₂ : T.Tw → Type
   [finLam : ∀ i, Fintype (abelian₂ i)]
@@ -284,15 +288,6 @@ def TwL.empty (T : TwR LL0 N) : TwL T where
   qs_sq := fun _ a => a.elim
   qs_conj := fun _ a => a.elim
   th := fun _ _ a => a.elim
-
-def NLay0.setTw (L : NLay0 R H what₂ LL0) (tw : NTw R H what₂ LL0 L.nd) (ex : NExp R H what₂ LL0 L.nd tw)
-    (h0 : ∀ g : G0g L.nd, what₂.embLL ((ex.eLL0 g : ↥LL0) : what₂.LL) = L.ntypes.e0.coeff g)
-    (th : NTh R H what₂ LL0 L.nd tw ex)
-    (br : ∀ (i : tw.Tw) (w : HeightOneSpectrum (𝓞 H.E)), w ∈ Formalism.BasicNotions.placesOver H.E (tw.l i) →
-      Formalism.BasicNotions.LocBridge (tw.l i) H.E L.nd.Om (ReciprocityTheory.Gal.Dec (F := H.E) (L.nd.plOm.1 w)) (tw.O0 i))
-    (hbr : ∀ (i : tw.Tw) (w : HeightOneSpectrum (𝓞 H.E)) (hw : w ∈ Formalism.BasicNotions.placesOver H.E (tw.l i))
-      (x : L.nd.Om), x ∈ L.nd.plOm.1 w ↔ ‖(br i w hw).j x‖ ≤ 1) : NLay0 R H what₂ LL0 :=
-  { L with ntw := tw, nexp := ex, nStage_trivialCharacter_coeff_eq := h0, nth := th, ntwbr := br, ntwbr_ind := hbr }
 
 def setTw (D : D7) (tw : NTw D.R D.host D.what₂ D.LL0 D.nd) (ex : NExp D.R D.host D.what₂ D.LL0 D.nd tw)
     (h0 : ∀ g : G0g D.nd, D.what₂.embLL ((ex.eLL0 g : ↥D.LL0) : D.what₂.LL) = D.ntypes.e0.coeff g)

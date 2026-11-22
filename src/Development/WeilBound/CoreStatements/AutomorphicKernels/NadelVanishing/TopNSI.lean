@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopNadel
-import Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopIsolated
-import Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopPointSep
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopNadel
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopIsolated
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopPointSep
+
+@[expose] public section
 
 namespace NadelVanishingSeparation.NSI
 

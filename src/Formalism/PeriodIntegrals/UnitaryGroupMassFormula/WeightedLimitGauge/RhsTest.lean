@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstPair
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem embWb_wI (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (j m : Fin (k + 1
     simp only [PI.RhsWLim.wI]
     omega
   unfold PI.RhsWLim.embWb
-  rw [dif_pos hc]
+  rw [dite_eq_left hc]
   exact congrArg₂ μ (Fin.ext (by simp [PI.RhsWLim.wI])) (Fin.ext (by simp [PI.RhsWLim.wI]))
 
 theorem wbPart_emb (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (z' : Fin (2 * r + k + 1) → ℂ) (hz' : inWb k r z') :

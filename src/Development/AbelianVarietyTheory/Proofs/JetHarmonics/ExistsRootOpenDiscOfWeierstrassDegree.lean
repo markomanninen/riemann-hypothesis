@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.PowerSeriesHasSumAt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MvPowerSeriesIntegralBoundedClosureStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesEvalTsumUnitDiscPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.PowerSeriesHasSumAt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MvPowerSeriesIntegralBoundedClosureStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesEvalTsumUnitDiscPropertiesStatement
+
+@[expose] public section
+
 open GlobalTheory.ConvSer
 
 namespace GlobalTheory.ConvSer.DiscRoot
@@ -110,7 +115,7 @@ theorem division [CompleteSpace K] (h : PowerSeries K) (d : ℕ) (hd : 0 < d)
     lt_of_le_of_lt (Polynomial.degree_map_le) hdeg, fun n => ?_, ?_⟩
   · rw [PowerSeries.coeff_map]; exact (PowerSeries.coeff n q).2
   · have e := congrArg (PowerSeries.coeff d) HD.eq_mul_add
-    rw [g.eq_X_pow_mul_shift_add_trunc d, add_mul, mul_assoc, map_add, map_add,
+    rw [g.eq_X_pow_mul_shift_add_trunc d, add_mul, mul_assoc, map_add (f := _), map_add (f := _),
       PowerSeries.coeff_X_pow_self, Polynomial.coeff_coe,
       Polynomial.coeff_eq_zero_of_degree_lt hdeg, add_zero, PowerSeries.coeff_X_pow_mul',
       if_pos le_rfl, Nat.sub_self, PowerSeries.coeff_mul] at e
@@ -140,7 +145,7 @@ theorem division [CompleteSpace K] (h : PowerSeries K) (d : ℕ) (hd : 0 < d)
     · rw [Polynomial.coeff_eq_zero_of_degree_lt (hdeg.trans_le (by exact_mod_cast not_lt.1 hn))]
       simp
   · have := congrArg (PowerSeries.map (ball K).subtype) HD.eq_mul_add
-    rw [map_pow, PowerSeries.map_X, map_add, map_mul, hgh] at this
+    rw [map_pow, PowerSeries.map_X, map_add (f := _), map_mul, hgh] at this
     rw [this, Polynomial.polynomial_map_coe]
 
 theorem root_small [IsAlgClosed K] (r : Polynomial K) (d : ℕ) (hd : 0 < d) (hr : r.degree < d)
@@ -158,7 +163,7 @@ theorem root_small [IsAlgClosed K] (r : Polynomial K) (d : ℕ) (hd : 0 < d) (hr
     by_cases h0 : r = 0
     · simp [h0]
     exact Polynomial.eval_eq_sum_range' ((Polynomial.natDegree_lt_iff_degree_lt h0).2 hr) x
-  obtain ⟨i, hi, hle⟩ := IsUltrametricDist.exists_norm_finset_sum_le_of_nonempty
+  obtain ⟨i, hi, hle⟩ := IsUltrametricDist.exists_norm_finsetSum_le_of_nonempty
     (t := Finset.range d) ⟨0, Finset.mem_range.2 hd⟩ (fun i => r.coeff i * x ^ i)
   rw [← e, norm_mul, norm_pow, norm_pow] at hle
   have h2 : ‖x‖ ^ i ≤ ‖x‖ ^ d := pow_le_pow_right₀ h1 (Finset.mem_range.1 hi).le

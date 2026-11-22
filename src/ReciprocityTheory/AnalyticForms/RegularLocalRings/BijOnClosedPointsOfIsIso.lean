@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLoc
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FromSpecResidueFieldAppTopIso
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.SecHomSurjective
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLoc
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FromSpecResidueFieldAppTopIso
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.SecHomSurjective
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

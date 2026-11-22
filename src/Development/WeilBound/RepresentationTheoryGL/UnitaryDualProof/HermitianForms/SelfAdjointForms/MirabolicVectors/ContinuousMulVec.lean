@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.FixK
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexLatticeEqHaarDetStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.FixK
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexLatticeEqHaarDetStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,7 +145,8 @@ theorem avg_conj (ψ : AddChar k Circle) {m N : ℕ} (h : m + 2 ≤ N) {V : Type
         refine hun t1 ⟨ht1, ?_⟩
         have : _ *ᵥ (a - gv t1) ∈ p.1 := ht'a
         rwa [Matrix.mulVec_sub, mulVec_inv_mulVec] at this
-  rw [avg_eq_of_data ψ h π hψ hπ η (isLat_gLat g hA) _ p' hp', hav, map_smul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avg_eq_of_data ψ h π hψ hπ η (isLat_gLat g hA) _ p' hp', hav, map_smul, map_sum,
     Finset.card_image_of_injective _ ginj, Finset.sum_image (fun x _ y _ e => ginj e)]
   congr 1
   refine Finset.sum_congr rfl fun t _ => ?_

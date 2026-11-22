@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.OrthZero
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TwtrContOfMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.OrthZero
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TwtrContOfMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,6 +79,7 @@ private theorem mul_keep (D : Dom E n 0) (π : CuspSub E n) {w : ℝ → ℂ} (h
       (mulV_cont D hw hC ι)
   exact Submodule.topologicalClosure_minimal _ hle hcl hf
 
+set_option synthInstance.maxHeartbeats 200000 in
 private theorem cv_cont (μ : Measure (H E n 0)) [IsLocallyFiniteMeasure μ] {φ : H E n 0 → ℂ} (hφ : IsTestH φ)
     {u : ℝ → ℂ} (hu : Continuous u) {f : GA E n → ℂ} (hf : Continuous f) : Continuous (cvF μ φ u f) := by
   have hl : Continuous (ldet : H E n 0 → ℝ) := DiscreteGroups.T1.G.continuous_ldet
@@ -119,7 +124,34 @@ private theorem cut_value (hB : Basic) (hn : 1 ≤ n) (D : Dom E n 0) (π : Cusp
   obtain ⟨T, hT, -, -⟩ := PositivityTheory.Rg.BcB.E1.kernel_operator_exists_holds E n 0 D Unit (fun _ _ => φ') (fun _ _ => ht)
   refine ⟨T g, DiscreteGroups.T1.G.piInv E n hn D π hθ Unit _ T (fun _ _ => ht) hT g hg, ?_⟩
   filter_upwards [hT g ()] with x hx hxR
-  let X := PositivityTheory.Rg.BcB.E1.ctx PositivityTheory.Rg.BcB.E1.ratProper_holds D
+  let X : E1.Ctx :=
+    haveI := CuspidalL2GL.t2Space_GA E n
+    haveI := CuspidalL2GL.t2Space_GA E 0
+    haveI := CuspidalL2GL.locallyCompactSpace_GA E n
+    haveI := CuspidalL2GL.locallyCompactSpace_GA E 0
+    haveI := CuspidalL2GL.secondCountableTopology_GA E n
+    haveI := CuspidalL2GL.secondCountableTopology_GA E 0
+    haveI := (E1.ratProper_holds E n).2.1
+    haveI := (E1.ratProper_holds E 0).2.1
+    { G := H E n 0
+      ms := PositivityTheory.Rg.BcB.E.borelH E n 0
+      bs := ⟨rfl⟩
+      μ := D.μ
+      haar := { toIsFiniteMeasureOnCompacts :=
+                  @isFiniteMeasureOnCompacts_of_isLocallyFiniteMeasure _ _ _ D.μ D.haar.2.2.2
+                toIsMulLeftInvariant := D.haar.1
+                toIsOpenPosMeasure := D.haar.2.2.1 }
+      Γ := ratH E n 0
+      cn := (((ratGL E n).prodMap (ratGL E 0)).rangeRestrict_surjective).countable
+      proper := by
+        intro C hC
+        have h1 := (E1.ratProper_holds E n).2.2 _ (hC.image continuous_fst)
+        have h2 := (E1.ratProper_holds E 0).2.2 _ (hC.image continuous_snd)
+        refine ((h1.prod h2).image ((ratGL E n).prodMap (ratGL E 0)).rangeRestrict).subset ?_
+        rintro ⟨_, γ, rfl⟩ hγ
+        exact ⟨γ, ⟨⟨_, hγ, rfl⟩, ⟨_, hγ, rfl⟩⟩, rfl⟩
+      F := D.F
+      fd := D.fd }
   have hinv : ∀ (δ : ratH E n 0) (y : H E n 0), f ((δ : H E n 0) * y) = f y := fun δ y => by
     show ψ.1 ((δ : H E n 0) * y).1 * χ (ldet ((δ : H E n 0) * y)) = ψ.1 y.1 * χ (ldet y)
     rw [form_rat π hψ δ y, hmul, (hrat δ).1, zero_add]

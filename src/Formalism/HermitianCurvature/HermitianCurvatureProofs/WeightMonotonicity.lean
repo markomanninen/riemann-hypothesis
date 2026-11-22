@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerProductCast.OfFnProdIntCast
+module
+
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerProductCast.OfFnProdIntCast
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -37,7 +41,8 @@ theorem dm_one : (1 : Module.End ℂ V).dualMap = 1 := by
 theorem dm_sum {ι : Type*} (s : Finset ι) (f : ι → Module.End ℂ V) :
     (∑ i ∈ s, f i).dualMap = ∑ i ∈ s, (f i).dualMap := by
   ext φ x
-  simp [LinearMap.dualMap_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [LinearMap.dualMap_apply, LinearMap.sum_apply, map_sum]
 
 theorem dm_intCast (z : ℤ) : ((z : Module.End ℂ V)).dualMap = (z : Module.End ℂ (Module.Dual ℂ V)) := by
   ext φ x
@@ -96,7 +101,7 @@ theorem comm_prod (H : Module.End ℂ V) : ∀ {n : ℕ} (g : Fin n → Module.E
     H * (List.ofFn g).prod = (List.ofFn g).prod * H + (∑ x, e x) • (List.ofFn g).prod
   | 0, g, e, _ => by simp
   | n + 1, g, e, h => by
-    have ih := comm_prod H (fun x => g x.succ) (fun x => e x.succ) (fun x => h x.succ)
+    have ih := comm_prod H (n := n) (fun x => g x.succ) (fun x => e x.succ) (fun x => h x.succ)
     rw [List.ofFn_succ, List.prod_cons, ← mul_assoc, h 0, add_mul, mul_assoc, ih, Fin.sum_univ_succ, mul_add,
       add_smul, mul_smul_comm, smul_mul_assoc, mul_assoc]
     abel

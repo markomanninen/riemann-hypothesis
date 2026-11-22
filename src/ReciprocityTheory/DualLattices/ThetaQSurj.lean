@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.MulVecMemPP
+module
+
+public import ReciprocityTheory.DualLattices.MulVecMemPP
+
+@[expose] public section
 
 noncomputable section
 

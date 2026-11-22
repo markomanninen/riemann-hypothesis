@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,7 +114,7 @@ theorem beta_all_of_generating : BetaGen → SumBd → SchurJT → BetaAll := by
     exact (hG m m' α (γ t) X A B' hA hB' hα hb hX' hd).tsum_eq.symm
   have hP : Filter.Tendsto (fun t => ∏ i : Fin m, ∏ j : Fin m', (1 - α i * c t j * X)⁻¹) (𝓝[>] (0 : ℝ))
       (𝓝 (∏ i : Fin m, ∏ j : Fin m', (1 - α i * (β j : ℂ) * X)⁻¹)) := by
-    refine tendsto_finset_prod _ fun i _ => tendsto_finset_prod _ fun j _ => ?_
+    refine tendsto_finsetProd _ fun i _ => tendsto_finsetProd _ fun j _ => ?_
     refine (tendsto_const_nhds.sub ((tendsto_const_nhds.mul (hγt j)).mul tendsto_const_nhds)).inv₀ ?_
     intro h0
     have h1 : α i * (β j : ℂ) * X = 1 := by linear_combination -h0

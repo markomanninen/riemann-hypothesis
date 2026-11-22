@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TowerComplexLiftAndExtensionLemmasStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TowerComplexLiftAndExtensionLemmasStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -160,7 +164,7 @@ theorem tower (K : Cx C) (Q : ℕ → ObjectProperty C) (hQ : ∀ n, Q n ≤ Q (
         refine ⟨fun X ↦ if h : Q n X.obj then g ⟨X.obj, h⟩ else 0, ?_⟩
         funext X
         show (if h : Q n X.obj then g ⟨X.obj, h⟩ else 0) = g X
-        rw [dif_pos X.property])
+        rw [dite_eq_left X.property])
       (fun n x hx ↦ (((K.res (Q (n + 1)).ι).resMap (ιOfLE (hQ n))).z1 ⟨x, hx⟩).2)
       (fun n b hb ↦ by
         obtain ⟨z, hz, g, e⟩ := exists_cocycle_of_h1_surjective _ (h1b n).2 b hb

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatiosEqOfSameOrbit
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatiosEqOfSameOrbit
+
+@[expose] public section
+
 set_option autoImplicit false
 open CategoryTheory AlgebraicGeometry Limits TopologicalSpace MvPolynomial MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -21,12 +26,13 @@ theorem chernPart_null_of_chart_null : ∀ {k : Type} [CommRing k] {X : Scheme.{
       GlobalTheory.ChartGlue.chartMeas c.e ρ Z = 0 := by
     intro c ρ
     unfold GlobalTheory.ChartGlue.chartMeas
-    by_cases hf : AEMeasurable c.e.symm ((volume.restrict c.e.target).withDensity (ρ ∘ c.e.symm))
-    · rw [Measure.map_apply_of_aemeasurable hf hZ]
-      refine withDensity_absolutelyContinuous _ _ ?_
-      rw [Measure.restrict_apply' c.e.open_target.measurableSet, Set.inter_comm]
-      exact hc c
-    · simp [Measure.map_of_not_aemeasurable hf]
+    have hf : AEMeasurable c.e.symm ((volume.restrict c.e.target).withDensity (ρ ∘ c.e.symm)) :=
+      (c.e.continuousOn_symm.aemeasurable c.e.open_target.measurableSet).mono_ac
+        (withDensity_absolutelyContinuous _ _)
+    rw [Measure.map_apply_of_aemeasurable hf hZ]
+    refine withDensity_absolutelyContinuous _ _ ?_
+    rw [Measure.restrict_apply' c.e.open_target.measurableSet, Set.inter_comm]
+    exact hc c
   have hle : ∀ ρ : GlobalTheory.AlgChart q σ D → GlobalTheory.CxPts q σ → ENNReal,
       GlobalTheory.ChartGlue.glueMeas (fun c : GlobalTheory.AlgChart q σ D => c.e) ρ ≤
         (GlobalTheory.ChartGlue.glueMeas (fun c : GlobalTheory.AlgChart q σ D => c.e) ρ).restrict Zᶜ := by

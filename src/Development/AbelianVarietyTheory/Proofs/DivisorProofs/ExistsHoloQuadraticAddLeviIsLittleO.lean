@@ -1,8 +1,13 @@
-import ReciprocityTheory.L2DbarEstimates.Imports
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
-import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.RegMaxA
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Imports
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.RegMaxA
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric ReciprocityTheory.L2DbarEstimates ReciprocityTheory.L2DbarEstimates.Y GlobalTheory.OTY GlobalTheory.Published.L2Extension
 open scoped ENNReal ContDiff
 
@@ -17,7 +22,7 @@ theorem taylor_two {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] (φ : E
   have hB : HasFDerivAt (fderiv ℝ φ) B p :=
     ((hφ.fderiv_right (m := 1) (by norm_num)).differentiableAt one_ne_zero).hasFDerivAt
   have hsymm : ∀ u w, B u w = B w u := fun u w =>
-    (hφ.isSymmSndFDerivAt (by simp [minSmoothness])) u w
+    (hφ.isSymmSndFDerivAt (by simp)) u w
   have hdiff := eventually_differentiableAt_of_contDiffAt hφ
   have hlo := hB.isLittleO
   set g : E → ℝ := fun w => φ w - D (w - p) - 1 / 2 * B (w - p) (w - p)
@@ -67,7 +72,7 @@ noncomputable section
 
 theorem rmVec_coord (h : V n) : rmVec (fun j => h j) = h := by
   ext i
-  simp [rmVec, bas, EuclideanSpace.single_apply, Pi.single_apply]
+  simp [rmVec, bas, PiLp.single_apply, Pi.single_apply]
 
 def linCoef (D : V n →L[ℝ] ℝ) (j : Fin n) : ℂ :=
   (D (bas n j) : ℂ) - Complex.I * (D (Complex.I • bas n j) : ℂ)
@@ -78,7 +83,8 @@ def quadCoef (B : V n →L[ℝ] V n →L[ℝ] ℝ) (j k : Fin n) : ℂ :=
 
 theorem lin_re (D : V n →L[ℝ] ℝ) (ξ : Fin n → ℂ) :
     (∑ j, linCoef D j * ξ j).re = D (rmVec ξ) := by
-  simp only [rmVec, map_sum, Complex.re_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rmVec, map_sum, Complex.re_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [rm_cplx_smul_eq]
   simp [linCoef, Complex.mul_re]

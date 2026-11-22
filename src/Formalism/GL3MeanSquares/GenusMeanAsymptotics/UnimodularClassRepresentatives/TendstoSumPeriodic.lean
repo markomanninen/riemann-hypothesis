@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.TendstoSumCoset
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.TendstoSumCoset
+
+@[expose] public section
 
 open NumberField Module Filter Topology
 open scoped Classical
@@ -114,8 +118,8 @@ theorem tendsto_sum_periodic (hK : Formalism.HermitianLatticesTheory.IsCMUnram K
       refine finsum_mem_congr rfl fun n _ => ?_
       rw [Finset.prod_insert h𝔮S]
       ring
-    have hT := tendsto_finset_sum (Finset.univ : Finset (𝓞 F ⧸ 𝔮.1 ^ k)) fun c _ => (hlim c).const_mul (φ 𝔮 c)
-    convert hT using 1
+    have hT := tendsto_finsetSum (Finset.univ : Finset (𝓞 F ⧸ 𝔮.1 ^ k)) fun c _ => (hlim c).const_mul (φ 𝔮 c)
+    convert (preTransparency := .reducible) hT using 1
     · funext j
       rw [hsplit j, Finset.mul_sum]
       exact Finset.sum_congr rfl fun c _ => by ring

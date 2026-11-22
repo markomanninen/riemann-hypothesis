@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ThresholdGeOddPosition
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ThresholdGeOddPosition
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem Mx_even {L₁ N₁' : ℕ} (hV : Fr.Valid L₁ N₁') (hnL : ∀ j, Dt.n
   have hc := Classical.choose_spec hex
   have heq : Classical.choose hex = u := hinj _ _ hc.1 hu hc.2
   unfold Mx
-  rw [dif_pos hex, if_pos he, heq]
+  rw [dite_eq_left hex, if_pos he, heq]
 
 theorem Mx_odd {L₁ N₁' : ℕ} (hV : Fr.Valid L₁ N₁') (hnL : ∀ j, Dt.nL j = (Fr.LLset (segZ j)).card) (j : ZMod J) (u : ℕ)
     (hu : u < Dt.nL j + r) (he : ¬ Even (pU p O Fr Dt j u)) :
@@ -54,7 +58,7 @@ theorem Mx_odd {L₁ N₁' : ℕ} (hV : Fr.Valid L₁ N₁') (hnL : ∀ j, Dt.nL
   have hc := Classical.choose_spec hex
   have heq : Classical.choose hex = u := hinj _ _ hc.1 hu hc.2
   unfold Mx
-  rw [dif_pos hex, if_neg he, heq]
+  rw [dite_eq_left hex, if_neg he, heq]
 
 theorem cond_at {TT : Finset (Fin n')} {L₁ L₂ : ℕ} {d : Fin n' → ℕ}
     (hM : MFH p Fr TT L₁ L₂ N₁ G' deg d Y (r + K) cP) (hnL : ∀ j, Dt.nL j = (Fr.LLset (segZ j)).card)
@@ -103,8 +107,8 @@ end At
 
 end XXb
 
-open XXb in
 
+open XXb in
 theorem restXXG_b : RestXXG := by
   intro p _ n' r K _ _ _ O _ _ _ S Fr TT L₁ L₂ N₁ G' deg d Y cP hM J _ Dt dPl dNo ka hT δ j A B hPl hNo
   have hV := hM.frames.2.1
@@ -114,7 +118,7 @@ theorem restXXG_b : RestXXG := by
       ∑ c : Fin (r + K), mm (x, c) = δ (j, x) + dNoOf p O Fr Dt dNo (j, x) ∧
       ordDeg mm x ≤ δ (j, x) + dNoOf p O Fr Dt dNo (j, x) := by
     intro mm hmm x
-    obtain ⟨ua, hua, ub, hub, h⟩ := deg_mul A B mm hmm
+    obtain ⟨ua, hua, ub, hub, h⟩ := XXb.deg_mul A B mm hmm
     have e1 : ∑ c : Fin r, mm (x, Fin.castAdd K c) = δ (j, x) := by
       rw [← hPl.2.1 ua hua x]
       exact Finset.sum_congr rfl fun c _ => (h x).1 c
@@ -128,10 +132,10 @@ theorem restXXG_b : RestXXG := by
     · rw [e1]; omega
   refine ⟨?_, ?_⟩
   · unfold XX'
-    refine Submodule.mem_inf.2 ⟨Submodule.subset_span ⟨A, B, Mx p O Fr cP Dt ka j, hPl.1, hNo.1, ?_, rfl⟩, ?_⟩
+    refine Submodule.mem_inf.2 ⟨Submodule.subset_span ⟨A, B, XXb.Mx p O Fr cP Dt ka j, hPl.1, hNo.1, ?_, rfl⟩, ?_⟩
     · intro x hx hW
-      obtain ⟨u, hu, rfl⟩ := exists_posU hV hr1 (segZ j) (Dt.nL j) (hnL j) x hx hW
-      exact cond_at p O Fr deg Y N₁ G' cP Dt dNo ka hM hnL δ j A B hPl hNo u hu hx hW
+      obtain ⟨u, hu, rfl⟩ := XXb.exists_posU hV hr1 (segZ j) (Dt.nL j) (hnL j) x hx hW
+      exact XXb.cond_at p O Fr deg Y N₁ G' cP Dt dNo ka hM hnL δ j A B hPl hNo u hu hx hW
     · rw [mem_restrictSupport_iff]
       intro mm hmm x _ _
       show (ordDeg mm x : ℝ) ≤ ((δ (j, x) + dNoOf p O Fr Dt dNo (j, x) : ℕ) : ℝ)

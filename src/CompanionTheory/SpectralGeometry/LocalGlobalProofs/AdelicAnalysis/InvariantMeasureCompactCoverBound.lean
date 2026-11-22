@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.ThetaDilations.Nuabs
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.ThetaDilations.Nuabs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix

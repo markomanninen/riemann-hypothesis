@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ContinuousAtMN
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ContinuousAtMN
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,6 @@ def iotaF (τ : D.what₂.Tau) (y : GR n) : G D n :=
       by rw [← atMN_mul, ← reidx_mul, mR_mul_inv, reidx_one, atMN_one],
       by rw [← atMN_mul, ← reidx_mul, mR_inv_mul, reidx_one, atMN_one]⟩,
     atMN_unitary D τ (Jst D n) _ (reidx_unitary τ y)⟩ : HR (AF D.host.F) D.sp.cm.sig (Jst D n))
-
-theorem mat_iotaF (τ : D.what₂.Tau) (y : GR n) : mat (iotaF τ y) = atMN D τ (reidx (mR y)) := rfl
 
 def iota (τ : D.what₂.Tau) : GR n →* G D n where
   toFun := iotaF τ

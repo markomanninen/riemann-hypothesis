@@ -1,9 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.DzValue
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SglobDzBigDef
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AbsCentral
-import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.AbsCentralAlt
-import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.GoodLem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameUniformizerPower
+public import Development.DiscreteGroups.GlobalIrreducibility.DzBigDef
+public import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.GoodLem
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SglobDzBigDef
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AbsCentral
+public import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.AbsCentralAlt
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -15,8 +21,8 @@ namespace DiscreteGroups.sglob.DzType.Rt
 open ValuativeRel GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.DepthZeroRankOneLabel
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] {g : ℕ} [Fact g.Prime]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
-theorem character_inertia_eq_of_congruent_generator [IsTotallyComplex E] (H : _root_.DiscreteGroups.sglob.DzType.DepthZeroInertiaBigAlt) {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a}
-    {ε : EpsFamily A} {rc : IrrGL (w.adicCompletion E) → WD h} (hl : _root_.UpperTheory.One.M.LawsM a ha ε rc)
+theorem character_inertia_eq_of_congruent_generator [_root_.NumberField.IsTotallyComplex E] (H : _root_.DiscreteGroups.sglob.DzType.DepthZeroInertiaBigAlt) {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a}
+    {ε : EpsFamily A} {rc : IrrGL (k := w.adicCompletion E) → WD h} (hl : _root_.UpperTheory.One.M.LawsM a ha ε rc)
     (i : ℚ_[g] ≃+* w.adicCompletion E) (hi : Continuous i) (hw : ((g : ℕ) : 𝓞 E) ∈ w.asIdeal)
     (κ : IsLocalRing.ResidueField A ≃+* Formalism.CyclotomicNorms.Fbar g) (L : GlobalTheory.GLq.LabelDatum g) (t : G E Ω) (ht : t ∈ Ine (F := E) A)
     (hT : TameCoupled A κ t L.gen) (μ : (w.adicCompletion E)ˣ →* ℂˣ) (hμ : GlobalTheory.SmGL.IsSmoothChar μ)

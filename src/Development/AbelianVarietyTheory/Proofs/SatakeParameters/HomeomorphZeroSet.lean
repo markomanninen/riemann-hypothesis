@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DetJacMatCoordsEqTransitionJacobianDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DetJacMatCoordsEqTransitionJacobianDet
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,14 +40,14 @@ theorem homAt_comp {φ : MvPolynomial (Fin k) ℂ →+* Γ(X, U)} (hφ : Functio
 
 end GlobalTheory.AffCxPts
 
-open GlobalTheory.AffCxPts GlobalTheory.CxPts GlobalTheory.Points in
 
+open GlobalTheory.AffCxPts GlobalTheory.CxPts GlobalTheory.Points in
 theorem GlobalTheory.AffCxPts.homeomorph_zeroSet : ∀ (X : Scheme.{0}) (p : X ⟶ Sp ℂ) (U : X.Opens),
     IsAffineOpen U → (algX p U).FiniteType → ∃ (k : ℕ) (G : Finset (MvPolynomial (Fin k) ℂ)),
       Nonempty (↥(GlobalTheory.CxPts.ptsIn p (RingHom.id ℂ) U) ≃ₜ
         ↥{z : Fin k → ℂ | ∀ P ∈ G, MvPolynomial.eval z P = 0}) := by
   intro X p U hU hft
-  letI := (algX p U).toAlgebra
+  let := (algX p U).toAlgebra
   obtain ⟨k, φa, hφ⟩ := Algebra.FiniteType.iff_quotient_mvPolynomial''.1 hft
   let φ : MvPolynomial (Fin k) ℂ →+* Γ(X, U) := φa.toRingHom
   have hφ' : Function.Surjective φ := hφ
@@ -95,5 +99,5 @@ theorem GlobalTheory.AffCxPts.homeomorph_zeroSet : ∀ (X : Scheme.{0}) (p : X �
       right_inv := fun z => Subtype.ext (funext fun i => hcoords z i)
       continuous_toFun := by
         refine Continuous.subtype_mk (continuous_pi fun i => ?_) _
-        exact (continuousOn_iff_continuous_restrict.1 (continuousOn_ev (φ (MvPolynomial.X i))))
+        exact (continuousOn_iff_continuous_domRestrict.1 (continuousOn_ev (φ (MvPolynomial.X i))))
       continuous_invFun := hsc.subtype_mk _ }

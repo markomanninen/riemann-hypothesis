@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -14,7 +18,8 @@ theorem isAdicComplete_of_le_of_isNoetherianRing (R : Type) [CommRing R] [IsNoet
     refine ⟨L, fun n => ?_⟩
     set N : Submodule R R := I ^ n • ⊤ with hN
     have hK : (⨅ m : ℕ, J ^ m • ⊤ : Submodule R (R ⧸ N)) = ⊥ :=
-      Ideal.iInf_pow_smul_eq_bot_of_le_jacobson J (IsAdicComplete.le_jacobson_bot J)
+      Ideal.iInf_pow_smul_eq_bot_of_le_jacobson J (by
+        simpa only [Ideal.jacobson_bot] using IsAdicComplete.le_jacobson_bot J)
     rw [SModEq.sub_mem, ← Submodule.Quotient.mk_eq_zero, ← Submodule.mem_bot R, ← hK,
       Submodule.mem_iInf]
     intro m

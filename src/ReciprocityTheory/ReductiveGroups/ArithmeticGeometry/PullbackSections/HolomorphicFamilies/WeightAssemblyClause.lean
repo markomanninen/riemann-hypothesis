@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.PlaceIntegralUnramified
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+
+@[expose] public section
 
 noncomputable section
 

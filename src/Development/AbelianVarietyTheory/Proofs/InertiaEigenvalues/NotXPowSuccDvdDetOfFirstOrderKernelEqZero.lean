@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -63,10 +68,10 @@ theorem not_X_pow_succ_dvd_det_of_first_order_kernel_eq_zero :
   set Θ : Matrix (Fin a) (Fin a) K[X] := Ψ * Q.map C with hΘ
   have hΘ0 : ∀ i j, (Θ i j).coeff 0 = (A * Q) i j := by
     intro i j
-    simp [hΘ, hA, Matrix.mul_apply, Polynomial.finset_sum_coeff]
+    simp [hΘ, hA, Matrix.mul_apply, Polynomial.finsetSum_coeff]
   have hΘ1 : ∀ i j, (Θ i j).coeff 1 = (B * Q) i j := by
     intro i j
-    simp [hΘ, hB, Matrix.mul_apply, Polynomial.finset_sum_coeff]
+    simp [hΘ, hB, Matrix.mul_apply, Polynomial.finsetSum_coeff]
   set Θ' : Matrix (Fin a) (Fin a) K[X] :=
     Matrix.of fun i j => if D j = 0 then (Θ i j).divX else Θ i j with hΘ'
   have hfac : Θ = Θ' * Matrix.diagonal fun j => if D j = 0 then (X : K[X]) else 1 := by

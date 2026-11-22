@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem ofRoots_eq (R : Finset (Fin N × Fin N)) (hR : ∀ q ∈ R, q.1 < q.2) (
     ofRoots R c i j = (1 : Matrix (Fin N) (Fin N) ℂ) i j + ∑ q : R, if q.1 = (i, j) then c q else 0 := by
   simp only [ofRoots]
   by_cases h : (i, j) ∈ R
-  · rw [dif_pos h, Matrix.one_apply_ne (hR _ h).ne, zero_add, Finset.sum_eq_single ⟨(i, j), h⟩]
+  · rw [dite_eq_left h, Matrix.one_apply_ne (hR _ h).ne, zero_add, Finset.sum_eq_single ⟨(i, j), h⟩]
     · simp
     · intro q _ hq
       rw [if_neg]
@@ -37,7 +41,7 @@ theorem ofRoots_eq (R : Finset (Fin N × Fin N)) (hR : ∀ q ∈ R, q.1 < q.2) (
       exact hq (Subtype.ext h')
     · intro h'
       exact absurd (Finset.mem_univ _) h'
-  · rw [dif_neg h, Finset.sum_eq_zero, add_zero, Matrix.one_apply]
+  · rw [dite_eq_right h, Finset.sum_eq_zero, add_zero, Matrix.one_apply]
     intro q _
     rw [if_neg]
     intro h'

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotVanish
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfAdelicFourierSeparatingCharsVanish
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteTwConjOfIsTest
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralTsumEnormNeTop
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OnlyStableSubspaces
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotVanish
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfAdelicFourierSeparatingCharsVanish
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteTwConjOfIsTest
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralTsumEnormNeTop
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OnlyStableSubspaces
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Matrix MeasureTheory
@@ -28,13 +32,11 @@ theorem twConj_map' (ι : D →* G) (θD : Monoid.End D) (θ : Monoid.End G)
     twConj θ (ι g) (ι δ) = ι (twConj θD g δ) := by
   simp [twConj, hθ]
 
-theorem twConjugate_equivalence (θ : Monoid.End D) : Equivalence (TwConjugate θ) where
-  refl δ := ⟨1, by simp [twConj]⟩
-  symm := by
-    rintro a b ⟨g, rfl⟩
+theorem twConjugate_equivalence (θ : Monoid.End D) : Equivalence (TwConjugate θ) := by
+  refine ⟨fun δ => ⟨1, by simp [twConj]⟩, ?_, ?_⟩
+  · rintro a b ⟨g, rfl⟩
     exact ⟨g⁻¹, by simp only [twConj, map_inv]; group⟩
-  trans := by
-    rintro a b c ⟨g, rfl⟩ ⟨h, rfl⟩
+  · rintro a b c ⟨g, rfl⟩ ⟨h, rfl⟩
     exact ⟨g * h, (twConj_mul' θ g h a).symm⟩
 
 theorem cl_eq_iff (θ : Monoid.End D) (a b : D) :
@@ -253,7 +255,7 @@ theorem abstract_unfold
       by_cases hx : x ∈ S
       · simp [hdef, hh, Set.indicator_of_mem hx]
       · simp [hdef, hh, Set.indicator_of_notMem hx]
-    have hs : Summable (h x) := summable_of_finite_support (hsupp x)
+    have hs : Summable (h x) := summable_of_hasFiniteSupport (hsupp x)
     have hs' : Summable fun p => h x (Equiv.sigmaFiberEquiv cl p) :=
       (Equiv.sigmaFiberEquiv cl).summable_iff.2 hs
     have e1 : ∑' d, h x d = ∑' p, h x (Equiv.sigmaFiberEquiv cl p) :=
@@ -269,7 +271,7 @@ theorem abstract_unfold
   · by_contra hcT
     exact hc (hT0 _ fun x => hzero c hcT _ (Quot.out_eq c) x)
   · simp_rw [hpt]
-    rw [integral_finset_sum T fun c _ => hint c, finsum_eq_sum_of_support_subset (s := T)]
+    rw [integral_finsetSum T fun c _ => hint c, finsum_eq_sum_of_support_subset (s := T)]
     · exact Finset.sum_congr rfl fun c _ => (hclass c).symm
     · intro c hc
       by_contra hcT
@@ -348,9 +350,6 @@ theorem unfold_of_mahler (hM : Mahler) : Unfold := by
         GlobalTheory.CompanionTheory.KerTwFin.discreteTopology_range (fun _ ⟨t, _, e⟩ => ⟨t, e⟩)
     exact GlobalTheory.CompanionTheory.QuotUnfold.quotIntegral_unfold (Γ := (ratGL E n).range) (Γ₀ := ratCent δ)
       (fun _ ⟨t, _, e⟩ => ⟨t, e⟩) hF (hHm δ) (hinvH δ) hfin
-
-theorem unfold_of_absUnfold_mahler_kerFin : PositivityTheory.Rg.BcB.D4.AbsUnfold → Mahler → PositivityTheory.Rg.BcB.D4.KerFin → Unfold :=
-  fun _ hM _ => unfold_of_mahler hM
 
 end GlobalTheory.CompanionTheory.UnfoldCut
 

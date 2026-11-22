@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DistribHaarCharEqOneOfValuationEqOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DistribHaarCharEqOneOfValuationEqOne
+
+@[expose] public section
 
 open Matrix ValuativeRel MeasureTheory
 open scoped Topology

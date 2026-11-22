@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.RealGroupsLie
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.RealGroupsLie
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -81,9 +85,6 @@ noncomputable def polarEquiv : unitaryGroup n 𝕜 × {p : Matrix n n 𝕜 // p.
     have := polar_unique (g := polarMul (⟨k, hk⟩, ⟨p, hp⟩)) hk hp rfl
     exact Prod.ext (Subtype.ext this.2) (Subtype.ext this.1)
   right_inv g := Units.ext (polarUnitary_mul_polarPos g)
-
-@[simp] theorem coe_polarEquiv_apply (kp : unitaryGroup n 𝕜 × {p : Matrix n n 𝕜 // p.PosDef}) :
-    ((polarEquiv kp : GL n 𝕜) : Matrix n n 𝕜) = kp.1 * kp.2 := rfl
 
 theorem continuous_polarPos
     (hsqrt : ContinuousOn (CFC.sqrt : Matrix n n 𝕜 → Matrix n n 𝕜) {a | 0 ≤ a}) :

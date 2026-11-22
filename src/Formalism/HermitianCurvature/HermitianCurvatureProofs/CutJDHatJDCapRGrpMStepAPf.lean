@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpMStepA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JDRvStepAOfLvlA
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpMStepA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JDRvStepAOfLvlA
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

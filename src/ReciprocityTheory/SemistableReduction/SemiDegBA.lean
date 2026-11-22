@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SemiDegSt
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem colMat_comb {K : Type} [Field K] [NumberField K] {r k : ℕ} (σ : K →
     (b : Fin k → Fin r → K) (N : Matrix (Fin k) (Fin k) K) :
     colMat σ (fun j => ∑ i, N i j • b i) = colMat σ b * N.map σ := by
   ext a j
-  simp only [colMat, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, Finset.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [colMat, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, Finset.sum_apply,
     Pi.smul_apply, smul_eq_mul, map_sum, map_mul]
   exact Finset.sum_congr rfl fun i _ => mul_comm _ _
 

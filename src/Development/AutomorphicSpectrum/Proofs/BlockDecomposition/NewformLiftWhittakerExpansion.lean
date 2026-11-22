@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ open scoped NumberField.AdeleRing ValuativeRel ENNReal ComplexConjugate
 namespace GlobalTheory.CompanionTheory.RsWhittaker
 
 open Ad3 Ad3.R
-
-local notation "𝔸f" => FiniteAdeleRing (𝓞 ℚ) ℚ
 
 theorem unipotent_eq_adelic_unipotent (x : 𝔸[ℚ]) : (uni2 x : G2) = unipAdele x := by
   refine Units.ext (Matrix.ext fun a b => ?_)
@@ -90,11 +92,11 @@ theorem continuous_unipotentGL2 : Continuous (fun x : 𝔸[ℚ] => (uni2 x : G2)
     fin_cases a <;> fin_cases b <;> simp [uni2, Function.comp_def] <;> fun_prop
 
 theorem isCompact_box : IsCompact (closure (fundamentalSetInfinite ℚ) ×ˢ
-    (integralFiniteAdeles (𝓞 ℚ) ℚ : Set 𝔸f) : Set 𝔸[ℚ]) :=
+    (integralFiniteAdeles (𝓞 ℚ) ℚ : Set 𝔸ᶠ[ℚ]) : Set 𝔸[ℚ]) :=
   (isCompact_closure_fundamentalSetInfinite ℚ).prod (isCompact_integralFiniteAdeles ℚ)
 
 theorem fundamentalSet_subset_box : fundamentalSet ℚ ⊆ (closure (fundamentalSetInfinite ℚ) ×ˢ
-    (integralFiniteAdeles (𝓞 ℚ) ℚ : Set 𝔸f) : Set 𝔸[ℚ]) :=
+    (integralFiniteAdeles (𝓞 ℚ) ℚ : Set 𝔸ᶠ[ℚ]) : Set 𝔸[ℚ]) :=
   Set.prod_mono subset_closure subset_rfl
 
 theorem continuous_setIntegral_of_compact {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] [T2Space Y]
@@ -162,7 +164,7 @@ theorem setIntegral_levelDomain (G : ℝ → ℂ) :
       levelConstant 1 • ∫ t in (0 : ℝ)..1, G t := by
   set A : Set (InfiniteAdeleRing ℚ) := RationalIdeles.realEquiv ⁻¹' Set.Ico (0 : ℝ) (1 : ℕ)
   calc ∫ x in levelDomain 1, G (RationalIdeles.realEquiv x.1) ∂adeleMeasure ℚ
-      = ∫ x in (A ×ˢ levelIdeal 1 : Set (InfiniteAdeleRing ℚ × 𝔸f)), G (RationalIdeles.realEquiv x.1)
+      = ∫ x in (A ×ˢ levelIdeal 1 : Set (InfiniteAdeleRing ℚ × 𝔸ᶠ[ℚ])), G (RationalIdeles.realEquiv x.1)
           ∂((infiniteAdeleMeasure ℚ).prod (finiteAdeleMeasure ℚ)) := rfl
     _ = (finiteAdeleMeasure ℚ (levelIdeal 1)).toReal •
           ∫ x in A, G (RationalIdeles.realEquiv x) ∂infiniteAdeleMeasure ℚ := by
@@ -191,7 +193,7 @@ theorem levelConstant_one : levelConstant 1 = 1 := by
   simpa [hm] using h1.symm
 
 theorem wh_realEmb {φ : G2 → ℂ} (hL : LInv φ)
-    (hZ : ∀ y ∈ integralFiniteAdeles (𝓞 ℚ) ℚ, ∀ g, φ (g * finEmb ℚ 2 (unipFin y)) = φ g) (h : GL (Fin 2) ℝ) :
+    (hZ : ∀ y ∈ integralFiniteAdeles (𝓞 ℚ) ℚ, ∀ g, φ (g * finEmb ℚ 2 (GroundTheory.Automorphic.GL2Classical.unipFin y)) = φ g) (h : GL (Fin 2) ℝ) :
     Wh φ (realEmb h) = ∫ t in (0 : ℝ)..1, φ (realEmb (unipReal t * h)) *
       Complex.exp (2 * Real.pi * Complex.I * (t : ℝ)) := by
   have e1 : Wh φ (realEmb h) = ∫ x in levelDomain 1, φ (uni2 x * realEmb h) * (adelicChar ℚ (-x) : ℂ) ∂adeleMeasure ℚ :=
@@ -276,18 +278,18 @@ theorem coe_unipReal (x : ℝ) : (unipReal x : Matrix (Fin 2) (Fin 2) ℝ) = !![
   rw [unipMatrix_apply]
   fin_cases a <;> fin_cases b <;> simp
 
-theorem coe_unipFin (y : 𝔸f) : (unipFin y : Matrix (Fin 2) (Fin 2) 𝔸f) = !![1, y; 0, 1] := by
+theorem coe_unipFin (y : 𝔸ᶠ[ℚ]) : (GroundTheory.Automorphic.GL2Classical.unipFin y : Matrix (Fin 2) (Fin 2) 𝔸ᶠ[ℚ]) = !![1, y; 0, 1] := by
   refine Matrix.ext fun a b => ?_
   change unipMatrix (n := 2) (r := 1) (fun _ => y) a b = _
   rw [unipMatrix_apply]
   fin_cases a <;> fin_cases b <;> simp
 
-theorem unipFin_mem (N : ℕ) [NeZero N] {y : 𝔸f} (hy : y ∈ integralFiniteAdeles (𝓞 ℚ) ℚ) :
-    unipFin y ∈ Gamma0Level N := by
+theorem unipFin_mem (N : ℕ) [NeZero N] {y : 𝔸ᶠ[ℚ]} (hy : y ∈ integralFiniteAdeles (𝓞 ℚ) ℚ) :
+    GroundTheory.Automorphic.GL2Classical.unipFin y ∈ Gamma0Level N := by
   refine ⟨(AdelicGLn.mem_integralFiniteGL_iff ℚ 2).2 ⟨fun a b => ?_, fun a b => ?_⟩, ?_⟩
   · rw [coe_unipFin]
     fin_cases a <;> fin_cases b <;> simp [hy, one_mem, zero_mem]
-  · rw [unipFin, coe_unipGL_inv]
+  · rw [GroundTheory.Automorphic.GL2Classical.unipFin, coe_unipGL_inv]
     change unipMatrix (n := 2) (r := 1) (fun _ => -y) a b ∈ _
     rw [unipMatrix_apply]
     split_ifs
@@ -328,8 +330,8 @@ theorem real_pos (hl : Lift k N f ω φ) (x t : ℝ) (ht : 0 < t) (z : UpperHalf
   have e : M = borelGL z := Units.ext (by rw [hM, coe_borelGL, hz1, hz2])
   rw [e, hl.real _ (det_borelGL_pos z), archLift_borelGL, hz2]
 
-theorem hZ_of_lift (hl : Lift k N f ω φ) (y : 𝔸f) (hy : y ∈ integralFiniteAdeles (𝓞 ℚ) ℚ) (g : G2) :
-    φ (g * finEmb ℚ 2 (unipFin y)) = φ g := by
+theorem hZ_of_lift (hl : Lift k N f ω φ) (y : 𝔸ᶠ[ℚ]) (hy : y ∈ integralFiniteAdeles (𝓞 ℚ) ℚ) (g : G2) :
+    φ (g * finEmb ℚ 2 (GroundTheory.Automorphic.GL2Classical.unipFin y)) = φ g := by
   refine level_one hl (unipFin_mem N hy) (fun v => ?_) g
   rw [GodementSection.glAt_apply, coe_unipFin]
   simp

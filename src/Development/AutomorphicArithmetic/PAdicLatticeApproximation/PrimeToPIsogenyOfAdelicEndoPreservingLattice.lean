@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimePowMulEqIntOfIntegralFiniteAdeleAwayStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimePowMulEqIntOfIntegralFiniteAdeleAwayStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
@@ -49,7 +53,7 @@ theorem UpperTheory.primeToP_isogeny_of_adelic_endo_preserving_lattice :
       obtain ⟨w', hw', e'⟩ := hA n hn hc x
       obtain ⟨z, hz⟩ := hf n hn hc b x
       refine ⟨inAf D (ψ z) + w - Cc w', sub_mem (add_mem (inAf_mem D _) hw) (hCL _ hw'), ?_⟩
-      rw [Module.End.mul_apply, Module.End.mul_apply, bc_inAf, e, hz, e', map_add, map_add, hCin, map_nsmul,
+      rw [mul_apply_eq_comp, mul_apply_eq_comp, bc_inAf, e, hz, e', map_add (f := _), map_add (f := _), hCin, map_nsmul,
         map_nsmul, inAf_add, inAf_nsmul]
       simp only [smul_add, smul_sub]; abel
     exact sub_eq_zero.1 this
@@ -58,7 +62,7 @@ theorem UpperTheory.primeToP_isogeny_of_adelic_endo_preserving_lattice :
     refine LinearMap.ext fun z => ?_
     induction z using TensorProduct.induction_on with
     | zero => simp only [map_zero]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul a m =>
       change T.toLinearMap.baseChange (AfP p) (Cq.baseChange (AfP p) (a ⊗ₜ[ℚ] m)) =
         (actQ D b).baseChange (AfP p) (T.toLinearMap.baseChange (AfP p) (a ⊗ₜ[ℚ] m))

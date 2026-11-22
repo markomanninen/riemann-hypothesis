@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteModuleGradedQuantumDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteModuleGradedQuantumDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ section Ring
 
 variable {R S : Type} [CommRing R] [CommRing S] {a b : ℕ}
 
-variable (R) in
 
+variable (R) in
 def incl (f : Fin b ↪ Fin a) : Matrix (Fin a) (Fin b) R := Matrix.of fun i p => if f p = i then 1 else 0
 
 theorem transpose_mul_incl (f : Fin b ↪ Fin a) : (incl R f)ᵀ * incl R f = 1 := by
@@ -27,8 +31,8 @@ theorem transpose_mul_incl (f : Fin b ↪ Fin a) : (incl R f)ᵀ * incl R f = 1 
     rw [if_neg (Ne.symm hi), zero_mul]
   · simp
 
-variable (R) in
 
+variable (R) in
 def extN (f : Fin b ↪ Fin a) : Matrix (Fin b) (Fin b) R →ₙ+* Matrix (Fin a) (Fin a) R where
   toFun X := incl R f * X * (incl R f)ᵀ
   map_mul' X Y := by
@@ -80,7 +84,7 @@ theorem map_embGL (f : Fin b ↪ Fin a) (φ : R →+* S) (y : GL (Fin b) R) :
     GeneralLinearGroup.map φ (embGL f y) = embGL f (GeneralLinearGroup.map φ y) := by
   apply Units.ext
   change φ.mapMatrix (1 - extN R f 1 + extN R f y) = 1 - extN S f 1 + extN S f ((y : Matrix _ _ R).map φ)
-  rw [map_add, map_sub, map_one, RingHom.mapMatrix_apply, RingHom.mapMatrix_apply, map_extN, map_extN,
+  rw [map_add (f := _), map_sub, map_one, RingHom.mapMatrix_apply, RingHom.mapMatrix_apply, map_extN, map_extN,
     Matrix.map_one _ (map_zero φ) (map_one φ)]
 
 theorem continuous_embGL [TopologicalSpace R] [IsTopologicalRing R] (f : Fin b ↪ Fin a) :
@@ -158,7 +162,7 @@ theorem blkGL_mul_unip {r : ℕ} (h : r ≤ a) (p : GL (Fin r) R × GL (Fin (a -
         intro k _
         rcases blkGL_block h p i k with h1 | h1
         · simp only [nilM, Matrix.of_apply]
-          rw [dif_neg (fun hh => hij (by omega)), mul_zero]
+          rw [dite_eq_right (fun hh => hij (by omega)), mul_zero]
         · rw [h1, zero_mul]
       · rw [h2, mul_zero]
   apply Units.ext
@@ -197,7 +201,7 @@ theorem rel_aeval_qdet (Γ : Submodule ℂ (M × N)) {n : ℕ} (A : Fin n → Fi
 
 end Rel
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a b : ℕ} (f : Fin b ↪ Fin a)
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a b : ℕ} (f : Fin b ↪ Fin a)
 
 theorem embGL_infGL (y : GL (Fin b) (Cinf E)) : embGL f (infGL E b y) = infGL E a (embGL f y) :=
   ga_ext (by simp [map_embGL]) (by simp [map_embGL])
@@ -205,20 +209,20 @@ theorem embGL_infGL (y : GL (Fin b) (Cinf E)) : embGL f (infGL E b y) = infGL E 
 theorem embGL_finGL (k : GL (Fin b) (Af E)) : embGL f (finGL E b k) = finGL E a (embGL f k) :=
   ga_ext (by simp [map_embGL]) (by simp [map_embGL])
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 def embK (k : Kinf E b) : Kinf E a :=
   ⟨(embGL f (Unitary.toUnits k)).val, Matrix.mem_unitaryGroup_iff.2 (by
     have e : star (embGL f (Unitary.toUnits k)).val = (embGL f (Unitary.toUnits k)⁻¹).val := by
       rw [embGL_val, embGL_val, star_add, star_sub, star_extN, star_extN, star_one, star_one]; rfl
     rw [e, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one])⟩
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem toUnits_embK (k : Kinf E b) : Unitary.toUnits (embK f k) = embGL f (Unitary.toUnits k) := Units.ext rfl
 
-omit [IsTotallyComplex E] in
-variable (E) in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
+variable (E) in
 def extL : Lie E b →L[ℝ] Lie E a :=
   LinearMap.toContinuousLinearMap
     { toFun := fun X => toL (extN (Cinf E) f (Matrix.of X))
@@ -227,11 +231,11 @@ def extL : Lie E b →L[ℝ] Lie E a :=
         change extN (Cinf E) f (c • Matrix.of X) = c • extN (Cinf E) f (Matrix.of X)
         rw [extN_apply, extN_apply, Matrix.mul_smul, Matrix.smul_mul] }
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem toL_embGL (y : GL (Fin b) (Cinf E)) :
     toL (embGL f y).val = toL (1 - extN (Cinf E) f 1) + extL E f (toL y.val) := rfl
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem height_embGL : ∃ B : ℝ, 0 ≤ B ∧ ∀ y : GL (Fin b) (Cinf E), height (embGL f y) ≤ B * height y := by
   refine ⟨1 + 2 * ‖toL (1 - extN (Cinf E) f 1)‖ + ‖extL E f‖, by positivity, fun y => ?_⟩
   unfold height

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -52,7 +57,7 @@ theorem span_powers_of_uniformizer_of_nilpotent :
         rw [Finset.mul_sum, ← Finset.sum_add_distrib]
         apply Finset.sum_congr rfl
         intro j _
-        simp only [map_add, map_mul, map_pow]
+        simp only [map_add (f := _), map_mul, map_pow]
         ring
       rw [key, hx, hw]
       ring

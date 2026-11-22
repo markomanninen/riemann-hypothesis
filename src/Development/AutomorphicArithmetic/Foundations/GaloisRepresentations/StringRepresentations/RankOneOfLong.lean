@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.StringRepresentations.AllCuspidalOpenBound
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SegmentEigenvalueSumFormula
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeightRegularOfExt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.StringRepresentations.AllCuspidalOpenBound
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SegmentEigenvalueSumFormula
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeightRegularOfExt
+
+@[expose] public section
 
 noncomputable section
 
@@ -135,7 +139,12 @@ open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.ConjugateSelf
 
 variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} {N : NData R H what₂} {A : NAut N}
 
-theorem one_lt_q (w : PlE H) : 1 < normV w := NumberField.HeightOneSpectrum.one_lt_absNorm w
+theorem one_lt_q (w : PlE H) : 1 < normV w := by
+  haveI : Finite (𝓞 H.E ⧸ w.asIdeal) := Ideal.finiteQuotientOfFreeOfNeBot _ w.ne_bot
+  haveI : w.asIdeal.IsMaximal := w.isMaximal
+  letI : Field (𝓞 H.E ⧸ w.asIdeal) := Ideal.Quotient.field w.asIdeal
+  show 1 < Nat.card (𝓞 H.E ⧸ w.asIdeal)
+  exact Finite.one_lt_card
 
 theorem half_le_r (R : Ranks) : (1 / 2 : ℝ) ≤ ((R.r : ℝ) - 1) / 2 := by
   have : 2 ≤ R.r := by

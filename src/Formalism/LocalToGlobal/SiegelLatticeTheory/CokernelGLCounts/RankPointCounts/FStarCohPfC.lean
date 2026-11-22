@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarCohPfB
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.LocalModelsSplitCofinite
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarCohPfB
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.LocalModelsSplitCofinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,33 @@ variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
 theorem split_finite : {p : PlF D | (Zd.M p).split.isSome}.Finite := by
-  refine ((PI.UnitaryGroupMassFormula.CntFormula.resChar_finite D (D.host.g 0)).union
-    (PI.UnitaryGroupMassFormula.CntFormula.resChar_finite D (D.host.g 1))).subset ?_
+  have hfinite (ℓ : ℕ) : {p : PlF D | Loc.resChar p = ℓ}.Finite := by
+    have hsub : {p : PlF D | Loc.resChar p = ℓ} ⊆
+        {v | v.asIdeal ∣ Ideal.span {(ℓ : 𝓞 D.host.F)}} := by
+      intro p hp
+      simp only [Set.mem_ofPred_eq] at hp ⊢
+      rw [Ideal.dvd_span_singleton, ← hp, ← Ideal.Quotient.eq_zero_iff_mem, map_natCast]
+      exact ringChar.Nat.cast_ringChar
+    by_cases hℓ : ℓ = 0
+    · subst hℓ
+      convert Set.finite_empty
+      rename_i p
+      change Loc.resChar p = 0 ↔ False
+      simp only [iff_false]
+      intro hp
+      have h1 : ((Ideal.absNorm p.asIdeal : ℕ) : 𝓞 D.host.F ⧸ p.asIdeal) = 0 := by
+        rw [← map_natCast (Ideal.Quotient.mk p.asIdeal), Ideal.Quotient.eq_zero_iff_mem]
+        exact Ideal.absNorm_mem p.asIdeal
+      have hc : CharP (𝓞 D.host.F ⧸ p.asIdeal) 0 := by
+        have h2 := ringChar.charP (𝓞 D.host.F ⧸ p.asIdeal)
+        unfold Loc.resChar at hp
+        rwa [hp] at h2
+      rw [CharP.cast_eq_zero_iff _ 0, zero_dvd_iff, Ideal.absNorm_eq_zero_iff] at h1
+      exact p.ne_bot h1
+    · refine (Ideal.finite_factors ?_).subset hsub
+      rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
+      exact_mod_cast hℓ
+  refine ((hfinite (D.host.g 0)).union (hfinite (D.host.g 1))).subset ?_
   intro p hp
   simp only [Set.mem_ofPred_eq] at hp
   have hs : (D.s.atP p).split.isSome := by
@@ -46,9 +75,5 @@ theorem cohIota_holds : CohIota Zd u u' F0 what₂ := by
   intro g hg
   rw [hg] at hn
   exact (hn rfl).elim
-
-theorem starCoh_of_P'' (hGen : CohGen Zd u u' F0 what₂) (hLp : CohLp Zd u u' F0 what₂)
-    (hGood : CohGood Zd u u' F0 what₂) : CtxP u u' F0 what₂ → StarCoh Zd u u' F0 what₂ :=
-  starCoh_of_P' Zd hGen hLp (cohIota_holds Zd) hGood
 
 end Formalism.L2.SG.Pf.FrameGlobalPatching.FStar

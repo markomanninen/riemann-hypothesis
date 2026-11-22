@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ResidueCharacters.InvariantsKilledOverCyclotomicAlt
-import Development.AutomorphicArithmetic.ResidueCharacters.NumBounds
+module
+
+public import Development.AutomorphicArithmetic.ResidueCharacters.InvariantsKilledOverCyclotomicAlt
+public import Development.AutomorphicArithmetic.ResidueCharacters.NumBounds
+
+@[expose] public section
 
 namespace UpperTheory.N.Num
 

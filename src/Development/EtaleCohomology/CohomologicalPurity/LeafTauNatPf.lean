@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafThomCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafThomCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -39,7 +43,8 @@ theorem tn_pull_poly (h : DivisorNaturality) (q : ℕ) [NeZero q] (N : ℕ) {A B
     (a : ∀ j : Fin m, Ht q (sp A) (n - 2 * (j : ℕ)) (i - (j : ℕ))) :
     pull _ f _ _ (poly q N 0 A m n i a) = poly q N 0 B m n i (fun j => pull _ (spMap φ) _ _ (a j)) := by
   unfold poly
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [tn_pull_cast, (h q).1, ← pull_comp, hs, pull_comp, tn_pull_cpow h q f hI, tn_pull_hyp h q N f hI hl]
 
@@ -48,7 +53,8 @@ theorem tn_red_poly (h : A11) (q r : ℕ) [NeZero q] (hr : r ∣ q) (N : ℕ) {A
     (a : ∀ j : Fin m, Ht q (sp A) (n - 2 * (j : ℕ)) (i - (j : ℕ))) :
     red q r _ _ _ (poly q N 0 A m n i a) = poly r N 0 A m n i (fun j => red q r _ _ _ (a j)) := by
   unfold poly
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [tn_red_cast, (h q r hr _).1, ← pull_red]
   unfold hyp
@@ -66,13 +72,13 @@ theorem LeafTauNat_of (hG : LeafGeo) : LeafTauNat := by
       change pull _ (dbl.inl _) _ _ (pull _ (dbl.map g) _ _ τ.1) =
         pull _ g.right _ _ (pull _ (dbl.inl _) _ _ τ.1)
       rw [← pull_comp, ← pull_comp, inl_map]
-    rw [e, ha, map_add, tn_pull_cpow h6 q (E := PR (d + 1) 0 B) (E' := PR (d + 1) 0 A) g.right hI,
+    rw [e, ha, map_add (f := _), tn_pull_cpow h6 q (E := PR (d + 1) 0 B) (E' := PR (d + 1) 0 A) g.right hI,
       tn_pull_hyp h6 q (d + 1) g.right hI hl, tn_pull_poly h6 q (d + 1) φ g.right hI hl hs]
   · have e : Hs.fgt r (pr d A) _ _ τ' = red q r (PR (d + 1) 0 A) _ _
         (show Ht q (PR (d + 1) 0 A) _ _ from Hs.fgt q (pr d A) _ _ τ) := by
       change pull _ (dbl.inl _) _ _ τ'.1 = red q r _ _ _ (pull _ (dbl.inl _) _ _ τ.1)
       rw [hτ', pull_red]
-    rw [e, ha, map_add, tn_red_poly h11 q r hr (d + 1) hI]
+    rw [e, ha, map_add (f := _), tn_red_poly h11 q r hr (d + 1) hI]
     unfold hyp
     rw [tn_red_cpow h11 q r hr hI]
 

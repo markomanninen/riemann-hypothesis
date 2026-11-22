@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,8 @@ theorem sum_emb_mul_dual {E : Type} [Field E] [NumberField E] {ι : Type} [Finty
   · ext x
     have h1 : τ x = ∑ i, (∑ σ : E →ₐ[ℚ] ℂ, σ (x * b i)) * τ (b.traceDual i) := by
       conv_lhs => rw [← b.traceDual.sum_repr x]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Algebra.smul_def, map_mul, τ.commutes, b.traceDual_repr_apply, Algebra.traceForm_apply,
         ← trace_eq_sum_embeddings ℂ]
@@ -41,7 +46,8 @@ theorem eq_sum_trace_mul_dual {F E L : Type} [Field F] [NumberField F] [Field E]
   letI : Algebra F ℂ := (u.comp (algebraMap F L)).toAlgebra
   haveI : IsScalarTower F L ℂ := IsScalarTower.of_algebraMap_eq fun _ => rfl
   apply u.injective
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have h1 : ∀ i, u (algebraMap F L (Algebra.trace F L (y * j (b i))) * j (b.traceDual i)) =
       ∑ ρ : L →ₐ[F] ℂ, ρ y * (ρ (j (b i)) * u (j (b.traceDual i))) := by
     intro i

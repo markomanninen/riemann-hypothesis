@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.UnimodularGram.StarRingOfInvolution
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.UnimodularGram.StarRingOfInvolution
+
+@[expose] public section
 
 namespace KStar.Cstarloc
 
@@ -32,7 +36,7 @@ theorem exists_norm_one [IsLocalRing R] (hR : UnramDatum R) [Module.Free R M] [N
   · exact norm_one_of_unit hR h hh _ hyy
   refine norm_one_of_unit hR h hh (b i + e • y) ?_
   have key : h (b i + e • y) (b i + e • y) = 1 + (h (b i) (b i) + e * star e * h y y) := by
-    simp only [map_add, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, hxy, hyx]
     linear_combination he
   have hw : ¬ IsUnit (e * star e * h y y) := fun hw => hyy (isUnit_of_mul_isUnit_right hw)

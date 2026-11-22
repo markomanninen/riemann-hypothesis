@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsVeroneseChiParts
-import GroundTheory.HeightsAndTheta.Heights.HomogeneousLocalization.IntegralMonoInnerEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStD
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsVeroneseChiParts
+public import GroundTheory.HeightsAndTheta.Heights.HomogeneousLocalization.IntegralMonoInnerEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStD
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -82,7 +87,7 @@ theorem aeval_alt (f : MvPolynomial (Ix (Veronese.Idx D)) ℚ) :
     rw [aeval_C, phi, bind₁_C_right]
     exact congrArg (fun g : ℚ →+* Veronese.Fld D => g a)
       (Subsingleton.elim _ ((algebraMap (MvPolynomial (Fin (D + 1)) ℚ) (Veronese.Fld D)).comp C))
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p q hp =>
     rw [map_mul, map_mul, map_mul, hp, aeval_X]
     simp [phi, Veronese.x, Veronese.t]
@@ -93,7 +98,8 @@ theorem phi_eq {N : ℕ} (b : MvPolynomial (Ix (Veronese.Idx D)) ℚ)
     phi D b = ∑ l, (c l : MvPolynomial (Fin (D + 1)) ℚ) * ∏ i, X i ^ adtEnum D N l i := by
   apply IsFractionRing.injective (MvPolynomial (Fin (D + 1)) ℚ) (Veronese.Fld D)
   rw [← aeval_alt, h]
-  simp [map_sum, map_mul, map_prod, map_pow, Veronese.t]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul, map_prod, map_pow, Veronese.t]
 
 theorem eval_map_phi (w : Fin (D + 1) → ℂ) (f : MvPolynomial (Ix (Veronese.Idx D)) ℚ) :
     eval (Veronese.map D w) (MvPolynomial.map (algebraMap ℚ ℂ) f) = aeval w (phi D f) := by
@@ -108,7 +114,8 @@ theorem eval_b {N : ℕ} (w : Fin (D + 1) → ℂ) (b : MvPolynomial (Ix (Verone
     eval (Veronese.map D w) (MvPolynomial.map (algebraMap ℚ ℂ) b) =
       ∑ l, (c l : ℂ) * ∏ i, w i ^ adtEnum D N l i := by
   rw [eval_map_phi, phi_eq b c h]
-  simp [map_sum, map_mul, map_prod, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul, map_prod, map_pow]
 
 theorem eval_conj_b {N : ℕ} (w : Fin (D + 1) → ℂ) (b : MvPolynomial (Ix (Veronese.Idx D)) ℚ)
     (c : Fin (Finset.Nat.antidiagonalTuple (D + 1) N).card → ℤ)
@@ -116,7 +123,8 @@ theorem eval_conj_b {N : ℕ} (w : Fin (D + 1) → ℂ) (b : MvPolynomial (Ix (V
     eval (conjPt (Veronese.map D w)) (MvPolynomial.map (algebraMap ℚ ℂ) b) =
       starRingEnd ℂ (∑ l, (c l : ℂ) * ∏ i, w i ^ adtEnum D N l i) := by
   rw [conjPt_map, eval_b _ b c h]
-  simp [map_sum, map_mul, map_prod, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul, map_prod, map_pow]
 
 def ex (D N : ℕ) (l : Fin (Finset.Nat.antidiagonalTuple (D + 1) N).card) : Fin (D + 1) →₀ ℕ :=
   Finsupp.equivFunOnFinite.symm (adtEnum D N l)
@@ -150,7 +158,8 @@ theorem pairVal_map (k l : Fin r) (w : Fin (D + 1) → ℂ) :
   unfold pairVal
   rw [veroneseMetric_pow_eq, eval_b w (b k) _ (hA k), eval_b w (b l) _ (hA l)]
   simp only [monoInner, eval_ex]
-  rw [map_sum, Finset.sum_mul_sum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul_sum, Finset.sum_div]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.sum_div]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -163,7 +172,8 @@ theorem pairVal_conj_map (k l : Fin r) (w : Fin (D + 1) → ℂ) :
   unfold pairVal
   rw [veroneseMetric_conj_pow_eq, eval_conj_b w (b k) _ (hA k), eval_conj_b w (b l) _ (hA l), Complex.conj_conj]
   simp only [monoInner, eval_ex]
-  rw [map_sum, Finset.sum_mul_sum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul_sum, Finset.sum_div]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.sum_div]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -176,8 +186,8 @@ theorem integrable_monoInner_ex (i j : Fin (Finset.Nat.antidiagonalTuple (D + 1)
   (continuous_monoInner_rep (ex_degree i) (ex_degree j)).integrable_of_hasCompactSupport
     (HasCompactSupport.of_compactSpace _)
 
-omit hA in
 
+omit hA in
 theorem integral_monoInner_ex (i j : Fin (Finset.Nat.antidiagonalTuple (D + 1) (2 * n)).card) :
     ∫ p : CP D, monoInner (2 * n) (ex D (2 * n) i) (ex D (2 * n) j) p.rep ∂CP.fsMeasure D =
       if i = j then ((monoNormSq (adtEnum D (2 * n) i) : ℝ) : ℂ) else 0 := by

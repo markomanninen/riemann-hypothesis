@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteSemisimple
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootsCharpolyPowEqMapPow
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteSemisimple
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootsCharpolyPowEqMapPow
+
+@[expose] public section
+
 open Formalism.MainNotions.N GlobalTheory.Cong GlobalTheory.PsChar
 
 namespace GlobalTheory.CharpolyNewton
@@ -15,7 +20,8 @@ theorem newton_fn {σ : Type} [Fintype σ] (f : σ → k) (j : ℕ) :
       ∑ a ∈ antidiagonal j with a.1 < j,
         (-1) ^ a.1 * (univ.val.map f).esymm a.1 * ∑ i, f i ^ a.2 := by
   have h := congrArg (MvPolynomial.aeval f) (MvPolynomial.mul_esymm_eq_sum σ k j)
-  simpa only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast,
     MvPolynomial.aeval_esymm_eq_multiset_esymm, MvPolynomial.psum, MvPolynomial.aeval_X] using h
 
 theorem newton_multiset (s : Multiset k) (j : ℕ) :

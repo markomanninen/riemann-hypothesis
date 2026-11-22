@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.NApply
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.NApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -29,7 +33,7 @@ theorem UpperTheory.ConvolutionTheory.R2.C.genLoc :
   obtain ⟨u, hu⟩ := hex
   obtain ⟨t, rfl⟩ := IsLocalRing.residue_surjective u
   refine ⟨t, fun p hp => ?_⟩
-  rw [← IsLocalRing.residue_ne_zero_iff_isUnit, map_add, map_mul]
+  rw [← IsLocalRing.residue_ne_zero_iff_isUnit, map_add (f := _), map_mul]
   intro h0
   by_cases hb : IsLocalRing.residue R p.2 = 0
   · rw [hb, zero_mul, add_zero] at h0

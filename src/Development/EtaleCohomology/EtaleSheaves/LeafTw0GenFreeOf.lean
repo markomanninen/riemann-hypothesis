@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTw0LocSplitOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTw0LocSplitOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
@@ -35,9 +39,5 @@ theorem LeafTw0GenFree_of (h : LeafTw0TwFree) : LateralTheory.E.LeafTw0LocSplitP
     rw [show Sec.map (resι (ZMod q) (tw q 0)) (c • twGen 0 ζ) = c • resGen 0 ζ from
       map_smul ((resι (ZMod q) (tw q 0)).hom.app (op V)).hom c _, hc]
     simp [Sec.map]
-
-theorem LeafTw0LocSplit_of (h1 : LateralTheory.E.LeafTw0LocSplitPf.LeafTw0LocGen) (h2 : LeafTw0TwFree) :
-    LateralTheory.E.LeafTensMonoPf.LeafTw0LocSplit :=
-  LateralTheory.E.LeafTw0LocSplitPf.LeafTw0LocSplit_of h1 (LeafTw0GenFree_of h2)
 
 end LateralTheory.E.LeafTw0LocSplitPfM

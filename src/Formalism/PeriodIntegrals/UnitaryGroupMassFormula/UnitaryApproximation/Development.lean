@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryApproxFin
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.WeakApproxF
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryApproxFin
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.WeakApproxF
+
+@[expose] public section
 
 noncomputable section
 

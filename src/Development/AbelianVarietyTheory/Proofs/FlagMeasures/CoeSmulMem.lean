@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IntegralMultiple
 
@@ -20,7 +24,7 @@ theorem coe_smul_mem {E : Type} [Field E] [NumberField E] {j : ℕ}
 
 theorem main : ∀ {E : Type} [inst : Field E] [NumberField E] {j : ℕ}
     (Λ : Submodule (NumberField.RingOfIntegers E) (Fin j → E)),
-    Submodule.IsLattice E Λ → ∀ (x : Fin j → E), ∃ (n : ℤ), n ≠ (0 : ℤ) ∧ (↑n : E) • x ∈ Λ := by
+    Submodule.IsFullLattice E Λ → ∀ (x : Fin j → E), ∃ (n : ℤ), n ≠ (0 : ℤ) ∧ (↑n : E) • x ∈ Λ := by
   intro E _ _ j Λ hΛ x
   let S : Submodule E (Fin j → E) :=
     { carrier := {x | ∃ n : ℤ, n ≠ 0 ∧ (n : E) • x ∈ Λ}

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.CoprimeProd
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GroundTheory
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.CoprimeProd
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GroundTheory
+
+@[expose] public section
 
 noncomputable section
 
@@ -229,11 +233,13 @@ theorem linExt_apply (g : (Fin r → O) →ₗ[O] O) (u : Fin r → PowerSeries 
 
 theorem linExt_cst (g : (Fin r → O) →ₗ[O] O) (v : Fin r → O) : linExt g (cst v) = C (g v) := by
   rw [linExt_apply]
-  simp_rw [cst, ← map_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [cst, ← map_mul, ← map_sum]
   congr 1
   have key : ∀ i, v i * g (Pi.single i 1) = g (v i • Pi.single i 1) := fun i => by
     rw [LinearMap.map_smul, smul_eq_mul]
-  simp_rw [key, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [key, ← map_sum]
   congr 1
   ext j
   simp [Finset.sum_apply, Pi.single_apply]
@@ -264,7 +270,7 @@ theorem linExt_mem_of_mem_ext (g : (Fin r → O) →ₗ[O] O) (V : Submodule O (
     exact Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self _)
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   | smul c x _ hx =>
     rw [map_smul, smul_eq_mul]
@@ -353,7 +359,8 @@ theorem exists_const_decomp (ϖ : O) (hϖ : Irreducible ϖ) (F C : Submodule O (
       exact h1.symm
     refine ⟨t, ?_⟩
     rw [e]
-    simp only [map_sum, map_smul, Module.Basis.equivFun_self, Finset.sum_apply, Pi.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Module.Basis.equivFun_self, Finset.sum_apply, Pi.smul_apply, smul_eq_mul,
       Pi.single_apply]
   let Φ : _ → (Fin r → O) →ₗ[O] O := fun j =>
     LinearMap.proj j ∘ₗ snf.bM.equivFun.toLinearMap ∘ₗ F.mkQ
@@ -604,7 +611,7 @@ theorem descent_estimate_up_down : MUD := by
       rw [hk1] at h
       obtain ⟨N, c', z, hc', heq⟩ := h
       have hj := congrArg (linExt (LinearMap.proj j ∘ₗ f)) heq
-      rw [linExt_levelRel, map_add, map_smul, map_smul,
+      rw [linExt_levelRel, map_add (f := _), map_smul, map_smul,
         linExt_eq_zero_of_mem_ext _ (V s₁) (fun v hv => by simp [hfC v hv]) c' hc', hyW,
         map_smul, hLam, hLL] at hj
       have hj' : p s₁ ^ (H s₁ - b s₁) * (Q1 * (C (ϖ ^ (N + kk s₁)) * vecExt f W j)) =
@@ -638,7 +645,7 @@ theorem descent_estimate_up_down : MUD := by
         ϖ ^ (kk s₀ + min n c) ∣ ϖ ^ c * φ (dd s₀) := by
       intro φ n hφF hφC
       have hj := congrArg (linExt φ) heq₀
-      rw [linExt_levelRel, map_add, map_smul, map_smul,
+      rw [linExt_levelRel, map_add (f := _), map_smul, map_smul,
         linExt_eq_zero_of_mem_ext _ (V s₀) hφF c₀ hc₀, hyW, map_smul, hWu, map_add, map_smul]
         at hj
       obtain ⟨g, hg⟩ := Ideal.mem_span_singleton'.mp (linExt_mem_of_mem_ext φ (V s₁) _ hφC u huC)
@@ -735,7 +742,7 @@ theorem descent_estimate_up_down : MUD := by
           Submodule.smul_mem _ _ hc', ?_⟩
         funext i
         have hi := congrFun heq i
-        simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, cst, map_add, map_mul]
+        simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, cst, map_add (f := _), map_mul]
           at hi ⊢
         rw [hLamE, hLL0]
         rw [pow_add] at hi ⊢

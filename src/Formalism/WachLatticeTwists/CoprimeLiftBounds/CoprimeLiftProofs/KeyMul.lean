@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.LengthMapQuotLe
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.CupKillAdm
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.LengthMapQuotLe
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.CupKillAdm
+
+@[expose] public section
 
 open Finset
 
@@ -25,10 +29,10 @@ theorem rowCup : StatRowCup := by
   let ρA : Representation O Dw A := resRep (uRep O (M := A) r χ) Dw
   let ρM : Representation O Dw M := resRep (uRep O (M := M) r χ) Dw
   let β : T₁ →ₗ[O] Y →ₗ[O] Y := LinearMap.mk₂ O (fun b y => inc b • y)
-    (fun b b' y => by rw [map_add, add_smul]) (fun c b y => by rw [map_smul, smul_assoc])
+    (fun b b' y => by rw [map_add (f := _), add_smul]) (fun c b y => by rw [map_smul, smul_assoc])
     (fun b y y' => smul_add _ _ _) (fun c b y => smul_comm _ _ _)
   let β' : T₁ →ₗ[O] A →ₗ[O] A := LinearMap.mk₂ O (fun b y => inc b • y)
-    (fun b b' y => by rw [map_add, add_smul]) (fun c b y => by rw [map_smul, smul_assoc])
+    (fun b b' y => by rw [map_add (f := _), add_smul]) (fun c b y => by rw [map_smul, smul_assoc])
     (fun b y y' => smul_add _ _ _) (fun c b y => smul_comm _ _ _)
   let jm : Y →ₗ[O] A := Y.subtype.restrictScalars O
   let φ' : Y →ₗ[O] M := psiY r χ E e₁ δ D j Kc k0 φ

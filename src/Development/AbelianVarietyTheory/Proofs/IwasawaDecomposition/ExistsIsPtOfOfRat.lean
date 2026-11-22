@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 open scoped TensorProduct
@@ -43,7 +48,7 @@ theorem adAt_inv {P : HeightOneSpectrum (𝓞 E)} {g : GL (Fin n) (AfE F E)} {γ
 variable [StarRing E]
 
 theorem glEquiv_mem_iff {P : HeightOneSpectrum (𝓞 E)} {g : GL (Fin n) (AfE F E)} {γ : GL (Fin n) E}
-    (hN : Submodule.IsLattice E (Formalism.UG.CS.globLat g (stdLat E n)))
+    (hN : IsSdLat (Formalism.UG.CS.globLat g (stdLat E n)))
     (h : ∀ r s, adAt F P ((g : Matrix (Fin n) (Fin n) (AfE F E)) r s) = algebraMap E (P.adicCompletion E) ((γ : Matrix (Fin n) (Fin n) E) r s))
     (x : Sp E n) : glEquiv γ x ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (Formalism.UG.CS.globLat g (stdLat E n)) ↔ x ∈ stdAt E n P := by
   have hi := adAt_inv h
@@ -56,7 +61,8 @@ theorem glEquiv_mem_iff {P : HeightOneSpectrum (𝓞 E)} {g : GL (Fin n) (AfE F 
       have e2 : ((γ⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) *ᵥ glEquiv γ x = x := by
         rw [glEquiv_apply, Matrix.mulVec_mulVec, ← Units.val_mul, inv_mul_cancel, Units.val_one, Matrix.one_mulVec]
       conv_rhs => rw [← e2]
-      simp only [Formalism.L2.Col.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, hi, adAt_inclE]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Formalism.L2.Col.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, hi, adAt_inclE]
     rwa [e] at h1
   · intro hx
     obtain ⟨f, hf⟩ := CharValCompare.exists_isFr P hN
@@ -66,21 +72,28 @@ theorem glEquiv_mem_iff {P : HeightOneSpectrum (𝓞 E)} {g : GL (Fin n) (AfE F 
       set A : Matrix (Fin n) (Fin n) E := mat f.symm * (γ : Matrix (Fin n) (Fin n) E) with hA
       have hA1 : ∀ j, Valued.v (algebraMap E (P.adicCompletion E) (A i j)) ≤ 1 := by
         intro j
-        have h2 := valued_symm_le (u := fun l => (g : Matrix (Fin n) (Fin n) (AfE F E)) l j) hf
-          ((carries_globLat g _).2 ((mem_latS_std _).2 fun l => ?_)) i
-        · simp only [h, ← map_mul, ← map_sum] at h2
-          rw [hA, Matrix.mul_apply]
-          exact h2
-        · simp only [Matrix.mulVec, dotProduct]
+        have hmem : (fun l => (g : Matrix (Fin n) (Fin n) (AfE F E)) l j) ∈
+            Formalism.L2.Herm.hatL (F := F) (Formalism.UG.CS.globLat g (stdLat E n)) := by
+          apply (carries_globLat g _).2
+          apply (mem_latS_std _).2
+          intro l
+          simp only [Matrix.mulVec, dotProduct]
           rw [← Matrix.mul_apply, Units.inv_mul, Matrix.one_apply]
           split_ifs
           exacts [one_mem _, zero_mem _]
+        have h2 := valued_symm_le (u := fun l => (g : Matrix (Fin n) (Fin n) (AfE F E)) l j) hf
+          hmem i
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [h, ← map_mul, ← map_sum] at h2
+        rw [hA, Matrix.mul_apply]
+        exact h2
       have e3 : f.symm (glEquiv γ x) = A *ᵥ x := by
         funext i
         rw [← mat_mulVec, hA, ← Matrix.mulVec_mulVec, glEquiv_apply]
         rfl
       rw [e3]
-      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
       refine Valuation.map_sum_le _ fun j _ => ?_
       rw [map_mul]
       exact mul_le_one' (hA1 j) ((GlobalTheory.Mem.ColAd.mem_stdAt_val.1 hx) j)
@@ -94,7 +107,8 @@ theorem exists_isPtOf_of_rat : ∀ {F E : Type} [Field F] [NumberField F] [Field
   choose! γ hγ using hQ
   obtain ⟨p₀, hd, -⟩ := GlobalTheory.Mem.ColAd.exists_near (ST := ST) (SG := SG) (Q := Q) hc 0 hg
   have hN : Formalism.UG.CS.globLat g (stdLat E n) = p₀.deco.1.N := congrArg Deco.N hd
-  have hlat : Submodule.IsLattice E (Formalism.UG.CS.globLat g (stdLat E n)) := hN ▸ p₀.deco.2.lat
+  have hlat : IsSdLat (Formalism.UG.CS.globLat g (stdLat E n)) :=
+    hN ▸ ⟨p₀.deco.2.lat, p₀.deco.2.uni⟩
   let p : DecoF E n ST SG Q := ⟨(p₀.deco, fun P => glEquiv (γ P.1)), fun P x => by
     show glEquiv (γ P.1) x ∈ Formalism.HermitianLatticesTheory.localization₂ P.1.asIdeal p₀.deco.1.N ↔ _
     rw [← hN]

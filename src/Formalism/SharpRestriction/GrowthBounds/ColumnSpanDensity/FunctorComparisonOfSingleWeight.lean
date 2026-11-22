@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ProdSmulPowT
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SingleWeightLatticeComparison
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.OneMemDualWeyl
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FactorizationBoundMonoLattices
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ProdSmulPowT
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SingleWeightLatticeComparison
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.OneMemDualWeyl
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FactorizationBoundMonoLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,7 +137,7 @@ theorem functor_comparison_of_single_weight (hIOe : ExistsIO) (hPRe : ExistsPR) 
         intro j
         rw [hPR j, prodTopsT TT (fun s => pr1 s (j s) (Y s))]
         have := hIO j (fun s => if h : s ∈ TT then pr1 ⟨s, h⟩ (j ⟨s, h⟩) (Y ⟨s, h⟩) else 1)
-          (fun s hs => by rw [dif_neg hs])
+          (fun s hs => by rw [dite_eq_right hs])
         rw [show (∏ s : Fin n', blockEmb R.Kf s (if h : s ∈ TT then pr1 ⟨s, h⟩ (j ⟨s, h⟩) (Y ⟨s, h⟩) else 1)) =
           ∏ s : Fin n', rename (fun v => (s, v)) (if h : s ∈ TT then pr1 ⟨s, h⟩ (j ⟨s, h⟩) (Y ⟨s, h⟩) else 1) from rfl,
           this]
@@ -145,10 +149,11 @@ theorem functor_comparison_of_single_weight (hIOe : ExistsIO) (hPRe : ExistsPR) 
       rw [hJf, ← Finset.prod_univ_sum (fun s : TT => Finset.range (min (A s) (B s) + 1))
         (fun s j => rename (fun v : Bool × (Fin (m + 1) × Fin (m + 1)) => ((s, v.1), v.2)) (i1 s j (pr1 s j (Y s))))]
       refine Finset.prod_congr rfl fun s _ => ?_
-      rw [← map_sum, ← hmin s, hsum1 s (Y s) (hYm s)]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, ← hmin s, hsum1 s (Y s) (hYm s)]
     · simp
     · intro x y _ _ hx hy
-      simp only [map_add, Finset.sum_add_distrib, hx, hy]
+      simp only [map_add (f := _), Finset.sum_add_distrib, hx, hy]
     · intro c x _ hx
       simp only [map_smul]
       rw [← Finset.smul_sum, hx]

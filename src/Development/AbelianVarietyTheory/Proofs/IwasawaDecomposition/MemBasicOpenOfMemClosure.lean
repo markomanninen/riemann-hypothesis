@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+module
+
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -64,7 +68,7 @@ theorem exists_local_ext {T X Y : Scheme.{0}} (j : T ⟶ Y) (g : T ⟶ X) (V : Y
       map_one' := hj (by rw [hb, map_one, map_one])
       map_mul' := fun x y ↦ hj (by rw [map_mul, hb, hb, hb, map_mul])
       map_zero' := hj (by rw [hb, map_zero, map_zero])
-      map_add' := fun x y ↦ hj (by rw [map_add, hb, hb, hb, map_add]) }
+      map_add' := fun x y ↦ hj (by rw [map_add (f := _), hb, hb, hb, map_add (f := _)]) }
   have hσ : CommRingCat.ofHom σ ≫ j.app V = g.appLE U (j ⁻¹ᵁ V) e := by
     ext x
     exact hb x

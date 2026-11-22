@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SingleMemDegLE
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SingleMemDegLE
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,7 +54,7 @@ theorem snd_lin (φ : Jet V (Fin 1 × Fin d) 1 →ₐ[V] DualNumber V) (hφ : �
     refine Finset.sum_eq_zero fun c _ => ?_
     rw [jetTan_mk, aeval_tan, snd_tan_lemma, MvPolynomial.coeff_C, if_neg (hne c), mul_zero]
   next p q hp hq =>
-    simp only [map_add, TrivSqZeroExt.snd_add, hp, hq, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TrivSqZeroExt.snd_add, hp, hq, mul_add, Finset.sum_add_distrib]
   next p n _ =>
     obtain ⟨a, b⟩ := n
     obtain rfl : a = 0 := Subsingleton.elim _ _

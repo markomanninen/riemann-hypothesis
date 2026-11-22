@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU GlobalTheory.PRep Formalism.L2.Host GlobalTheory.HeckeGal UpperTheory.Gal.CertificateRingHomMap
 open scoped Classical
 
@@ -76,7 +81,8 @@ private theorem av_eig (L : Lvl χ) {x : V} (hx : Fx σ L.N x) (k : C) :
   have e : ∑ q : C ⧸ L.N, σ k (tw σ χ x q.out) = ((χ k : ℂˣ) : ℂ) • ∑ q : C ⧸ L.N, tw σ χ x q.out := by
     rw [hs, Finset.smul_sum]
     exact Finset.sum_congr rfl fun q _ => tw_left x k _
-  rw [av_apply, map_smul, map_sum, e, smul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [av_apply, map_smul, map_sum, e, smul_comm]
 
 private theorem av_translate (L : Lvl χ) {x : V} (hx : Fx σ L.N x) (k : C) :
     av σ χ L (σ k x) = ((χ k : ℂˣ) : ℂ) • av σ χ L x := by
@@ -98,7 +104,8 @@ private theorem av_refine {L' L : Lvl χ} (hle : L'.N ≤ L.N) {x : V} (hx : Fx 
   have h2 : av σ χ L' (av σ χ L x) = av σ χ L' x := by
     have h : ∀ k, av σ χ L' (tw σ χ x k) = av σ χ L' x := fun k => by
       rw [tw, map_smul, av_translate L' (hx.mono hle), smul_smul, inv_mul_cancel₀ (Units.ne_zero _), one_smul]
-    rw [av_apply L x, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [av_apply L x, map_smul, map_sum]
     simp only [h, Finset.sum_const, Finset.card_univ, ← Nat.card_eq_fintype_card, ← Nat.cast_smul_eq_nsmul ℂ]
     rw [smul_smul, inv_mul_cancel₀ (card_ne L), one_smul]
   rw [← h2, h1]
@@ -108,7 +115,8 @@ private theorem av_indep {L L' : Lvl χ} {x : V} (hx : Fx σ L.N x) (hx' : Fx σ
 
 private theorem av_comm (L : Lvl χ) (T : V →ₗ[ℂ] V) (hT : ∀ k x, T (σ k x) = σ k (T x)) (x : V) :
     av σ χ L (T x) = T (av σ χ L x) := by
-  simp only [av_apply, map_smul, map_sum, tw, hT]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [av_apply, map_smul, map_sum, tw, hT]
 
 private def Z (σ : Representation ℂ C V) (χ : C →* ℂˣ) (x : V) : Prop := ∃ L : Lvl χ, Fx σ L.N x ∧ av σ χ L x = 0
 
@@ -121,7 +129,7 @@ private theorem Z.add {x y : V} (hx : Z σ χ x) (hy : Z σ χ y) : Z σ χ (x +
   obtain ⟨L', h', h0'⟩ := id hy
   have a : Fx σ (L.inf L').N x := h.mono inf_le_left
   have b : Fx σ (L.inf L').N y := h'.mono inf_le_right
-  exact ⟨L.inf L', fun n hn => by rw [map_add, a n hn, b n hn], by rw [map_add, hx.av_eq a, hy.av_eq b, add_zero]⟩
+  exact ⟨L.inf L', fun n hn => by rw [map_add (f := _), a n hn, b n hn], by rw [map_add (f := _), hx.av_eq a, hy.av_eq b, add_zero]⟩
 
 private theorem Z.smul {x : V} (hx : Z σ χ x) (a : ℂ) : Z σ χ (a • x) := by
   obtain ⟨L, h, h0⟩ := hx
@@ -161,7 +169,7 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pLocAdj_of :
     { carrier := {φ | φ ∈ π ∧ ∀ h ∈ H, Z σ χ (ρ h φ)}
       zero_mem' := ⟨π.zero_mem, fun h _ => ⟨L₀, fun n _ => by simp, by simp⟩⟩
       add_mem' := fun {a b} ha hb => ⟨π.add_mem ha.1 hb.1, fun h hh => by
-        rw [map_add]; exact (ha.2 h hh).add (hb.2 h hh)⟩
+        rw [map_add (f := _)]; exact (ha.2 h hh).add (hb.2 h hh)⟩
       smul_mem' := fun c x hx => ⟨π.smul_mem c hx.1, fun h hh => by
         rw [map_smul]; exact (hx.2 h hh).smul c⟩ }
   have hNn : Nn ≤ π := fun x hx => hx.1
@@ -207,7 +215,8 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pLocAdj_of :
   have hr : ∀ v, (r.sum fun g a => a • ρ g (f v)) = av σ χ L (ρ h (f v)) := fun v => by
     have e : (r.sum fun g a => a • ρ g (f v)) = Finsupp.linearCombination ℂ (fun g => ρ g (f v)) r :=
       (Finsupp.linearCombination_apply _ _).symm
-    rw [e, av_apply, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, av_apply, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [Finsupp.linearCombination_single, map_mul, Module.End.mul_apply, tw, mul_smul]
     rfl

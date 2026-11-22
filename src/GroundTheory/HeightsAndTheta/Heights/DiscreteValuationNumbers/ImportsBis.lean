@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -11,8 +16,14 @@ noncomputable section
 
 universe u
 
-theorem LeftSideAdditiveInDegree.proof : LeftSideAdditiveInDegree.Statement.{u} := by
-  intro O _ _ _ ϖ hϖ K _ _ ι _ P d hP b f g hD c₁ c₂ L
+theorem LeftSideAdditiveInDegree.proof
+    (O : Type u) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O) (hϖ : Irreducible ϖ)
+    (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)]
+    (P : Ideal (MRing ι O)) (d : ℕ) (hP : IsModelOver P (d + 1))
+    (b : K → ℤ) (f g : MRing ι O) (hD : IsVerticalDivisor P ϖ b f g)
+    (c₁ c₂ : K → ℕ) (L : Fin d → K → ℤ) :
+    cutIdentityLeftSide P f g (c₁ + c₂) L =
+      cutIdentityLeftSide P f g c₁ L + cutIdentityLeftSide P f g c₂ L := by
   obtain ⟨bf, bg, hbf, hbg, -⟩ := hD.degrees
   have hPmh : IsMultiHomogIdeal P := hP.multiProj.multiHomog
   have : P.IsPrime := hP.multiProj.isPrime

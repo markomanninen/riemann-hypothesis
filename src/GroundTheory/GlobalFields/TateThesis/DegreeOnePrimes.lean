@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -16,7 +20,7 @@ theorem card_primesOver_le_finrank {R S : Type*} [CommRing R] [IsDomain R] [Comm
     Fintype.card_eq_sum_ones]
   refine Finset.sum_le_sum fun q _ => ?_
   exact Nat.one_le_iff_ne_zero.mpr
-    (Nat.mul_ne_zero (Ideal.ramificationIdx_pos q.1 R).ne' (Ideal.inertiaDeg_pos q.1 R).ne')
+    (Nat.mul_ne_zero (Ideal.ramificationIdx_pos (R := R) q.1).ne' (Ideal.inertiaDeg_pos q.1 R).ne')
 
 variable {K L : Type*} [Field L] [NumberField L]
 
@@ -27,13 +31,13 @@ omit [NumberField L] in
 theorem under_int_ne_bot (w : HeightOneSpectrum (𝓞 L)) : w.asIdeal.under ℤ ≠ ⊥ :=
   mt Ideal.eq_bot_of_comap_eq_bot w.ne_bot
 
-omit [NumberField L] in
 
+omit [NumberField L] in
 theorem rationalPrimeUnder_prime (w : HeightOneSpectrum (𝓞 L)) : (rationalPrimeUnder w).Prime :=
   (Int.prime_absNorm _).mpr (Ideal.prime_of_isPrime (under_int_ne_bot w) inferInstance)
 
-omit [NumberField L] in
 
+omit [NumberField L] in
 theorem span_rationalPrimeUnder (w : HeightOneSpectrum (𝓞 L)) :
     Ideal.span {((rationalPrimeUnder w : ℕ) : ℤ)} = w.asIdeal.under ℤ :=
   Int.ideal_span_absNorm_eq_self _
@@ -141,7 +145,7 @@ theorem summable_absNorm_rpow_neg_of_not_prime {s : ℝ} (hs : 1 / 2 < s) :
 
 theorem summable_absNorm_rpow_neg_subtype (S : Set (HeightOneSpectrum (𝓞 L))) {s : ℝ}
     (hs : 1 < s) : Summable fun w : S => (Ideal.absNorm w.1.asIdeal : ℝ) ^ (-s) :=
-  (summable_absNorm_rpow_neg hs).subtype S
+  (summable_absNorm_rpow_neg hs).subtype (fun w => w ∈ S)
 
 section relative
 
@@ -179,8 +183,8 @@ theorem summable_indicator_not_prime {s : ℝ} (hs : 1 / 2 < s) :
     (f := fun w : HeightOneSpectrum (𝓞 L) => (Ideal.absNorm w.asIdeal : ℝ) ^ (-s))).mp
     (summable_absNorm_rpow_neg_of_not_prime hs)
 
-variable (K L) in
 
+variable (K L) in
 theorem summable_higherDegreePrimes {s : ℝ} (hs : 1 / 2 < s) :
     Summable fun w : higherDegreePrimes K L => (Ideal.absNorm w.1.asIdeal : ℝ) ^ (-s) := by
   refine (summable_subtype_iff_indicator (s := higherDegreePrimes K L)
@@ -189,8 +193,8 @@ theorem summable_higherDegreePrimes {s : ℝ} (hs : 1 / 2 < s) :
     (fun w => ?_) (summable_indicator_not_prime hs)
   exact indicator_le_indicator_of_subset higherDegreePrimes_subset (fun _ => by positivity) w
 
-variable (K L) in
 
+variable (K L) in
 theorem primeIdealZetaSum_higherDegreePrimes_le :
     ∃ C : ℝ, ∀ s : ℝ, 1 ≤ s → (higherDegreePrimes K L).primeIdealZetaSum s ≤ C := by
   refine ⟨∑' w, {w : HeightOneSpectrum (𝓞 L) | ¬ (Ideal.absNorm w.asIdeal).Prime}.indicator
@@ -209,13 +213,6 @@ theorem primeIdealZetaSum_higherDegreePrimes_le :
   · rw [indicator_of_notMem hw]
     exact indicator_nonneg (fun _ _ => by positivity) w
 
-variable (K L) in
-
-theorem isBoundedUnder_primeIdealZetaSum_higherDegreePrimes :
-    IsBoundedUnder (· ≤ ·) (𝓝[>] 1) fun s => (higherDegreePrimes K L).primeIdealZetaSum s := by
-  obtain ⟨C, hC⟩ := primeIdealZetaSum_higherDegreePrimes_le K L
-  exact isBoundedUnder_of_eventually_le (a := C)
-    (eventually_nhdsWithin_of_forall fun s hs => hC s (le_of_lt hs))
 
 end relative
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassCurvePointOfLatticeAddOfGeneric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassCurvePointOfLatticeAddOfGeneric
+
+@[expose] public section
 
 open Filter PeriodPair Polynomial
 open scoped Topology
@@ -141,7 +145,7 @@ lemma exists_representatives (hα0 : α ≠ 0) (hα : ∀ l ∈ L.lattice, α * 
     fun t ↦ α⁻¹ * o t, rfl, fun t ↦ by simp [hα0], fun s t ↦ ?_, fun s t ↦ ?_, fun t ↦ ?_,
     fun m hm ↦ ⟨N.mkQ ⟨_, hm⟩, ?_⟩⟩
   · rw [← mul_sub, ← Submodule.coe_sub, key, map_sub, ho, ho, sub_eq_zero]
-  · rw [← mul_add, ← Submodule.coe_add, key, map_add, ho, ho, add_eq_zero_iff_eq_neg]
+  · rw [← mul_add, ← Submodule.coe_add, key, map_add (f := _), ho, ho, add_eq_zero_iff_eq_neg]
   · rw [key, ho]
   · have := (key (⟨_, hm⟩ - o (N.mkQ ⟨_, hm⟩))).mpr (by rw [map_sub, ho, sub_self])
     simpa [mul_sub, hα0] using this

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.ReductionColumnStandardBasis
-import Formalism.LocalToGlobal.Columns.UnfoldingPhiCompLeftUnipotentSource
+module
+
+public import Formalism.LocalToGlobal.Columns.ReductionColumnStandardBasis
+public import Formalism.LocalToGlobal.Columns.UnfoldingPhiCompLeftUnipotentSource
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 

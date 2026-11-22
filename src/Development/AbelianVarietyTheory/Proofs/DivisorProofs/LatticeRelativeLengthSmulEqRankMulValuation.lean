@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreEig
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsSaturatedSubmoduleIffExistsIsComplOfValuationR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreEig
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsSaturatedSubmoduleIffExistsIsComplOfValuationR
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.MultiplicationKernelIdentity GlobalTheory.HermitianPreEigenvalues Polynomial Module
 
 namespace GlobalTheory.ScalLen
@@ -15,7 +20,7 @@ theorem relLen_map_lsmul : ∀ (C : Type) [Field C] (v : AddValuation C (WithTop
   have hc : c ≠ 0 := by
     rintro rfl
     simp at hr
-  haveI : Module.IsTorsionFree (Int0 v) X := ⟨fun s hs x y hxy => by
+  have : Module.IsTorsionFree (Int0 v) X := ⟨fun s hs x y hxy => by
     have hs0 : s ≠ 0 := hs.ne_zero
     apply Subtype.ext
     have h1 : s • ((x : M) - (y : M)) = 0 := by
@@ -24,7 +29,14 @@ theorem relLen_map_lsmul : ∀ (C : Type) [Field C] (v : AddValuation C (WithTop
       simp only [Submodule.coe_smul] at this
       rw [this, sub_self]
     exact sub_eq_zero.1 (htf s _ hs0 h1)⟩
-  haveI : Module.Free (Int0 v) X := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing _ _
+  have : ValuationRing (Int0 v) := by
+    have hInt : Int0 v = v.toValuation.integer := by
+      ext x
+      rw [mem_addValuationIntegerRing_iff]
+    rw [hInt]
+    infer_instance
+  have : Module.Free (Int0 v) X :=
+    GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (R := Int0 v) (M := ↥X)
   set n := finrank (Int0 v) X with hn
   let b : Basis (Fin n) (Int0 v) X := Module.finBasis _ _
   let g : X →ₗ[Int0 v] M := (LinearMap.lsmul (Int0 v) M c).comp X.subtype
@@ -40,6 +52,7 @@ theorem relLen_map_lsmul : ∀ (C : Type) [Field C] (v : AddValuation C (WithTop
     simp only [g, LinearMap.range_comp, Submodule.range_subtype]
   let e : X ≃ₗ[Int0 v] X.map (LinearMap.lsmul (Int0 v) M c) :=
     (LinearEquiv.ofInjective g hg).trans (LinearEquiv.ofEq _ _ hrange)
+  unfold GlobalTheory.IndefiniteRowSideFullHecke.MultiplicationKernelIdentity.RelLen
   refine ⟨n, b, b.map e, Matrix.diagonal (fun _ => c), fun k => ?_, ?_⟩
   · simp only [Basis.map_apply, Matrix.diagonal_apply, ite_smul, zero_smul,
       Finset.sum_ite_eq', Finset.mem_univ, if_true]

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsIrr
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsClosure
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ClosureSummand
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsIrr
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsClosure
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ClosureSummand
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace

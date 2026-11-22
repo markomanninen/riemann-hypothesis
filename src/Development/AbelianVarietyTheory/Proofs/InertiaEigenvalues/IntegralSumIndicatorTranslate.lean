@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.CosetIntegral
@@ -11,10 +16,10 @@ theorem integral_sum_indicator_translate {G ι : Type} [Group G] [TopologicalSpa
     ∫ x, ∑ q ∈ T, ((fun y => y * (r q)⁻¹) ⁻¹' H).indicator (fun _ => c q) x ∂m
       = ∑ q ∈ T, c q := by
   have hmeas : ∀ q, MeasurableSet ((fun y => y * (r q)⁻¹) ⁻¹' H) := fun q =>
-    (hH.preimage (continuous_mul_right _)).measurableSet
+    (hH.preimage (continuous_mul_const _)).measurableSet
   have hmq : ∀ q, m ((fun y => y * (r q)⁻¹) ⁻¹' H) = 1 := fun q => by
     rw [measure_preimage_mul_right, hm]
-  rw [integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl fun q _ => ?_
     rw [integral_indicator_const _ (hmeas q), measureReal_def, hmq q]
     simp
@@ -41,7 +46,7 @@ theorem integral_eq_of_coset_support
     have := hinv _ hg (i r)
     simpa using this.symm
   let U : S → Set S := fun s => (fun x => x * s⁻¹) ⁻¹' (i ⁻¹' (R₀ : Set R))
-  have hUo : ∀ s, IsOpen (U s) := fun s => hS₀o.preimage (continuous_mul_right _)
+  have hUo : ∀ s, IsOpen (U s) := fun s => hS₀o.preimage (continuous_mul_const _)
   obtain ⟨t, ht⟩ := hcs.isCompact.elim_finite_subcover U hUo
     (fun x _ => Set.mem_iUnion.2 ⟨x, by simp [U, R₀.one_mem]⟩)
   let mk : S → Quotient (QuotientGroup.rightRel S₀) := fun s => Quotient.mk _ s

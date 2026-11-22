@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.PolarizationDifferenceFormulaHolds
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.PolarizationDifferenceFormulaHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ variable {p : ℕ} [Fact p.Prime] {σ : Type*}
 
 theorem Dv_add (v : PowerSeries ℂ_[p]) (i : σ) (f g : MvPowerSeries σ ℂ_[p]) :
     Dv v i (f + g) = Dv v i f + Dv v i g := by
-  simp only [Dv, map_add, mul_add]
+  simp only [Dv, map_add (f := _), mul_add]
 
 theorem Dv_sub (v : PowerSeries ℂ_[p]) (i : σ) (f g : MvPowerSeries σ ℂ_[p]) :
     Dv v i (f - g) = Dv v i f - Dv v i g := by
@@ -21,7 +25,7 @@ end
 
 private theorem pderiv_lX (hP : PdSelf) (hN : PdNe) {p : ℕ} [Fact p.Prime]
     {σ : Type} [DecidableEq σ] (l : PowerSeries ℂ_[p]) (i j : σ) :
-    MvPowerSeries.pderiv ℂ_[p] i (lX l j : MvPowerSeries σ ℂ_[p]) =
+    MvPowerSeries.pderiv (R := ℂ_[p]) i (lX l j : MvPowerSeries σ ℂ_[p]) =
       if j = i then PowerSeries.subst (MvPowerSeries.X i : MvPowerSeries σ ℂ_[p]) (PI.JetsPhW.dX l) else 0 := by
   split_ifs with h
   · subst h
@@ -45,12 +49,12 @@ theorem highG_of (hC : DChain) (hS : DSelf) (hN : PdNe) (hP : PdSelf) (hE : Ev0)
     intro j; simp
   have hLc : ∀ j : Fin 3, MvPowerSeries.constantCoeff (lX l j : MvPowerSeries (Fin 3) ℂ_[p]) = 0 :=
     fun j => (hE p (Fin 3) _ l (hX j)).trans hl0
-  have hpd : ∀ i j : Fin 3, MvPowerSeries.pderiv ℂ_[p] i (lX l j : MvPowerSeries (Fin 3) ℂ_[p]) =
+  have hpd : ∀ i j : Fin 3, MvPowerSeries.pderiv (R := ℂ_[p]) i (lX l j : MvPowerSeries (Fin 3) ℂ_[p]) =
       if j = i then PowerSeries.subst (MvPowerSeries.X i : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) else 0 :=
     fun i j => pderiv_lX hP hN l i j
   have hd : ∀ (i : Fin 3) (S : MvPowerSeries (Fin 3) ℂ_[p]) (c : ℂ_[p]) (g : PowerSeries ℂ_[p]),
       MvPowerSeries.constantCoeff S = 0 →
-      MvPowerSeries.pderiv ℂ_[p] i S =
+      MvPowerSeries.pderiv (R := ℂ_[p]) i S =
         MvPowerSeries.C c * PowerSeries.subst (MvPowerSeries.X i : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) →
       Dv v i (PowerSeries.subst S g) = MvPowerSeries.C c * PowerSeries.subst S (PI.JetsPhW.dX g) :=
     fun i S c g h1 h2 => hC p (Fin 3) i l v g S c hv h1 h2
@@ -62,40 +66,40 @@ theorem highG_of (hC : DChain) (hS : DSelf) (hN : PdNe) (hP : PdSelf) (hE : Ev0)
   have hq : ∀ j : Fin 3, (PI.JetsPhW.phAt ph (PI.JetsPhW.Xv j) : MvPowerSeries (Fin 3) ℂ_[p]) =
       PowerSeries.subst (MvPowerSeries.X j : MvPowerSeries (Fin 3) ℂ_[p]) ph := fun j => rfl
   have c012 : MvPowerSeries.constantCoeff (lX l 0 + lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) = 0 := by
-    simp only [map_add, hLc, add_zero]
+    simp only [map_add (f := _), hLc, add_zero]
   have c01 : MvPowerSeries.constantCoeff (lX l 0 + lX l 1 : MvPowerSeries (Fin 3) ℂ_[p]) = 0 := by
-    simp only [map_add, hLc, add_zero]
+    simp only [map_add (f := _), hLc, add_zero]
   have c12 : MvPowerSeries.constantCoeff (lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) = 0 := by
-    simp only [map_add, hLc, add_zero]
+    simp only [map_add (f := _), hLc, add_zero]
   have c20 : MvPowerSeries.constantCoeff (lX l 2 + lX l 0 : MvPowerSeries (Fin 3) ℂ_[p]) = 0 := by
-    simp only [map_add, hLc, add_zero]
-  have p0_012 : MvPowerSeries.pderiv ℂ_[p] 0 (lX l 0 + lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hLc, add_zero]
+  have p0_012 : MvPowerSeries.pderiv (R := ℂ_[p]) 0 (lX l 0 + lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 1 * PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
-  have p0_01 : MvPowerSeries.pderiv ℂ_[p] 0 (lX l 0 + lX l 1 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
+  have p0_01 : MvPowerSeries.pderiv (R := ℂ_[p]) 0 (lX l 0 + lX l 1 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 1 * PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
-  have p0_12 : MvPowerSeries.pderiv ℂ_[p] 0 (lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
+  have p0_12 : MvPowerSeries.pderiv (R := ℂ_[p]) 0 (lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 0 * PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
-  have p0_20 : MvPowerSeries.pderiv ℂ_[p] 0 (lX l 2 + lX l 0 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
+  have p0_20 : MvPowerSeries.pderiv (R := ℂ_[p]) 0 (lX l 2 + lX l 0 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 1 * PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
-  have p1_012 : MvPowerSeries.pderiv ℂ_[p] 1 (lX l 0 + lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
+  have p1_012 : MvPowerSeries.pderiv (R := ℂ_[p]) 1 (lX l 0 + lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 1 * PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
-  have p1_01 : MvPowerSeries.pderiv ℂ_[p] 1 (lX l 0 + lX l 1 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
+  have p1_01 : MvPowerSeries.pderiv (R := ℂ_[p]) 1 (lX l 0 + lX l 1 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 1 * PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
-  have p1_20 : MvPowerSeries.pderiv ℂ_[p] 1 (lX l 2 + lX l 0 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
+  have p1_20 : MvPowerSeries.pderiv (R := ℂ_[p]) 1 (lX l 2 + lX l 0 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 0 * PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
-  have p2_012 : MvPowerSeries.pderiv ℂ_[p] 2 (lX l 0 + lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
+  have p2_012 : MvPowerSeries.pderiv (R := ℂ_[p]) 2 (lX l 0 + lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 1 * PowerSeries.subst (MvPowerSeries.X 2 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
-  have p2_01 : MvPowerSeries.pderiv ℂ_[p] 2 (lX l 0 + lX l 1 : MvPowerSeries (Fin 3) ℂ_[p]) =
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
+  have p2_01 : MvPowerSeries.pderiv (R := ℂ_[p]) 2 (lX l 0 + lX l 1 : MvPowerSeries (Fin 3) ℂ_[p]) =
       MvPowerSeries.C 0 * PowerSeries.subst (MvPowerSeries.X 2 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX l) := by
-    simp only [map_add, hpd]; simp (config := { decide := true })
+    simp only [map_add (f := _), hpd]; simp (config := { decide := true })
   have e1 : Dv v 0 (PI.JetsPhW.cubeE l ex ph) =
       PowerSeries.subst (lX l 0 + lX l 1 + lX l 2 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX (psi ex ph)) -
         PowerSeries.subst (lX l 0 + lX l 1 : MvPowerSeries (Fin 3) ℂ_[p]) (PI.JetsPhW.dX (psi ex ph)) -
@@ -149,7 +153,7 @@ theorem highG_of (hC : DChain) (hS : DSelf) (hN : PdNe) (hP : PdSelf) (hE : Ev0)
     have hph : PowerSeries.constantCoeff ph = 0 := by
       have h0 := hD0
       rw [hDdef] at h0
-      simp only [map_add, map_sub, hq] at h0
+      simp only [map_add (f := _), map_sub, hq] at h0
       rw [hE p (Fin 3) _ _ c012, hE p (Fin 3) _ _ c01, hE p (Fin 3) _ _ c12, hE p (Fin 3) _ _ c20,
         hE p (Fin 3) _ _ (hX 0), hE p (Fin 3) _ _ (hX 1), hE p (Fin 3) _ _ (hX 2), hψ] at h0
       linear_combination h0

@@ -1,7 +1,11 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IsOpenAlt
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.AnChart
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.AtlasA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IsOpenAlt
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.AnChart
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.AtlasA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

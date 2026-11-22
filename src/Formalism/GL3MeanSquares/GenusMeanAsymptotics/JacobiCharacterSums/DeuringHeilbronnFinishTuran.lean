@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.DHFinish2Of
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDHFinish
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.NormUSum
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.DHFinish2Of
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDHFinish
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.NormUSum
+
+@[expose] public section
 
 open Finset Complex Classical
 

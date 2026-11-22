@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
+
+@[expose] public section
 
 namespace GlobalTheory.TestLat
 

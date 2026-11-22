@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsPrincipalIdealRingLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsPrincipalIdealRingLoc
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -23,7 +27,8 @@ theorem exists_map_of_basis {O B M Mb : Type} [CommRing O] [IsDomain O] [CommRin
     rw [Fintype.linearCombination_apply] at hy
     have h1 : ∑ i, algebraMap O B (y i * (p i).2) • b i = 0 := by
       have h := congrArg f hy
-      rw [map_sum, map_zero] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h
       rw [← h]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, ← hp i, Submonoid.smul_def, algebraMap_smul, mul_smul]
@@ -41,7 +46,8 @@ theorem exists_map_of_basis {O B M Mb : Type} [CommRing O] [IsDomain O] [CommRin
       intro i
       rw [ha i, Algebra.smul_def, mul_assoc, mul_assoc, IsUnit.val_inv_mul, mul_one]
     have key : f ((t : O) • x) = f (Fintype.linearCombination O (fun i => (p i).1) a) := by
-      rw [map_smul, Fintype.linearCombination_apply, map_sum, ← hx, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, Fintype.linearCombination_apply, map_sum, ← hx, Finset.smul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, ← hp i, Submonoid.smul_def, ← algebraMap_smul B (a i),
         ← algebraMap_smul B ((p i).2 : O), smul_smul, hc i, mul_smul, algebraMap_smul]

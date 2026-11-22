@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
-import Formalism.LocalToGlobal.HermitianForms.BothSym
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
+public import Formalism.LocalToGlobal.HermitianForms.BothSym
+
+@[expose] public section
 
 noncomputable section
 

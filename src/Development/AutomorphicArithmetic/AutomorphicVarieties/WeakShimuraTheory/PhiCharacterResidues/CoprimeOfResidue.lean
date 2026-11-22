@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.PhiCharacterResidues.ContinuousResLe
-import Mathlib.RingTheory.Polynomial.Resultant.Basic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.PhiCharacterResidues.ContinuousResLe
+public import Mathlib.RingTheory.Polynomial.Resultant.Basic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp
 
@@ -37,7 +41,8 @@ theorem UpperTheory.V.Ws.phiRigid :
     have h3 : ((m : ℕ) : ResidueField B) ≠ 0 := by
       have := (hu.map (residue B)).ne_zero
       rwa [map_natCast] at this
-    simpa [hS, Polynomial.map_sum, eval_finset_sum] using h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [hS, Polynomial.map_sum, eval_finsetSum] using h3
   obtain ⟨a, b, hab⟩ := hc
   have h4 : aeval M b * aeval M S = 1 := by
     have := congrArg (aeval M) hab

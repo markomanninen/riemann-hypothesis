@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical UpperTheory.Gal.Gen
 
@@ -20,7 +24,7 @@ private lemma half_cont {X : Type*} [TopologicalSpace X] {t : ℝ} (ht0 : 0 ≤ 
     (hn : ∀ x i, ‖((u x i : ℂˣ) : ℂ)‖ = 1) :
     Continuous fun x => half (t : ℂ) (u x) := by
   unfold half
-  refine continuous_finset_prod _ (fun p _ => ?_)
+  refine continuous_finsetProd _ (fun p _ => ?_)
   have h1 := hc p.1
   have h2 := hc p.2
   have hne : ∀ x, ((u x p.2 : ℂˣ) : ℂ) ≠ 0 := fun x => Units.ne_zero _
@@ -48,6 +52,6 @@ theorem UpperTheory.Gal.Gen.densCont_pf :
   · intro p
     simp only [evalAt_apply, monomialChar_apply, Units.val_zpow_eq_zpow_val]
     unfold Finsupp.sum
-    refine continuous_finset_sum _ (fun l _ => ?_)
-    refine continuous_const.mul (continuous_finset_prod _ (fun i _ => ?_))
+    refine continuous_finsetSum _ (fun l _ => ?_)
+    refine continuous_const.mul (continuous_finsetProd _ (fun i _ => ?_))
     exact (pt_cont i).zpow₀ _ (fun θ => Or.inl (Units.ne_zero _))

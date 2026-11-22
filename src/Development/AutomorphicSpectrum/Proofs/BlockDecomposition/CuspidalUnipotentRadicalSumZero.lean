@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColGeR
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColGeR
+
+@[expose] public section
+
 open ReciprocityTheory.Ty.Fin GlobalTheory.CompanionTheory.TyFin.ColStep
 
 noncomputable section
@@ -17,8 +22,8 @@ theorem blk_unip (b : ι → Fin s) (c : Fin s) {g : GL ι K}
   simp only [Formalism.IrreducibleCountingLemmas.TYPES.blk, Matrix.submatrix_apply, Matrix.one_apply, Subtype.mk.injEq]
   exact hg.2 i l (hi.trans hl.symm)
 
-omit [Fintype K] [DecidableEq K] [Fintype ι] in
 
+omit [Fintype K] [DecidableEq K] [Fintype ι] in
 theorem entry_of_blk (b : ι → Fin s) {M : Matrix ι ι K}
     (h : ∀ c, Formalism.IrreducibleCountingLemmas.TYPES.blk K b c M = 1) (i j : ι) (hij : b i = b j) :
     M i j = if i = j then 1 else 0 := by
@@ -42,7 +47,6 @@ theorem unip_inv_mem (b : ι → Fin s) {g : GL ι K}
   exact Matrix.submatrix_one _ Subtype.val_injective
 
 open Classical in
-
 theorem sum_rho_unip (τ : FDRep ℂ (GL ι K)) (hc : Formalism.IrreducibleCountingLemmas.TYPES.IsCuspidal K τ)
     (b : ι → Fin s) (hb : Function.Surjective b) (hs : 2 ≤ s) :
     (∑ v : GL ι K, if v ∈ Formalism.IrreducibleCountingLemmas.TYPES.unip K b then τ.ρ v else 0) = 0 := by
@@ -80,7 +84,8 @@ theorem sum_character_translate :
   have h1 : LinearMap.trace ℂ τ (τ.ρ u * ∑ v : GL (Fin d) K,
       if v ∈ Formalism.IrreducibleCountingLemmas.TYPES.unip K (Formalism.IrreducibleCountingLemmas.TYPES.twoBlock d j) then τ.ρ v else 0) = 0 := by
     rw [h0, mul_zero, map_zero]
-  rw [Finset.mul_sum, map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum] at h1
   refine Eq.trans (Finset.sum_congr rfl fun v _ => ?_) h1
   split_ifs
   · rw [FDRep.character, map_mul]

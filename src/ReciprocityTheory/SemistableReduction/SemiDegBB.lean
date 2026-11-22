@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SemiDegBA
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegBA
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,10 +54,11 @@ theorem relIndex_span_comb {K : Type} [Field K] [NumberField K] {r k : ℕ}
   have : Module.Finite ℤ P := Module.Finite.of_basis ((RingOfIntegers.basis K).smulTower bP)
   set N : Submodule ℤ P := (LinearMap.range f).toAddSubgroup.toIntSubmodule with hN
   let e : P ≃+ N := (LinearEquiv.ofInjective f hf).toAddEquiv
-  have hdet : N.subtype ∘ₗ (e : P →+ N).toIntLinearMap = f.restrictScalars ℤ := by
+  have hdet : N.subtype ∘ₗ e.toAddMonoidHom.toIntLinearMap = f.restrictScalars ℤ := by
     ext x
     rfl
-  have key := Submodule.natAbs_det_equiv N e
+  have key : (LinearMap.det (N.subtype ∘ₗ e.toAddMonoidHom.toIntLinearMap)).natAbs =
+      Nat.card (P ⧸ N) := Submodule.natAbs_det_equiv N e
   rw [hdet, LinearMap.det_restrictScalars, LinearMap.det_toLin] at key
   rw [AddSubgroup.relIndex, hR]
   change ((Nat.card (P ⧸ N) : ℕ) : ℤ) = _

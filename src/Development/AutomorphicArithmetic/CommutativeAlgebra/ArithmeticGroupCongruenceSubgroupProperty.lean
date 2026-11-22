@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,9 +19,8 @@ variable {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup p} (L : Link D G)
 
 private theorem actOn_comm_mulF (x : 𝓞 D.F) (y : AfP p ⊗[ℚ] G.C) :
     actOn L.rep (AfP p) y * mulF D x = mulF D x * actOn L.rep (AfP p) y := by
-  induction y using TensorProduct.induction_on with
-  | zero => simp
-  | add a b ha hb => rw [map_add, add_mul, mul_add, ha, hb]
+  induction y using TensorProduct.inductionOn with
+  | add a b ha hb => rw [map_add (f := _), add_mul, mul_add, ha, hb]
   | tmul a c =>
     have hc : L.rep c * actQ D (algebraMap (𝓞 D.F) D.O x) = actQ D (algebraMap (𝓞 D.F) D.O x) * L.rep c :=
       (L.rep_range (L.rep c)).1 ⟨c, rfl⟩ _

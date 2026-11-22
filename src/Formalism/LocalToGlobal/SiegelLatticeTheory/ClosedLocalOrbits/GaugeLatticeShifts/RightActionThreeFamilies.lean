@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActR
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActL
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActLIota
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActLChi
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.NormalizingConstantEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActR
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActL
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActLIota
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramActLChi
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.NormalizingConstantEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,8 @@ theorem hsInv_hsEmb (A : Wq →L[ℂ] Wp) : hsInv (Formalism.L2.SG.PackageTie.hs
   rw [hsInv_apply]
   simp only [Formalism.L2.SG.PackageTie.hsEmb, LinearMap.coe_mk, AddHom.coe_mk, PiLp.toLp_apply]
   conv_rhs => rw [← (stdOrthonormalBasis ℂ Wq).sum_repr' ξ]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp [map_smul]
 
 theorem hsNormSq_comp_iso (A : Wq →L[ℂ] Wp) (P : Wq ≃ₗᵢ[ℂ] Wq) :
@@ -60,7 +65,7 @@ def hsR (P : Wq ≃ₗᵢ[ℂ] Wq) :
       rw [← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [PiLp.add_apply, smul_add]
-    rw [e, ContinuousLinearMap.add_comp, map_add]
+    rw [e, ContinuousLinearMap.add_comp, map_add (f := _)]
   map_smul' c f := by
     have e : hsInv (c • f) = c • hsInv f := by
       ext ξ
@@ -193,8 +198,8 @@ end RO
 
 section Main
 
-open Formalism.L2.SG.Pf.SatGramActL in
 
+open Formalism.L2.SG.Pf.SatGramActL in
 theorem right_action_three_families (hB : ChiNBiAll) (hIR : IotaRepC) (hAR : AmpRepNC) : RightActC' := by
   intro D X Y u u' hOI _ _ S hS q b hb
   obtain ⟨γ, hk, rfl⟩ := hb

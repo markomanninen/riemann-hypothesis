@@ -1,5 +1,9 @@
-import Formalism.MahlerMeasure.StatementD
-import Formalism.MahlerMeasure.MahlerMeasureProofs.Mahler
+module
+
+public import Formalism.MahlerMeasure.StatementD
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.Mahler
+
+@[expose] public section
 
 namespace Formalism.GM
 

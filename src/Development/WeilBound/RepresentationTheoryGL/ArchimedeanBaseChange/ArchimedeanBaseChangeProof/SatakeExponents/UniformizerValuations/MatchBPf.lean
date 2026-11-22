@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchB
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchB
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,7 +146,7 @@ theorem mb_isCompact_KL_split {n : ℕ} {w : Pl E} (hw : IsSplitAt w) : IsCompac
     have h : UL n w = ⊤ := if_pos hw
     rw [h]
     exact isClosed_univ
-  have hKL : (KL n w : Set (UL n w)) = Subtype.val ⁻¹' (GlobalTheory.LFun.KGL w n : Set (GLw n w)) := by
+  have hKL : (KL n w : Set (UL n w)) = Subtype.val ⁻¹' (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) := by
     ext x
     exact Subgroup.mem_subgroupOf
   rw [hKL]
@@ -174,7 +178,7 @@ theorem lponeIdem : LponeIdem := by
 
 theorem fixIdem : FixIdem := by
   intro E _ _ _ a b w L hLo hLK φ hφ
-  have hK2c : IsCompact (((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) : Subgroup _) : Set (GLw a w × GLw b w)) := by
+  have hK2c : IsCompact (((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) : Subgroup _) : Set (GLw a w × GLw b w)) := by
     rw [Subgroup.coe_prod]
     exact (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w a).2.prod (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w b).2
   have hN : ((L.relIndex (K2 a b w) : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (mb_relIndex_ne_zero _ _ hLo hK2c)
@@ -216,7 +220,7 @@ theorem matchUnitIOf : MatchUnitIOf := by
   intro h1 E _ _ _ hU w hw n a ha
   have hM := h1 E hU w hw n a (n - a) (Nat.add_sub_cancel' ha)
   have he : idem (K2 a (n - a) w) =
-      ((((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w (n - a)) : Subgroup _) : Set (GLw a w × GLw (n - a) w)).indicator 1) := by
+      ((((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := (n - a))) : Subgroup _) : Set (GLw a w × GLw (n - a) w)).indicator 1) := by
     funext y
     simp [idem, Set.indicator_apply, Subgroup.relIndex_self]
   rw [he]

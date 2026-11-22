@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InfiniteCoordinateUnfold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InfiniteCoordinateUnfold
+
+@[expose] public section
+
 open MeasureTheory Topology GlobalTheory.IndefiniteRowSideFullHecke.InfiniteCoordinateUnfold
 open scoped ENNReal
 
 namespace GlobalTheory
 
+
 open MeasureTheory Topology in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.exists_isQuotientMeasure_of_bruhatFunction :
     ∀ (T T' : Type) [Group T] [MeasurableSpace T] [MeasurableMul₂ T] [Group T'] [MeasurableSpace T']
       [MeasurableMul T'] [MeasurableInv T'] (j : T' →* T), Measurable j →

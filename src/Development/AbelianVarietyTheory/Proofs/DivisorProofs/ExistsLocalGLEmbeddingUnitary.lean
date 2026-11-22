@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergLawApplyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationLocalityUnitaryGroupVStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalWeilOperatorIsometrySchwartzBruhatStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEqStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhatStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodingerStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartzStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergLawApplyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationLocalityUnitaryGroupVStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalWeilOperatorIsometrySchwartzBruhatStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEqStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhatStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodingerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartzStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 open scoped Matrix GlobalTheory.VacAny
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -25,7 +30,7 @@ section Lift
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] (v : HeightOneSpectrum (𝓞 F)) {n : ℕ}
 
-def ext0 (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : Matrix (Fin n) (Fin n) (AE F E) := M.map (tensAt E v)
+def ext0 (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : Matrix (Fin n) (Fin n) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) := M.map (tensAt E v)
 
 theorem matrixExtendByZero_add (M N : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : ext0 v (M + N) = ext0 v M + ext0 v N := by
   ext i j; simp [ext0]
@@ -33,15 +38,17 @@ theorem matrixExtendByZero_add (M N : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) 
 theorem matrixExtendByZero_zero : ext0 v (0 : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) = 0 := by
   ext i j; simp [ext0]
 
-theorem ext_zero_mul_right (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) (C : Matrix (Fin n) (Fin n) (AE F E)) :
+theorem ext_zero_mul_right (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) (C : Matrix (Fin n) (Fin n) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) :
     ext0 v M * C = ext0 v (M * C.map (compFin F E v)) := by
   ext i j
-  simp only [ext0, Matrix.mul_apply, Matrix.map_apply, map_sum, tensAt_mul_right]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ext0, Matrix.mul_apply, Matrix.map_apply, map_sum, tensAt_mul_right]
 
-theorem ext_zero_mul_left (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) (C : Matrix (Fin n) (Fin n) (AE F E)) :
+theorem ext_zero_mul_left (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) (C : Matrix (Fin n) (Fin n) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) :
     C * ext0 v M = ext0 v (C.map (compFin F E v) * M) := by
   ext i j
-  simp only [ext0, Matrix.mul_apply, Matrix.map_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ext0, Matrix.mul_apply, Matrix.map_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [mul_comm, tensAt_mul_right, mul_comm]
 
@@ -62,7 +69,7 @@ theorem ext_zero_comp_finite (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : (e
   ext i j
   exact compFin_tensAt v _
 
-def lift (Y : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : Matrix (Fin n) (Fin n) (AE F E) := 1 + ext0 v (Y - 1)
+def lift (Y : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : Matrix (Fin n) (Fin n) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) := 1 + ext0 v (Y - 1)
 
 theorem lift_mul (Y Z : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : lift v Y * lift v Z = lift v (Y * Z) := by
   have e : Y * Z - 1 = (Y - 1) + (Z - 1) + (Y - 1) * (Z - 1) := by noncomm_ring
@@ -73,10 +80,10 @@ theorem lift_one : lift v (1 : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) = 1 := 
   rw [lift, sub_self, matrixExtendByZero_zero, add_zero]
 
 theorem compFin_lift (Y : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : (lift v Y).map (compFin F E v) = Y := by
-  have h2 : (1 : Matrix (Fin n) (Fin n) (AE F E)).map (compFin F E v) = 1 := Matrix.map_one _ (map_zero _) (map_one _)
-  have h1 : (lift v Y).map (compFin F E v) = (1 : Matrix (Fin n) (Fin n) (AE F E)).map (compFin F E v) +
+  have h2 : (1 : Matrix (Fin n) (Fin n) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))).map (compFin F E v) = 1 := Matrix.map_one _ (map_zero _) (map_one _)
+  have h1 : (lift v Y).map (compFin F E v) = (1 : Matrix (Fin n) (Fin n) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))).map (compFin F E v) +
       (ext0 v (Y - 1)).map (compFin F E v) := by
-    ext i j; simp only [lift, Matrix.map_apply, Matrix.add_apply, map_add]
+    ext i j; simp only [lift, Matrix.map_apply, Matrix.add_apply, map_add (f := _)]
   rw [h1, ext_zero_comp_finite, h2]
   abel
 
@@ -86,7 +93,7 @@ theorem lift_sub_one_at (Y : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : At (evF
   ext i j
   simp only [ext0, Matrix.smul_apply, Matrix.map_apply, Matrix.zero_apply]
   rw [Algebra.smul_def, mul_comm, tensAt_mul_right]
-  have : compFin F E v (algebraMap (AF F) (AE F E) u) = 0 := by
+  have : compFin F E v (algebraMap (AF F) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) u) = 0 := by
     change (evFin F v u) ⊗ₜ[F] (1 : E) = 0
     rw [hu, TensorProduct.zero_tmul]
   rw [this, mul_zero, map_zero]

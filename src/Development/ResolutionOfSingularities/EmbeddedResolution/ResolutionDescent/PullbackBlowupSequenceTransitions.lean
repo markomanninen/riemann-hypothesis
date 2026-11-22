@@ -1,11 +1,16 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry CategoryTheory.Limits Opposite
@@ -114,9 +119,25 @@ theorem IsPullbackBlowupSequence.exists_reindexing_of_flat {A A' : Scheme.{u}} (
   have hiso : ∀ m : ℕ, m < t.length → (∀ j', j' < t'.length → r j' ≠ m) →
       IsIso (t.pullbackTransitionMap f (Nat.le_succ m)) := by
     intro m hm hskip
-    have hb := (t.baseChange f).isBlowupAlongIdealSheaf_blowupMorphism m hm
-    rw [SequenceOfBlowups.baseChange_blowupMorphism, SequenceOfBlowups.baseChange_center,
-      htop m hm hskip] at hb
+    have hsq : IsPullback (pullback.snd f (t.projectionToBase (m + 1)))
+        (t.pullbackTransitionMap f (Nat.le_succ m)) (t.transitionMapSucc m)
+        (pullback.snd f (t.projectionToBase m)) := by
+      have hbase : IsPullback (pullback.snd f (t.projectionToBase m))
+          (pullback.fst f (t.projectionToBase m)) (t.projectionToBase m) f :=
+        (IsPullback.of_hasPullback f (t.projectionToBase m)).flip
+      have hsnd : pullback.snd f (t.projectionToBase (m + 1)) ≫ t.transitionMapSucc m =
+          t.pullbackTransitionMap f (Nat.le_succ m) ≫ pullback.snd f (t.projectionToBase m) := by
+        rw [t.pullbackTransitionMap_snd, t.blowupMorphism_eq_transitionMap]
+      have hsquare : IsPullback (pullback.snd f (t.projectionToBase (m + 1)))
+          (t.pullbackTransitionMap f (Nat.le_succ m) ≫ pullback.fst f (t.projectionToBase m))
+          (t.transitionMapSucc m ≫ t.projectionToBase m) f := by
+        rw [t.pullbackTransitionMap_fst, t.blowupMorphism_eq_transitionMap,
+          t.transitionMap_comp_projectionToBase]
+        exact (IsPullback.of_hasPullback f (t.projectionToBase (m + 1))).flip
+      exact hsquare.of_bot hsnd hbase
+    have hb := (t.isBlowupAlongIdealSheaf_blowupMorphism m hm).of_isPullback_of_flat
+      (pullback.snd f (t.projectionToBase m)) hsq
+    rw [htop m hm hskip] at hb
     exact hb.isIso_of_top
   have hD : ∀ (j : ℕ) (hj : j ≤ t'.length),
       IsPullback ((e j hj).hom ≫ pullback.snd f (t.projectionToBase (r j))) (t'.projectionToBase j)

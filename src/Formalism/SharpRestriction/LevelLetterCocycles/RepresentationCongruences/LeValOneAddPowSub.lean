@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,8 +158,8 @@ theorem chi_pow_nat_val (l : ℕ) (hl : l.Prime) (hl2 : l ≠ 2) (hvl : v (l : L
   have hcop : Nat.Coprime r l := ((Nat.Prime.coprime_iff_not_dvd hl).mpr hr).symm
   have : Fact l.Prime := ⟨hl⟩
   have hpv : padicValNat l (l ^ k * r) = k := by
-    rw [padicValNat.mul (pow_ne_zero k hl.ne_zero) hr0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hr, add_zero]
+    rw [Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero k hl.ne_zero) hr0,
+      Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hr, add_zero]
   have hk0 : (0 : WithTop ℚ) ≤ k := by exact_mod_cast (Nat.cast_nonneg k : (0 : ℚ) ≤ k)
   have hlk := pow_lk_val v l hl hl2 hvl (le_refl 1) hχ k
   rw [hpv, pow_mul, pow_coprime_val v l hvl
@@ -187,11 +191,11 @@ theorem chi_pow_val {LL : Type*} [Field LL] (v : AddValuation LL (WithTop ℚ)) 
   have hne : χ ≠ 0 := LemGA.ne_zero_of_val_zero v hχ0
   obtain ⟨n, rfl | rfl⟩ := Int.eq_nat_or_neg m
   · have hn : n ≠ 0 := by rintro rfl; exact hm rfl
-    rw [zpow_natCast, padicValInt.of_nat]
+    rw [zpow_natCast, padicValInt.of_nat, ← Nat.padicValNat_def]
     exact LemGA.chi_pow_nat_val v l hl hl2 hvl χ hχ n hn
   · have hn : n ≠ 0 := by rintro rfl; exact hm (by simp)
     have hpv : padicValInt l (-(n : ℤ)) = padicValNat l n := by
-      unfold padicValInt; rw [Int.natAbs_neg]; simp
+      rw [padicValInt, Int.natAbs_neg, Int.natAbs_natCast, Nat.padicValNat_def]
     rw [hpv, zpow_neg, zpow_natCast]
     have hxn : v (χ ^ n) = 0 := by
       rw [AddValuation.map_pow, hχ0, smul_zero]

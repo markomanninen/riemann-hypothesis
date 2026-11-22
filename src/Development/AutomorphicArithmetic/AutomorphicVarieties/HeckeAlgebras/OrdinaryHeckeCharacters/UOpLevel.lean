@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Hi
 
 private theorem uOpLevel_mem {G : Type} [Group G] (I : Iwa G) (a x : G) :
@@ -50,7 +55,8 @@ private theorem uOpLevel_core {G : Type} [Group G] (I : Iwa G) {A M : Type} [Com
         (I.N_le (mul_mem (inv_mem (hs _ u.2)) (hs _ w.2)))
     have h3 := (iwMem G I c _).2.2 h1 (e ▸ mul_mem (inv_mem (hk u)) (hk w))
     exact Subtype.ext ((hu w (hs _ w.2)).unique ⟨u.2, (uOpLevel_mem I a _).2 h3⟩ ⟨w.2, by simp⟩)
-  rw [(h2 s hs hu).2 v hN, map_sum, ← Finset.sum_coe_sort s, ← Finset.sum_coe_sort s,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [(h2 s hs hu).2 v hN, map_sum, ← Finset.sum_coe_sort s, ← Finset.sum_coe_sort s,
     ← (Finite.injective_iff_bijective.1 inj).sum_comp (fun u : s => π (u * a) v)]
   refine Finset.sum_congr rfl fun u _ => ?_
   rw [← mul, he u, mul, hkv u]

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.Statement
-import Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.Statement
+public import Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,11 +34,6 @@ def SecondBranchInclusionLength : Prop :=
             (D.R.k : ℚ)))
 
 variable {D u}
-
-theorem secondBranchInclusionLength_of_lemB (hB : LemB D u) : SecondBranchInclusionLength D u := by
-  unfold LemB at hB
-  intro w hw hs v hb
-  exact (hB w hw hs v).2 hb
 
 theorem rational_level_zero_of_integral (w : D.what₂.places.Pl) (hw : OverT D u w) (hs : (D.fm u).seenP w = true) (h4 : HeckeIntegralLevelZero D u) :
     Rat0 D u := fun v =>
@@ -156,12 +155,6 @@ theorem congruence_no_kernel_minimal (hS : HidaSetting D u) (hB : SecondBranchIn
     unfold len
     rw [Submodule.comap_subtype_self]
     simp
-
-theorem congruence_no_kernel_family_minimal
-    (h : ∀ (D : D7) (u : D.what₂.Word), FormsCompatible D u → HidaSetting D u → admS D u →
-      HeckeIntegralLevelZero D u ∧ HeckeRamifiedLevelZero D u ∧ SecondBranchInclusionLength D u) : CongruenceLatticeLengthBoundFamily := fun D u hF hS hA =>
-  have h' := h D u hF hS hA
-  congruence_no_kernel_minimal hS h'.2.2 h'.1 h'.2.1
 
 end Min
 

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
-import Development.AbelianVarietyTheory.Definitions.Divisors.NatCastSmulMemHatL
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicUnitaryTopCong
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
-import Formalism.LocalToGlobal.Columns.StdLatUnimodular
-import Formalism.LocalToGlobal.Columns.AdelicLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NatCastSmulMemHatL
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicUnitaryTopCong
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+public import Formalism.LocalToGlobal.Columns.StdLatUnimodular
+public import Formalism.LocalToGlobal.Columns.AdelicLemmas
+
+@[expose] public section
 
 open NumberField MeasureTheory
 open scoped Classical
@@ -51,7 +55,7 @@ theorem swap_mem_iff (e : TensorProduct D.host.F (Af D.host.F) D.host.E) (c : Fo
     induction e' using TensorProduct.induction_on with
     | zero => rfl
     | tmul a x => rfl
-    | add a b ha hb => rw [RingHom.map_add, map_add (Algebra.TensorProduct.comm D.host.F D.host.E (IsDedekindDomain.FiniteAdeleRing (𝓞 D.host.F) D.host.F)), ha, hb]
+    | add a b ha hb => rw [RingHom.map_add (f := _), map_add (Algebra.TensorProduct.comm D.host.F D.host.E (IsDedekindDomain.FiniteAdeleRing (𝓞 D.host.F) D.host.F)), ha, hb]
   rw [e1, h]
   rfl
 
@@ -126,8 +130,8 @@ theorem entry_cong {D : D7} {r : ℕ} (g : GL (Fin r) (Lev.EAf D)) (w : Matrix (
   rw [← this]
   split_ifs <;> simp
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_level : ∀ {D : D7} (V : HSp D) (n : ℕ) (ι : Formalism.MainNotions.StandardLatticesGL3.GA D n →* GA D V) (J : Subgroup (Formalism.MainNotions.StandardLatticesGL3.GA D n)), V.gram = 1 →
   (∀ x, IsFinPt V (ι x) x) → Function.Injective ι → ι.range = GfC V → J ≤ intG D n → IsCongLevel J →
   ∃ K : Subgroup (GL (Fin V.rank) (Lev.EAf D)), IsOpenCompactLevel V K ∧ ∀ x, Lev.finE V (ι x) ∈ K ↔ x ∈ J := by
@@ -153,8 +157,19 @@ theorem exists_level : ∀ {D : D7} (V : HSp D) (n : ℕ) (ι : Formalism.MainNo
     have h2 := (GlobalTheory.UnitarySplit.real_finite_split D V).2.2.1 _ (ker_finE V h1)
       (mul_mem (inv_mem (hGf y)) (hGf x))
     exact hinj (inv_mul_eq_one.1 h2).symm
+  have hstd : Submodule.IsFullLattice D.host.E (Formalism.L2.Col.stdLat D.host.E V.rank) := by
+    letI := Formalism.L2.Col.stdLat_lattice (E := D.host.E) (n := V.rank)
+    constructor
+    apply eq_top_iff.mpr
+    intro v _
+    have hv : v = ∑ i, v i • (Pi.single i 1 : Fin V.rank → D.host.E) := by
+      funext j
+      simp [Finset.sum_apply, Pi.single_apply]
+    rw [hv]
+    exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
+      (Submodule.subset_span (by simpa using Formalism.L2.Col.single_mem_stdLat (E := D.host.E) i 1))
   obtain ⟨hK₀o, hK₀c⟩ := GlobalTheory.FunObj.congLev_open_compact V (Λ := Formalism.L2.Col.stdLat D.host.E V.rank)
-    Formalism.L2.Col.stdLat_lattice (𝔪 := ⊤) top_ne_bot
+    hstd (𝔪 := ⊤) top_ne_bot
   obtain ⟨K₀, hK₀⟩ : ∃ K₀, K₀ = GlobalTheory.ChiGrid.congLev D.sp.cm V.gram (Formalism.L2.Col.stdLat D.host.E V.rank) ⊤ := ⟨_, rfl⟩
   rw [← hK₀] at hK₀o hK₀c
   obtain ⟨f, hf⟩ : ∃ f : Formalism.MainNotions.StandardLatticesGL3.GA D V.rank →* GL (Fin V.rank) (Lev.EAf D), f = (Lev.finE V).comp ι := ⟨_, rfl⟩

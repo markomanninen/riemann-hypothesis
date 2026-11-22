@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.LatticeGeometry.PluckerHadamard.BlockVandermondeForms
-import Formalism.DegreeFormula.PointDegree.FlagDeg
+module
+
+public import Formalism.LocalToGlobal.LatticeGeometry.PluckerHadamard.BlockVandermondeForms
+public import Formalism.DegreeFormula.PointDegree.FlagDeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ def apol (P g : MvPolynomial σ ℝ) : ℝ :=
   ∑ m ∈ P.support, P.coeff m * g.coeff m * (m.prod fun _ e => (e.factorial : ℝ))
 
 theorem apol_add (P g h : MvPolynomial σ ℝ) : apol P (g + h) = apol P g + apol P h := by
-  unfold apol; rw [← Finset.sum_add_distrib]; refine Finset.sum_congr rfl (fun m _ => ?_); rw [coeff_add]; ring
+  unfold apol; rw [← Finset.sum_add_distrib]; refine Finset.sum_congr rfl (fun m _ => ?_); rw [MvPolynomial.coeff_add]; ring
 
 theorem apol_smul (P g : MvPolynomial σ ℝ) (c : ℝ) : apol P (c • g) = c * apol P g := by
   unfold apol; rw [Finset.mul_sum]; refine Finset.sum_congr rfl (fun m _ => ?_); rw [coeff_smul, smul_eq_mul]; ring
@@ -170,7 +174,7 @@ theorem linRoot_nuT (t : Ψ × Fin N × Fin N) : Formalism.DegreeFormula.linRoot
 theorem linRoot_add (l1 l2 : Ψ → Fin N → ℝ) :
     Formalism.DegreeFormula.linRoot (l1 + l2) = Formalism.DegreeFormula.linRoot l1 + Formalism.DegreeFormula.linRoot l2 := by
   unfold Formalism.DegreeFormula.linRoot
-  simp only [Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib, neg_add]
+  simp only [Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib, neg_add]
 
 theorem linRoot_sum {α : Type*} (s : Finset α) (l : α → Ψ → Fin N → ℝ) :
     Formalism.DegreeFormula.linRoot (∑ a ∈ s, l a) = ∑ a ∈ s, Formalism.DegreeFormula.linRoot (l a) := by
@@ -254,7 +258,8 @@ theorem weyl_coeff (j : ℕ) (ν : Ψ → Fin N → ℝ) (n k : ℕ) (hD : Forma
     Polynomial.C ((D.choose m : ℝ) * degFlL Ψ N (μ ^ m * L ^ (D - m))) * Polynomial.X ^ (D - m) with hPLdef
   have hPL : ∀ ε : ℝ, PL.eval ε = degFlL Ψ N ((μ + C ε * L) ^ D) := by
     intro ε
-    rw [add_pow, map_sum, hPLdef, Polynomial.eval_finsetSum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [add_pow, map_sum, hPLdef, Polynomial.eval_finsetSum]
     refine Finset.sum_congr rfl (fun m _ => ?_)
     have e : μ ^ m * (C ε * L) ^ (D - m) * ((D.choose m : ℕ) : Pol Ψ N) =
         C (ε ^ (D - m) * (D.choose m : ℝ)) * (μ ^ m * L ^ (D - m)) := by
@@ -415,95 +420,5 @@ open WeylPolynomialAlgebra
 theorem mul_eq_sign_rearrange (K e s f : ℝ) (hf : f ≠ 0) (hs : s * s = 1) : K * e = K * s / f * (f * s * e) := by
   rw [div_mul_eq_mul_div, eq_div_iff hf]
   linear_combination (-(K * e * f)) * hs
-
-theorem flag_integral_nonzero : FlagIntegralNonzero := by
-  intro Ψ _ _ N j hj
-  set n := a0n Ψ N j
-  set k := (idxS Ψ N j).card with hkdef
-  set D := Formalism.DegreeFormula.dimFl Ψ N with hDdef
-  have hD : D = n + k := dim_split j hj
-  set fib : Formalism.ShimuraLimitIdentity.Pol Ψ N := ∏ t ∈ idxS Ψ N j, ell t with hfib
-
-  set K0 : ℝ := (D.factorial : ℝ) * (∏ t ∈ idxS Ψ N j, 1 / ((t.2.2 : ℝ) - t.2.1)) *
-    (∏ t ∈ idxC Ψ N j, 1 / ((t.2.2 : ℝ) - t.2.1)) / (D.choose n : ℝ) with hK0
-  have hpos : ∀ s : Finset (Ψ × Fin N × Fin N), (∀ t ∈ s, t.2.1 < t.2.2) →
-      0 < ∏ t ∈ s, 1 / ((t.2.2 : ℝ) - t.2.1) := by
-    intro s hs
-    refine Finset.prod_pos (fun t ht => ?_)
-    have : (t.2.1 : ℝ) < t.2.2 := by exact_mod_cast (hs t ht)
-    exact one_div_pos.mpr (by linarith)
-  have hK0pos : 0 < K0 := by
-    have h1 := hpos (idxS Ψ N j) (fun t ht => (Finset.mem_filter.mp ht).2.1)
-    have h2 := hpos (idxC Ψ N j) (fun t ht => (Finset.mem_filter.mp ht).2.1)
-    have h3 : (0 : ℝ) < (D.choose n : ℝ) := by exact_mod_cast Nat.choose_pos (by omega)
-    have h4 : (0 : ℝ) < (D.factorial : ℝ) := by exact_mod_cast Nat.factorial_pos D
-    positivity
-
-  have hPhi : ∀ ν : Ψ → Fin N → ℝ, PhiL j n (Formalism.DegreeFormula.linRoot ν ^ k) =
-      K0 * eval (fun x => ν x.1 x.2) fib := by
-    intro ν
-    have hw := weyl_coeff j ν n k hD hkdef.symm
-    rw [PhiL_apply, eval_fib]
-    have hc : (D.choose n : ℝ) ≠ 0 := by exact_mod_cast (Nat.choose_pos (by omega)).ne'
-    have e : ∏ t ∈ idxS Ψ N j, (ν t.1 t.2.1 - ν t.1 t.2.2) / ((t.2.2 : ℝ) - t.2.1) =
-        (∏ t ∈ idxS Ψ N j, (ν t.1 t.2.1 - ν t.1 t.2.2)) * ∏ t ∈ idxS Ψ N j, 1 / ((t.2.2 : ℝ) - t.2.1) := by
-      rw [← Finset.prod_mul_distrib]; refine Finset.prod_congr rfl (fun t _ => ?_); ring
-    rw [e] at hw
-    rw [hK0]
-    field_simp
-    linarith [hw]
-
-  have hApol : ∀ ν : Ψ → Fin N → ℝ, apolL fib (Formalism.DegreeFormula.linRoot ν ^ k) =
-      (k.factorial : ℝ) * (-1) ^ k * eval (fun x => ν x.1 x.2) fib := by
-    intro ν
-    show apol fib _ = _
-    rw [linRoot_eq_smul, apol_pow fib k (fib_homog j), eval_fib, eval_fib]
-    have e : ∏ t ∈ idxS Ψ N j, (-ν t.1 t.2.1 - -ν t.1 t.2.2) =
-        (-1) ^ k * ∏ t ∈ idxS Ψ N j, (ν t.1 t.2.1 - ν t.1 t.2.2) := by
-      rw [hkdef, ← Finset.prod_const, ← Finset.prod_mul_distrib]
-      refine Finset.prod_congr rfl (fun t _ => ?_); ring
-    rw [e]; ring
-
-  set c : ℝ := K0 * (-1) ^ k / (k.factorial : ℝ) with hc
-  have hkf : (k.factorial : ℝ) ≠ 0 := by exact_mod_cast (Nat.factorial_pos k).ne'
-  have hagree : ∀ ν : Ψ → Fin N → ℝ, PhiL j n (Formalism.DegreeFormula.linRoot ν ^ k) = c * apolL fib (Formalism.DegreeFormula.linRoot ν ^ k) := by
-    intro ν
-    rw [hPhi, hApol, hc]
-    have h1 : ((-1 : ℝ) ^ k) * (-1) ^ k = 1 := by rw [← mul_pow]; norm_num
-    exact mul_eq_sign_rearrange K0 _ _ _ hkf h1
-
-  have hpol := polarization (fun t => (ell t : Formalism.ShimuraLimitIdentity.Pol Ψ N)) (idxS Ψ N j)
-  have hsumS : ∀ S : Finset (Ψ × Fin N × Fin N), (∑ t ∈ S, (ell t : Formalism.ShimuraLimitIdentity.Pol Ψ N)) =
-      Formalism.DegreeFormula.linRoot (∑ t ∈ S, nuT t) := by
-    intro S; rw [linRoot_sum]; exact Finset.sum_congr rfl (fun t _ => (linRoot_nuT t).symm)
-  have hcast : ∀ S : Finset (Ψ × Fin N × Fin N), ((-1 : Formalism.ShimuraLimitIdentity.Pol Ψ N) ^ ((idxS Ψ N j).card - S.card)) =
-      C ((-1 : ℝ) ^ ((idxS Ψ N j).card - S.card)) := by
-    intro S; rw [map_pow, map_neg, map_one]
-  rw [← hfib] at hpol
-  simp only [hsumS, hcast] at hpol
-  rw [show (((idxS Ψ N j).card.factorial : ℕ) : Formalism.ShimuraLimitIdentity.Pol Ψ N) = C ((k.factorial : ℕ) : ℝ) by
-    rw [map_natCast]] at hpol
-  have hP := congrArg (PhiL j n) hpol
-  have hA := congrArg (apolL fib) hpol
-  rw [PhiL_C_mul, map_sum] at hP
-  rw [apolL_C_mul, map_sum] at hA
-  simp only [PhiL_C_mul, apolL_C_mul, ← hkdef, hagree] at hP hA
-  have hmain : PhiL j n fib = c * apolL fib fib := by
-    have e1 : ∑ S ∈ (idxS Ψ N j).powerset, (-1 : ℝ) ^ ((idxS Ψ N j).card - S.card) *
-        (c * apolL fib (Formalism.DegreeFormula.linRoot (∑ t ∈ S, nuT t) ^ k)) =
-        c * ∑ S ∈ (idxS Ψ N j).powerset, (-1 : ℝ) ^ ((idxS Ψ N j).card - S.card) *
-          apolL fib (Formalism.DegreeFormula.linRoot (∑ t ∈ S, nuT t) ^ k) := by
-      rw [Finset.mul_sum]; refine Finset.sum_congr rfl (fun S _ => ?_); ring
-    rw [e1, ← hA] at hP
-    have : (k.factorial : ℝ) * PhiL j n fib = (k.factorial : ℝ) * (c * apolL fib fib) := by rw [hP]; ring
-    exact mul_left_cancel₀ hkf this
-  have hapos : 0 < apolL fib fib := apol_self_pos fib (fib_ne_zero j)
-  have hcne : c ≠ 0 := by
-    rw [hc]; have : ((-1 : ℝ) ^ k) ≠ 0 := pow_ne_zero _ (by norm_num)
-    exact div_ne_zero (mul_ne_zero hK0pos.ne' this) hkf
-  have hJ : degFlL Ψ N (a0JP (Ψ := Ψ) (N := N) j n 1) = PhiL j n fib := by
-    rw [PhiL_apply, hfib, ← fib_eq]; rfl
-  rw [hJ, hmain]
-  exact mul_ne_zero hcne hapos.ne'
 
 end Formalism.L2.Geo

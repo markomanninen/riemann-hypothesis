@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SingleWeightLatticeComparison
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.HarProjEqZeroIff
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankTensor
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SingleWeightLatticeComparison
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.HarProjEqZeroIff
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankTensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,7 +114,8 @@ theorem single_weight_of_model_identification (h : TwoLetterModelIdentification)
   refine ⟨I, Pj, ?_, ?_, ?_⟩
   · intro x hx
     have h0 := congrArg (twoSp R.Kf m P Q).subtype (hsum ⟨x, hx⟩)
-    rw [map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h0
     calc ∑ j ∈ Finset.range (min P Q + 1), I j (Pj j x)
         = ∑ j ∈ Finset.range (min P Q + 1), (twoSp R.Kf m P Q).subtype (io j (pr j ⟨x, hx⟩)) :=
           Finset.sum_congr rfl fun j _ => by rw [hP' j ⟨x, hx⟩, hI']; rfl

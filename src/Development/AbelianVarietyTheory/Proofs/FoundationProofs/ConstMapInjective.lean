@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.DataG
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+
+@[expose] public section
 
 open Formalism.MainNotions.G MvPolynomial
 
@@ -92,11 +96,11 @@ def constMap (d : ℕ) : (Fin d → O) →ₗ[O] (Fin d → (noPlaces p O Kf).Tu
 
 theorem constMap_injective (d : ℕ) (hinj : Function.Injective (algebraMap O Kf)) :
     Function.Injective (constMap p O Kf d) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   funext i
   have h : c i • (1 : (noPlaces p O Kf).Xsp) = 0 := congrFun (congrFun hc i) (fun v => isEmptyElim v)
-  have h2 := congrArg (MvPolynomial.coeff 0) h
+  have h2 := congrArg (AddMonoidAlgebra.coeff · 0) h
   rw [MvPolynomial.coeff_smul, MvPolynomial.coeff_zero_one, MvPolynomial.coeff_zero,
     Algebra.smul_def, mul_one] at h2
   apply hinj

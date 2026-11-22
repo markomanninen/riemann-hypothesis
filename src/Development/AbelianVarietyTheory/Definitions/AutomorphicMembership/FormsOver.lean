@@ -1,9 +1,22 @@
-import Mathlib
-import Formalism.LocalToGlobal.LatticeGeometry.ViewsC
-import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.LatticeGeometry.LevPrPrime
+public import Formalism.LocalToGlobal.LatticeGeometry.ShimuraSheafOfIndefiniteSubspace
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataDIV
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
+public import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
+public import Formalism.SharpRestriction.Divisibility.WeightThresholdDefs
+public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,15 +53,11 @@ def Sig.wt (S : Sig A N j) (L : CmList A) : (D.what₂.Tau → Fin N → ℤ) �
   map_zero' := rfl
   map_add' _ _ := rfl
 
-example (S : Sig A N j) (L : CmList A) (la : D.what₂.Tau → Fin N → ℤ) (t : D.what₂.Tau) (i : Fin (S.Dw.p + S.Dw.q)) :
-    S.wt L la (L.ψ t) i = la t (Fin.cast S.rank_eq i) := by
-  simp [Sig.wt]
-
 def FinalTheorems.Lw (Φ : s.Flag) (k : s.Comp) : (D.what₂.Tau → Fin N → ℤ) →+ (Φ.C k).Y.Dv :=
   AddMonoidHom.mk' (fun la => (Φ.C k).Lw (S.wt L la)) fun a b => by
     have h := GlobalTheory.AllWt.exOf_add (Dw := S.Dw) (S.wt L a) (S.wt L b) 0 0
     rw [add_zero] at h
-    simp only [FlagCpt.Lw, map_add, h]
+    simp only [FlagCpt.Lw, map_add (f := _), h]
 
 variable (C : CxSt D.what₂.LL) (K : CutSt C) (R : ResSt C)
 
@@ -112,23 +121,14 @@ def famOf (hg : F.κg.primes = Finset.univ.image D.host.g) (P : FormsOver K R k)
   U := shimOf K R k
   forms := P
 
-example (hg : F.κg.primes = Finset.univ.image D.host.g) (P : FormsOver K R k) (w : Dat D (Lv A)) :
-    ((famOf K R k hg P).U w).Comp = (F.at w).Comp := rfl
-
 end Fam
 
 section Comparison₂
 
 def ambOf (Q : Par D) (h : Q.PinHost) : Amb D := ⟨Q.H, h.1, h.2.1, h.2.2.1⟩
 
-example (Q : Par D) (h : Q.PinHost) : (ambOf Q h).H = Q.H := rfl
-
 abbrev MD {E : Type} [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) : Type 1 :=
   Σ (l : Level H) (Dw : Datum H), Moduli Dw l
-
-def trRul {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {m m' : MD H} (h : m = m')
-    {c : Coeff m.1} {c' : Coeff m'.1} (hle : c.F ≤ c'.F) (f : Rul m.2.2 c) : Rul m'.2.2 c' := by
-  subst h; exact GlobalTheory.FieldBC.rulBC hle f
 
 structure ParTie (Q : Par D) (h : Q.PinHost) (F : SrcFam (ambOf Q h)) : Prop where
   same : ∀ j, InR D j → (⟨Q.l, Q.Dw j, Q.Xo j⟩ : MD Q.H) =
@@ -138,25 +138,6 @@ structure ParTie (Q : Par D) (h : Q.PinHost) (F : SrcFam (ambOf Q h)) : Prop whe
 variable {T : Top D} (h : LawsP T) {F : SrcFam (ambOf T.Q h.pins.1)} (t : ParTie T.Q h.pins.1 F) {L : CmList (ambOf T.Q h.pins.1)}
   {C : CxSt D.what₂.LL} (K : CutSt C) (R : ResSt C) {jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)} {ng : NgPkg}
   (k : Kits F L C jC ng)
-
-def cmpAt {j : ℕ} (hj : InR D j) (n : ℕ) (i : (F.at (datW D F.κg j)).Comp) (f : T.R j) :
-    ((k.at (datW D F.κg j)).Φ.C i).Y.Fn :=
-  ((k.at (datW D F.κg j)).Φ.C i).val
-    ((show Rul (F.at (datW D F.κg j)).Xo (datW D F.κg j).κ.c from trRul (t.same j hj) (c := T.Q.c) (c' := F.κg.c) t.le f) *
-      (k.at (datW D F.κg j)).key.ρ.val ^ (n / 2))
-
-structure FormsAre (P : FormsOver K R k) : Prop where
-  base : P.toWeightFamilies = recB h.toLawsCore
-  kL : ∀ (x : P.KO) (x' : T.Q.c.F), HEq x x' → D.what₂.embLL (P.kL x) = (x' : ℂ)
-  cmp : ∀ j (hj : InR D j) w i (f : P.Cusp j w) (f' : (recB h.toLawsCore).Cusp j w), HEq f f' →
-    P.cmp j w i f = cmpAt h t k hj w.n i f'.1
-  pts : ∀ j (_ : InR D j) (la : HeightOneSpectrum (𝓞 P.KO)) (la' : HeightOneSpectrum (𝓞 T.Q.c.F)), HEq la la' →
-    ∃ e : P.Pt j la ≃ T.PtA j la', (∀ y, j < D.R.m → HEq (P.pt66 j la y) (imgV (e y))) ∧
-      ∀ y w (f : P.Cusp j w) (f' : (recB h.toLawsCore).Cusp j w), HEq f f' → P.vAtC j la y w f = vAtV (e y) f'.1
-  th : ∀ j (hj : InR D j) w, HEq (P.thAll j w) ((recPJ h j hj).thAll w) ∧ HEq (P.shortTh j w) ((recPJ h j hj).shortTh w)
-
-def PtsTie : Prop := ∀ j, 1 ≤ j → j < D.R.m → ∀ p,
-  T.G.PY j p = ((k.at (datW D F.κg j)).pad.loc p).Pt ((k.at (datW D F.κg j)).pad.loc p).YY
 
 end Comparison₂
 

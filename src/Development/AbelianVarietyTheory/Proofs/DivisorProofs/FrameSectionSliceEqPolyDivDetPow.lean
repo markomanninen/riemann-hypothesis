@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
-import ReciprocityTheory.SemistableReduction.LatAll
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+public import ReciprocityTheory.SemistableReduction.LatAll
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.FD
 
 namespace GlobalTheory

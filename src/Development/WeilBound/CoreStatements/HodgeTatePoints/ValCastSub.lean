@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ValLeOfMem
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsDualOf
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CompMemAddFun
-import ReciprocityTheory.DualLattices.HasLenLeOfSurj
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ValLeOfMem
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsDualOf
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CompMemAddFun
+public import ReciprocityTheory.DualLattices.HasLenLeOfSurj
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.GR GlobalTheory.CompanionTheory.Ar.Num.FamEx
 open PositivityTheory.Xgn.TestGroupPoint
@@ -115,7 +119,8 @@ theorem cast_pair {p m : ℕ} (h : p ∣ m) (e : (Fin n → 𝓞 E) →+ (Fin n 
     co p x ⬝ᵥ (Matrix.of fun a b => ZMod.castHom h (ZMod p) (e (dl a) (dl b))) *ᵥ co p x' =
       ZMod.castHom h (ZMod p) (e x x') := by
   conv_rhs => rw [← sum_cz x, ← sum_cz x']
-  simp only [map_sum, map_zsmul, AddMonoidHom.finset_sum_apply, AddMonoidHom.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, AddMonoidHom.finsetSum_apply, AddMonoidHom.smul_apply,
     dotProduct, Matrix.mulVec, Matrix.of_apply, co_apply, Finset.mul_sum]
   simp only [Finset.smul_sum, zsmul_eq_mul]
   conv_rhs => rw [Finset.sum_comm]
@@ -145,11 +150,11 @@ private theorem hasLen_AFQuot_map_pbE_of_addEquiv {X Y : Type} [AddCommGroup X] 
       (∀ a b : X, y (φ (a + b)) - y (φ a) - y (φ b) ∈ pInt R p)
     constructor
     · intro hy a b
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hy _ _
     · intro hy a b
       have hab := hy (φ.symm a) (φ.symm b)
-      simp only [map_add, AddEquiv.apply_symm_apply] at hab
+      simp only [map_add (f := _), AddEquiv.apply_symm_apply] at hab
       exact hab
   have hpf : ∀ y : Y → C, y ∈ pFun R p Y ↔ P y ∈ pFun R p X := by
     intro y
@@ -249,7 +254,7 @@ theorem core_pull {p : ℕ} [Fact p.Prime] [IsAlgClosed C] [CharZero C] (hv : v.
     have ha' : algebraMap R C a = (T.symm f).1 0 := by rw [hT, map_zero, ha]
     have hb' : algebraMap R C b = (T.symm f2).1 0 := by rw [hT, map_zero, hb]
     show qq p R g (Dv (T.symm h)) = a • qq p R g (Dv (T.symm f2)) + b • qq p R g (Dv (T.symm f))
-    rw [hD _ _ _ a b hh' ha' hb', map_add, map_smul, map_smul]
+    rw [hD _ _ _ a b hh' ha' hb', map_add (f := _), map_smul, map_smul]
   have hsurj : Function.Surjective Dv' := by
     intro w
     obtain ⟨a, ha⟩ := surj_aug Dv S hS hs w
@@ -293,7 +298,8 @@ theorem core_pull {p : ℕ} [Fact p.Prime] [IsAlgClosed C] [CharZero C] (hv : v.
     rw [Ideal.Quotient.eq]
     have hih : ih x0 k = ∑ m, ih (dl m) k * (cz x0 m : R) := by
       conv_lhs => rw [← sum_cz x0]
-      simp only [map_sum, map_zsmul, Finset.sum_apply, Pi.smul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul, Finset.sum_apply, Pi.smul_apply]
       simp only [zsmul_eq_mul]
       exact Finset.sum_congr rfl fun m _ => mul_comm _ _
     have hA' := sum_co_sub p (Hm k) x0

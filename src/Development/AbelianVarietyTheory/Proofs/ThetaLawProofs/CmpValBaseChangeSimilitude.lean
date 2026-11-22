@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.PwIsoIsGen
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsNormalisingUnitSimilitudeOrigin
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SimilitudeIsoThetaProductBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.PwIsoIsGen
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsNormalisingUnitSimilitudeOrigin
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SimilitudeIsoThetaProductBaseChange
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -74,7 +78,7 @@ theorem prod_eq_one (h : IsGrpPullback G' G f φ) {n : ℕ} (ξ : Fin n → (�
   have e : pushHom h _ (List.ofFn fun r => ξ' r ^ a r).prod = preHom U (List.ofFn fun r => ξ r ^ a r).prod := by
     rw [map_list_prod, map_list_prod, List.map_ofFn, List.map_ofFn]
     congr 2
-    funext c
+    funext r
     simp only [Function.comp_apply, map_zpow, e₁]
   rw [H, map_one, ← map_one (pushHom h (𝟙_ (Over S')))] at e
   refine Over.OverMorphism.ext (h.1.hom_ext (congrArg (fun z => z.left) e) ?_)
@@ -155,7 +159,8 @@ theorem row_move {R' : Type} [CommRing R'] {x : KeyIn R} {x' : KeyIn R'} {f : R 
           ((b' (I' c)).f (J' (Out.powPr x'.P.A c).left)) := by
   choose J hJ using fun χ : (Out.powObj x'.P.A 4).left ⟶ x.P.A.left => exists_chart x.P.isLB (χ z)
   have E := congrArg (ψ.stalkMap z).hom (H (ψ z) _ (good_comp hJ ψ))
-  rw [map_prod, map_mul, map_sum] at E
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_prod, map_mul, map_sum] at E
   have hv := (val_comp w (𝟙 _) ψ hJ).trans ((congrArg (fun r => val w r z J)
     ((Category.comp_id ψ).trans (Category.id_comp ψ).symm)).trans
     (val_move (by rintro (r | c); exacts [ha r, hc c]) P (𝟙 _) z hJ hJ'))

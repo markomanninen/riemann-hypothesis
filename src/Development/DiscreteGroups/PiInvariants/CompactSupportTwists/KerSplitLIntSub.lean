@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.UncutHalf
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.UncutHalf
+
+@[expose] public section
 
 noncomputable section
 

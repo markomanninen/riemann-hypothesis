@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicFormValuesNearPointSpec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlESymmApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicFormValuesNearPointSpec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlESymmApply
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.L2.Forms Formalism.UG Formalism.L2.GlobalTheoryTheory.LocalLatticeBases NumberField IsDedekindDomain Matrix GlobalTheory.LevelHecke
 open scoped TensorProduct
 set_option maxHeartbeats 1000000 in

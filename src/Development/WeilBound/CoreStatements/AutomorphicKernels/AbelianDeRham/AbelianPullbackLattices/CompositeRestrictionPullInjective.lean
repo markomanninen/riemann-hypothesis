@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechTripleRestrictCompositeInjectiveSecond
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechTripleRestrictCompositeInjectiveSecond
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -12,12 +16,6 @@ open CategoryTheory AlgebraicGeometry TensorProduct Opposite MonoidalCategory Ca
 attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace MainStatements.Hodge.Pf.AXO
-
-def USt {R : Type} [CommRing R] {C : Type} [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R) : Prop :=
-  ∀ (M : Type) [AddCommGroup M] [Module R M],
-    (∀ m : M, (∀ T, m ⊗ₜ[R] (1 : F.obj T) = 0) → m = 0) ∧
-    ∀ y : ∀ T, M ⊗[R] F.obj T, (∀ (T T' : C) (φ : T ⟶ T'), ((mp F φ).toLinearMap.lTensor M) (y T) = y T') →
-      ∃ m : M, ∀ T, y T = m ⊗ₜ[R] 1
 
 section Tri
 

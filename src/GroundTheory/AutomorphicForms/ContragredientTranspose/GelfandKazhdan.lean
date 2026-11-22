@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.WhittakerOrbit
-import GroundTheory.AutomorphicForms.WhittakerCriterion
-import GroundTheory.AutomorphicForms.WhittakerGroups
-import GroundTheory.AutomorphicForms.WhittakerDistribution
-import GroundTheory.AutomorphicForms.ContragredientTranspose.MatrixSimilarity
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.WhittakerOrbit
+public import GroundTheory.AutomorphicForms.WhittakerCriterion
+public import GroundTheory.AutomorphicForms.WhittakerGroups
+public import GroundTheory.AutomorphicForms.WhittakerDistribution
+public import GroundTheory.AutomorphicForms.ContragredientTranspose.MatrixSimilarity
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.ContragredientTranspose
 
@@ -381,8 +385,8 @@ theorem transposeGL_smul' (h : ConjAct (GL (Fin n) F)) (x : GL (Fin n) F) :
     transposeGL (h • x) = thetaC h • transposeGL x :=
   transposeGL_smul h x
 
-omit [TopologicalSpace F] [IsTopologicalRing F] in
 
+omit [TopologicalSpace F] [IsTopologicalRing F] in
 theorem transl_comp_transposeGL (h : ConjAct (GL (Fin n) F)) (f : GL (Fin n) F → ℂ) :
     (fun x => transl h f (transposeGL x)) = transl (thetaC h) (fun x => f (transposeGL x)) := by
   funext x
@@ -435,8 +439,8 @@ theorem transl_mem_relT_univ (h : ConjAct (GL (Fin n) F)) {f : GL (Fin n) F → 
     refine add_mem (le_sup_right (a := relSpan (1 : ConjAct (GL (Fin n) F) →* ℂ) univ)
       (Submodule.subset_span ⟨transl h f, hf', rfl⟩)) (sub_mem (hτrel _ f hf) (hτrel h f hf))
 
-omit [IsTopologicalRing F] in
 
+omit [IsTopologicalRing F] in
 theorem comp_transposeGL_mem_relT_univ {f : GL (Fin n) F → ℂ}
     (hf : f ∈ relT (univ : Set (GL (Fin n) F))) :
     (fun x => f (transposeGL x)) ∈ relT (univ : Set (GL (Fin n) F)) := by
@@ -472,8 +476,8 @@ section Fibre
 variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
   {n : ℕ}
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem exists_symm_conj_transposeGL (x : GL (Fin n) F) :
     ∃ S : GL (Fin n) F, transposeGL S = S ∧ S * x * S⁻¹ = transposeGL x := by
   obtain ⟨S, hS, hSx⟩ := exists_isSymm_mul_eq_transpose_mul (x : Matrix (Fin n) (Fin n) F)
@@ -766,7 +770,7 @@ theorem distribution_transpose_invariant
       let f' : locallyConstantCompactSupport (GL (Fin n) F) ℂ ℂ := ⟨f, hf.1⟩
       refine ⟨f' + compHomeoL transposeHomeo f', ?_, ?_⟩
       · show E _ = 0
-        rw [map_add, hE, LinearMap.sub_apply, LinearMap.sub_apply, LinearMap.comp_apply,
+        rw [map_add (f := _), hE, LinearMap.sub_apply, LinearMap.sub_apply, LinearMap.comp_apply,
           LinearMap.comp_apply, hττ]
         abel
       · rfl

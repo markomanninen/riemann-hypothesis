@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BesselLevi
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BesselLevi
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.QuantumDeterminants.WeylGroupFacts
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsPrimitiveEndClassFunctionInvariantSubspaceMobi
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootPowerSumCharacterAdditiveAndXSubOnePow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsPrimitiveEndClassFunctionInvariantSubspaceMobi
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootPowerSumCharacterAdditiveAndXSubOnePow
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,12 +157,12 @@ theorem hfree_two_le {F : Type} [Field F] [Finite F] (θ : AlgebraicClosure F �
   have hNcols : ∀ (d : F) (h : Module.End F (Fin m → F)), h ∈ nilRad (hyp l) → ∀ i j, j ≠ l →
       LinearMap.toMatrix' (Matrix.toLin' (dg l d) + h) i j = (1 : Matrix (Fin m) (Fin m) F) i j := by
     intro d h hh i j hj
-    rw [map_add, LinearMap.toMatrix'_toLin', Matrix.add_apply, (of_mem_nilRad l h hh).1 i j hj, add_zero,
+    rw [map_add (f := _), LinearMap.toMatrix'_toLin', Matrix.add_apply, (of_mem_nilRad l h hh).1 i j hj, add_zero,
       dg_off l d i j hj]
   have hNll : ∀ (d : F) (h : Module.End F (Fin m → F)), h ∈ nilRad (hyp l) →
       LinearMap.toMatrix' (Matrix.toLin' (dg l d) + h) l l = d := by
     intro d h hh
-    rw [map_add, LinearMap.toMatrix'_toLin', Matrix.add_apply, (of_mem_nilRad l h hh).2, add_zero]
+    rw [map_add (f := _), LinearMap.toMatrix'_toLin', Matrix.add_apply, (of_mem_nilRad l h hh).2, add_zero]
     simp [dg]
   have hxcols : ∀ x ∈ hSf.toFinset, ∀ i j, j ≠ l →
       (x : Matrix (Fin m) (Fin m) F) i j = (1 : Matrix (Fin m) (Fin m) F) i j := by
@@ -193,7 +197,7 @@ theorem hfree_two_le {F : Type} [Field F] [Finite F] (θ : AlgebraicClosure F �
     · intro x hx
       refine Matrix.GeneralLinearGroup.ext fun i j => ?_
       change LinearMap.toMatrix' _ i j = _
-      rw [← map_add, add_sub_cancel, LinearMap.toMatrix'_toLin']
+      rw [← map_add (f := _), add_sub_cancel, LinearMap.toMatrix'_toLin']
     · intro p hp
       have hp' := Finset.mem_product.1 hp
       have h2 := hN.mem_toFinset.1 hp'.2

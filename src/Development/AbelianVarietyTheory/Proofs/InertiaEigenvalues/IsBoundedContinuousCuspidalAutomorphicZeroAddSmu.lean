@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+
+@[expose] public section
 
 noncomputable section
 open NumberField MeasureTheory Matrix GlobalTheory.CuspRep GlobalTheory.JSW
 
 namespace GlobalTheory.JSW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem continuous_unip_adele {r : ℕ} : Continuous fun x : BlockIx a r → Ad E => (unip x : GA E a) := by
   have hn : Continuous fun x : BlockIx a r → Ad E => (nilM x : Matrix (Fin a) (Fin a) (Ad E)) := by
@@ -19,7 +23,7 @@ theorem continuous_unip_adele {r : ℕ} : Continuous fun x : BlockIx a r → Ad 
   · exact continuous_const.add hn
   · exact continuous_const.sub hn
 
-theorem isBCC_zero_and_add : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ),
+theorem isBCC_zero_and_add : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ),
     IsBCC (0 : GA E a → ℂ) ∧
     ∀ (c : ℂ) (F G : GA E a → ℂ), IsBCC F → IsBCC G → IsBCC (c • F + G) := by
   intro E _ _ _ a

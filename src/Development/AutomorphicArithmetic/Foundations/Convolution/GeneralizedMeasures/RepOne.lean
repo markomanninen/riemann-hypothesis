@@ -1,16 +1,20 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.ConvSpec
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFin
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.UiwFin
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.PolyMem
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.NormIntLe
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.UiwPow
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.ConvSpec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFin
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.UiwFin
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.PolyMem
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.NormIntLe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.UiwPow
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -93,7 +97,7 @@ private theorem exists_mid (w : Pl K) (J : Subgroup (GL (Fin n) (w.adicCompletio
     have h3 : t⁻¹ * g ∈ J := QuotientGroup.eq.1 h2
     simpa using hSJ t ht _ h3
 
-private theorem ofin_left (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+private theorem ofin_left (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure] (u : AdelicGLn.FiniteAdelicGL K n)
     (e : TF K n) (he : ∀ x, e (u * x) = e x) (v : LL μ) : rhoF μ u (Ofin μ m e v) = Ofin μ m e v := by
   have key : ∀ a b : LL μ, ⟪a, Ofin μ m e b⟫_ℂ = ∫ h, e h * ⟪a, rhoF μ h b⟫_ℂ ∂m := by
@@ -170,7 +174,7 @@ private theorem iw_zero (w : Pl K) :
   · intro hg
     exact ⟨g, hg, 1, one_mem _, by rw [GroundTheory.Automorphic.Parabolic.diagPow_zero, mul_one, mul_one]⟩
 
-variable {μ : Measure (normOneGL K n)} [μ.IsHaarMeasure]
+variable {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
 
 private theorem comm_hop (B : LL μ →L[ℂ] LL μ) (hB : ∀ h, Commute B (rhoF μ h)) (w : Pl K)
     (J : Subgroup (GL (Fin n) (w.adicCompletion K))) (x : GL (Fin n) (w.adicCompletion K))
@@ -187,7 +191,7 @@ private theorem comm_ev (𝔞 : Amp μ) {ev : PR K n →+* (LL μ →L[ℂ] LL �
     rw [hev.const a]
     exact (Commute.one_right B).smul_right a
   | add p q hp hq =>
-    simp only [atPl, map_add] at hp hq ⊢
+    simp only [atPl, map_add (f := _)] at hp hq ⊢
     exact hp.add_right hq
   | mul_X p i hp =>
     simp only [atPl, map_mul, rename_X, map_X] at hp ⊢
@@ -197,7 +201,7 @@ private theorem comm_ev (𝔞 : Amp μ) {ev : PR K n →+* (LL μ →L[ℂ] LL �
 
 end Aux2
 
-set_option maxHeartbeats 1000000 in
+set_option maxHeartbeats 4000000 in
 theorem UpperTheory.ConvolutionTheory.GM.repOne :
     RepOne := by
   intro K _ _ _ n hn μ _ 𝔞 ev hev w₀ hw₀ ν hν T hT p h hsph r hr₀ hrT hU j wd e₀ e₁ h₀ h₁

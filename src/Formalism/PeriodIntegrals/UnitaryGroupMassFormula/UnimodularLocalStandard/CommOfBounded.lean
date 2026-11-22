@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.IsKTheta
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.IsKTheta
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -174,7 +178,8 @@ lemma bounded_map (φ : (m → ℂ) →ₗ[ℂ] (m → ℂ))
   choose p q hpq using fun i => (lattice_iff _ _).1 (hs' i)
   have hs_sum : s = ∑ i, Pi.single i (s i) := by
     exact (Finset.univ_sum_single s).symm
-  rw [hs_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hs_sum, map_sum, Finset.smul_sum]
   refine sum_mem fun i _ => ?_
   have e : Pi.single i (s i) = ((p i : ℤ) : ℂ) • Pi.single i (PI.ULS.cmL a b d ha hd lam hlam).ω₁ +
       ((q i : ℤ) : ℂ) • Pi.single i (PI.ULS.cmL a b d ha hd lam hlam).ω₂ := by
@@ -184,7 +189,7 @@ lemma bounded_map (φ : (m → ℂ) →ₗ[ℂ] (m → ℂ))
     · subst h
       simp [Complex.real_smul]
     · simp [Pi.single_apply, h]
-  rw [e, map_add, map_smul, map_smul, smul_add, nsmul_intCast_smul_comm, nsmul_intCast_smul_comm]
+  rw [e, map_add (f := _), map_smul, map_smul, smul_add, nsmul_intCast_smul_comm, nsmul_intCast_smul_comm]
   exact add_mem (zsmul_mem (k1 i) _) (zsmul_mem (k2 i) _)
 
 lemma comm_of_bounded (σ : (m → ℂ) ≃ₗ[ℂ] (m → ℂ)) {N N' : ℕ} (hN : N ≠ 0) (hN' : N' ≠ 0)

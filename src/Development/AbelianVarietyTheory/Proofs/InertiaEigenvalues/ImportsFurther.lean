@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SmulMemRatForms
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SmulMemRatForms
+
+@[expose] public section
 
 namespace GlobalTheory.ScalarMultipleMembership
 

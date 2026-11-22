@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.BesselDiscreteSeries.InfCharG
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CentralCharacters.QuasiDeterminantConjInv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CentralCharacters.AdjointEquivalence
-import Formalism.FormalDegreeBessel.FinalIO
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Smooth
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CentralCharacters.QuasiDeterminantConjInv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CentralCharacters.AdjointEquivalence
+public import Formalism.FormalDegreeBessel.FinalIO
+
+@[expose] public section
 
 noncomputable section
 
@@ -140,7 +144,7 @@ theorem eabH_cf (hσ : IsURepOn (UJset ε) σ) (hQP : Q * P = 1) (hPQ : P * Q = 
         Complex.I • actM (smE ε σ) (S7.cpart2 ε (P * Matrix.single c d 1 * Q)) := by
     conv_lhs => rw [SmDerA.cpart_decomp ε (P * Matrix.single c d 1 * Q)]
     rw [SmDerA.actM_add, SmDerA.actM_smul]
-  rw [hY, LinearMap.add_apply, LinearMap.smul_apply, Submodule.coe_add, Submodule.coe_smul, map_add, map_smul,
+  rw [hY, LinearMap.add_apply, LinearMap.smul_apply, Submodule.coe_add, Submodule.coe_smul, map_add (f := _), map_smul,
     inner_add_right, inner_smul_right, add_smul, smul_smul]
 
 end Coef
@@ -170,7 +174,7 @@ theorem top_cf (hσ : IsURepOn (UJset ε) σ) (hQP : Q * P = 1) (hPQ : P * Q = 1
   unfold Formalism.QuantumDeterminants.Top Formalism.REAL.Tm
   rw [eabH_cf hσ hQP hPQ a T x f hf c d hg, hf g hg]
   by_cases hcd : c = d
-  · rw [if_pos hcd, if_pos hcd, LinearMap.add_apply, Submodule.coe_add, map_add, inner_add_right, add_smul,
+  · rw [if_pos hcd, if_pos hcd, LinearMap.add_apply, Submodule.coe_add, map_add (f := _), inner_add_right, add_smul,
       Algebra.algebraMap_eq_smul_one, LinearMap.smul_apply, Module.End.one_apply, Submodule.coe_smul, map_smul,
       inner_smul_right, smul_smul]
     rfl
@@ -204,7 +208,8 @@ theorem qminorOp_cf (hσ : IsURepOn (UJset ε) σ) (hQP : Q * P = 1) (hPQ : P * 
     Formalism.QuantumDeterminants.qminorOp (Formalism.QuantumDeterminants.EabH (Pᴴ * Jm ε * P)) ra cb u f g =
       (inner ℂ a (σ (P * g * Q) ((Formalism.REAL.qminor (Ec ε σ P Q) ra cb u x : smD ε σ) : H))) • T := by
   unfold Formalism.QuantumDeterminants.qminorOp Formalism.REAL.qminor
-  rw [Finset.sum_apply, LinearMap.sum_apply, Submodule.coe_sum, map_sum, inner_sum, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, LinearMap.sum_apply, Submodule.coe_sum, map_sum, inner_sum, Finset.sum_smul]
   refine Finset.sum_congr rfl fun s _ => ?_
   have hL1 : (List.ofFn fun k : Fin t => Formalism.QuantumDeterminants.Top (E := E) (Formalism.QuantumDeterminants.EabH (Pᴴ * Jm ε * P)) (u - ((k : ℕ) : ℂ))
       (ra (s k)) (cb k)) = (List.ofFn fun k : Fin t => ((u - ((k : ℕ) : ℂ)), ra (s k), cb k)).map

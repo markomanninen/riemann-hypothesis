@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.SliceAd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmissibleFormAdelicThetaSum
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.SliceAd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmissibleFormAdelicThetaSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem slice_core {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) (e : ((κ → AF F
         (continuous_id.smul continuous_const)).eventually_eq 0
       simpa only [Function.comp_apply, zero_smul, fw_zero] using this
     obtain ⟨C₀, h₀, h₀'⟩ := annih hψ hU
-    refine ⟨Set.pi Set.univ fun _ => -C₀, isCompact_univ_pi fun _ => h₀.neg, fun b hb j _ => h₀' _ fun a ha => ?_⟩
+    refine ⟨Set.pi Set.univ fun _ => Set.image Neg.neg C₀, isCompact_univ_pi fun _ => h₀.image continuous_neg, fun b hb j _ => ⟨-b j, h₀' _ (fun a ha => ?_), neg_neg _⟩⟩
     obtain ⟨f₀, hf₀⟩ : ∃ f₀, ei f₀ ≠ 0 := by
       by_contra! h
       exact h0 (ContinuousLinearMap.ext h)
@@ -196,7 +200,8 @@ theorem slice_of : Slice := by
     (fun j => M.co.e (incM F (z j))) (fun j a Φ hΦ => by rw [← map_smul]; exact he.inv _ (hD.mem j a) Φ hΦ)
     (fun i j => by rw [← M.co.form]; convert hD.pair i j) hφ
   refine ⟨r, φ₁, C, A, h1, h2, h3, fun y f => ?_, h5⟩
-  rw [← h4, Darboux.rho, lin, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h4, Darboux.rho, lin, map_sum]
   simp only [map_smul]
 
 theorem evAdm_of : EvAdm := by

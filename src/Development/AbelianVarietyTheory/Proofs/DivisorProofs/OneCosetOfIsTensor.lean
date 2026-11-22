@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsKOOfDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsKOOfDet
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped NNReal ENNReal Pointwise
@@ -17,10 +21,10 @@ theorem stepPt_add {n n' : Type} {c : ℕ} (x₀ : Matrix n n' k) (e : StepVar n
   ext r s
   simp only [stepPt, Matrix.add_apply, Matrix.of_apply]
   by_cases h : Free (c / 2 + 1) (r, s) ∨ Kept (r, s)
-  · rw [dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h]
     simp only [Pi.add_apply]
     ring
-  · rw [dif_neg h, dif_neg h, hY r s (fun hf => h (Or.inl hf))]
+  · rw [dite_eq_right h, dite_eq_right h, hY r s (fun hf => h (Or.inl hf))]
     simp
 
 theorem ch_add {n n' : Type} {c : ℕ} (X Y : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k) : ch (X + Y) = ch X + ch Y := by
@@ -105,7 +109,7 @@ theorem src_eq (hs : 1 ≤ G.s) (j : Fin (G.m - 1)) :
 theorem downMap_eq (hs : 1 ≤ G.s) (x : ColArgs G) (e : Vars G) (j : Fin (G.m - 1)) : downMap hs x e j =
     (stepPt (x j) (e j)).reindex (frame (tgt_eq hs j)) (frame (src_eq hs j)) := by
   unfold downMap
-  rw [dif_pos j.isLt]
+  rw [dite_eq_left j.isLt]
 
 variable [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {ϖ : kˣ} {e : ℕ} {T : G.Args → ℂ}
@@ -170,7 +174,7 @@ theorem moved_shift (hs : 1 ≤ G.s) (hT : G.IsTensor ϖ e (oppositePath G.m) T)
         exact inv_smul_mem_integers_of_valuation_le _ _ hv
       · have h0 : (fill hs x y (v + Y.vars) - fill hs x y v) (.theta G.m j') = 0 := by
           rw [Pi.sub_apply, fill_theta, fill_theta]
-          simp only [downMap, dif_neg hj, sub_self]
+          simp only [downMap, dite_eq_right hj, sub_self]
         simp only [Grid.moveArgs, h0, Matrix.mul_zero, Matrix.zero_mul]
         exact zero_mem _
     · have h0 : (fill hs x y (v + Y.vars) - fill hs x y v) (.theta i j') = 0 := by
@@ -245,14 +249,14 @@ theorem step_form [ν.IsAddHaarMeasure] (hs : 1 ≤ G.s) (hψ : HasConductor ψ 
     · intro l hl
       have hl' : i.val < l.val := hl
       simp only [stepPt, basePt, Matrix.add_apply, Matrix.of_apply, Matrix.fromBlocks_apply₂₂, Fin.val_castSucc]
-      rw [dif_neg]
+      rw [dite_eq_right]
       · simp [hl'.ne']
       · rintro (hF | hK)
         · simp [Free] at hF; omega
         · simp [Kept] at hK
     · intro hi r
       simp only [stepPt, basePt, Matrix.add_apply, Matrix.of_apply, Matrix.fromBlocks_apply₁₂, Matrix.zero_apply, zero_add]
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro (hF | hK)
       · simp [Free] at hF; omega
       · simp only [Kept, Fin.val_castSucc] at hK
@@ -329,7 +333,7 @@ theorem step_form [ν.IsAddHaarMeasure] (hs : 1 ≤ G.s) (hψ : HasConductor ψ 
                   ((Sum.elim (fun _ : Fin (topRank G ↑j') => (1 : kˣ)) (fun p : Fin (G.m - 2 - ↑j' + 1) => ϖ ^ (e * (p.val + 1))) (.inr i.succ) : kˣ) : k) =
                   (y'' / (((frameGL (tgt_eq hs j') (g (G.m, ↑j' + 1))).val *ᵥ y') (.inr i) *
                     (((ϖ ^ (e * (i.val + 1)) : kˣ) : k))⁻¹)) * y' r * ((ϖ ^ e : kˣ) : k) := by
-                simp only [M, Matrix.mul_apply, Matrix.of_apply, if_true, Sum.elim_inr, Fin.val_succ]
+                simp only [M, Matrix.mul_apply, Matrix.of_apply, ite_true, Sum.elim_inr, Fin.val_succ]
                 rw [← hinv r, Finset.mul_sum, Finset.sum_mul, Finset.sum_mul]
                 refine Finset.sum_congr rfl fun q _ => ?_
                 simp only [Units.val_pow_eq_pow_val]
@@ -351,8 +355,8 @@ theorem step_form [ν.IsAddHaarMeasure] (hs : 1 ≤ G.s) (hψ : HasConductor ψ 
     rw [one_mul] at hfin
     exact hfin
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 theorem frameGL_stair (hs : 1 ≤ G.s) (ϖ : kˣ) (e : ℕ) {j c : ℕ} (hj : j < G.m)
     (h : topRank G j + c = G.rank (G.m, j)) :
     frameGL h (stair G ϖ e j) = diagGL (Sum.elim (fun _ => 1) fun p => ϖ ^ (e * (p.val + 1))) := by
@@ -362,8 +366,8 @@ theorem frameGL_stair (hs : 1 ≤ G.s) (ϖ : kˣ) (e : ℕ) {j c : ℕ} (hj : j 
   subst hc
   exact toFrame_stair (hs := hs) ϖ e hj
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 theorem mem_rowR (hs : 1 ≤ G.s) {j c : ℕ} (hj : j < G.m) (h : topRank G j + c = G.rank (G.m, j))
     {g : GL (Fin (G.rank (G.m, j))) k} (hg : frameGL h g ∈ symR k _ c) : g ∈ rowR hs hj := by
   have hc : c = G.m - 1 - j := by
@@ -372,8 +376,8 @@ theorem mem_rowR (hs : 1 ≤ G.s) {j c : ℕ} (hj : j < G.m) (h : topRank G j + 
   subst hc
   exact hg
 
-omit [MeasurableSpace k] [BorelSpace k] in
 
+omit [MeasurableSpace k] [BorelSpace k] in
 theorem mem_KO_of_frameGL {a c b : ℕ} (h : a + c = b) {g : GL (Fin b) k} (hg : frameGL h g ∈ KO k _) :
     g ∈ KO k _ := by
   obtain ⟨y, hy⟩ := hg
@@ -424,13 +428,13 @@ theorem oneCoset_of_isTensor [ν.IsAddHaarMeasure] (hs : 1 ≤ G.s) {J : G.Level
             ((Reps.through hs J (stair G ϖ e)).elt β (G.m, n + 1)) := by
         rw [DoubleCoset.eq]
         exact ⟨_, hr', _, hJn ▸ hw', hg'⟩
-      rw [hEltAt n, dif_pos hn2] at hmk ⊢
+      rw [hEltAt n, dite_eq_left hn2] at hmk ⊢
       have hb := (Reps.through hs J (stair G ϖ e)).mk_rep ⟨n, hn2⟩ (β ⟨n, hn2⟩)
       dsimp only [Reps.through]
-      rw [if_pos (hmk.trans hb)]
+      rw [ite_eq_left (hmk.trans hb)]
   intro i
   have hi := key (i + 1) (by have := i.isLt; omega)
-  rw [hEltAt i, dif_pos i.isLt] at hi
+  rw [hEltAt i, dite_eq_left i.isLt] at hi
   rw [← (Reps.through hs J (stair G ϖ e)).mk_rep i (β i)]
   exact congrArg _ hi
 

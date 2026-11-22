@@ -1,9 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousChiDet
-open NumberField IsDedekindDomain MeasureTheory Formalism.L2.Host GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace GlobalTheory.UnitaryBC GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.OneRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Formalism.LocalToGlobal.PlaceMapInjectivity.MapPlInjective
+
+@[expose] public section
+
+open NumberField IsDedekindDomain MeasureTheory Formalism.L2.Host GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace GlobalTheory.UnitaryBC GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL
 
 noncomputable section
 
@@ -11,14 +17,14 @@ namespace GlobalTheory.OneRep
 
 variable {E : Type} [Field E] [NumberField E] [NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [NumberField E] [NumberField.IsTotallyComplex E] in
 
+omit [NumberField E] [NumberField.IsTotallyComplex E] in
 theorem atEmb_zero (τ : E →+* ℂ) : atEmb τ 0 = 0 := by
   classical
   unfold atEmb; split_ifs <;> simp
 
-omit [NumberField E] [NumberField.IsTotallyComplex E] in
 
+omit [NumberField E] [NumberField.IsTotallyComplex E] in
 theorem map_single_atEmb (τ : E →+* ℂ) (i k : Fin a) (z : ℂ) :
     (Matrix.single i k z).map (atEmb τ) = Matrix.single i k (atEmb τ z) := by
   ext p q

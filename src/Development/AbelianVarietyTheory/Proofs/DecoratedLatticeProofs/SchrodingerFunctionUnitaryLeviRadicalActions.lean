@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HeckeFormNSOfHeckeForm
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittSourceProof
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HeckeFormNSOfHeckeForm
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittSourceProof
+
+@[expose] public section
+
 open scoped ComplexConjugate Matrix NNReal ENNReal
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -20,26 +25,34 @@ variable {D : D7}
 
 theorem isWeilDatumO_zero_one {ψ : AddChar (AF D.host.F) ℂ} {A B : HSp D} {χB : (AE D)ˣ →* Circle}
     {omh : WRep (dblSp A) B} (hW : IsWeilDatumO ψ (dblSp A) B 1 χB omh) :
-    IsWeilDatumO ψ (zeroSp D) B 1 χB 1 where
-  std := hW.std
-  hecS := hW.hecS
-  hecT := hW.hecT
-  resS := ⟨hW.resS.1, fun η _ a => by rw [show (zeroSp D).rank = 0 from rfl, pow_zero]; rfl⟩
-  resT := hW.resT
-  om_pres := fun _ _ hf => hf
-  om_heis := fun g h w₀ f _ => by
+    IsWeilDatumO ψ (zeroSp D) B 1 χB 1 := by
+  refine
+    { std := hW.std
+      hecS := hW.hecS
+      hecT := hW.hecT
+      resS := ?_
+      resT := hW.resT
+      om_pres := fun _ _ hf => hf
+      om_heis := ?_
+      om_aut := fun _ _ _ _ _ _ => rfl
+      om_cont := fun _ _ _ => continuous_const
+      om_unit := fun _ _ _ _ _ _ _ => rfl
+      om_split := ?_ }
+  · refine ⟨hW.resS.1, fun η _ a => ?_⟩
+    rw [show (zeroSp D).rank = 0 from rfl, pow_zero]
+    rfl
+  · intro g h w₀ f _
     have e : actO (zeroSp D) B g h w₀ = w₀ := Matrix.ext fun _ j => Fin.elim0 j
-    rw [e]; rfl
-  om_aut := fun _ _ _ _ _ _ => rfl
-  om_cont := fun _ _ _ => continuous_const
-  om_unit := fun _ _ _ _ _ _ _ => rfl
-  om_split := fun e _ g h _ _ x y hx _ => by
+    rw [e]
+    rfl
+  · intro e _ g h _ _ x y hx _
     have hx1 : x = 1 := by
       apply Units.ext
       unfold IsDetAt at hx
-      haveI : IsEmpty (Fin (zeroSp D).rank) := Fin.isEmpty
+      have : IsEmpty (Fin (zeroSp D).rank) := Fin.isEmpty
       rw [Matrix.det_isEmpty] at hx
-      rw [hx]; simp
+      rw [hx]
+      simp
     refine ⟨1, one_pos, fun ℓ _ f _ => ?_⟩
     simp [splitFacO, hx1]
 
@@ -53,15 +66,20 @@ theorem sch_laws : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (A B : HSp D) (
   have h := GlobalTheory.MixSourceFormulas.mixed_source D ψ (dblSp A) (zeroSp D) B A.rank (dblDec A) 1 χB omh 1 hW
     (isWeilDatumO_zero_one hW) ν 𝓨 hν f hf
   refine ⟨fun g x => ?_, fun m x => ?_, fun c x => ?_, ?_⟩
-  · rw [sch, h.target]
-    rfl
-  · rw [sch, h.levi, Pi.smul_apply, smul_eq_mul, MonoidHom.inv_apply, GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.halfMod, GlobalTheory.Doubling.npow,
-      Complex.ofReal_cpow (NNReal.coe_nonneg _)]
-    push_cast
-    rfl
-  · rw [sch, h.centre, chr_gramOf_eq ψ A B]
-    rfl
-  · rw [sch, mixS_dblDec_zero, GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.swSec, Prod.mk_one_one, map_one, Module.End.one_apply]
+  · exact congrFun (h.target g x) 0
+  · calc
+      _ = (((χB (Matrix.GeneralLinearGroup.det m))⁻¹ : Circle) : ℂ) *
+          (GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.halfMod B.rank m : ℂ) *
+          sch ψ A B ν 𝓨 f (x ⬝ m.1) := congrFun (h.levi m x) 0
+      _ = _ := by
+        rw [MonoidHom.inv_apply, GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.halfMod,
+          GlobalTheory.Doubling.npow, Complex.ofReal_cpow (NNReal.coe_nonneg _)]
+        push_cast
+        rfl
+  · rw [chr_gramOf_eq ψ A B]
+    exact congrFun (h.centre c x) 0
+  · rw [sch, mixS_dblDec_zero, GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.swSec, Prod.mk_one_one, map_one,
+      one_apply_eq_self]
 
 end GlobalTheory.Core.Rk.SchLaws
 

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
-import Formalism.SharpRestriction.GrowthBounds.SourceCleaning
-import Formalism.SharpRestriction.GrowthBounds.Lemma5aAt
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
+public import Formalism.SharpRestriction.GrowthBounds.SourceCleaning
+public import Formalism.SharpRestriction.GrowthBounds.Lemma5aAt
+
+@[expose] public section
 
 noncomputable section
 

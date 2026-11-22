@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.CompactCupEqCompactCupRight
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.CompactCupEqCompactCupRight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -42,7 +47,7 @@ theorem LeibnizPairing.coconeLeft_homology_eq_homologyδ {p s m : ℕ} (h : p + 
     have e1 := LeibnizPairing.iCycles_cycles (LeibnizPairing.coconeLeft μL ρ μK hc) h X e
     have e2 := iCycles_toCycles_hom_apply (mappingCoconeNat f') m (m + 1)
       ((q, 0) : K'.X m × shiftNegOneX L' m)
-    rw [map_add, e1, e2, mappingCoconeNat_d_hom_apply']
+    rw [map_add (f := _), e1, e2, mappingCoconeNat_d_hom_apply']
     refine Prod.ext ?_ ?_
     · change μK.μ h (((mappingCoconeNat f).iCycles (p + 1)).hom X).1 ((N.iCycles s).hom e) =
         (((mappingCoconeNat f').iCycles (m + 1)).hom c').1 + (K'.d m (m + 1)).hom q
@@ -55,7 +60,7 @@ theorem LeibnizPairing.coconeLeft_homology_eq_homologyδ {p s m : ℕ} (h : p + 
           shiftNegOneSucc L' m ((L'.iCycles m).hom w) from congrArg Prod.snd hc'2, map_zero, add_zero,
         shiftNegOneSucc_apply, shiftNegOneSucc_apply, hw]
       exact (sub_add_cancel _ _).symm
-  rw [key, map_add]
+  rw [key, map_add (f := _)]
   exact (congrArg (_ + ·) (homologyπ_toCycles_hom_apply (mappingCoconeNat f') m (m + 1)
     ((q, 0) : K'.X m × shiftNegOneX L' m))).trans (add_zero _)
 
@@ -70,29 +75,8 @@ variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologic
   {Aᵥ Cᵥ : ∀ v, Rep.{u} k (H v)} [∀ v, IsDiscreteRep (Aᵥ v)] [∀ v, IsDiscreteRep (Cᵥ v)]
   {a : ∀ v, Rep.res (φ v).toMonoidHom A ⟶ Aᵥ v} {c : ∀ v, Rep.res (φ v).toMonoidHom C ⟶ Cᵥ v}
 
-theorem compactCup_homologyπ_eq_homologyδ (μ : A ⊗ B ⟶ C) (μᵥ : ∀ v, Aᵥ v ⊗ Rep.res (φ v).toMonoidHom B ⟶ Cᵥ v)
-    (hμ : ∀ v, (Rep.resFunctor (φ v).toMonoidHom).map μ ≫ c v =
-      resTensorHom (φ v).toMonoidHom (a v) (𝟙 _) ≫ μᵥ v)
-    {p s m : ℕ} (h : p + 1 + s = m + 1) (X : (compactCochains φ A Aᵥ a).cycles (p + 1))
-    (e : (cochainsComplex B).cycles s) (q : (cochainsComplex C).X m)
-    (w : (piComplex fun v => cochainsComplex (Cᵥ v)).cycles m)
-    (hq : ((cochainsComplex C).d m (m + 1)).hom q = cupPairingCochains μ h
-      (((compactCochains φ A Aᵥ a).iCycles (p + 1)).hom X).1 (((cochainsComplex B).iCycles s).hom e))
-    (hw : ((piComplex fun v => cochainsComplex (Cᵥ v)).iCycles m).hom w =
-      (LeibnizPairing.pi fun v => cupLeibniz (μᵥ v)).μ (show p + s = m by omega)
-        (show (piComplex fun v => cochainsComplex (Aᵥ v)).X p from
-          (((compactCochains φ A Aᵥ a).iCycles (p + 1)).hom X).2)
-        (((localRes φ B (fun v => Rep.res (φ v).toMonoidHom B) fun _ => 𝟙 _).f s).hom
-          (((cochainsComplex B).iCycles s).hom e)) -
-      ((localRes φ C Cᵥ c).f m).hom q) :
-    compactCup φ μ μᵥ hμ h (((compactCochains φ A Aᵥ a).homologyπ (p + 1)).hom X)
-        (((cochainsComplex B).homologyπ s).hom e) =
-      (mappingCoconeNat.homologyδ (localRes φ C Cᵥ c) m).hom
-        (((piComplex fun v => cochainsComplex (Cᵥ v)).homologyπ m).hom w) :=
-  LeibnizPairing.coconeLeft_homology_eq_homologyδ _ _ _ (localRes_cupPairingCochains φ μ μᵥ hμ) h X e q w hq hw
 
 omit [IsDiscreteRep A] [IsDiscreteRep B] [∀ v, IsDiscreteRep (Aᵥ v)] in
-
 theorem homologyδ_homologyπ_eq_localToCompact {m : ℕ}
     (w : (piComplex fun v => cochainsComplex (Cᵥ v)).cycles m) :
     (mappingCoconeNat.homologyδ (localRes φ C Cᵥ c) m).hom

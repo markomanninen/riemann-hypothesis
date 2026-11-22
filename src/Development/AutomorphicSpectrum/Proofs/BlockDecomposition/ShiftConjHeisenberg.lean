@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumMeas
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumMeas
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,13 +24,18 @@ namespace GlobalTheory.CompanionTheory.FJE
 theorem sh_mul_nzx {D : D7} {n ρ p : ℕ} {hn : ρ + p = n} (M : Maps D hn) (y : Mx D ρ p)
     (z : hermA D ρ) (x : Mx D ρ p) :
     M.sh y * M.nzx z x = M.nzx (z + GlobalTheory.CompanionTheory.FJE.jc y x) x * M.sh y := by
-  have e : GlobalTheory.CompanionTheory.PcB.tw (z + jc y x) x y = z := by
-    apply Subtype.ext
-    show z.1 + ((HMul.hMul y (adj x) : Mx D ρ ρ) + (HMul.hMul x (adj y) : Mx D ρ ρ))
-      - (HMul.hMul x (adj y) : Mx D ρ ρ) - (HMul.hMul y (adj x) : Mx D ρ ρ) = z.1
-    abel
-  have h := GlobalTheory.CompanionTheory.PcB.nzx_sh M (z + jc y x) x y
-  rw [e] at h
-  exact h.symm
+  apply GlobalTheory.CompanionTheory.FourierN.mat_injective
+  rw [GlobalTheory.CompanionTheory.PcB.mat_mul', GlobalTheory.CompanionTheory.PcB.mat_mul',
+    M.nzx_mat, M.nzx_mat, M.sh_mat]
+  simp only [blk4, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply]
+  simp only [Matrix.mul_zero, Matrix.zero_mul, Matrix.mul_one, Matrix.one_mul, add_zero, zero_add]
+  simp only [bl, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply]
+  simp only [Matrix.mul_zero, Matrix.zero_mul, Matrix.mul_one, Matrix.one_mul, add_zero, zero_add]
+  congr 2
+  simp only [jc]
+  congr 2
+  rw [Matrix.mul_neg]
+  change z.1 + y * adj x = (z.1 + (y * adj x + x * adj y)) + -(x * adj y)
+  abel
 
 end GlobalTheory.CompanionTheory.FJE

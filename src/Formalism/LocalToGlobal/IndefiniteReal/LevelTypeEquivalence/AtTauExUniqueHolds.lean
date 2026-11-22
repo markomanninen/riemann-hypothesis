@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousTensMap
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousTensMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,14 +30,14 @@ theorem repr_infPart (x : AE D) (k : Fin 2) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [infPart, basA, basAF, Algebra.TensorProduct.basis_repr_tmul]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem repr_finPart (x : AE D) (k : Fin 2) :
     (basAf D).repr (finPart D x) k = sndA D.host.F ((basAF D).repr x k) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [finPart, basAf, basAF, Algebra.TensorProduct.basis_repr_tmul]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem ae_ext {x x' : AE D} (h1 : infPart D x = infPart D x') (h2 : finPart D x = finPart D x') : x = x' := by
   apply (basAF D).ext_elem
@@ -93,14 +97,14 @@ theorem infPart_sigR (x : AE D) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [infPart, sigR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem finPart_sigR (x : AE D) :
     finPart D (sigR (AF D.host.F) D.sp.cm.sig x) = sigR (Af D.host.F) D.sp.cm.sig (finPart D x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [finPart, sigR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem thetaC_sigR (τ : D.what₂.Tau) (y : Ainf D.host.F ⊗[D.host.F] D.host.E) :
     thetaC D τ (sigR (Ainf D.host.F) D.sp.cm.sig y) = starRingEnd ℂ (thetaC D τ y) := by
@@ -113,7 +117,7 @@ theorem thetaC_sigR (τ : D.what₂.Tau) (y : Ainf D.host.F ⊗[D.host.F] D.host
     congr 1
     have he : D.sp.cm.sig e = star e := rfl
     rw [he, tauE_star]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem psiT_sigR (τ : D.what₂.Tau) (x : AE D) :
     psiT D τ (sigR (AF D.host.F) D.sp.cm.sig x) = starRingEnd ℂ (psiT D τ x) := by
@@ -200,14 +204,16 @@ theorem gram_det_ne' : V.gram.det ≠ 0 := by
     intro i
     have h1 := congrFun hc i
     simp only [Matrix.mulVec, dotProduct, Formalism.BasicNotions.HSpace.gram, Pi.zero_apply] at h1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, smul_eq_mul]
     rw [← h1]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   have hker : ∀ x, V.hT x (∑ j, c j • V.frame j) = 0 := by
     intro x
     have hx : x = ∑ i, V.frame.repr x i • V.frame i := (V.frame.sum_repr x).symm
-    rw [hx, map_sum V.hT, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum V.hT, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hi i, smul_zero]
   have hy0 : ∑ j, c j • V.frame j = 0 := V.nondeg.2 _ hker

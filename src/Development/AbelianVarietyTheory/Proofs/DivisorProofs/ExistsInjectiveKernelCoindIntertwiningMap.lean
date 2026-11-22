@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BlockProductIsomorphism
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCuspidalIffCompositions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BlockProductIsomorphism
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCuspidalIffCompositions
+
+@[expose] public section
+
 open Formalism.L2.DIV GlobalTheory.FinGL GlobalTheory.Parabolic GlobalTheory.IndefiniteRowSideFullHecke.BlockProductIsomorphism
 
 namespace GlobalTheory.CoindKernel
@@ -8,8 +13,8 @@ namespace GlobalTheory.CoindKernel
 variable {G : Type} [Group G] (P : Subgroup G) {V : Type} [AddCommGroup V] [Module ℂ V]
   (σ : Representation ℂ P V)
 
-open Classical in
 
+open Classical in
 noncomputable def delta : V →ₗ[ℂ] Representation.coindV P.subtype σ where
   toFun v := ⟨fun x => if h : x ∈ P then σ ⟨x, h⟩ v else 0, by
     intro p g
@@ -99,7 +104,8 @@ theorem exists_kernel : ∀ (G : Type) [Group G] [Finite G] (P P' : Subgroup G) 
     apply Representation.IntertwiningMap.ext
     ext1 f
     have h1 := congrArg Φ (sum_delta P σ f)
-    rw [map_sum, map_smul, Finset.sum_eq_zero (fun g _ => by
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_smul, Finset.sum_eq_zero (fun g _ => by
       rw [Φ.isIntertwining, h0, map_zero])] at h1
     have hc : ((Finset.univ.filter (fun x : G => x ∈ P)).card : ℂ) ≠ 0 := by
       rw [Nat.cast_ne_zero, Finset.card_ne_zero]

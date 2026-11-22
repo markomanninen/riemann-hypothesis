@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.MainNotions.N.Ln34
 
@@ -92,7 +96,7 @@ theorem gradNPf_unit_one_add (lO d : O) (hl : v (ι lO) = 1) : IsUnit (1 + lO * 
   have hlt : v (1 : L) < v (ι lO * ι d) := by
     rw [v.map_one, hy]
     exact lt_of_lt_of_le gradNPf_zero_lt_one hle
-  rw [_root_.map_add, _root_.map_one, _root_.map_mul, val_add_eq_left_of_val_lt v _ _ hlt, v.map_one]
+  rw [_root_.map_add (f := _), _root_.map_one, _root_.map_mul, val_add_eq_left_of_val_lt v _ _ hlt, v.map_one]
 
 include hι hR in
 theorem gradNPf_unit_nat (l : ℕ) (hp : l.Prime) (hl : v (l : L) = 1) (m : ℕ) (hm : ¬ l ∣ m) :
@@ -130,8 +134,8 @@ theorem gradNPf_sub_one (lO x : O) (hl : v (ι lO) = 1) (hx : v (ι x - 1) = 1) 
   rw [_root_.map_sub, _root_.map_one, _root_.map_mul, ht, mul_comm (ι lO), mul_assoc,
     inv_mul_cancel₀ hne, mul_one]
 
-include hι hR in
 
+include hι hR in
 theorem gradNPf_lte (l : ℕ) [hp : Fact l.Prime] (hl2 : l ≠ 2) (hl : v (l : L) = 1)
     (x t : O) (ht : IsUnit t) (hxt : x - 1 = (l : O) * t) :
     ∀ m : ℕ, m ≠ 0 → ∃ ε : O, IsUnit ε ∧ x ^ m - 1 = (l : O) ^ (1 + padicValNat l m) * ε := by
@@ -199,31 +203,35 @@ theorem gradNPf_lte (l : ℕ) [hp : Fact l.Prime] (hl2 : l ≠ 2) (hl : v (l : L
       obtain ⟨ε', hε', he'⟩ := lte_pow_prime_step_lemma_7 v ι hι hR l hl2 hl (x ^ m') ε hε
         (padicValNat l m') (by rw [he]; ring)
       have hv : padicValNat l (l * m') = padicValNat l m' + 1 := by
-        rw [padicValNat.mul hp.out.ne_zero hm']
-        first
-          | rw [padicValNat_self]; ring
-          | rw [padicValNat.self hl1]; ring
-          | simp; ring
-          | simp
+        rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hp.out.ne_zero hm']
+        have hs : padicValNat l l = 1 := by
+          simpa only [← Nat.padicValNat_def] using Nat.multiplicity_self hl1
+        rw [hs]
+        omega
       refine ⟨ε', hε', ?_⟩
       rw [hv, show l * m' = m' * l from Nat.mul_comm l m', pow_mul, he']
       ring
     · obtain ⟨ε, hε, he⟩ := lte_pow_coprime_step_lemma_6 v ι hι hR l hl x t ht hxt m hdvd
       refine ⟨ε, hε, ?_⟩
-      rw [padicValNat.eq_zero_of_not_dvd hdvd, he]
+      have hz : padicValNat l m = 0 := by
+        simpa only [← Nat.padicValNat_def] using (multiplicity_eq_zero_of_not_dvd hdvd)
+      rw [hz, he]
       ring
 
 theorem gradNPf_sum_val (l : ℕ) [hp : Fact l.Prime] (N : ℕ) :
     ∑ y ∈ Ico 1 (N + 1), (1 + padicValNat l y) = N + padicValNat l N.factorial := by
   induction N with
-  | zero => simp
+  | zero =>
+    have hz : padicValNat l 1 = 0 := by
+      simpa only [← Nat.padicValNat_def] using (multiplicity_one_right (a := l))
+    simp [hz]
   | succ N ih =>
     rw [sum_Ico_succ_top (by omega : 1 ≤ N + 1), ih, Nat.factorial_succ,
-      padicValNat.mul (Nat.succ_ne_zero N) (Nat.factorial_ne_zero N)]
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.succ_ne_zero N) (Nat.factorial_ne_zero N)]
     ring
 
-include hι hR in
 
+include hι hR in
 theorem gradNPf_prod (l : ℕ) [hp : Fact l.Prime] (hl2 : l ≠ 2) (hl : v (l : L) = 1)
     (x t : O) (ht : IsUnit t) (hxt : x - 1 = (l : O) * t) (s : ℕ) (hs : s ≠ 0) (hsl : ¬ l ∣ s)
     (N : ℕ) : ∃ a : O, (l : O) ^ (N + padicValNat l N.factorial) =

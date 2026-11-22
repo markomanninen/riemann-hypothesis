@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeckeInert
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeckeInert
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Spherical UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.H
 
 private theorem evalAt_polynomialEmbed {n : ℕ} (z : Fin n → ℂˣ) (Q : MvPolynomial (Fin n) ℂ) :
-    evalAt z (polyEmb n Q) = MvPolynomial.aeval (fun j : Fin n => (z j : ℂ)) Q := by
-  have h : (evalAt z).comp (polyEmb n) = MvPolynomial.aeval (fun j : Fin n => (z j : ℂ)) := by
+    evalAt z (polyEmb (n := n) Q) = MvPolynomial.aeval (fun j : Fin n => (z j : ℂ)) Q := by
+  have h : (evalAt z).comp (polyEmb (n := n)) = MvPolynomial.aeval (fun j : Fin n => (z j : ℂ)) := by
     refine MvPolynomial.algHom_ext fun i => ?_
     rw [AlgHom.comp_apply, polyEmb_X, evalAt_single, MvPolynomial.aeval_X, one_mul,
       monomialChar_apply, Finset.prod_eq_single i]
@@ -16,8 +20,8 @@ private theorem evalAt_polynomialEmbed {n : ℕ} (z : Fin n → ℂˣ) (Q : MvPo
   exact AlgHom.congr_fun h Q
 
 private theorem baseChange_polynomialEmbed {n : ℕ} (l : ℕ) (Q : MvPolynomial (Fin n) ℂ) :
-    bc l (polyEmb n Q) = polyEmb n (MvPolynomial.expand l Q) := by
-  have h : (bc l).comp (polyEmb n) = (polyEmb n).comp (MvPolynomial.expand l) := by
+    bc l (polyEmb (n := n) Q) = polyEmb (n := n) (MvPolynomial.expand l Q) := by
+  have h : (bc l).comp (polyEmb (n := n)) = (polyEmb (n := n)).comp (MvPolynomial.expand l) := by
     refine MvPolynomial.algHom_ext fun i => ?_
     rw [AlgHom.comp_apply, AlgHom.comp_apply, MvPolynomial.expand_X, map_pow, polyEmb_X,
       AddMonoidAlgebra.single_pow, one_pow]
@@ -49,8 +53,8 @@ private theorem aeval_aeval_elemSymm_power {n : ℕ} (l : ℕ) (γ : MvPolynomia
   exact AlgHom.congr_fun h γ
 
 private theorem polynomialEmbed_symmetric_mem {n : ℕ} (γ : MvPolynomial (Fin n) ℂ) :
-    polyEmb n (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) γ) ∈
-      symmetricLaurent n := by
+    polyEmb (n := n) (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) γ) ∈
+      symmetricLaurent (n := n) := by
   intro σ
   have h := (MvPolynomial.esymmAlgHom (Fin n) ℂ n γ).2
   rw [MvPolynomial.esymmAlgHom_apply, MvPolynomial.mem_symmetricSubalgebra] at h
@@ -58,12 +62,12 @@ private theorem polynomialEmbed_symmetric_mem {n : ℕ} (γ : MvPolynomial (Fin 
 
 theorem UpperTheory.ConvolutionTheory.H.polyAlg :
     ∀ n : ℕ,
-      (∀ g ∈ symmetricLaurent n, g ∈ (polyEmb n).range → ∃ γ : MvPolynomial (Fin n) ℂ, polyEmb n (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) γ) = g) ∧
-      (∀ (γ : MvPolynomial (Fin n) ℂ) (z : Fin n → ℂˣ), evalAt z (polyEmb n (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) γ)) =
+      (∀ g ∈ symmetricLaurent (n := n), g ∈ (polyEmb (n := n)).range → ∃ γ : MvPolynomial (Fin n) ℂ, polyEmb (n := n) (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) γ) = g) ∧
+      (∀ (γ : MvPolynomial (Fin n) ℂ) (z : Fin n → ℂˣ), evalAt z (polyEmb (n := n) (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) γ)) =
         MvPolynomial.eval (fun i : Fin n => (Finset.univ.val.map fun j => (z j : ℂ)).esymm (i + 1)) γ) ∧
-      (∀ (l : ℕ) (γ : MvPolynomial (Fin n) ℂ), bc l (polyEmb n (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) γ)) = polyEmb n (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) (MvPolynomial.aeval (powE l) γ))) ∧
-      ∀ D : ℕ, ∃ P : Finset (LaurentRing n), (∀ y ∈ P, y ∈ symmetricLaurent n) ∧
-        ∀ p : MvPolynomial (Fin n) ℂ, p.totalDegree ≤ D → polyEmb n (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) p) ∈ Submodule.span ℂ (P : Set (LaurentRing n)) := by
+      (∀ (l : ℕ) (γ : MvPolynomial (Fin n) ℂ), bc l (polyEmb (n := n) (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) γ)) = polyEmb (n := n) (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) (MvPolynomial.aeval (powE l) γ))) ∧
+      ∀ D : ℕ, ∃ P : Finset (LaurentRing n), (∀ y ∈ P, y ∈ symmetricLaurent (n := n)) ∧
+        ∀ p : MvPolynomial (Fin n) ℂ, p.totalDegree ≤ D → polyEmb (n := n) (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1)) p) ∈ Submodule.span ℂ (P : Set (LaurentRing n)) := by
   intro n
   refine ⟨?_, ?_, ?_, ?_⟩
   · rintro g hg ⟨Q, rfl⟩
@@ -94,14 +98,15 @@ theorem UpperTheory.ConvolutionTheory.H.polyAlg :
   · intro D
     classical
     let f : (Fin n → Fin (D + 1)) → LaurentRing n := fun c =>
-      polyEmb n (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1))
+      polyEmb (n := n) (MvPolynomial.aeval (fun i : Fin n => MvPolynomial.esymm (Fin n) ℂ (i + 1))
         (MvPolynomial.monomial (Finsupp.equivFunOnFinite.symm fun i => (c i : ℕ)) (1 : ℂ)))
     refine ⟨Finset.univ.image f, ?_, ?_⟩
     · intro y hy
       obtain ⟨c, -, rfl⟩ := Finset.mem_image.1 hy
       exact polynomialEmbed_symmetric_mem _
     · intro p hp
-      rw [p.as_sum, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [p.as_sum, map_sum, map_sum]
       refine Submodule.sum_mem _ fun s hs => ?_
       have hle : ∀ i, s i < D + 1 := fun i => by
         have h1 : s.degree ≤ p.totalDegree := MvPolynomial.le_totalDegree hs
@@ -109,8 +114,8 @@ theorem UpperTheory.ConvolutionTheory.H.polyAlg :
           rw [Finsupp.degree_eq_sum]
           exact Finset.single_le_sum (f := fun j => s j) (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
         omega
-      have hm : MvPolynomial.monomial s (MvPolynomial.coeff s p) =
-          MvPolynomial.coeff s p • MvPolynomial.monomial s (1 : ℂ) := by
+      have hm : MvPolynomial.monomial s (AddMonoidAlgebra.coeff p s) =
+          AddMonoidAlgebra.coeff p s • MvPolynomial.monomial s (1 : ℂ) := by
         rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
       rw [hm, map_smul, map_smul]
       refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)

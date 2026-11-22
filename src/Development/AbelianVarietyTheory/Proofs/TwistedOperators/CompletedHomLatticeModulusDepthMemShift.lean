@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsValuationOneElementAtGridPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsValuationOneElementAtGridPlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,8 +83,8 @@ theorem exists_lift_int (c : Formalism.L2.Herm.intAf D.host.F D.host.E) :
   rw [hc']
   exact (mem_OA_iff _).1 c.2 Q
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem smul_mem_of_idS {𝔪 : Ideal (𝓞 D.host.E)} (h𝔪 : ∀ r ∈ 𝔪, ∀ t ∈ LT, r • t ∈ LT') {u : WO S B}
     (hu : u ∈ latO S B (LS : Set _) (LT : Set _) fun _ => True) {s : Formalism.L2.Herm.intAf D.host.F D.host.E}
     (hs : s ∈ Formalism.L2.DIV.idS D.host.F 𝔪) {b : AE D} (hb : toEAf D b = s.1) :
@@ -95,7 +99,7 @@ theorem smul_mem_of_idS {𝔪 : Ideal (𝓞 D.host.E)} (h𝔪 : ∀ r ∈ 𝔪, 
     | add x y _ _ hx hy =>
       obtain ⟨a, ha, ha'⟩ := hx
       obtain ⟨c, hc, hc'⟩ := hy
-      exact ⟨a + c, by rw [RingHom.map_add, ha, hc, Subring.coe_add], by rw [add_smul]; exact add_mem ha' hc'⟩
+      exact ⟨a + c, by rw [RingHom.map_add (f := _), ha, hc, Subring.coe_add], by rw [add_smul]; exact add_mem ha' hc'⟩
     | smul c x _ hx =>
       obtain ⟨a, ha, ha'⟩ := hx
       obtain ⟨c', hc, hc'⟩ := exists_lift_int c

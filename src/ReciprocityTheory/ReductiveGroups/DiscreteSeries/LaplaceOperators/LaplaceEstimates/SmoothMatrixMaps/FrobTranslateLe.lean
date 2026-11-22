@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.CoefXHasDeriv
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.CoefXHasDeriv
+
+@[expose] public section
 
 noncomputable section
 
@@ -156,7 +160,7 @@ theorem genSub_le_span {M : Type*} [AddCommGroup M] [Module ℂ M]
       obtain ⟨v, hv, wd, rfl⟩ := hx
       exact Submodule.subset_span ⟨v, hv, (a, b) :: wd, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem Qp_genSub {σ : Mat k r → (H →L[ℂ] H)} {D : Submodule ℂ H}

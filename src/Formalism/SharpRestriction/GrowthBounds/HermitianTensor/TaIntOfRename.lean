@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ExplicitMapOntoTwoLetterSpace
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.MemInvariantSectionsIffIntegral
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.QaNuNextAdd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ExplicitMapOntoTwoLetterSpace
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.MemInvariantSectionsIffIntegral
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.QaNuNextAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem ta_aeval_map {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (m 
     map φ (aeval (ta_covR A m) β) = aeval (ta_covR B m) (map φ β) := by
   induction β using MvPolynomial.induction_on with
   | C a => simp [MvPolynomial.algebraMap_eq]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n hp => simp only [map_mul, hp, map_X, aeval_X, ta_covR_map]
 
 section Int
@@ -39,16 +43,17 @@ def ta_Int (O : Type) {K : Type} [CommRing O] [Field K] [Algebra O K] {σ : Type
   ∃ β : MvPolynomial σ O, map (algebraMap O K) β = F
 
 theorem ta_Int_coeff {σ : Type} {F : MvPolynomial σ K} (h : ta_Int O F) (u : σ →₀ ℕ) :
-    coeff u F ∈ Set.range (algebraMap O K) := by
+    AddMonoidAlgebra.coeff F u ∈ Set.range (algebraMap O K) := by
   obtain ⟨β, rfl⟩ := h
-  exact ⟨coeff u β, (coeff_map _ _ _).symm⟩
+  exact ⟨AddMonoidAlgebra.coeff β u, (coeff_map _ _ _).symm⟩
 
-theorem ta_Int_of_coeff {σ : Type} {F : MvPolynomial σ K} (h : ∀ u, coeff u F ∈ Set.range (algebraMap O K)) :
+theorem ta_Int_of_coeff {σ : Type} {F : MvPolynomial σ K} (h : ∀ u, AddMonoidAlgebra.coeff F u ∈ Set.range (algebraMap O K)) :
     ta_Int O F := by
   classical
   choose c hc using h
   refine ⟨∑ u ∈ F.support, monomial u (c u), ?_⟩
-  simp only [map_sum, map_monomial, hc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_monomial, hc]
   exact F.support_sum_monomial_coeff
 
 theorem ta_Int_add {σ : Type} {F G : MvPolynomial σ K} (h1 : ta_Int O F) (h2 : ta_Int O G) : ta_Int O (F + G) := by
@@ -92,7 +97,7 @@ theorem ta_exists_pow (w : O) (hw : Irreducible w) {σ : Type} (b : MvPolynomial
     ∃ n : ℕ, ta_Int O ((algebraMap O K w ^ n) • b) := by
   classical
   obtain ⟨⟨s, hs⟩, hsI⟩ := IsLocalization.exist_integer_multiples_of_finset (nonZeroDivisors O)
-    (b.support.image fun u => coeff u b)
+    (b.support.image fun u => AddMonoidAlgebra.coeff b u)
   have hs0 : s ≠ 0 := nonZeroDivisors.ne_zero hs
   obtain ⟨n, v, hv⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hs0 hw
   refine ⟨n, ta_Int_of_coeff fun u => ?_⟩
@@ -100,7 +105,7 @@ theorem ta_exists_pow (w : O) (hw : Irreducible w) {σ : Type} (b : MvPolynomial
   by_cases hu : u ∈ b.support
   · obtain ⟨r, hr⟩ := hsI _ (Finset.mem_image_of_mem _ hu)
     refine ⟨(↑v⁻¹ : O) * r, ?_⟩
-    have hr' : algebraMap O K r = algebraMap O K s * coeff u b := by
+    have hr' : algebraMap O K r = algebraMap O K s * AddMonoidAlgebra.coeff b u := by
       rw [hr]
       exact Algebra.smul_def _ _
     rw [map_mul, hr', hv, map_mul, map_pow, ← mul_assoc, ← mul_assoc, ← map_mul, Units.inv_mul, map_one, one_mul]
@@ -135,13 +140,13 @@ theorem ta_sat (w : O) (hw : Irreducible w) (m : ℕ) (hm : 1 ≤ m) (b : MvPoly
     have e4 : map (Ideal.Quotient.mk (Ideal.span {w})) β = 0 := hind (by rw [e3, map_zero])
     apply ta_Int_of_coeff
     intro u
-    have hu : coeff u β ∈ Ideal.span {w} := by
+    have hu : AddMonoidAlgebra.coeff β u ∈ Ideal.span {w} := by
       rw [← Ideal.Quotient.eq_zero_iff_mem]
-      have := congrArg (coeff u) e4
-      rwa [coeff_map, coeff_zero] at this
+      have := congrArg (AddMonoidAlgebra.coeff · u) e4
+      rwa [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at this
     obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp hu
     refine ⟨c, ?_⟩
-    have e5 := congrArg (coeff u) hβ
+    have e5 := congrArg (AddMonoidAlgebra.coeff · u) hβ
     rw [coeff_map, ← hc, map_mul, coeff_smul, smul_eq_mul] at e5
     rw [coeff_smul, smul_eq_mul]
     apply mul_right_cancel₀ hW0
@@ -183,8 +188,10 @@ theorem ta_Psi_gl_y (g : Matrix (Fin (m + 1)) (Fin (m + 1)) K) (hg : IsUnit g.de
     rw [covY_eq] at h5
     have hgg : ((g'⁻¹ : GL (Fin (m + 1)) K) : Matrix (Fin (m + 1)) (Fin (m + 1)) K) = g := by
       rw [Matrix.coe_units_inv, hg', Matrix.nonsing_inv_nonsing_inv g hg]
-    simp only [AlgHom.comp_apply, rename_X, aeval_X, Formalism.CountingSumsFrames.glAct, Sum.elim_inr, map_sum, map_mul, hgg]
-    rw [h5, ← map_mul, ← mul_assoc, ← C_mul, Matrix.nonsing_inv_nonsing_inv g hg, Matrix.det_nonsing_inv,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, rename_X, aeval_X, Formalism.CountingSumsFrames.glAct, Sum.elim_inr, map_sum, map_mul, hgg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h5, ← map_mul, ← mul_assoc, ← C_mul, Matrix.nonsing_inv_nonsing_inv g hg, Matrix.det_nonsing_inv,
       Ring.inverse_eq_inv', mul_inv_cancel₀ hd0, C_1, one_mul, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul]
@@ -197,7 +204,8 @@ theorem ta_aeval_scale {τ : Type} {k Q : ℕ} (d : K) (z : Fin k → MvPolynomi
   classical
   conv_lhs => rw [b.as_sum]
   conv_rhs => rw [b.as_sum]
-  simp only [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun u hu => ?_
   have hdeg := hb (mem_support_iff.mp hu)
   simp only [aeval_monomial, Finsupp.prod, mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum]

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsAuxiliaryXi
+module
+
+public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsAuxiliaryXi
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.BXiAsm
 open Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2

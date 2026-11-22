@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementJ
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ColR
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementJ
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ColR
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Col Classical
 open Formalism.L2.Th1.H (cmL CmOK matH IsIsom taylorMv)
 open Formalism.L2.Th1.GD (LocNorm InMul frameM thetaLin)
@@ -35,13 +40,15 @@ theorem hOK_vecF : ∀ (D : D7) (X : Fields) (s : Seam D X) (L : PeriodPair) (Λ
       Finset.mem_univ, if_true, Finset.mul_sum]
     rw [Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun τ _ => ?_
-    simp only [map_sum, map_mul, hconj, vecF]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hconj, vecF]
     rw [Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => ?_
     have h0 : ((Formalism.L2.Th1.F.area L : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hA.ne'
     push_cast
     field_simp
-  rw [hL, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hL, map_sum]
   rw [← Equiv.sum_comp s.iT.symm]
   simp only [Equiv.apply_symm_apply]
   rw [← (Equiv.ofBijective _ hbij).sum_comp]

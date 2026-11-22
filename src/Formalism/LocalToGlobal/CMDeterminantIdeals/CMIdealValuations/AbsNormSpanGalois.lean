@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CMDeterminantIdeals.CoeffMemOfLoc
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementA
-import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.OneLeAbsNormOfLeOne
+module
+
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CoeffMemOfLoc
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementA
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.OneLeAbsNormOfLeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -199,24 +203,6 @@ theorem degree_norm_base : DegNN0 := by
   rw [hnd']
   linarith
 
-theorem CMNumbersLink_of (hH : HadamardIdeals) (hD : DetGood) : CMNumbersLink := by
-  unfold CMNumbersLink
-  intro K _ _ g Lie ℓ u de La logOm h
-  unfold CMNumbers at h
-  unfold CMNumbers0
-  obtain ⟨hL, hℓ, hde, hu, hmem, hLa, hsq, hnd, hdd⟩ := h
-  exact ⟨(hD K g Lie hL).2, hℓ, hde, hLa, hH K g Lie ℓ u La hL hℓ hu hmem (by linarith) hsq, hnd, hdd⟩
-
-theorem DegDe_of (hH : HadamardIdeals) (hD : DetGood) : DegDe := by
-  unfold DegDe
-  intro K _ _ g Lie ℓ u de La logOm h
-  exact degree_delta_base K g _ ℓ de La logOm (CMNumbersLink_of hH hD K g Lie ℓ u de La logOm h)
-
-theorem DegNN_of (hH : HadamardIdeals) (hD : DetGood) : DegNN := by
-  unfold DegNN
-  intro K _ _ g Lie ℓ u de La logOm V _ c μ n h
-  exact degree_norm_base K g _ ℓ de La logOm V c μ n (CMNumbersLink_of hH hD K g Lie ℓ u de La logOm h)
-
 section cauchy
 
 lemma geom_root_sum {ζ : ℂ} {N : ℕ} (hζ : IsPrimitiveRoot ζ N) {a b : ℕ} (ha : a < N) (hb : b < N) :
@@ -263,16 +249,16 @@ theorem coeff_cauchy_bound : CoeffCauchy := by
     simp only [z, norm_mul, norm_pow, hζn, one_pow, mul_one, Complex.norm_real, Real.norm_eq_abs]
     exact le_of_eq (abs_of_pos (hρ v))
   have inner : ∀ ν ∈ G.support, ∑ k : V → Fin N,
-      MvPolynomial.coeff ν G * (∏ v, z k v ^ ν v) * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) =
-      if ν = μ then (N : ℂ) ^ Fintype.card V * (MvPolynomial.coeff μ G * ∏ v, (ρ v : ℂ) ^ μ v) else 0 := by
+      AddMonoidAlgebra.coeff G ν * (∏ v, z k v ^ ν v) * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) =
+      if ν = μ then (N : ℂ) ^ Fintype.card V * (AddMonoidAlgebra.coeff G μ * ∏ v, (ρ v : ℂ) ^ μ v) else 0 := by
     intro ν hν
     have hprod : ∀ k : V → Fin N, (∏ v, z k v ^ ν v) * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) =
         (∏ v, (ρ v : ℂ) ^ ν v) * ∏ v, (ζ ^ ν v * ζ⁻¹ ^ μ v) ^ (k v : ℕ) := by
       intro k
       rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
       exact Finset.prod_congr rfl (fun v _ => by simp only [z]; ring)
-    have hsum1 : ∑ k : V → Fin N, MvPolynomial.coeff ν G * (∏ v, z k v ^ ν v) * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) =
-        MvPolynomial.coeff ν G * ((∏ v, (ρ v : ℂ) ^ ν v) *
+    have hsum1 : ∑ k : V → Fin N, AddMonoidAlgebra.coeff G ν * (∏ v, z k v ^ ν v) * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) =
+        AddMonoidAlgebra.coeff G ν * ((∏ v, (ρ v : ℂ) ^ ν v) *
           ∑ k : V → Fin N, ∏ v, (ζ ^ ν v * ζ⁻¹ ^ μ v) ^ (k v : ℕ)) := by
       rw [Finset.mul_sum, Finset.mul_sum]
       exact Finset.sum_congr rfl (fun k _ => by rw [mul_assoc, hprod k])
@@ -296,20 +282,20 @@ theorem coeff_cauchy_bound : CoeffCauchy := by
       ring
     · simp
   have hexp : ∀ k : V → Fin N, MvPolynomial.eval (z k) G * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) =
-      ∑ ν ∈ G.support, MvPolynomial.coeff ν G * (∏ v, z k v ^ ν v) * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) := by
+      ∑ ν ∈ G.support, AddMonoidAlgebra.coeff G ν * (∏ v, z k v ^ ν v) * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) := by
     intro k
     rw [MvPolynomial.eval_eq', Finset.sum_mul]
   have key : ∑ k : V → Fin N, MvPolynomial.eval (z k) G * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v) =
-      (N : ℂ) ^ Fintype.card V * (MvPolynomial.coeff μ G * ∏ v, (ρ v : ℂ) ^ μ v) := by
+      (N : ℂ) ^ Fintype.card V * (AddMonoidAlgebra.coeff G μ * ∏ v, (ρ v : ℂ) ^ μ v) := by
     rw [Finset.sum_congr rfl (fun k _ => hexp k), Finset.sum_comm, Finset.sum_congr rfl inner]
     rw [Finset.sum_eq_single μ (fun ν _ hν => if_neg hν) (fun hμ => by
-      have h0 : MvPolynomial.coeff μ G = 0 := by
+      have h0 : AddMonoidAlgebra.coeff G μ = 0 := by
         by_contra h
         exact hμ (MvPolynomial.mem_support_iff.mpr h)
       rw [if_pos rfl, h0]
       simp)]
     rw [if_pos rfl]
-  have hbound : ‖(N : ℂ) ^ Fintype.card V * (MvPolynomial.coeff μ G * ∏ v, (ρ v : ℂ) ^ μ v)‖ ≤
+  have hbound : ‖(N : ℂ) ^ Fintype.card V * (AddMonoidAlgebra.coeff G μ * ∏ v, (ρ v : ℂ) ^ μ v)‖ ≤
       (N : ℝ) ^ Fintype.card V * S := by
     rw [← key]
     calc ‖∑ k : V → Fin N, MvPolynomial.eval (z k) G * ∏ v, ζ⁻¹ ^ ((k v : ℕ) * μ v)‖
@@ -337,7 +323,7 @@ theorem lambda_number_base : LamNumber0 := by
   have hde := h.2.2.1
   have hℓ := h.2.1
   have hBpos : (0 : ℝ) < Rr ^ (∑ v, μ v) := pow_pos hRr _
-  have hlen : ∀ σ, (lineNN de ℓ c μ n).len σ (MvPolynomial.coeff μ G) ≤ S σ * Rr ^ (∑ v, μ v) := by
+  have hlen : ∀ σ, (lineNN de ℓ c μ n).len σ (AddMonoidAlgebra.coeff G μ) ≤ S σ * Rr ^ (∑ v, μ v) := by
     intro σ
     have hnv : ∀ v, 0 < (ℓ (c v)).n σ := fun v => (hℓ (c v)).2 σ
     have hdn : 0 < de.n σ ^ n := pow_pos (hde.2 σ) n
@@ -352,10 +338,10 @@ theorem lambda_number_base : LamNumber0 := by
       simp [one_div, inv_pow]
     rw [hprod] at hC
     simp only [MLine.len, lineNN, MLine.tensor, MLine.dual, MLine.pow, MLine.prodPow]
-    calc ‖σ (MvPolynomial.coeff μ G)‖ * (de.n σ ^ n * (∏ v, (ℓ (c v)).n σ ^ μ v)⁻¹)
-        = ‖σ (MvPolynomial.coeff μ G)‖ * (∏ v, (ℓ (c v)).n σ ^ μ v)⁻¹ * de.n σ ^ n := by ring
+    calc ‖σ (AddMonoidAlgebra.coeff G μ)‖ * (de.n σ ^ n * (∏ v, (ℓ (c v)).n σ ^ μ v)⁻¹)
+        = ‖σ (AddMonoidAlgebra.coeff G μ)‖ * (∏ v, (ℓ (c v)).n σ ^ μ v)⁻¹ * de.n σ ^ n := by ring
       _ ≤ S σ * Rr ^ (∑ v, μ v) := hC
-  have hE := lambda_endomorphism K (lineNN de ℓ c μ n) (MvPolynomial.coeff μ G) S _ hNg hcf hmem hS hBpos hlen
+  have hE := lambda_endomorphism K (lineNN de ℓ c μ n) (AddMonoidAlgebra.coeff G μ) S _ hNg hcf hmem hS hBpos hlen
   have hd := finrank_pos_real K
   have hlogB : Real.log (Rr ^ (∑ v, μ v)) = (∑ v, (μ v : ℝ)) * Real.log Rr := by
     rw [Real.log_pow]; push_cast; ring
@@ -367,11 +353,6 @@ theorem lambda_number_base : LamNumber0 := by
     rwa [div_le_iff₀ hd] at this
   rw [hlogB] at hE
   nlinarith
-
-theorem LamNumber_of (hH : HadamardIdeals) (hD : DetGood) : LamNumber := by
-  unfold LamNumber
-  intro K _ _ g Lie ℓ u de La logOm V _ c G μ n S Rr h
-  exact lambda_number_base K g _ ℓ de La logOm V c G μ n S Rr (CMNumbersLink_of hH hD K g Lie ℓ u de La logOm h)
 
 section loc
 
@@ -436,12 +417,6 @@ theorem coeff_mem_of_local : CoeffMemOfLoc := by
 section galois
 
 variable {K : Type} [Field K] [NumberField K]
-
-def compEquiv (γ : K ≃+* K) : (K →+* ℂ) ≃ (K →+* ℂ) where
-  toFun σ := σ.comp (γ : K →+* K)
-  invFun σ := σ.comp (γ.symm : K →+* K)
-  left_inv σ := by ext x; simp
-  right_inv σ := by ext x; simp
 
 end galois
 

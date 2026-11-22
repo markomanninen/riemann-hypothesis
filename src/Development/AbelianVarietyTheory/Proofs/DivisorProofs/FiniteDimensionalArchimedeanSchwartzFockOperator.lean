@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DOpMemDStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DOpMemDStep
+
+@[expose] public section
+
 open NumberField MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.AdelicU
 
 noncomputable section
@@ -12,13 +17,15 @@ theorem lin_expand {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
   conv_lhs => rw [← B.sum_repr b]
   simp only [lin, Finset.sum_apply, Pi.smul_apply, Finset.mul_sum, mul_smul_comm]
   rw [Finset.sum_comm]
-  simp [map_sum, map_smul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, Finset.mul_sum]
 
 theorem fderiv_expand {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] {ι : Type} [Fintype ι]
     (B : Module.Basis ι ℝ (κ → mixedEmbedding.mixedSpace F)) (a : κ → mixedEmbedding.mixedSpace F) (f : SInf F κ) (x) :
     fderiv ℝ f x a = ∑ j, (B.repr a j : ℂ) * fderiv ℝ f x (B j) := by
   conv_lhs => rw [← B.sum_repr a]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun j _ => by rw [map_smul, Complex.real_smul]
 
 theorem sumAt {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] {ι : Type} (s : Finset ι) (g : ι → SInf F κ) (x) :

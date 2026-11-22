@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamExtensionPotentiallySemistableStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamBlockTriangularDiagonalBlocksStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamExtensionPotentiallySemistableStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamBlockTriangularDiagonalBlocksStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,16 +59,15 @@ variable (X : Matrix m n ↥(MaximalUnramifiedExtension l)) (Y : Matrix n m ↥(
   (h : ∀ g, (ρ' g : Matrix m m ↥(MaximalUnramifiedExtension l)) = X * (ρ g : Matrix n n ↥(MaximalUnramifiedExtension l)) * Y)
 
 include hX hY h in
-theorem isRat_of (hρ : IsRat r ρ) : IsRat r ρ' where
-  pos := hρ.pos
-  le := hρ.le
-  rat g i j := by
+theorem isRat_of (hρ : IsRat r ρ) : IsRat r ρ' := by
+  refine ⟨hρ.pos, hρ.le, ?_, ?_⟩
+  · intro g i j
     have hρg : (ρ g : Matrix n n ↥(MaximalUnramifiedExtension l)).map (fr l r) = ρ g := Matrix.ext fun a b => hρ.rat g a b
     have e : (X * (ρ g : Matrix n n ↥(MaximalUnramifiedExtension l)) * Y).map (fr l r) = X * (ρ g : Matrix n n ↥(MaximalUnramifiedExtension l)) * Y := by
       rw [Matrix.map_mul, Matrix.map_mul, map_fr hX, map_fr hY, hρg]
     rw [h g]
     exact congrFun (congrFun e i) j
-  cont i j := by
+  · intro i j
     have e : (fun g => (((ρ' g : Matrix m m ↥(MaximalUnramifiedExtension l)) i j : ↥(MaximalUnramifiedExtension l)) : Om l)) = fun g =>
         ∑ k, ∑ k', ((X i k' : ↥(MaximalUnramifiedExtension l)) : Om l) * (((ρ g : Matrix n n ↥(MaximalUnramifiedExtension l)) k' k : ↥(MaximalUnramifiedExtension l)) : Om l) *
           ((Y k j : ↥(MaximalUnramifiedExtension l)) : Om l) := by
@@ -72,7 +75,8 @@ theorem isRat_of (hρ : IsRat r ρ) : IsRat r ρ' where
       rw [h g]
       simp only [Matrix.mul_apply, Finset.sum_mul]
       change algebraMap ↥(MaximalUnramifiedExtension l) (Om l) _ = _
-      simp only [map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul]
       rfl
     rw [e]
     refine continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun k' _ => ?_
@@ -189,17 +193,13 @@ variable {a b : Type} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b] {K
   (ρ : ↥(GK K) →* GL (a ⊕ b) ↥(MaximalUnramifiedExtension l))
   (hz : ∀ g i j, (ρ g : Matrix (a ⊕ b) (a ⊕ b) ↥(MaximalUnramifiedExtension l)) (Sum.inr i) (Sum.inl j) = 0)
 
-theorem isRat_blk₁ (hρ : IsRat r ρ) : IsRat r (blk₁ ρ hz) where
-  pos := hρ.pos
-  le := hρ.le
-  rat g i j := hρ.rat g _ _
-  cont i j := hρ.cont _ _
+theorem isRat_blk₁ (hρ : IsRat r ρ) : IsRat r (blk₁ ρ hz) := by
+  exact ⟨hρ.pos, hρ.le, fun g i j => hρ.rat g (Sum.inl i) (Sum.inl j),
+    fun i j => hρ.cont (Sum.inl i) (Sum.inl j)⟩
 
-theorem isRat_blk₂ (hρ : IsRat r ρ) : IsRat r (blk₂ ρ hz) where
-  pos := hρ.pos
-  le := hρ.le
-  rat g i j := hρ.rat g _ _
-  cont i j := hρ.cont _ _
+theorem isRat_blk₂ (hρ : IsRat r ρ) : IsRat r (blk₂ ρ hz) := by
+  exact ⟨hρ.pos, hρ.le, fun g i j => hρ.rat g (Sum.inr i) (Sum.inr j),
+    fun i j => hρ.cont (Sum.inr i) (Sum.inr j)⟩
 
 end BlocksRat
 

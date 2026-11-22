@@ -1,32 +1,37 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormLength
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PVertTermEq
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IsChowFormCMul
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PPrimitiveUnit
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PGaussEq
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PParAlgIndep
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecBLinInj
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormEval
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowSecDegree
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormIdentity
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.POrdEq
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChartTorsion
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowFormHomog
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowNormFormGeneric
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowNormForm
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PIncidenceNull
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PLengthDecomp
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormLocalization
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PParDVRIsDVR
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PParFracIsFractionRing
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PPrimitiveScale
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecAlgField
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecBFinite
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecBGeneric
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecLinNZD
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecMax
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecResidue
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormLength
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PVertTermEq
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IsChowFormCMul
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PGaussEq
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PParAlgIndep
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecBLinInj
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormEval
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowSecDegree
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormIdentity
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.POrdEq
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChartTorsion
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowFormHomog
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowNormFormGeneric
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowNormForm
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PIncidenceNull
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PLengthDecomp
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormLocalization
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PParDVRIsDVR
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PParFracIsFractionRing
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PPrimitiveScale
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecAlgField
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecBFinite
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecBGeneric
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecLinNZD
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecMax
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecResidue
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -35,7 +40,6 @@ open MvPolynomial NumberField IsDedekindDomain
 
 theorem NormLength.full : NormLength.Statement := NormLength.proof
 theorem VertTermEq.full : VertTermEq.Statement := VertTermEq.proof
-theorem PrimitiveUnit.full : PrimitiveUnit.Statement := PrimitiveUnit.proof
 theorem ParAlgIndep.full : ParAlgIndep.Statement := ParAlgIndep.proof
 theorem NormFormEval.full : NormFormEval.Statement := NormFormEval.proof
 theorem ChartTorsion.full : ChartTorsion.Statement := ChartTorsion.proof

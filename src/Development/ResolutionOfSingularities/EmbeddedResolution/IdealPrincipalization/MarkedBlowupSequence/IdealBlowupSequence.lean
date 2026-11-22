@@ -1,8 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits Opposite AlgebraicGeometry TopologicalSpace
@@ -31,8 +36,6 @@ variable {k : Type u} [Field k] {X : Scheme.{u}} {p : X ⟶ Spec (CommRingCat.of
 
 def structureMorphism (s : SmoothCenterBlowup p I E) : s.obj ⟶ Spec (CommRingCat.of k) := s.map ≫ p
 
-theorem structureMorphism_eq (s : SmoothCenterBlowup p I E) : s.structureMorphism = s.map ≫ p := rfl
-
 def exceptionalIdeal (s : SmoothCenterBlowup p I E) : s.obj.IdealSheafData :=
   Blowup.exceptionalIdeal s.map s.center
 
@@ -40,9 +43,6 @@ theorem exceptionalIdeal_eq (s : SmoothCenterBlowup p I E) : s.exceptionalIdeal 
 
 def boundary (s : SmoothCenterBlowup p I E) : List s.obj.IdealSheafData :=
   E.map (Blowup.strictTransform s.map s.center) ++ [s.exceptionalIdeal]
-
-theorem boundary_eq (s : SmoothCenterBlowup p I E) :
-    s.boundary = E.map (Blowup.strictTransform s.map s.center) ++ [s.exceptionalIdeal] := rfl
 
 end SmoothCenterBlowup
 
@@ -107,13 +107,6 @@ def lastIdeal (s : IdealBlowupSequence p I E) :
 
 theorem lastIdeal_eq (s : IdealBlowupSequence p I E) :
     s.lastIdeal = s.ideal s.toSequenceOfBlowups.length := rfl
-
-def lastBoundary (s : IdealBlowupSequence p I E) :
-    List (s.toSequenceOfBlowups.schemeAt s.toSequenceOfBlowups.length).IdealSheafData :=
-  s.boundary s.toSequenceOfBlowups.length
-
-theorem lastBoundary_eq (s : IdealBlowupSequence p I E) :
-    s.lastBoundary = s.boundary s.toSequenceOfBlowups.length := rfl
 
 end IdealBlowupSequence
 

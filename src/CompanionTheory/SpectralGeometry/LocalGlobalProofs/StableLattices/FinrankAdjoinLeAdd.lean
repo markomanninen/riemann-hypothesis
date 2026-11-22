@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.CommSplit
 
@@ -59,7 +63,7 @@ lemma adjoin_compr {l : ℕ} (a : Fin l → End ℂ V) (W W' : Submodule ℂ V) 
     refine ⟨fun w hw => ?_, ?_⟩
     · rw [LinearMap.add_apply]
       exact W.add_mem (hx.1 w hw) (hy.1 w hw)
-    · rw [map_add]
+    · rw [map_add (f := _)]
       exact Subalgebra.add_mem _ hx.2 hy.2
   | mul x y _ _ hx hy =>
     refine ⟨fun w hw => ?_, ?_⟩
@@ -84,7 +88,7 @@ theorem finrank_adjoin_le_add :
     { toFun := fun b => (⟨compr W W' hc b, (adjoin_compr a W W' hc h b b.2).2⟩,
         ⟨compr W' W hc.symm b, (adjoin_compr a W' W hc.symm h' b b.2).2⟩)
       map_add' := fun b c => by
-        ext <;> simp [map_add]
+        ext <;> simp [map_add (f := _)]
       map_smul' := fun t b => by
         ext <;> simp [map_smul] }
   have hinj : Function.Injective Φ := by
@@ -106,7 +110,7 @@ theorem finrank_adjoin_le_add :
       rw [compr_of_inv W' W hc.symm _ (adjoin_compr a W' W hc.symm h' b b.2).1,
         compr_of_inv W' W hc.symm _ (adjoin_compr a W' W hc.symm h' c c.2).1] at e
       exact congrArg Subtype.val e
-    rw [map_add, map_add, e1, e2]
+    rw [map_add (f := _), map_add (f := _), e1, e2]
   calc Module.finrank ℂ (Algebra.adjoin ℂ (Set.range a)) ≤ Module.finrank ℂ (AW × AW') :=
         LinearMap.finrank_le_finrank_of_injective hinj
     _ = Module.finrank ℂ AW + Module.finrank ℂ AW' := Module.finrank_prod

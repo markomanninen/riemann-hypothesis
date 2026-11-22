@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.PartsOrth
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
-import Formalism.LocalToGlobal.GlobalTheory.DivPassage
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.PartsOrth
+public import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
+public import Formalism.LocalToGlobal.GlobalTheory.DivPassage
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -39,16 +43,16 @@ def KFormL : Prop :=
   ∀ j t, LinearIndependent ℂ (fun k => X.jL j t (bL j t k)) ∧
     Submodule.span ℂ (Set.range fun k => X.jL j t (bL j t k)) = ⊤
 
-open Classical in
 
+open Classical in
 def opC (t : Bs.Tup) (i : A.OpR t) : Module.End ℂ (X.FC t) :=
   if h : LinearIndependent ℂ (fun k => X.jR t (bR t k)) ∧
       Submodule.span ℂ (Set.range fun k => X.jR t (bR t k)) = ⊤ then
     (Basis.mk h.1 h.2.ge).constr ℂ fun k => X.jR t (A.opR t i (bR t k))
   else 0
 
-open Classical in
 
+open Classical in
 def opLC (j : Bs.J) (t : Bs.Tup) (i : A.OpL j t) : Module.End ℂ (X.FLC j t) :=
   if h : LinearIndependent ℂ (fun k => X.jL j t (bL j t k)) ∧
       Submodule.span ℂ (Set.range fun k => X.jL j t (bL j t k)) = ⊤ then
@@ -152,8 +156,8 @@ section Pairing
 
 variable {fc : DefSub A → DefFace Bs} (cr : Crd A fc)
 
-open Classical in
 
+open Classical in
 def rinv {d n : ℕ} (P : Matrix (Fin d) (Fin n) K) : Matrix (Fin n) (Fin d) K :=
   if h : ∃ R : Matrix (Fin n) (Fin d) K, P * R = 1 then h.choose else 0
 
@@ -191,14 +195,11 @@ def W1 (N : IndefNum Bs) (w : HeightOneSpectrum (𝓞 K)) : Prop :=
     jw ((lv (fc X.zs) false).HT j Bs.μ0) (conjPl w) ((lv (fc X.zs) false).Tl j Bs.μ0) ≠ 0 ∨
     N.F0 w j ≠ 0 ∨ N.F0 (conjPl w) j ≠ 0
 
-open Classical in
 
+open Classical in
 def MuDef (N : IndefNum Bs) (tw : HeightOneSpectrum (𝓞 K) → Bs.Tup) : Prop :=
   (∀ w, X.W1 cr N w → tw w ≠ Bs.μ0) ∧ (∀ w, X.W1 cr N w → tw (conjPl w) = tw w) ∧
     (∀ w, X.μ w = if X.W1 cr N w then tw w else Bs.μ0) ∧ ∀ w, w ∈ X.Tw ↔ X.W1 cr N w
-
-def CutTuples (C CH : ℝ) : Prop :=
-  ∀ tw, X.MuDef cr ((fc X.zs).Z.num C CH) tw → X.H0 ∧ (X.data cr false).Untwisted ((fc X.zs).Z.num C CH)
 
 def CutTuples2 (C CH : ℝ) : Prop :=
   X.H0 → (∀ w, X.W1 cr ((fc X.zs).Z.num C CH) w → w ∈ X.Tw) → (X.data cr false).Untwisted ((fc X.zs).Z.num C CH)
@@ -209,17 +210,6 @@ section Passage
 
 variable {fc : DefSub A → DefFace Bs} (cr : Crd A fc)
 
-open Formalism.L2.GlobalTheoryTheory.DivPassage in
-
-def Levels (N : IndefNum Bs) : Prop :=
-  ∃ LA : LevelAmb K (X.data cr false).D (X.data cr true).D,
-    LA.FramesG ∧ LA.LatG ∧ LA.EmbAt LA.ι0 LA.ep0 LA.h0 (X.data cr false).XE ∧
-    LA.EmbAt LA.ι1 LA.ep1 LA.h1 (X.data cr true).XE ∧ LA.SandAt LA.ι0 LA.ep0 LA.h0 (X.data cr false).RR ∧
-    LA.SandAt LA.ι1 LA.ep1 LA.h1 (X.data cr true).RR ∧ LA.Sizes N.la ∧ LA.Ranks ∧ LA.Deg0 ∧ LA.Deg1 ∧
-    LA.MaxT ∧ LA.Mult N.de ∧ LA.RowsG
-
-def CutPassage [IsTotallyComplex K] (C CH : ℝ) : Prop :=
-  X.Levels cr ((fc X.zs).Z.num C CH) → Passage ((fc X.zs).Z.num C CH) (X.data cr false) (X.data cr true)
 
 end Passage
 

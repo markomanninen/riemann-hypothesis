@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRatPrimeDense
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFiniteSeparatingModel
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRootsNear
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRootsBounded
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPolyNonvanishDense
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRatPrimeDense
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFiniteSeparatingModel
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRootsNear
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRootsBounded
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPolyNonvanishDense
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

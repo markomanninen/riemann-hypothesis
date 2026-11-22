@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding Complex Classical
 open scoped TensorProduct ContDiff nonZeroDivisors
@@ -46,17 +50,17 @@ theorem exists_mul_conj_eq_algebraMap (F E : Type) [Field F] [NumberField F] [Fi
     | add y₁ y₂ h₁ h₂ =>
       obtain ⟨n₁, h₁⟩ := h₁
       obtain ⟨n₂, h₂⟩ := h₂
-      exact ⟨n₁ + n₂, by rw [map_add, map_add, ← h₁, ← h₂]; ring⟩
+      exact ⟨n₁ + n₂, by rw [map_add (f := _), map_add (f := _), ← h₁, ← h₂]; ring⟩
     | tmul a e =>
       induction z using TensorProduct.induction_on with
       | zero => exact ⟨0, by simp⟩
       | add z₁ z₂ h₁ h₂ =>
         obtain ⟨n₁, h₁⟩ := h₁
         obtain ⟨n₂, h₂⟩ := h₂
-        exact ⟨n₁ + n₂, by rw [map_add, map_add, ← h₁, ← h₂]; ring⟩
+        exact ⟨n₁ + n₂, by rw [map_add (f := _), map_add (f := _), ← h₁, ← h₂]; ring⟩
       | tmul b f =>
         obtain ⟨c, hc⟩ := mem_range_algebraMap_of_conj_fixed F E σ hE h2 hσ
-          (e * σ f + f * σ e) (by rw [map_add, map_mul, map_mul, hinv, hinv]; ring)
+          (e * σ f + f * σ e) (by rw [map_add (f := _), map_mul, map_mul, hinv, hinv]; ring)
         refine ⟨c • (a * b), ?_⟩
         rw [hφ, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul,
           Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul,

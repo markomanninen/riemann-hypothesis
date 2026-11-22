@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ReFormPosOfThetaNeZero
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ReFormPosOfThetaNeZero
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
@@ -53,7 +57,7 @@ theorem pos_of_theta_power : ∀ (g : ℕ) (Λ : Submodule ℤ (Fin g → ℂ)),
     rw [star_star] at h1 h2
     exact Complex.le_def.mpr ⟨h1, h2.symm⟩
   have hker : Hm.mulVec (star z) = 0 :=
-    (hpsd.dotProduct_mulVec_zero_iff (star z)).mp (by
+    hpsd.dotProduct_mulVec_zero_iff.mp (by
       rw [star_star]
       exact Complex.ext h0.symm (him z))
   have hker' : ∀ t : ℂ, H'.mulVec (star (t • z)) = 0 := by

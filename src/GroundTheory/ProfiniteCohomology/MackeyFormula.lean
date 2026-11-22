@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.MackeyDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.MackeyDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -15,13 +20,13 @@ variable (U : Subgroup G) (ι : H →* G) (N : Rep.{u} k U)
 theorem exists_eq_mul_out_mul (y : G) :
     ∃ u : U, ∃ h : H, y = (u : G) * (DoubleCoset.mk U ι.range y).out * ι h := by
   obtain ⟨a, ha, b, hb, e⟩ :=
-    (DoubleCoset.eq U ι.range _ y).1 (DoubleCoset.out_eq' U ι.range (DoubleCoset.mk U ι.range y))
+    (@DoubleCoset.eq _ _ U ι.range _ y).1 (DoubleCoset.out_eq' (DoubleCoset.mk U ι.range y))
   obtain ⟨h, rfl⟩ := MonoidHom.mem_range.1 hb
   exact ⟨⟨a, ha⟩, h, e⟩
 
 theorem doubleCosetMk_mul_mul (x : G) (u : U) (h : H) :
     DoubleCoset.mk U ι.range ((u : G) * x * ι h) = DoubleCoset.mk U ι.range x :=
-  ((DoubleCoset.eq U ι.range _ _).2 ⟨u, u.2, ι h, ⟨h, rfl⟩, rfl⟩).symm
+  ((@DoubleCoset.eq _ _ U ι.range _ _).2 ⟨u, u.2, ι h, ⟨h, rfl⟩, rfl⟩).symm
 
 theorem coind_apply_eq_of_mul_eq (x : G)
     (F : Representation.coindV (mackeySubgroup U ι x).subtype (mackeyRep U ι N x).ρ)
@@ -84,7 +89,7 @@ noncomputable def mackeyLift :
     funext y
     simp only [mackeyLiftFun]
     change _ = N.ρ _ ((F _).1 _) + N.ρ _ ((F' _).1 _)
-    rw [← map_add]
+    rw [← map_add (f := _)]
     rfl
   map_smul' r F := by
     apply Subtype.ext
@@ -143,11 +148,6 @@ noncomputable def mackeyEquiv :
   left_inv f := mackeyLift_mackeyProj U ι N f
   right_inv F := funext fun d => mackeyProj_mackeyLift U ι N F d
 
-theorem mackeyEquiv_apply_ρ (f : Rep.coind U.subtype N) (h₀ : H) (d : MackeyDoubleCoset U ι) :
-    mackeyEquiv U ι N ((Rep.coind U.subtype N).ρ (ι h₀) f) d =
-      (mackeySummand U ι N d.out).ρ h₀ (mackeyEquiv U ι N f d) :=
-  Rep.hom_comm_apply (mackeyProj U ι N d.out) h₀ f
-
 theorem mackeyLift_single_ρ [DecidableEq (MackeyDoubleCoset U ι)] (d : MackeyDoubleCoset U ι)
     (F : mackeySummand U ι N d.out) (h₀ : H) :
     mackeyLift U ι N (Pi.single d ((mackeySummand U ι N d.out).ρ h₀ F)) =
@@ -161,12 +161,11 @@ theorem mackeyLift_single_ρ [DecidableEq (MackeyDoubleCoset U ι)] (d : MackeyD
   · simp [Pi.single_eq_of_ne hd]
 
 open scoped Classical in
-
 noncomputable def mackeyIncl (d : MackeyDoubleCoset U ι) :
     mackeySummand U ι N d.out ⟶ Rep.res ι (Rep.coind U.subtype N) :=
   Rep.ofHom ⟨{
       toFun := fun F => mackeyLift U ι N (Pi.single d F)
-      map_add' := fun F F' => by rw [Pi.single_add, map_add]
+      map_add' := fun F F' => by rw [Pi.single_add, map_add (f := _)]
       map_smul' := fun r F => by rw [Pi.single_smul, map_smul]; rfl },
     fun h₀ => LinearMap.ext fun F => mackeyLift_single_ρ U ι N d F h₀⟩
 
@@ -203,48 +202,14 @@ theorem sum_mackeyProj_comp_mackeyIncl :
   let ev : (Rep.res ι (Rep.coind U.subtype N) ⟶ Rep.res ι (Rep.coind U.subtype N)) →+
       Rep.coind U.subtype N := AddMonoidHom.mk' (fun φ => φ.hom f) fun _ _ => rfl
   change ev (∑ d : MackeyDoubleCoset U ι, mackeyProj U ι N d.out ≫ mackeyIncl U ι N d) = f
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   change ∑ d : MackeyDoubleCoset U ι,
     (mackeyIncl U ι N d).hom ((mackeyProj U ι N d.out).hom f) = f
-  rw [Finset.sum_congr rfl fun d _ => mackeyIncl_hom_apply U ι N d _, ← map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_congr rfl fun d _ => mackeyIncl_hom_apply U ι N d _, ← map_sum,
     Finset.univ_sum_single]
   exact mackeyLift_mackeyProj U ι N f
-
-noncomputable def mackeyBicone :
-    Bicone (fun d : MackeyDoubleCoset U ι => mackeySummand U ι N d.out) where
-  pt := Rep.res ι (Rep.coind U.subtype N)
-  π d := mackeyProj U ι N d.out
-  ι d := mackeyIncl U ι N d
-  ι_π d d' := by
-    split_ifs with h
-    · subst h
-      simpa using mackeyIncl_comp_mackeyProj U ι N d
-    · exact mackeyIncl_comp_mackeyProj_of_ne U ι N h
-
-noncomputable def mackeyBiconeIsBilimit : (mackeyBicone U ι N).IsBilimit :=
-  isBilimitOfTotal _ (sum_mackeyProj_comp_mackeyIncl U ι N)
-
-instance hasBiproduct_mackeySummand :
-    HasBiproduct fun d : MackeyDoubleCoset U ι => mackeySummand U ι N d.out :=
-  HasBiproduct.mk ⟨_, mackeyBiconeIsBilimit U ι N⟩
-
-noncomputable def mackeyIso :
-    Rep.res ι (Rep.coind U.subtype N) ≅ ⨁ fun d : MackeyDoubleCoset U ι => mackeySummand U ι N d.out :=
-  biproduct.uniqueUpToIso _ (mackeyBiconeIsBilimit U ι N)
-
-@[reassoc (attr := simp)]
-theorem mackeyIso_hom_π (d : MackeyDoubleCoset U ι) :
-    (mackeyIso U ι N).hom ≫ biproduct.π (fun d : MackeyDoubleCoset U ι => mackeySummand U ι N d.out) d =
-      mackeyProj U ι N d.out := by
-  rw [mackeyIso, biproduct.uniqueUpToIso_hom]
-  exact biproduct.lift_π _ _
-
-@[reassoc (attr := simp)]
-theorem ι_mackeyIso_inv (d : MackeyDoubleCoset U ι) :
-    biproduct.ι (fun d : MackeyDoubleCoset U ι => mackeySummand U ι N d.out) d ≫ (mackeyIso U ι N).inv =
-      mackeyIncl U ι N d := by
-  rw [mackeyIso, biproduct.uniqueUpToIso_inv]
-  exact biproduct.ι_desc _ _
 
 end Finite
 

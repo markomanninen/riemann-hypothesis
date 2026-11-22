@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Mathlib.LinearAlgebra.Matrix.Transvection
-import Mathlib.LinearAlgebra.Matrix.Swap
-import Mathlib.RingTheory.MatrixAlgebra
-import Mathlib.RingTheory.Localization.FractionRing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Mathlib.LinearAlgebra.Matrix.Transvection
+public import Mathlib.LinearAlgebra.Matrix.Swap
+public import Mathlib.RingTheory.MatrixAlgebra
+public import Mathlib.RingTheory.Localization.FractionRing
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -24,7 +28,7 @@ private theorem dm_transv (S : Type) [CommRing S] [Algebra k S] {i j : ι} (hij 
     rw [← nat]
     congr 1
     ext a b
-    simp only [Matrix.transvection, Matrix.map_apply, Matrix.add_apply, Matrix.one_apply, Matrix.single_apply, map_add]
+    simp only [Matrix.transvection, Matrix.map_apply, Matrix.add_apply, Matrix.one_apply, Matrix.single_apply, map_add (f := _)]
     split_ifs <;> simp
   have hu : IsUnit (F k[X] (Matrix.transvection i j X)) := by
     refine IsUnit.of_mul_eq_one (F k[X] (Matrix.transvection i j (-X))) ?_
@@ -123,8 +127,7 @@ private theorem dm_rep (S : Type) [CommRing S] [Algebra k S] (y : S ⊗[k] Matri
     matrixEquivTensor ι k S (Det.repS (AlgHom.id k _) S y) = y := by
   rw [← AlgEquiv.eq_symm_apply]
   induction y with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul s x =>
     rw [Det.repS_tmul, matrixEquivTensor_apply_symm]
     ext a b
@@ -141,7 +144,8 @@ theorem UpperTheory.V.CA.d_matrix :
       change D.D T (matrixEquivTensor _ k T (M.map f)) = f (D.D S (matrixEquivTensor _ k S M))
       rw [← D.nat]
       congr 1
-      simp [matrixEquivTensor_apply, map_sum])
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [matrixEquivTensor_apply, map_sum])
     (fun S _ _ b M => by
       change D.D S (matrixEquivTensor _ k S (b • M)) = b ^ n * D.D S (matrixEquivTensor _ k S M)
       rw [← D.homog]

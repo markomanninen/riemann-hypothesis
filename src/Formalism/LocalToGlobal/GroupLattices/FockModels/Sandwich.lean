@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.SpanTopOf
-import Formalism.SharpRestriction.GrowthBounds.Joints
-import Formalism.SharpRestriction.GrowthBounds.TensorLatticeBounds.ExistsHypothesesNonempty
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.SpanTopOf
+public import Formalism.SharpRestriction.GrowthBounds.Joints
+public import Formalism.SharpRestriction.GrowthBounds.TensorLatticeBounds.ExistsHypothesesNonempty
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -53,7 +57,7 @@ theorem delta_le [CharZero (KK O)] (hν : Antitone ν) :
   | add x y _ _ hx hy =>
     obtain ⟨z1, hz1, e1⟩ := hx
     obtain ⟨z2, hz2, e2⟩ := hy
-    exact ⟨z1 + z2, Submodule.add_mem _ hz1 hz2, by rw [Submodule.coe_add, e1, e2, map_add]⟩
+    exact ⟨z1 + z2, Submodule.add_mem _ hz1 hz2, by rw [Submodule.coe_add, e1, e2, map_add (f := _)]⟩
   | smul c x _ hx =>
     obtain ⟨z1, hz1, e1⟩ := hx
     exact ⟨c • z1, Submodule.smul_mem _ c hz1, by rw [Submodule.coe_smul_of_tower, e1, sw_map_smul]⟩
@@ -79,8 +83,7 @@ theorem top_coord [CharZero (KK O)] (hν : Antitone ν) (y0 : MvPolynomial (Fin 
         rw [map_eval]
         congr 2
         funext v
-        simp only [idPoint, Function.comp]
-        split_ifs <;> simp
+        simp [idPoint]
       rw [h2] at h1
       rw [← h1, sub_self]
       rfl
@@ -96,7 +99,7 @@ theorem top_coord [CharZero (KK O)] (hν : Antitone ν) (y0 : MvPolynomial (Fin 
     obtain ⟨c1, z1, h1, e1⟩ := hx
     obtain ⟨c2, z2, h2, e2⟩ := hy
     refine ⟨c1 + c2, z1 + z2, Submodule.add_mem _ h1 h2, ?_⟩
-    rw [Submodule.coe_add, e1, e2, map_add, map_add, add_smul]
+    rw [Submodule.coe_add, e1, e2, map_add (f := _), map_add (f := _), add_smul]
     abel
   | smul a x _ hx =>
     obtain ⟨c1, z1, h1, e1⟩ := hx

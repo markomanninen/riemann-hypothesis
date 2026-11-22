@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FinrankMulDiscrRpowLeSumSqOfMemTraceDual
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TorsionTotientBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FinrankMulDiscrRpowLeSumSqOfMemTraceDual
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TorsionTotientBound
+
+@[expose] public section
 
 open NumberField Matrix
 
@@ -22,7 +26,8 @@ private theorem exists_single_of_sum_star_mul {n : ℕ} [Star K]
   have hφ : ∀ φ : K →+* ℂ, ∑ i, ‖φ (z i)‖ ^ 2 = 1 := by
     intro φ
     have h := congrArg φ h1
-    rw [map_sum, map_one] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one] at h
     have h2 : ∀ i, φ (star (z i) * z i) = ((‖φ (z i)‖ ^ 2 : ℝ) : ℂ) := by
       intro i
       rw [map_mul, hconj, Complex.conj_mul']

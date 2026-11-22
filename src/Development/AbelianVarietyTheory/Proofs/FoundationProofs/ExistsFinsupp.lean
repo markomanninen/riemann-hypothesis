@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableAtGP
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmoothedSiegelUnitQExpansionCoeffsIntegral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUnitQExpansionCoefficients
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUnitInTowerAnEqSiegelUnitOnComplex
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisActionSiegelUnitInTower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableAtGP
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmoothedSiegelUnitQExpansionCoeffsIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUnitQExpansionCoefficients
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUnitInTowerAnEqSiegelUnitOnComplex
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisActionSiegelUnitInTower
+
+@[expose] public section
 
 noncomputable section
 
@@ -247,7 +251,7 @@ theorem IsU.ep (hM : 0 < M) (hv : ‖v‖ = 1) {j : ℤ} {e : ℕ} (he : 0 < e) 
       (𝓝 (dc (SiegQ.ep M w e) (fun z => -j * lam M w e z) n)) := by
     refine (t1 n).prodMk_nhds ?_
     simp only [tc_mul d1 (d2.const_mul _), fun N => tc_mul (hg N).dU (hg N).dL, conv, cm d2, fun N => cm (hGd N)]
-    exact tendsto_finset_sum _ fun p _ => (t1 _).mul ((t2 _).const_mul _)
+    exact tendsto_finsetSum _ fun p _ => (t1 _).mul ((t2 _).const_mul _)
   have hs : ∀ N, n ≤ N → dc (F N) (fun z => -j * G N z) n = dc (F n) (fun z => -j * G n z) n := by
     intro N hN
     induction N, hN using Nat.le_induction with
@@ -509,8 +513,8 @@ theorem sg_jets {c : ℕ} {b : ℤ} (hM : 0 < M) (hadm : admitted c ![(A : ℚ) 
     exact dm_mem hv0 g (s3.mem n)
   · rcases s1 with rfl | rfl <;> simp [tc_zero, s3.U0]
 
-open GlobalTheory.KZ in
 
+open GlobalTheory.KZ in
 theorem exp_of_hasQ {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ} (T : Tower Ω ε) (f : T.K) (g : ℍ → ℂ) {M : ℕ}
     (hM : 0 < M) (k : ℤ) (A' : ℕ → ℂ)
     (hmem : T.an f = ((fun z => g (UpperHalfPlane.ofComplex z) : ℂ → ℂ) : Mero))
@@ -536,7 +540,7 @@ theorem exp_of_hasQ {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ} 
   have hB0 : ∀ r, r ∉ Set.range ι → B r = 0 := by
     intro r hr
     simp only [B]
-    rw [dif_neg]
+    rw [dite_eq_right]
     exact hr
   have hBsum : ∀ z : ℂ, 0 < z.im →
       HasSum (fun r : ℚ => B r * Complex.exp (2 * Real.pi * Complex.I * (r : ℂ) * z)) (g (UpperHalfPlane.ofComplex z)) := by

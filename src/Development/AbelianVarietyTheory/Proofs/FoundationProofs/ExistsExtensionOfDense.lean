@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+
+@[expose] public section
+
 open Classical GlobalTheory.FinWeil
 open scoped BigOperators
 
@@ -75,7 +80,7 @@ theorem exists_extension_of_dense {X₀ X M : Type} [AddCommGroup X₀] [AddComm
     obtain ⟨z, a, ha, hz⟩ := hd x n hn0
     obtain ⟨w, c, hc, hw⟩ := hd y n hn0
     have hzw : ι (z + w) = x + y + n • (a + c) := by
-      rw [map_add, hz, hw, smul_add]; abel
+      rw [map_add (f := _), hz, hw, smul_add]; abel
     have hβzw : β (ι z) (ι w) = β x y := by
       rw [hz, hw, hl, hr, hr, (hb' x n h4 c hc).1, (hb' y n h5 a ha).2,
         hA _ (A.nsmul_mem ha n) _ (A.nsmul_mem hc n)]

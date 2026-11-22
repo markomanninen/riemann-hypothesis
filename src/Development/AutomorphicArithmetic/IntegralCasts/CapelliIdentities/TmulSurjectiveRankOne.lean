@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qj4.tmul_surjective_rank_one :
     ∀ {O T X : Type} [inst : CommRing O]

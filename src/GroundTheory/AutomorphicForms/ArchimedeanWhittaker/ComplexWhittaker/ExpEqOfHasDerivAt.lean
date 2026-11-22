@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ArchimedeanWhittaker
-import GroundTheory.AutomorphicForms.RealGroupsIwasawa
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ArchimedeanWhittaker.Density
+public import GroundTheory.AutomorphicForms.RealGroupsIwasawa
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.ArchWhittakerC
 
@@ -8,10 +12,6 @@ open Matrix NormedSpace Complex MeasureTheory
 open scoped Matrix.Norms.L2Operator
 
 abbrev GL2C : Subgroup (GL (Fin 2) ℂ) := ⊤
-
-noncomputable abbrev gl2C : Submodule ℝ (Matrix (Fin 2) (Fin 2) ℂ) := ⊤
-
-theorem hGL2C : IsExpLieAlgebra GL2C gl2C := isExpLieAlgebra_top
 
 noncomputable def toGLC (A : Matrix (Fin 2) (Fin 2) ℂ) (hA : A.det ≠ 0) : GL2C :=
   ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero A hA, Subgroup.mem_top _⟩
@@ -23,26 +23,10 @@ theorem GL2C_ext {g g' : GL2C}
     (h : ((g : GL (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ) = ((g' : GL (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ)) :
     g = g' := Subtype.ext (Units.ext h)
 
-noncomputable def nC (z : ℂ) : GL2C := toGLC !![1, z; 0, 1] (by simp)
-
-noncomputable def aC (t : ℝ) : GL2C :=
-  toGLC !![(Real.exp t : ℂ), 0; 0, (Real.exp (-t) : ℂ)] (by
-    simp [Matrix.det_fin_two_of])
-
-noncomputable def zC (s : ℝ) : GL2C :=
-  toGLC !![(Real.exp s : ℂ), 0; 0, (Real.exp s : ℂ)] (by
-    simp [Matrix.det_fin_two_of])
-
 noncomputable def dC (d₁ d₂ : ℝ) (h₁ : 0 < d₁) (h₂ : 0 < d₂) : GL2C :=
   toGLC !![(d₁ : ℂ), 0; 0, (d₂ : ℂ)] (by
     simp [Matrix.det_fin_two_of, h₁.ne', h₂.ne'])
 
-@[simp] theorem coe_nC (z : ℂ) :
-    (((nC z : GL2C) : GL (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ) = !![1, z; 0, 1] := rfl
-@[simp] theorem coe_aC (t : ℝ) : (((aC t : GL2C) : GL (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ) =
-    !![(Real.exp t : ℂ), 0; 0, (Real.exp (-t) : ℂ)] := rfl
-@[simp] theorem coe_zC (s : ℝ) : (((zC s : GL2C) : GL (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ) =
-    !![(Real.exp s : ℂ), 0; 0, (Real.exp s : ℂ)] := rfl
 @[simp] theorem coe_dC (d₁ d₂ : ℝ) (h₁ : 0 < d₁) (h₂ : 0 < d₂) :
     (((dC d₁ d₂ h₁ h₂ : GL2C) : GL (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ) =
       !![(d₁ : ℂ), 0; 0, (d₂ : ℂ)] := rfl
@@ -91,36 +75,5 @@ noncomputable def tC (a b : ℝ) : U2 :=
 
 @[simp] theorem coe_tC (a b : ℝ) : ((tC a b : U2) : Matrix (Fin 2) (Fin 2) ℂ) =
     !![Complex.exp (a * I), 0; 0, Complex.exp (b * I)] := rfl
-
-noncomputable def lE : gl2C := ⟨!![0, 1; 0, 0], Submodule.mem_top⟩
-
-noncomputable def lEi : gl2C := ⟨!![0, I; 0, 0], Submodule.mem_top⟩
-
-noncomputable def lF : gl2C := ⟨!![0, 0; 1, 0], Submodule.mem_top⟩
-
-noncomputable def lFi : gl2C := ⟨!![0, 0; I, 0], Submodule.mem_top⟩
-
-noncomputable def lH : gl2C := ⟨!![1, 0; 0, -1], Submodule.mem_top⟩
-
-noncomputable def lHi : gl2C := ⟨!![I, 0; 0, -I], Submodule.mem_top⟩
-
-noncomputable def lZ : gl2C := ⟨!![1, 0; 0, 1], Submodule.mem_top⟩
-
-noncomputable def lZi : gl2C := ⟨!![I, 0; 0, I], Submodule.mem_top⟩
-
-noncomputable def lK0 : gl2C := ⟨!![0, 1; -1, 0], Submodule.mem_top⟩
-
-noncomputable def lK1 : gl2C := ⟨!![0, I; I, 0], Submodule.mem_top⟩
-
-@[simp] theorem coe_lE : ((lE : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![0, 1; 0, 0] := rfl
-@[simp] theorem coe_lEi : ((lEi : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![0, I; 0, 0] := rfl
-@[simp] theorem coe_lF : ((lF : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![0, 0; 1, 0] := rfl
-@[simp] theorem coe_lFi : ((lFi : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![0, 0; I, 0] := rfl
-@[simp] theorem coe_lH : ((lH : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![1, 0; 0, -1] := rfl
-@[simp] theorem coe_lHi : ((lHi : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![I, 0; 0, -I] := rfl
-@[simp] theorem coe_lZ : ((lZ : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![1, 0; 0, 1] := rfl
-@[simp] theorem coe_lZi : ((lZi : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![I, 0; 0, I] := rfl
-@[simp] theorem coe_lK0 : ((lK0 : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![0, 1; -1, 0] := rfl
-@[simp] theorem coe_lK1 : ((lK1 : gl2C) : Matrix (Fin 2) (Fin 2) ℂ) = !![0, I; I, 0] := rfl
 
 end GroundTheory.Automorphic.ArchWhittakerC

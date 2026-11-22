@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open scoped TensorProduct
 open MvPolynomial
@@ -52,7 +56,7 @@ theorem pd_comm (i j : σ) : pd i * pd j = pd j * pd i := by
   | C a => simp
   | add p q hp hq => simp [hp, hq]
   | mul_X p k hp =>
-    simp only [Derivation.leibniz, map_add, smul_eq_mul, pderiv_X, hp]
+    simp only [Derivation.leibniz, map_add (f := _), smul_eq_mul, pderiv_X, hp]
     by_cases h1 : i = k <;> by_cases h2 : j = k <;> simp [h1, h2, add_comm]
 
 theorem word_monomial (l : List σ) : ∀ (s : σ →₀ ℕ) (c : ℂ), s.degree < l.length →
@@ -72,7 +76,7 @@ theorem word_monomial (l : List σ) : ∀ (s : σ →₀ ℕ) (c : ℂ), s.degre
         rw [Finsupp.single_le_iff]
         omega
       have e2 := congrArg Finsupp.degree e
-      rw [map_add, Finsupp.degree_single] at e2
+      rw [map_add (f := _), Finsupp.degree_single] at e2
       simp only [List.length_append, List.length_singleton] at h
       omega
 
@@ -83,7 +87,7 @@ theorem word_pol (f : MvPolynomial σ ℂ) : ∃ m : ℕ, ∀ l : List σ, m ≤
     obtain ⟨m, hm⟩ := hp
     obtain ⟨k, hk⟩ := hq
     exact ⟨max m k, fun l hl => by
-      rw [map_add, hm l (le_trans (le_max_left _ _) hl), hk l (le_trans (le_max_right _ _) hl), add_zero]⟩
+      rw [map_add (f := _), hm l (le_trans (le_max_left _ _) hl), hk l (le_trans (le_max_right _ _) hl), add_zero]⟩
 
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
@@ -105,7 +109,7 @@ theorem word_tens (z : V ⊗[ℂ] MvPolynomial σ ℂ) : ∃ m : ℕ, ∀ l : Li
     obtain ⟨m, hm⟩ := hp
     obtain ⟨k, hk⟩ := hq
     exact ⟨max m k, fun l hl => by
-      rw [map_add, hm l (le_trans (le_max_left _ _) hl), hk l (le_trans (le_max_right _ _) hl), add_zero]⟩
+      rw [map_add (f := _), hm l (le_trans (le_max_left _ _) hl), hk l (le_trans (le_max_right _ _) hl), add_zero]⟩
 
 end Pol
 
@@ -134,7 +138,7 @@ theorem cover : Koszul → Verma → Cover := by
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v f => simp [EY, hcc, h0]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
   · refine hK n ε (V ⊗[ℂ] P) (fun i => EY i.1.1 i.1.2) (fun i => (pd i).lTensor V) ?_ ?_ ?_ ?_
     · intro i j
       have h := hEY i.1.1 i.1.2 j.1.1 j.1.2

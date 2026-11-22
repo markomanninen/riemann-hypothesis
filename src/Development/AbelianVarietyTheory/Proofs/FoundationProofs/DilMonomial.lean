@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousExptPY
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.FockSingularValues
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousExptPY
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.FockSingularValues
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.FockDecay
@@ -48,7 +52,7 @@ theorem dil_monomial {p q n : ℕ} (u : Ix p q → ℝ) (α : Ln p q n 0 →₀ 
 
 theorem dil_dil_neg {p q n : ℕ} (u : Ix p q → ℝ) (Φ : Pol p q n 0) : dil n u (dil n (-u) Φ) = Φ := by
   induction Φ using MvPolynomial.induction_on' with
-  | add P Q hP hQ => rw [map_add, map_add, hP, hQ]
+  | add P Q hP hQ => rw [map_add (f := _), map_add (f := _), hP, hQ]
   | monomial α c =>
     rw [dil_monomial, map_smul, dil_monomial, smul_smul, ← Complex.ofReal_mul, ← Real.exp_add,
       ← Finset.sum_add_distrib]
@@ -56,7 +60,7 @@ theorem dil_dil_neg {p q n : ℕ} (u : Ix p q → ℝ) (Φ : Pol p q n 0) : dil 
 
 theorem dil_zero {p q n : ℕ} (Φ : Pol p q n 0) : dil n 0 Φ = Φ := by
   induction Φ using MvPolynomial.induction_on' with
-  | add P Q hP hQ => rw [map_add, hP, hQ]
+  | add P Q hP hQ => rw [map_add (f := _), hP, hQ]
   | monomial α c => rw [dil_monomial]; simp
 
 end GlobalTheory.FockDecay

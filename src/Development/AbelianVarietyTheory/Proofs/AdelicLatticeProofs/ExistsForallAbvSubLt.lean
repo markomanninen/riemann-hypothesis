@@ -1,13 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Matrix WithZero
 
 namespace GlobalTheory.LocalQuad.Approx
 
+
 open NumberField IsDedekindDomain in
 open scoped Matrix WithZero in
-
 theorem _root_.GlobalTheory.LocalQuad.Approx.exists_forall_abv_sub_lt {F : Type*} [Field F] {ι : Type*} [Finite ι]
     {v : ι → AbsoluteValue F ℝ} (h : ∀ i, (v i).IsNontrivial)
     (hv : Pairwise fun i j ↦ ¬(v i).IsEquiv (v j)) (z : ι → F) {ε : ℝ} (hε : 0 < ε) :
@@ -18,7 +22,7 @@ theorem _root_.GlobalTheory.LocalQuad.Approx.exists_forall_abv_sub_lt {F : Type*
     (fun i ↦ WithAbs.toAbs (v i) (z i)) hε
   refine ⟨x, fun i ↦ ?_⟩
   have hi := (dist_pi_lt_iff hε).1 hx i
-  rw [dist_eq_norm, WithAbs.norm_eq_abv] at hi
+  rw [dist_eq_norm, WithAbs.norm_eq_apply_ofAbs] at hi
   convert hi using 2
   rfl
 
@@ -99,10 +103,10 @@ theorem _root_.GlobalTheory.LocalQuad.Approx.abv_pairwise (T : Finset (HeightOne
 
 end GlobalTheory.LocalQuad.Approx
 
+
 open NumberField IsDedekindDomain in
 open scoped Matrix WithZero in
 variable {F : Type} [Field F] [NumberField F] in
-
 theorem _root_.GlobalTheory.LocalQuad.denseRange_finite_real (F : Type) [Field F] [NumberField F]
     (T : Finset (HeightOneSpectrum (𝓞 F))) :
     DenseRange (fun x : F =>

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
-import Development.AbelianVarietyTheory.Definitions.Divisors.ChartMeasApplyOfSubset
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsClosedEmbeddingOfAffine
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHolomorphicSections
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ChartMeasApplyOfSubset
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsClosedEmbeddingOfAffine
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHolomorphicSections
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,8 +38,8 @@ instance t2Space [IsSeparated p] : T2Space (CxPts p σ) := PtsOver.t2Space p _
 instance secondCountableTopology [LocallyOfFiniteType p] [QuasiCompact p] :
     SecondCountableTopology (CxPts p σ) := PtsOver.secondCountableTopology p _
 
-variable {p} in
 
+variable {p} in
 theorem compactSpace (h : IsProjOver p) : CompactSpace (CxPts p σ) := PtsOver.compactSpace h _
 
 def ptsIn (U : Y.Opens) : Set (CxPts p σ) := {y | ⊤ ≤ y.1 ⁻¹ᵁ U}
@@ -88,7 +92,7 @@ theorem ev_mul (f g : Γ(Y, U)) (y : CxPts p σ) :
 theorem ev_add (f g : Γ(Y, U)) (y : CxPts p σ) :
     ev p σ U (f + g) y = ev p σ U f y + ev p σ U g y := by
   by_cases h : y ∈ ptsIn p σ U
-  · simp only [ev_eq h, map_add]
+  · simp only [ev_eq h, map_add (f := _)]
   · simp only [ev_of_notMem h, add_zero]
 
 theorem ev_algX (h : y ∈ ptsIn p σ U) (a : k) : ev p σ U (algX p U a) y = σ a :=
@@ -202,8 +206,10 @@ def restr (S : Set (CxPts p σ)) (hS : IsOpen S) : AlgChart p σ D where
 
 theorem holo_trans :
     DifferentiableOn ℂ (c'.e ∘ c.e.symm) (c.e.target ∩ c.e.symm ⁻¹' c'.e.source) :=
-  differentiableOn_euclidean.2 fun a => ((c.holo _ (c'.x a)).mono fun _ hv =>
-    ⟨hv.1, c'.source_subset hv.2⟩).congr fun _ hv => c'.apply_eq _ hv.2 a
+  differentiableOn_euclidean.2 fun a => ((c.holo _ (c'.x a)).mono
+    (show c.e.target ∩ c.e.symm ⁻¹' c'.e.source ⊆
+      c.e.target ∩ c.e.symm ⁻¹' ptsIn p σ c'.U from
+      fun _ hv => ⟨hv.1, c'.source_subset hv.2⟩)).congr fun _ hv => c'.apply_eq _ hv.2 a
 
 theorem differentiableAt_ev {W : Y.Opens} (f : Γ(Y, W)) {y : CxPts p σ} (hy : y ∈ c.e.source)
     (hW : y ∈ ptsIn p σ W) : DifferentiableAt ℂ (ev p σ W f ∘ c.e.symm) (c.e y) :=

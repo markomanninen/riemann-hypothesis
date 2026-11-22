@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemOfLpCharLpSpEqSumList
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DirectSumCancelRight
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemOfLpCharLpSpEqSumList
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DirectSumCancelRight
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Published
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -98,7 +103,7 @@ theorem powZeroW_lpSum_of (x y : WD h) (H : PowZeroW k x) (H' : PowZeroW k y) :
       rw [powZeroW_mk] at H H'
       exact powZero_sum H H'
 
-theorem powZeroW_lpZero : PowZeroW k (WD.lpZero h) := by
+theorem powZeroW_lpZero : PowZeroW k (WD.lpZero (h := h)) := by
   rw [WD.lpZero, powZeroW_mk]
   show (WDRep.diag h _).N ^ (k + 1) = 0
   rw [WDRep.diag_N, zero_pow (Nat.succ_ne_zero k)]
@@ -162,7 +167,7 @@ theorem perm_of_sumList_lpChar_lpSp_eq : ∀ (E Ω : Type) [Field E] [NumberFiel
     | cons q l'' =>
       exfalso
       have hd := congrArg WD.lpDim heq
-      change WD.lpDim (WD.lpZero h) = WD.lpDim (WD.lpSum _ (sumList _)) at hd
+      change WD.lpDim (WD.lpZero (h := h)) = WD.lpDim (WD.lpSum _ (sumList _)) at hd
       rw [WD.lpDim_zero, WD.lpDim_sum] at hd
       have := lpDim_pos q (hl' q List.mem_cons_self)
       beta_reduce at hd

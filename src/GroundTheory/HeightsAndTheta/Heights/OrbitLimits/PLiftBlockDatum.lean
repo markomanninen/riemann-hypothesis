@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.LiftBlockGraph
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLiftGraphPoints
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLiftGraphMetric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResVolume
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.LiftBlockGraph
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLiftGraphPoints
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLiftGraphMetric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResVolume
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

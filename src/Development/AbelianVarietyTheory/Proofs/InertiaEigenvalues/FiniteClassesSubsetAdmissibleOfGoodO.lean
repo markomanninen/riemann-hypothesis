@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteLengthOfSmulEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteLengthOfSmulEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -204,8 +208,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [CommRing O] [Algebra O LL] [TopologicalSpace LL] [IsTopologicalRing LL] {n : ℕ}
     {emb : ZMod n → (K₀ →ₐ[Qp] LL)}
 
-variable (PD emb O) in
 
+variable (PD emb O) in
 abbrev TwistCrys : Prop :=
   ∀ (T : LocLat G Qp LL O) (U : ZMod n → Multiset ℤ) (θ : G →* Oˣ) (a : ZMod n → ℤ),
     CrysWith PD emb T.ρ U → IsCrysChar PD emb θ a →
@@ -260,6 +264,9 @@ theorem isCrysChar_chi (hinj : Function.Injective (algebraMap O LL)) (htw : Twis
         twistRep (charRep (chiLL LL (Γ.chi (s + 1)))) (chiLL LL Γ.ε⁻¹) := by
       ext g
       simp [charRep, twistRep, mul_comm, Algebra.smul_def]
+      have h (f : LL →ₗ[LL] LL) (x : LL) : f x = x * f 1 := by
+        simpa [smul_eq_mul] using f.map_smul x (1 : LL)
+      exact (h _ _).symm
     have h5 : (fun i => ({w i + ((s + 1 : ℕ) : ℤ)} : Multiset ℤ)) =
         fun i => ({w i + (s : ℤ)} : Multiset ℤ).map (· + - -1) := by
       funext i
@@ -433,7 +440,7 @@ theorem cyclic_mem_adm (hext : GlobalTheory.IndefiniteRowSideFullHecke.Crystalli
     (fun y => Prod.ext (smul_tensor_eq_zero hX y.1) (hX y.2))
   change (q (e (latRep T.L g x)).1, Ideal.Quotient.mk _ (e (latRep T.L g x)).2) =
     Ea Γ.W₀ Γ.χ₁ hX _ g (q (e x).1, Ideal.Quotient.mk _ (e x).2)
-  rw [Ea_apply, hg, map_add, map_smul]
+  rw [Ea_apply, hg, map_add (f := _), map_smul]
   rfl
 
 theorem finite_subset_adm (hO : IsOpen (Set.range (algebraMap O LL)))
@@ -456,7 +463,7 @@ theorem finite_subset_adm (hO : IsOpen (Set.range (algebraMap O LL)))
     clear hy
     induction y using TensorProduct.induction_on with
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add _ _ h1 h2 => rw [map_add]; exact Submodule.add_mem _ h1 h2
+    | add _ _ h1 h2 => rw [map_add (f := _)]; exact Submodule.add_mem _ h1 h2
     | tmul κ x =>
       obtain ⟨_, z, hz, rfl⟩ := κ
       have hY : ∀ x : O ⧸ Ideal.span {Γ.lam ^ a}, Γ.lam ^ a • x = 0 := fun x => by
@@ -476,8 +483,8 @@ theorem finite_subset_adm (hO : IsOpen (Set.range (algebraMap O LL)))
   rw [hA, ← toAmb_injective _ (h.trans hy)]
   exact hc'
 
-omit [IsTopologicalRing LL] [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O LL] in
 
+omit [IsTopologicalRing LL] [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O LL] in
 theorem finite_classes_subset_admissible_of_goodO [TopologicalSpace Qp] (hO : Formalism.MainNotions.N.GoodO (Qp := Qp) LL O)
     (hfin : ∀ c : O, c ≠ 0 → Finite (O ⧸ Ideal.span {c}))
     (hext : GlobalTheory.IndefiniteRowSideFullHecke.CrystallineExtensions.ExtCrysAt PD emb) (htw : TwistCrys PD O emb)

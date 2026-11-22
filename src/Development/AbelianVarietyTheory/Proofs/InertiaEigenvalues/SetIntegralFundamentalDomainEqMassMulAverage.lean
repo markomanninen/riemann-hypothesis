@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix GlobalTheory.CuspRep GlobalTheory.CuspGeneric
 
 namespace GlobalTheory.CuspGeneric
@@ -27,7 +32,7 @@ theorem setIntegral_eq_mass_mul_avg : ∀ (G : Type) [AddCommGroup G] [Topologic
     exact ⟨(μ₀, F₀), h⟩
   have hav : avg Γ Φ = ∫ x in hex'.choose.2, Φ x ∂hex'.choose.1 := by
     simp only [avg]
-    rw [dif_pos hex']
+    rw [dite_eq_left hex']
   rw [hav]
   obtain ⟨hμ₀, hF₀, h1⟩ := hex'.choose_spec
   generalize hex'.choose = p at hμ₀ hF₀ h1 ⊢

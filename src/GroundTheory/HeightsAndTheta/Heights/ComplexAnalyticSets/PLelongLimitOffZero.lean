@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOffZero
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PHessCCompPluri
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffGradient
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOff
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOffZero
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PHessCCompPluri
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffGradient
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOff
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

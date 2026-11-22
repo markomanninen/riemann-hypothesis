@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPsiOfOverK
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPsiOfOverK
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.L2.DIV
 open scoped Matrix ComplexOrder
@@ -17,7 +21,8 @@ variable {ι : Type} [Fintype ι] {n : ℕ} {K : Type} [Field K] [StarRing K] (�
 
 theorem fockS_map_int {s : Type} (P : MvPolynomial s ℤ) (g : MvPolynomial s K) :
     fockS (map φ (map (Int.castRingHom K) P)) (map φ g) = φ (fockS (map (Int.castRingHom K) P) g) := by
-  rw [fockS_eq_sum _ _ (map (Int.castRingHom K) P).support (support_map_subset _ _), fockS, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fockS_eq_sum _ _ (map (Int.castRingHom K) P).support (support_map_subset _ _), fockS, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   simp [coeff_map]
 

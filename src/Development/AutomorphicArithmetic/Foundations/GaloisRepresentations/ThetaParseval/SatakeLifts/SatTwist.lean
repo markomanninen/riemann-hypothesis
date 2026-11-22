@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SatakeLifts.PairOfLiftAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SatakeLifts.PairOfLiftAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ private theorem unram_apply (hc : IsUnram c) {x : (w.adicCompletion K)ˣ}
     (Valued.v : Valuation (w.adicCompletion K) (WithZero (Multiplicative ℤ)))
   exact hc x (he.eq_one_iff_eq_one.2 hx)
 
-private theorem unram_det (hc : IsUnram c) {n : ℕ} {g : GL (Fin n) (w.adicCompletion K)} (hg : g ∈ KGL w n) :
+private theorem unram_det (hc : IsUnram c) {n : ℕ} {g : GL (Fin n) (w.adicCompletion K)} (hg : g ∈ KGL w (n := n)) :
     c (Matrix.GeneralLinearGroup.det g) = 1 :=
   unram_apply hc (GlobalTheory.SphGal.isUnitAt_det_of_mem hg)
 
@@ -42,7 +46,7 @@ end SlopeTestRemainingChoices
 
 theorem satTwist : SatTwist := by
   intro K _ _ w n c V _ _ ρ hc ϖ₀ h₀ B h
-  have hf : ∀ x, x ∈ fixed (twist ρ (detChar (Fin n) c)) (KGL w n) ↔ x ∈ fixed ρ (KGL w n) := fun x => by
+  have hf : ∀ x, x ∈ fixed (twist ρ (detChar (Fin n) c)) (KGL w (n := n)) ↔ x ∈ fixed ρ (KGL w (n := n)) := fun x => by
     simp only [GlobalTheory.LGrp.mem_fixed]
     refine forall₂_congr fun g hg => ?_
     rw [twist_apply, detChar_apply, unram_det hc hg, Units.val_one, one_smul]

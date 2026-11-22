@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SvalEqZeroOfExpandsAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SvalEqZeroOfExpandsAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -42,7 +46,8 @@ theorem sval_secLin (hL : L.IsLB) {φ : K → (Y ⟶ X)} {ε : K → ℤ} {φ₁
     (hJ : Good L z J) : sval s₁ r z J = ∑ i, gs r z ⊤ (c i) * sval (s i) (r ≫ h) z J := by
   have e := (FieldBaseChange.secLin_iff_val hL s₁ s h c).1 H (r z) (fun ψ => J (r ≫ ψ)) fun ψ => hJ (r ≫ ψ)
   have e₁ := sval_comp s₁ r (𝟙 _) z hJ
-  rw [Category.comp_id, e, map_sum] at e₁
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Category.comp_id, e, map_sum] at e₁
   refine e₁.trans (Finset.sum_congr rfl fun i _ => ?_)
   rw [map_mul, ← gs_stalkMap r z ⊤ trivial, Category.id_comp, ← sval_comp (s i) r h z hJ]
 
@@ -79,9 +84,10 @@ theorem coeff_of_jet {V F κ : Type} [CommRing V] [CommRing F] (g : V →+* F) [
     (h : psJet e.degree f = ∑ i, algebraMap F (Jet F κ e.degree) (c i) * jetCoef g κ e.degree (a i)) :
     ∃ b : Fin n → V, MvPowerSeries.coeff e f = ∑ i, c i * g (b i) := by
   choose p hp using fun i => Ideal.Quotient.mk_surjective (a i)
-  refine ⟨fun i => MvPolynomial.coeff e (p i), ?_⟩
+  refine ⟨fun i => AddMonoidAlgebra.coeff (p i) e, ?_⟩
   have h1 : psJet e.degree f = Ideal.Quotient.mk _ (∑ i, MvPolynomial.C (c i) * MvPolynomial.map g (p i)) := by
-    rw [h, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, ← hp]
     rfl
@@ -102,7 +108,8 @@ theorem main : Laws → Laws2 → Laws4 → TwistBaseChangeStatement → AIntSt 
     choose J hJ using fun χ : Sp (Jet F κ e.degree) ⟶ G.left => exists_chart hL (χ y)
     have e₁ := (h3 y J hJ).symm.trans (sval_secLin hL hlin zF y hJ)
     refine (Units.mul_left_inj _).1 (e₁.trans ?_)
-    rw [map_sum, gs_eq _ y ⊤ trivial, map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, gs_eq _ y ⊤ trivial, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← gs_eq _ y ⊤ trivial, map_mul, gs_mul _ y ⊤ trivial, h2, hu i _ _ y J hJ, ← ha, gs_spMap, _root_.mul_assoc,
       FieldBaseChange.gs_scal, h1]

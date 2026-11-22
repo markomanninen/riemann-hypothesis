@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+
+@[expose] public section
 
 open CategoryTheory Limits
 
@@ -39,7 +43,7 @@ theorem LeafQuot_of : LeafQuot := by
       obtain ⟨k, y', hy', rfl⟩ := h'
       refine ⟨IsFiltered.max j k, (D.map (IsFiltered.leftToMax j k)).hom y + (D.map (IsFiltered.rightToMax j k)).hom y',
         add_mem (mv _ _ hy) (mv _ _ hy'), ?_⟩
-      rw [map_add, tn, tn]
+      rw [map_add (f := _), tn, tn]
     | smul b x _ h =>
       obtain ⟨j, y, hy, rfl⟩ := h
       obtain ⟨k, c, rfl⟩ := rep b

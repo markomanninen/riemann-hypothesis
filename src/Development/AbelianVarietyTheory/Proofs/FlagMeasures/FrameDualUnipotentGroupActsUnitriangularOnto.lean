@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver
 open scoped Classical
@@ -23,7 +27,7 @@ lemma h_sub_left (x x' y : V) : H.h (x - x') y = H.h x y - H.h x' y := (lf H y).
 lemma h_neg_left (x y : V) : H.h (-x) y = -H.h x y := (lf H y).map_neg x
 
 lemma h_add_right (x y y' : V) : H.h x (y + y') = H.h x y + H.h x y' := by
-  rw [h_right H x, H.h_add_left, map_add, ← h_right, ← h_right]
+  rw [h_right H x, H.h_add_left, map_add (f := _), ← h_right, ← h_right]
 
 lemma h_sub_right (x y y' : V) : H.h x (y - y') = H.h x y - H.h x y' := by
   rw [h_right H x, h_sub_left, map_sub, ← h_right, ← h_right]
@@ -435,7 +439,7 @@ lemma onto [CharZero F] (hT : Fr.T ≠ 0) (g : Fin (r + 1) → V) (hg : Tri E Fr
     have key : (2 : F) * (2 * Fr.T)⁻¹ + (-Fr.T⁻¹) * ((-Fr.T⁻¹) * -Fr.T) = 0 := by
       field_simp; ring
     have key' := congrArg (algebraMap F E) key
-    simp only [map_add, map_mul, map_neg, map_ofNat, map_zero] at key'
+    simp only [map_add (f := _), map_mul, map_neg, map_ofNat, map_zero] at key'
     rw [hv0d, H.h_smul_left, h_smul_right, AlgEquiv.commutes, Fr.h_zz]
     simp only [map_neg]
     linear_combination key'

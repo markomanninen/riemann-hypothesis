@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatMatrixTranslationModulationIrreduc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatMatrixTranslationModulationIrreduc
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -110,10 +114,9 @@ theorem schr_irreducible_local (k : Type) [Field k] [ValuativeRel k] [Topologica
     have h := hS (0, fun r => b r ()) _ hΦ
     convert h using 1
     funext y
-    simp only [schr, Function.comp_apply, coe_toCircle, zero_dotProduct, mul_zero, add_zero]
-    congr 2
-    simp only [dotProduct, Finset.univ_unique, Finset.sum_singleton]
-    exact Finset.sum_congr rfl fun r _ => mul_comm _ _
+    simp [schr, dotProduct, coe_toCircle, e, colH, mul_comm]
+    change Φ (e y) * ψk (∑ r, b r () * y r) = ψk (∑ r, b r () * y r) * Φ (e y)
+    exact mul_comm _ _
   have h0' : φ₀ ∘ e.symm ∈ N.comap L := by
     rw [Submodule.mem_comap, hL]
     have : (φ₀ ∘ e.symm) ∘ e = φ₀ := by funext y; simp

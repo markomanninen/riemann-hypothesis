@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmpleOnAbelianBase
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivComp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsSmulOfPreservesFrameOrbits
-import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD
-import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmpleOnAbelianBase
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivComp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsSmulOfPreservesFrameOrbits
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfB
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,22 +82,6 @@ theorem connectedComponent_mem {X : Type} [TopologicalSpace X] (hfin : (irreduci
   rw [e]
   exact ⟨hV, ho⟩
 
-theorem exists_point {K Ω : Type} [Field K] [Field Ω] [IsAlgClosed Ω] {X : Scheme.{0}} (π : X ⟶ Sp K)
-    [LocallyOfFiniteType π] (x : Sp Ω ⟶ Sp K) {O : Set X} (hO : IsOpen O) (hne : O.Nonempty) :
-    ∃ g : Sp Ω ⟶ X, g ≫ π = x ∧ ∀ a, g a ∈ O := by
-  obtain ⟨p, hp⟩ := hne
-  obtain ⟨z, hz, -⟩ := Scheme.Pullback.exists_preimage_pullback (f := π) (g := x) p (IsLocalRing.closedPoint Ω)
-    (Subsingleton.elim (α := PrimeSpectrum K) _ _)
-  have := LocallyOfFiniteType.jacobsonSpace (pullback.snd π x)
-  obtain ⟨c, hcO, hc'⟩ := nonempty_inter_closedPoints (Z := pullback.fst π x ⁻¹' O)
-    ⟨z, show pullback.fst π x z ∈ O from hz ▸ hp⟩ (hO.preimage (pullback.fst π x).continuous).isLocallyClosed
-  have hc : IsClosed {c} := hc'
-  refine ⟨pointOfClosedPoint (pullback.snd π x) c hc ≫ pullback.fst π x, ?_, fun a => ?_⟩
-  · rw [Category.assoc, pullback.condition, pointOfClosedPoint_comp_assoc]
-  · show pullback.fst π x (pointOfClosedPoint (pullback.snd π x) c hc a) ∈ O
-    rw [pointOfClosedPoint_apply]
-    exact hcO
-
 section Free
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
@@ -146,28 +134,5 @@ theorem onComp_compPt (y : Pt s) (pt : Sp Qb) : OnComp s (compPt s y) (y.y pt) :
   have : ∃ k, ∀ pt', OnComp s k (y.y pt') :=
     ⟨k, fun pt' => (Subsingleton.elim (α := PrimeSpectrum Qb) pt pt') ▸ hk⟩
   exact Classical.epsilon_spec this pt
-
-theorem compPt_surjective : Function.Surjective (compPt s) := by
-  intro k
-  obtain ⟨q, hq⟩ := exists_equiv s
-  have hsm : Smooth (genStr s.T.Z) := haveI := s.T.smooth; SmoothOfRelativeDimension.smooth S.Dw.dim _
-  have := s.T.Z.jQ_open
-  have := κ.c.fin
-  have : IsAlgClosed Qb := (algebraicClosure.isAlgClosure ℚ ℂ).isAlgClosed
-  let φ : κ.c.F →+* Qb := (IsAlgClosed.lift : κ.c.F →ₐ[ℚ] Qb).toRingHom
-  have ho : IsOpen (q k).1 := (CompSplitPfB.cspB_isClopen (CompSplitPfD.cspD_comp_disj _ _) (q k)).isOpen
-  obtain ⟨g, hg, hgO⟩ := exists_point (genStr s.T.Z) (spMap φ) (s.T.Z.jQ.isOpenEmbedding.isOpenMap _ ho)
-    ((q k).2.1.nonempty.image _)
-  obtain ⟨f⟩ := GlobalTheory.ShFam.EigLoc.exists_eigFrame _ _ _ _ _ _ _ _ s.T.Z Qb φ g hg
-  let y : Pt s := ⟨φ, g, hg, f.v, f.tan, f.eig, f.basis⟩
-  let pt : Sp Qb := (⟨⊥, Ideal.isPrime_bot⟩ : PrimeSpectrum Qb)
-  obtain ⟨a, ha, hag⟩ := hgO pt
-  refine ⟨y, (existsUnique_onComp s (g pt)).unique (onComp_compPt s y pt) ((hq _ _).2 ?_)⟩
-  by_contra hn
-  refine Set.disjoint_left.1 (CompSplitPfD.cspD_comp_disj _ _ (q k)
-    ⟨_, preimage_connectedComponent_mem s.T.Z hsm (g pt)⟩ fun e => hn (congrArg Subtype.val e)) ha ?_
-  show s.T.Z.jQ a ∈ connectedComponent (g pt)
-  rw [hag]
-  exact mem_connectedComponent
 
 end GlobalTheory.ShFam.PtComp

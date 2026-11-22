@@ -1,9 +1,13 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.LineFacts
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsStandardIndModule
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableFlagLocalSizesUnitary
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FlagFacts
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.LineFacts
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsStandardIndModule
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableFlagLocalSizesUnitary
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FlagFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,8 +149,6 @@ def aLine (hG : IsGrad ε A) (t : ℝ) : Formalism.REAL.UJ ε :=
   ⟨⟨eT A t, eT A (-t), by rw [← eT_add, add_neg_cancel, eT_zero], by rw [← eT_add, neg_add_cancel, eT_zero]⟩,
     Formalism.REAL.exp_indefinite_unitary_holds n ε A hG.1 t⟩
 
-theorem uMat_aLine (hG : IsGrad ε A) (t : ℝ) : uMat (aLine hG t) = eT A t := rfl
-
 theorem continuous_aLine (hG : IsGrad ε A) : Continuous (aLine hG) := by
   refine continuous_induced_rng.2 (Units.continuous_iff.2 ⟨?_, ?_⟩)
   · exact continuous_eT
@@ -193,7 +195,7 @@ theorem detOn_eT (h3 : A * A * A = A) (t : ℝ) : detOn (eT A t) (Vm A) = Real.e
     simp only [LinearMap.restrict_coe_apply, Matrix.toLin'_apply, eT_mulVec h3 y.2]
     rfl
   unfold detOn
-  rw [dif_pos hk, hr, LinearMap.det_smul, LinearMap.det_id, mul_one, norm_pow, Complex.norm_real,
+  rw [dite_eq_left hk, hr, LinearMap.det_smul, LinearMap.det_id, mul_one, norm_pow, Complex.norm_real,
     Real.norm_of_nonneg (Real.exp_pos _).le, ← Real.exp_nat_mul]
   congr 1
   simp only [rk]

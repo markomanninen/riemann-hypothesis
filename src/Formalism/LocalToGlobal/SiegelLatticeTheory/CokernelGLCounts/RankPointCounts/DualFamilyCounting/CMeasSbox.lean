@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXCC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXCC
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ def Φc (x : ∀ p : CBlk r, CSpc ι k p) (i : ι × LsNc5.CIdx r k) : ℝ :=
   | (v, Sum.inr (Sum.inr (Sum.inr a))) => (x (Sum.inr (Sum.inr a)) : ι → ℝ) v
 
 theorem measurable_Φc : Measurable (Φc (ι := ι) (r := r) (k := k)) := by
-  refine measurable_pi_lambda _ fun i => ?_
+  refine Measurable.of_eval fun i => ?_
   rcases i with ⟨v, ((⟨p, t⟩ | ⟨b, t⟩) | (⟨b, j, t⟩ | (⟨p, t⟩ | a)))⟩
   · exact (reim_cont t).measurable.comp ((measurable_pi_apply v).comp
       (measurable_pi_apply (Sum.inl (Sum.inl p) : CBlk r)))
@@ -83,18 +87,18 @@ theorem measurable_Ψc : Measurable (Ψc (ι := ι) (r := r) (k := k)) := by
   have hC : ∀ f g : (ι × LsNc5.CIdx r k → ℝ) → ℝ, Measurable f → Measurable g →
       Measurable fun y => (⟨f y, g y⟩ : ℂ) := fun f g hf hg =>
     Complex.measurableEquivRealProd.symm.measurable.comp (hf.prodMk hg)
-  refine measurable_pi_lambda _ fun p => ?_
+  refine Measurable.of_eval fun p => ?_
   rcases p with ((p | b) | (p | a))
-  · exact measurable_pi_lambda _ fun v => hC _ _ (measurable_pi_apply _) (measurable_pi_apply _)
-  · refine measurable_pi_lambda _ fun v => measurable_pi_lambda _ fun j => ?_
+  · exact Measurable.of_eval fun v => hC _ _ (measurable_pi_apply _) (measurable_pi_apply _)
+  · refine Measurable.of_eval fun v => Measurable.of_eval fun j => ?_
     show Measurable fun y : ι × LsNc5.CIdx r k → ℝ => (if h : j.val < k then (⟨y (v, Sum.inr (Sum.inl (b, ⟨j.val, h⟩, false))),
         y (v, Sum.inr (Sum.inl (b, ⟨j.val, h⟩, true)))⟩ : ℂ)
       else (⟨y (v, Sum.inl (Sum.inr (b, false))), y (v, Sum.inl (Sum.inr (b, true)))⟩ : ℂ))
     split_ifs with h
     · exact hC _ _ (measurable_pi_apply _) (measurable_pi_apply _)
     · exact hC _ _ (measurable_pi_apply _) (measurable_pi_apply _)
-  · exact measurable_pi_lambda _ fun v => hC _ _ (measurable_pi_apply _) (measurable_pi_apply _)
-  · exact measurable_pi_lambda _ fun v => measurable_pi_apply _
+  · exact Measurable.of_eval fun v => hC _ _ (measurable_pi_apply _) (measurable_pi_apply _)
+  · exact Measurable.of_eval fun v => measurable_pi_apply _
 
 end Phi
 

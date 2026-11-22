@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,37 +13,39 @@ open Polynomial
 
 variable {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
 
-theorem isAlgZp_one : IsAlgZp p (1 : Ω) :=
+theorem isAlgZp_one : IsAlgZp (p := p) (1 : Ω) :=
   ⟨X - C 1, X_sub_C_ne_zero 1, by simp⟩
 
-theorem isAlgZp_mul {x y : Ω} (hx : IsAlgZp p x) (hy : IsAlgZp p y) : IsAlgZp p (x * y) := by
-  letI : Algebra ℤ_[p] Ω := Algebra.compHom Ω (algebraMap ℤ_[p] (O0 p))
-  haveI : IsScalarTower ℤ_[p] (O0 p) Ω := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
-  have key : ∀ z : Ω, IsAlgZp p z ↔ IsAlgebraic ℤ_[p] z := fun z => by
+theorem isAlgZp_mul {x y : Ω} (hx : IsAlgZp (p := p) x) (hy : IsAlgZp (p := p) y) :
+    IsAlgZp (p := p) (x * y) := by
+  let : Algebra ℤ_[p] Ω := Algebra.compHom Ω (algebraMap ℤ_[p] (O0 p))
+  have : IsScalarTower ℤ_[p] (O0 p) Ω := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
+  have key : ∀ z : Ω, IsAlgZp (p := p) z ↔ IsAlgebraic ℤ_[p] z := fun z => by
     simp only [IsAlgZp, IsAlgebraic, aeval_map_algebraMap]
   rw [key] at hx hy ⊢
   exact hx.mul hy
 
-variable (p Ω) in
 
+variable (p Ω) in
 def algZpMonoid : Submonoid Ω where
-  carrier := {x | IsAlgZp p x}
+  carrier := {x | IsAlgZp (p := p) x}
   one_mem' := isAlgZp_one
   mul_mem' := isAlgZp_mul
 
 theorem mem_adjoin_iff (z : Ω) :
-    z ∈ Algebra.adjoin (O0 p) {x : Ω | IsAlgZp p x} ↔
-      z ∈ Submodule.span (O0 p) {x : Ω | IsAlgZp p x} := by
+    z ∈ Algebra.adjoin (O0 p) {x : Ω | IsAlgZp (p := p) x} ↔
+      z ∈ Submodule.span (O0 p) {x : Ω | IsAlgZp (p := p) x} := by
   rw [← Subalgebra.mem_toSubmodule, Algebra.adjoin_eq_span]
-  have hcl : (Submonoid.closure {x : Ω | IsAlgZp p x} : Set Ω) = {x | IsAlgZp p x} := by
-    rw [show {x : Ω | IsAlgZp p x} = (algZpMonoid p Ω : Set Ω) from rfl, Submonoid.closure_eq]
+  have hcl : (Submonoid.closure {x : Ω | IsAlgZp (p := p) x} : Set Ω) = {x | IsAlgZp (p := p) x} := by
+    rw [show {x : Ω | IsAlgZp (p := p) x} = (algZpMonoid (p := p) (Ω := Ω) : Set Ω) from rfl,
+      Submonoid.closure_eq]
   rw [hcl]
 
 theorem exists_mul_mem_span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-    ∀ b ∈ Subfield.closure (Set.range (algebraMap (O0 p) Ω) ∪ {x | IsAlgZp p x}),
-    ∃ g : O0 p, g ≠ 0 ∧ algebraMap (O0 p) Ω g * b ∈ Submodule.span (O0 p) {x : Ω | IsAlgZp p x} := by
+    ∀ b ∈ Subfield.closure (Set.range (algebraMap (O0 p) Ω) ∪ {x | IsAlgZp (p := p) x}),
+    ∃ g : O0 p, g ≠ 0 ∧ algebraMap (O0 p) Ω g * b ∈ Submodule.span (O0 p) {x : Ω | IsAlgZp (p := p) x} := by
   intro p _ Ω _ _ h b hb
-  set B := Algebra.adjoin (O0 p) {x : Ω | IsAlgZp p x} with hBdef
+  set B := Algebra.adjoin (O0 p) {x : Ω | IsAlgZp (p := p) x} with hBdef
   let S : Subfield Ω :=
     { carrier := {b | ∃ g : O0 p, g ≠ 0 ∧ algebraMap (O0 p) Ω g * b ∈ B}
       zero_mem' := ⟨1, one_ne_zero, by rw [mul_zero]; exact B.zero_mem⟩
@@ -75,7 +81,7 @@ theorem exists_mul_mem_span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω
           (isAlgebraic_algHom_iff B.val Subtype.val_injective).1 (h.alg.isAlgebraic _)
         have hnz : y ∈ nonZeroDivisors B :=
           mem_nonZeroDivisors_of_ne_zero (fun e => hy0 (congrArg Subtype.val e))
-        obtain ⟨r, hr, s, hs⟩ := halg.exists_nonzero_dvd hnz
+        obtain ⟨r, hr, s, hs⟩ := halg.exists_ne_zero_dvd hnz
         have hs' : algebraMap (O0 p) Ω r = algebraMap (O0 p) Ω g * a * (s : Ω) := by
           have := congrArg Subtype.val hs
           simpa [y] using this
@@ -85,7 +91,7 @@ theorem exists_mul_mem_span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω
         show algebraMap (O0 p) Ω r * a⁻¹ ∈ B
         rw [e]
         exact B.mul_mem (B.algebraMap_mem g) s.2 }
-  have hle : Subfield.closure (Set.range (algebraMap (O0 p) Ω) ∪ {x | IsAlgZp p x}) ≤ S := by
+  have hle : Subfield.closure (Set.range (algebraMap (O0 p) Ω) ∪ {x | IsAlgZp (p := p) x}) ≤ S := by
     rw [Subfield.closure_le]
     rintro x (⟨c, rfl⟩ | hx)
     · exact ⟨1, one_ne_zero, by rw [map_one, one_mul]; exact B.algebraMap_mem c⟩

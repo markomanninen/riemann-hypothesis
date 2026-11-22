@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnlocalizedSaturatedState
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnlocalizedSaturatedState
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,22 +29,6 @@ structure CopyN (D : D7) {D' : D7} (N : TwNew D') (ι : D.what₂.LL →+* D'.wh
   twPsi : HEq D.nexp.twPsi N.ex.twPsi
   twDel : HEq D.nexp.twDel N.ex.twDel
   eH : HEq D.nexp.eH N.ex.eH
-
-theorem CopyN.refl (D : D7) : CopyN D (⟨D.ntw, D.nexp, D.nStage_trivialCharacter_coeff_eq, D.nth, D.ntwbr, D.ntwbr_ind⟩ : TwNew D) (RingHom.id _) (RingEquiv.refl _) where
-  cp := GlobalTheory.TwInputs.Move.CopyTw.refl D
-  ThetaPsi := HEq.rfl
-  topO := HEq.rfl
-  finLam := HEq.rfl
-  jL := HEq.rfl
-  s2 := HEq.rfl
-  lamG := HEq.rfl
-  Xv := HEq.rfl
-  qs := HEq.rfl
-  res := HEq.rfl
-  eLL0 _ _ h := by cases h; rfl
-  twPsi := HEq.rfl
-  twDel := HEq.rfl
-  eH := HEq.rfl
 
 theorem CopyN.carried {D D' : D7} {N : TwNew D'} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyN D N ι e) :
     Carried D N.toD7 := by

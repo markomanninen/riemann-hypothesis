@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsCuspFunIffConstTerm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsCuspFunIffConstTerm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,51 +21,11 @@ namespace GlobalTheory.CuspDecay.Model
 
 variable {D : D7}
 
-theorem exists_theta_exp (V : HSp D) : ∃ θ, IsInfFam (D := D) θ ∧ ∃ e, IsExpFam θ V e := by
-  have h := (GlobalTheory.AutFunCompare.isInfFam_iff (D := D) _).2 rfl
-  exact ⟨_, h, _, GlobalTheory.SmoothForms.isExpFam_expInf ((GlobalTheory.SmoothForms.RealPts.realPoints D).2 _ h V)⟩
-
-theorem const_hyps (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
-    (e : LieInf V → GA D V) (c : ℂ) :
-    IsAutFun V (fun _ => c) ∧ IsSmoothInf V e (fun _ => c) ∧ IsUnifModerate θ V e (fun _ => c) := by
-  refine ⟨⟨fun _ _ _ => rfl, ⟨⊤, isOpen_univ, fun _ _ _ _ => rfl⟩, continuous_const⟩, isSmoothInf_const V e c, 0,
-    fun l => ?_⟩
-  obtain ⟨c', hc⟩ := wordDer_const V e l c
-  exact ⟨‖c'‖, fun g => by rw [hc]; simp⟩
-
 theorem isCuspFun_zero (V : HSp D) : IsCuspFun V fun _ => 0 := fun _ _ _ _ _ _ _ _ => by simp
 
 def line (D : D7) : HSp D := Examples₂.posSpace Examples₂.star_isIntegral 1
 
 def plane (D : D7) : HSp D := Examples₂.stdSpace Examples₂.star_isIntegral 2 ![false, true] 1 1
-
-theorem isCuspFun_line (φ : GA D (line D) → ℂ) : IsCuspFun (line D) φ := by
-  intro r C hC
-  exfalso
-  obtain ⟨hr, hli, h0⟩ := hC
-  have h1 := congrFun (congrFun h0 ⟨0, hr⟩) ⟨0, hr⟩
-  have hg : (line D).gram = 1 := by
-    funext i j
-    refine (Examples₂.stdSpace_gram_apply (E := D.host.E) Examples₂.star_isIntegral 1 (fun _ => false) 1 0 i j).trans ?_
-    change (if i = j then (Examples₂.sgn false : D.host.E) else 0) = if i = j then 1 else 0
-    by_cases h : i = j <;> simp [h, Examples₂.sgn]
-  rw [hg, Matrix.mul_one] at h1
-  let C' : Matrix (Fin 1) (Fin r) D.host.E := C
-  have h2 : ∑ i : Fin 1, D.sp.cm.sig (C' i ⟨0, hr⟩) * C' i ⟨0, hr⟩ = 0 := h1
-  rw [Fin.sum_univ_one] at h2
-  have h3 : C' 0 ⟨0, hr⟩ = 0 := by
-    rcases mul_eq_zero.1 h2 with h | h
-    · exact (map_eq_zero_iff _ (D.sp.cm.sig : D.host.E →+* D.host.E).injective).1 h
-    · exact h
-  refine hli.ne_zero ⟨0, hr⟩ (funext fun i => ?_)
-  have hi : ∀ i : Fin 1, C' i ⟨0, hr⟩ = 0 := fun i => by rw [Subsingleton.elim i 0]; exact h3
-  exact hi i
-
-theorem hyps_line (D : D7) : ∃ θ, IsInfFam (D := D) θ ∧ ∃ e, IsExpFam θ (line D) e ∧ IsAutFun (line D) (fun _ => 1) ∧
-    IsSmoothInf (line D) e (fun _ => 1) ∧ IsUnifModerate θ (line D) e (fun _ => 1) ∧ IsCuspFun (line D) fun _ => 1 := by
-  obtain ⟨θ, hθ, e, he⟩ := exists_theta_exp (line D)
-  obtain ⟨h1, h2, h3⟩ := const_hyps θ (line D) e 1
-  exact ⟨θ, hθ, e, he, h1, h2, h3, isCuspFun_line _⟩
 
 theorem isIsoFrame_plane (D : D7) : IsIsoFrame (plane D) (r := 1) (Matrix.of fun _ _ => 1) := by
   refine ⟨one_pos, ?_, ?_⟩
@@ -131,21 +95,6 @@ theorem not_isCuspFun_const (V : HSp D) {r : ℕ} {C : Matrix (Fin V.rank) (Fin 
 
 theorem not_isCuspFun_one_plane (D : D7) : ¬ IsCuspFun (plane D) fun _ => 1 :=
   not_isCuspFun_const _ (isIsoFrame_plane D) one_ne_zero
-
-theorem isRapidDecay_rank_zero (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
-    (hV : V.rank = 0) (φ : GA D V → ℂ) : IsRapidDecay θ V φ := by
-  have : IsEmpty (Fin V.rank) := by rw [hV]; infer_instance
-  have hs : ∀ g : GA D V, g = 1 := fun g => Subtype.ext (Units.ext (Matrix.ext fun i _ => isEmptyElim i))
-  exact fun N => ⟨‖φ 1‖ * (quotHeight θ V 1 : ℝ) ^ N, fun g => by rw [hs g]⟩
-
-theorem quotHeight_rat_mul (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
-    {γ : GA D V} (hγ : γ ∈ GQ V) (g : GA D V) : quotHeight θ V (γ * g) = quotHeight θ V g := by
-  have key : ∀ {γ : GA D V}, γ ∈ GQ V → ∀ g, quotHeight θ V g ≤ quotHeight θ V (γ * g) := fun {γ} hγ g =>
-    le_ciInf fun δ => by
-      rw [← mul_assoc]
-      exact quotHeight_le g (mul_mem δ.2 hγ)
-  refine le_antisymm ?_ (key hγ g)
-  simpa using key (inv_mem hγ) (γ * g)
 
 end GlobalTheory.CuspDecay.Model
 

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.LetterShift
-import Formalism.GL3MeanSquares.HookFormulaTorsion.BimultiplicativeDivisibleTorsion
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.LetterShift
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.BimultiplicativeDivisibleTorsion
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -33,7 +37,8 @@ theorem hasSubst_scale {τ : Type} [Finite τ] (a : τ → K) :
 theorem subst_sum {σ' τ α : Type} {a : σ' → MvPowerSeries τ K} (ha : MvPowerSeries.HasSubst a)
     (S : Finset α) (F : α → MvPowerSeries σ' K) :
     MvPowerSeries.subst a (∑ i ∈ S, F i) = ∑ i ∈ S, MvPowerSeries.subst a (F i) := by
-  rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
 
 theorem subst_C_mul {σ' τ : Type} {a : σ' → MvPowerSeries τ K} (ha : MvPowerSeries.HasSubst a)
     (c : K) (f : MvPowerSeries σ' K) :
@@ -157,14 +162,16 @@ variable {d : ℕ} [NeZero d]
 theorem constantCoeff_linE (σ : K →+* K) (c : K) :
     MvPowerSeries.constantCoeff (linE (d := d) σ c) = 0 := by
   unfold linE
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun s _ => ?_
   split_ifs <;> simp
 
 theorem constantCoeff_linO (σ : K →+* K) (c : K) :
     MvPowerSeries.constantCoeff (linO (d := d) σ c) = 0 := by
   unfold linO
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun s _ => ?_
   split_ifs <;> simp
 
@@ -251,7 +258,8 @@ theorem coeff_beMean {ι : Type} [Fintype ι] (l : ℕ) (σ : K →+* K) (be0 : 
       (((l ^ d - 1 : ℕ) : K)⁻¹) * ((∑ k ∈ Finset.range (l ^ d - 1), wt l ζ n ^ k) *
         MvPowerSeries.coeff n (beTil l σ be0 om oms)) := by
   unfold beMean
-  rw [MvPowerSeries.coeff_C_mul, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPowerSeries.coeff_C_mul, map_sum, Finset.sum_mul]
   congr 1
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [torus_coefficient]
@@ -435,11 +443,13 @@ theorem third_mean_condition : MeanNoLowBidegreeTerms := by
   refine ⟨?_, ?_, ?_⟩
   · refine Nat.pos_of_ne_zero fun h => hT ?_
     unfold beTil
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun r _ => coeff_pair_degE hG σ _ _ h
   · refine Nat.pos_of_ne_zero fun h => hT ?_
     unfold beTil
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun r _ => coeff_pair_degO hG σ _ _ h
   · rintro ⟨hE, hO⟩
     exact hS (geom_zero (wt_pow hζ.pow_eq_one n) (wt_ne_one hl hζ hE hO))

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -21,8 +25,9 @@ private theorem conj_mem {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace
     rw [he]
     rcases lt_or_ge (a i) (a j) with hij | hij
     · rw [h i j hij, mul_zero]
-    · simpa using Parabolic.valuation_zpow_mul_le_pow_mul (F := F) (e := 0) (z := a i - a j)
-        (x := (g : Matrix (Fin n) (Fin n) F) i j) (by simpa using hij)
+    · obtain ⟨d, hd⟩ : ∃ d : ℕ, a i - a j = d := ⟨(a i - a j).toNat, by omega⟩
+      rw [hd, zpow_natCast, map_mul, map_pow]
+      exact mul_le_of_le_one_left' (pow_le_one' (valuation_uniformizer_lt_one F).le d)
   obtain ⟨h1, h2, h3⟩ := (mem_iwahori_iff F n).1 hg
   refine (mem_iwahori_iff F n).2 ⟨fun i j => (hle i j).trans (h1 i j),
     fun i j hij => (hle i j).trans_lt (h2 i j hij), fun i => ?_⟩

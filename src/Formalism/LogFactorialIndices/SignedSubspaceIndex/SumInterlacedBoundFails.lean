@@ -1,4 +1,8 @@
-import Formalism.LogFactorialIndices.StatementSize
+module
+
+public import Formalism.LogFactorialIndices.StatementSize
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,5 @@ theorem sumInterlacedBound : Interlace := by
   constructor
   · linarith [hb.1]
   · linarith [hb.2]
-
-def chi (n : ℕ) : ℝ := if n = 0 then -1 else 0
 
 end Formalism.LatticeIndexTer

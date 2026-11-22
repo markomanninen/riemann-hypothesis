@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SwapOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDedekind
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SwapOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDedekind
+
+@[expose] public section
 
 open MvPolynomial Equiv UpperTheory.V.AlgebraTools.Hk
 
 private theorem X_sub_ne {R : Type} [CommRing R] [IsDomain R] {n : ℕ} (q : R) {i j : Fin n} (h : i ≠ j) :
     (X i - C q * X j : MvPolynomial (Fin n) R) ≠ 0 := by
   intro h0
-  have := congrArg (MvPolynomial.coeff (Finsupp.single i 1)) h0
+  have := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single i 1)) h0
   simp [MvPolynomial.coeff_X', MvPolynomial.coeff_C_mul, Finsupp.single_left_inj, h, Ne.symm h] at this
 
 theorem UpperTheory.V.AlgebraTools.hkFaith :
@@ -26,13 +30,15 @@ theorem UpperTheory.V.AlgebraTools.hkFaith :
     have h1 : b.th (∑ u, c u * Y u x) * b.one = 0 := by
       calc b.th (∑ u, c u * Y u x) * b.one
           = ∑ u, b.th (c u) * (b.th (Y u x) * b.one) := by
-            rw [map_sum, Finset.sum_mul]; simp [map_mul, mul_assoc]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum, Finset.sum_mul]; simp [map_mul, mul_assoc]
         _ = ∑ u, b.th (c u) * (b.T u * b.th x * b.one) := by simp [hY1]
         _ = (∑ u, b.th (c u) * b.T u) * b.th x * b.one := by
             rw [Finset.sum_mul, Finset.sum_mul]; simp [mul_assoc]
         _ = 0 := hc x
     have h2 := congrArg (algebraMap (MvPolynomial (Fin n) R) K) (hfaith _ h1)
-    rw [map_sum, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h2
     simp_rw [map_mul, hY2, Finset.mul_sum] at h2
     rw [Finset.sum_comm] at h2
     rw [← h2]

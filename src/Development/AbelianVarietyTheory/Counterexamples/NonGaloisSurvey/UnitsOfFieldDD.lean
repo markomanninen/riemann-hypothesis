@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.CoboundaryTransfers.Statement
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.UnitDualParts
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.CoboundaryTransfers.Statement
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.UnitDualParts
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.Survey.UnitsOfFieldRootsOfUnity
@@ -43,7 +47,7 @@ theorem _root_.GlobalTheory.Survey.UnitsOfFieldRootsOfUnity.symm_act (h : _root_
       (T.ρ g ((_root_.GlobalTheory.Survey.UnitsOfFieldRootsOfUnity.sumEquiv i i' h).symm z).1,
         T'.ρ g ((_root_.GlobalTheory.Survey.UnitsOfFieldRootsOfUnity.sumEquiv i i' h).symm z).2) := by
   apply (_root_.GlobalTheory.Survey.UnitsOfFieldRootsOfUnity.sumEquiv i i' h).injective
-  rw [LinearEquiv.apply_symm_apply, _root_.GlobalTheory.Survey.UnitsOfFieldRootsOfUnity.sumEquiv_apply, i.equiv, i'.equiv, ← map_add,
+  rw [LinearEquiv.apply_symm_apply, _root_.GlobalTheory.Survey.UnitsOfFieldRootsOfUnity.sumEquiv_apply, i.equiv, i'.equiv, ← map_add (f := _),
     ← _root_.GlobalTheory.Survey.UnitsOfFieldRootsOfUnity.sumEquiv_apply i i' h, Prod.mk.eta, LinearEquiv.apply_symm_apply]
 
 def pr₁ (h : IsSumLat i i') : LatHom T''.L T.L where
@@ -106,7 +110,7 @@ theorem sum_N {T T' T'' : LocLat G Qp LL O} (hT : IsCrys PD T.ρ)
   · intro hz
     have h1 := W.map_N (pr₁ i i' h) hT'' hT _ hz
     have h2 := W.map_N (pr₂ i i' h) hT'' hT' _ hz
-    rw [map_add, ← W.map_comp, ← W.map_comp] at h1 h2
+    rw [map_add (f := _), ← W.map_comp, ← W.map_comp] at h1 h2
     rw [show latComp (pr₁ i i' h) i = latId T from latHom_ext e1, W.map_id,
       map_of_zero (latComp (pr₁ i i' h) i') e2, add_zero] at h1
     rw [show latComp (pr₂ i i' h) i' = latId T' from latHom_ext e4, W.map_id,
@@ -132,7 +136,7 @@ theorem sumFor_of_crys
       simp only [LinearMap.coprod_apply] at hxy
       have h1 := congrArg (W.map (pr₁ i i' h)) hxy
       have h2 := congrArg (W.map (pr₂ i i' h)) hxy
-      rw [map_add, ← W.map_comp, ← W.map_comp, map_zero] at h1 h2
+      rw [map_add (f := _), ← W.map_comp, ← W.map_comp, map_zero] at h1 h2
       rw [show latComp (pr₁ i i' h) i = latId T from latHom_ext fun a => by
           simpa [latComp, latId] using (key a 0).1, W.map_id,
         map_of_zero (latComp (pr₁ i i' h) i') (fun a => by simpa [latComp] using (key 0 a).1),
@@ -156,10 +160,10 @@ theorem sumFor_of_crys
   refine ⟨LinearEquiv.ofBijective _ hbij, fun x y => rfl, fun x y => ?_, fun g x y => ?_,
     fun x y => sum_N hT hT' (hc T T' T'' i i' h hT hT') i i' h x y⟩
   · change W.φD T'' (W.map i x + W.map i' y) = W.map i _ + W.map i' _
-    rw [map_add, ← W.map_φ, ← W.map_φ]
+    rw [map_add (f := _), ← W.map_φ, ← W.map_φ]
     rfl
   · change W.γD T'' g (W.map i x + W.map i' y) = W.map i _ + W.map i' _
-    rw [map_add, ← W.map_γ, ← W.map_γ]
+    rw [map_add (f := _), ← W.map_γ, ← W.map_γ]
     rfl
 
 end GlobalTheory.Survey.UnitsOfFieldRootsOfUnity

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -200,10 +204,6 @@ theorem subst_sol (hc : c ≠ 0) (ha : IsTri c a) (G : MvPowerSeries σ K) : sub
   rw [hS, hsol, solvable_equivalence_of_base_change.eq_2]
   beta_reduce
   rw [if_pos rfl, ← mul_assoc, mul_inv_cancel₀ (pow_ne_zero _ hc), one_mul, sub_add_cancel]
-
-theorem surj (hc : c ≠ 0) (ha : IsTri c a) (G : MvPowerSeries σ K) :
-    ∃ F : MvPowerSeries σ K, subst a F = G :=
-  ⟨sol c a G, subst_sol hc ha G⟩
 
 end PI.OrbShared.Tri
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Filter Topology
 open scoped Pointwise ENNReal
@@ -7,7 +11,7 @@ namespace GlobalTheory.CompanionTheory.Ar.Cmp.DetMod
 
 theorem multilinear_sub_mem {O V W ι : Type*} [CommRing O] [AddCommGroup V] [Module O V]
     [AddCommGroup W] [Module O W] [Fintype ι] [DecidableEq ι]
-    (f : MultilinearMap O (fun _ : ι => V) W) (Λ : Submodule O V) (I : Submodule O W)
+    (f : (ι → V) →ₘₗ[O] W) (Λ : Submodule O V) (I : Submodule O W)
     (𝔞 : Ideal O) (hI : ∀ z : ι → V, (∀ i, z i ∈ Λ) → f z ∈ I)
     (x y : ι → V) (hx : ∀ i, x i ∈ Λ) (hxy : ∀ i, y i - x i ∈ 𝔞 • Λ) :
     f y - f x ∈ 𝔞 • I := by
@@ -75,7 +79,7 @@ theorem mem_of_smul_le {O K : Type*} [CommRing O] [IsDedekindDomain O] [Field K]
 
 theorem main : ∀ (O K : Type) [CommRing O] [IsDedekindDomain O] [Field K] [Algebra O K] [IsFractionRing O K] (N : ℕ) (Λ : Submodule O (Fin N → K)) (𝔞 : Ideal O) (γ : Matrix (Fin N) (Fin N) K), Λ.FG → Submodule.span K (Λ : Set (Fin N → K)) = ⊤ → (∀ x ∈ Λ, γ *ᵥ x - x ∈ 𝔞 • Λ) → ∃ a ∈ 𝔞, γ.det = 1 + algebraMap O K a := by
   intro O K _ _ _ _ _ N Λ 𝔞 γ hfg hsp hγ
-  let f : MultilinearMap O (fun _ : Fin N => (Fin N → K)) K :=
+  let f : (Fin N → Fin N → K) →ₘₗ[O] K :=
     (Matrix.detRowAlternating (n := Fin N) (R := K)).toMultilinearMap.restrictScalars O
   have hf : ∀ z, f z = (Matrix.of z).det := fun z => rfl
   let I : Submodule O K := Submodule.span O {t | ∃ z : Fin N → Fin N → K, (∀ i, z i ∈ Λ) ∧ f z = t}

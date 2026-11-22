@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -88,7 +92,8 @@ theorem exists_conj : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] (j₁ 
   obtain ⟨σ, hσ⟩ := exists_equiv_of_ker_le (ext a) (ext b) (by
     intro t ht
     obtain ⟨s, rfl⟩ := TensorProduct.exists_finset t
-    rw [RingHom.mem_ker, map_sum] at ht ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [RingHom.mem_ker, map_sum] at ht ⊢
     simp only [ext_tmul] at ht ⊢
     rw [← Finset.sum_coe_sort] at ht ⊢
     exact sum_eq_zero a b h' _ _ ht)

@@ -1,12 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.FrobeniusOrbits.DiscrMaximalRealCyclotomic
-import Formalism.FrobeniusOrbits.HostOrbitsPlaces
-import Formalism.FrobeniusOrbits.HostDiffSupport
-import Formalism.FrobeniusOrbits.HostThickExists
-import Formalism.FrobeniusOrbits.HostOrbitCountSg
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.FrobeniusOrbits.DiscrMaximalRealCyclotomic
+public import Formalism.FrobeniusOrbits.HostOrbitsPlaces
+public import Formalism.FrobeniusOrbits.HostDiffSupport
+public import Formalism.FrobeniusOrbits.HostThickExists
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+
+@[expose] public section
 
 open NumberField Formalism.FrobeniusOrbits Formalism.TwoAdicCyclotomicDecomposition
 open scoped Pointwise
@@ -124,12 +127,12 @@ noncomputable def emb (g : R.GG) : H.E →+* ℂ := H.φ₀.comp (H.sigmaOf g : 
 def MuCond {ι : Type} [Fintype ι] (g : ι → R.GG) (e : ι → ℚ) : Prop :=
   ∀ ζ : H.E, (∃ n : ℕ, 0 < n ∧ ζ ^ n = 1) → ∏ τ, H.emb (g τ) ζ ^ (e τ).num = 1
 
-open Classical in
 
+open Classical in
 noncomputable def topPlaces : Finset R.GG := H.TT.image R.tau1
 
-open Classical in
 
+open Classical in
 noncomputable def thickPlaces : Finset R.GG :=
   H.T2.image (fun s => R.tau2 (R.dig s + H.u0))
 

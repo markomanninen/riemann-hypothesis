@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryGroupAdelicClassesViaFiniteAdelicPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryGroupAdelicClassesViaFiniteAdelicPart
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -44,20 +48,20 @@ theorem exists_adForms_value {G Γ W : Type} [Group G] [Group Γ] [NormedAddComm
       have h2 : ∃ γ' : Γ, ∃ k' ∈ J, ι γ * (ι γ₁ * x₀ * k₁) * (k : G) = ι γ' * x₀ * k' :=
         ⟨γ * γ₁, k₁ * k, J.mul_mem hk₁ k.2, e2⟩
       have h1 : ∃ γ' : Γ, ∃ k' ∈ J, ι γ₁ * x₀ * k₁ = ι γ' * x₀ * k' := ⟨γ₁, k₁, hk₁, rfl⟩
-      rw [dif_pos h2, dif_pos h1, hval _ h2 (γ * γ₁) (k₁ * k) (J.mul_mem hk₁ k.2) e2,
+      rw [dite_eq_left h2, dite_eq_left h1, hval _ h2 (γ * γ₁) (k₁ * k) (J.mul_mem hk₁ k.2) e2,
         hval _ h1 γ₁ k₁ hk₁ rfl, map_mul, Module.End.mul_apply]
     · have h2 : ¬ ∃ γ' : Γ, ∃ k' ∈ J, ι γ * h * (k : G) = ι γ' * x₀ * k' := by
         rintro ⟨γ', k', hk', e⟩
         refine hh ⟨γ⁻¹ * γ', k' * (k : G)⁻¹, J.mul_mem hk' (J.inv_mem k.2), ?_⟩
         calc h = (ι γ)⁻¹ * (ι γ * h * (k : G)) * (k : G)⁻¹ := by group
           _ = ι (γ⁻¹ * γ') * x₀ * (k' * (k : G)⁻¹) := by rw [e, map_mul, map_inv]; group
-      rw [dif_neg h2, dif_neg hh, map_zero]
+      rw [dite_eq_right h2, dite_eq_right hh, map_zero]
   · have h0 : ∃ γ : Γ, ∃ k ∈ J, x₀ = ι γ * x₀ * k := ⟨1, 1, J.one_mem, by simp⟩
     dsimp only
-    rw [dif_pos h0, hval _ h0 1 1 J.one_mem (by simp), map_one, Module.End.one_apply]
+    rw [dite_eq_left h0, hval _ h0 1 1 J.one_mem (by simp), map_one, Module.End.one_apply]
   · intro y hy
     dsimp only
-    rw [dif_neg hy]
+    rw [dite_eq_right hy]
 
 theorem eq_one_of_gam_bot {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
     {n : ℕ} {hc : CMData F E} {J : Matrix (Fin n) (Fin n) E} {K : Subgroup (GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))}
@@ -66,7 +70,7 @@ theorem eq_one_of_gam_bot {F E : Type} [Field F] [NumberField F] [Field E] [Numb
   rw [Subgroup.mem_subgroupOf] at hu
   simp only [Formalism.UG.ratPts, Subgroup.mem_map] at hu
   obtain ⟨g, hg, hgu⟩ := hu
-  obtain ⟨q, hq, k₁, hk₁, e3⟩ := (DoubleCoset.eq (UQ hc J) (K.subgroupOf (UA hc J))
+  obtain ⟨q, hq, k₁, hk₁, e3⟩ := (@DoubleCoset.eq _ _ (UQ hc J) (K.subgroupOf (UA hc J))
     (Formalism.L2.DIV.rep (Quotient.mk'' x : Cl hc J K)) x).1 (Formalism.L2.DIV.mk_rep _)
   rw [Subgroup.mem_subgroupOf] at hq hk₁
   simp only [Formalism.UG.ratPts, Subgroup.mem_map] at hq
@@ -209,7 +213,7 @@ theorem toMap_apply {S : D.what₂.Tau → SPar} {M : DSModel V S} (c : CoefA V)
       pr (c.ρ g⁻¹ (f ((finHom V).rangeRestrict g))) (PiTensorProduct.tprod ℂ v) := rfl
 
 set_option maxHeartbeats 1000000 in
-private theorem exists_mult_evAt_eq_and_vanish_off_class : ∀ (D : D7) (θ : InfFam D) (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S) (c : CoefA V) (pr : c.W →ₗ[ℂ] SmT M →ₗ[ℂ] ℂ) (β : GL (Fin V.rank) (EAf D)) (L : LevDat D.host.E ℂ V.rank), IsInfFam θ → V.SigOK → V.IsDefinite → c.Is → IsDualPair θ M c pr → Function.Surjective pr → (∀ x, levFn β (flag1L L) x = 1) → (∀ c₀ : Cl D.sp.cm V.gram (lev D.sp.cm V.gram β (flag1L L)), Gam c₀ = ⊥) → ∀ (h : GA D V) (ℓ : MultilinearMap ℂ (fun τ : D.what₂.Tau => M.sm τ) ℂ), ∃ T ∈ Mult θ M (levS V β (flag1L L)) (levChi V β (flag1L L)), evAt M h T = ℓ ∧ ∀ h' : GA D V, clsA V (lev D.sp.cm V.gram β (flag1L L)) h' ≠ clsA V (lev D.sp.cm V.gram β (flag1L L)) h → evAt M h' T = 0 := by
+private theorem exists_mult_evAt_eq_and_vanish_off_class : ∀ (D : D7) (θ : InfFam D) (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S) (c : CoefA V) (pr : c.W →ₗ[ℂ] SmT M →ₗ[ℂ] ℂ) (β : GL (Fin V.rank) (EAf D)) (L : LevDat D.host.E ℂ V.rank), IsInfFam θ → V.SigOK → V.IsDefinite → c.Is → IsDualPair θ M c pr → Function.Surjective pr → (∀ x, levFn β (flag1L L) x = 1) → (∀ c₀ : Cl D.sp.cm V.gram (lev D.sp.cm V.gram β (flag1L L)), Gam c₀ = ⊥) → ∀ (h : GA D V) (ℓ : MultilinearMap (RingHom.id ℂ) (fun τ : D.what₂.Tau => M.sm τ) ℂ), ∃ T ∈ Mult θ M (levS V β (flag1L L)) (levChi V β (flag1L L)), evAt M h T = ℓ ∧ ∀ h' : GA D V, clsA V (lev D.sp.cm V.gram β (flag1L L)) h' ≠ clsA V (lev D.sp.cm V.gram β (flag1L L)) h → evAt M h' T = 0 := by
   intro D θ V S M c pr β L hθ hs hd hc hpr hsurj hχ hG h ℓ
   obtain ⟨w, hw⟩ := hsurj (PiTensorProduct.lift ℓ)
   obtain ⟨f, hf, hfx, hf0⟩ := exists_form_value c hχ hG h (c.ρ h w)
@@ -239,7 +243,7 @@ private theorem exists_mult_evAt_eq_and_vanish_off_class : ∀ (D : D7) (θ : In
 
 end
 
-theorem exists_mult_value : ∀ (D : D7) (θ : InfFam D) (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S) (c : CoefA V) (pr : c.W →ₗ[ℂ] SmT M →ₗ[ℂ] ℂ) (β : GL (Fin V.rank) (EAf D)) (L : LevDat D.host.E ℂ V.rank), IsInfFam θ → V.SigOK → V.IsDefinite → c.Is → IsDualPair θ M c pr → Function.Surjective pr → (∀ x, levFn β (flag1L L) x = 1) → (∀ c₀ : Cl D.sp.cm V.gram (lev D.sp.cm V.gram β (flag1L L)), Gam c₀ = ⊥) → ∀ (h : GA D V) (ℓ : MultilinearMap ℂ (fun τ : D.what₂.Tau => M.sm τ) ℂ), ∃ T ∈ Mult θ M (levS V β (flag1L L)) (levChi V β (flag1L L)), evAt M h T = ℓ ∧ ∀ h' : GA D V, clsA V (lev D.sp.cm V.gram β (flag1L L)) h' ≠ clsA V (lev D.sp.cm V.gram β (flag1L L)) h → evAt M h' T = 0 := by
+theorem exists_mult_value : ∀ (D : D7) (θ : InfFam D) (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S) (c : CoefA V) (pr : c.W →ₗ[ℂ] SmT M →ₗ[ℂ] ℂ) (β : GL (Fin V.rank) (EAf D)) (L : LevDat D.host.E ℂ V.rank), IsInfFam θ → V.SigOK → V.IsDefinite → c.Is → IsDualPair θ M c pr → Function.Surjective pr → (∀ x, levFn β (flag1L L) x = 1) → (∀ c₀ : Cl D.sp.cm V.gram (lev D.sp.cm V.gram β (flag1L L)), Gam c₀ = ⊥) → ∀ (h : GA D V) (ℓ : MultilinearMap (RingHom.id ℂ) (fun τ : D.what₂.Tau => M.sm τ) ℂ), ∃ T ∈ Mult θ M (levS V β (flag1L L)) (levChi V β (flag1L L)), evAt M h T = ℓ ∧ ∀ h' : GA D V, clsA V (lev D.sp.cm V.gram β (flag1L L)) h' ≠ clsA V (lev D.sp.cm V.gram β (flag1L L)) h → evAt M h' T = 0 := by
   exact exists_mult_evAt_eq_and_vanish_off_class
 
 end GlobalTheory.DefFree

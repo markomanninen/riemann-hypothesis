@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CapelliDeterminantFirstRowsMemBmW
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CoefficientSpaceEqSpanOrbitExtremalVector
-import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CapelliDeterminantFirstRowsMemBmW
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CoefficientSpaceEqSpanOrbitExtremalVector
+public import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BranchingDeterminantCap Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.Mem.Gelf GlobalTheory.Mem.GelfCheck GlobalTheory.BrCompare
 
@@ -13,7 +17,7 @@ theorem natW_top (lam : DomWeight (n + 1)) (a : Fin (n + 1)) :
     (lam.natW a : ℤ) = lam.w a - lam.w (Fin.last n) := by
   have h1 : lam.detShift = lam.w (Fin.last n) := by
     unfold DomWeight.detShift
-    rw [dif_pos (Nat.succ_pos n)]
+    rw [dite_eq_left (Nat.succ_pos n)]
     rfl
   have h2 := lam.anti (Fin.le_last a)
   unfold DomWeight.natW
@@ -44,7 +48,7 @@ theorem natW_low (hE : GlobalTheory.IndefiniteRowSideFullHecke.InterlacingNumera
   have h0 : 0 < n := by omega
   have h1 : sg.detShift = lam.w (Fin.last n) := by
     unfold DomWeight.detShift
-    rw [dif_pos h0]
+    rw [dite_eq_left h0]
     exact hE _ (by simp only; omega)
   have h2 : sg.w ⟨n - 1, by omega⟩ ≤ sg.w i := sg.anti (by rw [Fin.le_def]; simp only; omega)
   rw [hE ⟨n - 1, by omega⟩ (by simp only; omega)] at h2
@@ -69,8 +73,8 @@ theorem rename_initMinor (K : Type) [Field K] {s : ℕ} (I : Fin s → Fin (n + 
 
 end GlobalTheory.BrCompare.Shift
 
-open GlobalTheory.BrCompare.Shift in
 
+open GlobalTheory.BrCompare.Shift in
 theorem GlobalTheory.BrCompare.shifted_branching_list_character : ∀ (n : ℕ) (lam : DomWeight (n + 1)) (sg : DomWeight n), GlobalTheory.IndefiniteRowSideFullHecke.InterlacingNumerators.Interlace lam sg → GlobalTheory.IndefiniteRowSideFullHecke.InterlacingNumerators.EqualLast lam sg → Formalism.BranchingDeterminantCap.Interlace (lamZ (lamN lam)) (fun i => (sg.natW i : ℤ)) ∧ (∀ u ∈ bmList (lamN lam) sg.natW, u ∈ zList lam sg) ∧ ((zList lam sg).map (bmChi (lamN lam) fun s => ((lamN lam s - sg.natW s : ℕ) : ℤ))).prod = Formalism.L2.Col.Br.cBr rfl lam sg ∧ (∀ s, (Formalism.L2.Col.Br.bBr rfl lam sg s).toNat = lamN lam s - sg.natW s) ∧ ∀ (K : Type) [Field K], Formalism.L2.Col.Br.xiBr K rfl lam sg = incl K n (xiB K (lamN lam) sg.natW) := by
   intro n lam sg hI hE
   have hb : ∀ s, (Formalism.L2.Col.Br.bBr rfl lam sg s).toNat = lamN lam s - sg.natW s := by

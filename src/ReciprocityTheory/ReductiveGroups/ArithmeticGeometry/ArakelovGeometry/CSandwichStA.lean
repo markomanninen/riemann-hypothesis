@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CNormSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsNatMulMemConeRingIntFin
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.HadZSt
-import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.BergmanSt
-import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.MonomSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CNormSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsNatMulMemConeRingIntFin
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.HadZSt
+public import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.BergmanSt
+public import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.MonomSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ open scoped ComplexOrder
 theorem aeval_eq_sum_adt {D N : ℕ} {S : Type*} [CommRing S] (g : MvPolynomial (Fin (D + 1)) ℤ)
     (hg : g.IsHomogeneous N) (y : Fin (D + 1) → S) :
     aeval y g = ∑ a ∈ Finset.Nat.antidiagonalTuple (D + 1) N,
-      ((coeff (Finsupp.equivFunOnFinite.symm a) g : ℤ) : S) * ∏ i, y i ^ a i := by
+      ((AddMonoidAlgebra.coeff g (Finsupp.equivFunOnFinite.symm a) : ℤ) : S) * ∏ i, y i ^ a i := by
   classical
   rw [aeval_def, eval₂_eq']
   symm
@@ -42,10 +46,16 @@ theorem integral_sphProb_le {D : ℕ} (F : (Fin (D + 1) → ℂ) → ℝ) (hF0 :
   have hae : ∀ᵐ w ∂(sphProb (D + 1)), sqN w = 1 := by
     rw [ae_iff]
     exact sphProb_compl_sphere D
+  letI : IsProbabilityMeasure (sphProb (D + 1)) := by
+    unfold sphProb
+    infer_instance
+  letI : IsFiniteMeasure (sphProb (D + 1)) := ⟨by rw [measure_univ]; norm_num⟩
   calc ∫ w, F w ∂(sphProb (D + 1)) ≤ ∫ _w, B ∂(sphProb (D + 1)) :=
         integral_mono_of_nonneg (Filter.Eventually.of_forall hF0) (integrable_const B)
           (hae.mono fun w hw => hB w hw)
-    _ = B := by simp
+    _ = B := by
+      rw [integral_const]
+      simp [Measure.real]
 
 def secTraceHom {Ω : Type*} [Field Ω] [CharZero Ω] {κ : Type*} [Fintype κ] {D : ℕ} (x : κ → Ω)
     (e : Fin (D + 1) → κ) (h : IsRatProjFrame x e) (n : ℕ) : sec ℤ x n →+ Ω :=

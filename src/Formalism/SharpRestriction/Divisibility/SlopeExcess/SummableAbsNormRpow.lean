@@ -1,5 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.FunctionModelRallisFromInputs
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataTheta
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Filter Topology Asymptotics
@@ -122,10 +130,6 @@ namespace Formalism.MainNotions.DIV.Proofs.QuadraticNormBounds
 section Euler
 variable {ι : Type} (q : ι → ℕ) (ε : ι → ℕ → ℂ) (n : ℕ)
 
-def at' (i : ι) (j : ℕ) (s : ℂ) : ℂ := ε i j * ((q i : ℕ) : ℂ) ^ (-(2 * s + (j : ℂ)))
-
-def ell (i : ι) (s : ℂ) : ℂ := ∑ j ∈ Finset.Icc 1 n, -Complex.log (1 - at' q ε i j s)
-
 variable {q ε}
 
 variable (hsum : ∀ σ : ℝ, 1 < σ → Summable (fun i => (q i : ℝ) ^ (-σ)))
@@ -135,35 +139,12 @@ end Euler
 end Formalism.MainNotions.DIV.Proofs.QuadraticNormBounds
 
 namespace Formalism.MainNotions.DIV.Proofs.QuadraticNormBounds
-open Formalism.MainNotions.SchurIrreducible Formalism.MainNotions.PDVS MeasureTheory
+open Formalism.MainNotions.SchurIrreducible MeasureTheory
 
 section Tail
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-def qS (S : Finset (Pl F)) : {w : HeightOneSpectrum (𝓞 F) // Sum.inr w ∉ S} → ℕ := fun w => qNorm w.1
 
-variable (E) in
-
-def εS (n M : ℕ) (S : Finset (Pl F)) : {w : HeightOneSpectrum (𝓞 F) // Sum.inr w ∉ S} → ℕ → ℂ :=
-  fun w j => etaV (E := E) w.1 ^ (M + n - j)
-
-variable (E) in
-
-def LL (n M : ℕ) (S : Finset (Pl F)) (s : ℂ) : ℂ := ∑' w, ell (qS S) (εS E n M S) n w s
-
-lemma εS_le (n M : ℕ) (S : Finset (Pl F)) : ∀ w j, ‖εS E n M S w j‖ ≤ 1 := by
-  intro w j
-  simp only [εS, norm_pow]
-  unfold etaV
-  split_ifs <;> simp
-
-def eqv (S : Finset (Pl F)) (hinf : ∀ v : NumberField.InfinitePlace F, Sum.inl v ∈ S) :
-    {w : HeightOneSpectrum (𝓞 F) // Sum.inr w ∉ S} ≃ {v : Pl F // v ∉ S} :=
-  Equiv.ofBijective (fun w => ⟨Sum.inr w.1, w.2⟩)
-    ⟨fun a b h => Subtype.ext (Sum.inr_injective (congrArg Subtype.val h)), fun ⟨v, hv⟩ => by
-      cases v with
-      | inl x => exact absurd (hinf x) hv
-      | inr w => exact ⟨⟨w, hv⟩, rfl⟩⟩
 
 end Tail
 
@@ -175,7 +156,7 @@ end Main
 end Formalism.MainNotions.DIV.Proofs.QuadraticNormBounds
 
 namespace Formalism.MainNotions.DIV.Proofs
-open Formalism.BasicNotions Formalism.MainNotions.PDVS Formalism.MainNotions.DIV.Proofs.QuadraticNormBounds
+open Formalism.BasicNotions Formalism.MainNotions.DIV.Proofs.QuadraticNormBounds
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 end Formalism.MainNotions.DIV.Proofs

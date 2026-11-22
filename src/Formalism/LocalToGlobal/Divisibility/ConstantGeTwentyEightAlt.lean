@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.TwistedPlaceEtaSumLeExtended
+module
+
+public import Formalism.LocalToGlobal.Divisibility.TwistedPlaceEtaSumLeExtended
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ variable {A3 : FamIn3 K G Pl0 I0 Ty T m} {s : ℕ} {P0 : Subgroup G} {ψ0 : P0 �
   {Pl : Type} [Fintype Pl] [DecidableEq Pl] {R : RecNums A3.fam3.base3.J Pl} {u : (Dc Pk.Zs).Mem}
   {Nu : Submodule (𝓞 K) (Fin ((Dc Pk.Zs).a u) → K)} {sg : HeightOneSpectrum (𝓞 K) → ℝ} {bd : Fin m → ℝ}
 
-def DivisionInputsWithoutNorm.ofRows (hNu : Submodule.IsLattice K Nu) (hsg : (Function.support (shiftZ sg)).Finite)
+def DivisionInputsWithoutNorm.ofRows (hNu : Submodule.IsFullLattice K Nu) (hsg : (Function.support (shiftZ sg)).Finite)
     (hXc : ∀ v, IsUnit ((Dc Pk.Zs).Xc u v).det) (ha : 0 < (Dc Pk.Zs).a u)
     (X0 : InfinitePlace K → Matrix (Fin ((A3.side3 P1 ψ1 Pk.Zs).nV A3.fam3.base3.μ0))
       (Fin ((A3.side3 P1 ψ1 Pk.Zs).nV A3.fam3.base3.μ0)) ℂ)

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsGenRosati
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsHolFamPullbackLiftOfCommonBaseStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AbelianHolomorphicFrameReadingConstOfFormsCancelStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.GeneratorReadingCorrMulInvStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.GeneratorReadingPullbackPeriodRigidStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsGenRosati
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsHolFamPullbackLiftOfCommonBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AbelianHolomorphicFrameReadingConstOfFormsCancelStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.GeneratorReadingCorrMulInvStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.GeneratorReadingPullbackPeriodRigidStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,9 +67,6 @@ theorem one_adφ {T : Over S} (f f' : A ⟶ A) [IsMonHom f] [IsMonHom f'] (k) :
   have h2 : (![(1 : T ⟶ A) ≫ f, 1] : Fin 2 → (T ⟶ A)) = fun _ => 1 := by
     funext i; fin_cases i <;> simp
   rcases k with I | I <;> simp only [Sum.elim_inl, Sum.elim_inr, cub, h1, h2, psum_one]
-
-theorem prod_adε {U : Type} [CommGroup U] (x : U) : ∏ k, x ^ adε k = 1 := by
-  simp [adε, Fintype.prod_sum_type, zpow_neg, Finset.prod_inv_distrib]
 
 theorem exists_norm {L : LB A.left} (hL : L.IsLB) (f f' : A ⟶ A) [IsMonHom f] [IsMonHom f']
     (H : LBIso (cubeLB A ![fst A A ≫ f, snd A A] L) (cubeLB A ![fst A A, snd A A ≫ f'] L)) :
@@ -273,7 +274,7 @@ theorem reading_one (f f' : A ⟶ A) [IsMonHom f] [IsMonHom f']
     intro gm hgm
     have hg : (C gm).1 ∈ Φ.lat ∧ (C gm).2 ∈ Φ.lat := AddSubgroup.mem_prod.mp (AddSubgroup.mem_comap.mp hgm)
     refine ⟨fun z => ?_, fun k => ?_⟩
-    · simp only [q, map_add, Prod.fst_add, Prod.snd_add, Φ.e_add, (Φ.e_ker _).mpr hg.1, (Φ.e_ker _).mpr hg.2]
+    · simp only [q, map_add (f := _), Prod.fst_add, Prod.snd_add, Φ.e_add, (Φ.e_ker _).mpr hg.1, (Φ.e_ker _).mpr hg.2]
       rw [_root_.mul_one, _root_.mul_one]
     · rcases k with I | I
       · show psumL 2 g I (M1 (C gm)) ∈ Φ.lat

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CccoefMono
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CccoefMono
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Filter Topology MeasureTheory
 

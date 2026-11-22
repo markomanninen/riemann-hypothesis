@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CMTraceForms.CmDatumNatCastMemHeightOneSpectrumIff
-import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SpanResCharNeBot
-import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CMTraceForms.CmDatumNatCastMemHeightOneSpectrumIff
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SpanResCharNeBot
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.DIV Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.L2.Indef.Tree.DepthCond Formalism.DivisionValues Formalism.EigenvalueLevelCeiling
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff)
@@ -27,7 +31,7 @@ theorem nusOf_eq_nuN {D : D7} (B : WeightFamilies.Prov D) {j : ℕ} (w : WeightF
   unfold nusOf DepPage.nuN
   rw [H1algLink.eWL_eq la, h1, h2]
   by_cases hc : ∃ i : Fin 2, ((D.host.g i : ℕ) : 𝓞 B.KO) ∈ la.asIdeal
-  · rw [dif_pos hc]
+  · rw [dite_eq_left hc]
     have hch := (H1algLink.prime_mem_iff la (D.host.g_prime _)).1 (Classical.choose_spec hc)
     rw [← hch, mul_div_assoc]
     congr 1
@@ -40,7 +44,7 @@ theorem nusOf_eq_nuN {D : D7} (B : WeightFamilies.Prov D) {j : ℕ} (w : WeightF
         · exact absurd hch e0
         · exact hch
       rw [if_pos e1, e1]
-  · rw [dif_neg hc]
+  · rw [dite_eq_right hc]
     have e0 : ¬ resCharOf la = D.host.g 0 := fun e =>
       hc ⟨0, (H1algLink.prime_mem_iff la (D.host.g_prime 0)).2 e⟩
     have e1 : ¬ resCharOf la = D.host.g 1 := fun e =>

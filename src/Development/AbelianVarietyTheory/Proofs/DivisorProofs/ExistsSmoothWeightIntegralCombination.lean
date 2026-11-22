@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernIntegralIndependentOfCoefficient
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernPartCombinationPower
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivisorOfTensorSectionAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernIntegralIndependentOfCoefficient
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernPartCombinationPower
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivisorOfTensorSectionAdd
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -69,7 +74,13 @@ def combSub (X : Var F) (σ : F →+* ℂ) : AddSubgroup (X.Dv × ((atlas X σ).
     exact ⟨_, _, ψ.tens φ, h1.tens h1', h2.tens h2', by rw [firstChernFormOfWeight_tensor _ _ h2 h2', h3, h3']; rfl⟩
   neg_mem' := by
     rintro ⟨D, w⟩ ⟨L, r, ψ, h1, h2, h3⟩
-    exact ⟨_, _, ψ.dual, GlobalTheory.LatChain.CanTens.presents_dual h1, h2.dual, by rw [firstChernFormOfWeight_dual _ h2, h3]; rfl⟩
+    have hdual : Presents (-D) (CechPic.dual L) (fun i => (r i)⁻¹) := by
+      refine ⟨CechPic.isLB_dual h1.isLB, fun i j hij => ?_, fun i x hx => (h1.isEqn i x hx).neg⟩
+      change (↑((r i)⁻¹) : X.Fn) =
+        fnOf (L.U i ⊓ L.U j) hij ↑((L.g i j)⁻¹) * ↑((r j)⁻¹)
+      rw [Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_units_inv,
+        h1.isRatSec i j hij, mul_inv]
+    exact ⟨_, _, ψ.dual, hdual, h2.dual, by rw [firstChernFormOfWeight_dual _ h2, h3]; rfl⟩
 
 end GlobalTheory.ChernCalc.CombW
 

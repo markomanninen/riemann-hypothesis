@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLineFibre
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLinearQuotient
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLineFibre
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLinearQuotient
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -17,7 +22,7 @@ section Helpers
 variable {F : Type} [Field F]
 
 theorem linearForm_fin_one_eq {g : MvPolynomial (Fin 1) F} (hg : g.IsHomogeneous 1) :
-    g = C (coeff (Finsupp.single 0 1) g) * X 0 := by
+    g = C (AddMonoidAlgebra.coeff g (Finsupp.single 0 1)) * X 0 := by
   ext d
   rw [coeff_C_mul, coeff_X]
   by_cases h : Finsupp.single 0 1 = d
@@ -71,8 +76,9 @@ theorem LineFibreBlocks.proof (hLin : LinearQuotient.Statement) : LineFibreBlock
   rw [hWdef, ringKrullDim_eq_of_ringEquiv (Ideal.quotientKerAlgEquivOfSurjective hφs).toRingEquiv,
     MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field, zero_add] at hdimW
   have hr : r = 1 := by
-    have : ((Nat.card (Fin r) : ℕ) : WithBot ℕ∞) = ((1 : ℕ) : WithBot ℕ∞) := hdimW
-    have h2 : Nat.card (Fin r) = 1 := by exact_mod_cast this
+    have h : ENat.card (Fin r) = (1 : ℕ∞) := WithBot.coe_injective hdimW
+    rw [ENat.card_eq_coe_natCard] at h
+    have h2 : Nat.card (Fin r) = 1 := by exact_mod_cast h
     simpa using h2
   subst hr
 
@@ -87,7 +93,7 @@ theorem LineFibreBlocks.proof (hLin : LinearQuotient.Statement) : LineFibreBlock
       simp [h0]
     obtain ⟨f, hf⟩ := hφs (X 0)
     rw [hφ0] at hf
-    have := congrArg (coeff (Finsupp.single 0 1)) hf
+    have := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single 0 1)) hf
     simp [Algebra.ofId_apply, coeff_X, algebraMap_eq, coeff_C] at this
     rw [if_neg (Finsupp.single_ne_zero.mpr one_ne_zero).symm] at this
     exact zero_ne_one this
@@ -110,7 +116,7 @@ theorem LineFibreBlocks.proof (hLin : LinearQuotient.Statement) : LineFibreBlock
   set j : ∀ k, ι₀ k := fun k => (hWrel k).choose with hjdef
   have hj : IsChart W j := fun k => (hWrel k).choose_spec
   set p₁ : Σ k, ι₀ k := ⟨k₀, j k₀⟩ with hp₁
-  set a : (Σ k, ι₀ k) → F := fun s => coeff (Finsupp.single 0 1) (φ (X s)) with hadef
+  set a : (Σ k, ι₀ k) → F := fun s => AddMonoidAlgebra.coeff (φ (X s)) (Finsupp.single 0 1) with hadef
   have hφXs : ∀ s, φ (X s) = C (a s) * X 0 := fun s => linearForm_fin_one_eq (hφX s)
   have ha1 : a p₁ ≠ 0 := by
     intro h0

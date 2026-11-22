@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemRingOfInR
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemRingOfInR
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+
+@[expose] public section
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators
 open GlobalTheory.QFam GlobalTheory.WpFam GlobalTheory.KZ GlobalTheory.FN
 open ReciprocityTheory.ChartRestriction.L1 (DD jT IsMF)
@@ -33,11 +38,12 @@ theorem hs_mul : ∀ (Ω : Type) [Field Ω] (ε : Ω →+* ℂ) (C : ℝ) (φ ψ
     rw [this]; ring
   rw [tsum_subtype (f := fun p : ℚ × ℚ => a p.1 * b p.2)]
   rw [tsum_eq_sum (s := Finset.antidiagonal h.isPWO_support h'.isPWO_support s)]
-  · simp only [HahnSeries.coeff_mul, map_sum, map_mul, Finset.sum_mul]
-    refine Finset.sum_congr rfl fun p hp => ?_
-    rw [Finset.mem_antidiagonal] at hp
-    rw [Set.indicator_of_mem (by simpa using hp.2.2)]
-    exact (hexp p hp.2.2).symm
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [HahnSeries.coeff_mul, map_sum, map_mul, Finset.sum_mul]
+      refine Finset.sum_congr rfl fun p hp => ?_
+      rw [Finset.mem_antidiagonal] at hp
+      rw [Set.indicator_of_mem (by simpa using hp.2.2)]
+      exact (hexp p hp.2.2).symm
   · intro p hp
     by_cases hs : p.1 + p.2 = s
     · rw [Set.indicator_of_mem (by simpa using hs), hexp p hs]

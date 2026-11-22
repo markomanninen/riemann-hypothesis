@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteTwConjOfIsTest
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteTwConjOfIsTest
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,6 +40,9 @@ theorem discrete_ratIn (d : GL (Fin n) E) : DiscreteTopology (ratIn d) := by
     exact Subtype.ext (Subtype.ext h')
 
 theorem isClosed_adCent (d : GL (Fin n) E) : IsClosed (adCent d : Set (GA E n)) := by
+  haveI : T2Space (GA E n) := by
+    haveI := GlobalTheory.AdelicUnitaryTop.t2Space_adeleRing_numberField E
+    exact Units.isEmbedding_embedProduct.t2Space
   have hc : Continuous fun g : GA E n => twConj (thetaA E n) g (ratGL E n d) := by
     unfold twConj
     exact (continuous_inv.mul continuous_const).mul GlobalTheory.CompanionTheory.KerTwFin.continuous_thetaA

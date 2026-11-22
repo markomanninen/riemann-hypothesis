@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleProperBaseChange
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.A6supp
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.TateTwistSectionsLocallyGenerated
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleLocalPrimitiveRootAndRootsOfUnity
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleProperBaseChange
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.TateTwistSectionsLocallyGenerated
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleLocalPrimitiveRootAndRootsOfUnity
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex UpperTheory.Et
 
 theorem UpperTheory.tateTwist_generator_of_primitiveRoot_and_roots_etaleLocal :
@@ -10,7 +15,7 @@ theorem UpperTheory.tateTwist_generator_of_primitiveRoot_and_roots_etaleLocal :
   intro q _ i U
   obtain ⟨-, h2, h3, h4, -⟩ := UpperTheory.Cb.tateTwist_sections_locally_generated q i
   refine ⟨fun ζ => ⟨?_, ?_, ?_⟩, fun hq => (UpperTheory.Cb.etaleLocal_primitiveRoot_and_roots_of_unity q U).1 hq⟩
-  · have h0 : ((q : ℕ) : ULift.{1} (ZMod q)) = 0 := ULift.ext _ _ (ZMod.natCast_self q)
+  · have h0 : ((q : ℕ) : ULift.{1} (ZMod q)) = 0 := ULift.ext (ZMod.natCast_self q)
     rw [← Nat.cast_smul_eq_nsmul (ULift.{1} (ZMod q)) q, h0, zero_smul]
   · intro V k c hV hc
     haveI := hV

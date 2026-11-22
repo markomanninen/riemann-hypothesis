@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.SplitPkg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterConductorConditionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EmbZeroTrivialWittDecomposition
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.SplitPkg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterConductorConditionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EmbZeroTrivialWittDecomposition
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem sigR_tensNU {F E R R' : Type} [Field F] [Field E] [Algebra F E] [CommRin
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem conjUnit_ideleAt {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (σ : E →ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) (w : (Fv F v ⊗[F] E)ˣ) :
@@ -39,7 +43,7 @@ theorem conjUnit_ideleAt {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
   refine Units.ext ?_
   change Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ σ (1 - tensNU (inFin v) (inFin_mul v) 1 + tensNU (inFin v) (inFin_mul v) w.1) =
     1 - tensNU (inFin v) (inFin_mul v) 1 + tensNU (inFin v) (inFin_mul v) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ σ w.1)
-  rw [map_add, map_sub, map_one, sigR_tensNU, sigR_tensNU, map_one]
+  rw [map_add (f := _), map_sub, map_one, sigR_tensNU, sigR_tensNU, map_one]
 
 theorem resEta_norm {D : D7} {χ : (AE D)ˣ →* Circle} {r : ℕ} (h : ResEta D χ r) (x : (AE D)ˣ) :
     χ (x * conjUnit D.sp.cm.sig x) = 1 := by
@@ -78,14 +82,14 @@ theorem snd_tensNU_mem {y : Fv F v ⊗[F] E} (hy : y ∈ intLoc F E v) :
     · subst hw; rw [evalV_singleFin_self]; exact ha
     · rw [evalV_singleFin_ne hw]; exact zero_mem _
   · rw [map_zero, map_zero]; exact zero_mem _
-  · rw [map_add, map_add]; exact add_mem hy hz
+  · rw [map_add (f := _), map_add (f := _)]; exact add_mem hy hz
   · rw [map_neg, map_neg]; exact neg_mem hy
 
 omit [NumberField E] in
 theorem snd_ideleAt_mem {u : (Fv F v ⊗[F] E)ˣ} (hu : u.1 ∈ intLoc F E v) :
     Algebra.TensorProduct.map (sndA F) (AlgHom.id F E) (ideleAt F E v u).1 ∈
       AddSubgroup.closure {y : Af F ⊗[F] E | ∃ a ∈ Formalism.MainNotions.StandardLattice.intAf F, ∃ x : 𝓞 E, y = a ⊗ₜ[F] (x : E)} := by
-  rw [ideleAt, val_extUnit, map_add, map_sub, map_one]
+  rw [ideleAt, val_extUnit, map_add (f := _), map_sub, map_one]
   exact add_mem (sub_mem (AddSubgroup.subset_closure ⟨1, fun w => by rw [map_one]; exact one_mem _, 1, rfl⟩)
     (snd_tensNU_mem (one_mem _))) (snd_tensNU_mem hu)
 

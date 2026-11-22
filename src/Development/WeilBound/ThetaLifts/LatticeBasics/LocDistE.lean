@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocDistB
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocDistD
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocDistB
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocDistD
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.WeilM Matrix
 
@@ -16,12 +20,12 @@ def invT : GL (Fin d) k →* GL (Fin d) k where
 theorem cont_invT : Continuous (invT (k := k) (d := d)) :=
   Units.continuous_iff.2 ⟨Units.continuous_coe_inv.matrix_transpose, Units.continuous_val.matrix_transpose⟩
 
-open Classical in
 
+open Classical in
 noncomputable def toGL (X : Matrix (Fin d) (Fin d) k) : GL (Fin d) k := if h : IsUnit X then h.unit else 1
 
 theorem toGL_val {X : Matrix (Fin d) (Fin d) k} (h : X.det ≠ 0) : (toGL X).1 = X := by
-  rw [toGL, dif_pos ((isUnit_iff_isUnit_det X).2 h.isUnit)]; rfl
+  rw [toGL, dite_eq_left ((isUnit_iff_isUnit_det X).2 h.isUnit)]; rfl
 
 theorem toGL_coe (x : GL (Fin d) k) : toGL x.1 = x := Units.ext (toGL_val x.det_ne_zero)
 
@@ -42,7 +46,7 @@ theorem top_cell (ξ : kˣ →* ℂˣ) (l : (Matrix (Fin d) (Fin d) k → ℂ) �
   have hU : IsOpen {X : Matrix (Fin d) (Fin d) k | X.det ≠ 0} := isOpen_ne_fun (by fun_prop) continuous_const
   let m : (GL (Fin d) k → ℂ) →ₗ[ℂ] ℂ :=
     { toFun := fun ψ => l fun X => if X.det ≠ 0 then ψ (toGL X) else 0
-      map_add' := fun F F' => by rw [← map_add]; congr 1; ext z; by_cases h : z.det = 0 <;> simp [h]
+      map_add' := fun F F' => by rw [← map_add (f := _)]; congr 1; ext z; by_cases h : z.det = 0 <;> simp [h]
       map_smul' := fun a F => by rw [← map_smul]; congr 1; ext z; by_cases h : z.det = 0 <;> simp [h] }
   have hm : ∀ ψ, m ψ = l fun X => if X.det ≠ 0 then ψ (toGL X) else 0 := fun _ => rfl
   have a := left_of_right ((Units.coeHom ℂ).comp (ξ.comp GeneralLinearGroup.det)) invT cont_invT

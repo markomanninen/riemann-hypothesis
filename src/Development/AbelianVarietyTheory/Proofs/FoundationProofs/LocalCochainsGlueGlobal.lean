@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCyclotomicBlockCocyclesLeSha
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCyclotomicBlockCocyclesLeSha
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,7 +107,8 @@ instance (c : Coef l) (n : ℕ) : Finite (Red c n) := by
   obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ_[l]).1 hx
   refine ⟨fun i => PadicInt.toZModPow n (a i), ?_⟩
   show ∑ i, _ = _
-  rw [← ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← ha, map_sum]
   exact Finset.sum_congr rfl fun i _ => (red_smul c n (a i) (s i)).symm
 
 theorem continuous_red_comp {X : Type*} [TopologicalSpace X] (c : Coef l) (n : ℕ) (f : X → c.O)
@@ -245,7 +250,7 @@ theorem coboundary_of_locTriv : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → �
 
   have htriv : ∀ g (φ : TDual (ZMod (l ^ n)) (Red c n)), twDual μ (rho c n μ) g φ = φ := by
     intro g φ
-    ext m
+    refine DFunLike.ext _ _ fun m => ?_
     have hφ : ∀ (a : ZMod (l ^ n)) (m : Red c n), φ (a • m) = a * φ m := fun a m =>
       LinearMap.map_smul (φ : Module.Dual (ZMod (l ^ n)) (Red c n)) a m
     rw [twDual_apply]
@@ -320,7 +325,7 @@ theorem coboundary_of_locTriv : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → �
     have e : red c n ((cycZ ℚ Ω l r : ℤ_[l]) • xi s t) - red c n (xi (r * s) t) + red c n (xi r (s * t)) -
         red c n (xi r s) = red c n ((cycZ ℚ Ω l r : ℤ_[l]) • xi s t + xi r (s * t)) -
           red c n (xi (r * s) t + xi r s) := by
-      simp only [map_add]; abel
+      simp only [map_add (f := _)]; abel
     rw [e, sub_eq_zero, red_eq_iff]
     show Cg n ((((cycZ ℚ Ω l r : ℤ_[l]) • xi s t : c.O) : Qbar l) + ξ r (s * t)) (ξ (r * s) t + ξ r s)
     rw [heps]
@@ -338,7 +343,7 @@ theorem coboundary_of_locTriv : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → �
     obtain ⟨g, h⟩ := p
     show rho c n μ (toGS Ω (S : Set Pl) g) (red c n ⟨u h, huO h⟩) - red c n ⟨u (g * h), huO _⟩ +
       red c n ⟨u g, huO g⟩ = xb (toGS Ω (S : Set Pl) g, toGS Ω (S : Set Pl) h)
-    rw [hxb, hrho, ← map_sub, ← map_add, red_eq_iff]
+    rw [hxb, hrho, ← map_sub, ← map_add (f := _), red_eq_iff]
     show Cg n ((((cycZ ℚ Ω l g : ℤ_[l]) • (⟨u h, huO h⟩ : c.O) : c.O) : Qbar l) - u (g * h) + u g) (ξ g h)
     rw [heps]
     exact cg_symm (hcg g g.2 h h.2)
@@ -365,7 +370,7 @@ theorem coboundary_of_locTriv : GlobalTheory.Mem.LiteralAutomorphy.LitCoh → �
   · have h1 := congrFun hd (toGS Ω (S : Set Pl) s, toGS Ω (S : Set Pl) t)
     simp only [d1_apply, Submodule.coe_subtype] at h1
     have key : red c n (xi s t) = red c n ((cycZ ℚ Ω l s : ℤ_[l]) • U t - U (s * t) + U s) := by
-      rw [map_add, map_sub, ← hrho, hU, hU, hU, map_mul, ← hxb]
+      rw [map_add (f := _), map_sub, ← hrho, hU, hU, hU, map_mul, ← hxb]
       exact h1.symm
     have e := (red_eq_iff c n _ _).1 key
     show Cg n (ξ s t) (eps l s * (U t : Qbar l) - U (s * t) + U s)

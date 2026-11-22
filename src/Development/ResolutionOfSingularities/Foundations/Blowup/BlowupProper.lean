@@ -1,11 +1,16 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupProper
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupUniversal
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupProper
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupUniversal
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry CategoryTheory.Limits
@@ -101,17 +106,5 @@ theorem isProper_of_isBlowupAlongIdealSheaf {X X' : Scheme.{u}}
     [AlgebraicGeometry.IsLocallyNoetherian X] {π : X' ⟶ X} {I : X.IdealSheafData}
     (h : IsBlowupAlongIdealSheaf π I) : AlgebraicGeometry.IsProper π :=
   blowupIsProper X X' π I h
-
-theorem locallyOfFiniteType_of_isBlowupAlongIdealSheaf {X X' : Scheme.{u}}
-    [AlgebraicGeometry.IsLocallyNoetherian X] {π : X' ⟶ X} {I : X.IdealSheafData}
-    (h : IsBlowupAlongIdealSheaf π I) : AlgebraicGeometry.LocallyOfFiniteType π := by
-  have := isProper_of_isBlowupAlongIdealSheaf h
-  infer_instance
-
-theorem quasiCompact_of_isBlowupAlongIdealSheaf {X X' : Scheme.{u}}
-    [AlgebraicGeometry.IsLocallyNoetherian X] {π : X' ⟶ X} {I : X.IdealSheafData}
-    (h : IsBlowupAlongIdealSheaf π I) : AlgebraicGeometry.QuasiCompact π := by
-  have := isProper_of_isBlowupAlongIdealSheaf h
-  infer_instance
 
 end FunctorialResolution.Blowup

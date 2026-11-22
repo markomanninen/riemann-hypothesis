@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.MetAndHolds
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ArtEx
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.MetAndHolds
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ArtEx
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,5 @@ theorem of_three (hD : HeckeLAdicCharacterDeRham) (hB : DeRhamPotSemistable) (hW
 
 theorem of_classicalTheorems_m (hD : HeckeLAdicCharacterDeRham) (hB : DeRhamPotSemistable) (hW : AlgebraicCharacterWD)
     (_hL : LocalLanglandsGL) : HeckeLAdicCharacterCrystalline := of_three hD hB hW
-
-example : type_of% @of_classicalTheorems := @of_classicalTheorems_m
 
 end GlobalTheory.Published.CharCrysModel

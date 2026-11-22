@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockCoefficientExtremalEqDiscreteSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RealLowestKTypeOfExtremalVectorCase
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealTranslationCuspFormMapsEqSmoothLinearMap
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HolomorphicDiscreteSeriesLowestKTypeSmoothIrredu
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockCoefficientExtremalEqDiscreteSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RealLowestKTypeOfExtremalVectorCase
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealTranslationCuspFormMapsEqSmoothLinearMap
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HolomorphicDiscreteSeriesLowestKTypeSmoothIrredu
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -22,12 +26,12 @@ open GlobalTheory.DefLift GlobalTheory.RawLift GlobalTheory.RawLift.RealLowRed F
 variable {D : D7} {V W : HSp D} {S' : D.what₂.Tau → SPar} {ψ : AddChar (AF D.host.F) ℂ} {χV χW : (AE D)ˣ →* Circle}
   {ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)} {μ : Measure (WO V W)} {𝓕 : Set (WO V W)}
 
+
 open Classical in
 set_option maxHeartbeats 4000000 in
-
 theorem pair_of_ext (θ : InfFam D) (hθ : IsInfFam θ) (M : DSModel W S') (hLS : LowSm M) (hLI : GlobalTheory.IndefiniteRowSideFullHecke.HolomorphicLowestType.LowIrr M)
     (hω : IsWeilDatumO ψ V W χV χW ω) (hcv : IsCovolOne (ratL W V) μ 𝓕)
-    (J : MultilinearMap ℂ (fun ρ => lowT M ρ) (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
+    (J : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
     (hK : ∀ τ, ∀ k ∈ Formalism.REAL.Kset (M.ε τ), ∀ (v : ∀ ρ, lowT M ρ) (u : lowT M τ),
       ((u : M.sm τ) : M.H τ) = M.σ τ k ((v τ : M.sm τ) : M.H τ) →
       J (Function.update v τ u) = ω (1, atTau θ W τ ((M.fr τ)⁻¹ * k * M.fr τ)) (J v))
@@ -50,7 +54,7 @@ theorem pair_of_ext (θ : InfFam D) (hθ : IsInfFam θ) (M : DSModel W S') (hLS 
     rw [GlobalTheory.PointAtPlaceHom.infMat_one]
     exact (hU ρ).1.1
   have hωmul : ∀ g h f, ω (1, g) (ω (1, h) f) = ω (1, g * h) f := fun g h f => by
-    rw [← Module.End.mul_apply, ← map_mul, Prod.mk_mul_mk, mul_one]
+    rw [← mul_apply_eq_comp, ← map_mul, Prod.mk_mul_mk, mul_one]
 
   have hA : ∀ τ, ∀ k ∈ Formalism.REAL.Kset (M.ε τ), ∀ (v : ∀ ρ, lowT M ρ) (u : lowT M τ),
       ((u : M.sm τ) : M.H τ) = M.σ τ k ((v τ : M.sm τ) : M.H τ) → ∀ ρ,
@@ -106,24 +110,70 @@ theorem pair_of_ext (θ : InfFam D) (hθ : IsInfFam θ) (M : DSModel W S') (hLS 
     rw [h0, norm_zero] at h'
     exact zero_ne_one h'
 
+  have mem_of_translates (B : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (GA D W → ℂ))
+      (he : B e ∈ offReal W)
+      (hupdate : ∀ τ, ∀ k ∈ Formalism.REAL.Kset (M.ε τ), ∀ (v : ∀ ρ, lowT M ρ) (u : lowT M τ),
+        ((u : M.sm τ) : M.H τ) = M.σ τ k ((v τ : M.sm τ) : M.H τ) →
+        B v ∈ offReal W → B (Function.update v τ u) ∈ offReal W)
+      (v : ∀ ρ, lowT M ρ) : B v ∈ offReal W := by
+    have key : ∀ s : Finset D.what₂.Tau, B (s.piecewise v e) ∈ offReal W := by
+      intro s
+      induction s using Finset.induction_on with
+      | empty => simpa using he
+      | insert τ s hτ ih =>
+        have heq : s.piecewise v e τ = e τ := Finset.piecewise_eq_of_notMem _ _ _ hτ
+        have htop := GlobalTheory.DefLift.eq_top_of_translates hLS hLI τ
+          ((offReal W).comap (B.toLinearMap (s.piecewise v e) τ)) (e τ) (hne τ)
+          fun k hk u hu => hupdate τ k hk _ u (by rw [heq]; exact hu) ih
+        rw [Finset.piecewise_insert]
+        exact (htop.ge Submodule.mem_top : v τ ∈ (offReal W).comap (B.toLinearMap (s.piecewise v e) τ))
+    simpa using key Finset.univ
+
+  let prodPair (F : GA D W → ∀ ρ, lowT M ρ →ₗ[ℂ] ℂ) : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (GA D W → ℂ) :=
+    MultilinearMap.pi fun g => (MultilinearMap.mkPiAlgebra ℂ D.what₂.Tau ℂ).compLinearMap (F g)
+  have prodPair_apply (F : GA D W → ∀ ρ, lowT M ρ →ₗ[ℂ] ℂ) (v : ∀ ρ, lowT M ρ) (g : GA D W) :
+      prodPair F v g = ∏ ρ, F g ρ (v ρ) := rfl
+
+  let thR : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (GA D W → ℂ) :=
+    { toFun := fun v g => thetaIP μ 𝓕 (J e) (ω (1, g) (J v))
+      map_update_add' := by
+        intro _ m ρ x y
+        funext g
+        simp only [Pi.add_apply]
+        rw [J.map_update_add, map_add (f := _)]
+        exact thetaInner_add_right hω.std h1 (hJ e) (hω.om_pres _ _ (hJ _)) (hω.om_pres _ _ (hJ _))
+      map_update_smul' := by
+        intro _ m ρ a x
+        funext g
+        simp only [RingHom.id_apply, Pi.smul_apply, smul_eq_mul]
+        rw [J.map_update_smul, RingHom.id_apply, map_smul]
+        exact thetaInner_smul_right _ _ _ _ _ }
+  have thR_apply (v : ∀ ρ, lowT M ρ) (g : GA D W) :
+      thR v g = thetaIP μ 𝓕 (J e) (ω (1, g) (J v)) := rfl
+
   have st1 : ∀ v', ∀ g ∈ GinfC W, thetaIP μ 𝓕 (J e) (ω (1, g) (J v')) = thetaIP μ 𝓕 (J e) (J e) *
       ∏ ρ, ⟪((e ρ : M.sm ρ) : M.H ρ), M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g) ((v' ρ : M.sm ρ) : M.H ρ)⟫_ℂ := by
     intro v'
-    have key := GlobalTheory.DefLift.mem_of_translates hLS hLI
-      (thR hω h1 J hJ (J e) (hJ e) - thetaIP μ 𝓕 (J e) (J e) • prodR θ M (fun ρ => ((e ρ : M.sm ρ) : M.H ρ)))
-      (offReal W) e hne ?_ ?_ v'
+    let prodR := prodPair fun g ρ =>
+      (innerₛₗ ℂ ((e ρ : M.sm ρ) : M.H ρ)).comp
+        ((M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g)).toLinearMap.comp
+          ((M.sm ρ).subtype.comp (lowT M ρ).subtype))
+    have prodR_apply (v : ∀ ρ, lowT M ρ) (g : GA D W) : prodR v g =
+        ∏ ρ, ⟪((e ρ : M.sm ρ) : M.H ρ), M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g)
+          ((v ρ : M.sm ρ) : M.H ρ)⟫_ℂ := prodPair_apply _ _ _
+    have key := mem_of_translates (thR - thetaIP μ 𝓕 (J e) (J e) • prodR) ?_ ?_ v'
     · intro g hg
       have := key g hg
-      simp only [MultilinearMap.sub_apply, MultilinearMap.smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
+      simp only [sub_apply, smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
         prodR_apply, thR_apply] at this
       exact sub_eq_zero.1 this
     · intro g hg
-      simp only [MultilinearMap.sub_apply, MultilinearMap.smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
+      simp only [sub_apply, smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
         prodR_apply, thR_apply]
       exact sub_eq_zero.2 (hX e hext g hg)
     · intro τ k hk v' u hu hv' g hg
       have := hv' (g * atTau θ W τ ((M.fr τ)⁻¹ * k * M.fr τ)) (mul_mem hg (GlobalTheory.PointAtPlaceHom.atTau_mem W τ _))
-      simp only [MultilinearMap.sub_apply, MultilinearMap.smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
+      simp only [sub_apply, smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
         prodR_apply, thR_apply] at this ⊢
       rw [hK τ k hk v' u hu, hωmul]
       have hp : ∏ ρ, ⟪((e ρ : M.sm ρ) : M.H ρ), M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g)
@@ -140,23 +190,41 @@ theorem pair_of_ext (θ : InfFam D) (hθ : IsInfFam θ) (M : DSModel W S') (hLS 
   have st2 : ∀ v v', ∀ g ∈ GinfC W, thetaIP μ 𝓕 (J v) (ω (1, g) (J v')) = thetaIP μ 𝓕 (J e) (J e) *
       ∏ ρ, ⟪((v ρ : M.sm ρ) : M.H ρ), M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g) ((v' ρ : M.sm ρ) : M.H ρ)⟫_ℂ := by
     intro v v'
-    have key := GlobalTheory.DefLift.mem_of_translates hLS hLI
-      (thL hω h1 J hJ (J v') (hJ v') - star (thetaIP μ 𝓕 (J e) (J e)) •
-        prodL θ M (fun ρ => ((v' ρ : M.sm ρ) : M.H ρ))) (offReal W) e hne ?_ ?_ v
+    let thL : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (GA D W → ℂ) :=
+      { toFun := fun u g => star (thetaIP μ 𝓕 (J u) (ω (1, g) (J v')))
+        map_update_add' := by
+          intro _ m ρ x y
+          funext g
+          simp only [Pi.add_apply]
+          rw [J.map_update_add, thetaInner_add_left hω.std h1 (hJ _) (hJ _) (hω.om_pres _ _ (hJ v')), star_add]
+        map_update_smul' := by
+          intro _ m ρ a x
+          funext g
+          simp only [RingHom.id_apply, Pi.smul_apply, smul_eq_mul]
+          rw [J.map_update_smul, RingHom.id_apply, thetaInner_smul_left, star_mul', star_star] }
+    have thL_apply (u : ∀ ρ, lowT M ρ) (g : GA D W) :
+        thL u g = star (thetaIP μ 𝓕 (J u) (ω (1, g) (J v'))) := rfl
+    let prodL := prodPair fun g ρ =>
+      (innerₛₗ ℂ (M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g) ((v' ρ : M.sm ρ) : M.H ρ))).comp
+        ((M.sm ρ).subtype.comp (lowT M ρ).subtype)
+    have prodL_apply (u : ∀ ρ, lowT M ρ) (g : GA D W) : prodL u g =
+        ∏ ρ, ⟪M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g) ((v' ρ : M.sm ρ) : M.H ρ),
+          ((u ρ : M.sm ρ) : M.H ρ)⟫_ℂ := prodPair_apply _ _ _
+    have key := mem_of_translates (thL - star (thetaIP μ 𝓕 (J e) (J e)) • prodL) ?_ ?_ v
     · intro g hg
       have := key g hg
-      simp only [MultilinearMap.sub_apply, MultilinearMap.smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
+      simp only [sub_apply, smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
         prodL_apply, thL_apply] at this
       rw [sub_eq_zero, hconj, ← star_mul'] at this
       exact star_injective this
     · intro g hg
-      simp only [MultilinearMap.sub_apply, MultilinearMap.smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
+      simp only [sub_apply, smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
         prodL_apply, thL_apply]
       rw [st1 v' g hg, star_mul', ← hconj, sub_self]
     · intro τ k hk v u hu hv g hg
       set a := atTau θ W τ ((M.fr τ)⁻¹ * k * M.fr τ) with ha
       have := hv (a⁻¹ * g) (mul_mem (inv_mem (GlobalTheory.PointAtPlaceHom.atTau_mem W τ _)) hg)
-      simp only [MultilinearMap.sub_apply, MultilinearMap.smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
+      simp only [sub_apply, smul_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
         prodL_apply, thL_apply] at this ⊢
       have e1 : ω (1, g) (J v') = ω (1, a) (ω (1, a⁻¹ * g) (J v')) := by rw [hωmul, mul_inv_cancel_left]
       rw [hK τ k hk v u hu, e1, GlobalTheory.WeilPairing.thetaInner_weilRep D ψ V W χV χW ω μ 𝓕 hω hcv (1, a) _ _ (hJ v)
@@ -175,13 +243,13 @@ end GlobalTheory.RawLift.FockPair
 
 namespace GlobalTheory.RawLift.FockPair
 
-open GlobalTheory.DefLift GlobalTheory.RawLift Formalism.IndefR.FWT in
 
+open GlobalTheory.DefLift GlobalTheory.RawLift Formalism.IndefR.FWT in
 theorem coef_one_vector : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)), IsInfFam θ → IsWeilDatumO ψ S T χS χT om → ∀ (Sp : D.what₂.Tau → SPar) (M : DSModel T Sp), GlobalTheory.HolDict.HolShape M → (∃ wt, GlobalTheory.HolDict.WtIs M wt) → ∀ (μ : Measure (WO S T)) (𝓧 : Set (WO S T)), IsCovolOne (ratL T S) μ 𝓧 → ∀ c : CoefA S, c.Is → ∀ pt : PolF D T.rank S.rank →ₗ[ℂ] (WO S T → ℂ), (∀ P, IsThetaFunO ψ S T (pt P)) → ∀ (Δ : PolF D T.rank S.rank) (io : LowT M →ₗ[ℂ] c.W →ₗ[ℂ] PolF D T.rank S.rank), IsIoW θ M c om (fun P => pt P) Δ io → GlobalTheory.RawLift.FockCoef.Killed om θ M (pt Δ) → ∀ w : c.W, ∃ N : ℂ, ∀ g : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ, (∀ ρ, g ρ ∈ Formalism.QuantumDeterminants.UH (gramAt D T ρ)) → ∀ (e e' : ∀ ρ, lowT M ρ), l2 μ 𝓧 (om (1, realElt θ T g) (pt (io (PiTensorProduct.tprod ℂ e) w))) (pt (io (PiTensorProduct.tprod ℂ e') w)) = N * (∏ ρ, ⟪((e' ρ : M.sm ρ) : M.H ρ), M.rep ρ (g ρ) ((e ρ : M.sm ρ) : M.H ρ)⟫_ℂ) := by
   intro D ψ θ S T χS χT om hθ hom Sp M hM hwt μ 𝓧 hcv c hc pt hpt Δ io hio hΔ w
   obtain ⟨wt, hw⟩ := hwt
   obtain ⟨hLS, hLI⟩ := GlobalTheory.HolLowOnce.lowSm_and_lowIrr D T Sp M hM
-  let J : MultilinearMap ℂ (fun ρ => lowT M ρ) (WO S T → ℂ) :=
+  let J : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (WO S T → ℂ) :=
     (pt.comp (io.flip w)).compMultilinearMap (PiTensorProduct.tprod ℂ)
   have hJv : ∀ v, J v = pt (io (PiTensorProduct.tprod ℂ v) w) := fun _ => rfl
   have hJ : ∀ v, IsThetaFunO ψ S T (J v) := fun v => hpt _
@@ -196,7 +264,7 @@ theorem coef_one_vector : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : In
     exact GlobalTheory.PointAtPlaceHom.atTau_mem _ τ _
   have hinf : ∀ ρ, infMat D.sp.cm.sig T.gram (θ ρ) (realElt θ T g) = g ρ := fun ρ => by
     rw [realElt, GlobalTheory.RealTransSm.infMat_list_prod hθ g hg ρ _ (Finset.nodup_toList _),
-      if_pos (Finset.mem_toList.2 (Finset.mem_univ ρ))]
+      ite_eq_left (Finset.mem_toList.2 (Finset.mem_univ ρ))]
   have key := hN e' e _ hmem
   rw [hJv, hJv] at key
   simp only [hinf] at key

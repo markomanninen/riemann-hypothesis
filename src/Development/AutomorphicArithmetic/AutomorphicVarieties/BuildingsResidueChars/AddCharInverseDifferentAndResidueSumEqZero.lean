@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Base UpperTheory.V.Sd
@@ -148,7 +152,7 @@ theorem UpperTheory.addChar_inverseDifferent_and_residue_sum_eq_zero :
     have e : ∀ v : InfinitePlace F, (reAt v (η * ((a + b : 𝓞 F) : F)) : ℂ) =
         (reAt v (η * (a : F)) : ℂ) + (reAt v (η * (b : F)) : ℂ) := by
       intro v
-      simp only [reAt, map_add, mul_add, Complex.add_re, Complex.ofReal_add]
+      simp only [reAt, map_add (f := _), mul_add, Complex.add_re, Complex.ofReal_add]
     rw [Finset.sum_congr rfl (fun v _ => e v), Finset.sum_add_distrib]
     ring
   have hker : ∀ c ∈ w.asIdeal, ψ c = 1 := by
@@ -186,7 +190,7 @@ theorem UpperTheory.addChar_inverseDifferent_and_residue_sum_eq_zero :
           rw [← hadd]
           apply hcoset
           rw [← Ideal.Quotient.eq]
-          simp only [map_add, hs]
+          simp only [map_add (f := _), hs]
           ring
       _ = ∑ r, ψ (s r) := Fintype.sum_equiv (Equiv.addRight _) _ _ (fun _ => rfl)
   have h0 : (ψ b0 - 1) * ∑ r, ψ (s r) = 0 := by rw [sub_mul, hsum, one_mul, sub_self]

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.PartialDifferential.EllipticDiffOp
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.PartialDifferential.EllipticDiffOp
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.Sobolev
 
@@ -14,9 +18,6 @@ section Integrable
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
-
-def ofIntegrable {h : E → ℂ} (hh : Integrable h) : 𝓢'(E, ℂ) :=
-  MeasureTheory.Lp.toTemperedDistribution (hh.toL1 h)
 
 end Integrable
 

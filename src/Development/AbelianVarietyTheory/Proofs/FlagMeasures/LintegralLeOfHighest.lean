@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.IsLowUnitH
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CayleyExistsAndAny
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.IsLowUnitH
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CayleyExistsAndAny
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped InnerProductSpace ENNReal
@@ -16,15 +20,14 @@ section L2
 
 variable {X Ω : Type} [NormedAddCommGroup X] [InnerProductSpace ℂ X] [MeasurableSpace Ω] {μ : Measure Ω}
 
-theorem lintegral_sq_eq (f : Ω → X) : ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ = eLpNorm f 2 μ ^ 2 := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+theorem lintegral_sq_eq (f : Ω → X) (hf : AEStronglyMeasurable f μ) : ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ = eLpNorm f 2 μ ^ 2 := by
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
   norm_num
 
 theorem memLp_of_lt_top {f : Ω → X} (hf : AEStronglyMeasurable f μ)
     (h : ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ ≠ ⊤) : MemLp f 2 μ := by
-  refine ⟨hf, ?_⟩
-  rw [lintegral_sq_eq] at h
+  rw [lintegral_sq_eq f hf] at h
   exact lt_top_iff_ne_top.2 fun e => h (by rw [e]; simp)
 
 theorem exists_linear_sq {V : Type} [AddCommGroup V] [Module ℂ V] (T : V → Ω → X)
@@ -38,8 +41,8 @@ theorem exists_linear_sq {V : Type} [AddCommGroup V] [Module ℂ V] (T : V → �
     rw [← MemLp.toLp_const_smul]
     exact MemLp.toLp_congr _ _ (hsm a v)
   · show _ = ENNReal.ofReal (‖(hL v).toLp _‖ ^ 2)
-    rw [Lp.norm_toLp, lintegral_sq_eq, ENNReal.ofReal_pow ENNReal.toReal_nonneg,
-      ENNReal.ofReal_toReal (hL v).2.ne]
+    rw [Lp.norm_toLp, lintegral_sq_eq _ (hL v).aestronglyMeasurable, ENNReal.ofReal_pow ENNReal.toReal_nonneg,
+      ENNReal.ofReal_toReal (hL v).ne]
 
 end L2
 
@@ -197,8 +200,8 @@ theorem lintegral_le_of_highest {X Ω : Type} [NormedAddCommGroup X] [InnerProdu
       rintro g hg x ⟨hx, hxD, hxL⟩
       have hgx := hSs g hg x hx
       refine ⟨hgx, hSD hgx, memLp_of_lt_top (hme _ (hSD hgx)) ?_⟩
-      rw [hinv g hg x hxD, lintegral_sq_eq]
-      exact ENNReal.pow_ne_top hxL.2.ne
+      rw [hinv g hg x hxD, lintegral_sq_eq _ hxL.aestronglyMeasurable]
+      exact ENNReal.pow_ne_top hxL.ne
     rcases hirr _ inf_le_left hst with e | e
     · exfalso
       have hu := S.smul_mem ((‖v‖⁻¹ : ℝ) : ℂ) hvS
@@ -236,7 +239,7 @@ theorem lintegral_le_of_highest {X Ω : Type} [NormedAddCommGroup X] [InnerProdu
   · intro x hx y hy
     rw [hNF x hx, hNF y hy, hNF _ (V.add_mem hx hy), hNF _ (V.sub_mem hx hy)]
     have h3 := parallelogram_law_with_norm ℂ (F ⟨x, hx⟩) (F ⟨y, hy⟩)
-    rw [← map_add, ← map_sub] at h3
+    rw [← map_add (f := _), ← map_sub] at h3
     simp only [sq] at h3 ⊢
     exact h3.trans (by ring)
   · intro a x hx

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -13,7 +17,8 @@ theorem UpperTheory.V.AlgebraTools.isQuasiRegularSeq_of_tower :
   intro a c hc α
   simp only [sup_bot_eq] at hc ⊢
   have h := hq a (a + 1) (Nat.lt_succ_self a) (fun β => q (a + 1) (c β)) (by
-    rw [← hk, LinearMap.mem_ker, map_sum] at hc
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hk, LinearMap.mem_ker, map_sum] at hc
     simp only [map_smul] at hc
     rw [hc]
     exact zero_mem _) α

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfStepParts2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfStepParts2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -38,7 +42,7 @@ theorem level_zero_form_integrable (D : B.RealPlaceData k r Wp Wq) (μ : Measure
     rw [rb_weight hc]
     rfl
   refine Integrable.congr ?_ hae.symm
-  exact integrable_finset_sum _ fun b _ => ((hint b).integral_prod_left).const_mul _
+  exact integrable_finsetSum _ fun b _ => ((hint b).integral_prod_left).const_mul _
 
 theorem level_zero_form_integrable_compact (D : B.RealPlaceData k r Wp Wq) (μ : Measure (Mt k r))
     (hμ : B.IsHaarOn (Glev k r (Fin.last r)) μ) (x x' : Ix S → B.Mat k r → (Wq →L[ℂ] Wp))

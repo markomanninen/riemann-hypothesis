@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcResidue
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualLatticeModPrime
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedExcGeoFirst
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeIndex
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcResidue
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualLatticeModPrime
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedExcGeoFirst
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeIndex
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -28,7 +33,7 @@ def annIdeal (F : HermLattice K i) (φc : Fin i → K) : Ideal (𝓞 K) where
   carrier := {μ | algebraMap (𝓞 K) K μ • φc ∈ dualLattice F}
   add_mem' {a b} ha hb := by
     show algebraMap (𝓞 K) K (a + b) • φc ∈ dualLattice F
-    rw [map_add, add_smul]
+    rw [map_add (f := _), add_smul]
     exact add_mem ha hb
   zero_mem' := by
     show algebraMap (𝓞 K) K 0 • φc ∈ dualLattice F
@@ -87,13 +92,13 @@ def rhoDual (hlt : F'.lattice < F.lattice)
     rw [map_zero, zero_smul, sub_zero]
     exact zero_mem _
   map_add' φ ψ := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     refine mk_eq_of (coeff_spec hlt hcov hc hc' (φ + ψ)) ?_
     have e : ((φ + ψ : dualLattice F') : Fin i → K) - algebraMap (𝓞 K) K
         (coeff hlt hcov hc hc' φ + coeff hlt hcov hc hc' ψ) • φc =
         ((φ : Fin i → K) - algebraMap (𝓞 K) K (coeff hlt hcov hc hc' φ) • φc) +
         ((ψ : Fin i → K) - algebraMap (𝓞 K) K (coeff hlt hcov hc hc' ψ) • φc) := by
-      rw [Submodule.coe_add, map_add, add_smul]
+      rw [Submodule.coe_add, map_add (f := _), add_smul]
       abel
     rw [e]
     exact add_mem (coeff_spec hlt hcov hc hc' φ) (coeff_spec hlt hcov hc hc' ψ)
@@ -107,8 +112,8 @@ theorem rhoDual_eq (hlt : F'.lattice < F.lattice)
 
 end StackedExceptionalResidueExists
 
-open StackedExceptionalResidueExists in
 
+open StackedExceptionalResidueExists in
 theorem DualStackedExcResidueExists.proof (hσ : DualLatticeModPrime.Statement) :
     DualStackedExcResidueExists.Statement := by
   intro K _ _ i F F' T _ _ b b' a _ hlt hcov _

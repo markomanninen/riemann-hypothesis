@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralEnvelopingPreservesStable
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LagrangeProjectorPreservesStable
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsNonzeroMultipleMemLattice
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralEnvelopingPreservesLattice
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralEnvelopingPreservesStable
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.LagrangeProjectorPreservesStable
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsNonzeroMultipleMemLattice
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IntegralEnvelopingPreservesLattice
+
+@[expose] public section
 
 namespace Formalism.MainNotions.G.GLWeightTheory
 

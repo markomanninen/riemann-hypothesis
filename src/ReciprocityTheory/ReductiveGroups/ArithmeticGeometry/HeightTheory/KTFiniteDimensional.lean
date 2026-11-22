@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
-import ReciprocityTheory.SemistableReduction.AlgAll
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+public import ReciprocityTheory.SemistableReduction.AlgAll
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -66,7 +70,7 @@ theorem KT_finiteDimensional (hd : d.AxH 𝒜) (c : ι) :
   exact h2
 
 theorem omS_finite (hd : d.AxH 𝒜) (h : d.S1) (c : ι) :
-    letI : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra
+    letI : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra;
     FiniteDimensional (KTf K d.D d.N) (OmS (Ω c) d.D d.N) ∧
       Module.finrank (KTf K d.D d.N) (OmS (Ω c) d.D d.N) = d.delc c := by
   letI : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra

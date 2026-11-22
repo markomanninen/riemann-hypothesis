@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Eb GlobalTheory.GalOfCusp
 
@@ -27,12 +31,56 @@ theorem UpperTheory.V.Ws.Eb.trPlus :
     · subst hn
       ext i j
       exact i.elim0
+    have hsingle : ∀ (B : Type) [CommRing B] [Algebra A B] (g : G) (r : B),
+        W.GDet.repAlg (W.mat ρ) B (MonoidAlgebra.single g r) =
+          r • (W.mat ρ g).map (algebraMap A B) := by
+      intro B _ _ g r
+      unfold W.GDet.repAlg
+      rw [MonoidAlgebra.lift_single]
+      rfl
+    have hmap : ∀ y : MonoidAlgebra A G,
+        W.GDet.repAlg (W.mat ρ) A[X] (MonoidAlgebra.mapRingHom G (algebraMap A A[X]) y) =
+          (W.GDet.repAlg (W.mat ρ) A y).map (algebraMap A A[X]) := by
+      intro y
+      induction y using MonoidAlgebra.induction_on with
+      | of g => simp [MonoidAlgebra.of_apply, hsingle]
+      | add x y hx hy =>
+        rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
+        ext i j
+        simp
+      | smul r x hx =>
+        have hr : r • x = MonoidAlgebra.single 1 r * x := by
+          rw [Algebra.smul_def]
+          rfl
+        have hm : MonoidAlgebra.mapRingHom G (algebraMap A A[X]) (MonoidAlgebra.single 1 r)
+            = MonoidAlgebra.single 1 (algebraMap A A[X] r) := by
+          ext g
+          simp [MonoidAlgebra.coeff_single, Finsupp.single_apply]
+        rw [hr, map_mul, map_mul, map_mul, hx, Matrix.map_mul, hm, hsingle, hsingle, map_one]
+        congr 1
+        ext i j
+        by_cases h : i = j <;> simp [Matrix.one_apply, h]
+    have htr : ∀ y : MonoidAlgebra A G,
+        (W.GDet.ofRep (W.mat ρ)).tr y = (W.GDet.repAlg (W.mat ρ) A y).trace := by
+      intro y
+      have hchi : (W.GDet.ofRep (W.mat ρ)).chi y = (W.GDet.repAlg (W.mat ρ) A y).charpoly := by
+        unfold W.GDet.chi
+        change (W.GDet.repAlg (W.mat ρ) A[X] _).det = _
+        rw [← Polynomial.algebraMap_eq, map_sub, hsingle, hmap, map_one]
+        rw [Matrix.charpoly]
+        congr 1
+        ext i j
+        by_cases h : i = j <;> simp [Matrix.charmatrix_apply, Matrix.one_apply, h]
+      haveI : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
+      unfold W.GDet.tr W.GDet.lam
+      rw [hchi, Matrix.trace_eq_neg_charpoly_coeff, Fintype.card_fin]
+      ring
     have key : ∀ X, (X * W.GDet.repAlg (W.mat ρ) A z).trace = 0 := by
       intro X
       induction hsp X using Submodule.span_induction with
       | mem x hx =>
         obtain ⟨h, rfl⟩ := hx
-        rw [← hs h, ← map_mul, ← (AlgebraTools.Det.repApi (W.mat ρ)).2.2.1 hn]
+        rw [← hs h, ← map_mul, ← htr]
         exact hz h
       | zero => simp
       | add x y _ _ hx hy => rw [add_mul, Matrix.trace_add, hx, hy, add_zero]
@@ -46,7 +94,7 @@ theorem UpperTheory.V.Ws.Eb.trPlus :
       | mem x hx =>
         obtain ⟨h, rfl⟩ := hx
         simp_rw [← map_mul]
-        exact hc.comp (continuous_mul_left h)
+        exact hc.comp (continuous_const_mul h)
       | zero => simpa using continuous_const
       | add x y _ _ hx hy =>
         simp_rw [add_mul, Matrix.trace_add]

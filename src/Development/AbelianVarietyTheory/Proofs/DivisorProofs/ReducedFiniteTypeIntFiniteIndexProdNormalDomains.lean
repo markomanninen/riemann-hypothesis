@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIntegralClosureOfEssFiniteTypeIntDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIntegralClosureOfEssFiniteTypeIntDomain
+
+@[expose] public section
 
 open scoped nonZeroDivisors
 
@@ -59,7 +63,7 @@ theorem exists_conductor_elem {R : Type} [CommRing R] (p : Ideal R) [hp : p.IsPr
       obtain ⟨y1, hy1, e1⟩ := hx
       obtain ⟨y2, hy2, e2⟩ := hy
       exact ⟨y1 + y2, J.add_mem hy1 hy2, by
-        rw [map_add, e1, e2, ← mul_add]; rfl⟩
+        rw [map_add (f := _), e1, e2, ← mul_add]; rfl⟩
     | smul q x _ hx =>
       obtain ⟨y1, hy1, e1⟩ := hx
       obtain ⟨q', rfl⟩ := Ideal.Quotient.mk_surjective q
@@ -101,7 +105,8 @@ theorem exists_conductor {R : Type} [CommRing R] {ι : Type} [Fintype ι] [Decid
   refine ⟨∑ i, y i, funext fun k => Subtype.ext ?_⟩
   change algebraMap R (FractionRing (R ⧸ p k)) (∑ i, y i) =
     algebraMap R (FractionRing (R ⧸ p k)) (∑ i, c i) * (r k : FractionRing (R ⧸ p k))
-  rw [map_sum, map_sum, Finset.sum_mul, Finset.sum_eq_single k, Finset.sum_eq_single k, hy k]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul, Finset.sum_eq_single k, Finset.sum_eq_single k, hy k]
   · intro i _ hik
     rw [algebraMap_eq_zero_of_mem (p k) (hmemJ (hcJ i) hik), zero_mul]
   · intro h; exact absurd (Finset.mem_univ k) h
@@ -169,6 +174,3 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory Car
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
-
-example : ∀ (R : Type) [CommRing R] [Algebra.FiniteType ℤ R] [IsReduced R] [Nontrivial R], ∃ (n : ℕ) (D : Fin n → Type) (_ : ∀ i, CommRing (D i)) (_ : ∀ i, Algebra R (D i)), (∀ i, IsDomain (D i) ∧ IsIntegrallyClosed (D i) ∧ Module.Finite R (D i)) ∧ Function.Injective (algebraMap R (∀ i, D i)) ∧ ∃ a : R, a ≠ 0 ∧ ∀ r : (∀ i, D i), ∃ y : R, algebraMap R (∀ i, D i) y = algebraMap R (∀ i, D i) a * r :=
-  GlobalTheory.ReducedNormalisation.exists_finiteIndex_prod_normalDomains

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstEqZeroOfDegreeLt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstRestrictSumVariables
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstEqZeroOfDegreeLt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstRestrictSumVariables
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat GlobalTheory.LawDer
 
 namespace GlobalTheory
@@ -14,15 +19,16 @@ theorem invDer_coeff_eq_zero_of_degree_lt :
       ∀ α : Fin d →₀ ℕ, α.degree < r → coeff α (invDer μ u F) = 0 := by
   intro R _ d μ hμ u F r hF α hα
   unfold invDer
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   apply Finset.sum_eq_zero
   intro i _
   rw [map_smul]
   unfold atZero
-  rw [(coeff_subst_restrict_sum (pderiv R (Sum.inr i) (subst μ F))).1 α, coeff_pderiv]
+  rw [(coeff_subst_restrict_sum (pderiv (R := R) (Sum.inr i) (subst μ F))).1 α, coeff_pderiv]
   have h := coeff_subst_eq_zero_of_degree_lt R (Fin d) (Fin d ⊕ Fin d) μ F (r + 1) hμ hF
     (α.mapDomain Sum.inl + Finsupp.single (Sum.inr i) 1) (by
-      rw [map_add, Finsupp.degree_mapDomain, Finsupp.degree_single]; omega)
+      rw [map_add (f := _), Finsupp.degree_mapDomain, Finsupp.degree_single]; omega)
   rw [h, zero_mul, smul_zero]
 
 end GlobalTheory

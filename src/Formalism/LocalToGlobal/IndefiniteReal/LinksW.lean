@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,10 +148,6 @@ structure BaseW (F : Face D A) : Prop where
   models : R.IsModels
   chain : R.IsChainW
   thP : R.IsThPW
-
-structure CharW (F : Face D A) : Prop extends R.BaseW F where
-  scal : R.IsScal F
-  tup : R.IsTup F
 
 variable {R}
 

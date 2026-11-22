@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.NsetExpInjectiveSurjective
+module
+
+public import ReciprocityTheory.DualLattices.NsetExpInjectiveSurjective
+
+@[expose] public section
 
 noncomputable section
 

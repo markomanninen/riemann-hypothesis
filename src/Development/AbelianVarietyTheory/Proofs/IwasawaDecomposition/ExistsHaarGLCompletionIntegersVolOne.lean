@@ -1,8 +1,13 @@
-import Formalism.LocalToGlobal.Divisibility.QLocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
-import Formalism.DoubleCosetMeasures.LatticeCoset
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsClosedLowUni
-import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+module
+
+public import Formalism.LocalToGlobal.Divisibility.QLocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
+public import Formalism.DoubleCosetMeasures.LatticeCoset
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsClosedLowUni
+public import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+
+@[expose] public section
+
 open MeasureTheory Matrix NumberField IsDedekindDomain Formalism.BasicNotions Formalism.DoubleCosetMeasures Formalism.L2.Host Formalism.L2.DIV Formalism.L2.DIV.QLoc GlobalTheory.Mem.HD
 
 namespace GlobalTheory

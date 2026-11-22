@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMapPairTimesIdentitySnd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernelActionIsPullbackProdMapTorsor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMapPairTimesIdentitySnd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernelActionIsPullbackProdMapTorsor
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
@@ -15,7 +19,7 @@ private theorem coe_gm_eq_stalkMap_germ {X Y : Scheme.{0}} (f : Y ⟶ X) (y : Y)
     ((gm f y U a : (Y.presheaf.stalk y)ˣ) : Y.presheaf.stalk y) =
       f.stalkMap y (X.presheaf.germ U (f y) h (a : Γ(X, U))) := by
   unfold gm
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   simp only [pullU, MonoidHom.comp_apply, Units.coe_map, MonoidHom.coe_coe]
   exact (Scheme.Hom.germ_stalkMap_apply f U y h _).symm
 

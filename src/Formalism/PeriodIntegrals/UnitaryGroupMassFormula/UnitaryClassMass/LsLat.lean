@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.LSBase
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.LSBase
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UJClassMass Formalism.HermitianLatticesTheory Formalism.ThetaLiftIndependence PI.UnitaryGroupMassFormula.UJClassFin
 open scoped TensorProduct
@@ -83,21 +87,24 @@ theorem lsLat : LSLat := by
       rw [LinearEquiv.apply_symm_apply]; exact hx
     · intro hv
       exact ⟨b.equivFun v, hv, by simp [f]⟩
-  refine ⟨N, hNset, ⟨hCfg.map f, ?_⟩⟩
-  rw [eq_top_iff, ← b.span_eq, Submodule.span_le]
-  rintro _ ⟨i, rfl⟩
-  have hb : c • b i ∈ (N : Set V) := by
-    rw [hNset]
-    show b.equivFun (c • b i) ∈ abelian₂ σ (gramOf h b) L g
-    have : b.equivFun (c • b i) = Pi.single i c := by
-      funext j
-      rw [LinearEquiv.map_smul, Pi.smul_apply, b.equivFun_self]
-      by_cases hj : j = i
-      · subst hj; simp
-      · simp [Pi.single_apply, hj, Ne.symm hj]
-    rw [this]; exact hlowC i
-  have : b i = c⁻¹ • (c • b i) := by rw [smul_smul, inv_mul_cancel₀ hcne, one_smul]
-  rw [this]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span hb)
+  have hNfull : Submodule.IsFullLattice E N := by
+    refine { toIsLattice := Submodule.IsLattice.of_fg E (hCfg.map f), span_eq_top := ?_ }
+    rw [eq_top_iff, ← b.span_eq, Submodule.span_le]
+    rintro _ ⟨i, rfl⟩
+    have hb : c • b i ∈ (N : Set V) := by
+      rw [hNset]
+      show b.equivFun (c • b i) ∈ abelian₂ σ (gramOf h b) L g
+      have hcrd : b.equivFun (c • b i) = Pi.single i c := by
+        funext j
+        rw [LinearEquiv.map_smul, Pi.smul_apply, b.equivFun_self]
+        by_cases hj : j = i
+        · subst hj; simp
+        · simp [hj, Ne.symm hj]
+      rw [hcrd]
+      exact hlowC i
+    have hi : b i = c⁻¹ • (c • b i) := by rw [smul_smul, inv_mul_cancel₀ hcne, one_smul]
+    rw [hi]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hb)
+  exact ⟨N, hNset, hNfull⟩
 
 end PI.UnitaryGroupMassFormula.UJClassMass

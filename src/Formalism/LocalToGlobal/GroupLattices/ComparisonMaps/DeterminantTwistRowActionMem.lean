@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -67,7 +71,7 @@ theorem dw_HtenW {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf]
     simp only [(blockActTensor Kf Kf (Fin n') (m + 1) (m + 1) (fun s => (g s)⁻¹)).1, map_smul]
     exact je_prod_smul _ _
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ a hx
 
 theorem dw_HtenW' {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf]
@@ -108,7 +112,7 @@ theorem equivSys_HtupW (G : GAtP p) : EquivSys G G.P.HtupW := by
     exact ⟨fun v => je_loc G v ((G.lev i).act v γ) (F v),
       fun v => dw_ext G v _ (L v) (hL v) (F v) (hF v), je_natAct_prod G _ F⟩
   | zero => rw [map_zero, smul_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add, smul_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), smul_add]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [LinearMap.map_smul_of_tower, smul_comm]; exact Submodule.smul_mem _ a hx
 
 end Formalism.L2.G.Cmp

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.IsTemperedGLOfIsUnitaryLSeg
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.NotIsTemperedGLDetRepTwo
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelCohomologicalModel
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSphericalFactorOfSphericalSubquotient
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugateSymplecticCharacterExistsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.IsTemperedGLOfIsUnitaryLSeg
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.NotIsTemperedGLDetRepTwo
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelCohomologicalModel
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSphericalFactorOfSphericalSubquotient
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugateSymplecticCharacterExistsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -135,15 +139,17 @@ theorem map_eq_zero_of_equivariant (e : (Σ a, m a) ≃ n) {ρ : Representation 
     refine sub_eq_zero.1 (SatInd.eq_zero_of_apply_one e (sub_mem hF (Submodule.smul_mem _ _ hfix)) ?_)
     let ev : IndSp e ρ →ₗ[ℂ] W := ⟨⟨fun f => f.1.1 1, fun _ _ => rfl⟩, fun _ _ => rfl⟩
     show ev (∑ u ∈ S, u - ((∑ u ∈ S, c u : ℕ) : ℂ) • f₀) = 0
-    rw [map_sub, map_sum, map_smul, Nat.cast_sum, Finset.sum_smul, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, map_smul, Nat.cast_sum, Finset.sum_smul, sub_eq_zero]
     exact Finset.sum_congr rfl hc
   have h3 := congrArg l hF2
-  rw [map_sum, map_smul, Finset.sum_eq_zero fun u hu => by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_smul, Finset.sum_eq_zero fun u hu => by
     obtain ⟨g, -, rfl⟩ := (hS u).1 hu
     rw [hl, hlv, smul_zero]] at h3
   exact (smul_eq_zero.1 h3.symm).resolve_left (by exact_mod_cast hN.ne')
 
-theorem deg_eq_one_of_isCusp (x : IrrGL k) (hx : x.IsCusp) (hs : IsSpherical x.rep) : x.1 = 1 := by
+theorem deg_eq_one_of_isCusp (x : IrrGL (k := k)) (hx : x.IsCusp) (hs : IsSpherical x.rep) : x.1 = 1 := by
   by_contra hne
   have h2 : 2 ≤ x.1 := by have := hx.1; omega
   let e : (Σ _ : Fin x.1, Fin 1) ≃ Fin x.1 := Equiv.sigmaUnique _ _
@@ -172,7 +178,7 @@ theorem deg_eq_one_of_isCusp (x : IrrGL k) (hx : x.IsCusp) (hs : IsSpherical x.r
   exact h0 (congrArg Subtype.val ((injective_iff_map_eq_zero _).1
     (IwahoriInj.iwahoriProj_injective k _ _ x.rep x.2.rep.smooth) _ h3))
 
-theorem exists_span_of_deg_one (x : IrrGL k) (hx : x.1 = 1) : ∃ t : x.2.rep.V, ∀ v, ∃ c : ℂ, v = c • t := by
+theorem exists_span_of_deg_one (x : IrrGL (k := k)) (hx : x.1 = 1) : ∃ t : x.2.rep.V, ∀ v, ∃ c : ℂ, v = c • t := by
   have : Subsingleton (Fin x.1) := hx ▸ inferInstance
   obtain ⟨ψ, -, ⟨e⟩⟩ := RankLeOne.exists_equiv_detRep k (Fin x.1) _ x.rep x.2.rep.smooth x.2.rep.irr
   exact ⟨e.toLinearEquiv.symm 1, fun v => ⟨e.toLinearEquiv v, by
@@ -218,13 +224,15 @@ theorem tprod_line {X : α → Type} [∀ a, AddCommGroup (X a)] [∀ a, Module 
   induction w using PiTensorProduct.induction_on with
   | smul_tprod r v =>
     choose c hc using fun a => ht a (v a)
-    exact ⟨r * ∏ a, c a, by rw [funext hc, MultilinearMap.map_smul_univ, smul_smul]⟩
+    exact ⟨r * ∏ a, c a, by
+      rw [funext hc, MultilinearMap.map_smul_univ, smul_smul]
+      simp⟩
   | add a b ha hb =>
     obtain ⟨c, rfl⟩ := ha
     obtain ⟨d, rfl⟩ := hb
     exact ⟨c + d, (add_smul _ _ _).symm⟩
 
-theorem not_isSpherical_quotient {h N : ℕ} (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N) (h1 : ∀ a, (x a).1 = 1)
+theorem not_isSpherical_quotient {h N : ℕ} (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N) (h1 : ∀ a, (x a).1 = 1)
     (hN : 2 ≤ N) {χ : kˣ →* ℂˣ} (hχ : IsUnram χ) (φ : (detRep (Fin N) χ).IntertwiningMap (prodIrr x hd))
     (hφ : Function.Injective φ) {σ : Representation ℂ (GL (Fin N) k) Y} (hσ : σ.IsIrreducible)
     (q : (prodIrr x hd).IntertwiningMap σ) (hq : Function.Surjective q) : ¬ IsSpherical σ := by
@@ -249,7 +257,7 @@ theorem not_isSpherical_quotient {h N : ℕ} (x : Fin h → IrrGL k) (hd : ∑ a
   simp only
   omega
 
-theorem deg_eq_one_of_isLSeg [CharZero k] {Δ : Segment k} {y : IrrGL k} (hL : IsLSeg Δ y.rep) (hs : IsSpherical y.rep) :
+theorem deg_eq_one_of_isLSeg [CharZero k] {Δ : Segment k} {y : IrrGL (k := k)} (hL : IsLSeg Δ y.rep) (hs : IsSpherical y.rep) :
     y.1 = 1 := by
   obtain ⟨hd, hc⟩ := id hL
   have hsph := LocLanglands.SphFac.isSpherical_factor k Δ.len _ Δ.term hd _ y.rep hc.isSubquotient hs
@@ -398,9 +406,9 @@ theorem isTemperedGL_of_twist {η : Formalism.L2.Host.HChar E} (hη : η.IsUnita
 
 end Global
 
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep in
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
-
 theorem norm_satake_eq_one : GlobalTheory.Published.ClozelCohomological → GlobalTheory.Published.CohomologicalCsdTempered →
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a : ℕ), 1 ≤ a → ∀ P : CuspSub E a, P.IsCsd →
   ∀ m : (E →+* ℂ) → Multiset ℂ, (∀ τ, P.HasInfChar τ (m τ)) → (∀ τ, (m τ).Nodup) →

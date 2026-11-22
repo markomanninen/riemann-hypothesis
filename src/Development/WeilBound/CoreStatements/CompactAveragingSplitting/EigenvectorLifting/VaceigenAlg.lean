@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.LaEqSqrtSmulLam
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.LaEqSqrtSmulLam
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,17 +41,18 @@ theorem dual_family (R K : Type) {V : Type} [CommRing R] [IsDedekindDomain R] [F
   induction hx using Submodule.span_induction with
   | mem x hx =>
     have h1 : p (s ⟨x, hx⟩) = ⟨x, hx⟩ := LinearMap.congr_fun hps _
-    rw [pi_eq_sum_univ' (s ⟨x, hx⟩), map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pi_eq_sum_univ' (s ⟨x, hx⟩), map_sum] at h1
     have h2 := congrArg Subtype.val h1
     simp only [map_smul, AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at h2
     conv_lhs => rw [← h2]
     exact Finset.sum_congr rfl fun i _ => by rw [hf i ⟨x, hx⟩, algebraMap_smul]
   | zero => simp
-  | add x y _ _ hx hy => simp only [map_add, add_smul, Finset.sum_add_distrib, ← hx, ← hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), add_smul, Finset.sum_add_distrib, ← hx, ← hy]
   | smul a x _ hx => simp only [map_smul, smul_eq_mul, mul_smul, ← Finset.smul_sum, ← hx]
 
-open GlobalTheory.CompanionTheory.FinHeis in
 
+open GlobalTheory.CompanionTheory.FinHeis in
 theorem line_of_eigen {X M : Type} [AddCommGroup X] [AddCommGroup M] [Module ℂ M] (S : Sys X M) (Γ : Set X) (χ : X → ℂ)
     (hΓ : ∀ x, (∀ γ ∈ Γ, S.c γ x ^ 2 = 1) → x ∈ Γ) {φ φ' : M} (h0 : φ ≠ 0) (hc : Cyclic S φ)
     (hφ : ∀ γ ∈ Γ, S.rho γ φ = χ γ • φ) (hφ' : ∀ γ ∈ Γ, S.rho γ φ' = χ γ • φ') : ∃ a : ℂ, φ' = a • φ := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WwCauchyBinet
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IsometryDerivative.ExistsOePerm
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WwCauchyBinet
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IsometryDerivative.ExistsOePerm
+
+@[expose] public section
 
 open Matrix Finset
 

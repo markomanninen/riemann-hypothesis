@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ def Marked {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.hos
     ∀ a ∈ l.Mb.map (H.bar : 𝓞 D.host.E →+* 𝓞 D.host.E) • (⊤ : Submodule (𝓞 D.host.E) Dw.La),
       ∃ w ∈ latGHat V h, finVec V (mk a ∘ Fin.cast hr) - (finHom V h).1.mulVec (finVec V (io a)) = (l.M : ℕ) • w
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 
+attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 def FormPlus {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} (V : HSp D)
     (io : Dw.La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)) : Prop :=
   ∀ x y, ((Dw.EF x y : ℤ) : ℚ) =

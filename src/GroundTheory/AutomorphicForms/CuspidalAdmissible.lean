@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.LeviCartan
-import GroundTheory.AutomorphicForms.SmoothRepSchur
-import GroundTheory.AutomorphicForms.MeasuresModulus
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.LeviCartan
+public import GroundTheory.AutomorphicForms.SmoothRepSchur
+public import GroundTheory.AutomorphicForms.MeasuresModulus
+
+@[expose] public section
 
 noncomputable section
 
@@ -185,8 +189,8 @@ theorem gap_or_bounded (μ : Fin n → ℤ) {C : ℤ} (hC : 0 < C) :
 
 section Cuspidal
 
-variable (F n β) in
 
+variable (F n β) in
 def leviUnipotent (γ : Fin n → ℕ) : Subgroup (levi F n β) :=
   (unipotentRadical F n γ).subgroupOf (levi F n β)
 

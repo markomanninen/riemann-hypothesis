@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def prp (K : Type) [CommRing K] (j : ZMod 2) : Matrix (Fin 3) (Fin 3) K →ₗ[K
 
 def evp {O R : Type} [CommRing O] [CommRing R] [Algebra O R] (σ : R →ₐ[O] R) (j : ZMod 2) : Submodule O R where
   carrier := {x | σ x = sg R j * x}
-  add_mem' {x y} (h : _ = _) (h' : _ = _) := show _ = _ by rw [map_add, h, h', mul_add]
+  add_mem' {x y} (h : _ = _) (h' : _ = _) := show _ = _ by rw [map_add (f := _), h, h', mul_add]
   zero_mem' := show _ = _ by simp
   smul_mem' c x (h : _ = _) := show _ = _ by rw [map_smul, h, mul_smul_comm]
 

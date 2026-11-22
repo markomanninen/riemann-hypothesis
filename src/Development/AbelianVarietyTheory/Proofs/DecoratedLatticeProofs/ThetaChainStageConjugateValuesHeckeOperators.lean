@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -46,7 +51,7 @@ theorem good_val (hP : GlobalTheory.Published.CuspRapidDecay) {θ : InfFam D} (h
     exact ⟨(hT.aut x).cont, GlobalTheory.CuspDecay.bounded_of_cuspForm hP hθ (hT.aut x) (hT.cusp x), (hT.aut x).left,
       hT.lev x⟩
   | add x y hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact hx.add hy
 
 theorem conj_eq_one_iff' (z : ℂ) : conj z = 1 ↔ z = 1 := by
@@ -66,7 +71,8 @@ theorem conj_values_hecke : GlobalTheory.Published.CuspRapidDecay → ∀ D : D7
   refine ⟨fun u v => good_val hP hc.inf (u : SmT s.M →ₗ[ℂ] (GA D s.V → ℂ)) u.2 v, fun P d R => ?_, fun R f => ?_⟩
   · simp only [Hecke₂, conj_eq_one_iff']
   · funext g
-    simp [heckeLin, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [heckeLin, map_sum]
 
 end GlobalTheory.ConjVal
 

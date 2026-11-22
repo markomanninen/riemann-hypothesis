@@ -1,23 +1,26 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.AdmissibleMonoIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.TwoSigned
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.AdmissibilityHolds
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.GradedQuotientIsomorphism
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.GrEqRange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FgHolds
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleUB
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerIndependenceOfOrder
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleNzd
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerAdditivityExactSequence
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleFin
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleGr
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleIso
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.AdmissibleMonoIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.TwoSigned
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.AdmissibilityHolds
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.GradedQuotientIsomorphism
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.GrEqRange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FgHolds
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleUB
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerIndependenceOfOrder
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleNzd
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerAdditivityExactSequence
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleFin
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleGr
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RuleIso
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
-private theorem self_isGr {k : ℕ} (X : HidaSetting k) : (GMod.self X.𝒜).IsGr X.𝒜 where
-  smul_mem ha hx := X.gra.toGradedMonoid.toGradedMul.mul_mem ha hx
-  internal := DirectSum.Decomposition.isInternal X.𝒜
-  fin := Module.Finite.self X.R
+private theorem self_isGr {k : ℕ} (X : HidaSetting k) : (GMod.self X.𝒜).IsGr X.𝒜 := by
+  exact ⟨fun ha hx => X.gra.toGradedMonoid.toGradedMul.mul_mem ha hx,
+    DirectSum.Decomposition.isInternal X.𝒜, Module.Finite.self X.R⟩
 
 private theorem chain {k : ℕ} (X : HidaSetting k) (ts : List (Deg k × X.R)) (J : Ideal X.R) (a : X.R)
     (hJ : (GMod.self X.𝒜).IsHomSub J) (hv : Valid X.𝒜 (ts ++ [(0, a)]))
@@ -62,15 +65,16 @@ private theorem coef_hom (J : Ideal A) : (GMod.self (reesGr N)).IsHomSub (coefId
   refine le_antisymm (fun p hp => ?_) (Submodule.span_le.2 fun x hx => hx.1)
   rw [eq_sum_mono N p]
   refine Submodule.sum_mem _ fun μ _ => Submodule.subset_span ⟨fun n => ?_, _, mono_mem N μ _ _⟩
-  show MvPolynomial.coeff n (MvPolynomial.monomial μ _) ∈ J
+  show AddMonoidAlgebra.coeff (MvPolynomial.monomial μ _) n ∈ J
   rw [MvPolynomial.coeff_monomial]
   split_ifs
   · exact hp μ
   · exact J.zero_mem
 
 private theorem coeff_alg (b : B) (p : rees N) (n : Fin k →₀ ℕ) :
-    MvPolynomial.coeff n (algebraMap B (rees N) b * p).1 = algebraMap B A b * MvPolynomial.coeff n p.1 := by
-  show MvPolynomial.coeff n (algebraMap B (MvPolynomial (Fin k) A) b * p.1) = _
+    AddMonoidAlgebra.coeff (algebraMap B (rees N) b * p).1 n =
+      algebraMap B A b * AddMonoidAlgebra.coeff p.1 n := by
+  show AddMonoidAlgebra.coeff (algebraMap B (MvPolynomial (Fin k) A) b * p.1) n = _
   rw [MvPolynomial.algebraMap_apply, MvPolynomial.coeff_C_mul]
 
 private theorem alg_mem_coef (J : Ideal A) (b : B) (hb : algebraMap B A b ∈ J) :

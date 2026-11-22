@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdmissibleLocalComponentDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ArchimedeanUnitaryPointsEquivUnitaryGroupStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryInfinitePointEqListProdPlacePartsStatement
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FdomExistsAll
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnimodularOfIsFundamentalDomainFinite
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfAeFundamentalDomainOfLeftInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdmissibleLocalComponentDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ArchimedeanUnitaryPointsEquivUnitaryGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryInfinitePointEqListProdPlacePartsStatement
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FdomExistsAll
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnimodularOfIsFundamentalDomainFinite
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfAeFundamentalDomainOfLeftInvariant
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 open MeasureTheory
 
@@ -37,14 +42,14 @@ theorem topology_facts (E : Type) [Field E] [NumberField E] [IsCMField E] (n : �
   exact DiscreteTopology.of_continuous_injective hf hi
 
 theorem exists_isOpen_isCompact_finU (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) :
-    ∃ K : Subgroup (finU E n), IsOpen (K : Set (finU E n)) ∧ IsCompact (K : Set (finU E n)) := by
+    ∃ K : Subgroup (finU (E := E) (n := n)), IsOpen (K : Set (finU (E := E) (n := n))) ∧ IsCompact (K : Set (finU (E := E) (n := n))) := by
   haveI := GlobalTheory.DefU.LocAdm.t2Space_adelicGL_cmField (E := E) (n := n)
   obtain ⟨U0, hU0o, hU0c⟩ := GlobalTheory.GLIntegral.exists_isOpen_isCompact E n
-  let p : finU E n →* GL (Fin n) (Af E) :=
-    (GeneralLinearGroup.map (pFin E)).comp ((UA E n).subtype.comp (finU E n).subtype)
+  let p : finU (E := E) (n := n) →* GL (Fin n) (Af E) :=
+    (GeneralLinearGroup.map (pFin E)).comp ((UA E n).subtype.comp (finU (E := E) (n := n)).subtype)
   have hp : Continuous p := continuous_map_pFin.comp (continuous_subtype_val.comp continuous_subtype_val)
-  have hKo : IsOpen (U0.comap p : Set (finU E n)) := hU0o.preimage hp
-  have hfin : ∀ x : UA E n, x ∈ finU E n ↔
+  have hKo : IsOpen (U0.comap p : Set (finU (E := E) (n := n))) := hU0o.preimage hp
+  have hfin : ∀ x : UA E n, x ∈ finU (E := E) (n := n) ↔
       finGL E n (GeneralLinearGroup.map (pFin E) (x : GA E n)) = (x : GA E n) := by
     intro x
     constructor
@@ -54,14 +59,14 @@ theorem exists_isOpen_isCompact_finU (E : Type) [Field E] [NumberField E] [IsCMF
     · intro hx
       change GeneralLinearGroup.map (pInf E) (x : GA E n) = 1
       rw [← hx, pInf_finGL]
-  have hc : IsClosed ((finU E n : Subgroup (UA E n)) : Set (UA E n)) := by
-    have e : ((finU E n : Subgroup (UA E n)) : Set (UA E n)) =
+  have hc : IsClosed ((finU (E := E) (n := n) : Subgroup (UA E n)) : Set (UA E n)) := by
+    have e : ((finU (E := E) (n := n) : Subgroup (UA E n)) : Set (UA E n)) =
         {x : UA E n | finGL E n (GeneralLinearGroup.map (pFin E) (x : GA E n)) = (x : GA E n)} :=
       Set.ext hfin
     rw [e]
     exact isClosed_eq (GlobalTheory.DefU.LocAdm.continuous_finGL.comp (continuous_map_pFin.comp continuous_subtype_val))
       continuous_subtype_val
-  have hι : Topology.IsClosedEmbedding (fun x : finU E n => ((x : UA E n) : GA E n)) :=
+  have hι : Topology.IsClosedEmbedding (fun x : finU (E := E) (n := n) => ((x : UA E n) : GA E n)) :=
     GlobalTheory.DefU.LocAdm.isClosed_UA.isClosedEmbedding_subtypeVal.comp hc.isClosedEmbedding_subtypeVal
   exact ⟨U0.comap p, hKo, IsCompact.of_isClosed_subset
     (hι.isCompact_preimage (hU0c.image GlobalTheory.DefU.LocAdm.continuous_finGL))
@@ -81,7 +86,7 @@ theorem exists_compact_cover (E : Type) [Field E] [NumberField E] [IsCMField E] 
   have hP : Continuous P :=
     continuous_list_prod _ fun v _ => continuous_subtype_val.comp (continuous_apply v)
   have hPc : IsCompact (Set.range P) := isCompact_range hP
-  have hKc' : IsCompact (Subtype.val '' (K : Set (finU E n))) := hKc.image continuous_subtype_val
+  have hKc' : IsCompact (Subtype.val '' (K : Set (finU (E := E) (n := n)))) := hKc.image continuous_subtype_val
   refine ⟨_, (S.finite_toSet.isCompact.mul hPc).mul hKc', fun g => ?_⟩
   obtain ⟨γ, hγ, s, hs, x, hx, k, hk, e⟩ := hS g
   obtain ⟨y, hy, -, hyx⟩ := GlobalTheory.T.definiteUnitaryInfinitePoint_eq_list_prod_placeParts E n x hx
@@ -92,8 +97,9 @@ end GlobalTheory.DefU.Petersson
 
 namespace GlobalTheory.DefU.Petersson
 
-set_option maxHeartbeats 1600000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
+set_option maxHeartbeats 1600000 in
 theorem exists_invariant_pos_form : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ),
     ∃ B : GlobalTheory.DefU.autU E n →ₗ⋆[ℂ] GlobalTheory.DefU.autU E n →ₗ[ℂ] ℂ, (∀ u v, star (B u v) = B v u) ∧ (∀ v, 0 ≤ (B v v).re) ∧
       (∀ v, B v v = 0 → v = 0) ∧ ∀ g u v, B (GlobalTheory.DefU.autRep E n g u) (GlobalTheory.DefU.autRep E n g v) = B u v := by
@@ -146,26 +152,30 @@ theorem exists_invariant_pos_form : ∀ (E : Type) [Field E] [NumberField E] [Is
       rw [← integral_add (hI x y) (hI x' y)]
       congr 1
       funext g
-      simp only [Submodule.coe_add, Pi.add_apply, star_add, add_mul])
+      change star (x.1 g + x'.1 g) * y.1 g = _
+      simp only [star_add]
+      ring)
     (fun c x y => by
       simp only [F, smul_eq_mul]
       rw [← integral_const_mul]
       congr 1
       funext g
-      simp only [Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, star_mul', starRingEnd_apply]
+      change star (c * x.1 g) * y.1 g = _
+      simp only [star_mul, starRingEnd_apply]
       ring)
     (fun x y y' => by
       simp only [F]
       rw [← integral_add (hI x y) (hI x y')]
       congr 1
       funext g
-      simp only [Submodule.coe_add, Pi.add_apply, mul_add])
+      change star (x.1 g) * (y.1 g + y'.1 g) = _
+      ring)
     (fun c x y => by
       simp only [F, smul_eq_mul, RingHom.id_apply]
       rw [← integral_const_mul]
       congr 1
       funext g
-      simp only [Submodule.coe_smul, Pi.smul_apply, smul_eq_mul]
+      change star (x.1 g) * (c * y.1 g) = _
       ring)
   have hB : ∀ u v, B u v = ∫ g in 𝓕, star (u.1 g) * v.1 g ∂μ := fun _ _ => rfl
   have hre : ∀ v, B v v = ((∫ g in 𝓕, ‖v.1 g‖ ^ 2 ∂μ : ℝ) : ℂ) := by
@@ -180,7 +190,7 @@ theorem exists_invariant_pos_form : ∀ (E : Type) [Field E] [NumberField E] [Is
   · rw [hB, hB, Complex.star_def, ← integral_conj]
     congr 1
     funext g
-    simp only [map_mul, Complex.conj_conj]
+    simp only [map_mul, map_star, starRingEnd_apply, star_star]
     ring
   · rw [hre, Complex.ofReal_re]
     exact integral_nonneg fun g => by positivity

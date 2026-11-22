@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.SumKfMulZREqZero
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.SumKfMulZREqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,10 @@ theorem ratN_of_AF (γ : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) (h : HAd X.
       intro a
       rw [hR_ratV_left]
       have h' := congrArg (inclR (F := X.B.I.F) (E := X.B.I.E) (AF X.B.I.F)) (hy a)
-      simp only [Kf, map_sum, map_mul, map_zero] at h'
-      simp only [ratV, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Kf, map_sum, map_mul, map_zero] at h'
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [ratV, map_sum, map_mul]
       exact h'
     have := h2 _ hperp
     rw [hlin] at this
@@ -59,8 +65,10 @@ theorem ratN_of_fin (γ : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) (x : X.B.I
       intro a
       rw [hA_incl_left]
       have h' := congrArg (Formalism.UG.inclE (F := X.B.I.F) (E := X.B.I.E) (Af X.B.I.F)) (hy a)
-      simp only [Kf, map_sum, map_mul, map_zero] at h'
-      simpa only [incl, map_sum, map_mul] using h'
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Kf, map_sum, map_mul, map_zero] at h'
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [incl, map_sum, map_mul] using h'
     have := h3 _ hperp
     rw [hlin, ← Set.image_univ] at this
     have h4 := down_span (Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F)) (inclE_injective X) X.eR (Kf X X.fR)
@@ -101,7 +109,8 @@ theorem hJ_rv (v : InfinitePlace X.B.I.F) (x : Fin X.B.I.n → X.B.I.E) (y : Fin
     Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul, ← Matrix.conjTranspose_mul, hPP, Matrix.conjTranspose_one,
     Matrix.vecMul_one]
   set w := X.B.I.P v *ᵥ y
-  simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, Pi.star_apply, hst, map_sum, map_mul, Finset.mul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, Pi.star_apply, hst, map_sum, map_mul, Finset.mul_sum,
     Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => by ring

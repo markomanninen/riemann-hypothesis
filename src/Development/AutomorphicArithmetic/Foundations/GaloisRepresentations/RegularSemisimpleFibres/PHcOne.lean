@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.L2.Host
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
@@ -10,13 +14,13 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 private theorem toG_one' {F : Type} [Field F] (m : ℕ) :
     toG (1 : Matrix (Fin m) (Fin m) F) = 1 := by
   unfold toG
-  rw [dif_pos isUnit_one]
+  rw [dite_eq_left isUnit_one]
   exact Units.ext (IsUnit.unit_spec _)
 
 private theorem ent_one' {F : Type} [Field F] {n : ℕ} (i j : ℕ) (hi : i < n) (hj : j < n) :
     ent (1 : Matrix (Fin n) (Fin n) F) i j = if i = j then 1 else 0 := by
   unfold ent
-  rw [dif_pos ⟨hi, hj⟩, Matrix.one_apply]
+  rw [dite_eq_left ⟨hi, hj⟩, Matrix.one_apply]
   simp only [Fin.mk.injEq]
 
 private theorem tlG_one' {F : Type} [Field F] (a b : ℕ) :

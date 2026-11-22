@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselIntegrability.IntegrableGNRpowOfLintegralLtTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.DecayZeroRight.NormDec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselUnitNorm.BesselNormSteps.UnitNorm.UnrealifyRealify
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselIntegrability.IntegrableGNRpowOfLintegralLtTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.DecayZeroRight.NormDec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.BesselUnitNorm.BesselNormSteps.UnitNorm.UnrealifyRealify
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ENNReal
@@ -19,8 +23,8 @@ theorem s3dx1S_gNc : Continuous (fun y : Mt k r => Formalism.FourierDecayAlt.B.g
   unfold Formalism.FourierDecayAlt.B.gN
   simp only [Matrix.of_apply]
   refine Real.continuous_sqrt.comp ?_
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
-  exact Complex.continuous_normSq.comp ((continuous_apply j).comp (continuous_apply i))
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
+    Complex.continuous_normSq.comp ((continuous_apply j).comp (continuous_apply i))
 
 theorem s3dx1S_Fm (A : ℝ) : Measurable (haarCompactGrowthDensity (k := k) (r := r) A) := by
   unfold haarCompactGrowthDensity
@@ -30,13 +34,13 @@ theorem s3dx1S_mulc :
     Continuous (fun p : Mt k r × Mt k r => (fun i j => (Matrix.of p.1 * Matrix.of p.2) i j : Mt k r)) := by
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [Matrix.mul_apply, Matrix.of_apply]
-  exact continuous_finset_sum _ fun l _ => by fun_prop
+  exact continuous_finsetSum _ fun l _ => by fun_prop
 
 theorem s3dx1S_mulxc (x : Mt k r) :
     Continuous (fun s : Mt k r => (fun i j => (Matrix.of s * Matrix.of x) i j : Mt k r)) := by
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [Matrix.mul_apply, Matrix.of_apply]
-  exact continuous_finset_sum _ fun l _ => by fun_prop
+  exact continuous_finsetSum _ fun l _ => by fun_prop
 
 theorem s3dx1S_lower {z : Fin (2 * r + k + 1) → ℂ} {μW μN : Measure (Mt k r)} {A Rr : ℝ} (hA : 0 ≤ A)
     (hR : 0 < Rr) (hae : ∀ᵐ p ∂(μW.prod μN), Matrix.of p.1 ∈ UWset k r z ∧ Matrix.of p.2 ∈ Nset k r)

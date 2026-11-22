@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FramesExist
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagChartFramesEigenFramesLocalRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagBundlePointFramesTriangularComponent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagModelCarriesSameFlagsSpecialiseValuationRing
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagDeterminantIso
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FramesExist
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagChartFramesEigenFramesLocalRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagBundlePointFramesTriangularComponent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagModelCarriesSameFlagsSpecialiseValuationRing
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagDeterminantIso
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.Vanishing GlobalTheory.CompHS
@@ -83,7 +88,8 @@ theorem gen_frame (X : FlagCover Y) (C : FlagCpt Y (RingEquiv.refl c.F)) (g : C.
     obtain ⟨φy, fy, ty, hT, -⟩ := C.gr_spec (genericPoint C.Y.X)
     exact ⟨_, _, φy, fy, ty, ty, (spMap_alg_stalkPt C.Y _).symm, hT, hT⟩
   obtain ⟨t₀, ht₀⟩ := tri_of_carries C hcar₁ hcf
-  obtain ⟨G₀, hG₀⟩ := g₁.exists_isMap (RingHom.id _) ht₀.2.1 ht₀.1
+  obtain ⟨G₀, hG₀⟩ := g₁.exists_isMap (φ' := constF (RingEquiv.refl c.F) C.Y)
+    (x' := genericPt C.Y ≫ C.π ≫ GlobalTheory.Toroidal.genι Y) (RingHom.id _) ht₀.2.1 ht₀.1
   refine ⟨k₀, hz₀, G₀, t₀, fun σ i => ?_, fun τ => ?_⟩
   · rw [hG₀ σ i, spMap_dualMap_id, Category.id_comp, hg₁ σ i]
     exact hfr σ i
@@ -117,7 +123,8 @@ theorem isEqn_chart (X : FlagCover Y) (C : FlagCpt Y (RingEquiv.refl c.F)) (g : 
   have hx0 : genericPt C.Y ≫ C.π ≫ GlobalTheory.Toroidal.genι Y = spMap α ≫ ((stalkPt C.Y y ≫ g) ≫ X.π) := by
     rw [← hxy]
     exact hT.1
-  obtain ⟨gF, hgF⟩ := gy.exists_isMap α hT.2.1 hx0
+  obtain ⟨gF, hgF⟩ := gy.exists_isMap (φ' := constF (RingEquiv.refl c.F) C.Y)
+    (x' := genericPt C.Y ≫ C.π ≫ GlobalTheory.Toroidal.genι Y) α hT.2.1 hx0
   obtain ⟨gF₂, hgF₂⟩ := gy.exists_isMap α (x' := (spMap α ≫ (stalkPt C.Y y ≫ g)) ≫ X.π) hT.2.1
     (Category.assoc _ _ _)
   have hF₂ := isFrameAt_map X.F hgy α hgF₂
@@ -127,7 +134,8 @@ theorem isEqn_chart (X : FlagCover Y) (C : FlagCpt Y (RingEquiv.refl c.F)) (g : 
     exact hF₂ σ j
   have hB : gF.co G₀ τ = (X.F.B k k₀ τ).map (ev (genericPt C.Y ≫ g) _ hh) :=
     co_chart X.F (genericPt C.Y ≫ g) _ _ (by rw [Category.assoc, hg]) hzα rfl k k₀ _ hk₀ hh hgFv hG₀v τ
-  obtain ⟨fF, hfF⟩ := fy.exists_isMap α hT.2.1 hT.1
+  obtain ⟨fF, hfF⟩ := fy.exists_isMap (φ' := constF (RingEquiv.refl c.F) C.Y)
+    (x' := genericPt C.Y ≫ C.π ≫ GlobalTheory.Toroidal.genι Y) α hT.2.1 hT.1
   have hTf := hT.co τ hfF
   obtain ⟨gy', hgy'⟩ := exists_cast gy (φ' := φy) rfl hxy
   have hMap : gy'.IsMap α gF := fun σ j => by rw [hgF σ j, hgy' σ j]
@@ -179,8 +187,8 @@ theorem fnOf_pull_g {Xs Ys : Scheme.{0}} [IsIntegral Xs] (M : LB Ys) (f : Xs ⟶
 
 end GlobalTheory.VarFlagLL
 
-open GlobalTheory.VarFlagLL GlobalTheory.ShFam GlobalTheory.VarFlag in
 
+open GlobalTheory.VarFlagLL GlobalTheory.ShFam GlobalTheory.VarFlag in
 theorem GlobalTheory.VarFlag.lbIso_LL_pull : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {Y : Model Xo c (RingHom.id c.F)} (X : GlobalTheory.FlagMod.FlagCover Y) (C : GlobalTheory.ShFam.FlagCpt Y (RingEquiv.refl c.F)) (g : C.Y.X ⟶ X.YY), g ≫ X.π = C.π ≫ GlobalTheory.Toroidal.genι Y → (∀ (K : Type) [Field K] (p : Sp K ⟶ C.Y.X), GlobalTheory.VarFlag.Rel X.F C (p ≫ g) p) → ∀ ex : Ix Dw → ℤ, ex none = 0 → LBIso (C.Y.lb (C.LEx ex)) ((X.LL ex).pull g) := by
   intro E _ _ _ H Dw l Xo c Y X C g hg hrel ex hex
   classical
@@ -223,3 +231,4 @@ theorem GlobalTheory.VarFlag.lbIso_LL_pull : ∀ {E : Type} [Field E] [NumberFie
     rw [hval]
     exact h1
   exact (GlobalTheory.Cartier.presents_toLB _).lbIso ⟨hL, hr, heq⟩
+

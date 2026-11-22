@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassSumPrincipalLevelEqCardMulClassSum
-import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
-import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassSumPrincipalLevelEqCardMulClassSum
+public import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+
+@[expose] public section
+
 open Module NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Col Matrix
 open scoped ComplexOrder
 set_option maxHeartbeats 1000000 in

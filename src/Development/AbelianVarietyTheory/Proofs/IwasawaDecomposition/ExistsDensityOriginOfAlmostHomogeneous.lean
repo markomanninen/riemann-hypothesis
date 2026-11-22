@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
+
 open Formalism.BasicNotions MeasureTheory Filter Topology Matrix
 
 namespace GlobalTheory
@@ -80,8 +85,8 @@ private theorem limsup_ball_ratio_le_ofReal_pow_mul (l ν : Measure V) [l.IsAddH
   rw [← closedBall_smul_div_ball_eq_ofReal_pow_mul l ν x hs hr0]
   exact ENNReal.div_le_div_right hr _
 
-open MeasureTheory Filter Topology Matrix in
 
+open MeasureTheory Filter Topology Matrix in
 theorem _root_.GlobalTheory.exists_density_origin_of_almost_homogeneous : ∀ (V : Type) [NormedAddCommGroup V]
     [NormedSpace ℝ V] [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] (l ν : Measure V)
     [l.IsAddHaarMeasure] [IsLocallyFiniteMeasure ν], (∀ r : ℝ, 0 < r → ν (Metric.ball 0 r) ≠ 0) →
@@ -116,7 +121,7 @@ theorem _root_.GlobalTheory.exists_density_origin_of_almost_homogeneous : ∀ (V
         (𝓝 0) (𝓝 1) := by
       have hc : ContinuousAt (fun ε : ℝ =>
           ((1 + ε) ^ Module.finrank ℝ V / (1 - 2 * ε) ^ Module.finrank ℝ V)) 0 :=
-        ContinuousAt.div (by fun_prop) (by fun_prop) (by simp)
+        ContinuousAt.div₀ (by fun_prop) (by fun_prop) (by simp)
       simpa using hc.tendsto
     have hT : Tendsto (fun ε : ℝ => ENNReal.ofReal
         ((1 + ε) ^ Module.finrank ℝ V / (1 - 2 * ε) ^ Module.finrank ℝ V) * liminf ρ (𝓝[>] 0))

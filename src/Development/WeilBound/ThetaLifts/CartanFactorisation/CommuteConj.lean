@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ActsComp
-import Development.WeilBound.ThetaLifts.CartanFactorisation.RinfZero
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CountableCompactOpen
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ActsComp
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.RinfZero
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CountableCompactOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,12 +105,13 @@ theorem transL (hO : ArchOp) (hL : ArchLie) (hQ : ArchUniq) (hp : IsPair B M χX
 theorem quot_trans (hO : ArchOp) (hL : ArchLie) (hQ : ArchUniq) (hp : IsPair B M χX χW om r s r' s')
     (hp₂ : IsPair B M₂ χX χW om r s r' s') {g h T} (hg : Moves B X X₂ g) (hT : IsArchOp om (g, h) T)
     (hP : (M₂.Pol B.ψ B.emb).map (T : _ →ₗ[ℂ] _) = M.Pol B.ψ B.emb) {P : Type} [AddCommGroup P] [Module ℂ P]
-    {p : SInf F (Fin n × Fin d) →ₗ[ℂ] P} (q : RealQuot B M om p) : RealQuot B M₂ om (p ∘ₗ (T : _ →ₗ[ℂ] _)) where
-  onto := by rw [Submodule.map_comp, hP, q.onto]
-  lie := fun γ hγ f hf f₁ ha => q.lie _ (conj_line hg.1 hγ) (T f) (hP ▸ ⟨f, hf, rfl⟩) (T f₁)
-    (transL hO hL hQ hp hp₂ hT hP (conj_line hg.1 hγ) one_line hγ one_line (fun t => cj1 g (γ t) h) hf ha)
-  cpt := fun k hk f hf f₁ ha => q.cpt _ (hg.up hk) (T f) (hP ▸ ⟨f, hf, rfl⟩) (T f₁)
-    (transK hO hQ hp hT (hg.up hk).1 (one_at _) (cj1 g k h) ha)
+    {p : SInf F (Fin n × Fin d) →ₗ[ℂ] P} (q : RealQuot B M om p) : RealQuot B M₂ om (p ∘ₗ (T : _ →ₗ[ℂ] _)) := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [Submodule.map_comp, hP, q.onto]
+  · exact fun γ hγ f hf f₁ ha => q.lie _ (conj_line hg.1 hγ) (T f) (hP ▸ ⟨f, hf, rfl⟩) (T f₁)
+      (transL hO hL hQ hp hp₂ hT hP (conj_line hg.1 hγ) one_line hγ one_line (fun t => cj1 g (γ t) h) hf ha)
+  · exact fun k hk f hf f₁ ha => q.cpt _ (hg.up hk) (T f) (hP ▸ ⟨f, hf, rfl⟩) (T f₁)
+      (transK hO hQ hp hT (hg.up hk).1 (one_at _) (cj1 g k h) ha)
 
 theorem exists_linop (hO : ArchOp) (hL : ArchLie) (hQ : ArchUniq) (hp : IsPair B M χX χW om r s r' s') (i) :
     ∃ A : M.Pol B.ψ B.emb →ₗ[ℂ] SInf F (Fin n × Fin d), ∀ x, A x ∈ M.Pol B.ψ B.emb ∧ ∀ y, RInf B om i x y ↔ y = A x := by
@@ -119,7 +124,7 @@ theorem exists_linop (hO : ArchOp) (hL : ArchLie) (hQ : ArchUniq) (hp : IsPair B
               map_smul' := fun c x => sinf_ext fun L => ?_ }, fun x => ⟨h3 x x.2, fun y =>
       ⟨fun h => ((hQ F _ x.1 (D x x.2) y).2 _ (h4 x x.2) h).symm, fun h => by rw [h]; exact h4 x x.2⟩⟩⟩
     · refine (h5 _ (x + y).2 L).unique ?_
-      simp only [Submodule.coe_add, map_add]
+      simp only [Submodule.coe_add, map_add (f := _)]
       exact (h5 x x.2 L).add (h5 y y.2 L)
     · refine (h5 _ (c • x).2 L).unique ?_
       simp only [Submodule.coe_smul, map_smul, RingHom.id_apply]

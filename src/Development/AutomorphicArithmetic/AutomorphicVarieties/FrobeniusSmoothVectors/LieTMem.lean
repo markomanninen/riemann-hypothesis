@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrTsurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.GgMapOfGL
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrBrig
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.TanFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpDproj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrpOfMemSucc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrTsurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.GgMapOfGL
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrBrig
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.TanFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpDproj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrpOfMemSucc
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -40,7 +44,26 @@ theorem UpperTheory.V.Fr.ep_tan :
   have hbrig : ∀ j (v : F.V) (Y : adp (ResidueField O) j),
       (∀ s, (h.ad j (F.loc v s)) Y - Y ∈ (B.bar O).bp j v) → Y ∈ (B.bar O).bp j v := by
     intro j v Y hY
-    exact pr_brig (ResidueField O) (ρ.bar O) (B.bar O) (hOf.map _) hGood v Y hY
+    have hbar : (B.bar O).Of (ρ.bar O) := by
+      let f : R →+* ResidueField O := res O R
+      refine ⟨?_, ?_, ?_⟩
+      · show ((B.r F.c).mat).map f = 1
+        rw [hOf.atc]
+        exact Matrix.map_one _ (map_zero f) (map_one f)
+      · intro s
+        show ((B.r s).mat).map f = _
+        rw [hOf.res]
+        rfl
+      · intro v i s
+        have e : (((B.map f).g v : GL (Fin 3) (ResidueField O)) : Matrix (Fin 3) (Fin 3) (ResidueField O)) * (ρ.map f).r (F.loc0 v s) *
+            ((((B.map f).g v)⁻¹ : GL (Fin 3) (ResidueField O)) : Matrix (Fin 3) (Fin 3) (ResidueField O)) =
+            f.mapMatrix ((B.g v : Matrix (Fin 3) (Fin 3) R) * ρ.r (F.loc0 v s) *
+              (((B.g v)⁻¹ : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R)) := by
+          rw [map_mul, map_mul]
+          rfl
+        rw [e]
+        exact congrArg f (hOf.psi v i s)
+    exact pr_brig (ResidueField O) (ρ.bar O) (B.bar O) hbar hGood v Y hY
   have hsurj : ∀ j, ∀ x ∈ Z1C F.loc (h.ad j) ((B.bar O).bp j),
       ∃ D : derp O σ j, ∃ X, ∀ s, φ j D s = x.1 s + ((h.ad j s) X - X) := by
     intro j x hx
@@ -59,7 +82,7 @@ theorem UpperTheory.V.Fr.ep_tan :
     obtain ⟨D', hD', hD'e⟩ := ep_dproj O h2 R σ hσ B π hGr j D hD
     refine ⟨⟨D', hD'⟩, prp _ j X, fun s => ?_⟩
     show prp _ j (Box.tanCo O B D' s) = _
-    rw [hD'e s, prp_coe, hX s, map_add, map_sub, hP, prp_coe]
+    rw [hD'e s, prp_coe, hX s, map_add (f := _), map_sub, hP, prp_coe]
   haveI := hfin 0
   refine ⟨fun j => ?_, ?_⟩
   · haveI := hfin j

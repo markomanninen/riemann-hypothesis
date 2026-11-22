@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecThm
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecThm
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,13 +40,7 @@ structure CmpHyp0P (T : ∀ u : D.what₂.Word, Forms0 D u) (Gt : GatTies D) (I 
 theorem CmpHyp0P.toHyp0 {T : ∀ u : D.what₂.Word, Forms0 D u} {Gt : GatTies D} {I : CmpIn D X} (H : CmpHyp0P T Gt I)
     (pos : ∀ u w hg v (s : Fin ((D.gat u w hg).P.n' v)) (x : D.host.E),
       I.embW u w hg (tEL D (Gt.gat_pos u w hg ⟨v, s⟩) (if Even s.val then x else sigD D x)) =
-        (D.gat u w hg).P.ι v (((D.gat u w hg).P.σ v ^ s.val) ((locAt X u w hg I.B).iw v x))) : Cmp.CmpHyp0 T Gt I where
-  ex := H.ex
-  evInj := H.evInj
-  ptEx := H.ptEx
-  ptAll := H.ptAll
-  pos := pos
-  chi := H.chi
-  latM := H.latM
+        (D.gat u w hg).P.ι v (((D.gat u w hg).P.σ v ^ s.val) ((locAt X u w hg I.B).iw v x))) : Cmp.CmpHyp0 T Gt I := by
+  exact Cmp.CmpHyp0.mk H.ex H.evInj H.ptEx H.ptAll pos H.chi H.latM
 
 end Formalism.L2.G

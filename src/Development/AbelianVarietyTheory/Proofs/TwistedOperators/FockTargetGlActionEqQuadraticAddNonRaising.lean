@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Matrix GlobalTheory.Chain GlobalTheory.Chain.RealIt
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -32,7 +37,8 @@ theorem mul_mem {L L' : Module.End ℂ (MvPolynomial σ ℂ)} (h : L ∈ nonRais
 theorem totalDegree_X_mul_pderiv (x y : σ) (P : MvPolynomial σ ℂ) :
     (X x * pderiv y P).totalDegree ≤ P.totalDegree := by
   classical
-  conv_lhs => rw [P.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [P.as_sum, map_sum, Finset.mul_sum]
   refine totalDegree_finsetSum_le fun s hs => ?_
   rw [pderiv_monomial]
   by_cases h0 : s y = 0
@@ -43,7 +49,7 @@ theorem totalDegree_X_mul_pderiv (x y : σ) (P : MvPolynomial σ ℂ) :
     refine (totalDegree_mul _ _).trans ?_
     rw [totalDegree_X]
     refine le_trans ?_ (le_totalDegree hs)
-    have h1 := totalDegree_monomial_le (s - Finsupp.single y 1) (coeff s P * (s y : ℂ))
+    have h1 := totalDegree_monomial_le (s - Finsupp.single y 1) (AddMonoidAlgebra.coeff P s * (s y : ℂ))
     have h2 : (s.sum fun _ e => e) = 1 + (s - Finsupp.single y 1).sum fun _ e => e := by
       conv_lhs => rw [← hs']
       rw [Finsupp.sum_add_index' (fun _ => rfl) (fun _ _ _ => rfl), Finsupp.sum_single_index rfl]
@@ -134,7 +140,8 @@ theorem fockQuadraticPart_ne_zero_of_offBlock_entry (Y : Matrix (Fin b) (Fin b) 
       exact hc ⟨hi, hl⟩
   have := congrArg (eval pt) h0
   unfold quadAll at this
-  simp only [map_sum, smul_eval, hq, map_zero, ite_and] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, smul_eval, hq, map_zero, ite_and] at this
   apply hY
   simpa using this
 

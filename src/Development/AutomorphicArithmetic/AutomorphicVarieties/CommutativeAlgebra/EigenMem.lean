@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.TactVanish
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.TchPoly
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.TactVanish
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.TchPoly
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -22,7 +26,7 @@ private theorem eigen_low {R S σ : Type} [CommRing R] [CommRing S] [Finite σ] 
     refine Submodule.smul_induction_on hy (fun p hp z _ => ?_) (fun a b ha hb => ?_)
     · rw [map_smul, Algebra.smul_def, map_mul]
       exact Ideal.mul_mem_right _ _ (hIn hp)
-    · rw [map_add, map_add]; exact add_mem ha hb
+    · rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
   have h := key (e g) (by
     rw [AdicCompletion.pow_smul_top_eq_ker_eval (MvPolynomial.idealOfVars_fg σ R), LinearMap.mem_ker,
       AdicCompletion.eval_apply, toAdicCompletionAlgEquiv_apply, toAdicCompletion_apply_eq_mk_truncTotal]
@@ -42,7 +46,8 @@ private theorem eigen_split {O σ X : Type} [CommRing O] [Finite σ] [AddCommGro
   classical
   refine ⟨insert j ((truncTotal n g).support.image (Finsupp.weight wt)), Finset.mem_insert_self _ _,
     fun d hd => ?_⟩
-  rw [map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum]
   simp only [coeff_wcomp]
   rw [Finset.sum_ite_eq]
   split_ifs with h
@@ -100,7 +105,8 @@ theorem UpperTheory.V.Alg.eigen_mem :
     rfl
   have h3 := hind (R ⧸ maximalIdeal R ^ N) s
     (fun i => q (W.π (wcomp O W.wt i g)) - if i = j then q (W.π g) else 0) (by
-      rw [map_sub, map_sub, hx, map_sum, map_sum, Finset.sum_congr rfl
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sub, hx, map_sum, map_sum, Finset.sum_congr rfl
         (fun i _ => hf' i (W.π (wcomp O W.wt i g)) ⟨_, wcomp_mem O W.wt i g, rfl⟩), map_sub, map_sum] at h2
       simp only [map_mul, hq, hf, map_C] at h2
       simp only [map_sub, mul_sub, Finset.sum_sub_distrib, apply_ite C, map_zero, mul_ite, mul_zero,

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFgIsSeparated
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsProperOfPowerSeriesArcsOverAlgClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFgIsSeparated
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsProperOfPowerSeriesArcsOverAlgClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -54,9 +58,10 @@ theorem range_eq_of_isPullback {Y P Y' P' : Scheme.{0}} {q : Y ⟶ P} {q' : Y' �
 
 theorem isLocallyClosed_range {Y P : Scheme.{0}} {q : Y ⟶ P} (H : ∀ y, GoodAt q y) :
     IsLocallyClosed (Set.range q) := by
-  refine ((isLocallyClosed_tfae (Set.range q)).out 0 2).2 ?_
+  refine isLocallyClosed_iff_isLocallyClosedAt.2 ?_
   rintro _ ⟨y, rfl⟩
   obtain ⟨W, hW, _⟩ := H y
+  apply isLocallyClosedAt_iff_exists_isClosed_preimage_val.2
   refine ⟨W, W.2.mem_nhds hW, ?_⟩
   have := (q ∣_ W).isClosedMap.isClosed_range
   rw [range_eq_of_isPullback (isPullback_morphismRestrict q W).flip] at this
@@ -220,8 +225,8 @@ theorem hasCover_univ {R : Type} [CommRing R] {X : Scheme.{0}} (p : X ⟶ Sp R) 
     have := h.union (hasCover_affine p W.1.ι)
     rwa [Scheme.Opens.range_ι] at this
 
-open GlobalTheory.Spread GlobalTheory.SpreadSep in
 
+open GlobalTheory.Spread GlobalTheory.SpreadSep in
 theorem exists_finset_isProper (k V : Type) [CommRing k] [IsNoetherianRing k] [CommRing V]
     [Algebra k V] {X : Scheme.{0}} (p : X ⟶ Sp k) [LocallyOfFiniteType p] [QuasiCompact p] [IsSeparated p]
     [UniversallyClosed (pullback.snd p (spMap (algebraMap k V)))] :

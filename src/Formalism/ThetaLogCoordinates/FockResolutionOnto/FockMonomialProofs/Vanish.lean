@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementG
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.OmegaInjectiveHolds
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementG
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.OmegaInjectiveHolds
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 

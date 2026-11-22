@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValHalfInf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValHalfInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -173,7 +177,8 @@ theorem blocks_mem {R : Subring A} {a b c d : Matrix n n A} (ha : ∀ i k, a i k
   obtain ⟨x | x, rfl⟩ := e.surjective x <;> obtain ⟨y | y, rfl⟩ := e.surjective y <;> simp [*]
 
 theorem one_mem_entries (R : Subring A) (i k : n) : (1 : Matrix n n A) i k ∈ R := by
-  rw [one_apply]; split_ifs; exacts [one_mem _, zero_mem _]
+  change (if i = k then (1 : A) else 0) ∈ R
+  split_ifs <;> simp
 
 theorem uni_rat (S : Matrix n n E) : uni e (S.map j) ∈ (bc j).range :=
   (mem_rat j).2 (blocks_mem e (one_mem_entries _) (fun _ _ => ⟨_, rfl⟩) (fun _ _ => zero_mem _) (one_mem_entries _))
@@ -301,7 +306,7 @@ theorem core (j : E →+* A) (e : n ⊕ n ≃ ι) {σ : A →+* A} (hσc : Conti
       obtain ⟨y, hy⟩ := (mem_rat j).1 (hLj q) (e (.inr i)) x
       have h3 : j y = s.1 ^ m * (w₁ q).1 (e (.inr i)) x := by
         rw [hy, h1, Units.val_mul, Units.val_mul, val_uni, val_blkGL, blkMat, submatrix_mul_equiv, fromBlocks_multiply,
-          mul_apply, ← e.sum_comp]
+          Matrix.mul_apply, ← e.sum_comp]
         simp [dg, diagonal_apply, hm]
       rw [← hy, hm₀ m (by omega) _ (hw₂ q _ _) y h3, map_zero]
     have := (isUnit_iff_isUnit_det _).1 (L q * cayley e * (p q * k q)).isUnit

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CharpolyEqOfIsNilpotentSub
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuationApplyOfWild
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCongOfCongOnFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CharpolyEqOfIsNilpotentSub
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuationApplyOfWild
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCongOfCongOnFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,17 +27,17 @@ section Tame
 
 variable {t t' : Ine (F := E) A →* Multiplicative ℤ_[l]}
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 @[simp] theorem tval_mul (σ τ : Ine (F := E) A) : tval t (σ * τ) = tval t σ + tval t τ := by
   simp [tval]
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 @[simp] theorem tval_one : tval t 1 = 0 := by simp [tval]
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 @[simp] theorem tval_pow (σ : Ine (F := E) A) (k : ℕ) : tval t (σ ^ k) = k * tval t σ := by
   simp [tval]
 
@@ -132,8 +136,8 @@ section Monodromy
 variable {t t' : Ine (F := E) A →* Multiplicative ℤ_[l]} {r : G E Ω →* GL n (Qbar l)}
   {N N' : Matrix n n (Qbar l)} {φ φ' : Weil h}
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem IsMonodromy.of_nhds (hN : IsNilpotent N)
     (hr : ∀ᶠ σ : Ine (F := E) A in nhds 1, (r σ : Matrix n n (Qbar l)) = exp (tval t σ • N)) :
     IsMonodromy t r N := by
@@ -145,8 +149,8 @@ theorem IsMonodromy.of_nhds (hN : IsNilpotent N)
     Subgroup.isOpen_of_mem_nhds _ (g := 1) (hr.mono fun σ hσ => Units.ext hσ),
     fun σ hσ => congrArg Units.val hσ⟩
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem isMonodromy_zero_iff : IsMonodromy t r 0 ↔ IsSmooth (r.comp (Weil h).subtype) := by
   constructor
   · rintro ⟨-, U, hU, H⟩
@@ -164,8 +168,8 @@ theorem IsMonodromy.unique (ht : IsTameChar t) (hN : IsMonodromy t r N)
   refine eq_of_exp_smul_eq h1 h1' h0 fun k => ?_
   rw [← tval_pow, ← H _ (pow_mem hσ.1 k), ← H' _ (pow_mem hσ.2 k)]
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem IsMonodromy.smul {c : Qbar l} (hc : ∀ σ, tval t σ = c * tval t' σ)
     (hN : IsMonodromy t r N) : IsMonodromy t' r (c • N) := by
   obtain ⟨h1, U, hU, H⟩ := hN
@@ -214,11 +218,6 @@ theorem IsTameChar.tval_inePart_mul (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (h
       tval t (inePart hφ g') := by
   rw [inePart_mul, tval_mul, ht.tval_ineConj hl]
   simp [hφ]
-
-theorem wdMat_zpow_mul (hφ : deg φ = 1) (k : ℤ) (σ : Ine (F := E) A) :
-    wdMat t hφ r N (φ ^ k * ineIncl h σ) =
-      (r ((φ : G E Ω) ^ k * σ) : Matrix n n (Qbar l)) * exp ((-tval t σ) • N) := by
-  rw [wdMat, inePart_zpow_mul]; rfl
 
 theorem wdMat_ineIncl (hφ : deg φ = 1) (σ : Ine (F := E) A) :
     wdMat t hφ r N (ineIncl h σ) = (r σ : Matrix n n (Qbar l)) * exp ((-tval t σ) • N) := by
@@ -348,7 +347,6 @@ def IsWDOf (ι : Qbar l ≃+* ℂ) (r : G E Ω →* GL n (Qbar l)) (x : WD h) : 
 
 variable (h) in
 open Classical in
-
 def wdOf (_hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (ι : Qbar l ≃+* ℂ) (r : G E Ω →* GL n (Qbar l)) :
     WD h :=
   if H : ∃ x : WD h, IsWDOf ι r x then H.choose else WD.mk (WDRep.diag h fun _ : n => 1)
@@ -359,16 +357,16 @@ variable {t : Ine (F := E) A →* Multiplicative ℤ_[l]} {r : G E Ω →* GL n 
   {N : Matrix n n (Qbar l)} {φ : Weil h} {ι : Qbar l ≃+* ℂ}
   (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal)
 
-include hl in
 
+include hl in
 theorem IsMonodromy.exists_isFrobSS (ht : IsTameChar t) (hN : IsMonodromy t r N) (hφ : deg φ = 1)
     (ι : Qbar l ≃+* ℂ) : ∃ a : WDRep h (n → ℂ),
       IsFrobSS (fun g => toEndC ι (wdMat t hφ r N g)) (toEndC ι N) a :=
   WeilDeligne.exists_isFrobSS (hN.rep hl ht hφ ι) _ (hN.isSmooth_rep hl ht hφ ι) (hN.1.map _)
     (hN.rep_comm hl ht hφ ι)
 
-include hl in
 
+include hl in
 theorem IsWDOf.unique {x y : WD h} (hx : IsWDOf ι r x) (hy : IsWDOf ι r y) : x = y := by
   obtain ⟨t, ht, φ, hφ, N, a, hN, ha, rfl⟩ := hx
   obtain ⟨t', ht', φ', hφ', N', b, hN', hb, rfl⟩ := hy
@@ -391,11 +389,11 @@ theorem IsWDOf.unique {x y : WD h} (hx : IsWDOf ι r x) (hy : IsWDOf ι r y) : x
   exact WD.sound (h1.trans (ha'.iso_of_smul ((map_ne_zero ι).mpr hc0) hb))
 
 theorem IsWDOf.wdOf_eq {x : WD h} (hx : IsWDOf ι r x) : wdOf h hl ι r = x := by
-  rw [wdOf, dif_pos ⟨x, hx⟩]
+  rw [wdOf, dite_eq_left ⟨x, hx⟩]
   exact (Exists.choose_spec (⟨x, hx⟩ : ∃ x : WD h, IsWDOf ι r x)).unique hl hx
 
-include hl in
 
+include hl in
 theorem exists_isWDOf_iff (ht : IsTameChar t) :
     (∃ x : WD h, IsWDOf ι r x) ↔ ∃ N, IsMonodromy t r N := by
   constructor
@@ -413,7 +411,7 @@ theorem IsMonodromy.wdOf_spec (ht : IsTameChar t) (hN : IsMonodromy t r N) (hφ 
   exact ⟨a, ha, IsWDOf.wdOf_eq hl ⟨t, ht, φ, hφ, N, a, hN, ha, rfl⟩⟩
 
 theorem wdOf_of_not (H : ¬ ∃ x : WD h, IsWDOf ι r x) :
-    wdOf h hl ι r = WD.mk (WDRep.diag h fun _ : n => 1) := dif_neg H
+    wdOf h hl ι r = WD.mk (WDRep.diag h fun _ : n => 1) := dite_eq_right H
 
 theorem lpDim_wdOf (ι : Qbar l ≃+* ℂ) (r : G E Ω →* GL n (Qbar l)) :
     (wdOf h hl ι r).lpDim = Fintype.card n := by
@@ -459,8 +457,8 @@ theorem wdOf_eq_mk (a : WDRep h (n → ℂ)) (ha : a.N = 0)
   · simp only [wdMat_zero, hr, map_zero, ← ha]
     exact isFrobSS_self a
 
-include hl in
 
+include hl in
 theorem IsWDOf.of_conj {r' : G E Ω →* GL n (Qbar l)} (P : GL n (Qbar l))
     (hP : ∀ g : Weil h, P * r g = r' g * P) {x : WD h} (hx : IsWDOf ι r x) : IsWDOf ι r' x := by
   obtain ⟨t, ht, φ, hφ, N, a, hN, ha, rfl⟩ := hx
@@ -502,70 +500,6 @@ end Param
 
 section Examples
 
-variable (l) in
-
-def kummerRep (a : Eˣ) : G E Ω →* GL (Fin 2) (Qbar l) :=
-  MonoidHom.toHomUnits
-    { toFun := fun σ => !![algebraMap ℚ_[l] (Qbar l) ((cycZ E Ω l σ : ℤ_[l]ˣ) : ℤ_[l]),
-        algebraMap ℚ_[l] (Qbar l) (kummer l a σ); 0, 1]
-      map_one' := by simp [Matrix.one_fin_two]
-      map_mul' := fun σ τ => by
-        simp [kummer_mul, add_comm]
-        simp [Algebra.smul_def] }
-
-theorem coe_kummerRep (a : Eˣ) (σ : G E Ω) :
-    (kummerRep l a σ : Matrix (Fin 2) (Fin 2) (Qbar l)) =
-      !![algebraMap ℚ_[l] (Qbar l) ((cycZ E Ω l σ : ℤ_[l]ˣ) : ℤ_[l]),
-        algebraMap ℚ_[l] (Qbar l) (kummer l a σ); 0, 1] := rfl
-
-theorem continuous_kummerRep (a : Eˣ) :
-    Continuous fun σ : G E Ω => (kummerRep l a σ : Matrix (Fin 2) (Fin 2) (Qbar l)) := by
-  have h1 : Continuous fun x : ℤ_[l] => algebraMap ℚ_[l] (Qbar l) (x : ℚ_[l]) :=
-    (continuous_algebraMap _ _).comp continuous_subtype_val
-  refine continuous_matrix fun i j => ?_
-  fin_cases i <;> fin_cases j
-  · exact h1.comp (Units.continuous_val.comp (continuous_cycZ E Ω l))
-  · exact h1.comp (continuous_kummer l a)
-  · exact continuous_const
-  · exact continuous_const
-
-theorem isMonodromy_kummerRep (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) :
-    IsMonodromy (tameL h hl) (kummerRep l (unifUnit w)) !![0, 1; 0, 0] := by
-  refine ⟨⟨2, by simp [pow_two, ← Matrix.ext_iff]⟩, ⊤, isOpen_univ, fun σ _ => ?_⟩
-  rw [exp_eq_sum (k := 2) (by simp [pow_two, ← Matrix.ext_iff]), coe_kummerRep,
-    cycZ_of_mem_Ine h hl σ.2]
-  simp [Finset.sum_range_succ, Matrix.one_fin_two, tval, tameL]
-  simp [Algebra.smul_def]
-
-theorem wdOf_kummerRep (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (ι : Qbar l ≃+* ℂ) :
-    (wdOf h hl ι (kummerRep l (unifUnit w))).lpDim = 2 ∧
-      ¬ (wdOf h hl ι (kummerRep l (unifUnit w))).mono0 ∧
-      (wdOf h hl ι (kummerRep l (unifUnit w))).charPol (frob h) =
-        (X - C ((normV w : ℕ) : ℂ)) * (X - 1) := by
-  refine ⟨by simp [lpDim_wdOf], ?_, ?_⟩
-  · rw [(isMonodromy_kummerRep hl).weilDeligneParam_monodromy_eq_zero_iff hl (isTameChar_tameL h hl)]
-    simp [← Matrix.ext_iff]
-  · rw [(isMonodromy_kummerRep hl).charPol_wdOf hl (isTameChar_tameL h hl), coe_kummerRep,
-      cycZ_of_isFrob hl h isFrob_frob, Matrix.charpoly_fin_two]
-    simp [Matrix.det_fin_two]
-    ring
-
-theorem wdOf_cyc (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (ι : Qbar l ≃+* ℂ) :
-    wdOf h hl ι ((Matrix.GeneralLinearGroup.scalar (Fin 1)).comp (cyc E Ω l)) =
-      (WD.mk (WDRep.diag h fun _ : Fin 1 => 1)).lpTw 1 := by
-  rw [WD.lpTw_mk]
-  refine wdOf_eq_mk hl _ rfl fun g => ?_
-  have e : ((cyc E Ω l g : (Qbar l)ˣ) : Qbar l) = ((normV w : ℕ) : Qbar l) ^ deg g := by
-    have := congrArg (algebraMap ℚ_[l] (Qbar l)) (cycZ_weil hl g)
-    rw [map_zpow₀, map_natCast] at this
-    exact this
-  refine LinearMap.ext fun v => funext fun i => ?_
-  rw [Subsingleton.elim i 0]
-  simp [toEndC_apply, e, Matrix.mulVec, dotProduct]
-
-example (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (ι : Qbar l ≃+* ℂ) :
-    wdOf h hl ι (1 : G E Ω →* GL n (Qbar l)) = WD.mk (WDRep.diag h fun _ : n => 1) :=
-  wdOf_eq_mk hl _ rfl fun g => LinearMap.ext fun v => funext fun i => by simp
 
 end Examples
 

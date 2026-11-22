@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IndexMeasureIntegralEqOfFineSubgroupStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IndexMeasureIntegralEqOfFineSubgroup
+
+@[expose] public section
 
 open GlobalTheory.IdxInt
 open scoped Pointwise Classical
@@ -36,9 +40,9 @@ private lemma apply_eq_of_quotient_mk_eq_of_invariant {B : AddSubgroup W} {φ : 
   have := hinv u (-u + v) hb
   rwa [add_neg_cancel_left, eq_comm] at this
 
+
 open scoped Pointwise Classical in
 variable {W : Type} [AddCommGroup W] in
-
 theorem _root_.GlobalTheory.IdxInt.cint_eq_mean_reps {W : Type} [AddCommGroup W]
     (A B : AddSubgroup W) (φ : W → ℂ) (R : Finset W)
     (hBA : B ≤ A) (hinv : ∀ w, ∀ b ∈ B, φ (w + b) = φ w) (hsupp : ∀ w, w ∉ A → φ w = 0)

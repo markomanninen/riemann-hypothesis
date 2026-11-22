@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionTowerPresentationCotangentPullbackResRigiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionTowerPresentationCotangentPullbackResRigiStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,8 +22,8 @@ namespace GlobalTheory.PtExt
 variable {R : Type} [CommRing R] {A : Over (Sp R)}
 
 theorem fv_form (β : Form (A.hom ≫ 𝟙 _)) {D D' : Type} [CommRing D] [Algebra R D] [CommRing D'] [Algebra R D']
-    (φ : D →ₐ[R] D') (x : Pt A D) : fv β.1 D D' φ x = 0 :=
-  β.2 (trivMap φ x) rfl rfl
+    (φ : D →ₐ[R] D') (x : Pt A D) : fv β.1 D D' φ x = 0 := by
+  simpa only [fv, GlobalTheory.Cris.ev] using β.2 (trivMap φ x) rfl rfl
 
 variable [GrpObj A] {p : ℕ} {G : PDivGroup p R}
 
@@ -36,7 +41,7 @@ theorem isCan_form : ∀ (R : Type) [CommRing R] (A : Over (Sp R)) [GrpObj A] (p
   intro R _ A _ p G t β hβ
   refine ⟨⟨(formDat t β hβ).om, fun n ↦ GlobalTheory.T.torsionTowerPresentation_cotangentPullback_res_rigidification R A p G t _ (formDat t β hβ) n⟩, fun n ↦ ?_,
     formDat t β hβ, 0, _, fun n ↦ ?_, fun _ ↦ rfl, rfl⟩
-  · change cotVal β.1 (t.y n) - dUnit R (0 : G.A n) = _
+  · change cotVal β.1 (t.y n) - dUnit (R := R) (0 : G.A n) = _
     rw [dUnit, map_zero, sub_zero]
   · change (0 : _) = 0 - (fv β.1 _ _ _ _ - fv β.1 _ _ _ _ - fv β.1 _ _ _ _) - cobOne R (G.A n) 0
     simp [fv_form]

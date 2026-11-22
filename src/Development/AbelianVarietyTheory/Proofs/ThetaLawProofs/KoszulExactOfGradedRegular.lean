@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+
+@[expose] public section
+
 open GlobalTheory.KeyKa
 
 noncomputable section
@@ -194,7 +199,8 @@ theorem exact_dd (x : Fin g → ∀ j, V (j + 1) →ₗ[K] V j)
       rw [hcw] at e
       rw [e]
       unfold dd
-      rw [map_sum, Finset.smul_sum, ← Finset.sum_add_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.smul_sum, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
       split_ifs with hi
       · have hcard : (insert i I).card ≤ r := card_le_of_lt (insert i I) r (by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.MapUgAlgebraMap
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.MapUgAlgebraMap
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -95,15 +99,11 @@ def PFil0 : Ideal A.Acr0 := Ideal.span {(l : A.Acr0)} ⊔ A.Fil0 1
 
 def expand (c : ℕ →₀ A.A) : A.Acr 1 := c.sum fun k a => A.aTo1 a * A.dxi 1 (l * k)
 
-def idemSum (n : ℕ) (e : ZMod (l ^ n) → A.A) : A.Wn n :=
-  haveI : NeZero (l ^ n) := ⟨pow_ne_zero _ (Fact.out : l.Prime).ne_zero⟩
-  ∑ c : ZMod (l ^ n), (c.val : A.Wn n) * Ideal.Quotient.mk _ (WittVector.teichmuller l (e c))
-
 def contR (Γ : Type) [TopologicalSpace Γ] : Subring (Γ → A.A) where
   carrier := {f | ∀ k : ℕ, IsLocallyConstant fun γ => Ideal.Quotient.mk (Ideal.span {A.pi ^ k}) (f γ)}
   mul_mem' hf hg k := by simp only [Pi.mul_apply, map_mul]; exact (hf k).mul (hg k)
   one_mem' k := IsLocallyConstant.const (Ideal.Quotient.mk (Ideal.span {A.pi ^ k}) 1)
-  add_mem' hf hg k := by simp only [Pi.add_apply, map_add]; exact (hf k).add (hg k)
+  add_mem' hf hg k := by simp only [Pi.add_apply, map_add (f := _)]; exact (hf k).add (hg k)
   zero_mem' k := IsLocallyConstant.const (Ideal.Quotient.mk (Ideal.span {A.pi ^ k}) 0)
   neg_mem' hf k := by simp only [Pi.neg_apply, map_neg]; exact (hf k).neg
 

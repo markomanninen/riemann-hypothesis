@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTracePowRestrictNeZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTracePowRestrictNeZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,8 +106,8 @@ private theorem comm_of_fin (K : Subgroup G) (hfin : ∀ x, (cosets K x).Finite)
   rw [Subgroup.relIndex, e, MulAction.index_stabilizer]
   exact ((Set.ncard_pos h).2 ⟨_, MulAction.mem_orbit_self _⟩).ne'
 
-open ValuativeRel GlobalTheory.SmGL GlobalTheory.GLDoubling in
 
+open ValuativeRel GlobalTheory.SmGL GlobalTheory.GLDoubling in
 theorem iwInvT (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n : ℕ) (ϖ : kˣ)
     (hϖ : valuation k (ϖ : k) = uniformizer k) (ν : Fin n → ℤ) (hν : Antitone ν) :
     ∃ φ ∈ Hecke ℂ (iwahori k (Fin n)), conv (iwahori k (Fin n)) φ (dosetInd ℂ (iwahori k (Fin n)) (torusElt k (Fin n) ϖ ν)) =

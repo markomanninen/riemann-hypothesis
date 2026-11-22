@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -210,7 +214,7 @@ theorem sum_le_exp {s : ℝ} (hs : 1 < s) (T : Finset (Ideal (𝓞 K))) :
       _ ≤ 1 / 2 := one_div_le_one_div_of_le two_pos h2
   calc ∏ v ∈ P, ∑ k ∈ Finset.range (B + 1), ((Ideal.absNorm v.asIdeal : ℝ) ^ (-s)) ^ k
       ≤ ∏ v ∈ P, Real.exp (2 * (Ideal.absNorm v.asIdeal : ℝ) ^ (-s)) :=
-        Finset.prod_le_prod (fun v _ ↦ Finset.sum_nonneg fun k _ ↦ by positivity)
+        Finset.prod_le_prod₀ (fun v _ ↦ Finset.sum_nonneg fun k _ ↦ by positivity)
           fun v _ ↦ geom_le_exp (by positivity) (hx v) B
     _ = Real.exp (2 * ∑ v ∈ P, (Ideal.absNorm v.asIdeal : ℝ) ^ (-s)) := by
         rw [Finset.mul_sum, Real.exp_sum]

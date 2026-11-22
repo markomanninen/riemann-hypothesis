@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColOKOfPath
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.EqEmptyIffSplit
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColOKOfPath
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.EqEmptyIffSplit
+
+@[expose] public section
 
 noncomputable section
 

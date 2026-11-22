@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.ExistsIntertwiner
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.ExistsIntertwiner
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+
+@[expose] public section
 
 noncomputable section
 

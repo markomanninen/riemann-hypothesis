@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPf
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.FM
 
@@ -44,7 +48,7 @@ private theorem continuous_gram_comp {α : Type*} [TopologicalSpace α] (τ : E 
     Continuous fun a => ReciprocityTheory.ChartRestriction.G.FD.gram τ G (f a) := by
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [ReciprocityTheory.ChartRestriction.G.FD.gram, ReciprocityTheory.ChartRestriction.G.FD.hermC, ReciprocityTheory.ChartRestriction.G.FD.col, Matrix.of_apply]
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ => ?_
+  refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun b _ => ?_
   exact (((continuous_apply i).comp ((continuous_apply a).comp hf)).mul continuous_const).mul
     (Complex.continuous_conj.comp ((continuous_apply j).comp ((continuous_apply b).comp hf)))
 

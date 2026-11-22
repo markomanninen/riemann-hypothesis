@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.HermitianColumns.TiedQC
-import Formalism.LocalToGlobal.UnitaryNorms.CharDiv
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.TiedQC
+public import Formalism.LocalToGlobal.UnitaryNorms.CharDiv
+
+@[expose] public section
 
 noncomputable section
 

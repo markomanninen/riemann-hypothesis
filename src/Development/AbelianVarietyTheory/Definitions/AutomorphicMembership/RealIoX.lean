@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PlaceModelImp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PlaceModelImp
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,29 +90,6 @@ def real3 {A : FamIn3 a.D.what₂.LL G Pl0 I0 (List ℕ) T a.D.R.m} (R : RealDat
     @RealDat3 b.D G _ _ Pl0 I0 T (famInThreeCoefficientChange b A) Ks _ _ (alg b iK) :=
   @RealDat3.mk b.D G _ _ Pl0 I0 T (famInThreeCoefficientChange b A) Ks _ _ (alg b iK) ((by with_unfolding_all exact ((real b R.toRealDat) :))) ((by with_unfolding_all exact (R.plI :))) ((by with_unfolding_all exact (R.SF :))) ((by with_unfolding_all exact (R.phs :)))
     ((by with_unfolding_all exact (R.lam3 :)))
-
-scoped macro "tr_delta" : tactic => `(tactic|
-  try
-    delta
-      RealDat.chain_vY RealDat.models_HE RealDat.thP_vP RealDat.cw_ItX RealDat.cw_ItY RealDat.chain_vX IsStepVecOf
-      RealDat.models_HW RealDat.EEat RealDat.ex_ItX RealDat.ex_ItY RealDat3.full_P RealDat3.full_X
-      WeilFull.RealAtO WeilFull.SphInertAtO RealDat3.full_Y RealDat3.in_tie RealDat.thP_pt_theta IsThPVecOf
-      RealDat.thP_ωP RealDat.PItX RealDat.PItY RealDat.chain_ptX RealDat.chain_ptY IsThetaAt IsVacO
-      RealDat.chain_ωX RealDat.chain_ωY RealDat.Wall Mult.goodPart RealDat.fam_tie)
-
-scoped macro "tr_leaves " a:term:max b:term:max : tactic => `(tactic| (
-      (try rewrite [mult_eq $a $b])
-      (try rewrite [thetaFun_eq $a $b])
-      (try rewrite [vacuum_eq $a $b])
-      (try rewrite [placeModel_eq $a $b])
-      (try rewrite [itW_eq $a $b])
-      (try rewrite [pairSetup_eq $a $b])
-      (try rewrite [inertTie_eq $a $b])
-      (try rewrite [famTie_eq $a $b])
-      (try rewrite [weilDatum_eq $a $b])
-      (try rewrite [weilFull_eq $a $b])))
-
-scoped macro "tr_clause " a:term:max b:term:max h:term:max : tactic => `(tactic| (tr_delta; tr_leaves $a $b; kexactB $h))
 
 end GlobalTheory.Mem.R3.Tr
 

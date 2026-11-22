@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmpleOnAbelianBase
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmpleOnAbelianBase
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,18 +30,18 @@ def letterOf : ((E →+* ℂ) × ℕ) ⊕ ℕ → Option (Letter Dw)
   | .inl (τ, k) => if h : k < Dw.mult τ then some ⟨τ, ⟨k, h⟩⟩ else none
   | .inr k => (letters Dw)[k]?
 
-open Classical in
 
+open Classical in
 def expo (w : Sym E →₀ ℤ) (x : Letter Dw) : ℤ := w.sum fun a n => if letterOf Dw a.2.2 = some x then n else 0
 
-open Classical in
 
+open Classical in
 def parOf (w : Sym E →₀ ℤ) : Option ℝ := if h : w.support.Nonempty then h.choose.2.1 else none
 
 variable {Dw}
 
-open Classical in
 
+open Classical in
 def lnStep {X : Scheme.{0}} (t : SAB H X) {C : Type} [NontriviallyNormedField C] [IsUltrametricDist C] (x : Sp C ⟶ X)
     (u : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → (Sp (DualNumber C) ⟶ t.G.left)) (p : ℕ) (b : Bool) :
     ((E →+* ℂ) × ℕ) ⊕ ℕ → ℝ
@@ -58,8 +62,8 @@ def ioOf (p : ℕ) [Fact p.Prime] {v : HeightOneSpectrum (𝓞 F)} (ε : Ext v) 
   haveI : Nonempty (AlgebraicClosure F →+* ℂ_[p]) := ⟨(IsAlgClosed.lift : AlgebraicClosure F →ₐ[ℚ] ℂ_[p]).toRingHom⟩
   Classical.epsilon fun io => ∀ a, ‖io a‖ ≤ 1 ↔ a ∈ ε.O
 
-open Classical in
 
+open Classical in
 def lgOf (w : Sym E →₀ ℤ) (v : HeightOneSpectrum (𝓞 F)) (ε : Ext v) (y : AlgPt Y.Y) : ℝ :=
   if hp : (resP v).Prime then
     haveI := Fact.mk hp
@@ -82,8 +86,8 @@ def adlOf {C : CxSt F} (hm : Mets Y C) (w : Sym E →₀ ℤ) : Adl C Y.Y where
   ci := 0
   lg := lgOf Y w
 
-variable (Dw) in
 
+variable (Dw) in
 def rootSym (a : ℕ → Bool) (R : Option ℝ) (τ : E →+* ℂ) (i : ℕ) : Sym E →₀ ℤ :=
   if i < Dw.p then Finsupp.single (a, R, .inl (τ, i)) 1
   else Finsupp.single (a, R, .inl (conjEmb τ, Dw.p + Dw.q - 1 - i)) (-1)
@@ -92,8 +96,8 @@ def wholeSym (a : ℕ → Bool) (R : Option ℝ) {g : ℕ} : Fin g ⊕ Fin g →
   | .inl k => Finsupp.single (a, R, .inr k) 1
   | .inr k => Finsupp.single (a, R, .inr (Fin.rev k)) (-1)
 
-variable (Dw) in
 
+variable (Dw) in
 def detSym (a : ℕ → Bool) (R : Option ℝ) (τ : E →+* ℂ) : Sym E →₀ ℤ :=
   ∑ i ∈ Finset.range (Dw.p + Dw.q), rootSym Dw a R τ i
 

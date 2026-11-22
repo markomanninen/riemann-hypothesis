@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Matrix
@@ -32,6 +36,7 @@ theorem valuation_algebraMap_of_isInertAt : ∀ (F E : Type) [Field F] [NumberFi
   intro F E _ _ _ _ _ v w hin x
   have := liesOver_of_isInertAt v w hin
   rw [← HeightOneSpectrum.valuation_liesOver (K := F) E v w x,
+    ← Ideal.ramificationIdx'_eq_ramificationIdx v.asIdeal w.asIdeal v.ne_bot,
     ramificationIdx'_eq_one_of_isInertAt v w hin, pow_one]
 
 end GlobalTheory.InertValRestr

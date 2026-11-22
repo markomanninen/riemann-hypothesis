@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ZerosWindow
-import Formalism.PeriodIntegrals.ZerosWindowIn
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ZerosWindow
+public import Formalism.PeriodIntegrals.ZerosWindowIn
+
+@[expose] public section
 
 noncomputable section
 

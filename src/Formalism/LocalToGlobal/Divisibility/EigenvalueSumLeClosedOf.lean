@@ -1,18 +1,22 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.NumericScaleExponentEqExtended
-import Formalism.LocalToGlobal.Divisibility.TwistedPlaceEtaSumLeExtended
-import Formalism.LocalToGlobal.Divisibility.ConstantGeTwentyEightAlt
-import Formalism.LocalToGlobal.Divisibility.SmallTies
-import Formalism.LocalToGlobal.GroupLattices.JointServices.VwResChar
-import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
-import Formalism.LocalToGlobal.Divisibility.NumbersLink
-import Formalism.LocalToGlobal.Divisibility.ZscOfNum
-import Formalism.SharpRestriction.ElevenLe
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.SharpRestriction.Divisibility.SlopeExcess.ConstRankBaseLePolyFourth
-import Formalism.SharpRestriction.Divisibility.HookProducts.LwPNonneg
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.GZeroLogBound
-import Formalism.LocalToGlobal.Divisibility.DivisibilityConstruction.RBLam
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.NumericScaleExponentEqExtended
+public import Formalism.LocalToGlobal.Divisibility.TwistedPlaceEtaSumLeExtended
+public import Formalism.LocalToGlobal.Divisibility.ConstantGeTwentyEightAlt
+public import Formalism.LocalToGlobal.Divisibility.SmallTies
+public import Formalism.LocalToGlobal.GroupLattices.JointServices.VwResChar
+public import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
+public import Formalism.LocalToGlobal.Divisibility.NumbersLink
+public import Formalism.LocalToGlobal.Divisibility.ZscOfNum
+public import Formalism.SharpRestriction.ElevenLe
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.SharpRestriction.Divisibility.SlopeExcess.ConstRankBaseLePolyFourth
+public import Formalism.SharpRestriction.Divisibility.HookProducts.LwPNonneg
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.GZeroLogBound
+public import Formalism.LocalToGlobal.Divisibility.DivisibilityConstruction.RBLam
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -69,8 +73,8 @@ theorem twentyEight_le_constant (h : 28 ≤ C0) : 28 ≤ (RecNums.ofNum Nd eJ δ
 theorem logCard_le_lambda (h : Real.log (Fintype.card G) ≤ lam0) :
     Real.log (Fintype.card G) ≤ (RecNums.ofNum Nd eJ δ Tl Nc lam0 C0 ce Ch Sw C1 H).lam0 := h
 
-include hZ in
 
+include hZ in
 theorem logCardGroup_le_lambda (Zs : DefSub A3.fam3.amb3) (C CH : ℝ) (h : Real.log (Fintype.card G) ≤ lam0) :
     ((Zsc Zs).num C CH).la ≤ (RecNums.ofNum Nd eJ δ Tl Nc lam0 C0 ce Ch Sw C1 H).lam0 := by
   show (Zsc Zs).la ≤ lam0
@@ -89,8 +93,8 @@ theorem eigenvalue_sum_le_closed_of (Zs : DefSub A3.fam3.amb3) (C CH : ℝ)
         refine Finset.sum_congr rfl fun l _ => by ring
     _ ≤ ∑ j, ((Zsc Zs).num C CH).l6 j := Finset.sum_le_sum fun j _ => hl6 j
 
-include hZ in
 
+include hZ in
 theorem levelThree_bound_closed (Zs : DefSub A3.fam3.amb3) (C CH : ℝ) :
     ∑ j, ((Zsc Zs).num C CH).l3 j ≤
       (∑ j, ∑ ρ, (RecNums.ofNum Nd eJ δ Tl Nc lam0 C0 ce Ch Sw C1 H).pq j *
@@ -114,15 +118,15 @@ theorem levelThree_bound_closed (Zs : DefSub A3.fam3.amb3) (C CH : ℝ) :
       (((Nd.R.k : ℝ) + (l : ℝ) - 1) - ((Nd.R.m : ℝ) - (l : ℝ))) * Nd.w l ρ * Nd.logOm := hl eJ
   rw [e1, e2]
 
-include hZ in
 
+include hZ in
 theorem delta_nonneg (Zs : DefSub A3.fam3.amb3) (C CH : ℝ) : 0 ≤ ((Zsc Zs).num C CH).de := by
   show 0 ≤ (Zsc Zs).de
   rw [hZ.de]
   positivity
 
-include hZ in
 
+include hZ in
 theorem delta_mul_Q_le_one (Zs : DefSub A3.fam3.amb3) (C CH Q : ℝ)
     (hg : 24 * (Nd.R.f : ℝ) * (Nd.R.r : ℝ) * Q ≤ ((min (Nd.g 0) (Nd.g 1) : ℕ) : ℝ)) :
     3 * ((Zsc Zs).num C CH).de * Q ≤ 1 := by
@@ -238,15 +242,15 @@ theorem arithAt_scale3 (A3 : FamIn3 K G Pl0 I0 Ty T m) (s : ℕ) (P0 : Subgroup 
     (B : ℝ)
     (hB : boundBR Pk.core (lgDef (RecNums.ofNum Nd eJ δ Tl Nc lam0 C0 ce Ch Sw C1 H) s) 1 (etaSumBound bd dg s) ≤ B)
     (hg : 24 * (Nd.R.f : ℝ) * (Nd.R.r : ℝ) * QOfR B ((Zsc Pk.Zs).num C CH) ≤ ((min (Nd.g 0) (Nd.g 1) : ℕ) : ℝ)) :
-    ArithAt A3 s P0 ψ0 P1 ψ1 Dc Sp Zsc cf C CH Pk (RecNums.ofNum Nd eJ δ Tl Nc lam0 C0 ce Ch Sw C1 H) bd dg where
-  eig6 := eigenvalue_sum_le_closed_of eJ δ Tl lam0 C0 ce Ch Sw C1 H Pk.Zs C CH hl6
-  hG0 := logCard_le_lambda (A3 := A3) eJ δ Tl lam0 C0 ce Ch Sw C1 H hG
-  l3 := ⟨(Nd.R.m : ℝ) * (C * (Zsc Pk.Zs).l3u), levelThree_bound_closed hZ eJ δ Tl lam0 C0 ce Ch Sw C1 H Pk.Zs C CH,
-    error_bound_closed_numbers Nd Nc hZ eJ δ Tl lam0 C0 ce Ch Sw C1 H Pk.Zs C CH hC0 bd dg s c13 cG cD hbd hLam hdg hce⟩
-  q := ⟨QOfR B ((Zsc Pk.Zs).num C CH), delta_nonneg hZ Pk.Zs C CH, delta_mul_Q_le_one hZ Pk.Zs C CH _ hg, one_le_Q _ _,
-    Q_ge_bound_add Pk.core _ _ _ B hB⟩
-  la_le := logCardGroup_le_lambda hZ eJ δ Tl lam0 C0 ce Ch Sw C1 H Pk.Zs C CH hG
-  constant_ge_twenty_eight := twentyEight_le_constant (A3 := A3) eJ δ Tl lam0 C0 ce Ch Sw C1 H h28
+    ArithAt A3 s P0 ψ0 P1 ψ1 Dc Sp Zsc cf C CH Pk (RecNums.ofNum Nd eJ δ Tl Nc lam0 C0 ce Ch Sw C1 H) bd dg :=
+  { eig6 := eigenvalue_sum_le_closed_of eJ δ Tl lam0 C0 ce Ch Sw C1 H Pk.Zs C CH hl6
+    hG0 := logCard_le_lambda (A3 := A3) eJ δ Tl lam0 C0 ce Ch Sw C1 H hG
+    l3 := ⟨(Nd.R.m : ℝ) * (C * (Zsc Pk.Zs).l3u), levelThree_bound_closed hZ eJ δ Tl lam0 C0 ce Ch Sw C1 H Pk.Zs C CH,
+      error_bound_closed_numbers Nd Nc hZ eJ δ Tl lam0 C0 ce Ch Sw C1 H Pk.Zs C CH hC0 bd dg s c13 cG cD hbd hLam hdg hce⟩
+    q := ⟨QOfR B ((Zsc Pk.Zs).num C CH), delta_nonneg hZ Pk.Zs C CH, delta_mul_Q_le_one hZ Pk.Zs C CH _ hg, one_le_Q _ _,
+      Q_ge_bound_add Pk.core _ _ _ B hB⟩
+    la_le := logCardGroup_le_lambda hZ eJ δ Tl lam0 C0 ce Ch Sw C1 H Pk.Zs C CH hG
+    constant_ge_twenty_eight := twentyEight_le_constant (A3 := A3) eJ δ Tl lam0 C0 ce Ch Sw C1 H h28 }
 
 theorem arithmetic_fixed_scale (A3 : FamIn3 K G Pl0 I0 Ty T m) (s : ℕ) (P0 : Subgroup G) (ψ0 : P0 →* Kˣ) (P1 : Subgroup G)
     (ψ1 : P1 →* Kˣ) (Dc : ∀ Zs : DefSub A3.fam3.amb3, DefCols (A3.side3 P1 ψ1 Zs))
@@ -911,7 +915,7 @@ theorem nf_inter_rec (hDel : D.s.Del = (Del : ℚ)) (u : D.what₂.Word) :
   have hi : i < D.R.k - 1 := by have : i + 1 < D.R.k := h; omega
   have hs : (ofRecord D L Del h0).sigPar z i = (D.hc (tauPl D z)).v ⟨i, hi⟩ := by
     unfold NumDatum.sigPar
-    rw [dif_pos hi]
+    rw [dite_eq_left hi]
   rw [hs]
   have hv : (D.hcW u (tauPl D z)).v = (D.hc (tauPl D z)).v := D.hcW_v u _
   have h1 := (D.hcW u (tauPl D z)).u_gt_v ⟨i, hi⟩
@@ -1004,7 +1008,7 @@ theorem nf_top_rec :
     exact_mod_cast this
   · have hs : (ofRecord D L Del h0).sigPar (false, t) ((ofRecord D L Del h0).R.k - 2) = (D.hc τ).v ⟨D.R.k - 2, by omega⟩ := by
       unfold NumDatum.sigPar
-      rw [dif_pos (show (ofRecord D L Del h0).R.k - 2 < (ofRecord D L Del h0).R.k - 1 by
+      rw [dite_eq_left (show (ofRecord D L Del h0).R.k - 2 < (ofRecord D L Del h0).R.k - 1 by
         show D.R.k - 2 < D.R.k - 1; omega)]
     rw [hs]
     have hv' : (0 : ℚ) ≤ (D.hc τ).v ⟨D.R.k - 2, by omega⟩ := by exact_mod_cast hv
@@ -1013,7 +1017,7 @@ theorem nf_top_rec :
     linarith
   · have hs : (ofRecord D L Del h0).sigPar (false, t) 0 = (D.hc τ).v ⟨0, by omega⟩ := by
       unfold NumDatum.sigPar
-      rw [dif_pos (show 0 < (ofRecord D L Del h0).R.k - 1 by show 0 < D.R.k - 1; omega)]
+      rw [dite_eq_left (show 0 < (ofRecord D L Del h0).R.k - 1 by show 0 < D.R.k - 1; omega)]
     rw [hs]
     unfold swRec
     push_cast
@@ -1041,8 +1045,8 @@ theorem nu_blk_eq (δ : Code N) (j : ℕ) (hj1 : 1 ≤ j) (hjm : j ≤ N.R.m) (z
     exact (Nat.div_lt_iff_lt_mul (by omega)).2 hlt
   refine ⟨q, hq, ?_⟩
   unfold NumDatum.nu NumDatum.srcPar NumDatum.eQ
-  rw [dif_neg (show ¬ i < N.R.k by omega), dif_pos (show q < N.R.m by omega),
-    dif_pos (show 1 ≤ j ∧ j ≤ N.R.m from ⟨hj1, hjm⟩)]
+  rw [dite_eq_right (show ¬ i < N.R.k by omega), dite_eq_left (show q < N.R.m by omega),
+    dite_eq_left (show 1 ≤ j ∧ j ≤ N.R.m from ⟨hj1, hjm⟩)]
   have hr : r < N.R.t + 1 := Nat.mod_lt _ (by omega)
   have hi' : (i : ℚ) = N.R.k + q * ((N.R.t : ℚ) + 1) + r := by
     have : i = N.R.k + (N.R.t + 1) * q + r := by omega
@@ -1217,7 +1221,7 @@ theorem nu_nonneg_from_bounds (hDel : D.s.Del = (Del : ℚ)) (P5 : ParameterChoi
           (((D.R.N (j - 1) : ℝ) + D.R.N j - 1 - 2 * (i : ℝ)) / 2) := by
       have hw' := ofRecord_w D L Del h0 hj1 z
       unfold NumDatum.nu NumDatum.srcPar
-      rw [dif_pos hik, ofRecord_uW D L Del h0 hDel u z]
+      rw [dite_eq_left hik, ofRecord_uW D L Del h0 hDel u z]
       unfold NumDatum.w at hw'
       push_cast
       rw [hw']
@@ -1486,39 +1490,39 @@ theorem numFacts_rows (hDel : D.s.Del = (Del : ℚ)) (hh0 : L.etaSz = (D.R.m : �
     (c1 : 1 ≤ C0) (c2 : C0 ≤ ce) (c3 : 0 ≤ Ch) (c4 : Ch ≤ C0)
     (c5 : Ch * (ofRecord D L Del h0).Lp ≤ C0 * (ofRecord D L Del h0).La)
     (constant_succ_le : constantOneChoice L + 1 ≤ C0) :
-    (ofRecord D L Del h0).NumFacts (letterOf D L Del h0 u) Nc lam0 C0 ce Ch (swRec L) (constantOneChoice L) where
-  logrd := logrd
-  logx := logx
-  Nc0 := Nc0
-  w2b := w2b
-  Om := Om
-  lam := lam
-  lam0 := hlam0
-  n2 := n2
-  n3 := n3
-  eta := eta
-  kN := kN
-  kS := kS
-  blkW := blkW
-  Nw := Nw
-  bN := bN
-  mkb := mkb
-  c1 := c1
-  c2 := c2
-  c3 := c3
-  c4 := c4
-  c5 := c5
-  C1two := nf_C1two_rec L
-  constant_weight_sum_bound := nf_C1S_rec L Del h0 hDel
-  constant_succ_le := constant_succ_le
-  sw := nf_sw_rec' L Del h0 hDel P5
-  rowsA := nf_rowsA_rec L Del h0 P5 hx w2b
-  topsA := nf_topsA_rec L Del h0 (by have := abs_nonneg L.Cc; linarith) w2b
-  nu0 := nu_nonneg_from_conditions L Del h0 hDel P5 u
-  blk := nf_blk_rec L Del h0 hh0 u
-  inter := nf_inter_rec L Del h0 hDel u
-  off := nf_off_rec L Del h0 P5
-  top := nf_top_rec L Del h0
+    (ofRecord D L Del h0).NumFacts (letterOf D L Del h0 u) Nc lam0 C0 ce Ch (swRec L) (constantOneChoice L) :=
+  { logrd := logrd
+    logx := logx
+    Nc0 := Nc0
+    w2b := w2b
+    Om := Om
+    lam := lam
+    lam0 := hlam0
+    n2 := n2
+    n3 := n3
+    eta := eta
+    kN := kN
+    kS := kS
+    blkW := blkW
+    Nw := Nw
+    bN := bN
+    mkb := mkb
+    c1 := c1
+    c2 := c2
+    c3 := c3
+    c4 := c4
+    c5 := c5
+    C1two := nf_C1two_rec L
+    constant_weight_sum_bound := nf_C1S_rec L Del h0 hDel
+    constant_succ_le := constant_succ_le
+    sw := nf_sw_rec' L Del h0 hDel P5
+    rowsA := nf_rowsA_rec L Del h0 P5 hx w2b
+    topsA := nf_topsA_rec L Del h0 (by have := abs_nonneg L.Cc; linarith) w2b
+    nu0 := nu_nonneg_from_conditions L Del h0 hDel P5 u
+    blk := nf_blk_rec L Del h0 hh0 u
+    inter := nf_inter_rec L Del h0 hDel u
+    off := nf_off_rec L Del h0 P5
+    top := nf_top_rec L Del h0 }
 
 end Assemble
 

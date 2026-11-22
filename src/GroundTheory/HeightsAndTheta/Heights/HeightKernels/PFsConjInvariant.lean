@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -9,7 +14,7 @@ open ReciprocityTheory.ChartRestriction.G.Geo
 namespace FubiniStudyConjugationInvariant
 
 theorem fsMetric_conj {n : Type*} [Fintype n] (w : n → ℂ) :
-    (fsMetric n).ρ (fun i => (starRingEnd ℂ) (w i)) = (fsMetric n).ρ w := by
+    (fsMetric (ι := n)).ρ (fun i => (starRingEnd ℂ) (w i)) = (fsMetric (ι := n)).ρ w := by
   simp [fsMetric, EuclideanSpace.norm_eq]
 
 end FubiniStudyConjugationInvariant

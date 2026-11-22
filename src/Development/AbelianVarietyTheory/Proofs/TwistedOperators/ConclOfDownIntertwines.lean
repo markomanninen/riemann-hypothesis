@@ -1,22 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.KappaLambdaEmbedding
-import Formalism.ThetaLiftIndependence.FinalThetaLiftAMFKIndep
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.RowsOfLevel
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormGoodRowsFiniteGroupActionStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LiftTwistsByLevelCharacter
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChainCompositeLiftIntertwinesFiniteGroupActionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeterssonAdjointHeckeOperatorEqDualLabel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ISupIInfEigenspaceEqTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOnMemGoodPart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceOffLevelSetProperties
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalRingCardinality.DataKap
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.ThetaLiftIndependence.FinalThetaLiftAMFKIndep
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.RowsOfLevel
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormGoodRowsFiniteGroupActionStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LiftTwistsByLevelCharacter
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChainCompositeLiftIntertwinesFiniteGroupActionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeterssonAdjointHeckeOperatorEqDualLabel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ISupIInfEigenspaceEqTop
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOnMemGoodPart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceOffLevelSetProperties
+
+@[expose] public section
 
 noncomputable section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult
-open GlobalTheory.IndefiniteRowSideFullHecke.KappaLambdaEmbedding
 open scoped TensorProduct InnerProductSpace
 
 namespace GlobalTheory.KappaLevels
@@ -28,14 +33,14 @@ section Abstract
 variable {E H : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [FiniteDimensional ℂ E]
   [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]
 
-omit [FiniteDimensional ℂ E] [FiniteDimensional ℂ H] in
 
+omit [FiniteDimensional ℂ E] [FiniteDimensional ℂ H] in
 theorem inner_of_normSq (u : E →ₗ[ℂ] H) (n : ℝ) (h : ∀ x, ‖u x‖ ^ 2 = n * ‖x‖ ^ 2) (x y : E) :
     ⟪u x, u y⟫_ℂ = (n : ℂ) * ⟪x, y⟫_ℂ := by
   have h' : ∀ z, ((‖u z‖ : ℝ) : ℂ) ^ 2 = (n : ℂ) * ((‖z‖ : ℝ) : ℂ) ^ 2 := fun z => by exact_mod_cast h z
   have e1 := inner_eq_sum_norm_sq_div_four (𝕜 := ℂ) (u x) (u y)
   have e2 := inner_eq_sum_norm_sq_div_four (𝕜 := ℂ) x y
-  rw [← map_smul, ← map_add, ← map_add, ← map_sub, ← map_sub] at e1
+  rw [← map_smul, ← map_add (f := _), ← map_add (f := _), ← map_sub, ← map_sub] at e1
   rw [e1, e2]
   have h1 := h' (x + y)
   have h2 := h' (x - y)
@@ -76,20 +81,7 @@ end Abstract
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A)
 
-def DownIntertwines (t : T) : Prop :=
-  ∀ g κ, IsLevelLift D.sp.X' R.βX (R.datXt t) (R.eG g) κ → ∀ y y' : (R.HX t).H,
-    (∀ h, (R.HX t).e y' h = (levChi _ R.βX (flagL (R.datXt t)) κ)⁻¹ • (R.HX t).e y (h * (finHom _).rangeRestrict κ)) →
-      R.Th t y' = R.gE g (R.Th t y)
-
-def UpKeepsLevel (t : T) : Prop :=
-  ∀ P, ∀ x ∈ rowsAt R P, LinearMap.adjoint (R.Th t) x ∈ goodAt R t P
-
 variable {R F}
-
-def SchurOnChain : Prop :=
-  ∀ (D : D7) (θ : Datum.InfFam D) (j : ℕ), j < D.R.m → ∀ (M : DSModel (Yc D j) (parB (Ptw D) (min j D.R.m)))
-    (β : GL (Fin (Yc D j).rank) (Lev.EAf D)) (L : LevDat D.host.E ℂ (Yc D j).rank) (μ : Measure (GA D (Yc D j))) (𝓕 : Set (GA D (Yc D j))),
-    SchurMult θ M (levS _ β L) (levChi _ β L) μ 𝓕
 
 end GlobalTheory.KappaLevels
 

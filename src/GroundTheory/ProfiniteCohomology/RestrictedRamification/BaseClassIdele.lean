@@ -1,13 +1,16 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseClass
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseClass
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory IsDedekindDomain NumberField GroundTheory.Global IdeleGroup
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -133,6 +136,8 @@ theorem dataHom_eq_zero_of_boundary {D : Type} [AddCommGroup D] (xOf : D →+ (c
 end General
 
 section Concrete
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
@@ -265,8 +270,8 @@ theorem gsUnitsClass_apply (d : GsUnitsDatum S) :
       Multiplicative.ofAdd (-divAbove S d.1))) :=
   rfl
 
-omit [Finite S] in
 
+omit [Finite S] in
 theorem mul_sInvOfUnit_mem_sUnitsMax (t : Additive (sInvariantSubgroup (F := K.1) ℚ̄ S)) (x : (K.1)ˣ)
     (h : divS S (Additive.ofMul x) = -divAbove S t) :
     ((Additive.toMul (t + Additive.ofMul (sInvOfUnit S x)) : sInvariantSubgroup (F := K.1) ℚ̄ S) :

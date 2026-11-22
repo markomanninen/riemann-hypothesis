@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsBasis
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.OrderOfSignGroupDvdTwo
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CardTrivialFirstComponent
-import Formalism.LocalToGlobal.GlobalTheory.GL3.IsometryLinkageTrivialLevel
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntRing
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsBasis
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.OrderOfSignGroupDvdTwo
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CardTrivialFirstComponent
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.IsometryLinkageTrivialLevel
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ theorem embT_K (D : D7) (τ : D.what₂.Tau) (x : D.host.E) (hx : x ∈ D.host.K
     induction hx' using IntermediateField.adjoin_induction with
     | mem y hy => rw [Set.mem_singleton_iff.mp hy]; exact hb
     | algebraMap r => rw [eq_ratCast (algebraMap ℚ D.host.E) r]; exact map_ratCast σ r
-    | add y z _ _ h1 h2 => rw [map_add, h1, h2]
+    | add y z _ _ h1 h2 => rw [map_add (f := _), h1, h2]
     | inv y _ h1 => rw [map_inv₀, h1]
     | mul y z _ _ h1 h2 => rw [map_mul, h1, h2]
   show D.host.φ₀ (σ x) = _
@@ -87,7 +91,7 @@ def embQ (D : D7) (τ : D.what₂.Tau) : D.host.E →+* Qbar := (embT D τ).codR
 theorem lamC_embT (D : D7) (lam : Qbar →+* ℂ_[p]) (τ : D.what₂.Tau) (x : D.host.E) :
     lamC lam (embT D τ x) = lam (embQ D τ x) := by
   unfold lamC
-  rw [dif_pos (emb_mem D τ x)]
+  rw [dite_eq_left (emb_mem D τ x)]
   rfl
 
 theorem flog_constantCoeff (W : WeierstrassCurve ℂ_[p]) (wq : PowerSeries ℂ_[p]) :
@@ -125,24 +129,28 @@ theorem atLog_change (D : D7) {N N' r : ℕ} (lam : Qbar →+* ℂ_[p]) (Λ : Ad
         PowerSeries.subst (MvPowerSeries.X i : MvPowerSeries (Fin r) ℂ_[p]) (flog (C • wModel lam Λ) wq)) := by
     apply MvPowerSeries.hasSubst_of_constantCoeff_zero
     intro k
-    simp [map_sum, hX]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hX]
   have hSs : MvPowerSeries.HasSubst S := MvPowerSeries.hasSubst_of_constantCoeff_zero hS0
   unfold atLog
   simp only []
   rw [MvPowerSeries.subst_comp_subst_apply hY hSs]
   congr 1
   funext k
-  rw [← MvPowerSeries.coe_substAlgHom hSs, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hSs, map_sum]
   simp only [map_mul, AlgHom.commutes, MvPowerSeries.coe_substAlgHom, subst_subst_X S hSs, hSl]
   have hx : ∀ j, lamC lam (embT D k.1 (b' j k.2.1 k.2.2)) =
       ∑ i, lam (embQ D k.1 (A i j)) * lam (embQ D k.1 (b i k.2.1 k.2.2)) := by
     intro j
     rw [lamC_embT, hb' j, Matrix.sum_apply]
-    simp only [Matrix.smul_apply, smul_eq_mul, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.smul_apply, smul_eq_mul, map_sum, map_mul]
   have hy : ∀ i j, lamC lam (D.host.φ₀ (A i j)) = lam (embQ D k.1 (A i j)) := by
     intro i j
     rw [← embT_K D k.1 _ (hAK i j), lamC_embT]
-  simp only [hx, hy, lamC_embT, Finset.mul_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hx, hy, lamC_embT, Finset.mul_sum, map_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   simp only [map_mul]
@@ -163,7 +171,7 @@ theorem exists_coeffs (D : D7) {p N N' : ℕ} (hp : p.Prime)
       ∀ j, b' j = ∑ i, A i j • b i := by
   choose s1 hs1 hm1 using hb'.2.1
   choose s2 hs2 c hc using fun j => hb.2.2 _ (hm1 j)
-  have hcop : ∀ j, Nat.Coprime (s2 j * s1 j) p := fun j => Nat.Coprime.mul (hs2 j) (hs1 j)
+  have hcop : ∀ j, Nat.Coprime (s2 j * s1 j) p := fun j => Nat.Coprime.mul_left (hs2 j) (hs1 j)
   have hn : ∀ j, ((s2 j * s1 j : ℕ) : D.host.E) ≠ 0 := by
     intro j
     have : s2 j * s1 j ≠ 0 := by
@@ -219,7 +227,8 @@ theorem hYY_comb (D : D7) {N N' r : ℕ} (b : Fin r → Matrix (Fin N') (Fin N) 
     mul_mem (hx i) (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.G0.conj_mem D ⟨y i', hy i'⟩)
   have e1 : (∑ a, ∑ c, (∑ i, x i • b i) a c * D.host.conj ((∑ i, y i • b i) a c)) =
       ∑ i, ∑ i', (x i * D.host.conj (y i')) * ∑ a, ∑ c, b i a c * D.host.conj (b i' a c) := by
-    simp only [Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.sum_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.sum_mul,
       Finset.mul_sum]
     rw [sum4, Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun i' _ =>
@@ -232,7 +241,8 @@ theorem hYY_comb (D : D7) {N N' r : ℕ} (b : Fin r → Matrix (Fin N') (Fin N) 
     rfl
   unfold hYY
   rw [e1]
-  simp only [e2, map_sum, map_smul, smul_eq_mul, IntermediateField.coe_sum, IntermediateField.coe_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e2, map_sum, map_smul, smul_eq_mul, IntermediateField.coe_sum, IntermediateField.coe_mul]
 
 theorem orthChange_core : OrthChange := by
   intro D p hp N N' L L' r r' b b' hbL hbO hb'L hb'O
@@ -254,8 +264,8 @@ theorem orthChange_core : OrthChange := by
 
 end IntegralOrthonormalChange
 
-open IntegralOrthonormalChange in
 
+open IntegralOrthonormalChange in
 theorem basisInv_of (hO : OrthChange) (hU : UnitSubst) : BasisInv := by
   intro D cc δ hcc hδ p _ hp5 hin lam N N' L L' F hS
   obtain ⟨r, b, hbL, hbO, hI⟩ := hS

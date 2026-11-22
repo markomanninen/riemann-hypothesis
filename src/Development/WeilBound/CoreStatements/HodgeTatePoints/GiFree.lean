@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct NumberField GlobalTheory GlobalTheory.PDivGroup GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT GlobalTheory.CompanionTheory.Ar.HT ReciprocityTheory.ChartRestriction.G.Semi
 
 namespace PositivityTheory.HtPt.Gi
@@ -31,17 +36,15 @@ theorem free_on_lift : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgC
     rw [this]; rfl
   have hskew : ∀ x y, EF x y = -EF y x := fun x y => by
     have := h.alt (x + y)
-    simp only [map_add, LinearMap.add_apply, h.alt] at this
+    simp only [map_add (f := _), LinearMap.add_apply, h.alt] at this
     linarith
   have eskew : ∀ x y, e x y = -e y x := by
     intro x y
     induction x with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]; ring
+    | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]; ring
     | tmul s x =>
       induction y with
-      | zero => simp
-      | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]; ring
+      | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]; ring
       | tmul t y => rw [he, he, hskew]; push_cast; ring
   have hTb : T = Submodule.span O (Set.range B) := by
     apply le_antisymm
@@ -105,17 +108,15 @@ theorem free_on_lift : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgC
         exact ⟨(EF x y : O), by rw [he1, map_intCast]⟩
       | zero => simp
       | add x x' _ _ hx hx' =>
-        rw [map_add, LinearMap.add_apply]; exact Subring.add_mem _ hx hx'
+        rw [map_add (f := _), LinearMap.add_apply]; exact Subring.add_mem _ hx hx'
       | smul o x _ hx =>
         rw [← algebraMap_smul C o x, map_smul, LinearMap.smul_apply, smul_eq_mul]
         exact Subring.mul_mem _ ⟨o, rfl⟩ hx
   · induction x with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
     | tmul s x =>
       induction y with
-      | zero => simp
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
       | tmul t y => rw [hρ, hρ, he, he, h.adj]
 
 end PositivityTheory.HtPt.Gi

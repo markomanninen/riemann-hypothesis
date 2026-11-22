@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+
+@[expose] public section
 
 open scoped TensorProduct LinearAlgebra.Projectivization
 
@@ -115,8 +119,8 @@ theorem finrank_fibre (O M k : Type) [CommRing O] [IsDomain O] [AddCommGroup M] 
         (LocalizedModule.mkLinearMap p0.asIdeal.primeCompl M) hp]
   rw [h1, Module.rankAtStalk_baseChange, hlc.apply_eq_of_preconnectedSpace _ p0, h2]
 
-attribute [local instance] Ideal.Quotient.field in
 
+attribute [local instance] Ideal.Quotient.field in
 theorem count [IsDomain O] [Module.Finite O M] [Module.Projective O M] (P : Ideal O)
     [hP : P.IsMaximal] [Finite (O ⧸ P)] :
     {N : Submodule O M | ∃ f : M →ₗ[O] O ⧸ P, f ≠ 0 ∧ LinearMap.ker f = N}.Finite ∧
@@ -132,7 +136,8 @@ theorem count [IsDomain O] [Module.Finite O M] [Module.Projective O M] (P : Idea
   have : Finite (M →ₗ[O] O ⧸ P) :=
     Nat.finite_of_card_ne_zero (by rw [hcard]; exact pow_ne_zero _ Nat.card_pos.ne')
   let φ : ℙ (O ⧸ P) (M →ₗ[O] O ⧸ P) → Submodule O M :=
-    Projectivization.lift (fun f => LinearMap.ker f.1) (by
+    Projectivization.lift (K := O ⧸ P) (V := M →ₗ[O] O ⧸ P)
+      (fun f => LinearMap.ker f.1) (by
       rintro ⟨a, ha⟩ ⟨b, hb⟩ t (hab : a = t • b)
       have ht : t ≠ 0 := by
         rintro rfl

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.ExplicitFormulaCounts.AnalyticInputs
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ZerosWindow
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ExplicitFormula
+module
+
+public import Formalism.PeriodIntegrals.ExplicitFormulaCounts.AnalyticInputs
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ZerosWindow
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ExplicitFormula
+
+@[expose] public section
 
 theorem zerosWindow_closed : PI.ZerosWindow :=
   zerosWindow_of chk_lBoundRight chk_zetaBoundRight chk_lInvRight

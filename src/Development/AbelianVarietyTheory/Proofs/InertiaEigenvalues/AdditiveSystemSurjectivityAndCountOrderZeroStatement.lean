@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdditiveSystemSurjectivityAndCountOrderZero
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdditiveSystemSurjectivityAndCountOrderZero
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+
+@[expose] public section
+
 open GlobalTheory.PMonE
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.additiveSystem_surjectivity_and_count_order_zero : GLOnto 0 ∧ GLCount 0 := by

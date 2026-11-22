@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.LowerBound
@@ -8,62 +13,6 @@ open Real MeasureTheory Filter Topology
 noncomputable section
 
 universe u
-
-structure ReductionSmallLast.Hyp
-    (K1 Ca Cc A0 b0 hh sl rest vol J f j' n N j La : ℝ) : Prop where
-  f_pos : 0 < f
-  j'_pos : 0 < j'
-  vol_pos : 0 < vol
-  J_pos : 0 < J
-  n_succ_pos : 0 < n + 1
-  one_le_N : 1 ≤ N
-  half_N_le_j : N / 2 ≤ j
-  j_pos : 0 < j
-  one_le_La : 1 ≤ La
-  log_le_La : log (N + 1) ≤ La
-
-  identity : f * j' * b0 = hh / ((n + 1) * J) - sl + rest / ((n + 1) * vol * J)
-
-  bound_sum : |j * A0 + N * b0| ≤ K1 * N * La
-
-  sl_lower : -(Ca * f * j' * La) ≤ sl
-
-  hh_upper : hh / ((n + 1) * J) ≤ f * j' / 2 * log (N + 1)
-
-  rest_bound : |rest| ≤ Cc * f * j' * (n + 1) * vol * J
-
-def ReductionSmallLast.Statement : Prop :=
-  ∀ K1 Ca Cc : ℝ, 0 ≤ K1 → 0 ≤ Ca → 0 ≤ Cc → ∃ C : ℝ,
-    ∀ A0 b0 hh sl rest vol J f j' n N j La : ℝ,
-      ReductionSmallLast.Hyp K1 Ca Cc A0 b0 hh sl rest vol J f j' n N j La → -(C * La) ≤ A0
-
-structure ReductionSmallFirst.Hyp
-    (K1 Ca Cc A0 b0 hh sl rest vol J f j' n N j La : ℝ) : Prop where
-  f_pos : 0 < f
-  j'_pos : 0 < j'
-  vol_pos : 0 < vol
-  J_pos : 0 < J
-  n_succ_pos : 0 < n + 1
-  one_le_N : 1 ≤ N
-  half_N_le : N / 2 ≤ N - j
-  sub_pos : 0 < N - j
-  one_le_La : 1 ≤ La
-  log_le_La : log (N + 1) ≤ La
-
-  identity : f * j' * (A0 + b0) = sl - hh / ((n + 1) * J) - rest / ((n + 1) * vol * J)
-
-  bound_sum : |j * A0 + N * b0| ≤ K1 * N * La
-
-  sl_lower : -(Ca * f * j' * La) ≤ sl
-
-  hh_upper : hh / ((n + 1) * J) ≤ f * j' / 2 * log (N + 1)
-
-  rest_bound : |rest| ≤ Cc * f * j' * (n + 1) * vol * J
-
-def ReductionSmallFirst.Statement : Prop :=
-  ∀ K1 Ca Cc : ℝ, 0 ≤ K1 → 0 ≤ Ca → 0 ≤ Cc → ∃ C : ℝ,
-    ∀ A0 b0 hh sl rest vol J f j' n N j La : ℝ,
-      ReductionSmallFirst.Hyp K1 Ca Cc A0 b0 hh sl rest vol J f j' n N j La → -(C * La) ≤ A0
 
 structure InteriorDichotomy.Hyp (C0 C1 C2 h hmu g fj La : ℝ) : Prop where
   one_le_g : 1 ≤ g
@@ -105,18 +54,6 @@ structure CuspWeightBound.Hyp (f j' ρ : ℕ) (rd lam NI covol : ℝ) : Prop whe
 def CuspWeightBound.Statement : Prop :=
   ∀ (f j' ρ : ℕ) (rd lam NI covol : ℝ), CuspWeightBound.Hyp f j' ρ rd lam NI covol →
     -log NI ≤ f * j' * (2 * max 0 (log (1 / lam)) + log (2 * f * j' * rd))
-
-structure ShortVectorsOrthogonal.Hyp {L : Type*} [AddGroup L] (len : L → ℝ)
-    (E : L →+ L →+ ℤ) (a : L →+ L) (vr : ℝ) : Prop where
-  len_nonneg : ∀ v, 0 ≤ len v
-  abs_E_le : ∀ v w, |(E v w : ℝ)| ≤ len v * len w
-  len_a_le : ∀ v, len (a v) ≤ vr * len v
-  vr_pos : 0 < vr
-
-def ShortVectorsOrthogonal.Statement : Prop :=
-  ∀ (L : Type u) [AddGroup L] (len : L → ℝ) (E : L →+ L →+ ℤ) (a : L →+ L) (vr : ℝ),
-    ShortVectorsOrthogonal.Hyp len E a vr →
-    ∀ v w : L, len v < vr ^ (-(1 / 2 : ℝ)) → len w < vr ^ (-(1 / 2 : ℝ)) → E (a v) w = 0
 
 structure PackingCount.Hyp {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
     (L : Set V) (W : Submodule ℝ V) (lam r : ℝ) (a : ℕ) : Prop where
@@ -187,24 +124,6 @@ def MeanCuspWeight.Statement : Prop :=
   ∀ (X : Type u) [MeasurableSpace X] (μ : Measure X) (U lam : X → ℝ) (f j' : ℕ) (vr rd : ℝ),
     MeanCuspWeight.Hyp μ U lam f j' vr rd →
     ∫ z, U z ∂μ ≤ f * j' * (6 + log vr + log (2 * f * j' * rd))
-
-structure TelescopeMetric.Hyp (n : ℕ) (A A' : ℝ) (I : ℕ → ℝ) : Prop where
-  sum_eq : A' - A = 1 / 2 * ∑ i ∈ Finset.range (n + 1), I i
-  antitone : ∀ i, i < n → I (i + 1) ≤ I i
-
-def TelescopeMetric.Statement : Prop :=
-  ∀ (n : ℕ) (A A' : ℝ) (I : ℕ → ℝ), TelescopeMetric.Hyp n A A' I →
-    A' - (n + 1) / 2 * I 0 ≤ A
-
-structure LimitInEpsilon.Hyp (n : ℕ) (P Q W : ℝ → ℝ) (W0 e' C1 : ℝ) : Prop where
-  P_cont : ContinuousWithinAt P (Set.Ioi 0) 0
-  Q_cont : ContinuousWithinAt Q (Set.Ioi 0) 0
-  W_lim : Tendsto W (𝓝[>] 0) (𝓝 W0)
-  bound : ∀ᶠ ε in 𝓝[>] 0, (n + 1) * ((e' - ε * C1) * Q ε - 1 / 2 * W ε) ≤ P ε
-
-def LimitInEpsilon.Statement : Prop :=
-  ∀ (n : ℕ) (P Q W : ℝ → ℝ) (W0 e' C1 : ℝ), LimitInEpsilon.Hyp n P Q W W0 e' C1 →
-    (n + 1) * (e' * Q 0 - W0 / 2) ≤ P 0
 
 end
 

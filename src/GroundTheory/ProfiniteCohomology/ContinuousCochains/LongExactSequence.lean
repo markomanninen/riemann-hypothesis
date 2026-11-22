@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -62,11 +67,9 @@ variable (hS : S.ShortExact)
 noncomputable def δ (i j : ℕ) (hij : i + 1 = j) : cohomology S.X₃ i ⟶ cohomology S.X₁ j :=
   (cochainsShortComplex_shortExact hS).δ i j hij
 
-@[reassoc (attr := simp)]
 theorem δ_comp (i j : ℕ) (hij : i + 1 = j) : δ hS i j hij ≫ cohomologyMap S.f j = 0 :=
   (cochainsShortComplex_shortExact hS).δ_comp i j hij
 
-@[reassoc (attr := simp)]
 theorem comp_δ (i j : ℕ) (hij : i + 1 = j) : cohomologyMap S.g i ≫ δ hS i j hij = 0 :=
   (cochainsShortComplex_shortExact hS).comp_δ i j hij
 
@@ -77,8 +80,8 @@ theorem cohomology_exact₁ (i j : ℕ) (hij : i + 1 = j) :
     (ShortComplex.mk (δ hS i j hij) (cohomologyMap S.f j) (δ_comp hS i j hij)).Exact :=
   (cochainsShortComplex_shortExact hS).homology_exact₁ i j hij
 
-include hS in
 
+include hS in
 theorem cohomology_exact₂ (i : ℕ) :
     (ShortComplex.mk (cohomologyMap S.f i) (cohomologyMap S.g i)
       (cohomologyMap_f_comp_g i)).Exact :=
@@ -94,24 +97,6 @@ section Naturality
 
 variable {S₁ S₂ : ShortComplex (Rep.{u} k G)} [IsDiscreteRep S₁.X₁] [IsDiscreteRep S₁.X₂]
   [IsDiscreteRep S₁.X₃] [IsDiscreteRep S₂.X₁] [IsDiscreteRep S₂.X₂] [IsDiscreteRep S₂.X₃]
-
-noncomputable def cochainsShortComplexMap (φ : S₁ ⟶ S₂) :
-    cochainsShortComplex S₁ ⟶ cochainsShortComplex S₂ where
-  τ₁ := cochainsMap φ.τ₁
-  τ₂ := cochainsMap φ.τ₂
-  τ₃ := cochainsMap φ.τ₃
-  comm₁₂ := by
-    change cochainsMap φ.τ₁ ≫ cochainsMap S₂.f = cochainsMap S₁.f ≫ cochainsMap φ.τ₂
-    rw [← cochainsMap_comp, ← cochainsMap_comp, φ.comm₁₂]
-  comm₂₃ := by
-    change cochainsMap φ.τ₂ ≫ cochainsMap S₂.g = cochainsMap S₁.g ≫ cochainsMap φ.τ₃
-    rw [← cochainsMap_comp, ← cochainsMap_comp, φ.comm₂₃]
-
-theorem δ_naturality (hS₁ : S₁.ShortExact) (hS₂ : S₂.ShortExact) (φ : S₁ ⟶ S₂) (i j : ℕ)
-    (hij : i + 1 = j) :
-    δ hS₁ i j hij ≫ cohomologyMap φ.τ₁ j = cohomologyMap φ.τ₃ i ≫ δ hS₂ i j hij :=
-  HomologicalComplex.HomologySequence.δ_naturality (cochainsShortComplexMap φ)
-    (cochainsShortComplex_shortExact hS₁) (cochainsShortComplex_shortExact hS₂) i j hij
 
 end Naturality
 

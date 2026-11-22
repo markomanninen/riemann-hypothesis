@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.AlgebraMapToZMod
 
@@ -15,7 +19,7 @@ theorem algebraMap_toZMod_eq {l : ℕ} [inst : Fact (Nat.Prime l)] {R : Type} [i
     rw [hy, hc]; ring
   have h1 : f x = ((z.val : ℕ) : R) := by
     conv_lhs => rw [hx]
-    rw [map_add, map_mul, hf, mul_zero, zero_add, map_natCast]
+    rw [map_add (f := _), map_mul, hf, mul_zero, zero_add, map_natCast]
   have h2 : algebraMap (ZMod l) R z = ((z.val : ℕ) : R) := by
     conv_lhs => rw [← ZMod.natCast_zmod_val z]
     rw [map_natCast]

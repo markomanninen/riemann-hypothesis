@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TopNilDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TnAlgMapSmulMem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TopNilDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TnAlgMapSmulMem
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -11,12 +15,15 @@ theorem UpperTheory.V.AlgebraTools.exists_idem_topNil :
   intro R _ _ _ _ κ M _ _ _ T hT
   classical
   let S := Algebra.adjoin R (Set.range T)
-  haveI : Module.Finite R S := by
-    haveI : IsNoetherian R (Subalgebra.toSubmodule S) := inferInstance
+  have : Module.Finite R S := by
+    have : IsNoetherian R (Subalgebra.toSubmodule S) := inferInstance
     exact (inferInstance : Module.Finite R (Subalgebra.toSubmodule S))
-  letI : CommRing S := Algebra.adjoinCommRingOfComm R (by
-    rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩
+  have : IsMulCommutative S := Algebra.isMulCommutative_adjoin R (by
+    rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ _
     exact hT i j)
+  let _ : CommRing S := by
+    open scoped IsMulCommutative in
+    exact inferInstance
   let t : κ → S := fun i => ⟨T i, Algebra.subset_adjoin ⟨i, rfl⟩⟩
   obtain ⟨e, he, -, hx⟩ := topNil_eq_idem R S κ t
   have hfun : (fun i => (Algebra.lsmul R R M) (t i)) = T := by

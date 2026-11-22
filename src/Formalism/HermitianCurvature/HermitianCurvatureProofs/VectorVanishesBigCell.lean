@@ -1,15 +1,19 @@
-import Formalism.HermitianCurvature.StatementKB
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DensityConstantOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WittOrthonormalBasis
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Formalism.FormalDegreeBessel.FinalBF
+module
+
+public import Formalism.HermitianCurvature.StatementKB
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DensityConstantOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WittOrthonormalBasis
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+public import Formalism.FormalDegreeBessel.FinalBF
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -148,7 +152,10 @@ theorem orbJ_one_zero (S : B.RealPlaceData k r Wp Wq) {γ : B.Mat k r} (hγ : γ
     intro θ hθ p hp
     have h := hθ.2.2 p hp
     rw [hR, integral_dirac] at h
-    simpa [hact] using h
+    have hrow : (Matrix.of (row 1) : B.Mat k r) = 1 := by
+      ext i j
+      simp
+    simpa [hrow, hact] using h
   unfold D.orbJ
   split_ifs with hex
   · have h1 := hθ _ hex.choose_spec.1

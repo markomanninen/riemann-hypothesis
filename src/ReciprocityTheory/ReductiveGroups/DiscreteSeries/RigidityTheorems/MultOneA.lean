@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,7 @@ theorem signMatrix_conjTranspose (ε : Fin n → Bool) : (Jm ε)ᴴ = Jm ε := b
   rw [Jm, Matrix.diagonal_conjTranspose]
   congr 1
   funext a
-  simp only [Pi.star_apply]
-  split_ifs <;> simp
+  by_cases h : ε a = true <;> simp [h]
 
 theorem signMatrix_mul_self (ε : Fin n → Bool) : Jm ε * Jm ε = 1 := by
   rw [Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]

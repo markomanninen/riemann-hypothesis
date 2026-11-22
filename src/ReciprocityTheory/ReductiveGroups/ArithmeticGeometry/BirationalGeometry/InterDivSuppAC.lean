@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSuppAA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSuppAA
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,19 +22,21 @@ theorem height_polynomial_of_isMaximal {R : Type*} [CommRing R] [IsNoetherianRin
 
 theorem height_mvPolynomial_fin_of_isMaximal {k : Type*} [Field k] :
     ∀ (n : ℕ) (M : Ideal (MvPolynomial (Fin n) k)), M.IsMaximal → M.height = n
-  | 0, M, hM => by
-    have h := Ideal.height_le_ringKrullDim_of_ne_top hM.ne_top
-    rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field] at h
-    have h' : M.height ≤ 0 := by
-      have : ((M.height : ℕ∞) : WithBot ℕ∞) ≤ ((0 : ℕ∞) : WithBot ℕ∞) := by simpa using h
-      exact WithBot.coe_le_coe.mp this
-    simpa using h'
-  | n + 1, M, hM => by
-    let e := (MvPolynomial.finSuccEquiv k n).toRingEquiv
-    have hM' : (M.map e).IsMaximal := Ideal.map_isMaximal_of_equiv e
-    rw [← e.height_map M, height_polynomial_of_isMaximal
-      (height_mvPolynomial_fin_of_isMaximal n) _ hM']
-    simp
+  := by
+    intro n
+    induction n with
+    | zero =>
+      intro M hM
+      have h := Ideal.height_le_ringKrullDim_of_ne_top hM.ne_top
+      rw [ringKrullDim_mvPolynomial_of_isEmpty, ringKrullDim_eq_zero_of_field] at h
+      rw [Nat.cast_zero]
+      exact le_antisymm (WithBot.coe_le_coe.mp h) zero_le
+    | succ n ih =>
+      intro M hM
+      let e := (MvPolynomial.finSuccEquiv k n).toRingEquiv
+      have hM' : (M.map e).IsMaximal := Ideal.map_isMaximal_of_equiv e
+      rw [← e.height_map M, height_polynomial_of_isMaximal ih _ hM']
+      simp
 
 theorem height_map_under_eq_zero {R B : Type*} [CommRing R] [CommRing B] [Algebra R B]
     [Algebra.IsIntegral R B] (M : Ideal B) [M.IsPrime] :
@@ -82,7 +88,7 @@ theorem exists_height_of_isMaximal_of_field (k B : Type*) [Field k] [CommRing B]
   refine ⟨s, fun M hM => ?_⟩
   haveI := hM
   haveI hmax : (M.under (MvPolynomial (Fin s) k)).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal M
   haveI : M.LiesOver (M.under (MvPolynomial (Fin s) k)) := ⟨rfl⟩
   rw [Ideal.height_eq_height_add_of_liesOver_of_hasGoingDown (M.under (MvPolynomial (Fin s) k)) M,
     height_mvPolynomial_fin_of_isMaximal s _ hmax, height_map_under_eq_zero M, add_zero]

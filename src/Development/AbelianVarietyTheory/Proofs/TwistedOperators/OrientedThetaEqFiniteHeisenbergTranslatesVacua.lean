@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubMemOfMkEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeisAvgInvariant
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymplOInvSmulNsmul
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymplOSmulAddSmulAdd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceIdemEqSingle
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatLevel
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubMemOfMkEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeisAvgInvariant
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymplOInvSmulNsmul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymplOSmulAddSmulAdd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceIdemEqSingle
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatLevel
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatSelf
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum NumberField
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -25,15 +30,17 @@ theorem comb_eq_linearCombination (ψ : AddChar (AF D.host.F) ℂ) (c : WO S T �
 theorem comb_sum_single {ι : Type} [Fintype ι] (ψ : AddChar (AF D.host.F) ℂ) (x : ι → WO S T) (a : ι → ℂ)
     (f : WO S T → ℂ) :
     comb ψ S T (∑ i, Finsupp.single (x i) (a i)) f = ∑ i, a i • heisO ψ S T (x i) f := by
-  rw [comb_eq_linearCombination, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [comb_eq_linearCombination, map_sum]
   exact Finset.sum_congr rfl fun i _ => Finsupp.linearCombination_single _ _ _
 
 theorem isFinComb_sum_single {ι : Type} [Fintype ι] (x : ι → WO S T) (a : ι → ℂ)
     (hx : ∀ i, (x i).map (infPart D) = 0) : IsFinComb (∑ i, Finsupp.single (x i) (a i)) := by
   classical
   intro u hu
-  obtain ⟨i, -, hi⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hu)
-  rw [Finset.mem_singleton.1 (Finsupp.support_single_subset hi)]
+  obtain ⟨i, -, hi⟩ := Finset.mem_biUnion.1 (Finsupp.support_finsetSum hu)
+  have hui : u = x i := Finset.mem_singleton.1 (Finsupp.support_single_subset hi)
+  rw [hui]
   exact hx i
 
 theorem map_infPart_add_neg {x y : WO S T} (hx : x.map (infPart D) = 0) (hy : y.map (infPart D) = 0) :
@@ -42,7 +49,7 @@ theorem map_infPart_add_neg {x y : WO S T} (hx : x.map (infPart D) = 0) (hy : y.
   have h1 : infPart D (x i j) = 0 := congrFun (congrFun hx i) j
   have h2 : infPart D (y i j) = 0 := congrFun (congrFun hy i) j
   show infPart D (x i j + -y i j) = 0
-  rw [map_add, map_neg, h1, h2, neg_zero, add_zero]
+  rw [map_add (f := _), map_neg, h1, h2, neg_zero, add_zero]
 
 theorem symplO_neg_right (x y : WO S T) : symplO S T x (-y) = -symplO S T x y := by
   have h := symplO_add_right S T x y (-y)
@@ -139,7 +146,8 @@ theorem decomp_of_lam (ψ : AddChar (AF D.host.F) ℂ) (Λ : AddSubgroup (WO S T
       intro a
       rw [hcomb]
       change heisL S T ψ (s a) (∑ q : Qm m Λ, lam (repm q) • heisL S T ψ (repm q) (N⁻¹ • heisL S T ψ (-s a) f)) = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [map_smul, map_smul, map_smul, heisL_comm, heisL_cancel, smul_smul, smul_smul, smul_smul]
       congr 1

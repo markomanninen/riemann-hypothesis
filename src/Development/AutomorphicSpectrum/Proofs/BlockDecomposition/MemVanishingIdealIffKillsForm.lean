@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanIdealHomog
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanIdealHomog
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem KilledIn.add {n : ℕ} {f g : MvPolynomial (Fin (N + 1)) R} (hf : Killed
   unfold KillsForm at hf2 hg2
   unfold KilledIn KillsForm
   refine ⟨hf1.add hg1, fun k => ?_⟩
-  rw [GlobalTheory.ProjSpace.formOn_add hf1 hg1, map_add, hf2 k, hg2 k, add_zero]
+  rw [GlobalTheory.ProjSpace.formOn_add hf1 hg1, map_add (f := _), hf2 k, hg2 k, add_zero]
 
 theorem KilledIn.mul {d m : ℕ} {a f : MvPolynomial (Fin (N + 1)) R} (ha : a.IsHomogeneous d)
     (hf : KilledIn φ m f) : KilledIn φ (d + m) (a * f) := by
@@ -46,7 +50,8 @@ theorem killedIn_component_mul_of_homog {d : ℕ} {a h : MvPolynomial (Fin (N + 
     KilledIn φ n (homogeneousComponent n (a * h)) := by
   have hsum : a * h = ∑ m ∈ Finset.range (h.totalDegree + 1), a * homogeneousComponent m h := by
     rw [← Finset.mul_sum, sum_homogeneousComponent]
-  rw [hsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum]
   refine KilledIn.sum _ _ fun m _ => ?_
   rw [homogeneousComponent_of_mem
     ((mem_homogeneousSubmodule _ _).2 (ha.mul (homogeneousComponent_isHomogeneous m h)))]
@@ -60,7 +65,8 @@ theorem killedIn_component_mul (a : MvPolynomial (Fin (N + 1)) R)
     KilledIn φ n (homogeneousComponent n (a * h)) := by
   have hsum : a * h = ∑ k ∈ Finset.range (a.totalDegree + 1), homogeneousComponent k a * h := by
     rw [← Finset.sum_mul, sum_homogeneousComponent]
-  rw [hsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum]
   exact KilledIn.sum _ _ fun k _ =>
     killedIn_component_mul_of_homog (homogeneousComponent_isHomogeneous k a) hh n
 
@@ -82,7 +88,7 @@ theorem killedIn_component_of_mem {h : MvPolynomial (Fin (N + 1)) R} (hh : h ∈
     exact killedIn_zero φ n
   | add x y _ _ ihx ihy =>
     intro n
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (ihx n).add (ihy n)
   | smul a x _ ih =>
     intro n

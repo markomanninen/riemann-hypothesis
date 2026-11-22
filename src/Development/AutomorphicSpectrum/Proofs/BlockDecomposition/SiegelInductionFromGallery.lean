@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,11 +19,15 @@ theorem isHt_mono {Γ K P P' : Subgroup G} {η : G → ℝ} (h : IsHt Γ K P η)
   ⟨fun p hp g => h.left p (hP hp) g, h.right, fun γ hγ hp => h.rat γ hγ (hP hp), h.cont⟩
 
 theorem isHt_lin {Γ K P : Subgroup G} {η θ : G → ℝ} (x y : ℝ) (h₁ : IsHt Γ K P η) (h₂ : IsHt Γ K P θ) :
-    IsHt Γ K P fun g => x * η g + y * θ g where
-  left p hp g := by simp only [h₁.left p hp g, h₂.left p hp g]; ring
-  right g k hk := by simp only [h₁.right g k hk, h₂.right g k hk]
-  rat γ hγ hp := by simp only [h₁.rat γ hγ hp, h₂.rat γ hγ hp]; ring
-  cont := (continuous_const.mul h₁.cont).add (continuous_const.mul h₂.cont)
+    IsHt Γ K P fun g => x * η g + y * θ g := by
+  refine ⟨?_, ?_, ?_, (continuous_const.mul h₁.cont).add (continuous_const.mul h₂.cont)⟩
+  · intro p hp g
+    simp only [h₁.left p hp g, h₂.left p hp g]
+    ring
+  · intro g k hk
+    simp only [h₁.right g k hk, h₂.right g k hk]
+  · intro γ hγ hp
+    simp only [h₁.rat γ hγ hp, h₂.rat γ hγ hp, mul_zero, add_zero]
 
 theorem isHt_congr {Γ K P : Subgroup G} {η θ : G → ℝ} (h : IsHt Γ K P η) (e : ∀ g, θ g = η g) : IsHt Γ K P θ := by
   rwa [show θ = η from funext e]
@@ -32,8 +40,8 @@ end Heights
 variable {E R : Type} [Field E] [CommRing R] [TopologicalSpace R] [IsTopologicalRing R] [T2Space R]
   [LocallyCompactSpace R] [SecondCountableTopology R]
 
-open Classical in
 
+open scoped Classical in
 theorem wallQ (hTr : Transfer) (hTop : GrpTop) (hPar : ParLaw) (hLQ : LeviQ) (A : Ad E R) (hA : A.Good) (ε : ℤˣ)
     {ι : Type} [Fintype ι] [DecidableEq ι] (s : Set ι) (hI : Iwa (A.uQ ε s ⊓ A.uQ ε Set.univ) (A.uK ε ι))
     (hSg : A.Sg ε (sᶜ : Set ι)) {W : Type} [NormedAddCommGroup W] [NormedSpace ℂ W] [FiniteDimensional ℂ W]
@@ -123,9 +131,10 @@ theorem wallsS (hTr : Transfer) (hTw : Twist) (hTop : GrpTop) (hPar : ParLaw) (h
     (hP {i₁}ᶜ) (hP {i₀}) u₂ b₂ a₂ d₁ h₀ d₃ p₁ (hH {i₀}) p₃ (hH Set.univ)
   exact ⟨X₁.2.1 (T₁.2.1 m₁), X₂.1 (T₂.1 m₂), X₁.2.2 (T₁.2.2 m₃)⟩
 
-open Classical in
 
+open Classical in
 theorem sgStep : Gallery → Transfer → Twist → GrpTop → ParLaw → LeviS → LeviQ → ConvGrOf → ConvU → SgStep := by
+  classical
   intro hGal hTr hTw hTop hPar hLS hLQ hCG hCU E R _ _ _ _ _ _ _ A hA hMir ε ι _ _ hN hIH hS W _ _ _ ρ hρ
   obtain ⟨i₀⟩ : Nonempty ι := Fintype.card_pos_iff.1 (by omega)
   obtain ⟨π, j, -, -, hIw, -⟩ := hLS E R A hA ι ε hS

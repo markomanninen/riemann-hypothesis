@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HalfData
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtensionAdeleRealComponentsCmTypeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HalfData
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtensionAdeleRealComponentsCmTypeStatement
+
+@[expose] public section
+
 open scoped Matrix NNReal ComplexConjugate TensorProduct ContDiff
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.Core.Rk.SWLaw GlobalTheory.Core.Rk.SW GlobalTheory.StdUnn
@@ -35,21 +40,25 @@ theorem exists_unique_of_comp_finPart : ∀ (D : D7) (θ : InfFam D), IsInfFam �
       simp only [Matrix.map_apply] at this
       rw [(finPart D).map_sub, this, sub_self]
   refine ⟨x₀ + ∑ σ, lineAt θ σ (z σ - compAt θ σ x₀) 1, ⟨fun τ => ?_, ?_⟩, ?_⟩
-  · rw [hC, map_add, map_sum, ← hC]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [hC, map_add (f := _), map_sum, ← hC]
     simp_rw [← hC, (hL _ _).2.2 1 τ]
     rw [Finset.sum_eq_single τ (fun b _ hb => if_neg (Ne.symm hb)) (by simp), if_pos rfl, Complex.ofReal_one, one_smul]
     abel
-  · rw [hP, hP, map_add, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, hP, map_add (f := _), map_sum]
     simp_rw [← hP, (hL _ _).2.1 1]
     simp
   · rintro y ⟨hy1, hy2⟩
     apply key
     · intro τ
-      rw [hy1, hC, map_add, map_sum, ← hC]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hy1, hC, map_add (f := _), map_sum, ← hC]
       simp_rw [← hC, (hL _ _).2.2 1 τ]
       rw [Finset.sum_eq_single τ (fun b _ hb => if_neg (Ne.symm hb)) (by simp), if_pos rfl, Complex.ofReal_one, one_smul]
       abel
-    · rw [hy2, hP, hP, map_add, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [hy2, hP, hP, map_add (f := _), map_sum]
       simp_rw [← hP, (hL _ _).2.1 1]
       simp
 

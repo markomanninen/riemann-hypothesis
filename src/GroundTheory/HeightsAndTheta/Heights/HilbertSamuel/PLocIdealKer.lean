@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLocIdealKer
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLocIdealKer
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -127,7 +132,7 @@ theorem proof : LocIdealKer.Statement := by
       rw [map_smul]
       exact hkill p hp _
     | zero => exact map_zero L
-    | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
     | smul s x _ hx =>
       rw [← algebraMap_smul (MRingOver S ι) s x, map_smul, hx, smul_zero]
   · intro h0

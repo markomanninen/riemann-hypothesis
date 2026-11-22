@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+
+@[expose] public section
+
 open scoped Classical ENNReal Pointwise NNReal
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals GlobalTheory.TypeAsm
@@ -45,7 +50,7 @@ def mkUJ' (ε : Fin n → Bool) (M : Matrix (Fin n) (Fin n) ℂ) : Formalism.REA
 
 theorem mkUJ'_val (M : Matrix (Fin n) (Fin n) ℂ) (h : Formalism.REAL.inUJ ε M) :
     Formalism.MainNotions.S.uMat (mkUJ' ε M) = M := by
-  rw [mkUJ', dif_pos h]; rfl
+  rw [mkUJ', dite_eq_left h]; rfl
 
 theorem mkUJ'_coe (γ : Formalism.REAL.UJ ε) :
     mkUJ' ε (((γ : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ)) = γ := by
@@ -131,7 +136,7 @@ theorem cont_uMat {n : ℕ} {ε : Fin n → Bool} : Continuous (fun γ : Formali
   Units.continuous_val.comp continuous_subtype_val
 
 theorem measurable_trI : Measurable (trI C) := by
-  refine measurable_pi_lambda _ (fun τ => ?_)
+  refine Measurable.of_eval (fun τ => ?_)
   have hc : Continuous (fun γ : Formalism.REAL.UJ (X.B.I.ε (vOf X τ)) =>
       (Matrix.of.symm (C.Qi τ * Formalism.MainNotions.S.uMat γ * C.Q τ) : Formalism.QuantumDeterminants.Mt D.R.k D.R.rS)) :=
     (continuous_const.matrix_mul cont_uMat).matrix_mul continuous_const
@@ -171,7 +176,7 @@ theorem measurable_mkUJ' {n m : ℕ} (ε : Fin n → Bool) (Q : Matrix (Fin n) (
   exact Measurable.dite hf.measurable measurable_const hSc.measurableSet
 
 theorem measurable_back : Measurable (back C) := by
-  refine measurable_pi_lambda _ (fun v => ?_)
+  refine Measurable.of_eval (fun v => ?_)
   exact (measurable_mkUJ' _ _ _).comp (measurable_pi_apply (X.pl v))
 
 theorem measEmb_trI : MeasurableEmbedding (trI C) :=

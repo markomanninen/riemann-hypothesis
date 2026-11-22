@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.UnipTool
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SCompact
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.UnipTool
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ theorem hE_crd (v w : (VS D).V) : hE X (X.crd v) (X.crd w) = X.ιE.symm ((VS D).
   apply X.ιE.injective
   rw [RingEquiv.apply_symm_apply]
   conv_rhs => rw [← X.bas.sum_repr v, ← X.bas.sum_repr w]
-  simp only [hE, Formalism.UG.P.hform_eq_dot, dotProduct, mulVec, Function.comp_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hE, Formalism.UG.P.hform_eq_dot, dotProduct, mulVec, Function.comp_apply, map_sum, map_mul,
     LinearMap.sum_apply, LinearMap.map_smulₛₗ₂, LinearMap.map_smul, smul_eq_mul,
     starRingEnd_apply, X.ιE_conj, X.J_eq, HidaSetting.crd, crdOf, RingEquiv.apply_symm_apply, Finset.mul_sum]
   conv_rhs => rw [Finset.sum_comm]
@@ -161,7 +166,7 @@ def cE : (Fin X.B.I.n → X.B.I.E) →ₗ[X.B.I.E] (Kap X → X.B.I.E) where
         Subtype.ext (pW_add X x y)
       show (wb X).repr ⟨pW X (x + y), pW_mem X (x + y)⟩ i =
         (wb X).repr ⟨pW X x, pW_mem X x⟩ i + (wb X).repr ⟨pW X y, pW_mem X y⟩ i
-      rw [this, map_add]
+      rw [this, map_add (f := _)]
       rfl
     · simp [hE_add_right]
   map_smul' c x := by
@@ -239,7 +244,8 @@ theorem Bm'_mul_Bm : Bm' X * Bm X = 1 := by
   apply Matrix.toLin'.injective
   apply LinearMap.ext
   intro c
-  rw [Matrix.toLin'_apply, Matrix.toLin'_apply, ← Matrix.mulVec_mulVec, Bm_mulVec, Bm'_mulVec, map_sum, Matrix.one_mulVec]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.toLin'_apply, Matrix.toLin'_apply, ← Matrix.mulVec_mulVec, Bm_mulVec, Bm'_mulVec, map_sum, Matrix.one_mulVec]
   funext k'
   simp [Finset.sum_apply, cE_bv]
 

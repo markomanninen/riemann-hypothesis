@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.DefsGH
-import Formalism.LocalToGlobal.Columns.RecLevelLocT
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.DefsGH
+public import Formalism.LocalToGlobal.Columns.RecLevelLocT
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.UG Formalism.L2.Forms Matrix
 open scoped TensorProduct
@@ -33,9 +37,9 @@ theorem redM_eq_one {n : ℕ} (v : HeightOneSpectrum (𝓞 F)) (p : ℕ) (hv : (
     split_ifs <;> simp
   have hm : M r c ∈ v.adicCompletionIntegers F := e' ▸ u.2
   unfold redM
-  rw [dif_pos hm]
+  rw [dite_eq_left hm]
   have : (⟨M r c, hm⟩ : v.adicCompletionIntegers F) = u := Subtype.ext e'
-  rw [this, hu, map_add, map_mul, hp, zero_mul, add_zero, Matrix.one_apply]
+  rw [this, hu, map_add (f := _), map_mul, hp, zero_mul, add_zero, Matrix.one_apply]
   split_ifs <;> simp
 
 theorem mem_Uloc_of_cong : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F))} {gp : Fin 2 → ℕ}

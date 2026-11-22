@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalArtinUniqueness
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalArtinUniqueness
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,11 +106,6 @@ def transportFieldEquiv (M : IntermediateField K Ω) : M ≃+* transportField e 
   map_mul' _ _ := Subtype.ext (map_mul ε _ _)
   map_add' _ _ := Subtype.ext (map_add ε _ _)
 
-@[simp]
-theorem coe_transportFieldEquiv (M : IntermediateField K Ω) (x : M) :
-    (transportFieldEquiv e ε hε M x : Ω') = ε x :=
-  rfl
-
 theorem transportFieldEquiv_algebraMap (M : IntermediateField K Ω) (x : K) :
     transportFieldEquiv e ε hε M (algebraMap K M x) = algebraMap K' (transportField e ε hε M) (e x) :=
   Subtype.ext (hε x)
@@ -132,8 +131,8 @@ theorem apply_mem_maximalAbelianExtension {y : Ω} (hy : y ∈ maximalAbelianExt
   have := isAbelianGalois_transportField e ε hε L
   exact le_maximalAbelianExtension _ ((apply_mem_transportField e ε hε).2 hyL)
 
-include hε in
 
+include hε in
 theorem mem_maximalAbelianExtension_transport_iff {y : Ω} :
     ε y ∈ maximalAbelianExtension K' Ω' ↔ y ∈ maximalAbelianExtension K Ω := by
   refine ⟨fun h => ?_, apply_mem_maximalAbelianExtension e ε hε⟩
@@ -149,11 +148,6 @@ def maximalAbelianExtensionTransport :
     maximalAbelianExtension K Ω ≃+* maximalAbelianExtension K' Ω' :=
   (transportFieldEquiv e ε hε _).trans
     (IntermediateField.equivOfEq (transportField_maximalAbelianExtension e ε hε)).toRingEquiv
-
-@[simp]
-theorem coe_maximalAbelianExtensionTransport (y : maximalAbelianExtension K Ω) :
-    (maximalAbelianExtensionTransport e ε hε y : Ω') = ε y :=
-  rfl
 
 theorem maximalAbelianExtensionTransport_algebraMap (x : K) :
     maximalAbelianExtensionTransport e ε hε (algebraMap K _ x) = algebraMap K' _ (e x) :=
@@ -188,17 +182,12 @@ def integerEquivOfVle : 𝒪[K] ≃+* 𝒪[K'] where
   map_mul' _ _ := Subtype.ext (map_mul e _ _)
   map_add' _ _ := Subtype.ext (map_add e _ _)
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [TopologicalSpace K']
-  [IsNonarchimedeanLocalField K'] in
-@[simp]
-theorem coe_integerEquivOfVle (x : 𝒪[K]) : (integerEquivOfVle e he x : K') = e x :=
-  rfl
 
 def residueFieldEquivOfVle : 𝓀[K] ≃+* 𝓀[K'] :=
   IsLocalRing.ResidueField.mapEquiv (integerEquivOfVle e he)
 
-include he in
 
+include he in
 theorem card_residueField_eq_of_vle : Nat.card 𝓀[K'] = Nat.card 𝓀[K] :=
   (Nat.card_congr (residueFieldEquivOfVle e he).toEquiv).symm
 
@@ -206,8 +195,8 @@ include he in
 theorem natCast_residueField_ne_zero_iff (m : ℕ) : (m : 𝓀[K']) ≠ 0 ↔ (m : 𝓀[K]) ≠ 0 := by
   rw [← map_natCast (residueFieldEquivOfVle e he), Ne, map_eq_zero_iff _ (residueFieldEquivOfVle e he).injective]
 
-include he in
 
+include he in
 theorem ord_apply_of_vle (x : Kˣ) : ord (e (x : K)) = ord (x : K) := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
   have hϖ' : Irreducible (integerEquivOfVle e he ϖ) :=
@@ -252,8 +241,8 @@ theorem apply_mem_maximalUnramifiedExtension_of_vle {y : Ω}
   have := (IntermediateField.adjoin_le_iff.2 hS) hy
   rwa [mem_transportField, RingEquiv.symm_symm] at this
 
-variable (K Ω) in
 
+variable (K Ω) in
 def transportedArtinMap :
     K'ˣ →* (maximalAbelianExtension K' Ω' ≃ₐ[K'] maximalAbelianExtension K' Ω') :=
   (galTransport e (maximalAbelianExtensionTransport e ε hε)
@@ -285,8 +274,8 @@ theorem transportedArtinMap_apply' (x' : K'ˣ) {y' : Ω'}
   simp only [RingEquiv.apply_symm_apply] at h
   exact h
 
-include he in
 
+include he in
 theorem transportedArtinMap_eq : transportedArtinMap K Ω e ε hε = localArtinMap K' Ω' := by
   have he' := symm_vle_iff e he
   have hε' := symm_algebraMap_transport e ε hε
@@ -340,8 +329,8 @@ theorem transportedArtinMap_eq : transportedArtinMap K Ω e ε hε = localArtinM
     simp only [restrictAb_apply, AlgEquiv.one_apply] at h2
     rw [h2, RingEquiv.apply_symm_apply]
 
-include he in
 
+include he in
 theorem transport_localArtinMap_apply (x : Kˣ) {y : Ω} (hy : y ∈ maximalAbelianExtension K Ω) :
     ε ((localArtinMap K Ω x ⟨y, hy⟩ : maximalAbelianExtension K Ω) : Ω) =
       ((localArtinMap K' Ω' (Units.map e.toRingHom.toMonoidHom x)
@@ -359,8 +348,8 @@ section Corollaries
 variable {K K' : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
   [Field K'] [ValuativeRel K'] [TopologicalSpace K'] [IsNonarchimedeanLocalField K']
 
-open Filter Topology in
 
+open Filter Topology in
 theorem vle_apply_iff_of_continuous (e : K ≃+* K') (hc : Continuous e) (hc' : Continuous e.symm)
     (x y : K) : e x ≤ᵥ e y ↔ x ≤ᵥ y := by
   refine vle_map_iff_of_valuation_lt_one_iff e.toRingHom (fun z => ?_) x y

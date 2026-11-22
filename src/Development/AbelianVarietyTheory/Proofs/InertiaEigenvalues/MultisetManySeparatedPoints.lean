@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 open Classical
 
@@ -51,7 +56,8 @@ theorem multiset_many_separated_points : ∀ (K : Type) [NormedAddCommGroup K] (
     calc Multiset.card s ≤ Multiset.card (∑ W ∈ Z, s.filter (fun z => ‖z - W‖ ≤ ρ)) :=
           Multiset.card_le_card hle
       _ = ∑ W ∈ Z, Multiset.card (s.filter (fun z => ‖z - W‖ ≤ ρ)) := by
-          simp [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [map_sum]
       _ ≤ ∑ W ∈ Z, B := Finset.sum_le_sum fun W hW => hball W (hZs W hW)
       _ = Z.card * B := by simp
   exact ⟨Z, Nat.le_of_mul_le_mul_right (hAB.trans hcard) hB, hZs, hZsep⟩

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitHeightSummableExpNegAbs
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousMultilinearMapExtHilbertBasisStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsHilbertSchmidtOrthonormalApplyStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumTupleProdOfSummableNormComplexStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitHeightSummableExpNegAbs
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousMultilinearMapExtHilbertBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsHilbertSchmidtOrthonormalApplyStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumTupleProdOfSummableNormComplexStatement
+
+@[expose] public section
 
 open ContinuousLinearMap
 open scoped InnerProductSpace
@@ -19,14 +23,14 @@ theorem tensorTrace_summable_sq {ι : Type} [Fintype ι] {Hs : ι → Type} [∀
     [InnerProductSpace ℂ H] (Ψ : ContinuousMultilinearMap ℂ Hs H) (c : ℂ)
     (hΨ : ∀ y y', ⟪Ψ y', Ψ y⟫_ℂ = c * ∏ i, ⟪y' i, y i⟫_ℂ) (A : ∀ i, Hs i →L[ℂ] Hs i)
     (hA : ∀ i, IsHilbertSchmidt (A i)) :
-    Summable fun j : ∀ i, stdIndex (Hs i) => ‖Ψ (fun i => A i (stdBasis (Hs i) (j i)))‖ ^ 2 := by
+    Summable fun j : ∀ i, stdIndex (Hs i) => ‖Ψ (fun i => A i (stdBasis (H := Hs i) (j i)))‖ ^ 2 := by
   have hs := (splitHeight_summable_pi_prod (α := fun i => stdIndex (Hs i))
-    (f := fun i k => ‖A i (stdBasis (Hs i) k)‖ ^ 2) (fun _ _ => sq_nonneg _) hA).mul_left c.re
+    (f := fun i k => ‖A i (stdBasis (H := Hs i) k)‖ ^ 2) (fun _ _ => sq_nonneg _) hA).mul_left c.re
   refine hs.congr fun j => ?_
-  have h1 := hΨ (fun i => A i (stdBasis (Hs i) (j i))) (fun i => A i (stdBasis (Hs i) (j i)))
+  have h1 := hΨ (fun i => A i (stdBasis (H := Hs i) (j i))) (fun i => A i (stdBasis (H := Hs i) (j i)))
   simp only [inner_self_eq_norm_sq_to_K] at h1
-  have h2 : ((‖Ψ (fun i => A i (stdBasis (Hs i) (j i)))‖ ^ 2 : ℝ) : ℂ)
-      = c * ((∏ i, ‖A i (stdBasis (Hs i) (j i))‖ ^ 2 : ℝ) : ℂ) := by
+  have h2 : ((‖Ψ (fun i => A i (stdBasis (H := Hs i) (j i)))‖ ^ 2 : ℝ) : ℂ)
+      = c * ((∏ i, ‖A i (stdBasis (H := Hs i) (j i))‖ ^ 2 : ℝ) : ℂ) := by
     push_cast; exact h1
   have h3 := congrArg Complex.re h2
   rw [Complex.ofReal_re, Complex.re_mul_ofReal] at h3
@@ -36,7 +40,7 @@ theorem tensorTrace_hasTrace : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Hs
   intro ι _ _ Hs _ _ _ H _ _ _ Φ Φ' κ κ' hΦ hΦΦ' hΦ' B b hB X hX hX0
   classical
   let J : ι → Type := fun i => stdIndex (Hs i)
-  let e : ∀ i, HilbertBasis (J i) ℂ (Hs i) := fun i => stdBasis (Hs i)
+  let e : ∀ i, HilbertBasis (J i) ℂ (Hs i) := fun i => stdBasis (H := Hs i)
   let u : (∀ i, J i) → H := fun j => Φ (fun i => e i (j i))
 
   have hu : Orthonormal ℂ u := by
@@ -107,7 +111,8 @@ theorem tensorTrace_hasTrace : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Hs
       simp only [comp_apply]
       rw [show (fun i => B i (e i (j i))) = fun i => ∑ m, C i m (D i m (e i (j i))) from
         funext fun i => by rw [hBeq i]; simp]
-      rw [Φ'.map_sum (fun i m => C i m (D i m (e i (j i))))]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Φ'.map_sum (fun i m => C i m (D i m (e i (j i))))]
       refine Finset.sum_congr rfl fun k _ => ?_
       change _ = GC k (GD k (Φ fun i => e i (j i)))
       rw [hGD1, hGC1]

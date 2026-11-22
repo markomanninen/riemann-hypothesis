@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AinfDivisibilityBreuilKisinFactsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsResidueTiltInjectiveRetractStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinOEModPrimeLaurentFieldStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WittVectorTeichmullerIsAdicCompleteOfPerfectStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AinfDivisibilityBreuilKisinFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsResidueTiltInjectiveRetractStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinOEModPrimeLaurentFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WittVectorTeichmullerIsAdicCompleteOfPerfectStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem frob (w : WCb l) (hw : w ∈ bk.OE) : frobW l w ∈ bk.OE := by
     rw [BK.evW, RingHom.comp_apply, RingHom.comp_apply, frobW_inclW, bk.ev_frob]
   refine ⟨l * m, frobS l bk.a s, frobW l y, ?_⟩
   have h' := congrArg (frobW l) h
-  simp only [map_mul, map_add, map_pow, map_natCast, key, frobS_X] at h'
+  simp only [map_mul, map_add (f := _), map_pow, map_natCast, key, frobS_X] at h'
   rw [pow_mul]
   linear_combination h'
 
@@ -109,7 +113,7 @@ theorem gal (g : ↥(GK K)) (hg : bk.FixFlat g) (w : WCb l) (hw : w ∈ bk.OE) :
   intro n
   obtain ⟨m, s, y, h⟩ := hw n
   have h' := congrArg (galW l (g : GQ l)) h
-  simp only [map_mul, map_add, map_pow, map_natCast, hW] at h'
+  simp only [map_mul, map_add (f := _), map_pow, map_natCast, hW] at h'
   obtain ⟨u, hu'⟩ := hu.pow m
   have e : (u : WCb l) * (galW l (g : GQ l) w - w) =
       ((l : ℕ) : WCb l) ^ n * (galW l (g : GQ l) y - y) := by
@@ -132,7 +136,7 @@ theorem inv (w : WCb l) (hw : w ∈ bk.OE) (hu : IsUnit w) : ∃ w' ∈ bk.OE, w
     rw [map_mul, h0, zero_mul, map_one] at h1
     exact zero_ne_one h1
   have h1 : (u : WCb l) * v - 1 ∈ RingHom.ker (WittVector.constantCoeff (p := l) (R := Cb l)) := by
-    rw [RingHom.mem_ker, map_sub, map_mul, hvy, map_one, mul_inv_cancel₀ hne, sub_self]
+    rw [RingHom.mem_ker, RingHom.map_sub, map_mul, hvy, map_one, mul_inv_cancel₀ hne, sub_self]
   rw [WittVector.ker_constantCoeff, Ideal.mem_span_singleton] at h1
   obtain ⟨z, hz⟩ := h1
   have hz' : z ∈ bk.OE := sat bk z (by

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory
@@ -8,7 +13,8 @@ theorem quotSpanNat_mk_eq_sum {S : Type} [CommRing S] {ι : Type} [Fintype ι] (
     Ideal.Quotient.mk (Ideal.span {((n : ℕ) : S)}) s =
       ∑ i, ((b.repr s i : ℤ) : ZMod n) • Ideal.Quotient.mk (Ideal.span {((n : ℕ) : S)}) (b i) := by
   conv_lhs => rw [← b.sum_repr s]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Int.cast_smul_eq_zsmul, map_zsmul]
 

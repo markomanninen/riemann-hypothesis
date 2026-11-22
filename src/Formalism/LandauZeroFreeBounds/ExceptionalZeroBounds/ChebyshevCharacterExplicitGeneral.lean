@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ExistsContourAvoidingRealZero
+module
+
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ExistsContourAvoidingRealZero
+
+@[expose] public section
 
 open Complex MeasureTheory
 

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisOfPolarized
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisOfPolarized
+
+@[expose] public section
 
 noncomputable section
 

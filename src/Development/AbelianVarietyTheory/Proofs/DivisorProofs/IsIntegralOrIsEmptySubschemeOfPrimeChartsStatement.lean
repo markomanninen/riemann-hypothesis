@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralOrIsEmptySubschemeOfPrimeCharts
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralOrIsEmptySubschemeOfPrimeCharts
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open scoped TensorProduct
 set_option maxHeartbeats 1000000 in

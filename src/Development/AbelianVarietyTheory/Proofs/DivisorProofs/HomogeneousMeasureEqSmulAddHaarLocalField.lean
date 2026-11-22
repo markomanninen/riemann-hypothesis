@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
@@ -28,8 +32,8 @@ theorem isOpen_sphere {γ : ValueGroupWithZero F} (hγ : γ ≠ 0) :
   have : z = y + (z - y) := by ring
   rw [this, (valuation F).map_add_eq_of_lt_left (by rw [hy]; exact hz), hy]
 
+open scoped Classical in
 open Classical in
-
 def absE (x : F) : ℝ≥0∞ := if h : x = 0 then 0 else (distribHaarChar F (Units.mk0 x h) : ℝ≥0∞)
 
 theorem absE_ne_zero {x : F} (hx : x ≠ 0) : absE x ≠ 0 := by

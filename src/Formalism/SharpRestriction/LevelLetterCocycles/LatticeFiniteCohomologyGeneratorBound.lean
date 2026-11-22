@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPosConstLagrangeCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoryWindows
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPosConstLagrangeCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoryWindows
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,8 @@ theorem gen_step_of_ker (A B : Submodule O M) (ob : ↥B →ₗ[O] Q)
     obtain ⟨c, -, hc⟩ := hq
     let z : ↥B := ∑ q ∈ t', c q • pre q
     have hz : ob z = ob ⟨y, hyB⟩ := by
-      rw [← hc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, map_sum]
       refine Finset.sum_congr rfl fun q hq => ?_
       rw [map_smul, hpre' q hq]
     rw [Submodule.mem_sup]
@@ -158,7 +163,8 @@ theorem cover_of_gen (T : LocLat G Qp LL O) (s : Finset (LatticeCohomology T.L))
   obtain ⟨c, hc⟩ := hz
   refine ⟨c, ?_⟩
   have hcls : cls (Fintype.linearCombination O rep c) = cls z := by
-    rw [Fintype.linearCombination_apply, map_sum, ← hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Fintype.linearCombination_apply, map_sum, ← hc]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_smul, hrep]
   have h0 : cls (z - Fintype.linearCombination O rep c) = 0 := by rw [map_sub, hcls, sub_self]
@@ -197,8 +203,8 @@ def LocalLiftingConditions [NeZero n] (W : LocWach PD LL O v n) : Prop :=
             2 * (m : ℝ) * cD PD.p (hpar n b S + η)) e₀) ∧
         (m = 0 → F.LiftF PD (e₀ + 3 * S))
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 private lemma e0_le_eBd_of_ExpC {l h η S e₀ : ℕ} (hl : 11 ≤ l) (hE : ExpC l h η S e₀) :
     (e₀ : ℝ) ≤ eBd 32 4 10 25 l (h + η) S η := by
   obtain ⟨a, b, s₁, E, e₂, hb, ha, hs₁, hEb, he₂, he₀⟩ := hE

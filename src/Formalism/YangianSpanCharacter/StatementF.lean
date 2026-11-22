@@ -1,5 +1,9 @@
-import Formalism.YangianSpanCharacter.ExchangeGen
-import Formalism.YangianSpanCharacter.StatementY
+module
+
+public import Formalism.YangianSpanCharacter.ExchangeGen
+public import Formalism.YangianSpanCharacter.StatementY
+
+@[expose] public section
 
 namespace Formalism.YangianSpanCharacter.F
 

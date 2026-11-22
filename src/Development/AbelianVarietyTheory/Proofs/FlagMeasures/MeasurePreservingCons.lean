@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Matrix
 open scoped ENNReal
 
@@ -72,7 +77,7 @@ lemma of_invM {m : ℕ} (x : Fin m → Fin m → ℂ) : Matrix.of (invM x) = (Ma
 
 lemma measurable_mulM {m : ℕ} {α : Type*} [MeasurableSpace α] {u v : α → Fin m → Fin m → ℂ}
     (hu : Measurable u) (hv : Measurable v) : Measurable fun a => mulM (u a) (v a) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [mulM, Matrix.mul_apply, Matrix.of_apply]
   refine Finset.measurable_sum _ fun k _ => Measurable.mul ?_ ?_
   · exact (measurable_pi_apply k).comp ((measurable_pi_apply i).comp hu)
@@ -83,7 +88,7 @@ lemma continuous_detM {m : ℕ} : Continuous fun x : Fin m → Fin m → ℂ => 
 
 lemma measurable_invM {m : ℕ} :
     Measurable (invM : (Fin m → Fin m → ℂ) → Fin m → Fin m → ℂ) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   have hof : Continuous fun x : Fin m → Fin m → ℂ =>
     (Matrix.of x : Matrix (Fin m) (Fin m) ℂ) := continuous_id
   have h1 : Measurable fun x : Fin m → Fin m → ℂ => (Matrix.of x).det := hof.matrix_det.measurable
@@ -218,7 +223,7 @@ theorem exists_section (k : ℕ) (hk : 1 ≤ k) :
   let B : Fin (k + 1) → (Fin (k + 1) → ℂ) → Fin (k + 1) → Fin (k + 1) → ℂ := fun i x =>
     ((1 : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ).updateCol i x).submatrix id (Equiv.swap 0 i)
   have hBm : ∀ i, Measurable (B i) := fun i => by
-    refine measurable_pi_lambda _ fun a => measurable_pi_lambda _ fun b => ?_
+    refine Measurable.of_eval fun a => Measurable.of_eval fun b => ?_
     simp only [B, submatrix_apply, updateCol_apply, id]
     split_ifs
     · exact measurable_pi_apply a
@@ -249,7 +254,7 @@ theorem exists_section (k : ℕ) (hk : 1 ≤ k) :
     omega
   refine ⟨fun x => (Matrix.of (C x)).updateCol (Fin.last k)
     (((Matrix.of (C x)).det)⁻¹ • fun a => C x a (Fin.last k)), ?_, fun x hx => ⟨?_, fun a => ?_⟩⟩
-  · refine measurable_pi_lambda _ fun a => measurable_pi_lambda _ fun b => ?_
+  · refine Measurable.of_eval fun a => Measurable.of_eval fun b => ?_
     have h1 : ∀ b, Measurable fun x => C x a b := fun b =>
       (measurable_pi_apply b).comp ((measurable_pi_apply a).comp hCm)
     simp only [updateCol_apply, of_apply, Pi.smul_apply, smul_eq_mul]
@@ -316,7 +321,7 @@ lemma inv_blk {k : ℕ} (T : Fin k → ℂ) (m : Fin k → Fin k → ℂ) (hm : 
 lemma measurable_blk {k : ℕ} {α : Type*} [MeasurableSpace α] {u : α → Fin k → ℂ}
     {v : α → Fin k → Fin k → ℂ} (hu : Measurable u) (hv : Measurable v) :
     Measurable fun t => blk (u t) (v t) := by
-  refine measurable_pi_lambda _ fun a => measurable_pi_lambda _ fun b => ?_
+  refine Measurable.of_eval fun a => Measurable.of_eval fun b => ?_
   refine Fin.cases ?_ (fun a => ?_) a <;> refine Fin.cases ?_ (fun b => ?_) b
   · exact measurable_const
   · exact (measurable_pi_apply b).comp hu
@@ -374,7 +379,7 @@ theorem haar_first_column : ∀ (k : ℕ), 1 ≤ k → ∃ s : (Fin (k + 1) → 
   obtain ⟨hd, h0⟩ := hs x hx
   have hc : Measurable fun (Y : Fin (k + 1) → Fin k → ℂ) (a : Fin (k + 1)) =>
       (Fin.cons (x a) (Y a) : Fin (k + 1) → ℂ) := by
-    refine measurable_pi_lambda _ fun a => measurable_pi_lambda _ fun b => ?_
+    refine Measurable.of_eval fun a => Measurable.of_eval fun b => ?_
     refine Fin.cases ?_ (fun b => ?_) b
     · exact measurable_const
     · exact (measurable_pi_apply b).comp (measurable_pi_apply a)

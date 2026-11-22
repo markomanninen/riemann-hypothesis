@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra
 
 namespace GlobalTheory

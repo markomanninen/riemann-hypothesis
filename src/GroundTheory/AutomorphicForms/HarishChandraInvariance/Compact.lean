@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.CartanBasis
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.CartanBasis
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -17,15 +21,14 @@ def conjCME (k : G) : G ≃ₜ* G :=
     continuous_toFun := (continuous_const.mul continuous_id).mul continuous_const
     continuous_invFun := (continuous_const.mul continuous_id).mul continuous_const }
 
-@[simp] theorem conjCME_apply (k x : G) : conjCME k x = k * x * k⁻¹ := rfl
-
 theorem conjCME_mul (a b : G) : conjCME (a * b) = (conjCME b).trans (conjCME a) := by
   ext x
+  change (a * b) * x * (a * b)⁻¹ = a * (b * x * b⁻¹) * a⁻¹
   simp [mul_assoc]
 
 theorem conjCME_one : conjCME (1 : G) = ContinuousMulEquiv.refl G := by
   ext x
-  simp
+  simp [conjCME]
 
 variable [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G]
 
@@ -87,19 +90,6 @@ theorem mulEquivHaarChar_conjCME_eq_one {K : Subgroup G} (hK : IsCompact (K : Se
       _ < 1 := by rwa [one_mul]
   rw [h3] at this
   exact lt_irrefl _ this
-
-theorem map_conj_eq_self_of_mem (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] {K : Subgroup G}
-    (hK : IsCompact (K : Set G)) {k : G} (hk : k ∈ K) : μ.map (conjCME k) = μ := by
-  have e := mulEquivHaarChar_smul_map μ (conjCME k)
-  rwa [mulEquivHaarChar_conjCME_eq_one hK hk, one_smul] at e
-
-theorem integral_conj_eq_self_of_mem (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
-    {K : Subgroup G} (hK : IsCompact (K : Set G)) {k : G} (hk : k ∈ K) {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] (F : G → E) :
-    ∫ y, F (k * y * k⁻¹) ∂μ = ∫ y, F y ∂μ := by
-  have e := integral_map_equiv (conjCME k).toHomeomorph.toMeasurableEquiv (μ := μ) F
-  conv_rhs => rw [← map_conj_eq_self_of_mem μ hK hk]
-  exact e.symm
 
 end Conj
 
@@ -193,16 +183,6 @@ theorem isCompact_maxCompact_of_isClosed {G : Subgroup (Matrix ι ι 𝕜)ˣ}
     exact ⟨g, g.2, rfl⟩
   have huG : u ∈ G := hG.closure_subset hu
   exact ⟨haS, ⟨u, huG⟩, rfl⟩
-
-theorem IsExpLieAlgebra.isCompact_maxCompact_real {G : Subgroup (Matrix ι ι ℝ)ˣ}
-    {𝔤 : Submodule ℝ (Matrix ι ι ℝ)} (h : IsExpLieAlgebra G 𝔤) :
-    IsCompact ((maxCompact G : Subgroup G) : Set G) :=
-  isCompact_maxCompact_of_isClosed h.isClosed
-
-theorem IsExpLieAlgebra.isCompact_maxCompact_complex {G : Subgroup (Matrix ι ι ℂ)ˣ}
-    {𝔤 : Submodule ℝ (Matrix ι ι ℂ)} (h : IsExpLieAlgebra G 𝔤) :
-    IsCompact ((maxCompact G : Subgroup G) : Set G) :=
-  isCompact_maxCompact_of_isClosed h.isClosed
 
 end MaxCompact
 

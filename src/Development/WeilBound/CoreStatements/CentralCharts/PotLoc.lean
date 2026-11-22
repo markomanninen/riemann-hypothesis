@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.ContAtOfHoloOn
-import Development.WeilBound.CoreStatements.FlagImmersions.CoordsOrbit
-import Development.WeilBound.CoreStatements.FlagImmersions.IsHolToOfLocal
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.ContAtOfHoloOn
+public import Development.WeilBound.CoreStatements.FlagImmersions.CoordsOrbit
+public import Development.WeilBound.CoreStatements.FlagImmersions.IsHolToOfLocal
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
+
+@[expose] public section
 
 noncomputable section
 

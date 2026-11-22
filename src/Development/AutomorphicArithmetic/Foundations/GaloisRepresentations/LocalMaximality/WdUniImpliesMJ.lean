@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -12,7 +17,8 @@ private lemma wd_act {ι S E : Type} [LinearOrder ι] [CommRing S] [Algebra ℂ 
     (act : S →ₐ[ℂ] Module.End ℂ E) (u : ι → S) (f : Finset ι → S) (m : E) (t : Finset ι) :
     wd (fun i => act (u i)) (fun t => act (f t) m) t =
       act (wd (fun i => Algebra.lmul ℂ S (u i)) f t) m := by
-  rw [wd_at, wd_at, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [wd_at, wd_at, map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp [map_zsmul, Module.End.mul_apply]
 
@@ -21,7 +27,8 @@ private lemma wd_one {ι E : Type} [LinearOrder ι] [AddCommGroup E] [Module ℂ
     wd (fun _ => (1 : Module.End ℂ E)) (fun t => g (b t)) t = g (deltaL ℂ ι E b t) := by
   rw [wd_at]
   change _ = g (∑ i ∈ t, GlobalTheory.cubeSign t i • b (t.erase i))
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp [map_zsmul]
 
@@ -98,7 +105,7 @@ theorem UpperTheory.Gal.productCup_of_system.mJ_of :
         rw [← mul_pow]; simp
       linear_combination ((-1 : ℤ) ^ I.card * (-1 : ℤ) ^ ((p + 1) * L.card)) * this
     have hPQ' : T.act P + ((-1 : ℤ) ^ I.card) • T.act Q = 0 := by
-      rw [← map_zsmul, ← map_add, hPQ, map_zero]
+      rw [← map_zsmul, ← map_add (f := _), hPQ, map_zero]
     have := congrArg (fun f : Module.End ℂ E => f (((-1 : ℤ) ^ ((p + 1) * L.card)) • b J)) hPQ'
     simp only [LinearMap.add_apply, LinearMap.smul_apply, LinearMap.zero_apply] at this
     simp only [map_zsmul, smul_smul] at this ⊢

@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdlAlongComapEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolarizationTransferModels
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResidueFieldMapFiniteOfQuasiFinite
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyClosureExtensionAbelianScheme
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RefinePolarisedMonomialPeriodsMonomialData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StalkIdPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SqLeOfForallNonneg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraitExistsAfterFiniteExtensionOfCompleteDVRStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApproximateSeriesLeadingTermFourierSystemStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCorrectionApproximateIdealSectionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalisationNormalisedBlowupSiegelModelStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlowupChartIdealSheafEqSpanMonomialStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdlAlongComapEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolarizationTransferModels
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResidueFieldMapFiniteOfQuasiFinite
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyClosureExtensionAbelianScheme
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RefinePolarisedMonomialPeriodsMonomialData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StalkIdPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SqLeOfForallNonneg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraitExistsAfterFiniteExtensionOfCompleteDVRStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApproximateSeriesLeadingTermFourierSystemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCorrectionApproximateIdealSectionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalisationNormalisedBlowupSiegelModelStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlowupChartIdealSheafEqSpanMonomialStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -29,8 +34,8 @@ theorem spMap_comp₁ {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f :
     spMap (g.comp f) = spMap g ≫ spMap f := by
   rw [← Spec.map_comp]; rfl
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem exists_extend_algClosed {A B K : Type} [CommRing A] [CommRing B] [Field K] [IsAlgClosed K] (g : A →+* B)
     (hg : Function.Injective g) (hi : g.IsIntegral) (ψ : A →+* K) : ∃ φ : B →+* K, φ.comp g = ψ := by
   letI := g.toAlgebra
@@ -45,7 +50,11 @@ theorem exists_extend_algClosed {A B K : Type} [CommRing A] [CommRing B] [Field 
   haveI : FaithfulSMul (A ⧸ RingHom.ker ψ) K :=
     (faithfulSMul_iff_algebraMap_injective _ _).2 (RingHom.kerLift_injective ψ)
   haveI : Algebra.IsIntegral (A ⧸ RingHom.ker ψ) (B ⧸ Q) := inferInstance
-  let l : (B ⧸ Q) →ₐ[A ⧸ RingHom.ker ψ] K := IsAlgClosed.lift
+  let l : (B ⧸ Q) →ₐ[A ⧸ RingHom.ker ψ] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨l.toRingHom.comp (Ideal.Quotient.mk Q), RingHom.ext fun a => ?_⟩
   exact l.commutes (Ideal.Quotient.mk _ a)
 
@@ -244,7 +253,16 @@ theorem exists_mem_of_ordGe {g n : ℕ} {F : SFam g n (zetaAway n)} {Z : Scheme.
       Φ.m y = 1 ∧ IsPrincipalIdealRing (Φ.V y) ∧ Function.Injective f ∧ IsLocalHom f ∧ f.comp (f₁.comp ev) = Φ.ev y ∧
       ∀ k, Φ.t y k = f T.ϖ ∧ ∀ a b, Φ.δ y k a b = T.β (e a) (e b) := hT T (f₁.comp ev) inferInstance hreg (by
     rw [← hgen, spMap_comp₁, Category.assoc, ← Category.assoc (spMap ev), hξ, Category.assoc])
-  obtain ⟨a, ha, hJ⟩ := valOn_pow F i φ J d D hval T _ hgen
+  obtain ⟨a₀, ha₀, hJ₀⟩ := hval T _ hgen
+  have hpowJ : idlAlong (J ^ D) (spMap f₁ ≫ ξ ≫ p₁ ≫ X₁.π) = idlAlong J (spMap f₁ ≫ ξ ≫ p₁ ≫ X₁.π) ^ D := by
+    rw [idlAlong, stalkId_pow', Ideal.map_pow, ← idlAlong]
+  have ha : ((D * a₀ : ℕ) : ℝ) = (D * d : ℕ) * φ.evalZ T.β := by
+    push_cast
+    rw [ha₀]
+    ring
+  have hJ : idlAlong (J ^ D) (spMap f₁ ≫ ξ ≫ p₁ ≫ X₁.π) = Ideal.span {T.ϖ ^ (D * a₀)} := by
+    rw [hpowJ, hJ₀, Ideal.span_singleton_pow, pow_mul']
+  let a := D * a₀
   let k₀ : Fin (Φ.m y) := ⟨0, by omega⟩
   have hm := hf.mem y hP hm k₀ a (by
     rw [ha]
@@ -254,8 +272,28 @@ theorem exists_mem_of_ordGe {g n : ℕ} {F : SFam g n (zetaAway n)} {Z : Scheme.
   have hpow : ∀ {Y : Scheme.{0}} (I : Y.IdealSheafData) (χ : Sp V ⟶ Y), idlAlong (I ^ D) χ = idlAlong I χ ^ D := by
     intro Y I χ
     rw [idlAlong, stalkId_pow', Ideal.map_pow, ← idlAlong]
+  have idlAlong_comp_local {X : Scheme.{0}} (J : X.IdealSheafData) {R S : Type} [CommRing R] [IsLocalRing R] [CommRing S]
+      [IsLocalRing S] (χ : Sp R ⟶ X) (f : R →+* S) : idlAlong J (spMap f ≫ χ) = (idlAlong J χ).map f := by
+    have eq_map {A : Type} [CommRing A] [IsLocalRing A] (ψ : Sp A ⟶ X)
+        (U : X.affineOpens) (hle : ⊤ ≤ ψ ⁻¹ᵁ U.1) :
+        idlAlong J ψ = (J.ideal U).map (ψ.appLE U.1 ⊤ hle ≫ (Scheme.ΓSpecIso (.of A)).hom).hom := by
+      have hx : ψ (closedPoint A) ∈ U.1 := hle trivial
+      unfold idlAlong
+      rw [ds_stalkId_eq_map J U _ hx, Ideal.map_map, ← CommRingCat.hom_comp, Scheme.germ_stalkClosedPointTo]
+      congr 2
+    obtain ⟨U, hU, hx, -⟩ := TopologicalSpace.Opens.isBasis_iff_nbhd.1 X.isBasis_affineOpens
+      (show χ (closedPoint R) ∈ (⊤ : X.Opens) from trivial)
+    have hle : ⊤ ≤ χ ⁻¹ᵁ U := (Scheme.preimage_eq_top_of_closedPoint_mem χ hx).ge
+    have hle' : ⊤ ≤ (spMap f ≫ χ) ⁻¹ᵁ U := fun x _ => hle (show spMap f x ∈ (⊤ : (Sp R).Opens) from trivial)
+    rw [eq_map χ ⟨U, hU⟩ hle, eq_map _ ⟨U, hU⟩ hle', Ideal.map_map]
+    congr 1
+    have e : (spMap f ≫ χ).appLE U ⊤ hle' = χ.appLE U ⊤ hle ≫ (spMap f).appTop := by
+      rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
+      exact (Scheme.Hom.appLE_comp_appLE _ _ _ _ _ _ _).symm
+    rw [e, Category.assoc, Scheme.ΓSpecIso_naturality, ← Category.assoc, CommRingCat.hom_comp]
+    rfl
   have h1 : (idlAlong E.idealSheaf ξ).map (f₂.comp f₁) = Ideal.span {Φ.t y k₀ ^ a} := by
-    rw [hE', hpow, GlobalTheory.PullAlong.idlAlong_comap_eq, ← hpow, ← Ideal.map_map, ← GlobalTheory.TraitOrder.idlAlong_comp, hJ,
+    rw [hE', hpow, GlobalTheory.PullAlong.idlAlong_comap_eq, ← hpow, ← Ideal.map_map, ← idlAlong_comp_local, hJ,
       Ideal.map_span, Set.image_singleton, map_pow, (hδ k₀).1]
   rw [Ideal.map_sup, h1, Ideal.map_pow, Ideal.map_map, RingHom.comp_assoc, hev₂, ← RingHom.comp_apply,
     RingHom.comp_assoc, hev₂]
@@ -309,11 +347,31 @@ theorem exists_elements : ∀ g : ℕ, 1 ≤ g → ∀ n : ℕ, 3 ≤ n → Odd 
   · rw [hb]
     congr 1
     exact (evalZ_eq_of_addEquiv φ _ _ e (htδ k).2).symm
-  · rw [← Ideal.span_singleton_eq_span_singleton]
+  · have idlAlong_comp_local {X : Scheme.{0}} (J : X.IdealSheafData) {R S : Type} [CommRing R] [IsLocalRing R] [CommRing S]
+        [IsLocalRing S] (χ : Sp R ⟶ X) (f : R →+* S) : idlAlong J (spMap f ≫ χ) = (idlAlong J χ).map f := by
+      have eq_map {A : Type} [CommRing A] [IsLocalRing A] (ψ : Sp A ⟶ X)
+          (U : X.affineOpens) (hle : ⊤ ≤ ψ ⁻¹ᵁ U.1) :
+          idlAlong J ψ = (J.ideal U).map (ψ.appLE U.1 ⊤ hle ≫ (Scheme.ΓSpecIso (.of A)).hom).hom := by
+        have hx : ψ (closedPoint A) ∈ U.1 := hle trivial
+        unfold idlAlong
+        rw [ds_stalkId_eq_map J U _ hx, Ideal.map_map, ← CommRingCat.hom_comp, Scheme.germ_stalkClosedPointTo]
+        congr 2
+      obtain ⟨U, hU, hx, -⟩ := TopologicalSpace.Opens.isBasis_iff_nbhd.1 X.isBasis_affineOpens
+        (show χ (closedPoint R) ∈ (⊤ : X.Opens) from trivial)
+      have hle : ⊤ ≤ χ ⁻¹ᵁ U := (Scheme.preimage_eq_top_of_closedPoint_mem χ hx).ge
+      have hle' : ⊤ ≤ (spMap f ≫ χ) ⁻¹ᵁ U := fun x _ => hle (show spMap f x ∈ (⊤ : (Sp R).Opens) from trivial)
+      rw [eq_map χ ⟨U, hU⟩ hle, eq_map _ ⟨U, hU⟩ hle', Ideal.map_map]
+      congr 1
+      have e : (spMap f ≫ χ).appLE U ⊤ hle' = χ.appLE U ⊤ hle ≫ (spMap f).appTop := by
+        rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
+        exact (Scheme.Hom.appLE_comp_appLE _ _ _ _ _ _ _).symm
+      rw [e, Category.assoc, Scheme.ΓSpecIso_naturality, ← Category.assoc, CommRingCat.hom_comp]
+      rfl
+    rw [← Ideal.span_singleton_eq_span_singleton]
     have h1 : idlAlong (J.comap (p₁ ≫ X₁.π)) ξ₁ = Ideal.span {s f₀} := by
       rw [idlAlong, hst, Ideal.map_span, Set.image_singleton]
     rw [← h1, GlobalTheory.PullAlong.idlAlong_comap_eq, ← hν, ← Category.assoc, hξν, Category.assoc,
-      GlobalTheory.TraitOrder.idlAlong_comp, ← GlobalTheory.PullAlong.idlAlong_comap_eq, hJb, Ideal.map_span, Set.image_singleton, map_prod,
+      idlAlong_comp_local, ← GlobalTheory.PullAlong.idlAlong_comap_eq, hJb, Ideal.map_span, Set.image_singleton, map_prod,
       ← Equiv.prod_comp h]
     simp only [map_pow, (htδ _).1]
   · have hle : ∀ {R : Type} [CommRing R] (I J : Ideal R) {a b : ℕ}, a ≤ b → J ⊔ I ^ b ≤ J ⊔ I ^ a :=
@@ -340,7 +398,7 @@ theorem exists_elements : ∀ g : ℕ, 1 ≤ g → ∀ n : ℕ, 3 ≤ n → Odd 
     have h4 := sub_mem h2 (Ideal.mem_sup_right h1)
     rw [h3]
     convert h4 using 1
-    rw [map_add]
+    rw [map_add (f := _)]
     ring
 
 end GlobalTheory.CoverElements

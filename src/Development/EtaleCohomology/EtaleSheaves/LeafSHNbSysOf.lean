@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSHNbSys
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSHNbSys
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -13,7 +17,8 @@ abbrev Fb : S.Etale ⥤ Type := Scheme.Etale.forget S ⋙ coyoneda.obj (op (Over
 
 lemma exists_affine (i : (Fb s).Elements) :
     ∃ j : (Fb s).Elements, IsAffine j.1.left ∧ Nonempty (j ⟶ i) := by
-  rcases i with ⟨X, x⟩
+  rcases i with ⟨x⟩
+  rename_i X
   cases X with | _ Y f
   obtain ⟨y, hy, rfl⟩ := Over.homMk_surjective x
   dsimp at y hy
@@ -24,7 +29,7 @@ lemma exists_affine (i : (Fb s).Elements) :
     refine ⟨R, j, inferInstance, _, IsOpenImmersion.lift_fac j y ?_⟩
     rintro _ ⟨a, rfl⟩
     rwa [Subsingleton.elim a default]
-  refine ⟨⟨(Scheme.AffineEtale.Spec S).obj (Scheme.AffineEtale.mk (j ≫ f)), Over.homMk y'⟩, ?_,
+  refine ⟨Functor.elementsMk (Fb s) ((Scheme.AffineEtale.Spec S).obj (Scheme.AffineEtale.mk (j ≫ f))) (Over.homMk y'), ?_,
     ⟨⟨MorphismProperty.Over.homMk j rfl trivial, by cat_disch⟩⟩⟩
   change IsAffine (Spec R)
   infer_instance
@@ -159,7 +164,7 @@ lemma main (x : U.left) (hx : s default = x) (hwi : ∀ i, ∃ j ∈ Q, Nonempty
     rw [nat, reassoc_of% (l_e s Q haff k), l_e, pt_map]
   · intro U' b l' hl'
     let X' : U.left.Etale := MorphismProperty.Over.mk ⊤ b.left inferInstance
-    obtain ⟨c, ⟨hc⟩⟩ := exists_of_wi s Q hwi ⟨X', Over.homMk l' hl'⟩
+    obtain ⟨c, ⟨hc⟩⟩ := exists_of_wi s Q hwi (Functor.elementsMk (Fb s) X' (Over.homMk l' hl'))
     refine ⟨op c, hc.1.left, MorphismProperty.Over.w hc.1, ?_⟩
     erw [reassoc_of% (l_e s Q haff (op c))]
     exact congrArg CommaMorphism.left hc.2
@@ -168,7 +173,7 @@ lemma main (x : U.left) (hx : s default = x) (hwi : ∀ i, ∃ j ∈ Q, Nonempty
     let X' : U.left.Etale := MorphismProperty.Over.mk ⊤ b.left inferInstance
     have hy : (pt s Q j.unop ≫ g) ≫ b.left = s := by
       exact (Category.assoc _ _ _).trans ((congrArg (pt s Q j.unop ≫ ·) hg).trans (pt_w s Q j.unop))
-    let y : (Fb s).Elements := ⟨X', Over.homMk (pt s Q j.unop ≫ g) hy⟩
+    let y : (Fb s).Elements := Functor.elementsMk (Fb s) X' (Over.homMk (pt s Q j.unop ≫ g) hy)
     let u : ι s Q j.unop ⟶ y := ⟨MorphismProperty.Over.homMk (B := X') g hg trivial,
       by apply Over.OverMorphism.ext; rfl⟩
     let u' : ι s Q j.unop ⟶ y := ⟨MorphismProperty.Over.homMk (B := X') g' hg' trivial,

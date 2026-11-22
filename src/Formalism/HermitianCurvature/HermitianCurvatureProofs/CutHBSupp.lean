@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHBPts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbWords
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixBlockThreeMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VLetZeroNear
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHBPts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbWords
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixBlockThreeMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VLetZeroNear
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

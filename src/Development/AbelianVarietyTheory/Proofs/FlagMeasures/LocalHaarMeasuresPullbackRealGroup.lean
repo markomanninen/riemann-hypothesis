@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ConstC
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocJEqMeas
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotMeas
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RowsBij
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselFrame
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BaseOfCore
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Choice
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EquivPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ConstC
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocJEqMeas
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotMeas
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RowsBij
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselFrame
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BaseOfCore
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Choice
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EquivPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
+
+@[expose] public section
+
 noncomputable section
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
@@ -380,8 +385,8 @@ theorem pullC_holds : GlobalTheory.TypeAsm.PullC := by
   have hE : MeasurableEmbedding E := by
     refine MeasurableEmbedding.of_measurable_inverse
       (g := fun y τ => Function.extend (eM C τ) id (fun _ => (1 : Formalism.REAL.UJ (X.B.I.ε (vOf X τ)))) (y τ))
-      (measurable_pi_lambda _ fun τ => (eM_emb C τ).measurable.comp (measurable_pi_apply τ)) ?_
-      (measurable_pi_lambda _ fun τ =>
+      (Measurable.of_eval fun τ => (eM_emb C τ).measurable.comp (measurable_pi_apply τ)) ?_
+      (Measurable.of_eval fun τ =>
         ((eM_emb C τ).measurable_extend measurable_id measurable_const).comp (measurable_pi_apply τ)) ?_
     · have : Set.range E = Set.univ.pi fun τ => Set.range (eM C τ) := by
         ext y
@@ -445,7 +450,7 @@ theorem pullC_holds : GlobalTheory.TypeAsm.PullC := by
       rw [hRq_mul, Rq.apply_symm_apply]
     have hmeas : Measurable (fun (p : ∀ τ : D.what₂.Tau, Formalism.REAL.UJ (X.B.I.ε (vOf X τ)))
         (i : D.what₂.Tau) => Rq.symm s i * p i) :=
-      measurable_pi_lambda _ fun τ => (measurable_const_mul _).comp (measurable_pi_apply τ)
+      Measurable.of_eval fun τ => (measurable_const_mul _).comp (measurable_pi_apply τ)
     rw [Measure.map_map (measurable_const_mul s) Rq.measurable, hcomp,
       ← Measure.map_map Rq.measurable hmeas, hpm]
     congr 2

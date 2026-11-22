@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,10 +56,10 @@ theorem zSplit : ZSplit := by
       ((ideleModule k (ofFinite b) : ℝ) : ℂ) ^ s with hB
   have hF : ∀ x : IdeleGroup k,
       GJMatrix.schwartzBruhatTensorPi φ g (fun _ => (x : 𝔸[k])) * (ω.toIdele x : ℂ) *
-        ((ideleModule k x : ℝ) : ℂ) ^ s = (fun p => A p.1 * B p.2) (prodEquiv k x) :=
+        ((ideleModule k x : ℝ) : ℂ) ^ s = (fun p => A p.1 * B p.2) (IdeleGroup.prodEquiv k x) :=
     zetaIntegrand_tensor φ g ω s
-  have hemb : MeasurableEmbedding (prodEquiv k) :=
-    (prodEquiv k).toHomeomorph.measurableEmbedding
+  have hemb : MeasurableEmbedding (IdeleGroup.prodEquiv k) :=
+    (IdeleGroup.prodEquiv k).toHomeomorph.measurableEmbedding
   unfold globalZeta zInf zFin
   simp_rw [hF]
   rw [(measurePreserving_prodEquiv (K := k)).integral_comp hemb (fun p => A p.1 * B p.2)]

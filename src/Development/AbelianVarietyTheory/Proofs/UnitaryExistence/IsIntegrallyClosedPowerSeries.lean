@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -225,7 +229,8 @@ theorem isIntegrallyClosed_powerSeries : ∀ (R : Type) [CommRing R] [IsDomain R
             rw [hgx, map_mul, map_pow, map_pow]
     have hz : algebraMap R⟦X⟧ K g ^ p.natDegree * x ^ n = algebraMap R⟦X⟧ K
         (∑ i ∈ Finset.range (q.natDegree + 1), q.coeff i * (g ^ (p.natDegree - i) * f ^ i)) := by
-      rw [← hq, Polynomial.aeval_eq_sum_range, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hq, Polynomial.aeval_eq_sum_range, Finset.mul_sum, map_sum]
       refine Finset.sum_congr rfl fun i hi => ?_
       have hi' : i ≤ p.natDegree := (Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)).trans hqd
       rw [Algebra.smul_def, mul_left_comm, hterm i hi']

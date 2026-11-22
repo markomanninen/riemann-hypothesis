@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegersOfCmFieldConjStructureStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegersOfCmFieldConjStructureStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -33,17 +37,17 @@ theorem kform_bar_w0 (H : Host E) : H.bar H.w0 = 1 - H.w0 := by
 
 theorem kform_skew {H : Host E} (D : Datum H) (x y : D.La) : D.EF y x = - D.EF x y := by
   have h := D.alt (x + y)
-  simp only [map_add, LinearMap.add_apply, D.alt] at h
+  simp only [map_add (f := _), LinearMap.add_apply, D.alt] at h
   linarith
 
 theorem kFun_add_left {H : Host E} (D : Datum H) (ε : ℤˣ) (x x' y : D.La) :
     kFun D ε (x + x') y = kFun D ε x y + kFun D ε x' y := by
-  simp only [kFun, smul_add, map_add, LinearMap.add_apply]
+  simp only [kFun, smul_add, map_add (f := _), LinearMap.add_apply]
   push_cast; ring
 
 theorem kFun_add_right {H : Host E} (D : Datum H) (ε : ℤˣ) (x y y' : D.La) :
     kFun D ε x (y + y') = kFun D ε x y + kFun D ε x y' := by
-  simp only [kFun, map_add]
+  simp only [kFun, map_add (f := _)]
   push_cast; ring
 
 theorem kFun_zsmul {H : Host E} (D : Datum H) (ε : ℤˣ) (m : ℤ) (x y : D.La) :
@@ -91,7 +95,7 @@ theorem kLin_perfect {H : Host E} (D : Datum H) (ε : ℤˣ) (f : D.La →ₗ[OK
     intro x x'
     have : (((c (f (x + x'))).1 : ℤ) : OK H) + ((c (f (x + x'))).2 : OK H) * wK H =
         (((c (f x)).1 + (c (f x')).1 : ℤ) : OK H) + (((c (f x)).2 + (c (f x')).2 : ℤ) : OK H) * wK H := by
-      rw [← hc, map_add]
+      rw [← hc, map_add (f := _)]
       have h1 := hc (f x)
       have h2 := hc (f x')
       push_cast
@@ -135,7 +139,7 @@ theorem exists_kForm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H
   · have h1 : D.EF (H.w0 • y) x = D.EF (H.w0 • x) y - D.EF x y := by
       rw [D.adj, kform_bar_w0, sub_smul, one_smul, map_sub, kform_skew D x y, kform_skew D (H.w0 • x) y]
       ring
-    rw [kLin_apply, kLin_apply, kFun_coe, kFun_coe, h1, kform_skew D x y, map_add, map_mul, map_intCast,
+    rw [kLin_apply, kLin_apply, kFun_coe, kFun_coe, h1, kform_skew D x y, map_add (f := _), map_mul, map_intCast,
       map_intCast, kform_bar_w0]
     push_cast; ring
   · rw [kLin_apply, kLin_apply, kFun, kFun, smul_comm H.w0 s x, D.adj, D.adj s]
@@ -147,7 +151,8 @@ theorem exists_kForm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H
     choose y hy using fun i : Fin n => (kLin_perfect D ε ((LinearMap.proj i).comp s)).exists
     refine ⟨n, fun i => π (Pi.single i 1), y, fun a => ?_⟩
     have ha : π (s a) = a := LinearMap.congr_fun hs a
-    conv_lhs => rw [← ha, ← Finset.univ_sum_single (s a), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← ha, ← Finset.univ_sum_single (s a), map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← hy, ← map_smul, ← Pi.single_smul, smul_eq_mul, _root_.mul_one]
     rfl

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SimpLemmas
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SimpLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,8 @@ theorem approxE (S : Finset (HeightOneSpectrum (𝓞 F))) (c : 𝓞 F) (hc : c �
       rw [map_mul, (A p).compat, Algebra.smul_def, ← mul_assoc, ← map_mul, mul_div_cancel₀ _ hcF, ← sub_mul,
         map_sub]
   · haveI := (A q).lf
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Subring.sum_mem _ fun j _ => ?_
     rw [map_mul, (A q).compat]
     exact Subring.mul_mem _ (alg_mem_O A q (hfO j q hq)) (iotaE_mem_O A q (e j))

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricDatumEigenvectorTwoBlockParahoric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricDatumEigenvectorTwoBlockParahoric
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound GlobalTheory.ParHecke
 
@@ -15,7 +19,7 @@ def IsIntM {m n : Type} (M : Matrix m n k) : Prop := ∀ i j, M i j ∈ 𝒪[k]
 
 theorem isIntM_mul {l m n : Type} [Fintype m] {M : Matrix l m k} {N : Matrix m n k} (hM : IsIntM M) (hN : IsIntM N) :
     IsIntM (M * N) := fun i j => by
-  rw [mul_apply]; exact sum_mem fun a _ => mul_mem (hM i a) (hN a j)
+  rw [Matrix.mul_apply]; exact sum_mem fun a _ => mul_mem (hM i a) (hN a j)
 
 theorem isIntM_sub {m n : Type} {M N : Matrix m n k} (hM : IsIntM M) (hN : IsIntM N) : IsIntM (M - N) :=
   fun i j => sub_mem (hM i j) (hN i j)
@@ -26,7 +30,7 @@ theorem isIntM_neg {m n : Type} {M : Matrix m n k} (hM : IsIntM M) : IsIntM (-M)
 theorem isIntM_zero {m n : Type} : IsIntM (0 : Matrix m n k) := fun _ _ => zero_mem _
 
 theorem isIntM_one {n : Type} [DecidableEq n] : IsIntM (1 : Matrix n n k) := fun i j => by
-  rw [one_apply]; split_ifs
+  rw [Matrix.one_apply]; split_ifs
   exacts [one_mem _, zero_mem _]
 
 theorem isIntM_fromBlocks_iff {a b c d : Type} {P : Matrix a c k} {Q : Matrix a d k} {R : Matrix b c k}
@@ -99,8 +103,8 @@ theorem fromBlocks_unip_mul {c d : Type} (u : Matrix A D k) (W : Matrix (A ⊕ D
   conv_lhs => rw [← fromBlocks_toBlocks W]
   rw [fromBlocks_multiply]; simp
 
-variable (A) in
 
+variable (A) in
 def dg : GL D k →* GL (A ⊕ D) k where
   toFun G := ⟨fromBlocks 1 0 0 G.val, fromBlocks 1 0 0 (G⁻¹).val, by simp [fromBlocks_multiply],
     by simp [fromBlocks_multiply]⟩
@@ -142,7 +146,7 @@ theorem nmat_mem {u : Matrix A D k} (hu : IsIntM u) : nmat u ∈ parahoric k A D
 theorem mtor_eq_dg (ϖ : kˣ) (e : D → ℤ) : mtor (A := A) ϖ e = dg A (torusElt k D ϖ e) := by
   ext1
   rw [mtor, val_torusElt, val_dg, val_torusElt]
-  ext (i | i) (j | j) <;> simp [diagonal_apply, one_apply]
+  ext (i | i) (j | j) <;> simp [diagonal_apply, Matrix.one_apply]
 
 end GlobalTheory.ParHeckeSource
 
@@ -156,7 +160,7 @@ theorem isIntM_of_mem_parahoric {j : GL (A ⊕ D) k} (hj : j ∈ parahoric k A D
 
 theorem val_lt_mul {l m n : Type} [Fintype m] {P : Matrix l m k} {c : Matrix m n k} (hP : IsIntM P)
     (hc : ∀ i j, valuation k (c i j) < 1) (i j) : valuation k ((P * c) i j) < 1 := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   exact Valuation.map_sum_lt _ one_ne_zero fun m _ => GlobalTheory.DatumEigen.val_mul_lt (hP _ _) (hc _ _)
 
 theorem inv_torusElt_int {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k) (s : Finset D) :
@@ -210,8 +214,8 @@ namespace GlobalTheory.ParHeckeSource
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {A D : Type} [Fintype A] [DecidableEq A] [Fintype D] [DecidableEq D]
 
-open Classical in
 
+open Classical in
 def lowerDiagonalBlockAsGL (j : GL (A ⊕ D) k) : GL D k :=
   if h : IsUnit j.val.toBlocks₂₂.det then nonsingInvUnit _ h else 1
 
@@ -248,8 +252,8 @@ namespace GlobalTheory.ParHeckeSource
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {A D : Type} [Fintype A] [DecidableEq A] [Fintype D] [DecidableEq D]
 
-open Classical in
 
+open Classical in
 theorem card_filter_eq {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k) (s : Finset D)
     {R : Finset (GL (A ⊕ D) k)} {d : GL (A ⊕ D) k → kˣ} (hR : IsReps (mtor ϖ (-indic s)) R d)
     {RK : Finset (GL D k)} (hRK : IsRepsK (torusElt k D ϖ (-indic s)) RK) {D' : Type}
@@ -406,8 +410,8 @@ theorem unip_int {x : Matrix (A ⊕ D') (A ⊕ D) k} (hx : InSupp x) : IsIntM (x
   obtain ⟨i11, i12, -, -⟩ := isIntM_toBlocks (show IsIntM x from hx.1)
   exact isIntM_mul (isIntM_inv i11 hx.2.1) i12
 
-open Classical in
 
+open Classical in
 theorem term_eq {ξ : kˣ →* ℂˣ} (hξ : IsTame ξ) {x : Matrix (A ⊕ D') (A ⊕ D) k} (hx : InSupp x) {j : GL (A ⊕ D) k}
     (hj : j ∈ parahoric k A D) {d : kˣ} (hd : (d : k) = j.val.toBlocks₂₂.det) (T : GL D k) :
     ((ξ (GeneralLinearGroup.det j) * (ξ d)⁻¹ : ℂˣ) : ℂ) * datum ξ (x * (j * dg A T).val) =

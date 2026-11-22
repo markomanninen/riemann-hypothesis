@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacobianCoordinates
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacobianCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,17 +21,6 @@ def RightInvS : Prop :=
     FrameLoc ε k e z z' T T' →
     ∀ μ : Measure (Formalism.REAL.UJ ε), IsHaarS (SLoc ε e z) μ →
     ∀ s ∈ SLoc ε e z, μ.map (fun x => x * s) = μ
-
-def SecMeas : Prop :=
-  ∀ (n r k : ℕ) (ε : Fin n → Bool) (e : Fin r → Fin n → ℂ) (z z' : Fin n → ℂ) (T T' sc : ℝ),
-    FrameLoc ε k e z z' T T' → 0 < sc →
-    ∃ h : (Fin (r + 1) → ℂ) → Formalism.REAL.UJ ε, IsSecLoc ε sc e z z' T T' h ∧ Measurable h
-
-def JacMeas : Prop :=
-  ∀ (n r k : ℕ) (ε : Fin n → Bool) (e : Fin r → Fin n → ℂ) (z z' : Fin n → ℂ) (T T' sc : ℝ),
-    FrameLoc ε k e z z' T T' → 0 < sc →
-    ∀ μS μS' : Measure (Formalism.REAL.UJ ε), IsHaarS (SLoc ε e z) μS → IsHaarS (SLoc ε e z') μS' →
-    ∀ h, IsSecLoc ε sc e z z' T T' h → Measurable h → ∃ C, 0 < C ∧ DisintLoc ε k T T' μS μS' h C
 
 theorem frameLoc_swap {n r k : ℕ} {ε : Fin n → Bool} {e : Fin r → Fin n → ℂ} {z z' : Fin n → ℂ} {T T' : ℝ}
     (hF : FrameLoc ε k e z z' T T') : FrameLoc ε k e z' z T' T :=

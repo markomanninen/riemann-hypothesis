@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKernel
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LevelPrimeSplitsCompletelyInCmField
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FinprodPlacesOverTypePrimesSplit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalIndicesColumnRowLevelsExact
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StdLatIsOrthoLatticeAndMassProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdSubEqProdFactorial
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowHCParameterIsHCParamAndFormalDegreePos
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFdegSmulOfIsDS
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsDiscreteSeriesFormalDegreeProduct
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FormalDegreeCompactDualIff
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKernel
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LevelPrimeSplitsCompletelyInCmField
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FinprodPlacesOverTypePrimesSplit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalIndicesColumnRowLevelsExact
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StdLatIsOrthoLatticeAndMassProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdSubEqProdFactorial
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowHCParameterIsHCParamAndFormalDegreePos
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFdegSmulOfIsDS
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsDiscreteSeriesFormalDegreeProduct
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FormalDegreeCompactDualIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.FourierDecayAlt NumberField Finset
 
@@ -138,7 +142,7 @@ theorem ratio_ranks (D : D7) (hM : UnitaryVolumeMass.stMassRatio D) (hR : LocalB
     rw [hf]
     refine h.trans ?_
     unfold StandardLattice.ratioH
-    rw [Real.rpow_neg (hOk.hdF ▸ by positivity), ← Real.sqrt_eq_rpow, div_eq_mul_inv]
+    rw [Real.rpow_neg (by rw [hOk.hdF]; exact pow_nonneg (mul_nonneg (by norm_num) hOk.hv.le) _), ← Real.sqrt_eq_rpow, div_eq_mul_inv]
     rfl
   have hLB : S.LBound := by
     intro M h1 _
@@ -215,8 +219,8 @@ theorem vand_eq_Vand {n : ℕ} (x : Fin n → ℝ) (y : ℕ → ℝ) (h : ∀ i 
     show a.val < b - 1
     omega
 
-open Classical in
 
+open Classical in
 def cfg (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) : Sz.Cfg where
   k := D.R.k
   m := D.R.m
@@ -235,7 +239,7 @@ theorem isWord_letters (D : D7) (u : D.what₂.Word) : Sz.IsWord D.R.k (letters 
   · unfold letters
     split_ifs <;> simp
   · unfold letters
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
 
 theorem cfg_v (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) {i : ℕ} (h1 : 1 ≤ i) (h2 : i ≤ D.R.k - 1) :
     (cfg D u τ).v i = vOne D τ i := by
@@ -252,7 +256,7 @@ theorem cfg_v (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) {i : ℕ} (h1 :
       simp only [D.hcW_v] at h4
       have h5 : vOne D τ i - vOne D τ (i + 1) = 4 * (D.s.Del : ℝ) := by
         unfold vOne
-        rw [dif_pos ⟨h1, by omega⟩, dif_pos ⟨by omega, by omega⟩]
+        rw [dite_eq_left ⟨h1, by omega⟩, dite_eq_left ⟨by omega, by omega⟩]
         have e : (⟨i + 1 - 1, by omega⟩ : Fin (D.R.k - 1)) = ⟨i - 1 + 1, by omega⟩ := Fin.ext (by simp only; omega)
         rw [e]
         exact_mod_cast h4
@@ -271,14 +275,14 @@ theorem cfg_lam (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) :
   unfold lamSH lamS Sz.Cfg.lam
   simp only [Fin.val_cast]
   by_cases h : i.val < D.R.k - 1
-  · rw [dif_pos h, if_pos (show i.val + 1 < (cfg D u τ).k from (by omega : i.val + 1 < D.R.k)), cfg_v D u τ (by omega) (by omega)]
+  · rw [dite_eq_left h, if_pos (show i.val + 1 < (cfg D u τ).k from (by omega : i.val + 1 < D.R.k)), cfg_v D u τ (by omega) (by omega)]
     unfold vOne
-    rw [dif_pos ⟨by omega, by omega⟩]
+    rw [dite_eq_left ⟨by omega, by omega⟩]
     rfl
-  · rw [dif_neg h, dif_pos (by omega), if_neg (show ¬ i.val + 1 < (cfg D u τ).k from (by omega : ¬ i.val + 1 < D.R.k))]
+  · rw [dite_eq_right h, dite_eq_left (by omega), if_neg (show ¬ i.val + 1 < (cfg D u τ).k from (by omega : ¬ i.val + 1 < D.R.k))]
     show _ = -bOne D τ (i.val + 1 + 1 - D.R.k)
     unfold bOne
-    rw [dif_pos ⟨by omega, by omega⟩]
+    rw [dite_eq_left ⟨by omega, by omega⟩]
     congr 3
     simp only [Fin.mk.injEq]
     omega
@@ -291,7 +295,7 @@ theorem cfg_u (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau)
   have hi := i.2
   have e : uS D u τ i = uOne D u τ (i.val + 1) := by
     unfold uOne
-    rw [dif_pos ⟨by omega, by omega⟩]
+    rw [dite_eq_left ⟨by omega, by omega⟩]
     rfl
   unfold Sz.Cfg.u
   by_cases h1 : i.val + 1 = 1
@@ -304,7 +308,7 @@ theorem cfg_u (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau)
     · rw [if_pos (by simpa [cfg] using ht)]
       show _ = - -uOne D D.u₀ τ D.R.k
       unfold uOne uS
-      rw [neg_neg, dif_pos ⟨by omega, le_rfl⟩, dif_pos ⟨by omega, le_rfl⟩, D.hcW_last u τ (by omega),
+      rw [neg_neg, dite_eq_left ⟨by omega, le_rfl⟩, dite_eq_left ⟨by omega, le_rfl⟩, D.hcW_last u τ (by omega),
         D.hcW_last D.u₀ τ (by omega)]
     · rw [if_neg (by simpa [cfg] using ht)]
       exact hl ht
@@ -314,7 +318,7 @@ theorem cfg_u (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau)
     have e2 : (⟨i.val - 1 + 1, by omega⟩ : Fin D.R.k) = i := Fin.ext (by simp only; omega)
     rw [e2] at h3
     unfold uS vOne letters
-    rw [h3, dif_pos ⟨by omega, by omega⟩, dif_pos ⟨by omega, by omega⟩]
+    rw [h3, dite_eq_left ⟨by omega, by omega⟩, dite_eq_left ⟨by omega, by omega⟩]
     split_ifs <;> simp [cfg]
 
 theorem vv_eq (hE : GlobalTheory.Published.DiscreteSeriesUpqExists) (hF : GlobalTheory.Published.FormalDegreeCompactDual) (D : D7)
@@ -357,8 +361,8 @@ theorem num_bound (k m r : ℕ) (B P ae c ka : ℝ) (hm : m = 2 * r + 2) (h40 : 
     _ ≤ c * (ka ^ (m - 1))⁻¹ * P := by
         gcongr
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem tcrit_low (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 : ℝ) (hCl : 40 ≤ Cl)
     (hVV : ∀ τ, VV D τ = vand (lamSH D.R (D.hc τ))) (hb' : Real.sqrt large₂.sc.b ≤ large₂.sc.b') (hx : large₂.sc.x ≤ D.R.k) :
     UnitaryVolumeMass.stTcritLow D large₂ C' Cl Cg cb Cu cT CT C0 := by
@@ -460,7 +464,7 @@ theorem tcrit_low (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 :
         have h1 := large₂.top_b τ t (by omega) ht
         have h2 := large₂.bT_ge t
         have h3 : B = (((D.hc τ).b ⟨0, by omega⟩ : ℚ) : ℝ) := by
-          rw [hBdef]; unfold bOne; rw [dif_pos ⟨le_rfl, by omega⟩]
+          rw [hBdef]; unfold bOne; rw [dite_eq_left ⟨le_rfl, by omega⟩]
         linarith
       have hbB : large₂.sc.b ≤ B ^ 2 := (Real.sqrt_le_left (by linarith)).1 (hb'.trans hBt)
       have hu1 : uOne D u τ 1 ≤ B ^ 3 := by
@@ -468,7 +472,7 @@ theorem tcrit_low (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 :
         have h2 := (large₂.aT_win t).2
         have h3 : uOne D u τ 1 = (((D.hc τ).u ⟨0, by omega⟩ : ℚ) : ℝ) := by
           unfold uOne uS
-          rw [dif_pos ⟨le_rfl, by omega⟩, ← D.hcW_first u τ (by omega)]
+          rw [dite_eq_left ⟨le_rfl, by omega⟩, ← D.hcW_first u τ (by omega)]
         have hx1 := large₂.sc.one_lt_alt
         have h4 : large₂.sc.a ≤ D.R.k * B ^ 2 := by
           unfold Scale.a
@@ -507,7 +511,7 @@ theorem tcrit_low (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 :
     rw [le_div_iff₀ (by linarith [hae.2.2.1])]
     linarith [hae.2.2.2]
   have hP : B ^ D.R.m ≤ c.prodb := by
-    have := prod_le_prod (s := Icc 1 D.R.m) (f := fun _ => B) (g := bOne D τ) (fun _ _ => by linarith)
+    have := prod_le_prod₀ (s := Icc 1 D.R.m) (f := fun _ => B) (g := bOne D τ) (fun _ _ => by linarith)
       fun j hj => hmono j (mem_Icc.1 hj).1 (mem_Icc.1 hj).2
     rw [prod_const, Nat.card_Icc, Nat.add_sub_cancel] at this
     exact this

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.RatHermLcvTwist
-import Formalism.QuotientMetricDivisors.ClassSumDualGeF
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.RatHermLcvTwist
+public import Formalism.QuotientMetricDivisors.ClassSumDualGeF
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -52,7 +56,7 @@ def Forms : Submodule K (S.Cl → S.V) where
   carrier := {f | ∀ c (γ : S.Gam c), S.ρ c γ (f c) = f c}
   add_mem' := by
     intro f g hf hg c γ
-    simp only [Pi.add_apply, map_add, hf c γ, hg c γ]
+    simp only [Pi.add_apply, map_add (f := _), hf c γ, hg c γ]
   zero_mem' := by
     intro c γ
     simp
@@ -66,8 +70,8 @@ def IsRat (f : S.Cl → S.V) : Prop := ∀ c i, S.bV.repr (f c) i ∈ cmMax K
 
 def HasRatBasis : Prop := ∃ b : Basis (Fin S.dim) K S.Forms, ∀ i, S.IsRat (b i : S.Cl → S.V)
 
-open Classical in
 
+open Classical in
 def basis : Basis (Fin S.dim) K S.Forms :=
   if h : S.HasRatBasis then h.choose else finBasis K S.Forms
 

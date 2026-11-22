@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,10 +61,14 @@ theorem pi_reindex_scale {ι κ : Type*} [Fintype ι] [Fintype κ] (e : ι ≃ �
     rw [volume_pi, Measure.pi_map_pi (fun i => (measurable_const_mul (s i)).aemeasurable)]
     simp_rw [map_scale _ (hs _)]
     rw [pi_smul_vol _ (fun i => ENNReal.ofReal_ne_top), volume_pi]
+  have hscale : Measurable (fun (x : ι → ℂ) (i : ι) => s i * x i) :=
+    Measurable.of_eval fun i => by fun_prop
+  have htotal : AEMeasurable (fun (y : κ → ℂ) (i : ι) => s i * y (e i)) volume := by
+    exact (hscale.comp (reindex_mp e).measurable).aemeasurable
   have hcomp : (fun (y : κ → ℂ) (i : ι) => s i * y (e i)) =
       (fun (x : ι → ℂ) i => s i * x i) ∘ (fun (y : κ → ℂ) (i : ι) => y (e i)) := rfl
-  rw [hk, Measure.map_smul, hcomp,
-    ← Measure.map_map (measurable_pi_lambda _ fun i => (measurable_pi_apply i).const_mul (s i))
+  rw [hk, Measure.map_smul _ htotal, hcomp,
+    ← Measure.map_map (Measurable.of_eval fun i => (measurable_pi_apply i).const_mul (s i))
       (reindex_mp e).measurable, (reindex_mp e).map_eq, hsc, smul_smul]
   congr 1
   rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.prod_const, Finset.card_univ,

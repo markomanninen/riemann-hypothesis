@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsInt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnimodGenus
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsInt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnimodGenus
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,7 +132,7 @@ theorem wa_denom (p : ℕ) (hp : p.Prime) {n : ℕ} (M₁ M₂ : Submodule (𝓞
     have ha0 : Ideal.Quotient.mk I a = 0 := Ideal.Quotient.eq_zero_iff_mem.2 haI
     have h1' : Ideal.Quotient.mk I c * (p : 𝓞 E ⧸ I) = 1 := by
       have := congrArg (Ideal.Quotient.mk I) hca
-      rw [map_add, map_mul, ha0, add_zero, map_one, map_natCast] at this
+      rw [map_add (f := _), map_mul, ha0, add_zero, map_one, map_natCast] at this
       exact this
     have hx0 : x = 0 := by
       calc x = (Ideal.Quotient.mk I c * (p : 𝓞 E ⧸ I)) * x := by rw [h1', one_mul]
@@ -175,7 +179,7 @@ theorem wa_main (hWA : WAPlaces) (hCM : PI.UG.IsCMUnram E) (p : ℕ) (hp : p.Pri
       (∃ s : ℕ, Nat.Coprime s p ∧ (∀ x ∈ PI.UG.stdLat E n, (s : E) • x ∈ M) ∧
         ∀ x ∈ M, (s : E) • x ∈ PI.UG.stdLat E n) ∧
       L = Formalism.BasicNotions.SDLat.smulLat (γ : Matrix (Fin n) (Fin n) E) M := by
-  have hLat : Submodule.IsLattice E L := ⟨hL.1, hL.2.1⟩
+  have hLat : Submodule.IsLattice E L := Submodule.IsLattice.of_fg E hL.1
   have hUni : PI.UG.IsUnimodular (PI.UG.hStd E n) L := wa_unimod hL
   have hGen := unimodular_genus_unique E n hCM L hLat hUni
   obtain ⟨γ, hγ, hγP⟩ := hWA E hCM p hp n L (fun P hP _ => hGen P hP)
@@ -260,16 +264,6 @@ theorem wa_main (hWA : WAPlaces) (hCM : PI.UG.IsCMUnram E) (p : ℕ) (hp : p.Pri
   · show L = M.map ((Matrix.toLin' (LinearMap.toMatrix' (γ : (Fin n → E) →ₗ[E] (Fin n → E)))).restrictScalars (𝓞 E))
     rw [Matrix.toLin'_toMatrix', hMdef, Submodule.map_comap_eq_of_surjective]
     exact γ.surjective
-
-theorem waPlaces_hyp_std (p n : ℕ) :
-    ∀ P : Ideal (𝓞 E), P.IsMaximal → (p : 𝓞 E) ∈ P →
-      ∃ g ∈ PI.UG.isom (PI.UG.hStd E n),
-        PI.UG.gmap g (PI.UG.loc (K := E) P (PI.UG.stdLat E n)) = PI.UG.loc (K := E) P (PI.UG.stdLat E n) := by
-  intro P _ _
-  refine ⟨1, Subgroup.one_mem _, ?_⟩
-  unfold PI.UG.gmap
-  ext x
-  simp
 
 end Gen
 

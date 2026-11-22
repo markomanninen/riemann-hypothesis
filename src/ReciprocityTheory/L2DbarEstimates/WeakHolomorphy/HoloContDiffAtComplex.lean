@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExistsClmOfI
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExistsClmOfI
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 

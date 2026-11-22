@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
 namespace GlobalTheory
@@ -30,7 +35,7 @@ theorem tensorSquare_perfectProjection (p : ℕ) [Fact p.Prime] (k : Type) [Fiel
         rw [this]
         exact Ideal.mul_mem_left _ _ (mem_nilradical.2 ((h1 b).map _))
     | add x y hx hy =>
-      rw [map_add, add_sub_add_comm]
+      rw [map_add (f := _), add_sub_add_comm]
       exact Ideal.add_mem _ hx hy
   · induction a using TensorProduct.induction_on with
     | zero => exact ⟨0, by simp [hp0]⟩
@@ -43,6 +48,6 @@ theorem tensorSquare_perfectProjection (p : ℕ) [Fact p.Prime] (k : Type) [Fiel
       obtain ⟨u, hu⟩ := hx
       obtain ⟨v, hv⟩ := hy
       refine ⟨u + v, ?_⟩
-      rw [map_add, map_add, hu, hv, ← frobRing_apply hpA, ← frobRing_apply hpA, ← frobRing_apply hpA, map_add]
+      rw [map_add (f := _), map_add (f := _), hu, hv, ← frobRing_apply hpA, ← frobRing_apply hpA, ← frobRing_apply hpA, map_add (f := _)]
 
 end GlobalTheory

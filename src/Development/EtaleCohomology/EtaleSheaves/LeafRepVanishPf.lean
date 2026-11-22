@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSupport
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSupport
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -14,7 +18,7 @@ theorem free_mono {P Q : PSh} (φ : P ⟶ Q) [Mono φ] : Mono ((free R).map φ) 
     rw [ModuleCat.mono_iff_injective]
     have hi : Function.Injective (φ.app Y) := (mono_iff_injective _).1 inferInstance
     have hu : Function.Injective (uliftFunctor.{1}.map (φ.app Y)) := by
-      intro a b h; exact ULift.ext _ _ (hi (congrArg ULift.down h))
+      intro a b h; exact ULift.ext (hi (congrArg ULift.down h))
     exact Finsupp.mapDomain_injective hu
   unfold free
   simp only [Functor.comp_map]

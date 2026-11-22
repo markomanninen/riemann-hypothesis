@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomMul
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomMul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools GlobalTheory.PRep
 
 section
@@ -81,7 +86,7 @@ theorem UpperTheory.V.AlgebraTools.jqInj :
     | zero => simp
     | add a b _ _ ha hb =>
       filter_upwards [ha, hb] with m h1 h2
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem h1 h2
     | smul a y _ hy =>
       filter_upwards [hy] with m h1

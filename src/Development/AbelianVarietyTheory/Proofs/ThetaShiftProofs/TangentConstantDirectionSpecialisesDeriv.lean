@@ -1,17 +1,21 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ArcDictExpZeroSection
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsFormalConvergence
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SvalEqSumOfHasVal
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CoordsDetermineFamily
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsEvLePreimage
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SecScalOfIsPullSec
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermMemConvLaurent
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyProjCoordsConvergentCoefficientsStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueLiftCoordsLocalSubringStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ArcDictExpZeroSection
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsFormalConvergence
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SvalEqSumOfHasVal
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CoordsDetermineFamily
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsEvLePreimage
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SecScalOfIsPullSec
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermMemConvLaurent
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyProjCoordsConvergentCoefficientsStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueLiftCoordsLocalSubringStatement
+
+@[expose] public section
 
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -31,7 +35,7 @@ theorem eq_dualMapR (φ : R →+* R') (ρ : DualNumber R →+* DualNumber R') (h
     (he : ρ DualNumber.eps = DualNumber.eps) : ρ = dualMapR φ := by
   refine RingHom.ext fun a => ?_
   have e : a = inl a.fst + inl a.snd * DualNumber.eps := by ext <;> simp
-  rw [e, map_add, map_mul, h, h, he]
+  rw [e, map_add (f := _), map_mul, h, h, he]
   ext <;> simp [dualMapR]
 
 theorem dualMapR_add (φ : R →+* R') (a b : R) : dualMapR φ (inl a + inr b) = inl (φ a) + inr (φ b) := by
@@ -109,7 +113,7 @@ theorem exists_deriv_comb {O : Type} [CommRing O] [StarRing O] (A : AnArc O) : �
   choose F hF hFv using fun i => (hS (α i) (th i) (h1 i).2).2 z₀
   let r₁ : Fin n → Conv.halfRing T₁ := fun i => ⟨r i, Conv.halfRing_mono hT (h1 i).1⟩
   refine ⟨n, r, α, th, fun i => F i, ∑ i, r₁ i * F i, fun i => (h1 i).2, h2, hF,
-    AddSubmonoidClass.coe_finset_sum _ _, fun w hw => ?_⟩
+    AddSubmonoidClass.coe_finsetSum _ _, fun w hw => ?_⟩
   have hd : ∀ i, Differentiable ℂ (A.Sum j (α i) (th i) w) := fun i => by
     have := hD (fun v => ⟨_, hm i v⟩) ⟨1, fun _ => 1, fun _ => α i, fun _ => th i,
       fun _ => ⟨one_mem _, (h1 i).2⟩, fun v => by simp⟩ w hw
@@ -117,12 +121,14 @@ theorem exists_deriv_comb {O : Type} [CommRing O] [StarRing O] (A : AnArc O) : �
   have key : (fun v => Conv.ev T w (hT.trans_lt hw) (f v)) =
       fun v => ∑ i, Conv.ev T₁ w hw (r₁ i) * A.Sum j (α i) (th i) w v := by
     funext v
-    rw [Conv.ev_congr (hT.trans_lt hw) hw (s' := ∑ i, r₁ i * ⟨_, hm i v⟩)
-      (by rw [AddSubmonoidClass.coe_finset_sum]; exact h2 v), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Conv.ev_congr (hT.trans_lt hw) hw (s' := ∑ i, r₁ i * ⟨_, hm i v⟩)
+      (by rw [AddSubmonoidClass.coe_finsetSum]; exact h2 v), map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_mul, hv]
   rw [key]
   refine ⟨Differentiable.fun_sum fun i _ => (hd i).const_mul _, ?_⟩
-  rw [fderiv_fun_sum fun i _ => ((hd i).const_mul _) 0, map_sum, ContinuousLinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fderiv_fun_sum fun i _ => ((hd i).const_mul _) 0, map_sum, ContinuousLinearMap.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, hFv, fderiv_const_mul (hd i 0)]
   rfl
@@ -209,6 +215,7 @@ theorem spec_tangent : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [Numb
       rw [Category.assoc] at hk
       have hk' := le_of_isLocalHom _ _ hk
       obtain ⟨u', hu'⟩ := x3 k hk'
+      set_option synthInstance.maxHeartbeats 200000 in
       refine ⟨Units.map (dualMapR (Γ.ev w).toRingHom).toMonoidHom u', fun i => ?_⟩
       have hx : ⊤ ≤ x ⁻¹ᵁ (Out.powOver o.t.G o.t.PP.L C.U 4).U (fun _ => k) :=
         fun z hz => Set.mem_iInter.2 fun _ => hk' hz

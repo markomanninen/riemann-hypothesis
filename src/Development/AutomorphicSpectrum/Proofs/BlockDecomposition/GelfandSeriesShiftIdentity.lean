@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MultisetEq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MultisetEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,6 +27,6 @@ theorem gser_mul_prod : ∀ (n : ℕ) (c : Fin n → ℂ),
   have e : gser c = PowerSeries.mk (fun k => ∑ a, ∑ b,
       (Formalism.REAL.Amat (fun a => c a + ((n : ℂ) - 1) / 2) ^ k) a b) := rfl
   rw [e]
-  simpa only [map_add, map_one] using h
+  simpa only [map_add (f := _), map_one] using h
 
 end GlobalTheory.CompanionTheory.WaveMult

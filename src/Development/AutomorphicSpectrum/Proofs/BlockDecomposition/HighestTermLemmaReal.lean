@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ExpansionTerms
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RealCompression
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SignAntisymmetric
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ExpansionTerms
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RealCompression
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SignAntisymmetric
+
+@[expose] public section
 
 noncomputable section
 
@@ -477,7 +481,7 @@ theorem spin_le (lam : Fin n → ℤ) (hlam : Antitone lam) {ν : Fin n → ℝ}
     have := harm_of_eq lam hlam π hs t4
     convert this using 1
     funext a
-    simp only [Pi.add_apply, hηr, hr, Function.comp]
+    simp [hηr, hr]
 
 theorem lemmaHT : LemmaHT := fun _ lam hlam =>
   ⟨harm_sub lam hlam, fun _ h => spin_le lam hlam h⟩

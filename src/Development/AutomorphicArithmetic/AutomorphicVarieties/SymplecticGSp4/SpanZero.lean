@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SpanMono
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.WcompMulHomog
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SpanMono
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.WcompMulHomog
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
@@ -44,7 +48,7 @@ private theorem span_zero {O S K : Type} [CommRing O] [CommRing S] [Algebra O S]
     obtain ⟨hz1, hz2⟩ := hz
     refine ⟨B.add_mem hy1 hz1, ?_⟩
     have e : (⟨y + z, B.add_mem hy1 hz1⟩ : B) = ⟨y, hy1⟩ + ⟨z, hz1⟩ := rfl
-    rw [e, map_add, hy2, hz2, add_zero]
+    rw [e, map_add (f := _), hy2, hz2, add_zero]
   | smul a y _ hy =>
     obtain ⟨hy1, hy2⟩ := hy
     refine ⟨B.smul_mem hy1 a, ?_⟩
@@ -89,7 +93,7 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.signs :
     exact this
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro hneg n hn f hf
-    rw [AlgHom.comp_apply]
+    change ξ (M.toSS f) = 0
     apply zero_of n f hf
     intro L hsum
     obtain ⟨a, ha, hlt⟩ := list_neg (fun a => wt a.2.1 a.2.2) L (by rw [hsum]; exact hn)
@@ -97,7 +101,7 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.signs :
     by_contra hne
     exact hneg _ _ hlt ⟨a.1, hne⟩
   · intro hpos n hn f hf
-    rw [AlgHom.comp_apply]
+    change ξ (M.toSS f) = 0
     apply zero_of n f hf
     intro L hsum
     obtain ⟨a, ha, hlt⟩ := list_pos (fun a => wt a.2.1 a.2.2) L (by rw [hsum]; exact hn)
@@ -108,13 +112,15 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.signs :
     obtain ⟨f, hf, hfx⟩ := from_part 1 g 0 2 (by decide)
     apply hg
     have := hpos 1 one_pos f hf
-    rw [AlgHom.comp_apply, hfx] at this
+    change ξ (M.toSS f) = 0 at this
+    rw [hfx] at this
     exact this
   · rintro hneg ⟨g, hg⟩
     obtain ⟨f, hf, hfx⟩ := from_part (-1) g 2 0 (by decide)
     apply hg
     have := hneg (-1) (by norm_num) f hf
-    rw [AlgHom.comp_apply, hfx] at this
+    change ξ (M.toSS f) = 0 at this
+    rw [hfx] at this
     exact this
   · intro ξ' hs
     have key : ∀ x : M.SS, (x : M.S) ∈ M.sPart ((0 : ℤ), 0) → ξ x = ξ' x := by

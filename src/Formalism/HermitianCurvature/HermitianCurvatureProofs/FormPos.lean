@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCutInside
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCutInside
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 

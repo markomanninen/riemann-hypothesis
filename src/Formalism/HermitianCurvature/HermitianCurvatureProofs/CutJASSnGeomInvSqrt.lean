@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomCut
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

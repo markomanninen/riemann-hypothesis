@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.StokesB
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.StokesB
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -122,7 +126,7 @@ theorem st_mInt_eq_chart [CompactSpace X] [T2Space X] (A : FinHolAtlas e X)
     (hg : Continuous g) (hgs : tsupport g ⊆ (A.chart j).source) :
     mInt A Ψ g = ∫ y in (A.chart j).target, g ((A.chart j).symm y) * locDens A Ψ j y := by
   unfold mInt
-  rw [dif_pos (existsPartition A)]
+  rw [dite_eq_left (existsPartition A)]
   exact mIntLocalize A _ Ψ hΨ j g hgs (mIntegrableCont A Ψ hΨ g hg)
 
 theorem st_mInt_eq_piece [CompactSpace X] [T2Space X] (A : FinHolAtlas e X)
@@ -144,8 +148,8 @@ variable [CompactSpace X] [T2Space X] (A : FinHolAtlas (e + 1) X) (Φ : Fin e �
   (hΦ : ∀ i, IsPotential A (Φ i)) (j : Fin A.n) (G : Set X) (hGo : IsOpen G)
   (hG : G ⊆ (A.chart j).source) (x0 : Fin e → X) (hGU : ∀ i, G ⊆ (Φ i).U (x0 i))
 
-include hΦ hG hGU in
 
+include hΦ hG hGU in
 theorem st_locDens_piece (u : X → ℝ) (hu : A.Smooth u) {y : Fin (e + 1) → ℂ}
     (hy : y ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹' G) :
     locDens A (Fin.cons (LocPot.ofFun u) Φ) j y =
@@ -172,7 +176,7 @@ theorem st_locDens_piece (u : X → ℝ) (hu : A.Smooth u) {y : Fin (e + 1) → 
     have hf2 : ∀ᶠ z in 𝓝 y, ContDiffAt ℝ 2 ((Φ i).φ (x0 i) ∘ (A.chart j).symm) z := by
       filter_upwards [hSn] with z hz
       have hon := (hΦ i).1 (x0 i) j
-      exact ((hon.mono (fun w hw => ⟨hw.1, hw.2.2⟩)).contDiffAt (hSo.mem_nhds hz)).of_le
+      exact ((hon.mono (fun w (hw : w ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹' (W ∩ (Φ i).U ((A.chart j).symm y) ∩ (Φ i).U (x0 i))) => ⟨hw.1, hw.2.2⟩)).contDiffAt (hSo.mem_nhds hz)).of_le
         two_le_infty_withTop
     have hK : ∀ z ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹'
         (W ∩ (Φ i).U ((A.chart j).symm y) ∩ (Φ i).U (x0 i)),
@@ -188,8 +192,8 @@ theorem st_locDens_piece (u : X → ℝ) (hu : A.Smooth u) {y : Fin (e + 1) → 
       linarith
     rw [st_hessC_congr heq, hessC_add_potential hf2 hh, hessC_re_of_analyticAt (hK y hyS), add_zero]
 
-include hΦ hGo hG hGU in
 
+include hΦ hGo hG hGU in
 theorem st_left_piece (w ψ : X → ℝ) (hw : A.Smooth w) (hψ : A.Smooth ψ) (hψG : tsupport ψ ⊆ G) :
     mInt A (Fin.cons (LocPot.ofFun w) Φ) ψ =
       ∫ y in (A.chart j).target ∩ (A.chart j).symm ⁻¹' G,
@@ -218,8 +222,8 @@ theorem st_left_piece (w ψ : X → ℝ) (hw : A.Smooth w) (hψ : A.Smooth ψ) (
     Set.indicator_of_mem hy.1 _
   simp only [h1, h2]
 
-include hΦ hGo hG hGU in
 
+include hΦ hGo hG hGU in
 theorem st_right_piece (w ψ : X → ℝ) (hw : A.Smooth w) (hψ : A.Smooth ψ) (hψG : tsupport ψ ⊆ G) :
     mInt A (Fin.cons (LocPot.ofFun ψ) Φ) w =
       ∫ y in (A.chart j).target ∩ (A.chart j).symm ⁻¹' G,
@@ -259,8 +263,8 @@ theorem st_right_piece (w ψ : X → ℝ) (hw : A.Smooth w) (hψ : A.Smooth ψ) 
     rw [st_locDens_piece A Φ hΦ j G hG x0 hGU ψ hψ hy] at h0
     simp [h0]
 
-include hΦ hGo hG hGU in
 
+include hΦ hGo hG hGU in
 theorem st_symm_piece (hP : ReciprocityTheory.AnForm.A.PartsStatement) (w ψ : X → ℝ) (hw : A.Smooth w)
     (hψ : A.Smooth ψ) (hψG : tsupport ψ ⊆ G) :
     mInt A (Fin.cons (LocPot.ofFun w) Φ) ψ = mInt A (Fin.cons (LocPot.ofFun ψ) Φ) w := by
@@ -293,11 +297,11 @@ theorem st_symm_piece (hP : ReciprocityTheory.AnForm.A.PartsStatement) (w ψ : X
       ((A.chart j).target ∩ (A.chart j).symm ⁻¹' G) := by
     unfold ReciprocityTheory.AnForm.A.PartsHyp
     refine ⟨hSo, ?_, hKc.of_isClosed_subset (isClosed_tsupport _) hts, hts.trans hKS, ?_, ?_⟩
-    · exact (((hψ j).mono (fun y hy => ⟨hy.1, mem_univ _⟩)).of_le three_le_infty_withTop).congr
+    · exact (((hψ j).mono (fun y (hy : y ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹' G) => ⟨hy.1, mem_univ _⟩)).of_le three_le_infty_withTop).congr
         (fun y hy => Set.indicator_of_mem hy.1 _)
-    · exact ((hw j).mono (fun y hy => ⟨hy.1, mem_univ _⟩)).of_le three_le_infty_withTop
+    · exact ((hw j).mono (fun y (hy : y ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹' G) => ⟨hy.1, mem_univ _⟩)).of_le three_le_infty_withTop
     · intro i
-      exact (((hΦ i).1 (x0 i) j).mono (fun y hy => ⟨hy.1, hGU i hy.2⟩)).of_le three_le_infty_withTop
+      exact (((hΦ i).1 (x0 i) j).mono (fun y (hy : y ∈ (A.chart j).target ∩ (A.chart j).symm ⁻¹' G) => ⟨hy.1, hGU i hy.2⟩)).of_le three_le_infty_withTop
   have key := (hP e (fun i => (Φ i).φ (x0 i) ∘ (A.chart j).symm)
     ((A.chart j).target.indicator (ψ ∘ (A.chart j).symm)) (w ∘ (A.chart j).symm)
     ((A.chart j).target ∩ (A.chart j).symm ⁻¹' G) hH).2.2.2.2

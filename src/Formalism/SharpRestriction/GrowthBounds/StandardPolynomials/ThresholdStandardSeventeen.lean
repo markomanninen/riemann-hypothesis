@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestRoom
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestRoom
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+
+@[expose] public section
 
 noncomputable section
 

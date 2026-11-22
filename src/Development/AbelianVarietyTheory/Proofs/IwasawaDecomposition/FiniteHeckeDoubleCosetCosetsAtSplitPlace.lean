@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjSplit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjSplit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevel
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -47,9 +52,9 @@ theorem finite_image_tSet_loc : ∀ (L : Type) [Field L] [NumberField L] [IsCMFi
     rw [QuotientGroup.eq]
     have htriv : TrivOutside {s.v} (x⁻¹ * x') := triv_mul (triv_inv hx.1) hx'.1
     refine (hJ _ htriv).2 ?_
-    refine mem_Umax_of_loc s _ htriv (fun i j => ?_) (fun i j => ?_)
-    · rw [map_mul, map_inv]; exact h1 i j
-    · rw [mul_inv_rev, inv_inv, map_mul, map_inv]; exact h2 i j
+    exact mem_Umax_of_loc s _ htriv (fun i j => by
+      rw [map_mul, map_inv]; exact h1 i j) (fun i j => by
+      rw [mul_inv_rev, inv_inv, map_mul, map_inv]; exact h2 i j)
   let g : GAf L n ⧸ J → (Fin n → Fin n → 𝓞 (maximalRealSubfield L) ⧸ s.v.asIdeal) := fun q =>
     if h : ∃ x ∈ tSet L n s ϖ k, (x : GAf L n ⧸ J) = q then κ h.choose else 0
   refine Set.Finite.of_finite_image (f := g) (Set.toFinite _) ?_

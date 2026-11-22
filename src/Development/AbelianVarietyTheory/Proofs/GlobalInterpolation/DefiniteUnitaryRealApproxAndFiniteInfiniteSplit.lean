@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdelicExtensionOfAlgebraicWeightDefiniteUn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdelicExtensionOfAlgebraicWeightDefiniteUn
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC
 open scoped Pointwise
 
@@ -10,9 +15,9 @@ namespace GlobalTheory.UnitarySplit
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-def finPart : UA E n →* finU E n :=
+def finPart : UA E n →* finU (E := E) (n := n) :=
   ((((finGL E n).comp (GeneralLinearGroup.map (pFin E))).comp (UA E n).subtype).codRestrict (UA E n)
-    fun g => GlobalTheory.DefU.ClassFin.finGL_mem_UA _ (GlobalTheory.DefU.ClassFin.cT_pFin g)).codRestrict (finU E n)
+    fun g => GlobalTheory.DefU.ClassFin.finGL_mem_UA _ (GlobalTheory.DefU.ClassFin.cT_pFin g)).codRestrict (finU (E := E) (n := n))
     fun _ => pInf_finGL _
 
 def infPart : UA E n →* infU E n :=
@@ -46,7 +51,7 @@ theorem finPart_mul_infPart (g : UA E n) : g = (finPart g).1 * (infPart g).1 := 
 
 theorem cInf_infPart (g : UA E n) : cInf (infPart g).1 = cInf g := pInf_infGL _
 
-theorem finPart_fin (g : finU E n) : finPart g.1 = g :=
+theorem finPart_fin (g : finU (E := E) (n := n)) : finPart g.1 = g :=
   Subtype.ext (Subtype.ext (GlobalTheory.CuspRep.ga_ext ((pInf_finGL _).trans g.2.symm) (pFin_finGL _)))
 
 theorem infPart_inf (k : infU E n) : infPart k.1 = k :=
@@ -58,7 +63,7 @@ theorem finPart_inf (k : infU E n) : finPart k.1 = 1 := by
   rw [finPart_val, h, map_one]
   rfl
 
-theorem infPart_fin (g : finU E n) : infPart g.1 = 1 := by
+theorem infPart_fin (g : finU (E := E) (n := n)) : infPart g.1 = 1 := by
   refine Subtype.ext (Subtype.ext ?_)
   have h : GeneralLinearGroup.map (pInf E) g.1.1 = 1 := g.2
   rw [infPart_val, h, map_one]
@@ -74,7 +79,7 @@ theorem dense_rat_inf : Dense {k : infU E n | ∃ γ ∈ ratU E n, cInf k.1 = cI
   have hg' : cInf g = 1 := hg
   rw [cInf_infPart, map_mul, hg', mul_one]
 
-theorem dense_and_split : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ), Dense ((ratU E n : Set (UA E n)) * (finU E n : Set (UA E n))) ∧ Dense {k : infU E n | ∃ γ ∈ ratU E n, cInf k.1 = cInf γ} ∧ (∀ k : infU E n, ∀ g ∈ finU E n, k.1 * g = g * k.1) ∧ ∃ (a : UA E n →* finU E n) (b : UA E n →* infU E n), Continuous a ∧ Continuous b ∧ (∀ x, x = (a x).1 * (b x).1) ∧ ∀ (g : finU E n) (k : infU E n), a (g.1 * k.1) = g ∧ b (g.1 * k.1) = k := by
+theorem dense_and_split : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ), Dense ((ratU E n : Set (UA E n)) * (finU (E := E) (n := n) : Set (UA E n))) ∧ Dense {k : infU E n | ∃ γ ∈ ratU E n, cInf k.1 = cInf γ} ∧ (∀ k : infU E n, ∀ g ∈ finU (E := E) (n := n), k.1 * g = g * k.1) ∧ ∃ (a : UA E n →* finU (E := E) (n := n)) (b : UA E n →* infU E n), Continuous a ∧ Continuous b ∧ (∀ x, x = (a x).1 * (b x).1) ∧ ∀ (g : finU (E := E) (n := n)) (k : infU E n), a (g.1 * k.1) = g ∧ b (g.1 * k.1) = k := by
   intro E _ _ _ n
   refine ⟨GlobalTheory.WeightRealExt.dense_rat_fin, dense_rat_inf, fun k g hg => (GlobalTheory.DefU.fin_mul_inf hg k.2).symm,
     finPart, infPart, continuous_finPart, continuous_infPart, finPart_mul_infPart, fun g k => ⟨?_, ?_⟩⟩

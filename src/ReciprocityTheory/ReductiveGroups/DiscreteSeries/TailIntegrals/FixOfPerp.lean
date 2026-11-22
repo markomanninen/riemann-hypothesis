@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.LinIndToLp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.LinIndToLp
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,8 @@ abbrev EE (k r : ℕ) := EuclideanSpace ℂ (Fin (2 * r + k + 1))
 
 def HE (k r : ℕ) : EE k r →ₗ[ℂ] EE k r := Matrix.toEuclideanLin (Hpk k r)
 
-theorem HE_apply (x : EE k r) : HE k r x = WithLp.toLp 2 (Hpk k r *ᵥ x.ofLp) := Matrix.toEuclideanLin_apply _ _
+theorem HE_apply (x : EE k r) : HE k r x = WithLp.toLp 2 (Hpk k r *ᵥ x.ofLp) :=
+  Matrix.toLpLin_apply 2 2 (Hpk k r) x
 
 theorem HE_HE (x : EE k r) : HE k r (HE k r x) = x := by
   rw [HE_apply, HE_apply, WithLp.ofLp_toLp, hpk_invol]

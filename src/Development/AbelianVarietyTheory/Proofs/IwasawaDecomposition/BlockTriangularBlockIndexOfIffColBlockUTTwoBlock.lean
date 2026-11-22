@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.GenericUnipotentCharacter
-import Formalism.LocalToGlobal.Divisibility.DefGroup
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.GenericUnipotentCharacter
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory

@@ -1,7 +1,11 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpaCHessComp
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.DerivDerivNonposOfIsLocalMax
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.CommFderivApply
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpaCHessComp
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.DerivDerivNonposOfIsLocalMax
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.CommFderivApply
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Complex ComplexConjugate
 open scoped ContDiff ENNReal ComplexOrder
@@ -103,7 +107,7 @@ theorem cmpb_det_nonneg {f : V n → ℝ} {x : V n} (hf : ContDiffAt ℝ 2 f x)
     refine Matrix.IsHermitian.ext fun j k => ?_
     show (starRingEnd ℂ) (cHess n g x k j) = cHess n g x j k
     rw [hH k j, hH j k]
-    simp only [map_div₀, map_add, map_sub, map_mul, Complex.conj_I, hc2, map_ofNat]
+    simp only [map_div₀, map_add (f := _), map_sub, map_mul, Complex.conj_I, hc2, map_ofNat]
     linear_combination (1 / 4 : ℂ) * hsym (bas n k) (bas n j) +
       (1 / 4 : ℂ) * hsym (Complex.I • bas n k) (Complex.I • bas n j) -
       (Complex.I / 4) * hsym (bas n k) (Complex.I • bas n j) +

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.IntAllFree
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntAllFree
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,8 +116,8 @@ theorem nval_map_of_overLa {K : Type} [Field K] [NumberField K] {la : HeightOneS
     · exact h
   exact ⟨r, hr0, he, hr, fun x => he ▸ nval_bc i hr0 hr e x⟩
 
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor in
 
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor in
 theorem intAll_ramified {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H}
     {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} (h : Formalism.L2.PjFree.IntAll Xo c)
     (la : HeightOneSpectrum (𝓞 c.F)) (T : CDVR) (io : c.F →+* T.Fr) (e : ℕ) (ho : OverLa la T.V io e)

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ private theorem iso_alg {R : Type} [CommRing R] [Algebra ℂ R] [IsNoetherianRin
   let dl : R →ₗ[ℂ] R ⧸ m ^ 2 :=
     { toFun := fun x => Ideal.Quotient.mk (m ^ 2) (x - algebraMap ℂ R (e x))
       map_add' := fun x y => by
-        simp only [map_add, map_sub]
+        simp only [map_add (f := _), map_sub]
         ring
       map_smul' := fun c x => by
         simp only [RingHom.id_apply, Algebra.smul_def, map_mul, map_sub, AlgHom.commutes,
@@ -32,7 +36,7 @@ private theorem iso_alg {R : Type} [CommRing R] [Algebra ℂ R] [IsNoetherianRin
         ring }
   let dd : Derivation ℂ R (R ⧸ m ^ 2) := Derivation.mk' dl (fun a b => by
     simp only [dl, LinearMap.coe_mk, AddHom.coe_mk, Algebra.smul_def, Ideal.Quotient.algebraMap_eq]
-    rw [← map_mul, ← map_mul, ← map_add, Ideal.Quotient.eq]
+    rw [← map_mul, ← map_mul, ← map_add (f := _), Ideal.Quotient.eq]
     have h2 : (a - algebraMap ℂ R (e a)) * (b - algebraMap ℂ R (e b)) ∈ m ^ 2 := by
       rw [pow_two]
       exact Ideal.mul_mem_mul (hsub a) (hsub b)
@@ -64,16 +68,19 @@ private theorem iso_alg {R : Type} [CommRing R] [Algebra ℂ R] [IsNoetherianRin
       simp [Matrix.vecMul, dotProduct, Finset.sum_apply]
     set x' := x - ∑ j, c j • g j with hx'Eq
     have hx' : φ (D ℂ R x') = 0 := by
-      simp only [hx'Eq, map_sub, map_sum, Derivation.map_smul, map_smul, hM, hc, sub_self]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hx'Eq, map_sub, map_sum, Derivation.map_smul, map_smul, hM, hc, sub_self]
     obtain ⟨k, b, ω', hb, hω⟩ := hk _ hx'
     have hx'm : x' ∈ m ^ 2 := by
       have h1 : dd.liftKaehlerDifferential (D ℂ R x') = 0 := by
-        rw [hω, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hω, map_sum]
         exact Finset.sum_eq_zero fun i _ => by
           rw [map_smul]
           exact hkill _ ((hmem _).mpr (hb i)) _
       have hex' : e x' = 0 := by
-        simp [hx'Eq, map_sub, map_sum, map_smul, hg, (hmem x).mp hx]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [hx'Eq, map_sub, map_sum, map_smul, hg, (hmem x).mp hx]
       rw [hL, hd, hex', map_zero, sub_zero, Ideal.Quotient.eq_zero_iff_mem] at h1
       exact h1
     have hsum : ∑ j, c j • g j ∈ Ig :=

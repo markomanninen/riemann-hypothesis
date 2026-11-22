@@ -1,11 +1,27 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexEqCard
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeCosetSumCompact
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermMultiplicative
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpParabEqLevOpCt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulusHalfLeviAbsDet
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmVecTranslate
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexEqCard
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeCosetSumCompact
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermMultiplicative
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UNInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportTwistedConstantTermSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumParabolicQuotientFubini
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulusHalfLeviAbsDet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedOpenCompactEqFiniteLevelSuStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviProjectionMaximalCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsHalfBlockDetIntegralGLInvariant
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsCompactIsOpen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOpenCompactIntegralMatrixAddSubgroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedIntegralMatricesTwoSidedMu
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmVecTranslate
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Matrix Filter
@@ -29,10 +45,10 @@ section Key
 variable {n a b : ℕ}
 
 theorem parabolic_function_right_invariant (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w))
-    (hN : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K')
+    (hN : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K')
     (f : GLw n w → ℂ) (hf : ∀ k₁ ∈ K', ∀ k₂ ∈ K', ∀ g, f (k₁ * g * k₂) = f g)
-    (g y : GLw n w) (hy : y ∈ GlobalTheory.LFun.KGL w n) (k : GLw a w × GLw b w)
-    (hk1 : k.1 ∈ GlobalTheory.LFun.KGL w a) (hk2 : k.2 ∈ GlobalTheory.LFun.KGL w b) (hd : CtLevel.dgM h w k ∈ K')
+    (g y : GLw n w) (hy : y ∈ GlobalTheory.LFun.KGL w (n := n)) (k : GLw a w × GLw b w)
+    (hk1 : k.1 ∈ GlobalTheory.LFun.KGL w (n := a)) (hk2 : k.2 ∈ GlobalTheory.LFun.KGL w (n := b)) (hd : CtLevel.dgM h w k ∈ K')
     (m : GLw a w × GLw b w) : phi3 h w f g y (m * k) = phi3 h w f g y m := by
   have hab : absHalf w ((m * k).1.val.det ^ b / (m * k).2.val.det ^ a) =
       absHalf w (m.1.val.det ^ b / m.2.val.det ^ a) :=
@@ -98,20 +114,21 @@ theorem parabolic_function_transform (h : a + b = n) (w : Pl E) (f : GLw n w →
 def fv (h : a + b = n) (w : Pl E) (U : Subgroup (GLw a w × GLw b w)) {W : Type} [AddCommGroup W] [Module ℂ W]
     (ρ : Representation ℂ (GLw a w × GLw b w) W) (f : GLw n w → ℂ) (X : Finset (GLw n w)) (v : GLw n w → W)
     (g : GLw n w) : W :=
-  ∑ y ∈ X, (((U.relIndex ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) : ℕ) : ℂ))⁻¹ •
+  ∑ y ∈ X, (((U.relIndex ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) : ℕ) : ℂ))⁻¹ •
     ∑ᶠ q : (GLw a w × GLw b w) ⧸ U, phi3 h w f g y q.out • ρ q.out (v y)
 
 theorem lw_fv (h : a + b = n) (w : Pl E) (U : Subgroup (GLw a w × GLw b w)) {W : Type} [AddCommGroup W]
     [Module ℂ W] (ρ : Representation ℂ (GLw a w × GLw b w) W) (f : GLw n w → ℂ) (hfc : HasCompactSupport f)
     (X : Finset (GLw n w)) (v : GLw n w → W) (g : GLw n w)
-    (hUK : U ≤ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) (hUo : IsOpen (U : Set (GLw a w × GLw b w)))
-    (hne : U.relIndex ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) ≠ 0)
+    (hUK : U ≤ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) (hUo : IsOpen (U : Set (GLw a w × GLw b w)))
+    (hne : U.relIndex ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) ≠ 0)
     (hinv : ∀ y ∈ X, ∀ k ∈ U, ∀ m, phi3 h w f g y (m * k) = phi3 h w f g y m)
     (hvU : ∀ y ∈ X, ∀ k ∈ U, ρ k (v y) = v y) (lw : W →ₗ[ℂ] ℂ) :
-    lw (fv h w U ρ f X v g) = ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b))
+    lw (fv h w U ρ f X v g) = ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)))
       fun m => phi3 h w f g y m * lw (ρ m (v y)) := by
   unfold fv
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun y hy => ?_
   have hfin := GlobalTheory.CompanionTheory.DiagAvg.finite_cosets U hUo _ (GlobalTheory.CompanionTheory.GL3BlockMatrixLocal.constant_term_compact_support h w f hfc g y)
   rw [map_smul, smul_eq_mul, GlobalTheory.CompanionTheory.HintLevel.hint_eq_level _ _ U _ hUK ?_ hne,
@@ -141,8 +158,8 @@ theorem fv_right (h : a + b = n) (w : Pl E) (U : Subgroup (GLw a w × GLw b w)) 
 theorem fv_law (h : a + b = n) (w : Pl E) (U : Subgroup (GLw a w × GLw b w)) {W : Type} [AddCommGroup W]
     [Module ℂ W] (ρ : Representation ℂ (GLw a w × GLw b w) W) (f : GLw n w → ℂ) (hfc : HasCompactSupport f)
     (X : Finset (GLw n w)) (v : GLw n w → W)
-    (hUK : U ≤ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) (hUo : IsOpen (U : Set (GLw a w × GLw b w)))
-    (hne : U.relIndex ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) ≠ 0)
+    (hUK : U ≤ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) (hUo : IsOpen (U : Set (GLw a w × GLw b w)))
+    (hne : U.relIndex ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) ≠ 0)
     (hinv : ∀ g, ∀ y ∈ X, ∀ k ∈ U, ∀ m, phi3 h w f g y (m * k) = phi3 h w f g y m)
     (hvU : ∀ y ∈ X, ∀ k ∈ U, ρ k (v y) = v y) (m₀ : GLw a w × GLw b w)
     (X₀ : Matrix (Fin a) (Fin b) (w.adicCompletion E)) (g : GLw n w) :
@@ -158,7 +175,7 @@ theorem fv_law (h : a + b = n) (w : Pl E) (U : Subgroup (GLw a w × GLw b w)) {W
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [← GlobalTheory.CompanionTheory.CtMulSplit.hint_left _ m₀]
   simp only [parabolic_function_transform, inv_mul_cancel_left, map_mul, Module.End.mul_apply, LinearMap.comp_apply]
-  have e3 := GlobalTheory.CompanionTheory.HeckeAct.hint_mul_const ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b))
+  have e3 := GlobalTheory.CompanionTheory.HeckeAct.hint_mul_const ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)))
     (fun m => phi3 h w f g y m * lw (ρ m₀ (ρ m (v y)))) (absHalf w (m₀.1.val.det ^ b / m₀.2.val.det ^ a))
   rw [mul_comm, ← e3]
   congr 1
@@ -168,16 +185,16 @@ theorem fv_law (h : a + b = n) (w : Pl E) (U : Subgroup (GLw a w × GLw b w)) {W
 end Key2
 
 theorem key_ind {n a b : ℕ} (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hK'o : IsOpen (K' : Set (GLw n w)))
-    (hK'le : K' ≤ GlobalTheory.LFun.KGL w n) (hnorm : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K')
-    (X : Finset (GLw n w)) (hXK : ∀ x ∈ X, x ∈ GlobalTheory.LFun.KGL w n) (hX : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∃! x ∈ X, x⁻¹ * k ∈ K')
+    (hK'le : K' ≤ GlobalTheory.LFun.KGL w (n := n)) (hnorm : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K')
+    (X : Finset (GLw n w)) (hXK : ∀ x ∈ X, x ∈ GlobalTheory.LFun.KGL w (n := n)) (hX : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∃! x ∈ X, x⁻¹ * k ∈ K')
     {W : Type} [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ (GLw a w × GLw b w) W) (e : GLw n w → ℂ)
     (he : IsHk K' e) (U₀ : Subgroup (GLw a w × GLw b w)) (hU₀ : IsOpen (U₀ : Set (GLw a w × GLw b w)))
     (v : GLw n w → W) (hv : ∀ y ∈ X, v y ∈ fixed ρ U₀) :
     ∃ u ∈ fixed (GlobalTheory.SmGL.ind₂ (GlobalTheory.SmGL.stdSum h) ρ) K', ∀ x ∈ X, ∀ lw : W →ₗ[ℂ] ℂ,
-      lw (u.1.1 x) = ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) fun m => phi3 h w e x y m * lw (ρ m (v y)) := by
+      lw (u.1.1 x) = ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) fun m => phi3 h w e x y m * lw (ρ m (v y)) := by
   obtain ⟨hKa, hKac⟩ := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL (E := E) w a
   obtain ⟨hKb, hKbc⟩ := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL (E := E) w b
-  set K2' : Subgroup (GLw a w × GLw b w) := (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) with hK2'
+  set K2' : Subgroup (GLw a w × GLw b w) := (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) with hK2'
   set U : Subgroup (GLw a w × GLw b w) := U₀ ⊓ K2' ⊓ K'.comap (CtLevel.dgM h w) with hUdef
   have hUK : U ≤ K2' := fun k hk => hk.1.2
   have hK2o : IsOpen (K2' : Set (GLw a w × GLw b w)) := by

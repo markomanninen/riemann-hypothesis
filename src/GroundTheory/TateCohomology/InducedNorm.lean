@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.Induced
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.Induced
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -31,7 +36,8 @@ noncomputable def fromCoindRes (φ : M.V →ₗ[k] M.V) :
   ofHom ⟨∑ x : G, M.ρ x⁻¹ ∘ₗ φ ∘ₗ LinearMap.proj x ∘ₗ
       (Representation.coindV (⊥ : Subgroup G).subtype (res (⊥ : Subgroup G).subtype M).ρ).subtype,
     fun g => LinearMap.ext fun f => by
-      simp only [LinearMap.coe_comp, LinearMap.coe_sum, Function.comp_apply, Finset.sum_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.coe_comp, LinearMap.coe_sum, Function.comp_apply, Finset.sum_apply,
         map_sum]
       refine Fintype.sum_equiv (Equiv.mulRight g) _ _ fun x => ?_
       change M.ρ x⁻¹ (φ (f.1 (x * g))) = M.ρ g (M.ρ (x * g)⁻¹ (φ (f.1 (x * g))))
@@ -56,13 +62,13 @@ end Criterion
 
 section Tensor
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 noncomputable def coeffOneProj : MonoidAlgebra k G →ₗ[k] MonoidAlgebra k G :=
   MonoidAlgebra.lsingle 1 ∘ₗ Finsupp.lapply 1 ∘ₗ (MonoidAlgebra.coeffLinearEquiv k).toLinearMap
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 theorem coeffOneProj_apply (x : MonoidAlgebra k G) :
     coeffOneProj x = MonoidAlgebra.single 1 (x.coeff 1) := rfl
 
@@ -73,11 +79,11 @@ theorem sum_leftRegular_tensor (t : (leftRegular k G ⊗ B : Rep k G)) :
       (TensorProduct.map coeffOneProj LinearMap.id ((leftRegular k G ⊗ B).ρ g⁻¹ t)) = t := by
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, Finset.sum_add_distrib, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finset.sum_add_distrib, hx, hy]
   | tmul x b =>
     induction x using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add x y hx hy => simp only [TensorProduct.add_tmul, map_add, Finset.sum_add_distrib, hx, hy]
+    | add x y hx hy => simp only [TensorProduct.add_tmul, map_add (f := _), Finset.sum_add_distrib, hx, hy]
     | single h c =>
       rw [Fintype.sum_eq_single h]
       · simp [Rep.tensor_ρ, coeffOneProj_apply]

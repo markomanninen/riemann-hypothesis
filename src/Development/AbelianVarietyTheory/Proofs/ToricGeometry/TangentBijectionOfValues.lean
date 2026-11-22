@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Complex Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -88,7 +92,7 @@ theorem eq_spMap_of_evalPt {k : Type} [CommRing k] (y : Sp R ⟶ Sp k) (φ : k �
 theorem valAt'_eq_evalPt (x : Sp ℂ ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) :
     valAt' x U f = evalPt x U h f := by
   unfold valAt'
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 abbrev fstC : DualNumber ℂ →+* ℂ := (TrivSqZeroExt.fstHom ℂ ℂ ℂ).toRingHom
@@ -164,7 +168,7 @@ theorem fderiv_val_add {W : A.left.Opens} (h : ⊤ ≤ (u.ex 0).left ⁻¹ᵁ W)
   have : (fun z => valAt' (u.ex z).left W (f + f')) =ᶠ[𝓝 0]
       fun z => valAt' (u.ex z).left W f + valAt' (u.ex z).left W f' := by
     filter_upwards [eventually_mem u h] with z hz
-    simp only [valAt'_eq_evalPt _ _ hz, map_add]
+    simp only [valAt'_eq_evalPt _ _ hz, map_add (f := _)]
   rw [this.fderiv_eq, fderiv_fun_add (differentiableAt_val u h f) (differentiableAt_val u h f')]
 
 theorem fderiv_val_mul {W : A.left.Opens} (h : ⊤ ≤ (u.ex 0).left ⁻¹ᵁ W) (f f' : Γ(A.left, W)) :
@@ -317,7 +321,7 @@ theorem tangent_bijection :
         { toFun := fun f => (evalPt (R := DualNumber ℂ) v.left U h f).snd - (jet u w U h0 f).snd
           map_zero' := by simp
           map_add' := fun f f' => by
-            simp only [map_add, TrivSqZeroExt.snd_add]
+            simp only [map_add (f := _), TrivSqZeroExt.snd_add]
             ring }
       have hD : ∀ f, D f =
           (evalPt (R := DualNumber ℂ) v.left U h f).snd - (jet u w U h0 f).snd := fun _ => rfl

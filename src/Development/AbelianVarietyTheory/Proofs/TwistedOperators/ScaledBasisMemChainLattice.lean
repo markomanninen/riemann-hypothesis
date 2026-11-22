@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentTerms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentTerms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped Pointwise
@@ -65,15 +69,6 @@ theorem _root_.GlobalTheory.RootEx.UnfoldShape.mem_smul_iff {ϖ : 𝒪[k]} {M : 
   rw [Submodule.mem_smul_pointwise_iff_exists]
   rfl
 
-omit [Fintype ι] [DecidableEq ι] in
-theorem mem_smul_iff_inv {ϖ : 𝒪[k]} (h : (ϖ : k) ≠ 0) {M : Submodule 𝒪[k] (ι → k)} {v : ι → k} :
-    v ∈ ϖ • M ↔ (ϖ : k)⁻¹ • v ∈ M := by
-  rw [mem_smul_iff]
-  constructor
-  · rintro ⟨w, hw, rfl⟩
-    rwa [inv_smul_smul₀ h]
-  · intro hv
-    exact ⟨_, hv, smul_inv_smul₀ h v⟩
 
 open MeasureTheory ValuativeRel Matrix in
 open scoped Pointwise in
@@ -154,10 +149,11 @@ theorem _root_.GlobalTheory.RootEx.UnfoldShape.scaled_basis_mem_chainLattice (ϖ
 def colMat (n' : Type) (y : Fin c → (n ⊕ Fin c → k)) : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k :=
   Matrix.of fun r s => Sum.elim (fun _ => 0) (fun j : Fin (c + 1) => Fin.cases 0 (fun i => y i r) j) s
 
-open Classical in
 
-def col (e : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) (i : Fin c) : n ⊕ Fin c → k :=
-  fun r => if h : Free (n' := n') 1 (r, Sum.inr i.succ) then e ⟨_, h⟩ else 0
+open Classical in
+def col (e : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) (i : Fin c) : n ⊕ Fin c → k := by
+  classical
+  exact fun r => if h : Free (n' := n') 1 (r, Sum.inr i.succ) then e ⟨_, h⟩ else 0
 
 def uncol (n' : Type) (y : Fin c → (n ⊕ Fin c → k)) :
     {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k := fun rs => colMat n' y rs.1.1 rs.1.2
@@ -166,11 +162,6 @@ section
 omit [ValuativeRel k] [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n']
 
 theorem pt_eq (x₀ : Matrix n n' k) (y : Fin c → (n ⊕ Fin c → k)) : pt x₀ y = basePt c x₀ + colMat n' y := rfl
-
-theorem colMat_add (y z : Fin c → (n ⊕ Fin c → k)) : colMat n' (y + z) = colMat n' y + colMat n' z := by
-  ext r (s | s)
-  · simp [colMat]
-  · refine Fin.cases ?_ (fun i => ?_) s <;> simp [colMat]
 
 open MeasureTheory ValuativeRel Matrix in
 open scoped Pointwise in
@@ -183,100 +174,18 @@ theorem _root_.GlobalTheory.RootEx.UnfoldShape.colMat_smul (a : k) (y : Fin c �
   · simp [_root_.GlobalTheory.RootEx.UnfoldShape.colMat]
   · refine Fin.cases ?_ (fun i => ?_) j <;> simp [_root_.GlobalTheory.RootEx.UnfoldShape.colMat]
 
-theorem pt_add (x₀ : Matrix n n' k) (y z : Fin c → (n ⊕ Fin c → k)) :
-    pt x₀ (y + z) = pt x₀ y + colMat n' z := by
-  rw [pt_eq, pt_eq, colMat_add, add_assoc]
-
-theorem pt_add_base (x₀ x₁ : Matrix n n' k) (y : Fin c → (n ⊕ Fin c → k)) :
-    pt (x₀ + x₁) y = pt x₀ y + fromBlocks x₁ 0 0 0 := by
-  ext (r | r) (s | s) <;> simp [pt_eq, basePt, colMat]
-
-theorem col_add (e e' : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) :
-    col (e + e') = col e + col e' := by
-  ext i r
-  simp only [col, Pi.add_apply]
-  split_ifs <;> simp
-
-theorem col_smul (a : k) (e : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) :
-    col (a • e) = a • col e := by
-  ext i r
-  simp only [col, Pi.smul_apply]
-  split_ifs <;> simp
-
-theorem colMat_col (e : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) (r s) :
-    colMat n' (col e) r s = open Classical in if h : Free 1 (r, s) then e ⟨(r, s), h⟩ else 0 := by
-  rcases s with s | s
-  · rw [dif_neg]
-    · simp [colMat]
-    · rcases r with r | r <;> simp [Free]
-  · refine Fin.cases ?_ (fun i => ?_) s
-    · rw [dif_neg]
-      · simp [colMat]
-      · rcases r with r | r <;> simp [Free]
-    · simp [colMat, col]
-
-theorem affPt_eq_pt (x₀ : Matrix n n' k) (e : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) :
-    affPt 1 x₀ e = pt x₀ (col e) := by
-  ext r s
-  simp only [affPt, pt_eq, Matrix.add_apply, Matrix.of_apply, colMat_col]
-
-theorem ch_pt (x₀ : Matrix n n' k) (y : Fin c → (n ⊕ Fin c → k)) : ch (pt x₀ y) = ∑ i, y i (Sum.inr i) := by
-  simp [ch, pt_eq, basePt, colMat]
-
 end
 
 section
 omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n']
-
-theorem col_mem_Yle (e : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) (i : Fin c) :
-    col e i ∈ Yle k n c (i.val + 1) := by
-  intro l hl
-  rw [col, dif_neg]
-  simp only [Free, Fin.val_succ]
-  omega
-
-theorem col_uncol {y : Fin c → (n ⊕ Fin c → k)} (hy : ∀ i, y i ∈ Yle k n c (i.val + 1)) :
-    col (uncol n' y) = y := by
-  ext i r
-  rw [col]
-  split_ifs with h
-  · simp [uncol, colMat]
-  · rcases r with r | r
-    · simp [Free] at h
-    · simp only [Free, Fin.val_succ] at h
-      exact (hy i r (by omega)).symm
 
 end
 
 section
 omit [ValuativeRel k] [Fintype n] [DecidableEq n] [DecidableEq n']
 
-theorem colMat_mulVec (y : Fin c → (n ⊕ Fin c → k)) (v : n' ⊕ Fin (c + 1) → k) :
-    colMat n' y *ᵥ v = ∑ i, v (Sum.inr i.succ) • y i := by
-  ext r
-  simp [colMat, Matrix.mulVec, dotProduct, Fin.sum_univ_succ, Finset.sum_apply, mul_comm]
-
-theorem basePt_mulVec (x₀ : Matrix n n' k) (v : n' ⊕ Fin (c + 1) → k) :
-    basePt c x₀ *ᵥ v = Sum.elim (x₀ *ᵥ fun s => v (Sum.inl s)) fun l => v (Sum.inr l.castSucc) := by
-  ext (r | r)
-  · simp [basePt, Matrix.mulVec, dotProduct]
-  · simp only [basePt, Matrix.mulVec, dotProduct, Fintype.sum_sum_type, fromBlocks_apply₂₁, fromBlocks_apply₂₂,
-      Matrix.zero_apply, zero_mul, Finset.sum_const_zero, zero_add, Matrix.of_apply, Sum.elim_inr]
-    rw [Finset.sum_eq_single r.castSucc]
-    · simp
-    · intro j _ hj
-      rw [if_neg, zero_mul]
-      intro h
-      exact hj (Fin.ext (by simp [h]))
-    · simp
-
 end
 
-omit [Fintype n] [DecidableEq n] [DecidableEq n'] in
-theorem pt_mulVec_inX (x₀ : Matrix n n' k) (y : Fin c → (n ⊕ Fin c → k)) (v : n' → k) :
-    pt x₀ y *ᵥ inX k n' (c + 1) v = inX k n c (x₀ *ᵥ v) := by
-  rw [pt_eq, Matrix.add_mulVec, colMat_mulVec, basePt_mulVec]
-  ext (r | r) <;> simp [inX_apply]
 
 variable [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
@@ -304,23 +213,9 @@ theorem _root_.GlobalTheory.RootEx.UnfoldShape.mapsInto_colMat {ϖ : 𝒪[k]} {L
   rw [hsum]
   exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (hy i)
 
-omit [Fintype n] in
-theorem mapsInto_basePt {ϖ : 𝒪[k]} {L' : Submodule 𝒪[k] (n' → k)} {L : Submodule 𝒪[k] (n → k)}
-    {x₀ : Matrix n n' k} (h : MapsInto x₀ L' L) :
-    MapsInto (basePt c x₀) (chainLat ϖ (c + 1) L') (chainLat ϖ c L) := by
-  intro v hv
-  rw [basePt_mulVec, mem_chainLat]
-  obtain ⟨h1, h2⟩ := mem_chainLat.1 hv
-  exact ⟨h _ h1, fun i => h2 i.castSucc⟩
 
 variable [MeasurableSpace k] [BorelSpace k]
 
-open Classical in
-theorem opE_one_eq (ψ : AddChar k Circle) (ν : Measure k) (Ψ : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k → ℂ)
-    (x₀ : Matrix n n' k) :
-    opE ψ ν 1 Ψ x₀ = ∫ e : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k,
-      Ψ (pt x₀ (col e)) * (ψ (-∑ i, col e i (Sum.inr i)) : ℂ) ∂(Measure.pi fun _ => ν) := by
-  simp only [opE, affPt_eq_pt, ch_pt]
 
 open MeasureTheory ValuativeRel Matrix in
 open scoped Pointwise in
@@ -350,7 +245,7 @@ private theorem col_mem_Yle' [ValuativeRel k]
     _root_.GlobalTheory.RootEx.UnfoldShape.col e i ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.ExponentTerms.Yle k n c (i.val + 1) := by
   intro l hl
   simp only [_root_.GlobalTheory.RootEx.UnfoldShape.col]
-  rw [dif_neg]
+  rw [dite_eq_right]
   simp only [_root_.GlobalTheory.RootEx.Free, Fin.val_succ]
   omega
 
@@ -422,13 +317,13 @@ private theorem ch_add_colMat (x : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k)
       _root_.GlobalTheory.RootEx.ch x + ∑ i, y i (Sum.inr i) := by
   simp [_root_.GlobalTheory.RootEx.ch, Finset.sum_add_distrib, _root_.GlobalTheory.RootEx.UnfoldShape.colMat]
 
+
 open MeasureTheory ValuativeRel Matrix in
 open scoped Pointwise in
 variable {k : Type} [Field k] [ValuativeRel k] in
 variable {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] {c : ℕ} in
 variable [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 variable [MeasurableSpace k] [BorelSpace k] in
-
 theorem _root_.GlobalTheory.RootEx.UnfoldShape.opE_translate (ψ : AddChar k Circle) (ν : Measure k) [ν.IsAddHaarMeasure]
     {Ψ : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k → ℂ} {y : Fin c → (n ⊕ Fin c → k)}
     (hy : ∀ i, y i ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.ExponentTerms.Yle k n c (i.val + 1)) (hΨ : ∀ x, Ψ (x + _root_.GlobalTheory.RootEx.UnfoldShape.colMat n' y) = Ψ x)
@@ -444,37 +339,7 @@ theorem _root_.GlobalTheory.RootEx.UnfoldShape.opE_translate (ψ : AddChar k Cir
     Circle.coe_mul]
   ring
 
-open Classical in
 
-def volFree (ν : Measure k) (n n' : Type) [Fintype n] [Fintype n'] (c : ℕ) :
-    Measure ({rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) := Measure.pi fun _ => ν
 
-theorem opE_one_eq_volFree (ψ : AddChar k Circle) (ν : Measure k)
-    (Ψ : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k → ℂ) (x₀ : Matrix n n' k) :
-    opE ψ ν 1 Ψ x₀ = ∫ e, Ψ (pt x₀ (col e)) * (ψ (-∑ i, col e i (Sum.inr i)) : ℂ) ∂(volFree ν n n' c) :=
-  opE_one_eq ψ ν Ψ x₀
-
-omit [MeasurableSpace k] [BorelSpace k] in
-
-def perLat (ϖ : 𝒪[k]) (n' : Type) (c : ℕ) (L : Submodule 𝒪[k] (n → k)) :
-    AddSubgroup ({rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) where
-  carrier := {e | ∀ i : Fin c, (ϖ : k) ^ (i.val + 1) • col e i ∈ chainLat ϖ c L}
-  add_mem' he he' i := by
-    rw [col_add, Pi.add_apply, smul_add]
-    exact add_mem (he i) (he' i)
-  zero_mem' i := by
-    have : col (0 : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k) i = 0 := by
-      ext r
-      simp [col]
-    rw [this, smul_zero]
-    exact zero_mem _
-  neg_mem' {e} he i := by
-    rw [← neg_one_smul k e, col_smul, neg_one_smul, Pi.neg_apply, smul_neg]
-    exact neg_mem (he i)
-
-omit [MeasurableSpace k] [BorelSpace k] in
-theorem mem_perLat {ϖ : 𝒪[k]} {L : Submodule 𝒪[k] (n → k)}
-    {e : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free 1 rs} → k} :
-    e ∈ perLat ϖ n' c L ↔ ∀ i : Fin c, (ϖ : k) ^ (i.val + 1) • col e i ∈ chainLat ϖ c L := Iff.rfl
 
 end GlobalTheory.RootEx.UnfoldShape

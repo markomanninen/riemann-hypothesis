@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.FmTools
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousCj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBallSubset
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.FmTools
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousCj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBallSubset
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,15 +40,15 @@ theorem level_of_comap {G₁ G₂ : Type} [Group G₁] [Group G₂] [Topological
 
 theorem exists_level_prod (w : Pl E) (U : Subgroup (GLw a w × GLw b w)) (hU : IsOpen (U : Set (GLw a w × GLw b w)))
     (hle : U ≤ K2 a b w) :
-    ∃ (V₁ : Subgroup (GLw a w)) (V₂ : Subgroup (GLw b w)), IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) V₁ ∧
-      IsLevel (thL b w) (GlobalTheory.LFun.KGL w b) V₂ ∧ V₁.prod V₂ ≤ U := by
+    ∃ (V₁ : Subgroup (GLw a w)) (V₂ : Subgroup (GLw b w)), IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) V₁ ∧
+      IsLevel (thL b w) (GlobalTheory.LFun.KGL w (n := b)) V₂ ∧ V₁.prod V₂ ≤ U := by
   obtain ⟨c₁, i₁⟩ := thL_cont_invol (E := E) a w
   obtain ⟨c₂, i₂⟩ := thL_cont_invol (E := E) b w
   have hl := level_of_comap (thL a w) c₁ i₁ (MonoidHom.inl (GLw a w) (GLw b w))
-    (continuous_id.prodMk continuous_const) U hU (GlobalTheory.LFun.KGL w a)
+    (continuous_id.prodMk continuous_const) U hU (GlobalTheory.LFun.KGL w (n := a))
     (fun g hg => (Subgroup.mem_prod.1 (hle hg)).1)
   have hr := level_of_comap (thL b w) c₂ i₂ (MonoidHom.inr (GLw a w) (GLw b w))
-    (continuous_const.prodMk continuous_id) U hU (GlobalTheory.LFun.KGL w b)
+    (continuous_const.prodMk continuous_id) U hU (GlobalTheory.LFun.KGL w (n := b))
     (fun g hg => (Subgroup.mem_prod.1 (hle hg)).2)
   refine ⟨_, _, hl.1, hr.1, fun x hx => ?_⟩
   obtain ⟨hx₁, hx₂⟩ := Subgroup.mem_prod.1 hx
@@ -54,7 +58,7 @@ theorem exists_level_prod (w : Pl E) (U : Subgroup (GLw a w × GLw b w)) (hU : I
   exact U.mul_mem (hl.2 _ hx₁) (hr.2 _ hx₂)
 
 theorem isHecke_idem {w : Pl E} (V₁ : Subgroup (GLw a w)) (V₂ : Subgroup (GLw b w))
-    (hV₁ : IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) V₁) (hV₂ : IsLevel (thL b w) (GlobalTheory.LFun.KGL w b) V₂) :
+    (hV₁ : IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) V₁) (hV₂ : IsLevel (thL b w) (GlobalTheory.LFun.KGL w (n := b)) V₂) :
     IsHecke (V₁.prod V₂) (idem (V₁.prod V₂)) := by
   have hVo : IsOpen ((V₁.prod V₂ : Subgroup (GLw a w × GLw b w)) : Set (GLw a w × GLw b w)) := by
     rw [Subgroup.coe_prod]; exact hV₁.1.prod hV₂.1

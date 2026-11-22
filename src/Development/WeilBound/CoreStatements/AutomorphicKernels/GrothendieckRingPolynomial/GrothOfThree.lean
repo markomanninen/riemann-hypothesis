@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.GrothOfCls
-import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.PeelGood
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.GrothOfCls
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.PeelGood
+
+@[expose] public section
 
 namespace PositivityTheory.Groth
 

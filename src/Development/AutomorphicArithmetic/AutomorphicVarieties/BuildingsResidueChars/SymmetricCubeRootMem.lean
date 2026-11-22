@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.AdjointLowWeight.SymmetricCubeSymplecticSimilitude
-import Mathlib.FieldTheory.Galois.Infinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.AdjointLowWeight.SymmetricCubeSymplecticSimilitude
+public import Mathlib.FieldTheory.Galois.Infinite
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 open GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V.Af UpperTheory.V.Ws UpperTheory.V.Sd UpperTheory.V.Sd.S3
@@ -17,7 +21,7 @@ theorem UpperTheory.symmetric_cube_root_mem :
   rw [IntermediateField.mem_fixingSubgroup_iff] at hσ
   have hrel' : c + d * σ x = (a + b * σ x) * σ x := by
     have h := congrArg σ hrel
-    simpa only [map_add, map_mul, hσ a ha, hσ b hb, hσ c hc, hσ d hd] using h
+    simpa only [map_add (f := _), map_mul, hσ a ha, hσ b hb, hσ c hc, hσ d hd] using h
   by_contra hne
   have hyn : ‖σ x‖ ≤ 1 := by rw [hn]; exact hx
   have key : (σ x - x) * (b * (x + σ x) - (d - a)) = 0 := by linear_combination hrel - hrel'

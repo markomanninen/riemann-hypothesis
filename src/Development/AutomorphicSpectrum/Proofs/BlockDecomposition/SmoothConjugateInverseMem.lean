@@ -1,15 +1,20 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.GelfandKazhdanDuality.IsCuspFormDualMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.GelfandKazhdanDuality.IsCuspFormDualMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
+
 noncomputable section
 open NumberField IsDedekindDomain Matrix Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.ContraPair GlobalTheory.DiscSpec PositivityTheory.PRW.GKD GlobalTheory.ThetaPull GlobalTheory.SmGL
 
 namespace GlobalTheory.CompanionTheory.DualSm
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem map_invT {R S : Type} [CommRing R] [CommRing S] (p : R →+* S) (g : GL (Fin a) R) :
     GeneralLinearGroup.map p (invT a R g) = invT a S (GeneralLinearGroup.map p g) := by
   apply Units.ext
@@ -23,16 +28,16 @@ theorem invA_infGL (y : GL (Fin a) (Cinf E)) :
   ga_ext (by rw [invA, map_invT, pInf_infGL, pInf_infGL])
     (by rw [invA, map_invT, pFin_infGL, pFin_infGL, map_one])
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 def trL : Lie E a →L[ℝ] Lie E a :=
   LinearMap.toContinuousLinearMap
     { toFun := fun X => toL (Matrix.of X)ᵀ
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem toL_invT (y : GL (Fin a) (Cinf E)) : toL (invT a (Cinf E) y).val = trL (invL (toL y.val)) := by
   change toL ((y⁻¹).val)ᵀ = toL (Matrix.of (toL (Matrix.of (toL y.val))⁻¹))ᵀ
   rw [Matrix.coe_units_inv]

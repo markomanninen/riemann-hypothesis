@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfHeads
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfHeads
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StandardPairingDecay
 

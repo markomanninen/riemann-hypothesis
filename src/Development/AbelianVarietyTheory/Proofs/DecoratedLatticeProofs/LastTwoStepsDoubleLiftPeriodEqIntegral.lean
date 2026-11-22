@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawWeilBiActionCommutesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionMixedCoordsRankZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientPara
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumTransportSourceRationalIsometry
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittHyperbolicRankZeroProjMulEmb
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianLinkMapAdditiveRationalEquivariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawWeilBiActionCommutesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionMixedCoordsRankZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientPara
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumTransportSourceRationalIsometry
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittHyperbolicRankZeroProjMulEmb
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianLinkMapAdditiveRationalEquivariant
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl
 open scoped TensorProduct
@@ -27,8 +32,8 @@ theorem sympl_zero_l (S T : HSp D) (x : WO S T) : symplOH S T 0 x = 0 := by
 theorem sympl_zero_r (S T : HSp D) (x : WO S T) : symplOH S T x 0 = 0 := by
   simp [symplOH, symplO, hO]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem biTheta_of_maps {ψ : AddChar (AF D.host.F) ℂ} {V₀ A S X T : HSp D} (a : WO A S →+ WO V₀ S) (b : WO S X →+ WO V₀ S)
     (p : WO S X →+ WO S T) (ca : Continuous a) (cb : Continuous b) (cp : Continuous p)
     (ra : ∀ γ, ∃ γ', a (ratW S A γ) = ratW S V₀ γ') (rb : ∀ γ, ∃ γ', b (ratW X S γ) = ratW S V₀ γ')
@@ -42,10 +47,11 @@ theorem biTheta_of_maps {ψ : AddChar (AF D.host.F) ℂ} {V₀ A S X T : HSp D} 
     (hs : ∀ u v u' v', symplOH S T (p v) (p v') + symplOH V₀ S (a u + b v) (a u' + b v') =
       symplOH A S u u' + symplOH S X v v')
     {Ξ : WO V₀ S → ℂ} {Φ : WO S T → ℂ} (hΞ : IsThetaFunO ψ V₀ S Ξ) (hΦ : IsThetaFunO ψ S T Φ) :
-    IsBiTheta ψ A S X fun u v => Φ (p v) * Ξ (a u + b v) where
-  cont := (hΦ.cont.comp (cp.comp continuous_snd)).mul
-    (hΞ.cont.comp ((ca.comp continuous_fst).add (cb.comp continuous_snd)))
-  smooth n L L' hL hL' h0 h0' u v := by
+    IsBiTheta ψ A S X (fun u v => Φ (p v) * Ξ (a u + b v)) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact (hΦ.cont.comp (cp.comp continuous_snd)).mul
+      (hΞ.cont.comp ((ca.comp continuous_fst).add (cb.comp continuous_snd)))
+  · intro n L L' hL hL' h0 h0' u v
     have h1 := hΦ.smooth n (p.comp L') (cp.comp hL') (fun t => fp _ (h0' t)) (p v)
     have h2 := hΞ.smooth n (a.comp L + b.comp L') ((ca.comp hL).add (cb.comp hL')) (fun t => by
       show (a (L t) + b (L' t)).map (finPart D) = 0
@@ -53,34 +59,32 @@ theorem biTheta_of_maps {ψ : AddChar (AF D.host.F) ℂ} {V₀ A S X T : HSp D} 
     have e : (fun t => Φ (p (v + L' t)) * Ξ (a (u + L t) + b (v + L' t))) =
         fun t => Φ (p v + (p.comp L') t) * Ξ (a u + b v + (a.comp L + b.comp L') t) := by
       funext t
-      simp only [map_add, AddMonoidHom.add_apply, AddMonoidHom.comp_apply, add_add_add_comm (a u) (a (L t))]
+      simp only [map_add (f := _), AddMonoidHom.add_apply, AddMonoidHom.comp_apply, add_add_add_comm (a u) (a (L t))]
     rw [e]
     exact h1.mul h2
-  quasiL γ u v := by
+  · intro γ u v
     obtain ⟨γ', e⟩ := ra γ
     have h := hs (ratW S A γ) 0 u v
     simp only [map_zero, add_zero, sympl_zero_l, zero_add] at h
     show Φ (p v) * Ξ (a (ratW S A γ + u) + b v) = _ * (Φ (p v) * Ξ (a u + b v))
-    rw [map_add, add_assoc, ← h, e, hΞ.quasi]
+    rw [map_add (f := _), add_assoc, ← h, e, hΞ.quasi]
     ring
-  quasiR γ u v := by
+  · intro γ u v
     obtain ⟨γ', e⟩ := rb γ
     obtain ⟨γ'', e'⟩ := rp γ
     have h := hs 0 (ratW X S γ) u v
     simp only [map_zero, sympl_zero_l, zero_add] at h
     show Φ (p (ratW X S γ + v)) * Ξ (a u + b (ratW X S γ + v)) = _ * (Φ (p v) * Ξ (a u + b v))
-    rw [map_add, map_add, add_left_comm, ← h, e, e', hΞ.quasi, hΦ.quasi, neg_add, AddChar.map_add_eq_mul]
+    rw [map_add (f := _), map_add (f := _), add_left_comm, ← h, e, e', hΞ.quasi, hΦ.quasi, neg_add, AddChar.map_add_eq_mul]
     ring
-  levL := by
-    obtain ⟨U, hU, k⟩ := hΞ.level
+  · obtain ⟨U, hU, k⟩ := hΞ.level
     refine ⟨U.comap a, hU.preimage ca, fun x hx h0 v => funext fun u => ?_⟩
     have e := congrFun (k (a x) hx (ia x h0)) (a u + b v)
     have h := hs u v x 0
     simp only [map_zero, add_zero, sympl_zero_r, zero_add] at h
     simp only [heisO] at e ⊢
-    rw [← h, map_add, add_right_comm, mul_left_comm, e]
-  levR := by
-    obtain ⟨U, hU, k⟩ := hΞ.level
+    rw [← h, map_add (f := _), add_right_comm, mul_left_comm, e]
+  · obtain ⟨U, hU, k⟩ := hΞ.level
     obtain ⟨U', hU', k'⟩ := hΦ.level
     refine ⟨U.comap b ⊓ U'.comap p, (hU.preimage cb).inter (hU'.preimage cp), fun x hx h0 u => funext fun v => ?_⟩
     have e := congrFun (k (b x) hx.1 (ib x h0)) (a u + b v)
@@ -190,6 +194,8 @@ theorem flatBF_rankZero : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (B : Bes
   funext w
   have hS := (GlobalTheory.Unf.mixRankZero D ψ).1 B.V B.V₀ J.W B.d s.vS.μ s.vS.𝓕 s.vS.covol
   have hT := (GlobalTheory.Unf.mixRankZero D ψ).2.1 B.V₀ J.W J.W₀ J.d s.vT.μ s.vT.𝓕 s.vT.covol
+  change ∀ f x, _root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source B.d J.W ψ s.vS.μ s.vS.𝓕 f x = fun w => f (B.d.ext0 J.W w) at hS
+  change ∀ f y, _root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target J.d B.V₀ ψ s.vT.μ s.vT.𝓕 f y = fun w => f (J.d.inc0 B.V₀ w) at hT
   simp only [flatBF, flat, flatAt, flatFun, evalAt, hS, hT]
   have hpsi : ∀ u : UX D 0, psiUni ψ u.1 = 1 := fun u => by
     simp [psiUni, upSum, psiE]
@@ -207,6 +213,7 @@ theorem flatBF_rankZero : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (B : Bes
     simp [Subsingleton.elim y x, hx]
   have h1 : s.vU.ν Set.univ = 1 := by rw [← hU, h𝓤]
   simp [Measure.real, h1]
+  rw [hT]
 
 end GlobalTheory.LastRed
 
@@ -259,7 +266,7 @@ theorem liftS_trans {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (A
     (fun γ hγ h => by rw [ker_inv_right hom hf hγ, hG γ hγ]) b
 
 theorem contAut_rTrans {V : HSp D} {F : GA D V → ℂ} (hF : IsContAut V F) (b : GA D V) : IsContAut V (rTrans b F) :=
-  ⟨fun γ hγ g => by simp only [rTrans]; rw [mul_assoc, hF.1 γ hγ], hF.2.comp (continuous_mul_right b)⟩
+  ⟨fun γ hγ g => by simp only [rTrans]; rw [mul_assoc, hF.1 γ hγ], hF.2.comp (continuous_mul_const b)⟩
 
 theorem cocpt_zero {S S₀ : HSp D} (d : HypDec S S₀ 0) (h : CoCpt S₀) : CoCpt S := by
   obtain ⟨K, hK, hKs⟩ := h

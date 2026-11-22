@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SlopeMaxSquaredBoundStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaxSlopeSqFieldExtensionLeComparableNormsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearEmbSupLatticeOntoRealisationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightBoundHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HostBoundHolds
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.EqZeroOfPnorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SlopeMaxSquaredBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaxSlopeSqFieldExtensionLeComparableNormsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearEmbSupLatticeOntoRealisationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightBoundHoldsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HostBoundHolds
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.EqZeroOfPnorm
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -125,23 +129,5 @@ theorem le_rpow_of_add {X b A1 A Cm u s : ℝ} (hX : 10 ≤ X) (hb : 0 ≤ b) (h
   have e3 : P * Q * b * (1 + 2 * Cm) ≤ P * Q * b * K :=
     mul_le_mul_of_nonneg_left hK (by positivity)
   nlinarith
-
-theorem lam : Hypotheses2 → Gram → Meas → abelian₂ := by
-  intro hP hG hM
-  have hc := GlobalTheory.T.slope_max_squared_bound hP hG
-  have hH : HostN 1 := GlobalTheory.CovTop.Sizes.hostN 1
-  have hW : WtN := GlobalTheory.T.weight_bound_holds
-  refine Closed.imp ((((hc.and hM).and hH).and hG).and hW) ?_
-  intro eps Fm CH _ h
-  obtain ⟨⟨⟨⟨⟨A1, hA1, hc⟩, ⟨Cm, hCm, hm⟩⟩, ⟨Ah, hAh, hh⟩⟩, ⟨Cg, -, hg⟩⟩, ⟨Cw, -, hw⟩⟩ := h
-  refine ⟨A1 + (Ah + 1) + (⌈2 * Cm⌉₊ : ℝ), by have := Nat.cast_nonneg (α := ℝ) ⌈2 * Cm⌉₊; linarith, ?_⟩
-  obtain ⟨x0, H⟩ := (((hc.and hm).and hh).and hg).and hw
-  refine ⟨x0, fun x hx hle ι p hp i => ?_⟩
-  obtain ⟨⟨⟨⟨a, b⟩, c⟩, d⟩, e⟩ := H x hx hle ι p hp
-  have hH1 := c i
-  have hX : 10 ≤ (Fm.L x ι).sc.x := hH1.big.2.1.trans hH1.big.2.2.1
-  have hb : 0 ≤ (Fm.L x ι).sc.b := le_trans (by positivity) hH1.room
-  exact le_rpow_of_add hX hb hA1 (by linarith [hH1.poly.1]) hCm (unitE_le p i hH1 (e i))
-    ((slopeMax_all_le p i Cm (d i) (b i)).trans (by linarith [a i]))
 
 end GlobalTheory.CovTop.LamAll

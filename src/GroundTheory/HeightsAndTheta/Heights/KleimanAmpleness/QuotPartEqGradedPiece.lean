@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraSide
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideFurther
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraSide
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideFurther
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

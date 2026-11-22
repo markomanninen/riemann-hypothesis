@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.LocalTransition
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.LocalTransition
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -8,8 +13,6 @@ open CategoryTheory NumberField IntermediateField IsDedekindDomain GroundTheory.
   GroundTheory.Global.AdeleBaseChange FiniteSubfield IdeleLimit SemiLocal GroundTheory.Global.IdeleGroup
 
 open scoped Pointwise NumberField.LiesOver NumberField.AdeleRing
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -44,8 +47,8 @@ def finiteComponent (n : ℕ) :
   cohomologyMapAlong (MulAction.stabilizer (F.1 ≃ₐ[K.1] F.1) w.1.asIdeal).subtype
     continuous_of_discreteTopology (finiteComponentRep w) n
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem placeProj_comp_finiteShapiroIso (n : ℕ) :
     cohomologyMap (finiteProjAboveRep (K := K.1) (L := F.1) v) n ≫ (finiteShapiroIso v w n).hom =
       finiteComponent w n := by
@@ -57,8 +60,8 @@ theorem placeProj_comp_finiteShapiroIso (n : ℕ) :
   rw [← HomologicalComplex.homologyMap_comp, ← HomologicalComplex.homologyMap_comp]
   congr 1
 
-omit [Fact (K ≤ F)] [F.1.fixingSubgroup.Normal] in
 
+omit [Fact (K ≤ F)] [F.1.fixingSubgroup.Normal] in
 theorem ideleEmbedding_snd_of_below_eq {E : FiniteSubfield} [Algebra F.1 E.1]
     (w' : HeightOneSpectrum (𝓞 E.1)) (u : HeightOneSpectrum (𝓞 F.1)) (hu : below F.1 w' = u)
     [w'.asIdeal.LiesOver u.asIdeal] (x : IdeleGroup F.1) :
@@ -69,8 +72,8 @@ theorem ideleEmbedding_snd_of_below_eq {E : FiniteSubfield} [Algebra F.1 E.1]
 
 variable {E : FiniteSubfield} [Fact (K ≤ E)] [Fact (F ≤ E)] [E.1.fixingSubgroup.Normal]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem levelTransition_comp_finiteComponent (w' : PlacesOver E.1 v)
     [w'.1.asIdeal.LiesOver w.1.asIdeal] (n : ℕ) :
     levelTransition K F E n ≫ finiteComponent w' n =
@@ -127,8 +130,8 @@ def infiniteComponent (n : ℕ) :
   cohomologyMapAlong (MulAction.stabilizer (F.1 ≃ₐ[K.1] F.1) w.1).subtype
     continuous_of_discreteTopology (infiniteComponentRep w) n
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem placeProj_comp_infiniteShapiroIso (n : ℕ) :
     cohomologyMap (infiniteProjAboveRep (K := K.1) (L := F.1) v) n ≫ (infiniteShapiroIso v w n).hom =
       infiniteComponent w n := by
@@ -140,20 +143,22 @@ theorem placeProj_comp_infiniteShapiroIso (n : ℕ) :
   rw [← HomologicalComplex.homologyMap_comp, ← HomologicalComplex.homologyMap_comp]
   congr 1
 
-omit [Fact (K ≤ F)] [F.1.fixingSubgroup.Normal] in
 
+omit [Fact (K ≤ F)] [F.1.fixingSubgroup.Normal] in
 theorem ideleEmbedding_fst_of_comap_eq {E : FiniteSubfield} [Algebra F.1 E.1]
     (w' : InfinitePlace E.1) (u : InfinitePlace F.1) (hu : w'.comap (algebraMap F.1 E.1) = u)
     [w'.LiesOver u] (x : IdeleGroup F.1) :
     ((ideleEmbedding F.1 E.1 x : IdeleGroup E.1) : 𝔸[E.1]).1 w' =
-      NumberField.LiesOver.completionMap (v := u) (w := w') ((x : 𝔸[F.1]).1 u) := by
+      AbsoluteValue.Completion.map u.1 w'.1 ((x : 𝔸[F.1]).1 u) := by
   subst hu
-  rfl
+  exact (GroundTheory.Global.InfinitePlace.infiniteAdeleRingMap_apply (x : 𝔸[F.1]).1 w').trans
+    (AbsoluteValue.Completion.algebraMap_apply_of_liesOver
+      (w'.comap (algebraMap F.1 E.1)).1 w'.1 _)
 
 variable {E : FiniteSubfield} [Fact (K ≤ E)] [Fact (F ≤ E)] [E.1.fixingSubgroup.Normal]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem levelTransition_comp_infiniteComponent (w' : v.placesOver E.1) [w'.1.LiesOver w.1] (n : ℕ) :
     levelTransition K F E n ≫ infiniteComponent w' n =
       infiniteComponent w n ≫ infLocalTransition K F E w w' n := by
@@ -167,7 +172,7 @@ theorem levelTransition_comp_infiniteComponent (w' : v.placesOver E.1) [w'.1.Lie
   apply Additive.toMul.injective
   apply Units.ext
   change ((ideleEmbedding F.1 E.1 _ : IdeleGroup E.1) : 𝔸[E.1]).1 w'.1 =
-    NumberField.LiesOver.completionMap (v := w.1) (w := w'.1) _
+    AbsoluteValue.Completion.map w.1.1 w'.1.1 _
   exact ideleEmbedding_fst_of_comap_eq w'.1 w.1 (InfinitePlace.LiesOver.comap_eq w'.1 w.1) _
 
 end Infinite

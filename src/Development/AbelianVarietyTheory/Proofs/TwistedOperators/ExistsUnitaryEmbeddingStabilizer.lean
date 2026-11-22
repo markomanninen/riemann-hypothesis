@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryEmbeddingContinuousMulRational
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsRealFnNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryEmbeddingContinuousMulRational
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsRealFnNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
@@ -94,8 +98,6 @@ namespace GlobalTheory.UnitaryEmbeddingGroup
 
 variable {D : D7}
 
-local infixl:70 " ⋆ₘ " => HMul.hMul
-
 theorem unit_gen {R : Type} [CommRing R] (σ : R →+* R) {n r : ℕ} (J : Matrix (Fin n) (Fin n) R)
     (P : Matrix (Fin n) (Fin r) R) (X : Matrix (Fin r) (Fin r) R) (g : Matrix (Fin n) (Fin n) R) (hPX : P * X = g * P)
     (hg : Formalism.UG.cT σ g * J * g = J) :
@@ -110,7 +112,7 @@ section Ad
 variable {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : HermitianOrthogonalExtensionData A B c ε)
 
 theorem matA_eq (h : GA D A) : (matHom A h).1 =
-    (GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) ⋆ₘ (matHom B (stabilizerEmbedding d h)).1 ⋆ₘ (frameMat B A d.ι).map (incA D) := by
+    (GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) * (matHom B (stabilizerEmbedding d h)).1 * (frameMat B A d.ι).map (incA D) := by
   rw [GlobalTheory.UnitaryEmbeddingProperties.unitaryEmbedding_matrix_formula, Matrix.mul_assoc, GlobalTheory.UnitaryEmbeddingProperties.ex_mul_P _ _ (GlobalTheory.UnitaryEmbeddingProperties.qM_mul_map _ d),
     ← Matrix.mul_assoc, GlobalTheory.UnitaryEmbeddingProperties.qM_mul_map, Matrix.one_mul]
 
@@ -133,39 +135,39 @@ theorem mem_rational_of_embedding_rational (h : GA D A) (hg : stabilizerEmbeddin
   have e2 : (matHom B (stabilizerEmbedding d h⁻¹)).1 = (γE⁻¹).val.map (incA D) := by
     have i1 : stabilizerEmbedding d h⁻¹ = (stabilizerEmbedding d h)⁻¹ := map_inv (MonoidHom.mk' (stabilizerEmbedding d) (GlobalTheory.UnitaryEmbeddingProperties.unitaryEmbedding_mul d)) h
     rw [i1, map_inv, e0, ← map_inv]; rfl
-  have hA1 : (Q ⋆ₘ γE.val ⋆ₘ P).map (incA D) = (matHom A h).1 := by
+  have hA1 : (Q * γE.val * P).map (incA D) = (matHom A h).1 := by
     rw [matA_eq d h, e1, Matrix.map_mul, Matrix.map_mul]
-  have hA2 : (Q ⋆ₘ (γE⁻¹).val ⋆ₘ P).map (incA D) = (matHom A h⁻¹).1 := by
+  have hA2 : (Q * (γE⁻¹).val * P).map (incA D) = (matHom A h⁻¹).1 := by
     rw [matA_eq d h⁻¹, e2, Matrix.map_mul, Matrix.map_mul]
-  let M : GL (Fin A.rank) D.host.E := ⟨Q ⋆ₘ γE.val ⋆ₘ P, Q ⋆ₘ (γE⁻¹).val ⋆ₘ P,
+  let M : GL (Fin A.rank) D.host.E := ⟨Q * γE.val * P, Q * (γE⁻¹).val * P,
     map_inj (by
-      show (Q ⋆ₘ γE.val ⋆ₘ P ⋆ₘ (Q ⋆ₘ (γE⁻¹).val ⋆ₘ P)).map (incA D) =
+      show (Q * γE.val * P * (Q * (γE⁻¹).val * P)).map (incA D) =
         (1 : Matrix (Fin A.rank) (Fin A.rank) D.host.E).map (incA D)
       rw [Matrix.map_mul, hA1, hA2, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one,
         Matrix.map_one _ (map_zero _) (map_one _)]),
     map_inj (by
-      show (Q ⋆ₘ (γE⁻¹).val ⋆ₘ P ⋆ₘ (Q ⋆ₘ γE.val ⋆ₘ P)).map (incA D) =
+      show (Q * (γE⁻¹).val * P * (Q * γE.val * P)).map (incA D) =
         (1 : Matrix (Fin A.rank) (Fin A.rank) D.host.E).map (incA D)
       rw [Matrix.map_mul, hA1, hA2, ← Units.val_mul, ← map_mul, inv_mul_cancel, map_one, Units.val_one,
         Matrix.map_one _ (map_zero _) (map_one _)])⟩
   have hu : M ∈ Formalism.UG.UJ (D.sp.cm.sig : D.host.E →+* D.host.E) A.gram := by
-    show Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) (Q ⋆ₘ γE.val ⋆ₘ P) * A.gram * (Q ⋆ₘ γE.val ⋆ₘ P) = A.gram
+    show Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) (Q * γE.val * P) * A.gram * (Q * γE.val * P) = A.gram
     apply map_inj
-    show (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) (Q ⋆ₘ γE.val ⋆ₘ P) * A.gram * (Q ⋆ₘ γE.val ⋆ₘ P)).map (incA D) =
+    show (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) (Q * γE.val * P) * A.gram * (Q * γE.val * P)).map (incA D) =
       A.gram.map (incA D)
     rw [Matrix.map_mul, Matrix.map_mul, ← GlobalTheory.AutFunCounterexample.cT_map_gen, hA1]
     exact h.2
   refine Subgroup.mem_subgroupOf.2 ⟨M, hu, Units.ext ?_⟩
   exact hA1
 
-theorem unitaryEmbedding_fixes_vectors (h : GA D A) : mt B (stabilizerEmbedding d h) ⋆ₘ d.a.map (incA D) = d.a.map (incA D) := by
+theorem unitaryEmbedding_fixes_vectors (h : GA D A) : mt B (stabilizerEmbedding d h) * d.a.map (incA D) = d.a.map (incA D) := by
   obtain ⟨-, a2⟩ := (embRel_iff d h _).2 rfl
   ext i j
   exact congr_fun (a2 (fun k => d.a k j) (by funext k; exact congr_fun (congr_fun d.perp k) j)) i
 
-theorem fix_adj (g : GA D B) (hg : mt B g ⋆ₘ d.a.map (incA D) = d.a.map (incA D)) :
-    (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) d.a ⋆ₘ B.gram).map (incA D) ⋆ₘ mt B g =
-      (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) d.a ⋆ₘ B.gram).map (incA D) := by
+theorem fix_adj (g : GA D B) (hg : mt B g * d.a.map (incA D) = d.a.map (incA D)) :
+    (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) d.a * B.gram).map (incA D) * mt B g =
+      (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) d.a * B.gram).map (incA D) := by
   have hU : Formalism.UG.cT (sigR (AF D.host.F) D.sp.cm.sig) (mt B g) * B.gram.map (incA D) * mt B g =
       B.gram.map (incA D) := g.2
   rw [Matrix.map_mul, ← GlobalTheory.AutFunCounterexample.cT_map_gen]
@@ -175,26 +177,26 @@ theorem fix_adj (g : GA D B) (hg : mt B g ⋆ₘ d.a.map (incA D) = d.a.map (inc
 variable (hε : ε ≠ 0)
 include hε
 
-theorem fix_P (g : GA D B) (hg : mt B g ⋆ₘ d.a.map (incA D) = d.a.map (incA D)) :
-    mt B g ⋆ₘ (frameMat B A d.ι).map (incA D) = (frameMat B A d.ι).map (incA D) ⋆ₘ
-      ((GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) ⋆ₘ mt B g ⋆ₘ (frameMat B A d.ι).map (incA D)) := by
-  have hdec : (frameMat B A d.ι).map (incA D) ⋆ₘ (GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) +
-      d.a.map (incA D) ⋆ₘ (rM d).map (incA D) = 1 := by
+theorem fix_P (g : GA D B) (hg : mt B g * d.a.map (incA D) = d.a.map (incA D)) :
+    mt B g * (frameMat B A d.ι).map (incA D) = (frameMat B A d.ι).map (incA D) *
+      ((GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) * mt B g * (frameMat B A d.ι).map (incA D)) := by
+  have hdec : (frameMat B A d.ι).map (incA D) * (GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) +
+      d.a.map (incA D) * (rM d).map (incA D) = 1 := by
     rw [← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_add _ (map_add _), decomp d hε,
       Matrix.map_one _ (map_zero _) (map_one _)]
-  have h0 : (rM d).map (incA D) ⋆ₘ mt B g ⋆ₘ (frameMat B A d.ι).map (incA D) = 0 := by
+  have h0 : (rM d).map (incA D) * mt B g * (frameMat B A d.ι).map (incA D) = 0 := by
     rw [rM, Matrix.map_mul, Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc _ (mt B g), fix_adj d g hg,
       ← Matrix.map_mul, perp', Matrix.map_zero _ (map_zero _), Matrix.mul_zero]
-  calc mt B g ⋆ₘ (frameMat B A d.ι).map (incA D) = ((frameMat B A d.ι).map (incA D) ⋆ₘ (GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) +
-        d.a.map (incA D) ⋆ₘ (rM d).map (incA D)) ⋆ₘ (mt B g ⋆ₘ (frameMat B A d.ι).map (incA D)) := by
+  calc mt B g * (frameMat B A d.ι).map (incA D) = ((frameMat B A d.ι).map (incA D) * (GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) +
+        d.a.map (incA D) * (rM d).map (incA D)) * (mt B g * (frameMat B A d.ι).map (incA D)) := by
         rw [hdec, Matrix.one_mul]
-    _ = (frameMat B A d.ι).map (incA D) ⋆ₘ ((GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) ⋆ₘ mt B g ⋆ₘ (frameMat B A d.ι).map (incA D)) +
-        d.a.map (incA D) ⋆ₘ ((rM d).map (incA D) ⋆ₘ mt B g ⋆ₘ (frameMat B A d.ι).map (incA D)) := by
+    _ = (frameMat B A d.ι).map (incA D) * ((GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D) * mt B g * (frameMat B A d.ι).map (incA D)) +
+        d.a.map (incA D) * ((rM d).map (incA D) * mt B g * (frameMat B A d.ι).map (incA D)) := by
         simp only [Matrix.add_mul, Matrix.mul_assoc]
     _ = _ := by rw [h0, Matrix.mul_zero, add_zero]
 
-theorem fix_ker (g : GA D B) (hg : mt B g ⋆ₘ d.a.map (incA D) = d.a.map (incA D)) (x : Fin B.rank → D.host.E)
-    (hx : (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) (frameMat B A d.ι) ⋆ₘ B.gram) *ᵥ x = 0) :
+theorem fix_ker (g : GA D B) (hg : mt B g * d.a.map (incA D) = d.a.map (incA D)) (x : Fin B.rank → D.host.E)
+    (hx : (Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) (frameMat B A d.ι) * B.gram) *ᵥ x = 0) :
     mt B g *ᵥ (fun i => incA D (x i)) = fun i => incA D (x i) := by
   have hq : GlobalTheory.UnitaryEmbeddingProperties.qM d *ᵥ x = 0 := by
     rw [GlobalTheory.UnitaryEmbeddingProperties.qM, ← Matrix.mulVec_mulVec, hx, Matrix.mulVec_zero]
@@ -207,27 +209,27 @@ theorem fix_ker (g : GA D B) (hg : mt B g ⋆ₘ d.a.map (incA D) = d.a.map (inc
     funext i; exact RingHom.map_mulVec (incA D) d.a _ i
   rw [hm, Matrix.mulVec_mulVec, hg]
 
-theorem mem_range_of_fix (g : GA D B) (hg : mt B g ⋆ₘ d.a.map (incA D) = d.a.map (incA D)) : ∃ h, stabilizerEmbedding d h = g := by
+theorem mem_range_of_fix (g : GA D B) (hg : mt B g * d.a.map (incA D) = d.a.map (incA D)) : ∃ h, stabilizerEmbedding d h = g := by
   set P' := (frameMat B A d.ι).map (incA D)
   set Q' := (GlobalTheory.UnitaryEmbeddingProperties.qM d).map (incA D)
-  have hg' : mt B g⁻¹ ⋆ₘ d.a.map (incA D) = d.a.map (incA D) := by
+  have hg' : mt B g⁻¹ * d.a.map (incA D) = d.a.map (incA D) := by
     conv_lhs => rw [← hg, ← Matrix.mul_assoc, mt_inv_mul, Matrix.one_mul]
-  have e1 : mt B g ⋆ₘ P' = P' ⋆ₘ (Q' ⋆ₘ mt B g ⋆ₘ P') := fix_P d hε g hg
-  have e2 : mt B g⁻¹ ⋆ₘ P' = P' ⋆ₘ (Q' ⋆ₘ mt B g⁻¹ ⋆ₘ P') := fix_P d hε g⁻¹ hg'
-  have hQP : Q' ⋆ₘ P' = 1 := GlobalTheory.UnitaryEmbeddingProperties.qM_mul_map _ d
-  have hXY : Q' ⋆ₘ mt B g ⋆ₘ P' ⋆ₘ (Q' ⋆ₘ mt B g⁻¹ ⋆ₘ P') = 1 := by
-    rw [Matrix.mul_assoc (Q' ⋆ₘ mt B g), ← e2, ← Matrix.mul_assoc, Matrix.mul_assoc Q', mt_mul_inv, Matrix.mul_one, hQP]
-  have hYX : Q' ⋆ₘ mt B g⁻¹ ⋆ₘ P' ⋆ₘ (Q' ⋆ₘ mt B g ⋆ₘ P') = 1 := by
-    rw [Matrix.mul_assoc (Q' ⋆ₘ mt B g⁻¹), ← e1, ← Matrix.mul_assoc, Matrix.mul_assoc Q', mt_inv_mul, Matrix.mul_one, hQP]
-  have hJA : A.gram.map (incA D) = Formalism.UG.cT (sigR (AF D.host.F) D.sp.cm.sig) P' ⋆ₘ B.gram.map (incA D) ⋆ₘ P' := by
+  have e1 : mt B g * P' = P' * (Q' * mt B g * P') := fix_P d hε g hg
+  have e2 : mt B g⁻¹ * P' = P' * (Q' * mt B g⁻¹ * P') := fix_P d hε g⁻¹ hg'
+  have hQP : Q' * P' = 1 := GlobalTheory.UnitaryEmbeddingProperties.qM_mul_map _ d
+  have hXY : Q' * mt B g * P' * (Q' * mt B g⁻¹ * P') = 1 := by
+    rw [Matrix.mul_assoc (Q' * mt B g), ← e2, ← Matrix.mul_assoc, Matrix.mul_assoc Q', mt_mul_inv, Matrix.mul_one, hQP]
+  have hYX : Q' * mt B g⁻¹ * P' * (Q' * mt B g * P') = 1 := by
+    rw [Matrix.mul_assoc (Q' * mt B g⁻¹), ← e1, ← Matrix.mul_assoc, Matrix.mul_assoc Q', mt_inv_mul, Matrix.mul_one, hQP]
+  have hJA : A.gram.map (incA D) = Formalism.UG.cT (sigR (AF D.host.F) D.sp.cm.sig) P' * B.gram.map (incA D) * P' := by
     rw [← GlobalTheory.AutFunCounterexample.gram_pull B A d.ι d.isom, Matrix.map_mul, Matrix.map_mul, GlobalTheory.AutFunCounterexample.cT_map_gen]
   have hU : Formalism.UG.cT (sigR (AF D.host.F) D.sp.cm.sig) (mt B g) * B.gram.map (incA D) * mt B g =
       B.gram.map (incA D) := g.2
-  have hX : Formalism.UG.cT (sigR (AF D.host.F) D.sp.cm.sig) (Q' ⋆ₘ mt B g ⋆ₘ P') * A.gram.map (incA D) * (Q' ⋆ₘ mt B g ⋆ₘ P') =
+  have hX : Formalism.UG.cT (sigR (AF D.host.F) D.sp.cm.sig) (Q' * mt B g * P') * A.gram.map (incA D) * (Q' * mt B g * P') =
       A.gram.map (incA D) := by
     rw [hJA]
     exact unit_gen _ _ _ _ _ e1.symm hU
-  let hm : GA D A := ⟨⟨Q' ⋆ₘ mt B g ⋆ₘ P', Q' ⋆ₘ mt B g⁻¹ ⋆ₘ P', hXY, hYX⟩, hX⟩
+  let hm : GA D A := ⟨⟨Q' * mt B g * P', Q' * mt B g⁻¹ * P', hXY, hYX⟩, hX⟩
   have hrel : EmbRel B A d.ι g hm := ⟨e1, fun x hx => fix_ker d hε g hg x hx⟩
   exact ⟨hm, ((embRel_iff d hm g).1 hrel).symm⟩
 

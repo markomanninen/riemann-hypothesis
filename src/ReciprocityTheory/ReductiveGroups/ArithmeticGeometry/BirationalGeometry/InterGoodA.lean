@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Geo
 
@@ -17,7 +21,7 @@ theorem exists_ltSeries_lift {R S : Type*} [CommRing R] [CommRing S] [Algebra R 
       rw [(RingHom.injective_iff_ker_eq_bot _).mp hinj]
       exact bot_le
     obtain ⟨Q, -, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral p.last.asIdeal (⊥ : Ideal S)
-      (by rw [← RingHom.ker_eq_comap_bot]; exact hker)
+      (by rw [Ideal.under_def, ← RingHom.ker_eq_comap_bot]; exact hker)
     exact ⟨RelSeries.singleton _ ⟨Q, hQ⟩, rfl, hQc⟩
   | succ n ih =>
     intro p hp
@@ -27,17 +31,22 @@ theorem exists_ltSeries_lift {R S : Type*} [CommRing R] [CommRing S] [Algebra R 
       | simp [hp])
     have hlt : p.eraseLast.last < p.last := p.eraseLast_last_rel_last (by omega)
     obtain ⟨Q, hQle, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral_of_isPrime
-      p.last.asIdeal q'.last.asIdeal (by rw [hq'c]; exact hlt.le)
+      p.last.asIdeal q'.last.asIdeal (by
+        calc
+          under R q'.last.asIdeal = p.eraseLast.last.asIdeal := hq'c
+          _ ≤ p.last.asIdeal := hlt.le)
     have hlt' : q'.last.asIdeal < Q := by
       refine lt_of_le_of_ne hQle fun h => hlt.ne ?_
       ext1
-      rw [← hq'c, h, hQc]
+      calc
+        p.eraseLast.last.asIdeal = under R q'.last.asIdeal := hq'c.symm
+        _ = under R Q := congrArg (under R) h
+        _ = p.last.asIdeal := hQc
     refine ⟨q'.snoc ⟨Q, hQ⟩ hlt', ?_, ?_⟩
     · show q'.length + 1 = n + 1
       rw [hq'len]
-    · first
-      | (rw [RelSeries.last_snoc]; exact hQc)
-      | simpa using hQc
+    · rw [RelSeries.last_snoc]
+      exact hQc
 
 theorem le_ringKrullDim_of_isIntegral {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S)
     (hf : f.IsIntegral) (hinj : Function.Injective f) (n : ℕ)
@@ -106,7 +115,7 @@ theorem succ_le_ringKrullDim_of_isLocalization {A B : Type*} [CommRing A] [CommR
     refine lt_of_le_of_ne (Ideal.comap_mono hab.le) fun e => hab.ne ?_
     have e' : (φ a).asIdeal = (φ b).asIdeal := congrArg PrimeSpectrum.asIdeal e
     ext1
-    rw [← IsLocalization.map_comap M B a.asIdeal, ← IsLocalization.map_comap M B b.asIdeal]
+    rw [← IsLocalization.map_under M B a.asIdeal, ← IsLocalization.map_under M B b.asIdeal]
     exact congrArg (Ideal.map (algebraMap A B)) e'
   obtain ⟨p, hp⟩ := Order.le_krullDim_iff.mp h
   let p' := p.map φ hsm

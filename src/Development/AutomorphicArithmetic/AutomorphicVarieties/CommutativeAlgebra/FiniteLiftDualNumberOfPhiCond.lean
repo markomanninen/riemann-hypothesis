@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
 private theorem pullback_fin_relation (l : ℕ) [Fact l.Prime] (k : Type) [Field k] [Finite k] [CharP k l] (Γ ι : Type) [Group Γ]
     [TopologicalSpace Γ] [Fintype ι] [DecidableEq ι] (rbar : Γ →* Matrix ι ι k) [IsTopologicalGroup Γ]
-    [CompactSpace Γ] (hΦ : PhiCond Γ l) (hlc : IsLocallyConstant rbar) :
+    [CompactSpace Γ] (hΦ : PhiCond (Γ := Γ) l) (hlc : IsLocallyConstant rbar) :
     Finite {r : Γ →* Matrix ι ι (DualNumber k) //
       (∀ g a b, (r g a b).fst = rbar g a b) ∧ ∀ a b, IsLocallyConstant fun g => r g a b} := by
   classical
@@ -50,7 +54,7 @@ private theorem pullback_fin_relation (l : ℕ) [Fact l.Prime] (k : Type) [Field
         rfl
       map_mul' := by
         intro x y
-        simp only [Subgroup.coe_mul, key r x x.2 y y.2, map_add, ofAdd_add] }
+        simp only [Subgroup.coe_mul, key r x x.2 y y.2, map_add (f := _), ofAdd_add] }
   have hφopen : ∀ r a b f, IsOpen ((φ r a b f).ker : Set rbar.ker) := by
     intro r a b f
     have hlc' : IsLocallyConstant fun x : rbar.ker => φ r a b f x :=
@@ -89,7 +93,7 @@ private theorem pullback_fin_relation (l : ℕ) [Fact l.Prime] (k : Type) [Field
   rw [hg, map_mul, map_mul, h1, hK _ (rbar.ker.inv_mem h.2)]
 
 theorem UpperTheory.finite_lift_dualNumber_of_phiCond :
-    ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsLocalRing O] [Finite (ResidueField O)] [CharP (ResidueField O) l] (Γ ι : Type) [Group Γ] [TopologicalSpace Γ] [Fintype ι] [DecidableEq ι] (rbar : Γ →* Matrix ι ι (ResidueField O)) [IsTopologicalGroup Γ] [CompactSpace Γ] [IsCO O (DualNumber (ResidueField O))], PhiCond Γ l → IsLocallyConstant rbar → Finite (Lift O rbar (DualNumber (ResidueField O))) := by
+    ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsLocalRing O] [Finite (ResidueField O)] [CharP (ResidueField O) l] (Γ ι : Type) [Group Γ] [TopologicalSpace Γ] [Fintype ι] [DecidableEq ι] (rbar : Γ →* Matrix ι ι (ResidueField O)) [IsTopologicalGroup Γ] [CompactSpace Γ] [IsCO O (DualNumber (ResidueField O))], PhiCond (Γ := Γ) l → IsLocallyConstant rbar → Finite (Lift O rbar (DualNumber (ResidueField O))) := by
   intro l _ O _ _ _ _ Γ ι _ _ _ _ rbar _ _ _ hΦ hlc
   classical
   have hmem : ∀ x : DualNumber (ResidueField O), x ∈ maximalIdeal (DualNumber (ResidueField O)) ↔ x.fst = 0 := by
@@ -108,7 +112,7 @@ theorem UpperTheory.finite_lift_dualNumber_of_phiCond :
       rw [res_eq_zero_iff, hmem]
       simp
     conv_lhs => rw [hx]
-    rw [map_add, hz, add_zero, AlgHom.commutes, IsLocalRing.ResidueField.algebraMap_eq, ha]
+    rw [map_add (f := _), hz, add_zero, AlgHom.commutes, IsLocalRing.ResidueField.algebraMap_eq, ha]
   have hsq : maximalIdeal (DualNumber (ResidueField O)) ^ 2 = ⊥ := by
     rw [sq, eq_bot_iff]
     refine Ideal.mul_le.2 fun x hx y hy => ?_

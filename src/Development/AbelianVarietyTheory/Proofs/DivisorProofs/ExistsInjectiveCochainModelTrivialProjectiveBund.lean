@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaOfUnitOnEtalePoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CotDComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupChernKummerPullbackNaturalityStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjBundleModelCochainComplexIsStrictlyGEStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveProjBundleModelCochainComplexXStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiscreteSpaceCocycleVanishingPosStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainMapOfFibreCocyclePairingStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteProjBundleModelCohomologyEquivProdFibreStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupProductDiscreteSpaceFibreEqPairingStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsoTrivialProjBundleProdFibreStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullbackProjBundleFormulaMapOfFactorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaOfUnitOnEtalePoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CotDComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupChernKummerPullbackNaturalityStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjBundleModelCochainComplexIsStrictlyGEStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveProjBundleModelCochainComplexXStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiscreteSpaceCocycleVanishingPosStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainMapOfFibreCocyclePairingStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteProjBundleModelCohomologyEquivProdFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupProductDiscreteSpaceFibreEqPairingStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsoTrivialProjBundleProdFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullbackProjBundleFormulaMapOfFactorStatement
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC GlobalTheory.EtC.CupSpec
@@ -31,7 +35,7 @@ variable {q : ℕ}
 theorem ev_comp_cochain {E : Spc} {I K : Cx (ZMod q)} {n d w : ℤ} (α : Cochain ((chains (ZMod q)).obj E) I n)
     (ψ : Cochain I K d) (h : n + d = w) (p : ℕ) (s t : ℤ) (hs : -(p : ℤ) + n = s) (ht : -(p : ℤ) + w = t)
     (U : Scheme.{0}) (x : Sx E p U) :
-    ev (α.comp ψ h) p t ht U x = Sec.map (ψ.v s t (by omega)) (ev α p s hs U x) := by
+    ev (R := ZMod q) (α.comp ψ h) p t ht U x = Sec.map (ψ.v s t (by omega)) (ev (R := ZMod q) α p s hs U x) := by
   rw [ev_def, ev_def, Cochain.comp_v α ψ h _ s t hs (by omega)]
   rfl
 
@@ -40,7 +44,7 @@ theorem cast_cocycle {E : Spc} {n n' i i' : ℤ} (hn : n' = n) (hi : i' = i)
     ∃ γ' : Cocycle ((chains (ZMod q)).obj E) (res (ZMod q) (tw q i)) n,
       (CohomologyClass.mk γ' : Ht q E n i) = Ht.cast hn hi (CohomologyClass.mk γ) ∧
       ∀ (k : ℕ) (s : ℤ) (hs : -(k : ℤ) + n = s) (V : Scheme.{0}) (w : Sx E k V),
-        ev γ'.1 k s hs V w = twCast hi (ev γ.1 k s (by omega) V w) := by
+        ev (R := ZMod q) γ'.1 k s hs V w = twCast hi (ev (R := ZMod q) γ.1 k s (by omega) V w) := by
   subst hn hi
   exact ⟨γ, rfl, fun _ _ _ _ _ => rfl⟩
 
@@ -61,13 +65,13 @@ theorem Jsec_sum {N : ℕ} {I : Cx (ZMod q)} {n : ℤ} {U : Scheme.{0}} {ι : Ty
 
 theorem ev_cocycle_sum {E : Spc} {I : Cx (ZMod q)} {n : ℤ} {ι : Type} (t : Finset ι) (c : ι → Cocycle ((chains (ZMod q)).obj E) I n)
     (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (↑(∑ j ∈ t, c j) : Cochain _ _ _) p s h U x = ∑ j ∈ t, ev (c j).1 p s h U x := by
+    ev (R := ZMod q) (↑(∑ j ∈ t, c j) : Cochain _ _ _) p s h U x = ∑ j ∈ t, ev (R := ZMod q) (c j).1 p s h U x := by
   rw [coe_cocycle_sum]
   exact map_sum (evHom I n p s h U x) _ t
 
 theorem ev_cochain_sum {E : Spc} {I : Cx (ZMod q)} {n : ℤ} {ι : Type} (t : Finset ι) (c : ι → Cochain ((chains (ZMod q)).obj E) I n)
     (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (∑ j ∈ t, c j) p s h U x = ∑ j ∈ t, ev (c j) p s h U x :=
+    ev (R := ZMod q) (∑ j ∈ t, c j) p s h U x = ∑ j ∈ t, ev (R := ZMod q) (c j) p s h U x :=
   map_sum (evHom I n p s h U x) c t
 
 end
@@ -108,7 +112,8 @@ theorem pbf_disc_model : ∀ (q : ℕ) [NeZero q] (N : ℕ) (i : ℤ), ∃ (J : 
     fun {K L m} => AddMonoidHom.mk' CohomologyClass.mk CohomologyClass.mk_add
   have hL : (∑ j, cpost _ (ψ j) (n - 2 * ((j : ℕ) : ℤ)) n (by omega) (a j)) =
       CohomologyClass.mk (∑ j, zcomp (α j) (ψ j) (show n - 2 * ((j : ℕ) : ℤ) + 2 * ((j : ℕ) : ℤ) = n by ring)) := by
-    rw [show CohomologyClass.mk (∑ j, zcomp (α j) (ψ j) (show n - 2 * ((j : ℕ) : ℤ) + 2 * ((j : ℕ) : ℤ) = n by ring)) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show CohomologyClass.mk (∑ j, zcomp (α j) (ψ j) (show n - 2 * ((j : ℕ) : ℤ) + 2 * ((j : ℕ) : ℤ) = n by ring)) =
       mkH (∑ j, zcomp (α j) (ψ j) _) from rfl, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← hαa j]
@@ -116,7 +121,8 @@ theorem pbf_disc_model : ∀ (q : ℕ) [NeZero q] (N : ℕ) (i : ℤ), ∃ (J : 
   have hR : (∑ j : Fin N, ((cup q (pull _ (prod.fst : disc.obj F ⨯ fibQ q N ⟶ _) _ _ (a j))
       (pull _ (prod.snd : disc.obj F ⨯ fibQ q N ⟶ _) _ _ (cpow q (c1 q (lineQ q N)) j))).cast (by ring) (by ring) :
         Ht q _ n i)) = CohomologyClass.mk (∑ j, γ' j) := by
-    rw [show CohomologyClass.mk (∑ j, γ' j) = mkH (∑ j, γ' j) from rfl, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show CohomologyClass.mk (∑ j, γ' j) = mkH (∑ j, γ' j) from rfl, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     change _ = CohomologyClass.mk (γ' j)
     rw [hγ'c j, hγc j, hαa j, hz j]
@@ -131,7 +137,7 @@ theorem pbf_disc_model : ∀ (q : ℕ) [NeZero q] (N : ℕ) (i : ℤ), ∃ (J : 
     rw [coe_cocycle_sum, cochain_sum_v]
     exact Finset.sum_eq_zero fun j _ => key j
   · intro U x
-    have hc := fun j : Fin N => hψ j (n - 2 * ((j : ℕ) : ℤ)) n (by ring) U (ev (α j).1 0 (n - 2 * ((j : ℕ) : ℤ)) (by simp) U x)
+    have hc := fun j : Fin N => hψ j (n - 2 * ((j : ℕ) : ℤ)) n (by ring) U (ev (R := ZMod q) (α j).1 0 (n - 2 * ((j : ℕ) : ℤ)) (by simp) U x)
     choose c hc1 hc2 using hc
     refine ⟨∑ j, c j, ?_, ?_⟩
     · rw [ev_cocycle_sum, Jsec_sum]
@@ -153,8 +159,8 @@ theorem pbf_disc_model : ∀ (q : ℕ) [NeZero q] (N : ℕ) (i : ℤ), ∃ (J : 
           rw [prod.map_fst]
           rfl)
       have e3 : Sec.res (Sx.map (prod.fst : sch.obj U ⨯ fibQ q N ⟶ _) y : V ⟶ U)
-          (ev (α j).1 0 (n - 2 * ((j : ℕ) : ℤ)) (by simp) U x) =
-          ev (α j).1 0 (n - 2 * ((j : ℕ) : ℤ)) (by simp) V (show Sx (disc.obj F) 0 V from Sx.map (p := k)
+          (ev (R := ZMod q) (α j).1 0 (n - 2 * ((j : ℕ) : ℤ)) (by simp) U x) =
+          ev (R := ZMod q) (α j).1 0 (n - 2 * ((j : ℕ) : ℤ)) (by simp) V (show Sx (disc.obj F) 0 V from Sx.map (p := k)
             (prod.fst : disc.obj F ⨯ fibQ q N ⟶ _) (Sx.map (prod.map (disc.map (yonedaEquiv.symm x)) (𝟙 (fibQ q N))) y)) :=
         (ev_res _ _ _ _ _ _).trans (congrArg _ e1.symm)
       rw [e2, e3]

@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
-import Development.WeilBound.ThetaLifts.LeviDeterminants.WeilRepRationalDarbouxFixesThetaDistribution
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EqZeroOfTheta
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumTensorProduct
-import Development.WeilBound.ThetaLifts.LatticeBasics.RatEquiv
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.WeilRepRationalDarbouxFixesThetaDistribution
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EqZeroOfTheta
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumTensorProduct
+public import Development.WeilBound.ThetaLifts.LatticeBasics.RatEquiv
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,9 +19,9 @@ namespace PositivityTheory.SiegelWeilFormula.Tauto
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
+
 open PositivityTheory.ThKF0.Resc in
 set_option maxHeartbeats 1000000 in
-
 theorem split_core {m n : ℕ} {κ : Type} [Fintype κ] {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) {δ : E}
     (hq : IsQuad σ δ) (JA : Matrix (Fin m) (Fin m) E) (JB : Matrix (Fin n) (Fin n) E) (hA : IsHerm σ JA)
     (hB : IsHerm σ JB)
@@ -53,8 +57,8 @@ theorem split_core {m n : ℕ} {κ : Type} [Fintype κ] {ψ : AddChar (AF F) ℂ
     ψ hψ.1 (PositivityTheory.ThKF0.isStd_ne_one hψ) hψ.2.1 hq hA (GlobalTheory.CompanionTheory.ThetaMember.isHerm_dbl hB)
     (incM F (dbl JB)) rfl d' d₀ hd χ (Fin n) (diagCols (Fin n)) (diagCols (Fin n)) hC om' hχ' hL hS hR g hg
 
-omit [NumberField F] [NumberField E] in
 
+omit [NumberField F] [NumberField E] in
 theorem split_resc {R K : Type} [CommRing R] [CommRing K] [Algebra R K] [Invertible (2 : R)] {c : K →ₐ[R] K}
     {α β ν κ : Type} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β] [Fintype ν] [DecidableEq ν] [Fintype κ]
     {ξ ξ' u v : K} (h : ξ = ξ' * u * v) (hv : IsUnit v) {JA JA' : Matrix α α K} {JB JB' : Matrix β β K}
@@ -72,9 +76,9 @@ theorem split_resc {R K : Type} [CommRing R] [CommRing K] [Algebra R K] [Inverti
     fun l hl hinv p t hp => hR l hl hinv (Subgroup.inclusion hU.le p) t hp,
     fun g => ⟨Subgroup.inclusion hU.ge g, rfl, rfl⟩⟩
 
+
 open PositivityTheory.ThKF0.Resc in
 set_option maxHeartbeats 1000000 in
-
 theorem theta_sum_rational_invariant (d : SD σ) (γ : d.G) (hγ : γ ∈ rat2 σ d.Y) (Ψ : d.Fn) (hΨ : Ψ ∈ d.sch) :
     thetaSum F (d.om γ Ψ) = thetaSum F Ψ := by
   have hσ : IsCMExt F E σ := d.cm

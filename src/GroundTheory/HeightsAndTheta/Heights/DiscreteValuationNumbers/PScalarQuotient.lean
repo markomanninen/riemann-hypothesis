@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -33,7 +38,7 @@ theorem classNum_add {σ : Type*} (cls : σ → K → ℤ) (H₁ H₂ : MvPolyno
     ext H₁ (H₁.support ∪ H₂.support) Finset.subset_union_left,
     ext H₂ (H₁.support ∪ H₂.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun μ _ => ?_
-  rw [coeff_add, add_mul]
+  rw [MvPolynomial.coeff_add, add_mul]
 
 def classNumHom {σ : Type*} (cls : σ → K → ℤ) (Q : List (K → ℤ)) (W : Ideal (MRing ι O)) :
     MvPolynomial σ ℤ →+ ℤ where
@@ -56,8 +61,8 @@ theorem classNum_monomial {σ : Type*} (cls : σ → K → ℤ) (μ : σ →₀ 
     simp
   · rw [support_monomial, if_neg hc, Finset.sum_singleton, coeff_monomial, if_pos rfl]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem classList_diag {N : ℕ} (x : Fin N → K → ℤ) (i : Fin N) (j l : ℕ) :
     classList (Sum.elim x x) (Finsupp.single (Sum.inl i) j + Finsupp.single (Sum.inr i) l) =
       classList x (Finsupp.single i (j + l)) := by
@@ -114,12 +119,12 @@ theorem divCycle_support_finite (P : Ideal (MRing ι O)) (f : MRing ι O) :
   · exact h.1
   · exact absurd rfl hW
 
-omit [Fintype K] [∀ k, Fintype (ι k)] [IsDomain O] [IsDiscreteValuationRing O] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] [IsDomain O] [IsDiscreteValuationRing O] in
 theorem divCycle_unit (P : Ideal (MRing ι O)) (u : Oˣ) : divCycle P (C (u : O)) = 0 := by
   funext W
   unfold divCycle
-  rw [dif_neg]
+  rw [dite_eq_right]
   · rfl
   rintro ⟨h, -⟩
   have hW : W.IsPrime := h.1.1
@@ -153,8 +158,8 @@ theorem ratDiv_const (P : Ideal (MRing ι O)) [P.IsPrime]
 
 variable [DecidableEq K]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] [IsDomain O] [IsDiscreteValuationRing O] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] [IsDomain O] [IsDiscreteValuationRing O] in
 theorem isVerticalDivisor_const (P : Ideal (MRing ι O)) [P.IsPrime] (ϖ : O) (u : Oˣ) (n : ℕ)
     (hP : (C ((u : O) * ϖ ^ n) : MRing ι O) ∉ P) :
     IsVerticalDivisor P ϖ 0 (C ((u : O) * ϖ ^ n)) 1 := by

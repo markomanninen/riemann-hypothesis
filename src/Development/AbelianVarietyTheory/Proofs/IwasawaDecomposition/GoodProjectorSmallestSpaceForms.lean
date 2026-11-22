@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -49,8 +54,8 @@ theorem mem_CCP_cast (C : ChainReal D) (b : Bool) (μ : D.what₂.Tup) :
   subst h
   exact hw
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem iota_eq_gen (X : RowSide D EE) (C : ChainReal D) (b : Bool) (I : RowIds X C b) {n : ℕ}
     {bs : OrthonormalBasis (Fin n) ℂ EE} {ty : Fin n → D.what₂.FT} (hR : RowSideReal X C b I bs ty)
     (μ : D.what₂.Tup) (hμ : Used0 D μ) (hok : C.IoOK b μ) (hm : 0 < D.R.m)
@@ -182,12 +187,13 @@ theorem isIo_transfer {G H S Sinf Ds Dt : Type*} [MeasurableSpace H] [AddCommGro
     {th : G → H → S → ℂ} {pt : Sinf → S} {T : Sinf →ₗ[ℂ] Ds →ₗ[ℂ] Dt} {CCs CCs' : Submodule ℂ (Ds →ₗ[ℂ] (H → ℂ))}
     {CCt CCt' : Submodule ℂ (Dt →ₗ[ℂ] (G → ℂ))} {io : CCs →ₗ[ℂ] CCt} {io' : CCs' →ₗ[ℂ] CCt'}
     (h : Lift.IsIo ν 𝓕 th pt T CCs CCt io) (hc : ∀ F : CCs', ∃ F' : CCs, F.1 = F'.1 ∧ (io' F).1 = (io F').1) :
-    Lift.IsIo ν 𝓕 th pt T CCs' CCt' io' where
-  integ F φ v g := by
+    Lift.IsIo ν 𝓕 th pt T CCs' CCt' io' := by
+  constructor
+  · intro F φ v g
     obtain ⟨F', h1, -⟩ := hc F
     rw [h1]
     exact h.integ F' φ v g
-  eq F φ v g := by
+  · intro F φ v g
     obtain ⟨F', h1, h2⟩ := hc F
     rw [h1, h2]
     exact h.eq F' φ v g
@@ -331,8 +337,8 @@ theorem thDn_eq_dnFrom (R : RealDat D A Ks) (F : Face D A) (tupT : D.what₂.Tup
     (R.ioX (tupT μ) ((R.cX.toMap R.prX ∘ₗ (R.HX (tupT μ)).e).rangeRestrict y'))
     ((ioX_val R F tupT hm hTop b μ u hu').trans (congrArg (fun z => (R.ioX (tupT μ) z).1) e2))
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem iota_eq_real (R : RealDat D A Ks) (F : Face D A) (tupT : D.what₂.Tup → T) (hm : 0 < D.R.m)
     (hTop : TopMultH R) (hch : R.IsChain) (hS : StepLev R F) (hT : TopLev R F) (hP : RowProj R F)
     {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] [FiniteDimensional ℂ EE] (X : RowSide D EE) (b : Bool)

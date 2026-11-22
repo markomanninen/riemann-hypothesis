@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.StepW
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.StepW
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem kv_lin {k : HA (Fv F v) σ J} (hk : k ∈ Formalism.L2.SG.TypedSets.Kv �
   (hk y).symm
 
 theorem locF_smul (k : HA (Fv F v) σ J) {r : ℕ} (X : TupV (E := E) v n (r + 1)) :
-    locF v (k • X) = k • locF v X := by
+    locF (E := E) (n := n) (r := r) v (k • X) = k • locF v X := by
   funext a
   show sc (E := E) v (alp v r a) • lin (Fv F v) σ J k (X a) =
     lin (Fv F v) σ J k (sc (E := E) v (alp v r a) • X a)
@@ -62,7 +66,8 @@ theorem prim_smul {k : HA (Fv F v) σ J} (hk : k ∈ Formalism.L2.SG.TypedSets.K
   · rw [smul_apply_lin, kv_lin σ J v Λ hk]; exact hY.1 i
   · apply hY.2 c
     have : (∑ i, c i • (k • Y) i) = lin (Fv F v) σ J k (∑ i, c i • Y i) := by
-      simp only [smul_apply_lin, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [smul_apply_lin, map_sum, map_smul]
     rw [this, kv_lin σ J v Λ hk] at hc
     exact hc
 

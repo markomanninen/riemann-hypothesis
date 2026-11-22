@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -61,7 +66,7 @@ theorem prod_arg_real_unit_eq_one (E : Type) [Field E] [NumberField E] [IsCMFiel
       linear_combination -hPs
     rw [mem_integralClosure_iff, hs'] at hs
     have hint : IsIntegral ℤ ((-2 / q : ℚ)) :=
-      (isIntegral_algebraMap_iff (algebraMap ℚ ℂ).injective).mp hs
+      (isIntegral_algebraMap_iff ).mp hs
     obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.mp hint
     have hqQ : (q : ℚ) ≠ 0 := by exact_mod_cast hq.ne_zero
     have h2 : (n : ℚ) * q = -2 := by

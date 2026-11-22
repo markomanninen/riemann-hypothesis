@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem twConj_cent_mul {G : Type} [Group G] (θ : Monoid.End G) {t δ : G} (x :
         simp only [twConj, map_mul, _root_.mul_inv_rev, mul_assoc]
     _ = twConj θ x δ := by rw [h]; rfl
 
-theorem logSize_nonneg {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} (g : GA E n) :
+theorem logSize_nonneg {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} (g : GA E n) :
     0 ≤ logSize g := by
   have h : ∀ A : Matrix (Fin n) (Fin n) (Ad E), 0 ≤ logSizeM A := fun A =>
     add_nonneg (Finset.sum_nonneg fun _ _ => Real.posLog_nonneg)

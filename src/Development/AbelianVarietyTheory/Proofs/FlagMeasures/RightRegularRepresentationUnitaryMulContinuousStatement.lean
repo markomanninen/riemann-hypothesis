@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightRegularRepresentationUnitaryMulContinuous
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightRegularRepresentationUnitaryMulContinuous
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+
+@[expose] public section
+
 open MeasureTheory Formalism.MainNotions.S
 open scoped InnerProductSpace
 set_option maxHeartbeats 1000000 in

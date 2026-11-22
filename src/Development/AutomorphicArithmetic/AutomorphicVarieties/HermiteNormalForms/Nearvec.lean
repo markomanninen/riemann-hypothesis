@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Scinv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Nearcoord
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Cntconj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Scinv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Nearcoord
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Cntconj
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
 
 theorem UpperTheory.V.KT.nearvec :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (A : Matrix (Fin N) (Fin N) (𝓞 L)), A.det ≠ 0 →
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (A : Matrix (Fin N) (Fin N) (𝓞 L)), A.det ≠ 0 →
     (nearVec A).Finite ∧ (nearVec A).ncard ≤ (2 * RR L N + 1) ^ dd L N := by
   intro L _ _ _ N A hA
   obtain ⟨hpos, B, hAB, _⟩ := scinv L N A hA

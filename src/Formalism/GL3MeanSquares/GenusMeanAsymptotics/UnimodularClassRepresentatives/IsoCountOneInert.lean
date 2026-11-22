@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MapMkConjTranspose
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MapMkConjTranspose
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -57,7 +61,8 @@ theorem isoCount_one_split (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) 
         ∏ j ∈ Finset.Icc 1 m,
           (1 - ((Ideal.absNorm (P.comap (algebraMap (𝓞 F) (𝓞 K))) : ℝ))⁻¹ ^ j) := by
   have hF := hFF.out
-  have h𝔭 : (P.comap (algebraMap (𝓞 F) (𝓞 K))).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+  have h𝔭 : (P.comap (algebraMap (𝓞 F) (𝓞 K))).IsMaximal :=
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal P
   set 𝔭 := P.comap (algebraMap (𝓞 F) (𝓞 K)) with h𝔭def
   have e1 : extP K 𝔭 ^ 1 ≤ P := by
     rw [pow_one]
@@ -105,14 +110,14 @@ theorem isoCount_one (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {𝔭 
   unfold alphaStd
   rw [etaF_comap hK hF hP]
   by_cases hc : Formalism.HermitianLatticesTheory.conjIdeal (K := K) P = P
-  · rw [isoCount_one_inert hK hP hc u hu hunit, if_pos hc]
+  · rw [isoCount_one_inert hK hP hc u hu hunit, ite_eq_left hc]
     congr 1
     apply Finset.prod_congr rfl
     intro j _
     rw [_root_.zpow_neg, _root_.zpow_natCast, ← inv_pow, ← mul_pow, inv_neg]
     congr 2
     ring
-  · rw [isoCount_one_split hK hP hc u hu hunit, if_neg hc]
+  · rw [isoCount_one_split hK hP hc u hu hunit, ite_eq_right hc]
     congr 1
     apply Finset.prod_congr rfl
     intro j _

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestCloudBOfThree
-import Formalism.LocalToGlobal.GroupLattices.FockModels.Cartan
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProductFirstParts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestCloudBOfThree
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.Cartan
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProductFirstParts
+
+@[expose] public section
 
 noncomputable section
 

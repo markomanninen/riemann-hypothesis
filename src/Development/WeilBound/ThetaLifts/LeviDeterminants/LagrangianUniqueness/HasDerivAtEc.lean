@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.RealTest
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DenseHasCompactSupport
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.RealTest
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DenseHasCompactSupport
+
+@[expose] public section
 
 open Complex MeasureTheory
 open scoped Real ContDiff RealInnerProductSpace FourierTransform
@@ -83,7 +87,8 @@ theorem delta_pi (n : ℕ) (T : SchwartzMap (Fin n → ℝ) ℂ →L[ℂ] ℂ)
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [sub_apply, ph_apply (ht i), sub_mul, one_mul, he']
     rfl
-  rw [e1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, map_sum]
   exact Finset.sum_eq_zero fun i _ => by rw [map_sub, hT i R⁻¹ (G i) _ (ph_apply (ht i) _), sub_self]
 
 theorem test_pi (n : ℕ) : ∃ f₀ : SchwartzMap (Fin n → ℝ) ℂ, ∀ T : SchwartzMap (Fin n → ℝ) ℂ →L[ℂ] ℂ,
@@ -185,7 +190,7 @@ theorem Test.shear {S S' : Set (E × E)} (h : Test S) (b : E →ₗ[ℝ] E) (hb 
   refine h.map (ph _) (ph_surj ht) (fun w => (w.1, w.2 + b w.1)) (fun w f g hr z => ?_) hS
   simp only [ph_apply ht, hr z, ← mul_assoc, ← ec_add]
   congr 2
-  simp only [map_add, inner_add_left, inner_add_right, hb w.1 z]
+  simp only [map_add (f := _), inner_add_left, inner_add_right, hb w.1 z]
   ring
 
 theorem test_lag (P : Submodule ℝ E) (b : E →ₗ[ℝ] E) (hb : ∀ x y, ⟪x, b y⟫ = ⟪y, b x⟫) :
@@ -225,7 +230,7 @@ theorem realTest : RealTest := by
     rw [real_inner_comm, InnerProductSpace.toDual_symm_apply, hb]; rfl
   let B : E →ₗ[ℝ] E :=
     { toFun := β
-      map_add' := fun u u' => ext_inner_left ℝ fun v => by simp only [hβ, inner_add_right, map_add]
+      map_add' := fun u u' => ext_inner_left ℝ fun v => by simp only [hβ, inner_add_right, map_add (f := _)]
       map_smul' := fun c u => ext_inner_left ℝ fun v => by
         simp only [hβ, inner_smul_right, map_smul, RingHom.id_apply, smul_eq_mul] }
   have hB : ∀ u v, ⟪v, B u⟫ = b (e.symm v) (e.symm u) := hβ

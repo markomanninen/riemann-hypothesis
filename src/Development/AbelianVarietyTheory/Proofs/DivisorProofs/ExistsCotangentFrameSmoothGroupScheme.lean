@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap epsR IsTangent)
 open GlobalTheory.SqZeroPt GlobalTheory.PDivGroup GlobalTheory.DeRham
@@ -38,13 +43,13 @@ theorem sub_isLocalizedModule {X : Scheme.{0}} {F : X.Modules} [F.IsQuasicoheren
 variable {S X : Scheme.{0}} {π : X ⟶ S} {e : S ⟶ X} (he : e ≫ π = 𝟙 S) {U : S.Opens}
   {W : X.Opens}
 
-include he in
 
+include he in
 theorem preimage_eq (c : IsChart π e U W) : e ⁻¹ᵁ W = U :=
   le_antisymm ((le_preimage_iff he).1 (e.preimage_mono c.le_base)) c.le
 
-include he in
 
+include he in
 theorem isQuasicoherent_restrict_ideal (c : IsChart π e U W) :
     ((ideal e).restrict c.affine.fromSpec).IsQuasicoherent := by
   have := (isVB_structureModule X).isQuasicoherent
@@ -71,8 +76,8 @@ namespace GlobalTheory.ConormalFrame
 variable {S X : Scheme.{0}} {π : X ⟶ S} {e : S ⟶ X} (he : e ≫ π = 𝟙 S) {U : S.Opens}
   {W : X.Opens}
 
-include he in
 
+include he in
 theorem isQuasicoherent_conormal : (conormal e).IsQuasicoherent := by
   refine GlobalTheory.QCoh.isQuasicoherent_of_forall_exists_affine _ fun x => ?_
   obtain ⟨U, W, hx, -, c⟩ := exists_isChart he (x := x) (V := ⊤) trivial
@@ -90,8 +95,8 @@ namespace GlobalTheory.ConormalFrame
 
 open GlobalTheory.QCoh
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isBaseChange_pullbackSections {X Y : Scheme.{0}} (f : X ⟶ Y) (G : Y.Modules)
     {U : X.Opens} {V : Y.Opens} (hU : IsAffineOpen U) (hV : IsAffineOpen V)
     [(G.restrict hV.fromSpec).IsQuasicoherent] (e : U ≤ f ⁻¹ᵁ V) :
@@ -141,17 +146,16 @@ theorem ofAugCot_bijective (c : IsChart π e U W) : Function.Bijective (c.ofAugC
   · obtain ⟨x, rfl⟩ := (RingHom.ker (c.aug he)).toCotangent_surjective x
     rw [key]
     exact hb.lift_eq g _
-  · refine hb.inductionOn y (fun y => c.ofAugCot he (hb.lift g y) = y)
-      (by rw [map_zero, map_zero]; rfl) (fun s => ?_) (fun r y hy => ?_) fun y z hy hz => ?_
+  · refine hb.inductionOn y (fun s => ?_) (fun r y hy => ?_) fun y z hy hz => ?_
     · rw [hb.lift_eq]
       exact key _
     · rw [map_smul, map_smul, hy]
       rfl
-    · rw [map_add, map_add, hy, hz]
+    · rw [map_add (f := _), map_add (f := _), hy, hz]
       rfl
 
-include he in
 
+include he in
 theorem exists_isFrame [Smooth π] (x : S) :
     ∃ (U : S.Opens) (n : ℕ) (s : Fin n → Γ(conormal e, U)), x ∈ U ∧ IsFrame s := by
   have := isQuasicoherent_conormal he

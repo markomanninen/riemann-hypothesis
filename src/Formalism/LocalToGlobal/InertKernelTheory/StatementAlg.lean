@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.TaylorMvLinear
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EndoZInstance
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.TaylorMvLinear
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EndoZInstance
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,6 @@ def kerB (B : Ker.Base D cc δ) : (Fin 4 × D.what₂.Tau → ℂ) → ℂ :=
 
 def KapAlg (B : Ker.Base D cc δ) : Prop := IsAlgebraic ℚ B.kappa
 
-def KerAlg (B : Ker.Base D cc δ) : Prop := AlgMv (kerB B)
-
 def IsTors (B : Ker.Base D cc δ) (x : D.what₂.Tau → ℂ) : Prop :=
   ∃ m : ℕ, 0 < m ∧ (m : ℂ) • x ∈ B.lamM
 
@@ -52,9 +54,6 @@ def KerTransAlg (B : Ker.Base D cc δ) : Prop :=
     AlgMv (Formalism.L2.Th1.H.opU (stdH B.L (Fin 4 × D.what₂.Tau)) (diag4 x) (kerB B))
 
 end Data
-
-def ThMMAlg : Prop :=
-  ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Ker.Base D cc δ), B.StdOK → KapAlg B → KerAlg B → AlgMv B.thMM
 
 def ThMMTransAlg : Prop :=
   ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Ker.Base D cc δ), B.StdOK → KapAlg B → KerTransAlg B →

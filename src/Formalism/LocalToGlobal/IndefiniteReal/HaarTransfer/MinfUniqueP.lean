@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.HaarTransfer.MinfUnique
-import Formalism.LocalRingCardinality.SpanPowerMembership.HaarDensityNeZero
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.LocalRingCardinality.SpanPowerMembership.HaarDensityNeZero
+
+@[expose] public section
 
 namespace Formalism.IndefR.Leaf.Proofs
 open Formalism.IndefR.Leaf MeasureTheory Formalism.BasicNotions

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjPair
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGACutGraded
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjPair
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGACutGraded
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 

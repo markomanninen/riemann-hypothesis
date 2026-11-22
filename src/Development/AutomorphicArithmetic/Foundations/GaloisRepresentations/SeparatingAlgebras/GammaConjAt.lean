@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,16 +60,17 @@ def RInt : Prop :=
     ∫ θ : Fin n → UnitAddCircle, evalAt (pt θ) (hlR (t : ℂ) l) * dens (t : ℂ) (pt θ) = if l = 0 then (n.factorial : ℂ) else 0
 
 def StarEx : Prop :=
-  ∀ (n : ℕ), ∀ p ∈ symmetricLaurent n, ∃ q ∈ symmetricLaurent n, ∀ z : Fin n → ℂˣ, (∀ i, ‖(z i : ℂ)‖ = 1) →
+  ∀ (n : ℕ), ∀ p ∈ symmetricLaurent (n := n), ∃ q ∈ symmetricLaurent (n := n),
+    ∀ z : Fin n → ℂˣ, (∀ i, ‖(z i : ℂ)‖ = 1) →
     evalAt z q = (starRingEnd ℂ) (evalAt z p)
 
 def SymEx : Prop :=
-  ∀ (n : ℕ) (Φ : MvPolynomial (Fin n) ℂ), ∃ p ∈ symmetricLaurent n,
+  ∀ (n : ℕ) (Φ : MvPolynomial (Fin n) ℂ), ∃ p ∈ symmetricLaurent (n := n),
     (∀ z : Fin n → ℂˣ, evalAt z p = ∏ σ : Equiv.Perm (Fin n), MvPolynomial.eval (fun i => (z (σ i) : ℂ)) Φ) ∧
     (Φ ≠ 0 → ∃ Ψ : MvPolynomial (Fin n) ℂ, Ψ ≠ 0 ∧ ∀ z : Fin n → ℂˣ, evalAt z p = MvPolynomial.eval (fun i => (z i : ℂ)) Ψ)
 
 def Small : Prop :=
-  ∀ (n : ℕ) (Φ : MvPolynomial (Fin n) ℂ), Φ ≠ 0 → ∀ δ : ℝ, 0 < δ → ∃ p ∈ symmetricLaurent n,
+  ∀ (n : ℕ) (Φ : MvPolynomial (Fin n) ℂ), Φ ≠ 0 → ∀ δ : ℝ, 0 < δ → ∃ p ∈ symmetricLaurent (n := n),
     (∀ z : Fin n → ℂˣ, MvPolynomial.eval (fun i => (z i : ℂ)) Φ = 0 → evalAt z p = 1) ∧
     ∫ θ : Fin n → UnitAddCircle, ‖evalAt (pt θ) p‖ ^ 2 ≤ δ
 
@@ -74,8 +79,8 @@ section
 variable (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] (n : ℕ)
   [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] (μ : Measure (GL (Fin n) F)) [μ.IsHaarMeasure]
 
-open Classical in
 
+open Classical in
 def GammaIntAt : Prop :=
   ∀ g : GL (Fin n) F,
     (Continuous fun θ : Fin n → UnitAddCircle => zonalSpherical μ (pt θ) g) ∧
@@ -86,8 +91,8 @@ def GammaConjAt : Prop :=
   ∀ (z : Fin n → ℂˣ), Function.Injective z → (∀ i, ‖(z i : ℂ)‖ = 1) → ∀ g : GL (Fin n) F,
     zonalSpherical μ z g⁻¹ = (starRingEnd ℂ) (zonalSpherical μ z g)
 
-variable {F n μ} in
 
+variable {F n μ} in
 def IsReps (h : SphericalHecke μ (F := F) (n := n)) (T : Finset (GL (Fin n) F)) : Prop :=
   (∀ g ∈ T, ∀ g' ∈ T, g⁻¹ * g' ∈ GLnLocal.integralGL F n → g = g') ∧
   ∀ f : GL (Fin n) F → ℂ, (∀ g, ∀ k ∈ GLnLocal.integralGL F n, f (g * k) = f g) →

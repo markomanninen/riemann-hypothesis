@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbLoc
-import Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbGeo
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbLoc
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbGeo
+
+@[expose] public section
 
 noncomputable section
 
@@ -330,7 +334,7 @@ theorem rootIdx_left (τ : CMType H) (a : Fin D.p) :
 theorem rootIdx_right (τ : CMType H) (a : Fin D.q) :
     HodgeCpt.rootIdx D (τ, Fin.natAdd D.p a.rev) = ⟨.inr τ, a⟩ := by
   unfold HodgeCpt.rootIdx
-  rw [dif_neg (by simp)]
+  rw [dite_eq_right (by simp)]
   congr 1
   apply Fin.ext
   have := a.2

@@ -1,22 +1,26 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatLineGenerator
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CardComapMulFinsumEqFinsumFibres
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GapN
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.KillNoneFormPoly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformisedDegreePolynomialAntisymmetricStatement
-import Development.WeilBound.CoreStatements.FlagImmersions.HasPerConj
-import Development.WeilBound.CoreStatements.FlagImmersions.ExistsModelOfEq
-import Development.WeilBound.CoreStatements.FlagImmersions.NormDetEq
-import Development.WeilBound.CoreStatements.FlagImmersions.PerCoord
-import Development.WeilBound.CoreStatements.FlagImmersions.ExistsRightInv
-import Development.WeilBound.CoreStatements.FlagImmersions.RankLem
-import Development.WeilBound.CoreStatements.FlagImmersions.EqZeroOfTri
-import Development.WeilBound.CoreStatements.FlagImmersions.GenRigidOf
-import Development.WeilBound.CoreStatements.FlagImmersions.CountableBall
-import Development.WeilBound.CoreStatements.FlagImmersions.Imports
-import Development.WeilBound.CoreStatements.CentralCharts.FlagImmersion
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatLineGenerator
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CardComapMulFinsumEqFinsumFibres
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GapN
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.KillNoneFormPoly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformisedDegreePolynomialAntisymmetricStatement
+public import Development.WeilBound.CoreStatements.FlagImmersions.HasPerConj
+public import Development.WeilBound.CoreStatements.FlagImmersions.ExistsModelOfEq
+public import Development.WeilBound.CoreStatements.FlagImmersions.NormDetEq
+public import Development.WeilBound.CoreStatements.FlagImmersions.PerCoord
+public import Development.WeilBound.CoreStatements.FlagImmersions.ExistsRightInv
+public import Development.WeilBound.CoreStatements.FlagImmersions.RankLem
+public import Development.WeilBound.CoreStatements.FlagImmersions.EqZeroOfTri
+public import Development.WeilBound.CoreStatements.FlagImmersions.GenRigidOf
+public import Development.WeilBound.CoreStatements.FlagImmersions.CountableBall
+public import Development.WeilBound.CoreStatements.FlagImmersions.Imports
+public import Development.WeilBound.CoreStatements.CentralCharts.FlagImmersion
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem eval_formPoly_none {σ : Type} [Fintype σ] (n : ℕ) (a : (Fin n → Op
     intro Q
     induction Q using MvPolynomial.induction_on with
     | C r => simp
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p o hp =>
       rw [map_mul, map_mul, map_mul, hp]
       cases o <;> simp

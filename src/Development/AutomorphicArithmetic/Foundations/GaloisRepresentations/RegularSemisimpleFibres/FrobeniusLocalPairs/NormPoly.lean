@@ -1,15 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.NormFin
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.NormAdic
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobFacts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.InflFacts
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.UnitsPowers
-import Development.AutomorphicArithmetic.FrobeniusTwistedNorms.IsAdicCompleteAdjoinRootOfMonic
-import Development.AutomorphicArithmetic.FrobeniusTwistedNorms.ExistsTwistedTraceEqOneOfResidueFrobenius
-import Development.AutomorphicArithmetic.FrobeniusTwistedNorms.ExistsFrobeniusTwistedNormDvdSubX
-import Development.AutomorphicArithmetic.FrobeniusTwistedNorms.ExistsTwistedNormDvdSubXOfAdicComplete
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.NormFin
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.NormAdic
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobFacts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.InflFacts
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.UnitsPowers
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +57,7 @@ private theorem isNonarchimedeanLocalField_of_ringEquiv_of_isInducing {L M : Typ
       refine ⟨e.symm c₁, by simpa using hc₁, fun z hz => hts ?_⟩
       rw [hlt, RingEquiv.apply_symm_apply] at hz
       show e (x + z) ∈ t
-      rw [map_add]
+      rw [map_add (f := _)]
       exact h _ hz
     · rintro ⟨c, hc, h⟩
       refine ⟨e '' u, ?_, fun z hz => ?_⟩
@@ -66,7 +66,7 @@ private theorem isNonarchimedeanLocalField_of_ringEquiv_of_isInducing {L M : Typ
         refine ⟨x + e.symm w, h _ ?_, ?_⟩
         · rw [hlt, RingEquiv.apply_symm_apply]
           exact hw
-        · rw [map_add, RingEquiv.apply_symm_apply]
+        · rw [map_add (f := _), RingEquiv.apply_symm_apply]
       · obtain ⟨z', hz', hzz⟩ := hz
         rw [e.injective hzz] at hz'
         exact hz'⟩
@@ -96,7 +96,7 @@ private theorem valuation_algEquiv_le_one_of_le_one {F L : Type} [Field F] [Valu
   have hext : @ValuativeExtension F L _ _ _
       (ValuativeRel.ofValuation ((valuation L).comap (s : L →+* L))) _ := by
     refine @ValuativeExtension.mk F L _ _ _
-      (ValuativeRel.ofValuation ((valuation L).comap (s : L →+* L))) _ (fun a b => ?_)
+      (ValuativeRel.ofValuation ((valuation L).comap (s : L →+* L))) _ (fun {a b} => ?_)
     show valuation L (s (algebraMap F L a)) ≤ valuation L (s (algebraMap F L b)) ↔ a ≤ᵥ b
     rw [AlgEquiv.commutes, AlgEquiv.commutes, ← Valuation.Compatible.vle_iff_le,
       ValuativeExtension.vle_iff_vle]
@@ -122,8 +122,6 @@ private def resE (s : K ≃ₐ[k] K) : 𝒪[K] ≃+* 𝒪[K] where
   right_inv x := Subtype.ext (s.apply_symm_apply (x : K))
   map_mul' x y := Subtype.ext (map_mul s (x : K) (y : K))
   map_add' x y := Subtype.ext (map_add s (x : K) (y : K))
-
-private theorem resE_coe (s : K ≃ₐ[k] K) (x : 𝒪[K]) : ((resE s x : 𝒪[K]) : K) = s (x : K) := rfl
 
 end
 
@@ -302,14 +300,16 @@ private theorem exists_sum_pow_apply_eq_one_of_lift_frobenius {R F₀ F₁ : Typ
         ← pow_mul, pow_succ, mul_comm (Fintype.card F₀ ^ i)]
   set t := ∑ i ∈ Finset.range n, (f ^ i) a₀ with ht
   have hrt : r t = 1 := by
-    rw [ht, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ht, map_sum]
     simp_rw [hri, ha₀]
     exact hz
   have htu : IsUnit t := by
     rw [← IsLocalRing.notMem_maximalIdeal, ← hker, hrt]
     exact one_ne_zero
   have hft : f t = t := by
-    rw [ht, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ht, map_sum]
     have e : ∀ i, f ((f ^ i) a₀) = (f ^ (i + 1)) a₀ := by
       intro i
       rw [pow_succ', RingHom.mul_def, RingHom.comp_apply]
@@ -355,7 +355,8 @@ private theorem mem_map_of_adjoinRoot_hom_eq_zero_of_ker_le {R S : Type*} [CommR
         Polynomial.coeff_zero]
     have hmk : AdjoinRoot.mk ψ g = AdjoinRoot.mk ψ g' := by
       rw [hg', map_sub, map_mul, AdjoinRoot.mk_self, zero_mul, sub_zero]
-    rw [hmk, g'.as_sum_range_C_mul_X_pow, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hmk, g'.as_sum_range_C_mul_X_pow, map_sum]
     refine Ideal.sum_mem _ (fun i _ => ?_)
     rw [map_mul, AdjoinRoot.mk_C, ← AdjoinRoot.algebraMap_eq]
     exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ (hg'0 i))
@@ -455,7 +456,8 @@ private theorem normPoly_lemma_7 {R F₀ F₁ : Type} [CommRing R] [IsNoetherian
   obtain ⟨a, ha⟩ := exists_sum_pow_apply_eq_one_of_lift_frobenius r hr hker φ sb hfrob hcomm hper
   have htr : ∑ i ∈ Finset.range n, (⇑τ)^[i] (AdjoinRoot.of ψ a) = 1 := by
     simp_rw [hof]
-    rw [← map_sum, ha, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ha, map_one]
   have hper' : ∀ x, (⇑τ)^[n] x = x := by
     intro x
     induction x using AdjoinRoot.induction_on with

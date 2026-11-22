@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.UnitaryReadS
+module
+
+public import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.UnitaryReadS
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ theorem part {rc : RecMap A} (hMW : DiscCsd H.E) (hS : RecSpeh rc) (hC : CuspRea
   · obtain ⟨m, hm, rfl⟩ := h3 τ m' hm'
     rw [c3 τ m hm]
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 
+attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 theorem parts {rc : RecMap A} (hNT : DefiniteN)
     (hMW : DiscCsd H.E)
     (hP : RecProd rc) (hS : RecSpeh rc) (hSat : RecSatake rc) (hC : CuspReadG rc)

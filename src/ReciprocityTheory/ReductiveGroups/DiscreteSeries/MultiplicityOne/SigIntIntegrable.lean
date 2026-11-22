@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HpkMulVecMulVec
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HpkMulVecMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -209,7 +213,7 @@ theorem psi_cont (z : Fin (2 * r + k + 1) → ℂ) : Continuous (fun m : Mat k r
   unfold psi ell
   have hs : Continuous fun m : Mat k r => ∑ a : Fin r, (if h : (a : ℕ) + 1 < r then m (eI k r a) (eI k r ⟨(a : ℕ) + 1, h⟩)
       else (m *ᵥ z) (eI k r a)) := by
-    refine continuous_finset_sum _ fun a _ => ?_
+    refine continuous_finsetSum _ fun a _ => ?_
     by_cases h : (a : ℕ) + 1 < r
     · simp only [dif_pos h]
       exact continuous_id.matrix_elem _ _

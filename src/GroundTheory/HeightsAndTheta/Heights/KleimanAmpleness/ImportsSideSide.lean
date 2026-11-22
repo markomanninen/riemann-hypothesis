@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreLiftVal
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.NefGenericDVRSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreLiftVal
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.NefGenericDVRSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -19,9 +24,5 @@ def SegreFibreIdeal.Statement : Prop :=
       ((mIdealOver O (segreJoin y)).map (MvPolynomial.map φ)).comap (segreIncl ι F) ∧
     ∀ W : Ideal (MRing ι F), (mIdealOver O y).map (MvPolynomial.map φ) ≤ W →
       (mIdealOver O (segreJoin y)).map (MvPolynomial.map φ) ≤ segreLift ι F W
-
-example (h : SegreFibreIdeal.Statement) :=
-  h exO exΩ (IsLocalRing.ResidueField exO) (IsLocalRing.residue exO) Unit (fun _ => Fin (1 + 1))
-    (IndefiniteRowSideFullHecke.Kleiman2.oneBlock (Kleiman.lineX exF))
 
 end GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

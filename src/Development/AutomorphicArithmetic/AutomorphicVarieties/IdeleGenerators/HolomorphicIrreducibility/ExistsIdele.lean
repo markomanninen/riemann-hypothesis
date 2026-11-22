@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UopSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.GlobFixed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsGlobalElementValuationEqIdeleAtPlace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.AddCharInverseDifferentAndResidueSumEqZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HilbertHolomorphicInvariantIntegralTranslation
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HeckeOperatorsCommuteOnAutomorphicForms
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BijectiveResidueUnitMulLift
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UopSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.GlobFixed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsGlobalElementValuationEqIdeleAtPlace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.AddCharInverseDifferentAndResidueSumEqZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HilbertHolomorphicInvariantIntegralTranslation
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HeckeOperatorsCommuteOnAutomorphicForms
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BijectiveResidueUnitMulLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ private theorem genD_uniq {y : Af F} {I J : Ideal (𝓞 F)} (hI : GenD y I) (hJ 
 
 private theorem coefAt_eq (c : Ideal (𝓞 F) → ℂ) {y : Af F} {I : Ideal (𝓞 F)} (h : GenD y I) : coefAt c y = c I := by
   have e : ∃ 𝔪, GenD y 𝔪 := ⟨I, h⟩
-  rw [coefAt, dif_pos e, genD_uniq e.choose_spec h]
+  rw [coefAt, dite_eq_left e, genD_uniq e.choose_spec h]
 
 private theorem genD_shift {w : Pl F} {u : Af F} (hu : ∀ v, Valued.v (pLoc F v u) = WithZero.exp (ordI v w.asIdeal : ℤ))
     (y : Af F) (I : Ideal (𝓞 F)) : GenD (y * u) I ↔ GenD y (w.asIdeal * I) := by
@@ -83,15 +87,15 @@ private theorem coefAt_shift {w : Pl F} {u : Af F} (hu : ∀ v, Valued.v (pLoc F
   by_cases h : ∃ I, GenD (y * u) I
   · obtain ⟨I, hI⟩ := h
     have e : ∃ 𝔫, w.asIdeal * I = w.asIdeal * 𝔫 := ⟨I, rfl⟩
-    rw [coefAt_eq a hI, coefAt_eq _ ((genD_shift hu y I).1 hI), coefDiv, dif_pos e,
+    rw [coefAt_eq a hI, coefAt_eq _ ((genD_shift hu y I).1 hI), coefDiv, dite_eq_left e,
       ← mul_left_cancel₀ w.ne_bot e.choose_spec]
-  · rw [coefAt.eq_1 a, dif_neg h]
+  · rw [coefAt.eq_1 a, dite_eq_right h]
     by_cases h' : ∃ J, GenD y J
     · obtain ⟨J, hJ⟩ := h'
-      rw [coefAt_eq _ hJ, coefDiv, dif_neg]
+      rw [coefAt_eq _ hJ, coefDiv, dite_eq_right]
       rintro ⟨I, rfl⟩
       exact h ⟨I, (genD_shift hu y I).2 hJ⟩
-    · rw [coefAt, dif_neg h']
+    · rw [coefAt, dite_eq_right h']
 
 private theorem map_aff {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (y : Rˣ) (x : R) :
     Matrix.GeneralLinearGroup.map f (aff y x) = aff (Units.map f.toMonoidHom y) (f x) := by
@@ -177,7 +181,7 @@ private theorem char_sum [IsTotallyReal F] {w : Pl F} [Fintype (𝓞 F ⧸ w.asI
     · refine (h2 v).trans ?_
       rw [hI.2 v, WithZero.exp_le_exp]
       omega
-  rw [coefAt.eq_1 _ z, dif_neg h, mul_zero]
+  rw [coefAt.eq_1 _ z, dite_eq_right h, mul_zero]
   by_cases h' : ∃ I, GenD (z * ((u⁻¹ : (Af F)ˣ) : Af F)) I
   · obtain ⟨I, hI⟩ := h'
     have h0 : ordI w I = 0 := by
@@ -192,7 +196,7 @@ private theorem char_sum [IsTotallyReal F] {w : Pl F} [Fintype (𝓞 F ⧸ w.asI
       simp
     · rw [hz, ordI_ne hv, WithZero.exp_le_exp]
       omega
-  · rw [coefAt, dif_neg h', zero_mul]
+  · rw [coefAt, dite_eq_right h', zero_mul]
 
 private theorem pInf_alg [IsTotallyReal F] (x : F) (v : InfinitePlace F) : TR.pInf F (algebraMap F (Ad F) x) v = reAt v x := by
   rw [reAt, ← InfinitePlace.embedding_of_isReal_apply (IsTotallyReal.isReal v), Complex.ofReal_re]
@@ -257,7 +261,8 @@ private theorem hk_comm (k : ℕ) (w : Pl F) (c : ℕ) {φ : TR.Sm F 2} (hφ : �
     (A : Module.End ℂ (TR.Sm F 2)) (hA : ∀ g ψ, A (locSm F w g ψ) = locSm F w g (A ψ)) : A (hk k w c φ) = hk k w c (A φ) := by
   obtain ⟨S, hS⟩ := exists_reps w
   have hφ' : A φ ∈ Hi.fixd (locSm F w) (K1 w c) := fun u hu => by rw [← hA, hφ u hu]
-  rw [hk, LinearMap.smul_apply, LinearMap.smul_apply, (uopSum F w _ (locSm F w) c φ hφ).2 S hS,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hk, LinearMap.smul_apply, LinearMap.smul_apply, (uopSum F w _ (locSm F w) c φ hφ).2 S hS,
     (uopSum F w _ (locSm F w) c _ hφ').2 S hS, map_smul, map_add, map_sum]
   simp only [hA]
   split_ifs
@@ -319,7 +324,8 @@ private theorem hk_hk {k : ℕ} {c : Pl F → ℕ} {ω : HChar F} {φ : TR.Sm F 
     split_ifs <;> rfl
   rw [hA _ ((hk_hol h w').level w), hA _ (h.level w)]
   refine hk_comm k w' _ (h.level w') A fun g ψ => ?_
-  simp only [A, LinearMap.smul_apply, LinearMap.add_apply, LinearMap.sum_apply, map_smul, map_add, map_sum, locSm_comm e]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [A, LinearMap.smul_apply, LinearMap.add_apply, LinearMap.sum_apply, map_smul, map_add (f := _), map_sum, locSm_comm e]
   split_ifs
   · rw [locSm_comm e]
   · simp

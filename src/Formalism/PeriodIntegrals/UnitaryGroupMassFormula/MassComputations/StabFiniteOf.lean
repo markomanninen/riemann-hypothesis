@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MeasurePrjFPreimage
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.IsHermNDOfSetting
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.SplitG
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MeasurePrjFPreimage
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.IsHermNDOfSetting
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.SplitG
+
+@[expose] public section
 
 noncomputable section
 

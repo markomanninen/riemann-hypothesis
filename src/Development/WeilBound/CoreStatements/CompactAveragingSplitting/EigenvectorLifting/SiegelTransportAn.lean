@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,16 +94,16 @@ theorem star_mem {X : Type} [TopologicalSpace X] {φ : X → ℂ} (h : φ ∈ SB
 
 def conjL {X : Type} (l : (X → ℂ) →ₗ[ℂ] ℂ) : (X → ℂ) →ₗ[ℂ] ℂ where
   toFun φ := star (l (star φ))
-  map_add' φ φ' := by rw [star_add, map_add, star_add]
+  map_add' φ φ' := by rw [star_add, map_add (f := _), star_add]
   map_smul' a φ := by rw [star_smul, map_smul, star_smul, star_star]; rfl
 
 def boxL {A : Type} (l : ((κ → A) → ℂ) →ₗ[ℂ] ℂ) (l' : ((κ' → A) → ℂ) →ₗ[ℂ] ℂ) : ((κ ⊕ κ' → A) → ℂ) →ₗ[ℂ] ℂ where
   toFun Φ := l' fun y => l fun x => Φ (Sum.elim x y)
   map_add' Φ Ψ := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     funext y
-    rw [Pi.add_apply, ← map_add]
+    rw [Pi.add_apply, ← map_add (f := _)]
     rfl
   map_smul' a Φ := by
     rw [RingHom.id_apply, ← map_smul]
@@ -128,12 +132,12 @@ theorem boxL_inv {A : Type} [CommRing A] [Invertible (2 : A)] [TopologicalSpace 
   rw [← h₂ _ (star_mem (partial_mem hΦ l))]
   congr 2
   funext y
-  simp only [Pi.star_apply, schr]
+  dsimp only [schr, Pi.star_apply]
   rw [← h₁ _ (slice_mem hΦ (y + w₂.1)), ← star_star (ψ (y ⬝ᵥ w₂.2 + _)), ← star_mul', conj_psi hψ,
     ← smul_eq_mul (ψ (-_)) (l _), ← map_smul]
   congr 2
   funext x
-  simp only [Pi.smul_apply, smul_eq_mul, schr]
+  dsimp only [schr, Pi.smul_apply, smul_eq_mul]
   rw [← mul_assoc, ← AddChar.map_add_eq_mul]
   congr 2
   · simp only [sumElim_dotProduct_sumElim, dotProduct_neg]

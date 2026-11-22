@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat GlobalTheory.LawDer
 
 set_option autoImplicit false
@@ -31,8 +36,8 @@ theorem invDer_mul : ∀ (R : Type) [CommRing R] (d : ℕ) (μ : Fin d → MvPow
   have hmul : ∀ H K : MvPowerSeries (Fin d ⊕ Fin d) R, atZero (H * K) = atZero H * atZero K := by
     intro H K; unfold atZero; exact subst_mul hz H K
   have h0 := atZero_subst_of_unit R d μ hc hu
-  have key : ∀ i, atZero (pderiv R (Sum.inr i) (subst μ (F * G))) =
-      atZero (pderiv R (Sum.inr i) (subst μ F)) * G + F * atZero (pderiv R (Sum.inr i) (subst μ G)) := by
+  have key : ∀ i, atZero (MvPowerSeries.pderiv (Sum.inr i) (subst μ (F * G))) =
+      atZero (MvPowerSeries.pderiv (Sum.inr i) (subst μ F)) * G + F * atZero (MvPowerSeries.pderiv (Sum.inr i) (subst μ G)) := by
     intro i
     rw [subst_mul hμ, Derivation.leibniz, smul_eq_mul, smul_eq_mul]
     unfold atZero

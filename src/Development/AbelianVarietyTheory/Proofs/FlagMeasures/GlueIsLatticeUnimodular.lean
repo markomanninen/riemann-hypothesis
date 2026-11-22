@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitRowLatticeMiddleIffGluedLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitRowLatticeMiddleIffGluedLattice
+
+@[expose] public section
+
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals
@@ -19,15 +24,8 @@ theorem glue_isLattice_unimodular : ∀ (D : D7) (large₂ : SizeData₂ D) (X :
       Mid (VS D).hT X.eX X.fY w := by
     rintro _ ⟨w, -, rfl⟩
     exact w.2
-  refine ⟨H.isLattice (A := fun a => aaD D a) (B := fun a => (aaD D a)⁻¹) h0 (fun a => inv_ne_zero (h0 a))
-    (hL.fg.map _) ?_, (H.unimodular_iff (A := fun a => aaD D a) (B := fun a => (aaD D a)⁻¹) hmid
+  refine ⟨Submodule.IsLattice.of_fg D.host.E (((sumS_fg _ _).sup (hL.fg.map _)).sup (sumS_fg _ _)), (H.unimodular_iff (A := fun a => aaD D a) (B := fun a => (aaD D a)⁻¹) hmid
       (fun a => inv_ne_zero (h0 a)) (fun a => (hs a).inv (h0 a)) (fun a => (inv_inv _).symm)).2 ?_⟩
-  · intro w hw
-    have h1 : (⟨w, hw⟩ : GlobalTheory.RowsOrb.Wb X) ∈ Submodule.span D.host.E (L : Set (GlobalTheory.RowsOrb.Wb X)) := by
-      rw [hL.span_eq_top]; trivial
-    have h2 := Submodule.mem_map_of_mem (f := (GlobalTheory.RowsOrb.Wb X).subtype) h1
-    rw [Submodule.map_span] at h2
-    exact h2
   · intro w hw
     have key : (⟨w, hw⟩ : GlobalTheory.RowsOrb.Wb X) ∈ Formalism.HermitianLatticesTheory.dual (GlobalTheory.RowsOrb.hb X) L ↔
         (⟨w, hw⟩ : GlobalTheory.RowsOrb.Wb X) ∈ L := by

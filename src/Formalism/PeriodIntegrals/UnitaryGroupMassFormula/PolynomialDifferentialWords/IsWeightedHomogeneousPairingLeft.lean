@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaRight
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaRight
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -20,37 +24,39 @@ theorem homog_of_mul {σ : Type} (w : σ → ℕ) {s g : MvPolynomial σ K} {n :
     split_ifs with hd
     · refine Finset.sum_congr rfl fun x hx => ?_
       rw [coeff_weightedHomogeneousComponent]
-      by_cases h0 : coeff x.1 s = 0
+      by_cases h0 : AddMonoidAlgebra.coeff s x.1 = 0
       · simp [h0]
       · have hx0 := hs h0
         have hsum : x.1 + x.2 = d := by simpa using hx
         have hw : Finsupp.weight w x.2 = j := by
-          rw [← hsum, map_add, hx0] at hd
+          rw [← hsum, map_add (f := _), hx0] at hd
           omega
         rw [if_pos hw]
     · symm
       refine Finset.sum_eq_zero fun x hx => ?_
       rw [coeff_weightedHomogeneousComponent]
-      by_cases h0 : coeff x.1 s = 0
+      by_cases h0 : AddMonoidAlgebra.coeff s x.1 = 0
       · simp [h0]
       · have hx0 := hs h0
         have hsum : x.1 + x.2 = d := by simpa using hx
         have hw : Finsupp.weight w x.2 ≠ j := by
-          rw [← hsum, map_add, hx0] at hd
+          rw [← hsum, map_add (f := _), hx0] at hd
           omega
         rw [if_neg hw, mul_zero]
   intro m hm
   by_contra hne
   have hc : weightedHomogeneousComponent w (Finsupp.weight w m) g ≠ 0 := by
     intro h0
-    have h3 := congrArg (coeff m) h0
-    rw [coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at h3
+    have h3 := congrArg (AddMonoidAlgebra.coeff · m) h0
+    simp only [coeff_weightedHomogeneousComponent, ite_eq_left rfl,
+      AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h3
     exact hm h3
   apply hc
   have h4 : s * weightedHomogeneousComponent w (Finsupp.weight w m) g = 0 := by
     rw [← hA]
     ext d
-    rw [coeff_weightedHomogeneousComponent, coeff_zero]
+    simp only [coeff_weightedHomogeneousComponent, AddMonoidAlgebra.coeff_zero,
+      Finsupp.zero_apply]
     split_ifs with hd
     · by_contra hne2
       have h5 := h hne2
@@ -101,18 +107,19 @@ theorem dvd_of_dvd_X_pow {i : Fin k ⊕ Fin k} {s f : Pol K k} (hs : ¬ (X i : P
     · exact dvd_of_dvd_X_pow hs n h'
     · exact absurd h' hs
 
-variable (K) in
 
-def chiF (i0 : Fin k) : Fin k ⊕ Fin k → Pol K k :=
+variable (K) in
+def chiF (K : Type) [Field K] (i0 : Fin k) : Fin k ⊕ Fin k → Pol K k :=
   Sum.elim (fun j => X (Sum.inl j)) (fun j => X (Sum.inl i0) * X (Sum.inr j))
 
-variable (K) in
-
-def tp (i0 : Fin k) : Pol K k := ∑ j ∈ Finset.univ.erase i0, X (Sum.inl j) * X (Sum.inr j)
 
 variable (K) in
+def tp (K : Type) [Field K] (i0 : Fin k) : Pol K k :=
+  ∑ j ∈ Finset.univ.erase i0, X (Sum.inl j) * X (Sum.inr j)
 
-def psiF (i0 : Fin k) : Fin k ⊕ Fin k → Pol K k :=
+
+variable (K) in
+def psiF (K : Type) [Field K] (i0 : Fin k) : Fin k ⊕ Fin k → Pol K k :=
   Sum.elim (fun j => X (Sum.inl j))
     (fun j => if j = i0 then - tp K i0 else X (Sum.inl i0) * X (Sum.inr j))
 
@@ -132,7 +139,8 @@ theorem chi_eq (i0 : Fin k) (d : ℕ) (f : Pol K k) (hf : IsWeightedHomogeneous 
     aeval (chiF K i0) f = X (Sum.inl i0) ^ d * f := by
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [chi_monomial, hf (mem_support_iff.1 hm)]
 
@@ -217,7 +225,7 @@ theorem divT_one (d : ℕ) (hd : 1 ≤ d) (f : Pol K 1) (hf : f ∈ Bihom K 1 d)
     rw [hs, Finsupp.le_def]
     intro v
     rcases v with i | i <;> obtain rfl := Subsingleton.elim i 0 <;> simp <;> omega
-  have key : monomial m (coeff m f) = tt K 1 * monomial (m - s) (coeff m f) := by
+  have key : monomial m (AddMonoidAlgebra.coeff f m) = tt K 1 * monomial (m - s) (AddMonoidAlgebra.coeff f m) := by
     simp only [tt, Fin.sum_univ_one, X, monomial_mul, one_mul]
     rw [← hs, add_tsub_cancel_of_le hsm]
   rw [key]
@@ -237,7 +245,7 @@ theorem divT : PI.OpWords.DivT := by
     refine ⟨0, Submodule.zero_mem _, ?_⟩
     rw [mul_zero]
     ext m
-    rw [coeff_zero]
+    simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     by_contra h
     have h1 := hfx h
     have h2 : m = 0 := by

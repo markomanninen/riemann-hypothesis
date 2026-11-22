@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
-import Formalism.LocalToGlobal.LatticeGeometry.RealizationNorms.MkTauEmbInjective
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.SmoothBigCellSectionsExist
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+public import Formalism.LocalToGlobal.LatticeGeometry.RealizationNorms.MkTauEmbInjective
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.SmoothBigCellSectionsExist
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,9 +67,6 @@ theorem norm_prod_sgn {l : ℕ} (hl : l ≤ r + 1) : ‖∏ i : Fin l, sgnV r (F
   apply Finset.prod_eq_one
   intro i _
   simp [sgnV]
-
-theorem prod_one' (l : ℕ) (hl : l ≤ r + 1) : ∏ _i : Fin l, (fun _ : Fin (r + 1) => (1 : ℂ)) (Fin.castLE hl _i) = 1 := by
-  simp
 
 theorem norm_dl_zhatO (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) {l : ℕ} (hl : l ≤ r + 1) :
     ‖RealObj.Dl Z l‖ = ‖RealObj.Dl (RealObj.ZhatO Z) l‖ := by

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TopSideIntegralTendstoZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TopSideIntegralTendstoZero
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Set
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.tendsto_integral_shifted_segment_zero_of_exp_decay : ∀ (g : ℂ → ℂ) (K c : ℝ) (m : ℕ) (τ : ℂ), ContinuousOn g {z : ℂ | 0 < z.im} → 0 < c →

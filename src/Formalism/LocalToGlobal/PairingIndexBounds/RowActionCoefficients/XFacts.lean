@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.SzTLe
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.SzTLe
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -85,7 +89,7 @@ def XB : Prop :=
     (La : X.Lt j) (La' : X.Lt (j + 1)) (φ : Frm X j La La') (P : DA X Kc j) (f : MvPowerSeries (X.ZA j) Kc)
     (l : XspC (X.Pj (j + 1)) Kc →ₗ[Kc] Kc) (R : MvPolynomial (X.ZA j) Kc),
     (∀ d0 : X.ZA j → Kc, eval d0 R = l (evD X Kc j (fun y => ∑ z, bc Kc φ z y * d0 z) P)) →
-      l (pairD X Kc j P (linSub (bc Kc φ) f)) = ∑ n ∈ R.support, derAt X Kc j n f * coeff n R
+      l (pairD X Kc j P (linSub (bc Kc φ) f)) = ∑ n ∈ R.support, derAt X Kc j n f * AddMonoidAlgebra.coeff R n
 
 def TransposedFrameImageBlockwise : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra (K0 p) Kc] [Algebra X.G.Kf Kc] (j : ℕ)
@@ -102,7 +106,7 @@ def XG : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra X.G.Kf Kc] (j : ℕ) (I : X.ColCh j) (i0 : X.Pl → ℕ)
     (f : MvPowerSeries (X.ZA j) Kc) (x : X.FrI j → Kc),
     ∑ n ∈ (map (eval₂Hom (Int.castRingHom Kc) x) (X.PI j I i0)).support,
-        derAt X Kc j n f * coeff n (map (eval₂Hom (Int.castRingHom Kc) x) (X.PI j I i0)) =
+        derAt X Kc j n f * AddMonoidAlgebra.coeff (map (eval₂Hom (Int.castRingHom Kc) x) (X.PI j I i0)) n =
       eval x (applyD (X.PI j I i0) f)
 
 end Formalism.L2.PairingIndexBounds.Ent

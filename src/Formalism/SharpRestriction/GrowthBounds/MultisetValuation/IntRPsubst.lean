@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AllPlacesOfRestrictions
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.OmegaOfTraceDuality
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AllPlacesOfRestrictions
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.OmegaOfTraceDuality
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {K : Type} [Field K] {R : Subring K}
 
 theorem IntR_add {ι : Type} {f g : MvPowerSeries ι K} (hf : IntR R f) (hg : IntR R g) : IntR R (f + g) := by
   intro n
-  rw [map_add]
+  rw [map_add (f := _)]
   exact R.add_mem (hf n) (hg n)
 
 theorem IntR_zero {ι : Type} : IntR R (0 : MvPowerSeries ι K) := by
@@ -25,7 +29,8 @@ theorem IntR_zero {ι : Type} : IntR R (0 : MvPowerSeries ι K) := by
 theorem IntR_sum {ι α : Type} (s : Finset α) (f : α → MvPowerSeries ι K) (h : ∀ a ∈ s, IntR R (f a)) :
     IntR R (∑ a ∈ s, f a) := by
   intro n
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact R.sum_mem fun a ha => h a ha n
 
 theorem IntR_X {ι : Type} (i : ι) : IntR R (MvPowerSeries.X i : MvPowerSeries ι K) := by
@@ -154,7 +159,8 @@ theorem exists_mu (vp : K') (hvp : vp ^ (p ^ 2 - 1) = (p : K')) :
 
 theorem map_logF : PowerSeries.map (algebraMap (K0 p) K') (logF p) = lgF K' p := by
   ext n
-  simp only [PowerSeries.coeff_map, logF, lgF, PowerSeries.coeff_mk, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PowerSeries.coeff_map, logF, lgF, PowerSeries.coeff_mk, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← pow_mul]
   split_ifs <;> simp

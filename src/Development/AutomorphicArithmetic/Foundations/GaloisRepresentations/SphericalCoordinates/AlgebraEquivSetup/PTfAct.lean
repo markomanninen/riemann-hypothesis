@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
+
+@[expose] public section
+
 open Formalism.UG GlobalTheory.LKDef.HeckeTraceForms UpperTheory.Gal.W2.Seed
 open scoped Classical
 
@@ -9,15 +14,15 @@ private theorem typeFunction_mul_mem {M : Type} [Group M] (J : Subgroup M) (ψ :
   unfold tyFn
   by_cases ha : a ∈ J
   · have hab : a * b ∈ J := J.mul_mem ha hb
-    rw [dif_pos ha, dif_pos hab]
+    rw [dite_eq_left ha, dite_eq_left hab]
     have : (⟨a * b, hab⟩ : J) = ⟨a, ha⟩ * ⟨b, hb⟩ := rfl
     rw [this, map_mul, mul_inv, Units.val_mul]
   · have hab : a * b ∉ J := fun h => ha (by simpa using J.mul_mem h (J.inv_mem hb))
-    rw [dif_neg ha, dif_neg hab, zero_mul]
+    rw [dite_eq_right ha, dite_eq_right hab, zero_mul]
 
 private theorem typeFunction_one {M : Type} [Group M] (J : Subgroup M) (ψ : J →* ℂˣ) : tyFn J ψ 1 = 1 := by
   unfold tyFn
-  rw [dif_pos J.one_mem]
+  rw [dite_eq_left J.one_mem]
   have : (⟨1, J.one_mem⟩ : J) = 1 := rfl
   rw [this, map_one, inv_one, Units.val_one]
 

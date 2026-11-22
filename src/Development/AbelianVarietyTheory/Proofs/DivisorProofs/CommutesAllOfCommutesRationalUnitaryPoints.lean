@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.BridgeTie
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MvPolynomialClearDenominatorsEval
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RelIndexLevelSelfDualStabilizerEqProdLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPolynomialEqZeroOfVanishSkewHermitianStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CayleyTransformSkewMemUnitaryGroupStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.BridgeTie
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MvPolynomialClearDenominatorsEval
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RelIndexLevelSelfDualStabilizerEqProdLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPolynomialEqZeroOfVanishSkewHermitianStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CayleyTransformSkewMemUnitaryGroupStatement
+
+@[expose] public section
+
 set_option autoImplicit false
 noncomputable section
 open NumberField Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Theta Formalism.IndefR
@@ -21,7 +26,7 @@ theorem blockAct_univ {K : Type} [Field K] {ι : Type} {n : ℕ} (F : MvPolynomi
   | add p q hp hq =>
     obtain ⟨U, hU⟩ := hp
     obtain ⟨W, hW⟩ := hq
-    exact ⟨U + W, fun g => by rw [map_add, map_add, hU, hW]⟩
+    exact ⟨U + W, fun g => by rw [map_add (f := _), map_add (f := _), hU, hW]⟩
   | mul_X p v hp =>
     obtain ⟨U, hU⟩ := hp
     refine ⟨U * ∑ b : Fin n, MvPolynomial.C (MvPolynomial.X (v.1, v.2.1, b)) * MvPolynomial.X (v.1, (b, v.2.2)),
@@ -35,7 +40,8 @@ theorem lin_map_eval {K σ τ : Type} [Field K] (ℓ : MvPolynomial σ K →ₗ[
     ℓ (MvPolynomial.map (MvPolynomial.eval p) U) =
       MvPolynomial.eval p (∑ m ∈ U.support, U.coeff m * MvPolynomial.C (ℓ (MvPolynomial.monomial m 1))) := by
   conv_lhs => rw [U.as_sum]
-  simp only [map_sum, MvPolynomial.map_monomial, map_mul, MvPolynomial.eval_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPolynomial.map_monomial, map_mul, MvPolynomial.eval_C]
   refine Finset.sum_congr rfl fun m _ => ?_
   have e : ∀ c : K, MvPolynomial.monomial m c = c • MvPolynomial.monomial m (1 : K) := by
     intro c; rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]

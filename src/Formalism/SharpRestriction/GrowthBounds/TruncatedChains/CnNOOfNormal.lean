@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CnStepsTail
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CnStepsTail
+
+@[expose] public section
 
 namespace Formalism.MainNotions.G.ExtremalProjector
 

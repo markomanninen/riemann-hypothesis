@@ -1,11 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.PeriodLowerBounds
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataErr
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.SharpRestriction.Divisibility.LiftErrorLocal
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.Survey.PeriodBoundOfPlaceBound
 
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G NumberField IsDedekindDomain GlobalTheory.IndefiniteRowSideFullHecke.PeriodLowerBounds
+open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G NumberField IsDedekindDomain
 open scoped BigOperators
 
 theorem vAdd_unit (D : D7) (w : D.what₂.places.Pl) (s : 𝓞 D.what₂.LL) (hs : s ∉ (D.plEq w).asIdeal) :

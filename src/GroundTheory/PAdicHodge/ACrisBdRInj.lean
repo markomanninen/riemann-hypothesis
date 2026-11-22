@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ACrisBdR
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ACrisBdR
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -13,7 +18,6 @@ namespace ACris
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
 
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
 
 theorem mem_acrisZero_of_forall_dvd {z : 𝔸}
@@ -46,7 +50,7 @@ theorem mem_acrisZero_of_forall_dvd {z : 𝔸}
     exact sub_eq_zero.1 (eq_zero_of_algebraMap_mul_eq_zero hnz h0)
   have hxi : ξm * (r + r') = dpow m (xiGen K p) * algebraMap (AInf K p) 𝔸 d := by
     rw [← hR, ← mul_assoc, mul_comm (dpow m (xiGen K p)), factorial_mul_dpow, ← map_pow]
-  have hξmem : xiGen K p ∈ RingHom.ker θ := by
+  have hξmem : xiGen K p ∈ RingHom.ker (fontaineTheta (normInteger K) p) := by
     rw [ker_eq_span_xiGen]; exact Ideal.mem_span_singleton_self _
   rw [hz, hxi]
   exact add_mem hs' (Subalgebra.mul_mem _ (dpow_mem hξmem m) (Subalgebra.algebraMap_mem _ d))
@@ -62,8 +66,8 @@ theorem span_p_pow_map (k : ℕ) :
       Ideal.span {(p : ACris K p)} ^ k := by
   rw [Ideal.map_pow, Ideal.map_span, Set.image_singleton, map_natCast]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_eq_pow_mul_of_iota_eq_zero {y : ACris K p} (hy : iota K p y = 0) {k : ℕ}
     {yk : ACrisZero K p}
     (ha : y - _root_.AdicCompletion.of _ _ yk ∈
@@ -84,7 +88,7 @@ theorem exists_eq_pow_mul_of_iota_eq_zero {y : ACris K p} (hy : iota K p y = 0) 
       apply hle
       rw [← Ideal.map_map]
       exact Ideal.mem_map_of_mem _ ha
-    rw [map_sub, iotaM_eq_zero hy, zero_sub, Ideal.span_singleton_pow, Ideal.mem_span_singleton] at h1
+    rw [RingHom.map_sub, iotaM_eq_zero hy, zero_sub, Ideal.span_singleton_pow, Ideal.mem_span_singleton] at h1
     obtain ⟨t, ht⟩ := h1
     obtain ⟨s, hs, hst⟩ := t.2
     have h3 := congrArg (fun x : acrisQ K p m => (x : 𝔸 ⧸ kerAway K p ^ m)) ht
@@ -104,10 +108,10 @@ theorem exists_eq_pow_mul_of_iota_eq_zero {y : ACris K p} (hy : iota K p y = 0) 
     exact ((hu.pow k).dvd_mul_left).1 h4
   · rw [← mul_assoc, Units.val_pow_eq_pow_val, ← mul_pow, IsUnit.mul_val_inv, one_pow, one_mul]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem iota_injective : Function.Injective (iota K p) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   refine IsHausdorff.haus' (I := Ideal.span {(p : ACris K p)}) y fun k => ?_
   rw [SModEq.sub_mem, sub_zero, smul_eq_mul, Ideal.mul_top, ← span_p_pow_map]
@@ -118,7 +122,7 @@ theorem iota_injective : Function.Injective (iota K p) := by
       (Ideal.span {(p : ACrisZero K p)} ^ k).map
         (algebraMap (ACrisZero K p) (ACris K p)) := by
     rw [← ker_adicCompletion_evalₐ (Submodule.fg_span_singleton _), RingHom.mem_ker]
-    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_sub]
+    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, RingHom.map_sub]
     rw [← hyk]
     exact sub_eq_zero.2 (_root_.AdicCompletion.evalₐ_of _ k yk).symm
   obtain ⟨z, hz, hzk⟩ := exists_eq_pow_mul_of_iota_eq_zero hy hker

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameInertiaElementActsByScalar
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.SkolemNoether
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.UnramifiedNoJump
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameInertiaElementActsByScalar
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.SkolemNoether
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.UnramifiedNoJump
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem coeff_eq_zero (ρ₁ ρ₂ : G →* Matrix (Fin r) (Fin r) K) (h₁ : Su
     intro a
     induction a using MonoidAlgebra.induction_on with
     | of g => simp [hR₁, hR₂, hf]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | smul c a ha => simp only [map_smul, ha]
   have hker : ∀ a, R₂ a = 0 → R₁ a = 0 := by
     intro a ha
@@ -203,7 +207,8 @@ theorem indep_on {Γ O : Type} [Group Γ] [TopologicalSpace Γ] [CommRing O] {r 
   refine Fintype.linearIndependent_iff.1 hx u ?_ a
   have e : ∑ a, u a • (Submodule.Quotient.mk (x a) : H1 (repOn ρ (1 : Γ →* Kˣ) K)) =
       Submodule.Quotient.mk (∑ a, u a • x a) := by
-    rw [← Submodule.mkQ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.mkQ_apply, map_sum]
     simp
   rw [e, Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, mem_coboundaries1]
   obtain ⟨m, hm⟩ := cob_of_vanish (matOf ρ K) L z d hL hz hd hd1 (∑ a, u a • x a).1

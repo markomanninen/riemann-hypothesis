@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeOfLatMod
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefinitePartLatticeDiscriminantEqQuotienStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsHermIsometryGraphModScalarFlagPairIotaStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefiniteThetaLatticeLeFixedIndexBoundStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeOfLatMod
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefinitePartLatticeDiscriminantEqQuotienStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsHermIsometryGraphModScalarFlagPairIotaStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefiniteThetaLatticeLeFixedIndexBoundStatement
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
@@ -47,7 +51,7 @@ theorem exists_proj (hS : S = C ⊔ I) (hd : C ⊓ I = ⊥) : ∃ p : V →ₗ[K
   intro x hx
   rw [hS] at hx
   obtain ⟨c, hc', i, hi, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add, hC1 c hc', hI0 i hi, add_zero]
+  rw [map_add (f := _), hC1 c hc', hI0 i hi, add_zero]
   exact hc'
 
 theorem genBy_latIn (hS : S = C ⊔ I) (hd : C ⊓ I = ⊥) {A B : Submodule (𝓞 K) V} {e : ℕ}
@@ -88,7 +92,7 @@ theorem genBy_latIn (hS : S = C ⊔ I) (hd : C ⊓ I = ⊥) {A B : Submodule (�
       apply Subtype.ext
       rw [Submodule.coe_add]
       show (y : V) = p b + (C.subtype.restrictScalars (𝓞 K)) z
-      rw [hzs, ← map_add, hbs, hpC1 y y.2]
+      rw [hzs, ← map_add (f := _), hbs, hpC1 y y.2]
     rw [hy']
     exact Submodule.add_mem_sup hpb hz
   · rw [sup_le_iff]
@@ -216,7 +220,7 @@ theorem dual_latIn (hS : S = C ⊔ I) (H : HermSpace K V) (H' : HermSpace K C)
       have hcM : c ∈ M := by simpa using M.sub_mem hx (hIM hi)
       have h1 := hy ⟨c, hc⟩ hcM
       rw [hH] at h1
-      rw [map_add, ho _ (hCS y.2) i hi, add_zero]
+      rw [map_add (f := _), ho _ (hCS y.2) i hi, add_zero]
       exact h1
 
 theorem intLat_latIn (hS : S = C ⊔ I) (hd : C ⊓ I = ⊥) (H : HermSpace K V) (H' : HermSpace K C)
@@ -233,7 +237,7 @@ theorem intLat_latIn (hS : S = C ⊔ I) (hd : C ⊓ I = ⊥) (H : HermSpace K V)
     exact ⟨hM.2 ▸ Submodule.subset_span hx, fun y hy => hi x hx y hy⟩
   refine ⟨?_, ?_⟩
   · unfold GlobalTheory.Mass.IsIntLat
-    refine ⟨latIn_isLattice p hCS hpC hpI hpI0 hpC1 hM, ?_⟩
+    refine ⟨latIn_isFullLattice p hCS hpC hpI hpI0 hpC1 hM, ?_⟩
     intro x hx y hy
     rw [LinearMap.flip_apply, hH]
     exact hi _ hy _ hx

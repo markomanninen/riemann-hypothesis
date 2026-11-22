@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMemOfKappa
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMemOfKappa
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -88,14 +92,14 @@ theorem tprod_mem (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (𝒜 : StarS
   | zero =>
     intro i hi _ a b
     unfold tprod
-    rw [dif_neg (by omega), Matrix.one_apply]
+    rw [dite_eq_right (by omega), Matrix.one_apply]
     split_ifs
     · exact one_mem _
     · exact zero_mem _
   | succ n ih =>
     intro i hi hS a b
     unfold tprod
-    rw [dif_pos (by omega), Matrix.mul_apply]
+    rw [dite_eq_left (by omega), Matrix.mul_apply]
     refine sum_mem fun e _ => mul_mem (ih (i + 1) (by omega) (fun l hl => hS l (by omega)) a e) ?_
     obtain ⟨hp, hc, hci⟩ := hS ⟨i, by omega⟩ le_rfl
     have h00 : algebraMap ℂ _ Y + L.p ⟨i, by omega⟩ ∈ 𝒜 := add_mem (𝒜.algebraMap_mem Y) hp
@@ -115,39 +119,12 @@ theorem QQi_mem (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (st : Fr.Start 
   rw [Matrix.conjTranspose_apply]
   exact star_mem (tprod_mem L 𝒜 (star Y) i.val hS f a)
 
-def IntLevOn (μ : Measure (Mt k r)) (i : Fin (r + 1)) (U : Submodule ℂ (RadSp k r z z' π π')) : Prop :=
-  ∀ c ∈ OmX r, ∀ Φ ∈ U, ∀ Ψ ∈ U,
-    (∀ c' : Cf r i, Integrable (fun g : Mt k r =>
-      B.hsInner ((Φ : Fn k r (Wq →L[ℂ] Wp)) (glue i c c') (Matrix.of g))
-        ((Ψ : Fn k r (Wq →L[ℂ] Wp)) (glue i c c') (Matrix.of g))) μ) ∧
-    Integrable (fun c' : Cf r i => ((∏ l, ‖c' l‖ ^ (-2 : ℤ) : ℝ) : ℂ) * pairAt μ Φ Ψ (glue i c c'))
-
 end Levels
 
 section Top
 
 variable {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] {S : Type} [Fintype S] [DecidableEq S]
-
-theorem formInt_of_cls (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
-    (π' : Mx P.k P.r → (Wq →L[ℂ] Wq)) (μ : Measure (Mt P.k P.r))
-    (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (Pr (RadSp P.k P.r z z' π π')))
-    (K : Fin (P.r + 1) → Submodule ℂ (RadSp P.k P.r z z' π π')) (l0 : ℕ)
-    (U : Fin (P.r + 1) → Submodule ℂ (RadSp P.k P.r z z' π π')) (hK : ∀ i, K i ≤ U i)
-    (hI : ∀ i, IntLevOn μ i (U i))
-    (hQ : ∀ i, ∀ Y : ℂ, star Y = Y → ∀ a b, st.QQ Y a b ∈ presAlg (U i))
-    (hS : ∀ (i : Fin (P.r + 1)) (l : Fin P.r), i.val ≤ l.val →
-      L.p l ∈ presAlg (U i) ∧ L.c l ∈ presAlg (U i) ∧ L.ci l ∈ presAlg (U i)) :
-    FormInt S P z z' π π' μ L st l0 K := by
-  intro w hw i c hc x y hx hy
-  have hRR : RRi L st i w ∈ entSub (presAlg (U i)) :=
-    rrw_mem (QQi L st i) (QQi_mem L st _ i (hQ i) (hS i)) w hw.1.2.1
-  have hu : ∀ a, act (RRi L st i w) x a ∈ U i := fun a =>
-    (U i).sum_mem fun b _ => (hRR a b).1 _ (hK i (hx b))
-  have hv : ∀ a, y a ∈ U i := fun a => hK i (hy a)
-  refine ⟨fun c' a => ((hI i) c hc _ (hu a) _ (hv a)).1 c', ?_⟩
-  simp only [Finset.mul_sum]
-  exact integrable_finsetSum _ fun a _ => ((hI i) c hc _ (hu a) _ (hv a)).2
 
 end Top
 

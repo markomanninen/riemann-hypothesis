@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+
+@[expose] public section
+
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 namespace GlobalTheory
@@ -22,12 +27,12 @@ theorem dadj_combination : ∀ (k F K : Type) [Field k] [Field F] [Field K] [Alg
     obtain ⟨cx, hcx, ex⟩ := ihx
     obtain ⟨cy, hcy, ey⟩ := ihy
     refine ⟨cx + cy, fun j => add_mem (hcx j) (hcy j), ?_⟩
-    simp only [map_add, ex, ey, Pi.add_apply, add_smul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), ex, ey, Pi.add_apply, add_smul, Finset.sum_add_distrib]
   | mul x y hx hy ihx ihy =>
     obtain ⟨cx, hcx, ex⟩ := ihx
     obtain ⟨cy, hcy, ey⟩ := ihy
     refine ⟨fun j => x * cy j + y * cx j, fun j => add_mem (mul_mem hx (hcy j)) (mul_mem hy (hcx j)), ?_⟩
     rw [map_mul, Derivation.leibniz, ex, ey]
-    simp only [Finset.smul_sum, smul_smul, map_add, map_mul, add_smul, Finset.sum_add_distrib]
+    simp only [Finset.smul_sum, smul_smul, map_add (f := _), map_mul, add_smul, Finset.sum_add_distrib]
 
 end GlobalTheory

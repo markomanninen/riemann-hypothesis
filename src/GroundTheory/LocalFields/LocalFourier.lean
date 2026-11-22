@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalFourierSchwartz
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalFourierSchwartz
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ theorem selfDualMeasure_real_valBall_zero (ψ : AddChar K Circle) :
   rw [measureReal_def, coe_valBall_zero, selfDualMeasure_integers, ENNReal.coe_toReal,
     NNReal.coe_rpow, NNReal.coe_natCast]
 
-omit [MeasurableSpace K] [BorelSpace K] in
 
+omit [MeasurableSpace K] [BorelSpace K] in
 theorem inversion_const_eq_one_iff (n : ℤ) {r : ℝ} (hr : 0 ≤ r) :
     (residueCard K : ℝ) ^ (-n) * r ^ 2 = 1 ↔ r = (residueCard K : ℝ) ^ ((n : ℝ) / 2) := by
   have hq : (0 : ℝ) < residueCard K := by exact_mod_cast zero_lt_one.trans one_lt_residueCard
@@ -58,18 +62,6 @@ theorem inversion_const_eq_one_iff (n : ℤ) {r : ℝ} (hr : 0 ≤ r) :
   · intro h
     rw [h, hsq, ← zpow_add₀ hq.ne', neg_add_cancel, zpow_zero]
 
-omit [MeasurableSpace K] [BorelSpace K] in
-theorem indicator_valBall_zero_mem_schwartzBruhat :
-    (valBall K 0 : Set K).indicator (fun _ => (1 : ℂ)) ∈ schwartzBruhat K := by
-  refine ⟨isLocallyConstant_of_add_valBall (N := 0) fun x h hh => ?_, ?_⟩
-  · have hiff : x + h ∈ valBall K 0 ↔ x ∈ valBall K 0 :=
-      ⟨fun h' => by simpa using sub_mem h' hh, fun h' => add_mem h' hh⟩
-    by_cases hx : x ∈ valBall K 0
-    · rw [Set.indicator_of_mem (show x + h ∈ (valBall K 0 : Set K) from hiff.mpr hx),
-        Set.indicator_of_mem (show x ∈ (valBall K 0 : Set K) from hx)]
-    · rw [Set.indicator_of_notMem (show x + h ∉ (valBall K 0 : Set K) from mt hiff.mp hx),
-        Set.indicator_of_notMem (show x ∉ (valBall K 0 : Set K) from hx)]
-  · exact HasCompactSupport.intro (isCompact_valBall 0) fun x hx => Set.indicator_of_notMem hx _
 
 variable {ψ : AddChar K Circle} (hψ : Continuous ψ) (hψ1 : ψ ≠ 1)
 include hψ hψ1
@@ -81,39 +73,24 @@ theorem localFourier_localFourier_selfDual {f : K → ℂ} (hf : f ∈ schwartzB
       rfl]
   simp
 
-def fourierSB (μ : Measure K) [μ.IsAddHaarMeasure] : schwartzBruhat K →ₗ[ℂ] schwartzBruhat K where
-  toFun f := ⟨localFourier μ ψ f, localFourier_mem_schwartzBruhat μ hψ hψ1 f.2⟩
-  map_add' f g := Subtype.ext <| funext fun y => by
-    show ∫ x, ((f : K → ℂ) x + (g : K → ℂ) x) * (ψ (x * y) : ℂ) ∂μ =
-      ∫ x, (f : K → ℂ) x * (ψ (x * y) : ℂ) ∂μ + ∫ x, (g : K → ℂ) x * (ψ (x * y) : ℂ) ∂μ
-    simp only [add_mul]
-    exact integral_add (integrable_mul_char_of_mem_schwartzBruhat μ hψ f.2 y)
-      (integrable_mul_char_of_mem_schwartzBruhat μ hψ g.2 y)
-  map_smul' c f := Subtype.ext <| funext fun y => by
-    show ∫ x, (c * (f : K → ℂ) x) * (ψ (x * y) : ℂ) ∂μ = c * ∫ x, (f : K → ℂ) x * (ψ (x * y) : ℂ) ∂μ
-    simp only [mul_assoc]
-    exact integral_const_mul c _
-
 end SelfDual
 
 section Multiplicative
 
 variable [MeasurableSpace K] [BorelSpace K]
 
-theorem measurableEmbedding_units_val : MeasurableEmbedding (Units.val : Kˣ → K) where
-  injective := Units.val_injective
-  measurable := comap_measurable _
-  measurableSet_image' := by
-    rintro _ ⟨t, ht, rfl⟩
-    have : (Units.val : Kˣ → K) '' (Units.val ⁻¹' t) = t ∩ {0}ᶜ := by
-      ext x
-      constructor
-      · rintro ⟨u, hu, rfl⟩
-        exact ⟨hu, u.ne_zero⟩
-      · rintro ⟨hx, hx0⟩
-        exact ⟨Units.mk0 x hx0, hx, rfl⟩
-    rw [this]
-    exact ht.inter (measurableSet_singleton 0).compl
+theorem measurableEmbedding_units_val : MeasurableEmbedding (Units.val : Kˣ → K) := by
+  refine ⟨Units.val_injective, comap_measurable _, ?_⟩
+  rintro _ ⟨t, ht, rfl⟩
+  have : (Units.val : Kˣ → K) '' (Units.val ⁻¹' t) = t ∩ {0}ᶜ := by
+    ext x
+    constructor
+    · rintro ⟨u, hu, rfl⟩
+      exact ⟨hu, u.ne_zero⟩
+    · rintro ⟨hx, hx0⟩
+      exact ⟨Units.mk0 x hx0, hx, rfl⟩
+  rw [this]
+  exact ht.inter (measurableSet_singleton 0).compl
 
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [MeasurableSpace K]
   [BorelSpace K] in
@@ -125,13 +102,13 @@ theorem range_units_val : Set.range (Units.val : Kˣ → K) = {0}ᶜ := by
   · intro hx
     exact ⟨Units.mk0 x hx, rfl⟩
 
-omit [MeasurableSpace K] [BorelSpace K] in
 
+omit [MeasurableSpace K] [BorelSpace K] in
 theorem isOpenEmbedding_units_val : IsOpenEmbedding (Units.val : Kˣ → K) :=
   ⟨Units.isEmbedding_val₀, by rw [range_units_val]; exact isOpen_compl_singleton⟩
 
-variable (K) in
 
+variable (K) in
 def multHaarConst : ℝ≥0∞ := (1 - ((residueCard K : ℝ≥0∞))⁻¹)⁻¹
 
 omit [MeasurableSpace K] [BorelSpace K] in
@@ -146,8 +123,8 @@ omit [MeasurableSpace K] [BorelSpace K] in
 theorem multHaarConst_ne_top : multHaarConst K ≠ ∞ :=
   ENNReal.inv_ne_top.mpr one_sub_inv_residueCard_ne_zero
 
-variable (K) in
 
+variable (K) in
 def multHaar : Measure Kˣ :=
   Measure.comap Units.val
     (multHaarConst K • (haarIntegers K).withDensity fun x => ((modulus x : ℝ≥0∞))⁻¹)
@@ -160,16 +137,6 @@ theorem multHaar_apply (s : Set Kˣ) :
       multHaarConst K * ∫⁻ x in Units.val '' s, ((modulus x : ℝ≥0∞))⁻¹ ∂(haarIntegers K) := by
   rw [multHaar, measurableEmbedding_units_val.comap_apply, Measure.smul_apply, withDensity_apply',
     smul_eq_mul]
-
-theorem lintegral_multHaar {g : K → ℝ≥0∞} (hg : Measurable g) :
-    ∫⁻ u, g u ∂(multHaar K) =
-      multHaarConst K * ∫⁻ x in {0}ᶜ, ((modulus x : ℝ≥0∞))⁻¹ * g x ∂(haarIntegers K) := by
-  rw [← measurableEmbedding_units_val.lintegral_map, multHaar,
-    measurableEmbedding_units_val.map_comap, range_units_val, Measure.restrict_smul,
-    lintegral_smul_measure, smul_eq_mul,
-    setLIntegral_withDensity_eq_setLIntegral_mul _ measurable_modulus_inv hg
-      (measurableSet_singleton 0).compl]
-  rfl
 
 theorem integral_multHaar {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (f : K → E) :
     ∫ u, f u ∂(multHaar K) =
@@ -303,8 +270,11 @@ theorem multHaar_unitFiltrationUnits_zero :
     rw [modulus_eq_one_iff.mpr ⟨hx0, hord⟩]
     simp
   have hm := (measurableSet_valBall (K := K) 0).diff (measurableSet_valBall 1)
+  have hsubset : (valBall K 1 : Set K) ⊆ valBall K 0 := by
+    intro x hx
+    exact mem_valBall_zero_iff.mpr (mem_valBall_one_iff.mp hx).le
   rw [setLIntegral_congr_fun hm hd, setLIntegral_const, one_mul,
-    measure_sdiff (valBall_antitone (by norm_num)) (measurableSet_valBall 1).nullMeasurableSet
+    measure_sdiff hsubset (measurableSet_valBall 1).nullMeasurableSet
       (isCompact_valBall 1).measure_lt_top.ne,
     haarIntegers_valBall, haarIntegers_valBall, neg_zero, zpow_zero, ENNReal.coe_one, zpow_neg_one,
     ENNReal.coe_inv residueCard_nnreal_ne_zero, ENNReal.coe_natCast, multHaarConst,

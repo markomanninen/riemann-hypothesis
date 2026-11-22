@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.AlgebraMapMemOv
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.AlgebraMapMemOv
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,7 +142,8 @@ theorem exists_std_to_bint : ∃ M : ℤ, M ≠ 0 ∧ ∀ μ ∈ ((stdSub : Subm
       ∑ j, (β.repr a j) • (M • b.repr (algebraMap (𝓞 E) E (β j)) k) := by
     rw [Pi.smul_apply, ← ha]
     conv_lhs => rw [← β.sum_repr a]
-    simp only [map_sum, map_zsmul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
       Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [smul_comm]
@@ -203,8 +208,5 @@ theorem stdHatCompact_holds : StdHatCompact := by
 end MassDataMassesW.KCptW
 
 namespace MassDataMassesW
-
-theorem kCompactOpen_holds : KCompactOpen :=
-  kCompactOpen_of_std @KCptW.stdHatOpen_holds @KCptW.stdHatCompact_holds
 
 end MassDataMassesW

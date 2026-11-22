@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.WeightedA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.WeightedA
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,8 @@ theorem wd_key (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) (i : Fin n) (w :
       have e2 : wdCoef ε w (casimir (smE ε (rreg ε)) x) g =
           ∑ a, ∑ b, wdCoef ε w (smE ε (rreg ε) a b (smE ε (rreg ε) b a x)) g := by
         unfold casimir
-        simp only [LinearMap.sum_apply, Module.End.mul_apply, map_sum, Finset.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [LinearMap.sum_apply, Module.End.mul_apply, map_sum, Finset.sum_apply]
       show ∑ a, ∑ b, Formalism.REAL.Eab ε a b (Formalism.REAL.Eab ε b a (wdCoef ε w x)) g = _
       simp only [e1]
       rw [← e2, datumV_casimir hP v₀ x hx, map_smul, Pi.smul_apply, smul_eq_mul])
@@ -77,7 +82,7 @@ theorem wd_key (hP : IsPsiFor ε lam T Ψ) (hv₀ : v₀ ≠ 0) (i : Fin n) (w :
     { carrier := {x | ∀ l, MemLp (wdF ε (wdCoef ε w (wdWord ε l x))) 2 (Formalism.REAL.muG ε)}
       add_mem' := by
         intro x y hx hy l
-        simp only [Set.mem_ofPred_eq, map_add, wdF_add] at *
+        simp only [Set.mem_ofPred_eq, map_add (f := _), wdF_add] at *
         exact (hx l).add (hy l)
       zero_mem' := by
         intro l
@@ -112,7 +117,7 @@ theorem wd_psi_memLp (hP : IsPsiFor ε lam T Ψ)
     MemLp (wdF ε (fun g => ((‖Ψ g‖ : ℝ) : ℂ))) 2 (Formalism.REAL.muG ε) := by
   have hI := integrable_muG_of_haar ε (fun g => ‖Ψ g‖ ^ 2 * S7.hs g ^ ((2 : ℝ) / 2)) hΨw
   have hΨm : AEStronglyMeasurable (fun g : Formalism.REAL.UJ ε => Ψ (Formalism.MainNotions.S.umat g)) (Formalism.REAL.muG ε) :=
-    (memLp_muG_of_haar ε Ψ 2 hP.2.2.2.2).1
+    ((ffa_continuousOn hP.2.2.1).comp_continuous (continuous_umatA ε) (fun g => g.2)).aestronglyMeasurable
   have hm : AEStronglyMeasurable (wdF ε (fun g => ((‖Ψ g‖ : ℝ) : ℂ))) (Formalism.REAL.muG ε) := by
     unfold wdF
     exact ((Complex.continuous_ofReal.comp (Real.continuous_sqrt.comp

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PChainA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PChainA
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,7 +156,8 @@ private theorem pmap_Om_lemma_3 {V W : Type} [AddCommGroup V] [Module ℂ V] [Ad
     (LinearMap.pi fun I : P → Fin n => f ∘ₗ LinearMap.proj I) ∘ₗ Om E p =
       Om F p ∘ₗ (LinearMap.pi fun I : P → Fin n => f ∘ₗ LinearMap.proj I) := by
   refine LinearMap.ext fun v => ?_
-  simp only [Om, LinearMap.comp_apply, LinearMap.sum_apply, map_sum, Module.End.mul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Om, LinearMap.comp_apply, LinearMap.sum_apply, map_sum, Module.End.mul_apply]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   have hA := LinearMap.congr_fun (pmap_lift_lemma (P := P) f _ _ (h a b)) (eAt p b a v)
   have hB := LinearMap.congr_fun (pmap_eAt_lemma_2 f p b a) v
@@ -165,7 +170,8 @@ private theorem pmap_tE_lemma_4 {V W : Type} [AddCommGroup V] [Module ℂ V] [Ad
     (LinearMap.pi fun I : P → Fin n => f ∘ₗ LinearMap.proj I) ∘ₗ tE S E a b =
       tE S F a b ∘ₗ (LinearMap.pi fun I : P → Fin n => f ∘ₗ LinearMap.proj I) := by
   refine LinearMap.ext fun v => ?_
-  simp only [tE, LinearMap.comp_apply, LinearMap.add_apply, LinearMap.sum_apply, map_sum, map_add]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tE, LinearMap.comp_apply, LinearMap.add_apply, LinearMap.sum_apply, map_sum, map_add (f := _)]
   have hA := LinearMap.congr_fun (pmap_lift_lemma (P := P) f _ _ (h a b)) v
   simp only [LinearMap.comp_apply] at hA
   rw [hA]

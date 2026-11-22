@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ArcDictExpZeroSection
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ToFSurjectiveFractionRing
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FormalThetaSumShiftPeriodDiv
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SectionsEquivAnArcTheta
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ArcDictExpZeroSection
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ToFSurjectiveFractionRing
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FormalThetaSumShiftPeriodDiv
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SectionsEquivAnArcTheta
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.ArcPts
@@ -145,8 +149,8 @@ theorem genVal_phi_zero {p : GtPtF D ℂ} {bt : Fin g → ℂ}
     simp only [ofMul_mul, ofMul_zpow]
     module
 
-omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 
+omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 theorem secVal_congr {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} {u : HolUnif A L g} (hL : L.IsLB)
     {Y Y' : Scheme.{0}} {K : Type} [Fintype K] {φ : K → (Y ⟶ A.left)} {φ' : K → (Y' ⟶ A.left)} {ε : K → ℤ}
     {s : LB.Sec (LB.LinComb L φ ε)} {s' : LB.Sec (LB.LinComb L φ' ε)} {y : Sp ℂ ⟶ Y} {y' : Sp ℂ ⟶ Y'}
@@ -185,8 +189,8 @@ theorem secVal_translate (hG : GlobalFnsSt) (h : u.IsAH Hm χ) {k : ℕ} {q : Qk
   refine secVal_congr D.P.isLB ?_ (isLift_fam hc' z) (isLift_famF hc' (pt_pr _))
   rw [sval_resF D ℂ t _ hJ, pt_pr]
 
-omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 
+omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 theorem fn_translate : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) [StarRing (𝓞 E)] (D : Datum H) (l : Level H) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] (b : O →+* ℂ) (a : ArcIn D l β ℂ b) (Λ : GtAn a) (k : ℕ) [NeZero k] (la : Λ.A.La) (q : Out.QkPt a.D₀ ℂ k) (v : LB.Gen (LB.LinComb a.D₀.P.L (Out.DegPre.lineφ a.D₀ ℂ q.g.b) (Out.DegPre.lineε k))), q.y = Λ.ε la.y → q.g = Λ.ex0 ((k : ℂ)⁻¹ • Λ.A.P0 la) → v.IsGen → ∃ κ : ℂ, κ ≠ 0 ∧ ∀ (α : Λ.A.X) (s : a.D₀.SecB k (Λ.ε α)) (t : a.D₀.SecB k (Λ.ε α + q.y)) (t' : a.D₀.SecB k (Λ.ε (α + la.y))), ThetaTranslate.IsPhiTranslate a.D₀ ℂ k q v (Λ.ε α) s t → HEq t t' → Λ.fn k (α + la.y) t' = κ • Λ.A.shift k la α (Λ.fn k α s) := by
   intro hL _ E _ _ _ H _ D l c O _ β _ _ b a Λ k _ la q v hy hg hv
   have hk : (k : ℂ) ≠ 0 := NeZero.ne _
@@ -205,9 +209,9 @@ theorem fn_translate : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [Numb
     · exact congrArg (fun m => m.left)
         ((MonObj.comp_one _).trans (ex_zero Λ.u).symm : basePt ≫ DegPre.zeroF a.D₀ ℂ = Λ.u.ex 0)
     · exact (Category.id_comp _).trans hb
-  · refine (secVal_translate hL.globalFns Λ.ah hb hv (by rw [map_add, hy]) (Λ.ct α) (Λ.ct (α + la.y))
+  · refine (secVal_translate hL.globalFns Λ.ah hb hv (by rw [map_add (f := _), hy]) (Λ.ct α) (Λ.ct (α + la.y))
       (l := la.l) ?_ hst ht z).trans ?_
-    · rw [← Nat.cast_smul_eq_nsmul ℂ, smul_inv_smul₀ hk, AnArc.degeneratingTori_basePeriodMap_snd, map_add]
+    · rw [← Nat.cast_smul_eq_nsmul ℂ, smul_inv_smul₀ hk, AnArc.degeneratingTori_basePeriodMap_snd, map_add (f := _)]
       abel
     · rw [hs, Pi.smul_apply, smul_eq_mul, AnArc.shift_apply', GtAn.fn, AnArc.H_def]
       ring

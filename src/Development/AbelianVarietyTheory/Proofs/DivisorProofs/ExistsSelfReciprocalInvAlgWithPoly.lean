@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.UnitLemma
@@ -23,7 +28,7 @@ theorem root_mul_rootInv (hP : P.Monic) (hr : C (K.c (P.coeff 0)) * P = (P.map (
     AdjoinRoot.root P * rootInv P = 1 := by
   have h0 : aeval (AdjoinRoot.root P) P = 0 := AdjoinRoot.aeval_eq P ▸ AdjoinRoot.mk_self
   have h1 := congrArg (aeval (AdjoinRoot.root P)) (X_mul_divX_add P)
-  rw [h0, map_add, map_mul, aeval_X, aeval_C] at h1
+  rw [h0, map_add (f := _), map_mul, aeval_X, aeval_C] at h1
   have h2 : AdjoinRoot.root P * aeval (AdjoinRoot.root P) P.divX = -algebraMap K.E (AdjoinRoot P) (P.coeff 0) :=
     eq_neg_of_add_eq_zero_left h1
   unfold rootInv

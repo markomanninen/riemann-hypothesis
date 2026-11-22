@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SectionsHaveFiniteDimension
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsProjByOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsMultigradedHilbertPoly
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomogeneousFormEqHighPowerSection
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionsHaveFiniteDimensionInvarianceIsomorphism
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PolarizedAbelianAmpleExistsPositiveVolume
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SectionsHaveFiniteDimension
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsProjByOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsMultigradedHilbertPoly
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomogeneousFormEqHighPowerSection
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionsHaveFiniteDimensionInvarianceIsomorphism
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PolarizedAbelianAmpleExistsPositiveVolume
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -25,15 +30,15 @@ theorem eq_coeff_of_tendsto (q : Polynomial ℝ) (g : ℕ) (δ : ℝ)
   have hX : (Polynomial.X ^ g : Polynomial ℝ).degree = g := Polynomial.degree_X_pow g
   have h0 : (Polynomial.X ^ g : Polynomial ℝ) ≠ 0 := pow_ne_zero _ Polynomial.X_ne_zero
   rcases lt_trichotomy q.degree g with hq | hq | hq
-  · have := (Polynomial.div_tendsto_atTop_zero_of_degree_lt q (Polynomial.X ^ g) (hX ▸ hq)).comp
+  · have := (Polynomial.div_tendsto_atTop_zero_of_degree_lt (P := q) (Q := Polynomial.X ^ g) (hX ▸ hq)).comp
       tendsto_natCast_atTop_atTop
     rw [Polynomial.coeff_eq_zero_of_degree_lt hq]
     exact tendsto_nhds_unique h (by simpa [Function.comp_def] using this)
-  · have := (Polynomial.div_tendsto_atTop_leadingCoeff_div_of_degree_eq q (Polynomial.X ^ g) (hX ▸ hq)).comp
+  · have := (Polynomial.div_tendsto_atTop_leadingCoeff_div_of_degree_eq (P := q) (Q := Polynomial.X ^ g) (hX ▸ hq)).comp
       tendsto_natCast_atTop_atTop
     rw [← Polynomial.natDegree_eq_of_degree_eq_some hq]
     exact tendsto_nhds_unique h (by simpa [Function.comp_def] using this)
-  · have := (Polynomial.abs_div_tendsto_atTop_atTop_of_degree_gt q (Polynomial.X ^ g) (hX ▸ hq) h0).comp
+  · have := (Polynomial.abs_div_tendsto_atTop_atTop_of_degree_gt (P := q) (Q := Polynomial.X ^ g) (hX ▸ hq) h0).comp
       tendsto_natCast_atTop_atTop
     exact (not_tendsto_nhds_of_tendsto_atTop (by simpa [Function.comp_def, abs_div] using this) _ (by simpa [abs_div] using h.abs)).elim
 
@@ -47,12 +52,9 @@ theorem exists_poly_line {σ : Type} (Ψ : MvPolynomial σ ℚ) (n : σ → ℚ)
         Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, Finsupp.degree_apply]
       ring
     · rw [MvPolynomial.homogeneousComponent_of_mem (MvPolynomial.isHomogeneous_monomial c rfl),
-        Polynomial.coeff_monomial]
-      split_ifs with h1 h2 h2
-      · rfl
-      · exact (h2 h1.symm).elim
-      · exact (h1 h2.symm).elim
-      · simp
+        Polynomial.coeff_monomial_apply]
+      split_ifs <;> simp_all
+
   | add p p' hp hp' =>
     obtain ⟨q, h1, h2⟩ := hp
     obtain ⟨q', h1', h2'⟩ := hp'
@@ -75,7 +77,8 @@ theorem eq_eval_homogeneousComponent {σ : Type} (Ψ : MvPolynomial σ ℚ) (n :
 theorem isWeightedHomogeneous_aeval {K σ τ M : Type} [CommRing K] [AddCommMonoid M] (w : σ → M) (n : M)
     (G : τ → MvPolynomial σ K) (hG : ∀ a, (G a).IsWeightedHomogeneous w n) (F : MvPolynomial τ K) (e : ℕ)
     (hF : F.IsHomogeneous e) : (MvPolynomial.aeval G F).IsWeightedHomogeneous w (e • n) := by
-  rw [F.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [F.as_sum, map_sum]
   refine MvPolynomial.IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
   rw [MvPolynomial.aeval_monomial]
   have h1 : d.degree = e := by
@@ -186,7 +189,7 @@ theorem Emb.veryAmpleBy {f : X ⟶ Sp K} {H : LB X} {σ : Type} {s : σ → LB.S
   refine ⟨MvPolynomial.rename e.symm p, ?_⟩
   rw [MvPolynomial.coe_eval₂Hom, MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_rename]
   congr 1
-  funext a
+  funext j
   simp
 
 variable {J : Type} {U : J → X.Opens}
@@ -240,7 +243,7 @@ theorem Emb.mul {p : X ⟶ Sp K} [IsSeparated p] {g g' : ∀ i j, Γ(X, U i ⊓ 
     · obtain ⟨F, rfl⟩ := sj₁ d
       induction F using MvPolynomial.induction_on with
       | C c => exact ⟨MvPolynomial.C c, by rw [MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂Hom_C, rs_cst]⟩
-      | add F G hF hG => rw [map_add, map_add]; exact Subring.add_mem _ hF hG
+      | add F G hF hG => rw [map_add (f := _), map_add (f := _)]; exact Subring.add_mem _ hF hG
       | mul_X F i hF =>
         rw [map_mul, map_mul]
         refine Subring.mul_mem _ hF ⟨MvPolynomial.X (i, a.2), ?_⟩
@@ -248,7 +251,7 @@ theorem Emb.mul {p : X ⟶ Sp K} [IsSeparated p] {g g' : ∀ i j, Γ(X, U i ⊓ 
     · obtain ⟨F, rfl⟩ := sj₂ d
       induction F using MvPolynomial.induction_on with
       | C c => exact ⟨MvPolynomial.C c, by rw [MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂Hom_C, rs_cst]⟩
-      | add F G hF hG => rw [map_add, map_add]; exact Subring.add_mem _ hF hG
+      | add F G hF hG => rw [map_add (f := _), map_add (f := _)]; exact Subring.add_mem _ hF hG
       | mul_X F i hF =>
         rw [map_mul, map_mul]
         refine Subring.mul_mem _ hF ⟨MvPolynomial.X (a.1, i), ?_⟩
@@ -270,7 +273,7 @@ theorem isSec_cst (p : X ⟶ Sp K) (c : K) : IsSec (U := U) 1 (cstPi p U c) := f
 
 theorem IsSec.add {g : ∀ i j, Γ(X, U i ⊓ U j)ˣ} {f f' : ∀ j, Γ(X, U j)} (h : IsSec g f) (h' : IsSec g f') :
     IsSec g (f + f') := fun i j => by
-  simp only [Pi.add_apply, map_add, h i j, h' i j, mul_add]
+  simp only [Pi.add_apply, map_add (f := _), h i j, h' i j, mul_add]
 
 theorem isSec_zero (g : ∀ i j, Γ(X, U i ⊓ U j)ˣ) : IsSec g 0 := fun i j => by simp
 
@@ -305,12 +308,13 @@ theorem isSec_eval (p : X ⟶ Sp K) (col : σ → Fin r) (v : σ → ∀ j, Γ(X
     induction d using Finsupp.induction_linear with
     | zero => simpa [gpow_zero] using isSec_cst (U := U) p 1
     | add d d' h h' =>
-      rw [map_add, gpow_add, Finsupp.prod_add_index' (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _)]
+      rw [map_add (f := _), gpow_add, Finsupp.prod_add_index' (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _)]
       exact h.mul h'
     | single a m =>
       rw [Finsupp.weight_single, gpow_smul, gpow_single, Finsupp.prod_single_index (h := fun a m => v a ^ m) (pow_zero _)]
       exact (hv a).pow m
-  rw [F.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [F.as_sum, map_sum]
   refine Finset.sum_induction _ _ (fun _ _ => IsSec.add) (isSec_zero _) fun d hd => ?_
   rw [MvPolynomial.eval₂Hom_monomial, ← hF (MvPolynomial.mem_support_iff.1 hd), ← _root_.one_mul (gpow _ _)]
   exact (isSec_cst p _).mul (key d)
@@ -377,7 +381,7 @@ theorem HasFormSystem.eventually_surj {p : X ⟶ Sp K} {w : σ → Fin r → ℕ
   clear hE hE'
   induction E using MvPolynomial.induction_on with
   | C c => simp only [MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq, MvPolynomial.eval₂Hom_C]; rfl
-  | add a b ha hb => simp only [map_add, Pi.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, ha, hb]
   | mul_X a i ha =>
     simp only [map_mul, Pi.mul_apply, ha, MvPolynomial.aeval_X, MvPolynomial.eval₂Hom_X', ← hF']
 
@@ -436,7 +440,7 @@ theorem lbIso_lbPow_linComb {Y : Scheme.{0}} {L : LB Y} (hL : L.IsLB) {I : Type}
     LBIso (lbPow (LB.LinComb L φ (fun i => ∑ k, (n k : ℤ) * ε k i)) e)
       (LB.LinComb L φ (fun i => ∑ k, ((e • n) k : ℤ) * ε k i)) := by
   have h := LB.isLB_linComb hL φ (fun i => ∑ k, (n k : ℤ) * ε k i)
-  refine (CechPic.cls_eq_iff (LB.isLB_linComb h _ _) (LB.isLB_linComb hL _ _)).1 ?_
+  refine (CechPic.cls_eq_iff (isLB_lbPow h e) (LB.isLB_linComb hL φ _)).1 ?_
   rw [CechPic.cls_lbPow h, CechPic.cls_linComb hL, CechPic.cls_linComb hL, Finset.smul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← natCast_zsmul, smul_smul, Finset.mul_sum]

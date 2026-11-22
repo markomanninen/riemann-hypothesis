@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenCongruenceIdelesAndRealFiniteParts
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSplitIdempotentsOfRelTraceOneModTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenCongruenceIdelesAndRealFiniteParts
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSplitIdempotentsOfRelTraceOneModTwo
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.L2.Ker Formalism.UG
@@ -17,7 +21,8 @@ open GlobalTheory.IdemSupport
 
 theorem map_mul_apply_mem {A B n : Type} [CommRing A] [CommRing B] [Fintype n] (φ : A →+* B) (S : Subring B)
     {a b : Matrix n n A} (ha : ∀ i j, φ (a i j) ∈ S) (hb : ∀ i j, φ (b i j) ∈ S) (i j : n) : φ ((a * b) i j) ∈ S := by
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   exact sum_mem fun l _ => by rw [map_mul]; exact mul_mem (ha i l) (hb l j)
 
 theorem mulVec_mem {B n : Type} [CommRing B] [Fintype n] (S : Subring B) {a : Matrix n n B} {y : n → B}
@@ -26,7 +31,7 @@ theorem mulVec_mem {B n : Type} [CommRing B] [Fintype n] (S : Subring B) {a : Ma
 
 theorem map_mix_one {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) {f : A} (hf : φ f = 1) (a b : A) :
     φ a = φ (f * a + (1 - f) * b) := by
-  rw [map_add, map_mul, map_mul, map_sub, map_one, hf, sub_self, zero_mul, one_mul, add_zero]
+  rw [map_add (f := _), map_mul, map_mul, map_sub, map_one, hf, sub_self, zero_mul, one_mul, add_zero]
 
 variable {D : D7}
 

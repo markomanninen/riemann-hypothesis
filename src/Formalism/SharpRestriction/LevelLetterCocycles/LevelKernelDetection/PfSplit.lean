@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.ExistsInvariantLiftAverage
-import Formalism.SharpRestriction.LevelLetterCocycles.RealExtOfExact
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.ExistsInvariantLiftAverage
+public import Formalism.SharpRestriction.LevelLetterCocycles.RealExtOfExact
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,13 +82,15 @@ theorem splitStep_holds (hOloc : IsLocalRing O)
       letterRingVal W i (k17f μ u k) = ∑ l, letterRingVal W i (u l) * M l k := by
     intro u k
     change letterRingVal W i (∑ l, u l * μ l k) = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [letterRing_val_mul, hμ, ← mul_assoc, letterRing_mul_idempotent]
   have hmap : ∀ u : Fin m₁ → k17R W i, W.map F (∑ l, letterRingVal W i (u l) • B₁ l) =
       ∑ k, letterRingVal W i (k17f μ u k) • B₂ k := by
     intro u
-    simp only [hcoef, Finset.sum_smul, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hcoef, Finset.sum_smul, map_sum, map_smul]
     have h1 : ∀ l, W.map F (B₁ l) = ∑ k, M l k • B₂ k := fun l => (B₂.sum_repr _).symm
     simp only [h1, Finset.smul_sum, smul_smul]
     exact Finset.sum_comm
@@ -112,7 +118,8 @@ theorem splitStep_holds (hOloc : IsLocalRing O)
   have hsurj : Function.Surjective (k17f μ) := by
     intro y
     refine ⟨∑ k, y k • ν k, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, hν]
     funext k'
     simp [Finset.sum_apply, Pi.single_apply]

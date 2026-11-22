@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.RightBilinearApply
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.RightBilinearApply
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
+
+@[expose] public section
 
 noncomputable section
 

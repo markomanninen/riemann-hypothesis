@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlMulToRingEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlMulToRingEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ theorem toGQ_diag_nat_one_ent (q : ℕ) (hq : 0 < q) :
   have h : (0 : ℤ) < (!![(q : ℤ), 0; 0, 1] : Matrix (Fin 2) (Fin 2) ℤ).det := by
     rw [Matrix.det_fin_two_of]; omega
   unfold ent toGQ
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   simp
 
 theorem eOm_zero_of_injective_diag {Ω : Type} [Field Ω] (ε : Ω →+* ℂ) (hε : Function.Injective ε) : eOm ε 0 = 1 := by

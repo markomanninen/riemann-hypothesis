@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.ExistsIsBump
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmoothOnAdditive
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.ExistsIsBump
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmoothOnAdditive
+
+@[expose] public section
 
 open Matrix Filter Topology Set
 open scoped ContDiff InnerProductSpace
@@ -125,7 +129,8 @@ theorem exists_factor [CompleteSpace H] [CompleteSpace H'] {T : H → H'} (hl : 
     show Tl.extendOfNorm e (K.orthogonalProjectionOnto (e ⟨v, hv⟩ : PiLp 2 fun _ : ι => H)) = Tl ⟨v, hv⟩
     rw [Submodule.orthogonalProjectionOnto_mem_subspace_eq_self, LinearMap.extendOfNorm_eq hd hn]
   rw [← h1]
-  simp only [ContinuousLinearMap.comp_apply, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.comp_apply, ← map_sum]
   congr 1
   refine PiLp.ext fun j => ?_
   show dsW σ (W j) v = (∑ i, s i (dsW σ (W i) v)).ofLp j

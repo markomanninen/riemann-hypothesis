@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceLatticeComponents
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceLatticeComponents
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
@@ -130,7 +134,8 @@ theorem columns_iff (sp : A ≃+* K × K) (I : Subring A) (Λ : Submodule I (Fin
     have hs1 : φ ∘ s = fr *ᵥ (fun b => if b < i then M b i else 0) := by
       funext a
       show φ (s a) = _
-      rw [hs, Finset.sum_apply, map_sum, Finset.sum_filter]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hs, Finset.sum_apply, map_sum, Finset.sum_filter]
       simp only [Matrix.mulVec, dotProduct]
       refine Finset.sum_congr rfl fun b _ => ?_
       by_cases hb : b < i
@@ -141,7 +146,8 @@ theorem columns_iff (sp : A ≃+* K × K) (I : Subring A) (Λ : Submodule I (Fin
       · rw [if_neg hb, if_neg hb, mul_zero]
     have hs2 : ∀ a, ψ (s a) = 0 := by
       intro a
-      rw [hs, Finset.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hs, Finset.sum_apply, map_sum]
       refine Finset.sum_eq_zero fun j _ => ?_
       show ψ ((sp.symm (M j i, 0) : A) * c j a) = 0
       rw [map_mul, hψa (c j a), hc2, mul_zero]
@@ -163,7 +169,7 @@ theorem columns_iff (sp : A ≃+* K × K) (I : Subring A) (Λ : Submodule I (Fin
       have h2 : φ (s a) = (fr *ᵥ (fun b => if b < i then M b i else 0)) a := congrFun hs1 a
       have h3 : φ (z a) = (fr *ᵥ W) a := by simp [hz, hφa]
       show φ (((y - 1) *ᵥ c i) a) = φ (s a + (g : A) * z a)
-      rw [map_add, map_mul, map_natCast, h1, h2, h3]
+      rw [map_add (f := _), map_mul, map_natCast, h1, h2, h3]
     · have h1 : ψ (((y - 1) *ᵥ c i) a) = 0 := by
         rw [RingHom.map_mulVec]
         have : ψ ∘ c i = 0 := by
@@ -172,7 +178,7 @@ theorem columns_iff (sp : A ≃+* K × K) (I : Subring A) (Λ : Submodule I (Fin
         rw [this, Matrix.mulVec_zero]
         rfl
       show ψ (((y - 1) *ᵥ c i) a) = ψ (s a + (g : A) * z a)
-      rw [h1, map_add, map_mul, hs2 a, hz0 a, mul_zero, add_zero]
+      rw [h1, map_add (f := _), map_mul, hs2 a, hz0 a, mul_zero, add_zero]
 
 end Abstract
 

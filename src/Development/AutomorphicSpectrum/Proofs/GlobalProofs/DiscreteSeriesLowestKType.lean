@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesLowestKTypeOfClassification
-import Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.LowKMultOneP
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DiscreteSeriesUpqUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesLowestKTypeOfClassification
+public import Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.LowKMultOneP
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DiscreteSeriesUpqUnique
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Glob
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
@@ -35,7 +39,7 @@ private theorem exists_compl {Γ κ V : Type*} [Group Γ] [Field κ] [AddCommGro
   have hcom : ∀ (X : Submodule κ V) (g : Γ), (∀ h ∈ H, ∀ v ∈ X, σ h v ∈ X) →
       ∀ h ∈ H, ∀ v ∈ X.comap (σ g), σ h v ∈ X.comap (σ g) := by
     intro X g hX h hh v hv
-    have := hX (g * h * g⁻¹) (Subgroup.Normal.conj_mem ‹_› h hh g) _ hv
+    have := hX (g * h * g⁻¹) (Subgroup.Normal.conj_mem h hh g) _ hv
     rw [hmul, inv_mul_cancel_right, ← hmul] at this
     exact this
   obtain ⟨W, ⟨hW0, hWst⟩, hmin⟩ := (wellFounded_lt (α := Submodule κ V)).has_min
@@ -71,7 +75,7 @@ private theorem exists_compl {Γ κ V : Type*} [Group Γ] [Field κ] [AddCommGro
     have hX : ∀ h ∈ H, ∀ v ∈ U.comap (σ g) ⊔ W, σ h v ∈ U.comap (σ g) ⊔ W := by
       intro h hh v hv
       obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hv
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (hU' h hh a ha) (hWst h hh b hb)
     have hle : U ≤ (U.comap (σ g) ⊔ W).comap (σ g⁻¹) := fun u hu =>
       Submodule.mem_sup_left (hback u hu)
@@ -147,7 +151,7 @@ private theorem exists_twist {Γ κ V : Type*} [Group Γ] [Field κ] [IsAlgClose
     intro g T hT
     refine ⟨?_, fun h hh => ?_⟩
     · rw [hf, LinearMap.trace_mul_comm, mul_assoc, ← map_mul]; simpa using hT.1
-    · have h1 := hT.2 (g⁻¹ * h * g) (by simpa using Subgroup.Normal.conj_mem ‹_› h hh g⁻¹)
+    · have h1 := hT.2 (g⁻¹ * h * g) (by simpa using Subgroup.Normal.conj_mem h hh g⁻¹)
       have e1 : σ h * σ g = σ g * σ (g⁻¹ * h * g) := by
         rw [← map_mul, ← map_mul]; congr 1; group
       have e2 : σ g⁻¹ * σ h = σ (g⁻¹ * h * g) * σ g⁻¹ := by

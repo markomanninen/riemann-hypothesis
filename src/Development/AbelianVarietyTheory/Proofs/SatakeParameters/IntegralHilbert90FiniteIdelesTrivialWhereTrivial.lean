@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
-import Formalism.LocalToGlobal.Divisibility.DivisibilityProofs.TuplesP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfCongSet
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.H90RangeEqNormOneOfIsQuad
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteAdeleFieldIdentificationEqBaseChangeRingEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegralHilbert90DetHostField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
+public import Formalism.LocalToGlobal.Divisibility.DivisibilityProofs.TuplesP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfCongSet
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.H90RangeEqNormOneOfIsQuad
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteAdeleFieldIdentificationEqBaseChangeRingEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegralHilbert90DetHostField
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.DIV Formalism.UG
 open scoped TensorProduct
 
@@ -103,11 +108,14 @@ theorem exists_glue_of_int {F E : Type} [Field F] [NumberField F] [Field E] [Num
   refine ⟨∑ i, Module.finBasis F E i ⊗ₜ[F] c i, fun g ι hι P => ?_⟩
   have e1 : ι (sigR g (FiniteAdeleRing (𝓞 F) F) (∑ i, Module.finBasis F E i ⊗ₜ[F] c i)) =
       ∑ i, algebraMap E _ (g (Module.finBasis F E i)) * adMap F E (c i) := by
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     exact Finset.sum_congr rfl fun i _ => hι _ _
-  rw [e1, ← localComponent_apply₂, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, ← localComponent_apply₂, map_sum]
   conv_rhs => rw [← (Module.finBasis F E).sum_repr (algebraMap (𝓞 E) E (f (P.under (𝓞 F))))]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, localComponent_algebraMap, localComponent_apply₂, adMap_apply, hc', locMap_algebraMap, Algebra.smul_def, map_mul,
     AlgHom.commutes, map_mul, mul_comm]
@@ -180,7 +188,7 @@ theorem exists_integral_h90_preimage_of_mem_intU_unramified (σ : E →ₐ[F] E)
   let S : HeightOneSpectrum (𝓞 F) → Prop := fun v => ∀ P' : HeightOneSpectrum (𝓞 E), P'.under (𝓞 F) = v → ι d P' = 1
   have hσσ : ∀ x, σ (σ x) = x := hσ.2.1
   have htr : ∀ x, ∃ t : F, x + σ x = algebraMap F E t := fun x => by
-    obtain ⟨t, ht⟩ := hσ.2.2 (x + σ x) (by rw [map_add, hσσ, add_comm])
+    obtain ⟨t, ht⟩ := hσ.2.2 (x + σ x) (by rw [map_add (f := _), hσσ, add_comm])
     exact ⟨t, ht.symm⟩
   set sR := sigR σ (FiniteAdeleRing (𝓞 F) F) with hsR
   have hss : ∀ z, sR (sR z) = z := GlobalTheory.Mem.DetClass.sigR_sigR hσσ
@@ -257,7 +265,7 @@ theorem exists_integral_h90_preimage_of_mem_intU_unramified (σ : E →ₐ[F] E)
   have ιx : ∀ P, ι x0 P = (if S (P.under (𝓞 F)) then 1 else 0) + algebraMap E _ (algebraMap (𝓞 E) E (f (P.under (𝓞 F)))) +
       ι d P * algebraMap E _ (σ (algebraMap (𝓞 E) E (f (P.under (𝓞 F))))) := by
     intro P
-    rw [hx0, map_add, map_add, map_mul]
+    rw [hx0, map_add (f := _), map_add (f := _), map_mul]
     show ι T P + ι a P + ι d P * ι (sR a) P = _
     rw [hιT, haι, haσ]
   have hxS : ∀ P : HeightOneSpectrum (𝓞 E), S (P.under (𝓞 F)) → ι x0 P = 1 := by
@@ -282,7 +290,7 @@ theorem exists_integral_h90_preimage_of_mem_intU_unramified (σ : E →ₐ[F] E)
     show σ 1 ⊗ₜ[F] ε = _
     rw [map_one]
   have hsx : sR x0 = T + sR a + sR d * a := by
-    rw [hx0, map_add, map_add, map_mul, hsT, hss]
+    rw [hx0, map_add (f := _), map_add (f := _), map_mul, hsT, hss]
   have hrel : x0 = d * sR x0 := by
     rw [hsx, hx0]
     linear_combination (-1 : AfE F E) * hde - a * hdd

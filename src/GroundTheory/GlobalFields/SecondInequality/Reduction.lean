@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.SecondInequality.PrimeDegree
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SecondInequality.PrimeDegree
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.EllipticTorsion.FormalGroupPointsParametrisation
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementU
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.CM4
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KurDefs
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.FormalGroupPointsParametrisation
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementU
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.CM4
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KurDefs
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical

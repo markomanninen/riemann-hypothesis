@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.UpPositionOfModels
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U3upPfFilCAnti
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.UpPositionOfModels
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U3upPfFilCAnti
+
+@[expose] public section
 
 noncomputable section
 

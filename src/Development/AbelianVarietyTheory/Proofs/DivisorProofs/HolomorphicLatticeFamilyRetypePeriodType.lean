@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicFamilyConjConstantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSemisimpleRingOfPosFormAdjointClosedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramRePosDefAdjointPeriodStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicFamilyConjConstantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSemisimpleRingOfPosFormAdjointClosedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramRePosDefAdjointPeriodStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PELU
@@ -92,7 +96,8 @@ def perM (D : PLat O bar) (e : Module.Basis (Fin r) ℤ D.La) (P : D.La →+ (Fi
 
 theorem apply_eq_mulVec (D : PLat O bar) (e : Module.Basis (Fin r) ℤ D.La) (P : D.La →+ (Fin g → ℂ)) (x : D.La) :
     P x = perM D e P *ᵥ (fun j => ((e.repr x j : ℤ) : ℂ)) := by
-  conv_lhs => rw [← e.sum_repr x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← e.sum_repr x, map_sum]
   ext i
   simp only [map_zsmul, Finset.sum_apply, Pi.smul_apply, zsmul_eq_mul, perM, Matrix.mulVec, dotProduct, Matrix.of_apply]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
@@ -111,7 +116,8 @@ theorem apply_smul_eq (D : PLat O bar) (e : Module.Basis (Fin r) ℤ D.La) (P : 
   rw [Finset.smul_sum]
   simp_rw [smul_comm a]
   ext i
-  simp [map_sum, map_zsmul, Matrix.mulVec, dotProduct, Finset.sum_apply, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_zsmul, Matrix.mulVec, dotProduct, Finset.sum_apply, mul_comm]
 
 theorem perM_surj (D : PLat O bar) (e : Module.Basis (Fin r) ℤ D.La) (P : D.La →+ (Fin g → ℂ))
     (hspan : Submodule.span ℝ (Set.range P) = ⊤) : Function.Surjective (perM D e P).mulVec := by

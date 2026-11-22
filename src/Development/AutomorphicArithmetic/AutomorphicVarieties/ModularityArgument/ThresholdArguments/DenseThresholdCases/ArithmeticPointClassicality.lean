@@ -1,3 +1,7 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.IrrArithPointsAutomorphicAway
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.IrrArithPointsAutomorphicAway
+
+@[expose] public section
 
 noncomputable abbrev UpperTheory.V.W.UniversalOrdinaryDeterminantRing.arithmeticPointClassicalityDense := @UpperTheory.Gal.projectedFormsSystemPart.IrrArithPointsAutomorphicAway

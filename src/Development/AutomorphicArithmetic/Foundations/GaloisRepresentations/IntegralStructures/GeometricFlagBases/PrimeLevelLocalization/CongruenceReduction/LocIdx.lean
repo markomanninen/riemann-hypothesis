@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.CongruenceReduction.LevLocAlt
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.CongruenceReduction.LevLocAlt
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU Formalism.L2.Host GlobalTheory.HeckeGal
 open GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKDef
@@ -55,7 +59,9 @@ private theorem exists_gl (D₁ D₂ : Submodule κ (Fin n → κ))
     intro x
     simp only [e, LinearEquiv.trans_apply]
     rw [Submodule.prodEquivOfIsCompl_symm_apply_left]
-    simp
+    change (eD x : Fin n → κ) + (eC 0 : Fin n → κ) = (eD x : Fin n → κ)
+    rw [eC.map_zero]
+    simp only [Submodule.coe_zero, add_zero]
   let M := LinearMap.toMatrix' (e : (Fin n → κ) →ₗ[κ] (Fin n → κ))
   let M' := LinearMap.toMatrix' (e.symm : (Fin n → κ) →ₗ[κ] (Fin n → κ))
   have hMM : M * M' = 1 := by
@@ -254,8 +260,8 @@ private theorem conj_mem_iff (n j : ℕ) (hj : j ≤ n) (ϖ : L) (hϖ : ϖ ≠ 0
   rw [tjcosets_mem_K_iff, hinv, key g, key g⁻¹, map_inv, map_inv]
   exact ⟨fun h => h.1, fun h => ⟨h, (stabS n j κ hj).inv_mem h⟩⟩
 
-include e in
 
+include e in
 private theorem relIndex_eq (n j : ℕ) (hj : j ≤ n) (ϖ : L) (hϖ : ϖ ≠ 0) (hϖO : ϖ ∈ O)
     (hmax : ∀ x : O, ϖ⁻¹ * (x : L) ∈ O ↔ IsLocalRing.residue O x = 0) (t : GL (Fin n) L)
     (ht : t = (tjcosets_dG n j ϖ⁻¹ (inv_ne_zero hϖ))⁻¹) :

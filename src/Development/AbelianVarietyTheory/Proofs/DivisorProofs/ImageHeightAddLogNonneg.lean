@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsImageHeightUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingRotBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsImageHeightUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingRotBlock
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,7 +42,7 @@ theorem IsImageHeight.neg_log_le {K V Ω : Type} [Field K] [NumberField K] [AddC
   push_cast at h2
   linarith
 
-theorem imageHeight_add_log_nonneg (K V Ω : Type) [Field K] [NumberField K] [IsTotallyComplex K] [AddCommGroup V]
+theorem imageHeight_add_log_nonneg (K V Ω : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V]
     [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Field Ω] [Algebra K Ω] (Nm : (K →+* ℂ) → V → ℝ)
     (L : Submodule (𝓞 K) V) (ev : V →ₗ[K] Ω) (d n : ℕ) (w : Fin n → V) (abelian₂ : ℝ) (hG : HasGram Nm)
     (hc : ∀ σ x, Nm ((starRingEnd ℂ).comp σ) x = Nm σ x) (hs : Submodule.span K (L : Set V) = ⊤)
@@ -50,8 +54,5 @@ theorem imageHeight_add_log_nonneg (K V Ω : Type) [Field K] [NumberField K] [Is
     IsTotallyComplex.complexEmbedding_not_isReal σ h
   exact IsImageHeight.neg_log_le hs hL hw.le (isImageHeight_imageHeight (exists_isImageHeight_iff.2
     ⟨exists_isFrame hK hc hG (hL ▸ Submodule.fg_span (Set.finite_range _)) hs, hd⟩))
-
-theorem imageHeight_nonneg : Hypotheses2 → ∀ (K V Ω : Type) [Field K] [NumberField K] [IsTotallyComplex K] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Field Ω] [Algebra K Ω] (Nm : (K →+* ℂ) → V → ℝ) (L : Submodule (𝓞 K) V) (ev : V →ₗ[K] Ω) (d n : ℕ) (w : Fin n → V) (abelian₂ : ℝ), HasGram Nm → (∀ σ x, Nm ((starRingEnd ℂ).comp σ) x = Nm σ x) → Submodule.span K (L : Set V) = ⊤ → IsShortGen Nm L w abelian₂ → 0 < imageDeg ev d → 0 ≤ imageHeight Nm L ev d + Real.log abelian₂ :=
-  fun _ => imageHeight_add_log_nonneg
 
 end GlobalTheory.ImageHeightNonneg

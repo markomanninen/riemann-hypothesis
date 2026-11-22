@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.StickelbergerTheorem.StickelbergerAt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.StickelbergerTheorem.StickelbergerAt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V.Kum UpperTheory.V.Stick
 open scoped nonZeroDivisors
@@ -19,7 +23,7 @@ theorem UpperTheory.V.Stick.redRoot :
   have hroot : (Polynomial.cyclotomic M R).IsRoot ζ := hζ.isRoot_cyclotomic hM
   have hroot' : (Polynomial.cyclotomic M (ZMod p)).IsRoot (π ζ) := by
     rw [← Polynomial.map_cyclotomic M π]
-    exact hroot.map
+    exact hroot.map π
   have hprim : IsPrimitiveRoot (π ζ) M := (Polynomial.isRoot_cyclotomic_iff).mp hroot'
   refine ⟨hprim, hprim.dvd_of_pow_eq_one _ ?_⟩
   exact ZMod.pow_card_sub_one_eq_one (hprim.ne_zero hM.ne')

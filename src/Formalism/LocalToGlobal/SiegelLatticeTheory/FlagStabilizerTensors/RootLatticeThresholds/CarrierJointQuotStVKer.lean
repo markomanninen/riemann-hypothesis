@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotStVGeo
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotStVGeo
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,7 +157,7 @@ theorem stVKer_of_fix (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.
   intro w hw v y hy h0
   have hγ : IsPtRep X u u' w (gamW X u u' w) := by
     unfold gamW
-    rw [dif_pos hw.1]
+    rw [dite_eq_left hw.1]
     exact hw.1.choose_spec
   have hfe : ∀ a b, Formalism.L2.SG.HidaSetting.hJ (X.B.I.ε v) (Formalism.L2.SG.HidaSetting.rv X.B.I v (X.fR a))
       (Formalism.L2.SG.HidaSetting.rv X.B.I v (X.eR b)) = if b = a then 1 else 0 := by

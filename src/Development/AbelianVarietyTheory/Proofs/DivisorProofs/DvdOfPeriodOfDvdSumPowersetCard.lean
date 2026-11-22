@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardDvdSumOfInvariantOfCardStabilizerDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardDvdSumOfInvariantOfCardStabilizerDvd
+
+@[expose] public section
 
 open Pointwise
 
@@ -179,8 +183,9 @@ lemma exists_eq_mul_geom {q d s e l : ℕ} (hq : 2 ≤ q) (hd : 0 < d) (h : s * 
 
 end PeriodDvd
 
-open PeriodDvd in
+open PeriodDvd
 
+open PeriodDvd in
 theorem dvd_of_period_of_dvd_sum_powersetCard (q d : ℕ) (a : ℕ → ℤ) (hq : 2 ≤ q) (hd : 0 < d)
     (hinv : ∀ k l i : ℕ, k * q ^ i ≡ l [MOD q ^ d - 1] → a k = a l)
     (hsum : ∀ k s : ℕ, (d : ℤ) ∣ ∑ I ∈ (Finset.range d).powersetCard s, a (k * ∑ i ∈ I, q ^ i))
@@ -191,7 +196,7 @@ theorem dvd_of_period_of_dvd_sum_powersetCard (q d : ℕ) (a : ℕ → ℤ) (hq 
   induction s using Nat.strong_induction_on generalizing e l with
   | _ s ih =>
   have hs : 0 < s := Nat.pos_of_mul_pos_right (hse ▸ hd)
-  obtain ⟨k, hk⟩ := exists_eq_mul_geom hq hd hse hl
+  obtain ⟨k, hk⟩ := PeriodDvd.exists_eq_mul_geom hq hd hse hl
   rw [← sum_killed hse] at hk
   set h : Finset (ZMod d) → ℤ :=
     fun I => if I.card = s then a (k * ∑ x ∈ I, q ^ x.val) else 0 with hh

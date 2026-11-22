@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffineOpenAndIsPushout
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffineOpenAndIsPushout
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,76 +31,21 @@ section Eigen
 variable {X Y : Scheme.{0}} {F G : X.Modules} {O : Type} [CommRing O] {ρ : O →+* End F}
   {ρ' : O →+* End G} (σ : O →+* Γ(X, ⊤))
 
-def eigenQuotMap {φ : F ⟶ G} (h : IsEquivariant ρ ρ' φ) : eigenQuot ρ σ ⟶ eigenQuot ρ' σ :=
-  eigenDesc (φ ≫ eigenπ ρ' σ) fun a => by
-    rw [← Category.assoc, h a, Category.assoc, act_eigenπ, Linear.comp_smul]
-
-@[reassoc (attr := simp)] theorem eigenπ_eigenQuotMap {φ : F ⟶ G} (h : IsEquivariant ρ ρ' φ) :
-    eigenπ ρ σ ≫ eigenQuotMap σ h = φ ≫ eigenπ ρ' σ := eigenπ_desc _ _ _ _
-
 theorem isEquivariant_inv {φ : F ≅ G} (h : IsEquivariant ρ ρ' φ.hom) :
     IsEquivariant ρ' ρ φ.inv := fun a => by
   rw [Iso.comp_inv_eq, Category.assoc, h a, Iso.inv_hom_id_assoc]
 
-@[simps] def eigenIso {φ : F ≅ G} (h : IsEquivariant ρ ρ' φ.hom) : eigen ρ σ ≅ eigen ρ' σ where
-  hom := eigenMap σ h
-  inv := eigenMap σ (isEquivariant_inv h)
-  hom_inv_id := by rw [← cancel_mono (eigenι _ _)]; simp
-  inv_hom_id := by rw [← cancel_mono (eigenι _ _)]; simp
-
-@[simps] def eigenQuotIso {φ : F ≅ G} (h : IsEquivariant ρ ρ' φ.hom) :
-    eigenQuot ρ σ ≅ eigenQuot ρ' σ where
-  hom := eigenQuotMap σ h
-  inv := eigenQuotMap σ (isEquivariant_inv h)
-  hom_inv_id := by rw [← cancel_epi (eigenπ _ _)]; simp
-  inv_hom_id := by rw [← cancel_epi (eigenπ _ _)]; simp
-
 variable (ρ)
 
-theorem eigenι_comp_act {c : O →+* O} (hc : Function.Involutive c) (a : O) :
-    eigenι (ρ.comp c) σ ≫ act ρ a = σ.comp c a • eigenι (ρ.comp c) σ := by
-  have := eigenι_act (ρ.comp c) σ (c a)
-  rwa [act, RingHom.comp_apply, hc] at this
-
-def eigenConjIso {c : O →+* O} (hc : Function.Involutive c) :
-    eigen (ρ.comp c) σ ≅ eigen ρ (σ.comp c) where
-  hom := eigenLift (eigenι _ _) (eigenι_comp_act ρ σ hc)
-  inv := eigenLift (eigenι _ _) fun a => by
-    have := eigenι_act ρ (σ.comp c) (c a)
-    rwa [RingHom.comp_apply, hc] at this
-  hom_inv_id := by
-    rw [← cancel_mono (eigenι _ _), Category.assoc, eigenLift_ι, eigenLift_ι, Category.id_comp]
-  inv_hom_id := by
-    rw [← cancel_mono (eigenι _ _), Category.assoc, eigenLift_ι, eigenLift_ι, Category.id_comp]
-
-@[reassoc (attr := simp)] theorem eigenConjIso_hom_ι {c : O →+* O} (hc : Function.Involutive c) :
-    (eigenConjIso ρ σ hc).hom ≫ eigenι _ _ = eigenι _ _ :=
-  eigenLift_ι ρ _ _ (eigenι_comp_act ρ σ hc)
-
-def eigenQuotConjIso {c : O →+* O} (hc : Function.Involutive c) :
-    eigenQuot (ρ.comp c) σ ≅ eigenQuot ρ (σ.comp c) where
-  hom := eigenDesc (eigenπ _ _) fun a => by
-    have := act_eigenπ ρ (σ.comp c) (c a)
-    rwa [RingHom.comp_apply, hc] at this
-  inv := eigenDesc (eigenπ _ _) fun a => by
-    have := act_eigenπ (ρ.comp c) σ (c a)
-    rwa [act, RingHom.comp_apply, hc] at this
-  hom_inv_id := by rw [← cancel_epi (eigenπ _ _)]; simp
-  inv_hom_id := by rw [← cancel_epi (eigenπ _ _)]; simp
-
-@[reassoc (attr := simp)] theorem eigenπ_eigenQuotConjIso_hom {c : O →+* O}
-    (hc : Function.Involutive c) : eigenπ _ _ ≫ (eigenQuotConjIso ρ σ hc).hom = eigenπ _ _ := by
-  simp only [eigenQuotConjIso, eigenπ_desc]
-
 theorem smul_eq_smulHom_comp (a : Γ(X, ⊤)) (φ : F ⟶ G) : a • φ = smulHom F a ≫ φ :=
-  (smulHom_comp φ a).symm
+  (smul_hom_def a φ).trans (smulHom_comp a φ).symm
 
 theorem dualMap_smul (a : Γ(X, ⊤)) (φ : F ⟶ G) : dualMap (a • φ) = a • dualMap φ := by
   rw [smul_eq_smulHom_comp, dualMap_comp, dualMap_smulHom]
   rfl
 
 def dualQuotHom : dual (eigenQuot ρ σ) ⟶ eigen (dualAct ρ) σ :=
-  eigenLift (dualMap (eigenπ ρ σ)) fun a => by
+  eigenLift (ρ := dualAct ρ) (σ := σ) (dualMap (eigenπ ρ σ)) fun a => by
     rw [act_dualAct, ← dualMap_comp, act_eigenπ, dualMap_smul]
 
 instance isIso_dualQuotHom : IsIso (dualQuotHom ρ σ) := by
@@ -123,12 +72,10 @@ instance isIso_dualQuotHom : IsIso (dualQuotHom ρ σ) := by
 
 def dualQuotIso : dual (eigenQuot ρ σ) ≅ eigen (dualAct ρ) σ := asIso (dualQuotHom ρ σ)
 
-@[reassoc (attr := simp)] theorem dualQuotIso_hom_ι :
-    (dualQuotIso ρ σ).hom ≫ eigenι _ _ = dualMap (eigenπ ρ σ) := by
+theorem dualQuotIso_hom_ι :
+    (dualQuotIso ρ σ).hom ≫ eigenι _ _ =
+      dualMap (eigenπ ρ σ) := by
   simp only [dualQuotIso, asIso_hom, dualQuotHom, eigenLift_ι]
-
-theorem isEquivariant_toBidual : IsEquivariant ρ (dualAct (dualAct ρ)) (cartierDualToBidual F) := fun a =>
-  toBidual_naturality_dualSheafTranspose (act ρ a)
 
 def pullbackQuotIso (f : Y ⟶ X) : eigenQuot (pullAct ρ f) (f.appTop.hom.comp σ) ≅
     (Scheme.Modules.pullback f).obj (eigenQuot ρ σ) where
@@ -146,10 +93,6 @@ def pullbackQuotIso (f : Y ⟶ X) : eigenQuot (pullAct ρ f) (f.appTop.hom.comp 
     rw [← cancel_epi ((Scheme.Modules.pullback f).map (eigenπ ρ σ)), ← Category.assoc, adj,
       ← Adjunction.homEquiv_naturality_left_symm, eigenπ_desc, Equiv.symm_apply_apply, eigenπ_desc,
       Category.comp_id]
-
-@[reassoc (attr := simp)] theorem eigenπ_pullbackQuotIso_hom (f : Y ⟶ X) :
-    eigenπ _ _ ≫ (pullbackQuotIso ρ σ f).hom = (Scheme.Modules.pullback f).map (eigenπ ρ σ) := by
-  simp only [pullbackQuotIso, eigenπ_desc]
 
 theorem hom_ext_of_isFrame {κ : Type} [Fintype κ] {e : κ → Γ(F, ⊤)} (he : IsFrame e)
     {φ ψ : F ⟶ G} (h : ∀ i, φ.app ⊤ (e i) = ψ.app ⊤ (e i)) : φ = ψ := by

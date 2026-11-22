@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Dets
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeDegreeEqSublatticeDegreeAddLogIndex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Dets
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeDegreeEqSublatticeDegreeAddLogIndex
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -34,7 +38,8 @@ theorem idx_map_eq_colon_dets : ∀ {F V : Type} [Field F] [NumberField F] [AddC
     refine LinearMap.ext fun x => ?_
     rw [GlobalTheory.LatIndexDeg.coordMap_apply, LinearMap.restrictScalars_apply]
     conv_lhs => rw [← (Pi.basisFun F (Fin p)).sum_repr x]
-    simp [hv, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hv, map_sum, map_smul]
   have hω := GlobalTheory.LatIndexDeg.ιMulti_ne_zero_of_li v hli
   have hℓ : Function.Injective (GlobalTheory.LatIndexDeg.lineMap F (exteriorPower.ιMulti F p v)) :=
     fun s t e => smul_left_injective F hω e

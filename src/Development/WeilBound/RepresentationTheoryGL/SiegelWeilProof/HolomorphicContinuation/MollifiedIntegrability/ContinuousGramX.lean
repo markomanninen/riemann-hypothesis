@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.NormMono
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.NormMono
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,8 @@ lemma gramX_smul {m n : ℕ} (ε : Fin m → Bool) (ζ : ℂ) (hζ : ‖ζ‖ = 
     rw [map_mul]
     linear_combination ((starRingEnd ℂ) u * v) * h1
   ext _i _j
-  simp only [gramX, evX, Qp, Qb, map_sub, map_sum, map_mul, MvPolynomial.eval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gramX, evX, Qp, Qb, map_sub, map_sum, map_mul, MvPolynomial.eval_X]
   congr 1 <;> refine Finset.sum_congr rfl fun a _ => ?_ <;>
     simp only [Pi.smul_apply, smul_eq_mul, Bool.false_eq_true, if_true, if_false] <;>
     exact key _ _

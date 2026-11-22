@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchInt
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsArch
-import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchInt
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsArch
+public import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -206,9 +210,6 @@ theorem integral_kR {y ξ : ℝ} (hy : 0 < y) (hξ : ξ ≠ 0) :
     rw [this, mul_zero]
 
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
-
-theorem locInf_eq (ω : HChar F) (v : InfinitePlace F) (z : (v.Completion)ˣ) :
-    ω.1 (infiniteEmbedding v z) = ω.locInf v z := rfl
 
 theorem omega_ofInfinite (ω : HChar F) (a : (InfiniteAdeleRing F)ˣ) :
     ((ω.1 (ofInfinite a) : ℂˣ) : ℂ) = ∏ v, ((ω.locInf v (infiniteComponent v a) : ℂˣ) : ℂ) := by

@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedHalf
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.MulStableIntegral
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedHalf
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.MulStableIntegral
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical
@@ -99,7 +103,7 @@ def co (L : PeriodPair) (z : ℂ) : ℤ × ℤ :=
 
 theorem co_spec (L : PeriodPair) {z : ℂ} (h : z ∈ L.lattice) :
     ((co L z).1 : ℂ) * L.ω₁ + ((co L z).2 : ℂ) * L.ω₂ = z := by
-  rw [co, dif_pos h]
+  rw [co, dite_eq_left h]
   exact (PeriodPair.mem_lattice.mp h).choose_spec.choose_spec
 
 end CardG

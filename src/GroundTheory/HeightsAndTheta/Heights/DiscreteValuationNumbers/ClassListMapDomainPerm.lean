@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InstFintypeSumElim
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisor
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVocabMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVocabMultiHomogIdeal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InstFintypeSumElim
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisor
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVocabMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVocabMultiHomogIdeal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -135,7 +140,7 @@ theorem polyNum_eq_classNum {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteVal
   congr 1
   have hlen : (IndefiniteRowSideFullHecke.NumbersDVR.Bundles.monoList deg μ).length = d := by
     rw [monoList_eq, List.length_map, FlagTypings.length_monoList hH hμ]
-  rw [dif_pos hlen]
+  rw [dite_eq_left hlen]
   refine (intNum_get_cast _ _ _ _ hlen).trans ?_
   rw [List.append_nil]
   refine FlagTypings.intNumL_perm _ _ ?_
@@ -229,11 +234,6 @@ section ProjBundle
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-def optIdx (M : ℕ) :
-    (Σ o : Option K, bundleIdx ι M o) → (Σ k : K ⊕ Unit, Sum.elim ι (fun _ : Unit => Fin M) k)
-  | ⟨none, l⟩ => ⟨Sum.inr (), l⟩
-  | ⟨some k, i⟩ => ⟨Sum.inl k, i⟩
-
 end ProjBundle
 
 section Joins
@@ -254,8 +254,6 @@ end Joins
 section Degenerate
 
 variable (O : Type*) [CommRing O] {Ω : Type*} [Field Ω] [Algebra O Ω]
-
-def zeroPt : (Σ _ : Unit, Fin 1) → Ω := fun _ => 0
 
 end Degenerate
 

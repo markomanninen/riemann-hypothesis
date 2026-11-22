@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.StatementG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhaseFunctionCriticalPoints
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralConvergesAbs
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FourierUniquenessMirabolic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CuspidalIrreducibleSubrep
+module
+
+public import Formalism.HermitianCurvature.StatementG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhaseFunctionCriticalPoints
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralConvergesAbs
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FourierUniquenessMirabolic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CuspidalIrreducibleSubrep
+
+@[expose] public section
 
 section PartA
 
@@ -24,7 +28,7 @@ theorem a_isOpen (n : ℕ) : IsOpen {x : Fin n → ℂ | ∀ k, x k ≠ 0} := by
 
 theorem a_contDiffAt_inv {n : ℕ} (N : WithTop ℕ∞) (k : Fin n) (x : Fin n → ℂ) (hx : x k ≠ 0) :
     ContDiffAt ℂ N (fun y : Fin n → ℂ => (y k)⁻¹) x :=
-  ((contDiff_apply ℂ ℂ k).contDiffAt).inv hx
+  ((contDiff_apply ℂ (fun _ => ℂ) k).contDiffAt).inv hx
 
 theorem a_norm_proj_le {n : ℕ} (k : Fin n) :
     ‖(ContinuousLinearMap.proj k : (Fin n → ℂ) →L[ℂ] ℂ)‖ ≤ 1 :=
@@ -54,7 +58,7 @@ theorem a_norm_inv {n : ℕ} (c : ℕ) (k : Fin n) (x : Fin n → ℂ) (hx : x k
   refine (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans ?_
   rw [hgx, norm_iteratedFDeriv_inv c _ hx]
   have h3 : ∏ _i : Fin c, ‖g‖ ≤ 1 :=
-    Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun _ _ => hg ▸ a_norm_proj_le k)
+    Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun _ _ => hg ▸ a_norm_proj_le k)
   exact mul_le_of_le_one_right (by positivity) h3
 
 theorem a_lin_zero {n : ℕ} (j : ℕ) (hj : 1 ≤ j) (x : Fin n → ℂ) :
@@ -73,7 +77,7 @@ theorem a_contDiffAt_prod {n : ℕ} (N : WithTop ℕ∞) (x : Fin n → ℂ) (hx
   contDiffAt_prod fun k _ => a_contDiffAt_inv N k x (hx k)
 
 theorem a_contDiff_lin {n : ℕ} (N : WithTop ℕ∞) : ContDiff ℂ N (fun x : Fin n → ℂ => ∑ k, x k) :=
-  ContDiff.sum fun k _ => contDiff_apply ℂ ℂ k
+  ContDiff.sum fun k _ => contDiff_apply ℂ (fun _ => ℂ) k
 
 theorem contDiffAt_phase_function {n : ℕ} (N : WithTop ℕ∞) (D' : ℂ) (x : Fin n → ℂ) (hx : ∀ k, x k ≠ 0) :
     ContDiffAt ℂ N (g0 D') x := by
@@ -109,7 +113,7 @@ theorem a_prod_bound {n : ℕ} (N : ℕ) (x : Fin n → ℂ) (hx : ∀ k, x k �
           (fun y : Fin n → ℂ => (y k)⁻¹) {x : Fin n → ℂ | ∀ k, x k ≠ 0} x‖
       ≤ ∏ k, (((Multiset.count k (p : Multiset (Fin n))).factorial : ℝ) *
           (‖x k‖⁻¹ * b ^ (Multiset.count k (p : Multiset (Fin n))))) := by
-        refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun k _ => ?_
+        refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun k _ => ?_
         rw [iteratedFDerivWithin_of_isOpen _ hS hxS]
         refine (a_norm_inv _ k x (hx k)).trans ?_
         gcongr
@@ -128,7 +132,8 @@ theorem a_fderiv_single {n : ℕ} (D' : ℂ) (x : Fin n → ℂ) (hx : ∀ k, x 
 theorem a_fderiv_apply {n : ℕ} (D' : ℂ) (x : Fin n → ℂ) (hx : ∀ k, x k ≠ 0) (v : Fin n → ℂ) :
     fderiv ℂ (g0 D') x v = ∑ k, v k * dg0 D' x k := by
   conv_lhs => rw [pi_eq_sum_univ v]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   have : (fun j => if k = j then (1 : ℂ) else 0) = Pi.single k 1 := by
     funext j; simp [Pi.single_apply, eq_comm]
@@ -377,7 +382,7 @@ theorem phase_near_critical : Formalism.FourierDecayAlt.G.PhaseFunctionNearCriti
       linarith
     have h2 : (‖z‖ / 2) ^ (m + 1) ≤ ‖∏ k, x k‖ := by
       rw [norm_prod]
-      have := Finset.prod_le_prod (s := Finset.univ) (f := fun _ : Fin (m + 1) => ‖z‖ / 2)
+      have := Finset.prod_le_prod₀ (s := Finset.univ) (f := fun _ : Fin (m + 1) => ‖z‖ / 2)
         (g := fun k => ‖x k‖) (fun _ _ => by positivity) (fun k _ => (hball x hx k).1)
       rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin] at this
       exact this

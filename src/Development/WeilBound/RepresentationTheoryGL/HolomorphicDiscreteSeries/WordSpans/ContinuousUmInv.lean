@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WordSpans.WordSpan
-import Development.WeilBound.CoreStatements.BranchingTraces.ContinuousEmb
-import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.LipschitzEstimate
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WordSpans.WordSpan
+public import Development.WeilBound.CoreStatements.BranchingTraces.ContinuousEmb
+public import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.LipschitzEstimate
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,9 +86,11 @@ theorem gen_step (hS : IsSmMod ε σ S E) (hU : IsURepOn (UJset ε) σ) (g : UJ 
   rw [um_inv_inv] at h
   have h2 := congrArg (σ (um g)) h
   rw [inv_cancel' hU] at h2
-  rw [h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun d _ => map_smul _ _ _
 
 theorem continuous_um : Continuous fun g : UJ ε => um g := Units.continuous_val.comp continuous_subtype_val
@@ -116,9 +122,11 @@ theorem word_growth (hS : IsSmMod ε σ S E) (hU : IsURepOn (UJset ε) σ) (w : 
         rfl
       simp only [wp, List.map_append, List.map_cons, List.map_nil, List.prod_append, List.prod_cons, List.prod_nil,
         mul_one, Module.End.mul_apply]
-      rw [hx, map_sum, Submodule.coe_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx, map_sum, Submodule.coe_sum]
       refine Finset.sum_congr rfl fun c _ => ?_
-      rw [map_sum, Submodule.coe_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Submodule.coe_sum]
       refine Finset.sum_congr rfl fun d _ => ?_
       rw [map_smul, Submodule.coe_smul]
     choose hc C hC0 hC using fun c d => ih (E c d v)
@@ -155,7 +163,7 @@ variable {m : ℕ} {ε : Fin m → Bool} {H : Type} [NormedAddCommGroup H] [Inne
   {σ : Matrix (Fin m) (Fin m) ℂ → (H →L[ℂ] H)} {S : Submodule ℂ H} {E : Fin m → Fin m → Module.End ℂ S}
 
 theorem ap_of_mem (T : Module.End ℂ S) {x : H} (hx : x ∈ S) : ap T x = (T ⟨x, hx⟩ : H) := by
-  unfold ap; rw [dif_pos hx]
+  unfold ap; rw [dite_eq_left hx]
 
 theorem ap_add (T₁ T₂ : Module.End ℂ S) (x : H) : ap (T₁ + T₂) x = ap T₁ x + ap T₂ x := by
   unfold ap; split_ifs <;> simp

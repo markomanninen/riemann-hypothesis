@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct GlobalTheory.EtC
 
 noncomputable section
@@ -112,7 +117,7 @@ theorem cechPt_nat {Y X : Scheme.{0}} (f : Y ⟶ X) (k : ℕ) {Z Z' : Scheme.{0}
       erw [Category.assoc, WidePullback.lift_π, WidePullback.lift_π, yoneda.map_comp]
     · erw [Category.assoc, WidePullback.lift_base, WidePullback.lift_base, yoneda.map_comp]
   rw [← e]
-  erw [← FunctorToTypes.naturality]
+  erw [← NatTrans.naturality_apply]
   simp
   rfl
 
@@ -175,7 +180,8 @@ theorem val_coboundary_first_level (R : Type) [CommRing R] (F : Shv R) (t : (fre
       simp
   change valHom R F _ (P1 A B) (cobd t) = _
   unfold cobd
-  rw [map_sum, Fin.sum_univ_two]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Fin.sum_univ_two]
   simp only [map_zsmul]
   simp only [valHom, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
   rw [val_map, val_map, e, e, val_nat, val_nat]
@@ -214,7 +220,8 @@ theorem val_coboundary_second_level (R : Type) [CommRing R] (F : Shv R) (s : (fr
         simp [Algebra.TensorProduct.one_def]
   change valHom R F _ (P2 A B) (cobd s) = _
   unfold cobd
-  rw [map_sum, Fin.sum_univ_three]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Fin.sum_univ_three]
   simp only [map_zsmul]
   simp only [valHom, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
   rw [val_map, val_map, val_map, e, e, e, val_nat, val_nat, val_nat]

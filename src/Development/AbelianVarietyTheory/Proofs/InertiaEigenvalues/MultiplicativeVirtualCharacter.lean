@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyEqOfTracePowersStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyEqOfTracePowersStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,10 +51,10 @@ theorem trace_listSum (σ : Weil h) (k : ℕ) (L : List (Σ n : ℕ, WDRep h (Fi
     rw [this, LinearMap.trace_prodMap']
 
 theorem map_lpZero {M : Type} [CommGroup M] (f : WD h → M)
-    (hf : ∀ x y, f (x.lpSum y) = f x * f y) : f (WD.lpZero h) = 1 := by
-  have := hf (WD.lpZero h) (WD.lpZero h)
-  rw [WD.lpSum_zero] at this
-  simpa using this
+    (hf : ∀ x y, f (x.lpSum y) = f x * f y) : f (WD.lpZero (h := h)) = 1 := by
+  have hzero := hf (WD.lpZero (h := h)) (WD.lpZero (h := h))
+  rw [WD.lpSum_zero] at hzero
+  exact mul_left_cancel (hzero.symm.trans (mul_one _).symm)
 
 theorem map_listSum {M : Type} [CommGroup M] (f : WD h → M)
     (hf : ∀ x y, f (x.lpSum y) = f x * f y) (L : List (Σ n : ℕ, WDRep h (Fin n → ℂ))) :
@@ -83,8 +87,8 @@ theorem sum_flatMap_replicate {ι α M : Type} [AddCommMonoid M] (s : Finset ι)
 
 end GlobalTheory.WeilDeligne.VirtualTrace
 
-open GlobalTheory.WeilDeligne.VirtualTrace in
 
+open GlobalTheory.WeilDeligne.VirtualTrace in
 theorem GlobalTheory.WeilDeligne.VirtualTrace.prod_zpow_eq_one_of_trace_zero :
     ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
     (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (f : WD h → ℂˣ),

@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.CompP
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBoxInvariantSnd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AddCharConductorIntegersContinuousNeOneStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.CompP
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBoxInvariantSnd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AddCharConductorIntegersContinuousNeOneStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,14 +99,14 @@ theorem G_symm : (G Z)ᵀ = G Z := by
   simp only [G, transpose_apply, of_apply]
   exact trace_mul_comm _ _
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem orth {z w : Matrix (Fin n) (Fin n) k} (hz : z ∈ Z) (hw : w ∈ B0 Z) : trace (z * w) = 0 := by
   obtain ⟨-, hwq⟩ := Submodule.mem_inf.mp hw
   have hq : qZ Z w = 0 := LinearMap.mem_ker.mp hwq
   have hz' : (∑ i, (Module.finBasis k Z).repr ⟨z, hz⟩ i • ((Module.finBasis k Z i : Z) : Matrix (Fin n) (Fin n) k)) = z := by
     have := congrArg Subtype.val ((Module.finBasis k Z).sum_repr ⟨z, hz⟩)
-    simpa only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] using this
+    simpa only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] using this
   rw [← hz', Finset.sum_mul, trace_sum]
   apply Finset.sum_eq_zero
   intro i _
@@ -192,8 +196,8 @@ omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem Pr_of_D (hZ : CR Z) (h : Hyp Z) {x : Matrix (Fin n) (Fin n) k} (hx : D Z x = 0) : Pr Z x = 0 := by
   simp [Pr, hx, E]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem piZ_eq_sub (hZ : CR Z) (h : Hyp Z) {x : Matrix (Fin n) (Fin n) k} (hx : x ∈ Bz Z) :
     piZ Z x = x - Pr Z x := by
   obtain ⟨v, hv⟩ := exists_E Z (sub_pi_mem hZ h hx)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StabiliserCardinality
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StabiliserCardinality
+
+@[expose] public section
 
 namespace GlobalTheory.Proof.DoubleCosetCountGlobalInterpolation
 
@@ -14,10 +18,10 @@ theorem card_fiber_mul_card_stab {G : Type} [Group G] (Γ U K : Subgroup G) (hUK
         DoubleCoset.mk Γ K d.out = DoubleCoset.mk Γ K y},
       ∃ k : K, DoubleCoset.mk Γ U (y * k) = d.1 := by
     rintro ⟨d, hd⟩
-    obtain ⟨a, ha, k, hk, h⟩ := (DoubleCoset.eq Γ K _ _).1 hd.symm
+    obtain ⟨a, ha, k, hk, h⟩ := (@DoubleCoset.eq _ _ Γ K _ _).1 hd.symm
     refine ⟨⟨k, hk⟩, ?_⟩
-    refine Eq.trans ?_ (DoubleCoset.out_eq' Γ U d)
-    exact (DoubleCoset.eq Γ U _ _).2 ⟨a, ha, 1, U.one_mem, by rw [h]; group⟩
+    refine Eq.trans ?_ (DoubleCoset.out_eq' (H := Γ) (K := U) d)
+    exact (@DoubleCoset.eq _ _ Γ U _ _).2 ⟨a, ha, 1, U.one_mem, by rw [h]; group⟩
   choose κ hκ using hex
   rw [← Nat.card_prod, Subgroup.relIndex, Subgroup.index]
   refine Nat.card_congr (Equiv.ofBijective
@@ -32,7 +36,7 @@ theorem card_fiber_mul_card_stab {G : Type} [Group G] (Γ U K : Subgroup G) (hUK
     have hde : d = e := by
       apply Subtype.ext
       rw [← hκ d, ← hκ e]
-      exact (DoubleCoset.eq Γ U _ _).2 ⟨t⁻¹ * s, Γ.mul_mem (Γ.inv_mem ht') hs', _, h1, by group⟩
+      exact (@DoubleCoset.eq _ _ Γ U _ _).2 ⟨t⁻¹ * s, Γ.mul_mem (Γ.inv_mem ht') hs', _, h1, by group⟩
     subst hde
     have h2 : s⁻¹ * t ∈ stab Γ U (y * κ d) := by
       refine (mem_stab Γ U _ _).2 ⟨Γ.mul_mem (Γ.inv_mem hs') ht', ?_⟩
@@ -45,12 +49,12 @@ theorem card_fiber_mul_card_stab {G : Type} [Group G] (Γ U K : Subgroup G) (hUK
     induction q using QuotientGroup.induction_on with
     | H k =>
       have hd : DoubleCoset.mk Γ K (DoubleCoset.mk Γ U (y * k)).out = DoubleCoset.mk Γ K y := by
-        obtain ⟨a, ha, u, hu, h⟩ := (DoubleCoset.eq Γ U _ _).1
-          (DoubleCoset.out_eq' Γ U (DoubleCoset.mk Γ U (y * k))).symm
+        obtain ⟨a, ha, u, hu, h⟩ := (@DoubleCoset.eq _ _ Γ U _ _).1
+          (DoubleCoset.out_eq' (H := Γ) (K := U) (DoubleCoset.mk Γ U (y * k))).symm
         symm
-        exact (DoubleCoset.eq Γ K _ _).2
+        exact (@DoubleCoset.eq _ _ Γ K _ _).2
           ⟨a, ha, k * u, K.mul_mem k.2 (hUK hu), h.trans (by group)⟩
-      obtain ⟨a, ha, u, hu, h⟩ := (DoubleCoset.eq Γ U _ _).1 (hκ ⟨_, hd⟩)
+      obtain ⟨a, ha, u, hu, h⟩ := (@DoubleCoset.eq _ _ Γ U _ _).1 (hκ ⟨_, hd⟩)
       have hk : y⁻¹ * a * y = k * u⁻¹ * (κ ⟨_, hd⟩ : G)⁻¹ := by
         generalize (κ ⟨_, hd⟩ : G) = m at h ⊢
         rw [show (k : G) = y⁻¹ * (y * k) by group, h]

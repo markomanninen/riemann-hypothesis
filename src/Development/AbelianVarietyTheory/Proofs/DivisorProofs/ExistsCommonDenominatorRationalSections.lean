@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEffectiveCartierDivisorAddEffective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEffectiveCartierDivisorAddEffective
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -65,8 +70,8 @@ theorem exists_open_regularAt {L : LB Y} (hL : L.IsLB) {r : L.ι → Y.functionF
 
 end GlobalTheory.MixHt.Denom
 
-open GlobalTheory.MixHt.Denom in
 
+open GlobalTheory.MixHt.Denom in
 theorem GlobalTheory.MixHt.exists_common_denom : ∀ (k : Type) [CommRing k] (Y : Scheme.{0}) [IsIntegral Y]
     (q : Y ⟶ Sp k), IsAmb q → ∀ (N : HermLB q) (r r' : N.B.ι → Y.functionFieldˣ), IsRatSec N.B r →
     IsRatSec N.B r' → ∃ (A : HermLB q) (u : A.B.Sec) (t t' : (N.tens A).B.Sec)
@@ -76,7 +81,11 @@ theorem GlobalTheory.MixHt.exists_common_denom : ∀ (k : Type) [CommRing k] (Y 
       ratOfSec t' ht' (i, j) = r' i * ratOfSec u hu j := by
   intro k _ Y _ q hq N r r' hr hr'
   obtain ⟨n₀, j, hj, hjq⟩ := hq.isProjOver
-  let H : HermLB q := (ProjSpace.hermitianTwistingSheaf k n₀).pull j hjq
+  let H₀ : HermLB (PSpace.str k n₀) :=
+    .fs _ (isAmple_projective_O_one k n₀).isLB (ProjSpace.coord k n₀)
+      (ProjSpace.iSup_nonzeroLocus_coord k n₀) (fun _ => 1) (fun _ => by simp)
+      (fun _ => ⟨1, one_mem _, by rw [mul_one, Matrix.map_one _ (map_zero _) (map_one _)]⟩)
+  let H : HermLB q := H₀.pull j hjq
   have hH : IsAmpleLB H.B := (isAmple_projective_O_one k n₀).pull_of_isClosedImmersion j
   haveI := hH.compactSpace
   obtain ⟨W, hW, hWr⟩ := exists_open_regularAt N.isLB hr

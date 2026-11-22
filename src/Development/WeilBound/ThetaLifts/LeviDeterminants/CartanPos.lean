@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.AdaptC
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.MMPreservesHM
-import Development.AutomorphicSpectrum.Proofs.TwistedProofs.EqZeroOfPiInf
-import Development.AutomorphicSpectrum.Proofs.TwistedProofs.ExistsAdelePiInf
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrSumOf
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.AdaptC
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.MMPreservesHM
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.EqZeroOfPiInf
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.ExistsAdelePiInf
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrSumOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem tr_tr (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w) (
   have h1 : algebraMap (AF F) (AE F E) (Algebra.trace (AF F) (AE F E) z) = z + cA σ z := by
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]; ring
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]; ring
     | tmul a e =>
       rw [← GlobalTheory.VacIndic.smul_inclR_eq, map_smul (Algebra.trace _ _), map_smul (cA σ), GlobalTheory.VacIndic.trace_inclR, GlobalTheory.VacIndic.cA_inclR, ← smul_add,
         ← map_add, ← GlobalTheory.SelfDualLatticeCompare.trace_field h, smul_eq_mul, map_mul, Algebra.smul_def]
@@ -45,12 +49,27 @@ theorem tr_tr (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w) (
       generalize Algebra.trace F E e = t
       show algebraMap F (AF F) t ⊗ₜ[F] (1 : E) = (1 : AF F) ⊗ₜ[F] algebraMap F E t
       rw [Algebra.algebraMap_eq_smul_one (A := AF F), Algebra.algebraMap_eq_smul_one (A := E), TensorProduct.smul_tmul]
+  have hconj (τ : EmbOver E w) (z : AE F E) : piInf τ (cA σ z) = star (piInf τ z) := by
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, star_add]
+    | tmul a e =>
+      have hz : cA σ (a ⊗ₜ[F] e) = a ⊗ₜ[F] σ e := by simp [cA]
+      have hr : star (InfinitePlace.Completion.extensionEmbedding w (a.1 w)) =
+          InfinitePlace.Completion.extensionEmbedding w (a.1 w) := by
+        rw [← InfinitePlace.Completion.extensionEmbeddingOfIsReal_apply (h.1.isReal w)]
+        exact Complex.conj_ofReal _
+      rw [hz]
+      change InfinitePlace.Completion.extensionEmbedding w (a.1 w) * τ.1 (σ e) =
+        star (InfinitePlace.Completion.extensionEmbedding w (a.1 w) * τ.1 e)
+      rw [star_mul', hr, h.2.2.2]
   have h2 := congrArg (piInf (τ w)) h1
-  rw [map_add, piInf_cA h, Complex.add_conj] at h2
+  rw [map_add (f := _), hconj] at h2
   have h3 : piInf (τ w) (algebraMap (AF F) (AE F E) (Algebra.trace (AF F) (AE F E) z)) =
       InfinitePlace.Completion.extensionEmbedding w ((Algebra.trace (AF F) (AE F E) z).1 w) * (τ w).1 1 := rfl
   rw [h3, map_one, mul_one] at h2
-  rw [h2, Complex.ofReal_re]
+  rw [h2, Complex.add_re, Complex.star_def, Complex.conj_re]
+  ring
 
 abbrev cj : ℂ →ₐ[ℝ] ℂ := Complex.conjAe
 
@@ -66,7 +85,27 @@ theorem omega_eq (hB : B.IsGood σ) (u u' : Matrix (Fin n) (Fin d) (AE F E)) : o
   rw [omega, symp, tr_tr hB.cm B.emb]
   refine Finset.sum_congr rfl fun w _ => ?_
   congr 2
-  simp only [hTens, neg_one_mul, map_neg, map_sum, map_mul, piInf_cA hB.cm, incM, Matrix.map_apply, piInf_inclR]
+  have hconj (τ : EmbOver E w) (z : AE F E) : piInf τ (cA σ z) = star (piInf τ z) := by
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, star_add]
+    | tmul a e =>
+      have hz : cA σ (a ⊗ₜ[F] e) = a ⊗ₜ[F] σ e := by simp [cA]
+      have hr : star (InfinitePlace.Completion.extensionEmbedding w (a.1 w)) =
+          InfinitePlace.Completion.extensionEmbedding w (a.1 w) := by
+        rw [← InfinitePlace.Completion.extensionEmbeddingOfIsReal_apply (hB.cm.1.isReal w)]
+        exact Complex.conj_ofReal _
+      rw [hz]
+      change InfinitePlace.Completion.extensionEmbedding w (a.1 w) * τ.1 (σ e) =
+        star (InfinitePlace.Completion.extensionEmbedding w (a.1 w) * τ.1 e)
+      rw [star_mul', hr, hB.cm.2.2.2]
+  have hincl (x : E) : piInf (B.emb w) (inclR (AF F) x) = (B.emb w).1 x := by
+    change piInf (B.emb w) ((1 : AF F) ⊗ₜ[F] x) = _
+    change InfinitePlace.Completion.extensionEmbedding w ((1 : AF F).1 w) * (B.emb w).1 x = _
+    change InfinitePlace.Completion.extensionEmbedding w 1 * _ = _
+    rw [map_one, one_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hTens, neg_one_mul, map_neg, map_sum, map_mul, hconj, incM, Matrix.map_apply, hincl, cj, Complex.star_def]
   rfl
 
 def Rel (B : Base F E) (X : Spc F E n) (W : Spc F E d) (e : InfinitePlace F → ℤˣ) (u u' : Matrix (Fin n) (Fin d) (AE F E)) : Prop :=
@@ -166,8 +205,13 @@ theorem omega_pure (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) (hW : W.IsSkew σ
   refine Finset.sum_congr rfl fun w _ => ?_
   have e1 : (Matrix.vecMulVec a (incV F b)).map (piInf (B.emb w)) =
       Matrix.vecMulVec (fun i => piInf (B.emb w) (a i)) fun i => (B.emb w).1 (b i) := by
+    have hincl (x : E) : piInf (B.emb w) (inclR (AF F) x) = (B.emb w).1 x := by
+      change piInf (B.emb w) ((1 : AF F) ⊗ₜ[F] x) = _
+      change InfinitePlace.Completion.extensionEmbedding w ((1 : AF F).1 w) * (B.emb w).1 x = _
+      change InfinitePlace.Completion.extensionEmbedding w 1 * _ = _
+      rw [map_one, one_mul]
     ext i j
-    simp only [Matrix.map_apply, Matrix.vecMulVec_apply, map_mul, incV, piInf_inclR]
+    simp only [Matrix.map_apply, Matrix.vecMulVec_apply, map_mul, incV, hincl]
   have e2 : ∀ (J : Matrix (Fin n) (Fin n) ℂ) (J' : Matrix (Fin d) (Fin d) ℂ) x x' y y',
       hTens cj J J' (Matrix.vecMulVec x y) (Matrix.vecMulVec x' y') = (x ⬝ᵥ J *ᵥ star x') * (y ⬝ᵥ J' *ᵥ star y') := by
     intro J J' x x' y y'

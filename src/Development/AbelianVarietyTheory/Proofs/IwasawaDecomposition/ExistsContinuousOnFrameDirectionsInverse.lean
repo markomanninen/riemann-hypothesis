@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DerivativeAlongTangentCombinationModuli
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnExponentialFrameMatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DerivativeAlongTangentCombinationModuli
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnExponentialFrameMatrix
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,8 @@ theorem isDerivAt0_of_comb {X : Scheme.{0}} {t : SAB H X} {x : Sp ℂ ⟶ X} {g 
     subst hub
     rw [List.prod_ofFn, ← TanMod.TanSp.pt_sum]
   refine key.trans ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, smul_eq_mul]
   exact congrArg (a i * ·) ((hv i).2 U (hU i) f)
@@ -66,7 +71,8 @@ theorem frame_basis {x : Sp ℂ ⟶ Z.X} (f : EigFrame Z σ x) {n : ℕ}
       simpa only [LieLocBasis.comb_iff hx] using this
   have he : ∀ τ (a : Fin (Dw.mult τ) → ℂ), IsEigV (rho hx) (embK c τ) (∑ i, a i • cc ⟨τ, i⟩) := fun τ a r => by
     have h1 : ∀ i, IsEigV (rho hx) (embK c τ) (cc ⟨τ, i⟩) := fun i => (hE _ _).2 (hcc ⟨τ, i⟩ ▸ f.eig τ i)
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul, h1 i r, smul_comm]
   refine ⟨Fintype.linearIndependent_iff.2 fun a ha z => ?_, fun m _ => ?_⟩
   · rw [Fintype.sum_sigma] at ha
@@ -134,7 +140,7 @@ theorem differentiableAt_dir {n g : ℕ} {e : OpenPartialHomeomorph (CxPts (genS
       simp only [Function.comp_apply, hl b hb]
     · filter_upwards [hn] with b ⟨hb, h⟩
       refine ((hW b hb).2 U h f).symm.trans ?_
-      rw [ReciprocityTheory.ChartRestriction.G.Geo.Tor.valR, dif_pos h]
+      rw [ReciprocityTheory.ChartRestriction.G.Geo.Tor.valR, dite_eq_left h]
   have d₁ := LocalLift.isDerivAt0_const (ε (x b₀)) w hw'
   have d₀ := LocalLift.isDerivAt0_const (ε (x b₀)) 0 fun _ _ _ => map_zero _
   have e0 : ex (x b₀) 0 = 1 := by simpa using h3 _ (hs b₀ hb₀) 0 0
@@ -149,7 +155,8 @@ theorem exists_inverse {J : Type} [Fintype J] [DecidableEq J] {g : ℕ} (b : Mod
       funext i
       simp [Finset.sum_apply, Pi.single_apply]
     have h2 := congrArg (fun w => b.repr w z') h
-    simp only [map_sum, map_smul, Module.Basis.repr_self, Finsupp.single_apply, Finsupp.finset_sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Module.Basis.repr_self, Finsupp.single_apply, Finsupp.finsetSum_apply,
       Finsupp.smul_apply, smul_eq_mul] at h2
     rw [Matrix.mul_apply, Matrix.one_apply, h2]
     rfl

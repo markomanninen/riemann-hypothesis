@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.DZTranspose
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.DZTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,8 +111,6 @@ theorem det_ne_of_inG {g : M2 n} (hg : InG g) : g.det ≠ 0 := by
 
 def mkGR (g : M2 n) (hg : InG g) : GR n := ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero g (det_ne_of_inG hg), hg⟩
 
-theorem mR_mkGR (g : M2 n) (hg : InG g) : mR (mkGR g hg) = g := rfl
-
 theorem continuous_herm' : Continuous (herm : (Fin n → Fin n → ℝ) → Matrix (Fin n) (Fin n) ℂ) := by
   unfold herm
   fun_prop
@@ -183,8 +185,8 @@ theorem form_w (d : SD σ) (R : RD d) (w : InfinitePlace F) (x : d.G) :
 
 end UnitaryGroupBasics
 
-open UnitaryGroupBasics in
 
+open UnitaryGroupBasics in
 theorem split (d : SD σ) (R : RD d) (w : InfinitePlace F) (g : d.G) :
     ∃ (y : GR d.n) (x : d.G), g = R.ι w y * x ∧ ∀ y' : GR d.n, x * R.ι w y' = R.ι w y' * x := by
   have hζ0 := Krd.zeta_ne R.hζ
@@ -227,7 +229,8 @@ theorem toBlocks₁₂_one {n : ℕ} {α : Type} [Zero α] [One α] :
 
 theorem piInf_trace (d : SD σ) (w : InfinitePlace F) (M : Matrix (Fin d.n) (Fin d.n) (AE F E)) :
     piInf (d.B.emb w) M.trace = (d.cw w M).trace := by
-  simp [SD.cw, Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [SD.cw, Matrix.trace, map_sum]
 
 theorem cw_unip (d : SD σ) (R : RD d) (w : InfinitePlace F) (u : GR d.n) (H : Matrix (Fin d.n) (Fin d.n) ℂ)
     (hu : mR u = nU H) : d.cw w (inFrame d.b (R.ι w u)) = Matrix.fromBlocks 1 (R.ζ • H) 0 1 := by
@@ -241,8 +244,8 @@ theorem cw_unip (d : SD σ) (R : RD d) (w : InfinitePlace F) (u : GR d.n) (H : M
 
 end UnitaryGroupBasics
 
-open UnitaryGroupBasics in
 
+open UnitaryGroupBasics in
 theorem nbw (d : SD σ) (R : RD d) (w : InfinitePlace F) {nb : nA σ d.Y d.b → d.G} (h : IsNMap d.b nb)
     (nr : (Fin d.n → Fin d.n → ℝ) → GR d.n) (hnr : ∀ x, mR (nr x) = nU (herm x)) :
     ∃ β : (Fin d.n → Fin d.n → ℝ) → nA σ d.Y d.b, Continuous β ∧ ∀ x, R.ι w (nr x) = nb (β x) := by
@@ -267,8 +270,8 @@ theorem nbw (d : SD σ) (R : RD d) (w : InfinitePlace F) {nb : nA σ d.Y d.b →
     exact continuous_pi fun i => continuous_pi fun j => hc.matrix_elem (Sum.inl i) (Sum.inr j)
   · rw [h]; exact hP x
 
-open UnitaryGroupBasics in
 
+open UnitaryGroupBasics in
 theorem charW (d : SD σ) (R : RD d) (w : InfinitePlace F) {nb : nA σ d.Y d.b → d.G} (h : IsNMap d.b nb)
     (nr : (Fin d.n → Fin d.n → ℝ) → GR d.n) (hnr : ∀ x, mR (nr x) = nU (herm x))
     (β : (Fin d.n → Fin d.n → ℝ) → nA σ d.Y d.b) (hβ : ∀ x, R.ι w (nr x) = nb (β x)) (T : nF σ d.Y d.b) :

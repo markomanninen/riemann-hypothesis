@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpActPf
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpActPf
+
+@[expose] public section
 
 set_option autoImplicit false
 

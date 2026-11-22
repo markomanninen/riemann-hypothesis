@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.StatementACE
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.StatementACE
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix

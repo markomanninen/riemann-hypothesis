@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe30.transfer_of_comp_subtype.{u_1} :
     ∀ {Γ : Type u_1} [inst : Group Γ] (H : Subgroup Γ)

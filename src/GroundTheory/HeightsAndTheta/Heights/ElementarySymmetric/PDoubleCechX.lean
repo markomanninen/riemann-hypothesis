@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.UpdateEraseSubset
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GraphEquiv
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.DoubleSumEqZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.UpdateEraseSubset
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GraphEquiv
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.DoubleSumEqZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Swarm

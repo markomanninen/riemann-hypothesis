@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -56,7 +60,8 @@ theorem lin_all (hL : L.IsLB) {T T' : Over Z} {h : T' ⟶ T} {n : ℕ} {b : Fin 
   obtain ⟨J', hJ', e⟩ := exists_good L hL (r z) (K := PUnit) (fun _ => (snd T' G).left)
     (fun _ => J (r ≫ (snd T' G).left)) (fun _ _ _ => rfl) (fun _ => hJ (r ≫ (snd T' G).left))
   have e₀ := congrArg (r.stalkMap z).hom (H (r z) J' hJ')
-  rw [map_sum] at e₀
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at e₀
   have e₁ := sv_stalk G L N s (𝟙 _) r z hJ' (J' := J) (by simpa only [Category.id_comp] using e PUnit.unit)
   rw [Category.comp_id] at e₁
   refine e₁.symm.trans (e₀.trans (Finset.sum_congr rfl fun i _ => ?_))
@@ -76,8 +81,8 @@ theorem exists_pull (hL : L.IsLB) {T T' : Over Z} (h : T' ⟶ T) (a : LB.Sec (LP
   refine ⟨s, fun Y r z J hJ => (hs Y r z J hJ).trans ((sval_pullMulSec _ _ _ _ r z hJ).trans ?_)⟩
   rw [val_one, Units.val_one, _root_.mul_one]; rfl
 
-variable (G L N) in
 
+variable (G L N) in
 def Rel {T T₁ T₂ : Over Z} {m n : ℕ} (h₁ : T ⟶ T₁) (a : Fin m → LB.Sec (LPow G L (N : ℤ) T₁)) (h₂ : T ⟶ T₂)
     (b : Fin n → LB.Sec (LPow G L (N : ℤ) T₂)) (M : Matrix (Fin m) (Fin n) Γ(T.left, ⊤)) : Prop :=
   ∀ (k : Fin m) (Y : Scheme.{0}) (r : Y ⟶ (T ⊗ G).left) (z : Y) (J), Good L z J →
@@ -99,7 +104,8 @@ theorem Rel.pull {M} (H : Rel G L N h₁ a h₂ b M) (g : T' ⟶ T) :
 theorem Rel.trans {M P} (H : Rel G L N h₁ a h₂ b M) (H' : Rel G L N h₂ b h₃ c P) : Rel G L N h₁ a h₃ c (M * P) := by
   intro k Y r z J hJ
   rw [H k Y r z J hJ]
-  simp only [H' _ Y r z J hJ, Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul, _root_.mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [H' _ Y r z J hJ, Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul, _root_.mul_assoc]
   exact Finset.sum_comm
 
 theorem Rel.refl : Rel G L N h₁ a h₁ a 1 := by
@@ -178,8 +184,8 @@ theorem exists_chart_local {A : LB Z} (hA : A.IsLB) {W : Type} [CommRing W] [IsL
   obtain ⟨i, hi⟩ := exists_chart hA (χ (IsLocalRing.closedPoint W))
   exact ⟨i, fun t => ((IsLocalRing.specializes_closedPoint t).map χ.continuous).mem_open (A.U i).isOpen hi⟩
 
-variable (G L N) in
 
+variable (G L N) in
 def TraitBasis (U : Z.Opens) {m : ℕ} (b : Fin m → LB.Sec (LPow G L (N : ℤ) (Over.mk U.ι))) : Prop :=
   ∀ (W : Type) [CommRing W] [IsDomain W] [IsLocalRing W], CDvr W → ∀ χ : Sp W ⟶ U.toScheme,
     Set.range (jK W ≫ χ ≫ U.ι) ⊆ abLocus G →

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.PartShortOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.PartShortOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ theorem svBig_block [DecidableEq (E →+* ℂ)] {m N : ℕ} (e : Fin N → Fin m
 theorem svR_hform (hst : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEnd ℂ (φ a)) {m : ℕ}
     (J : Matrix (Fin m) (Fin m) E) (φ : E →+* ℂ) (x y : Fin m → E) :
     φ (hform (starRingEnd E) J x y) = ∑ k, ∑ l, star (φ (x k)) * φ (J k l) * φ (y l) := by
-  simp only [hform, map_sum, map_mul, starRingEnd_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, starRingEnd_apply]
   simp only [hst, starRingEnd_apply]
 
 theorem svR_hdot (hst : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEnd ℂ (φ a)) {m : ℕ}
@@ -82,14 +87,9 @@ theorem svR_conj {m N : ℕ} (e : Fin N → Fin m → E) (H : (E →+* ℂ) → 
         svP e (ComplexEmbedding.conjugate φ) = ((svP e φ)ᴴ * H φ * svP e φ).map (starRingEnd ℂ) := by
   ext i j
   rw [hc, Matrix.map_apply, svR_entry, svR_entry]
-  simp only [svP, Matrix.of_apply, Matrix.map_apply, ComplexEmbedding.conjugate_coe_eq, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [svP, Matrix.of_apply, Matrix.map_apply, ComplexEmbedding.conjugate_coe_eq, map_sum,
     map_mul, starRingEnd_apply, star_star]
-
-theorem svR_normsq (z X : ℂ) : star z * X * z = ((‖z‖ ^ 2 : ℝ) : ℂ) * X := by
-  have h : z * star z = ((‖z‖ ^ 2 : ℝ) : ℂ) := by
-    rw [Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]
-  calc star z * X * z = (z * star z) * X := by ring
-    _ = _ := by rw [h]
 
 end Coord
 
@@ -103,7 +103,8 @@ theorem successive_vector_real : SvReal := by
 
   have hMc : ∀ i j, starRingEnd ℂ (M i j) = M i j := by
     intro i j
-    simp only [hM, Matrix.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hM, Matrix.sum_apply, map_sum]
     have hT : ∀ φ : E →+* ℂ, starRingEnd ℂ (((svP e φ)ᴴ * H φ * svP e φ) i j) =
         ((svP e (ComplexEmbedding.conjugate φ))ᴴ * H (ComplexEmbedding.conjugate φ) *
           svP e (ComplexEmbedding.conjugate φ)) i j := by
@@ -189,7 +190,8 @@ theorem successive_vector_real : SvReal := by
         svP e φ *ᵥ fun i => ((c i : ℝ) : ℂ) := by
       intro φ
       ext k
-      simp only [svP, Matrix.mulVec, dotProduct, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [svP, Matrix.mulVec, dotProduct, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply,
         smul_eq_mul, map_sum, map_mul, map_intCast]
       refine Finset.sum_congr rfl (fun i _ => ?_)
       push_cast

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
-import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
-import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
+module
+
+public import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
+public import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
+public import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
+
+@[expose] public section
 
 noncomputable section
 

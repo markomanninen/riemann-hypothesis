@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.IndexSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.IndexSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,9 +43,6 @@ def MultilinStatement : Prop :=
       I P n (Function.update L j (A.tensor B)) =
         I P n (Function.update L j A) + I P n (Function.update L j B)
 
-def TheoremIStatement : Prop :=
-  ExistsStatement ∧ UniqueStatement ∧ SymmStatement ∧ MultilinStatement
-
 def AvoidStatement : Prop :=
   ∀ (R : Type) [CommRing R] (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)]
     (Ws : Finset (Ideal (MRingOver R ι))), (∀ W ∈ Ws, IsMultiProjPrime W) →
@@ -62,9 +63,6 @@ def DimensionOneRationalSectionIndependence : Prop :=
     (A : HermLine ι) (s t : MRing ι),
     IsArithVar P 1 → IsSectionOn P A s → IsSectionOn P A t →
     recR I P (Fin.elim0 : Fin 0 → HermLine ι) A s = recR I P (Fin.elim0 : Fin 0 → HermLine ι) A t
-
-def DimensionOneRationalSectionsFromIndex : Prop :=
-  IndexStatement → DimensionOneRationalSectionIndependence
 
 end TheoremI
 
@@ -137,25 +135,6 @@ def FibreCompStatement : Prop :=
 end Consequences
 
 section Inhabit
-
-def DimensionOneRationalSectionExample : Prop :=
-  IsArithVar (⊥ : Ideal (MRing (PBlk 1))) 1 ∧
-    ∀ I : Ideal (MRing (PBlk 1)) → (n : ℕ) → (Fin n → HermLine (PBlk 1)) → ℝ,
-      IsIntersectionFamily I → ∀ A : HermLine (PBlk 1), IsSmoothHerm A →
-        I ⊥ 1 ![A] = Real.log (A.h 1)
-
-def ProjectiveLineRationalSectionExample : Prop :=
-  ∀ I : Ideal (MRing (PBlk 2)) → (n : ℕ) → (Fin n → HermLine (PBlk 2)) → ℝ,
-    IsIntersectionFamily I → I ⊥ 2 ![fsLine 2, fsLine 2] = 1 / 2
-
-def InhabitVertStatement : Prop :=
-  ∀ p : ℕ, p.Prime →
-    IsRatSectionOn (⊥ : Ideal (MRing (PBlk 2))) (constLine (-Real.log p)) (C (p : ℤ)) 1 ∧
-    (∀ W ∈ divSupp (⊥ : Ideal (MRing (PBlk 2))) (C (p : ℤ)), ¬ IsHorizontal W) ∧
-    (∀ z ∈ mcPts (⊥ : Ideal (MRing (PBlk 2))),
-      ‖eval z (map (Int.castRingHom ℂ) (C (p : ℤ)))‖ =
-        ‖eval z (map (Int.castRingHom ℂ) (1 : MRing (PBlk 2)))‖ *
-          (constLine (-Real.log p) : HermLine (PBlk 2)).h z)
 
 end Inhabit
 

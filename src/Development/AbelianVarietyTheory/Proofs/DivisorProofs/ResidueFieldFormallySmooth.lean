@@ -1,11 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.LogPair
 open scoped TensorProduct
 
-theorem GlobalTheory.residueField_formallySmooth_of_isClosed : ∀ (k : Type) [Field k] [PerfectField k] (X : Scheme.{0}) (f : X ⟶ Sp k) [LocallyOfFiniteType f] (U : X.Opens) (x : X) (hxU : x ∈ U), IsClosed ({x} : Set X) → letI : Algebra k (X.presheaf.stalk x) := ((X.presheaf.germ U x hxU).hom.comp (cstOn f U)).toAlgebra; Algebra.FormallySmooth k (IsLocalRing.ResidueField (X.presheaf.stalk x)) := by
+theorem GlobalTheory.residueField_formallySmooth_of_isClosed :
+    ∀ (k : Type) [Field k] [PerfectField k] (X : Scheme.{0}) (f : X ⟶ Sp k)
+      [LocallyOfFiniteType f] (U : X.Opens) (x : X) (hxU : x ∈ U),
+      IsClosed ({x} : Set X) →
+        (letI : Algebra k (X.presheaf.stalk x) :=
+          ((X.presheaf.germ U x hxU).hom.comp (cstOn f U)).toAlgebra
+         Algebra.FormallySmooth k (IsLocalRing.ResidueField (X.presheaf.stalk x))) := by
   intro k _ _ X f _ U x hxU _
   letI : Algebra k (X.presheaf.stalk x) := ((X.presheaf.germ U x hxU).hom.comp (cstOn f U)).toAlgebra
   have key : f.appLE ⊤ U le_top ≫ X.presheaf.germ U x hxU =
@@ -22,7 +33,7 @@ theorem GlobalTheory.residueField_formallySmooth_of_isClosed : ∀ (k : Type) [F
   have hT : (Scheme.ΓSpecIso (CommRingCat.of k)).inv ≫ (Sp k).presheaf.germ ⊤ (f x) trivial =
       StructureSheaf.toStalk k (f x) := by
     rw [Scheme.ΓSpecIso_inv]
-    exact StructureSheaf.toOpen_germ _ _ _
+    exact AlgebraicGeometry.StructureSheaf.algebraMap_germ _ _ _
   have hφ : algebraMap k (X.presheaf.stalk x) =
       (((Scheme.ΓSpecIso (CommRingCat.of k)).inv ≫ (Sp k).presheaf.germ ⊤ (f x) trivial) ≫
         f.stalkMap x).hom := by

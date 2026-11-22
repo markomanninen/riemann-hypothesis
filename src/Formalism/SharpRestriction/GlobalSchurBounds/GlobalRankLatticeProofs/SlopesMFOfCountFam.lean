@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SevenLogLeLOfPowerBound
-import Formalism.SharpRestriction.GlobalSchurBounds.JointsL
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SevenLogLeLOfPowerBound
+public import Formalism.SharpRestriction.GlobalSchurBounds.JointsL
+
+@[expose] public section
 
 noncomputable section
 

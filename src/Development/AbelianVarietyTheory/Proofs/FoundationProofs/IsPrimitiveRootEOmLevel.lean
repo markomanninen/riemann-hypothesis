@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsEqExpOfRat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsEqExpOfRat
+
+@[expose] public section
 
 noncomputable section
 

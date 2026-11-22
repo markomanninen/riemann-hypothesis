@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TailSubstPAdicallySmallOfIntegralDifferentialStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasValSubstPolyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TailSubstPAdicallySmallOfIntegralDifferentialStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasValSubstPolyStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,8 +32,8 @@ theorem hasVal_subst : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] 
   have hsplit : subst (up Q u) f = subst (up Q u) (g : MvPowerSeries τ Q) + subst (up Q u) (f - (g : MvPowerSeries τ Q)) := by
     rw [← subst_add hs]; congr 1; ring
   refine ⟨b1 + b2 - b3, ?_⟩
-  rw [hsplit, map_add, map_add]
-  simp only [map_mul, map_sub, map_add, map_pow, map_natCast] at hb1 hb2 hb3 ⊢
+  rw [hsplit, map_add (f := _), map_add (f := _)]
+  simp only [map_mul, map_sub, map_add (f := _), map_pow, map_natCast] at hb1 hb2 hb3 ⊢
   linear_combination hb1 + hb2 - hb3
 
 end GlobalTheory.QLog

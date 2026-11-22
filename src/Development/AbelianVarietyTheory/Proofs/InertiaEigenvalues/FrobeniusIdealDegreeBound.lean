@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowerSeriesExistsUniqueDecompOverFrobeniusLikeEnStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowerSeriesExistsUniqueDecompOverFrobeniusLikeEnStatement
+
+@[expose] public section
+
 open scoped PowerSeries Pointwise
 
 namespace GlobalTheory.FrobIdealDeg
@@ -25,7 +30,7 @@ lemma comps_eq {f : O⟦X⟧} {c : Fin l → O⟦X⟧}
 lemma comps_add (f f' : O⟦X⟧) :
     comps l hl φ hφ (f + f') = comps l hl φ hφ f + comps l hl φ hφ f' := by
   apply comps_eq
-  simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
   rw [← comps_spec l hl φ hφ f, ← comps_spec l hl φ hφ f']
 
 lemma comps_zero : comps l hl φ hφ (0 : O⟦X⟧) = 0 := by
@@ -122,8 +127,8 @@ end GlobalTheory.FrobIdealDeg
 
 namespace GlobalTheory
 
-open GlobalTheory.FrobIdealDeg in
 
+open GlobalTheory.FrobIdealDeg in
 theorem frobenius_ideal_degree_bound : ∀ {O : Type} [CommRing O] (l : ℕ), 2 ≤ l →
     ∀ (φ : O⟦X⟧ →ₐ[O] O⟦X⟧), (∀ (f : O⟦X⟧) (m : ℕ), PowerSeries.coeff m (φ f) =
       if l ∣ m then PowerSeries.coeff (m / l) f else 0) →

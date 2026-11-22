@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.GlobalReciprocity.Frobenius
-import GroundTheory.GlobalFields.GlobalReciprocity.LocalSurjective
-import GroundTheory.GlobalFields.KummerTheory.Splitting
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.GlobalReciprocity.Frobenius
+public import GroundTheory.GlobalFields.GlobalReciprocity.LocalSurjective
+public import GroundTheory.GlobalFields.KummerTheory.Splitting
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -17,23 +21,23 @@ variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchi
   [IsNonarchimedeanLocalField M] [Algebra k M] [ValuativeExtension k M] [FiniteDimensional k M]
   [IsGalois k M] [IsMulCommutative (M ≃ₐ[k] M)]
 
+
 omit [CharZero k] [IsGalois k M] [IsMulCommutative (M ≃ₐ[k] M)] [ValuativeRel M] [TopologicalSpace M]
   [IsNonarchimedeanLocalField M] [ValuativeExtension k M] [FiniteDimensional k M] in
 variable (k) in
-
 theorem exists_ord_eq_one_units : ∃ π : kˣ, ord (π : k) = 1 := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[k]
   have h0 : (ϖ : k) ≠ 0 := by exact_mod_cast hϖ.ne_zero
   exact ⟨Units.mk0 _ h0, ord_uniformizer hϖ⟩
 
+
 omit [CharZero k] [IsGalois k M] [IsMulCommutative (M ≃ₐ[k] M)] [ValuativeRel M] [TopologicalSpace M]
   [IsNonarchimedeanLocalField M] [ValuativeExtension k M] [FiniteDimensional k M] in
-
 theorem ord_zpow_units {π : kˣ} (hπ : ord (π : k) = 1) (n : ℤ) : ord ((π ^ n : kˣ) : k) = n := by
   rw [Units.val_zpow_eq_zpow_val, ord_zpow π.ne_zero, hπ, mul_one]
 
-omit [ValuativeRel M] [TopologicalSpace M] [IsNonarchimedeanLocalField M] [ValuativeExtension k M] in
 
+omit [ValuativeRel M] [TopologicalSpace M] [IsNonarchimedeanLocalField M] [ValuativeExtension k M] in
 theorem natCard_quotient_range_normUnits :
     Nat.card (kˣ ⧸ (normUnits k M).range) = Module.finrank k M := by
   have e : kˣ ⧸ (normUnits k M).range ≃* (M ≃ₐ[k] M) :=
@@ -42,9 +46,9 @@ theorem natCard_quotient_range_normUnits :
   rw [Nat.card_congr e.toEquiv, IsGalois.card_aut_eq_finrank]
 
 theorem ramificationIndex_eq_one_of_units_le
-    (h : unitFiltrationUnits k 0 ≤ (normUnits k M).range) : ramificationIndex k M = 1 := by
+    (h : unitFiltrationUnits k 0 ≤ (normUnits k M).range) : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation M))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) = 1 := by
   set N := (normUnits k M).range
-  set f := residueDegree k M
+  set f := ((IsLocalRing.maximalIdeal 𝒪[M]).inertiaDeg (𝒪[k]))
   obtain ⟨π, hπ⟩ := exists_ord_eq_one_units k
   obtain ⟨ϖ, hϖ⟩ := exists_ord_eq_one_units M
 
@@ -77,13 +81,13 @@ theorem ramificationIndex_eq_one_of_units_le
     refine orderOf_le_of_pow_eq_one hf0 ?_
     rw [← QuotientGroup.mk_pow, QuotientGroup.eq_one_iff]
     exact_mod_cast hπf
-  have h1 : ramificationIndex k M * f = Module.finrank k M := ramificationIndex_mul_residueDegree k M
-  have he : ramificationIndex k M ≤ 1 := by
+  have h1 : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation M))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) * f = Module.finrank k M := ramificationIndex_mul_residueDegree k M
+  have he : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation M))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) ≤ 1 := by
     by_contra hc
     push Not at hc
-    have : 2 * f ≤ ramificationIndex k M * f := Nat.mul_le_mul_right f hc
+    have : 2 * f ≤ (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation M))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) * f := Nat.mul_le_mul_right f hc
     omega
-  have he0 : ramificationIndex k M ≠ 0 := by
+  have he0 : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation M))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) ≠ 0 := by
     intro h0
     rw [h0, zero_mul] at h1
     exact (Module.finrank_pos (R := k) (M := M)).ne' h1.symm
@@ -100,8 +104,8 @@ theorem isEquiv_valuation_valued :
       (Valued.v : Valuation (v.adicCompletion K) ℤᵐ⁰) :=
   ValuativeRel.isEquiv _ _
 
-variable {v} in
 
+variable {v} in
 theorem mem_unitFiltrationUnits_zero_iff_valued {x : (v.adicCompletion K)ˣ} :
     x ∈ unitFiltrationUnits (v.adicCompletion K) 0 ↔ Valued.v (x : v.adicCompletion K) = 1 := by
   rw [mem_unitFiltrationUnits_zero_iff]
@@ -157,7 +161,7 @@ theorem ramificationIdx_eq_one_of_units_le_ker_localSymbol
     w.asIdeal.ramificationIdx (𝓞 K) = 1 := by
   let w' : PlacesOver L v := ⟨w, inferInstance⟩
   have := isMulCommutative_gal_adicCompletion L v w'
-  have hM : ramificationIndex (v.adicCompletion K) (w.adicCompletion L) = 1 :=
+  have hM : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation (w.adicCompletion L)))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation (v.adicCompletion K)))) = 1 :=
     ramificationIndex_eq_one_of_units_le (by rw [← ker_localSymbol L v w']; exact h)
   exact (ramificationIdx_integer v w).symm.trans hM
 

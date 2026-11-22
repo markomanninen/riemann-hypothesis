@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.MemMapAugmentationIdealComapPullbackQuotient
+module
+
+public import ReciprocityTheory.DualLattices.MemMapAugmentationIdealComapPullbackQuotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem exists_basis_map_restrictToSubgroup (hv : v.Integers R) (AA : HopfOrder 
       intro c g; funext k; simp [resK]
     have hφ : φ = resK (R := R) K F := by
       funext k; simp [resK, F]
-    rw [hφ, hF, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hφ, hF, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     rw [hsm]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)

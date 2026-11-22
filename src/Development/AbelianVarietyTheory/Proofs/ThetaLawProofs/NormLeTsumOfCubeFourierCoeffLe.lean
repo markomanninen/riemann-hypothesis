@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.GenMain
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.FourierCoeffUnitCubeTranslateOfEntirePeriodic
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SetIntegralPowEqZeroOfPosFreqEuclidean
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SndFDerivAddSndFDerivIEqZeroOfHarmonicAtLine
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsNatMulQuadraticLt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.GenMain
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.FourierCoeffUnitCubeTranslateOfEntirePeriodic
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SetIntegralPowEqZeroOfPosFreqEuclidean
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SndFDerivAddSndFDerivIEqZeroOfHarmonicAtLine
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsNatMulQuadraticLt
+
+@[expose] public section
 
 open Complex Matrix Filter Topology MeasureTheory
 open scoped BigOperators Real
@@ -106,8 +110,8 @@ theorem setIntegral_unitCube_tube {ι : Type*} [Fintype ι] [DecidableEq ι]
       congr 1
       funext x
       congr 1
-      funext j
-      simp
+      funext i
+      simp only [Pi.add_apply, Complex.ofReal_add]
       ring) hw hw'
 
 theorem exists_tube_fourierCoeff {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -276,9 +280,12 @@ theorem exists_siegel_fourierCoeff {g N : ℕ} (hN : 1 ≤ N) {F : Matrix (Fin g
     rw [← hsym τ hτ]
     convert h using 4
     funext q
-    simp only [Pi.add_apply, hz, ← hτY, Matrix.map_apply]
+    simp only [Pi.add_apply, hz]
     push_cast
-    rw [← add_div, mul_comm I, Complex.re_add_im]
+    rw [← add_div, mul_comm I]
+    have hy : (τ q.1 q.2).im = Y q.1 q.2 := by
+      simpa using congrFun (congrFun hτY q.1) q.2
+    rw [← hy, Complex.re_add_im]
   · obtain ⟨a, ha0, ha1, ha2⟩ := exists_tube_fourierCoeff hU hU' htube hf hp
     refine ⟨a, ha0, fun Y hY M hM m => ?_, fun τ hτ b hb hle => ?_⟩
     · set z : Fin g × Fin g → ℂ := fun q => I * Y q.1 q.2 with hz
@@ -390,8 +397,8 @@ theorem bound_of_invariant {g : ℕ} {F : Matrix (Fin g) (Fin g) ℂ → ℂ}
 
 end Koecher
 
-open ReciprocityTheory.PTheta ReciprocityTheory.ChartRestriction.G.Key Koecher in
 
+open ReciprocityTheory.PTheta ReciprocityTheory.ChartRestriction.G.Key Koecher in
 theorem phKoecher : PhKoecherStatement := by
   intro g hg N hN F hF hper hinv c hc
   have hNpos : (0 : ℝ) < N := by exact_mod_cast hN

@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasArchimedeanCharExponentsConjOfHasInfExp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemMultTOfEquivariant
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLieAlgebraExpEqOfCommuteCartanInvolutionStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsThetaSubSelf
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HypothesesAbsDet
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasArchimedeanCharExponentsConjOfHasInfExp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemMultTOfEquivariant
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLieAlgebraExpEqOfCommuteCartanInvolutionStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsThetaSubSelf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HypothesesAbsDet
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -53,7 +57,7 @@ theorem piInf_eq_infProj {w : InfinitePlace D.host.F} (e : GlobalTheory.AdelicU.
     GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.piInf e y = GlobalTheory.AdelicU.infProj e (infPart D y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add a b ha hb => rw [RingHom.map_add, RingHom.map_add, RingHom.map_add, ha, hb]
+  | add a b ha hb => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), RingHom.map_add (f := _), ha, hb]
   | tmul a x => rfl
 
 theorem isInfFam_thetaC (D : D7) : IsInfFam (Eqv.thetaC D) := by
@@ -106,7 +110,8 @@ theorem isCartan_conj {n : ℕ} {M θ : Matrix (Fin n) (Fin n) ℂ} (h : GlobalT
     have e2 : (θ.map conj).map star = (θ.map star).map conj := by ext i j; simp
     rw [e1, e2]; exact this
   · have e : ((θ.map conj) *ᵥ x) ⬝ᵥ (M.map conj) *ᵥ star x = conj ((θ *ᵥ star x) ⬝ᵥ M *ᵥ star (star x)) := by
-      simp [dotProduct, Matrix.mulVec, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [dotProduct, Matrix.mulVec, map_sum, map_mul]
     rw [e, Complex.conj_re]
     exact h3 _ (by simpa using hx)
 
@@ -155,21 +160,11 @@ theorem conjU_prod (W : HSp D) {J : Matrix (Fin W.rank) (Fin W.rank) D.host.E} (
   | cons a L ih => rw [List.prod_cons, conjU_mul', ih, List.map_cons, List.prod_cons]
 
 theorem prod_map_ite {M ι : Type} [Monoid M] [DecidableEq ι] (g : ι → M) (τ : ι) :
-    ∀ L : List ι, L.Nodup → τ ∈ L → (L.map fun t => if τ = t then g t else 1).prod = g τ
-  | [], _, h => absurd h List.not_mem_nil
-  | a :: L, hL, h => by
-    rw [List.map_cons, List.prod_cons]
-    obtain ⟨ha, hL'⟩ := List.nodup_cons.1 hL
-    by_cases e : τ = a
-    · subst e
-      rw [if_pos rfl, List.prod_eq_one, mul_one]
-      intro x hx
-      obtain ⟨t, ht, rfl⟩ := List.mem_map.1 hx
-      rw [if_neg]
-      rintro rfl
-      exact ha ht
-    · rw [if_neg e, one_mul]
-      exact prod_map_ite g τ L hL' ((List.mem_cons.1 h).resolve_left e)
+    ∀ L : List ι, L.Nodup → τ ∈ L → (L.map fun t => if τ = t then g t else 1).prod = g τ := by
+  intro L hL h
+  have hterms : ∀ t, t ≠ τ → t ∈ L → (if τ = t then g t else 1) = 1 :=
+    fun _ ht _ => ite_eq_right ht.symm
+  rw [List.prod_map_eq_pow_single τ _ hterms, List.count_eq_one_of_mem hL h, ite_eq_left rfl, pow_one]
 
 end GlobalTheory.KInfLines
 
@@ -207,7 +202,7 @@ theorem fin_one_of_mem {k : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorMo
     fun u hu => congrFun (congrFun (hk u hu) i) j
   have h2 := GlobalTheory.ConjInfExp.finPart_eq_one (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.mat k i j - (1 : Matrix _ _ (AE D)) i j + 1)
     (by rwa [add_sub_cancel_right])
-  rw [RingHom.map_add, RingHom.map_one, add_eq_right, RingHom.map_sub, sub_eq_zero] at h2
+  rw [RingHom.map_add (f := _), RingHom.map_one, add_eq_right, RingHom.map_sub, sub_eq_zero] at h2
   rw [Matrix.map_apply, h2]
   by_cases e : i = j
   · subst e; simp
@@ -358,23 +353,5 @@ theorem prod_eq (hJ : V.J = (1 : D.host.E) • W.gram) {k : GlobalTheory.Indefin
     rw [map_list_prod, List.map_map]
     simp only [Function.comp_def, hterm]
     exact prod_map_ite (gsOf k) τ _ (Finset.nodup_toList _) (Finset.mem_toList.2 (Finset.mem_univ _))
-
-theorem prod_lines : GlobalTheory.FunPr.Hypotheses₂ → ∀ (D : D7) (θ : InfFam D) (W : HSp D) (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E)
-    (V : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc D.host.F D.host.E W.rank) (r s : ℕ) (hJ : V.J = (1 : D.host.E) • W.gram),
-    IsInfFam θ → Bs.IsGood D.sp.cm.sig → V.IsHerm D.sp.cm.sig Bs r s →
-    ∀ k ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.KInf D.sp.cm.sig V Bs.emb,
-    ∃ l : List (D.what₂.Tau × Matrix (Fin W.rank) (Fin W.rank) ℂ),
-      (∀ q ∈ l, q.2 ∈ lieAt W q.1 ∧ ∀ t : ℝ,
-        GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.conjU W 1 hJ (oneP θ W q.1 q.2 t) ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.KInf D.sp.cm.sig V Bs.emb) ∧
-      k = (l.map fun q => GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.conjU W 1 hJ (oneP θ W q.1 q.2 1)).prod := by
-  intro _ D θ W Bs V r s hJ hθ _ hV k hk
-  obtain rfl := Eqv.eq_thetaC D hθ
-  choose C hC using cartan_data hJ Bs hV hk
-  choose Z hZ using fun t => exists_log_of_cartan (GlobalTheory.SmoothForms.RealPts.gramAt_herm W t) (hC t).1
-    (unitFam_gsOf hJ k t) (hC t).2.1
-  refine ⟨Finset.univ.toList.map fun t => (t, Z t), ?_, prod_eq hJ hk.1 Z fun t => ⟨(hZ t).1, (hZ t).2.2⟩⟩
-  intro q hq
-  obtain ⟨t, -, rfl⟩ := List.mem_map.1 hq
-  exact ⟨(hZ t).1, line_mem hJ Bs C (fun t => (hC t).2.2) (hZ t).1 (hZ t).2.1⟩
 
 end GlobalTheory.KInfLines

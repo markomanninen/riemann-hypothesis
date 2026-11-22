@@ -1,11 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 
 namespace GlobalTheory.CompanionTheory.SurjPass
 
 theorem aic_of_surjective {S : Type} [CommRing S] {T : Type} [CommRing T] (φ : S →+* T)
-    (hφ : Function.Surjective φ) (h : Aic S) : Aic T := by
+    (hφ : Function.Surjective φ) (h : Aic (S := S)) : Aic (S := T) := by
   intro P hP hdeg
   rcases subsingleton_or_nontrivial T with hT | hT
   · exact ⟨0, Subsingleton.elim _ _⟩
@@ -16,7 +21,7 @@ theorem aic_of_surjective {S : Type} [CommRing S] {T : Type} [CommRing T] (φ : 
   rw [← hQ, Polynomial.IsRoot, Polynomial.eval_map, Polynomial.eval₂_hom, hx.eq_zero, map_zero]
 
 theorem comparable_of_surjective {S : Type} [CommRing S] {T : Type} [CommRing T] (φ : S →+* T)
-    (hφ : Function.Surjective φ) (h : Val0 S) : Val0 T := by
+    (hφ : Function.Surjective φ) (h : Val0 (S := S)) : Val0 (S := T) := by
   intro f g
   obtain ⟨f', rfl⟩ := hφ f
   obtain ⟨g', rfl⟩ := hφ g
@@ -32,7 +37,7 @@ theorem comparable_of_surjective {S : Type} [CommRing S] {T : Type} [CommRing T]
     exact map_dvd φ h2
 
 theorem absolutely_closed_comparable_surjective : ∀ {S : Type} [CommRing S] {T : Type} [CommRing T] (φ : S →+* T),
-    Function.Surjective φ → (Aic S → Aic T) ∧ (Val0 S → Val0 T) := by
+    Function.Surjective φ → (Aic (S := S) → Aic (S := T)) ∧ (Val0 (S := S) → Val0 (S := T)) := by
   intro S _ T _ φ hφ
   exact ⟨aic_of_surjective φ hφ, comparable_of_surjective φ hφ⟩
 

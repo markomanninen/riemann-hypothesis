@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsLieCombOneIffComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsLieCombOneIffComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,10 +23,9 @@ theorem prod_ofFn_eq_single {M : Type*} [Monoid M] :
     rw [List.ofFn_succ, List.prod_cons]
     refine Fin.cases (motive := fun i => (∀ j, j ≠ i → u j = 1) →
       u 0 * (List.ofFn fun k : Fin n => u k.succ).prod = u i) (fun h => ?_) (fun i h => ?_) i h
-    · rw [List.prod_eq_one, _root_.mul_one]
-      intro x hx
-      obtain ⟨k, rfl⟩ := List.mem_ofFn.1 hx
-      exact h _ (Fin.succ_ne_zero k)
+    · have hprod : (List.ofFn fun k : Fin n => u k.succ).prod = 1 :=
+        List.prod_eq_one (List.forall_mem_ofFn_iff.mpr fun k => h _ (Fin.succ_ne_zero k))
+      rw [hprod, _root_.mul_one]
     · rw [h 0 (Fin.succ_ne_zero i).symm, _root_.one_mul]
       exact prod_ofFn_eq_single (fun k : Fin n => u k.succ) i
         (fun j hj => h _ (fun e => hj (Fin.succ_injective _ e)))

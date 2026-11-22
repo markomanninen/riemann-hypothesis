@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.OrderTwo
-import GroundTheory.ProfiniteCohomology.RealPlaces.InvolutionDuality
-import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.OrderTwo
+public import GroundTheory.ProfiniteCohomology.RealPlaces.InvolutionDuality
+public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -33,7 +38,7 @@ theorem cocycleOne_add (α β : A) (hα : α + A.ρ c α = 0) (hβ : β + A.ρ c
     (hαβ : α + β + A.ρ c (α + β) = 0) :
     cocycleOne A hG hc (α + β) hαβ = cocycleOne A hG hc α hα + cocycleOne A hG hc β hβ := by
   apply cocycles_ext
-  rw [map_add, cochainOf_add, cochainOf_cocycleOne, cochainOf_cocycleOne, cochainOf_cocycleOne]
+  rw [map_add (f := _), cochainOf_add, cochainOf_cocycleOne, cochainOf_cocycleOne, cochainOf_cocycleOne]
   funext v
   simp only [cochainOne, Pi.add_apply]
   split_ifs <;> simp
@@ -42,7 +47,7 @@ theorem cocycleTwo_add (a b : A) (ha : A.ρ c a = a) (hb : A.ρ c b = b)
     (hab : A.ρ c (a + b) = a + b) :
     cocycleTwo A hG hc (a + b) hab = cocycleTwo A hG hc a ha + cocycleTwo A hG hc b hb := by
   apply cocycles_ext
-  rw [map_add, cochainOf_add, cochainOf_cocycleTwo, cochainOf_cocycleTwo, cochainOf_cocycleTwo]
+  rw [map_add (f := _), cochainOf_add, cochainOf_cocycleTwo, cochainOf_cocycleTwo, cochainOf_cocycleTwo]
   funext v
   simp only [cochainTwo, Pi.add_apply]
   split_ifs <;> simp
@@ -57,7 +62,7 @@ def h1Hom : fixedSub (-act A c) →+ cohomology A 1 where
     funext v
     simp [cochainOne]
   map_add' α β := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     exact cocycleOne_add A hG hc _ _ _ _ _
 
@@ -75,7 +80,7 @@ def h1EquivOfOrderTwo : tateQuot (-act A c) ≃+ cohomology A 1 :=
       rw [← hy, AddMonoidHom.neg_apply, map_neg]
       simp [sub_eq_add_neg, add_comm]))
     ⟨by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨α, rfl⟩ := QuotientAddGroup.mk_surjective x
       rw [QuotientAddGroup.lift_mk, h1Hom_apply, cohomologyπ_cocycleOne_eq_zero_iff] at hx
@@ -105,7 +110,7 @@ def h2Hom : fixedSub (act A c) →+ cohomology A 2 where
     funext v
     simp [cochainTwo]
   map_add' a b := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     exact cocycleTwo_add A hG hc _ _ _ _ _
 
@@ -121,7 +126,7 @@ def h2EquivOfOrderTwo : tateQuot (act A c) ≃+ cohomology A 2 :=
       rw [AddMonoidHom.mem_ker, h2Hom_apply, cohomologyπ_cocycleTwo_eq_zero_iff]
       exact ⟨y, hy.symm⟩))
     ⟨by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨a, rfl⟩ := QuotientAddGroup.mk_surjective x
       rw [QuotientAddGroup.lift_mk, h2Hom_apply, cohomologyπ_cocycleTwo_eq_zero_iff] at hx
@@ -161,7 +166,7 @@ def h0HomOfOrderTwo : fixedSub (act A c) →+ cohomologyTateZero A where
     change Submodule.Quotient.mk ((H0Iso A).inv.hom 0) = 0
     rw [map_zero, Submodule.Quotient.mk_zero]
   map_add' a b := by
-    rw [← Submodule.Quotient.mk_add, ← map_add]
+    rw [← Submodule.Quotient.mk_add, ← map_add (f := _)]
     rfl
 
 theorem h0Hom_apply (a : fixedSub (act A c)) :
@@ -173,8 +178,8 @@ omit [Fintype G] in
 theorem H0Iso_inv_injective : Function.Injective (H0Iso A).inv.hom :=
   (ModuleCat.mono_iff_injective _).1 inferInstance
 
-include hc in
 
+include hc in
 def cohomZeroEquivContinuous : tateQuot (act A c) ≃+ cohomologyTateZero A :=
   AddEquiv.ofBijective (QuotientAddGroup.lift _ (h0HomOfOrderTwo A hG) (by
       intro a ha
@@ -188,7 +193,7 @@ def cohomZeroEquivContinuous : tateQuot (act A c) ≃+ cohomologyTateZero A :=
       congr 1
       exact Subtype.ext hN.symm))
     ⟨by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨a, rfl⟩ := QuotientAddGroup.mk_surjective x
       rw [QuotientAddGroup.lift_mk, h0Hom_apply, Submodule.Quotient.mk_eq_zero,

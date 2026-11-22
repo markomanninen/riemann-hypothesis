@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocLawA
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocLawL
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousWeilSchrodingerStandardUnnEvalZero
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocLawA
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocLawL
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousWeilSchrodingerStandardUnnEvalZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,9 +32,9 @@ theorem lIlin : LIlin := by
       apply Subtype.ext
       rw [LocLawH.phiS_val (mem _), Submodule.coe_add, Submodule.coe_smul, LocLawH.phiS_val (mem P), LocLawH.phiS_val (mem Q)]
       funext x
-      simp only [tens, fP, evX, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, MvPolynomial.smul_eval]
+      simp only [tens, fP, evX, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), MvPolynomial.smul_eval]
       ring
-    rw [← hL y _ hΨ (a • P + Q), hlin, map_add, map_smul, Submodule.coe_add, Submodule.coe_smul, hL y _ hΨ P,
+    rw [← hL y _ hΨ (a • P + Q), hlin, map_add (f := _), map_smul, Submodule.coe_add, Submodule.coe_smul, hL y _ hΨ P,
       hL y _ hΨ Q]
     funext x
     simp only [tens, Pi.add_apply, Pi.smul_apply, smul_eq_mul]

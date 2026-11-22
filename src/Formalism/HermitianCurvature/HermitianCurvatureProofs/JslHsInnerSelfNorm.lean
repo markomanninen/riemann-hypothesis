@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEPairAtDeriv
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermMulVecMulVec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEPairAtDeriv
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermMulVecMulVec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate
@@ -75,7 +79,8 @@ theorem jsl_hs_comb_le {K : ℕ} (a : Fin K → ℂ) (A : Fin K → (Wq →L[ℂ
     ‖B.hsInner (∑ i, a i • A i) (∑ i, a i • A i)‖ ≤ (K : ℝ) * ∑ i, ‖a i‖ ^ 2 * ‖B.hsInner (A i) (A i)‖ := by
   have hlin : B.hsVec (∑ i, a i • A i) = ∑ i, a i • B.hsVec (A i) := by
     change hsVecLin (∑ i, a i • A i) = ∑ i, a i • hsVecLin (A i)
-    simp [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul]
   rw [jsl_hsInner_self_norm, hlin]
   simp_rw [jsl_hsInner_self_norm]
   calc ‖∑ i, a i • B.hsVec (A i)‖ ^ 2 ≤ (∑ i, ‖a i • B.hsVec (A i)‖) ^ 2 := by
@@ -135,7 +140,7 @@ theorem jsl_int_norm_self (μ : Measure (Mt k r)) (i : Fin (r + 1)) (v : RadSp k
 theorem jsl_glue_self (l : Fin r) (c : Fin r → ℂ) (t : ℂ) (c' : Cf r l.succ) :
     glue l.succ (Function.update c l t) c' l = t := by
   unfold glue
-  rw [dif_neg (by simp [Fin.val_succ])]
+  rw [dite_eq_right (by simp [Fin.val_succ])]
   simp
 
 end JSL

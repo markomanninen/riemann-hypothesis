@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem intS_subst {V : VF C} {σ τ : Type} [Finite σ] {a : σ → MvPowerSeri
   exact this μ
 
 theorem intS_pderiv {V : VF C} {τ : Type} {f : MvPowerSeries τ C} (hf : IntS V f) (t : τ) :
-    IntS V (pderiv C t f) := by
+    IntS V (pderiv (R := C) t f) := by
   intro μ
   rw [coeff_pderiv, mul_comm, ← Nat.cast_succ]
   exact (VF.ge_natCast _).mul_int (hf _)
@@ -101,7 +105,7 @@ theorem coeff_mul_van {τ : Type} {T : Set τ} {f g : MvPowerSeries τ C} (hf : 
     simp [hg b hb]
 
 theorem van_pderiv_mvExp {τ : Type} {T : Set τ} {H : MvPowerSeries τ C} (hH : Van T H) (t : τ) :
-    Van T (pderiv C t (mvExp H) - pderiv C t H) := by
+    Van T (pderiv (R := C) t (mvExp H) - pderiv (R := C) t H) := by
   intro ν hν
   rw [map_sub, coeff_pderiv, coeff_pderiv, ← sub_mul]
   have : coeff (ν + Finsupp.single t 1) (mvExp H) = coeff (ν + Finsupp.single t 1) H := by
@@ -120,7 +124,7 @@ theorem van_pderiv_mvExp {τ : Type} {T : Set τ} {H : MvPowerSeries τ C} (hH :
     · intro h
       exfalso
       apply h
-      rw [Finset.mem_range, map_add, Finsupp.degree_single]
+      rw [Finset.mem_range, map_add (f := _), Finsupp.degree_single]
       omega
   rw [this, sub_self, zero_mul]
 
@@ -150,15 +154,15 @@ theorem subst_killCompl {τ : Type} {γ : κ → MvPowerSeries τ C} (hγ : ∀ 
   rw [subst_sub hS, sub_eq_zero] at hz
   rw [hz, rename_eq_subst, subst_comp_subst_apply (HasSubst.X_comp _) hS]
   congr 1
-  funext x
-  simp only [Function.comp_apply]
-  rw [subst_X hS]
-  exact (if_pos rfl).symm
+  funext s
+  change γ s = subst _ (X ((0 : Fin 2), s))
+  simp [subst_X hS]
 
 theorem sg_eq (X : RawChart C d I κ) (v : κ → C) :
-    X.sg v = -∑ i, v i • killCompl (fstEmb κ) (pderiv C ((1 : Fin 2), i) X.h) := by
+    X.sg v = -∑ i, v i • killCompl (fstEmb κ) (pderiv (R := C) ((1 : Fin 2), i) X.h) := by
   ext μ
-  rw [map_neg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_neg, map_sum]
   show -∑ i, v i * coeff
     (μ.mapDomain (fun x : κ => ((0 : Fin 2), x)) + Finsupp.single ((1 : Fin 2), i) 1) X.h = _
   congr 1
@@ -173,7 +177,7 @@ theorem sg_eq (X : RawChart C d I κ) (v : κ → C) :
 theorem subst_sg (X : RawChart C d I κ) (v : κ → C) {τ : Type} {γ : κ → MvPowerSeries τ C}
     (hγ : ∀ s, constantCoeff (γ s) = 0) :
     subst γ (X.sg v) = -∑ i, v i •
-      subst (fun p : Fin 2 × κ => if p.1 = 0 then γ p.2 else 0) (pderiv C ((1 : Fin 2), i) X.h) := by
+      subst (fun p : Fin 2 × κ => if p.1 = 0 then γ p.2 else 0) (pderiv (R := C) ((1 : Fin 2), i) X.h) := by
   have hS := hasSubst_of_constantCoeff_zero hγ
   rw [sg_eq, FormalCalc.subst_neg' hS, FormalCalc.subst_sum' hS]
   congr 1
@@ -190,15 +194,15 @@ theorem pair_const {τ : Type} {a b : κ → MvPowerSeries τ C} (ha : ∀ s, co
 theorem gp_const {n : ℕ} (j : Fin n) (x : κ) : constantCoeff (gp C κ j x) = 0 := constantCoeff_X _
 
 theorem subst_pderiv_hAt (X : RawChart C d I κ) {τ : Type} {A : κ → MvPowerSeries (Fin 3 × κ) C}
-    (hA : ∀ s, constantCoeff (A s) = 0) (i : κ) (hA' : ∀ x, pderiv C ((2 : Fin 3), i) (A x) = 0)
+    (hA : ∀ s, constantCoeff (A s) = 0) (i : κ) (hA' : ∀ x, pderiv (R := C) ((2 : Fin 3), i) (A x) = 0)
     {a : Fin 3 × κ → MvPowerSeries τ C} (ha : ∀ s, constantCoeff (a s) = 0) (ha2 : ∀ x, a (2, x) = 0) :
-    subst a (pderiv C ((2 : Fin 3), i) (hAt X A (gp C κ 2))) =
-      subst (fun p : Fin 2 × κ => if p.1 = 0 then subst a (A p.2) else 0) (pderiv C ((1 : Fin 2), i) X.h) := by
+    subst a (pderiv (R := C) ((2 : Fin 3), i) (hAt X A (gp C κ 2))) =
+      subst (fun p : Fin 2 × κ => if p.1 = 0 then subst a (A p.2) else 0) (pderiv (R := C) ((1 : Fin 2), i) X.h) := by
   have hS := hasSubst_of_constantCoeff_zero ha
   have hP := hasSubst_of_constantCoeff_zero (pair_const hA (gp_const (C := C) (κ := κ) (2 : Fin 3)))
   unfold hAt
   rw [FormalCalc.pderiv_subst hP, Finset.sum_eq_single ((1 : Fin 2), i)]
-  · have : pderiv C ((2 : Fin 3), i) (if ((1 : Fin 2), i).1 = 0 then A ((1 : Fin 2), i).2
+  · have : pderiv (R := C) ((2 : Fin 3), i) (if ((1 : Fin 2), i).1 = 0 then A ((1 : Fin 2), i).2
         else gp C κ (2 : Fin 3) ((1 : Fin 2), i).2) = 1 := by
       rw [if_neg (by simp)]
       exact pderiv_X_self
@@ -227,8 +231,8 @@ theorem subst_pderiv_hAt (X : RawChart C d I κ) {τ : Type} {A : κ → MvPower
     exact absurd (Finset.mem_univ _) h
 
 theorem pderiv_subst_eq_zero {σ τ : Type} [Fintype σ] {a : σ → MvPowerSeries τ C}
-    (ha : ∀ s, constantCoeff (a s) = 0) {t : τ} (h : ∀ s, pderiv C t (a s) = 0) (f : MvPowerSeries σ C) :
-    pderiv C t (subst a f) = 0 := by
+    (ha : ∀ s, constantCoeff (a s) = 0) {t : τ} (h : ∀ s, pderiv (R := C) t (a s) = 0) (f : MvPowerSeries σ C) :
+    pderiv (R := C) t (subst a f) = 0 := by
   rw [FormalCalc.pderiv_subst (hasSubst_of_constantCoeff_zero ha)]
   simp [h]
 
@@ -239,7 +243,7 @@ theorem lg_const {X : RawChart C d I κ} {V : VF C} (h : RLaw X V) (i : κ) : co
 theorem sum_const {X : RawChart C d I κ} {V : VF C} (h : RLaw X V) {τ : Type} {a b : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (hb : ∀ s, constantCoeff (b s) = 0) (x : κ) :
     constantCoeff (subst a (X.lg x) + subst b (X.lg x)) = 0 := by
-  rw [map_add, constantCoeff_subst_zero ha (lg_const h x), constantCoeff_subst_zero hb (lg_const h x), add_zero]
+  rw [map_add (f := _), constantCoeff_subst_zero ha (lg_const h x), constantCoeff_subst_zero hb (lg_const h x), add_zero]
 
 theorem formalAdd_const {X : RawChart C d I κ} {V : VF C} (h : RLaw X V) {τ : Type} {a b : κ → MvPowerSeries τ C}
     (ha : ∀ s, constantCoeff (a s) = 0) (hb : ∀ s, constantCoeff (b s) = 0) (x : κ) :
@@ -312,32 +316,33 @@ theorem intS_cocycle {X : RawChart C d I κ} {V : VF C} (h : RLaw X V) {τ : Typ
   have hH : Van {p : Fin 3 × κ | p.1 = 2} (hAt X (gp C κ (0 : Fin 3)) (gp C κ 2) + hAt X (gp C κ 1) (gp C κ 2) -
       hAt X (addP X (gp C κ 0) (gp C κ 1)) (gp C κ 2)) := by
     intro ν hν
-    rw [map_sub, map_add, hvan _ (gp_const 0) ν hν, hvan _ (gp_const 1) ν hν, hvan _ hAc ν hν]
+    rw [map_sub, map_add (f := _), hvan _ (gp_const 0) ν hν, hvan _ (gp_const 1) ν hν, hvan _ hAc ν hν]
     simp
   have key : ∀ i, IntS V
-      (subst (fun p : Fin 2 × κ => if p.1 = 0 then a p.2 else 0) (pderiv C ((1 : Fin 2), i) X.h) +
-        subst (fun p : Fin 2 × κ => if p.1 = 0 then b p.2 else 0) (pderiv C ((1 : Fin 2), i) X.h) -
-        subst (fun p : Fin 2 × κ => if p.1 = 0 then addP X a b p.2 else 0) (pderiv C ((1 : Fin 2), i) X.h)) := by
+      (subst (fun p : Fin 2 × κ => if p.1 = 0 then a p.2 else 0) (pderiv (R := C) ((1 : Fin 2), i) X.h) +
+        subst (fun p : Fin 2 × κ => if p.1 = 0 then b p.2 else 0) (pderiv (R := C) ((1 : Fin 2), i) X.h) -
+        subst (fun p : Fin 2 × κ => if p.1 = 0 then addP X a b p.2 else 0) (pderiv (R := C) ((1 : Fin 2), i) X.h)) := by
     intro i
-    have d0 : ∀ x, pderiv C ((2 : Fin 3), i) (gp C κ (0 : Fin 3) x) = 0 := fun x =>
+    have d0 : ∀ x, pderiv (R := C) ((2 : Fin 3), i) (gp C κ (0 : Fin 3) x) = 0 := fun x =>
       pderiv_X_of_ne (by simp)
-    have d1 : ∀ x, pderiv C ((2 : Fin 3), i) (gp C κ (1 : Fin 3) x) = 0 := fun x =>
+    have d1 : ∀ x, pderiv (R := C) ((2 : Fin 3), i) (gp C κ (1 : Fin 3) x) = 0 := fun x =>
       pderiv_X_of_ne (by simp)
-    have dA : ∀ x, pderiv C ((2 : Fin 3), i) (addP X (gp C κ (0 : Fin 3)) (gp C κ 1) x) = 0 := fun x =>
+    have dA : ∀ x, pderiv (R := C) ((2 : Fin 3), i) (addP X (gp C κ (0 : Fin 3)) (gp C κ 1) x) = 0 := fun x =>
       pderiv_subst_eq_zero (sum_const h (gp_const 0) (gp_const 1)) (fun y => by
-        rw [map_add, pderiv_subst_eq_zero (gp_const 0) d0, pderiv_subst_eq_zero (gp_const 1) d1, add_zero]) _
+        rw [map_add (f := _), pderiv_subst_eq_zero (gp_const 0) d0, pderiv_subst_eq_zero (gp_const 1) d1, add_zero]) _
     have h1 := intS_subst hc hci (intS_pderiv h.ph1 ((2 : Fin 3), i))
     have h2 := subst_eq_zero_of_van hc (fun s (hs : s.1 = 2) => by
       rw [show s = (2, s.2) from Prod.ext hs rfl]; exact hc2 _) (van_pderiv_mvExp hH ((2 : Fin 3), i))
     rw [subst_sub hS, sub_eq_zero] at h2
-    rw [h2, map_sub, map_add, subst_sub hS, subst_add hS, subst_pderiv_hAt X (gp_const 0) i d0 hc hc2,
+    rw [h2, map_sub, map_add (f := _), subst_sub hS, subst_add hS, subst_pderiv_hAt X (gp_const 0) i d0 hc hc2,
       subst_pderiv_hAt X (gp_const 1) i d1 hc hc2, subst_pderiv_hAt X hAc i dA hc hc2] at h1
     simpa only [s0, s1, sA] using h1
   rw [subst_sg X v (formalAdd_const h ha hb), subst_sg X v ha, subst_sg X v hb]
   intro μ
   have := VF.Ge.sum (s := Finset.univ) fun i _ => (hv i).mul_int (key i μ)
   convert this using 1
-  simp only [map_sub, map_add, map_neg, map_sum, coeff_smul, mul_sub, mul_add, Finset.sum_sub_distrib,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_add (f := _), map_neg, map_sum, coeff_smul, mul_sub, mul_add, Finset.sum_sub_distrib,
     Finset.sum_add_distrib]
   ring
 

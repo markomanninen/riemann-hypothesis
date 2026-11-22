@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DefClassNum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDensityOfImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DefClassNum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDensityOfImmersion
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.FlagMeas
@@ -57,7 +62,7 @@ theorem detOn_exp_smul : ∀ (n : ℕ) (A : Matrix (Fin n) (Fin n) ℂ) (V : Sub
     refine LinearMap.ext fun v => Subtype.ext ?_
     simp only [LinearMap.restrict_coe_apply, Matrix.toLin'_apply]
     exact key v
-  rw [detOn, dif_pos hstab, hres]
+  rw [detOn, dite_eq_left hstab, hres]
   show ‖LinearMap.det (Matrix.toLin b b (NormedSpace.exp (s • B)))‖ = _
   rw [LinearMap.det_toLin, GlobalTheory.SUVol.det_exp, Matrix.trace_smul, smul_eq_mul, Complex.norm_exp, hs,
     Complex.re_ofReal_mul]

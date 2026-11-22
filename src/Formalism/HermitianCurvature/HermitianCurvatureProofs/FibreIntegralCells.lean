@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RearrSymm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RearrSymm
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.FK
 
@@ -98,7 +102,7 @@ theorem fibre_integral_cells : PBI.FibIntCells := by
     have hex : ∃ θ, D.IsNormCut S γ0 (D.muR S γ0 w) θ ∧
         Integrable (fun q => θ q • D.orbIntegrand S γ0 F q) S.μSS := ⟨θ1, hθ1, hint1⟩
     unfold D.orbJ
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     obtain ⟨hθ, hint⟩ := hex.choose_spec
     obtain ⟨hI, hEq⟩ := OG.orb_int S hγe hd0 hZw hpos hrel e hemp he hμ0 hμ0' hc1 hc2 hN1 hN2 F _ hθ hint
     rw [hEq, OJ.cell_int S γ0 w hμ0 hμ0' F hI, RCLike.real_smul_eq_coe_smul (K := ℂ), ← integral_smul]
@@ -123,7 +127,7 @@ theorem fibre_integral_cells : PBI.FibIntCells := by
     symm
     exact FB.fib_indep S p.ν' p.m₀ p.hF a ha hG hE hμ0 hμ0' F hv hu hsG (hsZ.trans hZ1.symm) hsD
   · have h0 : D.vecV S p.ν' p.m₀ F a = 0 := by
-      unfold D.vecV; rw [dif_neg (fun h => hG h.2)]
+      unfold D.vecV; rw [dite_eq_right (fun h => hG h.2)]
     rw [h0]
     symm
     refine integral_eq_zero_of_ae (Filter.Eventually.of_forall fun Y => ?_)

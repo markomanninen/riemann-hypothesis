@@ -1,4 +1,8 @@
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountStB
+module
+
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountStB
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 
@@ -87,38 +91,10 @@ private lemma form_sum_smul_right (h : HermFam K V) (σ : K →+* ℂ) (x : V) {
 private lemma form_sum_smul_left (h : HermFam K V) (σ : K →+* ℂ) (y : V) {ι : Type*}
     (s : Finset ι) (a : ι → K) (u : ι → V) :
     h.form σ (∑ i ∈ s, a i • u i) y = ∑ i ∈ s, starRingEnd ℂ (σ (a i)) * h.form σ (u i) y := by
-  rw [← h.conj_symm σ y, form_sum_smul_right h σ y s a u, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h.conj_symm σ y, form_sum_smul_right h σ y s a u, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, h.conj_symm]
-
-theorem form_eq_qC (h : HermFam K V) (σ : K →+* ℂ) {r : ℕ} {v : Fin r → V}
-    (hli : LinearIndependent K v) {x : V} (hx : x ∈ Submodule.span K (Set.range v)) :
-    (h.form σ x x).re = qC (h.gram σ v) (fun i => σ (crd hli x i)) := by
-  unfold qC HermFam.gram
-  conv_lhs => rw [← sum_crd hli hx]
-  rw [form_sum_smul_left]
-  congr 1
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [form_sum_smul_right, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [Matrix.of_apply]
-  ring
-
-theorem qR_crdEmb (h : HermFam K V) {r : ℕ} {v : Fin r → V}
-    (hli : LinearIndependent K v) {x : V} (hx : x ∈ Submodule.span K (Set.range v))
-    (w : {w : InfinitePlace K // w.IsReal}) :
-    qR (gramR h v w) (fun i => (crdEmb hli x i).1 w) = (h.form w.1.embedding x x).re := by
-  rw [form_eq_qC h w.1.embedding hli hx, gramR, qR_map_re_eq_qC_ofReal]
-  congr 1
-  funext i
-  show ((InfinitePlace.embedding_of_isReal w.2 (crd hli x i) : ℝ) : ℂ) = _
-  exact InfinitePlace.embedding_of_isReal_apply w.2 _
-
-theorem qC_crdEmb (h : HermFam K V) {r : ℕ} {v : Fin r → V}
-    (hli : LinearIndependent K v) {x : V} (hx : x ∈ Submodule.span K (Set.range v))
-    (w : {w : InfinitePlace K // w.IsComplex}) :
-    qC (h.gram w.1.embedding v) (fun i => (crdEmb hli x i).2 w) = (h.form w.1.embedding x x).re := by
-  exact (form_eq_qC h w.1.embedding hli hx).symm
 
 def psi (K : Type*) [Field K] [NumberField K] (r : ℕ) (y : Fin r → mixedEmbedding.mixedSpace K) :
     ({w : InfinitePlace K // w.IsReal} → Fin r → ℝ) × ({w : InfinitePlace K // w.IsComplex} → Fin r → ℂ) :=
@@ -132,7 +108,7 @@ private lemma measurePreserving_pi_pi_swap {ι κ X : Type*} [Fintype ι] [Finty
   have h1 : MeasurePreserving (fun (f : ι → κ → X) (p : ι × κ) => f p.1 p.2)
       (Measure.pi fun _ => Measure.pi fun _ => μ) (Measure.pi fun _ => μ) := by
     have hm : Measurable (fun (f : ι → κ → X) (p : ι × κ) => f p.1 p.2) :=
-      measurable_pi_lambda _ fun p => (measurable_pi_apply p.2).comp (measurable_pi_apply p.1)
+      Measurable.of_eval fun p => (measurable_pi_apply p.2).comp (measurable_pi_apply p.1)
     refine ⟨hm, (Measure.pi_eq fun s hs => ?_).symm⟩
     rw [Measure.map_apply hm (MeasurableSet.univ_pi hs)]
     have he : (fun (f : ι → κ → X) (p : ι × κ) => f p.1 p.2) ⁻¹' Set.univ.pi s =
@@ -148,9 +124,9 @@ private lemma measurePreserving_pi_pi_swap {ι κ X : Type*} [Fintype ι] [Finty
       left_inv := fun g => rfl
       right_inv := fun g => rfl
       measurable_toFun :=
-        measurable_pi_lambda _ fun p => (measurable_pi_apply p.1).comp (measurable_pi_apply p.2)
+        Measurable.of_eval fun p => (measurable_pi_apply p.1).comp (measurable_pi_apply p.2)
       measurable_invFun :=
-        measurable_pi_lambda _ fun j => measurable_pi_lambda _ fun i => measurable_pi_apply (i, j) }
+        Measurable.of_eval fun j => Measurable.of_eval fun i => measurable_pi_apply (i, j) }
   have h2 : MeasurePreserving e (Measure.pi fun _ => Measure.pi fun _ => μ)
       (Measure.pi fun _ => μ) := by
     refine ⟨e.measurable, (Measure.pi_eq fun s hs => ?_).symm⟩
@@ -261,27 +237,5 @@ theorem volume_ellS (h : HermFam K V) {r : ℕ} {v : Fin r → V} (hli : LinearI
     Measure.prod_prod, Measure.pi_pi,
     Measure.pi_pi, ENNReal.toReal_mul, ENNReal.toReal_prod, ENNReal.toReal_prod]
   all_goals rfl
-
-theorem le_volume_ellS (h : HermFam K V) {r : ℕ} (hr : 0 < r) {v : Fin r → V}
-    (hli : LinearIndependent K v) {R : ℝ} (hR : 0 < R) :
-    (∏ w, (2 * R / Real.sqrt r) ^ r / Real.sqrt (gramR h v w).det) *
-        ∏ w : {w : InfinitePlace K // w.IsComplex},
-          (2 * R ^ 2 / r) ^ r / (h.gram w.1.embedding v).det.re ≤
-      (volume (ellS h v R)).toReal := by
-  rw [volume_ellS h hli R]
-  have ha : ∀ w : {w : InfinitePlace K // w.IsReal},
-      0 ≤ (2 * R / Real.sqrt r) ^ r / Real.sqrt (gramR h v w).det := fun w => by positivity
-  have hb : ∀ w : {w : InfinitePlace K // w.IsComplex},
-      0 ≤ (2 * R ^ 2 / r) ^ r / (h.gram w.1.embedding v).det.re := fun w => by
-    have hd : 0 < (h.gram w.1.embedding v).det.re := by
-      simpa using (Complex.lt_def.mp (gram_posDef h w.1.embedding hli).det_pos).1
-    exact div_nonneg (by positivity) hd.le
-  apply mul_le_mul
-  · exact Finset.prod_le_prod (fun w _ => ha w)
-      (fun w _ => le_volume_ellipsoidR (gramR_posDef h hli w) hR)
-  · exact Finset.prod_le_prod (fun w _ => hb w)
-      (fun w _ => le_volume_ellipsoidC (gram_posDef h w.1.embedding hli) hR)
-  · exact Finset.prod_nonneg fun w _ => hb w
-  · exact Finset.prod_nonneg fun w _ => ENNReal.toReal_nonneg
 
 end ReciprocityTheory.GeometryOfNumbersTheory

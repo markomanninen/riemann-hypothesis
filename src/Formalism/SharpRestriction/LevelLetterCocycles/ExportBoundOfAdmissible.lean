@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.NEqRZeroMulXPow
-import Development.AutomorphicArithmetic.CyclotomicBounds.SmallSum
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.NEqRZeroMulXPow
+public import Development.AutomorphicArithmetic.CyclotomicBounds.SmallSum
+
+@[expose] public section
 
 noncomputable section
 

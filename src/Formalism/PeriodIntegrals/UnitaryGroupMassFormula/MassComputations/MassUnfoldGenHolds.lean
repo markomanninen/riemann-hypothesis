@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MeasurePrjFPreimage
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.Unfold
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MeasurePrjFPreimage
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.Unfold
+
+@[expose] public section
 
 noncomputable section
 

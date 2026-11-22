@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt GlobalTheory.DegAsm
 open scoped Pointwise ENNReal Classical
@@ -360,9 +364,9 @@ private theorem NF_Dl_eq_zero_of_j_lt {K V : Type} [Field K] [NumberField K]
     exact _root_.Formalism.HermitianLatticeCounting.P.e_mem_X N.F' _
   exact _root_.Formalism.HermitianLatticeCounting.P.X_iso N.F' hX hb
 
+
 open NumberField in
 open scoped Pointwise ENNReal Classical in
-
 theorem _root_.GlobalTheory.DegAsm.adapt_invariants : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (H : _root_.Formalism.HermitianLatticeCounting.S6.HermSpace K V), _root_.Formalism.HermitianLatticesTheory.IsCMUnram K → ∀ (r : ℕ), ∀ (F F' : _root_.Formalism.HermitianLatticeCounting.S6.FlagD H r) (𝔡 : Ideal (𝓞 K)) (N : _root_.GlobalTheory.DegCnt.NF H r), _root_.GlobalTheory.DegAsm.Adapt F F' 𝔡 N → (∀ a : ℕ, N.F.Xa a = F.Xa a ∧ N.F'.Xa a = F'.Xa a) ∧ N.F.X = F.X ∧ N.F'.X = F'.X ∧ _root_.Formalism.HermitianLatticeCounting.S6.V0 N.F N.F' = _root_.Formalism.HermitianLatticeCounting.S6.V0 F F' ∧ N.j = r - Module.finrank K (_root_.Formalism.HermitianLatticeCounting.S6.II F F') ∧ (∀ (l : ℕ) (hl : l ≤ r + 1), _root_.Formalism.HermitianLatticeCounting.S6.Dl N.F N.F' l hl = _root_.Formalism.HermitianLatticeCounting.S6.Dl F F' l hl) ∧ (∀ (l : ℕ) (hl : l ≤ r + 1), N.j < l → l ≤ r → _root_.Formalism.HermitianLatticeCounting.S6.Dl F F' l hl = 0) ∧ (∀ s : V →ₗ[K] V, (N.F.InN s ↔ F.InN s) ∧ (N.F'.InN s ↔ F'.InN s)) ∧ ∀ (g : ℕ) (Λ : Submodule (𝓞 K) V), (N.IsTerm g Λ ↔ _root_.GlobalTheory.HermLat.IsFramed F F' Λ N.aa ∧ _root_.GlobalTheory.HermLat.IsAdm F F' Λ (g : 𝓞 K)) ∧ _root_.GlobalTheory.HermLat.latL N.F N.F' Λ = _root_.GlobalTheory.HermLat.latL F F' Λ ∧ _root_.GlobalTheory.HermLat.latL N.F' N.F Λ = _root_.GlobalTheory.HermLat.latL F' F Λ ∧ _root_.GlobalTheory.HermLat.flagPairDefinitePartLattice N.F N.F' Λ = _root_.GlobalTheory.HermLat.flagPairDefinitePartLattice F F' Λ ∧ _root_.GlobalTheory.HermLat.flagPairDefinitePartLattice N.F' N.F Λ = _root_.GlobalTheory.HermLat.flagPairDefinitePartLattice F' F Λ ∧ _root_.GlobalTheory.HermLat.iotaGraph N.F N.F' Λ (g : 𝓞 K) = _root_.GlobalTheory.HermLat.iotaGraph F F' Λ (g : 𝓞 K) := by
   intro K V _ _ _ _ _ _ _ _ H _ r F F' 𝔡 N hN
   unfold _root_.GlobalTheory.DegAsm.Adapt at hN

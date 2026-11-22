@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColOKOfPath
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColOKOfPath
+
+@[expose] public section
 
 noncomputable section
 

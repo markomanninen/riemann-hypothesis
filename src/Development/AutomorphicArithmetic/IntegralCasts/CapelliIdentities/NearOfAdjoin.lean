@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qg2.near_of_adjoin :
     ∀ {P L : Type} [inst : CommRing P] [inst_1 : CommRing L]
@@ -15,7 +19,7 @@ theorem UpperTheory.Reformulated.B.Qg2.near_of_adjoin :
     refine ⟨p + q, ?_⟩
     have h := (Commute.all _ _).isNilpotent_add hp hq
     convert h using 1
-    rw [map_add]
+    rw [map_add (f := _)]
     ring
   | mul y z _ _ hy hz =>
     obtain ⟨p, hp⟩ := hy

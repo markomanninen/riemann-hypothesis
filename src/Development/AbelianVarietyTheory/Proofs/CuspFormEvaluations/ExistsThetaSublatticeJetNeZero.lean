@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.FlatMemLatIffStdLat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsTranslateJetNeZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardToMultisetEqDegree
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsBasisSpanEqOfCommensurable
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HermFormDiagonalEq
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsTorusOfSelfD
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.CoeffEqZeroOfOrthonormal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.FlatMemLatIffStdLat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsTranslateJetNeZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardToMultisetEqDegree
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsBasisSpanEqOfCommensurable
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HermFormDiagonalEq
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsTorusOfSelfD
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.CoeffEqZeroOfOrthonormal
+
+@[expose] public section
 
 namespace GlobalTheory.Dict.SubJet
 
@@ -73,7 +77,7 @@ theorem exists_jet_of_periods {ι A : Type} [Fintype ι] [AddCommGroup A] (p : A
     obtain ⟨a, rfl⟩ := (hb x).1 hx
     obtain ⟨a', rfl⟩ := (hb y).1 hy
     obtain ⟨k, hk⟩ := hQ a a'
-    rw [← map_add, hka, hka, hka, hk, ← Complex.exp_add, ← Complex.exp_add,
+    rw [← map_add (f := _), hka, hka, hka, hk, ← Complex.exp_add, ← Complex.exp_add,
       Complex.exp_eq_exp_iff_exists_int]
     refine ⟨k, ?_⟩
     push_cast
@@ -127,10 +131,10 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r g : ℕ} {X : Dat
   {𝔐 : Ideal (𝓞 E)} {M : ℕ}
 
 theorem EF_add_left (u u' v : Fin r → E) : EF X (u + u') v = EF X u v + EF X u' v := by
-  simp only [EF_eq_bilin, map_add, LinearMap.add_apply]
+  simp only [EF_eq_bilin, map_add (f := _), LinearMap.add_apply]
 
 theorem EF_add_right (u v v' : Fin r → E) : EF X u (v + v') = EF X u v + EF X u v' := by
-  simp only [EF_eq_bilin, map_add]
+  simp only [EF_eq_bilin, map_add (f := _)]
 
 theorem EF_ratSmul_left (c : ℚ) (u v : Fin r → E) : EF X ((c : E) • u) v = c * EF X u v := by
   rw [Rat.cast_smul_eq_qsmul, EF_eq_bilin, EF_eq_bilin, map_smul, LinearMap.smul_apply, smul_eq_mul]
@@ -250,8 +254,8 @@ open scoped ComplexConjugate Classical
 attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Dict
 
-open GlobalTheory.Dict.SubJet in
 
+open GlobalTheory.Dict.SubJet in
 theorem GlobalTheory.Dict.exists_theta_sublattice_jet_ne_zero : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : Data E r) (g q0 : ℕ) (hr : X.p0 + q0 = r) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (n : ℕ), IsSympl X bas → Even n → ∀ w : 𝓞 E, (w : E) + cc (w : E) = 1 → ∀ L : Lt E r, SelfD X L → ∀ x ∈ X.dom, X.IsOrtho x → ∀ t : ℝ, 0 < t → (∀ τ, X.c τ = t) → ∀ (𝔐 : Ideal (𝓞 E)) (M : ℕ), Odd M → 𝔐 * conjI 𝔐 = Ideal.span {(M : 𝓞 E)} → ∀ P : Harm.Poly ℂ X.Ψ q0 X.p0 (Fin n), P ≠ 0 → 3 * P.totalDegree + 2 ≤ M → ∃ F : (Fin n → Fin g → ℂ) → ℂ, Differentiable ℂ F ∧ (∀ u : Matrix (Fin n) (Fin r) E, (∀ b, u b ∈ 𝔐 • L) → ∀ z, F z = epsW X (w : E) u * cexp (-(Real.pi * ∑ b, hx X bas idx x (z b + (1 / 2 : ℂ) • pv X idx x (u b)) (pv X idx x (u b)))) * F (fun b => z b + pv X idx x (u b))) ∧ I2.polyDeriv P (letterDir X hr idx) F 0 ≠ 0 := by
   intro E _ _ _ r X g q0 hr bas idx n hs hn w hw L hL x hxd ho t ht hc 𝔐 M _ hM P hP hdeg
   have hM0 : M ≠ 0 := by omega
@@ -294,7 +298,7 @@ theorem GlobalTheory.Dict.exists_theta_sublattice_jet_ne_zero : ∀ (E : Type) [
   obtain ⟨b, hb⟩ := exists_basis_cols Φ b₁
   let p : (Fin n → (𝔐 • L : Lt E r)) →+ EuclideanSpace ℂ (Harm.Var X.Ψ q0 X.p0 (Fin n)) :=
     AddMonoidHom.mk' (fun a => Φ fun k => pl (a k)) fun a a' => by
-      rw [← map_add]
+      rw [← map_add (f := _)]
       congr 1
       funext k
       exact map_add pl _ _
@@ -333,7 +337,8 @@ theorem GlobalTheory.Dict.exists_theta_sublattice_jet_ne_zero : ∀ (E : Type) [
       refine ⟨fun k => ⟨u k, hu k⟩, fun a' => ?_⟩
       rw [hI]
       simp only [hu']
-      conv_lhs => rw [← Finset.univ_sum_single a', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← Finset.univ_sum_single a', map_sum]
       rw [← Finset.mul_sum]
       push_cast
       field_simp
@@ -350,7 +355,7 @@ theorem GlobalTheory.Dict.exists_theta_sublattice_jet_ne_zero : ∀ (E : Type) [
     M P hP hdeg hs0
   refine ⟨G ∘ Φ.toContinuousLinearEquiv, hG.comp Φ.toContinuousLinearEquiv.differentiable, fun u hu z => ?_, ?_⟩
   · have h := hlaw (fun k => ⟨u k, hu k⟩) (Φ z)
-    rw [hp, ← map_add, mul_div_cancel₀ _ hMR, mul_comm (M : ℂ), _root_.mul_assoc (Real.pi : ℂ) M,
+    rw [hp, ← map_add (f := _), mul_div_cancel₀ _ hMR, mul_comm (M : ℂ), _root_.mul_assoc (Real.pi : ℂ) M,
       _root_.mul_assoc (Real.pi : ℂ) M, hH, hH] at h
     simp only at h
     obtain ⟨m, hm⟩ := hZ u (fun k => (w : E) • u k) hu fun k => Submodule.smul_mem _ w (hu k)

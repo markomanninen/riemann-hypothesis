@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSphericalTwistOfUnr
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspRepSatakeIffLocalComponentSatake
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormsFiniteGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSphericalTwistOfUnr
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspRepSatakeIffLocalComponentSatake
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormsFiniteGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,12 +23,6 @@ theorem holds_csd_crys_of_holdsS (hC : SphericalLevelCondition .csd .crys) : Hol
   have hc := GlobalTheory.Cong.satake_locComp E a π w σ hσ
   obtain ⟨B, hB⟩ := GlobalTheory.SatInd.exists_hasSatGL_of_isIrreducible σ.smooth σ.irred (hc.2.1 hsph)
   exact hC E Ω l ι a ha π χ hs r hr w hw B ((hc.1 B).2 hB) P AI hT A hAw O Bw hj σ hσ hsph
-
-theorem holdsS_good_crys : Inputs → SphericalLevelCondition .csd .crys → SphericalLevelCondition .good .crys := by
-  intro hI hC
-  have hG := GlobalTheory.CrysTwistBack.holds_good_crys GlobalTheory.automorphicFormsFiniteGL hI.hk (holds_csd_crys_of_holdsS hC)
-  intro E Ω _ _ _ _ _ _ l _ ι a ha π χ hs r hr w hw B _
-  exact hG E Ω l ι a ha π χ hs r hr w hw
 
 end GlobalTheory.RoadU
 

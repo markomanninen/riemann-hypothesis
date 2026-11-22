@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyLinearEquivOfPiFinPowFiniteStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyLinearEquivOfPiFinPowFiniteStatement
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
 
@@ -20,7 +25,7 @@ theorem smul_of_X {F : Type} [Field F] {M N : Type} [AddCommGroup M] [Module F M
     exact e.map_smul a m
   | add p q hp hq =>
     intro m
-    rw [add_smul, add_smul, map_add, hp, hq]
+    rw [add_smul, add_smul, map_add (f := _), hp, hq]
   | monomial k a ih =>
     intro m
     rw [pow_succ, ← mul_assoc, mul_smul (C a * X ^ k) X m, ih, h, ← mul_smul]
@@ -46,7 +51,8 @@ theorem coordE_mulVec {F F' : Type} [Field F] [Field F'] [Algebra F F'] {l : ℕ
     coordE b n (Matrix.mulVec (A.map (algebraMap F F')) v) = fun k => Matrix.mulVec A (coordE b n v k) := by
   funext k i
   rw [coordE_apply]
-  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, ← Algebra.smul_def, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, ← Algebra.smul_def, map_sum, map_smul,
     Finset.sum_apply, Pi.smul_apply, smul_eq_mul, coordE_apply]
 
 end
@@ -55,8 +61,8 @@ end GlobalTheory.Shin.ConjDesc
 
 namespace GlobalTheory.Shin
 
-open ConjDesc in
 
+open ConjDesc in
 theorem isConj_of_isConj_incl : ∀ (F F' : Type) [Field F] [Field F'] [Algebra F F'] [Finite F'] (n : ℕ)
     (γ γ' : GL (Fin n) F), IsConj (incl F F' n γ) (incl F F' n γ') → IsConj γ γ' := by
   intro F F' _ _ _ _ n γ γ' hc

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SphericalIntegral
-import GroundTheory.AutomorphicForms.SatakeSymmetric
-import GroundTheory.LocalFields.LocalFourierHaar
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SphericalIntegral
+public import GroundTheory.AutomorphicForms.SatakeSymmetric
+public import GroundTheory.LocalFields.LocalFourierHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem prod_zpow_eq_zpow_sum {G₀ : Type*} [CommGroupWithZero G₀] {a : G₀}
   | empty => simp
   | insert j s hj ih => rw [Finset.prod_insert hj, Finset.sum_insert hj, ih, zpow_add₀ ha]
 
-variable (F) in
 
+variable (F) in
 theorem modulus_uniformizer :
     Measures.modulus (GLnLocal.uniformizer F : F) = ((qF F : ℝ≥0))⁻¹ := by
   borelize F
@@ -43,13 +47,13 @@ theorem rhoPair_single (i : Fin n) :
     (fun h => absurd (Finset.mem_univ i) h)]
   simp
 
-variable (F n) in
 
+variable (F n) in
 def torusBorel (l : Fin n → ℤ) : blockUpper F n (id : Fin n → Fin n) :=
   ⟨torusPow F n l, torusPow_mem_borel F n l⟩
 
-variable (F) in
 
+variable (F) in
 def halfModulus (l : Fin n → ℤ) : ℂ :=
   sqrtModular F n id (torusBorel F n l)
 
@@ -64,8 +68,8 @@ theorem halfModulus_zero : halfModulus F (0 : Fin n → ℤ) = 1 := by
   congr 1
   exact Subtype.ext torusPow_zero
 
-variable (F) in
 
+variable (F) in
 def sqrtQ : ℂ := ((NNReal.sqrt (qF F : ℝ≥0) : ℝ) : ℂ)
 
 theorem qF_nnreal_ne_zero : ((qF F : ℝ≥0)) ≠ 0 := by
@@ -105,8 +109,8 @@ theorem halfModulus_ne_zero (l : Fin n → ℤ) : halfModulus F l ≠ 0 := by
   rw [halfModulus_eq]
   exact zpow_ne_zero _ sqrtQ_ne_zero
 
-variable (F n) in
 
+variable (F n) in
 def halfPoint : Fin n → ℂˣ :=
   fun i => Units.mk0 (halfModulus F (Pi.single i 1)) (halfModulus_ne_zero _)
 
@@ -119,8 +123,8 @@ theorem monomialChar_halfPoint (l : Fin n → ℤ) : monomialChar l (halfPoint F
   congr 1
   ring
 
-variable (F n) in
 
+variable (F n) in
 def normHom : Multiplicative (Fin n → ℤ) →* LaurentRing n where
   toFun l := single (Multiplicative.toAdd l) (halfModulus F (Multiplicative.toAdd l))
   map_one' := by
@@ -129,8 +133,8 @@ def normHom : Multiplicative (Fin n → ℤ) →* LaurentRing n where
   map_mul' a b := by
     rw [toAdd_mul, halfModulus_add, single_mul_single]
 
-variable (F n) in
 
+variable (F n) in
 def normalize : LaurentRing n →ₐ[ℂ] LaurentRing n :=
   AddMonoidAlgebra.lift ℂ (LaurentRing n) (Fin n → ℤ) (normHom F n)
 
@@ -145,7 +149,7 @@ theorem coeff_normalize (p : LaurentRing n) (l : Fin n → ℤ) :
   classical
   induction p using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add p p' hp hp' => rw [map_add, coeff_add, coeff_add, Finsupp.add_apply, Finsupp.add_apply, hp,
+  | add p p' hp hp' => rw [map_add (f := _), coeff_add, coeff_add, Finsupp.add_apply, Finsupp.add_apply, hp,
       hp', mul_add]
   | single m c =>
     rw [normalize_single, coeff_single, coeff_single, Finsupp.single_apply, Finsupp.single_apply]
@@ -171,14 +175,14 @@ theorem evalAt_normalize (z : Fin n → ℂˣ) (p : LaurentRing n) :
     ring
   exact AlgHom.congr_fun this p
 
-variable (F n) in
 
+variable (F n) in
 def torusLevi (l : Fin n → ℤ) : levi F n (id : Fin n → Fin n) :=
   ⟨torusPow F n l, mem_levi.2 fun i j hij => by
     rw [coe_torusPow, Matrix.diagonal_apply_ne _ (by simpa using hij)]⟩
 
-variable (F) in
 
+variable (F) in
 def paramChar (z : Fin n → ℂˣ) : levi F n (id : Fin n → Fin n) →* ℂ :=
   unramifiedChar (z * halfPoint F n)
 
@@ -205,9 +209,10 @@ theorem normalize_yElt (i : Fin n) :
 
 theorem normalize_esymm_yElt (k : ℕ) :
     normalize F n ((Finset.univ.val.map (yElt F (n := n))).esymm k) =
-      (sqrtQ F ^ ((n : ℤ) - 1)) ^ k • polyEmb n (MvPolynomial.esymm (Fin n) ℂ k) := by
+      (sqrtQ F ^ ((n : ℤ) - 1)) ^ k • polyEmb (n := n) (MvPolynomial.esymm (Fin n) ℂ k) := by
   classical
-  rw [Finset.esymm_map_val, map_sum, MvPolynomial.esymm, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.esymm_map_val, map_sum, MvPolynomial.esymm, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun t ht => ?_
   rw [map_prod, map_prod]
   simp only [normalize_yElt, polyEmb_X, smul_single', mul_one]
@@ -217,23 +222,14 @@ theorem normalize_esymm_yElt (k : ℕ) :
 variable [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
   {μ : Measure (GL (Fin n) F)} [μ.IsHaarMeasure]
 
-variable (μ) in
 
+variable (μ) in
 def satakeTransform : SphericalHecke μ (F := F) (n := n) →ₐ[ℂ] LaurentRing n :=
   (normalize F n).comp (satakeHom μ)
 
 theorem satakeTransform_apply (h : SphericalHecke μ (F := F) (n := n)) :
     satakeTransform μ h = normalize F n (satake μ h) :=
   rfl
-
-theorem satakeTransform_eq_sum (h : SphericalHecke μ (F := F) (n := n)) :
-    satakeTransform μ h = (μ.real (integralGL F n : Set (GL (Fin n) F)) : ℂ) •
-      ∑ x ∈ cosetSupport h, single (iwasawaExponent F n x.out)
-        (halfModulus F (iwasawaExponent F n x.out) * (h : HeckeAlgebra μ) x.out) := by
-  rw [satakeTransform_apply, satake, map_smul, map_sum]
-  congr 1
-  refine Finset.sum_congr rfl fun x _ => ?_
-  rw [normalize_single, mul_comm]
 
 theorem coeff_satakeTransform (h : SphericalHecke μ (F := F) (n := n)) (l : Fin n → ℤ) :
     (satakeTransform μ h).coeff l = halfModulus F l * (satake μ h).coeff l :=
@@ -248,14 +244,14 @@ theorem sphericalCharacter_paramChar (z : Fin n → ℂˣ) (h : SphericalHecke �
   rfl
 
 theorem symmetricLaurent_le_range :
-    symmetricLaurent n ≤ (satakeTransform μ (F := F) (n := n)).range := by
+    symmetricLaurent (n := n) ≤ (satakeTransform μ (F := F) (n := n)).range := by
   have hK : (μ.real (integralGL F n : Set (GL (Fin n) F)) : ℂ) ≠ 0 :=
     Complex.ofReal_ne_zero.2
       (measureReal_compactOpen_pos μ (isCompact_integralGL F n) (isOpen_integralGL F n)).ne'
   refine symmetricLaurent_le (fun k => ?_) ?_
   · obtain ⟨h, hh⟩ := (AlgHom.mem_range _).1 (esymm_yElt_mem (μ := μ) (F := F) (n := n) k)
     have hc : (sqrtQ F ^ ((n : ℤ) - 1)) ^ k ≠ 0 := pow_ne_zero _ (zpow_ne_zero _ sqrtQ_ne_zero)
-    have : polyEmb n (MvPolynomial.esymm (Fin n) ℂ k) =
+    have : polyEmb (n := n) (MvPolynomial.esymm (Fin n) ℂ k) =
         ((sqrtQ F ^ ((n : ℤ) - 1)) ^ k)⁻¹ • satakeTransform μ h := by
       rw [satakeTransform_apply, ← satakeHom_apply, hh, normalize_esymm_yElt, smul_smul,
         inv_mul_cancel₀ hc, one_smul]

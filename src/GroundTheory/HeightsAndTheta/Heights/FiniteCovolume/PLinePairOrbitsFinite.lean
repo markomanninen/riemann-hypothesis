@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsComplementExtension
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdaptedReduction
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsComplementExtension
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdaptedReduction
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -86,7 +90,7 @@ end Sandwich
 section Pairs
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type u} [AddCommGroup W] [Module E W]
 
 theorem LinePairOrbitsFinite.proof (h : HermitianForm F E W) [FiniteDimensional E W]

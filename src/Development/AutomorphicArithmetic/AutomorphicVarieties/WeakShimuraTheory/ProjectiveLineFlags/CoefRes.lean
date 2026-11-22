@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -42,7 +46,8 @@ theorem UpperTheory.V.Ws.P1.coefRes {l : ℕ} [hl : Fact l.Prime] (c : Coef l) :
       have hmem : (∑ i ∈ Finset.range m, x ^ i) ∈ maximalIdeal c.O :=
         (IsLocalRing.mem_maximalIdeal _).2 hnu
       have h0 := (IsLocalRing.residue_eq_zero_iff _).2 hmem
-      rw [map_sum] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h0
       simp only [map_pow, hres, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
         mul_one] at h0
       exact hnd ((CharP.cast_eq_zero_iff (ResidueField c.O) l m).1 h0)

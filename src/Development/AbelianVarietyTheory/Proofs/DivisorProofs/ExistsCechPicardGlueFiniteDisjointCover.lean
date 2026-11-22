@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ variable {Y : Scheme.{0}} {κ : Type} {Z : κ → Scheme.{0}} (f : ∀ i, Z i �
 def gT (i : κ) (k k' : (L i).ι) : Γ(Y, (f i) ''ᵁ (L i).U k ⊓ (f i) ''ᵁ (L i).U k')ˣ :=
   res (image_inf_le (f i) _ _) (extUnit (f i) _ ((L i).g k k'))
 
-open Classical in
 
+open Classical in
 def gS : ∀ p q : (Σ i, (L i).ι),
     Γ(Y, (f p.1) ''ᵁ (L p.1).U p.2 ⊓ (f q.1) ''ᵁ (L q.1).U q.2)ˣ
   | ⟨i, k⟩, ⟨i', k'⟩ => if h : i = i' then by subst h; exact gT f L i k k' else 1
@@ -66,7 +70,7 @@ theorem same_of_mem {i i' : κ} (hd : Pairwise fun i i' => Disjoint (f i).opensR
 
 variable {L} in
 theorem isLB_glueLB (hL : ∀ i, (L i).IsLB) (hcov : ⨆ i, (f i).opensRange = ⊤)
-    (hd : Pairwise fun i i' => Disjoint (f i).opensRange (f i').opensRange) : (glueLB f L).IsLB where
+    (hd : Pairwise fun i i' => Disjoint (f i).opensRange (f i').opensRange) : (glueLB f L).IsLB := {
   cover := by
     refine top_le_iff.1 fun y _ => ?_
     have hy : y ∈ ⨆ i, (f i).opensRange := by rw [hcov]; trivial
@@ -98,7 +102,7 @@ theorem isLB_glueLB (hL : ∀ i, (L i).IsLB) (hcov : ⨆ i, (f i).opensRange = �
     have e3 := gm_glueLB f L i (𝟙 _) z k k'' hz hz''
     rw [Category.id_comp] at e1 e2 e3
     rw [map_mul, gm_res _ z _ hy, gm_res _ z _ hy, gm_res _ z _ hy, e1, e2, e3,
-      gm_cocycle (hL i) _ z hz hz' hz'']
+      gm_cocycle (hL i) _ z hz hz' hz''] }
 
 theorem exists_pic_glue : ∀ {Y : Scheme.{0}} {κ : Type} [Finite κ] {Z : κ → Scheme.{0}} (f : ∀ i, Z i ⟶ Y)
     [∀ i, IsOpenImmersion (f i)], (⨆ i, (f i).opensRange = ⊤) →

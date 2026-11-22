@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi54.card_pow :
     ∀ {E : Type} [inst : Field E] [NumberField E]

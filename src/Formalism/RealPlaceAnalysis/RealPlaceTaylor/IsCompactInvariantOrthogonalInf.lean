@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.StatementKT
+module
+
+public import Formalism.RealPlaceAnalysis.StatementKT
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open Finset
@@ -211,7 +215,8 @@ theorem kCasBound_of (hd : KDecomp) (hc : KCasSpan) (ho : KOrth) : KCasBound := 
   have hy' : y ∈ ⨆ i ∈ (univ : Finset (Fin m)), kSpan ε F (x i) := by simpa [h3] using hy
   obtain ⟨v, hv⟩ := (Submodule.mem_iSup_finset_iff_exists_sum _ y).1 hy'
   have hC : CasK ε F y = ∑ i, ((ckv ε (μ i) : ℝ) : ℂ) • (v i : V) := by
-    rw [← hv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hv, map_sum]
     exact Finset.sum_congr rfl fun i _ => hc V n ε F (μ i) (x i) hr (h1 i).2.2 _ (v i).2
   have key : ∀ c : Fin m → ℂ,
       ⟪y, ∑ i, c i • (v i : V)⟫_ℂ = ∑ i, c i * ⟪(v i : V), (v i : V)⟫_ℂ := by

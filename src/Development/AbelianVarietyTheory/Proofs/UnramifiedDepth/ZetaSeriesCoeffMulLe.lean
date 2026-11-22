@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ChainLemmaMultivariatePowerSeriesCoordinateFormStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WeightedOrderGePrimePowOfSumPurePowersAddStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ChainLemmaMultivariatePowerSeriesCoordinateFormStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WeightedOrderGePrimePowOfSumPurePowersAddStatement
+
+@[expose] public section
+
 open ReciprocityTheory.PGsh
 
 namespace GlobalTheory
@@ -64,7 +69,8 @@ theorem zetaSeries_ordGe_pure {C : Type} [Field C] (v : AddValuation C (WithTop 
       (∑ j, MvPowerSeries.C (R := C) (a j) * (MvPowerSeries.X j : MvPowerSeries (Fin M) C) ^ N) w := by
   classical
   intro α
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   apply v.map_le_sum
   intro j _
   rw [MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X_pow]
@@ -230,7 +236,8 @@ theorem zetaSeries_main_term : (∀ (C : Type) [Field C] [CharZero C] (v : AddVa
         ((-1) ^ (s₀ + 1) * ∑ c ∈ Gs s₀, π s₀ c j ^ l * ((l : C) * be c 1 b))) *
       (MvPowerSeries.X j : MvPowerSeries (Fin M) C) ^ (l ^ (2 * s₀ + 1))) =
       -∑ c ∈ Gs s₀, be c 1 b * MvPowerSeries.coeff α (P c) := by
-    simp only [hP, map_sum, MvPowerSeries.coeff_C_mul, hexp, Finset.mul_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hP, map_sum, MvPowerSeries.coeff_C_mul, hexp, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [← Finset.sum_neg_distrib]

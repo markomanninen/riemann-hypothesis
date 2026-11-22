@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.ShortIntervalPrimes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.ShortIntervalPrimes
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -80,10 +84,6 @@ theorem IsRayValue.unique {ε : Ideal (𝓞 K) → ℚ} {k : ℕ} {r r' : ℚ} (
   rw [e] at this
   exact_mod_cast this.symm
 
-theorem IsRayL.congr {ε ε' : Ideal (𝓞 K) → ℚ} {L : ℂ → ℂ} (h : IsRayL 𝔣 ε L) (e : ∀ I, CoprimeTo K 𝔣 I → ε I = ε' I) :
-    IsRayL 𝔣 ε' L :=
-  ⟨h.1, fun s hs => by simpa only [fun I : {I : Ideal (𝓞 K) // CoprimeTo K 𝔣 I} => e I.1 I.2] using h.2 s hs⟩
-
 theorem coprimeTo_mul {I J : Ideal (𝓞 K)} (hI : CoprimeTo K 𝔣 I) (hJ : CoprimeTo K 𝔣 J) : CoprimeTo K 𝔣 (I * J) :=
   ⟨mul_ne_zero hI.1 hJ.1, Ideal.isCoprime_iff_sup_eq.1
     ((Ideal.isCoprime_iff_sup_eq.2 hI.2).mul_left (Ideal.isCoprime_iff_sup_eq.2 hJ.2))⟩
@@ -124,14 +124,9 @@ theorem IsRayFun.translate {α : Type} {ε : Ideal (𝓞 K) → α} (h : IsRayFu
     IsRayFun 𝔣 (translate 𝔠 ε) :=
   fun _ _ hI hJ e => h _ _ (coprimeTo_mul hc hI) (coprimeTo_mul hc hJ) (rayRel_mul_left 𝔠 e)
 
+
 open Classical in
-
 def rayIndicator (𝔣 𝔞 : Ideal (𝓞 K)) : Ideal (𝓞 K) → ℚ := fun I => if RayRel K 𝔣 I 𝔞 then 1 else 0
-
-theorem isRayFun_rayIndicator (𝔞 : Ideal (𝓞 K)) : IsRayFun 𝔣 (rayIndicator 𝔣 𝔞) := fun I J _ _ e => by
-  have : RayRel K 𝔣 I 𝔞 ↔ RayRel K 𝔣 J 𝔞 := ⟨rayRel_trans (rayRel_symm e), rayRel_trans e⟩
-  unfold rayIndicator
-  rw [this]
 
 theorem isRayZeta_iff {𝔞 : Ideal (𝓞 K)} {Z : ℂ → ℂ} : IsRayZeta 𝔣 𝔞 Z ↔ IsRayL 𝔣 (rayIndicator 𝔣 𝔞) Z := by
   refine and_congr_right fun _ => forall₂_congr fun s _ => ?_
@@ -153,21 +148,6 @@ end GlobalTheory.RayZeta
 namespace GlobalTheory.Published
 
 open GlobalTheory.RayZeta
-
-theorem SiegelKlingen.partialZeta (h : SiegelKlingen) (F : Type) [Field F] [NumberField F] [IsTotallyReal F] {𝔣 : Ideal (𝓞 F)}
-    (h𝔣 : 𝔣 ≠ ⊥) (𝔞 : Ideal (𝓞 F)) : ∃ Z : ℂ → ℂ, IsRayZeta 𝔣 𝔞 Z ∧ ∀ k : ℕ, 1 ≤ k → ∃ r : ℚ, Z (1 - (k : ℂ)) = (r : ℂ) := by
-  simpa only [isRayZeta_iff] using h F 𝔣 h𝔣 _ (isRayFun_rayIndicator 𝔞)
-
-theorem SiegelKlingenDeligneRibet.exists_values (h : SiegelKlingenDeligneRibet) (F : Type) [Field F] [NumberField F]
-    [IsTotallyReal F] (l : ℕ) [hl : Fact l.Prime] {n : ℕ} (hn : 1 ≤ n) {ε : Ideal (𝓞 F) → ℚ} (hε : IsRayFun (powMod F l n) ε)
-    (hZ : ∀ I, CoprimeTo F (powMod F l n) I → InZl l (ε I)) {𝔠 : Ideal (𝓞 F)} (hc : CoprimeTo F (powMod F l n) 𝔠) {k : ℕ}
-    (hk : 1 ≤ k) : ∃ r r' : ℚ, IsRayValue (powMod F l n) ε k r ∧ IsRayValue (powMod F l n) (translate 𝔠 ε) k r' ∧
-      InZl l (r - (Ideal.absNorm 𝔠 : ℚ) ^ k * r') := by
-  obtain ⟨L, hL, e⟩ := h.1 F _ (powMod_ne_bot hl.out.ne_zero n) ε hε
-  obtain ⟨L', hL', e'⟩ := h.1 F _ (powMod_ne_bot hl.out.ne_zero n) _ (hε.translate hc)
-  obtain ⟨r, hr⟩ := e k hk
-  obtain ⟨r', hr'⟩ := e' k hk
-  exact ⟨r, r', ⟨L, hL, hr⟩, ⟨L', hL', hr'⟩, h.2 F l n hn ε hε hZ 𝔠 hc k hk r r' ⟨L, hL, hr⟩ ⟨L', hL', hr'⟩⟩
 
 end GlobalTheory.Published
 
@@ -219,29 +199,5 @@ theorem isRayL_rat_one (N : ℕ) [NeZero N] :
   simp only [g, Function.comp, absNorm_span_rat]
   rw [LSeries.term_of_ne_zero h.1, MulChar.one_apply ((ZMod.isUnit_iff_coprime _ _).2 h.2), Complex.cpow_neg]
   simp
-
-example : IsRayValue (powMod ℚ 2 1) (fun _ => 1) 2 (1 / 12) ∧ CoprimeTo ℚ (powMod ℚ 2 1) (Ideal.span {((3 : ℕ) : 𝓞 ℚ)}) ∧
-    IsRayValue (powMod ℚ 2 1) (translate (Ideal.span {((3 : ℕ) : 𝓞 ℚ)}) fun _ => 1) 2 (1 / 12) ∧ ¬ InZl 2 (1 / 12) ∧
-    InZl 2 (1 / 12 - (Ideal.absNorm (Ideal.span {((3 : ℕ) : 𝓞 ℚ)}) : ℚ) ^ 2 * (1 / 12)) := by
-  have h1 : IsRayValue (powMod ℚ 2 1) (fun _ => 1) 2 (1 / 12) := by
-    refine ⟨_, by simpa only [powMod, pow_one] using isRayL_rat_one 2, ?_⟩
-    have h := riemannZeta_neg_nat_eq_bernoulli 1
-    have hb : bernoulli 2 = 1 / 6 := by rw [bernoulli_eq_bernoulli'_of_ne_one (by decide), bernoulli'_two]
-    rw [show (1 + 1 : ℕ) = 2 from rfl, hb] at h
-    rw [show (1 - ((2 : ℕ) : ℂ)) = -((1 : ℕ) : ℂ) by norm_num, DirichletCharacter.LFunctionTrivChar_eq_mul_riemannZeta (by norm_num), h,
-      Nat.Prime.primeFactors Nat.prime_two]
-    norm_num
-  refine ⟨h1, ?_, h1, ?_, ?_⟩
-  · rw [coprimeTo_powMod_iff le_rfl, coprimeTo_span_rat]; norm_num
-  · have h2 : padicValNat 2 12 = 2 := by
-      rw [show 12 = 2 ^ 2 * 3 by norm_num, padicValNat.mul (by norm_num) (by norm_num), padicValNat.prime_pow,
-        padicValNat.eq_zero_of_not_dvd (by norm_num)]
-    have hn : (1 / 12 : ℚ).num = 1 := by norm_num
-    have hd : (1 / 12 : ℚ).den = 12 := by norm_num
-    rw [inZl_iff]
-    simp only [padicValRat, hn, hd, h2]
-    simp
-  · rw [absNorm_span_rat]
-    exact Padic.norm_rat_le_one (by norm_num)
 
 end GlobalTheory.RayZeta

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AlternatingMapSumSmulEqDetSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AlternatingMapSumSmulEqDetSmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,36 +37,35 @@ theorem exists_algHom_of_isBaseChange {φ : M →ₗ[A] N} (hφ : IsBaseChange B
   have hf (m : M) : f (φ m) = 1 ⊗ₜ ExteriorAlgebra.ι A m := hφ.lift_eq _ m
   have anti (n n' : N) : f n * f n' + f n' * f n = 0 := by
     induction n using hφ.inductionOn with
-    | zero => simp
     | smul s n h => rw [map_smul, smul_mul_assoc, mul_smul_comm, ← smul_add, h, smul_zero]
-    | add a b ha hb => rw [map_add, add_mul, mul_add, add_add_add_comm, ha, hb, add_zero]
+    | add a b ha hb => rw [map_add (f := _), add_mul, mul_add, add_add_add_comm, ha, hb, add_zero]
     | tmul m =>
       induction n' using hφ.inductionOn with
-      | zero => simp
       | smul s n h => rw [map_smul, smul_mul_assoc, mul_smul_comm, ← smul_add, h, smul_zero]
-      | add a b ha hb => rw [map_add, add_mul, mul_add, add_add_add_comm, ha, hb, add_zero]
+      | add a b ha hb => rw [map_add (f := _), add_mul, mul_add, add_add_add_comm, ha, hb, add_zero]
       | tmul m' =>
         rw [hf, hf, Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul,
           ← TensorProduct.tmul_add, ExteriorAlgebra.ι_add_mul_swap, TensorProduct.tmul_zero]
   have sq (n : N) : f n * f n = 0 := by
     induction n using hφ.inductionOn with
-    | zero => simp
     | smul s n h => rw [map_smul, smul_mul_assoc, mul_smul_comm, h, smul_zero, smul_zero]
     | add a b ha hb =>
-      rw [map_add, add_mul, mul_add, mul_add, ha, hb, zero_add, add_zero, anti]
+      rw [map_add (f := _), add_mul, mul_add, mul_add, ha, hb, zero_add, add_zero, anti]
     | tmul m =>
       rw [hf, Algebra.TensorProduct.tmul_mul_tmul, ExteriorAlgebra.ι_sq_zero,
         TensorProduct.tmul_zero]
   exact ⟨ExteriorAlgebra.lift B ⟨f, sq⟩, fun m => by rw [ExteriorAlgebra.lift_ι_apply, hf]⟩
 
 theorem isBaseChange_exteriorPower {φ : M →ₗ[A] N} (hφ : IsBaseChange B φ) (D : ℕ) :
-    IsBaseChange B (exteriorPowerMapOver B D φ) := by
+    IsBaseChange B (exteriorPowerMapOver (B := B) (D := D) φ) := by
   obtain ⟨F, hF⟩ := exists_algHom_of_isBaseChange hφ
   let G : (⋀[B]^D N) →ₗ[B] B ⊗[A] (⋀[A]^D M) :=
     ((extProj A M D).baseChange B) ∘ₗ F.toLinearMap ∘ₗ (⋀[B]^D N).subtype
-  let H : B ⊗[A] (⋀[A]^D M) →ₗ[B] ⋀[B]^D N := (exteriorPowerMapOver B D φ).liftBaseChange B
-  have hG (x : ⋀[A]^D M) : G (exteriorPowerMapOver B D φ x) = 1 ⊗ₜ x := by
-    have : (G.restrictScalars A) ∘ₗ (exteriorPowerMapOver B D φ) = TensorProduct.mk A B _ 1 := by
+  let H : B ⊗[A] (⋀[A]^D M) →ₗ[B] ⋀[B]^D N :=
+    (exteriorPowerMapOver (B := B) (D := D) φ).liftBaseChange B
+  have hG (x : ⋀[A]^D M) : G (exteriorPowerMapOver (B := B) (D := D) φ x) = 1 ⊗ₜ x := by
+    have : (G.restrictScalars A) ∘ₗ (exteriorPowerMapOver (B := B) (D := D) φ) =
+        TensorProduct.mk A B _ 1 := by
       apply exteriorPower.linearMap_ext
       ext1 v
       have e : F (ExteriorAlgebra.ιMulti B D fun k => φ (v k)) =
@@ -91,7 +94,6 @@ theorem isBaseChange_exteriorPower {φ : M →ₗ[A] N} (hφ : IsBaseChange B φ
         rw [eq_top_iff]
         rintro n -
         induction n using hφ.inductionOn with
-        | zero => simp
         | smul s n h => exact Submodule.smul_mem _ _ h
         | add a b ha hb => exact add_mem ha hb
         | tmul m => exact Submodule.subset_span ⟨m, rfl⟩), Submodule.span_le]
@@ -191,13 +193,12 @@ theorem span_dForm (α : k →+* A) (D : ℕ) :
   exact ⟨v, congrArg (exteriorPower.ιMulti A D) (funext hv)⟩
 
 variable (D) in
-
 def formMap (ρ : A →+* B) (h : ρ.comp α = β) : Forms α D →ₛₗ[ρ] Forms β D :=
   letI := α.toAlgebra
   letI := β.toAlgebra
   letI := ρ.toAlgebra
   haveI : IsScalarTower k A B := IsScalarTower.of_algebraMap_eq' h.symm
-  { toFun := exteriorPowerMapOver B D (KaehlerDifferential.map k k A B)
+  { toFun := exteriorPowerMapOver (B := B) (D := D) (KaehlerDifferential.map k k A B)
     map_add' := map_add _
     map_smul' := fun a x => by
       rw [map_smul, ← algebraMap_smul B]
@@ -209,7 +210,8 @@ def formMap (ρ : A →+* B) (h : ρ.comp α = β) : Forms α D →ₛₗ[ρ] Fo
   letI := β.toAlgebra
   letI := ρ.toAlgebra
   haveI : IsScalarTower k A B := IsScalarTower.of_algebraMap_eq' h.symm
-  change exteriorPowerMapOver B D (KaehlerDifferential.map k k A B) (exteriorPower.ιMulti A D _) = _
+  change exteriorPowerMapOver (B := B) (D := D) (KaehlerDifferential.map k k A B)
+    (exteriorPower.ιMulti A D _) = _
   rw [exteriorPowerMapOver_ιMulti, dForm_eq]
   simp only [KaehlerDifferential.map_D]
   rfl

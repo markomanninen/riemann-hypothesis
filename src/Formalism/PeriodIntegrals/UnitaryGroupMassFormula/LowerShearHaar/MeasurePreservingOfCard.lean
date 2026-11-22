@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerShearHaar.TriShear
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerShearHaar.TriShear
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -11,7 +15,7 @@ def extNe {ι : Type} [DecidableEq ι] (a : ι) (y : {i // i ≠ a} → ℂ) : �
   fun j => if h : j ≠ a then y ⟨j, h⟩ else 0
 
 theorem measurable_extNe {ι : Type} [DecidableEq ι] (a : ι) : Measurable (extNe a) := by
-  refine measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun j => ?_
   by_cases h : j ≠ a
   · simp only [extNe, dif_pos h]
     exact measurable_pi_apply _
@@ -60,7 +64,7 @@ theorem measurePreserving_of_card (n : ℕ) : ∀ (ι : Type) [Fintype ι] [Deci
 
     have hG := hF.skew_product (g := fun y (z : {j // ¬ j ≠ a} → ℂ) => fun q => z q + g a (extNe a y))
       (by
-        refine measurable_pi_lambda _ fun q => ?_
+        refine Measurable.of_eval fun q => ?_
         exact ((measurable_pi_apply q).comp measurable_snd).add
           ((hg a).comp ((measurable_extNe a).comp measurable_fst)))
       (Filter.Eventually.of_forall fun y =>

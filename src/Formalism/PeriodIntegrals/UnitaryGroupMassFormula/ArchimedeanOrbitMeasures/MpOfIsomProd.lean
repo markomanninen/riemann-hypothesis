@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DetMulRCReal
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DetMulRCReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,8 @@ theorem herm_cross {m : ℕ} (A B : Matrix (Fin m) (Fin m) ℂ) (hA : Aᴴ = A) 
   have hB' : ∀ i j, B j i = conj (B i j) := fun i j => by
     simpa [Matrix.conjTranspose_apply] using (congrFun (congrFun hB j) i).symm
   have hc : conj (∑ i, ∑ j, A i j * conj (B i j)) = ∑ i, ∑ j, A i j * conj (B i j) := by
-    simp only [map_sum, map_mul, Complex.conj_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Complex.conj_conj]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [hA' j i, hB' j i, Complex.conj_conj]
@@ -112,9 +117,9 @@ def psiLp {m : ℕ} {η : Type} [Fintype η] (H : EuclideanSpace ℝ η →ₗ[�
   map_add' a b := by
     show reimL (Complex.I • H (a + b).1 + H (a + b).2) =
       reimL (Complex.I • H a.1 + H a.2) + reimL (Complex.I • H b.1 + H b.2)
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
-    simp only [Prod.fst_add, Prod.snd_add, map_add, smul_add]
+    simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), smul_add]
     abel
   map_smul' c z := by
     simp only [Prod.smul_fst, Prod.smul_snd, map_smul, RingHom.id_apply]

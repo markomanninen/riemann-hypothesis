@@ -1,16 +1,20 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Spanpsd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Exbasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.DetPull
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hnf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Nearvx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.SimpSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Spanpsd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Exbasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.DetPull
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hnf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Nearvx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.SimpSpan
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
 
-private theorem sx_basis (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N p : ℕ)
+private theorem sx_basis (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N p : ℕ)
     (t : Sx L N p) :
     ∃ A : Matrix (Fin N) (Fin N) (𝓞 L), A.det ≠ 0 ∧ ∀ j, ColsMin A (t.1 j).1 := by
   have hs : Spans {y : Lat L N | ∀ j, q (t.1 j).1 y = 1} := by
@@ -32,7 +36,7 @@ private theorem colsMin_smul {L : Type} [Field L] [NumberField L] {N : ℕ} (g :
   exact H a
 
 theorem UpperTheory.V.KT.orb :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (p : ℕ),
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (p : ℕ),
     KH.OrbLe (Gm L N) (Sx L N p) (orbBound L N p) := by
   intro L _ _ _ N p
   classical

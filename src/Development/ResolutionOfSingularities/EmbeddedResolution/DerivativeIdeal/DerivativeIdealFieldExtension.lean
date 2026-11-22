@@ -1,7 +1,12 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealEtaleBaseChange
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealEtaleBaseChange
+
+@[expose] public section
+
 namespace FunctorialResolution.EmbeddedResolution
 namespace DerivIdealBaseChange
 
@@ -85,7 +90,7 @@ theorem partialDeriv_algHom_apply (φ : S →ₐ[k] S')
         intro x y
         show partialDeriv L ι S' i (φ (x + y))
             = partialDeriv L ι S' i (φ x) + partialDeriv L ι S' i (φ y)
-        rw [map_add, hadd1]
+        rw [map_add (f := _), hadd1]
       map_smul' := by
         intro c x
         show partialDeriv L ι S' i (φ (c • x)) = c • partialDeriv L ι S' i (φ x)
@@ -96,7 +101,7 @@ theorem partialDeriv_algHom_apply (φ : S →ₐ[k] S')
         intro x y
         show φ (partialDeriv k ι S i (x + y))
             = φ (partialDeriv k ι S i x) + φ (partialDeriv k ι S i y)
-        rw [hadd2, map_add]
+        rw [hadd2, map_add (f := _)]
       map_smul' := by
         intro c x
         show φ (partialDeriv k ι S i (c • x)) = c • φ (partialDeriv k ι S i x)
@@ -112,7 +117,7 @@ theorem partialDeriv_algHom_apply (φ : S →ₐ[k] S')
     show φ (partialDeriv k ι S i (a * b))
         = a • φ (partialDeriv k ι S i b) + b • φ (partialDeriv k ι S i a)
     rw [(partialDeriv k ι S i).leibniz]
-    simp only [hsmul, smul_eq_mul, map_add, map_mul])
+    simp only [hsmul, smul_eq_mul, map_add (f := _), map_mul])
   have hcoords : ∀ j : ι, D₁ (coord k ι S j) = D₂ (coord k ι S j) := by
     intro j
     show partialDeriv L ι S' i (φ (coord k ι S j)) = φ (partialDeriv k ι S i (coord k ι S j))

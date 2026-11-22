@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.KerLabelsMu
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.StepIn
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocCore
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ColSpanMap
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsOrb
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.KerLabelsMu
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.StepIn
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocCore
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ColSpanMap
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsOrb
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,8 +87,8 @@ theorem smul_colSpan (i : G.comp) (γ : (G.lev i).Γ) (L : G.P.Tup) (g : ∀ v, 
   rw [hL v, colSpan_map]
   rfl
 
-include H hW hH hbad hA hΓ hU in
 
+include H hW hH hbad hA hΓ hU in
 theorem fix_mem (i : G.comp) (L : G.P.Tup) (g : ∀ v, GL (Fin (G.P.m + 1)) (G.P.Qq v))
     (hL : ∀ v, L v = colSpan (G.P.W v) (g v : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v)))
     (x : UPts σ J (FiniteAdeleRing (𝓞 F) F)) (hx : A.IsPt i g x.1) (γ : (G.lev i).Γ) (hfix : (G.lev i).smul γ L = L) :
@@ -106,8 +110,8 @@ theorem fix_mem (i : G.comp) (L : G.P.Tup) (g : ∀ v, GL (Fin (G.P.m + 1)) (G.P
   rw [e2]
   exact S.U.mul_mem κ'.2 κ.2
 
-include H hW hHc hA hΓ in
 
+include H hW hHc hA hΓ in
 theorem fix_of_mem (i : G.comp) (L : G.P.Tup) (g : ∀ v, GL (Fin (G.P.m + 1)) (G.P.Qq v))
     (hL : ∀ v, L v = colSpan (G.P.W v) (g v : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v)))
     (x : UPts σ J (FiniteAdeleRing (𝓞 F) F)) (hx : A.IsPt i g x.1) (γ : (G.lev i).Γ)
@@ -129,8 +133,8 @@ theorem fix_of_mem (i : G.comp) (L : G.P.Tup) (g : ∀ v, GL (Fin (G.P.m + 1)) (
   rw [smul_colSpan i γ L g hL v, hL v, colSpan_eq, colSpan_eq]
   exact (gMap_std_eq_iff _ _ _).2 hst
 
-include H hW hH hHc hbad hA hΓ hU in
 
+include H hW hH hHc hbad hA hΓ hU in
 theorem stab_bij (i : G.comp) (hinj : Function.Injective (A.gamI i)) (hon : GamOnto S A i) (L : G.P.Tup)
     (g : ∀ v, GL (Fin (G.P.m + 1)) (G.P.Qq v))
     (hL : ∀ v, L v = colSpan (G.P.W v) (g v : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v)))
@@ -174,9 +178,9 @@ theorem conj_mem' (x y : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) (γ�
   rw [this]
   exact S.U.mul_mem (S.U.mul_mem (S.U.inv_mem κ₀.2) hd) κ₀.2
 
+
 set_option maxHeartbeats 2000000 in
 include H hW hH hbad in
-
 theorem cls_unique {cl : Type} (y : cl → UPts σ J (FiniteAdeleRing (𝓞 F) F))
     (hy : Function.Injective (fun c => (Quotient.mk'' (y c) : Cls S))) (i : G.comp) (L : G.P.Tup)
     (g g' : ∀ v, GL (Fin (G.P.m + 1)) (G.P.Qq v))
@@ -194,7 +198,7 @@ theorem cls_unique {cl : Type} (y : cl → UPts σ J (FiniteAdeleRing (𝓞 F) F
   have hκ : κ₁.1 * κ.1 * κ₂.1⁻¹ ∈ S.U := S.U.mul_mem (S.U.mul_mem κ₁.2 κ.2) (S.U.inv_mem κ₂.2)
   apply hy
   show (Quotient.mk'' (y c) : Cls S) = Quotient.mk'' (y c')
-  refine (DoubleCoset.eq _ _ _ _).2 ⟨⟨_, bc_mem hγ⟩, Subgroup.mem_subgroupOf.2 ⟨γ₂⁻¹ * γ₁, hγ, rfl⟩, ⟨_, U_le hκ⟩,
+  refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨⟨_, bc_mem hγ⟩, Subgroup.mem_subgroupOf.2 ⟨γ₂⁻¹ * γ₁, hγ, rfl⟩, ⟨_, U_le hκ⟩,
     Subgroup.mem_subgroupOf.2 hκ, Subtype.ext ?_⟩
   show (y c').1 = bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) (γ₂⁻¹ * γ₁) * (y c).1 * (κ₁.1 * κ.1 * κ₂.1⁻¹)
   have : (y c').1 = (bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ₂)⁻¹ *
@@ -222,8 +226,8 @@ def stabCls {cl : Type} {stab : cl → Type} [∀ c, Group (stab c)] (y : cl →
       obtain ⟨s, hs⟩ := (hrange c ⟨δ.1, δ.2.1⟩).2 ((mem_map_conj S.U _ _).2 δ.2.2)
       exact ⟨s, Subtype.ext (show (stabI c s).1 = δ.1 from congrArg Subtype.val hs)⟩⟩
 
-include H hW hH hHc hbad hA hΓ hU in
 
+include H hW hH hHc hbad hA hΓ hU in
 theorem card_eq (i : G.comp) (hinj : Function.Injective (A.gamI i)) (hon : GamOnto S A i) (L : G.P.Tup)
     (g : ∀ v, GL (Fin (G.P.m + 1)) (G.P.Qq v))
     (hL : ∀ v, L v = colSpan (G.P.W v) (g v : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v)))
@@ -279,8 +283,8 @@ theorem gamI_inj_locJ (c : cmp) : Function.Injective ((locJ hi t B).gamI c) := b
   apply Subtype.ext
   exact (reGL (rankN D (i + 1) hi) D.host.E).injective hab
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem gamOnto_locJ (hU : SameUlocJ hi S Uloc) (c : cmp) : GamOnto S (locJ hi t B) c := by
   intro δ hδ hoff
   have hδ0 : (reGL (rankN D (i + 1) hi) D.host.E).symm δ ∈ UJ (D.sp.cm.sig : D.host.E →+* D.host.E) (D.sp.X (i + 1)).gram :=
@@ -339,8 +343,8 @@ def HypTJC : Prop :=
       GL (Fin (D.sp.X (i + 1)).rank) _) : Matrix (Fin (D.sp.X (i + 1)).rank) (Fin (D.sp.X (i + 1)).rank) _) a b ∈
         w'.adicCompletionIntegers D.host.F
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem locHypC_locJ (hU : SameUlocJ hi S Uloc) (hB : FrRatJ t B) (hTc : HypTJC t) : LocHypC S (locJ hi t B) := by
   refine locHypC_of (rankN D (i + 1) hi) (locJ hi t B) S B rfl Uloc hU ?_
   intro v x0 hx0
@@ -355,17 +359,6 @@ section Mu
 
 variable {D : D7} {Tw : TwForms D} {u : D.what₂.Word} {μ : D.what₂.Tup} {w : D.what₂.places.Pl}
   {h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)} {Fl : Fills (D.gat u w h)} {Lv : Levels Fl}
-
-def ClsPt (K : KerLabelsMu Tw u μ w h Lv) (st : ∀ j (hj : j + 1 ≤ D.R.m), StepIn (Tw.fm u μ) (j + 1) hj (gatJ Lv (j + 1))) : Prop :=
-  ∀ j (hj : j + 1 ≤ D.R.m) (β : (st j hj).Ch) (a : (st j hj).cmpt β) (L : (Fl.Pj (j + 1)).Tup)
-    (g : ∀ v, GL (Fin ((Fl.Pj (j + 1)).m + 1)) ((Fl.Pj (j + 1)).Qq v)),
-    (∀ v, L v = colSpan ((Fl.Pj (j + 1)).W v) (g v : Matrix (Fin ((Fl.Pj (j + 1)).m + 1)) (Fin ((Fl.Pj (j + 1)).m + 1))
-      ((Fl.Pj (j + 1)).Qq v))) →
-    ∀ (c : {c // (st j hj).chOf c = β}) (γ₀ : GL (Fin (D.R.N (j + 1))) D.host.E) (κ₀ : ((st j hj).K β).lev.U),
-      γ₀ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D (j + 1) hj) →
-      ((st j hj).loc β).IsPt a g
-        (bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ₀ * (((st j hj).K β).y c).1 * κ₀.1) →
-      K.cls (j + 1) ((st j hj).eC ⟨β, a⟩) L = c.1
 
 end Mu
 

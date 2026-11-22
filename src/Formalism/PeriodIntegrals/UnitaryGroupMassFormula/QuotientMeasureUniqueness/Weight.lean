@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuotientMeasureUniqueness.QmuWeight
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuotientMeasureUniqueness.QLiftIsMulLeftInvariant
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuotientMeasureUniqueness.QmuWeight
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuotientMeasureUniqueness.QLiftIsMulLeftInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem qmuWeight : QmuWeight := by
   have hind : ∀ n, Measurable ((d n • interior K).indicator (1 : G → ℝ≥0∞)) :=
     fun n => measurable_one.indicator (hCm n)
   refine ⟨fun x => ∑' n, (2⁻¹ : ℝ≥0∞) ^ n * (d n • interior K).indicator 1 x,
-    Measurable.ennreal_tsum fun n => (hind n).const_mul _, fun g => ?_⟩
+    Measurable.tsum fun n => (hind n).const_mul _, fun g => ?_⟩
   have hmg : ∀ n, Measurable fun h : H => (d n • interior K).indicator (1 : G → ℝ≥0∞) (g * (h : G)) :=
     fun n => (hind n).comp ((measurable_const_mul g).comp measurable_subtype_coe)
   have hterm : ∀ n, Measurable fun h : H =>

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsHighestWeightIrreducibleUnitaryRepU
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHarishChandraTypeDualWeylModuleFockNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerOfSameHarishChandraParamUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasModelOfAntitone
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ExistsGoodFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsHighestWeightIrreducibleUnitaryRepU
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHarishChandraTypeDualWeylModuleFockNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerOfSameHarishChandraParamUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasModelOfAntitone
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ExistsGoodFamily
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 open scoped InnerProductSpace
@@ -48,8 +52,8 @@ theorem star_permMat {n : ℕ} (s : Equiv.Perm (Fin n)) : star (permMat s) = per
 theorem permMat_mem {n : ℕ} (s : Equiv.Perm (Fin n)) : permMat s ∈ Matrix.unitaryGroup (Fin n) ℂ := by
   rw [Matrix.mem_unitaryGroup_iff, star_permMat, permMat_mul]
 
-open Formalism.MainNotions.S in
 
+open Formalism.MainNotions.S in
 theorem weight_int_dom {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     {π : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} (hπ : IsURepOn (UJset (allPos n)) π) {Λ : Fin n → ℝ}
     (hK : IsKTypeOf (allPos n) π Λ ⊤) :
@@ -142,10 +146,6 @@ def restr {G V : Type} [Monoid G] [AddCommGroup V] [Module ℂ V] (ρ : Represen
   map_one' := by ext v; simp
   map_mul' a b := by ext v; simp
 
-@[simp] theorem restr_apply {G V : Type} [Monoid G] [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V)
-    (S : Submodule ℂ V) (hS : ∀ g, ∀ v ∈ S, ρ g v ∈ S) (g : G) (v : S) :
-    ((restr ρ S hS g v : S) : V) = ρ g v := rfl
-
 theorem exists_minimal {G V : Type} [Monoid G] [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
     [Nontrivial V] (ρ : Representation ℂ G V) :
     ∃ S : Submodule ℂ V, S ≠ ⊥ ∧ (∀ g, ∀ v ∈ S, ρ g v ∈ S) ∧
@@ -190,7 +190,7 @@ theorem exists_intertwining_of_minimal {n : ℕ} {V : Type} [AddCommGroup V] [Mo
       funext u
       exact (b.sum_repr (σ u v)).symm
     rw [e]
-    exact continuous_finset_sum _ fun i _ => (hcS (b.coord i) v).smul continuous_const
+    exact continuous_finsetSum _ fun i _ => (hcS (b.coord i) v).smul continuous_const
   let π : Matrix (Fin n) (Fin n) ℂ → (S →L[ℂ] S) := fun g =>
     if hg : g ∈ Matrix.unitaryGroup (Fin n) ℂ then LinearMap.toContinuousLinearMap (σ ⟨g, hg⟩) else 0
   have hπu : ∀ g (hg : g ∈ Matrix.unitaryGroup (Fin n) ℂ) (v : S), π g v = σ ⟨g, hg⟩ v := by

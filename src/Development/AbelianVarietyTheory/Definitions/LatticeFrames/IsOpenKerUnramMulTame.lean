@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -16,8 +20,8 @@ open GlobalTheory.QPl
 
 variable {D : D7} {c : Comm D}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 structure QGeo (v : VCom c) (B : GlobalTheory.Fam.Base c) (PP : Formalism.L2.DIV.Pl D.host.E) where
   k : Type
   [fld : Field k]
@@ -75,10 +79,6 @@ variable {v : VCom c} {B : GlobalTheory.Fam.Base c} {PP : Formalism.L2.DIV.Pl D.
 abbrev QGeo.T (G : QGeo v B PP) (δ : G.kˣ →* ℂˣ) (hδ : IsTame δ) (η : ℕ → G.kˣ →* ℂˣ) :=
   twistChain G.s (Fin D.R.t) (Fin D.R.k) δ hδ η
 
-structure QGeo.UnitScal (G : QGeo v B PP) : Prop where
-  sc_unit : ∀ j, valuation G.k (G.sc j) = 1
-  hz_unit : ∀ j ρ h, valuation G.k ((ofSplit G.q).hz (c.B j ρ h)) = 1
-
 theorem isOpen_ker_unram_mul_tame {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     {η δ : kˣ →* ℂˣ} (hη : IsUnram η) (hδ : IsTame δ) : IsOpen ((η * δ).ker : Set kˣ) := by
   refine Subgroup.isOpen_of_mem_nhds _ (g := 1) (Filter.mem_of_superset
@@ -112,12 +112,10 @@ theorem T_openTop :
     IsOpen ((G.T δ hδ η).levTop.J : Set (GL (Ix (Fin D.R.k ⊕ Fin (G.s + 1)) (Fin D.R.t) (G.s + 2)) G.k)) :=
   (TypeDatum.map_conj (parahoric (Fin D.R.k ⊕ Fin (G.s + 1)) (Fin (G.s + 2) × Fin D.R.t) δ hδ) (LatFrame.refl G.k _)).1
 
-example (j : ℕ) : (G.T δ hδ η).mu j = η j * δ := rfl
-
 end QGeo
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 structure QExt (G : QGeo v B PP) (χ : ℕ → (AE D)ˣ →* Circle) where
   δ : G.kˣ →* ℂˣ
   tame : IsTame δ
@@ -189,23 +187,10 @@ theorem mu : ∀ j, j ≤ G.s + 1 →
     (ofSplit G.q).IsComp (χ j)⁻¹ (E.η (j + 1) * E.δ) ∧ IsOpen ((E.η (j + 1) * E.δ).ker : Set G.kˣ) :=
   fun j hj => ⟨E.mu_comp j hj, isOpen_ker_unram_mul_tame (E.unr _) E.tame⟩
 
-structure Exact : Prop where
-  ram : ¬ IsUnram E.δ
-  unitary : ∀ x, ‖(E.δ x : ℂ)‖ = 1
-  one_le : 1 ≤ E.M
-  normal : (G.T E.δ E.tame E.η).RepsNormal E.A G.ϖ
-  cos_mem : ∀ y, ∃ z ∈ box (XIx (Fin D.R.k) (Fin D.R.t) (G.s + 1)) (G.ϖ ^ E.M)⁻¹, Submodule.Quotient.mk z = E.cos y
-
-example : Nonempty (E.Ch (G.s + 1)) := ⟨(E.cos_all 0 (zero_mem _)).choose⟩
-
-example (d h α) : E.rep 0 d h α = 1 := by
-  have := (E.rep_bij 0 d h).1 (Set.mem_univ α)
-  rwa [E.reps.zero] at this
-
 end QExt
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def QExt.toAt {G : QGeo v B PP} {χ : ℕ → (AE D)ˣ →* Circle} (E : QExt G χ) : QAt v χ where
   k := G.k
   ν := G.ν
@@ -276,9 +261,6 @@ def QExt.toAt {G : QGeo v B PP} {χ : ℕ → (AE D)ˣ →* Circle} (E : QExt G 
   wt_mid := E.wt_mid
   wt_pen := E.wt_pen
   wt_top := E.wt_top
-
-example {G : QGeo v B PP} {χ : ℕ → (AE D)ˣ →* Circle} (E : QExt G χ) :
-    E.toAt.T = G.T E.δ E.tame E.η ∧ E.toAt.Ch = E.Ch ∧ E.toAt.c₁ = (G.ϖ ^ E.M)⁻¹ ∧ E.toAt.c₂ = G.ϖ ^ E.M := ⟨rfl, rfl, rfl, rfl⟩
 
 end GlobalTheory.QTw
 end

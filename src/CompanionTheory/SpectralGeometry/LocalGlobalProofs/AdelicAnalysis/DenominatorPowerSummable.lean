@@ -1,5 +1,10 @@
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CountableIdealSummableAbsNormRpow
+module
+
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CountableIdealSummableAbsNormRpow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core
 open scoped ENNReal NNReal MatrixGroups
 
@@ -95,7 +100,7 @@ theorem fibre_bound (N : ℕ) (hN : 0 < N) (s : Set F)
     have h1 := congrArg (algebraMap (𝓞 F) F) hr'
     have htb : algebraMap (𝓞 F) F (t b) = (a : F) * ((b.1 : s) : F) := ht b
     have htb' : algebraMap (𝓞 F) F (t b') = (a : F) * ((b'.1 : s) : F) := ht b'
-    simp only [map_mul, map_add, map_neg, map_natCast, Nat.cast_mul, htb, htb'] at h1
+    simp only [map_mul, map_add (f := _), map_neg, map_natCast, Nat.cast_mul, htb, htb'] at h1
     have hrF : algebraMap (𝓞 F) F r = (r : F) := rfl
     rw [hrF] at h1
     have ha' : (a : F) ≠ 0 := by exact_mod_cast ha0

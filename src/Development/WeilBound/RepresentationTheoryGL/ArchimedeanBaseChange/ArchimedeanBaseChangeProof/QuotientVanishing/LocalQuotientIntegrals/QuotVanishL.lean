@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocVanishOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NilradicalChangeOfVariables
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulVecMemUniRad
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocVanishOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NilradicalChangeOfVariables
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulVecMemUniRad
+
+@[expose] public section
 
 open MeasureTheory
 

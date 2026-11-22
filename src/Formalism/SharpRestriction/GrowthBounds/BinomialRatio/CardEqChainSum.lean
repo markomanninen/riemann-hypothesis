@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountDefs
-import Formalism.SharpRestriction.GrowthBounds.PolBridge
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountDefs
+public import Formalism.SharpRestriction.GrowthBounds.PolBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,7 +172,8 @@ theorem clear_den {σ : Type} (F : MvPolynomial σ (KK O)) :
   choose g hg using hc
   refine ⟨sd, ∑ m ∈ F.support, monomial m (g m), nonZeroDivisors.coe_ne_zero sd, ?_⟩
   conv_rhs => rw [F.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [map_monomial, smul_monomial, hg m hm]
 
@@ -325,7 +330,7 @@ theorem map_span (LL : ChainLetters N) (s : Set (Tx r LL)) (G : MvPolynomial (Fi
     obtain ⟨y, hy, rfl⟩ := hx
     exact Submodule.subset_span ⟨y, hy, (psiR_map LL y).symm⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]
     exact Submodule.smul_mem _ _ hx

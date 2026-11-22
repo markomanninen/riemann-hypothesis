@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.AlgInfCharIff
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.WignerVanishingGL
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.AntisymmetrizedProductEqFactorialSmulQdet
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.AlgInfCharIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.WignerVanishingGL
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.AntisymmetrizedProductEqFactorialSmulQdet
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,13 +68,13 @@ section Hol
 
 variable {N : Type} [AddCommGroup N] [Module ℂ N] [Module ℝ N] [IsScalarTower ℝ ℂ N]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def eL (L : Lie E a →ₗ[ℝ] N) (τ : E →+* ℂ) (i j : Fin a) : N :=
   (1 / 2 : ℂ) • (L (toL (Matrix.single i j (atEmb τ 1))) - Complex.I • L (toL (Matrix.single i j (atEmb τ Complex.I))))
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def hol (τ : E →+* ℂ) (L : Lie E a →ₗ[ℝ] N) : Matrix (Fin a) (Fin a) ℂ →ₗ[ℂ] N where
   toFun x := ∑ i, ∑ j, x i j • eL L τ i j
   map_add' x y := by simp [add_smul, Finset.sum_add_distrib]
@@ -86,20 +90,18 @@ theorem hol_single (τ : E →+* ℂ) (L : Lie E a →ₗ[ℝ] N) (i j : Fin a) 
 
 end Hol
 
-theorem eL_dmat (Ξ : AlgRep E a) (τ : E →+* ℂ) : eL Ξ.dmat τ = WeylC.eOf Ξ.mat τ := rfl
-
 theorem dualE_eq (Ξ : AlgRep E a) (τ : E →+* ℂ) (i j : Fin a) :
     GlobalTheory.WignerGL.dualE Ξ τ i j = -(eL Ξ.dmat τ i j)ᵀ := by
   simp only [GlobalTheory.WignerGL.dualE, GlobalTheory.WignerGL.dualS, eL, Matrix.transpose_smul, Matrix.transpose_sub]
   module
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def IsLieHom {A : Type} [Ring A] [Module ℝ A] (L : Lie E a →ₗ[ℝ] A) : Prop :=
   ∀ X Y : Matrix (Fin a) (Fin a) (Cinf E), L (toL X) * L (toL Y) - L (toL Y) * L (toL X) = L (toL (X * Y - Y * X))
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def hp : Lie E a →ₗ[ℝ] Herm E a where
   toFun X := ⟨(1 / 2 : ℝ) • (Matrix.of X + star (Matrix.of X)), by
     change star _ = _
@@ -114,8 +116,8 @@ def hp : Lie E a →ₗ[ℝ] Herm E a where
 omit [NumberField E] in
 theorem hp_val (X : Matrix (Fin a) (Fin a) (Cinf E)) : (hp (toL X)).1 = (1 / 2 : ℝ) • (X + star X) := rfl
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def brH (Z : Matrix (Fin a) (Fin a) (Cinf E)) (hZ : star Z = -Z) (Y : Herm E a) : Herm E a :=
   ⟨Z * Y.1 - Y.1 * Z, by
     have h : star Y.1 = Y.1 := Y.2
@@ -128,8 +130,8 @@ section Complex
 variable {M : Type} [AddCommGroup M] [Module ℂ M] [Module ℝ M] [IsScalarTower ℝ ℂ M]
   (κ : Kinf E a → Module.End ℂ M) (L : Lie E a →ₗ[ℝ] Module.End ℂ M)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def InfEq {q : ℕ} (ω : Herm E a [⋀^Fin q]→ₗ[ℝ] M) : Prop :=
   ∀ (Z : Matrix (Fin a) (Fin a) (Cinf E)) (hZ : star Z = -Z) (Y : Fin q → Herm E a),
     L (toL Z) (ω Y) = ∑ i, ω (Function.update Y i (brH Z hZ (Y i)))
@@ -138,8 +140,8 @@ def SepDer : Prop :=
   ∀ (k : ℝ → Kinf E a) (Z : Matrix (Fin a) (Fin a) (Cinf E)), k 0 = 1 → HasDerivAt (fun t => toL (k t).1) (toL Z) 0 →
     ∀ m' : M, m' ≠ 0 → ∃ l : M →ₗ[ℂ] ℂ, l m' ≠ 0 ∧ ∀ m, HasDerivAt (fun t => l (κ (k t) m)) (l (L (toL Z) m)) 0
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 structure IsRetr (α : (Lie E a →ₗ[ℝ] M) →ₗ[ℝ] M) : Prop where
   lie : ∀ (Y : Matrix (Fin a) (Fin a) (Cinf E)) (f f' : Lie E a →ₗ[ℝ] M),
     (∀ X, L (toL Y) (f (toL X)) = f' (toL X) + f (toL (Y * X - X * Y))) → L (toL Y) (α f) = α f'
@@ -153,29 +155,31 @@ section Tensor
 
 open scoped TensorProduct
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def lieA (π : CuspSub E a) (Ξ : AlgRep E a) : Lie E a →ₗ[ℝ] Module.End ℂ (π.V ⊗[ℂ] (Fin Ξ.d → ℂ)) where
   toFun X := (lieOp π X).rTensor _
-  map_add' X Y := by simp only [map_add, LinearMap.rTensor_add]
+  map_add' X Y := by simp only [map_add (f := _), LinearMap.rTensor_add]
   map_smul' c X := by
-    rw [map_smul, RingHom.id_apply, ← algebraMap_smul ℂ c (lieOp π X),
-      ← algebraMap_smul ℂ c (LinearMap.rTensor _ _ : Module.End ℂ (π.V ⊗[ℂ] (Fin Ξ.d → ℂ))), LinearMap.rTensor_smul]
+    rw [map_smul, RingHom.id_apply, ← algebraMap_smul ℂ c (lieOp π X), LinearMap.rTensor_smul]
+    refine TensorProduct.ext' fun v w => ?_
+    simp only [LinearMap.smul_apply, LinearMap.rTensor_tmul, TensorProduct.smul_tmul',
+      algebraMap_smul ℂ c (lieOp π X v)]
 
 def lieB (π : CuspSub E a) (Ξ : AlgRep E a) : Lie E a →ₗ[ℝ] Module.End ℂ (π.V ⊗[ℂ] (Fin Ξ.d → ℂ)) where
   toFun X := (Matrix.toLin' (Ξ.dmat X)).lTensor _
-  map_add' X Y := by simp only [map_add, LinearMap.lTensor_add]
+  map_add' X Y := by simp only [map_add (f := _), LinearMap.lTensor_add]
   map_smul' c X := by
-    rw [map_smul, RingHom.id_apply, ← algebraMap_smul ℂ c (Ξ.dmat X),
-      ← algebraMap_smul ℂ c (LinearMap.lTensor _ _ : Module.End ℂ (π.V ⊗[ℂ] (Fin Ξ.d → ℂ))), map_smul,
+    rw [map_smul, RingHom.id_apply, ← algebraMap_smul ℂ c (Ξ.dmat X), map_smul,
       LinearMap.lTensor_smul]
+    refine TensorProduct.ext' fun v w => ?_
+    simp only [LinearMap.smul_apply, LinearMap.lTensor_tmul, TensorProduct.smul_tmul',
+      algebraMap_smul ℂ c v]
 
 theorem lieA_apply (π : CuspSub E a) (Ξ : AlgRep E a) (X : Lie E a) : lieA π Ξ X = (lieOp π X).rTensor _ := rfl
 
 theorem lieB_apply (π : CuspSub E a) (Ξ : AlgRep E a) (X : Lie E a) :
     lieB π Ξ X = (Matrix.toLin' (Ξ.dmat X)).lTensor _ := rfl
-
-theorem tensorLie_eq (π : CuspSub E a) (Ξ : AlgRep E a) : tensorLie π Ξ = lieA π Ξ + lieB π Ξ := rfl
 
 theorem lieA_commute (π : CuspSub E a) (Ξ : AlgRep E a) (X Y : Lie E a) : Commute (lieA π Ξ X) (lieB π Ξ Y) :=
   TensorProduct.ext' fun _ _ => rfl
@@ -186,7 +190,5 @@ def eEnd (Ξ : AlgRep E a) (τ : E →+* ℂ) (i j : Fin a) : Module.End ℂ (Fi
 
 def IsAlgIso (Ξ Ξ' : AlgRep E a) (T : (Fin Ξ.d → ℂ) ≃ₗ[ℂ] (Fin Ξ'.d → ℂ)) : Prop :=
   (∀ y v, T (Ξ.mat y *ᵥ v) = Ξ'.mat y *ᵥ T v) ∧ ∀ X v, T (Ξ.dmat X *ᵥ v) = Ξ'.dmat X *ᵥ T v
-
-theorem isAlgIso_refl (Ξ : AlgRep E a) : IsAlgIso Ξ Ξ (LinearEquiv.refl _ _) := ⟨fun _ _ => rfl, fun _ _ => rfl⟩
 
 end UpperTheory.V.AlgRepEndIrreducible

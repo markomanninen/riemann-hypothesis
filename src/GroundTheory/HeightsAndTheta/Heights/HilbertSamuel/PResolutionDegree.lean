@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionDegree
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFSExtension
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResolutionPotentials
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridge
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFSMass
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionDegree
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFSExtension
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResolutionPotentials
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridge
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFSMass
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -56,7 +61,8 @@ theorem smooth_logRatio_resPt (d : HSMDatum D Ω κ) {m₀ m₁ : ConeMetric ℂ
   obtain ⟨c, hc, hcy⟩ := d.R.compat ((d.R.A.chart j).symm y') ((d.R.A.chart j).symm y)
     ((d.R.A.chart j).symm y') ⟨d.R.mem_U _, hy'.2.2⟩
   change logRatio m₀ m₁ (d.R.lift ((d.R.A.chart j).symm y') ((d.R.A.chart j).symm y')) = _
-  rw [hcy, gbamix_logRatio_deg c _ hc]
+  rw [hcy]
+  exact gbamix_logRatio_deg (m₀ := m₀) (m₁ := m₁) c _ hc
 
 theorem mInt_resPot_eq (d : HSMDatum D Ω κ) {m₀ m₁ : ConeMetric ℂ (Ix κ)} (g : d.R.X → ℝ) :
     mInt d.R.A (fun _ => resPot d m₁) g =
@@ -75,7 +81,9 @@ theorem mInt_resPot_eq (d : HSMDatum D Ω κ) {m₀ m₁ : ConeMetric ℂ (Ix κ
   change Real.log (m₁.ρ (d.R.lift ((d.R.A.chart j).symm y) ((d.R.A.chart j).symm y'))) =
     Real.log (m₀.ρ (d.R.lift ((d.R.A.chart j).symm y) ((d.R.A.chart j).symm y'))) +
       logRatio m₀ m₁ (d.R.lift ((d.R.A.chart j).symm y') ((d.R.A.chart j).symm y'))
-  rw [hcy, gbamix_logRatio_deg c _ hc, logRatio, Real.log_div h₁.ne' h₀.ne']
+  rw [hcy, gbamix_logRatio_deg (m₀ := m₀) (m₁ := m₁) c
+    (d.R.lift ((d.R.A.chart j).symm y) ((d.R.A.chart j).symm y')) hc,
+    logRatio, Real.log_div h₁.ne' h₀.ne']
   ring
 
 theorem mass_eq (d : HSMDatum D Ω κ) {m₀ m₁ : ConeMetric ℂ (Ix κ)} (h₀ : IsSmoothMetric m₀)

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorusStableAffineOpenFunctionsWeightGraded
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorusStableAffineOpenFunctionsWeightGraded
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -35,11 +40,12 @@ theorem exists_weight_zero_sum_one {A X J : Type} [CommRing A] [AddCommGroup X] 
       split_ifs with h
       · exact h ▸ one
       · exact zero_mem _
-    · rw [← hT, map_sub, map_sum]
-      simp only [map_smul]
-      simp only [hT, Finsupp.sum_equivMapDomain, ← hsum, smul_eq_mul]
-      rw [Finsupp.sum_single_index rfl, sub_eq_zero, ← hc]
-      exact Finset.sum_congr rfl fun f _ => mul_comm _ _
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hT, map_sub, map_sum]
+        simp only [map_smul]
+        simp only [hT, Finsupp.sum_equivMapDomain, ← hsum, smul_eq_mul]
+        rw [Finsupp.sum_single_index rfl, sub_eq_zero, ← hc]
+        exact Finset.sum_congr rfl fun f _ => mul_comm _ _
   refine ⟨fun f => g f * a f (-δ + 0), fun f => hm f 0, fun f => Dvd.intro _ rfl, ?_⟩
   have := hB 0
   rw [h0, Finsupp.single_eq_same] at this
@@ -85,7 +91,7 @@ theorem exists_units {d : ℕ} {i : splitTorus S (Fin d → ℤ) ⟶ H} {V : H.l
         rw [map_zero]; exact GlobalTheory.UU.isWt_one
       add_mem' := fun {a c} ha hc => by
         show GlobalTheory.UU.IsWt i _ (Additive.toMul (l (a + c))).val (a + c)
-        rw [map_add]; exact GlobalTheory.UU.IsWt.mul ha hc
+        rw [map_add (f := _)]; exact GlobalTheory.UU.IsWt.mul ha hc
       neg_mem' := fun {a} ha => by
         show GlobalTheory.UU.IsWt i _ (Additive.toMul (l (-a))).val (-a)
         rw [map_neg]; exact GlobalTheory.UU.IsWt.inv ha }
@@ -128,7 +134,8 @@ theorem main : ∀ (K : Type) [Field K] (H : Over (Sp K)) [GrpObj H] [IsCommMonO
   obtain ⟨b, hb, hd, h1⟩ := exists_weight_zero_sum_one (wtSpace i (C.W a)) GlobalTheory.UU.isWt_one
     (fun _ _ _ _ => GlobalTheory.UU.IsWt.mul) ex un g _ hg hs
   have hu : IsUnit (∑ f, (H.left.presheaf.germ (C.W a) x hx).hom (b f)) := by
-    rw [← map_sum, h1, map_one]; exact isUnit_one
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, h1, map_one]; exact isUnit_one
   obtain ⟨f, -, hf⟩ := IsLocalRing.exists_of_isUnit_sum hu
   refine ⟨b f, hasWt_iff.2 (hb f), (H.left.mem_basicOpen _ x hx).2 hf,
     stable_basicOpen (hT.stable a) (hasWt_iff.2 (hb f)), ?_⟩

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.HodgeOfFon
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 namespace PI.HodgeOfFon.W.Triv
 
@@ -48,7 +53,7 @@ theorem coordE_act (ρ : Representation LL G V) (hρ : ∀ g x, ρ g x = x) (g :
   | tmul v β =>
     rw [actVdR, TensorProduct.AlgebraTensorModule.map_tmul, hρ, coordE_tmul, coordE_tmul]
     exact (actdR_smul PD g _ β).symm
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem coordE_mem_fil {a : ℤ} {x : V ⊗[Qp] BdR} (hx : x ∈ FilV PD (LL := LL) (V := V) a) (i) :
     coordE V x i ∈ PD.Fil a := by
@@ -59,7 +64,7 @@ theorem coordE_mem_fil {a : ℤ} {x : V ⊗[Qp] BdR} (hx : x ∈ FilV PD (LL := 
     rw [TensorProduct.AlgebraTensorModule.map_tmul, LinearMap.id_apply, coordE_tmul]
     exact Submodule.smul_of_tower_mem _ _ f.2
   | add y z hy hz =>
-    simp only [map_add, Finsupp.add_apply]
+    simp only [map_add (f := _), Finsupp.add_apply]
     exact add_mem hy hz
 
 theorem mem_DdR_iff (ρ : Representation LL G V) {x : V ⊗[Qp] BdR} :

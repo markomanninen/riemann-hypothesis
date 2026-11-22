@@ -1,23 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSqMulGaussianLatticeTranslateEqShifted
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWeilOfVacuum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulNeBot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CongOneInvMulIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockUpperOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsNormMulMemHatId
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CondESupConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridNuUnitTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StdSumFixEig
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVectorConjIsThetaSomeLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilActionCosetVectorFixedPrincipalCongruenceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVectorBlockLevelUnimodularEigenStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugateModulusStandardThetaPresentationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModTMulConjLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModTSupConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulLeOfIsConjPl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CondEIsCoprimeHalfDifferent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSqMulGaussianLatticeTranslateEqShifted
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWeilOfVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulNeBot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CongOneInvMulIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockUpperOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsNormMulMemHatId
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CondESupConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridNuUnitTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StdSumFixEig
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVectorConjIsThetaSomeLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilActionCosetVectorFixedPrincipalCongruenceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVectorBlockLevelUnimodularEigenStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugateModulusStandardThetaPresentationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModTMulConjLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModTSupConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulLeOfIsConjPl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CondEIsCoprimeHalfDifferent
+
+@[expose] public section
+
 open scoped Pointwise
 open Formalism.BasicNotions Formalism.IndefR.Links IsDedekindDomain NumberField
 open Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3
@@ -56,7 +61,7 @@ theorem conj_isCoprime_halfDifferent {I : Ideal (𝓞 D.host.E)}
   obtain ⟨a, ha, b, hb', e⟩ := Submodule.mem_sup.1 ((Ideal.eq_top_iff_one _).1 h)
   obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1 hb'
   have e1 := congrArg (MulSemiringAction.toRingHom _ (𝓞 D.host.E) D.host.conj) e
-  rw [map_add, map_mul, map_natCast, map_one] at e1
+  rw [map_add (f := _), map_mul, map_natCast, map_one] at e1
   refine hM.ne_top ((Ideal.eq_top_iff_one _).2 ?_)
   rw [← e1]
   exact M.add_mem (hle (Ideal.mem_sup_left (Ideal.smul_mem_pointwise_smul D.host.conj _ _ ha))) (M.mul_mem_left _ h2)

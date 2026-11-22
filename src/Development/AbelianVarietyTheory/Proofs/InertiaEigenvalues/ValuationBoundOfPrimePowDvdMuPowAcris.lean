@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormSubOnePowTotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FundamentalMapSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UntiltNormUltrametricEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.AdicMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormSubOnePowTotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FundamentalMapSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UntiltNormUltrametricEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.AdicMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
@@ -80,7 +84,7 @@ theorem mem_of_l_mul {ϖ : OCb l} (hϖ : ϖ ≠ 0) (k : ℕ) {y : Ainf l}
   obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1 hv
   have hc : WittVector.constantCoeff c = 0 := by
     have := congrArg WittVector.constantCoeff huv
-    rw [map_add, map_mul, map_mul, map_mul, map_pow, map_pow, cc_natCast_l, cc_teich] at this
+    rw [map_add (f := _), map_mul, map_mul, map_mul, map_pow, map_pow, cc_natCast_l, cc_teich] at this
     simp only [zero_mul, zero_add] at this
     exact (mul_eq_zero.1 this).resolve_right (pow_ne_zero _ (pow_ne_zero _ hϖ))
   obtain ⟨c', rfl⟩ := l_dvd_of_cc hc
@@ -140,7 +144,7 @@ def Qs (ϖ : OCb l) : Subalgebra (Per.Ainf l) (Per.AinfP l) where
     · rw [pow_add]
       exact Ideal.add_mem _ (Ideal.mul_mem_mul ha (Ideal.pow_mem_pow (l_mem_Iw ϖ) k))
         (Ideal.mul_mem_mul (Ideal.pow_mem_pow (l_mem_Iw ϖ) m) hb)
-    · rw [map_add, map_mul, map_mul, map_pow, map_pow, map_natCast, ← hz, ← hw]; ring
+    · rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, map_natCast, ← hz, ← hw]; ring
   algebraMap_mem' r := ⟨0, r, by simp, by simp⟩
 
 theorem dividedPower_mem_pt {ϖ : OCb l} (hϖ : ϖ.untilt = (l : Per.OC l)) (x : Per.Ainf l) (k : ℕ)
@@ -149,7 +153,7 @@ theorem dividedPower_mem_pt {ϖ : OCb l} (hϖ : ϖ.untilt = (l : Per.OC l)) (x :
     y ∈ Qs ϖ := by
   have hxI := mem_of_theta hϖ hx
   have he : (l - 1) * k.factorial.factorization l ≤ k := by
-    have := sub_one_mul_padicValNat_factorial (p := l) k
+    have := hl.out.sub_one_mul_multiplicity_factorial (n := k)
     rw [← Nat.factorization_def _ hl.out] at this
     omega
   set e := k.factorial.factorization l
@@ -176,15 +180,13 @@ theorem dividedPower_mem_pt {ϖ : OCb l} (hϖ : ϖ.untilt = (l : Per.OC l)) (x :
 theorem acris0_le (hl2 : 2 ≤ l) {ϖ : OCb l} (hϖ : ϖ.untilt = (l : Per.OC l)) : Per.Acris0 l ≤ Qs ϖ :=
   GlobalTheory.RingIface.Acris0_le_of_dividedPowers l _ (dividedPower_mem_pt hϖ)
 
-theorem exists_of_dvd {n : ℕ} {y : Ainf l} (h : (l : Per.Acris l) ^ n ∣ ainfToAcris l y) :
+theorem exists_of_dvd {n : ℕ} {y : Ainf l}
+    (h : (l : Per.Acris l) ^ n ∣ algebraMap (Ainf l) (Per.Acris l) y) :
     ∃ z ∈ Per.Acris0 l, (l : Per.AinfP l) ^ n * z = algebraMap (Per.Ainf l) (Per.AinfP l) y := by
   obtain ⟨w, hw⟩ := h
   obtain ⟨e, he⟩ := GlobalTheory.AdicMaps.exists_acris_completion l
-  have h3 : ainfToAcris l y =
-      algebraMap (Per.Acris0 l) (Per.Acris l) (algebraMap (Per.Ainf l) (Per.Acris0 l) y) :=
-    GlobalTheory.RingIface.tower l y
   have hw' := congrArg e hw
-  rw [h3, he, map_mul, map_pow, map_natCast] at hw'
+  rw [GlobalTheory.RingIface.tower l y, he, map_mul, map_pow, map_natCast] at hw'
   have h1 := congrArg (AdicCompletion.evalₐ (Ideal.span {(l : Per.Acris0 l)}) n) hw'
   rw [map_mul, map_pow, map_natCast] at h1
   have h0 : ((l : Per.Acris0 l ⧸ Ideal.span {(l : Per.Acris0 l)} ^ n)) ^ n = 0 := by
@@ -219,7 +221,8 @@ theorem ne_zero_of_untilt {ϖ : OCb l} (hϖ : ϖ.untilt = (l : Per.OC l)) : ϖ �
   exact hl.out.one_lt.ne' (by exact_mod_cast h3)
 
 theorem pow_dvd_cc (hl2 : 2 ≤ l) {ϖ : OCb l} (hϖ : ϖ.untilt = (l : Per.OC l)) {n : ℕ} {y : Ainf l}
-    (h : (l : Per.Acris l) ^ n ∣ ainfToAcris l y) : ϖ ^ ((l - 1) * n) ∣ WittVector.constantCoeff y := by
+    (h : (l : Per.Acris l) ^ n ∣ algebraMap (Ainf l) (Per.Acris l) y) :
+    ϖ ^ ((l - 1) * n) ∣ WittVector.constantCoeff y := by
   obtain ⟨z, hz0, hz⟩ := exists_of_dvd h
   obtain ⟨m, a, ha, hza⟩ := acris0_le hl2 hϖ hz0
   have hinj : Function.Injective (algebraMap (Per.Ainf l) (Per.AinfP l)) :=
@@ -323,7 +326,11 @@ end GlobalTheory.AcrisMuBound
 
 namespace GlobalTheory.AcrisMuBound
 
-theorem main : ∀ (l : ℕ) [Fact l.Prime], l ≠ 2 → ∀ ε : OCb l, IsEps ε → ∀ (j n : ℕ) (x : ℤ_[l]), x ≠ 0 → (l : Per.Acris l) ^ n ∣ ainfToAcris l (muOf ε ^ j * algebraMap ℤ_[l] (Ainf l) x) → (l - 1) * n ≤ (l - 1) * x.valuation + 2 * j := by
+theorem main : ∀ (l : ℕ) [Fact l.Prime], l ≠ 2 → ∀ ε : OCb l, IsEps ε →
+    ∀ (j n : ℕ) (x : ℤ_[l]), x ≠ 0 →
+      (l : Per.Acris l) ^ n ∣ algebraMap (Ainf l) (Per.Acris l)
+        (muOf ε ^ j * algebraMap ℤ_[l] (Ainf l) x) →
+      (l - 1) * n ≤ (l - 1) * x.valuation + 2 * j := by
   intro l hl hl2 ε hε j n x hx h
   have hl2' : 2 ≤ l := hl.out.two_le
   obtain ⟨ϖ, hϖ⟩ := GlobalTheory.MemLoc.FundOnto.untilt_surjective l (l : Per.OC l)
@@ -337,10 +344,11 @@ theorem main : ∀ (l : ℕ) [Fact l.Prime], l ≠ 2 → ∀ ε : OCb l, IsEps �
   · have := Nat.mul_le_mul_left (l - 1) hnv
     omega
   obtain ⟨n', rfl⟩ := Nat.exists_eq_add_of_le hnv.le
-  have h2 : (l : Per.Acris l) ^ n' ∣ ainfToAcris l y := by
+  have h2 : (l : Per.Acris l) ^ n' ∣ algebraMap (Ainf l) (Per.Acris l) y := by
     obtain ⟨w, hw⟩ := h
     refine ⟨w, ?_⟩
-    have h3 : ((l ^ v : ℕ) : Per.Acris l) * (ainfToAcris l y - (l : Per.Acris l) ^ n' * w) = 0 := by
+    have h3 : ((l ^ v : ℕ) : Per.Acris l) *
+        (algebraMap (Ainf l) (Per.Acris l) y - (l : Per.Acris l) ^ n' * w) = 0 := by
       rw [hxu, mul_left_comm, map_mul, map_pow, map_natCast] at hw
       push_cast
       rw [mul_sub, hw]

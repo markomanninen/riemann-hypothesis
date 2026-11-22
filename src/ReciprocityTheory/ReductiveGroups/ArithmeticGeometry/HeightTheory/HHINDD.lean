@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDC
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -126,10 +130,36 @@ theorem aI_mul_ae (hd : d.AxH 𝒜) (h : d.S1) {G G' : WT} (c : ι) {f g : A c}
     (hf : f ∈ 𝒜 c G) (hg : g ∈ 𝒜 c G') (hf0 : f ≠ 0) (hg0 : g ≠ 0) (sg : K →+* ℂ) :
     d.aI (fun c f P => d.nrm c (G + G') f P) c (f * g) sg =ᵐ[blockSphereProb d.D (d.N + 1)]
       fun z => d.aI (fun c f P => d.nrm c G f P) c f sg z + d.aI (fun c f P => d.nrm c G' f P) c g sg z := by
-  filter_upwards [d.norm_at_sg hd h c sg] with z hz
+  have hfin : ∀ᵐ z ∂(blockSphereProb d.D (d.N + 1)), (d.ST c sg (d.tOf z)).Finite := by
+    letI : Countable K := countable_numberField K
+    letI : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra
+    letI := d.KT_finiteDimensional hd c
+    let e : KTf K d.D d.N ≃+* d.KT c :=
+      ((d.KTtoS h c).rangeRestrictFieldEquiv).trans (RingEquiv.subfieldCongr (d.KTtoS_fieldRange h c))
+    have hmap : (algebraMap (KTf K d.D d.N) (OmS (Ω c) d.D d.N)).comp e.symm.toRingHom =
+        algebraMap (d.KT c) (OmS (Ω c) d.D d.N) := by
+      ext x
+      change d.KTtoS h c (e.symm x) = (x : OmS (Ω c) d.D d.N)
+      exact congrArg Subtype.val (e.apply_symm_apply x)
+    letI : Module.Finite (KTf K d.D d.N) (OmS (Ω c) d.D d.N) :=
+      Module.Finite.of_equiv_equiv e.symm (RingEquiv.refl _) hmap
+    filter_upwards [NPB.ae_gen (K := K) (D := d.D) (N := d.N) sg] with z hz
+    obtain ⟨y, -, hpt⟩ := NPB.exists_gen sg (fun q => d.tOf z q.1 q.2) hz 1 one_ne_zero
+    let pt := NPB.gpt (fun q => d.tOf z q.1 q.2) y
+    have hy : ∀ i, y (Fin.natAdd (d.N + 1) i) ≠ 0 := by
+      intro i h0
+      exact hpt (MvPolynomial.X (i.succ, 0)) (MvPolynomial.X_ne_zero _) (by simp [NPB.gpt, h0])
+    letI : Algebra (KTf K d.D d.N) ℂ := (tauPev sg pt hpt).toAlgebra
+    rw [← d.ST_scale c sg (d.tOf z) y hy]
+    refine (Set.finite_range (fun σ : OmS (Ω c) d.D d.N →ₐ[KTf K d.D d.N] ℂ =>
+      (σ : OmS (Ω c) d.D d.N →+* ℂ).comp (algebraMap (Ω c) (OmS (Ω c) d.D d.N)))).subset ?_
+    intro P hP
+    obtain ⟨σ, hσ, rfl⟩ := d.exists_emb hd h c sg pt hpt P hP
+    exact ⟨{ σ with commutes' := fun x => RingHom.congr_fun hσ x }, rfl⟩
+  filter_upwards [hfin] with z hz
   unfold aI
-  rw [finsum_mem_eq_finite_toFinset_sum _ hz.1, finsum_mem_eq_finite_toFinset_sum _ hz.1,
-    finsum_mem_eq_finite_toFinset_sum _ hz.1, ← Finset.sum_add_distrib]
+  rw [finsum_mem_eq_finite_toFinset_sum _ hz, finsum_mem_eq_finite_toFinset_sum _ hz,
+    finsum_mem_eq_finite_toFinset_sum _ hz, ← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro P _
   dsimp only

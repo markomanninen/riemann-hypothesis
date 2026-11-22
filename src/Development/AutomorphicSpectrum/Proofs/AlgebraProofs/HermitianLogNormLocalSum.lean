@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.DifferentIdealLogSumRootDiscriminantStatement
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.LogNormsOfNonzeroAdelicStatement
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SumEmbeddingsBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.LogIdealSupportFiniteStatement
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.ProductFormulaLogNormsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.DifferentIdealLogSumRootDiscriminantStatement
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.LogNormsOfNonzeroAdelicStatement
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SumEmbeddingsBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.LogIdealSupportFiniteStatement
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.ProductFormulaLogNormsStatement
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
 open scoped ComplexOrder
@@ -13,20 +17,6 @@ open scoped ComplexOrder
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.Ar.Fl.LocalSum
-
-theorem finsum_lin {α : Type} {f g : α → ℝ} (hf : {x | f x ≠ 0}.Finite)
-    (hg : {x | g x ≠ 0}.Finite) (a b : ℝ) :
-    (∑ᶠ x, (a * f x + b * g x)) = a * (∑ᶠ x, f x) + b * ∑ᶠ x, g x := by
-  rw [mul_finsum, mul_finsum, finsum_add_distrib]
-  · exact hf.subset fun x hx h => hx (by simp [h])
-  · exact hg.subset fun x hx h => hx (by simp [h])
-
-theorem finite_lin {α : Type} {f g : α → ℝ} (hf : {x | f x ≠ 0}.Finite)
-    (hg : {x | g x ≠ 0}.Finite) (a b : ℝ) : {x | a * f x + b * g x ≠ 0}.Finite :=
-  (hf.union hg).subset fun x hx => by
-    by_contra h
-    simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_not] at h
-    exact hx (by simp [h.1, h.2])
 
 theorem finsum_linear_combination_four {α : Type} {f g h i : α → ℝ} (hf : {x | f x ≠ 0}.Finite)
     (hg : {x | g x ≠ 0}.Finite) (hh : {x | h x ≠ 0}.Finite) (hi : {x | i x ≠ 0}.Finite)

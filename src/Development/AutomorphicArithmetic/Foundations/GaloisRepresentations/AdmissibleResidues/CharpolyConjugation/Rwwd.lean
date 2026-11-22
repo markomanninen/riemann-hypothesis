@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.RW
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.RW
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N Polynomial GlobalTheory GlobalTheory.WeilDeligne GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Sd UpperTheory.GalN.V
 
 theorem UpperTheory.GalN.V.L.rwwd :
-    ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (n : ℕ) (r : G F Ω →* GL (Fin n) (Qbar l)), Continuous r → (∀ (w : HeightOneSpectrum (𝓞 F)) (hl : ((l : ℕ) : 𝓞 F) ∉ w.asIdeal) (A : ValuationSubring Ω) (h : IsPlaceOver A w), RatioW (wdOf h hl ι r)) → RW ι r := by
+    ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (n : ℕ) (r : G F Ω →* GL (Fin n) (Qbar l)), Continuous r → (∀ (w : HeightOneSpectrum (𝓞 F)) (hl : ((l : ℕ) : 𝓞 F) ∉ w.asIdeal) (A : ValuationSubring Ω) (h : IsPlaceOver A w), RatioW (wdOf (h := h) hl ι r)) → RW ι r := by
   intro F Ω _ _ _ _ _ l _ ι n r hr hW w hl A h s hs α β hα hβ
   have hc : Continuous fun g => ((r g : GL (Fin n) (Qbar l)) : Matrix (Fin n) (Fin n) (Qbar l)) :=
     Units.continuous_val.comp hr
@@ -15,9 +19,9 @@ theorem UpperTheory.GalN.V.L.rwwd :
     rw [deg_eq (σ := σ) hact]
     norm_num
   have hmem : ∀ γ : Qbar l, (Matrix.charpoly ((r s : GL (Fin n) (Qbar l)) : Matrix (Fin n) (Fin n) (Qbar l))).IsRoot γ →
-      ι γ ∈ (wdOf h hl ι r).eig σ := by
+      ι γ ∈ (wdOf (h := h) hl ι r).eig σ := by
     intro γ hγ
-    show ι γ ∈ ((wdOf h hl ι r).charPol σ).roots
+    show ι γ ∈ ((wdOf (h := h) hl ι r).charPol σ).roots
     rw [charPol_wdOf hl ι hc σ, Polynomial.mem_roots']
-    exact ⟨((Matrix.charpoly_monic _).map _).ne_zero, hγ.map⟩
+    exact ⟨((Matrix.charpoly_monic _).map _).ne_zero, hγ.map ι.toRingHom⟩
   exact hW w hl A h σ hdeg (ι α) (hmem α hα) (ι β) (hmem β hβ)

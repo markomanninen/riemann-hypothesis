@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermZeroRight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermZeroRight
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

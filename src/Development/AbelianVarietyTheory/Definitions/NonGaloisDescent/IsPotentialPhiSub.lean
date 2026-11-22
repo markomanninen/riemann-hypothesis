@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysLatOfTrivial
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneNotMemFilOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysLatOfTrivial
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneNotMemFilOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,9 +21,9 @@ variable {l : ℕ} [hl : Fact l.Prime] {a : ℕ} [NeZero a] {e : ℕ} [NeZero e]
   {ι : Type} [Fintype ι] [DecidableEq ι]
   {G : Type} [Group G] [TopologicalSpace G]
 
+
 omit [NeZero a] [NeZero e] [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O]
   [NormedAlgebra ℚ_[l] K] in
-
 theorem xi_unit (d : (unitMod l a e O K ι).D) : (unitMod l a e O K ι).xi d = cst d :=
   (PhiMod.xi_unique _ (s := fun d => cst d) red_cst (fun d => by
     ext1 τ
@@ -28,15 +32,15 @@ theorem xi_unit (d : (unitMod l a e O K ι).D) : (unitMod l a e O K ι).xi d = c
     rw [cst_apply, PhiMod.phiD_apply, PhiMod.mx0, mx_unitMod, Matrix.map_one _ (map_zero _) (map_one _), Matrix.one_mulVec]
     simp [PhiMod.phiD_apply, PhiMod.mx0, mx_unitMod, frob_C]) d).symm
 
+
 omit [NeZero a] [NeZero e] [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O]
   [NormedAlgebra ℚ_[l] K] in
-
 theorem nabla_bas (i : ι) : (unitMod l a e O K ι).nabla (bas i) = 0 := by
   rw [← cst_single, ← xi_unit (O := O) (l := l) (e := e), PhiMod.nabla_xi]
 
+
 omit [NeZero a] [NeZero e] [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O]
   [NormedAlgebra ℚ_[l] K] in
-
 theorem phi_bas_unit (i : ι) : (unitMod l a e O K ι).phi (bas i) = bas i := by
   ext1 τ
   rw [PhiMod.phi_bas, mx_unitMod]
@@ -45,8 +49,8 @@ theorem phi_bas_unit (i : ι) : (unitMod l a e O K ι).phi (bas i) = bas i := by
 
 variable [TameDescentExponentData K l e a]
 
-variable (O K l e a ι) in
 
+variable (O K l e a ι) in
 def unitDesc : Descent (unitMod l a e O K ι) :=
   Descent.ofMatrix _ (fun _ _ => 1)
     (fun _ _ i j => by rw [Matrix.one_apply]; split_ifs; exacts [one_mem _, zero_mem _])
@@ -56,15 +60,15 @@ def unitDesc : Descent (unitMod l a e O K ι) :=
       rw [mx_unitMod, mx_unitMod, Matrix.map_one _ (map_zero _) (map_one _),
         Matrix.map_one _ (map_zero _) (map_one _)]
 
-omit [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 
+omit [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 theorem unitDesc_act (γ : TameGal K l e a) (v : Vec K a ι) (τ : ZMod a) (i : ι) :
     (unitDesc l a e O K ι).act γ v τ i = ringAct γ (fun σ => v σ i) τ := by
   change Descent.matAct γ (fun _ => 1) v τ i = _
   rw [Descent.matAct_apply, Matrix.one_mulVec, ringAct_apply]
 
-variable (O K l e a ι) in
 
+variable (O K l e a ι) in
 def unitDat (η H : ℕ) : BKDat O K l e a ι η H where
   toPhiMod := unitMod l a e O K ι
   desc := unitDesc l a e O K ι
@@ -111,11 +115,12 @@ theorem galOW_iW_of_covers {h : GQ l} {γ : TameGal K l e a} (hc : Covers K t ϖ
   rw [← galOW_inclO, key, key, map_mul, map_pow, hε, galOW_inclO, h2] at h3
   exact (hu.pow N).mul_left_cancel h3
 
-omit [TameDescentExponentData K l e a] in
 
+omit [TameDescentExponentData K l e a] in
 theorem galOB_iB_const {h : GQ l} (hh : h ∈ GK (ϖ.field a)) (f : ZMod a → invL l (S O K e))
     (c : ZMod a → K) (hf : ∀ τ, (f τ : K⟦X⟧) = C (c τ)) : galOB O h (ϖ.iB t K f) = ϖ.iB t K f := by
-  rw [PiSys.iB, glue_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PiSys.iB, glue_apply, map_sum]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [map_mul]
   congr 1
@@ -137,9 +142,9 @@ theorem galOB_iB_const {h : GQ l} (hh : h ∈ GK (ϖ.field a)) (f : ZMod a → i
 def coordEq (R : Type) [CommRing R] [Algebra O R] (T : LocLat G ℚ_[l] K O) (b : Module.Basis ι O ↥T.L.T) :
     (ι → R) ≃ₗ[R] TW R T := (b.baseChange R).equivFun.symm
 
+
 omit [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K]
   [DecidableEq ι] in
-
 theorem coordEq_apply (R : Type) [CommRing R] [Algebra O R] (T : LocLat G ℚ_[l] K O)
     (b : Module.Basis ι O ↥T.L.T) (v : ι → R) : coordEq R T b v = ∑ i, v i ⊗ₜ[O] b i := by
   simp only [coordEq, Module.Basis.equivFun_symm_apply, Module.Basis.baseChange_apply, smul_tmul',
@@ -154,10 +159,12 @@ def unitGal (s : G →* GQ l) (η H : ℕ) (T : LocLat G ℚ_[l] K O) (hT : ∀ 
     have h1 : (unitIdent t ϖ T b).j (inclL t ϖ (unitMod l a e O K ι) c) =
         (unitIdent t ϖ T b).j (inclL t ϖ (unitMod l a e O K ι) c') := by
       refine h.trans ?_
-      rw [unitIdent_j, coordEq_apply, map_sum, inclL_apply, frobMat_unitMod, Matrix.one_mulVec]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [unitIdent_j, coordEq_apply, map_sum, inclL_apply, frobMat_unitMod, Matrix.one_mulVec]
       rfl
     obtain rfl := inclL_injective t ϖ _ ((unitIdent t ϖ T b).j.injective h1)
-    rw [coordEq_apply, coordEq_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coordEq_apply, coordEq_apply, map_sum]
     rfl
   desc g γ hc v v' hv := by
     refine (unitIdent_act t ϖ T b (s g) (hT g) _).trans (funext fun i => ?_)
@@ -165,7 +172,8 @@ def unitGal (s : G →* GQ l) (η H : ℕ) (T : LocLat G ℚ_[l] K O) (hT : ∀ 
       (congrFun (congrFun hv τ) i).trans (unitDesc_act γ v.1 τ i)
   stable g := (Ident.exists_isLMat_iff _ _ _).1 ⟨1, isLMat_unitIdent t ϖ T b (s g) (hT g)⟩
   horiz g hg d h := by
-    rw [coordEq_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coordEq_apply, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     have h1 : T.actT g (b i) = b i := Subtype.ext (hT g _)
     rw [actB, TWact, TensorProduct.map_tmul, h1, AlgHom.toLinearMap_apply, toBcris_apply,
@@ -180,8 +188,8 @@ def unitPack {LL : FinExt l} [HasUnr a LL] [TameDescentExponentData ↥LL.1 l e 
   R := unitGal _ ϖ (sQ l) η H T hT (latBasis T)
   isBK := isBK_unitIdent (thetaW a LL) ϖ (T := resF T (ϖ.field a)) (fun g x => hT _ x) (latBasis T)
 
-omit [TameDescentExponentData K l e a] in
 
+omit [TameDescentExponentData K l e a] in
 theorem isCrisVal_unique {P : PhiMod O K l e a ι} {T : LocLat G ℚ_[l] K O}
     {jB : (ι → OB l O) ≃ₗ[OB l O] TW (OB l O) T} {w : ι → OW l O} {b b' : TW (OB l O) T}
     (h : IsCrisVal t ϖ P jB w b) (h' : IsCrisVal t ϖ P jB w b') : b = b' := by
@@ -216,16 +224,6 @@ theorem isPotential_phi_sub {s : G →* GQ l} {η H : ℕ} {D : BKDat O K l e a 
       refine congrArg _ (funext fun i => ?_)
       rw [toBcris_apply, toB, AlgHom.comp_apply, ← ϖ.iC_of_mem t K, ← ϖ.iB_of_mem t K]
       rfl
-
-theorem classOf_phi_sub {s : G →* GQ l} {η H : ℕ} {D : BKDat O K l e a ι η H} {T : LocLat G ℚ_[l] K O}
-    (R : GalDat t ϖ s D T) {m : Vec K a ι} (hm : m ∈ D.Minv) : R.ClassOf (D.phi m - m) 0 :=
-  ⟨0, isPotential_phi_sub t ϖ R hm, fun g n x hx => by
-    obtain rfl : x = 0 := Subtype.ext (by simpa using hx)
-    simp⟩
-
-theorem covers_one {g : GQ l} (hg : g ∈ ϖ.GfieldInf a) : Covers K t ϖ g (1 : TameGal K l e a) := fun f f' h => by
-  obtain rfl : f' = f := funext fun τ => Subtype.ext (by rw [h τ, map_one]; rfl)
-  exact ϖ.galOA_iTot t K hg f'
 
 theorem fix_Kur {F : FinExt l} {g : ↥(GK F)} (hg : g ∈ IK F) : (g : GQ l) ∈ (MaximalUnramifiedExtension l).fixingSubgroup := by
   refine (Subgroup.closure_le ((MaximalUnramifiedExtension l).fixingSubgroup.comap (GK F).subtype)).2 (fun σ hσ => ?_) hg
@@ -265,8 +263,8 @@ theorem fix_Kur {F : FinExt l} {g : ↥(GK F)} (hg : g ∈ IK F) : (g : GQ l) �
   rintro ⟨_, k, rfl⟩
   exact MulAction.mem_fixedBy_zpow (α := Om l) (g := (σ : GQ l)) (a := x) key k
 
-omit [NeZero e] [TameDescentExponentData K l e a] in
 
+omit [NeZero e] [TameDescentExponentData K l e a] in
 theorem isGood_of_trivial (Pl : LocPrime l) {LL : FinExt l} (T : QLat LL) (hT : ∀ g x, T.ρ g x = x) :
     IsGood a ϖ Pl T {0} {0} := by
   have := LL.2
@@ -282,7 +280,7 @@ theorem isGood_of_trivial (Pl : LocPrime l) {LL : FinExt l} (T : QLat LL) (hT : 
         (IsScalarTower.toAlgHom ℚ_[l] ↥(K0 (ϖ.field a)) Pl.R.B).toLinearMap y := fun y => by
     induction y using TensorProduct.induction_on with
     | zero => simp only [map_zero]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul v c =>
       have h1 : (Pl.PD (Formalism.MainNotions.ElementDenominator.qlExt l)).actB g (algebraMap _ Pl.R.B c) = algebraMap _ Pl.R.B c :=
         (Pl.PD_actB _ g _).trans (Pl.actQ_Kur _ ⟨c, c.2.2⟩ ⟨c, c.2.2⟩
@@ -292,16 +290,12 @@ theorem isGood_of_trivial (Pl : LocPrime l) {LL : FinExt l} (T : QLat LL) (hT : 
   simp only [Finset.prod_singleton, ZMod.val_zero, pow_zero, map_one, map_sub, Polynomial.aeval_X]
   exact sub_eq_zero.2 (key y)
 
+
 omit [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 variable (O K G l) in
-
 theorem finrank_unitLat : Module.finrank O ↥(unitLat G : LocLat G ℚ_[l] K O).L.T = 1 := by
   have : Nontrivial O := (algebraMap O K).domain_nontrivial
   exact (LinearEquiv.ofInjective (Algebra.linearMap O K) IsUnitBall.inj).finrank_eq.symm.trans
     (Module.finrank_self O)
-
-example {LL : FinExt l} [HasUnr a LL] [TameDescentExponentData ↥LL.1 l e a] :
-    (unitPack (a := a) ϖ 1 2 (unitLat (Gl l) : QLat LL) fun _ _ => rfl).n = 1 :=
-  finrank_unitLat l ↥(OL LL) ↥LL.1 (Gl l)
 
 end GlobalTheory.BKGal.UnitModel

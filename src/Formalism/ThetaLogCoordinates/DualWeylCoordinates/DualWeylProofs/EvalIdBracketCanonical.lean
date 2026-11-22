@@ -1,7 +1,11 @@
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.TransposeVariables
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.ABridge
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.BideterminantMem
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+module
+
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.TransposeVariables
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.ABridge
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.BideterminantMem
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+
+@[expose] public section
 
 open MvPolynomial
 

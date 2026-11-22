@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.ChartRange
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.ChartRange
+
+@[expose] public section
 
 namespace UpperTheory.Gal.KunnethLefschetz.G.PX
 
@@ -80,7 +84,7 @@ private theorem chart_quotient_X_nonZeroDivisor {A : Type} [CommRing A] {D : ℕ
     simpa [Θ, θ0, hZj] using h2
   have h4 : Θ g = 0 := by
     refine Polynomial.ext fun n => ?_
-    have := congrArg (fun q => Polynomial.coeff q (n + 1)) h3
+    have := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q (n + 1)) h3
     simpa [Polynomial.coeff_X_mul] using this
   have h5 := congrArg (fun F => F g) hΛ
   simp only [RingHom.comp_apply, h4, map_zero] at h5
@@ -120,7 +124,7 @@ theorem UpperTheory.Gal.KunnethLefschetz.G.PX.chartNzdAlg :
   have hΦJ : ∀ g ∈ J, Φ (MvPolynomial.map (algebraMap (MvPolynomial (Fin D) A) E) g) = 0 := by
     intro g hg
     rw [← key g]
-    simp only [Φ, AlgHom.comp_apply, AlgEquiv.toAlgHom_eq_coe, AlgEquiv.coe_algHom,
+    simp only [Φ, AlgHom.comp_apply, AlgEquiv.coe_toAlgHom,
       AlgEquiv.symm_apply_apply, Ideal.Quotient.mkₐ_eq_mk]
     rw [Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mem_map_of_mem _ hg),
       map_zero]

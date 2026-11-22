@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.LatticeInclusionRealSettingAlt
-import Formalism.LocalToGlobal.Divisibility.RowLat
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterAboveIff
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.LatticeInclusionRealSettingAlt
+public import Formalism.LocalToGlobal.Divisibility.RowLat
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterAboveIff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -100,8 +104,10 @@ def IsHecke (jK : F.K →* alg F.O N lam) (W : Type) [AddCommGroup W] [Module F.
   ∀ i (f : Forms F.O (A := alg F.O N lam) F.Γ jK W) (g : F.G), (((X i : F.T) • f : Forms F.O (A := alg F.O N lam) F.Γ jK W) : F.G → W) g =
     F.cst i • ∑ s ∈ F.tr i, (f : F.G → W) (g * s)
 
-def setting (jK : F.K →* alg F.O N lam) [Module F.T (Forms F.O (A := alg F.O N lam) F.Γ jK (NablaT F.O N lam))]
-    [IsScalarTower F.O F.T (Forms F.O (A := alg F.O N lam) F.Γ jK (NablaT F.O N lam))] (m : Ideal F.T) [m.IsPrime] : HidaSetting ι N lam where
+def setting (jK : F.K →* alg F.O N lam)
+    [mT : Module F.T (Forms F.O (A := alg F.O N lam) F.Γ jK (NablaT F.O N lam))]
+    [sT : @IsScalarTower F.O F.T (Forms F.O (A := alg F.O N lam) F.Γ jK (NablaT F.O N lam)) _ mT.toSMul _]
+    (m : Ideal F.T) [m.IsPrime] : HidaSetting ι N lam where
   O := F.O
   A := alg F.O N lam
   G := F.G
@@ -109,6 +115,8 @@ def setting (jK : F.K →* alg F.O N lam) [Module F.T (Forms F.O (A := alg F.O N
   K := F.K
   jK := jK
   T := F.T
+  mT := mT
+  sT := sT
   S := m.primeCompl
 
 def latN : AddSubgroup (NablaT (PadicAlgCl l) N lam) :=
@@ -173,10 +181,6 @@ theorem eq_one_of_occurs {L V J : Type} [Field L] [AddCommGroup V] [Module L V] 
   rw [e, smul_pow, one_pow, LinearMap.smul_apply, Module.End.one_apply, smul_eq_zero] at hk
   exact (sub_eq_zero.1 (eq_zero_of_pow_eq_zero (hk.resolve_right hv0))).symm
 
-theorem Reads.hasBlock_of_occurs {w : HeightOneSpectrum (𝓞 K)} (R : Reads F lam B w) (h0 : ∀ P, B.op (P, 0) = 1) {x : B.Pl × ℕ → K}
-    (hx : Formalism.L2.Col.Occurs B.op x) (hb : Formalism.L2.Col.HasBlocks B.n B.q B.t B.bl x) : R.HasBlock fun i => R.e0 (x (R.ix i)) :=
-  ⟨x, fun P => eq_one_of_occurs hx (h0 P), hb, fun _ => rfl⟩
-
 end Reading
 
 section Galois
@@ -191,8 +195,8 @@ def CrysWith [IsAlgClosure E Ω] {n : ℕ} (r : G E Ω →* GL (Fin n) (Qbar l))
       ∀ (τ : E →+* Qbar l) (LL' : FinExt l) (τ' : ↥Bw.Kw.1 →ₐ[ℚ_[l]] ↥LL'.1), IsInduced Bw τ τ' →
         IsJumpsAt P Bw (r.comp (Dec (F := E) A).subtype) τ (J τ)
 
-variable (E Ω l) in
 
+variable (E Ω l) in
 def BlockPair [IsAlgClosure E Ω] (n t : ℕ) (J : (E →+* Qbar l) → Fin n → ℤ) (bot : (E →+* Qbar l) → ℤ) : Prop :=
   ∃ (r : G E Ω →* GL (Fin n) (Qbar l)) (a : ℕ) (ρ : G E Ω →* GL (Fin a) (Qbar l)) (χ : Fin t → G E Ω →* (Qbar l)ˣ),
     a + t = n ∧ CrysWith r (fun τ => Finset.univ.val.map (J τ)) ∧ Continuous ρ ∧
@@ -207,16 +211,16 @@ def cj [IsCMField E] (τ : E →+* Qbar l) : E →+* Qbar l := τ.comp (IsCMFiel
 def IsHalf [IsCMField E] {ι : Type} (inc : ι → (E →+* Qbar l)) : Prop :=
   Function.Injective inc ∧ (∀ τ τ', cj (inc τ) ≠ inc τ') ∧ ∀ i, ∃ τ, i = inc τ ∨ i = cj (inc τ)
 
-variable (Ω) in
 
+variable (Ω) in
 def BlockFor [IsCMField E] [IsAlgClosure E Ω] {ι : Type} (inc : ι → (E →+* Qbar l)) (P : Par) (W : Wts ι) (mu : ι → ℕ → ℕ) : Prop :=
   ∃ (ep : (E →+* Qbar l) → (E →+* Qbar l)) (J : (E →+* Qbar l) → Fin P.Nr → ℤ) (bot : (E →+* Qbar l) → ℤ),
     (ep = id ∨ ep = cj) ∧ BlockPair E Ω l P.Nr P.t J bot ∧
     ∀ τ, (∀ a : Fin P.Nr, J (ep (inc τ)) a = Formalism.CohomologicalDescent.UnitNormBounds.UN P.Nr (mu τ) a ∧ J (ep (cj (inc τ))) a = (h0 P : ℤ) - Formalism.CohomologicalDescent.UnitNormBounds.UN P.Nr (mu τ) (Fin.rev a)) ∧
       bot (ep (inc τ)) = W.bot P τ ∧ bot (ep (cj (inc τ))) = (h0 P : ℤ) - (W.bot P τ + (P.t : ℤ) - 1)
 
-variable (E Ω l) in
 
+variable (E Ω l) in
 structure FrobNorm (Pl : Type) where
 
   lab : Pl → HeightOneSpectrum (𝓞 E)
@@ -239,8 +243,8 @@ def IsJumps [IsCMField E] {ι : Type} (inc : ι → (E →+* Qbar l)) (ep : (E �
 def sysOf {Pl I : Type} (n : ℕ) (pt : Pl → Fin n → I) (θ : I → Qbar l) (P : Pl) (k : ℕ) : Qbar l :=
   if h : 1 ≤ k ∧ k ≤ n then θ (pt P ⟨k - 1, by omega⟩) else 1
 
-variable (Ω) in
 
+variable (Ω) in
 def GalSide [IsCMField E] [IsAlgClosure E Ω] {ι : Type} [DecidableEq ι] (inc : ι → (E →+* Qbar l)) (P : Par) (W : Wts ι) (F : Frame l ι P.Nr)
     (Bk : (F.I → Qbar l) → Prop) : Prop :=
   ∃ (Pl : Type) (pt : Pl → Fin P.Nr → F.I) (Fn : FrobNorm E Ω l Pl) (ep : (E →+* Qbar l) → (E →+* Qbar l)), (ep = id ∨ ep = cj) ∧
@@ -282,7 +286,8 @@ theorem Reads.HasBlock.dvd {l : ℕ} [Fact l.Prime] {ι : Type} [DecidableEq ι]
     refine List.map_congr_left fun ν _ => ?_
     simp [blockPoly, Polynomial.map_prod]
   have e2 : (heckePoly B.n B.q x Q).map R.e0 = heckePolyOf B.n (B.q Q) (sysOf B.n pt θ P) := by
-    rw [heckePoly, heckePolyOf, heckePolyOf, Polynomial.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [heckePoly, heckePolyOf, heckePolyOf, Polynomial.map_sum]
     refine Finset.sum_congr rfl fun k hk => ?_
     have : R.e0 (x (Q, k)) = sysOf B.n pt θ P k := by
       rcases k with _ | k

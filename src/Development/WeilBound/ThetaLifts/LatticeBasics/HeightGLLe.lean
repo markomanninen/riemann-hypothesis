@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.OffOpenAlt
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.OffOpenAlt
+
+@[expose] public section
 
 noncomputable section
 

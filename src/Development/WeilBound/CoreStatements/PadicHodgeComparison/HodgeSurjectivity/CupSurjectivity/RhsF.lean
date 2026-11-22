@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.CastTRfl
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.T2a
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.GenPb
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.CastTRfl
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.T2a
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.GenPb
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -47,7 +51,8 @@ theorem eid (hC : CupLaws) (hS : Slant) (P : HTPre l K) {M : Model l K} (hM : M.
       ext C
       simp [th]
     rw [split, map_sub, sub_eq_zero, Dt.dec] at hk
-    simp only [map_add, map_sum, AddMonoidHom.add_apply, AddMonoidHom.finsetSum_apply] at hk
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, AddMonoidHom.add_apply, AddMonoidHom.finsetSum_apply] at hk
     have e1 : ∀ s, P.h Dt.S.P A (2 + 2 * d) (Dt.S.P.toV (2 + 2 * d) (Dt.ab₀ s)) (th hC Dt.S sl ψ (Dt.S.pl₁ a' n x)) =
         if h : 0 = n then kap hC P x φ' (Dt.a₀ s) * P.h M β n (M.toV n (castT h (Dt.b₀ s))) ψ else 0 :=
       fun s => t1 hC P hM Dt.S x hA φ' ψ sl hsl' (Dt.a₀ s) (Dt.b₀ s) (Dt.ab₀ s) (Dt.cup₀ s) rfl
@@ -65,9 +70,9 @@ theorem eid (hC : CupLaws) (hS : Slant) (P : HTPre l K) {M : Model l K} (hM : M.
     exact hk
   · have hk : ∀ {i : ℕ} (X : M.T i), kap hC P x φ' X = 0 := by
       intro i X
-      rw [kap, Fx, dif_neg (fun h => hlt (by omega)), map_zero, smul_zero]
+      rw [kap, Fx, dite_eq_right (fun h => hlt (by omega)), map_zero, smul_zero]
     have hg : Gx hC x ψ = 0 := by
-      rw [Gx, dif_neg (by omega)]
+      rw [Gx, dite_eq_right (by omega)]
     simp only [hk, hg, zero_mul, map_zero, mul_zero, dite_eq_ite, ite_self, Finset.sum_const_zero, add_zero]
 
 end CrystallineSemistableComparison.Onto

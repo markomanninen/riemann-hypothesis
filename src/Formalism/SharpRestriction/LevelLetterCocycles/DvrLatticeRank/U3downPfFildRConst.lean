@@ -1,7 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.UpPositionHypothesis
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.UnivLinkPfA
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U3upPfFilCAnti
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LemCStep
+public import Formalism.SharpRestriction.LevelLetterCocycles.ModelKStep
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.UnivLinkPfA
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U3upPfFilCAnti
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +40,7 @@ theorem u3downPf_series {LL : Type} [Field LL] (e e₁ P G A : PowerSeries LL) (
     · subst hk; simp
     · simp
   have hresc : rescale u A = C x₀ * rescale u (e ^ h) + X ^ (h + m) * (C (u ^ (h + m)) * rescale u D₁) := by
-    rw [hA', map_add, map_mul, map_mul, hRC, map_pow (rescale u) X (h + m), rescale_X, mul_pow]
+    rw [hA', map_add (f := _), map_mul, map_mul, hRC, map_pow (rescale u) X (h + m), rescale_X, mul_pow]
     simp only [map_pow]; ring
   have key : X ^ h * (C (u ^ h) * (rescale u e₁) ^ h * P * G) =
       X ^ h * (X ^ (h + m) * (e₁ ^ h * C (u ^ (h + m)) * rescale u D₁ - C (u ^ h) * (rescale u e₁) ^ h * D₁)) := by
@@ -241,7 +246,7 @@ theorem u3downPf_cc_π (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) :
   obtain ⟨E, hE0, -, hE⟩ := W.lev_π c ζ ⟨1, by simpa using hζ⟩
   have hζ1 : ζ ≠ 1 := hζ.ne_one PD.hp.one_lt
   have := congrArg PowerSeries.constantCoeff hE
-  rw [map_add, map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
+  rw [map_add (f := _), map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
   intro h0
   rw [h0, add_zero] at this
   exact hζ1 this.symm

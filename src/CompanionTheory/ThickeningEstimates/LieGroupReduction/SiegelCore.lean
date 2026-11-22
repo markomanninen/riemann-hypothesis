@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -48,9 +52,6 @@ def SiegelCore : Prop :=
             height σ J g ≤ C * height σ J (γ * g) ^ A) ∧
           ∀ φ : GAd σ J → ℂ, IsSmoothModerate σ J φ → IsCuspidal σ J φ →
             ∀ N : ℕ, ∃ C : ℝ, ∀ g ∈ siegelSet σ J X Y Ω c K, ‖φ g‖ * (height σ J g : ℝ) ^ N ≤ C
-
-theorem one_mem_minPar (X : Matrix (Fin n) (Fin r) E) : (1 : GAd σ J) ∈ minPar σ J X :=
-  ⟨1, Matrix.blockTriangular_one, by simp⟩
 
 end CompanionTheory.ThKR
 

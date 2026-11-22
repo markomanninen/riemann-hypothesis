@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantUniformizer
-import Formalism.SharpRestriction.LevelLetterCocycles.MapCompZero
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantUniformizer
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapCompZero
+
+@[expose] public section
 
 noncomputable section
 

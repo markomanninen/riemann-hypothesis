@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.TraceOneUnramified
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowUnitCondition
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.TraceOneUnramified
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowUnitCondition
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
 

@@ -1,6 +1,10 @@
-import Formalism.JumpKernelCokernel.LemmaDJoint
-import Formalism.JumpKernelCokernel.JumpShiftProofs.LenSplit
-import Formalism.JumpKernelCokernel.JumpShiftProofs.KerCoker
+module
+
+public import Formalism.JumpKernelCokernel.LemmaDJoint
+public import Formalism.JumpKernelCokernel.JumpShiftProofs.LenSplit
+public import Formalism.JumpKernelCokernel.JumpShiftProofs.KerCoker
+
+@[expose] public section
 
 namespace Formalism.KernelCokernelLengths.QuotientLengthJointLemmas
 

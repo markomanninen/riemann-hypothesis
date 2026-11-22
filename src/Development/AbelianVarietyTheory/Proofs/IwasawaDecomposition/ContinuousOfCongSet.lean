@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleCharacterTrivialOnLocalUnits
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdInfMulFinPart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqOfMapEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleCharacterTrivialOnLocalUnits
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdInfMulFinPart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqOfMapEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,13 +20,11 @@ namespace GlobalTheory.Mem.ReadEx
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F E) in
 
+variable (F E) in
 def toIdl : (AfE F E)ˣ →* Ideles E :=
   Units.map ((MonoidHom.inr (InfiniteAdeleRing E) (FiniteAdeleRing (𝓞 E) E)).comp
     (afIso F E : AfE F E →* FiniteAdeleRing (𝓞 E) E))
-
-theorem toIdl_fst (y : (AfE F E)ˣ) : (toIdl F E y : AdeleRing (𝓞 E) E).1 = 1 := rfl
 
 theorem toIdl_snd (y : (AfE F E)ˣ) : (toIdl F E y : AdeleRing (𝓞 E) E).2 = afIso F E y := rfl
 
@@ -120,7 +122,7 @@ theorem exists_reads {K : Type} [Field K] (σ : K →+* ℂ) (μ : Formalism.L2.
   · have h : μ (ratId F E k) = 1 := h1 ⟨k, rfl⟩
     rw [MonoidHom.comp_apply, MonoidHom.comp_apply, finAf_diag, h, map_one]
 
-theorem map_finPartI [IsTotallyComplex E] {ξ : HChar E} {n : ℕ} (hn : 0 < n) (h : ξ.OrderDvd n) (a : Ideles E) :
+theorem map_finPartI [_root_.NumberField.IsTotallyComplex E] {ξ : HChar E} {n : ℕ} (hn : 0 < n) (h : ξ.OrderDvd n) (a : Ideles E) :
     ξ.1 (finPartI E a) = ξ.1 a := by
   obtain ⟨y, hy⟩ := Determ.exists_prod_inf_mul_finPart a
   have key : ∀ (w : InfinitePlace E) (x : (w.Completion)ˣ), ξ.1 (infIdele E w x) = 1 := fun w x => by
@@ -154,14 +156,14 @@ theorem ker_of_reads {K : Type} [Field K] {σ : K →+* ℂ} {μ : Formalism.L2.
   rw [hy] at h1
   exact Units.ext (σ.injective (h1.symm.trans (map_one σ).symm))
 
-variable (F) in
 
+variable (F) in
 def evP (P : HeightOneSpectrum (𝓞 E)) : AfE F E →+* P.adicCompletion E where
   toFun z := afIso F E z P
   map_one' := by rw [map_one]; rfl
   map_mul' a b := by rw [map_mul]; rfl
   map_zero' := by rw [map_zero]; rfl
-  map_add' a b := by rw [map_add]; rfl
+  map_add' a b := by rw [map_add (f := _)]; rfl
 
 theorem le_exp_neg_one {γ : WithZero (Multiplicative ℤ)} (h : γ < 1) : γ ≤ WithZero.exp (-((1 : ℕ) : ℤ)) := by
   rcases eq_or_ne γ 0 with rfl | h0
@@ -255,8 +257,8 @@ theorem afIso_one_tmul {a : FiniteAdeleRing (𝓞 F) F} {k : F} {P : HeightOneSp
   rw [WithZero.exp_le_exp] at h2
   omega
 
-variable (F E) in
 
+variable (F E) in
 def finF : Ideles F →* (AfE F E)ˣ :=
   (idF F E).comp (Units.map (MonoidHom.snd (InfiniteAdeleRing F) (FiniteAdeleRing (𝓞 F) F)))
 

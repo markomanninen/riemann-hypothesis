@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.LenIdStatement
-import ReciprocityTheory.DualLattices.MemOfSumSingleEqZero
+module
+
+public import ReciprocityTheory.DualLattices.LenIdStatement
+public import ReciprocityTheory.DualLattices.MemOfSumSingleEqZero
+
+@[expose] public section
 
 noncomputable section
 

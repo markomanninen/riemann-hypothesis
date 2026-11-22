@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+
+@[expose] public section
 
 open CompanionTheory.Rg.FlB CompanionTheory.Rg.Fl
 
@@ -23,7 +27,8 @@ theorem form_isHerm (s : L →+* L) (J : Matrix (Fin n) (Fin n) L) (hs : ∀ x, 
   · have hJ' : ∀ i j, s (J i j) = J j i := fun i j => by
       have := congrFun (congrFun hJ j) i
       simpa [Matrix.transpose_apply, Matrix.map_apply] using this
-    simp only [form, dotProduct, Matrix.mulVec, Function.comp, map_sum, map_mul, hs, Finset.mul_sum, hJ']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [form, dotProduct, Matrix.mulVec, Function.comp, map_sum, map_mul, hs, Finset.mul_sum, hJ']
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     ring

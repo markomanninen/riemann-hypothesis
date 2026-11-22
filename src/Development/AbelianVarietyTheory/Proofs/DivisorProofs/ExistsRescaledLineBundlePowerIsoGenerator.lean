@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WchartCompLe
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WchartCompLe
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.EndLoc
@@ -103,8 +108,7 @@ theorem pull_g_val {X Y : Scheme.{0}} (L : LB X) (φ : Y ⟶ X) (i j : PUnit →
     ((L.pull φ).g i j).val = (Y.presheaf.map (homOfLE (fun y hy => ⟨Set.mem_iInter.1 hy.1 PUnit.unit,
       Set.mem_iInter.1 hy.2 PUnit.unit⟩ : (L.pull φ).U i ⊓ (L.pull φ).U j ≤
         φ ⁻¹ᵁ (L.U (i PUnit.unit) ⊓ L.U (j PUnit.unit)))).op).hom
-      ((φ.app _).hom (L.g (i PUnit.unit) (j PUnit.unit)).val) :=
-by
+      ((φ.app _).hom (L.g (i PUnit.unit) (j PUnit.unit)).val) := by
   show (∏ m : PUnit, (res (le_inf (inf_le_left.trans (LB.wchart_le L _ i m)) (inf_le_right.trans (LB.wchart_le L _ j m)))
     (pullU φ (L.U (i m) ⊓ L.U (j m)) (L.g (i m) (j m)))) ^ (1 : ℤ)).val = _
   rw [Fintype.prod_unique, zpow_one]
@@ -113,8 +117,7 @@ by
 theorem powPull_g_val {X Y : Scheme.{0}} (L : LB X) (φ : Y ⟶ X) (k : ℕ) (i j : Fin 1 → L.ι) :
     ((powPull L φ (k : ℤ)).g i j).val = ((Y.presheaf.map (homOfLE (fun y hy => ⟨Set.mem_iInter.1 hy.1 0,
       Set.mem_iInter.1 hy.2 0⟩ : (powPull L φ (k : ℤ)).U i ⊓ (powPull L φ (k : ℤ)).U j ≤
-        φ ⁻¹ᵁ (L.U (i 0) ⊓ L.U (j 0)))).op).hom ((φ.app _).hom (L.g (i 0) (j 0)).val)) ^ k :=
-by
+        φ ⁻¹ᵁ (L.U (i 0) ⊓ L.U (j 0)))).op).hom ((φ.app _).hom (L.g (i 0) (j 0)).val)) ^ k := by
   show (∏ m : Fin 1, (res (le_inf (inf_le_left.trans (LB.wchart_le L _ i m)) (inf_le_right.trans (LB.wchart_le L _ j m)))
     (pullU φ (L.U (i m) ⊓ L.U (j m)) (L.g (i m) (j m)))) ^ (k : ℤ)).val = _
   rw [Fin.prod_univ_one, zpow_natCast, Units.val_pow_eq_pow_val]

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TrivIsCr
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EcoefQNormLe
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TrivIsCr
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EcoefQNormLe
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc GlobalTheory.Pst GlobalTheory.BKLim GlobalTheory.Cong Matrix
 open scoped Formalism.Per NNReal
@@ -26,7 +30,7 @@ theorem padicInt_hom_ext_pt {l : ℕ} [Fact l.Prime] {R : Type} [CommRing R] [Ch
   have h : f x - g x = (f y - g y) * (l : WittVector l R) ^ n := by
     have hf := congrArg f hx
     have hg := congrArg g hx
-    simp only [map_add, map_mul, map_pow, map_natCast] at hf hg
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast] at hf hg
     rw [hf, hg]
     ring
   rw [SModEq.zero, h, smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow]
@@ -79,7 +83,8 @@ theorem map_sum_smul_pow {R S : Type} [CommRing R] [CommRing S] (h : R →+* S) 
     (a : ℕ → R) (x : R) (M : Matrix (Fin d) (Fin d) R) :
     (∑ n ∈ Finset.range d, (a n * x ^ n) • M ^ n).map h =
       ∑ n ∈ Finset.range d, (h (a n) * h x ^ n) • (M.map h) ^ n := by
-  rw [← RingHom.mapMatrix_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← RingHom.mapMatrix_apply, map_sum]
   refine Finset.sum_congr rfl fun n _ => ?_
   have e : h.mapMatrix ((a n * x ^ n) • M ^ n) = h (a n * x ^ n) • h.mapMatrix (M ^ n) := by
     ext i j; simp

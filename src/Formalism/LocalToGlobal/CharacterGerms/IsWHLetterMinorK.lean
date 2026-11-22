@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCInv
-import Formalism.LocalToGlobal.CharacterGerms.NormOneRowDegrees
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCInv
+public import Formalism.LocalToGlobal.CharacterGerms.NormOneRowDegrees
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem isWH_aeval {σ τ : Type} {w : τ → ℕ} {w' : σ → ℕ} (f : σ →
   have h2 : (∑ i ∈ m.support, m i • w' i) = D := by
     rw [← hp (mem_support_iff.1 hm), Finsupp.weight_apply]
     rfl
-  have h3 := (isWeightedHomogeneous_C w (coeff m p)).mul h1
+  have h3 := (isWeightedHomogeneous_C w (AddMonoidAlgebra.coeff p m)).mul h1
   rw [zero_add, h2] at h3
   exact h3
 
@@ -100,8 +104,8 @@ theorem num_mon (g0 : Fin 2) (t0 : ZMod d) (c0 : ℕ) (g : Fin 2) (e : ZMod d �
       | (intro k _; rw [if_neg (fun h => hg h.1)])
       | (intro t _; exact Finset.sum_eq_zero fun k _ => by rw [if_neg (fun h => hg h.2.2.1.1.symm), smul_zero])
 
-include std in
 
+include std in
 theorem blockPoly_isWeightedHomogeneous' (b : GlobalTheory d) (g0 : Fin 2) (t0 : ZMod d) (c0 : ℕ) :
     IsWeightedHomogeneous (wRowG X idx g0 t0 c0) (b.poly X F)
       (∑ k ∈ Finset.Icc (c0 + 1) (X.rkF g0 t0), b.wt X g0 t0 k) := by

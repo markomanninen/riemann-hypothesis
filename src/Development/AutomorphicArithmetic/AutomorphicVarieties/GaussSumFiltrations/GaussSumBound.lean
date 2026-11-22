@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPosGramQuadFormTotallyPositiveProperness
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPosGramQuadFormTotallyPositiveProperness
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
 
@@ -76,7 +81,7 @@ theorem prod_bound {T : Type} [Fintype T] {s : ℝ} (hs : 0 < s) (S : Finset (T 
     _ = ∏ t : T, ∑ n ∈ I, Real.exp (-s * (n : ℝ) ^ 2) :=
         (Finset.prod_univ_sum (fun _ => I) (fun _ n => Real.exp (-s * (n : ℝ) ^ 2))).symm
     _ ≤ ∏ t : T, (2 + 2 / s) :=
-        Finset.prod_le_prod (fun _ _ => Finset.sum_nonneg fun _ _ => by positivity) (fun _ _ => geo_bound hs I)
+        Finset.prod_le_prod₀ (fun _ _ => Finset.sum_nonneg fun _ _ => by positivity) (fun _ _ => geo_bound hs I)
     _ = (2 + 2 / s) ^ Fintype.card T := by simp
 
 section
@@ -146,7 +151,8 @@ theorem coord_bound : ∃ μ : ℝ, 0 < μ ∧ ∀ m : Module.Free.ChooseBasisIn
   set t : Module.Free.ChooseBasisIndex ℤ (𝓞 F) → ℝ := fun j => (m j : ℝ)
   have hx : mixedEmbedding F x = lb.equivFun.symm t := by
     rw [Module.Basis.equivFun_symm_apply]
-    simp only [x, t, lb, map_sum, map_zsmul, mixedEmbedding.latticeBasis_apply, Int.cast_smul_eq_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [x, t, lb, map_sum, map_zsmul, mixedEmbedding.latticeBasis_apply, Int.cast_smul_eq_zsmul]
   have hft : f (mixedEmbedding F x) = t := by
     rw [hx]; exact lb.equivFun.apply_symm_apply t
   have h1 : ‖t‖ ≤ ‖f‖ * ‖mixedEmbedding F x‖ := by
@@ -192,7 +198,8 @@ theorem exists_coord (a : F) (x : aL κ a) : ∃ m : κ × Module.Free.ChooseBas
   funext i
   have h1 : ∑ j, (RingOfIntegers.basis F).repr (o i) j • integralBasis F j = l i := by
     have h2 := congrArg (algebraMap (𝓞 F) F) ((RingOfIntegers.basis F).sum_repr (o i))
-    simp only [map_sum, map_zsmul] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul] at h2
     simp only [integralBasis_apply]
     exact h2
   simp only [h1]

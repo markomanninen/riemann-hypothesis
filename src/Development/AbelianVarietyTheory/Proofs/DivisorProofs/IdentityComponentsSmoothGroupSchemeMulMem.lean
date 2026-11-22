@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionComponentsPreimageOfIsPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulMemIdentityComponentOfRationalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionComponentsPreimageOfIsPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulMemIdentityComponentOfRationalStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj TopologicalSpace TensorProduct
 open scoped CategoryTheory.Obj
 
@@ -24,7 +29,6 @@ theorem mul_mem_of_field {S : Scheme.{0}} (G : Over S) [GrpObj G] (hG : Smooth G
     have hc : pullback.fst (𝟙 S) p = pullback.snd (𝟙 S) p ≫ p := by
       simpa using pullback.condition (f := 𝟙 S) (g := p)
     simp [G', F, hc]
-    exact pullback.lift_fst _ _ _
   have key := GlobalTheory.T.preimage_section_connectedComponentIn_of_isPullback G.left S G'.left (Spec (CommRingCat.of k)) G.hom G'.hom p
     (pullback.fst G.hom p) η[G].left η[G'].left hG (IsPullback.of_hasPullback G.hom p)
     (Over.w η[G]) (Over.w η[G']) hsec
@@ -39,11 +43,10 @@ theorem mul_mem_of_field {S : Scheme.{0}} (G : Over S) [GrpObj G] (hG : Smooth G
     show z ∈ connectedComponentIn (G'.hom ⁻¹' {G'.hom z}) ((η[G']).left (G'.hom z)) ↔ _
     rw [huniv, connectedComponentIn_univ, hpt (G'.hom z)]
   let u : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ F.obj (Over.mk p) :=
-    Over.homMk (pullback.lift (𝟙 _) (𝟙 _) (by simp)) (by simp [F]; exact pullback.lift_snd _ _ _)
+    Over.homMk (pullback.lift (𝟙 _) (𝟙 _) (by simp)) (by simp [F])
   have hgen : ∀ c : Over.mk p ⟶ G, (u ≫ F.map c).left ≫ pullback.fst G.hom p = c.left := by
     intro c
     simp [u, F]
-    erw [pullback.lift_fst, ← Category.assoc, pullback.lift_fst, Category.id_comp]
   have hpoint : ∀ (c : Over.mk p ⟶ G) (t : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ G'),
       t.left ≫ pullback.fst G.hom p = c.left →
         pullback.fst G.hom p (t.left (IsLocalRing.closedPoint k)) = c.left (IsLocalRing.closedPoint k) := by

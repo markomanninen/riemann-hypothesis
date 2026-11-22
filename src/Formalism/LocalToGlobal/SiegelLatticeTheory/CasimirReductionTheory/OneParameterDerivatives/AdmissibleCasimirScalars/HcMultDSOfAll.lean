@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
-import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
-import Formalism.SharpRestriction.CuspSpanNormBounds.ExpansionFromLemmaB
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
+public import Formalism.SharpRestriction.CuspSpanNormBounds.ExpansionFromLemmaB
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology
 open scoped InnerProductSpace

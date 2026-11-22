@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FromNAdd
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyModelHodgeRelayStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PtAfTypeMain
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.TestOrderSections
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.KernelMem
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ReducesAtOfWithE
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ExistsDualFamily
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.Typed
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsUnitOfVal
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ValCastSub
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FromNAdd
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyModelHodgeRelayStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PtAfTypeMain
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.TestOrderSections
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.KernelMem
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ReducesAtOfWithE
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ExistsDualFamily
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.Typed
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsUnitOfVal
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ValCastSub
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -33,7 +38,7 @@ theorem mem_spanOver {o Ω C : Type} [CommRing o] [Field Ω] [Field C] [Algebra 
 def smallSub {C : Type} [Field C] (v : Valuation C NNReal) (t : NNReal) {r : ℕ} {I : Type}
     (f : I → ((Fin r → C) →ₗ[C] C)) : AddSubgroup (Fin r → C) where
   carrier := {a | ∀ m, v (f m a) ≤ t}
-  add_mem' ha hb m := by rw [map_add]; exact v.map_add_le (ha m) (hb m)
+  add_mem' ha hb m := by rw [map_add (f := _)]; exact v.map_add_le (ha m) (hb m)
   zero_mem' m := by simp
   neg_mem' ha m := by rw [map_neg, Valuation.map_neg]; exact ha m
 
@@ -140,7 +145,7 @@ theorem PositivityTheory.Xgn.test_group_point_exists : GlobalTheory.CompanionThe
   have hWl : ∀ a ∈ ((chartD e b pq sc w P i).bc RC).W τ, algebraMap O C w • a ∈ ((chartD e b pq sc w P i).bc RC).lie τ :=
     fun a ha => spanOver_ind RC _ (divLat (algebraMap O C w) (((chartD e b pq sc w P i).bc RC).lie τ))
       (fun t ht a ha => by
-        simp only [divLat, AddSubgroup.mem_comap, DistribMulAction.toAddMonoidHom_apply] at ha ⊢
+        simp only [divLat, AddSubgroup.mem_comap, DistribSMul.toAddMonoidHom_apply] at ha ⊢
         rw [smul_comm]
         exact smul_mem_spanOver RC _ ht ha)
       (fun a ha => by
@@ -152,7 +157,7 @@ theorem PositivityTheory.Xgn.test_group_point_exists : GlobalTheory.CompanionThe
           change _ = algebraMap Ω C (algebraMap O Ω w * a k)
           rw [map_mul, hOC']
           rfl
-        simp only [divLat, AddSubgroup.mem_comap, DistribMulAction.toAddMonoidHom_apply]
+        simp only [divLat, AddSubgroup.mem_comap, DistribSMul.toAddMonoidHom_apply]
         rw [e]
         exact h2) ha
   have heig : ∀ t a k, 𝔐.ρ a (b t k) = 𝔐.emb t a • b t k := fun t a k => by

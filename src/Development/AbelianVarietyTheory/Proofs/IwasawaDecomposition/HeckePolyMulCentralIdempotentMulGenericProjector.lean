@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvRoots
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCentralGroupAlgebraIdempotentUniversal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupEigenspaceEqTopOfAeval
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvRoots
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCentralGroupAlgebraIdempotentUniversal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupEigenspaceEqTopOfAeval
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting GlobalTheory.HeightCounting.FormsStep NumberField IsDedekindDomain Polynomial
 open scoped TensorProduct
 
@@ -27,15 +32,15 @@ def actLHom (j : ℕ) : G0g D.nd →* Module.End D.what₂.LL (S.WL j) where
 
 def actAlg (j : ℕ) : MonoidAlgebra ↥D.LL0 (G0g D.nd) →+* Module.End D.what₂.LL (S.WL j) :=
   (MonoidAlgebra.lift D.what₂.LL (Module.End D.what₂.LL (S.WL j)) (G0g D.nd) (actLHom D S j)).toRingHom.comp
-    (MonoidAlgebra.mapRangeRingHom (G0g D.nd) (algebraMap ↥D.LL0 D.what₂.LL))
+    (MonoidAlgebra.mapRingHom (G0g D.nd) (algebraMap ↥D.LL0 D.what₂.LL))
 
 theorem actAlg_of (j : ℕ) (g : G0g D.nd) : actAlg D S j (MonoidAlgebra.of _ _ g) = actL D S j g := by
-  simp [actAlg, MonoidAlgebra.mapRangeRingHom, MonoidAlgebra.of_apply, actLHom]
+  simp [actAlg, MonoidAlgebra.of_apply, actLHom]
 
 theorem actAlg_eL (j : ℕ) : actAlg D S j (eL D) = eLop D S j := by
   letI := Fintype.ofFinite (G0g D.nd)
   rw [eLop, finsum_eq_sum_of_fintype]
-  simp [actAlg, eL, MonoidAlgebra.mapRangeRingHom, MonoidAlgebra.lift_apply, actLHom]
+  simp [actAlg, eL, MonoidAlgebra.lift_apply, actLHom]
   rw [Finsupp.sum_fintype _ (fun a (b : D.what₂.LL) => b • actL D S j a) (fun _ => zero_smul _ _)]
   refine Finset.sum_congr rfl fun g _ => ?_
   congr 1

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.X
 
@@ -87,7 +91,7 @@ theorem UpperTheory.V.X.urIndex :
     have h := hm' ⟨j, hj⟩
     simp only [cI, MonoidHom.comp_apply, Subgroup.coe_subtype] at h
     rw [sub_eq_iff_eq_add] at h
-    rw [h, map_add]
+    rw [h, map_add (f := _)]
     abel
   · rintro ⟨m, hm⟩
     exact ⟨m, fun j hj => hm j (hNI hj)⟩

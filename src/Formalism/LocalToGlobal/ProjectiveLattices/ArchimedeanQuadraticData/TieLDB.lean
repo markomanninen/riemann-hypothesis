@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.L2.Pj.QAt.TieLDB
 
@@ -77,8 +81,9 @@ noncomputable def locMap :
 theorem locMap_mk (h : H) :
     locMap p H G (Submodule.Quotient.mk h) = Submodule.Quotient.mk (inc p H h) := rfl
 
-theorem isLocalizedModule : IsLocalizedModule p.primeCompl (locMap p H G) where
-  map_units s := by
+theorem isLocalizedModule : IsLocalizedModule p.primeCompl (locMap p H G) := by
+  constructor
+  · intro s
     rw [Module.End.isUnit_iff]
     have hu := IsLocalization.map_units (Localization.AtPrime p) s
     constructor
@@ -92,13 +97,13 @@ theorem isLocalizedModule : IsLocalizedModule p.primeCompl (locMap p H G) where
       rw [Module.algebraMap_end_apply, ← algebraMap_smul (Localization.AtPrime p) (s : A)]
       change hu.unit • hu.unit⁻¹ • z = z
       rw [smul_inv_smul]
-  surj y := by
+  · intro y
     obtain ⟨⟨x, hx⟩, rfl⟩ := Submodule.Quotient.mk_surjective _ y
     obtain ⟨s, hs, hsx⟩ := exists_smul_mem p H hx
     refine ⟨(Submodule.Quotient.mk ⟨s • x, hsx⟩, ⟨s, hs⟩), ?_⟩
     rw [locMap_mk]
     rfl
-  exists_of_eq {x₁ x₂} h := by
+  · intro x₁ x₂ h
     obtain ⟨h1, rfl⟩ := Submodule.Quotient.mk_surjective _ x₁
     obtain ⟨h2, rfl⟩ := Submodule.Quotient.mk_surjective _ x₂
     rw [locMap_mk, locMap_mk, Submodule.Quotient.eq] at h

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory.NormCoprime
@@ -23,24 +28,9 @@ theorem coprime_absNorm_of_sup {K : Type} [Field K] [NumberField K] (p : ℕ) (h
     have e0 : y = i * y + t * (((p : ℕ) : 𝓞 K) * y) := by linear_combination (-(y)) * hir
     have e : Ideal.Quotient.mk I y = Ideal.Quotient.mk I i * Ideal.Quotient.mk I y +
         Ideal.Quotient.mk I t * ((p : ℕ) • Ideal.Quotient.mk I y) := by
-      rw [nsmul_eq_mul, ← map_natCast (Ideal.Quotient.mk I) p, ← map_mul, ← map_mul, ← map_mul, ← map_add, ← e0]
+      rw [nsmul_eq_mul, ← map_natCast (Ideal.Quotient.mk I) p, ← map_mul, ← map_mul, ← map_mul, ← map_add (f := _), ← e0]
     rw [e, hpx, mul_zero, add_zero, hq, zero_mul]
   rw [hx0, addOrderOf_zero] at hx
   exact hp.one_lt.ne hx
-
-theorem exists_coprime_mem : ∀ (K : Type) [Field K] [NumberField K] (c : Ideal (𝓞 K)) (l : ℕ), l.Prime → c ≠ ⊥ →
-    (∀ v : HeightOneSpectrum (𝓞 K), v.asIdeal ∣ c → (l : 𝓞 K) ∉ v.asIdeal) → ∃ m : ℕ, m.Coprime l ∧ (m : 𝓞 K) ∈ c := by
-  intro K _ _ c l hl hc hv
-  refine ⟨Ideal.absNorm c, ?_, Ideal.absNorm_mem c⟩
-  refine coprime_absNorm_of_sup l hl hc ?_
-  by_contra hne
-  obtain ⟨M, hM, hle⟩ := Ideal.exists_le_maximal _ hne
-  have hlM : ((l : ℕ) : 𝓞 K) ∈ M := hle (Ideal.mem_sup_right (Ideal.mem_span_singleton_self _))
-  have hcM : c ≤ M := le_trans le_sup_left hle
-  have hM0 : M ≠ ⊥ := by
-    intro h0
-    rw [h0, Ideal.mem_bot] at hlM
-    exact hl.ne_zero (by exact_mod_cast hlM)
-  exact hv ⟨M, hM.isPrime, hM0⟩ (Ideal.dvd_iff_le.mpr hcM) hlM
 
 end GlobalTheory.NormCoprime

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapCompStalkAlg
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapCompStalkAlg
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -33,14 +38,14 @@ theorem exists_restrict_der {k A K R : Type} [CommRing k] [CommRing A] [CommRing
   choose δ0 hδ0 using hmem
   let δ : Derivation k A A :=
     { toFun := δ0
-      map_add' := fun a b => hφ (by simp only [hδ0, map_add])
+      map_add' := fun a b => hφ (by simp only [hδ0, map_add (f := _)])
       map_smul' := fun c a => hφ (by
         simp only [RingHom.id_apply, Algebra.smul_def, map_mul, hk, hδ0]
         rw [← Algebra.smul_def, D.map_smul, Algebra.smul_def])
       map_one_eq_zero' := hφ (by show φ (δ0 1) = φ 0; rw [hδ0, map_one, Derivation.map_one_eq_zero, map_zero])
       leibniz' := fun a b => hφ (by
         show φ (δ0 (a * b)) = φ (a • δ0 b + b • δ0 a)
-        simp only [hδ0, map_mul, map_add, smul_eq_mul, Derivation.leibniz]) }
+        simp only [hδ0, map_mul, map_add (f := _), smul_eq_mul, Derivation.leibniz]) }
   refine ⟨δ, fun a => (hδ0 a).symm, fun r => hφ ?_⟩
   show φ (δ0 (h r)) = _
   rw [hδ0, hD]

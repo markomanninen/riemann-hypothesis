@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RrgCountableField
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.FoldBound
-import Formalism.PeriodIntegrals.SymDist
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RrgCountableField
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.FoldBound
+public import Formalism.PeriodIntegrals.SymDist
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,23 +59,9 @@ def LatCount : Prop :=
       (S.card : ℝ) ≤ (3 * Real.sqrt (I.n : ℝ) / (tau1 I x * tau1 I y)) ^ (2 * I.n ^ 2 * I.f) *
         Real.exp (2 * (I.n : ℝ) ^ 2 * ∑ v, r v)
 
-def Om (r : InfinitePlace I.F → ℝ) (K' : Set I.Gf) : Set I.GA :=
-  {ω | (∀ v, PI.symD (I.ε v) (ω.1 v) ≤ r v) ∧ ω.2 ∈ K'}
-
-def COm (r : InfinitePlace I.F → ℝ) : ℝ :=
-  (3 * Real.sqrt (I.n : ℝ)) ^ (2 * I.n ^ 2 * I.f) * Real.exp (4 * (I.n : ℝ) ^ 2 * ∑ v, r v)
-
-def MultBound : Prop :=
-  ∀ r : InfinitePlace I.F → ℝ, (∀ v, 0 ≤ r v) → ∀ K' : Subgroup I.Gf, (K' : Set I.Gf) ⊆ I.Kset →
-    ∀ x : I.GA, 0 < tau1 I x →
-      Formalism.L2.SG.FoldBound.mult (Formalism.MainNotions.LeviCoordinates.rr_GF I) (Om I r (K' : Set I.Gf)) x ≤
-        ENNReal.ofReal (COm I r / tau1 I x ^ (4 * I.n ^ 2 * I.f))
-
 end Lat
 
 def LatCountAll : Prop := ∀ I : Formalism.MainNotions.S.AutInst, LatCount I
-
-def MultFromLat : Prop := PI.SymDist → ∀ I : Formalism.MainNotions.S.AutInst, LatCount I → MultBound I
 
 end PI.LatCountG
 

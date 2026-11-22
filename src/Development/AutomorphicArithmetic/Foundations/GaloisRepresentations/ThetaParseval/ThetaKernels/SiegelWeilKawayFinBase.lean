@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.FinBase
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopPlumb
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.FinBase
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopPlumb
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -73,9 +77,9 @@ theorem gram_inf_fin_k {X Z : Mx F E d.m d.n} (hX : finOne F • X = 0) (hZ : eI
   rw [eZ, _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.gram_smul_right_k, ← _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.gram_smul_left_k, hX]
   simp [_root_.PositivityTheory.SiegelWeilFormula.SD_k.gram]
 theorem tt_add_k (M M' : Mx F E d.n d.n) : d.tt (M + M') = d.tt M + d.tt M' := by
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.tt, Matrix.trace_add, map_add]
+  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.tt, Matrix.trace_add, map_add (f := _)]
 theorem crd_add_k (X Z : Mx F E d.m d.n) (k) : d.crd (X + Z) k = d.crd X k + d.crd Z k := by
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.crd, Matrix.add_apply, map_add, Finsupp.add_apply]
+  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.crd, Matrix.add_apply, map_add (f := _), Finsupp.add_apply]
 theorem crd_smul_k (c : AF F) (X : Mx F E d.m d.n) (k) : d.crd (c • X) k = c * d.crd X k := by
   simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.crd, Matrix.smul_apply, map_smul, Finsupp.smul_apply, smul_eq_mul]
 theorem cmb_crd_k (X : Mx F E d.m d.n) : d.cmb (d.crd X) = X := by
@@ -126,8 +130,9 @@ theorem step_comp_k {x x' : d.G} {A A' B B' : (Mx F E d.m d.n → ℂ) → Mx F 
     (h : _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.StepF_k d x A B) (h' : _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.StepF_k d x' A' B') : _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.StepF_k d (x * x') (A ∘ A') (B ∘ B') := by
   refine ⟨fun f hf => h.1 _ (h'.1 f hf), fun G hG => ⟨(h.2 _ (h'.2 G hG).1).1, fun f hf Φ hΦ hT => ?_⟩⟩
   have e1 := (h'.2 G hG).2 f hf Φ hΦ hT
-  have e2 := (h.2 (B' G) (h'.2 G hG).1).2 (A' f) (h'.1 f hf) (d.om x' Φ) (d.om_sch x' Φ hΦ) e1
-  rw [map_mul, Module.End.mul_apply]
+  have hΦ' : d.om x' Φ ∈ d.sch := d.ok.dbl.weil.2.1.pres x' Φ hΦ
+  have e2 := (h.2 (B' G) (h'.2 G hG).1).2 (A' f) (h'.1 f hf) (d.om x' Φ) hΦ' e1
+  rw [map_mul, mul_apply_eq_comp]
   exact e2
 theorem key_split_k {f G A' B' : Mx F E d.m d.n → ℂ} (hf : _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.InvFin_k d f) (hA : _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.InvFin_k d A') (hG : _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.InvInf_k d G)
     (hB : _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.InvInf_k d B') (h : ∀ X, f X * G X = A' X * B' X) : ∀ X Y, f X * G Y = A' X * B' Y := by
@@ -162,20 +167,28 @@ theorem step_conj_k (hT : _root_.PositivityTheory.SiegelWeilFormula.TAll_k) {x�
       rfl
   · have e := (hc.2 G hG).2 f hf Φ hΦ hTΦ
     have e0 := (h0.2 G hG).2 f hf Φ hΦ hTΦ
-    rw [h1, map_one, Module.End.one_apply, hTΦ] at e0
+    rw [h1, map_one, one_apply_eq_self, hTΦ] at e0
     have key := _root_.PositivityTheory.SiegelWeilFormula.KAway.SDf.key_split_k d hf (h0.1 f hf) hG (h0.2 G hG).1 (fun X => congrFun e0 X)
     by_cases hz : (∀ X, f X = 0) ∨ ∀ X, G X = 0
-    · have hΦ0 : Φ = 0 := d.T_inj hT Φ hΦ (by
+    · have hΦ0 : Φ = 0 := (hT.1 F E σ d).2.2 Φ hΦ (by
         rw [hTΦ]
         funext X
         rcases hz with hz | hz <;> simp [hz])
       subst hΦ0
-      rw [map_zero, d.T_zero]
+      have hT0 : d.T 0 = 0 := by
+        funext X
+        have hschr : ∀ p : (d.κ → AF F) × (d.κ → AF F), schr d.B.ψ p (0 : d.Fn) = 0 := by
+          intro p
+          funext x
+          simp [schr]
+        simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.T, Darboux.rho, hschr,
+          map_zero, Pi.zero_apply]
+      rw [map_zero, hT0]
       funext X
       rcases hz with hz | hz
       · simp [hz]
       · have hn : ¬ ∃ X₀, G X₀ ≠ 0 ∧ B₁ (B₂ G) X₀ ≠ 0 := fun ⟨X₀, h, _⟩ => h (hz X₀)
-        simp [dif_neg hn]
+        simp [dite_eq_right hn]
     · push Not at hz
       obtain ⟨⟨u₀, hu₀⟩, ⟨X₁, hX₁⟩⟩ := hz
       have hex : ∃ X₀, G X₀ ≠ 0 ∧ B₁ (B₂ G) X₀ ≠ 0 := by
@@ -193,7 +206,7 @@ theorem step_conj_k (hT : _root_.PositivityTheory.SiegelWeilFormula.TAll_k) {x�
         linear_combination -this
       rw [e]
       funext X
-      simp only [Function.comp_apply, id_eq, dif_pos hex, Pi.smul_apply, smul_eq_mul, hA]
+      simp only [Function.comp_apply, id_eq, dite_eq_left hex, Pi.smul_apply, smul_eq_mul, hA]
       ring
 end SDf
 end PositivityTheory.SiegelWeilFormula.KAway

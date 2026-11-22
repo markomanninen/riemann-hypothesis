@@ -1,6 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.FlagPivot
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPlueckerRatioTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.FlagPivot
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.FlagLine
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

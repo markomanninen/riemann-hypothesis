@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.MembershipOfSum
 
@@ -19,7 +23,8 @@ theorem mem_of_sum_mem {k : Type} [Field k] {H : Type 1} [AddCommGroup H] [Modul
         have e : ∑ l ∈ insert j S, (χ l c - χ j c) • u l =
             ρ c (∑ l ∈ insert j S, u l) - χ j c • ∑ l ∈ insert j S, u l
               - ∑ l ∈ insert j S, (ρ c (u l) - χ l c • u l) := by
-          rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
           refine Finset.sum_congr rfl fun l _ => ?_
           rw [sub_smul]; abel
         rw [e]

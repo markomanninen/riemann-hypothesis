@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.SumIndL
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.SumIndL
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem row_inl (b : Fin (r + 1)) :
         ∑ a, (g.q : F)⁻¹ * (g.e (Zh b a)).2 * (g.e (c (Sum.inr a) : E)).2 +
           (if b = Fin.last r then (g.q : F)⁻¹ * T * (g.e (c (Sum.inr (Fin.last r)) : E)).2 -
             T * (g.e (c (Sum.inl (Fin.last r)) : E)).2 else 0)) := by
-  rw [map_sum, Fintype.sum_sum_type]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Fintype.sum_sum_type]
   simp only [map_mul, e_gram]
   refine Prod.ext ?_ ?_
   · simp only [Prod.fst_add, Prod.fst_sum, Prod.fst_mul]
@@ -69,7 +74,8 @@ theorem row_inr (b : Fin (r + 1)) :
             (g.q : F)⁻¹ * (g.q : F)⁻¹ * (-(g.e (Zh b a)).2 - (g.e (Zh a b)).1) * (g.e (c (Sum.inr a) : E)).2) +
           (if b = Fin.last r then (g.q : F)⁻¹ * T * (g.e (c (Sum.inl (Fin.last r)) : E)).2 -
             (g.q : F)⁻¹ * (g.q : F)⁻¹ * (T + T') * (g.e (c (Sum.inr (Fin.last r)) : E)).2 else 0)) := by
-  rw [map_sum, Fintype.sum_sum_type]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Fintype.sum_sum_type]
   simp only [map_mul, e_gram]
   refine Prod.ext ?_ ?_
   · simp only [Prod.fst_add, Prod.fst_sum, Prod.fst_mul]

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPairValueLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormGroupTestFunctionSupportBoundedDenominators
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RootFlatPushforwardGeoFun
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSumsVanishOfTrivialFlags
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntOfDenLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDenBdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPairValueLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormGroupTestFunctionSupportBoundedDenominators
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RootFlatPushforwardGeoFun
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSumsVanishOfTrivialFlags
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntOfDenLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDenBdd
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount
 open scoped TensorProduct Classical
 
@@ -76,7 +81,7 @@ theorem isTest_indicator_comm (G : HTGroup p) (K' : Subgroup (Gr G 1))
         rw [e]; exact K'.mul_mem (K'.mul_mem hk h) (K'.inv_mem hk))
       simp [Set.indicator_apply, hg, h']
   · set K₀ := KHT p G.m G.n 1 G.Fw
-    haveI : (K₀.subgroupOf K').FiniteIndex := ⟨hK.2⟩
+    haveI : (K₀.subgroupOf K').FiniteIndex := Subgroup.isFiniteRelIndex_iff_finiteIndex.mp hK.2
     haveI : Finite (K' ⧸ K₀.subgroupOf K') := Subgroup.finite_quotient_of_finiteIndex
     haveI : Fintype (K' ⧸ K₀.subgroupOf K') := Fintype.ofFinite _
     refine ⟨Finset.univ.image fun q : K' ⧸ K₀.subgroupOf K' => ((Quotient.out q : K') : Gr G 1), fun g hg => ?_⟩

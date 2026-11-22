@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.InstLCSL
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Unimodular
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.InstLCSL
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Unimodular
+
+@[expose] public section
 
 noncomputable section
 

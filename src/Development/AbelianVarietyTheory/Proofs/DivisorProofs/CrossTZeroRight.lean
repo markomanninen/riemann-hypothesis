@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageCochainExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaOfUnitOnEtalePoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageCochainExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaOfUnitOnEtalePoints
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex
@@ -106,7 +110,8 @@ variable {I J K : Cx R} (μ : Pair I J K) {n m k : ℤ} (hk : n + m = k) (α : C
 def crossVal (a b : ℕ) (s : ℤ) (h : -((a + b : ℕ) : ℤ) + k = s) (U : Scheme.{0}) (y : BSx (twX E V) a b U) :
     Sec (K.X s) U :=
   (m * (a : ℤ)).negOnePow • μ.mul U (-(a : ℤ) + n) (-(b : ℤ) + m) s (by push_cast at h; omega)
-    (ev α a _ rfl U (baseS V y)) (ev z b _ rfl U (vertS V ℓ y))
+    (_root_.GlobalTheory.EtC.ev (R := R) α a _ rfl U (baseS V y))
+    (_root_.GlobalTheory.EtC.ev (R := R) z b _ rfl U (vertS V ℓ y))
 
 theorem crossVal_res (a b : ℕ) (s : ℤ) (h : -((a + b : ℕ) : ℤ) + k = s) {W U : Scheme.{0}} (g : W ⟶ U)
     (y : BSx (twX E V) a b U) :
@@ -120,7 +125,8 @@ def crossT : Cochain (totChains R (twX E V)) K k :=
 theorem evT_crossT (a b : ℕ) (s : ℤ) (h : -((a + b : ℕ) : ℤ) + k = s) (U : Scheme.{0}) (y : BSx (twX E V) a b U) :
     evT (crossT V ℓ μ hk α z) a b s h U y =
       (m * (a : ℤ)).negOnePow • μ.mul U (-(a : ℤ) + n) (-(b : ℤ) + m) s (by push_cast at h; omega)
-        (ev α a _ rfl U (baseS V y)) (ev z b _ rfl U (vertS V ℓ y)) :=
+        (_root_.GlobalTheory.EtC.ev (R := R) α a _ rfl U (baseS V y))
+        (_root_.GlobalTheory.EtC.ev (R := R) z b _ rfl U (vertS V ℓ y)) :=
   (evT_exists (crossVal V ℓ μ hk α z) (fun a b s h W U g y => crossVal_res V ℓ μ hk α z a b s h g y)).choose_spec a b s h U y
 
 theorem evT_add {X : SimplicialObject Spc} {L : Cx R} {t : ℤ} (γ γ' : Cochain (totChains R X) L t) (a b : ℕ) (s : ℤ)
@@ -133,7 +139,7 @@ theorem evT_add {X : SimplicialObject Spc} {L : Cx R} {t : ℤ} (γ γ' : Cochai
 theorem crossT_add_left (α' : Cochain ((chains R).obj E) I n) :
     crossT V ℓ μ hk (α + α') z = crossT V ℓ μ hk α z + crossT V ℓ μ hk α' z :=
   evT_ext _ _ fun a b s h U y => by
-    rw [evT_add, evT_crossT, evT_crossT, evT_crossT, ev_add, map_add, LinearMap.add_apply, smul_add]
+    rw [evT_add, evT_crossT, evT_crossT, evT_crossT, ev_add, map_add (f := _), LinearMap.add_apply, smul_add]
 
 theorem evT_zero {X : SimplicialObject Spc} {L : Cx R} {t : ℤ} (a b : ℕ) (s : ℤ)
     (h : -((a + b : ℕ) : ℤ) + t = s) (U : Scheme.{0}) (y : BSx X a b U) :

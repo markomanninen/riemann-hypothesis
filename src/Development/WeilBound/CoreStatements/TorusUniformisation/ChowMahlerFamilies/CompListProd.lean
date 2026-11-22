@@ -1,12 +1,16 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLieBc
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartJetTrD
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdLB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLieBc
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartJetTrD
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdLB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+
+@[expose] public section
 
 noncomputable section
 namespace PositivityTheory.Xgn.GermSystem.Bc
@@ -113,7 +117,8 @@ theorem basis_bc {n : ℕ} {tg : Fin n → (Sp (DualNumber S) ⟶ t.G.left)} (ht
   obtain ⟨hli', hsp'⟩ := hbs t.semi.smooth n (Module.Basis.mk hli hsp)
   simp only [Module.Basis.mk_apply] at hli' hsp'
   have htg' : (fun i => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ tg i) = fun l => (M'.pt (j (b l))).left :=
-    funext fun l => by rw [hj, htg]
+    funext fun l => by
+      rw [hj, htg]
   obtain ⟨v, hv⟩ := M'.onto (Over.homMk w hw.1) hw.2
   have hvw : (M'.pt v).left = w := by rw [hv]; rfl
   let B := Module.Basis.mk hli' hsp'.ge
@@ -144,7 +149,16 @@ theorem sq_subst {κ κ' : Type} (m : ℕ) (φ : κ → MvPolynomial κ' S) (φ'
     (h : ∀ i, φ' i = MvPolynomial.map f (φ i)) :
     homAt (spMap f ≫ x) (jetSubstP m φ') ≫ cO f x κ m = cO f x κ' m ≫ homAt x (jetSubstP m φ) := by
   obtain rfl : φ' = _ := funext h
-  exact sq_of f x _ _ (jetCoef_substP f m φ)
+  apply sq_of
+  apply Ideal.Quotient.ringHom_ext
+  apply MvPolynomial.ringHom_ext
+  · intro r
+    simp only [RingHom.coe_comp, Function.comp_apply, AlgHom.coe_toRingHom, jetSubstP,
+      jetMap_mk, MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq, jetCoef_mk, MvPolynomial.map_C]
+  · intro i
+    simp only [RingHom.coe_comp, Function.comp_apply, AlgHom.coe_toRingHom, jetSubstP,
+      jetMap_mk, MvPolynomial.aeval_X, jetCoef_mk, MvPolynomial.map_X]
+    rw [map_sub (MvPolynomial.map f), MvPolynomial.map_C, MvPolynomial.constantCoeff_map]
 
 variable {d : ℕ} (y : ∀ m, jOG x d m 1 ⟶ t.G)
 
@@ -157,8 +171,10 @@ theorem jpt_bc {n : ℕ} (m : ℕ) (i : Fin n) :
 theorem chart_bc {F : Fin d → MvPowerSeries (Fin 2 × Fin d) S} {act : 𝓞 E → Fin d → MvPowerSeries (Fin 1 × Fin d) S}
     {tg : Fin d → (Sp (DualNumber S) ⟶ t.G.left)} (h : IsChartG t x d F act tg (fun l j => if l = j then 1 else 0) y) :
     IsChartG t (spMap f ≫ x) d (fun i => MvPowerSeries.map f (F i)) (fun a i => MvPowerSeries.map f (act a i))
-      (fun l => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ tg l) (fun l j => if l = j then 1 else 0) (yBC t f x y) where
-  zero m := by
+      (fun l => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ tg l) (fun l j => if l = j then 1 else 0) (yBC t f x y) := by
+  refine { zero := ?zero, trunc := ?trunc, law := ?law, act := ?act, tan := ?tan, basis := ?basis }
+  case zero =>
+    intro m
     let ρ : overAt (spMap f ≫ x) S₂ ⟶ overAt x S := Over.homMk (spMap f) (by
       change spMap _ ≫ spMap _ ≫ x = spMap _ ≫ spMap f ≫ x
       rw [spMap_alg_self, spMap_alg_self, Category.id_comp, Category.id_comp])
@@ -168,15 +184,19 @@ theorem chart_bc {F : Fin d → MvPowerSeries (Fin 2 × Fin d) S} {act : 𝓞 E 
       change spMap _ ≫ spMap _ = spMap _ ≫ spMap _
       rw [spMap_cp, spMap_cp, jetCoef_aug]
     rw [yBC, ← Category.assoc, e, Category.assoc, h.zero, MonObj.comp_one]
-  trunc m := by
+  case trunc =>
+    intro m
     rw [yBC, yBC, ← Category.assoc, sq_of f x _ _ (jetCoef_trunc f _ m).symm, Category.assoc, h.trunc]
-  law m := by
+  case law =>
+    intro m
     rw [jpt_bc, jpt_bc, ← MonObj.comp_mul, ← h.law, yBC, ← Category.assoc,
       sq_subst f x m (fun p : Fin 1 × Fin d => psTrunc m (F p.2)) _ (fun i => psTrunc_map f m _), Category.assoc]
-  act m a := by
+  case act =>
+    intro m a
     rw [yBC, Category.assoc, h.act, ← Category.assoc (homAt _ _),
       sq_subst f x m (fun p : Fin 1 × Fin d => psTrunc m (act a p.2)) _ (fun i => psTrunc_map f m _), Category.assoc]
-  tan l := by
+  case tan =>
+    intro l
     have := comb_bc t f x (h.tan l)
     convert this using 2 with j j
     · change spMap _ ≫ spMap _ ≫ (y 1).left = spMap _ ≫ spMap _ ≫ (y 1).left
@@ -196,7 +216,9 @@ theorem chart_bc {F : Fin d → MvPowerSeries (Fin 2 × Fin d) S} {act : 𝓞 E 
         · ext <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap]
         · simp
     · split_ifs <;> simp
-  basis v := ⟨v, fun j => by simp, fun a ha => funext fun j => by simpa using ha j⟩
+  case basis =>
+    intro v
+    exact ⟨v, fun j => by simp, fun a ha => funext fun j => by simpa using ha j⟩
 
 end
 
@@ -292,9 +314,10 @@ theorem FrBC.frame (h : FrBC t f x y e e₂) (hg : ∀ m, (e₂ m).IsGen)
     {ad : 𝓞 E → MvPowerSeries (Fin 2 × Fin d) S} (hf : IsFrameG t x d y F act ph1 ph2 sy ad e) :
     IsFrameG t (spMap f ≫ x) d (yBC t f x y) (fun i => MvPowerSeries.map f (F i))
       (fun a i => MvPowerSeries.map f (act a i)) (MvPowerSeries.map f ph1) (MvPowerSeries.map f ph2)
-      (MvPowerSeries.map f sy) (fun a => MvPowerSeries.map f (ad a)) e₂ where
-  gen := hg
-  ph1 m := by
+      (MvPowerSeries.map f sy) (fun a => MvPowerSeries.map f (ad a)) e₂ := by
+  refine { gen := hg, ph1 := ?ph1, ph2 := ?ph2, sy := ?sy, ad := ?ad }
+  case ph1 =>
+    intro m
     obtain ⟨u, hu, hc⟩ := hf.ph1 m
     refine ⟨Units.map (jetCoef f _ m).toMonoidHom u, by rw [← coef_psJet, ← hu]; rfl,
       corr_of_val t.PP.isLB fun z J hJ => ?_⟩
@@ -305,7 +328,8 @@ theorem FrBC.frame (h : FrBC t f x y e e₂) (hg : ∀ m, (e₂ m).IsGen)
         h.pe _ _ _ _ (fun j => psIn_map f m _ _) (fun j => (MvPolynomial.map_X f _).symm) _ hJ,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ]
-  ph2 m := by
+  case ph2 =>
+    intro m
     obtain ⟨u, hu, hc⟩ := hf.ph2 m
     refine ⟨Units.map (jetCoef f _ m).toMonoidHom u, by rw [← coef_psJet, ← hu]; rfl,
       corr_of_val t.PP.isLB fun z J hJ => ?_⟩
@@ -316,14 +340,16 @@ theorem FrBC.frame (h : FrBC t f x y e e₂) (hg : ∀ m, (e₂ m).IsGen)
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => psIn_map f m _ _) _ hJ,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ]
-  sy m := by
+  case sy =>
+    intro m
     obtain ⟨u, hu, hc⟩ := hf.sy m
     refine ⟨Units.map (jetCoef f _ m).toMonoidHom u, by rw [← coef_psJet, ← hu]; rfl,
       corr_of_val t.PP.isLB fun z J hJ => ?_⟩
     refine (h m _ _ z J hJ).trans ((val_corr hJ hc _).trans ?_)
     rw [val_scale t _ _ _ hJ, val_scale t _ _ _ hJ, ← map_inv, gm_unit_bc f x,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ]
-  ad a := by
+  case ad =>
+    intro a
     obtain ⟨wL, hw, hm⟩ := hf.ad a
     refine ⟨wL, hw, fun m => ?_⟩
     obtain ⟨u, hu, hc⟩ := hm m

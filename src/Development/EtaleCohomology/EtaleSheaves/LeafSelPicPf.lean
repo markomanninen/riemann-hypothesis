@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafPicCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafPicCut
+
+@[expose] public section
 
 noncomputable section
 open nonZeroDivisors IsDedekindDomain

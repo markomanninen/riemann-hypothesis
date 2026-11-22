@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCoreDef
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCoreDef
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
+
+@[expose] public section
 
 noncomputable section
 

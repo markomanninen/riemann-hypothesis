@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioSelf
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffCoverSpec
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.RingKrullDimLeOfQuasiFinite
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsGenericForms
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCotangentBasis
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioLinear
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RatioSpanCotangentChangeDenominator
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsProjFormNonvanishingGenericPointComplexPoi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioSelf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffCoverSpec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.RingKrullDimLeOfQuasiFinite
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsGenericForms
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCotangentBasis
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioLinear
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RatioSpanCotangentChangeDenominator
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsProjFormNonvanishingGenericPointComplexPoi
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.CechDR GlobalTheory.PD
 
 set_option autoImplicit false
@@ -214,7 +219,7 @@ theorem exists_lin_sep {X : Scheme.{0}} (p : X ⟶ Sp ℂ) {N : ℕ} (ι : X ⟶
       exact ((basicOpen_app_frac ι _ (hL l) hg le_rfl).le h).2 (hLx l)
     | algebraMap c => rw [he, sub_self]; exact I.zero_mem
     | add a b _ _ ha hb =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       convert I.add_mem ha hb using 1
       ring
     | mul a b _ _ ha hb =>
@@ -306,7 +311,7 @@ theorem exists_lin_mul {X : Scheme.{0}} (p : X ⟶ Sp ℂ) {N : ℕ} (ι : X ⟶
       Eq.trans (congrArg (ι.app _).hom (frac_mul_eq rfl).symm) (map_mul _ _ _)
     have e2 : rat p ι _ g₀ hl hg₀ = (e t)⁻¹ • rat p ι l₁ g₀ hl₁ hg₀ := fRatio_smul_n p ι hp _ hl₁ hl hg₀
     have h3 : 1 - algebraMap ℂ _ (e t)⁻¹ * t ∈ RingHom.ker e := by
-      rw [RingHom.mem_ker, map_sub, map_mul, he, map_one, inv_mul_cancel₀ ht, sub_self]
+      rw [RingHom.mem_ker, RingHom.map_sub, map_mul, he, map_one, inv_mul_cancel₀ ht, sub_self]
     have h4 : u' - v ∈ RingHom.ker e ^ 2 := by
       have h5 := Ideal.mul_mem_mul (RingHom.mem_ker.2 hs0) h3
       rw [← pow_two] at h5
@@ -357,13 +362,13 @@ theorem mem_vanS {k : ℕ} {f : MvPolynomial (Fin (N + 1)) ℂ} :
 def vanAt (k : ℕ) (x : X) : Submodule ℂ (vanS ι S k) :=
   ((ι.base x).asHomogeneousIdeal.toIdeal.restrictScalars ℂ).comap (vanS ι S k).subtype
 
-variable (p) in
 
+variable (p) in
 abbrev evS {U : X.Opens} {y : CxPts p (RingHom.id ℂ)} (hy : y ∈ CxPts.ptsIn p (RingHom.id ℂ) U) : Sec p U →+* ℂ :=
   CxPts.evHom hy
 
-variable (p) in
 
+variable (p) in
 def sqI {U : X.Opens} {y : CxPts p (RingHom.id ℂ)} (hy : y ∈ CxPts.ptsIn p (RingHom.id ℂ) U) : Submodule ℂ (Sec p U) :=
   ((RingHom.ker (evS p hy)) ^ 2).restrictScalars ℂ
 
@@ -408,7 +413,8 @@ theorem jet_range (hp : ι ≫ PSpace.str ℂ N = p) (d : ℕ) [SmoothOfRelative
         exact ((mem_vanS ι S).1 f.2).2 y hyS
       obtain ⟨b, hb⟩ := hgs _ hf0
       change (sqI p hy).mkQ _ ∈ _
-      rw [(hq _ _).2 hb, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [(hq _ _).2 hb, map_sum]
       exact Submodule.sum_mem _ fun j _ => by
         rw [map_smul]
         exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -420,7 +426,8 @@ theorem jet_range (hp : ι ≫ PSpace.str ℂ N = p) (d : ℕ) [SmoothOfRelative
     intro b hb
     refine congrFun (hgi b ?_)
     have : (sqI p hy).mkQ (∑ j, b j • g j) = (sqI p hy).mkQ 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simpa only [map_smul, map_zero] using hb
     have h2 := (hq _ _).1 this
     rw [sub_zero] at h2
@@ -565,7 +572,7 @@ theorem exists_jet_forms : ∀ (X : Scheme.{0}) [IsIntegral X] (p : X ⟶ Sp ℂ
         calc ((k + 1 : ℕ) : ℕ∞) = (k : ℕ∞) + 1 := by push_cast; ring
           _ ≤ Order.coheight t + 1 := by gcongr
           _ ≤ Order.coheight x := h2
-      · rw [Fin.comp_snoc, linearIndependent_fin_snoc]
+      · rw [Fin.comp_snoc, linearIndependent_finSnoc]
         exact ⟨hli y, hc' (some (Sum.inr y))⟩
   obtain ⟨c, hgen, hZ, hli⟩ := key d le_rfl
   let Z : Set X := ⋂ i, (↑(fOpen ι (c i).1) : Set X)ᶜ
@@ -622,7 +629,8 @@ theorem exists_jet_forms : ∀ (X : Scheme.{0}) [IsIntegral X] (p : X ⟶ Sp ℂ
       obtain ⟨b, hb⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 h1
       have h2 : u - ∑ j, b j • r j ∈ RingHom.ker (evS p hya) ^ 2 := by
         have e1 : (sqI p hya).mkQ (∑ j, b j • r j) = (sqI p hya).mkQ u := by
-          rw [← hb, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [← hb, map_sum]
           simp only [map_smul]
           rfl
         rw [Submodule.mkQ_apply, Submodule.mkQ_apply, Submodule.Quotient.eq] at e1

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeUlSqSubMemOldformsGamma1Statement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeUlSemisimpleOnLOldSpaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeUlSqSubMemOldformsGamma1Statement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeUlSemisimpleOnLOldSpaceStatement
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
 open scoped Manifold
@@ -13,7 +18,7 @@ namespace GlobalTheory.HeckeFamilyMatrices.UlSemisimple
 theorem toGL_det (g : Matrix (Fin 2) (Fin 2) ℤ) (hg : g.det ≠ 0) :
     (toGL g : Matrix (Fin 2) (Fin 2) ℝ).det = (g.det : ℝ) := by
   unfold toGL
-  rw [dif_neg hg]
+  rw [dite_eq_right hg]
   simp only [Matrix.GeneralLinearGroup.mkOfDetNeZero, Matrix.det_fin_two]
   simp [Matrix.det_fin_two]
 
@@ -69,8 +74,8 @@ theorem aeval_mem {M : Type*} [AddCommGroup M] [Module ℂ M] (U : Module.End �
 
 end GlobalTheory.HeckeFamilyMatrices.UlSemisimple
 
-open GlobalTheory.HeckeFamilyMatrices.UlSemisimple in
 
+open GlobalTheory.HeckeFamilyMatrices.UlSemisimple in
 theorem GlobalTheory.HeckeFamilyMatrices.ul_semisimple : ∀ (N l k : ℕ), 5 ≤ N → l.Prime → ¬ l ∣ N → 3 ≤ k → ∀ (χ : DirichletCharacter ℂ N) (α : ℂ), α ^ 2 ≠ χ l * (l : ℂ) ^ (k - 1) → α ^ 2 ≠ χ l * (l : ℂ) ^ (k - 2) →
   ∀ f : CuspForm (Lev N l) (k : ℤ), (∀ γ : SL(2, ℤ), γ ∈ CongruenceSubgroup.Gamma0 (N * l) → ⇑f ∣[(k : ℤ)] γ = χ ((mat γ 1 1 : ℤ) : ZMod N) • ⇑f) →
   ∀ n : ℕ, (fun F => UlF (k : ℤ) l F - α • F)^[n] ⇑f = 0 → UlF (k : ℤ) l ⇑f = α • ⇑f := by
@@ -90,7 +95,7 @@ theorem GlobalTheory.HeckeFamilyMatrices.ul_semisimple : ∀ (N l k : ℕ), 5 �
   obtain ⟨A, B, hAB⟩ := hcop
   have key : aeval U A (aeval U ((X - C α) ^ n) ⇑f) + aeval U B (aeval U (X ^ 2 - C c) ⇑f) = ⇑f := by
     have := congrArg (fun p => aeval U p ⇑f) hAB
-    simpa only [map_add, map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply,
+    simpa only [map_add (f := _), map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply,
       Module.End.one_apply] using this
   have h1 : aeval U ((X - C α) ^ n) ⇑f = 0 := by
     rw [map_pow, map_sub, aeval_X, aeval_C, Module.End.pow_apply]

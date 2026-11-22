@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset NumberField Module
 open scoped ComplexConjugate nonZeroDivisors
@@ -22,7 +26,7 @@ private lemma fiber_eq {E : Type} [Field E] (w : InfinitePlace E) [DecidableEq (
     · right
       rw [h, ComplexEmbedding.involutive_conjugate E]
 
-theorem goal1 (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (x : E) :
+theorem goal1 (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (x : E) :
     ((Algebra.trace ℚ E x : ℚ) : ℝ) = ∑ w : InfinitePlace E, 2 * (w.embedding x).re := by
   classical
   have h1 : ((Algebra.trace ℚ E x : ℚ) : ℂ) = ∑ φ : E →+* ℂ, φ x := by

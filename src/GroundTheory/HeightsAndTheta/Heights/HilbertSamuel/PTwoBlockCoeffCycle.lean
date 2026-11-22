@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwoBlockCoeffCycle
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwoBlockHorizDiv
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwoBlockTop
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMetricTransportSmooth
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwoBlockCoeffCycle
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwoBlockHorizDiv
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwoBlockTop
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMetricTransportSmooth
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -21,7 +26,7 @@ variable {κ : Type} [Fintype κ]
 theorem isSmoothHerm_blockLine {m : ConeMetric ℂ (Ix κ)} (hm : IsSmoothMetric m) (b : Fin 2) :
     IsSmoothHerm (blockLine m b) := by
   have hL : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z : (Σ k, FinTwoTypeFamily κ k) → ℂ => fun p : Ix κ => z ⟨b, p.2⟩) :=
-    contDiff_pi.2 fun p => contDiff_apply ℝ ℂ (⟨b, p.2⟩ : Σ k, FinTwoTypeFamily κ k)
+    contDiff_pi.2 fun p => contDiff_apply ℝ (fun _ => ℂ) (⟨b, p.2⟩ : Σ k, FinTwoTypeFamily κ k)
   exact hm.comp hL.contDiffOn fun z hz h0 => by
     obtain ⟨i, hi⟩ := hz b
     exact hi (congrFun h0 ⟨(), i⟩)
@@ -50,7 +55,8 @@ variable {Ω : Type} [Field Ω] [CharZero Ω]
 theorem mConeMap_lin (x x' : Ix κ → Ω) (b : Fin 2) (a : Ix κ → ℤ) :
     mConeMap (pair x x') (∑ k : Ix κ, C (a k) * X (⟨b, k.2⟩ : Σ k, FinTwoTypeFamily κ k)) =
       C (∑ k, (a k : Ω) * pair x x' ⟨b, k.2⟩) * X b := by
-  simp only [mConeMap, map_sum, map_mul, aeval_X, eq_intCast, map_intCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mConeMap, map_sum, map_mul, aeval_X, eq_intCast, map_intCast]
   rw [Finset.sum_mul]
   refine Finset.sum_congr rfl fun k _ => ?_
   ring
@@ -118,7 +124,8 @@ theorem logNorm_eq {x : Ix κ → Ω} {B : Matrix (Ix κ) (Ix κ) ℚ} {m m' : C
   have key : ∀ j, z ⟨0, c⟩ * w j = L * matActC B u j := fun j => by
     have h0 := hz.2 _ (rel_mem hl (d : ℤ) (N j) j (hNΩ j))
     have h0' : (d : ℂ) * z ⟨0, c⟩ * w j - L * ∑ k, ((N j k : ℤ) : ℂ) * u k = 0 := by
-      simpa [twoBlockNum, hL, hw, hu, map_sum] using h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [twoBlockNum, hL, hw, hu, map_sum] using h0
     rw [hNC j] at h0'
     have hd' : (d : ℂ) ≠ 0 := by exact_mod_cast hd
     apply mul_left_cancel₀ hd'
@@ -135,7 +142,8 @@ theorem logNorm_eq {x : Ix κ → Ω} {B : Matrix (Ix κ) (Ix κ) ℚ} {m m' : C
   have hmu := m.pos u hu0
   have hmw := m'.pos w hw0
   have hnum : eval z (map (Int.castRingHom ℂ) (twoBlockNum l)) = L := by
-    simp [twoBlockNum, hL, hw, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [twoBlockNum, hL, hw, map_sum]
   have hden : eval z (map (Int.castRingHom ℂ) (twoBlockDen c)) = z ⟨0, c⟩ := by
     simp [twoBlockDen]
   show Real.log (‖eval z (map (Int.castRingHom ℂ) (twoBlockNum l))‖ / m'.ρ w) =
@@ -155,8 +163,8 @@ theorem logNorm_eq {x : Ix κ → Ω} {B : Matrix (Ix κ) (Ix κ) ℚ} {m m' : C
     rw [div_eq_div_iff hmw.ne' hmu.ne']
     linarith [hnorm]
 
-open Classical in
 
+open Classical in
 theorem cycR_split {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     (I : Ideal (MRing ι) → (n : ℕ) → (Fin n → HermLine ι) → ℝ) (P : Ideal (MRing ι)) {n : ℕ}
     (L : Fin n → HermLine ι) (s : MRing ι) :
@@ -168,8 +176,8 @@ theorem cycR_split {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι 
   refine finsum_mem_congr rfl fun W _ => ?_
   split_ifs <;> ring
 
-open Classical in
 
+open Classical in
 theorem horiz_eq (hH : TwoBlockHorizDiv.Statement) {x : Ix κ → Ω} {B : Matrix (Ix κ) (Ix κ) ℚ} {c : κ}
     {l : Ix κ → ℤ} (hsp : Submodule.span ℤ (Set.range x) ≤ Submodule.span ℤ (Set.range (matAct B x)))
     (hl : x ⟨(), c⟩ = ∑ j, (l j : Ω) * matAct B x j) (f : Ideal (MRing (FinTwoTypeFamily κ)) → ℝ) :
@@ -192,8 +200,8 @@ theorem horiz_eq (hH : TwoBlockHorizDiv.Statement) {x : Ix κ → Ω} {B : Matri
 
 end TwoBlockCoeffCycle
 
-open TwoBlockCoeffCycle in
 
+open TwoBlockCoeffCycle in
 theorem TwoBlockCoeffCycle.proof (hA : CoordArithOfFnField.Statement) (hF : TwoBlockFnField.Statement)
     (hH : TwoBlockHorizDiv.Statement) : TwoBlockCoeffCycle.Statement := by
   classical

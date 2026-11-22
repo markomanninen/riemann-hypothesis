@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DualIntegralLattice
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DualIntegralLattice
+
+@[expose] public section
 
 namespace PositivityTheory.Xgn.GramDeterminantUnit
 open NumberField GlobalTheory.CompanionTheory.Ar

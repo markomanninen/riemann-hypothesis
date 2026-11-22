@@ -1,6 +1,10 @@
-import GroundTheory.LocalFields.LocalZeta
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
-import GroundTheory.LocalFields.LocalFourierHaar
+module
+
+public import GroundTheory.LocalFields.LocalZeta
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+public import GroundTheory.LocalFields.LocalFourierHaar
+
+@[expose] public section
 
 noncomputable section
 

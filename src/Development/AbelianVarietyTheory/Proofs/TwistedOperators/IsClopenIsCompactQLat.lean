@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.DualLiftInvariance
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairOperatorStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClopenIsCompactMapsPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.DualLiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairOperatorStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClopenIsCompactMapsPair
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix IsLocalRing
-open scoped Pointwise
+open scoped Classical Pointwise
 open GlobalTheory.SplitWeil GlobalTheory.LatPair GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData
 
 noncomputable section
@@ -35,12 +39,12 @@ theorem finsum_split {V A : Type} [Finite V] [Zero V] [AddCommMonoid A] (F : V �
   letI := Fintype.ofFinite V
   rw [finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype, Fintype.sum_eq_add_sum_subtype_ne F 0]
 
-theorem finsum_ofDual {A : Type} [AddCommMonoid A] (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] (F : Pair k n → A) :
+theorem finsum_ofDual {A : Type} [AddCommMonoid A] (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k] (F : Pair k n → A) :
     ∑ᶠ f : {f : Module.Dual 𝓀[k] (Red L) // f ≠ 0}, F (ofDual L f) = ∑ P ∈ withLat L, F P := by
   letI := Fintype.ofFinite {f : Module.Dual 𝓀[k] (Red L) // f ≠ 0}
   rw [finsum_eq_sum_of_fintype, sum_withLat]
 
-theorem card_withKer (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] : (withKer L).card = (withLat L).card := by
+theorem card_withKer (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k] : (withKer L).card = (withLat L).card := by
   obtain ⟨q⟩ : Nonempty (Unif k) := inferInstance
   letI := Fintype.ofFinite {f : Module.Dual 𝓀[k] (Red L) // f ≠ 0}
   letI := Fintype.ofFinite {x : Red L // x ≠ 0}
@@ -68,8 +72,8 @@ theorem exists_lifts (h : InDual L F) : ∃ f, Lifts L F f := by
   obtain ⟨f, hf⟩ := exists_dual L (Algebra.linearMap 𝒪[k] 𝓀[k] ∘ₗ G)
   exact ⟨f, fun y => ⟨G y, rfl, (hf y).symm⟩⟩
 
-open Classical in
 
+open Classical in
 theorem cosetInd_eq (q : Unif k) (f : Module.Dual 𝓀[k] (Red L)) (η : n → k) :
     cosetInd q L f η = if Lifts L (q.1 • η) f then 1 else 0 := by
   refine if_congr ⟨fun ⟨F, hF, hD⟩ y => ?_, fun h => ⟨_, h, fun y _ => by simp⟩⟩ rfl rfl
@@ -78,15 +82,15 @@ theorem cosetInd_eq (q : Unif k) (f : Module.Dual 𝓀[k] (Red L)) (η : n → k
   · have : q.1 • η = F + q.1 • (η - q.inv • F) := by rw [smul_sub, q.smul_inv_smul]; abel
     rw [this, add_dotProduct, smul_dotProduct, ← hs]
     rfl
-  · rw [map_add, map_mul, (residue_eq_zero_iff _).2 q.mem_max, zero_mul, add_zero, e]
+  · rw [map_add (f := _), map_mul, (residue_eq_zero_iff _).2 q.mem_max, zero_mul, add_zero, e]
 
 end Duals
 
 section Decomposition
 variable [Fintype n'] {L : Submodule 𝒪[k] (n' → k)} {LY : Submodule 𝒪[k] (n → k)} {x₀ : Matrix n n' k}
 
-open Classical in
 
+open Classical in
 theorem exists_pull (h : ∀ z ∈ L, x₀ *ᵥ z ∈ LY) (fW : Module.Dual 𝓀[k] (Red LY)) :
     ∃ f₀ : Module.Dual 𝓀[k] (Red L), (∀ z : L, f₀ (Red.mk L z) = fW (Red.mk LY ⟨x₀ *ᵥ z, h z z.2⟩)) ∧
       ∀ w : Module.Dual 𝓀[k] (Red L) → ℂ, ∑ᶠ f', w f' * compInd L LY f' fW x₀ = w f₀ := by
@@ -125,7 +129,7 @@ theorem term_zero : term q χ ε P LY 0 = latInd P.ker LY := by
   · simp [term, dif_pos h, latInd, if_pos h]
   · simp [term, dif_neg h, latInd, if_neg h]
 
-variable [LY.IsLattice k] (fW : {f : Module.Dual 𝓀[k] (Red LY) // f ≠ 0})
+variable [LY.IsFullLattice k] (fW : {f : Module.Dual 𝓀[k] (Red LY) // f ≠ 0})
 
 theorem compInd_zero : compInd L LY 0 fW.1 = latInd L (ofDual LY fW).ker := by
   ext x₀
@@ -133,7 +137,7 @@ theorem compInd_zero : compInd L LY 0 fW.1 = latInd L (ofDual LY fW).ker := by
   exact if_congr ⟨fun ⟨h, h'⟩ y hy => Pair.mem_ker.2 ⟨h y hy, h' ⟨y, hy⟩⟩, fun h =>
     ⟨fun y hy => (Pair.mem_ker.1 (h y hy)).1, fun z => (Pair.mem_ker.1 (h z z.2)).2⟩⟩ rfl rfl
 
-theorem compInd_eq_phiOne [L.IsLattice k] (f' : {f : Module.Dual 𝓀[k] (Red L) // f ≠ 0}) :
+theorem compInd_eq_phiOne [L.IsFullLattice k] (f' : {f : Module.Dual 𝓀[k] (Red L) // f ≠ 0}) :
     compInd L LY f'.1 fW.1 = phiOne (ofDual L f') (ofDual LY fW) := by
   ext x₀
   classical
@@ -182,27 +186,62 @@ theorem latInd_mul {g : GL n' k} (hg : g ∈ latStab L) (L₁ : Submodule 𝒪[k
   rw [MulAction.mem_stabilizer_iff.1 hg, one_smul] at this
   simpa using this.symm
 
-omit [Fintype n] in
 
-theorem sum_latInd {φ : Form k n' M} (hφ : φ ∈ Mram k n' M) (L : Submodule 𝒪[k] (n' → k)) [L.IsLattice k]
+omit [Fintype n] in
+theorem sum_latInd {φ : Form k n' M} (hφ : φ ∈ Mram k n' M) (L : Submodule 𝒪[k] (n' → k)) [L.IsFullLattice k]
     (L₁ : Submodule 𝒪[k] (n → k)) (x₀ : Matrix n n' k) : ∑ P₁ ∈ withKer L, latInd P₁.ker L₁ x₀ • φ P₁ = 0 := by
-  obtain ⟨q⟩ : Nonempty (Unif k) := inferInstance
-  rw [Finset.sum_congr rfl fun P₁ h => by rw [mem_withKer.1 h], ← Finset.smul_sum, ← trKer_apply,
-    (PairOp.vanishing q).trKer_eq_zero φ hφ L, smul_zero]
+  have hsum : ∑ P₁ ∈ withKer L, φ P₁ = 0 := Model.sum_stable_eq_zero hφ _ fun c P₁ => by simp
+  rw [Finset.sum_congr rfl fun P₁ h => by rw [mem_withKer.1 h], ← Finset.smul_sum, hsum, smul_zero]
 
 variable {π : Representation ℂ (GL n' k) M} {θ : M →ₗ[ℂ] (Matrix n n' k → ℂ) →ₗ[ℂ] A} {φ : Form k n' M}
 
 theorem lift_latInd (hφ : φ ∈ Mram k n' M) (he : φ ∈ EqForm π) (hθ : IsLiftInv π θ P.ker)
-    (L₁ : Submodule 𝒪[k] (n → k)) [L₁.IsLattice k] : θ (φ P) (latInd P.ker L₁) = 0 := by
-  obtain ⟨q⟩ : Nonempty (Unif k) := inferInstance
-  have hv : formOf π P (evalEquiv π P ⟨φ, he⟩) = φ := congrArg Subtype.val ((evalEquiv π P).left_inv ⟨φ, he⟩)
-  refine (PairOp.vanishing q).invariant_eq_zero π P (evalEquiv π P ⟨φ, he⟩) (hv.symm ▸ hφ) A
-    (θ.flip (latInd P.ker L₁)) (Or.inr fun g hg w => ?_)
-  have := hθ g hg w _ (latInd_mem_SB P.ker L₁)
-  simp only [latInd_mul hg] at this
-  exact this
+    (L₁ : Submodule 𝒪[k] (n → k)) [L₁.IsFullLattice k] : θ (φ P) (latInd P.ker L₁) = 0 := by
+  letI : Fintype 𝓀[k]ˣ := Fintype.ofFinite _
+  let T : M →ₗ[ℂ] A := θ.flip (latInd P.ker L₁)
+  have hconst (c : 𝓀[k]ˣ) : T (φ (c • P)) = T (φ P) := by
+    obtain ⟨t, ht⟩ := IsLocalRing.residue_surjective ((c⁻¹ : 𝓀[k]ˣ) : 𝓀[k])
+    have hu : IsUnit t := by
+      by_contra hnu
+      have hzero := (residue_eq_zero_iff t).2 ((mem_maximalIdeal t).2 hnu)
+      rw [ht] at hzero
+      exact (c⁻¹).ne_zero hzero
+    let s := hu.unit
+    have hs : (Units.map (residue 𝒪[k]).toMonoidHom s)⁻¹ = c := by
+      rw [inv_eq_iff_eq_inv]
+      ext
+      simp [s, ht]
+    let g : GL n' k := Units.map (Matrix.scalar n' : k →+* Matrix n' n' k).toMonoidHom
+      (Units.map (algebraMap 𝒪[k] k).toMonoidHom s)
+    have hg (x : n' → k) : g • x = (s : 𝒪[k]) • x := by
+      ext i
+      simp [g, Units.smul_def, Matrix.scalar_apply, Matrix.mulVec_diagonal, Algebra.smul_def]
+    have hstab : g ∈ latStab P.ker := by
+      rw [MulAction.mem_stabilizer_iff]
+      ext x
+      rw [mem_smul_iff]
+      have e : x = (s : 𝒪[k]) • (g⁻¹ • x) := by rw [← hg, smul_inv_smul]
+      constructor
+      · intro h
+        rw [e]
+        exact P.ker.smul_mem _ h
+      · intro h
+        have e' : g⁻¹ • x = ((s⁻¹ : 𝒪[k]ˣ) : 𝒪[k]) • x := by
+          conv_rhs => rw [e]
+          rw [smul_smul, Units.inv_mul, one_smul]
+        rw [e']
+        exact P.ker.smul_mem _ h
+    have hgP : g • P = c • P := by rw [scalar_smul_eq g s hg P, hs]
+    rw [← hgP, he g P]
+    have hinv := hθ g hstab (φ P) _ (latInd_mem_SB P.ker L₁)
+    simpa only [T, LinearMap.flip_apply, latInd_mul hstab] using hinv
+  have hsum := congrArg T ((mem_Mram _).mp hφ P)
+  rw [map_sum, map_zero] at hsum
+  simp only [hconst, Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ] at hsum
+  have hcard : (Fintype.card 𝓀[k]ˣ : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  exact (smul_eq_zero.mp hsum).resolve_left hcard
 
-theorem lift_mainDatum {L : Submodule 𝒪[k] (n' → k)} [L.IsLattice k] (he : φ ∈ EqForm π) (hθ : IsLiftInv π θ L)
+theorem lift_mainDatum {L : Submodule 𝒪[k] (n' → k)} [L.IsFullLattice k] (he : φ ∈ EqForm π) (hθ : IsLiftInv π θ L)
     (Q : Pair k n) {P P' : Pair k n'} (hP : P.ker = L) (hP' : P'.lat = L) :
     θ (φ P) (mainDatum q χ ε P Q) = θ (dia ε (FFStar q χ φ) P') (phiOne P' Q) := by
   classical
@@ -230,14 +269,15 @@ theorem lift_mainDatum {L : Submodule 𝒪[k] (n' → k)} [L.IsLattice k] (he : 
     exact_mod_cast (Finset.card_pos.2 ⟨P', mem_withLat.2 hP'⟩).ne'
   have h5 := smul_right_injective A h4 h3
   rw [mainDatum_eq, dia_FFStar, hP, hP']
-  simpa only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply] using h5
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply] using h5
 
 end Decomposition
 
 section Transform
 variable [Fintype n]
 
-theorem isClopen_isCompact_qLat (q : Unif k) (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] :
+theorem isClopen_isCompact_qLat (q : Unif k) (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k] :
     IsClopen {y : n → k | q.inv • y ∈ L} ∧ IsCompact {y : n → k | q.inv • y ∈ L} := by
   classical
   refine ⟨(isClopen_lattice L).preimage (f := fun y : n → k => q.inv • y) (by fun_prop), ?_⟩
@@ -258,18 +298,18 @@ theorem isClopen_isCompact_qLat (q : Unif k) (L : Submodule 𝒪[k] (n → k)) [
     rwa [q.inv_smul_smul, inv_smul_smul]
 
 variable [MeasurableSpace k] [BorelSpace k] (q : Unif k) {ψ : AddChar k Circle} (hψ : HasConductor ψ 1)
-  (μ : Measure (n → k)) [μ.IsAddHaarMeasure] (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k]
+  (μ : Measure (n → k)) [μ.IsAddHaarMeasure] (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k]
+
 
 omit [BorelSpace k] in
-
 theorem volQ_pos : 0 < volQ μ q L := by
   obtain ⟨h1, h2⟩ := isClopen_isCompact_qLat q L
   exact ENNReal.toReal_pos (h1.2.measure_ne_zero μ ⟨0, by simp⟩) h2.measure_lt_top.ne
 
 include hψ
 
-open Classical in
 
+open Classical in
 theorem integrable_qLat (η : n → k) :
     Integrable (fun y => (if q.inv • y ∈ L then (1 : ℂ) else 0) * (ψ (η ⬝ᵥ y) : ℂ)) μ := by
   haveI := secondCountable k
@@ -279,8 +319,8 @@ theorem integrable_qLat (η : n → k) :
   refine Continuous.integrable_of_hasCompactSupport (h3.1.continuous.mul ?_) h3.2.mul_right
   exact continuous_subtype_val.comp (hψ.continuous.comp (continuous_const.dotProduct continuous_id))
 
-open Classical in
 
+open Classical in
 theorem integral_qLat (η : n → k) :
     ∫ y, (if q.inv • y ∈ L then (1 : ℂ) else 0) * (ψ (η ⬝ᵥ y) : ℂ) ∂μ =
       if InDual L (q.1 • η) then (volQ μ q L : ℂ) else 0 := by
@@ -393,9 +433,9 @@ theorem datum_eq (q : Unif k) (P : Pair k n') (LY : Submodule 𝒪[k] (n → k))
     · simpa using h (Sum.elim z 0) ⟨0, by simpa using hz, by simp⟩
     · simpa [add_comm] using h (Sum.elim P.vec fun _ => q.inv) ⟨1, by simp, by simp⟩
 
-omit [Fintype n'] in
 
-theorem lastPair_hasVal (q : Unif k) (L : Submodule 𝒪[k] (n'' → k)) [L.IsLattice k] (v : n'' ⊕ Fin 1 → k)
+omit [Fintype n'] in
+theorem lastPair_hasVal [Fintype n''] (q : Unif k) (L : Submodule 𝒪[k] (n'' → k)) [L.IsFullLattice k] (v : n'' ⊕ Fin 1 → k)
     (a : 𝓀[k]) : (lastPair q L).HasVal v a ↔
       v ∘ Sum.inl ∈ L ∧ ∃ s : 𝒪[k], (s : k) = q.1 • v (Sum.inr 0) ∧ residue 𝒪[k] s = a := by
   have hq : (q.1 : k) * q.inv = 1 := mul_inv_cancel₀ q.ne_zero
@@ -411,7 +451,7 @@ theorem lastPair_hasVal (q : Unif k) (L : Submodule 𝒪[k] (n'' → k)) [L.IsLa
     refine ⟨hL, s + q.1 * ⟨_, ht⟩, ?_, ?_⟩
     · change (s : k) + q.1 * (v (Sum.inr 0) - s * q.inv) = q.1 * v (Sum.inr 0)
       linear_combination (-(s : k)) * hq
-    · rw [map_add, map_mul, (residue_eq_zero_iff _).2 q.mem_max, zero_mul, add_zero]
+    · rw [map_add (f := _), map_mul, (residue_eq_zero_iff _).2 q.mem_max, zero_mul, add_zero]
   · rintro ⟨hL, s, hs, rfl⟩
     refine ⟨s, rfl, hL, ?_⟩
     have : v (Sum.inr 0) - s * q.inv = 0 := by
@@ -421,11 +461,11 @@ theorem lastPair_hasVal (q : Unif k) (L : Submodule 𝒪[k] (n'' → k)) [L.IsLa
     rw [this]
     exact zero_mem _
 
+
 omit [Fintype n'] in
 open Classical in
-
-theorem phiOne_last [Fintype n] (q : Unif k) (LY : Submodule 𝒪[k] (n → k)) [LY.IsLattice k]
-    (L : Submodule 𝒪[k] (n'' → k)) [L.IsLattice k] (fW : {f : Module.Dual 𝓀[k] (Red LY) // f ≠ 0})
+theorem phiOne_last [Fintype n] [Fintype n''] (q : Unif k) (LY : Submodule 𝒪[k] (n → k)) [LY.IsFullLattice k]
+    (L : Submodule 𝒪[k] (n'' → k)) [L.IsFullLattice k] (fW : {f : Module.Dual 𝓀[k] (Red LY) // f ≠ 0})
     (x' : Matrix n'' n k) (η : n → k) :
     phiOne (ofDual LY fW) (lastPair q L) (withRow x' η) =
       latInd LY L x' * (if Lifts LY (q.1 • η) fW.1 then 1 else 0) := by
@@ -441,12 +481,12 @@ theorem phiOne_last [Fintype n] (q : Unif k) (LY : Submodule 𝒪[k] (n → k)) 
 end Kernels
 
 section Last
-variable [Fintype n] [Fintype n'] (q : Unif k) (LY : Submodule 𝒪[k] (n → k)) [LY.IsLattice k]
-  (L'' : Submodule 𝒪[k] (n'' → k)) [L''.IsLattice k] {M A : Type} [AddCommGroup M] [Module ℂ M] [AddCommGroup A]
+variable [Fintype n] [Fintype n'] [Fintype n''] (q : Unif k) (LY : Submodule 𝒪[k] (n → k)) [LY.IsFullLattice k]
+  (L'' : Submodule 𝒪[k] (n'' → k)) [L''.IsFullLattice k] {M A : Type} [AddCommGroup M] [Module ℂ M] [AddCommGroup A]
   [Module ℂ A] (x' : Matrix n'' n k) (η : n → k)
 
-omit [Fintype n'] in
 
+omit [Fintype n'] in
 theorem phiOne_last' (fW : {f : Module.Dual 𝓀[k] (Red LY) // f ≠ 0}) :
     phiOne (ofDual LY fW) (lastPair q L'') (withRow x' η) = latInd LY L'' x' * cosetInd q LY fW.1 η := by
   rw [phiOne_last, cosetInd_eq]
@@ -483,7 +523,7 @@ theorem datumHat_mul (P : Pair k n') :
     rw [term_ne_zero, phiOne_last', Pi.add_apply]
     ring
 
-variable [DecidableEq n'] {L : Submodule 𝒪[k] (n' → k)} [L.IsLattice k] {φ : Form k n' M}
+variable [DecidableEq n'] {L : Submodule 𝒪[k] (n' → k)} [L.IsFullLattice k] {φ : Form k n' M}
 
 theorem sum_datumHat (hφ : φ ∈ Mram k n' M) (x₀ : Matrix n n' k) :
     ∑ P ∈ withKer L, (datumHat ψ ε μ q P LY x₀ η * latInd LY L'' x') • φ P =
@@ -506,7 +546,8 @@ theorem lift_datumHat {π : Representation ℂ (GL n' k) M} {θ : M →ₗ[ℂ] 
         θ (dia (resUnit ε) (FFStar q (resChar ψ hψ q) φ) P') (phiOne P' Q) := by
   have h0 := lift_latInd P hφ he (hP.symm ▸ hθ)
   rw [← map_smul, datumHat_mul q LY L'' x' η hψ]
-  simp only [map_smul, map_add, map_sum, h0 LY, fun Q : Pair k n => h0 Q.ker, smul_zero, zero_add,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_add (f := _), map_sum, h0 LY, fun Q : Pair k n => h0 Q.ker, smul_zero, zero_add,
     fun Q => lift_mainDatum q (resChar ψ hψ q) (resUnit ε) he hθ Q hP hP']
 
 end Last
@@ -523,7 +564,7 @@ theorem lastTwoSteps : LastTwoSteps := by
       fun ψ hψ ε L _ M _ _ φ hφ x' η => ⟨sum_main_last q LY L'' x' η _ _ L φ, fun μ _ =>
         ⟨sum_datumHat q LY L'' x' η hψ ε μ hφ,
           fun π A _ _ θ he hθ P P' hP hP' => lift_datumHat q LY L'' x' η hψ ε μ hφ he hθ hP hP'⟩⟩⟩⟩
-  haveI : L.IsLattice k := by
+  haveI : L.IsFullLattice k := by
     rcases hL with rfl | ⟨fW, rfl⟩ <;> infer_instance
   exact lift_latInd P hφ he hθ L
 

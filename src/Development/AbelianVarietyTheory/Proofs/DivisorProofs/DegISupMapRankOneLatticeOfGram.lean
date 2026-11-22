@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexISupMapEqPowStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexISupMapEqPowStatement
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.GeometryOfNumbersTheory
 
 namespace GlobalTheory

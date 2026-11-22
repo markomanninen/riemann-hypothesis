@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.DivisorCycles.DegPoly2
-import Development.EtaleCohomology.DivisorCycles.EntriesCont
+module
+
+public import Development.EtaleCohomology.DivisorCycles.DegPoly2
+public import Development.EtaleCohomology.DivisorCycles.EntriesCont
+
+@[expose] public section
 
 namespace LateralTheory.Fin.DegAll
 theorem etale_degree_polynomial_bound : LateralTheory.DivDb.DegPoly := by

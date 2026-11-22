@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeDefs
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeDefs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -25,8 +30,8 @@ def resSymmHomOfIso (e : H ≃ₜ* G) {A : Rep.{u} k G} {B : Rep.{u} k H}
     change A.ρ (e (e.symm g)) _ = _
     rw [e.apply_symm_apply]⟩
 
-omit [IsTopologicalGroup G] [IsTopologicalGroup H] in
 
+omit [IsTopologicalGroup G] [IsTopologicalGroup H] in
 theorem continuous_mulEquiv_toMonoidHom (e : H ≃ₜ* G) : Continuous e.toMulEquiv.toMonoidHom :=
   e.continuous_toFun
 
@@ -71,13 +76,6 @@ def galUnitsResIso : Rep.res (fixingOfRestrictScalarsEq h).subtype (galUnits.{u}
       Additive Eˣ ≃ₗ[ULift.{u} ℤ] Additive E'ˣ) fun _ =>
       LinearMap.ext fun _ => rfl)
 
-def galUnitsZResIso : Rep.res (fixingOfRestrictScalarsEq h).subtype (galUnitsZ F E) ≅
-    Rep.res (fixingMulEquivOfRestrictScalarsEq h).toMonoidHom (galUnitsZ L E') :=
-  Rep.mkIso (Representation.Equiv.mk
-    ((MulEquiv.toAdditive (unitsEquivOfRestrictScalarsEq h)).toIntLinearEquiv :
-      Additive Eˣ ≃ₗ[ℤ] Additive E'ˣ) fun _ =>
-      LinearMap.ext fun _ => rfl)
-
 abbrev rootsOfUnityEquivOfRestrictScalarsEq (n : ℕ) : rootsOfUnity n E ≃* rootsOfUnity n E' :=
   (fieldEquivOfRestrictScalarsEq h).toMulEquiv.restrictRootsOfUnity n
 
@@ -87,13 +85,6 @@ def galRootsOfUnityResIso (n : ℕ) :
   Rep.mkIso (Representation.Equiv.mk
     (uliftIntLinearEquiv.{u} (MulEquiv.toAdditive (rootsOfUnityEquivOfRestrictScalarsEq h n)) :
       Additive (rootsOfUnity n E) ≃ₗ[ULift.{u} ℤ] Additive (rootsOfUnity n E')) fun _ => LinearMap.ext fun _ => rfl)
-
-def galRootsOfUnityZResIso (n : ℕ) :
-    Rep.res (fixingOfRestrictScalarsEq h).subtype (galRootsOfUnityZ F E n) ≅
-      Rep.res (fixingMulEquivOfRestrictScalarsEq h).toMonoidHom (galRootsOfUnityZ L E' n) :=
-  Rep.mkIso (Representation.Equiv.mk
-    ((MulEquiv.toAdditive (rootsOfUnityEquivOfRestrictScalarsEq h n)).toIntLinearEquiv :
-      Additive (rootsOfUnity n E) ≃ₗ[ℤ] Additive (rootsOfUnity n E')) fun _ => LinearMap.ext fun _ => rfl)
 
 variable [NumberField F] [NumberField L] (S : Set (HeightOneSpectrum (𝓞 F)))
 
@@ -131,24 +122,6 @@ def galSUnitsResIso : Rep.res (fixingOfRestrictScalarsEq h).subtype (galSUnits S
       Additive (sUnitsOf S E) ≃ₗ[ULift.{u} ℤ] Additive (sUnitsOf (placesOver S : Set (HeightOneSpectrum (𝓞 L))) E')) fun _ =>
       LinearMap.ext fun _ => rfl)
 
-theorem galSUnitsResIso_hom_sUnitsToUnits :
-    (galSUnitsResIso h S).hom ≫ (Rep.resFunctor _).map (sUnitsToUnits (placesOver S : Set (HeightOneSpectrum (𝓞 L))) E') =
-      (Rep.resFunctor _).map (sUnitsToUnits S E) ≫ (galUnitsResIso h).hom := by
-  apply Rep.hom_ext
-  apply Representation.IntertwiningMap.ext
-  apply LinearMap.ext
-  intro _
-  rfl
-
-theorem galRootsOfUnityResIso_hom_rootsOfUnityToSUnits (n : ℕ) [NeZero n] :
-    (galRootsOfUnityResIso h n).hom ≫ (Rep.resFunctor _).map (rootsOfUnityToSUnits (placesOver S : Set (HeightOneSpectrum (𝓞 L))) E' n) =
-      (Rep.resFunctor _).map (rootsOfUnityToSUnits S E n) ≫ (galSUnitsResIso h S).hom := by
-  apply Rep.hom_ext
-  apply Representation.IntertwiningMap.ext
-  apply LinearMap.ext
-  intro _
-  rfl
-
 end Abstract
 
 section Max
@@ -167,51 +140,19 @@ def gsUnitsIso : Rep.res (gsSubtype S hL) (galUnits.{u} F (maxUnramifiedOutside 
       (galUnits.{u} L (maxUnramifiedOutside L Ω (placesOver S))) :=
   galUnitsResIso (restrictScalars_maxUnramifiedOutside_eq S hL)
 
-def gsUnitsZIso : Rep.res (gsSubtype S hL) (galUnitsZ F (maxUnramifiedOutside F Ω S)) ≅
-    Rep.res (gsBaseChange S hL).toMulEquiv.toMonoidHom
-      (galUnitsZ L (maxUnramifiedOutside L Ω (placesOver S))) :=
-  galUnitsZResIso (restrictScalars_maxUnramifiedOutside_eq S hL)
-
 def gsRootsOfUnityIso (n : ℕ) :
     Rep.res (gsSubtype S hL) (galRootsOfUnity.{u} F (maxUnramifiedOutside F Ω S) n) ≅
       Rep.res (gsBaseChange S hL).toMulEquiv.toMonoidHom
         (galRootsOfUnity.{u} L (maxUnramifiedOutside L Ω (placesOver S)) n) :=
   galRootsOfUnityResIso (restrictScalars_maxUnramifiedOutside_eq S hL) n
 
-def gsRootsOfUnityZIso (n : ℕ) :
-    Rep.res (gsSubtype S hL) (galRootsOfUnityZ F (maxUnramifiedOutside F Ω S) n) ≅
-      Rep.res (gsBaseChange S hL).toMulEquiv.toMonoidHom
-        (galRootsOfUnityZ L (maxUnramifiedOutside L Ω (placesOver S)) n) :=
-  galRootsOfUnityZResIso (restrictScalars_maxUnramifiedOutside_eq S hL) n
-
 def gsSUnitsIso : Rep.res (gsSubtype S hL) (galSUnitsMax F Ω S) ≅
     Rep.res (gsBaseChange S hL).toMulEquiv.toMonoidHom (galSUnitsMax L Ω (placesOver S)) :=
   galSUnitsResIso (restrictScalars_maxUnramifiedOutside_eq S hL) S
 
-theorem gsSUnitsIso_hom_sUnitsToUnits :
-    (gsSUnitsIso S hL).hom ≫
-        (Rep.resFunctor _).map (sUnitsToUnits (placesOver S) (maxUnramifiedOutside L Ω (placesOver S))) =
-      (Rep.resFunctor _).map (sUnitsToUnits S (maxUnramifiedOutside F Ω S)) ≫ (gsUnitsIso S hL).hom := by
-  apply Rep.hom_ext
-  apply Representation.IntertwiningMap.ext
-  apply LinearMap.ext
-  intro _
-  rfl
-
-theorem gsRootsOfUnityIso_hom_rootsOfUnityToSUnits (n : ℕ) [NeZero n] :
-    (gsRootsOfUnityIso S hL n).hom ≫ (Rep.resFunctor _).map
-        (rootsOfUnityToSUnits (placesOver S) (maxUnramifiedOutside L Ω (placesOver S)) n) =
-      (Rep.resFunctor _).map (rootsOfUnityToSUnits S (maxUnramifiedOutside F Ω S) n) ≫
-        (gsSUnitsIso S hL).hom := by
-  apply Rep.hom_ext
-  apply Representation.IntertwiningMap.ext
-  apply LinearMap.ext
-  intro _
-  rfl
-
 instance isDiscreteRep_res_gsSubtype_galUnits :
     IsDiscreteRep (Rep.res (gsSubtype S hL) (galUnits.{u} F (maxUnramifiedOutside F Ω S))) :=
-  IsDiscreteRep.res continuous_subtype_val _
+  IsDiscreteRep.res continuous_subtype_val (galUnits.{u} F (maxUnramifiedOutside F Ω S))
 
 instance isDiscreteRep_res_gsSubtype_galRootsOfUnity (m : ℕ) :
     IsDiscreteRep (Rep.res (gsSubtype S hL) (galRootsOfUnity.{u} F (maxUnramifiedOutside F Ω S) m)) :=

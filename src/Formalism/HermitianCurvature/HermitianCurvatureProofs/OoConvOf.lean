@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TripleIntegrandMeasurable
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TripleIntegrandMeasurable
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.CuspidalAdmissibility.OccursIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
+module
+
+public import Development.WeilBound.CuspidalAdmissibility.OccursIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C

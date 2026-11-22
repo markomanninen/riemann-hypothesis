@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrLink
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColumnWittFrameBasisBlockGramStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicColumnLatticeEqSpanPartTransportedFrameStatement
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
-import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrLink
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColumnWittFrameBasisBlockGramStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicColumnLatticeEqSpanPartTransportedFrameStatement
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
+public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,7 @@ theorem T_pc_Lf (y : VA X.B.I) (hy : y ∈ X.B.I.Lf) :
     have := X.B.I.L.smul_mem a (zR_mem X u)
     rwa [← IsScalarTower.algebraMap_smul X.B.I.E a] at this
   | zero => simp
-  | add y z _ _ hy hz => rw [map_add, smul_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _), smul_add]; exact add_mem hy hz
   | smul c y _ hy =>
     rw [Subring.smul_def, map_smul, smul_comm]
     exact X.B.I.Lf.smul_mem c hy
@@ -238,7 +242,8 @@ theorem GlobalTheory.St.G.g_proj : ∀ (D : D7) (X : HidaSetting D) (u : D.what�
       have e : embA X wt ιA (Pi.single j 1) = qA X wt j := by
         simp [embA, Pi.single_apply]
       rwa [e] at h
-    simp only [map_add, map_sum, map_smul, Proj.pc_e, Proj.pc_f, Proj.orthogonalProjection_anisotropic_eq_zero, hqj, smul_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_smul, Proj.pc_e, Proj.pc_f, Proj.orthogonalProjection_anisotropic_eq_zero, hqj, smul_zero,
       Finset.sum_const_zero, add_zero]
     simp [embA]
   · intro y hy h1 h2

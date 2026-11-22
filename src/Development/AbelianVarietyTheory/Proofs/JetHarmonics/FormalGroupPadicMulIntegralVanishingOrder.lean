@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpSeriesCoeffNormBoundedRingLaws
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FormalGroupNatMulSeriesProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpSeriesCoeffNormBoundedRingLaws
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FormalGroupNatMulSeriesProperties
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.MomOne
 open scoped ComplexConjugate BigOperators Topology
 
@@ -20,14 +25,14 @@ theorem subst_C' (g : K⟦X⟧) (r : K) : ((C r : K⟦X⟧).subst g : K⟦X⟧) 
 
 theorem taylor_dvd (U f h : K⟦X⟧) (N : ℕ) (hf : constantCoeff f = 0) (hh0 : constantCoeff h = 0)
     (hh : X ^ N ∣ h) :
-    (X : K⟦X⟧) ^ (2 * N) ∣ (U.subst (f + h) : K⟦X⟧) - U.subst f - (d⁄dX K U).subst f * h := by
-  have hfh : constantCoeff (f + h) = 0 := by rw [map_add, hf, hh0, add_zero]
+    (X : K⟦X⟧) ^ (2 * N) ∣ (U.subst (f + h) : K⟦X⟧) - U.subst f - (d⁄dX U).subst f * h := by
+  have hfh : constantCoeff (f + h) = 0 := by rw [map_add (f := _), hf, hh0, add_zero]
   set M := 2 * N with hM
   obtain ⟨V, P, hU⟩ : ∃ (V : K⟦X⟧) (P : Polynomial K), U = X ^ (M + 1) * V + (P : K⟦X⟧) :=
     ⟨_, _, eq_X_pow_mul_shift_add_trunc (M + 1) U⟩
-  have hD : d⁄dX K U = X ^ M * (((M + 1 : ℕ) : K⟦X⟧) * V + X * d⁄dX K V) +
+  have hD : d⁄dX U = X ^ M * (((M + 1 : ℕ) : K⟦X⟧) * V + X * d⁄dX V) +
       ((Polynomial.derivative P : Polynomial K) : K⟦X⟧) := by
-    rw [hU, map_add, derivative_coe, Derivation.leibniz, Derivation.leibniz_pow, derivative_X]
+    rw [hU, map_add (f := _), derivative_coe, Derivation.leibniz, Derivation.leibniz_pow, derivative_X]
     simp only [smul_eq_mul, nsmul_eq_mul, Nat.add_sub_cancel]
     ring
   obtain ⟨k, hk⟩ := (P.map (algebraMap K K⟦X⟧)).binomExpansion f h
@@ -83,13 +88,13 @@ theorem add_law (G : MvPowerSeries (Fin 2) K) (U : K⟦X⟧) (hU : constantCoeff
     rw [comp _ (hX 1), MvPowerSeries.subst_X hb]; rfl
 
 theorem deriv_mul_eq_one {U ℓ : K⟦X⟧} (hℓ : constantCoeff ℓ = 0) (h : U.subst ℓ = (X : K⟦X⟧)) :
-    ((d⁄dX K U).subst ℓ : K⟦X⟧) * d⁄dX K ℓ = 1 := by
+    ((d⁄dX U).subst ℓ : K⟦X⟧) * d⁄dX ℓ = 1 := by
   rw [← derivative_subst (hs hℓ), h, derivative_X]
 
 theorem subst_inv {U ℓ : K⟦X⟧} (hℓ : constantCoeff ℓ = 0) (h : U.subst ℓ = (X : K⟦X⟧)) :
     ℓ.subst U = (X : K⟦X⟧) := by
   have h1 := congrArg constantCoeff (deriv_mul_eq_one hℓ h)
-  rw [map_mul, map_one, ← coeff_zero_eq_constantCoeff_apply (d⁄dX K ℓ), coeff_derivative] at h1
+  rw [map_mul, map_one, ← coeff_zero_eq_constantCoeff_apply (d⁄dX ℓ), coeff_derivative] at h1
   simp only [zero_add, Nat.cast_zero, mul_one] at h1
   have : Invertible (coeff 1 ℓ) := ⟨_, h1, by rw [mul_comm]; exact h1⟩
   have h2 := subst_substInv_right ℓ hℓ
@@ -120,7 +125,7 @@ variable {q : ℕ} [Fact q.Prime]
 
 theorem mem_int_iff (x : ℂ_[q]) : x ∈ 𝓞_ℂ_[q] ↔ ‖x‖ ≤ 1 := by
   rw [PadicComplexInt, Valuation.mem_valuationSubring_iff, PadicComplex.norm_eq_norm, Valuation.norm_def,
-    PadicComplex.RankOne.hom_eq_embedding, Valuation.embedding_restrict]
+    (show Valuation.RankLeOne.hom' Valued.v = MonoidWithZeroHom.ValueGroup₀.embedding from rfl), Valuation.embedding_restrict]
   exact_mod_cast Iff.rfl
 
 theorem bd_map (f : 𝓞_ℂ_[q]⟦X⟧) : Bd 1 (PowerSeries.map (algebraMap 𝓞_ℂ_[q] ℂ_[q]) f) := by
@@ -229,7 +234,7 @@ theorem padic_multiplications : ∀ (q : ℕ) [Fact q.Prime] (F : FormalGroup �
       rw [this]
       congr 1
       push_cast
-      rw [map_add, map_one]
+      rw [map_add (f := _), map_one]
       ring
   have hint : ∀ a : ℤ_[q], Bd 1 (U.subst (C (zc a) * ℓ)) := by
     intro a m
@@ -245,10 +250,10 @@ theorem padic_multiplications : ∀ (q : ℕ) [Fact q.Prime] (F : FormalGroup �
     rwa [zc_natCast] at this
 
   have hone := deriv_mul_eq_one hℓ hUℓ
-  set W : ℂ_[q]⟦X⟧ := C (coeff 1 ℓ) * (d⁄dX ℂ_[q] U).subst ℓ with hW
+  set W : ℂ_[q]⟦X⟧ := C (coeff 1 ℓ) * (d⁄dX U).subst ℓ with hW
   have hW0 : constantCoeff W = 1 := by
     have h1 := congrArg constantCoeff hone
-    rw [map_mul, map_one, ← coeff_zero_eq_constantCoeff_apply (d⁄dX _ ℓ), coeff_derivative] at h1
+    rw [map_mul, map_one, ← coeff_zero_eq_constantCoeff_apply (d⁄dX ℓ), coeff_derivative] at h1
     simp only [zero_add, Nat.cast_zero, mul_one] at h1
     rw [hW, map_mul, constantCoeff_C, mul_comm, h1]
   have hWint : Bd 1 W := by
@@ -283,25 +288,25 @@ theorem padic_multiplications : ∀ (q : ℕ) [Fact q.Prime] (F : FormalGroup �
     rw [hUℓ, hUh, hb] at hl
     have hbd : Bd 1 (U.subst (ℓ + h)) := hl ▸ bd_map _
     have e : (U.subst (ℓ + h) : ℂ_[q]⟦X⟧) = X + X ^ N * W +
-        X ^ (2 * N) * (T + (d⁄dX ℂ_[q] U).subst ℓ * V.subst (X ^ N : ℂ_[q]⟦X⟧)) := by
+        X ^ (2 * N) * (T + (d⁄dX U).subst ℓ * V.subst (X ^ N : ℂ_[q]⟦X⟧)) := by
       rw [hUℓ] at hT
       rw [hW]
-      linear_combination hT + ((d⁄dX ℂ_[q] U).subst ℓ : ℂ_[q]⟦X⟧) * hh'
+      linear_combination hT + ((d⁄dX U).subst ℓ : ℂ_[q]⟦X⟧) * hh'
     have := hbd (m + N)
-    rw [e, map_add, map_add, coeff_X_pow_mul, coeff_X, if_neg (by omega), coeff_X_pow_mul', if_neg (by omega)] at this
+    rw [e, map_add (f := _), map_add (f := _), coeff_X_pow_mul, coeff_X, if_neg (by omega), coeff_X_pow_mul', if_neg (by omega)] at this
     simpa using this
   have hq1 : ‖(q : ℂ_[q])‖ < 1 := by
     rw [← zc_natCast, norm_zc, PadicInt.norm_p]
     exact inv_lt_one_of_one_lt₀ (by exact_mod_cast hq.out.one_lt)
-  have hder : Bd ‖(q : ℂ_[q])‖ (d⁄dX ℂ_[q] (U.subst (C (q : ℂ_[q]) * ℓ))) := by
+  have hder : Bd ‖(q : ℂ_[q])‖ (d⁄dX (U.subst (C (q : ℂ_[q]) * ℓ))) := by
     refine (sup_norm_laws q).2.2.2.2.2 _ W 0 _ hWint (by rw [hW0, norm_one]) ?_
-    have e : X ^ 0 * W * d⁄dX ℂ_[q] (U.subst (C (q : ℂ_[q]) * ℓ))
+    have e : X ^ 0 * W * d⁄dX (U.subst (C (q : ℂ_[q]) * ℓ))
         = C (q : ℂ_[q]) * W.subst (U.subst (C (q : ℂ_[q]) * ℓ) : ℂ_[q]⟦X⟧) := by
       rw [derivative_subst (hs (hc q)), hW, subst_mul (hs (hB0 q)), subst_C',
         subst_comp_subst_apply (hs hℓ) (hs (hB0 q)), hℓB, Derivation.leibniz, derivative_C]
       simp only [smul_eq_mul]
       linear_combination (C (coeff 1 ℓ) * C (q : ℂ_[q]) *
-        ((d⁄dX ℂ_[q] U).subst (C (q : ℂ_[q]) * ℓ) : ℂ_[q]⟦X⟧)) * hone
+        ((d⁄dX U).subst (C (q : ℂ_[q]) * ℓ) : ℂ_[q]⟦X⟧)) * hone
     rw [e]
     intro n
     rw [coeff_C_mul, norm_mul]

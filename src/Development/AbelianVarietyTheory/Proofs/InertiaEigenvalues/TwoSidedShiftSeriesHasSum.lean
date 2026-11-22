@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.TwoSidedShift
@@ -58,7 +63,7 @@ theorem exists_sum_shift : ∀ (l : ℕ) [Fact l.Prime] (A : Type) [CommRing A]
     induction N with
     | zero => simp [hT, hsh']; ring
     | succ N ih =>
-      rw [hstep N, map_add, map_add, hsh', hsh']
+      rw [hstep N, map_add (f := _), map_add (f := _), hsh', hsh']
       have e1 : (-((N + 1 : ℕ) : ℤ) + 1) = -(N : ℤ) := by push_cast; ring
       have e2 : (((N + 1 : ℕ) : ℤ) + 1) = ((N + 1 : ℕ) : ℤ) + 1 := rfl
       rw [e1]
@@ -105,7 +110,8 @@ theorem exists_sum_shift : ∀ (l : ℕ) [Fact l.Prime] (A : Type) [CommRing A]
       rw [Finset.mem_Icc] at hn'
       refine (hbound _ _ (hc n)).trans (pow_le_pow_of_le_one hr0 hr1.le (by omega))
     have hhead : ‖∑ n ∈ Finset.Icc (-(N : ℤ)) N, Θ (c n) - Θ w‖ ≤ r ^ N := by
-      rw [← map_sum, ← map_sub]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, ← map_sub]
       refine hbound N _ ?_
       rw [← dvd_neg, neg_sub]; exact hwT N
     rw [add_sub_assoc]

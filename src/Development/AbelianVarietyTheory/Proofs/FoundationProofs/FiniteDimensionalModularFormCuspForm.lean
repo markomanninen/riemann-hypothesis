@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EtaSixProductDifferentiable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EtaSixProductDifferentiable
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices UpperHalfPlane ModularForm
 open scoped MatrixGroups ModularForm Manifold
 
@@ -126,7 +131,7 @@ def coeffMap {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetOne] {h : ℝ} (hh : 0 <
   map_add' f g := by
     funext n
     simp only [Pi.add_apply]
-    rw [ModularForm.coe_add, ModularForm.qExpansion_add hh hΓ f g, map_add]
+    rw [ModularForm.coe_add, ModularForm.qExpansion_add hh hΓ f g, map_add (f := _)]
   map_smul' c f := by
     funext n
     simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
@@ -143,8 +148,8 @@ theorem finiteDimensional_of_isArithmetic (Γ : Subgroup (GL (Fin 2) ℝ)) [Γ.I
 
 end GlobalTheory.HeckeFamilyMatrices.FinDim
 
-open GlobalTheory.HeckeFamilyMatrices.FinDim in
 
+open GlobalTheory.HeckeFamilyMatrices.FinDim in
 theorem GlobalTheory.HeckeFamilyMatrices.finiteDimensional_modularForm_cuspForm :
     ∀ (Γ : Subgroup SL(2, ℤ)) (k : ℤ), Γ.FiniteIndex →
       FiniteDimensional ℂ (ModularForm Γ k) ∧ FiniteDimensional ℂ (CuspForm Γ k) := by

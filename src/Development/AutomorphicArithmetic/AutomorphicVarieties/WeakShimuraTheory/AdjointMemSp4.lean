@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SpaceMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ContinuousCoboundaries2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SpaceMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ContinuousCoboundaries2
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,8 +79,8 @@ def nil (n : M4 k) : Submodule k (sp4 k) where
   smul_mem' c X hX i j h := by
     rw [Submodule.coe_smul, mul_smul_comm, smul_mul_assoc, Matrix.smul_apply, hX i j h, smul_zero]
 
-variable (k) in
 
+variable (k) in
 def tor : Submodule k (sp4 k) where
   carrier := {X | X.1.IsDiag}
   add_mem' hX hY := hX.add hY

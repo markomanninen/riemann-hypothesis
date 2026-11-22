@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Formalism.SharpRestriction.LevelLetterCocycles.RamificationTwoAndConjugationAtQAndD
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LatticeDualPairingCyclotomic
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfForallAnnihilatorAnnihilatorFieldModInteger
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateH2PeriodDatum
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TatePairingLatticeQuotientsNondegenerate
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Formalism.SharpRestriction.LevelLetterCocycles.RamificationTwoAndConjugationAtQAndD
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LatticeDualPairingCyclotomic
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfForallAnnihilatorAnnihilatorFieldModInteger
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateH2PeriodDatum
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TatePairingLatticeQuotientsNondegenerate
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,13 +42,13 @@ def qpair : (↥LA.T ⧸ I) →ₗ[O] (↥LA'.T ⧸ I') →ₗ[O] (LL ⧸ L1.T) 
       (fun (t : ↥LA.T) (t' : ↥LA'.T) =>
         (Submodule.Quotient.mk (s * m (t : A.V) (t' : A'.V)) : LL ⧸ L1.T))
       (fun t u t' => by
-        simp only [Submodule.coe_add, map_add, LinearMap.add_apply, mul_add,
+        simp only [Submodule.coe_add, map_add (f := _), LinearMap.add_apply, mul_add,
           Submodule.Quotient.mk_add])
       (fun c t t' => by
         rw [Submodule.coe_smul, ← algebraMap_smul LL c (t : A.V), map_smul, LinearMap.smul_apply,
           smul_eq_mul, mul_left_comm, ← Algebra.smul_def, Submodule.Quotient.mk_smul])
       (fun t t' u' => by
-        simp only [Submodule.coe_add, map_add, mul_add, Submodule.Quotient.mk_add])
+        simp only [Submodule.coe_add, map_add (f := _), mul_add, Submodule.Quotient.mk_add])
       (fun c t t' => by
         rw [Submodule.coe_smul, ← algebraMap_smul LL c (t' : A'.V), map_smul, smul_eq_mul,
           mul_left_comm, ← Algebra.smul_def, Submodule.Quotient.mk_smul]))
@@ -91,7 +95,7 @@ theorem cup_cocycle_d2_eq_zero (hI : StableSub LA I) (hI' : StableSub LA' I')
     + zq m L1 I I' s hsI hsI' hI' c c' (g, h * k) - zq m L1 I I' s hsI hsI' hI' c c' (g, h) = 0
   simp only [zq]
   rw [← qpair_equiv m L1 I I' s hsI hsI' hI hI' hm, hc.2 g h, hc'.2 h k, GlobalTheory.TateFin.actQ_mul]
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   abel
 
 theorem lc_act (hI' : StableSub LA' I') (hlc' : ∀ y, IsLocallyConstant fun g => actQ LA' I' hI' g y)
@@ -130,7 +134,7 @@ theorem cup_coboundary_left_mem_B2 (hI : StableSub LA I) (hI' : StableSub LA' I'
       + qpair m L1 I I' s hsI hsI' x (c' g) =
     qpair m L1 I I' s hsI hsI' (c g) (actQ LA' I' hI' g (c' h))
   rw [hcg, ← qpair_equiv m L1 I I' s hsI hsI' hI hI' hm, hc'.2 g h]
-  simp only [map_add, map_sub, LinearMap.sub_apply]
+  simp only [map_add (f := _), map_sub, LinearMap.sub_apply]
   abel
 
 theorem cup_coboundary_right_mem_B2 (hI : StableSub LA I) (hI' : StableSub LA' I')
@@ -149,7 +153,7 @@ theorem cup_coboundary_right_mem_B2 (hI : StableSub LA I) (hI' : StableSub LA' I
       + -qpair m L1 I I' s hsI hsI' (c g) (actQ LA' I' hI' g y) =
     qpair m L1 I I' s hsI hsI' (c g) (actQ LA' I' hI' g (c' h))
   rw [hcg, map_neg, ← qpair_equiv m L1 I I' s hsI hsI' hI hI' hm, hc.2 g h, GlobalTheory.TateFin.actQ_mul]
-  simp only [map_add, map_sub, LinearMap.add_apply]
+  simp only [map_add (f := _), map_sub, LinearMap.add_apply]
   abel
 
 end Gen
@@ -183,7 +187,7 @@ def cupH2Level : ↥(quotientCocycles LA' I' hI') →ₗ[O] ↥(quotientCocycles
       congr 1
       apply Subtype.ext
       funext x
-      simp [zq, map_add])
+      simp [zq, map_add (f := _)])
     (fun r a c => by
       rw [← Submodule.Quotient.mk_smul]
       congr 1
@@ -195,7 +199,7 @@ def cupH2Level : ↥(quotientCocycles LA' I' hI') →ₗ[O] ↥(quotientCocycles
       congr 1
       apply Subtype.ext
       funext x
-      simp [zq, map_add])
+      simp [zq, map_add (f := _)])
     (fun r c' a => by
       rw [← Submodule.Quotient.mk_smul]
       congr 1
@@ -203,8 +207,8 @@ def cupH2Level : ↥(quotientCocycles LA' I' hI') →ₗ[O] ↥(quotientCocycles
       funext x
       simp [zq, map_smul])
 
-include hsI hsI' hm hlc' in
 
+include hsI hsI' hm hlc' in
 theorem exists_level_pairing {S : Submodule O LL}
     (e : ReciprocityTheory.Def.H2 (repD L1) (⊤ : Submodule O (LL ⧸ L1.T)) ≃ₗ[O] (LL ⧸ S)) :
     ∃ β : QuotientCohomology LA' I' hI' →ₗ[O] QuotientCohomology LA I hI →ₗ[O] (LL ⧸ S),
@@ -230,8 +234,8 @@ theorem exists_level_pairing {S : Submodule O LL}
     unfold CobO
     rw [funext (zq_eq m L1 I I' s hsI hsI' hI' c.1 c'.1)]
 
-omit [TopologicalSpace LL] in
 
+omit [TopologicalSpace LL] in
 theorem cobO_smul (a : O) {z : G × G → LL} (h : CobO PD L1 z) :
     CobO PD L1 (fun x => algebraMap O LL a * z x) := by
   unfold CobO at *
@@ -264,8 +268,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {LL : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL]
     {O : Type} [CommRing O] [Algebra O LL]
 
-open Formalism.MainNotions.BlochKatoDuality.Br in
 
+open Formalism.MainNotions.BlochKatoDuality.Br in
 theorem cobO_red [IsTopologicalRing LL] [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O LL]
     (L1 : Lattice (O := O) (charRep (cycLL PD LL)))
     (hL1 : L1.T = LinearMap.range (Algebra.linearMap O LL))

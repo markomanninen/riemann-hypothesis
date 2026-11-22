@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.FormYx
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.FormYx
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+
+@[expose] public section
 
 noncomputable section
 
@@ -251,7 +255,7 @@ theorem genB (hA : ArchOp) (hE : EiDense) (hS : ArchSlice) {M : Model σ X W} {M
     rw [ha, ha, ← hg, om_rho hP _ _ _ (pv_sch hG f), ← heisenberg_action_add_of_orthogonal M B.ψ (sy0 _ _), ← Matrix.add_vecMulVec, hy, add_comm (lift _ • _),
       add_assoc, kill _ _ _ _ (om_sch hP _ (pv_sch hG f)), ← add_smul,
       ← hlf.eq (at_add hat (hlf.supp (star c))) (c := star (c + bet (xi B H.x) (k, η))) fun w => by
-        rw [map_add, hlf.pi, hlf.conj, pi_beta hlf hP.herm]; simp [add_comm]]
+        rw [map_add (f := _), hlf.pi, hlf.conj, pi_beta hlf hP.herm]; simp [add_comm]]
 
 theorem kap_ex {a a' : ℕ} {G : Geo σ a a'} {Y : Chars F E} {om om'} (t : IsTriple B G Y om om') :
     ∃ κ : InfinitePlace F → ℕ, (∀ w, a + a' < κ w) ∧ HasExp B.emb Y.ν fun w => κ w := by

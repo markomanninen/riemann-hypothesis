@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AbsInvOf
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AbsInvOf
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 set_option maxHeartbeats 1000000
@@ -60,8 +64,8 @@ private theorem exists_val (hF : R.Facts) (e : EMap G D) (b : BMap G D) (p : PMa
     linear_combination h1
   have add0 : ∀ v v' φ, c0 (v + v') φ = c0 v φ + c0 v' φ := by
     intro v v' φ
-    have := spec0 (R.t ^ N) (v + v') (xs v + xs v') (by rw [map_add, hxs, hxs, map_add, smul_add]) φ
-    rw [map_add, AddMonoidHom.add_apply] at this
+    have := spec0 (R.t ^ N) (v + v') (xs v + xs v') (by rw [map_add (f := _), hxs, hxs, map_add (f := _), smul_add]) φ
+    rw [map_add (f := _), AddMonoidHom.add_apply] at this
     simp only [c0]
     field_simp
     rw [this]; simp only [c0]; field_simp
@@ -99,7 +103,7 @@ private theorem exists_val (hF : R.Facts) (e : EMap G D) (b : BMap G D) (p : PMa
     · intro s v
       rw [smul_smul, hC, hC, map_mul]; ring
     · intro x y hx hy
-      rw [smul_add, map_add, map_add, Pi.add_apply, Pi.add_apply, hx, hy, mul_add]
+      rw [smul_add, map_add (f := _), map_add (f := _), Pi.add_apply, Pi.add_apply, hx, hy, mul_add]
   · intro c v x h φ
     rw [hC1]; exact spec0 c v x h φ
 
@@ -127,7 +131,7 @@ private theorem IsVal.equi {n : ℕ} {C : M.V n →+ (Module.Dual K (HdR M.q n) 
     rw [p.act a hM, hC.spec _ _ _ hx, map_mul, hF.i_σ] at h1
     exact (mul_left_cancel₀ ((map_ne_zero _).mpr (tB_pow_ne hF N)) h1).symm
   · intro x y hx hy
-    rw [map_add, map_add, Pi.add_apply, hx, hy, map_add, Pi.add_apply, map_add]
+    rw [map_add (f := _), map_add (f := _), Pi.add_apply, hx, hy, map_add (f := _), Pi.add_apply, map_add (f := _)]
 
 private theorem IsVal.cup {i j : ℕ} {Ci : M.V i →+ (Module.Dual K (HdR M.q i) → R.B)}
     {Cj : M.V j →+ (Module.Dual K (HdR M.q j) → R.B)} {Cij : M.V (i + j) →+ (Module.Dual K (HdR M.q (i + j)) → R.B)}
@@ -189,12 +193,17 @@ private theorem IsVal.van {n : ℕ} {C : M.V n →+ (Module.Dual K (HdR M.q n) �
   obtain ⟨m, hm⟩ := b.inj a hM n
   choose xs hxs using fun k => hN (v k)
   have h1 := hm (R.t ^ u • ∑ k, (c k • xs k)) (by
-    simp only [map_smul, map_sum, hxs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, hxs]
     simp only [smul_comm (c _) (R.t ^ N), ← Finset.smul_sum]
     rw [smul_comm, h, smul_zero])
   have h2 := congrArg (fun y => p.κ a n y ψ) h1
-  simp only [p.lin a hM, map_zero, AddMonoidHom.zero_apply, map_sum, AddMonoidHom.finset_sum_apply,
-    hC.spec _ _ _ (hxs _)] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [p.lin a hM, map_zero, AddMonoidHom.zero_apply, map_sum] at h2
+  have heval : (∑ k, p.κ a n (c k • xs k)) ψ = ∑ k, p.κ a n (c k • xs k) ψ := by
+    exact map_sum ({ toFun := fun f => f ψ, map_zero' := rfl, map_add' := fun _ _ => rfl } : (Module.Dual K (HdR M.q n) →+ R.B) →+ R.B) _ _
+  rw [heval] at h2
+  simp only [p.lin a hM, hC.spec _ _ _ (hxs _)] at h2
   have h3 := (mul_eq_zero.mp ((mul_eq_zero.mp h2).resolve_left (tB_pow_ne hF m))).resolve_left (tB_pow_ne hF u)
   have h4 : R.i (R.t ^ N) * ∑ k, R.i (c k) * C (M.toV n (v k)) ψ = 0 := by
     rw [Finset.mul_sum, ← h3]
@@ -222,7 +231,7 @@ private theorem inj_conn (hF : R.Facts) (hS : EtSide G) (hL : D.Laws G) (e : EMa
     have hw' : w ∈ Submodule.span ℚ_[l] (Set.range g) := by rw [hspan]; trivial
     refine hw (Submodule.span_induction (p := fun w _ => C (j + j') w φ = 0) ?_ (by simp) ?_ ?_ hw')
     · rintro _ ⟨s, rfl⟩; exact hcon s
-    · intro x y _ _ hx hy; rw [map_add, Pi.add_apply, hx, hy, add_zero]
+    · intro x y _ _ hx hy; rw [map_add (f := _), Pi.add_apply, hx, hy, add_zero]
     · intro z x _ hx; rw [(hC _).smul, hx, mul_zero]
   obtain ⟨s₀, hs₀⟩ := hg
   have hall : ∀ s, C (j + j') (g s) φ ≠ 0 := by
@@ -256,7 +265,7 @@ private theorem inj_conn (hF : R.Facts) (hS : EtSide G) (hL : D.Laws G) (e : EMa
       rw [Finset.sum_mul, ← h1]; exact Finset.sum_congr rfl fun _ _ => by ring
     exact (mul_eq_zero.mp h3).resolve_right (hall s)
   · intro x y _ _ hx hy
-    simp only [LinearMap.add_apply, map_add, add_mul, Finset.sum_add_distrib, hx, hy, add_zero]
+    simp only [LinearMap.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib, hx, hy, add_zero]
   · intro z x _ hx
     simp only [LinearMap.smul_apply, smul_eq_mul, map_mul, mul_assoc, ← Finset.mul_sum, hx, mul_zero]
 
@@ -273,7 +282,8 @@ theorem injAbs : UpperTheory.Ru.crystallineComparison.InjAbs := by
     obtain ⟨a', _, ⟨m⟩⟩ := hL.refine (P s) M (uu s) (hu s) (hP s).1 hM a₀ a
     have := inj_conn hF hS hL e b p (hP s).1 (hP s).2 a' j (fun k => Model.pullT (uu s) (hu s) j (v k)) c u (by
       have h1 := congrArg (D.pullA m j) h
-      simpa only [map_smul, map_sum, map_zero, ← e.nat m (hP s).1 hM] using h1) f'
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [map_smul, map_sum, map_zero, ← e.nat m (hP s).1 hM] using h1) f'
     simpa only [toV_pullT] using this
   let L : M.V j →ₗ[ℚ_[l]] ∀ s, (P s).V j := LinearMap.pi fun s => Model.pullV (uu s) (hu s) j
   have hk : LinearMap.ker L = ⊥ := LinearMap.ker_eq_bot'.2 fun w hw => hinj j w fun s => congrFun hw s
@@ -282,9 +292,11 @@ theorem injAbs : UpperTheory.Ru.crystallineComparison.InjAbs := by
   have hf : ∀ w, f w = ∑ s, f' s (Model.pullV (uu s) (hu s) j w) := by
     intro w
     have h1 : g (L w) = w := LinearMap.congr_fun hg w
-    conv_lhs => rw [← h1, ← Finset.univ_sum_single (L w), map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← h1, ← Finset.univ_sum_single (L w), map_sum, map_sum]
     rfl
-  simp only [hf, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hf, map_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_eq_zero fun s _ => hs s (f' s)
 

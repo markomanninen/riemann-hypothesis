@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.IdealPowPrincipal
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.IdealPowPrincipal
+
+@[expose] public section
 
 noncomputable section
 open scoped NumberField ComplexConjugate
@@ -93,7 +97,7 @@ lemma vol_std_le {a : ℕ} {b c : ℤ} {d : ℕ} {ha : 0 < a} {hd : 0 < d} {lam 
     obtain ⟨p, q, hpq⟩ := Submodule.mem_span_pair.mp h2
     refine ⟨p * (a : 𝓞 (KF b d)) + q * thetaO hok, ?_⟩
     rw [← hpq]
-    simp only [map_add, map_mul, algebraMap_thetaO, map_intCast, map_natCast, zsmul_eq_mul]
+    simp only [map_add (f := _), map_mul, algebraMap_thetaO, map_intCast, map_natCast, zsmul_eq_mul]
     ring
   choose o ho using hent
   have hM : Matrix.of v = lam • (algebraMap (𝓞 (KF b d)) ℂ).mapMatrix (Matrix.of o) := by

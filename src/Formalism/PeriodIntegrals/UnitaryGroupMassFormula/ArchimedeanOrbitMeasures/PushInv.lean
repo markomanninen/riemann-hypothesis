@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PushCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.SplitG
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PushCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.SplitG
+
+@[expose] public section
 
 noncomputable section
 

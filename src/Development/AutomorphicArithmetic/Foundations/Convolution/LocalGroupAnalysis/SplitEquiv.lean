@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotStage
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotStage
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,11 +49,10 @@ def Eul [MeasurableSpace G] [MeasurableSpace Gi] [∀ v, MeasurableSpace (Gv v)]
 
 def cen (f : G →* Gi) (g : G) : Subgroup.centralizer {g} →* Subgroup.centralizer {f g} where
   toFun t := ⟨f t, by
-    rw [Subgroup.mem_centralizer_singleton_iff, ← map_mul, ← map_mul, Subgroup.mem_centralizer_singleton_iff.1 t.2]⟩
+    exact Subgroup.mem_centralizer_singleton_iff.mpr
+      ((Subgroup.mem_centralizer_singleton_iff.mp t.2).map f)⟩
   map_one' := Subtype.ext (map_one f)
   map_mul' s t := Subtype.ext (map_mul f _ _)
-
-@[simp] theorem coe_cen (f : G →* Gi) (g : G) (t : Subgroup.centralizer {g}) : (cen f g t : Gi) = f t := rfl
 
 end
 

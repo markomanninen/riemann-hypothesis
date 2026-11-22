@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementM
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FglInvariant
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementM
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FglInvariant
+
+@[expose] public section
 
 open PowerSeries
 
@@ -16,7 +20,7 @@ section Tools
 variable {R : Type u} {S : Type v} [CommRing R] [CommRing S]
 
 theorem map_derivative (φ : R →+* S) (f : R⟦X⟧) :
-    PowerSeries.map φ (derivative R f) = derivative S (PowerSeries.map φ f) := by
+    PowerSeries.map φ (derivative f) = derivative (PowerSeries.map φ f) := by
   ext n
   simp [PowerSeries.coeff_derivative, PowerSeries.coeff_map]
 
@@ -48,7 +52,7 @@ namespace More
 
 theorem iterate_derivative_subst {K : Type u} [Field K] [CharZero K] (W : WeierstrassCurve K)
     (n : ℕ) (f : K⟦X⟧) :
-    (derivative K)^[n] (f.subst (expSer W)) = ((D W)^[n] f).subst (expSer W) := by
+    (derivative (R := K))^[n] (f.subst (expSer W)) = ((D W)^[n] f).subst (expSer W) := by
   induction n generalizing f with
   | zero => rfl
   | succ n ih =>
@@ -66,12 +70,12 @@ private theorem constantCoeff_powerSeries_subst_eq_zero {R : Type u} [CommRing R
     (show constantCoeff (g - C (constantCoeff g)) = 0 by simp)
   have hg : g = X * h + (constantCoeff g) • (1 : R⟦X⟧) := by
     rw [PowerSeries.smul_eq_C_mul, mul_one, ← hh]; ring
-  rw [hg, ← PowerSeries.coe_substAlgHom ha, map_add, map_mul, map_smul, map_one,
+  rw [hg, ← PowerSeries.coe_substAlgHom ha, map_add (f := _), map_mul, map_smul, map_one,
     PowerSeries.coe_substAlgHom ha, PowerSeries.subst_X ha]
   simp [ha0, PowerSeries.smul_eq_C_mul]
 
 private theorem factorial_mul_coeff_eq_coeff_zero_iterate_derivative {R : Type u} [CommRing R] (n : ℕ) (g : R⟦X⟧) :
-    (n.factorial : R) * coeff n g = coeff 0 ((derivative R)^[n] g) := by
+    (n.factorial : R) * coeff n g = coeff 0 ((derivative (R := R))^[n] g) := by
   induction n generalizing g with
   | zero => simp
   | succ n ih =>
@@ -106,7 +110,7 @@ theorem fw_mem (h1 : W.a₁ ∈ S) (h2 : W.a₂ ∈ S) (h3 : W.a₃ ∈ S) (h4 :
 
 theorem D_mem (hw : ∀ n, coeff n (fw W) ∈ S) (f : K⟦X⟧) (hf : ∀ n, coeff n f ∈ S) (n : ℕ) :
     coeff n (D W f) ∈ S := by
-  have e1 : D W f = fw W * derivative K f := by
+  have e1 : D W f = fw W * derivative f := by
     simp only [D, Derivation.smul_apply, smul_eq_mul]
   rw [e1, PowerSeries.coeff_mul]
   refine Subring.sum_mem S fun p _ => Subring.mul_mem S (hw _) ?_
@@ -158,7 +162,7 @@ theorem weierstrass_p_prime_shape : WpPrimeShape.{u} := by
     rw [h0] at e1
     simp at e1
   constructor
-  · rw [(wpShape K W).1, map_add, dL_uPow, dL_toL, WpSh.C_neg_two]
+  · rw [(wpShape K W).1, map_add (f := _), dL_uPow, dL_toL, WpSh.C_neg_two]
     norm_num
   · have h2 : (toL (expSer W))⁻¹ * toL (expSer W) = 1 := inv_mul_cancel₀ hne
     have h3 : Wp.sig he (wU W) * Wp.sig he (xS W) = 1 := by

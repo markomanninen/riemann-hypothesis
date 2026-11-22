@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsSubMemEigW
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SplitHermitianGeneratorsExistStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FamilyHodgeLatticeDataStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionHiddenSecondStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalIsomorphismTransportStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BundleDegreeEqSumValuations
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubAndQuotientBundles
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsSubMemEigW
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SplitHermitianGeneratorsExistStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FamilyHodgeLatticeDataStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionHiddenSecondStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalIsomorphismTransportStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BundleDegreeEqSumValuations
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubAndQuotientBundles
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
 open scoped CategoryTheory.Obj
@@ -45,14 +50,17 @@ theorem exists_quot_basis {r : ℕ} (x : Fin r → V)
   have hχ : ∀ a : O, χ a = ∑ k, ((b.repr a k : ℤ) : K) * χ (b k) := by
     intro a
     conv_lhs => rw [← b.sum_repr a]
-    simp [map_sum, zsmul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, zsmul_eq_mul]
   have hρ : ∀ (a : O) (v : V), ρ a v = ∑ k, (b.repr a k : ℤ) • ρ (b k) v := by
     intro a v
     conv_lhs => rw [← b.sum_repr a]
-    simp [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, LinearMap.sum_apply]
   have hφx : ∀ (a : O) (j : Fin r), φ (ρ a (x j)) = χ a • Pi.single j (1 : K) := by
     intro a j
-    rw [hρ, map_sum, hχ a, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hρ, map_sum, hχ a, Finset.sum_smul]
     refine Finset.sum_congr rfl fun k _ => ?_
     have h := hφB (j, k)
     rw [hB] at h
@@ -89,7 +97,8 @@ theorem exists_quot_basis {r : ℕ} (x : Fin r → V)
   · simp [e, hψ]
   · rw [Basis.map_repr, LinearEquiv.trans_apply, LinearEquiv.symm_symm, he, Pi.basisFun_repr]
     simp_rw [← hB]
-    rw [map_sum, Finset.sum_apply, Fintype.sum_prod_type, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply, Fintype.sum_prod_type, Finset.sum_eq_single j]
     · simp [hφB]
     · intro j' _ hj'
       simp [hφB, Pi.single_apply, Ne.symm hj']
@@ -117,7 +126,8 @@ theorem isLatOf_quot {C : ACurve K} (i : C.I) {r : ℕ} {x : Fin r → V}
   · intro hw
     have h1 : χ 1 = ∑ k, ((b.repr 1 k : ℤ) : K) * χ (b k) := by
       conv_lhs => rw [← b.sum_repr 1]
-      simp [map_sum, zsmul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, zsmul_eq_mul]
     refine ⟨∑ q : Fin r × J, (((b.repr 1 q.2 : ℤ) : K) * bq.repr w q.1) • ρ (b q.2) (x q.1),
       (hL _).2 ⟨fun q : Fin r × J => ((b.repr 1 q.2 : ℤ) : K) * bq.repr w q.1, fun q => ?_, rfl⟩, ?_⟩
     · show C.v i (((b.repr 1 q.2 : ℤ) : K) * bq.repr w q.1) ≤ 1
@@ -248,7 +258,8 @@ theorem mem_stdLat_iff
         rw [hL]
         rfl
       refine ⟨fun q => (bA.repr u q : K), fun q => (Valuation.mem_valuationSubring_iff _ _).1 (bA.repr u q).2, ?_⟩
-      conv_lhs => rw [← hu, ← bA.sum_repr u, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← hu, ← bA.sum_repr u, map_sum, map_sum]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [map_smul, LinearMap.map_smul_of_tower, ← algebraMap_smul K]
       rfl
@@ -307,7 +318,8 @@ private theorem quot_deg_lemma_4 {K : Type} [Field K] (C : ACurve K) {V : Type} 
       intro j
       rw [hbq1 i j]
       simp_rw [hb₀]
-      rw [show (∑ l, N i j l • (eigSpan ρ χ).mkQ (x₀ l)) =
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [show (∑ l, N i j l • (eigSpan ρ χ).mkQ (x₀ l)) =
           (eigSpan ρ χ).mkQ (∑ l, N i j l • x₀ l) by rw [map_sum]; simp only [map_smul]]
       rw [Submodule.mkQ_apply, Submodule.mkQ_apply, Submodule.Quotient.eq]
       exact hN i j

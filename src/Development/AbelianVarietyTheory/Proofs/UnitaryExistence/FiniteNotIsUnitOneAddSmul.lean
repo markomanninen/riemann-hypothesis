@@ -1,8 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.AdmissibleHarmonicLattice
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsPowLeHalfPart
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsForallAbvSubLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.AdmissibleHarmonicLattice
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.NormFactorThetaValue
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsMulMemOfMemSpan
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdmissibleFalseIffFirstInvariant
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.UniversalNormalisedMulByNatPullbackIso
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ModuliUnivEtaKilled
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsTranslationSectionsUniversalObject
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InZhGeoInjStable
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsotropicGroupLatticeClassRepresentatives
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsForallAbvSubLt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -91,7 +104,7 @@ theorem exists_inv_one_add_smul {A : Type*} [CommRing A] (O : Subring A) {p : �
     exact IsUnit.of_mul_eq_one (⟨w, hw⟩ : O) (Subtype.ext h)
   refine ⟨O.subtype.mapMatrix (1 + (p : O) • Z')⁻¹, fun i j => ((1 + (p : O) • Z')⁻¹ i j).2, ?_⟩
   have := congrArg O.subtype.mapMatrix (Matrix.mul_nonsing_inv _ hd)
-  rw [map_mul, map_one, Nat.cast_smul_eq_nsmul, map_add, map_one, map_nsmul] at this
+  rw [map_mul, map_one, Nat.cast_smul_eq_nsmul, map_add (f := _), map_one, map_nsmul] at this
   rw [Nat.cast_smul_eq_nsmul]
   exact this
 
@@ -142,7 +155,7 @@ theorem exists_unitary_approx {E : Type*} [Field E] [CharZero E] [StarRing E] {�
   have e : (1 + (2 * t - 1)) * (1 + m • (Y - star Y)) = 2 := by
     rw [add_sub_cancel, mul_assoc, mul_eq_one_comm.1 ht, mul_one]
   have e' := congrArg (φ i).mapMatrix e
-  rw [map_mul, map_add, map_add, map_one, map_ofNat, map_nsmul, map_sub _ Y, hφ'] at e'
+  rw [map_mul, map_add (f := _), map_add (f := _), map_one, map_ofNat, map_nsmul, map_sub _ Y, hφ'] at e'
   rw [← e']
   congr 2
   rw [star_sub, star_smul, (hc i).1, ← hφ, star_inv₀, star_natCast, ← hm]
@@ -222,7 +235,7 @@ theorem exists_sub_mem_locOrder (T : Finset (HeightOneSpectrum (𝓞 (maximalRea
   obtain ⟨y, hy⟩ := app b
   refine ⟨x + y * θ, fun v => ?_⟩
   convert add_mem (hx v) (mul_mem (hy v) (locEmb_mem_locOrder v.1 θ)) using 1
-  rw [hab v, map_add, map_mul]
+  rw [hab v, map_add (f := _), map_mul]
   ring
 
 variable (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E)))
@@ -234,13 +247,13 @@ theorem exists_inv_one_add {p : ℕ} (hp : (p : 𝓞 (maximalRealSubfield E)) �
   have : IsUnit (1 + p • (⟨z, hz⟩ : locOrder v)) := by
     by_contra h
     obtain ⟨m, hm, h⟩ := exists_max_ideal_of_mem_nonunits h
-    have h1 := eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal
+    have h1 := eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal
       (R := v.adicCompletionIntegers (maximalRealSubfield E)) m)
     have h2 : (p : v.adicCompletionIntegers (maximalRealSubfield E)) ∈ maximalIdeal _ := by
       rw [mem_maximalIdeal, mem_nonunits_iff, ← map_natCast (algebraMap (𝓞 (maximalRealSubfield E)) _),
         isUnit_algebraMap_iff]
       exact fun h => h hp
-    rw [← h1, Ideal.mem_comap, map_natCast] at h2
+    rw [← h1, Ideal.mem_under, map_natCast] at h2
     rw [nsmul_eq_mul] at h
     exact hm.ne_top ((Ideal.eq_top_iff_one _).2 ((Ideal.add_mem_iff_left _ (m.mul_mem_right _ h2)).1 h))
   obtain ⟨w, hw⟩ := this.exists_right_inv
@@ -252,7 +265,7 @@ theorem exists_norm_one_isUnit {p : ℕ} (hp0 : p ≠ 0) (hp : (p : 𝓞 (maxima
   haveI : IsArtinianRing (LocAlg v) := IsArtinianRing.of_finite (v.adicCompletion (maximalRealSubfield E)) _
   obtain ⟨θ, h0, hθ⟩ := exists_imaginary_integer E
   have hc : ∀ k : ℤ, IsCMField.complexConj E (1 + p * (k * θ : E)) = 1 - p * (k * θ) := fun k => by
-    rw [map_add, map_one, map_mul, map_mul, map_natCast, map_intCast, show IsCMField.complexConj E θ = -θ from hθ]
+    rw [map_add (f := _), map_one, map_mul, map_mul, map_natCast, map_intCast, show IsCMField.complexConj E θ = -θ from hθ]
     ring
   have hne : ∀ k : ℤ, 1 + p * (k * θ : E) ≠ 0 := fun k hk => by
     have := hc k
@@ -298,7 +311,7 @@ theorem isUnit_one_add_of_skew (S : Matrix (Fin n) (Fin n) E) (hS : star S = -S)
   open scoped ComplexOrder in
   have h2 := (Matrix.PosDef.one.add_posSemidef (Matrix.posSemidef_conjTranspose_mul_self (τ.mapMatrix S))).isUnit
   have h3 : 1 + (τ.mapMatrix S)ᴴ * τ.mapMatrix S = τ.mapMatrix (1 + S) * τ.mapMatrix (1 - S) := by
-    rw [h1, map_add, map_sub, map_one]; noncomm_ring
+    rw [h1, map_add (f := _), map_sub, map_one]; noncomm_ring
   rw [h3, Matrix.isUnit_iff_isUnit_det, Matrix.det_mul, ← RingHom.map_det] at h2
   rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero, ← _root_.map_ne_zero τ]
   exact left_ne_zero_of_mul h2.ne_zero
@@ -365,8 +378,10 @@ theorem exists_nsmul_mem {p : ℕ} (hp : p.Prime) (L : Submodule (𝓞 E) (Fin n
     · rwa [← e]
     · rwa [e, neg_smul, neg_mem_iff] at h1
   have hpQ : (p : 𝓞 (maximalRealSubfield E)) ∈ Q := by
-    have : (p : ℤ) ∈ Q.comap (algebraMap ℤ _) := hQp ▸ Ideal.mem_span_singleton_self _
-    simpa using this
+    have : (p : ℤ) ∈ Q.under ℤ := by
+      rw [hQp]
+      exact Ideal.mem_span_singleton_self _
+    simpa [Ideal.mem_under] using this
   obtain ⟨s, hs, hsx⟩ := h ⟨Q, hQ, fun e => hp.ne_zero (by simpa [e] using hpQ)⟩ hpQ
   exact hs (hIQ hsx)
 
@@ -398,7 +413,8 @@ theorem inGenus_of_selfDual [Algebra.Unramified (𝓞 (maximalRealSubfield E)) (
     Units.inv_eq_of_mul_eq_one_left (hh' v)
   obtain ⟨γ, hγ, hγ'⟩ := exists_unitary_near hp.ne_zero (fun v => (h v).1) hh'
   have hγ₂ : γ * (γ.map cc)ᵀ = 1 := mul_eq_one_comm.1 hγ
-  have hmap : ∀ v (M : Matrix (Fin n) (Fin n) E) (x : Fin n → E),
+  have hmap : ∀ (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E)))
+      (M : Matrix (Fin n) (Fin n) E) (x : Fin n → E),
       (fun i => locEmb v ((M *ᵥ x) i)) = M.map (locEmb v) *ᵥ fun i => locEmb v (x i) :=
     fun v M x => funext fun i => RingHom.map_mulVec (locEmb v) M x i
   refine ⟨Matrix.toLin'OfInv hγ hγ₂, fun x y => ?_, fun x hx => exists_nsmul_mem hp _ _ fun v hv => ?_,
@@ -410,7 +426,8 @@ theorem inGenus_of_selfDual [Algebra.Unramified (𝓞 (maximalRealSubfield E)) (
   · have h1 := (hhL v _).1 (Submodule.subset_span ⟨x, hx, rfl⟩)
     have h2 : ∀ i j, (((γ.map cc)ᵀ).map (locEmb v) * (h v).1) i j ∈ locOrder v := fun i j => by
       convert locConj_mem v (hγ' v hv j i) using 1
-      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, locConj_locConj,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, locConj_locConj,
         locConj_locEmb, mul_comm]
     have h3 := mulVec_mem_locOrder v h2 h1
     rw [Matrix.mulVec_mulVec, Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one, ← hmap] at h3

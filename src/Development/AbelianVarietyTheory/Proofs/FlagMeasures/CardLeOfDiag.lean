@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.CmStarOfIsCMUnram
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsRest
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.CmStarOfIsCMUnram
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsRest
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions
 
@@ -52,7 +56,8 @@ theorem card_le_of_diag {p q d : ℕ} (N : Matrix (Fin p ⊕ Fin q) (Fin d) ℂ)
 theorem hT_eq_sum {E : Type} [Field E] [NumberField E] [StarRing E] (S : HSpace E) (x y : S.V) :
     S.hT x y = ∑ b, (∑ a, star (S.frame.repr x a) * S.gram a b) * S.frame.repr y b := by
   conv_lhs => rw [← S.frame.sum_repr x, ← S.frame.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
     smul_eq_mul, starRingEnd_apply, Finset.mul_sum, Finset.sum_mul]
   simp only [HSpace.gram]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -103,9 +108,11 @@ theorem amb_of_sig : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (S : 
       rw [hsplit, hA]
       ext i j
       have hij : τ (S.hT (u i : S.V) (u j : S.V)) = (Cᴴ * S.gram.map τ * C) i j := by
-        rw [hT_eq_sum, map_sum, Matrix.mul_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hT_eq_sum, map_sum, Matrix.mul_apply]
         refine Finset.sum_congr rfl fun b _ => ?_
-        rw [map_mul, map_sum, Matrix.mul_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_mul, map_sum, Matrix.mul_apply]
         congr 1
         refine Finset.sum_congr rfl fun a _ => ?_
         simp [C, v, hcm τ]

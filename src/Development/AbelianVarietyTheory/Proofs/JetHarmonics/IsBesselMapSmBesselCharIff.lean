@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BesselMapUniq
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsWtOnIffOfTorus
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BesselMapUniq
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsWtOnIffOfTorus
+
+@[expose] public section
 
 open Matrix
 
@@ -9,16 +13,6 @@ noncomputable section
 namespace GlobalTheory.BesselMapCompare
 
 open PI.UpqRep GlobalTheory.IndefiniteRowSideFullHecke
-
-def scaleEquiv (r : ℕ) : (Fin r → ℂ) ≃ (Fin r → ℂ) where
-  toFun κ := fun a => -2 * Complex.I * κ a
-  invFun c := fun a => Complex.I / 2 * c a
-  left_inv κ := by
-    funext a
-    linear_combination (-κ a) * Complex.I_mul_I
-  right_inv c := by
-    funext a
-    linear_combination (-c a) * Complex.I_mul_I
 
 section Maps
 

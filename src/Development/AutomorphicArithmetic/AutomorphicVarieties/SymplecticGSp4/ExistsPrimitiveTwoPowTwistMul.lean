@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.exists_primitive_two_pow_twist_mul :
     ∀ (O : Type) [CommRing O] [IsDomain O] (N : ℕ) [NeZero N] (χ : DirichletCharacter O N) (c n : ℕ), χ.conductor = 2 ^ c → c < n → ∀ ξ : DirichletCharacter O (2 ^ n), ξ.IsPrimitive → ∃ ξ₁ : DirichletCharacter O (2 ^ n), ξ₁.IsPrimitive ∧ ∀ a : ℤ, IsCoprime a (2 * N : ℕ) → ξ₁ a = χ a * ξ a := by

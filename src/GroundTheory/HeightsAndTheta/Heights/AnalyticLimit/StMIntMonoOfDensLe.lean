@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureA
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureA
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

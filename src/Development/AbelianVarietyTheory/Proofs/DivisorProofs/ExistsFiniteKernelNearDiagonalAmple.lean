@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FibreKilled
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearChangeEulerProduct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveOfTrivAxes
-import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelativelyAmpleClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FibreKilled
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearChangeEulerProduct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveOfTrivAxes
+public import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelativelyAmpleClosedImmersion
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.SiegelTor GlobalTheory.EndLoc
 open scoped CategoryTheory.Obj

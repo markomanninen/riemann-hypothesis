@@ -1,9 +1,14 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WchartCompLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLineBundlePowerPullbackSectionPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerPullbackSectionExistsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLineBundlePowerIsoReindexedChartsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRescaledLineBundlePowerIsoGeneratorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoeffPullbackBaseChangeStableSectionBasisStatement
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WchartCompLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLineBundlePowerPullbackSectionPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerPullbackSectionExistsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLineBundlePowerIsoReindexedChartsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRescaledLineBundlePowerIsoGeneratorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoeffPullbackBaseChangeStableSectionBasisStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.EndLoc
@@ -95,7 +100,8 @@ theorem exists_isMat : ∀ (Rg : Type) [CommRing Rg] [IsNoetherianRing Rg] (A B 
     obtain ⟨c, hc⟩ := GlobalTheory.T.exists_coeff_pullback_baseChangeStableSectionBasis Rg A L k mA bA hbA R t A' φA' hpA.1 ψA hψA s
     refine ⟨c, fun p => ?_⟩
     have e1 := hs p
-    rw [hσ p.1, hc p.2, map_sum] at e1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hσ p.1, hc p.2, map_sum] at e1
     erw [res_appLE] at e1
     simp only [map_mul] at e1
     erw [e1]

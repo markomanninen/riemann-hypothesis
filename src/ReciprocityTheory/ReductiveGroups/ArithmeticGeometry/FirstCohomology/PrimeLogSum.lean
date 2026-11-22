@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ReducedBasisStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ReducedBasisStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.H1
 
@@ -86,9 +90,7 @@ lemma primeLogSum_theta (N : ℕ) :
     · rintro ⟨h1, h2⟩
       exact ⟨by omega, h2⟩
   have hprod : ∏ p ∈ (Finset.range (N + 1)).filter Nat.Prime, p ≤ 4 ^ N := by
-    first
-    | exact primorial_le_4_pow N
-    | exact Nat.primorial_le_4_pow N
+    exact primorial_le_four_pow N
   have hne : ∀ p ∈ (Finset.range (N + 1)).filter Nat.Prime, ((p : ℕ) : ℝ) ≠ 0 :=
     fun p hp => Nat.cast_ne_zero.mpr (Finset.mem_filter.mp hp).2.ne_zero
   have hpos : (0:ℝ) < ((∏ p ∈ (Finset.range (N + 1)).filter Nat.Prime, p : ℕ) : ℝ) :=
@@ -118,14 +120,6 @@ lemma primeLogSum_f_nonneg (n : ℕ) : 0 ≤ Real.log n / ((n : ℝ) * ((n : ℝ
   · have h1 : (1:ℝ) ≤ n := by exact_mod_cast (show 1 ≤ n by omega)
     apply div_nonneg (Real.log_nonneg h1)
     exact mul_nonneg (by linarith) (by linarith)
-
-lemma primeLogSum_g_nonneg (n : ℕ) : 0 ≤ Real.log n / ((n : ℝ) - 1) := by
-  rcases Nat.eq_zero_or_pos n with h | h
-  · subst h
-    simp
-  · have h1 : (1:ℝ) ≤ n := by exact_mod_cast (show 1 ≤ n by omega)
-    apply div_nonneg (Real.log_nonneg h1)
-    linarith
 
 lemma primeLogSum_log_le (p k : ℕ) (hp : 0 < p) (hk : p ≤ 2 ^ k) :
     Real.log (p : ℝ) ≤ (k : ℝ) * Real.log 2 := by

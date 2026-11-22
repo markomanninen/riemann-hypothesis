@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV GlobalTheory.FlagBasis
 open scoped TensorProduct
 
@@ -38,11 +43,11 @@ theorem flagGram_apply (K : Type) [CommRing K] {ρ k n : ℕ} (hn : n = 2 * ρ +
 
 theorem flagGram_mul (K : Type) [CommRing K] {ρ k n : ℕ} (hn : n = 2 * ρ + k + 1) (X : Matrix (Fin n) (Fin n) K)
     (i j : Fin n) : (flagGram K n ρ k * X) i j = sgn K ρ k i * X (tau hn i) j := by
-  rw [mul_apply]; simp only [flagGram_apply K hn, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  rw [Matrix.mul_apply]; simp only [flagGram_apply K hn, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
 theorem mul_flagGram (K : Type) [CommRing K] {ρ k n : ℕ} (hn : n = 2 * ρ + k + 1) (X : Matrix (Fin n) (Fin n) K)
     (i j : Fin n) : (X * flagGram K n ρ k) i j = X i (tau hn j) * sgn K ρ k j := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   have e : ∀ b : Fin n, (j = tau hn b) ↔ (b = tau hn j) := fun b =>
     ⟨fun h => by rw [h, tau_tau], fun h => by rw [h, tau_tau]⟩
   simp only [flagGram_apply K hn, e, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, sgn_tau]
@@ -50,7 +55,7 @@ theorem mul_flagGram (K : Type) [CommRing K] {ρ k n : ℕ} (hn : n = 2 * ρ + k
 theorem flagGram_mul_self (K : Type) [CommRing K] {ρ k n : ℕ} (hn : n = 2 * ρ + k + 1) :
     flagGram K n ρ k * flagGram K n ρ k = 1 := by
   ext i j
-  rw [flagGram_mul K hn, flagGram_apply K hn, tau_tau, one_apply, sgn_tau]
+  rw [flagGram_mul K hn, flagGram_apply K hn, tau_tau, Matrix.one_apply, sgn_tau]
   split_ifs with h h' h'
   · exact sgn_mul_self K ρ k i
   · exact absurd h.symm h'

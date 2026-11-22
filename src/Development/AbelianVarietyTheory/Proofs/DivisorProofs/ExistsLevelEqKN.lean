@@ -1,6 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.Classify
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceTensorRatFiniteAlgebraModuleTopology
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceTensorRatFiniteAlgebraModuleTopology
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField Matrix IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.DiscreteGroups.LocalClassField
 open GlobalTheory GlobalTheory.AV GlobalTheory.AV.AbVar GlobalTheory.PDivGroup GlobalTheory.Dieu GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo
@@ -32,7 +42,7 @@ theorem repr_isIntAf (b : Module.Basis κ ℤ D.La) (u : AfP p ⊗[ℚ] VQ D) (h
       eq_intCast (algebraMap ℤ ℚ), map_intCast, map_mul, map_intCast]
     exact mul_mem (ha v) (intCast_mem _ _)
   | zero => intro v; rw [map_zero, Finsupp.zero_apply, map_zero]; exact zero_mem _
-  | add u u' _ _ hu hu' => intro v; rw [map_add, Finsupp.add_apply, map_add]; exact add_mem (hu v) (hu' v)
+  | add u u' _ _ hu hu' => intro v; rw [map_add (f := _), Finsupp.add_apply, map_add (f := _)]; exact add_mem (hu v) (hu' v)
   | neg u _ hu => intro v; rw [map_neg, Finsupp.neg_apply, map_neg]; exact neg_mem (hu v)
 
 theorem mem_laHat_of_repr (b : Module.Basis κ ℤ D.La) (u : AfP p ⊗[ℚ] VQ D)
@@ -88,7 +98,7 @@ theorem int_of_congOne (b : Module.Basis κ ℤ D.La) (L : Link D G) {N : ℕ} {
     (i j : κ) :
     IsIntAf (matL b L (((g : (AfP p ⊗[ℚ] G.C)ˣ × (AfP p)ˣ).1 : (AfP p ⊗[ℚ] G.C)ˣ) : AfP p ⊗[ℚ] G.C) i j) := by
   obtain ⟨w, hw, e⟩ := h (bA b j) (bA_mem b j)
-  rw [matL_apply, e, map_add, map_nsmul, Finsupp.add_apply, Finsupp.smul_apply, isIntAf_iff]
+  rw [matL_apply, e, map_add (f := _), map_nsmul, Finsupp.add_apply, Finsupp.smul_apply, isIntAf_iff]
   exact add_mem (repr_isIntAf b _ (bA_mem b j) i) (nsmul_mem (repr_isIntAf b w hw i) N)
 
 theorem congOne_of_mat (b : Module.Basis κ ℤ D.La) (L : Link D G) {N : ℕ} (hN : 0 < N) {g : G.GAf}
@@ -111,7 +121,7 @@ theorem congOne_of_mat (b : Module.Basis κ ℤ D.La) (L : Link D G) {N : ℕ} (
     have e1 : (bA b).equivFun (L.actG g v) = X *ᵥ c := by
       rw [Module.Basis.equivFun_apply, hc, hXdef, actG_eq]
       exact (LinearMap.toMatrix_mulVec_repr (bA b) (bA b) _ v).symm
-    rw [e1, map_add, map_nsmul, LinearEquiv.apply_symm_apply, hX, Matrix.add_mulVec, Matrix.one_mulVec,
+    rw [e1, map_add (f := _), map_nsmul, LinearEquiv.apply_symm_apply, hX, Matrix.add_mulVec, Matrix.one_mulVec,
       Matrix.smul_mulVec, Module.Basis.equivFun_apply]
 
 end GlobalTheory.LKGeo.KNLevel
@@ -141,22 +151,22 @@ theorem exists_leftInv (b : Module.Basis κ ℤ D.La) (L : Link D G) :
     have := congrArg (fun f => f c) hT'
     simpa using this
   refine ⟨fun X => ∑ i, ∑ j, X i j • ((1 : AfP p) ⊗ₜ[ℚ] T' (Matrix.single i j 1)), ?_, ?_⟩
-  · exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  · exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       Continuous.smul (f := fun X : Matrix κ κ (AfP p) => X i j)
         (g := fun _ => (1 : AfP p) ⊗ₜ[ℚ] T' (Matrix.single i j 1)) (continuous_id.matrix_elem i j) continuous_const
   · intro y
-    induction y using TensorProduct.induction_on with
-    | zero => simp
+    induction y using TensorProduct.inductionOn with
     | add x y hx hy =>
       dsimp only at hx hy ⊢
-      rw [map_add]
+      rw [map_add (f := _)]
       simp only [Matrix.add_apply, add_smul, Finset.sum_add_distrib, hx, hy]
     | tmul a c =>
       rw [matL_tmul]
       have e1 : a ⊗ₜ[ℚ] c = a • ((1 : AfP p) ⊗ₜ[ℚ] T' (T c)) := by
         rw [hTT, TensorProduct.smul_tmul', smul_eq_mul, _root_.mul_one]
       rw [e1, Matrix.matrix_eq_sum_single (T c)]
-      simp only [map_sum, TensorProduct.tmul_sum, Finset.smul_sum, Matrix.smul_apply, Matrix.map_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, TensorProduct.tmul_sum, Finset.smul_sum, Matrix.smul_apply, Matrix.map_apply]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       rw [show Matrix.single i j (T c i j) = (T c i j) • Matrix.single i j (1 : ℚ) by
         rw [Matrix.smul_single, smul_eq_mul, _root_.mul_one], map_smul, TensorProduct.tmul_smul,
@@ -250,14 +260,13 @@ theorem exists_level_eq_KN : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTG
   have hσ : Continuous (fun y : AfP p ⊗[ℚ] G.C ↦ (starT G.star (AfP p) y).unop) := by
     let σl : (AfP p ⊗[ℚ] G.C) →ₗ[AfP p] (AfP p ⊗[ℚ] G.C) :=
       { toFun := fun y ↦ (starT G.star (AfP p) y).unop
-        map_add' := fun x y ↦ by simp only [map_add, MulOpposite.unop_add]
+        map_add' := fun x y ↦ by simp only [map_add (f := _), MulOpposite.unop_add]
         map_smul' := by
           intro r x
-          induction x using TensorProduct.induction_on with
-          | zero => simp
+          induction x using TensorProduct.inductionOn with
           | tmul a y =>
             simp only [TensorProduct.smul_tmul', smul_eq_mul, starT_tmul, RingHom.id_apply]
-          | add x y hx hy => simp only [smul_add, map_add, MulOpposite.unop_add, hx, hy, RingHom.id_apply] }
+          | add x y hx hy => simp only [smul_add, map_add (f := _), MulOpposite.unop_add, hx, hy, RingHom.id_apply] }
     exact IsModuleTopology.continuous_of_linearMap σl
   have hj : Continuous (algebraMap (AfP p) (AfP p ⊗[ℚ] G.C)) :=
     IsModuleTopology.continuous_of_linearMap (Algebra.linearMap (AfP p) (AfP p ⊗[ℚ] G.C))

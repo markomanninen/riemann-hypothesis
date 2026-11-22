@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqD
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeExpPow
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeRatio
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqD
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeExpPow
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeRatio
+
+@[expose] public section
 
 set_option autoImplicit false
 

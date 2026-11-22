@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitting
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitting
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -23,7 +28,8 @@ def quotStarRing (J : Ideal L) (hJ : ∀ a ∈ J, star a ∈ J) : StarRing (L �
   star_add x y := by
     obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective x
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective y
-    simp [← map_add]
+    rw [← map_add (Ideal.Quotient.mk J)]
+    simp only [Ideal.Quotient.lift_mk, RingHom.comp_apply, starRingEnd_apply, map_add]
 
 end star
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SDivisor
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SDivisor
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -50,14 +55,14 @@ noncomputable def sUnitsQuotSequence :
         (show Additive.toMul (α := (maxUnramifiedOutside F Ω S)ˣ) _ ∈ sUnitsMax F Ω S from
           (Additive.toMul x).2))
 
-theorem sUnitsQuotSequence_shortExact : (sUnitsQuotSequence F Ω S).ShortExact where
-  exact := by
-    apply shortComplex_exact_of_forall_exists
+theorem sUnitsQuotSequence_shortExact : (sUnitsQuotSequence F Ω S).ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ?_ ?_
+  · apply shortComplex_exact_of_forall_exists
     intro x hx
     exact ⟨Additive.ofMul ⟨Additive.toMul (α := (maxUnramifiedOutside F Ω S)ˣ) x,
       (Submodule.Quotient.mk_eq_zero _).1 hx⟩, rfl⟩
-  mono_f := (Rep.mono_iff_injective _).2 (sUnitsToUnits_injective S _)
-  epi_g := (Rep.epi_iff_surjective _).2 (Submodule.mkQ_surjective _)
+  · exact (Rep.mono_iff_injective _).2 (sUnitsToUnits_injective S _)
+  · exact (Rep.epi_iff_surjective _).2 (Submodule.mkQ_surjective _)
 
 variable [IsGalois F Ω]
 
@@ -77,8 +82,8 @@ section Phi
 variable {F Ω : Type u} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsGalois F Ω]
 variable (S : Set (HeightOneSpectrum (𝓞 F)))
 
-omit [IsGalois F Ω] in
 
+omit [IsGalois F Ω] in
 theorem mk_mem_invariants_iff (x : (maxUnramifiedOutside F Ω S)ˣ) :
     (Rep.mkQ _ (sUnitsSubmodule F Ω S) (sUnitsSubmodule_le_comap F Ω S)).hom
         (Additive.ofMul x : Additive (maxUnramifiedOutside F Ω S)ˣ) ∈
@@ -103,7 +108,7 @@ theorem sInvariantToInvariants_surjective : Function.Surjective (sInvariantToInv
 
 omit [IsGalois F Ω] in
 theorem sInvariantToInvariants_eq_zero_iff (x : Additive (sInvariantSubgroup Ω S)) :
-    sInvariantToInvariants S x = 0 ↔
+    sInvariantToInvariants (Ω := Ω) S x = 0 ↔
       ((Additive.toMul x : sInvariantSubgroup Ω S) : (maxUnramifiedOutside F Ω S)ˣ) ∈ sUnitsMax F Ω S := by
   rw [Subtype.ext_iff]
   exact Submodule.Quotient.mk_eq_zero _
@@ -142,9 +147,10 @@ noncomputable def invariantsToSPic : (galUnitsModSUnits F Ω S).ρ.invariants �
       (sInvariantToInvariants_surjective (Ω := Ω) S)).symm.toAddMonoidHom
 
 theorem invariantsToSPic_apply (x : Additive (sInvariantSubgroup Ω S)) :
-    invariantsToSPic S (sInvariantToInvariants S x) = sPicMk S (divAbove S x) := by
+    invariantsToSPic (Ω := Ω) S (sInvariantToInvariants (Ω := Ω) S x) =
+      sPicMk S (divAbove S x) := by
   have h : (QuotientAddGroup.quotientKerEquivOfSurjective _
-      (sInvariantToInvariants_surjective (Ω := Ω) S)).symm (sInvariantToInvariants S x) =
+      (sInvariantToInvariants_surjective (Ω := Ω) S)).symm (sInvariantToInvariants (Ω := Ω) S x) =
       (x : Additive (sInvariantSubgroup Ω S) ⧸ (sInvariantToInvariants (Ω := Ω) S).ker) :=
     (AddEquiv.symm_apply_eq _).2 rfl
   simp only [invariantsToSPic, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, h]
@@ -160,8 +166,9 @@ theorem invariantsToH1_surjective : Function.Surjective (invariantsToH1 (Ω := �
     (subsingleton_cohomology_one_galUnits (K := F) (L := maxUnramifiedOutside F Ω S)) x
 
 theorem invariantsToH1_eq_zero_iff (q : (galUnitsModSUnits F Ω S).ρ.invariants) :
-    invariantsToH1 S q = 0 ↔ ∃ a : Fˣ,
-      sInvariantToInvariants S (Additive.ofMul ⟨_, map_algebraMap_mem_sInvariantSubgroup (Ω := Ω) S a⟩) = q := by
+    invariantsToH1 (Ω := Ω) S q = 0 ↔ ∃ a : Fˣ,
+      sInvariantToInvariants (Ω := Ω) S
+        (Additive.ofMul ⟨_, map_algebraMap_mem_sInvariantSubgroup (Ω := Ω) S a⟩) = q := by
   refine (δ_H0Iso_inv_eq_zero_iff (sUnitsQuotSequence_shortExact F Ω S) q).trans ?_
   constructor
   · rintro ⟨w, rfl⟩
@@ -179,7 +186,7 @@ variable (S : Set (HeightOneSpectrum (𝓞 F)))
 
 noncomputable def h1SUnitsToSPic :
     cohomology (galSUnits S (maxUnramifiedOutside F Ω S)) 1 →+ sPic S :=
-  (QuotientAddGroup.lift (invariantsToH1 (Ω := Ω) S).ker (invariantsToSPic S) (fun q hq => by
+  (QuotientAddGroup.lift (invariantsToH1 (Ω := Ω) S).ker (invariantsToSPic (Ω := Ω) S) (fun q hq => by
       obtain ⟨a, rfl⟩ := (invariantsToH1_eq_zero_iff S q).1 (AddMonoidHom.mem_ker.1 hq)
       rw [AddMonoidHom.mem_ker, invariantsToSPic_apply, divAbove_algebraMap]
       exact (sPicMk_eq_zero_iff S _).2 ⟨a, rfl⟩)).comp
@@ -187,16 +194,17 @@ noncomputable def h1SUnitsToSPic :
       (invariantsToH1_surjective (Ω := Ω) S)).symm.toAddMonoidHom
 
 theorem h1SUnitsToSPic_invariantsToH1 (q : (galUnitsModSUnits F Ω S).ρ.invariants) :
-    h1SUnitsToSPic S (invariantsToH1 S q) = invariantsToSPic S q := by
+    h1SUnitsToSPic (Ω := Ω) S (invariantsToH1 (Ω := Ω) S q) = invariantsToSPic (Ω := Ω) S q := by
   have h : (QuotientAddGroup.quotientKerEquivOfSurjective _
-      (invariantsToH1_surjective (Ω := Ω) S)).symm (invariantsToH1 S q) =
+      (invariantsToH1_surjective (Ω := Ω) S)).symm (invariantsToH1 (Ω := Ω) S q) =
       (q : (galUnitsModSUnits F Ω S).ρ.invariants ⧸ (invariantsToH1 (Ω := Ω) S).ker) :=
     (AddEquiv.symm_apply_eq _).2 rfl
   simp only [h1SUnitsToSPic, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, h]
   rfl
 
 theorem h1SUnitsToSPic_apply (x : Additive (sInvariantSubgroup Ω S)) :
-    h1SUnitsToSPic S (invariantsToH1 S (sInvariantToInvariants S x)) = sPicMk S (divAbove S x) := by
+    h1SUnitsToSPic (Ω := Ω) S (invariantsToH1 (Ω := Ω) S (sInvariantToInvariants (Ω := Ω) S x)) =
+      sPicMk S (divAbove S x) := by
   rw [h1SUnitsToSPic_invariantsToH1, invariantsToSPic_apply]
 
 theorem h1SUnitsToSPic_injective : Function.Injective (h1SUnitsToSPic (Ω := Ω) S) := by
@@ -210,29 +218,13 @@ theorem h1SUnitsToSPic_injective : Function.Injective (h1SUnitsToSPic (Ω := Ω)
   have hxy : divAbove S (x - y) = 0 := by
     rw [map_sub, divAbove_algebraMap, ha, sub_self]
   have hmem := mem_sUnitsMax_of_divAbove_eq_zero S (x := Additive.toMul (x - y)) hxy
-  have h0 : sInvariantToInvariants S (x - y) = 0 := (sInvariantToInvariants_eq_zero_iff S _).2 hmem
+  have h0 : sInvariantToInvariants (Ω := Ω) S (x - y) = 0 :=
+    (sInvariantToInvariants_eq_zero_iff S _).2 hmem
   rw [map_sub, sub_eq_zero] at h0
   rw [h0]
   exact (invariantsToH1_eq_zero_iff S _).2 ⟨a, rfl⟩
 
 variable [IsSepClosed Ω]
-
-theorem exists_h1SUnitsToSPic_eq {N : ℕ} (hN : N ≠ 0)
-    (hNS : ∀ v ∉ S, ((N : ℕ) : 𝓞 F) ∉ v.asIdeal) (c : sPic S) (hc : N • c = 0) :
-    ∃ h, h1SUnitsToSPic (Ω := Ω) S h = c := by
-  obtain ⟨D, rfl⟩ := QuotientAddGroup.mk'_surjective _ c
-  rw [← map_nsmul, sPicMk_eq_zero_iff] at hc
-  obtain ⟨a, ha⟩ := hc
-  obtain ⟨x, hx⟩ := exists_divAbove_eq (Ω := Ω) S hN hNS D a ha
-  exact ⟨invariantsToH1 S (sInvariantToInvariants S (Additive.ofMul x)),
-    by rw [h1SUnitsToSPic_apply, hx]⟩
-
-theorem exists_h1SUnitsToSPic_eq_of_pow {n : ℕ} (hn : n ≠ 0)
-    (hnS : ∀ v ∉ S, ((n : ℕ) : 𝓞 F) ∉ v.asIdeal) (c : sPic S) (k : ℕ) (hc : n ^ k • c = 0) :
-    ∃ h, h1SUnitsToSPic (Ω := Ω) S h = c := by
-  refine exists_h1SUnitsToSPic_eq S (pow_ne_zero k hn) (fun v hv h => hnS v hv ?_) c hc
-  rw [Nat.cast_pow] at h
-  exact v.isPrime.mem_of_pow_mem k h
 
 end H1
 
@@ -311,24 +303,6 @@ theorem kummerPicHom_eq_zero_iff (y : cohomology (galRootsOfUnity.{u} F (maxUnra
       (sUnitsToInvariants S (maxUnramifiedOutside F Ω S) a))) (δ_comp hK 0 1 rfl)
     simp only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_zero, LinearMap.zero_apply] at h0
     exact (congrArg (h1SUnitsToSPic (Ω := Ω) S) h0).trans (map_zero _)
-
-theorem mem_range_kummerPicHom_iff (c : sPic S) :
-    (∃ y, kummerPicHom (Ω := Ω) S n y = c) ↔ n • c = 0 := by
-  have hK := sUnitsKummerSequence_shortExact (Ω := Ω) S n hnS
-  have hg : ∀ h : cohomology (galSUnits S (maxUnramifiedOutside F Ω S)) 1,
-      (cohomologyMap (sUnitsKummerSequence S (maxUnramifiedOutside F Ω S) n).g 1).hom h = n • h :=
-    fun h => cohomologyMap_nsmul_id_apply (galSUnits S (maxUnramifiedOutside F Ω S)) n 1 h
-  constructor
-  · rintro ⟨y, rfl⟩
-    have h1 := cohomologyMap_g_cohomologyMap_f_apply (S := sUnitsKummerSequence S (maxUnramifiedOutside F Ω S) n) 1 y
-    have h1' := (hg _).symm.trans h1
-    have h2 := congrArg (h1SUnitsToSPic (Ω := Ω) S) h1'
-    exact (map_nsmul (h1SUnitsToSPic (Ω := Ω) S) n _).symm.trans (h2.trans (map_zero _))
-  · intro hc
-    obtain ⟨h, rfl⟩ := exists_h1SUnitsToSPic_eq (Ω := Ω) S (NeZero.ne n) hnS c hc
-    have hh : n • h = 0 := h1SUnitsToSPic_injective S (by rw [map_nsmul, hc, map_zero])
-    obtain ⟨y, hy⟩ := exists_cohomologyMap_f_eq hK 1 h ((hg h).trans hh)
-    exact ⟨y, congrArg (h1SUnitsToSPic (Ω := Ω) S) hy⟩
 
 end KummerPic
 

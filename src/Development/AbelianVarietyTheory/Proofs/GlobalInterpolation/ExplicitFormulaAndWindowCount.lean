@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.ShortIntervalPrimes
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FinsumMemLeOfSubset
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TruncatedExplicitFormula
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.ShortIntervalPrimes
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FinsumMemLeOfSubset
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TruncatedExplicitFormula
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory Formalism.MainNotions.ShortIntervalPrimes
 
 namespace GlobalTheory.ZeroBounds

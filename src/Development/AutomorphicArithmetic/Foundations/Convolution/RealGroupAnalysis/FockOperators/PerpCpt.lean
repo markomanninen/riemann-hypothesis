@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
-import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatDual
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+public import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatDual
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix

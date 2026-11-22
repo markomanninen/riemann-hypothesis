@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DegFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DegFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -108,7 +112,8 @@ theorem exists_matrix {R : Type} [CommRing R] [IsLocalRing R] {φ : c.F →+* R}
       simp only [sub_smul, Finset.sum_sub_distrib]
       rw [← d₁, d₂, sub_eq_zero]
       funext q
-      simp only [hM', Finset.sum_apply, Pi.smul_apply, Function.comp_apply, smul_eq_mul, map_sum, map_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hM', Finset.sum_apply, Pi.smul_apply, Function.comp_apply, smul_eq_mul, map_sum, map_mul,
         Finset.mul_sum, Finset.sum_mul, mul_assoc]
       exact Finset.sum_comm)
   exact sub_eq_zero.1 (congrFun this k')
@@ -163,7 +168,7 @@ theorem isLocalHom_of_algebraic {R F k : Type} [CommRing R] [IsLocalRing R] [Fie
     (Polynomial.aeval_algHom_apply ψ' a _).symm.trans (minpoly.aeval ℚ (ψ a))
   have h2 : ¬ IsUnit (Polynomial.aeval a (minpoly ℚ (ψ a))) := fun h => (h.map ψ).ne_zero h1
   by_contra hna
-  rw [← Polynomial.X_mul_divX_add (minpoly ℚ (ψ a)), map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at h2
+  rw [← Polynomial.X_mul_divX_add (minpoly ℚ (ψ a)), map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at h2
   have h3 : algebraMap ℚ R ((minpoly ℚ (ψ a)).coeff 0) ∈ IsLocalRing.maximalIdeal R := by
     have := Ideal.sub_mem (IsLocalRing.maximalIdeal R) h2
       (Ideal.mul_mem_right (Polynomial.aeval a (minpoly ℚ (ψ a)).divX) _ hna)
@@ -185,21 +190,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheo
   {Z : Model Xo c β} {F : Type} [Field F] [NumberField F] {e : F ≃+* c.F} (Y : FlagCpt Z e)
   {k : Type} [Field k] {φ : c.F →+* k} {x : Sp k ⟶ Z.X} {p : Sp k ⟶ Y.Y.X} {g : EigFrame Z φ x}
   {n : Letter Dw → ℤ} {σ : Y.Y.Fn}
-
-theorem exists_isCoord (hσ : ∀ y, (divOf Y n).RegularAt y σ) (h : Y.Carries p g) : ∃ a, IsCoord Y p g n σ a := by
-  obtain ⟨y, ψ, φ₁, f, t, t', h₁, h₂, h₃⟩ := h
-  obtain ⟨φ₂, f₂, t₂, hT, ht⟩ := Y.gr_spec y
-  obtain ⟨u, hu⟩ := exists_unit_ratio f f₂ (IsFractionRing.injective (Y.Y.X.presheaf.stalk y) Y.Y.X.functionField) h₂ hT
-  have ht' : ∀ τ i, (Y.gr τ i).IsEqn y (t τ i) := fun τ i => (ht τ i).iff_unitAt.2
-    ⟨u τ i, (u τ i).isUnit, by
-      rw [hu _ _ _ _ h₂ hT τ i, Units.val_mul, mul_div_cancel_left₀ _ (Units.ne_zero _)]; rfl⟩
-  have hE : ∀ s : Finset (Letter Dw), (∑ z ∈ s, n z • Y.gr z.1 z.2).IsEqn y (∏ z ∈ s, t z.1 z.2 ^ n z) := fun s => by
-    classical
-    induction s using Finset.induction_on with
-    | empty => simpa using CartierDiv.isEqn_zero y
-    | insert z s hz ih => rw [Finset.sum_insert hz, Finset.prod_insert hz]; exact ((ht' _ _).zsmul _).add ih
-  obtain ⟨r, hr⟩ := (hE Finset.univ).regularAt_iff.1 (hσ y)
-  exact ⟨_, y, ψ, φ₁, f, t, t', r, h₁, h₂, h₃, hr, rfl⟩
 
 end Coord
 

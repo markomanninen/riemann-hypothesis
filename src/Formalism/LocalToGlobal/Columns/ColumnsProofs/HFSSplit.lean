@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.ColumnsProofs.HFSLin
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.ColumnsProofs.HFSLin
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 
@@ -15,12 +19,6 @@ variable {K V I : Type} [Field K] [AddCommGroup V] [Module K V]
 
 def HeckePolyFor (op : I → Module.End K V) (p : K[X]) : Prop :=
   p ≠ 0 ∧ ∃ s : Finset I, (∀ x, ∃ c : I → K, op x = ∑ y ∈ s, c y • op y) ∧ ∀ y ∈ s, Polynomial.aeval (op y) p = 0
-
-theorem HeckePolyFor.of_dvd {op : I → Module.End K V} {p q : K[X]} (h : HeckePolyFor op p) (hq : q ≠ 0) (hpq : p ∣ q) :
-    HeckePolyFor op q := by
-  obtain ⟨s, hs, hz⟩ := h.2
-  obtain ⟨r, rfl⟩ := hpq
-  exact ⟨hq, s, hs, fun y hy => by rw [map_mul, hz y hy, zero_mul]⟩
 
 theorem hfs_exists_poly [FiniteDimensional K V] (op : I → Module.End K V) : ∃ p, HeckePolyFor op p := by
   classical
@@ -118,8 +116,8 @@ theorem Lifts.eq_zero (F : CoefFrame ι) {A' : Module.End L S'.EqFun} (hA : b.Li
     rw [hA φ]
     simp only [LinearMap.zero_apply, lift_zero]
 
-include b in
 
+include b in
 theorem finiteDimensional (F : CoefFrame ι) [FiniteDimensional K S.EqFun] : FiniteDimensional L S'.EqFun := by
   classical
   let B := Module.finBasis K S.EqFun

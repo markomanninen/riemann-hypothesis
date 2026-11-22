@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
-import Formalism.SatakeDualWeyl.DualWeylRepApply
-import Formalism.PieriBlockIdeals.PieriColumnMinors.RealLocalDeltaNabla
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
+public import Formalism.SatakeDualWeyl.DualWeylRepApply
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.RealLocalDeltaNabla
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,23 +38,17 @@ section Tensor
 variable {O K : Type} [CommRing O] [CommRing K] (φ : O →+* K) (N : ℕ) {ι : Type} (lam : ι → ℕ → ℕ)
 
 def bc : NablaT O N lam →ₛₗ[φ] NablaT K N lam :=
+  let f := (PiTensorProduct.tprod K).compLinearMap (σ₁₃ := φ)
+    (fun τ => dwMap φ N (res N (lam τ)))
   letI : Module O (NablaT K N lam) := Module.compHom _ φ
-  let f : MultilinearMap O (fun τ => dualWeyl O N N (res N (lam τ))) (NablaT K N lam) :=
-    { toFun := fun m => PiTensorProduct.tprod K fun τ => dwMap φ N _ (m τ)
-      map_update_add' := fun m i x y => by
-        have hu : ∀ z, (fun τ => dwMap φ N (res N (lam τ)) (Function.update m i z τ)) =
-            Function.update (fun τ => dwMap φ N (res N (lam τ)) (m τ)) i (dwMap φ N _ z) :=
-          fun z => funext fun τ => Function.apply_update (fun τ => dwMap φ N (res N (lam τ))) m i z τ
-        simp only [hu, map_add, MultilinearMap.map_update_add]
-      map_update_smul' := fun m i c x => by
-        have hu : ∀ z, (fun τ => dwMap φ N (res N (lam τ)) (Function.update m i z τ)) =
-            Function.update (fun τ => dwMap φ N (res N (lam τ)) (m τ)) i (dwMap φ N _ z) :=
-          fun z => funext fun τ => Function.apply_update (fun τ => dwMap φ N (res N (lam τ))) m i z τ
-        simp only [hu, LinearMap.map_smulₛₗ, MultilinearMap.map_update_smul]
-        rfl }
-  { toFun := PiTensorProduct.lift f
-    map_add' := fun x y => map_add _ x y
-    map_smul' := fun c x => (PiTensorProduct.lift f).map_smul c x }
+  let f' : (∀ τ, dualWeyl O N N (res N (lam τ))) →ₘₗ[O] NablaT K N lam :=
+    { toFun := f
+      map_update_add' := f.map_update_add
+      map_update_smul' := f.map_update_smul }
+  let g : NablaT O N lam →ₗ[O] NablaT K N lam := PiTensorProduct.lift f'
+  { toFun := g
+    map_add' := g.map_add
+    map_smul' := g.map_smul }
 
 theorem bc_tprod (m : ∀ τ, dualWeyl O N N (res N (lam τ))) :
     bc φ N lam (PiTensorProduct.tprod O m) = PiTensorProduct.tprod K fun τ => dwMap φ N _ (m τ) := by
@@ -77,10 +75,11 @@ theorem linInd_mapRange_field {F K P ι : Type} [Field F] [Field K] [Algebra F K
   have key : ∑ i ∈ s, (B.repr (c i) j) • v i = 0 := by
     ext m
     have h1 := congrArg (fun z => z m) hsum
-    simp only [Finsupp.finset_sum_apply, Finsupp.smul_apply, Finsupp.mapRange_apply, smul_eq_mul,
+    simp only [Finsupp.finsetSum_apply, Finsupp.smul_apply, Finsupp.mapRange_apply, smul_eq_mul,
       Finsupp.coe_zero, Pi.zero_apply] at h1 ⊢
     have h2 := congrArg (fun x => B.repr x j) h1
-    simp only [map_sum, map_zero, Finsupp.finset_sum_apply, Finsupp.coe_zero, Pi.zero_apply] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zero, Finsupp.finsetSum_apply, Finsupp.coe_zero, Pi.zero_apply] at h2
     rw [← h2]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [mul_comm (c i), ← Algebra.smul_def, map_smul, Finsupp.smul_apply, smul_eq_mul, mul_comm]
@@ -111,7 +110,7 @@ theorem repr_of_basis {O K M M' P : Type} [CommRing O] [Field K] [AddCommGroup M
   let g : M →ₛₗ[φ] (P →₀ K) :=
     { toFun := fun x => Finsupp.mapRange φ φ.map_zero (BO.repr x)
       map_add' := fun x y => by
-        rw [map_add]; exact Finsupp.mapRange_add (fun a b => map_add φ a b) _ _
+        rw [map_add (f := _)]; exact Finsupp.mapRange_add (fun a b => map_add φ a b) _ _
       map_smul' := fun c x => by
         ext p; simp }
   have : (BK.repr.toLinearMap.comp f : M →ₛₗ[φ] (P →₀ K)) = g := by
@@ -208,7 +207,7 @@ theorem latN_iff {l : ℕ} [Fact l.Prime] {ι : Type} [DecidableEq ι] {N : ℕ}
       rw [LinearMap.map_smulₛₗ, bc_tprod]
       exact AddSubgroup.subset_closure ⟨r, fun τ => dwMap F.emb N _ (m τ), fun τ => ⟨m τ, (m τ).2, rfl⟩, rfl⟩
     | add a b ha hb =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem ha hb
 
 theorem latD_iff {l : ℕ} [Fact l.Prime] {ι : Type} [DecidableEq ι] {N : ℕ} (F : GlobalTheory.ExpFrame.Frame l ι N)
@@ -245,7 +244,7 @@ theorem latD_iff {l : ℕ} [Fact l.Prime] {ι : Type} [DecidableEq ι] {N : ℕ}
       exact AddSubgroup.subset_closure ⟨r, fun τ => dwMap F.emb N _ (m τ),
         fun τ => ⟨((m τ : dualWeyl F.O N N (res N (lam τ))) : MvPolynomial (Fin N × Fin N) F.O), (m τ).2, rfl⟩, rfl⟩
     | add a b ha hb =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem ha hb
 
 theorem rowAct_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) {r n : ℕ}
@@ -253,11 +252,12 @@ theorem rowAct_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) {r n 
     MvPolynomial.map φ (rowAct R M f) = rowAct S (M.map φ) (MvPolynomial.map φ f) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [rowAct]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     rw [map_mul, map_mul, map_mul, hp, map_X]
     congr 1
-    simp [rowAct, map_sum, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [rowAct, map_sum, Matrix.map_apply]
 
 theorem dwAct_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r n : ℕ) (g : GL (Fin r) R)
     (f : MvPolynomial (Fin r × Fin n) R) :
@@ -284,14 +284,14 @@ theorem bc_grp {O K : Type} [CommRing O] [CommRing K] (φ : O →+* K) (N : ℕ)
     funext τ
     apply Subtype.ext
     simp only [Formalism.UG.dualWeylRep_apply, dwMap_coe, dwAct_map]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end Main
 
 end GlobalTheory.LatBC
 
-open NumberField IsDedekindDomain GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative Formalism.CohomologicalDescent.LD Formalism.RankGapBounds.FormsTensorLocalization Formalism.L2.Host GlobalTheory.HeckeGal in
 
+open NumberField IsDedekindDomain GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative Formalism.CohomologicalDescent.LD Formalism.RankGapBounds.FormsTensorLocalization Formalism.L2.Host GlobalTheory.HeckeGal in
 theorem GlobalTheory.LatBC.baseChange_lattices : ∀ (l : ℕ) [Fact l.Prime] (ι : Type) [Fintype ι] [DecidableEq ι] (N : ℕ) (F : Frame l ι N) (lam : ι → ℕ → ℕ), Function.Injective F.emb → (∀ τ, Antitone (res N (lam τ))) → ∃ b : NablaT F.O N lam →ₛₗ[F.emb] NablaT (PadicAlgCl l) N lam, Function.Injective b ∧ (∀ y, y ∈ F.latN lam ↔ ∃ x, b x = y) ∧ (∀ y, y ∈ F.latD lam ↔ ∃ x ∈ tensSub (Formalism.CohomologicalDescent.DepthNonnegative.deltaIn F.O N lam), b x = y) ∧ (∀ g x, b (grp F.O N lam g x) = grp (PadicAlgCl l) N lam (fun τ => Matrix.GeneralLinearGroup.map F.emb (g τ)) (b x)) ∧ (∀ (n : ℕ) (x : Fin n → NablaT F.O N lam), LinearIndependent F.O x → LinearIndependent (PadicAlgCl l) fun a => b (x a)) ∧ Submodule.span (PadicAlgCl l) (Set.range b) = ⊤ := by
   intro l _ ι _ _ N F lam hinj hlam
   obtain ⟨h1, h5, h6⟩ := GlobalTheory.LatBC.bc_props F.emb N lam hinj

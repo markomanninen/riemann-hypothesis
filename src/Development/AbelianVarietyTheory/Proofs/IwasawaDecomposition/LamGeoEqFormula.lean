@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
+
+@[expose] public section
 
 namespace GlobalTheory.LowestKType
 

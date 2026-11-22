@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem finrank_perp_add {E : Type} [Field E] [NumberField E] [StarRing E] (V : 
         rw [Submodule.coe_sum] at this
         simp only [Submodule.coe_smul] at this
         exact this
-      rw [this, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, map_sum, LinearMap.sum_apply]
       refine Finset.sum_eq_zero fun i _ => ?_
       rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply]
       have := congrFun h i
@@ -60,7 +65,8 @@ theorem finrank_perp_add {E : Type} [Field E] [NumberField E] [StarRing E] (V : 
         rw [hf] at this
         exact (Submodule.mem_bot E).1 this
       rw [hfc] at h1
-      rw [map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply]
       rw [← h1]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]

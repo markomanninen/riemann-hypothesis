@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RightCosetSpaceCompact
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RightCosetSpaceCompact
+
+@[expose] public section
 
 open MeasureTheory Topology Filter Set TopologicalSpace
 open scoped ENNReal Pointwise Uniformity
@@ -13,7 +17,7 @@ theorem polishSpace_of_locallyCompact {G : Type*} [Group G] [TopologicalSpace G]
     PolishSpace G := by
   let _ := IsTopologicalGroup.rightUniformSpace G
   have : IsRightUniformGroup G := ⟨rfl⟩
-  have : CompleteSpace G := IsRightUniformGroup.completeSpace_of_weaklyLocallyCompactSpace
+  have : CompleteSpace G := IsRightUniformGroup.completeSpace_of_weaklyLocallyCompactSpace G
   have : (𝓤 G).IsCountablyGenerated := by
     rw [uniformity_eq_comap_nhds_one']
     infer_instance
@@ -316,11 +320,6 @@ def fundamentalDomainEquiv : fundamentalDomain Γ ≃ᵐ RightCosetSpace Γ wher
     rw [Set.image_smul]
     exact hS.const_smul γ
 
-@[simp]
-theorem fundamentalDomainEquiv_apply (x : fundamentalDomain Γ) :
-    fundamentalDomainEquiv Γ x = mk Γ x :=
-  rfl
-
 variable (μ : Measure G)
 
 theorem quotientMeasure_eq_map_fundamentalDomainEquiv :
@@ -344,15 +343,11 @@ theorem lintegral_quotientMeasure (h : RightCosetSpace Γ → ℝ≥0∞) :
 
 variable {Γ} [μ.IsMulLeftInvariant]
 
-omit [LocallyCompactSpace G] [T2Space G] in
 
+omit [LocallyCompactSpace G] [T2Space G] in
 theorem map_restrict_eq_quotientMeasure {F : Set G} (hF : IsFundamentalDomain Γ F μ) :
     Measure.map (mk Γ) (μ.restrict F) = quotientMeasure Γ μ :=
   hF.quotientMeasure_eq μ (isFundamentalDomain_fundamentalDomain Γ μ)
-
-instance quotientMeasureEqMeasurePreimage :
-    QuotientMeasureEqMeasurePreimage μ (quotientMeasure Γ μ) :=
-  (isFundamentalDomain_fundamentalDomain Γ μ).quotientMeasureEqMeasurePreimage_quotientMeasure
 
 theorem quotientMeasure_apply {F : Set G} (hF : IsFundamentalDomain Γ F μ)
     {A : Set (RightCosetSpace Γ)} (hA : MeasurableSet A) :

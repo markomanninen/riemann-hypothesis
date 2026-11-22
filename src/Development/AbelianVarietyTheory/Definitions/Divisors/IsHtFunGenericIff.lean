@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CurveV
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsFlagBundleRankOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,41 +25,6 @@ abbrev clo (z : X) : Closeds X := ⟨closure {z}, isClosed_closure⟩
 instance isIntegral_clo (z : X) : IsIntegral (Scheme.IdealSheafData.vanishingIdeal (clo z)).subscheme :=
   isIntegral_red (Z := clo z) isIrreducible_singleton.closure
 
-open Classical in
-
-def cutMult [IsLocallyNoetherian X] {L : LB X} (hL : L.IsLB) (s : L.Sec) (z w : X) : ℤ :=
-  haveI : IsLocallyNoetherian (Scheme.IdealSheafData.vanishingIdeal (clo z)).subscheme :=
-    LocallyOfFiniteType.isLocallyNoetherian (redι (clo z))
-  if h : genericPoint _ ∈ Out.nonzeroLocus (GlobalTheory.ZM.RepBC.secPull L (redι (clo z)) s) then
-    Function.extend (redι (clo z)) (divOfSec (LB.isLB_pull hL _) _ h).mult 0 w
-  else 0
-
-def degAt (p : X ⟶ Sp k) (L : LB X) (z : X) (n : ℕ) : ℤ :=
-  topSelfIntersection ℂ ((L.pull (redι (clo z))).pull (cxFibre.fst (redι (clo z) ≫ p))) n
-
-def IsHtFun {p : X ⟶ Sp k} (L : ι → HermLB p) (y : X) (D : ℕ) (Φ : MvPolynomial ι ℝ →ₗ[ℝ] ℝ) : Prop :=
-  (∀ n : ι → ℤ, ∃ h, (comb L n).IsArithHeight h ∧ h y = Φ (lin (fun i => (n i : ℝ)) ^ D)) ∧
-    ∀ (P : MvPolynomial ι ℝ) (d : ℕ), d ≠ D → P.IsHomogeneous d → Φ P = 0
-
-def IsIntFun {p : X ⟶ Sp k} (L : ι → HermLB p) (f : ∀ σ : k →+* ℂ, CxPts p σ → ℝ) (D : ℕ)
-    (Λ : MvPolynomial ι ℝ →ₗ[ℝ] ℝ) : Prop :=
-  (∀ n : ι → ℤ, Λ (lin (fun i => (n i : ℝ)) ^ D) = chInt (comb L n) D f) ∧
-    ∀ (P : MvPolynomial ι ℝ) (d : ℕ), d ≠ D → P.IsHomogeneous d → Λ P = 0
-
-theorem isHtFun_generic_iff [IsIntegral X] {p : X ⟶ Sp k} (L : ι → HermLB p) (D : ℕ) (Φ : MvPolynomial ι ℝ →ₗ[ℝ] ℝ) :
-    IsHtFun L (genericPoint X) (D + 1) Φ ↔ IsArFun L D Φ :=
-  Iff.rfl
-
-theorem isIntFun_one_iff {p : X ⟶ Sp k} (L : ι → HermLB p) (D : ℕ) (Λ : MvPolynomial ι ℝ →ₗ[ℝ] ℝ) :
-    IsIntFun L (fun _ _ => 1) D Λ ↔ IsGeoFun L D Λ :=
-  Iff.rfl
-
-def vdmPol (r e : ℕ) : MvPolynomial (Option (Fin r)) ℝ :=
-  C ((r.factorial : ℝ)⁻¹) * (∑ i : Fin r, MvPolynomial.X (some i) ^ 2) *
-    (∏ i : Fin r, ∏ i' ∈ Finset.Ioi i, (MvPolynomial.X (some i') - MvPolynomial.X (some i))) * MvPolynomial.X none ^ e
-
-theorem vdmPol_one (e : ℕ) : vdmPol 1 e = MvPolynomial.X (some 0) ^ 2 * MvPolynomial.X none ^ e := by
-  simp [vdmPol]
 
 structure FlagSp (E : X.Modules) (r : ℕ) : Type 1 where
 
@@ -66,30 +35,9 @@ structure FlagSp (E : X.Modules) (r : ℕ) : Type 1 where
   fl : Vert.Flag ((Scheme.Modules.pullback π).obj E) r
   univ : IsFlagBundle π (fun _ : Unit => E) (fun _ => r) (fun _ => fl)
 
-def FlagSp.ofRankOne {E : X.Modules} (hE : IsVB E 1) : FlagSp E 1 :=
-  ⟨X, 𝟙 X, .ofRankOne (hE.pullback _), isFlagBundle_rank_one X (fun _ : Unit => E) _⟩
-
 namespace FlagSp
 
 variable {p : X ⟶ Sp k} {E : X.Modules} {r : ℕ} (F : FlagSp E r) {h : VMetric p E r}
-
-def IsTop (z : X) (y : F.Y) : Prop := F.π y = z ∧ ∀ y', F.π y' = z → y ⤳ y'
-
-def fam (H : h.IsCInf) (N : HermLB p) : Option (Fin r) → HermLB (F.π ≫ p) :=
-  fun o => o.elim (N.pull F.π rfl) fun i => VMetric.grLB F.fl i (H.pull F.π rfl)
-
-def IsVal (H : h.IsCInf) (N : HermLB p) (z : X) (e : ℕ) (a : ℝ) : Prop :=
-  ∃ y Φ, F.IsTop z y ∧ IsHtFun (F.fam H N) y (e + 2 + r.choose 2) Φ ∧ Φ (vdmPol r e) = a
-
-def val (H : h.IsCInf) (N : HermLB p) (z : X) (e : ℕ) : ℝ := Classical.epsilon (F.IsVal H N z e)
-
-def IsArch (H : h.IsCInf) (N M : HermLB p) (s : M.B.Sec) (z : X) (e : ℕ) (a : ℝ) : Prop :=
-  ∃ y Λ, F.IsTop z y ∧ IsIntFun (fun o => (F.fam H N o).restr (redι (clo y)))
-    (fun σ v => Real.log ((M.φ σ).nsq (secVal p σ s)
-      (PtsOver.map (redι (clo y) ≫ F.π) (Category.assoc _ _ _) (spMap σ) v)) / 2) (e + 2 + r.choose 2) Λ ∧
-    Λ (vdmPol r e) = a
-
-def arch (H : h.IsCInf) (N M : HermLB p) (s : M.B.Sec) (z : X) (e : ℕ) : ℝ := Classical.epsilon (F.IsArch H N M s z e)
 
 end FlagSp
 
@@ -136,65 +84,9 @@ attribute [instance] int cl
 
 variable {D : D7} {O : Setup D} {c : O.s.Comp} (M : DRBase O c)
 
-instance : IsLocallyNoetherian M.B := M.ar.isLocallyNoetherian
 
-abbrev q : M.B ⟶ Sp (𝓞 O.κ.c.F) := M.b ≫ O.s.T.Z.s
-
-def lam (R : ℝ) : HermLB M.q := VMetric.det ((M.H R).pull M.b rfl)
-
-def lamB : LB M.B := VB.det ((Scheme.Modules.pullback M.b).obj (omega O.s.T.Z.t.G)) (D.R.f * O.N)
-
-theorem lam_B (R : ℝ) : (M.lam R).B = M.lamB :=
-  rfl
-
-theorem isLB_pow (m : ℕ) : (lbPow M.lamB m).IsLB :=
-  M.lam_B 0 ▸ ((M.lam 0).pow m).isLB
-
-def bd : Set M.B := {w | M.b w ∉ abLocus O.s.T.Z.t.G}
-
-def val (R : ℝ) (z : M.B) (e : ℕ) : ℝ := M.F.val ((M.H R).pull M.b rfl) (M.lam R) z e
-
-def arch (R : ℝ) (m : ℕ) (s : (lbPow M.lamB m).Sec) (z : M.B) (e : ℕ) : ℝ :=
-  M.F.arch ((M.H R).pull M.b rfl) (M.lam R) ((M.lam R).pow m) s z e
-
-def deg (z : M.B) (n : ℕ) : ℤ := degAt M.q M.lamB z n
-
-structure Emb : Type where
-
-  a : ℕ
-  a_pos : 0 < a
-
-  n : ℕ
-
-  f : M.B ⟶ PSpace (𝓞 O.κ.c.F) n
-  f_str : f ≫ PSpace.str _ n = M.q
-  iso : LBIso ((ProjSpace.hermitianTwistingSheaf (𝓞 O.κ.c.F) n).B.pull f) (lbPow M.lamB a)
-
-variable {M} in
-
-def Emb.Good (I : M.Emb) (z : M.B) (e : ℕ) : Prop :=
-  topologicalKrullDim (closure ({z} : Set M.B)) = (e + 2 : ℕ) ∧
-    topologicalKrullDim (I.f '' (closure {z} ∩ M.bd)) + 3 ≤ (e + 2 : ℕ) ∧ (CharZero (M.B.residueField z) → z ∉ M.bd)
-
-variable {M} in
-
-def Emb.Cuts (I : M.Emb) {m : ℕ} (s : (lbPow M.lamB m).Sec) (z : M.B) (e : ℕ) : Prop :=
-  z ∈ Out.nonzeroLocus s ∧ ∀ w, cutMult (M.isLB_pow m) s z w ≠ 0 → I.Good w e
 
 end DRBase
-
-def cNum {D : D7} (O : Setup D) (c : O.s.Comp) : MvPolynomial (Sym D.host.E →₀ ℤ) ℝ →ₗ[ℝ] ℝ :=
-  numL ((arIn O.s O.Φ O.met.hm).num c) (dimFl D.what₂.Tau O.N + 1)
-
-def termL {D : D7} (O : Setup D) (c : O.s.Comp) (R : ℝ) : ℝ :=
-  cNum O c ((arIn O.s O.Φ O.met.hm).mixEv ∅ R 1 c
-    (MvPolynomial.X (Sum.inr (false, 2)) * tagDR D.what₂.Tau _ (CovTestDR.curveV D.what₂.Tau O.N O.j)))
-
-def termW {D : D7} (O : Setup D) (c : O.s.Comp) (R : ℝ) : ℝ :=
-  cNum O c ((arIn O.s O.Φ O.met.hm).mixEv ∅ R 1 c
-      (MvPolynomial.X (Sum.inr (false, 2)) * tagDR D.what₂.Tau _ (CovTestDR.vdmCl D.what₂.Tau O.N O.j)) *
-    (∑ i : Fin (D.R.f * O.N), MvPolynomial.X (wholeSym (fun _ => false) (some R)
-      (.inr i : Fin (D.R.f * O.N) ⊕ Fin (D.R.f * O.N)))) ^ (dimGr D.what₂.Tau O.N O.j - 1))
 
 end GlobalTheory.VdmRec
 

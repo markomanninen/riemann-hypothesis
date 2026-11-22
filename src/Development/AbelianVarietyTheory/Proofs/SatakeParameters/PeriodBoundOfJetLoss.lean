@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotDvdCardStabFrm
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StatementWithTransposeOfBranching
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeUnit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationFinOrderApply
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValLocCharUnit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnfoldingIsGoodCyclotomicInvariantReferenceLatti
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.VolqExistsPow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntOfHomAt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfPow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SubHalfRankInt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NuRowSuccEqWt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsStdSplit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulMemLocPOfVal
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetLossOfFamilyFacts
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.KernelAwayPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotDvdCardStabFrm
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StatementWithTransposeOfBranching
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeUnit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationFinOrderApply
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValLocCharUnit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnfoldingIsGoodCyclotomicInvariantReferenceLatti
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.VolqExistsPow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntOfHomAt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfPow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SubHalfRankInt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NuRowSuccEqWt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsStdSplit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulMemLocPOfVal
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetLossOfFamilyFacts
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.KernelAwayPrimes
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,11 +71,12 @@ theorem sum_nuW_nonneg {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Wo
   rw [← h3, ← h1]
   omega
 
-theorem recWts_ok {D : D7} (EX : ErrX D) : (recWts EX).Ok where
-  row_ok τ := ⟨D.hc τ, rfl⟩
-  hc_row := recWts_row EX
-  u_first u u' τ h := (D.hcW_first u τ h).trans (D.hcW_first u' τ h).symm
-  u_last u u' τ h := (D.hcW_last u τ (by omega)).trans (D.hcW_last u' τ (by omega)).symm
+theorem recWts_ok {D : D7} (EX : ErrX D) : (recWts EX).Ok := by
+  exact
+    { row_ok τ := ⟨D.hc τ, rfl⟩
+      hc_row := recWts_row EX
+      u_first u u' τ h := (D.hcW_first u τ h).trans (D.hcW_first u' τ h).symm
+      u_last u u' τ h := (D.hcW_last u τ (by omega)).trans (D.hcW_last u' τ (by omega)).symm }
 
 theorem emb_star_piG {D : D7} (EX : ErrX D) (i : Fin 2) (τ : D.what₂.Tau) :
     (recFields D).emb τ (@star _ (recFields D).starE.toStar (((recPrimes EX).piG i : 𝓞 D.host.E) : D.host.E)) = tauPib EX i τ := by

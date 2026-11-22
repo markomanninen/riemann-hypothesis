@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInverse
-import GroundTheory.GlobalFields.TateThesis.GaussianComplexFourier
-import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInverse
+public import GroundTheory.GlobalFields.TateThesis.GaussianComplexFourier
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+
+@[expose] public section
 
 open NumberField InfinitePlace MeasureTheory Complex ComplexConjugate NumberField.mixedEmbedding
 open scoped Real FourierTransform Classical

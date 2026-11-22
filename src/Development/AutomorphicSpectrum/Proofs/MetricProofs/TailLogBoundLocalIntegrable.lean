@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
-import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureB
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureB
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+
+@[expose] public section
 
 open MeasureTheory Filter Topology ReciprocityTheory.AnForm.M
 
@@ -34,7 +38,7 @@ theorem tailLog_on_compact_of_chart {e : ℕ} {X : Type} [TopologicalSpace X] [C
     exact Real.log_nonneg (hr x hx.1)
   have hhYo : ∀ x, x ∉ Yo → h x = 0 := by
     intro x hx
-    exact Set.indicator_of_notMem (fun hm => hx hm.1) _
+    exact Set.indicator_of_notMem (by exact fun hm => hx hm.1) _
   have hSm : MeasurableSet S := hSc.isClosed.measurableSet
   set ch := A.chart j with hch
   set Z : Set X := ch.symm '' S with hZ
@@ -82,7 +86,9 @@ theorem tailLog_on_compact_of_chart {e : ℕ} {X : Type} [TopologicalSpace X] [C
       rw [h1, h2]
   calc ∫ y in S, F y = integralWith A hne.some Φ g := by rw [hgI, hSint]
     _ ≤ integralWith A hne.some Φ h := hle
-    _ = mInt A Φ h := (mInt_eq_integralWith A Φ hne h).symm
+    _ = mInt A Φ h := by
+      unfold mInt
+      rw [dite_eq_left hne]
     _ ≤ _ := hB
 
 end GlobalTheory.CompanionTheory.Metric.LocTail

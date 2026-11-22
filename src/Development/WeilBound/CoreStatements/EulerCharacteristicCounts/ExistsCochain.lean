@@ -1,10 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.ChainRows
-import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBlochKatoCocycleOfCrysDeRhamPair
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineCoboundaryLift
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBlochKatoCocycleOfCrysDeRhamPair
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineCoboundaryLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +40,7 @@ theorem pr_smul_right (x : V ⊗[Qp] R) (c : LL) (v' : V') (r' : R) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v r => rw [pr_tmul, pr_tmul, map_smul, TensorProduct.smul_tmul']
-  | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy, smul_add]
 
 end Pairing
 
@@ -59,11 +67,11 @@ theorem pr_act (hP : ∀ g x y, P (ρ g x) (ρ' g y) = ((cycLL PD LL g : LLˣ) :
     actVB PD (charRep (cycLL PD LL)) g (pr P B x y) = pr P B (actVB PD ρ g x) (actVB PD ρ' g y) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, LinearMap.add_apply, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), LinearMap.add_apply, hx, hx']
   | tmul v r =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y y' hy hy' => simp only [map_add, hy, hy']
+    | add y y' hy hy' => simp only [map_add (f := _), hy, hy']
     | tmul v' r' =>
       rw [pr_tmul, actVB_tmul', actVB_tmul', actVB_tmul', pr_tmul, hP, map_mul, charRep_apply]
 
@@ -73,11 +81,11 @@ theorem pr_actdR (hP : ∀ g x y, P (ρ g x) (ρ' g y) = ((cycLL PD LL g : LLˣ)
       pr P BdR (actVdR PD ρ g x) (actVdR PD ρ' g y) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, LinearMap.add_apply, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), LinearMap.add_apply, hx, hx']
   | tmul v r =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y y' hy hy' => simp only [map_add, hy, hy']
+    | add y y' hy hy' => simp only [map_add (f := _), hy, hy']
     | tmul v' r' =>
       rw [pr_tmul, actVdR_tmul', actVdR_tmul', actVdR_tmul', pr_tmul, hP, map_mul, charRep_apply]
 
@@ -86,7 +94,7 @@ theorem pr_φ (x : V ⊗[Qp] B) (v' : V') :
       pr P B (φVB PD (LL := LL) (V := V) x) (v' ⊗ₜ[Qp] 1) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, LinearMap.add_apply, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), LinearMap.add_apply, hx, hx']
   | tmul v r => rw [pr_tmul, φVB_tmul', φVB_tmul', pr_tmul, mul_one, mul_one]
 
 theorem pr_ι (x : V ⊗[Qp] B) (y : V' ⊗[Qp] B) :
@@ -94,11 +102,11 @@ theorem pr_ι (x : V ⊗[Qp] B) (y : V' ⊗[Qp] B) :
       pr P BdR (ιV PD (LL := LL) (V := V) x) (ιV PD (LL := LL) (V := V') y) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, LinearMap.add_apply, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), LinearMap.add_apply, hx, hx']
   | tmul v r =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y y' hy hy' => simp only [map_add, hy, hy']
+    | add y y' hy hy' => simp only [map_add (f := _), hy, hy']
     | tmul v' r' => rw [pr_tmul, ιV_tmul', ιV_tmul', ιV_tmul', pr_tmul, map_mul]
 
 theorem pr_fil (a : ℤ) (y : V ⊗[Qp] BdR) (hy : y ∈ FilV PD (LL := LL) (V := V) a) (v' : V') :
@@ -110,7 +118,7 @@ theorem pr_fil (a : ℤ) (y : V ⊗[Qp] BdR) (hy : y ∈ FilV PD (LL := LL) (V :
     rw [AlgebraTensorModule.map_tmul, pr_tmul, mul_one]
     exact GlobalTheory.CobCrisLift.tmul_mem PD _ b.2
   | add x y hx hy =>
-    rw [map_add, map_add, LinearMap.add_apply]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply]
     exact add_mem hx hy
 
 theorem exists_cochain
@@ -151,14 +159,14 @@ theorem exists_cochain
       rw [hw2, pr_actdR PD hP, e₂, hιb, map_sub (pr P BdR _)]
     apply hker
     · rw [map_sub (pr P B), LinearMap.sub_apply, map_sub] at f₁
-      rw [map_add, map_sub, pr_φ, φVB_actVB', map_neg, map_neg, map_neg, ← sub_eq_zero, ← neg_eq_zero,
+      rw [map_add (f := _), map_sub, pr_φ, φVB_actVB', map_neg, map_neg, map_neg, ← sub_eq_zero, ← neg_eq_zero,
         ← sub_eq_zero.2 f₁]
       abel
     · have : ιV PD (LL := LL) (V := LL) (pr P B x (b g ⊗ₜ[Qp] 1) +
           (actVB PD (charRep (cycLL PD LL)) g (-w) - (-w))) =
           pr P BdR (ιV PD (LL := LL) (V := V) x - d) (b g ⊗ₜ[Qp] 1) -
             (actVdR PD (charRep (cycLL PD LL)) g w' - w') := by
-        rw [map_add, map_sub, pr_ι, ιV_tmul', map_one, ιV_actVB', map_sub (pr P BdR),
+        rw [map_add (f := _), map_sub, pr_ι, ιV_tmul', map_one, ιV_actVB', map_sub (pr P BdR),
           LinearMap.sub_apply, f₂, map_sub, map_neg, map_neg]
         abel
       rw [this]
@@ -174,7 +182,7 @@ theorem exists_cochain
     rw [actVB_tmul', map_one]
   have e' : P (a g) (ρ' g (b h)) ⊗ₜ[Qp] (1 : B) =
       pr P B (a g ⊗ₜ[Qp] (1 : B)) (ρ' g (b h) ⊗ₜ[Qp] (1 : B)) := by rw [pr_tmul, mul_one]
-  rw [add_tmul, sub_tmul, e, e', hx, ← hf, ← hf, ← hf, map_add, pr_act PD hP, actVB_tmul', map_one, hb,
+  rw [add_tmul, sub_tmul, e, e', hx, ← hf, ← hf, ← hf, map_add (f := _), pr_act PD hP, actVB_tmul', map_one, hb,
     add_tmul, map_add, map_sub, actVB_mul', map_sub (pr P B), LinearMap.sub_apply]
   abel
 
@@ -234,7 +242,8 @@ theorem orthL_of
     (fun i => (IsModuleTopology.continuous_of_linearMap (e.coord i)).comp hbc) w f (fun g => ?_)
   refine (hf g).trans ?_
   congr 1
-  conv_lhs => rw [← e.sum_repr (b g), TensorProduct.sum_tmul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← e.sum_repr (b g), TensorProduct.sum_tmul, map_sum]
   exact Finset.sum_congr rfl fun i _ => pr_smul_right P x _ _ _
 
 end Top
@@ -244,9 +253,5 @@ theorem orthL_tied (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) 
   orthL_of (P.PD K) (fun LL _ _ => GlobalTheory.FundSeq.tensor_fundamental_sequence l P AI T K LL LL)
     (fun LL _ _ _ O _ _ hO A => GlobalTheory.CobCrisLift.coboundary_lift l P AI T K LL O hO A)
     (GlobalTheory.FundCont.contCore_tied l P AI T K)
-
-theorem tdOrth : ∀ (D : D7) (l : ℕ) [Fact l.Prime] (K : FinExt l),
-    GlobalTheory.CompanionTheory.LocDual.OrthL ((D.loc l).PD K) :=
-  fun D l _ K => orthL_tied l (D.loc l) (D.locA l) (D.locT l) K
 
 end PositivityTheory.LocalTateOrthogonality.Orth

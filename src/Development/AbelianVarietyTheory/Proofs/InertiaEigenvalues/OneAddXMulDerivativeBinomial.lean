@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CyclotomicFrobeniusPowerSeriesXEqMulQuotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankCyclotomicExtAndCyclotomicCharSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocPrimeVNormalised
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueEv
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CyclotomicFrobeniusPowerSeriesXEqMulQuotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankCyclotomicExtAndCyclotomicCharSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocPrimeVNormalised
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueEv
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL
 
@@ -18,11 +22,11 @@ section Algebra
 
 theorem one_add_X_mul_derivative_binomial {l : ℕ} [Fact l.Prime] (L : Type) [Field L] [CharZero L]
     [Algebra ℤ_[l] L] (c : ℤ_[l]) :
-    (1 + X) * d⁄dX L (binomialSeries L c) = C (algebraMap ℤ_[l] L c) * binomialSeries L c := by
+    (1 + X) * PowerSeries.derivative (binomialSeries L c) = C (algebraMap ℤ_[l] L c) * binomialSeries L c := by
   have hc : ∀ (f : L⟦X⟧) (n : ℕ),
-      coeff n ((1 + X) * d⁄dX L f) = coeff (n + 1) f * (n + 1) + coeff n f * n := by
+      coeff n ((1 + X) * PowerSeries.derivative f) = coeff (n + 1) f * (n + 1) + coeff n f * n := by
     intro f n
-    rw [add_mul, one_mul, map_add, coeff_derivative]
+    rw [add_mul, one_mul, map_add (f := _), coeff_derivative]
     cases n with
     | zero => simp
     | succ n => rw [coeff_succ_X_mul, coeff_derivative]; simp
@@ -34,21 +38,21 @@ theorem one_add_X_mul_derivative_binomial {l : ℕ} [Fact l.Prime] (L : Type) [F
   simp only [Polynomial.smeval_sub, Polynomial.smeval_X, Polynomial.smeval_natCast, pow_one, pow_zero,
     nsmul_eq_mul, mul_one, Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one] at h1
   have h2 := congrArg (algebraMap ℤ_[l] L) h1
-  simp only [map_mul, map_sub, map_add, map_natCast, map_one] at h2
+  simp only [map_mul, map_sub, map_add (f := _), map_natCast, map_one] at h2
   have h0 : (n.factorial : L) ≠ 0 := by exact_mod_cast n.factorial_ne_zero
   apply mul_left_cancel₀ h0
   linear_combination -h2
 
 theorem derivative_rescale_exp (L : Type) [Field L] [Algebra ℚ L] (a : L) :
-    d⁄dX L (rescale a (exp L)) = C a * rescale a (exp L) := by
+    PowerSeries.derivative (rescale a (exp L)) = C a * rescale a (exp L) := by
   ext n
   have h := congrArg (coeff n) (derivative_exp L)
   rw [coeff_derivative] at h
   rw [coeff_derivative, coeff_C_mul, coeff_rescale, coeff_rescale, ← h]
   ring
 
-theorem ode_unique {L : Type} [Field L] [CharZero L] (a : L) {f g : L⟦X⟧} (hf : d⁄dX L f = C a * f)
-    (hg : d⁄dX L g = C a * g) (h0 : constantCoeff f = constantCoeff g) : f = g := by
+theorem ode_unique {L : Type} [Field L] [CharZero L] (a : L) {f g : L⟦X⟧} (hf : PowerSeries.derivative f = C a * f)
+    (hg : PowerSeries.derivative g = C a * g) (h0 : constantCoeff f = constantCoeff g) : f = g := by
   ext n
   induction n with
   | zero => simpa using h0
@@ -95,14 +99,14 @@ theorem map_binomial_of_exp (f : O⟦X⟧ →ₐ[O] L⟦X⟧) (m : L) (hf : f X 
   rw [h1]
   refine ode_unique _ ?_ (derivative_rescale_exp L _) ?_
   · have h2 := congrArg g (one_add_X_mul_derivative_binomial L w)
-    rw [map_mul, map_mul, map_add, map_one, gX, gC] at h2
-    have h3 : d⁄dX L (g (binomialSeries L w)) =
-        g (d⁄dX L (binomialSeries L w)) * (C m * rescale m (exp L)) := by
+    rw [map_mul, map_mul, map_add (f := _), map_one, gX, gC] at h2
+    have h3 : PowerSeries.derivative (g (binomialSeries L w)) =
+        g (PowerSeries.derivative (binomialSeries L w)) * (C m * rescale m (exp L)) := by
       rw [e, e, derivative_subst hs, map_sub, derivative_rescale_exp]; simp
     rw [h3, map_mul]
     linear_combination (C m) * h2
   · obtain ⟨b, hb⟩ : (X : L⟦X⟧) ∣ binomialSeries L w - 1 := X_dvd_iff.2 (by simp)
-    rw [sub_eq_iff_eq_add.1 hb, map_add, map_mul, map_one, gX, map_add, map_mul, h0,
+    rw [sub_eq_iff_eq_add.1 hb, map_add (f := _), map_mul, map_one, gX, map_add (f := _), map_mul, h0,
       constantCoeff_rescale_exp]
     simp
 
@@ -112,7 +116,7 @@ theorem map_gam_X (f : O⟦X⟧ →ₐ[O] L⟦X⟧) (ζ : L) (hf : f X = C ζ * 
   obtain ⟨w, hw⟩ := hc
   have hnat : ∀ k : ℕ, f (binomialSeries O (k : ℤ_[l])) = C (ζ ^ k) * rescale (k : L) (exp L) := by
     intro k
-    rw [binomialSeries_nat, map_pow, map_add, map_one, hf, add_sub_cancel, mul_pow, exp_pow_eq_rescale_exp,
+    rw [binomialSeries_nat, map_pow, map_add (f := _), map_one, hf, add_sub_cancel, mul_pow, exp_pow_eq_rescale_exp,
       map_pow]
   have h1 := map_binomial_of_exp (f.comp (GlobalTheory.Fon.gam O ((l ^ j : ℕ) : ℤ_[l]))) ((l ^ j : ℕ) : L) (by
     rw [AlgHom.comp_apply, GlobalTheory.Fon.gam_X, map_sub, hnat, hζ, map_one, map_one, one_mul]) w
@@ -153,8 +157,8 @@ theorem ev_gam (H : EvLaw l (O := O) v inferInstance) {ζ : L} {j a : ℕ} (h : 
       exact (rescaleAlgHom _).commutes _)
   exact (AlgHom.congr_fun this b).trans (hr _)
 
-omit [Fact l.Prime] [CharZero L] [Algebra ℤ_[l] O] [Algebra ℤ_[l] L] [IsScalarTower ℤ_[l] O L] in
 
+omit [Fact l.Prime] [CharZero L] [Algebra ℤ_[l] O] [Algebra ℤ_[l] L] [IsScalarTower ℤ_[l] O L] in
 theorem exists_ev (H : EvLaw l (O := O) v inferInstance) : ∃ ev : L → (O⟦X⟧ →ₐ[O] L⟦X⟧),
     (∀ ζ, (∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)) → ev ζ X = C ζ * exp L - 1) ∧
     (∀ ζ, ¬ (∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)) → ev ζ = ev 1) ∧
@@ -178,8 +182,8 @@ theorem exists_ev (H : EvLaw l (O := O) v inferInstance) : ∃ ev : L → (O⟦X
     simp only [z, if_neg h, ite_self]
   · simp only [hev]; exact hz ζ
 
-omit [CharZero L] [Algebra ℚ L] [Algebra ℤ_[l] L] in
 
+omit [CharZero L] [Algebra ℚ L] [Algebra ℤ_[l] L] in
 theorem exists_primitive_pow {ζ : L} {j : ℕ} (h : IsPrimitiveRoot ζ (l ^ j)) (a : ℕ) :
     ∃ k : ℕ, IsPrimitiveRoot (ζ ^ a) (l ^ k) := by
   have h' : (ζ ^ a) ^ l ^ j = 1 := by rw [← pow_mul, mul_comm, pow_mul, h.pow_eq_one, one_pow]
@@ -266,7 +270,7 @@ theorem norm_sub_one_lt {ζ : Om l} {j : ℕ} (h : ζ ^ l ^ j = 1) : ‖ζ - 1�
     rw [Valuation.mem_integer_iff, PadicAlgCl.valuation_def, ← NNReal.coe_le_coe]; rfl
   obtain ⟨r, hr⟩ := exists_add_pow_prime_pow_eq hp ((⟨ζ, (hS _).2 h1.le⟩ : S) - 1) 1 j
   have h2 := congrArg S.subtype hr
-  simp only [map_add, map_mul, map_pow, map_sub, map_one, map_natCast, sub_add_cancel, one_pow, mul_one] at h2
+  simp only [map_add (f := _), map_mul, map_pow, map_sub, map_one, map_natCast, sub_add_cancel, one_pow, mul_one] at h2
   change ζ ^ l ^ j = (ζ - 1) ^ l ^ j + 1 + l * (ζ - 1) * (r : Om l) at h2
   have h3 : (ζ - 1) ^ l ^ j = -(l * (ζ - 1) * (r : Om l)) := by linear_combination h - h2
   have hl : ‖(l : Om l)‖ < 1 := by

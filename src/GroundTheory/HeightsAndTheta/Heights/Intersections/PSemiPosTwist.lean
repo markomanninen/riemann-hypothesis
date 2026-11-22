@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NoCommonComponentCoordinatesPlane
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StTorusInvLevi
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ADensStC
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LeviOneEqLaplacianThm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NoCommonComponentCoordinatesPlane
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StTorusInvLevi
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ADensStC
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LeviOneEqLaplacianThm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -34,7 +39,7 @@ def blk (k : K) : ((Σ k, ι k) → ℂ) →L[ℂ] (ι k → ℂ) :=
     ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : (Σ k, ι k) => ℂ) ⟨k, i⟩
 
 def F (k : K) (y : (Σ k, ι k) → ℂ) : ℝ :=
-  Real.log ((fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩))
+  Real.log ((fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩))
 
 theorem blk_ne {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K) :
     (fun i => z ⟨k, i⟩ : ι k → ℂ) ≠ 0 := by
@@ -42,26 +47,30 @@ theorem blk_ne {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0
   exact fun h0 => hi (congrFun h0 i)
 
 theorem rho_pos {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K) :
-    0 < (fsMetric (ι k)).ρ (fun i => z ⟨k, i⟩) :=
-  (fsMetric (ι k)).pos _ (blk_ne hz k)
+    0 < (fsMetric (ι := ι k)).ρ (fun i => z ⟨k, i⟩) :=
+  (fsMetric (ι := ι k)).pos _ (blk_ne hz k)
 
 theorem rho_eq (k : K) (y : (Σ k, ι k) → ℂ) :
-    (fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩) = Real.sqrt (∑ i, ‖y ⟨k, i⟩‖ ^ 2) := by
+    (fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩) = Real.sqrt (∑ i, ‖y ⟨k, i⟩‖ ^ 2) := by
   simp [fsMetric, EuclideanSpace.norm_eq]
 
 theorem contDiffAt_F {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K) :
     ContDiffAt ℝ 2 (F k) z := by
-  have hφ := ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.adens_contDiffAt_logρ_id
-    (GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)) (blk_ne hz k)
-  have hFk : F k = (fun u => Real.log ((fsMetric (ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
+  have hρ : ContDiffAt ℝ 2 (fsMetric (ι := ι k)).ρ (blk (ι := ι) k z) :=
+    ((GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)).contDiffAt
+      (isOpen_ne.mem_nhds (blk_ne hz k))).of_le (WithTop.coe_le_coe.2 le_top)
+  have hφ := hρ.log (rho_pos hz k).ne'
+  have hFk : F k = (fun u => Real.log ((fsMetric (ι := ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
   rw [hFk]
   exact hφ.comp z ((blk (ι := ι) k).restrictScalars ℝ).contDiff.contDiffAt
 
 theorem levi_F_nonneg {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K)
     (w : (Σ k, ι k) → ℂ) : 0 ≤ ReciprocityTheory.AnForm.levi (F k) z w := by
-  have hφ := ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.adens_contDiffAt_logρ_id
-    (GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)) (blk_ne hz k)
-  have hFk : F k = (fun u => Real.log ((fsMetric (ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
+  have hρ : ContDiffAt ℝ 2 (fsMetric (ι := ι k)).ρ (blk (ι := ι) k z) :=
+    ((GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)).contDiffAt
+      (isOpen_ne.mem_nhds (blk_ne hz k))).of_le (WithTop.coe_le_coe.2 le_top)
+  have hφ := hρ.log (rho_pos hz k).ne'
+  have hFk : F k = (fun u => Real.log ((fsMetric (ι := ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
   rw [hFk, ReciprocityTheory.AnForm.levi_comp w ((blk (ι := ι) k).analyticAt z) hφ]
   exact GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.leviForm_log_fs_nonneg (blk_ne hz k) _
 
@@ -118,8 +127,8 @@ end Levi
 
 end SemipositiveTwist
 
-open SemipositiveTwist in
 
+open SemipositiveTwist in
 theorem SemiPosTwist.proof (hB : TorusInvLevi.Statement) : SemiPosTwist.Statement := by
   intro K _ ι _ M hM
   classical
@@ -137,9 +146,9 @@ theorem SemiPosTwist.proof (hB : TorusInvLevi.Statement) : SemiPosTwist.Statemen
     have hcn : ∀ k, ‖c k‖ ≠ 0 := fun k => norm_ne_zero_iff.mpr (hc k)
     have hF : ∀ k, F k (fun p => c p.1 * z p) = Real.log ‖c k‖ + F k z := by
       intro k
-      show Real.log ((fsMetric (ι k)).ρ (c k • fun i => z ⟨k, i⟩)) =
-        Real.log ‖c k‖ + Real.log ((fsMetric (ι k)).ρ (fun i => z ⟨k, i⟩))
-      rw [(fsMetric (ι k)).smul, Real.log_mul (hcn k) (rho_pos hz k).ne']
+      show Real.log ((fsMetric (ι := ι k)).ρ (c k • fun i => z ⟨k, i⟩)) =
+        Real.log ‖c k‖ + Real.log ((fsMetric (ι := ι k)).ρ (fun i => z ⟨k, i⟩))
+      rw [(fsMetric (ι := ι k)).smul, Real.log_mul (hcn k) (rho_pos hz k).ne']
     have hh : Real.log (M.h (fun p => c p.1 * z p)) =
         ∑ k, (M.a k : ℝ) * Real.log ‖c k‖ + Real.log (M.h z) := by
       rw [M.smul c z hc, Real.log_mul (Finset.prod_ne_zero_iff.mpr fun k _ => zpow_ne_zero _ (hcn k))
@@ -154,7 +163,7 @@ theorem SemiPosTwist.proof (hB : TorusInvLevi.Statement) : SemiPosTwist.Statemen
   obtain ⟨C, hC⟩ := hB K ι u (fun z hz => (hu2 z hz).contDiffWithinAt) hinv
 
   have hΦ : ∀ z : (Σ k, ι k) → ℂ, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) → ∀ w,
-      leviForm (fun y => ∑ k, Real.log ((fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩))) z w =
+      leviForm (fun y => ∑ k, Real.log ((fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩))) z w =
         ∑ k, ReciprocityTheory.AnForm.levi (F k) z w := by
     intro z hz w
     have h := (levi_add_sum (fun _ => (0 : ℝ)) F (fun _ => 1) contDiffAt_const (contDiffAt_F hz) w
@@ -175,7 +184,7 @@ theorem SemiPosTwist.proof (hB : TorusInvLevi.Statement) : SemiPosTwist.Statemen
   have hlogT : ∀ y : (Σ k, ι k) → ℂ, (∀ k, ∃ i, y ⟨k, i⟩ ≠ 0) →
       Real.log (T.h y) = ∑ k, (N : ℝ) * F k y := by
     intro y hy
-    have h : T.h y = ∏ k, (fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩) ^ N := by
+    have h : T.h y = ∏ k, (fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩) ^ N := by
       simp only [hT, HermLine.sqMetric, rho_eq]
     rw [h, Real.log_prod (fun k _ => pow_ne_zero _ (rho_pos hy k).ne')]
     simp only [Real.log_pow, F]

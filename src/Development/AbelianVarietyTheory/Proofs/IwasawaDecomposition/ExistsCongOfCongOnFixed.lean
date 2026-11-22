@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial Module GlobalTheory.WeilDeligne Pointwise
 
@@ -112,9 +116,9 @@ theorem cong_on_adjoin (h : IsPlaceOver A w) {l : ℕ} (hl : 2 ≤ l) {ϖ : 𝓞
     have := natDegree_modByMonic_lt p₀ hq (by
       intro h1
       have := congrArg natDegree h1
-      rw [natDegree_X_pow_sub_C, natDegree_one] at this
+      rw [natDegree_X_pow_sub_C _, natDegree_one] at this
       exact hl0 this)
-    rwa [natDegree_X_pow_sub_C] at this
+    rwa [natDegree_X_pow_sub_C _] at this
   change A.valuation (aeval x p₀) ≤ 1 at hb1
   change A.valuation (g (aeval x p₀) - aeval x p₀) < 1
   rw [← hp, aeval_eq_sum_range' hdeg] at hb1 ⊢
@@ -127,10 +131,11 @@ theorem cong_on_adjoin (h : IsPlaceOver A w) {l : ℕ} (hl : 2 ≤ l) {ϖ : 𝓞
       exact h0 (by simpa using he))
     exact hmod i j m n (Finset.mem_range.mp hi) (Finset.mem_range.mp hj) (by rw [← hm, ← hn, he])) hb1
   have hgx : A.valuation (g x) = t := by
-    refine pow_left_injective hl0 ?_
+    refine (pow_left_injective hl0 : Function.Injective (fun a : A.ValueGroup => a ^ l)) ?_
     show _ ^ l = t ^ l
     rw [← map_pow, ← map_pow, hx, g.commutes, htl]
-  rw [map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_sub_distrib]
   refine Valuation.map_sum_lt _ one_ne_zero fun i hi => ?_
   rcases Nat.eq_zero_or_pos i with rfl | hi0
   · simp

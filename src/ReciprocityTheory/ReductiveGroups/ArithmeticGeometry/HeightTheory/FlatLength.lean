@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -79,7 +83,7 @@ private theorem length_le_length_baseChange_of_faithfullyFlat {R S : Type*} [Com
       | tmul s n =>
         have hn : N.mkQ (N.subtype n) = 0 := (Submodule.Quotient.mk_eq_zero N).mpr n.2
         rw [LinearMap.baseChange_tmul, LinearMap.baseChange_tmul, hn, TensorProduct.tmul_zero]
-      | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+      | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
     have h0 : (N.mkQ ∘ₗ N'.subtype).lTensor S = 0 := by
       refine LinearMap.ext fun z => ?_
       obtain ⟨w, hw⟩ :=

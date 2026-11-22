@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -16,8 +21,8 @@ variable {Ω : Type w} [Field Ω] {N r : ℕ}
 
 abbrev LA (Ω : Type w) [Field Ω] : Type w := AddMonoidAlgebra Ω (ℤ × ℤ)
 
-set_option linter.unusedVariables false in
 
+set_option linter.unusedVariables false in
 def Amb (x : Fin (N + 1) → Ω) (η : Fin (r + 1) → Ω) : Type w := LA Ω
 
 variable (x : Fin (N + 1) → Ω) (η : Fin (r + 1) → Ω)
@@ -79,13 +84,14 @@ theorem psi_mem_tgr (s : Sy S r) : psi η S s ∈ tgr 0 := by
 theorem phi_mem_tgr {p : Poly (Sy S r) N} {d : ℕ} (hp : p.IsHomogeneous d) :
     phi x η S p ∈ tgr (d : ℤ) := by
   classical
-  rw [p.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, map_sum]
   refine Submodule.sum_mem _ fun μ hμ => ?_
   have hdeg : ∑ i ∈ μ.support, μ i = d := by
     have := hp (mem_support_iff.mp hμ)
     simpa [Finsupp.weight_apply, Finsupp.sum] using this
   rw [phi, coe_eval₂Hom, eval₂_monomial]
-  have h1 := psi_mem_tgr η S (MvPolynomial.coeff μ p)
+  have h1 := psi_mem_tgr η S (AddMonoidAlgebra.coeff p μ)
   have h2 : (∏ i ∈ μ.support, (single ((1 : ℤ), (0 : ℤ)) (x i) : LA Ω) ^ μ i) ∈
       tgr (∑ i ∈ μ.support, ((μ i : ℕ) : ℤ)) := by
     refine SetLike.prod_mem_graded _ _ _ fun i _ => ?_

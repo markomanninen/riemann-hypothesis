@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GeometricLemmaCellOneBlockSwapEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GeometricLemmaCellOneBlockSwapEquiv
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL Matrix GlobalTheory.SplitWeil
 set_option synthInstance.maxHeartbeats 400000
 
@@ -18,8 +23,12 @@ theorem mem_parab_of_single {R : Type} [CommRing R] {β : Type} [LinearOrder β]
   refine mem_parab_iff.2 fun a b i j hab => ?_
   by_cases ha : a = a₀
   · have hb : b ≠ a₀ := fun e => by rw [e, ha] at hab; exact lt_irrefl _ hab
-    exact absurd j.2 (by have := j.2; have := h0 b hb; omega)
-  · exact absurd i.2 (by have := i.2; have := h0 a ha; omega)
+    have hj := j.isLt
+    have hz := h0 b hb
+    omega
+  · have hi := i.isLt
+    have hz := h0 a ha
+    omega
 
 theorem eq_one_of_mem_unipRad_single {R : Type} [CommRing R] {β : Type} [Fintype β] [LinearOrder β]
     {n : β → ℕ} {t : Type} [Fintype t] [DecidableEq t] (e : (Σ j, Fin (n j)) ≃ t) (a₀ : β)
@@ -100,7 +109,11 @@ theorem cellFunctor_diag_equiv : ∀ {k : Type} [Field k] [ValuativeRel k] [Topo
       omega
     subst ha
     subst ha'
-    rw [leviEmb_apply_same, hfg, hfg]
+    have hsame (z : Levi k (fun j => Fin (b.1 a' j))) (u v : Fin (b.1 a' a')) :
+        (leviEmb k (f a') z : Matrix _ _ k) (f a' ⟨a', u⟩) (f a' ⟨a', v⟩) =
+          (z a' : Matrix _ _ k) u v := by
+      simp [leviEmb, Matrix.blockDiagonal'_apply_eq]
+    rw [hsame, hfg, hfg]
     rfl
   let Ψ : W ≃ₗ[ℂ] Jacquet ρ (relUnip k f) := (Submodule.quotEquivOfEqBot _ hbot).symm
   have hΨ : ∀ u, Ψ u = Submodule.Quotient.mk u := fun u => rfl

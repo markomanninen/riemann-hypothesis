@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.RightBilinearApply
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.PolyVHasTemperateGrowth
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SigmaFinitePosRealMeasure
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.RightBilinearApply
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.PolyVHasTemperateGrowth
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SigmaFinitePosRealMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,9 +65,6 @@ theorem vInf_infGL_mulVec (v : Fin 2 → Ad F) (y : GL (Fin 2) (UpperTheory.V.TR
   funext i
   simp only [vInf]
   rw [RingHom.map_mulVec, map_pInf_infGL]; rfl
-
-theorem tsum_Xi (f : {ξ : Fin 2 → F // ξ ≠ 0} → ℂ) :
-    (∑' ξ : Xi F, f ξ) = ∑' ξ : {ξ : Fin 2 → F // ξ ≠ 0}, f ξ := rfl
 
 theorem row_term (c : HeightOneSpectrum (𝓞 F) → ℕ) (g : GA F 2) (a : Ideles F) (ξ : Fin 2 → F)
     (y : GL (Fin 2) (UpperTheory.V.TR.Rinf F)) :

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RightTranslationActionApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RightTranslationActionApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,16 +39,19 @@ theorem coeff_coefMap (c : L →+ K) (p : MvPolynomial I L) (m : I →₀ ℕ) :
 
 theorem coefMap_add (c : L →+ K) (p q : MvPolynomial I L) : coefMap c (p + q) = coefMap c p + coefMap c q := by
   ext m
-  simp only [coeff_coefMap, MvPolynomial.coeff_add, map_add]
+  simp only [coeff_coefMap, MvPolynomial.coeff_add, map_add (f := _)]
 
 theorem coefMap_zero (c : L →+ K) : coefMap c (0 : MvPolynomial I L) = 0 := by
   ext m
   simp only [coeff_coefMap, MvPolynomial.coeff_zero, map_zero]
+  change c 0 = 0
+  exact map_zero c
 
 theorem coefMap_sum {J : Type*} (c : L →+ K) (s : Finset J) (p : J → MvPolynomial I L) :
     coefMap c (∑ j ∈ s, p j) = ∑ j ∈ s, coefMap c (p j) := by
   ext m
-  simp only [coeff_coefMap, MvPolynomial.coeff_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coeff_coefMap, MvPolynomial.coeff_sum, map_sum]
 
 variable {σ}
 
@@ -125,7 +132,7 @@ theorem coefMap_rhoC {c : ℂ →+ X.K} (hc : ∀ k a, c (σ k * a) = k * c a) (
       rfl
     · rintro x y ⟨u, hu, hu'⟩ ⟨v, hv, hv'⟩
       refine ⟨u + v, by rw [coefMap_add, ← hu, ← hv]; rfl, ?_⟩
-      rw [map_add, coefMap_add, hu', hv', map_add]
+      rw [map_add (f := _), coefMap_add, hu', hv', map_add (f := _)]
       rfl
     · intro a v
       refine ⟨c a • v, (coefMap_smul_map hc a v.1).symm, ?_⟩
@@ -135,7 +142,7 @@ theorem coefMap_rhoC {c : ℂ →+ X.K} (hc : ∀ k a, c (σ k * a) = k * c a) (
   rw [h]
   exact congrArg (fun z => (rhoV X.emb lam (ufGL X.E n γ) z).1) (Subtype.ext hy)
 
-variable (L : DecoSet X.E n ST SG → Submodule (𝓞 X.E) (Sp X.E n)) (Λ : LevFam X.E X.K n SG)
+variable (L : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) → Submodule (𝓞 X.E) (Sp X.E n)) (Λ : LevFam X.E X.K n SG)
 
 def coordForm {c : ℂ →+ X.K} (hc : ∀ k a, c (σ k * a) = k * c a) (F : cForms ST σ lam Λ) :
     (formGSD (squarePk X lam L) Λ).EqFun :=
@@ -147,14 +154,14 @@ def coordForm {c : ℂ →+ X.K} (hc : ∀ k a, c (σ k * a) = k * c a) (F : cFo
 theorem toCForm_linearIndependent {J : Type*} {φ : J → (formGSD (squarePk X lam L) Λ).EqFun} (h : LinearIndependent X.K φ) :
     LinearIndependent ℂ fun j => toCForm σ lam L Λ (φ j) := by
   refine LinearIndependent.of_comp (cForms ST σ lam Λ).subtype ?_
-  let i : (formGSD (squarePk X lam L) Λ).EqFun →ₗ[X.K] (DecoSet X.E n ST SG → Pol X.K X.Tau n) :=
+  let i : (formGSD (squarePk X lam L) Λ).EqFun →ₗ[X.K] (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) → Pol X.K X.Tau n) :=
     { toFun := fun φ d => (φ.1 d).1
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
   have hi : Function.Injective i := fun _ _ e => Subtype.ext (funext fun d => Subtype.ext (congrFun e d))
   exact linearIndependent_map_pi σ (h.map' i (LinearMap.ker_eq_bot.2 hi))
 
-theorem exists_finite_determining (hX : X.Ok) : ∃ s : Set (DecoSet X.E n ST SG), s.Finite ∧
+theorem exists_finite_determining (hX : X.Ok) : ∃ s : Set (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)), s.Finite ∧
     ∀ F : cForms ST σ lam Λ, (∀ d ∈ s, F.1 d = 0) → F = 0 := by
   obtain ⟨s, hs, hrep⟩ := DecoSet.finite_reps (ST := ST) (SG := SG) (n := n) (posStar_of_conj hX.conjE)
   refine ⟨s, hs, fun F hF => Subtype.ext (funext fun d => ?_)⟩
@@ -184,24 +191,8 @@ theorem toCForm_span_of_span (hX : X.Ok) {J : Type*} {φ : J → (formGSD (squar
   induction hψ using Submodule.span_induction with
   | mem x hx => obtain ⟨j, rfl⟩ := hx; exact Submodule.subset_span ⟨j, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ hx
-
-def basisCForm (hX : X.Ok) {J : Type*} (b : Module.Basis J X.K (formGSD (squarePk X lam L) Λ).EqFun) :
-    Module.Basis J ℂ (cForms ST σ lam Λ) :=
-  Module.Basis.mk (toCForm_linearIndependent σ lam L Λ b.linearIndependent) (toCForm_span_of_span σ lam L Λ hX b.span_eq).ge
-
-theorem basisCForm_apply (hX : X.Ok) {J : Type*} (b : Module.Basis J X.K (formGSD (squarePk X lam L) Λ).EqFun) (j : J) :
-    basisCForm σ lam L Λ hX b j = toCForm σ lam L Λ (b j) := Module.Basis.mk_apply _ _ _
-
-theorem rank_cForms (hX : X.Ok) :
-    Module.rank ℂ (cForms ST σ lam Λ) = Module.rank X.K (formGSD (squarePk X lam L) Λ).EqFun := by
-  let b := Module.Basis.ofVectorSpace X.K (formGSD (squarePk X lam L) Λ).EqFun
-  rw [← b.mk_eq_rank'', ← (basisCForm σ lam L Λ hX b).mk_eq_rank'']
-
-theorem finrank_cForms (hX : X.Ok) :
-    Module.finrank ℂ (cForms ST σ lam Λ) = Module.finrank X.K (formGSD (squarePk X lam L) Λ).EqFun :=
-  congrArg Cardinal.toNat (rank_cForms σ lam L Λ hX)
 
 end CForms
 
@@ -215,9 +206,6 @@ theorem toMtilde_linearIndependent {J : Type*} {φ : J → MtildeV W Ch sel mu P
     LinearIndependent ℂ fun j => toMtP W Ch sel mu P σ (φ j) := toCForm_linearIndependent σ W.sgTrue _ _ h
 
 theorem toMtilde_span (hX : X.Ok) : Submodule.span ℂ (Set.range (toMtP W Ch sel mu P σ)) = ⊤ := toCForm_span σ W.sgTrue _ _ hX
-
-theorem finrank_MtP (hX : X.Ok) : Module.finrank ℂ (MtP W Ch sel mu P σ) = Module.finrank X.K (MtildeV W Ch sel mu P) :=
-  finrank_cForms σ W.sgTrue _ _ hX
 
 end Rows
 

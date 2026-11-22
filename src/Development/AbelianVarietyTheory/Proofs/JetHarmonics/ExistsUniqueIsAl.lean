@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.ThmASt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitOfBijectiveMulNatural
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowEqScaleAndExistsUniqueTorsion
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitOfBijectiveMulNatural
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowEqScaleAndExistsUniqueTorsion
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -115,7 +120,7 @@ theorem unitAt_mul {n : ℕ} {R : Type} [CommRing R] [Algebra O R] (hR : (p : R)
 theorem unitAt_scale {n : ℕ} {R : Type} [CommRing R] [Algebra O R] (hR : (p : R) ^ n = 0)
     (a : O) (x z : LieG G) (h : z.1 = ptMap (dualScale a) ≫ x.1) :
     (unitAt χ hR z).snd = algebraMap O R a * (unitAt χ hR x).snd := by
-  have h1 : scale O (algebraMap O R a) ≫ lift hR x = lift hR z := by
+  have h1 : scale (O := O) (algebraMap O R a) ≫ lift hR x = lift hR z := by
     refine eq_lift hR z ?_
     rw [Category.assoc, lift_ι, bc, bc, h, ← Category.assoc, ← Category.assoc, scale,
       ptMap_comp_ptMap, ptMap_comp_ptMap]
@@ -190,7 +195,7 @@ theorem existsUnique_isAl [IsAdicComplete (Ideal.span {(p : O)}) O] :
   choose f hf using exists_limit χ
   refine ⟨f, ⟨⟨fun x y h => eq_of_forall (p := p) fun n => ?_,
     fun a x h => eq_of_forall (p := p) fun n => ?_⟩, (isAl_iff χ f).2 hf⟩, fun g hg => ?_⟩
-  · rw [map_add, hf x n _ (pow_quot n), hf y n _ (pow_quot n)]
+  · rw [map_add (f := _), hf x n _ (pow_quot n), hf y n _ (pow_quot n)]
     exact (hf _ n _ (pow_quot n)).trans (unitAt_mul χ _ x y _ rfl)
   · rw [map_mul, hf x n _ (pow_quot n)]
     exact (hf _ n _ (pow_quot n)).trans (unitAt_scale χ _ a x _ rfl)

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.CondZIff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.CondZIff
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -24,11 +28,11 @@ def gmap (h : V →ₗ⋆[K] V →ₗ[K] K) {m : ℕ} (b : Fin m → V) (a : Fin
     (Y : Matrix (Fin m) (Fin m) (𝓞 K)) : V →ₗ[𝓞 K] V where
   toFun x := ∑ i, (∑ j, jK (Y i j) * crd h b a x j) • b i
   map_add' x y := by
-    simp only [crd, map_add, add_div, mul_add, Finset.sum_add_distrib, add_smul]
+    simp only [crd, map_add (f := _), add_div, mul_add, Finset.sum_add_distrib, add_smul]
   map_smul' c x := by
     simp only [crd, RingHom.id_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [smul_eq_jK c x, smul_eq_jK c, smul_smul]
+    rw [algebra_compatible_smul K c x, algebra_compatible_smul K c, smul_smul]
     congr 1
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -44,7 +48,7 @@ theorem crd_sub (x y : V) (j : Fin m) : crd h b a (x - y) j = crd h b a x j - cr
 
 theorem crd_smul (c : 𝓞 K) (x : V) (j : Fin m) : crd h b a (c • x) j = jK c * crd h b a x j := by
   unfold crd
-  rw [smul_eq_jK c x, LinearMap.map_smul, smul_eq_mul, mul_div_assoc]
+  rw [algebra_compatible_smul K c x, LinearMap.map_smul, smul_eq_mul, mul_div_assoc]
 
 variable (horth : ∀ i j, i ≠ j → h (b i) (b j) = 0)
   (hdiag : ∀ i, h (b i) (b i) = algebraMap F K ((a i : 𝓞 F) : F)) (ha : ∀ i, a i ≠ 0)
@@ -55,9 +59,11 @@ theorem crd_sum (c : Fin m → K) (k : Fin m) : crd h b a (∑ i, c i • b i) k
     (IsScalarTower.algebraMap_apply (𝓞 F) (𝓞 K) K (a j)).symm.trans
       (IsScalarTower.algebraMap_apply (𝓞 F) F K (a j))
   unfold crd
-  rw [map_sum, Finset.sum_eq_single k]
-  · rw [LinearMap.map_smul, hdiag k, smul_eq_mul, ← e k, mul_div_assoc,
-      div_self (jK_ι_ne_zero (K := K) (ha k)), mul_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single k]
+  · have hne : jK (ι (a k)) ≠ 0 := RingOfIntegers.coe_ne_zero_iff.mpr
+      ((map_ne_zero_iff ι (RingOfIntegers.algebraMap.injective F K)).mpr (ha k))
+    rw [LinearMap.map_smul, hdiag k, smul_eq_mul, ← e k, mul_div_assoc, div_self hne, mul_one]
   · intro i _ hik
     rw [LinearMap.map_smul, horth k i (Ne.symm hik), smul_zero]
   · intro hk
@@ -69,15 +75,26 @@ theorem crd_gmap (Y : Matrix (Fin m) (Fin m) (𝓞 K)) (x : V) (k : Fin m) :
   exact crd_sum horth hdiag ha _ k
 
 theorem h_b (x : V) (k : Fin m) : h (b k) x = jK (ι (a k)) * crd h b a x k := by
+  have hne : jK (ι (a k)) ≠ 0 := RingOfIntegers.coe_ne_zero_iff.mpr
+    ((map_ne_zero_iff ι (RingOfIntegers.algebraMap.injective F K)).mpr (ha k))
   unfold crd
-  rw [mul_div_assoc', eq_div_iff (jK_ι_ne_zero (K := K) (ha k)), mul_comm]
+  rw [mul_div_assoc', eq_div_iff hne, mul_comm]
 
 variable (hbX : ∀ i, b i ∈ (⊤ : Submodule K V))
   (hloc : locF 𝔭 (Submodule.span (𝓞 K) (Set.range b)) = locF 𝔭 L)
 include hbX hloc
 
-theorem coordsT (h𝔭 : 𝔭.IsPrime) (hL : IsLatIn ⊤ L) (x : V) : x = ∑ i, crd h b a x i • b i := G2.coords (hbX := hbX) (hloc := hloc) (horth := horth) (hdiag := hdiag) (ha := ha)
-  h𝔭 hL Submodule.mem_top
+theorem coordsT (h𝔭 : 𝔭.IsPrime) (hL : IsLatIn ⊤ L) (x : V) : x = ∑ i, crd h b a x i • b i := by
+  have hxs : x ∈ Submodule.span K (Set.range b) := by
+    have hx : x ∈ (⊤ : Submodule K V) := Submodule.mem_top
+    rw [← hL.2] at hx
+    refine Submodule.span_le.mpr ?_ hx
+    intro y hy
+    have hyLoc := localizedQuotients.le_locF 𝔭 L hy
+    rw [← hloc] at hyLoc
+    exact G2.locF_le_spanK h𝔭 hyLoc
+  obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).mp hxs
+  simp only [crd_sum horth hdiag ha]
 
 theorem h_expand (h𝔭 : 𝔭.IsPrime) (hL : IsLatIn ⊤ L) (x y : V) :
     h x y = ∑ i, star (crd h b a x i) * jK (ι (a i)) * crd h b a y i := by
@@ -88,7 +105,8 @@ theorem h_expand (h𝔭 : 𝔭.IsPrime) (hL : IsLatIn ⊤ L) (x y : V) :
     intro j
     have hx := coordsT horth hdiag ha hbX hloc h𝔭 hL x
     conv_lhs => rw [hx]
-    rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single j]
     · rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hdiag j, smul_eq_mul, starRingEnd_apply, ← e j]
     · intro i _ hij
       rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, horth i j hij, smul_zero]
@@ -96,16 +114,33 @@ theorem h_expand (h𝔭 : 𝔭.IsPrime) (hL : IsLatIn ⊤ L) (x y : V) :
       exact absurd (Finset.mem_univ j) hj
   have hy := coordsT horth hdiag ha hbX hloc h𝔭 hL y
   conv_lhs => rw [hy]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [LinearMap.map_smul, e1 j, smul_eq_mul]
   ring
 
 theorem mem_B (h𝔭 : 𝔭.IsPrime) (hL : IsLatIn ⊤ L) (x : V) :
     x ∈ locF 𝔭 L ↔ ∀ i, crd h b a x i ∈ HU.SP K 𝔭 := by
-  rw [G2.mem_B_iff (hbX := hbX) (hloc := hloc) (horth := horth) (hdiag := hdiag) (ha := ha)
-    h𝔭 hL x]
-  exact ⟨fun hx => hx.2, fun hx => ⟨Submodule.mem_top, hx⟩⟩
+  have := h𝔭
+  rw [← hloc]
+  constructor
+  · rintro ⟨s, hs, hsx⟩ i
+    obtain ⟨z, hz⟩ := (Submodule.mem_span_range_iff_exists_fun (𝓞 K)).mp hsx
+    have hz' : s • x = ∑ j, jK (z j) • b j := by
+      exact hz.symm.trans (Finset.sum_congr rfl fun j _ => algebra_compatible_smul K (z j) (b j))
+    rw [HU.mem_SP_iff_locF]
+    refine ⟨s, hs, ?_⟩
+    rw [Algebra.smul_def, ← crd_smul, hz', crd_sum horth hdiag ha]
+    exact Submodule.mem_one.mpr ⟨z i, rfl⟩
+  · intro hx
+    rw [coordsT horth hdiag ha hbX hloc h𝔭 hL x]
+    refine Submodule.sum_mem _ fun i _ => ?_
+    obtain ⟨s, hs, hsc⟩ := HU.mem_SP_iff_locF.mp (hx i)
+    obtain ⟨z, hz⟩ := Submodule.mem_one.mp hsc
+    refine ⟨s, hs, ?_⟩
+    rw [← smul_assoc, ← hz, algebraMap_smul K]
+    exact Submodule.smul_mem _ z (Submodule.subset_span ⟨i, rfl⟩)
 
 theorem mem_A (hF : IsFixF K F) (h𝔭 : 𝔭.IsMaximal) (hL : IsLatIn ⊤ L) (x : V) :
     x ∈ locF 𝔭 (dualIn h ⊤ L) ↔ ∀ i, jK (ι (a i)) * crd h b a x i ∈ HU.SP K 𝔭 := by

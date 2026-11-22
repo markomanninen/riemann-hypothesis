@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjHypA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjHypA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem val_dehom (c : σ) (f : MvPolynomial σ ℂ) :
       (Localization.Away (coord I c)), ← Localization.mk_one_eq_algebraMap]
     rfl
   | add f g hf hg =>
-    simp only [map_add, HomogeneousLocalization.val_add, hf, hg, eval₂_add]
+    simp only [map_add (f := _), HomogeneousLocalization.val_add, hf, hg, eval₂_add]
   | mul_X f q hf =>
     rw [map_mul, HomogeneousLocalization.val_mul, hf, eval₂_mul, eval₂_X]
     congr 1
@@ -112,7 +116,8 @@ theorem dehom_X_self (c : σ) : dehom I c (X c) = 1 := by
 attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem dehom_eq_zero_of_mem (hI : I.IsHomogeneous (homogeneousSubmodule σ ℂ)) (c : σ) {F : MvPolynomial σ ℂ}
     (hF : F ∈ I) : dehom I c F = 0 := by
-  rw [← sum_homogeneousComponent F, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_homogeneousComponent F, map_sum]
   refine Finset.sum_eq_zero fun n _ => ?_
   apply HomogeneousLocalization.val_injective
   rw [val_dehom_of_isHomogeneous I c (homogeneousComponent_isHomogeneous n F),
@@ -145,7 +150,7 @@ theorem exists_evalAway (c : σ) (p : σ → ℂ) (hp : ∀ F ∈ I, eval p F = 
   rw [h3, eval₂_id]
   congr 2
   funext q
-  simp only [Function.comp_apply, map_mul, h1, h2, hψA, div_eq_mul_inv]
+  simp only [Function.comp_apply, map_mul, h1, hψA, h2, div_eq_mul_inv]
 
 attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem ringKrullDim_away_le (hI : I.IsHomogeneous (homogeneousSubmodule σ ℂ)) (hP : I.IsPrime) (c : σ) (g : ℕ)
@@ -184,8 +189,8 @@ theorem algebraMap_zero_surjective : Function.Surjective (algebraMap ℂ (quotGr
   rintro ⟨a, h, hh, rfl⟩
   have hC := (mem_homogeneousSubmodule 0 h).mp hh
   rw [← totalDegree_zero_iff_isHomogeneous, totalDegree_eq_zero_iff_eq_C] at hC
-  refine ⟨coeff 0 h, Subtype.ext ?_⟩
-  show algebraMap ℂ (MvPolynomial σ ℂ ⧸ I) (coeff 0 h) = Ideal.Quotient.mkₐ ℂ I h
+  refine ⟨AddMonoidAlgebra.coeff h 0, Subtype.ext ?_⟩
+  show algebraMap ℂ (MvPolynomial σ ℂ ⧸ I) (AddMonoidAlgebra.coeff h 0) = Ideal.Quotient.mkₐ ℂ I h
   conv_rhs => rw [hC]
   rfl
 
@@ -197,7 +202,7 @@ theorem adjoin_coord_eq_top : Algebra.adjoin (quotGrading I 0) (Set.range (coord
   | C a =>
     exact Subalgebra.algebraMap_mem _ (⟨Ideal.Quotient.mk _ (C a),
       ⟨C a, (mem_homogeneousSubmodule 0 _).mpr (isHomogeneous_C _ a), rfl⟩⟩ : quotGrading I 0)
-  | add g h hg hh => rw [map_add]; exact add_mem hg hh
+  | add g h hg hh => rw [RingHom.map_add (Ideal.Quotient.mk I)]; exact add_mem hg hh
   | mul_X g q hg => rw [map_mul]; exact mul_mem hg (Algebra.subset_adjoin ⟨q, rfl⟩)
 
 theorem isProper_toSpecC [Fintype σ] : IsProper (toSpecC I) := by
@@ -314,8 +319,8 @@ namespace GlobalTheory
 
 open ProjCone
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem exists_projModel {σ : Type} [Fintype σ] (I : Ideal (MvPolynomial σ ℂ))
     (hI : I.IsHomogeneous (homogeneousSubmodule σ ℂ)) (hP : I.IsPrime) (hX : ∃ c, X c ∉ I) (g : ℕ)
     (hg : ringKrullDim (MvPolynomial σ ℂ ⧸ I) ≤ (g + 1 : ℕ)) :

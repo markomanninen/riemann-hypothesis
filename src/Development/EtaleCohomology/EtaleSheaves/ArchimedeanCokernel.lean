@@ -1,8 +1,12 @@
-import Development.EtaleCohomology.EtaleSheaves.KernelLocalization.RangeOfBd
-import Development.EtaleCohomology.EtaleSheaves.TruncKerPf
-import Development.EtaleCohomology.EtaleSheaves.LocalDescent.DescLocOf
-import Development.EtaleCohomology.EtaleSheaves.FiltrationLevelInjectivity
-import Development.EtaleCohomology.EtaleSheaves.CechLevelIsomorphism
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KernelLocalization.RangeOfBd
+public import Development.EtaleCohomology.EtaleSheaves.TruncKerPf
+public import Development.EtaleCohomology.EtaleSheaves.LocalDescent.DescLocOf
+public import Development.EtaleCohomology.EtaleSheaves.FiltrationLevelInjectivity
+public import Development.EtaleCohomology.EtaleSheaves.CechLevelIsomorphism
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E3Cut LateralTheory.E.StalkCut LateralTheory.E.LeafGhostCut
 theorem LateralTheory.E.TruncationCokernelLevelRelations.TruncCok_of (hD : LateralTheory.E.TruncationKernel.RelDesc) : LateralTheory.E.DescLocPf.Fine.TruncCok := by

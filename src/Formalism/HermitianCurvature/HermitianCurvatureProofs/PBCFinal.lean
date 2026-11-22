@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermStep
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermStep
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 

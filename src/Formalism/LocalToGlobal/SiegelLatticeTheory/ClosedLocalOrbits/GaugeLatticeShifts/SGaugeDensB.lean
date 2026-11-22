@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.SGauge
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SGauge
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ENNReal

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableOfAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjComm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableOfAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjComm
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 

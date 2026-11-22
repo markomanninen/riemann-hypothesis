@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.BockCut
+module
+
+public import Development.EtaleCohomology.KummerTheory.BockCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -10,7 +14,7 @@ theorem nsmul_congr {q : ℕ} {i : ℤ} {U : Scheme.{0}} (y : Sec (tw q i) U) {n
     (h : (n : ZMod q) = (m : ZMod q)) : n • y = m • y := by
   rw [← Nat.cast_smul_eq_nsmul (ULift.{1} (ZMod q)) n y, ← Nat.cast_smul_eq_nsmul (ULift.{1} (ZMod q)) m y]
   congr 1
-  exact ULift.ext _ _ (by simpa using h)
+  exact ULift.ext (by simpa using h)
 
 theorem RedEx_of (hZ : ZHom) (hT : LateralTheory.EtaleFoundations.EtaleTateTwistSectionsLocallyGenerated) (hP : LateralTheory.EtaleFoundations.PrimitiveRootsOfUnityBasicIdentities) : RedEx := by
   intro Q q _ h i

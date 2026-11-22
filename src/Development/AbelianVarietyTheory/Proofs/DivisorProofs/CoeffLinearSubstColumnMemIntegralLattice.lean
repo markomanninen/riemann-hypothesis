@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfVectorMultiplicationsMemFiltrationLattiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfVectorMultiplicationsMemFiltrationLattiStatement
+
+@[expose] public section
+
 open NumberField MvPolynomial ReciprocityTheory.MultiplicativeHeights ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.HermTools GlobalTheory.HilbertSamuel GlobalTheory.HSChoice GlobalTheory.HSShort
 
@@ -18,9 +23,11 @@ theorem word_col {K A : Type} [Field K] [AddCommGroup A] [Module K A] {N n t : �
     intro i; funext k; simp [Matrix.col, Finset.sum_apply, Pi.single_apply]
   rw [hΦ]
   simp_rw [hcol]
-  rw [MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [MultilinearMap.map_smul_univ, hΦ]
+  rfl
 
 theorem linSubst_coordP {K A : Type} [Field K] [AddCommGroup A] [Module K A] {N n B t : ℕ}
     (mul : (Fin N → K) →ₗ[K] Module.End K A) (w : Matrix (Fin N) (Fin n) K) (c : A →ₗ[K] K)
@@ -32,11 +39,13 @@ theorem linSubst_coordP {K A : Type} [Field K] [AddCommGroup A] [Module K A] {N 
         ∏ i, (X (β i, g i) : MvPolynomial (Fin B × Fin n) K)) =
       ∑ g : Fin t → Fin n, ∑ e : Fin t → Fin N, C (c (word mul (fun i => Pi.single (e i) 1) x)) *
         ((∏ i, C (w (e i) (g i))) * ∏ i, (X (β i, g i) : MvPolynomial (Fin B × Fin n) K)) from ?_]
-  · simp only [linSubst, coordP, map_sum, map_mul, aeval_C, map_prod, aeval_X, algebraMap_eq]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [linSubst, coordP, map_sum, map_mul, aeval_C, map_prod, aeval_X, algebraMap_eq]
     simp_rw [Fintype.prod_sum, Finset.mul_sum, ← Finset.prod_mul_distrib]
     exact Finset.sum_comm
   · refine Finset.sum_congr rfl fun g _ => ?_
-    rw [word_col, LinearMap.sum_apply, map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [word_col, LinearMap.sum_apply, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun e _ => ?_
     rw [LinearMap.smul_apply, map_smul, smul_eq_mul, ← map_prod, map_mul]
     ring
@@ -50,9 +59,9 @@ theorem prod_X_monomial {σ K : Type} [Field K] {t : ℕ} (f : Fin t → σ) :
 
 end GlobalTheory.HSShort.CoeffInt
 
-open GlobalTheory.HSShort.CoeffInt in
 
-theorem GlobalTheory.HSShort.colCoeff_mem : ∀ (F A : Type) [Field F] [NumberField F] [AddCommGroup A] [Module F A] [Module (𝓞 F) A] [IsScalarTower (𝓞 F) F A] (S : Sys F A), S.Hyp → ∀ (d : ℕ) (b : Module.Basis (Fin d) F (S.V S.T)) (c : Fin d → A →ₗ[F] F), S.IsCo b c → ∀ κ : S.Col, κ.x ∈ S.M κ.j → ∀ m, ∑ i, coeff m (linSubst S.w (coordP S.mul (c i) κ.β (κ.x : A))) • b i ∈ S.M S.T := by
+open GlobalTheory.HSShort.CoeffInt in
+theorem GlobalTheory.HSShort.colCoeff_mem : ∀ (F A : Type) [Field F] [NumberField F] [AddCommGroup A] [Module F A] [Module (𝓞 F) A] [IsScalarTower (𝓞 F) F A] (S : Sys F A), S.Hyp → ∀ (d : ℕ) (b : Module.Basis (Fin d) F (S.V S.T)) (c : Fin d → A →ₗ[F] F), S.IsCo b c → ∀ κ : S.Col, κ.x ∈ S.M κ.j → ∀ m, ∑ i, AddMonoidAlgebra.coeff (linSubst S.w (coordP S.mul (c i) κ.β (κ.x : A))) m • b i ∈ S.M S.T := by
   intro F A _ _ _ _ _ _ S hS d b c hco κ hx m
   obtain ⟨-, hM⟩ := GlobalTheory.T.productOfVectorMultiplications_mem_filtration_lattice F A S hS κ.j κ.t (le_of_eq κ.add)
   have tr : ∀ j', j' = S.T → ∀ y' ∈ S.M j', ∃ y ∈ S.M S.T, (y : A) = (y' : A) := by
@@ -64,12 +73,15 @@ theorem GlobalTheory.HSShort.colCoeff_mem : ∀ (F A : Type) [Field F] [NumberFi
     obtain ⟨z, hz, hzeq⟩ := tr _ κ.add y hy
     exact ⟨z, hz, hzeq.trans hyeq⟩
   choose Y hY hYeq using key
-  choose s hs using fun g : Fin κ.t → Fin S.n =>
-    prod_X_monomial (K := F) (fun i => (κ.β i, g i))
-  have hcoef : ∀ i, coeff m (linSubst S.w (coordP S.mul (c i) κ.β (κ.x : A))) =
+  have hex : ∀ g : Fin κ.t → Fin S.n, ∃ s,
+      (∏ i, (X (κ.β i, g i) : MvPolynomial (Fin _ × Fin S.n) F)) = monomial s 1 := by
+    intro g
+    exact GlobalTheory.HSShort.CoeffInt.prod_X_monomial (K := F) (fun i => (κ.β i, g i))
+  choose s hs using hex
+  have hcoef : ∀ i, AddMonoidAlgebra.coeff (linSubst S.w (coordP S.mul (c i) κ.β (κ.x : A))) m =
       ∑ g, b.repr (Y g) i * (if s g = m then 1 else 0) := by
     intro i
-    rw [linSubst_coordP, coeff_sum]
+    rw [GlobalTheory.HSShort.CoeffInt.linSubst_coordP, coeff_sum]
     refine Finset.sum_congr rfl fun g _ => ?_
     rw [coeff_C_mul, hs g, coeff_monomial, ← hYeq g, hco]
   simp_rw [hcoef, Finset.sum_smul]

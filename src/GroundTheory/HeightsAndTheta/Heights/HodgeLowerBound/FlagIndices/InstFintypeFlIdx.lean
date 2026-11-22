@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.HasCoverByOne
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.HasCoverByOne
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.PermFinTwoUniv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -13,8 +18,8 @@ section FS
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-variable (ι) in
 
+variable (ι) in
 def fsHerm (a : K → ℤ) : HermLine ι where
   a := a
   h := refNorm a
@@ -64,7 +69,7 @@ def hFlMono (II : IntersectionSystem) (m : (Ψ × Fin N) →₀ ℕ) : ℝ :=
   else 0
 
 def hFl (II : IntersectionSystem) (F : RootPoly Ψ N) : ℝ :=
-  ∑ m ∈ F.support, ((coeff m F : ℚ) : ℝ) * hFlMono Ψ N II m
+  ∑ m ∈ F.support, ((AddMonoidAlgebra.coeff F m : ℚ) : ℝ) * hFlMono Ψ N II m
 
 end Flag
 

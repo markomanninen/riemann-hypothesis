@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.ExistsCen
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.ExistsCen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
@@ -38,8 +42,7 @@ private theorem dvd_of_ram {K L : Type} [Field K] [NumberField K] [Field L] [Num
   let w : HeightOneSpectrum (𝓞 L) := ⟨Q, inferInstance, Ideal.ne_bot_of_liesOver_of_ne_bot v.ne_bot Q⟩
   have : w.asIdeal.LiesOver v.asIdeal := (inferInstance : Q.LiesOver v.asIdeal)
   have h1 := HeightOneSpectrum.valuation_liesOver L v w (a : K)
-  rw [show v.asIdeal.ramificationIdx' w.asIdeal = 1 from
-    (Ideal.ramificationIdx'_eq_ramificationIdx v.asIdeal Q v.ne_bot).trans h, pow_one, ← hb, map_pow,
+  rw [h, pow_one, ← hb, map_pow,
     ← HeightOneSpectrum.valuationOfNeZero_eq] at h1
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · rw [pow_zero, ← WithZero.coe_one, WithZero.coe_inj] at h1
@@ -72,7 +75,8 @@ theorem UpperTheory.V.Kum.dvdOfIne :
   have hv : (CompanionTheory.PlaceDict.cen A).under (𝓞 K) = v.asIdeal := Ideal.ext fun x => hA x
   have : Algebra.IsIntegral (𝓞 K) (𝓞 Ω) := ⟨fun b => (RingOfIntegers.isIntegral b).tower_top⟩
   have hm : (CompanionTheory.PlaceDict.cen A).IsMaximal :=
-    Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := 𝓞 K) _ (by
+    Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap (𝓞 K) (𝓞 Ω))
+      (algebraMap_isIntegral_iff.mpr this) _ (by
       have := v.isMaximal
       rwa [← hv] at this)
   let P : Ideal (𝓞 L) := (CompanionTheory.PlaceDict.cen A).under (𝓞 L)

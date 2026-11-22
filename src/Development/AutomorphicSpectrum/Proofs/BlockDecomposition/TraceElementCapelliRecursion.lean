@@ -1,13 +1,18 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CapelliOperatorOnUnitaryCoefficientEqDerived
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QminorPolyMap
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CapelliOfGelfand
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QdetAddOneSubEqSumQminorStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TracedQminorComatrixTruncatedInverseStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QdetPolyMapMonicStatement
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CapelliOperatorOnUnitaryCoefficientEqDerived
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QminorPolyMap
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CapelliOfGelfand
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QdetAddOneSubEqSumQminorStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TracedQminorComatrixTruncatedInverseStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QdetPolyMapMonicStatement
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory.CompanionTheory.CapelliEigen
@@ -57,7 +62,7 @@ theorem etr_apply_of_eigen : ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (m :
         ← sum_smul, map_add, map_smul, Module.End.mul_apply, Module.algebraMap_end_apply, map_smul]
       simp
     rw [h2] at h1
-    simp only [LinearMap.add_apply, Module.End.mul_apply, Module.algebraMap_end_apply, map_add, map_smul,
+    simp only [LinearMap.add_apply, Module.End.mul_apply, Module.algebraMap_end_apply, map_add (f := _), map_smul,
       LinearMap.sub_apply, map_sub, smul_eq_mul] at h1
     rw [← polyOf_eval, ← hRp, ← hPqe] at h1
     simp only [hPv] at h1
@@ -67,7 +72,7 @@ theorem etr_apply_of_eigen : ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (m :
     refine Polynomial.funext fun w => ?_
     have h1 := hrec w
     simp only [eval_mul, eval_C, eval_pow, eval_neg, eval_one, eval_sub, eval_X, eval_comp, eval_add,
-      eval_finset_sum]
+      eval_finsetSum]
     have h4 : ∑ k ∈ range N, (-1) ^ k * t k * (w - m) ^ (N - k)
         = ∑ k ∈ range N, (-1) ^ k * (w - m) ^ (N - k) * t k :=
       sum_congr rfl fun k _ => by ring

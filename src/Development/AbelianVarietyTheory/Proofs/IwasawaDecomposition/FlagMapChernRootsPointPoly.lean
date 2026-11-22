@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchubGamApply
-import Formalism.DegreeFormula.PointDegree.PermExpInj
-import Development.AbelianVarietyTheory.Definitions.Foundations.CurveCl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchubGamApply
+public import Formalism.DegreeFormula.PointDegree.PermExpInj
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CurveCl
+
+@[expose] public section
+
 open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Classical
 
@@ -143,7 +148,7 @@ theorem flagMap_chernRoots_pointPoly {H : Host E} (Dw : Datum H) :
   have h1 : ∀ i : Fin (Dw.mult τ.1), GlobalTheory.Schubert.flagRoot Dw ⟨τ.1, i⟩ =
       X (τ, Fin.castAdd Dw.q (finCongr hm i)) := by
     intro i
-    rw [GlobalTheory.Schubert.flagRoot, dif_pos τ.2]
+    rw [GlobalTheory.Schubert.flagRoot, dite_eq_left τ.2]
     rfl
   simp only [h1]
   have h2 : (∏ i : Fin (Dw.mult τ.1), (-X (τ, Fin.castAdd Dw.q (finCongr hm i)) : MvPolynomial _ ℝ)) =
@@ -164,14 +169,14 @@ theorem flagMap_fibrePoint {H : Host E} (Dw : Datum H) :
   · refine Finset.prod_congr rfl fun τ _ => ?_
     have hm : Dw.mult τ.1 = Dw.p := GlobalTheory.PointChern.mult_of_mem Dw τ.2
     refine Fintype.prod_equiv (finCongr hm) _ _ fun i => ?_
-    rw [GlobalTheory.Schubert.flagRoot, dif_pos τ.2]
+    rw [GlobalTheory.Schubert.flagRoot, dite_eq_left τ.2]
     congr 1
     simp only [finCongr_apply, Fin.coe_cast]
     omega
   · refine Fintype.prod_equiv (conjOff H) _ _ fun τ => ?_
     have hm : Dw.mult τ.1 = Dw.q := GlobalTheory.PointChern.mult_of_not_mem Dw τ.2
     refine Fintype.prod_equiv ((finCongr hm).trans Fin.revPerm) _ _ fun i => ?_
-    rw [GlobalTheory.Schubert.flagRoot, dif_neg τ.2, neg_neg]
+    rw [GlobalTheory.Schubert.flagRoot, dite_eq_right τ.2, neg_neg]
     have hi : (i : ℕ) < Dw.q := hm ▸ i.2
     congr 1
     · congr 1

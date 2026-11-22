@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotIsIsoSpMapDnFst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotIsIsoSpMapDnFst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon GlobalTheory.DualOpen
 open scoped CategoryTheory.Obj
@@ -29,7 +34,7 @@ theorem dualNumber_map_flat_surjective : ∀ (k K : Type) [Field k] [Field K] (�
     abel
   have hgh : ∀ x, g (h x) = x := by
     intro x
-    simp only [h, g, map_add, Algebra.TensorProduct.lift_tmul, map_one, _root_.one_mul]
+    simp only [h, g, map_add (f := _), Algebra.TensorProduct.lift_tmul, map_one, _root_.one_mul]
     ext <;> simp [j, hψ₀]
   have hhg : ∀ x, h (g x) = x := by
     intro x
@@ -45,7 +50,7 @@ theorem dualNumber_map_flat_surjective : ∀ (k K : Type) [Field k] [Field K] (�
       show (1 : DualNumber k) ⊗ₜ[k] TrivSqZeroExt.fst (ψ₀ a * j b) +
         (DualNumber.eps : DualNumber k) ⊗ₜ[k] TrivSqZeroExt.snd (ψ₀ a * j b) = a ⊗ₜ[k] b
       rw [f1, f2, ← TensorProduct.smul_tmul, ← TensorProduct.smul_tmul, ← TensorProduct.add_tmul, ← e1]
-    | add x y hx hy => rw [map_add, hadd, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), hadd, hx, hy]
   have hbij : Function.Bijective g := Function.bijective_iff_has_inverse.2 ⟨h, hhg, hgh⟩
   refine ⟨ψ₀.toRingHom, ?_, ?_, ?_⟩
   · refine RingHom.ext fun a ↦ ?_

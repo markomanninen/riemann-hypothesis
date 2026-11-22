@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AdLawAtOfSteps
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocBases
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocBases
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.TwU
@@ -10,12 +14,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section OneByOne
 variable {R : Type} [CommRing R]
-
-def oneByOne (x : Rˣ) : GL (Fin 1) R where
-  val := Matrix.of fun _ _ => (x : R)
-  inv := Matrix.of fun _ _ => ((x⁻¹ : Rˣ) : R)
-  val_inv := by ext i j; fin_cases i; fin_cases j; simp [Matrix.mul_apply]
-  inv_val := by ext i j; fin_cases i; fin_cases j; simp [Matrix.mul_apply]
 
 end OneByOne
 
@@ -50,9 +48,5 @@ theorem det_mem_normOne_of_mem_unitaryPoints {n : ℕ} {J : Matrix (Fin n) (Fin 
 variable {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {Kc : G.Consts} {Y : DivX D} {cX : ExtraC}
   {ex : Extra D L hT Gi Gl Kc Y cX} {t : KerEntTied ex} {u : D.what₂.Word} {μ : D.what₂.Tup}
 
-open Classical in
-
-def muTOf (dtU : Formalism.L2.Herm.unitaryOneFiniteAdeles D.sp.cm →* D.Dt) (mt : ℕ → D.Dt →* ℂˣ) (j : ℕ) (x : (AfE D.host.F D.host.E)ˣ) : ℂ :=
-  if h : ∃ y : Formalism.L2.Herm.unitaryOneFiniteAdeles D.sp.cm, Matrix.GeneralLinearGroup.det y.1 = x then ((mt j (dtU h.choose) : ℂˣ) : ℂ) else 1
 
 end GlobalTheory.TwU

@@ -1,15 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
+
 open NumberField Matrix
 open scoped nonZeroDivisors
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory.CongruenceDet
 
+
 open NumberField Matrix in
 open scoped nonZeroDivisors in
-
 theorem _root_.GlobalTheory.CongruenceDet.isIntegral_root {R E K : Type} [CommRing R] [Field E]
     [Field K] [CharZero K]
     [Algebra R E] [Algebra R K] [Algebra E K] [IsScalarTower R E K] {r M : ℕ} (hM : M ≠ 0)
@@ -46,7 +51,7 @@ theorem _root_.GlobalTheory.CongruenceDet.isIntegral_root {R E K : Type} [CommRi
     have h1 : ℓ (g *ᵥ v) = μ * ℓ v := by
       rw [hℓ, hℓ, hmap, Matrix.dotProduct_mulVec, hug, smul_dotProduct, smul_eq_mul]
     have h2 : ℓ (g *ᵥ v) = ℓ v + M * ℓ w := by
-      rw [hgv, map_add, map_nsmul, nsmul_eq_mul]
+      rw [hgv, map_add (f := _), map_nsmul, nsmul_eq_mul]
     field_simp
     linear_combination h1.symm.trans h2
   let N : Submodule R K := Λ.map ℓ
@@ -70,9 +75,9 @@ theorem _root_.GlobalTheory.CongruenceDet.isIntegral_root {R E K : Type} [CommRi
   rw [smul_eq_mul, hvw]
   exact Submodule.mem_map_of_mem hw
 
+
 open NumberField Matrix in
 open scoped nonZeroDivisors in
-
 theorem _root_.GlobalTheory.CongruenceDet.isIntegral_det_sub_one {R E : Type} [CommRing R] [Field E]
     [CharZero E]
     [Algebra R E] {r M : ℕ} (hM : M ≠ 0)
@@ -114,9 +119,9 @@ theorem _root_.GlobalTheory.CongruenceDet.isIntegral_det_sub_one {R E : Type} [C
     simpa [map_div₀, map_sub, map_one, map_natCast] using hK
   exact (isIntegral_algHom_iff _ (algebraMap E K).injective).1 hK'
 
+
 open NumberField Matrix in
 open scoped nonZeroDivisors in
-
 theorem _root_.GlobalTheory.CongruenceDet.det_mul_conj {E : Type} [Field E] [NumberField E]
     [IsCMField E] {r : ℕ}
     (G g : Matrix (Fin r) (Fin r) E) (hG : G.det ≠ 0)
@@ -148,9 +153,9 @@ theorem _root_.GlobalTheory.CongruenceDet.det_mul_conj {E : Type} [Field E] [Num
   rw [← e]
   linear_combination hdet
 
+
 open NumberField Matrix in
 open scoped nonZeroDivisors in
-
 theorem _root_.GlobalTheory.CongruenceDet.det_eq_one : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r M : ℕ) (Gm : Matrix (Fin r) (Fin r) E) (Λ : Submodule (𝓞 E) (Fin r → E)) (γ : GL (Fin r) E), Gm.det ≠ 0 → Λ.FG → Submodule.span E (Λ : Set (Fin r → E)) = ⊤ → 3 ≤ M → _root_.ReciprocityTheory.ChartRestriction.G.FD.IsUStab Gm Λ γ → (∀ v ∈ Λ, ∃ w ∈ Λ, (γ : Matrix (Fin r) (Fin r) E) *ᵥ v = v + M • w) → (γ : Matrix (Fin r) (Fin r) E).det = 1 := by
   intro E _ _ _ r M Gm Λ γ hG hfg hspan hM hU hγ
   have hM0 : M ≠ 0 := by omega
@@ -193,7 +198,7 @@ theorem _root_.GlobalTheory.CongruenceDet.det_eq_one : ∀ (E : Type) [Field E] 
   rw [← hn] at hprod
   have hle : ‖∏ σ : E →ₐ[ℚ] ℂ, σ ((d - 1) / M)‖ ≤ (2 / 3 : ℝ) ^ Fintype.card (E →ₐ[ℚ] ℂ) := by
     rw [norm_prod, ← Finset.card_univ, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun σ _ => habs σ.toRingHom)
+    exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun σ _ => habs σ.toRingHom)
   have hcard : 0 < Fintype.card (E →ₐ[ℚ] ℂ) :=
     Fintype.card_pos_iff.2 ⟨(IsAlgClosed.lift : E →ₐ[ℚ] ℂ)⟩
   have hlt : (2 / 3 : ℝ) ^ Fintype.card (E →ₐ[ℚ] ℂ) < 1 :=

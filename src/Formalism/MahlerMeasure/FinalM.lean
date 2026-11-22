@@ -1,12 +1,16 @@
-import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelSum
-import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelAct
-import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeInto
-import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeBij
-import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeY
-import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelDecomp
-import Formalism.MahlerMeasure.MahlerMeasureProofs.PhiInt
-import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
-import Formalism.MahlerMeasure.LevelConst
+module
+
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelSum
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelAct
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeInto
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeBij
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeY
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelDecomp
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.PhiInt
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
+public import Formalism.MahlerMeasure.QuotientUpperBoundsOfPowerBounds
+
+@[expose] public section
 
 namespace Formalism.GM.Top
 open Formalism.GM

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,14 +36,5 @@ def ObjMap.comp {R : Type} [CommRing R] {D : Datum p} {b : Base D R} {N : ℕ} {
 end GlobalTheory.UPel.HT
 
 namespace GlobalTheory.RelTan
-
-def TanDim {R : Type} [CommRing R] {X : Scheme.{0}} (s : X ⟶ Sp R) (d : ℕ) : Prop :=
-  ∀ (k : Type) [Field k] [IsAlgClosed k] (β : R →+* k) (x : Sp k ⟶ X), x ≫ s = spMap β →
-    ∃ u : Sp (TrivSqZeroExt k (Fin d → k)) ⟶ X,
-      u ≫ s = spMap ((algebraMap k (TrivSqZeroExt k (Fin d → k))).comp β) ∧
-      spMap (TrivSqZeroExt.fstHom k k (Fin d → k)).toRingHom ≫ u = x ∧
-      ∀ v : Sp (DualNumber k) ⟶ X, v ≫ s = spMap ((algebraMap k (DualNumber k)).comp β) →
-        spMap (TrivSqZeroExt.fstHom k k k).toRingHom ≫ v = x →
-        ∃! φ : TrivSqZeroExt k (Fin d → k) →ₐ[k] DualNumber k, spMap φ.toRingHom ≫ u = v
 
 end GlobalTheory.RelTan

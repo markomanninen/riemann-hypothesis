@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
+
 set_option autoImplicit false
 noncomputable section
 open MvPolynomial Formalism.BasicNotions Formalism.L2.DIV
@@ -11,7 +16,7 @@ namespace GlobalTheory.CoefTorusWeight
 
 theorem coeff_aeval_scale {K σ : Type} [Field K] [Fintype σ] (c : σ → K) (F : MvPolynomial σ K)
     (m : σ →₀ ℕ) :
-    coeff m (aeval (fun v => (C (c v) * X v : MvPolynomial σ K)) F) = (∏ v, c v ^ m v) * coeff m F := by
+    AddMonoidAlgebra.coeff (aeval (fun v => (C (c v) * X v : MvPolynomial σ K)) F) m = (∏ v, c v ^ m v) * AddMonoidAlgebra.coeff F m := by
   classical
   induction F using MvPolynomial.induction_on' with
   | monomial u a =>
@@ -25,13 +30,13 @@ theorem coeff_aeval_scale {K σ : Type} [Field K] [Fintype σ] (c : σ → K) (F
     split_ifs with hu
     · rw [hu]
     · simp
-  | add p q hp hq => rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem coeff_actP_diag {K ι : Type} [Field K] [Fintype ι] {n : ℕ} (lam : ι → DomWeight n)
     (t : ι → Fin n → Kˣ) (F : Pol K ι n) (m : (ι × Fin n × Fin n) →₀ ℕ) :
-    coeff m (actP lam (fun τ => diagGL K n (t τ)) F)
+    AddMonoidAlgebra.coeff (actP lam (fun τ => diagGL K n (t τ)) F) m
       = detTwK lam (fun τ => diagGL K n (t τ)) *
-        ((∏ v : ι × Fin n × Fin n, (t v.1 v.2.1 : K) ^ m v) * coeff m F) := by
+        ((∏ v : ι × Fin n × Fin n, (t v.1 v.2.1 : K) ^ m v) * AddMonoidAlgebra.coeff F m) := by
   classical
   have h : trAct (fun τ => diagGL K n (t τ))
       = aeval (fun v : ι × Fin n × Fin n => (C (t v.1 v.2.1 : K) * X v : Pol K ι n)) := by
@@ -74,8 +79,8 @@ theorem weight_preserved (K : Type) [Field K] [CharZero K] {ι : Type} [Fintype 
     · simp
   set h : ι → GL (Fin n) K := fun τ => diagGL K n (t τ) with hh
   have hco : ∀ (w : VV K lam) (m : (ι × Fin n × Fin n) →₀ ℕ),
-      coeff m ((rhoK lam h w : VV K lam) : Pol K ι n)
-        = detTwK lam h * (2 ^ (∑ s : Fin n, m (τ0, a0, s)) * coeff m (w : Pol K ι n)) := by
+      AddMonoidAlgebra.coeff ((rhoK lam h w : VV K lam) : Pol K ι n) m
+        = detTwK lam h * (2 ^ (∑ s : Fin n, m (τ0, a0, s)) * AddMonoidAlgebra.coeff (w : Pol K ι n) m) := by
     intro w m
     rw [← hprod]
     exact coeff_actP_diag lam t w m
@@ -89,7 +94,7 @@ theorem weight_preserved (K : Type) [Field K] [CharZero K] {ι : Type} [Fintype 
       simp
   have h2 := hg h v
   rw [h1, map_smul] at h2
-  have h3 := congrArg (fun w : VV K lam => coeff m (w : Pol K ι n)) h2
+  have h3 := congrArg (fun w : VV K lam => AddMonoidAlgebra.coeff (w : Pol K ι n) m) h2
   simp only [hco, Submodule.coe_smul, coeff_smul, smul_eq_mul, mul_assoc] at h3
   have h4 := mul_right_cancel₀ (mem_support_iff.mp hm) (mul_left_cancel₀ (detTwK_ne_zero lam h) h3)
   have h5 : (2 : ℕ) ^ (lam τ0).natW a0 = 2 ^ (∑ s : Fin n, m (τ0, a0, s)) := by

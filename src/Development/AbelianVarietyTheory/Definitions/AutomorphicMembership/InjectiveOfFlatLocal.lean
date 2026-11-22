@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProperToroidalModelStructureMap
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsNoetherianRingOfIsAdicComplete
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.BaseChangeKernels.GtBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProperToroidalModelStructureMap
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsNoetherianRingOfIsAdicComplete
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.BaseChangeKernels.GtBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,11 +51,11 @@ theorem exists_etale_local (V : Type) [CommRing V] [IsLocalRing V] [IsNoetherian
       (AdjoinRoot.quotEquivQuotMap f (maximalIdeal V)).toRingEquiv.toMulEquiv)
   have hl : IsLocalRing (AdjoinRoot f) := by
     refine IsLocalRing.of_unique_max_ideal ⟨_, hmax, fun M hM => ?_⟩
-    have hc : (M.comap (algebraMap V (AdjoinRoot f))).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+    have hc : (M.comap (algebraMap V (AdjoinRoot f))).IsMaximal := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := V) M
     exact (hmax.eq_of_le hM.ne_top (Ideal.map_le_iff_le_comap.2 (IsLocalRing.eq_maximalIdeal hc).ge)).symm
   have hme : (maximalIdeal V).map (algebraMap V (AdjoinRoot f)) = maximalIdeal (AdjoinRoot f) :=
     IsLocalRing.eq_maximalIdeal hmax
-  have hlh : IsLocalHom (algebraMap V (AdjoinRoot f)) := ((IsLocalRing.local_hom_TFAE _).out 0 2).2 hme.le
+  have hlh : IsLocalHom (algebraMap V (AdjoinRoot f)) := ((IsLocalRing.local_hom_tfae _).out 1 3).2 hme.le
   have hres : (algebraMap (ResidueField V) (ResidueField (AdjoinRoot f))).comp (residue V) =
       (residue _).comp (algebraMap V (AdjoinRoot f)) := RingHom.ext fun a => ResidueField.map_residue _ a
   have hroot : aeval (residue _ (AdjoinRoot.root f)) (f.map (residue V)) = 0 := by
@@ -114,9 +118,6 @@ structure BDat {X : Scheme.{0}} (t₀ : SAB H X) (x : X) : Type 1 where
 attribute [instance] BDat.ring BDat.dom BDat.loc BDat.ch0 BDat.noeth BDat.normal BDat.complete BDat.alg
 
 def BDat.Exact {X : Scheme.{0}} {t₀ : SAB H X} {x : X} (A : BDat t₀ x) : Prop := Function.Bijective (algebraMap (Cpl X x) A.R)
-
-def SplitAt {X : Scheme.{0}} (t₀ : SAB H X) (x : X) : Prop :=
-  ∃ S : SplitExt (Sp (X.residueField x)), S.IsGt ((Over.pullback (X.fromSpecResidueField x)).obj t₀.G)
 
 theorem split_pull {S : Scheme.{0}} {t₀ : SAB H S} {k : Type} [Field k] (q : Sp k ⟶ S) {S' : SplitExt (Sp k)}
     (hS : S'.IsGt ((Over.pullback q).obj t₀.G)) {R : Type} [CommRing R] [IsLocalRing R] (j : k →+* ResidueField R)
@@ -247,22 +248,9 @@ theorem nonempty_bdat (hp : p ≠ 0) (hW : (p : ℂ) ∈ W.nonunits) (Z : Mdl Y 
       (Category.assoc _ _ _).symm) m'
   exact ⟨A⟩
 
-theorem exists_exact (hp : p ≠ 0) (hW : (p : ℂ) ∈ W.nonunits) (Z : Mdl Y i₀) (hU : (Y Z.i).N3)
-    (x : Z.X) [IsDomain (Cpl Z.X x)] [IsIntegrallyClosed (Cpl Z.X x)] (hs : SplitAt Z.t x) : ∃ A : BDat Z.t x, A.Exact := by
-  have := isNoetherianRing_stalk hp hW Z x
-  obtain ⟨S', hS'⟩ := hs
-  have : IsLocalHom (algebraMap (Cpl Z.X x) (Cpl Z.X x)) := ⟨fun _ h => h⟩
-  obtain ⟨A, hA⟩ := exists_bdat hp hW Z hU x (Cpl Z.X x) fun t m _ => split_pull _ hS' _ (residue_comp x) m
-  exact ⟨A, hA Function.bijective_id⟩
 
 open Classical in
-
 def pick {X : Scheme.{0}} {t₀ : SAB H X} {x : X} (h : Nonempty (BDat t₀ x)) : BDat t₀ x :=
   if h' : ∃ A : BDat t₀ x, A.Exact then h'.choose else h.some
-
-theorem pick_exact {X : Scheme.{0}} {t₀ : SAB H X} {x : X} (h : Nonempty (BDat t₀ x)) (h' : ∃ A : BDat t₀ x, A.Exact) :
-    (pick h).Exact := by
-  rw [pick, dif_pos h']
-  exact h'.choose_spec
 
 end GlobalTheory.LocM.Bdy

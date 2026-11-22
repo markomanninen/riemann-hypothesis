@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUnimodDiv
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUnimodDiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,8 +135,6 @@ theorem ev_zero (n : ℕ) : I.ev n 0 = 1 := (evH I n).map_zero
 
 theorem ev_nsmul (n m : ℕ) (a : D.La) : I.ev n (m • a) = I.ev n a ^ m := (evH I n).map_nsmul m a
 
-theorem ev_sub (n : ℕ) (a b : D.La) : I.ev n (a - b) = I.ev n a / I.ev n b := (evH I n).map_sub a b
-
 theorem ev_pow {n : ℕ} (hn : 0 < n) (a : D.La) : I.ev n a ^ n = 1 := (I.onto n hn _).2 ⟨a, rfl⟩
 
 def Uniq (e : ℕ → Q → Q → kˣ → Prop) : Prop :=
@@ -154,7 +156,7 @@ theorem triv_mul {n : ℕ} (hn : 0 < n) {x x' y : Q} (hx : x ^ n = 1) (hx' : x' 
   obtain ⟨a', rfl⟩ := (I.onto n hn _).1 hx'
   obtain ⟨b, rfl⟩ := (I.onto n hn _).1 hy
   rw [triv_iff I hu hn] at h h'
-  rw [← I.add, triv_iff I hu hn, map_add, LinearMap.add_apply]
+  rw [← I.add, triv_iff I hu hn, map_add (f := _), LinearMap.add_apply]
   exact dvd_add h h'
 
 theorem triv_symm {n : ℕ} (hn : 0 < n) {x y : Q} (hx : x ^ n = 1) (hy : y ^ n = 1)
@@ -205,10 +207,10 @@ theorem card_orth [IsAlgClosed k] [CharZero k] {p : ℕ} (hp : 0 < p) (hf : Fini
     fun x y a b ha hb => hu p x y _ _ hp x.2 y.2 (by simpa only [hs] using I.isom p hp (s x) (s y))
       (by simpa only [ha, hb] using I.isom p hp a b)
   let B : G →* G →* kˣ := MonoidHom.mk' (fun x => MonoidHom.mk' (fun y => I.ζ p ^ D.EF (s x) (s y)) fun y y' => by
-      rw [hv x (y * y') (s x) (s y + s y') (hs x) (by rw [I.add, hs, hs]; rfl), map_add, zpow_add])
+      rw [hv x (y * y') (s x) (s y + s y') (hs x) (by rw [I.add, hs, hs]; rfl), map_add (f := _), zpow_add])
     fun x x' => MonoidHom.ext fun y => by
       show I.ζ p ^ D.EF (s (x * x')) (s y) = I.ζ p ^ D.EF (s x) (s y) * I.ζ p ^ D.EF (s x') (s y)
-      rw [hv (x * x') y (s x + s x') (s y) (by rw [I.add, hs, hs]; rfl) (hs y), map_add, LinearMap.add_apply, zpow_add]
+      rw [hv (x * x') y (s x + s x') (s y) (by rw [I.add, hs, hs]; rfl) (hs y), map_add (f := _), LinearMap.add_apply, zpow_add]
   have hB1 : ∀ x y : G, B x y = 1 ↔ e p x y 1 := fun x y => by
     rw [← hs x, ← hs y, triv_iff I hu hp, ← (I.ζ_prim p hp).zpow_eq_one_iff_dvd]
     rfl
@@ -219,7 +221,7 @@ theorem card_orth [IsAlgClosed k] [CharZero k] {p : ℕ} (hp : 0 < p) (hf : Fini
     choose f hf using h₁
     have hp' : (p : ℤ) ≠ 0 := Nat.cast_ne_zero.2 hp.ne'
     obtain ⟨a, ha⟩ := D.unimod.2 (AddMonoidHom.mk' f fun b b' => mul_left_cancel₀ hp' (by
-      rw [mul_add, ← hf, ← hf, ← hf, map_add])).toIntLinearMap
+      rw [mul_add, ← hf, ← hf, ← hf, map_add (f := _)])).toIntLinearMap
     refine Subtype.ext ((hs x).symm.trans ((I.ker p hp _).2 ⟨a, D.unimod.1 (LinearMap.ext fun b => ?_)⟩))
     rw [map_nsmul, LinearMap.smul_apply, ha, hf, nsmul_eq_mul]
     rfl
@@ -253,8 +255,8 @@ variable (I : TateIso D k Q (fun a x => ρ a x) e) (hu : Uniq e) (hρ : IsAct ρ
   (hco : P ⊔ P.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤) {p : ℕ} (hp : 0 < p) (hpP : (p : 𝓞 E) ∈ P)
 include I hu hρ hco
 
-omit hP in
 
+omit hP in
 theorem triv_of_primary {n : ℕ} (hn : 0 < n) {x y : Q} (hx : x ^ n = 1) (hy : y ^ n = 1) {r s : ℕ}
     (h : ∀ a ∈ P.map (H.bar : 𝓞 E →+* 𝓞 E) ^ r, ρ a x = 1)
     (h' : ∀ a ∈ P.map (H.bar : 𝓞 E →+* 𝓞 E) ^ s, ρ a y = 1) : e n x y 1 := by
@@ -411,54 +413,9 @@ theorem exists_subgroup [IsAlgClosed k] [CharZero k] (hf : Finite {x : Q // x ^ 
       exact triv_symm I hu hp t (ht _ l₂') (o _ l₂')
     · exact triv_symm I hu hp t' (ht _ k₂') (o' _ k₂')
 
-omit h₁ hco in
 
-theorem card_datum_le [IsAlgClosed k] [CharZero k] (hf : Finite {x : Q // x ^ p = 1}) :
-    Nat.card C₀ ≤ Ideal.absNorm P ^ (D.p + D.q) := by
-  have ht : ∀ c ∈ C₀, c ^ p = 1 := fun c hc => datum_tors hρ hpP h₂ hc
-  have hc := card_orth I hu hp hf C₀ ht
-  have := D.fin
-  have := D.proj
-  have := hP.isPrime
-  have hP0 : P ≠ ⊥ := by
-    rintro rfl
-    exact Nat.cast_ne_zero.2 hp.ne' (Ideal.mem_bot.1 hpP)
-  have : Finite (𝓞 E ⧸ P) := Ideal.finiteQuotientOfFreeOfNeBot P hP0
-  obtain ⟨φ, φ', s, hs, hφ, -⟩ := HeckeTate.exists_local_iso (R := 𝓞 E) (M := D.La) (M' := Fin (D.p + D.q) → 𝓞 E)
-    (by rw [D.rank, Module.finrank_fin_fun]) P
-  have fU : Finite {x : Q // x ^ p = 1 ∧ ∀ c ∈ C₀, e p x c 1} :=
-    Finite.of_injective (β := {x : Q // x ^ p = 1}) (fun x => ⟨x.1, x.2.1⟩) fun a b h =>
-      Subtype.ext (congrArg (fun z : {x : Q // x ^ p = 1} => z.1) h)
-  let F : {x : Q // x ^ p = 1 ∧ ∀ c ∈ C₀, e p x c 1} × (Fin (D.p + D.q) → 𝓞 E ⧸ P) → {x : Q // x ^ p = 1} :=
-    fun z => ⟨z.1.1 * I.ev p (φ' fun i => (z.2 i).out), by rw [mul_pow, z.1.2.1, ev_pow I hp, mul_one]⟩
-  have hF : Function.Surjective F := by
-    rintro ⟨x, hx⟩
-    obtain ⟨a, rfl⟩ := (I.onto p hp _).1 hx
-    obtain ⟨t, π, hπ, h⟩ := hP.exists_inv hs
-    let y : Fin (D.p + D.q) → 𝓞 E := t • φ a
-    let y' : Fin (D.p + D.q) → 𝓞 E := fun i => (Ideal.Quotient.mk P (y i)).out
-    have hm : a - φ' y' ∈ P • (⊤ : Submodule (𝓞 E) D.La) := by
-      have e₁ : a - φ' y' = π • a + φ' (y - y') := by
-        rw [map_sub, map_smul, hφ, smul_smul, ← add_sub_assoc, ← add_smul, add_comm π, h, one_smul]
-      rw [e₁]
-      refine add_mem (Submodule.smul_mem_smul hπ trivial) ?_
-      rw [pi_eq_sum_univ' (y - y'), map_sum]
-      refine sum_mem fun i _ => ?_
-      rw [map_smul]
-      exact Submodule.smul_mem_smul (Ideal.Quotient.eq.1 (Quotient.out_eq _).symm) trivial
-    refine ⟨(⟨I.ev p (a - φ' y'), ev_pow I hp _, ev_orth I hu hρ hp hpP h₂ hm⟩, fun i => Ideal.Quotient.mk P (y i)),
-      Subtype.ext ?_⟩
-    show I.ev p (a - φ' y') * I.ev p (φ' y') = _
-    rw [← I.add, sub_add_cancel]
-  have hle := Nat.card_le_card_of_surjective F hF
-  rw [Nat.card_prod, Nat.card_fun, ← hc, Nat.card_eq_fintype_card (α := Fin _), Fintype.card_fin] at hle
-  have : Nonempty {x : Q // x ^ p = 1 ∧ ∀ c ∈ C₀, e p x c 1} := ⟨⟨1, one_pow _, fun c hc =>
-    triv_symm I hu hp (ht c hc) (one_pow _) (triv_one I hu hp (ht c hc))⟩⟩
-  rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
-  exact Nat.le_of_mul_le_mul_left hle Nat.card_pos
 
 omit h₁ h₂ in
-
 theorem eq_kerSet [IsAlgClosed k] [CharZero k] (hf : Finite {x : Q // x ^ p = 1}) (C : Subgroup Q)
     (c₁ : ∀ x ∈ C, ∀ a, ρ a x ∈ C)
     (c₃ : ∀ x ∈ C, ∀ a ∈ Ideal.span {(p : 𝓞 E)} * P.map (H.bar : 𝓞 E →+* 𝓞 E), ρ a x = 1)

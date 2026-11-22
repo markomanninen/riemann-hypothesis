@@ -1,8 +1,12 @@
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.LocalRingCardinality.DataGatTies
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Formalism.SharpRestriction.GrowthBounds.DataG
-import Formalism.SharpRestriction.GrowthBounds.DataGChain
+module
+
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.LocalRingCardinality.DataGatTies
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+public import Formalism.SharpRestriction.GrowthBounds.DataGChain
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,14 +124,6 @@ theorem class_zero_trichotomy {D : D7} {p : ℕ} (h : IsResidueClassZero D p) : 
     · exact Or.inr (Or.inl h0)
     · exact Or.inr (Or.inr ⟨h, Nat.not_even_iff_odd.mp he, h0⟩)
 
-theorem IsCs.three_le {D : D7} {p : ℕ} (h : IsCs D p) : 3 ≤ addOrderOf (hP D p) := by
-  obtain ⟨-, hodd, hne⟩ := h
-  have h1 : addOrderOf (hP D p) ≠ 1 := fun h1 => hne (by
-    have h2 := addOrderOf_nsmul_eq_zero (hP D p)
-    rwa [h1, one_nsmul] at h2)
-  obtain ⟨k, hk⟩ := hodd
-  omega
-
 def partner (D : D7) (p : ℕ) (t : HH D) (e : ℕ) : Bool × HH D :=
   (decide (IsSg D p ∧ Odd e), t + e • hP D p)
 
@@ -202,8 +198,8 @@ def tIIf (K : Consts) (L : SizeData₂ D) (p n' N : ℕ) : ℝ :=
 def kapIIf (K : Consts) (L : SizeData₂ D) (N : ℕ) : ℝ :=
   min 1 (K.kII * (N : ℝ) * (rG L.sc : ℝ) ^ 2 * (D.R.k : ℝ) * L.sc.x ^ (-Scale.A))
 
-open Classical in
 
+open Classical in
 def dMinus {n' : ℕ} (TT : Finset (Fin n')) (y : Fin n') : ℕ :=
   if h : ∃ d : ℕ, 0 < d ∧ d ≤ n' ∧ posAdd y (n' - d) ∈ TT ∧ IsTypeV (posAdd y (n' - d))
   then Nat.find h else 0
@@ -212,8 +208,8 @@ def c6f (K : Consts) (L : SizeData₂ D) (p n' : ℕ) : ℝ :=
   8 * ((DIf K L p n' : ℝ) + 1) + K.kappaThresholdTwo * NplusF L.sc n' * (D.R.k : ℝ) * Real.logb p L.sc.a +
     4 * NplusF L.sc n' * cG L + 2 * (n' : ℝ) * cG L
 
-open Classical in
 
+open Classical in
 def tIf (K : Consts) (L : SizeData₂ D) (p n' : ℕ) (TT : Finset (Fin n')) (a b : Fin n' → ℤ) : ℝ :=
   (∑ y ∈ TT.filter (fun y => ¬ IsTypeV y),
       (if dMinus TT y = 0 then 0 else
@@ -242,23 +238,23 @@ def dl (X : Inst D L) (K : Consts) (p : ℕ) (t0 : HH D) : ℝ :=
   K.dl1 * (nP D p : ℝ) * Nm D ^ 2 * Real.logb p (2 * L.sc.a) +
     K.dl2 * (Nv X p t0 : ℝ) * Real.logb p (2 * L.sc.a) ^ 2
 
-open Classical in
 
+open Classical in
 def g0 (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p j : ℕ) (t0 : HH D) : ℝ :=
   (∑ s ∈ topsOn X p t0, ∑' e : ℕ,
     if Odd e ∧ ¬ Excl D p s e then max 0 (al L a s / (p : ℝ) ^ e - capU X b p j s e) else 0) -
     dl X K p t0
 
-open Classical in
 
+open Classical in
 def gU (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p j : ℕ) (t0 : HH D) : ℝ :=
   gam p * (∑ s ∈ topsOn X p t0, al L a s) -
     (∑ s ∈ (topsOn X p t0).filter (fun s => ¬ IsV X p s), ∑' e : ℕ,
       if Odd e then min (al L a s / (p : ℝ) ^ e) (capU X b p j s e) else 0) -
     dl X K p t0
 
-open Classical in
 
+open Classical in
 def Pr (X : Inst D L) (K : Consts) (b : HH D → ℤ) (p j : ℕ) (t0 : HH D) : ℝ :=
   if L.sc.p0 D.R.k ≤ (p : ℝ) then
     (∑ s ∈ (topsOn X p t0).filter (fun s => ¬ IsV X p s), (fillG X b j (false, s) - (b s : ℝ))) +
@@ -280,15 +276,15 @@ def Cand (D : D7) (L : SizeData₂ D) (K : Consts) (p : ℕ) : Prop :=
   p.Prime ∧ (p : ℝ) < L.sc.X' ∧ IsResidueClassZero D p ∧ L.sc.x ^ (L.sc.eps / 4) ≤ (addOrderOf (hP D p) : ℝ) ∧
     (L.sc.p0 D.R.k ≤ (p : ℝ) → ¬ InBand D K L.sc p)
 
-open Classical in
 
+open Classical in
 def goodReps (X : Inst D L) (p : ℕ) : Finset (HH D) := (reps X p).filter (fun t0 => Good X p t0)
 
 def Sig (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) : ℝ :=
   (D.R.m : ℝ) * ∑ t0 ∈ goodReps X p, kapv X K a b p t0
 
-open Classical in
 
+open Classical in
 def VV (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) : Finset (HH D) :=
   if Cand D L K p ∧ Sig X K a b p ≤ L.sc.x ^ (-L.sc.eps) then goodReps X p else ∅
 
@@ -308,17 +304,13 @@ def winA (D : D7) (s : Scale) : Finset ℤ :=
 def winB (D : D7) (K : Consts) (s : Scale) : Finset ℤ :=
   Finset.Icc ⌈s.b'⌉ ⌊s.b' + Nstar D s * s.x ^ s.eps * La K s * s.b' / D.R.k⌋
 
-open Classical in
 
+open Classical in
 def box (D : D7) (W : Finset ℤ) : Finset (HH D → ℤ) :=
   Fintype.piFinset (fun t => if t ∈ D.host.TT then W else {0})
 
-def meanW (D : D7) (K : Consts) (s : Scale) (F : (HH D → ℤ) → (HH D → ℤ) → ℝ) : ℝ :=
-  (∑ a ∈ box D (winA D s), ∑ b ∈ box D (winB D K s), F a b) /
-    (((box D (winA D s)).card : ℝ) * ((box D (winB D K s)).card : ℝ))
 
 open Classical in
-
 def boxLoc (n' : ℕ) (TT : Finset (Fin n')) (W : Finset ℤ) : Finset (Fin n' → ℤ) :=
   Fintype.piFinset (fun i => if i ∈ TT then W else {0})
 
@@ -336,45 +328,45 @@ def MeanKappaBound (X : Inst D L) (K : Consts) : Prop :=
 def Sv (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) (t0 : HH D) : ℝ :=
   (⌈∑ j ∈ SizeData₂.lifts D, max 0 (gU X K a b p j t0 - Pr X K b p j t0 - max (g0 X K a b p j t0) 0)⌉ : ℤ)
 
-open Classical in
 
+open Classical in
 def tauP (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) : ℝ :=
   if VV X K a b p = ∅ then 0 else
     (X.ep p : ℝ) + ∑ t0 ∈ VV X K a b p,
       (D.R.m : ℝ) * ((⌈tv X K a b p t0⌉₊ : ℝ) + (Dp K L p : ℝ) + 1)
 
-open Classical in
 
+open Classical in
 def ioP (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) : ℝ :=
   if h : (VV X K a b p).Nonempty then
     2 * Sig X K a b p * (VV X K a b p).sup' h (fun t0 => Sv X K a b p t0)
   else 0
 
-open Classical in
 
+open Classical in
 def gainP (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p j : ℕ) : ℝ :=
   if (IsResidueClassZero D p ∧ hP D p = 0) ∨ L.sc.X'' D.R.n < (p : ℝ) then 0 else
     (∑ t0 ∈ VV X K a b p, max (gU X K a b p j t0 - Pr X K b p j t0) (max (g0 X K a b p j t0) 0)) +
     ∑ t0 ∈ reps X p \ VV X K a b p, max (g0 X K a b p j t0) 0
 
-open Classical in
 
+open Classical in
 def TTP (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) : Finset (HH D) :=
   if IsSg D p ∨ L.sc.X' ≤ (p : ℝ) then D.host.TT
   else D.host.TT.filter (fun t => X.bs (stepP D p) t ∈ VV X K a b p)
 
-open Classical in
 
+open Classical in
 def askG (X : Inst D L) (a b : HH D → ℤ) (p j : ℕ) (s : HH D) : ℝ :=
   ∑' e : ℕ, if Odd e then max 0 ((a s : ℝ) / (p : ℝ) ^ e - fillG X b j (partner D p s e)) else 0
 
-open Classical in
 
+open Classical in
 def askP (X : Inst D L) (a b : HH D → ℤ) (p j : ℕ) (s : HH D) : ℝ :=
   ∑' e : ℕ, if Odd e then max 0 ((a s : ℝ) / (p : ℝ) ^ e - fill X b j (partner D p s e)) else 0
 
-open Classical in
 
+open Classical in
 def lo (K : Consts) (L : SizeData₂ D) (C bo : ℝ) (p : ℕ) : ℝ :=
   let s := L.sc
   let cp : ℝ := C * (cG L + L.etaSz) * Real.logb p (2 * s.a)
@@ -459,8 +451,8 @@ def yProd (Y : LatInst D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
 def lowFE (L : SizeData₂ D) (u : D.what₂.Word) (w : D.what₂.places.Pl) : ℝ :=
   ∑ j ∈ SizeData₂.lifts D, ((L.F j w : ℝ) - (L.E u j w : ℝ))
 
-open Classical in
 
+open Classical in
 def NP (X : Inst D L) (Y : LatInst D) (K : Consts) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
     Submodule (D.gat u w hg).O (D.gat u w hg).Fn :=

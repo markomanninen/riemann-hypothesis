@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CommuteCenterRtInfGL
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AbsFar
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CommuteCenterRtInfGL
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AbsFar
+
+@[expose] public section
 
 open NumberField UpperTheory.ConvolutionTheory.BW
 
-private theorem rho_le {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} {S : Set (Pl E)}
+private theorem rho_le {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} {S : Set (Pl E)}
     (d : Dat S n) (j : Fin d.len) : ‖(d.rho j : ℂ)‖ ≤ n := by
   have h : ∑ l, d.size l = n := by
     have := Finset.card_eq_sum_card_fiberwise (s := Finset.univ) (t := Finset.univ) (f := d.idx)
@@ -21,7 +25,7 @@ private theorem rho_le {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
   constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
 
 theorem UpperTheory.ConvolutionTheory.BW.far :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.Far E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.Far E := by
   intro E _ _ _ n C hC
   obtain ⟨B, hB⟩ := absFar (E →+* ℂ) n C (∑ _p : (E →+* ℂ) × Fin n, (n : ℝ))
   refine ⟨B + n, fun S d φ hφ hs ⟨τ, i, hi⟩ => ?_⟩

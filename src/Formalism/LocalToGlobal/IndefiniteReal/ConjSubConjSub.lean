@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.CongNormal
-import Formalism.LocalToGlobal.IndefiniteReal.PeterssonHilbertSpace
-import Formalism.LocalToGlobal.Columns.MtRowRep
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.CongNormal
+public import Formalism.LocalToGlobal.IndefiniteReal.PeterssonHilbertSpace
+public import Formalism.LocalToGlobal.Columns.MtRowRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -187,8 +191,8 @@ def IsEigOf (P : RowPsi V n) (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Fins
     Hecke₃ P R x = c Pr d • x) ∧
   ∀ Pr d, (¬ ∃ R, Mult.Hecke₂ V J χ Sb Pr d R) → c Pr d = 0
 
-open Classical in
 
+open Classical in
 def cOfT (P : RowPsi V n) (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F)))
     (π : Formalism.L2.NG.FinTyp D.host.E n) : HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ :=
   if h : ∃ c, IsEigOf P J χ Sb π c then h.choose else 0

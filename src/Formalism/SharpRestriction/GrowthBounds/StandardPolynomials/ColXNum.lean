@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColNumDef
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FirstCoefficientFacts
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColNumDef
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FirstCoefficientFacts
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+
+@[expose] public section
 
 noncomputable section
 
@@ -186,7 +190,6 @@ theorem m1num_of_std {C0 Cde CE1 CE2 : ℝ} {X : Loc} (St : Std C0 Cde CE1 CE2 1
         (∑ l : Fin (segS X.TT j), (if (l : ℕ) < (X.seg C0 CE1 CE2 j).sigma then (b.sg l : ℤ) else 0)) ≤
         ⌊(((X.seg C0 CE1 CE2 j).A0 X.p : ℤ) : ℝ) - (mm + (n : ℝ) * ka1 X)⌋ := by
   obtain ⟨hdig, -, hS, -, -⟩ := hb
-  have H := segHyp_of St j
   have hk5 := St.k5
   have hk0 : 0 < X.k := by linarith
   have hp0 : (0 : ℝ) < X.p := by linarith [St.p1]
@@ -202,7 +205,7 @@ theorem m1num_of_std {C0 Cde CE1 CE2 : ℝ} {X : Loc} (St : Std C0 Cde CE1 CE2 1
     exact pow_pos hp0 _
   have hQjQ : ((X.p ^ segG X.TT j : ℕ) : ℝ) ≤ X.Q := by
     push_cast
-    exact H.Q
+    exact pow_le_pow_right₀ (by exact_mod_cast (show 1 ≤ X.p by have := St.p5; omega)) (St.segB j).1
   have hA0lt : ((X.a : ℝ) - X.E0 C0 CE1 CE2) / ((X.p ^ segG X.TT j : ℕ) : ℝ) - 1 <
       (((X.seg C0 CE1 CE2 j).A0 X.p : ℤ) : ℝ) := Int.sub_one_lt_floor _
   obtain ⟨hA0p, hB⟩ := column_first_coefficient_bound (eps := eps X C0) St.apos hQj0 hQjQ St.N5 hA0lt St.kb St.Hc St.N2 St.Y1 (by linarith) St.eps_ge hk5 hQ1
@@ -252,7 +255,7 @@ theorem m1num_of_std {C0 Cde CE1 CE2 : ℝ} {X : Loc} (St : Std C0 Cde CE1 CE2 1
     have hAPi : (X.bT (segPos X.TT j i) : ℝ) - X.k * ((X.p ^ (segG X.TT j - (segDists X.TT j).get i) : ℕ) : ℝ) <
         (coarseA X.p (X.seg C0 CE1 CE2 j) b i : ℝ) * ((X.p ^ (segG X.TT j - (segDists X.TT j).get i) : ℕ) : ℝ) :=
       hcbi.2
-    have hbTi : X.b' * (1 - _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) ≤ (X.bT (segPos X.TT j i) : ℝ) := (H.bT i).1
+    have hbTi : X.b' * (1 - _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) ≤ (X.bT (segPos X.TT j i) : ℝ) := (St.winB _ (pos_mem X.TT j i).1).1
     have hbe12 : _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0 ≤ 1 / 12 := by linarith [St.be18]
     have hdich : (coarseA X.p (X.seg C0 CE1 CE2 j) b i : ℝ) * (1 + X.de C0 Cde) < A0 := by
       rw [← hA0def]
@@ -265,8 +268,8 @@ theorem m1num_of_std {C0 Cde CE1 CE2 : ℝ} {X : Loc} (St : Std C0 Cde CE1 CE2 1
         (fun c => (hdig.1 l c).1) (hdig.2.1 l).1 (hdig.2.1 l).2
       have hAPl : (coarseA X.p (X.seg C0 CE1 CE2 j) b l : ℝ) *
           ((X.p ^ (segG X.TT j - (segDists X.TT j).get l) : ℕ) : ℝ) ≤ (X.bT (segPos X.TT j l) : ℝ) := hcbl.1
-      have hbTl : (X.bT (segPos X.TT j l) : ℝ) ≤ X.b' * (1 + _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) := (H.bT l).2
-      have hd1 : (segDists X.TT j).get l < (segDists X.TT j).get i := H.dmono (Fin.lt_def.mpr hl)
+      have hbTl : (X.bT (segPos X.TT j l) : ℝ) ≤ X.b' * (1 + _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) := (St.winB _ (pos_mem X.TT j l).1).2
+      have hd1 : (segDists X.TT j).get l < (segDists X.TT j).get i := dist_strictMono X.TT j (Fin.lt_def.mpr hl)
       have hd2 : (segDists X.TT j).get i < segG X.TT j := (dist_pos_lt X.TT j i).2
       have hPP : (X.p : ℝ) * ((X.p ^ (segG X.TT j - (segDists X.TT j).get i) : ℕ) : ℝ) ≤
           ((X.p ^ (segG X.TT j - (segDists X.TT j).get l) : ℕ) : ℝ) := by

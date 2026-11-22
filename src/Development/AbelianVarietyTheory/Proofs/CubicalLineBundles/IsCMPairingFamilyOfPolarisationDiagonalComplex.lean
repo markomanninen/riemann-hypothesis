@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLinearOfIsMonHom
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormPullEqOfLbIsoPow
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.EqZeroOfSumEmbeddingMul
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SubsingletonPrimeSpectrum
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveLieCharacterOfAdjoinGenerator
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.WeilEqIffHermFormEqComplexStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LambdaBundleIsoOfWeilPairingCompatibleStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLinearOfIsMonHom
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormPullEqOfLbIsoPow
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.EqZeroOfSumEmbeddingMul
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SubsingletonPrimeSpectrum
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveLieCharacterOfAdjoinGenerator
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.WeilEqIffHermFormEqComplexStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LambdaBundleIsoOfWeilPairingCompatibleStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -21,7 +25,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
 private theorem strictAnti_lt_of_succ_lt (D : Datum H) (u v : D.La) : D.EF u v = -D.EF v u := by
   have h := D.alt (u + v)
-  simp only [map_add, LinearMap.add_apply, D.alt u, D.alt v] at h
+  simp only [map_add (f := _), LinearMap.add_apply, D.alt u, D.alt v] at h
   omega
 
 private theorem ef_w0_smul_left_swap (D : Datum H) (u y : D.La) :
@@ -34,7 +38,7 @@ private theorem ef_w0_smul_left_swap (D : Datum H) (u y : D.La) :
 private theorem ef_rt_smul_right (D : Datum H) (u v : D.La) :
     D.EF u (H.rt • v) = 2 * D.EF u (H.w0 • v) - D.EF u v := by
   have hrt : H.rt = 2 * H.w0 - 1 := by linear_combination -H.two_weight_eq_one_add_root
-  rw [hrt, sub_smul, one_smul, mul_smul, two_smul, map_sub, map_add]
+  rw [hrt, sub_smul, one_smul, mul_smul, two_smul, map_sub, map_add (f := _)]
   ring
 
 private theorem four_mul_ef_w0_smul_w0_smul (D : Datum H) (u v : D.La) :
@@ -71,7 +75,7 @@ theorem polarise (D : Datum H) (L : Submodule (𝓞 E) D.La) {g : ℕ} (Hm : Mat
     have hq' := hq q
     rw [hadd, GlobalTheory.EigenNorm.hermForm_add_left, GlobalTheory.EigenNorm.hermForm_add_right,
       GlobalTheory.EigenNorm.hermForm_add_right] at h
-    simp only [Submodule.coe_add, smul_add, map_add, LinearMap.add_apply, Int.cast_add] at h
+    simp only [Submodule.coe_add, smul_add, map_add (f := _), LinearMap.add_apply, Int.cast_add] at h
     linear_combination h - hp - hq'
   have Sab := S1 a b
   have Sarb := S1 a (H.rt • b)
@@ -140,7 +144,7 @@ theorem smul_of_rt {M : Type} [AddCommGroup M] [Module (𝓞 E) M] {g : ℕ} (ω
     rw [this, Int.cast_smul_eq_zsmul]
   | add y z hy hz ihy ihz =>
     have e1 : (⟨y + z, Subalgebra.add_mem _ hy hz⟩ : OK H) = ⟨y, hy⟩ + ⟨z, hz⟩ := rfl
-    rw [e1, map_add, add_smul, hadd, ihy, ihz, add_smul]
+    rw [e1, τ.map_add, add_smul, hadd, ihy, ihz, add_smul]
   | mul y z hy hz ihy ihz =>
     have e1 : (⟨y * z, Subalgebra.mul_mem _ hy hz⟩ : OK H) = ⟨y, hy⟩ * ⟨z, hz⟩ := rfl
     rw [e1, map_mul, mul_smul, ihy, ihz, smul_smul]
@@ -152,7 +156,7 @@ theorem char_sq (ω : ℂ) (τ : OK H →+* ℂ) (hτ : τ (wK H) = ω) : (2 * �
     push_cast [hw]
     linear_combination (2 * H.w0 - 1 + H.rt) * H.two_weight_eq_one_add_root + H.rt_sq
   have := congrArg τ key
-  rw [map_pow, map_sub, map_add, map_one, map_neg, map_natCast, hτ] at this
+  rw [τ.map_pow, τ.map_sub, τ.map_add, τ.map_one, τ.map_neg, map_natCast, hτ] at this
   linear_combination this
 
 theorem isFam_of_isHomFamily : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (ω : ℂ) (C : Ell H ℂ ω) (D : Datum H) (ε : ℤˣ) (h : D.La → D.La → OK H) (T : PAT H (Sp ℂ)) (L : Submodule (𝓞 E) D.La) (ψ : L → (C.P.A ⟶ T.t.G)), IsKForm D ε h → (∀ x ∈ L, x ≠ 0 → 0 < (ε : ℤ) * D.EF (H.w0 • x) x) → PureType.IsHomFamily T.t C.P.A C.P.L C.v L (2 * ω - 1) Set.univ ψ → IsFam C T h L ψ := by
@@ -280,7 +284,7 @@ theorem isFam_of_isHomFamily : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Fiel
       rfl
     have hh : τ₀ (h a b) = (((ε : ℤ) * (D.EF (H.w0 • (a : D.La)) b - D.EF a b) : ℤ) : ℂ) +
         (((ε : ℤ) * D.EF a b : ℤ) : ℂ) * ω := by
-      rw [e, map_add, map_mul, map_intCast, map_intCast, hτ₀]
+      rw [e, τ₀.map_add, τ₀.map_mul, map_intCast, map_intCast, hτ₀]
     rw [hFs, hFs, map_smul, hGw, LinearMap.id_apply, smul_smul, GlobalTheory.EigenNorm.hermForm_smul_left,
       GlobalTheory.EigenNorm.hermForm_smul_right, GlobalTheory.EigenNorm.hermForm_smul_left, GlobalTheory.EigenNorm.hermForm_smul_right,
       hpol a b, hh]

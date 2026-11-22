@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateRat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PosBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateRat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PosBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial Topology
 
 namespace GlobalTheory.CocycleDim

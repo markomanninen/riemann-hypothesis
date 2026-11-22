@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSupport
-import Development.EtaleCohomology.EtaleSheaves.FirstChernNaturality
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSupport
+public import Development.EtaleCohomology.EtaleSheaves.FirstChernNaturality
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

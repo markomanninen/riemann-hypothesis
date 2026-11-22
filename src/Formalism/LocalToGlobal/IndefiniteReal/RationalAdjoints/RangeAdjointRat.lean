@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatZOfTests
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.CoordRat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatZOfTests
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.CoordRat
+
+@[expose] public section
 
 open Module NumberField
 open scoped InnerProductSpace
@@ -90,7 +94,8 @@ theorem range_adjoint_rat {K : Type} [Field K] [StarRing K] (σ : K →+* ℂ) {
         exact ⟨star a, by rw [← ha, star_compat σ jR h hiso (bb l) (hli.ne_zero l)]⟩)
     choose a ha using hcoord
     have hr' : jR (∑ k, a k • bb k) = LinearMap.adjoint Θ (e i) := by
-      rw [← hc, hf, Fintype.linearCombination_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, hf, Fintype.linearCombination_apply, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [LinearMap.map_smulₛₗ, ha]
     rw [← hr']
@@ -101,7 +106,7 @@ theorem range_adjoint_rat {K : Type} [Field K] [StarRing K] (σ : K →+* ℂ) {
       Submodule.span ℂ (jR '' ((LinearMap.range (LinearMap.adjoint Θ)).comap jR : Set F))) ?_ ?_ ?_ ?_ hv
   · rintro _ ⟨i, rfl⟩; exact hrat i
   · simp
-  · intro x y _ _ hx hy; rw [map_add]; exact Submodule.add_mem _ hx hy
+  · intro x y _ _ hx hy; rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   · intro a x _ hx; rw [map_smul]; exact Submodule.smul_mem _ a hx
 
 theorem ratZOfTests : RatZOfTests := by

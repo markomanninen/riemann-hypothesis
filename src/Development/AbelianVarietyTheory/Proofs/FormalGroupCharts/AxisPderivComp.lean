@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ variable {k : Type} [CommRing k] {d : ℕ}
 
 theorem pderiv_ev {m n : ℕ} (V : Fin m → Pt k n d) (hV : ∀ j, GP (V j)) (f : PS k m d)
     (v : Fin n × Fin d) :
-    pderiv k v (ev V f) = ∑ j : Fin m, ∑ l : Fin d, ev V (pderiv k (j, l) f) * pderiv k v (V j l) := by
+    pderiv v (ev V f) = ∑ j : Fin m, ∑ l : Fin d, ev V (pderiv (j, l) f) * pderiv v (V j l) := by
   unfold ev
   rw [GlobalTheory.FormalCalc.pderiv_subst (gt_hasSubst V hV), Fintype.sum_prod_type]
 
@@ -57,7 +61,7 @@ theorem dof_eq (F : Fin d → PS k 2 d) (hF : ∀ i, constantCoeff (F i) = 0)
     (hu : ∀ i, ev (n := 1) ![pt k (n := 1) d 0, 0] (F i) = (X ((0 : Fin 1), i) : PS k 1 d))
     (u : Fin d → k) (g : PS k 1 d) :
     Dof F u g = ∑ i, C (u i) *
-      ev (n := 1) ![pt k (n := 1) d 0, 0] (pderiv k ((1 : Fin 2), i) (ev (n := 2) ![F] g)) := by
+      ev (n := 1) ![pt k (n := 1) d 0, 0] (pderiv ((1 : Fin 2), i) (ev (n := 2) ![F] g)) := by
   have hF1 : ∀ j, GP ((![F] : Fin 1 → Pt k 2 d) j) := single_point_zero_constant hF
   have hS : ∀ h : PS k 1 d, ev (n := 1) ![pt k (n := 1) d 0, 0] (ev (n := 2) ![F] h) = h := by
     intro h
@@ -72,9 +76,9 @@ theorem dof_eq (F : Fin d → PS k 2 d) (hF : ∀ i, constantCoeff (F i) = 0)
   ring
 
 theorem pderiv_comp_pt (φ : Pt k 1 d) (a b : Fin 2) (i l : Fin d) :
-    pderiv k (a, i) (comp1 φ (pt k (n := 2) d b) l) =
-      if a = b then ev ![pt k (n := 2) d b] (pderiv k ((0 : Fin 1), i) (φ l)) else 0 := by
-  change pderiv k (a, i) (ev ![pt k (n := 2) d b] (φ l)) = _
+    pderiv (a, i) (comp1 φ (pt k (n := 2) d b) l) =
+      if a = b then ev ![pt k (n := 2) d b] (pderiv ((0 : Fin 1), i) (φ l)) else 0 := by
+  change pderiv (a, i) (ev ![pt k (n := 2) d b] (φ l)) = _
   rw [pderiv_ev _ (single_point_zero_constant (gp_pt b)), Fin.sum_univ_one]
   simp only [Matrix.cons_val_zero, pt]
   split_ifs with h
@@ -88,10 +92,10 @@ theorem pderiv_comp_pt (φ : Pt k 1 d) (a b : Fin 2) (i l : Fin d) :
     rw [pderiv_X_of_ne (fun h' => h (congrArg Prod.fst h').symm), mul_zero]
 
 theorem axis_pderiv_comp (φ : Pt k 1 d) (hφ : GP φ) (H : PS k 2 d) (i : Fin d) :
-    ev (n := 1) ![pt k (n := 1) d 0, 0] (pderiv k ((1 : Fin 2), i)
+    ev (n := 1) ![pt k (n := 1) d 0, 0] (pderiv ((1 : Fin 2), i)
       (ev ![comp1 φ (pt k (n := 2) d 0), comp1 φ (pt k (n := 2) d 1)] H)) =
     ∑ l, C (dLin φ l i) *
-      ev ![φ] (ev (n := 1) ![pt k (n := 1) d 0, 0] (pderiv k ((1 : Fin 2), l) H)) := by
+      ev ![φ] (ev (n := 1) ![pt k (n := 1) d 0, 0] (pderiv ((1 : Fin 2), l) H)) := by
   have hΦ : ∀ j, GP (![comp1 φ (pt k (n := 2) d 0), comp1 φ (pt k (n := 2) d 1)] j) :=
     pair_points_zero_constant (gp_comp1 φ _ hφ (gp_pt 0)) (gp_comp1 φ _ hφ (gp_pt 1))
   have hK : ∀ K : PS k 2 d, ev (n := 1) ![pt k (n := 1) d 0, 0]
@@ -104,7 +108,7 @@ theorem axis_pderiv_comp (φ : Pt k 1 d) (hφ : GP φ) (H : PS k 2 d) (i : Fin d
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
     rw [gt_comp1_pt_right, gt_comp1_zero φ hφ]
   have hL : ∀ l, ev (n := 1) ![pt k (n := 1) d 0, 0]
-      (ev ![pt k (n := 2) d 1] (pderiv k ((0 : Fin 1), i) (φ l))) = C (dLin φ l i) := by
+      (ev ![pt k (n := 2) d 1] (pderiv ((0 : Fin 1), i) (φ l))) = C (dLin φ l i) := by
     intro l
     rw [gt_ev_ev' _ _ axis_GP (single_point_zero_constant (gp_pt 1)), vec1, evP_pt _ axis_GP]
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
@@ -112,7 +116,7 @@ theorem axis_pderiv_comp (φ : Pt k 1 d) (hφ : GP φ) (H : PS k 2 d) (i : Fin d
     simp [dLin]
   rw [pderiv_ev _ hΦ, Fin.sum_univ_two]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, pderiv_comp_pt]
-  simp only [one_ne_zero, if_false, if_true, mul_zero, Finset.sum_const_zero, zero_add]
+  simp only [one_ne_zero, ite_false, ite_true, mul_zero, Finset.sum_const_zero, zero_add]
   rw [ev_sum _ axis_GP]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [gt_ev_mul _ axis_GP, hK, hL, mul_comm]
@@ -150,7 +154,8 @@ theorem dof_transF (F : Fin d → PS k 2 d) (hF : ∀ i, constantCoeff (F i) = 0
     rw [this]
   rw [dof_eq _ hF' (congrFun hu'), dof_eq F hF hu, key, ev_sum _ (single_point_zero_constant hφ)]
   simp only [axis_pderiv_comp φ hφ, ev_C_mul _ (single_point_zero_constant hφ)]
-  simp only [Matrix.mulVec, dotProduct, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum,
     map_mul, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_

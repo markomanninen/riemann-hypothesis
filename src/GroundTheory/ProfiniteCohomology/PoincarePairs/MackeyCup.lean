@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoincarePairs.ConeProduct
-import GroundTheory.ProfiniteCohomology.PoincarePairs.ConjHomotopyFunCupCochainZeroRight
-import GroundTheory.ProfiniteCohomology.PoincarePairs.Natural
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.ConeProduct
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.ConjHomotopyFunCupCochainZeroRight
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.Natural
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -31,14 +36,14 @@ def coindPairing :
       (fun f f' g => Subtype.ext (funext fun y => by
         change μ.hom ((f.1 y + f'.1 y) ⊗ₜ[k] g.1 y) =
           μ.hom (f.1 y ⊗ₜ[k] g.1 y) + μ.hom (f'.1 y ⊗ₜ[k] g.1 y)
-        rw [add_tmul, map_add]))
+        rw [add_tmul, map_add (f := _)]))
       (fun c f g => Subtype.ext (funext fun y => by
         change μ.hom ((c • f.1 y) ⊗ₜ[k] g.1 y) = c • μ.hom (f.1 y ⊗ₜ[k] g.1 y)
         rw [← smul_tmul', map_smul]))
       (fun f g g' => Subtype.ext (funext fun y => by
         change μ.hom (f.1 y ⊗ₜ[k] (g.1 y + g'.1 y)) =
           μ.hom (f.1 y ⊗ₜ[k] g.1 y) + μ.hom (f.1 y ⊗ₜ[k] g'.1 y)
-        rw [tmul_add, map_add]))
+        rw [tmul_add, map_add (f := _)]))
       (fun c f g => Subtype.ext (funext fun y => by
         change μ.hom (f.1 y ⊗ₜ[k] (c • g.1 y)) = c • μ.hom (f.1 y ⊗ₜ[k] g.1 y)
         rw [tmul_smul, map_smul]))),
@@ -200,22 +205,23 @@ theorem cupCochain_comp_monoidHom (ι : H →* G) {A B : Rep.{u} k G} {r s n : �
   rw [cupCochain_apply, cupCochain_apply, partialProd_comp_monoidHom]
   rfl
 
-omit [Group H] in
 
+omit [Group H] in
 theorem hom_conjHomotopyFun {X Y : Rep.{u} k G} (P : X ⟶ Y) (g : G) (m : ℕ)
     (K : (Fin (m + 1) → G) → X) (γ : Fin m → G) :
     P.hom (conjHomotopyFun X g m K γ) = conjHomotopyFun Y g m (fun τ => P.hom (K τ)) γ := by
-  simp only [conjHomotopyFun, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [conjHomotopyFun, map_sum, map_smul]
+
 
 omit [Group H] in
-
 theorem cupCochain_neg_left {A B : Rep.{u} k G} {r s n : ℕ} (h : r + s = n)
     (F : (Fin r → G) → A) (E : (Fin s → G) → B) (σ : Fin n → G) :
     cupCochain h (fun τ => -F τ) E σ = -cupCochain h F E σ := by
   rw [cupCochain_apply, cupCochain_apply, neg_tmul]
 
-omit [Group H] in
 
+omit [Group H] in
 theorem cupCochain_neg_right {A B : Rep.{u} k G} {r s n : ℕ} (h : r + s = n)
     (F : (Fin r → G) → A) (E : (Fin s → G) → B) (σ : Fin n → G) :
     cupCochain h F (fun τ => -E τ) σ = -cupCochain h F E σ := by
@@ -264,7 +270,7 @@ theorem neg_conjHomotopyFun_coindPairing_apply (ι : H →* G) (x : G) {r s m : 
   rw [← hom_conjHomotopyFun, conjHomotopyFun_cupCochain, cupCochain_neg_left, cupCochain_neg_right,
     map_neg, map_neg, smul_neg, ← neg_add]
   congr 1
-  rw [Pi.add_apply, Pi.smul_apply, map_add, map_smul]
+  rw [Pi.add_apply, Pi.smul_apply, map_add (f := _), map_smul]
   simp only [Submodule.coe_add, Submodule.coe_smul, Pi.add_apply, Pi.smul_apply]
   congr 1
   · rw [coindPairing_cupCochain_comp_apply]

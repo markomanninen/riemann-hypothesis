@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,19 +51,15 @@ def HoweSpan (ι : Type) [Fintype ι] : Prop :=
     ∃ (m : ℕ) (y' : Fin m → ι → Matrix (Fin b) (Fin b) ℂ) (s : Fin m → ℂ), (∀ j, IsInv (y' j)) ∧
       ∀ F ∈ Vn lam n, Q F = ∑ j, s j • subY hab (y' j) F
 
-example : IsUni (fun _ : ι => (1 : Matrix (Fin a) (Fin a) ℂ)) := fun _ => one_mem _
-
-example : IsInv (fun _ : ι => (1 : Matrix (Fin a) (Fin a) ℂ)) := fun _ => by simp
 
 omit [Fintype ι] in
-
 theorem evalAt_lft (g y : ι → Matrix (Fin a) (Fin a) ℂ) (F : PY ι a) :
     evalAt y (lft g F) = evalAt (fun τ => g τ * y τ) F := by
   unfold evalAt
   induction F using MvPolynomial.induction_on
   · simp [lft]
   · rename_i p q hp hq
-    rw [map_add, map_add, hp, hq, map_add]
+    rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   · rename_i p v hp
     rw [map_mul, map_mul, hp, map_mul]
     congr 1
@@ -75,22 +75,23 @@ private lemma mvZ_one_right_X_eq_sum {κ : Type} (h : κ → Matrix (Fin b) (Fin
     simp [Ne.symm hj]
   · simp
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem mvZ_subY (hab : a ≤ b) (h y' : ι → Matrix (Fin b) (Fin b) ℂ) (F : PY ι a) :
     mvZ (fun _ => 1) h (subY hab y' F) = subY hab (fun τ => h τ * y' τ) F := by
   have key : (mvZ (fun _ => 1) h).comp (subY hab y') = subY hab (fun τ => h τ * y' τ) := by
     apply MvPolynomial.algHom_ext
     rintro ⟨τ, p, q⟩
     rw [AlgHom.comp_apply]
-    simp only [subY, aeval_X, map_sum, map_mul, algHom_C, algebraMap_eq, mvZ_one_right_X_eq_sum, Matrix.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [subY, aeval_X, map_sum, map_mul, algHom_C, algebraMap_eq, mvZ_one_right_X_eq_sum, Matrix.mul_apply]
     simp only [Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
   exact AlgHom.congr_fun key F
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem subY_eq_subD (hab : a ≤ b) (y' : ι → Matrix (Fin b) (Fin b) ℂ) (F : PY ι a) :
     subY hab y' F = aeval (Sum.elim (fun x : ι × Fin b × Fin b => (C (y' x.1 x.2.1 x.2.2) : FP ι a b)) X)
       (subD ℂ ι a b F) := by

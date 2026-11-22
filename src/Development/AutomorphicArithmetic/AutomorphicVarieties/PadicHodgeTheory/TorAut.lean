@@ -1,11 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Published IsLocalRing Polynomial
+module
 
-private theorem gg_ext {A : Type} [CommRing A] {x y : GG 3 A} (h : ∀ a b, x.mat a b = y.mat a b)
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial
+
+private theorem gg_ext {A : Type} [CommRing A] {x y : GG (m := 3) (R := A)}
+    (h : ∀ a b, x.mat a b = y.mat a b)
     (h' : x.right = y.right) : x = y :=
   SemidirectProduct.ext (Units.ext (Matrix.ext h)) h'
 
@@ -13,7 +19,7 @@ private theorem exists_unit {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Is
     [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] :
     ∃ t : Oˣ, (t : O) - 1 ∈ maximalIdeal O ∧ Function.Injective fun j : ℤ => t ^ j := by
   have h1 : (maximalIdeal O).comap (algebraMap ℤ_[l] O) = maximalIdeal ℤ_[l] :=
-    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal O))
+    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal O))
   have h2 : (l : O) ∈ maximalIdeal O := by
     have : (l : ℤ_[l]) ∈ maximalIdeal ℤ_[l] := by
       rw [PadicInt.maximalIdeal_eq_span_p]; exact Ideal.mem_span_singleton_self _
@@ -33,7 +39,7 @@ private theorem exists_unit {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Is
   omega
 
 theorem UpperTheory.V.Loc.torAut :
-    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : D.Univ) (x : U.R →ₐ[O] O), IsBase D.η D.Ψ U.r.hom x → ∃ (t : Oˣ) (θ : U.R →ₐ[O] U.R), (Function.Injective fun j : ℤ => t ^ j) ∧ x.comp θ = x ∧ (∀ a ∈ D.It U, θ a ∈ D.It U) ∧ ∀ g a b, θ ((U.r.hom g).mat a b) = algebraMap O U.R ((t ^ wt a b : Oˣ) : O) * (U.r.hom g).mat a b := by
+    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ)) (x : U.R →ₐ[O] O), IsBase D.η D.Ψ U.r.hom x → ∃ (t : Oˣ) (θ : U.R →ₐ[O] U.R), (Function.Injective fun j : ℤ => t ^ j) ∧ x.comp θ = x ∧ (∀ a ∈ D.It U, θ a ∈ D.It U) ∧ ∀ g a b, θ ((U.r.hom g).mat a b) = algebraMap O U.R ((t ^ wt a b : Oˣ) : O) * (U.r.hom g).mat a b := by
   intro hP l _ O _ _ _ _ _ _ _ D U x hx
   obtain ⟨t, ht1, ht⟩ := exists_unit (l := l) O
   have hres : ∀ (C : Type) [CommRing C] [Algebra O C] [IsCO O C] (j : ℤ),
@@ -47,7 +53,7 @@ theorem UpperTheory.V.Loc.torAut :
     rw [e, one_zpow] at e2
     rw [AlgHom.commutes]
     exact e2
-  have hmat : ∀ (C : Type) [CommRing C] [Algebra O C] (r : GQ l →* GG 3 C) g a b,
+  have hmat : ∀ (C : Type) [CommRing C] [Algebra O C] (r : GQ l →* GG (m := 3) (R := C)) g a b,
       (conjBy (tor C (Units.map (algebraMap O C : O →* C) t)) r g).mat a b =
         algebraMap O C ((t ^ wt a b : Oˣ) : O) * (r g).mat a b := fun C _ _ r g a b => by
     rw [(conjBy_tor r _).1, ← map_zpow]
@@ -72,7 +78,7 @@ theorem UpperTheory.V.Loc.torAut :
     refine (hF f ?_).trans (hF f' rfl).symm
     exact GLift.ext (MonoidHom.ext fun g => gg_ext (h g) rfl)
   have hxe : ∀ g a b, x ((U.r.hom g).mat a b) = (r0 D.η D.Ψ g).mat a b := fun g a b =>
-    congrArg (fun r : GQ l →* GG 3 O => (r g).mat a b) hx
+    congrArg (fun r : GQ l →* GG (m := 3) (R := O) => (r g).mat a b) hx
   refine ⟨t, θ, ht, uniq O _ _ fun g a b => ?_, fun y hy => ?_, hθm⟩
   · rw [AlgHom.comp_apply, hθm, map_mul, AlgHom.commutes]
     by_cases hab : a = b
@@ -93,7 +99,7 @@ theorem UpperTheory.V.Loc.torAut :
       ⟨_, rfl, fun a ha => Ideal.Quotient.eq_zero_iff_mem.2 ha⟩
     have e : f = (Ideal.Quotient.mkₐ O _).comp θ := uniq _ _ _ fun g a b => by
       rw [AlgHom.comp_apply, hθm, map_mul, AlgHom.commutes]
-      exact (congrArg (fun r : GQ l →* GG 3 (U.R ⧸ D.It U) => (r g).mat a b) hf).trans (hmat _ _ g a b)
+      exact (congrArg (fun r : GQ l →* GG (m := 3) (R := U.R ⧸ D.It U) => (r g).mat a b) hf).trans (hmat _ _ g a b)
     have := hfI hy
     rw [e] at this
     exact Ideal.Quotient.eq_zero_iff_mem.1 this

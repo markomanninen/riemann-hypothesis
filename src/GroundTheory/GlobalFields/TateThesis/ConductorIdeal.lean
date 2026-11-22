@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.Conductor
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.Conductor
+
+@[expose] public section
 
 open Topology Filter NumberField IsDedekindDomain Function
 open scoped NumberField.AdeleRing
@@ -12,8 +16,8 @@ section Ideals
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
 
-omit [IsDedekindDomain R] in
 
+omit [IsDedekindDomain R] in
 theorem asIdeal_pow_eq_one_iff (v : HeightOneSpectrum R) {k : ℕ} : v.asIdeal ^ k = 1 ↔ k = 0 := by
   constructor
   · intro h

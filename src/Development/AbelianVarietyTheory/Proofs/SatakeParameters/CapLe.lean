@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.ParConsts
-import Formalism.LocalRingCardinality.DataKerI
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NonemptyPlacesOfRecord
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemTopPlaces
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NonemptyPlacesOfRecord
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemTopPlaces
+
+@[expose] public section
+
 open Formalism.MainNotions Formalism.BasicNotions Formalism.MainNotions.G Classical
 
 namespace GlobalTheory.CapBound
@@ -14,7 +19,7 @@ theorem row_le (D : D7) (u : D.what₂.Word) (j : ℕ) (hj : j < D.R.m) (z : Boo
       wPl D (j + 1) z - kaJ D (j + 1) + (((D.hcW u (tauPl D z)).u ⟨r, hr⟩ : ℚ) : ℝ) := by
   have hw : wPl D (j + 1) z = (((D.hcW u (tauPl D z)).e ⟨j, hj⟩ : ℚ) : ℝ) := by
     unfold wPl wj
-    rw [dif_pos (by simpa using hj), D.hcW_e]
+    rw [dite_eq_left (by simpa using hj), D.hcW_e]
     rfl
   have hk : 5 ≤ D.R.k := by have := D.R.m_add_three_le_k; have := D.R.two_le_m; omega
   have hk' : (5 : ℝ) ≤ D.R.k := by exact_mod_cast hk

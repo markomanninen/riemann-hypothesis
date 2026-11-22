@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpOrbOfAmpDD
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AIsL
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselNeZeroOfCyclicOrbit
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpOrbOfAmpDD
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AIsL
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselNeZeroOfCyclicOrbit
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -204,102 +208,5 @@ theorem ae_UH_conj {k r : ℕ} {μG μR νR : Measure (Mt k r)}
     simp only [Set.mem_preimage, Set.mem_setOf_eq] at hx ⊢
     intro hxR
     exact hx hxR.2.1
-
-theorem amplitudeOrbit_of_local (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 Cn : ℝ) :
-    Formalism.MainNotions.S.Pv.AmpDD.AmpOrbOfAmpDD D large₂ C' Cl Cg cb Cu cT CT C0 Cn := by
-  intro hI hDD hAt hKD hNz hAKF hCC hGap hNV
-  intro hH hCl hCn τ w w' hTT θ W hW lam' hl A hA hT hT'
-  obtain ⟨h, hg, hok, hcell⟩ := hGap hCl hCn hH τ lam' hl
-  set L := toBessel D τ w w' θ W lam' A hW hA hT hT' with hL
-  set w0 : A.H := (((‖A.v0‖⁻¹ : ℝ) : ℂ) • A.v0) with hw0def
-  obtain ⟨l, l', hl1, hl1', hOP⟩ := ls_pair hI hAt hW hA hT hT' hg hok
-  have hw0 : PI.UpqRep.IsLowUnitH D.R.k D.R.rS (epsSH D.R) lam' A.σ w0 := lowest_K_type_unit hA
-  have hKS : PI.KFinSmooth := hI.2.2.1
-  have hJ : PI.BesselMapUniq.BesselMapUniq := hI.2.2.2
-  have hG : IsHaarOn (UH (Hpk D.R.k D.R.rS)) W.μG := hW.2.2.2.2.2.2.1
-  have hDDs : ∀ x ∈ Formalism.FourierDecayAlt.ThreeDimData.DDsp A.σ w0, x ∈ PI.UpqRep.smoothVecs (k := D.R.k) (r := D.R.rS) A.σ :=
-    Formalism.FourierDecayAlt.P.DDSmoothness.DD_smooth hKS hA.1 hA.2.1 hw0
-
-  obtain ⟨⟨x, hx, y, hy, hxy⟩, ⟨x', hx', y', hy', hxy'⟩⟩ :=
-    hNV hH τ w w' hTT θ W hW lam' hl A hA hT hT' w0 hw0
-  have hlx : l x ≠ 0 := by
-    intro h0; apply hxy
-    have e : Formalism.FourierDecayAlt.ThreeDimData.be W.z L.c W.π A.σ W.μW L.μN x y = (innerSL ℂ (l y)).smulRight (l x) :=
-      hOP.1.2.2.2.2.2.1 x hx y hy
-    rw [e, h0]; ext; simp
-  have hlx' : l' x' ≠ 0 := by
-    intro h0; apply hxy'
-    have e : Formalism.FourierDecayAlt.ThreeDimData.be W.z' L.c W.π' A.σ W.μW' L.μN x' y' = (innerSL ℂ (l' y')).smulRight (l' x') :=
-      hOP.1.2.2.2.2.2.2 x' hx' y' hy'
-    rw [e, h0]; ext; simp
-
-  obtain ⟨v, hvK, hlv⟩ := hNz hKD hKS _ _ _ _ _ A.σ w0 W.Wp W.z L.c W.π hA.1 hA.2.1 hw0 l hl1 ⟨x, hx, hlx⟩
-  obtain ⟨v', hvK', hlv'⟩ := hNz hKD hKS _ _ _ _ _ A.σ w0 W.Wq W.z' L.c W.π' hA.1 hA.2.1 hw0 l' hl1' ⟨x', hx', hlx'⟩
-
-  have hB : PI.BesselMapUniq.IsBesselMapSm (k := D.R.k) (r := D.R.rS) W.z
-      (PI.BesselMapUniq.psiGen D.R.k D.R.rS W.z (fun _ => L.c)) A.σ W.π A.B := by
-    rw [psiGen_const]; exact (Formalism.MainNotions.BridgeCS3d.isBesselMapSm_iff _ _ _ _ _).1 hA.2.2.1
-  have hB' : PI.BesselMapUniq.IsBesselMapSm (k := D.R.k) (r := D.R.rS) W.z'
-      (PI.BesselMapUniq.psiGen D.R.k D.R.rS W.z' (fun _ => L.c)) A.σ W.π' A.B' := by
-    rw [psiGen_const]; exact (Formalism.MainNotions.BridgeCS3d.isBesselMapSm_iff _ _ _ _ _).1 hA.2.2.2.1
-  have hlG : PI.BesselMapUniq.IsBesselMapSm (k := D.R.k) (r := D.R.rS) W.z
-      (PI.BesselMapUniq.psiGen D.R.k D.R.rS W.z (fun _ => L.c)) A.σ W.π l := by
-    rw [psiGen_const]; exact hl1
-  have hlG' : PI.BesselMapUniq.IsBesselMapSm (k := D.R.k) (r := D.R.rS) W.z'
-      (PI.BesselMapUniq.psiGen D.R.k D.R.rS W.z' (fun _ => L.c)) A.σ W.π' l' := by
-    rw [psiGen_const]; exact hl1'
-  obtain ⟨c0, hc0⟩ := Formalism.MainNotions.S.Pv.AIsL.aIsL hJ hA.1 hA.2.1 L.hz.1 L.hz.2 (fun _ => c_ne_zero D) L.hπ hB hlG
-    ⟨x, hDDs x hx, hlx⟩
-  obtain ⟨c0', hc0'⟩ := Formalism.MainNotions.S.Pv.AIsL.aIsL hJ hA.1 hA.2.1 L.hz'.1 L.hz'.2 (fun _ => c_ne_zero D) L.hπ' hB' hlG'
-    ⟨x', hDDs x' hx', hlx'⟩
-
-  set t : ℂ := ((‖A.v0‖ : ℝ) : ℂ) with ht
-  have hv0ne : A.v0 ≠ 0 := hA.2.2.2.2.2.1
-  have hv0 : A.v0 = t • w0 := by
-    rw [hw0def, ht, smul_smul, ← Complex.ofReal_mul, mul_inv_cancel₀ (norm_ne_zero_iff.mpr hv0ne),
-      Complex.ofReal_one, one_smul]
-  have hw0s : w0 ∈ PI.UpqRep.smoothVecs (k := D.R.k) (r := D.R.rS) A.σ :=
-    Formalism.FourierDecayAlt.P.DDSmoothness.smooth_smul _ hA.2.2.2.2.1
-  have hΦ : ∀ g ∈ UH (Hpk D.R.k D.R.rS), A.Φ g = (c0 * t) • l (A.σ g w0) := by
-    intro g hg'
-    show A.B (A.σ g A.v0) = _
-    rw [hv0]
-    exact orbit_mul hA.2.1 c0 hc0 hl1.2.1 hw0s t hg'
-  have hΦ' : ∀ g ∈ UH (Hpk D.R.k D.R.rS), A.Φ' g = (c0' * t) • l' (A.σ g w0) := by
-    intro g hg'
-    show A.B' (A.σ g A.v0) = _
-    rw [hv0]
-    exact orbit_mul hA.2.1 c0' hc0' hl1'.2.1 hw0s t hg'
-
-  set s : ℂ := ⟪l v, l v⟫_ℂ * ⟪l' v', l' v'⟫_ℂ with hs
-  have hs0 : s ≠ 0 := mul_ne_zero (inner_self_ne_zero.mpr hlv) (inner_self_ne_zero.mpr hlv')
-  set dg : ℂ := (PI.BesselPeriodGGP.fdegH W.μG A.σ w0 : ℂ) with hdg
-  set K1 : ℂ := ((A.cN : ℂ)⁻¹) * (c0 * t) * (starRingEnd ℂ) (c0' * t) with hK1
-  refine ⟨fun g => (K1 * s⁻¹ * dg⁻¹) • Formalism.MainNotions.S.Pv.AmpDD.coefF L v v' (l v) (l' v') g,
-    kfin_coef L _ v v' _ _ hvK hvK', ?_⟩
-  intro γ hγ hGf hMono hRel μR νR ν hRH hOQ hqR
-  have hCD : Formalism.MainNotions.S.Pv.AmpDD.CellData L W.μG γ μR νR ν := ⟨hγ, hGf, hMono, hRel, hRH, hOQ, hqR⟩
-  obtain ⟨b, hb0, hbm, hbi⟩ := hCC _ _ L h W.μG γ μR νR ν ENNReal.ofReal_ne_top hok hcell hCD hMono
-  have hAmp := hAKF hI _ _ L h W.μG w0 l l' hOP γ μR νR ν hCD b hb0 hbm hbi v v' hvK hvK' (l v) (l' v')
-  have hae := ae_UH_conj hγ hG hRH hqR
-  have hJ1 : A.J νR γ = K1 • ampJ νR 1 (fun g => l (A.σ g w0)) (fun g => l' (A.σ g w0)) γ :=
-    ampJ_mul νR A.cN A.Φ _ A.Φ' _ (c0 * t) (c0' * t) γ hγ hΦ hΦ' hae
-  have hJ2 : ampJ νR 1 (fun g => l (A.σ g w0)) (fun g => l' (A.σ g w0)) γ =
-      (s⁻¹ * dg⁻¹) • OrbInt L (Formalism.MainNotions.S.Pv.AmpDD.coefF L v v' (l v) (l' v')) γ ν := by
-    have hAmp' : s • ampJ νR 1 (fun g => l (A.σ g w0)) (fun g => l' (A.σ g w0)) γ =
-        dg⁻¹ • OrbInt L (Formalism.MainNotions.S.Pv.AmpDD.coefF L v v' (l v) (l' v')) γ ν := hAmp
-    have e1 : ampJ νR 1 (fun g => l (A.σ g w0)) (fun g => l' (A.σ g w0)) γ =
-        s⁻¹ • (s • ampJ νR 1 (fun g => l (A.σ g w0)) (fun g => l' (A.σ g w0)) γ) := by
-      rw [smul_smul, inv_mul_cancel₀ hs0, one_smul]
-    rw [e1, hAmp']
-    exact smul_smul s⁻¹ dg⁻¹ _
-  rw [hJ1, hJ2]
-  have hO := orbInt_smul L (K1 * s⁻¹ * dg⁻¹) (Formalism.MainNotions.S.Pv.AmpDD.coefF L v v' (l v) (l' v')) γ ν
-  have e2 : K1 • ((s⁻¹ * dg⁻¹) • OrbInt L (Formalism.MainNotions.S.Pv.AmpDD.coefF L v v' (l v) (l' v')) γ ν) =
-      (K1 * s⁻¹ * dg⁻¹) • OrbInt L (Formalism.MainNotions.S.Pv.AmpDD.coefF L v v' (l v) (l' v')) γ ν := by
-    rw [smul_smul]
-    congr 1
-    ring
-  exact e2.trans hO.symm
 
 end Formalism.L2.SG.AmpOrbPf

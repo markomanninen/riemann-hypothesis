@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.SmallCones.HodgeTateFromSandwich
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
-import Development.WeilBound.ThetaLifts.LocalTheory.SplitInv2
-import Development.WeilBound.ThetaLifts.CartanFactorisation.IntegrableOnRight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.HodgeTateFromSandwich
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
+public import Development.WeilBound.ThetaLifts.LocalTheory.SplitInv2
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.IntegrableOnRight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 

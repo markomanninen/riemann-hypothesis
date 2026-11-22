@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
-import Formalism.LocalToGlobal.ProjectiveLattices.ThExpBC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDVal
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDVal
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,7 +55,8 @@ theorem nabVal_C_mul [Algebra ℚ k] {R : Type} [CommRing R] [Algebra R k] {O : 
     (u : κ → Fin d → k) (P : MvPolynomial κ k) :
     B.nabVal k h w0 q (MvPowerSeries.C c * f) u P = c * B.nabVal k h w0 q f u P := by
   unfold Germ.FB.nabVal Germ.DpolyOf
-  rw [_root_.mul_assoc, map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [_root_.mul_assoc, map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [dmon_C_mul]
   simp only [map_mul, MvPowerSeries.constantCoeff_C]
@@ -122,8 +127,8 @@ end GlobalTheory.NabLinear
 
 namespace GlobalTheory
 
-open NabLinear in
 
+open NabLinear in
 theorem nab_smul_section : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) [StarRing (𝓞 E)] (nab : NabV Xo c), IsNab Xo c nab → ∀ (S : Type) [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) (N : ℕ) (F F' : LB.Sec (LPow Xo.univ.t.G Xo.univ.t.PP.L ((N : ℤ) ^ 2) (ptO Xo y.x))) (r : S), (∀ j, F'.f j = liftFun Xo.univ.t.G _ (T := ptO Xo y.x) (toΓ S r) * F.f j) → ∀ α, nab y ((N : ℤ) ^ 2) F' α = r * nab y ((N : ℤ) ^ 2) F α := by
   intro E _ _ _ H Dw l Xo c _ nab hnab S _ _ y N
   letI : Algebra ℚ S := ((algebraMap c.F S).comp (algebraMap ℚ c.F)).toAlgebra

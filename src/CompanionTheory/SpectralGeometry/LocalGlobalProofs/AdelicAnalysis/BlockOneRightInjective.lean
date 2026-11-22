@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,40 +16,33 @@ section Blocks
 
 variable {K : Type} [CommRing K] {M : ℕ}
 
-@[simp] lemma blockOne_zero_zero (t : K) (A : Matrix (Fin M) (Fin M) K) :
-    blockOne t A 0 0 = t := rfl
-@[simp] lemma blockOne_zero_succ (t : K) (A : Matrix (Fin M) (Fin M) K) (j : Fin M) :
-    blockOne t A 0 j.succ = 0 := rfl
-@[simp] lemma blockOne_succ_zero (t : K) (A : Matrix (Fin M) (Fin M) K) (i : Fin M) :
-    blockOne t A i.succ 0 = 0 := rfl
-@[simp] lemma blockOne_succ_succ (t : K) (A : Matrix (Fin M) (Fin M) K) (i j : Fin M) :
-    blockOne t A i.succ j.succ = A i j := rfl
-
 lemma blockOne_mul (a b : K) (A B : Matrix (Fin M) (Fin M) K) :
     blockOne a A * blockOne b B = blockOne (a * b) (A * B) := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp [Matrix.mul_apply, Fin.sum_univ_succ]
+    simp [blockOne, Matrix.mul_apply, Fin.sum_univ_succ]
 
 lemma blockOne_one : blockOne (1 : K) (1 : Matrix (Fin M) (Fin M) K) = 1 := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp [Matrix.one_apply, Fin.succ_ne_zero, (Fin.succ_ne_zero _).symm]
+    simp [blockOne, Matrix.one_apply, Fin.succ_ne_zero, (Fin.succ_ne_zero _).symm]
 
 lemma blockOne_right_injective {a b : K} {A B : Matrix (Fin M) (Fin M) K}
     (h : blockOne a A = blockOne b B) : A = B := by
   ext i j
-  simpa using congrFun (congrFun h i.succ) j.succ
+  exact congrFun (congrFun h i.succ) j.succ
 
 lemma map_blockOne {L : Type} [CommRing L] (φ : K →+* L) (a : K) (A : Matrix (Fin M) (Fin M) K) :
     (blockOne a A).map φ = blockOne (φ a) (A.map φ) := by
   ext i j
-  refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;> simp
+  refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
+    simp [blockOne]
 
 lemma cT_blockOne (σ : K →+* K) (a : K) (A : Matrix (Fin M) (Fin M) K) :
     cT σ (blockOne a A) = blockOne (σ a) (cT σ A) := by
   ext i j
-  refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;> simp [cT]
+  refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
+    simp [blockOne, cT]
 
 def blockHom : Matrix (Fin M) (Fin M) K →* Matrix (Fin (M + 1)) (Fin (M + 1)) K where
   toFun A := blockOne 1 A
@@ -89,15 +86,16 @@ lemma eq_blockOne_of_col (σ : K →+* K) (J : Matrix (Fin M) (Fin M) K) {s : K}
     simp [cT, h00, hi0]
   have h2 : ∀ j : Fin M, h 0 j.succ = 0 := by
     intro j
-    have e := congrFun (congrFun hm 0) j.succ
+    have e : (cT σ h * blockOne s J * h) 0 j.succ = blockOne s J 0 j.succ :=
+      congrArg (fun A : Matrix (Fin (M + 1)) (Fin (M + 1)) K => A 0 j.succ) hm
     rw [Matrix.mul_apply] at e
     simp only [h1] at e
     rw [Fin.sum_univ_succ] at e
-    simp at e
+    simp [blockOne] at e
     exact (hs.mul_right_eq_zero).1 e
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp [h00, hi0, h2]
+    simp [blockOne, h00, hi0, h2]
 
 lemma exists_blockGL (σ : K →+* K) (J : Matrix (Fin M) (Fin M) K) {s : K} (hs : IsUnit s)
     {h : GL (Fin (M + 1)) K} (hm : h ∈ UJ σ (blockOne s J))
@@ -145,7 +143,7 @@ lemma blockOne_mulVec_cons (A : Matrix (Fin M) (Fin M) K) (x : Fin M → K) :
     (blockOne 1 A).mulVec (Fin.cons 0 x) = Fin.cons 0 (A.mulVec x) := by
   ext a
   refine Fin.cases ?_ (fun i => ?_) a <;>
-    simp [Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+    simp [blockOne, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
 
 lemma continuous_blockOne [TopologicalSpace K] :
     Continuous (fun A : Matrix (Fin M) (Fin M) K => blockOne (1 : K) A) := by
@@ -254,9 +252,9 @@ lemma mem_HFin_iff (hs : s ≠ 0) (u : HA R σ J) :
         exact congrFun (congrFun (congrArg (fun g : GL (Fin (M + 1)) (R ⊗[F] E) =>
           (g : Matrix (Fin (M + 1)) (Fin (M + 1)) (R ⊗[F] E))) e) a) b
       have h0 : (γ : Matrix (Fin (M + 1)) (Fin (M + 1)) E) 0 0 = 1 :=
-        inj (by rw [ent]; simp)
+        inj (by rw [ent]; simp [blockOne])
       have hi : ∀ i : Fin M, (γ : Matrix (Fin (M + 1)) (Fin (M + 1)) E) i.succ 0 = 0 :=
-        fun i => inj (by rw [ent]; simp)
+        fun i => inj (by rw [ent]; simp [blockOne])
       obtain ⟨g, rfl⟩ := exists_blockGL _ _ (isUnit_iff_ne_zero.2 hs) hγ h0 hi
       refine ⟨g, of_blockGL_mem_UJ _ _ _ hγ, ?_⟩
       apply blockGL_injective
@@ -273,7 +271,7 @@ lemma act_iota {n : ℕ} (u : HA R σ J) (X : Fin n → Fin M → R ⊗[F] E) :
     change (blockOne 1 (HA.mat R σ J u : Matrix (Fin M) (Fin M) (R ⊗[F] E))).mulVec
       (Fin.cons 1 (fun _ => 0)) i = (Fin.cons 1 (fun _ => 0) : Fin (M + 1) → R ⊗[F] E) i
     rw [mulVec_first]
-    refine Fin.cases ?_ (fun i => ?_) i <;> simp
+    refine Fin.cases ?_ (fun i => ?_) i <;> simp [blockOne]
   · exact blockOne_mulVec_cons _ _
 
 section Top

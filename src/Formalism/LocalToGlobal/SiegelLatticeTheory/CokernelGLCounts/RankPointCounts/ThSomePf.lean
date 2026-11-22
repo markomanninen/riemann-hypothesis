@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocUnramB
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ScalKindPf
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.SmoothBigCellSectionsExist
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocUnramB
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ScalKindPf
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.SmoothBigCellSectionsExist
+
+@[expose] public section
 
 noncomputable section
 
@@ -362,7 +366,7 @@ theorem firstProj_det_corner (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) 
       split_ifs
       · rfl
       · exact map_zero _
-    rw [map_add, hp1Z, hp1c]
+    rw [map_add (f := _), hp1Z, hp1c]
     split_ifs
     · field_simp
       ring
@@ -424,7 +428,7 @@ theorem secondProj_det_corner (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word)
       split_ifs
       · rfl
       · exact map_zero _
-    rw [map_add, hp2Z, hp2c]
+    rw [map_add (f := _), hp2Z, hp2c]
     split_ifs
     · field_simp
       ring
@@ -505,11 +509,11 @@ theorem leadMinor_r (Z : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E) 
     leadMinorE Z D.R.rS = (Z.submatrix Fin.castSucc Fin.castSucc).det := by
   unfold leadMinorE; rw [dif_pos (Nat.le_succ _)]; rfl
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem detG (hA : ∀ p, Agree δ M p) (u u' : D.what₂.Word) (p : PlF D) (g : Loc.SplitG (M p).L)
     (hsM : (M p).split = some g) {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
-    {F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} (w : Point D.host.E (D.R.rS + 1))
+    {F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)} (w : Point D.host.E (D.R.rS + 1))
     (hc : IsInCell (ZhatOM (ZhatL (lf D F0) F')) w) :
     IsUnit (Formalism.L2.SG.CntLocal.ZZP (M := M) δ u u' p (ZhatL (lf D F0) F') +
       cornerM p (cornerSh δ (D.mem u).A.T (D.mem u').A.T p w)).det := by

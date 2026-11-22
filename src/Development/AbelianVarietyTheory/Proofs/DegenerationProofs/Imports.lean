@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.FiniteFieldCountEstimate
 
@@ -95,7 +99,7 @@ theorem main (R : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] (�
       (fun g _ b' h => ⟨1, g, by simpa using h⟩) ?_ ?_ b'
     · rintro x y ⟨n, b, hb⟩ ⟨m, c, hc⟩
       refine ⟨n + m, algebraMap R B π ^ m * b + algebraMap R B π ^ n * c, ?_⟩
-      rw [map_add, map_mul, map_mul, map_pow, map_pow, AlgHom.commutes, ← hb, ← hc]
+      rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, AlgHom.commutes, ← hb, ← hc]
       ring
     · rintro x y ⟨n, b, hb⟩ ⟨m, c, hc⟩
       refine ⟨n + m, b * c, ?_⟩
@@ -109,7 +113,8 @@ theorem main (R : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] (�
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun B).mp hg
     refine ⟨⟨A (∑ i, MvPolynomial.C (c i) * MvPolynomial.X i), _, rfl⟩, Subtype.ext ?_⟩
     show algebraMap R L π * A (∑ i, MvPolynomial.C (c i) * MvPolynomial.X i) = f g
-    rw [← hc, map_sum, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, map_sum, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, hAC, hAX, smul_eq_mul, map_mul, ← hπt i]
     ring

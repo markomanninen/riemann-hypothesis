@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPointOfIsPeriod
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PointEqIffIsometryClosed
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TensorObjectAndCurveExistsIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPointOfIsPeriod
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PointEqIffIsometryClosed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TensorObjectAndCurveExistsIff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
@@ -47,7 +51,8 @@ theorem exists_lat_move (hP : IsPeriod D ty P) (hP' : IsPeriod D' ty P') (gam : 
        obtain ⟨x, hx⟩ := hs (gam.symm a)
        refine ⟨x, ?_⟩
        have := congrArg gam hx
-       rw [map_nsmul, gam.apply_symm_apply, map_sum] at this
+       set_option synthInstance.maxHeartbeats 100000 in
+         rw [map_nsmul, gam.apply_symm_apply, map_sum] at this
        exact this }, rfl⟩
 
 theorem isExp_move {R : Type} [CommRing R] {T : GlobalTheory.CM.PAT H (Sp R)} {σ : R →+* ℂ} (hP : IsPeriod D ty P)
@@ -61,7 +66,7 @@ theorem isExp_move {R : Type} [CommRing R] {T : GlobalTheory.CM.PAT H (Sp R)} {�
   · exact (hol U f).1.preimage hd.continuous
   · exact (hol U f).2.comp hd.differentiableOn fun z hz => hz
   · beta_reduce
-    rw [map_add, add]
+    rw [map_add (f := _), add]
   · refine (ker _).trans ⟨?_, ?_⟩
     · rintro ⟨a, ha⟩
       exact ⟨gam.symm a, h.injective (by rw [← hh, gam.apply_symm_apply, ha])⟩

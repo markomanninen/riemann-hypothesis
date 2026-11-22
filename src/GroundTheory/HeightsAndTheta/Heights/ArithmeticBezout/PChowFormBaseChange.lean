@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Characterised
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsBaseChange
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LowerBoundConditional
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Characterised
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LowerBoundConditional
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

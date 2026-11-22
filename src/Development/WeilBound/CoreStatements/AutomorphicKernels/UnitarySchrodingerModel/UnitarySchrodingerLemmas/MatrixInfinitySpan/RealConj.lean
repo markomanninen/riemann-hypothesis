@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.SchrodingerMatching.PsiPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussMulUnitary
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.SchrodingerMatching.PsiPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussMulUnitary
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.OpenCoset
+module
+
+public import Development.EtaleCohomology.DivisorCycles.OpenCoset
+
+@[expose] public section
 
 open Matrix
 
@@ -11,13 +15,14 @@ theorem ev_DX (Y x : Mat C N) (f : MP C N) : ev x (DX Y f) = dAt f x (Y * x) := 
   induction f using MvPolynomial.induction_on with
   | C a => simp [dAt, ev, DX, MvPolynomial.derivation_C]
   | add f g hf hg =>
-    rw [map_add, ev, map_add, ← ev, ← ev, hf, hg]
-    simp only [dAt, map_add, ev, add_mul, Finset.sum_add_distrib]
+    rw [map_add (f := _), ev, map_add (f := _), ← ev, ← ev, hf, hg]
+    simp only [dAt, map_add (f := _), ev, add_mul, Finset.sum_add_distrib]
   | mul_X f q hf =>
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
-    simp only [ev, map_add, map_mul] at hf ⊢
+    simp only [ev, map_add (f := _), map_mul] at hf ⊢
     rw [hf]
-    simp only [DX, MvPolynomial.mkDerivation_X, map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [DX, MvPolynomial.mkDerivation_X, map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X,
       dAt, ev, Derivation.leibniz, smul_eq_mul, map_add, map_mul, MvPolynomial.pderiv_X, add_mul,
       Finset.sum_add_distrib, Matrix.mul_apply]
     congr 1

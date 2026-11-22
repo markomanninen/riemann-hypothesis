@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueEqZeroIffV
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.FlatGenInjective
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.BilLActRight
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigDirInt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanDir
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueEqZeroIffV
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.FlatGenInjective
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.BilLActRight
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigDirInt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanDir
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,7 +26,8 @@ theorem subst_act_log {k O : Type} [CommRing k] [Algebra ℚ k] [CommRing O] {d 
     subst (fun i => subst (oneVar k d) (A.act a i)) (subst (oneVar k d) (GlobalTheory.FormalLog.logOf G b)) =
       ∑ j, coeff (Finsupp.single ((0 : Fin 1), j) 1) (A.act a b) •
         (subst (oneVar k d) (GlobalTheory.FormalLog.logOf G j) : MvPowerSeries (Fin d) k) := by
-  rw [subst_oneVar _ cc_oneVar _ (A.const a), logOf_eq, GlobalTheory.TwistCheck.log_act, ← coe_substAlgHom hs_oneVar, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [subst_oneVar _ cc_oneVar _ (A.const a), logOf_eq, GlobalTheory.TwistCheck.log_act, ← coe_substAlgHom hs_oneVar, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← smul_eq_C_mul, map_smul]
   rfl
@@ -56,7 +61,8 @@ theorem isIntHom_actX_and_eigen (E : Type) [Field E] [NumberField E] [IsCMField 
       rw [jX, RingHom.comp_apply, hχ]; rfl
     funext i
     have h2 := congrArg (jX X) (congrFun h i)
-    simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, map_sum, map_mul, Pi.smul_apply, smul_eq_mul] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, map_sum, map_mul, Pi.smul_apply, smul_eq_mul] at h2
     rw [hz]
     simpa only [Matrix.mulVec, dotProduct, tanX, lieVec, Matrix.of_apply, Pi.smul_apply, smul_eq_mul] using h2
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CthMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CthMonomial
+
+@[expose] public section
 
 noncomputable section
 

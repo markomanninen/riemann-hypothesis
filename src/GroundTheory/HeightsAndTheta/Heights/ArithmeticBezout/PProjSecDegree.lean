@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsProjSecDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsProjSecDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,12 +18,10 @@ namespace ProjSecDegree
 variable {n e : ℕ} (J : Ideal (MvPolynomial (Fin n) ℂ)) (A : Matrix (Fin (e + 1)) (Fin n) ℂ)
 
 set_option hygiene false in
-
-local notation "𝕂" => FractionRing (MvPolynomial (Fin (e + 1)) ℂ)
+local notation "ℝt" => MvPolynomial (Fin (e + 1)) ℂ
 
 set_option hygiene false in
-
-local notation "ℝt" => MvPolynomial (Fin (e + 1)) ℂ
+local notation "𝕂" => FractionRing ℝt
 
 theorem projVar_ne_zero (i : Fin (e + 1)) : projVar e i ≠ 0 :=
   (map_ne_zero_iff _ (IsFractionRing.injective ℝt 𝕂)).2 (X_ne_zero i)
@@ -29,7 +32,8 @@ theorem algebraMap_C (c : ℂ) : algebraMap ℝt 𝕂 (C c) = algebraMap ℂ �
 theorem chartForm_projPar :
     Vertical.chartForm (projPar A) =
       C (projVar e 0)⁻¹ * (ComplexSets.linPoly A 0).map (algebraMap ℂ 𝕂) := by
-  simp only [Vertical.chartForm, linForm, projPar, ComplexSets.linPoly, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Vertical.chartForm, linForm, projPar, ComplexSets.linPoly, map_sum, map_mul,
     MvPolynomial.map_C, MvPolynomial.map_X, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← mul_assoc, ← C_mul, div_eq_inv_mul]
@@ -38,7 +42,8 @@ theorem secForm_projPar (i : Fin e) :
     Vertical.secForm (projPar A) i =
       C (projVar e i.succ) * (ComplexSets.linPoly A 0).map (algebraMap ℂ 𝕂) -
         C (projVar e 0) * (ComplexSets.linPoly A i.succ).map (algebraMap ℂ 𝕂) := by
-  simp only [Vertical.secForm, linForm, projPar, ComplexSets.linPoly, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Vertical.secForm, linForm, projPar, ComplexSets.linPoly, map_sum, map_mul,
     MvPolynomial.map_C, MvPolynomial.map_X, Finset.mul_sum, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [C_sub, C_mul, C_mul]
@@ -52,9 +57,10 @@ theorem projHom_X (i : Fin (e + 1)) :
     ComplexSets.projHom J A (X i) = Ideal.Quotient.mk J (ComplexSets.linPoly A i) := by
   simp [ComplexSets.projHom, ComplexSets.pullback]
 
+
+set_option synthInstance.maxHeartbeats 100000 in
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1600000 in
-
 theorem finrank_eq [Algebra ℝt (MvPolynomial (Fin n) ℂ ⧸ J)]
     (hφ : ∀ p, algebraMap ℝt (MvPolynomial (Fin n) ℂ ⧸ J) p = ComplexSets.projHom J A p) :
     Module.finrank 𝕂 (TensorProduct ℝt 𝕂 (MvPolynomial (Fin n) ℂ ⧸ J)) =
@@ -141,7 +147,7 @@ theorem finrank_eq [Algebra ℝt (MvPolynomial (Fin n) ℂ ⧸ J)]
     simp only [ψ, Ideal.Quotient.lift_mk, RingHom.comp_apply, σ, MvPolynomial.map_X]
   have h₂ : G.comp F = AlgHom.id 𝕂 _ := by
     refine Algebra.TensorProduct.ext (Subsingleton.elim _ _) ?_
-    apply AlgHom.coe_ringHom_injective
+    apply AlgHom.toRingHom_injective
     refine Ideal.Quotient.ringHom_ext (MvPolynomial.ringHom_ext (fun c => ?_) (fun j => ?_))
     · rw [RingHom.comp_apply, RingHom.comp_apply, ← projHom_C J A, ← hφ, AlgHom.coe_toRingHom,
         AlgHom.coe_toRingHom, AlgHom.commutes, AlgHom.commutes]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOffClr
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PairSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOffClr
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PairSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ private theorem exists_mem_eSpan (h : ESpanMul) (K : Type) [CommRing K] (n : ℕ
     obtain ⟨k, hk⟩ := hp
     obtain ⟨l, hl⟩ := hq
     refine ⟨max k l, ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ (hmono _ _ (le_max_left k l) hk) (hmono _ _ (le_max_right k l) hl)
   | mul_X p i hp =>
     obtain ⟨k, hk⟩ := hp

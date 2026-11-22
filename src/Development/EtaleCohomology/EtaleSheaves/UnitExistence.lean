@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafOneSpecPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafOneSpecPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -16,7 +20,7 @@ def LeafCocycleOfSec : Prop := ∀ (R : Type) [CommRing R] (F : Shv R) (E : Spc)
   (s : ∀ (U : Scheme.{0}), Nonempty (Sx E 0 U) → Sec F U),
   (∀ (V U : Scheme.{0}) (g : V ⟶ U) (hU : Nonempty (Sx E 0 U)) (hV : Nonempty (Sx E 0 V)), Sec.res g (s U hU) = s V hV) →
   ∃ α : Cocycle ((chains R).obj E) (res R F) 0,
-    ∀ (U : Scheme.{0}) (x : Sx E 0 U), ev α.1 0 0 (by simp) U x = Sec.map (resι R F) (s U ⟨x⟩)
+    ∀ (U : Scheme.{0}) (x : Sx E 0 U), ev (R := R) α.1 0 0 (by simp) U x = Sec.map (resι R F) (s U ⟨x⟩)
 
 theorem LeafOneExists_of (hU : LeafUnitSec) (hC : LeafCocycleOfSec) : LateralTheory.E.LeafOneSpecPf.LeafOneExists := by
   intro q _ E hE

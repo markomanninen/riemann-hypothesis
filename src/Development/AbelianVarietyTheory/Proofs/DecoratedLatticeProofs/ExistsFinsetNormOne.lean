@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentApproximation.AddDense
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentApproximation.AddDense
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace GlobalTheory.HeckeSplitAll.Approx
 variable {F : Type} [Field F] [NumberField F]
 
 theorem norm_alg_inf (w : InfinitePlace F) (x : F) : ‖algebraMap F w.Completion x‖ = w x := by
-  rw [show algebraMap F w.Completion x = (x : w.Completion) from rfl]
-  simp only [InfinitePlace.Completion.norm_ofCompletion, UniformSpace.Completion.norm_coe]; rfl
+  rw [AbsoluteValue.Completion.algebraMap_def, AbsoluteValue.Completion.norm_coe]
+  rfl
 
 theorem norm_le_one_iff_int (v : HeightOneSpectrum (𝓞 F)) (x : v.adicCompletion F) :
     ‖x‖ ≤ 1 ↔ x ∈ v.adicCompletionIntegers F := by
@@ -95,7 +99,8 @@ theorem exists_int_near (F : Type) [Field F] [NumberField F] : ∃ C : ℝ, 0 < 
   have e : ((∑ i, ⌊b.repr f i⌋ • RingOfIntegers.basis F i : 𝓞 F) : F) - f =
       ∑ i, (((⌊b.repr f i⌋ : ℚ) - b.repr f i : ℚ) : F) * b i := by
     conv_lhs => arg 2; rw [← b.sum_repr f]
-    rw [show ((∑ i, ⌊b.repr f i⌋ • RingOfIntegers.basis F i : 𝓞 F) : F) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show ((∑ i, ⌊b.repr f i⌋ • RingOfIntegers.basis F i : 𝓞 F) : F) =
       algebraMap (𝓞 F) F (∑ i, ⌊b.repr f i⌋ • RingOfIntegers.basis F i) from rfl, map_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, ← integralBasis_apply, ← hb, Rat.smul_def, zsmul_eq_mul]
@@ -103,7 +108,8 @@ theorem exists_int_near (F : Type) [Field F] [NumberField F] : ∃ C : ℝ, 0 < 
     ring
   have h2 : ‖algebraMap F w.Completion (((∑ i, ⌊b.repr f i⌋ • RingOfIntegers.basis F i : 𝓞 F) : F) - f)‖ ≤
       ∑ i, w (b i) := by
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [norm_alg_inf, map_mul]
     refine mul_le_of_le_one_left (apply_nonneg _ _) ?_
@@ -118,9 +124,9 @@ theorem exists_int_near (F : Type) [Field F] [NumberField F] : ∃ C : ℝ, 0 < 
   rw [map_sub, sub_add_sub_cancel, ← map_sub] at h4
   linarith [hf' w]
 
+
 open NumberField.mixedEmbedding NumberField.InfinitePlace MeasureTheory ENNReal Module in
 open scoped nonZeroDivisors in
-
 theorem exists_small_elt (v₀ : HeightOneSpectrum (𝓞 F)) (η : ℝ) (hη : 0 < η) :
     ∃ x : F, x ≠ 0 ∧ (∀ w : InfinitePlace F, w x < η) ∧
       ∀ v : HeightOneSpectrum (𝓞 F), v ≠ v₀ → ‖algebraMap F (v.adicCompletion F) x‖ ≤ 1 := by
@@ -192,7 +198,7 @@ theorem strong_approx (v₀ : HeightOneSpectrum (𝓞 F)) (t : InfiniteAdeleRing
       have e : algebraMap F w.Completion (M * u + M * x * o') - t w = algebraMap F w.Completion (M * x) *
           (algebraMap F w.Completion (o' : F) -
             (t w - algebraMap F w.Completion (M * u)) / algebraMap F w.Completion (M * x)) := by
-        rw [map_add, map_mul _ (M * x), mul_sub, mul_div_cancel₀ _ h0]; ring
+        rw [map_add (f := _), map_mul _ (M * x), mul_sub, mul_div_cancel₀ _ h0]; ring
       rw [e, norm_mul, norm_alg_inf, map_mul, InfinitePlace.map_natCast]
       calc _ ≤ (M * w x) * (C + 1) := mul_le_mul_of_nonneg_left (ho' w).le (by positivity)
         _ < (M * (ε / (M * (C + 1)))) * (C + 1) := by gcongr; exact hxw w
@@ -203,7 +209,7 @@ theorem strong_approx (v₀ : HeightOneSpectrum (𝓞 F)) (t : InfiniteAdeleRing
       have e : algebraMap F (v.adicCompletion F) (M * u + M * x * o') - s v = (M : v.adicCompletion F) *
           (-(algebraMap F (v.adicCompletion F) (M : F)⁻¹ * s v - algebraMap F (v.adicCompletion F) u) +
             algebraMap F (v.adicCompletion F) x * algebraMap F (v.adicCompletion F) (o' : F)) := by
-        simp only [map_add, map_mul, map_inv₀, map_natCast]
+        simp only [map_add (f := _), map_mul, map_inv₀, map_natCast]
         field_simp
         ring
       rw [e, norm_mul]
@@ -217,7 +223,7 @@ theorem strong_approx (v₀ : HeightOneSpectrum (𝓞 F)) (t : InfiniteAdeleRing
     · have h1 := norm_add_le (1 : w.Completion) (algebraMap F w.Completion (o : F) -
         (t w - algebraMap F w.Completion (M * u)) / algebraMap F w.Completion (M * x))
       have e : ((o + 1 : 𝓞 F) : F) = 1 + o := by push_cast; ring
-      rw [e, map_add, map_one, add_sub_assoc]
+      rw [e, map_add (f := _), map_one, add_sub_assoc]
       rw [norm_one] at h1
       linarith [ho w]
   · exact ⟨_, hc, key o fun w => (ho w).trans (lt_add_one C)⟩

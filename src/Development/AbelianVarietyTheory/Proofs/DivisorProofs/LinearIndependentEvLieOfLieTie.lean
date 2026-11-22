@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaFreeFiniteBijectiveOfSmooth
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaFreeFiniteBijectiveOfSmooth
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroup
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,13 +48,44 @@ theorem lieTie_unique_right {Y : Scheme.{0}} {ψ : P.A.A.left ⟶ Y} {x : LieG P
   haveI := HodgeTateCompare.isLocalRing_dualNumber (O := O)
   have hp : ¬ IsUnit (p : DualNumber O) := fun h => (Fact.out : ¬ IsUnit (p : O)) (by
     simpa using h.map (TrivSqZeroExt.fstHom O O O))
-  have e : xG.1 = xG'.1 := (existsUnique_right hp (isAdicComplete_dualNumber p) x.1).unique h1 h1'
+  have mem_pow {R : Type} [CommRing R] (a : R) (n : ℕ) (x : R) :
+      x ∈ (Ideal.span {a} ^ n • ⊤ : Submodule R R) ↔ a ^ n ∣ x := by
+    rw [Ideal.span_singleton_pow, smul_eq_mul, Ideal.mul_top, Ideal.mem_span_singleton]
+  have dual_dvd (n : ℕ) (x : DualNumber O) :
+      (p : DualNumber O) ^ n ∣ x ↔ (p : O) ^ n ∣ x.fst ∧ (p : O) ^ n ∣ x.snd := by
+    have e : (p : DualNumber O) ^ n = TrivSqZeroExt.inl ((p : O) ^ n) := by
+      rw [← TrivSqZeroExt.inl_pow, TrivSqZeroExt.inl_natCast]
+    rw [e]
+    constructor
+    · rintro ⟨y, rfl⟩
+      exact ⟨⟨y.fst, by simp⟩, ⟨y.snd, by simp⟩⟩
+    · rintro ⟨⟨a, ha⟩, b, hb⟩
+      exact ⟨TrivSqZeroExt.inl a + TrivSqZeroExt.inr b, by ext <;> simp [ha, hb]⟩
+  have hc : IsAdicComplete (Ideal.span {(p : DualNumber O)}) (DualNumber O) := by
+    have h := (inferInstance : IsAdicComplete (Ideal.span {(p : O)}) O)
+    refine { haus' := ?_, toIsPrecomplete := ?_ }
+    · intro x hx
+      simp only [SModEq.zero, mem_pow, dual_dvd] at hx
+      refine TrivSqZeroExt.ext (h.toIsHausdorff.haus' x.fst fun n => ?_)
+        (h.toIsHausdorff.haus' x.snd fun n => ?_)
+      · rw [SModEq.zero, mem_pow]; exact (hx n).1
+      · rw [SModEq.zero, mem_pow]; exact (hx n).2
+    · constructor
+      intro f hf
+      simp only [SModEq.sub_mem, mem_pow, dual_dvd] at hf ⊢
+      obtain ⟨a, ha⟩ := h.toIsPrecomplete.prec' (fun n => (f n).fst) fun {m n} hmn => by
+        rw [SModEq.sub_mem, mem_pow]; exact (hf hmn).1
+      obtain ⟨b, hb⟩ := h.toIsPrecomplete.prec' (fun n => (f n).snd) fun {m n} hmn => by
+        rw [SModEq.sub_mem, mem_pow]; exact (hf hmn).2
+      simp only [SModEq.sub_mem, mem_pow] at ha hb
+      exact ⟨TrivSqZeroExt.inl a + TrivSqZeroExt.inr b, fun n => ⟨by simpa using ha n, by simpa using hb n⟩⟩
+  have e : xG.1 = xG'.1 := (existsUnique_right hp hc x.1).unique h1 h1'
   have e1 : w.left = w'.left :=
     P.gen_pull.1.hom_ext (by rw [h3, h3', e]) ((Over.w w).trans (Over.w w').symm)
   rw [← h2, ← h2', e1]
 
-omit [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] in
 
+omit [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] in
 theorem linearIndependent_evLie {n : ℕ} (x : Fin n → LieG P.Gt)
     (h : ∀ a : Fin n → O, (∀ f : omega P.Gt, ∑ j, a j * f.1 (x j) = 0) → ∀ j, a j = 0) :
     LinearIndependent C (fun j => evLie P (x j)) := by
@@ -63,7 +98,8 @@ theorem linearIndependent_evLie {n : ℕ} (x : Fin n → LieG P.Gt)
   have h0 := h a (fun f => P.integers.hom_inj (by
     have h1 := congrArg (fun L : P.OmC →ₗ[C] C => (b : O) • L ((1 : C) ⊗ₜ f)) hg
     simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.zero_apply, smul_zero, Finset.smul_sum] at h1
-    rw [map_zero, map_sum, ← h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum, ← h1]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, ha, ← smul_assoc, smul_eq_mul]
     congr 1
@@ -77,8 +113,8 @@ end GlobalTheory.CompHt.TieIndep
 
 namespace GlobalTheory.CompHt
 
-open TieIndep in
 
+open TieIndep in
 theorem linearIndependent_evLie_of_lieTie : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C ℝ≥0) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] [Algebra ℤ_[p] O] [Algebra ℤ_[p] C] [IsScalarTower ℤ_[p] O C] [Algebra c.F C] [StarRing (𝓞 E)] (T : CDVR) (io : c.F →+* T.Fr) (y₀ : IntFr Xo c T io) (k : letI := io.toAlgebra; T.Fr →ₐ[c.F] C) (kO : T.V →+* O) (P : Point p v O (𝓞 E)) (ψ : P.A.A.left ⟶ Xo.univ.t.G.left) (z : FrPt Xo c C), (letI := io.toAlgebra; PointOver P y₀.1.x k.toRingHom kO ψ) → (letI := io.toAlgebra; FrMap k y₀.1 z) → ∀ (τ : E →+* ℂ) (x : Fin (Dw.mult τ) → LieG P.Gt), (∀ j, LieTie P ψ (x j) (z.u τ j)) → LinearIndependent C (fun j => evLie P (x j)) := by
   intro E _ _ _ H Dw l Xo c p _ C _ _ _ v O _ _ _ _ _ _ _ _ _ T io y₀ k kO P ψ z hP hz τ x hx
   letI := io.toAlgebra

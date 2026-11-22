@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeRatioPosOfPublished
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationOfMemNotMemSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeRatioPosOfPublished
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationOfMemNotMemSq
+
+@[expose] public section
 
 noncomputable section
 

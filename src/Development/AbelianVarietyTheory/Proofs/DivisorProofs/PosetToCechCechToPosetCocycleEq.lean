@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictCapFBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictCapFBijective
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry Opposite
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.KS (rsT IsCoc IsCob)

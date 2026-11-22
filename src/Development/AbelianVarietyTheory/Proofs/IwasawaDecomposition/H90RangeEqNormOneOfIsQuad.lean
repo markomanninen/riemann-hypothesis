@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.Divisibility.Tuples
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIdempotentIsUnitOneAddOrSubAdele
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Hilbert90AdeleRingTensorQuadratic
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.Divisibility.Tuples
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIdempotentIsUnitOneAddOrSubAdele
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Hilbert90AdeleRingTensorQuadratic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.FrobeniusOrbits Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.L2.Host GlobalTheory.Mem.Chr
 open Formalism.L2.DIV (AfE RInt h90 U1 conjId)
@@ -37,7 +41,7 @@ theorem exists_trace (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c �
     intro g
     rcases GlobalTheory.AdLat.aut_eq_one_or_of_finrank_two c h2 hc g with rfl | rfl
     · rfl
-    · rw [map_add, conj_conj g h2 hc, add_comm]
+    · rw [map_add (f := _), conj_conj g h2 hc, add_comm]
   obtain ⟨t, ht⟩ := this
   exact ⟨t, ht.symm⟩
 
@@ -48,7 +52,7 @@ theorem sigR_sigR (hσ : ∀ x, σ (σ x) = x) (z : AfE F E) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x a => rw [sigR_tmul, sigR_tmul, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem exists_half_trace (htr : ∀ x, ∃ t : F, x + σ x = algebraMap F E t) (z : AfE F E) :
     ∃ t : FiniteAdeleRing (𝓞 F) F, z + sigR σ _ z = 2 * (1 : E) ⊗ₜ[F] t := by
@@ -63,7 +67,7 @@ theorem exists_half_trace (htr : ∀ x, ∃ t : F, x + σ x = algebraMap F E t) 
     obtain ⟨t, ht⟩ := hx
     obtain ⟨t', ht'⟩ := hy
     refine ⟨t + t', ?_⟩
-    rw [map_add, TensorProduct.tmul_add, mul_add, ← ht, ← ht']; ring
+    rw [map_add (f := _), TensorProduct.tmul_add, mul_add, ← ht, ← ht']; ring
 
 theorem isUnit_two : IsUnit (2 : AfE F E) := by
   have := (IsUnit.mk0 (2 : E) two_ne_zero).map
@@ -99,7 +103,7 @@ theorem h90_range_eq_normOne_of_isQuad (hσ : ∀ x, σ (σ x) = x) (htr : ∀ x
       (by
         change sigR σ _ (1 ⊗ₜ e) = 1 ⊗ₜ e
         rw [sigR_tmul, map_one]) ht
-      (by simpa only [map_add, map_mul, map_sub, map_one] using hun.map j)
+      (by simpa only [map_add (f := _), map_mul, map_sub, map_one] using hun.map j)
     refine ⟨x, ?_⟩
     change x / conjId σ x = u
     rw [div_eq_iff_eq_mul]
@@ -244,7 +248,7 @@ theorem exists_approx_of_eq_tmul (ι : AfE F L ≃+* FiniteAdeleRing (𝓞 L) L)
   have hr' : (1 : L) ⊗ₜ[F] r ∈ RInt F L := Subring.subset_closure (Or.inr ⟨⟨r, hr⟩, rfl⟩)
   have e : (a : AdeleRing (𝓞 L) L).2 = algebraMap L _ (algebraMap F L k) +
       (N : FiniteAdeleRing (𝓞 L) L) * ι (1 ⊗ₜ[F] r) := by
-    rw [ha, TensorProduct.tmul_add, map_add, TensorProduct.tmul_smul, map_nsmul, nsmul_eq_mul, ← h1,
+    rw [ha, TensorProduct.tmul_add, map_add (f := _), TensorProduct.tmul_smul, map_nsmul, nsmul_eq_mul, ← h1,
       Algebra.algebraMap_eq_smul_one k, Algebra.algebraMap_eq_smul_one k, TensorProduct.smul_tmul]
   have e2 : compAt P a = algebraMap L (P.adicCompletion L) (algebraMap F L k) +
       (N : P.adicCompletion L) * ι (1 ⊗ₜ[F] r) P := by
@@ -307,8 +311,8 @@ theorem mem_KD_of_approx (a : Ideles H.E)
   exact mul_mem (mem_KD_of_congG H ⟨hb, fun k v hv => hb' v (Set.mem_iUnion.2 ⟨k, hv⟩)⟩)
     (prod_mem fun v _ => locF_mem_KD H v k)
 
-open Classical in
 
+open Classical in
 theorem exists_detClass : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (σ : H.E →ₐ[H.F] H.E), (∀ x, σ x = H.conj x) → ∀ (ι : Formalism.L2.DIV.AfE H.F H.E ≃+* FiniteAdeleRing (𝓞 H.E) H.E), (∀ x : H.E, ι (TensorProduct.tmul H.F x 1) = algebraMap H.E _ x) → (∀ z, z ∈ Formalism.L2.DIV.RInt H.F H.E ↔ ∀ Q : HeightOneSpectrum (𝓞 H.E), Valued.v (ι z Q) ≤ 1) → (Formalism.L2.DIV.h90 σ).range = Formalism.L2.DIV.U1 σ ∧ ∃ f : Formalism.L2.DIV.U1 σ →* DtT H, Function.Surjective f ∧ ∀ (x : (Formalism.L2.DIV.AfE H.F H.E)ˣ) (h : Formalism.L2.DIV.h90 σ x ∈ Formalism.L2.DIV.U1 σ) (a : Ideles H.E), (a : AdeleRing (𝓞 H.E) H.E).2 = ι (x : Formalism.L2.DIV.AfE H.F H.E) → f ⟨_, h⟩ = QuotientGroup.mk a := by
   intro R H σ hσ ι h1 h2
   obtain ⟨c, hc, hcm, -⟩ := GlobalTheory.Mem.HostCM.host_cm R H

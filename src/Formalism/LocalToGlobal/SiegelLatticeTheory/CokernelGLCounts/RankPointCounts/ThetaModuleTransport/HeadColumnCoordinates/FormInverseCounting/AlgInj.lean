@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.AlgDefs
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.AlgDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,8 @@ theorem mk_eq_zero_of (hcj : ∀ x, cj (cj x) = x) (hO : ∀ x ∈ O, cj x ∈ O
   let w' : Fin (r + 1) → E := fun a => ∑ j, cj (Ze⁻¹ j a) * (y' j : E)
   have hB1 : ∀ a, bRaw O cj Z (Pi.single a 1) y' = cj (w' a) := by
     intro a
-    simp only [bRaw, w', map_sum, map_mul, hcj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bRaw, w', map_sum, map_mul, hcj]
     rw [coe_single, Matrix.mulVec_single_one]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_comm]; rfl
@@ -60,7 +65,8 @@ theorem mk_eq_zero_of (hcj : ∀ x, cj (cj x) = x) (hO : ∀ x ∈ O, cj x ∈ O
     have h2 : ∀ j, ∑ a, cj (Ze a b) * (cj (Ze⁻¹ j a) * (y' j : E)) =
         cj ((Ze⁻¹ * Ze) j b) * (y' j : E) := by
       intro j
-      rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [map_mul]; ring
     simp only [h2, hinv, Matrix.one_apply]

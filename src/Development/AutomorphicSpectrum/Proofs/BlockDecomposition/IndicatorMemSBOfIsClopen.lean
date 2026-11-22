@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitDom
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionNonzeroAdmissible
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitDom
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionNonzeroAdmissible
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,8 @@ private theorem totallyDisconnectedSpace_finiteAdeleRing :
   have h1 : (f '' s).Subsingleton := (hs.image f hf.continuousOn).subsingleton
   exact fun x hx y hy => hi (h1 (Set.mem_image_of_mem f hx) (Set.mem_image_of_mem f hy))
 
-open GroundTheory.Global in
 
+open GroundTheory.Global in
 theorem exists_clopen_superset [Fintype κ] {S : Set (κ → FiniteAdeleRing (𝓞 F) F)} (hS : IsCompact S) :
     ∃ V, IsClopen V ∧ IsCompact V ∧ S ⊆ V := by
   classical
@@ -84,13 +88,13 @@ theorem infOf_ratA_add [Fintype κ] (ξ : κ → F) (a : κ → AF F) :
   funext i
   show InfiniteAdeleRing.ringEquiv_mixedSpace F (algebraMap F (InfiniteAdeleRing F) (ξ i) + (a i).1) =
     mixedEmbedding F (ξ i) + InfiniteAdeleRing.ringEquiv_mixedSpace F (a i).1
-  rw [map_add, InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp F]
+  rw [map_add (f := _), InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp F]
 
 theorem finOf_ratA_add (ξ : κ → F) (a : κ → AF F) :
     finOf (ratA ξ + a) = (fun i => algebraMap F (FiniteAdeleRing (𝓞 F) F) (ξ i)) + finOf a := rfl
 
-open scoped Classical in
 
+open scoped Classical in
 theorem pure_bound [Fintype κ] (f : SchwartzMap (κ → mixedEmbedding.mixedSpace F) ℂ)
     {g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ} (hg : g ∈ SB (κ → FiniteAdeleRing (𝓞 F) F))
     {K : Set (κ → AF F)} (hK : IsCompact K) :
@@ -158,8 +162,8 @@ theorem pure_bound [Fintype κ] (f : SchwartzMap (κ → mixedEmbedding.mixedSpa
         mul_le_mul hf1 hg1 (norm_nonneg _) (by positivity)
     _ = M * (C * (1 + R) ^ k) * (‖V.indicator (fun _ => (1 : ℂ)) y‖ * ((1 + ‖p‖) ^ k)⁻¹) := by ring
 
-open scoped Classical in
 
+open scoped Classical in
 theorem schA_bound [Fintype κ] {Φ : (κ → AF F) → ℂ} (hΦ : Φ ∈ schA F κ) :
     Continuous Φ ∧ ∀ K : Set (κ → AF F), IsCompact K →
       ∃ u : (κ → F) → ℝ, Summable u ∧ ∀ ξ, ∀ a ∈ K, ‖Φ (ratA ξ + a)‖ ≤ u ξ := by

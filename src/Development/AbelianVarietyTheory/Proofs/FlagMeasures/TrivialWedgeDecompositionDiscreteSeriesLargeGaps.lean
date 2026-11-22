@@ -1,10 +1,14 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.PieriTensorDecompositionStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.TensorDecompositionParametersStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.DiscreteSeriesParameterUniqueStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.TensorDecompositionInjectiveParameters
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.PieriTensorDecompositionStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.TensorDecompositionParametersStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.DiscreteSeriesParameterUniqueStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.TensorDecompositionInjectiveParameters
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+
+@[expose] public section
 
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -52,18 +56,16 @@ theorem dsigW_equiv (U : R.H ≃ₗᵢ[ℂ] R'.H) (hU : ∀ g ∈ GG k r, ∀ x,
     rw [ih hW', dsig_equiv U hU (hW X List.mem_cons_self)]
 
 theorem smMap_of_equiv (U : R.H ≃ₗᵢ[ℂ] R'.H) (hU : ∀ g ∈ GG k r, ∀ x, U (R.σ g x) = R'.σ g (U x)) :
-    SmMap R R' (fun v => U v) where
-  mem v hv := by
-    intro g₀ hg₀
+    SmMap R R' (fun v => U v) := by
+  refine ⟨?_, fun v _ w _ => map_add U v w, fun a v _ => map_smul U a v, ?_⟩
+  · intro v hv g₀ hg₀
     obtain ⟨O, Fn, hO, hgO, hF, hag⟩ := hv g₀ hg₀
     let L : R.H →L[ℝ] R'.H := (U.toContinuousLinearEquiv.toContinuousLinearMap).restrictScalars ℝ
     refine ⟨O, fun x => L (Fn x), hO, hgO, L.contDiff.comp_contDiffOn hF, fun x hx hxH => ?_⟩
     show R'.σ x (U v) = U (Fn x)
     rw [← hU x hxH]
     exact congrArg U (hag x hx hxH)
-  add v _ w _ := map_add _ _ _
-  smul a v _ := map_smul _ _ _
-  cont W hW := by
+  · intro W hW
     refine ⟨1, [W], ?_, fun v _ => ?_⟩
     · intro w hw Y hY
       rw [List.mem_singleton.mp hw] at hY
@@ -107,11 +109,11 @@ theorem dsigW_zero (R : Rep k r) (W : List (Mx k r)) : PI.UpqRep.dsigW (k := k) 
     rw [ih]
     simp [PI.UpqRep.dsig]
 
-theorem smMap_zero (R R' : Rep k r) : SmMap R R' (fun _ => 0) where
-  mem _ _ := R'.smSub.zero_mem
-  add _ _ _ _ := (add_zero 0).symm
-  smul a _ _ := (smul_zero a).symm
-  cont W _ := ⟨0, [], by simp, fun v _ => by simp [dsigW_zero]⟩
+theorem smMap_zero (R R' : Rep k r) : SmMap R R' (fun _ => 0) := by
+  refine ⟨fun _ _ => R'.smSub.zero_mem, fun _ _ _ _ => (add_zero 0).symm,
+    fun a _ _ => (smul_zero a).symm, ?_⟩
+  intro W _
+  exact ⟨0, [], by simp, fun _ _ => by simp [dsigW_zero]⟩
 
 theorem isInvForm_of_smMap (hK : PI.KFinSmooth) {ε : Fin (2 * r + k + 1) → Bool} {m' : Fin (2 * r + k + 1) → ℝ}
     {R R' : Rep k r} (hR' : R'.IsDG ε m') {T : R.H → R'.H} (hT : SmMap R R' T)

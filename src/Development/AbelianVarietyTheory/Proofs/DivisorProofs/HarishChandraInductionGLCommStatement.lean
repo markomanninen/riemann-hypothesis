@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLComm
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraInductionGLComm
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
@@ -13,7 +17,10 @@ private lemma hc_conj_invariant {F : Type} [Field F] (a b n : ℕ) (α : GL (Fin
   rw [← finsum_comp_equiv (Equiv.mulLeft p)]
   congr 1
   funext y
-  simp only [Equiv.coe_mulLeft, mul_inv_rev, mul_assoc, inv_mul_cancel_left]
+  have h : ((Equiv.mulLeft p) y)⁻¹ * (p * x * p⁻¹) * (Equiv.mulLeft p) y = y⁻¹ * x * y := by
+    change (p * y)⁻¹ * (p * x * p⁻¹) * (p * y) = y⁻¹ * x * y
+    simp [mul_assoc]
+  rw [h]
 
 private lemma inPar_swap_eq_inPar_aflipG {F : Type} [Field F] (a b : ℕ) (α : GL (Fin a) F → ℂ)
     (β : GL (Fin b) F → ℂ) (hα : IsCl α) (hβ : IsCl β) (z : GL (Fin (a + b)) F) :

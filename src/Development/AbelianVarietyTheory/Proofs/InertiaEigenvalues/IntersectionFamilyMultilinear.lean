@@ -1,23 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadNatZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RsTermZero
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ZintZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemMspan
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurDir
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnfoldMirabolic
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LintegralThetaSeriesUnfoldMirabolic
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPsiLocNeOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MeasurePreservingToMixedPiSymm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IteratedColumnTransformEqGlobalWhittaker
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsMirabolicWhittakerStageTopOfVanishingBlockAver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadNatZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RsTermZero
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ZintZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurDir
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnfoldMirabolic
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LintegralThetaSeriesUnfoldMirabolic
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPsiLocNeOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MeasurePreservingToMixedPiSymm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IteratedColumnTransformEqGlobalWhittaker
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsMirabolicWhittakerStageTopOfVanishingBlockAver
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory GlobalTheory.CuspRep GlobalTheory.JSW Formalism.UG GlobalTheory.LFun Formalism.L2.Host
 open scoped ENNReal ComplexConjugate ContDiff
@@ -33,7 +36,7 @@ open Matrix GroundTheory.Automorphic GroundTheory.Automorphic.FourierWhittaker G
 variable {E : Type} [Field E] [NumberField E]
 
 theorem partialCoeff_colSmooth : ∀ (E : Type) [Field E] [NumberField E] (n m : ℕ) (φ : GA E n → ℂ), Continuous φ → (∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) →
-    ∀ F ∈ GroundTheory.Automorphic.GJMatrix.schwartzBruhatPi E (Fin m), ∀ (j : ℕ) (g : GA E n),
+    ∀ F ∈ GroundTheory.Automorphic.GJMatrix.schwartzBruhatPi (K := E) (ι := Fin m), ∀ (j : ℕ) (g : GA E n),
     partialCoeff (GlobalTheory.RSnm.colSmooth m F φ) j g = GlobalTheory.RSnm.colSmooth m F (partialCoeff φ j) g := by
   intro E _ _ n m φ hc ⟨C, hC⟩ F hF j
   have hFi := integrable_of_mem_schwartzBruhatPi hF
@@ -131,12 +134,12 @@ theorem vecCoeff_zero_eq_zero : ∀ (E : Type) [Field E] [NumberField E] (k m : 
   rw [WhitEq.blkU_eq_colGL hk]
   simp [pair]
 
-theorem tsum_translate_eq : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ), ∀ G ∈ GroundTheory.Automorphic.GJMatrix.schwartzBruhatPi E (Fin n), ∀ x : Fin n → Ad E,
+theorem tsum_translate_eq : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ), ∀ G ∈ GroundTheory.Automorphic.GJMatrix.schwartzBruhatPi (K := E) (ι := Fin n), ∀ x : Fin n → Ad E,
     ∑' η : Fin n → E, G ((fun i => algebraMap E (Ad E) (η i)) + x) =
       ∑' ξ : Fin n → E, GroundTheory.Automorphic.GJMatrix.adelicFourierPi E G (fun i => algebraMap E (Ad E) (ξ i)) *
         (GroundTheory.Global.adelicChar E (-GroundTheory.Automorphic.FourierWhittaker.pair ξ x) : ℂ) := by
   intro E _ _ n G hG x
-  have hT : (fun y => G (y + x)) ∈ schwartzBruhatPi E (Fin n) := by
+  have hT : (fun y => G (y + x)) ∈ schwartzBruhatPi (K := E) (ι := Fin n) := by
     induction hG using Submodule.span_induction with
     | mem G hG =>
       obtain ⟨φ, g, hg, rfl⟩ := hG
@@ -222,14 +225,14 @@ def trGL {R : Type} [CommRing R] {n : ℕ} (h : GL (Fin n) R) : GL (Fin n) R :=
   ⟨h.valᵀ, (h⁻¹).valᵀ, by rw [← transpose_mul, Units.inv_mul, transpose_one],
     by rw [← transpose_mul, Units.mul_inv, transpose_one]⟩
 
-theorem hasSum_integral_mulVec {n : ℕ} {F : (Fin n → Ad E) → ℂ} (hF : F ∈ schwartzBruhatPi E (Fin n))
+theorem hasSum_integral_mulVec {n : ℕ} {F : (Fin n → Ad E) → ℂ} (hF : F ∈ schwartzBruhatPi (K := E) (ι := Fin n))
     {f : (Fin n → Ad E) → ℂ} (hf : Continuous f) (hb : ∃ C : ℝ, ∀ x, ‖f x‖ ≤ C)
     (hp : ∀ (η : Fin n → E) x, f ((fun i => algebraMap E (Ad E) (η i)) + x) = f x) (h : GA E n) :
     HasSum (fun ξ : Fin n → E => adelicFourierPi E F ((algebraMap E (Ad E) ∘ ξ) ᵥ* h.val) * vecCoeff f ξ)
       (∫ x, F x * f (h.val *ᵥ x) ∂adeleMeasurePi E) := by
   set t := trGL h with ht
   set G : (Fin n → Ad E) → ℂ := fun y => F (y ᵥ* (t⁻¹).val) with hG
-  have hGm : G ∈ schwartzBruhatPi E (Fin n) := GlobalTheory.ThetaPoisson.comp_vecMul_mem t⁻¹ hF
+  have hGm : G ∈ schwartzBruhatPi (K := E) (ι := Fin n) := GlobalTheory.ThetaPoisson.comp_vecMul_mem t⁻¹ hF
   have H := hasSum_integral_mul_of_periodic E n G f _ (continuous_of_mem_schwartzBruhatPi hGm) (integrable_of_mem_schwartzBruhatPi hGm) hf hb hp
     (poisson_of_mem_schwartzBruhatPi hGm).2.1 (tsum_translate_eq E n G hGm)
   set d : ℝ := (IdeleGroup.ideleModule E (Matrix.GeneralLinearGroup.det t) : ℝ) with hd
@@ -262,7 +265,7 @@ theorem hasSum_integral_mulVec {n : ℕ} {F : (Fin n → Ad E) → ℂ} (hF : F 
 theorem hasSum_colSmooth : ∀ (E : Type) [Field E] [NumberField E] (k m : ℕ) (hmk : m + 1 ≤ k) (φ : GA E (k + 1) → ℂ),
     Continuous φ → (∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) → (∀ γ g, φ (ratGL E (k + 1) γ * g) = φ g) →
     (∀ r, 0 < r → r ≤ k → ∀ g, avg (ratV E (UnipotentBlockColumnIndex (k + 1) r k)) (fun x => φ (blkU x * g)) = 0) →
-    ∀ F ∈ GroundTheory.Automorphic.GJMatrix.schwartzBruhatPi E (Fin (m + 1)),
+    ∀ F ∈ GroundTheory.Automorphic.GJMatrix.schwartzBruhatPi (K := E) (ι := Fin (m + 1)),
     ∀ γ : {ξ : Fin (m + 1) → E // ξ ≠ 0} → GL (Fin (m + 1)) E,
     (∀ ξ, Matrix.vecMul (Pi.single (Fin.last m) 1 : Fin (m + 1) → E) (γ ξ).val = ξ.1) → ∀ h : GA E (m + 1),
     HasSum (fun ξ : {ξ : Fin (m + 1) → E // ξ ≠ 0} =>

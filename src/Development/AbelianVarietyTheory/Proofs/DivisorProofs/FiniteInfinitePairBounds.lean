@@ -1,18 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BrPairFApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightsTopGrid
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingPairingExtendScalarsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemVertexLatticeOrthonormalCoordsTopNodeIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLatticeVertexLatticeGridCorner
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingPairingIntegralUpToExponentsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceValuationLocalDegreeArithmeticStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTotalExponentTopWeightBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingPairingArchimedeanBoundFockNormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanBranchingConstantBoundStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NsmulProjectionXColumnsMemSelfDualLattice
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BrPairFApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightsTopGrid
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingPairingExtendScalarsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemVertexLatticeOrthonormalCoordsTopNodeIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLatticeVertexLatticeGridCorner
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingPairingIntegralUpToExponentsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceValuationLocalDegreeArithmeticStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTotalExponentTopWeightBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingPairingArchimedeanBoundFockNormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanBranchingConstantBoundStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,6 +34,36 @@ theorem bil {K V W : Type} [Field K] [AddCommGroup V] [Module K V] [AddCommGroup
     (f : V →ₗ[K] W →ₗ[K] K) (s s' : K) (u : V) (v : W) : f (s • u) (s' • v) = s * (s' * f u v) := by
   simp only [map_smul, LinearMap.smul_apply, smul_eq_mul]
   ring
+
+private theorem full_grid_corner {D : D7} {T : Type} {L : LevCh D T} {sc : Consts}
+    {G : GridData L sc} {W : G.Weil} (S : GridChoice W Set.univ)
+    (y : FinPt G (.grid D.R.m D.R.m)) :
+    Submodule.IsFullLattice D.host.E (latAt S (.grid D.R.m D.R.m) y) := by
+  have hsd := (G.isV (X := .grid D.R.m D.R.m) ⟨le_rfl, le_rfl⟩ fun j e => by
+    have : D.R.m = 0 := (Node.grid.inj e).1
+    have := D.R.two_le_m
+    omega).sd
+  have hΛ := GlobalTheory.ProjXCols.selfDual_isFullLattice _ _ hsd
+  have hglob := Formalism.UG.P.csGlob_lattice (F := D.host.F) _
+    (Module.Finite.iff_fg.2 hΛ.fg) hΛ.span_eq_top (finG (G.V (.grid D.R.m D.R.m)) y)
+  let g := S.N.fr (.grid D.R.m D.R.m)
+  let e : (Fin (G.V (.grid D.R.m D.R.m)).rank → D.host.E) ≃ₗ[D.host.E]
+      (Fin (G.V (.grid D.R.m D.R.m)).rank → D.host.E) := LinearEquiv.ofLinearMap g.1.mulVecLin (g⁻¹).1.mulVecLin
+    (by rw [← Matrix.mulVecLin_mul, Units.mul_inv, Matrix.mulVecLin_one])
+    (by rw [← Matrix.mulVecLin_mul, Units.inv_mul, Matrix.mulVecLin_one])
+  haveI : Submodule.IsLattice D.host.E (latAt S (.grid D.R.m D.R.m) y) :=
+    GlobalTheory.T.isLattice_vertexLattice_gridCorner S y
+  refine ⟨?_⟩
+  have hset : (latAt S (.grid D.R.m D.R.m) y : Set _) =
+      e.symm '' (Formalism.UG.CS.globLat (finG (G.V (.grid D.R.m D.R.m)) y) (G.Λ (.grid D.R.m D.R.m)) : Set _) := by
+    ext x
+    constructor
+    · intro hx
+      exact ⟨e x, hx, e.symm_apply_apply x⟩
+    · rintro ⟨z, hz, rfl⟩
+      change e (e.symm z) ∈ Formalism.UG.CS.globLat (finG (G.V (.grid D.R.m D.R.m)) y) (G.Λ (.grid D.R.m D.R.m))
+      simpa using hz
+  rw [hset, Submodule.span_image_linearEquiv, hglob.span_eq_top, Submodule.map_top, LinearEquiv.range]
 
 theorem finPair : FinPairK := by
   obtain ⟨CF0, h6⟩ := GlobalTheory.T.exists_totalExponent_topWeight_bound
@@ -71,7 +107,7 @@ theorem finPair : FinPairK := by
     · rw [← hu0, ← hv0]
       exact (GlobalTheory.T.branchingPairing_extendScalars D.what₂.embLL _ _ _ u0 v0).symm
     · have h4 := GlobalTheory.T.branchingPairing_integral_upToExponents (labLL D) ch.G.sp.topDec.rank.symm (wt ch.G (.top D.R.m)) (listedWt ch.G (.grid D.R.m D.R.m))
-        (fun τ => (hIS τ).1) (fun τ => (hIS τ).2) _ _ (GlobalTheory.T.isLattice_vertexLattice_gridCorner ch.S.toGridChoice y) (GlobalTheory.T.mem_vertexLatticeOrthonormalCoords_topNode_iff ch.S.toGridChoice y) w
+        (fun τ => (hIS τ).1) (fun τ => (hIS τ).2) _ _ (full_grid_corner ch.S.toGridChoice y) (GlobalTheory.T.mem_vertexLatticeOrthonormalCoords_topNode_iff ch.S.toGridChoice y) w
         (s • u0) (s' • v0) hsu hsv
       erw [bil] at h4
       by_cases hy : GlobalTheory.BrPairF.brPairF _ ch.G.sp.topDec.rank.symm _ u0 v0 = 0
@@ -140,8 +176,6 @@ theorem infPair : InfPairK := by
       _ ≤ Real.exp (aOne ch.G C large₂.sc.b) * B * B' := by
           apply mul_le_mul (mul_le_mul_of_nonneg_left hB1 (Real.exp_pos _).le) hB2 hn2
           exact mul_nonneg (Real.exp_pos _).le hBn
-
-theorem main : GlobalTheory.FunPr.Hypotheses₂ → FinPairK ∧ InfPairK := fun _ => ⟨finPair, infPair⟩
 
 end GlobalTheory.FPair
 

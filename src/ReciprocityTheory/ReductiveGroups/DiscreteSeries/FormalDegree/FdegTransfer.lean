@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarMirror
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarMirror
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,10 +33,8 @@ theorem isFdeg_muCD {ε : Fin n → Bool} {H : Type*} [NormedAddCommGroup H] [In
   obtain ⟨c, hcpos, hsm⟩ : ∃ c : NNReal, 0 < c ∧ muCD ε = c • μ :=
     ⟨_, Measure.haarScalarFactor_pos_of_isHaarMeasure (muCD ε) μ,
       Measure.isMulLeftInvariant_eq_smul (muCD ε) μ⟩
-  have hsm' : muCD ε = ((c : NNReal) : ENNReal) • μ := by
-    rw [hsm]
-    ext s _
-    rw [Measure.smul_apply, Measure.smul_apply, ENNReal.smul_def]
+  have hsm' : muCD ε = (c : ENNReal) • μ :=
+    hsm.trans (Measure.coe_nnreal_smul c μ).symm
   have h := isFdeg_smul (NNReal.coe_pos.mpr hcpos) hd
   rw [ENNReal.ofReal_coe_nnreal, ← hsm'] at h
   exact ⟨_, h⟩

@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementZ
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementT
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.FlowBasic
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.Laurent
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.CurveSer
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementZ
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementT
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.FlowBasic
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.Laurent
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.CurveSer
+
+@[expose] public section
 
 open PowerSeries
 
@@ -48,7 +52,7 @@ theorem fwAt_sig : fwAt (curveL W) (sig he X) (sig he (wSer W)) = sig he (fw W) 
     WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆]
 
 theorem fuAt_sig : fuAt (curveL W) (sig he X) (sig he (wSer W)) = sig he (fu W) := by
-  simp only [fuAt, fu, map_add, map_mul, map_pow, map_ofNat, sig_C,
+  simp only [fuAt, fu, map_add (f := _), map_mul, map_pow, map_ofNat, sig_C,
     WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, WeierstrassCurve.map_a₄]
 
 theorem wEq_sig : WEq (curveL W) (sig he X) (sig he (wSer W)) := by
@@ -56,18 +60,18 @@ theorem wEq_sig : WEq (curveL W) (sig he X) (sig he (wSer W)) := by
       + C W.a₄ * X * wSer W ^ 2 + C W.a₆ * wSer W ^ 3 :=
     (Formalism.ELL.wSeriesUnique K W).choose_spec.1.2
   have h := congrArg (sig he) hw
-  simp only [map_add, map_mul, map_pow, sig_C] at h
+  simp only [map_add (f := _), map_mul, map_pow, sig_C] at h
   simp only [WEq, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, WeierstrassCurve.map_a₃,
     WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆]
   exact h
 
-theorem isFlowUW_sig (hc : ∀ f : K⟦X⟧, derivative K (f.subst e) = (D W f).subst e) :
+theorem isFlowUW_sig (hc : ∀ f : K⟦X⟧, derivative (f.subst e) = (D W f).subst e) :
     IsFlowUW (curveL W) dL (sig he X) (sig he (wSer W)) := by
   have hw : wSer W = X ^ 3 + C W.a₁ * X * wSer W + C W.a₂ * X ^ 2 * wSer W + C W.a₃ * wSer W ^ 2
       + C W.a₄ * X * wSer W ^ 2 + C W.a₆ * wSer W ^ 3 :=
     (Formalism.ELL.wSeriesUnique K W).choose_spec.1.2
-  have hd := congrArg (derivative K) hw
-  simp only [map_add, Derivation.leibniz, Derivation.leibniz_pow, PowerSeries.derivative_C,
+  have hd := congrArg PowerSeries.derivative hw
+  simp only [map_add (f := _), Derivation.leibniz, Derivation.leibniz_pow, PowerSeries.derivative_C,
     PowerSeries.derivative_X, smul_eq_mul, nsmul_eq_mul] at hd
   have hDw : D W (wSer W) = fu W := by
     rw [D, Derivation.smul_apply, smul_eq_mul, fw, fu]
@@ -94,7 +98,7 @@ theorem inv_mul_sig (hne : toL e ≠ 0) :
     _ = 1 := by rw [h1, h2, one_pow, one_mul]
 
 include he in
-theorem isFlow_sig (hc : ∀ f : K⟦X⟧, derivative K (f.subst e) = (D W f).subst e)
+theorem isFlow_sig (hc : ∀ f : K⟦X⟧, derivative (f.subst e) = (D W f).subst e)
     (hne : toL e ≠ 0) :
     IsFlow (curveL W) dL ((toL e)⁻¹ ^ 2 * toL ((xS W).subst e))
       ((toL e)⁻¹ ^ 3 * toL ((yS W).subst e)) := by

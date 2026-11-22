@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPairOfIsTriple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaActionExistsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSmulOfCommuteHeisenbergLinearModelSchwartzBruhStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodingerStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitPlaceAdelicMatrixGivenComponentsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicTraceSupportedAtSplitPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianSplitSymplecticPairStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceSymplecticSelfZeroSplitSupported
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHomSuppSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianSelfDualLatticeSpaceFormHermitianNondeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPairOfIsTriple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaActionExistsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSmulOfCommuteHeisenbergLinearModelSchwartzBruhStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodingerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitPlaceAdelicMatrixGivenComponentsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicTraceSupportedAtSplitPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianSplitSymplecticPairStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceSymplecticSelfZeroSplitSupported
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHomSuppSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianSelfDualLatticeSpaceFormHermitianNondeg
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 open scoped Matrix
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -24,7 +29,7 @@ noncomputable section
 
 namespace GlobalTheory.UnitWShape
 
-theorem eq_of_tens_eq {F : Type} [Field F] [NumberField F] {κ : Type} (v : Pl F) (R : (κ → AF F) → ℂ)
+theorem eq_of_tens_eq {F : Type} [Field F] [NumberField F] {κ : Type} (v : Pl (F := F)) (R : (κ → AF F) → ℂ)
     (hR0 : R 0 ≠ 0) (hinv : ∀ x z, At (evFin F v) z → R (x + z) = R x) (φ₁ φ₂ : (κ → Fv F v) → ℂ)
     (h : tens (evFin F v) φ₁ R = tens (evFin F v) φ₂ R) : φ₁ = φ₂ := by
   funext y
@@ -37,7 +42,7 @@ theorem eq_of_tens_eq {F : Type} [Field F] [NumberField F] {κ : Type} (v : Pl F
   simp only [tens, GlobalTheory.LatVac.evFin_liftV, hR] at e
   exact mul_right_cancel₀ hR0 e
 
-theorem tens_add_smul {F : Type} [Field F] [NumberField F] {κ : Type} (v : Pl F) (R : (κ → AF F) → ℂ)
+theorem tens_add_smul {F : Type} [Field F] [NumberField F] {κ : Type} (v : Pl (F := F)) (R : (κ → AF F) → ℂ)
     (x y : (κ → Fv F v) → ℂ) (c : ℂ) :
     tens (evFin F v) (c • x + y) R = c • tens (evFin F v) x R + tens (evFin F v) y R := by
   funext z
@@ -46,7 +51,7 @@ theorem tens_add_smul {F : Type} [Field F] [NumberField F] {κ : Type} (v : Pl F
 
 theorem exists_localOp : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (σ : E →ₐ[F] E) (B : Base F E) (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W)
-    (om' : Rep σ G.V' G.W), IsTriple B G X om om' → ∀ (v : Pl F), ∀ h ∈ UAt σ G.W (evFin F v),
+    (om' : Rep σ G.V' G.W), IsTriple B G X om om' → ∀ (v : Pl (F := F)), ∀ h ∈ UAt σ G.W (evFin F v),
     ∃ S : ((Fin a × Fin (a + a') → Fv F v) → ℂ) → (Fin a × Fin (a + a') → Fv F v) → ℂ,
       (∀ φ ∈ SB (Fin a × Fin (a + a') → Fv F v), S φ ∈ SB (Fin a × Fin (a + a') → Fv F v)) ∧
       (∀ φ ∈ SB (Fin a × Fin (a + a') → Fv F v), ∀ φ₁, Acts (evFin F v) (om (1, h)) φ φ₁ → φ₁ = S φ) ∧
@@ -82,7 +87,7 @@ theorem exists_localOp : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [
   · intro x hx y hy c
     have hz : c • x + y ∈ SB (Fin a × Fin (a + a') → Fv F v) := add_mem (Submodule.smul_mem _ c hx) hy
     apply eq_of_tens_eq v R hR0 hinv
-    rw [← (hS _ hz).2 R (hR _ hz), tens_add_smul, map_add, map_smul, (hS x hx).2 R (hR x hx),
+    rw [← (hS _ hz).2 R (hR _ hz), tens_add_smul, map_add (f := _), map_smul, (hS x hx).2 R (hR x hx),
       (hS y hy).2 R (hR y hy), ← tens_add_smul]
   · intro γ hγ φ hφ
     have hact : actAB (cA σ) ((1 : UA σ G.V.J), h) γ = γ * (mat h)ᵀ := by
@@ -102,7 +107,8 @@ theorem linForm_eq {K : Type} [Field K] {m n : Type} [Fintype m] [Fintype n] [De
     (l : Matrix m n K →ₗ[K] K) (Y : Matrix m n K) :
     l Y = ∑ k, ∑ j, Y k j * l (Matrix.single k j 1) := by
   conv_lhs => rw [Y.matrix_eq_sum_single]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ => ?_
   rw [show Matrix.single k j (Y k j) = Y k j • Matrix.single k j (1 : K) by
     rw [Matrix.smul_single, smul_eq_mul, mul_one], map_smul, smul_eq_mul]
@@ -124,7 +130,7 @@ theorem pair_mul_transpose {K : Type} [CommRing K] {m n : Type} [Fintype m] [Fin
   rw [sum_mul_eq_trace, sum_mul_eq_trace, Matrix.transpose_mul, Matrix.transpose_transpose, Matrix.mul_assoc]
 
 theorem at_hTens {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-    {v : Pl F} {m n : ℕ} (JA : Matrix (Fin m) (Fin m) E) (JB : Matrix (Fin n) (Fin n) E)
+    {v : Pl (F := F)} {m n : ℕ} (JA : Matrix (Fin m) (Fin m) E) (JB : Matrix (Fin n) (Fin n) E)
     (x u : Matrix (Fin m) (Fin n) (AE F E)) (hx : At (evFin F v) x) :
     At (evFin F v) ((-1 : AE F E) * hTens (cA σ) (incM F JA) (incM F JB) x u) := by
   intro r hr
@@ -143,7 +149,7 @@ theorem sigma_invol {F E : Type} [Field F] [NumberField F] [Field E] [NumberFiel
 
 theorem heisW {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {a a' : ℕ}
     (B : Base F E) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W)
-    (hTr : IsTriple B G X om om') (v : Pl F) (t : E →ₐ[F] Fv F v) (h : UA σ G.W.J)
+    (hTr : IsTriple B G X om om') (v : Pl (F := F)) (t : E →ₐ[F] Fv F v) (h : UA σ G.W.J)
     (S : ((Fin a × Fin (a + a') → Fv F v) → ℂ) → (Fin a × Fin (a + a') → Fv F v) → ℂ)
     (hSB : ∀ φ ∈ SB (Fin a × Fin (a + a') → Fv F v), S φ ∈ SB (Fin a × Fin (a + a') → Fv F v))
     (hcomm : ∀ γ : Matrix (Fin a) (Fin (a + a')) (AE F E), At (evFin F v) γ →
@@ -323,7 +329,7 @@ theorem shape : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [Field F] 
       (fun Y : Matrix (Fin a) (Fin (a + a')) (Fv F v) => ι (S (c • x + y)) (Y * htᵀ)) = c • (fun Y : Matrix (Fin a) (Fin (a + a')) (Fv F v) => ι (S x) (Y * htᵀ)) + fun Y : Matrix (Fin a) (Fin (a + a')) (Fv F v) => ι (S y) (Y * htᵀ) := by
     intro x hx y hy c
     funext Y
-    simp only [hlin x hx y hy c, map_add, map_smul, Pi.add_apply, Pi.smul_apply]
+    simp only [hlin x hx y hy c, map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply]
   have hT2 : ∀ C, ∀ x ∈ SB (Fin a × Fin (a + a') → Fv F v),
       schr (GlobalTheory.LatVac.psiAt B.ψ v) (wT C) x ∈ SB (Fin a × Fin (a + a') → Fv F v) ∧
       ι (schr (GlobalTheory.LatVac.psiAt B.ψ v) (wT C) x) = (fun Y => ι x (Y + C)) ∧

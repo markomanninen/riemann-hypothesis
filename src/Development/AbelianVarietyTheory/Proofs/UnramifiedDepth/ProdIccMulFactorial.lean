@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WtAddSingle
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WtAddSingle
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds
 
@@ -28,9 +32,9 @@ theorem jetAt0_coe (P Q : MvPolynomial σ C) :
 theorem pair_diffOp [CharZero C] (B : σ →₀ ℕ) (P Q : MvPolynomial σ C) :
     pair (monomial B (1 : C)) (diffOp P Q) = pair (monomial B (1 : C) * P) Q := by
   classical
-  have hinner : ∀ m : σ →₀ ℕ, coeff B (∑ a ∈ Q.support, if m ≤ a then
-      monomial (a - m) (coeff m P * coeff a Q * ((mfact a : C) / (mfact (a - m) : C))) else 0) =
-      coeff m P * coeff (B + m) Q * ((mfact (B + m) : C) / (mfact B : C)) := by
+  have hinner : ∀ m : σ →₀ ℕ, AddMonoidAlgebra.coeff (∑ a ∈ Q.support, if m ≤ a then
+      monomial (a - m) (AddMonoidAlgebra.coeff P m * AddMonoidAlgebra.coeff Q a * ((mfact a : C) / (mfact (a - m) : C))) else 0) B =
+      AddMonoidAlgebra.coeff P m * AddMonoidAlgebra.coeff Q (B + m) * ((mfact (B + m) : C) / (mfact B : C)) := by
     intro m
     rw [coeff_sum, Finset.sum_eq_single (B + m)]
     · rw [if_pos (le_add_self), coeff_monomial, add_tsub_cancel_right, if_pos rfl]
@@ -39,16 +43,17 @@ theorem pair_diffOp [CharZero C] (B : σ →₀ ℕ) (P Q : MvPolynomial σ C) :
       · rw [coeff_monomial, if_neg]
         intro hB
         exact ha (by rw [← hB, tsub_add_cancel_of_le hma])
-      · exact coeff_zero B
+      · simp
     · intro hQ
       rw [notMem_support_iff] at hQ
       rw [hQ, if_pos (le_add_self), coeff_monomial, add_tsub_cancel_right, if_pos rfl, mul_zero, zero_mul]
-  have hP : monomial B (1 : C) * P = ∑ m ∈ P.support, monomial (B + m) (coeff m P) := by
+  have hP : monomial B (1 : C) * P = ∑ m ∈ P.support, monomial (B + m) (AddMonoidAlgebra.coeff P m) := by
     conv_lhs => rw [P.as_sum]
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [monomial_mul, one_mul]
-  rw [pair_monomial, diffOp, coeff_sum, hP, map_sum, LinearMap.sum_apply, wt_eq, one_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [pair_monomial, diffOp, coeff_sum, hP, map_sum, LinearMap.sum_apply, wt_eq, one_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [hinner, pair_monomial, wt_eq]
   have := mfact_ne_zero (C := C) B
@@ -91,7 +96,8 @@ theorem pair_detL (n : ℕ) (P : MvPolynomial (PVar n) C) (Q : MvPolynomial (Fin
       (fun j : Fin n => (τ j, j)) (List.finRange n) Q
     rw [Fin.prod_univ_def, h1, h2]
     rfl
-  rw [detL, Matrix.det_apply', Finset.mul_sum, map_sum, LinearMap.sum_apply, cayOp, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [detL, Matrix.det_apply', Finset.mul_sum, map_sum, LinearMap.sum_apply, cayOp, LinearMap.sum_apply,
     map_sum, map_sum]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [LinearMap.smul_apply, map_zsmul, map_zsmul, ← hσ τ, mul_left_comm, ← zsmul_eq_mul, map_zsmul,

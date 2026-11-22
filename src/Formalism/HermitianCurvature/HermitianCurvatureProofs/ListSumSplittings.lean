@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExponentWordRecursion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExponentWordRecursion
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ComplexConjugate
@@ -275,7 +279,8 @@ lemma polyClass_lin (ℓ : Mat k r →ₗ[ℝ] ℂ) : PolyClass 1 (fun g => ℓ 
     rw [he, pow_one]
     have eg : ℓ' g = ∑ j : J k r, co g j • ℓ' (Eb j) := by
       conv_lhs => rw [← Mv_co g, Mv_sum]
-      rw [map_sum]; simp only [map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; simp only [map_smul]
     show ‖ℓ' g‖ ≤ _
     rw [eg, Finset.sum_mul]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun j _ => ?_)

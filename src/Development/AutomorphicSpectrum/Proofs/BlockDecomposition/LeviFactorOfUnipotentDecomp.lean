@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem entries_of_unip_lev {R : Type} [CommRing R] {r s : ℕ} (S : Set R) (x :
     rw [Prod.snd_inv] at this
     rw [← this]; exact h' _ _
 
-theorem levi_cf_integral {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ}
+theorem levi_cf_integral {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ}
     (u : BlockIx (r + s) r → Ad E) (m : GA E r × GA E s) (k : Kinf E (r + s)) (c : GL (Fin (r + s)) (Af E))
     (hc : c ∈ KO E (r + s)) (h : unip u * lev (Ad E) r s m = cf (r + s) k c) :
     ∃ (k₁ : Kinf E r) (c₁ : GL (Fin r) (Af E)) (k₂ : Kinf E s) (c₂ : GL (Fin s) (Af E)),

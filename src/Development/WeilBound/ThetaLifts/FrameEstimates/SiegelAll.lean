@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.LintegralLeOfCover
-import Development.WeilBound.ThetaLifts.FrameEstimates.LeHeightOfIsTorusElt
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LintegralLeOfCover
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LeHeightOfIsTorusElt
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem siegel_GAd (hS : GlobalTheory.Published.SiegelSetUnitary) (h : IsCMExt F
       ((hC₂ f (fun u => φ ((fun i => Real.log (u i)) + shf r c)) (hφ.comp ?_) fun p hp u hu b hb' k hk => ?_).trans ?_)
     · obtain ⟨γ, hγ, s, hs, rfl⟩ := hcov g
       exact ⟨γ⁻¹, inv_mem hγ, by rwa [inv_mul_cancel_left]⟩
-    · exact (measurable_pi_lambda _ fun i => (measurable_pi_apply i).log).add_const _
+    · exact (Measurable.of_eval fun i => (measurable_pi_apply i).log).add_const _
     · obtain ⟨κ, hκ, e⟩ := hdec p hp u hu b hb' k hk
       rw [e]
       exact hb _ (log_mem_Cone hc hu) κ hκ
@@ -117,7 +121,7 @@ theorem siegel_GAd (hS : GlobalTheory.Published.SiegelSetUnitary) (h : IsCMExt F
           _ = _ := by ring
       have h7 : Real.exp (∑ i, t i) ≤ (height σ J (a t) : ℝ) ^ r := by
         rw [Real.exp_sum]
-        refine (Finset.prod_le_prod (fun i _ => (Real.exp_pos _).le) fun i _ =>
+        refine (Finset.prod_le_prod₀ (fun i _ => (Real.exp_pos _).le) fun i _ =>
           le_height_of_isTorusElt hW (htor t) i).trans (le_of_eq ?_)
         simp
       have h8 : (1 : ℝ) ≤ height σ J (γ * a t) := by exact_mod_cast one_le_height σ J _
@@ -175,7 +179,8 @@ theorem exists_herm_smul (h : IsCMExt F E σ) (hJ : EpsHerm σ J) : ∃ c : E, c
 omit [NumberField F] [NumberField E] in
 theorem gram_smul (hσ : ∀ x, σ (σ x) = x) (c : E) (Z : Matrix (Fin n) (Fin r) E) (u : Fin n → E) (i : Fin r) :
     ((cT (σ : E →+* E) Z * (c • J.map σ)) *ᵥ u) i = c * σ (form σ J (fun k => Z k i) u) := by
-  simp only [form, mulVec, dotProduct, Matrix.mul_apply, cT, transpose_apply, map_apply, Matrix.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, mulVec, dotProduct, Matrix.mul_apply, cT, transpose_apply, map_apply, Matrix.smul_apply, smul_eq_mul,
     map_sum, map_mul, hσ, RingHom.coe_coe, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -193,7 +198,8 @@ omit [NumberField F] [NumberField E] in
 theorem form_eq_zero_swap (hσ : ∀ x, σ (σ x) = x) (hJ : EpsHerm σ J) {x y : Fin n → E} (e : form σ J x y = 0) :
     form σ J y x = 0 := by
   have e2 := congrArg σ e
-  simp only [form, mulVec, dotProduct, map_sum, map_mul, hσ, map_zero, Finset.mul_sum] at e2 ⊢
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, mulVec, dotProduct, map_sum, map_mul, hσ, map_zero, Finset.mul_sum] at e2 ⊢
   rw [Finset.sum_comm]
   rcases hJ.1 with h1 | h1
   · rw [← e2]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.Imports
+
+@[expose] public section
 
 namespace GlobalTheory
 

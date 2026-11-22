@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,7 @@ theorem rq_pir [FiniteDimensional k A] [IsReduced A] (χ : k[X]) (q : ℕ) :
     isPrincipalIdealRing_pi _ (fun I => by
       have := I.isMaximal
       letI : Field (A ⧸ I.asIdeal) := Ideal.Quotient.field _
-      exact EuclideanDomain.to_principal_ideal_domain)
+      exact EuclideanDomain.instIsPrincipalIdealRing)
   have hPI' : IsPrincipalIdealRing ((∀ I : MaximalSpectrum A, A ⧸ I.asIdeal)[X]) :=
     IsPrincipalIdealRing.of_surjective (Polynomial.piEquiv (fun I : MaximalSpectrum A => A ⧸ I.asIdeal)).symm
       (Polynomial.piEquiv _).symm.surjective

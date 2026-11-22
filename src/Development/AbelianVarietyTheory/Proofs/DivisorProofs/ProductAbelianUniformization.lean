@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsHolomorphicUniformisationPowerThetaKeyDatu
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsHolomorphicUniformisationPowerThetaKeyDatu
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -119,8 +124,8 @@ def sqUnif {L : LB A.left} (u : HolUnif A L g) : HolUnif (A ⊗ A) (trivLB (A �
   ex v := lift (u.ex (halfL g v)) (u.ex (halfR g v))
   ex_add z w := by
     refine CartesianMonoidalCategory.hom_ext _ _ ?_ ?_
-    · rw [MonObj.mul_comp, lift_fst, lift_fst, lift_fst, map_add, u.ex_add]
-    · rw [MonObj.mul_comp, lift_snd, lift_snd, lift_snd, map_add, u.ex_add]
+    · rw [MonObj.mul_comp, lift_fst, lift_fst, lift_fst, map_add (f := _), u.ex_add]
+    · rw [MonObj.mul_comp, lift_snd, lift_snd, lift_snd, map_add (f := _), u.ex_add]
   ex_onto p := by
     obtain ⟨x, hx⟩ := u.ex_onto (p ≫ fst _ _)
     obtain ⟨y, hy⟩ := u.ex_onto (p ≫ snd _ _)
@@ -159,17 +164,5 @@ def sqUnif {L : LB A.left} (u : HolUnif A L g) : HolUnif (A ⊗ A) (trivLB (A �
   fr_compat i j z h := by
     rw [Units.val_one, valAt'_one _ h, _root_.one_mul]
 
-theorem sqUnif_ex_append {L : LB A.left} (u : HolUnif A L g) (x y : Fin g → ℂ) :
-    (sqUnif A u).ex (Fin.append x y) = lift (u.ex x) (u.ex y) := by
-  change lift (u.ex (halfL g (Fin.append x y))) (u.ex (halfR g (Fin.append x y))) = _
-  rw [halfL_append, halfR_append]
-
 end GlobalTheory.ProdUnifSq
 
-open GlobalTheory.ProdUnifSq in
-
-theorem GlobalTheory.exists_holUnif_tensor_self : ∀ (A : Over (Sp ℂ)) [GrpObj A] [IsCommMonObj A], IsAbelianScheme A → ∀ (L : LB A.left) (g : ℕ) (u : HolUnif A L g),
-    ∃ U : HolUnif (A ⊗ A) (⟨PUnit, fun _ => ⊤, fun _ _ => 1⟩ : LB (A ⊗ A).left) (g + g),
-      ∀ x y : Fin g → ℂ, U.ex (Fin.append x y) = lift (u.ex x) (u.ex y) := by
-  intro A _ _ _ L g u
-  exact ⟨sqUnif A u, sqUnif_ex_append A u⟩

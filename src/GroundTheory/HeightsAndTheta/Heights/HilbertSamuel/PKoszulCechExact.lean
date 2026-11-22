@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKoszulCechExact
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKoszulCechExact
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -44,8 +49,8 @@ theorem kosSign_swap {J : Finset (Fin R)} {j k : Fin R} (hj : j ∉ J) (hk : k �
   have e : kosSign J j = kosSign (insert k (J.erase k)) j := by rw [Finset.insert_erase hk]
   rw [e, kosSign_insert _ hkA, kosSign_insert _ hjA]
   rcases lt_or_gt_of_ne hjk with h | h
-  · rw [if_neg (not_lt.mpr h.le), if_pos h]; ring
-  · rw [if_pos h, if_neg (not_lt.mpr h.le)]; ring
+  · rw [ite_eq_right (not_lt.mpr h.le), ite_eq_left h]; ring
+  · rw [ite_eq_left h, ite_eq_right (not_lt.mpr h.le)]; ring
 
 theorem wedge_zero (v : Fin R → L) (J : Finset (Fin R)) : wedge v (fun _ => 0) J = 0 := by
   unfold wedge
@@ -80,27 +85,27 @@ theorem contr_wedge (v w : Fin R → L) (F : Finset (Fin R) → L) (J : Finset (
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← Finset.sum_add_distrib, Finset.sum_eq_single j]
   · by_cases hj : j ∈ J
-    · rw [if_pos hj, if_pos hj, if_neg (Finset.notMem_erase j J), Finset.insert_erase hj, zero_add]
+    · rw [ite_eq_left hj, ite_eq_left hj, ite_eq_right (Finset.notMem_erase j J), Finset.insert_erase hj, zero_add]
       linear_combination (v j * w j * F J) * kosSign_mul_self_cast (L := L) (J.erase j) j
-    · rw [if_neg hj, if_pos (Finset.mem_insert_self j J), Finset.erase_insert hj, if_neg hj, add_zero]
+    · rw [ite_eq_right hj, ite_eq_left (Finset.mem_insert_self j J), Finset.erase_insert hj, ite_eq_right hj, add_zero]
       linear_combination (v j * w j * F J) * kosSign_mul_self_cast (L := L) J j
   · intro k _ hkj
     by_cases hj : j ∈ J
-    · rw [if_pos hj, zero_add]
+    · rw [ite_eq_left hj, zero_add]
       split_ifs with hk hjk
       · rfl
       · exact absurd (Finset.mem_erase.mpr ⟨Ne.symm hkj, hj⟩) hjk
       · rfl
-    · rw [if_neg hj]
+    · rw [ite_eq_right hj]
       by_cases hk : k ∈ J
       · have hjk : j ∉ J.erase k := fun h => hj (Finset.mem_of_mem_erase h)
-        rw [if_pos (Finset.mem_insert_of_mem hk), if_pos hk, if_neg hjk,
+        rw [ite_eq_left (Finset.mem_insert_of_mem hk), ite_eq_left hk, ite_eq_right hjk,
           Finset.erase_insert_of_ne (Ne.symm hkj)]
         have hs := congrArg (Int.cast : ℤ → L) (kosSign_swap hj hk (Ne.symm hkj))
         push_cast at hs
         linear_combination (w j * v k * F (insert j (J.erase k))) * hs
       · have hk' : k ∉ insert j J := by simp [Finset.mem_insert, hkj, hk]
-        rw [if_neg hk', if_neg hk, add_zero]
+        rw [ite_eq_right hk', ite_eq_right hk, add_zero]
   · intro h; exact absurd (Finset.mem_univ j) h
 
 theorem ring_neg_one_mul (x : L) : (-1 : L) * x = -x := neg_one_mul x
@@ -126,7 +131,7 @@ theorem eq_of_coeffs {p n : ℕ} {φ ψ : KosC S ι V R p n} (h : ∀ I, coeffs 
   funext J I
   have := congrFun (h I) J.1
   unfold coeffs at this
-  rw [dif_pos J.2, dif_pos J.2] at this
+  rw [dite_eq_left J.2, dite_eq_left J.2] at this
   exact this
 
 theorem coeffs_zero {p n : ℕ} (I : KH.Cell K ι n) : coeffs (0 : KosC S ι V R p n) I = fun _ => 0 := by
@@ -259,8 +264,8 @@ theorem homotopy_mem {α c : K → ℤ} {n : ℕ}
 
 end KoszulCechExact
 
-open KoszulCechExact in
 
+open KoszulCechExact in
 theorem KoszulCechExact.proof : KoszulCechExact.Statement := by
   intro S _ K _ _ ι _ _ V α R z hz c n
   choose u hu h1 using hz
@@ -273,7 +278,8 @@ theorem KoszulCechExact.proof : KoszulCechExact.Statement := by
   have hone : ∀ I : KH.Cell K ι n, ∑ j, v I j * restrict0 (z j) I = 1 := by
     intro I
     simp only [v, restrict0, ← GenTwistGenerated.cellRes_mul]
-    rw [← map_sum, h1, cellRes_one (hle I)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, h1, cellRes_one (hle I)]
   have key : ∀ {p : ℕ} (φ : KosC S ι V R p n),
       (∀ I, contr (fun j => restrict0 (z j) I) (coeffs φ I) = fun _ => 0) →
       kosD z p n (homotopy v p φ) = φ := by

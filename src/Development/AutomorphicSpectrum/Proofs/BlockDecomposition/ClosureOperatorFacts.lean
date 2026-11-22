@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem val_mem_GLs (y : G n) : y.val ∈ GLs n := by
 
 theorem cls_eq_toLp (μ : Measure (G n)) {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
     {f : Mat n → V} (hf : MemLp (fun y : G n => f y.val) 2 μ) : cls μ f = hf.toLp _ := by
-  rw [cls, dif_pos hf]
+  rw [cls, dite_eq_left hf]
 
 theorem continuous_lift {V : Type} [TopologicalSpace V] {f : Mat n → V}
     (hf : ContinuousOn f (GLs n)) : Continuous (fun y : G n => f y.val) := by
@@ -63,7 +67,7 @@ theorem rR_cls [BorelSpace (G n)] (μ : Measure (G n)) [μ.IsHaarMeasure] {V : T
   rw [cls_eq_toLp (f := f) μ hf,
     cls_eq_toLp (f := fun y => f (y * h.val)) μ (hf.comp_measurePreserving hmp)]
   unfold rR
-  rw [dif_pos hmp]
+  rw [dite_eq_left hmp]
   exact Lp.toLp_compMeasurePreserving hf hmp
 
 theorem compLpL_cls (μ : Measure (G n)) {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]

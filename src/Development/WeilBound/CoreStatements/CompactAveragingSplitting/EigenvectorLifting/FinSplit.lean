@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+
+@[expose] public section
 
 noncomputable section
 

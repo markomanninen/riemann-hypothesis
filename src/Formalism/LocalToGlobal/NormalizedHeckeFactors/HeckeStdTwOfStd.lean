@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAlg
+module
+
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ theorem castMt_castMtInv (D : D7) {j : ℕ} {w : D.what₂.places.Pl} {i : D.nd.
   unfold castMt castMtInv
   exact cast_cast _ _ y
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure NLocBase (D : D7) (M : MtFam D) where
 
   Oc : ℕ → D.what₂.places.Pl → Type
@@ -91,8 +95,8 @@ abbrev heckeAlg {D : D7} {M : MtFam D} (B : NLocBase D M) (j : ℕ) (w : D.what�
     Subalgebra (B.Oc j w) (Module.End (FractionRing (B.Oc j w)) (B.V j w)) :=
   Algebra.adjoin (B.Oc j w) (heckeGens B j w)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure NormalizedLocalCompatibility (D : D7) (M : MtFam D) where
   B : NLocBase D M
 
@@ -143,10 +147,6 @@ def HeckeStd {D : D7} {M : MtFam D} (B : NLocBase D M) : Prop :=
 
 def LocPl (D : D7) (j : ℕ) (w : D.what₂.places.Pl) : Prop :=
   D.what₂.muAt w ≠ D.what₂.mu0 ∨ (D.nd.locs j w).Nonempty
-
-theorem locPl_iff (D : D7) (hw : ∀ j w, (D.nd.locs j w).Nonempty → D.what₂.muAt w ≠ D.what₂.mu0) (j : ℕ)
-    (w : D.what₂.places.Pl) : LocPl D j w ↔ D.what₂.muAt w ≠ D.what₂.mu0 :=
-  ⟨fun h => h.elim id (hw j w), Or.inl⟩
 
 theorem locPl_of_mem (D : D7) {j : ℕ} {w : D.what₂.places.Pl} {i : D.nd.Loc} (h : i ∈ D.nd.locs j w) :
     LocPl D j w :=

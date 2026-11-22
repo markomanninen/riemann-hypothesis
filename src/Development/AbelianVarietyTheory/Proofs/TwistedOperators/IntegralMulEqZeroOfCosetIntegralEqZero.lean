@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ContinuousOfMemCcSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ContinuousOfMemCcSmooth
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.AutomorphicL2Unitary Topology Set Filter
 open scoped Pointwise

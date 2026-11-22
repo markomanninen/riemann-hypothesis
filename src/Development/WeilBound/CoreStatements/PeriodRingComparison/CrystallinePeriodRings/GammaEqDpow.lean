@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Period
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Action
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Embedding
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Period
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Action
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Embedding
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+
+@[expose] public section
 
 noncomputable section
 

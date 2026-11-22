@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemUnipSymBc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemUnipSymBc
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.AutomorphicEvaluation Formalism.L2.DIV Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ConcreteSettingExists MeasureTheory NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.SRe
 open scoped TensorProduct Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -22,7 +27,8 @@ theorem basisChange_quot {Q ι : Type} [AddCommGroup Q] [Fintype ι] [DecidableE
     (hυ : ∀ j, υ j = ∑ i, (P i j).val • β i) (hf : ∀ i, f (β i) = ∑ j, (M j i).val • β j) (j : ι) :
     f (υ j) = ∑ m, (N m j).val • υ m := by
   have e1 : f (υ j) = ∑ l, ((M * P) l j).val • β l := by
-    rw [hυ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hυ, map_sum]
     simp only [map_nsmul, hf, Finset.smul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun l _ => ?_
@@ -48,13 +54,16 @@ theorem basisChange_mod {V ι : Type} [AddCommGroup V] [Fintype ι] [DecidableEq
     M P N hPN
     (fun j => by
       have := (key _ _).1 (hυ j)
-      rw [this, map_sum]; simp only [map_nsmul])
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, map_sum]; simp only [map_nsmul])
     (fun i => by
       have := (key _ _).1 (hf i)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       simp only [map_nsmul] at this
       rw [← this]; rfl) j
-  rw [key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, map_sum]
   simp only [map_nsmul]
   rw [← h]; rfl
 
@@ -102,7 +111,7 @@ theorem fmat_mulVec_mem_wLf (w : HeightOneSpectrum (𝓞 D.host.E)) {k : X.B.I.G
     | add a b _ _ ha hb =>
       intro c
       have e : incl X.B.I (c • (a + b)) = incl X.B.I (c • a) + incl X.B.I (c • b) := by
-        rw [smul_add]; funext i; simp only [incl, Pi.add_apply, map_add]
+        rw [smul_add]; funext i; simp only [incl, Pi.add_apply, map_add (f := _)]
       rw [e, Matrix.mulVec_add]; exact add_mem (ha c) (hb c)
     | smul d a _ ha =>
       intro c

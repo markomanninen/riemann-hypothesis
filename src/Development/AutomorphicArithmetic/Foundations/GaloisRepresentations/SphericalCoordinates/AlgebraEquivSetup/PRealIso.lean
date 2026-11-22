@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.W2.Seed
 open scoped TensorProduct
@@ -109,7 +113,7 @@ theorem UpperTheory.Gal.W2.Seed.pRealIso :
         simp only [Pi.add_apply, Pi.smul_apply, Pi.single_eq_same]
         apply Complex.ext <;> simp
       · simp [Pi.single_apply, hq]
-    rw [hw, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [hw, map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   have hg : Function.Injective
       (Sum.elim (fun τ : Phi A => τ.1) (fun τ : Phi A => ComplexEmbedding.conjugate τ.1)) := by
     have hcross : ∀ a b : Phi A, a.1 ≠ ComplexEmbedding.conjugate b.1 := by
@@ -157,12 +161,14 @@ theorem UpperTheory.Gal.W2.Seed.pRealIso :
             simp [Pi.single_apply, hτ]
           · simp
         · simp [F, Pi.single_apply, hi]
-      rw [hFx, map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hFx, map_sum] at h1
       rw [← h1]
       exact Finset.sum_congr rfl fun τ _ => by rw [dec φ (τ, i) (τ.1 (x : E))]; ring
     apply hφ0
     refine LinearMap.ext fun z => ?_
-    rw [LinearMap.zero_apply, ← Finset.univ_sum_single z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.zero_apply, ← Finset.univ_sum_single z, map_sum]
     refine Finset.sum_eq_zero fun p _ => ?_
     obtain ⟨τ, i⟩ := p
     rw [dec, (huv i τ).1, (huv i τ).2]

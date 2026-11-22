@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.MemOfMemSupportToFinsupp
-import GroundTheory.AutomorphicForms.HarishChandraCentre.RhoOneEqZeroOfRhoZeroEqZero
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.MemOfMemSupportToFinsupp
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.RhoOneEqZeroOfRhoZeroEqZero
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -67,7 +71,8 @@ theorem coeff_eq_zero_of_rho_one (s : Finset (Fin n × Fin n →₀ ℕ)) (c : (
         exact fun h' => hne (transposeExp_injective h')
       rw [not_not.1 this, mul_zero]
   have hsum := congrArg (fun T : Module.End ℂ (Poly n) => constantCoeff (T (monomial N 1))) h
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, map_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, map_zero,
     LinearMap.zero_apply, MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.constantCoeff_C] at hsum
   rw [Finset.sum_eq_single m₀ (fun m hm hne => key m hm hne) (fun h' => absurd hm₀.1 h')] at hsum
   have h0 : constantCoeff (rho 1 (canon m₀) (monomial N 1)) ≠ 0 :=

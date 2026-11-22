@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+
+@[expose] public section
 
 open scoped ContDiff
 

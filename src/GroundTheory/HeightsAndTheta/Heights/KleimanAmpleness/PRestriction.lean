@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrictionBundle
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrictionBundle
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -132,9 +137,9 @@ theorem exists_restrictData_isVeryAmpleBy (hsp : primeOf (S := k) x ≤ primeOf 
         · rfl
       · dsimp only
         by_cases hb : redAt k x y (b' kk) = 0
-        · rw [if_pos hb, dif_pos hb]
+        · rw [if_pos hb, dite_eq_left hb]
           exact ⟨1, by rw [pow_one, zero_mul]; exact zero_mem_ampleChart⟩
-        · rw [if_neg hb, dif_neg hb]
+        · rw [if_neg hb, dite_eq_right hb]
           obtain ⟨e, he⟩ := hbJ kk (liftChart hxy I)
           have hbl := (hloc hσr (hb' kk)).1
           have hJ := hsupp kk hb

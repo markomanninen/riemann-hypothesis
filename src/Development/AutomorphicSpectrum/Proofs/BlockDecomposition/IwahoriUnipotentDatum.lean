@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriGlValuedDatum
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriGlValuedDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,8 @@ theorem tau_eq (σ : L →+* L) (M : Matrix (Fin n) (Fin n) L) :
 theorem tau_mul (σ : L →+* L) (M N : Matrix (Fin n) (Fin n) L) :
     tau σ (M * N) = tau σ N * tau σ M := by
   ext i j
-  simp only [tau, Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tau, Matrix.mul_apply, map_sum, map_mul]
   rw [← Equiv.sum_comp Fin.revPerm]
   simp [mul_comm]
 

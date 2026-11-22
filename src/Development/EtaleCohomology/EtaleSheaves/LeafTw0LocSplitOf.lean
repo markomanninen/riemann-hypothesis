@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTensMonoPf
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.ZModInj
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTensMonoPf
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.ZModInj
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC

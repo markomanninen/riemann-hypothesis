@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 
@@ -51,12 +55,10 @@ theorem differentIdeal_eq_top
   have hdvd := (dvd_differentIdeal_iff (A := 𝒪[K]) (B := C) (P := P)).1 (Ideal.dvd_iff_le.2 hle)
   apply hdvd
   have hpmax : (P.comap (algebraMap 𝒪[K] C)).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := 𝒪[K]) P
   have hpeq : P.comap (algebraMap 𝒪[K] C) = 𝓂[K] := IsLocalRing.eq_maximalIdeal hpmax
   haveI : P.LiesOver 𝓂[K] := ⟨hpeq.symm⟩
-  letI := Localization.AtPrime.instAlgebraOfLiesOver 𝓂[K] P
-  haveI : Localization.AtPrime.IsLiesOverAlgebra 𝓂[K] P :=
-    Localization.AtPrime.instIsLiesOverAlgebra 𝓂[K] P
+  letI := Localization.AtPrime.algebraOfLiesOver 𝓂[K] P
   rw [Algebra.isUnramifiedAt_iff_map_eq 𝒪[K] 𝓂[K] P]
   refine ⟨?_, ?_⟩
   · haveI : Finite (𝒪[K] ⧸ 𝓂[K]) := (inferInstance : Finite 𝓀[K])

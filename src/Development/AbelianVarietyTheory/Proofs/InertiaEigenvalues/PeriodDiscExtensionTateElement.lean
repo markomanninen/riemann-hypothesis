@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,11 +49,11 @@ theorem _root_.GlobalTheory.HWL.Cmp.actS_one_tmul (b : B) (m : V ⊗[Qp] B) :
       AlgebraTensorModule.map (LinearMap.id : V →ₗ[LL] V) (LinearMap.mulLeft Qp b) m := by
   simp [_root_.GlobalTheory.HWL.Cmp.actS, _root_.GlobalTheory.HWL.Cmp.mulR]
 
+
 open TensorProduct in
 variable {Qp LL : Type} [Field Qp] [Field LL] [Algebra Qp LL] (V : Type) [AddCommGroup V] [Module LL V]
   [Module Qp V] [IsScalarTower Qp LL V] (B : Type) [CommRing B] [Algebra Qp B] in
 variable {V B} in
-
 theorem _root_.GlobalTheory.HWL.Cmp.map_actS {V' : Type} [AddCommGroup V'] [Module LL V'] [Module Qp V'] [IsScalarTower Qp LL V']
     {B' : Type} [CommRing B'] [Algebra Qp B'] (f : V →ₗ[LL] V') (h : B →ₐ[Qp] B') (a : LL ⊗[Qp] B)
     (m : V ⊗[Qp] B) :
@@ -62,8 +66,8 @@ theorem _root_.GlobalTheory.HWL.Cmp.map_actS {V' : Type} [AddCommGroup V'] [Modu
     induction m using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [_root_.GlobalTheory.HWL.Cmp.actS_tmul]
-    | add m₁ m₂ h₁ h₂ => simp only [map_add, h₁, h₂]
-  | add a₁ a₂ h₁ h₂ => simp only [map_add, LinearMap.add_apply, h₁, h₂]
+    | add m₁ m₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
+  | add a₁ a₂ h₁ h₂ => simp only [map_add (f := _), LinearMap.add_apply, h₁, h₂]
 
 end Act
 
@@ -147,6 +151,7 @@ theorem _root_.GlobalTheory.HWL.Cmp.φL_apply (L : Type) [CommRing L] (n p : ℕ
   funext k
   simp [_root_.GlobalTheory.HWL.Cmp.φL, _root_.Formalism.BasicNotions.letφ, PowerSeries.coe_substAlgHom]
 
+
 open TensorProduct in
 variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
@@ -156,7 +161,6 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {PD : _root_.Formalism.WeaklyAdmissibleFiltrations.PeriodData G Qp K₀ K B BdR} {LL O : Type} [Field LL] [Algebra Qp LL]
     [CommRing O] [Algebra O LL] [TopologicalSpace LL] {v : AddValuation LL (WithTop ℚ)} {n s : ℕ}
     {Γ : _root_.GlobalTheory.HWL.WGam PD LL O v n s} in
-
 theorem _root_.GlobalTheory.HWL.Cmp.ringHom_ext_of_X {O L : Type} [CommRing O] [CommRing L] (f g : PowerSeries O →+* PowerSeries L)
     (hC : ∀ c, f (PowerSeries.C c) = g (PowerSeries.C c)) (hX : f PowerSeries.X = g PowerSeries.X)
     (h0 : PowerSeries.constantCoeff (f PowerSeries.X) = 0) (a : PowerSeries O) : f a = g a := by
@@ -164,7 +168,7 @@ theorem _root_.GlobalTheory.HWL.Cmp.ringHom_ext_of_X {O L : Type} [CommRing O] [
     intro q
     induction q using Polynomial.induction_on with
     | C c => simpa using hC c
-    | add q r hq hr => simp only [Polynomial.coe_add, map_add, hq, hr]
+    | add q r hq hr => simp only [Polynomial.coe_add, map_add (f := _), hq, hr]
     | monomial k c _ =>
       simp only [Polynomial.coe_mul, Polynomial.coe_C, Polynomial.coe_pow, Polynomial.coe_X, map_mul,
         map_pow, hC, hX]
@@ -177,7 +181,7 @@ theorem _root_.GlobalTheory.HWL.Cmp.ringHom_ext_of_X {O L : Type} [CommRing O] [
   have ha : a = (PowerSeries.trunc (N + 1) a : PowerSeries O) + PowerSeries.X ^ (N + 1) * b := by
     rw [← hb]; ring
   have hdiff : f a - g a = PowerSeries.X ^ (N + 1) * (u ^ (N + 1) * (f b - g b)) := by
-    rw [ha, map_add, map_add, hpoly, map_mul, map_mul, map_pow, map_pow, hu, hg]
+    rw [ha, map_add (f := _), map_add (f := _), hpoly, map_mul, map_mul, map_pow, map_pow, hu, hg]
     ring
   rw [← sub_eq_zero, ← map_sub, hdiff, PowerSeries.coeff_X_pow_mul']
   simp

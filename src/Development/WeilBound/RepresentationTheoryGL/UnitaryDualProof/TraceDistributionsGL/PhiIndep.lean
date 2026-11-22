@@ -1,9 +1,15 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.BernsteinExponentBounds.IsInvForm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBoxInvariantSnd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearChangeOfVariablesLocalFieldMatrix
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.UnitaryKirillovModel.FormTraceEq
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.ConjugationInvariantDistributions.TheoremA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.BernsteinExponentBounds.IsInvForm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBoxInvariantSnd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearChangeOfVariablesLocalFieldMatrix
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.UnitaryKirillovModel.FormTraceEq
+public import Mathlib
+public import GroundTheory.AutomorphicForms.WhittakerCriterion
+public import GroundTheory.AutomorphicForms.ContragredientTranspose.GelfandKazhdan
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipApplyCastSuccLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,13 +32,13 @@ def PInvX {n : ℕ} (Λ : (Mx k n → ℂ) →ₗ[ℂ] ℂ) : Prop := ∀ p ∈ 
 
 def GInvX {n : ℕ} (Λ : (Mx k n → ℂ) →ₗ[ℂ] ℂ) : Prop := ∀ g : GL (Fin (n + 1)) k, ∀ f ∈ SB (Mx k n), Λ (f ∘ cj g) = Λ f
 
-open Classical in
 
+open Classical in
 def sec {n : ℕ} (w : Vc k n) : GL (Fin (n + 1)) k :=
   if h : ∃ s : GL (Fin (n + 1)) k, ∀ j, (s : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.last n) j = w j then h.choose else 1
 
-open Classical in
 
+open Classical in
 def phi {n : ℕ} (Λ : (Mx k n → ℂ) →ₗ[ℂ] ℂ) (F : Mx k n × Vc k n → ℂ) (w : Vc k n) : ℂ :=
   if w = 0 then 0 else Λ (fun x => F (cj (sec w)⁻¹ x, w))
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.SummandLocalization.aux1.{u_1, u_2} :
     ∀ {R : Type u_2} [inst : CommRing R] {W : Type u_1} [inst_1 : AddCommGroup W] [inst_2 : _root_.Module R W]
@@ -63,7 +67,7 @@ noncomputable def UpperTheory.Reformulated.B.SummandLocalization.SummandLoc :
       (X : Submodule K V) (𝔭 : Ideal (NumberField.RingOfIntegers F)),
       𝔭.IsMaximal →
         ∀ (Λ : Submodule (NumberField.RingOfIntegers K) V),
-          (∃ (Λ₀ : Submodule (NumberField.RingOfIntegers K) V), Submodule.IsLattice K Λ₀ ∧ UpperTheory.Reformulated.B.SummandLocalization.locF 𝔭 Λ₀ = Λ) →
+          (∃ (Λ₀ : Submodule (NumberField.RingOfIntegers K) V), Submodule.IsFullLattice K Λ₀ ∧ UpperTheory.Reformulated.B.SummandLocalization.locF 𝔭 Λ₀ = Λ) →
             ∃ (π : V →ₗ[K] V), (∀ (v : V), (π : V → V) v ∈ X) ∧ (∀ x ∈ X, (π : V → V) x = x) ∧ ∀ y ∈ Λ, (π : V → V) y ∈ Λ
 
 private theorem UpperTheory.Reformulated.B.SummandLocalization.lattice_isLocalizedModule {R K W : Type*} [CommRing R] [IsDomain R] [Field K]
@@ -87,7 +91,7 @@ private theorem UpperTheory.Reformulated.B.SummandLocalization.lattice_isLocaliz
 
 private theorem UpperTheory.Reformulated.B.SummandLocalization.exists_proj {R K V : Type*} [CommRing R] [IsDedekindDomain R] [Field K]
     [Algebra R K] [IsFractionRing R K] [AddCommGroup V] [Module K V] [Module R V] [IsScalarTower R K V]
-    (X : Submodule K V) (L : Submodule R V) (hL : Submodule.IsLattice K L) :
+    (X : Submodule K V) (L : Submodule R V) (hL : Submodule.IsFullLattice K L) :
     ∃ π : V →ₗ[K] V, (∀ v, π v ∈ X) ∧ (∀ x ∈ X, π x = x) ∧ ∀ y ∈ L, π y ∈ L := by
   let q : V →ₗ[R] V ⧸ X := X.mkQ.restrictScalars R
   let M : Submodule R (V ⧸ X) := L.map q

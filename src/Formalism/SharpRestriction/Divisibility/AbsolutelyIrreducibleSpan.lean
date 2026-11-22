@@ -1,18 +1,22 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.LocalRingCardinality.DataDIV
-import Formalism.LocalRingCardinality.DataDIVDefs
-import Formalism.LocalRingCardinality.DataTheta
-import Formalism.LocalRingCardinality.PrincipalHermitianLattice
-import Formalism.LocalRingCardinality.DataKap
-import Formalism.LocalRingCardinality.DataAmbForm
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HermitianLattices.StatementMaj
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.ParamsHeightRankConstant
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.LocalRingCardinality.DataDIV
+public import Formalism.LocalRingCardinality.DataDIVDefs
+public import Formalism.LocalRingCardinality.DataTheta
+public import Formalism.LocalRingCardinality.PrincipalHermitianLattice
+public import Formalism.LocalRingCardinality.DataKap
+public import Formalism.LocalRingCardinality.DataAmbForm
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HermitianLattices.StatementMaj
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,25 +57,7 @@ structure Lev (D : D7) where
 
 attribute [instance] Lev.nEE Lev.iEE Lev.fEE
 
-def Lev.of {D : D7} {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] [FiniteDimensional ℂ EE]
-    (S : RowSide D EE) {n : ℕ} (b : OrthonormalBasis (Fin n) ℂ EE) (ty : Fin n → D.what₂.FT) : Lev D :=
-  { EE := EE, S := S, n := n, onb := b, ft := ty }
-
-def Lev.sharp (D : D7) : Lev D := Lev.of (RowSide.sharp D) D.what₂.onb D.what₂.ft
-
-def Lev.p0 {D : D7} (P : BaseLevelRowSide D) : Lev D := Lev.of P.s D.what₂.onb0 D.what₂.ft0
-
 def Lev.kap {D : D7} (V : Lev D) : ℝ := V.S.kapOf V.ft
-
-theorem Lev.kap_pos {D : D7} (V : Lev D) : 0 < V.kap := by
-  unfold Lev.kap RowSide.kapOf
-  split_ifs with h
-  · exact Real.rpow_pos_of_pos h _
-  · exact one_pos
-
-theorem sharp_kap (D : D7) : (Lev.sharp D).kap = kapSharp D := rfl
-
-theorem chain_constant_at_small_level {D : D7} (P : BaseLevelRowSide D) : (Lev.p0 P).kap = P.kap0 := rfl
 
 theorem sharp_downTo (D : D7) (μ : D.what₂.Tup) :
     ∀ j, (RowSide.sharp D).downTo μ j = D.what₂.downTo μ j
@@ -115,24 +101,12 @@ theorem sharp_RRDef (D : D7) : (RowSide.sharp D).RRDef ↔ DV.RRDef D := by
   | (unfold RowSide.RRDef DV.RRDef; simp only [sharp_RRset]; try exact Iff.rfl; done)
   | exact Iff.rfl
 
-theorem sharp_AIntegral (D : D7) : (RowSide.sharp D).AIntegral ↔ Rows.AIntegral D.what₂ := by
-  first
-  | exact Iff.rfl
-  | (unfold RowSide.AIntegral Rows.AIntegral; exact Iff.rfl)
-
 section Derived
 
 variable (D : D7)
 
 abbrev Used (μ : D.what₂.Tup) : Prop := μ = D.what₂.mu0 ∨ ∃ w, μ = D.what₂.muAt w
 
-variable {D} in
-
-theorem Used.dv {μ : D.what₂.Tup} (h : Used D μ) : DV.Used D μ := by
-  unfold DV.Used
-  rcases h with h | ⟨w, h⟩
-  · exact Or.inl h
-  · exact Or.inr (Or.inr (Or.inr ⟨w, h⟩))
 
 def v0 : InfinitePlace D.what₂.LL := InfinitePlace.mk D.what₂.embLL
 
@@ -193,34 +167,7 @@ theorem auxiliary_prime_mem : (q0 D).Prime ∧ q0 D % (rPr D * LevelStarExponent
       fun hd => absurd (Nat.le_of_dvd (absNorm_ccK_pos D) hd) (Nat.not_le.mpr hlt)⟩
   exact Nat.sInf_mem hne
 
-theorem auxiliary_prime_eq_least (h : Ideal.absNorm D.host.ccK < LevelStarExponents.condE D) :
-    q0 D = sInf {p : ℕ | p.Prime ∧ p % (rPr D * LevelStarExponents.condE D) = 1} := by
-  unfold q0
-  congr 1
-  ext p
-  simp only [Set.mem_setOf_eq]
-  constructor
-  · rintro ⟨hp, h1, -⟩
-    exact ⟨hp, h1⟩
-  · rintro ⟨hp, h1⟩
-    refine ⟨hp, h1, fun hd => ?_⟩
-    have hkp : rPr D * LevelStarExponents.condE D < p := by
-      by_contra hle
-      push_neg at hle
-      rcases Nat.eq_or_lt_of_le hle with heq | hlt
-      · rw [heq, Nat.mod_self] at h1
-        exact absurd h1 (by norm_num)
-      · rw [Nat.mod_eq_of_lt hlt] at h1
-        exact absurd h1 hp.one_lt.ne'
-    have hck : LevelStarExponents.condE D ≤ rPr D * LevelStarExponents.condE D :=
-      le_mul_of_one_le_left (Nat.zero_le _) (rPr_mem D).1.one_lt.le
-    exact absurd (Nat.le_of_dvd (absNorm_ccK_pos D) hd)
-      (Nat.not_le.mpr (lt_trans h (lt_of_le_of_lt hck hkp)))
-
 def S0pr : Finset ℕ := {D.host.g 0, D.host.g 1, D.host.pde, D.host.pde', q0 D}
-
-def chiCond (p : ℕ) : ℕ :=
-  if p = D.host.g 0 ∨ p = D.host.g 1 ∨ p = D.host.pde ∨ p = D.host.pde' then 2 else if p = q0 D then 1 else 0
 
 def nAt (l : ℕ) : ℕ := if l = q0 D then 1 else D.R.f
 
@@ -246,15 +193,6 @@ def Flippable (m : ℕ) (h : ℕ → ℕ) (i : ℕ) : Prop :=
   i < m ∧ h i < m ∧ (i = 0 ∨ h i < h (i - 1))
 
 open Formalism.BasicNotions.TH (Ix Mat ProvA)
-
-def shiftIx {p q : ℕ} : Ix p q → Ix (p + 1) q
-  | Sum.inl i => Sum.inl i.succ
-  | Sum.inr j => Sum.inr j
-
-def embMat {p q : ℕ} (g : Mat p q) : Mat (p + 1) q :=
-  Matrix.of fun a b =>
-    (if a = Sum.inl 0 ∧ b = Sum.inl 0 then (1 : ℂ) else 0) +
-      ∑ a', ∑ b', if shiftIx a' = a ∧ shiftIx b' = b then g a' b' else 0
 
 structure ThetaTh where
   Sp : Type
@@ -372,8 +310,6 @@ structure LocV (D : D7) (V : Lev D) (A : AmbForm D V.S) where
 
 attribute [instance] LocV.finDat LocV.aPD LocV.mPD LocV.aMS LocV.mMS
 
-abbrev Loc (D : D7) (A : AmbForm D (RowSide.sharp D)) := LocV D (Lev.sharp D) A
-
 namespace LocV
 
 variable {D : D7} {V : Lev D} {A : AmbForm D V.S} (X : LocV D V A)
@@ -425,28 +361,6 @@ end LocV
 
 def unitMetricFrames {D : D7} {V : Lev D} {A : AmbForm D V.S} (X : LocV D V A) : InfinitePlace D.what₂.LL → Matrix V.S.RR.ι V.S.RR.ι ℂ :=
   fun v => ((Real.sqrt (X.kapV v) : ℝ) : ℂ) • V.S.RR.X v
-
-def KapLevels {D : D7} {V : Lev D} {A : AmbForm D V.S} (XD : DivX D) (X : LocV D V A) : Prop :=
-  ∀ v : InfinitePlace D.what₂.LL, X.kapV v = XD.kapR v.embedding
-
-def KapNear {D : D7} {V : Lev D} {A : AmbForm D V.S} (XD : DivX D) (X : LocV D V A) (c : ℝ) : Prop :=
-  ∀ v : InfinitePlace D.what₂.LL, |Real.log (X.kapV v) - Real.log (XD.kapR v.embedding)| ≤ c
-
-theorem kapNear_of_levels {D : D7} {V : Lev D} {A : AmbForm D V.S} {XD : DivX D} {X : LocV D V A} (h : KapLevels XD X) :
-    KapNear XD X 0 := by
-  unfold KapNear
-  unfold KapLevels at h
-  intro v
-  rw [h v]
-  simp
-
-theorem unit_metric_frames_of_levels {D : D7} {V : Lev D} {A : AmbForm D V.S} {XD : DivX D} {X : LocV D V A} (h : KapLevels XD X) :
-    unitMetricFrames X = fun v => ((Real.sqrt (XD.kapR v.embedding) : ℝ) : ℂ) • V.S.RR.X v := by
-  unfold KapLevels at h
-  funext v
-  first
-  | (simp only [unitMetricFrames, h v]; done)
-  | (unfold unitMetricFrames; rw [h v])
 
 section admitted
 
@@ -518,15 +432,6 @@ theorem auxiliary_prime_odd (D : D7) : q0 D % 2 = 1 := by
   have h2k : 2 ∣ rPr D * LevelStarExponents.condE D := dvd_mul_of_dvd_right h2c _
   rw [← Nat.mod_mod_of_dvd (q0 D) h2k, (auxiliary_prime_mem D).2.1]
   all_goals norm_num
-
-theorem auxiliary_prime_admissible_of_prime (D : D7) (L : SizeData₂ D) (p : ℕ) (hp : p.Prime) (h1 : p % (rPr D * LevelStarExponents.condE D) = 1)
-    (h2 : ¬ p ∣ Ideal.absNorm D.host.ccK) (h3 : Real.log (p : ℝ) ≤ L.sc.L) : adm9 D L := by
-  unfold adm9
-  have hle : q0 D ≤ p := Nat.sInf_le ⟨hp, h1, h2⟩
-  have hq : 0 < q0 D := (auxiliary_prime_mem D).1.pos
-  calc Real.log (q0 D : ℝ) ≤ Real.log (p : ℝ) :=
-        Real.log_le_log (by exact_mod_cast hq) (by exact_mod_cast hle)
-    _ ≤ L.sc.L := h3
 
 def covR {n : ℕ} (Λ : Submodule ℤ (EuclideanSpace ℝ (Fin n))) : ℝ :=
   sSup (Set.range fun x : EuclideanSpace ℝ (Fin n) => Metric.infDist x (Λ : Set (EuclideanSpace ℝ (Fin n))))
@@ -692,21 +597,6 @@ def HypSz (L : SizeData₂ D) (X : LocV D V A) (K : Consts) : Prop :=
   X.ev0 = eV0 D L K.CPP ∧
   0 < V.n ∧ 0 ≤ K.Cgr ∧ FunDataAt D L X K.Cp
 
-theorem auxiliary_prime_eq_least_of_size {L : SizeData₂ D} {X : LocV D V A} {K : Consts} (h : HypSz D L X K)
-    (hC : K.Cp < (D.host.QS : ℝ) * (D.host.q : ℝ)) :
-    q0 D = sInf {p : ℕ | p.Prime ∧ p % (rPr D * LevelStarExponents.condE D) = 1} := by
-  unfold HypSz at h
-  obtain ⟨-, -, -, -, -, -, -, -, -, ⟨-, hN⟩, -⟩ := h
-  apply auxiliary_prime_eq_least D
-  have hd : (0 : ℝ) < (D.host.d : ℝ) := by
-    exact_mod_cast lt_of_le_of_lt (Nat.zero_le _) D.host.qd_big.2
-  have hlt : (Ideal.absNorm D.host.ccK : ℝ) < (LevelStarExponents.condE D : ℝ) := by
-    unfold LevelStarExponents.condE
-    push_cast
-    calc (Ideal.absNorm D.host.ccK : ℝ) ≤ K.Cp * (D.host.d : ℝ) := hN
-      _ < (D.host.QS : ℝ) * (D.host.q : ℝ) * (D.host.d : ℝ) := mul_lt_mul_of_pos_right hC hd
-  exact_mod_cast hlt
-
 def Hyp (L : SizeData₂ D) (X : LocV D V A) (K : Consts) : Prop :=
   HypGap D X ∧ HypSz D L X K
 
@@ -718,21 +608,6 @@ def Conclusion1 (X : LocV D V A) : Prop :=
   IsLLForm D.what₂.embLL (llSpan D.what₂.embLL (V.S.RRset D.what₂.mu0)) ∧
   (∀ μ, Used D μ → V.S.RRset μ ⊆ llSpan D.what₂.embLL (V.S.RRset D.what₂.mu0)) ∧
   (∀ μ, Used D μ → X.EELL = llSpan D.what₂.embLL (V.S.RRset μ))
-
-def JEEDef (X : LocV D V A) : Prop := Set.range V.S.jEE = X.EELL
-
-theorem rrset_sub_EELL {X : LocV D V A} (h : Conclusion1 D X) : V.S.RRset D.what₂.mu0 ⊆ X.EELL := by
-  unfold Conclusion1 at h
-  intro x hx
-  rw [h.2.2.2 D.what₂.mu0 (Or.inl rfl)]
-  simp only [llSpan, Set.mem_setOf_eq]
-  exact ⟨{x}, fun _ => 1, by simpa using hx, by simp⟩
-
-theorem rrDef_of_jEEDef {X : LocV D V A} (h : Conclusion1 D X) (hJ : JEEDef D X) (hR : V.S.RRDef) : RRDef D X := by
-  unfold Conclusion1 at h
-  unfold RRDef
-  unfold JEEDef at hJ
-  exact ⟨hJ.trans (h.2.2.2 D.what₂.mu0 (Or.inl rfl)), hR⟩
 
 def Conclusion2 (L : SizeData₂ D) (X : LocV D V A) (C : ℝ) : Prop :=
   RRDef D X → Formalism.HN.muMaxDef V.S.RR.b (unitMetricFrames X) V.S.RR.L ≤ L.sc.x ^ C * L.sc.b
@@ -760,132 +635,9 @@ def admitted (L : SizeData₂ D) (XD : DivX D) (X : LocV D V A) (K : Consts) : P
 def aux₃ (L : SizeData₂ D) (X : LocV D V A) (C Ch Ch' : ℝ) : Prop :=
   Conclusion1 D X ∧ Conclusion2 D L X C ∧ PointsLemma D L X Ch Ch'
 
-def BoundsOfCoreAdmissibleData (L : SizeData₂ D) (XD : DivX D) (X : LocV D V A) (K : Consts) (C Ch Ch' : ℝ) : Prop :=
-  Hyp D L X K → AdmCore D L XD X K → aux₃ D L X C Ch Ch'
-
 def Stmt (L : SizeData₂ D) (XD : DivX D) (X : LocV D V A) (K : Consts) (C Ch Ch' : ℝ) : Prop :=
   Hyp D L X K → admitted D L XD X K → aux₃ D L X C Ch Ch'
 
 end Stmt
-
-abbrev ObjClass : Type 1 :=
-  ∀ {D : D7} (_ : SizeData₂ D) (_ : DivX D) {V : Lev D} {A : AmbForm D V.S}, LocV D V A → Prop
-
-def RealisationStatementAll (𝒪 : ObjClass) : Prop :=
-  ∀ K : Consts, ∃ C Ch Ch' : ℝ, ∀ (D : D7) (L : SizeData₂ D) (XD : DivX D) (V : Lev D) (A : AmbForm D V.S) (X : LocV D V A),
-    𝒪 L XD X → Stmt D L XD X K C Ch Ch'
-
-def Conclusion1Family {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) {VF : ∀ x (_ : Fm.x1 < x) (i : Fm.Ix x), Lev (Fm.D x i)}
-    {AF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), AmbForm (Fm.D x i) (VF x hx i).S}
-    (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), LocV (Fm.D x i) (VF x hx i) (AF x hx i)) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, Conclusion1 (Fm.D x i) (XF x hx i)
-
-def Conclusion2Family {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) {VF : ∀ x (_ : Fm.x1 < x) (i : Fm.Ix x), Lev (Fm.D x i)}
-    {AF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), AmbForm (Fm.D x i) (VF x hx i).S}
-    (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), LocV (Fm.D x i) (VF x hx i) (AF x hx i)) (C : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, Conclusion2 (Fm.D x i) (Fm.L x i) (XF x hx i) C
-
-def Conclusion3Family {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) {VF : ∀ x (_ : Fm.x1 < x) (i : Fm.Ix x), Lev (Fm.D x i)}
-    {AF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), AmbForm (Fm.D x i) (VF x hx i).S}
-    (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), LocV (Fm.D x i) (VF x hx i) (AF x hx i)) (C C' : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, PointsLemma (Fm.D x i) (Fm.L x i) (XF x hx i) C C'
-
-def AdmF {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) {VF : ∀ x (_ : Fm.x1 < x) (i : Fm.Ix x), Lev (Fm.D x i)}
-    {AF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), AmbForm (Fm.D x i) (VF x hx i).S}
-    (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), LocV (Fm.D x i) (VF x hx i) (AF x hx i)) (K : Consts) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x,
-    HypSz (Fm.D x i) (Fm.L x i) (XF x hx i) K ∧ admitted (Fm.D x i) (Fm.L x i) (Fm.X x i) (XF x hx i) K
-
-def InClass (𝒪 : ObjClass) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) {VF : ∀ x (_ : Fm.x1 < x) (i : Fm.Ix x), Lev (Fm.D x i)}
-    {AF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), AmbForm (Fm.D x i) (VF x hx i).S}
-    (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), LocV (Fm.D x i) (VF x hx i) (AF x hx i)) : Prop :=
-  ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), 𝒪 (Fm.L x i) (Fm.X x i) (XF x hx i)
-
-def ErrorExponentStatement (K : Consts) (C Ch Ch' : ℝ) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) {VF : ∀ x (_ : Fm.x1 < x) (i : Fm.Ix x), Lev (Fm.D x i)}
-    {AF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), AmbForm (Fm.D x i) (VF x hx i).S}
-    (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), LocV (Fm.D x i) (VF x hx i) (AF x hx i)) : Prop :=
-  AdmF Fm XF K → Conclusion1Family Fm XF ∧ Conclusion2Family Fm XF C ∧ Conclusion3Family Fm XF Ch Ch'
-
-def KudlaFamilyStatement (𝒪 : ObjClass) (K : Consts) (C Ch Ch' : ℝ) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (_CH : ℝ) : Prop :=
-  ∀ (VF : ∀ x (_ : Fm.x1 < x) (i : Fm.Ix x), Lev (Fm.D x i))
-    (AF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), AmbForm (Fm.D x i) (VF x hx i).S)
-    (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), LocV (Fm.D x i) (VF x hx i) (AF x hx i)),
-    InClass 𝒪 Fm XF → ErrorExponentStatement K C Ch Ch' Fm XF
-
-def FamilyErrorExponentBound (𝒪 : ObjClass) (𝒞 : Formalism.MainNotions.FamClass) : Prop :=
-  ∀ K : Consts, ∃ C Ch Ch' : ℝ, ∀ {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (CH : ℝ), 𝒞 Fm → KudlaFamilyStatement 𝒪 K C Ch Ch' Fm CH
-
-def cpOf (l : List ℝ) : ℝ := max (l.getD 0 0 + 1) (max (l.getD 6 0 + 1) (max (l.getD 7 0) (max (l.getD 8 0) 5)))
-
-theorem cpOf_cOut {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) :
-    cpOf Fm.cOut = max (Fm.Ct + 1) (max (Fm.CYL + 1) (max Fm.Cpde (max Fm.CccK 5))) := rfl
-
-def Consts.atFam (K : Consts) (l : List ℝ) : Consts :=
-  { K with
-    Cp := max K.Cp (cpOf l)
-    Cval := K.Cval * max K.Cp (cpOf l)
-    Cfp' := K.Cfp' * max K.Cp (cpOf l)
-    Cmm := K.Cmm * max K.Cp (cpOf l) }
-
-def ClosedAbsoluteShare (𝒪 : ObjClass) (𝒞 : Formalism.MainNotions.FamClass) : Prop :=
-  ∀ K : List ℝ → Consts, ∃ C Ch Ch' : List ℝ → ℝ,
-    Formalism.MainNotions.Closed 𝒞 (fun Fm CH => KudlaFamilyStatement 𝒪 (K Fm.cOut) (C Fm.cOut) (Ch Fm.cOut) (Ch' Fm.cOut) Fm CH)
-
-theorem LocV.s_eq {D : D7} {V : Lev D} {A : AmbForm D V.S} (X : LocV D V A) : X.s = D.R.r + 6 := by
-  have h1 := X.s_odd
-  have h2 := X.s_lo
-  have h3 := X.s_hi
-  have hk := D.R.k_even
-  have hm := D.R.m_even
-  have hm2 := D.R.two_le_m
-  have hr : D.R.r = D.R.k + D.R.m - 1 := rfl
-  obtain ⟨a, ha⟩ := h1
-  obtain ⟨b, hb⟩ := hk
-  obtain ⟨c, hc⟩ := hm
-  omega
-
-theorem hypGap_fam {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (x : ℝ) (hx : Fm.x1 < x) (i : Fm.Ix x) {V : Lev (Fm.D x i)}
-    {A : AmbForm (Fm.D x i) V.S} (X : LocV (Fm.D x i) V A) : HypGap (Fm.D x i) X := by
-  intro τ j h
-  have h1 := ((Fm.params x hx i).nodes_gap τ j.1 h).1
-  have h2 := (Fm.params x hx i).heightBound_ge_rank_cubic
-  have h3 := h2.trans h1
-  have hN : ((X.Nst : ℕ) : ℝ) = ((Fm.D x i).R.k : ℝ) + (Fm.D x i).R.m * ((Fm.D x i).R.t + ((Fm.D x i).R.r + 6) + 1) := by
-    unfold LocV.Nst
-    rw [X.s_eq]
-    push_cast
-    ring
-  rw [← hN] at h3
-  have h4 : (((Fm.D x i).R.t : ℝ) + 2 * ((X.Nst : ℕ) : ℝ) ^ 3) <
-      ((((Fm.D x i).hc τ).b ⟨j.1 + 1, h⟩ - ((Fm.D x i).hc τ).b ⟨j.1, by omega⟩ : ℚ) : ℝ) := by linarith
-  have h5 : ((((Fm.D x i).R.t : ℚ) + 2 * ((X.Nst : ℕ) : ℚ) ^ 3 : ℚ) : ℝ) <
-      ((((Fm.D x i).hc τ).b ⟨j.1 + 1, h⟩ - ((Fm.D x i).hc τ).b ⟨j.1, by omega⟩ : ℚ) : ℝ) := by
-    push_cast
-    push_cast at h4
-    exact h4
-  exact (Rat.cast_lt (K := ℝ)).1 h5
-
-theorem stmtFam_of_all (𝒪 : ObjClass) (𝒞 : Formalism.MainNotions.FamClass) (h : RealisationStatementAll 𝒪) : FamilyErrorExponentBound 𝒪 𝒞 := by
-  intro K
-  obtain ⟨C, Ch, Ch', hK⟩ := h K
-  refine ⟨C, Ch, Ch', ?_⟩
-  intro eps Fm CH _ VF AF XF hIn hAdm
-  obtain ⟨x0, hx0⟩ := hAdm
-  have key : ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x,
-      aux₃ (Fm.D x i) (Fm.L x i) (XF x hx i) C Ch Ch' := by
-    intro x hx hle i
-    obtain ⟨hS, hA⟩ := hx0 x hx hle i
-    exact hK (Fm.D x i) (Fm.L x i) (Fm.X x i) (VF x hx i) (AF x hx i) (XF x hx i) (hIn x hx i)
-      ⟨hypGap_fam Fm x hx i (XF x hx i), hS⟩ hA
-  exact ⟨⟨x0, fun x hx hle i => (key x hx hle i).1⟩, ⟨x0, fun x hx hle i => (key x hx hle i).2.1⟩,
-    ⟨x0, fun x hx hle i => (key x hx hle i).2.2⟩⟩
-
-theorem stmtClosed_of_fam (𝒪 : ObjClass) (𝒞 : Formalism.MainNotions.FamClass) (h : FamilyErrorExponentBound 𝒪 𝒞) : ClosedAbsoluteShare 𝒪 𝒞 := by
-  intro K
-  refine ⟨fun l => Classical.choose (h (K l)),
-    fun l => Classical.choose (Classical.choose_spec (h (K l))),
-    fun l => Classical.choose (Classical.choose_spec (Classical.choose_spec (h (K l)))), ?_⟩
-  refine ⟨1, one_pos, fun eps _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun Fm CH hC _ => ?_⟩⟩
-  exact Classical.choose_spec (Classical.choose_spec (Classical.choose_spec (h (K Fm.cOut)))) Fm CH hC
 
 end Formalism.MainNotions.AbsolutelyIrreducibleSpan

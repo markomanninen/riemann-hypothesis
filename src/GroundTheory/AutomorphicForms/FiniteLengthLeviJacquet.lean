@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemma
-import GroundTheory.AutomorphicForms.LeviStagesInduction
-import GroundTheory.AutomorphicForms.LeviStagesExact
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemma
+public import GroundTheory.AutomorphicForms.LeviStagesInduction
+public import GroundTheory.AutomorphicForms.LeviStagesExact
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -233,8 +238,8 @@ theorem Refines.trans {β γ δ : Fin n → ℕ} (h₁ : Refines β γ) (h₂ : 
     Refines β δ :=
   fun i j h => h₂ i j (h₁ i j h)
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem eq_one_of_mem_leviUnipotent_self (u : leviUnipotent F n β β) :
     ((u : levi F n β) : GL (Fin n) F) = 1 := by
   have hu := mem_unipotentRadical.1 (Subgroup.mem_subgroupOf.1 u.2)
@@ -245,8 +250,8 @@ theorem eq_one_of_mem_leviUnipotent_self (u : leviUnipotent F n β β) :
   · exact hu.2 i j hij
   · rw [hl i j hij, Units.val_one, one_apply_ne fun e => hij (by rw [e])]
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem nontrivial_leviJacquetModule_self {U : Type*} [AddCommGroup U] [Module ℂ U]
     [Nontrivial U] (ρ : Representation ℂ (levi F n β) U) :
     Nontrivial (LeviJacquetModule β β ρ) := by
@@ -260,8 +265,8 @@ theorem nontrivial_leviJacquetModule_self {U : Type*} [AddCommGroup U] [Module �
     simp [hu]
   exact (Submodule.mem_bot ℂ).1 (hle hmem)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_embedding_leviParabolicInd {U : Type u} [AddCommGroup U] [Module ℂ U]
     {ρ : Representation ℂ (levi F n β) U} [ρ.IsIrreducible] (hρ : IsSmooth ρ) :
     ∃ (γ : Fin n → ℕ) (_ : Refines β γ) (W : Type u) (_ : AddCommGroup W) (_ : Module ℂ W)

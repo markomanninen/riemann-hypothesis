@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.PeriodIntegrals.QuotSetU
-import Formalism.PeriodIntegrals.QuotInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.PeriodIntegrals.QuotSetU
+public import Formalism.PeriodIntegrals.QuotInv
+
+@[expose] public section
 
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -61,7 +65,6 @@ instance : MeasurableSpace (Grp G hG) := inferInstanceAs (MeasurableSpace {x : M
 instance : BorelSpace (Grp G hG) := inferInstanceAs (BorelSpace {x : MtM m // x ∈ amb G})
 instance : SecondCountableTopology (Grp G hG) :=
   inferInstanceAs (SecondCountableTopology {x : MtM m // x ∈ amb G})
-instance : T2Space (Grp G hG) := inferInstanceAs (T2Space {x : MtM m // x ∈ amb G})
 
 def inc (x : Grp G hG) : MtM m := x.1
 
@@ -157,7 +160,7 @@ theorem eq_smul_haar (hG : IsMatGroup G) (μ : Measure (MtM m)) (hμ : IsHaarOnM
   have e := Measure.haarMeasure_unique (pull hG μ) (Classical.arbitrary _)
   have e' : μ = (pull hG μ (Classical.arbitrary (TopologicalSpace.PositiveCompacts (Grp G hG)) :
       TopologicalSpace.PositiveCompacts (Grp G hG))) • (haar0 hG).map inc := by
-    rw [← Measure.map_smul]
+    rw [← Measure.map_smul _ inc_cont.measurable.aemeasurable]
     refine (map_pull (hG := hG) μ h3).symm.trans ?_
     exact congrArg (Measure.map inc) e
   obtain ⟨a, b⟩ := factor_pos_lt_top μ _ h2 _ e'

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EvKEqSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EvKEqSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,8 @@ theorem mem_range_realRd_iff {ν : ℂ} (hν : ν ≠ 0) (g : GA D (Wc D j) → 
     rw [smul_inv_smul₀ hν, e]
   · rintro ⟨n, a, x, e⟩
     refine ⟨∑ k, (YS.eF i _ b (Nat.le_add_left _ _) j.2).symm (a k ⊗ₜ[S.Ks] x k), ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [realRd_tmul, mul_smul]
     rw [← Finset.smul_sum, ← e, inv_smul_smul₀ hν]
 

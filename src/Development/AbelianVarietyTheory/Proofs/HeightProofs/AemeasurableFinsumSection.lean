@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SacSuccAbove
-import ReciprocityTheory.SemistableReduction.AlgAll
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SacSuccAbove
+public import ReciprocityTheory.SemistableReduction.AlgAll
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
@@ -67,7 +71,7 @@ theorem liftS_fieldRange {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] {D N 
     next a =>
       exact Subfield.subset_closure (Or.inl ⟨a, by simp [sHom]⟩)
     next p q hp hq =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hp hq
     next p i hp =>
       rw [map_mul]
@@ -81,7 +85,7 @@ theorem liftS_finite {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] {D N : �
     {j₀ : Fin (N + 1)} {x : Fin N → Ω} (h : Function.Injective (sHom (K := K) (D := D) j₀ x))
     (hfin : FiniteDimensional (IntermediateField.adjoin K (Set.range (sImg (D := D) j₀ x)))
         (OmS Ω D N)) :
-    letI : Algebra (FractionRing (MvPolynomial (TVar D N) K)) (OmS Ω D N) := (liftS h).toAlgebra
+    letI : Algebra (FractionRing (MvPolynomial (TVar D N) K)) (OmS Ω D N) := (liftS h).toAlgebra;
     FiniteDimensional (FractionRing (MvPolynomial (TVar D N) K)) (OmS Ω D N) := by
   letI : Algebra (FractionRing (MvPolynomial (TVar D N) K)) (OmS Ω D N) := (liftS h).toAlgebra
   let i : FractionRing (MvPolynomial (TVar D N) K) ≃+*
@@ -118,7 +122,8 @@ theorem sImg_rel {Ω : Type} [Field Ω] {D N : ℕ} (j₀ : Fin (N + 1)) (x : Fi
   have hC : ∀ a : Ω, algebraMap (MvPolynomial (SVar D N) Ω) (OmS Ω D N) (C a) =
       algebraMap Ω (OmS Ω D N) a := fun a => by
     rw [← MvPolynomial.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
-  simp only [sImg, sac_self, sac_succAbove, Fin.succ_ne_zero, if_false,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sImg, sac_self, sac_succAbove, Fin.succ_ne_zero, if_false,
     ↓reduceIte, map_neg, map_sum, map_mul, hC]
   exact neg_add_cancel _
 
@@ -150,7 +155,8 @@ theorem bijOn_restrict {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] {D N : 
         rw [← MvPolynomial.algebraMap_eq]; exact (sHom (K := K) (D := D) j₀ x).commutes a,
         eval₂_C] at this
     · have := congrArg P (sImg_rel (D := D) j₀ x i)
-      simpa [map_sum, map_mul, hX P hP] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_mul, hX P hP] using this
   refine ⟨hmaps, ?_, ?_⟩
   · intro P₁ h₁ P₂ h₂ he
     have hm := hmaps h₁
@@ -174,8 +180,8 @@ theorem bijOn_restrict {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] {D N : 
 
 end SectionSum
 
-open SectionSum MeasureTheory in
 
+open SectionSum MeasureTheory in
 theorem aemeasurable_finsum_section :
     (∀ (K : Type) [Field K] [Countable K] (sg : K →+* ℂ) (D N : ℕ), ∀ᵐ t ∂(MeasureTheory.Measure.pi fun _ : Fin D => (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℂ (Fin (N + 1)))).toSphere), ∀ p : MvPolynomial (Fin D × Fin (N + 1)) K, p ≠ 0 → MvPolynomial.eval₂ sg (fun q => (t q.1 : EuclideanSpace ℂ (Fin (N + 1))) q.2) p ≠ 0) → (∀ (K : Type) [Field K] [CharZero K] (σ : Type) [Fintype σ] (L : Type) [Field L] [Algebra (FractionRing (MvPolynomial σ K)) L] [FiniteDimensional (FractionRing (MvPolynomial σ K)) L] (sg : K →+* ℂ) (m : ℕ) (b : Fin m → L) (Nf : (Fin m → ℂ) → ℝ), Measurable Nf → ∃ Φ : (σ → ℂ) → ℝ, Measurable Φ ∧ ∀ t : σ → ℂ, (∀ p : MvPolynomial σ K, p ≠ 0 → MvPolynomial.eval₂ sg t p ≠ 0) → Φ t = ∑ᶠ P ∈ {P : L →+* ℂ | ∀ p : MvPolynomial σ K, P (algebraMap (FractionRing (MvPolynomial σ K)) L (algebraMap (MvPolynomial σ K) (FractionRing (MvPolynomial σ K)) p)) = MvPolynomial.eval₂ sg t p}, Nf (fun i => P (b i))) → (∀ (K Ω L : Type) [Field K] [Field Ω] [Algebra K Ω] [Field L] [Algebra K L] (D N : ℕ) (j₀ : Fin (N + 1)) (x : Fin N → Ω) (τ : TVar D N → L) (φ : Ω →ₐ[K] L), Algebra.trdeg K Ω = D → AlgebraicIndependent K τ → (∀ i : Fin D, τ (i.succ, j₀) + ∑ k, τ (i.succ, j₀.succAbove k) * φ (x k) = 0) → ∃! P : OmS Ω D N →+* L, (∀ a : Ω, P (algebraMap Ω (OmS Ω D N) a) = φ a) ∧ ∀ p, P (sImg j₀ x p) = τ p) → ∀ (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (Ω : ι → Type) [∀ c, Field (Ω c)] [∀ c, Algebra K (Ω c)] (WT : Type) [AddCommGroup WT] (A : ι → Type) [∀ c, CommRing (A c)] [∀ c, Algebra (Ω c) (A c)] [∀ c, Algebra K (A c)] [∀ c, Algebra (𝓞 K) (A c)] (𝒜 : (c : ι) → WT → Submodule (Ω c) (A c)) (d : Data K ι Ω WT A), ∀ c : ι, (⊤ : IntermediateField K (Ω c)).FG → Algebra.trdeg K (Ω c) = d.D → d.w (d.jc c) c ≠ 0 → (∃ J : Fin d.D → Fin d.N, LinearIndependent (Ω c) fun k => KaehlerDifferential.D K (Ω c) (d.x c (J k))) → ∀ (sg : K →+* ℂ) (m : ℕ) (a : Fin m → Ω c) (Nf : (Fin m → ℂ) → ℝ) (h : (Ω c →+* ℂ) → ℝ), Measurable Nf → (∀ P ∈ PT (Ω := Ω c) sg, h P = Nf (fun i => P (a i))) → AEMeasurable (fun t : Fin d.D → Metric.sphere (0 : EuclideanSpace ℂ (Fin (d.N + 1))) 1 => ∑ᶠ P ∈ d.ST c sg (fun i j => (t i : EuclideanSpace ℂ (Fin (d.N + 1))) j), h P) d.sphMeasure := by
   intro hgen hfib hext K _ _ ι _ Ω _ _ WT _ A _ _ _ _ 𝒜 d c hfg htr hw hJ sg m a Nf h hNf hh
@@ -193,7 +199,7 @@ theorem aemeasurable_finsum_section :
     ((Fin.cons t₀ t : Fin (d.D + 1) → Metric.sphere (0 : EuclideanSpace ℂ (Fin (d.N + 1))) 1) q.1 :
       EuclideanSpace ℂ (Fin (d.N + 1))) q.2
   have hF : Measurable F := by
-    refine measurable_pi_lambda _ fun q => ?_
+    refine Measurable.of_eval fun q => ?_
     obtain ⟨i, j⟩ := q
     refine Fin.cases ?_ (fun k => ?_) i
     · simp only [F, Fin.cons_zero]

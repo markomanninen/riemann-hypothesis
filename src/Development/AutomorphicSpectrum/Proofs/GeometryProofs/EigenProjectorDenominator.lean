@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagLabelBasesExist
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagLabelBasesExist
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,7 @@ theorem exists_eigen_op_uniform : ∀ (E : Type) [Field E] [NumberField E], ∃ 
       exact h
     | zero => simp
     | add a b _ _ iha ihb =>
-      rw [map_add, map_add, LinearMap.add_apply, iha, ihb, add_smul]
+      rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, iha, ihb, add_smul]
     | smul m a _ ih =>
       rw [map_zsmul, map_zsmul, LinearMap.smul_apply, ih, smul_assoc]
   have hs : scal V σ y ∈ opRing ρ σ := by

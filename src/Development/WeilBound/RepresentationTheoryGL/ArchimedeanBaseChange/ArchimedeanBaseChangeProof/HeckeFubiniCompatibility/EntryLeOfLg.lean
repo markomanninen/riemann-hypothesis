@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,8 @@ theorem ent_mul (M : KMod n) (A B : M.V →L[ℂ] M.V) (i j : Ix M) :
     ((stdOrthonormalBasis ℂ M.V).sum_repr' _).symm
   rw [ContinuousLinearMap.mul_apply]
   conv_lhs => rw [hx]
-  rw [map_sum, inner_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, inner_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_smul, inner_smul_right, mul_comm]
 
@@ -160,6 +165,7 @@ theorem entA_convK [MeasurableSpace (G n)] [BorelSpace (G n)] (μ : Measure (G n
 
 theorem mulF_fin [MeasurableSpace (Hf E a b)] [BorelSpace (Hf E a b)] (ν : Measure (Hf E a b)) [ν.IsHaarMeasure]
     {κ : Type} [Fintype κ] {ψ ψ' : Matrix κ κ (Hf E a b → ℂ)} (hψ : IsFinM ψ) (hψ' : IsFinM ψ') : IsFinM (mulF ν ψ ψ') := by
+  set_option synthInstance.maxHeartbeats 400000 in
   intro x y
   refine ⟨continuous_finsetSum _ fun z _ => ?_, ?_⟩
   · have e : (fun g => ∫ h, ψ x z h * ψ' z y (h⁻¹ * g) ∂ν) =
@@ -216,8 +222,8 @@ theorem mulM_tens (D : Dom E a b) [MeasurableSpace (G a)] [BorelSpace (G a)] [Me
 
 end PMul
 
-open PMul in
 
+open PMul in
 theorem tensMul : TensMul := fun _ _ _ _ _ _ D _ _ _ _ _ _ μa _ μb _ ν _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ hC hka hkb hka'
     hkb' hψ hψ' => ⟨mulF_fin ν hψ hψ', mulM_tens D μa μb ν hC hka hkb hka' hkb' hψ hψ'⟩
 

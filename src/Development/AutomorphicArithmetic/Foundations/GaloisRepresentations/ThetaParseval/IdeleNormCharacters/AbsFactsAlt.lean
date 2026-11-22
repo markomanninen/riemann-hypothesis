@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SplitLineSubtraction.RowDefOfOdd
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousAdeleNorm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SplitLineSubtraction.RowDefOfOdd
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousAdeleNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 def pl (φ : E →+* ℂ) : InfinitePlace (maximalRealSubfield E) := (InfinitePlace.mk φ).comap (algebraMap (maximalRealSubfield E) E)
 
-open Classical in
 
+open Classical in
 def typ (emb : ∀ w : InfinitePlace (maximalRealSubfield E), EmbOver E w) (a b : InfinitePlace (maximalRealSubfield E) → ℤ) (φ : E →+* ℂ) : ℤ :=
   if φ = (emb (pl φ)).1 then a (pl φ) else b (pl φ)
 

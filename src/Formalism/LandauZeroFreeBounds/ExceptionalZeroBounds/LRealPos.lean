@@ -1,5 +1,9 @@
-import Formalism.LandauZeroFreeBounds.SameCharacterLFunctionOne
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.TrivReal
+module
+
+public import Formalism.LandauZeroFreeBounds.SameCharacterLFunctionOne
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.TrivReal
+
+@[expose] public section
 
 open Complex Filter Topology
 

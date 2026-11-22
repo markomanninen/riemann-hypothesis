@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.EtaleAlexanderWhitneyCupCochainExistsForPairing
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.EtaleAlexanderWhitneyCupCochainExistsForPairing
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -82,7 +86,8 @@ theorem etale_alexander_whitney_cup_exists_of_cochain_from_evaluations (hmk : Et
       (ev α p _ rfl U (x.sub 0 p (by omega))) (ev β (N - p) _ rfl U (x.sub p (N - p) (by omega))))
     (by
       intro N w h V U g x
-      simp only [Sec.res, map_sum, Units.smul_def, map_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Sec.res, map_sum, Units.smul_def, map_zsmul]
       refine Finset.sum_congr rfl fun p _ => ?_
       congr 1
       rw [awex_sub_res, awex_sub_res, ← awex_ev_res, ← awex_ev_res]
@@ -113,7 +118,7 @@ theorem awex_ev {R : Type} [CommRing R] {E : Spc} {I : Cx R} {n : ℤ}
     (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
     ev (awexCochain a ha) p s h U x = a p s h U x := by
   unfold ev
-  rw [awexCochain, Cochain.mk_v, dif_pos (by omega), awex_key a ha _ p (by omega)]
+  rw [awexCochain, Cochain.mk_v, dite_eq_left (by omega), awex_key a ha _ p (by omega)]
   exact awexPhi_freeGen a ha p s h U x
 
 theorem etale_simplicial_cochain_from_natural_evaluations_exists_holds : EtaleSimplicialCochainFromNaturalEvaluationsExists := by

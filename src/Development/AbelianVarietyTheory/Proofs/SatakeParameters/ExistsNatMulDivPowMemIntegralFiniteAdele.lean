@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormOneIdeleOrderOneTrivialElsewhere
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormOneIdeleOrderOneTrivialElsewhere
+
+@[expose] public section
+
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.L2.DIV Formalism.UG GlobalTheory.TwV GlobalTheory.TwV.Xc TensorProduct
 
 set_option maxHeartbeats 800000
@@ -16,7 +21,7 @@ theorem exists_nat_mul_div_pow_mem : ∀ {F E : Type} [Field F] [NumberField F] 
   obtain ⟨D, hD, hDx⟩ := exists_nat_mul_integral ({x} : Finset E)
   obtain ⟨o, ho⟩ := hDx x (Finset.mem_singleton_self x)
   have hDz : algebraMap E _ (D : E) * ι z ∈ intAd E := by
-    rw [hzr, map_add, map_tmul_one hι, mul_add, ← map_mul, ← nsmul_eq_mul, ← ho]
+    rw [hzr, map_add (f := _), map_tmul_one hι, mul_add, ← map_mul, ← nsmul_eq_mul, ← ho]
     exact add_mem (algebraMap_int_mem o) (mul_mem (by
       rw [← map_natCast (algebraMap (𝓞 E) E)]; exact algebraMap_int_mem _) (map_mem_int hι hr))
   refine ⟨D, hD, fun n => mem_int_of_map hι ?_⟩

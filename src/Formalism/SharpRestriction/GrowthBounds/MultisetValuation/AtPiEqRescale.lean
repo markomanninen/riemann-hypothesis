@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.InParamMap
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.InParamMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ private theorem atPi_sum_C_mul_X_eq_C_mul {σ R ι : Type} [CommRing R] (vp : R)
   ext n
   rw [MvPowerSeries.coeff_C_mul]
   show vp ^ n.degree * MvPowerSeries.coeff n _ = _
-  simp only [map_sum, MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X, Finset.mul_sum]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   split_ifs with h
   · subst h
@@ -43,7 +48,8 @@ theorem map_coordZA (K1 K' : Type) [Field K1] [Algebra (K0 p) K1] [Field K'] [Al
     [IsScalarTower (K0 p) K1 K'] (j : ℕ) (x : X.EA j ⊕ X.EA j) :
     MvPowerSeries.map (algebraMap K1 K') (X.coordZA K1 j x) = X.coordZA K' j x := by
   rcases x with ⟨v, r, a, b⟩ | ⟨v, r, a, b⟩ <;>
-    simp only [Sys.coordZA, map_sum, map_mul, MvPowerSeries.map_C, MvPowerSeries.map_X,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Sys.coordZA, map_sum, map_mul, MvPowerSeries.map_C, MvPowerSeries.map_X,
       ← IsScalarTower.algebraMap_apply]
 
 theorem atPi_map_ThZA (K1 K' : Type) [Field K1] [Algebra (K0 p) K1] [Field K'] [Algebra (K0 p) K'] [Algebra K1 K']

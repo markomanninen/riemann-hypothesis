@@ -1,19 +1,23 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCycleSplitFilt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCycleSplitFiltStep
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSurjectiveClosed
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PExtension
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PIdealTwistFamily
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeVanish
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PFiniteSections
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeTail
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PCutRestrLenExact
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PInterNumCut
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PInterNumPointDeg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PInterNumRestrict
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PRestrLenRestrict
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PRestrictQuotX
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCycleSplitFilt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCycleSplitFiltStep
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSurjectiveClosed
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PExtension
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PIdealTwistFamily
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeVanish
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PFiniteSections
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeTail
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PCutRestrLenExact
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PInterNumCut
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PInterNumPointDeg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PInterNumRestrict
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PRestrLenRestrict
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PRestrictQuotX
+
+@[expose] public section
 
 namespace PositivityTheory.HtPt.Kra
 

@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.TateTwists.LeafAcycPf
-import Development.EtaleCohomology.TateTwists.LeafAwPf
-import Development.EtaleCohomology.TateTwists.LeafWaPf
-import Development.EtaleCohomology.TateTwists.EtaleSteenrodPrismHomotopyOfAcyclicAlexanderWhit
+module
+
+public import Development.EtaleCohomology.TateTwists.LeafAcycPf
+public import Development.EtaleCohomology.TateTwists.LeafAwPf
+public import Development.EtaleCohomology.TateTwists.LeafWaPf
+public import Development.EtaleCohomology.TateTwists.EtaleSteenrodPrismHomotopyOfAcyclicAlexanderWhit
+
+@[expose] public section
 
 namespace LateralTheory.Fin.PrismAlexanderWhitneySwapChainHomotopy
 theorem etale_steenrod_acyclic_models_of_components : LateralTheory.EtaleFoundations.SteenPf.leaf_acyc := by

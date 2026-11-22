@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltUntiltToComplexPAdicBasicLaws
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UntiltSumSubLe
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UntiltFrobeniusLaurentSeriesHasSumBoundFrobenius
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltUntiltToComplexPAdicBasicLaws
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UntiltSumSubLe
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UntiltFrobeniusLaurentSeriesHasSumBoundFrobenius
+
+@[expose] public section
+
 open Formalism.Per GlobalTheory.PSer
 open scoped Formalism.Per
 
@@ -48,7 +53,8 @@ theorem untilt_ext_sum_sub_le : ∀ (l : ℕ) [Fact l.Prime] (F : Type) [NormedF
   have hsa : ∀ a ∈ s, sh (x a) = tsh c * tsh (z a) := fun a ha => by
     rw [← hι, hxa a ha, map_mul]
   have hss : sh (∑ a ∈ s, x a) = tsh c * tsh (∑ a ∈ s, z a) := by
-    rw [← hι, map_sum, Finset.sum_congr rfl hxa, ← Finset.mul_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hι, map_sum, Finset.sum_congr rfl hxa, ← Finset.mul_sum, map_mul]
   have hbd : ∀ a ∈ s, ‖sh (x a)‖ ≤ ‖c‖ * R := fun a ha => by
     rw [hsa a ha, norm_mul, hn, hn]
     exact mul_le_mul_of_nonneg_left (hz a ha) (norm_nonneg _)

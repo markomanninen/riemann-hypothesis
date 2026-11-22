@@ -1,11 +1,15 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
-import GroundTheory.AutomorphicForms.DixmierMalliavin
-import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedDerivExpGLineEqRightDerivPowStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValueAtZeroEqSumIntegralKernelIteratedDerivStatement
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+public import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedDerivExpGLineEqRightDerivPowStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValueAtZeroEqSumIntegralKernelIteratedDerivStatement
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic
 open scoped ContDiff
@@ -96,16 +100,20 @@ theorem exists_rep {ε : ℝ} (hε : 0 < ε) : ∀ (n : ℕ) (X : Fin n → 𝔤
     ∃ (N : ℕ) (l : Fin N → List 𝔤) (κ : Fin N → (Fin n → ℝ) → ℂ),
       (∀ i, Continuous (κ i) ∧ tsupport (κ i) ⊆ Metric.closedBall 0 ε) ∧
       ∀ f : G → ℂ, h.IsSmoothFun f → ∀ g,
-        f g = ∑ i, ∫ t, κ i t * (l i).foldr h.rightDeriv f (g * h.prodExp X t)
-  | 0, X => by
+        f g = ∑ i, ∫ t, κ i t * (l i).foldr h.rightDeriv f (g * h.prodExp X t) := by
+  intro n
+  induction n with
+  | zero =>
+    intro X
     refine ⟨1, fun _ => [], fun _ _ => 1, fun _ => ⟨continuous_const, ?_⟩, fun f _ g => ?_⟩
     · intro t _
       rw [Subsingleton.elim t 0]; exact Metric.mem_closedBall_self hε.le
     · have hv : (volume : Measure (Fin 0 → ℝ)).real Set.univ = 1 := by
         simp [Measure.real, MeasureTheory.volume_pi]
       simp [IsExpLieAlgebra.prodExp, hv]
-  | d + 1, X => by
-    obtain ⟨N, l, K, hK, hrep⟩ := exists_rep hε d (Fin.tail X)
+  | succ d ih =>
+    intro X
+    obtain ⟨N, l, K, hK, hrep⟩ := ih (Fin.tail X)
     obtain ⟨a, ha, hu⟩ := GlobalTheory.T.exists_kernels_eval_zero_eq_sum_integral_iteratedDeriv ε hε
     refine ⟨3 * N,
       fun j => l (finProdFinEquiv.symm j).2 ++ List.replicate (finProdFinEquiv.symm j).1 (X 0),

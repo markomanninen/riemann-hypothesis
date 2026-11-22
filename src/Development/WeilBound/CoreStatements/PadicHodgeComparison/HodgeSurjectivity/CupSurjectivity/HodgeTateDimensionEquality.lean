@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HodgeTateSurjectivePositiveDim
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HodgeTateSurjectivePositiveDim
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -26,13 +30,15 @@ theorem rank_equality : HodgeTateDimensionEquality := by
       P.h M a n v φ = ∑ s, kC K (φ (bH a s)) * P.h M a n v ((bH a).coord s) := by
     intro a v φ
     conv_lhs => rw [← (bH a).sum_dual_apply_smul_coord φ]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun s _ => P.lin' M a n _ v _
   have hexp : ∀ a (v : M.V n) (φ : Module.Dual K (Hdg M.q a n)),
       P.h M a n v φ = ∑ i, qC l (bV.repr v i) * P.h M a n (bV i) φ := by
     intro a v φ
     conv_lhs => rw [← bV.sum_repr v]
-    rw [map_sum, AddMonoidHom.finsetSum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, AddMonoidHom.finsetSum_apply]
     exact Finset.sum_congr rfl fun i _ => P.lin M a n _ _ φ
   have h1 : Module.finrank ℚ_[l] (M.V n) ≤ Fintype.card ι := by
     let r : Fin (Module.finrank ℚ_[l] (M.V n)) → (ι → ℂ_[l]) :=

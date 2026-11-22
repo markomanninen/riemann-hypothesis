@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
+
+@[expose] public section
+
 open Polynomial Matrix GlobalTheory.LatOrb
 
 namespace GlobalTheory.LatOrb
@@ -8,7 +13,8 @@ namespace GlobalTheory.LatOrb
 theorem herm_mulVec_eq_adj {K : Type} [Field K] (σ : K →+* K)
     {n : ℕ} (x : Matrix (Fin n) (Fin n) K) (y m : Fin n → K) :
     herm σ y (x *ᵥ m) = herm σ ((x.map σ)ᵀ *ᵥ y) m := by
-  simp only [herm, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.transpose_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [herm, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.transpose_apply,
     Matrix.map_apply, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => ?_

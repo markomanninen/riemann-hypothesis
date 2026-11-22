@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FormalExpMulFormalExpNeg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueHasPAdicPowerSeriesValueOfDiffCoeffsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueAddSmulMapStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PAdicEvaluationSubstCompatibleThickeningStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueSubMemPdIdealStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiffCoeffsInIdealTopFormalLogConstOneStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasValLogOfHasValFormalLogStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaEvalCharStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasValLogOfMulSelfEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiffCoeffsInIdealTopPowerSeriesLogStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstOneAddXPowLogEqNsmulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FormalExpMulFormalExpNeg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueHasPAdicPowerSeriesValueOfDiffCoeffsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueAddSmulMapStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PAdicEvaluationSubstCompatibleThickeningStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueSubMemPdIdealStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiffCoeffsInIdealTopFormalLogConstOneStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasValLogOfHasValFormalLogStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaEvalCharStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasValLogOfMulSelfEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiffCoeffsInIdealTopPowerSeriesLogStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstOneAddXPowLogEqNsmulStatement
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat GlobalTheory.FormalCalc WittVector
 
 set_option autoImplicit false
@@ -97,7 +102,7 @@ theorem pow_mul_logValue : ∀ (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] 
   have hu0 : ∀ j, constantCoeff (u j) = 0 := fun _ => by simp [hu]
   have hEu : (fun j => Ev (u j)) = fun _ : Unit => x := by
     funext j
-    simp only [hu, map_sub, map_pow, map_add, map_one, hEv.1 ()]
+    simp only [hu, map_sub, map_pow, map_add (f := _), map_one, hEv.1 ()]
     rw [add_sub_cancel, hep, add_sub_cancel_left]
   have h1 : HasVal p (fun j => Ev (u j)) (PowerSeries.log F.Q : MvPowerSeries Unit F.Q) (algebraMap F.B F.Q x) := by
     rw [hEu]; exact GlobalTheory.T.hasVal_log_of_mul_self_eq_zero' F.B F.Q p x hxx
@@ -109,7 +114,7 @@ theorem pow_mul_logValue : ∀ (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] 
   rw [pow_zero, one_mul] at hjb
   have h5 : q = q₁ + algebraMap F.B F.Q (j + b') := by rw [← hjb]; ring
   rw [h5, mul_add, ← Nat.cast_pow, h4]
-  simp only [map_add, map_mul, map_natCast, map_pow]
+  simp only [map_add (f := _), map_mul, map_natCast, map_pow]
   push_cast
   ring
 
@@ -134,9 +139,9 @@ theorem hasPeriod_formalLog_char : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Fiel
     obtain ⟨e, he⟩ := GlobalTheory.PDiv.pow_dvd_sub_digit n a
     have hy : F.a (Sandwich.mu ε * ofPadic p O a) = (GlobalTheory.PDiv.digit n a : F.B) * F.a (Sandwich.mu ε) + p ^ n * F.a (Sandwich.mu ε * ofPadic p O e) := by
       have h2 : ofPadic p O a = ofPadic p O (GlobalTheory.PDiv.digit n a : ℤ_[p]) + ofPadic p O ((p : ℤ_[p]) ^ n * e) := by
-        rw [← map_add, ← he, add_sub_cancel]
+        rw [← map_add (f := _), ← he, add_sub_cancel]
       rw [h2]
-      simp only [map_add, map_mul, map_pow, map_natCast]
+      simp only [map_add (f := _), map_mul, map_pow, map_natCast]
       ring
     refine ⟨b - F.a (Sandwich.mu ε * ofPadic p O e), ?_⟩
     rw [hb, hy]

@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.CapelliEigenvalues.FunAct
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.ZuckDualTOfZuckDual
+module
+
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.CapelliEigenvalues.FunAct
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.ZuckDualTOfZuckDual
+
+@[expose] public section
 
 open Matrix PI.UpqRep Formalism.FourierDecayAlt
 open scoped InnerProductSpace

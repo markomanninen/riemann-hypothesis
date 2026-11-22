@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
-import Formalism.LocalToGlobal.HermitianForms.TiedTwJSym
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Formalism.LocalToGlobal.Columns.TwQLevU
-import Formalism.LocalToGlobal.Columns.RecLevelAsm
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
-import Formalism.LocalToGlobal.Columns.TiedCls
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
+public import Formalism.LocalToGlobal.HermitianForms.TiedTwJSym
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Formalism.LocalToGlobal.Columns.TwQLevU
+public import Formalism.LocalToGlobal.Columns.RecLevelAsm
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
+public import Formalism.LocalToGlobal.Columns.TiedCls
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,12 +55,12 @@ section Ad
 variable {F E K : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] [Field K] {n : ℕ}
   {Q : Finset (HeightOneSpectrum (𝓞 E))}
 
-variable (F) in
 
+variable (F) in
 abbrev rhoP (P : HeightOneSpectrum (𝓞 E)) : GL (Fin n) (AfE F E) →* GL (Fin n) (P.adicCompletion E) := bc (adAt F P)
 
-variable (F) in
 
+variable (F) in
 def rhoT (P : HeightOneSpectrum (𝓞 E)) (t : GL (Fin n) (AfE F E)) : GL (Fin n) (AfE F E) →* GL (Fin n) (P.adicCompletion E) :=
   (rhoP F P).comp (MulAut.conj t⁻¹).toMonoidHom
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.PeriodIntegrals.UpqRep
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.PeriodIntegrals.UpqRep
+
+@[expose] public section
 
 noncomputable section
 

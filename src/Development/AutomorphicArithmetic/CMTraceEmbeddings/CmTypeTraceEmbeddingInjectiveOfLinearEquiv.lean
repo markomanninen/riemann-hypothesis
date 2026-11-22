@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.OrientEv
-import Development.AutomorphicArithmetic.CMTraceEmbeddings.CmFieldRealTensorBijectiveCmType
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.OrientEv
+public import Development.AutomorphicArithmetic.CMTraceEmbeddings.CmFieldRealTensorBijectiveCmType
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.W2.Seed UpperTheory.Gal.W2.Seed.Ori
 open scoped TensorProduct
@@ -19,7 +23,7 @@ theorem UpperTheory.cmType_trace_embedding_injective_of_linearEquiv :
       rw [Th_tmul, LinearMap.baseChange_tmul, realTensorEvalAlgHom_tmul]
       rfl
     | add a b ha hb' =>
-      rw [map_add, Pi.add_apply, ha, hb', map_add, map_add]
+      rw [map_add (f := _), Pi.add_apply, ha, hb', map_add (f := _), map_add (f := _)]
   have hj : ∀ j, (LinearMap.proj j ∘ₗ B).baseChange ℝ z = (LinearMap.proj j ∘ₗ B).baseChange ℝ z' := by
     intro j
     apply hb
@@ -37,7 +41,7 @@ theorem UpperTheory.cmType_trace_embedding_injective_of_linearEquiv :
       simp [Finset.univ_sum_single v]
     | add a b ha hb' =>
       conv_lhs => rw [ha, hb']
-      simp only [map_add, ← Finset.sum_add_distrib]
+      simp only [map_add (f := _), ← Finset.sum_add_distrib]
   have hc : ∀ j (y : ℝ ⊗[ℚ] V), (LinearMap.proj j : (Fin n → E) →ₗ[ℚ] E).baseChange ℝ (B.baseChange ℝ y) =
       (LinearMap.proj j ∘ₗ B).baseChange ℝ y := by
     intro j y

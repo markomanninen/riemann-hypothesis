@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+module
+
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates
 
@@ -51,7 +55,7 @@ theorem d_eq_wd {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
     d n z j f x = wd n j (f ∘ e.symm) (z x) := by
   have h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source := ⟨e, he, hx⟩
   unfold d
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   apply wd_congr
   have := chart_symm_eventuallyEq n z _ e (Classical.choose_spec h).1 he x (Classical.choose_spec h).2 hx
   filter_upwards [this] with y hy
@@ -63,7 +67,7 @@ theorem db_eq_wdb {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
     db n z j f x = wdb n j (f ∘ e.symm) (z x) := by
   have h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source := ⟨e, he, hx⟩
   unfold db
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   apply wdb_congr
   have := chart_symm_eventuallyEq n z _ e (Classical.choose_spec h).1 he x (Classical.choose_spec h).2 hx
   filter_upwards [this] with y hy

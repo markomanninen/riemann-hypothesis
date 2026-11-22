@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
+
+@[expose] public section
 
 open NumberField UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK UpperTheory.V.ZK.Up CategoryTheory
 
@@ -7,7 +11,7 @@ private theorem d_eq (A G : Type) [CommRing A] [Group G] (k : ℕ) (z : Ch A G (
   rw [groupHomology.inhomogeneousChains.d_def]
   induction z using Finsupp.induction_linear with
   | zero => simp
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | single g c =>
     rw [groupHomology.inhomogeneousChains.d_single]
     simp [bd, Finsupp.linearCombination_single, Finset.smul_sum, smul_smul, mul_comm c]
@@ -19,7 +23,7 @@ private theorem i_inj (A G : Type) [CommRing A] [Group G] (k : ℕ) :
 private noncomputable def mk (A G : Type) [CommRing A] [Group G] (k : ℕ) :
     LinearMap.ker (bd A G k) →ₗ[A] groupHomology.cycles (Rep.trivial A G A) (k + 1) where
   toFun z := groupHomology.cyclesMk (k + 1) k (by simp) z.1 ((d_eq A G k z.1).trans z.2)
-  map_add' a b := i_inj A G _ (by rw [map_add, groupHomology.iCycles_mk, groupHomology.iCycles_mk, groupHomology.iCycles_mk]; rfl)
+  map_add' a b := i_inj A G _ (by rw [map_add (f := _), groupHomology.iCycles_mk, groupHomology.iCycles_mk, groupHomology.iCycles_mk]; rfl)
   map_smul' c a := i_inj A G _ (by rw [map_smul, groupHomology.iCycles_mk, groupHomology.iCycles_mk]; rfl)
 
 private theorem i_mk (A G : Type) [CommRing A] [Group G] (k : ℕ) (z : LinearMap.ker (bd A G k)) :
@@ -81,7 +85,7 @@ theorem UpperTheory.V.ZK.Up.bridge : UpperTheory.V.ZK.Up.Bridge := by
     erw [h1, i_mk]
     induction (z : Ch ℤ G (k + 1)) using Finsupp.induction_linear with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | single g a =>
       rw [groupHomology.chainsMap_f_single]
       simp only [cm, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]

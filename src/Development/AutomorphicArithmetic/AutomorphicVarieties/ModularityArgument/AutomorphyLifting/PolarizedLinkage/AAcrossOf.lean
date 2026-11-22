@@ -1,15 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AAcrossOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.QuadraticCharpolySplitting.QuadFamSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CentralResidueGroups.Across
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CentralResidueGroups.BiQuad
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AAcrossOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.QuadraticCharpolySplitting.QuadFamSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CentralResidueGroups.Across
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CentralResidueGroups.BiQuad
+
+@[expose] public section
 
 noncomputable section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep GlobalTheory.WeilDeligne
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GalOfCusp UpperTheory.Zero.LLC UpperTheory.V.Af UpperTheory.V.Z.Gam
 open UpperTheory.GalN.V GroundTheory.Global.SemiLocal UpperTheory.V.Published UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter UpperTheory.V.Af.Bc
-
-open private across_cc across_pair across_up across_irr across_tf from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CentralResidueGroups.Across
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -60,24 +62,53 @@ private theorem step (hFL : FlagLaws) (hUD : AUpDown) (hP : HypothesesH) (hR : R
     (hW : WitA ι (r.comp (AlgEquiv.restrictScalarsHom ℚ : G K Ω →* G ℚ Ω))) :
     WitA ι (r.comp (AlgEquiv.restrictScalarsHom ℚ : G K' Ω →* G ℚ Ω)) := by
   obtain ⟨M, _, _, _, iK, iK', iM, tK, tK', gK, gK', hs, hs', hM, hM'⟩ := UpperTheory.V.Z.Bc.biQuad K K' Ω hK hK'
-  haveI := across_up K Ω
-  haveI := across_up K' Ω
-  haveI := across_up M Ω
-  obtain ⟨c, hcc⟩ := across_cc Ω
+  have : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
+  have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
+  have : IsAlgClosure K Ω := ⟨inferInstance, Algebra.IsAlgebraic.tower_top (K := ℚ) K⟩
+  have : IsAlgClosure K' Ω := ⟨inferInstance, Algebra.IsAlgebraic.tower_top (K := ℚ) K'⟩
+  have : IsAlgClosure M Ω := ⟨inferInstance, Algebra.IsAlgebraic.tower_top (K := ℚ) M⟩
+  have hconj : ∃ c : G ℚ Ω, IsConjEl c := by
+    let j : Ω →ₐ[ℚ] ℂ := IsAlgClosed.lift
+    let : Algebra Ω ℂ := j.toRingHom.toAlgebra
+    have : IsScalarTower ℚ Ω ℂ := IsScalarTower.of_algebraMap_eq fun x => (j.commutes x).symm
+    have : Normal ℚ Ω := IsAlgClosure.normal ℚ Ω
+    let τ : ℂ ≃ₐ[ℚ] ℂ := AlgEquiv.ofRingEquiv (f := starRingAut) fun x => by simp
+    exact ⟨τ.restrictNormal Ω, algebraMap Ω ℂ, fun x => AlgEquiv.restrictNormal_commutes τ Ω x⟩
+  obtain ⟨c, hcc⟩ := hconj
+  have irrOfRange {Δ Δ' : Type} [Group Δ] [Group Δ']
+      (f : Δ →* G ℚ Ω) (f' : Δ' →* G ℚ Ω) (h : ∀ s, ∃ t, f' t = f s)
+      (hf : IsIrr (r.comp f)) : IsIrr (r.comp f') := by
+    refine ⟨hf.1, fun _ _ _ => trivial, fun W hW hInv => hf.2.2 W hW fun s v hv => ?_⟩
+    obtain ⟨t, ht⟩ := h s
+    simpa only [MonoidHom.comp_apply, ht] using hInv t v hv
+  have pairing {F : Type} [Field F] [CharZero F] [Algebra F Ω] :
+      ∃ P, IsPairing c (r.comp (resG ℚ F Ω)) (θ.comp (resG ℚ F Ω)) P := by
+    obtain ⟨J, hJ⟩ := hd
+    refine ⟨J * r c⁻¹, fun s s' h => ?_⟩
+    change resG ℚ F Ω s' = c * resG ℚ F Ω s * c⁻¹ at h
+    have e : r c⁻¹ * r (resG ℚ F Ω s') = r (resG ℚ F Ω s) * r c⁻¹ := by
+      rw [h, ← map_mul, ← map_mul]
+      congr 1
+      group
+    have e' := congrArg Units.val e
+    simp only [Units.val_mul] at e'
+    simp only [MonoidHom.comp_apply]
+    rw [Units.val_mul, ← Matrix.smul_mul, ← hJ (resG ℚ F Ω s)]
+    simp only [Matrix.mul_assoc, e']
   have he : (r.comp (resG ℚ K Ω)).comp (resG K M Ω) = (r.comp (resG ℚ K' Ω)).comp (resG K' M Ω) :=
     MonoidHom.ext fun s => rfl
   have hiM : IsIrr ((r.comp (resG ℚ K Ω)).comp (resG K M Ω)) := by
-    refine across_irr r _ ((resG ℚ K Ω).comp (resG K M Ω)) ?_ hi
+    refine irrOfRange _ ((resG ℚ K Ω).comp (resG K M Ω)) ?_ hi
     rintro ⟨s, ⟨t, rfl⟩, h2⟩
     obtain ⟨u, rfl⟩ := (hM t).2 h2
     exact ⟨u, rfl⟩
   have hiM' : IsIrr ((r.comp (resG ℚ K' Ω)).comp (resG K' M Ω)) := he ▸ hiM
   have hiK : IsIrr (r.comp (resG ℚ K Ω)) :=
-    across_irr r ((resG ℚ K Ω).comp (resG K M Ω)) (resG ℚ K Ω) (fun s => ⟨resG K M Ω s, rfl⟩) hiM
+    irrOfRange ((resG ℚ K Ω).comp (resG K M Ω)) (resG ℚ K Ω) (fun s => ⟨resG K M Ω s, rfl⟩) hiM
   have hiK' : IsIrr (r.comp (resG ℚ K' Ω)) :=
-    across_irr r ((resG ℚ K' Ω).comp (resG K' M Ω)) (resG ℚ K' Ω) (fun s => ⟨resG K' M Ω s, rfl⟩) hiM'
-  obtain ⟨P, hPa⟩ := across_pair (F := K) r θ hd c
-  obtain ⟨P', hPa'⟩ := across_pair (F := K') r θ hd c
+    irrOfRange ((resG ℚ K' Ω).comp (resG K' M Ω)) (resG ℚ K' Ω) (fun s => ⟨resG K' M Ω s, rfl⟩) hiM'
+  obtain ⟨P, hPa⟩ := pairing (F := K)
+  obtain ⟨P', hPa'⟩ := pairing (F := K')
   have pol : Sol.Pol ι (r.comp (resG ℚ K Ω)) :=
     ⟨ℚ, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance,
       θ, c, P, hθ, UpperTheory.V.Ws.auSign θ, hcc, hPa⟩

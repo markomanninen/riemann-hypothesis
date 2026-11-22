@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.SubstDtop
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.SubstDtop
+
+@[expose] public section
 
 noncomputable section
 
@@ -204,7 +208,8 @@ private theorem isWeightedHomogeneous_aeval_of_homogeneous {σ K M : Type} [Comm
     (f : σ → MvPolynomial σ K) (hf : ∀ v, IsWeightedHomogeneous w (f v) (w v)) {P : MvPolynomial σ K} {e : M}
     (hP : IsWeightedHomogeneous w P e) : IsWeightedHomogeneous w (aeval f P) e := by
   classical
-  rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum]
   apply IsWeightedHomogeneous.sum
   intro m hm
   rw [aeval_monomial, MvPolynomial.algebraMap_eq]

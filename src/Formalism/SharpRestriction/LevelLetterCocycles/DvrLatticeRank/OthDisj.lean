@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FinrankMapMkQ
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfC
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FrMultVOfNotJump
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FinrankMapMkQ
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfC
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FrMultVOfNotJump
+
+@[expose] public section
 
 noncomputable section
 

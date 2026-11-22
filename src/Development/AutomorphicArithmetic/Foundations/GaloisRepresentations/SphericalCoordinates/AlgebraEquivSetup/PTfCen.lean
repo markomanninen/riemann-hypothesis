@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+
+@[expose] public section
+
 open Formalism.UG GlobalTheory.LKDef.HeckeTraceForms UpperTheory.Gal.W2.Seed
 open scoped Classical
 
@@ -32,7 +37,7 @@ theorem UpperTheory.Gal.W2.Seed.pTfCen :
       rw [hΨ, TyLev.tf, h0, mul_zero, zero_smul]
   have hty : tyFn T.J T.ψ 1 = 1 := by
     unfold tyFn
-    rw [dif_pos T.J.one_mem]
+    rw [dite_eq_left T.J.one_mem]
     have h1 : (⟨1, T.J.one_mem⟩ : T.J) = 1 := rfl
     rw [h1, map_one]
     simp

@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
-import Formalism.LocalToGlobal.ProjectiveLattices.FnTrdegOf
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FnFGFnTrdeg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
+public import Formalism.LocalToGlobal.ProjectiveLattices.FnTrdegOf
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FnFGFnTrdeg
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
 namespace GlobalTheory.FlagDim

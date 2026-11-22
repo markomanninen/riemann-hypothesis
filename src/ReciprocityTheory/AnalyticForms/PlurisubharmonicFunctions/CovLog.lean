@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.MaIntEmpty
+module
+
+public import ReciprocityTheory.AnalyticForms.MaIntEmpty
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A
 

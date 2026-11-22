@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.DefsCS
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
+module
+
+public import Formalism.SatakeDualWeyl.DefsCS
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem csSpan_approx (hA : Formalism.UG.CS.IntAdApprox) (D : 𝓞 F) (hD : D �
   · exact ⟨0, isIntegral_zero, 0, zero_mem _, by simp⟩
   · exact ⟨1, isIntegral_one, 0, zero_mem _, by simp⟩
   · rintro a b _ _ ⟨x, hx, w, hw, rfl⟩ ⟨y, hy, w', hw', rfl⟩
-    exact ⟨x + y, hx.add hy, w + w', add_mem hw hw', by rw [map_add]; ring⟩
+    exact ⟨x + y, hx.add hy, w + w', add_mem hw hw', by rw [map_add (f := _)]; ring⟩
   · rintro a _ ⟨x, hx, w, hw, rfl⟩
     exact ⟨-x, hx.neg, -w, neg_mem hw, by rw [map_neg]; ring⟩
   · rintro a b _ _ ⟨x, hx, w, hw, rfl⟩ ⟨y, hy, w', hw', rfl⟩
@@ -134,7 +138,7 @@ theorem csSpan_back (hA : Formalism.UG.CS.IntAdApprox) (Λ : Submodule (𝓞 E) 
     refine hM _ fun i => ?_
     by_cases h : i = k
     · subst h; simp only [Pi.single_eq_same]; exact one_mem _
-    · rw [Pi.single_apply, if_neg h]; exact zero_mem _
+    · rw [Pi.single_apply, ite_eq_right h]; exact zero_mem _
   have hdec : u = (fun i => ι (x i)) +
       ∑ k, (⟨w k, hw k⟩ : 𝒮) • (fun i => ι ((Pi.single k β : n → E) i)) := by
     ext i
@@ -143,7 +147,7 @@ theorem csSpan_back (hA : Formalism.UG.CS.IntAdApprox) (Λ : Submodule (𝓞 E) 
       rw [Pi.single_eq_same, Subring.smul_def, smul_eq_mul, hβ, adelstab_incl_C, mul_comm]
     · intro k _ hki
       show (_ : 𝒮) • ι ((Pi.single k β : n → E) i) = 0
-      rw [Pi.single_apply, if_neg (Ne.symm hki), map_zero, smul_zero]
+      rw [Pi.single_apply, ite_eq_right (Ne.symm hki), map_zero, smul_zero]
     · exact fun h => absurd (Finset.mem_univ i) h
   rw [hdec]
   exact add_mem (Submodule.subset_span ⟨x, hxmem, rfl⟩)

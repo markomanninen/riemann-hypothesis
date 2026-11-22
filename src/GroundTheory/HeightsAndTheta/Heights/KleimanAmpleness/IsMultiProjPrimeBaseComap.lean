@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.BaseComap
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherFurther
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.OneBlockPnPt
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.BaseComap
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherFurther
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.OneBlockPnPt
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.I2
 
@@ -32,7 +36,8 @@ variable {ι : Type} [Fintype ι] in
 theorem _root_.GlobalTheory.TorusAtAssembly.im_Hf_swap (x y : EuclideanSpace ℂ ι) :
     (_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf y x).im = -(_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf x y).im := by
   have h : _root_.ReciprocityTheory.ChartRestriction.G.I2.Hf y x = (starRingEnd ℂ) (_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf x y) := by
-    simp [_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf, map_sum, mul_comm]
   rw [h, Complex.conj_im]
 
 end Form
@@ -99,11 +104,11 @@ section Build
 variable [IsCMField E] {dim : (E →+* ℂ) → ℕ}
   {b : Module.Basis (Fin (2 * Fintype.card (Idx dim))) ℝ (Vsp dim)} {w w' : 𝓞 E}
 
+
 open NumberField in
 variable {E : Type} [Field E] [NumberField E] in
 variable [IsCMField E] {dim : (E →+* ℂ) → ℕ}
   {b : Module.Basis (Fin (2 * Fintype.card (_root_.ReciprocityTheory.ChartRestriction.G.I2.Idx dim))) ℝ (_root_.ReciprocityTheory.ChartRestriction.G.I2.Vsp dim)} {w w' : 𝓞 E} in
-
 theorem _root_.GlobalTheory.TorusAtAssembly.integral_of_parity (hw : (w' : E) = _root_.ReciprocityTheory.ChartRestriction.G.FD.cc (w : E))
     (par : ∀ x ∈ _root_.ReciprocityTheory.ChartRestriction.G.I2.lat b, ∀ y ∈ _root_.ReciprocityTheory.ChartRestriction.G.I2.lat b, ∃ k : ℤ,
       (_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf x (_root_.ReciprocityTheory.ChartRestriction.G.I2.act w y)).im - (_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf x (_root_.ReciprocityTheory.ChartRestriction.G.I2.act w' y)).im - (_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf x y).im = 2 * k) :
@@ -165,9 +170,9 @@ end Build
 
 end TorusAtAssembly
 
+
 open NumberField in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.torusAtExists_of_parts :
     (∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r), ∀ x ∈ X.dom, ∃ e : X.Ψ → Fin r → (Fin r → ℂ), (∀ τ a b, _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC τ.1 X.Gm (e τ a) (e τ b) = if a = b then ((_root_.ReciprocityTheory.ChartRestriction.G.FD.sgn X.p0 a : ℝ) : ℂ) else 0) ∧ ∀ τ (i : ℕ) (hi : i ≤ r), Submodule.span ℂ (Set.range fun a : Fin i => e τ (Fin.castLE hi a)) = Submodule.span ℂ (Set.range fun a : Fin i => _root_.ReciprocityTheory.ChartRestriction.G.FD.col (_root_.ReciprocityTheory.ChartRestriction.G.FD.mat x τ) (Fin.castLE hi a))) → (∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r), ∃ b : Module.Basis (Fin (2 * (X.Ψ.card * r))) ℝ (X.Ψ → Fin r → ℂ), ∀ y, y ∈ Submodule.span ℤ (Set.range b) ↔ ∃ v ∈ X.Λ, (fun τ : X.Ψ => _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 v) = y) → (∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r), ∃ sg : ℝ, (sg = 1 ∨ sg = -1) ∧ ∀ u v : Fin r → E, ∑ τ : X.Ψ, X.c τ * (_root_.ReciprocityTheory.ChartRestriction.G.FD.hermC τ.1 X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 u) (_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 v)).im = sg * ((Algebra.trace ℚ E (X.ξ0 * _root_.ReciprocityTheory.ChartRestriction.G.FD.herm X.Gm u v) : ℚ) : ℝ)) → (∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) (e : X.Ψ → Fin r → (Fin r → ℂ)), (∀ τ a b, _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC τ.1 X.Gm (e τ a) (e τ b) = if a = b then ((_root_.ReciprocityTheory.ChartRestriction.G.FD.sgn X.p0 a : ℝ) : ℂ) else 0) → ∃ (dim : (E →+* ℂ) → ℕ) (hp : ∀ τ : X.Ψ, dim τ.1 = X.p0) (hn : ∀ τ : X.Ψ, dim (ComplexEmbedding.conjugate τ.1) = r - X.p0) (Φ : (X.Ψ → Fin r → ℂ) ≃ₗ[ℝ] _root_.ReciprocityTheory.ChartRestriction.G.I2.Vsp dim), Fintype.card (_root_.ReciprocityTheory.ChartRestriction.G.I2.Idx dim) = X.Ψ.card * r ∧ (∀ τ, dim τ + dim (ComplexEmbedding.conjugate τ) = r) ∧ (∀ y (τ : X.Ψ) (a : Fin (dim τ.1)), (Φ y) ⟨τ.1, a⟩ = (Real.sqrt (X.c τ) : ℂ) * _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC τ.1 X.Gm (y τ) (e τ (Fin.castLE (by rw [hp τ]; exact X.p0_le) a))) ∧ (∀ y (τ : X.Ψ) (a : Fin (dim (ComplexEmbedding.conjugate τ.1))), (Φ y) ⟨ComplexEmbedding.conjugate τ.1, a⟩ = (Real.sqrt (X.c τ) : ℂ) * (starRingEnd ℂ) (-_root_.ReciprocityTheory.ChartRestriction.G.FD.hermC τ.1 X.Gm (y τ) (e τ ⟨X.p0 + a.1, by have h1 : a.1 < r - X.p0 := lt_of_lt_of_eq a.2 (hn τ); have := X.p0_le; omega⟩))) ∧ (∀ (α : 𝓞 E) y, Φ (fun τ => τ.1 (α : E) • y τ) = _root_.ReciprocityTheory.ChartRestriction.G.I2.act α (Φ y)) ∧ ∀ y y', (_root_.ReciprocityTheory.ChartRestriction.G.I2.Hf (Φ y) (Φ y')).im = ∑ τ : X.Ψ, X.c τ * (_root_.ReciprocityTheory.ChartRestriction.G.FD.hermC τ.1 X.Gm (y τ) (y' τ)).im) → (∀ (E : Type) [Field E] [NumberField E] (X : _root_.ReciprocityTheory.ChartRestriction.G.I2.PT E), ∃ s ∈ X.Sec 1 1, s ≠ 0) → _root_.ReciprocityTheory.ChartRestriction.G.I2.TorusAtExistsStatement := by
   intro hframe hbasis hsign hiso hsec
@@ -194,7 +199,7 @@ theorem _root_.GlobalTheory.torusAtExists_of_parts :
             (fun τ : X.Ψ => _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 u) + (fun τ : X.Ψ => _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 v) := by
           funext τ a
           simp [_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb]
-        simp only [h, map_add] }
+        simp only [h, map_add (f := _)] }
   have hφ : ∀ v, φ v = Φ (fun τ => _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 v) := fun v => rfl
   have hsmul : ∀ (α : 𝓞 E) (v : Fin r → E), α • v = (α : E) • v := fun α v => by
     funext i
@@ -244,7 +249,7 @@ theorem _root_.GlobalTheory.torusAtExists_of_parts :
       rw [hsmul]
       rfl
     have hsplit : φ (w0 • v) = φ ((w0 - w') • v) + φ (w' • v) := by
-      rw [← map_add, ← add_smul, sub_add_cancel]
+      rw [← map_add (f := _), ← add_smul, sub_add_cancel]
     rw [← hφact, ← hφact, hsplit, _root_.GlobalTheory.TorusAtAssembly.im_Hf_add_right, himφ, himφ, himφ, hsub]
     have hkR := congrArg (fun q : ℚ => (q : ℝ)) hk
     push_cast at hkR

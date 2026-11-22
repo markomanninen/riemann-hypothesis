@@ -1,12 +1,16 @@
-import Development.EtaleCohomology.EtaleSheaves.ChernClassEvaluation
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassEvaluation
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 namespace LateralTheory.E.ChernCocycleEdgeCoboundary
 
-open LateralTheory.E.ChernClassRootLocalization in
 
+open LateralTheory.E.ChernClassRootLocalization in
 theorem sec_dd (q : ℕ) {V : Scheme.{0}} (y : Sec ((res _ (tw q 1)).X 0) V) :
     Sec.map ((res _ (tw q 1)).d 1 2) (Sec.map ((res _ (tw q 1)).d 0 1) y) = 0 := by
   have h : (res _ (tw q 1)).d 0 1 ≫ (res _ (tw q 1)).d 1 2 = 0 := HomologicalComplex.d_comp_d _ _ _ _

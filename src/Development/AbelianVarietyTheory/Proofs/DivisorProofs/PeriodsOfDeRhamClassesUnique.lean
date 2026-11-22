@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FamUnif
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointHol
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodClassInjectiveOfRichChartsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FamUnif
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointHol
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodClassInjectiveOfRichChartsStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development
+
+@[expose] public section
 
 open MvPolynomial
 

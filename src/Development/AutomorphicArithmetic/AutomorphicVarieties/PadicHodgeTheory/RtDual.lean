@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtFinFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtPoints
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DualCr
-open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Published IsLocalRing Polynomial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtFinFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtPoints
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DualCr
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial
 
 namespace UpperTheory.V.Loc.RootDualTransport
 
@@ -50,16 +55,16 @@ private theorem sn_inv (a : GL (Fin m) (DualNumber κ)) :
   rw [Units.mul_inv, sn_one] at h
   rw [eq_neg_of_add_eq_zero_left h.symm, Matrix.mul_neg, neg_neg, ← Matrix.mul_assoc, fs_inv_mul, Matrix.one_mul]
 
-private def tc (x : GG m (DualNumber κ)) : Matrix (Fin m) (Fin m) κ :=
+private def tc (x : GG (m := m) (R := DualNumber κ)) : Matrix (Fin m) (Fin m) κ :=
   x.mat.map snd * ((x.left⁻¹ : GL _ _) : Matrix (Fin m) (Fin m) (DualNumber κ)).map (fr κ)
 
-private theorem tc_mul (x y : GG m (DualNumber κ)) : tc (x * y) = tc x + (GG.map (fr κ) x).adFun (tc y) := by
+private theorem tc_mul (x y : GG (m := m) (R := DualNumber κ)) : tc (x * y) = tc x + (GG.map (fr κ) x).adFun (tc y) := by
   have h : ((-1 : ℤˣ) = 1) = False := by decide
   have hJ : ∀ Y : Matrix (Fin m) (Fin m) κ, Jmat κ m * (Jmat κ m * Y) = Y := fun Y => by
     rw [← Matrix.mul_assoc, Jmat_mul_Jmat, Matrix.one_mul]
   obtain ⟨a, s⟩ := x
   obtain ⟨b, t⟩ := y
-  have e : (((GG.map (fr κ) (⟨a, s⟩ : GG m (DualNumber κ))).left⁻¹ : GL _ _) : Matrix (Fin m) (Fin m) κ) =
+  have e : (((GG.map (fr κ) (⟨a, s⟩ : GG (m := m) (R := DualNumber κ))).left⁻¹ : GL _ _) : Matrix (Fin m) (Fin m) κ) =
       ((a⁻¹ : GL _ _) : Matrix (Fin m) (Fin m) (DualNumber κ)).map (fr κ) := rfl
   have h1 : ∀ Y : Matrix (Fin m) (Fin m) κ, (b : Matrix (Fin m) (Fin m) (DualNumber κ)).map (fr κ) *
       (((b⁻¹ : GL _ _) : Matrix (Fin m) (Fin m) (DualNumber κ)).map (fr κ) * Y) = Y := fun Y => by
@@ -78,7 +83,7 @@ private theorem tc_mul (x y : GG m (DualNumber κ)) : tc (x * y) = tc x + (GG.ma
       Matrix.mul_zero, zero_add, add_zero, Matrix.transpose_neg, Matrix.transpose_mul, Matrix.neg_mul,
       Matrix.mul_neg, hJ, h2]
 
-private theorem tc_mul_mat (x : GG m (DualNumber κ)) : tc x * (GG.map (fr κ) x).mat = x.mat.map snd := by
+private theorem tc_mul_mat (x : GG (m := m) (R := DualNumber κ)) : tc x * (GG.map (fr κ) x).mat = x.mat.map snd := by
   rw [tc, GG.map_mat, Matrix.mul_assoc, GG.mat, fs_inv_mul, Matrix.mul_one]
 
 end UpperTheory.V.Loc.RootDualTransport
@@ -101,7 +106,7 @@ private theorem cont_inv {X E : Type} [TopologicalSpace X] [Field E] [Topologica
   refine Continuous.smul (ha.matrix_det.inv₀ fun x => ?_) ha.matrix_adjugate
   exact ((Matrix.isUnit_iff_isUnit_det _).1 (a x).isUnit).ne_zero
 
-private theorem adFun_map {A B : Type} [CommRing A] [CommRing B] {m : ℕ} (f : A →+* B) (x : GG m A)
+private theorem adFun_map {A B : Type} [CommRing A] [CommRing B] {m : ℕ} (f : A →+* B) (x : GG (m := m) (R := A))
     (X : Matrix (Fin m) (Fin m) A) : (x.adFun X).map f = (GG.map f x).adFun (X.map f) := by
   have e : (((GG.map f x).left⁻¹ : GL _ _) : Matrix (Fin m) (Fin m) B) =
       ((x.left⁻¹ : GL _ _) : Matrix (Fin m) (Fin m) A).map f := rfl
@@ -113,7 +118,7 @@ private theorem adFun_map {A B : Type} [CommRing A] [CommRing B] {m : ℕ} (f : 
 
 private theorem map_mem_finiteCocycles_adRep_of_continuous {l : ℕ} [Fact l.Prime] {A B : Type} [CommRing A] [CommRing B] [Algebra ℚ_[l] A]
     [Algebra ℚ_[l] B] [TopologicalSpace A] [TopologicalSpace B] [IsTopologicalRing A] [IsTopologicalRing B]
-    {m : ℕ} (ι : A →ₐ[ℚ_[l]] B) (hι : Continuous ι) (r : GQ l →* GG m A) (c : GQ l → Matrix (Fin m) (Fin m) A)
+    {m : ℕ} (ι : A →ₐ[ℚ_[l]] B) (hι : Continuous ι) (r : GQ l →* GG (m := m) (R := A)) (c : GQ l → Matrix (Fin m) (Fin m) A)
     (hc : c ∈ finiteCocycles (MonoidHom.id _) (adRep r)) :
     (fun g => (c g).map ι) ∈ finiteCocycles (MonoidHom.id _) (adRep ((GG.map (ι : A →+* B)).comp r)) := by
   obtain ⟨⟨hc, hcc⟩, x, hx⟩ := hc
@@ -122,7 +127,7 @@ private theorem map_mem_finiteCocycles_adRep_of_continuous {l : ℕ} [Fact l.Pri
     adFun_map (ι : A →+* B) (r g) X
   refine ⟨⟨hc.matrix_map hι, fun g h => ?_⟩, LinearMap.rTensor (Bcr l) f x, fun g => ?_⟩
   · show f (c (g * h)) = f (c g) + adRep _ g (f (c h))
-    rw [hcc g h, map_add, hf]
+    rw [hcc g h, map_add (f := _), hf]
   · have key : ∀ y : Matrix (Fin m) (Fin m) A ⊗[ℚ_[l]] Bcr l,
         LinearMap.rTensor (Bcr l) f (actC (MonoidHom.id _) (adRep r) g y) =
         actC (MonoidHom.id _) (adRep ((GG.map (ι : A →+* B)).comp r)) g (LinearMap.rTensor (Bcr l) f y) := by
@@ -130,13 +135,13 @@ private theorem map_mem_finiteCocycles_adRep_of_continuous {l : ℕ} [Fact l.Pri
       induction y using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [actC, hf]
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
     rw [← key, ← map_sub, ← hx g, LinearMap.rTensor_tmul]
     rfl
 
 private theorem fin_case (hP : LocalPublishedTheorems) {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O]
-    [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : D.Univ) (E : Type) [Field E] [Algebra ℚ_[l] E]
+    [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ)) (E : Type) [Field E] [Algebra ℚ_[l] E]
     [Module.Finite ℚ_[l] E] [Algebra O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] O E] [IsScalarTower ℤ_[l] ℚ_[l] E]
     [TopologicalSpace E] [IsModuleTopology ℚ_[l] E] [IsTopologicalRing E] [ContinuousInv₀ E]
     (F : U.R →ₐ[O] DualNumber E) (hF : D.It U ≤ RingHom.ker F) :
@@ -162,7 +167,7 @@ end UpperTheory.V.Loc.RootDualTransport
 
 open UpperTheory.V.Loc.RootDualTransport in
 theorem UpperTheory.V.Loc.rtDual :
-    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : D.Univ) [Algebra O (PadicAlgCl l)] [IsScalarTower ℤ_[l] O (PadicAlgCl l)] (F : U.R →ₐ[O] DualNumber (PadicAlgCl l)), D.It U ≤ RingHom.ker F → IsLocPt (dualFst F) → tanCoc F U.r.hom ∈ finiteCocycles (MonoidHom.id _) (adRep (push (dualFst F) U.r.hom)) := by
+    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ)) [Algebra O (PadicAlgCl l)] [IsScalarTower ℤ_[l] O (PadicAlgCl l)] (F : U.R →ₐ[O] DualNumber (PadicAlgCl l)), D.It U ≤ RingHom.ker F → IsLocPt (dualFst F) → tanCoc F U.r.hom ∈ finiteCocycles (MonoidHom.id _) (adRep (push (dualFst F) U.r.hom)) := by
   intro hP l _ O _ _ _ _ _ _ _ D U _ _ F hF hloc
   obtain ⟨⟨K, hfin⟩, hE⟩ := ptFin U.R F hloc
   haveI : FiniteDimensional ℚ_[l] ↥K := hfin

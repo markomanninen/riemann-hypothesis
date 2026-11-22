@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffDmonNCongr
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalModuleMatrixApplyPointsActionLawsStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupTranslateAutomorphismAndMatrixKernel
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.GaugeThirdDifferenceSymmetryIntegralExponentialsStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIntegralExponentialSimilitudeGaugeStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ProdSymmetricTranslationUnitsEqKappaRatioStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ConnectionValueLevelKappaMulPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CoeffSingleEq
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.JacobianNonzeroSplittingOfProductStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValueIntegralPointEqValueOnBiextensionCoStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralChartFormalBiextensionGaugeBoundStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.RegularSectionIntegralGermUniqueScaleStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupPointsOfIntegralChartSpecStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.KillsFormalPointsIffMemCoordinateKernelStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FiniteHeightFormalGroupUniformisedModelStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SplitKernelFormalGroupOfRationalTorsionStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsTranslateUnitSymmetricFormalGroupPointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffDmonNCongr
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalModuleMatrixApplyPointsActionLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupTranslateAutomorphismAndMatrixKernel
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.GaugeThirdDifferenceSymmetryIntegralExponentialsStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIntegralExponentialSimilitudeGaugeStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ProdSymmetricTranslationUnitsEqKappaRatioStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ConnectionValueLevelKappaMulPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CoeffSingleEq
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.JacobianNonzeroSplittingOfProductStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValueIntegralPointEqValueOnBiextensionCoStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralChartFormalBiextensionGaugeBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.RegularSectionIntegralGermUniqueScaleStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupPointsOfIntegralChartSpecStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.KillsFormalPointsIffMemCoordinateKernelStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FiniteHeightFormalGroupUniformisedModelStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SplitKernelFormalGroupOfRationalTorsionStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsTranslateUnitSymmetricFormalGroupPointStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -158,10 +162,11 @@ theorem map_pushL {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E
   unfold pushL
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p1 p2 h1 h2 => simp only [_root_.map_add, h1, h2]
+  | add p1 p2 h1 h2 => simp only [_root_.map_add (f := _), h1, h2]
   | mul_X p ℓ h =>
     simp only [Matrix.map_apply] at h
-    simp only [_root_.map_mul, h, MvPolynomial.aeval_X, MvPolynomial.map_X, _root_.map_sum, MvPolynomial.map_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [_root_.map_mul, h, MvPolynomial.aeval_X, MvPolynomial.map_X, _root_.map_sum, MvPolynomial.map_C,
       Matrix.map_apply, RingHom.coe_comp, Function.comp_apply]
     rfl
 
@@ -177,7 +182,7 @@ private theorem isLinearMap_nabValN {R : Type} [CommRing R] {d : ℕ} {O : Type}
       GlobalTheory.PowGerm.NabJet.constantCoeff_DpolyN_eq _ cp u P _ P.support subset_rfl,
       GlobalTheory.PowGerm.NabJet.constantCoeff_DpolyN_eq _ cp u P _ P.support subset_rfl, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl (fun mo _ => ?_)
-    rw [add_mul, (hD mo).map_add, _root_.map_add, mul_add]
+    rw [add_mul, (hD mo).map_add (f := _), _root_.map_add (f := _), mul_add]
   · show nabValN B k h w0 m (a • f) cp u P = a • nabValN B k h w0 m f cp u P
     unfold nabValN
     rw [GlobalTheory.PowGerm.NabJet.constantCoeff_DpolyN_eq _ cp u P _ P.support subset_rfl,
@@ -326,7 +331,8 @@ theorem sum_hv_formal_kernel : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
     have e0 := _root_.map_sum (IsLinearMap.mk' _ hlin) (fun i => FB.toK T.Fr (X i)) Finset.univ
     simp only [IsLinearMap.mk'_apply] at e0
     rw [← e0]
-    simp only [FB.toK, _root_.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [FB.toK, _root_.map_sum]
   have e2 : ∀ (t : T.V) (Y : PS T.V n (chD C.ch)), nabValN B T.Fr (gaugeOf C) H.w0 (N ^ 2) (FB.toK T.Fr (t • Y))
       (fun ℓ : LtN Dw n => ℓ.2.2) (fun ℓ => C.ch.uvec ⟨ℓ.1, ℓ.2.1⟩) (MvPolynomial.map io P) =
       algebraMap T.V T.Fr t * nabValN B T.Fr (gaugeOf C) H.w0 (N ^ 2) (FB.toK T.Fr Y)

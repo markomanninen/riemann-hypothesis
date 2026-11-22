@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreCoordGoodProj
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreCoordGoodProj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -20,7 +25,5 @@ def PtsSheetSimpleNull.Statement : Prop :=
     (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ)),
     IsArithVar P (e + 1) → IsGoodProj P Ψ →
       volume {y : Fin e → ℂ | ∃ w ∈ fibre P Ψ y, (∃ γ, IsSheet P Ψ y w γ) ∧ ¬ IsSimpleSheetPt P Ψ w} = 0
-
-def planeLift (y : Fin 2 → ℂ) : (Σ k, PBlk 3 k) → ℂ := fun p => (Fin.cons 1 y : Fin 3 → ℂ) p.2
 
 end GroundTheory.Heights₂.Heights

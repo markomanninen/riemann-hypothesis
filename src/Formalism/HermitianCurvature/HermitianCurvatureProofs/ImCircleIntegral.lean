@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaAtBasePointZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaAtBasePointZero
+
+@[expose] public section
 
 open Set Filter Topology Complex MeasureTheory intervalIntegral
 

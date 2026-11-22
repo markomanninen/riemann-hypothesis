@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+
+@[expose] public section
+
 open GlobalTheory.SmoothForms NumberField Matrix
 open scoped ContDiff Topology
 

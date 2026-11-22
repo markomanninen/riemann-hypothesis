@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+
+@[expose] public section
 
 open Formalism.MainNotions.GL3Theta Formalism.MainNotions.TaylorLogMetric
 

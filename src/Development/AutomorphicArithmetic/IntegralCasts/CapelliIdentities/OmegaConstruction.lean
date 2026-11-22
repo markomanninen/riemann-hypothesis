@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.OmegaConstruction.Om :
     (O : Type) → [inst : CommRing O] → [IsLocalRing O] → ℕ → Type :=

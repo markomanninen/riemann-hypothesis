@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
+
+@[expose] public section
+
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.SnFam
 open scoped Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -18,7 +23,7 @@ lemma orth_anti {U U' : Submodule D.host.E (VS D).V} (h : U ≤ U') : orth (VS D
   rw [mem_orth_iff'] at hy ⊢
   exact fun x hx => hy x (h hx)
 
-lemma z_mem_orth {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : F.fl.z ∈ orth (VS D) (Xsp F) := by
+lemma z_mem_orth {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) : F.fl.z ∈ orth (VS D) (Xsp F) := by
   rw [mem_orth_iff']
   intro x hx
   have hx' : x ∈ Submodule.span D.host.E (Set.range F.fl.e) := hx
@@ -29,11 +34,11 @@ lemma z_mem_orth {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : F.fl.z ∈ orth (V
   | add x y _ _ hx hy => simp [hx, hy]
   | smul c x _ hx => simp [hx]
 
-lemma Xsp_le_Xplus {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : Xsp F ≤ Xplus F := by
+lemma Xsp_le_Xplus {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) : Xsp F ≤ Xplus F := by
   show F.fl.X ≤ F.fl.X ⊔ _
   exact le_sup_left
 
-lemma Xa_of_ge {T : D.host.E} (F : LFlag (VS D) D.R.rS T) {j : ℕ} (h : D.R.rS ≤ j) :
+lemma Xa_of_ge {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) {j : ℕ} (h : D.R.rS ≤ j) :
     Xflag F j = Xsp F := by
   show F.fl.Xa j = F.fl.X
   unfold FlagG.Xa FlagG.X
@@ -44,7 +49,7 @@ lemma Xa_of_ge {T : D.host.E} (F : LFlag (VS D) D.R.rS T) {j : ℕ} (h : D.R.rS 
   · rintro ⟨i, -, rfl⟩; exact ⟨i, rfl⟩
   · rintro ⟨i, rfl⟩; exact ⟨i, lt_of_lt_of_le i.2 h, rfl⟩
 
-lemma nrat_mapsTo {T : D.host.E} {F : LFlag (VS D) D.R.rS T} {n} (hn : n ∈ NRat F) :
+lemma nrat_mapsTo {T : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T} {n} (hn : n ∈ NRat F) :
     ∀ x ∈ Xsp F, n x ∈ Xsp F := by
   intro x hx
   have h1 := hn.2.1 D.R.rS x (by rw [Xa_of_ge F (Nat.le_succ _)]; exact hx)
@@ -56,15 +61,15 @@ lemma map_eq_self {U : Submodule D.host.E (VS D).V} [FiniteDimensional D.host.E 
     U.map (f : (VS D).V →ₗ[D.host.E] (VS D).V) = U :=
   Submodule.eq_of_le_of_finrank_eq (by rintro _ ⟨x, hx, rfl⟩; exact h x hx) (LinearEquiv.finrank_map_eq f U)
 
-lemma fd_Xsp {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : FiniteDimensional D.host.E (Xsp F) :=
+lemma fd_Xsp {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) : FiniteDimensional D.host.E (Xsp F) :=
   FiniteDimensional.span_of_finite _ (Set.finite_range _)
 
-lemma nrat_map {T : D.host.E} {F : LFlag (VS D) D.R.rS T} {n} (hn : n ∈ NRat F) :
+lemma nrat_map {T : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T} {n} (hn : n ∈ NRat F) :
     (Xsp F).map (n : (VS D).V →ₗ[D.host.E] (VS D).V) = Xsp F :=
   haveI := fd_Xsp F
   map_eq_self n (nrat_mapsTo hn)
 
-lemma sgRel_iff {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+lemma sgRel_iff {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (y y' : (VS D).V) (al al' : D.host.E) :
     SgRel F F' y y' al al' ↔ y - y' - (al • F.zt + al' • F'.zt) ∈ Xsp F ⊔ Xsp F' := by
   rw [Submodule.mem_sup]
@@ -81,8 +86,8 @@ end GlobalTheory.SnFam.CvScal
 namespace GlobalTheory.SnFam.CvScal
 variable {D : D7}
 
-theorem pair_scalar (D : D7) {T T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F : LFlag (VS D) D.R.rS T)
-    (F' F'' : LFlag (VS D) D.R.rS T') (_hΛ : Submodule.IsLattice D.host.E Λ) (hF : F.zt = F.fl.z)
+theorem pair_scalar (D : D7) {T T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' F'' : LFlag (D.sp.Y 0) D.R.rS T') (_hΛ : Submodule.IsLattice D.host.E Λ) (hF : F.zt = F.fl.z)
     (hF' : F'.zt = F'.fl.z) (hF'' : F''.zt = F''.fl.z) (n) (hn : n ∈ NRat F) (m) (hm : m ∈ NRat F')
     (hfr : ∀ a, frame F'' a = (n * m) (frame F' a)) : IsScalar Λ F F' F'' (n * m) := by
   have hnm : ∀ v, (n * m) v = n (m v) := fun v => rfl
@@ -124,7 +129,7 @@ theorem pair_scalar (D : D7) {T T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (
   set d1 := y1 - y1' - (al • F.fl.z + al' • F'.fl.z) with hd1
   set d2 := y2 - y2'' - (al • F.fl.z + al' • F''.fl.z) with hd2
   have key : d2 = n d1 + ((y2 - n y1) - (y2'' - n y1') - al • (F.fl.z - n F.fl.z) - al' • (F''.fl.z - n F'.fl.z)) := by
-    simp only [hd1, hd2, map_sub, map_add, map_smul, smul_sub]; abel
+    simp only [hd1, hd2, map_sub, map_add (f := _), map_smul, smul_sub]; abel
   have kmem : (y2 - n y1) - (y2'' - n y1') - al • (F.fl.z - n F.fl.z) - al' • (F''.fl.z - n F'.fl.z) ∈ Xsp F ⊔ Xsp F'' :=
     sub_mem (sub_mem (sub_mem (Submodule.mem_sup_left A) (Submodule.mem_sup_right B))
       (Submodule.smul_mem _ _ (Submodule.mem_sup_left C))) (Submodule.smul_mem _ _ (Submodule.mem_sup_right Dd))

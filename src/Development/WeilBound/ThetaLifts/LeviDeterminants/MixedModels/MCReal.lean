@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.RealSt
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.RealSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem tr_cmp {β : X → X → ℝ} {β' : Y → Y → ℝ} (A : X ≃L[ℝ] Y
     {f g : 𝓢(X, ℂ)} (H : Tr β w f g) : Tr β' (A w.1, B w.2) (cmp A f) (cmp A g) := fun y => by
   obtain ⟨x, rfl⟩ := A.surjective y
   change g (A.symm (A x)) = _ * f (A.symm (A x + A w.1))
-  rw [← map_add, A.symm_apply_apply, A.symm_apply_apply, H x, h, h]
+  rw [← map_add (f := _), A.symm_apply_apply, A.symm_apply_apply, H x, h, h]
 
 end Gen
 
@@ -77,7 +81,7 @@ theorem implN (Q : V →ₗ[ℝ] V) (h : ∀ x y, ⟪x, Q y⟫ = ⟪y, Q x⟫) :
   simp only [ContinuousLinearEquiv.equivOfInverse_apply, smulLeftCLM_apply_apply (hq _), smul_eq_mul]
   rw [H x, ← mul_assoc, ← mul_assoc, ← ee_add, ← ee_add]
   congr 2
-  simp only [map_add, inner_add_left, inner_add_right, h w.1 x]
+  simp only [map_add (f := _), inner_add_left, inner_add_right, h w.1 x]
   ring
 
 theorem implJ : Impl fun w : V × V => (w.2, -w.1) := by
@@ -122,7 +126,7 @@ theorem implP (R : V × V →ₗ[ℝ] V × V) (hR : Sp R) (h0 : ∀ y, (R (0, y)
     simpa using key).comp (implM A (fun y => (R (0, y)).2) h1)
   convert this using 1
   funext w
-  have e : R w = R (w.1, 0) + R (0, w.2) := by rw [← map_add]; simp
+  have e : R w = R (w.1, 0) + R (0, w.2) := by rw [← map_add (f := _)]; simp
   refine Prod.ext ?_ ?_
   · rw [e, Prod.fst_add, h0, add_zero]; rfl
   · rw [e, Prod.snd_add, add_comm]; simp [c]

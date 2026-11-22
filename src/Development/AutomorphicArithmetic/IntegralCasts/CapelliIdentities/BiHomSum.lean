@@ -1,10 +1,14 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qf22.biHom :
     {K ι κ : Type} → [inst : Field K] → ℕ → MvPolynomial κ (MvPolynomial ι K) → Prop :=
     fun {K ι κ : Type} [Field K] (d : ℕ) (F : MvPolynomial κ (MvPolynomial ι K)) ↦
       ∀ (β : κ →₀ ℕ) (n : ι →₀ ℕ),
-        MvPolynomial.coeff n (MvPolynomial.coeff β F) ≠ (0 : K) →
+        AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff F β) n ≠ (0 : K) →
           (Finsupp.degree : (ι →₀ ℕ) → ℕ) n + (Finsupp.degree : (κ →₀ ℕ) → ℕ) β = d
 
 theorem UpperTheory.Reformulated.B.Qf22.biHom_sum.{u_1} :

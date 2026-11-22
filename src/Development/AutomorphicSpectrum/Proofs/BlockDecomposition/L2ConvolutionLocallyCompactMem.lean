@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace
 open scoped InnerProductSpace ENNReal

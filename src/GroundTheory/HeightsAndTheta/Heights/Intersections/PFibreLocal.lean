@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaB
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Assembly
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaB
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -96,10 +101,11 @@ theorem sphere_moment (a : E3) (m : ℕ) :
     ring
 
 theorem eval_momentPoly {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (w : Ω → ℝ)
-    (Q : MvPolynomial (Fin 3) (Ω → ℝ)) (hQ : ∀ m, Integrable (fun p => w p * coeff m Q p) μ)
+    (Q : MvPolynomial (Fin 3) (Ω → ℝ)) (hQ : ∀ m, Integrable (fun p => w p * AddMonoidAlgebra.coeff Q m p) μ)
     (a : Fin 3 → ℝ) :
     eval a (momentPoly μ w Q) = ∫ p, w p * eval₂ (Pi.evalRingHom (fun _ : Ω => ℝ) p) a Q ∂μ := by
-  rw [momentPoly, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [momentPoly, map_sum]
   simp only [eval_monomial]
   simp_rw [← integral_mul_const]
   rw [← integral_finsetSum _ (fun m _ => (hQ m).mul_const _)]
@@ -117,19 +123,20 @@ theorem dotPoly_id_pow (N : ℕ) :
     (dotPoly (id : S2 → S2)) ^ N =
       MvPolynomial.map (ContinuousMap.coeFnRingHom : C(S2, ℝ) →+* (S2 → ℝ)) ((∑ i, X i * C (coordS i)) ^ N) := by
   rw [map_pow, dotPoly]
-  simp only [map_sum, map_mul, map_X, map_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_X, map_C]
   rfl
 
 theorem pushMomentPoly_eq (k : ℕ) (hk : 1 ≤ k) :
     pushMomentPoly k = -(∑ i, X i ^ 2) ^ (k - 1) := by
   apply MvPolynomial.funext
   intro a
-  have hQ : ∀ m, Integrable (fun p : S2 => (1 : ℝ) * coeff m ((dotPoly (id : S2 → S2)) ^ (2 * k - 2)) p)
+  have hQ : ∀ m, Integrable (fun p : S2 => (1 : ℝ) * AddMonoidAlgebra.coeff ((dotPoly (id : S2 → S2)) ^ (2 * k - 2)) m p)
       sphereMeasure := by
     intro m
     rw [dotPoly_id_pow, coeff_map]
     simp only [one_mul]
-    exact (ContinuousMap.continuous (coeff m ((∑ i, X i * C (coordS i)) ^ (2 * k - 2)))).integrable_of_hasCompactSupport
+    exact (ContinuousMap.continuous (AddMonoidAlgebra.coeff ((∑ i, X i * C (coordS i)) ^ (2 * k - 2)) m)).integrable_of_hasCompactSupport
       (HasCompactSupport.of_compactSpace _)
   rw [pushMomentPoly, smul_eval, eval_momentPoly _ _ _ hQ]
   have he : ∀ p : S2, eval₂ (Pi.evalRingHom (fun _ : S2 => ℝ) p) a ((dotPoly id) ^ (2 * k - 2)) =
@@ -144,7 +151,8 @@ theorem pushMomentPoly_eq (k : ℕ) (hk : 1 ≤ k) :
     rw [real_inner_self_eq_norm_sq, EuclideanSpace.norm_sq_eq]
     simp [sq_abs]
   rw [haa]
-  simp only [map_neg, map_pow, map_sum, eval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_neg, map_pow, map_sum, eval_X]
   have hc : ((k - 1 : ℕ) : ℝ) = (k : ℝ) - 1 := by rw [Nat.cast_sub hk, Nat.cast_one]
   rw [hc]
   have hk' : (2 * ((k : ℝ) - 1) + 1) ≠ 0 := by
@@ -183,7 +191,8 @@ theorem proof : FibreLocal.Statement := by
     field_simp
     ring
   · rw [pushMomentPoly_eq k hk]
-    simp [map_neg, map_pow, map_sum, aeval_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_neg, map_pow, map_sum, aeval_X]
   · rw [kappa_eq, FlagBundles.fibreConstant_eq]
     ring
 

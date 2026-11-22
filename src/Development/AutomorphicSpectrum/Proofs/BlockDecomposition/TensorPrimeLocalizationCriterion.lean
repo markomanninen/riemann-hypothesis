@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory.CompanionTheory.KrullLocal
@@ -63,13 +68,13 @@ theorem exists_ringHom_of_fractions {B C D : Type} [CommRing B] [CommRing C] [Co
       (by
         have h := hvt c
         have h' := hvt c'
-        simp only [map_mul, map_add]
+        simp only [map_mul, map_add (f := _)]
         linear_combination (vv c' * algebraMap B C (tt c')) * h +
           (vv c * algebraMap B C (tt c)) * h')
     have hU : IsUnit (φ (tt c * tt c')) := by
       rw [map_mul]; exact (hu _ (ht c)).mul (hu _ (ht c'))
     apply hU.mul_right_cancel
-    rw [e, map_add, map_mul, map_mul, map_mul, ← hft c, ← hft c']
+    rw [e, map_add (f := _), map_mul, map_mul, map_mul, ← hft c, ← hft c']
     ring
   refine ⟨{ toFun := f, map_one' := hhom1, map_mul' := hhommul, map_zero' := hhom0,
             map_add' := hhomadd }, ?_, ?_⟩

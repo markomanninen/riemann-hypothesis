@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.ExistsOfMemKOne
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsOfMemKOne
+
+@[expose] public section
 
 open IsDedekindDomain NumberField
 

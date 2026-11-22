@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem continuousAt_lg (x : Mat n) (hx : x ∈ GLs n) : ContinuousAt lg x := by
     exact continuousAt_inv₀ hx
   have hsq : Continuous (sq : Mat n → ℝ) := by
     unfold sq
-    refine continuous_finset_sum _ (fun a _ => continuous_finset_sum _ (fun b _ => ?_))
+    refine continuous_finsetSum _ (fun a _ => continuous_finsetSum _ (fun b _ => ?_))
     exact (((continuous_apply b).comp (continuous_apply a)).norm).pow 2
   have hpos : 0 < 1 + sq x + sq x⁻¹ := by linarith [sq_nonneg' x, sq_nonneg' x⁻¹]
   rw [show (lg : Mat n → ℝ) = fun y => Real.log (1 + sq y + sq y⁻¹) from funext lg_eq]

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.VolMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripIm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.TailFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.FdNull
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.FdCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.VolumeOpenPosUpperHalfPlane
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.VolMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripIm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.TailFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.FdNull
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.FdCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.VolumeOpenPosUpperHalfPlane
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,12 +134,16 @@ private theorem intOn {φ : ℍ → ℂ} (hc : Continuous φ) {C : ℝ} (hb : �
 private theorem quotInt_mu (H : Subgroup SL(2, ℤ)) [H.FiniteIndex] {φ : ℍ → ℂ} (hc : Continuous φ) {C : ℝ}
     (hb : ∀ z, ‖φ z‖ ≤ C) : quotInt H φ = ∫ w, w ∂(Measure.map φ (mu H)) := by
   haveI : Fintype (SL(2, ℤ) ⧸ H) := Fintype.ofFinite _
-  rw [integral_map (f := fun w : ℂ => w) hc.aemeasurable aestronglyMeasurable_id, mu, Measure.sum_fintype, integral_finset_sum_measure,
-    quotInt, finsum_eq_sum_of_fintype]
-  · refine Finset.sum_congr rfl fun q _ => ?_
-    rw [integral_map (contSL _).aemeasurable hc.aestronglyMeasurable]
-  · intro q _
-    exact (integrable_map_measure hc.aestronglyMeasurable (contSL _).aemeasurable).2 (intOn hc hb _)
+  rw [integral_map (f := fun w : ℂ => w) hc.aemeasurable aestronglyMeasurable_id, mu]
+  have hi : Integrable φ (Measure.sum fun q : SL(2, ℤ) ⧸ H =>
+      Measure.map (fun z : ℍ => q.out⁻¹ • z) (volume.restrict ModularGroup.fd)) := by
+    apply integrable_sum_measure
+    · intro q
+      exact (integrable_map_measure hc.aestronglyMeasurable (contSL _).aemeasurable).2 (intOn hc hb _)
+    · apply Summable.of_finite
+  rw [integral_sum_measure hi, tsum_fintype, quotInt, finsum_eq_sum_of_fintype]
+  refine Finset.sum_congr rfl fun q _ => ?_
+  rw [integral_map (contSL _).aemeasurable hc.aestronglyMeasurable]
 
 private theorem quotInt_conj0 (H K : Subgroup SL(2, ℤ)) [H.FiniteIndex] [K.FiniteIndex] (α : GL (Fin 2) ℝ) (e : K ≃ H)
     (he : ∀ (h : K) (z : ℍ), α⁻¹ • (h : SL(2, ℤ)) • z = (e h : SL(2, ℤ)) • α⁻¹ • z)
@@ -221,7 +229,7 @@ theorem quotInt_sum (H : Subgroup SL(2, ℤ)) [H.FiniteIndex] {ι : Type} (s : F
   haveI : Fintype (SL(2, ℤ) ⧸ H) := Fintype.ofFinite _
   simp only [quotInt, finsum_eq_sum_of_fintype]
   rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun γ _ => integral_finset_sum _ fun i _ => intOn (hc i) (hb i).choose_spec _
+  exact Finset.sum_congr rfl fun γ _ => integral_finsetSum _ fun i _ => intOn (hc i) (hb i).choose_spec _
 
 theorem quotInt_mul (H : Subgroup SL(2, ℤ)) [H.FiniteIndex] (c : ℂ) (φ : ℍ → ℂ) :
     quotInt H (fun z => c * φ z) = c * quotInt H φ := by

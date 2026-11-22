@@ -1,13 +1,17 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
-import Development.WeilBound.ThetaLifts.SphericalLattices.ExistsFixedSum
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.PfDict
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfSurj
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsExtZ
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsFull
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EventuallyCompSideMulEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalLatticeIndicatorFourier
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
+public import Development.WeilBound.ThetaLifts.SphericalLattices.ExistsFixedSum
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.PfDict
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfSurj
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsExtZ
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsFull
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EventuallyCompSideMulEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalLatticeIndicatorFourier
+
+@[expose] public section
 
 noncomputable section
 

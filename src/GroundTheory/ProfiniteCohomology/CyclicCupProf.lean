@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CyclicCupGaloisDefs
-import GroundTheory.ProfiniteCohomology.CyclicCupInflation
-import GroundTheory.ProfiniteCohomology.CupProducts.ExistsCocycleMapFEqD
-import GroundTheory.ProfiniteCohomology.CupProducts.GroupCohomology
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CyclicCupGaloisDefs
+public import GroundTheory.ProfiniteCohomology.CyclicCupInflation
+public import GroundTheory.ProfiniteCohomology.CupProducts.ExistsCocycleMapFEqD
+public import GroundTheory.ProfiniteCohomology.CupProducts.GroupCohomology
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -34,7 +39,7 @@ theorem isLocallyConstant_charAdd (χ : Additive G →ₜ+ QZ) :
 theorem exists_cocycle_H0Iso_inv {k : Type} [CommRing k] (A : Rep k G) [IsDiscreteRep A]
     (a : A.ρ.invariants) :
     ∃ z : cocycles A 0, cohomologyπ A 0 z = (H0Iso A).inv.hom a ∧
-      cochainOf A (cocycleι A 0 z) = fun _ => (a : A) := by
+      cochainOf (A := A) (cocycleι (A := A) (p := 0) z) = fun _ => (a : A) := by
   refine ⟨(cocyclesIso₀ A).inv.hom a, rfl, ?_⟩
   have hf : (cocyclesIso₀ A).hom ≫ ModuleCat.ofHom (invariantsToCochains₀ A) =
       (cochainsComplex A).iCycles 0 := by
@@ -42,7 +47,7 @@ theorem exists_cocycle_H0Iso_inv {k : Type} [CommRing k] (A : Rep k G) [IsDiscre
     exact (Limits.KernelFork.mapOfIsLimit_ι _ _ _).trans (Category.comp_id _)
   have e := ConcreteCategory.congr_hom hf ((cocyclesIso₀ A).inv a)
   simp only [ConcreteCategory.comp_apply, Iso.inv_hom_id_apply] at e
-  exact (congrArg (cochainOf A) e).symm
+  exact (congrArg (cochainOf (A := A)) e).symm
 
 section Cocycles
 
@@ -51,7 +56,8 @@ attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.modu
 theorem exists_cocycle_charH1 (χ : Additive G →ₜ+ QZ) :
     ∃ z : cocycles (Rep.trivial ℤ G (AddCircle (1 : ℚ))) 1,
       cohomologyπ _ 1 z = (cohomologyOneRatModIntIso G).inv.hom χ ∧
-      ∀ v : Fin 1 → G, cochainOf _ (cocycleι _ 1 z) v = charAdd χ (Additive.ofMul (v 0)) := by
+      ∀ v : Fin 1 → G, cochainOf (A := Rep.trivial ℤ G (AddCircle (1 : ℚ)))
+        (cocycleι (Rep.trivial ℤ G (AddCircle (1 : ℚ))) 1 z) v = charAdd χ (Additive.ofMul (v 0)) := by
   obtain ⟨z, hz⟩ := cohomologyπ_surjective _ 1 ((cohomologyOneRatModIntIso G).inv.hom χ)
   refine ⟨z, hz, fun v => ?_⟩
   have h1 : (cohomologyOneRatModIntIso G).hom.hom (cohomologyπ _ 1 z) = χ := by
@@ -73,13 +79,14 @@ theorem exists_cocycle_charH1 (χ : Additive G →ₜ+ QZ) :
 
 theorem exists_cocycle_charClassProf (χ : Additive G →ₜ+ QZ) :
     ∃ x : cocycles (Rep.trivial ℤ G ℤ) 2, cohomologyπ _ 2 x = charClassProf χ ∧
-      ∀ v : Fin 2 → G, cochainOf _ (cocycleι _ 2 x) v = charCocycle (charAdd χ) (v 0, v 1) := by
+      ∀ v : Fin 2 → G, cochainOf (A := Rep.trivial ℤ G ℤ) (cocycleι (Rep.trivial ℤ G ℤ) 2 x) v =
+        charCocycle (charAdd χ) (v 0, v 1) := by
   obtain ⟨z, hz, hzv⟩ := exists_cocycle_charH1 χ
   let y : (Fin 1 → G) → ℚ := fun v => reprIco (charAdd χ (Additive.ofMul (v 0)))
   have hy : IsLocallyConstant y :=
     (((isLocallyConstant_charAdd χ).comp_continuous (continuous_apply 0)).comp reprIco)
-  let x₂ := mkCochain (ratSES G).X₂ y hy
-  have hx₂ : (cochainsMap (ratSES G).g).f 1 x₂ = cocycleι (ratSES G).X₃ 1 z := by
+  let x₂ := mkCochain (A := (ratSES G).X₂) y hy
+  have hx₂ : (cochainsMap (ratSES G).g).f 1 x₂ = cocycleι (A := (ratSES G).X₃) (p := 1) z := by
     apply cochainOf_injective
     rw [cochainOf_cochainsMap_f]
     funext v
@@ -88,7 +95,7 @@ theorem exists_cocycle_charClassProf (χ : Additive G →ₜ+ QZ) :
   refine ⟨x₁, ?_, fun v => ?_⟩
   · rw [charClassProf, ← hz]
     exact (δ_cohomologyπ_of_lift (ratSES_shortExact G) rfl z x₂ hx₂ x₁ hx₁).symm
-  · have e := congrArg (fun c => cochainOf _ c v) hx₁
+  · have e := congrArg (fun c => cochainOf (A := (ratSES G).X₂) c v) hx₁
     simp only [cochainOf_cochainsMap_f] at e
     erw [cochainOf_d, d_one_trivial_apply] at e
     have hc := charCocycle_cast (charAdd χ) (v 0) (v 1)
@@ -102,7 +109,8 @@ theorem exists_cocycle_charClassProf (χ : Additive G →ₜ+ QZ) :
 theorem exists_cocycle_cupCharClassProf (A : Rep ℤ G) [IsDiscreteRep A] (χ : Additive G →ₜ+ QZ)
     (a : A.ρ.invariants) :
     ∃ w : cocycles A 2, cohomologyπ A 2 w = (cupCharClassProf A χ).hom a ∧
-      ∀ v : Fin 2 → G, cochainOf A (cocycleι A 2 w) v = charCocycle (charAdd χ) (v 0, v 1) • (a : A) := by
+      ∀ v : Fin 2 → G, cochainOf (A := A) (cocycleι (A := A) (p := 2) w) v =
+        charCocycle (charAdd χ) (v 0, v 1) • (a : A) := by
   obtain ⟨z0, hz0, hz0c⟩ := exists_cocycle_H0Iso_inv A a
   obtain ⟨x, hx, hxc⟩ := exists_cocycle_charClassProf χ
   let φ : A ⊗ Rep.trivial ℤ G ℤ ⟶ A := (ρ_ A).hom
@@ -111,12 +119,13 @@ theorem exists_cocycle_cupCharClassProf (A : Rep ℤ G) [IsDiscreteRep A] (χ : 
     rw [← hz0, ← hx, cup_cohomologyπ]
     exact (ConcreteCategory.congr_hom (cohomologyπ_comp_cohomologyMap φ 2) _).symm
   · intro v
-    have e := congrArg (fun ψ => cochainOf A (ψ.hom (cupCocycles (zero_add 2) z0 x)))
+    have e := congrArg (fun ψ => cochainOf (A := A) (ψ.hom (cupCocycles (zero_add 2) z0 x)))
       (HomologicalComplex.cyclesMap_i (cochainsMap φ) 2)
     simp only [ModuleCat.hom_comp, LinearMap.comp_apply] at e
-    change cochainOf A (((cochainsComplex A).iCycles 2).hom _) v = _
+    change cochainOf (A := A) (((cochainsComplex A).iCycles 2).hom _) v = _
     rw [e, cochainOf_cochainsMap_f]
-    change φ.hom (cochainOf _ (cocycleι _ 2 (cupCocycles (zero_add 2) z0 x)) v) = _
+    change φ.hom (cochainOf (A := A ⊗ Rep.trivial ℤ G ℤ)
+      (cocycleι (A ⊗ Rep.trivial ℤ G ℤ) 2 (cupCocycles (zero_add 2) z0 x)) v) = _
     rw [cocycleι_cupCocycles, cochainOf_cupLocallyConstant, cupCochain_apply, hz0c]
     erw [hxc, rightUnitor_hom_tmul]
     exact int_smul_eq_zsmul _ _ _

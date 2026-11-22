@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LinearIndependentSemilinearOfBasis
-import Formalism.SharpRestriction.Divisibility.AbsolutelyIrreducibleSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LinearIndependentSemilinearOfBasis
+public import Formalism.SharpRestriction.Divisibility.AbsolutelyIrreducibleSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,16 +24,16 @@ def bkMk {B : Base} {C : Cols B} (W : RowsRest B C) {m : ℕ} (c : Fin m → W.E
     (u : B.Word) : (C.fm u).ramSub →ₗ[B.LL] Module.Dual B.LL (Fin m → B.LL) :=
   LinearMap.mk₂ B.LL (b u)
     (fun φ ψ x => B.embLL.injective (by
-      rw [map_add, hb, hb, hb, map_add, (W.Bu_linL u _).map_add]))
+      rw [map_add (f := _), hb, hb, hb, map_add (f := _), (W.Bu_linL u _).map_add (f := _)]))
     (fun a φ x => B.embLL.injective (by
       rw [smul_eq_mul, map_mul, hb, hb, map_smulₛₗ, (W.Bu_linL u _).map_smul, smul_eq_mul]))
     (fun φ x y => B.embLL.injective (by
-      rw [map_add, hb, hb, hb, map_add, (W.Bu_linR u _).map_add]))
+      rw [map_add (f := _), hb, hb, hb, map_add (f := _), (W.Bu_linR u _).map_add (f := _)]))
     (fun a φ x => B.embLL.injective (by
       rw [smul_eq_mul, map_mul, hb, hb, map_smulₛₗ, (W.Bu_linR u _).map_smul, smul_eq_mul]))
 
-open Classical in
 
+open Classical in
 def bkOf {B : Base} {C : Cols B} (W : RowsRest B C) {m : ℕ} (c : Fin m → W.EE) (u : B.Word) :
     (C.fm u).ramSub →ₗ[B.LL] Module.Dual B.LL (Fin m → B.LL) :=
   if H : ∀ u (φ : (C.fm u).ramSub) (x : Fin m → B.LL),
@@ -44,7 +48,7 @@ theorem bkOf_spec {B : Base} {C : Cols B} (W : RowsRest B C) {m : ℕ} (c : Fin 
     W.Bu u (GlobalTheory.Mem.ramForm W u φ) (GlobalTheory.Mem.coordForm B.embLL c x) = B.embLL (bkOf W c u φ x) := by
   classical
   unfold bkOf
-  rw [dif_pos H]
+  rw [dite_eq_left H]
   exact (H u φ x).choose_spec.symm
 
 end GlobalTheory.Mem.R3.Rw

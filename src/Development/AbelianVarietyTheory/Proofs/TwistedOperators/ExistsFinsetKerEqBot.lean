@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.FinsetKernelTrivial
 
@@ -60,7 +64,8 @@ theorem main : ∀ {X : Type} (V : Submodule ℂ (X → ℂ)) (W : Submodule ℂ
   have h3 : w = ∑ x : P, ((w : X → ℂ) x.1) • ((L (Pi.single x 1) : W) : V) := by
     have := congrArg (fun u : W => (u : V)) h1
     simp only at this
-    conv_lhs => rw [this, h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [this, h2, map_sum]
     simp [map_smul]
   conv_lhs => rw [h3]
   rw [← Finset.sum_attach P]

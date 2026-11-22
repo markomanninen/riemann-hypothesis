@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CcDualWtAnti
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CcDualWtAnti
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RelIndexDualSubmoduleInfOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SchwartzBruhatInnerProductSelfNonnegBounds
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinearStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledLatticeSplit
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledHermitianTestFunctionSpecStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledThetaTestFunctionSesquilinearHeisenbergStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledHermitianTestFunctionZeroAndNormStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RelIndexDualSubmoduleInfOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SchwartzBruhatInnerProductSelfNonnegBounds
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledLatticeSplit
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledHermitianTestFunctionSpecStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledThetaTestFunctionSesquilinearHeisenbergStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledHermitianTestFunctionZeroAndNormStatement
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -64,12 +68,10 @@ theorem mem_sup_of_dual_inf {V : Type} [AddCommGroup V] [Module ℚ V] [FiniteDi
   have hnd : B.Nondegenerate := by
     refine ⟨hsepL, fun n hn => hsepL n fun m => ?_⟩
     rw [hB, hn m, neg_zero]
-  have lat₁ : N₁.IsLattice ℚ :=
-    GlobalTheory.isLattice_of_fg_dualSubmodule B hnd N₁ g₁ (by rw [sd₁]; exact g₁)
-  have hsup : (N₁ ⊔ N₂).IsLattice ℚ := by
-    refine ⟨g₁.sup g₂, ?_⟩
-    rw [eq_top_iff, ← lat₁.span_eq_top]
-    exact Submodule.span_mono (fun z hz => Submodule.mem_sup_left hz)
+  have : N₁.IsFullLattice ℚ :=
+    GlobalTheory.isLattice_of_fg_dualSubmodule B hnd N₁ g₁ (sd₁.symm ▸ g₁)
+  have : (N₁ ⊔ N₂).IsFullLattice ℚ :=
+    Submodule.IsFullLattice.of_le_of_fg ℚ (le_sup_left : N₁ ≤ N₁ ⊔ N₂) (g₁.sup g₂)
   obtain ⟨b, hb⟩ := GlobalTheory.exists_basis_span_eq_of_isLattice (N₁ ⊔ N₂)
 
   have hdual : B.dualSubmodule (N₁ ⊔ N₂) = N₁ ⊓ N₂ := by
@@ -86,7 +88,7 @@ theorem mem_sup_of_dual_inf {V : Type} [AddCommGroup V] [Module ℚ V] [FiniteDi
       obtain ⟨z₁, hz₁, z₂, hz₂, rfl⟩ := Submodule.mem_sup.mp hz
       rw [← sd₁] at hy₁
       rw [← sd₂] at hy₂
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem (hy₁ z₁ hz₁) (hy₂ z₂ hz₂)
   have hx' : x ∈ B.flip.dualSubmodule (B.dualSubmodule (N₁ ⊔ N₂)) := by
     rw [hdual]
@@ -187,7 +189,7 @@ theorem ip_add_right (h : IsSB φ) (k : IsSB ψ) (k' : IsSB ψ') :
     ip φ (ψ + ψ') = ip φ ψ + ip φ ψ' := by
   have e : (fun x => φ x * conj ((ψ + ψ') x)) =
       (fun x => φ x * conj (ψ x)) + fun x => φ x * conj (ψ' x) := by
-    funext x; simp only [Pi.add_apply, map_add, mul_add]
+    funext x; simp only [Pi.add_apply, map_add (f := _), mul_add]
   unfold GlobalTheory.SW.ip
   rw [e]
   exact (GlobalTheory.T.rationalSchwartzBruhat_algebra_integral_linear K κ ι _ _ (sb_mul_conj h k) (sb_mul_conj h k')).2.2.2.2.1
@@ -231,7 +233,7 @@ theorem ip_of_support (h : IsSB φ) (k : IsSB ψ) {A B : Set (Matrix κ ι K)} {
   obtain ⟨ρ, hρ, hh⟩ : ∃ ρ : ℝ, 0 ≤ ρ ∧
       haar (fun x : Matrix κ ι K => if x ∈ A ∧ x ∈ B then (1 : ℂ) else 0) = ρ := by
     unfold GlobalTheory.SW.haar
-    rw [dif_pos hind]
+    rw [dite_eq_left hind]
     unfold GlobalTheory.SW.haarAt
     refine ⟨((hind.choose : ℝ) ^ (Module.finrank ℚ K * (Fintype.card κ * Fintype.card ι)))⁻¹ *
       ∑ᶠ q : Matrix κ ι K ⧸ perSub K κ ι hind.choose,
@@ -429,14 +431,15 @@ theorem eq_of_law (w : E) {L₁ L₂ : Lt E r} {β : Matrix (Fin r) (Fin r) E} (
       simp only [GlobalTheory.SW.heisH, sub_zero] at key
       have hq : Algebra.trace ℚ E (∑ k, ∑ a, (y * skew X) k a *
           (2 * cc (x k a) - cc ((0 : Matrix (Fin n) (Fin r) E) k a))) = -2 * rowForm X n y x := by
-        rw [rowForm_apply, Finset.mul_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [rowForm_apply, Finset.mul_sum, map_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
         have hin : ∑ a, (y * skew X) k a * (2 * cc (x k a) - cc ((0 : Matrix (Fin n) (Fin r) E) k a)) =
             pair (y k ᵥ* skew X) (x k) + pair (y k ᵥ* skew X) (x k) := by
           simp only [pair, Matrix.mul_apply, Matrix.vecMul, dotProduct, Matrix.zero_apply,
             ReciprocityTheory.ChartRestriction.G.FD.cc, map_zero, sub_zero, ← Finset.sum_add_distrib]
           exact Finset.sum_congr rfl fun a _ => by ring
-        rw [hin, map_add, EF_eq_trace]
+        rw [hin, map_add (f := _), EF_eq_trace]
         ring
       rw [hq] at key
       have hone : cexp (↑π * I * (((-2 * rowForm X n y x : ℚ)) : ℂ)) = 1 := by
@@ -549,8 +552,8 @@ end Main
 
 end GlobalTheory.SW.DblVac
 
-open GlobalTheory.SW.DblVac in
 
+open GlobalTheory.SW.DblVac in
 theorem GlobalTheory.SW.dbl_vacuum : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : Data E r) (g : ℕ) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (n : ℕ), IsSympl X bas → Even n → ∀ w : E, IsIntegral ℤ w → w + cc w = 1 → ∀ L₁ L₂ : Lt E r, SelfD X L₁ → SelfD X L₂ → ∀ M : ℕ, 0 < M → ∀ v₁ v₂ : TF n g, IsVac X bas w (tens (stdL E n) L₁) v₁ → IsVac X bas w (tens (stdL E n) L₂) v₂ → ∃ (β : Matrix (Fin r) (Fin r) E) (t : ℂ), ccT β = β ∧ ∀ Λ ∈ Vset E n M, ∀ x, dbl X bas idx (unitv (projA X bas w (tens Λ L₁) v₁)) (unitv (projA X bas w (tens Λ L₂) v₂)) x = if x ∈ tens Λ (L₁ ⊔ L₂) then t * cexp (π * I * ((Algebra.trace ℚ E (x * β * ccT x).trace : ℚ) : ℂ)) else 0 := by
   intro E _ _ _ r X g bas idx n hs hn w hw hw1 L₁ L₂ hL₁ hL₂ M hM v₁ v₂ hv₁ hv₂
   obtain ⟨β, hβh, hβ⟩ := GlobalTheory.SW.DiagSplit.doubled_lattice_split E r X w hw hw1 L₁ L₂ hL₁ hL₂

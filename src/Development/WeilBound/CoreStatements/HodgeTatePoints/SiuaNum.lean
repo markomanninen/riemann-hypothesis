@@ -1,10 +1,14 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PositivityTheory.HtPt.Siua
 
 open Filter Topology
 
-theorem expand {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ (fun _ : Fin n => M) ℤ) (μ e : M)
+theorem expand {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap (RingHom.id ℤ) (fun _ : Fin n => M) ℤ) (μ e : M)
     (x y : Fin n → ℤ) :
     f (fun i => x i • μ + y i • e) =
       ∑ s : Finset (Fin n), (∏ i, if i ∈ s then x i else y i) * f (fun i => if i ∈ s then μ else e) := by
@@ -15,13 +19,13 @@ theorem expand {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ (fu
       fun i => (if i ∈ s then x i else y i) • (if i ∈ s then μ else e) := by
     funext i
     by_cases hi : i ∈ s <;> simp [Finset.piecewise, hi]
-  rw [hpw, f.map_smul_univ, smul_eq_mul]
+  simp only [hpw, f.map_smul_univ, RingHom.id_apply, smul_eq_mul]
 
-noncomputable def form {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ (fun _ : Fin n => M) ℤ)
+noncomputable def form {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap (RingHom.id ℤ) (fun _ : Fin n => M) ℤ)
     (μ e : M) (x y : Fin n → ℚ) : ℚ :=
   ∑ s : Finset (Fin n), (∏ i, if i ∈ s then x i else y i) * (f (fun i => if i ∈ s then μ else e) : ℚ)
 
-theorem form_cast {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ (fun _ : Fin n => M) ℤ) (μ e : M)
+theorem form_cast {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap (RingHom.id ℤ) (fun _ : Fin n => M) ℤ) (μ e : M)
     (x y : Fin n → ℤ) :
     (f (fun i => x i • μ + y i • e) : ℚ) = form f μ e (fun i => x i) (fun i => y i) := by
   rw [PositivityTheory.HtPt.Siua.expand]
@@ -30,7 +34,7 @@ theorem form_cast {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ 
   refine Finset.sum_congr rfl fun s _ => ?_
   congr 1
 
-theorem form_smul {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ (fun _ : Fin n => M) ℤ) (μ e : M)
+theorem form_smul {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap (RingHom.id ℤ) (fun _ : Fin n => M) ℤ) (μ e : M)
     (x y : Fin n → ℚ) (a : ℚ) :
     form f μ e (fun i => a * x i) (fun i => a * y i) = a ^ n * form f μ e x y := by
   simp only [PositivityTheory.HtPt.Siua.form, Finset.mul_sum]
@@ -43,7 +47,7 @@ theorem form_smul {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ 
       _ = a ^ n * ∏ i, (if i ∈ s then x i else y i) := by simp
   rw [hprod, mul_assoc]
 
-theorem form_cont {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ (fun _ : Fin n => M) ℤ) (μ e : M)
+theorem form_cont {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap (RingHom.id ℤ) (fun _ : Fin n => M) ℤ) (μ e : M)
     (x : Fin n → ℚ) (y : Fin n → ℚ) : Continuous fun t : ℚ => form f μ e x (fun i => y i * t) := by
   simp only [PositivityTheory.HtPt.Siua.form]
   refine continuous_finsetSum _ fun s _ => ?_
@@ -54,7 +58,7 @@ theorem form_cont {M : Type} [AddCommGroup M] {n : ℕ} (f : MultilinearMap ℤ 
   · simp only [hi, ↓reduceIte]
     exact continuous_const.mul continuous_id
 
-theorem siu_num : ∀ (M : Type) [AddCommGroup M] (d : ℕ) (f : MultilinearMap ℤ (fun _ : Fin (d + 1) => M) ℤ) (μ e : M), 0 < f (fun _ => μ) → ∃ t : ℚ, 0 < t ∧ ∀ (a : ℕ) (m : ℤ), 1 ≤ a → (m : ℚ) = a * t → ((d + 1 : ℕ) : ℤ) * f (Fin.snoc (α := fun _ => M) (fun _ : Fin d => a • μ + m • e) ((2 * m) • e)) < f (fun _ => a • μ + m • e) := by
+theorem siu_num : ∀ (M : Type) [AddCommGroup M] (d : ℕ) (f : MultilinearMap (RingHom.id ℤ) (fun _ : Fin (d + 1) => M) ℤ) (μ e : M), 0 < f (fun _ => μ) → ∃ t : ℚ, 0 < t ∧ ∀ (a : ℕ) (m : ℤ), 1 ≤ a → (m : ℚ) = a * t → ((d + 1 : ℕ) : ℤ) * f (Fin.snoc (α := fun _ => M) (fun _ : Fin d => a • μ + m • e) ((2 * m) • e)) < f (fun _ => a • μ + m • e) := by
   intro M _ d f μ e hf
   obtain ⟨x2, hx2⟩ : ∃ x2 : Fin (d + 1) → ℚ, x2 = Fin.snoc (α := fun _ => ℚ) (fun _ : Fin d => (1 : ℚ)) 0 :=
     ⟨_, rfl⟩

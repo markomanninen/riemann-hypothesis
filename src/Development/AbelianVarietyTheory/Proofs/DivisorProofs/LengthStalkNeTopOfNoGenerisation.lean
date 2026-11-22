@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace GlobalTheory
 
 namespace GlobalTheory
@@ -29,11 +34,11 @@ theorem isFiniteLength_localized_of_minimal_prime {A B M N : Type*} [CommRing A]
       rw [Ideal.Quotient.eq_zero_iff_mem.2 this]
       exact Q.zero_mem
     have h2 : Q'.comap (algebraMap A B) ≤ p := by
-      rw [← IsLocalization.AtPrime.comap_maximalIdeal B p]
+      rw [← IsLocalization.AtPrime.under_maximalIdeal B p]
       exact Ideal.comap_mono (IsLocalRing.le_maximalIdeal hQ'.ne_top)
     have h3 : Ideal.under A Q' = p := h _ (Ideal.comap_isPrime _ _) h1 h2
     have h4 : Q' = IsLocalRing.maximalIdeal B := by
-      rw [← IsLocalization.map_comap p.primeCompl B Q', h3,
+      rw [← IsLocalization.map_under p.primeCompl B Q', h3,
         IsLocalization.AtPrime.map_eq_maximalIdeal]
     have h5 : Q'.IsMaximal := h4 ▸ IsLocalRing.maximalIdeal.isMaximal B
     have h6 := Ideal.map_eq_top_or_isMaximal_of_surjective

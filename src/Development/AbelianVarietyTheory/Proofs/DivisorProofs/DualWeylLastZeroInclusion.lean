@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CapelliDeterminantFirstRowsMemBmW
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CoefficientSpaceEqSpanOrbitExtremalVector
-import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ColAddGenRenameCastSucc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CapelliDeterminantFirstRowsMemBmW
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CoefficientSpaceEqSpanOrbitExtremalVector
+public import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ColAddGenRenameCastSucc
+
+@[expose] public section
+
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BranchingDeterminantCap Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.Mem.Gelf GlobalTheory.Mem.GelfCheck GlobalTheory.BrCompare
 
 namespace GlobalTheory.BrCompare
 
-open GlobalTheory.Branching.AddColumn in
 
+open GlobalTheory.Branching.AddColumn in
 theorem exists_eq_incl_of_last_eq_zero : ∀ (K : Type) [Field K] [CharZero K] (n : ℕ) (ν : Fin (n + 1) → ℕ), ν (Fin.last n) = 0 → ∀ x ∈ dualWeyl K (n + 1) (n + 1) ν, ∃ x' ∈ dualWeyl K (n + 1) n (fun i => ν i.castSucc), x = incl K n x' := by
   intro K _ _ n ν hν x hx
   have hinj : Function.Injective

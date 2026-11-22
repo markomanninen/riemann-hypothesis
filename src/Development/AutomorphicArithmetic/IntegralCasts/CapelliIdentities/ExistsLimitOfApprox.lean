@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qp1.exists_limit_of_approx.{u_1} :
     ∀ {R : Type u_1} [inst : CommRing R] (I : Ideal R)

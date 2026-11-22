@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.FinalF
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPosOfIsUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMeasurableCutoffFibreIntegralOneSubgroupStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FixedVectorDifferentiableStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneParameterConjugationBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TorusModulusUnipotentRadicalUnitaryGroupStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryRepMatrixCoefficientBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoeffEqZeroOfLipschitzUnitaryFlowDecayStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicSplitTorusIwasawaUnitaryGroupStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarSubgroupBiInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalVolumeGrowthStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DecayOfMemSpan
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanDecay
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPosOfIsUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMeasurableCutoffFibreIntegralOneSubgroupStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FixedVectorDifferentiableStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneParameterConjugationBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TorusModulusUnipotentRadicalUnitaryGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryRepMatrixCoefficientBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoeffEqZeroOfLipschitzUnitaryFlowDecayStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicSplitTorusIwasawaUnitaryGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarSubgroupBiInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalVolumeGrowthStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DecayOfMemSpan
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanDecay
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId
 open scoped InnerProductSpace ComplexOrder ContDiff
@@ -81,14 +85,14 @@ theorem inner_move {ρ : G → (H →L[ℂ] H)} (hρ : IsURep ρ) (x : G) (v u :
   show _ = ⟪ρ x v, ρ x (ρ x⁻¹ u)⟫_ℂ
   rw [e]
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem act_mul [TopologicalSpace G] {ρ : G → (H →L[ℂ] H)} (hρ : IsURep ρ) (x y : G) (u : H) :
     ρ (x * y) u = ρ x (ρ y u) := by
   rw [hρ.2.1]; rfl
 
-omit [Group G] [TopologicalSpace G] in
 
+omit [Group G] [TopologicalSpace G] in
 theorem decays_span_left {ρ : G → (H →L[ℂ] H)} {D : G → ℝ} {c : ℝ} {S : Set H} {u : H}
     (h : ∀ v ∈ S, Decays ρ D c v u) : ∀ v ∈ Submodule.span ℂ S, Decays ρ D c v u := by
   first
@@ -99,8 +103,8 @@ theorem decays_span_left {ρ : G → (H →L[ℂ] H)} {D : G → ℝ} {c : ℝ} 
   | (intros; apply @_root_.GlobalTheory.DecayOfMemSpan.decay_of_mem_span <;> first | assumption | infer_instance)
   | (intros; exact _root_.GlobalTheory.DecayOfMemSpan.decay_of_mem_span ..)
 
-omit [Group G] [TopologicalSpace G] in
 
+omit [Group G] [TopologicalSpace G] in
 theorem decays_span_right {ρ : G → (H →L[ℂ] H)} {D : G → ℝ} {c : ℝ} {S : Set H} {v : H}
     (h : ∀ u ∈ S, Decays ρ D c v u) : ∀ u ∈ Submodule.span ℂ S, Decays ρ D c v u := by
   first
@@ -149,7 +153,7 @@ theorem orbit_stable {ρ : G → (H →L[ℂ] H)} (hρ : IsURep ρ) (w : H) (x :
     obtain ⟨g, rfl⟩ := hy
     exact Submodule.subset_span ⟨x * g, act_mul hρ x g w⟩
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul a b _ hb => rw [map_smul]; exact Submodule.smul_mem _ _ hb
 
 theorem form_add_le {V : Type} [AddCommGroup V] [Module ℂ V] (I : V →ₗ⋆[ℂ] V →ₗ[ℂ] ℂ) (h : ∀ x, 0 ≤ I x x)
@@ -157,7 +161,7 @@ theorem form_add_le {V : Type} [AddCommGroup V] [Module ℂ V] (I : V →ₗ⋆[
     (I ((a : ℂ) • x + (b : ℂ) • y) ((a : ℂ) • x + (b : ℂ) • y)).re ≤
       2 * a ^ 2 * (I x x).re + 2 * b ^ 2 * (I y y).re := by
   have h1 := (Complex.nonneg_iff.1 (h ((a : ℂ) • x - (b : ℂ) • y))).1
-  simp only [map_add, map_sub, LinearMap.map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
+  simp only [map_add (f := _), map_sub, LinearMap.map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
     map_smul, smul_eq_mul, Complex.conj_ofReal, Complex.add_re, Complex.sub_re, Complex.re_ofReal_mul,
     RingHom.id_apply] at h1 ⊢
   nlinarith
@@ -176,8 +180,8 @@ theorem integral_conj {ν : Measure G} {x : G} {t : ℝ}
   rw [← integral_map hm.aemeasurable hf.aestronglyMeasurable, h, integral_smul_measure,
     ENNReal.toReal_ofReal (Real.exp_pos t).le, Complex.real_smul]
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem Decays.integrable {ρ : G → (H →L[ℂ] H)} (hρ : IsURep ρ) {D : G → ℝ} {c : ℝ} {ν : Measure G}
     (hi : Integrable (fun m => Real.exp (-(c * D m))) ν) {v u : H} (h : Decays ρ D c v u) :
     Integrable (fun m => ⟪v, ρ m u⟫_ℂ) ν := by
@@ -185,8 +189,8 @@ theorem Decays.integrable {ρ : G → (H →L[ℂ] H)} (hρ : IsURep ρ) {D : G 
   have hc : Continuous fun g => ⟪v, ρ g u⟫_ℂ := continuous_const.inner (hρ.2.2.2 u)
   exact (hi.const_mul C).mono' hc.aestronglyMeasurable (Filter.Eventually.of_forall hC)
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [BorelSpace G] [Group G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [BorelSpace G] [Group G] in
 theorem exists_form (ρ : G → (H →L[ℂ] H)) (ν : Measure G) (V : Submodule ℂ H)
     (hi : ∀ v ∈ V, ∀ u ∈ V, Integrable (fun m => ⟪v, ρ m u⟫_ℂ) ν) :
     ∃ I : V →ₗ⋆[ℂ] V →ₗ[ℂ] ℂ, ∀ v u : V, I v u = ∫ m, ⟪(v : H), ρ m u⟫_ℂ ∂ν := by
@@ -195,12 +199,12 @@ theorem exists_form (ρ : G → (H →L[ℂ] H)) (ν : Measure G) (V : Submodule
   · simp only [Submodule.coe_add, inner_add_left]
     exact integral_add (hi _ x.2 _ y.2) (hi _ x'.2 _ y.2)
   · simp only [Submodule.coe_smul, inner_smul_left, smul_eq_mul, integral_const_mul]
-  · simp only [Submodule.coe_add, map_add, inner_add_right]
+  · simp only [Submodule.coe_add, map_add (f := _), inner_add_right]
     exact integral_add (hi _ x.2 _ y.2) (hi _ x.2 _ y'.2)
   · simp only [Submodule.coe_smul, map_smul, inner_smul_right, smul_eq_mul, RingHom.id_apply, integral_const_mul]
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem torus_decay {ρ : G → (H →L[ℂ] H)} {D : G → ℝ} {c : ℝ} (hc : 0 ≤ c) {ν : Measure G} {N : Set G}
     (hN : ν Nᶜ = 0) (hD : ∀ g g', D (g * g') ≤ D g + D g') (hDi : ∀ g, D g⁻¹ = D g)
     (hi : Integrable (fun m => Real.exp (-(c / 3 * D m))) ν) {a : ℝ → G} (ha : ∀ s, D (a s) ≤ |s|)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Variant₂.N1
 
@@ -39,7 +43,7 @@ theorem exists_eq_add_mul_of_forall' {A : Type*} {R : Type*} {ι : Type*} [CommR
     | succ n ih =>
       have h1 := hstep (nx^[n] y)
       rw [Function.iterate_succ_apply', Finset.sum_range_succ, Finset.sum_range_succ]
-      simp only [map_add, map_mul, map_pow, hfa] at ih ⊢
+      simp only [map_add (f := _), map_mul, map_pow, hfa] at ih ⊢
       linear_combination ih + r ^ n * h1
   rw [← sub_eq_zero]
   refine IsHausdorff.haus' (I := Ideal.span {r}) _ fun n => ?_
@@ -47,7 +51,7 @@ theorem exists_eq_add_mul_of_forall' {A : Type*} {R : Type*} {ι : Type*} [CommR
   obtain ⟨c, hc⟩ := hB n
   obtain ⟨d, hd⟩ := hS n
   have hfB : f (∑ k ∈ Finset.range n, a ^ k * b (nx^[k] y)) = f B + r ^ n * f c := by
-    rw [← hfa, ← map_pow, ← map_mul, ← map_add]
+    rw [← hfa, ← map_pow, ← map_mul, ← map_add (f := _)]
     congr 1
     linear_combination hc
   exact ⟨f c + X * d + ψ (nx^[n] y), by linear_combination key n + hfB + X * hd⟩

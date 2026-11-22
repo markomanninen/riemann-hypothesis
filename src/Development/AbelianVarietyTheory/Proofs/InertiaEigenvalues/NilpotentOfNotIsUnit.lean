@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Per Ideal Finset
 
@@ -138,14 +142,14 @@ theorem hausdorff_pair {R : Type*} [CommRing R] [IsDomain R] (π : A →+* R) (p
     have h0 : π x = 0 := by
       refine hR _ fun n => ?_
       obtain ⟨a, b, rfl⟩ := mem_span_pair.1 (hx (n + 1))
-      simp only [map_add, map_mul, map_pow, hπp, pow_succ, mul_zero, zero_add]
+      simp only [map_add (f := _), map_mul, map_pow, hπp, pow_succ, mul_zero, zero_add]
       exact ⟨π b * π y, by ring⟩
     obtain ⟨x', hx'⟩ := mem_span_singleton'.1 (hker ▸ h0 : x ∈ span {p})
     refine ⟨x', by rw [← hx', mul_comm], fun n => ?_⟩
     obtain ⟨a, b, hab⟩ := mem_span_pair.1 (hx (n + 1))
     have h1 : π b = 0 := by
       rw [← hab] at h0
-      simp only [map_add, map_mul, map_pow, hπp, pow_succ _ n, mul_zero, zero_add] at h0
+      simp only [map_add (f := _), map_mul, map_pow, hπp, pow_succ _ n, mul_zero, zero_add] at h0
       simpa [hy] using h0
     obtain ⟨b', hb'⟩ := mem_span_singleton'.1 (hker ▸ h1 : b ∈ span {p})
     refine mem_span_pair.2 ⟨a, b' * y, ?_⟩
@@ -216,7 +220,7 @@ theorem perfection_tails {y : Perfection R p} (hy : IsNilpotent (Perfection.coef
     | succ N hN ih =>
       rw [← ih]
       simp only [S]
-      rw [sum_range_succ, map_add, map_mul, map_pow, coeff_pow_eq_zero hm n N hN, zero_mul,
+      rw [sum_range_succ, map_add (f := _), map_mul, map_pow, coeff_pow_eq_zero hm n N hN, zero_mul,
         add_zero]
   have ex : ∀ k, ∃ t : Perfection R p, ∀ n,
       Perfection.coeff R p n t = Perfection.coeff R p n (S k (p ^ n * m)) := fun k =>

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafReducedSmooth
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FiniteOfIsClosedOfFiniteInterClosedPoints
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafReducedSmooth
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FiniteOfIsClosedOfFiniteInterClosedPoints
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.E4

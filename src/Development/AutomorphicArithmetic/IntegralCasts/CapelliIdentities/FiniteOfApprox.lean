@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 
@@ -147,7 +151,7 @@ private lemma finite_of_approx {O R : Type} [CommRing O] [IsLocalRing O]
       simp [h0, y]
     | succ n ih =>
       have hy : y (n + 1) = ψ (y n) := Function.iterate_succ_apply' ψ n z
-      rw [hSsucc, map_add, map_smul, hy, Algebra.smul_def, map_pow]
+      rw [hSsucc, map_add (f := _), map_smul, hy, Algebra.smul_def, map_pow]
       conv_lhs => rw [ih, hφ (y n)]
       ring
   have hcauchy : ∀ j, ∀ {m n : ℕ}, m ≤ n →

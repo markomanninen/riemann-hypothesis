@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.UniformContinuousConstSMulOfIsIsometricSMul
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.UniformContinuousConstSMulOfIsIsometricSMul
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,21 @@ theorem coe_gOC (g : GQ l) (x : OC l) :
   smul_cp_eq l g x
 
 theorem tiltMap_gOC (g : GQ l) : Reformulated.AutPerF.Tilt.map l (gOC l g) = PositivityTheory.LocInh.galT g := by
-  refine RingHom.ext fun x => (PositivityTheory.LocInh.galT_ext fun n y hy => ⟨gOC l g y, coe_gOC l g y, ?_⟩).symm
-  rw [Reformulated.AutPerF.Tilt.coeff_map, hy, Ideal.quotientMap_mk]
+  refine RingHom.ext fun x => ?_
+  apply Perfection.ext
+  intro n
+  change PreTilt.coeff n (Reformulated.AutPerF.Tilt.map l (gOC l g) x) =
+    PreTilt.coeff n (PositivityTheory.LocInh.galT g x)
+  obtain ⟨y, hy⟩ := Ideal.Quotient.mk_surjective (PreTilt.coeff n x)
+  have h1 := PositivityTheory.LocInh.frob_coeff_tiltMap x n y hy.symm
+  have h2 : PreTilt.coeff n (PositivityTheory.LocInh.galT g x) = (Formalism.Per6.modPEquiv l).symm
+      (modPMap (galCp (Formalism.Per6.toBot g) : ℂ_[l] →+* ℂ_[l]) (AInf.norm_galCp_toRingHom (Formalism.Per6.toBot g))
+        (PreTilt.coeff n (Formalism.Per6.tiltMap l x))) := rfl
+  rw [h2, h1, modPMap_mk]
+  rw [Reformulated.AutPerF.Tilt.coeff_map, ← hy, Ideal.quotientMap_mk]
+  apply congrArg
+  apply Subtype.ext
+  exact coe_gOC l g y
 
 theorem ainfMap_gOC (g : GQ l) (a : Reformulated.AutPerF.Ainf l (OC l)) :
     Formalism.Per6.ainfMap l (Reformulated.AutPerF.Ainf.map l (gOC l g) a) =

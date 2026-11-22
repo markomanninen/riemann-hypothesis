@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrossTZeroRight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullAwChainsBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveTotalOfColumns
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrossTZeroRight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullAwChainsBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveTotalOfColumns
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC GlobalTheory.EtC.CupSpec GlobalTheory.EZ GlobalTheory.PBFc
 
 noncomputable section
@@ -73,7 +78,8 @@ theorem isAW_pull_crossT : ∀ {R : Type} [CommRing R] {E : Spc} {N : ℕ} (V : 
   rw [ev_def, hc M w h]
   simp only [awZ, Category.assoc, Iso.inv_hom_id_assoc, Preadditive.sum_comp]
   change mapHom _ _ (freeGen R _ U x) (∑ a : Fin (M + 1), _) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [mapHom_apply', map_comp_apply', freeGen_map, evT_of_eq, evT_crossT, ev_pull, ev_pull, baseS_aw V M (a : ℕ) (by omega), vertS_aw V ℓ M (a : ℕ) (by omega)]
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafFreeCokPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafFreeCokPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -11,7 +15,7 @@ theorem imageSieve_add' {F G : Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} (ULift.{1} R)}
     (s₁ s₂ : G.obj (op T)) :
     Presheaf.imageSieve f s₁ ⊓ Presheaf.imageSieve f s₂ ≤ Presheaf.imageSieve f (s₁ + s₂) := by
   rintro V g ⟨⟨t₁, h₁⟩, ⟨t₂, h₂⟩⟩
-  exact ⟨t₁ + t₂, by rw [map_add, map_add, h₁, h₂]⟩
+  exact ⟨t₁ + t₂, by rw [map_add (f := _), map_add (f := _), h₁, h₂]⟩
 
 theorem imageSieve_smul' {F G : Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} (ULift.{1} R)} (f : F ⟶ G) {T : Scheme.{0}}
     (r : ULift.{1} R) (s : G.obj (op T)) :
@@ -68,7 +72,7 @@ theorem exists_finset_adjoin_laurent_preimage (R : Type) [CommRing R] {A' B' A B
         simp only [Set.mem_setOf_eq]; rw [map_zero, imageSieve_zero']; exact J.top_mem T
       add_mem' := fun {v₁ v₂} h₁ h₂ => by
         simp only [Set.mem_setOf_eq] at *
-        rw [map_add]; exact J.superset_covering (imageSieve_add' _ _ _) (J.intersection_covering h₁ h₂)
+        rw [map_add (f := _)]; exact J.superset_covering (imageSieve_add' _ _ _) (J.intersection_covering h₁ h₂)
       smul_mem' := fun r v h => by
         simp only [Set.mem_setOf_eq] at *
         rw [map_smul]; exact J.superset_covering (imageSieve_smul' _ _ _) h }

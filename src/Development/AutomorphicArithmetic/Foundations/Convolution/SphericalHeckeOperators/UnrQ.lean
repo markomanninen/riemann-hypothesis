@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
-import GroundTheory.LocalFields.UnramifiedDefs
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+public import GroundTheory.LocalFields.UnramifiedDefs
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -28,10 +32,11 @@ theorem UpperTheory.ConvolutionTheory.H.unrQ :
       obtain ⟨c, rfl⟩ := hd
       exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ ((hmem p).2 hπk))
     rw [GroundTheory.LocalField.map_maximalIdeal] at hle
-    have he : GroundTheory.LocalField.ramificationIndex k E = 1 := by
-      have hpos := GroundTheory.LocalField.ramificationIndex_pos k E
+    have he : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) = 1 := by
+      have hpos : 0 < (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) :=
+        GroundTheory.LocalField.ramificationIndex_pos k E
       by_contra hne
-      have h2 : 2 ≤ GroundTheory.LocalField.ramificationIndex k E := by omega
+      have h2 : 2 ≤ (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) := by omega
       have h3 := hle.trans (Ideal.pow_le_pow_right h2)
       have h4 := Ideal.pow_succ_lt_pow (GroundTheory.LocalField.maximalIdeal_ne_bot E) 1
       rw [pow_one] at h4

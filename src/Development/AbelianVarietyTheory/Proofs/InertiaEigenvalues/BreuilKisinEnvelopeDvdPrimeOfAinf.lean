@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinEvWIsUnitInjectiveDvdStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinTwoHomsERegularAssociatedStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdIffDvdCoeffBreuilKisinStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinEvWIsUnitInjectiveDvdStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinTwoHomsERegularAssociatedStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdIffDvdCoeffBreuilKisinStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -19,7 +24,7 @@ theorem c_mem_of_mem_map {S A ι : Type} [CommRing S] [CommRing A] {s : S →+* 
       rw [mul_comm, TB.c_mul]
       exact L.mul_mem_right _ hj
     | zero => intro a; rw [mul_zero, map_zero]; exact L.zero_mem
-    | add y z _ _ hy hz => intro a; rw [mul_add, map_add]; exact L.add_mem (hy a) (hz a)
+    | add y z _ _ hy hz => intro a; rw [mul_add, map_add (f := _)]; exact L.add_mem (hy a) (hz a)
     | smul b y _ hy => intro a; rw [smul_eq_mul, ← mul_assoc]; exact hy (a * b)
   simpa using key 1
 
@@ -39,7 +44,8 @@ theorem coeff_map {S A S' A' ι : Type} [CommRing S] [CommRing A] [CommRing S'] 
   have hc := c_mem_of_mem_map TB' _ α hm
   have e : TB'.c α (qf (x - ∑ i ∈ (TB.fin x n).toFinset ∪ {α}, s (TB.c i x) * TB.b i)) =
       TB'.c α (qf x) - g (TB.c α x) := by
-    rw [map_sub, map_sub, map_sum, map_sum, Finset.sum_eq_single α]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sub, map_sum, map_sum, Finset.sum_eq_single α]
     · rw [map_mul, hq, hb, TB'.c_mul, TB'.c_self, mul_one]
     · intro i _ hi
       rw [map_mul, hq, hb, TB'.c_mul, TB'.c_ne α i (Ne.symm hi), mul_zero]
@@ -49,8 +55,8 @@ theorem coeff_map {S A S' A' ι : Type} [CommRing S] [CommRing A] [CommRing S'] 
 
 end GlobalTheory.BSP.EnvPush
 
-open GlobalTheory.BSP.EnvPush in
 
+open GlobalTheory.BSP.EnvPush in
 theorem GlobalTheory.BSP.envPush_dvd_l : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (En : Env bk bk.prism (bk.toP bk.E) (bk.toP X)) (An : Env bk (ainfObj K) (bk.ev bk.E) (bk.ev X)) (q : Hom En.Q An.Q), q.comp En.inl = An.inl.comp bk.ι → q.comp En.inr = An.inr → ∀ x : En.Q.A, ((l : ℕ) : An.Q.A) ∣ q.f x → ((l : ℕ) : En.Q.A) ∣ x := by
   intro l _ K bk En An q hl hr x hx
   have hql : ∀ y : bk.prism.A, q.f (En.inl.f y) = An.inl.f (bk.ι.f y) := fun y =>

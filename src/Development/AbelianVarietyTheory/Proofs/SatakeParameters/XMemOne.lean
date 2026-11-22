@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,8 +28,8 @@ def ratioSec (i j : Fin (d + 1)) : Γ(PSpace ℂ d, chart d i) :=
 
 variable {d} {Z : Scheme.{0}} [IsIntegral Z]
 
-open Classical in
 
+open Classical in
 def rat (φ : Z ⟶ PSpace ℂ d) (i j : Fin (d + 1)) : Z.functionField :=
   if h : genericPoint Z ∈ φ ⁻¹ᵁ chart d i then
     Z.presheaf.germ (φ ⁻¹ᵁ chart d i) (genericPoint Z) h (φ.app (chart d i) (ratioSec d i j))

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.NotCostlyZero
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.JointTypeLatticeSaturated
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.NotCostlyZero
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.JointTypeLatticeSaturated
+
+@[expose] public section
 
 noncomputable section
 

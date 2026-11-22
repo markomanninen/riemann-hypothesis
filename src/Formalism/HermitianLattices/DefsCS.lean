@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+
+@[expose] public section
 
 open Module
 
@@ -20,7 +24,7 @@ def TraceReal : Prop :=
     ∃ (N : ℕ) (ι : V →+ EuclideanSpace ℝ (Fin N)),
       (∀ x y : V, inner ℝ (ι x) (ι y) = ((Algebra.trace ℚ K (h x y) : ℚ) : ℝ)) ∧
       (∀ a : K, ∃ C : ℝ, ∀ x : V, ‖ι (a • x)‖ ≤ C * ‖ι x‖) ∧
-      (∀ M : Submodule (NumberField.RingOfIntegers K) V, Submodule.IsLattice K M →
+      (∀ M : Submodule (NumberField.RingOfIntegers K) V, Submodule.IsFullLattice K M →
         ∃ _ : DiscreteTopology (zmap ι M), IsZLattice ℝ (zmap ι M))
 
 def GenusCovol : Prop :=

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalA
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementD
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalA
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementD
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,10 +82,10 @@ theorem emb_atD (j k : Fin 3) (f : PowerSeries K) : emb j k (atD f) = evalDiffTh
 
 theorem emb_atS (j k : Fin 3) (f : PowerSeries K) :
     emb j k (atS f) = PowerSeries.subst (MvPowerSeries.X j + MvPowerSeries.X k : A3) f := by
-  rw [atS, emb_psubst j k f (by simp), map_add, embed_pair_X_zero, embed_pair_X_one]
+  rw [atS, emb_psubst j k f (by simp), map_add (f := _), embed_pair_X_zero, embed_pair_X_one]
 
 theorem emb_wpDiff (j k : Fin 3) (P : PowerSeries K) : emb j k (wpDiff P) = wp3 P j k := by
-  simp only [wpDiff, wp3, map_add, map_sub, map_mul, map_pow, embed_pair_X_zero, embed_pair_X_one, embed_pair_at_variable_zero,
+  simp only [wpDiff, wp3, map_add (f := _), map_sub, map_mul, map_pow, embed_pair_X_zero, embed_pair_X_one, embed_pair_at_variable_zero,
     embed_pair_at_variable_one]
 
 theorem emb_fExp (j k : Fin 3) {f : MvPowerSeries (Fin 2) K}
@@ -111,7 +115,7 @@ theorem tau3 (hT : TauRule) {g2 g3 : K} {P : PowerSeries K} (hP : IsWp g2 g3 P) 
       wp3 P j k * (2 + 2 * (MvPowerSeries.X j - MvPowerSeries.X k) *
         (evalDiffThree j k (dz (sigS P)) - at1 j (dz (sigS P)) + at1 k (dz (sigS P)))) := by
   have h := congrArg (emb j k) (hT K g2 g3 P hP)
-  simp only [map_add, map_sub, map_mul, map_ofNat, embed_pair_X_zero, embed_pair_X_one, embed_pair_at_variable_zero, embed_pair_at_variable_one, emb_atD,
+  simp only [map_add (f := _), map_sub, map_mul, map_ofNat, embed_pair_X_zero, embed_pair_X_one, embed_pair_at_variable_zero, embed_pair_at_variable_one, emb_atD,
     emb_wpDiff, ← pd_emb_0 hjk, ← pd_emb_1 hjk] at h
   exact h
 
@@ -178,28 +182,28 @@ theorem det_three_points_eq_expansion (P : PowerSeries K) : det3 P =
 theorem eval_last_zero_det_three_points (P : PowerSeries K) :
     ev3H (det3 P) = -2 * (MvPowerSeries.X 0 * MvPowerSeries.X 1) * wp3 P 0 1 := by
   rw [det_three_points_eq_expansion]
-  simp only [map_add, map_sub, map_mul, map_pow, map_neg, map_one, map_ofNat, eval_last_zero_X_zero, eval_last_zero_X_one,
+  simp only [map_add (f := _), map_sub, map_mul, map_pow, map_neg, map_one, map_ofNat, eval_last_zero_X_zero, eval_last_zero_X_one,
     eval_last_zero_X_two, eval_last_zero_at_variable_zero, eval_last_zero_at_variable_one, wp3]
   ring
 
 theorem eval_last_zero_vandermonde_three : ev3H (vand3 K) =
     (MvPowerSeries.X 0 * MvPowerSeries.X 1) * (MvPowerSeries.X 0 ^ 2 - MvPowerSeries.X 1 ^ 2) := by
-  simp only [vand3, map_add, map_sub, map_mul, eval_last_zero_X_zero, eval_last_zero_X_one, eval_last_zero_X_two]
+  simp only [vand3, map_add (f := _), map_sub, map_mul, eval_last_zero_X_zero, eval_last_zero_X_one, eval_last_zero_X_two]
   ring
 
 theorem eval_last_zero_exp_parallelogram {f : PowerSeries K} (hf : PowerSeries.constantCoeff f = 0) :
     ev3H (fsE f) = emb 0 1 (par0 f) := by
   have h0 : PowerSeries.subst (0 : A3) f = 0 := PowerSeries.subst_zero_of_constantCoeff_zero hf
-  simp only [fsE, par0, evalSumThree, evalDiffThree, map_add, map_sub, map_mul, map_ofNat, emb_atS, emb_atD,
+  simp only [fsE, par0, evalSumThree, evalDiffThree, map_add (f := _), map_sub, map_mul, map_ofNat, emb_atS, emb_atD,
     embed_pair_at_variable_zero, embed_pair_at_variable_one]
   rw [eval_last_zero_subst_series f (by simp), eval_last_zero_subst_series f (by simp), eval_last_zero_subst_series f (by simp),
     eval_last_zero_subst_series f (by simp), eval_last_zero_at_variable_zero, eval_last_zero_at_variable_one, at1, at1, at1, eval_last_zero_subst_series f (by simp)]
-  simp only [map_add, map_sub, eval_last_zero_X_zero, eval_last_zero_X_one, eval_last_zero_X_two, add_zero, sub_zero, h0]
+  simp only [map_add (f := _), map_sub, eval_last_zero_X_zero, eval_last_zero_X_one, eval_last_zero_X_two, add_zero, sub_zero, h0]
   ring
 
 theorem fsE_cc {f : PowerSeries K} (hf : PowerSeries.constantCoeff f = 0) :
     MvPowerSeries.constantCoeff (fsE f) = 0 := by
-  simp only [fsE, evalSumThree, evalDiffThree, at1, map_add, map_sub, map_mul]
+  simp only [fsE, evalSumThree, evalDiffThree, at1, map_add (f := _), map_sub, map_mul]
   rw [cc_psubst (by simp) hf, cc_psubst (by simp) hf, cc_psubst (by simp) hf,
     cc_psubst (by simp) hf, cc_psubst (by simp) hf, cc_psubst (by simp) hf,
     cc_psubst (by simp) hf]
@@ -220,7 +224,7 @@ theorem X_sub_ne_zero {j k : Fin 3} (hjk : j ≠ k) :
 theorem X_add_ne_zero {j k : Fin 3} (hjk : j ≠ k) :
     (MvPowerSeries.X j + MvPowerSeries.X k : A3) ≠ 0 :=
   ne_zero_of_pd j (by
-    rw [pd, map_add, MvPowerSeries.pderiv_X_self, MvPowerSeries.pderiv_X_of_ne hjk.symm, add_zero])
+    rw [pd, map_add (f := _), MvPowerSeries.pderiv_X_self, MvPowerSeries.pderiv_X_of_ne hjk.symm, add_zero])
 
 theorem sq_sub_ne_zero {j k : Fin 3} (hjk : j ≠ k) :
     (MvPowerSeries.X j ^ 2 - MvPowerSeries.X k ^ 2 : A3) ≠ 0 := by
@@ -235,7 +239,7 @@ theorem fExp_ne_zero {f : A3} (hf : MvPowerSeries.constantCoeff f = 0) : fExp f 
 
 theorem constantCoeff_parallelogram_defect {f : PowerSeries K} (hf : PowerSeries.constantCoeff f = 0) :
     MvPowerSeries.constantCoeff (par0 f) = 0 := by
-  simp only [par0, atS, atD, at1, map_add, map_sub, map_mul]
+  simp only [par0, atS, atD, at1, map_add (f := _), map_sub, map_mul]
   rw [cc_psubst (by simp) hf, cc_psubst (by simp) hf, cc_psubst (by simp) hf,
     cc_psubst (by simp) hf]
   simp
@@ -252,31 +256,31 @@ theorem weierstrass_pair_ne_zero {g2 g3 : K} {P : PowerSeries K} (hP : IsWp g2 g
   exact mul_ne_zero (sq_sub_ne_zero hjk) (fExp_ne_zero (emb_cc j k (constantCoeff_parallelogram_defect (sigS_cc P))))
 
 theorem pdX (i j : Fin 3) :
-    MvPowerSeries.pderiv K i (MvPowerSeries.X j : A3) = if j = i then 1 else 0 := by
+    MvPowerSeries.pderiv (R := K) i (MvPowerSeries.X j : A3) = if j = i then 1 else 0 := by
   split_ifs with h
   · rw [h, MvPowerSeries.pderiv_X_self]
   · rw [MvPowerSeries.pderiv_X_of_ne h]
 
-theorem pd_two (i : Fin 3) : MvPowerSeries.pderiv K i (2 : A3) = 0 := by
-  simpa using (MvPowerSeries.pderiv K i).map_natCast 2
+theorem pd_two (i : Fin 3) : MvPowerSeries.pderiv (R := K) i (2 : A3) = 0 := by
+  simpa using (MvPowerSeries.pderiv (R := K) i).map_natCast 2
 
-theorem pd_three (i : Fin 3) : MvPowerSeries.pderiv K i (3 : A3) = 0 := by
-  simpa using (MvPowerSeries.pderiv K i).map_natCast 3
+theorem pd_three (i : Fin 3) : MvPowerSeries.pderiv (R := K) i (3 : A3) = 0 := by
+  simpa using (MvPowerSeries.pderiv (R := K) i).map_natCast 3
 
 theorem pderiv_series_at_variable (i j : Fin 3) (f : PowerSeries K) :
-    MvPowerSeries.pderiv K i (at1 j f : A3) = at1 j (dz f) * if j = i then 1 else 0 := by
+    MvPowerSeries.pderiv (R := K) i (at1 j f : A3) = at1 j (dz f) * if j = i then 1 else 0 := by
   rw [← pdX]; exact pd_psubst i (by simp) f
 
 theorem pderiv_series_at_difference_three (i j k : Fin 3) (f : PowerSeries K) :
-    MvPowerSeries.pderiv K i (evalDiffThree j k f : A3) =
+    MvPowerSeries.pderiv (R := K) i (evalDiffThree j k f : A3) =
       evalDiffThree j k (dz f) * ((if j = i then 1 else 0) - if k = i then 1 else 0) := by
   rw [← pdX, ← pdX, ← map_sub]; exact pd_psubst i (by simp) f
 
 theorem pderiv_series_at_sum_three (i : Fin 3) (f : PowerSeries K) :
-    MvPowerSeries.pderiv K i (evalSumThree f : A3) = evalSumThree (dz f) := by
+    MvPowerSeries.pderiv (R := K) i (evalSumThree f : A3) = evalSumThree (dz f) := by
   have h := pd_psubst i (u := MvPowerSeries.X 0 + MvPowerSeries.X 1 + MvPowerSeries.X 2)
     (by simp) f
-  simp only [pd, map_add, pdX] at h
+  simp only [pd, map_add (f := _), pdX] at h
   rw [evalSumThree, h]
   fin_cases i <;> simp [evalSumThree]
 
@@ -285,7 +289,7 @@ theorem D_vand3 : pd 1 (vand3 K) - pd 2 (vand3 K) =
       (-((MvPowerSeries.X 0 - MvPowerSeries.X 2) * (MvPowerSeries.X 1 - MvPowerSeries.X 2)) +
         (MvPowerSeries.X 0 - MvPowerSeries.X 1) * (MvPowerSeries.X 1 - MvPowerSeries.X 2) +
         2 * ((MvPowerSeries.X 0 - MvPowerSeries.X 1) * (MvPowerSeries.X 0 - MvPowerSeries.X 2))) := by
-  simp only [vand3, pd, Derivation.leibniz, map_add, map_sub, smul_eq_mul, pdX]
+  simp only [vand3, pd, Derivation.leibniz, map_add (f := _), map_sub, smul_eq_mul, pdX]
   simp
   ring
 
@@ -293,7 +297,7 @@ theorem D_fsE (f : PowerSeries K) : pd 1 (fsE f) - pd 2 (fsE f) =
     -(evalDiffThree 0 1 (dz f) - at1 0 (dz f) + at1 1 (dz f)) +
       (evalDiffThree 0 2 (dz f) - at1 0 (dz f) + at1 2 (dz f)) +
       2 * (evalDiffThree 1 2 (dz f) - at1 1 (dz f) + at1 2 (dz f)) := by
-  simp only [fsE, pd, Derivation.leibniz, map_add, map_sub, smul_eq_mul, pd_three, pderiv_series_at_variable, pderiv_series_at_difference_three,
+  simp only [fsE, pd, Derivation.leibniz, map_add (f := _), map_sub, smul_eq_mul, pd_three, pderiv_series_at_variable, pderiv_series_at_difference_three,
     pderiv_series_at_sum_three]
   simp
   ring
@@ -361,7 +365,7 @@ theorem FrobStickLog_of (hS : ShearLemma) (hT : TauRule) (hD : DetRule) : FrobSt
 theorem fExp_three {K : Type} [Field K] [CharZero K] {ι : Type} {f : MvPowerSeries ι K}
     (hf : MvPowerSeries.constantCoeff f = 0) : fExp f ^ 3 = fExp (3 * f) := by
   have h3 : 3 * f = f + f + f := by ring
-  rw [h3, fExp_add (by rw [map_add, hf, add_zero]) hf, fExp_add hf hf]
+  rw [h3, fExp_add (by rw [map_add (f := _), hf, add_zero]) hf, fExp_add hf hf]
   ring
 
 theorem FrobStick_of (hL : FrobStickLog) : FrobStick := by
@@ -380,10 +384,10 @@ theorem FrobStick_of (hL : FrobStickLog) : FrobStick := by
       fExp (evalSumThree (sigS P)) * fExp (evalDiffThree 0 1 (sigS P)) * fExp (evalDiffThree 0 2 (sigS P)) *
         fExp (evalDiffThree 1 2 (sigS P)) := by
     rw [fExp_three (c0 0), fExp_three (c0 1), fExp_three (c0 2), ← fExp_add (c3 0) (c3 1),
-      ← fExp_add (by rw [map_add, c3, c3, add_zero]) (c3 2),
-      ← fExp_add (by rw [map_add, map_add, c3, c3, c3, add_zero, add_zero]) cE,
-      ← fExp_add cS (cD 0 1), ← fExp_add (by rw [map_add, cS, cD, add_zero]) (cD 0 2),
-      ← fExp_add (by rw [map_add, map_add, cS, cD, cD, add_zero, add_zero]) (cD 1 2)]
+      ← fExp_add (by rw [map_add (f := _), c3, c3, add_zero]) (c3 2),
+      ← fExp_add (by rw [map_add (f := _), map_add (f := _), c3, c3, c3, add_zero, add_zero]) cE,
+      ← fExp_add cS (cD 0 1), ← fExp_add (by rw [map_add (f := _), cS, cD, add_zero]) (cD 0 2),
+      ← fExp_add (by rw [map_add (f := _), map_add (f := _), cS, cD, cD, add_zero, add_zero]) (cD 1 2)]
     congr 1
     rw [fsE]
     ring
@@ -427,9 +431,9 @@ theorem FrobStickStar_of (hF : FrobStick) : FrobStickStar := by
         fExp (-(MvPowerSeries.C (s2 / 2) * (MvPowerSeries.X 0 - MvPowerSeries.X 2) ^ 2)) *
         fExp (-(MvPowerSeries.C (s2 / 2) * (MvPowerSeries.X 1 - MvPowerSeries.X 2) ^ 2)) := by
     rw [mul_pow, mul_pow, fExp_three (z 0), fExp_three (z 1), fExp_three (z 2),
-      ← fExp_add (z3 0) (z3 1), ← fExp_add (by rw [map_add, z3, z3, add_zero]) (z3 2),
-      ← fExp_add zS (zD 0 1), ← fExp_add (by rw [map_add, zS, zD, add_zero]) (zD 0 2),
-      ← fExp_add (by rw [map_add, map_add, zS, zD, zD, add_zero, add_zero]) (zD 1 2)]
+      ← fExp_add (z3 0) (z3 1), ← fExp_add (by rw [map_add (f := _), z3, z3, add_zero]) (z3 2),
+      ← fExp_add zS (zD 0 1), ← fExp_add (by rw [map_add (f := _), zS, zD, add_zero]) (zD 0 2),
+      ← fExp_add (by rw [map_add (f := _), map_add (f := _), zS, zD, zD, add_zero, add_zero]) (zD 1 2)]
     congr 1
     ring
   have eS : evalSumThree (sgStar s2 P) = evalSumThree (sigma P) * _ := subst_sgStar s2 P (by simp)

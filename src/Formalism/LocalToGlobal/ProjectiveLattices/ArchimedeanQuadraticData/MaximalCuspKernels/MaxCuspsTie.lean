@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.SpanRatSmulMem
-import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.SpanRatSmulMem
+public import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+
+@[expose] public section
 
 set_option autoImplicit false
 

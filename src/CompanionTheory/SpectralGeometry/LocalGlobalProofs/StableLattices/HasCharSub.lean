@@ -1,9 +1,13 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowForm
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ConjQdet
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CapelliLowestGelfandConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalFiniteIdem
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowForm
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ConjQdet
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CapelliLowestGelfandConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalFiniteIdem
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ def trMod (Y : GMod n) : GMod n where
   gl := fun a b c d => by
     refine LinearMap.ext fun φ => LinearMap.ext fun x => ?_
     have h := comm_apply Y d c b a x
-    simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.dualMap_apply, h, map_add, map_sub]
+    simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.dualMap_apply, h, map_add (f := _), map_sub]
     by_cases h1 : b = c <;> by_cases h2 : d = a
     · subst h1; subst h2; simp; ring
     · subst h1; simp [h2, Ne.symm h2]
@@ -69,8 +73,8 @@ def leviSub (P : GMod n) (d : Fin 3 → ℕ) (h : ∑ i, d i = n) (χ : Fin n �
     ∀ i Y, Qd P d h i Y x = plab χ L i Y • x}
   add_mem' := by
     rintro x y ⟨hx, hx'⟩ ⟨hy, hy'⟩
-    exact ⟨fun a b hab => by rw [map_add, hx a b hab, hy a b hab, add_zero],
-      fun i Y => by rw [map_add, hx', hy', smul_add]⟩
+    exact ⟨fun a b hab => by rw [map_add (f := _), hx a b hab, hy a b hab, add_zero],
+      fun i Y => by rw [map_add (f := _), hx', hy', smul_add]⟩
   zero_mem' := ⟨fun _ _ _ => map_zero _, fun _ _ => by simp⟩
   smul_mem' := by
     rintro c x ⟨hx, hx'⟩
@@ -93,7 +97,8 @@ theorem qdet_lin {V V' : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup V']
     unfold Tm
     by_cases hab : a = b <;> simp [hab, h]
   unfold qdet qminor
-  simp only [LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   simp only [Module.End.mul_apply, Module.End.intCast_apply, map_zsmul]
   rw [ofFn_lin f _ _ (fun k y => hT _ _ _ y)]

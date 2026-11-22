@@ -1,5 +1,9 @@
-import Formalism.RealPlaceAnalysis.StatementC
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorPowUpperVanishHolds
+module
+
+public import Formalism.RealPlaceAnalysis.StatementC
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorPowUpperVanishHolds
+
+@[expose] public section
 
 open Finset Polynomial
 
@@ -35,7 +39,8 @@ theorem CharId_comm {V : Type} [AddCommGroup V] [Module ℂ V] {n : ℕ}
   apply LinearMap.ext
   intro y
   funext x
-  simp only [Module.End.mul_apply, CharId_T_apply, CharId_M_apply, map_sum, map_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.End.mul_apply, CharId_T_apply, CharId_M_apply, map_sum, map_sub]
   have key : ∀ b, E c d (E x b (y b)) = E x b (E c d (y b)) +
       ((if d = x then E c b (y b) else 0) - (if b = c then E x d (y b) else 0)) := by
     intro b
@@ -66,7 +71,8 @@ theorem CharId_Mpow {V : Type} [AddCommGroup V] [Module ℂ V] {n : ℕ}
     simp [h0]
   | succ k ih =>
     rw [pow_succ, Module.End.mul_apply, ih]
-    simp only [epow, CharId_M_apply, map_sum, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [epow, CharId_M_apply, map_sum, LinearMap.sum_apply,
       Module.End.mul_apply]
     exact Finset.sum_comm
 
@@ -195,7 +201,7 @@ theorem CharId_on_v {V : Type} [AddCommGroup V] [Module ℂ V] {n : ℕ}
   have hy : (Pi.single b v : Fin n → V) ∈ CharId_F E v 0 := CharId_F_gen E v 0 b (Nat.zero_le _)
   have hk := CharId_kill E hE ν v hv n 0 (by omega) (∏ s : Fin n, (X - C (lsh ν s))) (by simp) _ hy
   have hdeg : (∏ s : Fin n, (X - C (lsh ν s))).natDegree < n + 1 := by
-    rw [natDegree_finset_prod_X_sub_C_eq_card]
+    rw [Polynomial.natDegree_finsetProd_X_sub_C_eq_card]
     simp
   rw [aeval_eq_sum_range' hdeg] at hk
   have h := congrFun hk a

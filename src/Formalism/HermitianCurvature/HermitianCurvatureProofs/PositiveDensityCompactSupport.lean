@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementJCCpt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
+module
+
+public import Formalism.HermitianCurvature.StatementJCCpt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Matrix
 

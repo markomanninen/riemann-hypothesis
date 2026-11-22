@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartValEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralElementAffineSectionGenerated
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartValEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralElementAffineSectionGenerated
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -143,7 +148,6 @@ theorem injective_and_exists_frac_genericChart : ∀ (R : Type) [CommRing R] [Is
       ∃ (c : Γ(G.left, W)) (r : R), r ≠ 0 ∧ e y * (α.app W).hom (σ r) = (α.app W).hom c := by
     intro y
     induction y with
-    | zero => exact ⟨0, 1, one_ne_zero, by simp⟩
     | tmul c k =>
       obtain ⟨a, r, hr, hk⟩ := exists_mul_fracRes (M.gp ⁻¹ᵁ U) k
       refine ⟨c * σ a, r, hr, ?_⟩
@@ -153,7 +157,7 @@ theorem injective_and_exists_frac_genericChart : ∀ (R : Type) [CommRing R] [Is
       obtain ⟨c₁, r₁, hr₁, e₁⟩ := h₁
       obtain ⟨c₂, r₂, hr₂, e₂⟩ := h₂
       refine ⟨c₁ * σ r₂ + c₂ * σ r₁, r₁ * r₂, mul_ne_zero hr₁ hr₂, ?_⟩
-      rw [map_add, add_mul, map_mul σ, map_mul, map_add, map_mul, map_mul, ← e₁, ← e₂]
+      rw [map_add (f := _), add_mul, map_mul σ, map_mul, map_add (f := _), map_mul, map_mul, ← e₁, ← e₂]
       ring
   obtain ⟨c, r, hr, hc⟩ := key (e.symm b)
   refine ⟨c, σ r, ?_, ?_⟩

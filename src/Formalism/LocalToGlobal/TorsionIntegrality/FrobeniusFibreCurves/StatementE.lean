@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.DivByXSq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.DivByXSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,10 +81,5 @@ def CubeE : Prop :=
     let ph' := phE s2 (xT + c0) (3 * (xT + c0) ^ 2 - g2 / 4) (wOf (xT + c0) P) l
     DivAB (cob F ph') ∧ swap2 (cob F ph') = cob F ph' ∧ Simeq (d1 F (cob F ph')) 0 ∧
       Simeq (d1 F (swap2 (cob F ph'))) 0
-
-def JetsSeries : Prop :=
-  ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (F : MvPowerSeries (Fin 2) K)
-    (l f : PowerSeries K), LawLog F l → Simeq (d1 F (cob F f)) 0 →
-    ∀ n : ℕ, 3 ≤ n → Integral (ι := Unit) ((Dinv l)^[n] f)
 
 end Formalism.L2.Th1.B

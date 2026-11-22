@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstSubInStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedInOfQuasiLogarithmStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstSubInStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedInOfQuasiLogarithmStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ theorem in_add {σ : Type} {N : Ideal B} {f g : MvPowerSeries σ Q} (hf : In N f
     In N (f + g) := fun α => by
   obtain ⟨a, ha, e⟩ := hf α
   obtain ⟨b, hb, e'⟩ := hg α
-  exact ⟨a + b, N.add_mem ha hb, by rw [map_add, e, e', map_add]⟩
+  exact ⟨a + b, N.add_mem ha hb, by rw [map_add (f := _), e, e', map_add (f := _)]⟩
 
 theorem in_mono {σ : Type} {N N' : Ideal B} (h : N ≤ N') {f : MvPowerSeries σ Q} (hf : In N f) :
     In N' f := fun α => by
@@ -137,8 +141,8 @@ end GlobalTheory.QLog.FrobQL
 
 namespace GlobalTheory.QLog
 
-open GlobalTheory.QLog.FrobQL in
 
+open GlobalTheory.QLog.FrobQL in
 theorem ql_frob : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C]
     (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)]
     [IsAdicComplete (Ideal.span {(p : O)}) O] [IsDomain O], v.Integers O →

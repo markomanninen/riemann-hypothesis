@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+
+@[expose] public section
 
 open DividedPowers CrystallineSemistableComparison.Pb
 
@@ -28,7 +32,7 @@ theorem dpE_mul (f : W →+* B) (ξ : W) (l M i j : ℕ) :
     Nat.cast_smul_eq_nsmul ℚ]
 
 theorem mem_span_of_mem_sub (f : W →+* B) (ξ : W) (l M : ℕ) (x : B) (hx : x ∈ Lat.sub f ξ l M) :
-    letI : Algebra W B := f.toAlgebra
+    letI : Algebra W B := f.toAlgebra;
     x ∈ Submodule.span W (Set.range (Lat.dpE f ξ l M)) := by
   letI : Algebra W B := f.toAlgebra
   have hsm : ∀ (w : W) (b : B), w • b = f w * b := fun w b => Algebra.smul_def w b

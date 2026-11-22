@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HInv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RingKrullDimLtTopOfEssFiniteType
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HInv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RingKrullDimLtTopOfEssFiniteType
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 open scoped TensorProduct
 
@@ -21,7 +26,7 @@ theorem ker_retraction_fg : ∀ (D T E : Type) [CommRing D] [CommRing T] [Algebr
     | algebraMap r => simp [AlgHom.commutes]
     | add x y _ _ hx hy =>
       have e : x + y - ι (χ (x + y)) = (x - ι (χ x)) + (y - ι (χ y)) := by
-        simp only [map_add]; ring
+        simp only [map_add (f := _)]; ring
       rw [e]; exact J.add_mem hx hy
     | mul x y _ _ hx hy =>
       have e : x * y - ι (χ (x * y)) = (x - ι (χ x)) * y + ι (χ x) * (y - ι (χ y)) := by

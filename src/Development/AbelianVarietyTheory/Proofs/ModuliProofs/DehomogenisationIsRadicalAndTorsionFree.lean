@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -41,7 +45,7 @@ theorem exists_ker_eq_dehomogenisation {o σ : Type} [CommRing o] (I : Ideal (Mv
     intro F
     induction F using MvPolynomial.induction_on with
     | C a => simp
-    | add p q hp hq => rw [MvPolynomial.eval₂_add, hp, hq, map_add]
+    | add p q hp hq => rw [MvPolynomial.eval₂_add, hp, hq, map_add (f := _)]
     | mul_X p j hp => rw [MvPolynomial.eval₂_mul, hp, MvPolynomial.eval₂_X, map_mul]
   have hxu : g (MvPolynomial.X i) * u = 1 := IsLocalization.Away.mul_invSelf x
   refine ⟨ψ, fun c => by exact MvPolynomial.eval₂Hom_C _ _ c, le_antisymm ?_ ?_⟩
@@ -91,7 +95,8 @@ theorem exists_ker_eq_dehomogenisation {o σ : Type} [CommRing o] (I : Ideal (Mv
   · apply sup_le
     ·
       intro F hF
-      rw [RingHom.mem_ker, ← MvPolynomial.sum_homogeneousComponent F, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [RingHom.mem_ker, ← MvPolynomial.sum_homogeneousComponent F, map_sum]
       refine Finset.sum_eq_zero fun e _ => ?_
       have h1 := eval₂_scale_of_isHomogeneous (g.comp MvPolynomial.C)
         (fun j => g (MvPolynomial.X j)) u (MvPolynomial.homogeneousComponent_isHomogeneous e F)

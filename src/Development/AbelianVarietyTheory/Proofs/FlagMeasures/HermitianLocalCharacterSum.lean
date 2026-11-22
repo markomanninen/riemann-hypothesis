@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SqNormSumRepsMulIndexLe
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SqNormSumRepsMulIndexLe
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical ComplexConjugate
@@ -114,7 +118,8 @@ theorem form_smul_right (c : E) (a y : Fin n → E) :
 
 theorem form_cj (h : IsHerm L Hm) (x y : Fin n → E) : L.cj (hf L Hm x y) = hf L Hm y x := by
   have h' : ∀ i j, L.cj (Hm i j) = Hm j i := fun i j => congrFun (congrFun h j) i
-  simp only [hf, map_sum, map_mul, L.cj_cj, h']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hf, map_sum, map_mul, L.cj_cj, h']
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -151,7 +156,8 @@ theorem relIndex_divBy (U : Submodule L.O (Fin n → E))
     refine ⟨⟨∑ b, (c b : E) • e b, U.sum_mem fun b _ => U.smul_mem (c b) (he b)⟩,
       funext fun a => Subtype.ext ?_⟩
     show formLeft L Hm (e a) (∑ b, (c b : E) • e b) = c a
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     show ∑ b, hf L Hm ((c b : E) • e b) (e a) = c a
     simp [form_smul_left, hee]
   have h1 : (divBy L Hm U e x).addSubgroupOf U.toAddSubgroup
@@ -309,7 +315,7 @@ theorem share_and_gauss_sum : ∀ {F : Type} [Field F] [ValuativeRel F] [Topolog
     obtain ⟨b, hb⟩ := not_forall.1 fun h' => h1 (hdual _ h')
     obtain ⟨hb, hb'⟩ := Classical.not_imp.1 hb
     obtain ⟨s, hs⟩ := (L.cj_fix (z * L.cj b + L.cj (z * L.cj b))).1
-      (by rw [map_add, L.cj_cj, add_comm])
+      (by rw [map_add (f := _), L.cj_cj, add_comm])
     have hs' : s ∉ 𝒪[F] := fun h' => hb' ⟨⟨s, h'⟩, hs.symm⟩
     obtain ⟨y, hy⟩ := not_forall.1 fun h' => hs' ((hψ s).1 h')
     have hyb : algebraMap F E y * b ∈ L.O := L.O.mul_mem (hO y) hb

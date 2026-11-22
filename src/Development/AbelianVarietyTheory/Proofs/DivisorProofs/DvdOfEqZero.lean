@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MuDvdOfDvdIterates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MuDvdOfDvdIterates
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -31,7 +35,8 @@ theorem frob_mu (ε : PreTilt O p) : frobenius (mu ε) = mu ε * frobenius (xi �
 
 theorem frob_xi (ε : PreTilt O p) : ∃ d, frobenius (xi ε) = p + mu ε * d := by
   have h : frobenius (xi ε) = ∑ i ∈ Finset.range p, (teichmuller p ε : Ainf p O) ^ i := by
-    rw [xi, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [xi, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_pow, frob_teich, root, frobeniusEquiv_symm_pow_p]
   have hd : ∀ i : ℕ, mu ε ∣ (teichmuller p ε : Ainf p O) ^ i - 1 := fun i => by
@@ -120,7 +125,7 @@ theorem gen (b : BR ε) : ∃ x y, b = a ε x + τ ε * a ε y := by
   have hX : Ideal.Quotient.mk (rel ε) (X ^ 2) = 0 := by
     rw [Ideal.Quotient.eq_zero_iff_mem]; exact Ideal.subset_span (Set.mem_insert_of_mem _ rfl)
   conv_lhs => rw [← h1, ← h2]
-  simp only [map_add, map_mul, a, τ, RingHom.comp_apply]
+  simp only [map_add (f := _), map_mul, a, τ, RingHom.comp_apply]
   have : Ideal.Quotient.mk (rel ε) f.divX.divX * Ideal.Quotient.mk (rel ε) X *
       Ideal.Quotient.mk (rel ε) X = 0 := by
     rw [mul_assoc, ← map_mul, ← sq, hX, mul_zero]
@@ -156,12 +161,12 @@ theorem mu_sq_dvd (hv : v.Integers O) (hε : IsPrimitiveSystem ε) (w : Ainf p O
 theorem dvd_of_eq_zero (x y : Ainf p O) (h : a ε x + τ ε * a ε y = 0) :
     mu ε ^ 2 ∣ (p : Ainf p O) * x + mu ε * y := by
   have hm : C x + C y * X ∈ rel ε := by
-    rw [← Ideal.Quotient.eq_zero_iff_mem, ← h, map_add, map_mul, mul_comm]; rfl
+    rw [← Ideal.Quotient.eq_zero_iff_mem, ← h, map_add (f := _), map_mul, mul_comm]; rfl
   obtain ⟨h1, h2, he⟩ := Ideal.mem_span_pair.1 hm
   have he' : C x + C y * X = h1 * C (p : Ainf p O) * X - h1 * C (mu ε) + h2 * X ^ 2 := by
     rw [← he]; ring
-  have e0 := congrArg (fun f => Polynomial.coeff f 0) he'
-  have e1 := congrArg (fun f => Polynomial.coeff f 1) he'
+  have e0 := congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f 0) he'
+  have e1 := congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f 1) he'
   simp only [coeff_add, coeff_sub, coeff_C_zero, coeff_mul_X_zero, coeff_mul_C,
     coeff_mul_X_pow', coeff_C_succ] at e0 e1
   rw [show (1 : ℕ) = 0 + 1 from rfl, coeff_mul_X, coeff_mul_X, coeff_mul_C, coeff_C_zero] at e1

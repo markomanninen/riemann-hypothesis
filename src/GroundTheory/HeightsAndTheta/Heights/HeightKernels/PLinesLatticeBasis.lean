@@ -1,22 +1,31 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLines
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLines
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
 
-theorem LinesLatticeBasis.proof : LinesLatticeBasis.Statement := by
-  intro V _ _ _ ι _ hcard M hM
-  let b0 := Module.Free.chooseBasis ℤ M
-  let B : Module.Basis (Module.Free.ChooseBasisIndex ℤ M) ℚ V := b0.extendOfIsLattice ℚ
-  have hc : Fintype.card (Module.Free.ChooseBasisIndex ℤ M) = Fintype.card ι := by
+theorem LinesLatticeBasis.proof (V : Type) [AddCommGroup V] [Module ℚ V]
+    [FiniteDimensional ℚ V] (ι : Type) [Fintype ι]
+    (hcard : Fintype.card ι = Module.finrank ℚ V) (M : Submodule ℤ V)
+    (hM : Submodule.IsFullLattice ℚ M) :
+    ∃ b : Module.Basis ι ℚ V, M = Submodule.span ℤ (Set.range b) := by
+  have : Module.Free ℤ M := Submodule.IsLattice.free ℚ M
+  have : Module.Finite ℤ M := Submodule.IsLattice.finite ℚ M
+  let b0 := Module.finBasis ℤ M
+  let B := b0.extendOfIsFullLattice ℚ
+  have hc : Fintype.card (Fin (Module.finrank ℤ M)) = Fintype.card ι := by
     rw [hcard, Module.finrank_eq_card_basis B]
   let e := Fintype.equivOfCardEq hc
   refine ⟨B.reindex e, ?_⟩
   rw [Module.Basis.range_reindex]
   have hB : Set.range B = M.subtype '' Set.range b0 := by
-    rw [← Set.range_comp]
-    ext x
-    simp [B, Module.Basis.extendOfIsLattice_apply]
+    rw [← Set.range_comp']
+    exact congrArg Set.range (funext (b0.extendOfIsFullLattice_apply ℚ))
   rw [hB, ← Submodule.map_span, b0.span_eq, Submodule.map_top, Submodule.range_subtype]
 
 end GroundTheory.Heights₂.Heights

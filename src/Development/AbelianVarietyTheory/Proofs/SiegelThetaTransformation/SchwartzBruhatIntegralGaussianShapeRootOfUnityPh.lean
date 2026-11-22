@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FinsumQuotientOfLe
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.IsZeroOrPosMulRootOfUnityFiniteGaussSumStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ComplexPhaseCalculusRootOfUnityStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FinsumQuotientOfLe
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.IsZeroOrPosMulRootOfUnityFiniteGaussSumStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ComplexPhaseCalculusRootOfUnityStatement
+
+@[expose] public section
+
 open Matrix Complex GlobalTheory.SW GlobalTheory.Phase
 open scoped ComplexConjugate Real
 
@@ -13,8 +18,9 @@ private theorem quotient_out_sub_mem' {G : Type} [AddCommGroup G] (N : AddSubgro
   have h := QuotientAddGroup.eq.mp (QuotientAddGroup.out_eq' (x : G ⧸ N)).symm
   rwa [neg_add_eq_sub] at h
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem ph_finsum_quotient {A : Type} [AddCommGroup A] (P S : AddSubgroup A) (φ f : A → ℂ) (c : ℂ) (a : A)
     (hper : ∀ x, ∀ y ∈ P, φ (x + y) = φ x)
     (hfin : (Function.support fun q : A ⧸ P => φ q.out).Finite)
@@ -105,7 +111,7 @@ theorem ph_haar_of_shape : ∀ (κ ι : Type) [Fintype κ] [Fintype ι] [Decidab
   obtain ⟨hsb, c, a, S, f, hc, hf, hφx⟩ := hφ
   have hR := hsb.choose_spec
   unfold haar
-  rw [dif_pos hsb]
+  rw [dite_eq_left hsb]
   unfold haarAt
   refine Ph.mul ?_ (ph_finsum_quotient (perSub ℚ κ ι hsb.choose) S φ f c a
     (GlobalTheory.SW.HaarLevel.periodic hR.2) (GlobalTheory.SW.HaarLevel.finite_support hR.1 hR.2) hc hf hφx)

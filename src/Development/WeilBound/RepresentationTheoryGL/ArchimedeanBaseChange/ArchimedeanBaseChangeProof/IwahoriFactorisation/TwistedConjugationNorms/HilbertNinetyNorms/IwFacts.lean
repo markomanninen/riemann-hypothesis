@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.CosetMap
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsValueSubset
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriGlCasselmanDatum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.CosetMap
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsValueSubset
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriGlCasselmanDatum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -261,13 +265,13 @@ theorem tdiag_mem_Tor (w : Pl E) (ϖ : (w.adicCompletion E)ˣ) (n : ℕ) (y : Fi
     tdiag ϖ y ∈ Tor (w.adicCompletion E) n :=
   diagT_mem_Tor n _
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem unif_val_lt_one (w : Pl E) (ϖ : (w.adicCompletion E)ˣ) (hϖ : ordL (ϖ : w.adicCompletion E) = 1) :
     Valued.v (ϖ : w.adicCompletion E) < 1 := by
   have h0 : Valued.v (ϖ : w.adicCompletion E) ≠ 0 := by simp
   unfold ordL at hϖ
-  rw [dif_neg h0] at hϖ
+  rw [dite_eq_right h0] at hϖ
   have hu : WithZero.unzero h0 = Multiplicative.ofAdd (-1 : ℤ) := by
     apply Multiplicative.toAdd.injective
     simp only [toAdd_ofAdd]

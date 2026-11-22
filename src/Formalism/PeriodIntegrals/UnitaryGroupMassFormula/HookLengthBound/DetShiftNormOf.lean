@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.HookBound
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalB
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HeightDescentMinors
+module
+
+public import Formalism.PeriodIntegrals.HookBound
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalB
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HeightDescentMinors
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,8 +42,6 @@ def detD (N : ℕ) : Module.End ℚ (MvPolynomial (Fin N × Fin N) ℚ) :=
 
 def DetAdj : Prop :=
   ∀ (N : ℕ) (f g : MvPolynomial (Fin N × Fin N) ℚ), fockQ (detX N * f) g = fockQ f (detD N g)
-
-def PolRel : Prop := ∀ N : ℕ, Formalism.CohomologicalDescent.HeightDescentMinors.GlRel (polE N)
 
 def DetDetId : Prop :=
   ∀ N : ℕ, LinearMap.mulLeft ℚ (detX N) * detD N =

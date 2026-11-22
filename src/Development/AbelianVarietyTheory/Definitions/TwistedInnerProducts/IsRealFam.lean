@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopOrthEmb
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealLineOfPeriodsOnLine
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsBiSmooth
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopOrthEmb
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealLineOfPeriodsOnLine
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsBiSmooth
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc)
 
 abbrev Pts : Type := ∀ j : ℕ, GA D (G.V (.grid D.R.m j))
 
-variable (D) in
 
+variable (D) in
 def idx : List ℕ := List.range' 1 (D.R.m - 2)
 
 def rowGrp (j : ℕ) : Subgroup (GA D (G.V (.grid D.R.m j))) :=
@@ -88,8 +92,8 @@ def conAt (hM : M.Is t) (Φ : SchDown G t) (h : Pts G) : BiFam G := fun j =>
         (W.om (.mu t D.R.m (j + 1)) (h (j + 1), h (j + 1 + 1)) (Φ ⟨j + 1, by omega⟩)))
   else 0
 
-variable (t) in
 
+variable (t) in
 def fockD (f : SchDown G t) (P : PolDown G) : SchDown G t := fun j => W.fock (.mu t D.R.m j) (f j) (P j)
 
 def tot (hM : M.Is t) (P : PolRow G × PolDown G) (τ : SchRow G × SchDown G t →₀ ℂ) (φ : Fn G (.top 0)) (F : Fn G (.grid 0 D.R.m))
@@ -101,8 +105,8 @@ def IsHaarDef (M : Vol G) : Prop :=
 
 def Scales (M M' : Vol G) (s : Node → ℝ≥0) : Prop := ∀ X : Node, DefNode D.R.m X → X ≠ .top D.R.m → M.ν X = s X • M'.ν X
 
-variable (D) in
 
+variable (D) in
 def sProd (s : Node → ℝ≥0) : ℂ :=
   (∏ j ∈ Finset.range D.R.m, ((s (.top j) : ℝ) : ℂ)) * ∏ i ∈ Finset.range (D.R.m + 1), ((s (.grid i D.R.m) : ℝ) : ℂ)
 
@@ -118,8 +122,8 @@ def IsCombOf {p : Pair T} (d : FinDatum G t p) (c : WO (G.pS p) (G.pT p) →₀ 
     IsLatVac (heisO W.ψ _ _) (latO (G.pS p) (G.pT p) (G.latS p : Set _) (G.latT p : Set _) fun _ => True) f₀ →
     d.IsTheta W (G.latS p) (G.latT p) f₀ (comb W.ψ _ _ c f₀)
 
-variable (G) in
 
+variable (G) in
 abbrev Combs : Type := (∀ j : ℕ, WO (G.V (.top j)) (G.V (.top (j + 1))) →₀ ℂ) ×
   ∀ i : Fin D.R.m, WO (G.pS (.chi i D.R.m : Pair T)) (G.pT (.chi i D.R.m : Pair T)) →₀ ℂ
 
@@ -128,12 +132,12 @@ def IsCombs (τ : PureDat G t →₀ ℂ) (c : PureDat G t → Combs G) : Prop :
 
 def combC (c : Combs G) (C : BiFam G) : BiFam G := fun j => biComb W.ψ _ _ _ (c.1 j) (c.1 (j + 1)) (C j)
 
-variable {W} in
 
+variable {W} in
 def combR (ρ : RealMatch W) (c : Combs G) : SchRow G := fun i => comb W.ψ _ _ (c.2 i) (ρ.vX i D.R.m)
 
-variable (G) in
 
+variable (G) in
 def IsTilt (j : ℕ) (g : GA D (G.V (.grid D.R.m j))) : Prop :=
   g ∈ GQ _ ∧ (Even j → g = 1) ∧ ∀ σ (h₁ : j < D.R.m) (h₂ : D.R.m - 1 - j = 2 * σ),
     HMul.hMul (mt _ g) ((rowJac G j h₁ σ h₂).i₀.map (incA D)) = (rowJac G j h₁ σ h₂).i₀.map (incA D) ∧
@@ -142,14 +146,14 @@ def IsTilt (j : ℕ) (g : GA D (G.V (.grid D.R.m j))) : Prop :=
     HMul.hMul (mt _ g) ((rowJac G j h₁ σ h₂).e'.map (incA D)) =
       ((rowJac G j h₁ σ h₂).e' * diagonal fun a : Fin σ => star (D.host.xi0 ^ a.1)).map (incA D)
 
-variable (G t) in
 
+variable (G t) in
 def sgnAt (s : ℤˣ) (w : Pl D.host.E) (j : ℕ) : GL (Fin ((locGrid G t w).rank (D.R.m, j))) (Kw w) :=
   GlobalTheory.SplitFlip.diagGL fun a => if Odd j ∧ topRank (locGrid G t w) j + (D.R.m - 1 - j) / 2 ≤ a.1
     then Units.map (Int.castRingHom (Kw w)).toMonoidHom s else 1
 
-variable (t) in
 
+variable (t) in
 def HasLoc (B : Frames G) {j : ℕ} (hj : j ≤ D.R.m) (r : GA D (G.V (.grid D.R.m j)))
     (g : ∀ w : locPl G t, GL (Fin ((locGrid G t w.1).rank (D.R.m, j))) (Kw w.1)) : Prop :=
   ∃ e, IsIdemSum e (locPl G t) ∧ SuppAt e _ r ∧
@@ -157,22 +161,22 @@ def HasLoc (B : Frames G) {j : ℕ} (hj : j ≤ D.R.m) (r : GA D (G.V (.grid D.R
 
 def IsFinOf {V : HSp D} (g b : GA D V) : Prop := b ∈ GfC V ∧ ∃ a ∈ GinfC V, a * b = g
 
-variable (t) in
 
+variable (t) in
 def IsRep (B : Frames G) (s : ℤˣ) (β : CosFam G t) (b : Pts G) : Prop :=
   (∀ j, j ∉ idx D → b j = 1) ∧ ∀ j ∈ idx D, ∀ hj : j ≤ D.R.m, ∃ δ r, IsTilt G j δ ∧
     HasLoc t B hj r (fun w => sgnAt G t s w.1 j * (repsAt G t w.1).elt (β w) (D.R.m, j)) ∧ IsFinOf (δ * r) (b j)
 
-variable (t) in
 
+variable (t) in
 def IsBase (B : Frames G) (b : Pts G) : Prop :=
   HasLoc t B (Nat.zero_le _) (b 0) (fun w => (stair (locGrid G t w.1) (unifAt w.1) (cosExp G w.1) 0)⁻¹) ∧
     (∀ j ∈ idx D, ∃ δ, IsTilt G j δ ∧ IsFinOf δ (b j)) ∧ ∀ j, j ≠ 0 → j ∉ idx D → b j = 1
 
 def IsRealPt (a : Pts G) : Prop := (∀ j, a j ∈ GinfC _) ∧ ∀ j, j ∉ idx D → a j = 1
 
-variable (t) in
 
+variable (t) in
 def Stair (β : CosFam G t) : Prop :=
   ∀ w : locPl G t, w.1 ∈ G.pl.W0 → ∀ i, β w i = DoubleCoset.mk _ _ (stair (locGrid G t w.1) (unifAt w.1) (cosExp G w.1) (i + 1))
 
@@ -363,8 +367,8 @@ def ColFock : Prop := ∀ v, IsColVac ch v → ∀ C, IsRealFam ch.W C → ∃ �
         ch.W.fock (.top t j) (comb ch.W.ψ _ _ (c.1 j) (v j)) (Q j)) (colFn ch a) (stabilizerEmbedding ch.G.sp.topDec h) * F h
         ∂M.ν (.grid D.R.m D.R.m)
 
-open GlobalTheory.FinPl in
 
+open GlobalTheory.FinPl in
 def ShapeAt : Prop :=
   ∃ (N : ∀ j, Lat (ch.G.V (.grid D.R.m j))) (N₀ : ∀ j, Lat (GlobalTheory.Doubling.hsum (ch.G.V (.top j)) (GlobalTheory.SeeSaw.Model.nLine D)))
     (LL : ℕ → Lat (GlobalTheory.SeeSaw.Model.nLine D)) (LZ : Lat (pLine D)),
@@ -394,15 +398,15 @@ def CoverAt (s : ℤˣ) : Prop := ∀ t (b : CosFam ch.G t → Pts ch.G), (∀ �
     ∃ k ∈ latGrp ch.G j, h j = r * a * (δ * x) * k) →
   ∃ β, InCells (fun _ => GinfC _) (rowGrp ch.G) (latGrp ch.G) (idx D) (b β) h
 
-variable {ch} in
 
+variable {ch} in
 def OneLoc (t : T) (w : Pl D.host.E) (e : AE D) (r : Pts ch.G)
     (g : ∀ j, GL (Fin ((locGrid ch.G t w).rank (D.R.m, j))) (Kw w)) : Prop :=
   ∀ j (hj : j ≤ D.R.m), SuppAt e _ (r j) ∧ inBasis (rank_vertex ch.G t w (X := (D.R.m, j)) ⟨le_rfl, hj⟩) (ch.S.B.β D.R.m j) w
     (Lev.finE (ch.G.V (.grid D.R.m j)) (r j)) = g j
 
-open Classical in
 
+open Classical in
 def PlaceAt (s : ℤˣ) : Prop :=
   ∃ (κ : Pl D.host.E → ℂ) (z : T → Pl D.host.E → ℂˣ), (∀ t w, z t w ∈ xiVals R.toLevCh t) ∧ (∀ w, w ∉ ch.G.pl.W0 → κ w = 1) ∧
     ∀ t, ∀ w ∈ locPl ch.G t, ∀ β : Cosets (G := locGrid ch.G t w) one_le_sLen (givenLevel ch.G t w), ∃ ζ : ℂ,

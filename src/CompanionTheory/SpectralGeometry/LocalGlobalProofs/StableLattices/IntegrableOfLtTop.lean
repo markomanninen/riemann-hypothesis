@@ -1,5 +1,8 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HaarExists
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,7 +134,7 @@ lemma energy_ge (hae : z.re + R = a) (hu : Continuous u) (hg : Continuous g)
 lemma iint_le {f : ℝ → ℝ} (hf : IntegrableOn f (Ioi 0)) (h0 : ∀ t, 0 ≤ f t) {T : ℝ} (hT : 0 ≤ T) :
     ∫ t in (0 : ℝ)..T, f t ≤ ∫ t in Ioi (0 : ℝ), f t := by
   rw [intervalIntegral.integral_of_le hT]
-  exact setIntegral_mono_set hf (ae_of_all _ h0) Ioc_subset_Ioi_self.eventuallyLE
+  exact setIntegral_mono_set hf (ae_of_all _ h0) Ioc_subset_Ioi_self.eventuallySubset
 
 lemma iint_mono {f : ℝ → ℝ} (hf : Continuous f) (h0 : ∀ t, 0 ≤ f t) {S T : ℝ} (hS : 0 ≤ S)
     (hST : S ≤ T) : ∫ t in (0 : ℝ)..S, f t ≤ ∫ t in (0 : ℝ)..T, f t :=
@@ -372,8 +375,16 @@ lemma lint_unit {u : ℝ → ℂ} (hu : Continuous u) :
   refine lintegral_congr fun t => ?_
   rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm]
 
-theorem lineChain : CompanionTheory.RgExh.Dec.L.LineChain := by
-  intro m z R R' hRR hz
+theorem lineChain (m : ℕ) (z : Fin m → ℂ) (R R' : ℝ)
+    (hRR : R ≤ R') (hz : ∀ k, (z k).re ≠ -R) : ∃ C : ℝ, 0 < C ∧
+    ∀ F : Fin (m + 1) → ℝ → ℂ,
+      (∀ (k : Fin m) (t : ℝ), 0 ≤ t →
+        HasDerivAt (F k.succ) (z k * F k.succ t + F k.castSucc t) t) →
+      (∀ k, Continuous (F k)) →
+      (∀ k, ∫⁻ t in Ioi (0 : ℝ), ‖F k t‖ₑ ^ 2 * ENNReal.ofReal (Real.exp (2 * R' * t)) < ⊤) →
+      ∫⁻ t in Ioi (0 : ℝ), ‖F (Fin.last m) t‖ₑ ^ 2 * ENNReal.ofReal (Real.exp (2 * R * t)) ≤
+        ENNReal.ofReal C * (∑ k, ∫⁻ t in Ioc (0 : ℝ) 1, ‖F k t‖ₑ ^ 2 +
+          ∫⁻ t in Ioi (0 : ℝ), ‖F 0 t‖ₑ ^ 2 * ENNReal.ofReal (Real.exp (2 * R * t))) := by
   obtain ⟨C, hC, H⟩ := chain m z R (fun k h => hz k (by linarith))
   refine ⟨C, hC, fun F hd hc hfin => ?_⟩
   have hint : ∀ k, IntegrableOn (wt R (F k)) (Ioi 0) := by

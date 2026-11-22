@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ClassMassEqSumOfBijective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitaryClassRepTrivialAtCm
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.ClassSet
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ClassMassEqSumOfBijective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitaryClassRepTrivialAtCm
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.ClassSet
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.UG Formalism.UG.P
 open scoped TensorProduct Matrix
@@ -16,10 +20,11 @@ variable {F : Type} [Field F] [NumberField F]
 local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
 
 theorem algebraMap_apply' (a : 𝓞 F) (w : HeightOneSpectrum (𝓞 F)) :
-    algebraMap (𝓞 F) 𝔸 a w = algebraMap (𝓞 F) (w.adicCompletion F) a := rfl
+    algebraMap (𝓞 F) (FiniteAdeleRing (𝓞 F) F) a w =
+      algebraMap (𝓞 F) (w.adicCompletion F) a := rfl
 
 theorem exists_inv (v : HeightOneSpectrum (𝓞 F)) (a : 𝓞 F) (ha : a ∉ v.asIdeal) :
-    ∃ u ∈ intAd F, u * algebraMap (𝓞 F) 𝔸 a = afsplitI v 1 := by
+    ∃ u ∈ intAd F, u * algebraMap (𝓞 F) (FiniteAdeleRing (𝓞 F) F) a = afsplitI v 1 := by
   have hval : Valued.v (algebraMap (𝓞 F) (v.adicCompletion F) a) = 1 := by
     rw [csApprox_val_int]
     exact HeightOneSpectrum.intValuation_eq_one_iff.2 ha
@@ -39,7 +44,9 @@ theorem exists_inv (v : HeightOneSpectrum (𝓞 F)) (a : 𝓞 F) (ha : a ∉ v.a
 
 theorem exists_approx (v : HeightOneSpectrum (𝓞 F)) (d : 𝓞 F) (hd : d ≠ 0) :
     ∃ t : 𝓞 F, t ∉ v.asIdeal ∧ ∃ y ∈ intAd F,
-      algebraMap (𝓞 F) 𝔸 t = algebraMap (𝓞 F) 𝔸 t * afsplitI v 1 + y * algebraMap (𝓞 F) 𝔸 d := by
+      algebraMap (𝓞 F) (FiniteAdeleRing (𝓞 F) F) t =
+        algebraMap (𝓞 F) (FiniteAdeleRing (𝓞 F) F) t * afsplitI v 1 +
+          y * algebraMap (𝓞 F) (FiniteAdeleRing (𝓞 F) F) d := by
   classical
   obtain ⟨k, hk0⟩ : ∃ k : ℕ, v.intValuation d = WithZero.exp (-(k : ℤ)) :=
     ⟨_, v.intValuation_if_neg hd⟩
@@ -104,13 +111,13 @@ section Main
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
 local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
-local notation "𝒮" => tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F)
-local notation "ι" => inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
+local notation "ι" => inclE (F := F) (E := E) 𝔸
 
 theorem eps_eq (v : HeightOneSpectrum (𝓞 F)) :
     afsplitEps E v = (1 : E) ⊗ₜ[F] afsplitI v 1 := rfl
 
-theorem one_tmul_mem {y : 𝔸} (hy : y ∈ intAd F) : (1 : E) ⊗ₜ[F] y ∈ 𝒮 := by
+theorem one_tmul_mem {y : FiniteAdeleRing (𝓞 F) F} (hy : y ∈ intAd F) :
+    (1 : E) ⊗ₜ[F] y ∈ tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F) := by
   have h := levelaf_tmul_mem (F := F) (E := E) 1 hy
   rwa [map_one] at h
 
@@ -139,7 +146,9 @@ theorem exists_inv_gen (σ : E →ₐ[F] E) (hs : ∀ e, (σ : E →+* E) ((σ :
     (v : HeightOneSpectrum (𝓞 F)) (p : Ideal (𝓞 E)) (hp : p.IsPrime)
     (hpv : p.comap (algebraMap (𝓞 F) (𝓞 E)) = v.asIdeal) (s : 𝓞 E) (h1 : s ∉ p)
     (h2 : ∀ t : 𝓞 E, algebraMap (𝓞 E) E t = (σ : E →+* E) (algebraMap (𝓞 E) E s) → t ∉ p) :
-    ∃ u ∈ 𝒮, u * ι (algebraMap (𝓞 E) E s) = afsplitEps E v := by
+    ∃ u ∈ tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F),
+      u * inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F) (algebraMap (𝓞 E) E s) =
+        afsplitEps E v := by
   set s' := algebraMap (𝓞 E) E s with hs'
   have hsint : IsIntegral ℤ s' := RingOfIntegers.isIntegral_coe s
   have hσint : IsIntegral ℤ ((σ : E →+* E) s') := hsint.map (σ : E →+* E).toIntAlgHom

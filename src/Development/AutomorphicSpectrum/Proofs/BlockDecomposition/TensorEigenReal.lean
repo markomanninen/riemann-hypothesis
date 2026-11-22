@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.CosetCount
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.CosetCount
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -29,7 +33,7 @@ theorem contr_map (A : Module.End ℂ V) (B : Module.End ℂ W) (v : V ⊗[ℂ] 
   induction v using TensorProduct.induction_on with
   | zero => simp [contr_apply]
   | tmul a b => simp [contr_tmul]
-  | add x y hx hy => simp only [map_add, contr_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), contr_add, hx, hy]
 
 theorem exists_finiteDimensional (v : V ⊗[ℂ] W) :
     ∃ T : Submodule ℂ W, FiniteDimensional ℂ T ∧ ∀ l, contr v l ∈ T := by
@@ -54,7 +58,7 @@ theorem exists_contr_ne_zero {v : V ⊗[ℂ] W} (hv : v ≠ 0) : ∃ l, contr v 
     induction w using TensorProduct.induction_on with
     | zero => simp [contr_apply]
     | tmul a c => simp [contr_tmul, TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
-    | add x y hx hy => simp only [map_add, Finsupp.add_apply, contr_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, contr_add, hx, hy]
   apply (TensorProduct.equivFinsuppOfBasisLeft (N := W) b).injective
   ext i : 1
   rw [key, hcon]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+
+@[expose] public section
 
 noncomputable section
 
@@ -166,7 +170,8 @@ theorem frameAct_mul {k : ℕ} (f : Fin k → S.V) (ξ η : Matrix (Fin k) (Fin 
 theorem map_frameAct {k : ℕ} (n : S.V ≃ₗ[E] S.V) (f : Fin k → S.V) (ξ : Matrix (Fin k) (Fin k) (𝓞 E)) :
     (fun a => n (frameAct f ξ a)) = frameAct (fun a => n (f a)) ξ := by
   funext b
-  simp only [frameAct, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [frameAct, map_sum, map_smul]
 
 theorem uni_mul {k : ℕ} {O : Type} [CommRing O] {ξ η : Matrix (Fin k) (Fin k) O}
     (h1 : ∀ a b, b < a → ξ a b = 0) (h2 : ∀ a b, b < a → η a b = 0) (a : Fin k) :

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
-import Development.AutomorphicArithmetic.CMTraceForms.SumLogPrimeFactorsMulTwoAddLogbLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
+public import Development.AutomorphicArithmetic.CMTraceForms.SumLogPrimeFactorsMulTwoAddLogbLe
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.HC
 

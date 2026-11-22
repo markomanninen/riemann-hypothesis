@@ -1,15 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.TrdegPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HeightIntegralEstimates
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.TrdegPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HeightIntegralEstimates
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
+
+@[expose] public section
 
 namespace GlobalTheory
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0 ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Up.AlgT
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem trdeg_adjoin_eq_iff_exists_linearIndependent_D {K F κ : Type} [Field K] [CharZero K]
     [Field F] [Algebra K F] {D : ℕ} (hD : Algebra.trdeg K F = D) (x : κ → F) :
     Algebra.trdeg K (IntermediateField.adjoin K (Set.range x)) = D ↔
@@ -37,7 +41,8 @@ theorem trdeg_adjoin_eq_iff_exists_linearIndependent_D {K F κ : Type} [Field K]
     have := b.linearIndependent.comp e.symm e.symm.injective
     convert this using 1
     funext k
-    simp only [Function.comp_apply, hbD, hJ]
+    rw [hJ k]
+    exact (hbD (e.symm k)).symm
   · rintro ⟨J, hJ⟩
     have hind : AlgebraicIndependent K fun k => x (J k) :=
       ReciprocityTheory.ChartRestriction.G.AR.differentialIndependence K F D _ hJ
@@ -60,7 +65,7 @@ theorem trdegD_iff_exists_linearIndependent_D :
   have hone : ratio (Ω := Ω c) (d.w (d.jc c) c) (d.w (d.jc c) c) = 1 := by
     have hex : ∃ a : Ω c, d.w (d.jc c) c = a • d.w (d.jc c) c := ⟨1, (one_smul _ _).symm⟩
     have h := hex.choose_spec
-    rw [ratio, dif_pos hex]
+    rw [ratio, dite_eq_left hex]
     exact smul_left_injective (Ω c) hw (h.symm.trans (one_smul _ _).symm)
   have heq : IntermediateField.adjoin K (Set.range fun j =>
       ratio (Ω := Ω c) (d.w j c) (d.w (d.jc c) c)) =

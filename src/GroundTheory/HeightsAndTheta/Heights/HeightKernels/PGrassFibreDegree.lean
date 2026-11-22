@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassFibreDegree
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassLinesProj
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ConservationDegreeFormOfExistence
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.GeoNum
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.IntNumRelabel
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsExamples
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassFibreDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassLinesProj
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ConservationDegreeFormOfExistence
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.GeoNum
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.IntNumRelabel
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsExamples
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -54,7 +59,8 @@ theorem ringKrullDim_quot :
     rw [Nat.card_eq_fintype_card, Fintype.card_sigma]
     simp
     omega
-  rw [hc, Fintype.card_fin]
+  rw [ENat.card_eq_coe_natCard, hc, Fintype.card_fin]
+  simp
 
 def coordEquiv : (Σ _ : Unit, Fin (n + 1)) ≃ (Σ _ : Fin 1, PlIdx 1 n) :=
   Equiv.ofBijective (GrassmannianLinesProjective.coordMap n)
@@ -88,8 +94,8 @@ theorem geoNum_span :
 
 end GrassmannianFibreDegree
 
-open GrassmannianFibreDegree in
 
+open GrassmannianFibreDegree in
 theorem GrassFibreDegree.proof : GrassFibreDegree.Statement := by
   intro n p hp
   have : Fact p.Prime := ⟨hp⟩

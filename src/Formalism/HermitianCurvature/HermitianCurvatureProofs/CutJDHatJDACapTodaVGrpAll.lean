@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVRules
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVChain
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVRules
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVChain
+
+@[expose] public section
 
 open Matrix
 

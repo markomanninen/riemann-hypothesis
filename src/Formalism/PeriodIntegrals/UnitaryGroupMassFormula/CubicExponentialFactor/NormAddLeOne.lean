@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.CubicExponentialFactor
+module
+
+public import Formalism.PeriodIntegrals.CubicExponentialFactor
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem wq_int {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (ha1 : 
       exact trunc_mul h2 ih
     dsimp only [IsWq] at hW
     rw [hW]
-    simp only [map_add]
+    simp only [map_add (f := _)]
     refine norm_add_le_one (norm_add_le_one (norm_add_le_one (norm_add_le_one
       (norm_add_le_one ?_ ?_) ?_) ?_) ?_) ?_
     · rw [PowerSeries.coeff_one]

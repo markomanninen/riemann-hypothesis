@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -32,7 +37,8 @@ theorem exists_generators_dual_point_derivations :
     refine ⟨∑ j, b.repr u j • x j,
       Submodule.sum_mem _ (fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)), ?_⟩
     have h1 : W.mkQ (∑ j, b.repr u j • x j) = ∑ j, b.repr u j • (b j : A ⧸ W) := by
-      simp [map_sum, hxq]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, hxq]
     have h2 := congrArg Subtype.val (b.sum_repr u)
     push_cast at h2
     have hq : W.mkQ (∑ j, b.repr u j • x j) = W.mkQ y := by rw [h1, h2]
@@ -96,10 +102,10 @@ theorem exists_generators_dual_point_derivations :
       rw [Submodule.coe_add, Submodule.coe_smul, Submodule.coe_smul, hT, hT, hT]
       have h0 : W.mkQ (P (a * c) - (ε a • P c + ε c • P a)) = 0 := by
         rw [← LinearMap.mem_ker, Submodule.ker_mkQ]; exact hmem
-      rw [map_sub, map_add, map_smul, map_smul, sub_eq_zero] at h0
+      rw [map_sub, map_add (f := _), map_smul, map_smul, sub_eq_zero] at h0
       exact h0
     show b.coord i (T (a * c)) = ε a * b.coord i (T c) + ε c * b.coord i (T a)
-    rw [hTac, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [hTac, map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   · intro i j
     have hTx : T (x j) = b j := by
       apply Subtype.ext

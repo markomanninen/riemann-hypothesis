@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsVerticalDivisorJoinPullback
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsVerticalDivisorJoinPullback
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -40,7 +45,7 @@ theorem isMultiHomog_joinForm [DecidableEq K] [DecidableEq K'] {R : Type*} [Comm
   unfold IsMultiHomog at hf ⊢
   induction hf using IsWeightedHomogeneous.induction_on with
   | zero => simpa [joinForm] using isWeightedHomogeneous_zero R _ _
-  | add p q hp hq ihp ihq => simpa [joinForm, map_add] using ihp.add ihq
+  | add p q hp hq ihp ihq => simpa [joinForm, map_add (f := _)] using ihp.add ihq
   | monomial d r hr =>
     simp only [joinForm, rename_monomial]
     apply isWeightedHomogeneous_monomial

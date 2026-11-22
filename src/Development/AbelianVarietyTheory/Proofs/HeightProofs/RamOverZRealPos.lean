@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CombAlgOfCombBound
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SpanResCharNeBot
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CombAlgOfCombBound
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SpanResCharNeBot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj
 

@@ -1,13 +1,18 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMainCpt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFMainS
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmBpAtEqNFR
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMainCpt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFMainS
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBPEqNF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmBpAtEqOfShiftR
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBPEq
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.TBB Formalism.QuantumDeterminants Formalism.FourierDecayAlt.P.CutBP Formalism.FourierDecayAlt.P.CutBP2 MeasureTheory
 open scoped ENNReal
 noncomputable section
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem _root_.Formalism.FourierDecayAlt.P.CutBPEq.ptBound_main_limEvTCpt (hA : P5.ThmPActualCpt) (Cb : ℝ) : ∃ C₂ c₃ Cc Cc' : ℝ, 0 < C₂ ∧
     ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
       [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (q : KB.Pl P Wp Wq)
@@ -40,9 +45,9 @@ namespace Formalism.FourierDecayAlt.P.CutBPEq
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.TBB Formalism.QuantumDeterminants Formalism.FourierDecayAlt.P.CutBP Formalism.FourierDecayAlt.P.CutBP2 MeasureTheory
 open scoped ENNReal
 noncomputable section
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem _root_.Formalism.FourierDecayAlt.P.CutBPEq.thmBpAt_eq_limEvTCpt (hA : P5.ThmPActualCpt) (hN : NormAtShOfAmaps) (Cb C₃ CΛ C₀ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ)
     (hC₀ : 1 / 2 ≤ C₀) :
     ∃ C₄ c₃ Cc Cc' : ℝ, ∀ (P : M.Par) (Wp Wq Wqp Wqm : Type)
@@ -97,8 +102,8 @@ namespace Formalism.FourierDecayAlt.P.CutBPEq
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.TBB Formalism.QuantumDeterminants Formalism.FourierDecayAlt.P.CutBP Formalism.FourierDecayAlt.P.CutBP2 MeasureTheory
 open scoped ENNReal
 noncomputable section
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem _root_.Formalism.FourierDecayAlt.P.CutBPEq.thmBpAt_eq_NFRCpt (hA : P5.ThmPActualCpt) (h1 : NFTopFormAllCpt) (h2 : NFTopPtwAll) (h3 : NFTopDomAll)
     (h4 : NFTopIdAll) (Cb C₃ CΛ C₀ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ) (hC₀ : 1 / 2 ≤ C₀) :
     ∃ C₄ c₃ Cc Cc' Cc'' : ℝ, ∀ (P : M.Par) (Wp Wq : Type)

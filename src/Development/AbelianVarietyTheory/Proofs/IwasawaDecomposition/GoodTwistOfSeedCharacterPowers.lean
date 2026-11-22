@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnlocalizedSaturatedState
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnlocalizedSaturatedState
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -198,7 +202,7 @@ theorem goodO_of_seed : ∀ (D₁ D₂ D₃ : D7) (A : D₁.ntw.Tw → Finset (P
     obtain ⟨e, he, hpe⟩ := psiAt_pow_pow (C₃.sd v) (σ.ψ (σ.s (u v))) a c
     have hce : Nat.Coprime e.natAbs (D₁.ntw.l (σ.s (u v))) := by
       rw [he]
-      exact Nat.Coprime.mul ha (hl ▸ hc)
+      exact Nat.Coprime.mul_left ha (hl ▸ hc)
     obtain ⟨hok, hg⟩ := σ.good (u v) ht
     have g1 := goodTw_swap h1n (hg e hce)
     rw [← hpe] at g1

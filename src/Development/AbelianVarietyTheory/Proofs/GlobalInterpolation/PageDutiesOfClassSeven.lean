@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.PageFix
-import Formalism.SharpRestriction.LevelLetterCocycles.AlignN
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FamilyClassSevenDutiesAndStableLattices
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.PageFix
+public import Formalism.SharpRestriction.LevelLetterCocycles.AlignN
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FamilyClassSevenDutiesAndStableLattices
+
+@[expose] public section
 
 namespace GlobalTheory.EX.DQ
 

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InterEqBasicOpen
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InterEqBasicOpen
+
+@[expose] public section
+
 open CrystallineSemistableComparison CrystallineSemistableComparison.Onto
 
 set_option autoImplicit false
@@ -36,7 +41,8 @@ theorem one_bij (hL : OneLow) (hR : OneRes) {R : Type} [CommRing R] {ι : Type} 
     intro m x
     rw [Cos.d_apply, Cos.d_apply]
     funext i
-    simp only [hδ, Finset.sum_apply, Pi.smul_apply, φ, map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hδ, Finset.sum_apply, Pi.smul_apply, φ, map_sum, map_zsmul]
   have hφ1 : ∀ m x y, φ m (x - y) = φ m x - φ m y := fun m x y => funext fun i => map_sub _ _ _
   obtain ⟨-, hinj, hex, hup⟩ := hP
   have hres : (A.coh a).cech.cx.ResUpTo 1 (LinearMap.ker ((A.coh a).cech.d 0)).subtype := by
@@ -172,7 +178,8 @@ theorem chart_alt_alt (c : BChart q i π d V) (S : Finset (Fin d)) (k : Fin d) (
     rw [c.rel k]
     exact Ideal.subset_span (Set.mem_insert_of_mem _ ⟨j, rfl⟩)
   rw [RingHom.mem_ker] at hm
-  simp only [map_sub, map_mul, MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_C, MvPolynomial.eval₂_X] at hm
+  change MvPolynomial.eval₂ (π.appLE V (c.C k) (c.C_le k)).hom (c.u k) _ = 0 at hm
+  simp only [MvPolynomial.eval₂_sub, MvPolynomial.eval₂_mul, MvPolynomial.eval₂_C, MvPolynomial.eval₂_X] at hm
   have hrs : ∀ x, rs (inf_le_C c hk) ((π.appLE V (c.C k) (c.C_le k)).hom x) = (π.appLE V (S.inf c.C) (inf_le_pre c ⟨k, hk⟩)).hom x := by
     intro x
     change (Y.presheaf.map (homOfLE _).op).hom ((π.appLE V _ _).hom x) = (π.appLE V _ _).hom x
@@ -266,7 +273,10 @@ theorem pres_transport {A R B ι : Type} [CommRing A] [CommRing R] [CommRing B] 
     (p : MvPolynomial ι A) : β (MvPolynomial.aeval v p) = MvPolynomial.eval₂Hom g w p := by
   induction p using MvPolynomial.induction_on with
   | C a => simp [hg]
-  | add p p' hp hp' => simp only [map_add, hp, hp']
+  | add p p' hp hp' =>
+    change β (MvPolynomial.aeval v (p + p')) = MvPolynomial.eval₂ g w (p + p')
+    rw [map_add (MvPolynomial.aeval v), map_add β, MvPolynomial.eval₂_add, hp, hp']
+    rfl
   | mul_X p j hp => simp only [map_mul, hp, MvPolynomial.aeval_X, MvPolynomial.eval₂Hom_X', hw]
 
 theorem chart_exists (K : Type) [Field K] (W Z Y : Scheme.{0}) (q : Z ⟶ Spec (CommRingCat.of K)) (i : W ⟶ Z)
@@ -341,8 +351,8 @@ theorem chart_exists (K : Type) [Field K] (W Z Y : Scheme.{0}) (q : Z ⟶ Spec (
     exact he ▸ chart_loc c S k hk
 
 section Main
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem chartBij_of : ChartFormsCechExact → SiteLaws → OneLow → OneRes → CovDesc → ZarRel → AffOm → OmNat → OmRes → AffRel → FormLaws →
     ChartLaws → ChartBij := by
   intro hH hS hL hR hC hZ hA hN hOR hAR hF hCL K _ _ W Z Y q i _ π d hd V hc hQ hQ' a h h' n

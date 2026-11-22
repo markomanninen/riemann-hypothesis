@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -21,7 +26,7 @@ theorem c_mem_of_mem (tb : TopBasis s I ι) (n : ℕ) {x : A} (hx : x ∈ (I ^ n
       rw [mul_comm, tb.c_mul]
       exact Ideal.mul_mem_right _ _ hz
     | zero => intro a; simp
-    | add y z _ _ hy hz => intro a; rw [mul_add, map_add]; exact add_mem (hy a) (hz a)
+    | add y z _ _ hy hz => intro a; rw [mul_add, map_add (f := _)]; exact add_mem (hy a) (hz a)
     | smul b y _ hy => intro a; rw [smul_eq_mul, ← mul_assoc]; exact hy (a * b)
   simpa using key 1
 
@@ -65,7 +70,8 @@ theorem exists_coeffs_eq_of_null (tb : TopBasis s I ι) (hS : IsHausdorff I S) (
     exact c_mem_of_mem tb n (by simpa using neg_mem h) i
   have h2 : tb.c i (y n) - a i ∈ I ^ n := by
     have e : tb.c i (y n) = ∑ j ∈ F n, a j * tb.c i (tb.b j) := by
-      simp only [y, map_sum, tb.c_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [y, map_sum, tb.c_mul]
     rw [e]
     by_cases hi : i ∈ F n
     · rw [Finset.sum_eq_single i (fun j _ hj => by rw [tb.c_ne i j (Ne.symm hj), mul_zero])

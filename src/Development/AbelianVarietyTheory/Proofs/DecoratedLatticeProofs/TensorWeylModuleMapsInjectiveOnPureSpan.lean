@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalizedFockFormPureTensorProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TensorTypesRealPlacesEquivSpanWeylModules
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalizedFockFormPureTensorProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TensorTypesRealPlacesEquivSpanWeylModules
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.L2.Forms
 open scoped TensorProduct
 
@@ -46,7 +51,7 @@ theorem main : ∀ (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n)
       intro i'
       let L : (⨂[ℂ] τ, V τ) →ₗ[ℂ] ℂ :=
         { toFun := fun x => nfAll lam (tenMap j x) (tenMap j (B i'))
-          map_add' := fun x y => by rw [map_add, GlobalTheory.TenTypes.nfAll_add_left]
+          map_add' := fun x y => by rw [map_add (f := _), GlobalTheory.TenTypes.nfAll_add_left]
           map_smul' := fun c x => by rw [map_smul, GlobalTheory.TenTypes.nfAll_smul_left]; rfl }
       have hL : L = B.coord i' := by
         refine B.ext fun i => ?_

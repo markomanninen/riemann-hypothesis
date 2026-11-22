@@ -1,8 +1,34 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalTower
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalTower
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
+
+section
+
+open AlgebraicGeometry CategoryTheory TopologicalSpace
+
+universe c236Ext c236Scheme
+
+private noncomputable def H.linearMapV436 {X : Scheme.{c236Scheme}}
+    [HasExt.{c236Ext} (Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpCat.{c236Scheme})]
+    (A : Type*) [CommRing A] [Algebra A Γ(X, ⊤)]
+    {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) :
+    Sheaf.H.{c236Ext} (modulesAb F) n →ₗ[A] Sheaf.H.{c236Ext} (modulesAb G) n where
+  toFun := Sheaf.H.map.{c236Ext} (modulesAbMap φ) n
+  map_add' := map_add _
+  map_smul' a x := by
+    change Sheaf.H.map.{c236Ext} (modulesAbMap φ) n (a • x) =
+      a • Sheaf.H.map.{c236Ext} (modulesAbMap φ) n x
+    rw [H.smul_def, H.smul_def, ← Sheaf.H.map_comp_apply, ← Sheaf.H.map_comp_apply,
+      ← modulesAbMap_comp, ← modulesAbMap_comp, smulHom_comp]
+
+end
 
 open AlgebraicGeometry CategoryTheory Opposite TopologicalSpace Limits
 
@@ -42,11 +68,6 @@ lemma formalπ_comm (n : ℕ) :
   refine LinearMap.ext fun x => Subtype.ext ?_
   exact (formalδ_naturality I F q n x).symm
 
-lemma surjective_formalτP (n : ℕ) : Function.Surjective (formalτP I F q n) := by
-  intro x
-  obtain ⟨h, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-  exact ⟨Submodule.Quotient.mk h, rfl⟩
-
 variable {I F q}
 
 theorem mem_range_formalβ_of_mem_towerLimit {c : ℕ}
@@ -55,7 +76,8 @@ theorem mem_range_formalβ_of_mem_towerLimit {c : ℕ}
     (n : ℕ) : x n ∈ LinearMap.range (formalβ I F q n) := by
   obtain ⟨p, hp⟩ := (bijective_towerLimitMap (formalτP I F q) (formalτE I F q) (formalτQ I F q)
     (formalι I F q) (formalπ I F q) (formalι_comm I F q) (formalπ_comm I F q)
-    (formalι_injective I F q) (range_formalι I F q) hQ).2 ⟨x, hx⟩
+    (formalι_injective I F q) (range_formalι I F q)
+    (formalι_injective I F q) (range_formalι I F q) (formalπ_comm I F q) hQ).2 ⟨x, hx⟩
   obtain ⟨h, hh⟩ := Submodule.Quotient.mk_surjective _ (p.1 n)
   refine ⟨h, ?_⟩
   have := congrArg (fun y => y.1 n) hp
@@ -64,13 +86,6 @@ theorem mem_range_formalβ_of_mem_towerLimit {c : ℕ}
   change formalβ I F q n h = formalι I F q n (p.1 n)
   rw [← hh]
   rfl
-
-theorem range_towerComp_formalτE_eq {c : ℕ} (hQ : ∀ n, towerComp (E := fun m => formalQ I F q m) (formalτQ I F q) n c = 0)
-    (n k : ℕ) (hk : c ≤ k) :
-    LinearMap.range (towerComp (E := fun m => Sheaf.H.{u} (modulesAb (quotPow I F m)) q) (formalτE I F q) n k) = LinearMap.range (formalβ I F q n) := by
-  rw [range_towerComp_eq_of_exact (formalτP I F q) (formalτE I F q) (formalτQ I F q)
-    (formalι I F q) (formalπ I F q) (formalι_comm I F q) (formalπ_comm I F q)
-    (range_formalι I F q) (surjective_formalτP I F q) hQ n k hk, formalι, Submodule.range_liftQ]
 
 end
 

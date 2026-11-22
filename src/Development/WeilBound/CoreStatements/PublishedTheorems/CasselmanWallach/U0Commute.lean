@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnitaryGroupStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ParabolicUnipotentGL
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnitaryGroupStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ParabolicUnipotentGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ open PositivityTheory.CW
 namespace WordFiltrationCommute
 
 variable {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (E : Fin n → Fin n → Module.End ℂ V)
-
-abbrev wd (l : List (Fin n × Fin n)) : Module.End ℂ V := (l.map fun p => E p.1 p.2).prod
 
 theorem U_mono {j k : ℕ} (h : j ≤ k) : U E j ≤ U E k :=
   Submodule.span_mono fun _ ⟨l, hl, hx⟩ => ⟨l, hl.trans h, hx⟩

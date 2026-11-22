@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem oneT_pderiv (e : Module.End Kf (MvPolynomial τ Kf)) (v : σ) (G : MvPol
   induction G using MvPolynomial.induction_on' with
   | monomial u a =>
     rw [pderiv_monomial, oneT_monomial, oneT_monomial, pderiv_monomial, ← nsmul_eq_mul', ← nsmul_eq_mul', map_nsmul]
-  | add p q hp hq => simp only [map_add, oneT_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), oneT_add, hp, hq]
 
 theorem oneT_X_mul (e : Module.End Kf (MvPolynomial τ Kf)) (v : σ) (G : MvPolynomial σ (MvPolynomial τ Kf)) :
     oneT e (X v * G) = X v * oneT e G := by
@@ -49,7 +53,7 @@ theorem planeCoeff_pderiv (nu : τ →₀ ℕ) (v : σ) (G : MvPolynomial σ (Mv
   | monomial u a =>
     rw [pderiv_monomial, planeCoeff_monomial, planeCoeff_monomial, pderiv_monomial, ← nsmul_eq_mul', ← nsmul_eq_mul',
       coeff_smul]
-  | add p q hp hq => simp only [map_add, planeCoeff_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), planeCoeff_add, hp, hq]
 
 theorem planeCoeff_X_mul (nu : τ →₀ ℕ) (v : σ) (G : MvPolynomial σ (MvPolynomial τ Kf)) :
     planeCoeff nu (X v * G) = X v * planeCoeff nu G := by

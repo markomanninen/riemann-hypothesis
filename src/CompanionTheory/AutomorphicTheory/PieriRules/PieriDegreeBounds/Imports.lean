@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeries₂.DSExist
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeries₂.Zuckerman
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeries₂.Poulsen
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Formalism.PeriodIntegrals.LowCyc
-import Formalism.PeriodIntegrals.HCFdeg
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeries₂.DSExist
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeries₂.Zuckerman
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeries₂.Poulsen
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Formalism.PeriodIntegrals.LowCyc
+public import Formalism.PeriodIntegrals.UpqRep
+
+@[expose] public section

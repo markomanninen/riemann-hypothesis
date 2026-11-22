@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
+
+@[expose] public section
 
 open scoped MatrixGroups
 open Polynomial
@@ -53,7 +57,7 @@ theorem map_mem_ringOfIntegers_of_fix_mdl :
     | add P P' hP hP' =>
       obtain ⟨Q, hQ⟩ := hP
       obtain ⟨Q', hQ'⟩ := hP'
-      exact ⟨Q + Q', by rw [map_add, map_add, hQ, hQ', map_add]⟩
+      exact ⟨Q + Q', by rw [map_add (f := _), map_add (f := _), hQ, hQ', map_add (f := _)]⟩
     | monomial n c =>
       obtain ⟨c', hc'⟩ := exists_map_const_eq_of_isAlgClosed (levConst X Γ') (σ : lev X Γ' →+* lev X Γ') c
       refine ⟨Polynomial.monomial n c', ?_⟩

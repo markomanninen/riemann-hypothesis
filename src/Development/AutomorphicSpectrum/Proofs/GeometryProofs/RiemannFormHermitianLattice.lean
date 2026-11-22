@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsAdaptedUnimodular
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsAdaptedUnimodular
+
+@[expose] public section
 
 open Filter Topology Matrix
 
@@ -54,7 +58,7 @@ theorem mem_span_integer_kernel {g : ℕ} (Bs : Matrix (Fin g) (Fin g) ℤ)
   have hent : ∀ a c, ((Qᵀ * Bs * Q).submatrix e e) a c = q a ⬝ᵥ Bs *ᵥ q c := by
     intro a c
     rw [Matrix.mul_assoc]
-    simp only [submatrix_apply, mul_apply, transpose_apply, q, dotProduct, mulVec]
+    simp [submatrix_apply, Matrix.mul_apply, transpose_apply, q, dotProduct, mulVec]
   have hnsum : n = ∑ a, w (e a) • (fun i => (q a i : ℝ)) := by
     rw [← hw]
     funext i
@@ -210,7 +214,7 @@ theorem form_bounds : ∀ (g : ℕ) (Bs : Matrix (Fin g) (Fin g) ℤ) (τ G : Ma
     ext i j
     have h := congrArg Complex.re (congrFun (hker _ (horth j)) i)
     rw [hGre] at h
-    simpa [mulVec, dotProduct, mul_apply, hBrdef] using h
+    simpa [mulVec, dotProduct, Matrix.mul_apply, hBrdef] using h
   have hmul' : Br * S = 0 := by
     have h := congrArg transpose hmul
     rwa [transpose_mul, hS, hBr, transpose_zero] at h

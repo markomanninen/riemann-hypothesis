@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.ConvExpandStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensAddOfFunContinuousOn
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.ConvExpandStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensAddOfFunContinuousOn
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 
@@ -8,7 +13,7 @@ namespace GlobalTheory.CompanionTheory.Ar.Giv
 
 namespace MeasOff
 
-abbrev ov {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e X) (U : Set X) (j : Fin A.n) :
+noncomputable abbrev ov {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e X) (U : Set X) (j : Fin A.n) :
     Set (Fin e → ℂ) :=
   (A.chart j).target ∩ (A.chart j).symm ⁻¹' U
 
@@ -228,7 +233,7 @@ theorem integrableOn_ov (A : FinHolAtlas e X) (P : ChartPartition A) {U : Set X}
     ((hGm.enorm).mul ((((chi_continuousOn P k j).mono Set.inter_subset_left).aemeasurable
       hVm).ennreal_ofReal)).mul hdm.ennreal_ofReal
   show ∫⁻ y in ov A U j, ‖G ((A.chart j).symm y) * locDens A Φ j y‖ₑ < ⊤
-  rw [hpt, lintegral_finset_sum' _ fun k _ => hHm k]
+  rw [hpt, lintegral_finsetSum' _ fun k _ => hHm k]
   refine ENNReal.sum_lt_top.2 fun k _ => ?_
   refine (lintegral_chart_le A Φ hU hnn hch j k (H k) fun x hx => ?_).trans_lt ?_
   · have : x ∉ tsupport (P.χ k) := fun h => hx (P.tsupport_subset k h)
@@ -258,7 +263,11 @@ theorem mInt_eq_of_dens (A : FinHolAtlas e X) {U : Set X} (Φ : Fin e → LocPot
   have hne : Nonempty (ChartPartition A) := existsPartition A
   set P := hne.some with hPd
   have hG := measurable_indicator hU hgc
-  rw [maMeasure_eq_sum A Φ hne] at hgi ⊢
+  have hmeasure : maMeasure A Φ = ∑ k, chartMeasure A P Φ k := by
+    unfold maMeasure
+    rw [dite_eq_left hne]
+    rfl
+  rw [hmeasure] at hgi ⊢
   have hgk : ∀ k, Integrable g (chartMeasure A P Φ k) := fun k =>
     integrable_finsetSum_measure.mp hgi k (Finset.mem_univ k)
   have hae : ∀ k, U.indicator g =ᵐ[chartMeasure A P Φ k] g := fun k =>
@@ -279,7 +288,10 @@ theorem mInt_eq_of_dens (A : FinHolAtlas e X) {U : Set X} (Φ : Fin e → LocPot
       refine ae_restrict_of_forall_mem (isOpen_ov A hU j).measurableSet fun y hy => ?_
       rw [Set.indicator_of_mem (show (A.chart j).symm y ∈ U from hy.2)]
     exact (h2.mono_set hK).congr (ae_restrict_of_ae_restrict_of_subset hK hev)
-  · rw [mInt_eq_integralWith A Φ hne, integral_finsetSum_measure fun k _ => hgk k]
+  · have hint : mInt A Φ g = integralWith A P Φ g := by
+      unfold mInt
+      rw [dite_eq_left hne]
+    rw [hint, integral_finsetSum_measure fun k _ => hgk k]
     unfold integralWith
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [← integral_congr_ae (hae k), (hfacts k).2, restrict_target_eq A hnull k]

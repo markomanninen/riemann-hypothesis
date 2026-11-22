@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.MatrixTransvectionDiagonalDecompositionStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HaarInvariantUnderTransvectionStatement
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.MatrixTransvectionDiagonalDecompositionStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HaarInvariantUnderTransvectionStatement
+
+@[expose] public section
+
 open MeasureTheory Topology Matrix
 open scoped ENNReal NNReal
 
@@ -27,7 +32,7 @@ theorem pi_smul_const {ι : Type} [Fintype ι] (lam : Measure K) [SigmaFinite la
   refine Measure.pi_eq fun s hs => ?_
   rw [Measure.smul_apply, Measure.pi_pi]
   simp only [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul, Finset.prod_mul_distrib,
-    ENNReal.coe_finset_prod]
+    ENNReal.ofNNReal_finsetProd]
 
 theorem pi_map_diag {ι : Type} [Fintype ι] (lam : Measure K) [lam.IsAddHaarMeasure] (D : ι → Kˣ) :
     (Measure.pi fun _ : ι => lam).map (fun x i => (D i : K) * x i) =
@@ -100,6 +105,7 @@ theorem map_mulVec_eq_smul : ∀ (K : Type) [CommRing K] [TopologicalSpace K] [I
     (continuous_pi fun i => continuous_const.mul (continuous_apply i)).measurable
   have hdiag : μ.map (fun (x : ι → K) i => (Du i : K) * x i) = c • μ := by
     rw [hμ, Measure.map_smul, pi_map_diag, hcc, smul_comm]
+    exact hmd.aemeasurable
   have hm : ∀ M : Matrix ι ι K, Measurable (fun x : ι → K => M *ᵥ x) := fun M =>
     (continuous_const.matrix_mulVec continuous_id).measurable
   have e : (fun x : ι → K => A *ᵥ x) =
@@ -114,5 +120,6 @@ theorem map_mulVec_eq_smul : ∀ (K : Type) [CommRing K] [TopologicalSpace K] [I
     rw [hAeq, Matrix.mul_assoc]
   rw [e, ← Measure.map_map (hm _) (hmd.comp (hm _)), ← Measure.map_map hmd (hm _),
     map_transvections μ L', hdiag, Measure.map_smul, map_transvections μ L]
+  exact (hm _).aemeasurable
 
 end GlobalTheory.CompanionTheory.SW.ModDet

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatCons
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtTorusTranslate
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceA
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitCentreDerivativeLieAction
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatCons
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtTorusTranslate
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceA
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitCentreDerivativeLieAction
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,9 +16,9 @@ open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction UpperTheory.V.C
 
 namespace UpperTheory.ConvolutionTheory.BW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ}
 
-private def aV (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (v : ℝ) : GA E (r + s) :=
+private def aV (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (v : ℝ) : GA E (r + s) :=
   lev (Ad E) r s (zt E r v, 1)
 
 private theorem zt_add (a b : ℝ) : zt E r (a + b) = zt E r a * zt E r b := by
@@ -152,13 +156,14 @@ private theorem taylor (F : Sm E (r + s)) (g : GA E (r + s)) {K : ℝ}
 
 private theorem exists_casimir_center : ∃ u : UC E (r + s), j1 E r s = uC E (r + s) u :=
   ⟨((r * Module.finrank ℚ E : ℕ) : ℂ)⁻¹ • ∑ τ : E →+* ℂ, ∑ i : Fin r, genC τ (Fin.castAdd s i) (Fin.castAdd s i), by
-    simp only [j1, map_smul, map_sum, uC_genC]⟩
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [j1, map_smul, map_sum, uC_genC]⟩
 
 end UpperTheory.ConvolutionTheory.BW
 
 open UpperTheory.ConvolutionTheory.BW in
 theorem UpperTheory.ConvolutionTheory.BW.sliceShift :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.SliceShift E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.SliceShift E := by
   intro E _ _ _ S r s b t φ m hφ
   have hsh : ∀ v, slice b.f.1 t (rt E (r + s) (aV E r s v) φ).1 m = slice b.f.1 (t + v) φ.1 m :=
     fun v => shift _ t v φ m

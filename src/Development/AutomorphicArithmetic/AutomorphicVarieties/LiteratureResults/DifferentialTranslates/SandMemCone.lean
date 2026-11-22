@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DeRham
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.DifferentiableAtOm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DeRham
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.DifferentiableAtOm
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace UpperTheory.V.Lit.Dr
 
 variable {E : Type} [Field E] [NumberField E] {a : ℕ}
 
-variable (E a) in
 
+variable (E a) in
 def HV : Submodule ℝ (Lie E a) where
   carrier := {x | IsSelfAdjoint (Matrix.of x)}
   add_mem' h h' := IsSelfAdjoint.add h h'
@@ -26,11 +30,9 @@ def hv : Herm E a ≃ₗ[ℝ] HV E a where
   left_inv _ := rfl
   right_inv _ := rfl
 
-omit [NumberField E] in
-theorem hv_val (X : Herm E a) : Matrix.of (hv X).1 = X.1 := rfl
+
 
 variable (E a) in
-
 def hOne : HV E a := hv ⟨1, IsSelfAdjoint.one _⟩
 
 omit [NumberField E] in
@@ -57,8 +59,8 @@ def sand : GL (Fin a) (Cinf E) →* (HV E a →L[ℝ] HV E a) where
 theorem sand_val (g : GL (Fin a) (Cinf E)) (p : HV E a) :
     Matrix.of (sand g p).1 = g.val * Matrix.of p.1 * star g.val := rfl
 
-variable (E a) in
 
+variable (E a) in
 def cone : Set (HV E a) := {p | ∃ g : GL (Fin a) (Cinf E), sand g (hOne E a) = p}
 
 theorem hOne_mem_cone : hOne E a ∈ cone E a := ⟨1, by rw [map_one]; rfl⟩
@@ -67,7 +69,7 @@ theorem sand_mem_cone (g : GL (Fin a) (Cinf E)) {p : HV E a} (hp : p ∈ cone E 
   obtain ⟨h, rfl⟩ := hp
   exact ⟨g * h, by rw [map_mul]; rfl⟩
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def ev {d : ℕ} : Sm E a ⊗[ℂ] (Fin d → ℂ) →ₗ[ℂ] (GA E a → Fin d → ℂ) :=
   TensorProduct.lift (LinearMap.mk₂ ℂ (fun φ v g => φ.1 g • v) (fun φ ψ v => by ext g i; simp [add_mul])
@@ -89,8 +91,6 @@ def geo (ho : IsOpen (cone E a)) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep
 section
 
 variable (ho : IsOpen (cone E a)) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
-
-theorem geo_Y : (geo ho U Ξ).Y = cone E a := rfl
 
 theorem geo_ρ (γ : (⊤ : Subgroup (GL (Fin a) E))) :
     (geo ho U Ξ).ρ γ = sand (GeneralLinearGroup.map (pInf E) (ratGL E a γ.1)) := rfl

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -57,7 +61,7 @@ theorem finrank_skewPart (B : Submodule ℂ (Matrix (Fin n) (Fin n) ℂ)) (hB : 
         simp only [Prod.smul_fst, Prod.smul_snd, Submodule.coe_smul_of_tower, Submodule.coe_smul, RingHom.id_apply, smul_add]
         rw [smul_comm] }
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨⟨X, hX⟩, ⟨Y, hY⟩⟩ h
     have h1 : X + Complex.I • Y = 0 := congrArg Subtype.val h
     have h2 : -X + Complex.I • Y = 0 := by
@@ -116,7 +120,7 @@ theorem exists_proj (W : Submodule ℂ (Fin n → ℂ)) :
     rw [hP]
     exact Submodule.starProjection_eq_self_iff.2 ⟨y, hy, rfl⟩
   refine ⟨P, ?_, h1, h2, ?_⟩
-  · apply Matrix.isHermitian_iff_isSymmetric.2
+  · apply Matrix.isSymmetric_toEuclideanLin_iff.mp
     rw [LinearEquiv.apply_symm_apply]
     exact W'.starProjection_isSymmetric
   · have h : LinearMap.IsProj W (Matrix.toLin' P) := ⟨h1, h2⟩
@@ -172,7 +176,8 @@ theorem finrank_commutant {κ : Type} [Fintype κ] (J : Matrix (Fin n) (Fin n) �
       rw [hπ, this, hX.1, mul_assoc, hJ, mul_one]
       module
   rw [← hP.trace]
-  simp only [π, map_smul, map_sum, map_add, trace_mulLeftRight, smul_eq_mul, Matrix.trace_mul_comm (e _) J, sq]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [π, map_smul, map_sum, map_add (f := _), trace_mulLeftRight, smul_eq_mul, Matrix.trace_mul_comm (e _) J, sq]
 
 theorem exists_trace_eq_nat (M : Matrix (Fin n) (Fin n) ℂ) (h : M * M = M) : ∃ m : ℕ, M.trace = m := by
   have hp : LinearMap.IsProj (LinearMap.range (Matrix.toLin' M)) (Matrix.toLin' M) :=

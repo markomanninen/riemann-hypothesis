@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.ExistsFinsetCosets
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.ExistsFinsetCosets
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,9 @@ theorem ph_apply {w : InfinitePlace L} (hw : w.IsComplex) (A : Matrix (Fin N) (F
 
 theorem e_alg {w : InfinitePlace L} (hw : w.IsComplex) (l : L) :
     Completion.ringEquivComplexOfIsComplex hw (algebraMap L w.Completion l) = w.embedding l := by
-  rw [Completion.ringEquivComplexOfIsComplex_apply]
-  simp
+  rw [Completion.ringEquivComplexOfIsComplex_apply, AbsoluteValue.Completion.algebraMap_def,
+    Completion.extensionEmbedding_coe]
+  rfl
 
 theorem ph_diag {w : InfinitePlace L} (hw : w.IsComplex) (γ : GL (Fin N) L) :
     ph hw ((Reduction.infAt w (AdelicGLn.diagonal L N γ) : GL (Fin N) w.Completion) :
@@ -86,7 +91,7 @@ theorem ph_posIdele {w : InfinitePlace L} (hw : w.IsComplex) (r : Fin N → ℝ)
       InfinitePlace.mult_isComplex ⟨w, hw⟩]
     have hnr : ¬ w.IsReal := InfinitePlace.not_isReal_iff_isComplex.mpr hw
     unfold GroundTheory.Global.posRealElem
-    rw [dif_neg hnr, RingEquiv.apply_symm_apply, Real.sqrt_sq (hr i).le]
+    rw [dite_eq_right hnr, RingEquiv.apply_symm_apply, Real.sqrt_sq (hr i).le]
   · rw [diagonal_apply_ne _ h, diagonal_apply_ne _ h]
     show Completion.ringEquivComplexOfIsComplex hw 0 = 0
     exact map_zero _

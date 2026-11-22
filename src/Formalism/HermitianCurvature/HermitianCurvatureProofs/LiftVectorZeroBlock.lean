@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementHeads
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
+module
+
+public import Formalism.HermitianCurvature.StatementHeads
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ContDiff

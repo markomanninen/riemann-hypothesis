@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
-import Development.AutomorphicArithmetic.PrimitiveCosets.GChiEq
-import Development.AutomorphicArithmetic.PrimitiveCosets.GzEq
+module
+
+public import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
+public import Development.AutomorphicArithmetic.PrimitiveCosets.GChiEq
+public import Development.AutomorphicArithmetic.PrimitiveCosets.GzEq
+
+@[expose] public section
 
 open UpperTheory.Comparison₂ Deduction.CH Formalism Formalism.HC Formalism.D5 Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.WeightedSlopeBounds Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds Formalism.LFunctionChainParameters.LErr
   Formalism.LFunctionChainParameters.LChain Formalism.LFunctionChainParameters.LHost
@@ -31,12 +35,27 @@ private theorem UpperTheory.Comparison₂.level_family_sum (Λ : Level) (y : ℝ
   congr 1
   · have h1 : UpperTheory.Comparison₂.level_family_wt Λ PChar.one = 1 := by
       simp [UpperTheory.Comparison₂.level_family_wt]
-    rw [h1, one_mul, ← gChi_eq, (Gz_eq y).1]
+    have hG : Formalism.Gz y = An.G y := by
+      unfold Formalism.Gz Formalism.Sz An.G
+      have hsum : (∑ n ∈ Finset.Icc 1 ⌊y⌋₊, ArithmeticFunction.vonMangoldt n * (y / n - 1)) =
+          ∑ n ∈ Finset.Icc 1 ⌊y⌋₊, An.abelian₂ n * max (y / n - 1) 0 := by
+        apply Finset.sum_congr rfl
+        intro n hn
+        obtain ⟨hn₁, hn₂⟩ := Finset.mem_Icc.mp hn
+        have hn_pos : 0 < n := Nat.zero_lt_of_lt hn₁
+        have hny : (n : ℝ) ≤ y := (Nat.le_floor_iff' hn_pos.ne').mp hn₂
+        have hnonneg : 0 ≤ y / (n : ℝ) - 1 := by
+          rw [sub_nonneg, le_div_iff₀ (Nat.cast_pos.mpr hn_pos), one_mul]
+          exact hny
+        rw [max_eq_left hnonneg]
+      rw [hsum]
+      ring
+    rw [h1, one_mul, ← gChi_eq, hG]
     simp only [An.gChi, PChar.one]
-    exact (congrArg Complex.re (if_pos rfl)).trans (Complex.ofReal_re _)
+    exact (congrArg Complex.re (ite_eq_left rfl)).trans (Complex.ofReal_re _)
   · refine Finset.sum_congr (by congr) fun ψ hψ => ?_
     have hne : ψ ≠ PChar.one := Finset.ne_of_mem_erase hψ
-    simp only [UpperTheory.Comparison₂.level_family_wt, if_neg hne, gChi_eq]
+    simp only [UpperTheory.Comparison₂.level_family_wt, ite_eq_right hne, gChi_eq]
 
 theorem UpperTheory.Comparison₂.level_family :
     ∀ Λ : Level, ∃ F : Deduction.CharFamily, (∀ y, Deduction.Gm F y = Λ.Gm y) ∧ ∀ θ, Deduction.ZeroFree F θ ↔ Λ.ZeroFreeAbove θ := by

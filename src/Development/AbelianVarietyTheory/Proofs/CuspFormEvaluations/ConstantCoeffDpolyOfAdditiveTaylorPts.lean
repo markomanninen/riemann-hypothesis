@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasSubstEv
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FormalExpMulFormalExpNeg
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasSubstEv
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FormalExpMulFormalExpNeg
+
+@[expose] public section
 
 open Filter Topology MvPowerSeries
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -13,8 +17,8 @@ section Comp
 variable {σ τ W : Type*} [Fintype σ] [DecidableEq σ] [Fintype τ] [NormedAddCommGroup W]
   [NormedSpace ℂ W]
 
-omit [DecidableEq σ] in
 
+omit [DecidableEq σ] in
 theorem hasSubst_taylorDir (u : τ → W) {φ : W → σ → ℂ} (h0 : φ 0 = 0) :
     HasSubst fun i => taylorDir u fun z => φ z i := by
   refine hasSubst_of_constantCoeff_zero fun i => ?_
@@ -30,7 +34,8 @@ private theorem fderiv_comp_apply_eq_sum_pi_single {φ : W → σ → ℂ} {f : 
   simp_rw [hi]
   rw [fderiv_comp z hf hφ, ContinuousLinearMap.comp_apply]
   conv_lhs => rw [← Finset.univ_sum_single (fderiv ℂ φ z v)]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [show (Pi.single i (fderiv ℂ φ z v i) : σ → ℂ) = fderiv ℂ φ z v i • Pi.single i 1 by
     ext k; by_cases h : k = i <;> simp [h], map_smul, smul_eq_mul, mul_comm]
@@ -60,11 +65,11 @@ private theorem taylorDir_comp_eq_subst_taylor_of_analyticAt (u : τ → W) {φ 
         fderiv ℂ f (φ z) (Pi.single i 1) * fderiv ℂ (fun y => φ y i) z (u j))
       (fun i _ => ((hg i).comp_of_eq hφ h0).mul (analyticAt_fderiv_apply (hφi i) _))
     beta_reduce at hsum
-    have key : pderiv ℂ j (taylorDir u (f ∘ φ) -
+    have key : pderiv (R := ℂ) j (taylorDir u (f ∘ φ) -
         subst (fun i => taylorDir u fun z => φ z i) (taylor f)) =
         ∑ i, (taylorDir u ((fun y => fderiv ℂ f y (Pi.single i 1)) ∘ φ) -
           subst (fun i => taylorDir u fun z => φ z i) (taylor fun y => fderiv ℂ f y (Pi.single i 1))) *
-            pderiv ℂ j (taylorDir u fun z => φ z i) := by
+            pderiv (R := ℂ) j (taylorDir u fun z => φ z i) := by
       rw [map_sub, FormalCalc.pderiv_subst hs, ← taylorDir_fderiv u hfφ j, taylorDir_congr u hev,
         hsum, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
@@ -98,27 +103,6 @@ end Points
 section Curried
 
 variable {m n d d' : ℕ}
-
-noncomputable def taylorPts (n : ℕ) (F : (Fin n → Fin d → ℂ) → ℂ) : PS ℂ n d :=
-  taylor fun z : Fin n × Fin d → ℂ => F fun j i => z (j, i)
-
-noncomputable def curryPts (n d : ℕ) : (Fin n × Fin d → ℂ) →L[ℂ] (Fin n → Fin d → ℂ) :=
-  ContinuousLinearMap.pi fun j => ContinuousLinearMap.pi fun i => ContinuousLinearMap.proj (j, i)
-
-@[simp] theorem curryPts_apply (z : Fin n × Fin d → ℂ) (j : Fin n) (i : Fin d) :
-    curryPts n d z j i = z (j, i) := rfl
-
-@[simp] theorem constantCoeff_taylorPts (F : (Fin n → Fin d → ℂ) → ℂ) :
-    constantCoeff (taylorPts n F) = F 0 := by
-  unfold taylorPts
-  rw [constantCoeff_taylor]
-  rfl
-
-@[simp] theorem taylorPts_coord (j : Fin n) (i : Fin d) :
-    taylorPts n (fun z : Fin n → Fin d → ℂ => z j i) = X (j, i) := taylor_coord (j, i)
-
-@[simp] theorem taylorPts_const (c : ℂ) :
-    taylorPts n (fun _ : Fin n → Fin d → ℂ => c) = C c := taylor_const c
 
 section Algebra
 

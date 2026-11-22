@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -14,8 +18,8 @@ def tpow (t : Fin d → Rˣ) (m : Fin d → ℤ) : R := ((∏ k, t k ^ m k : Rˣ
 def expS (S : Finset (Fin (d + 1))) : Set (Fin d → ℤ) :=
   {m | (∀ k : Fin d, k.succ ∉ S → 0 ≤ m k) ∧ ((0 : Fin (d + 1)) ∉ S → ∑ k, m k ≤ 0)}
 
-variable (K) in
 
+variable (K) in
 def torusS (t : Fin d → Rˣ) (S : Finset (Fin (d + 1))) : Subalgebra K R := Algebra.adjoin K (tpow t '' expS S)
 
 def jacS (B : Subalgebra K R) (D : Fin d → Derivation K R R) {m : ℕ} (κ : Fin m → Fin d) : AddSubgroup R :=

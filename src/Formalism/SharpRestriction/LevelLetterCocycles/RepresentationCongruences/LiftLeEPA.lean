@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FinalStep0
-import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FinalStep0
+public import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
+
+@[expose] public section
 
 noncomputable section
 

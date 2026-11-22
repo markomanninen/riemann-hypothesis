@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.GlobalZeta
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasureQuotient
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.GlobalZeta
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureQuotient
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter MeasureTheory
 open scoped NumberField.AdeleRing ENNReal NNReal

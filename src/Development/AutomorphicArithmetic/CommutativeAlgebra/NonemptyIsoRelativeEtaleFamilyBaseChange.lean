@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CompLeft
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CompLeft
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex CochainComplex.HomComplex
 open LateralTheory.E.EtaleTopologySheaves LateralTheory.E.LeafGhostCut UpperTheory.Et.Loc
 
@@ -43,7 +48,7 @@ private def baseI {B : Scheme.{0}} (U : B.Etale) : U.left ≅ pullback (𝟙 B) 
     apply pullback.hom_ext
     · have h := pullback.condition (f := 𝟙 B) (g := U.hom)
       simp only [Category.comp_id] at h
-      rw [Category.assoc, pullback.lift_fst, Category.id_comp, h]
+      simpa using h.symm
     · simp [pullback.lift_snd]
 
 theorem UpperTheory.nonempty_iso_relativeEtaleFamily_baseChange :

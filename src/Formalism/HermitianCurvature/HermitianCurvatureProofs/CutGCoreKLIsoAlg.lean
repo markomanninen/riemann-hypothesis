@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLineCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLineCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -297,8 +301,6 @@ theorem lie_algebra_isomorphism_holds : KLIsoAlg := by
       simp [hp2, hF, Ep]
     simp only [LinearMap.comp_apply, hA, LinearEquiv.coe_coe, hs, Submodule.subtype_apply, LinearMap.fst_apply,
       hF, Ep, LinearMap.prodMap_apply, hw]
-
-example : Formalism.FourierDecayAlt.P.CutMP.Gauge.GC.KLIsoAlg := lie_algebra_isomorphism_holds
 
 end
 

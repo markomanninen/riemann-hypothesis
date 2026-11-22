@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.FlagGramNonneg
+module
+
+public import Formalism.PeriodIntegrals.FlagGramNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,13 +37,13 @@ theorem det_succ_schur {E : Type} [Field E] {r : ℕ} (Z : Matrix (Fin (r + 1)) 
 theorem leadMinorE_succ {E : Type} [Field E] {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) :
     leadMinorE Z (r + 1) = Z.det := by
   unfold leadMinorE
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   rfl
 
 theorem leadMinorE_self {E : Type} [Field E] {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) :
     leadMinorE Z r = (Z.submatrix Fin.castSucc Fin.castSucc).det := by
   unfold leadMinorE
-  rw [dif_pos (Nat.le_succ r)]
+  rw [dite_eq_left (Nat.le_succ r)]
   rfl
 
 end PI.UnitaryGroupMassFormula.FlagGramNonneg

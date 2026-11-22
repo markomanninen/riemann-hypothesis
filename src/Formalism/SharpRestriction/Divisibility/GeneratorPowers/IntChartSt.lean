@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host GlobalTheory.HeckeGal
 
 namespace GlobalTheory.HeckeGal
 
-open NumberField IsDedekindDomain in
 
+open NumberField IsDedekindDomain in
 theorem _root_.GlobalTheory.HeckeGal.norm_lt_one_of_contEmb {E : Type} [Field E] [NumberField E]
     {l : ℕ} [Fact l.Prime]
     (v : HeightOneSpectrum (𝓞 E)) (j : v.adicCompletion E →+* _root_.Formalism.ConjugateSelfDual.Qbar l) (hj : Continuous j)
@@ -29,8 +34,8 @@ theorem _root_.GlobalTheory.HeckeGal.norm_lt_one_of_contEmb {E : Type} [Field E]
   rw [norm_pow] at hn
   exact absurd hn (not_lt.mpr (one_le_pow₀ hge))
 
-open NumberField IsDedekindDomain in
 
+open NumberField IsDedekindDomain in
 theorem _root_.GlobalTheory.HeckeGal.place_eq_of_contEmb_comp_eq :
     ∀ (E : Type) [Field E] [NumberField E] (l : ℕ) [Fact l.Prime] (v v' : HeightOneSpectrum (𝓞 E))
       (j : v.adicCompletion E →+* _root_.Formalism.ConjugateSelfDual.Qbar l) (j' : v'.adicCompletion E →+* _root_.Formalism.ConjugateSelfDual.Qbar l),
@@ -50,7 +55,7 @@ theorem _root_.GlobalTheory.HeckeGal.place_eq_of_contEmb_comp_eq :
   rw [← hb'] at hnb
   have hsum : j (algebraMap E (v.adicCompletion E) (algebraMap (𝓞 E) E a)) +
       j (algebraMap E (v.adicCompletion E) (algebraMap (𝓞 E) E b)) = 1 := by
-    rw [← map_add, ← map_add, ← map_add, hab, map_one, map_one, map_one]
+    rw [← map_add (f := _), ← map_add (f := _), ← map_add (f := _), hab, map_one, map_one, map_one]
   have hle := IsUltrametricDist.norm_add_le_max
     (j (algebraMap E (v.adicCompletion E) (algebraMap (𝓞 E) E a)))
     (j (algebraMap E (v.adicCompletion E) (algebraMap (𝓞 E) E b)))

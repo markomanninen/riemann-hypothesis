@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.MajorantInvolutionDiagonalForm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.MajorantInvolutionDiagonalForm
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -67,7 +71,7 @@ end Numbers
 section Spaces
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type u} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 def MajorantExists.Statement (h : HermitianForm F E W) (v : Basis ι E W) : Prop :=
@@ -105,18 +109,6 @@ open GaussianPlane
 abbrev C2 : Type := Multiplicative (ZMod 2)
 
 instance : MeasurableSpace C2 := ⊤
-
-instance : MeasurableMul C2 := ⟨fun _ => measurable_from_top, fun _ => measurable_from_top⟩
-
-instance : (Measure.count : Measure C2).IsMulLeftInvariant :=
-  ⟨fun g => by
-    ext s hs
-    rw [Measure.map_apply (measurable_from_top) hs]
-    have he : (fun x : C2 => g * x) ⁻¹' s = (fun x => g⁻¹ * x) '' s := by
-      ext x
-      simp
-    rw [he, Measure.count_apply MeasurableSpace.measurableSet_top, Measure.count_apply hs]
-    exact congrArg _ ((mul_right_injective (g⁻¹ : C2)).injOn.encard_image)⟩
 
 end Inhabitants
 

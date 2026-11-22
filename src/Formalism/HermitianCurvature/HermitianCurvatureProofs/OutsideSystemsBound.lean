@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementJ
+module
+
+public import Formalism.HermitianCurvature.StatementJ
+
+@[expose] public section
 
 open Finset NumberField Formalism.FourierDecayAlt Formalism.FourierDecayAlt.J
 open scoped ComplexOrder ComplexConjugate Matrix
@@ -98,8 +102,10 @@ theorem quadM (F : Finset α) (k : α → α → ℂ) (a : α → ℂ) :
 
 theorem conj_quad (F : Finset α) (k : α → α → ℂ) (hh : ∀ x ∈ F, ∀ y ∈ F, k y x = conj (k x y)) (a : α → ℂ) :
     conj (∑ x ∈ F, ∑ y ∈ F, conj (a x) * k x y * a y) = ∑ x ∈ F, ∑ y ∈ F, conj (a x) * k x y * a y := by
-  rw [map_sum, Finset.sum_comm]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   rw [Finset.sum_comm]
   conv_rhs => rw [Finset.sum_comm]
   apply Finset.sum_congr rfl; intro x hx
@@ -479,13 +485,9 @@ theorem scaling_bound : Formalism.FourierDecayAlt.J.ScaleOk := Jx8.t_ScaleOk Jx8
 
 theorem phaseOk_statement : Formalism.FourierDecayAlt.J.PhaseOk := Jx8.t_PhaseOk
 
-theorem outside_bound : Formalism.FourierDecayAlt.J.OutsideOk := Jx8.t_OutsideOk
-
 theorem outside_systems_bound : Formalism.FourierDecayAlt.J.OutsideSysOk := Jx8.t_OutsideSysOk
 
 theorem outside_domination : Formalism.FourierDecayAlt.J.OutsideDomination := Jx8.t_OutsideDomination
-
-theorem uniformMajorant_statement : Formalism.FourierDecayAlt.J.UniformMajorant := Jx8.t_UniformMajorant
 
 theorem uniform_majorant_on : Formalism.FourierDecayAlt.J.UniformMajorantOn := Jx8.t_UniformMajorantOn
 

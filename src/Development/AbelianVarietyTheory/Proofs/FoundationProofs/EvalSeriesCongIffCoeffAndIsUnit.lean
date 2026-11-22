@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGaloisInvariantValuationIntegersEqIntegral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ResidueLinearDisjointnessCoeffLtOneStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegralBasisOfIntegralAlgebraicElementsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamifiedDivisibilityOfUnramifiedDivisibilityStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGaloisInvariantValuationIntegersEqIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ResidueLinearDisjointnessCoeffLtOneStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegralBasisOfIntegralAlgebraicElementsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamifiedDivisibilityOfUnramifiedDivisibilityStatement
+
+@[expose] public section
+
 open scoped MatrixGroups NNReal
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois
 
@@ -34,7 +39,7 @@ theorem psi_C {T : GlobalTheory.K5.Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω} (h
     simp [this, HahnSeries.C_apply, HahnSeries.coeff_single]
 
 theorem psi_int {T : GlobalTheory.K5.Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω} (h : IsReb T n ψ) (y : O0 p) :
-    IsInt p (ψ y) := by
+    IsInt (p := p) (ψ y) := by
   have hq : IsIntegral (O0 p) (T.qq n) := by
     refine IsIntegral.of_pow (pow_pos (Fact.out : p.Prime).pos n) ?_
     rw [GlobalTheory.K5.Basic.qq_pow]; exact isIntegral_algebraMap
@@ -55,8 +60,8 @@ section Val
 
 variable (v : Valuation Ω ℝ≥0)
 
-theorem cong_iff (hv : ∀ x, v x ≤ 1 ↔ IsInt p x) (hp0 : 0 < v (p : Ω)) (k : ℕ) (y : Ω) :
-    Cong p k y 0 ↔ v y ≤ v (p : Ω) ^ k := by
+theorem cong_iff (hv : ∀ x, v x ≤ 1 ↔ IsInt (p := p) x) (hp0 : 0 < v (p : Ω)) (k : ℕ) (y : Ω) :
+    Cong (p := p) k y 0 ↔ v y ≤ v (p : Ω) ^ k := by
   have hpk : (p : Ω) ^ k ≠ 0 := by
     intro h
     have := congrArg v h
@@ -120,11 +125,34 @@ end GlobalTheory.Glue.EvInj
 
 end
 
-open GlobalTheory.Glue.EvInj in
 
-theorem GlobalTheory.Glue.ev_cong_iff_and_unit : ∀ (p : ℕ) [Fact p.Prime], ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω → ∀ (T : GlobalTheory.K5.Tower p Ω) (n : ℕ), ∀ (ψ : O0 p →+* Ω), IsReb T n ψ → ∀ (k : ℕ) (c : ℤ → Ω) (x x' : Ω), Ev ψ c x x' → ((Cong p k x 0 ↔ ∀ r, Cong p k (c r) 0) ∧ ((∃ r, c r ≠ 0 ∧ IsInt p (c r)⁻¹) → x ≠ 0 ∧ IsInt p x⁻¹)) := by
+open GlobalTheory.Glue.EvInj in
+theorem GlobalTheory.Glue.ev_cong_iff_and_unit :
+    ∀ (p : ℕ) [Fact p.Prime], ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω],
+      IsClo p Ω → ∀ (T : GlobalTheory.K5.Tower p Ω) (n : ℕ) (ψ : O0 p →+* Ω),
+      IsReb T n ψ → ∀ (k : ℕ) (c : ℤ → Ω) (x x' : Ω), Ev ψ c x x' →
+        (Cong (p := p) k x 0 ↔ ∀ r, Cong (p := p) k (c r) 0) ∧
+          ((∃ r, c r ≠ 0 ∧ IsInt (p := p) (c r)⁻¹) → x ≠ 0 ∧ IsInt (p := p) x⁻¹) := by
   intro p _ Ω _ _ hC T n ψ hψ k c x x' hEv
-  obtain ⟨v, hv, -, hp0, hp1⟩ := GlobalTheory.K5.exists_valuation_isInt p Ω hC
+  have hval : ∃ v : Valuation Ω ℝ≥0, (∀ y, v y ≤ 1 ↔ IsInt (p := p) y) ∧
+      0 < v (p : Ω) ∧ v (p : Ω) < 1 := by
+    obtain ⟨_, _, hirr⟩ := GlobalTheory.T.completed_laurent_isDVR_statement p
+    have : IsAdicComplete (IsLocalRing.maximalIdeal (O0 p)) (O0 p) := by
+      rw [hirr.maximalIdeal_eq]
+      exact GlobalTheory.T.unramified_integers_adic_complete p
+    have := hC.alg
+    obtain ⟨v, hv⟩ :=
+      GlobalTheory.T.exists_valuation_le_one_iff_isIntegral_of_complete_dvr (O0 p) Ω hC.inj
+    have : CharZero Ω := GlobalTheory.K5.Basic.charZero_of_isClo hC
+    have hp : (p : Ω) ≠ 0 := by exact_mod_cast (Fact.out : p.Prime).ne_zero
+    refine ⟨v, hv, (Valuation.pos_iff v).2 hp, ?_⟩
+    have hle : v (p : Ω) ≤ 1 := (hv _).2 (by
+      simpa [IsInt] using GlobalTheory.K5.Basic.isInt_intCast (p := p) (Ω := Ω) (p : ℤ))
+    refine lt_of_le_of_ne hle fun heq => ?_
+    have hinv : v ((p : Ω)⁻¹) ≤ 1 := by rw [map_inv₀, heq, inv_one]
+    exact GlobalTheory.K5.Basic.not_cong_one_zero hC 1 one_ne_zero
+      ⟨(p : Ω)⁻¹, (hv _).1 hinv, by rw [sub_zero, pow_one, mul_inv_cancel₀ hp]⟩
+  obtain ⟨v, hv, hp0, hp1⟩ := hval
   obtain ⟨d, e, a, he, hc, hx, -⟩ := hEv
   have hψv : ∀ y, v (ψ y) ≤ 1 := fun y => (hv _).2 (psi_int hψ y)
   have hzp : ∀ z : ℤ_[p], v (zp Ω z) ≤ 1 := fun z => (hv _).2 (by rw [zp]; exact isIntegral_algebraMap)
@@ -158,14 +186,16 @@ theorem GlobalTheory.Glue.ev_cong_iff_and_unit : ∀ (p : ℕ) [Fact p.Prime], �
     obtain ⟨B, hB⟩ : ∃ B : Fin F → Fin E → Lau p, ∀ j s, B j s = ∑ t, HahnSeries.C (lam t j s) * a t :=
       ⟨_, fun _ _ => rfl⟩
     have hx2 : x = S ψ π κ B := by
-      simp only [S, hB, map_sum, map_mul, psi_C hψ, hx, hesp, Finset.sum_mul, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [S, hB, map_sum, map_mul, psi_C hψ, hx, hesp, Finset.sum_mul, Finset.mul_sum]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun t _ => by ring
     have hc2 : ∀ r, c r = S ψ π κ (fun j s => HahnSeries.C ((B j s).coeff r)) := by
       intro r
-      simp only [S, psi_C hψ, hB, HahnSeries.coeff_sum, HahnSeries.C_mul_eq_smul, HahnSeries.coeff_smul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [S, psi_C hψ, hB, HahnSeries.coeff_sum, HahnSeries.C_mul_eq_smul, HahnSeries.coeff_smul,
         smul_eq_mul, zp_eq, map_sum, map_mul, hc, hesp, Finset.sum_mul, Finset.mul_sum]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun j _ => ?_

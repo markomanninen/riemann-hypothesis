@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.CasimirNonnegative
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+
+@[expose] public section
 
 open Matrix Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.TypeSum
 
@@ -14,7 +18,6 @@ private theorem exp_smul_diagonal_I_single_eq_diagonal_exp {n : ℕ} (a : Fin n)
   · simp [h, ← Complex.exp_eq_exp_ℂ, Complex.real_smul]
   · simp [h]
 
-open DerivativeRepresentation in
 theorem c3b : HighestWeightIntegral := by
   intro n ε H _ _ _ σ hU _ E hE v a x hv hx
   set Y : Matrix (Fin n) (Fin n) ℂ := Matrix.diagonal fun j => if j = a then Complex.I else 0 with hY
@@ -26,7 +29,7 @@ theorem c3b : HighestWeightIntegral := by
     funext j
     by_cases h : j = a
     · subst h
-      simp only [if_true, Pi.star_apply, Pi.add_apply, Pi.zero_apply]
+      simp only [ite_true, Pi.star_apply]
       split_ifs <;> simp
     · simp [h]
   have hact : ReciprocityTheory.ChartRestriction.DS.actM E Y = Complex.I • E a a := by
@@ -48,7 +51,7 @@ theorem c3b : HighestWeightIntegral := by
     funext j
     by_cases h : j = a
     · subst h
-      simp only [if_true, Pi.star_apply]
+      simp only [ite_true, Pi.star_apply]
       rw [Complex.star_def, ← Complex.exp_conj, map_mul, Complex.conj_ofReal, Complex.conj_I,
         mul_comm _ (if ε j = true then (1 : ℂ) else -1), mul_assoc, ← Complex.exp_add]
       simp
@@ -120,17 +123,16 @@ theorem c3b : HighestWeightIntegral := by
       simpa using this
     have := h1.smul (hderF t)
     convert this using 1
-    · rfl
-    · symm
-      rw [smul_smul, ← add_smul, show Complex.exp (-c * t) * c + Complex.exp (-c * t) * -c = 0 by ring,
-        zero_smul]
+    symm
+    rw [smul_smul, ← add_smul, show Complex.exp (-c * t) * c + Complex.exp (-c * t) * -c = 0 by ring,
+      zero_smul]
   have hGc := is_const_of_deriv_eq_zero (fun t => (hGd t).differentiableAt)
     (fun t => (hGd t).deriv) (2 * Real.pi) 0
   have hG0 : G 0 = (v : H) := by
-    simp only [hG, hFdef, hu0, hU.1.1, ContinuousLinearMap.one_apply, Complex.ofReal_zero, mul_zero,
+    simp only [hG, hFdef, hu0, hU.1.1, one_apply_eq_self, Complex.ofReal_zero, mul_zero,
       Complex.exp_zero, one_smul]
   have hG2 : G (2 * Real.pi) = Complex.exp (-c * ((2 * Real.pi : ℝ) : ℂ)) • (v : H) := by
-    simp only [hG, hFdef, hu2, hU.1.1, ContinuousLinearMap.one_apply]
+    simp only [hG, hFdef, hu2, hU.1.1, one_apply_eq_self]
   rw [hG2, hG0] at hGc
   have hexp1 : Complex.exp (-c * ((2 * Real.pi : ℝ) : ℂ)) = 1 := by
     have : (Complex.exp (-c * ((2 * Real.pi : ℝ) : ℂ)) - 1) • (v : H) = 0 := by

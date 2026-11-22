@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTranspOfMovesAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTransporterMovesFrameReadsInverse
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniqueUpToTargetGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolToOfOpenImmersion
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrameActionUpperTriangularBlockExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTranspOfMovesAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTransporterMovesFrameReadsInverse
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniqueUpToTargetGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolToOfOpenImmersion
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrameActionUpperTriangularBlockExists
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,7 +39,7 @@ theorem eventually_comp (hσ : GoodEmb c σ) (hU : IsUnf U) (ρ : Xo.X ⟶ Xo.X)
   have hB : IsOpen (L.symm ⁻¹' (U.X k).dom) := (FourierCoefficientDomain.isOpen_dom _).preimage L.symm.continuous
   let x : (Fin n → ℂ) → (U.X k).dom := fun b => if h : L.symm b ∈ (U.X k).dom then ⟨_, h⟩ else z₀
   have hxb : ∀ b ∈ L.symm ⁻¹' (U.X k).dom, (x b).1 = L.symm b := fun b hb => by
-    simp only [x]; rw [dif_pos (show L.symm b ∈ (U.X k).dom from hb)]
+    simp only [x]; rw [dite_eq_left (show L.symm b ∈ (U.X k).dom from hb)]
   have hxL : ∀ z : (U.X k).dom, x (L z.1) = z := fun z =>
     Subtype.ext ((hxb _ (by simp)).trans (L.symm_apply_apply _))
   have hd : ∀ τ a c, DifferentiableOn ℂ (fun b => mat (x b).1 τ a c) (L.symm ⁻¹' (U.X k).dom) := fun τ a c =>

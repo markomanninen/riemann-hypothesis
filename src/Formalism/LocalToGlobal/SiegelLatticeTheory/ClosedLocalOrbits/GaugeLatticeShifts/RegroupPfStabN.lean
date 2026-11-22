@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RegroupPfOrbitAlg
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RegroupPfOrbitAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,7 +135,8 @@ theorem incl_descent (I : Formalism.MainNotions.S.AutInst) [Nontrivial (Af I.F)]
     have hk := congrFun hsum k
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, ← hst] at hk ⊢
     have hk2 := congrArg g hk
-    simp only [Formalism.L2.SG.HidaSetting.incl, map_sum, hgm, hgc] at hk2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.L2.SG.HidaSetting.incl, map_sum, hgm, hgc] at hk2
     rw [← hk2]
     exact Finset.sum_congr rfl fun i _ => mul_comm _ _
   rw [e]
@@ -152,7 +157,8 @@ theorem crd_descent {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (v 
     apply crd_inj' X
     rw [← hc]
     change _ = Formalism.L2.SG.Pf.Vanish2.crdHom X (∑ a, X.ιE (c a) • X.eX a)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     show _ = X.crd (X.ιE (c a) • X.eX a)
     rw [Formalism.L2.SG.Pf.crd_smul X, RingEquiv.symm_apply_apply]

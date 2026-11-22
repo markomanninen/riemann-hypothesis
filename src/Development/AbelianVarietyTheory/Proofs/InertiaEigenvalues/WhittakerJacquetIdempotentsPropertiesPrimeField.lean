@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+
+@[expose] public section
 
 section
 open GlobalTheory.GLq Formalism.MainNotions.ArithmeticCylinders Polynomial
@@ -151,7 +155,7 @@ theorem card_uni {N : ℕ} (Q : Fin N × Fin N → Prop) (P : Mt g N → Prop)
     · intro hba
       have hab : a ≠ b := ne_of_gt hba
       simp only [mk, if_neg hab]
-      rw [dif_neg]
+      rw [dite_eq_right]
       intro h
       exact absurd (lt_trans h.1 hba) (lt_irrefl _)
     · intro hab
@@ -169,7 +173,7 @@ theorem card_uni {N : ℕ} (Q : Fin N × Fin N → Prop) (P : Mt g N → Prop)
     refine ⟨hmk_up f, fun p hp hq => ?_⟩
     have hne : p.1 ≠ p.2 := ne_of_lt hp
     simp only [mk, if_neg hne]
-    rw [dif_neg]
+    rw [dite_eq_right]
     exact fun h => h.2 hq
   let e : {u : Gn g N // P (u : Mt g N)} ≃ (S → ZMod g) :=
     { toFun := fun u p => (u.1 : Mt g N) p.1.1 p.1.2
@@ -187,8 +191,8 @@ theorem card_uni {N : ℕ} (Q : Fin N × Fin N → Prop) (P : Mt g N → Prop)
           exact ((hu.1 i i).2 rfl).symm
         · rw [if_neg hij]
           by_cases h : i < j ∧ ¬ Q (i, j)
-          · rw [dif_pos h]
-          · rw [dif_neg h]
+          · rw [dite_eq_left h]
+          · rw [dite_eq_right h]
             rcases lt_or_gt_of_ne hij with hlt | hgt
             · exact (hu.2 (i, j) hlt (not_not.mp fun hq => h ⟨hlt, hq⟩)).symm
             · exact ((hu.1 i j).1 hgt).symm
@@ -197,7 +201,7 @@ theorem card_uni {N : ℕ} (Q : Fin N × Fin N → Prop) (P : Mt g N → Prop)
         funext p
         show mk f p.1.1 p.1.2 = f p
         simp only [mk]
-        rw [if_neg (ne_of_lt p.2.1), dif_pos (show p.1.1 < p.1.2 ∧ ¬ Q (p.1.1, p.1.2) from p.2)] }
+        rw [if_neg (ne_of_lt p.2.1), dite_eq_left (show p.1.1 < p.1.2 ∧ ¬ Q (p.1.1, p.1.2) from p.2)] }
   have hL : (Finset.univ.filter fun u : Gn g N => P (u : Mt g N)).card =
       Fintype.card {u : Gn g N // P (u : Mt g N)} := (Fintype.card_subtype _).symm
   have hS : Fintype.card S = (Finset.univ.filter fun p : Fin N × Fin N => p.1 < p.2 ∧ ¬ Q p).card :=

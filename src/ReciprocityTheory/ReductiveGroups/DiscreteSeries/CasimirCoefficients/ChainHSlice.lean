@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiCapelliStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CapPhi
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ProdOfFnSmul
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasPsA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.GelfandPsB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiCapelliStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CapPhi
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ProdOfFnSmul
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasPsA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.GelfandPsB
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,12 +21,12 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 
+local notation "𝕄" => Matrix (Fin n) (Fin n) ℂ
+local notation "𝕋" => 𝕄 × 𝕄 × 𝕄
+
 namespace CapPs
 
 open ReciprocityTheory.ChartRestriction.DS.Lap.Capelli
-
-local notation "𝕄" => Matrix (Fin n) (Fin n) ℂ
-local notation "𝕋" => Matrix (Fin n) (Fin n) ℂ × Matrix (Fin n) (Fin n) ℂ × Matrix (Fin n) (Fin n) ℂ
 
 section Chains
 
@@ -197,7 +201,37 @@ theorem cap_psM (T : KType ε Λ) (μ : Fin n → ℤ) (lam : Fin n → ℝ) (h�
     rw [Ps1.toMK_inv_eq, ← Matrix.star_eq_conjTranspose]
     exact ⟨Unitary.star_mul_self_of_mem k.2.1, Unitary.mul_star_self_of_mem k.2.1⟩
   refine ⟨Ps1.Uset ε, Ps1.isOpen_Uset, Ps1.posSet_subset_Uset, fun z hz => ?_, fun Y z hz => ?_⟩
-  · exact (GPs.hasFDerivAt_Fint T (GPs.smooth_g0_on_Wset μ) hz).differentiableAt.differentiableWithinAt
+  · let f (x : 𝕄) (k : KG ε) := GPs.g0 μ (GPs.emb x k) • GPs.Pk T k
+    have hg := GPs.smooth_g0_on_Wset μ
+    have hop : Continuous (fun k : KG ε => T.op k) := continuous_subtype_val.comp T.cont
+    have hPk : Continuous (GPs.Pk T) := (hop.mul continuous_const).mul (hop.comp continuous_inv)
+    have hmem (q : 𝕄 × KG ε) (hq : q ∈ Ps1.Uset ε ×ˢ Set.univ) :
+        GPs.emb q.1 q.2 ∈ GPs.Wset n := GPs.emb_mem hq.1 q.2
+    have hf (k : KG ε) {x : 𝕄} (hx : x ∈ Ps1.Uset ε) :
+        HasFDerivAt (fun y => f y k)
+          (((fderiv ℂ (GPs.g0 μ) (GPs.emb x k)).comp (GPs.I0 n)).smulRight (GPs.Pk T k)) x :=
+      ((GPs.dAtW hg (GPs.emb_mem hx k)).hasFDerivAt.comp x
+        (GPs.hasFDerivAt_slice (toMK k, toMK k⁻¹) x)).smul_const (GPs.Pk T k)
+    have hdiff : DifferentiableAt ℂ (fun x => ∫ k, f x k ∂(muK ε)) z := by
+      refine (hasFDerivAt_integral_of_continuousOn_fderiv (𝕜 := ℂ) (F := f)
+        (Ps1.isOpen_Uset.mem_nhds hz) (k := Set.univ) (s := Set.univ) isCompact_univ
+        MeasurableSet.univ (isCompact_univ.measure_lt_top (μ := muK ε)).ne le_rfl
+        ?_ ?_ ?_).differentiableAt.congr_of_eventuallyEq ?_
+      · exact (hg.continuousOn.comp GPs.continuous_emb.continuousOn hmem).smul
+          (hPk.comp continuous_snd).continuousOn
+      · exact fun k _ x hx => (hf k hx).differentiableAt.differentiableWithinAt
+      · rw [continuousOn_clm_apply]
+        intro H
+        refine (((hg.continuousOn_fderiv_of_isOpen GPs.isOpen_kappaOpenNeighbourhood (by simp)).comp
+          GPs.continuous_emb.continuousOn hmem).clm_apply (continuousOn_const (c := (H, 0)))).smul
+          (hPk.comp continuous_snd).continuousOn |>.congr ?_
+        intro q hq
+        change fderiv ℂ (fun y => f y q.2) q.1 H =
+          fderiv ℂ (GPs.g0 μ) (GPs.emb q.1 q.2) (H, 0) • GPs.Pk T q.2
+        rw [(hf q.2 hq.1).fderiv, ContinuousLinearMap.smulRight_apply,
+          ContinuousLinearMap.comp_apply, GPs.zeroEmbedding_apply]
+      · exact Filter.Eventually.of_forall fun x => by rw [Measure.restrict_univ]
+    exact (hdiff.const_smul (GPs.cK T)).differentiableWithinAt
   set u : ℂ := Y + ((n : ℂ) - 1) / 2 with hu
   set C : ℂ := Formalism.QuantumDeterminants.capP (fun s => (lam s : ℂ)) Y with hC
   have hint : ∀ k : KG ε, ∑ σ : Equiv.Perm (Fin n), ((Equiv.Perm.sign σ : ℤ) : ℂ) •

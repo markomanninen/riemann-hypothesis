@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV
 
@@ -24,7 +28,8 @@ private theorem sndL_one (F : R →ₐ[O] DualNumber κ) : sndL F 1 = 0 := by
 private theorem map_sndL_mul {m : ℕ} (F : R →ₐ[O] DualNumber κ) (A B : Matrix (Fin m) (Fin m) R) :
     (A * B).map (sndL F) = A.map (sndL F) * B.map (dualFst F) + A.map (dualFst F) * B.map (sndL F) := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.add_apply, map_sum, sndL_mul, ← Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.add_apply, map_sum, sndL_mul, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun k _ => by ring
 
 private theorem map_sndL_one {m : ℕ} (F : R →ₐ[O] DualNumber κ) :
@@ -71,10 +76,10 @@ private theorem lder_theta {m : ℕ} (F : R →ₐ[O] DualNumber κ) (b : GL (Fi
     Matrix.mul_assoc]
   rw [← Matrix.mul_assoc (Jmat κ m) (Jmat κ m), Jmat_mul_Jmat, Matrix.one_mul]
 
-private theorem tanCoc_eq (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG 3 R) (g : Γ) :
+private theorem tanCoc_eq (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG (m := 3) (R := R)) (g : Γ) :
     tanCoc F r g = lder F (r g).left := rfl
 
-private theorem tan_isCoc (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG 3 R) :
+private theorem tan_isCoc (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG (m := 3) (R := R)) :
     IsCoc (push (dualFst F) r) (tanCoc F r) := by
   intro g h
   have hne : ((-1 : ℤˣ) = 1) = False := by decide
@@ -87,18 +92,18 @@ private theorem tan_isCoc (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG 3 R) :
   · rw [hs, sgnAct_neg_one, lder_theta]
     simp only [hne, if_false]
 
-private theorem tan_mul (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG 3 R) (g : Γ) :
+private theorem tan_mul (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG (m := 3) (R := R)) (g : Γ) :
     tanCoc F r g * (push (dualFst F) r g).mat = (r g).mat.map (sndL F) := by
   show lder F (r g).left * (r g).left.val.map (dualFst F) = _
   rw [lder, Matrix.mul_assoc, fst_inv_mul, Matrix.mul_one]
   rfl
 
-private theorem tan_zero (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG 3 R) (g : Γ) (h : (r g).mat = 1) :
+private theorem tan_zero (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG (m := 3) (R := R)) (g : Γ) (h : (r g).mat = 1) :
     tanCoc F r g = 0 := by
   show (r g).mat.map (sndL F) * _ = _
   rw [h, map_sndL_one, Matrix.zero_mul]
 
-private theorem tan_norm (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG 3 R) (c g₁ : Γ) (h : Normalised c g₁ r) :
+private theorem tan_norm (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG (m := 3) (R := R)) (c g₁ : Γ) (h : Normalised c g₁ r) :
     NormCoc c g₁ (push (dualFst F) r) (tanCoc F r) := by
   have hz : ∀ a b, zvar c g₁ (push (dualFst F) r) (tanCoc F r) a b = sndL F (zmat c g₁ r a b) := fun a b => by
     rw [zvar, tan_mul, tan_mul, zmat]
@@ -127,7 +132,7 @@ private theorem fin_gen {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [
     obtain ⟨u, hu, v, hv, rfl⟩ := Submodule.mem_sup.1 (hn hy)
     obtain ⟨w, rfl⟩ := Ideal.mem_span_singleton'.1 hu
     show Submodule.Quotient.mk (Ideal.Quotient.mk _ _) = 0
-    rw [Submodule.Quotient.mk_eq_zero, map_add, Ideal.Quotient.eq_zero_iff_mem.2 hv, add_zero]
+    rw [Submodule.Quotient.mk_eq_zero, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 hv, add_zero]
     have e : Ideal.Quotient.mk J (w * algebraMap O R a) = a • Ideal.Quotient.mk J w := by
       rw [Algebra.smul_def, map_mul, mul_comm]
       rfl
@@ -203,7 +208,8 @@ private theorem pow_le {f : R →ₐ[c.O] PadicAlgCl l} (hf : IsLocPt f) :
     exact (Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero) h1
   have hm : ((⊥ : Ideal (R ⧸ q)).comap (algebraMap c.O (R ⧸ q))).IsMaximal :=
     Ideal.IsPrime.isMaximal inferInstance hne
-  have hb : (⊥ : Ideal (R ⧸ q)).IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap _ hm
+  have hb : (⊥ : Ideal (R ⧸ q)).IsMaximal :=
+    Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := c.O) ⊥ hm
   have hq' : q.IsMaximal := by
     have := Ideal.comap_isMaximal_of_surjective (Ideal.Quotient.mk q) Ideal.Quotient.mk_surjective (K := ⊥)
     rwa [← RingHom.ker_eq_comap_bot, Ideal.mk_ker] at this
@@ -231,7 +237,7 @@ private theorem exists_max {f : R →ₐ[c.O] PadicAlgCl l} (hf : IsLocPt f) (D 
     | mem x hx => exact hz x (Finset.mem_insert_of_mem hx)
     | zero => rw [map_zero, norm_zero]; exact norm_nonneg _
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
     | smul a x _ hx =>
       rw [map_smul]
@@ -257,7 +263,7 @@ private theorem small {f : R →ₐ[c.O] PadicAlgCl l} (hf : IsLocPt f) (D : R �
   obtain ⟨w, rfl⟩ := Ideal.mem_span_singleton'.1 hu
   have e : w * (l : R) ^ k = ((l : c.O) ^ k) • w := by
     rw [Algebra.smul_def, map_pow, map_natCast, mul_comm]
-  rw [map_add, hD v hv, add_zero, e, map_smul, Algebra.smul_def, map_pow, map_natCast, norm_mul, norm_pow]
+  rw [map_add (f := _), hD v hv, add_zero, e, map_smul, Algebra.smul_def, map_pow, map_natCast, norm_mul, norm_pow]
   rw [lt_div_iff₀ hpos] at hk
   exact lt_of_le_of_lt (mul_le_mul_of_nonneg_left ((h₀ w).trans (by linarith)) (by positivity)) hk
 
@@ -310,7 +316,7 @@ private theorem span_top {O Γ : Type} [CommRing O] [IsLocalRing O] [Group Γ] [
     have e : x * y = (x - algebraMap O U.R a) * (y - algebraMap O U.R b) + a • y + b • x -
         algebraMap O U.R (a * b) := by
       rw [Algebra.smul_def, Algebra.smul_def, map_mul]; ring
-    rw [e, map_sub, map_add, map_add, hδ _ (h2 _ ha _ hb), hδ _ (hO _), map_smul, map_smul, ra, rb,
+    rw [e, map_sub, map_add (f := _), map_add (f := _), hδ _ (h2 _ ha _ hb), hδ _ (hO _), map_smul, map_smul, ra, rb,
       Algebra.smul_def, Algebra.smul_def]
     ring
   haveI := (co_res O).2
@@ -345,9 +351,9 @@ private theorem der_sq {f : R →ₐ[c.O] PadicAlgCl l} (D : R →ₗ[c.O] Padic
   rw [pow_two] at hy
   refine Submodule.mul_induction_on hy (fun a ha b hb => ?_) (fun a b ha hb => ?_)
   · rw [hD, (RingHom.mem_ker).1 ha, (RingHom.mem_ker).1 hb, zero_mul, zero_mul, add_zero]
-  · rw [map_add, ha, hb, add_zero]
+  · rw [map_add (f := _), ha, hb, add_zero]
 
-private theorem tan_cont {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsCO c.O R] (r : Γ →* GG 3 R)
+private theorem tan_cont {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsCO c.O R] (r : Γ →* GG (m := 3) (R := R))
     (hr : ∀ a b, AdicCont (maximalIdeal R) fun g => (r g).mat a b) (F : R →ₐ[c.O] DualNumber (PadicAlgCl l))
     (hf : IsLocPt (dualFst F)) : Continuous (tanCoc F r) := by
   have h1 : Continuous fun g => (r g).mat.map (sndL F) :=
@@ -377,7 +383,7 @@ private theorem der_zero {Γ : Type} [Group Γ] [TopologicalSpace Γ] {η : Γ �
     { carrier := {x | ‖D x‖ < ‖D y₀‖}
       add_mem' := fun {a b} ha hb => by
         show ‖D (a + b)‖ < _
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha hb)
       zero_mem' := by
         show ‖D 0‖ < _

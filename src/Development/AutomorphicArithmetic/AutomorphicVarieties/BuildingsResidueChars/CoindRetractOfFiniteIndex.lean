@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+
+@[expose] public section
 
 open CategoryTheory
 
@@ -29,7 +33,8 @@ private theorem tr_apply {G : Type} [Group G] (S : Subgroup G) [Fintype (G ⧸ S
 private theorem tr_equiv {G : Type} [Group G] (S : Subgroup G) [Fintype (G ⧸ S)] (A : Rep.{0} ℂ G) (h : G)
     (F : Representation.coindV S.subtype (Rep.res S.subtype A).ρ) :
     tr S A (Representation.coind S.subtype (Rep.res S.subtype A).ρ h F) = A.ρ h (tr S A F) := by
-  rw [tr_apply, tr_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [tr_apply, tr_apply, map_sum]
   refine Fintype.sum_equiv (MulAction.toPerm h⁻¹ : Equiv.Perm (G ⧸ S)) _ _ ?_
   intro q
   have hq : ((h⁻¹ * q.out : G) : G ⧸ S) = (((MulAction.toPerm h⁻¹ : Equiv.Perm (G ⧸ S)) q).out : G) := by

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoCut
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Filter Topology
 
@@ -56,8 +60,10 @@ theorem unitB_contDiff {m : ℕ} (a b : Fin m) :
   unfold unitB
   refine contDiff_pi.2 fun p => contDiff_pi.2 fun q => ?_
   simp only [Matrix.of_apply, herm, dotProduct, Pi.star_apply]
-  refine ContDiff.mul (contDiff_apply_apply ℝ ℂ a p) (ContDiff.sum fun i _ => ?_)
-  exact (Complex.conjCLE.contDiff.comp (contDiff_apply_apply ℝ ℂ b i)).mul contDiff_const
+  refine ContDiff.mul (contDiff_apply_apply ℝ a p)
+    (ContDiff.sum fun i _ => ?_)
+  exact (Complex.conjCLE.contDiff.comp
+    (contDiff_apply_apply ℝ b i)).mul contDiff_const
 
 end CapSm
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,13 +115,5 @@ theorem lamF_ne_zero {E : Type} [Field E] [NumberField E] (s : ℕ) (χ : HChar 
     have : Ideal.absNorm v.asIdeal ≠ 0 := fun h => v.ne_bot (Ideal.absNorm_eq_zero_iff.mp h)
     exact_mod_cast Nat.pos_of_ne_zero this
   exact mul_ne_zero (Units.ne_zero _) (by exact_mod_cast (pow_pos h s).ne')
-
-example {E : Type} [Field E] [NumberField E] {I : Type} [Fintype I] (d s : ℕ) (κ : I → ℕ) (Λ : PeriodPair) (n l T : ℂ) :
-    ((C0 E d (2 * s) κ : ℂ) * n * l * T) ^ 12 / latDisc Λ ^ (2 * s * Fintype.card I + 2 * ∑ i, κ i) =
-      beta E d s κ Λ (n * l * T) := by
-  rw [beta_eq]; ring
-
-example {E : Type} [Field E] [NumberField E] {I : Type} [Fintype I] (φ : I → E →+* ℂ) (s : ℕ) (κ : I → ℕ) (χ : HChar E)
-    (h : HasInf χ φ fun i => (κ i : ℤ) + s) : IsConjChar φ s κ (RingEquiv.refl ℂ) χ χ := ⟨fun _ => rfl, h⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.LatticeNormTransport

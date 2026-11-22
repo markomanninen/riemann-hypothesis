@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifVec
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifVec
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MemPadicAlgClValuationSubringIffNormLeOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MemPadicAlgClValuationSubringIffNormLeOne
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
+
 local notation "OO" p:max => (Valuation.valuationSubring (Valued.v : Valuation (PadicAlgCl p) NNReal))
 local notation "cPt" p:max => (IsLocalRing.closedPoint (OO p) : Sp (OO p))
 local notation "gPt" p:max => spMap (ValuationSubring.subtype (OO p))
@@ -18,7 +23,7 @@ theorem exists_ringHom_extend_of_isIntegral_of_injective {R B Ω : Type*} [CommR
   haveI := RingHom.ker_isPrime φ
   obtain ⟨Q, -, hQ, hQP⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := B)
     (RingHom.ker φ) ⊥ (by
-      rw [Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective R B)]
+      rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective R B))]
       exact bot_le)
   haveI : Q.LiesOver (RingHom.ker φ) := ⟨hQP.symm⟩
   letI : Algebra (R ⧸ RingHom.ker φ) Ω := (RingHom.kerLift φ).toAlgebra
@@ -29,7 +34,11 @@ theorem exists_ringHom_extend_of_isIntegral_of_injective {R B Ω : Type*} [CommR
   haveI : Algebra.IsIntegral (R ⧸ RingHom.ker φ) (B ⧸ Q) :=
     Algebra.IsIntegral.tower_top (R := R)
   haveI : Algebra.IsAlgebraic (R ⧸ RingHom.ker φ) (B ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let σ : (B ⧸ Q) →ₐ[R ⧸ RingHom.ker φ] Ω := IsAlgClosed.lift
+  let σ : (B ⧸ Q) →ₐ[R ⧸ RingHom.ker φ] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨σ.toRingHom.comp (Ideal.Quotient.mk Q), RingHom.ext fun r => ?_⟩
   exact (σ.commutes (Ideal.Quotient.mk _ r)).trans (RingHom.kerLift_mk φ r)
 
@@ -51,7 +60,7 @@ theorem bijective_algebraMap_of_subsingleton_algHom {R A : Type*} [CommRing R] [
       ∃ σ : A →ₐ[R] L, RingHom.ker σ = Q := by
     intro Q hQ hQ0
     have hinj : Function.Injective (algebraMap R (A ⧸ Q)) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro r hr
       have : r ∈ Q.comap (algebraMap R A) := by
         rw [Ideal.mem_comap, ← Ideal.Quotient.eq_zero_iff_mem]
@@ -59,9 +68,13 @@ theorem bijective_algebraMap_of_subsingleton_algHom {R A : Type*} [CommRing R] [
       rwa [hQ0, Ideal.mem_bot] at this
     haveI : FaithfulSMul R (A ⧸ Q) := (faithfulSMul_iff_algebraMap_injective _ _).mpr hinj
     haveI : Module.IsTorsionFree R (A ⧸ Q) := FaithfulSMul.to_isTorsionFree R _
-    let σ₀ : (A ⧸ Q) →ₐ[R] L := IsAlgClosed.lift
+    let σ₀ : (A ⧸ Q) →ₐ[R] L := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     have h₀ : Function.Injective σ₀ := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro a ha
       by_contra h
       obtain ⟨r, hr, c, hc⟩ := (Algebra.IsIntegral.isIntegral (R := R) a).isAlgebraic.exists_nonzero_dvd
@@ -77,7 +90,7 @@ theorem bijective_algebraMap_of_subsingleton_algHom {R A : Type*} [CommRing R] [
   obtain ⟨Q₀, hQ₀, -, hQ₀0⟩ := hgen M hM.isPrime
   obtain ⟨σ, -⟩ := hex Q₀ hQ₀ hQ₀0
   have hσ : Function.Injective σ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     apply IsNilpotent.eq_zero
     rw [← mem_nilradical, nilradical_eq_sInf, Submodule.mem_sInf]
@@ -95,7 +108,7 @@ theorem bijective_algebraMap_of_subsingleton_algHom {R A : Type*} [CommRing R] [
     obtain ⟨k, hk⟩ := (InfiniteGalois.mem_range_algebraMap_iff_fixed (k := K) (σ a)).2 fun g =>
       DFunLike.congr_fun (huniq ((g.toAlgHom.restrictScalars R).comp σ) σ) a
     have hint : IsIntegral R k := by
-      rw [← isIntegral_algebraMap_iff (algebraMap K L).injective, hk]
+      rw [← isIntegral_algebraMap_iff (B := L), hk]
       exact (Algebra.IsIntegral.isIntegral (R := R) a).map σ
     obtain ⟨r, hr⟩ := IsIntegrallyClosed.isIntegral_iff.mp hint
     refine ⟨r, hσ ?_⟩
@@ -136,8 +149,8 @@ theorem exists_ne_zero_forall_exists_two_lifts {R A : Type*} [CommRing R] [IsDom
     exact (congrArg χ ((c ρ).commutes s)).trans (hχ' s)
   refine ⟨_, _, hcomp σ, hcomp τ, fun h => hφ (Subtype.ext ?_)⟩
   have h₂ : χ (c σ a) = χ (c τ a) := congr((($h) a).1)
-  rw [← hχ', hd, map_mul, map_sub, h₂, sub_self, zero_mul]
-  rfl
+  change (φ r : Ω) = 0
+  rw [← hχ', hd, χ.map_mul, χ.map_sub, h₂, sub_self, zero_mul]
 
 theorem exists_mem_genericPoints_specializes {T : Type*} [TopologicalSpace T] [QuasiSober T]
     (w : T) : ∃ w₀ ∈ genericPoints T, w₀ ⤳ w :=

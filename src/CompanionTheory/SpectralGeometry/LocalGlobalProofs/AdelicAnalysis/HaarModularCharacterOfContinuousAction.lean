@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
 
 open MeasureTheory Topology Matrix
 open scoped ENNReal NNReal
 
 namespace GlobalTheory.CompanionTheory.SW
 
-open scoped Pointwise in
 
+open scoped Pointwise in
 theorem exists_continuous_modulus_of_continuous_action :
     ∀ (V : Type) [AddCommGroup V] [TopologicalSpace V] [LocallyCompactSpace V]
       [SecondCountableTopology V] [T2Space V] [MeasurableSpace V] [BorelSpace V]
@@ -16,6 +20,7 @@ theorem exists_continuous_modulus_of_continuous_action :
       [TopologicalSpace Q] [IsTopologicalGroup Q] [DistribMulAction Q V] [ContinuousSMul Q V],
       ∃ χ : Q →* ℝ≥0, Continuous χ ∧ ∀ q : Q, μ.map (fun v => q • v) = χ q • μ := by
   intro V _ _ _ _ _ _ _ _ μ _ Q _ _ _ _ _
+  letI : SMul Q (Set V) := Set.smulSet
 
   obtain ⟨K, hK, hK0⟩ := exists_compact_mem_nhds (0 : V)
   have hKint : (interior K).Nonempty := ⟨0, mem_interior_iff_mem_nhds.2 hK0⟩
@@ -66,7 +71,7 @@ theorem exists_continuous_modulus_of_continuous_action :
   ext s hs
   rw [Measure.map_apply (continuous_const_smul q).measurable hs]
   show _ = ((Δ q⁻¹ : ℝ≥0) • μ) s
-  rw [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul, Set.preimage_smul]
+  rw [smul_apply, ENNReal.smul_def, smul_eq_mul, Set.preimage_smul]
   exact (hmul q⁻¹ s).symm
 
 end GlobalTheory.CompanionTheory.SW

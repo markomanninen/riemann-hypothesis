@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.Spf
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaParabolic.LRhoOm
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.THeis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzMemL2
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerPreservesAdelicSchwartz
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.Spf
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaParabolic.LRhoOm
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.THeis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzMemL2
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerPreservesAdelicSchwartz
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,10 @@ theorem T_rho_sum' (hH : THeis) {Φ : d.Fn} (hΦ : Φ ∈ d.sch) (Z Z' X : Mx F 
   have h1 := Tpar.rho_rho (dd := d.dd) (ψ := d.B.ψ) a b Φ
   have h2 : d.dd.rho d.B.ψ (a + b) Φ =
       d.B.ψ (-(⅟(2 : AF F) * spf d a b)) • d.dd.rho d.B.ψ a (d.dd.rho d.B.ψ b Φ) := by
-    rw [h1, smul_smul, ← AddChar.map_add_eq_mul, neg_add_cancel, AddChar.map_zero_eq_one, one_smul]
+    have h := congrArg (fun f : d.Fn => d.B.ψ (-(⅟(2 : AF F) * spf d a b)) • f) h1
+    simp only [smul_smul, ← AddChar.map_add_eq_mul, spf, neg_add_cancel,
+      AddChar.map_zero_eq_one, one_smul] at h
+    exact h.symm
   rw [h2, T_smul', (hH F E σ d _ (hrho b Φ hΦ) Z X).1, (hH F E σ d Φ hΦ Z' (X + Z)).2]
 
 end PositivityTheory.SiegelWeilFormula.KFP

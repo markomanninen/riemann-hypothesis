@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PublishedIntClosHolds
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PublishedIntClosHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ def CombBound (G : GlobalFamilyData X ka wL wF) (S : Scal B) (c : ℝ) (nus : He
       X.depth S.sW wL la y ≤ (((nus la : ℝ) + c / (2 * (G.iet : ℝ)) * (X.vAt la y (X.inc _ G.et)).toReal : ℝ) : EReal))) ∧
     (D.R.m ≤ j → X.depth S.sW wL la y ≤ ((nus la : ℝ) : EReal))
 
-def LatAt (B : WeightFamilies.Prov D) (j : ℕ) (ka : WeightFamilies.Wt D j) : Prop := Submodule.IsLattice B.KO (B.Mlat j ka)
+def LatAt (B : WeightFamilies.Prov D) (j : ℕ) (ka : WeightFamilies.Wt D j) : Prop := Submodule.IsFullLattice B.KO (B.Mlat j ka)
 
 def SupBoundByL2AtWeight (large₂ : SizeData₂ D) (B : WeightFamilies.Prov D) (j : ℕ) (ka : WeightFamilies.Wt D j) (CG AG : ℝ) : Prop :=
   ∀ (F : B.Cusp j ka) (σ : B.KO →+* ℂ),

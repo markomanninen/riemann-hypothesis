@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqEqOfOmegaDensity
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqEqOfOmegaDensity
+
+@[expose] public section
 
 open Formalism.BasicNotions MeasureTheory Filter Topology
 
@@ -27,9 +31,6 @@ theorem exp_local_matrix (n : Type) [Fintype n] [DecidableEq n] :
   have : CompleteSpace (Matrix n n ℂ) := FiniteDimensional.complete ℂ _
   exact exp_local_algebra (Matrix n n ℂ)
 
-theorem Jpq_mul_self (P Q : ℕ) : Formalism.UG.Jpq P Q * Formalism.UG.Jpq P Q = 1 := by
-  simp [Formalism.UG.Jpq, Matrix.fromBlocks_multiply]
-
 open MeasureTheory Filter Topology in
 private theorem exists_local_homeomorph_matrix_exp_source_zero {n : Type} [Fintype n] [DecidableEq n] :
     ∃ e : OpenPartialHomeomorph (Matrix n n ℂ) (Matrix n n ℂ),
@@ -42,9 +43,9 @@ private theorem exists_local_homeomorph_matrix_exp_source_zero {n : Type} [Finty
   exact ⟨hf.toOpenPartialHomeomorph _, hf.mem_toOpenPartialHomeomorph_source,
     hf.toOpenPartialHomeomorph_coe⟩
 
+
 open MeasureTheory Filter Topology in
 open Matrix in
-
 theorem _root_.GlobalTheory.ExpBallNhds.exp_ballU_mem_nhds : ∀ (P Q : ℕ) (r : ℝ), 0 < r →
     {g : _root_.Formalism.BasicNotions.UpqT P Q | ∃ X ∈ _root_.Formalism.BasicNotions.ballU P Q r,
       _root_.Formalism.BasicNotions.UpqT.mat g = NormedSpace.exp (X : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ)} ∈

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -18,7 +22,7 @@ theorem exists_unit_norm_of_selfDual_hermitian_lattice :
     intro x
     obtain ⟨a, b, hab⟩ := hK (h x x)
     have h1 := hherm x x
-    rw [hab, map_add, map_mul, map_ratCast, map_ratCast, hσθ] at h1
+    rw [hab, map_add (f := _), map_mul, map_ratCast, map_ratCast, hσθ] at h1
     have h2 : (b : K) * θ = 0 := by
       have : (2 : K) * ((b : K) * θ) = 0 := by linear_combination h1
       simpa using this
@@ -49,7 +53,7 @@ theorem exists_unit_norm_of_selfDual_hermitian_lattice :
     have h1 := O.sub_mem (O.sub_mem (hdiv _ (L.add_mem hx hy) (W.add_mem hxW hyW)) (hdiv x hx hxW))
       (hdiv y hy hyW)
     convert h1 using 1
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     rw [← hherm x y]
     ring
   have hstep : ∀ x ∈ L, x ∈ W → (θ / p) • x ∈ L := by
@@ -60,7 +64,7 @@ theorem exists_unit_norm_of_selfDual_hermitian_lattice :
     have r2 := htr _ (hL _ hω x hx) (W.smul_mem _ hxW) y hy hyW
     have h1 := O.add_mem r2 (O.mul_mem (O.sub_mem hω O.one_mem) r1)
     convert h1 using 1
-    simp only [map_smul, LinearMap.smul_apply, smul_eq_mul, map_mul, map_div₀, map_add, map_one,
+    simp only [map_smul, LinearMap.smul_apply, smul_eq_mul, map_mul, map_div₀, map_add (f := _), map_one,
       hσθ, map_ofNat]
     field_simp
     ring

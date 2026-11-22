@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsNatCastSmulCoeffIsIntegral
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AdmissibleColumnsLeAndHarmonicMapCover
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsNatCastSmulCoeffIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AdmissibleColumnsLeAndHarmonicMapCover
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -79,7 +83,46 @@ theorem shortGen_indep_connection : ChartIndepSt2 → ∀ (E : Type) [Field E] [
   intro hC E _ _ _ H Dw l Xo c n d nab bad nV ⟨s, hs⟩ t nab' ht a
   have hst : s = t := ShortConnIndep.starRing_eq s t fun x => (hs.1 x).trans (ht.1 x).symm
   subst hst
-  have hmap := (admissible_columns_le_and_harmonic_map_cover E H Dw l Xo c n d).2 a
+  have hmap : ∀ P : MvPolynomial (LtN Dw n) c.F,
+      P ∈ HHa Dw.mult n c.F ComplexEmbedding.conjugate (InPsi H) (fun τ i => a (τ, i)) →
+      MvPolynomial.map (d.eF : c.F →+* d.c₂.F) P ∈
+        HHa Dw.mult n d.c₂.F ComplexEmbedding.conjugate (InPsi H) (fun τ i => a (τ, i)) := by
+    intro P hP
+    have hs : Function.Surjective (d.eF : c.F →+* d.c₂.F) :=
+      fun y => ⟨d.eF.symm y, d.eF.apply_symm_apply y⟩
+    generalize (d.eF : c.F →+* d.c₂.F) = f at hs ⊢
+    obtain ⟨h1, h2, h3⟩ := hP
+    refine ⟨?_, ?_, ?_⟩
+    · simp only [harmK, Submodule.mem_iInf, LinearMap.mem_ker] at h1 ⊢
+      intro τ hτ b b'
+      have hlap : lap Dw.mult n d.c₂.F 1 τ _ b b' (MvPolynomial.map f P) =
+          MvPolynomial.map f (lap Dw.mult n c.F 1 τ _ b b' P) := by
+        simp only [lap, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum,
+          Derivation.coeFn_coe, MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C,
+          MvPolynomial.pderiv_map]
+        refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
+        congr 2
+        by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
+      rw [hlap, h1 τ hτ b b', map_zero]
+    · intro σ i i' hi t
+      obtain ⟨s, rfl⟩ := hs t
+      have hshift : rowShift Dw.mult n d.c₂.F σ i i' (f s) (MvPolynomial.map f P) =
+          MvPolynomial.map f (rowShift Dw.mult n c.F σ i i' s P) := by
+        clear h1 h2 h3
+        induction P using MvPolynomial.induction_on with
+        | C x => simp [rowShift]
+        | add p q hp hq =>
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_add (f := _), hp, hq]
+        | mul_X p x hp =>
+          simp only [map_mul, hp, MvPolynomial.map_X]
+          congr 1
+          simp only [rowShift, MvPolynomial.aeval_X]
+          set_option synthInstance.maxHeartbeats 100000 in
+            split_ifs <;> simp
+      rw [hshift, h2 σ i i' hi s]
+    · intro m hm
+      exact h3 m (MvPolynomial.support_map_subset f P hm)
   refine Set.ext fun f => ⟨?_, ?_⟩
   · rintro ⟨hf, Λ, N, x0, P, h1, h2, h3, h4, h5, hP, hr⟩
     refine ⟨hf, Λ, N, x0, P, h1, h2, h3, h4, h5, hP, ?_⟩

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped GlobalTheory.VacAny
 
@@ -10,9 +15,9 @@ namespace GlobalTheory.BoxDecomp
 
 open Topology Filter
 
-variable {F : Type} [Field F] [NumberField F] {v : Pl F}
+variable {F : Type} [Field F] [NumberField F] {v : Pl (F := F)}
 
-theorem ball_mem_nhds_zero (v : Pl F) (N : ℕ) :
+theorem ball_mem_nhds_zero (v : Pl (F := F)) (N : ℕ) :
     {y : Fv F v | Valued.v y ≤ WithZero.exp (-(N : ℤ))} ∈ 𝓝 (0 : Fv F v) := by
   obtain ⟨π, hπ⟩ := v.valuation_exists_uniformizer F
   set p : Fv F v := (π : v.adicCompletion F) with hp
@@ -28,7 +33,7 @@ theorem ball_mem_nhds_zero (v : Pl F) (N : ℕ) :
   rw [hrv] at this
   exact le_of_lt this
 
-theorem exists_ball_subset (v : Pl F) {s : Set (Fv F v)} (hs : s ∈ 𝓝 (0 : Fv F v)) :
+theorem exists_ball_subset (v : Pl (F := F)) {s : Set (Fv F v)} (hs : s ∈ 𝓝 (0 : Fv F v)) :
     ∃ N : ℕ, {y : Fv F v | Valued.v y ≤ WithZero.exp (-(N : ℤ))} ⊆ s := by
   obtain ⟨γ, hγ⟩ := Valued.mem_nhds_zero.1 hs
   set g : WithZero (Multiplicative ℤ) := MonoidWithZeroHom.ValueGroup₀.embedding γ.1 with hg
@@ -42,7 +47,7 @@ theorem exists_ball_subset (v : Pl F) {s : Set (Fv F v)} (hs : s ∈ 𝓝 (0 : F
     WithZero.exp_lt_exp.2 (by omega)
   rwa [WithZero.exp_log hg0] at hlt
 
-def B (v : Pl F) (κ : Type) (N : ℕ) : Set (κ → Fv F v) :=
+def B (v : Pl (F := F)) (κ : Type) (N : ℕ) : Set (κ → Fv F v) :=
   {x | ∀ i, Valued.v (x i) ≤ WithZero.exp (-(N : ℤ))}
 
 theorem B_anti {κ : Type} {N M : ℕ} (h : N ≤ M) : B v κ M ⊆ B v κ N := fun x hx i =>
@@ -124,7 +129,7 @@ theorem exists_invariant {κ : Type} [Fintype κ] {φ : (κ → Fv F v) → ℂ}
       rwa [show y + u - x - u = y - x by abel] at this
     rw [image_eq_zero_of_notMem_tsupport hyK, image_eq_zero_of_notMem_tsupport hyuK]
 
-def BG (v : Pl F) (κ : Type) (N : ℕ) : AddSubgroup (κ → Fv F v) where
+def BG (v : Pl (F := F)) (κ : Type) (N : ℕ) : AddSubgroup (κ → Fv F v) where
   carrier := B v κ N
   add_mem' := add_mem_B
   zero_mem' := zero_mem_B κ N
@@ -141,7 +146,7 @@ theorem mk_eq_iff {κ : Type} {N : ℕ} {x c : κ → Fv F v} :
     have := neg_mem_B h
     rwa [show -(x - c) = -x + c by abel] at this
 
-theorem mem_span_boxes (F : Type) [Field F] [NumberField F] (v : Pl F) (κ : Type) [Fintype κ]
+theorem mem_span_boxes (F : Type) [Field F] [NumberField F] (v : Pl (F := F)) (κ : Type) [Fintype κ]
     (φ : (κ → Fv F v) → ℂ) : φ ∈ SB (κ → Fv F v) → ∃ N₀ : ℕ, ∀ N ≥ N₀, φ ∈ Submodule.span ℂ
       (Set.range fun c : κ → Fv F v => Set.indicator
         {x : κ → Fv F v | ∀ i, Valued.v (x i - c i) ≤ WithZero.exp (-(N : ℤ))} (1 : (κ → Fv F v) → ℂ)) := by

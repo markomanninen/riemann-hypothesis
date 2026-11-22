@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmulLk
-import Formalism.LocalToGlobal.UnitaryNorms.UnramT
-import Formalism.LocalToGlobal.Columns.DecoFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmulLk
+public import Formalism.LocalToGlobal.UnitaryNorms.UnramT
+public import Formalism.LocalToGlobal.Columns.DecoFin
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.HAt Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -30,9 +34,9 @@ theorem pos_iff_mem_Pv (A : AtTTied u) (v : (D.mem u).A.vT) (ν : AddValuation D
   have hpb : A.res v (cO A.piU) ≠ 0 := A.res_conj v (cO A.piU) rfl
   have hπb : ν ((cO A.piU : 𝓞 D.host.E) : D.host.E) = 0 := by
     obtain ⟨zF, hzF⟩ := exists_intF_of_conj_eq (D := D) (A.piU + cO A.piU) (by
-      push_cast; simp only [hcO, map_add, hinv]; ring)
+      push_cast; simp only [hcO, map_add (f := _), hinv]; ring)
     have hnot : zF ∉ (A.eV v).1.asIdeal := by
-      rw [A.res_v, hzF, map_add, A.res_pi, zero_add]; exact hpb
+      rw [A.res_v, hzF, map_add (f := _), A.res_pi, zero_add]; exact hpb
     rw [hTau, hzF] at hnot
     refine le_antisymm (not_lt.mp fun h => hnot ?_) (Formalism.L2.Host.addVal_nonneg ν _)
     push_cast
@@ -41,9 +45,9 @@ theorem pos_iff_mem_Pv (A : AtTTied u) (v : (D.mem u).A.vT) (ν : AddValuation D
     intro y hy
     have hy' : A.res v y = 0 := hy
     obtain ⟨zF, hzF⟩ := exists_intF_of_conj_eq (D := D) (y * cO A.piU + cO y * A.piU) (by
-      push_cast; simp only [hcO, map_add, map_mul, hinv]; ring)
+      push_cast; simp only [hcO, map_add (f := _), map_mul, hinv]; ring)
     have hin : zF ∈ (A.eV v).1.asIdeal := by
-      rw [A.res_v, hzF, map_add, map_mul, map_mul, hy', A.res_pi]; simp
+      rw [A.res_v, hzF, map_add (f := _), map_mul, map_mul, hy', A.res_pi]; simp
     rw [hTau, hzF] at hin
     push_cast at hin
     have h2 : 0 < ν (((cO y : 𝓞 D.host.E) : D.host.E) * A.piU) := by

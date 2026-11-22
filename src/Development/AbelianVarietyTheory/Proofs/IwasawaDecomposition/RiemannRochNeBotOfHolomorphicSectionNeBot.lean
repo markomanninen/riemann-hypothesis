@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemRiemannRochSpaceIffRegularAtEverywhere
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SerreHolomorphicSectionsHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemRiemannRochSpaceIffRegularAtEverywhere
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SerreHolomorphicSectionsHolds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem riemannRoch_ne_bot_of_holomorphicSection_ne_bot : ∀ (F : Type) [Field 
         rw [hs s, map_zero]
         exact zero_mem _)
     exact (Submodule.mem_bot ℂ).1 (hle (SecC.span_range_of.ge Submodule.mem_top))
-  have hb := GlobalTheory.AnRead.bijective_valC Y.isProjOver R (GlobalTheory.Cartier.isLB_toLB D)
+  have hb := GlobalTheory.AnRead.bijective_valC Y.isProjOver R P.isLB
   refine (Submodule.eq_bot_iff _).2 fun f hf => ?_
   obtain ⟨x, hxf⟩ := hb.2 ⟨f, hf⟩
   rw [hx x, map_zero] at hxf

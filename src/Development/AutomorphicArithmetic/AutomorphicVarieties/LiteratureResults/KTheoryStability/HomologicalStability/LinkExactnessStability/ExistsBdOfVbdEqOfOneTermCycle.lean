@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem lc_single_one (V : Type) (x : List V →₀ ℤ) :
     Finsupp.linearCombination ℤ (fun l : List V => Finsupp.single l (1:ℤ)) x = x := by
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add f g hf hg => rw [map_add, hf, hg]
+  | add f g hf hg => rw [map_add (f := _), hf, hg]
   | single l c => rw [Finsupp.linearCombination_single, Finsupp.smul_single, smul_eq_mul, mul_one]
 
 theorem slicePr_mapDomain (V W : Type) (w w' : List W) (x : List V →₀ ℤ) :
@@ -33,7 +37,7 @@ theorem slicePr_mapDomain (V W : Type) (w w' : List W) (x : List V →₀ ℤ) :
   · simp only [Function.comp_def, h, if_false]
     induction x using Finsupp.induction_linear with
     | zero => simp
-    | add f g hf hg => rw [map_add, hf, hg, add_zero]
+    | add f g hf hg => rw [map_add (f := _), hf, hg, add_zero]
     | single l c => simp [Finsupp.linearCombination_single]
 
 theorem slicePr_hbd (V W : Type) (w : List W) :
@@ -98,7 +102,8 @@ theorem sum_slicePr {V W : Type} (z : List V × List W →₀ ℤ) (U : Finset (
     ∑ w ∈ U, slicePr V W w z = Finsupp.mapDomain Prod.fst z := by
   unfold Finsupp.mapDomain
   conv_lhs => rw [← Finsupp.sum_single z]
-  simp only [Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finsupp.sum, map_sum]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro q hq
@@ -110,7 +115,8 @@ theorem exists_sum_bd {V : Type} (F : Set (List V)) (p : ℕ) {ι : Type} (S : F
     ∃ b ∈ chains F (p + 1), bd V b = ∑ i ∈ S, f i := by
   choose! g hg1 hg2 using hS
   refine ⟨∑ i ∈ S, g i, Submodule.sum_mem _ (fun i hi => hg1 i hi), ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl (fun i hi => hg2 i hi)
 
 theorem bd_of_oneTerm_cycle : ∀ (V W : Type) (D : Set (List V × List W)) (F : Set (List V)) (p : ℕ),

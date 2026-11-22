@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+
+@[expose] public section
 
 open Finset
 

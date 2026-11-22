@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.StdFrameCounterexample
@@ -30,7 +34,39 @@ theorem latC_coe (V : HSp D) : (latC V : Set _) = L0c D V := Set.ext (mem_latC V
 theorem hLat_one (V : HSp D) : Bridge.hLat V 1 = latC V := by
   have hfg : (latC V).FG := Submodule.FG.map _ V.standardTuple_isLattice.fg
   have hsp : Submodule.span D.host.E (latC V : Set (Fin V.rank → D.host.E)) = ⊤ := by
-    have h := V.standardTuple_isLattice.span_eq_top
+    have h : Submodule.span D.host.E (V.L0 : Set V.V) = ⊤ := by
+      let W := Submodule.span D.host.E (V.L0 : Set V.V)
+      change W = ⊤
+      by_contra hn
+      let e : V.V ≃ₗ⋆[D.host.E] V.V :=
+        V.frame.equivFun.trans ((starLinearEquiv D.host.E).trans V.frame.equivFun.symm)
+      let g : V.V →ₗ[D.host.E] Module.Dual D.host.E W :=
+        (LinearMap.domRestrict' W).comp (V.hT.comp e.toLinearMap)
+      have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E V.V := by
+        rw [Subspace.dual_finrank_eq]
+        exact Submodule.finrank_lt hn
+      obtain ⟨x, hx, hx₀⟩ :=
+        Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+      have hsmul (a : D.host.E) : a • e x ∈ V.L0 := by
+        rw [← V.baseLattice_isUnimodular]
+        change a • e x ∈ Formalism.E.hdual V.hT V.L0
+        simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
+          LinearMap.restrictScalars_apply, Submodule.mem_one]
+        intro y hy
+        have hxy : V.hT (e x) y = 0 :=
+          congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩)
+            (LinearMap.mem_ker.mp hx)
+        have hyx : V.hT y (e x) = 0 := by
+          have hh := V.herm.eq (e x) y
+          simpa [hxy] using hh.symm
+        simp [map_smul, hyx]
+      let i : D.host.E →ₗ[𝓞 D.host.E] V.L0 :=
+        ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict V.L0 hsmul
+      let : Module.Finite (𝓞 D.host.E) V.L0 := Module.Finite.iff_fg.mpr V.standardTuple_isLattice.fg
+      let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+        smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+      exact RingOfIntegers.not_isField D.host.E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 D.host.E) D.host.E) (Field.toIsField D.host.E))
     have : (latC V : Set (Fin V.rank → D.host.E)) = V.frame.equivFun.toLinearMap '' (V.L0 : Set V.V) := rfl
     rw [this, ← Submodule.map_span, h, Submodule.map_top]
     exact LinearMap.range_eq_top.2 V.frame.equivFun.surjective
@@ -66,49 +102,5 @@ theorem vstd_iff (i : Fin D.R.m) : VStd D i ↔ (Vc D i).gram = 1 ∧
     rw [← hy]; exact y.2
   · intro h
     exact ⟨⟨x a, h⟩, rfl⟩
-
-def withV (D : D7) (S : HSp D) (b : Bool) (hs : S.SigOK) (hr : S.rank = D.R.nV)
-    (ho : Formalism.HermitianLatticesTheory.IsOrthoLattice (if b then -S.hT else S.hT) S.L0 D.R.nV) : D7 :=
-  { D with sp := { D.sp with
-      V := fun _ => S, V_sig := fun _ => hs, V_rank := fun _ _ _ => hr, Vneg := fun _ => b, V_std := fun _ _ _ => ho } }
-
-theorem orthoSign {E : Type} [Field E] [NumberField E] [StarRing E] (N : ℕ) (b : Bool) : Formalism.HermitianLatticesTheory.IsOrthoLattice
-    (if b then -(diagForm (E := E) N (fun _ => b)) else diagForm (E := E) N (fun _ => b)) (Examples₂.stdLat N) N := by
-  refine ⟨Pi.basisFun E (Fin N), (Pi.basisFun E (Fin N)).linearIndependent,
-    (Pi.basisFun E (Fin N)).span_eq, rfl, fun i j => ?_⟩
-  rw [Pi.basisFun_apply, Pi.basisFun_apply]
-  cases b
-  · simp only [Bool.false_eq_true, if_false]
-    rw [diagForm_single]
-    simp [sgn]
-  · simp only [if_true, LinearMap.neg_apply]
-    rw [diagForm_single]
-    split_ifs <;> simp [sgn]
-
-def scaled {E : Type} [Field E] [NumberField E] [StarRing E] (N : ℕ) (u : Eˣ) : HSpace E :=
-  { posSpace (star_isIntegral (E := E)) N with frame := (Pi.basisFun E (Fin N)).unitsSMul fun _ => u }
-
-theorem scaled_gram {E : Type} [Field E] [NumberField E] [StarRing E] (N : ℕ) (u : Eˣ) (hu : star (u : E) * u = 1) :
-    (scaled N u).gram = 1 := by
-  refine Matrix.ext fun (i j : Fin N) => ?_
-  show diagForm N (fun _ => false) (((Pi.basisFun E (Fin N)).unitsSMul fun _ => u) i)
-    (((Pi.basisFun E (Fin N)).unitsSMul fun _ => u) j) = (1 : Matrix (Fin N) (Fin N) E) i j
-  rw [Module.Basis.unitsSMul_apply, Module.Basis.unitsSMul_apply, Units.smul_def, Units.smul_def, map_smul,
-    LinearMap.map_smulₛₗ, LinearMap.smul_apply, Pi.basisFun_apply, Pi.basisFun_apply, diagForm_single, Matrix.one_apply]
-  split_ifs
-  · simp only [sgn, starRingEnd_apply, smul_eq_mul]
-    simpa [mul_comm] using hu
-  · simp
-
-theorem scaled_sig {E : Type} [Field E] [NumberField E] [StarRing E] (N : ℕ) (u : Eˣ) (hu : star (u : E) * u = 1) :
-    (scaled N u).SigOK := by
-  intro τ
-  rw [scaled_gram N u hu, Matrix.map_one _ (map_zero τ) (map_one τ)]
-  have h := Formalism.UG.P.stdform_sig_one (n := Fin N)
-  rw [Fintype.card_fin] at h
-  exact h
-
-def withScaled (D : D7) (u : D.host.Eˣ) (hu : star (u : D.host.E) * u = 1) : D7 :=
-  withV D (scaled D.R.nV u) false (scaled_sig _ u hu) rfl (orthoSign _ false)
 
 end GlobalTheory.StdFrameCounterexample

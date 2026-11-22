@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorFixedMem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorFixedMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,7 @@ theorem generated_subrep_operator_stable (E : GLOps n K V) (h : V) : ∀ a b, �
       ⟨E a b * u, Submonoid.mul_mem _ (Submonoid.subset_closure ⟨(a, b), rfl⟩) hu, rfl⟩
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [map_smul]
@@ -116,7 +120,7 @@ theorem weight_projection_generated_scalar (E : GLOps n K V) (lam : Fin n → �
     intro z hz
     exact hπ.2 mu hmu z (Submodule.mem_inf.mp hz).1
   refine ⟨a, ?_⟩
-  rw [map_add, LinearMap.mem_ker.mp (hker ht), add_zero, map_smul, hπ.1 h (highestWeight_mem_weightSpace E lam h hh)]
+  rw [map_add (f := _), LinearMap.mem_ker.mp (hker ht), add_zero, map_smul, hπ.1 h (highestWeight_mem_weightSpace E lam h hh)]
 
 theorem isotypic_sum_generated_subreps (E : GLOps n K V) (lam : Fin n → ℤ) {k : ℕ} (h : Fin k → V)
     (hspan : highestWeightVectors E lam ≤ Submodule.span K (Set.range h)) (Y : V) (hY : Y ∈ isoSub E lam) :
@@ -126,7 +130,8 @@ theorem isotypic_sum_generated_subreps (E : GLOps n K V) (lam : Fin n → ℤ) {
     obtain ⟨u, hu, v, hv, rfl⟩ := hx
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun K).mp (hspan (isHWV_mem_highestWeightSpace E lam v hv))
     refine ⟨fun j => c j • u (h j), fun j => Submodule.smul_mem _ _ (Submodule.subset_span ⟨u, hu, rfl⟩), ?_⟩
-    rw [← hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, map_sum]
     simp only [map_smul]
   | zero => exact ⟨0, fun j => Submodule.zero_mem _, by simp⟩
   | add x z _ _ hx hz =>
@@ -155,7 +160,8 @@ theorem isotypic_lattice_of_five_parts (D : Formalism.BasicNotions.D7) (hA : Iso
         (integral_enveloping_preserves_stable E _ (generated_subrep_operator_stable E (h j)) u hu _ (hy j))
     choose a ha using hex
     have hz : π (u Y) = ∑ j, a j • h j := by
-      rw [hYsum, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hYsum, map_sum, map_sum]
       exact Finset.sum_congr rfl fun j _ => ha j
     obtain ⟨m, hmM, hm⟩ := hC1 O V M hM.2 hMQ ((p : KK O) ^ c) (π (u Y)) (hyp u hu)
     have hzHW : π (u Y) ∈ highestWeightVectors E lam := by

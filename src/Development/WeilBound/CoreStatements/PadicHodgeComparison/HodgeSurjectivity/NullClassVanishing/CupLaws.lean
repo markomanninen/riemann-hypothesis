@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HodgeKill
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.TfBaseField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAlexanderWhitneyDiagonalSwapHomotopyStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HodgeKill
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.TfBaseField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAlexanderWhitneyDiagonalSwapHomotopyStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -80,14 +84,16 @@ theorem phi_d₁ (hf : CH.d F₁ p f = 0) {N : ℕ} (s : ComposableArrows C N) (
   cases a with
   | zero => rw [d₁_zero, map_zero]
   | succ a =>
-    rw [d₁_succ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [d₁_succ, map_sum]
     simp only [phi_single]
     by_cases h : a = p ∧ r = q
     · obtain ⟨rfl, rfl⟩ := h
       have e := CrystallineSemistableComparison.Auxff.term_d F₁ s f (fun i : Fin (a + 2) => α.toOrderHom i) α.toOrderHom.monotone
       rw [hf, term_zero] at e
       have e2 := congrArg ((P.μ _).flip (CH.term F₂ s g (fun i : Fin (r + 1) => β.toOrderHom i) β.toOrderHom.monotone)) e
-      simp only [map_zero, map_sum, map_zsmul, LinearMap.flip_apply] at e2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_zero, map_sum, map_zsmul, LinearMap.flip_apply] at e2
       refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) e2.symm
       rw [val_mk]
       rfl
@@ -98,14 +104,16 @@ theorem phi_d₂ (hg : CH.d F₂ q g = 0) {N : ℕ} (s : ComposableArrows C N) (
   cases r with
   | zero => rw [d₂_zero, map_zero]
   | succ r =>
-    rw [d₂_succ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [d₂_succ, map_sum]
     simp only [phi_single]
     by_cases h : a = p ∧ r = q
     · obtain ⟨rfl, rfl⟩ := h
       have e := CrystallineSemistableComparison.Auxff.term_d F₂ s g (fun i : Fin (r + 2) => β.toOrderHom i) β.toOrderHom.monotone
       rw [hg, term_zero] at e
       have e2 := congrArg (P.μ _ (CH.term F₁ s f (fun i : Fin (a + 1) => α.toOrderHom i) α.toOrderHom.monotone)) e
-      simp only [map_zero, map_sum, map_zsmul] at e2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_zero, map_sum, map_zsmul] at e2
       refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) e2.symm
       rw [val_mk]
       rfl
@@ -115,16 +123,16 @@ theorem phi_d (hf : CH.d F₁ p f = 0) (hg : CH.d F₂ q g = 0) {N : ℕ} (s : C
     phi P f g s (Pr.d N c) = 0 := by
   induction c using Finsupp.induction_linear with
   | zero => rw [map_zero, map_zero]
-  | add c c' hc hc' => rw [map_add, map_add, hc, hc', add_zero]
+  | add c c' hc hc' => rw [map_add (f := _), map_add (f := _), hc, hc', add_zero]
   | single z t =>
-    rw [Pr.d, Finsupp.linearCombination_single, map_smul, map_add, map_smul, phi_d₁ P f g hf, phi_d₂ P f g hg,
+    rw [Pr.d, Finsupp.linearCombination_single, map_smul, map_add (f := _), map_smul, phi_d₁ P f g hf, phi_d₂ P f g hg,
       smul_zero, add_zero, smul_zero]
 
 theorem phi_face {N : ℕ} (s : ComposableArrows C (N + 1)) (i : Fin (N + 2)) (c : Pr N →₀ ℤ) :
     (F₃.map (GlobalTheory.CatH.toLast i s)).hom (phi P f g (GlobalTheory.CatH.face i s) c) = phi P f g s (Pr.push (SimplexCategory.δ i) c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp only [map_zero]
-  | add c c' hc hc' => simp only [map_add, hc, hc']
+  | add c c' hc hc' => simp only [map_add (f := _), hc, hc']
   | single z t =>
     obtain ⟨a, r, α, β⟩ := z
     rw [phi_single, Pr.push, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single, phi_single, map_zsmul]
@@ -140,12 +148,14 @@ def hc {N : ℕ} (c : Pr N →₀ ℤ) : CH.Cn F₃ N := fun s => phi P f g s c
 theorem d_hc {N : ℕ} (c : Pr N →₀ ℤ) (s : ComposableArrows C (N + 1)) :
     CH.d F₃ N (hc P f g c) s = phi P f g s (Pr.bd c) := by
   change ∑ i : Fin (N + 2), (-1 : ℤ) ^ (i : ℕ) • (F₃.map (GlobalTheory.CatH.toLast i s)).hom (phi P f g (GlobalTheory.CatH.face i s) c) = _
-  rw [Pr.bd, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Pr.bd, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, ← phi_face]
 
 theorem phi_aw {n : ℕ} (h : p + q = n) (s : ComposableArrows C n) : phi P f g s (Pr.aw n) = P.cupC h f g s := by
-  rw [Pr.aw, map_sum, Finset.sum_eq_single (⟨p, by omega⟩ : Fin (n + 1))]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Pr.aw, map_sum, Finset.sum_eq_single (⟨p, by omega⟩ : Fin (n + 1))]
   · rw [phi_single, one_smul, val_pos P f g s _ ⟨rfl, show n - p = q by omega⟩, CrystallineSemistableComparison.Auxff.cupC_apply]
     exact congrArg₂ (fun x y => P.μ _ x y)
       (CH.term_congr F₁ s f _ _ (funext fun i => Fin.ext rfl))
@@ -160,7 +170,8 @@ theorem phi_aw {n : ℕ} (h : p + q = n) (s : ComposableArrows C n) : phi P f g 
 theorem phi_wa {n : ℕ} (h' : q + p = n) (s : ComposableArrows C n) :
     phi P f g s (Pr.wa n) = (-1 : ℤ) ^ (p * q) •
       P.μ _ (CH.term F₁ s f (CH.back h') (CH.back_mono h')) (CH.term F₂ s g (CH.front h') (CH.front_mono h')) := by
-  rw [Pr.wa, map_sum, Finset.sum_eq_single (⟨q, by omega⟩ : Fin (n + 1))]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Pr.wa, map_sum, Finset.sum_eq_single (⟨q, by omega⟩ : Fin (n + 1))]
   · rw [phi_single, val_pos P f g s _ ⟨show n - q = p by omega, rfl⟩]
     have e2 : ((-1 : ℤ) ^ (q * (n - q))) = (-1) ^ (p * q) := by rw [show n - q = p by omega, mul_comm]
     refine Eq.trans (congrArg (fun t : ℤ => t • P.μ _ (CH.term F₁ s f _ (om_mono _ _)) (CH.term F₂ s g _ (om_mono _ _))) e2) ?_
@@ -192,7 +203,7 @@ theorem key (P' : CH.Pairing F₂ F₁ F₃) (hP : ∀ T x y, P'.μ T y x = P.μ
     exact zero_mem _
   | succ N =>
     refine ⟨hc P f g (hh N), funext fun s => ?_⟩
-    rw [ev, ← hds N, map_add, phi_d P f g hf hg, zero_add]
+    rw [ev, ← hds N, map_add (f := _), phi_d P f g hf hg, zero_add]
     exact d_hc P f g (hh N) s
 
 end Gen
@@ -231,7 +242,32 @@ end CrystallineSemistableComparison.Onto.RCupLaws
 open CrystallineSemistableComparison.Onto.RCupLaws in
 theorem CrystallineSemistableComparison.Onto.cupLaws_pf : CrystallineSemistableComparison.Onto.CupLaws := by
   intro K _ X q
-  have F := CrystallineSemistableComparison.HT.kForm
+  have F : CrystallineSemistableComparison.HT.KForm := by
+    open CrystallineSemistableComparison.HT in
+    exact {
+        bilin q _ _ _ _ _ _ ha h := CrystallineSemistableComparison.P.cup_bilin (grOk (smFun _ q) ha).pair h
+        pull_id q u hu e a n x := by subst e; exact pull_id' q hu a n x
+        pull_comp u hu v hv h a n x := pull_comp' u hu v hv h a n x
+        pull_cup u hu _ _ _ _ _ _ ha h x y := pull_cup' u hu ha h x y
+        pull_one u hu := rfl
+        one_cup {K _ X} q a n x := by
+          obtain ⟨h0, e⟩ := oneH_eq q
+          rw [e]
+          refine ⟨gen_left (grOk (smFun X q) (Nat.zero_add a)).pair (oneSec q) (oneSec_map q) (fun T x => ?_) h0 n x,
+            gen_right (grOk (smFun X q) (Nat.add_zero a)).pair (oneSec q) (oneSec_map q) (fun T x => ?_) h0 n x⟩
+          · obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
+            exact (pair_mk _ _ _ _ _).trans (mk_congr _ _ (one_mul _) _ _)
+          · obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
+            exact (pair_mk _ _ _ _ _).trans (mk_congr _ _ (mul_one _) _ _)
+        assoc {K _ X} q _ _ _ _ _ _ _ _ _ _ _ _ h₁ h₂ h₃ h₄ e₁ e₂ e₃ e₄ x y z :=
+          gen_assoc (grOk (smFun X q) h₁).pair (grOk (smFun X q) h₂).pair (grOk (smFun X q) h₃).pair (grOk (smFun X q) h₄).pair
+            (fun T x y z => by
+              obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
+              obtain ⟨y, hy, rfl⟩ := sq_surj _ _ y
+              obtain ⟨z, hz, rfl⟩ := sq_surj _ _ z
+              rw [pair_mk, pair_mk, pair_mk, pair_mk]
+              exact mk_congr _ _ (mul_assoc _ _ _) _ _) e₁ e₂ e₃ e₄ x y z
+    }
   refine ⟨fun ha h => F.bilin q ha h, fun h₁ h₂ h₃ h₄ g₁ g₂ g₃ g₄ x y z => F.assoc q h₁ h₂ h₃ h₄ g₁ g₂ g₃ g₄ x y z,
     fun ha ha' h h' x y => hdg_comm q ha ha' h h' x y, fun x => (F.one_cup q _ _ x).1,
     fun Y p u hu _ _ _ _ _ _ ha h x y => F.pull_cup u hu ha h x y, fun a n x => F.pull_id q (𝟙 X) _ rfl a n x,

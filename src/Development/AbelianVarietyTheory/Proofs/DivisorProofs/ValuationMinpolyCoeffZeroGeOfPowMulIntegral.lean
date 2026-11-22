@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
-import Formalism.PairingDivisors.StatementH
-import Formalism.PairingDivisors.PairingDivisorProofs.Height
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.PairingDivisors.PairingDivisorProofs.Height
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
+
+@[expose] public section
 
 open NumberField Polynomial IsDedekindDomain
 open Formalism.DivisionValues (vw lw)

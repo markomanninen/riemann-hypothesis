@@ -1,15 +1,20 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalGaloisCompatibility.PAdicSplitting.InfLifts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CharpolyFromTrace.GoodLiftAlt
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertSplitAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.SuppOfTypeOf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DenseSplitFrobenius
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIsPlaceOverFiniteExtensionOfIsPlaceOver
-import Development.DiscreteGroups.GlobalIrreducibility.DzGalW
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InePolLpTwOfMemIne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IneInclOntoUnits
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRationalLocalOperators
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsWeilGroupRestrictExtension
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalGaloisCompatibility.PAdicSplitting.InfLifts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CharpolyFromTrace.GoodLiftAlt
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertSplitAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.SuppOfTypeOf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DenseSplitFrobenius
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIsPlaceOverFiniteExtensionOfIsPlaceOver
+public import Development.DiscreteGroups.GlobalIrreducibility.DzGalW
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InePolLpTwOfMemIne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IneInclOntoUnits
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRationalLocalOperators
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsWeilGroupRestrictExtension
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.GLq
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.GalCut GlobalTheory.RoadU GlobalTheory.AboveL GlobalTheory.DeRhamOfPlainTorus ValuativeRel
@@ -21,7 +26,8 @@ private theorem split_of_padic {E : Type} [Field E] [NumberField E] [IsCMField E
   have hq : normV w = g := DiscreteGroups.sglob.DzType.normV_eq_of_padic w g i hi
   refine ⟨hq, GlobalTheory.DenseInvFrob.isSplitAt_of_inertiaDeg_eq_one w ?_ ?_⟩
   · have hp : (Ideal.absNorm w.asIdeal).Prime := by
-      have : Ideal.absNorm w.asIdeal = g := hq
+      have : Ideal.absNorm w.asIdeal = g := by
+        simpa only [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using hq
       rw [this]
       exact Fact.out
     exact ((GlobalTheory.absNorm_prime_iff_inertiaDeg_eq_one_and_finite_ramified E).1 w).1 hp
@@ -50,8 +56,8 @@ private theorem split_of_padic {E : Type} [Field E] [NumberField E] [IsCMField E
     exact hsq (by simpa using hne)
 
 private theorem dvd_of_support {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin N) k) V) (s : Multiset (IrrGL k))
-    (hs : HasSupport ρ s) (y : IrrGL k) (hy : y ∈ s) : y.1 ∣ N.factorial := by
+    {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin N) k) V) (s : Multiset (IrrGL (k := k)))
+    (hs : HasSupport ρ s) (y : IrrGL (k := k)) (hy : y ∈ s) : y.1 ∣ N.factorial := by
   have h1 : 0 < y.1 := (hs.isCusp hy).1
   have h2 := hs.sum_fst
   have h3 : y.1 ≤ (s.map Sigma.fst).sum := Multiset.single_le_sum (by simp) _ (Multiset.mem_map_of_mem _ hy)

@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HtCard
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDescent
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictCrystallineDeRhamFiniteExt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqAlgebraMapOfCharpoly
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WdConjAbove
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamWeightDirectSumStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamWeightTwistCharacterStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HtCard
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDescent
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictCrystallineDeRhamFiniteExt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqAlgebraMapOfCharpoly
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WdConjAbove
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamWeightDirectSum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamWeightTwistCharacter
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -30,13 +35,5 @@ theorem potCrysIffWD (D : D7) : PotCrysIffWD D.nd D.naut := by
   unfold IsDR at h4
   unfold LocBridge.IsdRE
   simpa using h4
-
-theorem tieGal_of_jumpsCard (hDR : GlobalTheory.Published.DeRhamPotSemistable) (hL : GlobalTheory.Published.LocalLanglandsGL) (D : D7) (P : Pin hL D)
-    (hJ : JumpsCard D.nd D.naut) : Formalism.MainNotions.SumRepresentations.At.TieGal D.nd D.naut :=
-  ⟨GlobalTheory.CrysWD.crysIffWD D, potCrysIffWD D, hJ, fun i => ⟨GlobalTheory.WeilDeligne.InertiaSplit.decomp_away hDR hL D P i, GlobalTheory.ConjGal.main hDR hL D P i,
-    GlobalTheory.T.de_rham_weight_direct_sum hDR hL D P i, GlobalTheory.T.de_rham_weight_twist_character hDR hL D P i⟩⟩
-
-theorem main : GlobalTheory.Published.DeRhamPotSemistable → ∀ (hL : GlobalTheory.Published.LocalLanglandsGL) (D : D7) (P : Pin hL D), JumpsCard D.nd D.naut → Formalism.MainNotions.SumRepresentations.At.TieGal D.nd D.naut :=
-  fun hDR hL D P hJ => tieGal_of_jumpsCard hDR hL D P hJ
 
 end GlobalTheory.TieGalAssembly

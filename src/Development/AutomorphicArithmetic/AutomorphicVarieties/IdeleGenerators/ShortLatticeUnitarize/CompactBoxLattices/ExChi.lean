@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+
+@[expose] public section
 
 theorem UpperTheory.V.Sd.Wc.exChi :
     UpperTheory.V.Sd.Wc.ExChi := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,10 +47,14 @@ variable {G : Type} [Group G]
 def levRep (ρ : Representation O G M) (c : O) : Representation O G (Lev M c) where
   toFun g :=
     { toFun := fun x => Lev.mk (ρ g x.val) (by rw [← map_smul, Lev.smul_val, map_zero])
-      map_add' := fun x y => Lev.ext (by rw [Lev.val_mk, Lev.val_add, Lev.val_add, map_add]; rfl)
-      map_smul' := fun a x => Lev.ext (by rw [Lev.val_mk, Lev.val_smul, Lev.val_smul, map_smul]; rfl) }
-  map_one' := by ext x; show ρ 1 x.val = x.val; rw [map_one]; rfl
-  map_mul' g h := by ext x; show ρ (g * h) x.val = ρ g (ρ h x.val); rw [map_mul]; rfl
+      map_add' := fun x y => Lev.ext (by
+        simpa only [Lev.val_mk, Lev.val_add] using map_add (ρ g) x.val y.val)
+      map_smul' := fun a x => Lev.ext (by
+        simpa only [Lev.val_mk, Lev.val_smul] using map_smulₛₗ (ρ g) a x.val) }
+  map_one' := LinearMap.ext fun x => Lev.ext
+    (congrArg (fun f : Module.End O M => f x.val) (map_one ρ))
+  map_mul' g h := LinearMap.ext fun x => Lev.ext
+    (congrArg (fun f : Module.End O M => f x.val) (map_mul ρ g h))
 
 theorem levRep_val (ρ : Representation O G M) (c : O) (g : G) (x : Lev M c) :
     (levRep ρ c g x).val = ρ g x.val := rfl

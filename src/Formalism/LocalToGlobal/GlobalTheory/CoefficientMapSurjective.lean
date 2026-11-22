@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.GlobalTheory.ColValOfTiedSOfRest
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.RankConditionsOfLayerTwo
-import Formalism.LocalToGlobal.Columns.TiedValRat
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PColStd
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.ColValOfTiedSOfRest
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.RankConditionsOfLayerTwo
+public import Formalism.LocalToGlobal.Columns.TiedValRat
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PColStd
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ def rd (F : Pol0 D) (z : (D.mem u).C.Y 0) : ℂ :=
   fnOf _ (shiftOf (lamT u 0)) 1 (MvPolynomial.map D.what₂.embLL F) (T.val0.eY z)
 
 theorem rd_add (F F' : Pol0 D) (z : (D.mem u).C.Y 0) : rd T (F + F') z = rd T F z + rd T F' z := by
-  simp only [rd, map_add, Pi.add_apply]
+  simp only [rd, map_add (f := _), Pi.add_apply]
 
 theorem map_smul_LL (a : D.what₂.LL) (F : Pol0 D) :
     MvPolynomial.map D.what₂.embLL (a • F) = D.what₂.embLL a • MvPolynomial.map D.what₂.embLL F := by
@@ -55,7 +59,7 @@ theorem pol_spec (x : ((D.fm u).lat 0).V) (c : (D.mem u).C.cls 0) (z : (D.mem u)
 def co0 : ((D.fm u).lat 0).V →ₗ[D.what₂.LL] ((D.mem u).C.cls 0 → Pol0 D) where
   toFun x c := pol T x c
   map_add' x y := funext fun c => rd_unique T fun z => by
-    rw [Pi.add_apply, rd_add, ← pol_spec, ← pol_spec, ← pol_spec, map_add]
+    rw [Pi.add_apply, rd_add, ← pol_spec, ← pol_spec, ← pol_spec, map_add (f := _)]
     rfl
   map_smul' a x := funext fun c => rd_unique T fun z => by
     simp only [Pi.smul_apply, RingHom.id_apply]

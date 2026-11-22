@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataParams
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataParams
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module
 

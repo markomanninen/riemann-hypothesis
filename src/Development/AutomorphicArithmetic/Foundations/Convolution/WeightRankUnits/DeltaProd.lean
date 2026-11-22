@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaProdAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaLoc
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.MuProd
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.AbsProd
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.Regroup
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaProdAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaLoc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.MuProd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.AbsProd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.Regroup
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct

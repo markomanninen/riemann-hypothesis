@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DblActId
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealisedOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzConjMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DblActId
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealisedOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzConjMem
+
+@[expose] public section
+
 open scoped TensorProduct NNReal ENNReal Matrix Classical
 open NumberField MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.TowU
 
@@ -16,29 +21,30 @@ theorem isOp_comp {ψ : AddChar (AF F) ℂ} {κ κ' κ'' : Type} [Fintype κ] [F
     {t : (κ' → AF F) × (κ' → AF F) → (κ'' → AF F) × (κ'' → AF F)}
     {S : ((κ → AF F) → ℂ) →ₗ[ℂ] ((κ' → AF F) → ℂ)} {S' : ((κ' → AF F) → ℂ) →ₗ[ℂ] ((κ → AF F) → ℂ)}
     {T : ((κ' → AF F) → ℂ) →ₗ[ℂ] ((κ'' → AF F) → ℂ)} {T' : ((κ'' → AF F) → ℂ) →ₗ[ℂ] ((κ' → AF F) → ℂ)}
-    (hs : IsOp ψ s S S') (ht : IsOp ψ t T T') : IsOp ψ (t ∘ s) (T ∘ₗ S) (S' ∘ₗ T') where
-  pres φ h := ht.pres _ (hs.pres φ h)
-  pres' φ h := hs.pres' _ (ht.pres' φ h)
-  left φ h := by simp only [LinearMap.comp_apply]; rw [ht.left _ (hs.pres φ h), hs.left φ h]
-  right φ h := by simp only [LinearMap.comp_apply]; rw [hs.right _ (ht.pres' φ h), ht.right φ h]
-  adm l hl := by rw [← LinearMap.comp_assoc]; exact hs.adm _ (ht.adm l hl)
-  adm' l hl := by rw [← LinearMap.comp_assoc]; exact ht.adm' _ (hs.adm' l hl)
-  Heisenberg₂ w φ h := by
-    simp only [LinearMap.comp_apply, Function.comp_apply]
-    rw [hs.Heisenberg₂ w φ h, ht.Heisenberg₂ _ _ (hs.pres φ h)]
-  theta := by
-    obtain ⟨c₁, hc₁, e₁⟩ := hs.theta
-    obtain ⟨c₂, hc₂, e₂⟩ := ht.theta
-    exact ⟨c₂ * c₁, mul_ne_zero hc₂ hc₁, fun φ h => by
-      simp only [LinearMap.comp_apply]; rw [e₂ _ (hs.pres φ h), e₁ φ h, mul_assoc]⟩
-  norm μ μ'' hμ hμ'' := by
-    letI : MeasurableSpace (κ' → AF F) := borel _
-    haveI : BorelSpace (κ' → AF F) := ⟨rfl⟩
-    haveI : T2Space (AF F) := GlobalTheory.AdelicUnitaryTop.t2Space_adeleRing_numberField F
-    obtain ⟨c₁, h1, h1', e₁⟩ := hs.norm μ Measure.addHaar hμ inferInstance
-    obtain ⟨c₂, h2, h2', e₂⟩ := ht.norm Measure.addHaar μ'' inferInstance hμ''
-    exact ⟨c₂ * c₁, mul_ne_zero h2 h1, ENNReal.mul_ne_top h2' h1', fun φ h => by
-      simp only [LinearMap.comp_apply]; rw [e₂ _ (hs.pres φ h), e₁ φ h, mul_assoc]⟩
+    (hs : IsOp ψ s S S') (ht : IsOp ψ t T T') : IsOp ψ (t ∘ s) (T ∘ₗ S) (S' ∘ₗ T') := by
+  exact
+    { pres φ h := ht.pres _ (hs.pres φ h)
+      pres' φ h := hs.pres' _ (ht.pres' φ h)
+      left φ h := by simp only [LinearMap.comp_apply]; rw [ht.left _ (hs.pres φ h), hs.left φ h]
+      right φ h := by simp only [LinearMap.comp_apply]; rw [hs.right _ (ht.pres' φ h), ht.right φ h]
+      adm l hl := by rw [← LinearMap.comp_assoc]; exact hs.adm _ (ht.adm l hl)
+      adm' l hl := by rw [← LinearMap.comp_assoc]; exact ht.adm' _ (hs.adm' l hl)
+      Heisenberg₂ w φ h := by
+        simp only [LinearMap.comp_apply, Function.comp_apply]
+        rw [hs.Heisenberg₂ w φ h, ht.Heisenberg₂ _ _ (hs.pres φ h)]
+      theta := by
+        obtain ⟨c₁, hc₁, e₁⟩ := hs.theta
+        obtain ⟨c₂, hc₂, e₂⟩ := ht.theta
+        exact ⟨c₂ * c₁, mul_ne_zero hc₂ hc₁, fun φ h => by
+          simp only [LinearMap.comp_apply]; rw [e₂ _ (hs.pres φ h), e₁ φ h, mul_assoc]⟩
+      norm μ μ'' hμ hμ'' := by
+        letI : MeasurableSpace (κ' → AF F) := borel _
+        haveI : BorelSpace (κ' → AF F) := ⟨rfl⟩
+        haveI : T2Space (AF F) := GlobalTheory.AdelicUnitaryTop.t2Space_adeleRing_numberField F
+        obtain ⟨c₁, h1, h1', e₁⟩ := hs.norm μ Measure.addHaar hμ inferInstance
+        obtain ⟨c₂, h2, h2', e₂⟩ := ht.norm Measure.addHaar μ'' inferInstance hμ''
+        exact ⟨c₂ * c₁, mul_ne_zero h2 h1, ENNReal.mul_ne_top h2' h1', fun φ h => by
+          simp only [LinearMap.comp_apply]; rw [e₂ _ (hs.pres φ h), e₁ φ h, mul_assoc]⟩ }
 
 theorem dblAct_comp {κ κ' κ'' : Type} (s : (κ → AF F) × (κ → AF F) → (κ' → AF F) × (κ' → AF F))
     (t : (κ' → AF F) × (κ' → AF F) → (κ'' → AF F) × (κ'' → AF F)) :
@@ -160,18 +166,19 @@ namespace GlobalTheory.TowU.RealComp
 variable {F : Type} [Field F] [NumberField F] {κ κ' : Type} [Fintype κ] [Fintype κ']
 
 theorem isOp_reix (ψ : AddChar (AF F) ℂ) (e : κ' ≃ κ) :
-    IsOp ψ (fun w : (κ → AF F) × (κ → AF F) => (w.1 ∘ e, w.2 ∘ e)) (reix e) (reix e.symm) where
-  pres _ h := reix_mem_schA e h
-  pres' _ h := reix_mem_schA e.symm h
-  left φ _ := reix_symm_reix e φ
-  right φ _ := by simpa using reix_symm_reix e.symm φ
-  adm _ hl := reix_adm e hl
-  adm' _ hl := reix_adm e.symm hl
-  Heisenberg₂ w φ _ := reix_heis ψ e w φ
-  theta := ⟨1, one_ne_zero, fun φ _ => by rw [reix_theta, one_mul]⟩
-  norm μ μ' hμ hμ' := by
-    obtain ⟨c, h0, h1, h⟩ := reix_norm e μ μ' hμ hμ'
-    exact ⟨c, h0, h1, fun φ _ => h φ⟩
+    IsOp ψ (fun w : (κ → AF F) × (κ → AF F) => (w.1 ∘ e, w.2 ∘ e)) (reix e) (reix e.symm) := by
+  exact
+    { pres _ h := reix_mem_schA e h
+      pres' _ h := reix_mem_schA e.symm h
+      left φ _ := reix_symm_reix e φ
+      right φ _ := by simpa using reix_symm_reix e.symm φ
+      adm _ hl := reix_adm e hl
+      adm' _ hl := reix_adm e.symm hl
+      Heisenberg₂ w φ _ := reix_heis ψ e w φ
+      theta := ⟨1, one_ne_zero, fun φ _ => by rw [reix_theta, one_mul]⟩
+      norm μ μ' hμ hμ' := by
+        obtain ⟨c, h0, h1, h⟩ := reix_norm e μ μ' hμ hμ'
+        exact ⟨c, h0, h1, fun φ _ => h φ⟩ }
 
 theorem dblAct_reix (e : κ' ≃ κ) :
     dblAct (fun w : (κ → AF F) × (κ → AF F) => (w.1 ∘ e, w.2 ∘ e)) =

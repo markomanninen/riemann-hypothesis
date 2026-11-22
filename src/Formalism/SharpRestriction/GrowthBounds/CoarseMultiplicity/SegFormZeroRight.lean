@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestBlockForm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestBlockForm
+
+@[expose] public section
 
 noncomputable section
 

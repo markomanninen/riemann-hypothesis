@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PhzEqFlat
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarMeasureSplitExactSequenceStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicSkewMatricesLocallyCompactGroupStatement
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PhzEqFlat
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarMeasureSplitExactSequenceStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicSkewMatricesLocallyCompactGroupStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,8 +121,8 @@ theorem padN_nF {β : nA σ L.Y L.b} (h : β ∈ nF σ L.Y L.b) : padN L β ∈ 
 theorem nA_inst (n : ℕ) (Y : Spc F E n) (b : GL (Fin n ⊕ Fin n) E) (ε : ℤˣ)
     (hε : b.1ᵀ * dbl Y.J * b.1.map σ = Matrix.fromBlocks 0 1 (((ε : ℤ) : E) • 1) 0) :
     LocallyCompactSpace (nA σ Y b) ∧ T2Space (nA σ Y b) := by
-  have h := GlobalTheory.T.adelic_skew_matrices_locally_compact_group F E σ n Y b ε fun β => by
-    rw [kunf.mem_nA_iff hε, ← sub_eq_zero, sub_neg_eq_add]
+  have h := GlobalTheory.T.adelic_skew_matrices_locally_compact_group F E σ n Y b ε (fun β => by
+    rw [kunf.mem_nA_iff hε, ← sub_eq_zero, sub_neg_eq_add])
   exact ⟨h.2.2.1, h.2.2.2.2.1⟩
 
 theorem fiber {nb : nA σ d.Y d.b → d.G} {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}

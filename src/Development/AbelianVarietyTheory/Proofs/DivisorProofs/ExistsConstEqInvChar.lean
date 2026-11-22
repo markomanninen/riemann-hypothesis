@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HalvesFreeAndAdjoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeEmbeddingIdealLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OmegaDataLevelForms
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HalvesFreeAndAdjoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeEmbeddingIdealLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OmegaDataLevelForms
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.L2.DIV Formalism.IndefR.Datum
 open scoped Matrix Classical
 
@@ -14,7 +19,8 @@ theorem mk_sum_smul {O La : Type} [CommRing O] [AddCommGroup La] [Module O La] (
     (c : Fin r → O) (x : Fin r → La) : (Submodule.Quotient.mk (∑ b, c b • x b) : La ⧸ J) =
       ∑ b, c b • (Submodule.Quotient.mk (x b) : La ⧸ J) := by
   change J.mkQ _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   rfl
 
 theorem isUnit_det_of_span : ∀ {O La ι : Type} [CommRing O] [AddCommGroup La] [Module O La] (P : Finset ι) (k : ι → Type) [∀ i, CommRing (k i)] (φ : ∀ i, O → k i) {r : ℕ} (ρ : ∀ i, Fin r → La →+ k i), (∀ i a c x, ρ i a (c • x) = φ i c * ρ i a x) → ∀ (J : Submodule O La), (∀ x, x ∈ J → ∀ i ∈ P, ∀ a, ρ i a x = 0) → (∀ t : ∀ i, Fin r → k i, ∃ x, ∀ i ∈ P, ∀ a, ρ i a x = t i a) → ∀ x : Fin r → La, Submodule.span O (Set.range fun b => (Submodule.Quotient.mk (x b) : La ⧸ J)) = ⊤ → ∀ i ∈ P, IsUnit (Matrix.of fun b a => ρ i a (x b)).det := by
@@ -32,7 +38,8 @@ theorem isUnit_det_of_span : ∀ {O La ι : Type} [CommRing O] [AddCommGroup La]
     exact (mk_sum_smul J c x).symm
   refine ⟨fun b => φ i (c b), funext fun a => ?_⟩
   have h1 := hJ _ hw i hi a
-  rw [map_sub, map_sum, sub_eq_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum, sub_eq_zero] at h1
   simp only [hs] at h1
   have h2 := hv i hi a
   rw [Pi.single_eq_same] at h2
@@ -53,7 +60,8 @@ theorem span_of_isUnit_det : ∀ {O La ι : Type} [CommRing O] [AddCommGroup La]
   choose e he using he
   choose c hc using fun b : Fin r => hcrt fun i => e i b
   have hmem : v - ∑ b, c b • x b ∈ J := hJ _ fun i hi a => by
-    rw [map_sub, map_sum, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, sub_eq_zero]
     simp only [hs, hc _ i hi]
     have := congrFun (he i hi) a
     rw [← this]

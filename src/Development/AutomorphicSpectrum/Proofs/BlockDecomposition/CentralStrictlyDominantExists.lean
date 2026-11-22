@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformizerPowTendstoZero
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformizerPowTendstoZero
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL ValuativeRel PositivityTheory.Lbc Matrix
 
@@ -40,8 +44,9 @@ theorem diagPow_pow (l : Fin N → ℤ) (j : ℕ) :
   | succ j ih =>
     rw [pow_succ, ih, ← diagPow_add]
     congr 1
-    funext i
-    simp
+    ext i
+    simp only [Pi.add_apply, Pi.smul_apply, zsmul_eq_mul, Pi.mul_apply, Pi.intCast_apply, Nat.cast_add, Nat.cast_one]
+    push_cast
     ring
 
 theorem conj_apply (l : Fin N → ℤ) (y : GL (Fin N) k) (i j : Fin N) :
@@ -173,14 +178,17 @@ theorem leviEmb_zLevi (d : Fin h → ℕ) (hd : ∑ a, d a = N) (w : Fin h → �
   rw [coe_diagPow]
   by_cases hab : a = b
   · subst hab
-    rw [leviEmb_apply_same]
+    have hs : (leviEmb k (stdBlocks d hd) (zLevi d w) : Matrix (Fin N) (Fin N) k)
+        (stdBlocks d hd ⟨a, i⟩) (stdBlocks d hd ⟨a, j⟩) = (zLevi (k := k) d w a : Matrix (Fin (d a)) (Fin (d a)) k) i j := by
+      simp [leviEmb, Matrix.blockDiagonal'_apply_eq]
+    rw [hs]
     by_cases hij : i = j
     · subst hij
       rw [coe_zLevi, Matrix.scalar_apply, Matrix.diagonal_apply_eq, Matrix.diagonal_apply_eq, blk_apply]
     · have hne := stdBlocks_ne d hd i j (fun e => hij (by simpa using e))
       rw [Matrix.diagonal_apply_ne _ hne, coe_zLevi, Matrix.scalar_apply, Matrix.diagonal_apply_ne _ hij]
   · have hne := stdBlocks_ne d hd i j (fun e => hab (congrArg Sigma.fst e))
-    rw [leviEmb_apply_ne k _ _ hab, Matrix.diagonal_apply_ne _ hne]
+    simp [leviEmb, Matrix.blockDiagonal'_apply, hab, Matrix.diagonal_apply_ne _ hne]
 
 def lam (d : Fin h → ℕ) (hd : ∑ a, d a = N) : Fin N → ℤ :=
   fun i => -(((blk (stdBlocks d hd) i : Fin h) : ℕ) : ℤ)
@@ -245,19 +253,33 @@ theorem exists_central_strictlyDominant : ∀ (k : Type) [Field k] [ValuativeRel
     rw [smul_neg, diagPow_neg, hpow]
   have hemb' : Zls.diagPow k N ((c : ℤ) • (-lam d hd)) = (leviEmb k (stdBlocks d hd) a)⁻¹ := by
     rw [smul_neg, diagPow_neg, hemb]
+  have hpar : leviEmb k (stdBlocks d hd) a ∈ parab k (stdBlocks d hd) := by
+    rw [hemb]
+    apply mem_parab.2
+    intro i j hij
+    rw [coe_diagPow, Matrix.diagonal_apply_ne]
+    intro e
+    subst e
+    exact lt_irrefl _ hij
+  have hparLower : leviEmb k (stdBlocks d hd) a ∈ parabLower k (stdBlocks d hd) := by
+    rw [hemb]
+    apply (mem_parabLower_iff k).2
+    intro b b' i j hlt
+    rw [coe_diagPow, Matrix.diagonal_apply_ne]
+    exact stdBlocks_ne d hd i j (fun e => hlt.ne (congrArg Sigma.fst e))
   have hcent : ∀ x : Levi k (Bl d), a * x = x * a := zLevi_comm d _
   refine ⟨a, hcent, ⟨⟨?_, ?_, ?_⟩, ?_⟩, ?_⟩
   · intro n hn
     refine ⟨?_, ?_⟩
     · rw [hemb]
       exact hc₁ c hcc₁ n hn.1 hn.2
-    · exact (Subgroup.mem_normalizer_iff.1 (leviEmb_mem_normalizer k _ a) n).1 hn.2
+    · exact (Subgroup.mem_normalizer_iff.1 (parab_le_normalizer k _ hpar) n).1 hn.2
   · intro n hn
     refine ⟨?_, ?_⟩
     · have := hc₂ c hcc₂ n hn.1 hn.2
       rwa [hemb', inv_inv] at this
     · have := (Subgroup.mem_normalizer_iff.1
-        (inv_mem (leviEmb_mem_normalizer_lower k (stdBlocks d hd) a)) n).1 hn.2
+        (inv_mem (parab_le_normalizer k _ hparLower)) n).1 hn.2
       rwa [inv_inv] at this
   · intro x hx
     refine ⟨?_, ?_⟩

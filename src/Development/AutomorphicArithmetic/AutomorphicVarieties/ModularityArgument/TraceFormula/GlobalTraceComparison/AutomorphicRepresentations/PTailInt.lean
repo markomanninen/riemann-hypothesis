@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosT
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosT
+
+@[expose] public section
 
 open UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi DiscreteGroups.T1.G
 
@@ -21,8 +25,17 @@ section Meas
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-private theorem continuous_ac' : Continuous (ac E n) :=
-  (GlobalTheory.OneRep.SplitTwist.continuous_splitCentre.comp (continuous_id.div_const _)).prodMk continuous_const
+private theorem continuous_ac' : Continuous (ac E n) := by
+  have hc : Continuous (splitCentre E n) := by
+    have e : splitCentre E n = fun t : ℝ =>
+        GeneralLinearGroup.scalar (Fin n) (infId E (expU fun _ : InfinitePlace E => (t : ℂ))) :=
+      funext GlobalTheory.CuspRep.CuspidalL2GL.splitCentre_eq_scalar
+    rw [e]
+    refine Continuous.units_map _ ?_ |>.comp ((continuous_infId E).comp
+      (continuous_expU.comp (continuous_pi fun _ => Complex.continuous_ofReal)))
+    change Continuous fun x : Ad E => Matrix.diagonal fun _ : Fin n => x
+    exact (continuous_pi fun _ => continuous_id).matrix_diagonal
+  exact (hc.comp (continuous_id.div_const _)).prodMk continuous_const
 
 private theorem measurable_reduced_size : Measurable (r0 : H E n 0 → ℝ) := by
   have hc : Continuous fun x : H E n 0 => (ac E n (-ldet x) * x).1 :=
@@ -36,11 +49,12 @@ private theorem measurable_cnt {Ω : Set (H E n 0)} (hΩ : IsCompact Ω) :
     Measurable (cnt (ratH E n 0) Ω) := by
   haveI := borelSpace_H (E := E) (n := n)
   haveI : Countable (ratH E n 0) := DiscreteGroups.T1.G.Dcy.countable_ratH'
-  have hm : MeasurableSet Ω := hΩ.measurableSet
-  refine Measurable.ennreal_tsum fun γ => ?_
-  have hc : Continuous fun x : H E n 0 => x⁻¹ * (γ : H E n 0) * x :=
-    (continuous_inv.mul continuous_const).mul continuous_id
-  exact (measurable_one.indicator hm).comp hc.measurable
+  set_option synthInstance.maxHeartbeats 200000 in
+    have hm : MeasurableSet Ω := hΩ.measurableSet
+    refine Measurable.tsum fun γ => ?_
+    have hc : Continuous fun x : H E n 0 => x⁻¹ * (γ : H E n 0) * x :=
+      (continuous_inv.mul continuous_const).mul continuous_id
+    exact (measurable_one.indicator hm).comp hc.measurable
 
 end Meas
 
@@ -115,7 +129,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.tailInt_of_bounds :
   calc ∫⁻ x, A.indicator (fun x => ‖m.G x x‖ₑ) x ∂s.D.ν
       ≤ ∫⁻ x, ∑ b, ENNReal.ofReal (Cb b * ‖m.U‖) * f b x ∂s.D.ν := lintegral_mono hpt
     _ = ∑ b, ENNReal.ofReal (Cb b * ‖m.U‖) * ∫⁻ x, f b x ∂s.D.ν := by
-        rw [lintegral_finset_sum _ fun b _ => (hfm b).const_mul _]
+        rw [lintegral_finsetSum _ fun b _ => (hfm b).const_mul _]
         exact Finset.sum_congr rfl fun b _ => lintegral_const_mul _ (hfm b)
     _ ≤ ∑ b, ENNReal.ofReal (Cb b * Db b * ‖m.U‖ * (1 + R) ^ (Finset.univ.sup Nb) * Real.exp (-(L * ρ))) :=
         Finset.sum_le_sum fun b _ => hT b

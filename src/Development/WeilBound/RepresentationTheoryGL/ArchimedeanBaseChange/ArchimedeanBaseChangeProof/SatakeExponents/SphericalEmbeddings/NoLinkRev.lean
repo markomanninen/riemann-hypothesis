@@ -1,13 +1,17 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.StageLift
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.ValuationDetKO
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.IsSmoothCharUnr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSatakeParameterOfIsSubquotientOfInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalPairIrreducibleUnlinked
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialOfIsSubquotient
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PrincipalSeriesSubquotientOfCharacters
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientUnramPrinSeriesOfHasSupport
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.StageLift
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.ValuationDetKO
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.IsSmoothCharUnr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSatakeParameterOfIsSubquotientOfInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalPairIrreducibleUnlinked
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialOfIsSubquotient
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PrincipalSeriesSubquotientOfCharacters
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientUnramPrinSeriesOfHasSupport
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 theorem prin_irr (χ : Fin 2 → kˣ →* ℂˣ) (hχ : ∀ i, IsSmoothChar (χ i))
     (h1 : χ 1 ≠ χ 0 * absPow k 1) (h2 : χ 0 ≠ χ 1 * absPow k 1) : (prinSeries χ).IsIrreducible := by
-  let x : Fin 2 → IrrGL k := fun i => IrrGL.ofChar (χ i) (hχ i)
+  let x : Fin 2 → IrrGL (k := k) := fun i => IrrGL.ofChar (χ i) (hχ i)
   have hx : ∀ i, (x i).IsCusp := fun i => IrrGL.isCusp_ofChar _ _
   have hd : ∑ i, (x i).1 = 2 := by simp [x, IrrGL.ofChar]
   have hnu : ∀ i j, χ j ≠ χ i * absPow k 1 → x j ≠ (x i).nu 1 := fun i j h e => by
@@ -44,9 +48,29 @@ theorem prin_irr (χ : Fin 2 → kˣ →* ℂˣ) (hχ : ∀ i, IsSmoothChar (χ 
   have hM : (multiProd (Equiv.sigmaUnique (Fin 2) fun _ => Fin 1) fun i => detRep (Fin 1) (χ i)).IsIrreducible :=
     GlobalTheory.Parabolic.isIrreducible_of_equiv (p.trans q).symm hP
   haveI := nontrivial_of_irreducible hM
-  haveI := nontrivial_of_isSubquotient
-    (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries (Equiv.sigmaUnique (Fin 2) fun _ => Fin 1) χ)
-  obtain ⟨e⟩ := equiv_of_isSubquotient (GlobalTheory.PrinProd.isSubquotient_prinSeries_multiProd k 2 χ) hM
+  haveI : Nontrivial (IndSp (points (Fin 2)) _) := by
+    obtain ⟨S, f, hf⟩ := GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries (Equiv.sigmaUnique (Fin 2) fun _ => Fin 1) χ
+    have := hf.nontrivial
+    exact Subtype.val_injective.nontrivial (α := S.toSubmodule)
+  have he : Nonempty ((multiProd (Equiv.sigmaUnique (Fin 2) fun _ => Fin 1)
+      fun i => detRep (Fin 1) (χ i)).Equiv (prinSeries χ)) := by
+    obtain ⟨S, f, hf⟩ := GlobalTheory.PrinProd.isSubquotient_prinSeries_multiProd k 2 χ
+    obtain ⟨y, hy⟩ := exists_ne (f 0)
+    simp only [map_zero] at hy
+    obtain ⟨v, rfl⟩ := hf y
+    haveI : IsSimpleOrder (Subrepresentation _) := hM
+    rcases eq_bot_or_eq_top S with rfl | rfl
+    · exact absurd (by rw [show v = 0 from Subtype.ext v.2, map_zero]) hy
+    let F := f.comp (topEquiv _).symm.toIntertwiningMap
+    have hs : Function.Surjective F := hf.comp (topEquiv _).symm.toLinearEquiv.surjective
+    refine ⟨equivOfBijective F ⟨(injective_iff_map_eq_zero _).2 fun x hx => ?_, hs⟩⟩
+    rcases eq_bot_or_eq_top F.ker with h | h
+    · have : x ∈ F.ker := hx
+      rw [h] at this
+      exact this
+    · have : v.1 ∈ F.ker := by rw [h]; trivial
+      exact absurd this hy
+  obtain ⟨e⟩ := he
   exact GlobalTheory.Parabolic.isIrreducible_of_equiv e hM
 
 theorem iP_sph {n : ℕ} (ξ : Fin n → ℂˣ) : IsSpherical (iP (k := k) ξ) := by
@@ -88,7 +112,7 @@ theorem unl (a b : ℂˣ) (h : unrChar k a ≠ unrChar k b * absPow k 1) (hab : 
   have h' := no_link_rev (k := k) a b hab
   obtain ⟨e⟩ := iso2 a b (irr2 a b h' h) (irr2 b a h h')
   refine ⟨e.toIntertwiningMap, fun v _ hv => ?_⟩
-  exact e.toLinearEquiv.injective (hv.trans (map_zero _).symm)
+  exact e.toLinearEquiv.injective (hv.trans e.toLinearEquiv.map_zero.symm)
 
 end PositivityTheory.Rg.BcB.N3.Pse
 

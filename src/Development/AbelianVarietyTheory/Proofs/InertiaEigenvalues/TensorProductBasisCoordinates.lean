@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct Module
 
 theorem GlobalTheory.tensorBasisCoords : ∀ (F : Type) [Field F] (B : Type) [CommRing B] [Algebra F B] (V : Type) [AddCommGroup V] [Module F V] (n : Type) [Fintype n] [DecidableEq n] (b : Basis n F V), ∃ e : V ⊗[F] B ≃ₗ[F] (n → B), (∀ v x i, e (v ⊗ₜ[F] x) i = b.repr v i • x) ∧ (∀ y : n → B, e.symm y = ∑ i, b i ⊗ₜ[F] y i) ∧ ∀ (r : V →ₗ[F] V) (f : B →ₗ[F] B) (y : V ⊗[F] B), e (TensorProduct.map r f y) = ((LinearMap.toMatrix b b r).map (algebraMap F B)).mulVec (fun i => f (e y i)) := by
@@ -14,7 +19,8 @@ theorem GlobalTheory.tensorBasisCoords : ∀ (F : Type) [Field F] (B : Type) [Co
   · intro y
     rw [LinearEquiv.symm_apply_eq]
     funext j
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     simp only [h1, Basis.repr_self, Finsupp.single_apply]
     simp
   · intro r f y
@@ -30,11 +36,12 @@ theorem GlobalTheory.tensorBasisCoords : ∀ (F : Type) [Field F] (B : Type) [Co
       rw [← Finset.sum_smul]
       congr 1
       conv_lhs => rw [← b.sum_repr v]
-      rw [map_sum, map_sum, Finsupp.finset_sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum, Finsupp.finsetSum_apply]
       simp only [map_smul, Finsupp.smul_apply, smul_eq_mul]
       exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
     | add y z hy hz =>
-      rw [map_add, hadd, hy, hz, hadd, ← Matrix.mulVec_add]
+      rw [map_add (f := _), hadd, hy, hz, hadd, ← Matrix.mulVec_add]
       congr 1
       funext i
-      simp [map_add]
+      simp [map_add (f := _)]

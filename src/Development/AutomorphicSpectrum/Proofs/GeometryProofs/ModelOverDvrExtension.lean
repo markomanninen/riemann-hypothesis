@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDvrConeDimTrdeg
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NatDegreeMinpolyEqOfClosed
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDvrConeDimTrdeg
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NatDegreeMinpolyEqOfClosed
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.BaseChange
 
@@ -100,21 +104,21 @@ theorem exists_decomp {O O' σ : Type} [CommRing O] [IsDomain O] [IsPrincipalIde
     ∃ (r : ℕ) (e : Fin r → O') (g : Fin r → MvPolynomial σ O), LinearIndependent O e ∧
       f = ∑ i, C (e i) * MvPolynomial.map (algebraMap O O') (g i) := by
   classical
-  let M : Submodule O O' := Submodule.span O (↑(f.support.image (fun m => coeff m f)) : Set O')
+  let M : Submodule O O' := Submodule.span O (↑(f.support.image (fun m => AddMonoidAlgebra.coeff f m)) : Set O')
   haveI : Module.Finite O M := Module.Finite.span_of_finite O (Finset.finite_toSet _)
   haveI : FaithfulSMul O O' := (faithfulSMul_iff_algebraMap_injective O O').2 hinj
   haveI : Module.Free O M := Module.free_of_finite_type_torsion_free'
   let b := Module.finBasis O M
-  have hm : ∀ m, coeff m f ∈ M := by
+  have hm : ∀ m, AddMonoidAlgebra.coeff f m ∈ M := by
     intro m
     by_cases h : m ∈ f.support
     · exact Submodule.subset_span (by simpa using ⟨m, by simpa using h, rfl⟩)
     · rw [notMem_support_iff.1 h]
       exact M.zero_mem
-  let cm : (σ →₀ ℕ) → M := fun m => ⟨coeff m f, hm m⟩
+  let cm : (σ →₀ ℕ) → M := fun m => ⟨AddMonoidAlgebra.coeff f m, hm m⟩
   let g : Fin (Module.finrank O M) → MvPolynomial σ O :=
     fun i => ∑ m ∈ f.support, monomial m (b.repr (cm m) i)
-  have hg : ∀ m i, coeff m (g i) = b.repr (cm m) i := by
+  have hg : ∀ m i, AddMonoidAlgebra.coeff (g i) m = b.repr (cm m) i := by
     intro m i
     by_cases h : m ∈ f.support
     · simp [g, coeff_sum, coeff_monomial, h]
@@ -125,9 +129,9 @@ theorem exists_decomp {O O' σ : Type} [CommRing O] [IsDomain O] [IsPrincipalIde
   · ext m
     have h1 : (cm m : O') = ∑ i, b.repr (cm m) i • (b i : O') := by
       have h := congrArg (fun z : M => (z : O')) (b.sum_repr (cm m))
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at h
+      simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at h
       exact h.symm
-    have h2 : coeff m f = (cm m : O') := rfl
+    have h2 : AddMonoidAlgebra.coeff f m = (cm m : O') := rfl
     rw [h2, h1, coeff_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [coeff_C_mul, coeff_map, hg, Algebra.smul_def, mul_comm]
@@ -181,7 +185,7 @@ theorem trdeg_eq {σ O O' : Type} [CommRing O] [IsDomain O] [CommRing O'] [IsDom
           (IsScalarTower.toAlgHom O O' (MvPolynomial σ O' ⧸ P'))
       exact h1.extendScalars hOS
     | add p q hp hq =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hp.add hq
     | mul_X p i hp =>
       rw [map_mul]
@@ -213,7 +217,7 @@ theorem pointConeMap_map (h : MvPolynomial (Σ k, J k) O) :
   | C a =>
     simp only [pointConeMap, map_C, aeval_C, MvPolynomial.algebraMap_apply]
     rw [← IsScalarTower.algebraMap_apply O O' Ω', ← IsScalarTower.algebraMap_apply O Ω Ω']
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp =>
     simp only [map_mul, hp]
     simp [pointConeMap]
@@ -269,7 +273,8 @@ theorem exists_decomp_mem (hcl : IsIntegrallyClosedIn O Ω)
   have h0 : pointConeMap O' (fun v => algebraMap Ω Ω' (y v)) f = 0 := hf
   have hz : ∑ i, (C (algebraMap O' Ω' (e i)) : MvPolynomial K Ω') *
       MvPolynomial.map (algebraMap Ω Ω') (pointConeMap O y (g i)) = 0 := by
-    rw [hfe, map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hfe, map_sum] at h0
     rw [← h0]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, pointConeMap_map]
@@ -278,9 +283,9 @@ theorem exists_decomp_mem (hcl : IsIntegrallyClosedIn O Ω)
   intro i
   change pointConeMap O y (g i) = 0
   ext n
-  have hn := congrArg (coeff n) hz
-  simp only [coeff_sum, coeff_C_mul, coeff_map, coeff_zero] at hn
-  have := Fintype.linearIndependent_iff.1 hLI (fun i => coeff n (pointConeMap O y (g i)))
+  have hn := congrArg (AddMonoidAlgebra.coeff · n) hz
+  simp only [coeff_sum, coeff_C_mul, coeff_map, AddMonoidAlgebra.coeff_zero] at hn
+  have := Fintype.linearIndependent_iff.1 hLI (fun i => AddMonoidAlgebra.coeff (pointConeMap O y (g i)) n)
     (by simpa [Algebra.smul_def, mul_comm] using hn) i
   simpa using this
 

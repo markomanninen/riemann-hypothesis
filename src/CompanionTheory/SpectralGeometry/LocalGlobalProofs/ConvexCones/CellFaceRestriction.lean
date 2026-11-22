@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolyFanFaceCutByIntLinearFormIsCell
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolyFanFaceCutByIntLinearFormIsCell
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ theorem isCell_face_of_isFaceCut : ∀ (O : Type) [CommRing O] [IsDedekindDomain
       obtain ⟨k, c, hk, hc⟩ := h3 u hu hp heq.symm
       have e1 : (k : ℤ) * h u = ∑ i, (c i : ℤ) * h (v i) := by
         have := congrArg h hc
-        simpa [map_sum, map_nsmul, nsmul_eq_mul] using this
+        set_option synthInstance.maxHeartbeats 100000 in
+          simpa [map_sum, map_nsmul, nsmul_eq_mul] using this
       have hnn : 0 ≤ (k : ℤ) * h u := e1 ▸ Finset.sum_nonneg fun i _ => mul_nonneg (Int.natCast_nonneg _) (hcut.1 i)
       exact ⟨(mul_nonneg_iff_of_pos_left (by exact_mod_cast hk)).1 hnn, heq⟩
     · right
@@ -66,7 +71,7 @@ theorem isCell_face_of_isFaceCut : ∀ (O : Type) [CommRing O] [IsDedekindDomain
       ((K * N : ℕ) : ℝ) * ψ.evalZ β ≤ ((K • ℓ + h) β : ℤ) ∧
         (((K * N : ℕ) : ℝ) * ψ.evalZ β = ((K • ℓ + h) β : ℤ) → h β = 0) := by
     intro β hβ hp
-    have hR : toReal β ∈ psdCone bar X := by
+    have hR : toReal β ∈ psdCone (bar := bar) (X := X) := by
       simpa using GlobalTheory.PolFan.ConeSub.sum_smul_toReal_mem_psdCone O bar X 1 ![β] ![1] (by simp [hβ])
         (by simp [hp]) (by simp)
     obtain ⟨e, mm, γ, c, hγ, hγS, hc, hsum⟩ := hcov (toReal β) hR
@@ -131,7 +136,8 @@ theorem isCell_face_of_isFaceCut : ∀ (O : Type) [CommRing O] [IsDedekindDomain
     obtain ⟨k, c, hk, hc⟩ := h3 β hβ hp hℓ
     have e1 : (k : ℤ) * h β = ∑ j, (c j : ℤ) * h (v j) := by
       have := congrArg h hc
-      simpa [map_sum, map_nsmul, nsmul_eq_mul] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_nsmul, nsmul_eq_mul] using this
     rw [hh, mul_zero] at e1
     have hz := (Finset.sum_eq_zero_iff_of_nonneg fun j _ =>
       mul_nonneg (Int.natCast_nonneg (c j)) (hcut.1 j)).1 e1.symm

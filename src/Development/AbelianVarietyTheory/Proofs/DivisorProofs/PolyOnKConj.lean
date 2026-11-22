@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem polyOnK_sum {n : ℕ} {ε : Fin n → Bool} {ι : Type} (s : Finset ι) 
   | insert a s ha ih =>
     obtain ⟨P, hP⟩ := hf a (Finset.mem_insert_self a s)
     obtain ⟨Q, hQ⟩ := ih fun i hi => hf i (Finset.mem_insert_of_mem hi)
-    exact ⟨P + Q, fun k hk => by dsimp only at hQ ⊢; rw [Finset.sum_insert ha, map_add, hP k hk, hQ k hk]⟩
+    exact ⟨P + Q, fun k hk => by dsimp only at hQ ⊢; rw [Finset.sum_insert ha, map_add (f := _), hP k hk, hQ k hk]⟩
 
 theorem trPoly : TrPoly := by
   intro n ε W _ _ _ T hT

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.EulerCharDefs
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
-import GroundTheory.ProfiniteCohomology.Shapiro
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.EulerCharDefs
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+public import GroundTheory.ProfiniteCohomology.Shapiro
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -47,7 +52,7 @@ theorem eulerChar_shortExact_of_finite (hS : S.ShortExact)
   have hk := fun {X Y : ModuleCat k} (φ : X ⟶ Y) => card_eq_card_ker_mul_card_range φ.hom
   have e2 : ∀ i, Nat.card (LinearMap.range (cohomologyMap S.f i).hom) =
       Nat.card (LinearMap.ker (cohomologyMap S.g i).hom) := fun i =>
-    card_range_eq_card_ker_of_exact (cohomology_exact₂ hS i)
+    card_range_eq_card_ker_of_exact ((cochainsShortComplex_shortExact hS).homology_exact₂ i)
   have e30 : Nat.card (LinearMap.range (cohomologyMap S.g 0).hom) =
       Nat.card (LinearMap.ker (δ hS 0 1 rfl).hom) :=
     card_range_eq_card_ker_of_exact (cohomology_exact₃ hS 0 1 rfl)
@@ -96,7 +101,8 @@ section Hypothesis
 
 variable {P : ℕ → Prop}
 
-theorem eulerChar_pos (hG : HasFiniteCohomology k G P) (A : Rep.{u} k G) [IsDiscreteRep A]
+theorem eulerChar_pos (hG : HasFiniteCohomology (k := k) (G := G) P)
+    (A : Rep.{u} k G) [IsDiscreteRep A]
     [Finite A] (hA : P (Nat.card A)) : 0 < eulerChar A := by
   obtain ⟨hfin, -⟩ := hG A ‹_› hA
   have h0 := hfin 0
@@ -111,8 +117,8 @@ theorem eulerChar_pos (hG : HasFiniteCohomology k G P) (A : Rep.{u} k G) [IsDisc
 variable {S : ShortComplex (Rep.{u} k G)} [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂]
   [IsDiscreteRep S.X₃]
 
-theorem eulerChar_shortExact_of_mem (hG : HasFiniteCohomology k G P) (hS : S.ShortExact)
-    [Finite S.X₁] [Finite S.X₂] [Finite S.X₃] (h₁ : P (Nat.card S.X₁))
+theorem eulerChar_shortExact_of_mem (hG : HasFiniteCohomology (k := k) (G := G) P)
+    (hS : S.ShortExact) [Finite S.X₁] [Finite S.X₂] [Finite S.X₃] (h₁ : P (Nat.card S.X₁))
     (h₂ : P (Nat.card S.X₂)) (h₃ : P (Nat.card S.X₃)) :
     eulerChar S.X₂ = eulerChar S.X₁ * eulerChar S.X₃ := by
   obtain ⟨f₁, z₁⟩ := hG S.X₁ ‹_› h₁
@@ -122,7 +128,8 @@ theorem eulerChar_shortExact_of_mem (hG : HasFiniteCohomology k G P) (hS : S.Sho
   have := (hG S.X₃ ‹_› h₃).1 1
   exact eulerChar_shortExact_of_finite hS
 
-theorem eulerChar_shortExact (hP : ∀ m n, m ∣ n → P n → P m) (hG : HasFiniteCohomology k G P)
+theorem eulerChar_shortExact (hP : ∀ m n, m ∣ n → P n → P m)
+    (hG : HasFiniteCohomology (k := k) (G := G) P)
     (hS : S.ShortExact) [Finite S.X₂] (h₂ : P (Nat.card S.X₂)) :
     eulerChar S.X₂ = eulerChar S.X₁ * eulerChar S.X₃ := by
   have hinj : Function.Injective S.f.hom := (Rep.mono_iff_injective _).1 hS.mono_f
@@ -138,38 +145,6 @@ theorem eulerChar_shortExact (hP : ∀ m n, m ∣ n → P n → P m) (hG : HasFi
     congr 1
     exact Nat.card_congr (Submodule.topEquiv).toEquiv
   exact eulerChar_shortExact_of_mem hG hS h₁ h₂ h₃
-
-noncomputable def eulerCharUnit (hG : HasFiniteCohomology k G P)
-    (A : (finiteDiscreteRep k G P).FullSubcategory) : ℚˣ :=
-  haveI := A.property.1
-  haveI := A.property.2.1
-  Units.mk0 (eulerChar A.obj) (eulerChar_pos hG A.obj A.property.2.2).ne'
-
-theorem coe_eulerCharUnit (hG : HasFiniteCohomology k G P)
-    (A : (finiteDiscreteRep k G P).FullSubcategory) :
-    haveI := A.property.1
-    (eulerCharUnit hG A : ℚ) = eulerChar A.obj :=
-  rfl
-
-noncomputable def eulerCharHom (hG : HasFiniteCohomology k G P) :
-    GrothendieckGroup k G P →+ Additive ℚˣ :=
-  QuotientAddGroup.lift (grothendieckRelations k G P)
-    (FreeAbelianGroup.lift fun A => Additive.ofMul (eulerCharUnit hG A)) (by
-      rw [grothendieckRelations, AddSubgroup.closure_le]
-      rintro x ⟨S, h₁, h₂, h₃, hS, rfl⟩
-      have := h₁.1
-      have := h₂.1
-      have := h₃.1
-      have := h₁.2.1
-      have := h₂.2.1
-      have := h₃.2.1
-      have key := eulerChar_shortExact_of_mem hG hS h₁.2.2 h₂.2.2 h₃.2.2
-      simp only [SetLike.mem_coe, AddMonoidHom.mem_ker, map_sub, FreeAbelianGroup.lift_apply_of]
-      rw [sub_sub, sub_eq_zero, ← ofMul_mul]
-      congr 1
-      ext
-      simp only [Units.val_mul, coe_eulerCharUnit]
-      exact key)
 
 end Hypothesis
 

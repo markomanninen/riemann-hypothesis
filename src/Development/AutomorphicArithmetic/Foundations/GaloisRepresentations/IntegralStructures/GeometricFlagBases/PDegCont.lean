@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FlagBasis
-import Development.EtaleCohomology.WeilConjectures.AbsContPf
-import Development.EtaleCohomology.WeilConjectures.ChevPf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FlagBasis
+public import Development.EtaleCohomology.WeilConjectures.AbsContPf
+public import Development.EtaleCohomology.WeilConjectures.ChevPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry NumberField GlobalTheory.EtC GlobalTheory.Et TensorProduct Polynomial
 open GlobalTheory.GalV (HTower Htot hop galV galTot)
@@ -43,4 +47,4 @@ theorem UpperTheory.Gal.Int.Geo.degCont_of :
     rw [e, map_smul, smul_eq_mul]
     rfl
   | add a b ha hb =>
-    exact (ha.add hb).congr fun σ => by simp only [map_add, Pi.add_apply]
+    exact (ha.add hb).congr fun σ => by simp only [map_add (f := _), Pi.add_apply]

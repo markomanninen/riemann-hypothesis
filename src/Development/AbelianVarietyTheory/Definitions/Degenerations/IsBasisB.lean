@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.Ser
-import Development.AbelianVarietyTheory.Definitions.Degenerations.RigGen
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.WchartLePreimage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.Ser
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.RigGen
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.WchartLePreimage
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -41,8 +46,8 @@ def toG (a : u.PtC) : Sp (PadicAlgCl p) ⟶ u.G.left := a.left ≫ pullback.fst 
 def toA (a : u.PtC) : Sp (PadicAlgCl p) ⟶ ρ.P.A.left := a.left ≫ u.U.gen.hom.left ≫ u.φ
 
 def Int (a : u.PtC) : Prop := ∃ c : Sp (OO p) ⟶ u.G.left, c ≫ u.G.hom = spMap u.j ∧ gPt p ≫ c = u.toG a
-open Classical in
 
+open Classical in
 def Basis (l : u.Lab) (k : ℕ) {J : Type} [Fintype J] (σ : J → (u.H k).Sec) (cls : J → u.D.toPre.X)
     (f : J → ∀ α, u.D.toPre.SecB k α) : Prop :=
   (∀ i, Short l.q k (cls i)) ∧ (∀ i i', (∃ m, cls i = cls i' + k • m) → cls i = cls i') ∧

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousIdeleCircle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousIdeleCircle
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem term_of_notMem (χ : HChar E) (hu : IsUnitary χ) (v : HeightOneSpectrum
   have h1 := (toHecke χ hu).finiteTest_of_dvd hv (atFin v (Units.mk0 (y : E) hy0)) (valued_eq_one hy)
   have h2 : ((atFin v (Units.mk0 (y : E) hy0) : (v.adicCompletion E)ˣ) : v.adicCompletion E) = algebraMap E (v.adicCompletion E) (y : E) := rfl
   rw [h2] at h1
-  rw [h1, coe_localComponent, gaussTerm, dif_neg hy0, Units.val_inv_eq_inv_val]
+  rw [h1, coe_localComponent, gaussTerm, dite_eq_right hy0, Units.val_inv_eq_inv_val]
   have h3 : ((atFin v c : (v.adicCompletion E)ˣ) : v.adicCompletion E) = algebraMap E (v.adicCompletion E) (c : E) := rfl
   rw [h3, map_div₀, div_eq_mul_inv, mul_comm (algebraMap E _ _)]
   rfl

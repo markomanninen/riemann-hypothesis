@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentIdealSmulMemSpanRational
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentIdealSmulMemSpanRational
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -14,7 +19,7 @@ theorem span_inf_span_eq_span_inf_of_rational :
   obtain ⟨m, ω, η, hη, hsum⟩ := exists_trace_dual_system K L
   let F : Fin m → (Fin n → L) → (Fin n → K) := fun i y j => Algebra.trace K L (η i * y j)
   have Fadd : ∀ i y z, F i (y + z) = F i y + F i z := by
-    intro i y z; funext j; simp [F, mul_add, map_add]
+    intro i y z; funext j; simp [F, mul_add, map_add (f := _)]
   have Fzero : ∀ i, F i 0 = 0 := by intro i; funext j; simp [F]
   have hint : ∀ i (a : 𝓞 L), ∃ c : 𝓞 K, algebraMap (𝓞 K) K c = Algebra.trace K L (η i * a) := by
     intro i a

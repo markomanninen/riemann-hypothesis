@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+
+@[expose] public section
 
 open Matrix Polynomial NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -13,7 +17,8 @@ variable {k R : Type} [CommRing k] [CommRing R] [Algebra k R]
 private lemma tr_mem {σ : R ≃ₐ[k] R} {q : ℕ} (h : IsGal σ q) (y : R) :
     ∃ t : k, algebraMap k R t = ∑ j ∈ Finset.range q, (σ ^ j) y := by
   apply h.fix
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have h1 := Finset.sum_range_succ (fun j => (σ ^ j) y) q
   have h2 := Finset.sum_range_succ' (fun j => (σ ^ j) y) q
   rw [h2, h.pow, pow_zero] at h1
@@ -56,7 +61,7 @@ private lemma phi_inj {σ : R ≃ₐ[k] R} {q : ℕ} (h : IsGal σ q) : Function
     induction z using TensorProduct.induction_on with
     | zero => simp
     | add u v hu hv =>
-      simp only [map_add, Pi.add_apply, mul_add, Finset.sum_add_distrib, TensorProduct.add_tmul, hu, hv]
+      simp only [map_add (f := _), Pi.add_apply, mul_add, Finset.sum_add_distrib, TensorProduct.add_tmul, hu, hv]
     | tmul a b =>
       choose t ht using fun i => tr_mem h (y i * b)
       have hb := expand h.pos hs b
@@ -74,7 +79,8 @@ private lemma phi_surj {σ : R ≃ₐ[k] R} {q : ℕ} (h : IsGal σ q) : Functio
   obtain ⟨s, x, y, hs⟩ := h.sep
   have key : ∀ m j : Fin q, phi σ q (∑ i, x i ⊗ₜ[k] (σ ^ (q - m)) (y i)) j = if j = m then 1 else 0 := by
     intro m j
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     simp_rw [phi_tmul, ← AlgEquiv.mul_apply, ← pow_add]
     rw [pow_eq_pow_mod _ h.pow, hs _ (Nat.mod_lt _ h.pos)]
     have hm := m.2
@@ -87,7 +93,8 @@ private lemma phi_surj {σ : R ≃ₐ[k] R} {q : ℕ} (h : IsGal σ q) : Functio
   intro f
   refine ⟨∑ m : Fin q, f m • ∑ i, x i ⊗ₜ[k] (σ ^ (q - m)) (y i), ?_⟩
   funext j
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   simp_rw [map_smul, Pi.smul_apply, key]
   simp
 

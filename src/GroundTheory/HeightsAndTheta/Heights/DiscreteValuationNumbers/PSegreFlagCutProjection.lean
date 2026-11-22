@@ -1,5 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutLiesOver
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutLiesOver
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutProjection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -31,7 +37,6 @@ theorem specialIdeal_le_contractPrime {O : Type*} [CommRing O] [IsDomain O] [IsD
 end SegreFlagCutProjection
 
 open SegreFlagCutProjection in
-
 theorem SegreFlagCutProjection.proof (hLies : SegreFlagCutLiesOver.Statement)
     (hDim : SegreFlagProjSpecialDim.Statement) : SegreFlagCutProjection.Statement := by
   intro O _ _ _ ϖ hϖ Ω _ _ K _ _ ι _ y d hV N E _ _ B B' hsame w w' x x' f g hflag M M' a₀ a₀' φ φ' hφ hφ'

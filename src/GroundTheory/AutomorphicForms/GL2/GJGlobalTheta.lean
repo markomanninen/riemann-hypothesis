@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobalSingular
-import GroundTheory.AutomorphicForms.GL2.GJGlobalPoisson
-import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeCont
-import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeSummable
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalSingular
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalPoisson
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeCont
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeSummable
+
+@[expose] public section
 
 open MeasureTheory Set Filter NumberField ComplexConjugate
 open scoped NumberField.AdeleRing
@@ -17,40 +21,41 @@ open Reduction AutomorphicForm RightCosetSpace GJMatrix
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
+local notation "Γ₁" => rationalGLOne (K := K) (n := n)
+
 section Continuity
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
-local notation "Γ₁" => rationalGLOne K n
-
+set_option synthInstance.maxHeartbeats 400000 in
 theorem continuous_thetaPairing {φ₁ φ₂ Ξ : AdelicGLn.AdelicGL K n → ℂ} (hφ₁ : Continuous φ₁)
     (hφ₂ : Continuous φ₂)
     (hcont : Continuous fun p : {r : ℝ // 0 < r} × AdelicGLn.AdelicGL K n × AdelicGLn.AdelicGL K n =>
       ∑' γ : GL (Fin n) K, Ξ (centralSection K n p.1 * p.2.1 * AdelicGLn.diagonal K n γ * p.2.2))
     {B : {r : ℝ // 0 < r} → ℝ} (hBc : Continuous B)
-    (hB : ∀ t : {r : ℝ // 0 < r}, ∀ x y : normOneGL K n,
+    (hB : ∀ t : {r : ℝ // 0 < r}, ∀ x y : normOneGL (K := K) (n := n),
       ‖φ₂ (x : AdelicGLn.AdelicGL K n)‖ * ‖φ₁ (y : AdelicGLn.AdelicGL K n)‖ *
         ‖∑' γ : GL (Fin n) K, Ξ (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
           AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n))‖ ≤ B t) :
     Continuous (thetaPairing μ φ₁ φ₂ Ξ) := by
-  let T : {r : ℝ // 0 < r} → normOneGL K n → normOneGL K n → ℂ := fun t x y =>
+  let T : {r : ℝ // 0 < r} → normOneGL (K := K) (n := n) → normOneGL (K := K) (n := n) → ℂ := fun t x y =>
     conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * φ₁ (y : AdelicGLn.AdelicGL K n) *
       ∑' γ : GL (Fin n) K, Ξ (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
         AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n))
-  have c1 : Continuous fun p : {r : ℝ // 0 < r} × normOneGL K n × normOneGL K n =>
-      ((p.2.1 : normOneGL K n) : AdelicGLn.AdelicGL K n) := by fun_prop
-  have c2 : Continuous fun p : {r : ℝ // 0 < r} × normOneGL K n × normOneGL K n =>
-      ((p.2.2 : normOneGL K n) : AdelicGLn.AdelicGL K n) := by fun_prop
-  have c4 : Continuous fun p : {r : ℝ // 0 < r} × normOneGL K n × normOneGL K n =>
-      (p.1, ((p.2.1 : normOneGL K n) : AdelicGLn.AdelicGL K n)⁻¹,
-        ((p.2.2 : normOneGL K n) : AdelicGLn.AdelicGL K n)) := by fun_prop
-  have c3 : Continuous fun p : {r : ℝ // 0 < r} × normOneGL K n × normOneGL K n =>
-      ∑' γ : GL (Fin n) K, Ξ (centralSection K n p.1 * ((p.2.1 : normOneGL K n) :
-        AdelicGLn.AdelicGL K n)⁻¹ * AdelicGLn.diagonal K n γ * ((p.2.2 : normOneGL K n) :
+  have c1 : Continuous fun p : {r : ℝ // 0 < r} × normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) =>
+      ((p.2.1 : normOneGL (K := K) (n := n)) : AdelicGLn.AdelicGL K n) := by fun_prop
+  have c2 : Continuous fun p : {r : ℝ // 0 < r} × normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) =>
+      ((p.2.2 : normOneGL (K := K) (n := n)) : AdelicGLn.AdelicGL K n) := by fun_prop
+  have c4 : Continuous fun p : {r : ℝ // 0 < r} × normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) =>
+      (p.1, ((p.2.1 : normOneGL (K := K) (n := n)) : AdelicGLn.AdelicGL K n)⁻¹,
+        ((p.2.2 : normOneGL (K := K) (n := n)) : AdelicGLn.AdelicGL K n)) := by fun_prop
+  have c3 : Continuous fun p : {r : ℝ // 0 < r} × normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) =>
+      ∑' γ : GL (Fin n) K, Ξ (centralSection K n p.1 * ((p.2.1 : normOneGL (K := K) (n := n)) :
+        AdelicGLn.AdelicGL K n)⁻¹ * AdelicGLn.diagonal K n γ * ((p.2.2 : normOneGL (K := K) (n := n)) :
           AdelicGLn.AdelicGL K n)) := by
     have h5 := hcont.comp c4
     simpa only [Function.comp_def] using h5
-  have hTc : Continuous fun p : {r : ℝ // 0 < r} × normOneGL K n × normOneGL K n =>
+  have hTc : Continuous fun p : {r : ℝ // 0 < r} × normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) =>
       T p.1 p.2.1 p.2.2 :=
     ((Complex.continuous_conj.comp (hφ₂.comp c1)).mul (hφ₁.comp c2)).mul c3
   have hTb : ∀ t x y, ‖T t x y‖ ≤ B t := by
@@ -63,7 +68,7 @@ theorem continuous_thetaPairing {φ₁ φ₂ Ξ : AdelicGLn.AdelicGL K n → ℂ
   have hloc : ∀ t₀ : {r : ℝ // 0 < r}, ∀ᶠ t in nhds t₀, B t ≤ B t₀ + 1 := fun t₀ =>
     (hBc.continuousAt.eventually (gt_mem_nhds (lt_add_one (B t₀)))).mono fun _ h => h.le
 
-  have hinner : Continuous fun p : {r : ℝ // 0 < r} × normOneGL K n =>
+  have hinner : Continuous fun p : {r : ℝ // 0 < r} × normOneGL (K := K) (n := n) =>
       ∫ y in fundamentalDomain Γ₁, T p.1 p.2 y ∂μ := by
     rw [continuous_iff_continuousAt]
     intro p₀
@@ -97,9 +102,7 @@ end Continuity
 
 section Symmetry
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
-
-local notation "Γ₁" => rationalGLOne K n
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem coe_mul_diagonal_mul (t : {r : ℝ // 0 < r}) (a b : AdelicGLn.AdelicGL K n)
     (γ : GL (Fin n) K) :
@@ -129,8 +132,9 @@ theorem tsum_inv_eq (Ψ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ) (t : {r : ℝ 
     simp only [mul_assoc]
   rw [e, Units.val_mul, Units.val_mul, coe_diagonal]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
+set_option synthInstance.maxHeartbeats 400000 in
 theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n → ℂ}
     (h₁ : φ₁ ∈ cuspForms K n) (h₂ : φ₂ ∈ cuspForms K n)
     {Φ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ} (hΦ : Φ ∈ matrixSchwartzBruhat K n)
@@ -149,27 +153,27 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
   have h₂c' : Continuous fun g => conj (φ₂ g) := Complex.continuous_conj.comp h₂c
   obtain ⟨B₁, hB₁⟩ := CuspidalSpectrum.exists_norm_le_of_mem_cuspForms h₁
   obtain ⟨B₂, hB₂⟩ := CuspidalSpectrum.exists_norm_le_of_mem_cuspForms h₂
-  have hB₂' : ∃ C, ∀ g ∈ normOneGL K n, ‖conj (φ₂ g)‖ ≤ C :=
+  have hB₂' : ∃ C, ∀ g ∈ normOneGL (K := K) (n := n), ‖conj (φ₂ g)‖ ≤ C :=
     ⟨B₂, fun g hg => by rw [Complex.norm_conj]; exact hB₂ g hg⟩
   set F := fundamentalDomain Γ₁
   have hF : μ F < ⊤ := measure_fundamentalDomain_rationalGLOne_lt_top μ
   have : IsFiniteMeasure (μ.restrict F) := ⟨by rw [Measure.restrict_apply_univ]; exact hF⟩
 
-  set S : normOneGL K n → normOneGL K n → ℂ := fun x y =>
+  set S : normOneGL (K := K) (n := n) → normOneGL (K := K) (n := n) → ℂ := fun x y =>
     ∑' ξ : Matrix (Fin n) (Fin n) K, Φ (((centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ :
       AdelicGLn.AdelicGL K n) : Matrix (Fin n) (Fin n) 𝔸[K]) * ratMat ξ *
         ((y : AdelicGLn.AdelicGL K n) : Matrix (Fin n) (Fin n) 𝔸[K])) with hS
-  set Sh : normOneGL K n → normOneGL K n → ℂ := fun x y =>
+  set Sh : normOneGL (K := K) (n := n) → normOneGL (K := K) (n := n) → ℂ := fun x y =>
     ∑' ξ : Matrix (Fin n) (Fin n) K, Φh (((centralSection K n t⁻¹ *
       (y : AdelicGLn.AdelicGL K n)⁻¹ : AdelicGLn.AdelicGL K n) : Matrix (Fin n) (Fin n) 𝔸[K]) *
         ratMat ξ * ((x : AdelicGLn.AdelicGL K n) : Matrix (Fin n) (Fin n) 𝔸[K])) with hSh
-  set ShG : normOneGL K n → normOneGL K n → ℂ := fun x y =>
+  set ShG : normOneGL (K := K) (n := n) → normOneGL (K := K) (n := n) → ℂ := fun x y =>
     ∑' γ : GL (Fin n) K, Φh (((centralSection K n t⁻¹ *
       (y : AdelicGLn.AdelicGL K n)⁻¹ : AdelicGLn.AdelicGL K n) : Matrix (Fin n) (Fin n) 𝔸[K]) *
         ratMat (γ : Matrix (Fin n) (Fin n) K) *
           ((x : AdelicGLn.AdelicGL K n) : Matrix (Fin n) (Fin n) 𝔸[K])) with hShG
 
-  have hP : ∀ x y : normOneGL K n, S x y = ((((t : ℝ) ^ n)⁻¹ : ℝ) : ℂ) * Sh x y := by
+  have hP : ∀ x y : normOneGL (K := K) (n := n), S x y = ((((t : ℝ) ^ n)⁻¹ : ℝ) : ℂ) * Sh x y := by
     intro x y
     have := (twisted_poisson_centralSection hn0 hΦ t x.2 y.2).2.2
     rw [hS, hSh]
@@ -181,7 +185,7 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
   obtain ⟨C₁, M₁, -, hC₁⟩ := exists_bound_tsum hΦ h₁ h₂
   obtain ⟨C₂, M₂, -, hC₂⟩ := exists_bound_tsum hΦh h₂ h₁
 
-  have hA : ∀ x : normOneGL K n,
+  have hA : ∀ x : normOneGL (K := K) (n := n),
       ∫ y in F, conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * φ₁ (y : AdelicGLn.AdelicGL K n) *
         ∑' γ : GL (Fin n) K, Φ ((centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
           AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n) : AdelicGLn.AdelicGL K n) :
@@ -194,7 +198,7 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
     have key := setIntegral_mul_tsum_eq_tsum_GL μ hn h₁c h₁.1.isLeftInvariant h₁.2
       ⟨B₁, hB₁⟩ hΦc (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹)
       (fun g => summable_norm_ratMat hΦ t _ g) ⟨C, fun g hg => (hC g hg).2⟩
-    have e : ∀ y : normOneGL K n, conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
+    have e : ∀ y : normOneGL (K := K) (n := n), conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
         φ₁ (y : AdelicGLn.AdelicGL K n) *
         ∑' γ : GL (Fin n) K, Φ ((centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
           AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n) : AdelicGLn.AdelicGL K n) :
@@ -207,7 +211,7 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
       intro y
       rw [mul_assoc]
       congr 2
-    have e' : ∀ y : normOneGL K n, conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
+    have e' : ∀ y : normOneGL (K := K) (n := n), conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
         φ₁ (y : AdelicGLn.AdelicGL K n) * (((((t : ℝ) ^ n)⁻¹ : ℝ) : ℂ) * Sh x y) =
         conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * (φ₁ (y : AdelicGLn.AdelicGL K n) * S x y) := by
       intro y
@@ -216,7 +220,7 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
       setIntegral_congr_fun (measurableSet_fundamentalDomain Γ₁) fun y _ => e' y,
       integral_const_mul, integral_const_mul, ← key]
 
-  have hB : ∀ y : normOneGL K n,
+  have hB : ∀ y : normOneGL (K := K) (n := n),
       ∫ x in F, conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * φ₁ (y : AdelicGLn.AdelicGL K n) *
         Sh x y ∂μ =
       ∫ x in F, conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * φ₁ (y : AdelicGLn.AdelicGL K n) *
@@ -228,10 +232,10 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
       (isCuspidal_conj h₂.2) hB₂' hΦhc (centralSection K n t⁻¹ * (y : AdelicGLn.AdelicGL K n)⁻¹)
       (fun g => summable_norm_ratMat hΦh t⁻¹ _ g)
       ⟨C, fun g hg => by rw [Complex.norm_conj]; exact (hC g hg).2⟩
-    have e1 : ∀ x : normOneGL K n, conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
+    have e1 : ∀ x : normOneGL (K := K) (n := n), conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
         φ₁ (y : AdelicGLn.AdelicGL K n) * Sh x y = φ₁ (y : AdelicGLn.AdelicGL K n) *
           (conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * Sh x y) := fun x => by ring
-    have e2 : ∀ x : normOneGL K n, conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
+    have e2 : ∀ x : normOneGL (K := K) (n := n), conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
         φ₁ (y : AdelicGLn.AdelicGL K n) * ShG x y = φ₁ (y : AdelicGLn.AdelicGL K n) *
           (conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * ShG x y) := fun x => by ring
     rw [setIntegral_congr_fun (measurableSet_fundamentalDomain Γ₁) fun x _ => e1 x,
@@ -239,21 +243,21 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
       integral_const_mul, integral_const_mul]
     congr 1
 
-  have hmeasSh : Continuous fun p : normOneGL K n × normOneGL K n => Sh p.1 p.2 := by
+  have hmeasSh : Continuous fun p : normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) => Sh p.1 p.2 := by
     have hc := continuous_tsum_ratMat hΦh
-    have h4 : Continuous fun p : normOneGL K n × normOneGL K n =>
+    have h4 : Continuous fun p : normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) =>
         (t⁻¹, ((p.2 : AdelicGLn.AdelicGL K n))⁻¹, ((p.1 : AdelicGLn.AdelicGL K n))) := by fun_prop
     have h5 := hc.comp h4
     simpa only [Function.comp_def] using h5
-  have hmeasShG : Continuous fun p : normOneGL K n × normOneGL K n => ShG p.1 p.2 := by
+  have hmeasShG : Continuous fun p : normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) => ShG p.1 p.2 := by
     have hc := continuous_tsum_GL hΦh
-    have h4 : Continuous fun p : normOneGL K n × normOneGL K n =>
+    have h4 : Continuous fun p : normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) =>
         (t⁻¹, ((p.2 : AdelicGLn.AdelicGL K n))⁻¹, ((p.1 : AdelicGLn.AdelicGL K n))) := by fun_prop
     have h5 := hc.comp h4
     simp only [Function.comp_def] at h5
     refine h5.congr fun p => tsum_congr fun γ => ?_
     rw [coe_mul_diagonal_mul]
-  have hbdSh : ∀ x y : normOneGL K n, ‖conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
+  have hbdSh : ∀ x y : normOneGL (K := K) (n := n), ‖conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
       φ₁ (y : AdelicGLn.AdelicGL K n) * Sh x y‖ ≤ C₂ * (max 1 ((t⁻¹ : {r : ℝ // 0 < r}) : ℝ)⁻¹) ^ M₂ := by
     intro x y
     obtain ⟨hs, hb⟩ := hC₂ y y.2 x x.2 t⁻¹
@@ -268,7 +272,7 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
           exact mul_le_mul_of_nonneg_left (norm_tsum_le_tsum_norm hs)
             (mul_nonneg (norm_nonneg _) (norm_nonneg _))
       _ ≤ _ := hb
-  have hbdShG : ∀ x y : normOneGL K n, ‖conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
+  have hbdShG : ∀ x y : normOneGL (K := K) (n := n), ‖conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
       φ₁ (y : AdelicGLn.AdelicGL K n) * ShG x y‖ ≤ C₂ * (max 1 ((t⁻¹ : {r : ℝ // 0 < r}) : ℝ)⁻¹) ^ M₂ := by
     intro x y
     obtain ⟨hs, hb⟩ := hC₂ y y.2 x x.2 t⁻¹
@@ -286,11 +290,11 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
           exact Summable.tsum_le_tsum_of_inj _ Units.val_injective (fun _ _ => norm_nonneg _)
             (fun _ => le_rfl) hs' hs
       _ ≤ _ := hb
-  have hint : ∀ T : normOneGL K n → normOneGL K n → ℂ,
-      Continuous (fun p : normOneGL K n × normOneGL K n => T p.1 p.2) →
-      (∀ x y : normOneGL K n, ‖conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * φ₁ (y : AdelicGLn.AdelicGL K n) * T x y‖ ≤
+  have hint : ∀ T : normOneGL (K := K) (n := n) → normOneGL (K := K) (n := n) → ℂ,
+      Continuous (fun p : normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) => T p.1 p.2) →
+      (∀ x y : normOneGL (K := K) (n := n), ‖conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * φ₁ (y : AdelicGLn.AdelicGL K n) * T x y‖ ≤
         C₂ * (max 1 ((t⁻¹ : {r : ℝ // 0 < r}) : ℝ)⁻¹) ^ M₂) →
-      Integrable (Function.uncurry fun x y : normOneGL K n =>
+      Integrable (Function.uncurry fun x y : normOneGL (K := K) (n := n) =>
         conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * φ₁ (y : AdelicGLn.AdelicGL K n) * T x y)
         ((μ.restrict F).prod (μ.restrict F)) := by
     intro T hT hTb
@@ -303,7 +307,7 @@ theorem thetaPairing_eq (hn : 2 ≤ n) {φ₁ φ₂ : AdelicGLn.AdelicGL K n →
   unfold thetaPairing
   dsimp only
   rw [setIntegral_congr_fun (measurableSet_fundamentalDomain Γ₁) fun x _ => hA x]
-  have e3 : ∀ x y : normOneGL K n, conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
+  have e3 : ∀ x y : normOneGL (K := K) (n := n), conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
       φ₁ (y : AdelicGLn.AdelicGL K n) * (((((t : ℝ) ^ n)⁻¹ : ℝ) : ℂ) * Sh x y) =
       ((((t : ℝ) ^ n)⁻¹ : ℝ) : ℂ) * (conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
         φ₁ (y : AdelicGLn.AdelicGL K n) * Sh x y) := fun x y => by ring

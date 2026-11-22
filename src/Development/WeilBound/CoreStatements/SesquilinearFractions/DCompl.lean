@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.DBlock
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsLocalBasisStatement
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.DBlock
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsLocalBasisStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -111,7 +115,8 @@ theorem sesq_integral_combination (D : Datum H) {p : ℕ} (x' : Fin p → D.La) 
     sesq D (x' b) (∑ a, d a • x' a) = ∑ a, gramE D x' b a * IsCMField.complexConj E (d a : E) := by
   let f : D.La →+ E := AddMonoidHom.mk' (sesq D (x' b)) (fun y y' => (sesq_sesquilinear_properties D).2.2.1 _ _ _)
   have hf : sesq D (x' b) (∑ a, d a • x' a) = f (∑ a, d a • x' a) := rfl
-  rw [hf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hf, map_sum]
   refine Finset.sum_congr rfl (fun a _ => ?_)
   show sesq D (x' b) (d a • x' a) = _
   rw [(sesq_sesquilinear_properties D).2.2.2.2.1, mul_comm]

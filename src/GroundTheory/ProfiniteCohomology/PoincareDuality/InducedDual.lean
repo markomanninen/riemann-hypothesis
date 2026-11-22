@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
-import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
+public import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -28,10 +33,6 @@ def coindSingleFun (a : V) : Rep.coind W.subtype (Rep.trivial k W V) :=
     · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem]
       exact fun h => hx ((Subgroup.mul_mem_cancel_left W w.2).1 h)⟩
 
-theorem coindSingleFun_apply (a : V) (x : Γ) :
-    (coindSingleFun (k := k) W V a).1 x = (W : Set Γ).indicator (fun _ => a) x :=
-  rfl
-
 def coindSingle : Rep.trivial k W V ⟶ Rep.res W.subtype (Rep.coind W.subtype (Rep.trivial k W V)) :=
   Rep.ofHom ⟨{ toFun := coindSingleFun W V
                map_add' := fun a b => Subtype.ext (funext fun x => by
@@ -48,10 +49,6 @@ def coindSingle : Rep.trivial k W V ⟶ Rep.res W.subtype (Rep.coind W.subtype (
     · rw [Set.indicator_of_mem hx, Set.indicator_of_mem (W.mul_mem hx w.2)]
     · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem]
       exact fun h => hx ((Subgroup.mul_mem_cancel_right W w.2).1 h)⟩
-
-theorem coindSingle_hom_apply (a : V) (x : Γ) :
-    ((coindSingle (k := k) W V).hom a).1 x = (W : Set Γ).indicator (fun _ => a) x :=
-  rfl
 
 variable (D : Rep.{u} k Γ)
 
@@ -77,11 +74,6 @@ def coindDualPairing :
       (fun _ _ _ => Subtype.ext (funext fun _ => rfl)))
     fun _ _ _ => Subtype.ext (funext fun _ => rfl)
 
-theorem coindDualPairing_tmul (f : Rep.coind W.subtype (Rep.trivial k W V))
-    (μ : Rep.coind W.subtype (dualRep (Rep.res W.subtype D) (Rep.trivial k W V))) (x : Γ) :
-    ((coindDualPairing W V D).hom (f ⊗ₜ[k] μ)).1 x = (μ.1 x : V →ₗ[k] D) (f.1 x) :=
-  rfl
-
 theorem res_coindDualPairing_comp_coindEvalOne :
     (Rep.resFunctor W.subtype).map (coindDualPairing W V D) ≫
         coindEvalOne W (Rep.res W.subtype D) =
@@ -92,7 +84,7 @@ theorem res_coindDualPairing_comp_coindEvalOne :
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul f μ => rfl
-  | add z z' hz hz' => simp only [map_add, hz, hz']
+  | add z z' hz hz' => simp only [map_add (f := _), hz, hz']
 
 def coindDualRestrict :
     Rep.res W.subtype (dualRep D (Rep.coind W.subtype (Rep.trivial k W V))) ⟶
@@ -108,32 +100,10 @@ def coindDualRestrict :
     rw [Rep.hom_comm_apply]
     rfl⟩
 
-theorem coindDualRestrict_hom_apply
-    (l : Rep.coind W.subtype (Rep.trivial k W V) →ₗ[k] D) (a : V) :
-    ((coindDualRestrict W V D).hom l : V →ₗ[k] D) a = l ((coindSingle (k := k) W V).hom a) :=
-  rfl
-
 def coindDualInv :
     dualRep D (Rep.coind W.subtype (Rep.trivial k W V)) ⟶
       Rep.coind W.subtype (dualRep (Rep.res W.subtype D) (Rep.trivial k W V)) :=
   Rep.resCoindToHom W.subtype _ _ (coindDualRestrict W V D)
-
-theorem coindDualInv_hom_apply (l : Rep.coind W.subtype (Rep.trivial k W V) →ₗ[k] D) (x : Γ)
-    (a : V) :
-    (((coindDualInv W V D).hom l).1 x : V →ₗ[k] D) a =
-      D.ρ x (l ((Rep.coind W.subtype (Rep.trivial k W V)).ρ x⁻¹
-        ((coindSingle (k := k) W V).hom a))) :=
-  rfl
-
-theorem res_coindDualInv_comp_coindEvalOne :
-    (Rep.resFunctor W.subtype).map (coindDualInv W V D) ≫
-        coindEvalOne W (dualRep (Rep.res W.subtype D) (Rep.trivial k W V)) =
-      coindDualRestrict W V D := by
-  refine Rep.hom_ext (Representation.IntertwiningMap.ext (LinearMap.ext fun l => ?_))
-  refine LinearMap.ext fun a => ?_
-  change D.ρ 1 (l ((Rep.coind W.subtype (Rep.trivial k W V)).ρ 1⁻¹
-      ((coindSingle (k := k) W V).hom a))) = l ((coindSingle (k := k) W V).hom a)
-  simp only [inv_one, map_one, Module.End.one_apply]
 
 section Sum
 
@@ -184,13 +154,6 @@ def coindDualHom :
       dualRep D (Rep.coind W.subtype (Rep.trivial k W V)) :=
   Rep.tensorHomEquiv _ _ _ (coindDualPairing W V D ≫ coindTrace W D)
 
-theorem coindDualHom_hom_apply
-    (μ : Rep.coind W.subtype (dualRep (Rep.res W.subtype D) (Rep.trivial k W V)))
-    (f : Rep.coind W.subtype (Rep.trivial k W V)) :
-    ((coindDualHom W V D).hom μ : Rep.coind W.subtype (Rep.trivial k W V) →ₗ[k] D) f =
-      (coindTrace W D).hom ((coindDualPairing W V D).hom (f ⊗ₜ[k] μ)) :=
-  rfl
-
 theorem tensorHom_coindDualHom_evalPairing :
     (𝟙 _ ⊗ₘ coindDualHom W V D) ≫ evalPairing D (Rep.coind W.subtype (Rep.trivial k W V)) =
       coindDualPairing W V D ≫ coindTrace W D := by
@@ -198,7 +161,7 @@ theorem tensorHom_coindDualHom_evalPairing :
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul f μ => rfl
-  | add z z' hz hz' => simp only [map_add, hz, hz']
+  | add z z' hz hz' => simp only [map_add (f := _), hz, hz']
 
 theorem coindDualInv_comp_coindDualHom :
     coindDualInv W V D ≫ coindDualHom W V D = 𝟙 _ := by
@@ -207,7 +170,8 @@ theorem coindDualInv_comp_coindDualHom :
   change (coindTrace W D).hom ((coindDualPairing W V D).hom (f ⊗ₜ[k] (coindDualInv W V D).hom l)) =
     (l : Rep.coind W.subtype (Rep.trivial k W V) →ₗ[k] D) f
   rw [coindTrace_hom_apply]
-  conv_rhs => rw [← sum_coindSingle W V f, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← sum_coindSingle W V f, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   change D.ρ c.out (D.ρ c.out⁻¹ (l ((Rep.coind W.subtype (Rep.trivial k W V)).ρ c.out⁻¹⁻¹
     ((coindSingle (k := k) W V).hom (f.1 c.out⁻¹))))) = _
@@ -224,7 +188,8 @@ theorem coindDualHom_comp_coindDualInv :
   change D.ρ h ((coindTrace W D).hom ((coindDualPairing W V D).hom
     ((Rep.coind W.subtype (Rep.trivial k W V)).ρ h⁻¹ ((coindSingle (k := k) W V).hom a) ⊗ₜ[k] μ))) =
       (μ.1 h : V →ₗ[k] D) a
-  rw [coindTrace_hom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coindTrace_hom_apply, map_sum]
   have key := sum_ite_mul_out_mem W (fun x => D.ρ h (D.ρ x ((μ.1 x⁻¹ : V →ₗ[k] D) a)))
     (fun x w => by
       have hμ : μ.1 ((w⁻¹ : W) * x⁻¹) = _ := μ.2 w⁻¹ x⁻¹
@@ -254,14 +219,6 @@ theorem coindDualHom_comp_coindDualInv :
     apply hc
     have := W.inv_mem hmem
     rwa [mul_inv_rev, inv_inv, inv_inv] at this
-
-def coindDualIso :
-    Rep.coind W.subtype (dualRep (Rep.res W.subtype D) (Rep.trivial k W V)) ≅
-      dualRep D (Rep.coind W.subtype (Rep.trivial k W V)) where
-  hom := coindDualHom W V D
-  inv := coindDualInv W V D
-  hom_inv_id := coindDualHom_comp_coindDualInv W V D
-  inv_hom_id := coindDualInv_comp_coindDualHom W V D
 
 end Sum
 

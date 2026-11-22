@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.RootNormLowerBound
 
@@ -14,7 +18,7 @@ theorem pow_card_le_norm_prod {ε : ℝ} (hε : 0 < ε) (s : Multiset ℂ)
     exact mul_le_mul ha ih' (by positivity) (norm_nonneg _)
 
 theorem exists_root_norm_lt {F : Polynomial ℂ} (hF : Polynomial.Monic F) {ε : ℝ}
-    (hε : (0 : ℝ) < ε) (h0 : ‖Polynomial.coeff F (0 : ℕ)‖ < ε ^ Polynomial.natDegree F) :
+    (hε : (0 : ℝ) < ε) (h0 : ‖F.coeff (0 : ℕ)‖ < ε ^ Polynomial.natDegree F) :
     ∃ (t : ℂ), Polynomial.IsRoot F t ∧ ‖t‖ < ε := by
   by_contra hcon
   have hall : ∀ t ∈ F.roots, ε ≤ ‖t‖ := fun t ht =>

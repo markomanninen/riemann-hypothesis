@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+
+@[expose] public section
 
 open GlobalTheory.SeqCx Matrix
 
@@ -17,7 +21,8 @@ theorem cone_cycle_isBoundary : âˆ€ (V : Type) (F G : Set (List V)) (x : V), (âˆ
       Finsupp.single l 1 - cone (bd V (Finsupp.single l 1)) := by
     intro l
     rw [hcone]
-    simp only [bd, Finsupp.linearCombination_single, one_smul, List.length_cons,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bd, Finsupp.linearCombination_single, one_smul, List.length_cons,
       Finset.sum_range_succ', List.eraseIdx_cons_succ, List.eraseIdx_cons_zero, pow_zero,
       map_sum, map_zsmul, hcone, pow_succ, mul_neg_one, neg_smul, Finset.sum_neg_distrib]
     abel
@@ -26,7 +31,7 @@ theorem cone_cycle_isBoundary : âˆ€ (V : Type) (F G : Set (List V)) (x : V), (âˆ
     induction d using Finsupp.induction_linear with
     | zero => simp
     | add f g hf hg =>
-      rw [map_add, map_add, hf, hg, map_add, map_add]
+      rw [map_add (f := _), map_add (f := _), hf, hg, map_add (f := _), map_add (f := _)]
       abel
     | single l n =>
       rw [â† Finsupp.smul_single_one]

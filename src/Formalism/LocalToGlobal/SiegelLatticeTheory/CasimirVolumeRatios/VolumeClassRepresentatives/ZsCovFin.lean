@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasLev
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasLev
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem mem_latHat_iff (L : Submodule (𝓞 E) (Fin n → E)) (y : Fin n → For
         one_mem' := fun w hw => by simpa using hw
         add_mem' := fun {r s} hr hs w hw => by
           convert (latHat F E (L : Set (Fin n → E))).add_mem (hr w hw) (hs w hw) using 1
-          funext i; simp [map_add, add_mul]
+          funext i; simp [map_add (f := _), add_mul]
         zero_mem' := fun w _ => by
           convert (latHat F E (L : Set (Fin n → E))).zero_mem using 1
           funext i; simp

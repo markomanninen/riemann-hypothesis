@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafGeomPfLoc
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafGeomPfLoc
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.D2 LateralTheory.E.LeafGeomPf
@@ -244,6 +248,7 @@ theorem rhoP_line (a b : ℕ) : rhoP a b ≫ PGL.line a = sigP a b ≫ PGL.line 
   (ofCatMap_comp _ _).symm.trans ((congrArg ofCatMap (e_line a b)).trans (ofCatMap_comp _ _))
 
 theorem LeafHalf1_of : LeafHalf1 := by
+  set_option synthInstance.maxHeartbeats 200000 in
   intro E a b V W
   have hp : pullback.fst (liftCat V W) (ofCatMap (pr1 a b)) ≫ V =
       (pullback.snd (liftCat V W) (ofCatMap (pr1 a b)) ≫ rhoP a b) ≫ PGL.pr a := by

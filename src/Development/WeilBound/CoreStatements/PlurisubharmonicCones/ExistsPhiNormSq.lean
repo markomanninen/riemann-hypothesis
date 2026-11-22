@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodDecompositionNearBoundary
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FirstMinimumAndCuspWeightBoundsStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsExtendLinearIndependentOfSpanStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodDecompositionNearBoundary
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FirstMinimumAndCuspWeightBoundsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsExtendLinearIndependentOfSpanStatement
+
+@[expose] public section
 
 noncomputable section
 namespace LevelTowerAlt
@@ -10,7 +14,7 @@ namespace LevelTowerAlt
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular
 open GlobalTheory.CompanionTheory.Ar.RiemannLimit GlobalTheory.CompanionTheory.Ar.Cusp.BoundaryLimit
 
-theorem limit_strong : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (Ψ : Type) [Fintype Ψ] (L : ActPeriods E n a g Λ) (σ : Ψ → (𝓞 E →+* ℂ)) (m : ℕ) (b : Ψ → Fin m → (Fin n → ℂ) → Fin g → ℂ), IsCMFam σ → IsEigFrames (Metric.ball 0 1) L.B σ b → ∃ (W : Submodule (𝓞 E) Λ) (I : Submodule (𝓞 E) Λ) (per : W →+ (Fin g → ℂ)) (Hb M : Matrix (Fin g) (Fin g) ℂ) (u : Λ →ₗ[ℤ] (Fin g → ℤ)), (∀ x, x ∈ I ↔ x ∈ W ∧ ∀ y ∈ W, L.toLogPeriods.E x y = 0) ∧ IsSaturated I ∧ Function.Injective per ∧ (∀ (c : 𝓞 E) (x : W), per (c • x) = L.B 0 c (per x)) ∧ M.det ≠ 0 ∧ (∀ x : W, (x : Λ) ∈ I → per x = M *ᵥ cst (u x)) ∧ ∀ ν : ℝ, PhiNormSq (L.B 0) (fun x y => y ⬝ᵥ Hb *ᵥ star x) (AddSubgroup.closure {p | ∃ x : W, (x : Λ) ∈ I ∧ p = per x}) 1 σ (fun τ i => b τ i 0) ν → 0 < ν ∧ ∀ ε > (0 : ℝ), ∃ δ > (0 : ℝ), ∀ w (hw : w ∈ logCover L.a_le), ‖expCover a w‖ < δ → |(L.riem w hw).logDet (fun τ i => b τ i (expCover a w)) - Real.log ((L.riem w hw).nz σ I) - Real.log ν| < ε := by
+theorem limit_strong : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (Ψ : Type) [Fintype Ψ] (L : ActPeriods E n a g Λ) (σ : Ψ → (𝓞 E →+* ℂ)) (m : ℕ) (b : Ψ → Fin m → (Fin n → ℂ) → Fin g → ℂ), IsCMFam σ → IsEigFrames (Metric.ball 0 1) L.B σ b → ∃ (W : Submodule (𝓞 E) Λ) (I : Submodule (𝓞 E) Λ) (per : W →+ (Fin g → ℂ)) (Hb M : Matrix (Fin g) (Fin g) ℂ) (u : Λ →ₗ[ℤ] (Fin g → ℤ)), (∀ x, x ∈ I ↔ x ∈ W ∧ ∀ y ∈ W, L.toLogPeriods.E x y = 0) ∧ IsSaturated I ∧ Function.Injective per ∧ (∀ (c : 𝓞 E) (x : W), per (c • x) = L.B 0 c (per x)) ∧ M.det ≠ 0 ∧ (∀ x : W, (x : Λ) ∈ I → per x = M *ᵥ cst (u x)) ∧ ∀ ν : ℝ, PhiNormSq (L.B 0) (fun x y => y ⬝ᵥ Hb *ᵥ star x) (AddSubgroup.closure {p | ∃ x : W, (x : Λ) ∈ I ∧ p = per x}) 1 σ (fun τ i => b τ i 0) ν → 0 < ν ∧ ∀ ε > (0 : ℝ), ∃ δ > (0 : ℝ), ∀ w (hw : w ∈ logCover L.a_le), ‖expCover a w‖ < δ → |(L.riem w hw).logDet (fun τ i => b τ i (expCover a w)) - Real.log (RiemLat.nz (L.riem w hw) σ I) - Real.log ν| < ε := by
   intro E _ _ _ n a g Λ _ _ Ψ _ L σ m b hσ hb
   classical
   obtain ⟨bas, A, T0, B, c, ρ, h⟩ := exists_isChart L.toLogPeriods
@@ -40,7 +44,7 @@ theorem limit_strong : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
   let I : Submodule (𝓞 E) Λ :=
     { carrier := {x | x ∈ chartW bas B ∧ ∀ y ∈ chartW bas B, L.toLogPeriods.E x y = 0}
       add_mem' := fun {x y} hx hy => ⟨(chartW bas B).add_mem hx.1 hy.1, fun u hu => by
-        rw [map_add, LinearMap.add_apply, hx.2 u hu, hy.2 u hu, add_zero]⟩
+        rw [map_add (f := _), LinearMap.add_apply, hx.2 u hu, hy.2 u hu, add_zero]⟩
       zero_mem' := ⟨(chartW bas B).zero_mem, fun u _ => by simp⟩
       smul_mem' := fun c' x hx => ⟨hstab c' x hx.1, fun u hu => by
         obtain ⟨c'', hc⟩ := hconj c'
@@ -151,7 +155,8 @@ theorem eig_indep {E : Type} [Field E] [NumberField E] {g r : ℕ} {Λ : Type} [
     refine Finset.sum_congr rfl fun x _ => ?_
     have hx : ρ x = ρ (∑ k, e.repr x k • e k) := by rw [e.sum_repr]
     rw [hx]
-    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, Finset.smul_sum, mul_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, Finset.smul_sum, mul_smul,
       Int.cast_smul_eq_zsmul]
   have hk : ∃ k, γ k ≠ 0 := by
     by_contra hn
@@ -171,7 +176,8 @@ theorem eig_indep {E : Type} [Field E] [NumberField E] {g r : ℕ} {Λ : Type} [
     refine h1 l (hinj ?_)
     rw [hu _ (by rw [Submodule.coe_sum]; exact I.sum_mem fun p _ => zsmul_mem (hmem p) _), map_zero]
     have : u ((∑ p, l p • e p.1 • y p.2 : W) : Λ) = 0 := by
-      rw [← hl, Submodule.coe_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hl, Submodule.coe_sum, map_sum]
       exact Finset.sum_congr rfl fun p _ => map_zsmul u _ _
     rw [this]
     have : cst (0 : Fin g → ℤ) = 0 := by funext k; simp [cst]
@@ -212,7 +218,8 @@ theorem oFamily_image {E : Type} [Field E] [NumberField E] {g r : ℕ} {Λ : Typ
       exact AddSubgroup.subset_closure ⟨x, hx, rfl⟩
   have hsum : ∀ c : Fin r → 𝓞 E, per (∑ i, c i • y i) = ∑ i, ρ (c i) (per (y i)) := by
     intro c
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => hact _ _
   refine ⟨fun a => AddSubgroup.subset_closure ⟨y a, hy a, rfl⟩, fun c hc => ?_, ?_⟩
   · funext i
@@ -291,7 +298,7 @@ theorem lower_centre {E : Type} [Field E] [NumberField E] [IsCMField E] {n a g :
     (b : Ψ → Fin m → (Fin n → ℂ) → Fin g → ℂ) (hσ : IsCMFam σ) (hm : 1 ≤ m)
     (hb : IsEigFrames (Metric.ball 0 1) L.B σ b) :
     ∃ δ > (0 : ℝ), ∃ C : ℝ, ∀ w (hw : w ∈ logCover L.a_le), ‖expCover a w‖ < δ →
-      -C ≤ (L.riem w hw).logDet (fun τ i => b τ i (expCover a w)) + (L.riem w hw).cuspW σ := by
+      -C ≤ (L.riem w hw).logDet (fun τ i => b τ i (expCover a w)) + RiemLat.cuspW (L.riem w hw) σ := by
   classical
   have hne : Nonempty Ψ := by
     by_contra hn
@@ -334,9 +341,9 @@ theorem lower_centre {E : Type} [Field E] [NumberField E] [IsCMField E] {n a g :
     show Module.finrank ℂ (eigSp (L.B (expCover a w)) (σ τ)) = m
     rw [← (hb.2 _ hz τ).2, finrank_span_eq_card (hb.2 _ hz τ).1, Fintype.card_fin]
   obtain ⟨-, -, h2, h3, -⟩ := GlobalTheory.T.first_minimum_and_cusp_weight_bounds E g Λ Ψ (L.riem w hw) σ m hσ hrk hm
-  have h4 : -Real.log ((L.riem w hw).nz σ I) ≤ (L.riem w hw).cuspW σ := by
+  have h4 : -Real.log (RiemLat.nz (L.riem w hw) σ I) ≤ RiemLat.cuspW (L.riem w hw) σ := by
     by_cases hI0 : I = ⊥
-    · have : (L.riem w hw).nz σ I = 1 := by
+    · have : RiemLat.nz (L.riem w hw) σ I = 1 := by
         refine dif_neg ?_
         rintro ⟨r, v, hr, hv, hl, -⟩
         exact hl.ne_zero ⟨0, hr⟩ (by simpa [hI0] using hv ⟨0, hr⟩)

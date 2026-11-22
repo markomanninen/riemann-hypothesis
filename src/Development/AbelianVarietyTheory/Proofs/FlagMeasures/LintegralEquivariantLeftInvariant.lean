@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InstSecondCountableSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InstSecondCountableSub
+
+@[expose] public section
+
 open MeasureTheory Matrix GlobalTheory.Dec GlobalTheory.IwaInt
 open scoped ComplexOrder
 
@@ -542,7 +547,7 @@ theorem iwasawaInt_of (hI : IwasawaKC) : IwasawaInt := by
   have hpos : ∀ (b : BC ε) l, 0 < ‖b.1.1 l l‖ := fun b l => norm_pos_iff.2 (b.2.2.2 l).ne'
   set d : BC ε → ℝ := fun b => ∏ l, ‖b.1.1 l l‖ ^ (4 * rhoC ε l) with hd
   have dpos : ∀ b, 0 < d b := fun b => Finset.prod_pos fun t _ => Real.rpow_pos_of_pos (hpos _ _) _
-  have dcont : Continuous d := continuous_finset_prod _ fun l _ =>
+  have dcont : Continuous d := continuous_finsetProd _ fun l _ =>
     (hvalB.matrix_elem l l).norm.rpow_const fun b => Or.inl (hpos b l).ne'
   have dmul : ∀ a b, d (a * b) = d a * d b := fun a b => by
     simp only [hd, ← Finset.prod_mul_distrib]

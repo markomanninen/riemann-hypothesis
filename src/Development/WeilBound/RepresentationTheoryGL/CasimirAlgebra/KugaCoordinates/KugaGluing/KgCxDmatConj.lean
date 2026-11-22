@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaGluing.KgLieOpComm
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaGluing.KgLieOpComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,8 +60,8 @@ def kgL : Matrix (Fin a) (Fin a) (Cinf E) →ₗ[ℝ] Lie E a where
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def kgD (Z : Matrix (Fin a) (Fin a) (Cinf E)) (hZ : star Z = -Z) : Herm E a →ₗ[ℝ] Herm E a where
   toFun Y := ⟨Z * Y.1 - Y.1 * Z, by
     have hY : star Y.1 = Y.1 := Y.2

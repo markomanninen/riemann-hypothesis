@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofDApply
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivationMemPowOfMemPowSucc
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofDApply
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivationMemPowOfMemPowSucc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,7 +42,7 @@ theorem word_add (D : ι → Derivation k A A) (w : List ι) (x y : A) :
     w.foldl (fun g l => D l g) (x + y) = w.foldl (fun g l => D l g) x + w.foldl (fun g l => D l g) y := by
   induction w generalizing x y with
   | nil => rfl
-  | cons l w ih => simp only [List.foldl_cons, map_add, ih]
+  | cons l w ih => simp only [List.foldl_cons, map_add (f := _), ih]
 
 theorem word_smul (D : ι → Derivation k A A) (w : List ι) (r : k) (x : A) :
     w.foldl (fun g l => D l g) (r • x) = r • w.foldl (fun g l => D l g) x := by
@@ -221,13 +225,14 @@ theorem constantCoeff_dof_X {R k : Type} [CommRing R] [CommRing k] (φ : R →+*
     (G : FGLaw R d) (v : Fin d → k) (j : Fin d) :
     constantCoeff (Dof (G.mapF φ) v (X ((0 : Fin 1), j))) = v j := by
   have h : ∀ i j : Fin d, constantCoeff (ev (n := 1) ![pt k d 0, 0]
-      (pderiv k ((1 : Fin 2), i) (G.mapF φ j))) = if j = i then 1 else 0 := by
+      (pderiv ((1 : Fin 2), i) (G.mapF φ j))) = if j = i then 1 else 0 := by
     intro i j
     rw [← coeff_zero_eq_constantCoeff_apply, WickVanishing.coeff_ev_zero_right, Finsupp.embDomain_zero,
       coeff_pderiv, FGLaw.mapF, coeff_map, zero_add, coeff_law]
     split_ifs <;> simp
   unfold Dof
-  simp only [map_sum, map_mul, h, constantCoeff_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, h, constantCoeff_C]
   rw [Finset.sum_eq_single j]
   · simp
   · intro j' _ hj
@@ -240,8 +245,8 @@ end GlobalTheory.SymbolOne
 
 namespace GlobalTheory
 
-open SymbolOne in
 
+open SymbolOne in
 theorem constantCoeff_dmonOf_prod_linear :
     ∀ (R k : Type) [CommRing R] [CommRing k] (φ : R →+* k) (d : ℕ) (G : FGLaw R d) (ι : Type) [Fintype ι] [DecidableEq ι] (u lam : ι → Fin d → k) (α : ι → k) (al m : ι →₀ ℕ) (E : PS k 1 d), (∀ l l', al l ≠ 0 → m l' ≠ 0 → ∑ i, lam l i * u l' i = if l = l' then α l else 0) → m.degree ≤ al.degree → constantCoeff (DmonOf (G.mapF φ) u m ((∏ l, (∑ i, C (lam l i) * (X ((0 : Fin 1), i) : PS k 1 d)) ^ al l) * E)) = if m = al then (∏ l, ((al l).factorial : k) * α l ^ al l) * constantCoeff E else 0 := by
   intro R k _ _ φ d G ι _ _ u lam α al m E hpair hdeg
@@ -258,7 +263,8 @@ theorem constantCoeff_dmonOf_prod_linear :
   have key := word_value π (fun l => GE.dofD (G.mapF φ) (u l))
     (fun l => ∑ i, C (lam l i) * (X ((0 : Fin 1), i) : PS k 1 d)) (fun l => by simp [hπ]) α w al E
     (fun l l' hl hl' => by
-      rw [hπ, GE.dofD_apply, GE.dof_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hπ, GE.dofD_apply, GE.dof_sum, map_sum]
       simp only [GE.dof_C_mul, map_mul, constantCoeff_C, constantCoeff_dof_X]
       exact hpair l l' hl (by rw [← hc]; exact (List.count_pos_iff.2 hl').ne'))
     (by rw [hlen]; simpa [Finsupp.degree_eq_sum] using hdeg)

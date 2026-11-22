@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
-import Formalism.LocalToGlobal.ProjectiveLattices.LatPAddRight
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
-import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Formalism.LocalToGlobal.ProjectiveLattices.DepLaws
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsCompleteIsAlgClosedAddValuation
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+public import Formalism.LocalToGlobal.ProjectiveLattices.LatPAddRight
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepLaws
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsCompleteIsAlgClosedAddValuation
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits NumberField IsDedekindDomain IsLocalRing ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.MainNotions.DIV.Cons
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -88,7 +93,7 @@ theorem exists_scf_isometry {p : ℕ} {C : Type} [NontriviallyNormedField C] [Is
         exact ⟨r.symm x, (hn' x).symm ▸ hx⟩ }
   haveI : IsUltrametricDist S :=
     IsUltrametricDist.isUltrametricDist_of_forall_norm_add_le_max_norm fun x y => by
-      rw [hn, hn, hn, map_add]; exact IsUltrametricDist.norm_add_le_max _ _
+      rw [hn, hn, hn, map_add (f := _)]; exact IsUltrametricDist.norm_add_le_max _ _
   haveI : IsAlgClosed S := IsAlgClosed.of_ringEquiv C S r.symm
   have hiso : Isometry r := AddMonoidHomClass.isometry_of_norm r fun x => (hn x).symm
   haveI : CompleteSpace S :=
@@ -106,7 +111,11 @@ theorem exists_extension_intO {V W C : Type} [CommRing V] [IsDomain V] [CommRing
   have hgC : Function.Injective (algebraMap V C) := Subtype.val_injective.comp hg
   haveI : FaithfulSMul V W := (faithfulSMul_iff_algebraMap_injective V W).2 hφ
   haveI : FaithfulSMul V C := (faithfulSMul_iff_algebraMap_injective V C).2 hgC
-  let l : W →ₐ[V] C := IsAlgClosed.lift
+  let l : W →ₐ[V] C := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hl : Function.Injective l := by
     rw [RingHom.injective_iff_ker_eq_bot]
     refine Ideal.eq_bot_of_comap_eq_bot (R := V) ?_

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.UpperTriangularPlaces.PtLawsOf
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CommonEigenvalue
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.UpperTriangularPlaces.PtLawsOf
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CommonEigenvalue
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.RootOfNe
-import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.ContDiffEmb
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.RootOfNe
+public import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.ContDiffEmb
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ private theorem exists_norm_le_one_p_eq_smul_Th {n : ℕ} {ε : Fin (n + 1) → 
       rw [hD, norm_prod]
       calc (1 : ℝ) = ∏ j ∈ univ.erase i, (1 : ℝ) := by simp
         _ ≤ ∏ j ∈ univ.erase i, ‖-mm i + mm j‖ := by
-          apply Finset.prod_le_prod (fun _ _ => zero_le_one)
+          apply Finset.prod_le_prod₀ (fun _ _ => zero_le_one)
           intro j hj
           have hji : j ≠ i := Finset.ne_of_mem_erase hj
           have he : -mm i + mm j = ((lam j - lam i : ℝ) : ℂ) := by
@@ -222,7 +226,7 @@ theorem comat_of (hW : WordBd) : Comat := by
       have hprod : ∏ j : Fin n, ‖-((lam i : ℂ) - (((n + 1 : ℕ) : ℂ) - 1) / 2) + ((mu j : ℂ) - ((n : ℂ) - 1) / 2)‖
           ≤ (8 * ((n : ℝ) + 1) * B) ^ n := by
         calc _ ≤ ∏ j : Fin n, (8 * ((n : ℝ) + 1) * B) := by
-              apply Finset.prod_le_prod (fun _ _ => norm_nonneg _)
+              apply Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
               intro j _
               have he : -((lam i : ℂ) - (((n + 1 : ℕ) : ℂ) - 1) / 2) + ((mu j : ℂ) - ((n : ℂ) - 1) / 2)
                   = ((mu j - lam i + 1 / 2 : ℝ) : ℂ) := by

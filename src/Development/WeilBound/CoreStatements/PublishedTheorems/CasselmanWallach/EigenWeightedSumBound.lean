@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,8 @@ theorem second_derivatives_of_growth : B1 → UnitaryGroupFacts → SumSquaresSe
     have hs : ∑ p ∈ nc ε, F (actM E (Xp p.1 p.2) (actM E (Xp p.1 p.2) (b i))) g
         = ((κ - μ i : ℝ) : ℂ) * F (b i) g := by
       have h0 := congrArg (fun v => F v g) (hcas κ hκ (b i))
-      simp only [map_sum, Finset.sum_apply] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, Finset.sum_apply] at h0
       rw [h0, (hEig.eig i : casimirK ε E (b i) = _)]
       simp only [map_sub, map_smul, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
       push_cast

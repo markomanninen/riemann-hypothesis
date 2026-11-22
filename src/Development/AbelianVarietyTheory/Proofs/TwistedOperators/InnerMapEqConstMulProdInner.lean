@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory
@@ -6,7 +11,7 @@ namespace GlobalTheory
 theorem MultilinearMap.inner_map_eq_const_mul_prod_inner
     {ι : Type} [Fintype ι] {Xs : ι → Type} [∀ i, NormedAddCommGroup (Xs i)]
     [∀ i, InnerProductSpace ℂ (Xs i)] {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    (f : MultilinearMap ℂ Xs E) (K : ℝ) (hf : ∀ x, ‖f x‖ ^ 2 = K * ∏ i, ‖x i‖ ^ 2) :
+    (f : (Π i, Xs i) →ₘₗ[ℂ] E) (K : ℝ) (hf : ∀ x, ‖f x‖ ^ 2 = K * ∏ i, ‖x i‖ ^ 2) :
     ∀ x y, ⟪f x, f y⟫_ℂ = (K : ℂ) * ∏ i, ⟪x i, y i⟫_ℂ := by
   classical
   have hdiag : ∀ x, ⟪f x, f x⟫_ℂ = (K : ℂ) * ∏ i, ⟪x i, x i⟫_ℂ := by
@@ -53,8 +58,8 @@ theorem MultilinearMap.inner_map_eq_const_mul_prod_inner
         have hb := hd b
         have h1 := hd (a + b)
         have h2 := hd (a + Complex.I • b)
-        simp only [MultilinearMap.map_update_add, MultilinearMap.map_update_smul, inner_add_left,
-          inner_add_right, inner_smul_left, inner_smul_right, Complex.conj_I] at h1 h2
+        simp only [MultilinearMap.map_update_add, MultilinearMap.map_update_smul, RingHom.id_apply,
+          inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, Complex.conj_I] at h1 h2
         have e1 : ⟪f (Function.update x j a), f (Function.update y j b)⟫_ℂ
             + ⟪f (Function.update x j b), f (Function.update y j a)⟫_ℂ
             = (K : ℂ) * C * (⟪a, b⟫_ℂ + ⟪b, a⟫_ℂ) := by

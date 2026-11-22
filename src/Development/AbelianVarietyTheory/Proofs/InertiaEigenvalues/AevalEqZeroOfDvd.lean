@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiniteCocycles
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MatMapTmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiniteCocycles
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MatMapTmul
+
+@[expose] public section
+
 open TensorProduct Polynomial IsLocalRing GlobalTheory.Pat
 
 namespace GlobalTheory.LagIdem
@@ -28,7 +33,7 @@ private lemma prod_X_sub_C_dvd_sum_lagPoly_sub_one :
     ∏ j, (X - C (a j)) ∣ ∑ i, _root_.GlobalTheory.LagIdem.lagPoly a i - 1 := by
   refine Fintype.prod_dvd_of_coprime
     (fun i j hij => isCoprime_X_sub_C_of_isUnit_sub (hu i j hij)) fun k => ?_
-  rw [dvd_iff_isRoot, IsRoot.def, eval_sub, eval_one, eval_finset_sum, sub_eq_zero,
+  rw [dvd_iff_isRoot, IsRoot.def, eval_sub, eval_one, eval_finsetSum, sub_eq_zero,
     Finset.sum_eq_single k]
   · simp only [_root_.GlobalTheory.LagIdem.lagPoly, eval_mul, eval_C, eval_prod, eval_sub, eval_X]
     exact Ring.inverse_mul_cancel _
@@ -90,7 +95,8 @@ theorem _root_.GlobalTheory.lagIdem_spec : ∀ (R E ι : Type) [CommRing R]
   intro R E ι _ _ _ _ _ _ M a hu hM
   have hsum : ∑ i, _root_.GlobalTheory.Pat.lagIdem M a i = 1 := by
     have h := aeval_eq_zero_of_dvd_of_aeval_eq_zero hM (prod_X_sub_C_dvd_sum_lagPoly_sub_one a hu)
-    simpa [map_sum, aeval_lagPoly_eq_lagIdem, sub_eq_zero] using h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, aeval_lagPoly_eq_lagIdem, sub_eq_zero] using h
   have hortho : ∀ i j, i ≠ j →
       _root_.GlobalTheory.Pat.lagIdem M a i * _root_.GlobalTheory.Pat.lagIdem M a j = 0 := by
     intro i j hij

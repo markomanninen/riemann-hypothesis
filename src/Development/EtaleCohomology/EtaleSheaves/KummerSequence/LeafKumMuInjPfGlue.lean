@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuInjPf
-import Development.EtaleCohomology.TateTwists.EtaleLocalPropertyBasicClosureProperties
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuInjPf
+public import Development.EtaleCohomology.TateTwists.EtaleLocalPropertyBasicClosureProperties
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC Polynomial

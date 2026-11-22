@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwpdivHopf
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwpdivTate
+module
+
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwpdivHopf
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwpdivTate
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,8 @@ theorem resT_surjective (n : ℕ) : Function.Surjective (resT X n) := fun g => b
   rw [ev_resT]
   exact (h a).symm
 
-theorem ker_resT (n : ℕ) : RingHom.ker (resT X n) = torsionIdeal O (Ord (X.hopf (n + 1))) (p ^ n) := by
+theorem ker_resT (n : ℕ) :
+    RingHom.ker (resT X n) = torsionIdeal (R := O) (A := Ord (X.hopf (n + 1))) (p ^ n) := by
   apply le_antisymm
   · intro f hf
     have hf' : resT X n f = 0 := hf
@@ -79,17 +84,23 @@ theorem ker_resT (n : ℕ) : RingHom.ker (resT X n) = torsionIdeal O (Ord (X.hop
       rw [hf', map_zero] at this
       exact this.symm
     have h2 : Ideal.span {g : X.A (n + 1) | ∃ h ∈ X.A (n + 1), ∀ t, g.1 t = h (t ^ p ^ n) - h 1} ≤
-        (torsionIdeal O (Ord (X.hopf (n + 1))) (p ^ n)).comap (Ord.equiv (X.hopf (n + 1))).symm := by
+        (torsionIdeal (R := O) (A := Ord (X.hopf (n + 1))) (p ^ n)).comap
+          (Ord.equiv (X.hopf (n + 1))).symm := by
       rw [Ideal.span_le]
       rintro g ⟨u, hu, hg⟩
       let u' := (Ord.equiv (X.hopf (n + 1))).symm ⟨u, hu⟩
       have h3 : (Ord.equiv (X.hopf (n + 1))).symm g =
-          mulBy O _ (p ^ n) (u' - algebraMap O _ (counit u')) := Ord.sep _ _ _ fun t => by
+          mulBy (R := O) (A := Ord (X.hopf (n + 1))) (p ^ n)
+            (u' - algebraMap O _ (counit u')) := Ord.sep _ _ _ fun t => by
         rw [Ord.ev_mulBy, map_sub, AlgHom.commutes, Ord.counit_eq]
         exact hg t
-      change (Ord.equiv (X.hopf (n + 1))).symm g ∈ torsionIdeal O (Ord (X.hopf (n + 1))) (p ^ n)
+      change (Ord.equiv (X.hopf (n + 1))).symm g ∈ torsionIdeal (R := O) (A := Ord (X.hopf (n + 1))) (p ^ n)
       rw [h3]
-      exact Ideal.mem_map_of_mem _ (by simp [RingHom.mem_ker])
+      have hu' : u' - algebraMap O _ (counit u') ∈ augIdeal (R := O) (A := Ord (X.hopf (n + 1))) := by
+        change counit (R := O) (u' - algebraMap O _ (counit (R := O) u')) = 0
+        rw [map_sub, counit_algebraMap, sub_self]
+      unfold torsionIdeal kerIdeal
+      exact Ideal.mem_map_of_mem (mulBy (R := O) (A := Ord (X.hopf (n + 1))) (p ^ n)).toAlgHom hu'
     exact h2 h1
   · refine (kerIdeal_le_ker_iff _ (resT X n : Ord (X.hopf (n + 1)) →ₐ[O] Ord (X.hopf n))).2 fun c =>
       Ord.sep _ _ _ fun t => ?_

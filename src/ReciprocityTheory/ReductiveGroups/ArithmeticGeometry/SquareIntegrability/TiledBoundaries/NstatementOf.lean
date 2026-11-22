@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TiledBoundaries.PointwiseNormSqPullbackTensorEqProd
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TiledBoundaries.PointwiseNormSqPullbackTensorEqProd
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2.TiledBoundaries
 
@@ -16,7 +20,7 @@ private theorem continuous_s0_of_continuous (X : PT E) {n : ℕ} (π : Vsp X.dim
     {s : (Fin 1 → Vsp X.dim) → ℂ} (hs : Continuous s) : Continuous (s0 X (n := n) π s) := by
   have hπc : Continuous π := LinearMap.continuous_of_finiteDimensional π
   show Continuous (fun v : Fin n → Vsp X.dim => ∏ k, s fun _ => π (v k))
-  exact continuous_finset_prod _ fun k _ =>
+  exact continuous_finsetProd _ fun k _ =>
     hs.comp (continuous_pi fun _ => hπc.comp (continuous_apply k))
 
 theorem norm_part (hT : StepT) (hF : StepF) (hP : StepP) (X : PT E) {q n : ℕ}

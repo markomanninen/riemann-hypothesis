@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.CintTranslate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.CintTranslate
+
+@[expose] public section
 
 open GlobalTheory.IdxInt
 open scoped Pointwise Classical
@@ -68,15 +72,15 @@ private lemma finsum_out_div_relIndex_eq_of_le {W : Type} [AddCommGroup W] {A B 
   rw [finsum_quotient_out_eq_relIndex_mul_of_le hCB hidx φ hinv hsupp, ← AddSubgroup.relIndex_mul_relIndex C B A hCB hBA,
     Nat.cast_mul, mul_div_mul_left _ _ (Nat.cast_ne_zero.mpr hidx)]
 
+
 open scoped Pointwise Classical in
 open Function in
-
 theorem _root_.GlobalTheory.IdxInt.cint_eq_of_fine : ∀ {W : Type} [AddCommGroup W] (A B : AddSubgroup W) (φ : W → ℂ),
     _root_.GlobalTheory.IdxInt.Fine A φ B → _root_.GlobalTheory.IdxInt.cint A φ = (∑ᶠ c : W ⧸ B, φ c.out) / (B.relIndex A : ℂ) := by
   intro W _ A B φ hB
   have h : _root_.GlobalTheory.IdxInt.Nice A φ := ⟨B, hB⟩
   unfold _root_.GlobalTheory.IdxInt.cint
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   have hB0 := h.choose_spec
   have hidx : (B ⊓ h.choose).relIndex A ≠ 0 := AddSubgroup.relIndex_inf_ne_zero hB.2.1 hB0.2.1
   rw [← finsum_out_div_relIndex_eq_of_le hB0 inf_le_right hidx, finsum_out_div_relIndex_eq_of_le hB inf_le_left hidx]

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -15,7 +20,7 @@ theorem dualProd_logDeriv_modSq : ∀ {K R : Type} [CommRing K] [CommRing R] [Al
     set S := ∑ i : Fin n, e i.succ * δ (f i.succ)
     have key : δ ((1 + e 0 * f 0) * P) - (1 + e 0 * f 0) * P * (e 0 * δ (f 0) + S)
         = (1 + e 0 * f 0) * (δ P - P * S) - e 0 ^ 2 * (f 0 * P * δ (f 0)) := by
-      simp only [Derivation.leibniz, map_add, Derivation.map_one_eq_zero, he 0, smul_eq_mul]
+      simp only [Derivation.leibniz, map_add (f := _), Derivation.map_one_eq_zero, he 0, smul_eq_mul]
       ring
     rw [key]
     exact I.sub_mem (I.mul_mem_left _ h) (I.mul_mem_right _ (he2 0))

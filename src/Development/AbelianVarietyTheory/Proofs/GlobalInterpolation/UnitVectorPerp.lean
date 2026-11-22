@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeComplements
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitVectorPerpAllIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HasComplementOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeComplements
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitVectorPerpAllIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HasComplementOfBasis
+
+@[expose] public section
 
 namespace GlobalTheory.UnitPerpObj
 

@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FiniteReducedSection
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveInj
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveUnit
-import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FinrankHostDivTwo
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FiniteReducedSection
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveInj
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveUnit
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FinrankHostDivTwo
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory.CurveRecord
@@ -31,10 +36,10 @@ section Inst
 variable {D : D7} {T : Top D} (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c)
   (hT : GenFromTest (T.Q.Xo j) T.Q.c hG)
 
+
 include hT in
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem evC_ne_zero (hV : GenValInjSt h j hG) (hC : CompSplitSt h j hG) {ka wL wF : WeightFamilies.Wt D j}
     (G : GlobalFamilyData (recPlus h j hj) ka wL wF) (hB : BigAt h j hj hG G) (g0 : (recB h.toLawsCore).Cusp j wF)
     (hg : (recPlus h j hj).NonZeroComp wF g0) (Z : Comp (T.Q.Xo j) T.Q.c) :
@@ -49,9 +54,9 @@ theorem evC_ne_zero (hV : GenValInjSt h j hG) (hC : CompSplitSt h j hG) {ka wL w
 
 end Inst
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem curveInst : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c) (hT : GenFromTest (T.Q.Xo j) T.Q.c hG), GenValInjSt h j hG → CompSplitSt h j hG → (∀ (ka wL wF : WeightFamilies.Wt D j) (G : GlobalFamilyData (recPlus h j hj) ka wL wF), BigAt h j hj hG G → BIRSt h j hj hG G) → CurveInstSt h j hj := by
   intro D T h j hj hG hT hV hC hB
   haveI : Finite (Comp (T.Q.Xo j) T.Q.c) := CompFin.finite_comp _ _

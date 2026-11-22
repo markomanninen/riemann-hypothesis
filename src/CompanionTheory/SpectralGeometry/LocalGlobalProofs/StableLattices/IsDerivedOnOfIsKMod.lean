@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.SopNegComm
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.SopNegComm
+
+@[expose] public section
 
 open Matrix Finset WithLp
 open scoped InnerProductSpace
@@ -107,7 +111,7 @@ theorem cyc_le {v : V} {T : Submodule ℂ V} (hT : ∀ a b, ∀ x ∈ T, E a b x
     exact ha _ (hb x hx)
   next a b ha hb =>
     intro x hx
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact T.add_mem (ha x hx) (hb x hx)
 
 theorem cas_comm (ε : Fin n → Bool) (hgl : GlRel E) (a b : Fin n) (x : V) : E a b (Cas E x) = Cas E (E a b x) := by
@@ -161,7 +165,7 @@ theorem orth_spread (hU : IsUnitary ε E) (J : Module.End ℂ V) (hJ : ∀ a b x
   let S : Submodule ℂ V :=
     { carrier := {x | ∀ m ∈ Cyc E v, ⟪m, J x⟫_ℂ = 0}
       add_mem' := fun {x y} hx hy m hm => by
-        rw [map_add, inner_add_right, hx m hm, hy m hm, add_zero]
+        rw [map_add (f := _), inner_add_right, hx m hm, hy m hm, add_zero]
       zero_mem' := fun m _ => by rw [map_zero, inner_zero_right]
       smul_mem' := fun c x hx m hm => by rw [map_smul, inner_smul_right, hx m hm, mul_zero] }
   have hS : Cyc E v ≤ S := by

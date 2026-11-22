@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GreenCuspidalCharsByRegularCharsProofStatement
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GreenCuspidalCharsByRegularCharsProofStatement
+
+@[expose] public section
 
 namespace PositivityTheory.Stage1.PM
 

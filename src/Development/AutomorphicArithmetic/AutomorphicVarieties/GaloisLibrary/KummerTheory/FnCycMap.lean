@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
@@ -15,7 +19,7 @@ private theorem apply_mem_fn_of_isLift (F Ω : Type) [Field F] [Field Ω] [Algeb
   have hx' : x ∈ IntermediateField.adjoin F ((Polynomial.X ^ l ^ n - 1 : Polynomial F).rootSet Ω) := hx
   show σ x ∈ IntermediateField.adjoin F ((Polynomial.X ^ l ^ n - 1 : Polynomial F).rootSet Ω)
   refine IntermediateField.adjoin_induction F
-    (p := fun x _ => σ x ∈ IntermediateField.adjoin F ((Polynomial.X ^ l ^ n - 1 : Polynomial F).rootSet Ω))
+    (motive := fun x _ => σ x ∈ IntermediateField.adjoin F ((Polynomial.X ^ l ^ n - 1 : Polynomial F).rootSet Ω))
     ?_ ?_ ?_ ?_ ?_ hx'
   · intro y hy
     apply IntermediateField.subset_adjoin
@@ -28,7 +32,7 @@ private theorem apply_mem_fn_of_isLift (F Ω : Type) [Field F] [Field Ω] [Algeb
     rw [h c]
     exact IntermediateField.algebraMap_mem _ _
   · intro y z _ _ hy hz
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hy hz
   · intro y _ hy
     rw [map_inv₀]

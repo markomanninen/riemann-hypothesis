@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgePlace
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WittOrthonormalBasis
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerFourthCondition
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgePlace
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WittOrthonormalBasis
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerFourthCondition
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,7 @@ theorem G_diag (Y : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (a b : Fin (r + 1) �
       (∏ i : Fin l, a (Fin.castLE h i)) * RealObj.Dl Y l * ∏ i : Fin l, b (Fin.castLE h i) := by
     intro l h
     unfold RealObj.Dl
-    rw [dif_pos h, dif_pos h]
+    rw [dite_eq_left h, dite_eq_left h]
     have e : (Matrix.diagonal a * Y * Matrix.diagonal b).submatrix (Fin.castLE h) (Fin.castLE h) =
         Matrix.diagonal (fun i => a (Fin.castLE h i)) * Y.submatrix (Fin.castLE h) (Fin.castLE h) *
           Matrix.diagonal (fun i => b (Fin.castLE h i)) := by
@@ -296,7 +300,7 @@ theorem cS_lam {κ : ℂ} (hc : ∀ a : Fin r, c a = κ ^ (r - a.val)) {sc : ℝ
   have hsc' : (sc : ℂ) ≠ 0 := by exact_mod_cast hsc
   unfold Formalism.L2.SG.Pf.CarrierTop.cS lam
   by_cases h : j.val < r
-  · rw [dif_pos h, hc]
+  · rw [dite_eq_left h, hc]
     simp only
     have hp : (sc : ℂ) ^ (r - j.val) ≠ 0 := pow_ne_zero _ hsc'
     have hs : star ((sc : ℂ) ^ (r - j.val)) = (sc : ℂ) ^ (r - j.val) := by
@@ -305,7 +309,7 @@ theorem cS_lam {κ : ℂ} (hc : ∀ a : Fin r, c a = κ ^ (r - a.val)) {sc : ℝ
     · rw [inv_mul_eq_iff_eq_mul₀ hp]
       ring
     · rw [star_mul', hs, mul_inv_cancel_right₀ hp]
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     have hj : j.val = r := by have := j.isLt; omega
     simp [hj]
 

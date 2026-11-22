@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyCoordIdeal
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePoint
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyCoordIdeal
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePoint
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -130,8 +135,8 @@ theorem isUnit_den (C : Subalgebra O Ω) {d : A} (hd : d ∉ m) (z : C) (hz : (z
   change (z : Ω) * algebraMap O Ω o = 1
   rw [hz, mul_comm, ho]
 
-include m in
 
+include m in
 theorem mem_of_isIntegral_loc (s : Set Ω) (hA : ∀ a : A, algebraMap A Ω a ∈ Algebra.adjoin ℤ s)
     (hB : ∀ a : Ω, _root_.IsIntegral (Algebra.adjoin ℤ s) a → a ∈ Algebra.adjoin ℤ s) {a : Ω}
     (ha : _root_.IsIntegral (Algebra.adjoin O s) a) : a ∈ Algebra.adjoin O s := by
@@ -156,8 +161,8 @@ theorem mem_of_isIntegral_loc (s : Set Ω) (hA : ∀ a : A, algebraMap A Ω a �
   rw [this]
   exact mul_mem w.2 h1
 
-include m in
 
+include m in
 theorem loc_of_contraction (s : Set Ω) (hA : ∀ a : A, algebraMap A Ω a ∈ Algebra.adjoin ℤ s)
     (𝔮 : Ideal (Algebra.adjoin O s)) (h𝔮 : 𝔮.IsPrime) (emb : Algebra.adjoin ℤ s →+* Algebra.adjoin O s)
     (hemb : ∀ b, (emb b : Ω) = b) (R : Subring Ω) (hB : ∀ b ∈ Algebra.adjoin ℤ s, b ∈ R)
@@ -192,8 +197,8 @@ theorem loc_of_contraction (s : Set Ω) (hA : ∀ a : A, algebraMap A Ω a ∈ A
     rw [this]
     exact mul_mem (mul_mem (hB _ (hA d)) (hC _ u.2)) hi
 
-include m in
 
+include m in
 theorem exists_point (T : CoordTie ℤ ξ x) {c : κ} (hc : x c ≠ 0)
     (hA : ∀ a : A, algebraMap A Ω a ∈ Algebra.adjoin ℤ (Set.range fun j => x j / x c))
     (𝔮 : Ideal (Algebra.adjoin O (Set.range fun j => x j / x c))) (h𝔮 : 𝔮.IsPrime) :

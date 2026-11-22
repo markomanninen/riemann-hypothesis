@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPrimitiveElementUnramified
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolynomialApproxPowMaximal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolynomialApproxUniqueness
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HenselRootsCompatible
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsRest
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ChartRingFormallyUnramified
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.MvPowerSeriesSubstConstTermsLocalAlgHomSpec
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPrimitiveElementUnramified
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolynomialApproxPowMaximal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolynomialApproxUniqueness
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HenselRootsCompatible
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsRest
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ChartRingFormallyUnramified
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.MvPowerSeriesSubstConstTermsLocalAlgHomSpec
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -44,12 +49,12 @@ theorem lift_with_value {A R V : Type} [CommRing A] [IsLocalRing A] [CommRing R]
     have e1 : (P.map φ).eval θ - (P'.map φ).eval θ = (((P - P') %ₘ q).map φ).eval θ := by
       rw [← Polynomial.eval_sub, ← Polynomial.map_sub]
       conv_lhs => rw [← hD]
-      simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.eval_add,
+      simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.eval_add,
         Polynomial.eval_mul, hqθ, zero_mul, add_zero]
     have e2 : (P.map α).eval ζ - (P'.map α).eval ζ = (((P - P') %ₘ q).map α).eval ζ := by
       rw [← Polynomial.eval_sub, ← Polynomial.map_sub]
       conv_lhs => rw [← hD]
-      simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.eval_add,
+      simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.eval_add,
         Polynomial.eval_mul, hqζ, zero_mul, add_zero]
     rw [e2]
     rw [e1] at h
@@ -109,11 +114,11 @@ theorem lift_with_value {A R V : Type} [CommRing A] [IsLocalRing A] [CommRing R]
         refine ⟨Px + Py, ?_, ?_⟩
         · have := Ideal.add_mem _ hx hy
           convert this using 1
-          simp only [Polynomial.map_add, Polynomial.eval_add]
+          simp only [Polynomial.map_add (f := _), Polynomial.eval_add]
           ring
         · have := Ideal.add_mem _ (hψ0 x n Px hx) (hψ0 y n Py hy)
           convert this using 1
-          simp only [Polynomial.map_add, Polynomial.eval_add]
+          simp only [Polynomial.map_add (f := _), Polynomial.eval_add]
           ring
       map_mul' := fun x y => char _ _ fun n => by
         obtain ⟨Px, hx⟩ := happ n x

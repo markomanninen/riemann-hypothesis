@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.PrimitiveCosets.RecH
+module
+
+public import Development.AutomorphicArithmetic.PrimitiveCosets.RecH
+
+@[expose] public section
 
 open UpperTheory.Comparison₂ Formalism Formalism.HC Formalism.D5 Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.LHost
 

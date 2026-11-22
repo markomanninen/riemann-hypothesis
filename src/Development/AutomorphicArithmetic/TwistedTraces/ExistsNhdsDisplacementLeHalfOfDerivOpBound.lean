@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
-import Development.AutomorphicArithmetic.TwistedTraces.NormExpSmulSubLeNormDerivOp
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+public import Development.AutomorphicArithmetic.TwistedTraces.NormExpSmulSubLeNormDerivOp
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C Polynomial Topology
@@ -14,7 +18,7 @@ theorem UpperTheory.exists_nhds_displacement_le_half_of_derivOp_bound :
   have hST : ∀ X : 𝔤, S (T X) = X := fun _ => rfl
   let f : 𝔤 → ℝ := fun X => (∑ i, |b.repr (h.toLie X) i|) * |C|
   have hf : Continuous f := by
-    refine Continuous.mul (continuous_finset_sum _ fun i _ => ?_) continuous_const
+    refine Continuous.mul (continuous_finsetSum _ fun i _ => ?_) continuous_const
     exact (LinearMap.continuous_of_finiteDimensional ((b.coord i) ∘ₗ T)).abs
   have hf0 : f 0 = 0 := by
     have : h.toLie 0 = 0 := rfl
@@ -42,14 +46,16 @@ theorem UpperTheory.exists_nhds_displacement_le_half_of_derivOp_bound :
       conv_lhs => rw [← hST X]
       show S (h.toLie X) = _
       conv_lhs => rw [← b.sum_repr (h.toLie X)]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun i _ => map_smul S _ _
     have hD : h.derivOp π X v =
         ∑ i, b.repr (h.toLie X) i • h.derivOp π (h.ofLie (b i)) v := by
       show fderiv ℝ (h.expOrbit π v) 0 X = ∑ i, b.repr (h.toLie X) i •
         fderiv ℝ (h.expOrbit π v) 0 (h.ofLie (b i))
       conv_lhs => rw [hsum]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun i _ => map_smul _ _ _
     have hbound : ‖h.derivOp π X v‖ ≤ f X * ‖v‖ := by
       rw [hD]

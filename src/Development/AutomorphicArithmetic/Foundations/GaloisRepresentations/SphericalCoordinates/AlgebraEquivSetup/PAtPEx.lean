@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.W2.Seed
 open scoped TensorProduct
 
@@ -11,9 +16,11 @@ theorem UpperTheory.Gal.W2.Seed.pAtPEx :
   haveI : CharZero (PadicAlgCl p) := charZero_of_injective_algebraMap (algebraMap ℚ_[p] (PadicAlgCl p)).injective
   haveI hAlg : Algebra.IsAlgebraic ℚ (AlgebraicClosure ℚ) := by
     convert (AlgebraicClosure.isAlgebraic ℚ)
-    · rfl
-    · exact Subsingleton.elim _ _
-  let iotaA : AlgebraicClosure ℚ →ₐ[ℚ] PadicAlgCl p := IsAlgClosed.lift
+  let iotaA : AlgebraicClosure ℚ →ₐ[ℚ] PadicAlgCl p := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let iotaP : AlgebraicClosure ℚ →+* PadicAlgCl p := iotaA.toRingHom
   let τ₁ : E →+* PadicAlgCl p := iotaP.comp s
   obtain ⟨u, ρ, hover, hρ⟩ := hU E A p hs Kq hω hgen τ₁

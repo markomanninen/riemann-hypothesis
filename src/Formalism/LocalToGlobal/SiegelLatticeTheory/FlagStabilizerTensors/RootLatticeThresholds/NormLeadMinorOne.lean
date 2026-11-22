@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.PtCellUniq
-import Formalism.HermitianCurvature.StatementC
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.PtCellUniq
+public import Formalism.HermitianCurvature.StatementC
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+
+@[expose] public section
 
 noncomputable section
 
@@ -178,13 +182,18 @@ theorem FH_append (r : ℕ) : ∀ (L1 L2 : List (ℂ × ℕ)) (b : ℕ),
 
 theorem FA_pre (k r : ℕ) (hk : 1 ≤ k) (GG : ℝ) : ∀ (L : List (ℂ × ℕ)) (b : ℕ), 1 ≤ b →
     b + (L.map Prod.snd).sum ≤ r + 1 → (∀ x ∈ L, 1 ≤ x.2) →
-    FA k r GG b L = FH r b L * (L.map fun x => ‖x.1‖ ^ x.2).prod ^ (2 * (k - 1))
-  | [], _, _, _, _ => by simp [FA, FH]
-  | (c, s) :: L, b, hb, hs, hL => by
+    FA k r GG b L = FH r b L * (L.map fun x => ‖x.1‖ ^ x.2).prod ^ (2 * (k - 1)) := by
+  intro L
+  induction L with
+  | nil => simp [FA, FH]
+  | cons head L ih =>
+    obtain ⟨c, s⟩ := head
+    intro b hb hs hL
     simp only [List.map_cons, List.sum_cons] at hs
     have hs1 : 1 ≤ s := hL (c, s) (by simp)
-    have ih := FA_pre k r hk GG L (b + s) (by omega) (by omega) (fun x hx => hL x (by simp [hx]))
-    simp only [FA, FH, List.map_cons, List.prod_cons, ih]
+    have htail := ih (b + s) (by omega) (by omega)
+      (fun x hx => hL x (List.mem_cons_of_mem _ hx))
+    simp only [FA, FH, List.map_cons, List.prod_cons, htail]
     rw [if_neg (by omega)]
     have he : (2 * (s : ℤ) * (Formalism.FourierDecayAlt.C.Mlev k r (b + s - 1) + s - 3)) =
         ((2 * s * (2 * (r + 1 - (b + s - 1)) + s - 1) + s * (2 * (k - 1)) : ℕ) : ℤ) := by

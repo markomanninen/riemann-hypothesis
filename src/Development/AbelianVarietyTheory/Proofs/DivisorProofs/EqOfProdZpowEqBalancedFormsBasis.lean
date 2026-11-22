@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyFiniteRootsOfBimul
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidCoords
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExtId
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyFiniteRootsOfBimul
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidCoords
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExtId
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.UChart GlobalTheory.UCanon GlobalTheory.PolDeg GlobalTheory.TInj
@@ -20,15 +25,15 @@ theorem coords_eq_zero {O : Type} [CommRing O] [StarRing O] [IsDedekindDomain O]
   have := Forms.projective_of_int O X
   have := Forms.finite_balTensor (O := O) (X := X)
   have := Forms.free_balTensor (X := X) hw
-  let e := Module.Free.chooseBasis ℤ ((TensorProduct ℤ X X) ⧸ Forms.balTensorRel O X)
+  let e := Module.Free.chooseBasis ℤ ((TensorProduct ℤ X X) ⧸ Forms.balTensorRel (O := O) (X := X))
   have hm := Forms.balTensorMk_mem_balForms O X
   let β : _ → PolFan.balForms (star : O → O) X := fun j =>
     ⟨(Forms.balTensorMk O).compr₂ (e.coord j),
       fun y x => congrArg (e.coord j) (hm.1 y x), fun a y x => congrArg (e.coord j) (hm.2 a y x)⟩
-  let L : J → ((TensorProduct ℤ X X) ⧸ Forms.balTensorRel O X) →+ ℤ := fun i =>
+  let L : J → ((TensorProduct ℤ X X) ⧸ Forms.balTensorRel (O := O) (X := X)) →+ ℤ := fun i =>
     Forms.balTensorLift (O := O) ⟨(ε i : LinearMap.BilinForm ℤ X), (ε i).2.1, (ε i).2.2⟩
   have hL (i a b) : L i (Forms.balTensorMk O a b) = (ε i : LinearMap.BilinForm ℤ X) a b := rfl
-  let Φ : ((TensorProduct ℤ X X) ⧸ Forms.balTensorRel O X) →+ B :=
+  let Φ : ((TensorProduct ℤ X X) ⧸ Forms.balTensorRel (O := O) (X := X)) →+ B :=
     ∑ i, (zmultiplesHom B (c i)).comp (L i)
   have hΦa (t) : Φ t = ∑ i, L i t • c i := by
     simp [Φ, AddMonoidHom.finsetSum_apply]
@@ -40,14 +45,17 @@ theorem coords_eq_zero {O : Type} [CommRing O] [StarRing O] [IsDedekindDomain O]
     refine LinearMap.ext fun a => LinearMap.ext fun b => ?_
     simp only [Submodule.coe_sum, Submodule.coe_smul, LinearMap.sum_apply, LinearMap.smul_apply,
       smul_eq_mul]
-    rw [← hL, ← e.sum_repr (Forms.balTensorMk O a b), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hL, ← e.sum_repr (Forms.balTensorMk O a b), map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_zsmul, smul_eq_mul, _root_.mul_comm]
     rfl
   have hδ (i) : L i (∑ j, ε.repr (β j) k • e j) = ε.repr (ε i) k := by
     have h1 := congrArg (ε.coord k) (hε i)
-    rw [map_sum] at h1
-    rw [map_sum, ← ε.coord_apply, h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← ε.coord_apply, h1]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_zsmul, map_zsmul, smul_eq_mul, smul_eq_mul, _root_.mul_comm, ε.coord_apply]
   have h := hΦa (∑ j, ε.repr (β j) k • e j)

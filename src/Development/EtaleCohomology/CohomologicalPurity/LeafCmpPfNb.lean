@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafCmpPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafCmpPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry
@@ -30,7 +34,5 @@ theorem LeafCmpNb_pf : LeafCmpNb := by
     exact ⟨show Spec (CommRingCat.of (Localization.Away g)) from t, ht⟩
   · rw [CommRingCat.ofHom_hom, Spec.map_preimage]
     exact (IsOpenImmersion.lift_fac w₀ _ H).symm
-
-theorem LeafCmp_of' (hMat : LeafMat) (hId : LeafCmpId) : LeafCmp := LeafCmp_of hMat LeafCmpNb_pf hId
 
 end LateralTheory.CohomologicalPurity.Cl

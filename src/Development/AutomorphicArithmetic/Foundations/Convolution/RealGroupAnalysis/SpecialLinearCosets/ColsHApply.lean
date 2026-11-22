@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.GoodU
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.CosetSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.CosetSpan
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.IsCompactBoxSet
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.GoodU
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.CosetSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.CosetSpan
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.IsCompactBoxSet
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -37,7 +41,8 @@ private theorem ifnSum {G : Type} [CommGroup G] [TopologicalSpace G] [IsTopologi
     funext x
     rw [h x, Submodule.coe_sum, Finset.sum_apply]
     rfl
-  rw [e, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [map_smul, smul_eq_mul, hL g⁻¹ a' _ fun _ => rfl]
 
@@ -102,8 +107,6 @@ private def colsH : ((Fin 2 → Kv v) × (Fin 2 → Kv v)) ≃ₜ M2 v where
     fin_cases i <;> fin_cases j <;> simp only [cols] <;> simp <;> fun_prop
   continuous_invFun := by
     refine Continuous.prodMk ?_ ?_ <;> refine continuous_pi fun i => ?_ <;> fun_prop
-
-private theorem colsH_apply (p : (Fin 2 → Kv v) × (Fin 2 → Kv v)) : colsH p = cols p.1 p.2 := rfl
 
 private theorem cols_add (p q : (Fin 2 → Kv v) × (Fin 2 → Kv v)) :
     cols (p + q).1 (p + q).2 = cols p.1 p.2 + cols q.1 q.2 := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensGen
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.FibDis
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensAll
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensGen
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.FibDis
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensAll
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNotMemOfSol
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNotMemOfSol
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -119,7 +123,7 @@ theorem card_preimage_piQ (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {
     rw [← card_ker_piQ hK hF h𝔭 k]
     exact Nat.card_congr
       { toFun := fun z => ⟨z.1 - z0, by rw [RingHom.mem_ker, map_sub, z.2, hz0, sub_self]⟩
-        invFun := fun q => ⟨q.1 + z0, by rw [map_add, RingHom.mem_ker.mp q.2, hz0, zero_add]⟩
+        invFun := fun q => ⟨q.1 + z0, by rw [map_add (f := _), RingHom.mem_ker.mp q.2, hz0, zero_add]⟩
         left_inv := fun z => Subtype.ext (sub_add_cancel _ _)
         right_inv := fun q => Subtype.ext (add_sub_cancel_right _ _) }
   have hfib : ∀ y : m → 𝓞 K ⧸ extP K 𝔭 ^ k,

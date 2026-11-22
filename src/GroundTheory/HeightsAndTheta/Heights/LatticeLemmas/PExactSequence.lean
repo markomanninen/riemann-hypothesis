@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -33,7 +38,7 @@ theorem quotFibreMap_mkQ_of_orthogonal (σ : K →+* ℂ) (x : Fibre σ M.carrie
     abel
   change Vᗮ.starProjection
       (FibreSpace.equiv M.metric σ (fibreMap σ (quotSection M F hF) (fibreMap σ F.mkQ x))) = _
-  rw [hsplit, map_add, Submodule.starProjection_orthogonal_apply_eq_zero hz, add_zero,
+  rw [hsplit, map_add (f := _), Submodule.starProjection_orthogonal_apply_eq_zero hz, add_zero,
     Submodule.starProjection_eq_self_iff.mpr hx]
 
 def subQuotExtension : HermitianExtension (M.sub F) M (M.quot F hF) where
@@ -60,11 +65,6 @@ def subQuotExtension : HermitianExtension (M.sub F) M (M.quot F hF) where
 end HermitianBundle
 
 namespace LatticeLemmas
-
-theorem ExactSequence.proof : ExactSequence.Statement := by
-  intro K _ _ M F hF
-  simp only [HermitianBundle.deg]
-  rw [(HermitianBundle.subQuotExtension M F hF).arithDegree_eq_add, add_div]
 
 end LatticeLemmas
 

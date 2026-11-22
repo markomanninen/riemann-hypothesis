@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyLinear
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyUnimodularStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyLinear
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyUnimodularStatement
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
@@ -65,7 +69,9 @@ theorem symO_std (n : ℕ) : Formalism.L2.Pj.symO (Dw := Dw) c (⟨stdLat E n⟩
   · rintro _ ⟨Q, rfl⟩
     induction Q using MvPolynomial.induction_on with
     | C o => exact Subring.subset_closure (Or.inl ⟨o, by rw [map_C]; rfl⟩)
-    | add p q hp hq => rw [map_add]; exact Subring.add_mem _ hp hq
+    | add p q hp hq =>
+      rw [(MvPolynomial.map (σ := LtN Dw n) (algebraMap (integralClosure ℤ c.F) c.F)).map_add]
+      exact Subring.add_mem _ hp hq
     | mul_X p s hp =>
       rw [map_mul, map_X]
       refine Subring.mul_mem _ hp (Subring.subset_closure (Or.inr ?_))
@@ -85,7 +91,7 @@ theorem harmL_std (n : ℕ) (a : (E →+* ℂ) × ℕ → ℕ) :
   constructor
   · rintro ⟨Q, rfl⟩ m
     rw [coeff_map]
-    exact (coeff m Q).2
+    exact (AddMonoidAlgebra.coeff Q m).2
   · intro h
     refine mem_range_map_iff_coeffs_subset.2 fun x hx => ?_
     obtain ⟨m, -, rfl⟩ := mem_coeffs_iff.1 hx

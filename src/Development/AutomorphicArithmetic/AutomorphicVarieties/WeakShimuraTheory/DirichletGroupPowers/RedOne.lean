@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsOnto
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.RootVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.BchiFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostOdd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompIne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.ExistsStrictHenselianAbsolutelyClosedLocalRing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsOnto
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.RootVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.BchiFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostOdd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompIne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.ExistsStrictHenselianAbsolutelyClosedLocalRing
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -20,7 +24,8 @@ theorem UpperTheory.V.Ws.large₂.redOne :
   have hgeom : (∑ i ∈ Finset.range m, (x : c.O) ^ i) * ((x : c.O) - 1) = 0 := by
     rw [geom_sum_mul, ← Units.val_pow_eq_pow_val, hx, Units.val_one, sub_self]
   have hsum : IsUnit (∑ i ∈ Finset.range m, (x : c.O) ^ i) := by
-    rw [← IsLocalRing.residue_ne_zero_iff_isUnit, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← IsLocalRing.residue_ne_zero_iff_isUnit, map_sum]
     simp only [map_pow, hres, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
     have hr := hmu.map (residue c.O)
     rw [map_natCast] at hr

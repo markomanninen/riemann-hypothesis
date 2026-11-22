@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcLgpLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcLgpLe
+
+@[expose] public section
 
 noncomputable section
 

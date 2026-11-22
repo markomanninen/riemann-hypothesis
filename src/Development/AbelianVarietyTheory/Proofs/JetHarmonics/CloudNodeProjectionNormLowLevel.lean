@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CardFilterFinBounds
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CardFilterLeSuccAndSqSumLePow
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormEigenLePowMulNormSum
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SplitCasEigenvalueSummand
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitaryGlModuleProjComponentsLevelAddTwoStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SplitCasimirResolventCircleBoundsStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevSubspaceMono
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormSumEigenprojectorLeOfResolventBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CardFilterFinBounds
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CardFilterLeSuccAndSqSumLePow
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormEigenLePowMulNormSum
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SplitCasEigenvalueSummand
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitaryGlModuleProjComponentsLevelAddTwoStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SplitCasimirResolventCircleBoundsStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevSubspaceMono
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormSumEigenprojectorLeOfResolventBound
+
+@[expose] public section
 
 open Finset BranchingSupport Formalism.REAL Formalism.QuantumDeterminants
 open scoped InnerProductSpace
@@ -64,7 +68,8 @@ theorem cloud_node_projector_bound (H : Type) [NormedAddCommGroup H] [NormedSpac
     have e : n + 1 - kk - 1 = n - kk := by omega
     rwa [e] at this
   · intro y hy
-    rw [← hsum y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsum y, map_sum]
     exact VV.sum_mem fun i _ => by rw [(hp i y hy).2]; exact VV.smul_mem _ (hp i y hy).1
   · intro i hi
     rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
@@ -133,7 +138,8 @@ theorem cloud_node_projection_norm : ∀ (M : Type) [NormedAddCommGroup M] [Inne
   have hsum : ∀ x, ∑ i, p i x = x := by
     intro x
     apply e.injective
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hp]
     exact hA.sum_io_pr _
   have hx₀V : x₀ ∈ VV := by
@@ -167,7 +173,7 @@ theorem cloud_node_projection_norm : ∀ (M : Type) [NormedAddCommGroup M] [Inne
       rw [hp, hx₀]
       exact hcomp s c d
     | zero => intro d; rw [map_zero]; exact L0 _
-    | add x y _ _ hx hy => intro d; rw [map_add]; exact Ladd _ _ _ (hx d) (hy d)
+    | add x y _ _ hx hy => intro d; rw [map_add (f := _)]; exact Ladd _ _ _ (hx d) (hy d)
     | smul a x _ hx => intro d; rw [map_smul]; exact Lsmul _ _ _ (hx d)
   have hres := fun x (hx : x ∈ VV) =>
     GlobalTheory.T.splitCasimir_resolvent_circle_bounds M n ε E μ kk (j + 2) bv (e x) hM hS (by omega) (hlev x hx)
@@ -175,7 +181,8 @@ theorem cloud_node_projection_norm : ∀ (M : Type) [NormedAddCommGroup M] [Inne
     (fun s => -μ s + (1 - (n : ℝ)) / 2) hfd hb hsum ?_ hpos ?_ hcard ?_ ?_ x₀ hx₀V
   · refine ⟨?_, fun s hs => ?_⟩
     · have h := pow_le_pow_left₀ (norm_nonneg _) key.1 2
-      rw [mul_pow, hx₀n, hn, map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [mul_pow, hx₀n, hn, map_sum] at h
       simp only [hp, hx₀] at h
       exact h
     · have h := pow_le_pow_left₀ (norm_nonneg _) (key.2 s hs) 2

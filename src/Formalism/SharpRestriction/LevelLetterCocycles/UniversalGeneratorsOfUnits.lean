@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SingleMemSpan
-import Formalism.SharpRestriction.LevelLetterCocycles.EvalZeroXEqUniformizer
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SingleMemSpan
+public import Formalism.SharpRestriction.LevelLetterCocycles.EvalZeroXEqUniformizer
+
+@[expose] public section
 
 noncomputable section
 

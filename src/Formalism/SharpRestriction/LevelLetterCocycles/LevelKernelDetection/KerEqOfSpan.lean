@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.UnivPart
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.UnivPart
+
+@[expose] public section
 
 noncomputable section
 

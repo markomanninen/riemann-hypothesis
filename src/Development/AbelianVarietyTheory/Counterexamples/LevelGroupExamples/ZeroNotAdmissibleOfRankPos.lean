@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,7 +29,7 @@ theorem cSep_spec (l : Level H) : cSep l ∈ Mfr l ∧ cSep l - 1 ∈ l.Mb := by
     have : mb - 1 = -m := by rw [← hsum]; ring
     rw [this]; exact neg_mem hm
   unfold cSep
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem dvd_EF_of_mem (x y : Dw.La) {a : 𝓞 E} (ha : a ∈ Ideal.span {(l.M : 𝓞 E)}) :
@@ -48,13 +52,13 @@ theorem dvd_right (x : Dw.La) {y : Dw.La} (hy : y ∈ (l.Mb • ⊤ : Submodule 
     (l.M : ℤ) ∣ Dw.EF x (cSep l • y) := by
   refine Submodule.smul_induction_on hy (fun a ha z _ => ?_) (fun u v hu hv => ?_)
   · rw [← mul_smul, mul_comm]; exact dvd_EF_of_mem _ _ (mul_mem_M ha (cSep_spec l).1)
-  · rw [smul_add, map_add]; exact dvd_add hu hv
+  · rw [smul_add, map_add (f := _)]; exact dvd_add hu hv
 
 theorem dvd_left {x : Dw.La} (y : Dw.La) (hx : x ∈ (Mfr l • ⊤ : Submodule (𝓞 E) Dw.La)) :
     (l.M : ℤ) ∣ Dw.EF x (cSep l • y) := by
   refine Submodule.smul_induction_on hx (fun a ha z _ => ?_) (fun u v hu hv => ?_)
   · rw [Dw.adj, ← mul_smul]; exact dvd_EF_of_mem _ _ (mul_mem_M (bar_mem_Mb ha) (cSep_spec l).1)
-  · rw [map_add, LinearMap.add_apply]; exact dvd_add hu hv
+  · rw [map_add (f := _), LinearMap.add_apply]; exact dvd_add hu hv
 
 theorem pairL_congr {n : ℕ} (x0 x0' x x' : Fin n → Dw.La)
     (h0 : ∀ b, x0 b - x0' b ∈ (Mfr l • ⊤ : Submodule (𝓞 E) Dw.La))
@@ -114,7 +118,7 @@ theorem exists_eq_smul_of_dvd (x : Dw.La) (m : ℕ) (hm : m ≠ 0) (h : ∀ y, (
     ∃ z, x = (m : ℤ) • z := by
   let f : Dw.La →ₗ[ℤ] ℤ :=
     { toFun := fun y => Dw.EF x y / m
-      map_add' := fun a b => by rw [map_add, Int.add_ediv_of_dvd_left (h a)]
+      map_add' := fun a b => by rw [map_add (f := _), Int.add_ediv_of_dvd_left (h a)]
       map_smul' := fun k a => by
         rw [map_zsmul]; simp only [smul_eq_mul, RingHom.id_apply]; exact Int.mul_ediv_assoc _ (h a) }
   obtain ⟨z, hz⟩ := Dw.unimod.2 f
@@ -174,16 +178,5 @@ theorem finite_LevQ : Finite (LevQ Dw l) := by
   haveI : Finite (𝓞 E ⧸ l.Mb) := Ideal.finiteQuotientOfFreeOfNeBot _ hb
   haveI : Module.Finite (𝓞 E ⧸ l.Mb) (LevQ Dw l) := Module.Finite.of_restrictScalars_finite (𝓞 E) _ _
   exact Module.finite_of_finite (𝓞 E ⧸ l.Mb)
-
-theorem Mfr_ne_top (l : Level H) : Mfr l ≠ ⊤ := by
-  intro h
-  have h1 : (1 : 𝓞 E) ∈ l.Mb := by simpa using bar_mem_Mb (l := l) (a := 1) (h ▸ Submodule.mem_top)
-  have h2 := mul_mem_M h1 (show (1 : 𝓞 E) ∈ Mfr l from h ▸ Submodule.mem_top)
-  rw [one_mul, ← Ideal.eq_top_iff_one, Ideal.span_singleton_eq_top] at h2
-  have h3 : IsUnit (l.M : ℤ) := by
-    have : IsUnit (algebraMap ℤ (𝓞 E) (l.M : ℤ)) := by simpa using h2
-    exact (isUnit_map_iff (algebraMap ℤ (𝓞 E)) _).1 this
-  have := l.three_le
-  rcases Int.isUnit_iff.1 h3 with h | h <;> omega
 
 end GlobalTheory.LevelPairing

@@ -1,6 +1,10 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.Clause1
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinalAll
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.IteratedDerivOrbit
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.Clause1
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinalAll
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.IteratedDerivOrbit
+
+@[expose] public section
 
 open Matrix
 
@@ -77,31 +81,6 @@ theorem mem_UJset_of_mem_kset {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Forma
   show kᴴ * Formalism.REAL.Jm ε * k = Formalism.REAL.Jm ε
   rw [Matrix.mul_assoc, ← hc, ← Matrix.mul_assoc, h1, Matrix.one_mul]
 
-private theorem exp_smul_mem_UJset_of_inG {Y : Matrix (Fin n) (Fin n) ℂ} (hY : inG ε Y) (t : ℝ) :
-    NormedSpace.exp ((t : ℂ) • Y) ∈ Formalism.MainNotions.S.UJset ε := by
-  have hJJ : Jm ε * Jm ε = 1 := by
-    rw [Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    by_cases h : ε a = true <;> simp [h]
-  have hJu : IsUnit (Jm ε) :=
-    (Matrix.isUnit_iff_isUnit_det _).mpr (Matrix.isUnit_det_of_left_inverse hJJ)
-  have hJinv : (Jm ε)⁻¹ = Jm ε := Matrix.inv_eq_left_inv hJJ
-  have hY' : Yᴴ * Jm ε + Jm ε * Y = 0 := hY
-  have hYh : Yᴴ = Jm ε * (-Y) * (Jm ε)⁻¹ := by
-    rw [hJinv]
-    have h1 : Yᴴ * Jm ε = -(Jm ε * Y) := eq_neg_of_add_eq_zero_left hY'
-    calc Yᴴ = Yᴴ * Jm ε * Jm ε := by rw [Matrix.mul_assoc, hJJ, Matrix.mul_one]
-      _ = Jm ε * (-Y) * Jm ε := by rw [h1, Matrix.mul_neg, Matrix.neg_mul]
-  have hs : star (t : ℂ) = t := Complex.conj_ofReal t
-  have hAh : ((t : ℂ) • Y)ᴴ = Jm ε * (-((t : ℂ) • Y)) * (Jm ε)⁻¹ := by
-    rw [Matrix.conjTranspose_smul, hs, hYh, ← smul_neg, Matrix.mul_smul, Matrix.smul_mul]
-  show (NormedSpace.exp ((t : ℂ) • Y))ᴴ * Jm ε * NormedSpace.exp ((t : ℂ) • Y) = Jm ε
-  rw [← Matrix.exp_conjTranspose, hAh, Matrix.exp_conj _ _ hJu, hJinv, Matrix.exp_neg]
-  simp only [Matrix.mul_assoc]
-  rw [← Matrix.mul_assoc (Jm ε) (Jm ε), hJJ, Matrix.one_mul,
-    Matrix.nonsing_inv_mul _ ((Matrix.isUnit_iff_isUnit_det _).mp (Matrix.isUnit_exp _)), Matrix.mul_one]
-
 theorem sigma_dS_conj (hσ : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.UJset ε) σ) {k : Matrix (Fin n) (Fin n) ℂ}
     (hk : k ∈ Formalism.REAL.Kset ε) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X) (v : smD ε σ) :
     σ k (dS σ X v) = dS σ (k * X * k⁻¹) (σ k v) := by
@@ -121,8 +100,8 @@ theorem sigma_dS_conj (hσ : Formalism.MainNotions.S.IsURepOn (Formalism.MainNot
       rw [show (t : ℂ) • (k * X * k⁻¹) = k * ((t : ℂ) • X) * k⁻¹ by rw [Matrix.mul_smul, Matrix.smul_mul]]
       rw [Matrix.exp_conj _ _ hku, Matrix.mul_assoc,
         Matrix.nonsing_inv_mul _ ((Matrix.isUnit_iff_isUnit_det k).mp hku), Matrix.mul_one]
-    have hE : NormedSpace.exp ((t : ℂ) • X) ∈ Formalism.MainNotions.S.UJset ε := exp_smul_mem_UJset_of_inG hX t
-    have hE' : NormedSpace.exp ((t : ℂ) • (k * X * k⁻¹)) ∈ Formalism.MainNotions.S.UJset ε := exp_smul_mem_UJset_of_inG hXc t
+    have hE : NormedSpace.exp ((t : ℂ) • X) ∈ Formalism.MainNotions.S.UJset ε := exp_smul_mem_UJset hX t
+    have hE' : NormedSpace.exp ((t : ℂ) • (k * X * k⁻¹)) ∈ Formalism.MainNotions.S.UJset ε := exp_smul_mem_UJset hXc t
     calc σ k (σ (NormedSpace.exp ((t : ℂ) • X)) (v : H))
         = (σ (k * NormedSpace.exp ((t : ℂ) • X))) (v : H) := by rw [hmul k hkU _ hE, ContinuousLinearMap.comp_apply]
       _ = (σ (NormedSpace.exp ((t : ℂ) • (k * X * k⁻¹)) * k)) (v : H) := by rw [e]
@@ -157,47 +136,6 @@ theorem actM_mem_derivedActionSpan (S : Submodule ℂ H) (hS : ∀ x ∈ S, x �
   exact Submodule.sum_mem _ fun a _ => Submodule.sum_mem _ fun b _ =>
     Submodule.smul_mem _ _ (smE_mem_derivedActionSpan S hS a b hx)
 
-private theorem inG_first_chart_piece (Z : Matrix (Fin n) (Fin n) ℂ) : inG ε (ReciprocityTheory.ChartRestriction.DS.S7.cpart1 ε Z) := by
-  have hJJ : Jm ε * Jm ε = 1 := by
-    rw [Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    by_cases h : ε a = true <;> simp [h]
-  have hJh : (Jm ε)ᴴ = Jm ε := Jm_conjTranspose_self
-  have key : (Jm ε * Zᴴ * Jm ε)ᴴ = Jm ε * Z * Jm ε := by
-    rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hJh, Matrix.conjTranspose_conjTranspose,
-      Matrix.mul_assoc]
-  have a1 : Jm ε * Z * Jm ε * Jm ε = Jm ε * Z := by
-    rw [Matrix.mul_assoc (Jm ε * Z), hJJ, Matrix.mul_one]
-  have a2 : Jm ε * (Jm ε * Zᴴ * Jm ε) = Zᴴ * Jm ε := by
-    rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, hJJ, Matrix.one_mul]
-  have hs : star (1 / 2 : ℂ) = 1 / 2 := by
-    rw [star_div₀, star_one, star_ofNat]
-  show ((1 / 2 : ℂ) • (Z - Jm ε * Zᴴ * Jm ε))ᴴ * Jm ε + Jm ε * ((1 / 2 : ℂ) • (Z - Jm ε * Zᴴ * Jm ε)) = 0
-  rw [Matrix.conjTranspose_smul, Matrix.conjTranspose_sub, key, hs, Matrix.smul_mul, Matrix.mul_smul,
-    Matrix.sub_mul, Matrix.mul_sub, a1, a2, ← smul_add, sub_add_sub_cancel, sub_self, smul_zero]
-
-private theorem inG_second_chart_piece (Z : Matrix (Fin n) (Fin n) ℂ) : inG ε (ReciprocityTheory.ChartRestriction.DS.S7.cpart2 ε Z) := by
-  have hJJ : Jm ε * Jm ε = 1 := by
-    rw [Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    by_cases h : ε a = true <;> simp [h]
-  have hJh : (Jm ε)ᴴ = Jm ε := Jm_conjTranspose_self
-  have key : (Jm ε * Zᴴ * Jm ε)ᴴ = Jm ε * Z * Jm ε := by
-    rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hJh, Matrix.conjTranspose_conjTranspose,
-      Matrix.mul_assoc]
-  have a1 : Jm ε * Z * Jm ε * Jm ε = Jm ε * Z := by
-    rw [Matrix.mul_assoc (Jm ε * Z), hJJ, Matrix.mul_one]
-  have a2 : Jm ε * (Jm ε * Zᴴ * Jm ε) = Zᴴ * Jm ε := by
-    rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, hJJ, Matrix.one_mul]
-  have hs : star (1 / (2 * Complex.I)) = -(1 / (2 * Complex.I)) := by
-    rw [star_div₀, star_one, star_mul', star_ofNat, Complex.star_def, Complex.conj_I, mul_neg, div_neg]
-  show ((1 / (2 * Complex.I)) • (Z + Jm ε * Zᴴ * Jm ε))ᴴ * Jm ε +
-    Jm ε * ((1 / (2 * Complex.I)) • (Z + Jm ε * Zᴴ * Jm ε)) = 0
-  rw [Matrix.conjTranspose_smul, Matrix.conjTranspose_add, key, hs, Matrix.smul_mul, Matrix.mul_smul,
-    Matrix.add_mul, Matrix.mul_add, a1, a2, add_comm (Jm ε * Z), neg_smul, neg_add_cancel]
-
 theorem derivedActionSpan_isKStableOn (hσ : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.UJset ε) σ) (S : Submodule ℂ H)
     (hS : ∀ x ∈ S, x ∈ smD ε σ) (hK : Formalism.MainNotions.S.IsKStableOn ε σ S) :
     Formalism.MainNotions.S.IsKStableOn ε σ (derivedActionSpan S hS) := by
@@ -222,8 +160,9 @@ theorem derivedActionSpan_isKStableOn (hσ : Formalism.MainNotions.S.IsURepOn (F
         dS σ (ReciprocityTheory.ChartRestriction.DS.S7.cpart1 ε (Matrix.single c d 1)) w +
           Complex.I • dS σ (ReciprocityTheory.ChartRestriction.DS.S7.cpart2 ε (Matrix.single c d 1)) w :=
       smE_apply hσ' ⟨w, hS w hw⟩ c d
-    rw [e, map_add, map_smul]
-    exact add_mem (part _ (inG_first_chart_piece _) w hw) (Submodule.smul_mem _ _ (part _ (inG_second_chart_piece _) w hw))
+    rw [e, map_add (f := _), map_smul]
+    exact add_mem (part _ (SmDerA.inG_cpart1 ε _) w hw)
+      (Submodule.smul_mem _ _ (part _ (SmDerA.inG_cpart2 ε _) w hw))
   have hle : derivedActionSpan S hS ≤ (derivedActionSpan S hS).comap ((σ g : H →L[ℂ] H) : H →ₗ[ℂ] H) := by
     refine iSup_le fun c => iSup_le fun d => ?_
     rintro _ ⟨⟨w, hw⟩, rfl⟩

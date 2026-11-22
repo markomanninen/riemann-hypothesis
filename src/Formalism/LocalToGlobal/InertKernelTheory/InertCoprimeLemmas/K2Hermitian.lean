@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.QuadraticBaseChangeGL3
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.LocalLevelIsKOneAtT
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.QuadraticBaseChangeGL3
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.LocalLevelIsKOneAtT
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,8 +44,8 @@ theorem mono_wh_A (A : X.ZA j → X.ZA j → Kc) (hA : BlockDiag X Kc j A) (v : 
   exact MvPolynomial.IsWeightedHomogeneous.prod _ _ _ fun x _ => (isWeightedHomogeneous_linearForm_of_blockDiagonal X Kc j A hA v s x).pow _
 
 theorem hGd_A (A : X.ZA j → X.ZA j → Kc) (hA : BlockDiag X Kc j A) (m n : X.ZA j →₀ ℕ)
-    (h : MvPolynomial.coeff n (MvPolynomial.aeval (linP fun x y => algebraMap Kc (XspC (X.Pj (j + 1)) Kc) (A x y))
-        (MvPolynomial.monomial m (1 : XspC (X.Pj (j + 1)) Kc))) ≠ 0) : GoodDeg X j n ↔ GoodDeg X j m := by
+    (h : AddMonoidAlgebra.coeff (MvPolynomial.aeval (linP fun x y => algebraMap Kc (XspC (X.Pj (j + 1)) Kc) (A x y))
+        (MvPolynomial.monomial m (1 : XspC (X.Pj (j + 1)) Kc))) n ≠ 0) : GoodDeg X j n ↔ GoodDeg X j m := by
   have key : ∀ (v : X.Pl) (s : Fin (X.G.P.n' v)), ∑ a, ∑ b, n ⟨v, (s, a, b)⟩ = ∑ a, ∑ b, m ⟨v, (s, a, b)⟩ := by
     intro v s
     rw [← wt_eq, ← wt_eq]
@@ -60,14 +64,16 @@ theorem chain_linear : ChainLin := by
 theorem hasSubst_lin {ι R : Type} [Fintype ι] [CommRing R] (B : ι → ι → R) :
     MvPowerSeries.HasSubst (fun x : ι => ∑ y, MvPowerSeries.C (B x y) * MvPowerSeries.X y) :=
   MvPowerSeries.hasSubst_of_constantCoeff_zero fun x => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun y _ => by rw [map_mul, MvPowerSeries.constantCoeff_X, mul_zero]
 
 theorem subst_lin {σ τ R : Type} [Fintype σ] [CommRing R] {a : σ → MvPowerSeries τ R} (ha : MvPowerSeries.HasSubst a)
     (c : σ → R) :
     MvPowerSeries.subst a (∑ y, MvPowerSeries.C (c y) * MvPowerSeries.X y : MvPowerSeries σ R) =
       ∑ y, MvPowerSeries.C (c y) * a y := by
-  rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [MvPowerSeries.coe_substAlgHom ha, MvPowerSeries.subst_mul ha, MvPowerSeries.subst_C, MvPowerSeries.subst_X ha]
 
@@ -104,7 +110,8 @@ theorem trSub_mul (U V : X.ZA j → X.ZA j → Kc) (P : DA X Kc j) :
     unfold trSub
     rw [MvPolynomial.aeval_X, MvPolynomial.aeval_X]
     unfold linT
-    simp only [map_sum, map_mul, MvPolynomial.aeval_C, MvPolynomial.aeval_X, MvPolynomial.algebraMap_eq, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, MvPolynomial.aeval_C, MvPolynomial.aeval_X, MvPolynomial.algebraMap_eq, Finset.mul_sum,
       Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun z _ => Finset.sum_congr rfl fun x _ => ?_
@@ -119,10 +126,11 @@ theorem blockDiag_mul {U V : X.ZA j → X.ZA j → Kc} (hV : BlockDiag X Kc j V)
   rw [hU x y (right_ne_zero_of_mul hx), hV z x (left_ne_zero_of_mul hx)]
 
 theorem pairD_lin (τ : XspC (X.Pj (j + 1)) Kc →ₗ[Kc] XspC (X.Pj (j + 1)) Kc) (P P' : DA X Kc j)
-    (h : ∀ n, MvPolynomial.coeff n P' = τ (MvPolynomial.coeff n P)) (f : MvPowerSeries (X.ZA j) Kc) :
+    (h : ∀ n, AddMonoidAlgebra.coeff P' n = τ (AddMonoidAlgebra.coeff P n)) (f : MvPowerSeries (X.ZA j) Kc) :
     pairD X Kc j P' f = τ (pairD X Kc j P f) := by
   classical
-  rw [pairD_eq X Kc j P' f (P.support ∪ P'.support) Finset.subset_union_right,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [pairD_eq X Kc j P' f (P.support ∪ P'.support) Finset.subset_union_right,
     pairD_eq X Kc j P f (P.support ∪ P'.support) Finset.subset_union_left, map_sum]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [h n, LinearMap.map_smul]
@@ -152,14 +160,17 @@ theorem chain_core [Algebra (Formalism.L2.G.Pend.K0 p) Kc] (V : X.ZA j → X.ZA 
     (A : ∀ v : Fin (X.Pj j).nV, GL (Fin ((X.Pj j).m + 1)) ((X.Pj j).Qq v))
     (Gm : (X.Pj j).Xsp) (hG : GoodG X Kc j Gm) (hO : OddDeg X j Gm)
     (τ : XspC (X.Pj (j + 1)) Kc →ₗ[Kc] XspC (X.Pj (j + 1)) Kc)
-    (hτ : ∀ n, MvPolynomial.coeff n (trSub X Kc j V (polDel X Kc j Gm)) = τ (MvPolynomial.coeff n (polDel X Kc j Gm)))
+    (hτ : ∀ n, AddMonoidAlgebra.coeff (trSub X Kc j V (polDel X Kc j Gm)) n = τ (AddMonoidAlgebra.coeff (polDel X Kc j Gm) n))
     (g : MvPowerSeries (X.ZA j) Kc) :
     pairD X Kc j (polDel X Kc j ((X.Pj j).natAct A Gm))
         (linSub (fun z y => ∑ x, V z x * LkB X Kc j (glAt X j A) x y) g) =
       cA X Kc j (glAt X j A) • τ (pairD X Kc j (polDel X Kc j Gm) g) := by
+  have heq : delF X Kc j ((X.Pj j).natAct A Gm) (SA X Kc j (glAt X j A) (linSub V g)) =
+      cA X Kc j (glAt X j A) • delF X Kc j Gm (linSub V g) :=
+    delEquivOn_GdC X Kc j A Gm (linSub V g) ⟨hG, hO⟩
   rw [chain_linear p X Kc j _ (blockDiag_mul X Kc j hV (blockDiag_LkB X Kc j _)), ← trSub_mul,
     ← chain_linear p X Kc j V hV, ← chain_linear p X Kc j _ (blockDiag_LkB X Kc j _), linSub_LkB,
-    ← delF_apply, (delEquivH X Kc j A Gm _ hG hO).2, delF_apply, chain_linear p X Kc j V hV, pairD_lin X Kc j τ _ _ hτ]
+    ← delF_apply, heq, delF_apply, chain_linear p X Kc j V hV, pairD_lin X Kc j τ _ _ hτ]
 
 end Alg
 
@@ -174,7 +185,7 @@ theorem kapOf_bij {p : ℕ} [Fact p.Prime] (X : Sys p) {T : Type} (pos : (Σ v :
 theorem frGL_val {p : ℕ} [Fact p.Prime] {X : Sys p} {D : D7} (fd : Formalism.L2.PairingIndexBounds.F.FData X D) (hFr : FrInv fd) (j : ℕ)
     (La : X.Lt j) (v : X.Pl) : ((frGL fd j La v : GL _ _) : Matrix _ _ _) = fd.frM j La v := by
   unfold frGL
-  rw [dif_pos (hFr j La v)]
+  rw [dite_eq_left (hFr j La v)]
   rfl
 
 theorem subBG_diag {p : ℕ} [Fact p.Prime] {X : Sys p} {D : D7} (E : Formalism.L2.G.Pend.CEmb X.G)
@@ -268,46 +279,5 @@ theorem substitution_split : SubBSplit := by
     have h1 := blockDiag_VOf X ℂ_[p] j fd c La' _ z (left_ne_zero_of_mul hz)
     have h2 := blockDiag_LkB X ℂ_[p] j (BOf fd j La) z _ (right_ne_zero_of_mul hz)
     exact h (h2.trans h1)
-
-theorem delPolH_of (hSp : SubBSplit) : DelPolH := by
-  intro D L hT Gi Gl Kc0 Dx cX ex t u μ p _ X _ E hfin hst g hLT pos fd cc δ B χ lamK SS cl Ξ₀ muT
-  intro hFr hS hK Y σ cls cmp κ ι Φ₀ τ sc sH Gm j cK hN hMv hOp hDeg hSer hChi hYEq
-  intro La hLa x Q hQ c' L' hL'
-  have hTh : Y.ThF j La (c', L') = Formalism.L2.G.Pend.thFOf X pos (Formalism.L2.PairingIndexBounds.F.FrecG E.toCEmb pos fd B χ lamK SS cl Ξ₀ muT
-      (Formalism.L2.PairingIndexBounds.F.ltC g hLT)) j La (c', L') :=
-    Formalism.L2.G.Pend.pendR_ThF_rep X E.toCEmb hfin hst _ _ hS hK j La (c', L') hLa
-  have hsr : srOf Y j La (c', L') = (Y.eS j La * (Y.eT j (c', L'))⁻¹ : X.G.Kf) •
-      linSub (fun z y => ∑ w, VOf Y.Kc fd (Formalism.L2.PairingIndexBounds.F.ltC g hLT) j (c', L') z w *
-        Formalism.L2.G.Pend.LkB X Y.Kc j (BOf fd j La) w y)
-        (resV (Formalism.L2.G.Pend.kapOf X pos j) (serG fd B χ lamK SS cl Ξ₀ muT j La (c', L'))) := by
-    unfold srOf
-    rw [hTh]
-    congr 1
-    show resV (Formalism.L2.G.Pend.kapOf X pos j) (linSub (fun x y => Formalism.L2.PairingIndexBounds.F.ltC g hLT *
-      Formalism.L2.PairingIndexBounds.F.subBG E.toCEmb pos fd j La (c', L') x y) (serG fd B χ lamK SS cl Ξ₀ muT j La (c', L'))) = _
-    rw [rename_linear _ _ _ _ (kapOf_bij X pos j)]
-    congr 1
-    funext z y
-    exact hSp p X D E.toCEmb pos fd _ hFr j La (c', L') z y
-  obtain ⟨hMe, hG, hO⟩ := hMv La hLa x
-  beta_reduce at hMe
-  have hc := chain_core X Y.Kc j (VOf Y.Kc fd (Formalism.L2.PairingIndexBounds.F.ltC g hLT) j (c', L'))
-    (blockDiag_VOf X Y.Kc j fd _ (c', L')) (glInv X j (BOf fd j La)) (Gm j La x) hG hO (τ j c' L')
-    (hYEq c' L' hL' (Gm j La x) hG hO) (resV (Formalism.L2.G.Pend.kapOf X pos j) (serG fd B χ lamK SS cl Ξ₀ muT j La (c', L')))
-  rw [glAt_glInv] at hc
-  have hPD := pairing_dictionary p X Y.Kc j D (D.R.N j) (D.R.N (j + 1)) ι (eIdx X D pos j hN) (eIdx_injective X D pos j hN) (Φ₀ j)
-    (polDY D (t.O u μ).dgen (Q (cls j La.1 La.2)) (N' := D.R.N (j + 1)))
-    ((t.rd u μ).Th t.seam t.amb j (cls j La.1 La.2) (κ j c' L'))
-    (resV (Formalism.L2.G.Pend.kapOf X pos j) (serG fd B χ lamK SS cl Ξ₀ muT j La (c', L'))) (sH j La (c', L'))
-    (hDeg La hLa x Q hQ) (fun α hα => hSer La hLa c' L' hL' α (hDeg La hLa x Q hQ α hα))
-  show sc j c' L' • τ j c' L' (Φ₀ j (_ • pairR D (polDY D (t.O u μ).dgen (Q (cls j La.1 La.2)) (N' := D.R.N (j + 1)))
-      ((t.rd u μ).Th t.seam t.amb j (cls j La.1 La.2) (κ j c' L')))) =
-    cK • Formalism.L2.G.Pend.pairD X Y.Kc j (Formalism.L2.G.Pend.polDel X Y.Kc j (cmp j x La.1 La.2)) (srOf Y j La (c', L'))
-  rw [hsr, Formalism.L2.G.Pend.pairD_smul_right, ← hMe, hc, hOp La hLa x Q hQ, hPD, LinearMap.map_smulₛₗ, map_smul, map_smul,
-    ← algebraMap_smul Y.Kc (Y.eS j La * (Y.eT j (c', L'))⁻¹), smul_smul, smul_smul, smul_smul, smul_smul]
-  congr 1
-  rw [← hChi La hLa c' L' hL']
-
-theorem difference_polynomial_hecke : DelPolH := delPolH_of substitution_split
 
 end Formalism.L2.KerInert.SecondKernelHermitian

@@ -1,12 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocIdem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocIdem
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Hi
 
 private theorem pres_pow {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] (N : Submodule A M)
     (T : Module.End A M) (h : ∀ y ∈ N, T y ∈ N) (n : ℕ) : ∀ y ∈ N, (T ^ n) y ∈ N := by
   induction n with
   | zero => intro y hy; simpa using hy
-  | succ n ih => intro y hy; rw [pow_succ', Module.End.mul_apply]; exact h _ (ih y hy)
+  | succ n ih => intro y hy; rw [pow_succ', mul_apply_eq_comp]; exact h _ (ih y hy)
 
 private theorem pres_smul {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] (N : Submodule A M)
     (I : Ideal A) (T : Module.End A M) (h : ∀ y ∈ N, T y ∈ N) : ∀ y ∈ I • N, T y ∈ I • N := by
@@ -28,14 +33,14 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locFree :
   obtain ⟨e, -, he, hmem, hcomm⟩ := UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locIdem A M ι Y op a h
   have hLY : locPart Y op a ≤ Y := inf_le_left
   have hee : ∀ y : Y, e (e y) = e y := fun y => by
-    rw [← Module.End.mul_apply, he.eq]
+    rw [← mul_apply_eq_comp, he.eq]
   have heL : ∀ y : Y, (e y : M) ∈ locPart Y op a := fun y => (hmem _).2 (hee y)
   have hc : ∀ j (y : Y), e ⟨op j y, h.1 j y y.2⟩ = ⟨op j (e y), h.1 j _ (e y).2⟩ := by
     intro j y
     have := hcomm ((op j).restrict (h.1 j)) (fun i t ht => by
       ext z
       have h1 : ∀ w : Y, (t w : M) = op i w := ht
-      simp only [Module.End.mul_apply, h1, LinearMap.restrict_coe_apply]
+      simp only [mul_apply_eq_comp, h1, LinearMap.coe_restrict_apply]
       exact h.2 j i z z.2)
     exact (LinearMap.congr_fun this y).symm
   have hst : ∀ i, ∀ y ∈ locPart Y op a, op i y ∈ locPart Y op a := by
@@ -69,7 +74,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locFree :
         (maximalIdeal A ^ k • Y).comap ((op i - algebraMap A (Module.End A M) (a i)) ^ n) := by
       refine monotone_nat_of_le_succ fun n y hy => ?_
       rw [Submodule.mem_comap] at hy ⊢
-      rw [pow_succ', Module.End.mul_apply]
+      rw [pow_succ', mul_apply_eq_comp]
       exact pres_smul Y _ _ (pres_sub Y _ _ (h.1 i)) _ hy
     obtain ⟨n, hn⟩ := (Submodule.mem_iSup_of_directed _ hmono.directed_le).1 (hx2 i k)
     refine Submodule.mem_iSup_of_mem n ?_
@@ -92,5 +97,5 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locFree :
       change e _ = 0
       rw [hc]
       simp [h2]
-  · haveI : Module.Projective A (locPart Y op a) := Module.Projective.of_split _ _ hE
+  · have : Module.Projective A (locPart Y op a) := Module.Projective.of_split _ _ hE
     exact Module.free_of_flat_of_isLocalRing

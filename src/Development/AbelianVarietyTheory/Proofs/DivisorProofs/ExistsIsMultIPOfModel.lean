@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypePartBase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypePartBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem IsMultIP₂ {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} {M : DSMod
   have h1 : ∀ x y : H.H, inner ℂ x y ≠ 0 → ∃ c, IsMultIP M μ 𝓕 (H.e x) (H.e y) c := fun x y hxy => by
     by_contra hc
     apply hxy
-    rw [h, ipM, dif_neg hc, mul_zero]
+    rw [h, ipM, dite_eq_right hc, mul_zero]
   by_cases hx : x = 0
   · subst hx
     exact ⟨0, fun v v' => by simp⟩

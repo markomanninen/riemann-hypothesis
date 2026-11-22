@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem isAddFundamentalDomain_join (J : X × Y ≃ᵐ Z) (hJ : ∀ a b, J (a + 
       rw [htr, this]
   refine ⟨?_, ?_, ?_⟩
   · have hq : QuasiMeasurePreserving J.symm ((μ.prod ν).map J) (μ.prod ν) := by
-      refine ⟨J.symm.measurable, ?_⟩
+      refine ⟨J.symm.measurable.aemeasurable, ?_⟩
       rw [Measure.map_map J.symm.measurable J.measurable]
       simp only [MeasurableEquiv.symm_comp_self, Measure.map_id]
       exact Measure.AbsolutelyContinuous.rfl

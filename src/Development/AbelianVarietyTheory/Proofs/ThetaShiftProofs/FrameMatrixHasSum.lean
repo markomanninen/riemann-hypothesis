@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicHomDetermined
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DerivativeAlongTangentCombinationModuli
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsDerivAt0OfIsPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicHomDetermined
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DerivativeAlongTangentCombinationModuli
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsDerivAt0OfIsPullback
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,8 @@ theorem cv_coeff {F : Type} {m : ℕ} {A : F → Fin m → ℂ⸨X⸩} {B : F �
   have hδ : ∀ j, ∑ f ∈ cf.support, (cf f : ℂ⸨X⸩) * A f j = algebraMap ℂ ℂ⸨X⸩ (if j = k then 1 else 0) := by
     intro j
     have h2 := congrArg (fun x : Fin m → convLaurent => convLaurent.val (x j)) hcf
-    simp only [Finsupp.sum, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finsupp.sum, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul] at h2
     refine h2.trans ?_
     by_cases hj : j = k <;> simp [hj]
   have hG : G k = ∑ f ∈ cf.support, (cf f : ℂ⸨X⸩) * B f := by
@@ -177,13 +182,9 @@ theorem exists_frac (W : Sp A ⟶ X) (V : X.Opens) (f : Γ(X, V)) {K : Type} [Fi
     map_mul, map_pow]
   ring
 
-theorem fst_comp_dualMap {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) :
-    (TrivSqZeroExt.fstHom S S S).toRingHom.comp (dualMap φ) = φ.comp (TrivSqZeroExt.fstHom R R R).toRingHom :=
-  RingHom.ext fun x => by simp [dualMap]
-
 theorem dualMap_comp_algebraMap {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) :
-    (dualMap φ).comp (algebraMap R (DualNumber R)) = (algebraMap S (DualNumber S)).comp φ :=
-  RingHom.ext fun x => by ext <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+    (Formalism.L2.Pj.dualMap φ).comp (algebraMap R (DualNumber R)) = (algebraMap S (DualNumber S)).comp φ :=
+  RingHom.ext fun x => by ext <;> simp [Formalism.L2.Pj.dualMap, TrivSqZeroExt.algebraMap_eq_inl]
 
 theorem le_iff_fst {S : Type} [CommRing S] (v : Sp (DualNumber S) ⟶ X) (U : X.Opens) :
     ⊤ ≤ v ⁻¹ᵁ U ↔ ⊤ ≤ (spMap (TrivSqZeroExt.fstHom S S S).toRingHom ≫ v) ⁻¹ᵁ U := by
@@ -194,27 +195,27 @@ theorem le_iff_fst {S : Type} [CommRing S] (v : Sp (DualNumber S) ⟶ X) (U : X.
     have h1 : x.fst = 0 := hx
     ext <;> simp [h1]
 
-open scoped LaurentSeries in
 
+open scoped LaurentSeries in
 theorem cv_chart {Ω : Type} {p : Ω → ℂ} {R : Type} [CommRing R] (W : Sp (DualNumber R) ⟶ X) (V : X.Opens)
     (f : Γ(X, V)) (φ : R →+* ℂ⸨X⸩) (ψ : Ω → (R →+* ℂ)) (hc : ∀ r, Cv p (φ r) (fun ω => ψ ω r))
-    (h : ⊤ ≤ (spMap (dualMap φ) ≫ W) ⁻¹ᵁ V) :
-    (∀ᶠ ω in high p, ⊤ ≤ (spMap (dualMap (ψ ω)) ≫ W) ⁻¹ᵁ V) ∧
-      Cv p (valR (spMap (dualMap φ) ≫ W) V f).snd (fun ω => (valR (spMap (dualMap (ψ ω)) ≫ W) V f).snd) := by
+    (h : ⊤ ≤ (spMap (Formalism.L2.Pj.dualMap φ) ≫ W) ⁻¹ᵁ V) :
+    (∀ᶠ ω in high p, ⊤ ≤ (spMap (Formalism.L2.Pj.dualMap (ψ ω)) ≫ W) ⁻¹ᵁ V) ∧
+      Cv p (valR (spMap (Formalism.L2.Pj.dualMap φ) ≫ W) V f).snd (fun ω => (valR (spMap (Formalism.L2.Pj.dualMap (ψ ω)) ≫ W) V f).snd) := by
   rw [le_iff_fst, ← Category.assoc, TanMod.spMap_comp'] at h
   obtain ⟨H, r, h0, hr⟩ := exists_frac W V f _ h
-  have h0' : φ H.fst ≠ 0 := by simpa [dualMap] using h0
-  have key : ∀ (L : Type) [Field L] (χ : R →+* L), χ H.fst ≠ 0 → ⊤ ≤ (spMap (dualMap χ) ≫ W) ⁻¹ᵁ V ∧
-      (valR (spMap (dualMap χ) ≫ W) V f).snd = (χ r.snd - χ r.fst * (χ H.fst)⁻¹ * χ H.snd) * (χ H.fst)⁻¹ := by
+  have h0' : φ H.fst ≠ 0 := by simpa [Formalism.L2.Pj.dualMap] using h0
+  have key : ∀ (L : Type) [Field L] (χ : R →+* L), χ H.fst ≠ 0 → ⊤ ≤ (spMap (Formalism.L2.Pj.dualMap χ) ≫ W) ⁻¹ᵁ V ∧
+      (valR (spMap (Formalism.L2.Pj.dualMap χ) ≫ W) V f).snd = (χ r.snd - χ r.fst * (χ H.fst)⁻¹ * χ H.snd) * (χ H.fst)⁻¹ := by
     intro L _ χ hχ
-    obtain ⟨h1, h2⟩ := hr _ (dualMap χ) (by
+    obtain ⟨h1, h2⟩ := hr _ (Formalism.L2.Pj.dualMap χ) (by
       rw [TrivSqZeroExt.isUnit_iff_isUnit_fst]
-      simpa [dualMap] using hχ)
+      simpa [Formalism.L2.Pj.dualMap] using hχ)
     refine ⟨h1, ?_⟩
     have h3 := congrArg TrivSqZeroExt.fst h2
     have h4 := congrArg TrivSqZeroExt.snd h2
-    generalize valR (spMap (dualMap χ) ≫ W) V f = x at h3 h4
-    simp [dualMap] at h3 h4
+    generalize valR (spMap (Formalism.L2.Pj.dualMap χ) ≫ W) V f = x at h3 h4
+    simp [Formalism.L2.Pj.dualMap] at h3 h4
     rw [← h3, ← h4]
     field_simp
     ring
@@ -363,19 +364,18 @@ theorem snd_lf_comb (y : FrPt Xo c S) (τ : E →+* ℂ) (a : Fin (Dw.mult τ) �
   rw [valR_comp _ Y.m.φ, key]
   exact Finset.sum_congr rfl fun k _ => by rw [valR_comp _ Y.m.φ]
 
-theorem lf_congr {y y' : FrPt Xo c S} (h : y'.x = y.x) (w) (hw : IsTanAt y.x w) (hw' : IsTanAt y'.x w) :
+theorem lf_congr {y y' : FrPt Xo c S} (_h : y'.x = y.x) (w) (hw : IsTanAt y.x w) (hw' : IsTanAt y'.x w) :
     lf Y y' w hw' = lf Y y w hw :=
   eq_lf Y y w hw _ (lf_fst Y _ _ _) (by rw [← Category.assoc, lf_snd, Category.assoc, ptF_snd])
 
 theorem lf_map {T : Type} [CommRing T] [Algebra c.F T] {φ : S →ₐ[c.F] T} {y : FrPt Xo c S} {y' : FrPt Xo c T}
     (h : FrMap φ y y') (τ : E →+* ℂ) (k : Fin (Dw.mult τ)) :
-    lf Y y' _ (y'.tan τ k) = spMap (dualMap φ.toRingHom) ≫ lf Y y _ (y.tan τ k) := by
+    lf Y y' _ (y'.tan τ k) = spMap (Formalism.L2.Pj.dualMap φ.toRingHom) ≫ lf Y y _ (y.tan τ k) := by
   refine (eq_lf Y y' _ _ _ (by rw [Category.assoc, lf_fst, h.2.1]) ?_).symm
   rw [Category.assoc, ← Category.assoc (lf _ _ _ _), lf_snd, Category.assoc, ptF_snd]
   simp only [spMap_comp']
   rw [← RingHom.comp_assoc, dualMap_comp_algebraMap, RingHom.comp_assoc]
-  congr 2
-  exact φ.comp_algebraMap
+  exact congrArg (fun f : c.F →+* T => spMap ((algebraMap T (DualNumber T)).comp f)) φ.comp_algebraMap
 
 theorem sep (y : FrPt Xo c S) (τ : E →+* ℂ) {V : Y.t.G.left.Opens} (hA : IsAffineOpen V)
     (hV : ⊤ ≤ unitAt Y (ptF y) ⁻¹ᵁ V) (a : Fin (Dw.mult τ) → S)
@@ -438,10 +438,10 @@ theorem arc_lf {A : Type} [CommRing A] [IsDomain A] (s : c.F →+* A) {a : ArcIn
     (hχ : χ ≫ Y.s = spMap (PowerSeries.C (R := A)) ≫ spMap (s.comp β)) [Mono (spMap β)]
     (h : IsArcFr W e th ι y) (τ : E →+* ℂ) (k : Fin (Dw.mult τ)) :
     ∃ v : epsR (PowerSeries A) ⟶ W.t.G, LieImg W (e τ k) v ∧
-      lf Y y _ (y.tan τ k) ≫ Y.m.φ = spMap (dualMap ι) ≫ (show Sp _ ⟶ _ from v.left) ≫ W.m.φ := by
+      lf Y y _ (y.tan τ k) ≫ Y.m.φ = spMap (Formalism.L2.Pj.dualMap ι) ≫ (show Sp _ ⟶ _ from v.left) ≫ W.m.φ := by
   obtain ⟨z, t', m1, m2, φ, -, -, -, h1, h2, h3, -⟩ := h
   obtain ⟨v, u', hv, hu1, hu2, -⟩ := h3 τ k
-  have e1 : (u' ≫ φ) ≫ Y.m.φ = spMap (dualMap ι) ≫ (show Sp _ ⟶ _ from v.left) ≫ W.m.φ := by
+  have e1 : (u' ≫ φ) ≫ Y.m.φ = spMap (Formalism.L2.Pj.dualMap ι) ≫ (show Sp _ ⟶ _ from v.left) ≫ W.m.φ := by
     rw [Category.assoc, h2, ← Category.assoc, hu2, Category.assoc]
   refine ⟨v, hv, ?_⟩
   rw [← e1]
@@ -460,7 +460,7 @@ theorem arc_lf {A : Type} [CommRing A] [IsDomain A] (s : c.F →+* A) {a : ArcIn
   simp only [spMap_comp']
   congr 1
   refine RingHom.ext fun x => ?_
-  ext <;> simp [dualMap, hι, TrivSqZeroExt.algebraMap_eq_inl]
+  ext <;> simp [Formalism.L2.Pj.dualMap, hι, TrivSqZeroExt.algebraMap_eq_inl]
 
 theorem isHolTo_slice {X : Scheme.{0}} {g : ℕ} (e : (Fin g → ℂ) → (Sp ℂ ⟶ X))
     (h : IsHolTo (Set.univ ×ˢ Set.univ) (fun bz : (Fin 0 → ℂ) × (Fin g → ℂ) => e bz.2)) : IsHolTo Set.univ e := by
@@ -522,10 +522,10 @@ theorem frame_matrix_hasSum : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E
     exact TanDeriv.comp_top_le _ _ _ hvV
   let ψ : Ω → (p.R →+* ℂ) := fun ω => ω.1.2.1.toRingHom
   have hψ : ∀ r, Cv pw (φ.toRingHom r) (fun ω => ψ ω r) := fun r => Filter.Eventually.of_forall fun ω => ω.2.1 r
-  have e₁ : ∀ k, lf Y y₁ _ (y₁.tan τ k) ≫ Y.m.φ = spMap (dualMap φ.toRingHom) ≫ lf Y y₀ _ (y₀.tan τ k) ≫ Y.m.φ :=
+  have e₁ : ∀ k, lf Y y₁ _ (y₁.tan τ k) ≫ Y.m.φ = spMap (Formalism.L2.Pj.dualMap φ.toRingHom) ≫ lf Y y₀ _ (y₀.tan τ k) ≫ Y.m.φ :=
     fun k => by rw [lf_map Y hφ, Category.assoc]
   have e₂ : ∀ (ω : Ω) k, (show Sp (DualNumber ℂ) ⟶ _ from lf (S := CAt σ) Y ω.1.2.2.1 _ (ω.1.2.2.1.tan τ k) ≫ Y.m.φ) =
-      spMap (dualMap (ψ ω)) ≫ lf Y y₀ _ (y₀.tan τ k) ≫ Y.m.φ :=
+      spMap (Formalism.L2.Pj.dualMap (ψ ω)) ≫ lf Y y₀ _ (y₀.tan τ k) ≫ Y.m.φ :=
     fun ω k => (congrArg (· ≫ Y.m.φ) (lf_map Y ω.2.2.1 τ k)).trans (Category.assoc _ _ _)
   have hch := fun (f : Γ(Y.t.G.left, V)) k => cv_chart (lf Y y₀ _ (y₀.tan τ k) ≫ Y.m.φ) V f φ.toRingHom ψ hψ
     (e₁ k ▸ (lf_le_iff Y y₁ _ (y₁.tan τ k) V).2 hyV)
@@ -548,7 +548,7 @@ theorem frame_matrix_hasSum : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E
       (fun n ρ κ vn h1 h2 h3 h4 h5 => hv n ρ κ vn h1 h2 h3 h4 (thick_base _ n v ρ vn h1 h5) h5) hvV
     have hB : (valR (lf Y y _ (y.tan τ i) ≫ Y.m.φ) V f).snd = HahnSeries.ofPowerSeries ℤ ℂ (valR v' V f).snd := by
       rw [hvy, HolHom.valR_spMap _ _ _ hvV]
-      simp [dualMap]
+      simp [Formalism.L2.Pj.dualMap]
     rw [hB]
     filter_upwards [high_iff.2 ⟨T, fun _ h => h⟩, high_iff.2 ⟨Ha.T, fun _ h => h⟩, hwV] with ω h1 h2 h3
     obtain ⟨xF, hx, hd⟩ := exists_exp_lift Y Fu Ha.i _ (Ha.period _ h2) _ z ω.2.2.2.1

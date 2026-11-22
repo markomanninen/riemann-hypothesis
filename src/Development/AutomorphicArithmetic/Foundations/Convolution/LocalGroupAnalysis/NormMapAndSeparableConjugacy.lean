@@ -1,7 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.SeparableOfMap
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.SeparableOfMap
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 
 open PositivityTheory.Rg.Tf.Loc in

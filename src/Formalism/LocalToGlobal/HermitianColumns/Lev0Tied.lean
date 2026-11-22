@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.HermitianColumns.SplitGAlg
-import Formalism.LocalToGlobal.HermitianColumns.CocycleZeroMemInvariants
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.SplitGAlg
+public import Formalism.LocalToGlobal.HermitianColumns.CocycleZeroMemInvariants
+
+@[expose] public section
 
 noncomputable section
 

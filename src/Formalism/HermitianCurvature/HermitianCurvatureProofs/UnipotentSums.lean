@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianXiVector
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CardInsertEmbedding
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianXiVector
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 open scoped ComplexConjugate

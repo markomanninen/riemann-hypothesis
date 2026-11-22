@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.ModelIndexPairings.HeisenbergUnitaryHolds
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.ModelIndexPairings.HeisenbergUnitaryHolds
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.OrbitOfPts
-import Formalism.LocalToGlobal.GroupLattices.ClassLocalOfEq
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.OrbitOfPts
+public import Formalism.LocalToGlobal.GroupLattices.ClassLocalOfEq
+
+@[expose] public section
 
 noncomputable section
 

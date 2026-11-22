@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapsAtExpLeB
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RigidifiedIsoRespectsCubeAndSymmetry
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCharacterGroupIso
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ComparisonTorusInvariant
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationPolarisationsAgreeAtLevel
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationPolarisedAbelianSchemesIso
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsoOfCompatibleAbelianThickenings
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsIsoOfIsClosedImmersionOfThickeningsOfIsProper
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRigidifiedTranslatedBundleIsoPsiZeroStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapsAtExpLeB
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RigidifiedIsoRespectsCubeAndSymmetry
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCharacterGroupIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ComparisonTorusInvariant
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationPolarisationsAgreeAtLevel
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationPolarisedAbelianSchemesIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsoOfCompatibleAbelianThickenings
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsIsoOfIsClosedImmersionOfThickeningsOfIsProper
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRigidifiedTranslatedBundleIsoPsiZeroStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem cube_tr (hw : PGen w) (c : CubicalStr G L) (c' : CubicalStr G L')
       choose J' hJ' using fun ψ : (𝟙_ (Over S)).left ⟶ G.left => exists_chart L'.isLB (ψ s)
       have v := vv (1 : 𝟙_ (Over S) ⟶ G) 1 1 hJ
       refine v.1.trans (Eq.trans ?_ v.2.symm)
-      rw [tv (1 : 𝟙_ (Over S) ⟶ G) 1 1 hJ hJ', (isCub_cubV c' (T := 𝟙_ (Over S)) hJ').face, _root_.mul_one, _root_.mul_one,
+      rw [tv (1 : 𝟙_ (Over S) ⟶ G) 1 1 hJ hJ', (isCub_cubV c' (T := 𝟙_ (Over S)) hJ').face _ _, _root_.mul_one, _root_.mul_one,
         prod_cub 1 1 1 (fun q => gw w q s (J (q ≫ (tr a).left)) (J' q))]
       simp) _ (lift x (lift x' y)).left z N hN
   exact (vv x x' y hN).1.symm.trans (key.trans ((vv x x' y hN).2.trans (congrArg (· * _) (tv x x' y hN hN'))))
@@ -354,9 +358,9 @@ theorem even_uV (ha : a ^ 2 = 1) (hf : Function.Surjective G.hom.appTop.hom)
     linear_combination (norm := abel) a₁ - a₂ + a₄ + a₅ - a₆
   exact alg e₁ e₂ e₃ e₅ e₆
 
+
 omit u sq in
 set_option maxHeartbeats 400000 in
-
 theorem exists_level [IsLocalRing R] (hG : IsSemiAbelian G) (ha : a ^ 2 = 1)
     (hf : Function.Surjective G.hom.appTop.hom)
     (hs : Function.Surjective ((snd G (G ⊗ G)).left ≫ (snd G G).left ≫ G.hom).appTop.hom)
@@ -480,8 +484,8 @@ theorem gw_trans' {D : DegData R I} {A : PolAV (Spec (CommRingCat.of (FractionRi
   have h₁ := gm_pull r (thickMap R I e G) z _ hm.1 ((U.w (e + 1)).s (fun _ => jM, fun _ => jL))
   exact h₁.symm.trans ((gm_res r z inf_le_left hm _).symm.trans (H.trans (gm_res r z inf_le_right hm _)))
 
-omit [IsDomain R] [GrpObj G] [IsCommMonObj G] in
 
+omit [IsDomain R] [GrpObj G] [IsCommMonObj G] in
 theorem thickMap_comm {G' : Over (Spec (CommRingCat.of R))} (e : ℕ) (f₀ : thickObj R I e G' ⟶ thickObj R I e G)
     (f₁ : thickObj R I (e + 1) G' ⟶ thickObj R I (e + 1) G) (f : G'.left ⟶ G.left)
     (h₀ : f₀.left ≫ (fstG I e G).left = (fstG I e G').left ≫ f)
@@ -518,8 +522,8 @@ theorem surjective_appTop {D : DegData R I} {A : PolAV (Spec (CommRingCat.of (Fr
   exact ⟨s₁, surj_comp (RigidIsoCube.surjective_snd_of_generic hG (jK R) G A.isAb hg _)
     (surj_comp (RigidIsoCube.surjective_snd_of_generic hG (jK R) G A.isAb hg _) s₁)⟩
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem exists_iso_translate [IsLocalRing R] (hR : AdmBase R I) (hG : IsSemiAbelian G) {D D' : DegData R I}
     {A A' : PolAV (Spec (CommRingCat.of (FractionRing R)))} (U : UnifPre I D A G) (U' : UnifPre I D' A' G)
     (a : 𝟙_ (Over (Spec (CommRingCat.of R))) ⟶ G) (ha : a ^ 2 = 1) (b : 𝟙_ (Over (Spec (CommRingCat.of R))) ⟶ D.toPre.P.A)

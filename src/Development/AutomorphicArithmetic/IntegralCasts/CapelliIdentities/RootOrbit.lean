@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi49.root_orbit :
     ∀ {A B G Ω : Type} [inst : CommRing A]

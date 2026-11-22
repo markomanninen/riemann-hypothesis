@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.LibOpenLevel
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.LibOpenLevel
+
+@[expose] public section
 
 noncomputable section
 

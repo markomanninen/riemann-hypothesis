@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasString
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.IsTemperedGLOfIsUnitaryLSeg
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelCohomologicalModel
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterAboveIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BaseChangeSpehOfDiscreteSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockIsTheRun
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetBlockChangeOfBasisViaTwoFamiliesImplicit
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasString
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.IsTemperedGLOfIsUnitaryLSeg
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelCohomologicalModel
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterAboveIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BaseChangeSpehOfDiscreteSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockIsTheRun
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetBlockChangeOfBasisViaTwoFamiliesImplicit
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -72,10 +76,8 @@ def tensComp (C : Type) [AddCommGroup C] [Module Qp C] :
       simp only [LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.id_apply,
         LinearMap.proj_apply, LinearMap.pi_apply, AlgebraTensorModule.map_tmul,
         LinearMap.single_apply, LinearEquiv.coe_coe]
-      rw [← sum_tmul, ← map_sum, Finset.univ_sum_single, E.symm_apply_apply])
-
-@[simp] theorem tensComp_tmul {C : Type} [AddCommGroup C] [Module Qp C] (v : V') (c : C) (i : ι) :
-    tensComp E C (v ⊗ₜ[Qp] c) i = E v i ⊗ₜ[Qp] c := rfl
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← sum_tmul, ← map_sum, Finset.univ_sum_single, E.symm_apply_apply])
 
 theorem tensComp_map {C D : Type} [AddCommGroup C] [Module Qp C] [AddCommGroup D] [Module Qp D]
     (φ' : V' →ₗ[LL] V') (φ : ∀ i, V i →ₗ[LL] V i) (h : ∀ x i, E (φ' x) i = φ i (E x i)) (ψ : C →ₗ[Qp] D)
@@ -84,8 +86,8 @@ theorem tensComp_map {C D : Type} [AddCommGroup C] [Module Qp C] [AddCommGroup D
       AlgebraTensorModule.map (φ i) ψ (tensComp E C x i) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | tmul v c => simp [h]
-  | add a b ha hb => simp only [map_add, Pi.add_apply, ha, hb]
+  | tmul v c => simp [tensComp, h]
+  | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, ha, hb]
 
 end Tensor
 
@@ -218,8 +220,8 @@ theorem mapRep_blockRep {k' : Type} [CommRing k'] (f : k →+* k') :
   rw [← blockDiagonal'_map _ _ (map_zero f)]
   rfl
 
-variable (k) in
 
+variable (k) in
 def vecComp : (Fin n → k) ≃ₗ[k] (∀ j, Fin (a j) → k) :=
   (LinearEquiv.funCongrLeft k k e).trans (LinearEquiv.piCurry k fun _ _ => k)
 
@@ -247,8 +249,8 @@ variable {l : ℕ} [Fact l.Prime] (P : LocPrime l) {E Ω : Type} [Field E] [Fiel
   {ι : Type} [Fintype ι] [DecidableEq ι] {a : ι → ℕ} {n : ℕ} (e : (Σ j, Fin (a j)) ≃ Fin n)
   {r : ∀ j, ↥Gw →* GL (Fin (a j)) (Om l)}
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem exists_common_model (h : ∀ j, ∃ L r', IsModel Bw (r j) L r') (L₀ : FinExt l) :
     ∃ L : FinExt l, L₀.1 ≤ L.1 ∧ Bw.LL.1 ≤ L.1 ∧ ∃ r' : ∀ j, ↥Gw →* GL (Fin (a j)) ↥L.1,
       ∀ j, IsModel Bw (r j) L (r' j) := by

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbSumPf
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbSumPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,13 +101,13 @@ theorem uLow_last {R : Type} [CommRing R] {n : ℕ} (x : Loc.IL (n + 1) → R) (
     Loc.uLow x i (Fin.last n) = if i = Fin.last n then 1 else 0 := by
   refine last_of_low _ (fun a => by simp [Loc.uLow]) (fun a b hab => ?_) i
   simp only [Loc.uLow]
-  rw [if_neg (ne_of_lt hab), dif_neg (not_lt.2 hab.le)]
+  rw [if_neg (ne_of_lt hab), dite_eq_right (not_lt.2 hab.le)]
 
 theorem uUp_last {R : Type} [CommRing R] {n : ℕ} (w : Loc.Pt R (n + 1)) (y : Loc.IN w → R) (j : Fin (n + 1)) :
     Loc.uUp w y (Fin.last n) j = if j = Fin.last n then 1 else 0 := by
   refine last_of_up _ (fun a => by simp [Loc.uUp]) (fun a b hab => ?_) j
   simp only [Loc.uUp]
-  rw [if_neg (ne_of_gt hab), dif_neg (fun h => (not_lt.2 hab.le) h.1)]
+  rw [if_neg (ne_of_gt hab), dite_eq_right (fun h => (not_lt.2 hab.le) h.1)]
 
 end Glue
 

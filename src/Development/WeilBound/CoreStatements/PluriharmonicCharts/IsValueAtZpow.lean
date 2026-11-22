@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ValueConstantOnOrbit
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorIJConjTranspose
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ValueConstantOnOrbit
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorIJConjTranspose
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open GlobalTheory.CompanionTheory.Ar.PB.MinorCalc GlobalTheory.CompanionTheory.Ar.PB.CPts GlobalTheory.CompanionTheory.Ar.PB.ValRing
 open scoped ComplexOrder Classical
@@ -118,7 +123,8 @@ theorem left_inv_val {F : FrameData ι Ψ N M.Ω M.blk} (hF : M.IsFrame F) {w : 
       have := hF.2.2.1 p k hp I I' hI hI'
       split_ifs at this ⊢ <;> simpa [uA, vA] using this
     have e' := congrArg (regVal hw) e
-    rw [map_sum] at e'
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at e'
     simp only [map_mul] at e'
     refine e'.trans ?_
     split_ifs <;> simp
@@ -187,12 +193,14 @@ theorem Rel.unique
       let vA : regRing M.x w := ⟨F'.u ⟨k, m⟩ I', exists_isValueAt hw (gd'.2.1 _ I').1⟩
       have e : detFac j p.2 RA * μA * ∑ I, uA I * minorIJ RA I I' = vA := by
         apply (regRing M.x w).subtype_injective
-        simp only [map_mul, map_sum, ← detFac_map, ← minorIJ_map, e1]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_mul, map_sum, ← detFac_map, ← minorIJ_map, e1]
         have := change_gen M hF hF' hk m hI'
         show _ * (_ / _) * ∑ I, F.u ⟨k, m⟩ I * _ = F'.u ⟨k, m⟩ I'
         rw [← mul_div_assoc, div_mul_eq_mul_div, this, mul_div_cancel_left₀ _ m0]
       have e' := congrArg (regVal hw) e
-      simp only [map_mul, map_sum, ← detFac_map, ← minorIJ_map, e2, eμ] at e'
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_mul, map_sum, ← detFac_map, ← minorIJ_map, e2, eμ] at e'
       exact e'
     have ch2 : ∀ m, ∑ I, valAt M.x (F'.u ⟨k, m⟩ I) w * minorIJ h' I (stepCols N j p.2) = detFac j p.2 Rz * μ *
         ∑ I, valAt M.x (F.u ⟨k, m⟩ I) w * minorIJ (Rz * h') I (stepCols N j p.2) := by

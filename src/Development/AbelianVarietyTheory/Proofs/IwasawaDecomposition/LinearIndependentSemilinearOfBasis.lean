@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.LocalRingCardinality.Lemmas
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFramesNormAtEqNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsComplexExtension
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRestrictedFrames
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SemilinearBasisImageIndepOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalRingCardinality.Lemmas
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFramesNormAtEqNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsComplexExtension
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRestrictedFrames
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SemilinearBasisImageIndepOfBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem linearIndependent_semilinear_of_basis {K : Type} [Field K] (e : K →+* 
     induction hx using Submodule.span_induction with
     | mem y hy => obtain ⟨i, rfl⟩ := hy; exact Submodule.subset_span ⟨i, rfl⟩
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact S.add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact S.add_mem hy hz
     | smul a y _ hy => rw [map_smulₛₗ]; exact S.smul_mem _ hy
   let j' : V →ₛₗ[e] S := j.codRestrict S hmem
   have h1 : LinearIndependent ℂ (fun i => j' (b i)) :=
@@ -67,7 +71,7 @@ def ramForm {B : Base} {C : Cols B} (W : RowsRest B C) (u : B.Word) :
     (C.fm u).ramSub →ₛₗ[B.embLL] W.Mu u where
   toFun x := (W.eMu u).symm ⟨(C.fm u).emb 0 x, x.2⟩
   map_add' x y := by
-    rw [← map_add]; congr 1; ext1; simp
+    rw [← map_add (f := _)]; congr 1; ext1; simp
   map_smul' a x := by
     rw [← map_smul]; congr 1; ext1; simp [map_smulₛₗ]
 
@@ -101,7 +105,7 @@ theorem ramForm_basis {B : Base} {C : Cols B} (W : RowsRest B C) (u : B.Word) {�
       induction hx using Submodule.span_induction with
       | mem y hy => obtain ⟨i, rfl⟩ := hy; exact Submodule.subset_span ⟨i, rfl⟩
       | zero => simp
-      | add y z _ _ hy hz => rw [map_add]; exact S.add_mem hy hz
+      | add y z _ _ hy hz => rw [map_add (f := _)]; exact S.add_mem hy hz
       | smul a y _ hy => rw [map_smulₛₗ]; exact S.smul_mem _ hy
     rw [eq_top_iff]
     intro φ _

@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,7 +115,8 @@ theorem main : UpperTheory.Esk.LinTr := by
     intro y
     have e : T (K y) = ∑ i, b.repr (K y) i • T (b i) := by
       conv_lhs => rw [← b.sum_repr (K y)]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul]
     rw [e]
     simp [Module.Basis.coord_apply]

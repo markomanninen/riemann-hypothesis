@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsAdapted
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjSumSumEmbeddingsEqTrace
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PDifferentLatIndex
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.EigenLatticesDifferentStatementHoldsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsAdapted
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjSumSumEmbeddingsEqTrace
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PDifferentLatIndex
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.EigenLatticesDifferentStatementHoldsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,8 @@ theorem psi_apply (ρ : 𝓞 E →+* Module.End L V) {r : ℕ} (v : Fin r → V)
 
 theorem psi_smul (ρ : 𝓞 E →+* Module.End L V) {r : ℕ} (v : Fin r → V) (o : 𝓞 E) (x : Fin r → E) :
     psi ρ v (o • x) = ρ o (psi ρ v x) := by
-  simp only [psi_apply, map_sum, map_smul, rho_eigProj, Pi.smul_apply, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [psi_apply, map_sum, map_smul, rho_eigProj, Pi.smul_apply, smul_smul]
   refine Finset.sum_congr rfl fun t _ => Finset.sum_congr rfl fun a _ => ?_
   congr 1
   rw [Algebra.smul_def, map_mul, mul_comm]
@@ -145,7 +150,7 @@ def lat (ρ : 𝓞 E →+* Module.End L V) {r : ℕ} (v : Fin r → V) (I : AddS
     (hst : ∀ a, ∀ x ∈ I, ρ a x ∈ I) : Submodule (𝓞 E) (Fin r → E) where
   carrier := {x | psi ρ v x ∈ I}
   add_mem' {x y} hx hy := by
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact I.add_mem hx hy
   zero_mem' := by simp [I.zero_mem]
   smul_mem' c x hx := by
@@ -234,8 +239,8 @@ theorem isNzFamily_lat (hcard : Fintype.card (E →+* L) = Module.finrank ℚ E)
       exact hv.2.2
     exact h
 
-omit [Fintype (E →+* L)] [CharZero L] in
 
+omit [Fintype (E →+* L)] [CharZero L] in
 theorem sum_dual_mul [DecidableEq (E →+* L)] (t u : E →+* L) :
     ∑ k, t (HT.dualInt E k) * u ((RingOfIntegers.basis E k : 𝓞 E) : E) = if t = u then 1 else 0 := by
   let ρ' : 𝓞 E →+* Module.End L L :=
@@ -294,8 +299,8 @@ theorem theta_injective (hcard : Fintype.card (E →+* L) = Module.finrank ℚ E
       intro x' h
       obtain ⟨xy, hxy⟩ := exists_psi hcard ρ hv (hcl ▸ hy)
       obtain ⟨xz, hxz⟩ := exists_psi hcard ρ hv (hcl ▸ hz)
-      have : x' = xy + xz := hinj (by rw [h, map_add, hxy, hxz])
-      rw [map_add, ihy xy hxy, ihz xz hxz, this, map_add]
+      have : x' = xy + xz := hinj (by rw [h, map_add (f := _), hxy, hxz])
+      rw [map_add (f := _), ihy xy hxy, ihz xz hxz, this, map_add (f := _)]
     | neg y hy ih =>
       intro x' h
       obtain ⟨xy, hxy⟩ := exists_psi hcard ρ hv (hcl ▸ hy)
@@ -309,7 +314,8 @@ theorem theta_injective (hcard : Fintype.card (E →+* L) = Module.finrank ℚ E
       intro k
       refine hGI _ (hst _ _ (hv.1 a)) _ ?_
       rw [psi_smul, psi_single hcard]
-    simp only [HT.eigProj, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [HT.eigProj, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h1]
     funext u b
     simp only [Finset.sum_apply, Pi.smul_apply, emb_apply, smul_eq_mul]
     by_cases hb : b = a
@@ -330,7 +336,8 @@ theorem theta_injective (hcard : Fintype.card (E →+* L) = Module.finrank ℚ E
       · simp [Pi.single_eq_of_ne htu]
   have hleft : Function.LeftInverse G (theta ρ v) := by
     intro z
-    simp only [theta_apply, map_sum, map_smul, hGP]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [theta_apply, map_sum, map_smul, hGP]
     funext u b
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     rw [Finset.sum_eq_single u, Finset.sum_eq_single b]
@@ -376,8 +383,8 @@ theorem eigProj_eigProj (ρ : 𝓞 E →+* Module.End L V) {t u : E →+* L} (y 
     exact HT.LatBasic.eigProj_of_mem (HT.LatBasic.eigProj_mem ρ u y)
   · exact HT.LatBasic.eigProj_of_ne (Ne.symm h) (HT.LatBasic.eigProj_mem ρ u y)
 
-open Classical in
 
+open Classical in
 def phi (ρ : 𝓞 E →+* Module.End L V) {r : ℕ} (v : Fin r → V) (t : E →+* L) :
     (Fin r → L) →ₗ[𝓞 L] V :=
   (thetaO ρ v).comp (LinearMap.single (𝓞 L) (fun _ : E →+* L => Fin r → L) t)
@@ -416,12 +423,14 @@ theorem map_eigenLat [NumberField L] (hcard : Fintype.card (E →+* L) = Module.
     have h3 : thetaO ρ v z ∈ HT.eigSp ρ t := h2
     have h4 := HT.LatBasic.eigProj_of_mem h3
     have h5 : HT.eigProj ρ t (thetaO ρ v z) = phi ρ v t (z t) := by
-      rw [phi_apply, thetaO_apply, theta_apply, map_sum, Finset.sum_eq_single t]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [phi_apply, thetaO_apply, theta_apply, map_sum, Finset.sum_eq_single t]
       · simp only [map_sum, map_smul]
         refine Finset.sum_congr rfl fun a _ => ?_
         rw [eigProj_eigProj, if_pos rfl]
       · intro u _ hu
-        simp only [map_sum, map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul]
         refine Finset.sum_eq_zero fun a _ => ?_
         rw [eigProj_eigProj, if_neg hu, smul_zero]
       · simp
@@ -513,7 +522,7 @@ theorem eigComp_comp (hcard : Fintype.card (E →+* L) = Module.finrank ℚ E)
         exact HT.LatBasic.eigProj_mem ρ u x
       exact Submodule.mem_iSup_of_mem _ (Submodule.mem_iSup_of_mem (hres u hut) hmem)
   unfold eigComp
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨h1, h2⟩ := hex.choose_spec
   have h3 := hker _ h2
   rw [map_sub, sub_eq_zero] at h3
@@ -545,8 +554,11 @@ theorem genIndex_tor (hE : EigenLatDifferent.Statement)
         ((Module.finrank ℚ L : ℝ) / Module.finrank ℚ E) := by
   let ι : L →+* ℂ := (IsAlgClosed.lift : L →ₐ[ℚ] ℂ).toRingHom
   obtain ⟨hnz, hidx⟩ := isNzFamily_lat hcard ρ hr hv hst
-  have hT := TorusIndex.proof hE DifferentLatIndex.proof E L ι
-    (exists_split (V := V) hcard ι) r (lat ρ v I hst) r _ hnz t
+  have hT : TorusIndex.Statement := by
+    intro Em _ _ K _ _ ι hι N J m w hw s
+    rw [hE Em K ι hι N J (fg_of_isNzFamily hw) s]
+    exact DifferentLatIndex.proof Em K N J m w hw s
+  have hT := hT E L ι (exists_split (V := V) hcard ι) r (lat ρ v I hst) r _ hnz t
   rw [hidx] at hT
   rw [← hT, ← map_eigenLat hcard ρ hv hst hI, ← map_familyLat hcard ρ v t, genIndex, genIndex,
     map_toAddSubgroup, map_toAddSubgroup]
@@ -558,8 +570,8 @@ end Final
 
 end TorPart
 
-open NumberField GlobalTheory.CompanionTheory.Ar GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.NineStatements TorPart in
 
+open NumberField GlobalTheory.CompanionTheory.Ar GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.NineStatements TorPart in
 theorem torusPartDegree : ∀ (E L Ψ : Type) [Field E] [NumberField E] [Field L] [NumberField L] [Fintype Ψ] (V : Type) [AddCommGroup V] [Module L V] [Module (𝓞 L) V] [IsScalarTower (𝓞 L) L V] (A : LinPt E L Ψ V) (r : ℕ) (v : Fin r → V), 2 * Fintype.card Ψ = Module.finrank ℚ E → IsOFamily A.ρ A.I v → ∀ s, logIdx (A.tor s) (fun a => eigComp A.ρ (A.σ s) (v a)) / Module.finrank ℚ L = -(r * Real.log (|(discr E : ℝ)| ^ (1 / (Module.finrank ℚ E : ℝ)))) + Real.log (((oSpan A.ρ v).relIndex A.I : ℕ) : ℝ) / Module.finrank ℚ E := by
   intro E L Ψ _ _ _ _ _ V _ _ _ _ A r v hΨ hv s
   classical

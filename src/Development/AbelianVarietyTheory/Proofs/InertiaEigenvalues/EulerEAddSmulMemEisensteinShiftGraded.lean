@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImagePolynomialAction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImagePolynomialAction
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,13 +16,14 @@ variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Comple
   [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a]
   {η H : ℕ}
 
-omit [CompleteSpace K] in
 
+omit [CompleteSpace K] in
 theorem conn_mem_ext_Rpi (D : BKDat O K l e a ι η H) {y : Vec K a ι}
     (hy : y ∈ D.ext (Rpi O K l e)) : D.conn y ∈ D.ext (Rpi O K l e) := by
   have hf : ∀ i τ, (Matrix.mulVec (D.mxInv τ) (y τ)) i ∈ Rpi O K l e := fun i τ =>
     D.mem_extc_iff.1 (mem_tot.1 hy τ) i
-  rw [D.eq_sum_phi_bas y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [D.eq_sum_phi_bas y, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   have hL : D.phi (bas i) ∈ D.L := D.phi_mem_L (D.bas_mem_M i)
   have hM : D.phi (bas i) ∈ D.MM := D.ext_mono (A_le_S l e) hL

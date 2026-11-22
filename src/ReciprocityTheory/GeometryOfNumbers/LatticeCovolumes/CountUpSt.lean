@@ -1,5 +1,9 @@
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountSt
-import Mathlib
+module
+
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountSt
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,9 +11,6 @@ namespace ReciprocityTheory.GeometryOfNumbersTheory
 
 open NumberField Module MeasureTheory
 open scoped ComplexOrder
-
-def intBasisBound (K : Type*) [Field K] [NumberField K] : ℝ :=
-  Real.sqrt (∑ a, ∑ σ : K →+* ℂ, ‖σ (RingOfIntegers.basis K a : K)‖ ^ 2)
 
 variable {K : Type*} [Field K] [NumberField K] {V : Type*} [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]

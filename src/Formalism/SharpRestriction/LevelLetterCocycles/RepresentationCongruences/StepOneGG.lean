@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AevalDopMap
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoefStep
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AevalDopMap
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoefStep
+
+@[expose] public section
 
 noncomputable section
 

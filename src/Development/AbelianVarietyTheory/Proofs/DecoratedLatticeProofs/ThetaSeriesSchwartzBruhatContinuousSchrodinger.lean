@@ -1,10 +1,31 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSummableBoundSchwartzMajorantRationalTransStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatAdelicMatrixContinuousLeMajorantStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SchwartzBruhatMixedFamilies
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HeckeFormNSOfHeckeForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSummableBoundSchwartzMajorantRationalTransStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatAdelicMatrixContinuousLeMajorantStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SchwartzBruhatMixedFamilies
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HeckeFormNSOfHeckeForm
+
+namespace I195MixedCoordinates_b252ee61f962e28100fad012
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+end I195MixedCoordinates_b252ee61f962e28100fad012
+
+@[expose] public section
+
 open scoped ComplexConjugate Matrix NNReal ENNReal
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -23,7 +44,7 @@ namespace GlobalTheory.Core.Rk.ThetaOf
 variable {D : D7} {S S₀ : HSp D} {ρ : ℕ}
 
 theorem symplO_eq_add (S T : HSp D) (x y : WO S T) : symplO S T x y = symplOH S T x y + symplOH S T x y := by
-  rw [symplOH, ← add_mul, ← map_add, add_halves, map_one, one_mul]
+  rw [symplOH, ← add_mul, ← map_add (f := _), add_halves, map_one, one_mul]
 
 theorem exists_symplO_eq (d : HypDec S S₀ ρ) (T : HSp D) {ξ : Matrix (Fin T.rank) (Fin ρ) D.host.E} (hξ : ξ ≠ 0)
     (t : AF D.host.F) : ∃ a, symplO S T (d.extX T (rat ξ)) (d.extY T a) = t := by
@@ -79,7 +100,7 @@ theorem integral_pair (hψ : IsStdChar D ψ (-1)) (d : HypDec S S₀ ρ) (T : HS
   obtain ⟨t, ht⟩ := hψ.1.2.2.2
   obtain ⟨u, hu⟩ := exists_symplO_eq d T hξ t
   refine integral_char_eq_zero h _ (fun a b => ?_) (fun γ hγ => ?_) (u := u) (by rw [hu]; exact ht)
-  · rw [map_add, symplO_add_right, AddChar.map_add_eq_mul]
+  · rw [map_add (f := _), symplO_add_right, AddChar.map_add_eq_mul]
   · exact (GlobalTheory.RatAnnih.ratL_annihilator D ψ hψ S T _).2 (ratMx_mul (rat_mem _) (rat_mem _)) _
       (ratMx_mul hγ (rat_mem _))
 
@@ -101,7 +122,7 @@ theorem theta_series (hψ : IsStdChar D ψ (-1)) (d : HypDec S S₀ ρ) (T : HSp
     (hf : ∀ w : WO S T, f w = ψ (-(symplOH S T (d.extX T (w ⬝ d.jX)) (d.extY T (w ⬝ d.jY)))) *
       ∑' ξ : Matrix (Fin T.rank) (Fin ρ) D.host.E,
         ψ (symplO S T (d.extX T (w ⬝ d.jX + rat ξ)) (d.extY T (w ⬝ d.jY))) * φ (w ⬝ d.jX + rat ξ)) :
-    Continuous f ∧ ∀ x, d.mixS T ψ μ 𝓕 f x 0 = φ x := by
+    Continuous f ∧ ∀ x, (_root_.I195MixedCoordinates_b252ee61f962e28100fad012.source d) T ψ μ 𝓕 f x 0 = φ x := by
   obtain ⟨hc, hb⟩ := bound_translates hψ hφ
   have hψc : Continuous ψ := hψ.1.1
   have hn : ∀ t, ‖ψ t‖ = 1 := hψ.1.2.1
@@ -148,7 +169,8 @@ theorem theta_series (hψ : IsStdChar D ψ (-1)) (d : HypDec S S₀ ρ) (T : HSp
     have hF := hasSum_integral_of_summable_integral_norm (μ := μ.restrict 𝓕)
       (F := fun (ξ : Matrix (Fin T.rank) (Fin ρ) D.host.E) a =>
         ψ (symplO S T (d.extX T (rat ξ)) (d.extY T a)) * φ (x + rat ξ)) (fun ξ => ?_) ?_
-    · rw [HypDec.mixS]
+    · rw [_root_.I195MixedCoordinates_b252ee61f962e28100fad012.source]
+      simp only [HypDec.extX_apply, HypDec.extY_apply, map_zero, Matrix.zero_mul] at key ⊢
       simp only [key]
       refine hF.unique ?_
       have h0 : ∫ a in 𝓕, ψ (symplO S T (d.extX T (rat 0)) (d.extY T a)) * φ (x + rat 0) ∂μ = φ x := by

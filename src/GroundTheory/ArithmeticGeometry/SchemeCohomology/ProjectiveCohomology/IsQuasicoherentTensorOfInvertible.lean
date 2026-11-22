@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.QcohLocal
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.InvertibleDual
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.QcohLocal
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.InvertibleDual
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -46,13 +51,14 @@ lemma resF_resF_of_le (F : X.Modules) {U V W : X.Opens} (h : V ≤ U) (i : W ≤
 lemma tmul_basis_bijective {P Q : PMod X} {s : Q.obj (op U)} (hs : IsBasisOn Q U s)
     (h : V ≤ U) :
     Function.Bijective (fun m : P.obj (op V) => (m ⊗ₜ resM Q h s : (P ⊗ Q).obj (op V))) := by
-  let eQ := LinearEquiv.ofBijective (LinearMap.toSpanSingleton (ringOn X V) _ (resM Q h s))
+  let R := X.sheaf.obj.obj (op V)
+  let eQ := LinearEquiv.ofBijective (LinearMap.toSpanSingleton R _ (resM Q h s))
     (hs V h)
-  let E := (TensorProduct.rid (ringOn X V) (P.obj (op V))).symm ≪≫ₗ
+  let E := (TensorProduct.rid R (P.obj (op V))).symm ≪≫ₗ
     TensorProduct.congr (LinearEquiv.refl _ _) eQ
   have hE : (fun m : P.obj (op V) => (m ⊗ₜ resM Q h s : (P ⊗ Q).obj (op V))) = E := by
     funext m
-    change m ⊗ₜ resM Q h s = m ⊗ₜ ((1 : ringOn X V) • resM Q h s)
+    change m ⊗ₜ[R] resM Q h s = m ⊗ₜ[R] ((1 : R) • resM Q h s)
     rw [one_smul]
   rw [hE]
   exact E.bijective
@@ -62,7 +68,7 @@ lemma tensorBasisMap_smul (h : V ≤ U) (r : Γ(X, V)) (m : Γ(M, V)) :
   rw [tensorBasisMap_apply, tensorBasisMap_apply]
   have e : ((show ((preMod X).obj M).obj (op V) from r • m) ⊗ₜ resM ((preMod X).obj L) h s :
       ((preMod X).obj M ⊗ (preMod X).obj L).obj (op V)) =
-      (show ringOn X V from r) • ((show ((preMod X).obj M).obj (op V) from m) ⊗ₜ
+      (show X.sheaf.obj.obj (op V) from r) • ((show ((preMod X).obj M).obj (op V) from m) ⊗ₜ
         resM ((preMod X).obj L) h s : ((preMod X).obj M ⊗ (preMod X).obj L).obj (op V)) := by
     rw [TensorProduct.smul_tmul']
     rfl
@@ -87,8 +93,12 @@ lemma tensorBasisMap_change {U' : X.Opens} (s' : ((preMod X).obj L).obj (op U'))
     (m : Γ(M, V)) : tensorBasisMap M L s' h' m = tensorBasisMap M L s h ((show Γ(X, V) from c) • m) := by
   rw [tensorBasisMap_apply, tensorBasisMap_apply, hc]
   congr 1
+  let R := X.sheaf.obj.obj (op V)
+  let a : R := c
+  let m₀ : ((preMod X).obj M).obj (op V) := m
+  let s₀ := resM ((preMod X).obj L) h s
+  change m₀ ⊗ₜ[R] (a • s₀) = (a • m₀) ⊗ₜ[R] s₀
   rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul']
-  rfl
 
 theorem tensorBasisMap_bijective (hs : IsBasisOn ((preMod X).obj L) U s) (h : V ≤ U) :
     Function.Bijective (tensorBasisMap M L s h) := by
@@ -159,10 +169,6 @@ section General
 
 variable {C D : Type*} [Category C] [Category D] [MonoidalCategory C] [MonoidalCategory D]
   {F : C ⥤ D} [F.Monoidal] {G : D ⥤ C} (adj : F ⊣ G) [IsIso adj.counit]
-
-abbrev counitTensor (a b : D) : F.obj (G.obj a ⊗ G.obj b) ⟶ a ⊗ b :=
-  ((Functor.Monoidal.μIso F (G.obj a) (G.obj b)).symm ≪≫
-    (asIso (adj.counit.app a) ⊗ᵢ asIso (adj.counit.app b))).hom
 
 end General
 

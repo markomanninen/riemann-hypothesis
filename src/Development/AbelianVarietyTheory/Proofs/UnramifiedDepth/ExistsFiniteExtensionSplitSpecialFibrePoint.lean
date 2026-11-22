@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ModuliModelUltrametricPoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ModuliModelUltrametricPoints
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -17,8 +21,8 @@ theorem exists_extend {V W Ω : Type} [CommRing V] [IsLocalRing V] [CommRing W] 
     [Algebra.IsIntegral V W] [Field Ω] [IsAlgClosed Ω] (β : V →+* Ω) (hβ : ∀ a ∈ maximalIdeal V, β a = 0) :
     ∃ β' : W →+* Ω, β'.comp (algebraMap V W) = β ∧ ∀ a ∈ maximalIdeal W, β' a = 0 := by
   have hm : (maximalIdeal W).comap (algebraMap V W) = maximalIdeal V :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := V) _)
-  have : IsLocalHom (algebraMap V W) := ((IsLocalRing.local_hom_TFAE (algebraMap V W)).out 4 0).1 hm
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := V) (maximalIdeal W))
+  have : IsLocalHom (algebraMap V W) := ((IsLocalRing.local_hom_tfae (algebraMap V W)).out 5 1).1 hm
   have : IsLocalHom β := ⟨fun a ha => by
     by_contra h
     exact ha.ne_zero (hβ a h)⟩
@@ -28,7 +32,11 @@ theorem exists_extend {V W Ω : Type} [CommRing V] [IsLocalRing V] [CommRing W] 
       obtain ⟨y, rfl⟩ := residue_surjective x
       exact (Algebra.IsIntegral.isIntegral (R := V) y).map (IsScalarTower.toAlgHom V W (ResidueField W))⟩
   have : Algebra.IsIntegral (ResidueField V) (ResidueField W) := Algebra.IsIntegral.tower_top V
-  let g : ResidueField W →ₐ[ResidueField V] Ω := IsAlgClosed.lift
+  let g : ResidueField W →ₐ[ResidueField V] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨g.toRingHom.comp (residue W), RingHom.ext fun a => ?_, fun a ha => ?_⟩
   · exact g.commutes (residue V a)
   · show g (residue W a) = 0

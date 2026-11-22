@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyAllIff
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotTeichTrivOfIsDelta
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NHkRow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyAllIff
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotTeichTrivOfIsDelta
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NHkRow
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,6 @@ def lowAll (D : D7) : Finset ℕ := lowPr D ∪ {D.host.g 0, D.host.g 1, D.host.
 
 def OverSet (D : D7) (S : Finset (PlE D.host)) (s : Finset ℕ) : Prop := ∀ P ∈ S, ∃ p ∈ s, P ∈ placesOver D.host.E p
 
-theorem OverSet.mono {D : D7} {S : Finset (PlE D.host)} {s s' : Finset ℕ} (h : OverSet D S s) (hs : s ⊆ s') : OverSet D S s' :=
-  fun P hP => (h P hP).imp fun _ hp => ⟨hs hp.1, hp.2⟩
-
 theorem OverSet.subset {D : D7} {S S' : Finset (PlE D.host)} {s : Finset ℕ} (h : OverSet D S s)
     (hs : ∀ p ∈ s, placesOver D.host.E p ⊆ ↑S') : S ⊆ S' :=
   fun P hP => (h P hP).elim fun p hp => hs p hp.1 hp.2
@@ -38,12 +39,6 @@ theorem OverSet.subset_twistExceptionalPlaces {D : D7} {S : Finset (PlE D.host)}
   h.subset fun p hp P hP => by
     rw [T.ringSpec_excludedPlaces_eq i]
     exact Or.inr (T.concreteTwistFrame_extraExcluded_over_smallPrimes i p (hs hp) hP)
-
-example (D : D7) : D.host.pde ∈ lowAll D := by simp [lowAll]
-
-example (D : D7) : 2 ∈ lowAll D := by simp [lowAll, lowPr]
-
-example (D : D7) (s : Finset ℕ) : OverSet D ∅ s := fun _ h => absurd h (Finset.notMem_empty _)
 
 structure Elem (D : D7) : Prop where
   star : ∀ x : D.LL0, star (x : D.what₂.LL) ∈ D.LL0
@@ -55,9 +50,9 @@ section Rows
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type} {A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m} {Ks : Type}
   [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat3 D A3 Ks} {F : Face3 D A3} {X0 : BaseLevelRowSide D}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure MtAd (Y : R3.Read (A3 := A3) R.toRealDat F.lv2 X0) (M : MtFam D) where
   PV : ∀ i : Fin D.R.m, principalLevelFrame.RowPsi (Vc D i) D.R.nV
   std : ∀ i, R3.StdFrame Y.hF (PV i)
@@ -72,15 +67,13 @@ structure MtAd (Y : R3.Read (A3 := A3) R.toRealDat F.lv2 X0) (M : MtFam D) where
   id : ∀ i : Fin D.R.m, ∃ hn : (Vc D i).rank = D.R.nV, ∀ κ a b, finMat D.sp.cm.sig (Vc D i).gram ((PV i).ψ κ) a b =
     (GlobalTheory.Mem.R3.swapCast Y.hF).symm ((κ.1 : Matrix (Fin D.R.nV) (Fin D.R.nV) (ReciprocityTheory.Aut.AL D.host.E)) (Fin.cast hn a) (Fin.cast hn b))
 
-variable (R) in
 
+variable (R) in
 def hkNorm (i : Fin D.R.m) (k : ℕ) (P : PlE D.host) : ℂ :=
   (((R.C.mu0 i).val P : ℂˣ) : ℂ)⁻¹ ^ k * (((Nat.card (kP P) : ℕ) : ℂ) ^ (k * (D.R.nV / 2)))⁻¹
 
-example (i : Fin D.R.m) (P : PlE D.host) : hkNorm R i 0 P = 1 := by simp [hkNorm]
 
 variable (R) in
-
 structure HkDat (Sb : Finset (PlE D.host)) (i : Fin D.R.m) (k : ℕ) (P : PlE D.host) (α : GA D (Wc D i))
     (Rr : Finset (GA D (Wc D i))) : Prop where
   split : IsSplitPl D.host P
@@ -110,10 +103,10 @@ structure RatAd (Y : R3.Read (A3 := A3) R.toRealDat F.lv2 X0) (cG : G0 R.Pg D.R.
 
 variable {cG : G0 R.Pg D.R.r ≃* G0g D.nd} {S : RatDat D.ntw}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 1000000 in
-
 structure SerAt (YS : NExpRealS R cG S) (v₀ : ∀ (j : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW j σ).Vec) (X : NExpTied D)
     (PV : ∀ i : Fin D.R.m, principalLevelFrame.RowPsi (Vc D i) D.R.nV) (cf : CharFrame D)
     (Pq : HeightOneSpectrum (𝓞 (maximalRealSubfield D.host.E)) → PlE D.host) : Type 1 where

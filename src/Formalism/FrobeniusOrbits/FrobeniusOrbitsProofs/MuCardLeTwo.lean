@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.FrobMulInertia
-import Formalism.TameInertiaTowers.TowerFieldFoundations
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.FrobMulInertia
+public import Formalism.TameInertiaTowers.TowerFieldFoundations
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 

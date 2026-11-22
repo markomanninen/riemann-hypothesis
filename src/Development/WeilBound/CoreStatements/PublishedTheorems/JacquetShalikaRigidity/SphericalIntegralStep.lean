@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.GeneralLinearEntryConvergence
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.GeneralLinearEntryConvergence
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem mem_Ov (w : Pl E) {x : w.adicCompletion E} (h : x ∈ (ValuativeRel.valu
   (le_one w x).1 ((Valuation.mem_integer_iff _ _).1 h)
 
 theorem int_KGL (w : Pl E) {x : GL (Fin k) (w.adicCompletion E)}
-    (hx : x ∈ GLnLocal.integralGL (w.adicCompletion E) k) : x ∈ KGL w k := by
+    (hx : x ∈ GLnLocal.integralGL (w.adicCompletion E) k) : x ∈ KGL w (n := k) := by
   obtain ⟨h1, h2⟩ := (GLnLocal.mem_integralGL_iff _ _).1 hx
   have hi : Function.Injective fun A : Matrix (Fin k) (Fin k) (Ov E w) => A.map (Ov E w).subtype :=
     Matrix.map_injective Subtype.val_injective
@@ -45,7 +49,7 @@ theorem fix {w : Pl E} {B : Multiset ℂˣ} {φ : XB E k} (h : SatFn w B φ) {x 
   · exact map_zero _
   · exact GlobalTheory.LGrp.mem_fixed.1 h.2.1 x (int_KGL w hx)
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem step (hG : jumpWindows.G0) (S : Finset (Pl E)) (φ : XB E k) (g κ : GA E k)
     (hfix : ∀ w, w ∉ S → ∀ x ∈ GLnLocal.integralGL (w.adicCompletion E) k, Rt E k (fl k w x) φ = φ)
@@ -87,8 +91,8 @@ theorem step (hG : jumpWindows.G0) (S : Finset (Pl E)) (φ : XB E k) (g κ : GA 
         rw [map_mul, h5 _ _ _ hvw, mul_one]
         exact ho v hv fun h' => hv' (Finset.mem_insert_of_mem h')
 
-open jumpWindows.GeneralLinearEntryConvergence in
 
+open jumpWindows.GeneralLinearEntryConvergence in
 theorem sph (hG : jumpWindows.G0) (S : Finset (Pl E)) (φ : XB E k)
     (hfix : ∀ w, w ∉ S → ∀ x ∈ GLnLocal.integralGL (w.adicCompletion E) k, Rt E k (fl k w x) φ = φ) :
     SphOff S (φ : GA E k → ℂ) := by

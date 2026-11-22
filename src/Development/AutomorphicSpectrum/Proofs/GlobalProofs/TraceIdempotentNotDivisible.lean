@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.IdemTrace
 
@@ -61,7 +65,7 @@ private lemma isLocalRing_zmod_prime_pow (p m : ℕ) [hp : Fact p.Prime] (hm : 0
     rw [map_natCast, ZMod.natCast_eq_zero_iff]
     exact hb
   have h1 := congrArg φ (add_sub_cancel a 1)
-  rw [map_add, key a hcon.1, key _ hcon.2, add_zero, map_one] at h1
+  rw [map_add (f := _), key a hcon.1, key _ hcon.2, add_zero, map_one] at h1
   exact zero_ne_one h1
 
 theorem not_dvd_trace : ∀ (B : Type) [CommRing B] [Module.Free ℤ B] [Module.Finite ℤ B] (x : B)

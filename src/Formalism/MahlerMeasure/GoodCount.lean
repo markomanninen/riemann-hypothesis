@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.LevelSum
+module
+
+public import Formalism.MahlerMeasure.LevelSum
+
+@[expose] public section
 
 namespace Formalism.GM.M
 
@@ -42,10 +46,6 @@ def GlStable (p : ℕ) [Fact p.Prime] {N r : ℕ} (LL : Letters N) (j : ℕ)
 noncomputable def gSpan (p : ℕ) [Fact p.Prime] {N r : ℕ} (LL : Letters N) (j : ℕ)
     (F : MvPolynomial (Fin N × Fin r) ℚ_[p]) : Submodule ℚ_[p] (MvPolynomial (Fin N × Fin r) ℚ_[p]) :=
   sInf {S | F ∈ S ∧ GlStable p LL j S}
-
-def FirstLE (p : ℕ) [Fact p.Prime] {N r : ℕ} [NeZero r] (LL : Letters N) (j : ℕ) (M : WithTop ℤ)
-    (F : MvPolynomial (Fin N × Fin r) ℚ_[p]) : Prop :=
-  ∀ G ∈ gSpan p LL j F, ∀ m ∈ G.support, ((wt LL j 0 m : ℤ) : WithTop ℤ) ≤ M
 
 noncomputable def YCond (p : ℕ) [Fact p.Prime] {N r : ℕ} [NeZero r] (LL : Letters N) (j : ℕ) (M : WithTop ℤ) :
     Submodule ℚ_[p] (MvPolynomial (Fin N × Fin r) ℚ_[p]) :=
@@ -99,7 +99,5 @@ noncomputable def goodCount (p : ℕ) [Fact p.Prime] {Vs : Type} [AddCommGroup V
 noncomputable def bad (p : ℕ) [Fact p.Prime] {Vs : Type} [AddCommGroup Vs] [Module ℤ_[p] Vs]
     (be : Vs → Vs → ℚ_[p]) (L : Submodule ℤ_[p] Vs) (D : ℤ) : ℕ :=
   Module.finrank ℤ_[p] L - goodCount p be L D
-
-noncomputable def lg (p : ℕ) (nmax r : ℕ) : ℝ := Real.logb p (4 * nmax + r) + 1
 
 end Formalism.GM.M

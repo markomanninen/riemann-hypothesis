@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HermitianAdjointLawsStandardCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HermitianAdjointLawsStandardCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open MeasureTheory Matrix GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.Grid
 open scoped TensorProduct InnerProductSpace
@@ -29,7 +34,7 @@ theorem dag_smul (S T : HSp D) (c : ℂ) (f : WO S T → ℂ) : dag S T (c • f
 
 def conjE (S T : HSp D) (A : Module.End ℂ (WO S T → ℂ)) : Module.End ℂ (WO T S → ℂ) where
   toFun f := dag S T (A (dag T S f))
-  map_add' f f' := by simp only [dag_add, map_add]
+  map_add' f f' := by simp only [dag_add, map_add (f := _)]
   map_smul' c f := by simp only [dag_smul, map_smul, Complex.conj_conj, RingHom.id_apply]
 
 def conjRep {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} (hST : AdjLaw ψ S T) (hTS : AdjLaw ψ T S) (ω : WRep S T) :
@@ -114,7 +119,7 @@ theorem exists_detAt_cA {e : AE D} (he : IsSplitIdem D e) {V : HSp D} {g : GA D 
   · show _ = _
     rw [GlobalTheory.SplitDetCharacter.cutDet_val]; ring
   · refine GlobalTheory.SplitDetCharacter.char_eq_of_mul_conj hχ _ _ ?_
-    rw [GlobalTheory.SplitDetCharacter.cutDet_val, hx, map_add, map_mul, map_sub, map_one]
+    rw [GlobalTheory.SplitDetCharacter.cutDet_val, hx, map_add (f := _), map_mul, map_sub, map_one]
     have hd := GlobalTheory.SplitDetCharacter.det_mul_conj V g
     linear_combination (1 - cA D (Formalism.L2.Theta.mt V g).det + (Formalism.L2.Theta.mt V g).det * cA D (Formalism.L2.Theta.mt V g).det
       - (Formalism.L2.Theta.mt V g).det) * hi + cA D e * hd
@@ -169,7 +174,7 @@ theorem exists_conj_weilDatum : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S
     refine ⟨r, hr, fun ℓ hinv f hf => ?_⟩
     let ℓω : (WO S T → ℂ) →ₗ[ℂ] ℂ :=
       { toFun := fun F => starRingEnd ℂ (ℓ (dag S T F))
-        map_add' := fun F F' => by simp only [dag_add, map_add]
+        map_add' := fun F F' => by simp only [dag_add, map_add (f := _)]
         map_smul' := fun c F => by simp only [dag_smul, map_smul, smul_eq_mul, map_mul, Complex.conj_conj, RingHom.id_apply] }
     have hinvω : ∀ u : WO S T, (∀ i j, cA D (cA D e) * u i j = u i j) → ∀ F, IsThetaFunO ψ S T F →
         ℓω (heisO ψ S T u F) = ℓω F := by

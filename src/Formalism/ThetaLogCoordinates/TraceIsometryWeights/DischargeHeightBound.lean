@@ -1,7 +1,11 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.FinalP
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.WeylInt
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.ZpClosedToAddSubgroup
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.CompEqZeroOfNotDle
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.FinalP
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.WeylInt
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.ZpClosedToAddSubgroup
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.CompEqZeroOfNotDle
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW.Top
 
@@ -15,7 +19,5 @@ private theorem intP_statement : IntP := by
 theorem extP : ExtP := extP_of intP_statement
 theorem dischargeW : DischargeW := dischargeW_of weylP
 theorem dischargeE : DischargeE := dischargeE_of extP
-theorem discharge_height_bound : HeightBoundImplication :=
-  discharge_of_pwe (dischargeP_of projection_lattice_holds comm_projection_holds intP_statement) dischargeW dischargeE
 
 end Formalism.InvariantFactorPaths.PW.Top

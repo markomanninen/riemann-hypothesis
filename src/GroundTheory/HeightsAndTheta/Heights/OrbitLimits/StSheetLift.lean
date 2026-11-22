@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsGenericCount
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsGenericCount
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

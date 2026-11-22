@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial Filter Topology
 
@@ -7,7 +11,8 @@ private theorem UpperTheory.ConvolutionTheory.FX.gen_fund_block (n : ℕ) (b : F
       = ∑ σ : Equiv.Perm (Fin n), ∏ i, (X (σ i) : MvPolynomial (Fin n) ℂ) ^ b i := by
   have hs : (∑ σ : Equiv.Perm (Fin n), ∏ i, (X (σ i) : MvPolynomial (Fin n) ℂ) ^ b i).IsSymmetric := by
     intro e
-    simp only [map_sum, map_prod, map_pow, rename_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_prod, map_pow, rename_X]
     exact Fintype.sum_equiv (Equiv.mulLeft e) _ _ (fun σ => by simp)
   obtain ⟨q, hq⟩ := esymmAlgHom_surjective (σ := Fin n) (R := ℂ) (n := n) (by simp) ⟨_, hs⟩
   refine ⟨q, ?_⟩
@@ -25,7 +30,8 @@ theorem UpperTheory.ConvolutionTheory.FX.gen_fund :
     have h2 := congrArg (rename (fun j : Fin n => (t, j))) (hq t)
     rw [← AlgHom.comp_apply, comp_aeval] at h2
     rw [aeval_rename]
-    simp only [map_sum, map_prod, map_pow, rename_X] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_prod, map_pow, rename_X] at h2
     exact h2
   rw [map_prod]
   simp only [h1]

@@ -1,10 +1,14 @@
-import Formalism.PieriBlockIdeals.LatticeInclusionRealSettingAlt
-import Formalism.PieriBlockIdeals.PieriColumnMinors.SL2BinomialLattices
-import Formalism.PieriBlockIdeals.PieriColumnMinors.RealLocalDeltaNabla
-import Formalism.PieriBlockIdeals.PieriColumnMinors.DepthNonnegative
-import Formalism.PieriBlockIdeals.PieriColumnMinors.ParameterBounds
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightProdLeadingMinors
-import Formalism.PieriBlockIdeals.PieriColumnMinors.WorkedExample
+module
+
+public import Formalism.PieriBlockIdeals.LatticeInclusionRealSettingAlt
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.SL2BinomialLattices
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.RealLocalDeltaNabla
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.DepthNonnegative
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.ParameterBounds
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightProdLeadingMinors
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.WorkedExample
+
+@[expose] public section
 
 noncomputable section
 
@@ -505,8 +509,6 @@ theorem correction_weight_eq_formula {ι : Type} (W : Wts ι) (P : Par) (J : ℕ
               ((W.sizeData₂ P J).depth P τ l / (d0 l (W.xm τ - W.top P τ) : ℝ)) else 0)
         + ((W.sizeData₂ P J).depth P τ l / (l : ℝ)) * (1 + max 0 (Real.log (P.h / (l : ℝ)))) := rfl
 
-theorem top_inputs_real_holds : TopInputsReal := top_inputs_of_shape_w shape_w_real_holds
-
 theorem inclusion_w_real_holds : InclWReal := inclusion_w_of_shape_w shape_w_real_holds
 
 theorem linkage_depth_eq_sum_difference (N k j t q : ℕ) (hN : k + j + t + q = N) (lam : ℕ → ℕ) (w : Fin N → ℕ)
@@ -630,7 +632,8 @@ theorem coarse_le_c_w_holds : CoarseLeCW := by
   have t5 : ((W.iW P l τ : ℝ) / (l : ℝ)) * (1 + Real.posLog ((h0 P : ℝ) / (l : ℝ))) ≤
       (dep / (l : ℝ)) * (1 + max 0 (Real.log (P.h / (l : ℝ)))) := by
     have hp : Real.posLog ((h0 P : ℝ) / (l : ℝ)) ≤ max 0 (Real.log (P.h / (l : ℝ))) :=
-      Real.posLog_le_posLog (div_nonneg (Nat.cast_nonneg _) hl0) (div_le_div_of_nonneg_right hh0 hl0)
+      Real.posLog_le_posLog (by have := div_nonneg (Nat.cast_nonneg (h0 P)) hl0; linarith)
+        (div_le_div_of_nonneg_right hh0 hl0)
     exact mul_le_mul (div_le_div_of_nonneg_right hdep hl0) (by linarith)
       (add_nonneg zero_le_one Real.posLog_nonneg) (div_nonneg hdep0 hl0)
   by_cases hc : ((d0 l (W.xm τ - W.top P τ) : ℕ) : ℤ) < W.xm τ - W.top P τ
@@ -670,15 +673,6 @@ theorem j_w_seven_le_holds : CoarseWeightBoundLe := by
       unfold cTau
       rw [if_neg hτ]
       exact le_rfl
-
-theorem inclusion_w_seven_real_holds : HidaLatticeInclusionAtCoarseWeightBound := by
-  intro hD P hH hL ι _ _ W hW l X hl hu hlJ hWI
-  obtain ⟨ϖ, n₀, e, Λ, L, _, _, _, _, _, hwt, hfin, hϖ, hA, hT, hS, hI⟩ := hWI
-  have hTop := top_inputs_real_holds P hH hL ι W hW l X hl hu hlJ ϖ n₀ e Λ L hwt hfin hϖ hA hT hS hI
-  have h := weight_theorem_top_coarse (last_graded_of_graded_alone hD) X.O X.A X.G X.Γ X.K X.jK ι l
-    P.Nr (kc P) P.t (h0 P) W.lam W.T2 W.j W.q W.xm W.xp (fun τ => W.ecl P τ l)
-    (fun τ => W.ex P τ l) (W.iW P l) X.T X.S ϖ n₀ e Λ L hwt hTop
-  exact ⟨h, Nat.sInf_le h⟩
 
 theorem seventh_recursion_eq_a_of_small_prime {ι : Type} [Fintype ι] [DecidableEq ι] (W : Wts ι) (P : Par) (l : ℕ)
     (hc : (l : ℝ) ≤ P.lJ ∨ P.Excl l ∨ l ∈ W.Sp) : W.Jrec7 P l = W.JA P l := by

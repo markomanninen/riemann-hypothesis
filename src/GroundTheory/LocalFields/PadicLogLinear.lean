@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.PrincipalUnitsModule
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.PrincipalUnitsModule
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -8,13 +12,13 @@ open scoped WithZero
 
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
 
-theorem eq_zero_of_forall_mem_valBall {y : K} (h : ∀ N : ℤ, y ∈ valBall K N) : y = 0 := by
+theorem eq_zero_of_forall_mem_valBall {y : K} (h : ∀ N : ℤ, y ∈ valBall (K := K) N) : y = 0 := by
   by_contra hy
   have := h (ord y + 1)
   rw [mem_valBall, normalizedValuation_eq_exp_ord hy, WithZero.exp_le_exp] at this
   omega
 
-theorem exists_mem_valBall (y : K) : ∃ M : ℤ, y ∈ valBall K M := by
+theorem exists_mem_valBall (y : K) : ∃ M : ℤ, y ∈ valBall (K := K) M := by
   by_cases hy : y = 0
   · exact ⟨0, by simp [hy]⟩
   · exact ⟨ord y, by rw [mem_valBall, normalizedValuation_eq_exp_ord hy]⟩
@@ -22,28 +26,29 @@ theorem exists_mem_valBall (y : K) : ∃ M : ℤ, y ∈ valBall K M := by
 variable (p : ℕ) [hp : Fact p.Prime] [CharP 𝓀[K] p] [CharZero K]
 
 theorem padicHom_padicInt_mem_valBall_zero (t : ℤ_[p]) :
-    CharZero.padicHom K p (t : ℚ_[p]) ∈ valBall K 0 := by
+    CharZero.padicHom K p (t : ℚ_[p]) ∈ valBall (K := K) 0 := by
   rw [mem_valBall, neg_zero, WithZero.exp_zero, ← map_one (normalizedValuation K),
     normalizedValuation_le_iff, map_one]
   exact CharZero.valuation_padicHom_padicInt_le_one K p t
 
-include p in
 
-theorem padicLog_mem_valBall_of_mem {k : ℕ} (hk : absRamificationIndex K ≤ k)
-    {w : Additive (unitFiltrationUnits K 1)} (hw : w ∈ principalFiltration K k) :
-    padicLog K w ∈ valBall K (k + 1) := by
+include p in
+include p in
+theorem padicLog_mem_valBall_of_mem {k : ℕ} (hk : absRamificationIndex (K := K) ≤ k)
+    {w : Additive (unitFiltrationUnits K 1)} (hw : w ∈ principalFiltration (K := K) k) :
+    padicLog K w ∈ valBall (K := K) (k + 1) := by
   rw [mem_principalFiltration] at hw
   rw [padicLog_apply]
   refine logSeries_mem_valBall p hw ?_
   have hp2 : (2 : ℤ) ≤ p := by exact_mod_cast hp.out.two_le
-  have : (absRamificationIndex K : ℤ) ≤ k := by exact_mod_cast hk
+  have : (absRamificationIndex (K := K) : ℤ) ≤ k := by exact_mod_cast hk
   nlinarith
 
 theorem padicLog_smul (a : ℤ_[p]) (u : Additive (unitFiltrationUnits K 1)) :
     padicLog K (a • u) = CharZero.padicHom K p (a : ℚ_[p]) * padicLog K u := by
   rw [← sub_eq_zero]
   refine eq_zero_of_forall_mem_valBall fun N ↦ ?_
-  set e := absRamificationIndex K
+  set e := absRamificationIndex (K := K)
   have he := one_le_absRamificationIndex (K := K) p
   obtain ⟨M, hM⟩ := exists_mem_valBall (padicLog K u)
   set k : ℕ := N.toNat + M.natAbs + e + 1 with hk_def
@@ -60,7 +65,7 @@ theorem padicLog_smul (a : ℤ_[p]) (u : Additive (unitFiltrationUnits K 1)) :
       PadicInt.coe_pow, PadicInt.coe_natCast, map_mul, map_pow, map_natCast] at this
     rw [this]; push_cast; ring
   have h3 : (CharZero.padicHom K p (a : ℚ_[p]) - (c : K)) * padicLog K u ∈
-      valBall K (e * k + 0 + M) := by
+      valBall (K := K) (e * k + 0 + M) := by
     rw [h2]
     exact mul_mem_valBall (mul_mem_valBall (natCast_prime_pow_mem_valBall p k)
       (padicHom_padicInt_mem_valBall_zero p t)) hM

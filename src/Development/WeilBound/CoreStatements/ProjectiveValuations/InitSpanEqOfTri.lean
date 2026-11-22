@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.ProjectiveValuations.IsIsoOfIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSpMapEv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowerUnitriangularMulUpperTriangularOfIsUnitLeadStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRowPermLeadingMinorsNotMemStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagCellPointImageAndFrameStatement
+module
+
+public import Development.WeilBound.CoreStatements.ProjectiveValuations.IsIsoOfIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSpMapEv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowerUnitriangularMulUpperTriangularOfIsUnitLeadStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRowPermLeadingMinorsNotMemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagCellPointImageAndFrameStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,8 @@ theorem pm_mul_u (X : FlagCover Y) (k : X.F.J) (σ : E →+* ℂ) :
     rw [← X.top S y hy z hx k hk σ]
     exact Submodule.subset_span ⟨j, j.2, rfl⟩
   have h2 := congrFun (((LowRank.pm_gen p (X.F.M k).toMChart σ hy hM).1 _).1 ((vec_mem_eigLie _ _ hM σ _).1 h1)) i
-  rw [ev_res z _ hz hk, map_zero, map_sub, sub_eq_zero, Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ev_res z _ hz hk, map_zero, map_sub, sub_eq_zero, Matrix.mul_apply, map_sum]
   refine Eq.trans (Finset.sum_congr rfl fun r _ => ?_) h2
   rw [map_mul, Matrix.map_apply, ev_appLE z X.π _ hk (hx ▸ hM), ev_congr hx _ _ hM]
   rfl
@@ -85,7 +90,8 @@ theorem pm_fix (X : FlagCover Y) (k : X.F.J) (σ : E →+* ℂ) (z : Sp S ⟶ X.
   congr 1
   funext i
   have e := congrArg (ev z _ hz) (congrFun (congrFun (pm_mul_u p X k σ) i) j)
-  rw [Matrix.mul_apply, map_sum] at e
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum] at e
   rw [Matrix.mulVec, dotProduct]
   refine Eq.trans (Finset.sum_congr rfl fun r _ => ?_) e
   rw [map_mul, Matrix.map_apply, Matrix.map_apply, ev_appLE z X.π _ hz (X.F.inM hz rfl)]
@@ -168,7 +174,8 @@ theorem exists_cell_pt (b : A.B) {x : Sp S ⟶ Y.X} (h : ⊤ ≤ x ⁻¹ᵁ (A.k
     · exact (hL0 σ i j (lt_of_le_of_ne (not_lt.1 h1) h2)).symm
   have key : ((A.k b).u σ).map ψ₀ * T σ = ((((A.k b).u σ).map ψ₀).submatrix id (w σ) * L σ) * U σ := by
     rw [Matrix.mul_assoc, ← hLU σ, Matrix.submatrix_mul_equiv, Matrix.submatrix_id_id]
-  simp only [Frames.vecAt, huAt σ, hcell, ← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Frames.vecAt, huAt σ, hcell, ← map_smul, ← map_sum]
   congr 1
   funext r
   change (((A.k b).u σ).map ψ₀ * T σ) r i = _

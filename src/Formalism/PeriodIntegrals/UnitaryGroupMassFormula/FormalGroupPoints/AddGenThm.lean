@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupPoints.ConstantCoeffPsubst
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupPoints.ConstantCoeffPsubst
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem addGen_thm : PI.FglPtW.AddGen := by
   have hG0 : MvPowerSeries.constantCoeff
       (PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) K) l +
         PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) K) l) = 0 := by
-    rw [map_add, hcc l _ hX0, hcc l _ hX1, hl0, add_zero]
+    rw [map_add (f := _), hcc l _ hX0, hcc l _ hX1, hl0, add_zero]
   have hG : MvPowerSeries.subst (![a, b] : Fin 2 → MvPowerSeries σ K)
       (PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) K) l +
         PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) K) l) =
@@ -57,7 +61,7 @@ theorem addGen_thm : PI.FglPtW.AddGen := by
   · rw [heq, serOver_iff]
     refine mvsubst_mem_SerS S hP0 (fun i => ?_) ((serOver_iff S _).mp hF)
     fin_cases i <;> simp [(serOver_iff S a).mp ha.1, (serOver_iff S b).mp hb.1]
-  · rw [hcc ex _ (by rw [map_add, hcc l a ha.2, hcc l b hb.2, hl0, add_zero])]
+  · rw [hcc ex _ (by rw [map_add (f := _), hcc l a ha.2, hcc l b hb.2, hl0, add_zero])]
     exact hex0
 
 end PI.FglPtW.Wk

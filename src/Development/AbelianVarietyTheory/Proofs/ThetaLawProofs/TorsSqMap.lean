@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+
+@[expose] public section
+
 open GlobalTheory.KeyKa
 
 namespace GlobalTheory.KeyKa
@@ -11,7 +16,7 @@ theorem torsSq_map : ∀ (R Ix : Type) [CommRing R] [Fintype Ix] [DecidableEq Ix
   · intro p q hpq
     simp [Matrix.map_apply, h1 p q hpq]
   · have := congrArg (f.mapMatrix : Matrix Ix Ix R →+* Matrix Ix Ix R') h2
-    rw [map_add, map_mul, map_mul, map_one] at this
+    rw [map_add (f := _), map_mul, map_mul, map_one] at this
     exact this
   · rw [h3, map_pow, RingHom.map_det]
     congr 2

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+
+@[expose] public section
 
 open NumberField Pointwise UpperTheory.V UpperTheory.V.KT UpperTheory.V.Af.BA
 

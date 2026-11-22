@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.FormalDegreeFormula.ModelFunctionsMultiply
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTwist
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.FormalDegreeFormula.ModelFunctionsMultiply
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTwist
+
+@[expose] public section
 
 noncomputable section
 

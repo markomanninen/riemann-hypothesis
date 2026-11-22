@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.MatchSmulAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubiniHolds
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.MatchSmulAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubiniHolds
+
+@[expose] public section
 
 open MeasureTheory PositivityTheory.Rg.Tf.Loc
 
@@ -171,7 +175,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.L.cosetSum :
       apply hg
       exact (hS _).2 ⟨i, hi, 1, H.one_mem, (x i)⁻¹ * g, hm, by group⟩
   have hcomp : ∫⁻ g, F g * ρ g ∂μ = R.card * ((ν V)⁻¹ * μ K) := by
-    rw [lintegral_congr (fun g => hpt g), lintegral_finset_sum]
+    rw [lintegral_congr (fun g => hpt g), lintegral_finsetSum]
     · simp_rw [lintegral_indicator_const (hKo.measurableSet.preimage (measurable_const_mul _)),
         measure_preimage_mul]
       rw [Finset.sum_const, nsmul_eq_mul]

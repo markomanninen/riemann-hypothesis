@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LaTwTranspose
-import Formalism.LocalToGlobal.GroupLattices.FockModels.EdgePlane
-import Formalism.SharpRestriction.GrowthBounds.ColumnSystems
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LaTwTranspose
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.EdgePlane
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSystems
+
+@[expose] public section
 
 open MvPolynomial
 

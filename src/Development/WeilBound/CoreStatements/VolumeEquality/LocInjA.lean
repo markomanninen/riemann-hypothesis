@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ContinuousHermitianMatrixFamily
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsometryPreservesHermitianAndAction
+module
+
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ContinuousHermitianMatrixFamily
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsometryPreservesHermitianAndAction
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem rigid_of_congr {Λ : Type} [AddCommGroup Λ] (B : Λ →+ Λ →+ ℝ) (
     have : B (M • e) (M • e) = (M : ℝ) * (M * B e e) := by
       simp only [map_nsmul, AddMonoidHom.nsmul_apply, nsmul_eq_mul]
     rw [← this, he']
-    simp only [map_sub, map_add, AddMonoidHom.sub_apply, AddMonoidHom.add_apply, iso]
+    simp only [map_sub, map_add (f := _), AddMonoidHom.sub_apply, AddMonoidHom.add_apply, iso]
     ring
   have hM' : (3 : ℝ) ≤ M := by exact_mod_cast hM
   have hlt : B e e < B z z := by
@@ -52,9 +56,9 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {g : ℕ} {Λ : Type
 
 def reForm (R : RiemLat E g Λ) : Λ →+ Λ →+ ℝ :=
   AddMonoidHom.mk' (fun x => AddMonoidHom.mk' (fun y => (R.ip (R.P x) (R.P y)).re) fun y y' => by
-    simp only [map_add, PeriodIso.ip_add_right', Complex.add_re]) fun x x' => by
+    simp only [map_add (f := _), PeriodIso.ip_add_right', Complex.add_re]) fun x x' => by
     ext y
-    simp only [map_add, PeriodIso.ip_add_left', Complex.add_re, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply]
+    simp only [map_add (f := _), PeriodIso.ip_add_left', Complex.add_re, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply]
 
 theorem reForm_apply (R : RiemLat E g Λ) (x y : Λ) : reForm R x y = (R.ip (R.P x) (R.P y)).re := rfl
 
@@ -142,7 +146,8 @@ theorem short_finite {X : Type} [TopologicalSpace X] (R : X → RiemLat E g Λ) 
   let a : Fin (2 * g) → ℝ := fun i => (b.equivFun v i : ℝ)
   have hTa : T x a = (R x).P v := by
     conv_rhs => rw [← b.sum_equivFun v]
-    simp only [T, a, map_sum, map_zsmul, Int.cast_smul_eq_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, a, map_sum, map_zsmul, Int.cast_smul_eq_zsmul]
   have hQa : Q (x, a) ≤ C := by
     simp only [Q, hTa]
     exact hv
@@ -184,7 +189,8 @@ theorem near_trivial {X : Type} [TopologicalSpace X] (R : X → RiemLat E g Λ) 
   have hG : G.Finite := (Set.Finite.pi' fun _ => hS).preimage fun γ _ γ' _ h => by
     ext v
     rw [← b.sum_equivFun v]
-    simp only [map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul]
     exact Finset.sum_congr rfl fun i _ => by rw [show γ (b i) = γ' (b i) from congrFun h i]
   have h2 : ∀ᶠ p : X × X in 𝓝 (x₀, x₀), ∀ γ ∈ G, (∀ v, ∃ e, γ v = v + M • e) →
       (∀ u v, reForm (R p.2) (γ u) (γ v) = reForm (R p.1) u v) → γ = 1 := by

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
 
@@ -12,7 +17,8 @@ private theorem frame_abs {V : Type} [AddCommGroup V] [Module ℝ V] [FiniteDime
   have h0 : 0 < B (v j) (v j) := hp _ (v.ne_zero j)
   have h1 : B (v j) x = v.repr x j * B (v j) (v j) := by
     conv_lhs => rw [← v.sum_repr x]
-    rw [map_sum, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single j]
     · simp
     · intro k _ hk
       have : B (v j) (v k) = 0 := hv (Ne.symm hk)

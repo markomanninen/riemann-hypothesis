@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
-import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
-import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+
+@[expose] public section
+
 open UpperHalfPlane Complex MeasureTheory CongruenceSubgroup GlobalTheory.EisM UpperTheory.V.Af Filter Topology
 open scoped MatrixGroups Real ComplexConjugate Manifold ModularForm
 
@@ -63,7 +68,7 @@ noncomputable def mean (L : ℕ) (k : ℤ → ℂ) (d : ℤ) : ℂ := (L : ℂ)�
 lemma mean_tendsto {L : ℕ} {k : ℤ → ℂ} (hk : Tendsto k cofinite (𝓝 0)) :
     Tendsto (mean L k) cofinite (𝓝 0) := by
   have : Tendsto (fun d => ∑ r ∈ Finset.range L, k (d + r)) cofinite (𝓝 0) := by
-    simpa using tendsto_finset_sum (Finset.range L) fun r _ => shift_tendsto hk r
+    simpa using tendsto_finsetSum (Finset.range L) fun r _ => shift_tendsto hk r
   have h2 := this.const_mul ((L : ℂ)⁻¹)
   rw [mul_zero] at h2
   exact h2
@@ -94,7 +99,7 @@ lemma symS_mul_mean_tendsto {L : ℕ} {A k : ℤ → ℂ} {C : ℝ} (hA : ∀ d,
     refine Finset.sum_congr rfl fun r _ => ?_
     ring
   rw [show (symS fun d => A d * mean L k d) = _ from funext eq]
-  have := tendsto_finset_sum (Finset.range L) fun r _ =>
+  have := tendsto_finsetSum (Finset.range L) fun r _ =>
     symS_shift_tendsto r (f r) (bdd_mul_tendsto (fun d => hA (d - r)) hk)
   simpa using this.const_mul ((L : ℂ)⁻¹)
 

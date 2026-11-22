@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.TensInduction
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.TensInduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,9 +36,6 @@ variable (hp : ∀ (g : G) (x : X), p (g • x) = g • p x) (σ : Sec H)
 
 def zpart (x : X) : Fib p :=
   ⟨(σ.s (p x))⁻¹ • x, by rw [hp]; exact σ.inv_smul (p x)⟩
-
-@[simp]
-theorem zpart_val (x : X) : (zpart hp σ x).1 = (σ.s (p x))⁻¹ • x := rfl
 
 include hp in
 theorem p_smul_fib (g : G) (z : Fib p) : p (g • z.1) = (g : G ⧸ H) := by
@@ -77,10 +78,6 @@ def triv : X × H ≃ₜ G × Fib p where
       (((σ.cont.comp (QuotientGroup.continuous_mk.comp continuous_fst)).inv).mul continuous_fst) _
 
 @[simp]
-theorem triv_apply (q : X × H) :
-    triv hp σ hpc q = (σ.s (p q.1) * q.2, fibSmul hp q.2⁻¹ (zpart hp σ q.1)) := rfl
-
-@[simp]
 theorem triv_symm_apply (r : G × Fib p) :
     (triv hp σ hpc).symm r = (r.1 • r.2.1, ⟨(σ.s (r.1 : G ⧸ H))⁻¹ * r.1, σ.inv_mul_mem r.1⟩) := rfl
 
@@ -105,7 +102,7 @@ def fap [LocallyCompactSpace (Fib p)] (α : SB G) (φ : SB (Fib p)) : SB X :=
 theorem fap_apply [LocallyCompactSpace (Fib p)] (α : SB G) (φ : SB (Fib p)) (x : X) :
     ((fap hp σ hpc μH α φ : SB X) : X → ℂ) x = ∫ h, (α : G → ℂ) (σ.s (p x) * (h : G)) *
       (φ : Fib p → ℂ) (fibSmul hp h⁻¹ (zpart hp σ x)) ∂μH := by
-  simp [fap, avg]
+  simp [fap, avg, intB, pullHomeo, tens, triv]
 
 theorem fap_smul [LocallyCompactSpace (Fib p)] (α : SB G) (φ : SB (Fib p)) (g : G) (z : Fib p) :
     ((fap hp σ hpc μH α φ : SB X) : X → ℂ) (g • z.1) =
@@ -119,7 +116,7 @@ theorem fap_smul [LocallyCompactSpace (Fib p)] (α : SB G) (φ : SB (Fib p)) (g 
     simp [k, mul_assoc]
   have e2 : fibSmul hp (k * h)⁻¹ (zpart hp σ (g • z.1)) = fibSmul hp h⁻¹ z := by
     apply Subtype.ext
-    simp [k, s0, smul_smul, mul_assoc, p_smul_fib hp g z]
+    simp [fibSmul, zpart, k, s0, smul_smul, mul_assoc, p_smul_fib hp g z]
   simp only [e1, e2]
 
 theorem eq_fap [LocallyCompactSpace (Fib p)] (α : SB G) (φ : SB (Fib p)) (f : SB X)
@@ -128,7 +125,7 @@ theorem eq_fap [LocallyCompactSpace (Fib p)] (α : SB G) (φ : SB (Fib p)) (f : 
     f = fap hp σ hpc μH α φ := by
   apply Subtype.ext
   funext x
-  have hx : x = σ.s (p x) • (zpart hp σ x).1 := by simp
+  have hx : x = σ.s (p x) • (zpart hp σ x).1 := by simp [zpart, ← smul_smul]
   rw [hx, hf, fap_smul]
 
 end Fap

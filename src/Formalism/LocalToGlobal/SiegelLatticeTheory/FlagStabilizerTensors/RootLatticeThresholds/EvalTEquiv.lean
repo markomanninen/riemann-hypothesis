@@ -1,10 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EvalTPh
-import Formalism.LocalToGlobal.IndefiniteReal.EqZeroOfVec
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.DensLow
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqBase
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.EqZeroOfVec
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.DensLow
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqBase
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +29,8 @@ theorem sm_stable_uh (τ : D.what₂.Tau) {g : Matrix (Fin V.rank) (Fin V.rank) 
 abbrev comp (a : GA D V) (τ : D.what₂.Tau) : Matrix (Fin V.rank) (Fin V.rank) ℂ :=
   infMat D.sp.cm.sig V.gram (Formalism.IndefR.Eqv.thetaC D τ) a
 
-open Classical in
 
+open Classical in
 def translS (a : GA D V) (s : Finset D.what₂.Tau) (v : M.Vec) : M.Vec := fun τ =>
   if τ ∈ s then ⟨M.rep τ (comp a τ) (v τ), sm_stable_uh M τ (Formalism.IndefR.Eqv.infMat_unitary' D V a τ) (v τ).2⟩
   else v τ

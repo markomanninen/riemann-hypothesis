@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VLetZeroNear
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VLetZeroNear
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+
+@[expose] public section
 
 open Matrix
 

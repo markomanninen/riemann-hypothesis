@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlESymmApply
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicFormValuesNearPointSpecStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlESymmApply
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicFormValuesNearPointSpecStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.L2.Forms Formalism.UG Formalism.L2.GlobalTheoryTheory.LocalLatticeBases NumberField IsDedekindDomain Matrix GlobalTheory.LevelHecke
 open scoped TensorProduct
@@ -29,12 +33,6 @@ theorem inc_dil {res : R →+* k} (hs : Function.Surjective res) {t : R} {p q : 
     rw [h1.smul _ _ he, h3, hb, mul_one, mul_inv_cancel₀ ha]
   · show a * p.f _ = 1
     rw [smul_comm, hp.smul _ _ hte, h4, hb, mul_one, mul_inv_cancel₀ ha]
-
-theorem inc_dil_iff {res : R →+* k} (hs : Function.Surjective res) {t : R} {p : Pr R V k} (hp : p.Ok res)
-    (q : Pr R V k) {a : k} (ha : a ≠ 0) : Pr.Inc res t (p.dil a) (q.dil a) ↔ Pr.Inc res t p q := by
-  refine ⟨fun h => ?_, fun h => inc_dil hs hp h ha⟩
-  have := inc_dil hs (hp.dil ha) h (inv_ne_zero ha)
-  rwa [Pr.dil_dil, Pr.dil_dil, inv_mul_cancel₀ ha, Pr.dil_one, Pr.dil_one] at this
 
 def dilEquiv {a : k} (ha : a ≠ 0) : Pr R V k ≃ Pr R V k where
   toFun q := q.dil a
@@ -82,7 +80,7 @@ theorem upAd_dia : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberF
         rw [e, hp, hc.2] at this
         rw [this]
         unfold valAt
-        rw [dif_pos h]
+        rw [dite_eq_left h]
       · have h' : ¬ ∃ η, AtV v η ∧ p (x * δ * η) = q := by
           rintro ⟨η, hη, hq⟩
           refine h ⟨δ⁻¹⁻¹ * η * δ⁻¹, atV_conj hη _, ?_⟩
@@ -90,7 +88,7 @@ theorem upAd_dia : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberF
           congr 1
           group
         unfold valAt
-        rw [dif_neg h, dif_neg h']
+        rw [dite_eq_right h, dite_eq_right h']
     unfold upAd
     rw [hp, key]
 

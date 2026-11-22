@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Rc9.conj_sqrt :
     ∀ {R : Formalism.BasicNotions.Ranks} (H : Formalism.BasicNotions.Host R),

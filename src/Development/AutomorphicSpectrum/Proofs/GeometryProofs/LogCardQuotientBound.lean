@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrGenOfIsFlagVBOn
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseHeight
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrGenOfIsFlagVBOn
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseHeight
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
@@ -42,7 +46,7 @@ theorem place_le_iSup {M : Type} [AddCommGroup M] [Module (𝓞 L) M] (φ : M �
     exact le_ciSup (f := fun i ↦ v (φ (g i))) (Set.finite_range _).bddAbove i
   | zero => simpa using h0
   | add a b _ _ ha hb =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (FinitePlace.add_le v _ _).trans (max_le ha hb)
   | smul r a _ ha =>
     rw [map_smul, Algebra.smul_def, map_mul]
@@ -90,7 +94,7 @@ theorem log_card_eq {M : Type} [AddCommGroup M] [Module (𝓞 L) M] (φ : M →�
     | add p q _ _ hp hq =>
       obtain ⟨r₁, h₁⟩ := hp
       obtain ⟨r₂, h₂⟩ := hq
-      exact ⟨r₁ + r₂, by rw [map_add, mul_add, ← h₁, ← h₂]; rfl⟩
+      exact ⟨r₁ + r₂, by rw [map_add (f := _), mul_add, ← h₁, ← h₂]; rfl⟩
     | smul c p _ hp =>
       obtain ⟨r, h⟩ := hp
       refine ⟨c * r, ?_⟩
@@ -102,7 +106,7 @@ theorem log_card_eq {M : Type} [AddCommGroup M] [Module (𝓞 L) M] (φ : M →�
     { toFun := ψ₀
       map_add' := fun p q ↦ RingOfIntegers.ext (by
         change (ψ₀ (p + q) : L) = (ψ₀ p : L) + (ψ₀ q : L)
-        rw [hψ₀, hψ₀, hψ₀, map_add, mul_add])
+        rw [hψ₀, hψ₀, hψ₀, map_add (f := _), mul_add])
       map_smul' := fun c p ↦ RingOfIntegers.ext (by
         change (ψ₀ (c • p) : L) = (c : L) * (ψ₀ p : L)
         rw [hψ₀, hψ₀, map_smul, Algebra.smul_def]

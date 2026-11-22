@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -27,13 +32,11 @@ theorem toEAf_tmul (x : AF D.host.F) (e : D.host.E) :
     toEAf D (x ⊗ₜ[D.host.F] e) = e ⊗ₜ[D.host.F] (sndA D.host.F x) := rfl
 
 theorem finEmb_mul (a : AE D) (x : EAf D) : finEmb D (toEAf D a * x) = a * finEmb D x := by
-  induction a using TensorProduct.induction_on with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, add_mul, ha, hb]
+  induction a using TensorProduct.inductionOn with
+  | add a b ha hb => simp only [map_add (f := _), add_mul, ha, hb]
   | tmul y e =>
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, mul_add, ha, hb]
+    induction x using TensorProduct.inductionOn with
+    | add a b ha hb => simp only [map_add (f := _), mul_add, ha, hb]
     | tmul f α =>
       rw [toEAf_tmul, Algebra.TensorProduct.tmul_mul_tmul, finEmb_tmul, finEmb_tmul,
         Algebra.TensorProduct.tmul_mul_tmul]
@@ -46,9 +49,8 @@ theorem cF_tmul (e : D.host.E) (α : Af D.host.F) :
     cF D (e ⊗ₜ[D.host.F] α) = star e ⊗ₜ[D.host.F] α := rfl
 
 theorem toEAf_cA (a : AE D) : toEAf D (cA D a) = cF D (toEAf D a) := by
-  induction a using TensorProduct.induction_on with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  induction a using TensorProduct.inductionOn with
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul y e => rfl
 
 theorem toEAf_incA (e : D.host.E) : toEAf D (incA D e) = eToEAf D e := rfl
@@ -59,13 +61,13 @@ def rankOne (S T : HSp D) (a : D.host.E) (s : Fin S.rank → EAf D) (t : Fin T.r
 theorem rankOne_add_left (S T : HSp D) (a : D.host.E) (s s' : Fin S.rank → EAf D) (t : Fin T.rank → EAf D) :
     rankOne S T a (s + s') t = rankOne S T a s t + rankOne S T a s' t := by
   ext i j
-  simp only [rankOne, Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add, add_mul, mul_add,
+  simp only [rankOne, Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add (f := _), add_mul, mul_add,
     Finset.sum_add_distrib]
 
 theorem rankOne_add_right (S T : HSp D) (a : D.host.E) (s : Fin S.rank → EAf D) (t t' : Fin T.rank → EAf D) :
     rankOne S T a s (t + t') = rankOne S T a s t + rankOne S T a s t' := by
   ext i j
-  simp only [rankOne, Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add, add_mul, mul_add]
+  simp only [rankOne, Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add (f := _), add_mul, mul_add]
 
 def rankOneHom (S T : HSp D) (a : D.host.E) : (Fin S.rank → EAf D) →+ (Fin T.rank → EAf D) →+ WO S T :=
   AddMonoidHom.mk' (fun s => AddMonoidHom.mk' (fun t => rankOne S T a s t) (rankOne_add_right S T a s))
@@ -155,10 +157,10 @@ theorem rankOne_mem_latO (S T : HSp D) (ΛS : Submodule (𝓞 D.host.E) (Fin S.r
       exact ⟨β * α, (mul_mem hβ hα : β * α ∈ Formalism.UG.intAd D.host.F), fun _ h => absurd trivial h, a, ha, x, hx, y, hy,
         rankOne_pure S T a x y α β⟩
     | zero => rw [map_zero]; exact zero_mem _
-    | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => simp only [map_add]; exact add_mem hy hz
     | neg y _ hy => rw [map_neg]; exact neg_mem hy
   | zero => rw [map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => simp only [map_add, AddMonoidHom.add_apply]; exact add_mem hy hz
   | neg y _ hy => rw [map_neg]; exact neg_mem hy
 
 theorem mt_mul (V : HSp D) (g g' : GA D V) : mt V (g * g') = mt V g * mt V g' := by
@@ -181,18 +183,21 @@ theorem actO_rankOne (S T : HSp D) (g : GA D S) (h : GA D T) (a : D.host.E) (s :
       ∑ l, cF D (toEAf D (mt S g l k)) * eToEAf D (S.gram l j) := by
     intro k
     have := congrArg (toEAf D) (congrFun (congrFun (gram_mul_inv S g) k) j)
-    simpa only [Matrix.mul_apply, map_sum, map_mul, Matrix.map_apply, Matrix.transpose_apply, toEAf_cA,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [Matrix.mul_apply, map_sum, map_mul, Matrix.map_apply, Matrix.transpose_apply, toEAf_cA,
       toEAf_incA] using this
   have key2 : ∑ l, (∑ k, cF D (s k) * eToEAf D (S.gram k l)) * toEAf D (mt S g⁻¹ l j) =
       ∑ k, cF D (((mt S g).map (toEAf D) *ᵥ s) k) * eToEAf D (S.gram k j) := by
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, Finset.sum_mul]
     rw [Finset.sum_comm, Finset.sum_comm (f := fun k l => cF D (toEAf D (mt S g k l)) * cF D (s l) * _)]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp only [mul_assoc, mul_left_comm _ (cF D (s k))]
     rw [← Finset.mul_sum, ← Finset.mul_sum, key]
   simp only [actO, rankOne, Matrix.mul_apply, Matrix.of_apply]
   rw [← key2]
-  simp only [← finEmb_mul, ← map_sum, mul_comm (finEmb D _)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← finEmb_mul, ← map_sum, mul_comm (finEmb D _)]
   congr 1
   simp only [Matrix.mulVec, dotProduct, Matrix.map_apply]
   rw [Finset.mul_sum (f := fun l => (∑ k, cF D (s k) * eToEAf D (S.gram k l)) * toEAf D (mt S g⁻¹ l j))]

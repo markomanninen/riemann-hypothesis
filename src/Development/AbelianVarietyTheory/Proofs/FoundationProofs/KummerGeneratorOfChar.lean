@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+
+@[expose] public section
+
 open GlobalTheory.NeedB Polynomial
 
 namespace GlobalTheory
@@ -99,7 +104,8 @@ theorem kummer_generator_of_char : ∀ (K Ω : Type) [Field K] [CharZero K] [Fie
       simp only [hr, AlgEquiv.mul_apply] at this
       simpa [hr] using g.injective this
     have hb : Function.Bijective e := Finite.injective_iff_bijective.mp he
-    rw [map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum]
     simp only [map_mul, hfix, w, map_inv₀, hafix]
     refine (Fintype.sum_bijective e hb _ _ ?_)
     intro i

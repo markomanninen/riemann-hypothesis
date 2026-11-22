@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCTheta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCTheta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 open scoped ContDiff

@@ -1,14 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ResidueCharMemLevelPrimes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcGalCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.H1cZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcSpAct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcSpDim
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcSpKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcScalDim
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcCycKFacts
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfKernel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ResidueCharMemLevelPrimes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcGalCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.H1cZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcSpAct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcSpDim
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcSpKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcScalDim
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcCycKFacts
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfKernel
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 private theorem nums_odd {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}

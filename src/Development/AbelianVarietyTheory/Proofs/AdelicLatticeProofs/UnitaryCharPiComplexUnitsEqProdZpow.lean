@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CircleHomEqZpow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CircleHomEqZpow
+
+@[expose] public section
 
 open scoped Topology BigOperators
 
@@ -23,8 +27,8 @@ private lemma div_norm_sq_eq_div_conj_of_ne_zero (x : ℂ) (hx : x ≠ 0) :
   rw [div_pow, ← h]
   field_simp
 
-open scoped Topology BigOperators in
 
+open scoped Topology BigOperators in
 theorem _root_.GlobalTheory.unitaryChar_pi_complexUnits_eq_prod_zpow :
     ∀ (ι : Type) [Fintype ι] (f : (ι → ℂˣ) →* Circle), Continuous f → (∀ z : ι → ℂˣ, (∀ i, ((z i : ℂ)).im = 0) → f z = 1) → ∃ k : ι → ℤ, ∀ z, ((f z : Circle) : ℂ) = ∏ i, ((z i : ℂ) / starRingEnd ℂ (z i : ℂ)) ^ k i := by
   intro ι _ f hf hreal

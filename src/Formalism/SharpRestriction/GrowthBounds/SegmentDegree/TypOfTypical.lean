@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ProdIccOneEqProdRange
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ProdIccOneEqProdRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem threshold_letter_eq_Xi (H : HypT N n0 r K LL B od bb a La p) (i : Fin N)
     have : 0 < r + K := by have := H.r1; omega
     exact_mod_cast this
   unfold BranchingDimensions.Letters.XT toB Xi
-  rw [dif_pos ⟨by omega, by have := i.2; omega⟩]
+  rw [dite_eq_left ⟨by omega, by have := i.2; omega⟩]
   show La * (13 * bb ⟨i.val + 1 - 1, _⟩ / (p : ℝ)) / (((13 : ℕ) : ℝ) * ((r + K : ℕ) : ℝ)) = _
   have he : (⟨i.val + 1 - 1, by have := i.2; omega⟩ : Fin N) = i := Fin.ext (by simp)
   rw [he]

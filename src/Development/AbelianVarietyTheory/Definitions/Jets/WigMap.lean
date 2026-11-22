@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.StatementD
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.StatementD
+
+@[expose] public section
 
 open Matrix Finset
 

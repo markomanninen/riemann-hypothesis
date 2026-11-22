@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinCol
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaussianDetLeviIntegralStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ComplexHessianLogFubiniStudyStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ComplexHessianLogDehomogeniseStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableZeroCountStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChangeVariablesZeroCountStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralSplitColumnStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinCol
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaussianDetLeviIntegralStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ComplexHessianLogFubiniStudyStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ComplexHessianLogDehomogeniseStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableZeroCountStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChangeVariablesZeroCountStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralSplitColumnStatement
+
+@[expose] public section
+
 open MeasureTheory ReciprocityTheory.L2DbarEstimates GlobalTheory.CompanionTheory.FSCrofton
 open scoped ENNReal ComplexConjugate
 
@@ -74,8 +79,8 @@ theorem continuous_kernel (d : ℕ) (β : Type) [Fintype β] :
   have h4 : Continuous fun q : (Fin d → β → ℂ) × ((β → ℂ) × (β → Fin d → ℂ)) =>
       Real.exp (-∑ k, ‖∑ j, q.1 k j * q.2.1 j‖ ^ 2) := by
     refine Real.continuous_exp.comp (continuous_neg.comp ?_)
-    refine continuous_finset_sum _ fun k _ => (Continuous.norm ?_).pow 2
-    refine continuous_finset_sum _ fun j _ => Continuous.mul ?_ ?_
+    refine continuous_finsetSum _ fun k _ => (Continuous.norm ?_).pow 2
+    refine continuous_finsetSum _ fun j _ => Continuous.mul ?_ ?_
     · exact (continuous_apply j).comp ((continuous_apply k).comp continuous_fst)
     · exact (continuous_apply j).comp (continuous_fst.comp continuous_snd)
   exact h4.mul (h3.norm.pow 2)
@@ -90,8 +95,8 @@ theorem measurable_kernel {X : Type} [MeasurableSpace X] (d : ℕ) (β : Type) [
       ((p.1, (fun j => g j p.2), (fun j a => F j a p.2)) :
         (Fin d → β → ℂ) × ((β → ℂ) × (β → Fin d → ℂ))) := by
     refine measurable_fst.prodMk (Measurable.prodMk ?_ ?_)
-    · exact measurable_pi_lambda _ fun j => (hg j).comp measurable_snd
-    · exact measurable_pi_lambda _ fun j => measurable_pi_lambda _ fun a =>
+    · exact Measurable.of_eval fun j => (hg j).comp measurable_snd
+    · exact Measurable.of_eval fun j => Measurable.of_eval fun a =>
         (hF j a).comp measurable_snd
   have hq := (continuous_kernel d β).measurable.comp hm
   exact ((measurable_gW d β).comp measurable_fst).mul (ENNReal.measurable_ofReal.comp hq)

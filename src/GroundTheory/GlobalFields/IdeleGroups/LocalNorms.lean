@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.CompletionsOverBasisRepr
-import GroundTheory.GlobalFields.IdeleGroups.Restricted
-import GroundTheory.GlobalFields.Adele.BaseChange.FiniteMap
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.CompletionsOverBasisRepr
+public import GroundTheory.GlobalFields.IdeleGroups.Restricted
+public import GroundTheory.GlobalFields.Adele.BaseChange.FiniteMap
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -23,8 +27,8 @@ def finiteLocalNorm (v : HeightOneSpectrum (𝓞 K)) :
   map_one' := by simp
   map_mul' y z := by simp only [Pi.mul_apply, map_mul, Finset.prod_mul_distrib]
 
-variable {L} in
 
+variable {L} in
 theorem coe_finiteLocalNorm (v : HeightOneSpectrum (𝓞 K))
     (y : (w : PlacesOver L v) → (w.1.adicCompletion L)ˣ) :
     ((finiteLocalNorm L v y : (v.adicCompletion K)ˣ) : v.adicCompletion K) =
@@ -35,17 +39,17 @@ def integerUnitsOver (v : HeightOneSpectrum (𝓞 K)) :
     Subgroup ((w : PlacesOver L v) → (w.1.adicCompletion L)ˣ) :=
   Subgroup.pi Set.univ fun w ↦ (Submonoid.ofClass (w.1.adicCompletionIntegers L)).units
 
+
 omit [NumberField K] in
 variable {L} in
-
 theorem mem_integerUnitsOver {v : HeightOneSpectrum (𝓞 K)}
     {y : (w : PlacesOver L v) → (w.1.adicCompletion L)ˣ} :
     y ∈ integerUnitsOver L v ↔
       ∀ w, y w ∈ (Submonoid.ofClass (w.1.adicCompletionIntegers L)).units := by
   simp [integerUnitsOver, Subgroup.mem_pi]
 
-open scoped Classical in
 
+open scoped Classical in
 def infiniteLocalNorm (v : InfinitePlace K) :
     ((w : v.placesOver L) → ((w : InfinitePlace L).Completion)ˣ) →* (v.Completion)ˣ where
   toFun y := ∏ w : v.placesOver L, Units.map (Algebra.norm v.Completion :
@@ -53,10 +57,10 @@ def infiniteLocalNorm (v : InfinitePlace K) :
   map_one' := by simp
   map_mul' y z := by simp only [Pi.mul_apply, map_mul, Finset.prod_mul_distrib]
 
+
 omit [NumberField K] in
 open scoped Classical in
 variable {L} in
-
 theorem coe_infiniteLocalNorm (v : InfinitePlace K)
     (y : (w : v.placesOver L) → ((w : InfinitePlace L).Completion)ˣ) :
     ((infiniteLocalNorm L v y : (v.Completion)ˣ) : v.Completion) =
@@ -68,17 +72,15 @@ variable {L}
 theorem finiteProj_ideleNorm (y : IdeleGroup L) (v : HeightOneSpectrum (𝓞 K)) :
     IdeleGroup.finiteProj v (ideleNorm K L y) =
       finiteLocalNorm L v (fun w ↦ IdeleGroup.finiteProj w.1 y) := by
-  ext
-  rw [IdeleGroup.coe_finiteProj, coe_finiteLocalNorm, ideleNorm_snd]
-  simp only [IdeleGroup.coe_finiteProj]
+  apply Units.ext
+  simpa only [IdeleGroup.coe_finiteProj, coe_finiteLocalNorm] using ideleNorm_snd y v
 
 theorem infiniteProj_ideleNorm (y : IdeleGroup L) (v : InfinitePlace K) :
     IdeleGroup.infiniteProj v (ideleNorm K L y) =
       infiniteLocalNorm L v (fun w ↦ IdeleGroup.infiniteProj (w : InfinitePlace L) y) := by
   classical
   apply Units.ext
-  rw [IdeleGroup.coe_infiniteProj, coe_infiniteLocalNorm, ideleNorm_fst]
-  simp only [IdeleGroup.coe_infiniteProj]
+  simpa only [IdeleGroup.coe_infiniteProj, coe_infiniteLocalNorm] using ideleNorm_fst y v
 
 theorem eventually_finiteProj_mem (y : IdeleGroup L) :
     ∀ᶠ w in cofinite,
@@ -89,20 +91,20 @@ theorem eventually_finiteProj_mem (y : IdeleGroup L) :
   rw [e]
   exact hw
 
+
 omit [NumberField K] [NumberField L] in
 variable (K) in
-
 theorem eventually_forall_placesOver {P : HeightOneSpectrum (𝓞 L) → Prop}
     (h : ∀ᶠ w in cofinite, P w) :
     ∀ᶠ v : HeightOneSpectrum (𝓞 K) in cofinite, ∀ w : PlacesOver L v, P w.1 := by
   rw [eventually_cofinite] at h ⊢
-  refine (h.image (below K)).subset fun v hv ↦ ?_
+  refine (h.image (below (K := K))).subset fun v hv ↦ ?_
   simp only [Set.mem_ofPred_eq, not_forall] at hv
   obtain ⟨w, hw⟩ := hv
-  exact ⟨w.1, hw, (below_eq_iff w.1 v).2 w.2⟩
+  exact ⟨w.1, hw, HeightOneSpectrum.ext w.2.over.symm⟩
+
 
 omit [NumberField K] in
-
 theorem placesOver_congr (yf : ∀ v : HeightOneSpectrum (𝓞 K),
       (w : PlacesOver L v) → (w.1.adicCompletion L)ˣ)
     {v v' : HeightOneSpectrum (𝓞 K)} (h : v' = v) (w : HeightOneSpectrum (𝓞 L))
@@ -111,8 +113,8 @@ theorem placesOver_congr (yf : ∀ v : HeightOneSpectrum (𝓞 K),
   subst h
   rfl
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 theorem infinitePlacesOver_congr (yi : ∀ v : InfinitePlace K,
       (w : v.placesOver L) → ((w : InfinitePlace L).Completion)ˣ)
     {v v' : InfinitePlace K} (h : v' = v) (w : InfinitePlace L)
@@ -124,13 +126,18 @@ theorem infinitePlacesOver_congr (yi : ∀ v : InfinitePlace K,
 def glue (yf : ∀ v : HeightOneSpectrum (𝓞 K), (w : PlacesOver L v) → (w.1.adicCompletion L)ˣ)
     (hyf : ∀ᶠ v in cofinite, yf v ∈ integerUnitsOver L v)
     (yi : ∀ v : InfinitePlace K, (w : v.placesOver L) → ((w : InfinitePlace L).Completion)ˣ) :
-    IdeleGroup L :=
-  (IdeleGroup.prodRestrictedEquiv L).symm
+    IdeleGroup L := by
+  have hbelow : Tendsto (below (K := K) (L := L)) cofinite cofinite := by
+    refine Filter.Tendsto.cofinite_of_finite_preimage_singleton fun v ↦ ?_
+    refine ((Set.finite_range (Subtype.val : PlacesOver L v → HeightOneSpectrum (𝓞 L))).subset
+      fun w hw ↦ ?_).to_subtype
+    exact ⟨⟨w, ⟨congrArg HeightOneSpectrum.asIdeal hw.symm⟩⟩, rfl⟩
+  exact (IdeleGroup.prodRestrictedEquiv L).symm
     (MulEquiv.piUnits.symm fun w : InfinitePlace L ↦
         yi (w.comap (algebraMap K L)) ⟨w, (inferInstance : w.LiesOver (w.comap (algebraMap K L)))⟩,
-      ⟨fun w ↦ yf (below K w) ⟨w, inferInstance⟩,
-        ((tendsto_below (K := K) (L := L)).eventually hyf).mono fun w hw ↦
-          mem_integerUnitsOver.1 hw ⟨w, inferInstance⟩⟩)
+      ⟨fun w ↦ yf (below (K := K) w) ⟨w, ⟨rfl⟩⟩,
+        (hbelow.eventually hyf).mono fun w hw ↦
+          mem_integerUnitsOver.1 hw ⟨w, ⟨rfl⟩⟩⟩)
 
 theorem glue_snd (yf : ∀ v : HeightOneSpectrum (𝓞 K),
       (w : PlacesOver L v) → (w.1.adicCompletion L)ˣ)
@@ -139,7 +146,7 @@ theorem glue_snd (yf : ∀ v : HeightOneSpectrum (𝓞 K),
     (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver L v) :
     ((glue yf hyf yi : 𝔸[L]).2 w.1) = (yf v w : w.1.adicCompletion L) := by
   rw [← IdeleGroup.prodRestrictedEquiv_apply_snd, glue, ContinuousMulEquiv.apply_symm_apply]
-  exact congrArg Units.val (placesOver_congr yf ((below_eq_iff w.1 v).2 w.2) w.1 w.2 _)
+  exact congrArg Units.val (placesOver_congr yf (HeightOneSpectrum.ext w.2.over.symm) w.1 w.2 _)
 
 theorem glue_fst (yf : ∀ v : HeightOneSpectrum (𝓞 K),
       (w : PlacesOver L v) → (w.1.adicCompletion L)ˣ)

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreDimGe
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreDimGe
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -58,7 +63,7 @@ theorem SegreDimGe.proof : SegreDimGe.Statement := by
     | C c =>
       rw [MvPolynomial.algHom_C]
       exact hR'B _ (R'.algebraMap_mem c)
-    | add p r hp hr => rw [map_add]; exact hp.add hr
+    | add p r hp hr => rw [map_add (f := _)]; exact hp.add hr
     | mul_X p v hp => rw [map_mul]; exact hp.mul (hgen v.1 (fun l _ => hall l) v.2)
   have : Algebra.IsAlgebraic B (MRing ι F ⧸ q) := ⟨hA⟩
   have htop : Algebra.trdeg R' (MRing ι F ⧸ q) ≤ #s := Algebra.IsAlgebraic.trdeg_le_cardinalMk R' s

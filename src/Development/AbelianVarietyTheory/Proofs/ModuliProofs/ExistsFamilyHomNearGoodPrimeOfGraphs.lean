@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SpMapCompRingHomComp
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SegreCoordinates
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsProjCoordRepresentationHomogeneousIdealFlaStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsoOfProjectiveCoordinateRepresentation
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionCoordinateVectorExistsLocallyStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSchemeMapOfProjectiveCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjProperRelAmpleOfProjectiveCoordinateRep
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjRepGraphSegreCoordinatesFibreStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAwayProjectiveFormsThroughPoints
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoFibreOfPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SpMapCompRingHomComp
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SegreCoordinates
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsProjCoordRepresentationHomogeneousIdealFlaStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsoOfProjectiveCoordinateRepresentation
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionCoordinateVectorExistsLocallyStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSchemeMapOfProjectiveCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjProperRelAmpleOfProjectiveCoordinateRep
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjRepGraphSegreCoordinatesFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAwayProjectiveFormsThroughPoints
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoFibreOfPullback
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -24,8 +29,8 @@ noncomputable section
 namespace GlobalTheory.ZM.LocalGraph
 open GlobalTheory.ZM.SegreCoord GlobalTheory.AbLaw.Segre
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem homogeneousComponent_mem_vanIdeal {R σ Hh : Type} [CommRing R] (d : ℕ) (p : Hh → σ → R)
     (F : MvPolynomial σ R) (hF : F ∈ vanIdeal d p) (e : ℕ) : homogeneousComponent e F ∈ vanIdeal d p := by
   classical
@@ -36,8 +41,8 @@ theorem homogeneousComponent_mem_vanIdeal {R σ Hh : Type} [CommRing R] (d : ℕ
   rwa [show ((DirectSum.decompose (homogeneousSubmodule σ R) F e : homogeneousSubmodule σ R e) : MvPolynomial σ R)
     = homogeneousComponent e F from MvPolynomial.decomposition.decompose'_apply F e] at this
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem eval₂_eq_zero_of_forms_le {K σ : Type} [CommRing K] {I J : Ideal (MvPolynomial σ K)} {d : ℕ}
     (hI : ∀ F ∈ I, ∀ e, homogeneousComponent e F ∈ I)
     (hle : ∀ e ≥ d, ∀ F : MvPolynomial σ K, F.IsHomogeneous e → F ∈ I → F ∈ J)
@@ -62,8 +67,8 @@ theorem eval₂_eq_zero_of_forms_le {K σ : Type} [CommRing K] {I J : Ideal (MvP
   rw [← sum_homogeneousComponent F, eval₂_sum]
   exact Finset.sum_eq_zero fun e _ => key e
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem mem_of_forall_map_mem {S σ : Type} [CommRing S] (J : Ideal (MvPolynomial σ S)) (e : ℕ)
     (hJ : ∀ F ∈ J, homogeneousComponent e F ∈ J)
     (hp : Module.Projective S (↥(homogeneousSubmodule σ S e) ⧸
@@ -90,7 +95,7 @@ theorem mem_of_forall_map_mem {S σ : Type} [CommRing S] (J : Ideal (MvPolynomia
       have h2 : (monomial m c : MvPolynomial σ S) = c • monomial m 1 := by simp [smul_monomial]
       rw [map_monomial, h1, map_smul, h2, map_smul, map_smul, smul_eq_mul, smul_eq_mul, map_mul]
       simp only [Λ, Module.Basis.constr_basis]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
   have key : ∀ G ∈ J.map (map x), ∀ H, Λ (H * G) = 0 := by
     intro G hG
     induction hG using Submodule.span_induction with
@@ -102,9 +107,9 @@ theorem mem_of_forall_map_mem {S σ : Type} [CommRing S] (J : Ideal (MvPolynomia
         have h1 : (monomial m c : MvPolynomial σ K) = c • map x (monomial m 1) := by simp [smul_monomial]
         rw [h1, smul_mul_assoc, map_smul, ← map_mul, hΛ, (hπ _).2 (hJ _ (J.mul_mem_left _ hG))]
         simp
-      | add p q hp hq => rw [add_mul, map_add, hp, hq, add_zero]
+      | add p q hp hq => rw [add_mul, map_add (f := _), hp, hq, add_zero]
     | zero => simp
-    | add p q _ _ hp hq => intro H; rw [mul_add, map_add, hp, hq, add_zero]
+    | add p q _ _ hp hq => intro H; rw [mul_add, map_add (f := _), hp, hq, add_zero]
     | smul c p _ hp => intro H; rw [smul_eq_mul, ← _root_.mul_assoc, hp]
   have := key _ hm 1
   rw [_root_.one_mul, hΛ] at this

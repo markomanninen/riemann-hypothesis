@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial
 
 namespace GlobalTheory.UnramSimpleGen
@@ -18,7 +23,7 @@ theorem not_mem_sq_of_derivative : ∀ (E E' : Type) [Field E] [NumberField E] [
   obtain ⟨k, hk⟩ := hdvd
   have hfd : aeval β (derivative f) = aeval β (derivative (minpoly (𝓞 E) β)) * aeval β k := by
     have h := congrArg (fun q => aeval β (derivative q)) hk
-    simp only [derivative_mul, map_add, map_mul, minpoly.aeval, zero_mul, add_zero] at h
+    simp only [derivative_mul, map_add (f := _), map_mul, minpoly.aeval, zero_mul, add_zero] at h
     rw [← h, derivative_map, aeval_map_algebraMap]
   have hnd : ¬ P.asIdeal ∣ differentIdeal (𝓞 E) (𝓞 E') := by
     intro h

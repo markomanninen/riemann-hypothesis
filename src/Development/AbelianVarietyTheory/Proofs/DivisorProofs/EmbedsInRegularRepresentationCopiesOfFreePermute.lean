@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.ArithmeticCylinders GlobalTheory.BadCount Module
 
 namespace GlobalTheory.BadCount
@@ -32,7 +37,7 @@ theorem embReg_of_free_permuted_summands : ∀ (K Γ V X : Type) [Field K] [Grou
           DirectSum.of_eq_of_ne (β := fun i => A i) y x a (Ne.symm hxy)]
         simp
     | add w₁ w₂ h₁ h₂ =>
-      rw [map_add, map_add, map_add, DirectSum.add_apply, Submodule.coe_add, h₁, h₂,
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), DirectSum.add_apply, Submodule.coe_add, h₁, h₂,
         DirectSum.add_apply, Submodule.coe_add, map_add]
   have hzero : ∀ v : V, (∀ x, comp x v = 0) → v = 0 := by
     intro v hv

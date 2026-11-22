@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRedDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupBaseChangeIsConnIsEtPerfectStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeSemilinearHomDualGroupsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeOfHomEqCompDualHomStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeCompStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeEqRigidifiedExtensionPullStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeAbsFrobeniusApplyFStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRedDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupBaseChangeIsConnIsEtPerfectStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeSemilinearHomDualGroupsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeOfHomEqCompDualHomStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeCompStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeEqRigidifiedExtensionPullStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleDieudonneTransposeAbsFrobeniusApplyFStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -54,7 +58,7 @@ theorem tr_add {k k' : Type} [Field k] [CharP k p] [PerfectRing k p] [Field k']
   obtain ⟨hb, lb, a1, b1⟩ := h1
   obtain ⟨_, mb, a2, b2⟩ := h2
   refine ⟨hb, lb + mb, fun x => ?_, fun y => ?_⟩
-  · rw [LinearMap.add_apply, a1, a2, LinearMap.add_apply, map_add]
+  · rw [LinearMap.add_apply, a1, a2, LinearMap.add_apply, map_add (f := _)]
   · rw [LinearMap.add_apply, b1, b2, LinearMap.add_apply]
 
 theorem tr_smul {k k' : Type} [Field k] [CharP k p] [PerfectRing k p] [Field k']

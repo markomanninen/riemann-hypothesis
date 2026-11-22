@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
+
+@[expose] public section
 
 open NumberField MeasureTheory Topology Matrix GlobalTheory.AutomorphicL2Unitary GlobalTheory.DiscreteSum GlobalTheory.OpTrace GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL
 
@@ -65,23 +69,28 @@ theorem integrable_pair [μ.IsMulRightInvariant] [LocallyCompactSpace G] [IsFini
   set C : ENNReal := eLpNorm u 2 (GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) * eLpNorm (descend Γ ψ) 2 (GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) with hC
   have hb : ∀ s, ∫⁻ q, ‖Function.uncurry (fun (s : ℝ) (q : GlobalTheory.AutomorphicL2Unitary.Quot Γ) => conj (u q) * ψ (sec Γ q * c s)) (s, q)‖ₑ
       ∂GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ ≤ C := fun s => by
-    have h1 := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm (μ := GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) (p := 2) (q := 2) (r := 1)
-      (Lp.aestronglyMeasurable u) (((hψ.mul_right (c s)).2).1) (fun a b => conj a * b) 1
+    have h1 := eLpNorm_le_eLpNorm_mul_eLpNorm (μ := GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) (p := 2) (q := 2) (r := 1)
+      (fun a b : ℂ => conj a * b) 1 (by fun_prop)
+      (Lp.aestronglyMeasurable u) ((hψ.mul_right (c s)).2.aestronglyMeasurable)
       (Filter.Eventually.of_forall fun q => by simp)
     have h2 : eLpNorm (descend Γ fun x => ψ (x * c s)) 2 (GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) = eLpNorm (descend Γ ψ) 2 (GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) := by
       have e : descend Γ (fun x => ψ (x * c s)) = descend Γ ψ ∘ rmul Γ (c s) := by
         funext q
         rw [descend_eq_sec (hψ.1.mul_right (c s)), ← sec_mul_eq hψ.1]
       rw [e]
-      exact eLpNorm_comp_measurePreserving hψ.2.1 (measurePreserving_rmul (c s))
-    rw [eLpNorm_one_eq_lintegral_enorm, h2] at h1
+      exact eLpNorm_comp_measurePreserving hψ.2.aestronglyMeasurable (measurePreserving_rmul (c s))
+    have hm₁ : AEStronglyMeasurable (fun q => conj (u q) * descend Γ (fun x => ψ (x * c s)) q)
+        (GlobalTheory.AutomorphicL2Unitary.quotMeasure Γ μ) :=
+      (Complex.continuous_conj.comp_aestronglyMeasurable (Lp.aestronglyMeasurable u)).mul
+        (hψ.mul_right (c s)).2.aestronglyMeasurable
+    rw [eLpNorm_one_eq_lintegral_eNorm hm₁, h2] at h1
     simp only [ENNReal.coe_one, one_mul] at h1
     refine le_trans (le_of_eq ?_) h1
     refine lintegral_congr fun q => ?_
     simp only [Function.uncurry, descend_eq_sec (hψ.1.mul_right (c s))]
   refine lt_of_le_of_lt (lintegral_mono hb) ?_
   rw [lintegral_const, Measure.restrict_apply_univ]
-  refine ENNReal.mul_lt_top (ENNReal.mul_lt_top (Lp.memLp u).2 hψ.2.2) ?_
+  refine ENNReal.mul_lt_top (ENNReal.mul_lt_top (Lp.memLp u) hψ.2) ?_
   simp [Set.uIoc, Real.volume_Ioc]
 
 variable [μ.IsMulRightInvariant] [LocallyCompactSpace G] [IsFiniteMeasureOnCompacts μ]

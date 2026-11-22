@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ExtendByIdentitySymmFixOrth
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ExtendByIdentitySymmFixOrth
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,12 @@ theorem isLattice_gmap_of_flag_isometry {T : D.host.E} (F0 : FlagG (VS D) D.R.rS
   refine ⟨?_, hLsub⟩
   obtain ⟨⟨hlat1, hgen1⟩, ⟨hL, hU, hLift, hConv⟩, hXS⟩ := hΛ
   obtain ⟨_, hloc, _, huni, _⟩ := isomAct (𝓞 D.host.E) D.host.E (VS D).V (VS D).hT σ hσ Λ
-  refine ⟨⟨isomAct_lattice σ Λ hlat1, fun p hp => ?_⟩,
+  have hfull : Submodule.IsFullLattice D.host.E (gmap σ Λ) := by
+    refine { toIsLattice := isomAct_lattice σ Λ hlat1.toIsLattice, span_eq_top := ?_ }
+    change Submodule.span D.host.E ((σ : (VS D).V →ₗ[D.host.E] (VS D).V) '' (Λ : Set (VS D).V)) = ⊤
+    rw [Submodule.span_image, hlat1.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+    exact σ.surjective
+  refine ⟨⟨hfull, fun p hp => ?_⟩,
     ⟨isomAct_lattice σ Λ hL, huni.2 hU, ⟨?_, hLift.2⟩, ?_, fun c hc => hConv.2 c ?_⟩, hXLam.trans hXS⟩
   · obtain ⟨g, hg, e⟩ := hgen1 p hp
     exact ⟨σ * g, (isom (VS D).hT).mul_mem hσ hg, by rw [gmap_mul, e, hloc p]⟩

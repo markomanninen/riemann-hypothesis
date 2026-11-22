@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOneTmulOfSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatOfForallFinsetSubsetFlatStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOneTmulOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatOfForallFinsetSubsetFlatStatement
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -12,27 +16,27 @@ theorem exists_strictHenselisation_of_henselian : ∀ (R : Type) [CommRing R] [H
   intro R _ _ Ω _ _ _
   have hflat : Module.Flat R (SH R Ω) := by
     refine GlobalTheory.T.flat_of_forall_finset_subset_flat_submodule R (SH R Ω) fun s => ?_
-    obtain ⟨E, hE⟩ := exists_ofA_finset s
-    let e := AlgEquiv.ofInjective (ofA R Ω E) (ofA_injective E)
+    obtain ⟨E, hE⟩ := StrictHensOfHens.exists_ofA_finset (R := R) (Ω := Ω) s
+    let e := AlgEquiv.ofInjective (ofA (R := R) (Ω := Ω) E) (ofA_injective E)
     haveI : Module.Flat R (Lift R Ω E) := Algebra.Smooth.flat _ _
-    refine ⟨Subalgebra.toSubmodule (ofA R Ω E).range, fun x hx => ?_,
+    refine ⟨Subalgebra.toSubmodule (ofA (R := R) (Ω := Ω) E).range, fun x hx => ?_,
       Module.Flat.of_linearEquiv e.symm.toLinearEquiv⟩
     obtain ⟨a, rfl⟩ := hE x hx
     exact ⟨a, rfl⟩
   refine ⟨SH R Ω, inferInstance, inferInstance, inferInstance, inferInstance,
     isSepClosed_residueField, hflat, map_maximalIdeal, ⟨resAlgEquiv⟩, Idx R Ω, inferInstance,
-    inferInstance, inferInstance, fun E => (ofA R Ω E).range, ?_, ?_, fun E => ?_⟩
+    inferInstance, inferInstance, fun E => (ofA (R := R) (Ω := Ω) E).range, ?_, ?_, fun E => ?_⟩
   · intro E F h x hx
     obtain ⟨a, rfl⟩ := hx
     exact ⟨trans R Ω E F h a, ofA_trans h a⟩
   · intro s
-    obtain ⟨E, a, rfl⟩ := exists_ofA s
+    obtain ⟨E, a, rfl⟩ := StrictHensOfHens.exists_ofA (R := R) (Ω := Ω) s
     exact ⟨E, a, rfl⟩
   · refine ⟨Lift R Ω E, inferInstance, inferInstance, inferInstance, maximalIdeal _, inferInstance, ⟨?_⟩⟩
     have hu : (maximalIdeal (Lift R Ω E)).primeCompl ≤ IsUnit.submonoid (Lift R Ω E) :=
       fun x hx => by simpa [IsUnit.mem_submonoid_iff, mem_maximalIdeal, mem_nonunits_iff] using hx
     exact ((IsLocalization.atUnits (Lift R Ω E) (maximalIdeal (Lift R Ω E)).primeCompl
       (S := Localization.AtPrime (maximalIdeal (Lift R Ω E))) hu).restrictScalars R).symm.trans
-      (AlgEquiv.ofInjective (ofA R Ω E) (ofA_injective E))
+      (AlgEquiv.ofInjective (ofA (R := R) (Ω := Ω) E) (ofA_injective E))
 
 end GlobalTheory

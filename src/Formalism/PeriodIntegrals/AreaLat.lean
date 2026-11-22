@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.LatDefs
+module
+
+public import Formalism.PeriodIntegrals.LatDefs
+
+@[expose] public section
 
 open Classical
 

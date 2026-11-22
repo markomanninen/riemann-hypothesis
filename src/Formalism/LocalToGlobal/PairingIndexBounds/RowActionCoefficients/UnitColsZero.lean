@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.CoefProd
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.CoefProd
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -13,11 +17,6 @@ def UnitCols : Prop :=
     ∃ (J : Fin l → Fin n) (ε : ℤ), Function.Injective J ∧ (∀ i q, J i ≠ I q) ∧ (ε = 1 ∨ ε = -1) ∧
       ∀ (A : Type) [CommRing A] (z : Fin n → ℕ → A),
         (catM l (unitM A I) z).det = (ε : A) * (Matrix.of fun i i' : Fin l => z (J i') i.val).det
-
-def UnitColsZero : Prop :=
-  ∀ (n l : ℕ), l ≤ n → ∀ I : Fin (n - l) → Fin n, ¬ Function.Injective I →
-    ∀ (A : Type) [CommRing A], (∀ z : Fin n → ℕ → A, (catM l (unitM A I) z).det = 0) ∧
-      initMinor A (n := n) I (Nat.sub_le n l) = 0
 
 def MinorZero : Prop :=
   ∀ (A : Type) [CommRing A] (r n s : ℕ) (hs : s ≤ n) (I : Fin s → Fin r), ¬ Function.Injective I → initMinor A I hs = 0

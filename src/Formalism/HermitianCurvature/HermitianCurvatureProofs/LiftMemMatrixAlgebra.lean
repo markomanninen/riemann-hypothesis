@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.CompositeFormulaLevelZero
+module
+
+public import Formalism.HermitianCurvature.CompositeFormulaLevelZero
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -141,7 +145,8 @@ theorem pr_fst_zero {V : Type} [AddCommGroup V] [Module ℂ V] : (0 : Pr V).1 = 
 theorem act_mul (M N : SlopeTestRemainingChoices S (Pr (RadSp k r z z' π π'))) (x : Ix S → RadSp k r z z' π π') :
     act (M * N) x = act M (act N x) := by
   funext a
-  simp only [act, Matrix.mul_apply, pr_fst_sum, pr_fst_mul, LinearMap.sum_apply, Module.End.mul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [act, Matrix.mul_apply, pr_fst_sum, pr_fst_mul, LinearMap.sum_apply, Module.End.mul_apply,
     map_sum]
   exact Finset.sum_comm
 
@@ -183,7 +188,7 @@ theorem pairAt_mulOp (μ : Measure (Mt k r)) (l : Fin r) (s : ℂ) (Wv : Module.
 theorem glue_succ_update (l : Fin r) (c : Fin r → ℂ) (t : ℂ) (c' : Cf r l.succ) :
     glue l.succ (Function.update c l t) c' l = t := by
   simp only [glue]
-  rw [dif_neg (by rw [Fin.val_succ]; omega)]
+  rw [dite_eq_right (by rw [Fin.val_succ]; omega)]
   simp
 
 theorem form_mulOp (μ : Measure (Mt k r)) (l : Fin r) (s : ℂ) (Wv Wv' : Module.End ℂ (RadSp k r z z' π π'))

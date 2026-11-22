@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.X
 
@@ -29,7 +33,7 @@ private theorem lev_kill {O : Type} [CommRing O] {Γ : Type} [Group Γ] [Topolog
   have hmem : (fun g => Lev.mk a (z g)) ∈ Z1 ρ := by
     rw [mem_Z1_iff_cocycle]
     refine ⟨hc, fun g h => ?_⟩
-    rw [hz, hρg, map_add, ← smul_eq_mul, map_smul]
+    rw [hz, hρg, map_add (f := _), ← smul_eq_mul, map_smul]
   let ζ : Z1 ρ := ⟨_, hmem⟩
   let q : H1 ρ := Submodule.Quotient.mk ζ
   have hpos : 0 < Nat.card (H1 ρ) := Nat.card_pos

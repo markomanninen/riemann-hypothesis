@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.IsPrecompleteOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.IsPrecompleteOfBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,8 +91,8 @@ theorem root_unique (f : W[X]) (hsep : (f.map v).Separable) {a b : W} (ha : f.ev
 
 end Hensel
 
-open ReciprocityTheory.ChartRestriction.G.Semi in
 
+open ReciprocityTheory.ChartRestriction.G.Semi in
 theorem exists_ring (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     [IsAdicComplete (maximalIdeal O) O] [Finite (ResidueField O)] (p : ℕ) [Fact p.Prime] [CharP (ResidueField O) p]
     {q f d : ℕ} (hq : Nat.card (ResidueField O) = q ^ 2) (hf : q = p ^ f) (hd : Odd d) (c : O →+* O)
@@ -242,8 +246,8 @@ theorem exists_ring (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRin
     omega
   · rw [← hvz, ← map_pow, hl, map_one]
   · have key : (⊤ : Submodule O W) ≤ Subalgebra.toSubmodule (Algebra.adjoin O {z}) := by
-      refine Submodule.le_of_le_smul_of_le_jacobson_bot (I := maximalIdeal O) Module.Finite.fg_top
-        (maximalIdeal_le_jacobson _) fun y _ => ?_
+      refine Submodule.le_of_le_smul_of_le_jacobson (I := maximalIdeal O) Module.Finite.fg_top
+        (by simpa only [Ideal.jacobson_bot] using maximalIdeal_le_jacobson (⊥ : Ideal O)) fun y _ => ?_
       have hm : ∀ t : W, v t = 0 → t ∈ (maximalIdeal O • ⊤ : Submodule O W) := fun t ht => by
         rw [Ideal.smul_top_eq_map, Submodule.restrictScalars_mem, ← hmax, ← hker]
         exact ht
@@ -290,7 +294,7 @@ theorem exists_unramified_ext : ∀ (K : UQ) (d : ℕ), Odd d → ∃ (K' : UQ) 
       map_one' := hi (by rw [← hc0]; simp)
       map_mul' := fun x y => hi (by rw [map_mul, ← hc0, ← hc0, ← hc0]; simp)
       map_zero' := hi (by rw [← hc0]; simp)
-      map_add' := fun x y => hi (by rw [map_add, ← hc0, ← hc0, ← hc0]; simp) }
+      map_add' := fun x y => hi (by rw [map_add (f := _), ← hc0, ← hc0, ← hc0]; simp) }
   have hc : ∀ x, K.c (algebraMap K.O K.E x) = algebraMap K.O K.E (c x) := hc0
   have hcc : ∀ x, c (c x) = x := fun x => hi (by rw [← hc, ← hc, K.c_c])
   let ce : K.O ≃+* K.O := RingEquiv.ofRingHom c c (RingHom.ext hcc) (RingHom.ext hcc)

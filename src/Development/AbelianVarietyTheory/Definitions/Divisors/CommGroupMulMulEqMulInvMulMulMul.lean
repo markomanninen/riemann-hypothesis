@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.DivSheaf
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsQuasiRegularSeqSelfIffLocalizationMaximal
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemSubPtsCutBaseChangeIff
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.DivSheaf
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsQuasiRegularSeqSelfIffLocalizationMaximal
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemSubPtsCutBaseChangeIff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -94,8 +98,8 @@ theorem germ_fun_smul (i : B.ι) (y : Y) (hy : y ∈ O) (hi : y ∈ B.U i) (a : 
   (map_mul (ger y (memInf hy hi)) (resG Y inf_le_left a) (f.loc i)).trans
     (congrArg (· * _) (ger_resG _ _ _ _))
 
-variable (p) in
 
+variable (p) in
 def const (y : Y) : k →+* Y.presheaf.stalk y := (ger (U := ⊤) y trivial).comp (algX p ⊤)
 
 theorem ger_algX (y : Y) (hy : y ∈ O) (c : k) : ger y hy (algX p O c) = const p y c := by
@@ -131,8 +135,8 @@ def restr (h : O' ≤ O) : H0 p B O →ₗ[k] H0 p B O' where
     (f : H0 p B O) : germ i y hy hi (restr h f) = germ i y (h hy) hi f :=
   ger_resG (inf_le_inf_right _ h) y _ _
 
-variable (p) in
 
+variable (p) in
 def ofSec (O : Y.Opens) : LB.Sec B →+ H0 p B O where
   toFun σ := LB.ofSec σ O
   map_zero' := sec_ext fun _ => map_zero _
@@ -352,11 +356,11 @@ theorem germ_mulFun (σ : H0 p P O) (f : H0 p B O) (t : C.τ) (y : Y) (hy : y �
 def mul : H0 p P O →ₗ[k] H0 p B O →ₗ[k] H0 p N O :=
   LinearMap.mk₂ k C.mulFun
     (fun σ σ' f => C.sec_ext fun t y hy ha hb hc => by
-      simp only [map_add, C.germ_mulFun _ _ t y hy ha hb hc, add_mul])
+      simp only [map_add (f := _), C.germ_mulFun _ _ t y hy ha hb hc, add_mul])
     (fun c σ f => C.sec_ext fun t y hy ha hb hc => by
       simp only [germ_smul, C.germ_mulFun _ _ t y hy ha hb hc, mul_assoc])
     (fun σ f f' => C.sec_ext fun t y hy ha hb hc => by
-      simp only [map_add, C.germ_mulFun _ _ t y hy ha hb hc, mul_add])
+      simp only [map_add (f := _), C.germ_mulFun _ _ t y hy ha hb hc, mul_add])
     (fun c σ f => C.sec_ext fun t y hy ha hb hc => by
       simp only [germ_smul, C.germ_mulFun _ _ t y hy ha hb hc, mul_left_comm])
 
@@ -516,18 +520,6 @@ abbrev powChart (hM : M.IsLB) (hL : L.IsLB) (h : n + m = l) :
   rule y _ _ e e' := by
     rw [tr_tw y e.2.2 e'.2.2, tr_tw y e.2.1 e'.2.1, tr_zpow L m y e.1 e'.1, ← h, zpow_add,
       ← mul_assoc, mul_comm]
-
-abbrev baseChart (hM : M.IsLB) (hL : L.IsLB) (m : ℤ) : ProdChart (lbZPow L m) M (tw M L m) where
-  isLB₁ := Twist.isLB_lbZPow hL m
-  isLB₂ := hM
-  isLB₃ := isLB_tw hM hL m
-  τ := M.ι × L.ι
-  a t _ := t.2
-  b t := t.1
-  c t := twIdx m t.1 t.2
-  cover y := let ⟨i, hi⟩ := exists_chart hM y; let ⟨j, hj⟩ := exists_chart hL y
-    ⟨(i, j), mem_zpow_U.2 hj, hi, mem_tw_U.2 ⟨hi, hj⟩⟩
-  rule y _ _ e e' := by rw [tr_tw y e.2.2 e'.2.2, tr_zpow L m y e.1 e'.1, mul_comm]
 
 abbrev adjChart (hM : M.IsLB) (hB : B.IsLB) (hL : L.IsLB) (h : n + d = l) :
     ProdChart (tw M L d) (tw B L n) (tw (tens M B) L l) where

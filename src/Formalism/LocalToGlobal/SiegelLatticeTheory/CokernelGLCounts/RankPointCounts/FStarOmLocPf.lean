@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarOmPart
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarOmPart
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem h_sub_left (x y z : V) : H.h (x - y) z = H.h x z - H.h y z := by
 
 theorem dl_last {r : ℕ} (f g : Fin (r + 1) → V) : H.Dl f g (r + 1) = (H.Zhat f g).det := by
   unfold Loc.HermSp.Dl
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   rfl
 
 theorem om_pair {r : ℕ} (f g : Fin (r + 1) → V) (a : Fin (r + 1)) :
@@ -126,7 +130,8 @@ theorem bcP_sp (G : Fin (D.R.rS + 1) → (VS D).V) {Ω : (VS D).V}
     (hΩ : Ω ∈ Submodule.span D.host.E (Set.range G)) :
     baseChange₂ D p Ω ∈ Submodule.span (D.s.atP p).Ep (Set.range (gL Zd p G)) := by
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun D.host.E).1 hΩ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun b _ => ?_
   rw [baseChange_smul₂]
   refine Submodule.smul_mem _ _ ?_
@@ -183,9 +188,11 @@ theorem descend {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (c : Fin D.R.rS → 
     intro x
     have e : ℓ x = ∑ i, (VS D).frame.repr x i * ℓ ((VS D).frame i) := by
       conv_lhs => rw [← (VS D).frame.sum_repr x]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun i _ => by rw [map_smul, smul_eq_mul]
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     simp only [Lp, LinearMap.coe_mk, AddHom.coe_mk, baseChange₂, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
     exact Finset.sum_congr rfl fun i _ => (map_mul _ _ _).symm
   have hℓe : ∀ i : Fin D.R.rS, ℓ (F0.fvec i.castSucc) = 0 := by
@@ -228,7 +235,7 @@ theorem sp_frameAct {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpac
   exact Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩)
 
 theorem admissibility_witness_inv_mul {D : Formalism.BasicNotions.D7} (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') : (admXi D Λ F F')⁻¹ * admXi D Λ F F' = 1 := by
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') : (admXi D Λ F F')⁻¹ * admXi D Λ F F' = 1 := by
   obtain ⟨h1, h2⟩ := admissibility_witness_unitriangular Λ F F'
   have hbt : (admXi D Λ F F').BlockTriangular id := fun i j hij => h1 i j hij
   have hdet : (admXi D Λ F F').det = 1 := by

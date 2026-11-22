@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PRadicalTorusModulusDet
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulusHaar
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsRadicalTorusModulus
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PRadicalTorusModulusDet
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulusHaar
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsRadicalTorusModulus
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -42,16 +46,17 @@ theorem map_eq_smul_of_coordinates {N V : Type*} [Group N] [TopologicalSpace N]
     funext x
     simp
   rw [e, ← Measure.map_map hφ hT, hC, Measure.map_smul, smul_comm]
+  all_goals fun_prop
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 theorem RadicalTorusModulus.proof (h : HermitianForm F E W) (v : Basis ι E W) :
     RadicalTorusModulus.Statement h v := by
   intro x₀ w₀ hp g α hga _ hgy μ _ f hf
   have : BorelSpace (unipRadical h v x₀) :=
-    Subtype.borelSpace (unipRadical h v x₀ : Set (archUnitary h v))
+    Subtype.borelSpace (fun x' => x' ∈ (unipRadical h v x₀ : Set (archUnitary h v)))
   set φ := heisHomeo (v := v) hp with hφ
   set lam : Measure (HeisCoord h v x₀ w₀) :=
     (Measure.addHaar : Measure (heisY h v x₀ w₀)).prod volume with hlam

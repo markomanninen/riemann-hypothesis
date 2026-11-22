@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxGrp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxAbs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.IsTopRingTens
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxGrp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxAbs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.IsTopRingTens
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,9 +97,9 @@ theorem sum_dite_lt {r : ℕ} (b : Fin (r + 1))
   rw [← hsplit]
   have h0 : ∀ i : {x // ¬ x ∈ {a : Fin (r + 1) | a < b}},
       (if h : (i : Fin (r + 1)) < b then c ⟨i, h⟩ else 0) • X i = 0 := fun i => by
-    rw [dif_neg (show ¬ ((i : Fin (r + 1)) < b) from i.2), zero_smul]
+    rw [dite_eq_right (show ¬ ((i : Fin (r + 1)) < b) from i.2), zero_smul]
   simp only [h0, Finset.sum_const_zero, add_zero]
-  exact Finset.sum_congr rfl fun i _ => by rw [dif_pos (show (i : Fin (r + 1)) < b from i.2)]
+  exact Finset.sum_congr rfl fun i _ => by rw [dite_eq_left (show (i : Fin (r + 1)) < b from i.2)]
 
 theorem ssub_frU {r : ℕ} (P : Frame E n r) {s : HA (Fv F v) σ J}
     (hs : s ∈ Ssub (Fv F v) σ J P) : ∃ u : UIdx r → Fv F v ⊗[F] E, ∀ b,
@@ -240,7 +244,7 @@ def phi (σ : E →ₐ[F] E) (J : Matrix (Fin n) (Fin n) E) (v : HeightOneSpectr
 theorem phi_spec {r g : ℕ} {P : Frame E n r} {x : HA (Fv F v) σ J}
     (h : ∃ u ∈ UO (E := E) v r, Cong σ J v Λ g P x u) :
     phi σ J v Λ g P x ∈ UO (E := E) v r ∧ Cong σ J v Λ g P x (phi σ J v Λ g P x) := by
-  unfold phi; rw [dif_pos h]; exact h.choose_spec
+  unfold phi; rw [dite_eq_left h]; exact h.choose_spec
 
 theorem sdE_inv (ψ : AddChar (AF F) ℂ) (v : HeightOneSpectrum (𝓞 F)) (ι : Type) [Fintype ι] :
     (sdE (E := E) ψ v ι).IsAddLeftInvariant := by

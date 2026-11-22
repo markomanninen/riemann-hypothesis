@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV GlobalTheory.HodgeCoh TensorProduct UpperTheory.Gal.G3
 open UpperTheory.Gal.Int.Geo (FEt Cover gen piece IsHEig)
@@ -11,7 +15,7 @@ private theorem exists_factor_ι {J : Type} {W : Scheme.{0}} (Ω : Type) [Field 
     (u : UpperTheory.Gal.G3.sp Ω ⟶ ∐ (fun _ : J => W)) :
     ∃ (j : J) (x : UpperTheory.Gal.G3.sp Ω ⟶ W), x ≫ Sigma.ι (fun _ : J => W) j = u := by
   haveI := sp_subsingleton Ω
-  have p : ↑(UpperTheory.Gal.G3.sp Ω) := show PrimeSpectrum Ω from ⟨⊥, Ideal.bot_prime⟩
+  have p : ↑(UpperTheory.Gal.G3.sp Ω) := show PrimeSpectrum Ω from ⟨⊥, Ideal.isPrime_bot⟩
   obtain ⟨⟨j, y⟩, hq⟩ : ∃ q, (sigmaMk (fun _ : J => W)).symm (u p) = q := ⟨_, rfl⟩
   have hy : Sigma.ι (fun _ : J => W) j y = u p := by
     rw [← sigmaMk_mk, ← hq, Homeomorph.apply_symm_apply]
@@ -26,7 +30,7 @@ private theorem index_eq_of_ι {J : Type} {W : Scheme.{0}} (Ω : Type) [Field Ω
     (h : x ≫ Sigma.ι (fun _ : J => W) j = x' ≫ Sigma.ι (fun _ : J => W) j') : j = j' := by
   by_contra hne
   have he := isEmpty_of_commSq_sigmaι_of_ne (g := fun _ : J => W) ⟨h⟩ hne
-  exact he.false (show PrimeSpectrum Ω from ⟨⊥, Ideal.bot_prime⟩)
+  exact he.false (show PrimeSpectrum Ω from ⟨⊥, Ideal.isPrime_bot⟩)
 
 theorem UpperTheory.Gal.G3.pPtsOfSplits :
     PtsOfSplits := by

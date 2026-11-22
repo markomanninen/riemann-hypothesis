@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpM
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpM
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Matrix

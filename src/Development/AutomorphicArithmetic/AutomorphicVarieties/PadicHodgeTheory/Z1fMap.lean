@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 theorem UpperTheory.V.Loc.z1fMap :
@@ -15,12 +20,12 @@ theorem UpperTheory.V.Loc.z1fMap :
   · obtain ⟨⟨hc, hcc⟩, x, hx⟩ := hc
     have hfc : Continuous f := IsModuleTopology.continuous_of_linearMap f
     refine ⟨⟨hfc.comp hc, fun g h => ?_⟩, LinearMap.rTensor (Bcr l) f x, fun g => ?_⟩
-    · simp only [hcc g h, map_add, hf]
+    · simp only [hcc g h, map_add (f := _), hf]
     · have key : ∀ y : V ⊗[ℚ_[l]] Bcr l, LinearMap.rTensor (Bcr l) f (actC φ ρ g y) =
           actC φ ρ' g (LinearMap.rTensor (Bcr l) f y) := by
         intro y
         induction y using TensorProduct.induction_on with
         | zero => simp
         | tmul a b => simp [actC, hf]
-        | add a b ha hb => simp only [map_add, ha, hb]
+        | add a b ha hb => simp only [map_add (f := _), ha, hb]
       rw [← key, ← map_sub, ← hx g, LinearMap.rTensor_tmul]

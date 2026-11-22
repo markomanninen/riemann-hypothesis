@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
+
+@[expose] public section
 
 open UpperHalfPlane hiding I
 open scoped Manifold ContDiff
@@ -42,7 +46,10 @@ private theorem archSm_eval_eq (k : ℕ) (f : ℍ → ℂ) (hf : MDiff f) (σ : 
     have hz : AnalyticAt ℂ (fun z : ℂ => z ^ (-1 : ℤ))
         ((x0 1 0 : ℂ) * (UpperHalfPlane.I : ℂ) + (x0 1 1 : ℂ)) :=
       (differentiableOn_zpow (-1 : ℤ) _ (by tauto)).analyticOnNhd isOpen_compl_singleton _ hc
-    exact (hz.contDiffAt.restrict_scalars ℝ).comp x0 hcd.contDiffAt
+    exact ContDiffAt.comp (g := fun z : ℂ => z ^ (-1 : ℤ))
+      (f := fun x : Fin 2 → Fin 2 → ℝ =>
+        (x 1 0 : ℂ) * (UpperHalfPlane.I : ℂ) + (x 1 1 : ℂ)) x0
+      (hz.contDiffAt.restrict_scalars ℝ) hcd.contDiffAt
   have hw : ContDiffAt ℝ ∞ (fun x : Fin 2 → Fin 2 → ℝ =>
       σ * (((x 0 0 : ℂ) * (UpperHalfPlane.I : ℂ) + (x 0 1 : ℂ)) /
         ((x 1 0 : ℂ) * (UpperHalfPlane.I : ℂ) + (x 1 1 : ℂ)))) x0 := by

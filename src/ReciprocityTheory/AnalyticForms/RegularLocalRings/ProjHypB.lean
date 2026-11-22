@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjHypA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjHypA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.RelNormPfAff
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.RelNormPfAff
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry

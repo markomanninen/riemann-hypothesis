@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.UniformContinuousConstSMulOfIsIsometricSMul
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.ExistsFactorialMulEqPow
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRhamMap
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Action
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.UniformContinuousConstSMulOfIsIsometricSMul
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.ExistsFactorialMulEqPow
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRhamMap
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Action
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,10 +33,6 @@ abbrev Acris (l : ℕ) [Fact (Nat.Prime l)] : Type := Reformulated.AutPerF.Acris
 abbrev Bcris (l : ℕ) [Fact (Nat.Prime l)] : Type := Reformulated.AutPerF.Bcris l (PadicComplexInt l)
 
 abbrev Gq (l : ℕ) [Fact (Nat.Prime l)] : Type := PadicAlgCl l ≃ₐ[ℚ_[l]] PadicAlgCl l
-
-def pcMap (l : ℕ) {A B : Type*} [CommRing A] [CommRing B] (f : A →+* B) :
-    AdicCompletion (span {(l : A)}) A →+* AdicCompletion (span {(l : B)}) B :=
-  adicMap _ _ f (span_natCast_le_comap l f)
 
 def zP (l : ℕ) [Fact (Nat.Prime l)] : ℤ_[l] →+* AinfP l := algebraMap ℤ_[l] (AinfP l)
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigRank
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigRank
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -65,13 +70,16 @@ theorem eigRank_cast_eq_trace {O R k : Type} [CommRing O] [CommRing R] [Field k]
     intro c hc
     have : Pb = ∑ i, φ (f i) • (A (b i)).map φ := by
       ext i j
-      simp [Pb, hPdef, Matrix.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Pb, hPdef, Matrix.sum_apply, map_sum]
     rw [this, Matrix.vecMul_sum]
-    simp_rw [Matrix.vecMul_smul, hc _, smul_smul, ← Finset.sum_smul, ← map_mul, ← map_sum, h1, map_one, one_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp_rw [Matrix.vecMul_smul, hc _, smul_smul, ← Finset.sum_smul, ← map_mul, ← map_sum, h1, map_one, one_smul]
   have hPbPb : Pb * Pb = Pb := by rw [← Matrix.map_mul, hPP]
   unfold eigRank
   rw [eigSp_eq_range _ _ Pb hPbA hfix, finrank_range_eq_trace Pb hPbPb]
-  simp [Pb, Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Pb, Matrix.trace, map_sum]
 
 theorem isOpen_eigRank_eq_of_datum {O R K : Type} [CommRing O] [CommRing R] [Field K] [CharZero K] (j : K →+* R)
     {n : ℕ} (A : O → Matrix (Fin n) (Fin n) R) (hmul : ∀ a b, A (a * b) = A a * A b) (χ : O → R)
@@ -128,7 +136,8 @@ theorem exists_datum {E : Type} [Field E] [NumberField E] (F : IntermediateField
   have hrep : ∀ (y : E) i, bE.repr y i = Algebra.trace ℚ E (y * d i) := by
     intro y i
     conv_rhs => rw [← bE.sum_repr y]
-    rw [Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum]
     simp_rw [smul_mul_assoc, map_smul, hdr, smul_eq_mul, mul_ite, _root_.mul_one]
     simp
   have hdrep : ∀ y : E, y = ∑ i, Algebra.trace ℚ E (y * bE i) • d i := by
@@ -138,7 +147,8 @@ theorem exists_datum {E : Type} [Field E] [NumberField E] (F : IntermediateField
   have hA : ∑ i, d i * bE i = 1 := by
     rw [← sub_eq_zero]
     refine hnd.1 _ fun y => ?_
-    rw [Algebra.traceForm_apply, sub_mul, map_sub, _root_.one_mul, Finset.sum_mul, map_sum, sub_eq_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Algebra.traceForm_apply, sub_mul, map_sub, _root_.one_mul, Finset.sum_mul, map_sum, sub_eq_zero,
       Algebra.trace_eq_matrix_trace bE y, Matrix.trace]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul, hrep]
@@ -160,7 +170,8 @@ theorem exists_datum {E : Type} [Field E] [NumberField E] (F : IntermediateField
     conv_lhs => rw [← bO.sum_repr x]
     exact (map_sum Aa _ _).trans (Finset.sum_congr rfl fun j _ => map_zsmul Aa _ _)
   refine ⟨_, inferInstance, fun i => g (d i), bO, ?_, ?_⟩
-  · simp_rw [hg, ← map_mul, ← map_sum, ← hbE, hA, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp_rw [hg, ← map_mul, ← map_sum, ← hbE, hA, map_one]
   · intro a
     calc ∑ i, g (d i) • A (a * bO i)
         = ∑ i, ∑ j, (g (d i) * ((bO.repr (a * bO i) j : ℤ) : R)) • A (bO j) := by
@@ -174,7 +185,8 @@ theorem exists_datum {E : Type} [Field E] [NumberField E] (F : IntermediateField
       _ = ∑ j, (embR F hF iF τ a * g (d j)) • A (bO j) := by
           refine Finset.sum_congr rfl fun j _ => ?_
           congr 1
-          rw [hg, ← map_mul, ← hB a j, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [hg, ← map_mul, ← hB a j, map_sum]
           refine Finset.sum_congr rfl fun i _ => ?_
           rw [map_mul g, map_intCast g, _root_.mul_comm]
       _ = _ := by

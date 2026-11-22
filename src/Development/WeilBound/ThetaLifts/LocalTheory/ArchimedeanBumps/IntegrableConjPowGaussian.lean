@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ExistsDensity
-import GroundTheory.GlobalFields.TateThesis.GaussianComplexFourier
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ExistsDensity
+public import GroundTheory.GlobalFields.TateThesis.GaussianComplexFourier
+
+@[expose] public section
 
 noncomputable section
 

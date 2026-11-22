@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairOperatorCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMemOfKappa
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairOperatorCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMemOfKappa
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TLB
 
@@ -55,14 +59,14 @@ theorem rma_pref_take (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (Y : ℂ)
   | 0 => by simp [Formalism.FourierDecayAlt.P.JCx2.rma_pref]
   | n + 1 => by
     by_cases h : n < r
-    · rw [Formalism.FourierDecayAlt.P.JCx2.rma_pref, dif_pos h, rma_pref_take L Y n, List.take_add_one, List.reverse_append,
+    · rw [Formalism.FourierDecayAlt.P.JCx2.rma_pref, dite_eq_left h, rma_pref_take L Y n, List.take_add_one, List.reverse_append,
         List.prod_append]
       have e : (List.ofFn (L.Tl Y))[n]? = some (L.Tl Y ⟨n, h⟩) := by simp [h]
       rw [e]
       simp only [Option.toList_some, List.reverse_cons, List.reverse_nil, List.nil_append, List.prod_cons,
         List.prod_nil, mul_one]
       congr 1
-    · rw [Formalism.FourierDecayAlt.P.JCx2.rma_pref, dif_neg h, rma_pref_take L Y n, List.take_of_length_le (by simp; omega),
+    · rw [Formalism.FourierDecayAlt.P.JCx2.rma_pref, dite_eq_right h, rma_pref_take L Y n, List.take_of_length_le (by simp; omega),
         List.take_of_length_le (by simp; omega)]
 
 theorem tprod_zero_eq (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (Y : ℂ) : tprod L Y 0 = L.Tprod Y := by

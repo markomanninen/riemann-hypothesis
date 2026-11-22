@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.JInjCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DetAlg
-import Formalism.LocalToGlobal.ProjectiveLattices.AlgebraMapCAt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.JInjCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DetAlg
+public import Formalism.LocalToGlobal.ProjectiveLattices.AlgebraMapCAt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
 
@@ -16,7 +20,7 @@ theorem evalAt_eq_of (hWD : EvalWD pts mapR) (f : Rules pts) (hf : IsNatural pts
     (h : mapR φ y w) : evalAt pts mapR f w = φ (f p y) := by
   have hT : FromTest pts mapR w := ⟨p, φ, y, h⟩
   unfold evalAt
-  rw [dif_pos hT]
+  rw [dite_eq_left hT]
   exact hWD f hf S _ p _ φ _ y w hT.choose_spec.choose_spec.choose_spec h
 
 theorem indep_of_complex [Algebra K ℂ] (hWD : EvalWD pts mapR)
@@ -31,7 +35,11 @@ theorem indep_of_complex [Algebra K ℂ] (hWD : EvalWD pts mapR)
   haveI : Normal K F := IsAlgClosure.normal K F
   haveI : Algebra.IsSeparable K F := IsAlgClosure.separable K F
   haveI : IsGalois K F := ⟨⟩
-  let ι : F →ₐ[K] ℂ := IsAlgClosed.lift
+  let ι : F →ₐ[K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let Pt := Σ p : TRing K, pts p.R × (p.R →ₐ[K] F)
   let v : Rules pts →ₗ[K] (Pt → F) :=
     { toFun := fun f q => q.2.2 (f q.1 q.2.1)
@@ -58,7 +66,11 @@ theorem indep_of_complex [Algebra K ℂ] (hWD : EvalWD pts mapR)
     funext p y
     apply detAlg_holds K p.n p.I p.3 (f p y)
     intro L _ _ _ φ
-    let e : L →ₐ[K] F := IsAlgClosed.lift
+    let e : L →ₐ[K] F := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     have h1 : e (φ (f p y)) = 0 := congrFun hf0 ⟨p, y, e.comp φ⟩
     exact e.toRingHom.injective (h1.trans (map_zero e).symm)
   have hli := indepDescent_holds K F ι.toRingHom (Rules pts) Pt v act hbij heq hinj n b hb

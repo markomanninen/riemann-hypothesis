@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSubstitutionIdentitiesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HoweSpanFamiliesOfPlacesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSubstitutionIdentitiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HoweSpanFamiliesOfPlacesStatement
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions Formalism.L2.Forms Formalism.L2.Ker GlobalTheory.KJInf MeasureTheory
 open scoped TensorProduct
 
@@ -15,7 +20,7 @@ theorem eval_bounded_on_box {σ : Type} (p : MvPolynomial σ ℂ) (M : σ → �
   | add p q hp hq =>
     obtain ⟨B1, h1, hB1⟩ := hp; obtain ⟨B2, h2, hB2⟩ := hq
     exact ⟨B1 + B2, by positivity, fun x hx => by
-      rw [map_add]; exact (norm_add_le _ _).trans (add_le_add (hB1 x hx) (hB2 x hx))⟩
+      rw [map_add (f := _)]; exact (norm_add_le _ _).trans (add_le_add (hB1 x hx) (hB2 x hx))⟩
   | mul_X p n hp =>
     obtain ⟨B, h0, hB⟩ := hp
     refine ⟨B * max (M n) 0, by positivity, fun x hx => ?_⟩
@@ -33,7 +38,8 @@ theorem mvZ_one_eq_map_univSubst {ι : Type} [Fintype ι] {a b : ℕ} (g : ι �
         (aeval (fun v => ∑ j, C (X (v.1, v.2.2, j)) * X (v.1, v.2.1, j))) := by
     apply MvPolynomial.algHom_ext
     intro v
-    simp only [mvZ, aeval_X, AlgHom.comp_apply, Matrix.one_apply, ite_mul, one_mul, zero_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [mvZ, aeval_X, AlgHom.comp_apply, Matrix.one_apply, ite_mul, one_mul, zero_mul,
       apply_ite C, C_0, map_sum, map_mul, mapAlgHom_apply, map_C, map_X]
     rw [Finset.sum_comm]
     simp [Finset.sum_ite_eq', coe_aeval_eq_eval]
@@ -41,11 +47,12 @@ theorem mvZ_one_eq_map_univSubst {ι : Type} [Fintype ι] {a b : ℕ} (g : ι �
   rw [h]; rfl
 
 theorem linear_eq_sum_coeff {σ : Type} (Λ : MvPolynomial σ ℂ →ₗ[ℂ] ℂ) (S : Finset (σ →₀ ℕ)) (p : MvPolynomial σ ℂ)
-    (hp : p.support ⊆ S) : Λ p = ∑ m ∈ S, coeff m p * Λ (monomial m 1) := by
+    (hp : p.support ⊆ S) : Λ p = ∑ m ∈ S, AddMonoidAlgebra.coeff p m * Λ (monomial m 1) := by
   conv_lhs => rw [p.as_sum]
-  rw [map_sum, Finset.sum_subset hp]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_subset hp]
   · refine Finset.sum_congr rfl fun m _ => ?_
-    rw [show monomial m (coeff m p) = coeff m p • monomial m (1 : ℂ) by rw [smul_monomial, smul_eq_mul, mul_one], map_smul, smul_eq_mul]
+    rw [show monomial m (AddMonoidAlgebra.coeff p m) = AddMonoidAlgebra.coeff p m • monomial m (1 : ℂ) by rw [smul_monomial, smul_eq_mul, mul_one], map_smul, smul_eq_mul]
   · intro m _ hm
     simp [notMem_support_iff.mp hm]
 
@@ -92,7 +99,7 @@ theorem avg_span : ∀ (ι : Type) [Fintype ι] (a b : ℕ) (hab : a ≤ b), 0 <
   obtain ⟨-, hcomp, -, -, -, hev, -, -⟩ := GlobalTheory.T.fockSubstitution_identities ι a b hab
   let S := (univSubst P).support
   let c : (ι × Fin b × Fin a →₀ ℕ) → K → ℂ := fun m k =>
-    eval (fun w => r k⁻¹ w.1 w.2.1 w.2.2) (coeff m (univSubst P))
+    eval (fun w => r k⁻¹ w.1 w.2.1 w.2.2) (AddMonoidAlgebra.coeff (univSubst P) m)
   have hΛ : ∀ (Λ : FP ι a b →ₗ[ℂ] ℂ) k, Λ (mvZ (fun τ => r k⁻¹ τ) (fun _ => 1) P) =
       ∑ m ∈ S, c m k * Λ (monomial m 1) := by
     intro Λ k
@@ -106,7 +113,7 @@ theorem avg_span : ∀ (ι : Type) [Fintype ι] (a b : ℕ) (hab : a ≤ b), 0 <
       map_add' := fun F G => by
         have e : ∀ k, c m k * evalAt (fun τ => r k τ * y τ) (F + G) =
             c m k * evalAt (fun τ => r k τ * y τ) F + c m k * evalAt (fun τ => r k τ * y τ) G := by
-          intro k; simp only [evalAt, map_add, mul_add]
+          intro k; simp only [evalAt, map_add (f := _), mul_add]
         simp only [e]
         exact integral_add (hint m F) (hint m G)
       map_smul' := fun t F => by
@@ -123,8 +130,9 @@ theorem avg_span : ∀ (ι : Type) [Fintype ι] (a b : ℕ) (hab : a ≤ b), 0 <
         ∑ m ∈ S, c m k * evalAt (fun τ => r k τ * y τ) F * Λ (monomial m 1) := by
       intro k; rw [hΛ, Finset.sum_mul]; exact Finset.sum_congr rfl fun _ _ => by ring
     simp only [e]
-    rw [integral_finset_sum _ (fun m _ => (hint m F).mul_const _)]
-    simp only [Q, LinearMap.sum_apply, LinearMap.smulRight_apply, map_sum, map_smul, smul_eq_mul]
+    rw [integral_finsetSum _ (fun m _ => (hint m F).mul_const _)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Q, LinearMap.sum_apply, LinearMap.smulRight_apply, map_sum, map_smul, smul_eq_mul]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [integral_mul_const]; rfl
   have heq : ∀ u, IsUni u → ∀ F ∈ Vn lam n, Q (lft u F) = mvZ u (fun _ => 1) (Q F) := by
@@ -146,7 +154,8 @@ theorem avg_span : ∀ (ι : Type) [Fintype ι] (a b : ℕ) (hab : a ≤ b), 0 <
   obtain ⟨m, y', s, hinv, hspan⟩ := GlobalTheory.T.howeSpan_families_of_places ι a b hab ha lam n Q heq
   refine ⟨m, y', s, hinv, fun F hF Λ => ?_⟩
   simp_rw [ontoUni_inv hr]
-  rw [← hQ, hspan F hF, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hQ, hspan F hF, map_sum]
   simp [map_smul]
 
 end GlobalTheory.KJAvg

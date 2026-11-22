@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL4.LowerSlopeInequalityFamily
-import Formalism.LocalToGlobal.Columns.BrzoPairAtZeroRight
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.LowerSlopeInequalityFamily
+public import Formalism.LocalToGlobal.Columns.BrzoPairAtZeroRight
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -17,8 +21,8 @@ section Orth
 
 variable {D : D7} {u : D.what₂.Word} (CV : ColVal D u)
 
-open Classical in
 
+open Classical in
 def prjC (c : (D.mem u).C.cls 0) : ((D.fm u).lat 0).V →ₗ[D.what₂.LL] ((D.fm u).lat 0).V :=
   ((coE CV (hTV0 D u)).symm : ((D.mem u).C.cls 0 → VV D.what₂.LL ((D.fm u).lam 0)) →ₗ[D.what₂.LL] ((D.fm u).lat 0).V) ∘ₗ
     (LinearMap.single D.what₂.LL (fun _ : (D.mem u).C.cls 0 => VV D.what₂.LL ((D.fm u).lam 0)) c ∘ₗ
@@ -50,7 +54,8 @@ private theorem coE_prjC_of_ne_eq_zero (c c' : (D.mem u).C.cls 0) (x : ((D.fm u)
 theorem prjC_sum (x : ((D.fm u).lat 0).V) : ∑ c, prjC CV c x = x := by
   apply (coE CV (hTV0 D u)).injective
   funext c'
-  rw [map_sum, Finset.sum_apply, Finset.sum_eq_single c']
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply, Finset.sum_eq_single c']
   · exact coE_prjC_self CV c' x
   · intro b _ hb
     exact coE_prjC_of_ne_eq_zero CV b c' x (Ne.symm hb)
@@ -202,15 +207,6 @@ theorem slopeMaxGiven_of_class (D : D7) (h : SlopeMaxClass D) : SlopeMaxGiven D 
   intro u CV hs
   obtain ⟨c, hc⟩ := muMax_le_class CV
   exact hc.trans (h u CV c (hs c))
-
-theorem third_proposition_of_class (h : ∀ D, SlopeMaxClass D) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : ConclusionF6 Fm :=
-  family_third_bound_of_max_slope Fm ⟨0, fun x _ _ i => slopeMaxGiven_of_class _ (h _)⟩
-
-theorem Link6F_of_class (h : ∀ D, SlopeMaxClass D) : Link6F :=
-  fun _ Fm _ _ _ => third_proposition_of_class h Fm
-
-theorem packet_of_slope_max_class (h : ∀ D, SlopeMaxClass D) : KudlaFamilyOfMinkowskiTransference :=
-  packet_of_third_proposition (Link6F_of_class h)
 
 end Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 

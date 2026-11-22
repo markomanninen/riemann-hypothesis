@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,16 +19,6 @@ def reImCoord (g : ℕ) : (Fin g → ℂ) ≃ₗ[ℝ] (Fin g ⊕ Fin g → ℝ) 
   map_smul' c z := by ext (i | i) <;> simp
   left_inv z := rfl
   right_inv p := by ext (i | i) <;> rfl
-
-@[simp] theorem reImCoord_inl {g : ℕ} (z : Fin g → ℂ) (i : Fin g) : reImCoord g z (Sum.inl i) = (z i).re := rfl
-
-@[simp] theorem reImCoord_inr {g : ℕ} (z : Fin g → ℂ) (i : Fin g) : reImCoord g z (Sum.inr i) = (z i).im := rfl
-
-@[simp] theorem reImCoord_symm_re {g : ℕ} (p : Fin g ⊕ Fin g → ℝ) (i : Fin g) :
-    ((reImCoord g).symm p i).re = p (Sum.inl i) := rfl
-
-@[simp] theorem reImCoord_symm_im {g : ℕ} (p : Fin g ⊕ Fin g → ℝ) (i : Fin g) :
-    ((reImCoord g).symm p i).im = p (Sum.inr i) := rfl
 
 theorem volume_fundamentalDomain_reImCoord (g : ℕ) :
     volume (ZSpan.fundamentalDomain (Module.Basis.ofEquivFun (reImCoord g))) = 1 := by
@@ -53,8 +47,13 @@ theorem det_periodMap {g : ℕ} (τ : Matrix (Fin g) (Fin g) ℂ) :
 theorem periodMap_apply {g : ℕ} (τ : Matrix (Fin g) (Fin g) ℂ) (z : Fin g → ℂ) :
     periodMap τ z = (fun i => ((z i).re : ℂ)) + τ.mulVec (fun i => ((z i).im : ℂ)) := by
   ext i
-  apply Complex.ext <;>
-    simp [periodMap, Matrix.mulVec, dotProduct, Matrix.one_apply]
+  apply Complex.ext
+  · change (Matrix.fromBlocks 1 (τ.map Complex.re) 0 (τ.map Complex.im)).mulVec
+      (Sum.elim (fun j => (z j).re) (fun j => (z j).im)) (Sum.inl i) = _
+    simp [Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Matrix.one_apply]
+  · change (Matrix.fromBlocks 1 (τ.map Complex.re) 0 (τ.map Complex.im)).mulVec
+      (Sum.elim (fun j => (z j).re) (fun j => (z j).im)) (Sum.inr i) = _
+    simp [Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Matrix.one_apply]
 
 end GlobalTheory.PeriodVol
 

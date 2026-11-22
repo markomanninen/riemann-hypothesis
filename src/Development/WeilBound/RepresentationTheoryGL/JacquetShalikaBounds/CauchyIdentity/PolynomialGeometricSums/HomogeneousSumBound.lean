@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem jt_le (hG : HGen) {m m' : ℕ} (α : Fin m → ℂ) (A : ℝ) (hA : 0 < 
     have hs : ‖((Equiv.Perm.sign σ : ℤ) : ℂ)‖ = 1 := by
       rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h]
     rw [hs, one_mul]
-    exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => by
+    exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => by
       simpa [Matrix.of_apply] using entry_le hG α A hA hα l (σ i) i
   refine (Finset.sum_le_sum fun σ _ => h1 σ).trans (le_of_eq ?_)
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_perm, Fintype.card_fin, nsmul_eq_mul]

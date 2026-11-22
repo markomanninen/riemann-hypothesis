@@ -1,7 +1,11 @@
-import Formalism.RealPlaceAnalysis.SmoothVectorGrowthBound
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
-import Formalism.RealPlaceAnalysis.StatementD
+module
+
+public import Formalism.RealPlaceAnalysis.SmoothVectorGrowthBound
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+public import Formalism.RealPlaceAnalysis.StatementA
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ContDiff InnerProductSpace
@@ -12,8 +16,8 @@ namespace Formalism.REAL
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
+open scoped Classical in
 open Classical in
-
 def expG {n : ℕ} (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) (t : ℝ) : UJ ε :=
   if h : inG ε X then
     ⟨(Matrix.isUnit_exp ((t : ℂ) • X)).unit, exp_indefinite_unitary_holds n ε X h t⟩
@@ -21,7 +25,7 @@ def expG {n : ℕ} (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) (t : �
 
 lemma toM_expG {n : ℕ} (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) (t : ℝ) (h : inG ε X) :
     toM (expG ε X t) = NormedSpace.exp ((t : ℂ) • X) := by
-  rw [expG, dif_pos h]
+  rw [expG, dite_eq_left h]
   exact IsUnit.unit_spec _
 
 lemma Kset_mul {n : ℕ} (ε : Fin n → Bool) {g h : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ Kset ε)
@@ -100,8 +104,9 @@ lemma inK_smul_real {n : ℕ} (ε : Fin n → Bool) {Z : Matrix (Fin n) (Fin n) 
     rw [Matrix.conjTranspose_smul, hs, Matrix.smul_mul, Matrix.mul_smul, ← smul_add, hG, smul_zero]
   · rw [Matrix.smul_mul, Matrix.mul_smul, hJ]
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def expK {n : ℕ} (ε : Fin n → Bool) (Z : Matrix (Fin n) (Fin n) ℂ) (t : ℝ) : KG ε :=
   if h : inK ε Z then
     ⟨expG ε Z t, by
@@ -139,19 +144,6 @@ def KByParts : Prop :=
     (∀ k : KG ε, HasDerivAt (fun t : ℝ => F (k * expK ε Z t)) (D k) 0) →
     ∫ k, D k ∂(muK ε) = 0
 
-def LamDom : Prop :=
-  ∀ (n : ℕ) (ε : Fin n → Bool) (lam : Fin n → ℝ), StrictAnti lam →
-    (∀ a, ∃ z : ℤ, lam a - rhoS n a = z) →
-    (∀ a, ∃ z : ℤ, lam a + rhoN ε a - rhoC ε a = z) ∧
-    (∀ a, ∃ z : ℤ, lam a + rhoS n a = z) ∧
-    ∀ a b : Fin n, a < b → ε a = ε b →
-      lam b + rhoN ε b - rhoC ε b ≤ lam a + rhoN ε a - rhoC ε a
-
-def EabConj : Prop :=
-  ∀ (n : ℕ) (ε : Fin n → Bool) (f : Matrix (Fin n) (Fin n) ℂ → ℂ) (a b : Fin n)
-    (g : Matrix (Fin n) (Fin n) ℂ), SmoothOnG ε f → inUJ ε g →
-    Eab ε a b (fun x => starRingEnd ℂ (f x)) g = -(sgn ε a b : ℂ) * starRingEnd ℂ (Eab ε b a f g)
-
 def SmoothOnGV {n : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (ε : Fin n → Bool)
     (f : Matrix (Fin n) (Fin n) ℂ → E) : Prop :=
   ∀ g₀, inUJ ε g₀ → ∃ (U : Set (Matrix (Fin n) (Fin n) ℂ)) (F : Matrix (Fin n) (Fin n) ℂ → E),
@@ -168,11 +160,6 @@ def EcV {n : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (ε : F
 def EabV {n : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (ε : Fin n → Bool) (a b : Fin n)
     (f : Matrix (Fin n) (Fin n) ℂ → E) : Matrix (Fin n) (Fin n) ℂ → E :=
   EcV ε (Matrix.single a b 1) f
-
-def EwordV {n : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (ε : Fin n → Bool) :
-    List (Fin n × Fin n) → (Matrix (Fin n) (Fin n) ℂ → E) → (Matrix (Fin n) (Fin n) ℂ → E)
-  | [] => id
-  | p :: w => fun f => EabV ε p.1 p.2 (EwordV ε w f)
 
 lemma smoothOnGV_iff {n : ℕ} (ε : Fin n → Bool) (f : Matrix (Fin n) (Fin n) ℂ → ℂ) :
     SmoothOnGV ε f ↔ SmoothOnG ε f := Iff.rfl

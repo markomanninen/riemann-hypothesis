@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WordInduction.WordActionLetterSiteApply
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WordInduction.WordActionLetterSiteApply
+
+@[expose] public section
 
 open scoped ContDiff ComplexConjugate
 
@@ -71,7 +75,7 @@ variable {X : Type} (A : (X → E) →ₗ[ℂ] (X → E))
 
 theorem linP (a b c : ℂ) (u v w : X → E) :
     A (fun Z => a • u Z + b • v Z - c • w Z) = a • A u + b • A v - c • A w := by
-  rw [show (fun Z => a • u Z + b • v Z - c • w Z) = a • u + b • v - c • w from rfl, map_sub, map_add,
+  rw [show (fun Z => a • u Z + b • v Z - c • w Z) = a • u + b • v - c • w from rfl, map_sub, map_add (f := _),
     map_smul, map_smul, map_smul]
 
 theorem linM (a b c : ℂ) (u v w : X → E) :

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+
+@[expose] public section
+
 open GlobalTheory.K5
 
 namespace GlobalTheory.K5.Span
@@ -26,9 +31,9 @@ theorem sum_range_shift {A : Type*} [AddCommGroup A] {M : ℕ} (f : ℕ → A)
     exact Finset.sum_congr rfl fun i _ => by congr 1; omega
 
 theorem span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ (T : Tower p Ω) (τ : Gal p Ω), τ ∈ Ggeo p Ω → (∀ n, τ (T.qq n) = T.ζ n * T.qq n) →
-  ∀ (N : ℕ) (z : Ω), (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g z = z) →
-  ∃ c : ℕ → Ω, (∀ j, ∀ g ∈ Ggeo p Ω, g (c j) = c j) ∧ z = ∑ j ∈ Finset.range (p ^ N), c j * T.qq N ^ j := by
+  ∀ (T : Tower p Ω) (τ : Gal p Ω), τ ∈ Ggeo (p := p) Ω → (∀ n, τ (T.qq n) = T.ζ n * T.qq n) →
+  ∀ (N : ℕ) (z : Ω), (∀ g ∈ Ggeo (p := p) Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g z = z) →
+  ∃ c : ℕ → Ω, (∀ j, ∀ g ∈ Ggeo (p := p) Ω, g (c j) = c j) ∧ z = ∑ j ∈ Finset.range (p ^ N), c j * T.qq N ^ j := by
   intro p _ Ω _ _ hΩ T τ hτ hτq N z hz
   haveI : CharZero Ω := charZero_of_injective_algebraMap hΩ.inj
   have hprim : IsPrimitiveRoot (T.ζ N) (p ^ N) := T.prim N
@@ -42,10 +47,10 @@ theorem span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 
   have hM0 : (M : Ω) ≠ 0 := by exact_mod_cast hMpos.ne'
   have hζ0 : ζ ≠ 0 := hprim.ne_zero hMpos.ne'
 
-  have hζalg : IsAlgZp p ζ := by
+  have hζalg : IsAlgZp (p := p) ζ := by
     refine ⟨Polynomial.X ^ M - Polynomial.C 1, Polynomial.X_pow_sub_C_ne_zero hMpos 1, ?_⟩
     simp [hprim.pow_eq_one]
-  have hfixζ : ∀ g ∈ Ggeo p Ω, g ζ = ζ := fun g hg => hg ζ hζalg
+  have hfixζ : ∀ g ∈ Ggeo (p := p) Ω, g ζ = ζ := fun g hg => hg ζ hζalg
   have hτpow : ∀ i : ℕ, (τ ^ i) q = ζ ^ i * q := by
     intro i
     induction i with
@@ -53,10 +58,10 @@ theorem span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 
     | succ i ih =>
       rw [pow_succ', AlgEquiv.mul_apply, ih, map_mul, map_pow, hfixζ τ hτ, hτqN, pow_succ']
       ring
-  have hτG : ∀ i : ℕ, τ ^ i ∈ Ggeo p Ω := fun i => Subgroup.pow_mem _ hτ i
-  have hconj : ∀ g ∈ Ggeo p Ω, g q = q → ∀ i : ℕ, g ((τ ^ i) z) = (τ ^ i) z := by
+  have hτG : ∀ i : ℕ, τ ^ i ∈ Ggeo (p := p) Ω := fun i => Subgroup.pow_mem _ hτ i
+  have hconj : ∀ g ∈ Ggeo (p := p) Ω, g q = q → ∀ i : ℕ, g ((τ ^ i) z) = (τ ^ i) z := by
     intro g hg hgq i
-    have hk : (τ ^ i)⁻¹ * g * τ ^ i ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) q := by
+    have hk : (τ ^ i)⁻¹ * g * τ ^ i ∈ Ggeo (p := p) Ω ⊓ MulAction.stabilizer (Gal p Ω) q := by
       refine Subgroup.mem_inf.2 ⟨Subgroup.mul_mem _ (Subgroup.mul_mem _ (Subgroup.inv_mem _ (hτG i)) hg)
         (hτG i), MulAction.mem_stabilizer_iff.2 ?_⟩
       show ((τ ^ i)⁻¹ * g * τ ^ i) q = q
@@ -68,14 +73,14 @@ theorem span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 
       _ = (τ ^ i * ((τ ^ i)⁻¹ * g * τ ^ i)) z := by rw [e]
       _ = (τ ^ i) (((τ ^ i)⁻¹ * g * τ ^ i) z) := rfl
       _ = (τ ^ i) z := by rw [hkz]
-  have hdec : ∀ g ∈ Ggeo p Ω, ∃ s : ℕ, g q = ζ ^ s * q ∧ ∀ i : ℕ, g ((τ ^ i) z) = (τ ^ (s + i)) z := by
+  have hdec : ∀ g ∈ Ggeo (p := p) Ω, ∃ s : ℕ, g q = ζ ^ s * q ∧ ∀ i : ℕ, g ((τ ^ i) z) = (τ ^ (s + i)) z := by
     intro g hg
     have h1 : (g q / q) ^ M = 1 := by
       rw [div_pow, ← map_pow, hqpow, AlgEquiv.commutes, ← hqpow, div_self (pow_ne_zero _ hq0)]
     obtain ⟨s, -, hse⟩ := hprim.eq_pow_of_pow_eq_one h1
     have hgq : g q = ζ ^ s * q := by rw [hse, div_mul_cancel₀ _ hq0]
     refine ⟨s, hgq, fun i => ?_⟩
-    have hh : (τ ^ s)⁻¹ * g ∈ Ggeo p Ω := Subgroup.mul_mem _ (Subgroup.inv_mem _ (hτG s)) hg
+    have hh : (τ ^ s)⁻¹ * g ∈ Ggeo (p := p) Ω := Subgroup.mul_mem _ (Subgroup.inv_mem _ (hτG s)) hg
     have hhq : ((τ ^ s)⁻¹ * g) q = q := by
       rw [AlgEquiv.mul_apply, hgq, ← hτpow, AlgEquiv.aut_inv, AlgEquiv.symm_apply_apply]
     have e : g = τ ^ s * ((τ ^ s)⁻¹ * g) := by group
@@ -87,14 +92,15 @@ theorem span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 
     rw [hτpow, hprim.pow_eq_one, one_mul]
   set η := ζ⁻¹ with hηdef
   have hηprim : IsPrimitiveRoot η M := hprim.inv
-  have hfixη : ∀ g ∈ Ggeo p Ω, g η = η := by
+  have hfixη : ∀ g ∈ Ggeo (p := p) Ω, g η = η := by
     intro g hg; rw [hηdef, map_inv₀, hfixζ g hg]
   obtain ⟨P, hP⟩ : ∃ P : ℕ → Ω, ∀ j,
       P j = (M : Ω)⁻¹ * ∑ i ∈ Finset.range M, η ^ (i * j) * (τ ^ i) z := ⟨_, fun _ => rfl⟩
-  have hgP : ∀ g ∈ Ggeo p Ω, ∀ s : ℕ, (∀ i : ℕ, g ((τ ^ i) z) = (τ ^ (s + i)) z) →
+  have hgP : ∀ g ∈ Ggeo (p := p) Ω, ∀ s : ℕ, (∀ i : ℕ, g ((τ ^ i) z) = (τ ^ (s + i)) z) →
       ∀ j, g (P j) = ζ ^ (s * j) * P j := by
     intro g hg s hs j
-    rw [hP, map_mul, map_inv₀, map_natCast, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, map_mul, map_inv₀, map_natCast, map_sum]
     have hper : ∀ i, (fun i => η ^ (i * j) * (τ ^ i) z) (i + M) = (fun i => η ^ (i * j) * (τ ^ i) z) i := by
       intro i
       show η ^ ((i + M) * j) * (τ ^ (i + M)) z = η ^ (i * j) * (τ ^ i) z

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
-import Development.DiscreteGroups.GlobalIrreducibility.DzIsoKO
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ApplyMemTwKerOfNormalizer
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+public import Development.DiscreteGroups.GlobalIrreducibility.DzIsoKO
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ApplyMemTwKerOfNormalizer
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,9 +57,11 @@ private theorem exists_dual_map {G K Γ V W : Type} [Group G] [TopologicalSpace 
     have hT : T = 0 := by
       refine LinearMap.ext fun w => (Module.forall_dual_apply_eq_zero_iff ℂ _).1 fun l => ?_
       have e : B w (ψ l) = 0 := by rw [h0]; simp
-      rw [hψ, map_sum] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hψ, map_sum] at e
       rw [← e]
-      simp only [T, LinearMap.sum_apply, map_sum, LinearMap.zero_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [T, LinearMap.sum_apply, map_sum, LinearMap.zero_apply]
       refine Finset.sum_congr rfl fun γ _ => ?_
       have e2 := hinv (s γ) (ρ γ⁻¹ w) v0
       rw [hs γ, ← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply] at e2
@@ -69,26 +75,28 @@ private theorem exists_dual_map {G K Γ V W : Type} [Group G] [TopologicalSpace 
           simp [P, dualTensorHom_apply]
         rw [this, LinearMap.trace_eq_contract_apply]
         simp
-      simp only [T, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [T, map_sum]
       have : ∀ γ : Γ, LinearMap.trace ℂ W (ρ γ * P * ρ γ⁻¹) = f w0 := fun γ => by
         rw [LinearMap.trace_mul_cycle, ← map_mul, inv_mul_cancel, map_one, one_mul, hP]
       simp [this]
     rw [hT, map_zero] at ht
     have hc : (Fintype.card Γ : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
     exact hw0 (by simpa [f, hc] using ht.symm)
-  · rw [hψ, hψ, map_sum]
-    refine (Fintype.sum_equiv (Equiv.mulLeft (q k)⁻¹) _ _ fun γ => ?_)
-    have e : π (ι (s γ)) v0 = π (ι k) (π (ι (s ((q k)⁻¹ * γ))) v0) := by
-      have hu : q ((k * s ((q k)⁻¹ * γ))⁻¹ * s γ) = 1 := by
-        simp [hs]
-      have e2 : ι (s γ) = ι (k * s ((q k)⁻¹ * γ)) * ι ((k * s ((q k)⁻¹ * γ))⁻¹ * s γ) := by
-        rw [← map_mul]
-        congr 1
-        group
-      rw [e2, map_mul π, Module.End.mul_apply, hv0' _ hu, map_mul ι, map_mul π, Module.End.mul_apply]
-    simp only [Equiv.coe_mulLeft]
-    rw [map_smul, ← e, Representation.dual_apply, map_mul, Module.End.mul_apply]
-    rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [hψ, hψ, map_sum]
+      refine (Fintype.sum_equiv (Equiv.mulLeft (q k)⁻¹) _ _ fun γ => ?_)
+      have e : π (ι (s γ)) v0 = π (ι k) (π (ι (s ((q k)⁻¹ * γ))) v0) := by
+        have hu : q ((k * s ((q k)⁻¹ * γ))⁻¹ * s γ) = 1 := by
+          simp [hs]
+        have e2 : ι (s γ) = ι (k * s ((q k)⁻¹ * γ)) * ι ((k * s ((q k)⁻¹ * γ))⁻¹ * s γ) := by
+          rw [← map_mul]
+          congr 1
+          group
+        rw [e2, map_mul π, Module.End.mul_apply, hv0' _ hu, map_mul ι, map_mul π, Module.End.mul_apply]
+      simp only [Equiv.coe_mulLeft]
+      rw [map_smul, ← e, Representation.dual_apply, map_mul, Module.End.mul_apply]
+      rfl
 
 section Finite
 

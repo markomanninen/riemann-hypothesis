@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -23,7 +28,7 @@ theorem ChowDegreePos.proof : ChowDegreePos.Statement := by
     ext ij
     exact (weightedDegree_eq_zero_iff hnt).1 h1 ij
   obtain ⟨c, rfl⟩ : ∃ c, g = C c := by
-    refine ⟨coeff 0 g, ?_⟩
+    refine ⟨AddMonoidAlgebra.coeff g 0, ?_⟩
     ext m
     rw [coeff_C]
     split_ifs with hm

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitTailEstimates
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WirtingerIntegrationByParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+module
+
+public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitTailEstimates
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WirtingerIntegrationByParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.FormNormSumIdentities
 

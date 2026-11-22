@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.InducedModelMorphismCompStructureMap
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.InducedModelMorphismCompStructureMap
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -83,7 +87,7 @@ theorem isClosed_singleton_cPt {X : Scheme.{0}} (y : Sp (OO p) ⟶ X) : IsClosed
   show w ∈ X.basicOpen f
   rw [X.mem_basicOpen _ _ hwU]
   have e' := congrArg (X.presheaf.germ U w hwU).hom e
-  rw [map_add, map_mul, map_one] at e'
+  rw [map_add (f := _), map_mul, map_one] at e'
   rcases isUnit_or_isUnit_of_add_one e' with h | h
   · exact isUnit_of_mul_isUnit_right h
   · exact absurd h hwc

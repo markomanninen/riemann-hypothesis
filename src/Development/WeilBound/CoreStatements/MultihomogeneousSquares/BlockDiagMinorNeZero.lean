@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem valAt_sum_mul' (hw : w ∈ mcPts (mCoordIdeal x)) {σ : Type} (S : Finse
   have e : (∑ m ∈ S, a m * b m) =
       ((∑ m ∈ S, (⟨a m, ha m⟩ : regRing x w) * ⟨b m, hb m⟩ : regRing x w) : Ω) := by
     push_cast; rfl
-  rw [e, ← regVal_apply hw, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, ← regVal_apply hw, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, regVal_apply, regVal_apply]
 

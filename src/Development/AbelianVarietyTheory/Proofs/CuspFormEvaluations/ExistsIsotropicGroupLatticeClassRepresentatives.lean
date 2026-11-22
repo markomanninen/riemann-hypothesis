@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ModNSqIffExistsGenLatSumStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ModNSqIffExistsGenLatSumStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,7 +53,8 @@ theorem exists_basis_mod (O M : Type) [CommRing O] [IsDomain O] [AddCommGroup M]
   choose e he using fun k => hs (B k)
   have hc : ∀ c : Fin r → O, TensorProduct.mk O (O ⧸ I) M 1 (∑ k, c k • e k) =
       ∑ k, Ideal.Quotient.mk I (c k) • B k := fun c => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, he, ← Ideal.Quotient.algebraMap_eq, algebraMap_smul]
   refine ⟨e, fun x => ?_, fun c y h k => ?_⟩
@@ -173,7 +178,8 @@ theorem exists_class_representatives : ∀ (E : Type) [Field E] [NumberField E] 
       refine RingOfIntegers.ext ?_
       rw [hV]
       simp only [RingOfIntegers.coe_eq_algebraMap] at *
-      simp only [W, map_sum, map_mul, hvw, Finset.sum_apply, Pi.smul_apply, Algebra.smul_def,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [W, map_sum, map_mul, hvw, Finset.sum_apply, Pi.smul_apply, Algebra.smul_def,
         Finset.mul_sum]
       exact Finset.sum_congr rfl fun i _ => by ring
     refine ⟨σ.symm fun k => (W k : Λ.La.toAddSubgroup ⧸ K), fun b => (hM _).2 ?_⟩

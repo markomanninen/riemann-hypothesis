@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfB
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,10 +40,6 @@ def perpEquiv (e : V ≃ₗ[E] V) (hiso : ∀ v w, H.h (e v) (e w) = H.h v w) (X
       exact perp_map H e hiso X1 X2 h21 hx
     · intro hy
       exact ⟨e.symm y, perp_map_symm H e hiso X1 X2 h12 hy, e.apply_symm_apply y⟩)
-
-theorem perpEquiv_coe (e : V ≃ₗ[E] V) (hiso : ∀ v w, H.h (e v) (e w) = H.h v w) (X1 X2 : Submodule E V)
-    (h12 : ∀ x ∈ X1, e x ∈ X2) (h21 : ∀ y ∈ X2, e.symm y ∈ X1) (x : ↥(H.perp X1)) :
-    ((perpEquiv H e hiso X1 X2 h12 h21 x : ↥(H.perp X2)) : V) = e x := rfl
 
 def qEquiv (e : V ≃ₗ[E] V) (hiso : ∀ v w, H.h (e v) (e w) = H.h v w) (X1 X2 : Submodule E V)
     (h12 : ∀ x ∈ X1, e x ∈ X2) (h21 : ∀ y ∈ X2, e.symm y ∈ X1) :

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.MarkWeightedFixedPointEqDefinitePairOdd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassSummandEqTermOfAOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.MarkWeightedFixedPointEqDefinitePairOdd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassSummandEqTermOfAOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ theorem eigL_of_eq {y : grp G β} {z : Fin G.n → ℂ} {μ : ℂ} (hz : z ≠ 0
     (h : (toV G v β y : Matrix (Fin G.n) (Fin G.n) ℂ) *ᵥ z = μ • z) : eigL G v β y z = μ := by
   have hF : FixL G v β y z := ⟨μ, h⟩
   unfold eigL
-  rw [dif_pos hF]
+  rw [dite_eq_left hF]
   have hc : hF.choose • z = μ • z := hF.choose_spec.symm.trans h
   exact smul_left_injective ℂ hz hc
 
@@ -233,7 +237,7 @@ theorem cls_part
       · have hex : ∃ z : Fin G.n → ℂ, 0 < (star z ⬝ᵥ (herm G v β *ᵥ z)).re ∧ FixL G v β y₀ z := ⟨_, hc⟩
         have hmu : muOf (v := v) y₀ = eigL G v β y₀ hex.choose := by
           unfold muOf
-          rw [dif_pos hex]
+          rw [dite_eq_left hex]
         obtain ⟨c, hcz⟩ := hu y₀ _ hfz _ _ hc.1 hex.choose_spec.1 hc.2 hex.choose_spec.2
         have hz0 : Projectivization.rep a.2 ≠ 0 := Projectivization.rep_nonzero _
         have hc0 : c ≠ 0 := by
@@ -246,8 +250,8 @@ theorem cls_part
   rw [GlobalTheory.T.conjugacyClassPart_eq_weight_mul_kottwitzPointSum p G v _ Kf f hf K' f' hf' β x t hx hu y₀]
   rfl
 
-include hf hf' in
 
+include hf hf' in
 theorem cxSumAtM_unfold
     (hA : ∀ (h : G.GAf × Gr G 1) (z : Fin G.n → ℂ), 0 < (star z ⬝ᵥ (herm G v β *ᵥ z)).re →
       Set.Finite {y : grp G β | FixL G v β y z ∧
@@ -315,7 +319,7 @@ theorem muOf_eq_mark (ha : G.a = 1) (hv : sigPosH (G.gram_herm v) = 1) (P : Pair
   have hex : ∃ z : Fin G.n → ℂ, 0 < (star z ⬝ᵥ (herm G v P.β *ᵥ z)).re ∧ FixL G v P.β r z :=
     ⟨x, hpos', μ, hxv⟩
   unfold muOf
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨hz1, hz2⟩ := hex.choose_spec
   have hreg : (minpoly G.F (((r : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C)).natDegree = G.n ∧
       (minpoly G.F (((r : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C)).Separable := by
@@ -354,7 +358,7 @@ theorem markTerm_rel (ha : G.a = 1) (hv : sigPosH (G.gram_herm v) = 1) {P P' : P
       fun ⟨μ, hμ⟩ => ⟨μ, (Pair.mark_iff_of_rel p G P P' μ h).mpr hμ⟩⟩
   by_cases hM : ∃ μ, P.Mark μ
   · have hM' := hiff.mp hM
-    rw [dif_pos hM, dif_pos hM', (Pair.rel_pol_c p G P P' h).1,
+    rw [dite_eq_left hM, dite_eq_left hM', (Pair.rel_pol_c p G P P' h).1,
       GlobalTheory.T.term_eq_of_similitude_rel p G P P' Kf f 1 K' f' one_pos hf hf' h]
     congr 2
     exact mark_unique ha hv P' hM'.choose_spec ((Pair.mark_iff_of_rel p G P P' _ h).mp hM.choose_spec)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsCounitEqOneMulEqZeroOfIsNilpotent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsCounitEqOneMulEqZeroOfIsNilpotent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +53,8 @@ theorem natCard_pts : Nat.card (A →ₐ[O] O) = finrank C (C ⊗[O] A) := by
   rw [Nat.card_congr (Equiv.ofBijective _ (comp_ofId_bijective O C A)),
     Nat.card_congr (AlgHom.liftEquiv O C A C), natCard_algHom_eq_finrank_of_etale]
 
-include C in
 
+include C in
 theorem eq_of_forall_pts [Module.Flat O A] {a b : A} (h : ∀ x : A →ₐ[O] O, x a = x b) :
     a = b := by
   have := etale_of_hopfAlgebra C (C ⊗[O] A)
@@ -277,8 +281,8 @@ instance TateOver.isTorsionFree : IsTorsionFree ℤ_[p] (G.TateOver B) := by
   rw [PadicInt.unitCoeff_spec ha, mul_smul] at h
   exact key _ t ((Units.isUnit _).smul_eq_zero.1 h)
 
-variable (G) in
 
+variable (G) in
 def tateLevel (n : ℕ) : G.Tate →+ Additive (WithConv (G.A n →ₐ[O] O)) where
   toFun t := Additive.ofMul (t.conv n)
   map_zero' := rfl
@@ -424,8 +428,8 @@ theorem pairing_flip_bijective : Function.Bijective (pairing G O).flip := by
         rw [pow_one, ← LinearMap.flip_apply (pairing G O), ← hz, LinearMap.smul_apply]⟩
     rwa [pow_one] at h
 
-variable (p O) in
 
+variable (p O) in
 theorem exists_primitive_system : ∃ ζ : ℕ → O, ζ 0 = 1 ∧ (∀ n, ζ (n + 1) ^ p = ζ n) ∧
     ∀ n, IsPrimitiveRoot (ζ n) (p ^ n) := by
   have hp : p.Prime := Fact.out

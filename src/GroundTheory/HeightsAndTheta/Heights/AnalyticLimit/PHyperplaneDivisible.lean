@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StRegSectionParts
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StRegSectionParts
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -71,7 +76,7 @@ theorem continuous_coordScale (i : Fin D) : Continuous (coordScale (D := D) i) :
 
 theorem analyticOnNhd_fderiv_apply {Ω : Set (Fin D → ℂ)} {F : (Fin D → ℂ) → ℂ} (hF : AnalyticOnNhd ℂ F Ω)
     (v : Fin D → ℂ) : AnalyticOnNhd ℂ (fun w => fderiv ℂ F w v) Ω := fun w hw =>
-  (((ContinuousLinearMap.apply ℂ ℂ (E := Fin D → ℂ) v).analyticAt (fderiv ℂ F w)).comp
+  (((ContinuousLinearMap.apply ℂ ℂ (E' := Fin D → ℂ) v).analyticAt (fderiv ℂ F w)).comp
     (hF.fderiv w hw)).congr (Eventually.of_forall fun _ => rfl)
 
 theorem eq_mul_integral_partial {Ω : Set (Fin D → ℂ)} {F : (Fin D → ℂ) → ℂ} {i : Fin D}

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSymp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSymp
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -23,7 +28,8 @@ theorem hom_mulVec {S T : Type} [CommRing S] [CommRing T] (f : S →+* T) (g : F
     (hg : f.comp g = g') (M : Matrix κ κ F) (x : κ → S) (i : κ) :
     f ((M.map g *ᵥ x) i) = (M.map g' *ᵥ (fun j => f (x j))) i := by
   subst hg
-  simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem spAct_levi {R : Type} [CommRing R] [Algebra F R] (A : Matrix κ κ F) (w : (κ → R) × (κ → R)) :
     GlobalTheory.SympChange.spAct (GlobalTheory.SympChange.leviM A) w =
@@ -75,7 +81,7 @@ variable [NumberField F]
 def evIr : AF F →+* mixedEmbedding.mixedSpace F :=
   (InfiniteAdeleRing.ringEquiv_mixedSpace F).toRingHom.comp (RingHom.fst _ _)
 
-theorem mulVec_mem {v : Pl F} (M : Matrix κ κ F)
+theorem mulVec_mem {v : Pl (F := F)} (M : Matrix κ κ F)
     (hM : ∀ i j, algebraMap F (Fv F v) (M i j) ∈ v.adicCompletionIntegers F) (x : κ → Fv F v)
     (hx : ∀ i, x i ∈ v.adicCompletionIntegers F) (i : κ) :
     (M.map (algebraMap F (Fv F v)) *ᵥ x) i ∈ v.adicCompletionIntegers F := by
@@ -87,10 +93,10 @@ theorem eventually_int (M : Matrix κ κ F) :
   simp only [Filter.eventually_all]
   exact fun i j => (algebraMap F (Af F) (M i j)).2
 
-open scoped Classical in
 
+open scoped Classical in
 theorem hasOp_levi : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ), IsStd ψ → (∀ᶠ v in cofinite, PsiUnr ψ v) →
-    (∀ v : Pl F, ∃ x, psiLoc ψ v x ≠ 1) → ∀ (κ : Type) [Fintype κ] [DecidableEq κ] (A : Matrix κ κ F), IsUnit A.det →
+    (∀ v : Pl (F := F), ∃ x, psiLoc ψ v x ≠ 1) → ∀ (κ : Type) [Fintype κ] [DecidableEq κ] (A : Matrix κ κ F), IsUnit A.det →
     GlobalTheory.SympChange.HasOp ψ (GlobalTheory.SympChange.leviM A) := by
   intro F _ _ ψ _ _ _ κ _ _ A hA
   let gI : F →+* mixedEmbedding.mixedSpace F := (evIr (F := F)).comp (algebraMap F (AF F))

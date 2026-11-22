@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory
@@ -15,11 +20,11 @@ theorem exists_clm_of_gram_eq_smul {α Hs E : Type} [NormedAddCommGroup Hs] [Inn
     intro z w
     induction z using Finsupp.induction_linear with
     | zero => simp
-    | add z₁ z₂ h₁ h₂ => simp only [map_add, inner_add_left, h₁, h₂]; ring
+    | add z₁ z₂ h₁ h₂ => simp only [map_add (f := _), inner_add_left, h₁, h₂]; ring
     | single a c =>
       induction w using Finsupp.induction_linear with
       | zero => simp
-      | add w₁ w₂ h₁ h₂ => simp only [map_add, inner_add_right, h₁, h₂]; ring
+      | add w₁ w₂ h₁ h₂ => simp only [map_add (f := _), inner_add_right, h₁, h₂]; ring
       | single b d =>
         simp only [Φ, Ψ, Finsupp.linearCombination_single, inner_smul_left, inner_smul_right, hK]
         ring

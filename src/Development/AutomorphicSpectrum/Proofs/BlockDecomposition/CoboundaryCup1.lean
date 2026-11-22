@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BisimplicialActionSecondFactor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BisimplicialActionSecondFactor
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -176,7 +180,8 @@ theorem coboundary_cup1 (F : C ⥤ CommAlgCat.{0} R) {n : ℕ} (y : Cn F 1) (z :
   simp only [MainStatements.Hodge.dn, LinearMap.sum_apply, LinearMap.smul_apply]
   rw [sum_fin_add_two_eq_zero_add_one_add_sum (m := n + 1), sum_fin_add_two_eq_zero_add_sum_succ (m := n), h0, h1]
   simp only [hk]
-  simp only [hface, GlobalTheory.CompanionTheory.HopfLe.cup1, map_add, map_neg, map_sum, map_smul, map_zsmul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hface, GlobalTheory.CompanionTheory.HopfLe.cup1, map_add (f := _), map_neg, map_sum, map_smul, map_zsmul,
     mul_add, Finset.mul_sum, mul_smul_comm, Fin.val_zero, Fin.val_one, Fin.val_succ, pow_zero,
     pow_one, pow_succ, one_smul, neg_smul, mul_neg, mul_one, neg_neg, Finset.sum_neg_distrib]
   rw [key]

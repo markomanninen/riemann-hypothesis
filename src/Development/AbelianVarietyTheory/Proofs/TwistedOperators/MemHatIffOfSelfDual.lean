@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FlatSpaceComponents
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralChangeBaseFrameOrthonormal
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapSplit
-import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FlatSpaceComponents
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralChangeBaseFrameOrthonormal
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapSplit
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem resS_eq_zero_iff_cpt (w : Pl D.host.E) (s : OA D) :
       exact (hv x).2 hx
     · simp
     · intro a b _ _ ha hb
-      rw [Subring.coe_add, RingHom.map_add]
+      rw [Subring.coe_add, RingHom.map_add (f := _)]
       exact Valuation.map_add_lt _ ha hb
     · intro c a _ ha
       rw [smul_eq_mul, Subring.coe_mul, RingHom.map_mul, Valuation.map_mul]
@@ -226,7 +230,8 @@ theorem mem_hat_of_idem (h : Λ.FG) {y : Fin n → EAf D} (hy : ∀ w : Pl D.hos
       rw [← hl] at hx
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hx
       refine ⟨fun j => inc D (c j), fun j => (inc_mem_iff _).2 ⟨c j, rfl⟩, funext fun i => ?_⟩
-      simp only [Finset.sum_apply, Pi.smul_apply, map_sum, smul_eq_mul, ← RingHom.map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.sum_apply, Pi.smul_apply, map_sum, smul_eq_mul, ← RingHom.map_mul]
       rfl
     · rintro _ _ ⟨c, hc, rfl⟩ ⟨d, hd, rfl⟩
       exact ⟨c + d, fun j => add_mem (hc j) (hd j), by simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib]⟩
@@ -238,7 +243,8 @@ theorem mem_hat_of_idem (h : Λ.FG) {y : Fin n → EAf D} (hy : ∀ w : Pl D.hos
     funext i
     refine cpt_ext fun Q => ?_
     have := congrArg (cpt Q) (congrFun (hy' Q) i)
-    simp only [Finset.sum_apply, Pi.smul_apply, map_sum, smul_eq_mul, RingHom.map_mul, cpt_idem_self, one_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, Pi.smul_apply, map_sum, smul_eq_mul, RingHom.map_mul, cpt_idem_self, one_mul,
       hd'] at this ⊢
     exact this
   rw [this]
@@ -248,11 +254,70 @@ theorem mem_hat_of_idem (h : Λ.FG) {y : Fin n → EAf D} (hy : ∀ w : Pl D.hos
 theorem mem_hat_lat (β : GL (Fin n) (EAf D)) (y : Fin n → EAf D) :
     y ∈ hat (lat β) ↔ ∀ i, ((β⁻¹).val *ᵥ y) i ∈ OA D := isFrame_lat β y
 
-theorem exists_eq_lat (h : Submodule.IsLattice D.host.E Λ) : ∃ β : GL (Fin n) (EAf D), Λ = lat β := by
-  obtain ⟨β, hβ⟩ := GlobalTheory.AdelicFrame.exists_isFrame D.host.F _ h.fg h.span_eq_top
+theorem selfDual_isFullLattice {V : HSp D} {Λ : Lat V} (hΛ : IsSelfDualC V Λ) :
+    Submodule.IsFullLattice D.host.E Λ := by
+  haveI : Submodule.IsLattice D.host.E Λ := hΛ.1
+  refine ⟨?_⟩
+  obtain ⟨s, hs⟩ := hΛ.1.fg
+  apply eq_top_iff.mpr
+  intro y _
+  let f : (Fin V.rank → D.host.E) → D.host.E := fun x =>
+    ∑ i, ∑ j, star (x i) * V.gram i j * y j
+  obtain ⟨a, ha⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s f
+  have ha0 : (algebraMap (𝓞 D.host.E) D.host.E a) ≠ 0 := by
+    exact (FaithfulSMul.algebraMap_injective _ _).ne (mem_nonZeroDivisors_iff_ne_zero.mp a.2)
+  let P : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) := {
+    carrier := {x | ∃ b : 𝓞 D.host.E, (b : D.host.E) = (algebraMap (𝓞 D.host.E) D.host.E a) * f x}
+    zero_mem' := by refine ⟨0, ?_⟩; simp [f]
+    add_mem' := by
+      rintro x z ⟨b, hb⟩ ⟨c, hc⟩
+      refine ⟨b + c, ?_⟩
+      change (b : D.host.E) + c = _
+      rw [hb, hc]
+      simp [f, map_add, add_mul, Finset.sum_add_distrib, mul_add]
+    smul_mem' := by
+      rintro c x ⟨b, hb⟩
+      refine ⟨RingOfIntegers.mapRingHom (starRingEnd D.host.E) c * b, ?_⟩
+      simp only [map_mul, hb, f, Pi.smul_apply, Algebra.smul_def, map_mul, RingOfIntegers.mapRingHom_apply, star_mul]
+      simp only [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      change star (c : D.host.E) * _ = _
+      ring }
+  have hsP : (s : Set (Fin V.rank → D.host.E)) ⊆ P := by
+    intro x hx
+    obtain ⟨b, hb⟩ := ha x hx
+    exact ⟨b, by simpa [Algebra.smul_def] using hb⟩
+  have hy : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Λ := by
+    apply (hΛ.2 _).2
+    intro x hx
+    have hxP : x ∈ P := (hs ▸ Submodule.span_le.mpr hsP) hx
+    obtain ⟨b, hb⟩ := hxP
+    refine ⟨b, ?_⟩
+    rw [hb]
+    dsimp only [f, Pi.smul_apply]
+    simp only [smul_eq_mul, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro i _
+    apply Finset.sum_congr rfl
+    intro j _
+    ring
+  have hy' : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) :=
+    Submodule.subset_span hy
+  have := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
+    (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ hy' 
+  change (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ •
+    ((algebraMap (𝓞 D.host.E) D.host.E a) • y) ∈ _ at this
+  rw [← smul_assoc, smul_eq_mul, inv_mul_cancel₀ ha0, one_smul] at this
+  exact this
+
+theorem exists_eq_lat (h : Submodule.IsFullLattice D.host.E Λ) : ∃ β : GL (Fin n) (EAf D), Λ = lat β := by
+  obtain ⟨β, hβ⟩ := GlobalTheory.AdelicFrame.exists_isFrame D.host.F _ h.fg (Submodule.IsFullLattice.span_eq_top (self := h))
   exact ⟨β, eq_lat hβ h⟩
 
-theorem inc_mem_hat_iff (h : Submodule.IsLattice D.host.E Λ) (x : Fin n → D.host.E) :
+theorem inc_mem_hat_iff (h : Submodule.IsFullLattice D.host.E Λ) (x : Fin n → D.host.E) :
     (fun i => inc D (x i)) ∈ hat Λ ↔ x ∈ Λ := by
   obtain ⟨β, rfl⟩ := exists_eq_lat h
   exact (mem_hat_lat β _).trans (GlobalTheory.NormSum.AdLattice.mem_lat β x).symm
@@ -280,7 +345,7 @@ theorem exists_sub_inc_mem_hat (h : Submodule.span D.host.E (Λ : Set (Fin n →
       refine ⟨t • x, ?_⟩
       convert smul_mem_hat ht (inc_mem_hat hx) using 1
       funext i
-      simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, RingHom.map_mul, sub_mul]
+      simp [Pi.smul_apply, map_mul, sub_mul]
     | zero => exact fun a => ⟨0, by convert zero_mem_hat (Λ := Λ) using 1; funext i; simp⟩
     | add x y _ _ hx hy =>
       intro a
@@ -289,15 +354,14 @@ theorem exists_sub_inc_mem_hat (h : Submodule.span D.host.E (Λ : Set (Fin n →
       refine ⟨x' + y', ?_⟩
       convert add_mem_hat hx' hy' using 1
       funext i
-      simp only [Pi.sub_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul, RingHom.map_add]
-      ring
+      simp [Pi.smul_apply, map_add, mul_add, sub_add_sub_comm]
     | smul c x _ hx =>
       intro a
       obtain ⟨x', hx'⟩ := hx (a * inc D c)
       refine ⟨x', ?_⟩
       convert hx' using 2
       funext i
-      simp only [Pi.smul_apply, smul_eq_mul, RingHom.map_mul, mul_assoc]
+      simp [Pi.smul_apply, map_mul, mul_assoc]
   choose x hx using fun j : Fin n => h1 (Pi.single j 1) (h ▸ Submodule.mem_top) (y j)
   refine ⟨∑ j, x j, ?_⟩
   convert (Formalism.L2.Herm.hatL (F := D.host.F) Λ).sum_mem (t := Finset.univ) fun j _ => hx j using 1
@@ -312,7 +376,7 @@ theorem hA_eq (V : HSp D) (x y : Fin V.rank → EAf D) :
 
 theorem isSelfDualC_lat {V : HSp D} {β : GL (Fin V.rank) (EAf D)} (h : Unimod (OA D) (gramOf V β)) :
     IsSelfDualC V (lat β) :=
-  ⟨GlobalTheory.NormSum.AdLattice.lat_isLattice β, fun y => (mem_lat_iff_dual h y).trans
+  ⟨(GlobalTheory.NormSum.AdLattice.lat_isLattice β).toIsLattice, fun y => (mem_lat_iff_dual h y).trans
     ⟨fun H x hx => H x hx, fun H x hx => H x hx⟩⟩
 
 theorem dualL_eq {V : HSp D} {Λ : Lat V} (h : IsSelfDualC V Λ) : Formalism.L2.Herm.dualL D.sp.cm V Λ = Λ := by
@@ -325,10 +389,10 @@ theorem dualL_eq {V : HSp D} {Λ : Lat V} (h : IsSelfDualC V Λ) : Formalism.L2.
 theorem exists_orth {V : HSp D} {Λ : Lat V} (h : IsSelfDualC V Λ) :
     ∃ β : GL (Fin V.rank) (EAf D), Λ = lat β ∧ gramOf V β = 1 := by
   haveI : IsCMField D.host.E := D.host.isCMField_hostE
-  obtain ⟨β, hβ⟩ := exists_eq_lat h.1
+  obtain ⟨β, hβ⟩ := exists_eq_lat (selfDual_isFullLattice h)
   obtain ⟨u, hu⟩ := GlobalTheory.AdelicOrthFrame.exists_orth (E := D.host.E) D.sp.cm (G := V.gram)
     (fun a b => V.herm.eq (V.frame a) (V.frame b)) (GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.gram_det_isUnit V).ne_zero
-    ⟨h.1.fg, h.1.span_eq_top⟩ (GlobalTheory.AdelicOrthFrame.selfDual_iff D.sp.cm V (dualL_eq h)) (β := β) (hβ ▸ isFrame_lat β)
+    ⟨h.1.fg, Submodule.IsFullLattice.span_eq_top (self := selfDual_isFullLattice h)⟩ (GlobalTheory.AdelicOrthFrame.selfDual_iff D.sp.cm V (dualL_eq h)) (β := β) (hβ ▸ isFrame_lat β)
   refine ⟨β * intGL D.host.F D.host.E V.rank u, hβ.trans (le_antisymm
     (GlobalTheory.NormSum.AdLattice.lat_le_of_int fun i j => ?_) (GlobalTheory.NormSum.AdLattice.lat_le_of_int fun i j => ?_)), hu⟩
   · rw [_root_.mul_inv_rev, inv_mul_cancel_right, ← map_inv]
@@ -347,7 +411,7 @@ theorem hA_add_left (x x' y : Fin V.rank → EAf D) : hA V (x + x') y = hA V x y
   simp only [hA, Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
 
 theorem hA_add_right (x y y' : Fin V.rank → EAf D) : hA V x (y + y') = hA V x y + hA V x y' := by
-  simp only [hA, Formalism.UG.hform, Pi.add_apply, RingHom.map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hA, Formalism.UG.hform, Pi.add_apply, RingHom.map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hA_smul_left (a : EAf D) (x y : Fin V.rank → EAf D) : hA V (a • x) y = a * hA V x y := by
   simp only [hA, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
@@ -364,7 +428,8 @@ theorem hA_sub_right (x y y' : Fin V.rank → EAf D) : hA V x (y - y') = hA V x 
   simp only [hA, Formalism.UG.hform, Pi.sub_apply, RingHom.map_sub, sub_mul, Finset.sum_sub_distrib]
 
 theorem cjA_hA (x y : Fin V.rank → EAf D) : cjA D (hA V x y) = hA V y x := by
-  simp only [hA, Formalism.UG.hform, map_sum, RingHom.map_mul, cjA_cjA, Matrix.map_apply, cjA_inc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, Formalism.UG.hform, map_sum, RingHom.map_mul, cjA_cjA, Matrix.map_apply, cjA_inc]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [show star (V.gram j i) = V.gram i j from V.herm.eq _ _]
@@ -453,13 +518,13 @@ theorem dualL_lat_eq {β β' : GL (Fin V.rank) (EAf D)}
   rw [SetLike.mem_coe, ← inc_mem_hat_iff (GlobalTheory.NormSum.AdLattice.lat_isLattice β'), ← dual_hat_lat h]
   exact ⟨fun H => hA_mem_of_forall fun x hx => (e x).2 (H x hx), fun H x hx => (e x).1 (H _ (inc_mem_hat hx))⟩
 
-theorem mem_hat_dualL_iff {Λ : Lat V} (h : Submodule.IsLattice D.host.E Λ) (y : Fin V.rank → EAf D) :
+theorem mem_hat_dualL_iff {Λ : Lat V} (h : Submodule.IsFullLattice D.host.E Λ) (y : Fin V.rank → EAf D) :
     y ∈ hat (Formalism.L2.Herm.dualL D.sp.cm V Λ) ↔ ∀ x ∈ hat Λ, hA V x y ∈ OA D := by
   obtain ⟨β, rfl⟩ := exists_eq_lat h
   obtain ⟨β', h1, -⟩ := exists_dual_frame V β
   rw [dualL_lat_eq h1, dual_hat_lat h1]
 
-theorem mem_hat_of_bidual {Λ : Lat V} (h : Submodule.IsLattice D.host.E Λ) {x : Fin V.rank → EAf D}
+theorem mem_hat_of_bidual {Λ : Lat V} (h : Submodule.IsFullLattice D.host.E Λ) {x : Fin V.rank → EAf D}
     (hx : ∀ y, (∀ x' ∈ hat Λ, hA V x' y ∈ OA D) → hA V y x ∈ OA D) : x ∈ hat Λ := by
   obtain ⟨β, rfl⟩ := exists_eq_lat h
   obtain ⟨β', h1, h2⟩ := exists_dual_frame V β
@@ -467,7 +532,7 @@ theorem mem_hat_of_bidual {Λ : Lat V} (h : Submodule.IsLattice D.host.E Λ) {x 
 
 theorem mem_hat_iff_of_selfDual {Λ : Lat V} (h : IsSelfDualC V Λ) (y : Fin V.rank → EAf D) :
     y ∈ hat Λ ↔ ∀ x ∈ hat Λ, hA V x y ∈ OA D := by
-  rw [← mem_hat_dualL_iff h.1, dualL_eq h]
+  rw [← mem_hat_dualL_iff (selfDual_isFullLattice h), dualL_eq h]
 
 end Form
 

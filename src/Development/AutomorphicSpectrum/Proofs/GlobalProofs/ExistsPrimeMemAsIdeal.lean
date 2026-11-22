@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.Transport
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohFin
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DecompositionGroupMulEquivLocalGaloisCyclotomic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.FirstLemmaD
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.Transport
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmp
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTateA
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DecompositionGroupMulEquivLocalGaloisCyclotomic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.FirstLemmaD
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel Formalism.GaloisCohomology NumberField IsDedekindDomain Formalism.ConjugateSelfDual
 

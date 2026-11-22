@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsS
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXRen
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXSeg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsS
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXRen
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXSeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem col_tan_eq (c : ℤ) (J : Finset (Fin X.m)) :
   show ioD O C0 CE1 CE2 mu X β j (rename (chainEmb (2 * segS X.TT j + 1) X.m (BDk C0 CE1 CE2 mu X β j).T.t)
       (xOf (KK O) (2 * segS X.TT j + 1) X.m a b)) = _
   unfold xOf
-  rw [dif_pos ha, dif_pos ha', rename_X, col_ioD_X]
+  rw [dite_eq_left ha, dite_eq_left ha', rename_X, col_ioD_X]
   have e2 : (⟨a + 1, ha'⟩ : Fin (2 * segS X.TT j + 1 + 1)) = (⟨a, ha⟩ : Fin (2 * segS X.TT j + 1)).succ := rfl
   rw [e2, colPsiS_X, phiS_succ X j C0 CE1 CE2 ⟨a, ha⟩ b]
   unfold PS
@@ -81,7 +85,7 @@ theorem col_sym_eq (h : PH vecc B ka (nuS C0 CE1 CE2 mu X β j)) (c : ℤ) :
   by_cases hc : nuS C0 CE1 CE2 mu X β j t.val < c ∧ c ≤ nuS C0 CE1 CE2 mu X β j (t.val + 1)
   · rw [if_pos hc, if_pos hc]
     unfold xOf
-    rw [dif_pos t.isLt, colPsiS_X, X_pow_eq_monomial]
+    rw [dite_eq_left t.isLt, colPsiS_X, X_pow_eq_monomial]
   · rw [if_neg hc, if_neg hc]
     rfl
 
@@ -91,7 +95,7 @@ theorem col_powSubst_int {N k : ℕ} (LL : LiftLetters (Fin N)) (z : ℤ) (F : M
   unfold powSubst
   induction F using MvPolynomial.induction_on with
   | C a => rw [aeval_C]; exact Subalgebra.algebraMap_mem _ a
-  | add p q hp hq => rw [map_add]; exact Subalgebra.add_mem _ hp hq
+  | add p q hp hq => rw [map_add (f := _)]; exact Subalgebra.add_mem _ hp hq
   | mul_X p v hp => rw [map_mul, aeval_X]; exact Subalgebra.mul_mem _ hp (Subalgebra.pow_mem _ (X_mem_goodSub v rfl) _)
 
 theorem colFac (S : UniformizedDVR X.p O) (hS : S.SqP) (hn : 1 ≤ X.n') (h2 : 2 ≤ numSeg X.TT)

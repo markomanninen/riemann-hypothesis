@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveFrameDatumZetaIntegralEqSmaller
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ZetaIdentityTransportLocalFieldIso
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveFrameDatumZetaIntegralEqSmaller
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ZetaIdentityTransportLocalFieldIso
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -43,7 +47,8 @@ theorem trM_injective (j : k ≃+* k') (eR : R' ≃ R) (eC : C' ≃ C) : Functio
 theorem trM_mul {M M' : Type} [Fintype M] [Fintype M'] (j : k ≃+* k') (eR : R' ≃ R) (eM : M' ≃ M) (eC : C' ≃ C)
     (X : Matrix R M k) (Y : Matrix M C k) : trM j eR eC (X * Y) = trM j eR eM X * trM j eM eC Y := by
   ext r c
-  simp only [trM_apply, Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [trM_apply, Matrix.mul_apply, map_sum, map_mul]
   exact (Fintype.sum_equiv eM _ _ fun m => rfl).symm
 
 end Matrices
@@ -78,9 +83,6 @@ def glTr (hj : IsLocIso j) (e : n' ≃ n) : GL n k ≃ₜ* GL n' k' :=
       show Continuous (fun g : GL n' k' => (((glTrEquiv j e).symm g : GL n k) : Matrix n n k))
       rw [this]
       exact (Units.continuous_val.matrix_map hj.2.1).matrix_submatrix e.symm e.symm) }
-
-@[simp] theorem glTr_val (hj : IsLocIso j) (e : n' ≃ n) (g : GL n k) : (glTr hj e g).val = trM j e e g.val :=
-  glTrEquiv_val j e g
 
 variable [MeasurableSpace k] [BorelSpace k] [MeasurableSpace k'] [BorelSpace k']
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -7,7 +11,8 @@ namespace LateralTheory.CohomologicalPurity.TubeCut
 
 theorem dbl_map_fold {P' P : Arrow Spc} (φ : P' ⟶ P) :
     dbl.map φ ≫ dbl.fold P = dbl.fold P' ≫ φ.right := by
-  apply pushout.hom_ext
+  set_option synthInstance.maxHeartbeats 200000 in
+    apply pushout.hom_ext
   · simp only [dbl.map, dbl.fold, pushout.map]
     erw [pushout.inl_desc_assoc, Category.assoc, pushout.inl_desc, pushout.inl_desc_assoc]
     simp

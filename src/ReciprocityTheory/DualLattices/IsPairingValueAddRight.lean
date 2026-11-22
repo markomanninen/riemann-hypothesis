@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.SeriesState
-import ReciprocityTheory.DualLattices.InstAddCommMonoidFibreFst
-import ReciprocityTheory.DualLattices.NsmulFstAddSnd
+module
+
+public import ReciprocityTheory.DualLattices.SeriesState
+public import ReciprocityTheory.DualLattices.InstAddCommMonoidFibreFst
+public import ReciprocityTheory.DualLattices.NsmulFstAddSnd
+
+@[expose] public section
 
 noncomputable section
 

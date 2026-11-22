@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralBasisCompletion
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceMatrixEqOfAgreeWithFramedGL
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousSplitPlaceHermitianFrameGLEmbedding
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsMaximalCompactUnnComponentStandardCartanIn
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralBasisCompletion
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceMatrixEqOfAgreeWithFramedGL
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousSplitPlaceHermitianFrameGLEmbedding
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsMaximalCompactUnnComponentStandardCartanIn
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
@@ -36,7 +40,7 @@ theorem mem_idOff_iff_pr {D : D7} {k : Type} [Field k] [ValuativeRel k] [Topolog
       exact Algebra.TensorProduct.one_def.symm
     · rw [hαo w hw, TensorProduct.zero_tmul]
   have hinf : infPart D E' = 0 := by
-    rw [← hsum, map_add, Formalism.IndefR.Fin.LevelGroupLemmas.Lat.infPart_of_splitIdem hsplit,
+    rw [← hsum, map_add (f := _), Formalism.IndefR.Fin.LevelGroupLemmas.Lat.infPart_of_splitIdem hsplit,
       Formalism.IndefR.Fin.LevelGroupLemmas.Lat.infPart_of_splitIdem hsplitc, add_zero]
   have hoff : a ∈ idOff D (· = p.v) ↔ GlobalTheory.FinPl.compAt D p.v a = 0 := by
     simp only [GlobalTheory.FinPl.idOff, Submodule.mem_iInf, RingHom.mem_ker]
@@ -148,11 +152,11 @@ theorem core_coord {O k : Type} [CommRing O] [Field k] [Algebra O k] (hinj : Fun
     ⟨_, fun _ _ => rfl⟩
   have hξ : ∀ p i, algebraMap O k (ξ p i) = s p * (P + PA) i p := by
     intro p i
-    rw [hξd, map_add, hz1, Matrix.add_apply, mul_add, h1]
+    rw [hξd, map_add (f := _), hz1, Matrix.add_apply, mul_add, h1]
     split_ifs <;> simp
   have hη : ∀ q i, algebraMap O k (η q i) = t q * (Q + QA) q i := by
     intro q i
-    rw [hηd, map_add, hz2, Matrix.add_apply, mul_add, h2]
+    rw [hηd, map_add (f := _), hz2, Matrix.add_apply, mul_add, h2]
     split_ifs <;> simp
   have hξI : ∀ p i, ξ p i - (if i = ι p then 1 else 0) ∈ I := by
     intro p i
@@ -181,7 +185,8 @@ theorem core_coord {O k : Type} [CommRing O] [Field k] [Algebra O k] (hinj : Fun
     intro p q
     apply hinj
     have e1 : algebraMap O k (η q ⬝ᵥ ξ p) = ∑ i, algebraMap O k (η q i) * algebraMap O k (ξ p i) := by
-      simp [dotProduct, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [dotProduct, map_sum]
     rw [e1, ← hsum1, hpair, hsum2]
     split_ifs <;> simp
   obtain ⟨K, hKI, hKcol, hKrow⟩ :=
@@ -203,7 +208,8 @@ theorem core_coord {O k : Type} [CommRing O] [Field k] [Algebra O k] (hinj : Fun
     rw [Matrix.mul_apply, hQ]
     calc ∑ i, (Q + QA) q i * (K.1.map (algebraMap O k)) i j
         = (t q)⁻¹ * algebraMap O k (∑ i, η q i * K.1 i j) := by
-          rw [map_sum, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.mul_sum]
           refine Finset.sum_congr rfl fun i _ => ?_
           rw [hQA', Matrix.map_apply, map_mul, mul_assoc]
       _ = (t q)⁻¹ * (if j = ι' q then 1 else 0) := by

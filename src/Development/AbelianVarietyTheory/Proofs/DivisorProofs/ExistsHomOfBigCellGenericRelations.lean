@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
@@ -72,7 +76,7 @@ theorem bigCell_hom : ∀ (G H : Type) [Group G] [Group H] (P : Subgroup G) (w :
     intro p₁ p₂
     have hC : C (p₁ * w * p₂) := ⟨p₁, p₂, rfl⟩
     dsimp only [f]
-    rw [dif_pos hC]
+    rw [dite_eq_left hC]
     exact hwd _ _ _ _ hC.choose_spec.choose_spec.symm
   have hmul : ∀ x y, C x → C y → C (x * y) → f (x * y) = f x * f y := by
     rintro x y ⟨p₁, p₂, rfl⟩ ⟨q₁, q₂, rfl⟩ ⟨r₁, r₂, hr⟩

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleEmbedNumbersSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleDim
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleEmbedNumbersSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleDim
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

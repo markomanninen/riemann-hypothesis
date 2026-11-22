@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.Helly
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.LteNorm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.Helly
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.LteNorm
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.PropA
 

@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.RepNewform
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NegOneNotSqSqrtTwo
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.RepNewform
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NegOneNotSqSqrtTwo
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep UpperTheory.V
 open scoped TensorProduct Quaternion
 
@@ -42,8 +47,8 @@ private theorem lift_bij {A : Type} [Ring A] [Algebra R A] [Algebra F A] [IsScal
   funext x
   exact LinearMap.congr_fun h x
 
-variable {R} in
 
+variable {R} in
 private noncomputable def spl {c d : R} (p q : R) (hc : c = -1) (hd : d = p ^ 2 + q ^ 2) :
     ℍ[R,c,0,d] →ₐ[R] Matrix (Fin 2) (Fin 2) R :=
   QuaternionAlgebra.Basis.liftHom
@@ -98,7 +103,7 @@ private theorem isUnit_of_neg (τ : F →+* ℝ) (ha : τ a < 0) (hb : τ b < 0)
   have hn0 : n ≠ 0 := by
     intro h
     have h1 := congrArg τ h
-    simp only [hn, map_add, map_sub, map_mul, map_pow, map_zero] at h1
+    simp only [hn, map_add (f := _), map_sub, map_mul, map_pow, map_zero] at h1
     have p1 := sq_nonneg (τ x.re)
     have p2 := mul_nonneg (neg_pos.2 ha).le (sq_nonneg (τ x.imI))
     have p3 := mul_nonneg (neg_pos.2 hb).le (sq_nonneg (τ x.imJ))
@@ -190,10 +195,11 @@ private theorem arith (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (h 
   have e3 : InfinitePlace.Completion.extensionEmbeddingOfIsReal hw (algebraMap F w.Completion (t⁻¹ : Fˣ)) = τ (t⁻¹ : Fˣ) := by
     have hr : ComplexEmbedding.IsReal (Complex.ofRealHom.comp τ) := by
       rw [ComplexEmbedding.isReal_iff]; ext z; simp
-    refine (InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw _).trans (Complex.ofReal_injective ?_)
+    rw [AbsoluteValue.Completion.algebraMap_def, InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe]
+    refine Complex.ofReal_injective ?_
     rw [InfinitePlace.embedding_of_isReal_apply, InfinitePlace.embedding_mk_eq_of_isReal hr]
     rfl
-  simp only [map_mul, map_neg, map_one, map_add, map_pow, e3] at e2
+  simp only [map_mul, map_neg, map_one, map_add (f := _), map_pow, e3] at e2
   refine lt_of_le_of_ne ?_ ((map_ne_zero τ).2 (Units.ne_zero _))
   nlinarith [sq_nonneg (InfinitePlace.Completion.extensionEmbeddingOfIsReal hw (x.1 w)),
     sq_nonneg (InfinitePlace.Completion.extensionEmbeddingOfIsReal hw (y.1 w))]

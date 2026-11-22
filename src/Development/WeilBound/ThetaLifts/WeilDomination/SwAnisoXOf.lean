@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.SiegelWeilAnisoOf
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SiegelWeilAnisoOf
+
+@[expose] public section
 
 namespace PositivityTheory.ThKClose
 

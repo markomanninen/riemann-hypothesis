@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsotropicSaturatedSubmoduleOfFinrankLeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOppositeIsotropicPairStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOppositeTransversalIsotropicStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsometryKernelCoisotropicModStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsotropicSaturatedSubmoduleOfFinrankLeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOppositeIsotropicPairStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOppositeTransversalIsotropicStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsometryKernelCoisotropicModStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem KerIs.of_dvd {f : D.La →ₗ[𝓞 E] X} {Z : Submodule (𝓞 E) D.La} {
   · rintro ⟨b, hb, e, rfl⟩
     obtain ⟨e', he'⟩ := (hk b).2 ⟨b, hb, 0, by simp⟩
     obtain ⟨e'', he''⟩ := nsmul_eq_nsmul_of_dvd hd e'
-    exact ⟨e'' + f e, by rw [map_add, map_nsmul, he', he'', smul_add]⟩
+    exact ⟨e'' + f e, by rw [map_add (f := _), map_nsmul, he', he'', smul_add]⟩
 
 theorem exists_step [Module.Free ℤ X] [Module.Finite ℤ X] {Z FinalForm : Submodule (𝓞 E) D.La} (hop : IsOpp D Z FinalForm)
     (hrk : Module.finrank (𝓞 E) Z = Module.finrank (𝓞 E) X) (f : D.La →ₗ[𝓞 E] X) {n N' : ℕ} (hn : 0 < n)
@@ -128,9 +132,9 @@ theorem exists_compatible_isometries : ∀ {E : Type} [Field E] [NumberField E] 
     · rintro ⟨b, hb, e, he⟩
       refine ⟨g₀ b, (memP _).2 (by rwa [g₀.symm_apply_apply]), g₀ e, ?_⟩
       conv_lhs => rw [← g₀.apply_symm_apply a, he]
-      rw [map_add, map_nsmul]
+      rw [map_add (f := _), map_nsmul]
     · rintro ⟨b, hb, e, rfl⟩
-      exact ⟨g₀.symm b, (memP b).1 hb, g₀.symm e, by rw [map_add, map_nsmul]⟩
+      exact ⟨g₀.symm b, (memP b).1 hb, g₀.symm e, by rw [map_add (f := _), map_nsmul]⟩
   have hstep : ∀ j (G : D.La ≃ₗ[𝓞 E] D.La), GoodAt D (y (levelSeq N j)) Z N (levelSeq N j) G →
       ∃ G' : D.La ≃ₗ[𝓞 E] D.La, GoodAt D (y (levelSeq N (j + 1))) Z N (levelSeq N (j + 1)) G' ∧
         ∀ a, ∃ e, G' a = G a + levelSeq N j • e := by
@@ -149,9 +153,9 @@ theorem exists_compatible_isometries : ∀ {E : Type} [Field E] [NumberField E] 
     · obtain ⟨e, he⟩ := hN' a
       obtain ⟨e₁, he₁⟩ := hGN a
       obtain ⟨e₂, he₂⟩ := nsmul_eq_nsmul_of_dvd (Dvd.intro _ rfl : N ∣ levelSeq N j) (G e)
-      exact ⟨e₁ + e₂, by rw [LinearEquiv.trans_apply, he, map_add, map_nsmul, he₁, he₂, smul_add, add_assoc]⟩
+      exact ⟨e₁ + e₂, by rw [LinearEquiv.trans_apply, he, map_add (f := _), map_nsmul, he₁, he₂, smul_add, add_assoc]⟩
     · obtain ⟨e, he⟩ := hN' a
-      exact ⟨G e, by rw [LinearEquiv.trans_apply, he, map_add, map_nsmul]⟩
+      exact ⟨G e, by rw [LinearEquiv.trans_apply, he, map_add (f := _), map_nsmul]⟩
   choose! F hF hFc using hstep
   obtain ⟨S, hS0, hSs⟩ : ∃ S : ℕ → D.La ≃ₗ[𝓞 E] D.La, S 0 = LinearEquiv.refl _ _ ∧ ∀ j, S (j + 1) = F j (S j) :=
     ⟨iterSeq (LinearEquiv.refl _ _) F, rfl, fun _ => rfl⟩

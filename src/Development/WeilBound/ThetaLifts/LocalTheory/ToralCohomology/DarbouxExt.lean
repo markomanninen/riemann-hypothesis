@@ -1,10 +1,14 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedDeterminedBySpherical
-import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.ExistsTorus
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EqZeroOfTheta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryDoubledBlockDiagOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicSchwartzNeZeroAtOrigin
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedDeterminedBySpherical
+public import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.ExistsTorus
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EqZeroOfTheta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryDoubledBlockDiagOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicSchwartzNeZeroAtOrigin
+
+@[expose] public section
 
 noncomputable section
 
@@ -166,7 +170,7 @@ theorem good_unit (hc : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E
   have h1 : (a • (g + 1)).det - 1 ∈ atI F E := by
     rw [← Ideal.Quotient.eq, RingHom.map_det, map_one]
     have : (Ideal.Quotient.mk (atI F E)).mapMatrix (a • (g + 1)) = 1 := by
-      rw [e, map_add, map_one, add_eq_left]
+      rw [e, map_add (f := _), map_one, add_eq_left]
       ext i j
       exact Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mul_mem_left _ a (hg i j))
     rw [this, det_one]
@@ -174,7 +178,7 @@ theorem good_unit (hc : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E
     have a0 : piInf (τ w) a ≠ 0 := fun z => by
       have := congrArg (piInf (τ w)) a2
       simp [z] at this
-    rw [det_smul, map_mul, map_pow, RingHom.map_det, map_add, map_one]
+    rw [det_smul, map_mul, map_pow, RingHom.map_det, map_add (f := _), map_one]
     exact mul_ne_zero (pow_ne_zero _ a0) (h0 w)
   have : (a • (g + 1)).det = u := eq_of_inf hc τ (by simpa using sub_mem h1 hu) fun w => (hu' w).symm
   obtain ⟨t, ht⟩ := (isUnit_iff_isUnit_det _).2 (this ▸ u.isUnit)
@@ -217,7 +221,7 @@ theorem realUniq : Loc.RealUniq := by
   obtain ⟨-, ⟨d₂, e₂, h₂⟩, -⟩ := hP'.weil
   obtain rfl : d₁ = d₂ := darboux_ext fun w => by rw [← transpose_transpose w, e₁, e₂]
   let a : AE F E := algebraMap (AF F) _ ⅟2
-  have a2 : a + a = 1 := by rw [← map_add, invOf_two_add_invOf_two, map_one]
+  have a2 : a + a = 1 := by rw [← map_add (f := _), invOf_two_add_invOf_two, map_one]
   have good : ∀ x : UA σ X.J, (∀ i j, (mat x - 1) i j ∈ atI F E) → (∀ w, ((mat x).map (piInf (B.emb w)) + 1).det ≠ 0) →
       ∀ Φ ∈ schA F (Fin n × Fin d), om (x, 1) Φ = om' (x, 1) Φ := fun x hx h0 => by
     obtain ⟨t, ht, ht'⟩ := good_unit hc B.emb a a2 (mat x) hx h0

@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StLocAwaySpec
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StLocAwaySpec
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
 
 namespace GroundTheory.Heights₂.Heights.Inter
 
-open Classical in
 
+open Classical in
 theorem LocAwaySpec.proof : LocAwaySpec.Statement := by
   intro R _ Φ _ φ S hrep
   choose f g hg hfg using hrep

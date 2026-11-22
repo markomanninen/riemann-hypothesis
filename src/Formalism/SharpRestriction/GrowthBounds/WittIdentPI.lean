@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittUnram
-import Formalism.PeriodIntegrals.WittUnram
-import Formalism.SharpRestriction.GrowthBounds.ObjBridge
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittUnram
+public import Formalism.PeriodIntegrals.WittUnram
+public import Formalism.SharpRestriction.GrowthBounds.ObjBridge
+
+@[expose] public section
 
 namespace Formalism.MainNotions.G.WittPI
 

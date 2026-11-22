@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.PsCo.Pc1 GlobalTheory.PsCo.Pc1.A
 
@@ -19,7 +23,7 @@ private theorem lieU_decomposition {n : ℕ} (ε : Fin n → Bool) (Z : Mat n) :
   · intro a b
     have ha := sg_sq' ε a
     have hb := sg_sq' ε b
-    simp only [barM, Matrix.of_apply, map_div₀, map_add, map_neg, map_mul, conj_sg',
+    simp only [barM, Matrix.of_apply, map_div₀, map_add (f := _), map_neg, map_mul, conj_sg',
       Complex.conj_conj, map_ofNat]
     linear_combination (-(starRingEnd ℂ) (Z a b) / 2 * (sg ε b * sg ε b)) * ha
       + (-(starRingEnd ℂ) (Z a b) / 2) * hb

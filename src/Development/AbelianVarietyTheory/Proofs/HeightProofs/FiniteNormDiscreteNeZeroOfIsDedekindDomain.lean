@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
@@ -27,7 +31,7 @@ theorem finite_normDiscrete_ne_zero_of_isDedekindDomain {S L : Type*} [CommRing 
   let Q : Ideal S :=
     { carrier := {b | 0 < w (algebraMap S L b)}
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_ofPred_eq, map_add] at ha hb ⊢
+        simp only [Set.mem_ofPred_eq, map_add (f := _)] at ha hb ⊢
         exact lt_of_lt_of_le (lt_min ha hb) (w.map_add _ _)
       zero_mem' := by simp
       smul_mem' := fun c b hb => by
@@ -56,13 +60,14 @@ theorem finite_normDiscrete_ne_zero_of_isDedekindDomain {S L : Type*} [CommRing 
   refine ⟨⟨Q, hprime, hne⟩, ?_, (ValPl.eq_addv _ w hw h0 (fun s => Iff.rfl)).symm⟩
   exact Ideal.dvd_span_singleton.mpr hab
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem finite_zeros_poles_of_trdeg_one :
     ∀ (F Ω : Type) [Field F] [CharZero F] [Field Ω] [Algebra F Ω] (t : Ω),
       (⊤ : IntermediateField F Ω).FG → Algebra.trdeg F Ω = 1 → Transcendental F t →
       ∀ g : Ω, g ≠ 0 → {v : AddValuation Ω (WithTop ℤ) |
         IsNormDiscrete v ∧ IsTrivOn F v ∧ 0 ≤ v t ∧ v g ≠ 0}.Finite := by
+  open scoped IntermediateField.algebraAdjoinAdjoin in
   intro F Ω _ _ _ _ t hfg htr ht g hg
   have hind : AlgebraicIndependent F (fun _ : Unit => t) :=
     algebraicIndependent_unique_type_iff.mpr ht

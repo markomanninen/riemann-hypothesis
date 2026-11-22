@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteGermProjectionObjects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteGermProjectionObjects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -14,9 +19,6 @@ def PrimeGermProjectionStep.Statement : Prop :=
       ∀ (v : τ → ℂ) (Q : Ideal (holGerms v)), Q.IsPrime →
         ∃ (d : ℕ) (B : (τ → ℂ) →L[ℂ] (Fin d → ℂ)), IsFiniteGermProjection v Q B) →
     ∃ (d : ℕ) (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ)), IsFiniteGermProjection w P A
-
-def originIdealLine : Ideal (holGerms (0 : Fin 1 → ℂ)) :=
-  RingHom.ker (Germ.valueRingHom.comp (holGerms (0 : Fin 1 → ℂ)).subtype)
 
 end
 

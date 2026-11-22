@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticUniformization
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticUniformization
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open Complex Filter Topology Set WeierstrassCurve GroundTheory.Arith.Abelian
@@ -110,7 +115,7 @@ theorem IsAnalyticUniformization.meromorphic_ptY (hg : IsAnalyticUniformization 
 
 theorem IsAnalyticUniformization.map_add_mem (hg : IsAnalyticUniformization L.lattice g) (z : ℂ)
     {l : ℂ} (hl : l ∈ L.lattice) : g (z + l) = g z := by
-  rw [map_add, (hg.map_eq_zero_iff l).2 hl, add_zero]
+  rw [map_add (f := _), (hg.map_eq_zero_iff l).2 hl, add_zero]
 
 theorem IsAnalyticUniformization.equation_ptX_ptY (hg : IsAnalyticUniformization L.lattice g)
     {z : ℂ} (hz : z ∉ L.lattice) :
@@ -339,7 +344,7 @@ theorem IsAnalyticUniformization.exists_omegaFun_eq_const (hg : IsAnalyticUnifor
 theorem IsAnalyticUniformization.ptY_eq_zero_of_two_mul_mem (hg : IsAnalyticUniformization L.lattice g)
     {z : ℂ} (hz : z ∉ L.lattice) (h2 : 2 * z ∈ L.lattice) : ptY (g z) = 0 := by
   obtain ⟨h, e⟩ := exists_eq_some_ptX_ptY (fun h0 ↦ hz ((hg.map_eq_zero_iff z).1 h0))
-  have h0 : g z + g z = 0 := by rw [← map_add, ← two_mul]; exact (hg.map_eq_zero_iff _).2 h2
+  have h0 : g z + g z = 0 := by rw [← map_add (f := _), ← two_mul]; exact (hg.map_eq_zero_iff _).2 h2
   have hneg : g z = -g z := eq_neg_of_add_eq_zero_left h0
   rw [e, Affine.Point.neg_some, Affine.Point.some.injEq] at hneg
   have := hneg.2
@@ -353,7 +358,7 @@ theorem IsAnalyticUniformization.two_mul_mem_of_ptY_eq_zero (hg : IsAnalyticUnif
     rw [e, Affine.Point.neg_some, Affine.Point.some.injEq]
     refine ⟨rfl, ?_⟩
     simp only [Affine.negY, weierstrassCurve_a₁, weierstrassCurve_a₃, zero_mul, sub_zero, hY, neg_zero]
-  rw [← hg.map_eq_zero_iff, two_mul, map_add]
+  rw [← hg.map_eq_zero_iff, two_mul, map_add (f := _)]
   nth_rewrite 1 [← hneg]
   exact neg_add_cancel _
 
@@ -492,7 +497,7 @@ theorem exists_mul_of_isAnalyticUniformization {L L' : PeriodPair}
     obtain ⟨w, ⟨hw1, hw2⟩, hw3, hw4⟩ :=
       nonempty_of_mem_codiscrete (hG.and (eventually_affine hG (neg_ne_zero.2 one_ne_zero) z))
     have e : z = w + (-1 * w + z) := by ring
-    rw [e, map_add, good w hw1 hw2, good _ hw3 hw4, ← toPoint_add]
+    rw [e, map_add (f := _), good w hw1 hw2, good _ hw3 hw4, ← toPoint_add]
     congr 1
     ring
   obtain ⟨w, hw1, hw2⟩ := nonempty_of_mem_codiscrete hG

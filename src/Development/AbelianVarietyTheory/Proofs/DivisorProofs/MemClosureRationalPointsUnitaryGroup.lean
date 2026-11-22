@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousLocAdele
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureDivMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousLocAdele
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureDivMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,11 +66,13 @@ theorem exists_proj {K : Type} [Field K] (c : K →+* K) (hc : ∀ x, c (c x) = 
   have hyx : y ⬝ᵥ x = d := by rw [hd, dotProduct_mulVec]
   have hcy : c ∘ y = J *ᵥ x := by
     funext i
-    simp [hy, vecMul, mulVec, dotProduct, map_sum, hc, hJ', mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hy, vecMul, mulVec, dotProduct, map_sum, hc, hJ', mul_comm]
   have hcd : c d = d := by
     conv_lhs => rw [← hyx]
     rw [hd, ← hcy]
-    simp [dotProduct, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dotProduct, map_sum, mul_comm]
   refine ⟨d⁻¹ • vecMulVec x y, ?_, ?_, fun a => ?_⟩
   · rw [smul_mul_assoc, mul_smul_comm, vecMulVec_mul_vecMulVec, hyx, vecMulVec_smul, smul_smul d⁻¹ d,
       inv_mul_cancel₀ hx, one_smul]
@@ -111,6 +117,7 @@ theorem mem_closure_su {K R : Type} [Field K] [CharZero K] [CommRing R] [Topolog
   · have e : cT c (1 + (c γ.det - 1) • P) = 1 + (γ.det - 1) • cT c P := by
       ext i j
       simp [cT, hc, one_apply, eq_comm]
+      by_cases h : i = j <;> simp [Matrix.one_apply, h, eq_comm]
     rw [cT_mul, e, Matrix.mul_assoc _ _ J, Matrix.mul_assoc, ← Matrix.mul_assoc _ γ, hγ', ← Matrix.mul_assoc]
     simp only [Matrix.add_mul, Matrix.mul_add, Matrix.one_mul, Matrix.mul_one, Matrix.smul_mul, Matrix.mul_smul, hPJ,
       Matrix.mul_assoc, hPP, smul_add, smul_smul]
@@ -140,7 +147,7 @@ theorem sigR_sigR (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) (hc
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a y => simp [sigR, hc]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem continuous_sigR (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] [IsTopologicalRing R]
     (σ : E →ₐ[F] E) : Continuous (sigR R σ) := by
@@ -202,13 +209,13 @@ theorem mem_closure_trunc [CharZero E] [FiniteDimensional F E] (A B : Type) [Com
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a y => rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hrepr : ∀ y i, bB.repr (p y) i = π (bA.repr y i) := by
     intro y i
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a y => simp [hp, bA, bB, Algebra.TensorProduct.basis_repr_tmul]
-    | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   let S : B ⊗[F] E → A ⊗[F] E := fun y => ∑ i, s (bB.repr y i) • bA i
   have hS : Continuous S := continuous_finsetSum _ fun i _ =>
     (hs.comp (IsModuleTopology.continuous_of_linearMap (bB.coord i))).smul continuous_const
@@ -277,6 +284,7 @@ theorem unitary_trunc {R : Type} [CommRing R] (σ : R →+* R) {n : ℕ} (J u : 
   have e1 : cT σ (1 + e • (u - 1)) = 1 + e • (cT σ u - 1) := by
     ext i j
     simp [cT, hσ, one_apply, eq_comm]
+    by_cases h : i = j <;> simp [Matrix.one_apply, h, eq_comm]
   rw [e1]
   simp only [Matrix.add_mul, Matrix.mul_add, Matrix.sub_mul, Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one,
     Matrix.smul_mul, Matrix.mul_smul, smul_add, smul_sub, smul_smul, he, hu]

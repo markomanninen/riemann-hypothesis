@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsInPsiIEEqEmbK
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsInPsiIEEqEmbK
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField IsLocalRing IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.DVR.QForm Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
@@ -19,7 +23,7 @@ theorem emb_eq_of_inPsi {D : D7} {Q : Par D} (hp : Q.PinHost) {τ σ : D.host.E 
   induction hx' using IntermediateField.adjoin_induction with
   | mem y hy => rw [Set.mem_singleton_iff.1 hy]; exact hs
   | algebraMap q => simp
-  | add a b ha hb iha ihb => rw [map_add, map_add, iha ha, ihb hb]
+  | add a b ha hb iha ihb => rw [map_add (f := _), map_add (f := _), iha ha, ihb hb]
   | inv a ha iha => rw [map_inv₀, map_inv₀, iha ha]
   | mul a b ha hb iha ihb => rw [map_mul, map_mul, iha ha, ihb hb]
 

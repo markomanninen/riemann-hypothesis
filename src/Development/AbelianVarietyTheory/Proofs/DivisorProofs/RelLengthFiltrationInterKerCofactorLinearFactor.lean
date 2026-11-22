@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreEig
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsSaturatedSubmoduleIffExistsIsComplOfValuationR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreEig
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsSaturatedSubmoduleIffExistsIsComplOfValuationR
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.MultiplicationKernelIdentity GlobalTheory.HermitianPreEigenvalues Polynomial Module
 
 noncomputable section
@@ -281,7 +286,8 @@ theorem relLen_lin_filKer : ∀ (C : Type) [Field C] (v : AddValuation C (WithTo
   have hsp : ⊤ ≤ Submodule.span C (Set.range (Φ ∘ b)) := by
     rw [← span_range_compMap (v := v) (Fil := Fil) ha τ, Submodule.span_le]
     rintro _ ⟨x, rfl⟩
-    rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_smul, ← algebraMap_smul C]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -298,7 +304,8 @@ theorem relLen_lin_filKer : ∀ (C : Type) [Field C] (v : AddValuation C (WithTo
         show T (b k) = _
         conv_lhs => rw [← b.sum_repr (T (b k))]
         simp [A, LinearMap.toMatrix_apply]
-      rw [h2, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h2, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, algebraMap_smul, Basis.mk_apply]
       rfl

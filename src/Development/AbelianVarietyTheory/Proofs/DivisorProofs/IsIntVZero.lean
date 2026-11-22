@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem isIntV_zero (G : HTGroup p) (v : AwayP p) : IsIntV G v 0 := fun i => by
 
 theorem isIntV_add' (G : HTGroup p) (v : AwayP p) {a b : Qv v ⊗[ℚ] G.C} (ha : IsIntV G v a)
     (hb : IsIntV G v b) : IsIntV G v (a + b) := fun i => by
-  rw [map_add, Finsupp.add_apply]; exact add_mem (ha i) (hb i)
+  rw [map_add (f := _), Finsupp.add_apply]; exact add_mem (ha i) (hb i)
 
 theorem isIntV_neg (G : HTGroup p) (v : AwayP p) {a : Qv v ⊗[ℚ] G.C} (ha : IsIntV G v a) :
     IsIntV G v (-a) := fun i => by
@@ -43,7 +47,7 @@ def intF (G : HTGroup p) (v : AwayP p) (h1 : IsIntV G v 1)
   one_mem' := by simp only [Set.mem_setOf_eq, map_one]; exact h1
   mul_mem' {a b} ha hb := by simp only [Set.mem_setOf_eq, map_mul] at *; exact hm _ _ ha hb
   zero_mem' := by simp only [Set.mem_setOf_eq, map_zero]; exact isIntV_zero G v
-  add_mem' {a b} ha hb := by simp only [Set.mem_setOf_eq, map_add] at *; exact isIntV_add' G v ha hb
+  add_mem' {a b} ha hb := by simp only [Set.mem_setOf_eq, map_add (f := _)] at *; exact isIntV_add' G v ha hb
   neg_mem' {a} ha := by simp only [Set.mem_setOf_eq, map_neg] at *; exact isIntV_neg G v ha
 
 theorem mem_intF (G : HTGroup p) (v : AwayP p) (h1 : IsIntV G v 1)

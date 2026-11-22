@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.UnitriangularFrameLift
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.UnitriangularFrameLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,10 +52,11 @@ theorem id_cong : ScalarCongruentOne := by
   have hze : ∀ a : Fin r, S.hT F.fl.z (F.fl.e a) = 0 := fun a => hzX _ (Submodule.subset_span ⟨a, rfl⟩)
   have h1 : S.hT F.fl.z F'.fl.z = (o : E) * (-(T : E)) := by
     have e : F'.fl.z = (F'.fl.z - (o : E) • F.fl.z) + (o : E) • F.fl.z := by abel
-    rw [e, map_add, hzX _ hz, zero_add, map_smul, smul_eq_mul, F.fl.z_norm]
+    rw [e, map_add (f := _), hzX _ hz, zero_add, map_smul, smul_eq_mul, F.fl.z_norm]
   have h2 : S.hT F.fl.z (frameAct (frame F) ξ (Fin.last r)) = -(T : E) := by
     unfold frameAct
-    rw [map_sum, Fin.sum_univ_castSucc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Fin.sum_univ_castSucc]
     have hl : frame F (Fin.last r) = F.fl.z := by simp [FlagG.fvec]
     have hc : ∀ a : Fin r, frame F a.castSucc = F.fl.e a := fun a => by simp [FlagG.fvec]
     rw [hl, hξ2, map_smul, F.fl.z_norm]

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SegreGlue
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ProjSpaceHom
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveSpaceChart
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SegreGlue
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ProjSpaceHom
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveSpaceChart
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace UpperTheory.Gal.KunnethLefschetz
@@ -16,20 +20,20 @@ private theorem sec_sub (k : Type) [Field k] (d : ℕ) (a : MvPolynomial (Fin (d
   induction a using MvPolynomial.induction_on with
   | C r => simp
   | add p q hp hq =>
-    rw [map_add, map_add, add_sub_add_comm]
+    rw [map_add (f := _), map_add (f := _), add_sub_add_comm]
     exact Ideal.add_mem _ hp hq
   | mul_X p n hp =>
     rw [map_mul, map_mul]
     cases n using Fin.cases with
     | zero =>
       have h0 : killCompl (R := k) (Fin.succ_injective (d + 1)) (X 0) = 0 := by
-        simp [killCompl, aeval_X, Fin.succ_ne_zero]
+        simp [killCompl]
       rw [h0, map_zero, mul_zero, sub_zero]
       exact Ideal.mul_mem_left _ _ (Ideal.subset_span rfl)
     | succ j =>
       have h1 : rename Fin.succ (killCompl (R := k) (Fin.succ_injective (d + 1)) (X j.succ)) =
           X j.succ := by
-        simp [killCompl, aeval_X]
+        simp [killCompl]
       rw [h1, ← sub_mul]
       exact Ideal.mul_mem_right _ _ hp
 
@@ -49,7 +53,7 @@ private theorem off_hyp (k : Type) [Field k] (d : ℕ) :
   constructor
   · rintro hx ⟨y, rfl⟩
     have hb := GlobalTheory.ProjSpace.linearι_preimage_chart_of_notMem k (Fin.succ_injective (d + 1))
-      (k := 0) (by simp [Fin.succ_ne_zero])
+      (k := 0) (by simp)
     have hy : y ∈ GlobalTheory.ProjSpace.linearι k (Fin.succ_injective (d + 1)) ⁻¹ᵁ
         GlobalTheory.ProjSpace.chart k (d + 1) 0 := hx
     rw [hb] at hy
@@ -100,8 +104,29 @@ private theorem off_hyp (k : Type) [Field k] (d : ℕ) :
       have h2 := Ideal.sub_mem _ h hs'
       rwa [sub_sub_cancel] at h2
 
+open GlobalTheory.ProjSpace ReciprocityTheory.ChartRestriction.G.Geo.Tor in
+attribute [local instance] MvPolynomial.gradedAlgebra in
+private theorem linear_str (F : Type) [Field F] (A B : ℕ) {e : Fin (A + 1) → Fin (B + 1)}
+    (he : Function.Injective e) : linearι F he ≫ PSpace.str F B = PSpace.str F A := by
+  refine (Proj.mapAffineOpenCover (killHom F he)
+    (irrelevant_le_map_of_surjective _ (killHom_surjective F he))).openCover.hom_ext _ _ fun s => ?_
+  have key : ∀ (d : ℕ) (hd : 0 < d) (s : MvPolynomial (Fin (B + 1)) F) (hs : s ∈ grading F B d),
+      Proj.awayι (grading F A) (killHom F he s) ((killHom F he).2 hs) hd ≫ linearι F he ≫ PSpace.str F B =
+        Proj.awayι (grading F A) (killHom F he s) ((killHom F he).2 hs) hd ≫ PSpace.str F A := by
+    intro d hd s hs
+    rw [linearι, Proj.awayι_comp_map_assoc _ _ hd s hs, PSpace.str, PSpace.str, Proj.awayι_toSpecZero_assoc,
+      Proj.awayι_toSpecZero_assoc, ← Spec.map_comp, ← Spec.map_comp, ← Spec.map_comp]
+    congr 1
+    ext1
+    refine RingHom.ext fun r => HomogeneousLocalization.val_injective _ ?_
+    refine (congrArg HomogeneousLocalization.val (HomogeneousLocalization.Away.map_mk (killHom F he) s hs 0 (MvPolynomial.C r)
+      ((zero_smul ℕ d).symm ▸ MvPolynomial.isHomogeneous_C _ r))).trans ?_
+    rw [HomogeneousLocalization.Away.val_mk]
+    exact congrArg (Localization.mk · _) (MvPolynomial.killCompl_C he r)
+  exact key _ s.1.2 _ s.2.2
+
 theorem UpperTheory.Gal.KunnethLefschetz.hypEmb_holds :
     UpperTheory.Gal.KunnethLefschetz.HypEmb := by
   intro k _ d
   refine ⟨GlobalTheory.ProjSpace.linearι k (Fin.succ_injective (d + 1)), GlobalTheory.ProjSpace.chart k (d + 1) 0, inferInstance,
-    GlobalTheory.ProjSpace.linearι_str k _, off_hyp k d, ⟨chartIso k d⟩⟩
+    linear_str k d (d + 1) _, off_hyp k d, ⟨chartIso k d⟩⟩

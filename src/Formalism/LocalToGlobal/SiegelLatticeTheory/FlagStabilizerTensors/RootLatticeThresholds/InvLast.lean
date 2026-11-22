@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.PtParAnti
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.PtParAnti
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,10 +20,10 @@ variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 theorem inv_last {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) :
     Z⁻¹ (Fin.last r) (Fin.last r) = Ring.inverse (Formalism.L2.SG.RealObj.Dl Z (r + 1)) * Formalism.L2.SG.RealObj.Dl Z r := by
   have hfull : Formalism.L2.SG.RealObj.Dl Z (r + 1) = Z.det := by
-    unfold Formalism.L2.SG.RealObj.Dl; rw [dif_pos le_rfl]
+    unfold Formalism.L2.SG.RealObj.Dl; rw [dite_eq_left le_rfl]
     congr 1
   have hr : Formalism.L2.SG.RealObj.Dl Z r = (Z.submatrix (Fin.last r).succAbove (Fin.last r).succAbove).det := by
-    unfold Formalism.L2.SG.RealObj.Dl; rw [dif_pos (Nat.le_succ r)]
+    unfold Formalism.L2.SG.RealObj.Dl; rw [dite_eq_left (Nat.le_succ r)]
     congr 1; ext i j; simp only [Matrix.submatrix_apply, Fin.succAbove_last]; rfl
   rw [Matrix.inv_def, Matrix.smul_apply, smul_eq_mul, Matrix.adjugate_fin_succ_eq_det_submatrix, hfull, hr]
   have : ((-1 : ℂ) ^ ((Fin.last r : ℕ) + (Fin.last r : ℕ))) = 1 := by
@@ -30,7 +34,7 @@ theorem gap_of_G {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (hZ : Is
     (hG : 0 < Gv T T' Z) :
     1 - (T : ℂ) * T' * (Z⁻¹ (Fin.last r) (Fin.last r) * starRingEnd ℂ (Z⁻¹ (Fin.last r) (Fin.last r))) ≠ 0 := by
   have hfull : Formalism.L2.SG.RealObj.Dl Z (r + 1) = Z.det := by
-    unfold Formalism.L2.SG.RealObj.Dl; rw [dif_pos le_rfl]
+    unfold Formalism.L2.SG.RealObj.Dl; rw [dite_eq_left le_rfl]
     congr 1
   have hd : Formalism.L2.SG.RealObj.Dl Z (r + 1) ≠ 0 := by rw [hfull]; exact hZ.ne_zero
   rw [inv_last, Ring.inverse_eq_inv']

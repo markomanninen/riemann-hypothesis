@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
-import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+public import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -53,7 +57,7 @@ theorem iteratedDeriv_comp_expG_mul (X : 𝔤) (p : ℕ) (f : G → ℂ) (x : G)
   rw [h.expG_add_smul, mul_assoc]
 
 theorem contMDiff_expG_smul_mul (X : 𝔤) (x : G) :
-    letI := h.chartedSpace; ContMDiff 𝓘(ℝ, ℝ) 𝓘(ℝ, 𝔤) ∞ (fun t : ℝ => h.expG (t • X) * x) := by
+    (letI := h.chartedSpace; ContMDiff 𝓘(ℝ, ℝ) 𝓘(ℝ, 𝔤) ∞ (fun t : ℝ => h.expG (t • X) * x)) := by
   let := h.chartedSpace
   have := h.lieGroup ∞
   exact (h.contMDiff_expG_comp (contDiff_id.smul contDiff_const)).mul contMDiff_const

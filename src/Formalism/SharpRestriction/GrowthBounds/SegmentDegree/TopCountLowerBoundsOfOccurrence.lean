@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.OldestLetterInSegment
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.OldestLetterInSegment
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ namespace Formalism.MainNotions.SelectionLemmas.Pf
 
 open Formalism.MainNotions.G Formalism.MainNotions.SelectionLemmas Formalism.MainNotions.G.Joints.StandardMonomialSpace
 
-open Classical in
 
+open Classical in
 def LeadingLetterInAtMostTwoSegments : Prop :=
   ∀ (p n' r K : ℕ) [NeZero n'] [NeZero r] [NeZero K] (X : Dat n' r), X.Hyp p K → ∀ t : Fin n',
     ∑ j ∈ Finset.range X.F.J, ((X.F.letters (j : ℤ)).filter fun y => posOf n' y = t).card ≤ 2

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftHom
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex
@@ -23,7 +27,7 @@ def rAug (φ : R →+* S) {F : Shv S} {C : Cx S} (ε : sgl F ⟶ C) : sgl ((rest
   (HomologicalComplex.singleMapHomologicalComplex (restr φ) (ComplexShape.up ℤ) 0).inv.app F ≫ (rcx φ).map ε
 
 def idSemi (φ : R →+* S) (K : Cx S) : SemiMap K ((rcx φ).obj K) where
-  app U s := { toFun := fun a => a, map_zero' := rfl, map_add' := fun _ _ => rfl }
+  app _ _ := { toFun := fun a => a, map_zero' := rfl, map_add' := fun _ _ => rfl }
   nat _ _ _ := rfl
   comm _ _ _ _ := rfl
 
@@ -116,7 +120,7 @@ theorem rAug_f_zero (φ : R →+* S) {F : Shv S} {C : Cx S} (ε : sgl F ⟶ C) (
       (show Sec ((restr φ).obj (C.X 0)) U from Sec.map (ε.f 0) (Sec.map (sglι F) a)) := by
   have h : sglι ((restr φ).obj F) ≫ (rAug φ ε).f 0 = (restr φ).map (sglι F ≫ ε.f 0) := by
     set_option backward.isDefEq.respectTransparency false in
-    simp [rAug, sglι, CochainComplex.singleFunctor, CochainComplex.singleFunctors]
+    simp [rAug, sglι]
   have := congrArg (fun m => Sec.map m (show Sec ((restr φ).obj F) U from a)) h
   exact this
 

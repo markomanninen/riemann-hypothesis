@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SplitEig
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ContinuousPrN
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.DiagInvVal
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SplitEig
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ContinuousPrN
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.DiagInvVal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -26,6 +30,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.meanLaws :
     intro y
     obtain ⟨C, hCc, hCn⟩ := exists_compact_mem_nhds y
     obtain ⟨B, hB⟩ := hΨ.bdd C hCc
+    set_option synthInstance.maxHeartbeats 200000 in
     refine continuousAt_of_dominated (bound := fun _ => B) ?_ ?_ (integrable_const B) ?_
     · exact Eventually.of_forall fun z => (hc z).aestronglyMeasurable
     · filter_upwards [hCn] with z hz

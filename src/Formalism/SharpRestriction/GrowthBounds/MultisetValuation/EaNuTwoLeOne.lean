@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TheoremOfAlternateForm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TheoremOfAlternateForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def ea_colH (t : ℕ) (lam0 : Fin n' → Fin (k1 + 1) → ℤ) (w : ℕ → Fin 
 theorem ea_lamI_anti (h : Std p n' k1 t m c r TT a b lam0 w) (s : Fin n') {i i' : ℕ} (h1 : 1 ≤ i) (h2 : i ≤ i')
     (h3 : i' ≤ k1 + 1) : lamI lam0 s i' ≤ lamI lam0 s i := by
   unfold lamI
-  rw [dif_pos (show 1 ≤ i' ∧ i' ≤ k1 + 1 by omega), dif_pos (show 1 ≤ i ∧ i ≤ k1 + 1 by omega)]
+  rw [dite_eq_left (show 1 ≤ i' ∧ i' ≤ k1 + 1 by omega), dite_eq_left (show 1 ≤ i ∧ i ≤ k1 + 1 by omega)]
   exact h.dom s (Fin.mk_le_mk.2 (by omega))
 
 theorem ea_block_le {J i : ℕ} (h1 : k1 + 1 < i) (h2 : i ≤ NN k1 t J) : (i - (k1 + 2)) / (t + 1) + 1 ≤ J := by
@@ -51,7 +55,7 @@ theorem ea_nu_nonneg (h : Std p n' k1 t m c r TT a b lam0 w) {J : ℕ} (hJ1 : 1 
     have hlow := (h.w_low s).2
     have hla : lam0 s (Fin.last k1) ≤ lamI lam0 s i := by
       unfold lamI
-      rw [dif_pos h1]
+      rw [dite_eq_left h1]
       exact h.dom s (Fin.le_last _)
     omega
   · have hb := ea_block_le (k1 := k1) (t := t) h2.1 h2.2
@@ -74,7 +78,7 @@ theorem ea_nu_le_two (h : Std p n' k1 t m c r TT a b lam0 w) {J : ℕ} (hJ : J �
     have hlow := (h.w_low s).2
     have hla : lam0 s (Fin.last k1) ≤ lamI lam0 s 2 := by
       unfold lamI
-      rw [dif_pos (show 1 ≤ 2 ∧ 2 ≤ k1 + 1 by omega)]
+      rw [dite_eq_left (show 1 ≤ 2 ∧ 2 ≤ k1 + 1 by omega)]
       exact h.dom s (Fin.le_last _)
     omega
 

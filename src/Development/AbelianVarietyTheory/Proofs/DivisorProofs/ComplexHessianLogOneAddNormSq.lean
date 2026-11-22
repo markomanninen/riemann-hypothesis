@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.LeviForms.EventuallyDifferentiableAtOfContDiffAt
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.EventuallyDifferentiableAtOfContDiffAt
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

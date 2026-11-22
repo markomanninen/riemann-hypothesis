@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerIntegralFromISlashChangeOfVariablesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerIntegralFromISlashChangeOfVariablesStatement
+
+@[expose] public section
 
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
@@ -27,7 +31,8 @@ theorem polySlash_eq_aeval (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X
     slP w g p = MvPolynomial.aeval
       ![C ((g 0 0 : ℤ) : ℂ) * X + C ((g 0 1 : ℤ) : ℂ), C ((g 1 0 : ℤ) : ℂ) * X + C ((g 1 1 : ℤ) : ℂ)]
       (p.homogenize w) := by
-  rw [polySlash_apply, homogenize_eq_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [polySlash_apply, homogenize_eq_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, map_mul, map_pow, map_pow, MvPolynomial.aeval_X, MvPolynomial.aeval_X]
   rfl
@@ -49,16 +54,18 @@ theorem homogenize_slP (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) :
     have h := (((isHomogeneous_lin ((g 0 0 : ℤ) : ℂ) ((g 0 1 : ℤ) : ℂ)).pow i).mul
       ((isHomogeneous_lin ((g 1 0 : ℤ) : ℂ) ((g 1 1 : ℤ) : ℂ)).pow (w - i))).C_mul (p.coeff i)
     rwa [one_mul, one_mul, Nat.add_sub_of_le hi'] at h
-  · rw [polySlash_apply, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [polySlash_apply, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [map_mul, map_pow, map_add, MvPolynomial.aeval_C, MvPolynomial.aeval_X, Matrix.cons_val_zero,
+    simp only [map_mul, map_pow, map_add (f := _), MvPolynomial.aeval_C, MvPolynomial.aeval_X, Matrix.cons_val_zero,
       Matrix.cons_val_one, mul_one, ← C_eq_algebraMap, smul_eq_C_mul]
 
 theorem polySlash_polySlash (w : ℕ) (g h : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) :
     slP w h (slP w g p) = slP w (g * h) p := by
-  rw [polySlash_eq_aeval w h, homogenize_slP, polySlash_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [polySlash_eq_aeval w h, homogenize_slP, polySlash_apply, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  simp only [map_mul, map_pow, map_add, MvPolynomial.aeval_C, MvPolynomial.aeval_X, Matrix.cons_val_zero,
+  simp only [map_mul, map_pow, map_add (f := _), MvPolynomial.aeval_C, MvPolynomial.aeval_X, Matrix.cons_val_zero,
       Matrix.cons_val_one, ← C_eq_algebraMap, smul_eq_C_mul, Matrix.mul_apply, Fin.sum_univ_two, Int.cast_add,
       Int.cast_mul]
   congr 3 <;> ring

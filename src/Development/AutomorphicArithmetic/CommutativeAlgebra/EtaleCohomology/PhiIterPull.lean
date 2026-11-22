@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SumTransportAlt
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NatCastQb
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SumTransportAlt
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NatCastQb
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitKron
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitKron
+
+@[expose] public section
 
 namespace PI.UnitKronW
 

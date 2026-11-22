@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescent
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescent
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -15,8 +19,9 @@ theorem desc_fun (ℓ : Kf →ₗ[LL] LL) (t : Finset (MvPolynomial ι LL)) (c :
     (h : ∑ x ∈ t, C (c x) * map (algebraMap LL Kf) x = C c0 * map (algebraMap LL Kf) Q) :
     ∑ x ∈ t, ℓ (c x) • x = ℓ c0 • Q := by
   ext m
-  have hm := congrArg (fun P => ℓ (coeff m P)) h
-  simp only [coeff_sum, coeff_C_mul, coeff_map, map_sum] at hm
+  have hm := congrArg (fun P => ℓ (AddMonoidAlgebra.coeff P m)) h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coeff_sum, coeff_C_mul, coeff_map, map_sum] at hm
   simp only [coeff_sum, coeff_smul, smul_eq_mul]
   have e : ∀ (a : Kf) (r : LL), ℓ (a * algebraMap LL Kf r) = ℓ a * r := by
     intro a r
@@ -177,7 +182,8 @@ theorem desc_main (A : Subring Kf) (hA : ∀ x : Kf, x ∈ A ∨ x⁻¹ ∈ A) (
         simp only [hc'def, map_sub, map_mul, sub_mul, Finset.sum_sub_distrib]
         have e1 : ∑ x ∈ (t.erase j), C (c j) * C (algebraMap LL Kf (f x / f j)) * map (algebraMap LL Kf) x =
             C (c j) * map (algebraMap LL Kf) (∑ x ∈ (t.erase j), (f x / f j) • x) := by
-          rw [map_sum, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.mul_sum]
           refine Finset.sum_congr rfl fun x _ => ?_
           rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, mul_assoc]
         rw [e1]

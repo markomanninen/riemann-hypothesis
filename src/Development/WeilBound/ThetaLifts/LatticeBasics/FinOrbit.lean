@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.HermAbs
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HermAbs
+
+@[expose] public section
 
 noncomputable section
 

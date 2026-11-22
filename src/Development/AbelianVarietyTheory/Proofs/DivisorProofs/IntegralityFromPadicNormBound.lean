@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ClosedBallValuationSubringToSubring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ClosedBallValuationSubringToSubring
+
+@[expose] public section
+
 open NumberField Polynomial
 
 namespace GlobalTheory
@@ -11,19 +16,19 @@ theorem den_eq_one_of_padicNorm_le_one (c : ℚ)
     (h : ∀ q : ℕ, q.Prime → padicNorm q c ≤ 1) : c.den = 1 := by
   by_contra hne
   obtain ⟨q, hq, hqd⟩ := Nat.exists_prime_and_dvd hne
-  haveI := Fact.mk hq
+  have : Fact q.Prime := ⟨hq⟩
   have hc : c ≠ 0 := by
     rintro rfl; simp at hne
   have h1 := h q hq
-  rw [padicNorm.eq_zpow_of_nonzero hc] at h1
+  rw [padicNorm.eq_zpow_of_ne_zero hc] at h1
   have hv : 0 ≤ padicValRat q c := by
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     have hq1 : (1 : ℚ) < q := by exact_mod_cast hq.one_lt
     have : (1 : ℚ) < (q : ℚ) ^ (-padicValRat q c) := one_lt_zpow₀ hq1 (by omega)
     linarith
-  have hden : 1 ≤ padicValNat q c.den :=
-    one_le_padicValNat_of_dvd c.den_nz hqd
+  have hden : 1 ≤ multiplicity q c.den :=
+    one_le_multiplicity_of_dvd c.den_nz hqd
   have hnum : padicValInt q c.num = 0 := by
     apply padicValInt.eq_zero_of_not_dvd
     intro hdvd
@@ -44,7 +49,7 @@ theorem isIntegral_of_forall_padicAlgCl_norm_le_one :
   have hmon : f.Monic := minpoly.monic hint
   have hcoeff : ∀ q : ℕ, q.Prime → ∀ n, padicNorm q (f.coeff n) ≤ 1 := by
     intro q hq n
-    haveI := Fact.mk hq
+    have : Fact q.Prime := ⟨hq⟩
     let S := unitBallSubring (PadicAlgCl q)
     set g := f.map (algebraMap ℚ (PadicAlgCl q)) with hg
     have hroots : ∀ b ∈ g.roots, b ∈ S := by
@@ -80,7 +85,7 @@ theorem isIntegral_of_forall_padicAlgCl_norm_le_one :
     intro n
     refine ⟨(f.coeff n).num, ?_⟩
     have := den_eq_one_of_padicNorm_le_one _ (fun q hq => hcoeff q hq n)
-    simpa using Rat.coe_int_num_of_den_eq_one this
+    simpa using Rat.intCast_num_of_den_eq_one this
   obtain ⟨g, hg, -, hgm⟩ := lifts_and_natDegree_eq_and_monic hlift hmon
   refine ⟨g, hgm, ?_⟩
   have h0 : aeval a f = 0 := minpoly.aeval ℚ a

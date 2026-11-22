@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
-import Mathlib.Analysis.Complex.Conformal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
+public import Mathlib.Analysis.Complex.Conformal
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open scoped Matrix MatrixGroups
 
 namespace UpperTheory.V.Br.DescentHolomorphic
 
-open Classical in
 
+open Classical in
 private def EE (i j : Fin 2) : TR.Lie ℚ 2 := TR.toL (Matrix.single i j (Pi.single Rat.infinitePlace 1))
 
 private def AA (w : ℂ) : TR.Lie ℚ 2 := w.im • EE 0 0 + w.re • EE 0 1 + EE 1 1

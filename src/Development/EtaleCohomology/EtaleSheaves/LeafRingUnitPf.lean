@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -15,7 +19,7 @@ def LeafUnitPair : Prop := ∀ (q : ℕ) [NeZero q] (i : ℤ),
   ∃ μ : Pair (res _ (tw q 0)) (res _ (tw q i)) (res _ (tw q (0 + i))), IsTwPair μ ∧ UnitProp μ
 
 def OneLoc {q : ℕ} {E : Spc} (α : Cocycle ((chains (ZMod q)).obj E) (res _ (tw q 0)) 0) : Prop :=
-  ∀ (U : Scheme.{0}) (x : Sx E 0 U), Loc U (fun V g => ∃ ζ : Prim q Γ(V, ⊤), Sec.res g (ev α.1 0 0 (by simp) U x) = resGen 0 ζ)
+  ∀ (U : Scheme.{0}) (x : Sx E 0 U), Loc U (fun V g => ∃ ζ : Prim q Γ(V, ⊤), Sec.res g (ev (R := ZMod q) α.1 0 0 (by simp) U x) = resGen 0 ζ)
 
 def LeafOneLoc : Prop := ∀ (q : ℕ) [NeZero q] (E : Spc), Inv q E →
   ∀ α : Cocycle ((chains (ZMod q)).obj E) (res _ (tw q 0)) 0, IsOneCocycle q E α → OneLoc α

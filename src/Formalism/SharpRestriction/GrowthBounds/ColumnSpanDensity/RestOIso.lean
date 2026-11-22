@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LpRingIndepOf
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.FinalO
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LpRingIndepOf
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.FinalO
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+
+@[expose] public section
+
 open Matrix GlobalTheory.CompanionTheory.Jp
 
 namespace GlobalTheory.CompanionTheory.Jp.CntCols
@@ -47,7 +52,8 @@ theorem li_iff {V Z ι : Type} [AddCommGroup V] [Module k V] [AddCommGroup Z] [M
   · intro h y hy
     have h1 := Fintype.linearIndependent_iff.mp h (fun i => b.repr y i) (by
       have := congrArg g (b.sum_repr y)
-      rw [map_sum, hy] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, hy] at this
       simpa using this)
     rw [← b.sum_repr y]
     simp [h1]

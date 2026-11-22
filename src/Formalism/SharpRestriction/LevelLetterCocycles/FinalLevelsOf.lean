@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,29 +64,29 @@ theorem finalLevels_of {T : LocLat G Qp LL O} {C : Coord W (baseIdOf hR) T} {c :
     (hs : LevSteps Hy ϖ j M g G₀ Sz η kind b e) :
     E.FinalLevels (latOf C) c ell H (lvData Hy ((baseIdOf hR).Bs.ff' ell j M g) kind b η)
       (lvModel Hy ((baseIdOf hR).Bs.ff' ell j M g) kind b η) ϖ (W.χΓ W.gam) j M g G₀ Sz η kind b e lam
-      (UL lam kind b η) where
-  kind_eq := fun _ _ => rfl
-  b_eq := fun _ _ => rfl
-  η_eq := rfl
-  k1b := hs.k1b
-  hasU := fun _ _ => rfl
-  k1c := hs.k1c
-  k1d := hs.k1d
-  unitsAt := hs.unitsAt
-  compl := hs.compl
-  filt := hs.filt
-  jumps := hs.jumps
-  mem := hs.mem
-  locReg := hs.locReg
-  pa1b := hs.pa1b
-  equiv := hs.equiv
-  span := hs.span
-  ind := hs.ind
-  flDef := fun _ _ _ => Iff.rfl
-  locLIs := hs.locLIs
-  lamInd := hs.lamInd
-  lamSpan := hs.lamSpan
-  uIs := fun _ _ _ => Iff.rfl
+      (UL lam kind b η) :=
+  { kind_eq := fun _ _ => rfl
+    b_eq := fun _ _ => rfl
+    η_eq := rfl
+    k1b := hs.k1b
+    hasU := fun _ _ => rfl
+    k1c := hs.k1c
+    k1d := hs.k1d
+    unitsAt := hs.unitsAt
+    compl := hs.compl
+    filt := hs.filt
+    jumps := hs.jumps
+    mem := hs.mem
+    locReg := hs.locReg
+    pa1b := hs.pa1b
+    equiv := hs.equiv
+    span := hs.span
+    ind := hs.ind
+    flDef := fun _ _ _ => Iff.rfl
+    locLIs := hs.locLIs
+    lamInd := hs.lamInd
+    lamSpan := hs.lamSpan
+    uIs := fun _ _ _ => Iff.rfl }
 
 section ThetaShiftProofs
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TypedPartSplitPrimes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtCoeffSingleSubst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TypedPartSplitPrimes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtCoeffSingleSubst
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,8 @@ variable {C : Type} [Field C] {v : AddValuation C (WithTop ℝ)}
 
 theorem subst_sum_smul {σ τ ι : Type} [Fintype ι] {a : σ → MvPowerSeries τ C} (ha : HasSubst a) (m : ι → C)
     (f : ι → MvPowerSeries σ C) : subst a (∑ i, m i • f i) = ∑ i, m i • (subst a (f i) : MvPowerSeries τ C) := by
-  rw [← substAlgHom_apply ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← substAlgHom_apply ha, map_sum]
   simp only [map_smul, substAlgHom_apply]
 
 theorem isIntHom_comp {d d' d'' : ℕ} {G : LogFGL v d} {G' : LogFGL v d'} {G'' : LogFGL v d''}

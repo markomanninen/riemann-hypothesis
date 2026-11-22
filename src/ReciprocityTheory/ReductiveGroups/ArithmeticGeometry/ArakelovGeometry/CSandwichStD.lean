@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStC
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,7 +115,8 @@ theorem eq_zero_of_sum_mono {y : Fin (D + 1) → Ω} (hy : coordIdeal ℤ y = �
     have := Finset.Nat.mem_antidiagonalTuple.mp (adtEnum_mem D N i)
     simpa using this
   have hpa : aeval y p = 0 := by
-    rw [hp, map_sum, ← h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hp, map_sum, ← h]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [aeval_monomial, Finsupp.prod_fintype _ _ (by simp)]
     simp [algebraMap_int_eq]
@@ -119,8 +124,8 @@ theorem eq_zero_of_sum_mono {y : Fin (D + 1) → Ω} (hy : coordIdeal ℤ y = �
     have := mem_coordIdeal_of_isHomogeneous (o := ℤ) (x := y) hph hpa
     rwa [hy, Ideal.mem_bot] at this
   funext i
-  have hc := congrArg (coeff (Finsupp.equivFunOnFinite.symm (adtEnum D N i))) hp0
-  rw [hp, coeff_sum, coeff_zero] at hc
+  have hc := congrArg (AddMonoidAlgebra.coeff · (Finsupp.equivFunOnFinite.symm (adtEnum D N i))) hp0
+  rw [hp, coeff_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hc
   rw [Finset.sum_eq_single i (fun j _ hji => ?_) (by simp)] at hc
   · simpa using hc
   · rw [coeff_monomial, if_neg]
@@ -130,7 +135,7 @@ theorem eq_zero_of_sum_mono {y : Fin (D + 1) → Ω} (hy : coordIdeal ℤ y = �
 theorem norm_monoC_sq_le {N : ℕ} (a : Fin N → ℕ) (w : Fin N → ℂ) :
     ‖monoC a w‖ ^ 2 ≤ sqN w ^ (∑ i, a i) := by
   rw [monoC, norm_prod, ← Finset.prod_pow, ← Finset.prod_pow_eq_pow_sum]
-  refine Finset.prod_le_prod (fun i _ => by positivity) fun i _ => ?_
+  refine Finset.prod_le_prod₀ (fun i _ => by positivity) fun i _ => ?_
   rw [norm_pow, ← pow_mul, mul_comm, pow_mul]
   refine pow_le_pow_left₀ (by positivity) ?_ _
   exact Finset.single_le_sum (f := fun j => ‖w j‖ ^ 2) (fun j _ => by positivity) (Finset.mem_univ i)
@@ -233,7 +238,7 @@ theorem crd_span {x : Ix κ → Ω} {n r : ℕ} {b : Fin r → MvPolynomial (Ix 
     | add y₁ y₂ h₁ h₂ ih₁ ih₂ =>
       have : (⟨y₁ + y₂, hsub (Submodule.add_mem _ h₁ h₂)⟩ : sec ℤ x n) =
           ⟨y₁, hsub h₁⟩ + ⟨y₂, hsub h₂⟩ := rfl
-      rw [this, map_add]; exact Submodule.add_mem _ ih₁ ih₂
+      rw [this, map_add (f := _)]; exact Submodule.add_mem _ ih₁ ih₂
     | smul a y h ih =>
       have : (⟨a • y, hsub (Submodule.smul_mem _ a h)⟩ : sec ℤ x n) = a • ⟨y, hsub h⟩ := rfl
       rw [this, map_smul]; exact Submodule.smul_mem _ _ ih
@@ -245,7 +250,7 @@ theorem crd_span {x : Ix κ → Ω} {n r : ℕ} {b : Fin r → MvPolynomial (Ix 
   rw [hv]
   exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (key _ (hle (hbm j)))
 
-theorem sq_wgt_le_of_le {m : ConeMetric ℂ (Ix κ)} {n : ℕ} {z : Ix κ → ℂ} (hz : z ≠ 0) {a Y : ℝ}
+theorem sq_wgt_le_of_le {m : ConeMetric (C := ℂ) (ι := Ix κ)} {n : ℕ} {z : Ix κ → ℂ} (hz : z ≠ 0) {a Y : ℝ}
     (ha : 0 ≤ a) (h : a ≤ Y * m.ρ z ^ n) : a ^ 2 * wgt m n z ≤ Y ^ 2 := by
   have hρ : 0 < m.ρ z ^ n := pow_pos (m.pos z hz) n
   unfold wgt
@@ -254,7 +259,7 @@ theorem sq_wgt_le_of_le {m : ConeMetric ℂ (Ix κ)} {n : ℕ} {z : Ix κ → �
   calc a ^ 2 ≤ (Y * m.ρ z ^ n) ^ 2 := pow_le_pow_left₀ ha h 2
     _ = Y ^ 2 * (m.ρ z ^ n) ^ 2 := by ring
 
-theorem sqN_comp_eq {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric ℂ (Ix κ)}
+theorem sqN_comp_eq {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric (C := ℂ) (ι := Ix κ)}
     (hFS : IsPullFS x e m) {z : Ix κ → ℂ} (hz : z ∈ pts (coordIdeal ℤ x)) :
     sqN (z ∘ e) = m.ρ z ^ 2 := by
   rw [hFS z hz, Real.sq_sqrt (Finset.sum_nonneg fun k _ => by positivity)]

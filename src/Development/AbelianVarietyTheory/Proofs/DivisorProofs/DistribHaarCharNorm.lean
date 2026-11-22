@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Lbc
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsTemperedCoeff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSmoothCharCompNorm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DistribHaarCharTransport
-import GroundTheory.AutomorphicForms.MeasuresModulus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Lbc
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsTemperedCoeff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSmoothCharCompNorm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DistribHaarCharTransport
+public import GroundTheory.AutomorphicForms.MeasuresModulus
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.FunExt GlobalTheory.LocGL
 
@@ -39,8 +43,8 @@ theorem distribHaarChar_norm {k k' : Type} [Field k] [ValuativeRel k] [Topologic
   rw [LinearMap.det_conj]
   rfl
 
-open GlobalTheory.SmGL GlobalTheory.SplitWeil in
 
+open GlobalTheory.SmGL GlobalTheory.SplitWeil in
 theorem absPow_comp_norm {k k' : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] [Field k'] [ValuativeRel k'] [TopologicalSpace k']
     [IsNonarchimedeanLocalField k'] [Algebra k k'] [FiniteDimensional k k'] [IsModuleTopology k k'] (t : ℂ) :

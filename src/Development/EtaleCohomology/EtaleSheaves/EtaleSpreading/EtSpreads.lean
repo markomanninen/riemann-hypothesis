@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.DescendPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.DescendPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits LateralTheory.E.t_E3Cut

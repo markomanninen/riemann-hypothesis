@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+
+@[expose] public section
+
 open Formalism.ConjugateSelfDual UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ
 
 private theorem UpperTheory.pow_val_mul_zmod {K : Type*} [Monoid K] {m : ℕ} (z : K) (hz : z ^ m = 1) (a b : ZMod m) :
@@ -22,7 +27,8 @@ theorem UpperTheory.gaussSum_twist_congr_of_measure :
   intro l _ r N L hN hL ψ' z hz
   have key : (∑ b : (ZMod (l ^ r))ˣ, ψ' b * z ^ (b : ZMod (l ^ r)).val) * N (fun x => ψ'⁻¹ x) =
       ∑ b : (ZMod (l ^ r))ˣ, ψ' b * N (fun x => (z ^ (b : ZMod (l ^ r)).val) ^ x.val) := by
-    simp only [← smul_eq_mul (α := Qbar l) _ (N _), ← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← smul_eq_mul (α := Qbar l) _ (N _), ← map_smul, ← map_sum]
     apply hN
     rintro _ ⟨x, rfl⟩
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem dualBasic : DualBasic := by
       rw [dualBasic_mem_dual] at hxL hxM ⊢
       intro y hy
       obtain ⟨l, hl, m, hm, rfl⟩ := Submodule.mem_sup.1 hy
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact add_mem (hxL l hl) (hxM m hm)
   · intro L
     rw [IsUnimodular, integ, le_antisymm_iff]

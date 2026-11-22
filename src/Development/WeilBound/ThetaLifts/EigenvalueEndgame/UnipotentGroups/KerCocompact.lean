@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryRationalPointsCountableDiscreteFundDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryRationalPointsCountableDiscreteFundDomain
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,29 +37,31 @@ theorem ker_cocompact {F A V V' M M' : Type} [Field F] [CommRing A] [Algebra F A
   let w : Fin _ → M := fun j => i (b j)
   have key : ∀ x, x - hb'.lift (i ∘ₗ s) (TA x) ∈ Submodule.span A (Set.range w) := fun x => by
     induction x using hb.inductionOn with
-    | zero => simp
     | tmul v =>
       rw [h, hb'.lift_eq, LinearMap.comp_apply, ← map_sub]
       have hv : v - s (T v) ∈ LinearMap.ker T := by simp [hs]
       rw [show v - s (T v) = ((⟨_, hv⟩ : LinearMap.ker T) : V) from rfl, ← b.sum_repr ⟨_, hv⟩]
-      simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
       exact Submodule.sum_mem _ fun j _ => Submodule.smul_of_tower_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
     | smul a x hx =>
       rw [map_smul, map_smul, ← smul_sub]
       exact Submodule.smul_mem _ _ hx
     | add x y hx hy =>
-      rw [map_add, map_add, add_sub_add_comm]
+      rw [map_add (f := _), map_add (f := _), add_sub_add_comm]
       exact add_mem hx hy
   refine ⟨(fun a : Fin _ → A => ∑ j, a j • w j) '' Set.univ.pi fun _ => K,
     (isCompact_univ_pi fun _ => hK).image (by fun_prop), ?_, fun x hx => ?_⟩
   · rintro _ ⟨a, -, rfl⟩
-    simp only [map_sum, map_smul, w, h, show ∀ j, T (b j) = 0 from fun j => (b j).2, map_zero, smul_zero, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, w, h, show ∀ j, T (b j) = 0 from fun j => (b j).2, map_zero, smul_zero, Finset.sum_const_zero]
   · have := key x
     rw [hx, map_zero, sub_zero] at this
     obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun A).1 this
     choose r hr using fun j => hc (a j)
     refine ⟨∑ j, r j • (b j : V), by simp [show ∀ j, T (b j) = 0 from fun j => (b j).2], _, fun j _ => hr j, ?_⟩
-    simp only [map_sum, map_smul, sub_smul, algebraMap_smul, Finset.sum_sub_distrib, w]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, sub_smul, algebraMap_smul, Finset.sum_sub_distrib, w]
 
 section Lat
 
@@ -78,7 +84,7 @@ theorem right_of_fd [LocallyCompactSpace G] [SecondCountableTopology G] (μ : Me
   have e := Measure.isMulLeftInvariant_eq_smul (μ.map (· * g)) μ
   set c := Measure.haarScalarFactor (μ.map (· * g)) μ
   have q : Measure.QuasiMeasurePreserving (· * g) μ μ :=
-    ⟨measurable_mul_const g, by rw [e]; exact Measure.smul_absolutelyContinuous⟩
+    ⟨(measurable_mul_const g).aemeasurable, by rw [e]; exact Measure.smul_absolutelyContinuous⟩
   have h2 : IsFundamentalDomain Γ ((Equiv.mulRight g) ⁻¹' 𝓕) μ :=
     h.preimage_of_equiv q Function.bijective_id fun γ x => by
       change _ * x * g = _ * (x * g)
@@ -138,7 +144,7 @@ theorem ex_neg {x : Matrix n n R} (h : x * x * x = 0) : ex A x * ex A (-x) = 1 :
 theorem map_ex (x : Matrix n n R) : (ex A x).map c = ex A (x.map c) := by
   have := (c.mapMatrix (m := n))
   change c.mapMatrix (ex A x) = ex A (c.mapMatrix x)
-  simp only [ex, map_add, map_one, map_smul, map_mul]
+  simp only [ex, map_add (f := _), map_one, map_smul, map_mul]
 
 theorem ex_unit {x : Matrix n n R} (h : x * x * x = 0) (hs : xᵀ * J + J * x.map c = 0) : (ex A x)ᵀ * J * (ex A x).map c = J := by
   have h1 : xᵀ * J = J * (-x.map c) := by rw [Matrix.mul_neg]; exact eq_neg_of_add_eq_zero_left hs
@@ -158,7 +164,7 @@ theorem log_skew {x : Matrix n n R} (h : x * x * x = 0) (hu : (1 + x)ᵀ * J * (
     (x - (⅟2 : A) • (x * x))ᵀ * J + J * (x - (⅟2 : A) • (x * x)).map c = 0 := by
   have e0 : (1 + x).map c = 1 + x.map c := by
     change c.mapMatrix _ = 1 + c.mapMatrix x
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
   have e1 : (x - (⅟2 : A) • (x * x)).map c = x.map c - (⅟2 : A) • (x.map c * x.map c) := by
     change c.mapMatrix _ = c.mapMatrix x - _ • (c.mapMatrix x * c.mapMatrix x)
     rw [map_sub, map_smul, map_mul]
@@ -184,8 +190,8 @@ theorem log_skew {x : Matrix n n R} (h : x * x * x = 0) (hu : (1 + x)ᵀ * J * (
   nth_rw 1 [← half (A := A) (J * (y * y))]
   abel
 
-variable (c J e f) in
 
+variable (c J e f) in
 def eqs (p : Matrix n n R) : Matrix n n R →ₗ[A] Matrix n n R × Matrix n n R × Matrix n n R × Matrix n n R × Matrix n n R where
   toFun x := (xᵀ * J + J * x.map c, x * e, e * (x * f) - x * f, f * x - x, x * p)
   map_add' x y := by

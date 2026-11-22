@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.CubeTheorem.SchemeModels
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.CubeTheorem.SchemeModels
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -100,16 +104,5 @@ theorem Chapters.print (h : Chapters) (h₁ : GlobalTheory.SpreadingModels.Schem
       (h.alt h.oneform h.twoform R _ _ (fr R A g hA hg) (bi R A g hA hg) (deg R A g hA hg).1 (deg R A g hA hg).2
         (wedge_alt (w R A g hA hg)))
   exact h.final h.stein par h1 deg wh obc (h.formbc h.stein par)
-
-theorem Chapters.h1Le (h : Chapters) : PositivityTheory.ObstructionTrivialLocus.H1StructureDimLe := by
-  have low := h.low h.dict
-  have htpy := h.htpy h.cx
-  have qc := h.qcalc h.cx
-  have fub := h.fubini h.cx
-  have aff := h.affacyc h.cx htpy
-  have des := h.descent h.cx htpy qc fub aff
-  have axo := h.axo des low (h.sysbc des low) h.stein
-  exact h.h1le des low h.stein (h.van h.cx (h.cmp h.cx)) (h.hopf htpy qc fub aff des low axo)
-    (h.hopfle h.cx h.dict low)
 
 end MainStatements.Hodge.Free

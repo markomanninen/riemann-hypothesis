@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuaKodOf
-import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuSegre
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuaKodOf
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuSegre
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Kleiman2
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.LocalRingCardinality.AdicCompletionLocal.InstIsAdicCompleteOCSpanSingletonSetCast
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.InstIsAdicCompleteOCSpanSingletonSetCast
+
+@[expose] public section
 
 open Polynomial Ideal
 
@@ -41,8 +45,8 @@ variable {O : Type*} (K : Type*) [CommRing O] [IsDomain O] [ValuationRing O] [Fi
   [IsAlgClosed K] [Algebra O K] [IsFractionRing O K] {p : ℕ} [Fact p.Prime]
   [Fact ¬IsUnit (p : O)]
 
-include K in
 
+include K in
 theorem roots_modP {g : (ModP O p)[X]} (hg : g.Monic) {d : ℕ} (hd : g.natDegree = d)
     (hd0 : d ≠ 0) :
     (∃ x, g.eval x = 0) ∧ {y | ∃ x, g.eval x = 0 ∧ y = x ^ p ^ d}.Finite := by
@@ -104,8 +108,8 @@ theorem eval₂_pow_p_pow (P : (PreTilt O p)[X]) (k n : ℕ) (x : ModP O p)
     rw [pow_succ', pow_mul]
     exact ih _ (eval₂_pow_p P (n + k) x hx)
 
-include K in
 
+include K in
 theorem exists_root_preTilt {P : (PreTilt O p)[X]} (hP : P.Monic) (hd0 : P.natDegree ≠ 0) :
     ∃ x, P.eval x = 0 := by
   classical

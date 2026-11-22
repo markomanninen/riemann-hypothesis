@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qe27.upperUni :
     (k : ℕ) → (A : Type) → [inst : CommRing A] → Set (GL (Fin k) A) :=

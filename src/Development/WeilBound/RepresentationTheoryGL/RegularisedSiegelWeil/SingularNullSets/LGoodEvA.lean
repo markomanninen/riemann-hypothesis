@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SchwartzBruhatEqSumPure
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EventuallyLocalLatticeCompletionEqCoordinateLatt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SchwartzBruhatEqSumPure
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EventuallyLocalLatticeCompletionEqCoordinateLatt
+
+@[expose] public section
 
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
@@ -21,7 +25,7 @@ theorem repr_map' {F E R R' ι : Type} [Field F] [Field E] [Algebra F E] [CommRi
       φ ((Algebra.TensorProduct.basis R b).repr z k) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   | tmul a e => simp [Algebra.TensorProduct.basis_repr_tmul]
 
 theorem ae_ext (z z' : AE D) (hi : ∀ w, compInf D.host.F D.host.E w z = compInf D.host.F D.host.E w z')
@@ -44,8 +48,8 @@ theorem ae_ext (z z' : AE D) (hi : ∀ w, compInf D.host.F D.host.E w z = compIn
     rw [h, h2] at h1
     exact h1.symm
 
-open Classical in
 
+open Classical in
 def indS (S : Finset (Pl D)) : Af D.host.F :=
   ⟨fun v => if v ∈ S then 1 else 0, Filter.Eventually.of_forall fun v => by
     by_cases h : v ∈ S
@@ -83,7 +87,7 @@ theorem cv_eq (v : Pl D) (z : AE D) :
     cv D v z = Algebra.TensorProduct.map (evalV D.host.F v) (AlgHom.id D.host.F D.host.E) (finPart D z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [RingHom.map_add, hx, hy, RingHom.map_add, map_add]
+  | add x y hx hy => rw [RingHom.map_add (f := _), hx, hy, RingHom.map_add (f := _), map_add (f := _)]
   | tmul a x => rfl
 
 end PositivityTheory.Rg.Rsw.L.LGoodEv

@@ -1,10 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HarderNarasimhan.QuotRealize
-import Formalism.HarderNarasimhan.StatementFrame
-import Formalism.LatticeLocalGlobal.Statement
-import Formalism.LatticeLocalGlobal.LatticeLocalGlobalOfGlobal
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HarderNarasimhan.QuotRealize
+public import Formalism.CorankShare.StatementFR
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -51,8 +53,9 @@ def bridge_unit_rule : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (l : ℕ) (w : HeightOneSpectrum (𝓞 K)), l.Prime →
     ((l : 𝓞 K) ∈ w.asIdeal) → vAdd w ((l : ℕ) : K) = (eWL K w : ℤ)
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def FactUnitNormalisation : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (p : ℕ), p.Prime →
     (∑ᶠ w : HeightOneSpectrum (𝓞 K),
@@ -104,11 +107,11 @@ def muMinDual : ℝ := Formalism.HN.muMinDef A.dualB A.dualX A.dualL
 end HLat
 
 def bridge_hn_mu : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] (A : HLat K),
+  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (A : HLat K),
     A.Good → 0 < A.rank → A.mu = - A.lcv / (A.rank : ℝ)
 
 def bridge_dual_mu : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] (A : HLat K),
+  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (A : HLat K),
     A.Good → 0 < A.rank → A.muMinDual = - A.muMax
 
 def bridge_ccb_dual : Prop :=
@@ -173,16 +176,9 @@ def R : ℕ := Rsum D.Nu
 
 def s : ℝ := sFrame D.Nu D.h
 
-def uF [Nonempty Words] : ℝ := uFrame D.Nu D.h
-
 def AllGood : Prop := D.RR.Good ∧ ∀ u, (D.Nu u).Good
 
 def OneMapIntoCC : Prop := ∀ u, (D.Nu u).L.map ((D.Bk u).restrictScalars (𝓞 K)) ≤ D.cc
-
-def HBound : Prop :=
-  ∀ u, Formalism.HN.htMap (D.Nu u).b (D.Nu u).X D.RR.dualB D.RR.dualX (D.Bk u) ≤ D.h u
-
-def DelPNonneg : Prop := 0 ≤ D.delP
 
 end DivData
 
@@ -191,7 +187,7 @@ def RankBoundMonotoneInDimension : Prop :=
     a ≤ (1 + η) * q ^ 2 / (Dall : ℝ) → a ≤ (1 + η) * q ^ 2 / (D : ℝ)
 
 def FactHHcc : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] (Words : Type)
+  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (Words : Type)
     [Fintype Words] (D : DivData K Words), D.RR.Good → 0 < D.RR.rank →
     D.s - D.RR.muMinDual ≤ D.HH
 

@@ -1,4 +1,8 @@
-import Formalism.LatticeSlopes.Statement
+module
+
+public import Formalism.LatticeSlopes.Statement
+
+@[expose] public section
 
 namespace Formalism.F
 

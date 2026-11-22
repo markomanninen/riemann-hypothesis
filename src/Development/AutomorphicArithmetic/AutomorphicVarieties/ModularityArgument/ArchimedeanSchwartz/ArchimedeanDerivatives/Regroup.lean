@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ExpIndep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvOneSubBound
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ExpIndep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvOneSubBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,7 +145,7 @@ private theorem core (K E : Type) [Field K] [NumberField K] [Field E] [NumberFie
     convert hasProd_prod_of_ne_finset_one (L := SummationFilter.unconditional _) (s := ({a, a'} : Finset _)) (fun c hc => absurd (hall c) hc) using 1
     rw [Finset.prod_pair hne']
     dsimp only [e, Equiv.coe_fn_mk, a, a', Function.comp_apply]
-    rw [hBK, Multiset.map_add, Multiset.prod_add, hN, hN']
+    rw [hBK, Multiset.map_add (f := _), Multiset.prod_add, hN, hN']
   · let a : {v : HeightOneSpectrum (𝓞 E) // v.under (𝓞 K) = w.under (𝓞 K)} := ⟨w, rfl⟩
     have hall : ∀ c : {v : HeightOneSpectrum (𝓞 E) // v.under (𝓞 K) = w.under (𝓞 K)}, c ∈ ({a} : Finset _) := by
       intro c
@@ -170,13 +174,13 @@ theorem regroup : Regroup := by
     exact ((hBE w hw).2 a ha).2
   · intro w hw
     rcases hloc w hw with ⟨hN, w', hne, hw', hBK⟩ | ⟨hN, B', hBE', hBK⟩
-    · exact Or.inl ⟨hN, w', hne, hw', by simp only [hBK, Multiset.map_add]⟩
+    · exact Or.inl ⟨hN, w', hne, hw', by simp only [hBK, Multiset.map_add (f := _)]⟩
     · refine Or.inr ⟨hN, B'.map (·⁻¹), ?_, ?_⟩
       · simp only [hBE', Multiset.map_map]
         apply Multiset.map_congr rfl
         intro b _
         simp [inv_pow]
-      · simp only [hBK, Multiset.map_add, Multiset.map_map]
+      · simp only [hBK, Multiset.map_add (f := _), Multiset.map_map]
         congr 1
         apply Multiset.map_congr rfl
         intro b _

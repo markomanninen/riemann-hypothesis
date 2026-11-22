@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.AffChar
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
-import GroundTheory.AutomorphicForms.MultiplicityOne.OpenSubgroupRep
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
-import GroundTheory.AutomorphicForms.HarishChandraCentre
-import GroundTheory.AutomorphicForms.AffineBruhat
-import GroundTheory.AutomorphicForms.Cartan
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.AffChar
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
+public import GroundTheory.AutomorphicForms.MultiplicityOne.OpenSubgroupRep
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+public import GroundTheory.AutomorphicForms.HarishChandraCentre
+public import GroundTheory.AutomorphicForms.AffineBruhat
+public import GroundTheory.AutomorphicForms.Cartan
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ abbrev Pl : Type := HeightOneSpectrum (𝓞 K)
 
 abbrev Ix : Type := (K →+* ℂ) × Fin n
 
-abbrev TG : Type := CompactlySupportedContinuousMap (normOneGL K n) ℂ
+abbrev TG : Type := CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ
 
 abbrev TI : Type := CompactlySupportedContinuousMap (archGroup K n) ℂ
 
@@ -41,11 +45,11 @@ variable {K n}
 
 section Test
 
-def tensFun (β : TI K n) (e : TF K n) (x : normOneGL K n) : ℂ :=
+def tensFun (β : TI K n) (e : TF K n) (x : normOneGL (K := K) (n := n)) : ℂ :=
   kbar β (infPart K n (x : AdelicGLn.AdelicGL K n)) * e (finPart K n (x : AdelicGLn.AdelicGL K n))
 
-open Classical in
 
+open Classical in
 def tens (β : TI K n) (e : TF K n) : TG K n :=
   if h : Continuous (tensFun β e) ∧ HasCompactSupport (tensFun β e) then ⟨⟨tensFun β e, h.1⟩, h.2⟩ else 0
 
@@ -56,8 +60,8 @@ def rUC : UC K n →ₐ[ℂ] Module.End ℂ ((isExpLieAlgebra K n).smoothFuns (F
 def uAct : UC K n →ₐ[ℂ] Module.End ℂ (archSmooth K n) :=
   Algebra.TensorProduct.lift (Algebra.ofId ℂ _) uAction fun c _ => Algebra.commute_algebraMap_left c _
 
-open Classical in
 
+open Classical in
 def lact (u : UC K n) (β : TI K n) : TI K n :=
   if h : ∃ (h : (fun g => β g⁻¹) ∈ (isExpLieAlgebra K n).smoothFuns (F := ℂ)) (γ : TI K n),
       ∀ g, γ g = (rUC u ⟨fun g => β g⁻¹, h⟩ : archGroup K n → ℂ) g⁻¹ then h.choose_spec.choose else 0
@@ -67,8 +71,8 @@ def SmoothT (β : TI K n) : Prop := (isExpLieAlgebra K n).IsSmoothFun fun g => �
 def LeftFin (β : TI K n) : Prop :=
   FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k : archCompact K n => fun g : archGroup K n => β ((k : archGroup K n) * g)))
 
-open Classical in
 
+open Classical in
 def along (τ : K →+* ℂ) (z : ℂ) : mixedEmbedding.mixedSpace K :=
   (0, fun w => if w.1 = InfinitePlace.mk τ then (if w.1.embedding = τ then z else starRingEnd ℂ z) else 0)
 
@@ -87,21 +91,21 @@ end Test
 
 section Ops
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 def Oinf (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (β : TI K n) : LL μ →L[ℂ] LL μ :=
-  ((rightRegularRep (rationalGLOne K n) μ).compHom (archP K n) continuous_archP).integrated ν (UnitaryRep.ccToL1 ν β)
+  ((rightRegularRep (rationalGLOne (K := K) (n := n)) μ).compHom (archP K n) continuous_archP).integrated ν (UnitaryRep.ccToL1 ν β)
 
 def Ofin (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure] (e : TF K n) : LL μ →L[ℂ] LL μ :=
-  ((rightRegularRep (rationalGLOne K n) μ).compHom (MultiplicityOne.finProj K n) MultiplicityOne.continuous_finProj).integrated m
+  ((rightRegularRep (rationalGLOne (K := K) (n := n)) μ).compHom (MultiplicityOne.finProj K n) MultiplicityOne.continuous_finProj).integrated m
     (UnitaryRep.ccToL1 m e)
 
 def Compat (ν : Measure (archGroup K n)) (m : Measure (AdelicGLn.FiniteAdelicGL K n)) : Prop :=
-  ∀ (β : TI K n) (e : TF K n) (Θ : normOneGL K n → ℂ), Continuous Θ →
+  ∀ (β : TI K n) (e : TF K n) (Θ : normOneGL (K := K) (n := n) → ℂ), Continuous Θ →
     ∫ x, tens β e x * Θ x ∂μ = ∫ a, ∫ h, β a * e h * Θ (archP K n a * MultiplicityOne.finProj K n h) ∂m ∂ν
 
 def rhoF (h : AdelicGLn.FiniteAdelicGL K n) : LL μ →L[ℂ] LL μ :=
-  rightRegularRep (rationalGLOne K n) μ (MultiplicityOne.finProj K n h)
+  rightRegularRep (rationalGLOne (K := K) (n := n)) μ (MultiplicityOne.finProj K n h)
 
 def rhoL (w : Pl K) (g : GL (Fin n) (w.adicCompletion K)) : LL μ →L[ℂ] LL μ := rhoF μ (AdelicGLn.localEmbedding w g)
 
@@ -168,15 +172,15 @@ def msOf (L : Ix K n → ℂ) (τ : K →+* ℂ) : Multiset ℂ := Finset.univ.v
 
 def hval (t : Pl K → Multiset ℂ) (x : Pl K × Fin n) : ℂ := (t x.1).esymm (x.2 + 1)
 
-variable (K n) in
 
+variable (K n) in
 structure Datum where
   r : ℕ
   two : 2 ≤ r
   d : Fin r → ℕ
   pos : ∀ i, 0 < d i
   sum : ∑ i, d i = n
-  μ : ∀ i, Measure (normOneGL K (d i))
+  μ : ∀ i, Measure (normOneGL (K := K) (n := (d i)))
   [haar : ∀ i, (μ i).IsHaarMeasure]
   V : ∀ i, Submodule ℂ (LL (μ i))
   summand : ∀ i, IsSummand (μ i) (V i)
@@ -188,8 +192,8 @@ def Datum.Pt (b : Datum K n) (S : Set (Pl K)) (Λ : (K →+* ℂ) → Multiset �
     (∀ i, At (b.μ i) S (b.V i) (m i) (B i)) ∧ (∀ τ, Λ τ = ∑ i, (m i τ).map (· + lam i)) ∧
       ∀ w ∉ S, t w = ∑ i, (B i w).map (· * (Ideal.absNorm w.asIdeal : ℂ) ^ (-lam i))
 
-open Classical in
 
+open Classical in
 def admitted (S : Set (Pl K)) (F : KF (Ix K n) (Pl K × Fin n)) : Prop :=
   (∀ w : (K →+* ℂ) → Equiv.Perm (Fin n), map (ren fun x : Ix K n => (x.1, w x.1 x.2)) F = F) ∧ ∀ x ∈ F.vars, x.1 ∉ S
 

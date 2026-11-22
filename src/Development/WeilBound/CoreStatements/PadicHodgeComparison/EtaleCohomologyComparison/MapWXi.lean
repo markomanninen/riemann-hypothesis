@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BStPeriod
-import GroundTheory.PAdicHodge.ACrisPhi
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OfNatTrans
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BStPeriod
+public import GroundTheory.PAdicHodge.ACrisPhi
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OfNatTrans
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,12 +98,12 @@ def mapU (f : A ⟶ B) : A.U →+* B.U :=
 
 end PAlg
 
-variable (l) in
 
+variable (l) in
 def IsBase (A : PAlg l) : Prop := Function.Bijective A.s
 
-variable (l) in
 
+variable (l) in
 abbrev Test : Type 1 := ObjectProperty.FullSubcategory fun A : PAlg l => A.IsTest
 
 end CrystallineSemistableComparison

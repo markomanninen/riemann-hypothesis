@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.DictPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.DictPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -56,7 +60,7 @@ theorem chainsXIso_nat (R : Type) [CommRing R] {E' E : Spc} (f : E' ⟶ E) (p : 
     (chainsXIso R E' p).inv ≫ ((chains R).map f).f (-(p : ℤ)) = (free R).map (f.app (op (SimplexCategory.mk p))) ≫ (chainsXIso R E p).inv := by
   simp only [chainsXIso, chains, chainsN, Functor.comp_map, ComplexShape.embeddingDownNat, Functor.comp_obj]
   erw [HomologicalComplex.extendMap_f _ _ (i := p) rfl]
-  simp only [AlgebraicTopology.alternatingFaceMapComplex_map_f, SimplicialObject.whiskering_obj_map_app]
+  simp only [AlgebraicTopology.alternatingFaceMapComplex_map_f]
   erw [Iso.inv_hom_id_assoc]
   rfl
 end LateralTheory.KummerTheory

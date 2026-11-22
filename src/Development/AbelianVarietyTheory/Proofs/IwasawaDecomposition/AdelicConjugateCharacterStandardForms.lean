@@ -1,10 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmulLk
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdelicLatticeCompletionLocalGlobal
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MulVecMemLocLatIffOfFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMulEqInteger
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmulLk
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdelicLatticeCompletionLocalGlobal
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MulVecMemLocLatIffOfFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMulEqInteger
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FiniteAdeleRingNontrivial
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.HAt Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -166,16 +172,22 @@ theorem locP_le_of_le' {R W : Type} [CommRing R] [AddCommGroup W] [Module R W] (
   exact ⟨t * s, p.primeCompl.mul_mem ht hs, by rw [mul_smul]; exact hx'⟩
 
 theorem clsCrd_fin (D : D7) (u : D.what₂.Word) (i : ℕ) (hi : i ≤ D.R.m) (c : (D.mem u).C.cls i) :
-    Module.Finite (𝓞 D.host.E) (clsCrd D u i hi c) ∧
-      Submodule.span D.host.E (clsCrd D u i hi c : Set (Fin (D.R.N i) → D.host.E)) = ⊤ := by
+    Module.Finite (𝓞 D.host.E) (clsCrd D u i hi c) := by
   letI := D.host.cmStar
-  have h := D.clsLat_lat u i c
-  refine ⟨Module.Finite.iff_fg.2 (h.fg.map _), ?_⟩
-  have h2 := congrArg (Submodule.map (((D.sp.X i).frame.equivFun.trans
-    (LinearEquiv.funCongrLeft D.host.E D.host.E (finCongr (rankN D i hi)).symm) :
-      (D.sp.X i).V ≃ₗ[D.host.E] (Fin (D.R.N i) → D.host.E)) : (D.sp.X i).V →ₗ[D.host.E] (Fin (D.R.N i) → D.host.E))) h.span_eq_top
-  rw [Submodule.map_span, Submodule.map_top, LinearEquiv.range] at h2
-  exact h2
+  exact Module.Finite.iff_fg.2 ((D.clsLat_lat u i c).fg.map _)
+
+private theorem span_eq_top_of_y_lat {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
+    [Algebra F E] {n : ℕ} (Lb L : Submodule (𝓞 E) (Fin n → E))
+    (hfin : Module.Finite (𝓞 E) Lb) (hspan : Submodule.span E (Lb : Set (Fin n → E)) = ⊤)
+    (y : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))
+    (hy : ∀ x : Fin n → E ⊗[F] FiniteAdeleRing (𝓞 F) F,
+      x ∈ latS (F := F) _ (tensInt (F := F) _ (intOE E) (intAd F)) L ↔
+      (y⁻¹).1 *ᵥ x ∈ latS (F := F) _ (tensInt (F := F) _ (intOE E) (intAd F)) Lb) :
+    Submodule.span E (L : Set (Fin n → E)) = ⊤ := by
+  have hG := Formalism.UG.P.csGlob_lattice (F := F) Lb hfin hspan y
+  rw [eq_top_iff, ← hG.span_eq_top, Submodule.span_le]
+  intro z hz
+  exact Formalism.L2.GlobalTheoryTheory.Br.latS_mem_span (F := F) L z ((hy _).2 hz)
 
 theorem mulLat_fin {E : Type} [Field E] [NumberField E] {n : ℕ} (γ : GL (Fin n) E) (L : Submodule (𝓞 E) (Fin n → E))
     (hL : Module.Finite (𝓞 E) L) (hs : Submodule.span E (L : Set (Fin n → E)) = ⊤) :
@@ -208,34 +220,43 @@ theorem locP_le_of_locLat_le {F E : Type} [Field F] [NumberField F] [Field E] [N
   locP_le_of_le' _ fun x hx =>
     mem_localization_of_mem_localLattice F E n _ B hBf hBs x (hAB _ (Submodule.subset_span ⟨x, hx, rfl⟩)) q rfl
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem sameoff_gen {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
     (T : FormsTiedSym D u Ch chOf) (i : ℕ) (hi : i ≤ D.R.m) (v : HeightOneSpectrum (𝓞 D.host.F))
     (c c' : (D.mem u).C.cls i) (γ : GL (Fin (D.R.N i)) D.host.E) (hAd : AdC T i hi c c' γ v)
     (q : HeightOneSpectrum (𝓞 D.host.E)) (hq : q.under (𝓞 D.host.F) ≠ v) :
     Formalism.HermitianLatticesTheory.localization₂ q.asIdeal (Formalism.L2.Forms.mulLat γ.1 (clsCrd D u i hi c')) =
       Formalism.HermitianLatticesTheory.localization₂ q.asIdeal (clsCrd D u i hi c) := by
-  obtain ⟨f1, s1⟩ := clsCrd_fin D u i hi c
-  obtain ⟨f2, s2⟩ := clsCrd_fin D u i hi c'
-  obtain ⟨f3, s3⟩ := mulLat_fin γ _ f2 s2
-  have key : ∀ z, z ∈ GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection.locLat (q.under (𝓞 D.host.F)) (Formalism.L2.Forms.mulLat γ.1 (clsCrd D u i hi c')) ↔
-      z ∈ GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection.locLat (q.under (𝓞 D.host.F)) (clsCrd D u i hi c) := by
+  have f1 := clsCrd_fin D u i hi c
+  have f2 := clsCrd_fin D u i hi c'
+  obtain ⟨key, s1, s2⟩ :
+      (∀ z, z ∈ GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection.locLat (q.under (𝓞 D.host.F)) (Formalism.L2.Forms.mulLat γ.1 (clsCrd D u i hi c')) ↔
+        z ∈ GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection.locLat (q.under (𝓞 D.host.F)) (clsCrd D u i hi c)) ∧
+      Submodule.span D.host.E (clsCrd D u i hi c : Set (Fin (D.R.N i) → D.host.E)) = ⊤ ∧
+      Submodule.span D.host.E (clsCrd D u i hi c' : Set (Fin (D.R.N i) → D.host.E)) = ⊤ := by
     by_cases h0 : i = 0 ∨ i = D.R.m
-    · have hS := hAd.1 h0
-      exact locLat_of_adStep _ _ _ _ _ _ _ _ _ _ _ _ _ _ (T.cls i hi h0).lev.Lb_fin f1 f2
-        (fun κ hκ X => stepLevel_stab _ κ hκ X) ((T.cls i hi h0).y_lat c) ((T.cls i hi h0).y_lat c') hS hq
+    · let K := T.cls i hi h0
+      exact ⟨locLat_of_adStep _ _ _ _ _ _ _ _ _ _ _ _ _ _ K.lev.Lb_fin f1 f2
+          (fun κ hκ X => stepLevel_stab _ κ hκ X) (K.y_lat c) (K.y_lat c') (hAd.1 h0) hq,
+        span_eq_top_of_y_lat _ _ K.lev.Lb_fin K.lev.Lb_span _ (K.y_lat c),
+        span_eq_top_of_y_lat _ _ K.lev.Lb_fin K.lev.Lb_span _ (K.y_lat c')⟩
     · have h1 : 1 ≤ i := by omega
       have h2 : i + 1 ≤ D.R.m := by omega
       obtain ⟨hβ, hS⟩ := hAd.2 h1 h2
-      exact locLat_of_adStep _ _ _ _ _ _ _ _ _ _ _ _ _ _ (T.ch i h1 h2 (chOf i c)).lev.Lb_fin f1 f2
-        (fun κ hκ X => stepLevel_stab _ κ hκ X) ((T.ch i h1 h2 (chOf i c)).y_lat ⟨c, rfl⟩)
-        ((T.ch i h1 h2 (chOf i c)).y_lat ⟨c', hβ⟩) hS hq
+      let K := T.ch i h1 h2 (chOf i c)
+      have hy := K.y_lat ⟨c, rfl⟩
+      have hy' := K.y_lat ⟨c', hβ⟩
+      exact ⟨locLat_of_adStep _ _ _ _ _ _ _ _ _ _ _ _ _ _ K.lev.Lb_fin f1 f2
+          (fun κ hκ X => stepLevel_stab _ κ hκ X) hy hy' hS hq,
+        span_eq_top_of_y_lat _ _ K.lev.Lb_fin K.lev.Lb_span _ hy,
+        span_eq_top_of_y_lat _ _ K.lev.Lb_fin K.lev.Lb_span _ hy'⟩
+  obtain ⟨f3, s3⟩ := mulLat_fin γ _ f2 s2
   exact le_antisymm (locP_le_of_locLat_le q _ _ f1 s1 fun z hz => (key z).1 hz)
     (locP_le_of_locLat_le q _ _ f3 s3 fun z hz => (key z).2 hz)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem use₆ : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)) (H : Formalism.L2.Herm.HermColsCh (I.rec7 l Z)) (F : ∀ u, FormsTiedSym (I.rec7 l Z) u (H.Ch u) (H.chOf u)), (∀ u, I.StdF l Z u (F u) ∧ I.StdLvC l Z u (F u)) → CarH H F → ∀ u i (hi : i ≤ (I.rec7 l Z).R.m) v (c c' : ((I.rec7 l Z).mem u).C.cls i) (γ : GL (Fin ((I.rec7 l Z).R.N i)) (I.rec7 l Z).host.E), AdC (F u) i hi c c' γ ((F u).atT.eV v).1 → ∀ q : HeightOneSpectrum (𝓞 (I.rec7 l Z).host.E), q.under (𝓞 (I.rec7 l Z).host.F) ≠ ((F u).atT.eV v).1 → Formalism.HermitianLatticesTheory.localization₂ q.asIdeal (Formalism.L2.Forms.mulLat γ.1 (clsCrd (I.rec7 l Z) u i hi c')) = Formalism.HermitianLatticesTheory.localization₂ q.asIdeal (clsCrd (I.rec7 l Z) u i hi c) := by
   intro B X I _ _ l Z H F _ _ u i hi v c c' γ hAd q hq
   exact sameoff_gen (F u) i hi _ c c' γ hAd q hq

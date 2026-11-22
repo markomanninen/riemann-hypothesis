@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,12 +49,12 @@ theorem pair {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimens
   let φ : V → StrongDual ℝ (EuclideanSpace ℝ (Fin (Module.finrank ℝ V))) := fun y =>
     (2 * π)⁻¹ • (β.flip y).comp (T.symm : EuclideanSpace ℝ (Fin (Module.finrank ℝ V)) →L[ℝ] V)
   have φadd : ∀ y y', φ (y + y') = φ y + φ y' := by
-    intro y y'; simp only [φ, map_add, ContinuousLinearMap.add_comp, smul_add]
+    intro y y'; simp only [φ, map_add (f := _), ContinuousLinearMap.add_comp, smul_add]
   have φsmul : ∀ (r : ℝ) y, φ (r • y) = r • φ y := by
     intro r y; simp only [φ, map_smul, ContinuousLinearMap.smul_comp, smul_comm r]
   let L : V →ₗ[ℝ] EuclideanSpace ℝ (Fin (Module.finrank ℝ V)) :=
     { toFun := fun y => (InnerProductSpace.toDual ℝ _).symm (φ y)
-      map_add' := fun y y' => by simp only [φadd, map_add]
+      map_add' := fun y y' => by simp only [φadd, map_add (f := _)]
       map_smul' := fun r y => by
         simp only [φsmul, LinearIsometryEquiv.map_smulₛₗ, RingHom.id_apply, RCLike.conj_to_real] }
   have hL : ∀ x y, ⟪T x, L y⟫ = (2 * π)⁻¹ * β x y := by

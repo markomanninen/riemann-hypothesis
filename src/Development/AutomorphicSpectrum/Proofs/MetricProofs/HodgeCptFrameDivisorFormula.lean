@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenUIsGenFam
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagFramesGenericModelLeftStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TensorEquivOfBasisExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagBundleUnderEquivStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GMatIsGenericFlag
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LatticePullSplitInjectionStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptLatticeBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.InChartIffOfDominatesStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoordinateTieTransferStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptMorphismCompatStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptDescentGenericPointStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsGenFamRevInvSubfamilyStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsGenericTriangularFactorizationStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsGenFamAlgebraicIndependentFinrankStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenUIsGenFam
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagFramesGenericModelLeftStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TensorEquivOfBasisExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagBundleUnderEquivStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GMatIsGenericFlag
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LatticePullSplitInjectionStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptLatticeBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.InChartIffOfDominatesStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoordinateTieTransferStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptMorphismCompatStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptDescentGenericPointStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsGenFamRevInvSubfamilyStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsGenericTriangularFactorizationStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsGenFamAlgebraicIndependentFinrankStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,8 +136,8 @@ theorem gen_of_mat' (F₀ Ω G : Type) [Field F₀] [Field Ω] [Field G] [Algebr
   haveI : IsScalarTower F₀ Ω G := IsScalarTower.of_algebraMap_eq fun a => (RingHom.congr_fun hι a).symm
   exact gen_of_mat F₀ Ω G E₀ E' j₀ S r V₀ c b U A d hc hsemi hlin hU hA hb hd hfin
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_colFlags : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F)) (S : Finset ℕ) (Ω : Type) [Field Ω] [CharZero Ω] (K₀ : Type) [Fintype K₀] (J₀ : K₀ → Type) [∀ k, Fintype (J₀ k)] (x₀ : (Σ k, J₀ k) → Ω) (𝔐 : HodgeCpt Y S x₀) (bW : WBases 𝔐) (bO : OmBases 𝔐) (n m : CMType H ⊕ CMType H → ℕ) (φ : ∀ s, Fin (n s) → Module.Dual Ω (EE 𝔐)) (d : ℕ), FormsOK 𝔐 bW bO m φ → 𝔐.IsCover d → ∀ (𝔐' : HodgeCpt Y S (yv (p := D.p) (q := D.q) (aOf 𝔐 bW bO φ) x₀)) (pr : 𝔐'.X ⟶ 𝔐.X) (j : 𝔐.Li →+ 𝔐'.Li), HodgeOver 𝔐' 𝔐 pr (algebraMap Ω (GenField Ω (rk (CMType H) D.p D.q))) j → Submodule.span (GenField Ω (rk (CMType H) D.p D.q)) (Set.range j) = ⊤ → (∀ s, 𝔐'.V s = (𝔐.V s).pull 𝔐'.ξ pr j) → ∃ Fl : 𝔐'.Flag, Fl.deg = d ∧ ColFlags 𝔐 bW bO j Fl := by
   classical
   intro E _ _ _ H D l Xo c Y S Ω _ _ K₀ _ J₀ _ x₀ 𝔐 bW bO n m φ d hF hC 𝔐' pr j hO hspan hV
@@ -164,7 +168,8 @@ theorem exists_colFlags : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
         fun k => Φ (∑ l, genU Ω (rk (CMType H) D.p D.q) (.inl τ) l k •
           TensorProduct.mk Ω (GenField Ω (rk (CMType H) D.p D.q)) 𝔐.Li 1 (bW τ l)) := by
       funext k
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun a _ => by rw [map_smul, hΦ]
     rw [e]
     exact h2
@@ -260,7 +265,8 @@ theorem exists_colFlags : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     intro s k
     have h1 : ∀ a, j (eb s a) = ∑ l, algebraMap Ω (GenField Ω (rk (CMType H) D.p D.q)) (A s l a) •
         (j.comp j₁) (c₀ s l) := fun a => by
-      rw [hAe s a, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hAe s a, map_sum]
       exact Finset.sum_congr rfl fun l _ => hext.1 _ _
     show ∑ a, U s a k • j (eb s a) = _
     simp only [h1, Matrix.mul_apply, Matrix.map_apply, Finset.sum_smul, Finset.smul_sum, smul_smul]

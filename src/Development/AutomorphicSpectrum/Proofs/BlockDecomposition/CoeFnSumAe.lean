@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailRest
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailRest
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

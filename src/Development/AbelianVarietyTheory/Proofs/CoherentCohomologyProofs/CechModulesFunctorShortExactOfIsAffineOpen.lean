@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits TopologicalSpace Opposite
 
@@ -47,9 +51,9 @@ section Comparison
 variable (R : Type v) [CommRing R] [Algebra R Γ(X, ⊤)] [LinearOrder ι] [Finite ι]
   (hc : ⨆ i, U i = ⊤) (hU : ∀ s : Finset ι, s.Nonempty → IsAffineOpen (⨅ i ∈ s, U i))
 
+
 omit [LinearOrder ι] [Finite ι] in
 include hU in
-
 theorem cechAcyclicMod_top_of_isAffineOpen (F : X.Modules) [F.IsQuasicoherent] :
     CechAcyclicMod ⊤ U F :=
   cechAcyclicMod_of_isAffineOpen (isAffineOpen_cechOpen_of_le (fun _ => le_top) hU) F
@@ -73,9 +77,9 @@ theorem cechHEquivCoh_toCechH (F : X.Modules) [F.IsQuasicoherent] (x : sectionsO
   rw [cechHEquivCoh_def, cechHEquivCohOn_zero, cechHZeroEquivCohOn, LinearEquiv.trans_apply,
     cechHZeroEquiv_toCechH]
 
+
 omit [Finite ι] in
 include hU in
-
 theorem cechModulesFunctor_shortExact_of_isAffineOpen {S : ShortComplex X.Modules}
     (hS : S.ShortExact) [S.X₁.IsQuasicoherent] :
     (S.map (cechModulesFunctor R ⊤ U)).ShortExact :=
@@ -89,12 +93,6 @@ theorem cechHEquivCoh_δ {S : ShortComplex X.Modules} (hS : S.ShortExact) [S.X�
   cechHEquivCohOn_δ R hc.ge hS _ _ n x
 
 end Comparison
-
-theorem cohOn.subsingleton_of_card_le [Fintype ι] (hc : V ≤ ⨆ i, U i)
-    (hU : ∀ s : Finset ι, s.Nonempty → IsAffineOpen (cechOpen V U s))
-    (F : X.Modules) [F.IsQuasicoherent] {n : ℕ} (hn : Fintype.card ι ≤ n) :
-    Subsingleton (cohOn F V n) :=
-  subsingleton_cohOn_of_cechAcyclic hc (cechAcyclicMod_of_isAffineOpen hU F) hn
 
 theorem coh.subsingleton_of_card_le [Fintype ι] (hc : ⨆ i, U i = ⊤)
     (hU : ∀ s : Finset ι, s.Nonempty → IsAffineOpen (⨅ i ∈ s, U i))
@@ -134,10 +132,10 @@ def cofanProj (k : κ) : c.pt ⟶ F k :=
   Cofan.IsColimit.desc hc fun j => if h : j = k then eqToHom (congrArg F h) else 0
 
 theorem inj_cofanProj (k : κ) : c.inj k ≫ cofanProj hc k = 𝟙 _ := by
-  rw [cofanProj, Cofan.IsColimit.fac, dif_pos rfl, eqToHom_refl]
+  rw [cofanProj, Cofan.IsColimit.fac, dite_eq_left rfl, eqToHom_refl]
 
 theorem inj_cofanProj_of_ne {j k : κ} (h : j ≠ k) : c.inj j ≫ cofanProj hc k = 0 := by
-  rw [cofanProj, Cofan.IsColimit.fac, dif_neg h]
+  rw [cofanProj, Cofan.IsColimit.fac, dite_eq_right h]
 
 theorem inj_comp_sum_cofanProj {T : Finset κ} {j : κ} (hj : j ∈ T) :
     c.inj j ≫ ∑ k ∈ T, cofanProj hc k ≫ c.inj k = c.inj j := by
@@ -155,7 +153,7 @@ theorem exists_finset_sum_cofanProj_app [Small.{u} κ] [∀ k, (F k).IsQuasicohe
       add_mem' := by
         rintro a b ⟨A, hA⟩ ⟨B, hB⟩
         exact ⟨A ∪ B, fun T h => by
-          rw [map_add, hA T (Finset.subset_union_left.trans h),
+          rw [map_add (f := _), hA T (Finset.subset_union_left.trans h),
             hB T (Finset.subset_union_right.trans h)]⟩
       zero_mem' := ⟨∅, fun _ _ => map_zero _⟩
       smul_mem' := by
@@ -171,21 +169,21 @@ theorem exists_finset_sum_cofanProj_app [Small.{u} κ] [∀ k, (F k).IsQuasicohe
 
 variable (R : Type v) [CommRing R] [Algebra R Γ(X, ⊤)] (V : X.Opens) (n : ℕ)
 
-variable (c) in
 
+variable (c) in
 def cohOn.directSumMap : (⨁ k, cohOn (F k) V n) →ₗ[R] cohOn c.pt V n :=
   DirectSum.toModule R κ _ fun k => cohOn.map R (c.inj k) V n
 
-variable (c) in
 
+variable (c) in
 @[simp]
 theorem cohOn.directSumMap_lof (k : κ) (x : cohOn (F k) V n) :
     cohOn.directSumMap c R V n (DirectSum.lof R κ (fun k => cohOn (F k) V n) k x) =
       cohOn.map R (c.inj k) V n x :=
   DirectSum.toModule_lof (M := fun k => cohOn (F k) V n) R k x
 
-include hc in
 
+include hc in
 theorem cohOn.directSumMap_injective : Function.Injective (cohOn.directSumMap c R V n) := by
   have key (j : κ) : cohOn.map R (cofanProj hc j) V n ∘ₗ cohOn.directSumMap c R V n =
       DirectSum.component R κ (fun k => cohOn (F k) V n) j := by
@@ -194,7 +192,7 @@ theorem cohOn.directSumMap_injective : Function.Injective (cohOn.directSumMap c 
     by_cases h : k = j
     · subst h
       rw [inj_cofanProj, cohOn.map_id, DirectSum.component.lof_self, LinearMap.id_apply]
-    · rw [inj_cofanProj_of_ne hc h, cohOn.map_zero_hom, DirectSum.component.of, dif_neg h,
+    · rw [inj_cofanProj_of_ne hc h, cohOn.map_zero_hom, DirectSum.component.of, dite_eq_right h,
         LinearMap.zero_apply]
   intro x y hxy
   refine DirectSum.ext_component R fun j => ?_
@@ -202,8 +200,8 @@ theorem cohOn.directSumMap_injective : Function.Injective (cohOn.directSumMap c 
 
 variable {V} [Small.{u} κ] [∀ k, (F k).IsQuasicoherent]
 
-include hc in
 
+include hc in
 theorem cohOn.directSumMap_bijective {ι : Type} [Finite ι] {U : ι → X.Opens} (hV : V ≤ ⨆ i, U i)
     (hU : ∀ s : Finset ι, s.Nonempty → IsAffineOpen (cechOpen V U s)) :
     Function.Bijective (cohOn.directSumMap c R V n) := by
@@ -227,7 +225,8 @@ theorem cohOn.directSumMap_bijective {ι : Type} [Finite ι] {U : ι → X.Opens
   refine ⟨∑ k ∈ Finset.univ.biUnion T, DirectSum.lof R κ (fun k => cohOn (F k) V n) k
     (cohOn.map R (cofanProj hc k) V n
       (cechHEquivCohOn R hV ha n (cechClass (cechCube R c.pt V U) n z))), Eq.trans ?_ h.symm⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun k _ => by rw [cohOn.directSumMap_lof, cohOn.map_map]
 
 variable (F) [HasCoproduct F]
@@ -244,14 +243,14 @@ theorem coh.sigmaEquiv_lof {ι : Type} [Finite ι] {U : ι → X.Opens} (hcov : 
     (hU : ∀ s : Finset ι, s.Nonempty → IsAffineOpen (⨅ i ∈ s, U i)) (k : κ) (x : coh (F k) n) :
     coh.sigmaEquiv F R n hcov hU (DirectSum.lof R κ (fun k => coh (F k) n) k x) =
       cohOn.map R (Sigma.ι F k) ⊤ n x :=
-  cohOn.directSumMap_lof (Cofan.mk (∐ F) (Sigma.ι F)) R ⊤ n k x
+  cohOn.directSumMap_lof (c := Cofan.mk (∐ F) (Sigma.ι F)) R ⊤ n k x
 
 end DirectSum
 
 section Disjoint
 
-open SheafLES in
 
+open SheafLES in
 theorem SheafLES.pi_res_bijective_of_disjoint {T : TopCat.{u}} {κ : Type w} {V : Opens T}
     {U : κ → Opens T} (h : ∀ i, U i ≤ V) (hc : V ≤ ⨆ i, U i)
     (hd : Pairwise fun i j => Disjoint (U i) (U j))
@@ -342,9 +341,9 @@ theorem coh.disjointRestrictEquiv_apply (F : X.Modules) (n : ℕ) (x : coh F n) 
 
 end Disjoint
 
+
 attribute [local instance] Abelian.hasFiniteBiproducts in
 open DirectSum in
-
 theorem cech_computes_coh_of_affine_cover (X : Scheme.{u}) (R : Type v) [CommRing R]
     [Algebra R Γ(X, ⊤)] :
     ((X.IsSeparated ∨ IsAffineHom (pullback.diagonal (terminal.from X))) →

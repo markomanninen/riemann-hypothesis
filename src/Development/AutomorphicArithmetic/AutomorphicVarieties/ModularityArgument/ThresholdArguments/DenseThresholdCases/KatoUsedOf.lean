@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.UsedOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AdmissibleTypeIIBlock
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.IsModular
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.UsedOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AdmissibleTypeIIBlock
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.IsModular
+
+@[expose] public section
 
 attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDomain UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing
 set_option maxHeartbeats 800000
@@ -10,6 +14,7 @@ set_option synthInstance.maxHeartbeats 200000
 section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
+open scoped Matrix
 private theorem cls_eq_one {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (N : ℕ) [NeZero N] (g : G ℚ Ω)
     (hg : ∀ ζ : Ω, ζ ^ N = 1 → g ζ = ζ) : Chr.cls ℚ Ω N g = 1 := by
   haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
@@ -24,8 +29,8 @@ private theorem cls_eq_one {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure �
   exact hζ.pow_inj (ZMod.val_lt _) (ZMod.val_lt _) (h1.symm.trans h2.symm)
 theorem UpperTheory.V.Z.Kato.used_of_alt :
     CohInp → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
-      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : D.ULoc}
-      {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG 3 (PadicAlgCl l)} (_ : D.IsPt U g₁ r),
+      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))}
+      {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)} (_ : D.IsPt U g₁ r),
       TypeII D.η r → ∀ W : G ℚ Ω →* GL (Fin 2) (PadicAlgCl l), D.IsExt r W → Continuous W →
       (∀ g, (W g : Matrix (Fin 2) (Fin 2) (PadicAlgCl l)) = Wfun r g) →
       (∀ g, (W g : Matrix (Fin 2) (Fin 2) (PadicAlgCl l)).det = ((D.η g : ℤˣ) : ℤ)) →
@@ -133,7 +138,106 @@ theorem UpperTheory.V.Z.Kato.used_of_alt :
     refine lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ?_ a2)
     rw [norm_mul, hn, one_mul]
     exact a0
-  · have hdt : GlobalTheory.Ord2.dt W = θ := MonoidHom.ext fun g => Units.ext ((hdet g).trans (hθ0 g).symm)
-    rw [← hdt]
-    exact (_root_.GlobalTheory.Ord2.admissible_typeII_block_alt hC D hM h ι hII W hext hcont hdet hmod).flag
+  · let χ : G ℚ Ω →* (Qbar l)ˣ :=
+      (Units.map (algebraMap c.O (PadicAlgCl l)).toMonoidHom).comp (Chr.dirG ℚ Ω (HV.comp l ψ))
+    have hχ2 (g : G ℚ Ω) : χ g * χ g = 1 := by
+      have hχg : Chr.dirG ℚ Ω (HV.comp l ψ) g * Chr.dirG ℚ Ω (HV.comp l ψ) g = 1 := by
+        apply Units.ext
+        show (HV.comp l ψ) (Chr.cls ℚ Ω N g) * (HV.comp l ψ) (Chr.cls ℚ Ω N g) = 1
+        rw [← MulChar.mul_apply, ← sq, D.gd.ine, MulChar.one_apply (Units.isUnit _)]
+      show Units.map _ _ * Units.map _ _ = 1
+      rw [← map_mul, hχg, map_one]
+    have hψχ : ∀ s ∈ Ine (F := ℚ) A₀, ψQ s = χ s := fun s hs => by
+      rw [← hIn] at hs
+      obtain ⟨g, hg, rfl⟩ := hs
+      show Units.map _ _ = Units.map _ _
+      rw [GlobalTheory.Ord2.psi_ine D g hg]
+    obtain ⟨hIk, s₀, hs₀, hu⟩ := hl1 A₀ hA₀
+    have hlocal : ∃ κ : Fin 2 → ↥(Dec (F := ℚ) A₀) →* (Qbar l)ˣ,
+        Af.IsFlagOn W (Dec (F := ℚ) A₀) κ ∧
+          ∀ s : ↥(Dec (F := ℚ) A₀), (s : G ℚ Ω) ∈ Ine (F := ℚ) A₀ →
+            κ 0 s = D.ΨQ s ∧ κ 1 s = (D.ΨQ s)⁻¹ := by
+      have hblk (s : G ℚ Ω) (hs : s ∈ D.η.ker) :
+          (r s).mat = !![W s 0 0, 0, W s 0 1; 0, 1, 0; W s 1 0, 0, W s 1 1] := by
+        have hcorner : (W s : Matrix (Fin 2) (Fin 2) (Qbar l)) = corner (r s).mat := hext.1 s hs
+        have e01 := hII.1 s hs 0 1 (by decide)
+        have e10 := hII.1 s hs 1 0 (by decide)
+        have e12 := hII.1 s hs 1 2 (by decide)
+        have e21 := hII.1 s hs 2 1 (by decide)
+        ext i j
+        fin_cases i <;> fin_cases j <;> simp [hcorner, corner, e01, e10, e12, e21, h11 s hs]
+      obtain ⟨-, M, hup, hdiag⟩ := pt_inertia_above hC D hM h A₀ hA₀
+      obtain ⟨hnorm, hID, -⟩ := Chr.decCyc Ω l A₀ hl.out hA₀
+      have hs₀' : (D.ΨQ s₀ : Qbar l) ^ 2 ≠ 1 := by
+        have hu' := (hu.map (algebraMap c.O (PadicAlgCl l))).ne_zero
+        rwa [map_sub, map_pow, map_one, sub_ne_zero] at hu'
+      set v : Fin 3 → Qbar l :=
+        ((M⁻¹ : GL (Fin 3) (Qbar l)) : Matrix (Fin 3) (Fin 3) (Qbar l)) *ᵥ Pi.single 0 1 with hv
+      have hv0 : v ≠ 0 := fun h0 => by
+        have he := congrArg (fun x => ((M : Matrix (Fin 3) (Fin 3) (Qbar l)) *ᵥ x) 0) (hv.symm.trans h0)
+        simp only [Matrix.mulVec_mulVec, Units.mul_inv, Matrix.one_mulVec, Matrix.mulVec_zero] at he
+        simp at he
+      have hev : ∀ s ∈ Ine (F := ℚ) A₀,
+          !![W s 0 0, 0, W s 0 1; 0, 1, 0; W s 1 0, 0, W s 1 1] *ᵥ v = (D.ΨQ s : Qbar l) • v := by
+        intro s hs
+        have hr : (r s).right = 1 := (h.mult s).trans (hIk hs)
+        have hmat : (conjBy M r s).mat =
+            (M : Matrix (Fin 3) (Fin 3) (Qbar l)) * (r s).mat *
+              ((M⁻¹ : GL (Fin 3) (Qbar l)) : Matrix (Fin 3) (Fin 3) (Qbar l)) := by
+          simp [conjBy, GG.mat, hr]
+        have hcol : (conjBy M r s).mat *ᵥ Pi.single 0 1 =
+            (D.ΨQ s : Qbar l) • (Pi.single 0 1 : Fin 3 → Qbar l) := by
+          rw [Matrix.mulVec_single_one]
+          funext i
+          fin_cases i
+          · change (conjBy M r s).mat 0 0 = _
+            rw [hdiag s hs 0, h00]
+            simp
+          · simpa using hup s (hID hs) (hIk hs) 1 0 (by decide)
+          · simpa using hup s (hID hs) (hIk hs) 2 0 (by decide)
+        rw [← hblk s (hIk hs), hv, ← Matrix.mulVec_smul, ← hcol, hmat,
+          Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, ← Matrix.mul_assoc, ← Matrix.mul_assoc,
+          Units.inv_mul, Matrix.one_mul]
+      have hv1 : v 1 = 0 := by
+        have he := congrFun (hev s₀ hs₀) 1
+        simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three] at he
+        by_contra hne
+        have hval : (D.ΨQ s₀ : Qbar l) = 1 := (mul_right_cancel₀ hne ((one_mul _).trans he)).symm
+        exact hs₀' (by rw [hval, one_pow])
+      exact UpperTheory.exists_isFlagOn_of_eigenvector_normal_subgroup (Dec (F := ℚ) A₀) (Ine (F := ℚ) A₀) W D.ΨQ ![v 0, v 2]
+        (fun d hd s hs => hnorm.conj_mem' ⟨s, hID hs⟩ hs ⟨d, hd⟩)
+        (fun h0 => hv0 (by
+          funext i
+          fin_cases i
+          · exact congrFun h0 0
+          · exact hv1
+          · exact congrFun h0 1))
+        (fun s hs => by
+          have a0 := congrFun (hev s hs) 0
+          have a2 := congrFun (hev s hs) 2
+          funext i
+          fin_cases i
+          · simpa [Matrix.mulVec, dotProduct, Fin.sum_univ_three, Fin.sum_univ_two] using a0
+          · simpa [Matrix.mulVec, dotProduct, Fin.sum_univ_three, Fin.sum_univ_two] using a2)
+        (fun s hs => by rw [hdet, show D.η s = 1 from hIk hs]; simp)
+        ⟨s₀, hs₀, hs₀'⟩
+    obtain ⟨κ, hflag, hκ⟩ := hlocal
+    refine ⟨A₀, χ, κ, ?_, ?_, hflag, ?_, ?_⟩
+    · obtain ⟨hex, htop, hover, -⟩ := places ℚ Ω l A₀
+      have hne : A₀ ≠ ⊤ := fun ht => (htop ht).2 hA₀
+      obtain ⟨v, hv⟩ := hex hne
+      exact ⟨v, hv, (hover v hv).1 hA₀⟩
+    · intro s hs
+      show Units.map _ _ = 1
+      rw [GlobalTheory.killsMu_comp_of_sq_eq_one ψ D.gd.l_odd D.gd.ine s hs, map_one]
+    · intro s hs
+      rw [MonoidHom.mem_ker]
+      apply Units.ext
+      rw [hθ0, hIk hs]
+      simp
+    · intro s hs
+      rw [(hκ s hs).1, (hκ s hs).2, hΨ, hψχ s hs, mul_inv, ← _root_.zpow_neg]
+      refine ⟨rfl, ?_⟩
+      congr 1
+      exact inv_eq_of_mul_eq_one_right (hχ2 s)
 end

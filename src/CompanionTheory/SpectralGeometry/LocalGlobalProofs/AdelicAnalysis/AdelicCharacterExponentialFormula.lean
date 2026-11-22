@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SumRhoEqTrace
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SumRhoEqTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ theorem DM_mulVec_emb_apply {F : Type} [Field F] [NumberField F] {ι : Type} [Fi
     (ρ : InfinitePlace F → (F →+* ℝ)) (y : ι → F) (i : ι) (w : InfinitePlace F) :
     (DM B ρ *ᵥ emb ρ y) (i, w) = ρ w ((B *ᵥ y) i) := by
   have h : ρ w ((B *ᵥ y) i) = ∑ j, ρ w (B i j) * ρ w (y j) := by
-    simp [mulVec, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [mulVec, dotProduct, map_sum, map_mul]
   rw [h]
   simp only [mulVec, dotProduct, DM, emb, Fintype.sum_prod_type_right, blockDiagonal_apply]
   rw [Finset.sum_eq_single w]
@@ -28,7 +33,8 @@ theorem emb_dotProduct_DM {F : Type} [Field F] [NumberField F] {ι : Type} [Fint
     emb ρ a ⬝ᵥ (DM B ρ *ᵥ emb ρ y) = ∑ w, ρ w (a ⬝ᵥ (B *ᵥ y)) := by
   have h : ∀ w, ρ w (a ⬝ᵥ (B *ᵥ y)) = ∑ i, ρ w (a i) * ρ w ((B *ᵥ y) i) := by
     intro w
-    simp [dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dotProduct, map_sum, map_mul]
   simp only [h]
   rw [dotProduct, Fintype.sum_prod_type_right]
   simp only [DM_mulVec_emb_apply, emb]
@@ -36,7 +42,8 @@ theorem emb_dotProduct_DM {F : Type} [Field F] [NumberField F] {ι : Type} [Fint
 theorem toA_dotProduct_Bf {F : Type} [Field F] [NumberField F] {ι : Type} [Fintype ι]
     (B : Matrix ι ι F) (a y : ι → F) :
     toA a ⬝ᵥ (Bf B *ᵥ toA y) = algebraMap F (A F) (a ⬝ᵥ (B *ᵥ y)) := by
-  simp only [dotProduct, mulVec, toA, Bf, map_sum, map_mul, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, mulVec, toA, Bf, map_sum, map_mul, Matrix.map_apply]
 
 theorem chiB_toA_eq_exp (F : Type) [Field F] [NumberField F] (ψ : AddChar (A F) ℂ)
     (hψ : IsStdChar F ψ) (ι : Type) [Fintype ι] [DecidableEq ι]

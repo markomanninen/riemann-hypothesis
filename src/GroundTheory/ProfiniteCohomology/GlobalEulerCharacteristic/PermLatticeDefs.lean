@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

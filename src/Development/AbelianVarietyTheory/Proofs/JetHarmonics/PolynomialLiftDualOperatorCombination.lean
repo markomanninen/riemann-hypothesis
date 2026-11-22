@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.JdPolyOKPolynomialOperators
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorSumPolynomialOperatorStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliDetConjugateTopCoefficientStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AntisymProdEqSumQuantumMinorStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LeibnizDetFrameMatrixMatrixUnitStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RightOperatorDualMemOfInfiniteStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsDualMatrixFrameFvecStatement
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasicLift
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftCapelliOperators
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfFunctions
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.JdPolyOKPolynomialOperators
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorSumPolynomialOperatorStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliDetConjugateTopCoefficientStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AntisymProdEqSumQuantumMinorStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LeibnizDetFrameMatrixMatrixUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RightOperatorDualMemOfInfiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsDualMatrixFrameFvecStatement
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasicLift
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftCapelliOperators
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfFunctions
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
+
+@[expose] public section
 
 namespace GlobalTheory.HatNF.MirrorLift
 
@@ -34,7 +38,7 @@ theorem contDiff_of_poly {N κ : ℕ} {φ : Matrix (Fin N) (Fin N) ℂ → ℂ} 
     simp only [map_mul, MvPolynomial.eval_X]
     refine hp.mul ?_
     have he : ∀ a b : Fin N, ContDiff ℝ ∞ (fun g : Matrix (Fin N) (Fin N) ℂ => g a b) := fun a b =>
-      (contDiff_apply_apply ℝ ℂ a b)
+      (contDiff_apply_apply ℝ a b)
     rcases i with i | i
     · exact he _ _
     · exact Complex.conjCLE.contDiff.comp (he i.1 i.2)
@@ -173,7 +177,8 @@ theorem row_mul_det (q : Fin (r + 1 + (r + k)) → ℂ) (a : Fin (r + 1 + (r + k
     simp only [posL_cast]
     rfl
   rw [Finset.sum_mul]
-  simp only [smul_mul_assoc, map_sum, map_smul, key, smul_add, Finset.sum_add_distrib, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [smul_mul_assoc, map_sum, map_smul, key, smul_add, Finset.sum_add_distrib, Finset.smul_sum]
   congr 1
   · exact Finset.sum_congr rfl fun d _ => smul_comm _ _ _
   · simp only [smul_smul, ← Finset.sum_smul]
@@ -288,7 +293,8 @@ theorem group_identity (hz' : inWb k r z') (hT : 0 < Tz k r z') (Y : ℂ) :
     rw [evAt_apply, Module.End.mul_apply, mulE_pow_apply _ hs _ _ hg]
     rfl
   rw [hP] at e1
-  simp only [map_smul, map_sum, hL, hM, hR, hLN] at e1 e2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, hL, hM, hR, hLN] at e1 e2
   simp only [mul_smul] at e2
   rw [e2, Matrix.det_transpose, Matrix.det_nonsing_inv, Ring.inverse_eq_inv'] at e1
   rw [Fintype.sum_prod_type]
@@ -387,7 +393,27 @@ theorem rad_cap (hD : P5.IsData P Bs.z Bs.z' Bs.π Bs.π' X μ L st l0) (Y : ℂ
   have hJ := bessel_function_finite_class P.k P.r Wp Wq Bs F ε hε hN
   have hh := TLB.wCell_om Bs hy
   have h1 := JCx2.rma_QQi X L hL st s hst Y 0 0 Φ hy
-  have h2 := (JCx2.rma_sandw X L hL Y P.r le_rfl _ _ (JCx2.rma_base X Y) (JCx2.rma_QL_loc Y)).2 0 0
+  have hloc : ∀ n, n ≤ P.r → ∀ N : Q.OM (Q.Fn P.k P.r (Wq →L[ℂ] Wp)),
+      JCx2.rma_Loc P.k P.r Bs.z Bs.z' N →
+      JCx2.rma_Loc P.k P.r Bs.z Bs.z' (Q.sandw P.k P.r Y n N) := by
+    intro n
+    induction n with
+    | zero =>
+      intro _ N hN
+      simpa only [Q.sandw] using hN
+    | succ n ih =>
+      intro hn N hN
+      have h : n < P.r := by omega
+      simp only [Q.sandw, dif_pos h]
+      apply ih (by omega)
+      intro a b f₁ f₂ he y' hy'
+      simp only [Q.oMul, Finset.sum_apply]
+      refine Finset.sum_congr rfl fun c _ => ?_
+      refine JCx2.rma_TLs_loc ⟨n, h⟩ Y a c _ _ (fun y'' hy'' => ?_) y' hy'
+      simp only [Finset.sum_apply]
+      refine Finset.sum_congr rfl fun d _ => ?_
+      exact hN c d _ _ (JCx2.rma_TL_loc ⟨n, h⟩ Y d b f₁ f₂ he) y'' hy''
+  have h2 := hloc P.r le_rfl _ (JCx2.rma_QL_loc Y) 0 0
     (Φ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) (Q.resG P.k P.r (Fin.last P.r) (B.JF Bs F)) (fun y' hy' => hΦ y' hy') y hy
   have h3 := chain_recursion_all_levels Wp Wq P.k P.r Bs.z Bs.z' Bs.π Bs.π' (Fin.last P.r) _ Y 0 0 hz hz'
     (JCx2.rma_isDom_omPlus hz hz') _ hJ y.1 hy.1 y.2 hy.2.1 hh.2
@@ -505,7 +531,8 @@ theorem lift_regular {d : Q.NFData P (RA P Bs)} (hD : P5.IsData P Bs.z Bs.z' Bs.
         map_add' := fun _ _ => rfl
         map_smul' := fun _ _ => rfl }
     have := congrArg ev hB
-    rw [map_neg, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_neg, map_sum] at this
     simp only [map_smul] at this
     exact this
   have e4 : dZ Bs.z Bs.z' h ^ P.r • B.JF Bs (B.opApply Θ F) h =

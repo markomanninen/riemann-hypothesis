@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qo8.exists_supported :
     ∀ {F : Type} [inst : Field F] [NumberField F]

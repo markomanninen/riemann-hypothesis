@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNmSectionsFinite
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntegralClosureFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNmSectionsFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntegralClosureFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -21,8 +26,8 @@ theorem mapDomain_fst_apply (μ : (Σ κ, ι κ) →₀ ℕ) (κ : K) :
   rw [Finsupp.mapDomain, Finsupp.sum_apply, Finsupp.sum_fintype _ _ (fun _ => by simp), Fintype.sum_sigma]
   simp [Finsupp.single_apply]
 
-omit [Fintype K] [∀ κ, Fintype (ι κ)] in
 
+omit [Fintype K] [∀ κ, Fintype (ι κ)] in
 theorem mConeMap_monomial (y : (Σ κ, ι κ) → Ω) (μ : (Σ κ, ι κ) →₀ ℕ) (r : ℤ) :
     mConeMap y (monomial μ r) = monomial (μ.mapDomain Sigma.fst) (aeval y (monomial μ r)) := by
   rw [mConeMap, aeval_monomial, aeval_monomial, monomial_eq,
@@ -35,7 +40,8 @@ theorem mConeMap_of_homog (y : (Σ κ, ι κ) → Ω) {g : MRing ι} {d : K → 
     mConeMap y g = monomial (expo d) (aeval y g) := by
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   rw [mConeMap_monomial]
   have hμd : μ.mapDomain Sigma.fst = expo d := by
@@ -44,7 +50,7 @@ theorem mConeMap_of_homog (y : (Σ κ, ι κ) → Ω) {g : MRing ι} {d : K → 
   rw [hμd]
 
 def formRing (y : (Σ κ, ι κ) → Ω) : Subalgebra ℤ (MvPolynomial K Ω) where
-  carrier := {F | ∀ m : K →₀ ℕ, coeff m F ∈ secM y ⇑m}
+  carrier := {F | ∀ m : K →₀ ℕ, AddMonoidAlgebra.coeff F m ∈ secM y ⇑m}
   mul_mem' := by
     classical
     intro F G hF hG m
@@ -55,7 +61,7 @@ def formRing (y : (Σ κ, ι κ) → Ω) : Subalgebra ℤ (MvPolynomial K Ω) wh
     exact secM_mul_mem y (hF x.1) (hG x.2)
   add_mem' := by
     intro F G hF hG m
-    rw [coeff_add]
+    rw [MvPolynomial.coeff_add]
     exact add_mem (hF m) (hG m)
   algebraMap_mem' := by
     classical
@@ -130,8 +136,7 @@ theorem proof (h : KH.CondStatement) : NmSectionsFinite.Statement := by
     refine Submodule.fg_of_fg_map_injective _ hinj ?_
     have := isNoetherian_of_fg_of_noetherian (Submodule.span R {(1 : MvPolynomial K Ω)})
       (Submodule.fg_span_singleton 1)
-    have := isNoetherian_of_le hmap
-    exact Module.Finite.iff_fg.mp inferInstance
+    exact isNoetherian_submodule.mp inferInstance _ hmap
   obtain ⟨t, htG, hspan⟩ := (Submodule.fg_span_iff_fg_span_finset_subset G).mp hfg
   choose d hd e he hte using fun j : t => htG j.2
   refine ⟨t, inferInstance, d, e, max τ₂ (Finset.univ.sup d), fun j => ⟨hd j,
@@ -148,9 +153,9 @@ theorem proof (h : KH.CondStatement) : NmSectionsFinite.Statement := by
     obtain ⟨g, hg⟩ := (f F).2
     rw [← hg]
     exact mConeMap_mem_formRing y g
-  refine ⟨fun j => coeff (expo fun κ => (τ - d j) * a κ) ((f j : R) : MvPolynomial K Ω), fun j => ?_, ?_⟩
+  refine ⟨fun j => AddMonoidAlgebra.coeff ((f j : R) : MvPolynomial K Ω) (expo fun κ => (τ - d j) * a κ), fun j => ?_, ?_⟩
   · simpa using hR j (expo fun κ => (τ - d j) * a κ)
-  · have hc' := congrArg (coeff (expo fun κ => τ * a κ)) hf
+  · have hc' := congrArg (AddMonoidAlgebra.coeff · (expo fun κ => τ * a κ)) hf
     rw [coeff_monomial, if_pos rfl] at hc'
     rw [← hc', coeff_sum, ← Finset.sum_coe_sort t]
     refine Finset.sum_congr rfl fun j _ => ?_

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE_RDWave
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDBeta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDBdd
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE_RDWave
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDBeta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDBdd
+
+@[expose] public section
 
 open MeasureTheory
 

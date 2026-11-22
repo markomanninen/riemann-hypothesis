@@ -1,4 +1,8 @@
-import GroundTheory.AutomorphicForms.StableConjCyclic
+module
+
+public import GroundTheory.AutomorphicForms.StableConjCyclic
+
+@[expose] public section
 
 private theorem UpperTheory.commute_of_commute_of_charpoly_separable {E : Type} [Field E] [CharZero E] {n : ℕ}
     (γ a b : Matrix (Fin n) (Fin n) E) (h : γ.charpoly.Separable)

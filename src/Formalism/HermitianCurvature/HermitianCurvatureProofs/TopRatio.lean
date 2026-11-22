@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormSmulL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutIntervalLong
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameThresholdBoundHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleAtOfAdmissibleList
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormSmulL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutIntervalLong
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameThresholdBoundHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleAtOfAdmissibleList
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 

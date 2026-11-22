@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IdMeetKey
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SlabCoverPf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FlagClassConstancy.FlagOfInSFRight
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.LevelSubgroupProperties
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IdMeetKey
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SlabCoverPf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FlagClassConstancy.FlagOfInSFRight
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.LevelSubgroupProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,9 +34,7 @@ theorem isId_rat {u : D.what₂.Word} {what₂ : Finset (Submodule (𝓞 D.host.
       (PI.InSClassConstW.inSFun_all _ _ _) ⟨t.frame, t.rep.2.2.2.2⟩).1 hin
   have hfr : t.frame.fl = mapFlag t.rep.1.2 t.rep.2.2.1 (lf D (X.Fu u)).fl := by
     show (mapLF t.rep.1.2 (lf D (X.Fu u))).fl = _
-    unfold mapLF
-    rw [dif_pos t.rep.2.2.1]
-    try rfl
+    simp only [mapLF, dite_eq_left t.rep.2.2.1]
   refine ⟨fun a => ?_, ?_⟩
   · have h := hS.1 a
     have e1 : t.frame.fl.e a = t.lin (X.eX a) := by
@@ -77,27 +79,76 @@ theorem pt_srat {u : D.what₂.Word} {x : X.B.I.GA} {n : (VS D).V ≃ₗ[D.host.
     show _ *ᵥ X.crd (X.zu u) ∈ _
     rw [mcrd X h3]
     exact this
+  have transfer {R : Type} [CommRing R] (j : X.B.I.E →+* R)
+      (ι : (Fin X.B.I.n → X.B.I.E) →+ (Fin X.B.I.n → R))
+      (hs : ∀ c x, ι (c • x) = j c • ι x)
+      (G : Matrix (Fin X.B.I.n) (Fin X.B.I.n) R)
+      (hG : ∀ y, G *ᵥ ι y = ι (M *ᵥ y))
+      (S : Set (Fin D.R.rS)) (y : Fin X.B.I.n → X.B.I.E)
+      (hy : ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) - 1) *ᵥ y ∈ Submodule.span X.B.I.E (X.eR '' S)) :
+      (G - 1) *ᵥ ι y ∈ Submodule.span R ((fun b => ι (X.eR b)) '' S) := by
+    have hspan : ∀ {z}, z ∈ Submodule.span X.B.I.E (X.eR '' S) →
+        ι z ∈ Submodule.span R (ι '' (X.eR '' S)) := by
+      intro z hz
+      induction hz using Submodule.span_induction with
+      | mem z hz => exact Submodule.subset_span ⟨z, hz, rfl⟩
+      | zero => rw [map_zero]; exact zero_mem _
+      | add a b _ _ ha hb => rw [map_add]; exact add_mem ha hb
+      | smul c a _ ha => rw [hs]; exact Submodule.smul_mem _ _ ha
+    have hh := hspan hy
+    rw [Set.image_image] at hh
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec, hG, ← map_sub]
+    simpa only [Matrix.sub_mulVec, Matrix.one_mulVec] using hh
+  let rmap (v : InfinitePlace X.B.I.F) : (Fin X.B.I.n → X.B.I.E) →+ (Fin X.B.I.n → ℂ) :=
+    { toFun := rv X.B.I v
+      map_zero' := by
+        unfold rv
+        have : (fun i => X.B.I.φ v ((0 : Fin X.B.I.n → X.B.I.E) i)) = 0 := by funext i; simp
+        rw [this, Matrix.mulVec_zero]
+      map_add' := by
+        intro x y
+        unfold rv
+        rw [← Matrix.mulVec_add]
+        congr 1
+        funext i; simp }
+  have rsmul (v : InfinitePlace X.B.I.F) (c : X.B.I.E) (x : Fin X.B.I.n → X.B.I.E) :
+      rmap v (c • x) = X.B.I.φ v c • rmap v x := by
+    change rv X.B.I v (c • x) = X.B.I.φ v c • rv X.B.I v x
+    unfold rv
+    rw [← Matrix.mulVec_smul]
+    congr 1
+    funext i; simp
+  let imap : (Fin X.B.I.n → X.B.I.E) →+ VA X.B.I :=
+    { toFun := incl X.B.I
+      map_zero' := by funext i; simp [incl]
+      map_add' := by intro x y; funext i; simp [incl] }
+  have ismul (c : X.B.I.E) (x : Fin X.B.I.n → X.B.I.E) :
+      imap (c • x) = Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) c • imap x := by
+    funext i
+    simp [imap, incl]
   refine Subgroup.mem_inf.2 ⟨hmem, Subgroup.subset_closure ⟨fun v => ?_, ?_⟩⟩
-  · have hG : ∀ y, uMat (x.1 v) *ᵥ Vanish2.rvHom X.B.I v y =
-        Vanish2.rvHom X.B.I v ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) *ᵥ y) := by
+  · have hG : ∀ y, uMat (x.1 v) *ᵥ rmap v y =
+        rmap v ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) *ᵥ y) := by
       intro y
-      rw [Vanish2.rvHom_apply, Vanish2.rvHom_apply, h1 v]
+      change uMat (x.1 v) *ᵥ rv X.B.I v y = rv X.B.I v (M *ᵥ y)
+      rw [h1 v]
       exact rv_mulVec X v _ y
     refine ⟨fun a => ?_, ?_⟩
-    · exact tr_flag (X.B.I.φ v) (Vanish2.rvHom X.B.I v) (rv_smul' X.B.I v) _ _ hG X.eR _ _ (hE a)
-    · have := tr_flag (X.B.I.φ v) (Vanish2.rvHom X.B.I v) (rv_smul' X.B.I v) _ _ hG X.eR Set.univ _
+    · exact transfer (X.B.I.φ v) (rmap v) (rsmul v) _ hG _ _ (hE a)
+    · have := transfer (X.B.I.φ v) (rmap v) (rsmul v) _ hG Set.univ _
         (by rw [Set.image_univ]; exact hZ)
       unfold spanLt
       rw [← range_eq_image_lt]
       rwa [Set.image_univ] at this
-  · have hG : ∀ y, X.B.I.fmat x.2 *ᵥ Vanish2.inclHom X.B.I y =
-        Vanish2.inclHom X.B.I ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) *ᵥ y) := by
+  · have hG : ∀ y, X.B.I.fmat x.2 *ᵥ imap y =
+        imap ((M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) *ᵥ y) := by
       intro y
-      rw [Vanish2.inclHom_apply, Vanish2.inclHom_apply, h2]
+      change X.B.I.fmat x.2 *ᵥ incl X.B.I y = incl X.B.I (M *ᵥ y)
+      rw [h2]
       exact incl_mulVec X _ y
     refine ⟨fun a => ?_, ?_⟩
-    · exact tr_flag _ (Vanish2.inclHom X.B.I) (incl_smul' X.B.I) _ _ hG X.eR _ _ (hE a)
-    · have := tr_flag _ (Vanish2.inclHom X.B.I) (incl_smul' X.B.I) _ _ hG X.eR Set.univ _
+    · exact transfer _ imap ismul _ hG _ _ (hE a)
+    · have := transfer _ imap ismul _ hG Set.univ _
         (by rw [Set.image_univ]; exact hZ)
       rwa [Set.image_univ] at this
 

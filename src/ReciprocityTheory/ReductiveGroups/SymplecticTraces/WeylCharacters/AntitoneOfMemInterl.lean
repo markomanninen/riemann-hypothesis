@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.AltBranchStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.AltBranchStatement
+
+@[expose] public section
 
 noncomputable section
 

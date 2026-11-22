@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiFixAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiFixAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem chiFix : ChiFix := by
     dsimp only
     by_cases ha : a.Coprime N
     · by_cases hb : b.Coprime N
-      · have hab : (a * b).Coprime N := Nat.Coprime.mul ha hb
+      · have hab : (a * b).Coprime N := Nat.Coprime.mul_left ha hb
         rw [if_pos hab, if_pos ha, if_pos hb]
         apply hinj
         rw [hFm, hχ _ hab, hχ _ ha, hχ _ hb, Nat.cast_mul, map_mul]

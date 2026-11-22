@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 
 namespace GlobalTheory.BI
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.BI.char_coset_sum_eq_zero :
     ∀ (G : Type) [Group G] [Finite G] (χ : G → ℂ), _root_.GlobalTheory.BI.IsChar ℂ ℂ χ → ∀ H : Subgroup G,
       ∑ᶠ u : H, χ u = 0 → ∀ g : G, ∑ᶠ u : H, χ (g * u) = 0 := by
@@ -17,7 +22,8 @@ theorem _root_.GlobalTheory.BI.char_coset_sum_eq_zero :
     simp [hρ, Representation.character]
   rw [finsum_eq_sum_of_fintype] at hH ⊢
   simp only [hχ] at hH ⊢
-  rw [← map_sum] at hH
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum] at hH
   set S : Module.End ℂ (Fin n → ℂ) := ∑ u : H, ρ u with hS
   have habs : ∀ v : H, ρ v * S = S := by
     intro v
@@ -39,7 +45,8 @@ theorem _root_.GlobalTheory.BI.char_coset_sum_eq_zero :
     (LinearMap.IsIdempotentElem.trace_eq_zero_iff hidem).1 (by rw [map_smul, hH, smul_zero])
   have hS0 : S = 0 := by simpa [hcard] using hP
   have hsum : ∑ u : H, LinearMap.trace ℂ _ (ρ (g * u)) = LinearMap.trace ℂ _ (ρ g * S) := by
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     simp [map_mul]
   rw [hsum, hS0, mul_zero, map_zero]
 

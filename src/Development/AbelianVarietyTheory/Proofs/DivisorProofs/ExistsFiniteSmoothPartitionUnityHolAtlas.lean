@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+
+@[expose] public section
 
 open Set Matrix MeasureTheory Filter Topology
 open GlobalTheory.HermFrame
@@ -66,7 +70,7 @@ theorem exists_smooth_bump [T2Space M] (x : M) :
       simp [Function.comp, this]
   · have ho : IsOpen (e.source ∩ e ⁻¹' Metric.ball (e x) (ε / 4)) :=
       e.isOpen_inter_preimage Metric.isOpen_ball
-    filter_upwards [ho.mem_nhds ⟨hxe, Metric.mem_ball_self (by linarith)⟩] with w hw
+    filter_upwards [ho.mem_nhds ⟨hxe, Set.mem_preimage.mpr (Metric.mem_ball_self (by linarith))⟩] with w hw
     simp only [ψ, if_pos hw.1]
     exact β.one_of_mem_closedBall (Metric.ball_subset_closedBall hw.2)
 

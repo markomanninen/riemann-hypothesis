@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryDensity.GramStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryDensity.GramStep
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexOrder
@@ -40,10 +44,11 @@ private theorem exists_diagonal_unitary_gram_of_posDef {n : ℕ} {G : Matrix (Fi
         diagonal (fun i => ((Real.sqrt (hG.1.eigenvalues i) : ℝ) : ℂ)) =
         diagonal (fun i => ((hG.1.eigenvalues i : ℝ) : ℂ)) := by
       rw [diagonal_conjTranspose, diagonal_mul_diagonal]
-      congr 1
-      funext i
-      simp only [Pi.star_apply, Complex.star_def, Complex.conj_ofReal]
-      rw [← Complex.ofReal_mul, Real.mul_self_sqrt (hG.eigenvalues_pos i).le]
+      refine congrArg diagonal (funext fun i => ?_)
+      change star (↑(Real.sqrt (hG.1.eigenvalues i)) : ℂ) *
+        ↑(Real.sqrt (hG.1.eigenvalues i)) = ↑(hG.1.eigenvalues i)
+      simp only [Complex.star_def, Complex.conj_ofReal, ← Complex.ofReal_mul,
+        Real.mul_self_sqrt (hG.eigenvalues_pos i).le]
     rw [conjTranspose_mul, conjTranspose_conjTranspose]
     calc G = V * diagonal (fun i => ((hG.1.eigenvalues i : ℝ) : ℂ)) * Vᴴ := hV
       _ = V * ((diagonal (fun i => ((Real.sqrt (hG.1.eigenvalues i) : ℝ) : ℂ)))ᴴ *

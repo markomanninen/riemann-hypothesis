@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleInjectiveResolutionBasicProperties
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleInjectiveResolutionBasicProperties
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -51,9 +55,8 @@ lemma ι_nat {F G : Shv R} (φ : F ⟶ G) : resι R F ≫ (resMap R φ).f 0 = φ
   simp only [HomologicalComplex.comp_f] at h
   change resι R F ≫ _ = _ at h
   rw [h]
-  simp [sglι, resι, CochainComplex.singleFunctor, CochainComplex.singleFunctors,
+  simp [sglι, resι, resAug, CochainComplex.singleFunctor, CochainComplex.singleFunctors,
     HomologicalComplex.single_map_f_self]
-  erw [Category.assoc, Iso.inv_hom_id_assoc]
 
 end LateralTheory.EtaleFoundations.ResBasicPf
 

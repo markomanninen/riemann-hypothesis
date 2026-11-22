@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.ConjugateSqrtNeg.conj_sqrt_neg :
     ∀ {E : Type} [inst : Field E] [inst_1 : NumberField E]

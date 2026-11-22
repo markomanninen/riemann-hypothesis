@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivedActionDiscreteSeriesProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivedActionDiscreteSeriesProperties
+
+@[expose] public section
 
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -58,7 +62,8 @@ theorem dsig_sum_letter {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ
   obtain ⟨L, hL⟩ := exists_lin hv
   have hm : (∑ j, c j • Z j) ∈ lieSubspace k r :=
     Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (hZ j)
-  rw [(hL _ hm).1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [(hL _ hm).1, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, (hL _ (hZ j)).1, Complex.coe_smul]
 

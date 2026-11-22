@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SelfDualCovolume
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactTer
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SelfDualCovolume
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactTer
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -118,7 +122,7 @@ theorem inter_isom (H : Sesq V) (H' : Sesq W) (hH : IsHerm H) (hH' : IsHerm H') 
     have h1 := hα'.2 _ (hmem B x hx) _ (hmem B y hy)
     have h2 : altE H' (g x) (g y) = altE H x y := by
       simp only [altE]; rw [show H' (g x) (g y) = H x y from hg x y]
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [h1, h2]
   have hGV : (fun v => G (g v)) ∈ fixedBy H (fun x => α' (g x)) A := by
     intro x hx z
@@ -227,7 +231,8 @@ theorem hermitian_fourth_block (h : Matrix n n ℂ) (hH : IsHerm (matH h)) : IsH
       simp [Ne.symm hb]
     · simp
   intro x y
-  rw [key, key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, key, map_sum]
   exact Finset.sum_congr rfl fun a _ => hH _ _
 
 theorem semicharacter_fourth_power (h : Matrix n n ℂ) {Λ : AddSubgroup (n → ℂ)} {α : (n → ℂ) → ℂ}

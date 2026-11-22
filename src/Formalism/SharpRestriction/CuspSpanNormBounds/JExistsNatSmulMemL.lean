@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 namespace Formalism.MainNotions.LatticeGluingRadicals
 
@@ -49,12 +53,12 @@ theorem m_exists_smul_memL {E : Type} [Field E] [NumberField E] [StarRing E]
   rwa [Nat.cast_smul_eq_nsmul]
 
 theorem c_lat_multL {E : Type} [Field E] [NumberField E] [StarRing E]
-    {S : Formalism.BasicNotions.HSpace E} {Λ : Submodule (𝓞 E) S.V} (hΛ : Submodule.IsLattice E Λ)
+    {S : Formalism.BasicNotions.HSpace E} {Λ : Submodule (𝓞 E) S.V} (hΛ : Submodule.IsFullLattice E Λ)
     (v : S.V) : ∃ n : 𝓞 E, n ≠ 0 ∧ n • v ∈ Λ :=
   m_exists_smul_memL Λ (by rw [hΛ.span_eq_top]; exact Submodule.mem_top)
 
 theorem a_exists_smul_memL {E : Type} [Field E] [NumberField E] [StarRing E]
-    {S : Formalism.BasicNotions.HSpace E} (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ)
+    {S : Formalism.BasicNotions.HSpace E} (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ)
     (x : S.V) : ∃ c : 𝓞 E, c ≠ 0 ∧ c • x ∈ Λ :=
   c_lat_multL hΛ x
 

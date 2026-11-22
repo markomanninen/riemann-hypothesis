@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemExpSolCons
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemExpSolCons
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology
 
 namespace GlobalTheory.HCF

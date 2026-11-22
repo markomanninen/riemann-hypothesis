@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.TwTrivPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.TwTrivPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -58,7 +62,7 @@ theorem sec_single {q : ℕ} {j : ℤ} {U : Scheme.{0}} (ξ : Prim q Γ(U, ⊤))
 
 theorem ulift_smul_eq {q : ℕ} {M : Type*} [AddCommGroup M] [Module (ULift.{1} (ZMod q)) M] (c : ULift.{1} (ZMod q)) (v : M) :
     c • v = ((c.down.cast : ℤ)) • v := by
-  have hc : c = (((c.down.cast : ℤ)) : ULift.{1} (ZMod q)) := ULift.ext _ _ (by
+  have hc : c = (((c.down.cast : ℤ)) : ULift.{1} (ZMod q)) := ULift.ext (by
     show c.down = ((c.down.cast : ℤ) : ULift.{1} (ZMod q)).down
     exact (ZMod.intCast_zmod_cast c.down).symm)
   conv_lhs => rw [hc]
@@ -91,7 +95,8 @@ theorem LocGen_of (hR : RootPow) : LocGen := by
   have hmk : (((twF q j).map h.appTop).hom (Submodule.Quotient.mk (w f hf) : (twF q j).obj Γ(Y, ⊤))) =
       ∑ ξ ∈ (w f hf).support, (Submodule.Quotient.mk (Finsupp.single (ξ.map h.appTop.hom) (w f hf ξ)) : (twF q j).obj Γ(Z, ⊤)) := by
     change (Submodule.Quotient.mk (Finsupp.mapDomain (Prim.map h.appTop.hom) (w f hf)) : (twF q j).obj Γ(Z, ⊤)) = _
-    rw [Finsupp.mapDomain, Finsupp.sum, ← Submodule.mkQ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.mapDomain, Finsupp.sum, ← Submodule.mkQ_apply, map_sum]
     rfl
   rw [hmk]
   erw [sec_sum]

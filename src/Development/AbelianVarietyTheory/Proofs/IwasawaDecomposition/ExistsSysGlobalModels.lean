@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmHostRootComplexEqPmSqrt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModelDominatedOfMapToBaseModel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGlobalModelOfLocalModels
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsTransitionMapRaisedModels
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelDescentCoefficientField
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsNormalModelAboveFiniteCover
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsModelBaseChangeOverring
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CoefficientFieldIntegersDedekindFractionField
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliSchemeLevelMapsHeckePoints
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllSixAbelianSchemeLawsHold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmHostRootComplexEqPmSqrt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModelDominatedOfMapToBaseModel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGlobalModelOfLocalModels
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsTransitionMapRaisedModels
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelDescentCoefficientField
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsNormalModelAboveFiniteCover
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsModelBaseChangeOverring
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CoefficientFieldIntegersDedekindFractionField
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliSchemeLevelMapsHeckePoints
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllSixAbelianSchemeLawsHold
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -208,9 +212,59 @@ theorem dominates_up {O₁ O V₁ V : Type} [CommRing O₁] [CommRing O] [CommRi
       ← spMap_comp, ← spMap_comp, hbb]
   obtain ⟨g₀, hg₀⟩ : ∃ g₀ : pullback Y.s (spMap b) ⟶ pullback Y₁.s (spMap b₁),
       g₀ ≫ pullback.fst _ _ = pullback.fst _ _ ≫ ρ := ⟨_, pullback.lift_fst _ _ w₀⟩
-  obtain ⟨τ, ⟨n₁⟩⟩ : ∃ τ, Nonempty (SABMap τ Y.t (pullback.fst Y.s (spMap b))) := by
-    obtain ⟨_, _, _, _, _, n₁, -⟩ := sabPull Out.CubePf.cubePull (pullback.fst Y.s (spMap b)) Y.t
-    exact ⟨_, ⟨n₁⟩⟩
+  have hpull {S S' : Scheme.{0}} (f : S' ⟶ S) (t : SAB H S) : ∃ t' : SAB H S', Nonempty (SABMap t' t f) := by
+    have hC := Out.CubePf.cubePull
+    have hsemi : IsSemiAbelian ((Over.pullback f).obj t.G) := by
+      refine { comm := ?_, smooth := ?_, separated := ?_, quasiCompact := ?_, geomConnected := ?_, fibres := ?_ }
+      · have := t.semi.comm
+        infer_instance
+      · have := t.semi.smooth
+        change Smooth (pullback.snd t.G.hom f)
+        infer_instance
+      · have := t.semi.separated
+        change IsSeparated (pullback.snd t.G.hom f)
+        infer_instance
+      · have := t.semi.quasiCompact
+        change QuasiCompact (pullback.snd t.G.hom f)
+        infer_instance
+      · have := t.semi.geomConnected
+        change GeometricallyConnected (pullback.snd t.G.hom f)
+        infer_instance
+      · intro Ω _ _ q
+        obtain ⟨A⟩ := t.semi.fibres Ω (q ≫ f)
+        exact ⟨torusExtOfIso (pullCompIso q f t.G) A⟩
+    have hp : ∃ (PP' : RigLB ((Over.pullback f).obj t.G)) (cub : CubicalStr _ PP') (sym : PP'.IsSymmetric) (adj : _) (prim : _)
+        (m : SABMap ⟨(Over.pullback f).obj t.G, hsemi, OAct.pullback f t.G t.act, PP', cub,
+          sym, adj, prim⟩ t f), m.φ = pullback.fst t.G.hom f := by
+      have h := isGrpPullback_pullback t.G f
+      obtain ⟨hL, hr, ⟨c', hc'⟩, hs⟩ := hC S S' t.G _ (cubeMapOf h) t.PP t.cub
+      have hact : ∀ a, ((OAct.pullback f t.G t.act).act a).left ≫ pullback.fst t.G.hom f =
+          pullback.fst t.G.hom f ≫ (t.act.act a).left := fun a => pullback.lift_fst _ _ _
+      have pa : ∀ {T : Over S'} (x : T ⟶ (Over.pullback f).obj t.G) a,
+          pushPt h.1.w (x ≫ (OAct.pullback f t.G t.act).act a) = pushPt h.1.w x ≫ t.act.act a := fun x a =>
+        Over.OverMorphism.ext (by
+          show (x.left ≫ _) ≫ _ = (x.left ≫ _) ≫ _
+          rw [Category.assoc, hact, Category.assoc])
+      refine ⟨(cubeMapOf h).rigLB t.PP hL hr, c', hs t.sym, fun a => ?_, ?_, ⟨cubeMapOf h, h, rfl, hact, hc'⟩, rfl⟩
+      · let U := lift (pushPt h.1.w (fst ((Over.pullback f).obj t.G) ((Over.pullback f).obj t.G)))
+          (pushPt h.1.w (snd ((Over.pullback f).obj t.G) ((Over.pullback f).obj t.G)))
+        refine LBIso.chartPull (chartPullLinComb t.PP.L _ _ _ _ U.left fun I => psum_push h _ _ U (fun i => ?_) I.down)
+          (chartPullLinComb t.PP.L _ _ _ _ U.left fun I => psum_push h _ _ U (fun i => ?_) I.down) (t.adj a)
+        · fin_cases i
+          · exact (pa _ a).trans (by simp [U])
+          · simp [U]
+        · fin_cases i
+          · simp [U]
+          · exact (pa _ _).trans (by simp [U])
+      · let U := pushPt h.1.w (𝟙 ((Over.pullback f).obj t.G))
+        refine LBIso.chartPull (chartPullPull t.PP.L _)
+          (chartPullLinComb t.PP.L _ _ _ _ U.left fun I => psum_push h _ _ U (fun i => ?_) I.down) t.prim
+        fin_cases i
+        · simp [U]
+        · exact (congrArg (pushPt h.1.w) (Category.id_comp _).symm).trans (pa _ _)
+    obtain ⟨_, _, _, _, _, m, -⟩ := hp
+    exact ⟨_, ⟨m⟩⟩
+  obtain ⟨τ, ⟨n₁⟩⟩ := hpull (pullback.fst Y.s (spMap b)) Y.t
   obtain ⟨k₁, hk₁⟩ := LevelCover.sab_comp n₁ mu rfl
   obtain ⟨k₂, hk₂⟩ := LevelCover.sab_cancel p₁ k₁ g₀ hg₀
   obtain ⟨n₂, hn₂⟩ := LevelCover.sab_comp k₂ p₂ rfl

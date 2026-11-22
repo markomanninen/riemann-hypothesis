@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinGlRelationsAdjointStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LoweringWordsSpanStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinGlRelationsAdjointStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LoweringWordsSpanStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem range_le (T : Fin n → Fin n → Module.End ℂ V) (q : V) (M : Submodu
   rintro _ ⟨c, rfl⟩
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add f g hf hg => rw [map_add]; exact M.add_mem hf hg
+  | add f g hf hg => rw [map_add (f := _)]; exact M.add_mem hf hg
   | single l b => rw [lowL_single]; exact M.smul_mem _ (h l)
 
 theorem low_stable (T : Fin n → Fin n → Module.End ℂ V) (q : V) {x y : Fin n} (hxy : y < x) {r : V}
@@ -161,13 +165,13 @@ theorem exists_factor {D Z : Type*} [AddCommGroup D] [Module ℂ D] [AddCommGrou
     ∃ φ : V →ₗ[ℂ] Z, (∀ d, φ (L d) = L' d) ∧ ∀ k ∈ Q, φ k = 0 := by
   let φ₀ : LinearMap.range L →ₗ[ℂ] Z :=
     ((LinearMap.ker L).liftQ L' h) ∘ₗ (L.quotKerEquivRange.symm : LinearMap.range L →ₗ[ℂ] _)
-  refine ⟨φ₀ ∘ₗ Submodule.linearProjOfIsCompl _ _ hc, fun d => ?_, fun k hk => ?_⟩
-  · have : Submodule.linearProjOfIsCompl _ _ hc (L d) = ⟨L d, LinearMap.mem_range_self L d⟩ :=
-      Submodule.linearProjOfIsCompl_apply_left hc ⟨L d, LinearMap.mem_range_self L d⟩
+  refine ⟨φ₀ ∘ₗ Submodule.projectionOnto _ _ hc, fun d => ?_, fun k hk => ?_⟩
+  · have : Submodule.projectionOnto _ _ hc (L d) = ⟨L d, LinearMap.mem_range_self L d⟩ :=
+      Submodule.projectionOnto_apply_left hc ⟨L d, LinearMap.mem_range_self L d⟩
     simp only [LinearMap.comp_apply, this, φ₀]
     erw [LinearMap.quotKerEquivRange_symm_apply_image L d (LinearMap.mem_range_self L d)]
     simp
-  · have h0 : Submodule.linearProjOfIsCompl _ _ hc k = 0 := Submodule.linearProjOfIsCompl_apply_right' hc hk
+  · have h0 : Submodule.projectionOnto _ _ hc k = 0 := Submodule.projectionOnto_apply_of_mem_right hc hk
     rw [LinearMap.comp_apply, h0, map_zero]
 
 end Span
@@ -193,7 +197,7 @@ theorem isCompl_perp (R : Submodule ℂ (ι → ℂ)) : IsCompl R (perp R) := by
     let e := WithLp.linearEquiv 2 ℂ (ι → ℂ)
     let K : Submodule ℂ (EuclideanSpace ℂ ι) := R.comap e.toLinearMap
     obtain ⟨y, hy, w, hw, h⟩ := Submodule.exists_add_mem_mem_orthogonal (K := K) (e.symm f)
-    have hf : f = e y + e w := by rw [← map_add, ← h]; simp
+    have hf : f = e y + e w := by rw [← map_add (f := _), ← h]; simp
     rw [hf]
     refine Submodule.add_mem_sup hy ?_
     intro r hr
@@ -297,7 +301,7 @@ theorem exists_spin_map : ∀ {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι
       simp only [LinearMap.comp_apply, lowL_single, map_smul, h1]
     have := LinearMap.congr_fun hlin d
     simp only [LinearMap.comp_apply] at this
-    rw [map_add, map_add, map_add, hφ2 _ (h2 k hk), hφ2 k hk, hφ1, this]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hφ2 _ (h2 k hk), hφ2 k hk, hφ1, this]
     simp
   refine ⟨φ, ?_, ?_, ?_⟩
   · simpa using hword ⟨[], by simp⟩

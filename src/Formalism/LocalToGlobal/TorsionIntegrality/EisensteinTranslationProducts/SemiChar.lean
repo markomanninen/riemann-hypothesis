@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -27,9 +31,11 @@ def herm (L : PeriodPair) (z w : ℂ) : ℂ := z * conj w / (area L : ℂ)
 def opU (L : PeriodPair) (x : ℂ) (F : ℂ → ℂ) (z : ℂ) : ℂ :=
   F (z + x) * Complex.exp (-(Real.pi : ℂ) * herm L z x - (Real.pi : ℂ) * herm L x x / 2)
 
-open Classical in
 
-def semiChar (L : PeriodPair) (ω : ℂ) : ℂ := if ω / 2 ∈ L.lattice then 1 else -1
+open Classical in
+def semiChar (L : PeriodPair) (ω : ℂ) : ℂ := by
+  classical
+  exact if ω / 2 ∈ L.lattice then 1 else -1
 
 def th0 (L : PeriodPair) (t : ℂ) (z : ℂ) : ℂ := opU L t (sgStar L) z / opU L t (sgStar L) 0
 

@@ -1,4 +1,8 @@
-import Formalism.SmithDeterminants.DefsDVR
+module
+
+public import Formalism.SmithDeterminants.StatementDVR
+
+@[expose] public section
 
 namespace Formalism.A
 
@@ -31,7 +35,7 @@ theorem nonempty_smith_normal_form {R M : Type} [CommRing R] [IsDomain R] [IsPri
       y.rangeRestrict ((c : M) + s z) = z := by
     intro c z
     apply Subtype.ext
-    rw [hrr, map_add, LinearMap.mem_ker.mp c.2, zero_add, hyS]
+    rw [hrr, map_add (f := _), LinearMap.mem_ker.mp c.2, zero_add, hyS]
 
   let fwd : (LinearMap.ker y × LinearMap.range y) →ₗ[R] M := (LinearMap.ker y).subtype.coprod s
   let bwd : M →ₗ[R] (LinearMap.ker y × LinearMap.range y) :=

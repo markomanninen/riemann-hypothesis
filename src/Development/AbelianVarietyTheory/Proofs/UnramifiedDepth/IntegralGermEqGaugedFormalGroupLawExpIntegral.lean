@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.CoeffSubstInvMemOfTwoLeOrder
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.CoeffSubstInvMemOfTwoLeOrder
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,17 +39,20 @@ theorem intS_X {V : VF C} {σ : Type} (s : σ) : IntS V (X s : MvPowerSeries σ 
 
 theorem intS_sum_smul {V : VF C} {σ ι : Type} [Fintype ι] {w : ι → C} (hw : ∀ i, V.Ge 0 (w i))
     {f : ι → MvPowerSeries σ C} (hf : ∀ i, IntS V (f i)) : IntS V (∑ i, w i • f i) := fun μ => by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact VF.Ge.sum fun i _ => by rw [map_smul, smul_eq_mul]; exact (hw i).mul_int (hf i μ)
 
 theorem subst_sum_smul {σ τ ι : Type} {a : σ → MvPowerSeries τ C} (ha : HasSubst a) (s : Finset ι) (w : ι → C)
     (f : ι → MvPowerSeries σ C) : subst a (∑ i ∈ s, w i • f i) = ∑ i ∈ s, w i • subst a (f i) := by
-  rw [← coe_substAlgHom ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_substAlgHom ha, map_sum]
   exact Finset.sum_congr rfl fun i _ => map_smul _ _ _
 
 theorem subst_sum {σ τ ι : Type} {a : σ → MvPowerSeries τ C} (ha : HasSubst a) (s : Finset ι)
     (f : ι → MvPowerSeries σ C) : subst a (∑ i ∈ s, f i) = ∑ i ∈ s, subst a (f i) := by
-  rw [← coe_substAlgHom ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_substAlgHom ha, map_sum]
 
 theorem coeff_pow_eq_zero {τ : Type} {t : MvPowerSeries τ C} (ht : constantCoeff t = 0) {μ : τ →₀ ℕ} {n : ℕ}
     (hn : μ.degree < n) : coeff μ (t ^ n) = 0 :=
@@ -109,7 +116,7 @@ theorem ex_lg (hY : RLaw Y V) {τ : Type} {a : κ → MvPowerSeries τ C} (ha : 
 
 theorem log_add_const (hY : RLaw Y V) {τ : Type} {a b : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0)
     (hb : ∀ i, constantCoeff (b i) = 0) (x : κ) : constantCoeff (subst a (Y.lg x) + subst b (Y.lg x)) = 0 := by
-  rw [map_add, constantCoeff_subst_zero ha (lg_const hY x), constantCoeff_subst_zero hb (lg_const hY x), add_zero]
+  rw [map_add (f := _), constantCoeff_subst_zero ha (lg_const hY x), constantCoeff_subst_zero hb (lg_const hY x), add_zero]
 
 theorem intS_addP (hY : RLaw Y V) {τ : Type} {a b : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0)
     (hb : ∀ i, constantCoeff (b i) = 0) (ia : ∀ i, IntS V (a i)) (ib : ∀ i, IntS V (b i)) (i : κ) :
@@ -211,7 +218,8 @@ theorem one_group (hY : RLaw Y V) (g : Fin 2) (H : Y.CartHyp V g) (S : Sys (RawC
     intro x
     rw [subst_sum hts]
     ext μ
-    rw [map_sum, coeff_X, ← ht.2 x μ, Finset.sum_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, coeff_X, ← ht.2 x μ, Finset.sum_comm]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [← coeff_subst_tyS hl _ (ht.1 c)]
     unfold PowerSeries.subst
@@ -231,9 +239,11 @@ theorem one_group (hY : RLaw Y V) (g : Fin 2) (H : Y.CartHyp V g) (S : Sys (RawC
     rw [linearPart_lg hY, Matrix.one_mul] at e
     rw [← e]
     show coeff (Finsupp.single j 1) (subst Φ (Y.lg i)) = _
-    rw [hΦ', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hΦ', map_sum]
     refine Finset.sum_congr rfl fun x _ => ?_
-    rw [map_smul, smul_eq_mul, map_sum, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, smul_eq_mul, map_sum, Finset.sum_eq_single j]
     · rw [coeff_subst_tyS hl _ (constantCoeff_X j)]
       have h1 : S.al j 0 x = S.tan j x := by
         unfold Sys.al
@@ -257,12 +267,14 @@ theorem one_group (hY : RLaw Y V) (g : Fin 2) (H : Y.CartHyp V g) (S : Sys (RawC
     · simp
   set Θ : I g → MvPowerSeries (I g) C := fun c => ∑ x, w x c • Φ x with hΘ
   have hΘ0 : ∀ c, constantCoeff (Θ c) = 0 := fun c => by
-    simp [hΘ, map_sum, h0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hΘ, map_sum, h0]
   have hΘi : ∀ c, IntS V (Θ c) := fun c => intS_sum_smul (fun x => hw x c) hi
   have hΘl : linearPart Θ = (Matrix.of S.tan).transpose := by
     ext c j
     show coeff (Finsupp.single j 1) (∑ x, w x c • Φ x) = S.tan j c
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have e : ∀ i, coeff (Finsupp.single j 1) (w i c • Φ i) = ∑ x : I g, (Y.u g x i * w i c) * S.tan j x := by
       intro i
       rw [map_smul, smul_eq_mul, show coeff (Finsupp.single j 1) (Φ i) = _ from hlin i j, Finset.mul_sum]
@@ -279,7 +291,8 @@ theorem one_group (hY : RLaw Y V) (g : Fin 2) (H : Y.CartHyp V g) (S : Sys (RawC
     rw [hEΦ]; exact constantCoeff_subst_zero ht.1 (h0 x)
   have hEs := hasSubst_of_constantCoeff_zero hE0
   have hW0 : ∀ c, constantCoeff (∑ x, w x c • (X x : MvPowerSeries κ C)) = 0 := fun c => by
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   refine ⟨fun c => subst (fun c' => ∑ x, w x c' • (X x : MvPowerSeries κ C)) (substInv Θ c),
     fun c => constantCoeff_subst_zero hW0 (constantCoeff_substInv hΘ0 c),
     fun c => intS_subst hW0 (fun c' => intS_sum_smul (fun x => hw x c') intS_X) fun μ =>
@@ -316,7 +329,8 @@ theorem intGerm_eq_expInt : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZer
   let E : ∀ g, κ → MvPowerSeries (I g) C := fun g x =>
     subst (fun i : κ => ∑ c : I g, Y.u g c i • (X c : MvPowerSeries (I g) C)) (Y.ex x)
   have hL : ∀ g (i : κ), constantCoeff (∑ c : I g, Y.u g c i • (X c : MvPowerSeries (I g) C)) = 0 := fun g i => by
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   have hE0 : ∀ g x, constantCoeff (E g x) = 0 := fun g x => constantCoeff_subst_zero (hL g) (hY.exc x)
   have hexp : ∀ g x, Y.expPt g x = upG g (E g x) := by
     intro g x

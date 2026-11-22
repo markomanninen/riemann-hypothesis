@@ -1,12 +1,16 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictUpperNeg
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictUpperNeg
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 
@@ -191,15 +195,6 @@ theorem gaXi_cont (σ : Equiv.Perm (Fin r)) (d : Fin r → ℂ) (hd : ∀ i, d i
   rw [e]
   exact (((Dx2.SplitF.rn_cont r 0).comp (continuous_fst.comp (continuous_fst.comp continuous_fst)).neg).matrix_mul hm).matrix_mul
     ((Dx2.SplitF.rn_cont r 0).comp (continuous_snd.comp (continuous_fst.comp continuous_fst)))
-
-def slF (σ : Equiv.Perm (Fin r)) (d : Fin r → ℂ) {E : Type*} (F : B.Mat k r → E) (γ0 : B.Mat k 0)
-    (p : (Mt k (r + 0) × Mt k (r + 0)) × U.Xi k r 0 0 σ) : E :=
-  F (U.gaXi k 0 σ d p.2 (fun a => a.elim0) ((midB r 0 (Matrix.of p.1.1))⁻¹ * γ0 * midB r 0 (Matrix.of p.1.2)))
-
-def slS (σ : Equiv.Perm (Fin r)) (z0 z0' : Fin (2 * 0 + k + 1) → ℂ) :
-    Set ((Mt k (r + 0) × Mt k (r + 0)) × U.Xi k r 0 0 σ) :=
-  ({h | Matrix.of h ∈ UWset k (r + 0) (liftVec k r 0 z0)} ×ˢ
-    {h | Matrix.of h ∈ UWset k (r + 0) (liftVec k r 0 z0')}) ×ˢ Set.univ
 
 end dom
 

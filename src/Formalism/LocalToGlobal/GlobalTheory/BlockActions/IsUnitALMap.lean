@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormalFormAgree
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormalFormAgree
+
+@[expose] public section
 
 noncomputable section
 

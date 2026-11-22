@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.GradedSeries
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.GradedSeries
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,8 +39,6 @@ def mk (u : ℤ → M) (hu : IsLaurent u) : Laur L M :=
   HahnModule.of L (HahnSeries.ofSuppBddBelow u (by
     obtain ⟨m, hm⟩ := hu
     exact ⟨m, fun k hk => not_lt.1 fun h => hk (hm k h)⟩))
-
-@[simp] theorem co_mk (u : ℤ → M) (hu : IsLaurent u) : co (mk u hu : Laur L M) = u := rfl
 
 private theorem coeff_ofPowerSeries_smul_eq_serMul (f : L⟦X⟧) (y : HahnModule ℤ L M) (k : ℤ) :
     ((HahnModule.of L).symm (HahnSeries.ofPowerSeries ℤ L f • y)).coeff k =
@@ -118,17 +120,18 @@ theorem co_smul_low (f : L⟦X⟧) (x : Laur L M) (m : ℤ) (hx : ∀ k < m, co 
   · have e := co_smul_add_eq_coeff_smul_co f x m 0 (fun j hj => absurd hj (Nat.not_lt_zero j)) hx
     simpa using e
 
-def single (k : ℤ) (d : M) : Laur L M :=
-  mk (Pi.single k d) ⟨k, fun _ h => Pi.single_eq_of_ne h.ne _⟩
-
-@[simp] theorem co_single (k : ℤ) (d : M) : co (single k d : Laur L M) = Pi.single k d := rfl
-
 def tw (c : L) (g : M →ₗ[L] M') : Laur L M →+ Laur L M' where
   toFun x := mk (fun k => c ^ k • g (co x k)) (by
     obtain ⟨m, hm⟩ := isLaurent_co x
     exact ⟨m, fun k hk => by simp [hm k hk]⟩)
-  map_zero' := co_injective (by funext k; simp)
-  map_add' x y := co_injective (by funext k; simp)
+  map_zero' := co_injective (by
+    funext k
+    simp
+    rfl)
+  map_add' x y := co_injective (by
+    funext k
+    simp
+    rfl)
 
 @[simp] theorem co_tw (c : L) (g : M →ₗ[L] M') (x : Laur L M) (k : ℤ) :
     co (tw c g x) k = c ^ k • g (co x k) := rfl

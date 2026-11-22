@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeMin
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeMin
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -61,7 +65,8 @@ theorem cMat_rowShift [Fintype Ty] (τ : Ty) (s : ℕ) (hs : s ≤ r τ) (B : Fi
           (cMat τ s hs B).updateCol i0 (fun p => cMat τ s hs B p i0 +
             (C t : MvPolynomial (Letter Ty r n) k) • cMat τ s hs B p i1) := by
         refine Matrix.ext fun p q => ?_
-        simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, cMat, Matrix.of_apply, map_sum, map_mul,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, cMat, Matrix.of_apply, map_sum, map_mul,
           algHom_C, algebraMap_eq, rowShift, aeval_X, Matrix.updateCol_apply, crSig_iff]
         by_cases hp : q = i0
         · subst hp
@@ -82,7 +87,8 @@ theorem cMat_rowShift [Fintype Ty] (τ : Ty) (s : ℕ) (hs : s ≤ r τ) (B : Fi
       exact Matrix.det_updateCol_add_smul_self _ hne (C t)
     · have hmat : (rowShift r n k τ i i' t).mapMatrix (cMat τ s hs B) = cMat τ s hs B := by
         refine Matrix.ext fun p q => ?_
-        simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, cMat, Matrix.of_apply, map_sum, map_mul,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, cMat, Matrix.of_apply, map_sum, map_mul,
           algHom_C, algebraMap_eq, rowShift, aeval_X, crSig_iff]
         refine Finset.sum_congr rfl fun b _ => ?_
         rw [if_neg]
@@ -93,7 +99,8 @@ theorem cMat_rowShift [Fintype Ty] (τ : Ty) (s : ℕ) (hs : s ≤ r τ) (B : Fi
       rw [hmat]
   · have hmat : (rowShift r n k σ i i' t).mapMatrix (cMat τ s hs B) = cMat τ s hs B := by
       refine Matrix.ext fun p q => ?_
-      simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, cMat, Matrix.of_apply, map_sum, map_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, cMat, Matrix.of_apply, map_sum, map_mul,
         algHom_C, algebraMap_eq, rowShift, aeval_X]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [if_neg (crSig_ne hτ)]

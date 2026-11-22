@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPowSubOneNormLtOne
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPowSubOneNormLtOne
+
+@[expose] public section
 
 open Formalism.MainNotions
 

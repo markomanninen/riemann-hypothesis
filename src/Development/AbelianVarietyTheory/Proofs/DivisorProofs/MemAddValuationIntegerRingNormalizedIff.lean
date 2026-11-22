@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.QuotientEigenDifference
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.QuotientEigenDifference
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
+
+@[expose] public section
 
 open scoped NNReal
 open GlobalTheory.IndefiniteRowSideFullHecke.MultiplicationKernelIdentity Classical
@@ -109,7 +113,7 @@ theorem evalVec_smul {v : AddValuation C (WithTop ℝ)} (a : S → Int0 v) (N : 
 theorem evalVec_add {v : AddValuation C (WithTop ℝ)} (a : S → Int0 v) (N : ℕ)
     (x y : Fin N → RS a) : evalVec a N (x + y) = evalVec a N x + evalVec a N y := by
   funext s i
-  simp only [evalVec, Pi.add_apply, map_add, Subring.coe_add]
+  simp only [evalVec, Pi.add_apply, map_add (f := _), Subring.coe_add]
 
 theorem evalVec_sub {v : AddValuation C (WithTop ℝ)} (a : S → Int0 v) (N : ℕ)
     (x y : Fin N → RS a) : evalVec a N (x - y) = evalVec a N x - evalVec a N y := by

@@ -1,21 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FirstSlotSliceSlotMixedCasimirZero
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantOrthogonalInf
-import Formalism.RealPlaceAnalysis.FinalF
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSmoothCompactSupportFixLowestKType
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsDer
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsDerLowKSub
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ContDiffFderivMul
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerRepK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FirstSlotSliceSlotMixedCasimirZero
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantOrthogonalInf
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSmoothCompactSupportFixLowestKType
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsDer
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsDerLowKSub
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ContDiffFderivMul
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerRepK
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId GlobalTheory.Jet
 open scoped InnerProductSpace ComplexOrder
 
 namespace GlobalTheory.SmoothKType
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem exists_garding_kMap (n : ℕ) (ε : Fin n → Bool) (μ : Fin n → ℝ) (H : Type) [NormedAddCommGroup H]
     [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (S : Submodule ℂ H)
     (hσ : IsURepOn (UJset ε) σ) (hK : IsKTypeOf ε σ μ S) :
@@ -47,7 +52,7 @@ theorem exists_garding_kMap (n : ℕ) (ε : Fin n → Bool) (μ : Fin n → ℝ)
       map_add' := by
         intro s t
         rw [← integral_add (hint s) (hint t)]
-        simp only [Submodule.coe_add, map_add, smul_add]
+        simp only [Submodule.coe_add, map_add (f := _), smul_add]
       map_smul' := by
         intro c s
         rw [RingHom.id_apply, ← integral_smul]
@@ -133,7 +138,7 @@ theorem exists_isDer_kType : ∀ (n : ℕ) (ε : Fin n → Bool) (μ : Fin n →
       obtain ⟨a', ha', hda⟩ := ha
       obtain ⟨b', hb', hdb⟩ := hb
       refine ⟨a' + b', add_mem ha' hb', ?_⟩
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact hda.add hdb
     | smul c a _ ha =>
       obtain ⟨a', ha', hda⟩ := ha

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
+module
+
+public import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,10 +51,6 @@ def geoC (L : A.ALB) (c : Comp) : ℝ := A.degA c (L c)
 def arVol (L : A.ALB) : ℝ := ∑ c, G.arVol (A.Yv c) (L c)
 
 def arNef (L : A.ALB) : Prop := ∀ c, G.nefA (A.Yv c) (L c)
-
-theorem arVol_eq_of_nef (h : ∀ (Y : G.Var) (Lb : G.Adl Y), G.nefA Y Lb → G.arVol Y Lb = G.arTop Y Lb)
-    (L : A.ALB) (hL : A.arNef L) : A.arVol L = ∑ c, A.arSelfC L c :=
-  Finset.sum_congr rfl fun c _ => h _ _ (hL c)
 
 end AlgPkg
 

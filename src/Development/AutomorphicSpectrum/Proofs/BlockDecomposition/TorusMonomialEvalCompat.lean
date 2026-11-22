@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.GeoDefs
-import GroundTheory.ArithmeticGeometry.ModularCurves.WeierstrassGenus
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.GeoDefs
+public import GroundTheory.ArithmeticGeometry.ModularCurves.WeierstrassGenus
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -215,7 +219,7 @@ theorem aeval_mem_torusS {K : Type} [Field K] {X : Scheme.{0}} {N d e : ℕ} (i 
     exact Submodule.smul_mem _ r hu
   have key : ∀ s : Finset (Fin (d + 1) →₀ ℕ), s ⊆ c.support → ∀ h,
       evV i (yS y S) V hS (HomogeneousLocalization.Away.mk (grK K N) (yS_mem y hy S) j
-        (∑ α ∈ s, MvPolynomial.C (MvPolynomial.coeff α c) * ∏ k, y k ^ α k) h) ∈
+        (∑ α ∈ s, MvPolynomial.C (AddMonoidAlgebra.coeff c α) * ∏ k, y k ^ α k) h) ∈
         torusS K (fun k => (ht k).unit) S := by
     intro s
     induction s using Finset.induction_on with
@@ -228,17 +232,17 @@ theorem aeval_mem_torusS {K : Type} [Field K] {X : Scheme.{0}} {N d e : ℕ} (i 
       intro hs h
       have hs' : s ⊆ c.support := (Finset.subset_insert a s).trans hs
       have hA : a ∈ c.support := hs (Finset.mem_insert_self a s)
-      have hrest : ∑ α ∈ s, MvPolynomial.C (MvPolynomial.coeff α c) * ∏ k, y k ^ α k ∈ grK K N (j • (S.card * e)) :=
+      have hrest : ∑ α ∈ s, MvPolynomial.C (AddMonoidAlgebra.coeff c α) * ∏ k, y k ^ α k ∈ grK K N (j • (S.card * e)) :=
         Submodule.sum_mem _ fun α hα => hCm _ _ (hmono α (hs' hα))
       simp only [Finset.sum_insert ha]
-      rw [mk_add' _ (hCm _ _ (hmono a hA)) hrest, map_add]
+      rw [mk_add' _ (hCm _ _ (hmono a hA)) hrest, map_add (f := _)]
       refine add_mem ?_ (ih hs' hrest)
       rw [mk_C_mul _ _ (hC _) (hmono a hA), map_mul, evV_const i q hq]
       refine mul_mem ?_ ?_
       · exact Subalgebra.algebraMap_mem _ _
       · rw [evV_monomial i y hy hV S hS ht (fun k => a k) (hdeg a hA)]
         exact Algebra.subset_adjoin ⟨_, mem_expS S j _ (hdeg a hA), rfl⟩
-  have hsum : MvPolynomial.aeval y c = ∑ α ∈ c.support, MvPolynomial.C (MvPolynomial.coeff α c) * ∏ k, y k ^ α k := by
+  have hsum : MvPolynomial.aeval y c = ∑ α ∈ c.support, MvPolynomial.C (AddMonoidAlgebra.coeff c α) * ∏ k, y k ^ α k := by
     rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_eq']
     rfl
   have gen : ∀ (p : MvPolynomial (Fin (N + 1)) K) (hp : p ∈ grK K N (j • (S.card * e))), MvPolynomial.aeval y c = p →

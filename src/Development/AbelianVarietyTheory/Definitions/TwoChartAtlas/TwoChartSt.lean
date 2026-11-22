@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj MvPowerSeries
@@ -35,8 +39,8 @@ def IsMapOf {G G' : Over (Spec (CommRingCat.of R))} {d : ℕ} (x : Fam G (Fin d)
     (f : G ⟶ G') (φ : Pt R 1 d) : Prop :=
   (∀ i, constantCoeff (φ i) = 0) ∧ ∀ (n : ℕ) (a : Pt R n d) (y : Fam G (Fin n × Fin d)),
     Rep x a y → Rep x' (comp1 φ a) (fun m => y m ≫ f)
-open Classical in
 
+open Classical in
 def fnVal {A : Type} [CommRing A] {X : Scheme.{0}} (p : Spec (CommRingCat.of A) ⟶ X) (U : X.Opens) (f : Γ(X, U)) : A :=
   if h : ⊤ ≤ p ⁻¹ᵁ U then (Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((p.appLE U ⊤ h).hom f) else 0
 
@@ -286,8 +290,6 @@ theorem Related.refl {d : ℕ} {O : Type} [CommRing O] [StarRing O] (B : FB R d 
   · simp only [ev_one, c, e3, _root_.mul_one]
   · simp only [ev_one, c, e2, _root_.mul_one]
   · simp only [ev_one, c, e2, _root_.mul_one]
-
-example : ∑ i, primε i = 1 := by decide
 
 end Basic₂
 

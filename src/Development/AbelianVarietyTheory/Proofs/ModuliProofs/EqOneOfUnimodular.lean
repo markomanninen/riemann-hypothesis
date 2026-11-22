@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitution
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaLinComb
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitution
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaLinComb
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,7 +127,8 @@ def coord (pr : Fin n → (G ⟶ A)) {T : Over S} (x : T ⟶ G) : Fin n → (T �
 omit [GrpObj G] in
 theorem pull_matLB (h : (matLB P pr W).IsLB) {T : Over S} (x : T ⟶ G) :
     pull x.left (cls _ h) = form (pairCls (cls P hP)) W (coord pr x) (coord pr x) := by
-  rw [cls_linComb hP, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cls_linComb hP, map_sum]
   refine Finset.sum_congr rfl fun uv _ => ?_
   rw [map_zsmul]
   exact congrArg (W uv.1 uv.2 • ·) (pull_pairCls _ x _ _)
@@ -214,7 +219,7 @@ theorem kTriv_matLB (hu : ∀ (T : Over S) (y : Fin n → (T ⟶ A)), ∃! x : T
       rw [cls_pull hd, ← pull_comp, IsOpenImmersion.lift_fac, map_zero] at c₁
       replace c₁ := (congrArg _ (cls_linComb h _ _ hd)).symm.trans c₁
       rw [Fin.sum_univ_two] at c₁
-      simp only [Matrix.cons_val_zero, Matrix.cons_val_one, one_smul, neg_smul, map_add, map_neg, ← pull_comp,
+      simp only [Matrix.cons_val_zero, Matrix.cons_val_one, one_smul, neg_smul, map_add (f := _), map_neg, ← pull_comp,
         ← Over.comp_left, lift_snd] at c₁
       rw [show lift (r ≫ i) a ≫ lift (fst (Over.mk t) G ≫ x) (snd (Over.mk t) G) ≫ μ = (r ≫ i ≫ x) * a from
         (CommutatorPairing.lift_translPt x (r ≫ i) a).trans (by rw [Category.assoc])] at c₁

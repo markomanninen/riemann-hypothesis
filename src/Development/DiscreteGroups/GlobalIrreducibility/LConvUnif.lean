@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvUnifB
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvUnifB
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,26 +30,26 @@ theorem hop_diagPow_mul (hr : 1 ≤ r) {μ ν : Fin n → ℤ} (hμ : IsDominant
   have hbc : ρ (b * c) w = w := hw _ (mul_mem hb hc)
   rw [h, show a * (diagPow F n μ * diagPow F n ν) * b * c =
       a * ((diagPow F n μ * diagPow F n ν) * (b * c)) by group,
-    map_mul, Module.End.mul_apply, fixedProj_apply_act hρ hKc hKo ha, map_mul,
-    Module.End.mul_apply, hbc]
+    map_mul, mul_apply_eq_comp, fixedProj_apply_act hρ hKc hKo ha, map_mul,
+    mul_apply_eq_comp, hbc]
 
 theorem hop_integral_mul {k : GL (Fin n) F} (hk : k ∈ GLnLocal.integralGL F n)
     (g : GL (Fin n) F) :
     hop ρ hρ hKc hKo k * hop ρ hρ hKc hKo g = hop ρ hρ hKc hKo (k * g) := by
   refine hop_mul hρ hKc hKo fun w _ κ hκ => ?_
-  rw [show k * κ * g = (k * κ * k⁻¹) * (k * g) by group, map_mul, Module.End.mul_apply,
+  rw [show k * κ * g = (k * κ * k⁻¹) * (k * g) by group, map_mul, mul_apply_eq_comp,
     fixedProj_apply_act hρ hKc hKo (GLnLocal.conj_mem_congruenceSubgroup F n hk hκ)]
 
 theorem hop_mul_integral (g : GL (Fin n) F) {k : GL (Fin n) F}
     (hk : k ∈ GLnLocal.integralGL F n) :
     hop ρ hρ hKc hKo g * hop ρ hρ hKc hKo k = hop ρ hρ hKc hKo (g * k) := by
   refine hop_mul hρ hKc hKo fun w hw κ hκ => ?_
-  rw [show g * κ * k = (g * k) * (k⁻¹ * κ * k⁻¹⁻¹) by group, map_mul, Module.End.mul_apply,
+  rw [show g * κ * k = (g * k) * (k⁻¹ * κ * k⁻¹⁻¹) by group, map_mul, mul_apply_eq_comp,
     hw _ (GLnLocal.conj_mem_congruenceSubgroup F n (inv_mem hk) hκ)]
 
-local notation "Kr" => GLnLocal.congruenceSubgroup F n r
 local notation "K0" => GLnLocal.integralGL F n
-local notation "W" => fixedVectors ρ (GLnLocal.congruenceSubgroup F n r)
+local notation "Kr" => GLnLocal.congruenceSubgroup F n r
+local notation "W" => fixedVectors ρ Kr
 local notation "T" => hop ρ hρ hKc hKo
 
 theorem finrank_le_of_commBound (hr : 1 ≤ r) [ρ.IsIrreducible] [FiniteDimensional ℂ W]

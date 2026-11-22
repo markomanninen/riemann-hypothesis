@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.FlatZetaIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.FlatZetaIntegral
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -9,8 +13,8 @@ open GlobalTheory.IndefiniteRowSideFullHecke.FlatZetaIntegral
 
 variable {X : Type} [MeasurableSpace X]
 
-omit [MeasurableSpace X] in
 
+omit [MeasurableSpace X] in
 theorem flatIntegrand_rebase (f : X → ℂ) {a : X → ℝ} (ha : ∀ x, 0 < a x) (s₀ s₁ s : ℂ) (x : X) :
     flatIntegrand f a s₀ s x = flatIntegrand f a s₀ s₁ x * ((a x : ℝ) : ℂ) ^ (s - s₁) := by
   have h : ((a x : ℝ) : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ha x).ne'
@@ -19,11 +23,12 @@ theorem flatIntegrand_rebase (f : X → ℂ) {a : X → ℝ} (ha : ∀ x, 0 < a 
   congr 2
   ring
 
-omit [MeasurableSpace X] in
 
+omit [MeasurableSpace X] in
 theorem norm_flatIntegrand_le (f : X → ℂ) {a : X → ℝ} (ha : ∀ x, 0 < a x) (ha1 : ∀ x, a x ≤ 1)
     (s₀ : ℂ) {s₁ s : ℂ} (hs : s₁.re ≤ s.re) (x : X) :
     ‖flatIntegrand f a s₀ s x‖ ≤ ‖flatIntegrand f a s₀ s₁ x‖ := by
+  letI : MeasurableSpace X := ⊥
   rw [norm_flatIntegrand f s₀ s (ha x), norm_flatIntegrand f s₀ s₁ (ha x)]
   exact mul_le_mul_of_nonneg_left
     (Real.rpow_le_rpow_of_exponent_ge (ha x) (ha1 x) (by linarith)) (norm_nonneg _)

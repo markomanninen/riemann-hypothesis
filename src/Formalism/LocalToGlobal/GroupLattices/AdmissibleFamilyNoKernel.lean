@@ -1,31 +1,35 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums
-import Formalism.SharpRestriction.GrowthBounds.InitialMinorTransposeMemHighestWeight
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree
-import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
-import Formalism.LocalToGlobal.GroupLattices.FockModels.LoBlockActComp
-import Formalism.LocalToGlobal.GroupLattices.FockModels.MulMemRiemannRochSpaceAdd
-import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
-import Formalism.LocalToGlobal.GroupLattices.FockModels.Cartan
-import Formalism.SharpRestriction.GrowthBounds.JointsLit
-import Formalism.SharpRestriction.GrowthBounds.SizesAtRecord
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PrvAndKernelCommutationUpToUnitsOfRests
-import Formalism.LocalToGlobal.GroupLattices.FockModels.LPBase
-import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
-import Formalism.LocalToGlobal.GroupLattices.FockModels.Sandwich
-import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideFinal
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PositivityConditionHolds
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NpDescFOfValRatF
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.OrbitSumStabilizer
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.StmtNumFEx
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow
-import Formalism.SharpRestriction.GrowthBounds.WittIdentPI
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials
-import Formalism.SharpRestriction.GrowthBounds.AevalValuation
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums
+public import Formalism.SharpRestriction.GrowthBounds.InitialMinorTransposeMemHighestWeight
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.LoBlockActComp
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.MulMemRiemannRochSpaceAdd
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.Cartan
+public import Formalism.SharpRestriction.GrowthBounds.JointsLit
+public import Formalism.SharpRestriction.GrowthBounds.SizesAtRecord
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PrvAndKernelCommutationUpToUnitsOfRests
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.LPBase
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.Sandwich
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideFinal
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PositivityConditionHolds
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NpDescFOfValRatF
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.OrbitSumStabilizer
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.StmtNumFEx
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow
+public import Formalism.SharpRestriction.GrowthBounds.WittIdentPI
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials
+public import Formalism.SharpRestriction.GrowthBounds.AevalValuation
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ structure Loc : Prop where
 theorem extremal_projector_tools_of_loc (h : Loc) : ExtremalProjectorTools where
   extremalProjectorAlt := ExtremalProjector.extremal_projector_statement
 
-theorem local_model_results (h : Loc) : Loc6 where
+theorem local_model_results (h : Loc) : Loc6 := {
   p14R := h.p14R
   p39B := SelectionLemmas.Pf.secondPartClosed
   rationalPlanesClauseThree := Joints.Lit.weyl_dimension_formula_index_sets
@@ -57,9 +61,9 @@ theorem local_model_results (h : Loc) : Loc6 where
   criterionClauseElevenB := Joints.joint_types_corollary_sentences
   criterionClauseTwentyTwo := Joints.coarse_units_lemma
   criterionClauseThirtyFive := Model.fewBadOrbits
-  criterionClauseThirtySix := Model.products_sections_integral
+  criterionClauseThirtySix := Model.products_sections_integral }
 
-theorem local_flatness_results (h : Loc) : Loc8 where
+theorem local_flatness_results (h : Loc) : Loc8 := {
   p13B := flipOneThree.Pf.theorem_I_closed_form_holds
   p13A := GramWindowAlt.theorem_A_closed_form_holds
   p15 := ColumnSystems.Pf.extendedClosedForm
@@ -71,10 +75,7 @@ theorem local_flatness_results (h : Loc) : Loc8 where
   tCartanOnto := Model.cartanOnto_proved
   tKP2 := Joints.saturated_restriction_holds
   tKP3 := Joints.restriction_dimension_holds
-  tRES := CountingStatementReduction.residue_division_transfer
-
-theorem packet_statement_closed (𝒞 : FamClass) : Closed 𝒞 fun Fm _ => AuxBlock8.KudlaFamilyStatement Fm :=
-  ⟨1, one_pos, fun _ _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun Fm _ _ _ => AuxBlock8.Pf.stmtF Fm⟩⟩
+  tRES := CountingStatementReduction.residue_division_transfer }
 
 def LocalDataSystem {D : D7} {L : SizeData₂ D} (X : Inst D L) (Y : LatInst D) (low : D.what₂.Word → D.what₂.places.Pl → ℝ) : Prop :=
   ∀ hT : GatTies D, LatTied hT X Y → ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl)
@@ -88,13 +89,6 @@ def LocalDataSystem {D : D7} {L : SizeData₂ D} (X : Inst D L) (Y : LatInst D) 
         low u w ≤ (∑ j ∈ Finset.Icc 1 D.R.m,
           ∑ v ∈ Finset.univ \ (reps X (D.what₂.places.resChar w)).image (Y.vOf u w hg), Fn v j) -
             ∑ j ∈ Finset.range D.R.m, (dG j : ℝ)
-
-theorem system_of_local_data {D : D7} {L : SizeData₂ D} (X : Inst D L) (Y : LatInst D) (low : D.what₂.Word → D.what₂.places.Pl → ℝ)
-    (h : LocalDataSystem X Y low) : LocalSystemCompletion X Y low := by
-  intro hT hLT u w hg
-  obtain ⟨hf, std, vp, unif, eO, eO_spec, dG, dG_spec, om, Y5, hadm, Fn, hFn, hlow⟩ := h hT hLT u w hg
-  exact ⟨hf, std, vp, unif, eO, eO_spec, dG, dG_spec, om, Y5,
-    hadm (Formalism.MainNotions.FormalGroupSystem.Pf.positivity_condition_holds D) (Formalism.L2.G.Pend.up_down_adjoint D _ Y5), Fn, hFn, hlow⟩
 
 theorem hypIAt_ev {eps : ℝ} (Fm : FamP eps) (hLa : 0 < Fm.GK.La) (hCN : CornerGLContinuity.FamilyWindowLogBound Fm) :
     Ev Fm fun x i => Joints.HypIAt (Fm.D x i) (Fm.L x i) (Fm.Gx x i) Fm.GK := by
@@ -131,33 +125,6 @@ structure Fam {eps : ℝ} (Fm : FamP eps) : Prop where
   localSystemLowTerm : Ev Fm fun x i => LocalDataSystem (Fm.Gx x i) (Fm.Gy x i) (AuxBlock8.lowU (Fm.D x i))
 
   localSystemSizeLowTerm : Ev Fm fun x i => LocalDataSystem (Fm.Gx x i) (Fm.Gy x i) (lowFE (Fm.L x i))
-
-theorem family_satisfies_ties {eps : ℝ} (Fm : FamP eps) (h : Fam Fm) (hCN : CornerGLContinuity.FamilyWindowLogBound Fm) (hLa : 0 < Fm.GK.La) : Fam1 Fm where
-  p6G := ⟨0, fun x _ i => FormalGroupSystem.Pf.stmt6G _ _ _ _ _⟩
-  p05 := FormalGroupSystem.Pf.stmtF_proved Fm
-  gatE := h.gatE
-  gatY := ⟨0, fun x _ i u w hg => Model.operators_preserve_lattices _ _⟩
-  stdSub := h.stdSub
-  lpBC := Model.lpBaseChange
-  hypII := Joints.hypIIAt_fam Fm hCN
-  model := ⟨0, fun x _ i => Model.modelSandwichG_of_ties _ (Fm.gatT x i)⟩
-  localSystemLowTerm := by
-    obtain ⟨x0, h0⟩ := h.localSystemLowTerm
-    exact ⟨x0, fun x hx i => system_of_local_data _ _ _ (h0 x hx i)⟩
-  localSystemSizeLowTerm := by
-    obtain ⟨x0, h0⟩ := h.localSystemSizeLowTerm
-    exact ⟨x0, fun x hx i => system_of_local_data _ _ _ (h0 x hx i)⟩
-  hypI := hypIAt_ev Fm hLa hCN
-
-theorem link_of_descent_closed (𝒞 : FamClass) (h : Loc) (hN : FormalGroupSystem.NumericalComparisonUniform) (hf : Closed 𝒞 fun Fm _ => Fam Fm)
-    (h2 : Closed 𝒞 fun Fm _ => Adm2F Fm) (hd : Closed 𝒞 fun Fm _ => NPDescF Fm) :
-    Closed 𝒞 fun Fm _ => LinkG Fm :=
-  link_of_closed_families 𝒞 (extremal_projector_tools_of_loc h) (local_model_results h) (local_flatness_results h) hN (packet_statement_closed 𝒞) (((hf.and (TopChoiceBounds.family_log_bound_closed 𝒞)).and (signs_closed 𝒞)).imp fun Fm _ _ h => family_satisfies_ties Fm h.1.1 h.1.2 h.2.1) h2 hd
-
-theorem link_of_numbers_proved (𝒞 : FamClass) (h : Loc) (hf : Closed 𝒞 fun Fm _ => Fam Fm)
-    (h2 : Closed 𝒞 fun Fm _ => Adm2F Fm) (hd : Closed 𝒞 fun Fm _ => NPDescF Fm) :
-    Closed 𝒞 fun Fm _ => LinkG Fm :=
-  link_of_descent_closed 𝒞 h FormalGroupSystem.Pf.stmtNumE hf h2 hd
 
 section NoKer
 

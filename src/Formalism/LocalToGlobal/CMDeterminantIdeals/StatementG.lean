@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CMDeterminantIdeals.DetIdeal
+module
+
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.DetIdeal
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ def LemmaGCore : Prop :=
     (Infinite (ResidueField R) ∨ P.totalDegree + ∑ b, m b < Nat.card (ResidueField R)) →
     (∀ X : ∀ b, Matrix (Fin (m b)) (Fin (m b)) R, (∀ b, IsUnit (X b).det) →
       evalFr P (fun b => (X b).map (algebraMap R K)) ∈ Set.range (algebraMap R K)) →
-    ∀ μ, MvPolynomial.coeff μ P ∈ Set.range (algebraMap R K)
+    ∀ μ, AddMonoidAlgebra.coeff P μ ∈ Set.range (algebraMap R K)
 
 def BigResExt : Prop :=
   ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V], IsAdicComplete (maximalIdeal V) V →
@@ -42,14 +46,14 @@ def LemmaG : Prop :=
       IsLocalHom (algebraMap V W) → (∀ a : V, f (algebraMap V K a) = algebraMap W KW (algebraMap V W a)) →
       ∀ X : ∀ b, Matrix (Fin (m b)) (Fin (m b)) W, (∀ b, IsUnit (X b).det) →
         evalFr (MvPolynomial.map f P) (fun b => (X b).map (algebraMap W KW)) ∈ Set.range (algebraMap W KW)) →
-    ∀ μ, MvPolynomial.coeff μ P ∈ Set.range (algebraMap V K)
+    ∀ μ, AddMonoidAlgebra.coeff P μ ∈ Set.range (algebraMap V K)
 
 def SubstGauss : Prop :=
   ∀ (R K : Type) [CommRing R] [Field K] [Algebra R K] (B : Type) [Fintype B] (m : B → ℕ) (P : MvPolynomial (FrVar m) K)
     (U : ∀ b, Matrix (Fin (m b)) (Fin (m b)) K) (c : ∀ b, Fin (m b) → K),
-    (∀ μ, MvPolynomial.coeff μ P ∈ Set.range (algebraMap R K)) →
+    (∀ μ, AddMonoidAlgebra.coeff P μ ∈ Set.range (algebraMap R K)) →
     (∀ b j k, c b j * U b j k ∈ Set.range (algebraMap R K)) →
-    ∀ μ : FrVar m →₀ ℕ, MvPolynomial.coeff μ (substFr U P) * ∏ v : FrVar m, c v.1 v.2.2 ^ μ v ∈ Set.range (algebraMap R K)
+    ∀ μ : FrVar m →₀ ℕ, AddMonoidAlgebra.coeff (substFr U P) μ * ∏ v : FrVar m, c v.1 v.2.2 ^ μ v ∈ Set.range (algebraMap R K)
 
 def IsEquiv [DecidableEq B] (a : ∀ b, Fin (m b) → ℕ) (P : MvPolynomial (FrVar m) ℂ) : Prop :=
   ∀ (X : ∀ b, Matrix (Fin (m b)) (Fin (m b)) ℂ) (b : B) (t : Matrix (Fin (m b)) (Fin (m b)) ℂ),
@@ -69,6 +73,6 @@ def ArchTie : Prop :=
 def SubstHomog : Prop :=
   ∀ (B : Type) [Fintype B] [DecidableEq B] (m : B → ℕ) (a : ∀ b, Fin (m b) → ℕ) (P : MvPolynomial (FrVar m) ℂ)
     (U : ∀ b, Matrix (Fin (m b)) (Fin (m b)) ℂ), IsEquiv a P →
-    ∀ μ : FrVar m →₀ ℕ, MvPolynomial.coeff μ (substFr U P) ≠ 0 → ∑ v : FrVar m, μ v = ∑ b, ∑ i, a b i
+    ∀ μ : FrVar m →₀ ℕ, AddMonoidAlgebra.coeff (substFr U P) μ ≠ 0 → ∑ v : FrVar m, μ v = ∑ b, ∑ i, a b i
 
 end Formalism.L2.LamCM

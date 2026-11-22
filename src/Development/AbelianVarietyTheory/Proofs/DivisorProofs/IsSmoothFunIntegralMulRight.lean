@@ -1,9 +1,14 @@
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
-import GroundTheory.AutomorphicForms.DixmierMalliavin
-import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
-import GroundTheory.AutomorphicForms.GKModules.Garding
+module
+
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+public import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+public import GroundTheory.AutomorphicForms.GKModules.Garding
+
+@[expose] public section
+
 open MeasureTheory GroundTheory.Automorphic
 open scoped ContDiff Manifold
 
@@ -12,7 +17,7 @@ namespace GlobalTheory
 theorem isSmoothFun_integral_mul_right : ∀ (𝔸 : Type) [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [FiniteDimensional ℝ 𝔸] (G : Subgroup 𝔸ˣ) (𝔤 : Submodule ℝ 𝔸) (h : IsExpLieAlgebra G 𝔤) [MeasurableSpace G] [BorelSpace G] (ν : Measure G) [IsFiniteMeasure ν] (K : Set G), IsCompact K → ν Kᶜ = 0 → ∀ κ : G → ℂ, h.IsSmoothFun κ → h.IsSmoothFun (fun z => ∫ y, κ (z * y) ∂ν) := by
   intro 𝔸 _ _ _ _ G 𝔤 h _ _ ν _ K hK hν κ hκ
   haveI := secondCountableTopology_subgroup_units G
-  haveI := h.locallyCompactSpace
+  haveI := IsExpLieAlgebra.locallyCompactSpace (G := G) (𝔤 := 𝔤) h
   obtain ⟨ψ, hψ1, -, hψc, -⟩ := exists_continuous_one_zero_of_isCompact hK isClosed_empty (Set.disjoint_empty K)
   rw [IsExpLieAlgebra.isSmoothFun_iff]
   intro g

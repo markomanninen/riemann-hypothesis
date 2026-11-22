@@ -1,4 +1,8 @@
-import Formalism.EllipticTorsion.WChordSeries
+module
+
+public import Formalism.EllipticTorsion.WChordSeries
+
+@[expose] public section
 
 open PowerSeries
 
@@ -73,7 +77,7 @@ theorem wSeriesNonsingularPoint_holds : WPoint := by
       (MvPowerSeries.C a) = algebraMap K (FractionRing (MvPowerSeries σ K)) a := fun a =>
     (IsScalarTower.algebraMap_apply K (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K)) a).symm
   have hE' := congrArg (algebraMap (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K))) hE
-  simp only [map_add, map_mul, map_pow, hC] at hE'
+  simp only [map_add (f := _), map_mul, map_pow, hC] at hE'
   have hx : xOf w s * algebraMap (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K)) (w.subst s) =
       algebraMap (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K)) s := by
     simp only [xOf]

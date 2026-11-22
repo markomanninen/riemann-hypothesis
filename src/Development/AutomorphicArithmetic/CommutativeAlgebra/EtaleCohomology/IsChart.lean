@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.FunctionField.ExistsBoundDegSubFinrankL
-import GroundTheory.FunctionField.PlaceBridge
+module
+
+public import Mathlib
+public import GroundTheory.FunctionField.ExistsBoundDegSubFinrankL
+public import GroundTheory.FunctionField.PlaceBridge
+
+@[expose] public section
 
 noncomputable section
 open GroundTheory.FunctionField

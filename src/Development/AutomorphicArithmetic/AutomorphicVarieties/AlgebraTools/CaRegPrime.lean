@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCotOfQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCotLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCotQuot
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCotOfQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCotLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCotQuot
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 

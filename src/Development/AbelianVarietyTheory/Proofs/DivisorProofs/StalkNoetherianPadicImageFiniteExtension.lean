@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PadicIntermediateFieldIntRingCompleteDvr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PadicIntermediateFieldIntRingCompleteDvr
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -38,7 +42,7 @@ theorem stalk_noetherian_and_finite_image :
       | algebraMap n =>
         have : f (algebraMap ℤ Γ(X, U) n) = (n : PadicAlgCl p) := by simp
         rw [this]; exact K.intCast_mem n
-      | add a b _ _ ha hb => rw [map_add]; exact K.add_mem ha hb
+      | add a b _ _ ha hb => rw [map_add (f := _)]; exact K.add_mem ha hb
       | mul a b _ _ ha hb => rw [map_mul]; exact K.mul_mem ha hb
     intro a
     obtain ⟨⟨r, t⟩, rfl⟩ := IsLocalization.mk'_surjective

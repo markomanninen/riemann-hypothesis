@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ParabolicInductionFiniteLength
-import GroundTheory.AutomorphicForms.GLnLocal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ParabolicInductionFiniteLength
+public import GroundTheory.AutomorphicForms.GLnLocal
+
+@[expose] public section
 
 noncomputable section
 

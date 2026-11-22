@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JoinedPre
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftFormsBijectiveDegreeOneTwoStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JoinedPre
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftFormsBijectiveDegreeOneTwoStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,12 +21,12 @@ variable {D : Data} (Λ : Lift D)
 def j1 (U : AffOp D.X) : Ω[Sec D.s U.unop.1⁄D.R] →+ K1 D.R (Λ.L.obj U).δ where
   toFun ω := Submodule.Quotient.mk ((Λ.semi U).m1 ω)
   map_zero' := by rw [map_zero, Submodule.Quotient.mk_zero]
-  map_add' a b := by rw [map_add, Submodule.Quotient.mk_add]
+  map_add' a b := by rw [map_add (f := _), Submodule.Quotient.mk_add]
 
 def j2 (U : AffOp D.X) : Om D.R (Sec D.s U.unop.1) 2 →+ K D.R (Λ.L.obj U).δ 2 where
   toFun ω := Submodule.Quotient.mk ((Λ.semi U).mOm 2 ω)
   map_zero' := by rw [map_zero, Submodule.Quotient.mk_zero]
-  map_add' a b := by rw [map_add, Submodule.Quotient.mk_add]
+  map_add' a b := by rw [map_add (f := _), Submodule.Quotient.mk_add]
 
 theorem compatibleOneFormClass_restriction_natural {U V : AffOp D.X} (a : U ⟶ V) (ω : Ω[Sec D.s U.unop.1⁄D.R]) :
     j1 Λ V (p1 (OAff D.s) a ω) = km1 (SemiHom.of_algHom (Λ.L.map a).φ) (Λ.L.map a).dp (j1 Λ U ω) := by
@@ -127,7 +131,7 @@ theorem deRhamCochainCorrespondence_degree_one_coboundary {g : (Kp Λ' φ).T1} {
     (hω : ∀ p, i1 Λ' φ p (c.2 p) = g.2 p) : Cor Λ' ((Kp Λ' φ).D1 g) (dTot1 _ c) := by
   unfold Cor
   refine ⟨fun p q r a b ↦ ?_, fun p q a ↦ ?_, fun p ↦ ?_⟩
-  · rw [cechDeRhamTotalDifferentialOne_functionPart, map_add, map_sub, pairFirstOpenFunctionSections_natural, hf, hf, hf]
+  · rw [cechDeRhamTotalDifferentialOne_functionPart, map_add (f := _), map_sub, pairFirstOpenFunctionSections_natural, hf, hf, hf]
     all_goals rfl
   · rw [dTot1_a, map_sub, map_sub, hω, pairFirstOpenOneForms_natural, hω, pairFirstOpenOneForms_kaehler_differential, hf]
     all_goals rfl

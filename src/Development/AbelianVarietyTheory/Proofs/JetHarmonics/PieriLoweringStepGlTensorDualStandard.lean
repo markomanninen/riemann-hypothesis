@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Definitions.Jets.Imports
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SplitCasimirEigenspaceIrreducibleDualStandardStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ReducedWignerCoefficientLoweringStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WignerExtremeNeZero
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SplitCasimirEigenspaceIrreducibleDualStandardStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ReducedWignerCoefficientLoweringStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WignerExtremeNeZero
+
+@[expose] public section
 
 open Formalism.REAL Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 

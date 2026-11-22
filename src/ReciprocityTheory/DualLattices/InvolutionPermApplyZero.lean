@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.MatEquivApply
-import ReciprocityTheory.DualLattices.CokernelLengthComparisonOf
-import ReciprocityTheory.DualLattices.StdJForm
+module
+
+public import ReciprocityTheory.DualLattices.MatEquivApply
+public import ReciprocityTheory.DualLattices.CokernelLengthComparisonOf
+public import ReciprocityTheory.DualLattices.StdJForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -195,7 +199,8 @@ theorem wdetLen : WdetLenStatement := by
   have hTs : ∑ a, εT a = 1 := by
     rw [Fin.sum_univ_succ]
     simp only [hεT, Fin.cons_zero, Fin.cons_succ]
-    rw [← map_sum ι (fun i => H.ρ (e i)) Finset.univ, ← map_add, add_comm, hsT, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum ι (fun i => H.ρ (e i)) Finset.univ, ← map_add (f := _), add_comm, hsT, map_one]
   have hLs : ∑ a, εL a = 1 := by
     rw [Fin.sum_univ_succ]
     simp only [hεL, Fin.cons_zero, Fin.cons_succ]

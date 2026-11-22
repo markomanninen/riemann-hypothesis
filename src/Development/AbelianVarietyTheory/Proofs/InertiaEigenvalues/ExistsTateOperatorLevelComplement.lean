@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersEqSumZetaPowStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegersStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersEqSumZetaPowStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegersStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc
 
 noncomputable section
@@ -138,9 +143,10 @@ theorem int_decomp (K : FinExt l) {j : ℕ} (hj : 1 ≤ j) (c : ℕ) : ∀ x : O
       apply Nat.Coprime.pow_right
       have ha0 : (a : ℕ) ≠ 0 := fun h => (Finset.ne_of_mem_erase ha) (Fin.ext h)
       exact (Nat.coprime_of_lt_prime ha0 a.2 hp).symm
-    · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ (0 : Fin l)), map_add, map_sum, ← add_assoc,
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ (0 : Fin l)), map_add (f := _), map_sum, ← add_assoc,
         ← hod]
-      simp
+        simp
 
 variable {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} {χ : GQ l →* ℚ_[l]ˣ}
 
@@ -223,7 +229,7 @@ theorem solve_alg (hact : IsActC act) (hχ : IsCyc χ) (K : FinExt l) {j : ℕ} 
       zero_mem' := ⟨0, zero_mem _, zero_mem _, by simp⟩
       add_mem' := by
         rintro a b ⟨y, hy, hy', h⟩ ⟨y', hz, hz', h'⟩
-        exact ⟨y + y', add_mem hy hz, add_mem hy' hz', by rw [map_add]; linear_combination h + h'⟩
+        exact ⟨y + y', add_mem hy hz, add_mem hy' hz', by rw [map_add (f := _)]; linear_combination h + h'⟩
       neg_mem' := by
         rintro a ⟨y, hy, hy', h⟩
         exact ⟨-y, neg_mem hy, neg_mem hy', by rw [map_neg]; linear_combination -h⟩ }
@@ -252,7 +258,8 @@ theorem solve_alg (hact : IsActC act) (hχ : IsCyc χ) (K : FinExt l) {j : ℕ} 
     sum_mem fun k _ => act_algC hact K (hgk k) (Xalg_alg K j hu), ?_⟩
   have hs : act g (∑ k ∈ Finset.range (l ^ b), act (g ^ k) u) -
       ∑ k ∈ Finset.range (l ^ b), act (g ^ k) u = act (g ^ l ^ b) u - act (g ^ 0) u := by
-    rw [← Finset.sum_range_sub (fun k => act (g ^ k) u), map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_range_sub (fun k => act (g ^ k) u), map_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [pow_succ', map_mul]
     rfl
@@ -269,7 +276,7 @@ theorem norm_l : ‖(l : PadicComplex l)‖ = (l : ℝ)⁻¹ := by
 
 theorem norm_le_one (hact : IsActC act) (hχ : IsCyc χ) (K : FinExt l) {j : ℕ} (hj : 1 ≤ j)
     {x : PadicComplex l} (hx : x ∈ Xj K j) : ‖x‖ ≤ 1 :=
-  closure_minimal (t := {y : PadicComplex l | ‖y‖ ≤ 1}) (fun _ hy => hy.2)
+  closure_minimal (s := intC (Kinf K)) (t := {y : PadicComplex l | ‖y‖ ≤ 1}) (fun _ hy => hy.2)
     (isClosed_le continuous_norm continuous_const)
     ((GlobalTheory.T.tate_decomposition_completed_cyclotomic_integers l act χ hact hχ K j hj).2.2.1 x hx)
 
@@ -435,7 +442,7 @@ theorem exists_tate_operator_bound : ∀ (l : ℕ) [Fact l.Prime] (act : GQ l �
     rw [map_mul, act_fix hact K hg.1 hz.1]
     ring
   · refine huniq _ (add_mem hx hx') _ (add_mem (hS x hx).1 (hS x' hx').1) ?_
-    rw [map_add]
+    rw [map_add (f := _)]
     linear_combination (hS x hx).2 + (hS x' hx').2
   · refine huniq _ (T1.2.2.2.1 y hy x hx) _ (T1.2.2.2.1 y hy _ (hS x hx).1) ?_
     rw [map_mul, act_fix hact K hg.1 hy.1]

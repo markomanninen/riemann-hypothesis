@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits DirectSum MvPolynomial TensorProduct GlobalTheory
 
@@ -36,10 +40,11 @@ theorem span_laurentMonomial_eq_homLoc :
     refine awayFrac_mem_homLoc (monomial_mem_polyGrading m 1) ?_
     rw [hdeg, Finset.sum_congr rfl fun i _ => hm i, Finset.sum_add_distrib, a.2.1, hsum]
   · rintro _ ⟨k, p, hp, rfl⟩
-    rw [p.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [p.as_sum, map_sum]
     refine Submodule.sum_mem _ fun m hm => ?_
     have hd := mem_polyGrading_iff.1 hp m (mem_support_iff.1 hm)
-    have e : monomial m (coeff m p) = coeff m p • (monomial m 1 : MvPolynomial ι R) := by
+    have e : monomial m (AddMonoidAlgebra.coeff p m) = AddMonoidAlgebra.coeff p m • (monomial m 1 : MvPolynomial ι R) := by
       rw [smul_monomial, smul_eq_mul, mul_one]
     rw [e, LinearMap.map_smul_of_tower]
     refine Submodule.smul_mem _ _ (Submodule.subset_span

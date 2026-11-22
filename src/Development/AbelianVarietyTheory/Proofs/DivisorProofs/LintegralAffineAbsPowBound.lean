@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndicatorIntMMemSB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndicatorIntMMemSB
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.SplitFlip GlobalTheory.KSplit Classical
 open scoped ENNReal
 
@@ -24,13 +29,13 @@ theorem absPow_mul_of_ne_zero {s : ℝ} (hs : s < 0) {a : k} (ha : a ≠ 0) (y :
     have hpy : ENNReal.ofReal (nabs k (Units.mk0 y hy)) ≠ 0 := by
       simpa using Model.nabs_pos _
     have e : Units.mk0 (a * y) hay = Units.mk0 a ha * Units.mk0 y hy := Units.ext rfl
-    rw [dif_neg hay, dif_neg hy, e, Model.nabs_mul, ENNReal.ofReal_mul (Model.nabs_pos _).le,
+    rw [dite_eq_right hay, dite_eq_right hy, e, Model.nabs_mul, ENNReal.ofReal_mul (Model.nabs_pos _).le,
       ENNReal.mul_rpow_of_ne_zero hpa hpy]
 
 theorem absPow_le_one_of_notMem [MeasurableSpace k] [BorelSpace k] {s : ℝ} (hs : s < 0) {y : k} (hy : y ∉ 𝒪[k]) :
     ENNReal.ofReal (if h : y = 0 then 0 else nabs k (Units.mk0 y h)) ^ s ≤ 1 := by
   have h0 : y ≠ 0 := fun h => hy (h ▸ zero_mem _)
-  rw [dif_neg h0]
+  rw [dite_eq_right h0]
   refine ENNReal.rpow_le_one_of_one_le_of_neg ?_ hs
   have h1 : valuation k y⁻¹ ≤ 1 := ((valuation k).val_le_one_or_val_inv_le_one y).resolve_left hy
   have h2 : nabs k (Units.mk0 y h0)⁻¹ ≤ 1 := Model.nabs_le_one _ (by simpa using h1)
@@ -51,10 +56,10 @@ theorem lintegral_absPow_affine_le (k : Type) [Field k] [ValuativeRel k] [Topolo
   have hO : IsOpen (𝒪[k] : Set k) := Model.isOpen_int
   by_cases ha : a = 0
   · have hpos : μ (𝒪[k] : Set k) ≠ 0 := (hO.measure_pos μ ⟨0, zero_mem _⟩).ne'
-    rw [dif_pos ha, ENNReal.ofReal_zero, ENNReal.zero_rpow_of_neg hs, ENNReal.top_mul]
+    rw [dite_eq_left ha, ENNReal.ofReal_zero, ENNReal.zero_rpow_of_neg hs, ENNReal.top_mul]
     · exact le_top
     · exact fun h => hpos (add_eq_zero.1 h).2
-  rw [dif_neg ha]
+  rw [dite_eq_right ha]
   set P : k → ℝ≥0∞ := fun y => ENNReal.ofReal (if h : y = 0 then 0 else nabs k (Units.mk0 y h)) ^ s with hP
   set C : ℝ≥0∞ := ENNReal.ofReal (nabs k (Units.mk0 a ha)) ^ s with hC
   have hCt : C ≠ ⊤ := by

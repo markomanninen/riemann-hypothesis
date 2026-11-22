@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StCutRestrLenExact
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSectionMulInj
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepThreeAway
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSurjectiveClosed
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSectionCountDropFiltStep
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PZeroIdealChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StCutRestrLenExact
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSectionMulInj
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepThreeAway
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSurjectiveClosed
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSectionCountDropFiltStep
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PZeroIdealChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -111,9 +116,9 @@ theorem idealMod_sup_mul_le (L : LineBundle S x) (σ : Ω) {pp : Ideal (Poly S N
     obtain ⟨f, t, d, hf, ht, hfd, htd, rfl⟩ := hz
     obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.mp hf
     have hf' : f = homogeneousComponent d a + homogeneousComponent d b := by
-      rw [← map_add, hab, homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr hfd),
+      rw [← map_add (f := _), hab, homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr hfd),
         if_pos rfl]
-    rw [hf', map_add, add_div, add_mul]
+    rw [hf', map_add (f := _), add_div, add_mul]
     refine Submodule.add_mem_sup (Submodule.mul_mem_mul (Submodule.subset_span ⟨_, t, d, hpp a ha d, ht,
       homogeneousComponent_isHomogeneous d a, htd, rfl⟩) hδ) ?_
     obtain ⟨r, hr⟩ := Submodule.mem_span_singleton.mp

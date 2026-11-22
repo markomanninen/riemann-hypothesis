@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SecondPropositionEveryLocalisation
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SecondPropositionEveryLocalisation
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,16 +14,6 @@ open scoped Pointwise
 open Formalism.MainNotions.UnusedSlot33.SlopeTestRemainingChoices
 
 namespace CMIdealEquivalence
-
-theorem map_KinE {L : Type} [Field L] [NumberField L] (ζ a b : L) :
-    (KinE ζ a b).map (hostE ζ a b).val = Kd b := by
-  have h := IntermediateField.adjoin_map (S := {bE ζ a b}) (f := (hostE ζ a b).val)
-  rw [Set.image_singleton] at h
-  exact h
-
-def kEquiv {L : Type} [Field L] [NumberField L] (ζ a b : L) : KinE ζ a b ≃+* Kd b :=
-  (((KinE ζ a b).equivMap (hostE ζ a b).val).trans
-    (IntermediateField.equivOfEq (map_KinE ζ a b))).toRingEquiv
 
 theorem mult_ring {M : Type} [Field M] [NumberField M]
     (I : FractionalIdeal (nonZeroDivisors (𝓞 M)) M) (hI : I ≠ 0) (x : M) :

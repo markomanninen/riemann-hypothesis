@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.OfForm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsDeterminantPairMapOfAlgHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.FlagRel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.OfForm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsDeterminantPairMapOfAlgHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.FlagRel
+
+@[expose] public section
 
 set_option linter.overlappingInstances false
 
@@ -20,11 +24,40 @@ private theorem tr_single {n : ℕ} {A G K : Type} [CommRing A] [Group G] [CommR
     f (D.tr (MonoidAlgebra.single g 1)) = (ρ g).trace := by
   have h1 := ((d_gmap D).2.2.1 f (MonoidAlgebra.single g 1)).2 1
   rw [h, MonoidAlgebra.mapRingHom_single, map_one] at h1
-  have h2 := (repApi ρ).2.2.1 hn (MonoidAlgebra.single g 1)
-  rw [GDet.tr, h1] at h2
-  rw [GDet.tr, h2]
-  congr 1
-  ext i j; simp [GDet.repAlg]
+  have hs (B : Type) [CommRing B] [Algebra K B] (g : G) (r : B) :
+      GDet.repAlg ρ B (MonoidAlgebra.single g r) = r • (ρ g).map (algebraMap K B) := by
+    unfold GDet.repAlg
+    rw [MonoidAlgebra.lift_single]
+    rfl
+  have hm (B : Type) [CommRing B] [Algebra K B] (y : MonoidAlgebra K G) :
+      GDet.repAlg ρ B (MonoidAlgebra.mapRingHom G (algebraMap K B) y) = (GDet.repAlg ρ K y).map (algebraMap K B) := by
+    induction y using MonoidAlgebra.induction_on with
+    | of g => simp [MonoidAlgebra.of_apply, hs]
+    | add x y hx hy =>
+      rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
+      ext i j; simp
+    | smul r x hx =>
+      have hr : r • x = MonoidAlgebra.single 1 r * x := by rw [Algebra.smul_def]; rfl
+      have hmap : MonoidAlgebra.mapRingHom G (algebraMap K B) (MonoidAlgebra.single 1 r) = MonoidAlgebra.single 1 (algebraMap K B r) := by
+        ext g; simp [MonoidAlgebra.coeff_single, Finsupp.single_apply]
+      rw [hr, map_mul, map_mul, map_mul, hx, Matrix.map_mul, hmap, hs, hs, map_one]
+      congr 1
+      ext i j
+      by_cases h : i = j <;> simp [Matrix.one_apply, h]
+  haveI : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
+  have hc : (GDet.ofRep ρ).chi (MonoidAlgebra.single g 1) = (ρ g).charpoly := by
+    have hc' (y : MonoidAlgebra K G) : (GDet.ofRep ρ).chi y = (GDet.repAlg ρ K y).charpoly := by
+      unfold GDet.chi
+      change (GDet.repAlg ρ (Polynomial K) _).det = _
+      rw [← Polynomial.algebraMap_eq, map_sub, hs, hm, map_one]
+      rw [Matrix.charpoly]
+      congr 1
+      ext i j
+      by_cases h : i = j <;> simp [Matrix.charmatrix_apply, Matrix.one_apply, h]
+    rw [hc', hs]; simp
+  unfold GDet.tr GDet.lam at *
+  rw [← h1, hc, Matrix.trace_eq_neg_charpoly_coeff, Fintype.card_fin]
+  ring
 
 private theorem prod_smul {K : Type} [CommRing K] {M : Type} [Ring M] [Algebra K M] :
     ∀ {m : ℕ} (c : Fin m → K) (x : Fin m → M), (List.ofFn fun i => c i • x i).prod = (∏ i, c i) • (List.ofFn x).prod
@@ -195,9 +228,37 @@ private theorem main {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain 
       rfl)) h1)
     exact (IsUnit.smul_eq_zero (IsUnit.mk0 _ (Finset.prod_ne_zero_iff.2 fun i _ => Units.ne_zero _))).1 h3
   · obtain ⟨h, H1, -, -⟩ := H
-    refine ⟨ρ, irr_conj r _ h H1 hirr, h0.trans ((repApi _).2.2.2.2.2.2.2 _ h fun g => ?_)⟩
-    show _ = (((T.K.κA K g : Kˣ) : K) • ρ.r (T.K.π g)) * _
-    rw [hv, H1, mul_smul_comm, smul_mul_assoc, Units.inv_mul_cancel_right]
+    have heq : GDet.ofRep (mat (Af.tw (r.comp T.K.π) (T.K.κA K))) = GDet.ofRep (T.K.tw ρ) := by
+      let ρ₁ := mat (Af.tw (r.comp T.K.π) (T.K.κA K))
+      let ρ₂ := T.K.tw ρ
+      have hp : ∀ g, (h : Matrix (Fin n) (Fin n) K) * ρ₁ g = ρ₂ g * h := fun g => by
+        show _ = (((T.K.κA K g : Kˣ) : K) • ρ.r (T.K.π g)) * _
+        rw [hv, H1, mul_smul_comm, smul_mul_assoc, Units.inv_mul_cancel_right]
+      refine GDet.ext fun B _ _ x => ?_
+      have hs (σ : T.G.G₀ →* Matrix (Fin n) (Fin n) K) (g : T.G.G₀) (r : B) :
+          GDet.repAlg σ B (MonoidAlgebra.single g r) = r • (σ g).map (algebraMap K B) := by
+        unfold GDet.repAlg
+        rw [MonoidAlgebra.lift_single]
+        rfl
+      have key : ∀ y : MonoidAlgebra B T.G.G₀,
+          (h : Matrix (Fin n) (Fin n) K).map (algebraMap K B) * GDet.repAlg ρ₁ B y =
+            GDet.repAlg ρ₂ B y * (h : Matrix (Fin n) (Fin n) K).map (algebraMap K B) := by
+        intro y
+        induction y using MonoidAlgebra.induction_on with
+        | of g =>
+          rw [MonoidAlgebra.of_apply, hs, hs, one_smul, one_smul, ← Matrix.map_mul, ← Matrix.map_mul, hp]
+        | add y z hy hz =>
+          rw [map_add (f := _), map_add (f := _), Matrix.mul_add, Matrix.add_mul, hy, hz]
+        | smul r y hy =>
+          rw [map_smul, map_smul, Matrix.mul_smul, Matrix.smul_mul, hy]
+      have hd := congrArg Matrix.det (key x)
+      rw [Matrix.det_mul, Matrix.det_mul, mul_comm (Matrix.det (GDet.repAlg ρ₂ B x))] at hd
+      have hu : IsUnit (Matrix.det ((h : Matrix (Fin n) (Fin n) K).map (algebraMap K B))) := by
+        rw [show ((h : Matrix (Fin n) (Fin n) K).map (algebraMap K B)).det = algebraMap K B (h : Matrix (Fin n) (Fin n) K).det from (RingHom.map_det _ _).symm]
+        exact (Matrix.isUnits_det_units h).map _
+      change (GDet.repAlg ρ₁ B x).det = (GDet.repAlg ρ₂ B x).det
+      exact hu.mul_left_cancel hd
+    exact ⟨ρ, irr_conj r _ h H1 hirr, h0.trans heq⟩
 
 end UpperTheory.V.Pr
 

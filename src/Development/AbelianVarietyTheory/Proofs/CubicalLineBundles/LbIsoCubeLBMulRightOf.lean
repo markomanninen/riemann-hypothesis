@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -85,8 +89,10 @@ theorem class_cubeLB {U : Type*} [CommGroup U] (cl : LB T.left → U) (m : (T.le
     cl (cubeLB A ![x, y] L) = m (x * y).left * (m x.left)⁻¹ * (m y.left)⁻¹ * m (1 : T ⟶ A).left := by
   have e := congrArg (FreeGroup.lift m |> Abelianization.lift)
     (prod_square_id x y (fun q => Abelianization.of (FreeGroup.of q)))
-  simp only [diff₂, map_prod, map_zpow, map_mul, map_inv, Abelianization.lift_apply_of,
-    FreeGroup.lift_apply_of] at e
+  have hm (q : T.left ⟶ A.left) :
+      (Abelianization.lift (FreeGroup.lift m)) (Abelianization.of (FreeGroup.of q)) = m q := by
+    exact (Group.Abelianization.lift_apply_of _ _).trans FreeGroup.lift_apply_of
+  simp only [diff₂, map_prod, map_zpow, map_mul, map_inv, hm] at e
   exact (h _ _ _).trans e
 
 theorem lbIso_cubeLB_swap (hL : L.IsLB) (x y : T ⟶ A) : LBIso (cubeLB A ![x, y] L) (cubeLB A ![y, x] L) :=

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open UpperHalfPlane hiding I
 open Complex Filter Function

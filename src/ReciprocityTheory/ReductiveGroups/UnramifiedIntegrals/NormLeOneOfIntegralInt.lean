@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ExistsTeichmullerRepModPrime
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ExistsTeichmullerRepModPrime
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,7 +142,7 @@ theorem isIntegral_int_of_rmu (δ : ℂ_[l]) (hδ : IsIntegral (Rmu l) δ) :
     (Int.castRingHom ℂ_[l]).IsIntegralElem δ := by
   have : Algebra.IsIntegral ℤ (Rmu l) := ⟨fun x => by
     have := rmu_isIntegral_int l x.2
-    exact (isIntegral_algebraMap_iff (A := Rmu l) (B := ℂ_[l]) Subtype.val_injective).mp this⟩
+    exact (isIntegral_algebraMap_iff (A := Rmu l) (B := ℂ_[l]) ).mp this⟩
   have h : IsIntegral ℤ δ := isIntegral_trans δ hδ
   exact (Subsingleton.elim (algebraMap ℤ ℂ_[l]) (Int.castRingHom ℂ_[l])) ▸ h
 

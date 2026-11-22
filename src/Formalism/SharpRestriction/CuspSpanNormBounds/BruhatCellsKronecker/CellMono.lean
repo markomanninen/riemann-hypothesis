@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellDef
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem cmono_supSum_succ (p q : Fin n) (y : K) (h : q.val = p.val + 1) : supSum
   unfold supSum
   rw [Finset.sum_eq_single p]
   · have hp : p.val + 1 < n := h ▸ q.isLt
-    rw [dif_pos hp]
+    rw [dite_eq_left hp]
     unfold cmonoE
     rw [if_pos ⟨rfl, Fin.ext h.symm⟩]
   · intro a _ hne

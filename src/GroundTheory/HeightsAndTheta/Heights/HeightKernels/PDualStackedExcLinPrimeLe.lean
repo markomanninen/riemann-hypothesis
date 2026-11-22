@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcResidue
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualCotangentKer
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedExcGeoFirst
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcResidue
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualCotangentKer
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedExcGeoFirst
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -41,7 +46,8 @@ theorem linS_single (c : T) : linS (Pi.single c 1 : T → ℤ) = graphSecond c :
 theorem graphMap_linS {F' : HermLattice K i} (b' : Module.Basis T ℤ (dualLattice F')) (a : T → ℤ) (m : T → ℤ) :
     graphMap (dualIdeal b') (linForm (stackedDiag a)) (linS m) =
       C (Ideal.Quotient.mk (dualIdeal b') (linD fun s => m s * a s)) * X () := by
-  rw [linS, linD, map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [linS, linD, map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [map_mul, graphSecond, graphMap, eval₂Hom_C, eval₂Hom_X']
   simp [linForm, stackedDiag, mul_assoc]
@@ -169,7 +175,7 @@ def thetaHom {b : Module.Basis T ℤ (dualLattice F)} {b' : Module.Basis T ℤ (
   map_add' μ ν := by
     apply mul_right_cancel₀ (toFrac_graphFirst_ne hc)
     rw [theta_mul hab hP hc (μ + ν) (coef b' c μ + coef b' c ν)
-        (by simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib, coef_spec, map_add]),
+        (by simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib, coef_spec, map_add (f := _)]),
       add_mul, theta_mul hab hP hc μ _ (coef_spec b' c μ), theta_mul hab hP hc ν _ (coef_spec b' c ν),
       linD_add, map_add, map_add]
 
@@ -188,13 +194,13 @@ section Second
 
 variable {F F' : HermLattice K i} {P : Ideal (MRing (stackedBlocks T))} [P.IsPrime]
 
-variable (P) in
 
+variable (P) in
 def secVal (b : Module.Basis T ℤ (dualLattice F)) : dualLattice F →+ FracP P :=
   AddMonoidHom.mk' (fun ψ => toFrac P (linS fun t => b.repr ψ t)) (by
     intro ψ χ
     show toFrac P (linS _) = toFrac P (linS _) + toFrac P (linS _)
-    rw [← map_add, ← linS_add]
+    rw [← map_add (f := _), ← linS_add]
     congr 2
     funext t
     simp)
@@ -256,8 +262,8 @@ end Second
 
 end StackedExceptionalLinearPrimeBound
 
-open StackedExceptionalLinearPrimeBound StackedExceptionalFirstGeometric in
 
+open StackedExceptionalLinearPrimeBound StackedExceptionalFirstGeometric in
 theorem DualStackedExcLinPrimeLe.proof (hK : DualCotangentKer.Statement) : DualStackedExcLinPrimeLe.Statement := by
   intro K _ _ i F F' T _ _ b b' a _ hlt hcov hab k _ α M hdata P hPp hP hrel
   haveI := hPp
@@ -313,13 +319,15 @@ theorem DualStackedExcLinPrimeLe.proof (hK : DualCotangentKer.Statement) : DualS
       have hs : ∀ j, σ ⟨algebraMap (𝓞 K) K (μ t j) • (χ j : Fin i → K), smul_mem_dual F _ (χ j).2⟩ =
           M t j • (Pi.single j 1 : Fin i → k) := fun j => by
         rw [hsl (μ t j) (χ j) _ rfl, hμ, hχ]
-      rw [map_sum, Finset.sum_congr rfl fun j _ => hs j, ← hM t]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_congr rfl fun j _ => hs j, ← hM t]
       funext j'
       simp [Pi.single_apply]
     have h0 := secVal_eq_zero_of_mem_span (P := P) (b := b) hab hP hc ρ hz
       (hK K i F T b k ρ σ hρ hσ hsl (b t - ψ) (by rw [map_sub, hσψ, sub_self]))
     rw [map_sub, sub_eq_zero, secVal_basis] at h0
-    rw [h0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h0, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [secVal_smul hab hP hc (μ t j) (χ j) _ rfl, ← hμ t j, hι, thetaHom_apply]
 
@@ -336,7 +344,8 @@ theorem DualStackedExcLinPrimeLe.proof (hK : DualCotangentKer.Statement) : DualS
         simp only [Option.elim]
         rw [← mul_div_assoc, hA t, mul_div_cancel_left₀ _ hαc]
       · show eval₂Hom _ _ (linPointMap α M (graphSecond t)) = toFrac P (graphSecond t)
-        rw [LinPrimeExample.linPointMap_second, map_sum, hB t]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [LinPrimeExample.linPointMap_second, map_sum, hB t]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_mul, eval₂Hom_C, eval₂Hom_X']
         rfl

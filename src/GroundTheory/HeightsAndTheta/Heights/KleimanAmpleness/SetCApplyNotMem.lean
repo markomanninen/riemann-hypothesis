@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CellPosExact
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CellPosExact
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -32,8 +37,8 @@ theorem rem_apply_subset (I : ∀ k, Finset (ι k)) (p : Σ k, ι k) (l : K) : r
   · subst hl; rw [rem_apply_self]; exact Finset.erase_subset _ _
   · rw [rem_apply_of_ne i hl]
 
-omit [∀ k, LinearOrder (ι k)] in
 
+omit [∀ k, LinearOrder (ι k)] in
 theorem offset_update (I : ∀ k, Finset (ι k)) (k : K) (X : Finset (ι k)) :
     ∑ l ∈ Finset.univ.filter (· < k), ((Function.update I k X l).card - 1) =
       ∑ l ∈ Finset.univ.filter (· < k), ((I l).card - 1) :=
@@ -215,8 +220,8 @@ theorem sum_addC {M : Type} [AddCommMonoid M] (c : ∀ k, ι k) (I : ∀ k, Fins
   congr 2
   exact Finset.sum_congr rfl fun l hl => by rw [addC_apply_of_ne c I (Finset.ne_of_mem_erase hl)]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem telescope {M : Type} [AddCommGroup M] (g : Finset K → M) (s : Finset K) :
     ∑ k ∈ s, (g (s.filter (· < k)) - g (s.filter (· ≤ k))) = g ∅ - g s := by
   induction s using Finset.induction_on_max with
@@ -253,19 +258,19 @@ def Good (y : (Σ k, ι k) → Ω) (I : ∀ k, Finset (ι k)) : Prop :=
 def Supp (y : (Σ k, ι k) → Ω) (f : (∀ k, Finset (ι k)) → Ω) : Prop :=
   ∀ I, ¬ Good y I → f I = 0
 
-open Classical in
 
+open Classical in
 def dif (y : (Σ k, ι k) → Ω) (f : (∀ k, Finset (ι k)) → Ω) (I : ∀ k, Finset (ι k)) : Ω :=
   if Good y I then ∑ k, ∑ i ∈ I k, faceSign I k i • f (rem I ⟨k, i⟩) else 0
 
-open Classical in
 
+open Classical in
 def coneOp (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (k : K) (f : (∀ k, Finset (ι k)) → Ω)
     (I : ∀ k, Finset (ι k)) : Ω :=
   if Good y I ∧ c k ∉ I k then faceSign (addC c I k) k (c k) • f (addC c I k) else 0
 
-open Classical in
 
+open Classical in
 def projOp (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (T : Finset K) (f : (∀ k, Finset (ι k)) → Ω)
     (I : ∀ k, Finset (ι k)) : Ω :=
   if Good y I ∧ ∀ j ∈ T, (I j).card = 1 then f (setC c T I) else 0
@@ -550,8 +555,8 @@ theorem dif_projOp (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {f : (∀ k, Finset (ι k)
       exact hj1 (by have := h j hjT; rwa [rem_apply_of_ne i (Ne.symm hl)] at this)
     · intro h; exact absurd (Finset.mem_univ j) h
 
-omit [∀ k, LinearOrder (ι k)] in
 
+omit [∀ k, LinearOrder (ι k)] in
 theorem projOp_projOp (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) (f : (∀ k, Finset (ι k)) → Ω) (T : Finset K) {k : K}
     (hk : k ∉ T) (I : ∀ k, Finset (ι k)) :
     projOp y c T (projOp y c {k} f) I = projOp y c (insert k T) f I := by
@@ -638,8 +643,8 @@ theorem dif_homot (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {f : (∀ k, Finset (ι k))
 theorem supp_homot (f : (∀ k, Finset (ι k)) → Ω) : Supp y (homot y c f) :=
   fun _ h => Finset.sum_eq_zero fun _ _ => projOp_of_not fun h' => h h'.1
 
-open Classical in
 
+open Classical in
 def extC (m : ℕ) (t : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH.Cell K ι m → Ω) (J : ∀ k, Finset (ι k)) : Ω :=
   if h : (∀ l, (J l).Nonempty) ∧ ∑ l, ((J l).card - 1) = m then t ⟨J, h⟩ else 0
 
@@ -660,8 +665,8 @@ theorem cellD_apply (m : ℕ) (t : ReciprocityTheory.ChartRestriction.G.Arakelov
   unfold extC rem
   by_cases h : (∀ l, (Function.update J.1 k ((J.1 k).erase i) l).Nonempty) ∧
       ∑ l, ((Function.update J.1 k ((J.1 k).erase i) l).card - 1) = m
-  · rw [dif_pos h, dif_pos h]; rfl
-  · rw [dif_neg h, dif_neg h, smul_zero]; rfl
+  · rw [dite_eq_left h, dite_eq_left h]; rfl
+  · rw [dite_eq_right h, dite_eq_right h, smul_zero]; rfl
 
 theorem cellD_apply_not (m : ℕ) (t : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH.Cell K ι m → Ω) (J : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH.Cell K ι (m + 1)) (hJ : ¬ CellMeets y J.1) :
     cellD S y m t J = 0 := by
@@ -676,7 +681,7 @@ theorem dif_extC_eq_zero {q : ℕ} {s : ReciprocityTheory.ChartRestriction.G.Ara
       rw [cellD_apply S (q + 1) s ⟨J, hJ.1, hd⟩ hJ.2] at h
       exact h
     · refine Finset.sum_eq_zero fun k _ => Finset.sum_eq_zero fun i hi => ?_
-      rw [extC, dif_neg, smul_zero]
+      rw [extC, dite_eq_right, smul_zero]
       rintro ⟨hne, hdeg⟩
       have := deg_rem hi (by simpa [rem_apply_self] using hne k)
       omega
@@ -703,8 +708,8 @@ theorem supp_extC {m : ℕ} {G : (∀ k, Finset (ι k)) → Submodule S Ω} {s :
     exact (Submodule.mem_bot S).1 hm
   · rfl
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem G_fill {G : (∀ k, Finset (ι k)) → Submodule S Ω}
     (hins : ∀ I : ∀ k, Finset (ι k), (∀ k, (I k).Nonempty) → ∀ k,
       G (Function.update I k (insert (c k) (I k))) = G I)
@@ -762,8 +767,8 @@ theorem homot_mem (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {G : (∀ k, Finset (ι k))
 
 end CellContract
 
-open CellContract in
 
+open CellContract in
 theorem CellContract.proof : CellContract.Statement := by
   intro S _ K _ _ ι _ _ Ω _ _ y G c hc hbot hmono hins q s hs hds
   have hf := supp_extC S hs hbot
@@ -781,7 +786,7 @@ theorem CellContract.proof : CellContract.Statement := by
     have hgood : Good y I.1 := ⟨I.2.1, hI⟩
     have hsI : extC (q + 1) s I.1 = s I := by
       unfold extC
-      rw [dif_pos I.2]
+      rw [dite_eq_left I.2]
       rfl
     rw [cellD_apply S q _ I hI, ← hsI, ← dif_homot hc hf h0 I.1 hpos, dif_of_good hgood]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i hi => ?_

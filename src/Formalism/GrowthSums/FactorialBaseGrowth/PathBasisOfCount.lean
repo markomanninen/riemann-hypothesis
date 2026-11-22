@@ -1,4 +1,8 @@
-import Formalism.GrowthSums.StatementG
+module
+
+public import Formalism.GrowthSums.StatementG
+
+@[expose] public section
 
 noncomputable section
 

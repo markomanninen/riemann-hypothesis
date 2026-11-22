@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MahlerCoefficientNormLeOneIffJetsBoundedMeasureM
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MahlerCoefficientNormLeOneIffJetsBoundedMeasureM
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+
+@[expose] public section
+
 open GlobalTheory.MomOne GlobalTheory.MomN PowerSeries
 open scoped ComplexConjugate
 set_option maxHeartbeats 1000000 in

@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.P5meas
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.P5meas
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,7 @@ theorem arch_norm (A Z : Ad F) :
       Complex.exp (-(Real.pi : ℂ) * ((UpperTheory.V.TR.pInf F A v : ℂ) ^ 2 + (UpperTheory.V.TR.pInf F Z v : ℂ) ^ 2)))‖ ≤
       ‖phi1 F (homeomorphMixedSpace F A.1)‖ * ‖phi1 F (homeomorphMixedSpace F Z.1)‖ := by
   rw [norm_prod, norm_real_test_matrix, norm_real_test_matrix, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun v _ => norm_nonneg _) fun v _ => ?_
+  refine Finset.prod_le_prod₀ (fun v _ => norm_nonneg _) fun v _ => ?_
   rw [norm_place, hms_fst, hms_fst]
   exact place_bound _ _
 

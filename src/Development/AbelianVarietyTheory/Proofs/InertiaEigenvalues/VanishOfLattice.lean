@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HomToCharacterLineEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenOfFgOfSpanEqTop
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HomToCharacterLineEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenOfFgOfSpanEqTop
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+
+@[expose] public section
 
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
@@ -27,7 +31,7 @@ theorem subsingleton_H2 {N : ℕ} {G G' : Type} [Group G] [TopologicalSpace G] [
       rw [hrho, map_inv, Φ.symm_apply_apply, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one,
         Module.End.one_apply] at h3
       exact h3.symm
-    exact Subtype.ext (ReciprocityTheory.Gal.TDual.ext fun m => DFunLike.congr_fun h m)
+    exact Subtype.ext (LinearMap.ext fun m => DFunLike.congr_fun h m)
   refine subsingleton_of_forall_eq 0 fun y => ?_
   obtain ⟨⟨z, hz⟩, rfl⟩ := Submodule.Quotient.mk_surjective _ y
   have hz' : (fun p : G × G => z (Φ.symm p.1, Φ.symm p.2)) ∈ ReciprocityTheory.Gal.Z2 (rho.comp (MonoidHom.id G)) := by
@@ -56,7 +60,7 @@ theorem addHom_eq_zero {k G V A : Type} [Field k] [Group G] [AddCommGroup V] [Mo
   let N : Submodule k V :=
     { carrier := {x | ∀ a : k, φ (a • x) = 0}
       zero_mem' := fun a => by simp
-      add_mem' := fun {x y} hx hy a => by rw [smul_add, map_add, hx, hy, add_zero]
+      add_mem' := fun {x y} hx hy a => by rw [smul_add, map_add (f := _), hx, hy, add_zero]
       smul_mem' := fun b x hx a => by rw [smul_smul]; exact hx _ }
   by_contra hne
   have hN : N < ⊤ := lt_top_iff_ne_top.2 fun hN => hne (AddMonoidHom.ext fun x => by

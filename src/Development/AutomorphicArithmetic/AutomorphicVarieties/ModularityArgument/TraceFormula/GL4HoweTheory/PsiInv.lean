@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4HoweTheory.GalIsom
-import Development.DiscreteGroups.GlobalIrreducibility.ExistsUniformizerValuation
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4HoweTheory.GalIsom
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsUniformizerValuation
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets UpperTheory.ConvolutionTheory.Loc
 
 private theorem UpperTheory.V.Z.Tf.L4.psiInv_exists_zpow (E : Type) [Field E] [ValuativeRel E] [TopologicalSpace E]
     [IsNonarchimedeanLocalField E] (ϖ : Eˣ) (hϖ : valuation E (ϖ : E) = uniformizer E) (x : Eˣ) :
     ∃ d : ℤ, valuation E (x : E) = valuation E (ϖ : E) ^ d := by
-  have h1 : ord E ϖ = 1 := ord_eq_one hϖ
+  have h1 : ord E ϖ = 1 := GlobalTheory.SmGL.ord_eq_one hϖ
   have hz : ∀ d : ℤ, ord E (ϖ ^ d) = d := by
     intro d
     cases d with
@@ -45,7 +49,7 @@ theorem UpperTheory.V.Z.Tf.L4.psiInv :
       [Algebra k E] [ValuativeExtension k E] [FiniteDimensional k E] [IsGalois k E] (ϖ : Eˣ), valuation E (ϖ : E) = uniformizer E → ∃ c : ℤ, ∀ a₀ : ℤ, ∃ a ≥ a₀, ∃ ψ : AddChar E Circle,
       HasConductor ψ (ϖ ^ (2 * a - c)) ∧ ∀ (σ : E ≃ₐ[k] E) (x : E), ψ (σ x) = ψ x := by
   intro k E _ _ _ _ _ _ _ _ _ _ _ _ _ ϖ hϖ
-  obtain ⟨ψ₀, hψ₀⟩ := exists_hasConductor_one k
+  obtain ⟨ψ₀, hψ₀⟩ := GlobalTheory.SplitWeil.exists_hasConductor_one k
   let Ψ : AddChar E Circle := ψ₀.compAddMonoidHom (Algebra.trace k E).toAddMonoidHom
   have hΨ : ∀ x, Ψ x = ψ₀ (Algebra.trace k E x) := fun _ => rfl
   have hle : ∀ a b : k, valuation k a ≤ valuation k b ↔

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.HeckeGaloisCriteria.OptInEqSome
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.HeckeGaloisCriteria.OptInEqSome
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+
+@[expose] public section
 
 noncomputable section
 

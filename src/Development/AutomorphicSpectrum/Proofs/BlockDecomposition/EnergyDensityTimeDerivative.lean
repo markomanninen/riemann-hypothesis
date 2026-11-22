@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Rr
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Rr
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset
 open scoped ContDiff ComplexConjugate InnerProductSpace
 open PositivityTheory.RgBcC GlobalTheory.CompanionTheory.WaveSpd
@@ -133,8 +138,8 @@ end Mat
 
 end GlobalTheory.CompanionTheory.WaveSpd.DensDeriv
 
-open GlobalTheory.CompanionTheory.WaveSpd.DensDeriv in
 
+open GlobalTheory.CompanionTheory.WaveSpd.DensDeriv in
 theorem GlobalTheory.CompanionTheory.WaveSpd.hasDerivAt_dens {n : ℕ} {W : Type} [NormedAddCommGroup W]
     [InnerProductSpace ℝ W] (u : ℝ → Mat n → W) (hu : Sm u) (s : ℝ) (y : Mat n)
     (hy : y ∈ GLs n) :

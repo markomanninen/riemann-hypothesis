@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
-import Development.AbelianVarietyTheory.Definitions.Divisors.ConstantUniqueOfEqProduct
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CoverFourierCoeffEqFiniteFourierSum
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HalvesFreeAndAdjoint
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OmegaDataLevelForms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ConstantUniqueOfEqProduct
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CoverFourierCoeffEqFiniteFourierSum
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HalvesFreeAndAdjoint
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OmegaDataLevelForms
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
 namespace GlobalTheory.CoverTransform
@@ -92,7 +97,7 @@ theorem dvd_pairing (d : DeltaDat Xo c n) (h : d.IsLev) (x z y : Dw.La) :
   have h4 : (d.l₂.M : ℤ) ∣ _ := hM ▸ mul_dvd_mul_right h2 (d.pd : ℤ)
   have h5 : (d.l₂.M : ℤ) ∣ _ := hM ▸ mul_dvd_mul_left (l.M : ℤ) h3
   have h6 := dvd_add (dvd_add h1 h4) h5
-  simp only [map_sub, map_add, map_nsmul, sub_smul, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.smul_apply,
+  simp only [map_sub, map_add (f := _), map_nsmul, sub_smul, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.smul_apply,
     nsmul_eq_mul] at h6
   refine h6.trans (dvd_of_eq ?_)
   ring
@@ -115,7 +120,8 @@ theorem hatC_eq_datum : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
   have hφ : c.F.val (d.φδ q) = ∑ z : Fin n → LaJ Xo c d, ((ph z : c.F) : ℂ) * (zeta d.l₂.M ^ l.M) ^
       (∑ b, Dw.EF (qRep (z b)) (cHalf H d.I • levRep (q b))) := by
     change d.c₂.F.val (d.eF (d.φδ q)) = _
-    rw [hpin.2.2.2.2.2 q, finsum_eq_sum_of_fintype, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hpin.2.2.2.2.2 q, finsum_eq_sum_of_fintype, map_sum]
     refine Finset.sum_congr rfl fun z _ => ?_
     rw [map_mul, map_zpow₀, ← GlobalTheory.Dict.CoverFourier.zetaM_pow d hd, map_pow, hz]
     rfl

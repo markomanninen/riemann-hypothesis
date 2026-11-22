@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.LocalDiamondOfSplitIdempotent
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.LocalDiamondOfSplitIdempotent
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem completion_integers_precomplete {ϖ : v.adicCompletionIntegers K} (hϖ :
     intro y _
     obtain ⟨N, hN⟩ := exists_pow_lt₀ hlt
       (Units.map (MonoidWithZeroHom.ValueGroup₀.embedding
-        (f := (.ofClass (Valued.v : Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))))) y)
+        (f := (.ofClass (Valued.v : Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))))).toMonoidHom y)
     refine ⟨N, fun m hm n hn => ?_⟩
     show Valued.v.restrict (g n - g m) < y.1
     rw [Valuation.restrict_lt_iff_lt_embedding]
@@ -239,7 +243,7 @@ theorem split_idempotent_of_square_root (σ : E →ₐ[F] E) (v : HeightOneSpect
   · have h1 : (1 : v.adicCompletion F) = H + H := by linear_combination -hH2
     have hs1 : sigR σ (v.adicCompletion F) ((1 : E) ⊗ₜ[F] H + (α : E) ⊗ₜ[F] Y) =
         (1 : E) ⊗ₜ[F] H - (α : E) ⊗ₜ[F] Y := by
-      simp only [sigR, RingHom.coe_coe, AlgHom.toRingHom_eq_coe, map_add, Algebra.TensorProduct.map_tmul,
+      simp only [sigR, RingHom.coe_coe, AlgHom.toRingHom_eq_coe, map_add (f := _), Algebra.TensorProduct.map_tmul,
         map_one, AlgHom.id_apply, hσ, TensorProduct.neg_tmul, sub_eq_add_neg]
     rw [hs1, Algebra.TensorProduct.one_def]
     conv_rhs => rw [h1]
@@ -271,8 +275,8 @@ theorem host_conj_involutive (x : D.host.E) : D.host.conj (D.host.conj x) = x :=
     | (letI := D.host.cmStar; rw [← Formalism.L2.Herm.star_conj, ← Formalism.L2.Herm.star_conj, star_star])
     | (letI := D.host.cmStar; rw [← Formalism.L2.Herm.star_conj, ← Formalism.L2.Herm.star_conj]; exact star_star x)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem splitAtT_of_tied (A : AtTTied u) : SplitAtT A := by
   intro v
   obtain ⟨pb, hpb⟩ : ∃ pb : 𝓞 D.host.E, (pb : D.host.E) = D.host.conj (A.piU : D.host.E) :=

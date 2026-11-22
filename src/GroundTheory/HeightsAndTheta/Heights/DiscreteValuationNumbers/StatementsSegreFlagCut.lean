@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagClosure
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagClosure
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -18,8 +23,8 @@ def flagLineCoord (b w e : Module.Basis (Fin N) Ω E) (t : Fin N → Φ) (k : �
 
 end Objects
 
-open Classical in
 
+open Classical in
 def SegreFlagCutSection.Statement : Prop :=
   ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O), Irreducible ϖ →
     ∀ (Ω : Type) [Field Ω] [Algebra O Ω]
@@ -81,8 +86,6 @@ def SegreFlagCutContraction.Statement : Prop :=
         ∀ l : List (Option (Option K) → ℤ), l.length = d + k → (∀ b ∈ l, b (some none) = 0) → vNumL W l = 0)
 
 section Examples
-
-def scaledDualCoordinate : MRing (bundleIdx (bundleIdx PointIdx 1) 1) ℤ_[2] := X ⟨none, (0 : Fin 1)⟩
 
 end Examples
 

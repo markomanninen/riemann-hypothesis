@@ -1,7 +1,11 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenOfPoincareLelongHyperplane
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LogInt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenCoord
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.HasCompactSupportCompHypInclAt
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenOfPoincareLelongHyperplane
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LogInt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenCoord
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.HasCompactSupportCompHypInclAt
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A
 
@@ -48,7 +52,7 @@ theorem log_norm_integral_formula_snc : PoincareLelongNormalCrossing := by
   obtain ⟨hIu, hEu⟩ := unit_part hp hu hu0
   have hIs : Integrable (fun z : Fin (n + 1) → ℂ =>
       ∑ i ∈ Finset.univ, (m i : ℝ) * (Real.log ‖z i‖ * densV v φ z)) volume :=
-    integrable_finset_sum Finset.univ (fun i _ => (hI i).const_mul (m i : ℝ))
+    MeasureTheory.integrable_finsetSum Finset.univ (fun i _ => (hI i).const_mul (m i : ℝ))
   have hae : (fun z : Fin (n + 1) → ℂ => Real.log ‖u z * ∏ i, z i ^ m i‖ * densV v φ z) =ᵐ[volume]
       fun z => Real.log ‖u z‖ * densV v φ z +
         ∑ i ∈ Finset.univ, (m i : ℝ) * (Real.log ‖z i‖ * densV v φ z) := by
@@ -67,7 +71,7 @@ theorem log_norm_integral_formula_snc : PoincareLelongNormalCrossing := by
       simp [h0]
   refine ⟨(hIu.add hIs).congr hae.symm, ?_⟩
   rw [integral_congr_ae hae, integral_add hIu hIs, hEu, zero_add,
-    integral_finset_sum Finset.univ (fun i _ => (hI i).const_mul (m i : ℝ))]
+    MeasureTheory.integral_finsetSum Finset.univ (fun i _ => (hI i).const_mul (m i : ℝ))]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   first
     | rw [integral_const_mul]

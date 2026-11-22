@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BranchingSmooth
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BranchingSmooth
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -75,7 +80,9 @@ private theorem br_basis (U : Subgroup (GL (Fin n) k)) (hU : IsOpen (U : Set (GL
   refine exists_subset_nhds_of_isCompact' (V := fun c => (Kc k n c : Set (GL (Fin n) k)))
     (directed_of_isDirected_le fun _ _ h => br_Kc_anti h)
     (fun c => GlobalTheory.SplitFlip.isCompact_KO.of_isClosed_subset (Subgroup.isClosed_of_isOpen _ (br_Kc_open c))
-      fun g hg => (br_memKc.1 hg).1) (fun c => Subgroup.isClosed_of_isOpen _ (br_Kc_open c)) fun g hg => ?_
+      fun g hg => (br_memKc.1 hg).1) (fun c => Subgroup.isClosed_of_isOpen _ (br_Kc_open c)) ?_
+  apply mem_nhdsSet_iff_forall.mpr
+  intro g hg
   have : g = 1 := by
     ext i j
     by_contra h
@@ -117,9 +124,6 @@ private theorem br_memNm {c : ℕ} {g : GL (Fin n) k} :
   rw [← inv_mem_iff (H := unipBLower k (Fin n)), GlobalTheory.IwahoriTraceProof.mem_unipBLower]
   refine (mem_unipB k).trans ?_
   exact ⟨fun h => ⟨fun i j hij => h.1 j i hij, h.2⟩, fun h => ⟨fun i j hij => h.1 j i hij, h.2⟩⟩
-
-private theorem br_memT {g : GL (Fin n) k} :
-    g ∈ (glIwa k n).T ↔ ∃ t ∈ torusO k (Fin n), diagT k (Fin n) t = g := Iff.rfl
 
 private theorem br_smooth {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V)
     (h : GlobalTheory.PRep.IsSmooth π) : (glIwa k n).Smooth π :=
@@ -187,9 +191,8 @@ private theorem iwahori_z_eq_product : (glIwa k n).z = ((List.range n).map (al k
     induction m with
     | zero =>
       rw [upow, List.range_zero, List.map_nil, List.prod_nil, ← (diagT k (Fin n)).map_one]
-      congr 1
-      funext i
       simp
+      exact ((diagT k (Fin n)).map_one).symm
     | succ m ih =>
       rw [List.range_succ, List.map_append, List.prod_append, ih, List.map_singleton, List.prod_singleton, al, upow, upow,
         upow, ← map_mul]

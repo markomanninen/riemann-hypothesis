@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsAlt
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.WeilDatumDoubledTargetSiegelRuleImports
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulFix
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ThetaFunctionHeisenbergInvariant
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsMore
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsAlt
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.WeilDatumDoubledTargetSiegelRuleImports
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulFix
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ThetaFunctionHeisenbergInvariant
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsMore
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -15,13 +20,13 @@ namespace GlobalTheory.SplitLagrF
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F E) in
 
+variable (F E) in
 def dC (n : ℕ) : Matrix (Fin (n + n)) (Fin n) (AF F ⊗[F] E) :=
   ((diagCols (Fin n) : Matrix (Fin n ⊕ Fin n) (Fin n) (AF F ⊗[F] E)).submatrix finSumFinEquiv.symm id)
 
-variable (F E) in
 
+variable (F E) in
 def aC (n : ℕ) : Matrix (Fin (n + n)) (Fin n) (AF F ⊗[F] E) :=
   ((Matrix.fromRows (1 : Matrix (Fin n) (Fin n) (AF F ⊗[F] E)) (-1)).submatrix finSumFinEquiv.symm id)
 

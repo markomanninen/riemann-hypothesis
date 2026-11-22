@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ColInst
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ColInst
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -31,7 +35,8 @@ theorem mat_mulVec (x : HomE X.E a b) (y : Sp X.E a) : (mat s x).mulVec (s.vec y
   funext i
   have h : x y = ∑ j, y j • x (Pi.single j 1) := by
     conv_lhs => rw [← Finset.univ_sum_single y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← map_smul]
     congr 1
@@ -40,7 +45,8 @@ theorem mat_mulVec (x : HomE X.E a b) (y : Sp X.E a) : (mat s x).mulVec (s.vec y
     · subst hk; simp
     · simp [hk]
   show ∑ j, s.iE (x (Pi.single j 1) i) * s.iE (y j) = s.iE (x y i)
-  rw [h, Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, Finset.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Pi.smul_apply, smul_eq_mul, map_mul, mul_comm]
 
@@ -112,7 +118,7 @@ theorem La_stable (L : Submodule (𝓞 D.host.E) (Fin a → D.host.E)) (L' : Sub
     refine AddSubgroup.subset_closure ⟨w, hw, r • A, Submodule.smul_mem _ _ hA, ?_⟩
     rw [embV_eq, embV_eq, opM_smul, emV_smulO]
   | zero => rw [map_zero]; exact zero_mem _
-  | add x y _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
+  | add x y _ _ h1 h2 => rw [map_add (f := _)]; exact add_mem h1 h2
   | neg x _ h => rw [map_neg]; exact neg_mem h
 
 theorem mat_mem_hom {x : HomE X.E a b} (hx : x ∈ homO N N') : mat s x ∈ TaylorLogMetric.homL D (s.lat N) (s.lat N') := by
@@ -157,7 +163,7 @@ theorem phi_mem_La {z : HomE X.E a b} (hz : z ∈ perO (aaX s cc) N N') :
       exact AddSubgroup.subset_closure ⟨_, AddSubgroup.subset_closure ⟨c, hc, rfl⟩, t • mat s x,
         Submodule.subset_span ⟨t, ht, mat s x, mat_mem_hom s N N' hx, rfl⟩, rfl⟩
     | zero => intro x _; rw [zero_smul, map_zero]; exact zero_mem _
-    | add r r' _ _ h1 h2 => intro x hx; rw [add_smul, map_add]; exact add_mem (h1 x hx) (h2 x hx)
+    | add r r' _ _ h1 h2 => intro x hx; rw [add_smul, map_add (f := _)]; exact add_mem (h1 x hx) (h2 x hx)
     | smul ρ r _ h =>
       intro x hx
       obtain ⟨ρ', hρ'⟩ := (s.int_iff (ρ : X.E)).2 ⟨ρ, rfl⟩
@@ -168,7 +174,7 @@ theorem phi_mem_La {z : HomE X.E a b} (hz : z ∈ perO (aaX s cc) N N') :
     obtain ⟨r, hr, x, hx, rfl⟩ := h
     exact key r hr x hx
   | zero => rw [map_zero]; exact zero_mem _
-  | add x y _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
+  | add x y _ _ h1 h2 => rw [map_add (f := _)]; exact add_mem h1 h2
   | smul ρ z _ h =>
     obtain ⟨ρ', hρ'⟩ := (s.int_iff (ρ : X.E)).2 ⟨ρ, rfl⟩
     rw [phi_smulO, ← hρ']
@@ -196,7 +202,7 @@ theorem La_le : TaylorLogMetric.La D (TaylorLogMetric.tor0 D cc δ) (s.lat N) (s
         Submodule.subset_span ⟨_, Submodule.subset_span ⟨c, hc, t, ht, rfl⟩, unmat s A, unmat_mem_hom s N N' h, rfl⟩, ?_⟩
       rw [gen_eq, mat_unmat]
     | zero => rw [smul_zero, map_zero, smul_zero]; exact zero_mem _
-    | add x y _ _ h1 h2 => rw [smul_add, map_add, smul_add]; exact add_mem h1 h2
+    | add x y _ _ h1 h2 => rw [smul_add, map_add (f := _), smul_add]; exact add_mem h1 h2
     | smul ρ A _ h =>
       rw [smul_comm, emV_smulO, ← opM_smul]
       exact imS_stable s cc δ N N' ρ h
@@ -208,7 +214,7 @@ theorem La_le : TaylorLogMetric.La D (TaylorLogMetric.tor0 D cc δ) (s.lat N) (s
       obtain ⟨t, ht, A₀, hA₀, rfl⟩ := h
       exact key4 c hc t ht A₀ hA₀
     | zero => rw [map_zero, smul_zero]; exact zero_mem _
-    | add x y _ _ h1 h2 => rw [map_add, smul_add]; exact add_mem h1 h2
+    | add x y _ _ h1 h2 => rw [map_add (f := _), smul_add]; exact add_mem h1 h2
     | smul ρ A _ h =>
       rw [emV_smulO, ← opM_smul]
       exact imS_stable s cc δ N N' ρ h

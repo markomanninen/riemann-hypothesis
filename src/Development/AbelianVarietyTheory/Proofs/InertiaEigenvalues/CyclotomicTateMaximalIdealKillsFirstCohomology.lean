@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerTraceAlmostSurjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplexStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsRest
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerTraceAlmostSurjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplexStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsRest
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc
 
 namespace GlobalTheory.Cyc.AveragingRankOne
@@ -134,7 +139,7 @@ theorem rank_one (act : GQ l →* (PadicComplex l ≃+* PadicComplex l)) (hact :
       exact pow_le_one₀ (by norm_num) (by norm_num)
     · have e : a * c h - (act h (y + x) - (y + x)) =
           a * (c h - a⁻¹ * (act h y - y)) - (act h x - x) := by
-        rw [map_add]; field_simp; ring
+        rw [map_add (f := _)]; field_simp; ring
       rw [e]; exact hx' h hh
     · simpa [dist_eq_norm] using hx
   choose! f hfQ hfd using hstep

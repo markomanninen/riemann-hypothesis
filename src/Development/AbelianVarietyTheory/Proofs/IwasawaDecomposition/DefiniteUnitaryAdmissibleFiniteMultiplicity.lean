@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
@@ -10,7 +14,7 @@ namespace GlobalTheory.DefU.admitted
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-theorem exists_fin_mul_inf (y : UA E n) : ∃ a ∈ finU E n, ∃ b ∈ infU E n, y = a * b := by
+theorem exists_fin_mul_inf (y : UA E n) : ∃ a ∈ finU (E := E) (n := n), ∃ b ∈ infU E n, y = a * b := by
   let yi := GeneralLinearGroup.map (pInf E) y.1
   have hyi : yi.valᴴ * yi.val = 1 := by
     have hy : cT (conjAd E) y.1.val * 1 * y.1.val = 1 := y.2
@@ -23,7 +27,7 @@ theorem exists_fin_mul_inf (y : UA E n) : ∃ a ∈ finU E n, ∃ b ∈ infU E n
     exact h
   let b : UA E n := ⟨infGL E n yi, infGL_mem_UA yi hyi⟩
   have hb : b ∈ infU E n := MonoidHom.mem_ker.2 (pFin_infGL yi)
-  have ha : b⁻¹ * y ∈ finU E n := by
+  have ha : b⁻¹ * y ∈ finU (E := E) (n := n) := by
     refine MonoidHom.mem_ker.2 ?_
     rw [map_mul, map_inv]
     have : cInf b = cInf y := pInf_infGL yi
@@ -87,7 +91,7 @@ theorem le_Y (π : AutSub E n) {φ : UA E n → ℂ} (hφ : φ ∈ π.V) (h0 : �
   · rw [← h]
     exact inf_le_right
 
-theorem eq_zero_of_vanish {K : Subgroup (finU E n)} {S : Finset (UA E n)}
+theorem eq_zero_of_vanish {K : Subgroup (finU (E := E) (n := n))} {S : Finset (UA E n)}
     (hS : ∀ g : UA E n, ∃ γ ∈ ratU E n, ∃ s ∈ S, ∃ x ∈ infU E n, ∃ k ∈ K, g = γ * s * x * (k : UA E n))
     {f : UA E n → ℂ} (hl : ∀ γ ∈ ratU E n, ∀ g, f (γ * g) = f g) (hK : ∀ k ∈ K, RU E n k f = f)
     (h0 : ∀ s ∈ S, ∀ x ∈ infU E n, f (s * x) = 0) : f = 0 := by
@@ -101,26 +105,26 @@ theorem eq_zero_of_vanish {K : Subgroup (finU E n)} {S : Finset (UA E n)}
 
 theorem exists_ne_zero (π : AutSub E n) : ∃ φ ∈ π.V, φ ≠ 0 := Submodule.exists_mem_ne_zero_of_ne_bot π.isAut.ne_bot
 
-theorem finiteDimensional_fixed (π : AutSub E n) (K : Subgroup (finU E n)) (hK : IsOpen (K : Set (finU E n))) :
-    FiniteDimensional ℂ (fixed (π.rep.comp (finU E n).subtype) K) := by
+theorem finiteDimensional_fixed (π : AutSub E n) (K : Subgroup (finU (E := E) (n := n))) (hK : IsOpen (K : Set (finU (E := E) (n := n)))) :
+    FiniteDimensional ℂ (fixed (π.rep.comp (finU (E := E) (n := n)).subtype) K) := by
   obtain ⟨φ, hφ, h0⟩ := exists_ne_zero π
   have : FiniteDimensional ℂ (X φ) := (π.isAut.aut φ hφ).kfin
   have : FiniteDimensional ℂ (C φ) := LinearMap.finiteDimensional_range _
   obtain ⟨S, hS⟩ := GlobalTheory.T.definiteUnitary_classSet_finite E n K hK
-  let L : fixed (π.rep.comp (finU E n).subtype) K →ₗ[ℂ] (S → C φ) :=
+  let L : fixed (π.rep.comp (finU (E := E) (n := n)).subtype) K →ₗ[ℂ] (S → C φ) :=
     LinearMap.pi fun s => LinearMap.codRestrict (C φ)
       ((LinearMap.funLeft ℂ ℂ fun x : infU E n => (s : UA E n) * x) ∘ₗ π.V.subtype ∘ₗ (fixed _ K).subtype)
       (fun ψ => mem_Y.1 (le_Y π hφ h0 ψ.1.2) s)
   refine Module.Finite.of_injective L (LinearMap.ker_eq_bot.1 (LinearMap.ker_eq_bot'.2 fun ψ hψ => ?_))
   have hK' : ∀ k ∈ K, RU E n k ψ.1.1 = ψ.1.1 := fun k hk => by
-    have e : (π.rep.comp (finU E n).subtype) k ψ.1 = (((1 : K →* ℂˣ) ⟨k, hk⟩ : ℂˣ) : ℂ) • ψ.1 := ψ.2 ⟨k, hk⟩
+    have e : (π.rep.comp (finU (E := E) (n := n)).subtype) k ψ.1 = (((1 : K →* ℂˣ) ⟨k, hk⟩ : ℂˣ) : ℂ) • ψ.1 := ψ.2 ⟨k, hk⟩
     rw [MonoidHom.one_apply, Units.val_one, one_smul] at e
     exact congrArg Subtype.val e
   have hf := eq_zero_of_vanish hS (π.isAut.aut _ ψ.1.2).left hK' fun s hs x hx =>
     congrFun (congrArg Subtype.val (congrFun hψ ⟨s, hs⟩)) ⟨x, hx⟩
   exact Subtype.ext (Subtype.ext hf)
 
-def stab (φ : UA E n → ℂ) : Subgroup (finU E n) where
+def stab (φ : UA E n → ℂ) : Subgroup (finU (E := E) (n := n)) where
   carrier := {k | RU E n k φ = φ}
   mul_mem' {a b} ha hb := by
     simp only [Set.mem_ofPred_eq] at *
@@ -177,8 +181,8 @@ theorem finiteDimensional_hom (π : AutSub E n) : FiniteDimensional ℂ (π.rep.
     exact hψ'
 
 theorem admissible_finiteMult : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (π : AutSub E n),
-    (∀ K : Subgroup (finU E n), IsOpen (K : Set (finU E n)) →
-      FiniteDimensional ℂ (fixed (π.rep.comp (finU E n).subtype) K)) ∧
+    (∀ K : Subgroup (finU (E := E) (n := n)), IsOpen (K : Set (finU (E := E) (n := n))) →
+      FiniteDimensional ℂ (fixed (π.rep.comp (finU (E := E) (n := n)).subtype) K)) ∧
     FiniteDimensional ℂ (π.rep.IntertwiningMap (autRep E n)) :=
   fun _ _ _ _ _ π => ⟨fun K hK => finiteDimensional_fixed π K hK, finiteDimensional_hom π⟩
 

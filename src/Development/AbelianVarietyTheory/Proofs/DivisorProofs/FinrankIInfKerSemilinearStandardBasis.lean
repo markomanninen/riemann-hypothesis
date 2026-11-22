@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIInfKerEqOfIsBaseChangeFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIInfKerEqOfIsBaseChangeFamily
+
+@[expose] public section
+
 open Module
 
 namespace GlobalTheory.BadCount
@@ -23,7 +28,8 @@ theorem finrank_iInf_ker_semilinear : ∀ (K V ι : Type) [Field K] [AddCommGrou
   have hsp' : Submodule.span ℂ (Set.range fun k => f (Pi.single k 1)) = ⊤ := by
     rw [eq_top_iff, ← hsp, Submodule.span_le]
     rintro _ ⟨x, rfl⟩
-    rw [← (Pi.basisFun K (Fin N)).sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← (Pi.basisFun K (Fin N)).sum_repr x, map_sum]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [f.map_smulₛₗ, Pi.basisFun_apply]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)

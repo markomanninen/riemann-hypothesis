@@ -1,20 +1,25 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PFGNullstellensatz
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PProjNullstellensatz
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncidenceGeneric
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealPrime
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PGenericLinearTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealDim
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimOfChowForm
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PMinimalPrimeHomog
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimComponent
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormExists
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PLengthQuotientDet
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.POrdPolynomialLocalization
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormBirational
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PSectionOrder
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PFGNullstellensatz
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PProjNullstellensatz
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncidenceGeneric
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealPrime
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PGenericLinearTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealDim
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimOfChowForm
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PMinimalPrimeHomog
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimComponent
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormExists
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PLengthQuotientDet
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.POrdPolynomialLocalization
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormBirational
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PSectionOrder
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

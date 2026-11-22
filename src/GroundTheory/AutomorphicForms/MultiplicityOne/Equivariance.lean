@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MultiplicityOne.NormOne
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MultiplicityOne.NormOne
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding MeasureTheory Topology Set Filter IsDedekindDomain Matrix
 open scoped NumberField.AdeleRing
@@ -37,8 +41,8 @@ theorem uN_colX_mul_uN_colX_of_lt {k j : ℕ} (hkj : k < j) (x : Fin k → R) (y
       · intro c _ hc
         rw [uN_apply, uN_apply]
         by_cases hac : a < c
-        · rw [dif_pos hac, colX_apply, dif_neg (fun h => hc (Fin.ext h)), zero_mul]
-        · rw [dif_neg hac, zero_mul]
+        · rw [dif_pos hac, colX_apply, dite_eq_right (fun h => hc (Fin.ext h)), zero_mul]
+        · rw [dite_eq_right hac, zero_mul]
       · simp
     · rw [uN_apply]
       have h0 : ∀ c : Fin n, uN (colX (n := n) k x) a c * uN (colX j y) c b = 0 := by
@@ -48,23 +52,23 @@ theorem uN_colX_mul_uN_colX_of_lt {k j : ℕ} (hkj : k < j) (x : Fin k → R) (y
         · rw [dif_pos hac, colX_apply]
           by_cases hck : c.val = k
           · rw [Fin.lt_def] at hac; omega
-          · rw [dif_neg hck, zero_mul]
-        · rw [dif_neg hac, zero_mul]
+          · rw [dite_eq_right hck, zero_mul]
+        · rw [dite_eq_right hac, zero_mul]
       rw [Finset.sum_eq_zero fun c _ => h0 c]
       split_ifs with hab
       · rw [colX_apply, dif_pos hb]
         simp only [colShift]
-        rw [dif_neg (by simpa using ha)]
+        rw [dite_eq_right (by simpa using ha)]
       · rfl
   · have h0 : ∀ c : Fin n, uN (colX (n := n) k x) a c * uN (colX j y) c b = 0 := by
       intro c
       rw [uN_apply (colX j y)]
       by_cases hcb : c < b
-      · rw [dif_pos hcb, colX_apply, dif_neg hb, mul_zero]
-      · rw [dif_neg hcb, mul_zero]
+      · rw [dif_pos hcb, colX_apply, dite_eq_right hb, mul_zero]
+      · rw [dite_eq_right hcb, mul_zero]
     rw [Finset.sum_eq_zero fun c _ => h0 c, uN_apply]
     split_ifs with hab
-    · rw [colX_apply, dif_neg hb]
+    · rw [colX_apply, dite_eq_right hb]
     · rfl
 
 theorem colGL_mul_colGL_of_lt {k j : ℕ} (hkj : k < j) (x : Fin k → R) (y : Fin j → R) :
@@ -82,7 +86,7 @@ theorem pair_lastVec_colShift {K : Type*} [Field K] [NumberField K] {k j : ℕ} 
     pair (lastVec (K := K) j) (colShift hkj x y) = 0 := by
   refine Finset.sum_eq_zero fun i _ => ?_
   by_cases hi : i.val + 1 = j
-  · rw [colShift, dif_neg (by omega), mul_zero]
+  · rw [colShift, dite_eq_right (by omega), mul_zero]
   · rw [lastVec, if_neg hi, map_zero, zero_mul]
 
 end Columns
@@ -173,7 +177,7 @@ theorem whittaker_uGL_mul {ϕ : AdelicGLn.AdelicGL K n → ℂ} (hc : Continuous
         congr 1
         apply Subtype.ext
         apply Prod.ext <;> apply Fin.ext <;> simp [h]
-      · rw [dif_neg h, if_neg h]
+      · rw [dite_eq_right h, if_neg h]
     have hsplit : X = X' + colX m c := by
       funext p
       rw [hcol, Pi.add_apply]

@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EvFrame
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EvFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem adapted_plane_model_evaluation_eq : ∀ (F E : Type) [Field F] [NumberFi
     (fun z => Sum.elim (DL (cA σ) (incM F G) (w z)) (DR (cA σ) (incM F X₁.J) ((w z).submatrix .inl id)))
     (fun z => (w z).submatrix .inl .inl)
     ⟨fun z z' => by ext (k | k) <;> simp, fun c z => by ext (k | k) <;> simp⟩
-    ⟨fun z z' => by ext (k | k) <;> simp only [map_add, DR, DL, Sum.elim_inl, Sum.elim_inr, Pi.add_apply, Matrix.add_apply,
+    ⟨fun z z' => by ext (k | k) <;> simp only [map_add (f := _), DR, DL, Sum.elim_inl, Sum.elim_inr, Pi.add_apply, Matrix.add_apply,
         Matrix.submatrix_apply, mul_add, Finset.sum_add_distrib, neg_add],
       fun c z => by ext (k | k) <;> simp [DR, DL, Finset.smul_sum]⟩
     ⟨fun z z' => by ext; simp, fun c z => by ext; simp⟩
@@ -62,7 +66,7 @@ theorem adapted_plane_model_evaluation_eq : ∀ (F E : Type) [Field F] [NumberFi
       rw [Int.cast_one] at g
       have g' := h'.gram
       rw [Int.cast_neg, Int.cast_one, ← hG] at g'
-      rw [hTens_fr _ _ h.pq h'.pq, g, g', splitL _ hc _ hGh, sumElim_dotProduct_sumElim, sumElim_dotProduct_sumElim, map_add]
+      rw [hTens_fr _ _ h.pq h'.pq, g, g', splitL _ hc _ hGh, sumElim_dotProduct_sumElim, sumElim_dotProduct_sumElim, map_add (f := _)]
       conv_lhs => rw [hG, splitR _ hc (fun i j => by simpa using h.herm₁ i j), ← hG]
       simp only [← hw]
       rw [show ∀ z, ((w z).submatrix Sum.inl id).submatrix id Sum.inl = (w z).submatrix .inl .inl from fun _ => rfl,
@@ -86,7 +90,7 @@ theorem adapted_plane_model_evaluation_eq : ∀ (F E : Type) [Field F] [NumberFi
       · simp only [hw, w_vec, h'.qx, qv]
         exact ⟨by ext (k | k) <;> simp [Matrix.vecMulVec_apply], by ext; simp [Matrix.vecMulVec_apply]⟩)
     (fun v γ hγ => ⟨hπ v γ hγ, _, add_mem (lat_map a0 c0 hγ) (lat_map a1 c1 hγ), by
-      simp only [map_add]
+      simp only [map_add (f := _)]
       simp only [hw, w_msk e0 f0, w_msk e1 f1]
       generalize incM F Q * γ * (incM F Q')ᵀ = y
       refine ⟨?_, ?_, ?_⟩

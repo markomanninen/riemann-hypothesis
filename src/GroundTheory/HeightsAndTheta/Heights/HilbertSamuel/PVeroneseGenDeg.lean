@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeroneseParts
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionsRank
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeroneseParts
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionsRank
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -111,14 +116,14 @@ theorem eventualValue_eq {K : Type*} (F : (K → ℤ) → ℤ) (c : ℤ)
     (h : ∀ᶠ m in atTop, F m = c) : GroundTheory.Heights₂.Heights.NumbersDVR.eventualValue F = c := by
   unfold GroundTheory.Heights₂.Heights.NumbersDVR.eventualValue
   have hex : ∃ c, ∀ᶠ m in atTop, F m = c := ⟨c, h⟩
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨m, h1, h2⟩ := (hex.choose_spec.and h).exists
   rw [← h1, h2]
 
 end VeroneseGenDeg
 
-open VeroneseGenDeg in
 
+open VeroneseGenDeg in
 theorem VeroneseGenDeg.proof : VeroneseGenDeg.Statement := by
   intro D _
   set q := (coordIdeal ℤ (Veronese.x D)).map (MvPolynomial.map (Int.castRingHom ℚ)) with hq

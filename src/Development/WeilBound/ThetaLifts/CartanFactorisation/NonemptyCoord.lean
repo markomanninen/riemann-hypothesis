@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsCharNe
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsCharNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem trace_nondeg {a : mixedEmbedding.mixedSpace F} (ha : a ≠ 0) :
 def tb (x y : κ → mixedEmbedding.mixedSpace F) : ℝ := -Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (x ⬝ᵥ y)
 
 theorem tb_add_left (a b c : κ → mixedEmbedding.mixedSpace F) : tb (a + b) c = tb a c + tb b c := by
-  rw [tb, tb, tb, add_dotProduct, map_add, neg_add]
+  rw [tb, tb, tb, add_dotProduct, map_add (f := _), neg_add]
 
 theorem tb_comm (a b : κ → mixedEmbedding.mixedSpace F) : tb a b = tb b a := by rw [tb, tb, dotProduct_comm]
 
@@ -66,21 +70,21 @@ theorem schrInf_apply {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ)
       rw [invOf_mul_eq_iff_eq_mul_left, infE_dot, two_mul]
       refine Prod.ext ?_ (add_zero (0 : Af F)).symm
       show _ = (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm _ + (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm _
-      rw [← map_add, ← add_smul]
+      rw [← map_add (f := _), ← add_smul]
       norm_num
-    rw [e2, infE_dot, map_add]
+    rw [e2, infE_dot, map_add (f := _)]
     exact Prod.ext rfl (add_zero (0 : Af F))
   rw [schrInf, e, hψ.2.2 _ (at_mk _)]
   have e3 : ∀ a, evI F (mk ((InfiniteAdeleRing.ringEquiv_mixedSpace F).symm a) 0) = a := fun a =>
     RingEquiv.apply_symm_apply _ _
-  rw [e3, map_add, map_smul]
+  rw [e3, map_add (f := _), map_smul]
   congr 2
   simp only [tb, smul_eq_mul]
   push_cast
   ring
 
-variable (F κ) in
 
+variable (F κ) in
 structure Coord where
   n : ℕ
   Q : EuclideanSpace ℝ (Fin n) ≃L[ℝ] (κ → mixedEmbedding.mixedSpace F)
@@ -105,7 +109,7 @@ theorem nonempty_coord : Nonempty (Coord F κ) := by
     conv_lhs => rw [this]
     simp [R]
   have hinj : Function.Injective R := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     by_contra h
     obtain ⟨i, hi⟩ := Function.ne_iff.1 h
@@ -141,7 +145,7 @@ theorem S_apply (f : SInf F κ) (x) : C.S f x = f (C.Q x) := rfl
 
 theorem schr_coord {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) (w) (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (x) :
     schrInf F ψ (C.P w) f (C.Q x) = rhoFun w (fun y => f (C.Q y)) x := by
-  rw [schrInf_apply hψ, C.fst, C.snd, C.snd, rhoFun, phase, map_add, real_inner_comm (pPart w)]
+  rw [schrInf_apply hψ, C.fst, C.snd, C.snd, rhoFun, phase, map_add (f := _), real_inner_comm (pPart w)]
 
 theorem rho_iff {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) (w) (f g : SInf F κ) :
     ⇑(C.S g) = rhoFun w (C.S f) ↔ ⇑g = schrInf F ψ (C.P w) f :=
@@ -166,6 +170,7 @@ theorem norm_eq {f g : SInf F κ} (h : ∫⁻ x, ‖f x‖ₑ ^ 2 = ∫⁻ x, �
     eLpNorm_eq_lintegral_rpow_enorm_toReal (by simp) (by simp)]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_ofNat]
   rw [e, e, hm, lintegral_smul_measure, lintegral_smul_measure, h]
+  all_goals exact SchwartzMap.continuous _ |>.aestronglyMeasurable
 
 def D (v : (κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)) : SInf F κ →L[ℂ] SInf F κ :=
   (C.S.symm : _ →L[ℂ] _) ∘L dRho (C.P.symm v) ∘L (C.S : _ →L[ℂ] _)

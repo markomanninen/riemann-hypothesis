@@ -1,6 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.QuadDiff
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticDifference.QuadDiffOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticDifference.QuadDiffOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +95,7 @@ theorem quadratic_intCoeffs : IntCoeffs := by
     have h1 : IsIntegral ℤ (algebraMap ℚ K x) := by
       rw [eq_ratCast]
       simpa using hint
-    obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.mp ((isIntegral_algebraMap_iff (algebraMap ℚ K).injective).mp h1)
+    obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.mp ((isIntegral_algebraMap_iff ).mp h1)
     rw [eq_intCast] at hn
     subst hn
     exact ⟨⟨2 * n, by push_cast; ring⟩, ⟨n ^ 2, by push_cast; ring⟩⟩
@@ -105,7 +108,7 @@ theorem quadratic_intCoeffs : IntCoeffs := by
     compute_degree!
   have haeval : aeval ((x : K) + (y : K) * θ) p = 0 := by
     rw [hp]
-    simp only [map_add, map_sub, map_mul, aeval_X, aeval_C, map_pow, eq_ratCast]
+    simp only [map_add (f := _), map_sub, map_mul, aeval_X, aeval_C, map_pow, eq_ratCast]
     push_cast
     linear_combination ((y : K)) ^ 2 * hθ
   have hirr : Irreducible p := by

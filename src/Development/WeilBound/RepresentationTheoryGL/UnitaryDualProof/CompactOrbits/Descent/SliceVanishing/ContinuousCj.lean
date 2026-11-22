@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.SliceVanishing.DistrC
-import GroundTheory.AutomorphicForms.WhittakerDistribution
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.SliceVanishing.DistrC
+public import GroundTheory.AutomorphicForms.WhittakerDistribution
+
+@[expose] public section
 
 noncomputable section
 

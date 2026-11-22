@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+module
+
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.TaylorLogMetric GlobalTheory.KerStd GlobalTheory.KerStd.HypCoord Classical
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
 open Formalism.L2.Th1.D (F1 F2 OwOK TrDual phFF)
@@ -12,7 +17,8 @@ theorem mvPowerSeries_subst_linearForm {σ τ : Type} [Fintype σ] {K : Type} [F
     (ha : MvPowerSeries.HasSubst a) (α : σ → K) :
     MvPowerSeries.subst a (∑ j, MvPowerSeries.C (α j) * MvPowerSeries.X j : MvPowerSeries σ K) =
       ∑ j, MvPowerSeries.C (α j) * a j := by
-  rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [MvPowerSeries.coe_substAlgHom ha, MvPowerSeries.subst_mul ha, MvPowerSeries.subst_X ha, MvPowerSeries.subst_C]
 
@@ -27,7 +33,7 @@ theorem stdSer_scaled_eq_thOrth : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Q
     MvPowerSeries.subst_comp_subst_apply (MvPowerSeries.hasSubst_of_constantCoeff_zero fun k => by simp) hs2]
   congr 1
   funext k
-  simp only [e]
+  simp only [e, one_mul]
   rw [mvPowerSeries_subst_linearForm hs1, mvPowerSeries_subst_linearForm hs2]
   have h1 : (∑ i, MvPowerSeries.C (c * lamC lam (embT D k.1 (b i k.2.1 k.2.2))) * hz i :
       MvPowerSeries (OrbitPlaces.Pl D × Fin N × Fin N') ℂ_[p]) =
@@ -38,7 +44,6 @@ theorem stdSer_scaled_eq_thOrth : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Q
     rfl
   rw [h1, hlin k, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [one_mul]
   ring
 
 end GlobalTheory.KerStd.HypCoord

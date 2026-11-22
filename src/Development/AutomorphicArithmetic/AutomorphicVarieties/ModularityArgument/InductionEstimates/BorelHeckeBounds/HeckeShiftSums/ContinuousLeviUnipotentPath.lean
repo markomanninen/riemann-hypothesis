@@ -1,18 +1,23 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.LineTerm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.CancelN
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.UnipMemIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.Master
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BochnerOfLintegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.FlatInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PmLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAdj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvAdj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.LineTerm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.CancelN
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.UnipMemIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.Master
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BochnerOfLintegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.FlatInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PmLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAdj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvAdj
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -65,14 +70,16 @@ private theorem convPt {V W : Type} [NormedAddCommGroup V] [InnerProductSpace �
     (Lp.aestronglyMeasurable u).comp_measurePreserving hmp
   have hn : eLpNorm (fun t => u (x + t)) 2 volume = eLpNorm u 2 volume :=
     eLpNorm_comp_measurePreserving (Lp.aestronglyMeasurable u) hmp
-  have h1 := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm (p := 2) (q := 2) (r := 1) hr.1 hg
-    (fun (A : V →L[ℂ] W) (v : V) => A v) 1 (Eventually.of_forall fun t => by
+  have hc : Continuous (Function.uncurry fun (A : V →L[ℂ] W) (v : V) => A v) := by fun_prop
+  have hm := hc.comp_aestronglyMeasurable₂ hr.aestronglyMeasurable hg
+  have h1 := eLpNorm_le_eLpNorm_mul_eLpNorm (p := 2) (q := 2) (r := 1)
+    (fun (A : V →L[ℂ] W) (v : V) => A v) 1 hc hr.aestronglyMeasurable hg (Eventually.of_forall fun t => by
       rw [one_mul]
       exact (κ t).le_opNNNorm _)
-  rw [eLpNorm_one_eq_lintegral_enorm, hn, ENNReal.coe_one, one_mul] at h1
+  rw [eLpNorm_one_eq_lintegral_eNorm hm, hn, ENNReal.coe_one, one_mul] at h1
   have h2 := (enorm_integral_le_lintegral_enorm (fun t => κ t (u (x + t)))).trans h1
   rw [← toReal_enorm, Lp.norm_def, ← ENNReal.toReal_mul]
-  exact ENNReal.toReal_mono (ENNReal.mul_ne_top hr.2.ne (Lp.memLp u).2.ne) h2
+  exact ENNReal.toReal_mono (ENNReal.mul_ne_top hr.ne (Lp.memLp u).ne) h2
 
 private theorem inv_map {G : Type} [Group G] [MeasurableSpace G] [MeasurableMul₂ G] [MeasurableInv G]
     (ν : Measure G) [IsProbabilityMeasure ν] (U : Subgroup G) (hs : ∀ᵐ k ∂ν, k ∈ U)
@@ -109,7 +116,7 @@ private theorem star_hecke {K : Type} [Field K] [NumberField K] {n : ℕ} (D : T
     refine integral_congr_ae (D.supp.mono fun k hk => ?_)
     simp [D.star k hk, mul_comm]
 
-private theorem adjBd {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure]
+private theorem adjBd {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure]
     (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)) (hp : Pair μ₂ τ₁ τ₂) (D : TypeDat K (2 + 2))
     (d d' : ℕ) (A : Line μ τ₁ τ₂ D d) (A' : Line μ τ₂ τ₁ D d') (a : CC K (2 + 2)) (ha : D.Hecke a) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ ψ : L2 μ, ∀ᵐ s : ℝ, ‖Jd A.J (Rop μ a ψ) s‖ ≤ C * ‖ψ‖ := by
@@ -246,18 +253,18 @@ private theorem oneS {ι M Kc : Type} [Fintype ι] [MeasurableSpace M] [Measurab
     intro x y
     have : ∀ t, ∫ k, ∑ i, u i t * b i x y k ∂κ = ∑ i, u i t * Q i (x, y) := by
       intro t
-      rw [integral_finset_sum _ fun i _ => (hS i x y).const_mul _]
+      rw [integral_finsetSum _ fun i _ => (hS i x y).const_mul _]
       simp only [integral_const_mul, Q]
     simp only [this]
-    rw [integral_finset_sum _ fun i _ => (hu i).mul_const _]
+    rw [integral_finsetSum _ fun i _ => (hu i).mul_const _]
     simp only [integral_mul_const]
   simp only [e1]
   have e2 : ∀ x, ∫ y, ∑ i, (∫ t, u i t) * Q i (x, y) ∂a = ∑ i, (∫ t, u i t) * ∫ y, Q i (x, y) ∂a := by
     intro x
-    rw [integral_finset_sum _ fun i _ => (hY i x).const_mul _]
+    rw [integral_finsetSum _ fun i _ => (hY i x).const_mul _]
     simp only [integral_const_mul]
   simp only [e2]
-  rw [integral_finset_sum _ fun i _ => (hX i).const_mul _]
+  rw [integral_finsetSum _ fun i _ => (hX i).const_mul _]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [integral_const_mul]
   congr 1
@@ -315,7 +322,8 @@ private theorem sec_exp {e : ℕ} {X : Type} (sec : Eu e →ₗ[ℂ] (X → ℂ)
     sec w g = ∑ i, w i * sec (EuclideanSpace.basisFun (Fin e) ℂ i) g := by
   have h := (EuclideanSpace.basisFun (Fin e) ℂ).sum_repr w
   conv_lhs => rw [← h]
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, Pi.smul_apply, smul_eq_mul, EuclideanSpace.basisFun_repr]
 
@@ -328,7 +336,7 @@ private theorem inner_exp {e : ℕ} (v w : Eu e) :
   rw [inner_smul_right, EuclideanSpace.basisFun_repr]
 
 set_option synthInstance.maxHeartbeats 400000 in
-private theorem ipSec {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure]
+private theorem ipSec {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure]
     (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)) (hp : Pair μ₂ τ₁ τ₂) (D : TypeDat K (2 + 2))
     (d d' : ℕ) (A : Line μ τ₁ τ₂ D d) (A' : Line μ τ₂ τ₁ D d') (κ : Measure (KG K (2 + 2))) [κ.IsHaarMeasure] (c : ℝ)
     (hU : Unf μ μ₂ κ c) (Φ : G1 K (2 + 2) → ℂ) (hΦ : Continuous Φ) (hi : ∀ γ ∈ Gam K (2 + 2), ∀ g, Φ (γ * g) = Φ g)
@@ -405,7 +413,7 @@ private theorem ipSec {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] 
       rw [inner_exp, Finset.mul_sum]
       exact Finset.sum_congr rfl fun i _ => by ring
     simp only [hin]
-    rw [integral_finset_sum _ fun i _ => (hui' i).mul_const _]
+    rw [integral_finsetSum _ fun i _ => (hui' i).mul_const _]
     simp only [integral_mul_const]
   have t1 : ∀ i, (c : ℂ) * ((∫ t, ui (Sum.inl i) t) * ∫ k, ∫ x, ∫ y, bi (Sum.inl i) x y k ∂fd μ₂ ∂fd μ₂ ∂κ) =
       (∫ t, conj (β t) * U t i) * ⟪v, e i⟫_ℂ := fun i => by
@@ -474,7 +482,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.ctRep :
       funext i
       exact (hv s (p i)).symm
     rw [e]
-    exact T.continuous_of_finiteDimensional.comp (continuous_pi fun i => hf.comp (continuous_levi_unipotent_path K (p i) _))
+    set_option synthInstance.maxHeartbeats 100000 in
+      exact T.continuous_of_finiteDimensional.comp (continuous_pi fun i => hf.comp (continuous_levi_unipotent_path K (p i) _))
   have hex : Continuous fun s : ℝ => Complex.exp (-2 * (s : ℂ)) := by fun_prop
   have hUc : Continuous fun s : ℝ => Complex.exp (-2 * (s : ℂ)) • v s := hex.smul hcv.fst
   have hUc' : Continuous fun s : ℝ => Complex.exp (-2 * (s : ℂ)) • v' s := hex.smul hcv.snd

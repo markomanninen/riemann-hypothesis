@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TwistStripLimits.CaseB
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TwistStripLimits.CaseB
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ theorem caseB (hTB : TwBound) (hNE : NodeEmb) (hG : Graft) (hTS : TwShift) (hTr 
   intro r hr hrN c hc
   exact (hcon ⟨r, hr, hrN, c, hc⟩).elim
 
-variable (E) in
 
+variable (E) in
 def Q (N : ℕ) : Prop :=
   ∀ W : Submodule ℂ (Kinf E N → ℂ), FiniteDimensional ℂ W →
   ∃ Ω : ∀ M : ℕ, Set (Submodule ℂ (Kinf E M → ℂ)), KTypes E Ω ∧

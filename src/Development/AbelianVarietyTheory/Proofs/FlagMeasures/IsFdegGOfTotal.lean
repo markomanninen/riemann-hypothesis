@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ComplexOrder ContDiff
 
@@ -60,7 +65,7 @@ theorem rel_span (S : Set H) (h : ∀ v ∈ S, ∀ w ∈ S, ∀ v' ∈ S, ∀ w'
       (fun v' hv' => h1 v hv w hw v' hv' w' hw')
     · intro g; simp
     · simp
-    · intro a b g; simp only [map_add, inner_add_right, star_add]; ring
+    · intro a b g; simp only [map_add (f := _), inner_add_right, star_add]; ring
     · intro a b; simp only [inner_add_left]; ring
     · intro c a g; simp only [map_smul, inner_smul_right, star_mul']; ring
     · intro c a; simp only [inner_smul_left, RCLike.star_def]; ring
@@ -83,7 +88,7 @@ theorem rel_span (S : Set H) (h : ∀ v ∈ S, ∀ w ∈ S, ∀ v' ∈ S, ∀ w'
       (fun v hv => h3 v hv w' hw' v' hv' w hw)
   · intro g; simp
   · simp
-  · intro a b g; simp only [map_add, inner_add_right]; ring
+  · intro a b g; simp only [map_add (f := _), inner_add_right]; ring
   · intro a b; simp only [inner_add_right]; ring
   · intro c a g; simp only [map_smul, inner_smul_right]; ring
   · intro c a; simp only [inner_smul_right]; ring

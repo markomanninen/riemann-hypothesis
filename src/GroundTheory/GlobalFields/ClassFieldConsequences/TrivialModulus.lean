@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Unramified
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Unramified
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

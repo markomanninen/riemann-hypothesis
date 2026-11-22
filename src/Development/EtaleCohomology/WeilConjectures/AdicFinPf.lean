@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.AdicLimPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.AdicLimPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory GlobalTheory.EtC
@@ -25,8 +29,8 @@ theorem red_smul {Q q : ℕ} [NeZero Q] [NeZero q] (h : q ∣ Q) (c : ZMod Q) (z
   conv_lhs => rw [← ZMod.natCast_zmod_val c, Nat.cast_smul_eq_nsmul, map_nsmul]
   rw [ZMod.castHom_apply, ZMod.cast_eq_val, Nat.cast_smul_eq_nsmul]
 
-open LateralTheory.KummerTheory in
 
+open LateralTheory.KummerTheory in
 theorem gen_mod {ι : Type*} (g : ι → Hl l E n i)
     (hg : ∀ x : Hl l E n i, ∃ t y, x = g t + ((l : ℤ_[l]) ^ 1) • y) :
     ∀ (k : ℕ) (x : Hl l E n i), ∃ m ∈ Submodule.span ℤ_[l] (Set.range g), ∃ y, x = m + ((l : ℤ_[l]) ^ k) • y := by
@@ -68,7 +72,8 @@ theorem AdicFin_of : LateralTheory.KummerTheory.AdicFin := by
       ∑ t, ZMod.castHom (pow_dvd_pow l (Nat.le_succ k)) (ZMod (l ^ k)) (a.1 t) • LateralTheory.KummerTheory.lev l (g t) k := by
     intro k a
     refine (lev_red l E n i k x).symm.trans ((congrArg _ a.2).trans ?_)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [red_smul _ _ _ (pow_dvd_pow l (Nat.le_succ k)), lev_red]
   let f : ∀ k, T (k + 1) ⟶ T k := fun k => TypeCat.ofHom fun a =>
@@ -82,7 +87,8 @@ theorem AdicFin_of : LateralTheory.KummerTheory.AdicFin := by
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ_[l]).mp hm
     refine ⟨⟨fun t => PadicInt.toZModPow j.unop (c t), ?_⟩⟩
     change levHom l E n i _ (_ + _) = _
-    rw [map_add, map_sum, show levHom l E n i j.unop (((l : ℤ_[l]) ^ j.unop) • y) = 0 from lev_pow_smul l E n i _ y, add_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, show levHom l E n i j.unop (((l : ℤ_[l]) ^ j.unop) • y) = 0 from lev_pow_smul l E n i _ y, add_zero]
     rfl
   obtain ⟨sec, hsec⟩ := nonempty_sections_of_finite_inverse_system F
   let A : ∀ k, T k := fun k => sec (Opposite.op k)
@@ -107,7 +113,8 @@ theorem AdicFin_of : LateralTheory.KummerTheory.AdicFin := by
     rw [PadicInt.toZModPow_ofIntSeq_of_pow_dvd_sub _ _ (hdiv t), Int.cast_natCast, ZMod.natCast_zmod_val]
   refine (Submodule.mem_span_range_iff_exists_fun ℤ_[l]).mpr ⟨α, Subtype.ext (funext fun k => ?_)⟩
   change levHom l E n i k (∑ t, α t • g t) = LateralTheory.KummerTheory.lev l x k
-  rw [map_sum, (A k).2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, (A k).2]
   refine Finset.sum_congr rfl fun t _ => ?_
   change LateralTheory.KummerTheory.lev l (α t • g t) k = _
   rw [lev_smul, hα]

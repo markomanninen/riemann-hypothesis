@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceMassFinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSliceMassFinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSliceAbsIndep
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeChartGram
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceMassFinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSliceMassFinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSliceAbsIndep
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeChartGram
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

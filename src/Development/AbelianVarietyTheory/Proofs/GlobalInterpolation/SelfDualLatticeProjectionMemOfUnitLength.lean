@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,12 +33,6 @@ def formAt (x : Fin M → Ev F E v) : (Fin M → Ev F E v) →ₗ[Ev F E v] Ev F
 def proj (x : Fin M → Ev F E v) (b : Ev F E v) :
     (Fin M → Ev F E v) →ₗ[Ev F E v] (Fin M → Ev F E v) :=
   LinearMap.id - (b • formAt σ J v x).smulRight x
-
-theorem proj_apply (x : Fin M → Ev F E v) (b : Ev F E v) (y : Fin M → Ev F E v) :
-    proj σ J v x b y = y - (b * hR (Fv F v) σ J x y) • x := rfl
-
-theorem mem_perp (x y : Fin M → Ev F E v) : y ∈ perp σ J v x ↔ hR (Fv F v) σ J x y = 0 :=
-  Iff.rfl
 
 open scoped TensorProduct Matrix in
 open NumberField IsDedekindDomain in
@@ -70,11 +68,11 @@ private lemma form_smul_add_left_lemma_3 (c : _root_.GlobalTheory.IndefiniteRowS
   unfold _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.hR _root_.Formalism.UG.hform _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR
   simp [add_mul, mul_assoc, Finset.sum_add_distrib, Finset.mul_sum]
 
+
 open scoped TensorProduct Matrix in
 open NumberField IsDedekindDomain in
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin M) (Fin M) E) (v : HeightOneSpectrum (𝓞 F)) in
-
 theorem _root_.GlobalTheory.SelfDualLatticeSplit.unit_vector_splits :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
       (σ : E →ₐ[F] E), _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsCMExt F E σ → ∀ (M : ℕ) (J : Matrix (Fin M) (Fin M) E), _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsHermND σ J →

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.VpBounds
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingOfIntegersSqrtNegThreeModFour
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.VpBounds
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingOfIntegersSqrtNegThreeModFour
+
+@[expose] public section
+
 open NumberField GlobalTheory.CMVal GlobalTheory.IndefiniteRowSideFullHecke.LatticeNormTransport
 open scoped IntermediateField
 
@@ -50,7 +55,7 @@ theorem exists_quadField : ∀ {E : Type} [Field E] [NumberField E] {I : Type} [
   · obtain ⟨ω, hω2, hgen⟩ := GlobalTheory.exists_integer_generator_of_sq_eq_neg h2 hp.squarefree hd4 hr
     have hφω : φK ω = (1 + Complex.I * (Real.sqrt d : ℂ)) / 2 := by
       have := congrArg φK hω2
-      rw [map_mul, map_add, map_one, map_ofNat, show φK r = _ from hφr i₀] at this
+      rw [map_mul, map_add (f := _), map_one, map_ofNat, show φK r = _ from hφr i₀] at this
       linear_combination this / 2
     unfold IsLatOf
     ext x
@@ -59,7 +64,7 @@ theorem exists_quadField : ∀ {E : Type} [Field E] [NumberField E] {I : Type} [
     · rintro ⟨hx, a, b, rfl⟩
       let y : ℚ⟮w⟯ := a + b * r
       have hy : φK y = a + b * (Complex.I * (Real.sqrt d : ℂ)) := by
-        simp only [y, map_add, map_mul, map_ratCast, show φK r = _ from hφr i₀]
+        simp only [y, map_add (f := _), map_mul, map_ratCast, show φK r = _ from hφr i₀]
       have hint : IsIntegral ℤ y := by
         rw [← hy] at hx
         exact (isIntegral_algHom_iff φK.toIntAlgHom φK.injective).1 hx
@@ -74,7 +79,7 @@ theorem exists_quadField : ∀ {E : Type} [Field E] [NumberField E] {I : Type} [
       refine ⟨m + n / 2, n / 2, ?_⟩
       change φK ((m + n * ω : 𝓞 ℚ⟮w⟯) : ℚ⟮w⟯) = _
       push_cast
-      simp only [map_add, map_mul, hφω]
+      simp only [map_add (f := _), map_mul, hφω]
       simp
       ring
 

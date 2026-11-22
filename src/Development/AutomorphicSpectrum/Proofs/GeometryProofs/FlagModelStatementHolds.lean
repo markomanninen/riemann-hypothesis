@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlagModelStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagModelCommonRefinementStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeFlagVectorBundleStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeSubQuotientSplitStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlagModelStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagModelCommonRefinementStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeFlagVectorBundleStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeSubQuotientSplitStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+
+@[expose] public section
 
 noncomputable section
 

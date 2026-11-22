@@ -1,22 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EnormPowLeInvMeasureMulLintegralBall
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EnormPowLeInvMeasureMulLintegralBall
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
 namespace GlobalTheory
-
-noncomputable def euclideanLineIsometry : EuclideanSpace ℂ (Fin 1) ≃ₗᵢ[ℝ] ℂ where
-  toFun z := z 0
-  invFun w := WithLp.toLp 2 (fun _ => w)
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
-  left_inv z := by
-    ext i
-    rw [Subsingleton.elim i 0]
-  right_inv _ := rfl
-  norm_map' z := by
-    show ‖z 0‖ = ‖z‖
-    rw [EuclideanSpace.norm_eq]
-    simp
 
 theorem norm_sq_le_integral_square :
     ∃ C : ℝ, 0 < C ∧ ∀ (f : ℂ → ℂ) (ρ : ℂ) (r : ℝ), Differentiable ℂ f → 0 < r →
@@ -56,7 +47,7 @@ theorem norm_sq_le_integral_square :
   rw [hvr] at key
   have hmono : ∫ z in Metric.ball ρ r, ‖f z‖ ^ 2 ≤ ∫ z in S, ‖f z‖ ^ 2 :=
     setIntegral_mono_set hint (Filter.Eventually.of_forall fun z => by positivity)
-      hball.eventuallyLE
+      (Filter.Eventually.of_forall hball)
   have hp := Complex.volume_preserving_equiv_real_prod.symm
   have he := Complex.measurableEquivRealProd.symm.measurableEmbedding
   have hpre : Complex.measurableEquivRealProd.symm ⁻¹' S =

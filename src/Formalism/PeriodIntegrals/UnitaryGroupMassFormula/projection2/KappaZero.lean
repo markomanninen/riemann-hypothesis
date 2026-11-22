@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.OneCosetSharp
+module
+
+public import Formalism.PeriodIntegrals.OneCosetSharp
+
+@[expose] public section
 
 noncomputable section
 

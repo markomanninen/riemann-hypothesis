@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.StarLoweringConstant
-import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.TieRad
+module
+
+public import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.StarLoweringConstant
+public import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.TieRad
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.NormalFormRelations
 

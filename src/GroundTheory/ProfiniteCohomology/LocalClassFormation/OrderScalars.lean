@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GaloisModules.Discrete
-import GroundTheory.ProfiniteCohomology.GaloisModules.FixedField
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GaloisModules.Discrete
+public import GroundTheory.ProfiniteCohomology.GaloisModules.FixedField
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -11,14 +16,6 @@ section General
 
 variable {G M : Type} [Group G] [CommGroup M] (φ : G →* Monoid.End M)
 
-theorem d₁₂_intRepOfMonoidEnd (f : G → Additive M) :
-    (d₁₂ (Rep.of (intRepOfMonoidEnd.{0} φ))).hom f = (d₁₂ (Rep.of (zRepOfMonoidEnd φ))).hom f :=
-  rfl
-
-theorem d₂₃_intRepOfMonoidEnd (f : G × G → Additive M) :
-    (d₂₃ (Rep.of (intRepOfMonoidEnd.{0} φ))).hom f = (d₂₃ (Rep.of (zRepOfMonoidEnd φ))).hom f :=
-  rfl
-
 def cocycles₂IntRepAddEquiv :
     cocycles₂ (Rep.of (intRepOfMonoidEnd.{0} φ)) ≃+ cocycles₂ (Rep.of (zRepOfMonoidEnd φ)) where
   toFun x := ⟨x.1, x.2⟩
@@ -26,11 +23,6 @@ def cocycles₂IntRepAddEquiv :
   left_inv _ := rfl
   right_inv _ := rfl
   map_add' _ _ := rfl
-
-theorem mem_coboundaries₂_intRepOfMonoidEnd_iff (f : G × G → Additive M) :
-    f ∈ coboundaries₂ (Rep.of (intRepOfMonoidEnd.{0} φ)) ↔
-      f ∈ coboundaries₂ (Rep.of (zRepOfMonoidEnd φ)) :=
-  Iff.rfl
 
 theorem h2π_intRepOfMonoidEnd_surjective :
     Function.Surjective (H2π (Rep.of (intRepOfMonoidEnd.{0} φ))).hom :=
@@ -42,8 +34,7 @@ theorem h2π_zRepOfMonoidEnd_surjective :
 
 theorem map_ker_h2π_intRepOfMonoidEnd :
     (H2π (Rep.of (intRepOfMonoidEnd.{0} φ))).hom.toAddMonoidHom.ker.map
-        (cocycles₂IntRepAddEquiv φ : cocycles₂ (Rep.of (intRepOfMonoidEnd.{0} φ)) →+
-          cocycles₂ (Rep.of (zRepOfMonoidEnd φ))) =
+        (cocycles₂IntRepAddEquiv φ).toAddMonoidHom =
       (H2π (Rep.of (zRepOfMonoidEnd φ))).hom.toAddMonoidHom.ker := by
   ext x
   constructor
@@ -62,11 +53,14 @@ theorem map_ker_h2π_intRepOfMonoidEnd :
 noncomputable def h2IntRepAddEquiv :
     groupCohomology (Rep.of (intRepOfMonoidEnd.{0} φ)) 2 ≃+
       groupCohomology (Rep.of (zRepOfMonoidEnd φ)) 2 :=
-  ((QuotientAddGroup.quotientKerEquivOfSurjective _
+  ((QuotientAddGroup.quotientKerEquivOfSurjective
+      (H2π (Rep.of (intRepOfMonoidEnd.{0} φ))).hom.toAddMonoidHom
       (h2π_intRepOfMonoidEnd_surjective φ)).symm.trans
     (QuotientAddGroup.congr _ _ (cocycles₂IntRepAddEquiv φ)
       (map_ker_h2π_intRepOfMonoidEnd φ))).trans
-    (QuotientAddGroup.quotientKerEquivOfSurjective _ (h2π_zRepOfMonoidEnd_surjective φ))
+    (QuotientAddGroup.quotientKerEquivOfSurjective
+      (H2π (Rep.of (zRepOfMonoidEnd φ))).hom.toAddMonoidHom
+      (h2π_zRepOfMonoidEnd_surjective φ))
 
 theorem h2IntRepAddEquiv_H2_class (x : cocycles₂ (Rep.of (intRepOfMonoidEnd.{0} φ))) :
     h2IntRepAddEquiv φ ((H2π _).hom x) = (H2π _).hom (cocycles₂IntRepAddEquiv φ x) := by

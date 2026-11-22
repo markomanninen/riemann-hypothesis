@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntVZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntVZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHom
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.OrbFinAf
 open scoped TensorProduct Classical
 
@@ -20,7 +25,7 @@ theorem iotaF_props : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (v : AwayP p)
   · intro z x
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => rw [map_add]; exact ha.add_left hb
+    | add a b ha hb => rw [map_add (f := _)]; exact ha.add_left hb
     | tmul a f =>
       induction x using TensorProduct.induction_on with
       | zero => exact Commute.zero_right _

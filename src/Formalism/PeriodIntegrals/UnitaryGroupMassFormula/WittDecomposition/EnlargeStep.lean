@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Imports
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Imports
+
+@[expose] public section
 
 namespace PI.Witt
 
@@ -8,7 +12,7 @@ variable {K V : Type} [Field K] [StarRing K] [CharZero K] [AddCommGroup V] [Modu
 theorem expand (B : V →ₗ⋆[K] V →ₗ[K] K) (p u u' : V) (c c' : K) :
     B (u + c • p) (u' + c' • p) =
       B u u' + c' * B u p + star c * B p u' + star c * c' * B p p := by
-  simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
+  simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
     starRingEnd_apply, RingHom.id_apply]
   generalize B u u' = A1
   generalize B u p = A2
@@ -95,7 +99,7 @@ theorem enlarge_step [FiniteDimensional K V] (B : V →ₗ⋆[K] V →ₗ[K] K)
     rw [hΨ] at h
     have hc : c = 0 := by
       have h4 := congrArg (B (f r')) h
-      rw [map_add, map_smul, hfr u, ← hB q (f r'), hqU r', hφr', map_zero] at h4
+      rw [map_add (f := _), map_smul, hfr u, ← hB q (f r'), hqU r', hφr', map_zero] at h4
       simpa using h4
     subst hc
     have hu : f u = 0 := by simpa using h

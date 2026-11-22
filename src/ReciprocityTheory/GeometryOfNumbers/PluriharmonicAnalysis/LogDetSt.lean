@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 
@@ -41,7 +45,7 @@ theorem hasDerivAt_det {r : ℕ} (G : ℝ → Matrix (Fin r) (Fin r) ℂ) (G' : 
         ((Equiv.Perm.sign σ : ℂ) * ∑ i, (∏ j ∈ Finset.univ.erase i, G t (σ j) j) • G' (σ i) i) t :=
     fun σ _ => by
       first
-        | exact (HasDerivAt.fun_finset_prod (u := Finset.univ) (fun j _ => hG (σ j) j)).const_mul _
+        | exact (HasDerivAt.fun_finsetProd (u := Finset.univ) (fun j _ => hG (σ j) j)).const_mul _
         | (have hp := HasDerivAt.finset_prod (u := Finset.univ) (fun j _ => hG (σ j) j)
            simp only [Finset.prod_apply] at hp
            exact hp.const_mul _)

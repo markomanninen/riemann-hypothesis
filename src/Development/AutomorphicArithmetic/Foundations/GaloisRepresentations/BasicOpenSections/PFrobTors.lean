@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.BaseFacts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.BaseFacts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et
 open UpperTheory.Gal.TranscendenceTraces (gp pt Wt fib IsWt nwt LocNml)
@@ -156,9 +160,9 @@ theorem UpperTheory.Gal.Mod.frobTors :
     (fam_sums m p f hp h hm) k
   have e2 := (TranscendenceTraces.trLin_holds m k 0).2.2 X 1 hm x
   rw [e1, one_smul] at e2
-  obtain ⟨a, ha⟩ := (TranscendenceTraces.rpBasic_holds _ (res _ (tw m 0)) X k).1 x
-  have h1 := (TranscendenceTraces.rpBasic_holds _ (res _ (tw m 0)) X k).2.2.2.1 X (absFrob X p f hp h) x a ha
-  have h2 := TranscendenceTraces.rpOp_holds _ _ (fam p f hp h (res _ (tw m 0))) k x a ha
+  obtain ⟨a, ha⟩ := (TranscendenceTraces.rpBasic_of _ (res _ (tw m 0)) X k).1 x
+  have h1 := (TranscendenceTraces.rpBasic_of _ (res _ (tw m 0)) X k).2.2.2.1 X (absFrob X p f hp h) x a ha
+  have h2 := (TranscendenceTraces.rpOp_of TranscendenceTraces.imgBasic_of) _ _ (fam p f hp h (res _ (tw m 0))) k x a ha
   rw [e2] at h2
-  refine ((TranscendenceTraces.rpBasic_holds _ _ X k).2.2.1 _ _ _ _ h1 h2).2.1 ?_
+  refine ((TranscendenceTraces.rpBasic_of _ _ X k).2.2.1 _ _ _ _ h1 h2).2.1 ?_
   exact (congrArg (fun e => Sec.res e a) (fk_self p f hp h)).symm

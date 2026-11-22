@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPairingStdP
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPairingStdP
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+
+@[expose] public section
+
 open scoped SchwartzMap Matrix
 
 open scoped RealInnerProductSpace
@@ -18,11 +23,13 @@ theorem pair_expand {n : ℕ} (C : V ≃L[ℝ] EuclideanSpace ℝ (Fin n)) {P : 
     P y b = ∑ i, C y i * P (C.symm (EuclideanSpace.single i 1)) b := by
   have hy : y = ∑ i, C y i • C.symm (EuclideanSpace.single i 1) := by
     conv_lhs => rw [← C.symm_apply_apply y, ← (EuclideanSpace.basisFun (Fin n) ℝ).sum_repr (C y)]
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   have e : P y b = leftForm hP b y := rfl
   rw [e]
   conv_lhs => rw [hy]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp [leftForm, hP.smulL]
 
 def pairCoordsL {n : ℕ} (C : V ≃L[ℝ] EuclideanSpace ℝ (Fin n)) {P : V → V → ℝ} (hP : IsPairing P) :
@@ -86,7 +93,7 @@ theorem exists_pairing_coords : ∀ (V : Type) [NormedAddCommGroup V] [NormedSpa
     ring
   · intro v f
     funext y
-    simp only [schrF, rhoFun, phase, Function.comp_apply, map_add, hp, hq', hCq]
+    simp only [schrF, rhoFun, phase, Function.comp_apply, map_add (f := _), hp, hq', hCq]
     congr 1
     congr 1
     push_cast

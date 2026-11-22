@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationSaturationKiller
-import Formalism.SharpRestriction.LevelLetterCocycles.KillerSecondTheoremHolds
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationSaturationKiller
+public import Formalism.SharpRestriction.LevelLetterCocycles.KillerSecondTheoremHolds
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
+
+@[expose] public section
 
 noncomputable section
 

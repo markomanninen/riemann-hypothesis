@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem _root_.UpperTheory.KN.exists_linearMap_span_baseChange_of_semilinear :
     ∀ {O O' LL Q : Type} [CommRing O] [IsDomain O] [IsPrincipalIdealRing O] [CommRing O'] [Field LL] [Algebra O' LL]
@@ -64,8 +68,10 @@ theorem _root_.UpperTheory.KN.exists_linearMap_span_baseChange_of_semilinear :
     apply Subtype.ext
     simp only [LinearEquiv.coe_ofEq_apply, Submodule.coe_sum, Submodule.coe_smul, B, Module.Basis.span_apply]
     exact hexp y
-  rw [LinearMap.comp_apply, LinearEquiv.coe_coe, h5, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.comp_apply, LinearEquiv.coe_coe, h5, map_sum]
   conv_rhs => rw [← b.sum_repr y]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, Module.Basis.constr_basis, hψ]

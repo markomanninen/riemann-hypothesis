@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsFlagModelHermSum
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsTestFunctionsSubsetOfMemNhds
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEtaleCoordsVanishing
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.FderivEqZeroOfAffine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsFlagModelHermSum
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsTestFunctionsSubsetOfMemNhds
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEtaleCoordsVanishing
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.FderivEqZeroOfAffine
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem eq_of_values {X : Scheme.{0}} {U : X.Opens} (hU : IsAffineOpen U) {x x' 
   ext1
   refine RingHom.ext fun f => ?_
   have := e f
-  rw [valAt', valAt', dif_pos h, dif_pos h'] at this
+  rw [valAt', valAt', dite_eq_left h, dite_eq_left h'] at this
   exact this
 
 theorem fderiv_eq_zero_of_origin {w : Fin g → ℂ}
@@ -83,11 +87,5 @@ theorem tangent_bijection (hs : SmoothOfRelativeDimension g A.hom) :
   TangentOrigin.tangent_bijection_of_values valAt'_rules A L g u
     (exists_coord_adapted (HolChart.exists_holomorphic_chart valAt'_rules existsUnique_point_of_ringHom
       exists_holomorphic_section_of_etale) A L g u hs (eq_zero_of_fderiv_eq_zero u))
-
-theorem riemannData_tangent : ∀ (S : Scheme.{0}) (P : PPAS S) (y : Sp ℂ ⟶ S) (d : P.RiemannData y),
-    (∀ v : epsR ℂ ⟶ d.B, IsTangent v → ∃! w, d.u.IsDiff w v) ∧
-      (∀ w, ∃! v : epsR ℂ ⟶ d.B, IsTangent v ∧ d.u.IsDiff w v) := fun _ P _ d =>
-  tangent_bijection d.u
-    ((smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback d.isPull.1 P.smoothDim)
 
 end GlobalTheory.UnifTangent

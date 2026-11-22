@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ProperRatH
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRightHaarMeasure
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ProperRatH
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRightHaarMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,7 @@ theorem exists_measure_of_eq {X Y : Type} [Group X] [Group Y] [TopologicalSpace 
   haveI : SigmaFinite μ₂ := sigmaFinite_of_locallyFinite
   exact ⟨μ₁.prod μ₂, ⟨inferInstance, inferInstance, inferInstance, inferInstance⟩, hF, fun _ => rfl⟩
 
-theorem isMulRightInvariant_GA (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+theorem isMulRightInvariant_GA (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
     [m : MeasurableSpace (GA E a)] [hm : BorelSpace (GA E a)] (μ : Measure (GA E a)) [μ.IsHaarMeasure] :
     μ.IsMulRightInvariant := by
   obtain ⟨ν, h1, h2⟩ := GlobalTheory.CompanionTheory.AdelicHaar.exists_haar_rightInvariant E a
@@ -71,8 +75,9 @@ theorem isMulRightInvariant_GA (E : Type) [Field E] [NumberField E] [IsTotallyCo
   haveI := CuspidalL2GL.t2Space_GA E a
   haveI := CuspidalL2GL.locallyCompactSpace_GA E a
   haveI := CuspidalL2GL.secondCountableTopology_GA E a
+  letI := h2
   rw [Measure.isMulLeftInvariant_eq_smul μ ν]
-  infer_instance
+  exact MeasureTheory.isMulRightInvariant_smul (μ := ν) _
 
 theorem prodDom : RatProper → ProdDom := by
   intro _ E _ _ _ a b _ _ _ _ μ₁ _ μ₂ _ F₁ F₂ h₁ h₂

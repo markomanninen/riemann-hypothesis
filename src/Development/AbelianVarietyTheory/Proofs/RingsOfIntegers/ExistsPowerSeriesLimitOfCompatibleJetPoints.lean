@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SmallPointsSubstitutionAlgHomSinglePoint
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.JetFramesDifferByUnitEachOrder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SmallPointsSubstitutionAlgHomSinglePoint
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.JetFramesDifferByUnitEachOrder
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -33,7 +37,7 @@ theorem exists_ringHom_of_jets {A : Type} [CommRing A] (φ : ∀ m, A →+* Jet 
   · exact ext fun m => by rw [hf', map_one, map_one]
   · exact fun a b => ext fun m => by rw [map_mul, hf', hf', hf', map_mul]
   · exact ext fun m => by rw [hf', map_zero, map_zero]
-  · exact fun a b => ext fun m => by rw [map_add, hf', hf', hf', map_add]
+  · exact fun a b => ext fun m => by rw [map_add (f := _), hf', hf', hf', map_add (f := _)]
 
 theorem exists_limit_hom [IsLocalRing V] {Y : Scheme.{0}} (p : Y ⟶ Spec (.of V))
     (x : ∀ m, Spec (.of (Jet V κ m)) ⟶ Y)

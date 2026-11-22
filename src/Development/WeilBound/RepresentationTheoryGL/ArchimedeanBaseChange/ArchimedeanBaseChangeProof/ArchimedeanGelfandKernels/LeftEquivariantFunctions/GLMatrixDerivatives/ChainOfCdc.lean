@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfCdcA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfCdcA
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,6 @@ def mulRL (c : Mat n) : Mat n →L[ℝ] Mat n := LinearMap.toContinuousLinearMap
 
 def mulLRL (a c : Mat n) : Mat n →L[ℝ] Mat n :=
   LinearMap.toContinuousLinearMap ((LinearMap.mulLeft ℝ a).comp (LinearMap.mulRight ℝ c))
-
-@[simp] theorem mulLRL_apply (a c y : Mat n) : mulLRL a c y = a * (y * c) := rfl
 
 theorem mem_GLs_mul {x y : Mat n} (hx : x ∈ GLs n) (hy : y ∈ GLs n) : x * y ∈ GLs n := by
   simp only [GLs, Set.mem_ofPred_eq, Matrix.det_mul] at *
@@ -104,7 +106,7 @@ theorem dFr_conj (h : CxData lam E Fr ε ι S Γ T) (k : Matrix.unitaryGroup (Fi
     L.hasFDerivAt.comp (1 : Mat n) (fr_diff h (one_mem_GLs (n := n))).hasFDerivAt
   rw [h1.fderiv, h2.fderiv] at e
   have := congrArg (fun M : Mat n →L[ℝ] (E.V →L[ℂ] E.V) => M Y) e
-  simpa [hL, ContinuousLinearMap.mulLeftRight_apply] using this
+  simpa [hL, mulLRL, ContinuousLinearMap.mulLeftRight_apply] using this
 
 end Cx
 

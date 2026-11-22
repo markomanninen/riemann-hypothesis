@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DplusLeBeS
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DplusLeBeS
+
+@[expose] public section
 
 noncomputable section
 

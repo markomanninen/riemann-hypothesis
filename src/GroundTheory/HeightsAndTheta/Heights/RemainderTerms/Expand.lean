@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -53,18 +58,11 @@ theorem hasDD_of_dividedDifference_eq {f N : ℕ} {H P : RootRing f N}
 
 theorem antisymmetrize_add (f N : ℕ) (H H' : RootRing f N) :
     antisymmetrize f N (H + H') = antisymmetrize f N H + antisymmetrize f N H' := by
-  simp [antisymmetrize, map_add, smul_add, Finset.sum_add_distrib]
+  simp [antisymmetrize, map_add (f := _), smul_add, Finset.sum_add_distrib]
 
 theorem antisymmetrize_smul (f N : ℕ) (b : ℚ) (H : RootRing f N) :
     antisymmetrize f N (b • H) = b • antisymmetrize f N H := by
   simp [antisymmetrize, map_smul, Finset.smul_sum, smul_comm b]
-
-theorem antisymmetrize_sum {ι : Type*} (s : Finset ι) (f N : ℕ) (H : ι → RootRing f N) :
-    antisymmetrize f N (∑ i ∈ s, H i) = ∑ i ∈ s, antisymmetrize f N (H i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp [antisymmetrize]
-  | insert i s hi ih => rw [Finset.sum_insert hi, Finset.sum_insert hi, antisymmetrize_add, ih]
 
 theorem hasDD_add {f N : ℕ} {H H' P P' : RootRing f N} (h : HasDD f N H P) (h' : HasDD f N H' P') :
     HasDD f N (H + H') (P + P') := by
@@ -106,7 +104,8 @@ theorem antisymmetrize_one_eq (N : ℕ) (P : RootRing 1 N) :
 theorem antisymmetrize_prod (f N : ℕ) (P : Fin f → RootRing 1 N) :
     antisymmetrize f N (∏ σ, blockEmb f N σ (P σ)) =
       ∏ σ, blockEmb f N σ (antisymmetrize 1 N (P σ)) := by
-  simp_rw [antisymmetrize_one_eq, map_sum, Finset.prod_univ_sum, antisymmetrize, map_prod,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [antisymmetrize_one_eq, map_sum, Finset.prod_univ_sum, antisymmetrize, map_prod,
     blockPermute_blockEmb, map_smul]
   refine Finset.sum_congr (by simp) fun w _ => ?_
   simp only [blockSign, smul_eq_C_mul, Finset.prod_mul_distrib, map_prod]
@@ -146,13 +145,15 @@ def yEval (r a : ℕ) (c : SmallBlock) : MvPolynomial (Fin r) ℚ →ₐ[ℚ] Ro
 
 theorem blockEmb_yEval_psum (f r a : ℕ) (c : SmallBlock) (σ : Fin f) (k : ℕ) :
     blockEmb f (r + a) σ (yEval r a c (psum (Fin r) ℚ k)) = smallPowerSum f r a c k σ := by
-  simp only [yEval, psum, map_sum, map_pow, aeval_X, smallPowerSum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [yEval, psum, map_sum, map_pow, aeval_X, smallPowerSum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [yRoot_eq_blockEmb f r a c σ i]
 
 theorem smallBlockMu_eq_sum (f r a : ℕ) (c : SmallBlock) :
     smallBlockMu f r a c = ∑ σ : Fin f, blockEmb f (r + a) σ (yEval r a c (psum (Fin r) ℚ 1)) := by
-  simp only [yEval, psum, map_sum, pow_one, aeval_X, smallBlockMu]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [yEval, psum, map_sum, pow_one, aeval_X, smallBlockMu]
   refine Finset.sum_congr rfl fun σ _ => Finset.sum_congr rfl fun i _ => ?_
   rw [yRoot_eq_blockEmb f r a c σ i]
 
@@ -184,7 +185,8 @@ theorem constantCoeff_completeSymmetric (σ : Type*) [Fintype σ] [DecidableEq �
   · have hpos : 0 < d.toNat := by omega
     obtain ⟨n, hn⟩ : ∃ n, d.toNat = n + 1 := ⟨d.toNat - 1, by omega⟩
     rw [hn]
-    simp only [hsymm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hsymm, map_sum]
     refine Finset.sum_eq_zero fun s _ => ?_
     rw [map_multiset_prod, Multiset.map_map]
     apply Multiset.prod_eq_zero
@@ -269,7 +271,8 @@ theorem hasDD_schur_sum (r a : ℕ) (c : SmallBlock) (κ : ℚ)
     (s : Finset (Fin r → ℕ)) (hs : ∀ lam ∈ s, Antitone lam) (b : (Fin r → ℕ) → ℚ) :
     HasDD 1 (r + a) (yEval r a c (∑ lam ∈ s, C (b lam) * schur (Fin r) lam) * fib1 r a c)
       (∑ lam ∈ s, b lam • pushOut r a c κ lam) := by
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine hasDD_sum s fun lam hlam => ?_
   have := hasDD_smul (b lam) (hκ lam (hs lam hlam))
   convert this using 1
@@ -290,7 +293,8 @@ theorem constantCoeff_pushOut_sum (r a : ℕ) (c : SmallBlock) (κ : ℚ) (s : F
     (hs : ∀ lam ∈ s, Antitone lam) (b : (Fin r → ℕ) → ℚ) :
     constantCoeff (∑ lam ∈ s, b lam • pushOut r a c κ lam) =
       if rectangle r a ∈ s then b (rectangle r a) * κ else 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have : ∀ lam ∈ s, constantCoeff (b lam • pushOut r a c κ lam) =
       if lam = rectangle r a then b lam * κ else 0 := by
     intro lam hlam

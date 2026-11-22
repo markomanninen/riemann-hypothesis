@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCountE
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountTypedOfVolumeStep
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VolumeStepOfSiegelWeil
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCountE
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountTypedOfVolumeStep
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VolumeStepOfSiegelWeil
+
+@[expose] public section
 
 open Formalism.MainNotions Formalism.MainNotions.S MeasureTheory
 

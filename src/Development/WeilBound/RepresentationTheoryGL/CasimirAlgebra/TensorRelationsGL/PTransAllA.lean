@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ theorem tE_comm_lift (S : Finset P) (F : Fin n → Fin n → Module.End ℂ M) (
 theorem cA_lift {C : Type} [DecidableEq C] (col : P → C) (b : P → Fin n) (B : Module.End ℂ M) :
     cA col b ∘ₗ lift B = B ∘ₗ (cA col b : TV n M P →ₗ[ℂ] M) := by
   refine LinearMap.ext fun x => ?_
-  simp [cA, alt, pm, lift, LinearMap.sum_apply, map_sum, map_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [cA, alt, pm, lift, LinearMap.sum_apply, map_sum, map_zsmul]
 
 def cj {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W] (e : V ≃ₗ[ℂ] W) :
     Module.End ℂ W →ₐ[ℂ] Module.End ℂ V where

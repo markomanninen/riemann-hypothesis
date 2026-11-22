@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,7 +138,8 @@ theorem factors_of_perturb {Kf V V' : Type} [Field Kf] [Algebra O Kf] [AddCommGr
     · exact mul_zero _
   calc ∑ l, be (x i) (y l) * algebraMap O Kf ((Q * Matrix.diagonal zl) l j)
       = algebraMap O Kf (∑ l, δ i * (1 + w • N) i l * (Q * Matrix.diagonal zl) l j) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun l _ => ?_
         rw [hT, hB]
         simp only [map_mul]

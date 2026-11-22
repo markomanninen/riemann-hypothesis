@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+
+@[expose] public section
 
 open GlobalTheory.SeqCx Matrix
 
@@ -27,14 +31,14 @@ theorem main : ∀ (R : Type) [CommRing R] (n : ℕ) (h : (ℕ →₀ R) →ₗ[
       invFun := fun x => x - h x • t
       map_add' := by
         intro x y
-        simp only [map_add, add_smul]
+        simp only [map_add (f := _), add_smul]
         abel
       map_smul' := by
         intro c x
         simp only [map_smul, smul_eq_mul, mul_smul, RingHom.id_apply, smul_add]
       left_inv := by
         intro x
-        simp only [map_add, map_smul, hht, smul_eq_mul, mul_zero, add_zero, add_sub_cancel_right]
+        simp only [map_add (f := _), map_smul, hht, smul_eq_mul, mul_zero, add_zero, add_sub_cancel_right]
       right_inv := by
         intro x
         simp only [map_sub, map_smul, hht, smul_eq_mul, mul_zero, sub_zero, sub_add_cancel] }

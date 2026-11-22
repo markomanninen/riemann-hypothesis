@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+
+@[expose] public section
 
 noncomputable section
 open LateralTheory.E.PartDiagCut
@@ -26,9 +30,9 @@ theorem comp_unit {B : Type} [CommRing B] (I : Ideal B) (e : B ⧸ I) (y : Local
     obtain ⟨t, ht⟩ := hs
     refine ⟨t, ?_⟩
     have : Ideal.Quotient.mk I i = 0 := Ideal.Quotient.eq_zero_iff_mem.2 hi
-    rw [map_add, this, add_zero]; exact ht
+    rw [map_add (f := _), this, add_zero]; exact ht
   have hu : IsUnit ((1 + y) * algebraMap B _ s) := by
-    rw [add_mul, one_mul, h, ← map_add]
+    rw [add_mul, one_mul, h, ← map_add (f := _)]
     exact IsLocalization.map_units (Localization (S I e)) ⟨s + i, hsi⟩
   exact isUnit_of_mul_isUnit_left hu
 

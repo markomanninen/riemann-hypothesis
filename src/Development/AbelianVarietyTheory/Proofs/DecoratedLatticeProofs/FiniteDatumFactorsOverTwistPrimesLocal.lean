@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RescOne
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistPrimeParahoricEntriesEqColumnDataStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RescOne
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistPrimeParahoricEntriesEqColumnDataStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.AdForm ValuativeRel
 open scoped TensorProduct Classical
@@ -24,19 +29,19 @@ theorem xiAt_eq_prod (i : ℕ) (hi : i + 1 ≤ B.R.m) (α : Ch₀ i) (γ : Ch₀
     congr 1
     refine Finset.prod_congr rfl fun P _ => ?_
     rw [locXi, dif_pos h]
-  · rw [xiAt, dif_neg (by omega), dif_pos h]
+  · rw [xiAt, dite_eq_right (by omega), dif_pos h]
     unfold Formalism.L2.Col.XiCpl1
     congr 1
     refine Finset.prod_congr rfl fun P _ => ?_
-    rw [locXi, dif_neg (by omega), dif_pos h]
+    rw [locXi, dite_eq_right (by omega), dif_pos h]
   · have h1 : i + 1 = B.R.m := by omega
     obtain ⟨n, rfl⟩ : ∃ n, i = n + 1 := ⟨i - 1, by have := B.R.two_le_m; omega⟩
-    rw [xiAt, dif_neg (by omega), dif_neg (by omega), dif_pos h1]
+    rw [xiAt, dite_eq_right (by omega), dite_eq_right (by omega), dif_pos h1]
     show xiOver _ _ _ _ n h1 _ _ _ x = _
     unfold xiOver
     congr 1
     refine Finset.prod_congr rfl fun P _ => ?_
-    rw [locXi, dif_neg (by omega), dif_neg (by omega), dif_pos h1]
+    rw [locXi, dite_eq_right (by omega), dite_eq_right (by omega), dif_pos h1]
     rfl
 
 theorem xi_eq_xiOff_mul (i : ℕ) (hi : i + 1 ≤ B.R.m) (α : Ch₀ i) (γ : Ch₀ (i + 1))

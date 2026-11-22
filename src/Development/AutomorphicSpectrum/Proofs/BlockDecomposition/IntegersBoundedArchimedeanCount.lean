@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FiniteAndNcardBound
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FiniteAndNcardBound
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding Module
 

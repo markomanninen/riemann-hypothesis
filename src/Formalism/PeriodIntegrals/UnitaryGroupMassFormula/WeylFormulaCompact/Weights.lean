@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.FormulaStep
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.TrivKtype
-import Lemmata.GeneralBFactLeftVariant.Imports
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.FormulaStep
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.TrivKtype
+public import Lemmata.GeneralBFactLeftVariant.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -222,7 +226,7 @@ theorem minimal_irreducible_exists : MinIrr := by
     have hu1 : A y - e • y ∈ X' := X'.sub_mem hAy (X'.smul_mem e hy)
     have hu2 : A z - e • z ∈ X'ᗮ := X'ᗮ.sub_mem hAz (X'ᗮ.smul_mem e hz)
     have hsum : A y - e • y + (A z - e • z) = 0 := by
-      rw [← hyz, map_add, smul_add] at hx
+      rw [← hyz, map_add (f := _), smul_add] at hx
       rw [show A y - e • y + (A z - e • z) = (A y + A z) - (e • y + e • z) by abel, hx, sub_self]
     have hneg : A y - e • y = -(A z - e • z) := eq_neg_of_add_eq_zero_left hsum
     have h0y : A y - e • y = 0 := hperp0 _ hu1 (by rw [hneg]; exact X'ᗮ.neg_mem hu2)

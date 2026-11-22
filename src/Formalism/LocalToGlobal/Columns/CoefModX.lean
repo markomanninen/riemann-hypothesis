@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+module
+
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -36,15 +40,6 @@ def BaseChangePair : Prop :=
     ∀ (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n) (G : ι → Matrix (Fin n) (Fin n) K) (F F' : Pol K ι n),
       pairP lam (fun τ => (G τ).map j) (MvPolynomial.map j F) (MvPolynomial.map j F') = j (pairP lam G F F')
 
-def BaseChangeRho : Prop :=
-  ∀ (E K K' : Type) [Field E] [Field K] [Field K'] (j : K →+* K') (ι : Type) [Fintype ι] (n : ℕ)
-    (emb : ι → E →+* K) (lam : ι → DomWeight n) (γ : GL (Fin n) E) (x : VV K lam) (y : VV K' lam),
-    (y : Pol K' ι n) = MvPolynomial.map j (x : Pol K ι n) →
-    ((rhoV (fun τ => j.comp (emb τ)) lam γ y : VV K' lam) : Pol K' ι n) =
-        MvPolynomial.map j ((rhoV emb lam γ x : VV K lam) : Pol K ι n) ∧
-    ((rhoVr (fun τ => j.comp (emb τ)) lam γ y : VV K' lam) : Pol K' ι n) =
-        MvPolynomial.map j ((rhoVr emb lam γ x : VV K lam) : Pol K ι n)
-
 def BaseChangePairV : Prop :=
   ∀ (E K K' : Type) [Field E] [Field K] [StarRing K] [Field K'] [StarRing K'] (j : K →+* K'),
     (∀ x, j (star x) = star (j x)) →
@@ -65,25 +60,25 @@ def BaseChangeStd : Prop :=
 
 def NabDelBaseChange : Prop :=
   ∀ (K K' : Type) [Field K] [NumberField K] [Field K'] [NumberField K'] (j : K →+* K') (ι : Type) [Fintype ι] (n : ℕ)
-    (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsLattice K (M τ)) →
+    (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsFullLattice K (M τ)) →
     bcPol j (nabP lam M) = nabP lam (fun τ => bcLat j (M τ)) ∧
     bcPol j (delP lam M) = delP lam (fun τ => bcLat j (M τ))
 
 def NabDelDescent : Prop :=
   ∀ (K K' : Type) [Field K] [NumberField K] [Field K'] [NumberField K'] (j : K →+* K') (ι : Type) [Fintype ι] (n : ℕ)
-    (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsLattice K (M τ)) →
+    (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsFullLattice K (M τ)) →
     ∀ F : Pol K ι n,
       (F ∈ nabP lam M ↔ MvPolynomial.map j F ∈ nabP lam (fun τ => bcLat j (M τ))) ∧
       (F ∈ delP lam M ↔ MvPolynomial.map j F ∈ delP lam (fun τ => bcLat j (M τ)))
 
 def BaseChangeDualFr : Prop :=
   ∀ (K K' : Type) [Field K] [NumberField K] [Field K'] [NumberField K'] (j : K →+* K') (n : ℕ)
-    (M : Submodule (𝓞 K) (Fin n → K)), Submodule.IsLattice K M → dualFr (bcLat j M) = bcLat j (dualFr M)
+    (M : Submodule (𝓞 K) (Fin n → K)), Submodule.IsFullLattice K M → dualFr (bcLat j M) = bcLat j (dualFr M)
 
 def NabDelBaseChangeAt : Prop :=
   ∀ (E K K' : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Field K'] [NumberField K'] (j : K →+* K')
     (ι : Type) [Fintype ι] (n : ℕ) (emb : ι → E →+* K) (lam : ι → DomWeight n) (L : Submodule (𝓞 E) (Fin n → E)),
-    Submodule.IsLattice E L →
+    Submodule.IsFullLattice E L →
     polOfVV lam (nabAt (fun τ => j.comp (emb τ)) lam L) = bcPol j (polOfVV lam (nabAt emb lam L)) ∧
     polOfVV lam (delAt (fun τ => j.comp (emb τ)) lam L) = bcPol j (polOfVV lam (delAt emb lam L)) ∧
     polOfVV lam (nabAtr (fun τ => j.comp (emb τ)) lam L) = bcPol j (polOfVV lam (nabAtr emb lam L)) ∧
@@ -92,7 +87,7 @@ def NabDelBaseChangeAt : Prop :=
 def NabDelDescentAt : Prop :=
   ∀ (E K K' : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Field K'] [NumberField K'] (j : K →+* K')
     (ι : Type) [Fintype ι] (n : ℕ) (emb : ι → E →+* K) (lam : ι → DomWeight n) (L : Submodule (𝓞 E) (Fin n → E)),
-    Submodule.IsLattice E L → ∀ (x : VV K lam) (y : VV K' lam), (y : Pol K' ι n) = MvPolynomial.map j (x : Pol K ι n) →
+    Submodule.IsFullLattice E L → ∀ (x : VV K lam) (y : VV K' lam), (y : Pol K' ι n) = MvPolynomial.map j (x : Pol K ι n) →
     (x ∈ nabAt emb lam L ↔ y ∈ nabAt (fun τ => j.comp (emb τ)) lam L) ∧
     (x ∈ delAt emb lam L ↔ y ∈ delAt (fun τ => j.comp (emb τ)) lam L) ∧
     (x ∈ nabAtr emb lam L ↔ y ∈ nabAtr (fun τ => j.comp (emb τ)) lam L) ∧

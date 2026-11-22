@@ -1,14 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Volumes
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.SiegelWeilNarrowOfWide
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalSelfDualMeasuresFibreFamilyExistStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarFrameStabilizerLocalFixerSectionProductStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsHaarFrameStabiliserCompatibleFibreStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SimilitudeConjPreservesUnitaryHaarAtFinitePlaceStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardFrameGramDetNeZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiVNeOneOfTrace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSelfDualTrace
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Volumes
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.SiegelWeilNarrowOfWide
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalSelfDualMeasuresFibreFamilyExistStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarFrameStabilizerLocalFixerSectionProductStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsHaarFrameStabiliserCompatibleFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SimilitudeConjPreservesUnitaryHaarAtFinitePlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardFrameGramDetNeZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiVNeOneOfTrace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSelfDualTrace
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures
 open scoped TensorProduct ENNReal
 
@@ -27,7 +32,7 @@ theorem exists_tied_haar : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
   have hsd := GlobalTheory.TraceSelfDual.exists_selfDual_trace F E σ hcm ψ hψ v hne (Formalism.L2.SG.LocVol.UIdx r)
   have hU : (Formalism.L2.SG.LocVol.sdE (E := E) ψ v (Formalism.L2.SG.LocVol.UIdx r)).IsAddHaarMeasure := by
     unfold Formalism.L2.SG.LocVol.sdE
-    rw [dif_pos hsd]
+    rw [dite_eq_left hsd]
     exact hsd.choose_spec.1
   obtain ⟨μS, hμS, hprod⟩ := GlobalTheory.T.haar_frameStabilizer_local_fixer_section_product F E σ hcm n J hJ v r P T hP μ0 hμ0 hconj _ hU
   refine ⟨μS, hμS, μ0, hμ0, ?_, ?_⟩
@@ -36,7 +41,7 @@ theorem exists_tied_haar : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
       unfold Formalism.L2.SG.LocVol.omAt
       have hmem : Formalism.L2.SG.LocVol.TFl σ J v P ∈ HermR (Fv F v) σ (r + 1) :=
         map_mem_HermR (Fv F v) σ _ hT
-      rw [dif_pos hmem]
+      rw [dite_eq_left hmem]
       rfl
     unfold Formalism.L2.SG.LocVol.IsCompatLoc
     rw [hom]

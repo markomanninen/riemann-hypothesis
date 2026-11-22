@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldModels
-import GroundTheory.GlobalFields.ClassFieldConsequences.HilbertClassField
-import GroundTheory.GlobalFields.TateThesis.Chebotarev
-import GroundTheory.GlobalFields.Artin.InflationTower
-import GroundTheory.GlobalFields.Artin.OneDim
-import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldModels
+public import GroundTheory.GlobalFields.ClassFieldConsequences.HilbertClassField
+public import GroundTheory.GlobalFields.TateThesis.Chebotarev
+public import GroundTheory.GlobalFields.Artin.InflationTower
+public import GroundTheory.GlobalFields.Artin.OneDim
+public import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
+
+@[expose] public section
 
 namespace GroundTheory.Global
 namespace Elliptic
@@ -89,10 +93,10 @@ end Frobenius
 section Main
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
+
 
 include hK in
-
 theorem galClassOf_eq_artin (L : IntermediateField K ℂ) [FiniteDimensional K L] [IsGalois K L]
     (hHL : hilbertClassField K ℂ ≤ L) (hL : ∀ x : ELL K, ELL.j x ∈ L)
     (E : ELL K → WeierstrassCurve L) [∀ x, (E x).IsElliptic]

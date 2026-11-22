@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsClassSumPairingFormsLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsClassSumPairingFormsLat
+
+@[expose] public section
 
 namespace GlobalTheory.ColNorms
 
@@ -26,6 +30,7 @@ theorem gram_posSemidef_and_sqAt : ∀ (E K : Type) [Field E] [NumberField E] [F
     rcases InfinitePlace.embedding_mk_eq σ with h | h
     · rw [h]
     · rw [h, ← Complex.conj_re]
-      simp only [map_sum, map_mul, ComplexEmbedding.conjugate_coe_eq, Complex.conj_conj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, ComplexEmbedding.conjugate_coe_eq, Complex.conj_conj]
 
 end GlobalTheory.ColNorms

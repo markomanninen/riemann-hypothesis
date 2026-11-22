@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AbelianVarietyTheory.PublishedTheorems.SemiabelianTori.GeometricallyConnectedSplitTorusAff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkClosedPointToGermTop
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeVectorBundleOfSmoothStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AbelianVarietyTheory.PublishedTheorems.SemiabelianTori.GeometricallyConnectedSplitTorusAff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkClosedPointToGermTop
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeVectorBundleOfSmoothStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem eval₂_apply_of_eigen (ρ : 𝓞 E →+* Module.End Ω V) (σ : 𝓞 E 
     | succ n ih =>
       rw [pow_succ, Module.End.mul_apply, hv, map_smul, ih, pow_succ, mul_smul, smul_comm]
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [eval₂_add, eval_add, map_add, LinearMap.add_apply, hp, hq, add_smul]
+  | add p q hp hq => simp only [eval₂_add, eval_add, map_add (f := _), LinearMap.add_apply, hp, hq, add_smul]
   | monomial n a =>
     rw [eval₂_monomial, Module.End.mul_apply, hpow, scal_apply, eval_monomial, map_mul, map_pow, mul_smul]
 
@@ -163,7 +167,7 @@ theorem exists_eigen_op [CharZero Ω] (ρ : 𝓞 E →+* Module.End Ω V) (σ : 
     | zero => simp
     | add a b _ _ ha hb =>
       have : ρ (a + b) - scal V σ (a + b) = (ρ a - scal V σ a) + (ρ b - scal V σ b) := by
-        rw [map_add, map_add]; abel
+        rw [map_add (f := _), map_add (f := _)]; abel
       rw [this, add_mul, ha, hb, add_zero]
     | smul n a _ ha =>
       have : ρ (n • a) - scal V σ (n • a) = n • (ρ a - scal V σ a) := by
@@ -216,7 +220,7 @@ theorem exists_pow_mul_mem (U : X.Opens) (hU : IsAffineOpen U) (hall : ∀ x ∈
     { carrier := {r | ∃ r', φ r * f = φ r'}
       add_mem' := by
         rintro a b ⟨a', ha⟩ ⟨b', hb⟩
-        exact ⟨a' + b', by rw [map_add, add_mul, ha, hb, map_add]⟩
+        exact ⟨a' + b', by rw [map_add (f := _), add_mul, ha, hb, map_add (f := _)]⟩
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := by
         rintro c a ⟨a', ha⟩
@@ -357,7 +361,7 @@ theorem exists_sandwich {Li : Type} [AddCommGroup Li] [Module Ω Li] (L Vb : Lat
       exact mono _ _ ((Nat.le_add_left _ _).trans (hle i j)) q (hku i j q hq)
     | zero => simpa using zero_mem _
     | add a b' _ _ ha hb' =>
-      rw [map_add, mul_add]
+      rw [map_add (f := _), mul_add]
       exact add_mem ha hb'
     | smul t a _ ha =>
       have : ((D : Ω)⁻¹ • (π₀ i ∘ₗ T)) (t • a) = (t : Ω) * ((D : Ω)⁻¹ • (π₀ i ∘ₗ T)) a := by
@@ -388,8 +392,8 @@ theorem emb_mem (s : CMType H ⊕ CMType H) (q : Cpt 𝔐.ξ) (a : 𝓞 E) : �
     rw [ho]
   rwa [e] at h1
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem lat_act (q : Cpt 𝔐.ξ) (x : 𝓞 E) (e : 𝔐.Li) (he : e ∈ 𝔐.M.lat q) : 𝔐.ρ x e ∈ 𝔐.M.lat q := by
   rw [LieModel.mem_lat_iff] at he ⊢
   obtain ⟨v, hv⟩ := he

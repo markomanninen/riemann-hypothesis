@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JArith
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.OneEntryMem
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantOfTrianglesData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.EqPOf
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JArith
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.OneEntryMem
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantOfTrianglesData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.EqPOf
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical

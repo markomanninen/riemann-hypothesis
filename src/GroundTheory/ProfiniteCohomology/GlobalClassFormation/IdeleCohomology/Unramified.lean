@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrand
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.Unramified
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrand
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.Unramified
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -14,9 +19,9 @@ variable {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L] [Algeb
   [IsGalois K L] (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L))
   [w.asIdeal.LiesOver v.asIdeal]
 
+
 include v in
 open AdicLiesOver in
-
 theorem isZero_groupCohomology_decomposition_integerUnits
     (he : w.asIdeal.ramificationIdx (𝓞 K) = 1) {n : ℕ} (hn : 1 ≤ n) :
     IsZero (groupCohomology (Rep.ofMulDistribMulAction (MulAction.stabilizer Gal(L/K) w.asIdeal)
@@ -27,8 +32,8 @@ theorem isZero_groupCohomology_decomposition_integerUnits
     (groupCohomology.mapIso (decompositionMulEquiv v w) (integerUnitsAddEquiv w).toIntLinearEquiv
       (fun σ => LinearMap.ext fun x => integerUnitsAddEquiv_decomposition v w σ x) n)
 
-include v in
 
+include v in
 theorem isZero_cohomology_decomposition_integerUnits
     (he : w.asIdeal.ramificationIdx (𝓞 K) = 1) {n : ℕ} (hn : 1 ≤ n) :
     IsZero (cohomology (Rep.ofMulDistribMulAction (MulAction.stabilizer Gal(L/K) w.asIdeal)

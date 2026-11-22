@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceExpansion
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceExpansion
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 

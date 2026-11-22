@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.GJMatrix
@@ -30,7 +34,7 @@ theorem UpperTheory.ConvolutionTheory.R2.M.ideleSum :
       ENNReal.ofReal q ^ n * (ENNReal.ofReal B * ideleMeasure F C) := by
     intro n
     have hS : MeasurableSet ((ρ ^ n * ·) '' C) :=
-      (hC.image (continuous_mul_left _)).measurableSet
+      (hC.image (continuous_const_mul _)).measurableSet
     have hμ : ideleMeasure F ((ρ ^ n * ·) '' C) = ideleMeasure F C := by
       rw [Set.image_mul_left]; exact measure_preimage_mul _ _ _
     calc ∫⁻ a in (ρ ^ n * ·) '' C, M.wt a ∂(ideleMeasure F)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCocCocOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTangentVectorContractionTwoCochainProduct
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PreimageEqTopOfSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCocCocOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTangentVectorContractionTwoCochainProduct
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PreimageEqTopOfSurjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,15 +31,12 @@ theorem dl_mul (u u' : DualNumber D) (hu : IsUnit u.fst) (hu' : IsUnit u'.fst) :
   have e2 : (↑b : D) * ↑b⁻¹ = 1 := Units.mul_inv b
   have e3 : Ring.inverse ((↑a : D) * ↑b) = ↑b⁻¹ * ↑a⁻¹ := by
     rw [← Units.val_mul, Ring.inverse_unit, mul_inv_rev, Units.val_mul]
-  simp only [dl, TrivSqZeroExt.fst_mul, TrivSqZeroExt.snd_mul, ← ha, ← hb, e3,
-    Ring.inverse_unit, smul_eq_mul, MulOpposite.smul_eq_mul_unop, MulOpposite.unop_op]
+  simp only [dl, TrivSqZeroExt.fst_mul, DualNumber.snd_mul, ← ha, ← hb, e3,
+    Ring.inverse_unit]
   linear_combination (u'.snd * ↑b⁻¹) * e1 + (u.snd * ↑a⁻¹) * e2
 
 theorem dl_one_add (l : DualNumber D) (h : l.fst = 0) : dl (1 + l) = l.snd := by
   simp [dl, h]
-
-theorem dl_one : dl (1 : DualNumber D) = 0 := by
-  simp [dl]
 
 theorem dl_inl (c : D) : dl (TrivSqZeroExt.inl c : DualNumber D) = 0 := by
   simp [dl]
@@ -70,15 +71,18 @@ section Pts
 
 variable {R : Type} [CommRing R] {A B : Over (Sp R)} [GrpObj A] [GrpObj B]
 
+omit [GrpObj A] in
 theorem pointWithZeroSecondCoord_left {D : Type} [CommRing D] [Algebra R D] (x : Pt A D) :
     (pt0 B x).left = x.left ≫ (AbDual.inl A B).left := by
   rw [← Over.comp_left, pt0, AbDual.inl, comp_lift, Category.comp_id, MonObj.comp_one]
 
+omit [GrpObj A] in
 theorem pointWithZeroSecondCoord_mem_chart_of_restricted (P : LB (A ⊗ B).left) {D : Type} [CommRing D] [Algebra R D] {x : Pt A D} {c : P.ι}
     (h : ⊤ ≤ x.left ⁻¹ᵁ chartsA P c) : ⊤ ≤ (pt0 B x).left ⁻¹ᵁ P.U c := by
   rw [pointWithZeroSecondCoord_left, Scheme.Hom.comp_preimage]
   exact h
 
+omit [GrpObj A] in
 theorem ptV_mem (P : LB (A ⊗ B).left) {v : epsR R ⟶ B} (hv : IsTangent v) {D : Type} [CommRing D]
     [Algebra R D] {x : Pt A D} {c : P.ι} (h : ⊤ ≤ x.left ⁻¹ᵁ chartsA P c) : ⊤ ≤ (ptV v x).left ⁻¹ᵁ P.U c := by
   have hsurj : Surjective (spOver (TrivSqZeroExt.fstHom R D D)).left := by
@@ -126,7 +130,7 @@ abbrev gv (L : LB X) {C : Type} [CommRing C] (x : Sp C ⟶ X) (a b : L.ι) : C :
   evU x (L.U a ⊓ L.U b) (L.g a b).val
 
 theorem gv_eq (L : LB X) {C : Type} [CommRing C] (x : Sp C ⟶ X) {a b : L.ι}
-    (h : ⊤ ≤ x ⁻¹ᵁ (L.U a ⊓ L.U b)) : gv L x a b = evalAt x (L.U a ⊓ L.U b) h (L.g a b).val := dif_pos h
+    (h : ⊤ ≤ x ⁻¹ᵁ (L.U a ⊓ L.U b)) : gv L x a b = evalAt x (L.U a ⊓ L.U b) h (L.g a b).val := dite_eq_left h
 
 theorem isUnit_gv (L : LB X) {C : Type} [CommRing C] (x : Sp C ⟶ X) {a b : L.ι}
     (ha : ⊤ ≤ x ⁻¹ᵁ L.U a) (hb : ⊤ ≤ x ⁻¹ᵁ L.U b) : IsUnit (gv L x a b) := by
@@ -173,8 +177,8 @@ end GlobalTheory.PtExt.ChernContr
 namespace GlobalTheory.PtExt.ChernContr
 open ContrMor
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem contr_cohom : ∀ (R : Type) [CommRing R] (A B : Over (Sp R)) [GrpObj A] [GrpObj B] (P : LB (A ⊗ B).left), P.IsLB →
     ∀ v : epsR R ⟶ B, IsTangent v → ∀ (j : ∀ (D : Type) [CommRing D] [Algebra R D], Pt A D → P.ι), IsChoice P j →
     ∀ w : Z2 (O (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _)),
@@ -213,17 +217,18 @@ theorem contr_cohom : ∀ (R : Type) [CommRing R] (A B : Over (Sp R)) [GrpObj A]
       (dl (U _ _ (sM h)) - dl (U _ _ (iM h))) + dl (gv P (ptV v x).left (j D x) (i (TV h)))
   refine ⟨fun D _ _ x ↦ if h : Sm (chartsA P) x then -k h else 0, ?_⟩
   intro D _ _ D' _ _ φ x hx
-  have hx' : Sm (chartsA P) (spOver φ ≫ x) := hx.map φ
-  simp only [dif_pos hx, dif_pos hx', Fn1.add, Fn1.neg]
+  let x' : Pt A D' := spOver φ ≫ x
+  have hx' : Sm (chartsA P) (D := D') (spOver φ ≫ x) := hx.map φ
+  simp only [dite_eq_left hx, dite_eq_left hx', Fn1.add, Fn1.neg]
   let aM : T0 hx ⟶ T0 hx' := ObjectProperty.homMk (aHom φ x)
   let bM : TV hx ⟶ TV hx' := ObjectProperty.homMk (bHom v φ x)
   let tM : TT hx ⟶ TT hx' := ObjectProperty.homMk (τHom φ x)
-  have c1 : sM hx ≫ tM = aM ≫ sM hx' := ObjectProperty.hom_ext _ (Thick.hom_ext fun r ↦ by
+  have c1 : sM hx ≫ tM = aM ≫ sM hx' := ObjectProperty.hom_ext _ (Thick.Hom.ext' (AlgHom.ext fun r ↦ by
     change epsHom φ (TrivSqZeroExt.inl r) = TrivSqZeroExt.inl (φ r)
     ext
     · exact fst_epsHom φ _
-    · exact (snd_epsHom' φ _).trans (map_zero φ))
-  have c2 : iM hx ≫ tM = bM ≫ iM hx' := ObjectProperty.hom_ext _ (Thick.hom_ext fun r ↦ rfl)
+    · exact (snd_epsHom' φ _).trans (map_zero φ)))
+  have c2 : iM hx ≫ tM = bM ≫ iM hx' := ObjectProperty.hom_ext _ (Thick.Hom.ext' (AlgHom.ext fun r ↦ rfl))
   have uU : ∀ (S S' : SmallCat P.U) (f : S ⟶ S'), IsUnit (S'.obj.π (U S S' f)) := fun S S' f ↦ by
     rw [hU]; exact (P.g _ _).isUnit.map _
   have key : ∀ (S S' : SmallCat P.U) (f : S ⟶ S') (g : S' ⟶ TT hx'),
@@ -266,9 +271,9 @@ theorem contr_cohom : ∀ (R : Type) [CommRing R] (A B : Over (Sp R)) [GrpObj A]
         (f : TV hx ⟶ smallAt P.U y h) (f' : TV hx ⟶ smallAt P.U y' h'),
         (∀ r, f.hom.φ r = f'.hom.φ r) → n _ _ f = n _ _ f' := by
       rintro y _ rfl h h' f f' hf
-      have : f = f' := ObjectProperty.hom_ext _ (Thick.hom_ext hf)
+      have : f = f' := ObjectProperty.hom_ext _ (Thick.Hom.ext' (AlgHom.ext hf))
       subst this; rfl
-    simp only [sndPull, cocOf, dif_pos (sV hx)]
+    simp only [sndPull, cocOf, dite_eq_left (sV hx)]
     exact congrArg (TrivSqZeroExt.snd (R := D') (M := D'))
       (tr _ _ (spOver_epsHom_ptV v φ x).symm (sV hx') ((sV hx).map (epsHom φ)) bM
         (ObjectProperty.homMk (trivMap (epsHom φ) (ptV v x))) fun _ ↦ rfl)
@@ -277,11 +282,11 @@ theorem contr_cohom : ∀ (R : Type) [CommRing R] (A B : Over (Sp R)) [GrpObj A]
   have b3 : dl (D := D') (tM.hom.φ (U _ _ (iM hx))) = φ (dl (U _ _ (iM hx))) := dl_epsHom φ _ ui
   have b4 : dl (D := D') ((iM hx').hom.φ (U _ _ bM)) = tanCoc P j v D D' φ x +
       φ (dl (gv P (ptV v x).left (j D x) (i (TV hx)))) -
-      dl (gv P (ptV v (spOver φ ≫ x)).left (j D' (spOver φ ≫ x)) (i (TV hx'))) := by
-    have e : (iM hx').hom.φ (U _ _ bM) = gv P (ptV v (spOver φ ≫ x)).left (i (TV hx')) (i (TV hx)) :=
+      dl (gv P (ptV v x').left (j D' x') (i (TV hx'))) := by
+    have e : (iM hx').hom.φ (U _ _ bM) = gv P (ptV v x').left (i (TV hx')) (i (TV hx)) :=
       (hU _ _ bM).trans (gv_eq P _ _).symm
     have e' : spMap (epsHom φ : DualNumber D →+* DualNumber D') ≫ (ptV v x).left =
-        (ptV v (spOver φ ≫ x)).left := (bHom v φ x).pt
+        (ptV v x').left := (bHom v φ x).pt
     exact (congrArg (dl (D := D')) e).trans (dl_gv φ P hP _ _ e' (hi (TV hx)) (ptV_mem P hv (hj D x hx))
       (hi (TV hx')) (ptV_mem P hv (hj D' _ hx')))
   have hk := hκ D D' φ x (sHom x) (iHom v hv x) (sHom _) (iHom v hv _) (aHom φ x) (bHom v φ x) (τHom φ x)
@@ -290,7 +295,7 @@ theorem contr_cohom : ∀ (R : Type) [CommRing R] (A B : Over (Sp R)) [GrpObj A]
     TrivSqZeroExt.snd (R := D') (M := D') (w.1 _ _ _ aM.hom (sM hx').hom) -
     TrivSqZeroExt.snd (R := D') (M := D') (w.1 _ _ _ (iM hx).hom tM.hom) +
     TrivSqZeroExt.snd (R := D') (M := D') (w.1 _ _ _ bM.hom (iM hx').hom) at hk
-  simp only [k, map_neg, map_add, map_sub]
+  simp only [k, map_neg, map_add (f := _), map_sub]
   linear_combination hk + k1 - k2 - k3 + k4 + a1 - a2 - a3 + a4 + b1 - b2 - b3 + b4
 
 end GlobalTheory.PtExt.ChernContr

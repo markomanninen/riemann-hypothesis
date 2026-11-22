@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.JnArcFin
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
-import GroundTheory.GlobalFields.Adele.IntegersLattice
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.JnArcFin
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
+public import GroundTheory.GlobalFields.Adele.IntegersLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,20 +40,6 @@ theorem continuous_arc (R : RD d) : Continuous (arc R) := by
 theorem continuous_fin : Continuous (fin d) := by
   unfold fin
   exact continuous_pi fun k => continuous_snd.comp ((continuous_apply k).comp (KFock.continuous_crd d))
-
-theorem loc_add (R : RD d) (w : InfinitePlace F) (X Y : Mx F E d.m d.n) :
-    R.loc w (X + Y) = R.loc w X + R.loc w Y := by
-  unfold RD.loc SD.cw
-  rw [Matrix.map_add _ (map_add _), Matrix.mul_add, Matrix.map_add _ (fun a b => star_add a b)]
-  rfl
-
-theorem arc_add' (R : RD d) (X Y : Mx F E d.m d.n) : arc R (X + Y) = arc R X + arc R Y := by
-  unfold arc
-  rw [← map_add]
-  congr 1
-  funext i
-  simp only [Pi.add_apply, loc_add]
-  split_ifs <;> simp
 
 theorem homeo_symm_eq (x : mixedEmbedding.mixedSpace F) :
     (GroundTheory.Global.homeomorphMixedSpace F).symm x = (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm x := by
@@ -94,7 +84,7 @@ theorem jn_eq_cmb (R : RD d) :
     · show (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (L.symm (zOf (EuclideanSpace.equiv (Iw d) ℝ (p + q).1)) k) =
         (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (L.symm (zOf (EuclideanSpace.equiv (Iw d) ℝ p.1)) k) +
         (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (L.symm (zOf (EuclideanSpace.equiv (Iw d) ℝ q.1)) k)
-      rw [← map_add, Prod.fst_add, map_add, zOf_add, map_add]
+      rw [← map_add (f := _), Prod.fst_add, map_add (f := _), zOf_add, map_add (f := _)]
       rfl
     · rfl
   · refine (exists_jn R p.1 p.2).unique ⟨arc_jn R p.1 p.2, fin_jn R p.1 p.2⟩ ⟨?_, ?_⟩

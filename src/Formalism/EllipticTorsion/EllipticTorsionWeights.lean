@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.EllipticTorsion.JetsCube
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.JetsCube
+
+@[expose] public section
 
 open PowerSeries
 
@@ -32,8 +36,8 @@ def FrobExpand : Prop :=
   ∀ (K : Type u) [NormedField K] [IsUltrametricDist K] (p : ℕ), p.Prime → ‖(p : K)‖ < 1 →
     ∀ (m j : ℕ) (a b : Fin m → K), (∀ e, ‖a e‖ ≤ 1) → (∀ e, ‖a e ^ (p ^ j) - b e‖ ≤ ‖(p : K)‖) →
       ∀ α : Fin m →₀ ℕ,
-        ‖MvPolynomial.coeff α
-            ((∑ e, MvPolynomial.C (a e) * MvPolynomial.X e) ^ (p ^ j)
-              - (∑ e, MvPolynomial.C (b e) * MvPolynomial.X e ^ (p ^ j)))‖ ≤ ‖(p : K)‖
+        ‖AddMonoidAlgebra.coeff ((∑ e, MvPolynomial.C (a e) * MvPolynomial.X e) ^ (p ^ j)
+              - (∑ e, MvPolynomial.C (b e) * MvPolynomial.X e ^ (p ^ j)))
+            α‖ ≤ ‖(p : K)‖
 
 end Formalism.ELL

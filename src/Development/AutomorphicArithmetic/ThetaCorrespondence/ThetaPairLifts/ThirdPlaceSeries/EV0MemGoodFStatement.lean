@@ -1,7 +1,15 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EV0MemGoodFRowsStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Realised
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EV0MemGoodF
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
+public import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.CxPassRep
+public import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Realised
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EV0MemGoodF
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultidegAdd
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CardEqChainSum
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultidegAdd
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CardEqChainSum
+
+@[expose] public section
 
 noncomputable section
 

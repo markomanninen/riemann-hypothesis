@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieValG
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieValG
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,12 +67,12 @@ theorem linPt_pl (ρ : Fin N) (col : Fin 2) (i : Fin dd) :
   rw [rowOf_eq, rename_subst_linS]
   congr 1
   funext j
-  simp only [linS, colLin, map_sum, map_smul, MvPowerSeries.rename_X]
+  simp only [linS, map_sum, map_smul, MvPowerSeries.rename_X]
   rw [Fintype.sum_prod_type, Finset.sum_eq_single ρ]
-  · simp only [MS_pl, if_true]
+  · simp only [colLin, MS_pl, if_true]
     rfl
   · intro ρ' _ hρ'
-    simp [MS_pl, hρ']
+    simp [colLin, MS_pl, hρ']
   · simp
 
 theorem linPt_off (b : Fin n) (hb : b ∉ Set.range pl) (i : Fin dd) : linPt Y (MS Y p pl) (b, i) = 0 := by

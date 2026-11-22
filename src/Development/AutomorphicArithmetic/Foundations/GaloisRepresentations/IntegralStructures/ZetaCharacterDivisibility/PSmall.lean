@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.ZetaCharacterDivisibility.CharOfZeta
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PGenScale
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.ZetaCharacterDivisibility.CharOfZeta
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PGenScale
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.HeckeGal GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.CongL GlobalTheory.RoadWGeo
 open Formalism.MainNotions.SumRepresentations.At (sumRep)
@@ -40,7 +45,11 @@ theorem frobSeed_of (h1 : InFacts) (h2 : GenPin) (h3 : AlgGen) (h4 : DetFrob) : 
   obtain ⟨e1, e2⟩ := he A hA
   refine ⟨fun s hs => i1 s (e1 s hs), fun σ hσ => ?_⟩
   have hc : B.card = a := hB.choose_spec.2.card
-  refine h2 l ι a _ _ (by simp [algSat, hc]) (h3 a _ B (GlobalTheory.LFun.qV_ne_zero w) hg) (i2 σ⁻¹ _ (e2 σ hσ)) ?_
+  have hn : normV w ≠ 0 := by
+    have h := NumberField.HeightOneSpectrum.one_lt_absNorm w
+    rw [Ideal.absNorm_apply, Submodule.cardQuot_apply] at h
+    exact h.ne_bot
+  refine h2 l ι a _ _ (by simp [algSat, hc]) (h3 a _ B hn hg) (i2 σ⁻¹ _ (e2 σ hσ)) ?_
   rw [hdet]
   exact (h4 E Ω l ι a U ψ hψ w hw hl B hB A hA).2 σ hσ
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
-import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+
+@[expose] public section
+
 open NumberField GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.DegCmp GlobalTheory.DegVal GlobalTheory.CovTop ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open scoped ENNReal NNReal
 
@@ -16,7 +21,8 @@ theorem exists_realValuation_of_discreteValuationSubring {Ω : Type} [Field Ω]
   have hne : maximalIdeal V ≠ ⊥ := IsDiscreteValuationRing.not_a_field V
   let v : HeightOneSpectrum V := ⟨maximalIdeal V, inferInstance, hne⟩
   let hmono := (WithZeroMulInt.toNNReal_strictMono (e := 2) (by norm_num))
-  refine ⟨(v.valuation Ω).map (WithZeroMulInt.toNNReal (e := 2) (by norm_num)) hmono.monotone,
+  refine ⟨Valuation.map { WithZeroMulInt.toNNReal (e := 2) (by norm_num) with
+    monotone' := hmono.monotone } (v.valuation Ω),
     fun x => ?_, fun x hx => ?_⟩
   · have h := v.valuation_le_one (K := Ω) x
     have := hmono.monotone h

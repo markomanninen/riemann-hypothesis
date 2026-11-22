@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.TensorSpan
-import ReciprocityTheory.DualLattices.SmallLevelClassSet
+module
+
+public import ReciprocityTheory.DualLattices.TensorSpan
+public import ReciprocityTheory.DualLattices.SmallLevelClassSet
+
+@[expose] public section
 
 noncomputable section
 

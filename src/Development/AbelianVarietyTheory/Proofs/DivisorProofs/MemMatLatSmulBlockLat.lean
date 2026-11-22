@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+
+@[expose] public section
 
 open Matrix MeasureTheory GlobalTheory.SplitFlip GlobalTheory.SplitWeil ValuativeRel
 open scoped Pointwise
@@ -10,26 +14,26 @@ namespace GlobalTheory.SplitFlip.FourierDepth
 variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {A D : Type*} [DecidableEq D]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem setCols_add (P : Finset D) (Y Z : Matrix A D k) (T : Matrix A P k) :
     setCols P (Y + Z) T = setCols P Y T + setCols P Z 0 := by
   ext i j
   by_cases h : j ∈ P <;> simp [setCols, h]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [DecidableEq D] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [DecidableEq D] in
 theorem pairCols_add [Fintype A] (P : Finset D) (Y Z : Matrix A D k) (T : Matrix A P k) :
     pairCols P (Y + Z) T = pairCols P Y T + pairCols P Z T := by
   simp [pairCols, mul_add, Finset.sum_add_distrib]
 
-omit [DecidableEq D] in
 
+omit [DecidableEq D] in
 theorem mem_matLat_diagLat {c : D → kˣ} {X : Matrix A D k} :
     X ∈ matLat A (diagLat c) ↔ ∀ i j, valuation k (X i j) ≤ valuation k (c j : k) := Iff.rfl
 
-omit [DecidableEq D] in
 
+omit [DecidableEq D] in
 theorem mem_matLat_smul_stdLat {c : kˣ} {X : Matrix A D k} :
     X ∈ matLat A (c • stdLat k D) ↔ ∀ i j, valuation k (X i j) ≤ valuation k (c : k) := by
   rw [stdLat, smul_diagLat, mem_matLat_diagLat]
@@ -115,7 +119,7 @@ theorem isNatDatum_invFourierSum {ψ : AddChar k Circle} {ϖ : kˣ} (hϖ : IsUni
       refine hY (mem_matLat_stdLat.2 fun i j => ?_)
       by_cases hj : j ∈ P
       · exact h i j hj
-      · simpa only [setCols, of_apply, dif_neg hj] using (mem_matLat_blockLat.1 H).2 i j hj
+      · simpa only [setCols, of_apply, dif_neg hj] using (mem_matLat_blockLat (ϖ := ϖ) (e := e) (P := P) |>.1 H).2 i j hj
     · rfl
   · have h1 := mem_matLat_smul_stdLat.1 hZ
     rw [invFourierSum_apply, invFourierSum_apply]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.LatticeCovolumeL2
 
@@ -290,7 +294,8 @@ theorem exists_line_basis {La ι V : Type} [AddCommGroup La] [Module (𝓞 E) La
       exact hT _ _ ht
     obtain ⟨g, hg⟩ := (Submodule.mem_span_range_iff_exists_fun (R := ℤ)).1 (hb v hTv)
     have h2 : e • ψ t = (∑ k, g k • a k) • ψ t := by
-      rw [← hv, ← hg, map_sum, Finset.sum_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hv, ← hg, map_sum, Finset.sum_smul]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_zsmul, ha k, smul_assoc]
     have h3 : e = ∑ k, g k • a k := smul_left_injective E h0 h2
@@ -299,7 +304,8 @@ theorem exists_line_basis {La ι V : Type} [AddCommGroup La] [Module (𝓞 E) La
   · intro he
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun (R := ℤ)).1 he
     refine ⟨∑ k, c k • b k, ?_⟩
-    rw [map_sum, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_smul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul, ha k, smul_assoc]
 

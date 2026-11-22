@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.GraphHeightLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.GraphHeightLattice
+
+@[expose] public section
 
 noncomputable section
 

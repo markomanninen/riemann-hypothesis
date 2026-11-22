@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsBoundA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsBoundA
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem dirC_eval {ι : Type} [Fintype ι] [DecidableEq ι] (φ : ι → E n →
   | C a => simp only [MvPolynomial.eval_C, MvPolynomial.pderiv_C, map_zero, zero_mul, Finset.sum_const_zero]
            exact dirC_const a w y
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [dirC_add (hd p) (hd q), hp, hq, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     ring

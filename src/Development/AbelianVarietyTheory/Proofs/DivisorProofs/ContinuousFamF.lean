@@ -1,13 +1,17 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PBConjTranspose
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StR
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousDen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjDiagReNonneg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StExpDeriv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjTransposeSignFormDiagEqSignedSumCol
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedDerivScale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StConstHolds
-import Mathlib
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PBConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StR
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousDen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjDiagReNonneg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StExpDeriv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjTransposeSignFormDiagEqSignedSumCol
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedDerivScale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StConstHolds
+public import Mathlib
+
+@[expose] public section
 
 section
 
@@ -29,7 +33,7 @@ theorem iter_zero {G : ℝ → ℝ} (h1 : ∀ x, 1 ≤ x → G x = 0) {t : ℝ} 
       (continuous_const.mul continuous_id).continuousAt.eventually (lt_mem_nhds hy)
     filter_upwards [this] with x hx using h1 _ hx.le
   rw [hev.iteratedDeriv_eq k]
-  simp [iteratedDeriv_const]
+  simp
 
 theorem iter_cont {G : ℝ → ℝ} (hG : ContDiff ℝ ∞ G) (t : ℝ) (k : ℕ) :
     Continuous (iteratedDeriv k fun x => G (t * x)) :=
@@ -62,7 +66,7 @@ theorem continuous_rM (ε : Fin n → Bool) : Continuous fun M : Mat n => rM ε 
 theorem continuous_famF (ε : Fin n → Bool) {G : ℝ → ℝ} (hG : ContDiff ℝ ∞ G) (p : ℕ → Poly n) (t : ℝ) :
     Continuous fun M : Mat n => famF ε G p t M := by
   unfold famF bas
-  refine continuous_finset_sum _ fun k _ => ?_
+  refine continuous_finsetSum _ fun k _ => ?_
   exact (Complex.continuous_ofReal.comp ((iter_cont hG t k).comp (continuous_rM ε))).mul (continuous_ev _)
 
 theorem famF_eq_zero (ε : Fin n → Bool) {G : ℝ → ℝ} (h1 : ∀ x, 1 ≤ x → G x = 0) (p : ℕ → Poly n) {t : ℝ}
@@ -110,7 +114,7 @@ theorem fam_cs (hR : StR) (ε : Fin n → Bool) {G : ℝ → ℝ} (hG : IsProfil
   refine ⟨((continuous_famF ε hG.1 p t).comp (continuous_toM ε)).mul hw, ?_⟩
   refine HasCompactSupport.intro ((hR n ε).2.2.2 (1 / t)) fun g hg => ?_
   have hg' : 1 < t * rM ε (toM g) := by
-    simp only [Set.mem_setOf_eq, not_le] at hg
+    simp only [Set.mem_ofPred_eq, not_le] at hg
     rwa [div_lt_iff₀' ht] at hg
   simp [famF_eq_zero ε hG.2.1 p ht hg']
 
@@ -189,7 +193,7 @@ theorem lim1 (hEB : StEB) (hR : StR) (hL : StExpLow) (hD : StExpDeriv) (hF : StF
       ring
     show (J B : ℂ) * ∫ k : KG ε, famF ε G p t (toM ((k : UJ ε) * eB ε B)) * w (k * eB ε B) ∂(muK ε) = _
     rw [integral_congr_ae (Eventually.of_forall hpt),
-      integral_finset_sum _ fun j _ => (hint j).const_mul _, Finset.mul_sum]
+      integral_finsetSum _ fun j _ => (hint j).const_mul _, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [integral_const_mul]
     ring
@@ -254,7 +258,8 @@ theorem lim2 (hEB : StEB) (hR : StR) (hL : StExpLow) (hD : StExpDeriv) (hC : StC
   have hval : ψ (nMode ε) 0 = (J 0 : ℂ) * ev (toM s) (p (nMode ε)) := by
     simp only [ψ, hEB0, inv_one, one_mul, mul_one]
     rw [integral_congr_ae (Eventually.of_forall hinv)]
-    simp [integral_const, Measure.real, muK_univ]
+    rw [integral_const, Measure.real, muK_univ]
+    simp
   obtain ⟨η, hη, hη'⟩ := hC n ε s d hs hinj 1 one_pos
   have heq : ∀ᶠ t : ℝ in atTop, ∫ x, famF ε G p t (toM (x⁻¹ * s * x)) ∂μ =
       ∫ B, ∑ k ∈ Finset.range (Fintype.card (Mode ε) + 1),
@@ -299,7 +304,7 @@ theorem lim2 (hEB : StEB) (hR : StR) (hL : StExpLow) (hD : StExpDeriv) (hC : StC
       simp only [bas, hr k]
     show (J B : ℂ) * ∫ k : KG ε, famF ε G p t (toM ((eB ε B * (k : UJ ε))⁻¹ * s * (eB ε B * (k : UJ ε)))) ∂(muK ε) = _
     rw [integral_congr_ae (Eventually.of_forall hpt),
-      integral_finset_sum _ fun j _ => (hint j).const_mul _, Finset.mul_sum]
+      integral_finsetSum _ fun j _ => (hint j).const_mul _, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [integral_const_mul]
     ring

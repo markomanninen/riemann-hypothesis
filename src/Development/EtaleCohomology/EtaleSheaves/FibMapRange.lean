@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LineOneCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LineOneCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut
@@ -10,7 +14,8 @@ lemma fibMap_eq {A : Type} [CommRing A] [IsLocalRing A] {U Z : Scheme.{0}} (p : 
     fibMap p ι = (pullbackRightPullbackFstIso p (cpt A) ι).inv ≫ pullback.snd ι (pullback.fst p (cpt A)) := by
   apply pullback.hom_ext
   · rw [Category.assoc, pullbackRightPullbackFstIso_inv_snd_fst]; exact pullback.lift_fst _ _ _
-  · rw [Category.assoc, pullbackRightPullbackFstIso_inv_snd_snd]; exact pullback.lift_snd _ _ _
+  · rw [Category.assoc, pullbackRightPullbackFstIso_inv_snd_snd]
+    simp [fibMap]
 
 lemma fibMap_open {A : Type} [CommRing A] [IsLocalRing A] {U Z : Scheme.{0}} (p : Z ⟶ Spec (CommRingCat.of A)) (ι : U ⟶ Z)
     [IsOpenImmersion ι] : IsOpenImmersion (fibMap p ι) := by

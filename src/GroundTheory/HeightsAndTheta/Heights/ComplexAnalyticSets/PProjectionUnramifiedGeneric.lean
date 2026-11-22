@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Theta.SplitLinear.RankMinors
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StProjectionUnramifiedGeneric
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Theta.SplitLinear.RankMinors
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StProjectionUnramifiedGeneric
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -35,18 +40,19 @@ theorem proof : ProjectionUnramifiedGeneric.Statement := by
   let D : (β → L) → MvPolynomial (α ⊕ β) ℂ → L := fun c p => ∑ b, φ (pderiv (Sum.inr b) p) * c b
   have hDadd : ∀ c p p', D c (p + p') = D c p + D c p' := by
     intro c p p'
-    simp only [D, map_add, add_mul, Finset.sum_add_distrib]
+    simp only [D, map_add (f := _), add_mul, Finset.sum_add_distrib]
   have hDmul : ∀ c p p', D c (p * p') = φ p * D c p' + φ p' * D c p := by
     intro c p p'
     simp only [D]
     rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [pderiv_mul]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
     ring
   have hDsum : ∀ c (f : Fin r → MvPolynomial (α ⊕ β) ℂ), D c (∑ j, f j) = ∑ j, D c (f j) := by
     intro c f
-    simp only [D, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [D, map_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
   have hDX : ∀ c b, D c (X (Sum.inr b)) = c b := by
     intro c b
@@ -118,7 +124,7 @@ theorem proof : ProjectionUnramifiedGeneric.Statement := by
 
   let M : Matrix (Fin r) β L := Matrix.of fun j b => φ (pderiv (Sum.inr b) (q j))
   have hMinj : Function.Injective M.mulVecLin := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     apply hker c
     intro j

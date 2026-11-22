@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.SectionScalarValuation
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.SectionScalarValuation
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +27,8 @@ theorem gs_sub' (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) (a b : Γ(X,
 
 theorem gs_sum' (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) {ι : Type} [Fintype ι]
     (a : ι → Γ(X, U)) : gs r z U (∑ i, a i) = ∑ i, gs r z U (a i) := by
-  simp only [gs_eq r z U h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gs_eq r z U h, map_sum]
 
 theorem gs_one' (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) : gs r z U 1 = 1 := by
   simp only [gs_eq r z U h, map_one]
@@ -244,7 +249,8 @@ theorem ker_sup_span_eq_top (f : X ⟶ Y) [IsAffine Y] [UniversallyClosed f] {H 
   have key : gs p₁ z _ ((s j).f k) = ∑ l, gs p₂ z ⊤ (e (MvPolynomial.C (c j l))) *
       (gs p₁ z _ ((t l).f k) - gs p₂ z ⊤ (e (MvPolynomial.X l)) * gs p₁ z _ (t₀.f k)) +
       gs p₂ z ⊤ (e (∑ l, MvPolynomial.C (c j l) * MvPolynomial.X l)) * gs p₁ z _ (t₀.f k) := by
-    rw [hc, gs_sum' _ _ _ hk, map_sum, gs_sum' _ _ _ (mem_top' _), Finset.sum_mul, ← Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, gs_sum' _ _ _ hk, map_sum, gs_sum' _ _ _ (mem_top' _), Finset.sum_mul, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [gs_mul _ _ _ hk, hb, map_mul, gs_mul _ _ _ (mem_top' _)]
     ring
@@ -285,7 +291,8 @@ theorem EmbedsBy.affine_and_surjective {f : X ⟶ Y} [IsAffine Y] [UniversallyCl
     have hρ : ∀ j, IsRatio (s j) t₀ (ψ (lam j)) := fun j => isRatio_of_gs fun x hx => by
       obtain ⟨k, hk⟩ := exists_chart_of_mem t₀ hx
       refine ⟨k, hk, ?_⟩
-      rw [hc, gs_sum' (𝟙 X) x _ hk, hlam, map_sum, gs_sum' (𝟙 X) x _ hx, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hc, gs_sum' (𝟙 X) x _ hk, hlam, map_sum, gs_sum' (𝟙 X) x _ hx, Finset.sum_mul]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [map_mul, hψ, MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂Hom_X', gs_mul (𝟙 X) x _ hk,
         gs_mul (𝟙 X) x _ hx, gs_const f _ (𝟙 X) x hk, gs_const f _ (𝟙 X) x hx,
@@ -330,7 +337,7 @@ theorem EmbedsBy.affine_and_surjective {f : X ⟶ Y} [IsAffine Y] [UniversallyCl
           obtain ⟨n, a, ha⟩ := hp
           obtain ⟨m, b, hb⟩ := hq
           refine ⟨n + m, lam j ^ m * a + lam j ^ n * b, ?_⟩
-          rw [map_add, map_add, map_add, map_mul, map_mul, map_pow, map_pow, ← ha, ← hb]
+          rw [map_add (f := _), map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, ← ha, ← hb]
           ring
         | mul_X p i hp =>
           obtain ⟨n, a, ha⟩ := hp
@@ -567,8 +574,8 @@ section Group
 
 variable {S : Scheme.{0}} (A : Over S) [GrpObj A] {L : LB A.left} {N : ℕ}
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem exists_isPullback_restrict {U : S.Opens} {φ : X' ⟶ A.left} {f' : X' ⟶ Y'}
     {g : Y' ⟶ U.toScheme} (sq : IsPullback φ f' A.hom (g ≫ U.ι)) :
     ∃ h : X' ⟶ (A.hom ⁻¹ᵁ U).toScheme, h ≫ (A.hom ⁻¹ᵁ U).ι = φ ∧
@@ -623,11 +630,6 @@ theorem embedsBy_of_isPullback [UniversallyClosed A.hom] (hL : L.IsLB) (hA : Ver
 omit [GrpObj A] in
 theorem comp_topIso_inv_ι (g : Y' ⟶ S) : (g ≫ S.topIso.inv) ≫ (⊤ : S.Opens).ι = g := by simp
 
-theorem embeds_by_global_sections [IsAffine S] [UniversallyClosed A.hom] (hL : L.IsLB) (hA : VeryAmpleAt A L N)
-    {ι : Type} [Fintype ι] (t : ι → H0 L N) (ht : ∀ s, InSpan A.hom t s) : EmbedsBy A.hom t :=
-  (embedsBy_of_isPullback A hL hA (isAffineOpen_top S) (g := 𝟙 S ≫ S.topIso.inv)
-    (by rw [comp_topIso_inv_ι]; exact IsPullback.of_id_fst) (by simp) t ht).1
-
 theorem inSpan_iff_mem_span {a : ℤ} {T : Over S} {ι : Type} [Fintype ι]
     (t : ι → LB.Sec (LPow A L a T)) (s : LB.Sec (LPow A L a T)) :
     InSpan (fst T A).left t s ↔ SecM.ofSec A s ∈
@@ -673,24 +675,7 @@ theorem translate_powOver_LPow (hL : L.IsLB) (N : ℕ) {U : S.Opens} (T : Over S
   have : IsIso h := sq.isIso_fst_of_isIso
   exact exists_equiv_secScal hL (formEq_const e (sum_one_fin N))
 
-omit [GrpObj A] in
-
-theorem global_sections_power_over_top (hL : L.IsLB) (N : ℕ) :
-    ∃ E : H0 L N ≃ LB.Sec (powOver A L ⊤ N),
-      ∀ s s', GeneratorPullback.SecScal L _ _ s' _ _ s (A.hom ⁻¹ᵁ ⊤).ι 1 ↔ E s = s' :=
-  have : IsIso (A.hom ⁻¹ᵁ ⊤).ι := A.left.topIso.isIso_hom
-  exists_equiv_secScal hL (formEq_const (Category.comp_id _) (sum_one_fin N).symm)
 
 end Group
-
-theorem polarized_abelian_embeds_by_sections (hA : AmpleSt) {S : Scheme.{0}} [IsAffine S] [IsLocallyNoetherian S]
-    (P : PolAV S) {N : ℕ} (hN : 4 ≤ N) {ι : Type} [Fintype ι] (t : ι → H0 P.L N)
-    (ht : ∀ s, InSpan P.A.hom t s) : EmbedsBy P.A.hom t :=
-  have := P.isAb.proper
-  embeds_by_global_sections P.A P.isLB (hA S P N hN).2 t ht
-
-theorem exists_embedsBy_polAV {S : Scheme.{0}} (P : PolAV S) {U : S.Opens} (hU : IsAffineOpen U) :
-    ∃ N : ℕ, 1 ≤ N ∧ ∃ M : ℕ, ∃ s : Fin (M + 1) → LB.Sec (powOver P.A P.L U N),
-      EmbedsBy (P.A.hom ∣_ U) s := P.ample U hU
 
 end GlobalTheory.AmpleSpan

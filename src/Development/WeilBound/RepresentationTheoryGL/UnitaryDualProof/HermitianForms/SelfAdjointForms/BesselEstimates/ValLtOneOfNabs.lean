@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.FixK
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.ColumnAlgebra.PiColElAdd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterAnnihilatorIntegerLatticeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsScaledNontrivialCharacterStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.FixK
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.ColumnAlgebra.PiColElAdd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterAnnihilatorIntegerLatticeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsScaledNontrivialCharacterStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,15 +27,18 @@ theorem bessel_finite {V : Type} [AddCommGroup V] [Module ℂ V] (B : V →ₗ[�
   have e1 : B (v - S) (v - S) = B v v - B v S - B S v + B S S := by
     simp only [map_sub, LinearMap.sub_apply]; ring
   have e2 : B S v = ∑ i ∈ Finset.range I, B (u i) (u i) := by
-    rw [hS, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hS, map_sum, LinearMap.sum_apply]
     exact Finset.sum_congr rfl fun i _ => hself i
   have e3 : B v S = ∑ i ∈ Finset.range I, starRingEnd ℂ (B (u i) (u i)) := by
-    rw [hS, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hS, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hB.1 (u i) v, hself i]
   have e4 : B S S = ∑ i ∈ Finset.range I, B (u i) (u i) := by
     rw [hS]
-    simp only [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i hi => ?_
     rw [Finset.sum_eq_single i (fun j _ hj => horth j i hj) (fun h => absurd hi h)]
   rw [e1, e2, e3, e4] at h0

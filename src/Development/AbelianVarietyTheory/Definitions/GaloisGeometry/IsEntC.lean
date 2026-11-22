@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsPin
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.LocalToGlobal.KernelLattices.AdaptedEnt
-import Formalism.LocalToGlobal.KernelLattices.KerMtPin
-import Formalism.LocalToGlobal.KernelLattices.JetFieldLeKR
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.KerEntHyp
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Formalism.LocalToGlobal.GroupLattices.StabilizerCount.StabiliserTrivialOfTiedChain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsPin
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.LocalToGlobal.KernelLattices.AdaptedEnt
+public import Formalism.LocalToGlobal.KernelLattices.KerMtPin
+public import Formalism.LocalToGlobal.KernelLattices.JetFieldLeKR
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.KerEntHyp
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Formalism.LocalToGlobal.GroupLattices.StabilizerCount.StabiliserTrivialOfTiedChain
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,14 +28,6 @@ def At (ex : Extra D L hT Gi Gl K Y cX) (E : KerEnt D Y ex.tw) : Prop :=
       OrbitPlaces.ThetaKernelShapeAtD (OrbitPlaces.ofKer (nuRowOK D) E ep be sg) Y ∧ OrbitPlaces.Shape D L Gi (OrbitPlaces.ofKer (nuRowOK D) E ep be sg)
 
 variable {ex : Extra D L hT Gi Gl K Y cX}
-
-structure Pins (t : KerEntTied ex) : Prop where
-  adapted : t.Adapted
-  top : t.TopPinned
-  mem : t.MemSideU
-  mtTw : t.MtTwTie
-  chr : ∃ (C : CharFrame D) (nch : NChoice D), Nonempty (DtTied D C) ∧ Nonempty (TupTied D C nch)
-  tw : ∃ (_ : LevelData D) (inQ : D.what₂.Tup → HeightOneSpectrum (𝓞 D.host.F) → Prop), Nonempty (Formalism.L2.Herm.TwChTied D inQ)
 
 def IsEntC (t : KerEntTied ex) : Prop :=
   ∃ (P : Examples₂.EntPl D) (B : PlaceMatrixFamily D) (h : KerEntHyp P t.O B Y ex.tw), t.ent = kerEntC P t.O B h

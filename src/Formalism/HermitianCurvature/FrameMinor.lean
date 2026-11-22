@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementQr
+module
+
+public import Formalism.HermitianCurvature.StatementQr
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -10,12 +14,6 @@ namespace Formalism.FourierDecayAlt.Qr
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-def RZLin : Prop :=
-  ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] (k r : ℕ) (i : Fin (r + 1)) (D : Set (Mx k r)), IsOpen D →
-    ∀ (c : Fin (mdim k r i) → Fin (mdim k r i) → ℂ) (F : Mx k r → E), SmoothLev k r i D F → ∀ g ∈ Glev k r i ∩ D,
-      RZ (Hpk k r) (∑ a, ∑ b, c a b • Matrix.single (posL k r i a) (posL k r i b) (1 : ℂ)) F g =
-        ∑ a, ∑ b, c a b • EH k r (posL k r i a) (posL k r i b) F g
 
 def FrameMinor : Prop :=
   ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] (k r m : ℕ) (D : Set (Mx k r)), IsOpen D →

@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsIsOpenForallCuspRepTFinOneEq
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsMeasure
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsArchConv
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
-import GroundTheory.AutomorphicForms.GKModules.VectorKernel
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsIsOpenForallCuspRepTFinOneEq
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsMeasure
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsArchConv
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
+public import GroundTheory.AutomorphicForms.GKModules.VectorKernel
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function
 open scoped InnerProductSpace
@@ -21,12 +25,12 @@ open AutomorphicForm RightCosetSpace Reduction
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-local notation "Γ₁" => Reduction.rationalGLOne K n
+local notation "Γ₁" => Reduction.rationalGLOne (K := K) (n := n)
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
-theorem rconv_mul_of_left_inv {f : normOneGL K n → ℂ} {u : normOneGL K n}
-    (hf : ∀ x, f (u⁻¹ * x) = f x) (φ : Lp ℂ 2 (quotientMeasure Γ₁ μ)) (x : normOneGL K n) :
+theorem rconv_mul_of_left_inv {f : normOneGL (K := K) (n := n) → ℂ} {u : normOneGL (K := K) (n := n)}
+    (hf : ∀ x, f (u⁻¹ * x) = f x) (φ : Lp ℂ 2 (quotientMeasure Γ₁ μ)) (x : normOneGL (K := K) (n := n)) :
     rconv Γ₁ μ f φ (x * u) = rconv Γ₁ μ f φ x := by
   unfold rconv
   refine integral_congr_ae (Eventually.of_forall fun y => ?_)
@@ -38,18 +42,18 @@ theorem archimedeanProjection_maximalCompact (k : archCompact K n) :
       ⟨infEmb K n (k : archGroup K n), Reduction.maxCompact_le_normOneGL k.2⟩ :=
   archProj_of_mem (Reduction.maxCompact_le_normOneGL k.2)
 
-variable {μ} in
 
-theorem IsContRep.of_eq {φ ψ : Lp ℂ 2 (quotientMeasure Γ₁ μ)} {F : normOneGL K n → ℂ}
+variable {μ} in
+theorem IsContRep.of_eq {φ ψ : Lp ℂ 2 (quotientMeasure Γ₁ μ)} {F : normOneGL (K := K) (n := n) → ℂ}
     (h : IsContRep μ φ F) (e : φ = ψ) : IsContRep μ ψ F := e ▸ h
 
-variable {μ} in
 
-theorem IsContRep.of_eq_fun {φ : Lp ℂ 2 (quotientMeasure Γ₁ μ)} {F G : normOneGL K n → ℂ}
+variable {μ} in
+theorem IsContRep.of_eq_fun {φ : Lp ℂ 2 (quotientMeasure Γ₁ μ)} {F G : normOneGL (K := K) (n := n) → ℂ}
     (h : IsContRep μ φ F) (e : F = G) : IsContRep μ φ G := e ▸ h
 
-omit [μ.IsHaarMeasure] in
 
+omit [μ.IsHaarMeasure] in
 theorem smul_comb {E : Type*} [AddCommGroup E] [Module ℂ E] (X : E) (r i c : ℂ) :
     r • (c • X) + Complex.I • (i • (c • X)) = c • ((r + i * Complex.I) • X) := by
   simp only [smul_smul, ← add_smul]
@@ -58,8 +62,8 @@ theorem smul_comb {E : Type*} [AddCommGroup E] [Module ℂ E] (X : E) (r i c : �
 
 variable (ν : Measure (archGroup K n)) [ν.IsHaarMeasure]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_contRep_of_zkFinite (v : CuspL2 μ)
     (hs : (isExpLieAlgebra K n).IsSmoothVector (archRepT μ) v)
     (hK : FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k :
@@ -67,13 +71,14 @@ theorem exists_contRep_of_zkFinite (v : CuspL2 μ)
         cuspRepT μ ⟨k, Reduction.maxCompact_le_normOneGL k.2⟩ v)))
     (hZ : FiniteDimensional ℂ (Submodule.span ℂ ((fun z => (isExpLieAlgebra K n).uAction (archRepT μ) z
       ⟨v, hs⟩) '' ((isExpLieAlgebra K n).centerU : Set _)))) :
-    ∃ (κ : archGroup K n → ℂ) (U : Subgroup (AdelicGLn.integralFiniteGL K n)) (Φ : normOneGL K n → ℂ)
+    ∃ (κ : archGroup K n → ℂ) (U : Subgroup (AdelicGLn.integralFiniteGL K n)) (Φ : normOneGL (K := K) (n := n) → ℂ)
       (C : ℝ), (isExpLieAlgebra K n).IsTestFunction κ ∧ (archRepT μ).integrated ν κ v = v ∧
       IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)) ∧
       IsContRep μ (toLp μ v) Φ ∧ (∀ y, ‖Φ y‖ ≤ C) ∧
       (∀ u ∈ U, ∀ x, Φ (x * finOne K n u) = Φ x) ∧
-      ∀ r : ℕ, 0 < r → r < n → ∀ x : normOneGL K n,
-        ∫ X in unipFundamentalDomain K n r, Φ (unipOne K n r X * x) ∂unipMeasure K n r = 0 := by
+      ∀ r : ℕ, 0 < r → r < n → ∀ x : normOneGL (K := K) (n := n),
+        ∫ X in unipFundamentalDomain K n r, Φ (unipOne (K := K) (n := n) r X * x)
+          ∂unipMeasure K n r = 0 := by
   have := isFiniteMeasure_quotientMeasure (K := K) (n := n) μ
 
   have hKarch : FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k : archCompact K n =>
@@ -98,7 +103,7 @@ theorem exists_contRep_of_zkFinite (v : CuspL2 μ)
 
   have hRv : (cuspRepT μ).integrated μ (UnitaryRep.ccToL1 μ F₀) v = (c : ℂ) • v := by
     refine ext_inner_left ℂ fun w => ?_
-    have hΘc : Continuous fun x : normOneGL K n => ⟪w, cuspRepT μ x v⟫_ℂ :=
+    have hΘc : Continuous fun x : normOneGL (K := K) (n := n) => ⟪w, cuspRepT μ x v⟫_ℂ :=
       continuous_const.inner ((cuspRepT μ).continuous_orbit v)
     have hΘU : ∀ u ∈ U, ∀ x, ⟪w, cuspRepT μ (x * finOne K n u) v⟫_ℂ = ⟪w, cuspRepT μ x v⟫_ℂ :=
       fun u hu x => congrArg (fun z => ⟪w, z⟫_ℂ)
@@ -116,7 +121,7 @@ theorem exists_contRep_of_zkFinite (v : CuspL2 μ)
       _ = (c : ℂ) * ⟪w, v⟫_ℂ := congrArg (fun t => (c : ℂ) * t) e1
       _ = ⟪w, (c : ℂ) • v⟫_ℂ := (inner_smul_right w v (c : ℂ)).symm
 
-  have hsub : ∀ f : CompactlySupportedContinuousMap (normOneGL K n) ℂ,
+  have hsub : ∀ f : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ,
       (rightRegularRep Γ₁ μ).integrated μ (UnitaryRep.ccToL1 μ f) (toLp μ v) =
         toLp μ ((cuspRepT μ).integrated μ (UnitaryRep.ccToL1 μ f) v) := fun f =>
     (toLp_integrated μ (UnitaryRep.ccToL1 μ f) v).symm
@@ -125,7 +130,7 @@ theorem exists_contRep_of_zkFinite (v : CuspL2 μ)
       ((hsub F₀).trans ((congrArg (toLp μ) hRv).trans ((toLp μ).map_smul (c : ℂ) v)))
   have hcancel : ∀ x : Lp ℂ 2 (quotientMeasure Γ₁ μ), (c : ℂ)⁻¹ • (c : ℂ) • x = x := fun x => by
     rw [smul_smul, inv_mul_cancel₀ hc0, one_smul]
-  obtain ⟨Φ, hΦ⟩ : ∃ Φ : normOneGL K n → ℂ,
+  obtain ⟨Φ, hΦ⟩ : ∃ Φ : normOneGL (K := K) (n := n) → ℂ,
       Φ = (c : ℂ)⁻¹ • rconv Γ₁ μ F₀ (toLp μ v) := ⟨_, rfl⟩
   have hrep : IsContRep μ (toLp μ v) Φ :=
     ((hrep0.smul (c : ℂ)⁻¹).of_eq (hcancel _)).of_eq_fun hΦ.symm

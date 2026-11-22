@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.Joints
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.MeanNum
-import Development.AutomorphicArithmetic.CyclotomicBounds.NotInert
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.Joints
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.MeanNum
+public import Development.AutomorphicArithmetic.CyclotomicBounds.NotInert
+
+@[expose] public section
 
 noncomputable section
 
@@ -309,8 +313,8 @@ def NumII (D : D7) (L : SizeData₂ D) (K : Consts) (p n' N : ℕ) : Prop :=
             2 * (rG L.sc : ℝ) * ((n' : ℕ) : ℝ) * cG L)) *
         L.sc.x ^ Scale.A ≤ L.sc.a - cG L
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem numII_ev (eps : ℝ) (K : Consts) (hK : K.Nonneg) (C31 : ℝ) (h31 : 0 < C31) :
     ∀ᶠ x : ℝ in atTop, ∀ (D : D7) (L : SizeData₂ D), L.sc.x = x → L.sc.eps = eps → Formalism.MainNotions.SizesAt L →
       ∀ p n' N : ℕ, p.Prime → (p : ℝ) < L.sc.p0 D.R.k → L.sc.x ^ (L.sc.eps / 4) ≤ (n' : ℝ) → n' ≤ D.R.n → N ≤ n' →
@@ -562,8 +566,8 @@ theorem numII_ev (eps : ℝ) (K : Consts) (hK : K.Nonneg) (C31 : ℝ) (h31 : 0 <
     rw [hab]
     nlinarith
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem hypIIAt_ev (eps ez : ℝ) (hez0 : 0 < ez) (K : Consts) (hK : K.Nonneg) (C31 : ℝ) (h31 : 0 < C31) :
     ∀ᶠ x : ℝ in atTop, ∀ (D : D7) (L : SizeData₂ D) (X : Inst D L), L.sc.x = x → L.sc.eps = eps → L.sc.ez = ez → Formalism.MainNotions.SizesAt L →
       La K L.sc = L.LaG → rho D K L.sc ≤ L.sc.x ^ (-2 : ℝ) → AuxBlock8.adm1 D L X C31 → HypIIAt D L X K := by

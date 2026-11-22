@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.StRiemannSlices
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.StRiemannSlices
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Regular
@@ -48,17 +53,22 @@ theorem cauchy_torus_off_axes : ∀ (n : ℕ) (G : (Fin n → ℂ) → ℂ),
     (∀ z ∈ ball (0 : Fin n → ℂ) 1, ∀ i : Fin n, (∀ j, j ≠ i → z j ≠ 0) →
       ∃ c : ℂ, Tendsto (fun x : ℂ => G (Function.update z i x)) (𝓝[≠] 0) (𝓝 c)) →
     ∀ r : ℝ, 0 < r → r < 1 → ∀ z ∈ ball (0 : Fin n → ℂ) r, (∀ i, z i ≠ 0) →
-    (∯ ζ in T(0, fun _ => r), (∏ i, (ζ i - z i)⁻¹) * G ζ) = (2 * π * I) ^ n * G z
-  | 0, G, _, _, r, _, _, z, _, _ => by
+    (∯ ζ in T(0, fun _ => r), (∏ i, (ζ i - z i)⁻¹) * G ζ) = (2 * π * I) ^ n * G z := by
+  intro n
+  induction n with
+  | zero =>
+    intro G _ _ r _ _ z _ _
     rw [torusIntegral_dim0]
     simp [Subsingleton.elim z 0]
-  | n + 1, G, hd, hlim, r, hr0, hr1, z, hz, hzW => by
+  | succ n ih =>
+    intro G hd hlim r hr0 hr1 z hz hzW
     have hint : TorusIntegrable (fun ζ => (∏ i, (ζ i - z i)⁻¹) * G ζ) 0 (fun _ => r) := by
       refine ContinuousOn.integrableOn_compact isCompact_Icc (Continuous.continuousOn ?_)
       refine Continuous.mul ?_ (continuous_comp_torusMap_zero hd hr0 hr1)
       refine continuous_finsetProd _ fun i _ => Continuous.inv₀ ?_ fun θ => torusMap_sub_ne hr0 hz θ i
       exact ((continuous_apply i).comp (continuous_torusMap 0 r)).sub continuous_const
-    rw [torusIntegral_succ hint]
+    have hsplit := torusIntegral_succ (E := ℂ) (n := n) hint
+    rw [hsplit]
     have hz1 : z ∈ ball (0 : Fin (n + 1) → ℂ) 1 := ball_subset_ball hr1.le hz
     have hz' : Fin.tail z ∈ ball (0 : Fin n → ℂ) r :=
       (mem_ball_pi_iff hr0).mpr fun i => by simpa [Fin.tail] using (mem_ball_pi_iff hr0).mp hz i.succ
@@ -87,23 +97,24 @@ theorem cauchy_torus_off_axes : ∀ (n : ℕ) (G : (Fin n → ℂ) → ℂ),
           induction j using Fin.cases with
           | zero => simpa using hx0
           | succ k => simpa using hwi k (fun h => hj (by rw [h]))
-        obtain ⟨c, hc⟩ := hlim _ (cons_mem_ball_one hx1 hw) i.succ hne
-        refine ⟨c, ?_⟩
-        simp only [Fin.cons_update]
-        exact hc
-      have ih := cauchy_torus_off_axes n (fun y => G (Fin.cons x y)) hd' hlim' r hr0 hr1 (Fin.tail z) hz' hzW'
+        simpa only [Fin.cons_update] using hlim (Fin.cons x w) (cons_mem_ball_one hx1 hw) i.succ hne
+      have htail := ih (fun y => G (Fin.cons x y)) hd' hlim' r hr0 hr1 (Fin.tail z) hz' hzW'
       have e0 : ((0 : Fin (n + 1) → ℂ) ∘ Fin.succ) = 0 := rfl
       have e1 : ((fun _ : Fin (n + 1) => r) ∘ Fin.succ) = fun _ => r := rfl
       simp only [e0, e1]
       simp only [Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ, mul_assoc]
       rw [torusIntegral_const_mul]
-      simp only [Fin.tail] at ih
-      rw [ih]
+      simp only [Fin.tail] at htail
+      rw [htail]
       ring
     rw [circleIntegral.integral_congr hr0.le key, circleIntegral.integral_const_mul]
-    obtain ⟨c, hc⟩ := hlim z hz1 0 (fun j _ => hzW j)
-    have hupd : ∀ x : ℂ, Function.update z 0 x = Fin.cons x (Fin.tail z) := fun x => by
-      rw [← Fin.update_cons_zero (x := z 0) (p := Fin.tail z) (z := x), Fin.cons_self_tail]
+    obtain ⟨c, hc⟩ : ∃ c : ℂ, Tendsto (fun x : ℂ => G (Function.update z 0 x)) (𝓝[≠] 0) (𝓝 c) :=
+      hlim z hz1 0 (fun j _ => hzW j)
+    have hupd (x : ℂ) : Function.update z 0 x = Fin.cons x (Fin.tail z) := by
+      calc
+        Function.update z 0 x = Function.update (Fin.cons (z 0) (Fin.tail z)) 0 x :=
+          congrArg (fun w : Fin (n + 1) → ℂ => Function.update w 0 x) (Fin.cons_self_tail z).symm
+        _ = Fin.cons x (Fin.tail z) := Fin.update_cons_zero (z 0) (Fin.tail z) x
     have hg : Tendsto (fun x => G (Fin.cons x (Fin.tail z))) (𝓝[≠] 0) (𝓝 c) := by
       simpa only [hupd] using hc
     have hgd : ∀ x : ℂ, x ≠ 0 → ‖x‖ < 1 → DifferentiableAt ℂ (fun x => G (Fin.cons x (Fin.tail z))) x :=
@@ -211,8 +222,8 @@ theorem exists_analytic_on_ball {n : ℕ} {G : (Fin n → ℂ) → ℂ}
 
 end RiemannExtensionSlices
 
-open RiemannExtensionSlices in
 
+open RiemannExtensionSlices in
 theorem RiemannExtensionSlices.proof : RiemannExtensionSlices.Statement := by
   intro n G hG hlim
   obtain ⟨W, hW⟩ : ∃ W : Set (Fin n → ℂ), W = {w | ∀ i, w i ≠ 0} := ⟨_, rfl⟩

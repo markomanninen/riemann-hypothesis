@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionRangeTrivial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionRangeTrivial
+
+@[expose] public section
 
 noncomputable section
 

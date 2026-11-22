@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk3.aux1 :
     ∀ {A : Type} [inst : CommRing A],
@@ -637,10 +641,10 @@ theorem UpperTheory.Reformulated.B.Qk3.unopS_mul :
   intro A E _ _ _ S _ _ x y
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x₁ x₂ h₁ h₂ => rw [add_mul, map_add, map_add, h₁, h₂, mul_add]
+  | add x₁ x₂ h₁ h₂ => rw [add_mul, map_add (f := _), map_add (f := _), h₁, h₂, mul_add]
   | tmul s e =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y₁ y₂ h₁ h₂ => rw [mul_add, map_add, map_add, h₁, h₂, add_mul]
+    | add y₁ y₂ h₁ h₂ => rw [mul_add, map_add (f := _), map_add (f := _), h₁, h₂, add_mul]
     | tmul t f =>
       simp [UpperTheory.Reformulated.B.Qk3.unopS, Algebra.TensorProduct.tmul_mul_tmul, mul_comm s t]

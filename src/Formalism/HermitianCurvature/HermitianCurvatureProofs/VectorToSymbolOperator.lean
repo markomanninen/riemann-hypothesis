@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartEqsOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartEqsOfParts
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField Matrix
 open scoped ContDiff
@@ -38,11 +42,16 @@ lemma word (hF : SOpField) (O : Set (Fin d → ℝ)) (hO : IsOpen O) :
     ∃ S : SOp d, S.ord = Vs.length ∧ (∀ i w, ContDiffOn ℝ ∞ (S.a i w) O) ∧
       (∀ u : (Fin d → ℝ) → ℂ, ContDiffOn ℝ (Vs.length : WithTop ℕ∞) u O → ∀ x ∈ O,
         S.app u x = vfW Vs u x) ∧
-      ∀ x ∈ O, ∀ ξ : Fin d → ℝ, S.symb x ξ = (Vs.map fun V => ((ξ ⬝ᵥ V x : ℝ) : ℂ)).prod
-  | [], _ => ⟨idOp d, rfl, fun _ _ => contDiffOn_const, fun u _ x _ => by simp [idOp_app, vfW],
+      ∀ x ∈ O, ∀ ξ : Fin d → ℝ, S.symb x ξ = (Vs.map fun V => ((ξ ⬝ᵥ V x : ℝ) : ℂ)).prod := by
+  intro Vs
+  induction Vs with
+  | nil =>
+    intro _
+    exact ⟨idOp d, rfl, fun _ _ => contDiffOn_const, fun u _ x _ => by simp [idOp_app, vfW],
       fun x _ ξ => by simp [idOp_symb]⟩
-  | V :: Vs, hV => by
-    obtain ⟨S, hSo, hSc, hSa, hSs⟩ := word hF O hO Vs (fun W hW => hV W (List.mem_cons_of_mem _ hW))
+  | cons V Vs ih =>
+    intro hV
+    obtain ⟨S, hSo, hSc, hSa, hSs⟩ := ih (fun W hW => hV W (List.mem_cons_of_mem _ hW))
     obtain ⟨S', hS'o, hS'c, hS'a, hS's⟩ := hF d S V O hO hSc (hV V List.mem_cons_self)
     refine ⟨S', by rw [hS'o, hSo]; rfl, hS'c, ?_, ?_⟩
     · intro u hu x hx

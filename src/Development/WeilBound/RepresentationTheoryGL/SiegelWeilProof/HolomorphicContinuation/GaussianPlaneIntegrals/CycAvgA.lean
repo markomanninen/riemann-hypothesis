@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem evX_subR (u : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) (x : Fin m → Fi
     evX (subR u P) x = evX P (act u x) := by
   induction P using MvPolynomial.induction_on
   next c => simp [evX_eq]
-  next p q hp hq => simp only [evX_eq, map_add] at *; rw [hp, hq]
+  next p q hp hq => simp only [evX_eq, map_add (f := _)] at *; rw [hp, hq]
   next p k hp =>
     simp only [evX_eq, map_mul] at *
     rw [hp, eval_pt_var, eval_X]
@@ -51,11 +55,15 @@ theorem evX_subR (u : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) (x : Fin m → Fi
 theorem subR_comp (v w : Matrix (Fin m) (Fin m) ℂ) : (subR (n := n) v).comp (subR w) = subR (w * v) := by
   apply MvPolynomial.algHom_ext
   rintro ⟨a, i, _ | _⟩
-  · simp only [AlgHom.comp_apply, subR_X_false, map_sum, map_mul, subR_C]
-    simp only [Finset.mul_sum, Matrix.mul_apply, map_sum, Finset.sum_mul, ← mul_assoc, ← C_mul]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, subR_X_false, map_sum, map_mul, subR_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.mul_sum, Matrix.mul_apply, map_sum, Finset.sum_mul, ← mul_assoc, ← C_mul]
     exact Finset.sum_comm
-  · simp only [AlgHom.comp_apply, subR_X_true, map_sum, map_mul, subR_C]
-    simp only [Finset.mul_sum, Matrix.mul_apply, star_sum, star_mul', map_sum, Finset.sum_mul, ← mul_assoc, ← C_mul]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, subR_X_true, map_sum, map_mul, subR_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.mul_sum, Matrix.mul_apply, star_sum, star_mul', map_sum, Finset.sum_mul, ← mul_assoc, ← C_mul]
     exact Finset.sum_comm
 
 theorem subR_subR (v w : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) : subR v (subR w P) = subR (w * v) P := by

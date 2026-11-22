@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
-import Formalism.SharpRestriction.GrowthBounds.PolBridge
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
+public import Formalism.SharpRestriction.GrowthBounds.PolBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ def cth (v : σ) (n : ℕ) (F : MvPolynomial σ K) : MvPolynomial σ K :=
   monomial (Finsupp.single v n) (1 : K) * divDer (Finsupp.single v n) F
 
 theorem coeff_cth (v : σ) (n : ℕ) (F : MvPolynomial σ K) (μ : σ →₀ ℕ) :
-    coeff μ (cth v n F) = coeff μ F * (((μ v).choose n : ℕ) : K) := by
+    AddMonoidAlgebra.coeff (cth v n F) μ = AddMonoidAlgebra.coeff F μ * (((μ v).choose n : ℕ) : K) := by
   unfold cth
   rw [eig_one]
   by_cases hn : n = 0
@@ -25,7 +29,7 @@ theorem coeff_cth (v : σ) (n : ℕ) (F : MvPolynomial σ K) (μ : σ →₀ ℕ
 
 theorem cth_add (v : σ) (n : ℕ) (F G : MvPolynomial σ K) : cth v n (F + G) = cth v n F + cth v n G := by
   ext μ
-  simp only [coeff_cth, coeff_add, add_mul]
+  simp only [coeff_cth, MvPolynomial.coeff_add, add_mul]
 
 theorem cth_smul (v : σ) (n : ℕ) (c : K) (F : MvPolynomial σ K) : cth v n (c • F) = c • cth v n F := by
   ext μ
@@ -35,8 +39,6 @@ def cthL (v : σ) (n : ℕ) : MvPolynomial σ K →ₗ[K] MvPolynomial σ K wher
   toFun := cth v n
   map_add' := cth_add v n
   map_smul' := cth_smul v n
-
-@[simp] theorem cthL_apply (v : σ) (n : ℕ) (F : MvPolynomial σ K) : cthL v n F = cth v n F := rfl
 
 theorem cth_monomial (v : σ) (n : ℕ) (e : σ →₀ ℕ) (c : K) :
     cth v n (monomial e c) = monomial e (c * (((e v).choose n : ℕ) : K)) := by
@@ -64,7 +66,8 @@ theorem cth_mul (v : σ) (n : ℕ) (F G : MvPolynomial σ K) :
       rw [mul_add, cth_add, hG, hG', ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun ab _ => by rw [cth_add, mul_add]
     | monomial e' c' =>
-      rw [monomial_mul, cth_monomial, Finsupp.add_apply, Nat.add_choose_eq, Nat.cast_sum, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [monomial_mul, cth_monomial, Finsupp.add_apply, Nat.add_choose_eq, Nat.cast_sum, Finset.mul_sum, map_sum]
       refine Finset.sum_congr rfl fun ab _ => ?_
       rw [cth_monomial, cth_monomial, monomial_mul]
       congr 1
@@ -74,7 +77,8 @@ theorem cth_mul (v : σ) (n : ℕ) (F G : MvPolynomial σ K) :
 theorem cth_free (v : σ) {F : MvPolynomial σ K} (hF : ∀ μ ∈ F.support, μ v = 0) {n : ℕ} (hn : n ≠ 0) :
     cth v n F = 0 := by
   ext μ
-  rw [coeff_cth, coeff_zero]
+  rw [coeff_cth]
+  change F.coeff μ * (((μ v).choose n : ℕ) : K) = 0
   by_cases h : μ ∈ F.support
   · rw [hF μ h, Nat.choose_eq_zero_of_lt (Nat.pos_of_ne_zero hn)]
     simp
@@ -146,7 +150,7 @@ theorem cth_pow (v : σ) {E m : MvPolynomial σ K} (h1 : cth v 1 E = m) (h2 : �
         have e2 : j - l' = (j - (l' + 1)) + 1 := by omega
         rw [e1, e2]
         push_cast
-        simp only [smul_eq_C_mul, pow_succ, map_add]
+        simp only [smul_eq_C_mul, pow_succ, map_add (f := _)]
         ring
       · have e0 : j.choose (l' + 1) = 0 := Nat.choose_eq_zero_of_lt (by omega)
         have e1 : j + 1 - (l' + 1) = j - l' := by omega

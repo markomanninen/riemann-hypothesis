@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+
+@[expose] public section
 
 open Polynomial
 
@@ -45,14 +49,15 @@ theorem adjoinRoot_eq_zero {R : Type} [CommRing R] {g : R[X]} (hg : g.Monic) {j 
     rw [Polynomial.degree_eq_natDegree hg.ne_zero]
     exact_mod_cast hj
   rw [(Polynomial.modByMonic_eq_self_iff hg).2 hdeg] at h1
-  simpa using congrArg (fun p => Polynomial.coeff p j) h1
+  simpa using congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p j) h1
 
 theorem aeval_C_mul_X_coeff {ι L : Type} [Fintype ι] [CommRing L] (F : MvPolynomial ι L) (b : ι → L)
     (d : ℕ) : (MvPolynomial.aeval (fun q => C (b q) * X) F : L[X]).coeff d =
       ∑ m ∈ F.support, if m.degree = d then F.coeff m * ∏ q, b q ^ m q else 0 := by
   classical
   conv_lhs => rw [F.as_sum]
-  rw [map_sum, Polynomial.finsetSum_coeff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [MvPolynomial.aeval_monomial, Finsupp.prod_fintype _ _ (fun i => pow_zero _)]
   have hprod : (∏ q, (C (b q) * X : L[X]) ^ m q) = C (∏ q, b q ^ m q) * X ^ m.degree := by
@@ -84,6 +89,7 @@ theorem exists_point {ι L : Type} [Fintype ι] [Field L] [Infinite L] (K : Set 
     · intro h0
       apply hm
       rw [← hHm, h0, MvPolynomial.coeff_zero]
+      rfl
     · exact Finset.prod_ne_zero_iff.2 fun q _ => MvPolynomial.X_ne_zero q
   obtain ⟨x, hx⟩ : ∃ x, MvPolynomial.eval x P ≠ 0 := by
     by_contra hcon
@@ -99,7 +105,8 @@ theorem exists_point {ι L : Type} [Fintype ι] [Field L] [Infinite L] (K : Set 
     fun q hq => by simp [hq, hxq q hq], ?_⟩
   have key : MvPolynomial.eval x H = ∑ m' ∈ F.support, if m'.degree = m.degree then
       F.coeff m' * ∏ q, (if q ∈ K then 0 else x q) ^ m' q else 0 := by
-    simp only [H, Finset.sum_filter, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [H, Finset.sum_filter, map_sum]
     refine Finset.sum_congr rfl fun m' _ => ?_
     by_cases hd : m'.degree = m.degree
     · by_cases hz : ∀ q ∈ K, m' q = 0
@@ -191,7 +198,7 @@ theorem exists_lift {R k L ι : Type} [CommRing R] [Finite R] [Field k] [Finite 
     have hsplit : h = C π * u + g * t' := by
       rw [← hu]
       ring
-    rw [hsplit, map_add, map_mul, map_mul, AdjoinRoot.mk_self, zero_mul, add_zero, AdjoinRoot.mk_C]
+    rw [hsplit, map_add (f := _), map_mul, map_mul, AdjoinRoot.mk_self, zero_mul, add_zero, AdjoinRoot.mk_C]
   · intro q
     obtain ⟨r, hr⟩ := Polynomial.map_surjective φ hφ (p q)
     refine ⟨AdjoinRoot.mk g r, ?_⟩
@@ -217,7 +224,7 @@ theorem exists_truncation {R L : Type} [CommRing R] [Finite R] [Field L] (ψ : R
     rw [AdjoinRoot.lift_mk, Polynomial.eval₂_at_zero] at hz
     have hsplit : h = C (h.coeff 0) + X * h.divX :=
       (Polynomial.X_mul_divX_add h).symm.trans (add_comm _ _)
-    rw [hsplit, map_add, map_mul, AdjoinRoot.mk_C, AdjoinRoot.mk_X]
+    rw [hsplit, map_add (f := _), map_mul, AdjoinRoot.mk_C, AdjoinRoot.mk_X]
     refine Commute.isNilpotent_add (Commute.all _ _) ((hnil _ hz).map _) ?_
     exact ⟨N + 1, by rw [mul_pow, hroot, zero_mul]⟩
   refine ⟨isLocalRing_of_map _ hnil', ?_⟩
@@ -259,14 +266,14 @@ theorem exists_truncation {R L : Type} [CommRing R] [Finite R] [Field L] (ψ : R
     have hP' : P = C π * A' + X ^ d0 * V := by
       rw [← hV]
       ring
-    rw [hP', map_add, map_mul, map_mul, map_pow, AdjoinRoot.mk_C, AdjoinRoot.mk_X]
+    rw [hP', map_add (f := _), map_mul, map_mul, map_pow, AdjoinRoot.mk_C, AdjoinRoot.mk_X]
   have hπ0 : AdjoinRoot.of (X ^ (N + 1) : R[X]) π ^ n = 0 := by
     rw [← map_pow, hn, map_zero]
   rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq_zero_iff_mem]
   set J := Ideal.span {AdjoinRoot.mk (X ^ (N + 1) : R[X]) P} with hJ
   have h1 : Ideal.Quotient.mk J (AdjoinRoot.mk (X ^ (N + 1) : R[X]) P) = 0 :=
     Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _)
-  rw [hy, map_add] at h1
+  rw [hy, map_add (f := _)] at h1
   have h2 := eq_neg_of_add_eq_zero_right h1
   have h3 : Ideal.Quotient.mk J ((AdjoinRoot.root (X ^ (N + 1) : R[X]) ^ d0 *
       AdjoinRoot.mk (X ^ (N + 1) : R[X]) V) ^ n) = 0 := by

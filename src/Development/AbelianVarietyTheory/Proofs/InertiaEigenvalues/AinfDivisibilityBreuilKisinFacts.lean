@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NilpotentOfNotIsUnit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NilpotentOfNotIsUnit
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -24,9 +29,11 @@ theorem dvd_E : ((l : ℕ) : Ainf l) ∣ bk.ev bk.E - bk.ev X ^ bk.Ep.natDegree 
     conv_lhs => rw [h]
     rw [Polynomial.coe_add, Polynomial.coe_pow, Polynomial.coe_X]
     congr 1
-    rw [← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
     simp
-  rw [this, map_add, map_pow, add_sub_cancel_left, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_add (f := _), map_pow, add_sub_cancel_left, map_sum]
   refine Finset.dvd_sum fun i hi => ?_
   obtain ⟨d, hd⟩ := bk.dvd_coeff i (Finset.mem_range.1 hi)
   rw [hd, map_mul, map_mul, map_mul, map_natCast, map_natCast, mul_assoc]
@@ -68,14 +75,15 @@ theorem flat_nil : IsNilpotent (Perfection.coeff (ModP (OC l) l) l 0 bk.flat) :=
 theorem flat_haus (x : OCb l) (hx : ∀ n, bk.flat ^ n ∣ x) : x = 0 :=
   GlobalTheory.Per.AinfComplete.perfection_haus (flat_nil bk) x hx
 
-theorem complete : IsAdicComplete (Ideal.span {bk.flat}) (OCb l) where
+theorem complete : IsAdicComplete (Ideal.span {bk.flat}) (OCb l) := {
   haus' x hx := by
     refine flat_haus bk x fun n => ?_
     have := hx n
     simp only [Ideal.span_singleton_pow, smul_eq_mul, Ideal.mul_top, SModEq.zero] at this
-    exact Ideal.mem_span_singleton.1 this
+    exact Ideal.mem_span_singleton.1 this,
   prec' := (GlobalTheory.Per.AinfComplete.precomplete_of_summ
-    (GlobalTheory.Per.AinfComplete.summ_of_tails (GlobalTheory.Per.AinfComplete.perfection_tails (flat_nil bk)))).prec'
+    (GlobalTheory.Per.AinfComplete.summ_of_tails
+      (GlobalTheory.Per.AinfComplete.perfection_tails (flat_nil bk)))).prec' }
 
 theorem dvd_of_dvd_X_mul (y : Ainf l) (h : ((l : ℕ) : Ainf l) ∣ bk.ev X * y) : ((l : ℕ) : Ainf l) ∣ y := by
   rw [dvd_iff] at h ⊢
@@ -92,8 +100,8 @@ theorem dvd_of_forall (y : Ainf l) (h : ∀ m : ℕ, ∃ z, ((l : ℕ) : Ainf l)
   rw [hz]
   exact dvd_mul_right _ _
 
-include bk in
 
+include bk in
 theorem mem_pow (n : ℕ) (y : Ainf l)
     (h : ((l : ℕ) : Ainf l) * y ∈ (Ideal.span {((l : ℕ) : Ainf l)} ⊔ RingHom.ker (Per.θ l)) ^ (2 * n + 2)) :
     y ∈ (Ideal.span {((l : ℕ) : Ainf l)} ⊔ RingHom.ker (Per.θ l)) ^ n := by
@@ -109,7 +117,7 @@ theorem mem_pow (n : ℕ) (y : Ainf l)
   have hb : ((l : ℕ) : Ainf l) ∣ b := by
     rw [dvd_iff]
     have := congrArg (WittVector.constantCoeff (p := l) (R := OCb l)) huv
-    simp only [map_add, map_mul, map_pow, cc_l, zero_pow (Nat.succ_ne_zero n), mul_zero, zero_mul,
+    simp only [map_add (f := _), map_mul, map_pow, cc_l, zero_pow (Nat.succ_ne_zero n), mul_zero, zero_mul,
       zero_add] at this
     exact (mul_eq_zero.1 this).resolve_right (pow_ne_zero _ (cc_E_ne bk))
   obtain ⟨b', rfl⟩ := hb

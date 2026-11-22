@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
-import Development.AutomorphicArithmetic.MeanSquareBounds.GIntegral
-import Development.AutomorphicArithmetic.MeanSquareBounds.PsiThin
-import Development.AutomorphicArithmetic.MeanSquareBounds.IntThin
+module
+
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+public import Development.AutomorphicArithmetic.MeanSquareBounds.GIntegral
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PsiThin
+public import Development.AutomorphicArithmetic.MeanSquareBounds.IntThin
+
+@[expose] public section
 
 open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
 

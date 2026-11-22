@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsIrreducibleOfClsGLEqSingle
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsIrreducibleOfClsGLEqSingle
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -29,7 +33,7 @@ section
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-private theorem UpperTheory.Lit.Full.count_seg_finite (S : Multiset (IrrGL k)) :
+private theorem UpperTheory.Lit.Full.count_seg_finite (S : Multiset (IrrGL (k := k))) :
     {Δ : Segment k | Δ.ms ≤ S}.Finite := by
   classical
   refine Set.Finite.of_finite_image (f := fun Δ : Segment k => (Δ.first, Δ.len))
@@ -51,7 +55,7 @@ private theorem UpperTheory.Lit.Full.count_card_le (𝔪 : Multiset (Segment k))
     simp only [Multiset.card_add, Multiset.card_singleton, Segment.card_ms]
     omega
 
-private theorem UpperTheory.Lit.Full.count_mseg_finite (S : Multiset (IrrGL k)) :
+private theorem UpperTheory.Lit.Full.count_mseg_finite (S : Multiset (IrrGL (k := k))) :
     {𝔪 : Multiset (Segment k) | msupp 𝔪 = S}.Finite := by
   classical
   refine (Set.finite_Icc 0 (S.card • (count_seg_finite S).toFinset.val)).subset ?_
@@ -72,7 +76,7 @@ private theorem UpperTheory.Lit.Full.count_msupp (m : Segment k →₀ ℕ) :
     msupp (Finsupp.toMultiset m) = GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum m := by
   induction m using Finsupp.induction_linear with
   | zero => simp [msupp, GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum]
-  | add a b ha hb => rw [map_add, msupp_add, ha, hb, GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum_add]
+  | add a b ha hb => rw [map_add (f := _), msupp_add, ha, hb, GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum_add]
   | single Δ c =>
     rw [GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum_eq, Finsupp.sum_single_index (zero_smul ℕ Δ.ms), Finsupp.toMultiset_single]
     induction c with
@@ -82,17 +86,17 @@ private theorem UpperTheory.Lit.Full.count_msupp (m : Segment k →₀ ℕ) :
 end
 
 theorem UpperTheory.Lit.Full.count :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (S : Multiset (IrrGL k)), {x : IrrGL k | HasSupport x.rep S}.Finite ∧ {𝔪 : Multiset (Segment k) | msupp 𝔪 = S}.Finite ∧ {x : IrrGL k | HasSupport x.rep S}.ncard = {𝔪 : Multiset (Segment k) | msupp 𝔪 = S}.ncard := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (S : Multiset (IrrGL (k := k))), {x : IrrGL (k := k) | HasSupport x.rep S}.Finite ∧ {𝔪 : Multiset (Segment k) | msupp 𝔪 = S}.Finite ∧ {x : IrrGL (k := k) | HasSupport x.rep S}.ncard = {𝔪 : Multiset (Segment k) | msupp 𝔪 = S}.ncard := by
   intro hG hBZ hZ k _ _ _ _ S
   classical
   obtain ⟨Z, Ψ, hS, hΨ, hX⟩ := hZ k
   let c := MvPolynomial.basisMonomials (Segment k) ℤ
-  let e : (IrrGL k →₀ ℤ) ≃ₗ[ℤ] ((Segment k →₀ ℕ) →₀ ℤ) := Ψ.toIntLinearEquiv.trans c.repr
-  have hc : ∀ p m, c.repr p m = MvPolynomial.coeff m p := fun _ _ => rfl
+  let e : (IrrGL (k := k) →₀ ℤ) ≃ₗ[ℤ] ((Segment k →₀ ℕ) →₀ ℤ) := Ψ.toIntLinearEquiv.trans c.repr
+  have hc : ∀ p m, c.repr p m = AddMonoidAlgebra.coeff p m := fun _ _ => rfl
   have hc' : ∀ m, c.repr.symm (Finsupp.single m 1) = MvPolynomial.monomial m 1 := fun m => by
     rw [Module.Basis.repr_symm_single_one]
     simp [c]
-  obtain ⟨f⟩ := count_equiv e {x : IrrGL k | HasSupport x.rep S} {m | GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum m = S}
+  obtain ⟨f⟩ := count_equiv e {x : IrrGL (k := k) | HasSupport x.rep S} {m | GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum m = S}
     (fun x hx m hm => GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum_eq_of_coeff_ne hG hBZ hS hΨ hX hx (by rw [← hc]; exact hm))
     (fun m hm z hz => by
       have hm : GlobalTheory.CompanionTheory.Hypotheses₂.RankOne.msum m = S := hm

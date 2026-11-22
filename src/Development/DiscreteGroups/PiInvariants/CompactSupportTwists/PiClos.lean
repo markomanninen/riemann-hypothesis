@@ -1,8 +1,12 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosT
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleSmoothModuleUnique
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormalisedCuspFormL2Bounded
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantOfLieOneLEqZero
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosT
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleSmoothModuleUnique
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormalisedCuspFormL2Bounded
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantOfLieOneLEqZero
+
+@[expose] public section
 
 set_option linter.all false
 
@@ -72,7 +76,7 @@ theorem piClosureInv : PiClosureInv := by
   have hstep : ∀ i, f i ∈ W1 := fun i => by
     obtain ⟨hψi, hui, hsi⟩ := hψ i
     let u' : ℝ → ℂ := fun s => u i (s + ldet z)
-    have hu' : Continuous u' := hui.comp (continuous_add_right _)
+    have hu' : Continuous u' := hui.comp (continuous_id.add continuous_const)
     have hs' : HasCompactSupport u' := hsi.comp_homeomorph (Homeomorph.addRight (ldet z))
     let T := Top D hn u' hu' hs'
     have hle : (classes π.V (muG D)).topologicalClosure ≤ W1.comap (T : L2 (latticeGL E n) (muG D) →ₗ[ℂ] Lp ℂ 2 D.ν) := by
@@ -128,7 +132,8 @@ theorem piClosureInv : PiClosureInv := by
       simp
   have hsum : f = ∑ i, J i (f i) := by
     apply (PiLp.continuousLinearEquiv 2 ℂ (fun _ : ι => Lp ℂ 2 D.ν)).injective
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hJe]
     exact (Finset.univ_sum_single _).symm
   rw [hsum]

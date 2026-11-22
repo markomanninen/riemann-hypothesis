@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAevalEqSmulOnEigenspace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecompositionElementFrobeniusPowerStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InertiaLiftOfResidualTrivialStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAevalEqSmulOnEigenspace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecompositionElementFrobeniusPowerStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InertiaLiftOfResidualTrivialStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Matrix MeasureTheory TensorProduct Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.Whittaker GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -14,25 +19,10 @@ section
 
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω]
 
-theorem actsAs_conj {A : ValuationSubring Ω} {q : ℕ} {g σ : G E Ω} (hg : g ∈ Dec (F := E) A)
-    {a b : ℕ} (hσ : ActsAs A q σ a b) : ActsAs A q (g * σ * g⁻¹) a b := by
-  refine ⟨(Dec (F := E) A).mul_mem ((Dec (F := E) A).mul_mem hg hσ.1) ((Dec (F := E) A).inv_mem hg),
-    fun x hx => ?_⟩
-  have hy : A.valuation ((g⁻¹ : G E Ω) x) ≤ 1 := val_apply_le_one ((Dec (F := E) A).inv_mem hg) hx
-  have h1 := hσ.2 _ hy
-  rw [← valuation_apply_lt_one_iff hg, map_sub, map_pow, map_pow, mul_inv_apply] at h1
-  exact h1
-
 end
 
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
-
-def conjW (g : G E Ω) (hg : g ∈ Dec (F := E) A) (σ : Weil h) : Weil h :=
-  ⟨g * σ * g⁻¹, by obtain ⟨a, b, hab⟩ := σ.2; exact ⟨a, b, actsAs_conj hg hab⟩⟩
-
-@[simp] theorem coe_conjW (g : G E Ω) (hg : g ∈ Dec (F := E) A) (σ : Weil h) :
-    (conjW g hg σ : G E Ω) = g * σ * g⁻¹ := rfl
 
 end GlobalTheory.ConjWD
 

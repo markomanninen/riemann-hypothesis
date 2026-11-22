@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.UnitBound
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.UnitBound
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -67,25 +71,6 @@ theorem exists_isCompact_normOneSubgroup :
     Set.inter_subset_right, fun x hx ↦ ?_⟩
   obtain ⟨k, hk⟩ := hxD x hx
   exact ⟨k, hk, mul_mem (range_diagonal_le_normOneSubgroup K ⟨k, rfl⟩) hx⟩
-
-instance compactSpace_normOneSubgroup_quotient :
-    CompactSpace (normOneSubgroup K ⧸ (diagonal K).range.subgroupOf (normOneSubgroup K)) := by
-  obtain ⟨D, hD, -, hxD⟩ := exists_isCompact_normOneSubgroup K
-  have hD' : IsCompact ((Subtype.val : normOneSubgroup K → IdeleGroup K) ⁻¹' D) :=
-    (isClosed_normOneSubgroup K).isClosedEmbedding_subtypeVal.isCompact_preimage hD
-  have h : (QuotientGroup.mk : normOneSubgroup K →
-      normOneSubgroup K ⧸ (diagonal K).range.subgroupOf (normOneSubgroup K)) ''
-      ((Subtype.val : normOneSubgroup K → IdeleGroup K) ⁻¹' D) = Set.univ := by
-    refine Set.eq_univ_of_forall fun q ↦ ?_
-    obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective q
-    obtain ⟨k, hk⟩ := hxD x x.2
-    refine ⟨⟨diagonal K k * x, mul_mem (range_diagonal_le_normOneSubgroup K ⟨k, rfl⟩) x.2⟩, hk,
-      (QuotientGroup.eq.2 ?_).symm⟩
-    rw [Subgroup.mem_subgroupOf]
-    refine ⟨k, ?_⟩
-    change diagonal K k = ((x : IdeleGroup K))⁻¹ * (diagonal K k * x)
-    rw [mul_comm (diagonal K k) x, inv_mul_cancel_left]
-  exact isCompact_univ_iff.1 (h ▸ hD'.image QuotientGroup.continuous_mk)
 
 end IdeleGroup
 

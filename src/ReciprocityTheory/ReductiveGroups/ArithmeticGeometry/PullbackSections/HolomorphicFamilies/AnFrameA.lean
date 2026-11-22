@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,7 +42,7 @@ theorem exists_compact_reps {La : Type} [AddCommGroup La] (P : La →+ (Fin N �
   refine ⟨(fun c : b → ℝ => ∑ j, c j • (j : Fin N → ℂ)) '' Set.pi Set.univ (fun _ => Set.Icc (0 : ℝ) 1),
     ?_, ?_⟩
   · exact (isCompact_univ_pi fun _ => isCompact_Icc).image
-      (continuous_finset_sum _ fun j _ => (continuous_apply j).smul continuous_const)
+      (continuous_finsetSum _ fun j _ => (continuous_apply j).smul continuous_const)
   · intro z
     let B := Module.Basis.mk hbli (le_of_eq (by rw [Subtype.range_coe, hbspan]))
     have hBj : ∀ j, B j = (j : Fin N → ℂ) := fun j => by simp [B]
@@ -49,7 +53,8 @@ theorem exists_compact_reps {La : Type} [AddCommGroup La] (P : La →+ (Fin N �
     refine ⟨∑ j, Int.fract (r j) • (j : Fin N → ℂ),
       ⟨fun j => Int.fract (r j), fun j _ => ⟨Int.fract_nonneg _, (Int.fract_lt_one _).le⟩, rfl⟩, ?_⟩
     refine ⟨∑ j, ⌊r j⌋ • a j, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [← hz]
     rw [← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_

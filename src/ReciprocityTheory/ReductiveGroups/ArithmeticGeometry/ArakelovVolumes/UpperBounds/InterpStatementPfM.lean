@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfK
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfL
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfK
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfL
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPf
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.IW
 
@@ -241,7 +245,7 @@ private lemma continuous_dmin_Gm (τ : X.Ψ) (i : Fin (r + 1)) :
   have hc : ∀ i j, Continuous fun y : Frame X.Ψ r => mat y τ i j := fun i j =>
     (continuous_apply j).comp ((continuous_apply i).comp (continuous_apply τ))
   simp only [FD.gram, FD.hermC, FD.col, Matrix.of_apply]
-  exact continuous_finset_sum _ fun a' _ => continuous_finset_sum _ fun b' _ =>
+  exact continuous_finsetSum _ fun a' _ => continuous_finsetSum _ fun b' _ =>
     ((hc a' a).mul continuous_const).mul (Complex.continuous_conj.comp (hc b' b))
 
 private lemma continuous_cpt' (x0 : Frame X.Ψ r) : Continuous (cpt X x0) := by
@@ -304,7 +308,7 @@ theorem rhoF_cont (x0 : Frame X.Ψ r) (ho : IsOrth X x0) (Fp : Wt X.Ψ r) (ψ : 
   have hnf : ContinuousAt (fun w => X.nfac Fp (cpt X x0 w)) z := by
     show ContinuousAt (fun w => ∏ τ, ∏ i : Fin r, ‖dmin X.Gm (cpt X x0 w) τ i.succ /
       dmin X.Gm (cpt X x0 w) τ i.castSucc‖ ^ (-(Fp τ i : ℝ) / 2)) z
-    exact tendsto_finset_prod _ fun τ _ => tendsto_finset_prod _ fun i _ =>
+    exact tendsto_finsetProd _ fun τ _ => tendsto_finsetProd _ fun i _ =>
       ((hdm τ i.succ).div (hdm τ i.castSucc) (hne τ _)).norm.rpow_const
         (Or.inl (norm_ne_zero_iff.mpr (div_ne_zero (hne τ _) (hne τ _))))
   have hnp : 0 < X.nfac Fp (cpt X x0 z) := by
@@ -318,10 +322,10 @@ theorem rhoF_cont (x0 : Frame X.Ψ r) (ho : IsOrth X x0) (Fp : Wt X.Ψ r) (ψ : 
     hψs.continuousOn.continuousAt (hO.mem_nhds hz)
   have hrh : ContinuousAt (rhF X x0) z := by
     unfold rhF
-    exact (tendsto_finset_sum _ fun τ _ => (hdm τ _).norm.log (norm_ne_zero_iff.mpr (hne τ _))).neg
+    exact (tendsto_finsetSum _ fun τ _ => (hdm τ _).norm.log (norm_ne_zero_iff.mpr (hne τ _))).neg
   have hdF : ContinuousAt (densF X x0) z := by
     unfold densF
-    refine tendsto_finset_prod _ fun τ _ => tendsto_finset_prod _ fun i _ => ?_
+    refine tendsto_finsetProd _ fun τ _ => tendsto_finsetProd _ fun i _ => ?_
     first
     | exact (hdm τ _).norm.zpow₀ _ (Or.inl (norm_ne_zero_iff.mpr (hne τ _)))
     | exact (hdm τ _).norm.rpow_const (Or.inl (norm_ne_zero_iff.mpr (hne τ _)))

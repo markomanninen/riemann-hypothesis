@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodGeneric
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NotGoodGenericSign
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodGeneric
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NotGoodGenericSign
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.DivisionValues Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef
 

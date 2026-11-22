@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuantumDetOppositeNegStatement
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuantumDetOppositeNegStatement
+
+@[expose] public section
+
 open Formalism.REAL
 
 namespace GlobalTheory.CompanionTheory.CapelliAdj
@@ -23,7 +28,7 @@ theorem HasAdj.one (B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ) : HasAdj B 1 1 := by
 theorem HasAdj.add {B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ} {T T' S S' : Module.End ℂ V}
     (h : HasAdj B T S) (h' : HasAdj B T' S') : HasAdj B (T + T') (S + S') := by
   intro φ ψ
-  simp only [LinearMap.add_apply, map_add, h φ ψ, h' φ ψ]
+  simp only [LinearMap.add_apply, map_add (f := _), h φ ψ, h' φ ψ]
 
 theorem HasAdj.zero (B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ) : HasAdj B 0 0 := by
   intro φ ψ

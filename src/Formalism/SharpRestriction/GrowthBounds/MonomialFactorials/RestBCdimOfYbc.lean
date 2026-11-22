@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinrankLjjSpan
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinrankLjjSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,8 @@ private theorem finrank_span_blockData_gens {p : ℕ} [Fact (Nat.Prime p)] {O : 
         rw [bW.sum_repr]
       refine h1.symm.trans ?_
       simp only [Submodule.coe_sum, Submodule.coe_smul]
-    rw [hw', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hw', map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [hsmul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -82,7 +87,7 @@ private theorem finrank_span_blockData_gens {p : ℕ} [Fact (Nat.Prime p)] {O : 
         exact hbase y0 hy0 g0 hg0
       | zero => simp
       | add x y _ _ hx hy =>
-        rw [map_add, mul_add, add_mul]
+        rw [map_add (f := _), mul_add, add_mul]
         exact T.add_mem hx hy
       | smul k x _ hx =>
         rw [map_smul, mul_smul_comm, smul_mul_assoc]

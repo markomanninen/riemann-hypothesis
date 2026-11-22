@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.EisLeftInv
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.MemStabiliserIffFrameLowerBlock
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.EisLeftInv
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.MemStabiliserIffFrameLowerBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,16 +64,16 @@ theorem j_rat (L : LD d) {p : G2 σ L.Y} (hp : p ∈ rat2 σ L.Y) : L.j p ∈ ra
   dsimp only [M]
   by_cases hu : ∃ u', Sum.map L.em L.em u' = u
   · by_cases hv : ∃ v', Sum.map L.em L.em v' = v
-    · rw [dif_pos hu, dif_pos hv]
+    · rw [dite_eq_left hu, dite_eq_left hv]
       have h1 := congrFun (congrFun (L.j_in p) hu.choose) hv.choose
       simp only [Matrix.submatrix_apply, hu.choose_spec, hv.choose_spec] at h1
       rw [h1, hL]
       rfl
-    · rw [dif_pos hu, dif_neg hv]
+    · rw [dite_eq_left hu, dite_eq_right hv]
       have hv' := (range_or L v).resolve_left hv
       rw [(L.j_out p _ hv' u).2]
       simp [Matrix.one_apply, apply_ite]
-  · rw [dif_neg hu]
+  · rw [dite_eq_right hu]
     have hu' := (range_or L u).resolve_left hu
     rw [(L.j_out p _ hu' v).1]
     simp [Matrix.one_apply, apply_ite]

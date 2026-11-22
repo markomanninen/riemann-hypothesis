@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLand
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLand
+
+@[expose] public section
 
 open NumberField Module
 
@@ -20,10 +24,10 @@ theorem bin_step_gen (h : V →ₗ⋆[K] V →ₗ[K] K) (hz : ∀ x y, h x y = 0
         a * b * n := by
   have h21 : h e₂ e₁ = 0 := hz _ _ h12
   refine ⟨?_, ?_, ?_⟩
-  · simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+  · simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, RingHom.id_apply, h12, h21, h11, h22]
     linear_combination hxy
-  · simp only [map_add, map_sub, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+  · simp only [map_add (f := _), map_sub, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, RingHom.id_apply, h12, h21, h11, h22]
     ring
   · simp only [map_sub, map_smulₛₗ, LinearMap.sub_apply, LinearMap.smul_apply, smul_eq_mul,
@@ -75,7 +79,7 @@ theorem exists_presc_family (hK : Formalism.HermitianLatticesTheory.IsCMUnram K)
         (TotPos.ne_zero' (htp _)) b3.symm
     have c1 : ∀ i, i ≠ Fin.last k → h (v i) f₁ = 0 := by
       intro i hi
-      rw [hf₁, map_add, map_smul, map_smul, ho i _ hi, hzv i, smul_zero, smul_zero, add_zero]
+      rw [hf₁, map_add (f := _), map_smul, map_smul, ho i _ hi, hzv i, smul_zero, smul_zero, add_zero]
     have c2 : ∀ i, i ≠ Fin.last k → h (v i) f₂ = 0 := by
       intro i hi
       rw [hf₂, map_sub, map_smul, map_smul, ho i _ hi, hzv i, smul_zero, smul_zero, sub_zero]

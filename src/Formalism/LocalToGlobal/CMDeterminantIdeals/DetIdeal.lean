@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.LatSemiSt
+module
+
+public import ReciprocityTheory.SemistableReduction.LatSemiSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,17 +57,14 @@ variable {m : ℕ}
 def Good (L : MLat K m) : Prop :=
   L.M.FG ∧ Submodule.span K (L.M : Set (Fin m → K)) = ⊤ ∧ ∀ σ, (L.H σ).PosDef
 
-def sq (L : MLat K m) (σ : K →+* ℂ) (x : Fin m → K) : ℝ := ReciprocityTheory.MultiplicativeHeights.hq (L.H σ) (ReciprocityTheory.MultiplicativeHeights.embVec σ x)
-
 def detSub (L : MLat K m) : Submodule (𝓞 K) K :=
   Submodule.span (𝓞 K) {d | ∃ x : Fin m → Fin m → K, (∀ i, x i ∈ L.M) ∧ d = (Matrix.of x).det}
 
+
 open Classical in
-
-def detIdeal (L : MLat K m) : FractionalIdeal (𝓞 K)⁰ K :=
-  if h : IsFractional (𝓞 K)⁰ L.detSub then ⟨L.detSub, h⟩ else 0
-
-def detLine (L : MLat K m) : MLine K := ⟨L.detIdeal, fun σ => Real.sqrt (L.H σ).det.re⟩
+def detIdeal (L : MLat K m) : FractionalIdeal (𝓞 K)⁰ K := by
+  classical
+  exact if h : IsFractional (𝓞 K)⁰ L.detSub then ⟨L.detSub, h⟩ else 0
 
 end MLat
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -68,8 +72,8 @@ theorem ev_eval₂ {U : Z.Opens} {y : CxPts p σ} (hy : y ∈ ptsIn p σ U) (t :
   | add f g hf hg => simp [ev_add, hf, hg]
   | mul_X f l hf => simp [ev_mul, hf]
 
-variable (p s σ) in
 
+variable (p s σ) in
 def loc (i : B.ι) (y : CxPts p σ) : Fin m → ℂ := fun k => ev p σ (B.U i) ((s k).f i) y
 
 variable {y y' : CxPts p σ} {i j : B.ι}

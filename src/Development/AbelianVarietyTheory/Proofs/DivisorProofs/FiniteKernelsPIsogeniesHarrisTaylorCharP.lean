@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvcPowRight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqOfPointsOfGerm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionExtOfApplyEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdealFactorIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalIdealPowLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RingHomEqOfCompEqId
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentFixLine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalRingFiniteIdealsOfMaximalIdealPrincipalNilp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapMemMaximalIdealIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsogenyOfDegreeIntActionHarrisTaylor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTangentCoordsBaseChangeSmoothCommGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvcPowRight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqOfPointsOfGerm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionExtOfApplyEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdealFactorIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalIdealPowLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RingHomEqOfCompEqId
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentFixLine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalRingFiniteIdealsOfMaximalIdealPrincipalNilp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapMemMaximalIdealIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsogenyOfDegreeIntActionHarrisTaylor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTangentCoordsBaseChangeSmoothCommGroup
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES GlobalTheory.IwLevel
 open ReciprocityTheory.ChartRestriction.G.Out (RingAct)
@@ -238,7 +243,8 @@ theorem exists_local_idempotents {B : Type} [CommRing B] (c : B) [Finite (B ⧸ 
   · rw [← Ideal.Quotient.eq_zero_iff_mem]
     refine hz _ fun J => ?_
     have := Ideal.sum_mem (J.asIdeal ^ (n + 1)) (t := Finset.univ) fun I _ => he I J
-    rw [Finset.sum_sub_distrib, Finset.sum_ite_eq, if_pos (Finset.mem_univ _), ← map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_sub_distrib, Finset.sum_ite_eq, if_pos (Finset.mem_univ _), ← map_sum] at this
     simpa using this
   · rw [← Ideal.Quotient.eq_zero_iff_mem]
     refine hz _ fun J => ?_
@@ -451,7 +457,7 @@ def transp {o o' : Obj b N s} (ψ : o.A ⟶ o'.A) (hψ : IsMonHom ψ)
   add_mem' := by
     intro z z' hz hz'
     simp only [Set.mem_setOf_eq] at hz hz' ⊢
-    rw [map_add, o.act.add, MonObj.comp_mul, MonObj.mul_comp, hz, hz', _root_.mul_one]
+    rw [map_add (f := _), o.act.add, MonObj.comp_mul, MonObj.mul_comp, hz, hz', _root_.mul_one]
   zero_mem' := by
     simp only [Set.mem_setOf_eq]
     rw [map_zero, act_zero, MonObj.comp_one, MonObj.one_comp]
@@ -477,8 +483,8 @@ theorem kill_of_dvd {n : ℕ} {o o' : Obj b N s} {ψ : o.A ⟶ o'.A} (h : IsPIso
 
 end GlobalTheory.UPel.HT.ES.KerFin
 
-open GlobalTheory.UPel.HT.ES.KerFin in
 
+open GlobalTheory.UPel.HT.ES.KerFin in
 theorem GlobalTheory.UPel.HT.ES.KerFin.finite_kernels : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type) [CommRing R] (b : Base D R) (N : ℕ), 3 ≤ N → N.Coprime p → D.m = 1 → ∀ (c : ℕ) (k : Type) [Field k] [IsAlgClosed k] [CharP k p] (s : Sp k ⟶ Sp R) (o : Obj b N s), Set.Finite {P : ∀ T : Over (Sp k), (T ⟶ o.A) → Prop | ∃ (o' : Obj b N s) (ψ : o.A ⟶ o'.A), IsPIsog c o o' ψ ∧ P = fun T x => x ≫ ψ = 1} := by
   intro p _ D R _ b N _ _ hm c k _ _ _ s o
   classical

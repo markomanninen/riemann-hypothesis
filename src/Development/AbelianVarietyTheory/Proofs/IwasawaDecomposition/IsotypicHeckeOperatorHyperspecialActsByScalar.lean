@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSphericalStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSphericalStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevelStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 
 noncomputable section
@@ -10,9 +15,7 @@ namespace GlobalTheory.IsoTypScalar
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W]
 
-local notation3 "L⁺" => maximalRealSubfield L
-
-theorem heckeD_eq_sum_of {v : HeightOneSpectrum (𝓞 L⁺)} {J : Subgroup (GAf L n)}
+theorem heckeD_eq_sum_of {v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))} {J : Subgroup (GAf L n)}
     (hJ : ∀ κ, TrivOutside {v} κ → (κ ∈ J ↔ κ ∈ Umax L n)) {D : Set (GAf L n)} (hD : ∀ x ∈ D, TrivOutside {v} x)
     {R : Finset (GAf L n)} (h1 : ∀ γ ∈ R, γ ∈ D) (h2 : ∀ x ∈ D, ∃! γ, γ ∈ R ∧ γ⁻¹ * x ∈ Umax L n)
     {f : GAf L n → W} (hf : ∀ κ ∈ Umax L n, TrivOutside {v} κ → NG.rt L n κ f = f) :
@@ -25,7 +28,7 @@ theorem heckeD_eq_sum_of {v : HeightOneSpectrum (𝓞 L⁺)} {J : Subgroup (GAf 
     Finset.sum_image]
   · refine Finset.sum_congr rfl fun γ hγ => ?_
     have hc : ∃ x ∈ D, (x : GAf L n ⧸ J) = γ := ⟨γ, h1 γ hγ, rfl⟩
-    rw [dif_pos hc]
+    rw [dite_eq_left hc]
     have ht := tr γ (h1 γ hγ) _ hc.choose_spec.1
     have hu : γ⁻¹ * hc.choose ∈ Umax L n := (hJ _ ht).1 (QuotientGroup.eq.1 hc.choose_spec.2.symm)
     have := congrFun (hf _ hu ht) (g * γ)
@@ -41,11 +44,12 @@ theorem heckeD_eq_sum_of {v : HeightOneSpectrum (𝓞 L⁺)} {J : Subgroup (GAf 
     · obtain ⟨x, hx, rfl⟩ := h
       obtain ⟨γ, ⟨hγ, e⟩, -⟩ := h2 x hx
       exact Finset.mem_coe.2 (Finset.mem_image.2 ⟨γ, hγ, QuotientGroup.eq.2 ((hJ _ (tr γ (h1 γ hγ) x hx)).2 e)⟩)
-    · exact absurd (dif_neg h) hc
+    · exact absurd (dite_eq_right h) hc
 
-theorem isoTyp_scalar (a : NG.AlgWt L n) (J : Subgroup (GAf L n)) (χ : J →* ℂˣ) (B : Set (HeightOneSpectrum (𝓞 L⁺)))
+theorem isoTyp_scalar (a : NG.AlgWt L n) (J : Subgroup (GAf L n)) (χ : J →* ℂˣ)
+    (B : Set (HeightOneSpectrum (𝓞 (maximalRealSubfield L))))
     (hyp : NG.HypOutside J χ B) (S : Submodule ℂ (GAf L n → a.W)) (hS : NG.IsIrrRep a.ρ S) (s : SplitPlace L)
-    (ϖ : s.v.adicCompletion L⁺) (k : ℕ) (hsB : s.v ∉ B) (hϖ : IsUnif L s.v ϖ) :
+    (ϖ : s.v.adicCompletion (maximalRealSubfield L)) (k : ℕ) (hsB : s.v ∉ B) (hϖ : IsUnif L s.v ϖ) :
     ∃ c : ℂ, ∀ f ∈ NG.isoTyp a.ρ S, f ∈ NG.TypeSp a.ρ J χ → NG.tN J s ϖ k f = c • f := by
   classical
   have tc : ∀ κ : GAf L n, TrivOutside {s.v} κ → TrivOutside Bᶜ κ := fun κ hκ v hv =>
@@ -55,13 +59,14 @@ theorem isoTyp_scalar (a : NG.AlgWt L n) (J : Subgroup (GAf L n)) (χ : J →* �
     GlobalTheory.T.finite_cosets_heckeSet_at_splitPlace_outside_level L n (Umax L n) 1 ∅ (fun κ _ => ⟨Iff.rfl, fun _ => MonoidHom.one_apply _⟩) s ϖ k
       (Set.notMem_empty _) hϖ
   obtain ⟨R, hR1, hR2⟩ := GlobalTheory.HeckeScalarSph.exists_reps (Umax L n) _ hfin
+  have hD : ∀ x ∈ tSet L n s ϖ k, TrivOutside {s.v} x := fun _ hx => hx.1
   set q : ℂ := ((s.q : ℂ) ^ (k * (n - 1)))⁻¹ with hq
   have hJeq : ∀ f : GAf L n → a.W, (∀ κ ∈ Umax L n, TrivOutside {s.v} κ → NG.rt L n κ f = f) →
       NG.tN J s ϖ k f = q • ∑ γ ∈ R, NG.rt L n γ f := fun f hf => by
-    rw [NG.tN, heckeD_eq_sum_of hJU (fun x hx => hx.1) hR1 hR2 hf]
+    rw [NG.tN, heckeD_eq_sum_of hJU hD hR1 hR2 hf]
   have hUeq : ∀ f : GAf L n → a.W, (∀ κ ∈ Umax L n, TrivOutside {s.v} κ → NG.rt L n κ f = f) →
       NG.tN (Umax L n) s ϖ k f = q • ∑ γ ∈ R, NG.rt L n γ f := fun f hf => by
-    rw [NG.tN, GlobalTheory.HeckeScalarSph.heckeD_eq_sum (v := s.v) (fun x hx => hx.1) hR1 hR2 hf]
+    rw [NG.tN, GlobalTheory.HeckeScalarSph.heckeD_eq_sum (v := s.v) hD hR1 hR2 hf]
   obtain ⟨c, hc⟩ := GlobalTheory.T.splitPlace_heckeOperator_scalar_on_spherical L n a S hS s ϖ k hϖ
   have hS0 : ∀ f ∈ S, (∀ κ ∈ Umax L n, TrivOutside {s.v} κ → NG.rt L n κ f = f) →
       q • ∑ γ ∈ R, NG.rt L n γ f = c • f := fun f hf hx => (hUeq f hx).symm.trans (hc f hf hx)
@@ -86,7 +91,8 @@ theorem isoTyp_scalar (a : NG.AlgWt L n) (J : Subgroup (GAf L n)) (χ : J →* �
       intro γ
       rw [hT γ g _ rfl, hTg]
     have := congrArg (fun u : S => ((T u : S') : GAf L n → a.W)) key
-    simp only [map_smul, map_sum, Submodule.coe_smul, Submodule.coe_sum, hTg, hterm] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, Submodule.coe_smul, Submodule.coe_sum, hTg, hterm] at this
     exact this.symm
 
   have hsum : ∀ t : Finset (Submodule ℂ (GAf L n → a.W)),
@@ -110,14 +116,14 @@ theorem isoTyp_scalar (a : NG.AlgWt L n) (J : Subgroup (GAf L n)) (χ : J →* �
       rw [Finset.iSup_insert]
       refine ⟨fun h f hf => ?_, fun f hf hfix => ?_⟩
       · obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 hf
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem_sup (h1.1.1.stable h x hx) (hst h y hy)
       · by_cases hd : S₁ ⊓ (⨆ S' ∈ t, S') = ⊥
         · obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 hf
           have hxy : ∀ κ ∈ Umax L n, TrivOutside {s.v} κ → NG.rt L n κ x = x ∧ NG.rt L n κ y = y := by
             intro κ hκ hκ'
             have e := hfix κ hκ hκ'
-            rw [map_add] at e
+            rw [map_add (f := _)] at e
             have e1 : NG.rt L n κ x - x = y - NG.rt L n κ y := by
               rw [sub_eq_sub_iff_add_eq_add, e, add_comm]
             have hm : NG.rt L n κ x - x ∈ S₁ ⊓ (⨆ S' ∈ t, S') :=
@@ -126,7 +132,7 @@ theorem isoTyp_scalar (a : NG.AlgWt L n) (J : Subgroup (GAf L n)) (χ : J →* �
             refine ⟨sub_eq_zero.1 hm, ?_⟩
             rw [hm] at e1
             exact (sub_eq_zero.1 e1.symm).symm
-          simp only [map_add, Finset.sum_add_distrib, smul_add]
+          simp only [map_add (f := _), Finset.sum_add_distrib, smul_add]
           rw [hiso S₁ h1.2 x hx fun κ h h' => (hxy κ h h').1, hfx y hy fun κ h h' => (hxy κ h h').2]
         · have hsub : NG.IsSubrep a.ρ (S₁ ⊓ (⨆ S' ∈ t, S')) :=
             ⟨inf_le_left.trans h1.1.1.le, fun h f hf => ⟨h1.1.1.stable h f hf.1, hst h f hf.2⟩⟩

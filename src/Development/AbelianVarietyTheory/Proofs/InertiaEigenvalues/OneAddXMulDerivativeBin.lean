@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,12 +26,12 @@ private theorem X_pow_dvd_algHom_sub_aeval_trunc {O : Type} [CommRing O] (f : O�
   rw [← algHom_coe_polynomial_eq_aeval]
   have hdiff : f a - f ↑(trunc n a) = f X ^ n * f s := by
     calc f a - f ↑(trunc n a) = f (X ^ n * s + ↑(trunc n a)) - f ↑(trunc n a) := by rw [← hs]
-      _ = f X ^ n * f s := by rw [map_add, map_mul, map_pow, add_sub_cancel_right]
+      _ = f X ^ n * f s := by rw [map_add (f := _), map_mul, map_pow, add_sub_cancel_right]
   rw [hdiff]
   exact Dvd.dvd.mul_right (pow_dvd_pow_of_dvd hf n) _
 
-open PowerSeries in
 
+open PowerSeries in
 theorem _root_.GlobalTheory.CycFr.algHom_ext_X {O : Type} [CommRing O] (f g : O⟦X⟧ →ₐ[O] O⟦X⟧)
     (hf : (X : O⟦X⟧) ∣ f X) (h : f X = g X) : f = g := by
   ext a : 1
@@ -46,15 +50,15 @@ theorem _root_.GlobalTheory.CycFr.algHom_C {O B : Type} [CommRing O] [CommRing B
   have hc : (C c : O⟦X⟧) = algebraMap O O⟦X⟧ c := by simp
   rw [hc, f.commutes]
 
-open PowerSeries in
 
+open PowerSeries in
 theorem _root_.GlobalTheory.CycFr.constantCoeff_algHom {O : Type} [CommRing O] (f : O⟦X⟧ →ₐ[O] O⟦X⟧)
     (hf : (X : O⟦X⟧) ∣ f X) (a : O⟦X⟧) : constantCoeff (f a) = constantCoeff a := by
   obtain ⟨s, hs⟩ : ∃ s, a = s * X + C (constantCoeff a) := ⟨_, eq_shift_mul_X_add_const a⟩
   have h0 : constantCoeff (f X) = 0 := X_dvd_iff.mp hf
   calc constantCoeff (f a) = constantCoeff (f (s * X + C (constantCoeff a))) := by rw [← hs]
     _ = constantCoeff a := by
-      rw [map_add, map_mul, _root_.GlobalTheory.CycFr.algHom_C, map_add, map_mul, h0, mul_zero,
+      rw [map_add (f := _), map_mul, _root_.GlobalTheory.CycFr.algHom_C, map_add (f := _), map_mul, h0, mul_zero,
         zero_add]
       simp
 
@@ -90,7 +94,7 @@ open PowerSeries in
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
 theorem _root_.GlobalTheory.CycFr.act_one_add_X (c : ℤ_[l]) : _root_.GlobalTheory.CycFr.act O c (1 + X) = _root_.GlobalTheory.CycFr.bin O c := by
-  rw [map_add, map_one, _root_.GlobalTheory.CycFr.act_X]
+  rw [map_add (f := _), map_one, _root_.GlobalTheory.CycFr.act_X]
   ring
 
 open PowerSeries in
@@ -134,10 +138,10 @@ theorem _root_.GlobalTheory.CycFr.coeff_one_act_X (c : ℤ_[l]) : coeff 1 (_root
     coeff_one, Algebra.smul_def, mul_one]
   simp
 
+
 open PowerSeries in
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
-
 theorem _root_.GlobalTheory.CycFr.exists_act_X (c : ℤ_[l]) :
     ∃ v : O⟦X⟧, _root_.GlobalTheory.CycFr.act O c X = X * v ∧ constantCoeff v = algebraMap ℤ_[l] O c := by
   refine ⟨mk fun p => coeff (p + 1) (_root_.GlobalTheory.CycFr.act O c X), ?_, ?_⟩
@@ -151,7 +155,7 @@ open PowerSeries in
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
 theorem _root_.GlobalTheory.CycFr.derivative_bin (c : ℤ_[l]) :
-    derivative O (_root_.GlobalTheory.CycFr.bin O c) = C (algebraMap ℤ_[l] O c) * _root_.GlobalTheory.CycFr.bin O (c - 1) := by
+    PowerSeries.derivative (_root_.GlobalTheory.CycFr.bin O c) = C (algebraMap ℤ_[l] O c) * _root_.GlobalTheory.CycFr.bin O (c - 1) := by
   ext n
   have key : ((n : ℤ_[l]) + 1) * Ring.choose c (n + 1) = c * Ring.choose (c - 1) n := by
     have h := Ring.choose_smul_choose c (n := n + 1) (k := 1) (by omega)
@@ -174,7 +178,7 @@ open PowerSeries in
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
 theorem _root_.GlobalTheory.CycFr.one_add_X_mul_derivative_bin (c : ℤ_[l]) :
-    (1 + X : O⟦X⟧) * derivative O (_root_.GlobalTheory.CycFr.bin O c) =
+    (1 + X : O⟦X⟧) * PowerSeries.derivative (_root_.GlobalTheory.CycFr.bin O c) =
       C (algebraMap ℤ_[l] O c) * _root_.GlobalTheory.CycFr.bin O c := by
   rw [_root_.GlobalTheory.CycFr.derivative_bin, mul_left_comm,
     one_add_X_mul_bin_sub_one_eq_bin]
@@ -186,13 +190,13 @@ variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
 variable [IsDomain O] [CharZero O] in
 private theorem eq_of_one_add_X_mul_derivative_eq_C_mul {F H : O⟦X⟧} (a : O)
-    (hF : (1 + X) * derivative O F = C a * F) (hH : (1 + X) * derivative O H = C a * H)
+    (hF : (1 + X) * PowerSeries.derivative F = C a * F) (hH : (1 + X) * PowerSeries.derivative H = C a * H)
     (h0 : constantCoeff F = constantCoeff H) : F = H := by
-  have hD : (1 + X) * derivative O (F - H) = C a * (F - H) := by
+  have hD : (1 + X) * PowerSeries.derivative (F - H) = C a * (F - H) := by
     rw [map_sub, mul_sub, mul_sub, hF, hH]
   have hD0 : coeff 0 (F - H) = 0 := by
     rw [coeff_zero_eq_constantCoeff_apply, map_sub, h0, sub_self]
-  have key : ∀ n, coeff n (F - H) = 0 ∧ coeff n (derivative O (F - H)) = 0 := by
+  have key : ∀ n, coeff n (F - H) = 0 ∧ coeff n (PowerSeries.derivative (F - H)) = 0 := by
     intro n
     induction n with
     | zero =>
@@ -220,9 +224,9 @@ variable [IsDomain O] [CharZero O] in
 theorem _root_.GlobalTheory.CycFr.act_bin (c d : ℤ_[l]) :
     _root_.GlobalTheory.CycFr.act O c (_root_.GlobalTheory.CycFr.bin O d) =
       _root_.GlobalTheory.CycFr.bin O (c * d) := by
-  have hG : derivative O (_root_.GlobalTheory.CycFr.act O c (_root_.GlobalTheory.CycFr.bin O d)) =
-      _root_.GlobalTheory.CycFr.act O c (derivative O (_root_.GlobalTheory.CycFr.bin O d)) *
-        derivative O (_root_.GlobalTheory.CycFr.bin O c) := by
+  have hG : PowerSeries.derivative (_root_.GlobalTheory.CycFr.act O c (_root_.GlobalTheory.CycFr.bin O d)) =
+      _root_.GlobalTheory.CycFr.act O c (PowerSeries.derivative (_root_.GlobalTheory.CycFr.bin O d)) *
+        PowerSeries.derivative (_root_.GlobalTheory.CycFr.bin O c) := by
     rw [_root_.GlobalTheory.CycFr.act_apply, _root_.GlobalTheory.CycFr.act_apply,
       derivative_subst (_root_.GlobalTheory.CycFr.hasSubst_bin O c), map_sub,
       Derivation.map_one_eq_zero, sub_zero]
@@ -297,15 +301,16 @@ omit [IsDomain O] [CharZero O] in
 theorem _root_.GlobalTheory.CycFr.act_l_pow_lvl (k : ℕ) : _root_.GlobalTheory.CycFr.act O ((l : ℤ_[l]) ^ k) (_root_.GlobalTheory.CycFr.lvl l O 0) = _root_.GlobalTheory.CycFr.lvl l O k := by
   have hb : _root_.GlobalTheory.CycFr.bin O ((l : ℤ_[l]) ^ k) = (1 + X) ^ l ^ k := by
     rw [← Nat.cast_pow, _root_.GlobalTheory.CycFr.bin_nat]
-  rw [_root_.GlobalTheory.CycFr.lvl, _root_.GlobalTheory.CycFr.lvl, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [_root_.GlobalTheory.CycFr.lvl, _root_.GlobalTheory.CycFr.lvl, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_pow, pow_zero, pow_one, _root_.GlobalTheory.CycFr.act_one_add_X, hb]
+
 
 open PowerSeries in
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
 variable [IsDomain O] [CharZero O] in
-
 theorem _root_.GlobalTheory.CycFr.dvd_bin_sub (k : ℕ) (c d : ℤ_[l]) (h : (l : ℤ_[l]) ^ k ∣ c - d) :
     (1 + X : O⟦X⟧) ^ l ^ k - 1 ∣ _root_.GlobalTheory.CycFr.bin O c - _root_.GlobalTheory.CycFr.bin O d := by
   obtain ⟨e, he⟩ := h
@@ -327,16 +332,16 @@ theorem _root_.GlobalTheory.CycFr.dvd_bin_sub (k : ℕ) (c d : ℤ_[l]) (h : (l 
   rw [h2, h1]
   exact Dvd.dvd.mul_left (dvd_mul_right _ _) _
 
+
 open PowerSeries in
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
 variable [IsDomain O] [CharZero O] in
 omit [Fact l.Prime] [Algebra ℤ_[l] O] [IsDomain O] [CharZero O] in
-
 theorem _root_.GlobalTheory.CycFr.dvd_algHom_sub [IsNoetherianRing O] (f g : O⟦X⟧ →ₐ[O] O⟦X⟧) (hf : (X : O⟦X⟧) ∣ f X)
     (hg : (X : O⟦X⟧) ∣ g X) (h : O⟦X⟧) (hh : h ∣ f X - g X) (a : O⟦X⟧) : h ∣ f a - g a := by
-  have hX : Ideal.span {(X : O⟦X⟧)} ≤ (⊥ : Ideal O⟦X⟧).jacobson := by
-    rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_jacobson_bot]
+  have hX : Ideal.span {(X : O⟦X⟧)} ≤ Ring.jacobson O⟦X⟧ := by
+    rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ring.mem_jacobson_iff]
     intro y
     rw [isUnit_iff_constantCoeff]
     simp
@@ -366,11 +371,11 @@ theorem _root_.GlobalTheory.CycFr.dvd_algHom_sub [IsNoetherianRing O] (f g : O�
   rw [Submodule.Quotient.mk_eq_zero, Ideal.mem_span_singleton] at key
   exact key
 
+
 open PowerSeries in
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
 variable [IsDomain O] [CharZero O] in
-
 theorem _root_.GlobalTheory.CycFr.dvd_act_sub [IsNoetherianRing O] (k : ℕ) (c d : ℤ_[l]) (h : (l : ℤ_[l]) ^ k ∣ c - d)
     (a : O⟦X⟧) : (1 + X : O⟦X⟧) ^ l ^ k - 1 ∣ _root_.GlobalTheory.CycFr.act O c a - _root_.GlobalTheory.CycFr.act O d a := by
   refine _root_.GlobalTheory.CycFr.dvd_algHom_sub _ _ (_root_.GlobalTheory.CycFr.X_dvd_act_X c)
@@ -379,12 +384,12 @@ theorem _root_.GlobalTheory.CycFr.dvd_act_sub [IsNoetherianRing O] (k : ℕ) (c 
     sub_sub_sub_cancel_right]
   exact _root_.GlobalTheory.CycFr.dvd_bin_sub k c d h
 
+
 open PowerSeries in
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O] in
 variable {O} in
 variable [IsDomain O] [CharZero O] in
 omit [Fact l.Prime] [Algebra ℤ_[l] O] [IsDomain O] [CharZero O] in
-
 theorem _root_.GlobalTheory.CycFr.dvd_sub_C_of_shift (x : O) (σ : O⟦X⟧ ≃ₐ[O] O⟦X⟧) (hσ : σ X = X + C x) (a : O⟦X⟧) :
     X - C x ∣ a - C (constantCoeff (σ a)) := by
   have hC : ∀ y : O, (C y : O⟦X⟧) = algebraMap O O⟦X⟧ y := fun y => by simp

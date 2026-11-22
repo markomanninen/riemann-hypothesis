@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
-import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactOfUnits
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+public import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactOfUnits
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ attribute [local instance] ae_ring ae_t2 ae_smul
 
 theorem stab2Cpt : Stab2Cpt := by
   intro F E _ _ _ _ _ σ B n Y r s hB hY K hK
-  obtain ⟨hL, c, c0, hc⟩ : Y.L.IsLattice E ∧ ∃ c : ℂ, c ≠ 0 ∧ ∀ w, IsCartan (c • Y.J.map (B.emb w).1) (Y.θ w) :=
+  obtain ⟨hL, c, c0, hc⟩ : Y.L.IsFullLattice E ∧ ∃ c : ℂ, c ≠ 0 ∧ ∀ w, IsCartan (c • Y.J.map (B.emb w).1) (Y.θ w) :=
     hY.elim (fun h => ⟨h.lat, 1, one_ne_zero, fun w => by simpa using h.cartan w⟩) fun h => ⟨h.lat, _, Complex.I_ne_zero, h.cartan⟩
   obtain ⟨Φ, hΦ, eΦ⟩ := exists_section hB.cm B.emb
   choose C hC h using fin_bound (F := F) Y hL

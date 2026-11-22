@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementWd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstEmbeddingOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondEmbedMulFirstEmbedApply
+module
+
+public import Formalism.HermitianCurvature.StatementWd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstEmbeddingOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondEmbedMulFirstEmbedApply
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.Wd4
 
@@ -356,11 +360,9 @@ section Slots
 variable {K A S : Type} [Field K] [StarRing K] [Ring A] [StarRing A] [Algebra K A] [StarModule K A]
   [Fintype S] [DecidableEq S]
 
-theorem eU_MU (a : S) : MU (eU a : Fin 2 → Fin 2 → SlopeTestRemainingChoices S A) where
-  mul := Wd1.eU_mul_eU a
-  sum := by
-    have h := Wd1.sum_eU_diag (A := A) a
-    rwa [Fin.sum_univ_two] at h
+theorem eU_MU (a : S) : MU (eU a : Fin 2 → Fin 2 → SlopeTestRemainingChoices S A) := by
+  refine ⟨Wd1.eU_mul_eU a, ?_⟩
+  simpa only [Fin.sum_univ_two] using Wd1.sum_eU_diag (A := A) a
 
 theorem freeOf_diagScalar {a : S} {b : SlopeTestRemainingChoices S A} (hb : FreeOf a b) : FreeOf2 a (d0 b) := by
   intro i j

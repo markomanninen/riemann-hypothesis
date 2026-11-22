@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermOf
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermOf
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -64,7 +69,7 @@ def toInt (σ : E →ₐ[F] E) (n : ℕ) : hermO σ n →+ Matrix (Fin n) (Fin n
     have h3 := Classical.choose_spec ((mem_hermO_iff σ n d.1).1 d.2 a b)
     refine Eq.trans h1 ?_
     change _ = algebraMap (𝓞 E) E (_ + _)
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Eq.trans rfl (Eq.symm (Eq.trans (congrArg₂ (· + ·) h2 h3) rfl))
 
 theorem algebraMap_toInt (σ : E →ₐ[F] E) (n : ℕ) (c : hermO σ n) (a b : Fin n) :
@@ -87,7 +92,7 @@ theorem Kc_le_add {n : ℕ} (c l : Matrix (Fin n) (Fin n) E)
   obtain ⟨o, ho⟩ := hy i
   choose m hm using hl
   refine ⟨o + ∑ j, m i j * y j, ?_⟩
-  rw [Matrix.add_mulVec, Pi.add_apply, map_add, ho]
+  rw [Matrix.add_mulVec, Pi.add_apply, map_add (f := _), ho]
   congr 1
   simp [Matrix.mulVec, dotProduct, hm]
 
@@ -105,8 +110,8 @@ end GlobalTheory.CompanionTheory.SiegelND.Integ.Hua.Compare
 
 namespace GlobalTheory.CompanionTheory.SiegelND.Integ.Hua
 
-open GlobalTheory.CompanionTheory.SiegelND.Integ.Hua.Compare in
 
+open GlobalTheory.CompanionTheory.SiegelND.Integ.Hua.Compare in
 theorem summable_quot_of_le_delta_rpow : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n : ℕ)
     (Λ : AddSubgroup (hermE σ n)) (t : F), t ≠ 0 → ∀ τ : ℕ, 0 < τ →
     (∀ c ∈ hermO σ n, ((τ : F) / t) • c ∈ Λ) →

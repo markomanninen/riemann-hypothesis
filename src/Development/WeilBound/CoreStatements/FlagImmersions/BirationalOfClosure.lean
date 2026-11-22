@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogResolutionReindexed
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomogRelationRatioReindex
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UnitRatioDivisorSupportEq
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogResolutionReindexed
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomogRelationRatioReindex
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UnitRatioDivisorSupportEq
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -174,10 +178,12 @@ theorem zeros_proj {Ω₀ Ω : Type} [Field Ω₀] [Field Ω] (y₀ : (Σ k, J�
             GlobalTheory.CompanionTheory.Ar.Rel.pow_mul_pow_sub_eq _ _ hMy hjn, Algebra.smul_def, map_mul]
           show _ = _ * (i (p.coeff j) * α ^ j)
           ring
-        simp only [Φ, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Φ, map_sum]
         rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum, hpa, mul_zero]
       have hev := hz.2 Φ (mem_mCoordIdeal_of_aeval_eq_zero y hΦh hΦy)
-      simp only [Φ, map_sum, map_mul, map_pow, hFz] at hev
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Φ, map_sum, map_mul, map_pow, hFz] at hev
       rw [Finset.sum_eq_single 0 (fun j _ hj => by simp [hj]) (by simp), eval_map_rename'] at hev
       have hMz : eval z (map (Int.castRingHom ℂ) M) ≠ 0 := by
         simp only [M, map_prod, map_pow, map_X, eval_X]
@@ -220,7 +226,7 @@ theorem birational_of_closure {Ω : Type} [Field Ω] {n : ℕ} (yf : Fin n → �
     obtain ⟨d', g', h', hg', hh', h0', he'⟩ := hy
     refine ⟨d + d', g * h' + h * g', h * h', homog_add (isMultiHomog_mul' hg hh') (isMultiHomog_mul' hh hg'),
       isMultiHomog_mul' hh hh', by rw [map_mul]; exact mul_ne_zero h0 h0', ?_⟩
-    simp only [map_add, map_mul, he, he']
+    simp only [map_add (f := _), map_mul, he, he']
     ring
   | neg x _ hx =>
     obtain ⟨d, g, h, hg, hh, h0, he⟩ := hx

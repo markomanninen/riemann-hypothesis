@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.JnArcFin
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.JnArcFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ variable {d : SD σ}
 def zInv (z : InfinitePlace F → Fin d.m → Fin d.n → ℂ) : Iw d → ℝ :=
   fun i => if i.2.2.2 then (z i.1 i.2.1 i.2.2.1).re else (z i.1 i.2.1 i.2.2.1).im
 
-variable (d) in
 
+variable (d) in
 def zLE : (Iw d → ℝ) ≃ₗ[ℝ] (InfinitePlace F → Fin d.m → Fin d.n → ℂ) where
   toFun := zOf (d := d)
   invFun := zInv (d := d)

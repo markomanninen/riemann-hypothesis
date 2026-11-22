@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotRedOfMem
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassCurvePointOfLatticeAddOfGeneric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotRedOfMem
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassCurvePointOfLatticeAddOfGeneric
+
+@[expose] public section
 
 open Formalism.L2.Th1.F GlobalTheory.Klein
 open scoped ComplexConjugate BigOperators
@@ -109,7 +113,7 @@ theorem Red.add_of_not {ι : ℂ ≃+* ℂ_[p]} {L : PeriodPair} {r u w : ℂ} (
         + ι (4 * r ^ 3 - L.g₂ * r - L.g₃) := fun x y h => by
     have : y ^ 2 = 4 * (x - r) ^ 3 + (12 * r) * (x - r) ^ 2 + (12 * r ^ 2 - L.g₂) * (x - r)
         + (4 * r ^ 3 - L.g₂ * r - L.g₃) := by linear_combination h
-    rw [← map_pow, this, map_add, map_add, map_add, map_mul ι 4, map_mul ι (12 * r),
+    rw [← map_pow, this, map_add (f := _), map_add (f := _), map_add (f := _), map_mul ι 4, map_mul ι (12 * r),
       map_mul ι _ (x - r), map_pow, map_pow, map_ofNat]
   refine chord_norm_le_one (norm_two_of_ne hp) ha hw.2 hk₂ hk₁ hk₀ (key _ _ e1) (key _ _ e2) ?_
   have : 4 * ((L.weierstrassP u - r) - (L.weierstrassP w - r)) ^ 2 * (L.weierstrassP (u + w) - r)
@@ -118,7 +122,7 @@ theorem Red.add_of_not {ι : ℂ ≃+* ℂ_[p]} {L : PeriodPair} {r u w : ℂ} (
           * ((L.weierstrassP u - r) - (L.weierstrassP w - r)) ^ 2 := by
     rw [hs]; field_simp; ring
   have := congrArg ι this
-  simpa only [map_mul, map_sub, map_add, map_pow, map_ofNat] using this
+  simpa only [map_mul, map_sub, map_add (f := _), map_pow, map_ofNat] using this
 
 theorem not_red_addSubgroup : ∀ (p : ℕ) [Fact p.Prime] (ι : ℂ ≃+* ℂ_[p]) (L : PeriodPair) (r : ℂ), Good ι L r → (∀ z, Red ι L r z → Red ι L r (-z)) ∧ (∀ z, Red ι L r z → ∀ ω ∈ L.lattice, Red ι L r (z + ω)) ∧ (∀ u w, ¬ Red ι L r u → Red ι L r w → Red ι L r (u + w)) ∧ ∃ G : AddSubgroup ℂ, (∀ z, z ∈ G ↔ ¬ Red ι L r z) ∧ ∀ ω ∈ L.lattice, ω ∈ G := by
   intro p _ ι L r hg

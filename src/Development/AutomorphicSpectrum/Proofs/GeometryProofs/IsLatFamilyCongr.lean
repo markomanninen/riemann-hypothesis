@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeLatticeFlagBound
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.TrivFlagOnHodge
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeLatticeFlagBoundAllPlaces
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.QuotientByFiniteFlatStatement
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.ZarhinStatement
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateDatumStatement
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.OrdinaryCurveStatement
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.NonemptyEquivOfCardHom
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyExistsPosOfFamilyExists
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeLatticeFlagBound
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.TrivFlagOnHodge
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsLatFlagPair
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.QuotientByFiniteFlatStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.ZarhinStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateDatumStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.OrdinaryCurveStatement
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.NonemptyEquivOfCardHom
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyExistsPosOfFamilyExists
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
@@ -177,7 +182,7 @@ def gamLat {o : Type} [CommRing o] [Algebra o Ω] (R : Subalgebra o Ω) (w : Ω)
     refine ⟨by simpa [smul_add] using W.add_mem h1 h1', ?_⟩
     have := (stdLat R (Fin n)).add_mem h2 h2'
     convert this using 1
-    simp only [Prod.fst_add, Prod.snd_add, map_add]; abel
+    simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]; abel
   zero_mem' := ⟨by simpa using W.zero_mem, by simpa using (stdLat R (Fin n)).zero_mem⟩
   neg_mem' := by
     rintro ⟨a, b⟩ ⟨h1, h2⟩
@@ -194,7 +199,7 @@ def delLat {o : Type} [CommRing o] [Algebra o Ω] (R : Subalgebra o Ω) (w : Ω)
     refine ⟨by simpa [smul_add] using (stdLat R (Fin n)).add_mem h1 h1', ?_⟩
     have := om.add_mem h2 h2'
     convert this using 1
-    simp only [Prod.fst_add, Prod.snd_add, map_add]; abel
+    simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]; abel
   zero_mem' := ⟨by simpa using (stdLat R (Fin n)).zero_mem, by simpa using om.zero_mem⟩
   neg_mem' := by
     rintro ⟨a, b⟩ ⟨h1, h2⟩
@@ -263,8 +268,8 @@ def chartD (e : Sg → CMType H ⊕ CMType H) (b : ∀ t, Fin (labelRk D t) → 
 def zeroD (F : Type) (n : ℕ) (Sg : Type) (r s : Sg → ℕ) : LieLatticeData Ω F n Sg r s :=
   ⟨⊥, fun _ => ⊥, fun _ => ⊥, fun _ => ⊥, fun _ => ⊥, fun _ => ⊥, fun _ => ⊥, fun _ => ⊥⟩
 
-open Classical in
 
+open Classical in
 def famD (e : Sg → CMType H ⊕ CMType H) (b : ∀ t, Fin (labelRk D t) → 𝔐.Li)
     (pq : (𝓞 E ⧸ Ideal.span {(p : 𝓞 E)}) →+* F) (sc : F →+ (𝓞 E ⧸ Ideal.span {(p : 𝓞 E)})) (w : O)
     (P : ∀ c' : ∀ k, J k, mseg y c' ≠ 0 → ChartPack G O c')
@@ -289,7 +294,7 @@ theorem famD_pos (e : Sg → CMType H ⊕ CMType H) (b : ∀ t, Fin (labelRk D t
     (P : ∀ c' : ∀ k, J k, mseg y c' ≠ 0 → ChartPack G O c')
     (i : ∀ (c' : ∀ k, J k) (τ), (Fin (labelRk D (e τ)) → Ω) →ₗ[Ω] (Fin (D.p + D.q) → Ω)) (c' : ∀ k, J k)
     (h : mseg y c' ≠ 0) : famD e b pq sc w P i c' = chartD e b pq sc w (P c' h) (i c') := by
-  rw [famD, dif_pos h]
+  rw [famD, dite_eq_left h]
 
 theorem isLatFamily_congr {V : Type} [AddCommGroup V] [Module Ω V] {o : Type} [CommRing o] [Algebra o Ω]
     {A B : (∀ k, J k) → AddSubgroup V} (h : ∀ c', mseg y c' ≠ 0 → A c' = B c') (hA : IsLatFamily o y A) :

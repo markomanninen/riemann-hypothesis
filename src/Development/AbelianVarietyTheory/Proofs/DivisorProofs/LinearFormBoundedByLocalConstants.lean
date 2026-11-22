@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulIntSingle
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulIntSingle
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.UG
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.ThetaDenom
 open scoped TensorProduct NNReal Matrix
@@ -38,12 +43,15 @@ theorem exists_bound {n m : ℕ} (f : Matrix (Fin n) (Fin m) (AF F ⊗[F] E) →
       f X = ∑ q : Fin n × Fin m × s, B.repr (X q.1 q.2.1) q.2.2 * y q := by
     intro X
     conv_lhs => rw [Matrix.matrix_eq_sum_single X]
-    simp only [map_sum, Fintype.sum_prod_type]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     conv_lhs => rw [← B.sum_repr (X i j)]
     have : Matrix.single i j (∑ k, B.repr (X i j) k • B k) = ∑ k, B.repr (X i j) k • Matrix.single i j (B k) := by
-      simp only [← Matrix.singleLinearMap_apply (R := AF F), map_sum, map_smul]
-    rw [this, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [← Matrix.singleLinearMap_apply (R := AF F), map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum]
     simp only [map_smul, smul_eq_mul, y]
   refine ⟨K, ?_, fun v => le_max_left _ _, fun X v => ?_⟩
   · have h := eventually_all.2 fun q => eventually_nnnorm_evFin_le_one (y q)
@@ -53,7 +61,8 @@ theorem exists_bound {n m : ℕ} (f : Matrix (Fin n) (Fin m) (AF F ⊗[F] E) →
         Finset.univ.sup fun p : Fin n × Fin m => absFin F v (compFin F E v (X p.1 p.2)) :=
       fun p => Finset.le_sup (f := fun p : Fin n × Fin m => absFin F v (compFin F E v (X p.1 p.2)))
         (Finset.mem_univ p)
-    rw [hdec X, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hdec X, map_sum]
     refine nnnorm_sum_le v _ _ fun q _ => ?_
     rw [map_mul, nnnorm_mul, mul_comm]
     refine mul_le_mul' ?_ ?_

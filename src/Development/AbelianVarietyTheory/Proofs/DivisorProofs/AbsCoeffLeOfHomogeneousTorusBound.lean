@@ -1,10 +1,15 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+
+@[expose] public section
+
 open Filter Topology MvPolynomial GlobalTheory.HSAmp
 
 namespace GlobalTheory.HSAmp.CoefTorus
 
 theorem sum_eq_of_coeff_ne_zero {n q : ℕ} {T : MvPolynomial (Fin n) ℤ} (hT : T.IsHomogeneous q)
-    {d : Fin n →₀ ℕ} (hd : coeff d T ≠ 0) : ∑ i, d i = q := by
+    {d : Fin n →₀ ℕ} (hd : AddMonoidAlgebra.coeff T d ≠ 0) : ∑ i, d i = q := by
   have := hT hd
   simpa [Finsupp.weight_apply, Finsupp.sum_fintype] using this
 
@@ -33,17 +38,17 @@ theorem geom_root {N m : ℕ} {ζ : ℂ} (hζ : IsPrimitiveRoot ζ N) (h0 : 0 < 
 theorem key_sum {n q N : ℕ} {T : MvPolynomial (Fin n) ℤ} (hT : T.IsHomogeneous q) {ζ : ℂ}
     (hζ : IsPrimitiveRoot ζ N) (α : Fin n →₀ ℕ) (hq : q < N) (hα : ∀ i, α i < N) :
     ∑ k : Fin n → Fin N, aeval (fun i => ζ ^ (k i : ℕ)) T * ∏ i, (ζ ^ (k i : ℕ)) ^ (N - α i)
-      = ((coeff α T : ℤ) : ℂ) * (N : ℂ) ^ n := by
+      = ((AddMonoidAlgebra.coeff T α : ℤ) : ℂ) * (N : ℂ) ^ n := by
   have inner : ∀ d ∈ T.support, ∑ k : Fin n → Fin N,
-      (algebraMap ℤ ℂ (coeff d T) * ∏ i, (ζ ^ (k i : ℕ)) ^ d i) * ∏ i, (ζ ^ (k i : ℕ)) ^ (N - α i)
-      = if d = α then ((coeff α T : ℤ) : ℂ) * (N : ℂ) ^ n else 0 := by
+      (algebraMap ℤ ℂ (AddMonoidAlgebra.coeff T d) * ∏ i, (ζ ^ (k i : ℕ)) ^ d i) * ∏ i, (ζ ^ (k i : ℕ)) ^ (N - α i)
+      = if d = α then ((AddMonoidAlgebra.coeff T α : ℤ) : ℂ) * (N : ℂ) ^ n else 0 := by
     intro d hd
     have hdq : ∀ i, d i ≤ q := fun i => by
       rw [← sum_eq_of_coeff_ne_zero hT (Finsupp.mem_support_iff.mp hd)]
       exact Finset.single_le_sum (f := fun j => d j) (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
     have e1 : ∑ k : Fin n → Fin N,
-        (algebraMap ℤ ℂ (coeff d T) * ∏ i, (ζ ^ (k i : ℕ)) ^ d i) * ∏ i, (ζ ^ (k i : ℕ)) ^ (N - α i)
-        = algebraMap ℤ ℂ (coeff d T) * ∏ i, ∑ j : Fin N, (ζ ^ (d i + (N - α i))) ^ (j : ℕ) := by
+        (algebraMap ℤ ℂ (AddMonoidAlgebra.coeff T d) * ∏ i, (ζ ^ (k i : ℕ)) ^ d i) * ∏ i, (ζ ^ (k i : ℕ)) ^ (N - α i)
+        = algebraMap ℤ ℂ (AddMonoidAlgebra.coeff T d) * ∏ i, ∑ j : Fin N, (ζ ^ (d i + (N - α i))) ^ (j : ℕ) := by
       rw [Fintype.prod_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [mul_assoc, ← Finset.prod_mul_distrib]
@@ -70,12 +75,12 @@ theorem key_sum {n q N : ℕ} {T : MvPolynomial (Fin n) ℤ} (hT : T.IsHomogeneo
   rw [Finset.sum_comm, Finset.sum_congr rfl inner, Finset.sum_ite_eq']
   split_ifs with h
   · rfl
-  · have h0 : coeff α T = 0 := not_not.mp (mt MvPolynomial.mem_support_iff.mpr h)
+  · have h0 : AddMonoidAlgebra.coeff T α = 0 := not_not.mp (mt MvPolynomial.mem_support_iff.mpr h)
     simp [h0]
 
 theorem coeff_le_of_torus_bound : ∀ (D q : ℕ) (T : MvPolynomial (Fin (D + 1)) ℤ) (M : ℝ), T.IsHomogeneous q →
     (∀ z : Fin (D + 1) → ℂ, z 0 = 1 → (∀ l, ‖z l‖ = 1) → ‖aeval z T‖ ≤ M) →
-    ∀ α, |((coeff α T : ℤ) : ℝ)| ≤ M := by
+    ∀ α, |((AddMonoidAlgebra.coeff T α : ℤ) : ℝ)| ≤ M := by
   intro D q T M hT hM α
   have htor : ∀ z : Fin (D + 1) → ℂ, (∀ l, ‖z l‖ = 1) → ‖aeval z T‖ ≤ M := by
     intro z hz
@@ -95,7 +100,7 @@ theorem coeff_le_of_torus_bound : ∀ (D q : ℕ) (T : MvPolynomial (Fin (D + 1)
     have := Finset.single_le_sum (f := fun j => α j) (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
     omega
   have key := key_sum hT hζ α (by omega) hα
-  have hbound : ‖((coeff α T : ℤ) : ℂ) * (N : ℂ) ^ (D + 1)‖ ≤ (N : ℝ) ^ (D + 1) * M := by
+  have hbound : ‖((AddMonoidAlgebra.coeff T α : ℤ) : ℂ) * (N : ℂ) ^ (D + 1)‖ ≤ (N : ℝ) ^ (D + 1) * M := by
     rw [← key]
     refine (norm_sum_le _ _).trans ?_
     have : ∀ k : Fin (D + 1) → Fin N,

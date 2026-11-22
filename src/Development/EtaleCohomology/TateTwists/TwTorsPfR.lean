@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.TwLocPfR
+module
+
+public import Development.EtaleCohomology.TateTwists.TwLocPfR
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

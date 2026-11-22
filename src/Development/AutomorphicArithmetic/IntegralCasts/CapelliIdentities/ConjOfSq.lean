@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh56.conj_of_sq :
     ∀ {w : ℂ} {q : ℕ},

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 

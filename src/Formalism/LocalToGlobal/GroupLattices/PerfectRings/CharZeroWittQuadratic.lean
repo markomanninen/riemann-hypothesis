@@ -1,6 +1,11 @@
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.GoodRingWittExtension
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IsLocalRingOfComplete
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.StdSubPlacesConst
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ObjBridge
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.JOInjective
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IsLocalRingOfComplete
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.StdSubPlacesConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,7 +142,7 @@ theorem wU_mem_max : wU p n ∈ maximalIdeal (OO p n) := by
 theorem under_max (L : Type) [Field L] [Algebra (KO p n) L] [FiniteDimensional (KO p n) L] [Algebra (OO p n) L]
     [IsScalarTower (OO p n) (KO p n) L] :
     (maximalIdeal (OL p n L)).comap (algebraMap (OO p n) (OL p n L)) = maximalIdeal (OO p n) :=
-  IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal _))
+  IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr (IntCl.finite (OO p n) (KO p n) L))) (maximalIdeal _))
 
 theorem p_mem_max (L : Type) [Field L] [Algebra (KO p n) L] [FiniteDimensional (KO p n) L] [Algebra (OO p n) L]
     [IsScalarTower (OO p n) (KO p n) L] : (p : OL p n L) ∈ maximalIdeal (OL p n L) := by

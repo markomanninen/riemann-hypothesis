@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.IntegrableAbsThetaToReal
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.IntegrableAbsThetaToReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,13 +73,13 @@ theorem fam_hasDeriv (V : HSp D) (ν : Measure (GA D V)) [ν.IsHaarMeasure] {U :
   have hsumM : ∀ q : Quot (GQ V), descend (GQ V) (absTheta V M) q < ⊤ →
       Summable fun ξ : Matrix (Fin V.rank) (Fin n) D.host.E => ‖M (invPt V q.out ξ)‖ := by
     intro q hq
-    refine Summable.of_enorm ?_
+    refine Summable.of_eNorm ?_
     simpa [GlobalTheory.AutomorphicL2Unitary.descend, absTheta] using hq.ne
   have htsM : ∀ q : Quot (GQ V), descend (GQ V) (absTheta V M) q < ⊤ →
       ∑' ξ : Matrix (Fin V.rank) (Fin n) D.host.E, ‖M (invPt V q.out ξ)‖ = (descend (GQ V) (absTheta V M) q).toReal := by
     intro q hq
     simp only [GlobalTheory.AutomorphicL2Unitary.descend, absTheta]
-    rw [ENNReal.tsum_toReal_eq fun ξ => enorm_ne_top]
+    rw [ENNReal.tsum_toReal_eq fun ξ => eNorm_ne_top]
     simp
 
   have hdiff : ∀ᵐ q ∂autMeasure V ν, ∀ z ∈ Metric.ball z₀ r,
@@ -136,9 +140,9 @@ theorem fam_hasDeriv (V : HSp D) (ν : Measure (GA D V)) [ν.IsHaarMeasure] {U :
     hint0 hmeas' hbound ((integrable_absTheta_toReal V ν hMc hMfin).div_const r) hdiff).2
 
 theorem fam_dF (V : HSp D) (ν : Measure (GA D V)) [ν.IsHaarMeasure] {U : Set ℂ} (hU : IsOpen U)
-    {f : ℂ → Mx D V.rank n → ℂ} (hf : Fam V ν U f) : Fam V ν U (dF f) where
-  diff x := (hf.diff x).deriv hU
-  maj z₀ hz₀ := by
+    {f : ℂ → Mx D V.rank n → ℂ} (hf : Fam V ν U f) : Fam V ν U (dF f) := by
+  refine { diff := fun x => (hf.diff x).deriv hU, maj := ?_, meas := ?_ }
+  · intro z₀ hz₀
     obtain ⟨ε, hε, hball, M, hMc, hMfin, hMb⟩ := hf.maj z₀ hz₀
     refine ⟨ε / 2, by positivity, (Metric.ball_subset_ball (by linarith)).trans hball, ((2 / ε : ℝ) : ℂ) • M,
       hMc.const_smul _, absThetaInt_smul_lt V ν _ hMfin, ?_⟩
@@ -163,7 +167,7 @@ theorem fam_dF (V : HSp D) (ν : Measure (GA D V)) [ν.IsHaarMeasure] {U : Set �
       _ = ‖(((2 / ε : ℝ) : ℂ) • M) x‖ := by
         rw [Pi.smul_apply, norm_smul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity)]
         field_simp
-  meas z hz := (fam_hasDeriv V ν hU hf hz).1
+  · exact fun z hz => (fam_hasDeriv V ν hU hf hz).1
 
 theorem fam_iF (V : HSp D) (ν : Measure (GA D V)) [ν.IsHaarMeasure] {U : Set ℂ} (hU : IsOpen U)
     {f : ℂ → Mx D V.rank n → ℂ} (hf : Fam V ν U f) (r : ℕ) : Fam V ν U (iF f r) := by

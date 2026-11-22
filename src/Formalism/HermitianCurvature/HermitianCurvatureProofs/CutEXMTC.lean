@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMTB
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMTB
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,9 +19,9 @@ theorem upper_utc {M : Matrix (Fin n) (Fin n) ℂ} (hM : M ∈ C2.UTset n) : G.u
   ext i j
   simp only [G.upper, G.strictUpper, StabilizerDisintegration.utc, Matrix.add_apply, Matrix.one_apply, Matrix.of_apply]
   rcases lt_trichotomy i j with h | rfl | h
-  · rw [dif_pos h, if_neg (ne_of_lt h), zero_add]
-  · rw [dif_neg (lt_irrefl _), if_pos rfl, hM.2, add_zero]
-  · rw [dif_neg (not_lt.2 h.le), if_neg (ne_of_gt h), hM.1 i j h, add_zero]
+  · rw [dite_eq_left h, if_neg (ne_of_lt h), zero_add]
+  · rw [dite_eq_right (lt_irrefl _), if_pos rfl, hM.2, add_zero]
+  · rw [dite_eq_right (not_lt.2 h.le), if_neg (ne_of_gt h), hM.1 i j h, add_zero]
 
 theorem upper_ut (v : G.UT n → ℂ) : G.upper v ∈ C2.UTset n := by
   refine ⟨fun i j h => ?_, fun i => ?_⟩

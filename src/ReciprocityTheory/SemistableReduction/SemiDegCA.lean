@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem exists_section_of_image {K : Type} [Field K] [NumberField K] {V : Type*}
         exact X.smul_mem r hx
     · obtain ⟨u1, e1, h1'⟩ := ha
       obtain ⟨u2, e2, h2'⟩ := hb
-      exact ⟨u1 + u2, by rw [map_add, e1, e2], fun t ht => by
+      exact ⟨u1 + u2, by rw [map_add (f := _), e1, e2], fun t ht => by
         rw [smul_add]; exact X.add_mem (h1' t ht) (h2' t ht)⟩
   exact key 1 (by rw [hII]; exact hone)
 

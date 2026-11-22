@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.Fr UpperTheory.V.GC
 
@@ -63,16 +67,16 @@ private theorem rank_kummer_dual_le_clRk {F Ω : Type} [Field F] [NumberField F]
       exact Submodule.subset_span ⟨i, rfl⟩
     | zero =>
       convert Submodule.zero_mem (Submodule.span k (Set.range e)) using 1
-      funext u
+      ext u
       simp
     | add x y _ _ hx hy =>
       convert Submodule.add_mem _ hx hy using 1
-      funext u
+      ext u
       simp
     | smul a x _ hx =>
       convert Submodule.smul_mem _ (cst a) hx using 1
-      funext u
-      simp
+      ext u
+      simp [cst]
   have hsp : Kum.XDual 1 K₁ k k ≤ Submodule.span k (Set.range e) := by
     intro φ hφ
     obtain ⟨hlc, hadd, hine, hdec⟩ := hφ
@@ -96,7 +100,7 @@ private theorem rank_kummer_dual_le_clRk {F Ω : Type} [Field F] [NumberField F]
         exact h0.comp (β.coord j)
       · intro a c
         show β.coord j ⟨φ (a * c), _⟩ = β.coord j ⟨φ a, _⟩ + β.coord j ⟨φ c, _⟩
-        rw [← map_add]
+        rw [← map_add (f := _)]
         congr 1
         exact Subtype.ext (hadd a c)
       · intro A u hu

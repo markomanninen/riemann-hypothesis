@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct GlobalTheory.EtC
 
 namespace GlobalTheory.HomogCochains
@@ -96,7 +101,8 @@ theorem toInh_d (n : ℕ) (c : C.obj ⦋n⦌) :
   apply Subtype.ext
   funext g
   rw [toInh_apply, dLocallyConstant_hom_apply, inhomogeneousCochains.d_hom_apply]
-  simp only [AlgebraicTopology.AlternatingCofaceMapComplex.objD, sum_hom_apply, zsmul_hom_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AlgebraicTopology.AlternatingCofaceMapComplex.objD, sum_hom_apply, zsmul_hom_apply,
     map_sum, map_zsmul, Finset.sum_apply, Pi.smul_apply, hd]
   rw [Fin.sum_univ_succ]
   congr 1
@@ -118,8 +124,8 @@ theorem alt_d (n : ℕ) :
       AlgebraicTopology.AlternatingCofaceMapComplex.objD C n := by
   simp [AlgebraicTopology.alternatingCofaceMapComplex, AlgebraicTopology.AlternatingCofaceMapComplex.obj]
 
-include he hr hd in
 
+include he hr hd in
 noncomputable def complexIso :
     (AlgebraicTopology.alternatingCofaceMapComplex AddCommGrpCat.{1}).obj C ≅
       ((upF k).mapHomologicalComplex _).obj (cochainsComplex M) :=

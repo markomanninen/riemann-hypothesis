@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WwInjective
-import Formalism.PeriodIntegrals.WwCauchyBinet
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramInjectivity.GramVanish
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WwInjective
+public import Formalism.PeriodIntegrals.WwCauchyBinet
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramInjectivity.GramVanish
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,9 +49,11 @@ theorem sum_smul_eq_zero (hCB : PI.WwCauchyBinet.WwCauchyBinet) (l : ℕ) [Fact 
   apply MvPolynomial.funext
   intro x
   have hx := hph (fun s a i => x (s, i, a))
-  rw [deX_eq_sum N nu hCB, map_sum] at hx
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [deX_eq_sum N nu hCB, map_sum] at hx
   simp only [MvPolynomial.C_mul', map_smul, smul_eq_mul] at hx
-  simp only [map_sum, MvPolynomial.smul_eq_C_mul, MvPolynomial.eval_mul, MvPolynomial.eval_C,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPolynomial.smul_eq_C_mul, MvPolynomial.eval_mul, MvPolynomial.eval_C,
     eval_map_nablaX, map_zero]
   refine Eq.trans ?_ hx
   exact Finset.sum_congr rfl fun J _ => mul_comm _ _

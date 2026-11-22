@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemStabLocStdLatticeIffHtFinEqOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemStabLocStdLatticeIffHtFinEqOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct
@@ -54,7 +58,36 @@ theorem exists_isSelfDualLattice : ∀ (F E : Type) [Field F] [NumberField F] [F
       smul_mem' := fun c _ hy =>
         (latLoc F L v).smul_mem ⟨c.1, (mem_maxOrder_iff_mem_intLoc v _).1 c.2⟩ hy }
   have hmem : ∀ y, y ∈ Lv ↔ y ∈ latLoc F L v := fun _ => Iff.rfl
-  obtain ⟨k, S, Φ, h1, hS, hΦ⟩ := exists_frame L hL
+  have hfull : Submodule.IsFullLattice E L := by
+    refine { toIsLattice := hL, span_eq_top := eq_top_iff.mpr fun y _ => ?_ }
+    obtain ⟨s, hs⟩ := hL.fg
+    obtain ⟨d, hd, hden⟩ := exists_integral_multiples ℤ ℚ
+      (s.image fun x => hE σ J x y)
+    have hdE : (d : E) ≠ 0 := by exact_mod_cast hd
+    have hy : (d : E) • y ∈ L := by
+      apply (hsd _).2
+      intro x hx
+      rw [← hs] at hx
+      have hint : IsIntegral ℤ (hE σ J x ((d : E) • y)) := by
+        induction hx using Submodule.span_induction with
+        | mem x hx =>
+          have hh := hden (hE σ J x y) (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
+          convert hh using 1 <;> simp [hE, Formalism.UG.hform, Pi.smul_apply,
+            smul_eq_mul, Finset.mul_sum, Finset.sum_mul, zsmul_eq_mul, mul_comm, mul_left_comm, mul_assoc]
+        | zero => simpa [hE, Formalism.UG.hform] using (isIntegral_zero : IsIntegral ℤ (0 : E))
+        | add x z _ _ hx hz =>
+          convert hx.add hz using 1 <;>
+            simp [hE, Formalism.UG.hform, add_mul, Finset.sum_add_distrib]
+        | smul a x _ hx =>
+          have ha : IsIntegral ℤ (σ (a : E)) := (RingOfIntegers.isIntegral_coe a).map σ.toRingHom.toIntAlgHom
+          convert ha.mul hx using 1 <;>
+            simp [hE, Formalism.UG.hform, Pi.smul_apply, ← algebraMap_smul E, smul_eq_mul, map_mul,
+              Finset.mul_sum, mul_assoc]
+      exact ⟨⟨_, hint⟩, rfl⟩
+    have hyspan : (d : E) • y ∈ Submodule.span E (L : Set (Fin n → E)) := Submodule.subset_span hy
+    have := Submodule.smul_mem (Submodule.span E (L : Set (Fin n → E))) (d : E)⁻¹ hyspan
+    simpa [← smul_smul, hdE] using this
+  obtain ⟨k, S, Φ, h1, hS, hΦ⟩ := exists_frame L hfull
   have h2 := map_mul_eq_one (F := F) (Fv F v) h1
   have hcol : ∀ j, (fun i => S.map (inclR (F := F) (Fv F v)) i j) ∈ Lv := fun j =>
     tmul_mem_latLoc (one_mem _) (hS j)
@@ -72,7 +105,7 @@ theorem exists_isSelfDualLattice : ∀ (F E : Type) [Field F] [NumberField F] [F
   · refine eq_top_iff.2 fun y _ => ?_
     rw [eq_sum_col h2 y]
     exact sum_mem fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span (hcol j))
-  · have h3 : latLoc F L v = dualLoc σ J L v := (forall_isSelfDualAt_iff hJ.2 hL).2 hsd v
+  · have h3 : latLoc F L v = dualLoc σ J L v := (forall_isSelfDualAt_iff hJ.2 hfull).2 hsd v
     simp only [mem_maxOrder_iff_mem_intLoc]
     rw [hmem, h3]
     exact Iff.rfl

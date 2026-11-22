@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommuteStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommuteStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem hc_hc (d e : ℕ) (P : MvPolynomial σ ℂ) :
 theorem DegZero.comm {K : Module.End ℂ (MvPolynomial σ ℂ)} (hK : DegZero K) (d : ℕ)
     (P : MvPolynomial σ ℂ) : homogeneousComponent d (K P) = K (homogeneousComponent d P) := by
   rw [← sum_homogeneousComponent P]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [homogeneousComponent_of_mem (hK e _ (homogeneousComponent_mem e P)), hc_hc]
   split_ifs <;> simp
@@ -46,7 +51,8 @@ theorem minusPart_eq_zero_iff (A : Module.End ℂ (MvPolynomial σ ℂ)) (P : Mv
       simp [homogeneousComponent_eq_zero _ _ this]
     rw [minusPart, finsum_eq_sum_of_support_subset _ hfin] at h
     have h2 := congrArg (homogeneousComponent d) h
-    rw [map_sum, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h2
     simp only [hc_hc] at h2
     rw [Finset.sum_ite_eq] at h2
     simpa using h2
@@ -88,7 +94,7 @@ theorem map_mem_lowKer {ι : Type} {A : ι → Module.End ℂ (MvPolynomial σ �
   rw [hK.comm, ← Module.End.mul_apply (A Z) K]
   rcases hc Z hZ with h | ⟨Z', hZ', h⟩
   · rw [h, Module.End.mul_apply, hK.comm, hP Z hZ d, map_zero]
-  · rw [← sub_add_cancel (A Z * K) (K * A Z), ← h, LinearMap.add_apply, map_add, hP Z' hZ' d,
+  · rw [← sub_add_cancel (A Z * K) (K * A Z), ← h, LinearMap.add_apply, map_add (f := _), hP Z' hZ' d,
       Module.End.mul_apply, hK.comm, hP Z hZ d, map_zero, add_zero]
 
 theorem X_mul_pderiv_mem (u v : σ) {d : ℕ} {P : MvPolynomial σ ℂ} (hP : P ∈ homog σ d) :

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.Common
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.Common
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem mulVec_mem_headCols (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) R) (w : Fin 
     simp [Finset.sum_apply, Pi.single_apply]
   have hsum : Z.mulVec w = ∑ j, w j • Z.mulVec (Pi.single j 1) := by
     conv_lhs => rw [hw']
-    rw [← Matrix.mulVecLin_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Matrix.mulVecLin_apply, map_sum]
     simp only [map_smul, Matrix.mulVecLin_apply]
   rw [hsum, Fin.sum_univ_castSucc, hw, zero_smul, add_zero]
   refine Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ ?_
@@ -178,7 +183,7 @@ theorem mem_range_Phi (Z : M.Mat (r + 1)) (p : M.Cok Z × E) :
     obtain ⟨s, hs⟩ := h
     have hs' : (s : E) = x - ell Z m := hs
     refine ⟨m + s • bCls Z.Z, ?_⟩
-    rw [Phi_apply, map_add, map_smul, piC_b, smul_zero, add_zero, map_add, ell_smul, ell_b,
+    rw [Phi_apply, map_add (f := _), map_smul, piC_b, smul_zero, add_zero, map_add (f := _), ell_smul, ell_b,
       mul_one, hs']
     congr 1
     abel

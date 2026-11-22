@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+
+@[expose] public section
 
 namespace UpperTheory.Gal.W2.FA
 
@@ -34,7 +38,8 @@ private theorem span_top (τ : J → F →+* PadicAlgCl p)
   have hsum : ∀ w : (∀ i, L i), φ w = ∑ i, ψ i (w i) := by
     intro w
     conv_lhs => rw [← Finset.univ_sum_single w]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     rfl
   have hrep : ∀ i, ∃ a : L i, ∀ y, ψ i y = Algebra.trace ℚ_[p] (L i) (a * y) := by
     intro i
@@ -115,12 +120,17 @@ private theorem span_top (τ : J → F →+* PadicAlgCl p)
       intro i
       rw [ha i, trace_eq_sum_embeddings]
       simp only [map_mul]
-    rw [Finset.sum_congr rfl (fun i _ => hi i), ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl (fun i _ => hi i), ← map_sum]
     have := hsum (fun i => (⟨τ i x, hm i x⟩ : L i))
     rw [← this, hφf x, map_zero])
   have ha0 : ∀ i, a i = 0 := by
     intro i
-    let s0 : L i →ₐ[ℚ_[p]] PadicAlgCl p := IsAlgClosed.lift
+    let s0 : L i →ₐ[ℚ_[p]] PadicAlgCl p := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     apply (s0 : L i →+* PadicAlgCl p).injective
     rw [map_zero]
     exact hzero ⟨i, s0⟩
@@ -168,7 +178,7 @@ private theorem approx (τ : J → F →+* PadicAlgCl p)
     refine ⟨x1 + x2, fun i => ?_⟩
     have hcalc : τ i (x1 + x2) - ((w1 + w2) i : PadicAlgCl p) =
         (τ i x1 - (w1 i : PadicAlgCl p)) + (τ i x2 - (w2 i : PadicAlgCl p)) := by
-      rw [map_add]
+      rw [map_add (f := _)]
       show τ i x1 + τ i x2 - ((w1 i : PadicAlgCl p) + (w2 i : PadicAlgCl p)) = _
       ring
     rw [hcalc]

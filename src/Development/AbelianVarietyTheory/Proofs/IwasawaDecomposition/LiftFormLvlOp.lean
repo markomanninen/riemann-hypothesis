@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCompOfOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubOrthProjPerpMem
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActEqTranslateLiftV
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CenterEqSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCompOfOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubOrthProjPerpMem
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActEqTranslateLiftV
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CenterEqSum
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.RecTie GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.HeightCounting GlobalTheory.CenFrame
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -102,7 +107,7 @@ theorem main : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 I0 T : Type) (
   letI : Fintype (G0g D.nd) := Fintype.ofEquiv G (R.eG.trans cG).toEquiv
   let ad : GA D (Vc D i) → D.what₂.Mt (Y.tup t) ((i : ℕ) + 1) →ₗ[ℂ] (R.cV i).W := fun h' =>
     { toFun := fun y' => (Y.IL.jMt (Y.tup t) ht i y').1 h'
-      map_add' := fun y₁ y₂ => by rw [map_add]; rfl
+      map_add' := fun y₁ y₂ => by rw [map_add (f := _)]; rfl
       map_smul' := fun c y₁ => by rw [map_smul]; rfl }
   let ch : G → ℂ := fun g => (levChi (Vc D i) (R.βV i) (flagL (R.datVt i t)) (κ g))⁻¹
   have key : ∀ (g₁ : G0g D.nd) (y' : D.what₂.Mt (Y.tup t) ((i : ℕ) + 1)),
@@ -130,7 +135,7 @@ theorem main : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 I0 T : Type) (
     simpa only [F1, F2, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply] using this
   let Φ : ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))) →ₗ[ℂ] (R.cV i).W :=
     { toFun := fun z' => ad h (D.ntypes.cenMt (Y.tup t) ((i : ℕ) + 1) z' y)
-      map_add' := fun z₁ z₂ => by simp only [map_add, LinearMap.add_apply]
+      map_add' := fun z₁ z₂ => by simp only [map_add (f := _), LinearMap.add_apply]
       map_smul' := fun c z₁ => by simp only [map_smul, LinearMap.smul_apply, RingHom.id_apply] }
   have hl := GlobalTheory.CenLocAt.lin_center Φ (fun g₀ => ch ((R.eG.trans cG).symm g₀) • ad (h * κ ((R.eG.trans cG).symm g₀)) y)
     (fun g₁ => (key g₁ y).trans (sum_reindex _ _ _ _)) z

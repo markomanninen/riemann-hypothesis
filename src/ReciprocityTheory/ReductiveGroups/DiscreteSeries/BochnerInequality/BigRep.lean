@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Permute
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.IsKUnitaryOfIsInfUnitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Permute
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.IsKUnitaryOfIsInfUnitary
+
+@[expose] public section
 
 noncomputable section
 open Finset
@@ -99,7 +103,8 @@ theorem bAct_apply (k : ℕ) (a b : Fin n) (F : Big n k M) (κ : Fin k → Fin n
     (bAct E k a b F) κ = E a b (F κ) + ∑ i, (factorAd k i a b F) κ := by
   show coord k κ ((mAct E k a b + ∑ i, factorAd k i a b : Module.End ℂ (Big n k M)) F) =
     E a b (F κ) + ∑ i, coord k κ (factorAd k i a b F)
-  rw [LinearMap.add_apply, map_add, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.add_apply, map_add (f := _), LinearMap.sum_apply, map_sum]
   rfl
 
 def swFst {k : ℕ} (i : Fin k) (a b : Fin n) : Equiv.Perm (Fin k → Fin n × Fin n) :=

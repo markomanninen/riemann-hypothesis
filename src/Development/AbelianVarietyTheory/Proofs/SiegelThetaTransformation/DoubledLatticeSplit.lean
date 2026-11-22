@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -108,21 +112,22 @@ theorem pair_sub_left (x x' y : Fin r → E) : pair (x - x') y = pair x y - pair
   simp only [pair, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
 
 theorem pair_add_right (x y y' : Fin r → E) : pair x (y + y') = pair x y + pair x y' := by
-  simp only [pair, cc, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [pair, cc, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem pair_sub_right (x y y' : Fin r → E) : pair x (y - y') = pair x y - pair x y' := by
   simp only [pair, cc, Pi.sub_apply, map_sub, mul_sub, Finset.sum_sub_distrib]
 
 theorem pair_vecMul (x y : Fin r → E) (M : Matrix (Fin r) (Fin r) E) :
     pair (x ᵥ* M) y = pair x (y ᵥ* ccT M) := by
-  simp only [pair, Matrix.vecMul, dotProduct, ccT, Matrix.transpose_apply, Matrix.map_apply, cc,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pair, Matrix.vecMul, dotProduct, ccT, Matrix.transpose_apply, Matrix.map_apply, cc,
     map_sum, map_mul, IsCMField.complexConj_apply_apply, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
 
 theorem ccT_add (A B : Matrix (Fin r) (Fin r) E) : ccT (A + B) = ccT A + ccT B := by
   ext i j
-  simp [ccT, cc, map_add]
+  simp [ccT, cc, map_add (f := _)]
 
 theorem ccT_sub (A B : Matrix (Fin r) (Fin r) E) : ccT (A - B) = ccT A - ccT B := by
   ext i j
@@ -206,7 +211,8 @@ theorem vecMul_dblT (y₁ y₂ : Fin r → E) : Sum.elim y₁ y₂ ᵥ* dblT X =
 
 private theorem ccT_mul_siegel_theta_transformation (M N : Matrix (Fin r) (Fin r) E) : ccT (M * N) = ccT N * ccT M := by
   ext i j
-  simp [ccT, cc, Matrix.mul_apply, map_sum, map_mul, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ccT, cc, Matrix.mul_apply, map_sum, map_mul, mul_comm]
 
 private theorem ccT_one_fin_r : ccT (1 : Matrix (Fin r) (Fin r) E) = 1 := by
   simp only [ccT]

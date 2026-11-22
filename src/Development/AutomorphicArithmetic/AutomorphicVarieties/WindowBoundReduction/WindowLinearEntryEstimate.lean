@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.IsConjRepRefl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.ExistsTens
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.IsConjRepRefl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.ExistsTens
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.WeylC UpperTheory.V.Cj.R
 
 private theorem lin_entry {d D : ℕ} (φ : Matrix (Fin d) (Fin d) ℂ →ₗ[ℂ] Matrix (Fin D) (Fin D) ℂ)
@@ -9,7 +14,8 @@ private theorem lin_entry {d D : ℕ} (φ : Matrix (Fin d) (Fin d) ℂ →ₗ[�
     conv_lhs => rw [Matrix.matrix_eq_sum_single A]
     simp only [Matrix.smul_single, smul_eq_mul, mul_one]
   conv_lhs => rw [e]
-  simp only [map_sum, map_smul, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, mul_comm]
 
 theorem UpperTheory.window_linear_entry_estimate :
     ∀ (E : Type) [Field E] [NumberField E] (a d D : ℕ) (φ : Matrix (Fin d) (Fin d) ℂ →ₗ[ℂ] Matrix (Fin D) (Fin D) ℂ) (M : GL (Fin a) (Cinf E) → Matrix (Fin d) (Fin d) ℂ), IsReg M → IsReg (fun y => φ (M y)) ∧ ∀ τ i j, eOf (fun y => φ (M y)) τ i j = φ (eOf M τ i j) := by

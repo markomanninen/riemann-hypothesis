@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.LogKS
 
@@ -22,9 +27,9 @@ theorem exists_isField_transport : ∀ (Z : Scheme.{0}) (W : Z.Opens) (hW : IsAf
   refine ⟨fun O f => if h : O ≤ W then (e O h).symm (d' (hW.fromSpec ⁻¹ᵁ O) (e O h f)) else 0,
     ⟨?_, ?_, ?_⟩, ?_⟩
   · intro O h f f'
-    simp only [dif_pos h, map_add, hd.1 _ le_top]
+    simp only [dif_pos h, map_add (f := _), hd.1 _ le_top]
   · intro O h f f'
-    simp only [dif_pos h, map_mul, hd.2.1 _ le_top, map_add, RingEquiv.symm_apply_apply]
+    simp only [dif_pos h, map_mul, hd.2.1 _ le_top, map_add (f := _), RingEquiv.symm_apply_apply]
   · intro O O' h hO f
     have hO' : O' ≤ W := h.trans hO
     simp only [dif_pos hO, dif_pos hO']

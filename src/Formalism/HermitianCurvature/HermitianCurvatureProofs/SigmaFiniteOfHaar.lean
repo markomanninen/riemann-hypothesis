@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Imports
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RightSingleRule.PatEntryZero
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermVectorIdentity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Imports
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RightSingleRule.PatEntryZero
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermVectorIdentity
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -116,8 +120,8 @@ section rule
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
 
-open Formalism.FourierDecayAlt.Q.QRR in
 
+open Formalism.FourierDecayAlt.Q.QRR in
 theorem rdV_kr (Bs : B.RealPlaceData k r Wp Wq) (F : B.Mat k r → (Wq →L[ℂ] Wp)) (x : B.Mat k r) (l : Fin r)
     (X : B.Mat k r) (hX : Pat k r l X) (hS : dag k r X = -X) :
     RdV X (Kr Bs F) x = (ell k r Bs.z' X - star (ell k r Bs.z' X)) • Kr Bs F x := by
@@ -136,7 +140,7 @@ theorem dEll_eq_ell (z' : Fin (2 * r + k + 1) → ℂ) (X : B.Mat k r) (hr : 1 �
   unfold C3.dEll ell
   rw [← Finset.sum_erase_add _ _ (Finset.mem_univ (⟨r - 1, by omega⟩ : Fin r)),
     ← Finset.sum_erase_add _ _ (Finset.mem_univ (⟨r - 1, by omega⟩ : Fin r))]
-  rw [dif_neg (by simp; omega), dif_neg (by simp; omega), add_zero]
+  rw [dite_eq_right (by simp; omega), dite_eq_right (by simp; omega), add_zero]
   congr 1
   apply Finset.sum_congr rfl
   intro a ha
@@ -145,7 +149,7 @@ theorem dEll_eq_ell (z' : Fin (2 * r + k + 1) → ℂ) (X : B.Mat k r) (hr : 1 �
     have := a.isLt
     have : a.val ≠ r - 1 := fun e => ha' (Fin.ext e)
     omega
-  rw [dif_pos this, dif_pos this]
+  rw [dite_eq_left this, dite_eq_left this]
 
 open Formalism.FourierDecayAlt.Q.QRR in
 theorem pat_inNp {l : Fin r} {X : B.Mat k r} (hX : Pat k r l X) : ∀ a b, ¬ C3.InNp k r a b → X a b = 0 := by
@@ -222,18 +226,6 @@ open Classical Formalism.FourierDecayAlt.P.CapelliWordSumExpansion
 
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
-
-def KrW (Bs : B.RealPlaceData k r Wp Wq) (F : B.Mat k r → (Wq →L[ℂ] Wp)) (U₀ : Set (B.Mat k r)) (hU₀ : IsOpen U₀)
-    (hK : ∀ g ∈ U₀, g ∈ B.GV k r → Loc (⊤ : ℕ∞) (Kr Bs F) g) : Wsm (E := Wq →L[ℂ] Wp) U₀ :=
-  ⟨fun g => if g ∈ U₀ ∧ g ∈ B.GV k r then Kr Bs F g else 0, fun g hg hgG =>
-    loc_of_eq (hK g hg hgG) hU₀ hg (fun x hx hxG => by simp [hx, hxG])⟩
-
-def LaK (Bs : B.RealPlaceData k r Wp Wq) (F : B.Mat k r → (Wq →L[ℂ] Wp)) (U₀ : Set (B.Mat k r)) (hU₀ : IsOpen U₀)
-    (hK : ∀ g ∈ U₀, g ∈ B.GV k r → Loc (⊤ : ℕ∞) (Kr Bs F) g) (x₀ : B.Mat k r) :
-    Module.End ℂ (Wsm (E := Wq →L[ℂ] Wp) U₀) →ₗ[ℂ] (Wq →L[ℂ] Wp) where
-  toFun X := (X (KrW Bs F U₀ hU₀ hK)).1 x₀
-  map_add' X Y := rfl
-  map_smul' c X := rfl
 
 end ring
 

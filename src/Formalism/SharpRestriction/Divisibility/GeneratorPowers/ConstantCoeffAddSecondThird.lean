@@ -1,11 +1,15 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcAdd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ActLin
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ExpLaw
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HomUniq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.PderivSecondEvFirstPointEqZero
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcAdd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ActLin
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ExpLaw
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.PderivSecondEvFirstPointEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ConstantCoeffEv
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,13 +54,14 @@ theorem ev_bilL {n : ℕ} (G : FGLaw S d) (cc : Fin d → Fin d → S) (a : Fin 
     ev a (bilL G cc) = ∑ i, ∑ l, cc i l • (ev ![a 0] (LogPf.logOf G i) * ev ![a 1] (LogPf.logOf G l)) := by
   simp only [bilL, lg]
   rw [ev_eq_hom a ha]
-  simp only [map_sum, map_smul, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_mul]
   simp only [← ev_eq_hom a ha]
   simp only [ev_at a ha]
 
 private theorem ev_add_lemma {m n : ℕ} (a : Fin m → Pt S n d) (ha : ∀ j i, MvPowerSeries.constantCoeff (a j i) = 0)
     (f g : PS S m d) : ev a (f + g) = ev a f + ev a g := by
-  simp only [ev_eq_hom a ha, map_add]
+  simp only [ev_eq_hom a ha, map_add (f := _)]
 
 theorem formal_log_add_last_two (G : FGLaw S d) (l : Fin d) :
     ev (n := 3) ![G.add (pt S d 1) (pt S d 2)] (LogPf.logOf G l) =
@@ -82,17 +87,19 @@ theorem cc_bilL (G : FGLaw S d) (cc : Fin d → Fin d → S) : MvPowerSeries.con
   have h1 : ∀ (j : Fin 2) (l : Fin d), MvPowerSeries.constantCoeff (lg G j l) = 0 := fun j l =>
     cc_ev_lemma (![pt S d j] : Fin 1 → Pt S 2 d) (fun j' k => by fin_cases j' <;> simp [pt]) _ (cc_logOf G l)
   simp only [bilL]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun l _ => ?_
   rw [← smul_mul_assoc, map_mul, h1, mul_zero]
 
 theorem constantCoeff_add_second_third (G : FGLaw S d) (i : Fin d) : MvPowerSeries.constantCoeff (G.add (pt S (n := 3) d 1) (pt S d 2) i) = 0 := by
   exact cc_ev_lemma (![pt S (n := 3) d 1, pt S d 2] : Fin 2 → Pt S 3 d) (fun j k => by fin_cases j <;> simp [pt]) (G.F i) (G.const i)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem ev_expP {n : ℕ} (a : Fin 2 → Pt S n d) (ha : ∀ j i, MvPowerSeries.constantCoeff (a j i) = 0)
     (G : FGLaw S d) (cc : Fin d → Fin d → S) :
     ev a (expP (-bilL G cc)) = expP (-ev a (bilL G cc)) := by
@@ -304,7 +311,8 @@ theorem ev_lin {n : ℕ} (M : Matrix (Fin d) (Fin d) S) (u : Pt S n d) (hu : ∀
     ev ![u] (∑ j, MvPowerSeries.C (M i j) * (MvPowerSeries.X ((0 : Fin 1), j) : PS S 1 d)) = ∑ j, M i j • u j := by
   have hu' : ∀ (j : Fin 1) (k : Fin d), MvPowerSeries.constantCoeff ((![u] : Fin 1 → Pt S n d) j k) = 0 := by
     intro j k; fin_cases j; simpa using hu k
-  rw [ev_eq_hom _ hu', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ev_eq_hom _ hu', map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← MvPowerSeries.smul_eq_C_mul, map_smul, ← ev_eq_hom _ hu', ev_X _ hu']
   rfl
@@ -339,7 +347,8 @@ theorem ev_act_pt {O : Type} [CommRing O] [StarRing O] (B : FB S d O) (a : O) {n
     funext j k
     fin_cases j
     rfl
-  · rw [h2, ev_eq_hom _ hq, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, ev_eq_hom _ hq, map_sum]
     simp only [map_smul]
     simp only [← ev_eq_hom _ hq]
 
@@ -375,7 +384,8 @@ theorem twist_bal_jet {O : Type} [CommRing O] [StarRing O] (B : FB S d O) (cc : 
   have hT : ∀ g : PS S 1 d, MvPowerSeries.constantCoeff g = 0 → MvPolynomial.constantCoeff (psTrunc m g) = 0 := by
     intro g hg
     unfold psTrunc
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun e _ => ?_
     rw [MvPolynomial.constantCoeff_monomial]
     split_ifs with he

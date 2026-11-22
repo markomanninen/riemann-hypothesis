@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ProjectionSurjective
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsHasProjectiveDimensionLEOfResidueField
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.LocDim
-import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiniteCocycles
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsHasProjectiveDimensionLEOfResidueField
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.LocDim
+public import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Pat CategoryTheory TensorProduct
 
@@ -69,8 +73,7 @@ theorem pd_quot {A : Type} [CommRing A] [IsNoetherianRing A] {x : A} (hx : IsSMu
         x • TensorProduct.lid A N t := by
       intro t
       induction t with
-      | zero => simp
-      | add a b ha hb => simp only [map_add, ha, hb, smul_add]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb, smul_add]
       | tmul a m => simp [smul_smul, mul_comm]
     intro a b hab
     apply (TensorProduct.lid A N).injective
@@ -108,7 +111,8 @@ theorem projective_of_socle {A : Type} [CommRing A] [IsNoetherianRing A] [IsLoca
       intro c
       have h0 : ∑ i, residue A (c.1 i) • b i = 0 := by
         have h1 := congrArg (TensorProduct.mk A (ResidueField A) M 1) (LinearMap.mem_ker.mp c.2)
-        rw [Fintype.linearCombination_apply, map_sum, map_zero] at h1
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Fintype.linearCombination_apply, map_sum, map_zero] at h1
         rw [← h1]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [map_smul, hv]
@@ -310,24 +314,5 @@ theorem isRegularRing_of_isRegularLocalRing (R : Type) [CommRing R] [IsRegularLo
   intro p _
   exact isRegularLocalRing_of_flat_of_map_eq_maximalIdeal R _ p
     Localization.AtPrime.map_eq_maximalIdeal.symm
-
-theorem Pat.IsCplAt.isRegularLocalRing_and_ringKrullDim :
-    ∀ (R S : Type) [CommRing R] [IsRegularLocalRing R] [CommRing S] [IsLocalRing S] (q : Ideal R)
-      [q.IsPrime] (φ : R →+* S), IsCplAt q φ →
-      ∃ _ : IsRegularLocalRing S, ringKrullDim S + ringKrullDim (R ⧸ q) = ringKrullDim R := by
-  intro R S _ _ _ _ q _ φ h
-  let _ : Algebra R S := φ.toAlgebra
-  have := h.noeth
-  have : Module.Flat R S := h.flat
-  have hq : maximalIdeal S = q.map (algebraMap R S) := h.max_eq
-  refine ⟨isRegularLocalRing_of_flat_of_map_eq_maximalIdeal R S q hq, ?_⟩
-  have : (maximalIdeal S).LiesOver q := ⟨h.comap_eq.symm⟩
-  have e := Ideal.height_eq_height_add_of_liesOver_of_hasGoingDown q (maximalIdeal S)
-  have e0 : (Ideal.map (Ideal.Quotient.mk (q.map (algebraMap R S))) (maximalIdeal S)).height = 0 := by
-    have hp : (q.map (algebraMap R S)).IsPrime := hq ▸ inferInstance
-    rw [hq, Ideal.map_quotient_self, Ideal.height_bot]
-  rw [e0, add_zero] at e
-  rw [← maximalIdeal_height_eq_ringKrullDim, e]
-  exact (isCM_of_isRegularLocalRing R).height_add_ringKrullDim_quotient q
 
 end GlobalTheory

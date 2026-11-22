@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -18,7 +22,7 @@ theorem UpperTheory.V.AlgebraTools.exists_lim_elt :
       exact h'
     refine ⟨b, fun O => ?_⟩
     have hopen : IsOpen {y : G | b⁻¹ * y ∈ O.toSubgroup} :=
-      O.toOpenSubgroup.isOpen.preimage (continuous_mul_left _)
+      O.toOpenSubgroup.isOpen.preimage (continuous_const_mul _)
     exact hl.eventually (hopen.mem_nhds (by simp))
   · rw [mem_limKer]
     intro O

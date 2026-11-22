@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,11 +25,62 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {ι : Type
 
 private theorem row_int (D : Dom E n 0) {φ : H E n 0 → ℂ} (hφ : IsTestH φ) (w : Lp ℂ 2 D.ν) (x : H E n 0) :
     Integrable (fun y => kerH φ x y * (w : H E n 0 → ℂ) y) D.ν :=
-  MemLp.integrable_mul ((kernel_rows_columns_square_integrable (ctx ratProper_holds D) φ hφ).2 x) (Lp.memLp w)
+  by
+    let X : Ctx := by
+      haveI := CuspidalL2GL.t2Space_GA E n
+      haveI := CuspidalL2GL.t2Space_GA E 0
+      haveI := CuspidalL2GL.locallyCompactSpace_GA E n
+      haveI := CuspidalL2GL.locallyCompactSpace_GA E 0
+      haveI := CuspidalL2GL.secondCountableTopology_GA E n
+      haveI := CuspidalL2GL.secondCountableTopology_GA E 0
+      haveI := (ratProper_holds E n).2.1
+      haveI := (ratProper_holds E 0).2.1
+      refine { G := H E n 0
+               ms := borelH E n 0
+               bs := ⟨rfl⟩
+               μ := D.μ
+               haar := { toIsFiniteMeasureOnCompacts := @isFiniteMeasureOnCompacts_of_isLocallyFiniteMeasure _ _ _ D.μ D.haar.2.2.2, toIsMulLeftInvariant := D.haar.1, toIsOpenPosMeasure := D.haar.2.2.1 }
+               Γ := ratH E n 0
+               cn := (((ratGL E n).prodMap (ratGL E 0)).rangeRestrict_surjective).countable
+               proper := ?_
+               F := D.F
+               fd := D.fd }
+      intro C hC
+      have h1 := (ratProper_holds E n).2.2 _ (hC.image continuous_fst)
+      have h2 := (ratProper_holds E 0).2.2 _ (hC.image continuous_snd)
+      refine ((h1.prod h2).image ((ratGL E n).prodMap (ratGL E 0)).rangeRestrict).subset ?_
+      rintro ⟨_, γ, rfl⟩ hγ
+      exact ⟨γ, ⟨⟨_, hγ, rfl⟩, ⟨_, hγ, rfl⟩⟩, rfl⟩
+    exact MemLp.integrable_mul ((kernel_rows_columns_square_integrable X φ hφ).2 x) (Lp.memLp w)
 
 private theorem ker_trM (D : Dom E n 0) {Φ : Matrix ι ι (H E n 0 → ℂ)} (hΦ : IsTestM Φ) (M : Matrix ι ι ℂ)
     (x y : H E n 0) : kerH (trM Φ M) x y = ∑ i, ∑ j, kerH (Φ i j) x y * M j i := by
-  have h := (kerLin (ctx ratProper_holds D) (ι × ι) (fun p => Φ p.1 p.2) (fun p => M p.2 p.1)
+  let X : Ctx := by
+    haveI := CuspidalL2GL.t2Space_GA E n
+    haveI := CuspidalL2GL.t2Space_GA E 0
+    haveI := CuspidalL2GL.locallyCompactSpace_GA E n
+    haveI := CuspidalL2GL.locallyCompactSpace_GA E 0
+    haveI := CuspidalL2GL.secondCountableTopology_GA E n
+    haveI := CuspidalL2GL.secondCountableTopology_GA E 0
+    haveI := (ratProper_holds E n).2.1
+    haveI := (ratProper_holds E 0).2.1
+    refine { G := H E n 0
+             ms := borelH E n 0
+             bs := ⟨rfl⟩
+             μ := D.μ
+             haar := { toIsFiniteMeasureOnCompacts := @isFiniteMeasureOnCompacts_of_isLocallyFiniteMeasure _ _ _ D.μ D.haar.2.2.2, toIsMulLeftInvariant := D.haar.1, toIsOpenPosMeasure := D.haar.2.2.1 }
+             Γ := ratH E n 0
+             cn := (((ratGL E n).prodMap (ratGL E 0)).rangeRestrict_surjective).countable
+             proper := ?_
+             F := D.F
+             fd := D.fd }
+    intro C hC
+    have h1 := (ratProper_holds E n).2.2 _ (hC.image continuous_fst)
+    have h2 := (ratProper_holds E 0).2.2 _ (hC.image continuous_snd)
+    refine ((h1.prod h2).image ((ratGL E n).prodMap (ratGL E 0)).rangeRestrict).subset ?_
+    rintro ⟨_, γ, rfl⟩ hγ
+    exact ⟨γ, ⟨⟨_, hγ, rfl⟩, ⟨_, hγ, rfl⟩⟩, rfl⟩
+  have h := (kerLin X (ι × ι) (fun p => Φ p.1 p.2) (fun p => M p.2 p.1)
     (fun p => hΦ p.1 p.2)).2 x y
   have e : trM Φ M = fun z => ∑ p : ι × ι, Φ p.1 p.2 z * M p.2 p.1 := by
     funext z
@@ -82,9 +137,9 @@ theorem ker_pf :
     exact Finset.sum_congr rfl fun j _ => vec_int w _ j (m.t i j) x
   refine ⟨?_, ?_⟩
   · simp only [hG]
-    exact integrable_finset_sum _ fun i _ => hI i
+    exact integrable_finsetSum _ fun i _ => hI i
   · simp only [hG]
-    rw [integral_finset_sum _ fun i _ => hI i]
+    rw [integral_finsetSum _ fun i _ => hI i]
     simp only [hterm]
     have e2 : ∀ y, kerH m.φ x y * (w : H E n 0 → ℂ) y =
         ∑ i, ∑ j, s.M j i * (kerH (m.Φ i j) x y * (w : H E n 0 → ℂ) y) := by
@@ -96,9 +151,9 @@ theorem ker_pf :
     simp only [e2]
     have hr : ∀ i j, Integrable (fun y => kerH (m.Φ i j) x y * (w : H E n 0 → ℂ) y) s.D.ν :=
       fun i j => row_int s.D (m.t i j) w x
-    rw [integral_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => (hr i j).const_mul _]
+    rw [integral_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => (hr i j).const_mul _]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [integral_finset_sum _ fun j _ => (hr i j).const_mul _]
+    rw [integral_finsetSum _ fun j _ => (hr i j).const_mul _]
     exact Finset.sum_congr rfl fun j _ => (integral_const_mul _ _).symm
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi

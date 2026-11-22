@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLawsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLawsStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Cyc
 
@@ -21,7 +25,7 @@ theorem algHom_ext_of_constantCoeff_zero {O : Type} [CommRing O]
         rw [← hb, PowerSeries.algebraMap_eq]; ring
       have : f a - g a = f PowerSeries.X * (f b - g b) := by
         conv_lhs => rw [ha]
-        rw [map_add, map_add, map_mul, map_mul, f.commutes, g.commutes, ← h]; ring
+        rw [map_add (f := _), map_add (f := _), map_mul, map_mul, f.commutes, g.commutes, ← h]; ring
       rw [this, pow_succ']
       exact mul_dvd_mul (PowerSeries.X_dvd_iff.2 h0) (ih b)
   ext a n
@@ -38,7 +42,7 @@ theorem constantCoeff_algHom {O : Type} [CommRing O]
   have ha : a = algebraMap O (PowerSeries O) (PowerSeries.constantCoeff a) + PowerSeries.X * b := by
     rw [← hb, PowerSeries.algebraMap_eq]; ring
   conv_lhs => rw [ha]
-  rw [map_add, map_mul, f.commutes, map_add, map_mul, h0, PowerSeries.algebraMap_eq]
+  rw [map_add (f := _), map_mul, f.commutes, map_add (f := _), map_mul, h0, PowerSeries.algebraMap_eq]
   simp
 
 theorem eq_of_commute_pow {O : Type} [CommRing O] [IsDomain O] (l : ℕ) (hl0 : (l : O) ≠ 0)
@@ -59,7 +63,7 @@ theorem eq_of_commute_pow {O : Type} [CommRing O] [IsDomain O] (l : ℕ) (hl0 : 
   have hd : φ (F - G) = (F - G) * ∑ i ∈ Finset.range l, (1 + F) ^ i * (1 + G) ^ (l - 1 - i) := by
     rw [map_sub, hf, hg, hφ]
     have := (Commute.all (1 + F) (1 + G)).mul_geom_sum₂ l
-    simp only [map_sub, map_pow, map_add, map_one, ← hF, ← hG]
+    simp only [map_sub, map_pow, map_add (f := _), map_one, ← hF, ← hG]
     rw [show (1 + F) - (1 + G) = F - G by ring] at this
     rw [this]; ring
   have key : ∀ n : ℕ, PowerSeries.X ^ (n + 2) ∣ F - G := by
@@ -76,7 +80,8 @@ theorem eq_of_commute_pow {O : Type} [CommRing O] [IsDomain O] (l : ℕ) (hl0 : 
       rw [he, map_mul, map_pow, hp, mul_pow, mul_assoc, mul_assoc] at hd
       have hc := congrArg PowerSeries.constantCoeff
         (mul_left_cancel₀ (pow_ne_zero _ PowerSeries.X_ne_zero) hd)
-      simp only [map_mul, map_pow, map_sum, map_add, map_one, PowerSeries.constantCoeff_X, hf0, hg0,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_mul, map_pow, map_sum, map_add (f := _), map_one, PowerSeries.constantCoeff_X, hf0, hg0,
         add_zero, one_pow, mul_one, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
         constantCoeff_algHom φ hφ0] at hc
       have he0 : PowerSeries.constantCoeff e = 0 := by

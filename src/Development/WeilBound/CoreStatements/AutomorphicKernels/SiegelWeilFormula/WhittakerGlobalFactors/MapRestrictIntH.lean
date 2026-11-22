@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerGlobalFactors.SigmaFiniteOfMp
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerGlobalFactors.SigmaFiniteOfMp
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ theorem hermVec_hermV (σ : E →ₐ[F] E) {d : ℕ} (b : Module.Basis (Fin d) F
     hermVec (Fv F v) σ b n (hermV σ v y) i = evalV F v (hermVec (Af F) σ b n y i) :=
   hermVec_map (evalV F v) σ b n y i
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem mem_latH_iff_vec (σ : E →ₐ[F] E) {d : ℕ} (b : Module.Basis (Fin d) F E) (n : ℕ)
     (v : HeightOneSpectrum (𝓞 F)) (S : HermR (Fv F v) σ n) :
     S ∈ latH σ b v n ↔ ∀ i, hermVec (Fv F v) σ b n S i ∈ v.adicCompletionIntegers F := by
@@ -133,7 +137,7 @@ theorem map_restrict_intH (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {d : ℕ} 
       (mp_hermVec hCM (Fv F v) b n (lam v))
   haveI : ∀ v : S, SigmaFinite (coordHerm (Fv F v.1) σ b (lam v.1) n) := fun v => hSF v.1
   have hρ : Measurable (fun y (v : S) => hV σ v.1 y) :=
-    measurable_pi_lambda _ fun v => (continuous_hermV σ hCM n v.1).measurable
+    Measurable.of_eval fun v => (continuous_hermV σ hCM n v.1).measurable
   symm
   refine Measure.pi_eq fun s hs => ?_
   rw [Measure.map_apply hρ (MeasurableSet.univ_pi hs), Measure.restrict_apply (hρ (MeasurableSet.univ_pi hs))]

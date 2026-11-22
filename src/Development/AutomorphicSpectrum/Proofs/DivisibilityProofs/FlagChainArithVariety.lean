@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsChainFirst
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFlagArithVar
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.Assembly
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsChainFirst
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFlagArithVar
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -67,7 +72,7 @@ theorem flag_mem_of_le (F : Type) [Field F] {K : Type} [Field K] [Algebra F K] {
     ext r s
     rw [Matrix.diagonal_mul]
     simp only [Matrix.submatrix_apply, pivotMatrix, Matrix.of_apply, U]
-    rw [dif_pos (by simp only [Fin.val_castLE]; have := r.2; have := j.2; omega)]
+    rw [dite_eq_left (by simp only [Fin.val_castLE]; have := r.2; have := j.2; omega)]
     rw [mul_div_cancel₀ _ (hL _)]
     rfl
   have hdet : flagMinor (pivotMatrix g) j S =

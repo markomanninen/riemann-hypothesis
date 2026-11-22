@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinR
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinI
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinC
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinE
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinF
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCTie
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinR
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinI
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinC
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinE
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinF
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCTie
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,12 +39,14 @@ theorem muC_pos : 0 < muC E := by
 theorem repr_left (b : Basis (Fin d) ℤ Y) (β : Y →ₗ[ℤ] Y →ₗ[ℤ] ℝ) (y z : Y) :
     ∑ j, (b.repr y j : ℝ) * β (b j) z = β y z := by
   conv_rhs => rw [← b.sum_repr y]
-  simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, zsmul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, zsmul_eq_mul]
 
 theorem repr_right (b : Basis (Fin d) ℤ Y) (β : Y →ₗ[ℤ] Y →ₗ[ℤ] ℝ) (y z : Y) :
     ∑ j, β z (b j) * (b.repr y j : ℝ) = β z y := by
   conv_rhs => rw [← b.sum_repr y]
-  simp only [map_sum, map_zsmul, zsmul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, zsmul_eq_mul]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 
 theorem repr_smul_expand (b : Basis (Fin d) ℤ Y) (u : 𝓞 E) (y : Y) (a : Fin d) :
@@ -49,7 +55,8 @@ theorem repr_smul_expand (b : Basis (Fin d) ℤ Y) (u : 𝓞 E) (y : Y) (a : Fin
     conv_lhs => rw [← b.sum_repr y]
     rw [Finset.smul_sum]
     exact Finset.sum_congr rfl fun j _ => smul_comm u (b.repr y j) (b j)
-  rw [h, map_sum, Finsupp.finset_sum_apply, Int.cast_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum, Finsupp.finsetSum_apply, Int.cast_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_zsmul, Finsupp.smul_apply, smul_eq_mul, Int.cast_mul]
 
@@ -170,7 +177,8 @@ theorem main_ineq (hne : ∃ z : E, cj z ≠ z) [Module.Free ℤ Y] [Module.Fini
   have hPmsum : ∀ t : Fin d → ℝ, Pm hcj (∑ a, t a • bs b a) (∑ a, t a • bs b a) =
       ∑ a, ∑ c, (t a * t c) • Pm hcj (bs b a) (bs b c) := by
     intro t
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Finset.smul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Finset.smul_sum,
       smul_smul]
     rw [Finset.sum_comm (f := fun x y => (t x * t y) • Pm hcj (bs b y) (bs b x))]
     exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun c _ => by rw [mul_comm]
@@ -178,7 +186,8 @@ theorem main_ineq (hne : ∃ z : E, cj z ≠ z) [Module.Free ℤ Y] [Module.Fini
       l (Pm hcj (∑ a, t a • bs b a) (∑ a, t a • bs b a)) / 2 := by
     intro t
     rw [hPmsum]
-    simp only [map_sum, map_smul, smul_eq_mul, dotProduct, Matrix.mulVec, hLdef, Matrix.of_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, dotProduct, Matrix.mulVec, hLdef, Matrix.of_apply,
       Finset.mul_sum, Finset.sum_div]
     exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun c _ => by ring
   have hbs_ne : ∀ t : Fin d → ℝ, t ≠ 0 → ∑ a, t a • bs b a ≠ 0 := by
@@ -209,12 +218,14 @@ theorem main_ineq (hne : ∃ z : E, cj z ≠ z) [Module.Free ℤ Y] [Module.Fini
     ext a c
     have e1 : (K * L) a c = l (Pm hcj (bs b a ∘ₗ smulZ θ) (bs b c)) / 2 := by
       rw [bs_comp b θ a]
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
         Matrix.mul_apply, hLdef, hKdef, Matrix.of_apply, Finset.sum_div]
       exact Finset.sum_congr rfl fun j _ => by ring
     have e2 : (L * Kᵀ) a c = l (Pm hcj (bs b a) (bs b c ∘ₗ smulZ θ)) / 2 := by
       rw [bs_comp b θ c]
-      simp only [map_sum, map_smul, smul_eq_mul, Matrix.mul_apply, Matrix.transpose_apply, hLdef,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul, Matrix.mul_apply, Matrix.transpose_apply, hLdef,
         hKdef, Matrix.of_apply, Finset.sum_div]
       exact Finset.sum_congr rfl fun j _ => by ring
     rw [Matrix.neg_apply, e1, e2, Pm_skew hcj θ hθs, map_neg]

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
-import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
+public import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Formalism.L2 NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module Polynomial GlobalTheory.Pass GlobalTheory.PendOf Formalism.MainNotions.PairedCharacterCondition
 open scoped TensorProduct
 
@@ -18,7 +23,7 @@ theorem prMt_mem_range (D : D7) (i : D.nd.Loc)
     rw [← D.nd.prMt_lat i]
     exact Submodule.subset_span ⟨x, hx, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx =>
     obtain ⟨b, hb⟩ := hO a
     have h1 : a • x = (a : D.what₂.LL) • x := rfl
@@ -43,7 +48,7 @@ theorem cenInt_lat : ∀ (D : D7) (i : D.nd.Loc) (S : Sec D i), (∀ a : 𝓞 D.
   | add x y _ _ hx hy =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by rw [TensorProduct.tmul_add, map_add, map_add, map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]⟩
   | smul a x _ hx =>
     obtain ⟨b, hb⟩ := hx
     refine ⟨a • b, ?_⟩

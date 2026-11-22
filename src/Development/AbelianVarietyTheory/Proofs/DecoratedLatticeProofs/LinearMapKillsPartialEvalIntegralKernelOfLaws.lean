@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsRead
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatLinearFunctional
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousCharactersLocallyConstantNonarchLocalF
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsRead
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatLinearFunctional
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousCharactersLocallyConstantNonarchLocalF
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData
 
 noncomputable section
@@ -93,10 +98,13 @@ theorem toTrip_add (ev it : Finset (m × m')) (hd : Disjoint ev it) (β t : Matr
       toTrip ev it β t + (0, 0, a) := by
   refine Prod.ext ?_ (Prod.ext ?_ ?_) <;> funext i
   · have h := i.2
-    simp [toTrip, sum_single_apply, h.1]
+    simp only [toTrip, Matrix.add_apply, sum_single_apply, h.1, if_false, add_zero,
+      Pi.add_apply, Pi.zero_apply] <;> simp
   · have h : i.1 ∉ it := Finset.disjoint_left.mp hd i.2
-    simp [toTrip, sum_single_apply, h]
-  · simp [toTrip, sum_single_apply, i.2]
+    simp only [toTrip, Matrix.add_apply, sum_single_apply, h, if_false, add_zero,
+      Pi.add_apply, Pi.zero_apply] <;> simp
+  · simp only [toTrip, Matrix.add_apply, sum_single_apply, i.2, if_true, dif_pos,
+      Pi.add_apply, Pi.zero_apply, zero_add] <;> simp
 
 theorem ofTrip_zero (ev it : Finset (m × m')) (β : Matrix m m' k) (x₀ : Rest ev it → k) (a : {e // e ∈ it} → k) :
     ofTrip ev it β (x₀, 0, a) = fill ev it β (ofTrip ev it β (x₀, 0, 0)) a := by

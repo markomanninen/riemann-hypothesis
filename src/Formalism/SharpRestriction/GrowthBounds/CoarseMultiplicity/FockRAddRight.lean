@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestBlockForm
-import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
-import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
-import Formalism.PolynomialDimension.MultinomialDepth.FockGaussComparisonHolds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestBlockForm
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
+public import Formalism.PolynomialDimension.MultinomialDepth.FockGaussComparisonHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,14 +42,14 @@ theorem Lin_X (N : S → Matrix (Fin k) (Fin k) R) (v : S × Fin k) :
   simp [Lin]
 
 theorem Lin_coeff_zero (N : S → Matrix (Fin k) (Fin k) R) (h : MvPolynomial (S × Fin k) R) :
-    coeff 0 (Lin N h) = coeff 0 h := by
+    AddMonoidAlgebra.coeff (Lin N h) 0 = AddMonoidAlgebra.coeff h 0 := by
   induction h using MvPolynomial.induction_on with
   | C a => simp [Lin]
-  | add p q hp hq => simp only [map_add, coeff_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), MvPolynomial.coeff_add, hp, hq]
   | mul_X p v hp =>
-    have e1 : coeff 0 (p * X v) = 0 := by
+    have e1 : AddMonoidAlgebra.coeff (p * X v) 0 = 0 := by
       rw [← constantCoeff_eq]; simp
-    have e2 : coeff 0 (Lin N (p * X v)) = 0 := by
+    have e2 : AddMonoidAlgebra.coeff (Lin N (p * X v)) 0 = 0 := by
       rw [map_mul, Lin_X, ← constantCoeff_eq]; simp
     rw [e1, e2]
 
@@ -54,12 +58,13 @@ theorem Lin_chain (N : S → Matrix (Fin k) (Fin k) R) (s : S) (b : Fin k) (h : 
   classical
   induction h using MvPolynomial.induction_on with
   | C a => simp [Lin]
-  | add p q hp hq => simp only [map_add, hp, hq, smul_add, Finset.sum_add_distrib]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, smul_add, Finset.sum_add_distrib]
   | mul_X p v hp =>
     obtain ⟨t, c⟩ := v
     have hL : pderiv (s, b) (∑ d : Fin k, C (N t c d) * X (t, d) : MvPolynomial (S × Fin k) R)
         = if t = s then C (N t c b) else 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [pderiv_C_mul, pderiv_X, Pi.single_apply, Prod.mk.injEq]
       by_cases hts : t = s
       · subst hts
@@ -74,7 +79,7 @@ theorem Lin_chain (N : S → Matrix (Fin k) (Fin k) R) (s : S) (b : Fin k) (h : 
         simp [apply_ite, Finset.sum_ite_eq, smul_eq_C_mul, mul_comm]
       · have hts' : ¬ s = t := fun h => hts h.symm
         simp [hts, hts']
-    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add, Lin_X, hL, hp]
+    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add (f := _), Lin_X, hL, hp]
     simp only [smul_add, Finset.sum_add_distrib]
     rw [hR]
     simp only [Finset.mul_sum, Finset.sum_mul, mul_smul_comm]
@@ -88,7 +93,7 @@ theorem fockR_Lin (N : S → Matrix (Fin k) (Fin k) R) (P : MvPolynomial (S × F
     rw [h1, C_apply, tsact_monomial_left, tsact_monomial_left, Lin_coeff_zero]
   | add p q hp hq =>
     intro Q
-    rw [map_add, tsact_add_left, tsact_add_left, hp, hq]
+    rw [map_add (f := _), tsact_add_left, tsact_add_left, hp, hq]
   | mul_X p v hp =>
     intro Q
     rw [map_mul, Lin_X, Finset.mul_sum, tsact_sum_left, tsact_X_mul, Lin_chain, tsact_sum_right]
@@ -144,8 +149,10 @@ theorem multDiv_kapFl (O : Type) [CommRing O] [IsLocalRing O] (p : ℕ) [hp : Fa
     rw [e] at this
     exact this
 
-  have hdv : p ^ padicValNat p Mn ∣ Mn := pow_padicValNat_dvd
-  have hnd : ¬ p ^ (padicValNat p Mn + 1) ∣ Mn := pow_succ_padicValNat_not_dvd hMn0
+  have hdv : p ^ padicValNat p Mn ∣ Mn := (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
+  have hnd : ¬ p ^ (padicValNat p Mn + 1) ∣ Mn := by
+    rw [Nat.padicValNat_def]
+    exact pow_succ_multiplicity_not_dvd hMn0
   generalize padicValNat p Mn = v at h4 hdv hnd
   obtain ⟨u, hu⟩ := hdv
   have hpu : ¬ p ∣ u := by
@@ -255,7 +262,7 @@ theorem int_pair (p κ : ℕ) (hMD : MultDiv O p κ (k := m + 1) d) (G : MvPolyn
     obtain ⟨q, hq⟩ := hMD α (mem_Pol.1 hG α hα)
     have hq' : (p : O) ^ κ * ((∏ k ∈ α.support, (α k).factorial : ℕ) : O) =
         (((∏ s, (d s).factorial : ℕ) : ℕ) : O) * q := hq
-    exact ⟨coeff α G * coeff α E * q, by linear_combination (coeff α G * coeff α E) * hq'⟩
+    exact ⟨AddMonoidAlgebra.coeff G α * AddMonoidAlgebra.coeff E α * q, by linear_combination (AddMonoidAlgebra.coeff G α * AddMonoidAlgebra.coeff E α) * hq'⟩
   obtain ⟨z, hz⟩ := hdvd
   refine ⟨z, ?_⟩
   rw [fockR_map, div_mul_eq_mul_div, div_eq_iff hD]

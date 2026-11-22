@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem coeff_map_lead (h : σ X = w * X ^ s) (hs : 0 < s) {j : ℕ} {G : R⟦X�
   obtain ⟨H, rfl⟩ := hG
   have h0 : constantCoeff (σ H) = constantCoeff H := by
     conv_lhs => rw [eq_X_mul_shift_add_const H]
-    rw [map_add, map_mul, h, show σ (C (constantCoeff H)) = C (constantCoeff H) from σ.commutes _]
+    rw [map_add (f := _), map_mul, h, show σ (C (constantCoeff H)) = C (constantCoeff H) from σ.commutes _]
     simp [hs.ne']
   have h1 : σ (X ^ j * H) = X ^ (s * j) * (w ^ j * σ H) := by
     rw [map_mul, map_pow, h, pow_mul]; ring
@@ -66,7 +70,8 @@ theorem lead_sum (h : σ X = w * X ^ s) (hs : 0 < s) (G : Fin s → R⟦X⟧) (n
       conv_lhs => rw [← hn, pow_add]
       exact mul_dvd_mul_left _ (X_pow_dvd_map h h1)
     · exact (pow_dvd_pow X n.le_succ).trans (key k hk)
-  · rw [map_sum, Finset.sum_eq_single ⟨n % s, Nat.mod_lt _ hs⟩]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single ⟨n % s, Nat.mod_lt _ hs⟩]
     · rw [← coeff_map_lead h hs h1, ← coeff_X_pow_mul (σ _) (n % s) (s * (n / s)), add_comm, hn]
     · intro k _ hk
       exact X_pow_dvd_iff.1 (key k fun e => hk (Fin.ext e)) n n.lt_succ_self
@@ -107,7 +112,8 @@ theorem exists_sum (h : σ X = w * X ^ s) (hs : 0 < s) (hw : IsUnit w) (b : R⟦
       linear_combination (X ^ s * mk fun i => coeff (i + s) b) * hv
     rw [h1]
     ext n
-    rw [map_add, coeff_X_pow_mul', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), coeff_X_pow_mul', map_sum]
     simp only [coeff_mul_C, coeff_X_pow, coeff_mk]
     split_ifs with hn
     · rw [Nat.sub_add_cancel hn, Finset.sum_eq_zero, add_zero]
@@ -124,7 +130,7 @@ theorem exists_sum (h : σ X = w * X ^ s) (hs : 0 < s) (hw : IsUnit w) (b : R⟦
     have : G b k = X * G (T b) k + C (coeff k b) := by
       conv_lhs => rw [eq_X_mul_shift_add_const (G b k)]
       simp [G]
-    rw [this, map_add, map_mul]
+    rw [this, map_add (f := _), map_mul]
     congr 1
     exact σ.commutes _
   have key : ∀ n, ∀ b : R⟦X⟧, X ^ n ∣ b - ∑ k : Fin s, X ^ (k : ℕ) * σ (G b k) := by
@@ -154,7 +160,7 @@ theorem existsUnique_sum (h : σ X = w * X ^ s) (hs : 0 < s) (hw : IsUnit w) (b 
 
 theorem algebraMap_injective (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O]
     [Algebra ℤ_[l] O] (hl : (l : O) ≠ 0) : Function.Injective (algebraMap ℤ_[l] O) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra h0
   rw [PadicInt.unitCoeff_spec h0, map_mul, map_pow, map_natCast] at hx
@@ -214,7 +220,8 @@ theorem invariants_param : ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] 
     rw [map_sub (act l O _), hb, hfix, one_mul, hu0, ← map_pow, eq_comm, mul_eq_right₀ hc,
       ← map_one (algebraMap ℤ_[l] O)] at h1
     have h2 := algebraMap_injective l O hl h1
-    ext
+    apply Subtype.ext
+    apply Units.ext
     simpa using h2
   rw [← sub_eq_zero, hG', h0]
   simp

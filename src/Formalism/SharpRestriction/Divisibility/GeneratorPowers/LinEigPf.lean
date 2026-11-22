@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LinEig
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LinEig
+
+@[expose] public section
 
 noncomputable section
 

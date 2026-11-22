@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+
+@[expose] public section
 
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.Kd.K4 Polynomial
 open scoped Matrix MatrixGroups
@@ -25,7 +29,7 @@ private lemma cauchy_far (d : ℕ → AdicCompletion I M) (n : ℕ)
     have h1 := ev_le (show n + k ≤ n + (k + j) by omega) (hd (k + j))
     have e : d (k + (j + 1)) - d k = (d (k + j + 1) - d (k + j)) + (d (k + j) - d k) := by
       rw [← add_assoc]; abel
-    rw [e, map_add, h1, ih, add_zero]
+    rw [e, map_add (f := _), h1, ih, add_zero]
 
 private lemma lim_exists (d : ℕ → AdicCompletion I M) (n : ℕ)
     (hd : ∀ k, AdicCompletion.eval I M (n + k) (d (k + 1) - d k) = 0) :
@@ -141,7 +145,8 @@ theorem UpperTheory.Kd.K4.lim :
   have hd : ∀ i k, AdicCompletion.eval (idl l) (X.Kl l) (n + k)
       (((l : ℤ_[l]) ^ c) • a (k + 1) i - ((l : ℤ_[l]) ^ c) • a k i) = 0 := by
     intro i k
-    rw [hrec, hrec, ← Finset.sum_sub_distrib, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hrec, hrec, ← Finset.sum_sub_distrib, map_sum]
     refine Finset.sum_eq_zero fun j _ => ?_
     rw [← smul_sub, map_smul, hC k _, smul_zero]
   choose L hL using fun i => lim_exists (fun k => ((l : ℤ_[l]) ^ c) • a k i) n (hd i)
@@ -150,7 +155,8 @@ theorem UpperTheory.Kd.K4.lim :
     intro k u
     show AdicCompletion.eval (idl l) (X.Kl l) (n + k)
       ((∑ i : Fin (w + 1), (u 0 ^ (i : ℕ) * u 1 ^ (w - (i : ℕ))) • L i) - ((l : ℤ_[l]) ^ c) • t k u) = 0
-    rw [ht k u, Finset.smul_sum, ← Finset.sum_sub_distrib, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ht k u, Finset.smul_sum, ← Finset.sum_sub_distrib, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [smul_comm ((l : ℤ_[l]) ^ c), ← smul_sub, map_smul, hL i k, smul_zero]
   have hA : ∀ i, L i ∈ X.ASet l := by
@@ -182,7 +188,7 @@ theorem UpperTheory.Kd.K4.lim :
       rw [map_sub, map_smul, smul_sub]
       abel
     have h5 : AdicCompletion.eval (idl l) (X.Kl l) s (X.act l (γ : Matrix (Fin 2) (Fin 2) ℤ) b u - b u) = 0 := by
-      rw [e, map_sub, map_add, map_smul, h3, h4, h1]
+      rw [e, map_sub, map_add (f := _), map_smul, h3, h4, h1]
       simp
     rw [map_sub, sub_eq_zero] at h5
     exact h5

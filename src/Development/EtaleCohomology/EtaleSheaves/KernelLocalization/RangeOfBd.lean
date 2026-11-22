@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafGhostCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafGhostCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC CochainComplex CochainComplex.HomComplex LateralTheory.E.LeafGhostCut

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.SpanInj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.SpanInj
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,6 +99,15 @@ private theorem wData_prism_ps_tcup_lR_iota_eq_neg (W : WData G P) {q : ℕ} (Y 
     (g : Fin (q + 1) → G) :
     prism W.ps (tcup W.lR (fun z : Fin (q + 1) → P => Y (fun i => W.ρ (z i))))
       (fun i => W.ι (g i)) = - Y g := by
+  have prism_zero {Y : Type} (φ : Y → Y) : ∀ {n : ℕ}, prism φ (0 : (Fin (n + 1) → Y) → ℝ) = 0 := by
+    intro n
+    induction n with
+    | zero => rfl
+    | succ n ih =>
+      funext y
+      rw [prism_succ]
+      change 0 - prism φ (0 : (Fin (n + 1) → Y) → ℝ) (Fin.tail y) = 0
+      simp only [ih, Pi.zero_apply, sub_zero]
   rw [prism_succ]
   have htc : ∀ x : P, W.t⁻¹ * x = x * W.t⁻¹ := by
     intro x
@@ -125,6 +138,75 @@ private theorem wData_prism_ps_tcup_lR_iota_eq_neg (W : WData G P) {q : ℕ} (Y 
 private theorem wData_dc_prism_ps_iota_eq_zero_of_dc_eq_zero (W : WData G P) {m : ℕ} (F : (Fin (m + 2) → P) → ℝ) (hF : dc F = 0)
     (hps : ∀ g : Fin (m + 2) → G, F (fun i => W.ps (W.ι (g i))) = F (fun i => W.ι (g i))) :
     dc (fun g : Fin (m + 1) → G => prism W.ps F (fun i => W.ι (g i))) = 0 := by
+  have prism_zero {Y : Type} (φ : Y → Y) : ∀ {n : ℕ}, prism φ (0 : (Fin (n + 1) → Y) → ℝ) = 0 := by
+    intro n
+    induction n with
+    | zero => rfl
+    | succ n ih =>
+      funext y
+      rw [prism_succ]
+      change 0 - prism φ (0 : (Fin (n + 1) → Y) → ℝ) (Fin.tail y) = 0
+      simp only [ih, Pi.zero_apply, sub_zero]
+  have prism_sub {Y : Type} (φ : Y → Y) : ∀ {n : ℕ} (F G : (Fin (n + 1) → Y) → ℝ),
+      prism φ (F - G) = prism φ F - prism φ G := by
+    intro n
+    induction n with
+    | zero =>
+      intro F G
+      funext y
+      simp [prism]
+    | succ n ih =>
+      intro F G
+      funext y
+      rw [Pi.sub_apply, prism_succ, prism_succ, prism_succ]
+      have hsub : prism φ (fun w => F (Fin.cons (y 0) w) - G (Fin.cons (y 0) w)) (Fin.tail y) =
+          prism φ (fun w => F (Fin.cons (y 0) w)) (Fin.tail y) -
+            prism φ (fun w => G (Fin.cons (y 0) w)) (Fin.tail y) :=
+        congrFun (ih (fun w => F (Fin.cons (y 0) w)) (fun w => G (Fin.cons (y 0) w))) (Fin.tail y)
+      change _ - _ - prism φ (fun w => F (Fin.cons (y 0) w) - G (Fin.cons (y 0) w))
+        (Fin.tail y) = _
+      rw [hsub]
+      ring
+  have prism_dc {Y : Type} (φ : Y → Y) : ∀ (m : ℕ) (F : (Fin (m + 2) → Y) → ℝ) (y : Fin (m + 2) → Y),
+      dc (prism φ F) y + prism φ (dc F) y = F (fun i => φ (y i)) - F y := by
+    intro m
+    induction m with
+    | zero =>
+      intro F y
+      simp [dc, prism, Fin.sum_univ_succ, Fin.tail]
+      have h1 : (Fin.cons (y 0) (fun i : Fin 1 => φ (y (Fin.succAbove 1 i))) : Fin 2 → Y) =
+          fun j => (Fin.cons (y 0) (fun i => φ (y i)) : Fin 3 → Y) (Fin.succAbove 2 j) := by
+        funext j; fin_cases j <;> rfl
+      have h2 : (fun j => (Fin.cons (y 0) (Fin.cons (y 1) (fun i : Fin 1 => φ (y i.succ)) : Fin 2 → Y) :
+          Fin 3 → Y) (Fin.succAbove 1 j)) =
+          fun j => (Fin.cons (y 0) (fun i => φ (y i)) : Fin 3 → Y) (Fin.succAbove 1 j) := by
+        funext j; fin_cases j <;> rfl
+      have h3 : (fun j => (Fin.cons (y 0) (Fin.cons (y 1) (fun i : Fin 1 => φ (y i.succ)) : Fin 2 → Y) :
+          Fin 3 → Y) (Fin.succAbove 2 j)) = y := by
+        funext j; fin_cases j <;> rfl
+      rw [h1, h2, h3]
+      ring
+    | succ m ih =>
+      intro F y
+      rw [← Fin.cons_self_tail y]
+      set a := y 0
+      set w := Fin.tail y
+      have h := ih (fun w' => F (Fin.cons a w')) w
+      rw [dc_cons, prism_cons]
+      have e1 : (fun w' => prism φ F (Fin.cons a w')) =
+          (fun w' => F (Fin.cons a (Fin.cons (φ a) (fun i => φ (w' i))))) -
+            prism φ (fun w' => F (Fin.cons a w')) := by
+        funext w'; rw [prism_cons]; rfl
+      have e2 : (fun w' => dc F (Fin.cons a w')) =
+          F - dc (fun w' => F (Fin.cons a w')) := by
+        funext w'; rw [dc_cons]; rfl
+      rw [e1, e2, dc_sub, prism_sub, dc_cons, dc_cons]
+      simp only [Pi.sub_apply]
+      rw [comp_cons']
+      have e4 : dc (fun w' => F (Fin.cons a (Fin.cons (φ a) (fun i => φ (w' i))))) w =
+          dc (fun w' => F (Fin.cons a (Fin.cons (φ a) w'))) (fun i => φ (w i)) := rfl
+      rw [e4]
+      linarith only [h]
   funext y
   have h := prism_dc W.ps m F (fun i => W.ι (y i))
   rw [hF, prism_zero, Pi.zero_apply, add_zero, hps, sub_self] at h
@@ -192,6 +274,26 @@ theorem WData.step' (W' : WData G P) (hG : SpanFor G) : SpanFor P := by
     intro g
     simp only [Pi.sub_apply, A, a, T, tcup, W'.ρι]
     rw [← map_inv, ← map_mul, wData_lR_ofMul_iota_eq_zero, zero_mul, sub_self, sub_zero]
+  have prism_sub {Y : Type} (φ : Y → Y) : ∀ {n : ℕ} (F G : (Fin (n + 1) → Y) → ℝ),
+      prism φ (F - G) = prism φ F - prism φ G := by
+    intro n
+    induction n with
+    | zero =>
+      intro F G
+      funext y
+      simp [prism]
+    | succ n ih =>
+      intro F G
+      funext y
+      rw [Pi.sub_apply, prism_succ, prism_succ, prism_succ]
+      have hsub : prism φ (fun w => F (Fin.cons (y 0) w) - G (Fin.cons (y 0) w)) (Fin.tail y) =
+          prism φ (fun w => F (Fin.cons (y 0) w)) (Fin.tail y) -
+            prism φ (fun w => G (Fin.cons (y 0) w)) (Fin.tail y) :=
+        congrFun (ih (fun w => F (Fin.cons (y 0) w)) (fun w => G (Fin.cons (y 0) w))) (Fin.tail y)
+      change _ - _ - prism φ (fun w => F (Fin.cons (y 0) w) - G (Fin.cons (y 0) w))
+        (Fin.tail y) = _
+      rw [hsub]
+      ring
   have hpr : ∀ g : Fin (q + 1) → G, prism W'.ps (c - A - T) (fun i => W'.ι (g i)) = 0 := by
     intro g
     rw [prism_sub, prism_sub]

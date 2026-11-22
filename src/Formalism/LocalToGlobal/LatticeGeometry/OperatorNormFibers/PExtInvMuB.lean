@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.LatticeGeometry.OperatorNormFibers.PExtInvMuA
+module
+
+public import Formalism.LocalToGlobal.LatticeGeometry.OperatorNormFibers.StExtInv
+
+@[expose] public section
 
 open Module NumberField TensorProduct
 
@@ -12,9 +16,9 @@ section Places
 
 variable (K K' : Type) [Field K] [NumberField K] [Field K'] [NumberField K'] [Algebra K K']
 
-open Classical in
 
-theorem card_fiber [IsTotallyComplex K] (v : InfinitePlace K) :
+open Classical in
+theorem card_fiber [_root_.NumberField.IsTotallyComplex K] (v : InfinitePlace K) :
     (Finset.univ.filter fun v' : InfinitePlace K' => v'.comap (algebraMap K K') = v).card =
       finrank K K' := by
   classical
@@ -45,18 +49,7 @@ theorem card_fiber [IsTotallyComplex K] (v : InfinitePlace K) :
   rw [h0, h1, Set.ncard_empty, mul_zero, add_zero, Set.ncard_coe_finset] at h
   exact h
 
-theorem prod_comap [IsTotallyComplex K] (g : InfinitePlace K → ℝ) :
-    ∏ v' : InfinitePlace K', g (v'.comap (algebraMap K K')) = (∏ v, g v) ^ finrank K K' := by
-  classical
-  rw [← Finset.prod_fiberwise Finset.univ (fun v' : InfinitePlace K' => v'.comap (algebraMap K K'))
-    (fun v' => g (v'.comap (algebraMap K K'))), ← Finset.prod_pow]
-  refine Finset.prod_congr rfl fun v _ => ?_
-  rw [Finset.prod_congr rfl (fun v' hv' => congrArg g (Finset.mem_filter.1 hv').2),
-    Finset.prod_const]
-  congr 1
-  convert card_fiber K K' v
-
-theorem nPl_ext [IsTotallyComplex K] [IsTotallyComplex K'] : nPl K' = finrank K K' * nPl K := by
+theorem nPl_ext [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex K'] : nPl K' = finrank K K' * nPl K := by
   have h1 := sizeMu_finrank_eq K
   have h2 := sizeMu_finrank_eq K'
   have h3 := Module.finrank_mul_finrank ℚ K K'

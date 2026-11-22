@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.ExpOneParam
 
@@ -9,7 +13,7 @@ theorem continuous_expG_and_toM_inv :
       Continuous (fun t : ℝ => Formalism.REAL.expG ε Z t) ∧
         ∀ t : ℝ, Formalism.REAL.toM (Formalism.REAL.expG ε Z t)⁻¹ = NormedSpace.exp (-((t : ℂ) • Z)) := by
   intro n ε Z hZ
-  obtain ⟨h0, hadd, hcont, -⟩ := (Formalism.REAL.group_exponential_facts : Formalism.REAL.ExpGFacts) n ε Z hZ
+  obtain ⟨h0, hadd, hcont, -⟩ := Formalism.REAL.group_exponential_facts n ε Z hZ
   refine ⟨hcont, fun t => ?_⟩
   have hinv : (Formalism.REAL.expG ε Z t)⁻¹ = Formalism.REAL.expG ε Z (-t) := by
     refine inv_eq_of_mul_eq_one_left ?_

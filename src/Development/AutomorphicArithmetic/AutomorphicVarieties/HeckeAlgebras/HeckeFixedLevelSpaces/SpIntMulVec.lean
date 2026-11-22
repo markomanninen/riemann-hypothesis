@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwahoriProUnipotentFiniteIndex
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CtrlEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwahoriProUnipotentFiniteIndex
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CtrlEq
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Hi
 
@@ -79,7 +83,7 @@ theorem sum_clOrd (φ : X.I.T →* Ωˣ) (c : ℕ) (U U' : Subgroup X.Ub) {κ : 
   · simp only [map_zero]
     exact zero_mem _
   · intro x y hx hy
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact add_mem hx hy
 
 private theorem UF_z_comm_and_preserves_N_fixed (a : X.I.P) (G : Fin m → X.Fn Ω (W.d + 1))
@@ -131,7 +135,7 @@ theorem uf_clOrd (φ : X.I.T →* Ωˣ) (c : ℕ) (U : Subgroup X.Ub)
   · simp only [map_zero]
     exact zero_mem _
   · intro x y hx hy
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact add_mem hx hy
 
 theorem clOrd_mono (φ : X.I.T →* Ωˣ) {c c' : ℕ} (hc : c ≤ c') {U U' : Subgroup X.Ub} (hU : U' ≤ U) :

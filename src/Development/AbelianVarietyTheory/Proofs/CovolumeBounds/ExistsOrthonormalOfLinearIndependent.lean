@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Module
 open scoped InnerProductSpace ComplexOrder
@@ -23,7 +27,7 @@ theorem norm_orthonormalBasis_det_le (b : OrthonormalBasis ι 𝕜 E) (x : ι �
   have h2 : c.toBasis.det x = ∏ i, ⟪c i, x i⟫_𝕜 := by
     convert InnerProductSpace.gramSchmidtOrthonormalBasis_det h x
   rw [h1, norm_mul, b.det_to_matrix_orthonormalBasis c, one_mul, h2, norm_prod]
-  refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => ?_
   simpa [c.orthonormal.1 i] using norm_inner_le_norm (𝕜 := 𝕜) (c i) (x i)
 
 theorem norm_det_le_prod_col (A : Matrix ι ι 𝕜) :
@@ -57,12 +61,12 @@ theorem det_gram_nonneg (x : ι → E) : 0 ≤ (gram 𝕜 x).det :=
 theorem re_det_gram_nonneg (x : ι → E) : 0 ≤ RCLike.re (gram 𝕜 x).det :=
   (RCLike.nonneg_iff.mp (det_gram_nonneg x)).1
 
-omit [DecidableEq ι] [Fintype κ] [DecidableEq κ] in
 
+omit [DecidableEq ι] [Fintype κ] [DecidableEq κ] in
 theorem gram_sum_smul [Fintype κ] (e : ι → E) (m : Matrix ι κ 𝕜) :
     gram 𝕜 (fun j => ∑ i, m i j • e i) = mᴴ * gram 𝕜 e * m := by
   ext j k
-  simp only [gram_apply, sum_inner, inner_sum, inner_smul_left, inner_smul_right, mul_apply,
+  simp only [gram_apply, sum_inner, inner_sum, inner_smul_left, inner_smul_right, Matrix.mul_apply,
     conjTranspose_apply, Finset.sum_mul, Finset.mul_sum, RCLike.star_def]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
 
@@ -106,14 +110,14 @@ theorem re_det_gram_le_prod (x : ι → E) : RCLike.re (gram 𝕜 x).det ≤ ∏
     rw [hx, map_zero]
     positivity
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem det_gram_comp_equiv [DecidableEq ι] (x : ι → E) (σ : κ ≃ ι) :
     (gram 𝕜 (x ∘ σ)).det = (gram 𝕜 x).det :=
   det_submatrix_equiv_self σ (gram 𝕜 x)
 
-omit [DecidableEq ι] [Fintype κ] [DecidableEq κ] in
 
+omit [DecidableEq ι] [Fintype κ] [DecidableEq κ] in
 theorem sum_norm_apply_sq_le {e : ι → E} (he : Orthonormal 𝕜 e) (φ : E →L[𝕜] 𝕜) :
     ∑ i, ‖φ (e i)‖ ^ 2 ≤ ‖φ‖ ^ 2 := by
   set s := ∑ i, ‖φ (e i)‖ ^ 2 with hs
@@ -133,13 +137,13 @@ theorem norm_det_apply_sq_le (φ : ι → E →L[𝕜] 𝕜) (x : ι → E) :
   · obtain ⟨e, m, he, hm⟩ := exists_orthonormal_of_linearIndependent hx
     have h : (of fun j k => φ j (x k)) = (of fun j i => φ j (e i)) * m := by
       ext j k
-      simp [hm, mul_apply, mul_comm]
+      simp [hm, Matrix.mul_apply, mul_comm]
     rw [h]
     obtain rfl : x = fun j => ∑ i, m i j • e i := funext hm
     rw [re_det_gram_sum_smul, gram_eq_one_iff_orthonormal.mpr he, det_mul, norm_mul, mul_pow,
       det_one, RCLike.one_re, mul_one, mul_comm]
     refine mul_le_mul_of_nonneg_left ((norm_det_sq_le_prod_row _).trans ?_) (by positivity)
-    exact Finset.prod_le_prod (fun _ _ => by positivity) fun j _ => sum_norm_apply_sq_le he (φ j)
+    exact Finset.prod_le_prod₀ (fun _ _ => by positivity) fun j _ => sum_norm_apply_sq_le he (φ j)
   · obtain ⟨g, hg, i, hi⟩ := Fintype.not_linearIndependent_iff.mp hx
     have h0 : (of fun j k => φ j (x k)).det = 0 := by
       refine exists_mulVec_eq_zero_iff.mp ⟨g, fun h => hi (congrFun h i), ?_⟩

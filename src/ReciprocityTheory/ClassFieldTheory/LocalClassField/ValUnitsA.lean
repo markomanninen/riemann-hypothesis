@@ -1,7 +1,11 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtD
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtE
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtD
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtE
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 

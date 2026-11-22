@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermHyperbolic
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermHyperbolic
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UTrans GlobalTheory.AdLat
 open scoped TensorProduct
 
@@ -24,7 +29,8 @@ theorem hf_smul_right (c : R) (x y : Fin n → R) : hf σ G x (c • y) = σ c *
 
 theorem hf_conj (hσ : ∀ a, σ (σ a) = a) (hG : ∀ a b, σ (G a b) = G b a) (x y : Fin n → R) :
     σ (hf σ G x y) = hf σ G y x := by
-  simp only [hf, map_sum, map_mul, hσ, hG]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hf, map_sum, map_mul, hσ, hG]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
@@ -32,12 +38,11 @@ theorem hf_conj (hσ : ∀ a, σ (σ a) = a) (hG : ∀ a b, σ (G a b) = G b a) 
 theorem tv_mulVec (x : Fin n → R) (t : R) (v : Fin n → R) :
     tv σ G x t *ᵥ v = v + (t * hf σ G v x) • x := by
   rw [tv, Matrix.add_mulVec, Matrix.one_mulVec]
-  congr 1
-  funext a
-  simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, hf, Pi.smul_apply, smul_eq_mul,
-    Finset.mul_sum, Finset.sum_mul]
-  refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun e _ => ?_
-  ring
+  ext a
+  simp only [Matrix.mulVec, Matrix.of_apply, dotProduct, Pi.add_apply, Pi.smul_apply,
+    smul_eq_mul]
+  simp only [hf]
+  simp [Finset.mul_sum, mul_assoc, mul_left_comm, mul_comm]
 
 theorem ext_mulVec {A B : Matrix (Fin n) (Fin n) R} (h : ∀ v, A *ᵥ v = B *ᵥ v) : A = B := by
   ext i j

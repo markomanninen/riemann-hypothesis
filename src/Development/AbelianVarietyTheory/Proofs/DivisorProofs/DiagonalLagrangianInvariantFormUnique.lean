@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReindexDblIncM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrInt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicStoneVonNeumannLagrangianUniqueness
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagLagrangian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrIntRhoInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormAdelicThetaSumSchroedingerRationalPairInvari
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HTensDiagEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixMemSpanIncM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralNeZeroOfCocompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaReNonneg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedEqDiagonalLagrangianThetaIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReindexDblIncM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrInt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicStoneVonNeumannLagrangianUniqueness
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagLagrangian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrIntRhoInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormAdelicThetaSumSchroedingerRationalPairInvari
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HTensDiagEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixMemSpanIncM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralNeZeroOfCocompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaReNonneg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedEqDiagonalLagrangianThetaIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -83,7 +88,7 @@ theorem exists_lagrInt_ne_zero : ∀ (F E : Type) [Field F] [NumberField F] [Fie
   · rintro _ ⟨γ₀, rfl⟩ u
     obtain ⟨y, z, h⟩ := hrat γ₀
     have e1 : Lm (((incAF F E).toAddMonoidHom.mapMatrix (m := Fin nT) (n := Fin nS)) γ₀ + u) = Lm (incM F γ₀) + Lm u := by
-      rw [map_add]; rfl
+      rw [map_add (f := _)]; rfl
     have hr : Lm (incM F γ₀) ∈ S := ⟨incM F γ₀, rfl⟩
     have hw : Lm u ∈ S := ⟨u, rfl⟩
     have hi := hiso _ hw _ hr
@@ -134,6 +139,6 @@ theorem lagr_invariant_unique : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
       rw [he _ (hmem _ φ hφ), he φ hφ]
       exact GlobalTheory.LagrThetaInv.lagrInt_rho_inv F E σ B hB nS nT JT JB ξ κ co hco ν 𝓕 hν h𝓕 u φ hφ))
     ⟨φ₀, hφ₀, by rw [he φ₀ hφ₀]; exact hne⟩
-  exact ⟨c, fun Φ hΦ => by rw [hc Φ hΦ, he Φ hΦ]⟩
+  exact ⟨c, fun Φ hΦ => by rw [hc Φ hΦ, he Φ hΦ]; rfl⟩
 
 end GlobalTheory.LagrUniq

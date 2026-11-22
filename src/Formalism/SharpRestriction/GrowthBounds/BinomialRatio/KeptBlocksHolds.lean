@@ -1,4 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptBlocksOfSLine
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptBlocksOfSLine
+
+@[expose] public section
+
 set_option maxHeartbeats 4000000
 
 noncomputable section

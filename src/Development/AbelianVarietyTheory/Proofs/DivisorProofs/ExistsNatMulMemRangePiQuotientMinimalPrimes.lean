@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CokerMinimalPrimes
 
@@ -55,7 +59,8 @@ theorem exists_pow_mul_mem_range {B : Type} [CommRing B] {ι : Type} [Fintype ι
     exact (Ideal.Quotient.eq.mpr (hq i j hij).2).symm
   choose c hc using fun i => Ideal.Quotient.mk_surjective (I := I i) (b' i)
   refine ⟨∑ i, e i * c i, fun i => ?_⟩
-  rw [map_sum, Finset.sum_eq_single i]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single i]
   · rw [map_mul, he_mod, hc]
   · intro j _ hji
     rw [map_mul, Ideal.Quotient.eq_zero_iff_mem.mpr (he_mem j i hji), zero_mul]

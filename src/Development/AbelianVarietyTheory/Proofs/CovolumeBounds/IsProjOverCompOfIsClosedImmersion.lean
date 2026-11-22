@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverMorphismRestrictOfRelAmple
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsGenOfUniqueFactorizationMonoid
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.AwayLiftCompFromZeroRingHom
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsClosedImmersionSigmaDesc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverMorphismRestrictOfRelAmple
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsGenOfUniqueFactorizationMonoid
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.AwayLiftCompFromZeroRingHom
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsClosedImmersionSigmaDesc
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,12 +77,6 @@ section
 
 variable (c : R →+* A) (v : Fin (N + 1) → A) (hv : Ideal.span (Set.range v) = ⊤)
 
-@[reassoc] theorem pt_str : pt c v hv ≫ PSpace.str R N = spMap c := by
-  rw [pt, PSpace.str, ProjPoint.ofHom_toSpecZero_assoc, ← Spec.map_comp]
-  congr 1
-  ext1
-  exact RingHom.ext fun r => eval₂Hom_C c v r
-
 theorem pt_preimage_basicOpen {n : ℕ} (hn : 0 < n) {f : MvPolynomial (Fin (N + 1)) R} (hf : f.IsHomogeneous n) :
     pt c v hv ⁻¹ᵁ Proj.basicOpen (grading R N) f = spOpen (eval₂ c v f) :=
   ProjPoint.ofHom_preimage_basicOpen _ _ _ hn hf
@@ -86,24 +84,10 @@ theorem pt_preimage_basicOpen {n : ℕ} (hn : 0 < n) {f : MvPolynomial (Fin (N +
 theorem pt_preimage_chart (i : Fin (N + 1)) : pt c v hv ⁻¹ᵁ chart R N i = spOpen (v i) := by
   rw [pt_preimage_basicOpen c v hv one_pos (isHomogeneous_X R i), eval₂_X]
 
-include hv in
 
+include hv in
 theorem span_range_comp_eq_top (ψ : A →+* B) : Ideal.span (Set.range (ψ ∘ v)) = ⊤ := by
   rw [Set.range_comp, ← Ideal.map_span, hv, Ideal.map_top]
-
-@[reassoc] theorem spMap_pt (ψ : A →+* B) :
-    spMap ψ ≫ pt c v hv = pt (ψ.comp c) (ψ ∘ v) (span_range_comp_eq_top v hv ψ) := by
-  refine (ProjPoint.SpecMap_ofHom _ _ _ ψ).trans ?_
-  unfold pt
-  congr 1
-  exact ringHom_ext (fun r => by simp) (fun i => by simp)
-
-@[reassoc] theorem pt_baseChange {R₀ : Type} [CommRing R₀] (φ : R₀ →+* R) :
-    pt c v hv ≫ baseChange N φ = pt (c.comp φ) v hv := by
-  refine (ProjPoint.ofHom_map _ _ _ _).trans ?_
-  unfold pt
-  congr 1
-  exact ringHom_ext (fun r => by simp) (fun i => by simp)
 
 theorem fromSpec_chart (i : Fin (N + 1)) : (isAffineOpen_chart R N i).fromSpec =
     Spec.map (Proj.awayToSection (grading R N) (X i)) ≫
@@ -158,7 +142,12 @@ theorem pullRatio_pt_mul {W : (Sp A).Opens} (i j : Fin (N + 1)) (h : W ≤ pt c 
       rw [h1]
       exact resG_self (X := Sp Γ(Sp A, U)) le_top _
     refine fnOn_top_bijective.1 ?_
-    have h3 := spMap_pt (B := Γ(Sp A, U)) c v hv (fnOn U)
+    have h3 : spMap (fnOn U) ≫ pt c v hv =
+        pt ((fnOn U).comp c) (fnOn U ∘ v) (span_range_comp_eq_top v hv (fnOn U)) := by
+      refine (ProjPoint.SpecMap_ofHom _ _ _ (fnOn U)).trans ?_
+      unfold pt
+      congr 1
+      exact ringHom_ext (fun r => by simp) (fun i => by simp)
     have h4 : ⊤ ≤ (spMap (R' := Γ(Sp A, U)) (fnOn U) ≫ pt c v hv) ⁻¹ᵁ chart R N i :=
       h0.trans ((spMap (R' := Γ(Sp A, U)) (fnOn U)).preimage_mono h)
     rw [map_mul, h2, appLE_pullRatio, pullRatio_of_eq h3 h4 (h3 ▸ h4)]
@@ -220,7 +209,12 @@ theorem pt_eq_pt_iff (c : R →+* A) {v w : Fin (N + 1) → A} (hv : Ideal.span 
 theorem eq_pt {c : R →+* A} {v : Fin (N + 1) → A} (hv : Ideal.span (Set.range v) = ⊤) {φ : Sp A ⟶ PSpace R N}
     (hφ : φ ≫ PSpace.str R N = spMap c) (h : ∀ i, spOpen (v i) ≤ φ ⁻¹ᵁ chart R N i)
     (H : ∀ i j, pullRatio φ _ i (h i) j * fnOn _ (v i) = fnOn _ (v j)) : φ = pt c v hv := by
-  refine hom_ext (hφ.trans (pt_str c v hv).symm) fun y => ?_
+  have hpt : pt c v hv ≫ PSpace.str R N = spMap c := by
+    rw [pt, PSpace.str, ProjPoint.ofHom_toSpecZero_assoc, ← Spec.map_comp]
+    congr 1
+    ext1
+    exact RingHom.ext fun r => eval₂Hom_C c v r
+  refine hom_ext (hφ.trans hpt.symm) fun y => ?_
   obtain ⟨i, hi⟩ := Opens.mem_iSup.1
     ((iSup_spOpen_eq_top_iff.2 hv).ge (Set.mem_univ y))
   refine ⟨_, hi, i, h i, (pt_preimage_chart c v hv i).ge, fun j => ?_⟩
@@ -260,23 +254,6 @@ theorem exists_eq_pt [Subsingleton (CommRing.Pic A)] (c : R →+* A) (φ : Sp A 
 abbrev Unimodular (A : Type) [CommRing A] (N : ℕ) : Type :=
   {v : Fin (N + 1) → A // Ideal.span (Set.range v) = ⊤}
 
-def unitSetoid (A : Type) [CommRing A] (N : ℕ) : Setoid (Unimodular A N) where
-  r v w := ∃ u : Aˣ, w.1 = u • v.1
-  iseqv := ⟨fun _ => ⟨1, (one_smul _ _).symm⟩, fun ⟨u, h⟩ => ⟨u⁻¹, by rw [h, inv_smul_smul]⟩,
-    fun ⟨u, h⟩ ⟨u', h'⟩ => ⟨u' * u, by rw [h', h, mul_smul]⟩⟩
-
-def ptEquiv [Subsingleton (CommRing.Pic A)] (c : R →+* A) (N : ℕ) :
-    Quotient (unitSetoid A N) ≃ {φ : Sp A ⟶ PSpace R N // φ ≫ PSpace.str R N = spMap c} :=
-  Equiv.ofBijective (Quotient.lift (fun v => ⟨pt c v.1 v.2, pt_str c v.1 v.2⟩)
-      fun v w h => Subtype.ext ((pt_eq_pt_iff c v.2 w.2).2 h))
-    ⟨fun a b => Quotient.inductionOn₂ a b fun v w h =>
-        Quotient.sound ((pt_eq_pt_iff c v.2 w.2).1 (congrArg Subtype.val h)),
-      fun φ => (exists_eq_pt c φ.1 φ.2).elim fun v h => h.elim fun hv e =>
-        ⟨Quotient.mk _ ⟨v, hv⟩, Subtype.ext e.symm⟩⟩
-
-@[simp] theorem ptEquiv_mk [Subsingleton (CommRing.Pic A)] (c : R →+* A) (v : Unimodular A N) :
-    (ptEquiv c N (Quotient.mk _ v)).1 = pt c v.1 v.2 := rfl
-
 theorem span_range_eq_top_iff_of_isLocalRing [IsLocalRing A] {ι : Type} {v : ι → A} :
     Ideal.span (Set.range v) = ⊤ ↔ ∃ i, IsUnit (v i) := by
   refine ⟨fun h => ?_, fun ⟨i, hi⟩ => Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span ⟨i, rfl⟩) hi⟩
@@ -292,7 +269,13 @@ theorem span_range_eq_top_iff_ne_zero {K : Type} [Field K] {ι : Type} {v : ι �
 theorem pt_eq_pt_of_injective (c : R →+* A) {ψ : A →+* B} (hψ : Function.Injective ψ) {v w : Fin (N + 1) → A}
     (hv : Ideal.span (Set.range v) = ⊤) (hw : Ideal.span (Set.range w) = ⊤)
     (h : spMap ψ ≫ pt c v hv = spMap ψ ≫ pt c w hw) : pt c v hv = pt c w hw := by
-  rw [spMap_pt, spMap_pt, pt_eq_pt_iff] at h
+  have hmap (x : Fin (N + 1) → A) (hx : Ideal.span (Set.range x) = ⊤) :
+      spMap ψ ≫ pt c x hx = pt (ψ.comp c) (ψ ∘ x) (span_range_comp_eq_top x hx ψ) := by
+    refine (ProjPoint.SpecMap_ofHom _ _ _ ψ).trans ?_
+    unfold pt
+    congr 1
+    exact ringHom_ext (fun r => by simp) (fun i => by simp)
+  rw [hmap v hv, hmap w hw, pt_eq_pt_iff] at h
   obtain ⟨u, hu⟩ := h
   refine (pt_eq_pt_iff c hv hw).2 (exists_unit_smul_of_mul_eq hv hw fun i j => hψ ?_)
   have e : ∀ k, ψ (w k) = u.val * ψ (v k) := congrFun hu
@@ -303,8 +286,8 @@ section Valuation
 
 variable {V K : Type} [CommRing V] [IsDomain V] [ValuationRing V] [Field K] [Algebra V K] [IsFractionRing V K]
 
-variable (V) in
 
+variable (V) in
 theorem exists_smul_eq_primitive {ι : Type} [Finite ι] {v : ι → K} (hv : v ≠ 0) :
     ∃ (u : Kˣ) (w : ι → V), (∃ i, w i = 1) ∧ algebraMap V K ∘ w = u • v := by
   obtain ⟨k, hk⟩ := Function.ne_iff.1 hv
@@ -327,30 +310,28 @@ theorem exists_primitive_eq (c : R →+* V) (φ : Sp K ⟶ PSpace R N)
       spMap (algebraMap V K) ≫ pt c w hw = φ := by
   obtain ⟨v, hv, rfl⟩ := exists_eq_pt _ φ hφ
   obtain ⟨u, w, ⟨i, hi⟩, e⟩ := exists_smul_eq_primitive V (span_range_eq_top_iff_ne_zero.1 hv)
-  refine ⟨w, span_range_eq_top_iff_of_isLocalRing.2 ⟨i, hi ▸ isUnit_one⟩, ⟨i, hi⟩, ?_⟩
-  rw [spMap_pt]
-  exact ((pt_eq_pt_iff _ _ _).2 ⟨u, e⟩).symm
+  have hw : Ideal.span (Set.range w) = ⊤ := span_range_eq_top_iff_of_isLocalRing.2 ⟨i, hi ▸ isUnit_one⟩
+  refine ⟨w, hw, ⟨i, hi⟩, ?_⟩
+  have hmap : spMap (algebraMap V K) ≫ pt c w hw =
+      pt ((algebraMap V K).comp c) (algebraMap V K ∘ w) (span_range_comp_eq_top w hw (algebraMap V K)) := by
+    refine (ProjPoint.SpecMap_ofHom _ _ _ (algebraMap V K)).trans ?_
+    unfold pt
+    congr 1
+    exact ringHom_ext (fun r => by simp) (fun i => by simp)
+  exact hmap.trans (((pt_eq_pt_iff _ _ _).2 ⟨u, e⟩).symm)
 
 theorem existsUnique_extend (c : R →+* V) (φ : Sp K ⟶ PSpace R N)
     (hφ : φ ≫ PSpace.str R N = spMap ((algebraMap V K).comp c)) :
     ∃! ψ : Sp V ⟶ PSpace R N, ψ ≫ PSpace.str R N = spMap c ∧ spMap (algebraMap V K) ≫ ψ = φ := by
   obtain ⟨w, hw, -, e⟩ := exists_primitive_eq c φ hφ
-  refine ⟨pt c w hw, ⟨pt_str c w hw, e⟩, fun ψ hψ => ?_⟩
+  have hpt : pt c w hw ≫ PSpace.str R N = spMap c := by
+    rw [pt, PSpace.str, ProjPoint.ofHom_toSpecZero_assoc, ← Spec.map_comp]
+    congr 1
+    ext1
+    exact RingHom.ext fun r => eval₂Hom_C c w r
+  refine ⟨pt c w hw, ⟨hpt, e⟩, fun ψ hψ => ?_⟩
   obtain ⟨w', hw', rfl⟩ := exists_eq_pt c ψ hψ.1
   exact pt_eq_pt_of_injective c (IsFractionRing.injective V K) hw' hw (hψ.2.trans e.symm)
-
-theorem existsUnique_extend_of_isProjOver {f : Y ⟶ Sp R} (hf : IsProjOver f) (c : R →+* V) (φ : Sp K ⟶ Y)
-    (hφ : φ ≫ f = spMap ((algebraMap V K).comp c)) :
-    ∃! ψ : Sp V ⟶ Y, ψ ≫ f = spMap c ∧ spMap (algebraMap V K) ≫ ψ = φ := by
-  have hp : IsProper f := ReciprocityTheory.ChartRestriction.G.Geo.Tor.projProper R Y f hf
-  have hv : ValuativeCriterion f := by
-    rw [IsProper.eq_valuativeCriterion] at hp
-    exact hp.1.1.1
-  let S : ValuativeCommSq f :=
-    { R := V, K := K, i₁ := φ, i₂ := spMap c, commSq := ⟨by rw [hφ, ← Spec.map_comp]; rfl⟩ }
-  obtain ⟨U⟩ := hv S
-  refine ⟨U.default.l, ⟨U.default.fac_right, U.default.fac_left⟩, fun ψ hψ => ?_⟩
-  exact congrArg CommSq.LiftStruct.l (U.uniq ⟨ψ, hψ.2, hψ.1⟩)
 
 end Valuation
 
@@ -433,8 +414,6 @@ def vPlusι : VPlus I ⟶ PSpace R N :=
 instance isClosedImmersion_vPlusι : IsClosedImmersion (vPlusι I) :=
   isClosedImmersion_projMap _ Ideal.Quotient.mk_surjective _
 
-theorem isProjOver_vPlus : IsProjOver (vPlusι I ≫ PSpace.str R N) := ⟨N, vPlusι I, inferInstance, rfl⟩
-
 theorem vPlusι_app_formOn_eq_zero_iff (i : Fin (N + 1)) {n : ℕ} {f : MvPolynomial (Fin (N + 1)) R}
     (hf : f.IsHomogeneous n) :
     ((vPlusι I).app (chart R N i)).hom (formOn (chart R N i) i le_rfl n f hf) = 0 ↔ ∃ m, X i ^ m * f ∈ I := by
@@ -487,8 +466,13 @@ theorem appLE_pt_formOn_mul (c : R →+* A) (v : Fin (N + 1) → A) (hv : Ideal.
     ((pt c v hv).appLE (chart R N i) W h).hom (formOn (chart R N i) i le_rfl n f hf) * fnOn W (v i) ^ n =
       fnOn W (eval₂ c v f) := by
   have e := congrArg (fun t => t f) (appLE_comp_aeval_ratio (φ := pt c v hv) (hi := h))
+  have hpt : pt c v hv ≫ PSpace.str R N = spMap c := by
+    rw [pt, PSpace.str, ProjPoint.ofHom_toSpecZero_assoc, ← Spec.map_comp]
+    congr 1
+    ext1
+    exact RingHom.ext fun r => eval₂Hom_C c v r
   have e' : (baseRingHom (pt c v hv ≫ PSpace.str R N) W).hom = (fnOn W).comp c := by
-    rw [pt_str]
+    rw [hpt]
     exact congrArg CommRingCat.Hom.hom
       (baseRingHom_comp_SpecMap (𝟙 (Sp A)) (CommRingCat.ofHom c) W)
   rw [e'] at e
@@ -508,7 +492,8 @@ theorem exists_comp_vPlusι_eq_pt_iff (c : R →+* A) (v : Fin (N + 1) → A) (h
         rw [← appLE_pt_formOn_mul c v hv i (pt_preimage_chart c v hv i).ge hg]
         exact mul_eq_zero_of_left ((congrArg (resG _ (pt_preimage_chart c v hv i).ge) (H i n g hg hI)).trans
           (map_zero _)) _
-    rw [← sum_homogeneousComponent f, ← coe_eval₂Hom, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_homogeneousComponent f, ← coe_eval₂Hom, map_sum]
     exact Finset.sum_eq_zero fun n _ => key n _ (homogeneousComponent_isHomogeneous n f)
       (decomposition.decompose'_apply f n ▸ I.isHomogeneous n hf)
   · intro H
@@ -538,13 +523,6 @@ theorem mem_range_vPlusι_iff (x : PSpace R N) : x ∈ Set.range (vPlusι I) ↔
 
 theorem range_vPlusι : Set.range (vPlusι I) = ProjectiveSpectrum.zeroLocus (grading R N) I :=
   Set.ext fun x => mem_range_vPlusι_iff I x
-
-theorem exists_eq_pt_vPlus [Subsingleton (CommRing.Pic A)] (c : R →+* A) (ψ : Sp A ⟶ VPlus I)
-    (hψ : ψ ≫ vPlusι I ≫ PSpace.str R N = spMap c) :
-    ∃ (v : Fin (N + 1) → A) (hv : Ideal.span (Set.range v) = ⊤),
-      (∀ f ∈ I, eval₂ c v f = 0) ∧ ψ ≫ vPlusι I = pt c v hv := by
-  obtain ⟨v, hv, e⟩ := exists_eq_pt c (ψ ≫ vPlusι I) (by rw [Category.assoc, hψ])
-  exact ⟨v, hv, (exists_comp_vPlusι_eq_pt_iff I c v hv).1 ⟨ψ, e⟩, e⟩
 
 theorem isProjOver_comp_of_isClosedImmersion (g : Z ⟶ Y) [IsClosedImmersion g] {f : Y ⟶ Sp R}
     (h : IsProjOver f) : IsProjOver (g ≫ f) := by
@@ -597,26 +575,8 @@ theorem linearι_preimage_chart (i : Fin (N + 1)) : linearι R he ⁻¹ᵁ chart
 
 theorem linearι_preimage_chart_of_notMem {k : Fin (M + 1)} (hk : k ∉ Set.range e) :
     linearι R he ⁻¹ᵁ chart R M k = ⊥ := by
-  have : killHom R he (X k) = 0 := (aeval_X _ k).trans (dif_neg hk)
+  have : killHom R he (X k) = 0 := (aeval_X _ k).trans (dite_eq_right hk)
   exact (congrArg (Proj.basicOpen (grading R N)) this).trans (Proj.basicOpen_zero _)
-
-@[reassoc] theorem linearι_str : linearι R he ≫ PSpace.str R M = PSpace.str R N := by
-  refine (Proj.mapAffineOpenCover (killHom R he)
-    (irrelevant_le_map_of_surjective _ (killHom_surjective R he))).openCover.hom_ext _ _ fun s => ?_
-  have key : ∀ (d : ℕ) (hd : 0 < d) (s : MvPolynomial (Fin (M + 1)) R) (hs : s ∈ grading R M d),
-      Proj.awayι (grading R N) (killHom R he s) ((killHom R he).2 hs) hd ≫ linearι R he ≫ PSpace.str R M =
-        Proj.awayι (grading R N) (killHom R he s) ((killHom R he).2 hs) hd ≫ PSpace.str R N := by
-    intro d hd s hs
-    rw [linearι, Proj.awayι_comp_map_assoc _ _ hd s hs, PSpace.str, PSpace.str, Proj.awayι_toSpecZero_assoc,
-      Proj.awayι_toSpecZero_assoc, ← Spec.map_comp, ← Spec.map_comp, ← Spec.map_comp]
-    congr 1
-    ext1
-    refine RingHom.ext fun r => HomogeneousLocalization.val_injective _ ?_
-    refine (congrArg HomogeneousLocalization.val (HomogeneousLocalization.Away.map_mk (killHom R he) s hs 0 (C r)
-      ((zero_smul ℕ d).symm ▸ isHomogeneous_C _ r))).trans ?_
-    rw [HomogeneousLocalization.Away.val_mk]
-    exact congrArg (Localization.mk · _) (killCompl_C he r)
-  exact key _ s.1.2 _ s.2.2
 
 end Linear
 
@@ -638,7 +598,25 @@ theorem isProjOver_sigmaDesc {ι : Type} [Finite ι] {T : ι → Scheme.{0}} (f 
     rintro ⟨l, hl⟩
     exact hij (congrArg Sigma.fst (a.injective (Fin.castSucc_injective _ hl))).symm
   · refine Sigma.hom_ext _ _ fun i => ?_
-    rw [Sigma.ι_desc_assoc, Sigma.ι_desc, Category.assoc, linearι_str, e]
+    have hstr : linearι R (hb i) ≫ PSpace.str R M = PSpace.str R (n i) := by
+      let he := hb i
+      refine (Proj.mapAffineOpenCover (killHom R he)
+        (irrelevant_le_map_of_surjective _ (killHom_surjective R he))).openCover.hom_ext _ _ fun s => ?_
+      have key : ∀ (d : ℕ) (hd : 0 < d) (s : MvPolynomial (Fin (M + 1)) R) (hs : s ∈ grading R M d),
+          Proj.awayι (grading R (n i)) (killHom R he s) ((killHom R he).2 hs) hd ≫ linearι R he ≫ PSpace.str R M =
+            Proj.awayι (grading R (n i)) (killHom R he s) ((killHom R he).2 hs) hd ≫ PSpace.str R (n i) := by
+        intro d hd s hs
+        rw [linearι, Proj.awayι_comp_map_assoc _ _ hd s hs, PSpace.str, PSpace.str, Proj.awayι_toSpecZero_assoc,
+          Proj.awayι_toSpecZero_assoc, ← Spec.map_comp, ← Spec.map_comp, ← Spec.map_comp]
+        congr 1
+        ext1
+        refine RingHom.ext fun r => HomogeneousLocalization.val_injective _ ?_
+        refine (congrArg HomogeneousLocalization.val (HomogeneousLocalization.Away.map_mk (killHom R he) s hs 0 (C r)
+          ((zero_smul ℕ d).symm ▸ isHomogeneous_C _ r))).trans ?_
+        rw [HomogeneousLocalization.Away.val_mk]
+        exact congrArg (Localization.mk · _) (killCompl_C he r)
+      exact key _ s.1.2 _ s.2.2
+    rw [Sigma.ι_comp_desc_assoc, Sigma.ι_comp_desc, Category.assoc, hstr, e]
 
 theorem isProjOver_coprodDesc {f : Y ⟶ Sp R} {g : Z ⟶ Sp R} (hf : IsProjOver f) (hg : IsProjOver g) :
     IsProjOver (coprod.desc f g) := by
@@ -646,7 +624,7 @@ theorem isProjOver_coprodDesc {f : Y ⟶ Sp R} {g : Z ⟶ Sp R} (hf : IsProjOver
   convert isProjOver_sigmaDesc (T := fun i : ULift.{0} WalkingPair => i.1.casesOn Y Z)
     (fun i => Sigma.ι (fun i : ULift.{0} WalkingPair => (i.1.casesOn Y Z : Scheme.{0})) i ≫
       (coprodIsoSigma Y Z).inv ≫ coprod.desc f g) ?_ using 1
-  · exact Sigma.hom_ext _ _ fun i => by rw [Sigma.ι_desc]
+  · exact Sigma.hom_ext _ _ fun i => by rw [Sigma.ι_comp_desc]
   · rintro ⟨_ | _⟩
     · rwa [← Category.assoc, ι_left_coprodIsoSigma_inv, coprod.inl_desc]
     · rwa [← Category.assoc, ι_right_coprodIsoSigma_inv, coprod.inr_desc]
@@ -660,31 +638,13 @@ theorem isProjOver_of_disjoint_cover {ι : Type} [Finite ι] (f : Y ⟶ Sp R) (U
     isIso_of_isOpenImmersion_of_opensRange_eq_top _ (top_le_iff.1 fun y _ => by
       obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (hU.ge (Set.mem_univ y))
       exact ⟨Sigma.ι (fun i => (U i).toScheme) i ⟨y, hi⟩, (Scheme.Hom.comp_apply _ _ _).symm.trans
-        (by rw [Sigma.ι_desc]; rfl)⟩)
+        (by rw [Sigma.ι_comp_desc]; rfl)⟩)
   refine isProjOver_of_isIso_comp (Sigma.desc fun i => (U i).ι) ?_
   convert isProjOver_sigmaDesc _ h using 1
-  exact Sigma.hom_ext _ _ fun i => by rw [Sigma.ι_desc_assoc, Sigma.ι_desc]
+  exact Sigma.hom_ext _ _ fun i => by rw [Sigma.ι_comp_desc_assoc, Sigma.ι_comp_desc]
 
-theorem pt_linearι {M : ℕ} {e : Fin (N + 1) → Fin (M + 1)} (he : Function.Injective e) (c : R →+* A)
-    (v : Fin (N + 1) → A) (hv : Ideal.span (Set.range v) = ⊤)
-    (hw : Ideal.span (Set.range (Function.extend e v 0)) = ⊤) :
-    pt c v hv ≫ linearι R he = pt c (Function.extend e v 0) hw := by
-  refine (ProjPoint.ofHom_map _ _ _ _).trans ?_
-  unfold pt
-  congr 1
-  refine ringHom_ext (fun r => ?_) (fun k => ?_)
-  · exact (congrArg (eval₂Hom c v) (killCompl_C he r)).trans ((eval₂Hom_C _ _ r).trans (eval₂Hom_C _ _ r).symm)
-  · rw [eval₂Hom_X']
-    by_cases hk : k ∈ Set.range e
-    · obtain ⟨i, rfl⟩ := hk
-      rw [he.extend_apply]
-      exact (congrArg (eval₂Hom c v) ((congrArg (killCompl he) (rename_X e i).symm).trans
-        (killCompl_rename_app he _))).trans (eval₂Hom_X' _ _ i)
-    · rw [Function.extend_apply' _ _ _ hk]
-      exact (congrArg (eval₂Hom c v) ((aeval_X _ k).trans (dif_neg hk))).trans (map_zero _)
 
 variable (R N) in
-
 theorem points_and_stability :
     (∀ (A : Type) [CommRing A] [Algebra R A],
       (∀ (v : Fin (N + 1) → A) (hv : Ideal.span (Set.range v) = ⊤),
@@ -713,21 +673,26 @@ theorem points_and_stability :
       Set.range (vPlusι I) = ProjectiveSpectrum.zeroLocus (grading R N) I ∧
       ∀ (A : Type) [CommRing A] (c : R →+* A) (v : Fin (N + 1) → A) (hv : Ideal.span (Set.range v) = ⊤),
         (∃ ψ : Sp A ⟶ VPlus I, ψ ≫ vPlusι I = pt c v hv) ↔ ∀ f ∈ I, eval₂ c v f = 0 := by
-  refine ⟨fun A _ _ => ⟨fun v hv => ⟨pt_str _ v hv, pt_preimage_chart _ v hv, fun B _ _ ψ =>
+  have hstr (A : Type) [CommRing A] (c : R →+* A) (v : Fin (N + 1) → A)
+      (hv : Ideal.span (Set.range v) = ⊤) : pt c v hv ≫ PSpace.str R N = spMap c := by
+    rw [pt, PSpace.str, ProjPoint.ofHom_toSpecZero_assoc, ← Spec.map_comp]
+    congr 1
+    ext1
+    exact RingHom.ext fun r => eval₂Hom_C c v r
+  refine ⟨fun A _ _ => ⟨fun v hv => ⟨hstr A _ v hv, pt_preimage_chart _ v hv, fun B _ _ ψ =>
       ⟨span_range_comp_eq_top v hv (ψ : A →+* B), ?_⟩, fun w hw => pt_eq_pt_iff _ hv hw⟩, fun h φ hφ => ?_⟩,
     fun V K _ _ _ _ _ _ c φ hφ => ⟨exists_primitive_eq c φ hφ, existsUnique_extend c φ hφ⟩,
     fun _ _ c _ _ h => isProjOver_pullback_snd c h,
     fun _ _ g _ _ h => isProjOver_comp_of_isClosedImmersion g h,
     fun _ _ _ f h => isProjOver_sigmaDesc f h, fun _ _ _ _ => isProjOver_pullback,
     fun I => ⟨inferInstance, range_vPlusι I, fun _ _ => exists_comp_vPlusι_eq_pt_iff I⟩⟩
-  · rw [spMap_pt]
+  · refine (ProjPoint.SpecMap_ofHom _ _ _ (ψ : A →+* B)).trans ?_
+    unfold pt
     congr 1
-    exact ψ.comp_algebraMap
+    exact ringHom_ext (fun r => by
+      simpa only [RingHom.comp_apply, eval₂Hom_C, AlgHom.coe_toRingHom] using ψ.commutes r)
+      (fun i => by simp)
   · have : Subsingleton (CommRing.Pic A) := h.elim (fun _ => inferInstance) id
     exact exists_eq_pt _ φ hφ
-
-example (h : Ideal.span (Set.range ![(2 : ℤ), 3]) = ⊤) (h' : Ideal.span (Set.range ![(-2 : ℤ), -3]) = ⊤) :
-    pt (RingHom.id ℤ) ![2, 3] h = pt (RingHom.id ℤ) ![-2, -3] h' :=
-  (pt_eq_pt_iff _ h h').2 ⟨-1, by decide⟩
 
 end GlobalTheory.ProjSpace

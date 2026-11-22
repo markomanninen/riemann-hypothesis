@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.AlternatingProductIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.AlternatingProductIntegral
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.DI
 
 namespace GlobalTheory.DI
@@ -31,7 +36,7 @@ theorem phi_mem_forms : ∀ {K : Type} [CommRing K] {V : Type} [AddCommGroup V] 
     rw [map_zero, Pi.zero_apply]
     exact zero_mem _
   | add x y _ _ hx hy =>
-    rw [map_add, Pi.add_apply]
+    rw [map_add (f := _), Pi.add_apply]
     exact add_mem hx hy
   | neg x _ hx =>
     rw [map_neg, Pi.neg_apply]

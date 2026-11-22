@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RationalLowerBounds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RationalLowerBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ open scoped Classical
 
 variable {K : Type*} [Field K] {R : Subring K} {p : ℕ}
 
-variable (R p) in
 
+variable (R p) in
 def nm_N (x : K) : ℝ := if x = 0 then 0 else (p : ℝ) ^ (-nm_v R p x)
 
 theorem nm_N_zero : nm_N R p (0 : K) = 0 := by

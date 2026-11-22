@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.ResidueClassEstimates.StatementT
+module
+
+public import Formalism.ThetaLogCoordinates.ResidueClassEstimates.StatementT
+
+@[expose] public section
 
 noncomputable section
 
@@ -251,8 +255,6 @@ lemma be_eq (D : Letters) : D.be = D.bePos + D.beNeg := by
   unfold Letters.be Letters.bePos Letters.beNeg
   rw [← Finset.sum_filter_add_sum_filter_not (Icc 1 D.n0) (fun i => D.vec i = true)]
   congr 2
-  ext i
-  simp
 
 lemma pre_size (hk : 1 ≤ D.k) (hP : D.IsPre mu) : ∀ i, i ≤ D.n0 →
     -((∑ l ∈ (Icc 1 i).filter (fun l => D.vec l = false), D.B l : ℕ) : ℤ) ≤ ent mu i (D.k - 1) ∧
@@ -543,26 +545,6 @@ lemma frame_step (hW : D.Wf) (hP : D.IsPATH mu) (i u : ℕ) (hi : i < D.Ns) (hn 
   refine ⟨hI.tailPos_le u, ?_⟩
   rw [tailNeg_eq, tailNeg_eq]
   exact hI.rev.tailPos_le u
-
-lemma vec_step (hP : D.IsPATH mu) (i : ℕ) (hi : i + 1 ≤ D.n0) (hv : D.vec (i + 1) = true) :
-    HStrip D.k (ent mu i) (ent mu (i + 1)) ∧
-      wsize D.k (ent mu (i + 1)) - wsize D.k (ent mu i) = D.B (i + 1) := by
-  obtain ⟨-, -, h3, -, h5, -, -⟩ := hP
-  have e : i + 1 - 1 = i := by omega
-  have ha := h3 (i + 1) (by omega) (hi.trans (n0_le_Ns D)) hv
-  have hb := h5 (i + 1) (by omega) hi hv
-  rw [e] at ha hb
-  exact ⟨ha, hb⟩
-
-lemma cov_step (hP : D.IsPATH mu) (i : ℕ) (hi : i + 1 ≤ D.n0) (hv : D.vec (i + 1) = false) :
-    HStrip D.k (ent mu (i + 1)) (ent mu i) ∧
-      wsize D.k (ent mu i) - wsize D.k (ent mu (i + 1)) = D.B (i + 1) := by
-  obtain ⟨-, -, -, h4, -, h6, -⟩ := hP
-  have e : i + 1 - 1 = i := by omega
-  have ha := h4 (i + 1) (by omega) (hi.trans (n0_le_Ns D)) hv
-  have hb := h6 (i + 1) (by omega) hi hv
-  rw [e] at ha hb
-  exact ⟨ha, hb⟩
 
 lemma pos_A (hP : D.IsPATH mu) (i u : ℕ) (ha : actV D (i + 1) = true) :
     tailPos (D.stLen (i + 1)) (stage mu (i + 1)) (u + 1) ≤ tailPos (D.stLen i) (stage mu i) u ∧

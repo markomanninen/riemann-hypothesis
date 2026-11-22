@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.FixedPointCriteria.Cond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SqrtO
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.FixedPointCriteria.Cond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SqrtO
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Loc.PK
 
@@ -13,7 +17,7 @@ private def el (x : Etau K τ) (a b : O) : Etau K τ :=
 
 private theorem el_mul {x : Etau K τ} {e : O} (hx : x * x = algebraMap O (Etau K τ) e) (a b c d : O) :
     el x a b * el x c d = el x (a * c + e * b * d) (a * d + b * c) := by
-  simp only [el, map_add, map_mul]
+  simp only [el, map_add (f := _), map_mul]
   linear_combination (algebraMap O (Etau K τ) b * algebraMap O (Etau K τ) d) * hx
 
 private theorem el_one (x : Etau K τ) : el x (1 : O) 0 = 1 := by simp [el]

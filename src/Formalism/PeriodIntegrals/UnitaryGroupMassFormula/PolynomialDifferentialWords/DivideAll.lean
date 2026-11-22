@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaRight
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaRight
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -50,7 +54,7 @@ theorem divide_all (hV : Vanish) (hD : DivT) (hRB : RBihom) (hRT : RTT) (hTW : T
       rw [mem_weightedHomogeneousSubmodule] at h1
       rw [mul_zero]
       ext m
-      rw [coeff_zero]
+      simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
       by_contra h
       have h2 := h1 h
       have h3 : m = 0 := by

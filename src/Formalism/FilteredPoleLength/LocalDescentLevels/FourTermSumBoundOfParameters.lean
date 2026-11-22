@@ -1,4 +1,8 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.FourTermSumBoundOfParameters
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.FourTermSumBoundOfParameters
+
+@[expose] public section
 
 namespace Formalism.LatticeBaseChangeAlt
 

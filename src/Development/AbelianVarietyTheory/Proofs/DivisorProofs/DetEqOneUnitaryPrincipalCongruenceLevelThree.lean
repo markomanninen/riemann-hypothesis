@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
 
 open NumberField Matrix ReciprocityTheory.ChartRestriction.G.FD Polynomial
 
@@ -22,7 +26,7 @@ theorem transpose_mul_mul_map {r : ℕ} (G γ : Matrix (Fin r) (Fin r) E)
     intro k; funext a; simp [mulVec, dotProduct, Pi.single_apply]
   have hij := h (Pi.single i 1) (Pi.single j 1)
   simp only [herm, cc_eq, hs] at hij
-  simp only [mul_apply, transpose_apply, map_apply, Finset.sum_mul]
+  simp only [Matrix.mul_apply, transpose_apply, map_apply, Finset.sum_mul]
   rw [Finset.sum_comm, hij]
   simp [Pi.single_apply]
 
@@ -47,7 +51,7 @@ theorem isIntegral_of_left_eigen {r : ℕ} {Ω : Type} [Field Ω] [Algebra E Ω]
     { toFun := fun x => u ⬝ᵥ (fun a => φ (x a))
       map_add' := by
         intro x y
-        simp only [Pi.add_apply, map_add]
+        simp only [Pi.add_apply, map_add (f := _)]
         rw [← dotProduct_add]; rfl
       map_smul' := by
         intro c x

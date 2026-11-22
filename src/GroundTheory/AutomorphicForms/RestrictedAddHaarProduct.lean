@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.RestrictedHaarProduct
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.RestrictedHaarProduct
+
+@[expose] public section
 
 open MeasureTheory Filter Set Topology
 open scoped ENNReal RestrictedProduct
@@ -35,12 +39,6 @@ theorem mem_box {T : Finset ι} {x : Πʳ i, [G i, (C i : Set (G i))]} :
 theorem box_mono {T T' : Finset ι} (h : T ⊆ T') : box C T ≤ box C T' :=
   fun _ hx i hi ↦ hx i fun hiT ↦ hi (h hiT)
 
-theorem exists_mem_box (x : Πʳ i, [G i, (C i : Set (G i))]) : ∃ T : Finset ι, x ∈ box C T := by
-  have hx : {i | ¬ x i ∈ C i}.Finite := Filter.eventually_cofinite.1 x.2
-  refine ⟨hx.toFinset, fun i hi ↦ ?_⟩
-  by_contra h
-  exact hi (hx.mem_toFinset.2 h)
-
 def proj (T : Finset ι) : (Πʳ i, [G i, (C i : Set (G i))]) →+ ((i : T) → G i) where
   toFun x i := x i
   map_zero' := by
@@ -54,21 +52,23 @@ def proj (T : Finset ι) : (Πʳ i, [G i, (C i : Set (G i))]) →+ ((i : T) → 
 
 theorem proj_apply (T : Finset ι) (x : Πʳ i, [G i, (C i : Set (G i))]) (i : T) : proj C T x i = x i := rfl
 
-open Classical in
 
-def secFun (T : Finset ι) (a : (i : T) → G i) (i : ι) : G i := if h : i ∈ T then a ⟨i, h⟩ else 0
+open Classical in
+def secFun (T : Finset ι) (a : (i : T) → G i) (i : ι) : G i := by
+  classical
+  exact if h : i ∈ T then a ⟨i, h⟩ else 0
 
 theorem secFun_of_mem {T : Finset ι} (a : (i : T) → G i) {i : ι} (h : i ∈ T) :
     secFun T a i = a ⟨i, h⟩ := by
   classical
   unfold secFun
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem secFun_of_notMem {T : Finset ι} (a : (i : T) → G i) {i : ι} (h : i ∉ T) :
     secFun T a i = 0 := by
   classical
   unfold secFun
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 def sec (T : Finset ι) : ((i : T) → G i) →+ (Πʳ i, [G i, (C i : Set (G i))]) where
   toFun a := ⟨secFun T a, by
@@ -135,16 +135,21 @@ theorem isCompact_box_inter_preimage [∀ i, IsTopologicalAddGroup (G i)] [∀ i
     · rintro x ⟨hxE, hxS⟩ i -
       by_cases h : i ∈ T
       · dsimp only
-        rw [dif_pos h]
+        rw [dite_eq_left h]
         exact ⟨_, hxE, rfl⟩
       · dsimp only
-        rw [dif_neg h]
+        rw [dite_eq_right h]
         exact hxS i h
   set Z : Set (Πʳ i, [G i, (C i : Set (G i))]_[𝓟 S]) := (fun y ↦ (y : (i : ι) → G i)) ⁻¹' W with hZ
   have hZc : IsCompact Z := by
     rw [(RestrictedProduct.isEmbedding_coe_of_principal (R := G) (A := fun i ↦ (C i : Set (G i)))
       (S := S)).isCompact_iff, hZ, image_preimage_eq_inter_range, RestrictedProduct.range_coe_principal]
-    rw [inter_eq_left.2 fun x hx ↦ hx.2]
+    have hsubset : W ⊆ S.pi (fun i ↦ (C i : Set (G i))) := by
+      intro x hx
+      rw [hW] at hx
+      change ∀ i ∈ S, x i ∈ C i
+      exact hx.2
+    rw [inter_eq_left.2 hsubset]
     exact hWc
   have heq : (box C T : Set (Πʳ i, [G i, (C i : Set (G i))])) ∩ proj C T ⁻¹' E =
       RestrictedProduct.inclusion G (fun i ↦ (C i : Set (G i))) hS '' Z := by
@@ -187,7 +192,7 @@ theorem isHaarMeasure_projMeasure (hCo : ∀ i, IsOpen (C i : Set (G i)))
     have hset : (box C T : Set (Πʳ i, [G i, (C i : Set (G i))])) ∩ proj C T ⁻¹' ((a + ·) ⁻¹' E) =
         (sec C T a + ·) ⁻¹' ((box C T : Set (Πʳ i, [G i, (C i : Set (G i))])) ∩ proj C T ⁻¹' E) := by
       ext x
-      simp only [mem_inter_iff, mem_preimage, SetLike.mem_coe, map_add, proj_sec]
+      simp only [mem_inter_iff, mem_preimage, SetLike.mem_coe, map_add (f := _), proj_sec]
       constructor
       · rintro ⟨hx, hxE⟩
         exact ⟨(box C T).add_mem (sec_mem_box C T a) hx, hxE⟩
@@ -268,7 +273,7 @@ theorem projMeasure_eq (hCo : ∀ i, IsOpen (C i : Set (G i))) (hCc : ∀ i, IsC
   have hc : ((projMeasure C μ T).addHaarScalarFactor (Measure.pi fun i : T ↦ ν i) : ℝ≥0∞) =
       μ {x : Πʳ i, [G i, (C i : Set (G i))] | ∀ i, x i ∈ C i} := by
     have := congrArg (fun m : Measure ((i : T) → G i) ↦ m B) h
-    simp only [Measure.smul_apply, hpi, ENNReal.smul_def, smul_eq_mul, mul_one] at this
+    simp only [smul_apply, hpi, ENNReal.smul_def, smul_eq_mul, mul_one] at this
     rw [← hproj, this]
   conv_lhs => rw [h]
   rw [← hc]

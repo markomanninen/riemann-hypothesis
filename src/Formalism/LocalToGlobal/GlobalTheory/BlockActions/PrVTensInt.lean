@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.DualLStable
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LatSOfMem
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.DualLStable
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LatSOfMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,12 +65,12 @@ variable {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem
 
 theorem clsCrd_fin (u : D.what₂.Word) (c : (D.mem u).C.cls D.R.m) :
     Module.Finite (𝓞 D.host.E) (clsCrd D u D.R.m le_rfl c) := by
-  letI := D.host.cmStar
+  let := D.host.cmStar
   rw [Module.Finite.iff_fg]
   exact (D.clsLat_lat u D.R.m c).fg.map _
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem stab_lat_le (Tf : FormsTiedSym D u Ch chOf) (hLG : LatLocGlob) (hAL : AdLocLat) (c : (D.fm u).clsP)
     (γ : UJ (sigD D : D.host.E →+* D.host.E) (gramN D D.R.m le_rfl))
     (hγ : γ ∈ ((Tf.cls D.R.m le_rfl (Or.inr rfl)).stabI ((D.fm u).til c)).range) :

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FourierWhittaker.IsAddFundamentalDomainImageOfMapVecLattice
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FourierWhittaker.IsAddFundamentalDomainImageOfMapVecLattice
+
+@[expose] public section
 
 open Matrix
 
@@ -27,9 +31,6 @@ theorem uN_add (X Y : Pos n → R) : uN (X + Y) = uN X + uN Y := by
 theorem uN_zero : uN (0 : Pos n → R) = 0 := by
   ext a b; simp only [uN_apply, Pi.zero_apply, Matrix.zero_apply]; split_ifs <;> rfl
 
-theorem uN_neg (X : Pos n → R) : uN (-X) = -uN X := by
-  ext a b; simp only [uN_apply, Pi.neg_apply, Matrix.neg_apply]; split_ifs <;> simp
-
 def uMat (X : Pos n → R) : Matrix (Fin n) (Fin n) R := 1 + uN X
 
 theorem uMat_apply (X : Pos n → R) (a b : Fin n) :
@@ -45,7 +46,7 @@ theorem det_uMat (X : Pos n → R) : (uMat X).det = 1 := by
   have hT : (uMat X).IsUpperTriangular := by
     intro a b hab
     have hab' : b < a := hab
-    rw [uMat_apply, if_neg (ne_of_gt hab'), dif_neg (not_lt.2 hab'.le)]
+    rw [uMat_apply, if_neg (ne_of_gt hab'), dite_eq_right (not_lt.2 hab'.le)]
   rw [Matrix.det_of_isUpperTriangular hT]
   refine Finset.prod_eq_one fun a _ => ?_
   rw [uMat_apply, if_pos rfl]
@@ -78,9 +79,6 @@ theorem colX_add (k : ℕ) (x y : Fin k → R) : colX (n := n) k (x + y) = colX 
 theorem colX_zero (k : ℕ) : colX (n := n) k (0 : Fin k → R) = 0 := by
   funext p; simp only [colX_apply, Pi.zero_apply]; split_ifs <;> rfl
 
-theorem colX_neg (k : ℕ) (x : Fin k → R) : colX (n := n) k (-x) = -colX k x := by
-  funext p; simp only [colX_apply, Pi.neg_apply]; split_ifs <;> simp
-
 theorem uN_mul_uN_colX {k : ℕ} {Y : Pos n → R} (hY : ∀ p : Pos n, p.1.2.val ≤ k → Y p = 0)
     (x : Fin k → R) : uN Y * uN (colX k x) = 0 := by
   ext a b
@@ -88,14 +86,14 @@ theorem uN_mul_uN_colX {k : ℕ} {Y : Pos n → R} (hY : ∀ p : Pos n, p.1.2.va
   refine Finset.sum_eq_zero fun c _ => ?_
   rw [uN_apply, uN_apply]
   by_cases hcb : c < b
-  · rw [dif_pos hcb, colX_apply]
+  · rw [dite_eq_left hcb, colX_apply]
     by_cases hb : b.val = k
-    · rw [dif_pos hb]
+    · rw [dite_eq_left hb]
       by_cases hac : a < c
-      · rw [dif_pos hac, hY _ (by rw [Fin.lt_def] at hcb; simp only; omega), zero_mul]
-      · rw [dif_neg hac, zero_mul]
-    · rw [dif_neg hb, mul_zero]
-  · rw [dif_neg hcb, mul_zero]
+      · rw [dite_eq_left hac, hY _ (by rw [Fin.lt_def] at hcb; simp only; omega), zero_mul]
+      · rw [dite_eq_right hac, zero_mul]
+    · rw [dite_eq_right hb, mul_zero]
+  · rw [dite_eq_right hcb, mul_zero]
 
 theorem uMat_mul_uMat_colX {k : ℕ} {Y : Pos n → R} (hY : ∀ p : Pos n, p.1.2.val ≤ k → Y p = 0)
     (x : Fin k → R) : uMat Y * uMat (colX k x) = uMat (Y + colX k x) := by
@@ -106,7 +104,7 @@ def colGL (k : ℕ) (x : Fin k → R) : GL (Fin n) R := uGL (colX k x)
 
 theorem colX_le (k : ℕ) (x : Fin k → R) (p : Pos n) (hp : p.1.2.val ≤ k - 1 ∨ k < p.1.2.val) :
     colX k x p = 0 := by
-  rw [colX_apply, dif_neg]
+  rw [colX_apply, dite_eq_right]
   intro h
   rcases hp with hp | hp
   · have := p.2; rw [Fin.lt_def] at this; omega
@@ -167,12 +165,12 @@ theorem blockMat_apply (hj : j ≤ n) (h : Matrix (Fin j) (Fin j) R) (a b : Fin 
       else 0) else (if a = b then 1 else 0) := by
   rw [blockMat, Matrix.submatrix_apply]
   by_cases ha : a.val < j
-  · rw [splitIdx_of_lt hj a ha, dif_pos ha]
+  · rw [splitIdx_of_lt hj a ha, dite_eq_left ha]
     by_cases hb : b.val < j
-    · rw [splitIdx_of_lt hj b hb, dif_pos hb, Matrix.fromBlocks_apply₁₁]
-    · rw [splitIdx_of_ge hj b (not_lt.1 hb), dif_neg hb, Matrix.fromBlocks_apply₁₂,
+    · rw [splitIdx_of_lt hj b hb, dite_eq_left hb, Matrix.fromBlocks_apply₁₁]
+    · rw [splitIdx_of_ge hj b (not_lt.1 hb), dite_eq_right hb, Matrix.fromBlocks_apply₁₂,
         Matrix.zero_apply]
-  · rw [splitIdx_of_ge hj a (not_lt.1 ha), dif_neg ha]
+  · rw [splitIdx_of_ge hj a (not_lt.1 ha), dite_eq_right ha]
     by_cases hb : b.val < j
     · rw [splitIdx_of_lt hj b hb, Matrix.fromBlocks_apply₂₁, Matrix.zero_apply, if_neg]
       intro hab; subst hab; exact ha hb

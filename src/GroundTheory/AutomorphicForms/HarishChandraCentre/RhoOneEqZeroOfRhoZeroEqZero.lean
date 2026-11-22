@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.MemCenterOfCommuteE
-import GroundTheory.AutomorphicForms.HarishChandraCentre.RepBase
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.MemCenterOfCommuteE
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.RepBase
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -22,7 +26,7 @@ theorem rhoDeriv_add (c : Matrix (Fin n) (Fin n) ℂ) (M N : gl n) :
     rhoDeriv c (M + N) = rhoDeriv c M + rhoDeriv c N := by
   apply derivation_ext
   intro a
-  simp only [rhoDeriv_X, Derivation.add_apply, Matrix.add_apply, map_add, add_mul,
+  simp only [rhoDeriv_X, Derivation.add_apply, Matrix.add_apply, map_add (f := _), add_mul,
     Finset.sum_add_distrib]
 
 theorem rhoDeriv_smul (c : Matrix (Fin n) (Fin n) ℂ) (r : ℂ) (M : gl n) :
@@ -35,8 +39,10 @@ theorem rhoDeriv_smul (c : Matrix (Fin n) (Fin n) ℂ) (r : ℂ) (M : gl n) :
 theorem rhoDeriv_rhoDeriv_X (c : Matrix (Fin n) (Fin n) ℂ) (P Q : gl n) (a : Fin n × Fin n) :
     rhoDeriv c P (rhoDeriv c Q (X a)) =
       ∑ k, C ((P * Q) k a.1) * (X (k, a.2) + C (c k a.2)) := by
-  rw [rhoDeriv_X, map_sum]
-  simp only [Derivation.leibniz, Derivation.map_add, derivation_C, smul_zero, add_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rhoDeriv_X, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Derivation.leibniz, Derivation.map_add, derivation_C, smul_zero, add_zero,
     smul_eq_mul, mul_zero, rhoDeriv_X, Matrix.mul_apply, map_sum, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_
@@ -85,7 +91,7 @@ noncomputable def rowDeriv (i j : Fin n) : Derivation ℂ (Poly n) (Poly n) :=
 theorem rowDeriv_apply (i j : Fin n) (f : Poly n) : rowDeriv i j f = rowOp i j f := by
   induction f using MvPolynomial.induction_on with
   | C r => simp [rowDeriv, rowOp_apply, derivation_C]
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p a hp =>
     rw [Derivation.leibniz, hp, rowOp_apply, rowOp_apply, smul_eq_mul, smul_eq_mul]
     have h1 : rowDeriv i j (X a) = ∑ k, X (i, k) * pderiv (j, k) (X a) := by
@@ -141,12 +147,13 @@ theorem rhoDeriv_one_shift (M : gl n) (f : Poly n) :
   | C r =>
     have : shift (C r : Poly n) = C r := (shift : Poly n ≃ₐ[ℂ] Poly n).commutes r
     rw [this, derivation_C, derivation_C, map_zero]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
   | mul_X p a hp =>
-    rw [map_mul, Derivation.leibniz, Derivation.leibniz, hp, map_add, smul_eq_mul, smul_eq_mul,
+    rw [map_mul, Derivation.leibniz, Derivation.leibniz, hp, map_add (f := _), smul_eq_mul, smul_eq_mul,
       smul_eq_mul, smul_eq_mul, map_mul, map_mul]
     congr 2
-    rw [shift_X, Derivation.map_add, derivation_C, add_zero, rhoDeriv_X, rhoDeriv_X, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [shift_X, Derivation.map_add, derivation_C, add_zero, rhoDeriv_X, rhoDeriv_X, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp [shift_X, shift_C, Matrix.one_apply]
 
@@ -155,7 +162,7 @@ theorem rho_one_shift (u : U n) (f : Poly n) : rho 1 u (shift f) = shift (rho 0 
   | halg r => simp [AlgHom.commutes, Module.algebraMap_end_apply]
   | hι M => rw [rho_ι_apply, rho_ι_apply, rhoDeriv_one_shift]
   | hmul a b ha hb => rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, hb, ha]
-  | hadd a b ha hb => rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, ha, hb,
+  | hadd a b ha hb => rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, ha, hb,
       map_add]
 
 theorem rho_one_eq_zero_of_rho_zero_eq_zero (u : U n) (h : rho 0 u = 0) : rho 1 u = 0 := by
@@ -164,9 +171,9 @@ theorem rho_one_eq_zero_of_rho_zero_eq_zero (u : U n) (h : rho 0 u = 0) : rho 1 
   rw [rho_one_shift, h, LinearMap.zero_apply, map_zero, LinearMap.zero_apply]
 
 def geDeg (t : ℕ) : Submodule ℂ (Poly n) where
-  carrier := {f | ∀ s : Fin n × Fin n →₀ ℕ, s.degree < t → coeff s f = 0}
-  add_mem' {f g} hf hg s hs := by rw [coeff_add, hf s hs, hg s hs, add_zero]
-  zero_mem' s _ := coeff_zero s
+  carrier := {f | ∀ s : Fin n × Fin n →₀ ℕ, s.degree < t → AddMonoidAlgebra.coeff f s = 0}
+  add_mem' {f g} hf hg s hs := by rw [MvPolynomial.coeff_add, hf s hs, hg s hs, add_zero]
+  zero_mem' s _ := by simp
   smul_mem' r f hf s hs := by rw [coeff_smul, hf s hs, smul_zero]
 
 theorem geDeg_anti {t t' : ℕ} (h : t' ≤ t) : (geDeg t : Submodule ℂ (Poly n)) ≤ geDeg t' :=
@@ -181,7 +188,7 @@ theorem monomial_mem_geDeg {t : ℕ} (s : Fin n × Fin n →₀ ℕ) (c : ℂ) (
 
 theorem constantCoeff_eq_zero_of_mem_geDeg {f : Poly n} (hf : f ∈ geDeg 1) :
     constantCoeff f = 0 := by
-  have h0 : constantCoeff f = coeff 0 f := by rw [constantCoeff_eq]
+  have h0 : constantCoeff f = AddMonoidAlgebra.coeff f 0 := by rw [constantCoeff_eq]
   rw [h0]
   exact hf 0 (by simp)
 
@@ -193,9 +200,10 @@ theorem mem_geDeg_of_isHomogeneous {f : Poly n} {d : ℕ} (hf : f.IsHomogeneous 
   omega
 
 theorem map_mem_of_monomial (L : Poly n →ₗ[ℂ] Poly n) (P : Submodule ℂ (Poly n))
-    (Q : (Fin n × Fin n →₀ ℕ) → Prop) {f : Poly n} (hf : ∀ s, coeff s f ≠ 0 → Q s)
+    (Q : (Fin n × Fin n →₀ ℕ) → Prop) {f : Poly n} (hf : ∀ s, AddMonoidAlgebra.coeff f s ≠ 0 → Q s)
     (h : ∀ s (c : ℂ), Q s → L (monomial s c) ∈ P) : L f ∈ P := by
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   exact Submodule.sum_mem _ fun s hs => h s _ (hf s (mem_support_iff.1 hs))
 
 theorem degree_sub_single {s : Fin n × Fin n →₀ ℕ} {a : Fin n × Fin n} (h : s a ≠ 0) :
@@ -203,7 +211,7 @@ theorem degree_sub_single {s : Fin n × Fin n →₀ ℕ} {a : Fin n × Fin n} (
   have hle : Finsupp.single a 1 ≤ s := by
     rw [Finsupp.single_le_iff]; omega
   conv_rhs => rw [← tsub_add_cancel_of_le hle]
-  rw [map_add, Finsupp.degree_single]
+  rw [map_add (f := _), Finsupp.degree_single]
 
 theorem pderiv_monomial_mem_geDeg {t : ℕ} (a : Fin n × Fin n) (s : Fin n × Fin n →₀ ℕ) (c : ℂ)
     (h : t ≤ s.degree) : pderiv a (monomial s c : Poly n) ∈ geDeg (t - 1) := by
@@ -240,7 +248,7 @@ theorem rowOp_monomial_term_mem {i j k : Fin n} {s : Fin n × Fin n →₀ ℕ} 
 
 theorem degree_rowOp_term {i j k : Fin n} {s : Fin n × Fin n →₀ ℕ} (hs : s (j, k) ≠ 0) :
     (Finsupp.single (i, k) 1 + (s - Finsupp.single (j, k) 1)).degree = s.degree := by
-  rw [map_add, Finsupp.degree_single, ← degree_sub_single hs]
+  rw [map_add (f := _), Finsupp.degree_single, ← degree_sub_single hs]
   ring
 
 theorem rowOp_monomial_mem_geDeg {t : ℕ} (i j : Fin n) (s : Fin n × Fin n →₀ ℕ) (c : ℂ)
@@ -260,15 +268,13 @@ theorem rowOp_mem_geDeg {t : ℕ} (i j : Fin n) {f : Poly n} (hf : f ∈ geDeg t
 noncomputable def iterPd (w : List (Fin n × Fin n)) (f : Poly n) : Poly n :=
   w.foldr (fun a g => pderiv (a.2, a.1) g) f
 
-@[simp] theorem iterPd_nil (f : Poly n) : iterPd [] f = f := rfl
-
 @[simp] theorem iterPd_cons (a : Fin n × Fin n) (w : List (Fin n × Fin n)) (f : Poly n) :
     iterPd (a :: w) f = pderiv (a.2, a.1) (iterPd w f) := rfl
 
 theorem iterPd_mem_geDeg (w : List (Fin n × Fin n)) {t : ℕ} {f : Poly n} (hf : f ∈ geDeg t) :
     iterPd w f ∈ geDeg (t - w.length) := by
   induction w with
-  | nil => simpa using hf
+  | nil => simpa [iterPd] using hf
   | cons a w ih =>
     rw [iterPd_cons, List.length_cons, ← Nat.sub_sub]
     exact pderiv_mem_geDeg _ ih
@@ -277,7 +283,7 @@ theorem rho_one_word_sub_iterPd (w : List (Fin n × Fin n)) {t : ℕ} {f : Poly 
     (hw : w.length ≤ t) (hf : f ∈ geDeg t) :
     rho 1 (word w) f - iterPd w f ∈ geDeg (t - w.length + 1) := by
   induction w with
-  | nil => simp
+  | nil => simp [iterPd]
   | cons a w ih =>
     rw [List.length_cons] at hw ⊢
     have ih := ih (by omega)
@@ -303,7 +309,7 @@ theorem constantCoeff_rho_one_word_of_lt (w : List (Fin n × Fin n)) (f : Poly n
   have hf' := mem_geDeg_of_isHomogeneous hf
   have h1 := rho_one_word_sub_iterPd w h.le hf'
   have h2 := iterPd_mem_geDeg w hf'
-  rw [← sub_add_cancel (rho 1 (word w) f) (iterPd w f), map_add,
+  rw [← sub_add_cancel (rho 1 (word w) f) (iterPd w f), map_add (f := _),
     constantCoeff_eq_zero_of_mem_geDeg (geDeg_anti (by omega) h1),
     constantCoeff_eq_zero_of_mem_geDeg (geDeg_anti (by omega) h2), add_zero]
 
@@ -320,7 +326,7 @@ theorem iterPd_monomial (w : List (Fin n × Fin n)) (s : Fin n × Fin n →₀ �
         monomial (s - Multiset.toFinsupp ((w.map Prod.swap : List _) : Multiset _)) (c * κ) ∧
       (κ ≠ 0 ↔ Multiset.toFinsupp ((w.map Prod.swap : List _) : Multiset _) ≤ s) := by
   induction w with
-  | nil => exact ⟨1, by simp, by simp⟩
+  | nil => exact ⟨1, by simp [iterPd], by simp⟩
   | cons a w ih =>
     obtain ⟨κ, h1, h2⟩ := ih
     rw [toFinsupp_map_swap_cons]
@@ -349,7 +355,7 @@ theorem constantCoeff_rho_one_word_monomial (w : List (Fin n × Fin n))
       Multiset.toFinsupp ((w.map Prod.swap : List _) : Multiset _) = s := by
   have hf' : (monomial s (1 : ℂ) : Poly n) ∈ geDeg s.degree := monomial_mem_geDeg s 1 le_rfl
   have h1 := rho_one_word_sub_iterPd w h.le hf'
-  rw [← sub_add_cancel (rho 1 (word w) (monomial s 1)) (iterPd w (monomial s 1)), map_add,
+  rw [← sub_add_cancel (rho 1 (word w) (monomial s 1)) (iterPd w (monomial s 1)), map_add (f := _),
     constantCoeff_eq_zero_of_mem_geDeg (geDeg_anti (by omega) h1), zero_add]
   obtain ⟨κ, hκ, hiff⟩ := iterPd_monomial w s 1
   rw [hκ, constantCoeff_monomial, one_mul]

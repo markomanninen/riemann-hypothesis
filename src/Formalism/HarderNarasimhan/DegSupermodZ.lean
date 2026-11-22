@@ -1,5 +1,9 @@
-import Formalism.HarderNarasimhan.Statement
-import Formalism.LatticeSlopes.CovolAntiSameRank
+module
+
+public import Formalism.HarderNarasimhan.Statement
+public import Formalism.LatticeSlopes.CovolAntiSameRank
+
+@[expose] public section
 
 open Module Submodule
 

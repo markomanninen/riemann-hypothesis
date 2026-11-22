@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 namespace GlobalTheory.PicLoc
 
 open Algebra in
-
 theorem finite_maximalSpectrum_of_field (B : Type) [CommRing B] (S : Submonoid B) (K : Type)
     [Field K] [Algebra B K] [IsLocalization S K] (A' : Type) [CommRing A'] [Algebra B A']
     [FormallyUnramified B A'] [FiniteType B A'] (R : Type) [CommRing R] [Algebra A' R]
@@ -53,7 +57,7 @@ theorem isField_localization (B : Type) [CommRing B] [IsDedekindDomain B] (f : B
       have hunit : IsUnit (Ideal.Quotient.mk (Ideal.span {f}) a) := by
         have hb0 : Ideal.Quotient.mk (Ideal.span {f}) b = 0 := Ideal.Quotient.eq_zero_iff_mem.2 hb
         have : Ideal.Quotient.mk (Ideal.span {f}) a = 1 := by
-          rw [← map_one (Ideal.Quotient.mk (Ideal.span {f})), ← hab, map_add, hb0, add_zero]
+          rw [← map_one (Ideal.Quotient.mk (Ideal.span {f})), ← hab, map_add (f := _), hb0, add_zero]
         rw [this]; exact isUnit_one
       exact hdisj a (Submonoid.mem_sup_left hunit) ha
     rw [← IsLocalization.map_under S (Localization S) Q]

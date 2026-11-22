@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolyCM
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.RingKrullDimQuotientOfMemAssociatedPrimes
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolyCM
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.RingKrullDimQuotientOfMemAssociatedPrimes
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -38,7 +42,7 @@ private theorem height_ker_add {B C : Type} [CommRing B] [IsDomain B] [CommRing 
     | C a =>
       rw [MvPolynomial.algebraMap_def, MvPolynomial.map_C, MvPolynomial.algHom_C, MvPolynomial.algHom_C,
         ← IsScalarTower.algebraMap_apply, ← IsScalarTower.algebraMap_apply]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | mul_X a i ha =>
       simp only [map_mul, ha]
       rw [MvPolynomial.algebraMap_def, MvPolynomial.map_X]
@@ -78,7 +82,7 @@ private theorem height_ker_add {B C : Type} [CommRing B] [IsDomain B] [CommRing 
     rw [← a4, ← ht]
     exact le_antisymm (a2.trans a3.le) a1
   rw [h2, ReciprocityTheory.CA.ringKrullDim_eq_of_trdeg_eq_field t h3,
-    ← IsLocalization.height_comap ((nonZeroDivisors B).map (MvPolynomial.C (σ := Fin N))) (RingHom.ker g'), Ideal.under_def, hc] at h1
+    ← IsLocalization.height_under ((nonZeroDivisors B).map (MvPolynomial.C (σ := Fin N))) (RingHom.ker g'), Ideal.under_def, hc] at h1
   exact h1
 
 theorem UpperTheory.V.CA.g_dimform :

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.SpanXLeKerAevalZero
-import Lemmata.FirstBlockLemmaK.Imports
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.SpanXLeKerAevalZero
+public import Lemmata.FirstBlockLemmaK.Imports
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -64,9 +68,9 @@ theorem algChart [IsLocalRing R] (B : Type) [CommRing B] [Algebra R B] [Algebra.
     ext s
     exact AlgHom.congr_fun h s
   have hπ : ∀ m : ℕ, ∃ π : Localization.Away f →ₐ[R] JetR R (Fin n) m, (jetAug R (Fin n) m).comp π = ε' ∧
-      ∀ j, π (sX R j) = algebraMap R _ (ε' (sX R j)) + zR m j := fun m =>
+      ∀ j, π (sX (R := R) j) = algebraMap R _ (ε' (sX (R := R) j)) + zR m j := fun m =>
     etale_exists (n := n) ε' (jetAug R (Fin n) m) (ker_jetAug_nil (Fin n) m) _ (fun j => by
-      rw [map_add, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, jetAug_zR, add_zero])
+      rw [map_add (f := _), AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, jetAug_zR, add_zero])
   choose π hπaug hπX using hπ
   refine ⟨n, fun m => (π m).comp toS, ?_, ?_, ?_⟩
   · intro m
@@ -77,7 +81,7 @@ theorem algChart [IsLocalRing R] (B : Type) [CommRing B] [Algebra R B] [Algebra.
       exact hπaug (m + 1)
     · exact hπaug m
     · intro j
-      rw [AlgHom.comp_apply, hπX, hπX, map_add, AlgHom.commutes]
+      rw [AlgHom.comp_apply, hπX, hπX, map_add (f := _), AlgHom.commutes]
       rfl
   · intro m
     rw [← hε', ← AlgHom.comp_assoc, ← AlgHom.comp_assoc]
@@ -88,7 +92,7 @@ theorem algChart [IsLocalRing R] (B : Type) [CommRing B] [Algebra R B] [Algebra.
     · ext s
       simp
     · intro j
-      rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes, AlgHom.comp_apply, jetZero_zR, add_zero]
+      rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes, AlgHom.comp_apply, jetZero_zR, add_zero]
       rfl
   · intro A _ _ aug m hJ φ hφ
     have hJn := nil_of_pow _ hJ
@@ -98,13 +102,13 @@ theorem algChart [IsLocalRing R] (B : Type) [CommRing B] [Algebra R B] [Algebra.
       ext b
       exact IsLocalization.Away.lift_eq f hu b
     have hφ'aug : aug.comp φ' = ε' := locExt _ _ (by rw [AlgHom.comp_assoc, hφ', hφ, hε'])
-    have hmem : ∀ j : Fin n, φ' (sX (S := Localization.Away f) R j) -
-        algebraMap R A (ε' (sX (S := Localization.Away f) R j)) ∈ RingHom.ker aug := by
+    have hmem : ∀ j : Fin n, φ' (sX (R := R) j) -
+        algebraMap R A (ε' (sX (R := R) j)) ∈ RingHom.ker aug := by
       intro j
       rw [RingHom.mem_ker, map_sub, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply,
         ← AlgHom.comp_apply, hφ'aug, sub_self]
-    let ψ := jetLift R (RingHom.ker aug) hJ
-      (fun j : Fin n => φ' (sX (S := Localization.Away f) R j) - algebraMap R A (ε' (sX (S := Localization.Away f) R j))) hmem
+    let ψ := jetLift (R := R) (RingHom.ker aug) hJ
+      (fun j : Fin n => φ' (sX (R := R) j) - algebraMap R A (ε' (sX (R := R) j))) hmem
     have hψaug : aug.comp ψ = jetAug R (Fin n) m := jet_ext fun j => by
       rw [AlgHom.comp_apply, jetLift_zR, jetAug_zR]; exact hmem j
     have hψπ : ψ.comp (π m) = φ' := by
@@ -113,7 +117,7 @@ theorem algChart [IsLocalRing R] (B : Type) [CommRing B] [Algebra R B] [Algebra.
         exact hπaug m
       · exact hφ'aug
       · intro j
-        rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes, jetLift_zR, add_sub_cancel]
+        rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes, jetLift_zR, add_sub_cancel]
     refine ⟨ψ, ⟨hψaug, ?_⟩, ?_⟩
     · rw [← AlgHom.comp_assoc, hψπ, hφ']
     · rintro ψ₂ ⟨_, h2⟩
@@ -122,8 +126,8 @@ theorem algChart [IsLocalRing R] (B : Type) [CommRing B] [Algebra R B] [Algebra.
       apply jet_ext
       intro j
       rw [jetLift_zR]
-      have := AlgHom.congr_fun h4 (sX R j)
-      rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes] at this
+      have := AlgHom.congr_fun h4 (sX (R := R) j)
+      rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes] at this
       rw [← this, add_sub_cancel_left]
 
 end ReciprocityTheory.ChartRestriction.G.Chart

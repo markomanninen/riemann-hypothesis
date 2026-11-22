@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.PairingAdjointness
-import Formalism.LocalToGlobal.GlobalTheory.GL6.SecondBranchInclLengthOfLengths
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.PairingAdjointness
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.SecondBranchInclLengthOfLengths
+
+@[expose] public section
 
 noncomputable section
 

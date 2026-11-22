@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsOriginBoxValueExponentLe
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableSetSetOfLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsOriginBoxValueExponentLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableSetSetOfLe
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix
 open GlobalTheory.OriginBox GlobalTheory.FunObj GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
 set_option maxHeartbeats 1000000 in

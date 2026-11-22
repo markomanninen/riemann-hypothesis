@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.StrictHensUnion
 
-open CategoryTheory Limits in
 
+open CategoryTheory Limits in
 theorem indEtale_of_directed_union : ∀ (R S : Type) [CommRing R] [CommRing S] [Algebra R S] (ι : Type) [Preorder ι] [IsDirected ι (· ≤ ·)] [Nonempty ι] (D : ι → Subalgebra R S), Monotone D → (∀ s : S, ∃ i, s ∈ D i) → (∀ i, GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.IsIndEtale (algebraMap R (D i))) → GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.IsIndEtale (algebraMap R S) := by
   intro R S _ _ _ ι _ _ _ D hmono hcov hD
   have hp : RingHom.toMorphismProperty @RingHom.Etale ≤
@@ -57,8 +62,8 @@ instance DivIdx.instIsDirected {A : Type} [CommRing A] (M : Submonoid A) :
 instance DivIdx.instNonempty {A : Type} [CommRing A] (M : Submonoid A) : Nonempty (DivIdx M) :=
   ⟨(1 : M)⟩
 
-open CategoryTheory Limits in
 
+open CategoryTheory Limits in
 theorem indEtale_localization_of_etale : ∀ (R A : Type) [CommRing R] [CommRing A] [Algebra R A] [Algebra.Etale R A] (M : Submonoid A), GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.IsIndEtale (algebraMap R (Localization M)) := by
   intro R A _ _ _ _ M
   haveI : IsFiltered (DivIdx M) := inferInstance
@@ -165,8 +170,8 @@ theorem indEtale_localization_of_etale : ∀ (R A : Type) [CommRing R] [CommRing
       IsScalarTower.algebraMap_apply R A (Localization M), IsLocalization.Away.lift]
     exact IsLocalization.lift_eq _ _
 
-open CategoryTheory in
 
+open CategoryTheory in
 theorem indEtale_over_localization : ∀ (R L S : Type) [CommRing R] [CommRing L] [CommRing S] [Algebra R L] [Algebra R S] [Algebra L S] [IsScalarTower R L S] (N : Submonoid R) [IsLocalization N L], GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.IsIndEtale (algebraMap R S) → GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.IsIndEtale (algebraMap L S) := by
   intro R L S _ _ _ _ _ _ _ N _ hR
   haveI : IsLocalization (Algebra.algebraMapSubmonoid S N) S := by

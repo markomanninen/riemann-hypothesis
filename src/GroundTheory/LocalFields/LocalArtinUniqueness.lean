@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalArtinMap
-import GroundTheory.LocalFields.KroneckerWeber
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalArtinMap
+public import GroundTheory.LocalFields.KroneckerWeber
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,22 @@ theorem eq_localArtinMap_of
   have := algebraicValuativeRel_valuativeExtension K Ω
   have := algebraicTopology_isValuativeTopology K Ω
   have : IsSepClosed Ω := IsSepClosure.sep_closed K
-  have hf := isLubinTateSeries_ltPoly ϖ
+  have hf : IsLubinTateSeries ϖ (ltPoly ϖ : PowerSeries 𝒪[K]) := by
+    have hq := one_lt_card_residueField' K
+    refine ⟨?_, ?_, ?_⟩
+    · rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, Polynomial.coeff_coe, ltPoly]
+      simp [Polynomial.coeff_X_pow, show 0 ≠ Nat.card 𝓀[K] by omega]
+    · rw [Polynomial.coeff_coe, ltPoly]
+      simp [Polynomial.coeff_X_pow, hq.ne]
+    · intro k
+      rw [coeff_ltPoly_sub, Polynomial.coeff_C_mul_X]
+      split_ifs
+      · exact dvd_rfl
+      · exact dvd_zero ϖ
+  haveI (n : ℕ) : IsGalois K (lubinTateField Ω hϖ hf n) :=
+    IsGalois.of_card_aut_eq_finrank K _
+      ((Nat.card_congr (lubinTateGalEquiv (Ω := Ω) hϖ hf n).toEquiv).trans
+        (card_units_quotient_eq_finrank (Ω := Ω) (hπ := hϖ) hf n))
 
   have hLT : ∀ (χ : Kˣ →* (maximalAbelianExtension K Ω ≃ₐ[K] maximalAbelianExtension K Ω))
       (hχ : ∀ (L : IntermediateField K Ω) [FiniteDimensional K L] [IsAbelianGalois K L],

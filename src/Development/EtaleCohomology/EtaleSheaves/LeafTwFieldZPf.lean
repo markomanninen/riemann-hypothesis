@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTwSecKillCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwSecKillCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -28,8 +32,8 @@ theorem exists_unit (ζ ξ : Prim q K) : ∃ u : (ZMod q)ˣ, ξ.1 = ζ.1 ^ (u : 
 theorem unit_unique (ζ : Prim q K) {u v : (ZMod q)ˣ} (h : ζ.1 ^ (u : ZMod q).val = ζ.1 ^ (v : ZMod q).val) : u = v :=
   Units.ext (ZMod.val_injective q ((prim_isPrim ζ).pow_inj (ZMod.val_lt _) (ZMod.val_lt _) h))
 
-open Classical in
 
+open Classical in
 def ex (j : ℤ) (ζ : Prim q K) (ξ : Prim q K) : ZMod q :=
   if h : ∃ u : (ZMod q)ˣ, ξ.1 = ζ.1 ^ (u : ZMod q).val then (((h.choose) ^ j : (ZMod q)ˣ) : ZMod q) else 0
 
@@ -37,7 +41,7 @@ theorem ex_spec (j : ℤ) (ζ ξ : Prim q K) (u : (ZMod q)ˣ) (h : ξ.1 = ζ.1 ^
     ex j ζ ξ = ((u ^ j : (ZMod q)ˣ) : ZMod q) := by
   have he : ∃ u : (ZMod q)ˣ, ξ.1 = ζ.1 ^ (u : ZMod q).val := ⟨u, h⟩
   unfold ex
-  rw [dif_pos he, unit_unique ζ (he.choose_spec.symm.trans h)]
+  rw [dite_eq_left he, unit_unique ζ (he.choose_spec.symm.trans h)]
 
 def Φ (j : ℤ) (ζ : Prim q K) : (Prim q K →₀ ULift.{1} (ZMod q)) →ₗ[ULift.{1} (ZMod q)] ULift.{1} (ZMod q) :=
   Finsupp.linearCombination (ULift.{1} (ZMod q)) (fun ξ => ULift.up (ex j ζ ξ))

@@ -1,9 +1,15 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HermitianSpaces
-import GroundTheory.HeightsAndTheta.Heights.HermitianLattice
-import GroundTheory.AutomorphicForms.HermitianDisc
-import GroundTheory.HeightsAndTheta.Theta.CMDatum
-import GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.DedekindZetaSeries.ChainWittIndexHypothesesMet
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HermitianSpaces
+public import GroundTheory.HeightsAndTheta.Heights.HermitianLattice
+public import GroundTheory.AutomorphicForms.HermitianDisc
+public import GroundTheory.HeightsAndTheta.Theta.CMDatum
+public import GroundTheory.AutomorphicForms.AdelicUnitaryGroups
+public import GroundTheory.HeightsAndTheta.Theta.GaussianExample
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Theta
@@ -32,8 +38,6 @@ def ofComplex : ℂ ≃ₐ[ℂ] CAt σ := AlgEquiv.refl
 
 instance : Algebra E (CAt σ) := ((ofComplex σ).toRingHom.comp σ).toAlgebra
 
-theorem algebraMap_apply (a : E) : algebraMap E (CAt σ) a = ofComplex σ (σ a) := rfl
-
 theorem smul_def (a : E) (z : CAt σ) : a • z = ofComplex σ (σ a) * z := rfl
 
 theorem complex_smul_def (c : ℂ) (z : CAt σ) : c • z = ofComplex σ c * z := rfl
@@ -41,8 +45,6 @@ theorem complex_smul_def (c : ℂ) (z : CAt σ) : c • z = ofComplex σ c * z :
 instance : SMulCommClass E ℂ (CAt σ) where
   smul_comm a c z := by
     rw [smul_def, complex_smul_def, complex_smul_def, smul_def, mul_left_comm]
-
-instance : SMulCommClass ℂ E (CAt σ) := SMulCommClass.symm _ _ _
 
 end CAt
 
@@ -112,40 +114,20 @@ instance (τ : InfinitePlace E) : FiniteDimensional ℂ (S.FibSp τ) :=
 
 def pt (τ : InfinitePlace E) (v : S.V) : S.FibSp τ := (1 : CAt τ.embedding) ⊗ₜ[E] v
 
-theorem inner_at (τ : InfinitePlace E) (v w : S.V) :
-    inner ℂ (S.pt τ v) (S.pt τ w) =
-      (S.form τ).inner ((1 : CAt τ.embedding) ⊗ₜ[E] v) ((1 : CAt τ.embedding) ⊗ₜ[E] w) := rfl
-
-def pair (y y' : S.V) : ℝ := ∑ τ : InfinitePlace E, (inner ℂ (S.pt τ y) (S.pt τ y')).re
-
-def gram {ι : Type} (b : ι → S.V) : Matrix ι ι ℝ := Matrix.of fun i j => S.pair (b i) (b j)
-
-open Classical in
-
-def covol (A : Submodule (𝓞 E) S.V) : ℝ :=
-  if h : ∃ n : ℕ, Nonempty (Basis (Fin n) ℤ A) then
-    Real.sqrt (S.gram fun i => ((h.choose_spec.some i : A) : S.V)).det
-  else 0
-
-def rk (A : Submodule (𝓞 E) S.V) : ℕ := finrank E (Submodule.span E (A : Set S.V))
 
 end MetSpace
 
-variable (E) in
 
+variable (E) in
 def fPl : ℕ := Fintype.card (InfinitePlace E)
 
-variable (E) in
 
+variable (E) in
 def rd : ℝ := |(discr E : ℝ)| ^ ((1 : ℝ) / (2 * fPl E))
 
 namespace MetSpace
 
 variable (S : MetSpace E)
-
-def ht (A : Submodule (𝓞 E) S.V) : ℝ := S.covol A * (2 / rd E) ^ (fPl E * S.rk A)
-
-def ta (A : Submodule (𝓞 E) S.V) : ℝ := S.ht A ^ ((1 : ℝ) / (2 * fPl E * S.rk A))
 
 end MetSpace
 
@@ -221,7 +203,7 @@ theorem dualCoord_injective (τ : InfinitePlace E) : Function.Injective (S.dualC
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero, LinearMap.zero_apply, zero_tmul, Finset.sum_const_zero]
     | add x y hx hy =>
-      simp only [map_add, LinearMap.add_apply, add_tmul, Finset.sum_add_distrib, hx, hy]
+      simp only [map_add (f := _), LinearMap.add_apply, add_tmul, Finset.sum_add_distrib, hx, hy]
     | tmul z ψ =>
       conv_rhs => rw [← hψ ψ]
       rw [tmul_sum]
@@ -247,7 +229,7 @@ theorem inner_riesz (τ : InfinitePlace E) (x : Fib τ.embedding (Module.Dual E 
 theorem riesz_add (τ : InfinitePlace E) (x y : Fib τ.embedding (Module.Dual E S.V)) :
     S.riesz τ (x + y) = S.riesz τ x + S.riesz τ y := by
   refine ext_inner_right ℂ fun v ↦ ?_
-  rw [inner_add_left, inner_riesz, inner_riesz, inner_riesz, map_add, LinearMap.add_apply, map_add]
+  rw [inner_add_left, inner_riesz, inner_riesz, inner_riesz, map_add (f := _), LinearMap.add_apply, map_add (f := _)]
 
 theorem riesz_smul (τ : InfinitePlace E) (c : ℂ) (x : Fib τ.embedding (Module.Dual E S.V)) :
     S.riesz τ (c • x) = starRingEnd ℂ c • S.riesz τ x := by
@@ -288,24 +270,12 @@ variable {V : Type} [AddCommGroup V] [Module E V] [Module (𝓞 E) V] [IsScalarT
 
 abbrev espan (A : Submodule (𝓞 E) V) : Submodule E V := Submodule.span E (A : Set V)
 
-def SatIn (A' A : Submodule (𝓞 E) V) : Prop :=
-  A' ≤ A ∧ ∀ (c : 𝓞 E) (x : V), c ≠ 0 → x ∈ A → c • x ∈ A' → x ∈ A'
-
-def smulIdeal (aa : FractionalIdeal (𝓞 E)⁰ E) (A : Submodule (𝓞 E) V) : Submodule (𝓞 E) V :=
-  Submodule.span (𝓞 E) {v | ∃ a ∈ aa, ∃ x ∈ A, v = a • x}
-
 section Herm
 
 variable {F : Type} [Field F] [Algebra F E] [Algebra.IsQuadraticExtension F E]
 
 def IsSelfDual (h : HermitianForm F E V) (L : Submodule (𝓞 E) V) : Prop :=
   ∀ y : V, y ∈ L ↔ ∀ l ∈ L, h.toSesq y l ∈ Set.range (algebraMap (𝓞 E) E)
-
-def IsIsotropic (h : HermitianForm F E V) (I : Submodule (𝓞 E) V) : Prop :=
-  ∀ x ∈ I, ∀ y ∈ I, h.toSesq x y = 0
-
-def perpIn (h : HermitianForm F E V) (L R : Submodule (𝓞 E) V) : Submodule (𝓞 E) V :=
-  L ⊓ ⨅ r : R, LinearMap.ker ((h.toSesq (r : V)).restrictScalars (𝓞 E))
 
 end Herm
 
@@ -315,65 +285,9 @@ namespace MetSpace
 
 variable (S : MetSpace E)
 
-def quotBy (N : Submodule (𝓞 E) S.V) : MetSpace E := S.quot (espan N)
-
-def quotLat (N M : Submodule (𝓞 E) S.V) : Submodule (𝓞 E) (S.quotBy N).V :=
-  M.map (((espan N).mkQ.restrictScalars (𝓞 E)) : S.V →ₗ[𝓞 E] (S.quotBy N).V)
-
-def least (A : Submodule (𝓞 E) S.V) : ℝ :=
-  sInf {t | ∃ M : Submodule (𝓞 E) S.V, M ≤ A ∧ M ≠ ⊥ ∧ S.ta M = t}
-
-def largest (A : Submodule (𝓞 E) S.V) : ℝ :=
-  sSup {t | ∃ A' : Submodule (𝓞 E) S.V, SatIn A' A ∧ A' ≠ A ∧ (S.quotBy A').ta (S.quotLat A' A) = t}
-
-def tOne (A : Submodule (𝓞 E) S.V) : ℝ :=
-  sInf {t | ∃ M : Submodule (𝓞 E) S.V, M ≤ A ∧ S.rk M = 1 ∧ S.ta M = t}
-
-def Semistable (A : Submodule (𝓞 E) S.V) : Prop := S.least A = S.ta A
-
-def pieceSize {l : ℕ} (L : Fin (l + 1) → Submodule (𝓞 E) S.V) (i : Fin l) : ℝ :=
-  (S.quotBy (L i.castSucc)).ta (S.quotLat (L i.castSucc) (L i.succ))
-
-def IsSizeFlag (A : Submodule (𝓞 E) S.V) {l : ℕ} (L : Fin (l + 1) → Submodule (𝓞 E) S.V) : Prop :=
-  L 0 = ⊥ ∧ L (Fin.last l) = A ∧ StrictMono L ∧ (∀ i, SatIn (L i) A) ∧
-    (∀ i : Fin l, (S.quotBy (L i.castSucc)).Semistable (S.quotLat (L i.castSucc) (L i.succ))) ∧
-    StrictMono (S.pieceSize L)
-
-def spanAt (A : Submodule (𝓞 E) S.V) (τ : InfinitePlace E) : Submodule ℂ (S.FibSp τ) :=
-  Submodule.span ℂ (S.pt τ '' (A : Set S.V))
-
 def fibMap (T : MetSpace E) (φ : S.V →ₗ[E] T.V) (τ : InfinitePlace E) :
     S.FibSp τ →ₗ[ℂ] T.FibSp τ :=
   ((φ.baseChange (CAt τ.embedding)).restrictScalars ℂ : Fib τ.embedding S.V →ₗ[ℂ] Fib τ.embedding T.V)
-
-def opNormOn (T : MetSpace E) (φ : S.V →ₗ[E] T.V) (A : Submodule (𝓞 E) S.V) (τ : InfinitePlace E) :
-    ℝ :=
-  sInf {C : ℝ | 0 ≤ C ∧ ∀ u ∈ S.spanAt A τ, ‖S.fibMap T φ τ u‖ ≤ C * ‖u‖}
-
-def spanSp (A : Submodule (𝓞 E) S.V) : MetSpace E := S.restrict (espan A)
-
-def inSpan (A A' : Submodule (𝓞 E) S.V) : Submodule (𝓞 E) (S.spanSp A).V :=
-  A'.comap (((espan A).subtype.restrictScalars (𝓞 E)) : (S.spanSp A).V →ₗ[𝓞 E] S.V)
-
-def dualSp (A : Submodule (𝓞 E) S.V) : MetSpace E := (S.spanSp A).dual
-
-def dualLatIn (W : Submodule E S.V) (A : Submodule (𝓞 E) S.V) :
-    Submodule (𝓞 E) (Module.Dual E W) where
-  carrier := {φ | ∀ a : W, (a : S.V) ∈ A → φ a ∈ Set.range (algebraMap (𝓞 E) E)}
-  add_mem' {φ ψ} hφ hψ a ha := by
-    obtain ⟨x, hx⟩ := hφ a ha
-    obtain ⟨y, hy⟩ := hψ a ha
-    exact ⟨x + y, by rw [LinearMap.add_apply, map_add, hx, hy]⟩
-  zero_mem' a _ := ⟨0, by rw [map_zero, LinearMap.zero_apply]⟩
-  smul_mem' c φ hφ a ha := by
-    obtain ⟨x, hx⟩ := hφ a ha
-    exact ⟨c * x, by rw [LinearMap.smul_apply, map_mul, hx, Algebra.smul_def]⟩
-
-def dualLat (A : Submodule (𝓞 E) S.V) : Submodule (𝓞 E) (S.dualSp A).V := S.dualLatIn (espan A) A
-
-def annLat (A A' : Submodule (𝓞 E) S.V) : Submodule (𝓞 E) (S.dualSp A).V :=
-  S.dualLat A ⊓ (((espan A').comap (espan A).subtype).dualAnnihilator.restrictScalars (𝓞 E) :
-    Submodule (𝓞 E) (Module.Dual E (espan A)))
 
 end MetSpace
 
@@ -381,19 +295,7 @@ namespace MetSpace
 
 variable (S : MetSpace E)
 
-def gapCount {l : ℕ} (L : Fin (l + 1) → Submodule (𝓞 E) S.V) : ℕ :=
-  (Finset.univ.filter fun i : Fin l => S.pieceSize L i < 1 / 2).card
-
-def taHat {l : ℕ} (L : Fin (l + 1) → Submodule (𝓞 E) S.V) (j : ℕ) : ℝ :=
-  if h : j < l then (if j < S.gapCount L then S.pieceSize L ⟨j, h⟩ else 1 / 2) else 1 / 2
-
 end MetSpace
-
-def rhoZero (t : ℝ) (r' : ℕ) : ℝ := (2 * t) ^ ((1 : ℝ) / r')
-
-def MetSpace.IsGapIndex (S : MetSpace E) {l : ℕ} (L : Fin (l + 1) → Submodule (𝓞 E) S.V)
-    (t : ℝ) (r' b : ℕ) : Prop :=
-  1 ≤ b ∧ b ≤ S.gapCount L ∧ S.taHat L (b - 1) / S.taHat L b ≤ rhoZero t r'
 
 structure SelfDualFrame (F E : Type) [Field F] [Field E] [NumberField E] [Algebra F E]
     [Algebra.IsQuadraticExtension F E] where
@@ -414,10 +316,6 @@ structure SelfDualFrame (F E : Type) [Field F] [Field E] [NumberField E] [Algebr
 namespace SelfDualFrame
 
 variable {F : Type} [Field F] [Algebra F E] [Algebra.IsQuadraticExtension F E]
-
-def lineForm (X : SelfDualFrame F E) (R : Submodule (𝓞 E) X.S.V) (y : X.S.V) :
-    (X.S.dualSp R).V :=
-  ((X.B.toSesq y).comp (espan R).subtype : Module.Dual E (espan R))
 
 end SelfDualFrame
 
@@ -449,24 +347,6 @@ variable {E n}
 
 theorem stdLat_fg : (stdLat E n).FG := Submodule.fg_span (Set.finite_range _)
 
-theorem standard_inner_pt (τ : InfinitePlace E) (v w : Fin n → E) :
-    inner ℂ ((MetSpace.standard E n).pt τ v) ((MetSpace.standard E n).pt τ w) =
-      ∑ i, starRingEnd ℂ (τ.embedding (v i)) * τ.embedding (w i) := by
-  change inner ℂ (stdCoord E n τ.embedding ((1 : CAt τ.embedding) ⊗ₜ v))
-    (stdCoord E n τ.embedding ((1 : CAt τ.embedding) ⊗ₜ w)) = _
-  simp only [PiLp.inner_apply, RCLike.inner_apply, stdCoord_tmul]
-  refine Finset.sum_congr rfl fun i _ ↦ ?_
-  change (τ.embedding (w i) * 1) * starRingEnd ℂ (τ.embedding (v i) * 1) = _
-  rw [mul_one, mul_one, mul_comm]
-
-theorem standard_inner_single (τ : InfinitePlace E) (i : Fin n) :
-    inner ℂ ((MetSpace.standard E n).pt τ (Pi.single i 1))
-      ((MetSpace.standard E n).pt τ (Pi.single i 1)) = 1 := by
-  rw [standard_inner_pt, Finset.sum_eq_single i]
-  · simp
-  · intro j _ hj; simp [Pi.single_apply, hj]
-  · simp
-
 theorem mem_range_iff_isIntegral (x : E) :
     x ∈ Set.range (algebraMap (𝓞 E) E) ↔ IsIntegral ℤ x :=
   ⟨fun ⟨c, hc⟩ => hc ▸ RingOfIntegers.isIntegral_coe c, fun h => ⟨⟨x, h⟩, rfl⟩⟩
@@ -488,7 +368,7 @@ end Standard
 
 section Frame
 
-variable (F : Type) [Field F] [NumberField F] [IsTotallyReal F] [IsTotallyComplex E]
+variable (F : Type) [Field F] [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
   [Algebra F E] [Algebra.IsQuadraticExtension F E]
 
 def signs : Fin 2 → Fˣ := ![1, -1]
@@ -510,7 +390,7 @@ end Frame
 
 section Frame
 
-variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F] [IsTotallyComplex E]
+variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
   [Algebra F E] [Algebra.IsQuadraticExtension F E]
 
 theorem isIntegral_conj {x : E} (hx : IsIntegral ℤ x) : IsIntegral ℤ (conj F E x) :=
@@ -548,7 +428,7 @@ end Frame
 
 section Frame2
 
-variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F] [IsTotallyComplex E]
+variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
   [Algebra F E] [Algebra.IsQuadraticExtension F E]
 
 theorem stdCoord_flip (τ : InfinitePlace E) (u : Fib τ.embedding (Fin 2 → E)) (i : Fin 2) :
@@ -561,7 +441,7 @@ theorem stdCoord_flip (τ : InfinitePlace E) (u : Fib τ.embedding (Fin 2 → E)
     simp only [flipMap, LinearMap.pi_apply, LinearMap.smul_apply, LinearMap.proj_apply, smul_eq_mul,
       map_mul]
     ring
-  | add u v hu hv => rw [map_add, map_add, PiLp.add_apply, hu, hv, map_add, PiLp.add_apply, mul_add]
+  | add u v hu hv => rw [map_add (f := _), map_add (f := _), PiLp.add_apply, hu, hv, map_add (f := _), PiLp.add_apply, mul_add]
 
 theorem signs_conj_mul (τ : InfinitePlace E) (i : Fin 2) :
     starRingEnd ℂ (τ.embedding (algebraMap F E (signs F i))) *
@@ -590,7 +470,8 @@ theorem flip_majorant (τ : InfinitePlace E) (y y' : Fin 2 → E) :
         ((flipMap F).baseChange (CAt τ.embedding) ((1 : CAt τ.embedding) ⊗ₜ y)))
         (stdCoord E 2 τ.embedding ((1 : CAt τ.embedding) ⊗ₜ y')) =
       τ.embedding ((hypForm (F := F) (E := E)).toSesq y y') := by
-  rw [LinearMap.baseChange_tmul, hypForm_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.baseChange_tmul, hypForm_apply, map_sum]
   simp only [PiLp.inner_apply, RCLike.inner_apply, stdCoord_tmul]
   refine Finset.sum_congr rfl fun i _ => ?_
   have h1 : (ofComplex τ.embedding).symm 1 = 1 := rfl
@@ -608,23 +489,7 @@ def hypFrame : SelfDualFrame F E where
   θ_isometry τ u v := flip_isometry τ u v
   majorant τ y y' := flip_majorant τ y y'
 
-theorem hypForm_isotropic :
-    (hypForm (F := F) (E := E)).toSesq ![1, 1] ![1, 1] = 0 ∧ (![1, 1] : Fin 2 → E) ∈ stdLat E 2 := by
-  refine ⟨?_, (mem_stdLat_iff _).2 fun i => ⟨1, by fin_cases i <;> simp⟩⟩
-  rw [hypForm_apply, Fin.sum_univ_two]
-  simp [signs]
-
 end Frame2
-
-example : SelfDualFrame ℚ GaussQ := hypFrame
-
-example : MetSpace GaussQ :=
-  (MetSpace.standard GaussQ 2).quot (Submodule.span GaussQ {(Pi.single 0 1 : Fin 2 → GaussQ)})
-
-example : MetSpace GaussQ :=
-  (MetSpace.standard GaussQ 2).restrict (Submodule.span GaussQ {(Pi.single 0 1 : Fin 2 → GaussQ)})
-
-example : MetSpace GaussQ := (MetSpace.standard GaussQ 2).dual
 
 end
 

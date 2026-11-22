@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldOfRepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldOfRepresentation
+
+@[expose] public section
+
 open GlobalTheory.BI
 noncomputable section
 namespace GlobalTheory.BI
@@ -16,7 +21,8 @@ private theorem trace_block_permutation (K : Type) [Field K] (X : Type) [Fintype
     intro f
     funext p
     simp
-  rw [hdec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hdec, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [LinearMap.trace_comp_comm', LinearMap.comp_assoc]
   split_ifs with h
@@ -96,15 +102,16 @@ theorem isChar_finsum_conj_ext0_of_isChar :
       = ∑ q, if g⁻¹ • q = q then LinearMap.trace K (Fin n → K) (σ (cosetCocycle H g q)) else 0 :=
     trace_block_permutation K (G ⧸ H) (Fin n → K) (fun q => g⁻¹ • q)
       (fun q => σ (cosetCocycle H g q))
-  rw [finsum_eq_sum_of_fintype, hc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [finsum_eq_sum_of_fintype, hc, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   by_cases h : g⁻¹ • q = q
   · have hm : q.out⁻¹ * g * q.out ∈ H := (inv_smul_eq_iff_conj_mem H g q).mp h
     have he : (⟨q.out⁻¹ * g * q.out, hm⟩ : H) = cosetCocycle H g q :=
       Subtype.ext (by simp [cosetCocycle, h])
-    rw [if_pos h, ext0, dif_pos hm, hσ, he]
+    rw [if_pos h, ext0, dite_eq_left hm, hσ, he]
     rfl
   · have hm : q.out⁻¹ * g * q.out ∉ H := fun hm => h ((inv_smul_eq_iff_conj_mem H g q).mpr hm)
-    rw [if_neg h, ext0, dif_neg hm, map_zero]
+    rw [if_neg h, ext0, dite_eq_right hm, map_zero]
 
 end GlobalTheory.BI

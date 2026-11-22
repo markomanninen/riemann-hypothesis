@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeKerOfLocalFiniteLengthToSimple
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeKerOfLocalFiniteLengthToSimple
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+
+@[expose] public section
 
 open scoped TensorProduct
 

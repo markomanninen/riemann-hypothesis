@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.KilledFin
 
@@ -42,7 +46,7 @@ theorem span_adjoin_apply_stable (s : Set (Module.End ℂ V)) (ψ : V) (u : Modu
     apply Submodule.subset_span
     exact ⟨u * z, Subalgebra.mul_mem _ hu hz, rfl⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem commute_of_mem_adjoin (s : Set (Module.End ℂ V)) (t : Module.End ℂ V)
@@ -107,7 +111,7 @@ theorem powSpan_stable_self (t : Module.End ℂ V) (q : ℂ[X]) (hq : q ≠ 0) (
       rw [this]
       exact pow_mem_powSpan t q hq N hkill n hn
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem powSpan_stable (t u : Module.End ℂ V) (d : ℕ) (N : Submodule ℂ V)
@@ -121,7 +125,7 @@ theorem powSpan_stable (t u : Module.End ℂ V) (d : ℕ) (N : Submodule ℂ V)
     rw [e]
     exact Submodule.subset_span ⟨i, hi, u n, hu n hn, rfl⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem le_powSpan (t : Module.End ℂ V) (q : ℂ[X]) (hq : q ≠ 0) (N : Submodule ℂ V)
@@ -160,8 +164,8 @@ theorem powSpan_finite (t : Module.End ℂ V) (d : ℕ) (N : Submodule ℂ V) [F
 
 end GlobalTheory.KilledFin
 
-open Polynomial in
 
+open Polynomial in
 theorem GlobalTheory.killed_span_adjoin_finrank_le :
     ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (T : Finset (Module.End ℂ V))
       (p : Module.End ℂ V → Polynomial ℂ), (∀ s ∈ T, ∀ t ∈ T, Commute s t) →
@@ -202,7 +206,7 @@ theorem GlobalTheory.killed_span_adjoin_finrank_le :
         rw [← Module.End.mul_apply, ← hc.eq, Module.End.mul_apply,
           hkillψ t (Finset.mem_insert_self t T), map_zero]
       | zero => simp
-      | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+      | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
       | smul c x _ hx => rw [map_smul, hx, smul_zero]
     have hq := hne t (Finset.mem_insert_self t T)
     have hK := GlobalTheory.KilledFin.powSpan_finite t (p t).natDegree N

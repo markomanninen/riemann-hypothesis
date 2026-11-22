@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SplitRow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.CoordStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SplitRow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.CoordStep
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 

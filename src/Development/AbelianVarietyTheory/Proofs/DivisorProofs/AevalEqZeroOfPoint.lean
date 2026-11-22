@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedLatticeZeroCycleHeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChowFormIntExistsAndChowFormExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowMultiplicityDvdFixFirstBlock
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChowFormIntExistsAndChowFormExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowMultiplicityDvdFixFirstBlock
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
+
+@[expose] public section
 
 open NumberField MvPolynomial ReciprocityTheory.MultiplicativeHeights GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.HSCore GlobalTheory.HSChoice
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -34,7 +39,8 @@ theorem aeval_eq_zero_of_point {F K : Type} [Field F] [Field K] [Algebra F K] [I
       simpa using this
     · rw [hmap, hyP a ha, map_zero]
     · have := congrArg φ (hs i)
-      simpa [map_sum, map_mul] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_mul] using this
   rw [hmap (fun p : Fin (e + 1) × Fin N => s p.1 p.2)] at key
   simpa using key
 

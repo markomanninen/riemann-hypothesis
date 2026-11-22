@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsRegularLocalRingOfFlatOfMapEqMaximalIdeal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RegularLocalRingNormalDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsRegularLocalRingOfFlatOfMapEqMaximalIdeal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RegularLocalRingNormalDomain
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,7 +36,7 @@ theorem injective_of_flat_of_isDomain {A B : Type} [CommRing A] [IsDomain A] [Co
   refine (injective_iff_map_eq_zero f).2 fun r hr => ?_
   by_contra h0
   have hreg : IsSMulRegular B r :=
-    Module.Flat.isSMulRegular_of_isRegular (isRegular_of_ne_zero h0)
+    Module.Flat.isSMulRegular_of_isRegular (IsRegular.of_ne_zero h0)
   have h1 : r • (1 : B) = r • (0 : B) := by
     rw [smul_zero, Algebra.smul_def, _root_.mul_one]; exact hr
   exact one_ne_zero (hreg h1)

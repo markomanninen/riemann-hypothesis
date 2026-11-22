@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsIsComOfOf
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelTwistPrimesStepZeroCharacterEqOne
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LatNotSelfDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsIsComOfOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelTwistPrimesStepZeroCharacterEqOne
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LatNotSelfDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ theorem val_rat_lt {y : D.host.E} (hy : PP.valuation D.host.E y < 1) : valuation
   have := (LevelTest.val_lt_one_iff q h r).2 hr
   rwa [show (r : D.host.E) = y * ((d : 𝓞 D.host.E) : D.host.E) from e.symm, map_mul, map_mul, map_mul, hd, mul_one] at this
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem val_pr_lt {z : AE D} (hz : Valued.v (adAt D.host.F PP (toEAf D z)) < 1) : valuation K (q.pr z) < 1 := by
   obtain ⟨y, N, r, hr, hN, e⟩ := exists_approx_small (F := D.host.F) (toEAf D z) {PP} (γ := 1) one_ne_zero
   have hN' := hN PP (Finset.mem_singleton_self PP)
@@ -72,10 +76,6 @@ end Split
 section Local
 
 variable {D : D7} {u : D.what₂.Word} {a : XPart D u} {ζ₀ : Fin a.Lz.rank → D.host.E} {PP : Formalism.L2.DIV.Pl D.host.E} (H : GX a ζ₀ PP)
-
-def LamIs (κ : GA D (D.sp.X 0)) (c : ℂ) : Prop :=
-  ∀ (g : GL (XIx (Fin D.R.k) (Fin D.R.t) 0) H.k) (hg : embX (H.s + 1) g ∈ H.lev0.J), H.MatAt κ g →
-    ((H.lev0.lam ⟨_, hg⟩ : ℂˣ) : ℂ) = c
 
 end Local
 

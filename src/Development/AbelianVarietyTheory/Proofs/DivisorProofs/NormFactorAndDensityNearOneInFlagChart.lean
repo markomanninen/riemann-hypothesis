@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.NormProdSignMulDetSubmatrixSubOneLe
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.LeviFinsetSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfD
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FinrankEqTwoMulHalfDegree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.NormProdSignMulDetSubmatrixSubOneLe
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.LeviFinsetSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfD
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FinrankEqTwoMulHalfDegree
+
+@[expose] public section
 
 open NumberField MeasureTheory ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates GlobalTheory.LevGeo
 open scoped ENNReal
@@ -29,9 +33,9 @@ theorem nmat_entry_le (X : Data E r) (z : V (nd X)) (τ : X.Ψ) (a b : Fin r) :
   unfold nmat
   by_cases h : b < a
   · have hab : a ≠ b := fun e => lt_irrefl b (e ▸ h)
-    rw [dif_pos h, if_neg hab, sub_zero]
+    rw [dite_eq_left h, if_neg hab, sub_zero]
     exact PiLp.norm_apply_le z _
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     split_ifs <;> simp
 
 theorem det_nmat (X : Data E r) (z : V (nd X)) (τ : X.Ψ) : (mat (nmat X z) τ).det = 1 := by
@@ -171,8 +175,8 @@ theorem chart_near_one : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
           = ∏ τ : X.Ψ, ∏ i : Fin r, Real.exp (-(2 * t)) := by
             rw [Finset.prod_const, Finset.prod_const, Finset.card_univ, Finset.card_univ,
               Fintype.card_fin, ← pow_mul, Nat.mul_comm (Fintype.card X.Ψ)]
-        _ ≤ _ := Finset.prod_le_prod (fun τ _ => by positivity) (fun τ _ =>
-            Finset.prod_le_prod (fun i _ => by positivity) (fun i _ => hfac τ i))
+        _ ≤ _ := Finset.prod_le_prod₀ (fun τ _ => by positivity) (fun τ _ =>
+            Finset.prod_le_prod₀ (fun i _ => by positivity) (fun i _ => hfac τ i))
     refine le_trans ?_ hprod
     rw [← Real.exp_nat_mul, QuadraticCoefficientForms.card_Psi X]
     refine Real.exp_le_exp.2 ?_

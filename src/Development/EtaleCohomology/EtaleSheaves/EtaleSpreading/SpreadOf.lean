@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleSpreading.FPProof
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleSpreading.FPProof
+
+@[expose] public section
 
 namespace LateralTheory.E.SpreadPf.Main
 

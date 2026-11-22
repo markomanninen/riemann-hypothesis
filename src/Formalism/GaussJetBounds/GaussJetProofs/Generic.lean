@@ -1,7 +1,11 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.StatementM
-import Formalism.GaussJetBounds.GaussJetProofs.FrameA
-import Formalism.GaussJetBounds.GaussJetProofs.Special
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.StatementM
+public import Formalism.GaussJetBounds.GaussJetProofs.FrameA
+public import Formalism.GaussJetBounds.Statement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -29,7 +33,7 @@ theorem generic_mono_det {R : Type*} [CommRing R] [Nontrivial R] {d N0 n : ℕ} 
   have hval : ∀ (f : Fin n → ZMod d) (g : Fin n → ℕ) (i : Fin n),
       (∑ j, Finsupp.single (f j, z, γ j) (g j)) (f i, z, γ i) = g i := by
     intro f g i
-    rw [Finsupp.finset_sum_apply, Finset.sum_eq_single i]
+    rw [Finsupp.finsetSum_apply, Finset.sum_eq_single i]
     · simp
     · intro j _ hj
       rw [Finsupp.single_apply, if_neg]
@@ -39,7 +43,7 @@ theorem generic_mono_det {R : Type*} [CommRing R] [Nontrivial R] {d N0 n : ℕ} 
   have hval2 : ∀ (i : Fin n) (u : ZMod d),
       (∑ j, Finsupp.single (t j, z, γ j) (L j)) (u, z, γ i) = if t i = u then L i else 0 := by
     intro i u
-    rw [Finsupp.finset_sum_apply, Finset.sum_eq_single i]
+    rw [Finsupp.finsetSum_apply, Finset.sum_eq_single i]
     · rw [Finsupp.single_apply]
       by_cases h : t i = u
       · simp [h]
@@ -65,7 +69,7 @@ theorem generic_mono_det {R : Type*} [CommRing R] [Nontrivial R] {d N0 n : ℕ} 
     · rw [if_neg ht] at h1
       exact absurd h1 (hL (σ i))
   intro hdet
-  have hc := congrArg (MvPolynomial.coeff (∑ i, Finsupp.single (t i, z, γ i) (L i))) hdet
+  have hc := congrArg (AddMonoidAlgebra.coeff · (∑ i, Finsupp.single (t i, z, γ i) (L i))) hdet
   rw [Matrix.det_apply, MvPolynomial.coeff_sum, Finset.sum_eq_single (1 : Equiv.Perm (Fin n))] at hc
   · rw [hprod] at hc
     simp at hc
@@ -112,7 +116,8 @@ theorem generic_minor_norm {K : Type u} [NormedField K] {l d N0 n : ℕ} (hl : l
       = Matrix.of fun (r c : Fin n) =>
         (MvPolynomial.X (t r, z, e c) : MvPolynomial (ZMod d × Fin N0 × Fin N0) (ZMod l)) ^ (L r) := by
     ext i i'
-    simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul, map_pow,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul, map_pow,
       MvPolynomial.bind₁_X_right, f, if_neg (hts i), if_true]
     rw [Finset.sum_eq_single (e i')]
     · simp

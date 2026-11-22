@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CutIrr
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.AlgTrace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CutIrr
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.AlgTrace
+
+@[expose] public section
 
 noncomputable section
 

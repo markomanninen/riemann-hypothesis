@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualGeomDegCharts
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartDensityIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualPtsOfPlane
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualPtsOnPlane
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStdMassAt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualGeomDegCharts
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartDensityIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualPtsOfPlane
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualPtsOnPlane
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStdMassAt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -42,8 +47,8 @@ theorem recLin_apply (b : Module.Basis T ℤ (dualLattice F))
     (z : (Σ _ : Unit, T) → ℂ) (j : Fin (D + 1)) :
     recLin b hb σ z j = dualRecover b hb (fun t => z ⟨(), t⟩) (σ, j) := rfl
 
-omit [Fintype T] [DecidableEq T] in
 
+omit [Fintype T] [DecidableEq T] in
 theorem recLin_planePt (b : Module.Basis T ℤ (dualLattice F))
     (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b))) (σ : K →+* ℂ) (v : Fin (D + 1) → ℂ) :
     recLin b hb σ (dualPlanePt b σ v) = v := by
@@ -51,8 +56,8 @@ theorem recLin_planePt (b : Module.Basis T ℤ (dualLattice F))
   rw [recLin_apply, recover_planePt]
   simp
 
-omit [Fintype T] [DecidableEq T] in
 
+omit [Fintype T] [DecidableEq T] in
 theorem eq_planePt (b : Module.Basis T ℤ (dualLattice F))
     (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b))) {z : (Σ _ : Unit, T) → ℂ}
     {σ : K →+* ℂ} (hσ : ∀ τ : K →+* ℂ, τ ≠ σ → ∀ j, dualRecover b hb (fun t => z ⟨(), t⟩) (τ, j) = 0) :
@@ -72,8 +77,8 @@ theorem eq_planePt (b : Module.Basis T ℤ (dualLattice F))
   cases u
   exact congrFun h1 t
 
-omit [Fintype T] [DecidableEq T] in
 
+omit [Fintype T] [DecidableEq T] in
 theorem h_planePt (b : Module.Basis T ℤ (dualLattice F))
     (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b))) (σ : K →+* ℂ) (v : Fin (D + 1) → ℂ) :
     (dualLine F b hb).h (dualPlanePt b σ v) = Real.sqrt (star v ⬝ᵥ (F.metric σ *ᵥ v)).re := by
@@ -95,8 +100,8 @@ theorem hermChartPot_eq (A h : Matrix (Fin (D + 1)) (Fin (D + 1)) ℂ) (y : Fin 
   unfold hermChartPot
   rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec, ← Matrix.star_mulVec]
 
-omit [Fintype T] [DecidableEq T] in
 
+omit [Fintype T] [DecidableEq T] in
 theorem planePt_inj (b : Module.Basis T ℤ (dualLattice F))
     (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b))) {σ τ : K →+* ℂ}
     {v u : Fin (D + 1) → ℂ} (hv : v ≠ 0)
@@ -201,7 +206,7 @@ theorem atProj (hOn : DualPtsOnPlane.Statement) (hOf : DualPtsOfPlane.Statement)
     have hex : ∃ γ, IsSheet (dualIdeal b) Ψ y
         (segre (ι := dualBlocks T) (dualPlanePt b σ (A σ *ᵥ Fin.cons 1 y))) γ := ⟨_, hsheet σ y⟩
     unfold sheetDensity
-    rw [dif_pos hex, one_mul]
+    rw [dite_eq_left hex, one_mul]
     apply maDensity_congr_of_eventuallyEq
     intro j
     set γ := hex.choose with hγdef
@@ -251,8 +256,8 @@ theorem atProj (hOn : DualPtsOnPlane.Statement) (hOf : DualPtsOfPlane.Statement)
 
 end DualGeometricDegreeCharts
 
-open DualGeometricDegreeCharts in
 
+open DualGeometricDegreeCharts in
 theorem DualGeomDegCharts.proof (hInt : ChartDensityIntegrable.Statement) : DualGeomDegCharts.Statement := by
   intro K _ _ i F T _ _ b hb hi
   obtain ⟨D, rfl⟩ : ∃ D, i = D + 1 := ⟨i - 1, by omega⟩
@@ -262,7 +267,7 @@ theorem DualGeomDegCharts.proof (hInt : ChartDensityIntegrable.Statement) : Dual
   refine ⟨A, hA, ?_⟩
   show ptsIntegral (e := D) (dualIdeal b) (fun _ z => Real.log ((dualLine F b hb).h z)) (fun _ => 1) = _
   unfold ptsIntegral
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hE
 
 end

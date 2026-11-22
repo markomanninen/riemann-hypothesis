@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.HformSmulRightB
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.HformSmulRightB
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,8 +57,8 @@ theorem map_cT {m n : Type} (M : Matrix m n D.host.E) (τ : D.what₂.Tau) :
   rw [embT_sig]
   rfl
 
-variable (D) in
 
+variable (D) in
 theorem gramP_eq : gramP D = ((iXm D).map (sigD D : D.host.E →+* D.host.E))ᵀ * gramN D D.R.m le_rfl * iXm D := by
   ext a b
   rw [gramOf_apply]
@@ -63,8 +67,8 @@ theorem gramP_eq : gramP D = ((iXm D).map (sigD D : D.host.E →+* D.host.E))ᵀ
   rw [hc, hc, hform_iXc]
   simp [hform, Pi.single_apply]
 
-variable (D) in
 
+variable (D) in
 theorem iXm_leftInv : ∃ L : Matrix (Fin (D.R.N D.R.m - 1)) (Fin (D.R.N D.R.m)) D.host.E, L * iXm D = 1 := by
   obtain ⟨g, hg⟩ := LinearMap.exists_leftInverse_of_injective (iXc D) (LinearMap.ker_eq_bot.mpr (iXc_injective D))
   refine ⟨LinearMap.toMatrix' g, ?_⟩

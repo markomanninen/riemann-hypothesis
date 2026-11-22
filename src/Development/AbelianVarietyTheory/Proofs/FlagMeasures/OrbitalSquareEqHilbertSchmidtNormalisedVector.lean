@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ThresholdProductsBounded
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentNormRpowNeg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsOrbQuotWithDensity
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ThresholdProductsBounded
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentNormRpowNeg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsOrbQuotWithDensity
+
+@[expose] public section
+
 open Formalism.FourierDecayAlt Formalism.MainNotions.S GlobalTheory.ThA Formalism.QuantumDeterminants MeasureTheory Matrix
 
 namespace GlobalTheory.ThA.OrbSq
@@ -167,7 +172,7 @@ theorem besselPhi_eq_reindexConj_rootCoords (hz : Bs.z = L.z) (γ : Point ℂ (r
   have hq : q.1.2.val < r := by have h1 := q.2.1; have h2 := q.1.1.isLt; rw [Fin.lt_def] at h1; omega
   show star (C2.uMap k r Bs.z (Matrix.of x) q.1.2 q.1.1) = star (flagMat k r L.z (Matrix.of x) q.1.2 q.1.1)
   unfold C2.uMap flagMat
-  rw [dif_pos hq, dif_pos hq, hz]
+  rw [dite_eq_left hq, dite_eq_left hq, hz]
   exact congrArg star (DF.herm_es _ _)
 
 theorem rootMeas_iff (hz : Bs.z = L.z) (hc : L.c = cStd) (γ : Point ℂ (r + 1)) {g : B.Mat k r}
@@ -204,12 +209,14 @@ theorem rootMeas_iff (hz : Bs.z = L.z) (hc : L.c = cStd) (γ : Point ℂ (r + 1)
         rw [← Matrix.conjTranspose_conjTranspose (C2.uMap k r Bs.z (Matrix.of x)), this]; rfl
     rw [← e1, ← Measure.map_map hm ((cjE _).measurable.comp hrm), ← Measure.map_map (cjE _).measurable hrm, h2,
       Measure.map_smul, Measure.map_smul, (cjE_mp _).map_eq, hmu]
+    all_goals first | exact hm.aemeasurable | exact (cjE _).measurable.aemeasurable
   · rintro rfl
     refine ⟨?_, ?_⟩
     · rw [Measure.smul_apply]
       have : D.muR Bs g (permOf γ) {x | Matrix.of x ∉ RStab k r g} = 0 := (Rad.haar_good Bs hg hd hG).conc
       rw [this, smul_zero]
     · rw [Measure.map_smul, hmu, Measure.map_map hrm hm]
+      swap; exact hrm.aemeasurable
       congr 1
       have : rootCoords k r L.z γ ∘ (fun x => (Matrix.of.symm (Rad.rhoF Bs g (permOf γ) x) : Mt k r)) =
           (cjE (rootEquiv γ)).symm := by
@@ -327,7 +334,11 @@ theorem haar_smul {U : Set (B.Mat k r)} {μ : Measure (Mt k r)} (h : B.IsHaarOn 
   refine ⟨?_, fun a ha => ?_, fun a ha => ?_, fun K hK => ?_, ?_⟩
   · rw [Measure.smul_apply, h.conc, smul_zero]
   · rw [Measure.map_smul, h.left a ha]
+    exact (show Continuous (lmulM a : Mt k r → Mt k r) from
+      continuous_const.matrix_mul continuous_id).measurable.aemeasurable
   · rw [Measure.map_smul, h.right a ha]
+    exact (show Continuous (B.rmulF a : Mt k r → Mt k r) from
+      continuous_id.matrix_mul continuous_const).measurable.aemeasurable
   · rw [Measure.smul_apply, smul_eq_mul]; exact ENNReal.mul_lt_top h1.lt_top (h.finite_compact K hK)
   · intro e
     have e2 : c * μ Set.univ = 0 := congrArg (fun m : Measure (Mt k r) => m Set.univ) e
@@ -401,8 +412,8 @@ theorem hs_orbJ {ν' : Fin (2 * r + k + 1) → ℂ} {m₀ : B.Mat k r} (hb : D.I
 
 end main
 
-open Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.Dx2 in
 
+open Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.Dx2 in
 theorem orbSq_eq_vecV : ∃ c₃ : ℝ, ∀ (k r : ℕ) (L : LocBessel k r) (μsec : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (Bs : B.RealPlaceData k r L.Wp L.Wq) (cN A : ℝ) (ν' : Fin (2 * r + k + 1) → ℂ) (m₀ : B.Mat k r) (F : B.Mat k r → (L.Wq →L[ℂ] L.Wp)), IsStdOf L μsec Bs → IsRatioN k r cN → L.c = cStd → L.κN ≠ 0 → L.κN ≠ ⊤ → D.IsBaseFrame Bs ν' m₀ → c₃ * ((r : ℝ) + 1) ^ 2 * ((r : ℝ) * ((2 * r + k + 1 : ℕ) : ℝ) + 1) ≤ A → B.InCC A 1 F → ∀ γ : Point ℂ (r + 1), 0 < ThB.Gpt (Tz k r L.z) (Tz k r L.z') γ → ThB.orbSq L F γ = ENNReal.ofReal ((L.κN.toReal * cN) ^ 4 * (Real.pi ^ (rootPat γ).card) ^ 2 * ‖B.hsVec (D.vecV Bs ν' m₀ F (γ.1.map fun b => (b.2, b.1)))‖ ^ 2) := by
   obtain ⟨c₃, hconv⟩ := Dx3.d_orbJConv
   refine ⟨c₃, ?_⟩
@@ -435,7 +446,7 @@ theorem orbSq_eq_vecV : ∃ c₃ : ℝ, ∀ (k r : ℕ) (L : LocBessel k r) (μs
     rw [(rootMeas_iff L Bs hz hc γ hg hZ hpos μR).1 hR, inv_pow] at hQ
     rw [orbInt_eq L Bs hS hc hN hFc hrel hH hπ hQ hex.choose_spec.1, ← hs_orbJ L Bs hb F _ hp hG hg hZ]
     unfold D.orbJ
-    rw [dif_pos hex, hsNormSq_hsVec]
+    rw [dite_eq_left hex, hsNormSq_hsVec]
     generalize (∫ p, hex.choose p • D.orbIntegrand Bs g F p ∂Bs.μSS) = X
     have e : ∀ t : ℝ, B.hsVec (t • X) = t • B.hsVec X := fun _ => rfl
     rw [e, norm_smul, mul_pow, Real.norm_eq_abs, sq_abs]

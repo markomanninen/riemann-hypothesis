@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ValuationDetLeOneOfEntriesIntegral
+module
+
+public import ReciprocityTheory.DualLattices.ValuationDetLeOneOfEntriesIntegral
+
+@[expose] public section
 
 noncomputable section
 

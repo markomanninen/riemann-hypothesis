@@ -1,15 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.FixOfLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.EqZeroOfSlices
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.CompLine
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.ActLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.EllLin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompHecke
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RepOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AmpRep
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.FixOfLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.EqZeroOfSlices
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.CompLine
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.ActLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.EllLin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompHecke
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RepOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AmpRep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -29,7 +33,7 @@ private theorem esymm_coeff (s : Multiset ℂ) (n : ℕ) :
 
 private theorem esymm_two (s t : Multiset ℂ) (j : ℕ) :
     ∑ a ∈ Finset.piAntidiag (Finset.univ : Finset (Fin 2)) j, s.esymm (a 0) * t.esymm (a 1) = (s + t).esymm j := by
-  rw [← esymm_coeff (s + t), Multiset.map_add, Multiset.prod_add, Polynomial.coeff_mul]
+  rw [← esymm_coeff (s + t), Multiset.map_add (f := _), Multiset.prod_add, Polynomial.coeff_mul]
   simp only [esymm_coeff]
   refine Finset.sum_nbij' (fun a => (a 0, a 1)) (fun p => ![p.1, p.2]) ?_ ?_ ?_ ?_ ?_
   · intro a ha
@@ -66,7 +70,12 @@ private theorem act_cc {H V : Type} [NormedAddCommGroup H] [InnerProductSpace �
   have tc : ∀ t, Continuous fun x => a t (u (x + t)) := fun t => (a t).continuous.comp (hc.comp (continuous_add_const t))
   have ts : ∀ t, HasCompactSupport fun x => a t (u (x + t)) := fun t =>
     (hs.comp_homeomorph (Homeomorph.addRight t)).comp_left (g := a t) (map_zero _)
-  have sc : Continuous fun x => ∑ t ∈ a.support, a t (u (x + t)) := continuous_finset_sum _ fun t _ => tc t
+  have sc : Continuous fun x => ∑ t ∈ a.support, a t (u (x + t)) := by
+    induction a.support using Finset.induction_on with
+    | empty => simp only [Finset.sum_empty]; exact continuous_const
+    | insert t T ht ih =>
+      simp only [Finset.sum_insert ht]
+      exact (tc t).add ih
   have ss : HasCompactSupport fun x => ∑ t ∈ a.support, a t (u (x + t)) := by
     induction a.support using Finset.induction_on with
     | empty => simp only [Finset.sum_empty]; exact HasCompactSupport.zero
@@ -89,14 +98,14 @@ private theorem act_cc {H V : Type} [NormedAddCommGroup H] [InnerProductSpace �
       filter_upwards [(measurePreserving_add_left volume x).quasiMeasurePreserving.ae hU] with t ht
       rw [ht]
   · rw [integral_add (sc.integrable_of_hasCompactSupport ss) (cvc.integrable_of_hasCompactSupport cvs), cvi, hs0,
-      integral_finset_sum _ fun t _ => (tc t).integrable_of_hasCompactSupport (ts t), ContinuousLinearMap.add_apply, Finsupp.sum,
+      integral_finsetSum _ fun t _ => (tc t).integrable_of_hasCompactSupport (ts t), ContinuousLinearMap.add_apply, Finsupp.sum,
       ContinuousLinearMap.sum_apply]
     congr 1
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [(a t).integral_comp_comm (hui.comp_add_right t), integral_add_right_eq_self]
     simp
 
-private theorem sign_data_rank_two {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (Pl E)} (b b' : BW.Blo S 2) :
+private theorem sign_data_rank_two {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (Pl E)} (b b' : BW.Blo S 2) :
     (dat2 b b').rho (0 : Fin 2) = -1 ∧ (dat2 b b').rho (1 : Fin 2) = 1 := by
   constructor
   · show ((∑ _l ∈ (∅ : Finset (Fin 2)), ((2 : ℕ) : ℝ)) - ((((2 : ℕ) : ℝ)) + 0)) / 2 = -1
@@ -104,7 +113,7 @@ private theorem sign_data_rank_two {E : Type} [Field E] [NumberField E] [IsTotal
   · show (((((2 : ℕ) : ℝ)) + 0) - ∑ _l ∈ (∅ : Finset (Fin 2)), ((2 : ℕ) : ℝ)) / 2 = 1
     norm_num
 
-private theorem hecke_eigenvalue_rank_two_data {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (Pl E)} (b b' : BW.Blo S 2)
+private theorem hecke_eigenvalue_rank_two_data {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (Pl E)} (b b' : BW.Blo S 2)
     (φ : GlobalTheory.CuspRep.Sm E (2 + 2)) (w : Pl E) (j : ℕ) (t : Fin 2 → ℝ) (h : BW.Umg φ) (hS : BW.Sph S φ) (hw : w ∉ S) (hj : j ≤ 2 + 2) :
     (dat2 b b').comp (BW.hk (2 + 2) w j φ).1 t = ∑ a ∈ Finset.piAntidiag (Finset.univ : Finset (Fin 2)) j,
       (((b.sat w).map fun x : ℂˣ => (x : ℂ)).esymm (a 0) * ((Formalism.UG.qV E w : ℕ) : ℂ) ^ (-((-1 : ℝ) : ℂ) * a 0)) *
@@ -126,7 +135,7 @@ private theorem cancel {q : ℕ} (hq : q ≠ 0) (x : ℝ) (a b : ℕ) :
   ring
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.genT :
-    ∀ {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {μ : Measure (normOneGL E (2 + 2))} [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : Fam 𝔢) (w : Pl E), w ∉ 𝔢.S → ∀ i : Fin (2 + 2),
+    ∀ {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {μ : Measure (normOneGL (K := E) (n := (2 + 2)))} [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : _root_.UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.Fam 𝔢) (w : Pl E), w ∉ 𝔢.S → ∀ i : Fin (2 + 2),
       (∃ s, Act 𝔵.A'.J (Tsph μ w i) s ∧ s 0 ∘L 𝔵.a₀ = hval 𝔵.t (w, i) • 𝔵.a₀) ∧ Tsph μ w i ∘L 𝔵.P = 𝔵.P ∘L Tsph μ w i := by
   intro E _ _ _ μ _ θ 𝔢 𝔵 w hw i
   obtain ⟨⟨s, hs⟩, hP⟩ := genTk 𝔵 w hw i
@@ -173,7 +182,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.genT :
   have hui := uc.integrable_of_hasCompactSupport (μ := volume) us
   have h4 := integral_congr_ae (μ := volume) (Eventually.of_forall pw)
   rw [ℓ.integral_comp_comm (uc'.integrable_of_hasCompactSupport us'),
-    integral_finset_sum _ fun a _ => (ℓ.integrable_comp (hui.comp_sub_right _)).const_mul _] at h4
+    integral_finsetSum _ fun a _ => (ℓ.integrable_comp (hui.comp_sub_right _)).const_mul _] at h4
   simp only [integral_const_mul, integral_sub_right_eq_self fun x => ℓ (u x)] at h4
   rw [← Finset.sum_mul, esymm_two, ℓ.integral_comp_comm hui, iu', iu, add_comm] at h4
   rw [← hℓ, map_sub, sub_eq_zero]

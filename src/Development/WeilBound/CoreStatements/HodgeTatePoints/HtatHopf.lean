@@ -1,19 +1,22 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsBaseChangeGroupStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfFin
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfFlat
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorBtOrderStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsHenselianFlatOverPrimeStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfDesc
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfTop
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfSub
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsBaseChangeGroupStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfFin
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfFlat
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorBtOrderStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsHenselianFlatOverPrimeStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfDesc
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfTop
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfSub
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 namespace PositivityTheory.HtPt.Htat.HopfOrderTop
 
@@ -59,7 +62,7 @@ private theorem exists_smul_mem_of_extOrder {R K : Type} [CommRing R] [IsDomain 
       funext t
       have h1 := congrFun e1 t
       have h2 := congrFun e2 t
-      simp only [Pi.smul_apply, smul_eq_mul, Pi.add_apply, map_mul, map_add] at h1 h2 ⊢
+      simp only [Pi.smul_apply, smul_eq_mul, Pi.add_apply, map_mul, map_add (f := _)] at h1 h2 ⊢
       linear_combination (algebraMap R K s2) * h1 + (algebraMap R K s1) * h2
     | mul x y _ _ hx hy =>
       obtain ⟨s1, hs1, a1, ha1, e1⟩ := hx

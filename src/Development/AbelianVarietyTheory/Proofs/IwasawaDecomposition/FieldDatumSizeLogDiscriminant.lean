@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTorsionParamLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiscFieldEqTorsionField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DvdDiscrTorsionField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnramInIffDifferentIdealEqTop
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AbelianUnramIn
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIsRayIntermediateField
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsImagQuadraticHost
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NatCastMulFinrankMemDifferentIdeal
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.LogRootDiscrLeOfNatCastMemDifferentIdeal
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HeckeIdealEqOfRay
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPrimeDvdNatCastMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTorsionParamLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiscFieldEqTorsionField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DvdDiscrTorsionField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnramInIffDifferentIdealEqTop
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AbelianUnramIn
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIsRayIntermediateField
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsImagQuadraticHost
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NatCastMulFinrankMemDifferentIdeal
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.LogRootDiscrLeOfNatCastMemDifferentIdeal
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HeckeIdealEqOfRay
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPrimeDvdNatCastMem
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Host GlobalTheory.NT GlobalTheory.Mem GlobalTheory.Mem.Fld GlobalTheory.FieldSize
 open scoped IntermediateField
 
@@ -78,7 +83,7 @@ theorem log_rootDiscr_le (K H M : Type) [Field K] [NumberField K] [Field H] [Num
   field_simp
 
 theorem exists_algHom_ray (hR : RayField) (K : IntermediateField ℚ ℂ) [NumberField K]
-    [IsTotallyComplex K] (hK : Module.finrank ℚ K = 2) (hd : discr K < -4) (L : PeriodPair)
+    [_root_.NumberField.IsTotallyComplex K] (hK : Module.finrank ℚ K = 2) (hd : discr K < -4) (L : PeriodPair)
     (hL : ∀ z : ℂ, z ∈ L.lattice ↔ ∃ a : 𝓞 K, ((a : K) : ℂ) = z) (H : IntermediateField ℚ ℂ)
     (hH : H = K ⊔ ℚ⟮(GlobalTheory.latticeCurve L).j⟯) [Algebra K H]
     (hKH : ∀ x : K, ((algebraMap K H x : H) : ℂ) = x) (n : ℕ) (ho : Odd n) (h3 : 3 ≤ n) :
@@ -99,7 +104,7 @@ theorem exists_algHom_ray (hR : RayField) (K : IntermediateField ℚ ℂ) [Numbe
        commutes' := fun x => Subtype.ext (hKH x) }⟩⟩
 
 theorem invariantField (hR : RayField) (K : IntermediateField ℚ ℂ) [NumberField K]
-    [IsTotallyComplex K] (hK : Module.finrank ℚ K = 2) (hd : discr K < -4) (L : PeriodPair)
+    [_root_.NumberField.IsTotallyComplex K] (hK : Module.finrank ℚ K = 2) (hd : discr K < -4) (L : PeriodPair)
     (hL : ∀ z : ℂ, z ∈ L.lattice ↔ ∃ a : 𝓞 K, ((a : K) : ℂ) = z) (H : IntermediateField ℚ ℂ)
     (hH : H = K ⊔ ℚ⟮(GlobalTheory.latticeCurve L).j⟯) [Algebra K H]
     (hKH : ∀ x : K, ((algebraMap K H x : H) : ℂ) = x) :
@@ -229,7 +234,7 @@ theorem sz_discField : RayField → ∀ (P : Pre) (δ : FieldDat P),
     (TorsionRam.dvd_discr_torsionField d δ.jField A hg)
   have hM' := hM.trans (Nat.mul_le_mul_left _ card_GL_le)
   have hrel : Module.finrank (hilbertField d δ.jField) (torsionField d A) ≤ 20736 := by
-    rw [← Module.finrank_mul_finrank ℚ (hilbertField d δ.jField) (torsionField d A)] at hM'
+    rw [← (letI : Module.Free (hilbertField d δ.jField) (torsionField d A) := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (hilbertField d δ.jField) (torsionField d A))] at hM'
     exact Nat.le_of_mul_le_mul_left hM' Module.finrank_pos
   rw [← Module.finrank_mul_finrank ℚ K (hilbertField d δ.jField), hK] at hM'
   rw [hdn] at hdeg

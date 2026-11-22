@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
-import Formalism.LatticeRigidity.HeightMinimum.PackingCountGeometricMean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+public import Formalism.LatticeRigidity.HeightMinimum.PackingCountGeometricMean
+
+@[expose] public section
 
 open NumberField MeasureTheory ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates GlobalTheory.LevGeo
 open scoped ENNReal
@@ -79,8 +83,8 @@ def majCore {x : Frame X.Ψ r} (hx : x ∈ X.dom) : InnerProductSpace.Core ℝ (
     rw [Data.Hf_self X hx, Complex.ofReal_re] at h0
     exact (X.maj_pos hx τ hne).ne' h0
 
-open NumberField.ComplexEmbedding in
 
+open NumberField.ComplexEmbedding in
 theorem card_cmType : X.Ψ.card = fdeg E := by
   classical
   have hc : ∀ τ : E →+* ℂ, τ ∈ X.Ψ ↔ conjugate τ ∉ X.Ψ := X.cmType

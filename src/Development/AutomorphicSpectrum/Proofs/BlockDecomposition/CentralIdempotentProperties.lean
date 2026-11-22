@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CentralIdempotentAction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SeparableIrreducibleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleIffIrreducibleStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CentralIdempotentAction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SeparableIrreducibleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleIffIrreducibleStatement
+
+@[expose] public section
 
 open ReciprocityTheory.Ty.Fin CategoryTheory
 
@@ -62,7 +66,8 @@ theorem zIdemFacts : ReciprocityTheory.Ty.Fin.St.ZIdemFacts := by
       · subst hi
         rw [if_pos ⟨e.symm⟩, if_pos rfl]
       · rw [if_neg (fun ⟨f⟩ => hi (hinj _ _ ⟨f ≪≫ e⟩)), if_neg hi]
-    rw [map_sum, map_one, Finset.sum_congr rfl fun i _ => hact i]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one, Finset.sum_congr rfl fun i _ => hact i]
     simp
 
 end GlobalTheory.CompanionTheory.TyFin

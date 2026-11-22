@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SpanRangeEqTopOfIsIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SpanRangeEqTopOfIsIrreducible
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.OuterTensor
@@ -70,7 +75,7 @@ theorem isIrreducible_outer_tprod :
       exact h2 A B x hx
     | add s t hs ht =>
       intro x hx
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact add_mem (hs x hx) (ht x hx)
   by_cases hS : S.toSubmodule = ⊥
   · exact Or.inl (Subrepresentation.toSubmodule_injective hS)

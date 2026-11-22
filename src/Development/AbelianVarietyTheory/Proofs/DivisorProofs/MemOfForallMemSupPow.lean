@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrdGeOfForall
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrdGeOfForall
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.Poinc
@@ -18,7 +23,7 @@ private theorem mem_of_forall_mem_sup_maximalIdeal_pow' (N : Ideal V) (x : V)
     refine Submodule.mem_iInf _ |>.2 fun e => ?_
     obtain ⟨a, ha, y, hy, rfl⟩ := Submodule.mem_sup.1 (hx e)
     have h1 : Ideal.Quotient.mk N (a + y) = y • Ideal.Quotient.mk N 1 := by
-      rw [map_add, Ideal.Quotient.eq_zero_iff_mem.2 ha, zero_add, Algebra.smul_def, map_one,
+      rw [map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 ha, zero_add, Algebra.smul_def, map_one,
         mul_one]
       rfl
     rw [h1]
@@ -41,8 +46,8 @@ private theorem exists_not_mem_span_mul_maximalIdeal_sup_pow [IsDomain V] {g : V
     · exact sub_eq_zero.1 h0
   exact (maximalIdeal.isMaximal V).ne_top ((Ideal.eq_top_iff_one _).2 (hz1 ▸ hz))
 
-open IsLocalRing in
 
+open IsLocalRing in
 theorem _root_.GlobalTheory.Poinc.const_mod_prime_of_approx (V : Type) [CommRing V] [IsDomain V]
     [IsLocalRing V] [IsNoetherianRing V] (p : Ideal V) [p.IsPrime] (O' : Subring V)
     (hO : ∀ h ∈ O', h ∈ maximalIdeal V → h ∈ p) (g b u : V) (I : Ideal V) (hg : g ≠ 0)

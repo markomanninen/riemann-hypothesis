@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.DiracAlg
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SpnAdj
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SpnCas
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.Gelf2
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.DiracAlg
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SpnAdj
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SpnCas
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.Gelf2
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ private theorem nsq_eq {n : ℕ} (u : Fin n → ℝ) : Formalism.REAL.nsq u = ns
 
 private theorem cas_map {A B : Type} [Ring A] [Ring B] [Algebra ℂ A] [Algebra ℂ B] {n : ℕ} (φ : A →ₐ[ℂ] B)
     (F : Fin n → Fin n → A) : φ (Cas F) = Cas fun a b => φ (F a b) := by
-  simp [Cas, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Cas, map_sum, map_mul]
 
 private theorem spn_map {A B : Type} [Ring A] [Ring B] [Algebra ℂ A] [Algebra ℂ B] {n : ℕ} (φ : A →ₐ[ℂ] B)
     (c : Fin n → Fin n → A) (a b : Fin n) : φ (spn c a b) = spn (fun a b => φ (c a b)) a b := by
@@ -51,7 +56,7 @@ private theorem clif_map {A B : Type} [Ring A] [Ring B] [Algebra ℂ A] [Algebra
     {c : Fin n → Fin n → A} (h : Clif c) : Clif fun a b => φ (c a b) := by
   intro a b d e
   have := congrArg φ (h a b d e)
-  simp only [map_add, map_mul] at this
+  simp only [map_add (f := _), map_mul] at this
   rw [this]
   split_ifs <;> simp
 
@@ -167,7 +172,7 @@ theorem UpperTheory.RealTr.diracHW :
   have hdg : (fun a b => L1 a b + L2 a b + spn C a b) = dg (kF E1 E2) c := by
     funext a b
     have : spn C a b = mt V (spn c a b) := by rw [← hφ]; exact congrFun (congrFun hspn a) b
-    simp only [dg, kF, L1, L2, lfJ, map_add, this]
+    simp only [dg, kF, L1, L2, lfJ, map_add (f := _), this]
   have hc4 : Cas (dg (kF E1 E2) c) x = ((N - R : ℝ) : ℂ) • x := by
     have h := Formalism.REAL.kCasSpan (Ten J V) n (fun _ => true) (dg (kF E1 E2) c) κ x
       (Formalism.REAL.glRel_kRel _ _ hUFd.gl) hx' x

@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormGenericRatioSpec
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SubstRowZeroFixOfDegreeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.X4v4RatioSpec
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormGenericRatioSpec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SubstRowZeroFixOfDegreeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.X4v4RatioSpec
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 

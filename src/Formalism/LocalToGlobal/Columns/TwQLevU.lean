@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.TwQGrp
+module
+
+public import Formalism.LocalToGlobal.Columns.TwQGrp
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -82,8 +86,8 @@ theorem qbU_inv_wit (hI : ∀ g : ↥(GLint E n P), qbInt ((qbIota P φ g : GL (
   simp only [map_inv, inv_inv, mul_inv_rev, mul_assoc, mul_inv_cancel, mul_one] at h ⊢
   exact h
 
-include hint hPv in
 
+include hint hPv in
 def qbU : Subgroup (GL (Fin n) Kv) where
   carrier := {k | qbInt (k : Matrix (Fin n) (Fin n) Kv) ∧ qbInt ((k⁻¹ : GL (Fin n) Kv) : Matrix (Fin n) (Fin n) Kv) ∧
     ∃ g : ↥(GLint E n P), g ∈ Θ.H ∧ (qbIota P φ g)⁻¹ * k ∈ qbK cm}
@@ -99,13 +103,10 @@ def qbU : Subgroup (GL (Fin n) Kv) where
     rintro a ⟨ha1, ha2, g, hg, ka⟩
     exact ⟨ha2, by rw [inv_inv]; exact ha1, g⁻¹, Θ.H.inv_mem hg, qbU_inv_wit P φ cm (qbIota_int P φ hint hPv) (qbIota_int_inv P φ hint hPv) ka⟩
 
-theorem mem_qbU {k : GL (Fin n) Kv} : k ∈ qbU P φ hint hPv Θ cm ↔ qbInt (k : Matrix (Fin n) (Fin n) Kv) ∧
-    qbInt ((k⁻¹ : GL (Fin n) Kv) : Matrix (Fin n) (Fin n) Kv) ∧ ∃ g : ↥(GLint E n P), g ∈ Θ.H ∧ (qbIota P φ g)⁻¹ * k ∈ qbK cm := Iff.rfl
-
 variable {N : ℕ} (d : E) (hd : d ≠ 0) (hdN : P.valuation E d ≤ WithZero.exp (-(N : ℤ)))
 
-include hint hPv hd hdN in
 
+include hint hPv hd hdN in
 theorem qbK_princ {g : ↥(GLint E n P)} (hg : qbIota P φ g ∈ qbK (φ d)) : lqPrinc P N (g : Sp E n ≃ₗ[E] Sp E n) := by
   intro i j
   obtain ⟨z, hz, e⟩ := hg.2.2 i j
@@ -119,8 +120,8 @@ theorem qbK_princ {g : ↥(GLint E n P)} (hg : qbIota P φ g ∈ qbK (φ d)) : l
 
 variable (hΘ : ∀ g : ↥(GLint E n P), lqPrinc P N (g : Sp E n ≃ₗ[E] Sp E n) → ∃ h : g ∈ Θ.H, Θ.lam ⟨g, h⟩ = 1)
 
-include hint hPv hd hdN hΘ in
 
+include hint hPv hd hdN hΘ in
 theorem qbU_rat (g : ↥(GLint E n P)) : qbIota P φ g ∈ qbU P φ hint hPv Θ (φ d) ↔ g ∈ Θ.H := by
   constructor
   · rintro ⟨-, -, g0, hg0, k⟩
@@ -131,8 +132,8 @@ theorem qbU_rat (g : ↥(GLint E n P)) : qbIota P φ g ∈ qbU P φ hint hPv Θ 
   · intro hg
     exact ⟨qbIota_int P φ hint hPv g, by rw [← map_inv]; exact qbIota_int P φ hint hPv g⁻¹, g, hg, by simpa using (qbK (φ d)).one_mem⟩
 
-include hint hPv hd hdN hΘ in
 
+include hint hPv hd hdN hΘ in
 theorem qbChr_wd {k : GL (Fin n) Kv} {g0 g1 : ↥(GLint E n P)} (h0 : g0 ∈ Θ.H) (h1 : g1 ∈ Θ.H)
     (k0 : (qbIota P φ g0)⁻¹ * k ∈ qbK (φ d)) (k1 : (qbIota P φ g1)⁻¹ * k ∈ qbK (φ d)) : Θ.lam ⟨g0, h0⟩ = Θ.lam ⟨g1, h1⟩ := by
   have hk : qbIota P φ (g0⁻¹ * g1) ∈ qbK (φ d) := by

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalisedModelUniformisationBaseChange
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsKeyInputAtChartPoint
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AppLEEqIffStalk
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ValueAtNormalForm
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieCombBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalisedModelUniformisationBaseChange
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsKeyInputAtChartPoint
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AppLEEqIffStalk
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ValueAtNormalForm
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieCombBaseChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ open GlobalTheory.FlagMod (GChart ev tau tau_le le_preimage_comp)
 
 namespace GlobalTheory.KeyFramePoint
 
-open scoped CategoryTheory.MonObj in
 
+open scoped CategoryTheory.MonObj in
 theorem card_eq_of_isLieBasis {X : Scheme.{0}} {R : Type} [CommRing R] [Nontrivial R] {x : Sp R ⟶ X} {G : Over X} [GrpObj G]
     [IsCommMonObj G] {G' : Over (Sp R)} [GrpObj G'] [IsCommMonObj G'] {Φ : G'.left ⟶ G.left}
     (h : IsGrpPullback G' G x Φ) {n n' : ℕ} {v : Fin n → (epsR R ⟶ G')} {v' : Fin n' → (epsR R ⟶ G')}

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
-import Development.EtaleCohomology.EtaleSheaves.LeafCurveCut
-import Development.EtaleCohomology.EtaleSheaves.LeafAffCoverVanishPfEmpty
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.CurveMayerVietorisOfDegreeZero
-import Development.AutomorphicArithmetic.CommutativeAlgebra.IsDedekindDomainAffineSectionsOfIsCurve
-import Development.AutomorphicArithmetic.CommutativeAlgebra.DedekindSpecOpenIsAffine
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+public import Development.EtaleCohomology.EtaleSheaves.LeafCurveCut
+public import Development.EtaleCohomology.EtaleSheaves.LeafAffCoverVanishPfEmpty
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.CurveMayerVietorisOfDegreeZero
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.IsDedekindDomainAffineSectionsOfIsCurve
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.DedekindSpecOpenIsAffine
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4
 

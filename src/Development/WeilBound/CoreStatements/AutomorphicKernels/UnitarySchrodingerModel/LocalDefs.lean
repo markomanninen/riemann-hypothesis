@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,22 +65,6 @@ def siegAt (ϖ : R) (σ : R →+* R) (ψ : ∀ k, AddChar (R ⧸ lev ϖ k) ℂ) 
 def OrthCount : Prop :=
   ∀ (M X : Type) [AddCommGroup M] [Fintype M] [Fintype X] [DecidableEq M] (Q : X → M) (t : M),
     ((Finset.univ.filter fun x => Q x = t).card : ℂ) * (Fintype.card M : ℂ) = ∑' χ : AddChar M ℂ, ∑ x, χ (Q x - t)
-
-def DensStab : Prop :=
-  ∀ (R : Type) [CommRing R] (σ : R →+* R) (ϖ : R) (q : ℕ) (ε : ℤ), IsUnrQuad R σ ϖ q ε →
-  ∀ (m n : ℕ) (S : Matrix (Fin m) (Fin m) R) (T : Matrix (Fin n) (Fin n) R), IsUnimod σ S → IsHermND σ ϖ T →
-    ∃ k₀, ∀ k ≥ k₀, densAt σ ϖ S T k = densAt σ ϖ S T k₀
-
-def SiegelSeriesConv : Prop :=
-  ∀ (R : Type) [CommRing R] (σ : R →+* R) (ϖ : R) (q : ℕ) (ε : ℤ), IsUnrQuad R σ ϖ q ε →
-  ∀ ψ, IsLevelChars σ ϖ ψ → ∀ (m n : ℕ), n < m → ∀ T : Matrix (Fin n) (Fin n) R, IsHermND σ ϖ T →
-    ∃ b : ℂ, Tendsto (siegAt ϖ σ ψ q ε m T) atTop (𝓝 b)
-
-def SeriesEqDens : Prop :=
-  ∀ (R : Type) [CommRing R] (σ : R →+* R) (ϖ : R) (q : ℕ) (ε : ℤ), IsUnrQuad R σ ϖ q ε →
-  ∀ ψ, IsLevelChars σ ϖ ψ → ∀ (m n : ℕ), n < m → ∀ (S : Matrix (Fin m) (Fin m) R) (T : Matrix (Fin n) (Fin n) R),
-    IsUnimod σ S → IsHermND σ ϖ T → ∀ α : ℝ, IsDens σ ϖ S T α →
-      Tendsto (siegAt ϖ σ ψ q ε m T) atTop (𝓝 (α : ℂ))
 
 def UnrFormula : Prop :=
   ∀ (R : Type) [CommRing R] (σ : R →+* R) (ϖ : R) (q : ℕ) (ε : ℤ), IsUnrQuad R σ ϖ q ε →

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.RestrictDiagCompInclFst
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.RestrictDiagCompInclFst
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,8 @@ private theorem jetAug_zR_lemma {κ : Type} {m : ℕ} (j : κ) : jetAug R κ m (
 
 theorem sum_smul_zR_mem {a : ℕ} (m : ℕ) (c : Fin a → R) :
     ∑ i, c i • zR (R := R) m i ∈ RingHom.ker (jetAug R (Fin a) m) := by
-  rw [RingHom.mem_ker, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [RingHom.mem_ker, map_sum]
   refine Finset.sum_eq_zero (fun i _ => ?_)
   rw [map_smul, jetAug_zR_lemma i, smul_zero]
 
@@ -29,7 +34,7 @@ theorem sum_single {a : ℕ} (c : Fin a → R) : ∑ i, c i • Pi.single i (1 :
   simp [Pi.single_apply]
 
 def jetSub {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) : JetR R (Fin b) m →ₐ[R] JetR R (Fin a) m :=
-  jetLift R (RingHom.ker (jetAug R (Fin a) m)) (ker_jetAug_pow (Fin a) m)
+  jetLift (R := R) (RingHom.ker (jetAug R (Fin a) m)) (ker_jetAug_pow (Fin a) m)
     (fun k => ∑ i, T (Pi.single i 1) k • zR m i) (fun k => sum_smul_zR_mem m _)
 
 theorem jetSub_zR {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) (k : Fin b) :
@@ -53,14 +58,16 @@ theorem jetSub_comp {a b c : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (S
     (jetSub S m).comp (jetSub T m) = jetSub (T.comp S) m := by
   apply jet_ext_lemma_2
   intro k
-  rw [AlgHom.comp_apply, jetSub_zR, jetSub_zR, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AlgHom.comp_apply, jetSub_zR, jetSub_zR, map_sum]
   simp_rw [map_smul, jetSub_zR, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl (fun j _ => ?_)
   rw [← Finset.sum_smul]
   congr 1
   conv_rhs => rw [LinearMap.comp_apply, ← sum_single (S (Pi.single j 1))]
-  simp [map_sum, map_smul, Finset.sum_apply, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, Finset.sum_apply, mul_comm]
 
 theorem jetAug_comp_jetSub {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) :
     (jetAug R (Fin a) m).comp (jetSub T m) = jetAug R (Fin b) m := by
@@ -79,13 +86,15 @@ theorem trunc_comp_jetSub {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)
     (jetTruncR R (Fin a) m).comp (jetSub T (m + 1)) = (jetSub T m).comp (jetTruncR R (Fin b) m) := by
   apply jet_ext_lemma_2
   intro k
-  simp only [AlgHom.comp_apply, jetSub_zR, trunc_zR_lemma_3, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AlgHom.comp_apply, jetSub_zR, trunc_zR_lemma_3, map_sum, map_smul]
 
 theorem zero_comp_jetSub {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) :
     (jetZeroR R (Fin a) m).comp (jetSub T m) = (jetSub T 0).comp (jetZeroR R (Fin b) m) := by
   apply jet_ext_lemma_2
   intro k
-  simp only [AlgHom.comp_apply, jetSub_zR, zero_zR_lemma_4, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AlgHom.comp_apply, jetSub_zR, zero_zR_lemma_4, map_sum, map_smul]
 
 private theorem sum_inr_lemma_5 {I : Type} (s : Finset I) (f : I → R) :
     ∑ i ∈ s, (TrivSqZeroExt.inr (f i) : DualNumber R) = TrivSqZeroExt.inr (∑ i ∈ s, f i) := by
@@ -99,11 +108,13 @@ theorem dualLift_comp_jetSub {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b →
     (dualLift c).comp (jetSub T 1) = dualLift (T c) := by
   apply jet_ext_lemma_2
   intro k
-  simp only [AlgHom.comp_apply, jetSub_zR, map_sum, map_smul, dualLift_zR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AlgHom.comp_apply, jetSub_zR, map_sum, map_smul, dualLift_zR]
   simp_rw [← TrivSqZeroExt.inr_smul, sum_inr_lemma_5]
   congr 1
   conv_rhs => rw [← sum_single c]
-  simp [map_sum, map_smul, Finset.sum_apply, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, Finset.sum_apply, mul_comm]
 
 variable {G : Over (Spec (CommRingCat.of R))} [GrpObj G]
 

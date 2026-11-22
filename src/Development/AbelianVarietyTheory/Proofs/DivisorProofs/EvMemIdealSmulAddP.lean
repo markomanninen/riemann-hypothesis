@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup
 
 namespace GlobalTheory
@@ -21,7 +26,8 @@ theorem Chart.ev_mem_ideal_smul_add_p (p : ℕ) (O : Type) [CommRing O] (G : PDi
     split_ifs <;> simp
   have hcoeff : ∀ β ∈ S, coeff β h₁ = coeff β h := by
     intro β hβ
-    simp only [h₁, map_sum, coeff_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [h₁, map_sum, coeff_monomial]
     rw [Finset.sum_eq_single_of_mem β hβ]
     · simp
     · intro b _ hb; simp [Ne.symm hb]
@@ -42,10 +48,11 @@ theorem Chart.ev_mem_ideal_smul_add_p (p : ℕ) (O : Type) [CommRing O] (G : PDi
     rw [map_sub, hcoeff β hmem, sub_self]
   obtain ⟨b, hb⟩ := h₂
   refine ⟨c.ev n h₁, ?_, b, ?_⟩
-  · simp only [h₁, map_sum]
-    refine Submodule.sum_mem _ fun α _ => ?_
-    rw [hmon, map_smul]
-    exact Submodule.smul_mem_smul (hI α) Submodule.mem_top
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [h₁, map_sum]
+      refine Submodule.sum_mem _ fun α _ => ?_
+      rw [hmon, map_smul]
+      exact Submodule.smul_mem_smul (hI α) Submodule.mem_top
   · rw [map_sub, pow_one] at hb
     rw [← hb]; ring
 

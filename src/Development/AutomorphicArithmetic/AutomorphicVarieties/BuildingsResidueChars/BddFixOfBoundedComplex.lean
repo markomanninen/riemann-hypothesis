@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AcycSimp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Faceexact
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AcycSimp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Faceexact
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.Af.BA UpperTheory.V.KT Pointwise in
 theorem UpperTheory.bddFix_of_bounded_complex :

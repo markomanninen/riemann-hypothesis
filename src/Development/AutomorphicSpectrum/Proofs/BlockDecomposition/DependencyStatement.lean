@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfSmallExtension
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CechHOneVanishesOnOpenOfIsAffineOpen
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TrMulTrInv
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfSmallExtension
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CechHOneVanishesOnOpenOfIsAffineOpen
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TrMulTrInv
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,7 +44,7 @@ theorem exists_split {U : Y.Opens} (hU : IsAffineOpen U) {I : Type} (O : I → Y
     (fun a b => (ch _).symm (φ a b)) (by
       intro a b d W ha hb hd
       apply (ch W).injective
-      rw [map_add, hr, hr, hr]
+      rw [map_add (f := _), hr, hr, hr]
       simpa only [LinearEquiv.apply_symm_apply] using hφ a b d W ha hb hd)
   refine ⟨fun a => ch _ (ψ a), fun a b => ?_⟩
   have h := (LinearEquiv.symm_apply_eq _).1 (hψ a b)
@@ -56,7 +60,7 @@ theorem cocycle_on {α : ∀ a b, Γ(Y, V a ⊓ V b)}
     (a b d : A) (W : Y.Opens) (ha : W ≤ V a) (hb : W ≤ V b) (hd : W ≤ V d) :
     rs Y (le_inf ha hb) (α a b) + rs Y (le_inf hb hd) (α b d) = rs Y (le_inf ha hd) (α a d) := by
   have h := congrArg (rs Y (le_inf (le_inf ha hb) hd)) (hα a b d)
-  simpa only [map_add, rs_rs] using h
+  simpa only [map_add (f := _), rs_rs] using h
 
 def IsPot (α : ∀ a b, Γ(Y, V a ⊓ V b)) (U : Y.Opens) (p : ∀ a, Γ(Y, U ⊓ V a)) : Prop :=
   ∀ a b (W : Y.Opens) (h : W ≤ U) (ha : W ≤ V a) (hb : W ≤ V b),
@@ -128,7 +132,7 @@ theorem diffF_comp (T T' T'' : Y.affineOpens) (h : T'.1 ≤ T.1) (h' : T''.1 ≤
   have e1 := congrArg (rs Y (inf_le_inf_right (V a) h')) (diffF_spec hV hP T T' h a)
   have e2 := diffF_spec hV hP T' T'' h' a
   simp only [map_sub, rs_rs] at e1
-  rw [map_add, rs_rs, e2]
+  rw [map_add (f := _), rs_rs, e2]
   rw [show rs Y _ (diffF hV hP T T' h) = _ from e1]
   abel
 
@@ -156,7 +160,8 @@ theorem depSt : DepSt := by
     omega
   obtain ⟨c, hc, i₀, hi₀⟩ := Fintype.not_linearIndependent_iff.1 hnot
   have h0 : CatCoh.H1.mk (OAff s₀) (∑ i, c i • f i) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simpa only [map_smul] using hc
   obtain ⟨g, hg⟩ := CatCoh.H1.mk_eq_zero.1 h0
   obtain ⟨G, hG⟩ : ∃ G : ∀ T : Y.affineOpens, Γ(Y, T.1), ∀ (T T' : Y.affineOpens) (h : T'.1 ≤ T.1),
@@ -176,16 +181,19 @@ theorem depSt : DepSt := by
       (hb : W ≤ V b), rs Y (le_inf h ha) (P T a) - rs Y (le_inf h hb) (P T b) =
         rs Y (le_inf ha hb) (∑ i, GlobalTheory.SmallExtLift.cst s₀ _ (c i) * α i a b) := by
     intro T a b W h ha hb
-    simp only [P, map_add, map_sum, map_mul, rs_rs, rs_cst]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, map_add (f := _), map_sum, map_mul, rs_rs, rs_cst]
     simp only [← hp _ T a b W h ha hb, mul_sub, Finset.sum_sub_distrib]
     ring
   have hPres : ∀ (T T' : Y.affineOpens) (h : T'.1 ≤ T.1) (a : A),
       rs Y (inf_le_inf_right _ h) (P T a) = P T' a := by
     intro T T' h a
     have e := congrArg (rs Y (inf_le_left : T'.1 ⊓ V a ≤ T'.1)) (hG T T' h)
-    simp only [map_sub, map_sum, map_mul, rs_rs, rs_cst, diffF_spec, mul_sub,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_mul, rs_rs, rs_cst, diffF_spec, mul_sub,
       Finset.sum_sub_distrib] at e
-    simp only [P, map_add, map_sum, map_mul, rs_rs, rs_cst]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, map_add (f := _), map_sum, map_mul, rs_rs, rs_cst]
     linear_combination -e
   refine ⟨c, fun a => rs Y (le_inf le_rfl le_rfl) (P ⟨V a, hVa a⟩ a),
     fun h => hi₀ (by rw [h]; rfl), fun a b => ?_⟩

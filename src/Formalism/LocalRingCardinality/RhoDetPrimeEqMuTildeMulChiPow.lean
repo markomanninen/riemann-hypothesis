@@ -1,19 +1,23 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.LocalRingCardinality.DataCoeff
-import Formalism.LocalRingCardinality.DataArith
-import Formalism.LocalRingCardinality.DataKernels
-import Formalism.LocalRingCardinality.DataRows
-import Formalism.SharpRestriction.CuspSpanNormBounds.DataS
-import Formalism.SharpRestriction.GrowthBounds.DataG
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.LocalRingCardinality.DataForms
-import Formalism.LocalRingCardinality.DataJet
-import Formalism.LocalRingCardinality.DataCD
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.LocalRingCardinality.DataCoeff
+public import Formalism.LocalRingCardinality.DataArith
+public import Formalism.LocalRingCardinality.DataKernels
+public import Formalism.LocalRingCardinality.DataRows
+public import Formalism.SharpRestriction.CuspSpanNormBounds.DataS
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.LocalRingCardinality.DataForms
+public import Formalism.LocalRingCardinality.DataJet
+public import Formalism.LocalRingCardinality.DataCD
+
+@[expose] public section
 
 noncomputable section
 
@@ -160,7 +164,7 @@ structure D7 where
   Dstar_eq : ∀ u, (mem u).A.Dstar = what₂.Dstar
 
   clsLat : letI := host.cmStar; ∀ u i, (mem u).C.cls i → Submodule (𝓞 host.E) (sp.X i).V
-  clsLat_lat : letI := host.cmStar; ∀ u i c, Submodule.IsLattice host.E (clsLat u i c)
+  clsLat_lat : letI := host.cmStar; ∀ u i c, Submodule.IsFullLattice host.E (clsLat u i c)
 
   eMu : ∀ u, what₂.Mu u ≃ₗ[ℂ] (mem u).A.Mram
 
@@ -347,8 +351,6 @@ def duS (u : D.what₂.Word) : ℕ :=
 
 def zmOf (u : D.what₂.Word) : letI := D.host.cmStar; (D.sp.Y 0).V :=
   letI := D.host.cmStar; (D.cOf u)⁻¹ • D.sp.zm
-
-def GatFin : Prop := ∀ u w h, (D.gat u w h).FinClasses
 
 def besS (u : D.what₂.Word) (φ : D.what₂.Mu u) (F : D.what₂.EE) : ℂ :=
   inner ℂ (D.sEE F) (D.s.Pu u ((D.s_Cu u).symm ⟨(D.eMu u φ).1, (D.eMu u φ).2.1⟩))

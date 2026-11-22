@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
-import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+
+@[expose] public section
 
 noncomputable section
 

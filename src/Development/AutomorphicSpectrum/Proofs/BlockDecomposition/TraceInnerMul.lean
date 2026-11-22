@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ namespace GlobalTheory.CompanionTheory.EisCovar.Unip
 variable {D : D7} {n : ℕ}
 
 theorem halfTr_add' (a c : AE D) : halfTr (a + c) = halfTr a + halfTr c := by
-  simp only [GlobalTheory.StdUnn.halfTr, GlobalTheory.StdUnn.trA, map_add, mul_add]
+  simp only [GlobalTheory.StdUnn.halfTr, GlobalTheory.StdUnn.trA, map_add (f := _), mul_add]
 
 theorem halfTr_add_cA (s : AE D) : halfTr s + halfTr (cA D s) = trA s := by
   have hinv : Function.Involutive (cA D) := by
@@ -31,7 +35,7 @@ theorem halfTr_add_cA (s : AE D) : halfTr s + halfTr (cA D s) = trA s := by
     AlgEquiv.ofBijective { cA D with commutes' := hcomm } hinv.bijective
   have htr : trA (cA D s) = trA s := Algebra.trace_eq_of_algEquiv e s
   simp only [GlobalTheory.StdUnn.halfTr]
-  rw [htr, ← add_mul, ← map_add, add_halves, map_one, one_mul]
+  rw [htr, ← add_mul, ← map_add (f := _), add_halves, map_one, one_mul]
 
 theorem inner_add_add (V : HSp D) (z x : Mx D V.rank n) :
     GlobalTheory.StdUnn.inner V (z + x) (z + x) = GlobalTheory.StdUnn.inner V z z + GlobalTheory.StdUnn.inner V z x + GlobalTheory.StdUnn.inner V x z +

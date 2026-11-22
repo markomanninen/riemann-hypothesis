@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,21 +34,19 @@ theorem unitBounded_of_split (hL : TensorLattice) {F B : Type} [Field F] [Number
   let Φ : (∀ i, C i ⊗[F] AdeleRing (𝓞 F) F) → B ⊗[F] AdeleRing (𝓞 F) F :=
     fun x => ∑ i, LinearMap.rTensor (AdeleRing (𝓞 F) F) (s i) (x i)
   have hΦ : Continuous Φ :=
-    continuous_finset_sum _ fun i _ =>
+    continuous_finsetSum _ fun i _ =>
       (continuous_rTensor (AdeleRing (𝓞 F) F) (s i)).comp (continuous_apply i)
   have hp : ∀ i u, p i (sigR τ _ u) = sigR (ρ i) _ (p i u) := by
     intro i u
     induction u with
-    | zero => simp
     | tmul a b => simp [p, sigR, hcomm]
-    | add a b ha hb => rw [map_add, map_add, map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
   have hm : ∀ i u (y : C i), LinearMap.rTensor (AdeleRing (𝓞 F) F) (s i)
       (p i u * inclE (F := F) _ y) = u * inclE (F := F) _ (s i y) := by
     intro i u y
     induction u with
-    | zero => simp
     | tmul a b => simp [p, inclE, hmul]
-    | add a b ha hb => rw [map_add, add_mul, map_add, add_mul, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), add_mul, map_add (f := _), add_mul, ha, hb]
   refine ⟨Φ '' Set.pi Set.univ D, (isCompact_univ_pi hD).image hΦ, fun u hu => ?_⟩
   have hpu : ∀ i, p i u * sigR (ρ i) _ (p i u) = 1 := fun i => by
     rw [← hp, ← map_mul, hu, map_one]
@@ -55,7 +57,8 @@ theorem unitBounded_of_split (hL : TensorLattice) {F B : Type} [Field F] [Number
   · rw [Finset.mul_sum]
     simp only [← hmul, hps, hγ]
     simpa using hsum 1
-  · simp only [Φ, hm, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [Φ, hm, map_sum, Finset.mul_sum]
 
 theorem productUnitBounded (hL : TensorLattice) : ProductUnitBounded := by
   classical
@@ -65,7 +68,8 @@ theorem productUnitBounded (hL : TensorLattice) : ProductUnitBounded := by
   have hq : ∀ i x, q i x = e x i := fun _ _ => rfl
   have ht : ∀ i x, t i x = e.symm (Pi.single i x) := fun _ _ => rfl
   have h1 : ∀ x, ∑ i, t i (q i x) = x := fun x => by
-    simp only [hq, ht, ← map_sum, Finset.univ_sum_single, AlgEquiv.symm_apply_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hq, ht, ← map_sum, Finset.univ_sum_single, AlgEquiv.symm_apply_apply]
   have h2 : ∀ i x y, t i (q i x * y) = x * t i y := fun i x y => by
     apply e.injective
     simp only [hq, ht, map_mul, AlgEquiv.apply_symm_apply]
@@ -78,36 +82,31 @@ theorem productUnitBounded (hL : TensorLattice) : ProductUnitBounded := by
     (fun i => LinearMap.rTensor E (t i)) ?_ ?_ ?_ ?_ h
   · intro x
     induction x with
-    | zero => simp
     | tmul a b => simp [← TensorProduct.sum_tmul, h1]
-    | add a b ha hb => simp only [map_add, Finset.sum_add_distrib, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), Finset.sum_add_distrib, ha, hb]
   · intro i x y
     induction x with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, add_mul, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), add_mul, ha, hb]
     | tmul a b =>
       induction y with
-      | zero => simp
-      | add c d hc hd => simp only [map_add, mul_add, hc, hd]
+      | add c d hc hd => simp only [map_add (f := _), mul_add, hc, hd]
       | tmul c d => simp [h2]
   · intro b j
-    rw [map_sum, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single j]
     · generalize b j = y
       induction y with
-      | zero => simp
-      | add c d hc hd => simp only [map_add, hc, hd]
+      | add c d hc hd => simp only [map_add (f := _), hc, hd]
       | tmul c d => simp [hq, ht]
     · intro i _ hi
       generalize b i = y
       induction y with
-      | zero => simp
-      | add c d hc hd => simp only [map_add, hc, hd, add_zero]
+      | add c d hc hd => simp only [map_add (f := _), hc, hd, add_zero]
       | tmul c d => simp [hq, ht, hi.symm]
     · simp
   · intro i x
     induction x with
-    | zero => simp
     | tmul a b => simp [tConj]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end GlobalTheory.RegSS

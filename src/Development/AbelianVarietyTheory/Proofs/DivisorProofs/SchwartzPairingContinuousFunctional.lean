@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 open scoped SchwartzMap
 
@@ -20,6 +25,6 @@ theorem schwartz_pairing_conj_clm_of_borelSpace (V : Type) [NormedAddCommGroup V
     SchwartzMap.smulLeftCLM_apply hg]
   congr 1
   funext x
-  simp only [smul_eq_mul, mul_comm]
+  simp [smul_eq_mul, mul_comm]
 
 end GlobalTheory

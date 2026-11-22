@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FixedIod
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementJ
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
-import Formalism.LocalRingCardinality.FactDelDualNabla
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FixedIod
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementJ
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+public import Formalism.LocalRingCardinality.FactDelDualNabla
+
+@[expose] public section
 
 noncomputable section
 

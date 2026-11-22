@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CMVal
 
@@ -105,8 +109,8 @@ theorem orderC_units (E : Type) [Field E] [NumberField E] [IsCMField E] (𝔣 c 
     Ideal.map_le_iff_le_comap.2 (hP' ▸ (Ideal.le_of_dvd hc).trans hle)
   obtain ⟨a, b, hb, hab⟩ := mem_orderC.1 hx
   obtain ⟨a', b', -, hab'⟩ := mem_orderC.1 hx'
-  have e1 : x = algebraMap (𝓞 E) E (algebraMap (OF E) (𝓞 E) a + b) := by rw [hab, map_add]; rfl
-  have e2 : x⁻¹ = algebraMap (𝓞 E) E (algebraMap (OF E) (𝓞 E) a' + b') := by rw [hab', map_add]; rfl
+  have e1 : x = algebraMap (𝓞 E) E (algebraMap (OF E) (𝓞 E) a + b) := by rw [hab, map_add (f := _)]; rfl
+  have e2 : x⁻¹ = algebraMap (𝓞 E) E (algebraMap (OF E) (𝓞 E) a' + b') := by rw [hab', map_add (f := _)]; rfl
   have hu : (algebraMap (OF E) (𝓞 E) a + b) * (algebraMap (OF E) (𝓞 E) a' + b') = 1 := by
     apply FaithfulSMul.algebraMap_injective (𝓞 E) E
     rw [map_mul, ← e1, ← e2, mul_inv_cancel₀ hx0, map_one]
@@ -123,7 +127,7 @@ theorem orderC_units (E : Type) [Field E] [NumberField E] [IsCMField E] (𝔣 c 
   have hcu : ((IsCMField.unitsComplexConj E u : (𝓞 E)ˣ) : 𝓞 E) =
       algebraMap (OF E) (𝓞 E) a + IsCMField.ringOfIntegersComplexConj E b := by
     have : ((IsCMField.unitsComplexConj E u : (𝓞 E)ˣ) : 𝓞 E) = IsCMField.ringOfIntegersComplexConj E u := rfl
-    rw [this, huv, map_add, AlgEquiv.commutes]
+    rw [this, huv, map_add (f := _), AlgEquiv.commutes]
   let ζ : (𝓞 E)ˣ := u * (IsCMField.unitsComplexConj E u)⁻¹
   have hfin : IsOfFinOrder ζ := (IsCMField.unitsMulComplexConjInv E u).2
   have hfin' : IsOfFinOrder (ζ : 𝓞 E) := (Units.coeHom (𝓞 E)).isOfFinOrder hfin

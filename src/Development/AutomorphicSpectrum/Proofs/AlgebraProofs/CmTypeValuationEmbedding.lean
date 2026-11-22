@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StatementUnavailableOneStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SumEigenProjectionsEqSelfStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CmTypePolynomialVanishingCriterionStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeSpanIntersectionBasisStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HodgeLatticeDualEigenDecompositionStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualModuleConjugateEigenActionStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ValuationLatticeMatrixReductionStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ConjugateEmbeddingsValuationRankBoundStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StatementUnavailableOneStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SumEigenProjectionsEqSelfStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CmTypePolynomialVanishingCriterionStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeSpanIntersectionBasisStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HodgeLatticeDualEigenDecompositionStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualModuleConjugateEigenActionStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ValuationLatticeMatrixReductionStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ConjugateEmbeddingsValuationRankBoundStatement
+
+@[expose] public section
 
 open scoped NNReal
 open AlgebraicGeometry CategoryTheory Limits NumberField GlobalTheory.IndefiniteRowSideFullHecke.QuotientEigenDifference GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Flat.ExG
@@ -103,7 +107,8 @@ theorem targetO : TargetO := by
 
   have projSum : ∀ (f : S → Fin (p + q) → C) (t : S), HT.eigProj ρH t.1 (∑ s, T s (f s)) = T t (f t) := by
     intro f t
-    rw [map_sum, Finset.sum_eq_single t]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single t]
     · exact HT.LatBasic.eigProj_of_mem (Tmem _ _)
     · intro s _ hs
       exact HT.LatBasic.eigProj_of_ne (fun e => hs (Subtype.ext e).symm) (Tmem _ _)
@@ -111,7 +116,8 @@ theorem targetO : TargetO := by
   have hind : ∀ f : S → Fin (p + q) → C, ∑ s, g s (f s) = 0 → ∀ s, g s (f s) = 0 := by
     intro f hf t
     have h2 := congrArg (HT.eigProj ρ t.1) hf
-    rw [map_sum, map_zero, Finset.sum_eq_single t] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero, Finset.sum_eq_single t] at h2
     · rwa [HT.LatBasic.eigProj_of_mem (gmem _ _)] at h2
     · intro s _ hs
       exact HT.LatBasic.eigProj_of_ne (fun e => hs (Subtype.ext e).symm) (gmem _ _)
@@ -268,7 +274,8 @@ theorem targetO : TargetO := by
   have hLBA : IsLatticeBasis ν (fun i => ∑ j, A i j • U j)
       (eigenQuot (W := fun _ => Fin (p + q) → C) (freeLattice a (p + q)) τ) := by
     have hTA : ∀ i, T τ (∑ j, A i j • U j) = ∑ j, A i j • u j := fun i => by
-      simp only [map_sum, map_smul, hU]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, hU]
     refine ⟨?_, ?_⟩
     · apply LinearIndependent.of_comp (T τ)
       have : (T τ) ∘ (fun i => ∑ j, A i j • U j) = fun i => ∑ j, A i j • u j := funext hTA

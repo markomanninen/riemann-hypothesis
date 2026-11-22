@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitLin
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitLin
+
+@[expose] public section
 
 namespace Formalism.IndefR.Fin
 

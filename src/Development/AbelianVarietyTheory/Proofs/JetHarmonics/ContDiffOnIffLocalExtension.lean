@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff
@@ -39,7 +43,7 @@ variable {n : ℕ} in
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 private lemma contDiff_entry' (i j : Fin n) :
     ContDiff ℝ ∞ (fun A : Matrix (Fin n) (Fin n) ℂ => A i j) :=
-  (contDiff_apply ℝ ℂ j).comp (contDiff_apply ℝ (Fin n → ℂ) i)
+  (contDiff_apply ℝ (fun _ => ℂ) j).comp (contDiff_apply ℝ (fun _ => (Fin n → ℂ)) i)
 
 open Matrix in
 open scoped ContDiff in
@@ -228,12 +232,12 @@ private lemma skew_cay_eq_and_cay_cay_eq {H Y : Matrix (Fin n) (Fin n) ℂ} (h2 
     rw [Matrix.inv_eq_right_inv hinv, hC, smul_mul_smul_comm, mul_assoc, hw2, mul_one]
     norm_num
 
+
 open Matrix in
 open scoped ContDiff in
 variable {n : ℕ} in
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 variable {H : Matrix (Fin n) (Fin n) ℂ} in
-
 theorem _root_.GlobalTheory.UnitaryRetraction.contDiffOn_iff_local_extension (hH : Hᴴ = H) (h2 : H * H = 1) {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] (f : Matrix (Fin n) (Fin n) ℂ → E) :
     ContDiffOn ℝ ∞ f {g | gᴴ * H * g = H} ↔

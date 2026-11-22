@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CoreFinite
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.LanglandsSquareIntegrable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.LanglandsSquareIntegrable
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,9 +52,14 @@ theorem prod_adj : ∀ {n : ℕ} (k : Fin n) (f₁ f₂ f₃ f₄ : Fin (n + 1) 
     (∀ i, i ≠ k.castSucc → i ≠ k.succ → f₂ i = f₁ i ∧ f₃ i = f₁ i ∧ f₄ i = f₁ i) →
     f₁ k.castSucc * f₁ k.succ + f₂ k.castSucc * f₂ k.succ
       - (f₃ k.castSucc * f₃ k.succ + f₄ k.castSucc * f₄ k.succ) = 0 →
-    (List.ofFn f₁).prod + (List.ofFn f₂).prod - ((List.ofFn f₃).prod + (List.ofFn f₄).prod) = 0
-  | 0, k, _, _, _, _, _, _ => k.elim0
-  | n + 1, k, f₁, f₂, f₃, f₄, h, hr => by
+    (List.ofFn f₁).prod + (List.ofFn f₂).prod - ((List.ofFn f₃).prod + (List.ofFn f₄).prod) = 0 := by
+  intro n
+  induction n with
+  | zero =>
+    intro k
+    exact k.elim0
+  | succ n inductionHypothesis =>
+    intro k f₁ f₂ f₃ f₄ h hr
     induction k using Fin.cases with
     | zero =>
       have hh : ∀ i : Fin n, f₂ i.succ.succ = f₁ i.succ.succ ∧ f₃ i.succ.succ = f₁ i.succ.succ ∧
@@ -62,17 +71,19 @@ theorem prod_adj : ∀ {n : ℕ} (k : Fin n) (f₁ f₂ f₃ f₄ : Fin (n + 1) 
       rw [← this]
       noncomm_ring
     | succ k =>
-      have ih := prod_adj k (fun i => f₁ i.succ) (fun i => f₂ i.succ) (fun i => f₃ i.succ) (fun i => f₄ i.succ)
+      have ih := inductionHypothesis k (fun i => f₁ i.succ) (fun i => f₂ i.succ) (fun i => f₃ i.succ) (fun i => f₄ i.succ)
         (fun i h1 h2 => h _ (by rw [← Fin.succ_castSucc]; exact fun e => h1 (Fin.succ_injective _ e))
           (fun e => h2 (Fin.succ_injective _ e))) (by simpa only [Fin.succ_castSucc] using hr)
-      obtain ⟨e2, e3, e4⟩ := h 0 (by rw [← Fin.succ_castSucc]; exact (Fin.succ_ne_zero _).symm)
-        (Fin.succ_ne_zero _).symm
-      rw [List.ofFn_succ (f := f₁), List.ofFn_succ (f := f₂), List.ofFn_succ (f := f₃), List.ofFn_succ (f := f₄)]
-      simp only [List.prod_cons, e2, e3, e4]
-      have := congrArg (f₁ 0 * ·) ih
-      simp only [mul_zero] at this
-      rw [← this]
-      noncomm_ring
+      have hcast : (0 : Fin (n + 2)) ≠ k.succ.castSucc := by
+        rw [← Fin.succ_castSucc]
+        exact (Fin.succ_ne_zero k.castSucc).symm
+      obtain ⟨e2, e3, e4⟩ : f₂ 0 = f₁ 0 ∧ f₃ 0 = f₁ 0 ∧ f₄ 0 = f₁ 0 :=
+        h 0 hcast (Fin.succ_ne_zero k.succ).symm
+      have prod_succ (f : Fin (n + 2) → A) :
+          (List.ofFn f).prod = f 0 * (List.ofFn fun i : Fin (n + 1) => f i.succ).prod := by
+        rw [List.ofFn_succ (f := f), List.prod_cons]
+      simpa only [prod_succ f₁, prod_succ f₂, prod_succ f₃, prod_succ f₄, e2, e3, e4,
+        mul_sub, mul_add, mul_zero] using congrArg (fun x => f₁ 0 * x) ih
 
 variable [Algebra ℂ A] {n : ℕ}
 
@@ -256,7 +267,7 @@ section Lie
 
 open GlobalTheory.CuspRep NumberField
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def mulL (x y : Lie E a) : Lie E a := Matrix.of.symm (Matrix.of x * Matrix.of y)
 
@@ -272,19 +283,19 @@ def rmul (y : Lie E a) : Lie E a →L[ℝ] Lie E a :=
       map_add' := fun x z => Matrix.add_mul (Matrix.of x) (Matrix.of z) (Matrix.of y)
       map_smul' := fun c x => Matrix.smul_mul c (Matrix.of x) (Matrix.of y) }
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem lmul_apply (x y : Lie E a) : lmul x y = mulL x y := rfl
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem rmul_apply (x y : Lie E a) : rmul y x = mulL x y := rfl
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem mulL_one (x : Lie E a) : mulL x (oneL E a) = x := Matrix.mul_one (Matrix.of x)
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem one_mulL (x : Lie E a) : mulL (oneL E a) x = x := Matrix.one_mul (Matrix.of x)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem inv_nhds {x : Lie E a} (hx : IsUnit (Matrix.of x)) : invSet E a ∈ nhds x := by
   have hc : Continuous fun y : Lie E a => (Matrix.of y).det :=
     Continuous.matrix_det (A := fun y : Lie E a => Matrix.of y) continuous_id
@@ -295,7 +306,7 @@ theorem inv_nhds {x : Lie E a} (hx : IsUnit (Matrix.of x)) : invSet E a ∈ nhds
     rw [this]; exact Units.isOpen.preimage hc
   exact ho.mem_nhds hx
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem isUnit_oneL : IsUnit (Matrix.of (oneL E a)) := isUnit_one
 
 theorem chart_mul (φ : GA E a → ℂ) (g : GA E a) {x : Lie E a} (hx : IsUnit (Matrix.of x)) :
@@ -311,7 +322,7 @@ theorem chart_mul (φ : GA E a → ℂ) (g : GA E a) {x : Lie E a} (hx : IsUnit 
     exact Units.ext e.symm
   · have hxy : ¬ IsUnit (Matrix.of (lmul x y)) := by
       rw [e]; exact fun h => hy ((hx.mul_left_iff).1 h)
-    rw [dif_neg hy, dif_neg hxy]
+    rw [dite_eq_right hy, dite_eq_right hxy]
 
 theorem contDiffAt_chart (φ : Sm E a) (g : GA E a) {x : Lie E a} (hx : IsUnit (Matrix.of x)) :
     ContDiffAt ℝ 2 (chart φ.1 g) x :=
@@ -376,21 +387,21 @@ theorem Eop_bracket (τ τ' : E →+* ℂ) (i j k l : Fin a) :
   simp only [smul_mul_assoc, mul_smul_comm, mul_sub, sub_mul]
   module
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem atEmb_mul (τ : E →+* ℂ) (z w : ℂ) : atEmb τ z * atEmb τ w = atEmb τ (z * w) := by
   classical
   unfold atEmb
   rw [← Pi.single_mul]
   split_ifs <;> simp
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem atEmb_neg (τ : E →+* ℂ) (z : ℂ) : atEmb τ (-z) = - atEmb τ z := by
   classical
   unfold atEmb
   rw [← Pi.single_neg]
   split_ifs <;> simp
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem atEmb_mul_of_ne {τ τ' : E →+* ℂ} (h : InfinitePlace.mk τ ≠ InfinitePlace.mk τ') (z w : ℂ) :
     atEmb τ z * atEmb τ' w = 0 := by
   classical
@@ -401,7 +412,7 @@ theorem atEmb_mul_of_ne {τ τ' : E →+* ℂ} (h : InfinitePlace.mk τ ≠ Infi
     simp [Pi.single_eq_of_ne h]
   · simp [Pi.single_eq_of_ne hv]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem atEmb_conj {τ τ' : E →+* ℂ} (h : InfinitePlace.mk τ = InfinitePlace.mk τ') (hne : τ ≠ τ') (w : ℂ) :
     atEmb τ' w = atEmb τ (starRingEnd ℂ w) := by
   unfold atEmb

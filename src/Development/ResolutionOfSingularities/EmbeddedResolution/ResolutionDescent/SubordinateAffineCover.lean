@@ -1,5 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.DisjointUnionOfOpens
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.DisjointUnionOfOpens
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
 namespace FunctorialResolution.EmbeddedResolution
@@ -84,39 +89,5 @@ private theorem smooth_resLE {X' X : Scheme.{u}} (φ : X' ⟶ X) [Smooth φ]
     Smooth (φ.resLE U V e) := by
   rw [resLE_eq_homOfLE_comp_restrict]
   infer_instance
-
-theorem smooth_opensCoprodMapOfRefinement {X' X : Scheme.{u}} (φ : X' ⟶ X) [Smooth φ] {ι κ : Type u}
-    (U : ι → X.Opens) (V : κ → X'.Opens) (β : κ → ι)
-    (hβ : ∀ a, V a ≤ φ ⁻¹ᵁ (U (β a))) :
-    Smooth (opensCoprodMapOfRefinement φ U V β hβ) := by
-  show Smooth (Sigma.desc fun a => φ.resLE (U (β a)) (V a) (hβ a) ≫
-      Sigma.ι (fun i => (U i).toScheme) (β a))
-  refine smooth_sigmaDesc _ fun a => ?_
-  have := smooth_resLE φ (U (β a)) (V a) (hβ a)
-  infer_instance
-
-instance instSmoothOpensCoprodRefine {X' X : Scheme.{u}} (φ : X' ⟶ X) [Smooth φ] {ι κ : Type u}
-    (U : ι → X.Opens) (V : κ → X'.Opens) (β : κ → ι)
-    (hβ : ∀ a, V a ≤ φ ⁻¹ᵁ (U (β a))) :
-    Smooth (opensCoprodMapOfRefinement φ U V β hβ) :=
-  smooth_opensCoprodMapOfRefinement φ U V β hβ
-
-theorem locallyOfFiniteType_opensCoprodMapOfRefinement {X' X : Scheme.{u}} (φ : X' ⟶ X)
-    [LocallyOfFiniteType φ] {ι κ : Type u}
-    (U : ι → X.Opens) (V : κ → X'.Opens) (β : κ → ι)
-    (hβ : ∀ a, V a ≤ φ ⁻¹ᵁ (U (β a))) :
-    LocallyOfFiniteType (opensCoprodMapOfRefinement φ U V β hβ) := by
-  have h1 : LocallyOfFiniteType (sigmaOpensDesc X' V ≫ φ) := inferInstance
-  have h2 : LocallyOfFiniteType (opensCoprodMapOfRefinement φ U V β hβ ≫ sigmaOpensDesc X U) := by
-    rw [opensCoprodMapOfRefinement_comp_sigmaOpensDesc]
-    exact h1
-  exact locallyOfFiniteType_of_comp _ (sigmaOpensDesc X U)
-
-instance instLocallyOfFiniteTypeOpensCoprodRefine {X' X : Scheme.{u}} (φ : X' ⟶ X)
-    [LocallyOfFiniteType φ] {ι κ : Type u}
-    (U : ι → X.Opens) (V : κ → X'.Opens) (β : κ → ι)
-    (hβ : ∀ a, V a ≤ φ ⁻¹ᵁ (U (β a))) :
-    LocallyOfFiniteType (opensCoprodMapOfRefinement φ U V β hβ) :=
-  locallyOfFiniteType_opensCoprodMapOfRefinement φ U V β hβ
 
 end FunctorialResolution.EmbeddedResolution

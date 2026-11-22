@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
@@ -11,7 +15,7 @@ theorem UpperTheory.Gal.TranscendenceTraces.nwtOfFlat_of :
   have hspec : IsNwt p hex.choose := hex.choose_spec
   have hval : nwt p = hex.choose := by
     unfold nwt
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   rw [hval]
   refine hU p _ _ hspec.1 hm.1 {s | GenPt s} (hG.1 S) ?_
   intro Ω _ _ z hz

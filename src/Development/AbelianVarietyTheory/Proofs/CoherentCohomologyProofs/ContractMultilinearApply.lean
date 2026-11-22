@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct BigOperators
 
@@ -18,7 +22,7 @@ private theorem apply_update (φ : ∀ i, X i →ₗ[R] R) [inst : DecidableEq �
     simp
   · simp [Function.update_of_ne h]
 
-def contractMultilinear (φ : ∀ i, X i →ₗ[R] R) (j : ι) : MultilinearMap R X (X j) where
+def contractMultilinear (φ : ∀ i, X i →ₗ[R] R) (j : ι) : (Π i, X i) →ₘₗ[R] X j where
   toFun x := (∏ i ∈ Finset.univ.erase j, φ i (x i)) • x j
   map_update_add' := by
     intro inst x k y z
@@ -32,7 +36,7 @@ def contractMultilinear (φ : ∀ i, X i →ₗ[R] R) (j : ι) : MultilinearMap 
       simp only [Finset.prod_update_of_notMem h₁,
         Function.update_self, smul_add]
     · have hk := h₂ h
-      simp only [Finset.prod_update_of_mem hk, Function.update_of_ne (Ne.symm h), map_add,
+      simp only [Finset.prod_update_of_mem hk, Function.update_of_ne (Ne.symm h), map_add (f := _),
         add_mul, add_smul]
   map_update_smul' := by
     intro inst x k c y
@@ -43,12 +47,11 @@ def contractMultilinear (φ : ∀ i, X i →ₗ[R] R) (j : ι) : MultilinearMap 
     simp only [apply_update]
     by_cases h : k = j
     · subst h
-      simp only [Finset.prod_update_of_notMem h₁,
-        Function.update_self]
+      simp only [Finset.prod_update_of_notMem h₁, Function.update_self, RingHom.id_apply]
       exact smul_comm _ _ _
     · have hk := h₂ h
       simp only [Finset.prod_update_of_mem hk, Function.update_of_ne (Ne.symm h), map_smul,
-        smul_eq_mul, mul_assoc, mul_smul]
+        RingHom.id_apply, smul_eq_mul, mul_assoc, mul_smul]
 
 @[simp] theorem contractMultilinear_apply (φ : ∀ i, X i →ₗ[R] R) (j : ι) (x : ∀ i, X i) :
     contractMultilinear φ j x = (∏ i ∈ Finset.univ.erase j, φ i (x i)) • x j := rfl
@@ -70,7 +73,7 @@ section
 variable {ι : Type*} [Fintype ι] {R : Type*} [CommSemiring R]
   {X : ι → Type*} [∀ i, AddCommMonoid (X i)] [∀ i, Module R (X i)]
 
-def prodMultilinear (φ : ∀ i, X i →ₗ[R] R) : MultilinearMap R X R :=
+def prodMultilinear (φ : ∀ i, X i →ₗ[R] R) : (Π i, X i) →ₘₗ[R] R :=
   (MultilinearMap.mkPiAlgebra R ι R).compLinearMap φ
 
 @[simp] theorem prodMultilinear_apply (φ : ∀ i, X i →ₗ[R] R) (x : ∀ i, X i) :

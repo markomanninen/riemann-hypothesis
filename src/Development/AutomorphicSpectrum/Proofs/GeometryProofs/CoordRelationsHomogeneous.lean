@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SmallPointsCoordRatioBoundStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MatchStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SmallPointsCoordRatioBoundStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MatchStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -134,8 +139,10 @@ theorem aeval_homogAt {R : Type*} [Field R] (x : σ → R) (i : σ) (hi : x i �
     aeval x (homogAt i G) = x i ^ G.totalDegree * aeval (fun j => x j / x i) G := by
   have h0 : aeval (fun j => x j / x i) G = ∑ m ∈ Finset.range (G.totalDegree + 1),
       aeval (fun j => x j / x i) (homogeneousComponent m G) := by
-    rw [← map_sum, sum_homogeneousComponent]
-  rw [h0, homogAt, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, sum_homogeneousComponent]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h0, homogAt, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hle : m ≤ G.totalDegree := Nat.lt_succ_iff.mp (Finset.mem_range.mp hm)
   have h2 := aeval_mul_homog (homogeneousComponent_isHomogeneous m G) (x i)
@@ -163,7 +170,7 @@ theorem exists_clear {Ω : Type} [Field Ω] [CharZero Ω] (r : σ → Ω) {b : �
     obtain ⟨N1, A1, h1, e1⟩ := hx
     obtain ⟨N2, A2, h2, e2⟩ := hw
     refine ⟨N1 * N2, C (N2 : ℤ) * A1 + C (N1 : ℤ) * A2, mul_ne_zero h1 h2, ?_⟩
-    simp only [map_add, map_mul, aeval_C, eq_intCast, Int.cast_natCast, map_natCast, ← e1, ← e2, Nat.cast_mul]
+    simp only [map_add (f := _), map_mul, aeval_C, eq_intCast, Int.cast_natCast, map_natCast, ← e1, ← e2, Nat.cast_mul]
     ring
   | mul x w _ _ hx hw =>
     obtain ⟨N1, A1, h1, e1⟩ := hx
@@ -301,10 +308,10 @@ theorem exists_finset_at [CharZero Ω] (k₀ : K) (hy : ∀ k, ∃ j, y ⟨k, j�
       obtain ⟨N1, A1, h1, e1, v1⟩ := hx
       obtain ⟨N2, A2, h2, e2, v2⟩ := hw
       refine ⟨N1 * N2, C (N2 : ℤ) * A1 + C (N1 : ℤ) * A2, mul_ne_zero h1 h2, ?_, ?_⟩
-      · simp only [map_add, map_mul, aeval_C, eq_intCast, Int.cast_natCast, map_natCast, ← e1, ← e2,
+      · simp only [map_add (f := _), map_mul, aeval_C, eq_intCast, Int.cast_natCast, map_natCast, ← e1, ← e2,
           Nat.cast_mul, AddMemClass.coe_add]
         ring
-      · simp only [map_add, map_mul, v1, v2, mul_zero, add_zero]
+      · simp only [map_add (f := _), map_mul, v1, v2, mul_zero, add_zero]
     | smul a x _ hx =>
       obtain ⟨N1, A1, h1, e1⟩ := exists_clear (ratio y k₀ i) a.2
       obtain ⟨N2, A2, h2, e2, v2⟩ := hx

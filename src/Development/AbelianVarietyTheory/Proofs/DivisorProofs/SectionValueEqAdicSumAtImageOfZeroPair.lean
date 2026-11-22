@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefTwistPull
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOneOfFiniteOrderAny
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SectionValueAtTorsionPointEqSumTerms
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueThetaConst
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SumIOfFinite
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsExpandsFScale
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaTableAlgClosedCompleteSingleValued
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefTwistPull
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOneOfFiniteOrderAny
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SectionValueAtTorsionPointEqSumTerms
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueThetaConst
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SumIOfFinite
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsExpandsFScale
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaTableAlgClosedCompleteSingleValued
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -55,7 +59,8 @@ theorem sumI_conv {R : Type} [CommRing R] [IsNoetherianRing R] {I : Ideal R} (hI
     have h3 := sumI_finset S _ _ h2
     simp only [← h1] at h3
     have h4 := sumI_unique hI (sumI_map π h) h3
-    rw [← map_sum, ← Finset.sum_mul] at h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← Finset.sum_mul] at h4
     have h5 := sub_mem ((Submodule.Quotient.eq _).1 h4) (hm _ (hS S le_rfl) _ hr')
     convert h5 using 1
     ring
@@ -195,8 +200,8 @@ theorem value_at_level (hB : AdmBase R I) (hG : IsSemiAbelian G) (U : Unif I D A
   rw [_root_.mul_assoc]
   exact h₄
 
-attribute [local instance] TorusExt.gtGroup in
 
+attribute [local instance] TorusExt.gtGroup in
 theorem exists_sumF (hB : AdmBase R I) (hG : IsSemiAbelian G) (U : Unif I D A G)
     {w₀ ρ} (hN : NormW U.toUnifPre w₀ ρ) {n : ℕ} (hn : 1 ≤ n) (p : QkPt D.toPre F n) (hp : p.y = 0) {k : ℕ}
     (hk : 1 ≤ k) (W : Frm D.toPre F k p.g.b) (hW : W.IsGen) (t : SecA A F k) (s : Fam D.toPre F k)
@@ -204,9 +209,21 @@ theorem exists_sumF (hB : AdmBase R I) (hG : IsSemiAbelian G) (U : Unif I D A G)
   have hL := GlobalTheory.firstFiveLaws
   have hpos : 1 ≤ k * n ^ 2 := Nat.mul_pos hk (Nat.pow_pos hn)
   obtain ⟨h, hh⟩ := (GlobalTheory.TorsionAnyChar.gtOnto_any hL R I hB D F).2.1 n hn p.g
-  let q : QkPt D.toPre F (k * n ^ 2) := TorusExt.qkMk D.tau_bimult 0 h (by
-    rw [show k * n ^ 2 = n * n * k by ring, mul_nsmul, mul_nsmul, ← (TorusExt.isNsmul_iff_eq _ _ _).1 hh,
-      TorusExt.qk_nsmul D.tau_bimult p, hp, map_zero, smul_zero])
+  have hz : GtPtF.IsIota 0 (0 : GtPtF D.toPre F) := by
+    obtain ⟨hb, hv⟩ := (isZero_iff (0 : GtPtF D.toPre F)).1 ((TorusExt.isZero_iff_eq _).2 rfl)
+    refine (isIota_iff 0 _).2 ⟨hb.trans (cPoint_zero _).symm, fun χ y J hJ => ?_⟩
+    have C : IsCub (th D.toPre (T := TF (R := R) F) y J) := isCub_cubV D.toPre.cub hJ
+    have t := tau_mul (𝟙 (TF (R := R) F)) hJ D.tau_bimult 0 0 χ
+    rw [add_zero, cPoint_zero, C.face, _root_.mul_one] at t
+    exact (hv χ y J hJ).trans (mul_eq_left.1 t.symm).symm
+  have pn : n • p.g = 0 := by
+    obtain ⟨v, hv, hi⟩ := p.eq
+    have hi' : GtPtF.IsIota 0 v := hp ▸ hi
+    exact ((TorusExt.isNsmul_iff_eq _ _ _).1 hv).symm.trans (TorusExt.isIota_unique hi' hz)
+  let q : QkPt D.toPre F (k * n ^ 2) := ⟨0, h, 0,
+    (TorusExt.isNsmul_iff_eq _ _ _).2 (by
+      rw [show k * n ^ 2 = n * n * k by ring, mul_nsmul, mul_nsmul,
+        ← (TorusExt.isNsmul_iff_eq _ _ _).1 hh, pn, smul_zero]), hz⟩
   obtain ⟨x, hx⟩ := GlobalTheory.TorsionAnyChar.existsTransl_any hL R I hB D A G hG U F _ hpos q
   have hx' := (GlobalTheory.TorsionAnyChar.indAtTransl_any hL R I hB D A G hG U F _ hpos q x).1
     (hx 1 _ le_rfl (Nat.mul_one _).symm q (one_nsmul _).symm rfl)
@@ -245,8 +262,8 @@ theorem exists_sumF (hB : AdmBase R I) (hG : IsSemiAbelian G) (U : Unif I D A G)
   simp only [Function.comp_apply, h₁, ← hdc] at S'
   exact ⟨_, S'⟩
 
-omit [CharZero R] [IsAlgClosed F] in
 
+omit [CharZero R] [IsAlgClosed F] in
 theorem exists_coef_ratio (U : Unif I D A G) {w₀ w₁ : W0 U.toUnifPre} (h₀ : w₀.IsGen) (h₁ : w₁.IsGen) (k : ℕ) :
     ∃ d : F, d ≠ 0 ∧ ∀ (t : SecA A F k) s, U.ExpandsF F k w₀ t s → ∃ s', U.ExpandsF F k w₁ t s' ∧
       ∀ (g : GtPtF D.toPre F) (w : Frm D.toPre F k g.b), w.IsGen → coef s g w = fun χ => d * coef s' g w χ := by
@@ -263,9 +280,9 @@ theorem exists_coef_ratio (U : Unif I D A G) {w₀ w₁ : W0 U.toUnifPre} (h₀ 
 
 end Unif
 
+
 open GlobalTheory.UT.CoefBasic in
 attribute [local instance] TorusExt.gtGroup in
-
 theorem liesOver_of_qkToAkU : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero R] (I : Ideal R), AdmBase R I → ∀ (D : DegData R I) (A : PolAV (Spec (CommRingCat.of (FractionRing R)))) (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G], IsSemiAbelian G → ∀ (U : Unif I D A G) (F : Type) [Field F] [IsAlgClosed F] [Algebra (FractionRing R) F] (w₀ : W0 U.toUnifPre), w₀.IsGen → ∀ (k : ℕ), 1 ≤ k → ∀ (p : QkPt D.toPre F k) (x : TFK (R := R) F ⟶ A.A), p.y = 0 → QkToAkU U.toUnifPre F k p x → ∃ (w : Frm D.toPre F 1 p.g.b) (fr : FrAt x), w.IsGen ∧ fr.IsGen ∧ GlobalTheory.Poinc.Tors.LiesOver U.toUnifPre w₀ p.g w x fr := by
   intro R _ _ _ I hB D A G _ _ hG U F _ _ _ w₀ hw₀ n hn p x hp hx
   have hL := GlobalTheory.firstFiveLaws
@@ -306,8 +323,20 @@ theorem liesOver_of_qkToAkU : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero
       obtain ⟨s, hs, -⟩ := (hbij k (by omega) w₀ hw₀).1 t
       exact ⟨_, c, ⟨t, s, hs, ht, rfl⟩, hc⟩)
     (fun m hm => by
-      let q : QkPt D.toPre F (n * m) := TorusExt.qkMk D.tau_bimult (m • p.y) p.g (by
-        rw [mul_nsmul, TorusExt.qk_nsmul D.tau_bimult p, map_nsmul])
+      have hz : GtPtF.IsIota 0 (0 : GtPtF D.toPre F) := by
+        obtain ⟨hb, hv⟩ := (isZero_iff (0 : GtPtF D.toPre F)).1 ((TorusExt.isZero_iff_eq _).2 rfl)
+        refine (isIota_iff 0 _).2 ⟨hb.trans (cPoint_zero _).symm, fun χ y J hJ => ?_⟩
+        have C : IsCub (th D.toPre (T := TF (R := R) F) y J) := isCub_cubV D.toPre.cub hJ
+        have t := tau_mul (𝟙 (TF (R := R) F)) hJ D.tau_bimult 0 0 χ
+        rw [add_zero, cPoint_zero, C.face, _root_.mul_one] at t
+        exact (hv χ y J hJ).trans (mul_eq_left.1 t.symm).symm
+      have pn : n • p.g = 0 := by
+        obtain ⟨v, hv, hi⟩ := p.eq
+        have hi' : GtPtF.IsIota 0 v := hp ▸ hi
+        exact ((TorusExt.isNsmul_iff_eq _ _ _).1 hv).symm.trans (TorusExt.isIota_unique hi' hz)
+      let q : QkPt D.toPre F (n * m) := ⟨m • p.y, p.g, 0,
+        (TorusExt.isNsmul_iff_eq _ _ _).2 (by rw [mul_nsmul, pn, smul_zero]),
+        by simpa only [hp, smul_zero] using hz⟩
       have hq : QkToAkU U.toUnifPre F (n * m) q x :=
         ((GlobalTheory.LevelCompat.qkToAkU_level hL R _ hB D A G hG U F n m _ hn hm rfl p q x).1 rfl rfl).1 hx
       obtain ⟨κ, hκ, Hκ⟩ := value_at_level hB hG U hN (Nat.mul_pos hn hm) q x hq e he (Ω _) (hΩ _)

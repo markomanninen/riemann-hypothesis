@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudIsoDef
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatRetract
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorKP
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.OneMemDualWeyl
-import Lemmata.DualWeylPullback.DualWeylPull
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudIsoDef
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatRetract
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorKP
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.OneMemDualWeyl
+public import Lemmata.DualWeylPullback.DualWeylPull
+
+@[expose] public section
 
 noncomputable section
 
@@ -171,7 +175,7 @@ theorem iso_ten {O K : Type} [CommRing O] [Field K] [Algebra O K] {S : Type} [Fi
       exact Submodule.subset_span ⟨fun s => ρ s (P s), fun s => h1 s _ (hP s), rfl⟩
     · rw [map_zero]; exact Submodule.zero_mem _
     · intro x y _ _ hx hy
-      rw [map_add]; exact Submodule.add_mem _ hx hy
+      rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     · intro c x _ hx
       rw [← algebraMap_smul K c x, map_smul, algebraMap_smul]
       exact Submodule.smul_mem _ _ hx
@@ -187,7 +191,7 @@ theorem iso_ten {O K : Type} [CommRing O] [Field K] [Algebra O K] {S : Type} [Fi
       exact Finset.prod_congr rfl fun s _ => by rw [h2 s _ (hP s)]
     · rw [mul_zero, map_zero]
     · intro x y _ _ hx hy
-      rw [mul_add, map_add, hx, hy]
+      rw [mul_add, map_add (f := _), hx, hy]
     · intro c x _ hx
       rw [mul_smul_comm, map_smul, hx]
   rw [← hB F hF]

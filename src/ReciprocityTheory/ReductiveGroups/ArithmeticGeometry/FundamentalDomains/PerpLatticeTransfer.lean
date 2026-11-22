@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PerpBasisExistence
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PerpBasisExistence
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.PerpLatticeTransfer
 
@@ -74,23 +78,68 @@ lemma LB_lattice (hli : LinearIndependent E (Fin.cons ξ β : Fin (n + 1) → Fi
     have h1 := IsNoetherian.noetherian ((LinearMap.range (Tmap β ξ) ⊓ X.L').comap X.L'.subtype)
     have h2 := h1.map X.L'.subtype
     rwa [Submodule.map_comap_subtype, inf_eq_right.mpr inf_le_right] at h2
-  · rw [eq_top_iff]
-    intro c _
-    obtain ⟨d, hd, hdv⟩ := HermitianTraceFormVanishing.exists_smul_mem (F := E) X.L' (x := ∑ k, c k • β k)
-      (by rw [span_L' X]; trivial)
-    have hd' : (d : E) ≠ 0 := by simpa using hd
-    have hdc : (d : E) • c ∈ LBsub X β ξ := by
+  · rw [Submodule.eq_top_iff']
+    intro c
+    have hc : (∑ k, c k • β k) ∈ Submodule.span E (X.L' : Set (Fin r → E)) := by
+      rw [span_L' X]
+      simp
+    have hdenom (v : Fin r → E) (hv : v ∈ Submodule.span E (X.L' : Set (Fin r → E))) :
+        ∃ a : 𝓞 E, a ≠ 0 ∧ (a : E) • v ∈ X.L' := by
+      refine Submodule.span_induction (p := fun v _ => ∃ a : 𝓞 E, a ≠ 0 ∧ (a : E) • v ∈ X.L')
+        (fun v hv => ⟨1, one_ne_zero, by simpa using hv⟩)
+        ⟨1, one_ne_zero, by simp⟩
+        ?_ ?_ hv
+      · intro x y hx hy ⟨a, ha, hax⟩ ⟨b, hb, hby⟩
+        refine ⟨a * b, mul_ne_zero ha hb, ?_⟩
+        change ((a : E) * (b : E)) • (x + y) ∈ X.L'
+        rw [smul_add]
+        have hleft : (b : 𝓞 E) • ((a : E) • x) ∈ X.L' := X.L'.smul_mem b hax
+        have hright : (a : 𝓞 E) • ((b : E) • y) ∈ X.L' := X.L'.smul_mem a hby
+        have hleft' : ((a : E) * (b : E)) • x ∈ X.L' := by
+          convert hleft using 1 <;> ext i <;> simp [smul_eq_mul, Algebra.smul_def] <;> ring
+        have hright' : ((a : E) * (b : E)) • y ∈ X.L' := by
+          convert hright using 1 <;> ext i <;> simp [smul_eq_mul, Algebra.smul_def] <;> ring
+        exact X.L'.add_mem hleft' hright'
+      · intro c x hx ⟨a, ha, hax⟩
+        have hdiv : ∃ u v : 𝓞 E, v ∈ nonZeroDivisors (𝓞 E) ∧
+            (algebraMap (𝓞 E) E u) / algebraMap (𝓞 E) E v = c :=
+          IsFractionRing.div_surjective (A := 𝓞 E) (z := c)
+        obtain ⟨u, v, hv, hcv⟩ := hdiv
+        have hvO : v ≠ 0 := nonZeroDivisors.ne_zero hv
+        refine ⟨a * v, mul_ne_zero ha hvO, ?_⟩
+        have hvE : (v : E) ≠ 0 := by
+          intro h
+          exact hvO ((IsFractionRing.injective (𝓞 E) E) h)
+        have hmul : ((a * v : 𝓞 E) : E) * c = (u * a : 𝓞 E) := by
+          change (a : E) * (v : E) * c = (u : E) * (a : E)
+          calc
+            (a : E) * (v : E) * c = (a : E) * (v : E) * ((u : E) / (v : E)) := by rw [hcv]
+            _ = (u : E) * (a : E) := by field_simp [hvE] <;> ring
+        rw [smul_smul]
+        change (((a * v : 𝓞 E) : E) * c) • x ∈ X.L'
+        rw [hmul]
+        change ((u : E) * (a : E)) • x ∈ X.L'
+        convert X.L'.smul_mem u hax using 1 <;> ext i <;>
+          simp [smul_eq_mul, Algebra.smul_def] <;> ring
+    obtain ⟨a, ha, hmem⟩ := hdenom _ hc
+    have hcoef : a • c ∈ LBsub X β ξ := by
       refine ⟨0, ?_⟩
-      rw [zero_smul, add_zero]
-      have e1 : ∑ k, ((d : E) • c) k • β k = d • ∑ k, c k • β k := by
-        rw [integer_smul_eq_coe_smul d, Finset.smul_sum]
-        simp only [Pi.smul_apply, smul_eq_mul, mul_smul]
-      rw [e1]
-      exact hdv
-    have h2 := Submodule.smul_mem (Submodule.span E (LBsub X β ξ : Set (Fin n → E))) ((d : E)⁻¹)
-      (Submodule.subset_span hdc)
-    rwa [smul_smul, inv_mul_cancel₀ hd', one_smul] at h2
-
+      have hsmul : (∑ k, (a • c) k • β k) + (0 : E) • ξ = a • (∑ k, c k • β k) := by
+        simp only [Pi.smul_apply, smul_eq_mul, Finset.smul_sum, mul_smul]
+        simp
+      rw [hsmul]
+      exact hmem
+    have haE : (a : E) ≠ 0 := by
+      intro h
+      exact ha ((IsFractionRing.injective (𝓞 E) E) (by simpa using h))
+    have hcspan : a • c ∈ Submodule.span E (LBsub X β ξ : Set (Fin n → E)) :=
+      Submodule.subset_span hcoef
+    have := Submodule.smul_mem _ ((a : E)⁻¹) hcspan
+    have heq : ((a : E)⁻¹) • (a • c) = c := by
+      ext k
+      change (a : E)⁻¹ * ((a : E) * c k) = c k
+      field_simp [haE]
+    simpa [heq] using this
 def Sform : ReciprocityTheory.MultiplicativeHeights.HermForm E n where
   c := (IsCMField.complexConj E).toRingEquiv.toRingHom
   c_invol x := IsCMField.complexConj_apply_apply E x
@@ -115,7 +164,8 @@ private lemma herm_sum_smul_right' {m : ℕ} (G : Matrix (Fin r) (Fin r) E) (x :
     (c : Fin m → E) (v : Fin m → Fin r → E) :
     herm G x (∑ k, c k • v k) = ∑ k, cc (c k) * herm G x (v k) := by
   unfold herm cc
-  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.mul_sum]
   calc _ = ∑ a, ∑ k, ∑ b, x a * G a b * ((IsCMField.complexConj E) (c k) *
         (IsCMField.complexConj E) (v k b)) :=
         Finset.sum_congr rfl fun a _ => Finset.sum_comm
@@ -134,7 +184,7 @@ lemma Sform_h (c c' : Fin n → E) :
   simp only [Sform, Matrix.of_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
-  try simp only [cc, RingEquiv.toRingHom_eq_coe, RingEquiv.coe_toRingHom, AlgEquiv.toRingEquiv_eq_coe,
+  try simp only [cc, RingEquiv.toRingHom_eq_coe, RingEquiv.coe_toRingHom, AlgEquiv.coe_toRingEquiv,
     AlgEquiv.coe_ringEquiv]
   ring
 
@@ -151,7 +201,7 @@ private lemma herm_add_left_of_matrix (G : Matrix (Fin r) (Fin r) E) (x y z : Fi
 private lemma herm_add_right_of_matrix (G : Matrix (Fin r) (Fin r) E) (x y z : Fin r → E) :
     herm G x (y + z) = herm G x y + herm G x z := by
   unfold herm cc
-  simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 private lemma herm_smul_left_of_matrix (G : Matrix (Fin r) (Fin r) E) (e : E) (x y : Fin r → E) :
     herm G (e • x) y = e * herm G x y := by

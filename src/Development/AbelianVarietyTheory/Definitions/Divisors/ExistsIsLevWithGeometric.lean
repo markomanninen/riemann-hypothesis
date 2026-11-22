@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FullLinearLevelCoverBaseChangeTorsor
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.UniversalWeilPairingPullbackExistsUnique
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConnectionLinearInSection
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FullLinearLevelCoverBaseChangeTorsor
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.UniversalWeilPairingPullbackExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConnectionLinearInSection
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,7 +48,7 @@ theorem modN_of_dvd {k m : ℕ} (h : k ∣ m) {a : Dw.La} (ha : Dw.ModN m a) : D
 theorem modN_of_forall_dvd {k : ℕ} (hk : 0 < k) {a : Dw.La} (h : ∀ y, (k : ℤ) ∣ Dw.EF a y) : Dw.ModN k a := by
   choose f hf using h
   have hk' : (k : ℤ) ≠ 0 := by exact_mod_cast hk.ne'
-  let g : Dw.La →+ ℤ := AddMonoidHom.mk' f fun x y => mul_left_cancel₀ hk' (by rw [mul_add, ← hf, ← hf, ← hf, map_add])
+  let g : Dw.La →+ ℤ := AddMonoidHom.mk' f fun x y => mul_left_cancel₀ hk' (by rw [mul_add, ← hf, ← hf, ← hf, map_add (f := _)])
   obtain ⟨b, hb⟩ := Dw.unimod.2 g.toIntLinearMap
   refine ⟨b, Dw.unimod.1 (LinearMap.ext fun y => ?_)⟩
   rw [map_nsmul, hb, hf, LinearMap.smul_apply, nsmul_eq_mul]
@@ -56,7 +60,7 @@ theorem dvd_EF_sub {k : ℕ} {a a' b b' : Dw.La} (ha : Dw.ModN k (a - a')) (hb :
   obtain ⟨y, hy⟩ := hb
   rw [sub_eq_iff_eq_add.1 hx, sub_eq_iff_eq_add.1 hy]
   refine ⟨Dw.EF x (k • y + b') + Dw.EF a' y, ?_⟩
-  simp only [map_add, map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul]
+  simp only [map_add (f := _), map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul]
   ring
 
 theorem zpow_congr {G : Type} [CommGroup G] {ζ : G} {k : ℕ} (h : ζ ^ k = 1) {a b : ℤ} (hab : (k : ℤ) ∣ a - b) :
@@ -162,8 +166,8 @@ theorem weilIs_unique {k : ℕ} {S : Type} [CommRing S] {x0 : Sp S ⟶ Xo.X} {p 
   (unitOn_bijective S).1
     (CommutatorPairing.weilIs_unique GlobalTheory.firstFiveLaws.1.globalFns (UnivPol.pol Xo).isAb (UnivPol.pol Xo).isLB hu hv)
 
-variable {Xo} in
 
+variable {Xo} in
 theorem IsLevWith.baseChange {k : ℕ} {S T : Type} [CommRing S] [CommRing T] (ψ : S →+* T) {x0 : Sp S ⟶ Xo.X}
     {x1 : Sp T ⟶ Xo.X} (h : ptO Xo x1 ⟶ ptO Xo x0) (hh : h.left = spMap ψ) {ζ : Sˣ}
     {ev : LatMod Dw k → (ptO Xo x0 ⟶ Xo.univ.t.G)} (hev : IsLevWith Xo k ζ x0 ev) :
@@ -174,8 +178,8 @@ theorem IsLevWith.baseChange {k : ℕ} {S T : Type} [CommRing S] [CommRing T] (�
   · rw [← map_zpow]
     exact weilIs_baseChange Xo ψ h hh (hev.2.2 a b)
 
-variable {Xo} in
 
+variable {Xo} in
 theorem IsLevWith.unique_field {k : ℕ} (hk : k ∣ l.M) {K : Type} [Field K] {x0 : Sp K ⟶ Xo.X} {ζ : Kˣ}
     (hζ : IsPrimitiveRoot ζ k) {ev ev' : LatMod Dw k → (ptO Xo x0 ⟶ Xo.univ.t.G)} (h : IsLevWith Xo k ζ x0 ev)
     (h' : IsLevWith Xo k ζ x0 ev') : ev = ev' := by
@@ -206,8 +210,8 @@ theorem IsLevWith.unique_field {k : ℕ} (hk : k ∣ l.M) {K : Type} [Field K] {
   obtain ⟨y, hy⟩ := h2
   exact ⟨x + y, by rw [smul_add, ← hx, ← hy, sub_smul, one_smul, smul_sub]; abel⟩
 
-variable {Xo c} in
 
+variable {Xo c} in
 theorem IsLevOf.unique {k : ℕ} {S : Type} [CommRing S] [Algebra c.F S] {x0 : Sp S ⟶ Xo.X}
     {ev ev' : LatMod Dw k → (ptO Xo x0 ⟶ Xo.univ.t.G)} (h : IsLevOf Xo c k x0 ev) (h' : IsLevOf Xo c k x0 ev') :
     ev = ev' := by
@@ -245,7 +249,7 @@ theorem exists_isLevWith_geometric {k : ℕ} (hk : k ∣ l.M) {K : Type} [Field 
     obtain ⟨y, hy⟩ := modN_of_dvd hk (smul_modN hf (Submodule.smul_mem_smul hf' (Submodule.mem_top (x := b))))
     refine ⟨(1 - m : 𝓞 E) • x + (m * m - m : 𝓞 E) • y, ?_⟩
     rw [smul_add, smul_comm k, smul_comm k, ← hx, ← hy, ← Nat.cast_smul_eq_nsmul (𝓞 E), hs]
-    simp only [map_add, map_mul, map_sub, map_one, map_natCast]
+    simp only [map_add (f := _), map_mul, map_sub, map_one, map_natCast]
     module
   have hEF : ∀ a b : Dw.La, I.ζ k ^ Dw.EF (s • a) (s • b) = ζ ^ Dw.EF a b := fun a b => by
     rw [Dw.adj, ← mul_smul, zpow_congr (I.ζ_prim k hk0).pow_eq_one
@@ -289,8 +293,9 @@ theorem exists_isLevWith_cover {k : ℕ} (hk : k ∣ l.M) {S : Type} [CommRing S
   haveI := UnivPol.isLocallyNoetherian Xo
   choose r hr using Submodule.Quotient.mk_surjective (Ideal.span {(k : 𝓞 E)} • ⊤ : Submodule (𝓞 E) Dw.La)
   have hra : ∀ a, Dw.ModN k (r (Submodule.Quotient.mk a) - a) := fun a => (FullLevel.mk_eq_iff k _ _).1 (hr _)
+  haveI : IsAddFG (𝓞 E) := Module.Finite.iff_addGroup_fg.1 inferInstance
   obtain ⟨s, hs⟩ : ∃ s : Finset (𝓞 E), AddSubgroup.closure (s : Set (𝓞 E)) = ⊤ :=
-    (Module.Finite.iff_addGroup_fg.1 (inferInstance : Module.Finite ℤ (𝓞 E))).out
+    AddGroup.exists_of_isAddFG (𝓞 E)
   obtain ⟨B, _, φ, w, hφ, hw, hU⟩ := exists_flat_universal_torsion_tuple hL E H Dw l Xo S x0 k hk0 (LatMod Dw k)
   let P : LatMod Dw k → Prop := fun q => ∃ a ∈ (Mfr l • ⊤ : Submodule (𝓞 E) Dw.La), Submodule.Quotient.mk a = q
   obtain ⟨e, he, he'⟩ := LevelFlat.exists_element hL Xo B (spMap φ ≫ x0) k hk0
@@ -395,8 +400,8 @@ theorem exists_isLevWith_cover {k : ℕ} (hk : k ∣ l.M) {S : Type} [CommRing S
     rw [(hvχ _ lo p).1 h3, zpow_congr (by rw [← map_pow, hζ1, map_one]) (dvd_EF_sub (hra a) (hra b))] at h4
     exact h4
 
-variable {Xo c} in
 
+variable {Xo c} in
 theorem IsLevOf.baseChange {k : ℕ} {S T : Type} [CommRing S] [Algebra c.F S] [CommRing T] [Algebra c.F T]
     (ψ : S →ₐ[c.F] T) {x0 : Sp S ⟶ Xo.X} {x1 : Sp T ⟶ Xo.X} (h : ptO Xo x1 ⟶ ptO Xo x0)
     (hh : h.left = spMap ψ.toRingHom) {ev : LatMod Dw k → (ptO Xo x0 ⟶ Xo.univ.t.G)} (hev : IsLevOf Xo c k x0 ev) :

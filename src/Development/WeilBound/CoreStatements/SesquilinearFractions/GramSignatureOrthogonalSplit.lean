@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.QReInr
-import Development.WeilBound.CoreStatements.SesquilinearFractions.ImIMulDivSq
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.QReInr
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.ImIMulDivSq
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl

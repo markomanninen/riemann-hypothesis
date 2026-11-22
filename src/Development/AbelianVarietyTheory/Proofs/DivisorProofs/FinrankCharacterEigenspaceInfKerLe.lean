@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankRangeIdempotentLeOfEmbedsInRegularStatement
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankRangeIdempotentLeOfEmbedsInRegularStatement
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.ArithmeticCylinders GlobalTheory.BadCount Module
@@ -15,7 +19,8 @@ theorem lvlIdem_apply_of_mem_eig {Γ V : Type} [Group Γ] [Fintype Γ] [AddCommG
   rw [mem_eig] at hx
   have hc : (Nat.card Hb : ℂ) ≠ 0 := by exact_mod_cast Nat.card_pos.ne'
   unfold Formalism.L2.DIV.lvlIdem
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   simp only [Representation.asAlgebraHom_single, LinearMap.smul_apply, hx, smul_smul]
   have e1 : ∀ h : Hb, (Nat.card Hb : ℂ)⁻¹ * ((lam h⁻¹ : ℂˣ) : ℂ) * ((lam h : ℂˣ) : ℂ) = (Nat.card Hb : ℂ)⁻¹ := fun h => by
     rw [mul_assoc, ← Units.val_mul, ← map_mul, inv_mul_cancel, map_one, Units.val_one, mul_one]
@@ -45,7 +50,7 @@ theorem finrank_eig_inf_ker_le : ∀ (Γ V : Type) [Group Γ] [Fintype Γ] [AddC
     have hx1 : x = ρ.asAlgebraHom (1 - e) x := by
       rw [map_sub, map_one, LinearMap.sub_apply, hek, sub_zero]; rfl
     have : x = 0 := by
-      rw [hx1, he, map_sub, map_add, map_mul]
+      rw [hx1, he, map_sub, map_add (f := _), map_mul]
       simp [LinearMap.sub_apply, LinearMap.add_apply, Module.End.mul_apply, hb0, hb1]
     exact Subtype.ext this
   have hdim := LinearMap.finrank_le_finrank_of_injective hinj

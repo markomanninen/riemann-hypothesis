@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementD
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.FiltrationBotHolds
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementD
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.FiltrationBotHolds
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -23,7 +27,7 @@ theorem glAct_succ_comm (LL : Letters (K + 1)) (s t a b : Fin r) (F : MvPolynomi
     glAct p LL (K + 1) s t (glAct p LL K a b F) - glAct p LL K a b (glAct p LL (K + 1) s t F) =
       (if t = a then glAct p LL K s b F else 0) - (if b = s then glAct p LL K a t F else 0) := by
   rw [glAct_split LL K (K + 1) s t]
-  simp only [LinearMap.add_apply, map_add]
+  simp only [LinearMap.add_apply, map_add (f := _)]
   rw [glRest_comm LL K (K + 1) (Nat.le_succ K) s t a b F, ← glAct_comm LL K s t a b F]
   abel
 
@@ -132,7 +136,8 @@ theorem raising_comm_holds : UComm := by
   have hc : ∀ b, glAct p LL (K + 1) s t (glAct p LL K a b F) = glAct p LL K a b (glAct p LL (K + 1) s t F) +
       ((if t = a then glAct p LL K s b F else 0) - (if b = s then glAct p LL K a t F else 0)) := by
     intro b; rw [← glAct_succ_comm]; abel
-  rw [Uop_apply, Uop_apply, map_sub, map_sum, hX, map_sub, map_smul, eul_glAct]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Uop_apply, Uop_apply, map_sub, map_sum, hX, map_sub, map_smul, eul_glAct]
   simp only [hX, hc, mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib]
   have h1 : ∑ b ∈ Cs, (if t = b then X (Fin.last K, s) * glAct p LL K a b F else 0) =
       X (Fin.last K, s) * glAct p LL K a t F := by
@@ -164,7 +169,8 @@ theorem restriction_raising_holds : ResU := by
   change resL p (Fin.last K, ρ) 0 _ = Uop p LL c (univ.erase ρ) a (resL p (Fin.last K, ρ) 0 F)
   have hne : ∀ b : Fin r, b ≠ ρ → ((Fin.last K, b) : Fin (K + 1) × Fin r) ≠ (Fin.last K, ρ) :=
     fun b hb h => hb (Prod.mk.inj h).2
-  rw [Uop_apply, Uop_apply, map_sub, map_sum, resL_X_mul _ _ (hne a ha), map_sub, map_smul, resL_eulL]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Uop_apply, Uop_apply, map_sub, map_sum, resL_X_mul _ _ (hne a ha), map_sub, map_smul, resL_eulL]
   congr 1
   rw [← Finset.add_sum_erase univ _ (Finset.mem_univ ρ), resL_apply, initPart_zero_X_mul, zero_add]
   refine Finset.sum_congr rfl fun b hb => ?_

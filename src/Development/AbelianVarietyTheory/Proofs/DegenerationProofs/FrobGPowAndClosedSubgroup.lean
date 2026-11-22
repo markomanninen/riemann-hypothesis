@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -23,13 +28,13 @@ theorem Raises.comp {X : Scheme.{0}} {φ ψ : X ⟶ X} {a b : ℕ} {U : X.Opens}
     map_pow, p₁, ← pow_mul]
 
 theorem Raises.mul {S : Scheme.{0}} {G : Over S} (F : End G) (q m : ℕ) {U : G.left.Opens} {f : Γ(G.left, U)}
-    (h : Raises (show G ⟶ G from F ^ m).left (q ^ m) U f) (n : ℕ) (hn : 1 ≤ n) :
-    Raises (show G ⟶ G from F ^ (m * n)).left (q ^ (m * n)) U f := by
+    (h : Raises (F ^ m).asHom.left (q ^ m) U f) (n : ℕ) (hn : 1 ≤ n) :
+    Raises (F ^ (m * n)).asHom.left (q ^ (m * n)) U f := by
   induction n, hn using Nat.le_induction with
   | base => rwa [Nat.mul_one]
   | succ n hn ih =>
     have := h.comp ih
-    rw [Nat.mul_succ, pow_add, pow_add, mul_comm (q ^ (m * n))]
+    rw [Nat.mul_succ, pow_add, End.mul_asHom, pow_add, mul_comm (q ^ (m * n))]
     exact this
 
 theorem Raises.pull {X Y : Scheme.{0}} (ν : Y ⟶ X) {φ : X ⟶ X} {ψ : Y ⟶ Y} (hc : ψ ≫ ν = ν ≫ φ) {a : ℕ}
@@ -67,27 +72,33 @@ theorem Raises.of_cover {X : Scheme.{0}} {φ : X ⟶ X} {a : ℕ} {U : X.Opens} 
   exact this.trans (p.trans (map_pow _ _ _).symm)
 
 theorem pow_comm_hom {C : Type*} [Category C] {N G : C} (ν : N ⟶ G) (F : End G) (F' : End N)
-    (h : (show N ⟶ N from F') ≫ ν = ν ≫ (show G ⟶ G from F)) (m : ℕ) :
-    (show N ⟶ N from F' ^ m) ≫ ν = ν ≫ (show G ⟶ G from F ^ m) := by
+    (h : F'.asHom ≫ ν = ν ≫ F.asHom) (m : ℕ) :
+    (F' ^ m).asHom ≫ ν = ν ≫ (F ^ m).asHom := by
   induction m with
-  | zero => simp
+  | zero => simp [End.one_asHom]
   | succ m ih =>
-    simp only [pow_succ, End.mul_def, Category.assoc] at *
+    simp only [pow_succ, End.mul_asHom, Category.assoc] at *
     rw [ih, reassoc_of% h]
 
 theorem isMonHom_pow {k : Type} [Field k] (G : Over (Sp k)) [GrpObj G] (F : End G)
-    (h : IsMonHom (show G ⟶ G from F)) (m : ℕ) : IsMonHom (show G ⟶ G from F ^ m) := by
+    (h : IsMonHom F.asHom) (m : ℕ) : IsMonHom (F ^ m).asHom := by
   induction m with
   | zero => exact inferInstanceAs (IsMonHom (𝟙 G))
   | succ m ih =>
-    rw [pow_succ]
-    exact inferInstanceAs (IsMonHom ((show G ⟶ G from F) ≫ (show G ⟶ G from F ^ m)))
+    rw [pow_succ, End.mul_asHom]
+    infer_instance
 
 end GlobalTheory.SS.FrobSub
 
-open GlobalTheory.SS.FrobSub in
 
-theorem GlobalTheory.SS.frobG_pow_and_closed_subgroup : ∀ (k : Type) [Field k] (G : Over (Sp k)) [GrpObj G], SmConn G → ∀ (F : End G) (q : ℕ), FrobG G F q → (∀ m, 1 ≤ m → FrobG G (F ^ m) (q ^ m)) ∧ ∀ (N : Over (Sp k)) [GrpObj N] (ν : N ⟶ G) (F' : End N), IsMonHom ν → IsClosedImmersion ν.left → IsMonHom (show N ⟶ N from F') → (show N ⟶ N from F') ≫ ν = ν ≫ (show G ⟶ G from F) → FrobG N F' q := by
+open GlobalTheory.SS.FrobSub in
+theorem GlobalTheory.SS.frobG_pow_and_closed_subgroup :
+    ∀ (k : Type) [Field k] (G : Over (Sp k)) [GrpObj G], SmConn G →
+      ∀ (F : End G) (q : ℕ), FrobG G F q →
+        (∀ m, 1 ≤ m → FrobG G (F ^ m) (q ^ m)) ∧
+        ∀ (N : Over (Sp k)) [GrpObj N] (ν : N ⟶ G) (F' : End N),
+          IsMonHom ν → IsClosedImmersion ν.left → IsMonHom F'.asHom →
+          F'.asHom ≫ ν = ν ≫ F.asHom → FrobG N F' q := by
   intro k _ G _ _ F q hF
   refine ⟨fun m hm => ⟨isMonHom_pow G F hF.1 m, fun U hU f => ?_⟩, fun N _ ν F' _ hν hF' hc => ⟨hF', fun U hU f => ?_⟩⟩
   · obtain ⟨n, hn, h⟩ := hF.2 U hU f
@@ -96,7 +107,7 @@ theorem GlobalTheory.SS.frobG_pow_and_closed_subgroup : ∀ (k : Type) [Field k]
     rw [mul_comm, pow_mul, pow_mul] at this
     exact this
   · have key : ∀ x : U, ∃ (W : N.left.Opens) (hW : W ≤ U) (m : ℕ), x.1 ∈ W ∧ 1 ≤ m ∧
-        Raises (show N ⟶ N from F' ^ m).left (q ^ m) W ((N.left.presheaf.map (homOfLE hW).op).hom f) := by
+        Raises (F' ^ m).asHom.left (q ^ m) W ((N.left.presheaf.map (homOfLE hW).op).hom f) := by
       intro x
       obtain ⟨W, hW, hWU⟩ := ν.left.isClosedEmbedding.isInducing.isOpen_iff.1 U.isOpen
       have hx : ν.left x.1 ∈ (⟨W, hW⟩ : G.left.Opens) := by
@@ -115,7 +126,7 @@ theorem GlobalTheory.SS.frobG_pow_and_closed_subgroup : ∀ (k : Type) [Field k]
     choose W hW m hxW hm hR using key
     obtain ⟨t, ht⟩ := hU.isCompact.elim_finite_subcover (fun x => (W x : Set N.left)) (fun x => (W x).isOpen)
       (fun y hy => Set.mem_iUnion.2 ⟨⟨y, hy⟩, hxW ⟨y, hy⟩⟩)
-    have hpos : 1 ≤ ∏ x ∈ t, m x := Finset.one_le_prod' fun x _ => hm x
+    have hpos : 1 ≤ ∏ x ∈ t, m x := Finset.one_le_prod fun x _ => hm x
     refine ⟨∏ x ∈ t, m x, hpos, ?_⟩
     refine Raises.of_cover (fun x : t => W x.1) (fun x => hW x.1) (fun y hy => ?_) fun x => ?_
     · obtain ⟨x, hx, hy'⟩ := Set.mem_iUnion₂.1 (ht hy)

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedLatticeZeroCycleHeight
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TopSelfEqLengthOfSmooth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyHomologyEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleOfFinrankLeCardAlgHomAlgebraicClosureStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDvdPowOfZeros
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NullstellensatzPointOfSystem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TopSelfEqLengthOfSmooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyHomologyEquiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleOfFinrankLeCardAlgHomAlgebraicClosureStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDvdPowOfZeros
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NullstellensatzPointOfSystem
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -131,7 +136,8 @@ theorem isHomogeneous_spec {F K : Type} [Field F] [Field K] [Algebra F K] {D N �
     (spec s f).IsHomogeneous δ := by
   classical
   unfold spec
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   apply IsHomogeneous.sum
   intro m hm
   have hprod : (m.prod fun v e =>
@@ -145,7 +151,7 @@ theorem isHomogeneous_spec {F K : Type} [Field F] [Field K] [Algebra F K] {D N �
     · intro i _ hi
       simp [hi]
     · simp
-  have h2 := (isHomogeneous_C (Fin 1 × Fin N) (algebraMap F K (coeff m f))).mul hprod
+  have h2 := (isHomogeneous_C (Fin 1 × Fin N) (algebraMap F K (AddMonoidAlgebra.coeff f m))).mul hprod
   rw [zero_add, hdeg] at h2
   rw [aeval_monomial, MvPolynomial.algebraMap_apply]
   exact h2
@@ -165,7 +171,7 @@ theorem eval_spec {F K : Type} [CommRing F] [CommRing K] [Algebra F K] {D N : �
   induction f using MvPolynomial.induction_on with
   | C a => simp [spec, MvPolynomial.algebraMap_apply]
   | add p q hp hq =>
-    simp only [spec, map_add] at hp hq ⊢
+    simp only [spec, map_add (f := _)] at hp hq ⊢
     rw [hp, hq]
   | mul_X p v hp =>
     simp only [spec, map_mul, aeval_X] at hp ⊢

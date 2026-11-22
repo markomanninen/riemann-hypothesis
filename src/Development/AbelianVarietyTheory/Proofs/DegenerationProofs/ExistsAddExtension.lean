@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FiniteOfIsClosedOfFiniteInterClosedPoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FiniteOfIsClosedOfFiniteInterClosedPoints
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -289,6 +294,107 @@ theorem Core.exists_add_extension : ∀ C : Core, C.HasTests → SmoothOfRelativ
   have : QuasiCompact (C.GG ⊗ C.GG).hom :=
     inferInstanceAs (QuasiCompact (pullback.fst C.GG.hom C.GG.hom ≫ C.GG.hom))
   have wμ : (μ[C.A]).left ≫ C.A.hom = (C.A ⊗ C.A).hom := Over.w _
+  have existsUnique_extension_of_finite_specializations :
+      ∀ (X : Scheme.{0}) [IsIntegral X] (π : X ⟶ Sp ℤ) [Flat π] [LocallyOfFiniteType π] [QuasiCompact π], Geo.Tor.IsNormalScheme X → ∀ (Z P : Scheme.{0}) (s : X ⟶ Z) (t : P ⟶ Z) [IsProper t] (G : P.Opens) (U : X.Opens) (φ : U.toScheme ⟶ P), (U : Set X).Nonempty → φ ≫ t = U.ι ≫ s → (∀ σ : X, IsClosed ({σ} : Set X) → ∃ F : Set P, F.Finite ∧ F ⊆ G ∧ ∀ (p : ℕ) [Fact p.Prime] (a : Sp (OO p) ⟶ X) (a₀ : Sp (PadicAlgCl p) ⟶ U.toScheme) (b : Sp (OO p) ⟶ P), a (cPt p) = σ → a₀ ≫ U.ι = gPt p ≫ a → gPt p ≫ b = a₀ ≫ φ → b ≫ t = a ≫ s → b (cPt p) ∈ F) → ∃! Φ : X ⟶ G.toScheme, U.ι ≫ Φ ≫ G.ι = φ ∧ Φ ≫ G.ι ≫ t = s := by
+    intro X _ π _ _ _ hX Z P s t _ G U φ hU hφ H
+    have : IsLocallyNoetherian X := LocallyOfFiniteType.isLocallyNoetherian π
+    have : Nonempty U.toScheme := hU.to_subtype
+    have : IsIntegral U.toScheme := isIntegral_of_isOpenImmersion U.ι
+    have : QuasiCompact U.ι := inferInstance
+    have : IsDominant U.ι := ⟨by
+      rw [DenseRange, Scheme.Opens.range_ι]; exact U.isOpen.dense hU⟩
+    let Γ := graphClosure s t U.ι φ hφ.symm
+    let f : Γ ⟶ X := graphClosure.fst s t U.ι φ hφ.symm
+    let g : Γ ⟶ P := graphClosure.snd s t U.ι φ hφ.symm
+    let j : U.toScheme ⟶ Γ := graphClosure.incl s t U.ι φ hφ.symm
+    have hjf : j ≫ f = U.ι := graphClosure.incl_fst ..
+    have hjg : j ≫ g = φ := graphClosure.incl_snd ..
+    have hfg : f ≫ s = g ≫ t := graphClosure.condition ..
+    have : Flat (j ≫ f ≫ π) := by rw [reassoc_of% hjf]; infer_instance
+    have : Flat (f ≫ π) := flat_of_schemeDominant_of_isDedekindDomain j _
+    have : JacobsonSpace Γ := jacobsonSpace_of_locallyOfFiniteType_int (f ≫ π)
+    choose F hF hFG hFH using H
+    have hcl (z : Γ) (hz : IsClosed ({z} : Set Γ)) : IsClosed ({f z} : Set X) := by
+      simpa using f.isClosedMap _ hz
+    have key (z : Γ) (hz : IsClosed ({z} : Set Γ)) : g z ∈ F (f z) (hcl z hz) := by
+      obtain ⟨p, hp, hpz⟩ := GlobalTheory.exists_prime_residueField_eq_zero (f ≫ π) hz
+      haveI : Fact p.Prime := ⟨hp⟩
+      obtain ⟨K, hK, y₀, hy₀, hyU₀, -⟩ := GlobalTheory.exists_padic_point_scheme (f ≫ π) hz hpz j.opensRange (Set.range_nonempty _)
+      let integralClosureToPadicAlgClIntegers : integralClosure ℤ_[p] K →+* OO p :=
+        (K.val.toRingHom.comp (integralClosure ℤ_[p] K).val.toRingHom).codRestrict (OO p) fun x => by
+          rw [Valuation.mem_valuationSubring_iff, ← NNReal.coe_le_coe]
+          exact (mem_integralClosure_padicInt_iff K _).mp x.2
+      haveI : IsLocalHom integralClosureToPadicAlgClIntegers := by
+        refine ⟨fun x hx => ?_⟩
+        obtain ⟨y, hy⟩ := hx.exists_right_inv
+        have hy' : ((x : K) : PadicAlgCl p) * (y : PadicAlgCl p) = 1 :=
+          congrArg (fun z : OO p => (z : PadicAlgCl p)) hy
+        have h0 : (x : K) ≠ 0 := by
+          intro h0
+          rw [h0] at hy'
+          simp at hy'
+        have hinv : (x : K)⁻¹ ∈ integralClosure ℤ_[p] K := by
+          rw [mem_integralClosure_padicInt_iff, IntermediateField.coe_inv,
+            ← eq_inv_of_mul_eq_one_right hy']
+          have h := y.2
+          rw [Valuation.mem_valuationSubring_iff, ← NNReal.coe_le_coe] at h
+          exact h
+        exact IsUnit.of_mul_eq_one ⟨_, hinv⟩ (Subtype.ext (mul_inv_cancel₀ h0))
+      let y := spMap (integralClosureToPadicAlgClIntegers) ≫ y₀
+      have hy : y (cPt p) = z := by
+        refine (Scheme.Hom.comp_apply _ _ _).trans ((congrArg y₀ ?_).trans hy₀)
+        exact IsLocalRing.comap_closedPoint (integralClosureToPadicAlgClIntegers)
+      have hyU : Set.range (gPt p ≫ y) ⊆ j.opensRange := by
+        rintro _ ⟨x, rfl⟩
+        rw [← Category.assoc, Scheme.Hom.comp_apply]
+        have key : spMap (integralClosureToPadicAlgClIntegers) ((gPt p) x) =
+            genericPoint (Sp (integralClosure ℤ_[p] K)) := by
+          rw [genericPoint_eq_bot_of_affine]
+          apply PrimeSpectrum.ext
+          apply le_antisymm _ bot_le
+          intro a ha
+          have ha' : ((a : K) : PadicAlgCl p) ∈ (x : PrimeSpectrum (PadicAlgCl p)).asIdeal := ha
+          haveI := (x : PrimeSpectrum (PadicAlgCl p)).isPrime
+          rw [Ideal.eq_bot_of_prime (x : PrimeSpectrum (PadicAlgCl p)).asIdeal, Ideal.mem_bot] at ha'
+          exact Subtype.ext (Subtype.ext ha')
+        rw [Scheme.Hom.comp_apply, key]
+        exact hyU₀
+      obtain ⟨l, e⟩ : ∃ l, l ≫ j = gPt p ≫ y := ⟨_, IsOpenImmersion.lift_fac j (gPt p ≫ y) hyU⟩
+      have := hFH (f z) (hcl z hz) p (y ≫ f) l (y ≫ g)
+        ((Scheme.Hom.comp_apply _ _ _).trans (congrArg f hy))
+        (by rw [← reassoc_of% e, hjf]) (by rw [← reassoc_of% e, hjg]) (by simp [hfg])
+      exact ((Scheme.Hom.comp_apply y g _).trans (congrArg g hy)) ▸ this
+    have : LocallyQuasiFinite f := by
+      refine GlobalTheory.locallyQuasiFinite_of_finite_fibres_closedPoints f fun y hy ↦ ?_
+      refine GlobalTheory.finite_of_isClosed_of_finite_inter_closedPoints
+        ((hcl y hy).preimage f.continuous) ?_
+      refine ((GlobalTheory.finite_pullback_over_closedPoint π s t (f y) (hcl y hy) (hF _ (hcl y hy))).preimage
+        (graphClosure.ι s t U.ι φ hφ.symm).isClosedEmbedding.injective.injOn).subset ?_
+      rintro z ⟨hz, hz'⟩
+      have hz₁ : f z = f y := hz
+      have h₂ := key z hz'
+      refine ⟨?_, ?_⟩
+      · rw [← Scheme.Hom.comp_apply]; exact hz₁
+      · rw [← Scheme.Hom.comp_apply]
+        have : ∀ (x : X) (hx : IsClosed ({x} : Set X)), f z = x → g z ∈ F x hx := by
+          rintro _ _ rfl; exact h₂
+        exact this _ _ hz₁
+    have : IsIso f := isIso_of_isProper_of_quasiFinite_of_birational f (fun x ↦ (hX x).2) U ‹_›
+    have hG : Set.range (inv f ≫ g) ⊆ Set.range G.ι := by
+      rw [Scheme.Opens.range_ι]
+      rintro _ ⟨x, rfl⟩
+      rw [Scheme.Hom.comp_apply]
+      exact subset_of_isOpen_of_closedPoints isOpen_univ (g ⁻¹ᵁ G).isOpen
+        (fun z hz _ ↦ hFG _ _ (key z hz)) (Set.mem_univ _)
+    have e := IsOpenImmersion.lift_fac G.ι (inv f ≫ g) hG
+    have e' : U.ι ≫ inv f = j := by simp [hjf]
+    refine ⟨IsOpenImmersion.lift G.ι (inv f ≫ g) hG, ⟨?_, ?_⟩, fun Φ hΦ ↦ ?_⟩
+    · rw [e, reassoc_of% e', hjg]
+    · rw [reassoc_of% e, ← hfg, IsIso.inv_hom_id_assoc]
+    · rw [← cancel_mono G.ι, e]
+      refine ext_of_isDominant_of_isSeparated t ?_ U.ι ?_
+      · rw [Category.assoc, hΦ.2, Category.assoc, ← hfg, IsIso.inv_hom_id_assoc]
+      · rw [hΦ.1, reassoc_of% e', hjg]
   obtain ⟨Φ, ⟨hΦ, hΦ'⟩, -⟩ := existsUnique_extension_of_finite_specializations (C.GG ⊗ C.GG).left
     ((C.GG ⊗ C.GG).hom ≫ C.π) hN C.Z C.P.left (C.GG ⊗ C.GG).hom C.P.hom C.G φ.opensRange
     (φ.isoOpensRange.inv ≫ (μ[C.A]).left ≫ C.a ≫ C.G.ι) ⟨_, x₀, rfl⟩

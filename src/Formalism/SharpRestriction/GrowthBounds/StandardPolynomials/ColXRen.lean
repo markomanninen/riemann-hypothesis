@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsDef
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftSubstitutionCoeffDivisible
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsDef
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftSubstitutionCoeffDivisible
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,14 +62,15 @@ private theorem coeff_rename_mem_multiple_of_coeff {σ τ : Type} (φ : σ → �
   classical
   have hP : rename φ P = ∑ u ∈ P.support, monomial (u.mapDomain φ) (P.coeff u) := by
     conv_lhs => rw [P.as_sum]
-    simp only [map_sum, rename_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, rename_monomial]
   rw [hP]
   refine Finset.sum_induction _
     (fun Q : MvPolynomial τ (KK O) => ∀ m, ∃ c : O, Q.coeff m = algebraMap O (KK O) (a * c)) ?_ ?_ ?_
   · intro Q R hQ hR m
     obtain ⟨c1, h1⟩ := hQ m
     obtain ⟨c2, h2⟩ := hR m
-    exact ⟨c1 + c2, by rw [coeff_add, h1, h2, mul_add, map_add]⟩
+    exact ⟨c1 + c2, by rw [MvPolynomial.coeff_add, h1, h2, mul_add, map_add (f := _)]⟩
   · intro m
     exact ⟨0, by simp⟩
   · intro u _ m
@@ -128,7 +133,7 @@ theorem mem_Pol_rename {R : Type} [CommRing R] {ι ι' : Type} [Fintype ι] {k k
   · obtain ⟨i, rfl⟩ := hl
     have h1 : ∀ c, (Finsupp.mapDomain (renV e rfl) u) (e i, c) = u (i, c) := by
       intro c
-      have h2 := Finsupp.mapDomain_apply (renV_injective e he rfl) u (i, c)
+      have h2 := Finsupp.mapDomain_apply_of_injective (renV_injective e he rfl) u (i, c)
       simpa [renV] using h2
     simp only [h1]
     rw [Finset.sum_eq_single i (fun j _ hj => by rw [if_neg (fun h => hj (he h))]) (by simp), if_pos rfl]

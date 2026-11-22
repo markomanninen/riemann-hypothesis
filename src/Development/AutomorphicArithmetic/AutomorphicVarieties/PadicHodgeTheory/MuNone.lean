@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocRootsY
-import GroundTheory.LocalFields.KroneckerWeber
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
-import GroundTheory.LocalFields.LocalArtinCompletion
-import GroundTheory.LocalFields.PrincipalUnitsRank
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixingSubgroupEquivBicontinuous
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocRootsY
+public import GroundTheory.LocalFields.KroneckerWeber
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+public import GroundTheory.LocalFields.LocalArtinCompletion
+public import GroundTheory.LocalFields.PrincipalUnitsRank
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixingSubgroupEquivBicontinuous
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc UpperTheory.V.Loc Topology
 
@@ -13,7 +17,7 @@ private theorem mn_sep {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalG
   obtain ⟨g, rfl⟩ := QuotientGroup.mk_surjective h
   have hg : g ∉ (commutator G).topologicalClosure := fun hm => hh ((QuotientGroup.eq_one_iff g).2 hm)
   have hS : IsOpen {x : G | x * g ∉ ((commutator G).topologicalClosure : Set G)} :=
-    (Subgroup.isClosed_topologicalClosure _).isOpen_compl.preimage (continuous_mul_right g)
+    (Subgroup.isClosed_topologicalClosure _).isOpen_compl.preimage (continuous_mul_const g)
   have h1 : (1 : G) ∈ {x : G | x * g ∉ ((commutator G).topologicalClosure : Set G)} := by
     show 1 * g ∉ ((commutator G).topologicalClosure : Set G)
     rw [one_mul]
@@ -121,7 +125,7 @@ private theorem mn_cyc {l : ℕ} [Fact l.Prime] (σ : GQ l) {ζ : Om l} (h1 : ζ
   have hk' : PadicInt.toZModPow 1 x = 1 := by
     rw [← ZMod.natCast_zmod_val (PadicInt.toZModPow 1 x), hk, Nat.cast_one]
   have hmem : x - 1 ∈ RingHom.ker (PadicInt.toZModPow (p := l) 1) := by
-    rw [RingHom.mem_ker, map_sub, hk', map_one, sub_self]
+    rw [RingHom.mem_ker, RingHom.map_sub, hk', map_one, sub_self]
   rw [PadicInt.ker_toZModPow, pow_one, ← PadicInt.maximalIdeal_eq_span_p, ← PadicInt.ker_toZMod,
     RingHom.mem_ker, map_sub, map_one, sub_eq_zero] at hmem
   exact hmem

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Finset
 
 namespace GlobalTheory
@@ -19,7 +24,7 @@ theorem ringHom_sep_charZero (k : Type) [Field k] [CharZero k] (C : Type) [CommR
     have key : ∀ χ ∈ insert χ' S, χ ≠ χ₀ →
         ({n : ℕ | χ (c + n * d) = χ₀ (c + n * d)} : Set ℕ).Subsingleton := by
       intro χ hχ hne n hn m hm
-      simp only [Set.mem_setOf_eq, map_add, map_mul, map_natCast] at hn hm
+      simp only [Set.mem_setOf_eq, map_add (f := _), map_mul, map_natCast] at hn hm
       have hsub : ((n : k) - m) * (χ d - χ₀ d) = 0 := by linear_combination hn - hm
       rcases mul_eq_zero.1 hsub with h | h
       · exact_mod_cast sub_eq_zero.1 h

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFormalBiextMap
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalCompApplyEqMvPowerSeriesSubst
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.PderivSecondEvFirstPointEqZero
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.JetEqBilinearSeriesOfBiadditiveStatement
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesJetEqCalculus
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalGroupLogEndomorphismLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFormalBiextMap
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalCompApplyEqMvPowerSeriesSubst
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.PderivSecondEvFirstPointEqZero
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.JetEqBilinearSeriesOfBiadditiveStatement
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesJetEqCalculus
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalGroupLogEndomorphismLinear
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -69,16 +73,19 @@ theorem evalPoints_linear {m n : ℕ} {b : Fin m → Pt k n d} (hb : ∀ j, NoCo
     (u : Pt k m d) : evP b (lin A u) = lin A (evP b u) := by
   funext i
   simp only [evP, lin, ev]
-  rw [← coe_substAlgHom (hasSubst_of hb), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_substAlgHom (hasSubst_of hb), map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, coe_substAlgHom, subst_C]
 
 theorem ev_bilSer {m n : ℕ} {b : Fin m → Pt k n d} (hb : ∀ j, NoConst (b j)) (β : Matrix (Fin d) (Fin d) k)
     (u v : Pt k m d) : ev b (bilSer β u v) = bilSer β (evP b u) (evP b v) := by
   simp only [evP, bilSer, ev]
-  rw [← coe_substAlgHom (hasSubst_of hb), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_substAlgHom (hasSubst_of hb), map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, map_mul, coe_substAlgHom, subst_C]
 
@@ -128,7 +135,8 @@ theorem bilSer_swap {n : ℕ} (β : Matrix (Fin d) (Fin d) k) (u v : Pt k n d) :
 
 theorem bilSer_lin_right {n : ℕ} (β A : Matrix (Fin d) (Fin d) k) (u v : Pt k n d) :
     bilSer β u (lin A v) = bilSer (β * A) u v := by
-  simp only [bilSer, lin, Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [bilSer, lin, Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun l _ => by ring
@@ -151,7 +159,8 @@ theorem coeff_bilSer (β : Matrix (Fin d) (Fin d) k) (i j : Fin d) :
     · have := DFunLike.congr_fun h (1, j)
       by_contra hne
       simp [Finsupp.single_apply, Ne.symm hne] at this
-  simp only [bilSer, pt, map_sum, coeff_C_mul, X_def, monomial_mul_monomial, coeff_monomial, key]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [bilSer, pt, map_sum, coeff_C_mul, X_def, monomial_mul_monomial, coeff_monomial, key]
   rw [Finset.sum_eq_single i, Finset.sum_eq_single j]
   · simp
   · intro b _ hb; simp [Ne.symm hb]
@@ -186,14 +195,24 @@ theorem exists_biadd_jEq : ∀ (R : Type) [CommRing R] (d : ℕ) (O : Type) [Com
     (by rw [hlin, Matrix.det_one]; exact isUnit_one)
   replace hℓ : NoConst ℓ := hℓ
   replace he : NoConst e := he
-  have hF : NoConst (B.FK k) := G.const
-  have hα : ∀ a, NoConst (B.actK k a) := A.const
+  have hFK : G.F = B.FK k := by
+    funext i
+    rfl
+  have hAK (a : O) : A.act a = B.actK k a := by
+    funext i
+    rfl
+  have hF : NoConst (B.FK k) := by
+    simpa only [NoConst, hG, mapLaw, mapPt, FB.FK, FGLaw.mapF] using G.const
+  have hα : ∀ a, NoConst (B.actK k a) := by
+    simpa [hA, mapAct, mapPt, FB.actK, NoConst] using A.const
   have hp : ∀ {n : ℕ} (j : Fin n), NoConst (pt k d j) := nc_pt
   have hlog : ∀ {n : ℕ} {u v : Pt k n d}, NoConst u → NoConst v →
       comp1 ℓ (addOf (B.FK k) u v) = comp1 ℓ u + comp1 ℓ v := by
     intro n u v hu hv
     have h0 : comp1 ℓ (addOf (B.FK k) (pt k (n := 2) d 0) (pt k (n := 2) d 1)) =
-      comp1 ℓ (pt k (n := 2) d 0) + comp1 ℓ (pt k (n := 2) d 1) := hadd
+      comp1 ℓ (pt k (n := 2) d 0) + comp1 ℓ (pt k (n := 2) d 1) := by
+      rw [← hFK]
+      exact hadd
     have hb := nc2 hu hv
     have h1 := congrArg (evP ![u, v]) h0
     rw [evalPoints_add hb, evalPoints_comp hb ℓ (nc_addOf hF (hp 0) (hp 1)), evalPoints_formalGroupAdd hb _ (hp 0) (hp 1),
@@ -209,7 +228,7 @@ theorem exists_biadd_jEq : ∀ (R : Type) [CommRing R] (d : ℕ) (O : Type) [Com
       comp1 ℓ (comp1 (B.actK k a) u) = lin (dLin (B.actK k a)) (comp1 ℓ u) := by
     intro a n u hu
     have h0 : comp1 ℓ (B.actK k a) = lin (dLin (B.actK k a)) ℓ :=
-      funext (GlobalTheory.LogLinear.formalGroup_log_endomorphism_linear k d G ℓ (B.actK k a) hℓ hlin hadd (hα a) (A.hom a))
+      funext (GlobalTheory.LogLinear.formalGroup_log_endomorphism_linear k d G ℓ (B.actK k a) hℓ hlin hadd (hα a) (by rw [← hAK a]; exact A.hom a))
     rw [germComp1_germComp1_eq_substitute ℓ (hα a) hu, h0, evalPoints_linear (nc1 hu)]
     rfl
   obtain ⟨g₀, hg₀⟩ : ∃ g₀ : PS k 2 d, ∀ {n : ℕ} {u v : Pt k n d}, NoConst u → NoConst v →

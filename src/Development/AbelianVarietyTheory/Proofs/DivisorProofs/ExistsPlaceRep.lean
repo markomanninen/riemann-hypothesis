@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EnvRepAllEnvIncl
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsEnvelopingAlgHomUnitaryLieAlgebra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EnvRepAllEnvIncl
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsEnvelopingAlgHomUnitaryLieAlgebra
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ section Fields
 
 variable {T : Type} {n : ℕ}
 
-open Classical in
 
+open Classical in
 def matDer (τ : T) (X : Matrix (Fin n) (Fin n) ℂ) :
     Derivation ℂ (MvPolynomial (T × Fin n × Fin n) ℂ) (MvPolynomial (T × Fin n × Fin n) ℂ) :=
   MvPolynomial.mkDerivation ℂ fun p =>
@@ -53,11 +57,12 @@ theorem matDer_bracket (τ : T) (X Y : Matrix (Fin n) (Fin n) ℂ) :
   refine MvPolynomial.derivation_ext fun p => ?_
   rw [Derivation.commutator_apply, matDer_X, matDer_X, matDer_X]
   split_ifs with h
-  · simp only [map_sum, Derivation.leibniz, MvPolynomial.derivation_C, smul_zero, zero_add, matDer_X, if_true,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, Derivation.leibniz, MvPolynomial.derivation_C, smul_zero, zero_add, matDer_X, if_true,
       smul_eq_mul, Finset.sum_mul, Matrix.sub_apply, Matrix.mul_apply, map_sub, map_sum, MvPolynomial.C_mul,
       Finset.mul_sum, mul_sub, Finset.sum_sub_distrib, mul_zero, zero_add]
-    refine congrArg₂ (· - ·) ?_ ?_ <;> rw [Finset.sum_comm] <;>
-      exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
+      refine congrArg₂ (· - ·) ?_ ?_ <;> rw [Finset.sum_comm] <;>
+        exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
   · simp
 
 theorem matDer_comm {τ τ' : T} (h : τ ≠ τ') (X Y : Matrix (Fin n) (Fin n) ℂ) :
@@ -66,7 +71,8 @@ theorem matDer_comm {τ τ' : T} (h : τ ≠ τ') (X Y : Matrix (Fin n) (Fin n) 
   refine MvPolynomial.derivation_ext fun p => ?_
   rw [Derivation.commutator_apply, matDer_X, matDer_X, Derivation.zero_apply]
   by_cases h1 : p.1 = τ <;> by_cases h2 : p.1 = τ' <;>
-    simp [h1, h2, h, Ne.symm h, map_sum, Derivation.leibniz, MvPolynomial.derivation_C, matDer_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [h1, h2, h, Ne.symm h, map_sum, Derivation.leibniz, MvPolynomial.derivation_C, matDer_X]
 
 theorem matDer_commute {τ τ' : T} (h : τ ≠ τ') (X Y : Matrix (Fin n) (Fin n) ℂ) :
     Commute (matDer τ X : Module.End ℂ (MvPolynomial (T × Fin n × Fin n) ℂ)) (matDer τ' Y) := by
@@ -118,17 +124,17 @@ theorem placeRep_comm (V : HSp D) {τ τ' : D.what₂.Tau} (h : τ ≠ τ') (x :
     Commute (placeRep V τ (UniversalEnvelopingAlgebra.ι ℂ x)) (placeRep V τ' (UniversalEnvelopingAlgebra.ι ℂ y)) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => rw [map_add, map_add]; exact hx.add_left hx'
+  | add x x' hx hx' => rw [map_add (f := _), map_add (f := _)]; exact hx.add_left hx'
   | tmul c X =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y y' hy hy' => rw [map_add, map_add]; exact hy.add_right hy'
+    | add y y' hy hy' => rw [map_add (f := _), map_add (f := _)]; exact hy.add_right hy'
     | tmul c' Y =>
       rw [placeRep_tmul, placeRep_tmul]
       exact ((matDer_commute h X.1 Y.1).smul_left c).smul_right c'
 
-open Classical in
 
+open Classical in
 def polyLie (V : HSp D) : GlobalTheory.AutFinLit.LieC V →ₗ⁅ℂ⁆ Module.End ℂ (PolyE V) :=
   DirectSum.toLieAlgebra _ (fun τ => (placeRep V τ).toLieHom.comp (UniversalEnvelopingAlgebra.ι ℂ)) fun τ τ' h x y => by
     change placeRep V τ (UniversalEnvelopingAlgebra.ι ℂ x) * placeRep V τ' (UniversalEnvelopingAlgebra.ι ℂ y) -

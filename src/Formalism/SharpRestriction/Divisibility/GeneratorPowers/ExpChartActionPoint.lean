@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HasSubstActPS
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HasSubstActPS
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -82,7 +86,7 @@ theorem ptm_subst (C : ChartAt Xo c y) {n n' : ℕ} (P : Fin n → Fin C.d → M
   rw [GermD.homAt_comp, ExpGF.jetSubstP_eq_jetSubstPS m σ hσ,
     ExpGF.jetSubstPS_comp m (fun k => ((σ k : MvPolynomial _ S) : MvPowerSeries (Fin n × Fin C.d) S))
       (fun p : Fin n × Fin C.d => P p.1 p.2) (fun k => by
-        have h0 : MvPolynomial.coeff 0 (σ k) = 0 := hσ k
+        have h0 : AddMonoidAlgebra.coeff (σ k) 0 = 0 := hσ k
         rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPolynomial.coeff_coe, h0]) (fun p => hP p.1 p.2)]
 
 theorem jφ_eq (C : ChartAt Xo c y) (φ : Fin C.d → MvPowerSeries (Fin 1 × Fin (dL Dw)) S) (m : ℕ) :

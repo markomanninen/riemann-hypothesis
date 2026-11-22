@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.EllipticFunctions
-import GroundTheory.GlobalFields.ComplexMultiplication.EllipticConstant
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticFunctions
+public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticConstant
+
+@[expose] public section
 
 open Complex Filter Topology Set Polynomial
 open scoped PeriodPair
@@ -117,7 +121,7 @@ lemma even_of_meromorphicOrderAt_eq {f : ℂ → ℂ} (hf : MeromorphicAt f 0)
 lemma exists_eventuallyEq_const_of_analyticAt_off_lattice {g : ℂ → ℂ} (hg : Meromorphic g)
     (hp : IsPeriodic L g) (han : ∀ z ∉ L.lattice, AnalyticAt ℂ g z)
     (h0 : 0 ≤ meromorphicOrderAt g 0) : ∃ c : ℂ, g =ᶠ[codiscrete ℂ] fun _ ↦ c := by
-  refine exists_eventuallyEq_const_of_meromorphicOrderAt_nonneg L hg hp fun z ↦ ?_
+  refine exists_eventuallyEq_const_of_meromorphicOrderAt_nonneg (L := L) hg hp fun z ↦ ?_
   by_cases hz : z ∈ L.lattice
   · have := hp.meromorphicOrderAt_add hz 0
     rw [zero_add] at this

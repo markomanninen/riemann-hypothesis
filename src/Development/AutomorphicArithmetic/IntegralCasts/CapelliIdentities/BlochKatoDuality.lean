@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MapInvolutionEqSelf
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MeasurableMatrixInv
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InvolutionMapCompactFinite
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MapInvolutionEqSelf
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MeasurableMatrixInv
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InvolutionMapCompactFinite
+
+@[expose] public section
 
 open MeasureTheory Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2 in
 theorem UpperTheory.Reformulated.B.BlochKatoDuality.haarInvFromUnique :

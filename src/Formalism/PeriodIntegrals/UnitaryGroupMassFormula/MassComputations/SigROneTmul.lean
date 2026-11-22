@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.FrameStd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.FrameStd
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem hA_add_right (y z z' : VA I) : hA I y (z + z') = hA I y z + hA I y z' :=
   simp only [hA, Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
 
 theorem hA_add_left (y y' z : VA I) : hA I (y + y') z = hA I y z + hA I y' z := by
-  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hA_sub_right (y z z' : VA I) : hA I y (z - z') = hA I y z - hA I y z' := by
   simp only [hA, Formalism.UG.hform, Pi.sub_apply, mul_sub, Finset.sum_sub_distrib]
@@ -67,7 +71,8 @@ theorem hA_incl (v w : Fin I.n → I.E) :
     hA I (incl I v) (incl I w) =
       Formalism.UG.inclE (F := I.F) (Af I.F) (Formalism.UG.hform (starRingEnd I.E) I.J v w) := by
   unfold hA Formalism.UG.hform incl
-  simp only [Matrix.map_apply, sigR_inclE, map_sum, map_mul, starRingEnd_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, sigR_inclE, map_sum, map_mul, starRingEnd_apply]
 
 theorem inclE_int {e : I.E} (he : e ∈ (algebraMap (𝓞 I.E) I.E).range) :
     Formalism.UG.inclE (F := I.F) (Af I.F) e ∈ IntAf I.F I.E :=
@@ -150,21 +155,6 @@ theorem mL_le_Lf (m : ℕ) : mL I m ≤ I.Lf := by
   rintro _ ⟨x, hx, rfl⟩
   exact sm I (natCast_int I m) hx
 
-theorem mulVec_mL (m : ℕ) (M : Matrix (Fin I.n) (Fin I.n) (I.E ⊗[I.F] Af I.F))
-    (hM : ∀ v ∈ I.Lf, M *ᵥ v ∈ I.Lf) : ∀ v ∈ mL I m, M *ᵥ v ∈ mL I m := by
-  intro v hv
-  induction hv using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨y, hy, rfl⟩ := hx
-    rw [Matrix.mulVec_smul]
-    exact smul_mem_mL I m (hM y hy)
-  | zero => rw [Matrix.mulVec_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [Matrix.mulVec_add]; exact add_mem hx hy
-  | smul r x _ hx =>
-    show M *ᵥ ((r : I.E ⊗[I.F] Af I.F) • x) ∈ _
-    rw [Matrix.mulVec_smul]
-    exact sm I r.2 hx
-
 theorem hA_mL_left (m : ℕ) : ∀ v ∈ mL I m, ∀ w ∈ I.Lf, ZMod' I m (hA I v w) := by
   intro v hv
   induction hv using Submodule.span_induction with
@@ -207,7 +197,7 @@ theorem dvd_smul {P : Submodule (IntAf I.F I.E) (VA I)} {c d : ℕ} (h : c ∣ d
 theorem close {P : Submodule (IntAf I.F I.E) (VA I)} {m : ℕ} (hmP : mL I m ≤ P) {v w r : VA I}
     (hv : v ∈ I.Lf) (hvr : v = w + r) {c k : ℕ} (hc : Nat.Coprime c m) (hk : Nat.Coprime k m)
     (hw : (k : I.E ⊗[I.F] Af I.F) • w ∈ P) (hr : (c : I.E ⊗[I.F] Af I.F) • r ∈ mL I m) : v ∈ P := by
-  refine bezout I (hk.mul hc) hmP hv ?_
+  refine bezout I (Nat.coprime_mul_iff_left.mpr ⟨hk, hc⟩) hmP hv ?_
   rw [hvr, smul_add, Nat.cast_mul]
   refine add_mem ?_ ?_
   · rw [mul_comm, mul_smul]; exact sm I (natCast_int I c) hw

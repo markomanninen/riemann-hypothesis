@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueIsPointOfDualNumber
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermEqZeroOfThickenings
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsCommonField
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LinearIndependentOfIsExtension
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueIsPointOfDualNumber
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermEqZeroOfThickenings
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsCommonField
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LinearIndependentOfIsExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem exists_gtPt_through (hG : GlobalFnsSt) (gp : IsGrpPullback D'.P.A D.P.A 
     linear_combination (norm := abel) -e'
   · obtain ⟨J, hJ⟩ := ConstFam.exists_good' D.P.isLB z
     have e₁ := FormalPoint.val_s_add g₀ ρ (z := z) hJ (e y) (e y')
-    rw [← hb, ← hcP, ← hcP, th_pushPt hG gp ((isGen_iff w).1 hw) hJ hJ', ← map_add] at e₁
+    rw [← hb, ← hcP, ← hcP, th_pushPt hG gp ((isGen_iff w).1 hw) hJ hJ', ← map_add (f := _)] at e₁
     have v₁ := vt' y z J J' hJ hJ'
     have v₂ := vt' y' z J J' hJ hJ'
     have v₃ := vt' (y + y') z J J' hJ hJ'
@@ -134,10 +138,21 @@ theorem valR_iso_trans {w : LB.Iso M (M₀.pull φ)} (hw : w.IsGen) (x : Sp A �
     (h' : ⊤ ≤ x ⁻¹ᵁ (LB.div (M₀.pull φ) M).U (fun _ => j', k')) :
     valR x _ (w.s (fun _ => j, k)).val * valR x _ (M.g k k').val =
       valR (x ≫ φ) _ (M₀.g j j').val * valR x _ (w.s (fun _ => j', k')).val := by
+  have toStkA_valR {X : Scheme.{0}} (x : Sp A ⟶ X) (U : X.Opens) (z : Sp A) (ht : ⊤ ≤ x ⁻¹ᵁ U) (a : Γ(X, U)ˣ) :
+      toStkA z (valR x U a.val) = (gm x z U a).val := by
+    have hz : x z ∈ U := ht (show z ∈ (⊤ : (Sp A).Opens) from trivial)
+    have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom c) = c :=
+      fun c => congrArg (fun f => CommRingCat.Hom.hom f c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of A)))
+    rw [valR, dif_pos ht, gm, dif_pos hz]
+    show ((Sp A).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom
+        ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((x.appLE U ⊤ ht).hom a.val))) =
+      ((Sp A).presheaf.germ (x ⁻¹ᵁ U) z hz).hom ((x.app U).hom a.val)
+    rw [e1]
+    exact TopCat.Presheaf.germ_res_apply (Sp A).presheaf (homOfLE ht) z trivial ((x.app U).hom a.val)
   have m := (top_le_iff_cpt _ _).1 h
   have m' := (top_le_iff_cpt _ _).1 h'
   have e := (isGen_iff w).1 hw _ x (cpt A) j j' k k' (mem_pull.1 m.1) (mem_pull.1 m'.1) m.2 m'.2
-  apply toStkA_injective
+  apply (toStkA_injective (A := A))
   rw [map_mul, map_mul, toStkA_valR x _ _ h, toStkA_valR x _ _ h',
     toStkA_valR x (M.U k ⊓ M.U k') _ ((top_le_iff_cpt _ _).2 ⟨m.2, m'.2⟩),
     toStkA_valR (x ≫ φ) (M₀.U j ⊓ M₀.U j') _ ((top_le_iff_cpt _ _).2 ⟨mem_pull.1 m.1, mem_pull.1 m'.1⟩),
@@ -148,8 +163,19 @@ theorem valR_iso_trans {w : LB.Iso M (M₀.pull φ)} (hw : w.IsGen) (x : Sp A �
 
 theorem valR_g_self (hM : M.IsLB) (x : Sp A ⟶ B) {k : M.ι} (h : ⊤ ≤ x ⁻¹ᵁ M.U k) :
     valR x _ (M.g k k).val = 1 := by
+  have toStkA_valR {X : Scheme.{0}} (x : Sp A ⟶ X) (U : X.Opens) (z : Sp A) (ht : ⊤ ≤ x ⁻¹ᵁ U) (a : Γ(X, U)ˣ) :
+      toStkA z (valR x U a.val) = (gm x z U a).val := by
+    have hz : x z ∈ U := ht (show z ∈ (⊤ : (Sp A).Opens) from trivial)
+    have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom c) = c :=
+      fun c => congrArg (fun f => CommRingCat.Hom.hom f c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of A)))
+    rw [valR, dif_pos ht, gm, dif_pos hz]
+    show ((Sp A).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom
+        ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((x.appLE U ⊤ ht).hom a.val))) =
+      ((Sp A).presheaf.germ (x ⁻¹ᵁ U) z hz).hom ((x.app U).hom a.val)
+    rw [e1]
+    exact TopCat.Presheaf.germ_res_apply (Sp A).presheaf (homOfLE ht) z trivial ((x.app U).hom a.val)
   have m := (top_le_iff_cpt _ _).1 h
-  apply toStkA_injective
+  apply (toStkA_injective (A := A))
   rw [toStkA_valR x (M.U k ⊓ M.U k) _ ((top_le_iff_cpt _ _).2 ⟨m, m⟩), gm_self hM x _ m, map_one, Units.val_one]
 
 end Local

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry
 
 namespace GlobalTheory.CompanionTheory.DimChart

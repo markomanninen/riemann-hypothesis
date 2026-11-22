@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.MainNotions.S GlobalTheory.LoopV
 open scoped ENNReal Classical
 open MeasureTheory Set
@@ -9,8 +14,8 @@ namespace GlobalTheory.LoopV.Cover
 section Analysis
 variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
 
-omit [FiniteDimensional ℝ E] in
 
+omit [FiniteDimensional ℝ E] in
 theorem near_of_finset (Λ : Submodule ℤ E) (s : Finset E) (hs : ∀ x ∈ s, x ∈ Λ) (w : E)
     (hw : w ∈ Submodule.span ℝ (s : Set E)) : ∃ l ∈ Λ, ‖w - l‖ ≤ ∑ x ∈ s, ‖x‖ := by
   obtain ⟨f, -, rfl⟩ := Submodule.mem_span_finset.1 hw
@@ -93,7 +98,7 @@ theorem exists_transversal [MeasurableSpace E] [BorelSpace E] (D : Submodule ℤ
     exact ⟨x + y, D.add_mem hx hy, by rwa [← add_assoc]⟩
   refine ⟨⋃ n, B n \ ⋃ m < n, G m, ?_, ?_, ?_, ?_⟩
   · exact MeasurableSet.iUnion fun n => (hB n).measurableSet.diff
-      (isOpen_biUnion fun m _ => hG m).measurableSet
+      (isOpen_iUnion fun m => isOpen_iUnion fun _ : m < n => hG m).measurableSet
   · intro c hc w hw
     simp only [mem_iUnion, mem_sdiff, not_exists] at hc ⊢
     obtain ⟨n, h1, h2⟩ := hc

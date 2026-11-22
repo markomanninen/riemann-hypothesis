@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.FramesOKg2
-import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.FramesExistGOfFramesExist
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.FramesOKg2
+public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.FramesExistGOfFramesExist
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ def NormalFrameConditionsDiagonal (Pg : Finset (Pl D.host.E)) (βY : ∀ j, GL (
     (βW : ∀ i : Fin D.R.m, GL (Fin (Wc D i).rank) (EAf D)) : Prop :=
   NormalClausesG Pg βY βW ∧ XBasesG Pg βY
 
-variable (D) in
 
+variable (D) in
 def FramesExistDiagonal (Pg : Finset (Pl D.host.E)) : Prop :=
   ∃ (ΛY : ∀ j, Submodule (𝓞 D.host.E) (Fin (Yc D j).rank → D.host.E))
     (ΛX : Submodule (𝓞 D.host.E) (Fin D.sp.X'.rank → D.host.E))

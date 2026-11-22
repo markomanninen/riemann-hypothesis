@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsExtraAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsExtraAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -27,8 +32,6 @@ theorem locIdeal_eq_span {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fint
   ext z
   simp only [Set.mem_singleton_iff]
   exact ⟨fun h => Subtype.ext h, fun h => by rw [h]; rfl⟩
-
-def specZTwo : Ideal (MRing (PBlk 1)) := Ideal.span {C 2}
 
 end
 

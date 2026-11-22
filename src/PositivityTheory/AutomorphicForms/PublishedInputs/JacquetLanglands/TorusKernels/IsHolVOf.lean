@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,8 +117,8 @@ def DReps : Prop := ∀ (F : Type) [Field F] [NumberField F] (c : Pl F → ℕ) 
 def DGood : Prop := ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (c : Pl F → ℕ) (ω : HChar F) (χ : Hc c →* ℂˣ), IsChi c ω χ →
   ∀ (W : List (Pl F)) (n : ℕ) (a : Fin n → GF F), IsReps c W a → (mkDat c χ).Good a ∧ ((∃ w ∈ W, c w ≠ 0) → (mkDat c χ).Reg a)
 
-open Classical in
 
+open Classical in
 def nz {l : ℕ} [Fact l.Prime] {ι : Qbar l ≃+* ℂ} (D : LDat F ι) (k₀ : ℕ) (t : InfinitePlace F → ℕ) (w : Pl F) : ℂ :=
   (((normV w : ℝ) ^ ((k₀ : ℝ) / 2 - 1) : ℝ) : ℂ) * ∏ v, if D.pl v = w then (l : ℂ) ^ t v else 1
 
@@ -126,8 +130,8 @@ def GUnit : Prop := ∀ (F : Type) [Field F] [NumberField F] (l : ℕ) [Fact l.P
 def GMod : Prop := ∀ (F : Type) [Field F] [NumberField F] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (D : LDat F ι) (z : (Af F)ˣ),
   0 < absF z ∧ nu ι ((absF z : ℂ) * ∏ v, D.ea v (z : Af F)) = 1
 
-open Classical in
 
+open Classical in
 def GTerm : Prop := ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (D : LDat F ι)
   (c : Pl F → ℕ) (χ : Hc c →* ℂˣ), (∀ v, c (D.pl v) = 1) → ∀ k₀ : ℕ, 2 ≤ k₀ → ∀ (N : ℕ) (t : InfinitePlace F → ℕ), (∀ v, (l - 1) * l ^ N ∣ t v) →
   ∀ (W : List (Pl F)) (r : ℕ), 1 ≤ r → (∀ v, r ≤ W.count (D.pl v)) → ∀ (n : ℕ) (a : Fin n → GF F), IsReps c W a →
@@ -214,8 +218,8 @@ def TrCong : Prop :=
 def DAx : Prop := ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F], 2 ≤ Module.finrank ℚ F → ∀ (c : Pl F → ℕ), {w | c w ≠ 0}.Finite →
   ∀ χ : Hc c →* ℂˣ, (∃ m, 0 < m ∧ ∀ h, χ h ^ m = 1) → (mkDat c χ).Ax
 
-open Classical in
 
+open Classical in
 def HolWC : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F], 2 ≤ Module.finrank ℚ F → ∀ (l : ℕ) [Fact l.Prime], l ≠ 2 → ∀ (ι : Qbar l ≃+* ℂ) (D : LDat F ι)
     (k₀ : ℕ), 4 ≤ k₀ → ∀ c : Pl F → ℕ, {w | c w ≠ 0}.Finite → (∀ v, c (D.pl v) = 1) → (∃ u, c u ≠ 0 ∧ normV u = 2) →
@@ -224,8 +228,8 @@ def HolWC : Prop :=
       IsHolV (fun v => k₀ + 2 * (if v ∈ S then t else 0)) c ω φ' ∧ φ' ≠ 0 ∧ TR.IsCuspForm φ' ∧ (∀ w, hk k₀ w (c w) φ' = lam' w • φ') ∧
       ∀ w, nu ι ((∏ v, if D.pl v = w ∧ v ∈ S then (l : ℂ) ^ t else 1) * lam' w - lam w) < 1
 
-open Classical in
 
+open Classical in
 def PropMV : Prop :=
   ∀ (F Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime], l ≠ 2 →
     2 ≤ Module.finrank ℚ F → SplitL F l →

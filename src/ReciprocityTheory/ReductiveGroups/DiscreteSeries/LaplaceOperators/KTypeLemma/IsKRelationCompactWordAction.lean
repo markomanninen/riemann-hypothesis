@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.SACommSES
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.LowestKTypeVectorExists
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.SACommSES
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.LowestKTypeVectorExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,8 @@ theorem sC_mul (a b c d : Fin n) : sC V a b * sC V c d = if b = c then sC V a d 
 theorem compactWordAction_commute (hV : IsKStableSub ε E V) (a b c d : Fin n) :
     compactWordAction ε E V hV a b * sC V c d = sC V c d * compactWordAction ε E V hV a b := by
   refine Finsupp.lhom_ext fun p v => ?_
-  rw [Module.End.mul_apply, Module.End.mul_apply, sC_single, compactWordAction_single, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Module.End.mul_apply, Module.End.mul_apply, sC_single, compactWordAction_single, map_add (f := _), map_sum]
   by_cases h1 : p.2 = d <;> by_cases h : ε a = ε b <;>
     simp only [h1, h, if_true, if_false, dif_pos, dif_neg, not_false_eq_true, compactWordAction_single, map_smul,
       sC_single, map_zero, smul_zero, sum_const_zero, add_zero]
@@ -66,7 +71,7 @@ theorem sT_sC (a b : Fin n) (x : KS (n := n) V) :
     sT E V (sC V a b x) = Pi.single a (sT E V x b) := by
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add x y h h' => simp only [map_add, h, h', Pi.add_apply, Pi.single_add]
+  | add x y h h' => simp only [map_add (f := _), h, h', Pi.add_apply, Pi.single_add]
   | single p v =>
     obtain ⟨w, c⟩ := p
     rw [sC_single, sT_single]
@@ -78,7 +83,7 @@ theorem sθ_sC (EM : Fin n → Fin n → Module.End ℂ MM) (φ : MM) (ℓ : V �
     (x : KS (n := n) V) : sθ V EM φ ℓ (sC V a b x) = Pi.single a (sθ V EM φ ℓ x b) := by
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add x y h h' => simp only [map_add, h, h', Pi.add_apply, Pi.single_add]
+  | add x y h h' => simp only [map_add (f := _), h, h', Pi.add_apply, Pi.single_add]
   | single p v =>
     obtain ⟨w, c⟩ := p
     rw [sC_single, sθ_single]

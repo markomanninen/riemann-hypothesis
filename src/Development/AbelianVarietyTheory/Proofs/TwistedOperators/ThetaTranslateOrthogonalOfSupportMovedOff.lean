@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitian
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatHalfSpanModulatedTranslates
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeMultipleMemOpenLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeFinitelyGenerated
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisThetaLaws
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitian
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatHalfSpanModulatedTranslates
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeMultipleMemOpenLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeFinitelyGenerated
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisThetaLaws
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.LFun GlobalTheory.AdelicU GlobalTheory.PRep GlobalTheory.FinZeta GlobalTheory.AdelicScalar GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.LiftRows
 open Formalism.IndefR.Lev (levG levChi IsBaseFrame)
@@ -73,8 +78,8 @@ theorem nsmul_inj {m n : ℕ} {N : ℕ} (hN : 0 < N) {x y : Mx D m n} (h : N •
 def charSpan (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (b : AE D) : Submodule ℂ (WO S T → ℂ) :=
   Submodule.span ℂ {p | ∃ y : WO S T, IsHalf b y ∧ p = fun t => ψ (symplO S T t y)}
 
-open Classical in
 
+open Classical in
 theorem exists_char_of_wave {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {a : AE D} {Λ : AddSubgroup (WO S T)} (N : ℕ)
     {Ψ : WO S T → ℂ}
     (hΨ : Ψ ∈ Submodule.span ℂ {Ψ : WO S T → ℂ | ∃ x y : WO S T, IsHalf a x ∧ IsHalf (cA D a) y ∧
@@ -162,12 +167,12 @@ theorem pairing_charSpan {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT
     obtain ⟨a₁, b₁, c₁⟩ := h₁
     obtain ⟨a₂, b₂, c₂⟩ := h₂
     have e1 : (Tm fun t => (p₁ + p₂) t * Φ t) = (Tm fun t => p₁ t * Φ t) + Tm fun t => p₂ t * Φ t := by
-      rw [← map_add]; congr 1; funext t; simp [add_mul]
+      rw [← map_add (f := _)]; congr 1; funext t; simp [add_mul]
     have e2 : (Tm fun t => (starRingEnd ℂ) ((p₁ + p₂) (actO S T 1 g t)) * Φ t) =
         (Tm fun t => (starRingEnd ℂ) (p₁ (actO S T 1 g t)) * Φ t) +
           Tm fun t => (starRingEnd ℂ) (p₂ (actO S T 1 g t)) * Φ t := by
-      rw [← map_add]; congr 1; funext t; simp [add_mul]
-    rw [e1, e2, map_add]
+      rw [← map_add (f := _)]; congr 1; funext t; simp [add_mul]
+    rw [e1, e2, map_add (f := _)]
     refine ⟨GlobalTheory.WeilVacMove.isTheta_add a₁ a₂, GlobalTheory.WeilVacMove.isTheta_add b₁ b₂, ?_⟩
     rw [((laws a₁ hF).2.2.2.1 _ a₂).2, ((laws (hw.om_pres _ _ b₁) hf).2.2.2.1 _ (hw.om_pres _ _ b₂)).1, c₁, c₂]
   | smul c p _ h =>

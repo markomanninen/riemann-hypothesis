@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.IsBand
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.EigBand
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.Fourier
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.IsBand
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.EigBand
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.Fourier
+
+@[expose] public section
 
 open MeasureTheory Filter UpperTheory.Lit.Cusp
 open scoped Topology

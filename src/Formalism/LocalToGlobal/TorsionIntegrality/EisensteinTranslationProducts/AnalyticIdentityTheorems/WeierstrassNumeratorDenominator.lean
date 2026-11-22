@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EisensteinS2LimitFormula
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Taylor
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.TaylorWp
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EisensteinS2LimitFormula
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Taylor
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.TaylorWp
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -95,13 +99,13 @@ section CharZero
 variable [CharZero K]
 
 theorem second_order (g2 g3 : K) :
-    X ^ 2 * derivative K (derivative K (pOf g2 g3))
+    X ^ 2 * PowerSeries.derivative (PowerSeries.derivative (pOf g2 g3))
       = 12 * pOf g2 g3 + 6 * (X ^ 2 * pOf g2 g3 ^ 2) - C (g2 / 2) * X ^ 2 := by
   ext n
   have h12 : (12 : PowerSeries K) = C (12 : K) := (map_ofNat C 12).symm
   have h6 : (6 : PowerSeries K) = C (6 : K) := (map_ofNat C 6).symm
   rw [h12, h6]
-  simp only [map_add, map_sub, coeff_C_mul, coeff_X_pow_mul', coeff_X_pow]
+  simp only [map_add (f := _), map_sub, coeff_C_mul, coeff_X_pow_mul', coeff_X_pow]
   by_cases hn : 2 ≤ n
   · obtain ⟨j, rfl⟩ : ∃ j, n = j + 2 := ⟨n - 2, by omega⟩
     simp only [if_pos hn, Nat.add_sub_cancel, coeff_derivative]
@@ -142,26 +146,26 @@ section CharZero2
 variable [CharZero K]
 
 def defect (g2 g3 : K) (P : PowerSeries K) : PowerSeries K :=
-  (-2 + X ^ 3 * derivative K P) ^ 2 - 4 * (1 + X ^ 2 * P) ^ 3
+  (-2 + X ^ 3 * PowerSeries.derivative P) ^ 2 - 4 * (1 + X ^ 2 * P) ^ 3
     + C g2 * X ^ 4 * (1 + X ^ 2 * P) + C g3 * X ^ 6
 
 theorem deriv_defect (g2 g3 : K) (P : PowerSeries K) :
-    derivative K (defect g2 g3 P) =
-      2 * (-2 + X ^ 3 * derivative K P) * (3 * X ^ 2 * derivative K P
-          + X ^ 3 * derivative K (derivative K P))
-        - 12 * (1 + X ^ 2 * P) ^ 2 * (2 * X * P + X ^ 2 * derivative K P)
-        + C g2 * (4 * X ^ 3 * (1 + X ^ 2 * P) + X ^ 4 * (2 * X * P + X ^ 2 * derivative K P))
+    PowerSeries.derivative (defect g2 g3 P) =
+      2 * (-2 + X ^ 3 * PowerSeries.derivative P) * (3 * X ^ 2 * PowerSeries.derivative P
+          + X ^ 3 * PowerSeries.derivative (PowerSeries.derivative P))
+        - 12 * (1 + X ^ 2 * P) ^ 2 * (2 * X * P + X ^ 2 * PowerSeries.derivative P)
+        + C g2 * (4 * X ^ 3 * (1 + X ^ 2 * P) + X ^ 4 * (2 * X * P + X ^ 2 * PowerSeries.derivative P))
         + C g3 * (6 * X ^ 5) := by
   have h4 : (4 : PowerSeries K) = C (4 : K) := (map_ofNat C 4).symm
   have h2 : (2 : PowerSeries K) = C (2 : K) := (map_ofNat C 2).symm
   unfold defect
-  simp only [map_add, map_sub, map_neg, Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul,
+  simp only [map_add (f := _), map_sub, map_neg, Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul,
     derivative_X, derivative_C, h4, h2, Derivation.map_one_eq_zero]
   rw [← h4, ← h2]
   ring
 
 theorem euler_defect (g2 g3 : K) :
-    X * derivative K (defect g2 g3 (pOf g2 g3)) = 6 * defect g2 g3 (pOf g2 g3) := by
+    X * PowerSeries.derivative (defect g2 g3 (pOf g2 g3)) = 6 * defect g2 g3 (pOf g2 g3) := by
   have h2 : (2 : PowerSeries K) = C (2 : K) := (map_ofNat C 2).symm
   have hg : C g2 = 2 * C (g2 / 2) := by
     rw [h2, ← map_mul]; congr 1; ring
@@ -169,10 +173,10 @@ theorem euler_defect (g2 g3 : K) :
   rw [deriv_defect]
   unfold defect
   rw [hg]
-  linear_combination 2 * (-2 + X ^ 3 * derivative K (pOf g2 g3)) * X ^ 2 * h
+  linear_combination 2 * (-2 + X ^ 3 * PowerSeries.derivative (pOf g2 g3)) * X ^ 2 * h
 
 theorem coeff_X_mul_derivative (f : PowerSeries K) (n : ℕ) :
-    coeff n (X * derivative K f) = (n : K) * coeff n f := by
+    coeff n (X * PowerSeries.derivative f) = (n : K) * coeff n f := by
   rcases n with _ | n
   · simp
   · rw [coeff_succ_X_mul, coeff_derivative]; push_cast; ring
@@ -181,7 +185,7 @@ theorem pOf_split (g2 g3 : K) :
     pOf g2 g3 = C (g2 / 20) * X ^ 2 + C (g3 / 28) * X ^ 4
       + X ^ 6 * PowerSeries.mk fun n => coeff (n + 6) (pOf g2 g3) := by
   ext n
-  simp only [map_add, coeff_C_mul, coeff_X_pow_mul', coeff_X_pow, coeff_mk]
+  simp only [map_add (f := _), coeff_C_mul, coeff_X_pow_mul', coeff_X_pow, coeff_mk]
   rcases n with _ | _ | _ | _ | _ | _ | n
   · simp [coeff_pOf, cW_one]
   · simp [coeff_pOf]
@@ -203,19 +207,19 @@ theorem defect_split (g2 g3 : K) : ∃ S : PowerSeries K, defect g2 g3 (pOf g2 g
     rw [h28, ← map_mul]; congr 1; ring
   set c2 : PowerSeries K := C (g2 / 20) with hc2
   set c3 : PowerSeries K := C (g3 / 28) with hc3
-  have hd : derivative K (pOf g2 g3)
-      = X * (2 * c2 + 4 * c3 * X ^ 2 + 6 * X ^ 4 * T + X ^ 5 * derivative K T) := by
+  have hd : PowerSeries.derivative (pOf g2 g3)
+      = X * (2 * c2 + 4 * c3 * X ^ 2 + 6 * X ^ 4 * T + X ^ 5 * PowerSeries.derivative T) := by
     rw [hP, hc2, hc3]
-    simp only [map_add, Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul,
+    simp only [map_add (f := _), Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul,
       derivative_X, derivative_C]
     ring
-  refine ⟨-4 * (6 * T + X * derivative K T) - 12 * T
-    + (2 * c2 + 4 * c3 * X ^ 2 + 6 * X ^ 4 * T + X ^ 5 * derivative K T) ^ 2
+  refine ⟨-4 * (6 * T + X * PowerSeries.derivative T) - 12 * T
+    + (2 * c2 + 4 * c3 * X ^ 2 + 6 * X ^ 4 * T + X ^ 5 * PowerSeries.derivative T) ^ 2
     - 12 * (c2 + c3 * X ^ 2 + X ^ 4 * T) ^ 2 - 4 * X ^ 4 * (c2 + c3 * X ^ 2 + X ^ 4 * T) ^ 3
     + 20 * c2 * (c2 + c3 * X ^ 2 + X ^ 4 * T), ?_⟩
   unfold defect
   rw [hd, hg2, hg3]
-  generalize derivative K T = T' at *
+  generalize PowerSeries.derivative T = T' at *
   rw [hP]
   ring
 
@@ -246,7 +250,7 @@ theorem weierstrass_numerator_denominator : WpNumDen := by
   intro K _ _ g2 g3
   constructor
   · ext n
-    rw [map_add, coeff_X_pow_mul', coeff_one]
+    rw [map_add (f := _), coeff_X_pow_mul', coeff_one]
     rcases n with _ | _ | n
     · simp [wpNum]
     · simp [wpNum]

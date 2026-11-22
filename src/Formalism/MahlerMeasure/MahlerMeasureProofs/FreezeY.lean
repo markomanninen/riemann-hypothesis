@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.IsFrozenInv
+module
+
+public import Formalism.MahlerMeasure.IsFrozenInv
+
+@[expose] public section
 
 namespace Formalism.GM.FrozenVariableComponents
 
@@ -6,8 +10,6 @@ open MvPolynomial Finset
 
 section Parts
 variable {N r : ℕ}
-
-def ev (N : ℕ) (c : Fin r) : Fin (N + 1) × Fin r := (Fin.last N, c)
 
 noncomputable def llPart (m : Fin (N + 1) × Fin r →₀ ℕ) : Fin N × Fin r →₀ ℕ :=
   Finsupp.equivFunOnFinite.symm (fun x => m (Fin.castSucc x.1, x.2))
@@ -128,7 +130,7 @@ theorem coeffη_monomial (b : Fin r →₀ ℕ) (m : Fin (N + 1) × Fin r →₀
 
 private theorem coeff_coeffη_eq_coeff_comb (b : Fin r →₀ ℕ) (m : Fin N × Fin r →₀ ℕ)
     (F : MvPolynomial (Fin (N + 1) × Fin r) K) :
-    coeff m (coeffη b F) = coeff (comb b m) F := by
+    AddMonoidAlgebra.coeff (coeffη b F) m = AddMonoidAlgebra.coeff F (comb b m) := by
   refine MvPolynomial.induction_on' F (fun n a => ?_) (fun p q hp hq => ?_)
   · rw [coeffη_monomial]
     by_cases h : etaPart n = b
@@ -137,17 +139,17 @@ private theorem coeff_coeffη_eq_coeff_comb (b : Fin r →₀ ℕ) (m : Fin N ×
          fun h' => by rw [h', llPart_comb]⟩
       rw [if_pos h, coeff_monomial, coeff_monomial]
       exact if_congr key rfl rfl
-    · rw [if_neg h, coeff_zero, coeff_monomial, if_neg]
+    · rw [if_neg h, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, coeff_monomial, if_neg]
       rintro rfl
       exact h (etaPart_comb b m)
-  · simp only [map_add, coeff_add, hp, hq]
+  · simp only [map_add (f := _), MvPolynomial.coeff_add, hp, hq]
 
 theorem coeff_coeffη (m : Fin (N + 1) × Fin r →₀ ℕ) (F : MvPolynomial (Fin (N + 1) × Fin r) K) :
-    coeff (llPart m) (coeffη (etaPart m) F) = coeff m F := by
+    AddMonoidAlgebra.coeff (coeffη (etaPart m) F) (llPart m) = AddMonoidAlgebra.coeff F m := by
   rw [coeff_coeffη_eq_coeff_comb, comb_parts]
 
 theorem coeff_coeffη' (b : Fin r →₀ ℕ) (m : Fin N × Fin r →₀ ℕ) (F : MvPolynomial (Fin (N + 1) × Fin r) K) :
-    coeff m (coeffη b F) = coeff (comb b m) F :=
+    AddMonoidAlgebra.coeff (coeffη b F) m = AddMonoidAlgebra.coeff F (comb b m) :=
   coeff_coeffη_eq_coeff_comb b m F
 
 end Coeff
@@ -177,7 +179,7 @@ theorem coeffη_X_castSucc_mul (b : Fin r →₀ ℕ) (i : Fin N) (c : Fin r)
   · rw [X_mul_monomial', coeffη_monomial, coeffη_monomial, etaPart_add,
       etaPart_single_castSucc, add_zero, llPart_add, llPart_single_castSucc]
     split_ifs <;> simp [X_mul_monomial']
-  · simp only [mul_add, map_add, hp, hq]
+  · simp only [mul_add, map_add (f := _), hp, hq]
 
 theorem coeffη_pderiv_castSucc (b : Fin r →₀ ℕ) (i : Fin N) (c : Fin r)
     (G : MvPolynomial (Fin (N + 1) × Fin r) K) :
@@ -186,7 +188,7 @@ theorem coeffη_pderiv_castSucc (b : Fin r →₀ ℕ) (i : Fin N) (c : Fin r)
   · rw [pderiv_monomial, coeffη_monomial, coeffη_monomial, etaPart_tsub,
       etaPart_single_castSucc, tsub_zero, llPart_tsub, llPart_single_castSucc]
     split_ifs <;> simp [pderiv_monomial]
-  · simp only [map_add, hp, hq]
+  · simp only [map_add (f := _), hp, hq]
 
 theorem coeffη_Xlast_pow_mul_monomial (b : Fin r →₀ ℕ) (ρ : Fin r) (k : ℕ) (m : Fin (N + 1) × Fin r →₀ ℕ)
     (a : K) :
@@ -200,7 +202,7 @@ theorem coeffη_shift (b : Fin r →₀ ℕ) (ρ : Fin r) (k : ℕ) (G : MvPolyn
   refine MvPolynomial.induction_on' G (fun n a => ?_) (fun p q hp hq => ?_)
   · rw [coeffη_Xlast_pow_mul_monomial, coeffη_monomial]
     simp only [add_left_inj]
-  · simp only [mul_add, map_add, hp, hq]
+  · simp only [mul_add, map_add (f := _), hp, hq]
 
 theorem coeffη_shift_zero (b : Fin r →₀ ℕ) (ρ : Fin r) (k : ℕ) (hb : ¬ Finsupp.single ρ k ≤ b)
     (G : MvPolynomial (Fin (N + 1) × Fin r) K) :
@@ -209,7 +211,7 @@ theorem coeffη_shift_zero (b : Fin r →₀ ℕ) (ρ : Fin r) (k : ℕ) (hb : �
   · rw [coeffη_Xlast_pow_mul_monomial, if_neg]
     intro h
     exact hb (by rw [← h]; exact le_add_self)
-  · simp only [mul_add, map_add, hp, hq, add_zero]
+  · simp only [mul_add, map_add (f := _), hp, hq, add_zero]
 
 theorem coeffη_pderiv_last (b : Fin r →₀ ℕ) (c : Fin r) (G : MvPolynomial (Fin (N + 1) × Fin r) K) :
     coeffη b (pderiv (Fin.last N, c) G) = ((b c + 1 : ℕ) : K) • coeffη (b + Finsupp.single c 1) G := by
@@ -233,7 +235,7 @@ theorem coeffη_pderiv_last (b : Fin r →₀ ℕ) (c : Fin r) (G : MvPolynomial
             omega
           rw [← h2, tsub_add_cancel_of_le hle]
       · rfl
-  · simp only [map_add, smul_add, hp, hq]
+  · simp only [map_add (f := _), smul_add, hp, hq]
 
 end Coeff2
 
@@ -271,7 +273,8 @@ theorem snoc_deg_last (LL : Letters N) (n : ℕ) : (LL.snoc n).deg (Fin.last N) 
 theorem coeffη_glAct (LL : Letters N) (n j : ℕ) (hj : j ≤ N) (c d : Fin r) (b : Fin r →₀ ℕ)
     (F : MvPolynomial (Fin (N + 1) × Fin r) ℚ_[p]) :
     coeffη b (glAct p (LL.snoc n) j c d F) = glAct p LL j c d (coeffη b F) := by
-  rw [glAct_apply, glAct_apply, Fin.sum_univ_castSucc, map_add, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [glAct_apply, glAct_apply, Fin.sum_univ_castSucc, map_add (f := _), map_sum,
     if_neg (show ¬ ((Fin.last N : ℕ) < j) by rw [Fin.val_last]; omega), map_zero, add_zero]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   simp only [Fin.coe_castSucc, snoc_vec_castSucc]
@@ -296,7 +299,9 @@ private theorem map_mem_sSup_of_forall_mapsTo {R V : Type*} [Semiring R] [AddCom
 theorem ycond_stable (LL : Letters N) (j : ℕ) (M : WithTop ℤ) : GlStable p LL j (YCond p (r := r) LL j M) := by
   intro c d x hx
   unfold Formalism.GM.M.YCond at hx ⊢
-  exact map_mem_sSup_of_forall_mapsTo (Formalism.GM.M.glAct p LL j c d) _ (fun T hT => hT.2 c d) x hx
+  exact map_mem_sSup_of_forall_mapsTo (Formalism.GM.M.glAct p LL j c d)
+    {S | S ≤ MvPolynomial.restrictSupport ℚ_[p] {m | ((wt LL j 0 m : ℤ) : WithTop ℤ) ≤ M} ∧
+      GlStable p LL j S} (fun T hT => hT.2 c d) x hx
 
 theorem ycond_le (LL : Letters N) (j : ℕ) (M : WithTop ℤ) :
     YCond p (r := r) LL j M ≤ MvPolynomial.restrictSupport ℚ_[p]
@@ -389,9 +394,10 @@ variable {K : Type*} [CommRing K] {σ : Type*}
 
 theorem X_mul_pderiv_eq_sum [DecidableEq σ] (a b : σ) (F : MvPolynomial σ K) :
     X a * pderiv b F = ∑ m0 ∈ F.support,
-      monomial (m0 - Finsupp.single b 1 + Finsupp.single a 1) (coeff m0 F * m0 b) := by
+      monomial (m0 - Finsupp.single b 1 + Finsupp.single a 1) (AddMonoidAlgebra.coeff F m0 * m0 b) := by
   conv_lhs => rw [F.as_sum]
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl (fun m0 _ => ?_)
   rw [pderiv_monomial, X_mul_monomial']
 
@@ -425,7 +431,7 @@ theorem pderiv_comm (a b : σ) (F : MvPolynomial σ K) :
       rw [Finsupp.tsub_apply, Finsupp.tsub_apply, Finsupp.single_apply, Finsupp.single_apply, if_neg hab,
         if_neg (Ne.symm hab), tsub_zero, tsub_zero]
       ring
-  · simp only [map_add, hp, hq]
+  · simp only [map_add (f := _), hp, hq]
 
 private theorem mvPolynomial_pderiv_X_eq_ite [DecidableEq σ] (x y : σ) :
     pderiv x (X y : MvPolynomial σ K) = if x = y then 1 else 0 := by
@@ -456,7 +462,7 @@ private theorem degree_add_single_one_eq (s : σ →₀ ℕ) (x y : σ) :
     (s + Finsupp.single x 1).degree = (s + Finsupp.single y 1).degree := by
   first
   | simp [Finsupp.degree_add, Finsupp.degree_single]
-  | simp [map_add]
+  | simp [map_add (f := _)]
 
 theorem op_hc (x y : σ) (t : ℕ) (F : MvPolynomial σ K) :
     homogeneousComponent t (X x * pderiv y F) = X x * pderiv y (homogeneousComponent t F) := by
@@ -478,7 +484,7 @@ theorem op_hc (x y : σ) (t : ℕ) (F : MvPolynomial σ K) :
       split_ifs
       · rw [pderiv_monomial, add_tsub_cancel_right, X_mul_monomial']
       · simp
-  · simp only [map_add, mul_add, hp, hq]
+  · simp only [map_add (f := _), mul_add, hp, hq]
 
 end Ops
 
@@ -526,7 +532,8 @@ theorem rest_comm (LL : Letters N) (j : ℕ) (c d c' d' : Fin r) (F : MvPolynomi
     restAct p LL j c d (glAct p LL j c' d' F) = glAct p LL j c' d' (restAct p LL j c d F) := by
   rw [glAct_eq_top]
   unfold restAct
-  simp only [LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
   split_ifs <;> (try simp only [LinearMap.zero_apply, map_zero]) <;>
@@ -586,9 +593,10 @@ theorem ycond_hc (LL : Letters N) (j : ℕ) (M : WithTop ℤ) (t : ℕ)
     (F : MvPolynomial (Fin N × Fin r) ℚ_[p]) (hF : F ∈ YCond p LL j M) :
     homogeneousComponent t F ∈ YCond p LL j M := by
   refine ycond_map p LL LL j j M (homogeneousComponent t) (fun c d G => ?_) (fun G m hm => ?_) F hF
-  · rw [glAct_apply, glAct_apply, map_sum]
-    refine Finset.sum_congr rfl (fun i _ => ?_)
-    split_ifs <;> simp [op_hc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [glAct_apply, glAct_apply, map_sum]
+      refine Finset.sum_congr rfl (fun i _ => ?_)
+      split_ifs <;> simp [op_hc]
   · have h := mem_support_iff.1 hm
     rw [coeff_homogeneousComponent] at h
     split_ifs at h
@@ -653,7 +661,8 @@ theorem diff_gen (LL : Letters N) (ρ c : Fin r) (hc : c ≠ ρ) (x : Fin N × F
   split_ifs <;> (try (exfalso; exact hc ((‹d = c›).symm.trans ‹d = ρ›))) <;>
     (try (have hcd : c ≠ d := Ne.symm ‹¬d = c›)) <;>
     (try (have hρd : ρ ≠ d := Ne.symm ‹¬d = ρ›)) <;>
-    simp only [map_sub, map_sum, map_neg, map_zero, mvPolynomial_pderiv_X_mul_X_eq_ite] <;>
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_neg, map_zero, mvPolynomial_pderiv_X_mul_X_eq_ite] <;>
     simp [*, n1, Ne.symm hc, freezeSub_apply, Finset.sum_ite_eq, Finset.sum_ite_eq'] <;> ring
 
 theorem diff_id (LL : Letters N) (ρ c : Fin r) (hc : c ≠ ρ) (f : MvPolynomial (Fin N × Fin r) ℚ_[p]) :
@@ -664,7 +673,7 @@ theorem diff_id (LL : Letters N) (ρ c : Fin r) (hc : c ≠ ρ) (f : MvPolynomia
     rw [glAct_full_C, map_zero, aeval_C]
     simp
   · rename_i f g hf hg
-    simp only [map_add, mul_add, hf, hg]
+    simp only [map_add (f := _), mul_add, hf, hg]
   · rename_i f x hf
     have e1 := diff_gen p LL ρ c hc x
     rw [map_mul (aeval (Formalism.GM.M.freezeSub p LL ρ)) f (X x), Derivation.leibniz, smul_eq_mul, smul_eq_mul,
@@ -729,7 +738,7 @@ theorem coeffη_kill (ρ : Fin r) (t : ℕ) (G : MvPolynomial (Fin (N + 1) × Fi
       intro c hc
       have := DFunLike.congr_fun hm c
       simpa [Finsupp.single_apply, Ne.symm hc] using this
-  · simp only [map_add, hf, hg]
+  · simp only [map_add (f := _), hf, hg]
 
 theorem kill_freezeSub (LL : Letters N) (ρ : Fin r) :
     (kill p ρ).comp (aeval (freezeSub p LL ρ)) =
@@ -770,7 +779,7 @@ private theorem llPart_mapDomain_emb (m : Fin N × Fin r →₀ ℕ) :
     llPart (Finsupp.mapDomain emb m) = m := by
   ext ⟨i, c⟩
   rw [llPart_apply]
-  exact Finsupp.mapDomain_apply emb_inj m (i, c)
+  exact Finsupp.mapDomain_apply_of_injective emb_inj m (i, c)
 
 private theorem etaPart_mapDomain_emb (m : Fin N × Fin r →₀ ℕ) :
     etaPart (Finsupp.mapDomain emb m) = 0 := by
@@ -792,7 +801,7 @@ theorem coeffη_base (LL : Letters N) (ρ : Fin r) (t : ℕ) (f : MvPolynomial (
     have key : (Finsupp.single ρ m.degree = Finsupp.single ρ t) ↔ t = m.degree :=
       ⟨fun h' => (Finsupp.single_injective ρ h').symm, fun h' => by rw [h']⟩
     exact if_congr key rfl rfl
-  · simp only [map_add, hf, hg]
+  · simp only [map_add (f := _), hf, hg]
 
 variable [NeZero r]
 
@@ -905,11 +914,12 @@ theorem hom_aeval {σ τ : Type*} (w : τ → ℕ) (v : σ → ℕ) (g : σ → 
     (hg : ∀ x, IsWeightedHomogeneous w (g x) (v x)) (f : MvPolynomial σ K) (d : ℕ)
     (hf : IsWeightedHomogeneous v f d) : IsWeightedHomogeneous w (aeval g f) d := by
   classical
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine isWeightedHomogeneous_finset_sum _ _ (fun m hm => ?_)
-  show IsWeightedHomogeneous w (aeval g (monomial m (coeff m f))) d
+  show IsWeightedHomogeneous w (aeval g (monomial m (AddMonoidAlgebra.coeff f m))) d
   have hmd : Finsupp.weight v m = d := hf (mem_support_iff.1 hm)
-  have h1 := (isWeightedHomogeneous_C w (coeff m f)).mul
+  have h1 := (isWeightedHomogeneous_C w (AddMonoidAlgebra.coeff f m)).mul
     (isWeightedHomogeneous_finset_prod w m.support (fun x => g x ^ m x) (fun x => m x * v x) (fun x _ => isWeightedHomogeneous_pow w (g x) (v x) (hg x) (m x)))
   have e : 0 + ∑ x ∈ m.support, m x * v x = d := by
     first
@@ -935,7 +945,7 @@ private theorem isWeightedHomogeneous_sub {τ : Type*} {w : τ → ℕ} {φ ψ :
     IsWeightedHomogeneous w (φ - ψ) n := by
   intro d hd
   rw [coeff_sub] at hd
-  by_cases h1 : coeff d φ = 0
+  by_cases h1 : AddMonoidAlgebra.coeff φ d = 0
   · rw [h1, zero_sub, neg_ne_zero] at hd
     exact hψ hd
   · exact hφ h1

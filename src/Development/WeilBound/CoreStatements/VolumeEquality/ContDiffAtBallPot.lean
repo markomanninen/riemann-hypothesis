@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,11 +22,10 @@ theorem hasSum_sheets {X M : Type*} [AddCommMonoid M] [TopologicalSpace M] [Cont
     intro k
     by_cases hk : t ∈ FF k
     · exact Set.finite_of_encard_eq_coe (ht k hk)
-    · convert Set.finite_empty
-      ext m
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
-      rintro rfl hm
-      exact hk (hB m hm)
+    · apply Set.Finite.subset Set.finite_empty
+      intro m hm
+      simp only [Set.mem_empty_iff_false]
+      exact hk (hm.1 ▸ hB m hm.2)
   have hS : {m | t ∈ B m}.Finite := by
     have hU : {m | t ∈ B m} = ⋃ k, {m | pc m = k ∧ t ∈ B m} := by
       ext m
@@ -81,9 +84,8 @@ theorem sum_sheets {X : Type*} [MeasurableSpace X] (μ : Measure X) {np : ℕ}
     intro m
     rw [← integral_norm_eq_lintegral_enorm (hFint m).aestronglyMeasurable, ← integral_indicator (hBm m)]
     congr 1
-    funext t
-    simp only [F, Set.indicator_apply]
-    split_ifs <;> simp [Real.norm_eq_abs]
+    ext t
+    by_cases ht : t ∈ B m <;> simp [F, ht, Real.norm_eq_abs]
   have hae : ∀ᵐ t ∂μ, ∀ k, t ∈ FF k → {m | pc m = k ∧ t ∈ B m}.encard = d k := ae_all_iff.mpr hc
   have hmeas : ∀ k, AEMeasurable (fun t => (d k : ℝ≥0∞) * (FF k).indicator (fun x => ‖f k x‖ₑ) t) μ := by
     intro k
@@ -98,10 +100,9 @@ theorem sum_sheets {X : Type*} [MeasurableSpace X] (μ : Measure X) {np : ℕ}
       simp only [nsmul_eq_mul] at h
       rw [← h.tsum_eq]
       congr 1
-      funext m
-      simp only [F, Set.indicator_apply]
-      split_ifs <;> simp
-    rw [lintegral_congr_ae hae1, lintegral_finset_sum' _ (fun k _ => hmeas k)]
+      ext m
+      by_cases hm : t ∈ B m <;> simp [F, hm]
+    rw [lintegral_congr_ae hae1, lintegral_finsetSum' _ (fun k _ => hmeas k)]
     apply Finset.sum_congr rfl
     intro k _
     rw [lintegral_const_mul' _ _ (ENNReal.natCast_ne_top _), lintegral_indicator (hF k)]
@@ -119,7 +120,7 @@ theorem sum_sheets {X : Type*} [MeasurableSpace X] (μ : Measure X) {np : ℕ}
       have h := (hasSum_sheets FF pc B d hB f t ht).tsum_eq
       simpa only [nsmul_eq_mul] using h
     rw [integral_congr_ae hae2,
-      integral_finset_sum _ (fun k _ => ((hf k).integrable_indicator (hF k)).const_mul _)]
+      integral_finsetSum _ (fun k _ => ((hf k).integrable_indicator (hF k)).const_mul _)]
     apply Finset.sum_congr rfl
     intro k _
     rw [integral_const_mul, integral_indicator (hF k)]
@@ -136,8 +137,8 @@ theorem contDiff_ballDet (q : Ψ × Fin j × Fin j' ≃ Fin n) (τ : Ψ) :
     apply ContDiff.sum
     intro c _
     apply ContDiff.mul
-    · exact (Complex.conjCLE.contDiff).comp (contDiff_apply ℝ ℂ _)
-    · exact contDiff_apply ℝ ℂ _
+    · exact (Complex.conjCLE.contDiff).comp (contDiff_apply ℝ (fun _ => ℂ) _)
+    · exact contDiff_apply ℝ (fun _ => ℂ) _
   simp only [Matrix.det_apply]
   apply ContDiff.sum
   intro σ _

@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.PoincareLelong
-import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.SheetDensityEqSetSheetDensity
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxPosDens
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxSimple
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChartDensityIntegrable
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsPosPartLocal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.PoincareLelong
+public import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.SheetDensityEqSetSheetDensity
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxPosDens
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxSimple
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChartDensityIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsPosPartLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -81,7 +86,7 @@ theorem setSheetDensity_eq {S : Set ((Σ k, ι k) → ℂ)} (hS0 : BlockNonzero 
   have hex : ∃ γ', IsSetSheet S Ψ y w γ' := ⟨γ, hsh⟩
   have han : AnalyticOnNhd ℂ γ U := analyticOnNhd_of_diffOn hU fun y hy => (hγ y hy).1
   unfold setSheetDensity
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hc := hex.choose_spec
   set γc := hex.choose
   have hcont : ContinuousAt (fun y' => (y', segre (γc y'))) y :=
@@ -389,7 +394,7 @@ theorem cxPosPart_local : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, F
   intro K _ ι _ Q e Ψ Ψ' L g z hQ _ _ hL _ hg _ hs hs'
   classical
   obtain ⟨k0⟩ := hQ.1
-  exact posPart_local_set (fun _ hz => hz.1)
+  exact posPart_local_set (S := conePts Q) (fun _ hz => hz.1)
     (fun c hc z' hz' => GlobalTheory.CompanionTheory.Ar.Pub.CxChart.FibSum.bsmul_mem_conePts hQ.2.1.2.1 hc hz') k0 hL hg hs hs'
 
 end GlobalTheory.CompanionTheory.Ar.Pub.CxPosLocal

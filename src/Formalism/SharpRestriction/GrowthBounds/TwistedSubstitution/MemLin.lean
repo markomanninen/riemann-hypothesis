@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.Proposition5Gram
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationBoundDetPowerFactor
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MulLaurentSup
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivativeValuationBounds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.Proposition5Gram
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationBoundDetPowerFactor
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MulLaurentSup
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivativeValuationBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem sumFilt_add {σ R M : Type*} [CommSemiring R] [AddCommMonoid M] (P : (σ
     sumFilt_sub P g F (F.support ∪ G.support) Finset.subset_union_left,
     sumFilt_sub P g G (F.support ∪ G.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun mo _ => ?_
-  rw [MvPolynomial.coeff_add, map_add]
+  rw [MvPolynomial.coeff_add, map_add (f := _)]
 
 theorem sumFilt_smul {σ R S M : Type*} [CommSemiring R] [Semiring S] [Module S R] [AddCommMonoid M] [Module S M]
     (P : (σ →₀ ℕ) → Prop) [DecidablePred P] (g : (σ →₀ ℕ) → R →ₗ[S] M) (c : S) (F : MvPolynomial σ R) :
@@ -108,7 +112,7 @@ theorem sumSupp_add {σ R M : Type*} [CommSemiring R] [AddCommMonoid M] (g : (σ
   rw [key _ MvPolynomial.support_add, key F Finset.subset_union_left, key G Finset.subset_union_right,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun mo _ => ?_
-  rw [MvPolynomial.coeff_add, map_add]
+  rw [MvPolynomial.coeff_add, map_add (f := _)]
 
 theorem sumSupp_smul {σ R S M : Type*} [CommSemiring R] [Semiring S] [Module S R] [AddCommMonoid M] [Module S M]
     (g : (σ →₀ ℕ) → R →ₗ[S] M) (c : S) (F : MvPolynomial σ R) :
@@ -121,23 +125,23 @@ theorem sumSupp_smul {σ R S M : Type*} [CommSemiring R] [Semiring S] [Module S 
 
 def mono2 {σ τ : Type} (a : σ →₀ ℕ) (b : τ →₀ ℕ) : Kf →ₗ[Kf] MvPolynomial σ (MvPolynomial τ Kf) where
   toFun x := monomial a (monomial b x)
-  map_add' x y := by simp only [map_add]
+  map_add' x y := by simp only [map_add (f := _)]
   map_smul' c x := by simp only [MvPolynomial.smul_monomial, RingHom.id_apply]
 
 def monoE {σ τ : Type} (e : Module.End Kf (MvPolynomial τ Kf)) (a : σ →₀ ℕ) :
     MvPolynomial τ Kf →ₗ[Kf] MvPolynomial σ (MvPolynomial τ Kf) where
   toFun q := monomial a (e q)
-  map_add' x y := by simp only [map_add]
+  map_add' x y := by simp only [map_add (f := _)]
   map_smul' c x := by simp only [map_smul, MvPolynomial.smul_monomial, RingHom.id_apply]
 
 def monoC {σ τ : Type} (nu : τ →₀ ℕ) (a : σ →₀ ℕ) : MvPolynomial τ Kf →ₗ[Kf] MvPolynomial σ Kf where
   toFun q := monomial a (q.coeff nu)
-  map_add' x y := by simp only [MvPolynomial.coeff_add, map_add]
+  map_add' x y := by simp only [MvPolynomial.coeff_add, map_add (f := _)]
   map_smul' c x := by simp only [MvPolynomial.coeff_smul, MvPolynomial.smul_monomial, RingHom.id_apply]
 
 def cMul {σ : Type} (Q : MvPolynomial σ Kf) : Kf →ₗ[Kf] MvPolynomial σ Kf where
   toFun x := C x * Q
-  map_add' x y := by simp only [map_add, add_mul]
+  map_add' x y := by simp only [map_add (f := _), add_mul]
   map_smul' c x := by simp only [MvPolynomial.smul_eq_C_mul, smul_eq_mul, C_mul, mul_assoc, RingHom.id_apply]
 
 theorem oneT_add {σ τ : Type} (e : Module.End Kf (MvPolynomial τ Kf)) (A B : MvPolynomial σ (MvPolynomial τ Kf)) :

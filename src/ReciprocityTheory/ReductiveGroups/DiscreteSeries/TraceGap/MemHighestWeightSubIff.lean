@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.GsBasisPhys
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.BlockAnti
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.GsBasisPhys
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.BlockAnti
+
+@[expose] public section
 
 noncomputable section
 

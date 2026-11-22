@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalAxiomDictionary
-import GroundTheory.LocalFields.HerbrandLocal
-import GroundTheory.LocalFields.MaximalUnramified
-import GroundTheory.LocalFields.SeparableClosure
-import GroundTheory.LocalFields.SeparableClosureValuation
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalAxiomDictionary
+public import GroundTheory.LocalFields.HerbrandLocal
+public import GroundTheory.LocalFields.MaximalUnramified
+public import GroundTheory.LocalFields.SeparableClosure
+public import GroundTheory.LocalFields.SeparableClosureValuation
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -25,8 +29,8 @@ theorem toAdd_ordUnitsHom (x : Kˣ) :
     (ordUnitsHom K x).toAdd = ((ord (x : K) : ℤ) : ℤ̂) :=
   rfl
 
-variable {K} in
 
+variable {K} in
 theorem exists_ordUnitsHom_eq (n : ℤ) :
     ∃ x : Kˣ, ordUnitsHom K x = Multiplicative.ofAdd (n : ℤ̂) := by
   obtain ⟨x, hx, h⟩ := exists_ord_eq K n
@@ -62,7 +66,7 @@ theorem range_localValuation_comp_norm_of_eq (H : Subgroup (Ω ≃ₐ[K] Ω))
   have hsc : IsSepClosed Ω := IsSepClosure.sep_closed K
   rw [inertiaDegree_unramifiedDegree_fixingSubgroup]
   have key : ∀ u : Lˣ, ordUnitsHom K (normUnits K L u) =
-      Multiplicative.ofAdd (((residueDegree K L : ℤ) * ord (u : L) : ℤ) : ℤ̂) := fun u => by
+      Multiplicative.ofAdd (((((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) : ℤ) * ord (u : L) : ℤ) : ℤ̂) := fun u => by
     apply Multiplicative.toAdd.injective
     rw [toAdd_ordUnitsHom, coe_normUnits, ord_norm, toAdd_ofAdd]
   ext z
@@ -144,8 +148,8 @@ theorem natCard_tate_of_isCyclic (K' L' : Subgroup (Ω ≃ₐ[K] Ω)) [(L'.subgr
       IsGalois.card_aut_eq_finrank]
   · rw [T.natCard_tateNegOne, natCard_tateNegOne_units]
 
-variable (K Ω) in
 
+variable (K Ω) in
 theorem classFieldAxiom_units : ClassFieldAxiom (Ω ≃ₐ[K] Ω) Ωˣ := by
   intro U V hVU _ hcyc
   exact natCard_tate_of_isCyclic (U : Subgroup (Ω ≃ₐ[K] Ω)) (V : Subgroup (Ω ≃ₐ[K] Ω))
@@ -168,10 +172,6 @@ noncomputable def localClassFieldTheory : ClassFieldTheory (Ω ≃ₐ[K] Ω) Ω�
 
 @[simp]
 theorem localClassFieldTheory_deg : (localClassFieldTheory K Ω).deg = unramifiedDegree K Ω :=
-  rfl
-
-@[simp]
-theorem localClassFieldTheory_val : (localClassFieldTheory K Ω).val = localValuation K Ω :=
   rfl
 
 theorem localClassFieldTheory_val_apply (a : fixedModule Ωˣ (⊤ : Subgroup (Ω ≃ₐ[K] Ω))) :

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPolyRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPolyRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,14 +47,15 @@ theorem isUPt_ratPt (γ₀ : GL (Fin n) L) (h : γ₀ ∈ GQ0 L n) : IsUPt (ratP
   have := congrArg (fun M => M.map σ) h'
   simpa [ratPt, conjT, Matrix.map_mul, Matrix.transpose_map] using this
 
+open scoped Classical in
 open Classical in
-
 def tauPt (τ : L →+* ℂ) (B : GL (Fin n) ℂ) : (L →+* ℂ) → Matrix (Fin n) (Fin n) ℂ := fun σ =>
   if σ = τ then B.val else if σ = ComplexEmbedding.conjugate τ then (B⁻¹).valᵀ else 1
 
-theorem evPt_eq_upt (τ : L →+* ℂ) (B : GL (Fin n) ℂ) : evPt τ B = upt (tauPt τ B) := by
+theorem evPt_eq_upt (τ : L →+* ℂ) (B : GL (Fin n) ℂ) :
+    Formalism.L2.NG.evPt τ B = upt (tauPt τ B) := by
   funext p
-  simp only [evPt, upt, tauPt]
+  simp only [Formalism.L2.NG.evPt, upt, tauPt]
   split_ifs <;> simp [Matrix.one_apply, *]
 
 theorem isUPt_tauPt (τ : L →+* ℂ) (B : GL (Fin n) ℂ) : IsUPt (tauPt τ B) := by

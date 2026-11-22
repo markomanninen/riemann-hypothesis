@@ -1,28 +1,32 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullUUnitsCompatGeneric
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MulPullOfCubeOfSymm
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaPtEqUnitMulTh
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIntegralDegenerationValues
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusTorsionPointsCorrespondValues
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FamiliesValuesCorrespond
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationValuesIntOfAdmissibleBaseStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HasSumOfAdicSumUnitBallExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SummableVtQTStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HasSumGradedOfMulDegreeStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProductOfSectionsExpandsToConvolution
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsNsmulAndNeg
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevelStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpansionPullbackSectionEndomorphism
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnivIdentity
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SymmetricLiftOddOrderActsAsExpansionOperator
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueThetaConst
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsActValue
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullUUnitsCompatGeneric
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MulPullOfCubeOfSymm
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaPtEqUnitMulTh
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIntegralDegenerationValues
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusTorsionPointsCorrespondValues
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FamiliesValuesCorrespond
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationValuesIntOfAdmissibleBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HasSumOfAdicSumUnitBallExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SummableVtQTStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HasSumGradedOfMulDegreeStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProductOfSectionsExpandsToConvolution
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsNsmulAndNeg
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpansionPullbackSectionEndomorphism
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnivIdentity
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SymmetricLiftOddOrderActsAsExpansionOperator
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueThetaConst
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsActValue
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -101,7 +105,13 @@ theorem grep_mulq (x : Y ⟶ D.P.A) (n : ℕ) :
 
 theorem dbl_one {z : Y.left} {J} (hJ : Good D.P.L z J) :
     dbl (cubV D.cub z J) (fun a : Y ⟶ D.P.A => val D.sym a.left z J) 1 = 1 := by
-  rw [dbl, (isCub_cubV D.cub hJ).face, normd_one (u := D.sym) ⟨D.sym_gen, D.sym_rig⟩ hJ, div_one]
+  have hc : cubV D.cub z J (1 : Y ⟶ D.P.A) 1 1 = 1 := by
+    have h := val_corr hJ (D.cub.face 0) (lift (1 : Y ⟶ D.P.A) 1).left
+    rw [val_one] at h
+    refine Eq.trans ?_ h
+    refine Eq.trans ?_ (val_cub D.cub (lift (1 : Y ⟶ D.P.A) 1) hJ (pzero D.P.A _) (x2 D.P.A 0) (x2 D.P.A 1)).symm
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
+  rw [dbl, inv_one, hc, normd_one (u := D.sym) ⟨D.sym_gen, D.sym_rig⟩ hJ, div_one]
 
 theorem val_kap (hG : GlobalFnsSt) {n : ℕ} {κ : LB.Gen (kapLB D (𝟙 D.P.A ^ n) (n ^ 2) 1)} (hκ : Normd κ)
     (b : Y ⟶ D.P.A) {z : Y.left} {J} (hJ : Good D.P.L z J) :
@@ -113,7 +123,14 @@ theorem val_kap (hG : GlobalFnsSt) {n : ℕ} {κ : LB.Gen (kapLB D (𝟙 D.P.A ^
     (fun y J hJ => by
       beta_reduce
       rw [Category.comp_id, normd_one hκ hJ, _root_.one_mul, mulq]
-      exact Finset.prod_eq_one fun i _ => by rw [(isCub_cubV D.cub hJ).N_one, dbl_one hJ, one_pow, div_one]) Y b z J hJ
+      exact Finset.prod_eq_one fun i _ => by
+        have hc : cubV D.cub y J (1 : (𝟙_ _) ⟶ D.P.A) 1 1 = 1 := by
+          have h := val_corr hJ (D.cub.face 0) (lift (1 : (𝟙_ _) ⟶ D.P.A) 1).left
+          rw [val_one] at h
+          refine Eq.trans ?_ h
+          refine Eq.trans ?_ (val_cub D.cub (lift (1 : (𝟙_ _) ⟶ D.P.A) 1) hJ (pzero D.P.A _) (x2 D.P.A 0) (x2 D.P.A 1)).symm
+          congr 1 <;> simp [x2, pzero, Hom.one_def]
+        simp [cubN, hc, dbl_one hJ]) Y b z J hJ
   beta_reduce at key
   rw [Category.comp_id] at key
   exact eq_inv_of_mul_eq_one_left key
@@ -128,8 +145,14 @@ theorem val_nu (hG : GlobalFnsSt) {n : ℕ} {ν : LB.Gen (nuLB D n)} (hν : Norm
       module)
     (fun y J hJ => by
       beta_reduce
-      rw [Category.comp_id, normd_one hν hJ, (isCub_cubV D.cub hJ).N_one, dbl_one hJ]
-      simp) Y b z J hJ
+      have hc : cubV D.cub y J (1 : (𝟙_ _) ⟶ D.P.A) 1 1 = 1 := by
+        have h := val_corr hJ (D.cub.face 0) (lift (1 : (𝟙_ _) ⟶ D.P.A) 1).left
+        rw [val_one] at h
+        refine Eq.trans ?_ h
+        refine Eq.trans ?_ (val_cub D.cub (lift (1 : (𝟙_ _) ⟶ D.P.A) 1) hJ (pzero D.P.A _) (x2 D.P.A 0) (x2 D.P.A 1)).symm
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
+      rw [Category.comp_id, normd_one hν hJ, dbl_one hJ]
+      simp [cubN, hc]) Y b z J hJ
   beta_reduce at key
   rw [Category.comp_id] at key
   exact eq_div_iff_mul_eq'.2 (mul_inv_eq_one.1 key)
@@ -224,7 +247,7 @@ theorem famV_lin {k : ℕ} {s s' : Fam D F k} {f f' : N.X → N.A → F} (h : ν
     ((congrArg (toStk y) (h α x)).trans (toStk_sF' _ _ hJ))) ((congrArg (toStk y) (h' α x)).trans (toStk_sF' _ _ hJ)))
   refine Eq.trans (congrArg (toStk y) (?_ : _ = c * (f α x * ν.rg ^ k) + f' α x * ν.rg ^ k)) ?_
   · simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]; ring
-  · rw [map_add, map_mul]; rfl
+  · rw [map_add (f := _), map_mul]; rfl
 
 theorem coef_theta {ϑ : Fam D F 1} {c₀ : F} (h : ν.FamV ϑ (c₀ • N.vth)) {g : GtPtF D F} {c : N.Gt} (hg : ν.Pt g c)
     {w : Frm D F 1 g.b} (hw : w.IsGen) (χ : N.X) :
@@ -335,8 +358,8 @@ abbrev ValIs {k : ℕ} (t : SecA A C k) (x : TFK (R := R) C ⟶ A.A)
   ∀ z J, Good A.L z J → sA t (ptSecT A.A x).left z J = @id ((TFK (R := R) C).left.presheaf.stalk z)
     (cst (R := R) C z c) * (val (powFrame A.A A.L x e k) (𝟙 _) z J).val
 
-omit [CompleteSpace C] in
 
+omit [CompleteSpace C] in
 theorem value_at_level (hL : LL) (hB : AdmBase R I) (hG : IsSemiAbelian G) (U : Unif I D A G) (hC : CExt R I C)
     {w₀ ρ} (hN : NormW U.toUnifPre w₀ ρ) {N : ℕ} (hN1 : 1 ≤ N) (q : QkPt D.toPre C N) (x : TFK (R := R) C ⟶ A.A)
     (hx : QkToAkU U.toUnifPre C N q x) (e) (he : e.IsGen) (w : Frm D.toPre C N q.g.b) (hw : w.IsGen) :
@@ -371,8 +394,8 @@ theorem value_at_level (hL : LL) (hB : AdmBase R I) (hG : IsSemiAbelian G) (U : 
   rw [_root_.mul_assoc]
   exact h₄
 
-attribute [local instance] TorusExt.gtGroup in
 
+attribute [local instance] TorusExt.gtGroup in
 theorem value_at_torsion (hL : LL) (hB : AdmBase R I) (hG : IsSemiAbelian G) (U : Unif I D A G) (hC : CExt R I C)
     {w₀ ρ} (hN : NormW U.toUnifPre w₀ ρ) {n : ℕ} (hn : 1 ≤ n) (p : QkPt D.toPre C n) (x : TFK (R := R) C ⟶ A.A)
     (hx : QkToAkU U.toUnifPre C n p x) (e) (he : e.IsGen) {k : ℕ} (hk : 1 ≤ k) :
@@ -401,8 +424,12 @@ theorem value_at_torsion (hL : LL) (hB : AdmBase R I) (hG : IsSemiAbelian G) (U 
       rw [h'' _ _ z J hJ, ht z J hJ, ht' z J hJ, pf, pf, pf, cm, Nat.cast_add, zpow_add, Units.val_mul]
       ring)
     (by
-      let q : QkPt D.toPre C (n * k) := TorusExt.qkMk D.tau_bimult (k • p.y) p.g (by
-        rw [mul_nsmul, TorusExt.qk_nsmul D.tau_bimult p, map_nsmul])
+      have hp : n • p.g = TorusExt.iota D.tau_bimult C p.y := by
+        obtain ⟨h, h₁, h₂⟩ := p.eq
+        exact ((TorusExt.isNsmul_iff_eq _ _ _).1 h₁).symm.trans ((TorusExt.isIota_iff_eq D.tau_bimult _ _).1 h₂)
+      let q : QkPt D.toPre C (n * k) :=
+        ⟨k • p.y, p.g, (n * k) • p.g, (TorusExt.isNsmul_iff_eq _ _ _).2 rfl,
+          (TorusExt.isIota_iff_eq D.tau_bimult _ _).2 (by rw [mul_nsmul, hp, map_nsmul])⟩
       have hq : QkToAkU U.toUnifPre C (n * k) q x :=
         ((GlobalTheory.T.uniformisation_torsion_maps_compatible_in_level hL R _ hB D A G hG U C n k _ hn hk rfl p q x).1 rfl rfl).1 hx
       obtain ⟨κ, hκ, Hκ⟩ := value_at_level hL hB hG U hC hN (Nat.mul_pos hn hk) q x hq e he (Ω _) (hΩ _)
@@ -432,8 +459,8 @@ theorem summable_vt [IsLocalRing R] (hL : LL) (hgt : BrGtSt) (hfam : BrFamSt) (h
   have a₂ := ν.eX.toEquiv.summable_iff.2 (ν'.eX.toEquiv.summable_iff.1 a₁)
   exact (summable_mul_left_iff (mul_ne_zero hc₀ (vF_ne ν w))).1 (a₂.congr fun χ => coef_theta ν hϑ hp.2 hw χ)
 
-omit [CharZero R] [IsUltrametricDist C] [CompleteSpace C] in
 
+omit [CharZero R] [IsUltrametricDist C] [CompleteSpace C] in
 theorem exists_theta (hL : LL) (hfam : BrFamSt) (U : Unif I D A G) {w₀ : W0 U.toUnifPre} (hw : w₀.IsGen)
     {N : NumD C} (ν : NumOf D.toPre C N) : ∃ (th : SecA A C 1) (ϑ : Fam D.toPre C 1) (c₀ : C), c₀ ≠ 0 ∧
       U.ExpandsF C 1 w₀ th ϑ ∧ ν.FamV ϑ (c₀ • N.vth) ∧ IsGenSec A.A A.L 1 th := by

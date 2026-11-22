@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
-import GroundTheory.AutomorphicForms.GL2.GodementSection
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import GroundTheory.AutomorphicForms.GL2.GodementSection
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ def StdGood : Prop := ∀ (k : Type) [Field k] [NumberField k], (adStd k).GoodL
 
 def EpConv : Prop :=
   ∀ (k : Type) [Field k] [NumberField k] (ι : Type) [Fintype ι] [DecidableEq ι] (Ψ : (ι → 𝔸[k]) → ℂ),
-    Ψ ∈ GJMatrix.schwartzBruhatPi k ι →
+    Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι) →
     (∀ (i₀ : ι) (a b : ℝ) (C : Set (GL ι 𝔸[k])), 1 < a → IsCompact C → ∃ f : IdeleGroup k → ℝ,
       Integrable f (ideleMeasure k) ∧ ∀ x : ℝ, a ≤ x → x ≤ b → ∀ m ∈ C, ∀ t : IdeleGroup k,
         ‖Ψ ((t : 𝔸[k]) • ((m : Matrix ι ι 𝔸[k]) *ᵥ Pi.single i₀ 1))‖ * (IdeleGroup.ideleModule k t : ℝ) ^ x ≤ f t) ∧
@@ -63,7 +67,7 @@ def EpConv : Prop :=
 
 def EpMain : Prop :=
   ∀ (k : Type) [Field k] [NumberField k], ∃ V : ℝ, 0 < V ∧ ∀ (ι : Type) [Fintype ι] [DecidableEq ι] [Nonempty ι]
-    (Ψ : (ι → 𝔸[k]) → ℂ) (ω : HeckeCharacter k), Ψ ∈ GJMatrix.schwartzBruhatPi k ι → ω * ω = 1 →
+    (Ψ : (ι → 𝔸[k]) → ℂ) (ω : HeckeCharacter k), Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι) → ω * ω = 1 →
     ∃ F F' : ℂ → GL ι 𝔸[k] → ℂ, IsEpCont Ψ ω F ∧ IsEpCont (GJMatrix.adelicFourierPi k Ψ) ω F' ∧
       (∀ z m, F z m = modPow (Matrix.GeneralLinearGroup.det m) 1 * F' (Fintype.card ι - z) (tInv m)) ∧
       (ω = 1 → ∀ m, F 0 m = Fintype.card ι * V * Ψ 0 ∧ F (Fintype.card ι) m =
@@ -72,7 +76,7 @@ def EpMain : Prop :=
 def TestFun : Prop :=
   ∀ (k : Type) [Field k] [NumberField k] (ι : Type) [Fintype ι] [DecidableEq ι] (i₀ : ι) (ω : HeckeCharacter k), ω * ω = 1 →
     ∀ U ∈ 𝓝 (1 : (adStd k).kGL ι), ∃ (Ψ : (ι → 𝔸[k]) → ℂ) (Ψ₁ : (Unit → 𝔸[k]) → ℂ) (ψ : (adStd k).kGL ι → ℂ),
-      Ψ ∈ GJMatrix.schwartzBruhatPi k ι ∧ Ψ₁ ∈ GJMatrix.schwartzBruhatPi k Unit ∧ Continuous ψ ∧ ψ 1 = 1 ∧
+      Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι) ∧ Ψ₁ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := Unit) ∧ Continuous ψ ∧ ψ 1 = 1 ∧
       (∀ (t : 𝔸[k]) (κ : (adStd k).kGL ι),
         Ψ (t • (((κ.1⁻¹ : GL ι 𝔸[k]) : Matrix ι ι 𝔸[k]) *ᵥ Pi.single i₀ 1)) = Ψ₁ (fun _ => t) * ψ κ) ∧
       (∀ κ, ψ κ ≠ 0 → ∃ p : (adStd k).kGL ι, p.1 ∈ stab 𝔸[k] {i₀} ∧ ∃ u ∈ U, κ = p * u ∧
@@ -83,8 +87,8 @@ def TestFun : Prop :=
 
 def TestSph : Prop :=
   ∀ (k : Type) [Field k] [NumberField k] (ι : Type) [Fintype ι] [DecidableEq ι] (i₀ : ι),
-    ∃ (Ψ : (ι → 𝔸[k]) → ℂ) (Ψ₁ : (Unit → 𝔸[k]) → ℂ), Ψ ∈ GJMatrix.schwartzBruhatPi k ι ∧
-      Ψ₁ ∈ GJMatrix.schwartzBruhatPi k Unit ∧ Ψ 0 = 1 ∧
+    ∃ (Ψ : (ι → 𝔸[k]) → ℂ) (Ψ₁ : (Unit → 𝔸[k]) → ℂ), Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι) ∧
+      Ψ₁ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := Unit) ∧ Ψ 0 = 1 ∧
       (∀ (t : 𝔸[k]) (κ : (adStd k).kGL ι),
         Ψ (t • (((κ.1⁻¹ : GL ι 𝔸[k]) : Matrix ι ι 𝔸[k]) *ᵥ Pi.single i₀ 1)) = Ψ₁ fun _ => t) ∧
       ∀ x : ℝ, 1 < x → globalZeta (fun t => Ψ₁ fun _ => t) 1 x ≠ 0

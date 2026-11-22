@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinOrbSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcBasic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinOrbSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,10 +57,10 @@ theorem UpperTheory.V.Z.Sym.So.extF :
   have Φ_spec : ∀ (γ : Γ) (s : S) (u : G), u ∈ U → Φ (ι γ * s * u) = W γ (ψ s) := by
     intro γ s u hu
     have h : P (ι γ * s * u) := (hP _).2 ⟨γ, s, u, hu, rfl⟩
-    rw [hΦ, dif_pos h]
+    rw [hΦ, dite_eq_left h]
     obtain ⟨u0, hu0, e⟩ := ((hP _).1 h).choose_spec.choose_spec
     exact wd _ _ _ _ _ _ hu0 hu e.symm
-  have Φ_neg : ∀ g, ¬ P g → Φ g = 0 := fun g h => by rw [hΦ, dif_neg h]
+  have Φ_neg : ∀ g, ¬ P g → Φ g = 0 := fun g h => by rw [hΦ, dite_eq_right h]
   have hUinv : ∀ u ∈ U, ∀ g : G, Φ (g * u) = Φ g := by
     intro u hu g
     by_cases hg : P g
@@ -131,7 +135,8 @@ theorem UpperTheory.V.Z.Sym.So.extF :
         intro r
         rw [show ι γ * ↑s * u * (u⁻¹ * ↑r * u) = ι γ * ↑(s * r) * u by
           simp only [Subgroup.coe_mul]; group, Φ_spec _ _ _ hu]
-      rw [Finset.sum_congr rfl (fun r _ => e5 r), ← map_sum (W γ),
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_congr rfl (fun r _ => e5 r), ← map_sum (W γ),
         ← (dcBasic S V (U.subgroupOf S) a hfinS ψ hψU').2.2.2.2 R hR1 hR2 s, heig, Pi.smul_apply,
         map_smul]
     · rw [hval 1 U.one_mem, Φ_neg _ hg, smul_zero]

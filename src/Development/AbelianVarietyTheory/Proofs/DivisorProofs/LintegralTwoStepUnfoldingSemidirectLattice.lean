@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnimodularAndLintegralUnfoldOfLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralConjEqOfSemidirectLatticeDatumStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnimodularAndLintegralUnfoldOfLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralConjEqOfSemidirectLatticeDatumStatement
+
+@[expose] public section
 
 open MeasureTheory Filter Topology GlobalTheory.ResLine
 open scoped ENNReal
@@ -61,7 +65,7 @@ theorem lintegral_two_step_unfolding : ∀ (G : Type) [Group G] [TopologicalSpac
     simp only [h1]
     rw [← lintegral_tsum]
     swap
-    · exact fun δ => (Measurable.ennreal_tsum fun γ => hφ.comp (by fun_prop)).aemeasurable
+    · exact fun δ => (Measurable.tsum fun γ => hφ.comp (by fun_prop)).aemeasurable
     refine lintegral_congr fun c => ?_
     exact tsum_split_lattice N M Λ S.disj S.dec fun g => φ ((b : G)⁻¹ * (c : G)⁻¹ * (g * x))
   simp only [A]
@@ -73,13 +77,13 @@ theorem lintegral_two_step_unfolding : ∀ (G : Type) [Group G] [TopologicalSpac
     · exact fun l => (hφ.comp (by fun_prop)).aemeasurable
   rw [lintegral_lintegral_swap (Measurable.aemeasurable (Measurable.lintegral_prod_right'
     (f := fun z : (G × M) × N => ∑' l : Λ, φ ((z.1.2 : G)⁻¹ * (z.2 : G)⁻¹ * (l * z.1.1)))
-    (Measurable.ennreal_tsum fun γ => hφ.comp (by fun_prop))))]
+    (Measurable.tsum fun γ => hφ.comp (by fun_prop))))]
   have C : ∀ b : M, ∫⁻ x in D, ∫⁻ c in DN, ∑' l : Λ, φ ((b : G)⁻¹ * (c : G)⁻¹ * (l * x)) ∂ν ∂μ =
       ν DN * ∫⁻ x, φ x ∂μ := by
     intro b
     rw [lintegral_lintegral_swap (Measurable.aemeasurable
       (f := fun z : G × N => ∑' l : Λ, φ ((b : G)⁻¹ * (z.2 : G)⁻¹ * (l * z.1)))
-      (Measurable.ennreal_tsum fun γ => hφ.comp (by fun_prop)))]
+      (Measurable.tsum fun γ => hφ.comp (by fun_prop)))]
     simp only [B]
     rw [setLIntegral_const, mul_comm]
   simp only [C]

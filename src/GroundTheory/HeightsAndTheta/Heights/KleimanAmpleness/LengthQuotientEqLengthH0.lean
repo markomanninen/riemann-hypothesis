@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -124,12 +129,13 @@ theorem d_mk (F₁ F₂ : SubSystem S x Ω) (u : Cech.Idx (support x) 0 → Ω) 
       ∑ j : J.1.1, Cech.sgn J.1.1 j • F₁.res _ J.1 (Cech.face_subset J j) ⟨u (Cech.face J j), hu _⟩ := by
     apply Subtype.ext
     simp [SubSystem.res]
-  rw [this, ← Submodule.mkQ_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, ← Submodule.mkQ_apply, map_sum]
   simp only [map_zsmul]
   rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_toCochain_eq (F₁ F₂ : SubSystem S x Ω)
     (hlift : ∀ s : Chart x → Ω, (∀ I, s I ∈ F₁.sub I) →
       (∀ I₁ I₂ : Chart x, I₁.1 ⊆ I₂.1 → s I₁ - s I₂ ∈ F₂.sub I₂) →
@@ -155,7 +161,7 @@ theorem exists_toCochain_eq (F₁ F₂ : SubSystem S x Ω)
     if h : (T.Nonempty ∧ T ⊆ support x) ∧ T.card = 0 + 1 then v ⟨⟨T, h.1⟩, h.2⟩ else 0
   have hV : ∀ I : Cech.Idx (support x) 0, V I.1.1 = v I := fun I => by
     simp only [V]
-    rw [dif_pos ⟨I.1.2, I.2⟩]
+    rw [dite_eq_left ⟨I.1.2, I.2⟩]
   have hVpair : ∀ (a b : Fin (N + 1)) (ha : a ∈ support x) (hb : b ∈ support x) (T : Chart x),
       a ∈ T.1 → b ∈ T.1 → V {a} - V {b} ∈ F₂.sub T := by
     intro a b ha hb T haT hbT
@@ -219,8 +225,8 @@ theorem exists_toCochain_eq (F₁ F₂ : SubSystem S x Ω)
   rw [← hsa]
   exact hts _
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem length_secs_eq (F₁ F₂ : SubSystem S x Ω)
     (hlift : ∀ s : Chart x → Ω, (∀ I, s I ∈ F₁.sub I) →
       (∀ I₁ I₂ : Chart x, I₁.1 ⊆ I₂.1 → s I₁ - s I₂ ∈ F₂.sub I₂) →

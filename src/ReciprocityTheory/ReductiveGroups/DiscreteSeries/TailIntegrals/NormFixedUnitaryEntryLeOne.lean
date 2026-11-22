@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.FixedUnitaryApplyFixedIndexRight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HalfLeNormOneSub
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.FixedUnitaryApplyFixedIndexRight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HalfLeNormOneSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ lemma ofReal_rpow_neg_anti {a b s : ℝ} (hs : 0 ≤ s) (hab : a ≤ b) :
 
 lemma continuous_tW {ι : Type*} [Fintype ι] [DecidableEq ι] (q : ι) : Continuous (tW q) := by
   show Continuous fun x : ι → ℂ => Real.sqrt (∑ i, if i = q then 0 else Complex.normSq (x i))
-  exact Real.continuous_sqrt.comp (continuous_finset_sum _ fun i _ =>
+  exact Real.continuous_sqrt.comp (continuous_finsetSum _ fun i _ =>
     continuous_if_const _ (fun _ => continuous_const)
       (fun _ => Complex.continuous_normSq.comp (continuous_apply i)))
 
@@ -97,7 +101,7 @@ lemma lint_lmul {ν : Measure (Mt k 0)} (hν : IsHaarOn (U0 k) ν) {a : Mat k 0}
       refine continuous_pi fun i => continuous_pi fun j => ?_
       show Continuous fun x : Mt k 0 => (a * Matrix.of x) i j
       simp only [Matrix.mul_apply, Matrix.of_apply]
-      exact continuous_finset_sum _ fun l _ =>
+      exact continuous_finsetSum _ fun l _ =>
         continuous_const.mul ((continuous_apply j).comp (continuous_apply l))
     exact hc.measurable
   rw [← lintegral_map hF hm, hν.left a ha]

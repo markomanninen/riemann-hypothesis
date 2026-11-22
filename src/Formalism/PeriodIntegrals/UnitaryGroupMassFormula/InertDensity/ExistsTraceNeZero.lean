@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset Polynomial
 
@@ -12,27 +16,28 @@ theorem card_L (h2 : Module.finrank K L = 2) : Fintype.card L = Fintype.card K ^
 omit [Fintype L] [Algebra K L] in
 theorem one_lt_q : 1 < Fintype.card K := Fintype.one_lt_card
 
-variable (K) in
 
+variable (K) in
 def conj : L →+* L := (FiniteField.frobeniusAlgHom K L).toRingHom
 
-omit [Fintype L] in
-theorem conj_apply (x : L) : conj K x = x ^ Fintype.card K := rfl
 
 omit [Fintype L] in
 theorem frob_add (x y : L) :
     (x + y) ^ Fintype.card K = x ^ Fintype.card K + y ^ Fintype.card K :=
-  map_add (conj K) x y
+  by simpa only [FiniteField.coe_frobeniusAlgHom] using
+    map_add (FiniteField.frobeniusAlgHom K L) x y
 
 omit [Fintype L] in
 theorem frob_sub (x y : L) :
     (x - y) ^ Fintype.card K = x ^ Fintype.card K - y ^ Fintype.card K :=
-  map_sub (conj K) x y
+  by simpa only [FiniteField.coe_frobeniusAlgHom] using
+    map_sub (FiniteField.frobeniusAlgHom K L) x y
 
 omit [Fintype L] in
 theorem frob_sum {ι : Type} (s : Finset ι) (f : ι → L) :
     (∑ i ∈ s, f i) ^ Fintype.card K = ∑ i ∈ s, f i ^ Fintype.card K :=
-  map_sum (conj K) f s
+  by simpa only [FiniteField.coe_frobeniusAlgHom] using
+    map_sum (FiniteField.frobeniusAlgHom K L) f s
 
 omit [Fintype L] in
 theorem frob_algebraMap (a : K) :
@@ -43,13 +48,10 @@ theorem frob_frob (h2 : Module.finrank K L = 2) (x : L) :
     (x ^ Fintype.card K) ^ Fintype.card K = x := by
   rw [← pow_mul, ← sq, ← card_L h2, FiniteField.pow_card]
 
-theorem conj_conj (h2 : Module.finrank K L = 2) (x : L) : conj K (conj K x) = x :=
-  frob_frob h2 x
-
 theorem card_fixed [DecidableEq L] : #{x : L | x ^ Fintype.card K = x} = Fintype.card K := by
   have hq := one_lt_q (K := K)
   apply le_antisymm
-  · have hne := FiniteField.X_pow_card_sub_X_ne_zero L hq
+  · have hne := Polynomial.X_pow_sub_X_ne_zero (R := L) hq
     calc #{x : L | x ^ Fintype.card K = x}
         ≤ ((X ^ Fintype.card K - X : L[X]).roots.toFinset).card := by
           apply card_le_card
@@ -59,7 +61,7 @@ theorem card_fixed [DecidableEq L] : #{x : L | x ^ Fintype.card K = x} = Fintype
           simp [hx]
       _ ≤ Multiset.card (X ^ Fintype.card K - X : L[X]).roots := Multiset.toFinset_card_le _
       _ ≤ (X ^ Fintype.card K - X : L[X]).natDegree := card_roots' _
-      _ = Fintype.card K := FiniteField.X_pow_card_sub_X_natDegree_eq L hq
+      _ = Fintype.card K := Polynomial.natDegree_X_pow_sub_X (R := L) hq
   · calc Fintype.card K = (univ.image (algebraMap K L)).card := by
           rw [card_image_of_injective _ (algebraMap K L).injective, card_univ]
       _ ≤ _ := by

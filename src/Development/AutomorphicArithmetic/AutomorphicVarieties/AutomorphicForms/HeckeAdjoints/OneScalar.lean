@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.HasPairingOfHerm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.TypePoly
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.HasPairingOfHerm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.TypePoly
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.L2.Host UpperTheory.V UpperTheory.V.TR UpperTheory.V.Af.Gk
 
 theorem UpperTheory.V.Af.Gk.oneScalar :
@@ -17,10 +22,12 @@ theorem UpperTheory.V.Af.Gk.oneScalar :
         rw [e, sub_add_cancel] at h
         exact h
   have hX : TR.lie F a (oneL F a) = ∑ i, TR.lieS F a i i 1 := by
-    simp only [TR.lieS_apply, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [TR.lieS_apply, ← map_sum]
     exact congrArg _ (Matrix.sum_single_one (m := Fin a) (α := TR.Rinf F)).symm
   have h1 : ∀ i, TR.lieS F a i i 1 = ∑ v, TR.Eop (a := a) v i i := fun i => by
-    rw [← Finset.univ_sum_single (1 : TR.Rinf F), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.univ_sum_single (1 : TR.Rinf F), map_sum]
     refine Finset.sum_congr rfl fun v _ => ?_
     rw [TR.Eop_eq]
     congr

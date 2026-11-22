@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ExpCut
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ExpCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def sumL {n : ℕ} (ε : Fin n → Bool) (m h : Submodule ℝ (EuclideanSpace �
     EuclideanSpace ℝ ι × EuclideanSpace ℝ η →ₗ[ℝ] gLie ε where
   toFun p := ⟨(L₀ p.1 : EuclideanSpace ℝ _) + (L₁ p.2 : EuclideanSpace ℝ _), by
     rw [← hmh]; exact Submodule.add_mem_sup (L₀ p.1).2 (L₁ p.2).2⟩
-  map_add' p q := by ext1; simp only [Prod.fst_add, Prod.snd_add, map_add, Submodule.coe_add]; abel
+  map_add' p q := by ext1; simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), Submodule.coe_add]; abel
   map_smul' c p := by ext1; simp [smul_add]
 
 def SumLPres : Prop := ∀ (n : ℕ) (ε : Fin n → Bool) (m h : Submodule ℝ (EuclideanSpace ℝ (Fin n × Fin n × Bool)))
@@ -34,7 +38,8 @@ theorem cayProdU_of (hC : CayDensG) (hP : SumLPres) : CayProdU := by
   obtain ⟨r₀, hr₀, f₀, hm, hc, h0, hS⟩ := hC n ε hG
   obtain ⟨_, hPS⟩ := hP n ε m h hmh horth ι η L₀ L₁
   set F := sumL ε m h hmh L₀ L₁ with hF
-  have hFc : Continuous F := LinearMap.continuous_of_finiteDimensional F
+  set_option synthInstance.maxHeartbeats 200000 in
+    have hFc : Continuous F := LinearMap.continuous_of_finiteDimensional F
   refine ⟨r₀ / 2, by positivity, fun p => f₀ (F p), hc.comp_of_eq hFc.continuousAt (map_zero F), ?_,
     hm.comp hFc.measurable, ?_⟩
   · show f₀ (F 0) = gaugeU ε

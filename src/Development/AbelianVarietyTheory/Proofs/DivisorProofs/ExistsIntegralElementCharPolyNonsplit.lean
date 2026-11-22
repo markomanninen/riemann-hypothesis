@@ -1,19 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHermitianFormCharPolyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHermitianFormCharPoly
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 namespace GlobalTheory.ExInertUnit
-
-theorem globalForm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (P : E[X]), P ∈ Ell E n →
-    ∃ M G : Matrix (Fin n) (Fin n) E, M.charpoly = P ∧ IsUnit G ∧
-      cT (IsCMField.complexConj E).toRingEquiv.toRingHom G = G ∧
-      cT (IsCMField.complexConj E).toRingEquiv.toRingHom M * G * M = G := GlobalTheory.T.exists_hermitian_form_char_poly
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
@@ -23,7 +23,7 @@ theorem eventually_mem_integers (a : E) :
 
 theorem mem_KGL_of_entries (w : Pl E) (g : GLw n w)
     (h1 : ∀ a b, g.val a b ∈ w.adicCompletionIntegers E)
-    (h2 : ∀ a b, (g⁻¹).val a b ∈ w.adicCompletionIntegers E) : g ∈ GlobalTheory.LFun.KGL w n := by
+    (h2 : ∀ a b, (g⁻¹).val a b ∈ w.adicCompletionIntegers E) : g ∈ GlobalTheory.LFun.KGL w (n := n) := by
   let O : Subring (w.adicCompletion E) := Ov E w
   have inj : Function.Injective (O.subtype.mapMatrix (m := Fin n)) :=
     fun A B h => funext fun i => funext fun j => Subtype.ext (congrFun (congrFun h i) j)
@@ -35,7 +35,7 @@ theorem mem_KGL_of_entries (w : Pl E) (g : GLw n w)
   · rw [map_mul, hA, hB, map_one, Units.mul_inv]
   · rw [map_mul, hA, hB, map_one, Units.inv_mul]
 
-theorem entries_of_mem_KGL {w : Pl E} {k : GLw n w} (hk : k ∈ GlobalTheory.LFun.KGL w n) (i j : Fin n) :
+theorem entries_of_mem_KGL {w : Pl E} {k : GLw n w} (hk : k ∈ GlobalTheory.LFun.KGL w (n := n)) (i j : Fin n) :
     k.val i j ∈ w.adicCompletionIntegers E := by
   obtain ⟨a, rfl⟩ := hk
   exact (a.val i j).2
@@ -46,8 +46,8 @@ theorem mul_entries {w : Pl E} {A B : Matrix (Fin n) (Fin n) (w.adicCompletion E
   rw [Matrix.mul_apply]
   exact sum_mem fun k _ => mul_mem (hA i k) (hB k j)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem local_step (hE : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w) (M G : Matrix (Fin n) (Fin n) E)
     (hG : IsUnit G) (hGh : cT (IsCMField.complexConj E).toRingEquiv.toRingHom G = G)
     (hMG : cT (IsCMField.complexConj E).toRingEquiv.toRingHom M * G * M = G)
@@ -71,7 +71,7 @@ theorem local_step (hE : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w) (M G : Matrix (
       rw [← map_mul, Matrix.nonsing_inv_mul _ hdet, map_one]
     rw [Matrix.coe_units_inv, IsUnit.unit_spec]
     exact Matrix.inv_eq_left_inv h
-  have hgK : hGu.unit ∈ GlobalTheory.LFun.KGL w n :=
+  have hgK : hGu.unit ∈ GlobalTheory.LFun.KGL w (n := n) :=
     mem_KGL_of_entries w _ (fun a b => by rw [IsUnit.unit_spec]; exact hG1 a b)
       (fun a b => by rw [hginv]; exact hG2 a b)
   have hgh : cT (cj w) hGu.unit.val = hGu.unit.val := by
@@ -125,22 +125,5 @@ theorem local_step (hE : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w) (M G : Matrix (
   · show (k.val * hMwu.unit.val * (k⁻¹ : GLw n w).val).charpoly = _
     rw [Matrix.coe_units_inv, Matrix.charpoly_units_conj, IsUnit.unit_spec]
     exact Matrix.charpoly_map M f
-
-theorem exists_integral_unitary_charpoly : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, 1 ≤ n →
-    ∀ P ∈ Ell E n, ∀ᶠ w in cofinite, ¬ IsSplitAt w → ∃ γ : UL n w, γ ∈ KL n w ∧ γ.1.val.charpoly = atPl w P := by
-  intro E _ _ _ hE n _ P hP
-  obtain ⟨M, G, hMP, hG, hGh, hMG⟩ := globalForm E n P hP
-  have h1 : ∀ᶠ w : Pl E in cofinite, ∀ i j,
-      algebraMap E (w.adicCompletion E) (M i j) ∈ w.adicCompletionIntegers E :=
-    eventually_all.2 fun i => eventually_all.2 fun j => eventually_mem_integers _
-  have h2 : ∀ᶠ w : Pl E in cofinite, ∀ i j,
-      algebraMap E (w.adicCompletion E) (G i j) ∈ w.adicCompletionIntegers E :=
-    eventually_all.2 fun i => eventually_all.2 fun j => eventually_mem_integers _
-  have h3 : ∀ᶠ w : Pl E in cofinite, ∀ i j,
-      algebraMap E (w.adicCompletion E) (G⁻¹ i j) ∈ w.adicCompletionIntegers E :=
-    eventually_all.2 fun i => eventually_all.2 fun j => eventually_mem_integers _
-  filter_upwards [h1, h2, h3] with w hw1 hw2 hw3 hw
-  obtain ⟨γ, hγ, hc⟩ := local_step hE w hw M G hG hGh hMG hw1 hw2 hw3
-  exact ⟨γ, hγ, by rw [hc, hMP]⟩
 
 end GlobalTheory.ExInertUnit

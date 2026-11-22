@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 universe u
 
@@ -28,7 +33,7 @@ theorem finrank_quot_one_sub_idem_eq_mul : ∀ (k : Type) [Field k] (A : Type) [
       set a := x - algebraMap k A (φ x) with ha
       have hφa : φ a = 0 := by simp [ha]
       have hxa : x = algebraMap k A (φ x) + a := by simp [ha]
-      rw [hxa, map_add]
+      rw [hxa, map_add (f := _)]
       have hn : IsNilpotent (Ideal.Quotient.mk I a) := by
         have : Ideal.Quotient.mk I a = Ideal.Quotient.mk I (e * a) := by rw [map_mul, he1, one_mul]
         rw [this]; exact (hnil a hφa).map _

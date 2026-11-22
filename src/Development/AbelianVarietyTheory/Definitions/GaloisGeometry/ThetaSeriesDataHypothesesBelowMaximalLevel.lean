@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.StatementAdmAt
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ClsChartedLabAt
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.FrobeniusSqIterateTeichmuller
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementAdmAt
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ClsChartedLabAt
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.FrobeniusSqIterateTeichmuller
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,8 +105,8 @@ def LawInLt (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (hfin : ∀ j c, (X.Lv.lev
 
 end Gen
 
-open Formalism.L2.KerInert.SecondKernelInstances in
 
+open Formalism.L2.KerInert.SecondKernelInstances in
 def AdmAtEnt2 : Prop :=
   ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (Gi : G.Inst D L) (Gl : G.LatInst D) (Kc0 : G.Consts) (Dx : DivX D)
     (cX : ExtraC) (ex : Extra D L hT Gi Gl Kc0 Dx cX) (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup)
@@ -148,20 +152,17 @@ theorem dGT_spec {D : D7} {c : LatCmp D} {Tw : TwForms D} {u : D.what₂.Word} {
   by_cases h0 : j = 0
   · subst h0
     rw [KA.stab_zero a L hL]
-    simp [dGT]
+    simp [dGT, Nat.padicValNat_def]
   · have hm : j ≤ D.R.m := by rw [← KA.fl_m]; exact hj
     obtain ⟨_, hdvd⟩ := KA.stab_dvd j hm a L hL
     simp only [dGT, if_neg h0]
-    exact (padicValNat_dvd_iff_le (D.mem u).C.DGam_pos.ne').1 (dvd_trans pow_padicValNat_dvd hdvd)
+    exact ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) (D.mem u).C.DGam_pos.ne').1 (dvd_trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)) hdvd)
 
 def StdAtW (D : D7) (Gl : G.LatInst D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) : Prop :=
   ∀ v, Std (D.what₂.places.resChar w) ((D.gat u w hg).P.n' v) (D.gat u w hg).P.m (Gl.Fl u w hg).t (Gl.Fl u w hg).mm
     (Gl.Fl u w hg).c (D.gat u w hg).P.r ((Gl.Fl u w hg).TT v) ((Gl.Fl u w hg).a v) ((Gl.Fl u w hg).b v)
     ((D.gat u w hg).P.lam0 v) ((Gl.Fl u w hg).w v)
-
-def StdAt (D : D7) (Gl : G.LatInst D) : Prop :=
-  ∀ u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)), StdAtW D Gl u w hg
 
 theorem fracAt {D : D7} (Gl : G.LatInst D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) : IsFractionRing (D.gat u w hg).O (D.gat u w hg).Kf :=

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoitouTate.RealAbstract
-import GroundTheory.ProfiniteCohomology.PoitouTate.BrauerInvZOfIsSepClosureCohomologyULiftIntAddEqu
-import GroundTheory.ProfiniteCohomology.RealPlaces.GSDefs
-import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityPlace
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoitouTate.RealAbstract
+public import GroundTheory.ProfiniteCohomology.PoitouTate.BrauerInvZOfIsSepClosureCohomologyULiftIntAddEqu
+public import GroundTheory.ProfiniteCohomology.RealPlaces.GSDefs
+public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityPlace
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -10,8 +15,6 @@ noncomputable section
 namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.Global
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 attribute [local instance 2000] Rep.hV2
 
@@ -32,7 +35,8 @@ theorem cohomologyMap_normClass {B B' : Rep k F} [IsDiscreteRep B] [IsDiscreteRe
   apply cochainOf_injective
   funext σ
   change f.hom ((∑ g, B.ρ g) m) = (∑ g, B'.ρ g) (f.hom m)
-  rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
   exact Finset.sum_congr rfl fun g _ => Rep.hom_comm_apply f g m
 
 end NormClassMap
@@ -77,8 +81,8 @@ theorem bijective_dualToCartier {n : ℕ} [NeZero n] (hL : Nonempty (galRootsOfU
           Nat.card_le_card_of_injective _ (bijective_toDualDual hD hM).1
       _ ≤ Nat.card (dualRep D M) := card_dualRep_le hD
 
-omit [IsTopologicalGroup G] [IsDiscreteRep D] [IsDiscreteRep M] in
 
+omit [IsTopologicalGroup G] [IsDiscreteRep D] [IsDiscreteRep M] in
 theorem tensorHom_dualToCartier_cartierPairing :
     (𝟙 (Rep.res ψ.toMonoidHom M) ⊗ₘ dualToCartier ψ D ρ M) ≫
         cartierPairing K L (Rep.res ψ.toMonoidHom M) =
@@ -87,7 +91,7 @@ theorem tensorHom_dualToCartier_cartierPairing :
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul a f => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem cupPairing_dualToCartier [Finite M] [IsDiscreteRep (galUnits.{0} K L)]
     [IsDiscreteRep (cartierDual K L (Rep.res ψ.toMonoidHom M))] {r s : ℕ} (h : r + s = 2)
@@ -116,8 +120,8 @@ variable [FiniteDimensional K L] [IsGalois K L] (h2 : Module.finrank K L ≤ 2)
   (inv : cohomology (Rep.res ψ.toMonoidHom D) 2 →+ QZ)
   (hinv : ∀ z, inv z = realInv K L h2 hN ((cohomologyMap ρ 2).hom z))
 
-include hG hc hneg hconj hroots hinv in
 
+include hG hc hneg hconj hroots hinv in
 theorem exists_orderTwo_pairing_zero {n : ℕ} [NeZero n] (hD : Nonempty (D ≃+ ZMod n))
     (hρ : Function.Injective ρ.hom) (hM : ∀ m : M, n • m = 0)
     (χ : cohomology (Rep.res ψ.toMonoidHom (dualRep D M)) 2 →+ QZ) :
@@ -136,8 +140,8 @@ theorem exists_orderTwo_pairing_zero {n : ℕ} [NeZero n] (hD : Nonempty (D ≃+
   change χ (e.symm (e η)) = χ η
   rw [AddEquiv.symm_apply_apply]
 
-include hG hc hneg hconj hroots hinv in
 
+include hG hc hneg hconj hroots hinv in
 theorem exists_orderTwo_pairing_two {n : ℕ} [NeZero n] (hD : Nonempty (D ≃+ ZMod n))
     (hρ : Function.Injective ρ.hom) (hM : ∀ m : M, n • m = 0)
     (χ : cohomology (Rep.res ψ.toMonoidHom (dualRep D M)) 0 →+ QZ)
@@ -173,6 +177,8 @@ end Order2
 end Abstract
 
 section GS
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
@@ -221,9 +227,9 @@ variable (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDis
 
 variable [NeZero n] (hD : Nonempty (gsRoots S n ≃+ ZMod n)) (hM : ∀ m : M, n • m = 0)
 
+
 set_option maxHeartbeats 400000 in
 include hD hM in
-
 theorem surjective_gsRealPairing_zero (w : {v : InfinitePlace K.1 // v.IsReal}) :
     Function.Surjective
       (ptLocalPairing (gsRealFamily S ιr) (gsRoots S n) M (gsRealInvRootsQZ S ιr n) w
@@ -247,9 +253,9 @@ theorem surjective_gsRealPairing_zero (w : {v : InfinitePlace K.1 // v.IsReal}) 
   obtain ⟨ξ, hξ⟩ := key
   exact ⟨ξ, AddMonoidHom.ext fun η => (ptLocalPairing_apply _ _ _ _ _ _ _ _).trans (hξ η)⟩
 
+
 set_option maxHeartbeats 400000 in
 include hD hM in
-
 theorem exists_gsRealPairing_two (w : {v : InfinitePlace K.1 // v.IsReal})
     (χ : cohomology (Rep.res (gsRealFamily S ιr w).toMonoidHom (dualRep (gsRoots S n) M)) 0 →+ QZ)
     (hχ : ∀ x ∈ normClasses (Rep.res (gsRealFamily S ιr w).toMonoidHom (dualRep (gsRoots S n) M)),

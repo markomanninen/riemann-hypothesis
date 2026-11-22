@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoTowerQ
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoTowerQ
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ValuativeRel GroundTheory.LocalField GlobalTheory.PMon.Ram
 
 namespace GlobalTheory.PMon.Ram

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ChernClassExistence
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassExistence
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -66,7 +70,7 @@ theorem LeafEvMk_of : LateralTheory.E.ChernClassExistence.LeafEvMk := by
         comp a ha ((-i).toNat) j (by omega) else 0, ?_⟩
   intro p s h U x
   unfold ev
-  rw [Cochain.mk_v, dif_pos (by omega), comp_key a ha p _ (by omega) s h]
+  rw [Cochain.mk_v, dite_eq_left (by omega), comp_key a ha p _ (by omega) s h]
   exact shLift_gen _ _ U x
 
 end LateralTheory.E.LeafEvMkPf

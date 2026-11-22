@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinrankSpanImageLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinrankSpanImageLe
+
+@[expose] public section
 
 noncomputable section
 

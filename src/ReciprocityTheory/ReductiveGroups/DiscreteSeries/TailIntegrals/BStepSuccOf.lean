@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InnerBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InnerBound
+
+@[expose] public section
 
 noncomputable section
 open Matrix MeasureTheory
@@ -77,6 +81,41 @@ theorem bStepSucc_of (hB2 : InductiveHeisenbergInputs) (hIW : IW) (hF : FormulaF
   have : IsFiniteMeasureOnCompacts (μHeis k r') := ⟨fun ⦃K⦄ hK => (hHH k r').finite_compact K hK⟩
   set F : Mt k (1 + r') → ℝ≥0∞ := fun n => ENNReal.ofReal (xiR k (1 + r') s (Matrix.of n)) *
     ENNReal.ofReal ((1 + |lam k (1 + r') (liftVec k 1 r' z1) (Matrix.of n)|) ^ (-δ)) with hFd
+  have hmul : Measurable (mulM (k := k) (r := 1 + r')) := by
+    apply Continuous.measurable
+    unfold mulM
+    exact (continuous_fst (X := Mt k (1 + r')) (Y := Mt k (1 + r'))).matrix_mul continuous_snd
+  have hlev : Measurable (levM k r') := by
+    apply Continuous.measurable
+    refine continuous_pi fun p => continuous_pi fun q => ?_
+    change Continuous fun m : Mt k r' => ιLev k 1 r' (Matrix.of m) p q
+    unfold ιLev
+    split_ifs <;> first | exact (continuous_apply _).comp (continuous_apply _) | exact continuous_const
+  have hheis : Measurable (fun X : HPar k r' => (heis0 k r' X : Mt k (1 + r'))) := by
+    apply Continuous.measurable
+    have hherm {ι : Type} [Fintype ι] (H : Matrix ι ι ℂ) :
+        Continuous (fun p : (ι → ℂ) × (ι → ℂ) => herm H p.1 p.2) := by
+      unfold herm
+      exact continuous_snd.star.dotProduct (continuous_const.matrix_mulVec continuous_fst)
+    have hlift : Continuous (fun X : HPar k r' => liftVec k 1 r' X.1) := by
+      refine continuous_pi fun p => ?_
+      change Continuous fun X : HPar k r' => liftVec k 1 r' X.1 p
+      unfold liftVec
+      split_ifs
+      · exact (continuous_apply _).comp continuous_fst
+      · exact continuous_const
+    have hself : Continuous (fun X : HPar k r' => herm (Hpk k r') X.1 X.1) :=
+      (hherm _).comp (continuous_fst.prodMk continuous_fst)
+    have hhb : Continuous (fun X : HPar k r' => hb k r' X.1 X.2) := by
+      unfold hb
+      exact (Complex.continuous_ofReal.comp ((Complex.continuous_re.comp hself).neg.div_const 2)).add
+        ((Complex.continuous_ofReal.comp continuous_snd).mul continuous_const)
+    have hrow : Continuous (fun X : HPar k r' =>
+        fun j => herm (Hpk k (1 + r')) (bvec j) (liftVec k 1 r' X.1)) :=
+      continuous_pi fun j => (hherm _).comp (continuous_const.prodMk hlift)
+    unfold heis0 heisG
+    exact (continuous_const.sub (continuous_const.matrix_vecMulVec hrow)).add
+      ((hlift.add (hhb.smul continuous_const)).matrix_vecMulVec continuous_const)
   have hsw : (μHeis k r').prod (μ'.map (levM k r')) = ((μ'.map (levM k r')).prod (μHeis k r')).map Prod.swap :=
     (Measure.prod_swap).symm
   have hae : ∀ᵐ m ∂μ', m ∈ Nset k r' := ae_iff.2 hμ'.conc
@@ -85,14 +124,17 @@ theorem bStepSucc_of (hB2 : InductiveHeisenbergInputs) (hIW : IW) (hF : FormulaF
         (ENNReal.ofReal (xiR k r' (fun a => s (su a) - if a = 0 then γ else 0) (Matrix.of m)) *
           ENNReal.ofReal ((1 + |lam k r' z1 (Matrix.of m)|) ^ (-(δ / 4)))) := by
     intro m hm
-    calc _ ≤ ∫⁻ X, F (mulM (heis0 k r' X, levM k r' m)) ∂volume := by unfold μHeis; exact lintegral_map_le _ _
+    calc _ ≤ ∫⁻ X, F (mulM (heis0 k r' X, levM k r' m)) ∂volume := by
+          unfold μHeis
+          exact lintegral_map_le _ hheis.aemeasurable
       _ ≤ _ := by rw [hFd]; exact inner_bound hIW hF hHC hHA hk s δ γ C z1 hC' hcz (Matrix.of m) hm.1
   calc ∫⁻ n, F n ∂(((μHeis k r').prod (μ'.map (levM k r'))).map mulM)
-      ≤ ∫⁻ q, F (mulM q) ∂((μHeis k r').prod (μ'.map (levM k r'))) := lintegral_map_le _ _
+      ≤ ∫⁻ q, F (mulM q) ∂((μHeis k r').prod (μ'.map (levM k r'))) := lintegral_map_le _ hmul.aemeasurable
     _ = ∫⁻ q, F (mulM q) ∂(((μ'.map (levM k r')).prod (μHeis k r')).map Prod.swap) := by rw [hsw]
-    _ ≤ ∫⁻ q, F (mulM q.swap) ∂((μ'.map (levM k r')).prod (μHeis k r')) := lintegral_map_le _ _
+    _ ≤ ∫⁻ q, F (mulM q.swap) ∂((μ'.map (levM k r')).prod (μHeis k r')) :=
+      lintegral_map_le _ measurable_swap.aemeasurable
     _ ≤ ∫⁻ n', ∫⁻ h, F (mulM (h, n')) ∂(μHeis k r') ∂(μ'.map (levM k r')) := lintegral_prod_le _
-    _ ≤ ∫⁻ m, ∫⁻ h, F (mulM (h, levM k r' m)) ∂(μHeis k r') ∂μ' := lintegral_map_le _ _
+    _ ≤ ∫⁻ m, ∫⁻ h, F (mulM (h, levM k r' m)) ∂(μHeis k r') ∂μ' := lintegral_map_le _ hlev.aemeasurable
     _ ≤ ∫⁻ m, ENNReal.ofReal (C * ‖herm (Hpk k r') (phiV k r' ⟨0, by omega⟩) (fvec k r' z1 ⟨0, by omega⟩)‖ ^ (-γ)) *
           (ENNReal.ofReal (xiR k r' (fun a => s (su a) - if a = 0 then γ else 0) (Matrix.of m)) *
             ENNReal.ofReal ((1 + |lam k r' z1 (Matrix.of m)|) ^ (-(δ / 4)))) ∂μ' := lintegral_mono_ae (hae.mono hpt)

@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.SatFrob
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.CrysSlopes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecOfRecLiteral
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.IntCrit
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.SatFrob
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.CrysSlopes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecOfRecLiteral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.IntCrit
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem slopesOf (hP : Hypotheses₂) {F : Type} [Field F] [NumberField F] {n : 
     (σ : SmIrr (GL (Fin n) (w.adicCompletion F))) (B : Multiset ℂˣ) (hB : GlobalTheory.LFun.HasSatGL w σ.ρ B)
     (H : ∀ (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ), ∃ r : G F (AlgebraicClosure F) →* GL (Fin n) (Qbar l), Continuous r ∧
       ((l : 𝓞 F) ∉ w.asIdeal → ∀ (A : ValuationSubring (AlgebraicClosure F)) (h : IsPlaceOver A w)
-        (rc : IrrGL (w.adicCompletion F) → WD h), IsRec h rc → IsWDOf ι r (rc (algNorm σ))) ∧
+        (rc : IrrGL (k := w.adicCompletion F) → WD h), IsRec h rc → IsWDOf ι r (rc (algNorm σ))) ∧
       ∀ (A : ValuationSubring (AlgebraicClosure F)) (h : IsPlaceOver A w)
         (O : Type) [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O]
         (Bw : LocBridge l F (AlgebraicClosure F) (Dec (F := F) A) O) (hj : Induces Bw),
@@ -77,7 +81,7 @@ theorem slopesOf (hP : Hypotheses₂) {F : Type} [Field F] [NumberField F] {n : 
     SlopesIn (normV w) m (algSat n (normV w) B) := by
   have hK := GlobalTheory.SmGL.SphCompletion.KO_completion w n
   obtain ⟨x, hx0, hx, -⟩ := hB.exists_vec
-  have hfix : ∀ U, U ≤ GlobalTheory.LFun.KGL w n → GlobalTheory.PRep.fixed σ.ρ U ≠ ⊥ := fun U hU =>
+  have hfix : ∀ U, U ≤ GlobalTheory.LFun.KGL w (n := n) → GlobalTheory.PRep.fixed σ.ρ U ≠ ⊥ := fun U hU =>
     (Submodule.ne_bot_iff _).2 ⟨x, GlobalTheory.LGrp.mem_fixed.2 fun k hk => GlobalTheory.LGrp.mem_fixed.1 hx k (hU hk), hx0⟩
   have hsph : GlobalTheory.SmGL.IsSpherical σ.ρ := hfix _ hK.le
   have hiw := hfix _ ((GlobalTheory.SmGL.iwahori_le_KO _ _).trans hK.le)

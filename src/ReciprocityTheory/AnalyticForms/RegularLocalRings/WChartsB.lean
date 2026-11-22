@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -89,7 +93,7 @@ theorem effCartier_comap_of_isOpenImmersion' {X Y : Scheme.{0}} (I : Y.IdealShea
     rfl
 
 theorem inter_reesCharts' {X W : Scheme.{0}} (π : W ⟶ X) (J : X.IdealSheafData) (hB : FinalTheorems.Blowup π J)
-    (U : X.affineOpens) {m : ℕ} (g : Fin m → Γ(X, U.1)) (hg : Ideal.span (Set.range g) = J.ideal U)
+    (U : X.affineOpens) {m : ℕ} (g : Fin m → Γ(X, U.1)) (_hg : Ideal.span (Set.range g) = J.ideal U)
     (V : Fin m → W.Opens) (hV : ∀ i, V i ≤ π ⁻¹ᵁ U.1)
     (e : ∀ i, (V i).toScheme ≅ Spec (CommRingCat.of (FinalTheorems.reesChart g i)))
     (he : ∀ i, (e i).hom ≫ Spec.map (CommRingCat.ofHom (algebraMap Γ(X, U.1) (FinalTheorems.reesChart g i))) ≫

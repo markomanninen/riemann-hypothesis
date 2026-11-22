@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+
+@[expose] public section
 
 open GlobalTheory.PMonE Finset
 
@@ -14,8 +18,7 @@ theorem gsum_sub_of_charP {F : Type*} [NormedField F] (p : ℕ) [Fact p.Prime] [
   rw [← Matrix.mulVec_sub]
   congr 1
   funext i
-  simp only [Pi.sub_apply, ← pow_mul]
-  exact sub_pow_char_pow _ _ _
+  simpa [pow_mul] using (sub_pow_char_pow (R := F) (p := p) (x i) (y i) (e * n))
 
 theorem norm_gsum_le_of_small {F : Type*} [NormedField F] [IsUltrametricDist F] {m : Type*} [Fintype m]
     (q D : ℕ) (hq : 0 < q) (M : ℕ → Matrix m m F) (δ : ℝ) (hδ : 0 ≤ δ)

@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerQqPowLevelEqQ
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompletedLaurentIsDVRStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntPrimeDivRootOfUnitySubOnePowStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerQqPowLevelEqQ
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompletedLaurentIsDVRStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntPrimeDivRootOfUnitySubOnePowStatement
+
+@[expose] public section
+
 open GlobalTheory.K5 GlobalTheory.KumDlog
 
 namespace GlobalTheory.K5
 
-theorem one_sub_p_div_zeta_mul_isUnit : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω → ∀ (T : Tower p Ω) (j : ℕ), 1 ≤ j → ∀ y : Ω, IsInt p y →
-  1 - (p : Ω) / (T.ζ j - 1) * y ≠ 0 ∧ IsInt p (1 - (p : Ω) / (T.ζ j - 1) * y)⁻¹ := by
+theorem one_sub_p_div_zeta_mul_isUnit : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω → ∀ (T : Tower p Ω) (j : ℕ), 1 ≤ j → ∀ y : Ω, IsInt (p := p) y →
+  1 - (p : Ω) / (T.ζ j - 1) * y ≠ 0 ∧ IsInt (p := p) (1 - (p : Ω) / (T.ζ j - 1) * y)⁻¹ := by
   intro p hp hp2 Ω _ _ _ T j hj y hy
   classical
   set A := integralClosure (O0 p) Ω
@@ -24,8 +29,9 @@ theorem one_sub_p_div_zeta_mul_isUnit : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 �
     have h1 : 1 ≤ p ^ (j - 1) := Nat.one_le_pow _ _ hp.out.pos
     calc 2 = 1 * 2 := by ring
       _ ≤ p ^ (j - 1) * (p - 1) := Nat.mul_le_mul h1 (by omega)
-  have hw : IsIntegral (O0 p) ((p : Ω) / (T.ζ j - 1) ^ 2 * y) :=
-    (GlobalTheory.T.isInt_prime_div_rootOfUnity_sub_one_pow p Ω T j 2 hj htot).mul hy
+  have hdiv : IsIntegral (O0 p) ((p : Ω) / (T.ζ j - 1) ^ 2) :=
+    GlobalTheory.K5.PDiv.pdiv p Ω T j 2 hj htot
+  have hw : IsIntegral (O0 p) ((p : Ω) / (T.ζ j - 1) ^ 2 * y) := hdiv.mul hy
   let ζ' : A := ⟨T.ζ j, hζint⟩
   let τ : A := ζ' - 1
   let w : A := ⟨_, hw⟩
@@ -40,22 +46,24 @@ theorem one_sub_p_div_zeta_mul_isUnit : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 �
   have hτM : ∀ M : Ideal A, M.IsMaximal → τ ∈ M := by
     intro M hM
     have hc : (M.comap (algebraMap (O0 p) A)).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal M
     have hpM : (p : A) ∈ M := by
       have h1 : M.comap (algebraMap (O0 p) A) = IsLocalRing.maximalIdeal (O0 p) :=
         IsLocalRing.eq_maximalIdeal hc
       have h2 : (p : O0 p) ∈ M.comap (algebraMap (O0 p) A) := by
         rw [h1, hmax]; exact Ideal.mem_span_singleton_self _
       simpa using h2
-    haveI : M.IsPrime := hM.isPrime
-    haveI : Nontrivial (A ⧸ M) := Ideal.Quotient.nontrivial_iff.2 hM.ne_top
-    haveI : CharP (A ⧸ M) p := by
+    have : M.IsPrime := hM.isPrime
+    have : Nontrivial (A ⧸ M) := Ideal.Quotient.nontrivial_iff.2 hM.ne_top
+    have : CharP (A ⧸ M) p := by
       rw [CharP.charP_iff_prime_eq_zero hp.out]
       rw [← map_natCast (Ideal.Quotient.mk M), Ideal.Quotient.eq_zero_iff_mem]; exact hpM
     have hζp : ζ' ^ (p ^ j) = 1 := Subtype.ext (by simp [ζ', (T.prim j).pow_eq_one])
     have h3 : (Ideal.Quotient.mk M τ) ^ (p ^ j) = 0 := by
-      simp only [τ, map_sub, map_one]
-      rw [sub_pow_char_pow, ← map_pow, hζp, map_one, one_pow, sub_self]
+      let q := Ideal.Quotient.mk M
+      change (q (ζ' - 1)) ^ (p ^ j) = 0
+      rw [q.map_sub, q.map_one, sub_pow_char_pow (p := p) (q ζ') 1 j,
+        ← q.map_pow, hζp, q.map_one, one_pow, sub_self]
     rw [← Ideal.Quotient.eq_zero_iff_mem]
     exact pow_eq_zero_iff (by omega) |>.1 h3
   have hunit : IsUnit u := by

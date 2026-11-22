@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubMemSmulTopOfNeatLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeActionFramedPointsOfUnipotentModTwoPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubMemSmulTopOfNeatLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeActionFramedPointsOfUnipotentModTwoPrimes
+
+@[expose] public section
+
 open CategoryTheory NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.Pj GlobalTheory.DualWeyl GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.CompHt GlobalTheory.DefPt ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 open scoped Matrix Classical
 
@@ -37,7 +42,7 @@ theorem eq_one_of_prime_order [IsDomain R] [IsNoetherianRing R] [Module.Finite R
   obtain ⟨Q, hQ⟩ := exists_poly hg
   set N : Module.End R M := β - 1 with hN
   have hQ' := congrArg (Polynomial.aeval N) hQ
-  simp only [map_pow, map_add, map_mul, Polynomial.aeval_X, map_one, map_natCast] at hQ'
+  simp only [map_pow, map_add (f := _), map_mul, Polynomial.aeval_X, map_one, map_natCast] at hQ'
   set q : Module.End R M := Polynomial.aeval N Q with hq
   have hcomm : N * q = q * N := by
     have := congrArg (Polynomial.aeval N) (mul_comm Polynomial.X Q)
@@ -46,7 +51,7 @@ theorem eq_one_of_prime_order [IsDomain R] [IsNoetherianRing R] [Module.Finite R
   have hrel : ∀ z, (g : R) • (N z + N (N (q z))) = - (N ^ g) z := by
     intro z
     have := congrArg (fun T : Module.End R M => T z) hQ'
-    simp only [LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply, Module.End.natCast_apply, map_add] at this
+    simp only [LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply, Module.End.natCast_apply, map_add (f := _)] at this
     rw [Nat.cast_smul_eq_nsmul, eq_neg_iff_add_eq_zero]
     have e : z + ((g • (N z + N (N (q z)))) + (N ^ g) z) = z + 0 := by
       rw [add_zero, smul_add]; conv_rhs => rw [this]
@@ -252,8 +257,8 @@ theorem sub_mem_smul_top_of_level (E : Type) [Field E] [NumberField E] (La Λ Q 
 open AlgebraicGeometry Limits MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G.Semi
 attribute [local instance] Over.cartesianMonoidalCategory
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem free_of_unip_one (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H)
     (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (G : Type) [Group G] (h : G → (Dw.La →ₗ[𝓞 E] Dw.La)) (m q₀ : ℕ)
     (I : Ideal (𝓞 E)) (s : 𝓞 E) (hq : q₀.Prime) (hI : I ≠ ⊤) (hqI : (q₀ : 𝓞 E) ∈ I) (hr : m + 1 < q₀) (hs1 : 1 - s ∈ I)

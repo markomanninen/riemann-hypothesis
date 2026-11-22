@@ -1,4 +1,8 @@
-import Formalism.ConjugateSelfDual.Statement
+module
+
+public import Formalism.ConjugateSelfDual.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +15,6 @@ open Formalism.ConjugateSelfDual
 variable {F Ω : Type*} [Field F] [NumberField F] [Field Ω] [Algebra F Ω]
 
 def Dec (A : ValuationSubring (Ω)) : Subgroup (G F Ω) := A.decompositionSubgroup F
-
-theorem mem_Dec {A : ValuationSubring (Ω)} {σ : G F Ω} :
-    σ ∈ Dec (F := F) A ↔ σ • A = A := Iff.rfl
 
 theorem apply_mem_iff_of_mem_Dec {A : ValuationSubring (Ω)} {σ : G F Ω}
     (hσ : σ ∈ Dec (F := F) A) (x : Ω) : σ x ∈ A ↔ x ∈ A := by
@@ -70,37 +71,14 @@ def Ine (A : ValuationSubring (Ω)) : Subgroup (G F Ω) where
     rw [e, Valuation.map_neg]
     exact hσ' _ hy
 
-theorem mem_Ine {A : ValuationSubring (Ω)} {σ : G F Ω} :
-    σ ∈ Ine (F := F) A ↔ σ ∈ Inertia (F := F) A := Iff.rfl
-
-theorem Ine_le_Dec (A : ValuationSubring (Ω)) : Ine (F := F) A ≤ Dec (F := F) A :=
-  fun _ h => h.1
-
-theorem conj_mem_Ine {A : ValuationSubring (Ω)} {g σ : G F Ω} (hg : g ∈ Dec (F := F) A)
-    (hσ : σ ∈ Ine (F := F) A) : g * σ * g⁻¹ ∈ Ine (F := F) A := by
-  refine ⟨(Dec (F := F) A).mul_mem ((Dec (F := F) A).mul_mem hg hσ.1) ((Dec (F := F) A).inv_mem hg), fun x hx => ?_⟩
-  have hy : A.valuation ((g⁻¹ : G F Ω) x) ≤ 1 := by
-    rw [A.valuation_le_one_iff, ← apply_mem_iff_of_mem_Dec hg, mul_inv_apply]
-    exact (A.valuation_le_one_iff x).mp hx
-  have e : (g * σ * g⁻¹) x - x = g (σ ((g⁻¹ : G F Ω) x) - (g⁻¹ : G F Ω) x) := by
-    rw [map_sub, mul_inv_apply]; rfl
-  rw [e, valuation_apply_lt_one_iff hg]
-  exact hσ.2 _ hy
-
-instance normal_Ine_subgroupOf (A : ValuationSubring (Ω)) :
-    ((Ine (F := F) A).subgroupOf (Dec (F := F) A)).Normal where
-  conj_mem n hn g := by
-    rw [Subgroup.mem_subgroupOf] at hn ⊢
-    simpa using conj_mem_Ine g.2 hn
 
 variable (F Ω) in
-
 def cycZ (l : ℕ) [Fact l.Prime] : G F Ω →* ℤ_[l]ˣ :=
   (cyclotomicCharacter (Ω) l).comp
     (MulSemiringAction.toRingAut (G F Ω) (Ω))
 
-variable (F Ω) in
 
+variable (F Ω) in
 def cycMod (l : ℕ) [Fact l.Prime] (r : ℕ) : G F Ω →* (ZMod (l ^ r))ˣ :=
   (Units.map (PadicInt.toZModPow r : ℤ_[l] →+* ZMod (l ^ r)).toMonoidHom).comp (cycZ F Ω l)
 
@@ -118,29 +96,6 @@ def IsPlaceAbove (F : Type*) [Field F] [NumberField F] {Ω : Type*} [Field Ω] [
 section unram
 
 variable (S : Set (HeightOneSpectrum (𝓞 F)))
-
-variable (Ω) in
-
-def NS : Subgroup (G F Ω) :=
-  (Subgroup.normalClosure
-    (⋃ v ∈ Sᶜ, ⋃ A ∈ {A : ValuationSubring (Ω) | IsPlaceOver A v}, Inertia (F := F) A)
-    ).topologicalClosure
-
-instance normal_NS : (NS Ω S).Normal := by
-  unfold NS; exact Subgroup.is_normal_topologicalClosure _
-
-variable (Ω) in
-
-abbrev GS := G F Ω ⧸ NS Ω S
-
-variable (Ω) in
-
-def toGS : G F Ω →* GS Ω S := QuotientGroup.mk' (NS Ω S)
-
-def locHom (A : ValuationSubring (Ω)) : Dec (F := F) A →* GS Ω S :=
-  (toGS Ω S).comp (Dec (F := F) A).subtype
-
-def UnramOutside {H : Type*} [Group H] (ρ : G F Ω →* H) : Prop := ∀ σ ∈ NS Ω S, ρ σ = 1
 
 end unram
 

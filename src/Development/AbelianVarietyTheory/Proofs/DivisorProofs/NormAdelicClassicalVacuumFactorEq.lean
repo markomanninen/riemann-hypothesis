@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
-import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HxOfIsONFr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrthonormalFrameReadingEqConjugateDatumThetaStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProdLevelOneThetaEqVacuumTheta
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MeanRealTorusNormalisedThetaMulConj
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelOrthonormalFrameInDomainPeriodLinear
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaInnerProductEqRealTorusMean
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsAnalyticDataUnitFrameFramedPoint
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LintegralFintypeProdEqProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HxOfIsONFr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrthonormalFrameReadingEqConjugateDatumThetaStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProdLevelOneThetaEqVacuumTheta
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MeanRealTorusNormalisedThetaMulConj
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelOrthonormalFrameInDomainPeriodLinear
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaInnerProductEqRealTorusMean
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsAnalyticDataUnitFrameFramedPoint
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LintegralFintypeProdEqProd
+
+@[expose] public section
 
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh
@@ -64,15 +68,15 @@ theorem integral_prod_eq {V U : Type} [NormedAddCommGroup V] [MeasurableSpace V]
     simp
   have e2 : ∀ t, ∫⁻ s in F', G (e s + t) ∂μ = ∫⁻ s in F', G (e s) ∂μ := fun t => by
     obtain ⟨t, rfl⟩ := hs t
-    simp only [add_comm _ (e t), ← map_add]
+    simp only [add_comm _ (e t), ← map_add (f := _)]
     refine lintegral_translate hF' (φ := fun s => G (e s)) (fun p h z => ?_) t
-    simp only [G, map_add, Pi.add_apply, hp _ (hΓ p h _)]
+    simp only [G, map_add (f := _), Pi.add_apply, hp _ (hΓ p h _)]
   simp only [e1, e2, lintegral_const, Measure.restrict_apply_univ, Measure.pi_univ, Finset.prod_const,
     Finset.card_univ, Fintype.card_fin] at hsw
   rw [mul_comm] at hsw
   have e3 := (ENNReal.mul_left_inj (pow_ne_zero n hv0) (ENNReal.pow_ne_top hv1)).1 hsw
   have hcc : Continuous fun v => ∏ k, φ (e v k) :=
-    continuous_finset_prod _ fun k _ => hc.comp ((continuous_apply k).comp he)
+    continuous_finsetProd _ fun k _ => hc.comp ((continuous_apply k).comp he)
   rw [integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall fun v => Finset.prod_nonneg fun k _ => h0 _)
     hcc.aestronglyMeasurable, e3]
   simp only [G, ENNReal.ofReal_prod_of_nonneg fun k _ => h0 _]
@@ -168,13 +172,15 @@ theorem exists_meanOne {n : ℕ} (hs : IsSympl X bas) (hn : Even n) {w : E} (hw 
   · rw [← mul_inv_cancel₀ hpos.ne', ← hm, ← mul_div_assoc, ← integral_const_mul]
     congr 2
     funext z
-    simp only [CanTh.canTh, CanTh.imInv]
+    unfold CanTh.canTh
     rw [norm_mul, norm_mul, mul_pow, mul_pow, Complex.norm_exp, ← Real.exp_nat_mul,
       Complex.norm_real, Real.norm_eq_abs, sq_abs, Real.sq_sqrt hpos.le, _root_.mul_assoc,
       mul_comm (Real.exp _), _root_.mul_assoc, ← Real.exp_add]
     congr 3
     have : ((Real.pi : ℂ) / 2) = ((Real.pi / 2 : ℝ) : ℂ) := by push_cast; ring
-    rw [hH, this, re_ofReal_mul, VacNorm.re_dot, VacNorm.re_dot_star]
+    rw [hH, this, re_ofReal_mul, VacNorm.re_dot_star]
+    unfold CanTh.imInv
+    rw [VacNorm.re_dot]
     push_cast; ring
 
 theorem norm_sq_periodic {w : E} {L : Lt E r} {x : Frame X.Ψ r} {c : Fin g → ℝ}
@@ -199,8 +205,8 @@ theorem norm_sq_periodic {w : E} {L : Lt E r} {x : Frame X.Ψ r} {c : Fin g → 
 
 end GlobalTheory.AdTh.VacFactor
 
-open GlobalTheory.AdTh.VacFactor in
 
+open GlobalTheory.AdTh.VacFactor in
 theorem GlobalTheory.AdTh.norm_factor_eq_of_reads : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (V W : HSp D) (r g : ℕ) (hr : W.rank = r) (X : Data D.host.E r) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r), IsStdChar D ψ (-1) → IsInfFam θ → V.gram = 1 → Even V.rank → IsMod W hr X → IsSympl X bas → ∀ (H : Geo.Tor.Host D.host.E), (H.rt : D.host.E) = D.host.sqrtMinusD → ∀ (ΛV : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (ΛW : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)), IsSelfDualC V ΛV → IsSelfDualC W ΛW → (ΛV : Set (Fin V.rank → D.host.E)) = (Formalism.L2.Pj.stdLat D.host.E V.rank : Set (Fin V.rank → D.host.E)) → (∀ L₀ : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E), L₀ = Submodule.span (𝓞 D.host.E) {w | ∃ a : D.host.E, a ∈ D.host.AA ∧ ∃ v ∈ ΛW, w = a • v} → X.Λ = latR hr L₀) → ∀ (x : Frame X.Ψ r) (s : D.what₂.Tau → Matrix (Fin W.rank) (Fin W.rank) ℂ), IsONFr X x → ∀ f, IsVacO ψ θ V W (fun _ => 1) s (ΛV : Set (Fin V.rank → D.host.E)) (ΛW : Set (Fin W.rank → D.host.E)) f → ∀ v : TF V.rank g, IsVac X bas (H.w0 : D.host.E) (tens (stdL D.host.E V.rank) X.Λ) v → ∀ κ : ℂ, Reads θ V W hr X bas idx f (κ • v) x → (∀ x' ∈ X.dom, IsUnitFr X x' → ∀ (ϑ : (Fin g → ℂ) → ℂ) (κ' : ℂ), IsTheta1 X bas idx (H.w0 : D.host.E) x' X.Λ ϑ → MeanOne X bas idx x' X.Λ ϑ → (∀ z : Fin V.rank → Fin g → ℂ, ∏ b, ϑ (z b) = κ' * thA X bas idx v x' z) → ‖κ'‖ = ‖κ‖) := by
   intro D ψ θ V W r g hr X bas idx hstd hinf hV he hm hs H _ ΛV ΛW _ _ _ _ x s hx f hf v hv κ hR
   subst hr

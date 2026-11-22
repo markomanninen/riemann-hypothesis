@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
@@ -42,7 +46,7 @@ theorem main : ∀ (R : Type) [CommRing R] (r : ℕ → R) (M : ℕ) (N : Type) 
       apply key
       have e : g (s (y + y') - (s y + s y')) =
           (y - g (s y)) + (y' - g (s y')) - (y + y' - g (s (y + y'))) := by
-        simp only [map_sub, map_add]; ring
+        simp only [map_sub, map_add (f := _)]; ring
       rw [e]
       exact I.sub_mem (I.add_mem (hs y) (hs y')) (hs _)
     have hsmul : ∀ (c : R) (y : T), r k • s (c • y) - c • (r k • s y) ∈ P := by
@@ -57,7 +61,7 @@ theorem main : ∀ (R : Type) [CommRing R] (r : ℕ → R) (M : ℕ) (N : Type) 
     let L : T →ₗ[R] B ⧸ P :=
       { toFun := fun y => P.mkQ (r k • s y)
         map_add' := fun y y' => by
-          rw [← map_add]
+          rw [← map_add (f := _)]
           exact (Submodule.Quotient.eq P).mpr (hadd y y')
         map_smul' := fun c y => by
           simp only [RingHom.id_apply]
@@ -85,7 +89,7 @@ theorem main : ∀ (R : Type) [CommRing R] (r : ℕ → R) (M : ℕ) (N : Type) 
         have e' : (g.toLinearMap) b = g b := rfl
         rw [e', e]
         exact I.neg_mem (hs _)
-      | add a b ha hb => rw [map_add, map_add, ha, hb, smul_add]
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, smul_add]
     rw [← hcomp w, hw, map_zero]
 
 end GlobalTheory.CompanionTheory.TensCompl

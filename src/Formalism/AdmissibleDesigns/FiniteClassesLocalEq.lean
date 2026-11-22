@@ -1,7 +1,11 @@
-import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
-import Formalism.AdmissibleDesigns.SelfGood
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.LiftingConditionOfWindows
-import Formalism.AdmissibleDesigns.RankReductionIdempotentOne
+module
+
+public import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
+public import Formalism.AdmissibleDesigns.SelfGood
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.LiftingConditionOfWindows
+public import Formalism.AdmissibleDesigns.RankReductionIdempotentOne
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -46,8 +50,8 @@ theorem smul_Ow (heO : ∀ a : O, algebraMap Ow LL (eO a) = e (algebraMap O (Fra
 
 variable {M : Type} [AddCommGroup M] [Module O M] (j : M →ₗ[O] V)
 
-variable (e eO) in
 
+variable (e eO) in
 def latT (heO : ∀ a : O, algebraMap Ow LL (eO a) = e (algebraMap O (FractionRing O) a)) :
     Submodule Ow (TrV e V) where
   carrier := Set.range fun m => tr e (j m)
@@ -60,9 +64,6 @@ def latT (heO : ∀ a : O, algebraMap Ow LL (eO a) = e (algebraMap O (FractionRi
     refine ⟨eO.symm c • a, ?_⟩
     show tr e (j (eO.symm c • a)) = c • tr e (j a)
     rw [smul_Ow heO, map_smul]
-
-theorem mem_latT (heO : ∀ a : O, algebraMap Ow LL (eO a) = e (algebraMap O (FractionRing O) a))
-    (v : TrV e V) : v ∈ latT e eO j heO ↔ ∃ m, tr e (j m) = v := Iff.rfl
 
 def MO (_eO : O ≃+* Ow) (M : Type) : Type := M
 
@@ -103,8 +104,8 @@ variable {Γ G : Type} [Group Γ] [Group G] [TopologicalSpace G] {K₀ Kk B BdR 
     [IsScalarTower K₀ Kk BdR] [IsScalarTower Qp K₀ BdR]
     (PD : PeriodData G Qp K₀ Kk B BdR) (ι : G →* Γ)
 
-variable (e eO) in
 
+variable (e eO) in
 def latOf (heO : ∀ a : O, algebraMap Ow LL (eO a) = e (algebraMap O (FractionRing O) a))
     (ρV : Representation O Γ V) (ρM : Representation O Γ M) (hj : Function.Injective j)
     (hjeq : ∀ γ m, j (ρM γ m) = ρV γ (j m))
@@ -200,7 +201,7 @@ theorem liftO_of_liftF (ℓ : ℕ) (hp : PD.p = ℓ) (hι : Function.Bijective �
   have hz1c : z1 ∈ coZ1s ρP := by
     intro γ δ
     apply hjP
-    rw [map_add, hz1, hz1, hjeqP, hz1, hσmul, hcoc]
+    rw [map_add (f := _), hz1, hz1, hjeqP, hz1, hσmul, hcoc]
     show untr e (c1 (σ γ)) + ρVP (ι (σ γ)) (untr e (c1 (σ δ))) = _
     rw [hισ]
   have hz1f : (fun g => tr e (jP (z1 (ι g)))) = c1 := by
@@ -287,8 +288,8 @@ variable {O : Type} [CommRing O] [IsDomain O] {LL : Type} [Field LL] [Topologica
   {ev : P →ₗ[O] Q} {f0 : VP →ₗ[O] VQ}
   (hf0 : ∀ γ v, f0 (ρVP γ v) = ρVQ γ (f0 v)) (hcomm : ∀ m, f0 (jP m) = jQ (ev m))
 
-include hspQ hcomm in
 
+include hspQ hcomm in
 theorem trL_onto (hev : Function.Surjective ev) : Function.Surjective (trL e f0) := by
   intro v
   obtain ⟨c, hc, m, hm⟩ := hspQ (untr e v)
@@ -299,8 +300,8 @@ theorem trL_onto (hev : Function.Surjective ev) : Function.Surjective (trL e f0)
   show f0 ((algebraMap O (FractionRing O) c)⁻¹ • jP p) = untr e v
   rw [smulK, hcomm, hm, ← algebraMap_smul (FractionRing O) c (untr e v), smul_smul, inv_mul_cancel₀ hk, one_smul]
 
-include heO hjP hjQ hjeqP hjeqQ hspP hspQ hf0 hcomm in
 
+include heO hjP hjQ hjeqP hjeqQ hspP hspQ hf0 hcomm in
 theorem liftO_of_liftAt (ℓ : ℕ) (hp : PD.p = ℓ) (hι : Function.Bijective ι) (hev : IsEquivMap ρP ρQ ev)
     (hevs : Function.Surjective ev) {ιx : Type} {k : ℕ} (Ms : ιx → G → Matrix (Fin k) (Fin k) LL) (n : ℕ)
     (hA : Formalism.MainNotions.N.LiftAt PD (O := Ow) Ms n)
@@ -412,7 +413,7 @@ theorem cont_of_inj {LL : Type} [Field LL] [TopologicalSpace LL] [IsTopologicalR
   have hψc : Continuous ψ := IsModuleTopology.continuous_of_linearMap ψ
   refine hψc.comp (continuous_pi fun a => continuous_pi fun i => ?_)
   simp only [Matrix.mulVec, dotProduct]
-  exact continuous_finset_sum _ fun j _ => ((hMs (xs a)).matrix_elem i j).mul continuous_const
+  exact continuous_finsetSum _ fun j _ => ((hMs (xs a)).matrix_elem i j).mul continuous_const
 
 end Emb
 
@@ -747,8 +748,8 @@ theorem embAt_Dd {n : ℕ} (hn : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l i
     { toFun := fun v a => e ((Λ (untr e v)) q.1 a q.2)
       map_add' := fun v w => funext fun a => by
         show e ((Λ (untr e v + untr e w)) q.1 a q.2) = _
-        rw [map_add]
-        simp [map_add]
+        rw [map_add (f := _)]
+        simp [map_add (f := _)]
       map_smul' := fun c v => funext fun a => by
         show e ((Λ (e.symm c • untr e v)) q.1 a q.2) = c * e ((Λ (untr e v)) q.1 a q.2)
         rw [smulK]
@@ -768,7 +769,8 @@ theorem embAt_Dd {n : ℕ} (hn : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l i
     have key : ∀ γ : ↥(Γn i dc n), (γ : GE D.nd) = ((Br.iota D.nbr i _ hn g : Gw D.nd (K.plOf i dc n)) : GE D.nd) →
         e ((Λ (locRep ρP γ (untr e v))) q.1 a q.2) = (MsAt i dc r hn (Dd.p q.1) g).mulVec (Ψ q v) a := by
       intro γ hγ
-      rw [hΛe, Pi.mul_apply, hγ, uElt_at i r Dd hr' hsm hχ, Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hΛe, Pi.mul_apply, hγ, uElt_at i r Dd hr' hsm hχ, Matrix.mul_apply, map_sum]
       simp only [Matrix.mulVec, dotProduct, msAt_apply]
       refine Finset.sum_congr rfl fun b _ => ?_
       simp [Ψ, Matrix.map_apply, map_mul]
@@ -852,7 +854,7 @@ variable {D : D7} (i : D.nd.Loc)
 def kappaL (x : Dd.R') :
     K.LeftId (D.nd.O i) x →ₗ[D.nd.O i] (Dd.X' → Matrix (Fin D.R.nV) (Fin D.R.nV) (FractionRing (D.nd.O i))) where
   toFun p := ((K.incl (D.nd.O i) x p : Dd.R') : Dd.X' → Matrix (Fin D.R.nV) (Fin D.R.nV) (FractionRing (D.nd.O i)))
-  map_add' p q := by rw [map_add]; rfl
+  map_add' p q := by rw [map_add (f := _)]; rfl
   map_smul' c p := rfl
 
 theorem kappaL_inj (x : Dd.R') : Function.Injective (kappaL i Dd x) := by

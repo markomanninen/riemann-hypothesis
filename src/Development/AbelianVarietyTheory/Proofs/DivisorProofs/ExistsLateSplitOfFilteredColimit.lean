@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyFiniteBaseChangeFilteredColimitStatement
-open CategoryTheory Limits TensorProduct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyFiniteBaseChangeFilteredColimitStatement
+
+@[expose] public section
+
+open CategoryTheory Limits TensorProduct GlobalTheory.FiniteColim MvPolynomial
 
 noncomputable section
 namespace GlobalTheory.SplitColim
@@ -101,7 +106,8 @@ theorem exists_late_linear (hc : IsColimit c) (k₁ : J) (M : Type) [AddCommGrou
   have hπapp : ∀ {T : Type} [AddCommGroup T] [Module (F.obj k₁) T] (g : M →ₗ[F.obj k₁] T)
       (v : s →₀ F.obj k₁), g (π v) = ∑ x, v x • g x := by
     intro T _ _ g v
-    rw [hπdef, Finsupp.linearCombination_apply, Finsupp.sum_fintype _ _ (fun i => by simp), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hπdef, Finsupp.linearCombination_apply, Finsupp.sum_fintype _ _ (fun i => by simp), map_sum]
     simp
   let lin : (s →₀ F.obj k₁) → MvPolynomial s (F.obj k₁) :=
     fun v => ∑ x, MvPolynomial.C (v x) * MvPolynomial.X x
@@ -166,10 +172,97 @@ theorem exists_late_split_of_isColimit :
     ∃ (k₀ : J) (f₀ : j ⟶ k₀), ∀ (k : J) (f : k₀ ⟶ k),
       letI : Algebra (F.obj j) (F.obj k) := (F.map (f₀ ≫ f)).hom.toAlgebra;
       ∃ τ : (F.obj k ⊗[F.obj j] A) →ₗ[F.obj k] F.obj k, τ 1 = 1 := by
-  intro J _ _ F c hc j A _ _ _ h
+  intro J _ _ F c hc j A _ _ hfp h
   letI : Algebra (F.obj j) c.pt := (c.ι.app j).hom.toAlgebra
   obtain ⟨hfin, τ, hτ⟩ := h
-  obtain ⟨k₁, f₁, hk₁⟩ := GlobalTheory.T.eventually_finite_baseChange_filtered_colimit J F c hc j A hfin
+  have hbase : ∃ (k₀ : J) (f₀ : j ⟶ k₀), ∀ (k : J) (f : k₀ ⟶ k),
+      letI : Algebra (F.obj j) (F.obj k) := (F.map (f₀ ≫ f)).hom.toAlgebra;
+      Module.Finite (F.obj k) (F.obj k ⊗[F.obj j] A) := by
+    classical
+    obtain ⟨n, φ, hφ, hfg⟩ := hfp.out
+    obtain ⟨s, hs⟩ := hfg
+    let rel : s → MvPolynomial (Fin n) (F.obj j) := fun x => x
+    have hker : RingHom.ker φ = Ideal.span (Set.range rel) := by
+      have : Set.range rel = (s : Set (MvPolynomial (Fin n) (F.obj j))) := by
+        ext x; simp [rel]
+      rw [this, hs]
+      rfl
+    letI : Algebra (F.obj j) c.pt := (c.ι.app j).hom.toAlgebra
+    haveI : Algebra.IsIntegral c.pt (c.pt ⊗[F.obj j] A) := Algebra.IsIntegral.of_finite _ _
+    have hint : ∀ i, IsIntegral c.pt (bcPres (S := c.pt) φ (X i)) :=
+      fun i => Algebra.IsIntegral.isIntegral _
+    choose p hpm hp0 using hint
+    have hcomb : ∀ i, ∃ G : s → MvPolynomial (Fin n) c.pt,
+        ∑ l, G l * MvPolynomial.map (algebraMap (F.obj j) c.pt) (rel l) =
+          Polynomial.aeval (X i : MvPolynomial (Fin n) c.pt) (p i) := by
+      intro i
+      refine exists_comb_of_bcPres_eq_zero φ hφ rel hker _ ?_
+      rw [← Polynomial.aeval_algHom_apply, Polynomial.aeval_def]
+      exact hp0 i
+    choose G hG using hcomb
+    let T : Finset c.pt := Finset.univ.biUnion (fun i => (p i).support.image (p i).coeff) ∪
+      Finset.univ.biUnion (fun i => Finset.univ.biUnion (fun l => (G i l).coeffs))
+    obtain ⟨k₁, f₁, hk₁⟩ := exists_stage_range hc j T
+    have hlp : ∀ i, ∃ q : Polynomial (F.obj k₁), q.map (c.ι.app k₁).hom = p i ∧ q.Monic := by
+      intro i
+      have hl : p i ∈ Polynomial.lifts (c.ι.app k₁).hom := by
+        rw [Polynomial.lifts_iff_coeff_lifts]
+        intro m
+        by_cases hm : m ∈ (p i).support
+        · exact hk₁ _ (Finset.mem_union_left _ (Finset.mem_biUnion.2
+            ⟨i, Finset.mem_univ _, Finset.mem_image_of_mem _ hm⟩))
+        · rw [Polynomial.notMem_support_iff.1 hm]; exact ⟨0, map_zero _⟩
+      obtain ⟨q, hq, -, hqm⟩ := Polynomial.lifts_and_natDegree_eq_and_monic hl (hpm i)
+      exact ⟨q, hq, hqm⟩
+    choose q hq hqm using hlp
+    have hlG : ∀ i l, ∃ H, MvPolynomial.map (c.ι.app k₁).hom H = G i l := by
+      intro i l
+      have : G i l ∈ Set.range (MvPolynomial.map (σ := Fin n) (c.ι.app k₁).hom) := by
+        rw [MvPolynomial.mem_range_map_iff_coeffs_subset]
+        intro y hy
+        exact hk₁ _ (Finset.mem_union_right _ (Finset.mem_biUnion.2 ⟨i, Finset.mem_univ _,
+          Finset.mem_biUnion.2 ⟨l, Finset.mem_univ _, hy⟩⟩))
+      exact this
+    choose H hH using hlG
+    let E : Fin n → MvPolynomial (Fin n) (F.obj k₁) := fun i =>
+      Polynomial.aeval (X i) (q i) - ∑ l, H i l * MvPolynomial.map (F.map f₁).hom (rel l)
+    have hE : ∀ i, MvPolynomial.map (c.ι.app k₁).hom (E i) = 0 := by
+      intro i
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [E, map_sub, map_sum, map_mul, map_aeval_X, hq, hH, MvPolynomial.map_map]
+      rw [← CommRingCat.hom_comp, c.w f₁, sub_eq_zero, ← hG i]
+      rfl
+    let U : Finset (F.obj k₁) := Finset.univ.biUnion (fun i => (E i).coeffs)
+    obtain ⟨k₂, g₂, hg₂⟩ := exists_stage_zero hc U (by
+      intro x hx
+      obtain ⟨i, -, hx⟩ := Finset.mem_biUnion.1 hx
+      obtain ⟨m, -, rfl⟩ := MvPolynomial.mem_coeffs_iff.1 hx
+      have := congrArg (AddMonoidAlgebra.coeff · m) (hE i)
+      rwa [MvPolynomial.coeff_map, MvPolynomial.coeff_zero] at this)
+    have hE2 : ∀ i, MvPolynomial.map (F.map g₂).hom (E i) = 0 := by
+      intro i
+      ext m
+      rw [MvPolynomial.coeff_map, MvPolynomial.coeff_zero]
+      by_cases hm : m ∈ (E i).support
+      · exact hg₂ _ (Finset.mem_biUnion.2 ⟨i, Finset.mem_univ _,
+          MvPolynomial.coeff_mem_coeffs _ (MvPolynomial.mem_support_iff.1 hm)⟩)
+      · simp [MvPolynomial.notMem_support_iff.1 hm]
+    refine ⟨k₂, f₁ ≫ g₂, fun k f => ?_⟩
+    letI : Algebra (F.obj j) (F.obj k) := (F.map ((f₁ ≫ g₂) ≫ f)).hom.toAlgebra
+    have hrel : ∀ l, φ (rel l) = 0 := fun l =>
+      (RingHom.mem_ker).1 (hker ▸ Ideal.subset_span ⟨l, rfl⟩ : rel l ∈ RingHom.ker φ)
+    refine finite_of_relations φ hφ rel hrel (fun i => (q i).map (F.map (g₂ ≫ f)).hom)
+      (fun i => (hqm i).map _) (fun i l => MvPolynomial.map (F.map (g₂ ≫ f)).hom (H i l)) (fun i => ?_)
+    have halg : algebraMap (F.obj j) (F.obj k) = (F.map (g₂ ≫ f)).hom.comp (F.map f₁).hom := by
+      change (F.map ((f₁ ≫ g₂) ≫ f)).hom = _
+      rw [Category.assoc, Functor.map_comp, CommRingCat.hom_comp]
+    have h3 : MvPolynomial.map (F.map (g₂ ≫ f)).hom (E i) = 0 := by
+      rw [Functor.map_comp, CommRingCat.hom_comp, ← MvPolynomial.map_map, hE2, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [E, map_sub, map_sum, map_mul, map_aeval_X, MvPolynomial.map_map, sub_eq_zero] at h3
+    rw [halg]
+    exact h3
+  obtain ⟨k₁, f₁, hk₁⟩ := hbase
   have hfin₁ := hk₁ k₁ (𝟙 k₁)
   rw [Category.comp_id] at hfin₁
   letI : Algebra (F.obj j) (F.obj k₁) := (F.map f₁).hom.toAlgebra

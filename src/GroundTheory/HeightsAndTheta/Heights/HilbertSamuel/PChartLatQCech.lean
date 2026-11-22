@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartLatQCech
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenOnFibres
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PZeroCocycleSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartLatQCech
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenOnFibres
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PZeroCocycleSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -64,8 +69,8 @@ theorem aeval_eq_zero_of_memQ {f : MRingOver ℚ ι} (hf : f ∈ idealOver y ℚ
       aeval_eq_eval_mConeMap y g, RingHom.mem_ker.mp hg, map_zero]
   exact RingHom.mem_ker.mp (h hf)
 
-attribute [local instance] MvPolynomial.algebraMvPolynomial in
 
+attribute [local instance] MvPolynomial.algebraMvPolynomial in
 theorem mem_idealOverQ {p : MRingOver ℚ ι} {d : K → ℕ} (hp : IsMultiHomog p d) (h0 : aeval y p = 0) :
     p ∈ idealOver y ℚ := by
   obtain ⟨⟨G, ⟨_, n, hn, rfl⟩⟩, hG⟩ :=
@@ -79,7 +84,7 @@ theorem mem_idealOverQ {p : MRingOver ℚ ι} {d : K → ℕ} (hp : IsMultiHomog
     intro m hm
     apply hp m
     rw [MvPolynomial.mem_support_iff] at hm ⊢
-    have h1 := congrArg (MvPolynomial.coeff m) hG'
+    have h1 := congrArg (AddMonoidAlgebra.coeff · m) hG'
     rw [MvPolynomial.coeff_map, MvPolynomial.coeff_smul] at h1
     intro h2
     rw [h2, smul_zero] at h1
@@ -95,8 +100,8 @@ theorem mem_idealOverQ {p : MRingOver ℚ ι} {d : K → ℕ} (hp : IsMultiHomog
   rw [e]
   exact Ideal.mul_mem_right _ _ hmem
 
-variable (y) in
 
+variable (y) in
 def evQ : (MRingOver ℚ ι ⧸ idealOver y ℚ) →ₐ[ℚ] Ω :=
   Ideal.Quotient.liftₐ (idealOver y ℚ) (aeval y) fun _ ha => aeval_eq_zero_of_memQ ha
 
@@ -117,9 +122,9 @@ theorem cellMon_aevalQ_ne {I : ∀ k, Finset (ι k)} (hI : ∀ k, ∀ i ∈ I k,
   | one => simp
   | mul x x' _ _ hx hx' => rw [map_mul]; exact mul_ne_zero hx hx'
 
-variable (y) in
-open Classical in
 
+open Classical in
+variable (y) in
 def val (T : Submonoid (MRingOver ℚ ι)) (x : LocalizedModule T (MRingOver ℚ ι ⧸ idealOver y ℚ)) : Ω :=
   if hT : ∀ t ∈ T, aeval y t ≠ 0 then
     x.liftOn (fun p => evQ y p.1 / aeval y (p.2 : MRingOver ℚ ι)) (by
@@ -137,7 +142,7 @@ def val (T : Submonoid (MRingOver ℚ ι)) (x : LocalizedModule T (MRingOver ℚ
 
 theorem val_mk {T : Submonoid (MRingOver ℚ ι)} (hT : ∀ t ∈ T, aeval y t ≠ 0) (m : MRingOver ℚ ι ⧸ idealOver y ℚ)
     (t : T) : val y T (LocalizedModule.mk m t) = evQ y m / aeval y (t : MRingOver ℚ ι) := by
-  rw [val, dif_pos hT]
+  rw [val, dite_eq_left hT]
   rfl
 
 theorem val_add (T : Submonoid (MRingOver ℚ ι)) (x x' : LocalizedModule T (MRingOver ℚ ι ⧸ idealOver y ℚ)) :
@@ -148,11 +153,11 @@ theorem val_add (T : Submonoid (MRingOver ℚ ι)) (x x' : LocalizedModule T (MR
       induction x' using LocalizedModule.induction_on with
       | h m' s' =>
         rw [LocalizedModule.mk_add_mk, val_mk hT, val_mk hT, val_mk hT]
-        simp only [Submonoid.coe_mul, map_add, Submonoid.smul_def, evQ_smul, map_mul]
+        simp only [Submonoid.coe_mul, map_add (f := _), Submonoid.smul_def, evQ_smul, map_mul]
         have hs := hT _ s.2
         have hs' := hT _ s'.2
         field_simp
-  · simp only [val, dif_neg hT, add_zero]
+  · simp only [val, dite_eq_right hT, add_zero]
 
 theorem val_smul (T : Submonoid (MRingOver ℚ ι)) (r : ℚ)
     (x : LocalizedModule T (MRingOver ℚ ι ⧸ idealOver y ℚ)) : val y T (r • x) = r • val y T x := by
@@ -160,10 +165,10 @@ theorem val_smul (T : Submonoid (MRingOver ℚ ι)) (r : ℚ)
   · induction x using LocalizedModule.induction_on with
     | h m s =>
       rw [LocalizedModule.smul'_mk, val_mk hT, val_mk hT, map_smul, smul_div_assoc]
-  · simp only [val, dif_neg hT, smul_zero]
+  · simp only [val, dite_eq_right hT, smul_zero]
+
 
 variable (y) in
-
 def valL (T : Submonoid (MRingOver ℚ ι)) : LocalizedModule T (MRingOver ℚ ι ⧸ idealOver y ℚ) →ₗ[ℚ] Ω where
   toFun := val y T
   map_add' := val_add T
@@ -221,7 +226,8 @@ variable {Ω : Type} [Field Ω] [CharZero Ω] {y : (Σ k, ι k) → Ω}
 theorem aeval_div_memQ (c : ∀ k, ι k) {g : MRingOver ℚ ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
     aeval y g / ∏ k, y ⟨k, c k⟩ ^ d k ∈ chartRingQ y c := by
   classical
-  rw [g.as_sum, map_sum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, map_sum, Finset.sum_div]
   refine Subalgebra.sum_mem _ fun m hm => ?_
   rw [aeval_monomial, mul_div_assoc]
   refine Subalgebra.mul_mem _ (Subalgebra.algebraMap_mem _ _) ?_
@@ -260,7 +266,7 @@ theorem exists_formQ (c : ∀ k, ι k) (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {r : �
     · refine homog_add (homog_mul hF1 (homog_cmq c e2)) ?_
       rw [add_comm e1 e2]
       exact homog_mul hF2 (homog_cmq c e1)
-    · rw [map_add, map_mul, map_mul, hv1, hv2, aeval_cmq, aeval_cmq, prod_pow_add]
+    · rw [map_add (f := _), map_mul, map_mul, hv1, hv2, aeval_cmq, aeval_cmq, prod_pow_add]
       ring
   | mul x z _ _ hx hz =>
     obtain ⟨e1, F1, hF1, hv1⟩ := hx
@@ -403,7 +409,7 @@ theorem resFacesS {S : Type} [CommRing S] {M : Type} [AddCommGroup M] [Module (M
     simp only [LinearMap.sum_apply]
     rw [Finset.sum_eq_single k0]
     · rw [Finset.sum_eq_add_of_mem i1 i2 hi1 hi2 (ne_of_lt hlt)]
-      · rw [dif_pos (hface i1 hi1), dif_pos (hface i2 hi2)]
+      · rw [dite_eq_left (hface i1 hi1), dite_eq_left (hface i2 hi2)]
         rfl
       · intro i hi hne'
         rw [hI] at hi
@@ -552,8 +558,8 @@ theorem cell_good {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} (J : KH.Cell 
 
 end ChartLatQCech
 
-open ChartLatQCech GenOnFibres ZeroCocycleSection in
 
+open ChartLatQCech GenOnFibres ZeroCocycleSection in
 theorem ChartLatQCech.proof : ChartLatQCech.Statement := by
   intro K _ _ ι _ _ Ω _ _ y d b hA
   classical
@@ -618,7 +624,7 @@ theorem ChartLatQCech.proof : ChartLatQCech.Statement := by
       have hwv : ∀ J : KH.Cell K ι 0, (∀ k, y ⟨k, cellChart J k⟩ ≠ 0) → val y _ (w J) = s := by
         intro J hJ
         simp only [w]
-        rw [dif_pos (hex J hJ)]
+        rw [dite_eq_left (hex J hJ)]
         exact (hex J hJ).choose_spec.2
       have hwZ : w ∈ KH.cechZc ι (KH.quotPart ℚ (idealOver y ℚ)) b 0 := by
         refine Submodule.mem_inf.mpr ⟨fun J _ => hw J, ?_⟩

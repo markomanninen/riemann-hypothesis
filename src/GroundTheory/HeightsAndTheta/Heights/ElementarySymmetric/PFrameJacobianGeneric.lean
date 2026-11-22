@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StFrameJacobianGeneric
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StConormalGenerationGeneric
-import GroundTheory.HeightsAndTheta.Heights.Intersections.JacMinorC
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StFrameJacobianGeneric
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StConormalGenerationGeneric
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.JacMinorC
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -38,7 +43,7 @@ theorem FrameJacobianGeneric.proof (hR : JacobianRankGeneric.Statement)
     rw [IsFractionRing.to_map_eq_zero_iff, Ideal.Quotient.eq_zero_iff_mem]
   have hdn : d ≤ n := by
     have h1 := ringKrullDim_quotient_le J
-    rw [hd, MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field, zero_add,
+    rw [hd, MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, ringKrullDim_eq_zero_of_field, zero_add,
       Nat.card_eq_fintype_card, Fintype.card_fin] at h1
     exact_mod_cast h1
   obtain ⟨t, G, hG⟩ := Submodule.fg_iff_exists_fin_generating_family.mp (IsNoetherian.noetherian J)
@@ -51,7 +56,8 @@ theorem FrameJacobianGeneric.proof (hR : JacobianRankGeneric.Statement)
   let W : Matrix (Fin r) (Fin n) K := Matrix.of fun i j => π (frameDeriv b j (G (a i)))
   have hW : W = V * N := by
     ext i j
-    simp [W, V, N, frameDeriv, Matrix.mul_apply, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [W, V, N, frameDeriv, Matrix.mul_apply, map_sum, mul_comm]
   have hVc : (V.submatrix id c).det ≠ 0 := by
     have : V.submatrix id c = π.mapMatrix (Matrix.of fun i j => pderiv (c j) (G (a i))) := by
       ext i j

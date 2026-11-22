@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.CProps
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardHermitianMatricesModPow
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.CProps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardHermitianMatricesModPow
+
+@[expose] public section
 
 open PositivityTheory.PfSWUS.Loc
 
@@ -56,9 +60,11 @@ theorem bf_swap {σ : R →+* R} (hinv : ∀ a, σ (σ a) = a) {n : ℕ} {H : Ma
     have := congrFun (congrFun hH a) b
     simpa [cT] using this
   unfold bf
-  rw [map_sum, Finset.sum_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_comm]
   refine Finset.sum_congr rfl fun l _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, map_mul, hinv, hab]
   ring
@@ -95,7 +101,8 @@ theorem vecMul_red (ϖ : R) (k : ℕ) {n : ℕ} (x : Fin n → R) (H : Matrix (F
     Matrix.vecMul (fun i => Ideal.Quotient.mk (lev ϖ k) (x i)) (red ϖ k H) =
       fun l => Ideal.Quotient.mk (lev ϖ k) (∑ i, x i * H i l) := by
   funext l
-  simp [Matrix.vecMul, dotProduct, red, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.vecMul, dotProduct, red, map_sum]
 
 theorem nu_lower {σ : R →+* R} {ϖ : R} {q : ℕ} {ε : ℤ} (h : IsUnrQuad R σ ϖ q ε) {n j k : ℕ}
     (hjk : j ≤ k) {H : Matrix (Fin n) (Fin n) R} (hH : cT σ H = H) (hnd : ¬ ∀ a b, ϖ ∣ H a b) :
@@ -210,8 +217,8 @@ theorem not_dvd_of_not_lvl {σ : R →+* R} {ϖ : R} {q : ℕ} {ε : ℤ} (h : I
 
 end GlobalTheory.CompanionTheory.GunrNuBound
 
-open GlobalTheory.CompanionTheory.GunrNuBound in
 
+open GlobalTheory.CompanionTheory.GunrNuBound in
 theorem GlobalTheory.CompanionTheory.GunrNuBound.nuBound : PositivityTheory.SiegelWeilFormula.Gunr.NuBound := by
   classical
   intro R _ σ ϖ q ε h n k r hr hx

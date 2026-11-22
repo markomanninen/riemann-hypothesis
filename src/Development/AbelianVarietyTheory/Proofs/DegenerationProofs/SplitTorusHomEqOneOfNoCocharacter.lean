@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -21,7 +26,8 @@ theorem splitTorus_hom_eq_one_of_no_cocharacter :
   let b := Module.Free.chooseBasis ℤ X
   let l : _ → (X →+ ULift.{0} ℤ) := fun i =>
     (AddEquiv.ulift : ULift.{0} ℤ ≃+ ℤ).symm.toAddMonoidHom.comp (b.coord i).toAddMonoidHom
-  let c : _ → (ULift.{0} ℤ →+ X) := fun i => SplitTorus.uliftMultiples X (b i)
+  let c : _ → (ULift.{0} ℤ →+ X) := fun i =>
+    (zmultiplesHom X (b i)).comp (AddEquiv.ulift : ULift.{0} ℤ ≃+ ℤ).toAddMonoidHom
   have h1 : ∀ i, SplitTorus.torusMap S ((c i).comp (l i)) ≫ u = 1 := fun i => by
     have e : SplitTorus.torusMap S (l i) ≫ u = 1 := h _ (inferInstanceAs
       (IsMonHom (SplitTorus.torusMap S (l i) ≫ u)))
@@ -34,8 +40,8 @@ theorem splitTorus_hom_eq_one_of_no_cocharacter :
       rw [Finset.sum_insert hi, SplitTorus.torusMap_add, MonObj.mul_comp, h1, ih, _root_.mul_one]
   have h3 : (∑ i, (c i).comp (l i)) = AddMonoidHom.id X := by
     ext x
-    rw [AddMonoidHom.finset_sum_apply]
-    exact b.sum_repr x
+    rw [AddMonoidHom.finsetSum_apply]
+    simpa [c, l] using b.sum_repr x
   have := h2 Finset.univ
   rwa [h3, SplitTorus.torusMap_id, Category.id_comp] at this
 

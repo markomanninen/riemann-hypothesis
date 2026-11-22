@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsolateMaximalAmongPrimesContainingEtaleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatLocalizationMembership
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleUniquePrimeLeMapMaximalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NilpotentApproximationSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DedekindPowerLocalization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalizationResidueApproximation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalizationInverseModF
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsolateMaximalAmongPrimesContainingEtaleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatLocalizationMembership
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleUniquePrimeLeMapMaximalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NilpotentApproximationSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DedekindPowerLocalization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalizationResidueApproximation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalizationInverseModF
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -97,7 +101,7 @@ theorem etale_away_quotient_eq_localization :
           exact hQ'p.ne_top (Ideal.eq_top_of_isUnit_mem _ hg
             (IsLocalization.Away.algebraMap_isUnit g))
       rw [← hc]
-      exact (IsLocalization.map_comap (Submonoid.powers g) (Localization.Away g) Q').symm
+      exact (IsLocalization.map_under (Submonoid.powers g) (Localization.Away g) Q').symm
     have hle := GlobalTheory.T.etale_unique_prime_le_map_maximal B (Localization.Away g) P hP
       (Q.map (algebraMap D (Localization.Away g))) hfib
     have hres' := GlobalTheory.T.localization_residue_approximation B D P hP Q g hgQ hQP hres

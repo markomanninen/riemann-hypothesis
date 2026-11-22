@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.FieldSizeSupAdd
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.FieldSizeMonotone
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SzAdjoinRootOfUnity
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SzFieldRangeEmbedding
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.FieldSizeAdjoinKthRoot
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsFieldIdealsPrincipal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CardFilterLeLogClassNumber
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.FieldSizeSupAdd
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.FieldSizeMonotone
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SzAdjoinRootOfUnity
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SzFieldRangeEmbedding
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.FieldSizeAdjoinKthRoot
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsFieldIdealsPrincipal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CardFilterLeLogClassNumber
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Host GlobalTheory.NT GlobalTheory.Mem GlobalTheory.Mem.Fld GlobalTheory.FieldSize
 open scoped IntermediateField nonZeroDivisors
 
@@ -57,8 +62,8 @@ namespace GlobalTheory.FieldSize.KummerSize
 
 variable {E : Type} [Field E] [NumberField E]
 
-open GlobalTheory.IndefiniteRowSideFullHecke.RootValueClassBasis in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.RootValueClassBasis in
 theorem exists_decomp (b : ClassBasis E) (J : Fin b.k → (Ideal (𝓞 E))⁰)
     (hJc : ∀ i, ClassGroup.mk0 (J i) = ClassGroup.mk E (b.c i)) (γ : Fin b.k → 𝓞 E) (hγ0 : ∀ i, γ i ≠ 0)
     (hγ : ∀ i, (J i : Ideal (𝓞 E)) ^ b.h i = Ideal.span {γ i}) {h : ℕ} (hh : 0 < h) {y : E}

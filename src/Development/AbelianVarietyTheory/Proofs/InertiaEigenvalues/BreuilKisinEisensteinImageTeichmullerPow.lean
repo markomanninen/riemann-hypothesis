@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem map_E_eq : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (O : 
   · apply isUnit_of_constantCoeff
     have hu : IsUnit (WittVector.constantCoeff (f (Polynomial.C (w₀ : Wq l bk.a)))) :=
       ((w₀.isUnit.map Polynomial.C).map f).map _
-    rw [map_add, map_mul, hX, map_add, map_mul, WittVector.constantCoeff_apply (WittVector.teichmuller l _),
+    rw [map_add (f := _), map_mul, hX, map_add (f := _), map_mul, WittVector.constantCoeff_apply (WittVector.teichmuller l _),
       WittVector.teichmuller_coeff_zero]
     by_contra hn
     have h1 : ψ bk.flat * WittVector.constantCoeff (f G) ∈ IsLocalRing.maximalIdeal O :=
@@ -62,7 +66,7 @@ theorem map_E_eq : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (O : 
     rw [add_sub_cancel_right] at h2
     exact h2 hu
   · have h1 := congrArg f hG
-    rw [map_add, map_pow, hX, map_mul, map_natCast Polynomial.C, map_natCast f] at h1
+    rw [map_add (f := _), map_pow, hX, map_mul, map_natCast Polynomial.C, map_natCast f] at h1
     exact h1
 
 end GlobalTheory.BSP.EisImage

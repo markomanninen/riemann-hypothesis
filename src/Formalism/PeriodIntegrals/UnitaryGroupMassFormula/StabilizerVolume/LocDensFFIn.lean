@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFFCnt
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFFCnt
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,21 +26,23 @@ private theorem ffH_single_right {M : ℕ} (J : Matrix (Fin M) (Fin M) K) (x : F
     simp [Pi.single_apply, hb]
 
 theorem ffH_isHS (hσ : ∀ x, σ (σ x) = x) {M : ℕ} (J : Matrix (Fin M) (Fin M) K)
-    (hJ : ∀ i j, σ (J j i) = J i j) (hdet : IsUnit J.det) : IsHS σ (ffH σ J) where
-  add_right x y z := by
+    (hJ : ∀ i j, σ (J j i) = J i j) (hdet : IsUnit J.det) : IsHS σ (ffH σ J) := by
+  refine ⟨⟨?_, ?_, ?_⟩, ?_⟩
+  · intro x y z
     simp only [ffH, Pi.add_apply, mul_add, Finset.sum_add_distrib]
-  smul_right c x y := by
+  · intro c x y
     simp only [ffH, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
     exact Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => by ring))
-  herm x y := by
-    simp only [ffH, map_sum, map_mul, hσ, hJ]
+  · intro x y
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ffH, map_sum, map_mul, hσ, hJ]
     conv_rhs => rw [Finset.sum_comm]
     exact Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => by ring))
-  nondeg x hx := by
+  · intro x hx
     have hv : Matrix.vecMul (fun i => σ (x i)) J = 0 := by
       funext j0
-      have := hx (Pi.single j0 1)
-      simpa [ffH, Pi.single_apply, Matrix.vecMul, dotProduct] using this
+      simpa only [ffH_single_right, Matrix.vecMul, dotProduct, Pi.zero_apply] using
+        hx (Pi.single j0 1)
     have hinv : (fun i => σ (x i)) = 0 := by
       have := congrArg (fun v => Matrix.vecMul v J⁻¹) hv
       simpa only [Matrix.vecMul_vecMul, Matrix.mul_nonsing_inv J hdet, Matrix.vecMul_one,
@@ -59,7 +65,7 @@ private theorem isSq_comp_linearMap {K : Type} [Field K] {σ : K →+* K} {U V :
     IsSq σ (fun x y => hV (φ x) (φ y)) := {
   add_right x y z := by
     show hV (φ x) (φ (y + z)) = hV (φ x) (φ y) + hV (φ x) (φ z)
-    rw [map_add, hsV.add_right]
+    rw [map_add (f := _), hsV.add_right]
   smul_right c x y := by
     show hV (φ x) (φ (c • y)) = c * hV (φ x) (φ y)
     rw [map_smul, hsV.smul_right]
@@ -106,7 +112,7 @@ private theorem add_pow_card_eq_add_pow_card (a b : K) :
 private theorem mem_range_algebraMap_of_pow_card_eq (d : K) (hd : d ^ Fintype.card k = d) :
     ∃ d0 : k, algebraMap k K d0 = d := by
   have hq1 : 1 < Fintype.card k := Fintype.one_lt_card
-  have hP : (X ^ Fintype.card k - X : K[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero K hq1
+  have hP : (X ^ Fintype.card k - X : K[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq1
   have hsub : Finset.univ.image (algebraMap k K) ⊆
       (X ^ Fintype.card k - X : K[X]).roots.toFinset := by
     intro x hx
@@ -118,7 +124,7 @@ private theorem mem_range_algebraMap_of_pow_card_eq (d : K) (hd : d ^ Fintype.ca
     rw [Finset.card_image_of_injective _ (algebraMap k K).injective, Finset.card_univ]
     calc _ ≤ Multiset.card (X ^ Fintype.card k - X : K[X]).roots := Multiset.toFinset_card_le _
       _ ≤ (X ^ Fintype.card k - X : K[X]).natDegree := card_roots' _
-      _ = Fintype.card k := FiniteField.X_pow_card_sub_X_natDegree_eq K hq1
+      _ = Fintype.card k := Polynomial.natDegree_X_pow_sub_X (R := K) hq1
   have heq := Finset.eq_of_subset_of_card_le hsub hcard
   have hmem : d ∈ (X ^ Fintype.card k - X : K[X]).roots.toFinset := by
     rw [Multiset.mem_toFinset, mem_roots hP, IsRoot.def, eval_sub, eval_pow, eval_X, hd, sub_self]
@@ -138,7 +144,7 @@ theorem frob_of_ne (σ : K ≃ₐ[k] K) (h2 : finrank k K = 2) (hne : σ ≠ Alg
   have hdich : ∀ x : K, σ x = x ∨ σ x = x ^ Fintype.card k := by
     intro x
     have hs : σ x + σ x ^ Fintype.card k = x + x ^ Fintype.card k := by
-      rw [← map_pow, ← map_add]
+      rw [← map_pow, ← map_add (f := _)]
       exact hfix _ (by rw [add_pow_card_eq_add_pow_card, hqq, add_comm])
     have hm : σ x * σ x ^ Fintype.card k = x * x ^ Fintype.card k := by
       rw [← map_pow, ← map_mul]
@@ -168,9 +174,6 @@ theorem frob_of_ne (σ : K ≃ₐ[k] K) (h2 : finrank k K = 2) (hne : σ ≠ Alg
     exact hb (hbq.trans (mul_left_cancel₀ hx0 h))
   · rw [map_mul, hax, hbq, mul_pow] at h
     exact ha (hax.trans (mul_right_cancel₀ (pow_ne_zero _ hb0) h))
-
-theorem mem_range_of_pow (d : K) (hd : d ^ Fintype.card k = d) :
-    ∃ d0 : k, algebraMap k K d0 = d := mem_range_algebraMap_of_pow_card_eq d hd
 
 theorem card_norm_fiber (σ : K ≃ₐ[k] K) (hfrob : ∀ x, σ x = x ^ Fintype.card k)
     (h2 : finrank k K = 2) (d : K) (hd : σ d = d) :

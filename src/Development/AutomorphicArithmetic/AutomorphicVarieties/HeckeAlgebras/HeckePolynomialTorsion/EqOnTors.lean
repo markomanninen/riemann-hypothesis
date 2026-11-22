@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.WeilGroupDenseInGaloisGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRootOfUnityFixedDvdWeilGroupDegreeStatement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.WeilGroupDenseInGaloisGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRootOfUnityFixedDvdWeilGroupDegreeStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.SmGL UpperTheory.V UpperTheory.V.Hi
 open UpperTheory.V.W (Plc)
@@ -100,8 +104,8 @@ private theorem locallyConstant_hom_trivial_on_commutator_closure {D W C : Type}
     exact hcomm g1 g2
   exact Subgroup.topologicalClosure_minimal _ hle (hP.isClosed_fiber 1) hx
 
-include h in
 
+include h in
 theorem char_tors {B : Type} [Group B] [Finite B] (χ : Dec (F := F) A →* B) (hχ : IsLocallyConstant χ)
     (hI : ∀ g : Dec (F := F) A, (g : G F Ω) ∈ Ine (F := F) A → χ g = 1) (g : Dec (F := F) A) (M : ℕ) (hM : 0 < M)
     (hg : g ^ M ∈ (commutator (Dec (F := F) A)).topologicalClosure) : χ g = 1 := by
@@ -168,8 +172,8 @@ theorem char_tors {B : Type} [Group B] [Finite B] (χ : Dec (F := F) A →* B) (
   obtain ⟨m, hm⟩ := h4
   rw [← hσ1, hχW, hm, zpow_mul, zpow_natCast, pow_card_eq_one', one_zpow]
 
-include h in
 
+include h in
 theorem eq_on_tors {R : Type} [CommRing R] [IsLocalRing R] [IsNoetherianRing R] [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
     [Finite (IsLocalRing.ResidueField R)] (ψ ψ' : Dec (F := F) A →* Rˣ)
     (hψ : Alg.AdicCont (IsLocalRing.maximalIdeal R) fun g => (ψ g : R))

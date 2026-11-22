@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TwTransAlt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Formalism.LocalToGlobal.Columns.BaseLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TwTransAlt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Formalism.LocalToGlobal.Columns.BaseLemmas
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -20,17 +25,19 @@ theorem places_dvd_iff (D : Formalism.BasicNotions.D7) (π π' : 𝓞 D.host.E) 
       rw [(RingHom.injective_iff_ker_eq_bot _).1 hinj]; exact bot_le
     haveI := x.isPrime
     obtain ⟨Q, -, hQp, hQ⟩ := Ideal.exists_ideal_over_prime_of_isIntegral x.asIdeal (⊥ : Ideal (𝓞 D.host.E))
-      (by rw [← RingHom.ker_eq_comap_bot]; exact hker)
+      (by rw [Ideal.under_def, ← RingHom.ker_eq_comap_bot]; exact hker)
     have hQb : Q ≠ ⊥ := by
       rintro rfl
       apply x.ne_bot
-      rw [← hQ, Ideal.comap_bot_of_injective _ hinj]
+      rw [← hQ, (show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]
     let w : HeightOneSpectrum (𝓞 D.host.E) := ⟨Q, hQp, hQb⟩
     have hw : w.under (𝓞 D.host.F) = x := HeightOneSpectrum.ext hQ
     have hTw : π * π' ∈ w.asIdeal := by
       rw [hT, ← hmap]
       show algebraMap (𝓞 D.host.F) (𝓞 D.host.E) (T : 𝓞 D.host.F) ∈ Q
-      rw [← Ideal.mem_comap, hQ]; exact hx
+      rw [← Ideal.mem_comap]
+      change (T : 𝓞 D.host.F) ∈ Ideal.under (𝓞 D.host.F) Q
+      rw [hQ]; exact hx
     rcases w.isPrime.mem_or_mem hTw with h | h
     · exact ⟨w, (Formalism.L2.Col.mem_divs hπ w).2 h, hw⟩
     · refine ⟨GlobalTheory.IdemSupport.cP w, (Formalism.L2.Col.mem_divs hπ _).2 ?_, (GlobalTheory.IdemSupport.under_cP w).trans hw⟩

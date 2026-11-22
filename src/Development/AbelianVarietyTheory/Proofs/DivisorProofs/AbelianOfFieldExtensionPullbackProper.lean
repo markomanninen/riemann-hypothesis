@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FracMapAlgebraMap
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FracMapAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 

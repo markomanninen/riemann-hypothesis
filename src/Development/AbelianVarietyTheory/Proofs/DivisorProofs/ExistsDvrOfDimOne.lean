@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -31,7 +35,7 @@ theorem fg_of_mem {A B : Type} [CommRing A] [IsNoetherianRing A] [CommRing B] [I
     obtain ⟨s, hs⟩ := Ideal.mem_span_singleton.1 h3
     obtain ⟨b, hb⟩ := Ideal.mem_span_singleton.1 (Ideal.mem_comap.1 hr')
     refine ⟨b, s, ?_⟩
-    rw [← hb, hα, ← map_mul, ← hs, ← map_add]
+    rw [← hb, hα, ← map_mul, ← hs, ← map_add (f := _)]
     congr 1; ring
   have down : ∀ (x : B) (j : ℕ),
       (∃ (b : B) (r : A), α ^ (l + j) * x = α ^ (l + j + 1) * b + algebraMap A B r) →
@@ -61,7 +65,7 @@ theorem fg_of_mem {A B : Type} [CommRing A] [IsNoetherianRing A] [CommRing B] [I
     obtain ⟨b, r, h⟩ := claim x
     refine Submodule.mem_span_singleton.2 ⟨r, ?_⟩
     have : φ x = Ideal.Quotient.mk Q (α ^ l * x) := rfl
-    rw [this, h, map_add, Ideal.Quotient.eq_zero_iff_mem.2
+    rw [this, h, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2
       (Ideal.mem_span_singleton.2 (dvd_mul_right _ _)), zero_add, Algebra.smul_def, mul_one]
     rfl
   · have : (J : Submodule B B) ⊓ LinearMap.ker φ = Ideal.span {α} := by
@@ -215,7 +219,7 @@ theorem exists_complete (B : Type) [CommRing B] [IsDomain B] [IsDiscreteValuatio
     rw [Algebra.smul_def, hy]
   obtain ⟨hd, hD⟩ := dvr_of_principal W _ h1 (hr p hp.ne_zero)
   refine ⟨W, inferInstance, hd, hD, algebraMap B W, inferInstance, ?_, inferInstance⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra h
   exact nonZeroDivisors.ne_zero (hr x h) hx

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.StatementL
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.StatementL
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -20,8 +24,6 @@ theorem idxPsiGood_of (hMono : IdxMono) (hSc : IdxScaleIn) (hCut : IdxCutLe) (hI
   unfold IdxPsiGood
   intro K _ _ _ Z _ _ _ _ _ w Zψ V₀ M Th ThK Th0 hM hTh hThK hThM hTh0fg hTh0Z σ hσ hThσ u hu
     hucut a E r ha hE hr δ hδ hδi
-  have hVB := valuation_basic_properties K w
-
   have hcc : ∀ (W W' : Submodule K Z) (A : Submodule (𝓞 K) Z), W' ≤ W →
       cut W' (cut W A) = cut W' A := by
     intro W W' A hWW
@@ -103,8 +105,8 @@ theorem idxPsiGood_of (hMono : IdxMono) (hSc : IdxScaleIn) (hCut : IdxCutLe) (hI
   have hcut2 := (hCut K Z w Zψ L (cut Zψ M) (cut Zψ N) hMψ hNψ hNMψ hLZ).2.2
   rw [hcc Zψ L M hLZ, hcc Zψ L N hLZ] at hcut2
   have hv : vw w (a * σ⁻¹) = (E : ℤ) - vw w σ := by
-    rw [hVB.1 a σ⁻¹ ha (inv_ne_zero hσ), hVB.2.2.2.2.2.1 σ, hE]
-    ring
+    rw [ValuationRepresentative.vw_mul w a σ⁻¹ ha (inv_ne_zero hσ),
+      ValuationRepresentative.vw_inv w σ, hE, sub_eq_add_neg]
   rw [hB2.2, hB1.2, hv] at hmono
   have h1 : (δ : ℝ) * (lix w (cut Zψ M) (cut Zψ N) : ℝ) ≤
       (lix w M N : ℝ) + (finrank K Z : ℝ) * (vw w (u : K) : ℝ) := by

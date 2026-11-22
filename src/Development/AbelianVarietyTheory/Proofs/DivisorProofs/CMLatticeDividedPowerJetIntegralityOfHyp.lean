@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeValueIntegralityRamifiedOfExpansion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeWeightTwoContinuationOfFunctionalEquationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LipschitzFormulaTotallyRealPoissonStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertEisensteinExpansionOfLipschitzHeckeZetaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeformedLatticeSumDerivativesEqEisensteinJets
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEquivCmTypeRealEmbeddingsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsRestLast
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemPassScaled
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLeTwoMulPadicValIntDiscr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicValIntDiscrDivLeDeltaVp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntOfIsIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAlgebraicOfRationalValuation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SzJetConj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeValueIntegralityRamifiedOfExpansion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeWeightTwoContinuationOfFunctionalEquationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LipschitzFormulaTotallyRealPoissonStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertEisensteinExpansionOfLipschitzHeckeZetaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeformedLatticeSumDerivativesEqEisensteinJets
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEquivCmTypeRealEmbeddingsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsRestLast
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemPassScaled
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLeTwoMulPadicValIntDiscr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicValIntDiscrDivLeDeltaVp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAlgebraicOfRationalValuation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SzJetConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem sz_l (l : ℕ) [hl : Fact l.Prime] (lam : algebraicClosure ℚ ℂ →+*
 
 theorem sz_val (l : ℕ) [hl : Fact l.Prime] (lam : algebraicClosure ℚ ℂ →+* ℂ_[l]) (D : ℕ) :
     Sz l lam (-(padicValNat l D : ℝ)) (D : ℂ) := by
-  obtain ⟨m, hm⟩ : l ^ padicValNat l D ∣ D := pow_padicValNat_dvd
+  obtain ⟨m, hm⟩ : l ^ padicValNat l D ∣ D := (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   have h := sz_mul (sz_pow (sz_l l lam).1 (padicValNat l D)) (sz_nat (l := l) (lam := lam) m)
   have h2 : (D : ℂ) = (l : ℂ) ^ padicValNat l D * m := by exact_mod_cast hm
   rw [← h2] at h
@@ -87,7 +91,7 @@ theorem theta_facts {E : Type} [Field E] [NumberField E] [IsCMField E] (ψ : E �
     · simp only [Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_X, Polynomial.eval₂_C, Polynomial.eval₂_X_pow]
       simp only [eq_intCast, Int.cast_natCast, algebraMap_int_eq]
       linear_combination (1 / 4 : E) * hw - (1 / 4 : E) * hm'
-    · rw [map_div₀, map_add, map_neg, map_one, hc, map_ofNat]
+    · rw [map_div₀, map_add (f := _), map_neg, map_one, hc, map_ofNat]
       linear_combination hw
   · subst hθ
     refine ⟨⟨Polynomial.X ^ 2 + Polynomial.C (d : ℤ), by monicity!, ?_⟩, ?_⟩
@@ -113,19 +117,21 @@ theorem val_facts (l d : ℕ) (hl : l.Prime) (hd : d.Prime) (h4 : 4 < d) :
   haveI := Fact.mk hl
   haveI := Fact.mk hd
   have h1 : padicValNat l d = if l = d then 1 else 0 := by
+    rw [Nat.padicValNat_def]
     split_ifs with h
-    · subst h; exact padicValNat_self
-    · exact padicValNat_primes h
+    · subst h; exact Nat.Prime.multiplicity_self
+    · exact multiplicity_primes h
   have h2 : padicValNat l 4 = if l = 2 then 2 else 0 := by
+    rw [Nat.padicValNat_def]
     split_ifs with h
-    · subst h; exact padicValNat.prime_pow 2
-    · refine padicValNat.eq_zero_of_not_dvd fun hh => h ?_
+    · subst h; exact Nat.multiplicity_prime_pow 2
+    · refine multiplicity_eq_zero_of_not_dvd fun hh => h ?_
       exact (Nat.prime_dvd_prime_iff_eq hl Nat.prime_two).1 (hl.dvd_of_dvd_pow (n := 2) hh)
   by_cases h3 : d % 4 = 3
   · simp only [h3, if_true, h1, not_true, and_false, if_false]
     split_ifs <;> norm_num
   · simp only [h3, if_false, not_false_iff, and_true]
-    rw [padicValNat.mul (by norm_num) hd.ne_zero, h1, h2]
+    rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (by norm_num) hd.ne_zero, h1, h2]
     split_ifs <;> norm_num
 
 theorem fin_id (jt Ω p n lp γ pi im r : ℂ) (t f K : ℕ) (hΩ : Ω ≠ 0) (hp : p ≠ 0) (hlp : lp ≠ 0) (hpi : pi ≠ 0) (him : im ≠ 0)

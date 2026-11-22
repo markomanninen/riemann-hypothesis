@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnLat
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnEndo
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgTorInt
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormSqrtNegPowPrimeSqSub
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnLat
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnEndo
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgTorInt
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormSqrtNegPowPrimeSqSub
+
+@[expose] public section
 
 noncomputable section
 

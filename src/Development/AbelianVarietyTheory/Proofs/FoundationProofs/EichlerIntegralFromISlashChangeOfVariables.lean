@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
 open scoped Manifold
@@ -65,7 +70,7 @@ def ecoef (w : ℕ) (h : ℍ → ℂ) (n : ℕ) (v : ℂ) : ℂ :=
 lemma coeff_eichler (w : ℕ) (h : ℍ → ℂ) (τ : ℍ) (n : ℕ) :
     (eichler w h τ).coeff n = (w.choose n : ℂ) * ecoef w h n τ := by
   unfold eichler ecoef
-  rw [finset_sum_coeff]
+  rw [finsetSum_coeff]
   simp only [coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq]
   split_ifs with hn
@@ -129,8 +134,8 @@ theorem polySlash_eichler_smul (k : ℕ) (hk : 2 ≤ k) (f : ℍ → ℂ) (hf : 
   set q : ℕ → ℂ := fun i => ((C a * X + C b) ^ i * (C c * X + C d) ^ (w - i)).coeff n with hq
   have hslP : ∀ p : ℂ[X], (slP w (mat σ) p).coeff n = ∑ i ∈ Finset.range (w + 1), p.coeff i * q i := by
     intro p
-    rw [polySlash_apply, finset_sum_coeff]
-    simp only [coeff_smul, smul_eq_mul]
+    rw [polySlash_apply, finsetSum_coeff]
+    simp only [AddMonoidAlgebra.coeff_smul_apply, smul_eq_mul]
     rfl
   set Φ : ℂ → ℂ := fun v => ∑ i ∈ Finset.range (w + 1),
       (w.choose i : ℂ) * ecoef w f i ((a * v + b) / (c * v + d)) * q i -

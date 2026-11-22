@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1 u_2
 
@@ -23,7 +27,7 @@ theorem goal1 :
             (DFunLike.coe.{max (u_2 + 1) (u_1 + 1), u_1 + 1, u_2 + 1} (Polynomial.aeval.{u_1, u_2} f) P) v) := by
   intro R M _ _ _ S f hf P v hv
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, LinearMap.add_apply]; exact S.add_mem hp hq
+  | add p q hp hq => rw [map_add (f := _), LinearMap.add_apply]; exact S.add_mem hp hq
   | monomial n a =>
     rw [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply]
     exact S.smul_mem a (powMem S f hf n hv)

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MonomialCountAndBinomialEstimates
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.XSmulMemWeightedHomogeneousSubmodule
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingCoeffNonnegOfEventuallyEvalNat
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IntegralStatementPfA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MonomialCountAndBinomialEstimates
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.XSmulMemWeightedHomogeneousSubmodule
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingCoeffNonnegOfEventuallyEvalNat
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IntegralStatementPfA
+
+@[expose] public section
 
 open Filter Module
 
@@ -64,7 +68,7 @@ theorem mk_mul_mem_quotPiece (I : Ideal (MvPolynomial ι k)) {z : MvPolynomial �
 theorem finrank_homogeneousSubmodule [Fintype ι] (n : ℕ) :
     finrank k (homogeneousSubmodule ι k n) = (n + Fintype.card ι - 1).choose n := by
   rw [← natCard_degree_eq, homogeneousSubmodule_eq_finsupp_supported]
-  exact finrank_eq_nat_card_basis (basisRestrictSupport k _)
+  exact finrank_eq_nat_card_basis (basisRestrictSupport k {d : ι →₀ ℕ | d.degree = n})
 
 end Grading
 
@@ -105,7 +109,8 @@ theorem isIntegral_of_projection {σ R A : Type*} [Fintype σ] [CommRing R] [Alg
     rw [← hdeg d hd]
     exact (prod_pow_natDegree_coeff' Finset.univ v d hv).1
   have hQ2 : Q.coeff m = algebraMap k R (eval c g) := by
-    rw [hQe, Polynomial.finsetSum_coeff, eval_eq', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hQe, Polynomial.finsetSum_coeff, eval_eq', map_sum]
     refine Finset.sum_congr rfl fun d hd => ?_
     rw [Polynomial.coeff_C_mul, ← hdeg d hd, (prod_pow_natDegree_coeff' Finset.univ v d hv).2]
     simp [hv1]
@@ -130,7 +135,7 @@ theorem isIntegral_of_projection {σ R A : Type*} [Fintype σ] [CommRing R] [Alg
     change aeval w p ∈ B
     induction p using MvPolynomial.induction_on with
     | C x => rw [algHom_C]; exact hk x
-    | add p q hp hq => rw [map_add]; exact B.add_mem hp hq
+    | add p q hp hq => rw [map_add (f := _)]; exact B.add_mem hp hq
     | mul_X p j hp =>
       rw [map_mul, aeval_X, h]
       exact B.mul_mem hp (B.add_mem (B.mul_mem (hk _) ht) (B.algebraMap_mem _))
@@ -144,7 +149,7 @@ theorem homogeneousComponent_aeval {σ : Type*} (w : σ → MvPolynomial ι k)
     homogeneousComponent n (aeval w g) = aeval w (homogeneousComponent n g) := by
   classical
   induction g using MvPolynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | monomial d x =>
     have h1 : (monomial d x : MvPolynomial σ k).IsHomogeneous d.degree :=
       isHomogeneous_monomial x rfl
@@ -196,6 +201,7 @@ theorem exists_linear_normalisation [Infinite k] {P : Ideal (MvPolynomial ι k)}
     refine ih w' (fun j => (hw _).sub ((hw 0).C_mul _)) (fun j => by simp [w', hy]) ?_
     let φ : MvPolynomial (Fin r) k →ₐ[k] _ := aeval fun j => Ideal.Quotient.mk P (w' j)
     letI := φ.toRingHom.toAlgebra
+    set_option synthInstance.maxHeartbeats 200000 in
     haveI : IsScalarTower k (MvPolynomial (Fin r) k) (MvPolynomial ι k ⧸ P) :=
       IsScalarTower.of_algebraMap_eq fun x => (φ.commutes x).symm
     refine (isIntegral_of_projection (R := MvPolynomial (Fin r) k) _ (Fin.cons 0 X) (Fin.cons 1 c)
@@ -262,7 +268,8 @@ theorem exists_monic_minimal {R A : Type*} [CommRing R] [IsDomain R] [IsIntegral
   have hq0 : (q : Polynomial R) = 0 := by
     by_contra h0
     have h1 := minpoly.IsIntegrallyClosed.degree_le_of_ne_zero (s := t) h0 (by
-      rw [hq, map_sum, ← ha]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hq, map_sum, ← ha]
       simp only [Polynomial.aeval_monomial]
       rfl)
     have h2 := Polynomial.mem_degreeLT.1 q.2
@@ -295,7 +302,7 @@ theorem mul_choose_le_finrank [Finite ι] (I : Ideal (MvPolynomial ι k)) {e d :
     have hj := j.2
     rwa [show 1 * (m + (d - j)) + 1 * (j : ℕ) = m + d by omega] at this
   have hinj : Function.Injective (LinearMap.codRestrict _ _ hmem) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     have h1 : L a ∈ I := Ideal.Quotient.eq_zero_iff_mem.1 (congrArg Subtype.val ha)
     rw [hL] at h1
@@ -321,7 +328,7 @@ theorem le_factorial_mul_leadingCoeff [Finite ι] {I : Ideal (MvPolynomial ι k)
       rw [Nat.sub_add_cancel hdn] at this
       rw [Int.cast_natCast] at hn
       rw [Polynomial.eval_sub, Polynomial.eval_C_mul,
-        Polynomial.preHilbertPoly_eq_choose_sub_add _ _ hdn, ← hn, sub_nonneg]
+        Polynomial.preHilbertPoly_eq_choose_add_sub _ _ (by omega), Nat.sub_add_comm hdn, ← hn, sub_nonneg]
       exact_mod_cast this
   rw [Polynomial.coeff_sub, Polynomial.coeff_C_mul, Polynomial.coeff_preHilbertPoly_self,
     sub_nonneg] at h1
@@ -403,7 +410,8 @@ theorem exists_form_degree_le_of_isHilbertPoly [Infinite k] [Finite ι]
   obtain ⟨m, hm⟩ : ∃ m, eval y (homogeneousComponent m g) ≠ 0 := by
     by_contra! hm
     apply hg
-    rw [← sum_homogeneousComponent g, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_homogeneousComponent g, map_sum]
     exact Finset.sum_eq_zero fun m _ => hm m
   obtain ⟨i, hi⟩ : ∃ i, y i ≠ 0 := by
     by_contra! h0
@@ -420,6 +428,7 @@ theorem exists_form_degree_le_of_isHilbertPoly [Infinite k] [Finite ι]
     let φ : MvPolynomial (Fin (Fintype.card ι)) k →ₐ[k] _ :=
       aeval fun j => Ideal.Quotient.mk P (w j)
     letI := φ.toRingHom.toAlgebra
+    set_option synthInstance.maxHeartbeats 200000 in
     haveI : IsScalarTower k (MvPolynomial (Fin (Fintype.card ι)) k) (MvPolynomial ι k ⧸ P) :=
       IsScalarTower.of_algebraMap_eq fun x => (φ.commutes x).symm
     have e : (aeval fun j => Ideal.Quotient.mk P (X j) : MvPolynomial ι k →ₐ[k] _) =
@@ -432,7 +441,7 @@ theorem exists_form_degree_le_of_isHilbertPoly [Infinite k] [Finite ι]
     · intro j
       have : algebraMap (MvPolynomial (Fin (Fintype.card ι)) k) (MvPolynomial ι k ⧸ P)
           (X (ε.symm j)) = Ideal.Quotient.mk P (w (ε.symm j)) := aeval_X _ _
-      rw [this, ← Ideal.Quotient.mk_algebraMap, ← map_mul, ← map_add]
+      rw [this, ← Ideal.Quotient.mk_algebraMap, ← map_mul, ← map_add (f := _)]
       congr 1
       simp only [w, Equiv.apply_symm_apply, div_eq_mul_inv, map_mul, algebraMap_eq]
       ring
@@ -460,7 +469,8 @@ theorem exists_form_degree_le_of_isHilbertPoly [Infinite k] [Finite ι]
     fun a => (comp_aeval_apply z (Ideal.Quotient.mkₐ k P) a).symm
   have hle := (le_factorial_mul_leadingCoeff hH hdeg' hp0
     (mul_choose_le_finrank P z hz (isHomogeneous_X k i) (fun a ha => hind a (by
-      rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum] at ha
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum] at ha
       rw [← ha]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, map_pow, ← e1]

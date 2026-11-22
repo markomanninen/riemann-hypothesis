@@ -1,8 +1,12 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafVanBStalkPf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConeSeqExact
-import Development.EtaleCohomology.EtaleSheaves.GlueRelPfNat
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsClosedFiberColimitPresentation
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafVanBStalkPf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConeSeqExact
+public import Development.EtaleCohomology.EtaleSheaves.GlueRelPfNat
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsClosedFiberColimitPresentation
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

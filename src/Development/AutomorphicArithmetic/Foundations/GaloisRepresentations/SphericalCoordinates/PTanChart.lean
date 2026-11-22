@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpoly
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpoly
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -28,26 +32,29 @@ theorem UpperTheory.Gal.W2.tanChart_of :
     intro ω
     set ω' := ω - ∑ l, (φ ω) l • KaehlerDifferential.D ℂ (Sec s' W) (e₁ l) with hω'
     have hφω' : φ ω' = 0 := by
-      rw [hω', map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hω', map_sub, map_sum]
       simp only [map_smul, hφ2']
       funext i
       simp [Finset.sum_apply, Pi.single_apply]
     obtain ⟨m, b, ω'', hb0, hωeq⟩ := hφ4 ω' hφω'
     have hψω' : ψ ω' = 0 := by
-      rw [hωeq, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hωeq, map_sum]
       refine Finset.sum_eq_zero (fun i _ => ?_)
       rw [hψ1, hb0 i, zero_smul]
     have hω : ω = ω' + ∑ l, (φ ω) l • KaehlerDifferential.D ℂ (Sec s' W) (e₁ l) := by
       rw [hω']
       abel
     conv_lhs => rw [hω]
-    rw [map_add, hψω', zero_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), hψω', zero_add, map_sum]
     simp only [map_smul]
   let τ : E →ₗ[ℂ] Fin d → ℂ :=
     LinearMap.pi (fun l => ((ψ (KaehlerDifferential.D ℂ (Sec s' W) (e₁ l)) : E →L[ℂ] ℂ) : E →ₗ[ℂ] ℂ))
   have hτ : ∀ w l, τ w l = ψ (KaehlerDifferential.D ℂ (Sec s' W) (e₁ l)) w := fun w l => rfl
   have hinj : Function.Injective τ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro w hw
     apply hflat
     refine hFA E Y B s v₀ w hB hv hs W hW hv₀N.2 (fun f => ?_)

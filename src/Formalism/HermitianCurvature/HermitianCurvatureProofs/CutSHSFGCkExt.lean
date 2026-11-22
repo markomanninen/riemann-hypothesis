@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsSmoothExt
-import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsSmoothExt
+public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
+
+@[expose] public section
 
 open scoped ContDiff
 

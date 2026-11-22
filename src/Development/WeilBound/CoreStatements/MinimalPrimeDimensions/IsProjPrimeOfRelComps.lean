@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.MemMinimalPrimesIff
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LowerBoundConditional
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.MemMinimalPrimesIff
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LowerBoundConditional
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,7 +18,8 @@ attribute [local instance] MvPolynomial.algebraMvPolynomial
 
 variable {K : Type} [Field K] [NumberField K] {m : ℕ}
 
-local notation "φ" => (MvPolynomial.map (algebraMap (𝓞 K) K) : MvPolynomial (Fin m) (𝓞 K) →+* MvPolynomial (Fin m) K)
+local notation "φ" => (MvPolynomial.map (algebraMap (𝓞 K) K) :
+  MvPolynomial (Fin m) (𝓞 K) →+* MvPolynomial (Fin m) K)
 local notation "CC" => (C : 𝓞 K →+* MvPolynomial (Fin m) (𝓞 K))
 
 theorem disjoint_of_bot {W : Ideal (MvPolynomial (Fin m) (𝓞 K))} (h : W.comap CC = ⊥) :
@@ -50,7 +55,7 @@ theorem isProjPrime_map {W : Ideal (MvPolynomial (Fin m) (𝓞 K))} (hW : IsProj
   refine ⟨isPrime_map hW.isPrime h, ?_, (isRelevant_comap_map_iff _ _).1 ((comap_map hW.isPrime h).symm ▸ hW.isRelevant)⟩
   intro f hf d
   refine Submodule.span_induction (p := fun f _ => ∀ d, homogeneousComponent d f ∈ W.map φ) ?_ (by simp)
-    (fun a b _ _ ha hb d => by rw [map_add]; exact Ideal.add_mem _ (ha d) (hb d)) ?_ hf d
+    (fun a b _ _ ha hb d => by rw [map_add (f := _)]; exact Ideal.add_mem _ (ha d) (hb d)) ?_ hf d
   · rintro _ ⟨g, hg, rfl⟩ d
     have e : homogeneousComponent d (φ g) = φ (homogeneousComponent d g) := by
       ext n
@@ -59,9 +64,11 @@ theorem isProjPrime_map {W : Ideal (MvPolynomial (Fin m) (𝓞 K))} (hW : IsProj
     rw [e]
     exact Ideal.mem_map_of_mem _ (hW.isHomog g hg d)
   · intro a b _ hb d
-    rw [smul_eq_mul, ← b.sum_homogeneousComponent, ← a.sum_homogeneousComponent, Finset.sum_mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [smul_eq_mul, ← b.sum_homogeneousComponent, ← a.sum_homogeneousComponent, Finset.sum_mul_sum, map_sum]
     refine Ideal.sum_mem _ fun i _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Ideal.sum_mem _ fun j _ => ?_
     rw [homogeneousComponent_of_mem ((homogeneousComponent_isHomogeneous i a).mul
       (homogeneousComponent_isHomogeneous j b))]

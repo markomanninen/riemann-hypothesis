@@ -1,4 +1,8 @@
-import Formalism.LatticeTheta.LatticeSummableDecay
+module
+
+public import Formalism.LatticeTheta.LatticeSummableDecay
+
+@[expose] public section
 
 open MeasureTheory Filter Asymptotics Topology
 
@@ -14,7 +18,7 @@ theorem lattice_summable_decay (V : Type*) [NormedAddCommGroup V] [InnerProductS
   have hsum : Summable fun z : L => ‖z‖ ^ (-b) :=
     ZLattice.summable_norm_rpow L (-b) (by rw [hrank]; linarith)
   have ht : Tendsto (Subtype.val : L → V) cofinite (cocompact V) :=
-    (AddSubgroup.isClosed_of_discrete (H := L.toAddSubgroup)).tendsto_coe_cofinite_of_isDiscrete
+    L.toAddSubgroup.tendsto_coe_cofinite_of_isDiscrete
       (isDiscrete_iff_discreteTopology.mpr inferInstance)
   refine Summable.of_norm_bounded_eventually (hsum.mul_left C) ?_
   filter_upwards [ht.eventually hC] with z hz

@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Restrict
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.KhwLowKSubRootEqZero
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Restrict
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.KhwLowKSubRootEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -162,7 +166,7 @@ theorem second_moment_of_bounds : RootBd → MatBd → AdEq → Mom2 := by
         = T' ((actM (smE ε π) (Y a b) v - (∑ c, Y a b c c * ((lowK ε (lam + t • d) c : ℝ) : ℂ)) • v)
           + (∑ c, Y a b c c * ((L c : ℝ) : ℂ)) • v) := by
       rw [hE, ← hT'2, ← hsum]
-      simp only [map_add, map_sub, map_smul, sub_smul]
+      simp only [map_add (f := _), map_sub, map_smul, sub_smul]
       abel
     rw [hdecomp, hTn]
     have hn1 := norm_add_le (actM (smE ε π) (Y a b) v - (∑ c, Y a b c c * ((lowK ε (lam + t • d) c : ℝ) : ℂ)) • v)

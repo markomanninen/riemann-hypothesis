@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
@@ -19,7 +24,8 @@ theorem mem_map_mul_ker_of_flat {R' A C' : Type} [CommRing R'] [CommRing A] [Com
   have hg : ∀ i, ∃ j ∈ J, algebraMap R' A j = (g i : A) := fun i => (g i).2
   choose j hjJ hjg using hg
   have hsum : ∑ i, j i • f (c i) = 0 := by
-    rw [← hfx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hfx, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_eq_mul, ← hjg i, map_mul, AlgHom.commutes, Algebra.smul_def, _root_.mul_comm]
   obtain ⟨k, a, y, hy, ha⟩ := Module.Flat.isTrivialRelation_of_sum_smul_eq_zero (R := R') (M := C') (f := j)
@@ -29,7 +35,8 @@ theorem mem_map_mul_ker_of_flat {R' A C' : Type} [CommRing R'] [CommRing A] [Com
     intro i
     rw [RingHom.mem_ker]
     change f (c i - ∑ l, a i l • z l) = 0
-    rw [map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum]
     simp only [map_smul, hz]
     rw [← hy i, sub_self]
   have h0 : ∑ i, algebraMap R' A (j i) * ∑ l, a i l • z l = 0 := by
@@ -64,7 +71,7 @@ theorem exists_sub_one_mem_mul_ker_le :
     have hfx : f x = 0 := by
       have h1 : f (i + x) = 0 := hG
       have h2 : f i = 0 := hI hi
-      rw [map_add, h2, zero_add] at h1
+      rw [map_add (f := _), h2, zero_add] at h1
       exact h1
     exact Submodule.add_mem_sup hi (mem_map_mul_ker_of_flat f hf J hx hfx)
   obtain ⟨r, hr1, hr⟩ := Submodule.exists_sub_one_mem_and_smul_le_of_fg_of_le_sup

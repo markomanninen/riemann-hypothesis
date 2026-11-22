@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
-import Development.WeilBound.ThetaLifts.FrameEstimates.CoefRealA
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+public import Development.WeilBound.ThetaLifts.FrameEstimates.CoefRealA
+
+@[expose] public section
 
 namespace PositivityTheory.ThKEst
 

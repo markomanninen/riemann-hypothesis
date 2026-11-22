@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.PerronKernelA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.PerronKernelA
+
+@[expose] public section
 
 namespace PI.EF.PK
 
@@ -11,7 +15,7 @@ lemma norm_log_sub_log_le (c T : ℝ) (hc : 0 < c) :
   set z1 : ℂ := (c : ℂ) + T * I with hz1
   set z2 : ℂ := (c : ℂ) + ((-T : ℝ) : ℂ) * I with hz2
   have hconj : (starRingEnd ℂ) z1 = z2 := by
-    rw [hz1, hz2, map_add, map_mul, Complex.conj_ofReal, Complex.conj_ofReal, Complex.conj_I]
+    rw [hz1, hz2, map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_ofReal, Complex.conj_I]
     push_cast
     ring
   have hn : ‖z1‖ = ‖z2‖ := by rw [← hconj, Complex.norm_conj]
@@ -49,9 +53,9 @@ lemma line_bound_small (l c T : ℝ) (hc : 0 < c) (hT : 0 < T) :
     rw [hexp, sub_zero]
     ring
   have hc1 : Continuous fun t : ℝ => (1 : ℂ) / (((c : ℂ) + t * I) - 0) :=
-    continuous_const.div (by fun_prop) (fun t => by simpa using line_ne_zero c hc t)
+    continuous_const.div₀ (by fun_prop) (fun t => by simpa using line_ne_zero c hc t)
   have hc2 : Continuous fun t : ℝ => (cexp (I * ((l * t : ℝ) : ℂ)) - 1) / ((c : ℂ) + t * I) :=
-    Continuous.div (by fun_prop) (by fun_prop) (line_ne_zero c hc)
+    Continuous.div₀ (by fun_prop) (by fun_prop) (line_ne_zero c hc)
   rw [hdec, intervalIntegral.integral_add ((hc1.const_mul _).intervalIntegrable _ _)
     ((hc2.const_mul _).intervalIntegrable _ _), intervalIntegral.integral_const_mul,
     intervalIntegral.integral_const_mul, ← mul_add, norm_mul]

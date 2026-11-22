@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,9 @@ theorem IsIntersectionFamily.isRFamily {I : Ideal (MRing ι) → (n : ℕ) → (
     (h : IsIntersectionFamily I) : IsRFamily I :=
   h.2
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def cycR (I : Ideal (MRing ι) → (n : ℕ) → (Fin n → HermLine ι) → ℝ) (P : Ideal (MRing ι)) {n : ℕ}
     (L : Fin n → HermLine ι) (s : MRing ι) : ℝ :=
   ∑ᶠ W ∈ divSupp P s, (multAt (P ⊔ Ideal.span {s}) W : ℝ) *
@@ -41,8 +46,9 @@ theorem recR_eq (I : Ideal (MRing ι) → (n : ℕ) → (Fin n → HermLine ι) 
     recR I P L A s = cycR I P L s - arInt P s A L :=
   rfl
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def vertR (P : Ideal (MRing ι)) {n : ℕ} (L : Fin n → HermLine ι) (s : MRing ι) : ℝ :=
   ∑ᶠ W ∈ divSupp P s, (multAt (P ⊔ Ideal.span {s}) W : ℝ) *
     (if IsHorizontal W then 0 else (geoNum n W (fun j => (L j).a) : ℝ) * Real.log (charOf W))

@@ -1,29 +1,33 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoherentLatticeClosureStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NormalIsoOfIntegrallyClosedStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreRefineLineBundlesStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelEmbeddingInjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundleStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeConstantRankStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeDedekindTwistStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateOmegaCoherentStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilPullbackStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenericWeilPairingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionWeilPullbackStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagModelCommonRefinementStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointNormalCoordsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NormalCptIffNormalSchemeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtNoetherianModelNoetherianStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundleStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoherentLatticeClosureStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NormalIsoOfIntegrallyClosedStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreRefineLineBundlesStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelEmbeddingInjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundleStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeConstantRankStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeDedekindTwistStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateOmegaCoherentStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilPullbackStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenericWeilPairingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionWeilPullbackStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagModelCommonRefinementStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointNormalCoordsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NormalCptIffNormalSchemeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtNoetherianModelNoetherianStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundleStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,7 @@ theorem frame_dualRestrict (L : Lat ξ E) (p : Cpt ξ) {I : Type} (V : I → Sub
     · subst h
       have : π e = ⟨e, he.2⟩ := Submodule.linearProjOfIsCompl_apply_left hc ⟨e, he.2⟩
       rw [this]; exact he.1
-    · have : π e = 0 := Submodule.linearProjOfIsCompl_apply_right' hc
+    · have : π e = 0 := Submodule.projectionOnto_apply_of_mem_right hc
         (Submodule.mem_iSup_of_mem t (Submodule.mem_iSup_of_mem h he.2))
       rw [this]; exact zero_mem _
   have hbm : ∀ i, b i ∈ V s := fun i => hb ▸ Submodule.subset_span ⟨i, rfl⟩
@@ -338,7 +342,7 @@ theorem exists_hodgeCpt_htFree : Out.WeilSt → ∀ (E : Type) [Field E] [Number
       (N₁.htOm t₁.PP.L (p ^ R p)).pull M'.ξ g (AddMonoidHom.id _) := fun p hp => by
     obtain ⟨h1, e, he⟩ := htw₁ p hp
     obtain ⟨-, e', he'⟩ := htw' p hp
-    exact (GlobalTheory.T.hodge_tate_weil_pullback _ Ω M₁.ξ M₁.tie.gen hN₁ t₁.G t₁.semi t₁.PP.L _ (hpos p hp) h1 e he Li N₁ M'.X Ω M'.ξ
+    exact (GlobalTheory.CompanionTheory.Ar.HtPull.main _ Ω M₁.ξ M₁.tie.gen hN₁ t₁.G t₁.semi t₁.PP.L _ (hpos p hp) h1 e he Li N₁ M'.X Ω M'.ξ
       M'.tie.gen hN' g (RingHom.id Ω) hdom t'.G m'.φ m'.cart t'.PP.L e' he' Li N' (AddMonoidHom.id _)
       (AddMonoidHom.id _) (fun v => by
         rw [dualMap_id]

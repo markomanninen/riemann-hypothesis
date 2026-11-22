@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainBSt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainBSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem pb_eval_bound {ι : Type} (R : MvPolynomial ι ℂ) (B : ℝ) :
   | add p q hp hq =>
     obtain ⟨C1, h1⟩ := hp; obtain ⟨C2, h2⟩ := hq
     exact ⟨C1 + C2, fun v hv => by
-      simp only [map_add]; exact (norm_add_le _ _).trans (add_le_add (h1 v hv) (h2 v hv))⟩
+      simp only [map_add (f := _)]; exact (norm_add_le _ _).trans (add_le_add (h1 v hv) (h2 v hv))⟩
   | mul_X p k hp =>
     obtain ⟨C1, h1⟩ := hp
     exact ⟨max C1 0 * max B 0, fun v hv => by
@@ -198,7 +202,7 @@ theorem pb_det_le (A : Mc n) (f : Fin n → ℝ) (K : ℝ)
       rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h]
     rw [norm_mul, hs, one_mul, norm_prod]
     calc ∏ i, ‖A (σ i) i‖ ≤ ∏ i, K / (f (σ i) * f i) :=
-          Finset.prod_le_prod (fun i _ => norm_nonneg _) (fun i _ => hA _ _)
+          Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) (fun i _ => hA _ _)
       _ = K ^ n / (∏ i, f i) ^ 2 := by
           rw [Finset.prod_div_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin,
             Finset.prod_mul_distrib, Equiv.prod_comp σ f, sq]

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaTW
-import Development.AbelianVarietyTheory.Definitions.Foundations.ThNSpec
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ZetaUr
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFixingMulFrobAt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoTwCont
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ValuationIntCastLtOneIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaTW
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ThNSpec
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ZetaUr
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFixingMulFrobAt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoTwCont
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ValuationIntCastLtOneIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem unifCont : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ
   obtain ⟨U, hU1, hU⟩ : ∃ U ∈ nhds (1 : Ω ≃ₐ[ℚ] Ω), ∀ s, ∀ u ∈ U, ‖f (s * u) - f s‖ < δ := by
     obtain ⟨t, ht⟩ := isCompact_univ.elim_finite_subcover
       (fun x => (fun y => x⁻¹ * y) ⁻¹' interior (V x))
-      (fun x => isOpen_interior.preimage (continuous_mul_left x⁻¹))
+      (fun x => isOpen_interior.preimage (continuous_const_mul x⁻¹))
       (fun y _ => Set.mem_iUnion.2 ⟨y, by
         show y⁻¹ * y ∈ interior (V y)
         rw [inv_mul_cancel]

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFifth
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFirst
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverFramesAtPointStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticEighthStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticSecondStatement
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.PullDegSome
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFifth
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFirst
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverFramesAtPointStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticEighthStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticSecondStatement
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.PullDegSome
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.CovMap PositivityTheory.Xgp.c_algsq
@@ -20,8 +25,6 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 def joinPt {R : Type} (k₀ : K) (z₀ z₁ : (Σ k, ι k) → R) : (Σ o : Option K, ι (o.getD k₀)) → R
   | ⟨some k, m⟩ => z₀ ⟨k, m⟩
   | ⟨none, m⟩ => z₁ ⟨k₀, m⟩
-
-theorem join_v₀ {R : Type} (k₀ : K) (z₀ z₁ : (Σ k, ι k) → R) : joinPt k₀ z₀ z₁ ∘ v₀ k₀ = z₀ := rfl
 
 theorem join_v₁ {R : Type} {k₀ : K} {z₀ z₁ : (Σ k, ι k) → R} (h : ∀ k, k ≠ k₀ → ∀ m, z₀ ⟨k, m⟩ = z₁ ⟨k, m⟩) :
     joinPt k₀ z₀ z₁ ∘ v₁ k₀ = z₁ := by
@@ -174,8 +177,8 @@ section Cov
 
 variable {M : FlagModel y Ψ N j} {M' : FlagModel y' Ψ N j}
 
-open FibreCount in
 
+open FibreCount in
 theorem img_blk (Cv : FlagCover M' M) {d : ℕ}
     (hy : IsArithVar (mCoordIdeal y) (d + 2)) (hy' : IsArithVar (mCoordIdeal y') (d + 2))
     {w₁ w₂ : (Σ k, ι k) → ℂ} (hw : w₁ ∈ mcPts (mCoordIdeal y)) {z₁ z₂ : (Σ k, ι' k) → ℂ}

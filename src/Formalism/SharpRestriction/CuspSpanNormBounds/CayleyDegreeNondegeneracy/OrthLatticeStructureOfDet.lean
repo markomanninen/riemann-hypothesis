@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.InnerMemOneOfMemDualOrthLattice
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.InnerMemOneOfMemDualOrthLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ variable {D : D7} {V : Type} [AddCommGroup V] [Module D.host.E V] [Module (𝓞 
   (hgen : ∀ w ∈ Formalism.HermitianLatticesTheory.dual h M, ∃ a : 𝓞 D.host.E, w + a • w₁ ∈ M)
   (hann : ∀ a : 𝓞 D.host.E, a • w₁ ∈ M ↔ ((T : ℕ) : 𝓞 D.host.E) ∣ a)
 
-include hw₁ hgen in
 
+include hw₁ hgen in
 theorem discriminant_one_generator : DiscGen h M 1 := by
   refine ⟨{Submodule.Quotient.mk ⟨w₁, hw₁⟩}, by simp, ?_⟩
   rw [eq_top_iff, Finset.coe_singleton]
@@ -31,8 +35,8 @@ theorem discriminant_one_generator : DiscGen h M 1 := by
   rw [e]
   exact M.neg_mem ha
 
-include hw₁ hgen hann in
 
+include hw₁ hgen hann in
 theorem corank_one_mod_prime_over (p : Ideal (𝓞 D.host.F)) (hp : p.IsMaximal) (hTp : ((T : ℕ) : 𝓞 D.host.F) ∈ p) :
     eP h M p = 1 := by
   set P : Ideal (𝓞 D.host.E) := pE D.host.F D.host.E p with hP
@@ -92,7 +96,7 @@ theorem corank_one_mod_prime_over (p : Ideal (𝓞 D.host.F)) (hp : p.IsMaximal)
   have hcard : Nat.card (Md ⧸ K) = Ideal.absNorm p ^ 2 := by
     rw [← Nat.card_congr (φ.quotKerEquivOfSurjective hsurj).toEquiv,
       Nat.card_congr (Submodule.quotEquivOfEq _ _ hker).toEquiv, ← Formalism.MainNotions.BridgeLemma.absNorm_pE]
-    rfl
+    exact (Ideal.absNorm_eq_natCard P).symm
   have hq := Formalism.MainNotions.BridgeLemma.absNorm_ge_two p hp
   show Nat.log (Ideal.absNorm p ^ 2) (Nat.card (Md ⧸ K)) = 1
   rw [hcard]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CovolEqOfAedisjoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CovolEqOfAedisjoint
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase GlobalTheory.OrbitTerm
 open scoped ENNReal
@@ -103,7 +107,7 @@ theorem pi_change {ι P D : Type*} [Fintype ι] [MeasurableSpace P] [MeasurableS
     rw [lintegral_indicator_one_mul_eq_setLIntegral μ (hc hs)] at h1
     exact h1
   have hcm : Measurable fun (p : ι → P) (i : ι) => c (p i) :=
-    measurable_pi_lambda _ fun i => hc.comp (measurable_pi_apply i)
+    Measurable.of_eval fun i => hc.comp (measurable_pi_apply i)
   have : SigmaFinite ((μ.withDensity fun p => ENNReal.ofReal (σ p)).map c) := by
     rw [← hmap]; infer_instance
   have hprodρ : ∀ g : ι → D, ENNReal.ofReal (∏ i, ρ (g i)) = ∏ i, ENNReal.ofReal (ρ (g i)) :=
@@ -182,13 +186,13 @@ theorem pi_change_three {ι A B C D : Type*} [Fintype ι] [MeasurableSpace A] [M
     hρ0 (fun p => hσ0 _) H' φ hφ]
   have hF : Measurable fun p : ι → A × B × C =>
       φ (fun i => c (p i).1 (p i).2.1 (p i).2.2) * ENNReal.ofReal (∏ i, σ (p i).2.1) :=
-    (hφ.comp (measurable_pi_lambda _ fun i => hc.comp (measurable_pi_apply i))).mul
+    (hφ.comp (Measurable.of_eval fun i => hc.comp (measurable_pi_apply i))).mul
       (Finset.measurable_prod _ fun i _ => hσ'.comp (measurable_pi_apply i)).ennreal_ofReal
   rw [lintegral_pi_prod_two α (β.prod γ) _ hF]
   refine lintegral_congr fun x => ?_
   have hG : Measurable fun q : ι → B × C =>
       φ (fun i => c (x i) (q i).1 (q i).2) * ENNReal.ofReal (∏ i, σ (q i).1) :=
-    hF.comp (measurable_pi_lambda _ fun i => (measurable_const.prodMk (measurable_pi_apply i)))
+    hF.comp (Measurable.of_eval fun i => (measurable_const.prodMk (measurable_pi_apply i)))
   exact lintegral_pi_prod_two β γ _ hG
 
 theorem piCoord : ∀ (ι : Type) [Fintype ι] (k : ℕ) (c : (Fin (k + 1) → ℂ) → (Fin k → Fin k → ℂ) → (Fin k → ℂ) → Fin (k + 1) → Fin (k + 1) → ℂ), Measurable (fun p : (Fin (k + 1) → ℂ) × (Fin k → Fin k → ℂ) × (Fin k → ℂ) => c p.1 p.2.1 p.2.2) → ∀ (ρ : (Fin (k + 1) → Fin (k + 1) → ℂ) → ℝ) (σ : (Fin k → Fin k → ℂ) → ℝ), Measurable ρ → Measurable σ → (∀ g, 0 ≤ ρ g) → (∀ h, 0 ≤ σ h) → (∀ φ : (Fin (k + 1) → Fin (k + 1) → ℂ) → ENNReal, Measurable φ → ∫⁻ g, φ g * ENNReal.ofReal (ρ g) = ∫⁻ x, ∫⁻ h, ∫⁻ T, φ (c x h T) * ENNReal.ofReal (σ h)) → ∀ φ : (ι → Fin (k + 1) → Fin (k + 1) → ℂ) → ENNReal, Measurable φ → ∫⁻ g, φ g * ENNReal.ofReal (∏ i, ρ (g i)) = ∫⁻ x : ι → Fin (k + 1) → ℂ, ∫⁻ h : ι → Fin k → Fin k → ℂ, ∫⁻ T : ι → Fin k → ℂ, φ (fun i => c (x i) (h i) (T i)) * ENNReal.ofReal (∏ i, σ (h i)) := by

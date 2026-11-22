@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.GramMatrixMulRight
-import Formalism.LocalToGlobal.CharacterGerms.SelfConjugateRowData
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.GramMatrixMulRight
+public import Formalism.LocalToGlobal.CharacterGerms.SelfConjugateRowData
+
+@[expose] public section
 
 set_option autoImplicit false
 

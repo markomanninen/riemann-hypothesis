@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.TraceIntegralBasis
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.TraceIntegralBasis
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.IntegralTraceNormBounds
 
@@ -24,8 +28,8 @@ lemma inner_iota_eq_trace (x y : E) :
   intro w _
   simp only [cc, map_mul, IsCMField.complexEmbedding_complexConj]
 
-variable (E) in
 
+variable (E) in
 noncomputable def ed : Basis (Free.ChooseBasisIndex ℤ (𝓞 E)) ℚ E :=
   (Algebra.traceForm ℚ E).dualBasis (traceForm_nondegenerate (K := ℚ) (L := E)) (integralBasis E)
 
@@ -34,8 +38,8 @@ lemma trace_ed (i j : Free.ChooseBasisIndex ℤ (𝓞 E)) :
   rw [← Algebra.traceForm_apply]
   exact LinearMap.BilinForm.apply_dualBasis_right _ (Algebra.traceForm_isSymm ℚ) _ i j
 
-variable (E) in
 
+variable (E) in
 noncomputable def bd (j : Free.ChooseBasisIndex ℤ (𝓞 E)) : VS E := iota E (2 * cc (ed E j))
 
 lemma inner_bas_bd (i j : Free.ChooseBasisIndex ℤ (𝓞 E)) :
@@ -60,8 +64,10 @@ lemma trace_int (c : Free.ChooseBasisIndex ℤ (𝓞 E) → ℤ) (γ : 𝓞 E) :
     rw [smul_mul_smul_comm, map_zsmul, mul_comm (ed E j), trace_ed]
     split_ifs <;> simp
   refine ⟨∑ j, c j * m j, ?_⟩
-  rw [hm, Finset.sum_mul_sum, map_sum]
-  simp_rw [map_sum, key]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hm, Finset.sum_mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_sum, key]
   simp [Finset.sum_ite_eq']
 
 lemma norm_discr (β : E) (hβ : β ≠ 0)
@@ -82,7 +88,8 @@ lemma norm_discr (β : E) (hβ : β ≠ 0)
       ring
     rw [e]
     conv_lhs => rw [← (integralBasis E).sum_repr (β * integralBasis E j)]
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     apply Finset.sum_congr rfl
     intro k _
     rw [Algebra.leftMulMatrix_eq_repr_mul, Algebra.traceMatrix_apply, Algebra.traceForm_apply,
@@ -135,7 +142,8 @@ lemma norm_bd_ge (x : VS E) (hx : x ∈ span ℤ (Set.range (bd E))) (hx0 : x �
   obtain ⟨β, hβdef⟩ : ∃ β : E, β = ∑ j, c j • ed E j := ⟨_, rfl⟩
   have hxβ : x = iota E (2 * cc β) := by
     rw [← hc, hβdef]
-    simp only [bd, cc, map_sum, map_zsmul, Finset.mul_sum, mul_smul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bd, cc, map_sum, map_zsmul, Finset.mul_sum, mul_smul_comm]
   have hβ0 : β ≠ 0 := by
     rintro h
     apply hx0
@@ -163,7 +171,7 @@ lemma norm_bd_ge (x : VS E) (hx : x ∈ span ℤ (Set.range (bd E))) (hx0 : x �
     (fun _ _ => by positivity)
     (by rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]; field_simp)
     (fun _ _ => by positivity)
-  rw [Real.finset_prod_rpow _ _ (fun _ _ => by positivity), prod_norm, ← Finset.mul_sum] at hgm
+  rw [Real.finsetProd_rpow _ _ (fun _ _ => by positivity), prod_norm, ← Finset.mul_sum] at hgm
   have h1 : dE E ^ (-(1 / (Fintype.card (CP E) : ℝ))) ≤
       |(Algebra.norm ℚ β : ℝ)| ^ (1 / (Fintype.card (CP E) : ℝ)) := by
     rw [Real.rpow_neg hd.le, ← Real.inv_rpow hd.le]

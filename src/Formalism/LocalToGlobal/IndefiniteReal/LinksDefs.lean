@@ -1,14 +1,18 @@
-import Formalism.LocalToGlobal.IndefiniteReal.CxToPkgFamIn
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.BridgeTie
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
-import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
-import Formalism.LocalToGlobal.HeckeThetaElements.DefsWt
-import Formalism.LocalToGlobal.JointCharacters.LocEMulLocE
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.CxToPkgFamIn
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.BridgeTie
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+public import Formalism.LocalToGlobal.HeckeThetaElements.DefsWt
+public import Formalism.LocalToGlobal.JointCharacters.LocEMulLocE
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ instance : InnerProductSpace ℂ (Tw s E) where
     rw [← cj_conj, inner_conj_symm]
   add_left x y z := by
     show cj s (inner ℂ (out x + out y) (out z)) = cj s (inner ℂ (out x) (out z)) + cj s (inner ℂ (out y) (out z))
-    rw [inner_add_left, map_add]
+    rw [inner_add_left, map_add (f := _)]
   smul_left x y r := by
     show cj s (inner ℂ (cj s r • out x) (out y)) = starRingEnd ℂ r * cj s (inner ℂ (out x) (out y))
     rw [inner_smul_left, map_mul, cj_conj, cj_cj]
@@ -133,12 +137,12 @@ end Tw
 
 variable {K : Type} [Field K]
 
-open Classical in
 
+open Classical in
 def sgAt (σ₀ : K →+* ℂ) (v : InfinitePlace K) : K →+* ℂ := if v = InfinitePlace.mk σ₀ then σ₀ else v.embedding
 
-open Classical in
 
+open Classical in
 def twAt (σ₀ : K →+* ℂ) (v : InfinitePlace K) : Bool := if v.embedding = sgAt σ₀ v then false else true
 
 theorem emb_eq (σ₀ : K →+* ℂ) (v : InfinitePlace K) (a : K) : v.embedding a = cj (twAt σ₀ v) (sgAt σ₀ v a) := by
@@ -292,19 +296,19 @@ def IsRes (χ : HChar D.host.E) (P : Pl D.host.E) (c : (kP P)ˣ →* ℂˣ) : Pr
   ∀ (a : 𝓞 D.host.E) (k : D.host.Eˣ) (u : (kP P)ˣ), (k : D.host.E) = a → (u : kP P) = Ideal.Quotient.mk _ a →
     c u = χ.locK P k
 
-variable (D) in
 
+variable (D) in
 abbrev Ptw : TPar D := tparRec D
 
-variable (D) in
 
+variable (D) in
 def labLL (τ : D.what₂.Tau) : D.host.E →+* D.what₂.LL :=
   D.embE.comp (D.host.sigmaOf (D.eTau τ).1 : D.host.E →+* D.host.E)
 
 def labE (σ : D.what₂.LL →+* ℂ) (τ : D.what₂.Tau) : D.host.E →+* ℂ := σ.comp (labLL D τ)
 
-open Classical in
 
+open Classical in
 def lab (σ : D.what₂.LL →+* ℂ) (ρ : D.what₂.Tau) : D.what₂.Tau :=
   if h : ∃ τ, labE σ τ = tauE D ρ ∨ labE σ τ = (starRingEnd ℂ).comp (tauE D ρ) then h.choose else ρ
 
@@ -312,8 +316,8 @@ def kapAt (W : HSp D) (σ : D.what₂.LL →+* ℂ) (ρ : D.what₂.Tau) :
     Fin (W.sig (tauE D ρ)).1 ⊕ Fin (W.sig (tauE D ρ)).2 → ℤ :=
   Formalism.L2.NTheta.kapW (D.hc (lab σ ρ)) _ _
 
-open Classical in
 
+open Classical in
 def parAt (W : HSp D) (σ : D.what₂.LL →+* ℂ) (ρ : D.what₂.Tau) : SPar :=
   if labE σ (lab σ ρ) = tauE D ρ then Formalism.L2.NTheta.holPar _ _ (kapAt W σ ρ)
   else dualPar (Formalism.L2.NTheta.holPar _ _ (kapAt W σ ρ))
@@ -336,13 +340,13 @@ abbrev SmT (M : DSModel V S) : Type := ⨂[ℂ] τ, M.sm τ
 
 abbrev LowT (M : DSModel V S) : Type := ⨂[ℂ] τ, lowT M τ
 
-variable (D) in
 
+variable (D) in
 def aPl (i : Fin D.R.m) (p : ℕ) (τ : D.what₂.Tau) (n : ℕ) : ℕ :=
   if n < p then ⌊Formalism.L2.NTheta.lamAt (D.hc τ) n + (D.hc τ).e i - ((p : ℚ) - (n + 1)) - ((D.R.t : ℚ) + 1) / 2⌋.toNat else 0
 
-variable (D) in
 
+variable (D) in
 def aMi (i : Fin D.R.m) (p q : ℕ) (τ : D.what₂.Tau) (n : ℕ) : ℕ :=
   if n < q then ⌊-((D.hc τ).e i + Formalism.L2.NTheta.lamAt (D.hc τ) (p + (q - n) - 1) + ((q - n : ℕ) : ℚ) + ((D.R.t : ℚ) - 1) / 2)⌋.toNat
   else 0
@@ -353,16 +357,16 @@ section Spaces
 
 open Formalism.IndefR.Lev
 
-variable (D) in
 
+variable (D) in
 abbrev Yc (j : ℕ) : HSp D := D.sp.Y (min j D.R.m)
 
-variable (D) in
 
+variable (D) in
 abbrev Wc (i : Fin D.R.m) : HSp D := D.sp.W ((i : ℕ) + 1)
 
-variable (D) in
 
+variable (D) in
 abbrev Vc (i : Fin D.R.m) : HSp D := D.sp.V ((i : ℕ) + 1)
 
 theorem r_le_Y (j : ℕ) : D.R.r ≤ (Yc D j).rank := by
@@ -383,8 +387,8 @@ theorem r_le_V (i : Fin D.R.m) : D.R.r ≤ (Vc D i).rank := by
   rw [D.sp.V_rank _ (Nat.succ_pos _) i.2]
   exact Nat.le_add_right _ _
 
-variable (D) in
 
+variable (D) in
 structure LevCh (T : Type) where
 
   C : Formalism.L2.Host.CharFrame D
@@ -474,9 +478,9 @@ open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism
 
 variable (D) {G : Type} [Group G] [Fintype G] {Pl0 T : Type} (A : FamIn D.what₂.LL G Pl0 T D.R.m)
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure Face where
 
   P0 : Subgroup G
@@ -509,10 +513,10 @@ abbrev sg0 : D.what₂.LL →+* ℂ := sgAt D.what₂.embLL A.v0
 
 abbrev PolF (a b : ℕ) : Type := MvPolynomial (FVar D a b) ℂ
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 2000000 in
-
 structure RealDat (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] extends LevCh D T where
 
   hv0 : A.v0 = InfinitePlace.mk D.what₂.embLL
@@ -707,10 +711,6 @@ def toCx : CxData A.fam.amb where
   κ _ := R.kap
   lam := R.lam
   err0 := R.err0
-
-def gEx : Representation ℂ G (R.toCx F).EE := Tw.rep (E := R.HE.H) _ R.gE
-
-def gWx (i : Fin D.R.m) : Representation ℂ G ((R.toCx F).W i) := Tw.rep (E := (R.HW i (sg0 D A)).H) _ (R.gW i (sg0 D A))
 
 end RealDat
 

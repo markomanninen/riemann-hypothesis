@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.MemZpowersIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Sumicc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.MemZpowersIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Sumicc
+
+@[expose] public section
 
 open Finset UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5
 
@@ -25,7 +29,8 @@ theorem UpperTheory.V.B5.groupRingCharEval_stickelbergerTheta_eq_neg_genBernoull
     rcases h2.lt_or_eq with h | rfl
     · rw [ZMod.val_cast_of_lt h]
     · rw [ZMod.natCast_self, MulChar.map_nonunit _ not_isUnit_zero, zero_mul, zero_mul]
-  simp only [thetaEl, sumEl, map_neg, map_sum, ev_single, genB, Ek]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [thetaEl, sumEl, map_neg, map_sum, ev_single, genB, Ek]
   rw [h1, b_sumicc (fun x : ZMod N => dirOf π χ x * algebraMap ℚ Ω (bcoef N k x.val)),
     hsum _ (fun x hx => by simp [MulChar.map_nonunit _ hx])]
   simp only [dirOf_unit]

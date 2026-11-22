@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.MemSpanCentreTranslates
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemNilRad
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsConstAlongSingleton
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,9 +13,6 @@ open NumberField Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolume
 namespace GlobalTheory.CentreFin
 
 variable {n r : ℕ}
-
-def cutP (J : Matrix (Fin n) (Fin n) ℂ) (X Y : Matrix (Fin n) (Fin r) ℂ) (k : Fin r) : Matrix (Fin n) (Fin n) ℂ :=
-  X * diagonal (fun i => if i ≤ k then (1 : ℂ) else 0) * (Yᴴ * J)
 
 variable {J : Matrix (Fin n) (Fin n) ℂ} {X Y : Matrix (Fin n) (Fin r) ℂ}
 

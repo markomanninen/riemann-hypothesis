@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -81,7 +85,7 @@ theorem unip_pow_card_eq_zero {K : Type*} [Field K] [CharZero K] {r : ℕ} (N : 
       | exact Polynomial.modByMonic_add_div P m
   have hPeq : aeval N P' = aeval N P := by
     have h := congrArg (aeval N) hdiv
-    rw [map_add, map_mul, hm0, zero_mul, add_zero] at h
+    rw [map_add (f := _), map_mul, hm0, zero_mul, add_zero] at h
     exact h
   have hP'deg : P'.natDegree ≤ r := by
     rw [hP']
@@ -90,7 +94,7 @@ theorem unip_pow_card_eq_zero {K : Type*} [Field K] [CharZero K] {r : ℕ} (N : 
       | exact Polynomial.natDegree_modByMonic_le P hmon
       | exact Polynomial.natDegree_modByMonic_le P m
   have hP'0 : P'.coeff 0 = 0 := by
-    have h := congrArg (fun p => Polynomial.coeff p 0) hdiv
+    have h := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 0) hdiv
     simp only [Polynomial.coeff_add, Polynomial.mul_coeff_zero, hmc, zero_mul, add_zero] at h
     rw [h, hP, Polynomial.mul_coeff_zero, Polynomial.coeff_X_pow, if_neg (by omega), mul_zero]
   have htr : (aeval N P).trace = 0 := by

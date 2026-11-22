@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive
-import Formalism.LocalToGlobal.ProjectiveLattices.FullExists
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive
+public import Formalism.LocalToGlobal.ProjectiveLattices.FullExists
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,6 +23,8 @@ open GlobalTheory.FormTies
 open scoped TensorProduct Matrix
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
+-- Prefer the same-scalar module instance for the submodules underlying recB.Cusp.
+attribute [local instance 2000] Submodule.module
 
 section Geo
 
@@ -57,8 +63,8 @@ def InCoefLat (h : GA D (Vc D i)) (w : (R.cV i).W) : Prop :=
       (fun i τ => Bridge.lamLdef (Vc D i).rank ((i : ℕ) + 1) τ) gramR c0R c0L ∧
     ∃ P ∈ nabAtr (labLL D) (lamV D i) (Bridge.hLat (Vc D i) (fin (Vc D i) h)), w = c0L i P
 
-open Classical in
 
+open Classical in
 def levelTrace (U : Subgroup G) (ψ : U →* D.what₂.LLˣ) : (GA D (Wc D i) → ℂ) →ₗ[ℂ] (GA D (Wc D i) → ℂ) :=
   gaL (Wc D i) (R.βW i) (R.datWp i R.triv) R.eG fun g =>
     if hg : g ∈ U then D.what₂.embLL (((ψ ⟨g, hg⟩)⁻¹ : D.what₂.LLˣ) : D.what₂.LL) else 0
@@ -82,8 +88,8 @@ def IsKernel (ξ : Formalism.L2.Host.HChar D.host.E) (Q : Finset (Pl D.host.E)) 
     Datum.IsThPVecOf R.ψ R.θ (Vc D i) (Wc D i) (fun _ => 1) (cart (R.MW i (sg0 D A))) (R.ΛV i) (R.ΛW i) (R.βV i) (R.βW i)
       R.Pg Q ξR (R.vacP i) φ
 
-open Classical in
 
+open Classical in
 def placesOver (t : T0) (p : ℕ) : Finset (Pl D.host.E) := (R.Q t).filter fun PP => (p : 𝓞 D.host.E) ∈ PP.asIdeal
 
 def thetaBase (U : Subgroup G) (ψ : U →* D.what₂.LLˣ) (ph : ℂ) (v : HeightOneSpectrum (𝓞 D.what₂.LL)) (p : ℕ) :
@@ -95,12 +101,12 @@ def thetaTuple (U : Subgroup G) (ψ : U →* D.what₂.LLˣ) (ph : ℂ) (t : T0)
     Submodule (𝓞 D.what₂.LL) (Fin (R.nW i) → D.what₂.LL) :=
   Submodule.span (𝓞 D.what₂.LL) (seriesSet R i U ψ ph (R.ωP i t) (R.vP i t))
 
-variable (A) in
 
+variable (A) in
 abbrev srcDim (t : T0) (U : Subgroup G) (ψ : U →* D.what₂.LLˣ) : ℕ := (A.MtCSD i t).lvlDim (A.leftGroupActionLift i t) U ψ
 
-variable (A) in
 
+variable (A) in
 def srcForm (t : T0) (U : Subgroup G) (ψ : U →* D.what₂.LLˣ) :
     (Fin (srcDim A i t U ψ) → D.what₂.LL) →ₗ[D.what₂.LL] (A.MtCSD i t).Forms :=
   ((A.MtCSD i t).basis.equivFun.symm : (Fin (A.MtCSD i t).dim → D.what₂.LL) →ₗ[D.what₂.LL] (A.MtCSD i t).Forms) ∘ₗ
@@ -316,17 +322,9 @@ theorem sub_orthProj_mem_perpOf {K : Type} [Field K] [StarRing K] {n : ℕ} (Hm 
       mul_left_comm]
   rw [h1, Matrix.mulVecLin_apply, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, h0, dotProduct_zero]
 
-example {K : Type} [Field K] [StarRing K] {n : ℕ} (Hm : Matrix (Fin n) (Fin n) K) (x : Fin n → K) :
-    orthProj Hm ⊥ x = 0 := orthProj_mem Hm ⊥ x
-
 section
 
 variable {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} {i : Fin D.R.m}
-
-theorem IsClassSum.unique {t : T0} {U : Subgroup G} {ψ : U →* D.what₂.LLˣ} {ph : ℂ}
-    {θ θ' : (Fin (srcDim A i t U ψ) → D.what₂.LL) →ₗ[D.what₂.LL] (Fin (R.nW i) → D.what₂.LL)}
-    (hinj : Function.Injective (adForm R i)) (h : IsClassSum R i t U ψ ph θ) (h' : IsClassSum R i t U ψ ph θ') : θ = θ' :=
-  LinearMap.ext fun x => hinj ((h x).trans (h' x).symm)
 
 end
 
@@ -384,28 +382,21 @@ theorem OnTie.e_eOp (t : OnTie h fw hinj EX p ι wL wF nT O v i z act inc ℓ U 
     toForms h fw ι z (O.e i x) = (R.FW ι).eOp (fun g => (idemOf A.X).coeff g) (toForms h fw ι z x) :=
   LinearMap.congr_fun t.e_eq x
 
-theorem OnTie.adForm_θ' (t : OnTie h fw hinj EX p ι wL wF nT O v i z act inc ℓ U ψ ph y)
-    (hr : ClassSumRational R ι (R.mu v) U ψ ph) (x : Fin (O.nX v i) → D.what₂.LL) :
-    adForm R ι (toForms h fw ι z (O.θ' v i x)) = ph • R.thF ι (R.mu v) (jVx R ι (R.mu v) (srcForm A ι (R.mu v) U ψ (y x))) := by
-  have := t.θ'_eq hr (y x)
-  simpa using this
-
 theorem OnTie.rho_eq_of_actionPin (t : OnTie h fw hinj EX p ι wL wF nT O v i z act inc ℓ U ψ ph y) (ha : ActionPin h fw ι ℓ)
     (g : P) (x : Fin (O.nZ i) → D.what₂.LL) :
     toForms h fw ι z (O.ρ i g x) = (R.FW ι).ρ (inc g) (toForms h fw ι z x) := by
   obtain ⟨a, h1, h2⟩ := ha
   obtain ⟨u, rfl⟩ := z.symm.surjective x
-  induction u using TensorProduct.induction_on with
-  | zero => rw [z.symm.map_zero, LinearMap.map_zero, LinearMap.map_zero, LinearMap.map_zero]
-  | add u u' hu hu' => rw [z.symm.map_add, LinearMap.map_add, LinearMap.map_add, hu, hu', LinearMap.map_add, LinearMap.map_add]
+  induction u using TensorProduct.inductionOn with
+  | add u u' hu hu' => simp only [map_add, hu, hu']
   | tmul c F =>
     have e : act g F = a (inc g) F := Subtype.ext ((t.act_eq g F).trans (h1 (inc g) F).symm)
     rw [t.toFormTieK.rho_tmul, toForms_tmul, toForms_tmul, e, h2, map_smul]
 
 end Use
 
-open Classical in
 
+open Classical in
 def charInt {K : Type} [Field K] [NumberField K] {P : Type} [Group P] (inc : P →* G) (U : Subgroup G) (ψ : U →* Kˣ) (g : P) :
     𝓞 K :=
   if hg : inc g ∈ U then

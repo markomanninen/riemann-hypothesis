@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestTMHypOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestTMHypOf
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory in
 private theorem UpperTheory.restricted_product_measure_set
@@ -13,7 +17,7 @@ private theorem UpperTheory.restricted_product_measure_set
       a • μi.prod (Measure.pi fun v : S => m v)) :
     μ {g | q g ∈ A ∧ ∀ v, p v g ∈ K v} = (a : ENNReal) * μi A := by
   have hf : Measurable (fun g => (q g, fun v : S => p v g)) :=
-    hq.prodMk (measurable_pi_lambda _ fun v => hp v)
+    hq.prodMk (Measurable.of_eval fun v => hp v)
   have hB : MeasurableSet (A ×ˢ (Set.univ.pi fun v : S => K v)) :=
     hA.prod (MeasurableSet.univ_pi fun v => hK v)
   have h2 := congrArg (fun ν => ν (A ×ˢ (Set.univ.pi fun v : S => K v))) h

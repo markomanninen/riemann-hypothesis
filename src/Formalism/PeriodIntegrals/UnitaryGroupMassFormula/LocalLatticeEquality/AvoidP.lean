@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem avoidP : AvoidP := by
   have hQ0 : Q ≠ ⊥ := by
     rintro rfl
     apply p.ne_bot
-    rw [← hQp, Ideal.comap_bot_of_injective _ hinj]
+    rw [← hQp, (show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]
   exact hI ⟨Q, hQ, hQ0⟩ hQp hIQ
 
 end PI.LocLatEq.W

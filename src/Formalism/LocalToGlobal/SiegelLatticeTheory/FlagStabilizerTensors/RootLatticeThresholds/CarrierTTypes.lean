@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTParNums
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.UnitaryOfBlockWMem
-import Formalism.PeriodIntegrals.IsLowUnitH
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTParNums
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.UnitaryOfBlockWMem
+public import Formalism.PeriodIntegrals.IsLowUnitH
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,9 +36,9 @@ theorem blockW_fix (h : Matrix (Fin k) (Fin k) ℂ) (j : Fin (2 * r + k + 1)) (h
   rw [mvs]
   unfold Formalism.MainNotions.S.blockW
   by_cases hi : r ≤ i.val ∧ i.val < r + k
-  · rw [dif_pos hi, dif_neg hj, Pi.single_apply, if_neg]
+  · rw [dite_eq_left hi, dite_eq_right hj, Pi.single_apply, if_neg]
     intro e; rw [e] at hi; exact hj hi
-  · rw [dif_neg hi, Pi.single_apply]
+  · rw [dite_eq_right hi, Pi.single_apply]
 
 theorem blockW_UH (h : Matrix (Fin k) (Fin k) ℂ) (hh : h ∈ Matrix.unitaryGroup (Fin k) ℂ) :
     Formalism.MainNotions.S.blockW k r h ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r) := by

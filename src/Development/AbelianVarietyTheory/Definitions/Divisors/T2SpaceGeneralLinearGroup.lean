@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix Topology
 open scoped NNReal ENNReal Pointwise
@@ -80,8 +84,8 @@ theorem isCompact_KO : IsCompact (KO k n : Set (GL n k)) := by
   simp only [SetLike.mem_coe, mem_KO_iff, Set.mem_setOf_eq, Set.mem_preimage, Units.embedProduct_apply,
     Set.mem_prod, (MulOpposite.op_injective).mem_set_image]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def diagGL (c : n → kˣ) : GL n k :=
   ⟨diagonal fun i => (c i : k), diagonal fun i => ((c i)⁻¹ : kˣ), by simp [diagonal_mul_diagonal],
     by simp [diagonal_mul_diagonal]⟩
@@ -93,15 +97,15 @@ omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem det_diagGL (c : n → kˣ) : Matrix.GeneralLinearGroup.det (diagGL c) = ∏ i, c i := by
   ext; simp [Matrix.GeneralLinearGroup.val_det_apply]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def diagHom : (n → kˣ) →* GL n k where
   toFun := diagGL
   map_one' := Units.ext (by simp)
   map_mul' c c' := Units.ext (by simp [diagonal_mul_diagonal])
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem hom_eq_one_of_center (Δ : GL n k →* ℝ≥0) (hc : ∀ g, (∀ h, g * h = h * g) → Δ g = 1) (g : GL n k) :
     Δ g = 1 := by
   have pos : ∀ g, Δ g ≠ 0 := fun g => ((Group.isUnit g).map Δ).ne_zero

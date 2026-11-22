@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodula
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RegulatorLeSumSmallIdealsInClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodula
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RegulatorLeSumSmallIdealsInClass
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
@@ -14,8 +18,8 @@ open GlobalTheory.Mass.DiscOrder
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-omit [StarRing K] [Module K V] [IsScalarTower (𝓞 K) K V] in
 
+omit [StarRing K] [Module K V] [IsScalarTower (𝓞 K) K V] in
 theorem idxN_span (x : V) (S : Submodule (𝓞 K) V) :
     idxN (Submodule.span (𝓞 K) {x}) S =
       Ideal.absNorm (S.comap (LinearMap.toSpanSingleton (𝓞 K) V x) : Ideal (𝓞 K)) := by
@@ -43,16 +47,17 @@ theorem nondeg (h : V →ₗ⋆[K] V →ₗ[K] K) (hp : PD h) : h.Nondegenerate 
 
 omit [StarRing K] in
 theorem span_isLattice (h1 : Module.finrank K V = 1) {x : V} (hx : x ≠ 0) :
-    Submodule.IsLattice K (Submodule.span (𝓞 K) {x}) := by
-  have : FiniteDimensional K V := Module.finite_of_finrank_eq_succ h1
-  refine ⟨Submodule.fg_span_singleton x, ?_⟩
+    Submodule.IsFullLattice K (Submodule.span (𝓞 K) {x}) := by
+  have : Submodule.IsLattice K (Submodule.span (𝓞 K) {x}) :=
+    Submodule.IsLattice.of_fg K (Submodule.fg_span_singleton x)
+  refine { span_eq_top := ?_ }
   rw [Submodule.span_span_of_tower]
-  exact (finrank_eq_one_iff_of_nonzero x hx).mp h1
+  exact (finrank_eq_one_iff_of_ne_zero x hx).mp h1
 
 private theorem apply_self_ne_zero_and_span_of_finrank_one [FiniteDimensional K V] (h : V →ₗ⋆[K] V →ₗ[K] K)
     (hn : h.Nondegenerate) (h1 : Module.finrank K V = 1) {m : V} (hm : m ≠ 0) :
     h m m ≠ 0 ∧ ∀ y : V, ∃ c : K, c • m = y := by
-  have hsp : Submodule.span K {m} = ⊤ := (finrank_eq_one_iff_of_nonzero m hm).mp h1
+  have hsp : Submodule.span K {m} = ⊤ := (finrank_eq_one_iff_of_ne_zero m hm).mp h1
   have hy : ∀ y : V, ∃ c : K, c • m = y := fun y =>
     Submodule.mem_span_singleton.mp (hsp ▸ Submodule.mem_top)
   refine ⟨fun h0 => hm (hn.1 m fun y => ?_), hy⟩
@@ -82,7 +87,7 @@ theorem exists_gen [FiniteDimensional K V] (h : V →ₗ⋆[K] V →ₗ[K] K) (h
   have : Nontrivial V := Module.nontrivial_of_finrank_eq_succ h1
   have hMne : M ≠ ⊥ := by
     intro hbot
-    have h2 := hM.1.span_eq_top
+    have h2 := Submodule.IsFullLattice.span_eq_top (self := hM.1)
     rw [hbot] at h2
     simp at h2
   obtain ⟨m, hmM, hm0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hMne
@@ -123,7 +128,7 @@ theorem exists_gen [FiniteDimensional K V] (h : V →ₗ⋆[K] V →ₗ[K] K) (h
     · rintro ⟨u, rfl⟩
       rw [← algebraMap_smul K (u * b) x₀]
       exact smul_mem_dual_span_of_mul_apply_self_integral h x₀ _ u (by rw [map_mul, hbK, mul_assoc, inv_mul_cancel₀ hxx, mul_one])
-  have hLlat : Submodule.IsLattice K L := span_isLattice h1 hx0
+  have hLlat : Submodule.IsFullLattice K L := span_isLattice h1 hx0
   have e1 := idxN_mul hMd hdL
   have e2 := idxN_mul hLd hdL
   have e3 := idxN_dual h hs hn hM.1 _ L hLlat hML rfl

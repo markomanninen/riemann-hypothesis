@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.HasCoverByOne
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.EqZeroOfIsIsoSub
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.HasCoverByOne
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.EqZeroOfIsIsoSub
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -90,8 +95,8 @@ def BoundedRegularisationSetting.bregWeight {M : CxModel P d} {Xo : Set ((Σ k, 
     {w : ((Σ k, ι k) → ℂ) → ℝ} (S : BoundedRegularisationSetting M Xo a w) (t : ℝ) : M.Xc → ℝ :=
   S.B.regularised S.ρ t (S.e1 t) S.η
 
-open Classical in
 
+open Classical in
 def smoothRep (P : Ideal (MRing ι)) (A : HermLine ι) : HermLine ι :=
   if h : ∃ A' : HermLine ι, A'.a = A.a ∧ IsSmoothHerm A' ∧ ∀ z ∈ mcPts P, A'.h z = A.h z then h.choose
   else A
@@ -121,8 +126,8 @@ namespace ComponentData
 
 def SB (D : ComponentData II Ψ K ι Ω E) (B : ℕ) : Finset ℕ := D.S.filter (· ≤ B)
 
-open Classical in
 
+open Classical in
 def vertFactor (D : ComponentData II Ψ K ι Ω E) (p : ℕ) (z : (Σ k, ι k) → ℂ) : ℝ :=
   if hc : ∃ c : (k : K) → ι k, ∀ k, z ⟨k, c k⟩ ≠ 0 then
     ‖valAt D.y (aeval D.y (D.vnum p) / aeval D.y (D.vden p) * chartMono D.y hc.choose (-D.vdeg p)) z‖ *
@@ -142,10 +147,6 @@ def degMu : ℝ := geomDeg (mCoordIdeal D.y) (muLine H) D.n
 def meanU {O abelian₂ : Type} [CommRing O] [AddCommGroup abelian₂] [Module O abelian₂] (Cd : CuspData D O abelian₂) : ℝ :=
   ptsIntegral (e := D.n) (mCoordIdeal D.y) (fun _ => phMu H) Cd.cuspWeight / degMu H
 
-def cuspCorrected {O abelian₂ : Type} [CommRing O] [AddCommGroup abelian₂] [Module O abelian₂] (Cd : CuspData D O abelian₂)
-    (z : (Σ k, ι k) → ℂ) : ℝ :=
-  phMu H z + Cd.cuspWeight z
-
 def muTwDeg (B : ℕ) : K → ℤ := H.aMu + ∑ p ∈ D.SB B, D.vdeg p
 
 def muReg {M : XModel D} (S : LogLogRegularisationSetting M D.Xo (muLine H)) (B : ℕ) (t : ℝ) : HermLine ι :=
@@ -162,23 +163,6 @@ def ArLimExists {M : XModel D} (S : LogLogRegularisationSetting M D.Xo (muLine H
   ∃ L, Tendsto (arLimFun H S B) (𝓝[>] 0) (𝓝 L)
 
 variable {O abelian₂ : Type} [CommRing O] [AddCommGroup abelian₂] [Module O abelian₂] (Cd : CuspData D O abelian₂)
-
-def MU {M : XModel D} (S : BoundedRegularisationSetting M D.Xo H.aMu (cuspCorrected H Cd)) (B p q : ℕ) (t' : ℝ) :
-    HermLine ι :=
-  smoothRep (mCoordIdeal D.y)
-    (hermOfFun ι ((q : ℤ) • muTwDeg H B + (p : ℤ) • D.a') fun z =>
-      (S.ref.h z * Real.exp (S.bregWeight t' (M.proj z))) ^ q *
-        (∏ p' ∈ D.SB B, D.vertFactor p' z) ^ q * D.A'.h z ^ p)
-
-def topMU {M : XModel D} (S : BoundedRegularisationSetting M D.Xo H.aMu (cuspCorrected H Cd)) (B p q : ℕ) (t' : ℝ) : ℝ :=
-  II K ι (mCoordIdeal D.y) (D.n + 1) (fun _ => MU H Cd S B p q t') / (q : ℝ) ^ (D.n + 1)
-
-def geomDegMU {M : XModel D} (S : BoundedRegularisationSetting M D.Xo H.aMu (cuspCorrected H Cd)) (B p q : ℕ) (t' : ℝ) : ℝ :=
-  geomDeg (mCoordIdeal D.y) (MU H Cd S B p q t') D.n / (q : ℝ) ^ D.n
-
-def htMU {M : XModel D} (S : BoundedRegularisationSetting M D.Xo H.aMu (cuspCorrected H Cd)) (B p q : ℕ) (t' : ℝ)
-    (W : Ideal (MRing ι)) : ℝ :=
-  II K ι W 1 ![MU H Cd S B p q t'] / ((q : ℝ) * degC W)
 
 end Numbers
 

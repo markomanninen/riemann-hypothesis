@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUnitaryMulTriangular
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchScale
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUnitaryMulTriangular
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchScale
+
+@[expose] public section
+
 open GlobalTheory.DualWeyl MvPolynomial NumberField Formalism.GradedWeylDivisibility
 
 namespace GlobalTheory.DualWeyl

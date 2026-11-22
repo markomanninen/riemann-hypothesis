@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 
@@ -19,19 +23,23 @@ theorem UpperTheory.V.AlgebraTools.Det.liftIndep :
   have hx : MonoidAlgebra.mapRingHom G (φ : MvPolynomial G A →+* MvPolynomial σ A) w = x := by
     ext g
     by_cases hg : g ∈ S
-    · simp [w, φ, map_sum, MonoidAlgebra.coeff_single, Finsupp.single_apply, hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [w, φ, map_sum, MonoidAlgebra.coeff_single, Finsupp.single_apply, hg]
     · have h0 : x.coeff g = 0 := by
         by_contra h
         exact hg (Finset.mem_union_left _ (Finsupp.mem_support_iff.mpr h))
-      simp [w, φ, map_sum, MonoidAlgebra.coeff_single, Finsupp.single_apply, hg, h0]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [w, φ, map_sum, MonoidAlgebra.coeff_single, Finsupp.single_apply, hg, h0]
   have hz : MonoidAlgebra.mapRingHom G (ψ : MvPolynomial G A →+* MvPolynomial τ A) w = z := by
     ext g
     by_cases hg : g ∈ S
-    · simp [w, ψ, map_sum, MonoidAlgebra.coeff_single, Finsupp.single_apply, hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [w, ψ, map_sum, MonoidAlgebra.coeff_single, Finsupp.single_apply, hg]
     · have h0 : z.coeff g = 0 := by
         by_contra h
         exact hg (Finset.mem_union_right _ (Finsupp.mem_support_iff.mpr h))
-      simp [w, ψ, map_sum, MonoidAlgebra.coeff_single, Finsupp.single_apply, hg, h0]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [w, ψ, map_sum, MonoidAlgebra.coeff_single, Finsupp.single_apply, hg, h0]
   have key : p.comp φ = q.comp ψ := by
     refine MvPolynomial.algHom_ext fun g => ?_
     have h := congrArg (fun y : MonoidAlgebra B G => y.coeff g) hxz

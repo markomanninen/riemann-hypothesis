@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetOff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetOff
+
+@[expose] public section
 
 noncomputable section
 
@@ -268,7 +272,7 @@ theorem exists_approx {I : Ideal (𝓞 F)} (hI : I ≠ ⊥) (v : HeightOneSpectr
   · have hy : algebraMap F (Fv F v) (x0 + (a - x0) * algebraMap (𝓞 F) F e) - c =
         algebraMap F (Fv F v) ((a - x0) * algebraMap (𝓞 F) F e - (a - x0)) +
           (algebraMap F (Fv F v) a - c) := by
-      rw [map_sub, map_add, map_mul, map_sub]
+      rw [map_sub, map_add (f := _), map_mul, map_sub]
       ring
     rw [hy]
     refine ballV_add ((mem_ballV_iff v k _).mpr ?_) ha
@@ -277,7 +281,7 @@ theorem exists_approx {I : Ideal (𝓞 F)} (hI : I ≠ ⊥) (v : HeightOneSpectr
       have h1 := congrArg (algebraMap (𝓞 F) F) hbh
       have h2 := congrArg (algebraMap (𝓞 F) F) hef
       rw [map_mul, map_mul] at h1
-      rw [map_add, map_one] at h2
+      rw [map_add (f := _), map_one] at h2
       rw [← hab]
       field_simp
       linear_combination (algebraMap (𝓞 F) F a' * algebraMap (𝓞 F) F g) * h2 +

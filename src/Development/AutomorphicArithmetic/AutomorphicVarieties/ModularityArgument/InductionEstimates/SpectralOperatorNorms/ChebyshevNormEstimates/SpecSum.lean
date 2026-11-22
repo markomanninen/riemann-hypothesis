@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -9,14 +13,14 @@ private theorem specSum_op {d : ℕ} (a Y : Eu d →L[ℂ] Eu d) (y : ℝ → �
     (hsp : ∀ x, x ∈ sp ↔ 0 < x ∧ Module.End.eigenspace (a : Eu d →ₗ[ℂ] Eu d) (x : ℂ) ≠ ⊥)
     (hY : ∀ x : ℝ, 0 < x → ∀ v ∈ Module.End.eigenspace (a : Eu d →ₗ[ℂ] Eu d) (x : ℂ), Y v = y x • v) (w : Eu d) :
     a (Y w) = ∑ x ∈ sp, ((x : ℂ) * y x) • eigP a x w := by
-  have hpos : a.IsPositive := (ContinuousLinearMap.nonneg_iff_isPositive a).1 ha
+  have hpos : a.IsPositive := (ContinuousLinearMap.nonneg_iff_isPositive).1 ha
   have hsym : (a : Eu d →ₗ[ℂ] Eu d).IsSymmetric := hpos.isSymmetric
   have htop : (⨆ μ : ℂ, Module.End.eigenspace (a : Eu d →ₗ[ℂ] Eu d) μ) = ⊤ :=
     Submodule.orthogonal_eq_bot_iff.1 hsym.orthogonalComplement_iSup_eigenspaces_eq_bot
   have hw : w ∈ (⨆ μ : ℂ, Module.End.eigenspace (a : Eu d →ₗ[ℂ] Eu d) μ) := htop ▸ Submodule.mem_top
   induction hw using Submodule.iSup_induction' with
   | zero => simp
-  | add u v _ _ hu hv => simp only [map_add, hu, hv, smul_add, Finset.sum_add_distrib]
+  | add u v _ _ hu hv => simp only [map_add (f := _), hu, hv, smul_add, Finset.sum_add_distrib]
   | mem μ v hv =>
     by_cases h0 : v = 0
     · subst h0; simp
@@ -63,7 +67,9 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.specSum :
     refine LinearMap.ext fun w => ?_
     rw [LinearMap.sum_apply]
     change N (a (Y (Z (s w)))) = ∑ x ∈ sp, ((x : ℂ) * y x) • N (eigP a x (Z (s w)))
-    rw [specSum_op a Y y sp ha hc hsp hY, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [specSum_op a Y y sp ha hc hsp hY, map_sum]
     simp only [map_smul]
-  rw [key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, map_sum]
   simp only [map_smul, smul_eq_mul]

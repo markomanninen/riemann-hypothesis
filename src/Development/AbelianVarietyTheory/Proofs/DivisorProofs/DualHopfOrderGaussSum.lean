@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 namespace GlobalTheory.EtaleSpreadReg
@@ -30,7 +35,7 @@ theorem isRegularLocalRing_polynomial_atPrime (A : Type*) [CommRing A] (Q₀ : I
   let Q' : Ideal Ap[X] := Q₀.map (algebraMap A[X] Ap[X])
   haveI hQ' : Q'.IsPrime := IsLocalization.isPrime_of_isPrime_disjoint M Ap[X] Q₀ inferInstance hdisj
   have hc : Q'.comap (algebraMap A[X] Ap[X]) = Q₀ :=
-    IsLocalization.comap_map_of_isPrime_disjoint M Ap[X] inferInstance hdisj
+    IsLocalization.under_map_of_isPrime_disjoint M Ap[X] inferInstance hdisj
   have h := IsLocalization.isLocalization_isLocalization_atPrime_isLocalization M
     (Localization.AtPrime Q') Q'
   have e : (Q'.comap (algebraMap A[X] Ap[X])).primeCompl = Q₀.primeCompl := by

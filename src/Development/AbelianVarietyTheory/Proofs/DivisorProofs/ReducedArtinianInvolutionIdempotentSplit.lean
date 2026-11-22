@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix Polynomial
 
 namespace GlobalTheory
@@ -58,10 +63,10 @@ theorem reducedArtinian_involution_split :
   have hσeε : σ e * ε = 0 := by linear_combination (-σ e) * hεf + ε * hσef
   have hmem : Ideal.span {1 - (e + ε) - σ (e + ε)} ∈ S :=
     ⟨e + ε, by linear_combination he + hε + 2 * heε,
-      by rw [map_add]; linear_combination heσ + heσε + hσeε + hεσ, rfl⟩
+      by rw [map_add (f := _)]; linear_combination heσ + heσε + hσeε + hεσ, rfl⟩
   apply hmin _ hmem
   have hff : f * (1 - (e + ε) - σ (e + ε)) = 1 - (e + ε) - σ (e + ε) := by
-    rw [map_add]; linear_combination hf - hεf - hσεf
+    rw [map_add (f := _)]; linear_combination hf - hεf - hσεf
   refine lt_of_le_of_ne ?_ ?_
   · rw [Ideal.span_singleton_le_span_singleton]
     exact ⟨_, hff.symm⟩
@@ -71,7 +76,7 @@ theorem reducedArtinian_involution_split :
     obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp this
     apply hεne
     have hεg : ε * (1 - (e + ε) - σ (e + ε)) = 0 := by
-      rw [map_add]; linear_combination -heε - hσeε - hε - hεσ
+      rw [map_add (f := _)]; linear_combination -heε - hσeε - hε - hεσ
     linear_combination -hεf - ε * hc + c * hεg
 
 end GlobalTheory

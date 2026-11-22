@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementQ
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowDouble
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementQ
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowDouble
+
+@[expose] public section
 
 open PowerSeries
 
@@ -12,8 +16,6 @@ namespace Formalism.L2.Th1.A
 namespace Q1
 
 open CubeR
-
-local notation "cc" => MvPowerSeries.constantCoeff
 
 section Diag
 
@@ -32,8 +34,9 @@ theorem eq_single0 (e : Fin 2 →₀ ℕ) (he : e 1 = 0) : e = Finsupp.single 0 
   fin_cases i <;> simp [he]
 
 theorem cc_subst {σ τ : Type*} {a : σ → MvPowerSeries τ R} (ha : MvPowerSeries.HasSubst a)
-    (ha' : ∀ i, cc (a i) = 0) (f : MvPowerSeries σ R) : cc (f.subst a) = cc f := by
-  have h0 : cc (f - MvPowerSeries.C (cc f)) = 0 := by simp
+    (ha' : ∀ i, (a i).constantCoeff = 0) (f : MvPowerSeries σ R) :
+    (f.subst a).constantCoeff = f.constantCoeff := by
+  have h0 : (f - MvPowerSeries.C f.constantCoeff).constantCoeff = 0 := by simp
   have h1 := MvPowerSeries.constantCoeff_subst_eq_zero ha ha' h0
   rw [MvPowerSeries.subst_sub ha, MvPowerSeries.subst_C, map_sub, MvPowerSeries.constantCoeff_C,
     sub_eq_zero] at h1
@@ -44,7 +47,7 @@ theorem coeff_subst_X0_zero (H : MvPowerSeries (Fin 2) R) (e : Fin 2 →₀ ℕ)
       MvPowerSeries.coeff e H := by
   classical
   have hs : MvPowerSeries.HasSubst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R), 0] :=
-    hasSubst2 (by simp) (by simp)
+    MvPowerSeries.HasSubst.X_zero
   have hprod : ∀ d : Fin 2 →₀ ℕ,
       (d.prod fun s n => (![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R), 0] s) ^ n)
         = MvPowerSeries.X 0 ^ d 0 * 0 ^ d 1 := by
@@ -53,11 +56,11 @@ theorem coeff_subst_X0_zero (H : MvPowerSeries (Fin 2) R) (e : Fin 2 →₀ ℕ)
     simp
   rw [MvPowerSeries.coeff_subst hs, finsum_eq_single _ e]
   · rw [hprod, he, pow_zero, mul_one, MvPowerSeries.coeff_X_pow]
-    rw [if_pos (eq_single0 e he), smul_eq_mul, mul_one]
+    rw [ite_eq_left (eq_single0 e he), smul_eq_mul, mul_one]
   · intro d hd
     rw [hprod]
     rcases Nat.eq_zero_or_pos (d 1) with h1 | h1
-    · rw [h1, pow_zero, mul_one, MvPowerSeries.coeff_X_pow, if_neg, smul_zero]
+    · rw [h1, pow_zero, mul_one, MvPowerSeries.coeff_X_pow, ite_eq_right, smul_zero]
       intro h
       apply hd
       rw [eq_single0 d h1]
@@ -74,13 +77,14 @@ theorem X_one_dvd_of_subst_X_zero_eq_zero (H : MvPowerSeries (Fin 2) R)
 theorem div_diag (H : MvPowerSeries (Fin 2) R)
     (h : H.subst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R), MvPowerSeries.X 0] = 0) :
     ∃ Q, H = (MvPowerSeries.X 1 - MvPowerSeries.X 0) * Q := by
-  have c0 : cc (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R) = 0 := by simp
   have hτ : MvPowerSeries.HasSubst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R),
-      MvPowerSeries.X 1 + MvPowerSeries.X 0] := hasSubst2 c0 (by simp)
+      MvPowerSeries.X 1 + MvPowerSeries.X 0] :=
+    MvPowerSeries.hasSubst_of_constantCoeff_zero (by simp)
   have hτ' : MvPowerSeries.HasSubst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R),
-      MvPowerSeries.X 1 - MvPowerSeries.X 0] := hasSubst2 c0 (by simp)
+      MvPowerSeries.X 1 - MvPowerSeries.X 0] :=
+    MvPowerSeries.hasSubst_of_constantCoeff_zero (by simp)
   have hε : MvPowerSeries.HasSubst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R), 0] :=
-    hasSubst2 c0 (by simp)
+    MvPowerSeries.HasSubst.X_zero
   obtain ⟨H', hH'⟩ : ∃ H', H' = H.subst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R),
       MvPowerSeries.X 1 + MvPowerSeries.X 0] := ⟨_, rfl⟩
   have e1 : H'.subst ![(MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R), 0] = 0 := by
@@ -111,15 +115,17 @@ theorem div_diag (H : MvPowerSeries (Fin 2) R)
   simp
 
 theorem coeff_lin (n : MvPowerSeries (Fin 2) R) :
-    MvPowerSeries.coeff (Finsupp.single 0 1) ((U₁ - U₂) * n) = cc n := by
+    MvPowerSeries.coeff (Finsupp.single 0 1) ((U₁ - U₂) * n) = n.constantCoeff := by
   classical
   have h10 : ¬ (Finsupp.single (1 : Fin 2) 1 ≤ Finsupp.single (0 : Fin 2) 1) := by
     intro h
     have := h 1
     simp at this
-  show MvPowerSeries.coeff (Finsupp.single 0 1) ((MvPowerSeries.X 0 - MvPowerSeries.X 1) * n) = cc n
+  show MvPowerSeries.coeff (Finsupp.single 0 1) ((MvPowerSeries.X 0 - MvPowerSeries.X 1) * n) =
+    n.constantCoeff
   rw [sub_mul, map_sub, MvPowerSeries.X_def, MvPowerSeries.X_def, MvPowerSeries.coeff_monomial_mul,
-    MvPowerSeries.coeff_monomial_mul, if_pos le_rfl, if_neg h10, tsub_self, one_mul, sub_zero,
+    MvPowerSeries.coeff_monomial_mul, ite_eq_left le_rfl, ite_eq_right h10, tsub_self, one_mul,
+    sub_zero,
     MvPowerSeries.coeff_zero_eq_constantCoeff_apply]
 
 end Diag
@@ -128,16 +134,22 @@ section Diff
 
 variable {R : Type u} [CommRing R] (W : WeierstrassCurve R)
 
-theorem X_cc (i : Fin 2) : cc (MvPowerSeries.X i : MvPowerSeries (Fin 2) R) = 0 := by
+theorem X_cc (i : Fin 2) :
+    MvPowerSeries.constantCoeff (MvPowerSeries.X i : MvPowerSeries (Fin 2) R) = 0 := by
   simp
 
-theorem difference_subst {τ : Type*} {p q : MvPowerSeries τ R} (hp : cc p = 0) (hq : cc q = 0) :
+theorem difference_subst {τ : Type*} {p q : MvPowerSeries τ R}
+    (hp : p.constantCoeff = 0) (hq : q.constantCoeff = 0) :
     (diff2 W).subst ![p, q]
       = MvPowerSeries.subst (![p, (iSer W).subst q] : Fin 2 → MvPowerSeries τ R) (fgl W) := by
-  have hs := hasSubst2 hp hq
+  have hs : MvPowerSeries.HasSubst ![p, q] :=
+    MvPowerSeries.hasSubst_of_constantCoeff_zero (Fin.forall_fin_two.2 ⟨hp, hq⟩)
+  have hi := PowerSeries.constantCoeff_subst_eq_zero (X_cc (R := R) 1) (iSer W) (iSer_cc W)
+  have hinner : MvPowerSeries.HasSubst
+      ![(U₁ : MvPowerSeries (Fin 2) R), (iSer W).subst (U₂ : MvPowerSeries (Fin 2) R)] :=
+    MvPowerSeries.hasSubst_of_constantCoeff_zero (Fin.forall_fin_two.2 ⟨X_cc 0, hi⟩)
   unfold diff2
-  rw [MvPowerSeries.subst_comp_subst_apply
-    (hasSubst2 (X_cc 0) (iSer_subst_cc W (X_cc 1))) hs]
+  rw [MvPowerSeries.subst_comp_subst_apply hinner hs]
   congr 1
   funext i
   fin_cases i
@@ -167,7 +179,8 @@ theorem difference_linear_coeff : MvPowerSeries.coeff (Finsupp.single 0 1) (diff
   rw [h0, coeff_subst_X0_zero _ _ he]
   exact (fglChord R W).2.2.2.2.2.1
 
-theorem first : ∃ n₁ : MvPowerSeries (Fin 2) R, cc n₁ = 1 ∧ diff2 W = (U₁ - U₂) * n₁ := by
+theorem first : ∃ n₁ : MvPowerSeries (Fin 2) R,
+    n₁.constantCoeff = 1 ∧ diff2 W = (U₁ - U₂) * n₁ := by
   obtain ⟨Q, hQ⟩ := div_diag (diff2 W) (difference_diagonal W)
   have h : diff2 W = (U₁ - U₂) * -Q := by rw [hQ]; ring
   refine ⟨-Q, ?_, h⟩
@@ -176,8 +189,10 @@ theorem first : ∃ n₁ : MvPowerSeries (Fin 2) R, cc n₁ = 1 ∧ diff2 W = (U
 theorem second {n₁ : MvPowerSeries (Fin 2) R} (h : diff2 W = (U₁ - U₂) * n₁) :
     fgl W = (U₂ - (iSer W).subst (U₁ : MvPowerSeries (Fin 2) R))
       * n₁.subst ![(U₂ : MvPowerSeries (Fin 2) R), (iSer W).subst (U₁ : MvPowerSeries (Fin 2) R)] := by
-  have hi := iSer_subst_cc W (X_cc (R := R) 0)
-  have hs := hasSubst2 (X_cc (R := R) 1) hi
+  have hi := PowerSeries.constantCoeff_subst_eq_zero (X_cc (R := R) 0) (iSer W) (iSer_cc W)
+  have hs : MvPowerSeries.HasSubst
+      ![(U₂ : MvPowerSeries (Fin 2) R), (iSer W).subst (U₁ : MvPowerSeries (Fin 2) R)] :=
+    MvPowerSeries.hasSubst_of_constantCoeff_zero (Fin.forall_fin_two.2 ⟨X_cc 1, hi⟩)
   have h1 := congrArg (MvPowerSeries.subst
     ![(U₂ : MvPowerSeries (Fin 2) R), (iSer W).subst (U₁ : MvPowerSeries (Fin 2) R)]) h
   rw [difference_subst W (X_cc 1) hi, MvPowerSeries.subst_mul hs, MvPowerSeries.subst_sub hs,
@@ -192,13 +207,6 @@ end Diff
 end Q1
 
 open Q1 CubeR
-
-theorem formal_group_difference : FglDiff.{u} := by
-  intro R _ W
-  obtain ⟨n₁, h0, h⟩ := first W
-  refine ⟨n₁, _, h0, ?_, h, second W h⟩
-  rw [cc_subst (hasSubst2 (X_cc 1) (iSer_subst_cc W (X_cc 0)))
-    (Fin.forall_fin_two.2 ⟨X_cc 1, iSer_subst_cc W (X_cc 0)⟩), h0]
 
 theorem cube_mem' : CubeMem.{u} := by
   intro R _ W S h1 h2 h3 h4 h6
@@ -225,8 +233,10 @@ theorem cube_mem' : CubeMem.{u} := by
       simp only [map_mul, map_sub, map_cubic_lhs, map_cubic_sum, MvPowerSeries.map_X, hW] at this
       exact this
   · obtain ⟨n₁, h0, h⟩ := first WS
-    have hi := iSer_subst_cc WS (X_cc (R := S) 0)
-    have hs := hasSubst2 (X_cc (R := S) 1) hi
+    have hi := PowerSeries.constantCoeff_subst_eq_zero (X_cc (R := S) 0) (iSer WS) (iSer_cc WS)
+    have hs : MvPowerSeries.HasSubst
+        ![(U₂ : MvPowerSeries (Fin 2) S), (iSer WS).subst (U₁ : MvPowerSeries (Fin 2) S)] :=
+      MvPowerSeries.hasSubst_of_constantCoeff_zero (Fin.forall_fin_two.2 ⟨X_cc 1, hi⟩)
     have h' := second WS h
     refine ⟨MvPowerSeries.map S.subtype n₁, MvPowerSeries.map S.subtype (n₁.subst
       ![(U₂ : MvPowerSeries (Fin 2) S), (iSer WS).subst (U₁ : MvPowerSeries (Fin 2) S)]),

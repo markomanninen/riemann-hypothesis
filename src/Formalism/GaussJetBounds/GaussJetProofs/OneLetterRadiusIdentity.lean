@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.GenLogInverse
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

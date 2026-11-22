@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJParabolicFubini
-import GroundTheory.AutomorphicForms.GL2.GJLeviZeta
-import GroundTheory.AutomorphicForms.HaarCosets
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJParabolicFubini
+public import GroundTheory.AutomorphicForms.GL2.GJLeviZeta
+public import GroundTheory.AutomorphicForms.HaarCosets
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -97,8 +102,8 @@ theorem IsSchwartzBruhat.comp_mulRight {Φ : Matrix (Fin n) (Fin n) F → ℂ}
       continuous_invFun := Continuous.matrix_mul continuous_id continuous_const }
   exact ⟨hΦ.1.comp_continuous T.continuous, hΦ.2.comp_homeomorph T⟩
 
-omit [Field F] [ValuativeRel F] [IsNonarchimedeanLocalField F] in
 
+omit [Field F] [ValuativeRel F] [IsNonarchimedeanLocalField F] in
 theorem IsSchwartzBruhat.norm {Φ : Matrix (Fin n) (Fin n) F → ℂ} (hΦ : IsSchwartzBruhat Φ) :
     IsSchwartzBruhat fun X => ((‖Φ X‖ : ℝ) : ℂ) :=
   ⟨hΦ.1.comp fun z => ((‖z‖ : ℝ) : ℂ),
@@ -228,8 +233,8 @@ theorem continuous_monoidHom_of_eq_one {G : Type*} [Group G] [TopologicalSpace G
   simp only [Set.mem_preimage, smul_eq_mul, map_mul, hV v hv, mul_one]
   exact hg
 
-variable (β) in
 
+variable (β) in
 def leviSqrtModular : levi F n β →* ℝ≥0 where
   toFun m := NNReal.sqrt (Measure.modularCharacter (leviIncl m))
   map_one' := by simp
@@ -345,8 +350,8 @@ theorem integral_inducedIntegrand_mul (μ𝔪 : Measure (LeviIndex n β → F))
     coe_leviSqrtModular]
   ring
 
-omit [MeasurableSpace F] [BorelSpace F] in
 
+omit [MeasurableSpace F] [BorelSpace F] in
 theorem lintegral_eq_sum_parabolic [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
     (μG : Measure (GL (Fin n) F)) [μG.IsHaarMeasure]
     (μP : Measure (blockUpper F n β)) [μP.IsHaarMeasure]
@@ -382,8 +387,8 @@ theorem lintegral_eq_sum_parabolic [MeasurableSpace (GL (Fin n) F)] [BorelSpace 
   rw [lintegral_const_mul _ (Finset.measurable_sum _ fun q _ => hmeas q),
     lintegral_finsetSum _ fun q _ => hmeas q]
 
-omit [MeasurableSpace F] [BorelSpace F] in
 
+omit [MeasurableSpace F] [BorelSpace F] in
 theorem integral_eq_sum_parabolic [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
     (μG : Measure (GL (Fin n) F)) [μG.IsHaarMeasure]
     (μP : Measure (blockUpper F n β)) [μP.IsHaarMeasure]

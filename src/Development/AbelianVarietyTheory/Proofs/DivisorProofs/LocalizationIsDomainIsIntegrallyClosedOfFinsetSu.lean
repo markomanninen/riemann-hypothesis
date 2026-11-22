@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -67,8 +72,8 @@ namespace LocalizationIntegrallyClosedDomain
 
 variable {B : Type} [CommRing B] {Q : Ideal B} [Q.IsPrime]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 lemma isIntegrallyClosed
     (H : ∀ s : Finset B, ∃ C : Subring B, (↑s : Set B) ⊆ (C : Set B) ∧
       ∀ (q : Ideal C) [q.IsPrime], IsDomain (Localization.AtPrime q) ∧

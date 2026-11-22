@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -21,7 +25,7 @@ private theorem chebyshev_image_norm_le {A B : Type} [CommRing A] [Algebra ℂ A
       push_cast
       rw [Polynomial.Chebyshev.T_add_two]
       ring
-    rw [e, map_sub, map_add, map_mul, Polynomial.aeval_X, map_sub, map_add, map_mul]
+    rw [e, map_sub, map_add (f := _), map_mul, Polynomial.aeval_X, map_sub, map_add (f := _), map_mul]
     set u := φ (Polynomial.aeval y (Polynomial.Chebyshev.T ℂ ((m + 1 : ℕ) : ℤ)))
     set v := φ (Polynomial.aeval y (Polynomial.Chebyshev.T ℂ (m : ℤ)))
     have hp : ‖φ y * u‖ ≤ r * (2 * r + 1) ^ (m + 1) :=

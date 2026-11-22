@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DdivOnLetterMonomial
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SlopeOfBinomCombGen
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DdivOnLetterMonomial
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SlopeOfBinomCombGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,12 +50,13 @@ def CostA (n : ℕ) (f : D.EA → K) : Prop :=
 theorem costM_ok : CostOK (CostV (K := K) (r := D.r) D.msg Set.univ) :=
   costV_ok D.msg Set.univ (fun _ _ _ _ _ h1 h2 => vala_add h1 h2) (fun _ _ _ a _ h => vala_smul a h)
 
-theorem costA_ok : CostOK (D.CostA p) where
-  one := fun _ => D.costM_ok.one
-  mul := fun m n _ _ hf hg ρ => D.costM_ok.mul m n _ _ (hf ρ) (hg ρ)
-  add := fun n _ _ hf hg ρ => D.costM_ok.add n _ _ (hf ρ) (hg ρ)
-  smul := fun n a _ hf ρ => D.costM_ok.smul n a _ (hf ρ)
-  mono := fun m n _ hmn hf ρ => D.costM_ok.mono m n _ hmn (hf ρ)
+theorem costA_ok : CostOK (D.CostA p) := by
+  constructor
+  · exact fun _ => D.costM_ok.one
+  · exact fun m n _ _ hf hg ρ => D.costM_ok.mul m n _ _ (hf ρ) (hg ρ)
+  · exact fun n _ _ hf hg ρ => D.costM_ok.add n _ _ (hf ρ) (hg ρ)
+  · exact fun n a _ hf ρ => D.costM_ok.smul n a _ (hf ρ)
+  · exact fun m n _ hmn hf ρ => D.costM_ok.mono m n _ hmn (hf ρ)
 
 theorem costM_choose [NeZero D.r] (hV2 : V2 K) (x : D.ML × Fin D.r) (k : ℕ) :
     CostV (K := K) D.msg Set.univ k (fun ζ => ((ζ x).choose k : K)) :=
@@ -82,7 +87,7 @@ theorem ChOK.dg [NeZero D.r] (hV2 : V2 K) {θ : (j : Fin D.J) → Fin (D.nch j) 
     approx_of_trunc (v := v) hC (D.costA_choose p hV2) T lam hlam f hf
   refine ⟨Formalism.MainNotions.PlaneGram.dg g G0, Formalism.MainNotions.PlaneGram.dg (fun α => f α - g α) G0 + Formalism.MainNotions.PlaneGram.dg f E,
     ?_, ?_, ?_, ?_⟩
-  · rw [h1, map_add, dg_sub_fun]; abel
+  · rw [h1, map_add (f := _), dg_sub_fun]; abel
   · have := cge_dg v (fun α => (vge_zero_iff v _).mpr (hg0 α)) h2
     rwa [zero_add] at this
   · refine cge_add v ?_ ?_

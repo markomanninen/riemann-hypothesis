@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem exists_algHom_pi_eq_eval {O ι : Type*} [CommRing O] [Nontrivial O] [Fin
     by_contra h
     have h' : ∀ k, f (Pi.single k 1) = 0 := fun k => by_contra fun hk => h ⟨k, hk⟩
     have h2 : f (∑ k, Pi.single k 1) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_eq_zero fun k _ => h' k
     have h3 : (∑ k, Pi.single k 1 : ι → O) = 1 := Finset.univ_sum_single (1 : ι → O)
     rw [h3, map_one] at h2
@@ -37,9 +42,6 @@ theorem exists_algHom_pi_eq_eval {O ι : Type*} [CommRing O] [Nontrivial O] [Fin
   rwa [map_mul, map_smul, h4, mul_one, smul_eq_mul, mul_one] at h6
 
 variable (p : ℕ) (O : Type) [CommRing O] [Fact p.Prime]
-
-@[simp] theorem constHom_constGen : constHom _ (constGen p O) = 𝟙 _ := by
-  rw [← LinearEquiv.eq_symm_apply, constHom_symm_apply, tateMap_id]
 
 variable [Nontrivial O]
 

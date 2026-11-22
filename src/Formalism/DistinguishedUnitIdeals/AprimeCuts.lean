@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.Statement
-import Formalism.TruncatedSeriesCounting.AprimeArith
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.Statement
+public import Formalism.TruncatedSeriesCounting.AprimeArith
+
+@[expose] public section
 
 noncomputable section
 

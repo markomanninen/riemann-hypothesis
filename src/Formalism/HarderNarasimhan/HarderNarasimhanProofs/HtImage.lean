@@ -1,9 +1,13 @@
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HarderNarasimhan.DefsPl
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.GramBlock
+module
+
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HarderNarasimhan.DefsPl
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.GramBlock
+
+@[expose] public section
 
 open Module NumberField
 
@@ -220,7 +224,7 @@ theorem htImage_map_norm {P ι κ : Type*} [Fintype P] [Fintype ι] [Fintype κ]
   rw [htImage_norm_placePart (htImage_map_mem M hy), htImage_norm_placePart hy, htImageCv_map]
   refine le_of_eq_of_le ?_
     ((LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin (M v))).le_opNorm _)
-  simp [Matrix.toEuclideanLin_apply]
+  simp [Matrix.toLpLin_apply]
 
 variable {K : Type*} [Field K] [NumberField K] [StarRing K]
   {V ι : Type*} [AddCommGroup V] [Module K V] [Fintype ι] [DecidableEq ι]
@@ -265,10 +269,10 @@ theorem htImage_map_realize (b : Basis ι K V) (X : InfinitePlace K → Matrix �
   rw [Matrix.mul_assoc _ (X v), Matrix.mul_nonsing_inv _ (hX v), Matrix.mul_one,
     ← Matrix.mulVec_mulVec]
   congr 1
+  unfold Formalism.HermitianLatticesTheory.vecAt
+  rw [← LinearMap.toMatrix_mulVec_repr b b' φ x]
   funext i
-  simp only [Formalism.HermitianLatticesTheory.vecAt]
-  rw [← LinearMap.toMatrix_mulVec_repr b b' φ x, RingHom.map_mulVec]
-  rfl
+  exact (RingHom.map_mulVec v.embedding _ _ _).symm
 
 end HtImageReal
 

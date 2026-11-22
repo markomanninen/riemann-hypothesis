@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -9,7 +14,8 @@ theorem res_mul' {R A β κ : Type} [CommRing R] [CommRing A] [Algebra R A] [Fin
     [Fintype κ] [DecidableEq κ] (b : Module.Basis β R A) (g h : Matrix κ κ A) :
     res b (g * h) = res b g * res b h := by
   ext p q
-  simp only [res, Matrix.of_apply, Matrix.mul_apply, map_sum, map_mul, Matrix.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [res, Matrix.of_apply, Matrix.mul_apply, map_sum, map_mul, Matrix.sum_apply,
     Fintype.sum_prod_type]
 
 theorem res_one' {R A β κ : Type} [CommRing R] [CommRing A] [Algebra R A] [Fintype β] [DecidableEq β]
@@ -34,7 +40,8 @@ theorem repr_mem {R A β : Type} [CommRing R] [CommRing A] [Algebra R A] [Fintyp
     exact Finset.sum_congr rfl fun i _ => mul_smul_comm _ _ _
   have hk : b.repr x k = ∑ i, b.repr 1 i * Algebra.leftMulMatrix b x k i := by
     conv_lhs => rw [hsum]
-    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
       smul_eq_mul, Algebra.leftMulMatrix_eq_repr_mul]
   rw [hk]
   exact Subring.sum_mem _ fun i _ => Subring.mul_mem _ (h1 i) (hx k i)
@@ -66,7 +73,8 @@ theorem repr_map {F β : Type} [Field F] [Algebra ℚ F] [Fintype β] [Decidable
       ((algebraMap F A).comp (algebraMap ℚ F))) c
   have hx : algebraMap F A x = ∑ i, algebraMap ℚ R (ω.repr x i) • b i := by
     conv_lhs => rw [← ω.sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.smul_def, Algebra.smul_def, map_mul, hq, hb]
   rw [hx, Module.Basis.repr_sum_self]

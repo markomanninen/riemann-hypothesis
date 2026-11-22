@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LeadingMinorIntegrality
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LeadingMinorIntegrality
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ theorem endMin_eq {r : ℕ} (w : Point K (r + 1)) (a : Fin (toPts w).1.length) :
 theorem dlast_eq {r : ℕ} (w : Point K (r + 1)) : DlastPt (toPts w) = leadingPrincipalMinor (ptMat w) (r + 1) := by
   have hl : 0 < (toPts w).1.length := Composition.length_pos_of_pos (toPts w).1 (Nat.succ_pos r)
   unfold DlastPt
-  rw [dif_pos hl, endMin_eq]
+  rw [dite_eq_left hl, endMin_eq]
   congr 1
   show (toPts w).1.sizeUpTo ((toPts w).1.length - 1 + 1) = r + 1
   rw [Nat.sub_add_cancel hl, Composition.sizeUpTo_length]
@@ -67,7 +71,7 @@ theorem dr_eq {r : ℕ} (w : Point K (r + 1)) : DrPt (toPts w) = leadingPrincipa
   have hsum := (toPts w).1.sizeUpTo_succ' ⟨(toPts w).1.length - 1, by omega⟩
   simp only [Nat.sub_add_cancel hlen, Composition.sizeUpTo_length] at hsum
   unfold DrPt
-  rw [dif_pos hlen]
+  rw [dite_eq_left hlen]
   split_ifs with h1 h2
   · rw [endMin_eq]
     congr 1
@@ -101,17 +105,16 @@ section Minors
 
 variable {D : D7}
 
-local notation "FI" => FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E
-
 theorem leadingMinor_map {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) {d : ℕ} (M : Matrix (Fin d) (Fin d) R)
     (q : ℕ) : leadingPrincipalMinor (M.map f) q = f (leadingPrincipalMinor M q) := by
   unfold leadingPrincipalMinor
   rw [RingHom.map_det]
   rfl
 
-theorem frame_smul_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} (F : LFlag (VS D) D.R.rS T)
+theorem frame_smul_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
     (hz : F.fl.z ∈ Λ) (hX : XLam Λ F = XS D F.fl) (a : Fin (D.R.rS + 1)) :
-    ∀ x ∈ (((dI D ^ (D.R.rS - (a : ℕ)) : Ideal (𝓞 D.host.E)) : FI))⁻¹, x • frame F a ∈ Λ := by
+    ∀ x ∈ ((dI D ^ (D.R.rS - (a : ℕ)) : Ideal (𝓞 D.host.E)) :
+      FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E)⁻¹, x • frame F a ∈ Λ := by
   induction a using Fin.lastCases with
   | last =>
     intro x hx
@@ -128,14 +131,15 @@ theorem frame_smul_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} 
       have e : -((D.R.rS : ℤ) - (a : ℕ)) = -(((D.R.rS - (a : ℕ) : ℕ) : ℤ)) := by
         push_cast [Nat.cast_sub ha]; ring
       rw [e, zpow_neg, zpow_natCast,
-        show ddS D = ((dI D : Ideal (𝓞 D.host.E)) : FI) from rfl, ← FractionalIdeal.coeIdeal_pow]
+        show ddS D = (dI D : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) from rfl,
+        ← FractionalIdeal.coeIdeal_pow]
       simpa using hx
     have h : x • F.fl.e a ∈ XLam Λ F := by
       rw [hX]; exact Submodule.subset_span ⟨a, x, hx', rfl⟩
     exact h.1
 
 theorem zhatOM_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ)
-    {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+    {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (hz : F.fl.z ∈ Λ) (hX : XLam Λ F = XS D F.fl) (hz' : F'.fl.z ∈ Λ) (hX' : XLam Λ F' = XS D F'.fl)
     (a b : Fin (D.R.rS + 1)) :
     ∃ o ∈ dI D ^ ((D.R.rS - (a : ℕ)) + (D.R.rS - (b : ℕ))), (o : D.host.E) = ZhatOM (ZhatL F F') a b := by
@@ -169,7 +173,7 @@ private theorem e4_cast_lemma_6 {R : Type*} [CommRing R] {N : ℕ} (A : Matrix (
   rfl
 
 theorem lead_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ)
-    {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+    {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (hz : F.fl.z ∈ Λ) (hX : XLam Λ F = XS D F.fl) (hz' : F'.fl.z ∈ Λ) (hX' : XLam Λ F' = XS D F'.fl)
     (q : ℕ) (hq : q ≤ D.R.rS + 1) :
     ∃ o ∈ dI D ^ (q * (2 * D.R.rS + 1 - q)), (o : D.host.E) = leadingPrincipalMinor (ZhatOM (ZhatL F F')) q := by
@@ -199,7 +203,7 @@ theorem lead_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.Herm
 private theorem e4_lm_lemma_4 {N : ℕ} (A : Matrix (Fin N) (Fin N) D.host.E) (q : ℕ) (hq : q ≤ N) :
     leadingPrincipalMinor A q = leadMinorE A q := by
   unfold leadingPrincipalMinor leadMinorE
-  rw [dif_pos hq]
+  rw [dite_eq_left hq]
   let e : Fin q ≃ {i : Fin N // (i : ℕ) < q} :=
     { toFun := fun k => ⟨Fin.castLE hq k, k.2⟩, invFun := fun i => ⟨i.1, i.2⟩,
       left_inv := fun _ => rfl, right_inv := fun _ => rfl }
@@ -210,7 +214,7 @@ theorem lead_ZhatOM {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) D.host.E) 
     leadingPrincipalMinor (ZhatOM Z) q = (∏ b : Fin q, (-1 : D.host.E) ^ (r - (b : ℕ))) * leadMinorE Z q := by
   rw [e4_lm_lemma_4 _ q hq]
   unfold leadMinorE
-  rw [dif_pos hq, dif_pos hq]
+  rw [dite_eq_left hq, dite_eq_left hq]
   have hM : (ZhatOM Z).submatrix (Fin.castLE hq) (Fin.castLE hq) =
       Z.submatrix (Fin.castLE hq) (Fin.castLE hq) * Matrix.diagonal (fun b : Fin q => (-1 : D.host.E) ^ (r - (b : ℕ))) := by
     ext a b
@@ -222,7 +226,7 @@ theorem sign_mul_star {r q : ℕ} :
   rw [star_prod, ← Finset.prod_mul_distrib]
   exact Finset.prod_eq_one (fun b _ => by rw [star_pow, star_neg, star_one, ← mul_pow, neg_one_mul, neg_neg, one_pow])
 
-theorem gpt_eq {T T' : ℕ} (F : LFlag (VS D) D.R.rS (T : D.host.E)) (F' : LFlag (VS D) D.R.rS (T' : D.host.E))
+theorem gpt_eq {T T' : ℕ} (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (w : Point D.host.E (D.R.rS + 1)) (h : IsInCell (ZhatOM (ZhatL F F')) w) :
     GPt (T * T') (toPts w) = Gval F F' := by
   have h1 : DlastPt (toPts w) =
@@ -269,7 +273,7 @@ theorem one_le_NDPt (γ : Formalism.FourierDecayAlt.PN.Pts D.host.E D.R.rS)
     1 ≤ NDPt D.host.rdE γ := by
   unfold NDPt
   rw [← Finset.prod_const_one (s := (Finset.univ : Finset (Fin γ.1.length)))]
-  refine Finset.prod_le_prod (fun _ _ => zero_le_one) fun a _ => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun a _ => ?_
   obtain ⟨o, ho, e, h0⟩ := hmin a
   rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Formalism.MainNotions.LatticeGluingRadicals.d_card D]
   have hsq := prod_sq_ge _ o ho (by rw [e]; exact h0)
@@ -283,8 +287,8 @@ theorem one_le_NDPt (γ : Formalism.FourierDecayAlt.PN.Pts D.host.E D.R.rS)
 
 end Bounds
 
-open Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.NGData Formalism.L2.SG.NGCut in
 
+open Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.NGData Formalism.L2.SG.NGCut in
 theorem stepNormOne_of
     (hOV : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
       Formalism.L2.SG.TermOp.KExpCut.OOVanish (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u') (X := X))
@@ -359,13 +363,5 @@ theorem stepNormOne_of
     have hE := PtPf.blockEndMinors_of_cell _ (PtPf.zhatOM_isIntegral _ _ hun hF hF') _ hcell
     exact ⟨o, ho, by rw [e, endMin_eq], (hE a).2⟩
 
-open Formalism.L2.SG.TermOp.Vanish in
-
-theorem stepNormOne_of_leaves (hA : AvgCore) (hU : GinfUnimod) (hN : NLamNinf) (hC : ChiTrivialC) (hG : PsiInfChar)
-    (h1 : RClosedC) (h2 : RODiscreteC) (h3 : RCocompactC) (h4 : NonRelCharC)
-    (hAt : ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : D.what₂.Word)
-      (t : Formalism.L2.SG.TermDef.Term D u u' (X.Fu u) (Y.what₂ u)), t.G ≠ 0 → t.relevant → ∃ w, t.atPt w) :
-    Formalism.L2.SG.NGCut.StepNormOne :=
-  stepNormOne_of (fun _ _ Y _ _ t ht => ooVanish_of hA hU hN hC hG h1 h2 h3 h4 Y t ht) hAt
 
 end Formalism.L2.SG.NGCut.LeadingMinorIntegrality

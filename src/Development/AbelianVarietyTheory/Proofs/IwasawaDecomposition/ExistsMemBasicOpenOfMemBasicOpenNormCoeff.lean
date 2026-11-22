@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+
+@[expose] public section
 
 noncomputable section
 
@@ -185,9 +189,13 @@ theorem mem_of_forall_mem_prime (φ : A →+* B) (hφ : φ.Finite) (b : B) (p : 
       rw [Polynomial.aeval_subalgebra_coe]
       simpa using e2
     have hw := mem_of_aeval_eq_zero P g hgm
-      (fun i hi => by rw [← Ideal.mem_comap, hPp]; exact hgc i hi) _ e3
+      (fun i hi => by
+        change g.coeff i ∈ Ideal.under A P
+        rw [hPp]
+        exact hgc i hi) _ e3
     rcases hP.mem_or_mem hw with h1 | h1
     · have h2 : s ∈ P.comap (algebraMap A (integralClosure A (AlgebraicClosure K))) := h1
+      change s ∈ Ideal.under A P at h2
       rw [hPp] at h2
       exact (hs h2).elim
     · exact hP.mem_of_pow_mem n h1
@@ -228,6 +236,7 @@ theorem mem_of_forall_mem_prime (φ : A →+* B) (hφ : φ.Finite) (b : B) (p : 
   have hmemA : a ∈ P.comap (algebraMap A (integralClosure A (AlgebraicClosure K))) := by
     rw [Ideal.mem_comap, hAR]
     exact hc
+  change a ∈ Ideal.under A P at hmemA
   rwa [hPp] at hmemA
 
 end Main
@@ -243,7 +252,7 @@ theorem exists_prime_comap_eq_notMem (φ : A →+* B) (hφ : φ.Finite) (b : B) 
   apply h
   by_cases hex : ∃ a : A, algebraMap A (FractionRing A) a = (charK φ hφ (FractionRing A) b).reverse.coeff k
   · exact mem_of_forall_mem_prime φ hφ b p hne k hk _ (algebraMap_normCoeff φ hφ b k hex)
-  · rw [normCoeff, dif_neg hex]
+  · rw [normCoeff, dite_eq_right hex]
     exact p.zero_mem
 
 end Main

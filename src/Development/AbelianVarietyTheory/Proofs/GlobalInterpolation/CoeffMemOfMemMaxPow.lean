@@ -1,15 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LiftInvariantsFinrankEq
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CoeffXMulPart
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MonomialOneMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaximalIdealLeFiltOne
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FiltLePow
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NoethLocalHausdorff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.Imports
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsAlt
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqXMulShiftAdd
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemPowOfCoeffMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsBis
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LiftInvariantsFinrankEq
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NoethLocalHausdorff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.Imports
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemPowOfCoeffMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +17,6 @@ namespace GlobalTheory.PsCNL
 section Division
 
 variable {σ : Type} {O : Type} [CommRing O]
-
-def divX (i : σ) (f : MvPowerSeries σ O) : MvPowerSeries σ O := fun m => coeff (Finsupp.single i 1 + m) f
-
-def remX (i : σ) (f : MvPowerSeries σ O) : MvPowerSeries σ O := fun m => if m i = 0 then coeff m f else 0
 
 end Division
 
@@ -72,6 +65,3 @@ theorem psCNL : ∀ (O : Type) [CommRing O] [IsLocalRing O] (C : TR O) (n : ℕ)
         rw [← residue_eq_zero_iff, map_sub, ha', sub_self] }
 
 end GlobalTheory.PsCNL
-
-open Formalism.BasicNotions.V1 IsLocalRing in
-example : ∀ (O : Type) [CommRing O] [IsLocalRing O] (C : TR O) (n : ℕ), ∃ (_ : IsLocalRing (MvPowerSeries (Fin n) C.C)), IsCNL O (MvPowerSeries (Fin n) C.C) ∧ ∀ x : MvPowerSeries (Fin n) C.C, x ∈ maximalIdeal (MvPowerSeries (Fin n) C.C) ↔ MvPowerSeries.constantCoeff x ∈ maximalIdeal C.C := GlobalTheory.PsCNL.psCNL

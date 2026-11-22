@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
-import GroundTheory.LocalFields.Unramified
-import GroundTheory.AutomorphicForms.Measures
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+public import GroundTheory.LocalFields.Unramified
+public import GroundTheory.AutomorphicForms.Measures
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel PositivityTheory.Rg.Tf.Loc
 

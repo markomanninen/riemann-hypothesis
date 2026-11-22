@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
-import Formalism.LocalToGlobal.Columns.RowFormsSym
-import Formalism.LocalToGlobal.Columns.GoodXgE
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
+public import Formalism.LocalToGlobal.Columns.RowFormsSym
+public import Formalism.LocalToGlobal.Columns.GoodXgE
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,19 +44,19 @@ abbrev PlS (B : Base) (px : PreX B.toPre) : Type := letI := B.fields.starE; Form
 
 abbrev PlI (B : Base) (px : PreX B.toPre) : Type := letI := B.fields.starE; Formalism.L2.Col.LevOffI (E := B.fields.E) ∅ (B.primes px).vGs ∅
 
-open Classical in
 
+open Classical in
 def tuOf (U : Set I.ι) : Finset (Tup B.fields.F B.fields.E B.fields.K I.S) :=
   (Finset.univ.filter fun a => a ∈ U).image I.tup
 
 abbrev TupU (U : Set I.ι) : Type := TupF (X := B.fields) (tuOf I U)
 
-open Classical in
 
+open Classical in
 def ixOf (U : Set I.ι) (t : TupU I U) : I.ι := if h : ∃ a, I.tup a = t.1 then h.choose else I.mu0
 
-open Classical in
 
+open Classical in
 def xiValOf (τ : Tup B.fields.F B.fields.E B.fields.K I.S) (P : HeightOneSpectrum (𝓞 B.fields.E)) : B.LLˣ :=
   if h : ∃ z : B.LLˣ, ∃ a, I.tup a = τ ∧ B.embLL (z : B.LL) = (((I.xi a).val P : ℂˣ) : ℂ) then h.choose else 1
 
@@ -63,8 +67,8 @@ def famC (hX : B.fields.Ok) (U : Set I.ι) (Xg : Finset (Gc B px → B.LL)) (tr 
     FamIn3 B.LL (Gc B px) (PlS B px) (PlI B px) (List ℕ) (TupU I U) B.R.m :=
   colIn3 (X := B.fields) (Pr := B.primes px) B.wts I.Ch I.sel hX (InfinitePlace.mk B.embLL) (tuOf I U) Xg ∅ (xiValOf I) tr
 
-open Classical in
 
+open Classical in
 def psiC : ∀ PP : Pl B.host.E, AddChar (kP PP) B.LL :=
   fun PP => if h : PP ∈ (B.primes px).vGs then I.Ch.psi0 ⟨PP, h⟩ else 1
 
@@ -75,9 +79,6 @@ def chr0 : lev0 I →* B.LLˣ := (P0 (B.primes px).vGs B.R.r (psiC I)).chi
 def lev1 : Subgroup (Gc B px) := (Formalism.L2.Col.rPsymF (R := B.R) I.Ch).grp
 
 def chr1 : lev1 I →* B.LLˣ := (Formalism.L2.Col.rPsymF (R := B.R) I.Ch).chr
-
-theorem famC_A (hX : B.fields.Ok) (U : Set I.ι) (Xg : Finset (Gc B px → B.LL)) (tr tr' : TrI B px) :
-    (famC I hX U Xg tr).A = (famC I hX U Xg tr').A := rfl
 
 def usedOf (T : Top.TwDat B) (Wt : Set B.places.Pl) : Set I.ι := {a | ∃ w ∈ Wt, I.xi a = T.xiTw I.C w}
 
@@ -99,7 +100,7 @@ theorem tup_mem_tuOf {U : Set I.ι} {a : I.ι} : I.tup a ∈ tuOf I U ↔ a ∈ 
 theorem ixOf_eq {U : Set I.ι} {t : TupU I U} {a : I.ι} (h : I.tup a = t.1) : ixOf I U t = a := by
   have h' : ∃ a, I.tup a = t.1 := ⟨a, h⟩
   unfold ixOf
-  rw [dif_pos h']
+  rw [dite_eq_left h']
   exact I.tup_inj (h'.choose_spec.trans h.symm)
 
 theorem tup_ixOf {U : Set I.ι} (t : TupU I U) : I.tup (ixOf I U t) = t.1 := by
@@ -133,21 +134,6 @@ section Fields
 
 variable (hX : B.fields.Ok) (U : Set I.ι) (Xg : Finset (Gc B px → B.LL)) (tr : TrI B px)
 
-theorem family_infinitePlace : (famC I hX U Xg tr).A.v0 = InfinitePlace.mk B.embLL := rfl
-
-theorem famC_μ0 : (famC I hX U Xg tr).A.μ0 = mu0F (X := B.fields) (tuOf I U) := rfl
-
-theorem famC_X : (famC I hX U Xg tr).A.X = Xg := rfl
-
-theorem famC_r : (famC I hX U Xg tr).A.r = B.R.r := rfl
-
-theorem famC_A_t : (famC I hX U Xg tr).A.t = B.R.t := rfl
-
-theorem famC_trI : (famC I hX U Xg tr).trI = tr := rfl
-
-theorem famC_muVal (j : Fin B.R.m) (t : TupU I U) (P : PlS B px) :
-    (famC I hX U Xg tr).A.muVal j t P = I.Ch.muVal j P.1 * xiValOf I t.1 P.1 := rfl
-
 end Fields
 
 theorem embLL_xiValOf (a : I.ι) (P : HeightOneSpectrum (𝓞 B.fields.E))
@@ -160,36 +146,17 @@ theorem embLL_xiValOf (a : I.ι) (P : HeightOneSpectrum (𝓞 B.fields.E))
   have h' : ∃ z : B.LLˣ, ∃ b, I.tup b = I.tup a ∧ B.embLL (z : B.LL) = (((I.xi b).val P : ℂˣ) : ℂ) :=
     ⟨Units.mk0 z hz0, a, rfl, hz⟩
   unfold xiValOf
-  rw [dif_pos h']
+  rw [dite_eq_left h']
   obtain ⟨b, hb, e⟩ := h'.choose_spec
   rw [e, I.tup_inj hb]
 
 theorem psiC_of_mem {PP : Pl B.host.E} (h : PP ∈ (B.primes px).vGs) : psiC I PP = I.Ch.psi0 ⟨PP, h⟩ := by
   unfold psiC
-  rw [dif_pos h]
-
-theorem psiC_of_notMem {PP : Pl B.host.E} (h : PP ∉ (B.primes px).vGs) : psiC I PP = 1 := by
-  unfold psiC
-  rw [dif_neg h]
+  rw [dite_eq_left h]
 
 theorem ValsIn.embLL_xiValOf {I : ColIn B px} (h : ValsIn I) (a : I.ι) (P : HeightOneSpectrum (𝓞 B.fields.E))
     (hP : (I.xi a).UnrAt P) : B.embLL (xiValOf I (I.tup a) P : B.LL) = (((I.xi a).val P : ℂˣ) : ℂ) :=
   GlobalTheory.Mem.R3.embLL_xiValOf I a P (h.1 a P hP)
-
-example : tuOf I ∅ = ∅ := by
-  refine Finset.eq_empty_of_forall_notMem fun τ h => ?_
-  obtain ⟨a, ha, -⟩ := (mem_tuOf I).1 h
-  exact ha
-
-example : (1 : Tup B.fields.F B.fields.E B.fields.K I.S) ∈ tuOf I {I.mu0} := (mem_tuOf I).2 ⟨_, rfl, I.trueColumn_tuple_trivial_eq_one⟩
-
-example (h : I.Ok) (P : HeightOneSpectrum (𝓞 B.fields.E)) : B.embLL (xiValOf I (I.tup I.mu0) P : B.LL) = 1 := by
-  have e : (((I.xi I.mu0).val P : ℂˣ) : ℂ) = 1 := by
-    rw [h.trueColumnChoices_heckeChar_reference_eq_one]
-    rfl
-  rw [embLL_xiValOf I I.mu0 P ⟨1, by rw [e, map_one]⟩, e]
-
-example (T : Top.TwDat B) : usedOf I T ∅ = ∅ := Set.eq_empty_of_forall_notMem fun _ ⟨_, h, _⟩ => h
 
 end Base
 
@@ -235,15 +202,9 @@ theorem goodSet_iff (eR : Gc X.B px ≃* G0g X.toD7.nd) (Xg : Finset (Gc X.B px 
   rw [Formalism.L2.Col.mem_XgE, ← Equiv.sum_comp eR.toEquiv, isAbsIrrChar_comp_iff eR.symm]
   simp
 
-theorem GoodSet.unique {eR : Gc X.B px ≃* G0g X.toD7.nd} {Xg Xg' : Finset (Gc X.B px → X.B.LL)}
-    (h : GoodSet X (px := px) eR Xg) (h' : GoodSet X (px := px) eR Xg') : Xg = Xg' :=
-  Finset.ext fun χ => (h.1 χ).trans (h'.1 χ).symm
-
 theorem GoodSet.irr {eR : Gc X.B px ≃* G0g X.toD7.nd} {Xg : Finset (Gc X.B px → X.B.LL)}
     (h : GoodSet X (px := px) eR Xg) : ∀ χ ∈ Xg, IsAbsIrrChar χ :=
   fun χ hχ => ((((goodSet_iff X eR Xg).1 h).1 χ).1 hχ).1
-
-theorem isIdG_refl : IsPlacewiseIdentity X (px := px) (Pg := (X.B.primes px).vGs) (MulEquiv.refl _) := fun _ _ _ _ => rfl
 
 structure GrpAt : Prop where
 

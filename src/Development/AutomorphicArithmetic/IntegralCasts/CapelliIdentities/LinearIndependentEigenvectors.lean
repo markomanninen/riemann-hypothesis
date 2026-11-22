@@ -1,5 +1,8 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IndependenceCharacters
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.LinearIndependentEigenvectors.li_eig :
     ∀ {V : Type} [inst : AddCommGroup V] [inst_1 : _root_.Module ℂ V] {Ξ P : Type}
@@ -22,7 +25,8 @@ theorem UpperTheory.Reformulated.B.LinearIndependentEigenvectors.li_eig :
       obtain ⟨p, hp⟩ := Function.ne_iff.mp hne
       have h1 : (g a * ev a p) • v a + ∑ j ∈ s, (g j * ev j p) • v j = 0 := by
         have h := congrArg (T p) hg
-        simpa only [map_add, map_sum, map_smul, map_zero, hT, smul_smul] using h
+        set_option synthInstance.maxHeartbeats 100000 in
+          simpa only [map_add (f := _), map_sum, map_smul, map_zero, hT, smul_smul] using h
       have h2 : (g a * ev a p) • v a + ∑ j ∈ s, (g j * ev a p) • v j = 0 := by
         have h := congrArg (fun x => ev a p • x) hg
         simpa only [smul_add, Finset.smul_sum, smul_zero, smul_smul, mul_comm] using h

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.PartitionSolutions.SplitFacts
-import Mathlib.Geometry.Manifold.PartitionOfUnity
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.PartitionSolutions.SplitFacts
+public import Mathlib.Geometry.Manifold.PartitionOfUnity
+
+@[expose] public section
 
 noncomputable section
 

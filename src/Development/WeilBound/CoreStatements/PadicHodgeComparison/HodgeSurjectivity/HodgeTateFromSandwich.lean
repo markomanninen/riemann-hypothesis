@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HodgeTateSurjectivePositiveDim
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HodgeTateSurjectivePositiveDim
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -39,8 +43,6 @@ def Retract : Prop := ∀ (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ_[l
 def OntoAll : Prop := ∀ (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) [FiniteDimensional ℚ_[l] K]
   (P : HTPre l K), (∀ M : Model l K, M.Sm → ∀ n, P.Inj M n) → ∀ (M : Model l K) (d : ℕ), M.Sm →
     SmoothOfRelativeDimension d M.p → ∀ n, Surj P M n
-
-def OntoOf2 : Prop := CupLaws → Slant → HodgeKill → SqEx2 → DiagEt2 → EtFin → HodgeTateSurjectiveOfTopDegreeInjective
 
 def OntoLow : Prop := CupLaws → Retract → HodgeTateSurjectiveOfTopDegreeInjective → OntoAll
 

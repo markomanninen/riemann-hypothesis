@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
-import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
-import Formalism.LocalRingCardinality.DataExtra
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsCuspFunIffConstTerm
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryAdelicHeightCosetLeNormInfPow
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
+public import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
+public import Formalism.LocalRingCardinality.DataExtra
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsCuspFunIffConstTerm
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryAdelicHeightCosetLeNormInfPow
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -208,7 +212,7 @@ theorem linOn_word (l : List (D.what₂.Tau × Matrix (Fin V.rank) (Fin V.rank) 
   exact linOn_Rder (hl p hp)
 
 theorem isAutFunSm_add {φ ψ : GA D V → ℂ} (h : IsAutFunSm θ V φ) (h' : IsAutFunSm θ V ψ) :
-    IsAutFunSm θ V (φ + ψ) where
+    IsAutFunSm θ V (φ + ψ) := {
   left γ hγ g := by simp only [Pi.add_apply, h.left γ hγ g, h'.left γ hγ g]
   level := by
     obtain ⟨U, hU, hUk⟩ := h.level
@@ -257,9 +261,9 @@ theorem isAutFunSm_add {φ ψ : GA D V → ℂ} (h : IsAutFunSm θ V φ) (h' : I
         (mul_le_mul_of_nonneg_left (hK g).2 (le_max_right C' 0))
     rw [add_mul]
     linarith [norm_add_le (l.foldr (fun p f => Rder θ V p.1 p.2 f) φ (x * g))
-      (l.foldr (fun p f => Rder θ V p.1 p.2 f) ψ (x * g)), hC g hg, hC' g hg]
+      (l.foldr (fun p f => Rder θ V p.1 p.2 f) ψ (x * g)), hC g hg, hC' g hg] }
 
-theorem isAutFunSm_smul (c : ℂ) {φ : GA D V → ℂ} (h : IsAutFunSm θ V φ) : IsAutFunSm θ V (c • φ) where
+theorem isAutFunSm_smul (c : ℂ) {φ : GA D V → ℂ} (h : IsAutFunSm θ V φ) : IsAutFunSm θ V (c • φ) := {
   left γ hγ g := by simp only [Pi.smul_apply, h.left γ hγ g]
   level := by
     obtain ⟨U, hU, hUk⟩ := h.level
@@ -283,7 +287,7 @@ theorem isAutFunSm_smul (c : ℂ) {φ : GA D V → ℂ} (h : IsAutFunSm θ V φ)
     have e : l.foldr (fun p f => Rder θ V p.1 p.2 f) (c • φ) = c • l.foldr (fun p f => Rder θ V p.1 p.2 f) φ :=
       (linOn_word (θ := θ) (V := V) l hl).2.2 c φ (mem_smFun h)
     rw [e, Pi.smul_apply, norm_smul, mul_assoc]
-    exact mul_le_mul_of_nonneg_left (hC g hg) (norm_nonneg c)
+    exact mul_le_mul_of_nonneg_left (hC g hg) (norm_nonneg c) }
 
 theorem isCuspFun_add {φ ψ : GA D V → ℂ} (h : IsAutFun V φ) (h' : IsAutFun V ψ) (c : IsCuspFun V φ)
     (c' : IsCuspFun V ψ) : IsCuspFun V (φ + ψ) := by
@@ -333,7 +337,7 @@ end Sob
 
 variable {S : D.what₂.Tau → SPar} {M : DSModel V S} {J : Set (GA D V)} {χ : GA D V → ℂ}
 
-private theorem isAutFunSm_zero' : IsAutFunSm θ V (0 : GA D V → ℂ) where
+private theorem isAutFunSm_zero' : IsAutFunSm θ V (0 : GA D V → ℂ) := {
   left _ _ _ := rfl
   level := ⟨⊤, by simp, fun _ _ _ _ => rfl⟩
   cont := continuous_const
@@ -350,42 +354,44 @@ private theorem isAutFunSm_zero' : IsAutFunSm θ V (0 : GA D V → ℂ) where
     have := (linOn_word (θ := θ) (V := V) l hl).2.2 0 0 (Submodule.zero_mem _)
     simp only [zero_smul] at this
     rw [this]
-    simp
+    simp }
 
-theorem isMultMap_zero : IsMultMap θ M J χ 0 where
-  aut _ := isAutFunSm_zero'
-  cusp _ := by
-    intro r C hC μ 𝓕 hμ h𝓕 g
+theorem isMultMap_zero : IsMultMap θ M J χ 0 := by
+  refine ⟨fun _ => isAutFunSm_zero', ?_, ?_, ?_, ?_⟩
+  · intro v r C hC μ 𝓕 hμ h𝓕 g
     simp
-  lev _ _ _ _ := by simp
-  equiv _ _ _ _ _ _ := rfl
-  cont _ _ _ := ⟨0, sobCont_zero, fun _ => by simp⟩
+  · intros
+    simp
+  · intros
+    rfl
+  · intros
+    exact ⟨0, sobCont_zero, fun _ => by simp⟩
 
 theorem isMultMap_add {T T' : MMap M} (h : IsMultMap θ M J χ T) (h' : IsMultMap θ M J χ T') :
-    IsMultMap θ M J χ (T + T') where
-  aut v := isAutFunSm_add (h.aut v) (h'.aut v)
-  cusp v := isCuspFun_add (h.aut v).toIsAutFun (h'.aut v).toIsAutFun (h.cusp v) (h'.cusp v)
-  lev v k hk g := by
+    IsMultMap θ M J χ (T + T') := by
+  refine ⟨fun v => isAutFunSm_add (h.aut v) (h'.aut v), ?_, ?_, ?_, ?_⟩
+  · intro v
+    exact isCuspFun_add (h.aut v).toIsAutFun (h'.aut v).toIsAutFun (h.cusp v) (h'.cusp v)
+  · intro v k hk g
     simp only [_root_.add_apply, Pi.add_apply, h.lev v k hk g, h'.lev v k hk g, mul_add]
-  equiv τ g hg v w hw := by
+  · intro τ g hg v w hw
     simp only [_root_.add_apply, h.equiv τ g hg v w hw, h'.equiv τ g hg v w hw]
     rfl
-  cont τ v x := by
+  · intro τ v x
     obtain ⟨ℓ, hℓ, e⟩ := h.cont τ v x
     obtain ⟨ℓ', hℓ', e'⟩ := h'.cont τ v x
     exact ⟨ℓ + ℓ', sobCont_add hℓ hℓ', fun w => by simp only [LinearMap.add_apply, e w, e' w,
       _root_.add_apply, Pi.add_apply]⟩
 
-theorem isMultMap_smul (c : ℂ) {T : MMap M} (h : IsMultMap θ M J χ T) : IsMultMap θ M J χ (c • T) where
-  aut v := isAutFunSm_smul c (h.aut v)
-  cusp v := isCuspFun_smul c (h.cusp v)
-  lev v k hk g := by
+theorem isMultMap_smul (c : ℂ) {T : MMap M} (h : IsMultMap θ M J χ T) : IsMultMap θ M J χ (c • T) := by
+  refine ⟨fun v => isAutFunSm_smul c (h.aut v), fun v => isCuspFun_smul c (h.cusp v), ?_, ?_, ?_⟩
+  · intro v k hk g
     simp only [_root_.smul_apply, Pi.smul_apply, smul_eq_mul, h.lev v k hk g]
     ring
-  equiv τ g hg v w hw := by
+  · intro τ g hg v w hw
     simp only [_root_.smul_apply, h.equiv τ g hg v w hw]
     rfl
-  cont τ v x := by
+  · intro τ v x
     obtain ⟨ℓ, hℓ, e⟩ := h.cont τ v x
     exact ⟨c • ℓ, sobCont_smul c hℓ, fun w => by simp only [LinearMap.smul_apply, e w,
       _root_.smul_apply, Pi.smul_apply]⟩

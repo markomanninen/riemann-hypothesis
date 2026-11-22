@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FirstDeriv
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
-import Formalism.FormalGroupLog.FormalGroupLogProofs.HomPsSubstMvSubst
-import Formalism.TorsionNormIteration.LubinTateExample
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.FrobSqV
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FirstDeriv
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.HomPsSubstMvSubst
+public import Formalism.TorsionNormIteration.LubinTateExample
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.FrobSqV
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem coeff_one_lgF (p : ℕ) (hp : 2 ≤ p) : PowerSeries.coeff 1 (lgF K p) =
 theorem map_lgF {L : Type} [Field L] (φ : K →+* L) (p : ℕ) :
     PowerSeries.map φ (lgF K p) = lgF L p := by
   ext n
-  simp only [lgF, PowerSeries.coeff_map, PowerSeries.coeff_mk, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lgF, PowerSeries.coeff_map, PowerSeries.coeff_mk, map_sum]
   refine Finset.sum_congr rfl (fun j _ => ?_)
   split_ifs <;> simp
 
@@ -52,7 +57,7 @@ theorem lgF_subst_inj {ι : Type} (p : ℕ) (hp : 2 ≤ p) (a b : MvPowerSeries 
 theorem law_exists (p : ℕ) (hp : 2 ≤ p) :
     ∃ F : MvPowerSeries (Fin 2) K, MvPowerSeries.constantCoeff F = 0 ∧ cob F (lgF K p) = 0 := by
   have h0 : MvPowerSeries.constantCoeff (at1 (0 : Fin 2) (lgF K p) + at1 1 (lgF K p)) = 0 := by
-    rw [map_add, constantCoeff_inVar _ _ (constantCoeff_lgF p hp),
+    rw [map_add (f := _), constantCoeff_inVar _ _ (constantCoeff_lgF p hp),
       constantCoeff_inVar _ _ (constantCoeff_lgF p hp), add_zero]
   obtain ⟨F, hF0, hF⟩ := Formalism.LT.SolveExists_proof K (Fin 2) (lgF K p) _
     (constantCoeff_lgF p hp) (coeff_one_lgF p hp) h0
@@ -207,7 +212,7 @@ theorem coeff_subst_lgF_of_degree_one {ι : Type} (p : ℕ) (hp : 2 ≤ p) (F : 
     simp [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hF]
   · have hj : j = 0 := by
       have h1 := congrArg Finsupp.degree hij
-      rw [map_add, hn] at h1
+      rw [map_add (f := _), hn] at h1
       have h2 : i.degree ≠ 0 := fun h => hi ((Finsupp.degree_eq_zero_iff i).mp h)
       exact (Finsupp.degree_eq_zero_iff j).mp (by omega)
     subst hj
@@ -338,7 +343,7 @@ theorem formal_law_symmetric : LawSymm := by
         lgF_subst_C_mul hζ hp2 (MvPowerSeries.X (1 : Fin 2)) (by simp),
         lgF_subst_C_mul hζ hp2 F hF0, hFl, mul_add]
   · intro n hn
-    rw [← coeff_subst_lgF_of_degree_one p hp2 F hF0 n hn, hFl, map_add,
+    rw [← coeff_subst_lgF_of_degree_one p hp2 F hF0 n hn, hFl, map_add (f := _),
       coeff_subst_lgF_of_degree_one p hp2 (MvPowerSeries.X (0 : Fin 2)) (by simp) n hn,
       coeff_subst_lgF_of_degree_one p hp2 (MvPowerSeries.X (1 : Fin 2)) (by simp) n hn]
     have hsum : n 0 + n 1 = 1 := by

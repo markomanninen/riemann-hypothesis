@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOverPt
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFourth
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOverPt
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFourth
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ggeo
 

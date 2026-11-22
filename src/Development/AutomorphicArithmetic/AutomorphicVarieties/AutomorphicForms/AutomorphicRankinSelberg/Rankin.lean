@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+
+@[expose] public section
 
 open MeasureTheory Set CongruenceSubgroup UpperTheory.V.Af UpperTheory.V.Sd UpperTheory.V.Af.Rs
 open UpperHalfPlane hiding I

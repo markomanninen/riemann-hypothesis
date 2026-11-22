@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartIntegralPoints
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ExistsIsSheetFinZero
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PPointIntegral
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartIntegralPoints
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ExistsIsSheetFinZero
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PPointIntegral
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -56,8 +61,8 @@ theorem minimalPrimes_vanishingIdeal {m : ℕ} {S : Set (Fin m → ℂ)} (hS : S
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem segre_ne_zero {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ j, z ⟨k, j⟩ ≠ 0) : segre z ≠ 0 := by
   choose j hj using hz
   intro h

@@ -1,6 +1,10 @@
-import Mathlib
+module
 
-open TensorProduct
+public import Mathlib
+
+@[expose] public section
+
+open TensorProduct AlgebraicGeometry
 
 universe u
 
@@ -16,7 +20,7 @@ theorem isDomain_and_isIntegrallyClosed_atPrime_of_isLocalization {B : Type*} [C
   have hq : (p.map (algebraMap B T)).IsPrime :=
     IsLocalization.isPrime_of_isPrime_disjoint M T p hp hM
   have hc : (p.map (algebraMap B T)).comap (algebraMap B T) = p :=
-    IsLocalization.comap_map_of_isPrime_disjoint M T hp hM
+    IsLocalization.under_map_of_isPrime_disjoint M T hp hM
   have h1 := IsLocalization.isLocalization_isLocalization_atPrime_isLocalization M
     (Localization.AtPrime (p.map (algebraMap B T))) (p.map (algebraMap B T))
   have h2 : IsLocalization p.primeCompl (Localization.AtPrime (p.map (algebraMap B T))) := by
@@ -107,11 +111,10 @@ theorem isIntegrallyClosedIn_tensor_of_smooth {A B L : Type*} [CommRing A] [Comm
     subst hy'
     clear hx hy
     induction y with
-    | zero => exact ⟨0, by simp⟩
     | add x y hx hy =>
       obtain ⟨a, ha⟩ := hx
       obtain ⟨b, hb⟩ := hy
-      exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+      exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
     | tmul b y =>
       obtain ⟨a, ha⟩ := hcl y.2
       refine ⟨a • b, ?_⟩
@@ -197,8 +200,8 @@ theorem isReduced_of_smooth_of_isIntegrallyClosed (A B : Type*) [CommRing A] [Co
     have := (isDomain_and_isIntegrallyClosed_atPrime_of_smooth A p (Localization.AtPrime p)).1
     inferInstance
 
-open AlgebraicGeometry in
 
+open AlgebraicGeometry in
 theorem isDomain_and_isIntegrallyClosed_stalk_of_smooth {X Y : Scheme.{u}} (f : X ⟶ Y) [Smooth f]
     (x : X) [IsDomain (Y.presheaf.stalk (f x))] [IsIntegrallyClosed (Y.presheaf.stalk (f x))] :
     IsDomain (X.presheaf.stalk x) ∧ IsIntegrallyClosed (X.presheaf.stalk x) := by
@@ -218,8 +221,8 @@ theorem isDomain_and_isIntegrallyClosed_stalk_of_smooth {X Y : Scheme.{u}} (f : 
   exact isDomain_and_isIntegrallyClosed_atPrime_of_smooth_of_comap (A := Γ(Y, U))
     (hV.primeIdealOf ⟨x, hx⟩).asIdeal (Y.presheaf.stalk (f x)) (X.presheaf.stalk x)
 
-open AlgebraicGeometry in
 
+open AlgebraicGeometry in
 theorem forall_isDomain_and_isIntegrallyClosed_stalk_of_smooth {X Y : Scheme.{u}} (f : X ⟶ Y)
     [Smooth f]
     (hY : ∀ y : Y, IsDomain (Y.presheaf.stalk y) ∧ IsIntegrallyClosed (Y.presheaf.stalk y))

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.Reduction
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.Reduction
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix
 open scoped NumberField.AdeleRing Pointwise
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.IdeleGroup
@@ -104,8 +109,7 @@ theorem exists_siegelSet_diag_normOne : ∀ (K : Type) [Field K] [NumberField K]
     rw [hδA, ← map_mul, ← map_mul]
     congr 1
     funext i
-    simp only [Pi.mul_apply, hσ, he]
-    group
+    simp [hσ, he, mul_assoc]
   refine ⟨νGL * diagUnits n c * γ, unitriangularGL n p * diagUnits n σ,
     ⟨_, ⟨p, hpD, rfl⟩, _, ⟨σ, fun i _ => hc i, rfl⟩, rfl⟩,
     diagUnits n (fun i => posIdele (r i) (hrpos i)), ⟨r, hrpos, fun i j hij => ?_, rfl⟩, k, hk, ?_⟩

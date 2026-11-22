@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Ker Matrix
 open scoped BigOperators
 
@@ -13,7 +18,8 @@ theorem exists_complexLinear_extension_of_traceIsometry : ∀ (K E : Type) [Fiel
   have hB : Bᴴ * B = 1 := by
     ext w' w
     have h := congrArg φ (γ.isom (b w) (b w'))
-    simp only [b, LinearEquiv.apply_symm_apply, map_sum, map_mul, hφ, ← htr, hemb] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [b, LinearEquiv.apply_symm_apply, map_sum, map_mul, hφ, ← htr, hemb] at h
     rw [Matrix.mul_apply, Fintype.sum_prod_type]
     have h2 : ∑ a, ∑ τ, Bᴴ w' (a, τ) * B (a, τ) w
         = ∑ a, ∑ τ, emb τ (b w a) * starRingEnd ℂ (emb τ (b w' a)) := by
@@ -31,14 +37,16 @@ theorem exists_complexLinear_extension_of_traceIsometry : ∀ (K E : Type) [Fiel
   refine ⟨Matrix.toLin'OfInv hB' hB, fun x => ?_⟩
   have hx : x = ∑ w, γ.g x w • b w := by
     apply γ.g.injective
-    simp only [b, map_sum, map_smul, LinearEquiv.apply_symm_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [b, map_sum, map_smul, LinearEquiv.apply_symm_apply]
     ext u
     simp [Finset.sum_apply, Pi.single_apply]
   have hv : (fun w : Fin 4 × ι => emb w.2 (x w.1))
       = B *ᵥ (fun w => φ (algebraMap K E (γ.g x w))) := by
     ext v
     have := congrArg (fun y => emb v.2 (y v.1)) hx
-    simp only [Finset.sum_apply, Pi.smul_apply, Algebra.smul_def, map_sum, map_mul, hK] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, Pi.smul_apply, Algebra.smul_def, map_sum, map_mul, hK] at this
     rw [this]
     simp [Matrix.mulVec, dotProduct, B, mul_comm, hK]
   rw [hv]

@@ -1,6 +1,10 @@
-import Formalism.SatakeDualWeyl.DefsCS
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+module
+
+public import Formalism.SatakeDualWeyl.DefsCS
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ section CsDual
 
 theorem csDual_hform_add_left {A : Type} [CommRing A] {n : Type} [Fintype n] (τ : A →+* A)
     (J : Matrix n n A) (u v y : n → A) : hform τ J (u + v) y = hform τ J u y + hform τ J v y := by
-  simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem csDual_hform_zero_left {A : Type} [CommRing A] {n : Type} [Fintype n] (τ : A →+* A)
     (J : Matrix n n A) (y : n → A) : hform τ J 0 y = 0 := by
@@ -65,21 +69,11 @@ theorem csDual_sig_mem (σ : E →ₐ[F] E) {s : 𝒜} (hs : s ∈ 𝒮) :
       exact Subring.subset_closure (Or.inr ⟨⟨y, hy⟩, rfl⟩)
   exact key s hs
 
-end CsDual
-
-section CsDual2
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {n : Type} [Fintype n] [DecidableEq n]
-
-local notation "𝒜" => E ⊗[F] FiniteAdeleRing (𝓞 F) F
-local notation "𝒮" => tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F)
-local notation "ι" => inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
-
 theorem csDual_hform_incl (σ : E →ₐ[F] E) (J : Matrix n n E) (y x : n → E) :
     hform (sigR σ (FiniteAdeleRing (𝓞 F) F)) (J.map ι) (fun i => ι (y i)) (fun i => ι (x i)) =
       ι (hform (σ : E →+* E) J y x) := by
-  simp [hform, csDual_sig_incl, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [hform, csDual_sig_incl, map_sum, map_mul]
 
 theorem csDual_span (σ : E →ₐ[F] E) (J : Matrix n n E) (M : Submodule (𝓞 E) (n → E)) (x : n → E)
     (hx : ∀ y ∈ M, hform (σ : E →+* E) J y x ∈ (algebraMap (𝓞 E) E).range)
@@ -98,17 +92,6 @@ theorem csDual_span (σ : E →ₐ[F] E) (J : Matrix n n E) (M : Submodule (𝓞
     rw [Subring.smul_def, csDual_hform_smul_left]
     exact mul_mem (csDual_sig_mem σ a.2) hu
 
-end CsDual2
-
-section CsDual3
-
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {n : Type} [Fintype n] [DecidableEq n]
-
-local notation "𝒜" => E ⊗[F] FiniteAdeleRing (𝓞 F) F
-local notation "𝒮" => tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F)
-local notation "ι" => inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
-
 theorem csDual_expand (M : Matrix n n E) (v : n → 𝒜) (a b : 𝒜) (k : n) :
     a * b * ((M.map ι) *ᵥ v) k = ∑ i, (b * ι (M k i)) * (a * v i) := by
   simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Finset.mul_sum]
@@ -118,7 +101,7 @@ theorem csDual_expand (M : Matrix n n E) (v : n → 𝒜) (a b : 𝒜) (k : n) :
 theorem csDual_int_coe (d : 𝓞 F) : IsIntegral ℤ (algebraMap (𝓞 F) E d) := by
   exact IsIntegral.algebraMap (Algebra.IsIntegral.isIntegral (R := ℤ) d)
 
-end CsDual3
+end CsDual
 
 theorem dual_lattice_bound_holds (hSpanRecover : Formalism.UG.CS.SpanRecover) : Formalism.UG.CS.DualBound := by
   intro F E _ _ _ _ _ n _ _ σ J Λ hdet hfin hspan

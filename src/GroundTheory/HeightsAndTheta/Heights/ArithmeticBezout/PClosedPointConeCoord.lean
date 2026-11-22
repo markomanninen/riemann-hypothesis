@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsClosedPointConeCoord
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsClosedPointConeCoord
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -15,7 +20,8 @@ theorem aeval_cone_of_isHomogeneous {F Ω : Type*} [Field F] [Field Ω] [Algebra
   classical
   conv_lhs => rw [p.as_sum]
   conv_rhs => rw [p.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hdeg : ∑ j ∈ m.support, m j = d := by
     have := hp (mem_support_iff.mp hm)
@@ -34,7 +40,8 @@ theorem ClosedPointConeCoord.proof : ClosedPointConeCoord.Statement := by
   have hIP : I ≤ P := by
     intro g hg
     show φ g = 0
-    rw [← sum_homogeneousComponent g, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_homogeneousComponent g, map_sum]
     refine Finset.sum_eq_zero fun d _ => ?_
     rw [show φ (homogeneousComponent d g) = _ from
       aeval_cone_of_isHomogeneous y (homogeneousComponent_isHomogeneous d g),

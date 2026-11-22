@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrthonormalPlaceBasis
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsOrthonormalBasis
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsContinuousMultilinearMapOfInnerProd
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNormSqTensUpdate
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasDerivAtOrbitTens
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StepSpacePropsOfDiff
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VPSubOfLocalBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrthonormalPlaceBasis
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsOrthonormalBasis
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsContinuousMultilinearMapOfInnerProd
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNormSqTensUpdate
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasDerivAtOrbitTens
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StepSpacePropsOfDiff
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VPSubOfLocalBound
+
+@[expose] public section
 
 open Formalism.MainNotions.S NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis
 open GlobalTheory.IndefiniteRowSideFullHecke.OrbitDifferenceSpace (stepSpace IsDiffVec IsONFamily stepConst)
@@ -85,8 +89,8 @@ variable {B} (hU : ∀ v, IsURepOn (UJset (B.I.ε v)) (B.σ v))
 
 include hU hd
 
-open Classical in
 
+open Classical in
 theorem hasDerivAt_orbit_sum {P k : ℕ} (E : gInf B) (u : Fin k → ∀ v, B.H v)
     (hu : ∀ l v, u l v ∈ stepSpace (B.I.ε v) (B.lam v) (B.σ v) P) :
     HasDerivAt (orbit B E (∑ l, B.tens (u l)))
@@ -97,8 +101,8 @@ theorem hasDerivAt_orbit_sum {P k : ℕ} (E : gInf B) (u : Fin k → ∀ v, B.H 
   exact GlobalTheory.TensDer.hasDerivAt_orbit_tens B E (u l) _
     (fun v => (hd v P _ (hu l v) _ (E v).2).hasDerivAt) (fun v => (hU v).1.1)
 
-open Classical in
 
+open Classical in
 theorem dAct_atPlace_sum {P k : ℕ} (v : InfinitePlace B.I.F) (X : gLie (B.I.ε v))
     (u : Fin k → ∀ v, B.H v) (hu : ∀ l v, u l v ∈ stepSpace (B.I.ε v) (B.lam v) (B.σ v) P) :
     dAct B (atPlace B v X) (∑ l, B.tens (u l)) =

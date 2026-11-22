@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -24,7 +29,7 @@ theorem eval_shiftPoly (b : K → ℤ) (p : MvPolynomial K ℚ) (x : K → ℚ) 
     eval x (shiftPoly b p) = eval (fun k => x k - b k) p := by
   induction p using MvPolynomial.induction_on with
   | C a => simp [shiftPoly]
-  | add p q hp hq => simp only [shiftPoly, map_add] at hp hq ⊢; rw [hp, hq]
+  | add p q hp hq => simp only [shiftPoly, map_add (f := _)] at hp hq ⊢; rw [hp, hq]
   | mul_X p k hp => simp only [shiftPoly, map_mul] at hp ⊢; rw [hp]; simp
 
 theorem monomial_good (b : K → ℤ) (s : K →₀ ℕ) (a : ℚ) :
@@ -58,17 +63,18 @@ theorem monomial_good (b : K → ℤ) (s : K →₀ ℕ) (a : ℚ) :
       · exact (totalDegree_mul _ _).trans (by rw [totalDegree_C, zero_add]; exact h1)
 
 theorem sum_eq (b : K → ℤ) (p : MvPolynomial K ℚ) :
-    shiftPoly b p = ∑ v ∈ p.support, shiftPoly b (monomial v (coeff v p)) ∧
-      polyStep b p = ∑ v ∈ p.support, polyStep b (monomial v (coeff v p)) := by
-  have hs : shiftPoly b p = ∑ v ∈ p.support, shiftPoly b (monomial v (coeff v p)) := by
+    shiftPoly b p = ∑ v ∈ p.support, shiftPoly b (monomial v (AddMonoidAlgebra.coeff p v)) ∧
+      polyStep b p = ∑ v ∈ p.support, polyStep b (monomial v (AddMonoidAlgebra.coeff p v)) := by
+  have hs : shiftPoly b p = ∑ v ∈ p.support, shiftPoly b (monomial v (AddMonoidAlgebra.coeff p v)) := by
     conv_lhs => rw [p.as_sum]
-    simp only [shiftPoly, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [shiftPoly, map_sum]
   refine ⟨hs, ?_⟩
   simp only [polyStep, Finset.sum_sub_distrib]
   rw [← hs, ← p.as_sum]
 
 theorem monomial_le (p : MvPolynomial K ℚ) {v : K →₀ ℕ} (hv : v ∈ p.support) :
-    (monomial v (coeff v p)).totalDegree ≤ p.totalDegree :=
+    (monomial v (AddMonoidAlgebra.coeff p v)).totalDegree ≤ p.totalDegree :=
   (totalDegree_monomial_le _ _).trans (le_totalDegree hv)
 
 theorem polyStep_deg (b : K → ℤ) (p : MvPolynomial K ℚ) :
@@ -81,7 +87,7 @@ theorem polyStep_deg (b : K → ℤ) (p : MvPolynomial K ℚ) :
     have : (polyStep b p).totalDegree ≤ p.totalDegree - 1 := by
       rw [(sum_eq b p).2]
       refine totalDegree_finsetSum_le fun v hv => ?_
-      rcases (monomial_good b v (coeff v p)).2 with h | h
+      rcases (monomial_good b v (AddMonoidAlgebra.coeff p v)).2 with h | h
       · rw [h, totalDegree_zero]; exact zero_le
       · have := monomial_le p hv; omega
     omega
@@ -119,8 +125,8 @@ end Eventual
 
 end MixedDiffConst
 
-open MixedDiffConst in
 
+open MixedDiffConst in
 theorem MixedDiffConst.proof (h1 : HilbDegreeBound.Statement.{u})
     (h2 : HilbEventuallyPoly.Statement.{u}) : MixedDiffConst.Statement.{u} := by
   intro F _ K _ _ ι _ I hI hrel n hn
@@ -141,7 +147,7 @@ theorem MixedDiffConst.proof (h1 : HilbDegreeBound.Statement.{u})
       rw [mixedDiff, hm, h0, map_zero]
     · rw [List.length_ofFn] at hd
       have hq0 : ((List.ofFn bs).foldr polyStep p).totalDegree = 0 := by omega
-      refine ⟨coeff 0 ((List.ofFn bs).foldr polyStep p), fun hlt => by omega, ?_⟩
+      refine ⟨AddMonoidAlgebra.coeff ((List.ofFn bs).foldr polyStep p) 0, fun hlt => by omega, ?_⟩
       rw [totalDegree_eq_zero_iff_eq_C] at hq0
       filter_upwards [hE] with m hm
       rw [mixedDiff, hm, hq0, eval_C, coeff_C, if_pos rfl]
@@ -154,7 +160,7 @@ theorem MixedDiffConst.proof (h1 : HilbDegreeBound.Statement.{u})
     have hex : ∃ c, ∀ᶠ m in atTop, mixedDiff bs (hilbFn I) m = c := ⟨_, hc'⟩
     have hval : intNum F I bs = mixedDiff bs (hilbFn I) m0 := by
       unfold intNum eventualValue
-      rw [dif_pos hex]
+      rw [dite_eq_left hex]
       obtain ⟨m, hm1, hm2⟩ := (hex.choose_spec.and hc').exists
       rw [← hm1, hm2]
     filter_upwards [hc'] with m hm

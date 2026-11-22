@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrYMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrYMap
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -35,7 +39,7 @@ theorem UpperTheory.V.Fr.algebraMap_range_span_eq_top_of_finite_generators :
       ZeroMemClass.coe_zero, Pi.zero_apply, φ, hgx] at h1
     simpa [hco, hi] using h1
   have hcard : Cardinal.mk b ≤ C := hφ.cardinal_le_rank.trans hY
-  have hfin : b.Finite := Cardinal.lt_aleph0_iff_set_finite.mp (hcard.trans_lt (Cardinal.nat_lt_aleph0 C))
+  have hfin : b.Finite := Cardinal.lt_aleph0_iff_set_finite.mp (hcard.trans_lt (Cardinal.natCast_lt_aleph0 (n := C)))
   haveI := hfin.fintype
   refine ⟨hfin.toFinset, ?_, ?_⟩
   · rw [Set.Finite.card_toFinset]

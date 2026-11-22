@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,9 +71,6 @@ structure Cup (w w' : ℤ × ℤ) (x y z : Γ → R) (m : Φ.ι → R) : Prop wh
   kill : ∀ g ∈ Φ.N, z g = 0
   loc : ∀ v, ∃ o, ∀ s ∈ Φ.Gv v, z s = o - a (Φ.rt (w + w') s) * o - y s * a (Φ.rt w s) * m v
 
-example (w w' : ℤ × ℤ) : Φ.Cup a w w' 0 0 0 0 :=
-  ⟨IsLocallyConstant.const 0, by simp, by simp, fun _ => ⟨0, by simp⟩⟩
-
 def Gys (l : ℕ) (𝒩 : Set Γ → Prop) : Prop :=
   ∀ (M : Type) [AddCommGroup M] [Module (ZMod (l ^ 1)) M] [Finite M] [TopologicalSpace M] [DiscreteTopology M]
     (ρ : Representation (ZMod (l ^ 1)) Γ M), ContAction ρ → (∀ g ∈ Φ.N, ρ g = 1) → ∀ m0 : M, m0 ≠ 0 →
@@ -104,8 +105,8 @@ def Zunr (ρ : Representation R (G F Ω) M) (S : Finset (HeightOneSpectrum (𝓞
 def TrivAt (l : ℕ) [Fact l.Prime] (ρ : Representation R (G F Ω) M) (v : HeightOneSpectrum (𝓞 F)) : Prop :=
   ∀ A, IsPlaceOver A v → ∀ g ∈ Dec (F := F) A, ρ g = 1 ∧ cycMod F Ω l 1 g = 1
 
-open Classical in
 
+open Classical in
 def gysL (S₀ S : Finset (HeightOneSpectrum (𝓞 F))) (ρ : Representation R (GS Ω (S : Set (HeightOneSpectrum (𝓞 F)))) M)
     (Av : S → ValuationSubring Ω) (m0 : M) : LocCond ρ (locFam S Av) := fun v =>
   if v.1 ∈ S₀ then ⊥ else ramLine (ρ.comp (locFam S Av v)) ((Ine (F := F) (Av v)).subgroupOf (Dec (F := F) (Av v))) m0

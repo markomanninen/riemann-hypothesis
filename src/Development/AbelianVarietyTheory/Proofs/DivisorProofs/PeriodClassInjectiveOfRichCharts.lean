@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHolomorphicParamOfDegZeroCompatibleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParameterFunctionEqZeroOfComposableStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHolomorphicParamOfDegZeroCompatibleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParameterFunctionEqZeroOfComposableStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,7 +39,7 @@ theorem perCl_injective (K : Charts F) (hK : K.Rich) (per per' : Λ →+ Hol F.V
     intro T T' φ
     have := hd T T' φ
     rw [hp T, hp T', AlgHom.commutes, sub_self] at this
-    rw [map_sub, ← this]
+    exact ((algebraMap (Hol F.V) T'.C).map_sub (per φ.deg) (per' φ.deg)).trans this.symm
   ext l : 1
   rw [← sub_eq_zero]
   refine GlobalTheory.T.parameter_function_eq_zero_of_composable K hK l 0 (per l - per' l) fun k k' k'' e e' ↦ ?_

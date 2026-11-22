@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightMemWeightsOfNeZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightMemWeightsOfNeZero
+
+@[expose] public section
 
 noncomputable section
 

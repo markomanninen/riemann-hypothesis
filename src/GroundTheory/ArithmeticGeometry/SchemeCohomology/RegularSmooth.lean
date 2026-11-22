@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularLocalDomain
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularLocalDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -84,11 +89,6 @@ theorem isRegularLocalRing_localization_of_smooth (k A : Type*) [CommRing k] [Is
 theorem isRegularRing_of_smooth_field (k A : Type*) [Field k] [CommRing A] [Algebra k A]
     [Algebra.Smooth k A] : IsRegularRing A :=
   isRegularRing_of_smooth k A
-
-theorem isDomain_localization_of_smooth (k A : Type*) [Field k] [CommRing A] [Algebra k A]
-    [Algebra.Smooth k A] (q : Ideal A) [q.IsPrime] : IsDomain (Localization.AtPrime q) :=
-  have := isRegularLocalRing_localization_of_smooth k A q
-  IsRegularLocalRing.isDomain
 
 open AlgebraicGeometry CategoryTheory
 

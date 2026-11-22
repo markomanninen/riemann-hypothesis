@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy GlobalTheory.FieldPair
@@ -105,7 +110,7 @@ theorem jets_finrank_le : ∀ {κ κ' : Type} [Field κ] [Field κ'] [Algebra �
       one_mem' := by show φ 1 ∈ B; rw [map_one]; exact B.one_mem
       add_mem' := fun {a b} ha hb => by
         show φ (a + b) ∈ B
-        rw [map_add]; exact B.add_mem ha hb
+        rw [map_add (f := _)]; exact B.add_mem ha hb
       zero_mem' := by show φ 0 ∈ B; rw [map_zero]; exact B.zero_mem
       algebraMap_mem' := fun r => by
         show φ (algebraMap ℂ κ r) ∈ B
@@ -167,7 +172,7 @@ theorem jets_finrank_le : ∀ {κ κ' : Type} [Field κ] [Field κ'] [Algebra �
         show mk _ = mk (a ⊗ₜ 1) * mk (1 ⊗ₜ b)
         rw [← map_mul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
       rw [this]; exact B.mul_mem (key a) (B.algebraMap_mem b)
-    | add x y hx hy => rw [map_add]; exact B.add_mem hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact B.add_mem hx hy
 
   have ht : ∀ i, t i ∈ N := fun i => hφσ (z i)
   let f : Sym (Fin (k + 1)) (M - 1) → (κ ⊗[ℂ] κ') ⧸ J ^ M :=

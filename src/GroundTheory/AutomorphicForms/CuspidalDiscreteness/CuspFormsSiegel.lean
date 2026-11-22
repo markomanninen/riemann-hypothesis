@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.TorusReduction
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.TorusReduction
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set MeasureTheory
 open scoped NumberField.AdeleRing Pointwise
@@ -25,7 +29,7 @@ theorem conj_unipGL_eq_archExp {r : ℕ} (x : AdelicGLn.AdelicGL K n) (P : UPos 
   refine Subtype.ext (Units.ext ?_)
   rw [coe_expG_top, exp_eq_one_add_of_mul_self_eq_zero (conjArch_mul_conjArch x P P)]
   show archMat K n ((g : AdelicGLn.AdelicGL K n) : Matrix (Fin n) (Fin n) 𝔸[K]) = _
-  rw [hg, coe_conj_unipGL, map_add, map_one]
+  rw [hg, coe_conj_unipGL, map_add (f := _), map_one]
   rfl
 
 theorem exists_norm_le_siegel_root {φ : AdelicGLn.AdelicGL K n → ℂ} (hφ : φ ∈ cuspForms K n)
@@ -123,7 +127,7 @@ theorem exists_norm_le_siegel_root {φ : AdelicGLn.AdelicGL K n → ℂ} (hφ : 
   refine (hC x Y hYY hYT).trans ?_
   have hprod : ∏ i, ‖Y i‖ ≤ (C₁' * gain) ^ k := by
     rw [← Fin.prod_const]
-    exact Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => hYn i
+    exact Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => hYn i
   have hh := pow_nonneg (height_pos x).le N
   calc C * (∏ i, ‖Y i‖) * height x ^ N ≤ max C 0 * (∏ i, ‖Y i‖) * height x ^ N :=
         mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (le_max_left _ _)
@@ -139,7 +143,7 @@ theorem exists_norm_le_height_pow_neg_siegel {φ : AdelicGLn.AdelicGL K n → �
     ∃ C : ℝ, ∀ b ∈ ω, ∀ (ρ : Fin n → ℝ) (hρ : ∀ i, 0 < ρ i),
       (∀ i j : Fin n, (j : ℕ) = i + 1 → t * ρ j ≤ ρ i) →
       ∀ kk ∈ (Reduction.maxCompact : Subgroup (AdelicGLn.AdelicGL K n)),
-      ∀ x : AdelicGLn.AdelicGL K n, x ∈ Reduction.normOneGL K n →
+      ∀ x : AdelicGLn.AdelicGL K n, x ∈ Reduction.normOneGL (K := K) (n := n) →
       x = b * Reduction.diagUnits n (fun i => Reduction.posIdele (K := K) (ρ i) (hρ i)) * kk →
       ‖φ x‖ ≤ C * (height x ^ N')⁻¹ := by
   obtain ⟨C₀, N₀, hC₀⟩ := hφ.1.hasModerateGrowth
@@ -255,13 +259,13 @@ theorem exists_norm_le_height_pow_neg_siegel {φ : AdelicGLn.AdelicGL K n → �
     simpa using this
 
 theorem exists_norm_le_of_mem_cuspForms {φ : AdelicGLn.AdelicGL K n → ℂ}
-    (hφ : φ ∈ cuspForms K n) : ∃ C : ℝ, ∀ x ∈ Reduction.normOneGL K n, ‖φ x‖ ≤ C := by
+    (hφ : φ ∈ cuspForms K n) : ∃ C : ℝ, ∀ x ∈ Reduction.normOneGL (K := K) (n := n), ‖φ x‖ ≤ C := by
   obtain ⟨ω, hω, hωB, t, ht, hsieg⟩ := Reduction.exists_siegelSet (K := K) n
   obtain ⟨C, hC⟩ := exists_norm_le_height_pow_neg_siegel hφ hω hωB ht 0
   refine ⟨C, fun x hx => ?_⟩
   obtain ⟨γ, hγ⟩ := hsieg x
   obtain ⟨b, hb, a, ⟨ρ, hρ, hs, rfl⟩, kk, hkk, hxe⟩ := hγ
-  have hγx : AdelicGLn.diagonal K n γ * x ∈ Reduction.normOneGL K n :=
+  have hγx : AdelicGLn.diagonal K n γ * x ∈ Reduction.normOneGL (K := K) (n := n) :=
     mul_mem (Reduction.rationalGL_le_normOneGL ⟨γ, rfl⟩) hx
   have h := hC b hb ρ hρ hs kk hkk _ hγx hxe
   rwa [pow_zero, inv_one, mul_one, hφ.1.isLeftInvariant γ x] at h

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpAct
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ActLin
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.PderivSecondEvFirstPointEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ExpLaw
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpAct
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ActLin
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.PderivSecondEvFirstPointEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ExpLaw
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,8 +36,8 @@ theorem subst_family_comp {τ : Type} {d : ℕ} {χ : Fin d → MvPowerSeries τ
     subst (fam1 χ) (subst (fam1 ψ) g) = subst (fam1 fun j => subst (fam1 χ) (ψ j)) g :=
   subst_comp_subst_apply (has_subst_family_of_const hψ) (has_subst_family_of_const hχ) g
 
-open Formalism.FG.SolveVAux in
 
+open Formalism.FG.SolveVAux in
 theorem coeff_single_subst {σ τ : Type} [Fintype σ] [DecidableEq σ] [DecidableEq τ]
     (a : σ → MvPowerSeries τ S) (ha : ∀ s, constantCoeff (a s) = 0) (f : MvPowerSeries σ S) (t : τ) :
     coeff (Finsupp.single t 1) (subst a f) =
@@ -63,14 +67,15 @@ theorem coeff_single_subst {σ τ : Type} [Fintype σ] [DecidableEq σ] [Decidab
         exact hl _ (by rw [Finsupp.degree_single]; omega)
     rw [hz, smul_zero]
 
-open Formalism.FG.SolveVAux in
 
+open Formalism.FG.SolveVAux in
 theorem eq_linear {N : ℕ} (g : MvPowerSeries (Fin 1 × Fin N) S)
     (h : ∀ n : Fin 1 × Fin N →₀ ℕ, n.degree ≠ 1 → coeff n g = 0) :
     g = ∑ q, C (coeff (Finsupp.single ((0 : Fin 1), q) 1) g) * X ((0 : Fin 1), q) := by
   classical
   ext n
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   by_cases hn : n.degree = 1
   · obtain ⟨⟨i, q⟩, rfl⟩ := degree_eq_one n hn
     fin_cases i
@@ -213,7 +218,8 @@ theorem expAct_core {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host
     rw [Finset.sum_comm]
     apply Finset.sum_congr rfl
     intro q _
-    rw [← Finset.sum_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_mul, ← map_sum]
     congr 2
     have := hE ((ltIdx Dw).symm q) i
     simpa [w] using this

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ChowGraphCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChowGraphCut
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry
 

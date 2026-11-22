@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DownSlotProposition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DownSlotProposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,10 +13,6 @@ open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.Basi
 def KapPiStep : Prop :=
   ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (CA CB CK : ℝ),
     Adm1 D HW F Cm CA CB CK → kapPiR D HW
-
-def FirstFrameHypothesis : Prop :=
-  ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (CA CB CK : ℝ),
-    Adm1 D HW F Cm CA CB CK → u1R D HW
 
 end Formalism.MainNotions.N.Ln34
 

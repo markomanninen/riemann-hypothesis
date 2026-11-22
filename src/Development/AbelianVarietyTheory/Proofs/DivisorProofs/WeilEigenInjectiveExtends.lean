@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
 
 noncomputable section
@@ -17,7 +22,7 @@ theorem finprod_ne_zero' {ι : Type} {g : ι → ℂ} (h : ∀ i, g i ≠ 0) : �
   · exact one_ne_zero
 
 theorem eq_zero_of_pure_eq_zero {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] (f : SInf F κ)
-    (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (hne : ∀ v, φ v ≠ 0)
+    (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (hne : ∀ v, φ v ≠ 0)
     (hstd : ∀ᶠ v in Filter.cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1)
     (h0 : pure f φ = 0) : f = 0 := by
   classical
@@ -31,7 +36,8 @@ theorem eq_zero_of_pure_eq_zero {F : Type} [Field F] [NumberField F] {κ : Type}
   let yf : κ → Af F := fun i => ∑ v ∈ S, GlobalTheory.AdelicU.singleFin v (pt v i)
   have hyf : ∀ w i, evalV F w (yf i) = if w ∈ S then pt w i else 0 := by
     intro w i
-    simp only [yf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [yf, map_sum]
     split_ifs with hw
     · rw [Finset.sum_eq_single w]
       · exact GlobalTheory.AdelicU.evalV_singleFin_self w _
@@ -62,7 +68,7 @@ theorem eq_zero_of_pure_eq_zero {F : Type} [Field F] [NumberField F] {κ : Type}
   rw [hI] at e
   simpa using (mul_eq_zero.1 e).resolve_right hc
 
-theorem ei_injective : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (M M₁ : Model σ X W), M.IsGood B.ψ → ∀ e : Fn F n d →ₗ[ℂ] Fn F n d, Set.InjOn e (schA F (Fin n × Fin d) : Set _) → ∀ (ei : SInf F (Fin n × Fin d) →L[ℂ] SInf F (Fin n × Fin d)) (ev : ∀ v : Pl F, ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Fin n × Fin d → Fv F v) → ℂ), (∀ v, ev v (M.vac v) = M₁.vac v) → (∀ f φ, (∀ v, φ v ∈ SB _) → (∀ᶠ v in Filter.cofinite, φ v = M.vac v) → e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei f) fun v => ev v (φ v)) → Function.Injective ei := by
+theorem ei_injective : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (M M₁ : Model σ X W), M.IsGood B.ψ → ∀ e : Fn F n d →ₗ[ℂ] Fn F n d, Set.InjOn e (schA F (Fin n × Fin d) : Set _) → ∀ (ei : SInf F (Fin n × Fin d) →L[ℂ] SInf F (Fin n × Fin d)) (ev : ∀ v : Pl (F := F), ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Fin n × Fin d → Fv F v) → ℂ), (∀ v, ev v (M.vac v) = M₁.vac v) → (∀ f φ, (∀ v, φ v ∈ SB _) → (∀ᶠ v in Filter.cofinite, φ v = M.vac v) → e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei f) fun v => ev v (φ v)) → Function.Injective ei := by
   intro F E _ _ _ _ _ σ B n d X W M M₁ hM e hinj ei ev _ hev
   refine (injective_iff_map_eq_zero ei).2 fun f hf => ?_
   have hSB : ∀ v, M.vac v ∈ SB (Fin n × Fin d → Fv F v) := fun v => (hM.vac v).1

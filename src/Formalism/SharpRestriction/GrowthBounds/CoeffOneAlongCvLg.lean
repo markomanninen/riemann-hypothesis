@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MixedCoefficientClosed
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MixedCoefficientClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem subst_tyS_Fs {l : ℕ} (hl : 2 ≤ l) {ζ : C} (hζ : IsPrimitiveRoot ζ
   rw [← tyS_Vpow hl]
   apply tyS_eq hl
   · intro s
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [PowerSeries.coeff_rescale, coeff_tyS_pow hl]
     rw [← Finset.sum_mul]
     cases s with
@@ -34,14 +39,16 @@ theorem subst_tyS_Fs {l : ℕ} (hl : 2 ≤ l) {ζ : C} (hζ : IsPrimitiveRoot ζ
       simp only [h1, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
       simp
   · intro m hm
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     apply Finset.sum_eq_zero
     intro k _
     rw [PowerSeries.coeff_rescale, coeff_tyS_of_ne _ m hm, mul_zero]
 
 theorem rescale_sum_smul {ι : Type} [Fintype ι] (a : C) (u : ι → C) (f : ι → PowerSeries C) :
     PowerSeries.rescale a (∑ c, u c • f c) = ∑ c, u c • PowerSeries.rescale a (f c) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   ext n
   simp only [PowerSeries.coeff_rescale, PowerSeries.coeff_smul, smul_eq_mul]
@@ -52,7 +59,8 @@ theorem subst_pow_sum_smul {n : ℕ} (hn : 0 < n) {ι : Type} [Fintype ι] (u : 
       ∑ c, u c • PowerSeries.subst ((PowerSeries.X : PowerSeries C) ^ n) (f c) := by
   have hS : PowerSeries.HasSubst ((PowerSeries.X : PowerSeries C) ^ n) :=
     PowerSeries.HasSubst.of_constantCoeff_zero' (by simp [hn.ne'])
-  rw [← PowerSeries.coe_substAlgHom hS, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← PowerSeries.coe_substAlgHom hS, map_sum]
   simp only [map_smul]
 
 variable {d : ℕ} {I : Fin 2 → Type} [∀ g, Fintype (I g)] {κ : Type} [Fintype κ]
@@ -81,7 +89,8 @@ theorem coeff_one_of_mem (X : RawChart C d I κ) {V : VF C} (hB : Basic X V) {g 
     (hγ : ∀ i, PowerSeries.constantCoeff (γ i) = 0) {x : ℕ → I g ⊕ JJ I g → C}
     (h1 : ∀ i : κ, alongCv γ (X.lg i) = ∑ c : I g, X.u g c i • tyS V.l (fun s => x s (Sum.inl c))) (i : κ) :
     PowerSeries.coeff 1 (γ i) = ∑ c : I g, X.u g c i * x 0 (Sum.inl c) := by
-  rw [← coeff_one_alongCv_lg X hB hγ i, h1 i, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coeff_one_alongCv_lg X hB hγ i, h1 i, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [PowerSeries.coeff_smul, coeff_one_tyS V.l_prime.two_le, smul_eq_mul]
 

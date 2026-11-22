@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,18 +22,8 @@ def IsConjDual (c : Ω ≃+* Ω) (r : G E Ω →* GL (Fin a) k) (μ : G E Ω →
       (μ g : k) • ((P : Matrix (Fin a) (Fin a) k) * (r g⁻¹ : Matrix (Fin a) (Fin a) k)ᵀ *
         ((P⁻¹ : GL (Fin a) k) : Matrix (Fin a) (Fin a) k))
 
-theorem IsConjDual.trace {c : Ω ≃+* Ω} {r : G E Ω →* GL (Fin a) k} {μ : G E Ω →* kˣ} (h : IsConjDual c r μ)
-    {g g' : G E Ω} (hg : ∀ x, g' x = c (g (c.symm x))) :
-    (r g' : Matrix (Fin a) (Fin a) k).trace = μ g * (r g⁻¹ : Matrix (Fin a) (Fin a) k).trace := by
-  obtain ⟨P, hP⟩ := h
-  rw [hP g g' hg, Matrix.trace_smul, Matrix.trace_mul_cycle, ← Units.val_mul, inv_mul_cancel, Units.val_one,
-    one_mul, Matrix.trace_transpose, smul_eq_mul]
-
-theorem isConjDual_one (c : Ω ≃+* Ω) : IsConjDual c (1 : G E Ω →* GL (Fin a) k) 1 :=
-  ⟨1, fun _ _ _ => by simp⟩
 
 variable (E Ω) in
-
 def cycBar (l : ℕ) [Fact l.Prime] : G E Ω →* (Qbar l)ˣ :=
   (Units.map ((algebraMap ℚ_[l] (Qbar l)).comp PadicInt.Coe.ringHom).toMonoidHom).comp (cycZ E Ω l)
 
@@ -80,16 +74,6 @@ def Reading : Prop :=
 variable {A}
 
 variable {i : N.Loc} {a : ℕ} {π : A.CG a} {s : ℝ} {r : G H.E N.Om →* GL (Fin a) (Qbar (N.l i))}
-
-theorem IsAttached.tempered (h : IsAttached A i π s r) {w : PlE H} (hw : w ∉ placesOver H.E (N.l i)) :
-    A.tempered (A.locG π w) := by
-  have := h.pure w hw
-  rwa [h.away w hw, A.lpTw_add, show s + (1 - (a : ℝ)) / 2 + (((a : ℝ) - 1) / 2 - s) = 0 by ring,
-    A.lpTw_zero] at this
-
-theorem IsAttached.pol_zero (h : IsAttached A i π 0 r) {c : N.Om ≃+* N.Om} (hc : IsCMConjOm H.E N.Om c) :
-    IsConjDual c r (cycBar H.E N.Om (N.l i) ^ (1 - (a : ℤ))) := by
-  simpa using h.pol c hc 0 (by simp)
 
 theorem IsAttached.frob (h : IsAttached A i π s r) {w : PlE H} (hw : w ∉ placesOver H.E (N.l i))
     (hu : A.unr (A.locG π w)) :

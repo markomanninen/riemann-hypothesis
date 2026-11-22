@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
-import Formalism.HarderNarasimhan.StatementPl
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIInfKerEqOfIsBaseChangeFamily
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableInfRestrictScalarsOfLeSpan
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+public import Formalism.HarderNarasimhan.StatementPl
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIInfKerEqOfIsBaseChangeFamily
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableInfRestrictScalarsOfLeSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,8 @@ theorem finrank_iInf_ker_semilinear {L M W X ι κ : Type} [Field L] [Field M] [
     refine le_antisymm (Submodule.span_le.2 ?_) (Submodule.span_mono (by rintro _ ⟨k, rfl⟩; exact ⟨_, rfl⟩))
     rintro _ ⟨w, rfl⟩
     haveI := Fintype.ofFinite κ
-    rw [← b.sum_repr w, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr w, map_sum]
     exact Submodule.sum_mem _ fun k _ => by
       rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
   let c : Basis κ M U := (Basis.span hb).map (LinearEquiv.ofEq _ _ hU.symm)
@@ -96,7 +101,7 @@ theorem finrank_eq {K L F M C W V G G' Γ : Type} [Field K] [Field L] [Field F] 
     induction hf using Submodule.span_induction with
     | mem _ h => obtain ⟨k, rfl⟩ := h; rw [← hΦb, Basis.mk_apply]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, map_add, hx, hy, map_add, TensorProduct.tmul_add]
+    | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), TensorProduct.tmul_add]
     | smul t x _ hx =>
       rw [map_smul, ← algebraMap_smul L, map_smulₛₗ, hx, map_smulₛₗ, hσ, algebraMap_smul, TensorProduct.tmul_smul]
   have hind : LinearIndependent M fun k => Φ (bW k) := by
@@ -104,7 +109,8 @@ theorem finrank_eq {K L F M C W V G G' Γ : Type} [Field K] [Field L] [Field F] 
     exact Module.Flat.linearIndependent_one_tmul b₄
   have hRΦ : ∀ γ w, R γ (Φ w) = Φ ((((chi (θ γ))⁻¹ : Lˣ) : L) • ρ (θ γ) w) := fun γ w => by
     rw [← bW.sum_repr w]
-    simp only [map_sum, map_smulₛₗ, Finset.smul_sum, RingHom.id_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smulₛₗ, Finset.smul_sum, RingHom.id_apply]
     refine Finset.sum_congr rfl fun k _ => ?_
     obtain ⟨f', h1, h2⟩ := hρ γ (b k)
     rw [hΦb, Basis.mk_apply, h1, hΦ, hR, twistExt_tmul, h2, smul_comm]
@@ -130,7 +136,10 @@ theorem finrank_eq {K L F M C W V G G' Γ : Type} [Field K] [Field L] [Field F] 
     induction hv' using Submodule.span_induction with
     | mem _ h => obtain ⟨f, rfl⟩ := h; exact Submodule.subset_span ⟨_, hΦ f⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy =>
+      change (TensorProduct.mk F M V 1) (x + y) ∈ Submodule.span M (Set.range Φ)
+      rw [map_add]
+      exact add_mem hx hy
     | smul t x _ hx => rw [map_smul, ← algebraMap_smul M]; exact Submodule.smul_mem _ _ hx
   let a : Q → W →ₗ[L] W := fun γ => (((chi (θ γ))⁻¹ : Lˣ) : L) • ρ (θ γ) - ((lam ⟨θ γ, (hQ _).1 γ.2⟩ : Lˣ) : L) • LinearMap.id
   let a' : Q → M ⊗[F] V →ₗ[M] M ⊗[F] V := fun γ => R γ - ((lamb γ : Mˣ) : M) • LinearMap.id
@@ -151,7 +160,8 @@ theorem finrank_eq {K L F M C W V G G' Γ : Type} [Field K] [Field L] [Field F] 
       rintro (_ | γ) w
       · haveI := Fintype.ofEquiv G c.toEquiv
         simp only [Option.elim]
-        rw [Representation.asAlgebraHom_def, MonoidAlgebra.lift_apply, Finsupp.sum_fintype _ _ (fun _ => by simp),
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Representation.asAlgebraHom_def, MonoidAlgebra.lift_apply, Finsupp.sum_fintype _ _ (fun _ => by simp),
           LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
         refine (Fintype.sum_equiv c.toEquiv _ _ fun g => ?_).symm
         rw [LinearMap.smul_apply, LinearMap.smul_apply, mul_smul, map_smulₛₗ, he]

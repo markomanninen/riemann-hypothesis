@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.TraceAeval
@@ -17,7 +22,7 @@ theorem trace_aeval_of_isNilpotent {V : Type*} [AddCommGroup V] [Module ℂ V] [
         ((Commute.refl g).pow_left k) h
       rw [pow_succ, Module.End.mul_eq_comp, this, ih]; ring
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, hp, hq, eval_add]; ring
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, eval_add]; ring
   | monomial k a =>
     rw [aeval_monomial, ← Algebra.smul_def, map_smul, hk, eval_monomial, smul_eq_mul]; ring
 
@@ -77,20 +82,6 @@ theorem trace_aeval_matrix {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (p : ℂ[X
   congr 1
   exact (aeval_algHom_apply (Matrix.toLinAlgEquiv' (R := ℂ) (n := Fin n)) A p).symm
 
-theorem trace_aeval_map {n : ℕ} {R : Type*} [CommRing R] (A : Matrix (Fin n) (Fin n) ℤ)
-    (p : ℤ[X]) :
-    (aeval (A.map (Int.castRingHom R)) p).trace = (((aeval A p).trace : ℤ) : R) := by
-  have := aeval_algHom_apply ((Int.castRingHom R).mapMatrix (m := Fin n)).toIntAlgHom A p
-  have h2 : aeval (A.map (Int.castRingHom R)) p = (aeval A p).map (Int.castRingHom R) := this
-  rw [h2]
-  simp [Matrix.trace]
-
-theorem trace_aeval_int {n : ℕ} (A : Matrix (Fin n) (Fin n) ℤ) (p : ℤ[X]) :
-    (((aeval A p).trace : ℤ) : ℂ)
-      = ((A.map (Int.castRingHom ℂ)).charpoly.roots.map fun z => aeval z p).sum := by
-  rw [← trace_aeval_map, ← aeval_map_algebraMap ℂ, trace_aeval_matrix]
-  simp only [eval_map_algebraMap]
-
 noncomputable def powMat {R : Type*} [CommRing R] (n : ℕ) (ψ : R[X]) : Matrix (Fin n) (Fin n) R :=
   Matrix.of fun i j => ((X ^ ((j : ℕ) + 1)) %ₘ ψ).coeff i
 
@@ -122,37 +113,5 @@ theorem charpoly_powMat {ψ : ℂ[X]} (h : ψ.Monic) : (powMat ψ.natDegree ψ).
   rw [AdjoinRoot.powerBasisAux'_repr_apply_to_fun, ← AdjoinRoot.mk_X, ← map_pow,
     AdjoinRoot.modByMonicHom_mk]
   rfl
-
-theorem trace_aeval_powMat {ψ : ℤ[X]} (h : ψ.Monic) (p : ℤ[X]) :
-    (((aeval (powMat ψ.natDegree ψ) p).trace : ℤ) : ℂ)
-      = ((ψ.aroots ℂ).map fun z => aeval z p).sum := by
-  rw [trace_aeval_int, powMat_map _ _ h, ← h.natDegree_map (Int.castRingHom ℂ),
-    charpoly_powMat (h.map _)]
-  rfl
-
-theorem exists_int_trace_aeval_eq_sum_aroots :
-    ∀ (χ p : Polynomial ℤ), χ.Monic → ∃ s : ℤ, (s : ℂ) = ((χ.aroots ℂ).map fun z => Polynomial.aeval z p).sum ∧ ∀ (n M : ℕ) (B : Matrix (Fin n) (Fin n) (ZMod M)), B.charpoly = χ.map (Int.castRingHom (ZMod M)) → (Polynomial.aeval B p).trace = (s : ZMod M) := by
-  intro χ p hχ
-  refine ⟨(aeval (powMat χ.natDegree χ) p).trace, trace_aeval_powMat hχ p, ?_⟩
-  intro n M B hB
-  rcases subsingleton_or_nontrivial (ZMod M) with hM | hM
-  · exact Subsingleton.elim _ _
-  have hn : χ.natDegree = n := by
-    rw [← hχ.natDegree_map (Int.castRingHom (ZMod M)), ← hB, Matrix.charpoly_natDegree_eq_dim,
-      Fintype.card_fin]
-  choose B₀ hB₀ using fun i j => ZMod.intCast_surjective (B i j)
-  have hBB : (Matrix.of B₀).map (Int.castRingHom (ZMod M)) = B := by
-    ext i j; simpa using hB₀ i j
-  set A : Matrix (Fin n) (Fin n) ℤ := Matrix.of B₀
-  have hA : A.charpoly.natDegree = n := by
-    rw [Matrix.charpoly_natDegree_eq_dim, Fintype.card_fin]
-  have h1 : (aeval A p).trace = (aeval (powMat n A.charpoly) p).trace := by
-    have h2 := trace_aeval_powMat A.charpoly_monic p
-    rw [hA] at h2
-    apply Int.cast_injective (α := ℂ)
-    rw [h2, trace_aeval_int, Matrix.charpoly_map]
-    rfl
-  rw [← hBB, trace_aeval_map, h1, hn, ← trace_aeval_map, ← trace_aeval_map,
-    powMat_map _ _ hχ, powMat_map _ _ A.charpoly_monic, ← Matrix.charpoly_map, hBB, hB]
 
 end GlobalTheory.TraceAeval

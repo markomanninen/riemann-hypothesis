@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.GenModelXi
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.GenModelXi
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -12,10 +16,10 @@ section
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
 theorem altE_add_left (H : Sesq V) (a a' b : V) : altE H (a + a') b = altE H a b + altE H a' b := by
-  simp [altE, map_add, LinearMap.add_apply, Complex.add_im]
+  simp [altE, map_add (f := _), LinearMap.add_apply, Complex.add_im]
 
 theorem altE_add_right (H : Sesq V) (a b b' : V) : altE H a (b + b') = altE H a b + altE H a b' := by
-  simp [altE, map_add, Complex.add_im]
+  simp [altE, map_add (f := _), Complex.add_im]
 
 theorem opU_smul_fun (H : Sesq V) (x : V) (r : ℂ) (F : V → ℂ) (z : V) :
     opU H x (fun v => r * F v) z = r * opU H x F z := by

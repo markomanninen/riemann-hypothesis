@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HeckeCharEqOfLAdicRealisation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HeckeCharEqOfLAdicRealisation
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,7 +157,7 @@ theorem asAlg_prod {V W : Type} [AddCommGroup V] [Module K V] [AddCommGroup W] [
     rw [Representation.asAlgebraHom_of, Representation.asAlgebraHom_of,
       Representation.asAlgebraHom_of]
     rfl
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb, Prod.mk_add_mk]
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb, Prod.mk_add_mk]
   | smul c a ha => simp only [map_smul, LinearMap.smul_apply, ha, Prod.smul_mk]
 
 def prodEquiv {V W : Type} [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]

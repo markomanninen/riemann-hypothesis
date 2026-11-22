@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.BoundedOnFramesIffIntegralOnFrames
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.BoundedOnFramesIffIntegralOnFrames
+
+@[expose] public section
 
 namespace GlobalTheory.Per
 
@@ -90,7 +94,7 @@ private theorem isPrecomplete_maximalIdeal_of_free_finite_zpadic {p : ℕ} [Fact
         simp only [map_smul, Pi.smul_apply, smul_eq_mul]
         exact Ideal.mul_mem_right _ _ hr
       · intro x y hx hy i
-        simp only [map_add, Pi.add_apply]
+        simp only [map_add (f := _), Pi.add_apply]
         exact add_mem (hx i) (hy i)
     · intro h
       rw [← b.sum_equivFun x]
@@ -186,7 +190,7 @@ theorem integers_completeDVR : ∀ (l : ℕ) [Fact l.Prime], ∀ LL : FinExt l,
     exact hpu (isUnit_iff_exists_inv.mpr ⟨c, hc⟩)
   have hded : IsDedekindDomain (integralClosure ℤ_[l] ↥LL.1) := inferInstance
   have hdvr : IsDiscreteValuationRing (integralClosure ℤ_[l] ↥LL.1) :=
-    ((IsDiscreteValuationRing.TFAE _ hnf).out 0 2).mpr hded
+    ((IsDiscreteValuationRing.TFAE _ hnf).out 1 3).mpr hded
   have hfin : Module.Finite ℤ_[l] (integralClosure ℤ_[l] ↥LL.1) := inferInstance
   have htf : Module.IsTorsionFree ℤ_[l] (integralClosure ℤ_[l] ↥LL.1) := by
     refine ⟨fun r hr x y hxy => ?_⟩

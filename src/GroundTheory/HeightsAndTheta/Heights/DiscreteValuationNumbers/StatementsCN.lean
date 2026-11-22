@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -21,8 +26,8 @@ def shiftFn (s : K → ℤ) (f : (K → ℤ) → ℤ) : (K → ℤ) → ℤ := f
 
 variable {ι : K → Type*}
 
+open scoped Classical in
 open Classical in
-
 def idealCycle {R : Type*} [CommRing R] (J W : Ideal (MRing ι R)) : ℤ :=
   if h : W ∈ J.minimalPrimes ∧ IsRelevant W then
     haveI : W.IsPrime := h.1.1.1
@@ -92,8 +97,8 @@ def GradedPieceQuot.Statement : Prop :=
       Module.finrank F (weightedHomogeneousSubmodule F (blockWeight ι) m) -
         Module.finrank F ↥(weightedHomogeneousSubmodule F (blockWeight ι) m ⊓ I.restrictScalars F)
 
-open Classical in
 
+open Classical in
 def CutPieces.Statement : Prop :=
   ∀ (F : Type u) [Field F] (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type)
     [∀ k, Fintype (ι k)] (I : Ideal (MRing ι F)) (x : MRing ι F) (e m : K → ℕ),
@@ -154,8 +159,8 @@ def PrimeFiltration.Statement : Prop :=
       (∀ m : K → ℤ, hilbFn J m = (l.map fun p => hilbFn p.1 (m - fun k => (p.2 k : ℤ))).sum) ∧
       (∀ (W : Ideal (MRing ι F)) [W.IsPrime], multAt J W = (l.map fun p => multAt p.1 W).sum)
 
-open Classical in
 
+open Classical in
 def MultAtPrimeAtMinimal.Statement : Prop :=
   ∀ (R : Type u) [CommRing R] (K : Type) (ι : K → Type) (J Q W : Ideal (MRing ι R)) [Q.IsPrime]
     [W.IsPrime], J ≤ Q → W ∈ J.minimalPrimes → multAt Q W = if Q = W then 1 else 0

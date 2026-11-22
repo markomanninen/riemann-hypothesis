@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LinClosedOfAdic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LinClosedOfAdic
+
+@[expose] public section
 
 open IsLocalRing Polynomial Matrix UpperTheory.V
 
@@ -15,7 +19,7 @@ theorem UpperTheory.V.Ws.isClosed_zeroLocus_mvPolynomial_eval_adicContinuous :
   let L : (f.support → A) →ₗ[A] κ :=
     { toFun := fun v => ∑ d : f.support, f.coeff d.1 * j (v d)
       map_add' := fun x y => by
-        simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+        simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
       map_smul' := fun c x => by
         change ∑ d : f.support, f.coeff d.1 * j (c * x d) = j c * ∑ d : f.support, f.coeff d.1 * j (x d)
         rw [Finset.mul_sum]
@@ -58,7 +62,8 @@ theorem UpperTheory.V.Ws.isClosed_zeroLocus_mvPolynomial_eval_adicContinuous :
     change L (m y) = 0
     rw [hL]; exact hy0)
   have h1 : K.mkQ (m x) = K.mkQ (m x - m y) := by rw [map_sub, h0, sub_zero]
-  rw [h1, pi_eq_sum_univ' (m x - m y), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, pi_eq_sum_univ' (m x - m y), map_sum]
   refine Submodule.sum_mem _ fun s _ => ?_
   rw [map_smul]
   exact Submodule.smul_mem_smul (hy s) Submodule.mem_top

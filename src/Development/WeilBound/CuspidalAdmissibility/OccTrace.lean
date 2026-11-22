@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SmoothRep
-import GroundTheory.AutomorphicForms.LocallyConstantCompact
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SmoothRep
+public import GroundTheory.AutomorphicForms.LocallyConstantCompact
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic
 
@@ -10,8 +14,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Local
   [TotallyDisconnectedSpace G] [MeasurableSpace G] [BorelSpace G]
   {X : Type} [AddCommGroup X] [Module ℂ X]
 
-omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] [MeasurableSpace G] [BorelSpace G] in
 
+omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] [MeasurableSpace G] [BorelSpace G] in
 theorem orbit_isLocallyConstant (ρ : Representation ℂ G X) (hρ : IsSmooth ρ) (v : X) :
     IsLocallyConstant fun g => ρ g v := by
   rw [IsLocallyConstant.iff_exists_open]
@@ -53,7 +57,8 @@ theorem exists_vec (m : Measure G) [m.IsHaarMeasure] (ρ : Representation ℂ G 
         exact absurd hgS h
   have hfun : (fun g => φ g * l (ρ g v)) = fun g => ∑ s ∈ S, (E s).indicator φ g * l s := funext hpt
   rw [hfun, integral_finsetSum]
-  · simp only [map_sum, map_smul, smul_eq_mul, integral_mul_const]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, map_smul, smul_eq_mul, integral_mul_const]
   · intro s _
     exact (hφi.indicator (hE s)).mul_const (l s)
 
@@ -71,10 +76,10 @@ theorem exists_integralOp (m : Measure G) [m.IsHaarMeasure] (ρ : Representation
   let A : X →ₗ[ℂ] X :=
     { toFun := A0
       map_add' := fun v v' => huniq _ _ fun l => by
-        rw [map_add, hA0, hA0, hA0, ← integral_add (hint v l) (hint v' l)]
+        rw [map_add (f := _), hA0, hA0, hA0, ← integral_add (hint v l) (hint v' l)]
         congr 1
         funext g
-        rw [map_add, map_add, mul_add]
+        rw [map_add (f := _), map_add (f := _), mul_add]
       map_smul' := fun c v => huniq _ _ fun l => by
         rw [map_smul, hA0, hA0, RingHom.id_apply, smul_eq_mul, ← integral_const_mul]
         congr 1

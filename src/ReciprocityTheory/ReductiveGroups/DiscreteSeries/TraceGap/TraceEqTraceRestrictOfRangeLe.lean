@@ -1,5 +1,9 @@
-import Mathlib.Analysis.InnerProductSpace.Projection.Basic
-import Mathlib.LinearAlgebra.Trace
+module
+
+public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+public import Mathlib.LinearAlgebra.Trace
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem trace_eq_add_of_isCompl (f : Y →ₗ[ℂ] Y) {K R : Submodule ℂ Y} (h
     exact hR _ (Submodule.projection_apply_mem _ _)
   have h1 : LinearMap.trace ℂ Y f = LinearMap.trace ℂ Y (f ∘ₗ K.projection R hKR) +
       LinearMap.trace ℂ Y (f ∘ₗ R.projection K hKR.symm) := by
-    rw [← map_add, ← LinearMap.comp_add, Submodule.projection_add_projection_eq_id, LinearMap.comp_id]
+    rw [← map_add (f := _), ← LinearMap.comp_add, Submodule.projection_add_projection_eq_id, LinearMap.comp_id]
   rw [h1, trace_eq_trace_restrict_of_range_le _ K hrK, trace_eq_trace_restrict_of_range_le _ R hrR]
   congr 2
   · ext x

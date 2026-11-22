@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TanRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverMove
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsKeyPBRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TanRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverMove
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsKeyPBRing
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
-open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.MBModel GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
+open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -27,12 +31,12 @@ theorem valR_congr {B : Type} [CommRing B] {X X' : Scheme.{0}} {x : Sp B ⟶ X} 
     (h : ∀ z, x' z ∈ U' → gs x z U a = gs x' z U' a') : valR x U a = valR x' U' a' := by
   by_cases h' : ⊤ ≤ x' ⁻¹ᵁ U'
   · have h₀ : ⊤ ≤ x ⁻¹ᵁ U := fun z hz => (hU z).1 (h' hz)
-    rw [valR, valR, dif_pos h', dif_pos h₀]
+    rw [valR, valR, dite_eq_left h', dite_eq_left h₀]
     refine congrArg _ (fn_ext fun z hz => ?_)
     rw [gs_appLE' _ _ _ _ _ _ hz, gs_appLE' _ _ _ _ _ _ hz, Category.id_comp, Category.id_comp]
     exact h z (h' hz)
   · have h₀ : ¬ ⊤ ≤ x ⁻¹ᵁ U := fun e => h' fun z hz => (hU z).2 (e hz)
-    rw [valR, valR, dif_neg h', dif_neg h₀]
+    rw [valR, valR, dite_eq_right h', dite_eq_right h₀]
 
 theorem val_rigT' {S : Scheme.{0}} (A : Over S) [GrpObj A] (L : LB A.left) (rig : LB.Gen (L.pull (eSec A)))
     (T : Over S) (k : ℤ) {Z : Scheme.{0}} (r : Z ⟶ T.left) (z : Z) (J : (Z ⟶ A.left) → L.ι) (hJ : Good L z J) :
@@ -66,8 +70,8 @@ variable {S S' : Scheme.{0}} {G : Over S} [GrpObj G] {A : Over S'} [GrpObj A]
   {T : Over S'} {T₀ : Over S} (τ : T.left ⟶ T₀.left) (hτ : τ ≫ T₀.hom = T.hom ≫ f)
   {L₀ : LB G.left} {L₁ : LB A.left} {w : LB.Iso L₁ (L₀.pull φ)} {c : L₁.ι → L₀.ι}
 
-include hp in
 
+include hp in
 theorem exists_gauge (hL₀ : L₀.IsLB) (hc : Chartwise w c) {Z : Scheme.{0}} (b : Z ⟶ S') {z : Z} {J'}
     (hJ' : Good L₁ z J') : ∃ J, Good L₀ z J ∧ ∀ ψ : Z ⟶ A.left, ψ ≫ A.hom = b →
       J (ψ ≫ φ) = c (J' ψ) ∧ wVal w z J J' ψ = 1 := by
@@ -221,8 +225,8 @@ theorem valR_rig_move (hc : Chartwise w c) (he : eSec P.A ≫ φ = f ≫ eSec P�
   rw [Fintype.prod_unique, hc.2 _ _ _ _ hz', one_zpow, _root_.one_mul] at q
   exact (gs_unit _ z _ ((hU' z).1 hz) _).trans ((congrArg Units.val q).trans (gs_unit _ z _ hz _).symm)
 
-include hp in
 
+include hp in
 theorem thJetT_move (hw : w.IsGen) (hc : Chartwise w c) (hs : Function.Surjective c)
     (he : eSec P.A ≫ φ = f ≫ eSec P₀.A)
     (hρ : PMaps w (fun _ : PUnit => eSec P.A) (fun _ => eSec P₀.A) (fun _ => 1) ρ ρ₀ f) {θ₀ : P₀.L.Sec} {θ : P.L.Sec}
@@ -333,8 +337,8 @@ theorem exists_keyPB_chartwise {R R' : Type} [CommRing R] [CommRing R'] (x : Key
 
 end GlobalTheory.MBLow.JetBC
 
-open GlobalTheory.MBLow.JetBC in
 
+open GlobalTheory.MBLow.JetBC in
 theorem GlobalTheory.MBLow.exists_keyPB_thJet : ∀ (K C : Type) [Field K] [Field C] (f : K →+* C) (x : KeyIn K), ∃ (xC : KeyIn C) (hg : xC.P.g = x.P.g) (io : (Over.mk (spMap f) ⟶ x.P.A) ≃* (baseOver (Sp C) ⟶ xC.P.A)), KeyPB xC x f ∧ (∀ (k : ℕ) a b (z : Γ(Sp C, ⊤)ˣ), WeilIs xC.P.A xC.P.L k (io a) (io b) z → WeilIs x.P.A x.P.L k a b z) ∧ ∀ (m : ℕ) (th : LB.Sec (LPow x.P.A x.P.L ((1 : ℕ) : ℤ) (Over.mk (spMap f)))) (I : Type) (pt : I → (Over.mk (spMap f) ⟶ x.P.A)) (y : Fin x.P.g → (Sp (DualNumber C) ⟶ (Over.mk (spMap f) ⊗ x.P.A).left)) (ϑ : I → C) (J : I → Fin x.P.g → C), IsPolAVSectionInverseImage x.P (Over.mk (spMap f)) x.th th → (∀ j, y j ≫ (fst (Over.mk (spMap f)) x.P.A).left = spMap (algebraMap C (DualNumber C)) ∧ y j ≫ (snd (Over.mk (spMap f)) x.P.A).left = spMap (dualMap f) ≫ (x.v j).left) → ThJetT x.P x.rig m (spMap f) th pt y ϑ J → ThJet xC hg m (fun i => io (pt i)) ϑ J := by
   intro K C _ _ f x
   obtain ⟨xC, hg, φ, w, c, hK, hp, hw, hc, hs, he, hρ, hθ, hv⟩ := exists_keyPB_chartwise x f

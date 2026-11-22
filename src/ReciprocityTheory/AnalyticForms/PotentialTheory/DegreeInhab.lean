@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 

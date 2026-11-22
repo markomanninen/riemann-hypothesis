@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartMass
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartMass
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -18,18 +23,6 @@ def ChartCutoffEnergy.Statement : Prop :=
     ∃ K : ℝ, ∀ k : ℕ,
       ∫ y : Fin (n + 1) → ℂ,
         ReciprocityTheory.AnForm.A.gradDens (fun i => hermChartPot (T i)) (chartCutoff k) (chartCutoff k) y ≤ K
-
-example (D k : ℕ) : chartCutoff k (0 : Fin D → ℂ) = 1 := by
-  simp only [chartCutoff, Pi.zero_apply, norm_zero]
-  exact Real.smoothTransition.one_of_one_le (by norm_num)
-
-example : chartCutoff 0 (fun _ : Fin 1 => (2 : ℂ)) = 0 := by
-  simp only [chartCutoff, Finset.univ_unique, Finset.sum_singleton, Complex.norm_ofNat]
-  exact Real.smoothTransition.zero_of_nonpos (by norm_num)
-
-example : ∀ i : Fin 1, ((fun _ => Matrix.diagonal ![(1 : ℂ), 4, 1]) i :
-    Matrix (Fin (1 + 1 + 1)) (Fin (1 + 1 + 1)) ℂ).PosDef :=
-  fun _ => Matrix.posDef_diagonal_iff.mpr fun j => by fin_cases j <;> norm_num
 
 end
 

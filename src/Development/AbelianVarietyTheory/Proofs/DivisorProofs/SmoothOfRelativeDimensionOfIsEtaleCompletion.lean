@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqSucc
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsProperToroidalModelStructureMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqSucc
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsProperToroidalModelStructureMap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,7 +47,6 @@ theorem spanFinrank_map_eq_of_flat {A B : Type*} [CommRing A] [CommRing B] [Alge
     apply le_antisymm
     · rintro _ ⟨x, -, rfl⟩
       induction x with
-      | zero => simp
       | tmul b i =>
         have : g (b ⊗ₜ i) = b * algebraMap A B i := by
           simp [g, Algebra.smul_def, mul_comm]

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -10,7 +14,7 @@ noncomputable section
 theorem toSm_of_mem (P : M.Par) {u : MA.Qp P.r P.TT → ℂ} (h : u ∈ MA.smSub P.r P.TT) (q : MA.Qp P.r P.TT) :
     (MA.toSm P u : MA.Qp P.r P.TT → ℂ) q = u q := by
   unfold MA.toSm
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem assumption_on_sections_holds : AsmSec := by
   intro hFL hGQ hML hRS hRaw hQL Wp Wq _ _ _ _ _ _ P Bs hPl hk hsec

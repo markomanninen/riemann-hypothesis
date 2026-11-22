@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.NormOneUnitIdeal
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SemiCharImg
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.NormOneUnitIdeal
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SemiCharImg
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical Matrix

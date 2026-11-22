@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,9 +40,6 @@ def locInt (p : Ideal (𝓞 E)) [hp : p.IsPrime] : Subring E where
   neg_mem' := by
     rintro c ⟨s, hs, a, h⟩
     exact ⟨s, hs, -a, by push_cast; linear_combination -h⟩
-
-theorem mem_locInt {p : Ideal (𝓞 E)} [p.IsPrime] {c : E} :
-    c ∈ locInt p ↔ ∃ s : 𝓞 E, s ∉ p ∧ ∃ a : 𝓞 E, (s : E) * c = a := Iff.rfl
 
 theorem coe_mem_locInt (p : Ideal (𝓞 E)) [p.IsPrime] (a : 𝓞 E) : (a : E) ∈ locInt p :=
   ⟨1, one_nmem p, a, by simp⟩
@@ -150,7 +151,8 @@ theorem frE_add {n : ℕ} (f h : Fin n → S.V) (A : Matrix (Fin n) (Fin n) E) (
 
 theorem frE_map {n : ℕ} (β : S.V ≃ₗ[E] S.V) (f : Fin n → S.V) (A : Matrix (Fin n) (Fin n) E) (b : Fin n) :
     β (frE f A b) = frE (fun a => β (f a)) A b := by
-  simp only [frE, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [frE, map_sum, map_smul]
 
 def UT {n : ℕ} (A : Matrix (Fin n) (Fin n) E) : Prop := (∀ a b, b < a → A a b = 0) ∧ ∀ a, A a a = 1
 

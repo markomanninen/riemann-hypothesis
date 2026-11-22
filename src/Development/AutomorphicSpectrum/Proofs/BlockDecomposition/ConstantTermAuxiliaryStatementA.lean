@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdelicGLn
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicGLIwasawaDecompositionStandardParabolic
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUnipLevIntegral
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdelicGLn
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicGLIwasawaDecompositionStandardParabolic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUnipLevIntegral
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -18,7 +22,7 @@ theorem map_unip {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) {a r : �
   ext i j
   change f ((1 + nilM x : Matrix (Fin a) (Fin a) R) i j) =
     (1 + nilM (fun p => f (x p)) : Matrix (Fin a) (Fin a) S) i j
-  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add]
+  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add (f := _)]
   split_ifs <;> simp
 
 theorem map_lev {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (r s : ℕ)
@@ -28,7 +32,18 @@ theorem map_lev {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (r s : �
   apply Units.ext
   ext i j
   change f (((lev R r s m : GL (Fin (r + s)) R) : Matrix _ _ R) i j) = ((lev S r s _ : GL (Fin (r + s)) S) : Matrix _ _ S) i j
-  rw [lev, lev, GlobalTheory.SmGL.val_emb₂, GlobalTheory.SmGL.val_emb₂]
+  have val_emb (T : Type) [CommRing T] (g : GL (Fin r) T × GL (Fin s) T) :
+      (GlobalTheory.SmGL.emb₂ T (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) g : Matrix _ _ T) =
+        Matrix.reindex (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
+          (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) (Matrix.fromBlocks g.1.val 0 0 g.2.val) := by
+    ext i j
+    obtain ⟨i, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective i
+    obtain ⟨j, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective j
+    simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply]
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp [GlobalTheory.SmGL.emb₂, GlobalTheory.SmGL.leviEmb,
+        GlobalTheory.SmGL.leviTwo, GlobalTheory.SmGL.two, Matrix.blockDiagonal'_apply]
+  rw [lev, lev, val_emb, val_emb]
   obtain ⟨i, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective i
   obtain ⟨j, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective j
   rcases i with i | i <;> rcases j with j | j <;> simp
@@ -45,7 +60,7 @@ theorem exists_finset_cover (E : Type) [Field E] [NumberField E] (n : ℕ) (L : 
   obtain ⟨t, ht, hl⟩ := Set.mem_iUnion₂.1 (hT hc)
   exact ⟨t, ht, t⁻¹ * c, hl, by group⟩
 
-theorem iwasawa_finite_cosets : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (L : Subgroup (GL (Fin (r + s)) (Af E))), IsOpen (L : Set (GL (Fin (r + s)) (Af E))) → ∃ T : Finset (GL (Fin (r + s)) (Af E)), ∀ g : GA E (r + s), ∃ (x : BlockIx (r + s) r → Ad E) (m : GA E r × GA E s) (t : GL (Fin (r + s)) (Af E)) (k : Kinf E (r + s)) (l : GL (Fin (r + s)) (Af E)), t ∈ T ∧ l ∈ L ∧ g = unip x * lev (Ad E) r s m * finGL E (r + s) t * infGL E (r + s) (Unitary.toUnits k) * finGL E (r + s) l := by
+theorem iwasawa_finite_cosets : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (L : Subgroup (GL (Fin (r + s)) (Af E))), IsOpen (L : Set (GL (Fin (r + s)) (Af E))) → ∃ T : Finset (GL (Fin (r + s)) (Af E)), ∀ g : GA E (r + s), ∃ (x : BlockIx (r + s) r → Ad E) (m : GA E r × GA E s) (t : GL (Fin (r + s)) (Af E)) (k : Kinf E (r + s)) (l : GL (Fin (r + s)) (Af E)), t ∈ T ∧ l ∈ L ∧ g = unip x * lev (Ad E) r s m * finGL E (r + s) t * infGL E (r + s) (Unitary.toUnits k) * finGL E (r + s) l := by
   intro E _ _ _ r s L hL
   obtain ⟨T, hT⟩ := exists_finset_cover E (r + s) L hL
   refine ⟨T, fun g => ?_⟩
@@ -61,10 +76,10 @@ theorem iwasawa_finite_cosets : ∀ (E : Type) [Field E] [NumberField E] [IsTota
   obtain ⟨xf, mf, c, hc, hf⟩ := IwaFin.exists_unip_lev_integral E r s (GeneralLinearGroup.map (pFin E) g)
   obtain ⟨t, ht, l, hl, rfl⟩ := hT c hc
   have e1 : ∀ p, pInf E (sInf E (xi p) + sFin E (xf p)) = xi p := fun p => by
-    rw [map_add, show pInf E (sInf E (xi p)) = xi p from (infEq E).symm_apply_apply _,
+    rw [map_add (f := _), show pInf E (sInf E (xi p)) = xi p from (infEq E).symm_apply_apply _,
       show pInf E (sFin E (xf p)) = 0 from map_zero (infEq E).symm, add_zero]
   have e2 : ∀ p, pFin E (sInf E (xi p) + sFin E (xf p)) = xf p := fun p => by
-    rw [map_add, show pFin E (sInf E (xi p)) = 0 from rfl, show pFin E (sFin E (xf p)) = xf p from rfl, zero_add]
+    rw [map_add (f := _), show pFin E (sInf E (xi p)) = 0 from rfl, show pFin E (sFin E (xf p)) = xf p from rfl, zero_add]
   refine ⟨fun p => sInf E (xi p) + sFin E (xf p),
     (infGL E r mi.1 * finGL E r mf.1, infGL E s mi.2 * finGL E s mf.2), t, k, l, ht, hl, ga_ext ?_ ?_⟩
   · simp only [map_mul, map_unip, map_lev, e1, pInf_infGL, pInf_finGL, mul_one, one_mul]

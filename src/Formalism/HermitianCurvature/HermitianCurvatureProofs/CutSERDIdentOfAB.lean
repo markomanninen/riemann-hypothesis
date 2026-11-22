@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BXiAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BXiAsm
+
+@[expose] public section
 
 open MeasureTheory
 

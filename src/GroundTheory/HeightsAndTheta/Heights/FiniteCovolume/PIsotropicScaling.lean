@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsVectorOrbits
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsVectorOrbits
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -29,12 +33,12 @@ theorem scalingMap_zero : scalingMap h v w 0 0 = LinearMap.id := by
 
 theorem pairing_left (hww : h.toSesq w w = 0) (hwv : h.toSesq w v = 1) (α β : E) (x : W) :
     h.toSesq w (scalingMap h v w α β x) = (1 + α) * h.toSesq w x := by
-  rw [scalingMap_apply, map_add, map_add, map_smul, map_smul, hwv, hww, smul_eq_mul, smul_eq_mul]
+  rw [scalingMap_apply, map_add (f := _), map_add (f := _), map_smul, map_smul, hwv, hww, smul_eq_mul, smul_eq_mul]
   ring
 
 theorem pairing_right (hvv : h.toSesq v v = 0) (hvw : h.toSesq v w = 1) (α β : E) (x : W) :
     h.toSesq v (scalingMap h v w α β x) = (1 + β) * h.toSesq v x := by
-  rw [scalingMap_apply, map_add, map_add, map_smul, map_smul, hvv, hvw, smul_eq_mul, smul_eq_mul]
+  rw [scalingMap_apply, map_add (f := _), map_add (f := _), map_smul, map_smul, hvv, hvw, smul_eq_mul, smul_eq_mul]
   ring
 
 variable (hvv : h.toSesq v v = 0) (hww : h.toSesq w w = 0) (hvw : h.toSesq v w = 1)
@@ -57,7 +61,7 @@ theorem scalingMap_isometry {α β : E} (hαβ : α + conj F E β + α * conj F 
   have hxv : h.toSesq x v = conj F E (h.toSesq v x) := (h.isSymm.eq v x).symm
   have hxw : h.toSesq x w = conj F E (h.toSesq w x) := (h.isSymm.eq w x).symm
   rw [scalingMap_apply, scalingMap_apply]
-  simp only [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, map_smul, LinearMap.smul_apply,
+  simp only [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, map_smul, LinearMap.smul_apply,
     smul_eq_mul, hvv, hww, hvw, hwv, hxv, hxw, hc, map_mul]
   linear_combination (h.toSesq w y * conj F E (h.toSesq v x)) * hαβ +
     (h.toSesq v y * conj F E (h.toSesq w x)) * hαβ'
@@ -104,8 +108,8 @@ theorem conj_mem_integralClosure {z : E}
     (hz : z ∈ integralClosure ℤ E) : conj F E z ∈ integralClosure ℤ E :=
   IsIntegral.map ((conj F E : E ≃ₐ[F] E) : E →+* E).toIntAlgHom hz
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem scalingMap_mem (h : HermitianForm F E W) {La : AddSubgroup W} (hLa : IsLattice E La)
     (hint : IsIntegralOn h La) {v w : W} (hv : v ∈ La) {N : ℕ} (hNw : N • w ∈ La)
     {u : (𝓞 E)ˣ} (hu : u ∈ congruenceUnits E N) {x : W} (hx : x ∈ La) :

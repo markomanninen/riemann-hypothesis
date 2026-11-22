@@ -1,8 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.UpperTriangularPlaces.OrdinaryFlagThree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.UpperTriangularPlaces.PotOfUnl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.WeakOfAtt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.WeightInfinitesimalCharacters.BlockValuationRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.LinkedUnlEOf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.UpperTriangularPlaces.OrdinaryFlagThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.UpperTriangularPlaces.PotOfUnl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.WeakOfAtt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.WeightInfinitesimalCharacters.AdmissibleUnitaryThreePoint
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.IsIrrOfMatIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.MatrixIrreducibility.IrrOfMatIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.LevelRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.DotProductSymmetry.PotentiallyCrystallineContragredient
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.DotProductSymmetry.PotentiallyCrystallineCompConjugation
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.LinkedUnlEOf
+
+@[expose] public section
 
 attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDomain UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing
 
@@ -163,13 +172,13 @@ private theorem theta_upper {k : Type} [Field k] (b : GL (Fin 3) k) (hb : b.val.
     exact hc (show id i.rev < id j.rev from Fin.rev_lt_rev.2 hij)
   · rw [he, hd]
 
-private theorem conj_left_pos {k : Type} [CommRing k] (x y : GG 3 k) (h1 : x.right = 1) (h2 : y.right = 1) :
+private theorem conj_left_pos {k : Type} [CommRing k] (x y : GG (m := 3) (R := k)) (h1 : x.right = 1) (h2 : y.right = 1) :
     (x * y * x⁻¹).left = x.left * y.left * x.left⁻¹ := by
-  simp [SemidirectProduct.mul_left, SemidirectProduct.inv_left, h1, h2, sgnAct_one]
+  simp [SemidirectProduct.mul_left, SemidirectProduct.inv_left, h1, h2]
 
-private theorem conj_left_neg {k : Type} [CommRing k] (x y : GG 3 k) (h1 : x.right = -1) (h2 : y.right = 1) :
+private theorem conj_left_neg {k : Type} [CommRing k] (x y : GG (m := 3) (R := k)) (h1 : x.right = -1) (h2 : y.right = 1) :
     (x * y * x⁻¹).left = x.left * theta y.left * x.left⁻¹ := by
-  simp [SemidirectProduct.mul_left, SemidirectProduct.inv_left, h1, h2, sgnAct_neg_one, sgnAct_one, theta_theta]
+  simp [SemidirectProduct.mul_left, SemidirectProduct.inv_left, h1, h2, sgnAct_neg_one, theta_theta]
 
 section Mv
 
@@ -222,7 +231,7 @@ section Move
 variable {Ω K : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] [Field K] [NumberField K] [Algebra K Ω] [IsAlgClosure K Ω]
   {l : ℕ} [Fact l.Prime]
 
-private theorem move_link (ρ : G K Ω →* GL (Fin 3) (Qbar l)) (R : G ℚ Ω →* GG 3 (Qbar l))
+private theorem move_link (ρ : G K Ω →* GL (Fin 3) (Qbar l)) (R : G ℚ Ω →* GG (m := 3) (R := Qbar l))
     (hρ : ∀ s, ρ s = (R (galEmb ℚ K Ω s)).left) (hK : ∀ s, (R (galEmb ℚ K Ω s)).right = 1)
     (hN : (galOf ℚ K Ω).Normal) (T : Subgroup (G ℚ Ω)) (u : G ℚ Ω) (hT : ∀ s ∈ T, u * s * u⁻¹ ∈ T)
     (P P' : ValuationSubring Ω) (hP : ∀ x, x ∈ P' ↔ u x ∈ P)
@@ -276,16 +285,16 @@ private theorem move_link (ρ : G K Ω →* GL (Fin 3) (Qbar l)) (R : G ℚ Ω �
           simp [trInv_val]
         map_mul' := fun a b => by rw [map_mul, map_mul, trInv_mul] }
     have h2 : Af.PotCrysAt r₂ P' := UpperTheory.potentiallyCrystalline_contragredient (ρ.comp c.toMonoidHom) r₂ P' (fun s => rfl) h1
-    have hJ : (Jgl (Qbar l) 3)⁻¹ = Jgl (Qbar l) 3 := inv_eq_of_mul_eq_one_left Jgl_mul_Jgl
+    have hJ : (Jgl (R := Qbar l) 3)⁻¹ = Jgl (R := Qbar l) 3 := inv_eq_of_mul_eq_one_left Jgl_mul_Jgl
     have t : ∀ x : GL (Fin 3) (Qbar l), theta x = thetaAut 3 (Qbar l) x := fun _ => rfl
-    refine ⟨h2.of_iso ⟨(theta (R u).left)⁻¹ * Jgl _ 3, fun s => ?_⟩, _, flag_minus ρ c.toMonoidHom _ _ hd κ hf _ ha,
+    refine ⟨h2.of_iso ⟨(theta (R u).left)⁻¹ * Jgl (R := Qbar l) 3, fun s => ?_⟩, _, flag_minus ρ c.toMonoidHom _ _ hd κ hf _ ha,
       j.rev, i.rev, fun s hs => ?_⟩
     · have h3 : theta (ρ (c s)) = theta (R u).left * ρ s * (theta (R u).left)⁻¹ := by
         have := congrArg theta (ha s)
         simp only [t, map_mul, map_inv] at this ⊢
         simp only [← t, theta_theta] at this ⊢
         exact this
-      have h4 : theta (ρ (c s)) = Jgl _ 3 * r₂ s * Jgl _ 3 := rfl
+      have h4 : theta (ρ (c s)) = Jgl (R := Qbar l) 3 * r₂ s * Jgl (R := Qbar l) 3 := rfl
       rw [_root_.mul_inv_rev, inv_inv, hJ]
       calc ρ s = (theta (R u).left)⁻¹ * (theta (R u).left * ρ s * (theta (R u).left)⁻¹) * theta (R u).left := by group
         _ = _ := by rw [← h3, h4]; simp only [mul_assoc]
@@ -304,7 +313,7 @@ attribute [local instance 10000] IsDiscreteValuationRing.toIsLocalRing
 
 set_option maxHeartbeats 400000 in
 private theorem UpperTheory.V.Z.Keep.KatoThreePlus.main :
-    Loc.LocalPublishedTheorems → ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) [CharP (ResidueField c.O) l] (N : ℕ) [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (η : G ℚ Ω →* ℤˣ) (σ g₁ : G ℚ Ω) (B : ValuationSubring Ω) (M : ℕ), Pr.LinkHyp c N e η σ B M → ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] [Algebra L Ω] [IsAlgClosure L Ω] (Φ : Fr.Frame l (ResidueField c.O)) (C₀ : ℕ) (k : Pr.GalLink η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B M L Φ), Φ.Ok C₀ → UnlPt k → ∀ (A : Subalgebra c.O (PadicAlgCl l)) [IsDiscreteValuationRing A] [Module.Finite c.O A] (r : G ℚ Ω →* GG 3 A), Pr.OrdPt l η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B r → (∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ η.ker → MatIrr U (mats (UnitaryThreeInertia.push A.val r))) → ∀ (K : Type) [Field K] [NumberField K] [IsCMField K] [Algebra K Ω] [IsAlgClosure K Ω], η.ker = galOf ℚ K Ω → ∀ [Algebra K L] [IsScalarTower K L Ω] (ρ : G K Ω →* GL (Fin 3) (Qbar l)), (∀ s, (ρ s).val = (UnitaryThreeInertia.push A.val r (galEmb ℚ K Ω s)).mat) → Z.Win.Keeps ρ L := by
+    Loc.LocalPublishedTheorems → ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) [CharP (ResidueField c.O) l] (N : ℕ) [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (η : G ℚ Ω →* ℤˣ) (σ g₁ : G ℚ Ω) (B : ValuationSubring Ω) (M : ℕ), Pr.LinkHyp c N e η σ B M → ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] [Algebra L Ω] [IsAlgClosure L Ω] (Φ : Fr.Frame l (ResidueField c.O)) (C₀ : ℕ) (k : Pr.GalLink η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B M L Φ), Φ.Ok C₀ → UnlPt k → ∀ (A : Subalgebra c.O (PadicAlgCl l)) [IsDiscreteValuationRing A] [Module.Finite c.O A] (r : G ℚ Ω →* GG (m := 3) (R := A)), Pr.OrdPt l η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B r → (∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ η.ker → MatIrr U (mats (UnitaryThreeInertia.push A.val r))) → ∀ (K : Type) [Field K] [NumberField K] [IsCMField K] [Algebra K Ω] [IsAlgClosure K Ω], η.ker = galOf ℚ K Ω → ∀ [Algebra K L] [IsScalarTower K L Ω] (ρ : G K Ω →* GL (Fin 3) (Qbar l)), (∀ s, (ρ s).val = (UnitaryThreeInertia.push A.val r (galEmb ℚ K Ω s)).mat) → Z.Win.Keeps ρ L := by
   intro hLP Ω _ _ _ l _ c _ N _ e ψ η σ g₁ B M H L _ _ _ _ _ Φ C₀ k hok hU A _ _ r hr hirr K _ _ _ _ _ hker _ _ ρ hρ
     w hw hU1 Q hQ
   obtain ⟨-, hloc, hcont⟩ := UpperTheory.V.Th.End3.sub_facts c A
@@ -330,7 +339,153 @@ private theorem UpperTheory.V.Z.Keep.KatoThreePlus.main :
     rw [IsScalarTower.algebraMap_apply K L Ω]
     exact hQ (algebraMap (𝓞 K) (𝓞 L) x)
 
-  obtain ⟨P₀, hP₀, κ₀, hκ₀⟩ := Z.Keep.ordFlag3 Ω l c N e ψ η σ g₁ B M H L Φ C₀ k hok A r hr K hker ρ hρ _ hv0
+  have hOrd : ∃ P₀ : ValuationSubring Ω, IsPlaceOver P₀ (w.under (𝓞 K)) ∧
+      ∃ κ₀, Af.FlagAt N ![(e : ℤ), 0, -(e : ℤ)] ρ P₀ κ₀ := by
+    have chars_of_tri {H k : Type} [Group H] [Field k] (T : H →* GL (Fin 3) k)
+        (tri : ∀ s, (T s).val.BlockTriangular id) :
+        ∃ κ : Fin 3 → H →* kˣ, ∀ s i, ((κ i s : kˣ) : k) = (T s).val i i := by
+      let d : Fin 3 → H →* k := fun i =>
+        { toFun := fun s => (T s).val i i
+          map_one' := by simp
+          map_mul' := fun a b => by
+            rw [map_mul, Units.val_mul]
+            exact KatoThreePlus.diag_mul _ _ (tri a) (tri b) i }
+      exact ⟨fun i => (d i).toHomUnits, fun s i => by simp [d]⟩
+
+    have weight_rev_eq_neg (i : Fin 3) : wt1 i.rev = - wt1 i := by
+      fin_cases i <;> simp [wt1, Fin.rev]
+
+    have conj_left {D A : Type} [Group D] [CommRing A] (h : GL (Fin 3) A) (r : D →* GG (m := 3) (R := A)) (s : D)
+        (hs : (r s).right = 1) : (conjBy h⁻¹ r s).left = h⁻¹ * (r s).left * h := by
+      simp [conjBy, hs]
+
+    have flag_core {Γ Δ k : Type} [Group Γ] [Group Δ] [Field k] (R : Γ →* GG (m := 3) (R := k)) (ι : Δ →* Γ)
+        (ρ : Δ →* GL (Fin 3) k) (hρ : ∀ s, ρ s = (R (ι s)).left) (hK : ∀ s, (R (ι s)).right = 1)
+        (H : Subgroup Δ) (I : Set Δ) (t : Γ) (b : GL (Fin 3) k) (c : Δ →* kˣ)
+        (tri : ∀ s ∈ H, (b * (R (t⁻¹ * ι s * t)).left * b⁻¹ : GL (Fin 3) k).val.BlockTriangular id)
+        (ine : ∀ s ∈ H, s ∈ I → ∀ i, (b * (R (t⁻¹ * ι s * t)).left * b⁻¹ : GL (Fin 3) k).val i i = ((c s ^ wt1 i : kˣ) : k)) :
+        ∃ κ : Fin 3 → ↥H →* kˣ, Af.IsFlagOn ρ H κ ∧ ∀ i (s : ↥H), (s : Δ) ∈ I → κ i s = c s ^ wt1 i := by
+      have hY : ∀ s, (R (t⁻¹ * ι s * t)).right = 1 := fun s => by
+        have e : ∀ x, (R x).right = (GG.nu (R x)) := fun _ => rfl
+        rw [e, map_mul, map_mul, map_mul, map_mul, map_inv, map_inv, ← e (ι s), hK]
+        simp
+      have hc : ∀ s, R (ι s) = R t * R (t⁻¹ * ι s * t) * (R t)⁻¹ := fun s => by
+        rw [← map_inv, ← map_mul, ← map_mul]
+        congr 1
+        group
+
+      suffices hs : ∃ P : GL (Fin 3) k, ∃ f : GL (Fin 3) k →* GL (Fin 3) k,
+          (∀ s, P * ρ s * P⁻¹ = f (b * (R (t⁻¹ * ι s * t)).left * b⁻¹)) ∧
+          (∀ x : GL (Fin 3) k, x.val.BlockTriangular id → (f x).val.BlockTriangular id) ∧
+          (∀ x : GL (Fin 3) k, x.val.BlockTriangular id → ∀ y : kˣ, (∀ i, x.val i i = ((y ^ wt1 i : kˣ) : k)) →
+            ∀ i, (f x).val i i = ((y ^ wt1 i : kˣ) : k)) by
+        obtain ⟨P, f, h1, h2, h3⟩ := hs
+        let T : ↥H →* GL (Fin 3) k := (MulAut.conj P).toMonoidHom.comp (ρ.comp H.subtype)
+        have hT : ∀ s : ↥H, T s = f (b * (R (t⁻¹ * ι s * t)).left * b⁻¹) := fun s => h1 s
+        obtain ⟨κ, hκ⟩ := chars_of_tri T fun s => by
+          rw [hT]
+          exact h2 _ (tri s s.2)
+        refine ⟨κ, ⟨P, fun s => ⟨fun i j hij => ?_, fun i => ?_⟩⟩, fun i s hs => Units.ext ?_⟩
+        · have : (T s).val.BlockTriangular id := by
+            rw [hT]
+            exact h2 _ (tri s s.2)
+          exact this hij
+        · exact (hκ s i).symm
+        · rw [hκ, hT]
+          exact h3 _ (tri s s.2) _ (ine s s.2 hs) i
+      rcases Int.units_eq_one_or (R t).right with ht | ht
+      · refine ⟨b * (R t).left⁻¹, MonoidHom.id _, fun s => ?_, fun x h => h, fun x _ y h => h⟩
+        have e1 : ρ s = (R t).left * (R (t⁻¹ * ι s * t)).left * (R t).left⁻¹ :=
+          (hρ s).trans ((congrArg (·.left) (hc s)).trans (KatoThreePlus.conj_left_pos _ _ ht (hY s)))
+        rw [e1, MonoidHom.id_apply]
+        group
+      · refine ⟨theta b * (R t).left⁻¹, thetaAut 3 k, fun s => ?_, fun x h => (KatoThreePlus.theta_upper x h).1, fun x hx y h i => ?_⟩
+        · have e1 : ρ s = (R t).left * theta (R (t⁻¹ * ι s * t)).left * (R t).left⁻¹ :=
+            (hρ s).trans ((congrArg (·.left) (hc s)).trans (KatoThreePlus.conj_left_neg _ _ ht (hY s)))
+          have e2 : ∀ x y : GL (Fin 3) k, theta (x * y * x⁻¹) = theta x * theta y * (theta x)⁻¹ := fun x y => by
+            have e : ∀ x : GL (Fin 3) k, theta x = thetaAut 3 k x := fun _ => rfl
+            simp only [e, map_mul, map_inv]
+          show _ = theta (b * (R (t⁻¹ * ι s * t)).left * b⁻¹)
+          rw [e1, e2]
+          group
+        · show (theta x).val i i = _
+          rw [(KatoThreePlus.theta_upper x hx).2, h, weight_rev_eq_neg]
+          simp
+
+    obtain ⟨P, hP⟩ := ReciprocityTheory.Gal.exists_isPlaceOver Ω (w.under (𝓞 K))
+    refine ⟨P, hP, ?_⟩
+    have hPl : P.valuation (l : Ω) < 1 := by
+      have := hP ((l : ℕ) : 𝓞 K)
+      simp only [map_natCast] at this
+      exact this.2 hv0
+    obtain ⟨v, u, -, hPv⟩ := (k.pl_all P hPl).exists
+    obtain ⟨γ, -, hpl⟩ := k.pl_conj v
+    have hPt : P = (u * γ) • B := by rw [hPv, hpl, mul_smul]
+    generalize u * γ = t at hPt
+    have hA : ∀ x, t.toRingEquiv x ∈ P ↔ x ∈ B := fun x => by
+      rw [hPt]
+      exact ValuationSubring.smul_mem_pointwise_smul_iff (g := t)
+    have hL : IsLift (RingEquiv.refl ℚ) t.toRingEquiv := fun x => t.commutes x
+    have hcg : ∀ g : G ℚ Ω, conjGal hL g = t⁻¹ * g * t := fun _ => rfl
+    have hη : ∀ s, η (t⁻¹ * galEmb ℚ K Ω s * t) = 1 := fun s => by
+      rw [map_mul, map_mul, map_inv, show η (galEmb ℚ K Ω s) = 1 from hmem s, mul_one, inv_mul_cancel]
+    have hdec : ∀ s ∈ Dec (F := K) P, t⁻¹ * galEmb ℚ K Ω s * t ∈ Dec (F := ℚ) B := fun s hs =>
+      hcg _ ▸ conjGal_mem_Dec hL hA (show galEmb ℚ K Ω s ∈ Dec (F := ℚ) P from hs)
+    have hine : ∀ s ∈ Ine (F := K) P, t⁻¹ * galEmb ℚ K Ω s * t ∈ Ine (F := ℚ) B := fun s hs =>
+      hcg _ ▸ conjGal_mem_Ine hL hA (show galEmb ℚ K Ω s ∈ Ine (F := ℚ) P from hs)
+    obtain ⟨h, -, tri, ine⟩ := hr.ord
+    let f : A →+* Qbar l := (A.val : A →+* PadicAlgCl l)
+    let h' : GL (Fin 3) (Qbar l) := Matrix.GeneralLinearGroup.map f h
+    let a : (c.O)ˣ →* (Qbar l)ˣ := Units.map (algebraMap c.O (Qbar l)).toMonoidHom
+    let d : G K Ω →* (Qbar l)ˣ := a.comp ((Chr.dirG ℚ Ω ψ).comp (galEmb ℚ K Ω))
+    let cc : G K Ω →* (Qbar l)ˣ := a.comp ((Chr.Psi l e (Chr.dirG ℚ Ω ψ)).comp (galEmb ℚ K Ω))
+    have hent : ∀ s (hs : s ∈ Dec (F := K) P) i j,
+        (h'⁻¹ * (UnitaryThreeInertia.push A.val r (t⁻¹ * galEmb ℚ K Ω s * t)).left * h'⁻¹⁻¹ : GL (Fin 3) (Qbar l)).val i j =
+          f ((conjBy h⁻¹ (r.comp (Dec (F := ℚ) B).subtype) ⟨_, hdec s hs⟩).mat i j) := fun s hs i j => by
+      have e1 : (r (t⁻¹ * galEmb ℚ K Ω s * t)).right = 1 := (hr.red.mult _).trans (hη s)
+      have e2 := conj_left h (r.comp (Dec (F := ℚ) B).subtype) ⟨_, hdec s hs⟩ e1
+      have e3 : (UnitaryThreeInertia.push A.val r (t⁻¹ * galEmb ℚ K Ω s * t)).left =
+        Matrix.GeneralLinearGroup.map f (r (t⁻¹ * galEmb ℚ K Ω s * t)).left := rfl
+      rw [GG.mat, e2, e3, inv_inv]
+      have e4 : h'⁻¹ * Matrix.GeneralLinearGroup.map f (r (t⁻¹ * galEmb ℚ K Ω s * t)).left * h' =
+        Matrix.GeneralLinearGroup.map f (h⁻¹ * (r (t⁻¹ * galEmb ℚ K Ω s * t)).left * h) := by
+        simp only [h', map_mul, map_inv]
+      rw [e4]
+      rfl
+    obtain ⟨κ, hf, hκ⟩ := flag_core (UnitaryThreeInertia.push A.val r) (galEmb ℚ K Ω) ρ hρ'
+      hK (Dec (F := K) P) (Ine (F := K) P : Set (G K Ω)) t h'⁻¹ cc
+      (fun s hs i j hij => by
+        rw [hent s hs]
+        have hij' : (j : ℕ) < i := hij
+        rw [tri ⟨_, hdec s hs⟩ (hη s) i j (by simp only [wt, wt1]; omega), map_zero])
+      (fun s hs hi i => by
+        rw [hent s hs]
+        have := ine ⟨_, hdec s hs⟩ (Subgroup.mem_subgroupOf.2 (hine s hi)) (hη s) i
+        rw [this]
+        have hx : Chr.Psi l e (Chr.dirG ℚ Ω ψ) (t⁻¹ * galEmb ℚ K Ω s * t) = Chr.Psi l e (Chr.dirG ℚ Ω ψ) (galEmb ℚ K Ω s) := by
+          rw [map_mul, map_mul, map_inv, mul_comm _ (Chr.Psi l e (Chr.dirG ℚ Ω ψ) t), mul_inv_cancel_left]
+        have e1 : cc s ^ wt1 i = a (Chr.Psi l e (Chr.dirG ℚ Ω ψ) (t⁻¹ * galEmb ℚ K Ω s * t) ^ wt1 i) := by
+          rw [hx, map_zpow]
+          rfl
+        rw [e1]
+        exact A.val.commutes _)
+    have hm : ∀ i : Fin 3, ![(e : ℤ), 0, -(e : ℤ)] i = (e : ℤ) * wt1 i := fun i => by
+      fin_cases i <;> simp [wt1]
+    have hcc : ∀ s, cc s = cycBar K Ω l s ^ (e : ℤ) * d s := fun s => by
+      have e1 : a (chiO ℚ Ω l c.O (galEmb ℚ K Ω s)) = cycBar K Ω l s := Units.ext rfl
+      show a (Chr.Psi l e (Chr.dirG ℚ Ω ψ) (galEmb ℚ K Ω s)) = _
+      rw [Chr.Psi, MonoidHom.mul_apply, map_mul, MonoidHom.zpow_apply, map_zpow, e1]
+      rfl
+    refine ⟨κ, fun i => d ^ wt1 i, fun i s hs => ?_, hf, fun i s hs => ?_⟩
+    · have hd : d s = 1 := by
+        have hcls : Chr.cls ℚ Ω N (galEmb ℚ K Ω s) = 1 := by
+          refine (Chr.clsFacts ℚ Ω N).2.2.1 _ 1 fun ζ hζ => ?_
+          rw [Units.val_one, ZMod.val_one_eq_one_mod, ← pow_eq_pow_mod 1 hζ, pow_one, galEmb_apply]
+          exact hs ζ hζ
+        simp [d, Chr.dirG, hcls]
+      rw [MonoidHom.zpow_apply, hd, one_zpow]
+    · rw [hκ i s hs, hcc, mul_zpow, ← zpow_mul, hm, MonoidHom.zpow_apply]
+  obtain ⟨P₀, hP₀, κ₀, hκ₀⟩ := hOrd
   obtain ⟨κ₁, hf₁, hu₁⟩ := hU1 P₀ hP₀
   have hf₀ : Af.IsFlagOn ρ (Dec (F := K) P₀) κ₀ := by
     obtain ⟨_, _, h, _⟩ := hκ₀
@@ -461,10 +616,10 @@ private theorem UpperTheory.V.Z.Keep.KatoThreePlus.main :
 end
 
 theorem UpperTheory.V.Z.Keep.keeps3P :
-    Loc.LocalPublishedTheorems → ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) [CharP (ResidueField c.O) l] (N : ℕ) [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (η : G ℚ Ω →* ℤˣ) (σ g₁ : G ℚ Ω) (B : ValuationSubring Ω) (M : ℕ), Pr.LinkHyp c N e η σ B M → ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] [Algebra L Ω] [IsAlgClosure L Ω] (Φ : Fr.Frame l (ResidueField c.O)) (C₀ : ℕ) (k : Pr.GalLink η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B M L Φ), Φ.Ok C₀ → UnlPt k → ∀ (A : Subalgebra c.O (PadicAlgCl l)) [IsDiscreteValuationRing A] [Module.Finite c.O A] (r : G ℚ Ω →* GG 3 A), Pr.OrdPt l η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B r → (∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ η.ker → MatIrr U (mats (UnitaryThreeInertia.push A.val r))) → ∀ (K : Type) [Field K] [NumberField K] [IsCMField K] [Algebra K Ω] [IsAlgClosure K Ω], η.ker = galOf ℚ K Ω → ∀ [Algebra K L] [IsScalarTower K L Ω] (ρ : G K Ω →* GL (Fin 3) (Qbar l)), (∀ s, (ρ s).val = (UnitaryThreeInertia.push A.val r (galEmb ℚ K Ω s)).mat) → Z.Win.Keeps ρ L :=
+    Loc.LocalPublishedTheorems → ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) [CharP (ResidueField c.O) l] (N : ℕ) [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (η : G ℚ Ω →* ℤˣ) (σ g₁ : G ℚ Ω) (B : ValuationSubring Ω) (M : ℕ), Pr.LinkHyp c N e η σ B M → ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] [Algebra L Ω] [IsAlgClosure L Ω] (Φ : Fr.Frame l (ResidueField c.O)) (C₀ : ℕ) (k : Pr.GalLink η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B M L Φ), Φ.Ok C₀ → UnlPt k → ∀ (A : Subalgebra c.O (PadicAlgCl l)) [IsDiscreteValuationRing A] [Module.Finite c.O A] (r : G ℚ Ω →* GG (m := 3) (R := A)), Pr.OrdPt l η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B r → (∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ η.ker → MatIrr U (mats (UnitaryThreeInertia.push A.val r))) → ∀ (K : Type) [Field K] [NumberField K] [IsCMField K] [Algebra K Ω] [IsAlgClosure K Ω], η.ker = galOf ℚ K Ω → ∀ [Algebra K L] [IsScalarTower K L Ω] (ρ : G K Ω →* GL (Fin 3) (Qbar l)), (∀ s, (ρ s).val = (UnitaryThreeInertia.push A.val r (galEmb ℚ K Ω s)).mat) → Z.Win.Keeps ρ L :=
   UpperTheory.V.Z.Keep.KatoThreePlus.main
 
 theorem UpperTheory.V.Z.Keep.keeps3E :
-    Loc.LocalPublishedTheorems → LinkedUnlE → ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) [CharP (ResidueField c.O) l] (N : ℕ) [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (η : G ℚ Ω →* ℤˣ) (σ g₁ : G ℚ Ω) (B : ValuationSubring Ω) (M : ℕ), Pr.LinkHyp c N e η σ B M → Even N → ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] [Algebra L Ω] [IsAlgClosure L Ω] (Φ : Fr.Frame l (ResidueField c.O)) (C₀ : ℕ) (k : Pr.GalLink η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B M L Φ), Φ.Ok C₀ → Φ.Big C₀ → Pr.SeedClause c η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ L → ∀ (A : Subalgebra c.O (PadicAlgCl l)) [IsDiscreteValuationRing A] [Module.Finite c.O A] (r : G ℚ Ω →* GG 3 A), Pr.OrdPt l η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B r → (∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ η.ker → MatIrr U (mats (UnitaryThreeInertia.push A.val r))) → ∀ (K : Type) [Field K] [NumberField K] [IsCMField K] [Algebra K Ω] [IsAlgClosure K Ω], η.ker = galOf ℚ K Ω → ∀ [Algebra K L] [IsScalarTower K L Ω] (ρ : G K Ω →* GL (Fin 3) (Qbar l)), (∀ s, (ρ s).val = (UnitaryThreeInertia.push A.val r (galEmb ℚ K Ω s)).mat) → Z.Win.Keeps ρ L :=
+    Loc.LocalPublishedTheorems → LinkedUnlE → ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) [CharP (ResidueField c.O) l] (N : ℕ) [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (η : G ℚ Ω →* ℤˣ) (σ g₁ : G ℚ Ω) (B : ValuationSubring Ω) (M : ℕ), Pr.LinkHyp c N e η σ B M → Even N → ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] [Algebra L Ω] [IsAlgClosure L Ω] (Φ : Fr.Frame l (ResidueField c.O)) (C₀ : ℕ) (k : Pr.GalLink η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B M L Φ), Φ.Ok C₀ → Φ.Big C₀ → Pr.SeedClause c η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ L → ∀ (A : Subalgebra c.O (PadicAlgCl l)) [IsDiscreteValuationRing A] [Module.Finite c.O A] (r : G ℚ Ω →* GG (m := 3) (R := A)), Pr.OrdPt l η (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ B r → (∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ η.ker → MatIrr U (mats (UnitaryThreeInertia.push A.val r))) → ∀ (K : Type) [Field K] [NumberField K] [IsCMField K] [Algebra K Ω] [IsAlgClosure K Ω], η.ker = galOf ℚ K Ω → ∀ [Algebra K L] [IsScalarTower K L Ω] (ρ : G K Ω →* GL (Fin 3) (Qbar l)), (∀ s, (ρ s).val = (UnitaryThreeInertia.push A.val r (galEmb ℚ K Ω s)).mat) → Z.Win.Keeps ρ L :=
   fun hLP hU Ω _ _ _ l _ c _ N _ e ψ η σ g₁ B M H hev L _ _ _ _ _ Φ C₀ k hok hbig hseed =>
     UpperTheory.V.Z.Keep.keeps3P hLP Ω l c N e ψ η σ g₁ B M H L Φ C₀ k hok (hU Ω l c N e ψ η σ g₁ B M H hev L Φ C₀ k hok hbig hseed)

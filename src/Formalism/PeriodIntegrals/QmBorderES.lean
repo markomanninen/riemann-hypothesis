@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.QmDefs
+module
+
+public import Formalism.PeriodIntegrals.QmDefs
+
+@[expose] public section
 
 namespace PI
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem projSum_sum_embeddings_eq_trace (K : Type) [Field K] [CharZero K] (E : T
     rw [h, AlgHom.card]
   apply (algebraMap K L).injective
   have ht := trace_eq_sum_embeddings L (K := ℚ) (L := E) (x := y)
-  rw [map_sum, map_ratCast, ← eq_ratCast (algebraMap ℚ L), ht]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_ratCast, ← eq_ratCast (algebraMap ℚ L), ht]
   exact Fintype.sum_bijective f hbij _ _ (fun σ => by simp [f])
 
 theorem projSum_trace_dualInt (E : Type) [Field E] [NumberField E]
@@ -34,7 +39,8 @@ theorem projSum_trace_dualInt (E : Type) [Field E] [NumberField E]
   classical
   have h1 : (1 : E) = ∑ j, (((RingOfIntegers.basis E).repr 1 j : ℤ) : ℚ) • integralBasis E j := by
     have := congrArg (algebraMap (𝓞 E) E) ((RingOfIntegers.basis E).sum_repr 1)
-    rw [map_sum, (algebraMap (𝓞 E) E).map_one] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, (algebraMap (𝓞 E) E).map_one] at this
     refine this.symm.trans ?_
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [integralBasis_apply, map_zsmul, Int.cast_smul_eq_zsmul]
@@ -42,7 +48,8 @@ theorem projSum_trace_dualInt (E : Type) [Field E] [NumberField E]
     rw [Algebra.traceForm_apply, mul_one]
   rw [h2]
   conv_lhs => rw [h1]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, dualInt, LinearMap.BilinForm.apply_dualBasis_left]
   simp
 
@@ -54,7 +61,8 @@ theorem sum_eigProj_eq_one (K : Type) [Field K] [CharZero K] (V : Type) [AddComm
   unfold eigProj
   rw [Finset.sum_comm]
   have := congrArg ρ ((RingOfIntegers.basis E).sum_repr 1)
-  rw [map_sum, ρ.map_one] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ρ.map_one] at this
   refine Eq.trans ?_ this
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [← Finset.sum_smul, projSum_sum_embeddings_eq_trace K E h, projSum_trace_dualInt,

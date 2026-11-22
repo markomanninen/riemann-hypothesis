@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UpperDens
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UpperDens
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ENNReal NNReal

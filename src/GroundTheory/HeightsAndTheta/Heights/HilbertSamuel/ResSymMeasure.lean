@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CNormSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CNormSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -19,20 +24,20 @@ section Normalise
 
 variable {J : Type} [Fintype J]
 
-open Classical in
 
+open Classical in
 def NZAt (z : J → ℂ) (k : ℕ) : Prop :=
   ∀ h : k < Fintype.card J, z ((Fintype.equivFin J).symm ⟨k, h⟩) ≠ 0
 
 theorem exists_nzAt (z : J → ℂ) : ∃ k, NZAt z k :=
   ⟨Fintype.card J, fun h => absurd h (lt_irrefl _)⟩
 
-open Classical in
 
+open Classical in
 def idx (z : J → ℂ) : ℕ := Nat.find (exists_nzAt z)
 
-open Classical in
 
+open Classical in
 def normPt (z : J → ℂ) : J → ℂ :=
   if h : idx z < Fintype.card J then (z ((Fintype.equivFin J).symm ⟨idx z, h⟩))⁻¹ • z else z
 
@@ -279,7 +284,7 @@ theorem symMeasure_compl_pts (d : HSMDatum D Ω κ) : symMeasure d (pts (coordId
 theorem map_conjPt_symMeasure (d : HSMDatum D Ω κ) : (symMeasure d).map conjPt = symMeasure d := by
   have hm := measurable_symPt d
   have hcj : Measurable (conjPt : (Ix κ → ℂ) → Ix κ → ℂ) := continuous_conjPt.measurable
-  rw [symMeasure, Measure.map_smul, Measure.map_add _ _ hcj, Measure.map_map hcj hm,
+  rw [symMeasure, Measure.map_smul _ hcj.aemeasurable, Measure.map_add _ _ hcj, Measure.map_map hcj hm,
     Measure.map_map hcj (hcj.comp hm)]
   have : conjPt ∘ (conjPt ∘ symPt d) = symPt d := by
     funext y

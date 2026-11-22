@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementKer
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementKer
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -11,8 +15,8 @@ open Formalism.L2.Th1.GD (InMul frameM)
 open Formalism.L2.Col (Fields Sp)
 open Formalism.L2.Ker (Amb DVar)
 
-open Classical in
 
+open Classical in
 def EigenFrameDual : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (p : ℕ) [Fact p.Prime] (ι : ℂ ≃+* ℂ_[p]), ¬ (p : ℤ) ∣ NumberField.discr E →
   ∀ τ₀ : E →+* ℂ, ∃ r : Module.Free.ChooseBasisIndex ℤ (𝓞 E) → ℂ_[p], (∀ i, ‖r i‖ ≤ 1) ∧

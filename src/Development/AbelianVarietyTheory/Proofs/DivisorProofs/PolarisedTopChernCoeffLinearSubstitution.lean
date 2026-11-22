@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EndValuedForm11Coeffs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EndValuedForm11Coeffs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,8 @@ theorem det_rows_sum (x : Fin n → Fin n → ℂ) (k : Fin n → Fin n → Fin 
     simp
   rw [h]
   change (Matrix.detRowAlternating : AlternatingMap ℂ (Fin n → ℂ) ℂ (Fin n)) _ = _
-  rw [← AlternatingMap.coe_multilinearMap, MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← AlternatingMap.coe_multilinearMap, MultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [MultilinearMap.map_smul_univ, smul_eq_mul]
   rfl

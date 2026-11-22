@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -25,7 +29,8 @@ private theorem exists_equivariant_projection_onto_invariant_submodule {G M : Ty
     simp only [key, Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ]
     rw [smul_smul, inv_mul_cancel₀ (Nat.cast_ne_zero.2 Fintype.card_ne_zero), one_smul]
   · intro h x hx
-    simp only [LinearMap.smul_apply, LinearMap.sum_apply, LinearMap.comp_apply, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.smul_apply, LinearMap.sum_apply, LinearMap.comp_apply, map_smul, map_sum]
     refine congrArg (fun y => (Fintype.card G : ℂ)⁻¹ • y) ?_
     refine Fintype.sum_equiv (Equiv.mulLeft h) _ _ fun g => ?_
     simp only [Equiv.coe_mulLeft]
@@ -54,7 +59,8 @@ theorem mem_span_killed_union_averages {G M : Type} [Group G] [Fintype G] [AddCo
       rintro u ⟨c, hc, w, hw, rfl⟩
       rw [SetLike.mem_coe, Submodule.mem_comap]
       refine Submodule.subset_span ⟨fun k => c (h * k * h⁻¹), hC c hc h, π h w, hS h w hw, ?_⟩
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Fintype.sum_equiv (MulAut.conj h⁻¹).toEquiv _ _ fun g => ?_
       simp only [MulEquiv.toEquiv_eq_coe, MulEquiv.coe_toEquiv, MulAut.conj_apply, inv_inv,
         map_smul]
@@ -67,7 +73,8 @@ theorem mem_span_killed_union_averages {G M : Type} [Group G] [Fintype G] [AddCo
   have hkill : v - P v ∈ {w | w ∈ S ∧ ∀ c ∈ C, ∑ g, c g • π g w = 0} := by
     refine ⟨S.sub_mem hv hPv, fun c hc => ?_⟩
     have hA : ∑ g, c g • π g (P v) = P (∑ g, c g • π g v) := by
-      simp only [map_sum, map_smul, hPc']
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, hPc']
     simp only [map_sub, smul_sub, Finset.sum_sub_distrib, hA]
     rw [hPid _ (Submodule.subset_span ⟨c, hc, v, hv, rfl⟩), sub_self]
   have hsum := Submodule.add_mem _ (Submodule.subset_span (Set.mem_union_left _ hkill))

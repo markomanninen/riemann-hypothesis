@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -57,7 +61,7 @@ theorem evaluation_coboundary_zero_tensor (y : M ⊗[R] C0 F) :
       j n ⊗ₜ g T' - (Algebra.TensorProduct.map (AlgHom.id R' R') (mp F φ)) (j n ⊗ₜ g T)
     rw [Algebra.TensorProduct.map_tmul, TensorProduct.tmul_sub]
     rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem exists_cocycle (e : R' ⊗[R] H1 F ≃ₗ[R'] H1 (bcF F R'))
     (he : ∀ c, e (1 ⊗ₜ c) = (bcM F R').coef.pull1 c) (t : M ⊗[R] Z1 F) :
@@ -77,13 +81,13 @@ theorem exists_cocycle (e : R' ⊗[R] H1 F ≃ₗ[R'] H1 (bcF F R'))
     obtain ⟨z1, h1, h1'⟩ := hx
     obtain ⟨z2, h2, h2'⟩ := hy
     refine ⟨z1 + z2, ?_, ?_⟩
-    · simp only [Submodule.coe_add, h1, h2, map_add]
-    · simp only [map_add, h1', h2']
+    · simp only [Submodule.coe_add, h1, h2, map_add (f := _)]
+    · simp only [map_add (f := _), h1', h2']
 
 theorem lTensor_iotaQ_injective_of_retract (h : H1CommutesBaseChange F) (p : R' →ₗ[R] M) (hp : p ∘ₗ j = LinearMap.id) :
     Function.Injective ((iotaQ F).lTensor M) := by
   obtain ⟨e, he⟩ := h R' (bcF F R') (bcM F R')
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨t, rfl⟩ := LinearMap.lTensor_surjective M (H1.mk_surjective F) x
   have hcomp : iotaQ F ∘ₗ H1.mk F = (LinearMap.range (d0 F)).mkQ ∘ₗ (Z1 F).subtype :=

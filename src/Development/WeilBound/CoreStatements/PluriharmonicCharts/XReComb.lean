@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.WeilBound.CoreStatements.FlagImmersions.IntersectionMultilinearExpansion
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.WeilBound.CoreStatements.FlagImmersions.IntersectionMultilinearExpansion
+
+@[expose] public section
 
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 
@@ -89,7 +93,8 @@ private theorem II_update_combLine (hML : MetricLocalStatement) (II : Intersecti
   calc G d = Gh d := rfl
     _ = Gh (∑ a, d a • Pi.single a (1 : ℤ)) := by rw [← hd]
     _ = ∑ a, (d a : ℝ) * G (Pi.single a 1) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [map_zsmul, zsmul_eq_mul]
       rfl

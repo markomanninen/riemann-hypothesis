@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.GaloisConditionFiveExtraOf
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.GaloisConditionFiveExtraOf
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ end SumRepresentations
 end Formalism.MainNotions.N.T2
 
 namespace Formalism.MainNotions.N.T2
-open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations in
 
+open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations in
 theorem litGoodO : Formalism.MainNotions.N.LitGoodO := by
   intro l _ LL
   haveI : FiniteDimensional ℚ_[l] LL.1 := LL.2

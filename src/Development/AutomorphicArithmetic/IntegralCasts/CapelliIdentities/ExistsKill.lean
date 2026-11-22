@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk55.exists_kill.{u_1} :
     ∀ {l : ℕ} [inst : Fact (Nat.Prime l)] {H : Type u_1}

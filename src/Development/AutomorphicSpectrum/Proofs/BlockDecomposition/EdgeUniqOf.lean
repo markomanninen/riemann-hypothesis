@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.FirstChernCompatibleSystem
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.FirstChernCompatibleSystem
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -12,7 +16,7 @@ theorem edgeUniq_of : CrystallineSemistableComparison.E.StCol → CrystallineSem
   obtain ⟨z, hz, st, rfl⟩ := hx
   obtain ⟨z', hz', st', rfl⟩ := hx'
   refine ⟨⟨z + z', ?_, (hadd R C F T j z z' j 0 x x' st st').1, ?_⟩, ?_⟩
-  · rw [map_add, hz, hz', add_zero]
+  · rw [map_add (f := _), hz, hz', add_zero]
   · rfl
   · intro hv
     have st2 : T.St (z - z') j 0 (x - x') := (hadd R C F T j z z' j 0 x x' st st').2

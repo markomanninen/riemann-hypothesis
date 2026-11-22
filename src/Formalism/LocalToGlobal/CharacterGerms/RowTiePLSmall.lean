@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePLSmallCv
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePLSmallCv
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,7 +107,7 @@ theorem lg_act_nat (Y : FBChart C V O dd) (k : ℕ) (i : Fin dd) :
   | succ k ih =>
     have h1 : Y.B.A.act ((k + 1 : ℕ) : O) = addOf Y.B.G.F (Y.B.A.act (k : O)) (pt C dd 0) := by
       rw [Nat.cast_succ, Y.B.A.add_act, Y.B.A.one_act]
-    rw [h1, lg_addOf Y _ _ (act0 _) (z0_pt 0) i, ih, germEval_oneStandardPoint_self, Nat.cast_succ, map_add, map_one]
+    rw [h1, lg_addOf Y _ _ (act0 _) (z0_pt 0) i, ih, germEval_oneStandardPoint_self, Nat.cast_succ, map_add (f := _), map_one]
     ring
 
 theorem ex_lg_comp (Y : FBChart C V O dd) {n : ℕ} (φ : Pt C n dd) (hφ : ∀ j, constantCoeff (φ j) = 0) (i : Fin dd) :

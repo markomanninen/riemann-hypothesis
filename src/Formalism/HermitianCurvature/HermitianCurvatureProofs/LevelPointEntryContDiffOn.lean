@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParamCommF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParamCommF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ComplexConjugate ContDiff
@@ -61,19 +65,19 @@ theorem level_point_first_lines (k r j : ℕ) (hj : j + 1 ≤ r) (Z : Matrix (Fi
     rw [wMat_mul_apply]
     have hrev : (⟨j - a.val, by omega⟩ : Fin (j + 1)).rev = ⟨a.val, by omega⟩ := by
       ext; simp [Fin.rev]; omega
-    rw [hrev, zfull_apply, dif_pos (by simp)]
+    rw [hrev, zfull_apply, dite_eq_left (by simp)]
     by_cases h : c.val < j
-    · rw [dif_pos h, dif_pos (by omega)]
+    · rw [dite_eq_left h, dite_eq_left (by omega)]
       exact congrArg₂ Z (Fin.ext rfl) (Fin.ext hq.symm)
-    · rw [dif_neg h, dif_neg (by omega)]
+    · rw [dite_eq_right h, dite_eq_right (by omega)]
   · have hq : q.val = j + 1 + c.val := by
       have := congrArg Fin.val hy; rw [Ux4.block_index_middle_val_eq] at this; simp at this; omega
     simp only [Matrix.fromBlocks_apply₂₁, Matrix.fromCols_apply_inr, Matrix.zero_apply]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
   · have hq : q.val = j + 1 + (2 * (r - (j + 1)) + k + 1) + c.val := by
       have := congrArg Fin.val hy; rw [Ux4.block_index_last_val_eq] at this; simp at this; omega
     simp only [Matrix.fromBlocks_apply₂₂, Matrix.zero_apply]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
 
 theorem Hpk_eI_row (k r : ℕ) (a : Fin r) (s : Fin (2 * r + k + 1)) :
     Hpk k r (eI k r a) s = if s = esI k r a then 1 else 0 := by
@@ -126,22 +130,22 @@ theorem xiCoefV : XiCoefV := by
   · rw [Fintype.sum_eq_single ⟨2 * r + k - p.val, by omega⟩]
     · have hH1 : Hpk k r p ⟨2 * r + k - p.val, by omega⟩ = 1 := by
         rw [Hpk_low _ _ _ _ (by simp only [Fin.val_mk]; omega), if_pos (by simp only [Fin.val_mk]; omega)]
-      rw [hH1, one_mul, dif_pos (by simp only [Fin.val_mk]; omega)]
+      rw [hH1, one_mul, dite_eq_left (by simp only [Fin.val_mk]; omega)]
       rfl
     · intro s hs
       by_cases h : s.val < j
-      · rw [dif_pos h]
+      · rw [dite_eq_left h]
         have : Hpk k r p s = 0 := by
           rw [Hpk_low _ _ _ _ (by omega), if_neg (by intro h'; apply hs; ext; simp only [Fin.val_mk]; omega)]
         rw [this, zero_mul]
-      · rw [dif_neg h, star_zero, mul_zero]
+      · rw [dite_eq_right h, star_zero, mul_zero]
   · refine Finset.sum_eq_zero fun s _ => ?_
     by_cases h : s.val < j
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       have : Hpk k r p s = 0 := by
         rw [Hpk_low _ _ _ _ (by omega), if_neg (by omega)]
       rw [this, zero_mul]
-    · rw [dif_neg h, star_zero, mul_zero]
+    · rw [dite_eq_right h, star_zero, mul_zero]
 
 section smooth
 
@@ -151,7 +155,7 @@ theorem contDiff_zfull (τ : ℂ) (c d : Fin (j + 1)) {n : WithTop ℕ∞} :
     ContDiff ℝ n (fun Z : MJ j => zfull Z τ c d) := by
   simp only [zfull_apply]
   split_ifs
-  · exact contDiff_apply_apply ℝ ℂ _ _
+  · exact contDiff_apply_apply ℝ _ _
   · exact contDiff_const
   · exact contDiff_const
   · exact contDiff_const
@@ -173,7 +177,7 @@ theorem contDiffOn_inv_zfull (τ : ℂ) (c d : Fin (j + 1)) :
     rw [Matrix.inv_def, Matrix.smul_apply, det_zfull, Ring.inverse_eq_inv', mul_inv, smul_eq_mul]
   simp only [he]
   have hdet : ContDiff ℝ ⊤ (fun Z : MJ j => Z.det) :=
-    PBG.contDiff_det' (fun Z : MJ j => Z) (fun a b => contDiff_apply_apply ℝ ℂ a b)
+    PBG.contDiff_det' (fun Z : MJ j => Z) (fun a b => contDiff_apply_apply ℝ a b)
   exact ((((hdet.of_le le_top).contDiffOn.inv (fun Z hZ => hZ)).mul contDiffOn_const).mul
     ((contDiff_adj_zfull τ c d).of_le le_top).contDiffOn)
 

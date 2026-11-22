@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Base UpperTheory.V.Sd
@@ -87,7 +91,7 @@ private theorem automorphic_form_linear_combination (φ ψ : TR.Sm F a) (c : ℂ
     · rintro k ⟨h1, h2⟩
       have h1' : TR.finRep F a (k₀⁻¹ * k) φ = φ := h1
       have h2' : TR.finRep F a (k₀⁻¹ * k) ψ = ψ := h2
-      have h3 : TR.finRep F a (k₀⁻¹ * k) (φ + c • ψ) = φ + c • ψ := by rw [map_add, map_smul, h1', h2']
+      have h3 : TR.finRep F a (k₀⁻¹ * k) (φ + c • ψ) = φ + c • ψ := by rw [map_add (f := _), map_smul, h1', h2']
       have h4 : TR.finRep F a k₀ (φ + c • ψ) = φ + c • ψ := hk₀
       change TR.finRep F a k (φ + c • ψ) = φ + c • ψ
       rw [← mul_inv_cancel_left k₀ k, finite_translation_mul, h3, h4]
@@ -97,7 +101,7 @@ private theorem automorphic_form_linear_combination (φ ψ : TR.Sm F a) (c : ℂ
       (S₂ := Submodule.span ℂ (Set.range fun k => TR.cptRep F a k φ) ⊔
         Submodule.span ℂ (Set.range fun k => TR.cptRep F a k ψ)) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
-    simp only [map_add, map_smul]
+    simp only [map_add (f := _), map_smul]
     exact Submodule.add_mem_sup (Submodule.subset_span ⟨k, rfl⟩)
       (Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩))
   · have := h.zfin
@@ -106,7 +110,7 @@ private theorem automorphic_form_linear_combination (φ ψ : TR.Sm F a) (c : ℂ
       (S₂ := Submodule.span ℂ ((fun z : Module.End ℂ (TR.Sm F a) => z φ) '' TR.Zalg F a) ⊔
         Submodule.span ℂ ((fun z : Module.End ℂ (TR.Sm F a) => z ψ) '' TR.Zalg F a)) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
-    simp only [map_add, map_smul]
+    simp only [map_add (f := _), map_smul]
     exact Submodule.add_mem_sup (Submodule.subset_span ⟨z, hz, rfl⟩)
       (Submodule.smul_mem _ _ (Submodule.subset_span ⟨z, hz, rfl⟩))
   · obtain ⟨C, N, hC⟩ := h.growth x

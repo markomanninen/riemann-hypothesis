@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsOpenSameModel
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FlagChartsCoverFramedFieldPoints
-import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsOpenSameModel
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FlagChartsCoverFramedFieldPoints
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+
+@[expose] public section
 
 open NumberField Topology Filter ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.Reg
 open scoped Matrix
@@ -20,6 +24,8 @@ theorem wchar_zero {S : Type} [CommRing S] (t : Ix Dw → Sˣ) : wchar (ex Dw 0 
   have : ex Dw 0 0 i = 0 := by rcases i with _ | ⟨τ, i⟩ <;> simp [ex]
   rw [this, pow_zero]
 
+attribute [local instance 1100] Subalgebra.algebra in
+attribute [local instance 100] IntermediateField.instAlgebraSubtypeMem in
 theorem evR_eq_natCast (hL : EvLaws Xo c) {h : GenFrEx Xo c} {χ : Rul Xo c} (hχ : χ ∈ sec Xo c 0 0) (C : FChart h)
     {L : Type} [Field L] [Algebra c.F L] (ψ : C.R →ₐ[c.F] L) {z w : FrPt Xo c L} {t : Ix Dw → Lˣ}
     (hz : FrMap ψ C.y z) (hb : FrBor t z w) (n : ℕ) (hn : evC h C.Z χ = n) : evR Xo c χ w = n := by
@@ -35,6 +41,8 @@ theorem evR_eq_natCast (hL : EvLaws Xo c) {h : GenFrEx Xo c} {χ : Rul Xo c} (h�
   rw [hL.wt 0 0 χ hχ _ t _ _ (hL.test _ _) (hL.test _ _) hb, wchar_zero, h3]
   simp
 
+attribute [local instance 1100] Subalgebra.algebra in
+attribute [local instance 100] IntermediateField.instAlgebraSubtypeMem in
 theorem exists_comp_of_charts : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (r : ℕ) (U : Formalism.L2.PjFree.Unf Xo c σ r), Formalism.L2.PjFree.IsUnf U → ∀ (h : GenFrEx Xo c) (k : U.Comp), ∃ Z : Comp Xo c, ∀ (x : (U.X k).dom) (C : FChart h) (ψ : C.R →ₐ[c.F] CAt σ) (z : FrPt Xo c (CAt σ)) (t : Ix Dw → (CAt σ)ˣ), FrMap ψ C.y z → FrBor t z (U.un k x) → C.Z = Z := by
   intro E _ _ _ H Dw l Xo c σ r U hU h k
   obtain ⟨hL, -, -, hA⟩ := evLaws_genFr_atlas E H Dw l Xo c

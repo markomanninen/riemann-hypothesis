@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.GenSpace
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.ConstantTerm
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.GenSpace
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.ConstantTerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,36 +13,36 @@ open scoped NumberField.AdeleRing
 
 namespace GlobalTheory.CompanionTheory.AffglAssembly
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-theorem isAutForm_add {φ ψ : Sm E a} (h : IsAutForm φ) (h' : IsAutForm ψ) : IsAutForm (φ + ψ) where
-  left γ g := by
+theorem isAutForm_add {φ ψ : Sm E a} (h : IsAutForm φ) (h' : IsAutForm ψ) : IsAutForm (φ + ψ) := by
+  refine { left := ?_, level := ?_, kfin := ?_, zfin := ?_, growth := ?_ }
+  · intro γ g
     change φ.1 _ + ψ.1 _ = φ.1 _ + ψ.1 _
     rw [h.left, h'.left]
-  level := isOpen_stab_of_mem_nhds _ _ <| Filter.mem_of_superset
-    ((h.level.inter h'.level).mem_nhds ⟨by simp, by simp⟩) fun k hk => by
-      have h1 : finRep E a k φ = φ := hk.1
-      have h2 : finRep E a k ψ = ψ := hk.2
-      change finRep E a k (φ + ψ) = φ + ψ
-      rw [map_add, h1, h2]
-  kfin := by
-    have := h.kfin
+  · refine isOpen_stab_of_mem_nhds _ _ (Filter.mem_of_superset
+      ((h.level.inter h'.level).mem_nhds ⟨by simp, by simp⟩) ?_)
+    intro k hk
+    have h1 : finRep E a k φ = φ := hk.1
+    have h2 : finRep E a k ψ = ψ := hk.2
+    change finRep E a k (φ + ψ) = φ + ψ
+    rw [map_add (f := _), h1, h2]
+  · have := h.kfin
     have := h'.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := Submodule.span ℂ (Set.range fun k => cptRep E a k φ) ⊔
       Submodule.span ℂ (Set.range fun k => cptRep E a k ψ)) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact Submodule.add_mem_sup (Submodule.subset_span ⟨k, rfl⟩) (Submodule.subset_span ⟨k, rfl⟩)
-  zfin := by
-    have := h.zfin
+  · have := h.zfin
     have := h'.zfin
     refine Submodule.finiteDimensional_of_le
       (S₂ := Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) '' Zalg E a) ⊔
         Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z ψ) '' Zalg E a)) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact Submodule.add_mem_sup (Submodule.subset_span ⟨z, hz, rfl⟩) (Submodule.subset_span ⟨z, hz, rfl⟩)
-  growth g := by
+  · intro g
     obtain ⟨C, N, h1⟩ := h.growth g
     obtain ⟨C', N', h2⟩ := h'.growth g
     refine ⟨|C| + |C'|, N + N', fun y => ?_⟩
@@ -57,30 +61,29 @@ theorem isAutForm_add {φ ψ : Sm E a} (h : IsAutForm φ) (h' : IsAutForm ψ) : 
             (mul_le_mul_of_nonneg_left e2 (abs_nonneg C'))
       _ = (|C| + |C'|) * height y ^ (N + N') := by ring
 
-theorem isAutForm_smul (c : ℂ) {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (c • φ) where
-  left γ g := by
+theorem isAutForm_smul (c : ℂ) {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (c • φ) := by
+  refine { left := ?_, level := ?_, kfin := ?_, zfin := ?_, growth := ?_ }
+  · intro γ g
     change c • φ.1 _ = c • φ.1 _
     rw [h.left]
-  level := isOpen_stab_of_mem_nhds _ _ <| Filter.mem_of_superset
-    (h.level.mem_nhds (by simp)) fun k hk => by
-      have h1 : finRep E a k φ = φ := hk
-      change finRep E a k (c • φ) = c • φ
-      rw [map_smul, h1]
-  kfin := by
-    have := h.kfin
+  · refine isOpen_stab_of_mem_nhds _ _ (Filter.mem_of_superset (h.level.mem_nhds (by simp)) ?_)
+    intro k hk
+    have h1 : finRep E a k φ = φ := hk
+    change finRep E a k (c • φ) = c • φ
+    rw [map_smul, h1]
+  · have := h.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := Submodule.span ℂ (Set.range fun k => cptRep E a k φ))
       (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     simp only [map_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
-  zfin := by
-    have := h.zfin
+  · have := h.zfin
     refine Submodule.finiteDimensional_of_le
       (S₂ := Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) '' Zalg E a)) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     simp only [map_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨z, hz, rfl⟩)
-  growth g := by
+  · intro g
     obtain ⟨C, N, h1⟩ := h.growth g
     refine ⟨‖c‖ * C, N, fun y => ?_⟩
     change ‖c * φ.1 (g * infGL E a y)‖ ≤ _
@@ -96,11 +99,11 @@ def genSub (L : Subgroup (GL (Fin a) (Af E))) {W : Type} [AddCommGroup W] [Modul
     rw [e]; exact Submodule.zero_mem _, fun z _ => map_zero z⟩
   add_mem' := by
     rintro φ ψ ⟨h1, h2, h3, h4⟩ ⟨h1', h2', h3', h4'⟩
-    refine ⟨isAutForm_add h1 h1', fun k hk => by rw [map_add, h2 k hk, h2' k hk], fun g => ?_,
-      fun z hz => by rw [map_add, h4 z hz, h4' z hz, add_zero]⟩
+    refine ⟨isAutForm_add h1 h1', fun k hk => by rw [map_add (f := _), h2 k hk, h2' k hk], fun g => ?_,
+      fun z hz => by rw [map_add (f := _), h4 z hz, h4' z hz, add_zero]⟩
     have e : (fun k : Kinf E a => (cptRep E a k (φ + ψ)).1 g) =
         (fun k : Kinf E a => (cptRep E a k φ).1 g) + fun k : Kinf E a => (cptRep E a k ψ).1 g := by
-      funext k; rw [map_add]; rfl
+      funext k; rw [map_add (f := _)]; rfl
     rw [e]; exact Submodule.add_mem _ (h3 g) (h3' g)
   smul_mem' := by
     rintro c φ ⟨h1, h2, h3, h4⟩
@@ -227,10 +230,10 @@ theorem genFin_step (hC : CuspFin E a) (hT : ∀ r, 0 < r → r < a → CTFin E 
   exact hfin
 
 theorem genFin_of_chapters :
-    (∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), CuspFin E a) →
-    (∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), (∀ b < a, GenFin E b) →
+    (∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), CuspFin E a) →
+    (∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), (∀ b < a, GenFin E b) →
       ∀ r, 0 < r → r < a → CTFin E a r) →
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), GenFin E a := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), GenFin E a := by
   intro hC hT E _ _ _ a
   induction a using Nat.strong_induction_on with
   | _ a ih => exact genFin_step (hC E a) (hT E a ih)

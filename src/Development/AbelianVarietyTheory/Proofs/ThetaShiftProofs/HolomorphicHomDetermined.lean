@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def evalHom (x : Sp A ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) : Γ(X, U)
   (x.appLE U ⊤ h ≫ (Scheme.ΓSpecIso (CommRingCat.of A)).hom).hom
 
 theorem valR_eq (x : Sp A ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) : valR x U f = evalHom x U h f := by
-  rw [valR, dif_pos h]; rfl
+  rw [valR, dite_eq_left h]; rfl
 
 theorem valAt'_eq_valR (x : Sp ℂ ⟶ X) (U : X.Opens) (f : Γ(X, U)) : valAt' x U f = valR x U f := rfl
 
@@ -33,7 +37,7 @@ theorem valR_comp {Y : Scheme.{0}} (x : Sp A ⟶ X) (φ : X ⟶ Y) (U : Y.Opens)
   by_cases hx : ⊤ ≤ x ⁻¹ᵁ (φ ⁻¹ᵁ U)
   · rw [Scheme.Hom.app_eq_appLE, valR_appLE x φ U _ le_rfl f hx]
   · have hx' : ¬ ⊤ ≤ (x ≫ φ) ⁻¹ᵁ U := hx
-    rw [valR, valR, dif_neg hx, dif_neg hx']
+    rw [valR, valR, dite_eq_right hx, dite_eq_right hx']
 
 theorem valR_res (x : Sp A ⟶ X) {U V : X.Opens} (h : V ≤ U) (f : Γ(X, U)) (hx : ⊤ ≤ x ⁻¹ᵁ V) :
     valR x V ((X.presheaf.map (homOfLE h).op).hom f) = valR x U f := by
@@ -117,9 +121,6 @@ theorem isHolTo_of_holAt {B : Set V} {c : V → (Sp ℂ ⟶ X)} (hB : IsOpen B) 
   refine ⟨isOpen_iff_mem_nhds.2 fun z hz => ?_, fun z hz => ((h z hz.1 U hz.2).2 f).differentiableWithinAt⟩
   filter_upwards [hB.mem_nhds hz.1, (h z hz.1 U hz.2).1] with t h1 h2 using ⟨h1, h2⟩
 
-theorem isHolTo_iff {B : Set V} {c : V → (Sp ℂ ⟶ X)} : IsHolTo B c ↔ IsOpen B ∧ ∀ z ∈ B, HolAt c z :=
-  ⟨fun h => ⟨isOpen_of_isHolTo h, fun _ hz => holAt_of_isHolTo h hz⟩, fun h => isHolTo_of_holAt h.1 h.2⟩
-
 theorem holAt_const (x : Sp ℂ ⟶ X) (z : V) : HolAt (fun _ => x) z :=
   fun _ hU => ⟨Eventually.of_forall fun _ => hU, fun _ => differentiableAt_const _⟩
 
@@ -192,7 +193,7 @@ theorem holAt_of_isPullback {Y S Z : Scheme.{0}} {f : Y ⟶ S} {g : Z ⟶ X} {iX
     simp only [valAt'_eq_valR, valR_eq _ _ ht, map_one]
   | add x y _ _ hx hy =>
     refine (hx.add hy).congr_of_eventuallyEq (hev.mono fun t ht => ?_)
-    simp only [valAt'_eq_valR, valR_eq _ _ ht, map_add, Pi.add_apply]
+    simp only [valAt'_eq_valR, valR_eq _ _ ht, map_add (f := _), Pi.add_apply]
   | neg x _ hx =>
     refine hx.neg.congr_of_eventuallyEq (hev.mono fun t ht => ?_)
     simp only [valAt'_eq_valR, valR_eq _ _ ht, map_neg, Pi.neg_apply]
@@ -285,7 +286,7 @@ def jetHom {c : V → (Sp ℂ ⟶ X)} {z : V} (h : HolAt c z) (w : V) (U : X.Ope
     simp
   map_add' f f' := by
     have : (fun t => valAt' (c t) U (f + f')) =ᶠ[𝓝 z] fun t => valAt' (c t) U f + valAt' (c t) U f' :=
-      (h U hU).1.mono fun t ht => by simp only [valAt'_eq_valR, valR_eq _ _ ht, map_add]
+      (h U hU).1.mono fun t ht => by simp only [valAt'_eq_valR, valR_eq _ _ ht, map_add (f := _)]
     have h0 := this.self_of_nhds
     beta_reduce at h0
     rw [this.fderiv_eq, h0, fderiv_fun_add ((h U hU).2 f) ((h U hU).2 f')]
@@ -376,16 +377,16 @@ theorem isHolTo_inv {B : Set V} {y : V → (Sp ℂ ⟶ S)} {a : ∀ t, Over.mk (
 
 variable {y : Sp ℂ ⟶ S}
 
-omit [GrpObj G] in
 
+omit [GrpObj G] in
 theorem IsDerivAt.over {a : V → (Over.mk y ⟶ G)} {z w : V} {v : Sp (DualNumber ℂ) ⟶ G.left}
     (h : IsDerivAt (fun t => (a t).left) z w v) : v ≫ G.hom = (epsPt y).hom := by
   have h1 := h.comp G.hom
   have h2 : (fun t => (a t).left ≫ G.hom) = fun _ => y := funext fun t => Over.w (a t)
   exact (h2 ▸ h1).unique (isDerivAt_const y z w)
 
-omit [GrpObj G] in
 
+omit [GrpObj G] in
 theorem isDerivAt_lift {G' : Over S} {a : V → (Over.mk y ⟶ G)} {b : V → (Over.mk y ⟶ G')} {z w : V}
     (ha : HolAt (fun t => (a t).left) z) (hb : HolAt (fun t => (b t).left) z) {v : epsPt y ⟶ G} {v' : epsPt y ⟶ G'}
     (hv : IsDerivAt (fun t => (a t).left) z w v.left) (hv' : IsDerivAt (fun t => (b t).left) z w v'.left) :
@@ -471,7 +472,7 @@ theorem IsDerivAt.snd_linear {X : Scheme.{0}} {c : V → (Sp ℂ ⟶ X)} {z w₁
     {v₁ v₂ v : Sp (DualNumber ℂ) ⟶ X} (h₁ : IsDerivAt c z w₁ v₁) (h₂ : IsDerivAt c z w₂ v₂)
     (h : IsDerivAt c z (a₁ • w₁ + a₂ • w₂) v) (U : X.Opens) (hU : ⊤ ≤ c z ⁻¹ᵁ U) (f : Γ(X, U)) :
     TrivSqZeroExt.snd (valR v U f) = a₁ * TrivSqZeroExt.snd (valR v₁ U f) + a₂ * TrivSqZeroExt.snd (valR v₂ U f) := by
-  rw [h.2 U hU, h₁.2 U hU, h₂.2 U hU, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+  rw [h.2 U hU, h₁.2 U hU, h₂.2 U hU, map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
 
 variable {S : Scheme.{0}} {G : Over S} {g : ℕ}
 
@@ -513,10 +514,10 @@ theorem existsUnique_linear [FiniteDimensional ℂ V] [GrpObj G] {y : Sp ℂ ⟶
   let h : V →ₗ[ℂ] (Fin g → ℂ) :=
     { toFun := k
       map_add' := fun z z' => eq_of_forall_fderiv_eq hA' hdiff fun U hU f => by
-        rw [map_add, hk _ U hU, hk _ U hU, hk _ U hU, map_add]
+        rw [map_add (f := _), hk _ U hU, hk _ U hU, hk _ U hU, map_add (f := _)]
       map_smul' := fun a z => eq_of_forall_fderiv_eq hA' hdiff fun U hU f => by
         rw [map_smul, hk _ U hU, hk _ U hU, map_smul, RingHom.id_apply] }
-  refine ⟨h, congrFun (eq_of_fderiv_eq (e' := fun z => e' (h z)) he (fun z w => by rw [map_add, he']) hol ?_ ?_),
+  refine ⟨h, congrFun (eq_of_fderiv_eq (e' := fun z => e' (h z)) he (fun z w => by rw [map_add (f := _), he']) hol ?_ ?_),
     fun h' hh' => LinearMap.ext fun z => eq_of_forall_fderiv_eq hA' hdiff fun U hU f => ?_⟩
   · exact isHolTo_of_holAt isOpen_univ fun z _ => (holAt_of_isHolTo hol' (Set.mem_univ (h z))).precomp
       (LinearMap.toContinuousLinearMap h).differentiableAt
@@ -642,8 +643,8 @@ end GlobalTheory.HolHom
 
 namespace GlobalTheory
 
-open HolHom in
 
+open HolHom in
 theorem holomorphic_hom_determined (S : Scheme.{0}) (G : Over S) [GrpObj G] :
     (∀ (y : Sp ℂ ⟶ S) (V : Type) [NormedAddCommGroup V] [NormedSpace ℂ V] (e e' : V → (Over.mk y ⟶ G)),
       (∀ z w, e (z + w) = e z * e w) → (∀ z w, e' (z + w) = e' z * e' w) →

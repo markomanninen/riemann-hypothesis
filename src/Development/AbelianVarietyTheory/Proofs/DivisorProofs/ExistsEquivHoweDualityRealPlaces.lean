@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolActs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolActs
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -54,7 +58,7 @@ theorem thetaSub_sup (hA : GlobalTheory.RealActs.PolActs B M om) {N N' : Submodu
     have hyP := hN.1 hy
     have hzP := hN'.1 hz
     have e : f₁ = D (y + z) := (hDf _ (add_mem hyP hzP) f₁).1 hf₁
-    rw [e, map_add]
+    rw [e, map_add (f := _)]
     exact add_mem (Submodule.mem_sup_left (hN.2.2.2.1 γ hγ y hy (D y) ((hDf y hyP (D y)).2 rfl)))
       (Submodule.mem_sup_right (hN'.2.2.2.1 γ hγ z hz (D z) ((hDf z hzP (D z)).2 rfl)))
   · intro k hk f hf f₁ hf₁
@@ -63,7 +67,7 @@ theorem thetaSub_sup (hA : GlobalTheory.RealActs.PolActs B M om) {N N' : Submodu
     have hyP := hN.1 hy
     have hzP := hN'.1 hz
     have e : f₁ = D (y + z) := (hDf _ (add_mem hyP hzP) f₁).1 hf₁
-    rw [e, map_add]
+    rw [e, map_add (f := _)]
     exact add_mem (Submodule.mem_sup_left (hN.2.2.2.2 k hk y hy (D y) ((hDf y hyP (D y)).2 rfl)))
       (Submodule.mem_sup_right (hN'.2.2.2.2 k hk z hz (D z) ((hDf z hzP (D z)).2 rfl)))
 

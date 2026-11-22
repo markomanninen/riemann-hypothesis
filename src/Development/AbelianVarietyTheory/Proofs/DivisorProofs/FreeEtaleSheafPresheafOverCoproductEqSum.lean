@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeEtaleModuleSheafHomEquivNaturalSectionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleModuleSheafSectionsCoprodBijectiveStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeEtaleModuleSheafHomEquivNaturalSectionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleModuleSheafSectionsCoprodBijectiveStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct GlobalTheory.EtC
 
 namespace GlobalTheory.EtC.FreeCofan
@@ -71,7 +76,7 @@ theorem main : ∀ (R : Type) [CommRing R] (U : Scheme.{0}) (ι : Type) (V : ι 
   have FH := fun (P' : PSh) (G : Shv R) => GlobalTheory.T.freeEtaleModuleSheaf_hom_equiv_natural_sections R P' G
   let y : ∀ T : Scheme.{0}, P.obj (op T) → (T ⟶ U) := fun T x => t.app (op T) x
   have hy : ∀ (T T' : Scheme.{0}) (g : T' ⟶ T) (x : P.obj (op T)), y T' (P.map g.op x) = g ≫ y T x :=
-    fun T T' g x => FunctorToTypes.naturality t g.op x
+    fun T T' g x => NatTrans.naturality_apply t g.op x
   have hw : ∀ i (W : Scheme.{0}) (q0 : (Q i).obj (op W)), y W ((a i).app _ q0) = ((b i).app _ q0 : W ⟶ V i) ≫ j i :=
     fun i W q0 => ConcreteCategory.congr_hom (congr_app (hpb i).w (op W)) q0
   have hcol : ∀ (T : Scheme.{0}) (x : P.obj (op T)), IsColimit (Cofan.mk T (fun i => pullback.fst (y T x) (j i))) :=
@@ -111,9 +116,9 @@ theorem main : ∀ (R : Type) [CommRing R] (U : Scheme.{0}) (ι : Type) (V : ι 
     rw [← h1, ← res_res, hφ, ← (FH (Q i) G).2.2.1 (c i)]
     congr 1
     apply huq
-    · rw [hqa, FunctorToTypes.naturality, hqa, ← FunctorToTypes.map_comp_apply, ← FunctorToTypes.map_comp_apply,
+    · rw [hqa, NatTrans.naturality_apply, hqa, ← Functor.map_comp_apply, ← Functor.map_comp_apply,
         ← op_comp, ← op_comp, h1]
-    · rw [hqb, FunctorToTypes.naturality, hqb]
+    · rw [hqb, NatTrans.naturality_apply, hqb]
       exact h2.symm
   let d : ∀ s : Cofan (fun i => (free R).obj (Q i)), (free R).obj P ⟶ s.pt := fun s =>
     ((FH P s.pt).2.1 (φ s.pt s.inj) (fun T' T g x => nat s.pt s.inj T' T g x)).choose
@@ -136,8 +141,8 @@ theorem main : ∀ (R : Type) [CommRing R] (U : Scheme.{0}) (ι : Type) (V : ι 
     · subst hki
       congr 1
       apply huq
-      · rw [hqa, FunctorToTypes.naturality, ← hx]
-      · rw [hqb, FunctorToTypes.naturality]
+      · rw [hqa, NatTrans.naturality_apply, ← hx]
+      · rw [hqb, NatTrans.naturality_apply]
         change _ = pullback.fst (y W x) (j k) ≫ ((b k).app _ q0 : W ⟶ V k)
         haveI := ho k
         rw [← cancel_mono (j k), Category.assoc, ← pullback.condition, hwx]

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Statements
-import Development.WeilBound.CoreStatements.ResolutionCharZero.WeakPair
-import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResIso
-import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResSnc
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsNil
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Statements
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.WeakPair
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResIso
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResSnc
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsNil
+
+@[expose] public section
 
 noncomputable section
 

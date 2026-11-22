@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+
+@[expose] public section
 
 namespace UpperTheory.Gal.Gen
 
@@ -13,7 +17,7 @@ theorem codim_pf : Codim := by
     obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.mp (h v)
     refine ⟨b, hb, ?_⟩
     have hz : A.mkQ a = 0 := by simpa [Submodule.Quotient.mk_eq_zero] using ha
-    simp only [f, LinearMap.comp_apply, ← hab, map_add, hz, zero_add]
+    simp only [f, LinearMap.comp_apply, ← hab, map_add (f := _), hz, zero_add]
   haveI : FiniteDimensional k (B.map A.mkQ) :=
     Module.Finite.map B A.mkQ
   have h1 : Module.finrank k (LinearMap.range f) ≤ Module.finrank k (B.map A.mkQ) :=

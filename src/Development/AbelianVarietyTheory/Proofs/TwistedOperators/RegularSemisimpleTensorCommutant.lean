@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,8 @@ theorem pointsCommutant : PointsCommutant := by
     refine ⟨a, ?_⟩
     rw [colMat_mulVec]
     congr 1
-    rw [map_sum, AddSubmonoidClass.coe_finsetSum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, AddSubmonoidClass.coe_finsetSum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [plusTensor, Algebra.TensorProduct.productMap_apply_tmul, mul_comm]
     exact Algebra.smul_def (a j) (c j)
@@ -96,7 +101,8 @@ theorem pointsCommutant : PointsCommutant := by
     rw [← colMat_map]; exact hB.map f.mapMatrix
   have hsum : ∀ a : n → E ⊗[F] R, toMat σ J (γ : Matrix n n E) R (∑ j, b j ⊗ₜ[F] a j) =
       ∑ j, a j • (c j).map f := fun a => by
-    rw [map_sum]; exact Finset.sum_congr rfl fun j _ => toMat_tmul_eq_smul _ _ _ _ _ _
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; exact Finset.sum_congr rfl fun j _ => toMat_tmul_eq_smul _ _ _ _ _ _
   refine ⟨(injective_iff_map_eq_zero _).2 fun u hu => ?_, fun N => ⟨fun hN => ?_, ?_⟩⟩
   · obtain ⟨a, rfl⟩ := exists_sum_basis_tmul b u
     rw [hsum] at hu

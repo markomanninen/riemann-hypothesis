@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullUUnitsCompatGeneric
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullUUnitsCompatGeneric
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,8 @@ theorem exists_firstLaw (θ : X → X → U) (h0 : ∀ a, θ 0 a = 1) (hs : ∀ 
   refine ⟨fun a => ((s a : ExtCar U X) : U × X).1, fun a a' => ?_, fun i => ?_⟩
   · have e : ((s (a + a') : ExtCar U X) : U × X).1 = ((s a : ExtCar U X) : U × X).1 * ((s a' : ExtCar U X) : U × X).1 *
         (θ ((s a : ExtCar U X) : U × X).2 ((s a' : ExtCar U X) : U × X).2)⁻¹ := by
-      rw [s.map_add]; rfl
+      rw [map_add s]
+      rfl
     show ((s (a + a') : ExtCar U X) : U × X).1 * θ a a' = _
     rw [e, h2, h2, inv_mul_cancel_right]
   · show ((s (b i) : ExtCar U X) : U × X).1 = m i
@@ -169,25 +174,30 @@ variable {A U : Type} [CommGroup A] [CommGroup U]
 def cob (h : A → U) (x x' y : A) : U :=
   h (x * x' * y) * (h (x * x'))⁻¹ * (h (x * y))⁻¹ * (h (x' * y))⁻¹ * h x * h x' * h y * (h 1)⁻¹
 
-theorem isCub_cob (h : A → U) : IsCub (cob h) where
-  face x y := by
+theorem isCub_cob (h : A → U) : IsCub (cob h) := by
+  constructor
+  case face =>
+    intro x y
     simp only [cob, _root_.one_mul]
     apply Additive.ofMul.injective
     simp only [ofMul_mul, ofMul_inv, ofMul_one]
     abel
-  s01 x y z := by
+  case s01 =>
+    intro x y z
     simp only [cob]
     rw [mul_comm x y]
     apply Additive.ofMul.injective
     simp only [ofMul_mul, ofMul_inv]
     abel
-  s12 x y z := by
+  case s12 =>
+    intro x y z
     simp only [cob]
     rw [mul_right_comm x y z, mul_comm z y]
     apply Additive.ofMul.injective
     simp only [ofMul_mul, ofMul_inv]
     abel
-  coc x x' x'' y := by
+  case coc =>
+    intro x x' x'' y
     simp only [cob]
     rw [_root_.mul_assoc x x' x'', _root_.mul_assoc x x' y, _root_.mul_assoc x' x'' y]
     apply Additive.ofMul.injective
@@ -195,11 +205,19 @@ theorem isCub_cob (h : A → U) : IsCub (cob h) where
     abel
 
 theorem isCub_mul_inv {θ θ' : A → A → A → U} (h : IsCub θ) (h' : IsCub θ') :
-    IsCub (fun x y z => θ x y z * (θ' x y z)⁻¹) where
-  face x y := by simp only [h.face, h'.face, inv_one, _root_.mul_one]
-  s01 x y z := by simp only [h.s01 x y z, h'.s01 x y z]
-  s12 x y z := by simp only [h.s12 x y z, h'.s12 x y z]
-  coc x x' x'' y := by
+    IsCub (fun x y z => θ x y z * (θ' x y z)⁻¹) := by
+  constructor
+  case face =>
+    intro x y
+    simp only [h.face, h'.face, inv_one, _root_.mul_one]
+  case s01 =>
+    intro x y z
+    simp only [h.s01 x y z, h'.s01 x y z]
+  case s12 =>
+    intro x y z
+    simp only [h.s12 x y z, h'.s12 x y z]
+  case coc =>
+    intro x x' x'' y
     have e := congrArg Additive.ofMul (h.coc x x' x'' y)
     have e' := congrArg Additive.ofMul (h'.coc x x' x'' y)
     apply Additive.ofMul.injective
@@ -208,11 +226,18 @@ theorem isCub_mul_inv {θ θ' : A → A → A → U} (h : IsCub θ) (h' : IsCub 
 
 theorem isCub_of_inj {P : Type} {V : P → Type} [∀ p, CommGroup (V p)] (F : ∀ p, U →* V p)
     (hF : ∀ u u' : U, (∀ p, F p u = F p u') → u = u') {θ : A → A → A → U}
-    (h : ∀ p, IsCub (fun x y z => F p (θ x y z))) : IsCub θ where
-  face x y := hF _ _ fun p => by rw [(h p).face, map_one]
-  s01 x y z := hF _ _ fun p => (h p).s01 x y z
-  s12 x y z := hF _ _ fun p => (h p).s12 x y z
-  coc x x' x'' y := hF _ _ fun p => by rw [map_mul, map_mul]; exact (h p).coc x x' x'' y
+    (h : ∀ p, IsCub (fun x y z => F p (θ x y z))) : IsCub θ := by
+  constructor
+  case face =>
+    exact fun x y => hF _ _ fun p => by rw [(h p).face, map_one]
+  case s01 =>
+    exact fun x y z => hF _ _ fun p => (h p).s01 x y z
+  case s12 =>
+    exact fun x y z => hF _ _ fun p => (h p).s12 x y z
+  case coc =>
+    refine fun x x' x'' y => hF _ _ fun p => ?_
+    rw [map_mul, map_mul]
+    exact (h p).coc x x' x'' y
 
 end Cub
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDetResMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDetResMat
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Pst GlobalTheory.PMon GlobalTheory.PMon.ResR TensorProduct
 open scoped Formalism.Per
 
@@ -16,7 +21,8 @@ theorem colv_latC_and_linearIndependent : ∀ (l : ℕ) [Fact l.Prime] (P : LocP
   have hφcol : ∀ (m : ℕ) c i, P.φB^[m] (colv P ω A₀ c i) =
       ∑ k, algebraMap ↥(MaximalUnramifiedExtension l) P.R.B (fr l m (ω k)) * (A₀ : Matrix (n × Fin r) (n × Fin r) P.R.B) (i, k) c := by
     intro m c i
-    rw [hit, colv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hit, colv, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, ← hit, ← hit, phi_iter_kur, hfix]
   have hsum : ∀ {R : Type} [CommRing R] (f : ↥(MaximalUnramifiedExtension l) →+* R) (X : Matrix (n × Fin r) (n × Fin r) R) (m : Fin r) (i : n) c,
@@ -40,7 +46,8 @@ theorem colv_latC_and_linearIndependent : ∀ (l : ℕ) [Fact l.Prime] (P : LocP
       ∑ j, (U m : Matrix n n P.R.BdR) i j * tz P (eps x y (m, j)) *
         (W₀ : Matrix (n × Fin r) (n × Fin r) P.R.BdR) (j, m) c := by
     intro m c i
-    rw [ev, hφcol, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ev, hφcol, map_sum]
     simp only [map_mul, iota_kur, h0]
     rw [hsum, ← Matrix.mul_assoc, ← Matrix.mul_assoc, hpU, Matrix.mul_assoc, Matrix.mul_apply, Fintype.sum_prod_type]
     simp [Matrix.blockDiagonal_apply, Matrix.diagonal_mul, ite_mul, mul_assoc]
@@ -63,7 +70,8 @@ theorem colv_latC_and_linearIndependent : ∀ (l : ℕ) [Fact l.Prime] (P : LocP
       simp only [Matrix.mulVec, dotProduct, Pi.zero_apply]
       calc ∑ c, Ymat P ω A₀ (i, m) c * algebraMap ℚ_[l] P.R.B (g c)
           = (P.φB ^ (m : ℕ)) (∑ c, g c • colv P ω A₀ c i) := by
-            rw [map_sum]; refine Finset.sum_congr rfl fun c _ => ?_
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum]; refine Finset.sum_congr rfl fun c _ => ?_
             rw [hYe, hit, map_smul, Algebra.smul_def, mul_comm]
         _ = 0 := by rw [hg' i, map_zero]
     have hdetY : IsUnit (Ymat P ω A₀).det := by

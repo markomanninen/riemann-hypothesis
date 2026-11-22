@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.StLogCoverDescent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.StLogCoverDescent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Regular
@@ -153,8 +158,8 @@ lemma isOpen_puncturedChart : IsOpen (puncturedChart h (ball (0 : Fin n → ℂ)
 
 end LogCoverDescent
 
-open LogCoverDescent in
 
+open LogCoverDescent in
 theorem LogCoverDescent.proof : LogCoverDescent.Statement := by
   intro n a h φ hφa hφ
   refine ⟨fun z0 hz0 => ?_, fun w hw => ?_⟩

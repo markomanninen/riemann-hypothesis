@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+
+@[expose] public section
 
 open PowerSeries
 
@@ -19,8 +23,8 @@ def uPow (n : ℤ) : LaurentSeries R := HahnSeries.single n 1
 
 def dL : LaurentSeries R →ₗ[R] LaurentSeries R := LaurentSeries.hasseDeriv R 1
 
-open Classical in
 
+open Classical in
 def compInv (s : R⟦X⟧) : R⟦X⟧ :=
   if h : ∃ t : R⟦X⟧, constantCoeff t = 0 ∧ s.subst t = X then h.choose else 0
 
@@ -54,7 +58,7 @@ def fu : R⟦X⟧ :=
 
 def om : R⟦X⟧ := invOfUnit (fw W) 1
 
-def D : Derivation R R⟦X⟧ R⟦X⟧ := fw W • derivative R
+def D : Derivation R R⟦X⟧ R⟦X⟧ := fw W • PowerSeries.derivative (R := R)
 
 def DL (f : LaurentSeries R) : LaurentSeries R := toL (fw W) * dL f
 

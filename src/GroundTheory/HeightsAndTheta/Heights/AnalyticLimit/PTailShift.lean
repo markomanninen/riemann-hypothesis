@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StTailShift
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.IntegrableOnTargetOfMIntegrable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StTailShift
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.IntegrableOnTargetOfMIntegrable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -46,8 +51,8 @@ theorem TailShift.proof : TailShift.Statement := by
         (1 + Bp) * mInt A T ((tail Yo r' R').indicator fun x => Real.log (r' x)) := by
     intro R₀ R' hR' hsub
     refine mInt_le_mul_of_le A T Yo (hT R' hR').1 hdens (fun x => ?_)
-      (fun x hx => Set.indicator_of_notMem (fun h => hx h.1) _)
-      (fun x hx => Set.indicator_of_notMem (fun h => hx h.1) _) (fun x hx => ?_)
+      (fun x hx => Set.indicator_of_notMem (by exact fun h => hx h.1) _)
+      (fun x hx => Set.indicator_of_notMem (by exact fun h => hx h.1) _) (fun x hx => ?_)
     · by_cases h : x ∈ tail Yo r R₀
       · rw [Set.indicator_of_mem h]; linarith [hl x h.1]
       · rw [Set.indicator_of_notMem h]

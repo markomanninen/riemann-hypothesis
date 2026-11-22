@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.BridgeYfiPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.BridgeYfiPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

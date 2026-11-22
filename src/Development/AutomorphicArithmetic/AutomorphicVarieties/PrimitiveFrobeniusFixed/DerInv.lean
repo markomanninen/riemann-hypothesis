@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.DerBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.GalBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.AdmProd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.DerBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.GalBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.AdmProd
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Odd UpperTheory.V.Stick UpperTheory.V.ML
 open scoped nonZeroDivisors Pointwise
@@ -128,7 +132,7 @@ private theorem di_gen {l F r : ℕ} (τ : ℕ → G ℚ Ω) (P : G ℚ Ω → P
     have hqF : q.Coprime F := di_cop hqP
     refine ih hL' (fun p hp => hτ p (List.mem_cons_of_mem _ hp)) ?_
       (fun p hp => hP p (List.mem_cons_of_mem _ hp))
-    refine forall_fixMu_of_mul_closed_of_tau_of_fixMu_mul (τ q) P hmul hqP.1 (Nat.Coprime.mul hqF.symm hqc.symm) (hτ q (by simp))
+    refine forall_fixMu_of_mul_closed_of_tau_of_fixMu_mul (τ q) P hmul hqP.1 (Nat.Coprime.mul_left hqF.symm hqc.symm) (hτ q (by simp))
       (hP q (by simp)) ?_
     intro g hg
     apply hbig
@@ -154,7 +158,7 @@ private theorem di_step {l M F r : ℕ} (hF : F ≠ 0) (hM : M ∣ F) {x : ℕ �
   have hd0 : L.prod ≠ 0 := AP.2.1
   have hN1 : F * L.prod ≠ 0 := mul_ne_zero hF hd0
   have hN2 : F * (q * L.prod) ≠ 0 := mul_ne_zero hF (mul_ne_zero hq.ne_zero hd0)
-  have hcop : (F * L.prod).Coprime q := Nat.Coprime.mul (di_cop hqP).symm (AP.2.2.1 q hL).symm
+  have hcop : (F * L.prod).Coprime q := Nat.Coprime.mul_left (di_cop hqP).symm (AP.2.2.1 q hL).symm
   have hτq : τ q ∈ fixMu ℚ Ω (F * L.prod) := hτ.1 _ hcop
   have DB := derBasic Ω (F * (q * L.prod)) r hN2 τ L (x (q * L.prod)) (hS.ne _ hAqd) (hS.fix _ hAqd)
   have DBU := derBasic Ω (F * (q * L.prod)) r hN2 τ [] (der τ L (x (q * L.prod))) DB.1 DB.2.1

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataLevel
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataLevel
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.UG Matrix
 
 namespace GlobalTheory.PrimeOrderScalar
@@ -202,26 +207,26 @@ theorem acts_by_same_integer : ∀ (F E : Type) [Field F] [NumberField F] [Field
     intro e he hσe
     obtain ⟨f, hf⟩ := hfix e hσe
     have hfi : IsIntegral ℤ f :=
-      (isIntegral_algebraMap_iff (algebraMap F E).injective).mp (hf ▸ he)
+      (isIntegral_algebraMap_iff ).mp (hf ▸ he)
     exact ⟨⟨f, hfi⟩, hf⟩
   have hE : ∀ o : 𝓞 E, Q (inclO w o) := by
     intro o
     obtain ⟨d', hd'⟩ := hdesc ((p : E) + σ p) (IsIntegral.add p.2 (hσint p))
-      (by rw [map_add, hinv, add_comm])
+      (by rw [map_add (f := _), hinv, add_comm])
     obtain ⟨c', hc'⟩ := hdesc ((o : E) * σ p + σ o * p)
       (IsIntegral.add (IsIntegral.mul o.2 (hσint p)) (IsIntegral.mul (hσint o) p.2))
-      (by rw [map_add, map_mul, map_mul, hinv, hinv]; ring)
+      (by rw [map_add (f := _), map_mul, map_mul, hinv, hinv]; ring)
     obtain ⟨δ, hδA, hδB⟩ := hW (algebraMap (𝓞 F) _ d')
     obtain ⟨γ, hγA, hγB⟩ := hW (algebraMap (𝓞 F) _ c')
     have hD : inclW (E := E) w (algebraMap (𝓞 F) (w.adicCompletionIntegers F) d') =
         inclO w p + inclO w (σO p) := by
-      rw [← map_add]
+      rw [← map_add (f := _)]
       apply Subtype.ext
       rw [inclW_algebraMap, coe_inclO, hd']
       rfl
     have hC : inclW (E := E) w (algebraMap (𝓞 F) (w.adicCompletionIntegers F) c') =
         inclO w o * inclO w (σO p) + inclO w (σO o) * inclO w p := by
-      rw [← map_mul, ← map_mul, ← map_add]
+      rw [← map_mul, ← map_mul, ← map_add (f := _)]
       apply Subtype.ext
       rw [inclW_algebraMap, coe_inclO, hc']
       rfl

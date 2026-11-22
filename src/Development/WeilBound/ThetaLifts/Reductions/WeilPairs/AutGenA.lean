@@ -1,10 +1,14 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryMatrixEqProdQuasiReflections
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryQuasiReflectionLaws
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartanInvolutionCommQuasiReflectionStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealSymplecticFormAlternatingInvariantDefinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryMatrixEqProdQuasiReflections
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryQuasiReflectionLaws
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartanInvolutionCommQuasiReflectionStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealSymplecticFormAlternatingInvariantDefinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -196,10 +200,11 @@ theorem refl_map {σ : E →ₐ[F] E} (hcm : IsCMExt F E σ) (c : E ≃ₐ[F] E)
   have h' : ∀ z, τ (c z) = star (τ z) := fun z => by rw [← hcm.2.2.2, ← hc]; rfl
   have e : τ ∘ (Jᵀ *ᵥ fun b => c (x b)) = star (τ ∘ x) ᵥ* J.map τ := by
     funext j
-    simp only [Function.comp_apply, mulVec, vecMul, dotProduct, transpose_apply, map_sum, map_mul, Matrix.map_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Function.comp_apply, mulVec, vecMul, dotProduct, transpose_apply, map_sum, map_mul, Matrix.map_apply,
       Pi.star_apply, h']
     exact Finset.sum_congr rfl fun _ _ => by ring
-  rw [GlobalTheory.UnRep.refl, ← RingHom.mapMatrix_apply, map_add, map_one, ← e]
+  rw [GlobalTheory.UnRep.refl, ← RingHom.mapMatrix_apply, map_add (f := _), map_one, ← e]
   congr 1
   ext i j
   simp [vecMulVec_apply, map_mul]

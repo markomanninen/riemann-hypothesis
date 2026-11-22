@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TypeSlice
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsCuspSpaceBot
-import GroundTheory.AutomorphicForms.MeasuresModulus
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TypeSlice
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCuspSpaceBot
+public import GroundTheory.AutomorphicForms.MeasuresModulus
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -195,7 +199,7 @@ private theorem noConst_conv (hK : K.map e.toMonoidHom = K₀.prod K') (o₀ : I
       simp only [Function.mem_support, Set.Finite.coe_toFinset, Set.mem_setOf_eq] at hq ⊢
       exact left_ne_zero_of_mul hq
   simp only [key]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · refine Finset.sum_eq_zero fun q _ => ?_
     rw [integral_const_mul]
     have hz := Cf ((e q.out⁻¹).2 * h') a b ε ha hb μ hμ u hu ((e q.out⁻¹).1 * g) h

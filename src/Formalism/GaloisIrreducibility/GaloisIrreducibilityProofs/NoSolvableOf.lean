@@ -1,4 +1,8 @@
-import Formalism.GaloisIrreducibility.NoSolvableOf
+module
+
+public import Formalism.GaloisIrreducibility.NoSolvableOf
+
+@[expose] public section
 
 namespace Formalism.GaloisIrreducibility
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocJacTyp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocJacTyp
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,10 +26,8 @@ theorem absV_zero : absV v (0 : Fv F v) = 0 := by
 theorem absV_pos {x : Fv F v} (hx : x ≠ 0) : 0 < absV v x := by
   have h : Valued.v x ≠ 0 := by simpa using hx
   unfold absV
-  rw [dif_neg h]
+  rw [dite_eq_right h]
   exact zpow_pos (q_pos v) _
-
-theorem absV_ne_zero {x : Fv F v} (hx : x ≠ 0) : absV v x ≠ 0 := (absV_pos v hx).ne'
 
 theorem absV_mul (x y : Fv F v) : absV v (x * y) = absV v x * absV v y := by
   by_cases hx : x = 0
@@ -36,7 +38,7 @@ theorem absV_mul (x y : Fv F v) : absV v (x * y) = absV v x * absV v y := by
   have h2 : Valued.v y ≠ 0 := by simpa using hy
   have h3 : Valued.v (x * y) ≠ 0 := by simpa using mul_ne_zero hx hy
   unfold absV
-  rw [dif_neg h1, dif_neg h2, dif_neg h3, ← zpow_add₀ (q_pos v).ne', ← toAdd_mul]
+  rw [dite_eq_right h1, dite_eq_right h2, dite_eq_right h3, ← zpow_add₀ (q_pos v).ne', ← toAdd_mul]
   congr 2
   apply WithZero.coe_injective
   rw [WithZero.coe_mul, WithZero.coe_unzero, WithZero.coe_unzero, WithZero.coe_unzero, map_mul]
@@ -44,7 +46,7 @@ theorem absV_mul (x y : Fv F v) : absV v (x * y) = absV v x * absV v y := by
 theorem absV_one : absV v (1 : Fv F v) = 1 := by
   have h : Valued.v (1 : Fv F v) ≠ 0 := by simp
   unfold absV
-  rw [dif_neg h]
+  rw [dite_eq_right h]
   have h1 : WithZero.unzero h = 1 := by
     apply WithZero.coe_injective
     rw [WithZero.coe_unzero, map_one, WithZero.coe_one]
@@ -62,9 +64,6 @@ theorem absV_pow (x : Fv F v) (n : ℕ) : absV v (x ^ n) = absV v x ^ n := by
   | zero => simp [absV_one]
   | succ n ih => rw [pow_succ, absV_mul, ih, pow_succ]
 
-theorem absV_div (x y : Fv F v) : absV v (x / y) = absV v x / absV v y := by
-  rw [div_eq_mul_inv, absV_mul, absV_inv, div_eq_mul_inv]
-
 theorem dV_ne_zero : dV v ≠ 0 := by
   unfold dV
   split_ifs with h
@@ -76,10 +75,6 @@ theorem alp_ne_zero (r : ℕ) (a : Fin (r + 1)) : alp v r a ≠ 0 := by
   split_ifs
   · exact pow_ne_zero _ (inv_ne_zero (dV_ne_zero v))
   · exact one_ne_zero
-
-theorem alp_last (r : ℕ) : alp v r (Fin.last r) = 1 := by
-  unfold alp
-  simp
 
 theorem natCast_ne_zero {g : ℕ} (hg : 0 < g) : (g : Fv F v) ≠ 0 := by
   intro h0

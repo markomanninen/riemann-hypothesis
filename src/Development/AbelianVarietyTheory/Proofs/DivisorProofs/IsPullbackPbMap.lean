@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapBcComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapBcComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,14 +46,19 @@ theorem isPullback_pbMap {T T' : Scheme.{0}} (a : T' ⟶ T) (y : (functor A B r)
     (Iso.refl _) ?_ ?_ ?_ ?_
   · simp only [pbMap, Iso.symm_hom, Iso.refl_hom, Category.comp_id, Category.id_comp]
     exact (Iso.inv_hom_id_assoc _ _).symm
-  · simp [proj, functor_map]
+  · change _ = (y.2.1.comapIso (bc A B y.1 a)).inv ≫
+      (y.2.1.comap (bc A B y.1 a)).subschemeι ≫ pullback.snd _ (a ≫ y.1)
+    rw [Scheme.IdealSheafData.comapIso_inv_subschemeι_assoc]
+    simp
   · simp
   · simp
 
 theorem pbMap_fst {T T' : Scheme.{0}} (a : T' ⟶ T) (y : (functor A B r).obj (op T)) :
     pbMap a y ≫ y.2.1.subschemeι ≫ pullback.fst _ y.1 =
       ((functor A B r).map a.op y).2.1.subschemeι ≫ pullback.fst _ ((functor A B r).map a.op y).1 := by
-  simp only [pbMap, functor_map, Category.assoc]
+  change (y.2.1.comapIso (bc A B y.1 a)).hom ≫ pullback.snd _ _ ≫
+      y.2.1.subschemeι ≫ pullback.fst _ y.1 =
+    (y.2.1.comap (bc A B y.1 a)).subschemeι ≫ pullback.fst _ (a ≫ y.1)
   rw [← pullback.condition_assoc, Scheme.IdealSheafData.comapIso_hom_fst_assoc]
   congr 1
   exact (pullback.lift_fst _ _ _).trans (Category.comp_id _)

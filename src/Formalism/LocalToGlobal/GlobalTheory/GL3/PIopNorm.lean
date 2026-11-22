@@ -1,9 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PIopIso
-import Formalism.LocalToGlobal.GlobalTheory.GL3.DeterminantNormOneOfUnitDisc
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EpEqOneIff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PIopIso
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.DeterminantNormOneOfUnitDisc
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EpEqOneIff
+
+@[expose] public section
 
 noncomputable section
+
+open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric MeasureTheory in
+private local instance (D : D7) (N N' : ℕ) :
+    VAddInvariantMeasure (VC D N N') (VC D N N') volume := by
+  have : (volume : Measure (VC D N N')).IsAddLeftInvariant :=
+    (Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.instHaarVC D N N').toIsAddLeftInvariant
+  exact Measure.IsAddLeftInvariant.vaddInvariantMeasure
 
 namespace Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IL
 
@@ -39,18 +50,16 @@ theorem mem_vadd_iff {La : AddSubgroup (VC D N N')} (g : La) (s : Set (VC D N N'
 theorem unionFd_fd {M La : AddSubgroup (VC D N N')} (hle : M ≤ La)
     [Finite (La ⧸ M.addSubgroupOf La)] {s : Set (VC D N N')}
     (hs : IsAddFundamentalDomain La s volume) :
-    IsAddFundamentalDomain M (unionFd M La s) volume where
-  nullMeasurableSet := NullMeasurableSet.iUnion fun q => hs.nullMeasurableSet_vadd _
-  ae_covers := by
-    filter_upwards [hs.ae_covers] with x hx
+    IsAddFundamentalDomain M (unionFd M La s) volume := by
+  refine ⟨NullMeasurableSet.iUnion (fun q => hs.nullMeasurableSet_vadd (Quotient.out q)), ?_, ?_⟩
+  · filter_upwards [hs.ae_covers] with x hx
     obtain ⟨g, hg⟩ := hx
     refine ⟨⟨_, out_mem M La g⟩, Set.mem_iUnion.2 ⟨QuotientAddGroup.mk (-g), ?_⟩⟩
     rw [mem_vadd_iff]
     convert hg using 1
     simp only [AddSubgroup.vadd_def, vadd_eq_add, AddSubgroup.coe_add]
     abel
-  aedisjoint := by
-    intro a b hab
+  · intro a b hab
     change volume ((a +ᵥ unionFd M La s) ∩ (b +ᵥ unionFd M La s)) = 0
     let a' : La := ⟨a, hle a.2⟩
     let b' : La := ⟨b, hle b.2⟩
@@ -461,7 +470,8 @@ theorem iso_core (T : Tor D) {La₁ La₂ : AddSubgroup (VC D N N')}
           starRingEnd ℂ (∑ q' : Q, trm T G (xr q') z) *
           (Real.exp (-Real.pi * (Hf D T z z).re) : ℂ)) := by
       simp only [crD, hI, map_mul]; ring
-    rw [e1, map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum, Finset.sum_mul_sum]
     simp_rw [Finset.sum_mul]
     rfl
   have hint : ∀ q q' : Q, IntegrableOn (crD T (trm T G (xr q)) (trm T G (xr q'))) t volume :=
@@ -565,9 +575,6 @@ theorem IopIso_of_parts (hA : HfIntRec) (hB : SelfDualRec) :
       exact ⟨b, by rw [h]; simp⟩
     · intro v _ hv
       exact hB D cc hcc δ hδ h0 N N' L₁ L₁' h1 v hv
-
-theorem LinkThIndep_of_parts (hA : HfIntRec) (hB : SelfDualRec) : LinkThIndep :=
-  LinkThIndep_of_IopIso (IopIso_of_parts hA hB)
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity
 

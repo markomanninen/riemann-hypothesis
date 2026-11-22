@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.FinalF
+module
+
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.FinalF
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure Filter Topology
 open scoped NNReal ENNReal
@@ -35,9 +39,10 @@ theorem modular_aut (φ : H ≃ₜ* H) (g : H) : modularCharacterFun (φ g) = mo
   apply smul_haar_cancel (ρ.map φ)
   rw [← map_right_eq, ← Measure.map_smul, ← map_right_eq, map_map (measurable_mul_const _) hφ,
     map_map hφ (measurable_mul_const _)]
-  congr 1
-  funext x
-  simp
+  · congr 1
+    funext x
+    simp
+  · exact hφ.aemeasurable
 
 theorem continuous_modular : Continuous fun g : H => (modularCharacterFun g : ℝ) := by
   let ρ : Measure H := Measure.haar
@@ -64,6 +69,7 @@ theorem map_inv_eq (ρ : Measure H) [ρ.IsHaarMeasure] [ρ.IsMulRightInvariant] 
     have h3 : ρ.inv.inv = c • ρ.inv := by
       conv_lhs => rw [h]
       rw [Measure.inv_def, Measure.map_smul, ← Measure.inv_def]
+      exact measurable_inv.aemeasurable
     rw [Measure.inv_inv, h, smul_smul] at h3
     rw [one_smul]
     exact h3.symm

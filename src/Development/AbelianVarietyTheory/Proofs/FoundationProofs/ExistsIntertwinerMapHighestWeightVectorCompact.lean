@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsLinearEquivOfIrreducibleIsHW
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsLinearEquivOfIrreducibleIsHW
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH
 
 namespace GlobalTheory
@@ -35,7 +40,8 @@ theorem gkMod_compact_irr_units {n : ℕ} (M : GKMod n 0) (h : Formalism.MainNot
     S = ⊥ ∨ S = ⊤ := by
   refine h.2 S fun Z y hy => ?_
   rw [mat_compact_eq_sum_units Z]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
   exact S.sum_mem fun a _ => S.sum_mem fun b _ => S.smul_mem _ (hS a b y hy)
 
 theorem gkMod_compact_isHW_units {n : ℕ} (M : GKMod n 0) (Λ : Ix n 0 → ℚ) (v : M.V)
@@ -74,7 +80,8 @@ theorem exists_intertwiner_map_highestVector :
   · simp [hc, smul_smul, hc0]
   · have key : T (M.act Z x) = M'.act Z (T x) := by
       rw [mat_compact_eq_sum_units Z]
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
       rw [hT a b x]
     simp only [LinearMap.smul_apply, LinearEquiv.coe_coe, key, map_smul]

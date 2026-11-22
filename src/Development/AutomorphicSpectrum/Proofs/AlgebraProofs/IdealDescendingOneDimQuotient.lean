@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TwistApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TwistApply
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Flat.DegCurve
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat.StepIdeal
@@ -64,7 +69,7 @@ theorem exists_colength_one (k A : Type) [Field k] [CommRing A] [Algebra k A] [F
     simp
   let J₁ : Ideal A :=
     { carrier := {a | a ∈ J ∧ l a = 0}
-      add_mem' := fun {a b} ha hb => ⟨J.add_mem ha.1 hb.1, by rw [map_add, ha.2, hb.2, add_zero]⟩
+      add_mem' := fun {a b} ha hb => ⟨J.add_mem ha.1 hb.1, by rw [map_add (f := _), ha.2, hb.2, add_zero]⟩
       zero_mem' := ⟨J.zero_mem, map_zero l⟩
       smul_mem' := fun c a ha => by
         refine ⟨J.mul_mem_left c ha.1, ?_⟩
@@ -72,7 +77,7 @@ theorem exists_colength_one (k A : Type) [Field k] [CommRing A] [Algebra k A] [F
           rw [Algebra.smul_def]
           ring
         change l (c * a) = 0
-        rw [hsplit, map_add, map_smul, ha.2, smul_zero, zero_add]
+        rw [hsplit, map_add (f := _), map_smul, ha.2, smul_zero, zero_add]
         exact hlW _ (Ideal.mul_mem_mul (hdec c) ha.1) }
   have hmemJ₁ : ∀ a, a ∈ J₁ ↔ a ∈ J ∧ l a = 0 := fun a => Iff.rfl
   refine ⟨J₁, t, l, ?_, htJ, ?_, ?_, ?_, hlt⟩

@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraExtra
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherTer
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherTail
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastRest
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsSumEqOneOfMulEqOne
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PGraphClosed
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraExtra
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherTer
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherTail
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastRest
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsSumEqOneOfMulEqOne
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PGraphClosed
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

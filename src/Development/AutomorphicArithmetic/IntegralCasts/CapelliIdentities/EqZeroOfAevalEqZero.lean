@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.G8.kry :
     {R : Type} → [CommRing R] → {n : ℕ} → Matrix (Fin n) (Fin n) R → (Fin n → R) → Matrix (Fin n) (Fin n) R :=
@@ -54,7 +58,8 @@ private theorem UpperTheory.Reformulated.B.G8.exists_kry_field {K : Type} [Field
   have hv : aeval g p • v = 0 := by
     rw [← hc0]
     ext i
-    simp only [p, map_sum, map_mul, aeval_C, map_pow, aeval_X, Finset.sum_smul, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p, map_sum, map_mul, aeval_C, map_pow, aeval_X, Finset.sum_smul, Finset.sum_apply,
       ← Algebra.smul_def, smul_assoc, Pi.smul_apply, smul_eq_mul, Matrix.smul_eq_mulVec]
     simp only [UpperTheory.Reformulated.B.G8.kry, Matrix.mulVec, dotProduct, Matrix.of_apply]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.WhitKOfSteps
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.WhitKOfSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ open PositivityTheory.SiegelWeilFormula
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-theorem integral_add_left_haar {G : Type} [MeasurableSpace G] [TopologicalSpace G] [AddGroup G] (μ : Measure G)
+theorem integral_add_left_haar {G : Type} [MeasurableSpace G] [MeasurableSingletonClass G]
+    [TopologicalSpace G] [AddGroup G] (μ : Measure G)
     [μ.IsAddHaarMeasure] (g : G) (f : G → ℂ) : ∫ x, f (g + x) ∂μ = ∫ x, f x ∂μ := by
   have hne : μ ≠ 0 := by
     intro h0
@@ -23,8 +28,8 @@ theorem integral_add_left_haar {G : Type} [MeasurableSpace G] [TopologicalSpace 
     intro g'
     by_contra hc
     have := Measure.IsAddLeftInvariant.map_add_left_eq_self (μ := μ) g'
-    rw [Measure.map_of_not_aemeasurable hc] at this
-    exact hne this.symm
+    rw [Measure.map_of_not_aemeasurable_of_ne_zero hc hne] at this
+    exact hc (this ▸ aemeasurable_dirac)
   have hmap : Measure.map (fun x => g + x) μ = μ := Measure.IsAddLeftInvariant.map_add_left_eq_self g
   by_cases hf : AEStronglyMeasurable f μ
   · conv_rhs => rw [← hmap]
@@ -76,7 +81,7 @@ theorem om_mem_sch (d : SD σ) (g : d.G) {Φ : d.Fn} (h : Φ ∈ d.sch) : d.om g
   d.ok.dbl.weil.2.1.pres g Φ h
 
 theorem section_mul_weil_action (d : SD σ) (Φ : d.Fn) (g k : d.G) : d.sec0 Φ (g * k) = d.sec0 (d.om k Φ) g := by
-  simp [SD.sec0, map_mul, Module.End.mul_apply]
+  simp [SD.sec0, map_mul]
 
 theorem a_mul_K (d : SD σ) (g k : d.G) (hk : k ∈ d.K) : d.a (g * k) = d.a g := by
   obtain ⟨p, t, hp, k', hk', rfl⟩ := d.ok.hgt.iwa g
@@ -89,7 +94,7 @@ theorem kfin_om (d : SD σ) {Φ : d.Fn} (hΦ : d.KFin Φ) {k : d.G} (hk : k ∈ 
     (Submodule.span_le.2 ?_)
   rintro _ ⟨k', rfl⟩
   refine Submodule.subset_span ⟨⟨k'.1 * k, d.K.mul_mem k'.2 hk⟩, ?_⟩
-  simp [map_mul, Module.End.mul_apply]
+  simp [map_mul]
 
 section Forms
 
@@ -126,11 +131,9 @@ theorem block_diag_form (c : R →+* R) {κ : Type} [Fintype κ] [DecidableEq κ
 
 end Forms
 
-local notation:70 X:70 " ⬝ " Y:71 => @HMul.hMul _ _ _ Matrix.instHMulOfFintypeOfMulOfAddCommMonoid X Y
-
 omit [NumberField E] in
 theorem incM_mul' {a b c : Type} [Fintype b] (X : Matrix a b E) (Y : Matrix b c E) :
-    incM F (X ⬝ Y) = incM F X ⬝ incM F Y := Matrix.map_mul
+    incM F (X * Y) = incM F X * incM F Y := Matrix.map_mul
 
 theorem frame_form (d : SD σ) : ∃ C' : Matrix (Fin d.n) (Fin d.n) (AE F E),
     (incM F d.b.1)ᵀ * dbl (incM F d.Y.J) * (incM F d.b.1).map (cA σ) = Matrix.fromBlocks 0 1 C' 0 := by
@@ -152,36 +155,36 @@ theorem parabolic_lower_block_zero (d : SD σ) (p : d.G) (t : GL (Fin d.n) (AE F
   obtain ⟨-, tb, htb⟩ := d.ok.frame
   let E1 : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n) (AE F E) := Matrix.fromRows 1 0
   let DC : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n) (AE F E) := diagCols (Fin d.n)
-  have htb' : d.b.1.toCols₁ = (diagCols (Fin d.n) : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n) E) ⬝ tb.1 := htb
-  have hp' : mat2 p ⬝ DC = DC ⬝ t.1 := hp
-  have hcol : ∀ M : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E), M ⬝ E1 = M.toCols₁ := by
+  have htb' : d.b.1.toCols₁ = (diagCols (Fin d.n) : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n) E) * tb.1 := htb
+  have hp' : mat2 p * DC = DC * t.1 := hp
+  have hcol : ∀ M : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F E), M * E1 = M.toCols₁ := by
     intro M
     ext i j
     simp [E1, Matrix.mul_apply, Fintype.sum_sum_type, Matrix.one_apply, Matrix.toCols₁]
-  have h1 : incM F d.b.1 ⬝ E1 = incM F (d.b.1.toCols₁) := by
+  have h1 : incM F d.b.1 * E1 = incM F (d.b.1.toCols₁) := by
     rw [hcol]
     ext i j
     rfl
-  have h2 : incM F ((diagCols (Fin d.n) : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n) E) ⬝ tb.1) = DC ⬝ incM F tb.1 := by
+  have h2 : incM F ((diagCols (Fin d.n) : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n) E) * tb.1) = DC * incM F tb.1 := by
     rw [incM_mul']
     congr 1
     ext i j
     cases i <;> simp [DC, diagCols, incM, Matrix.one_apply, apply_ite] <;> split_ifs <;> simp_all
-  have hb : incM F d.b.1 ⬝ E1 = DC ⬝ incM F tb.1 := h1.trans ((congrArg (incM F) htb').trans h2)
-  have hTb : incM F tb.1 ⬝ incM F (tb⁻¹).1 = 1 := by
+  have hb : incM F d.b.1 * E1 = DC * incM F tb.1 := h1.trans ((congrArg (incM F) htb').trans h2)
+  have hTb : incM F tb.1 * incM F (tb⁻¹).1 = 1 := by
     rw [← incM_mul', Units.mul_inv]
     exact Matrix.map_one _ (map_zero _) (map_one _)
-  have hBB : incM F (d.b⁻¹).1 ⬝ incM F d.b.1 = 1 := incM_inv_mul d
-  have hdc : DC = incM F d.b.1 ⬝ E1 ⬝ incM F (tb⁻¹).1 := by
+  have hBB : incM F (d.b⁻¹).1 * incM F d.b.1 = 1 := incM_inv_mul d
+  have hdc : DC = incM F d.b.1 * E1 * incM F (tb⁻¹).1 := by
     rw [hb, Matrix.mul_assoc, hTb, Matrix.mul_one]
-  have key : inFrame d.b p ⬝ E1 = E1 ⬝ (incM F (tb⁻¹).1 ⬝ t.1 ⬝ incM F tb.1) := by
-    have e0 : inFrame d.b p = incM F (d.b⁻¹).1 ⬝ mat2 p ⬝ incM F d.b.1 := rfl
-    calc inFrame d.b p ⬝ E1 = incM F (d.b⁻¹).1 ⬝ (mat2 p ⬝ (incM F d.b.1 ⬝ E1)) := by
+  have key : inFrame d.b p * E1 = E1 * (incM F (tb⁻¹).1 * t.1 * incM F tb.1) := by
+    have e0 : inFrame d.b p = incM F (d.b⁻¹).1 * mat2 p * incM F d.b.1 := rfl
+    calc inFrame d.b p * E1 = incM F (d.b⁻¹).1 * (mat2 p * (incM F d.b.1 * E1)) := by
           rw [e0]; simp only [Matrix.mul_assoc]
-      _ = incM F (d.b⁻¹).1 ⬝ ((mat2 p ⬝ DC) ⬝ incM F tb.1) := by
+      _ = incM F (d.b⁻¹).1 * ((mat2 p * DC) * incM F tb.1) := by
           rw [hb, Matrix.mul_assoc]
-      _ = incM F (d.b⁻¹).1 ⬝ ((DC ⬝ t.1) ⬝ incM F tb.1) := by rw [hp']
-      _ = (incM F (d.b⁻¹).1 ⬝ incM F d.b.1) ⬝ E1 ⬝ (incM F (tb⁻¹).1 ⬝ t.1 ⬝ incM F tb.1) := by
+      _ = incM F (d.b⁻¹).1 * ((DC * t.1) * incM F tb.1) := by rw [hp']
+      _ = (incM F (d.b⁻¹).1 * incM F d.b.1) * E1 * (incM F (tb⁻¹).1 * t.1 * incM F tb.1) := by
           rw [hdc]; simp only [Matrix.mul_assoc]
       _ = _ := by rw [hBB, Matrix.one_mul]
   ext i j
@@ -287,6 +290,22 @@ theorem orb_n (hT : TAll) (d : SD σ) (T : nF σ d.Y d.b) {Ψ : d.Fn} (hΨ : Ψ 
   simp only [MeasureTheory.average]
   exact integral_const_mul _ _
 
+open scoped RestrictedProduct in
+instance instMeasurableSingletonClassNA {n : ℕ} {Y : Spc F E n} (b : GL (Fin n ⊕ Fin n) E) :
+    MeasurableSingletonClass (nA σ Y b) := by
+  have : T2Space (AF F) := inferInstanceAs (T2Space
+    (((v : InfinitePlace F) → v.Completion) ×
+      (Πʳ v : HeightOneSpectrum (𝓞 F), [v.adicCompletion F, v.adicCompletionIntegers F])))
+  let e : AE F E ≃ₗ[AF F] (Fin (Module.finrank F E) → AF F) :=
+    (Algebra.TensorProduct.basis (AF F) (Module.finBasis F E)).equivFun
+  have : IsModuleTopology (AF F) (AE F E) := ⟨rfl⟩
+  have : T2Space (AE F E) := T2Space.of_injective_continuous e.injective
+    (IsModuleTopology.continuous_of_linearMap e.toLinearMap)
+  have : BorelSpace (AE F E) := ⟨rfl⟩
+  have : MeasurableSingletonClass (Matrix (Fin n) (Fin n) (AE F E)) :=
+    inferInstanceAs (MeasurableSingletonClass (Fin n → Fin n → AE F E))
+  infer_instance
+
 theorem int_n (d : SD σ) (nb : nA σ d.Y d.b → d.G) (lam : Measure (nA σ d.Y d.b)) (𝓖 : Set (nA σ d.Y d.b))
     (hcd : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖) (T : nF σ d.Y d.b) (w n0 m0 : d.G) (β₀ : Mx F E d.n d.n)
     (hn : inFrame d.b n0 = Matrix.fromBlocks 1 β₀ 0 1) (f : d.G → ℂ) :
@@ -302,7 +321,7 @@ theorem int_n (d : SD σ) (nb : nA σ d.Y d.b → d.G) (lam : Measure (nA σ d.Y
     simp [Matrix.fromBlocks_multiply, add_comm, b₀]
   have htt : ∀ β : nA σ d.Y d.b, d.tt (T.1.1 * (b₀ + β).1) = d.tt (T.1.1 * β₀) + d.tt (T.1.1 * β.1) := by
     intro β
-    simp [SD.tt, Matrix.mul_add, Matrix.trace_add, map_add, b₀]
+    simp [SD.tt, Matrix.mul_add, Matrix.trace_add, map_add (f := _), b₀]
   calc ∫ β, f (w * nb β * (n0 * m0)) * d.B.ψ (-d.tt (T.1.1 * β.1)) ∂lam
       = ∫ β, (fun β' : nA σ d.Y d.b => f (w * nb β' * m0) * (d.B.ψ (-d.tt (T.1.1 * β'.1)) *
           d.B.ψ (d.tt (T.1.1 * β₀)))) (b₀ + β) ∂lam := by
@@ -320,27 +339,6 @@ theorem int_n (d : SD σ) (nb : nA σ d.Y d.b → d.G) (lam : Measure (nA σ d.Y
         congr 1
         funext β
         ring
-
-theorem iwaRed : IwaRed := by
-  intro hT hL F E _ _ _ _ _ σ d hnm hE Φ hΦ nb lam 𝓖 hcd ε w hw T hTnd x
-  obtain ⟨p, t, hp, k, hk, rfl⟩ := d.ok.hgt.iwa x
-  obtain ⟨n0, m0, β₀, hn, hm, rfl⟩ := par_decomp d p t hp
-  have key := hL F E σ d hnm hE (d.om k Φ) (kfin_om d hΦ hk) m0 hm nb lam 𝓖 hcd ε w hw T hTnd
-  have e1 : (fun z => ∫ β, flat d.a (d.sec0 Φ) (s0 d.m d.n) z (w * nb β * (n0 * m0 * k)) *
-      d.B.ψ (-d.tt (T.1.1 * β.1)) ∂lam) = fun z => d.B.ψ (d.tt (T.1.1 * β₀)) *
-      ∫ β, flat d.a (d.sec0 (d.om k Φ)) (s0 d.m d.n) z (w * nb β * m0) * d.B.ψ (-d.tt (T.1.1 * β.1)) ∂lam := by
-    funext z
-    rw [← int_n d nb lam 𝓖 hcd T w n0 m0 β₀ hn]
-    congr 1
-    funext β
-    simp only [flat]
-    rw [show w * nb β * (n0 * m0 * k) = (w * nb β * (n0 * m0)) * k by simp only [mul_assoc], a_mul_K d _ k hk,
-      section_mul_weil_action]
-  have e2 : d.orb T (d.om (n0 * m0 * k) Φ) = d.B.ψ (d.tt (T.1.1 * β₀)) * d.orb T (d.om m0 (d.om k Φ)) := by
-    rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply]
-    exact orb_n hT d T (om_mem_sch d _ (om_mem_sch d _ hΦ.1)) n0 β₀ hn
-  rw [e1, e2]
-  exact holValueAt_const_mul _ key
 
 end PositivityTheory.SiegelWeilFormula.KWhit
 

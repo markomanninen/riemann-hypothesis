@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -317,14 +321,14 @@ theorem eventually_ne {h : S} (hh : ψ h ≠ 0) : ∀ᶠ ψ' in closeF V ψ, ψ'
   rw [h0, zero_sub, Valuation.map_neg] at h1
   exact lt_irrefl _ h1
 
-open Classical in
 
+open Classical in
 def ext (h : S) (χ₀ : Localization.Away h →+* K) (ψ' : S →+* K) : Localization.Away h →+* K :=
   if hh : ψ' h = 0 then χ₀ else IsLocalization.Away.lift h (Ne.isUnit hh)
 
 theorem ext_comp {h : S} (χ₀ : Localization.Away h →+* K) {ψ' : S →+* K} (hh : ψ' h ≠ 0) :
     (ext h χ₀ ψ').comp (algebraMap S _) = ψ' := by
-  rw [ext, dif_neg hh]
+  rw [ext, dite_eq_right hh]
   exact IsLocalization.Away.lift_comp h _
 
 theorem tend_ext {h : S} (hh : ψ h ≠ 0) {χ₀ : Localization.Away h →+* K} (h0 : χ₀.comp (algebraMap S _) = ψ)
@@ -360,7 +364,7 @@ theorem Tend.cong {a : (S →+* K) → K} {b : V} (h : Tend V ψ a (algebraMap V
     rw [hw]
     exact le_of_lt h1
   obtain ⟨y, hy⟩ := hint
-  refine ⟨b + y, by rw [map_add, hy, add_sub_cancel], ?_⟩
+  refine ⟨b + y, by rw [map_add (f := _), hy, add_sub_cancel], ?_⟩
   rw [add_sub_cancel_left]
   have h3 : valV V (algebraMap V K y) < 1 := by
     rw [hy]

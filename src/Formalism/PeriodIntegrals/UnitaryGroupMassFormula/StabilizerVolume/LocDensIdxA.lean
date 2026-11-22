@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensIdxH
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensIdxH
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,16 +31,19 @@ theorem crd_sigR (y : Fv F v ⊗[F] E) (k : Fin d) :
       smul_eq_mul]
     have he : σ e = ∑ l, b.repr e l • σ (b l) := by
       have h := congrArg σ (b.sum_repr e)
-      rw [map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h
       simp only [map_smul] at h
       exact h.symm
-    rw [he, map_sum]
-    simp only [map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [he, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul,
       map_sum, map_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     ring
   | add x y hx hy =>
-    rw [map_add, map_add, Finsupp.add_apply, hx, hy, map_add]
+    rw [map_add (f := _), map_add (f := _), Finsupp.add_apply, hx, hy, map_add (f := _)]
     simp only [Finsupp.add_apply, mul_add, Finset.sum_add_distrib]
 
 theorem eventually_int (x : F) :
@@ -84,7 +91,7 @@ theorem fix2 {F : Type} [Field F] (C : Matrix (Fin 2) (Fin 2) F) (hC : C ≠ 1) 
         algebraMap F K ((C - 1) i 1) * algebraMap F K (u 1) = 0 := by
       have := hrow F u (by simpa using hCu)
       have := congrArg (algebraMap F K) this
-      simpa [map_add, map_mul] using this
+      simpa [map_add (f := _), map_mul] using this
     rcases hab with ha | hb
     · have hA : algebraMap F K ((C - 1) i 0) ≠ 0 := (map_ne_zero _).2 ha
       apply mul_left_cancel₀ hA

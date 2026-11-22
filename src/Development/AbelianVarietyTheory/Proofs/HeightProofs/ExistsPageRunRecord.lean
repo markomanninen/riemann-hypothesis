@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.ConclOfInputs4
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NoCommonZeroSt
-import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.N0LeNs
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.NusOffLevel
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DegreeWeightKappaLePageBound
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MulRowsScaledWeightLeKappaRows
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.ConclOfInputs4
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NoCommonZeroSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.N0LeNs
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.NusOffLevel
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DegreeWeightKappaLePageBound
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MulRowsScaledWeightLeKappaRows
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -150,7 +154,7 @@ theorem sigPar_gap (P : ParameterChoice' D L) (τ : D.what₂.Tau) {G : ℝ} (g1
     push_cast at h3
     linarith
   · by_cases c2 : i < D.R.k - 1
-    · rw [dif_pos c2, dif_neg c1, dif_pos (by omega)]
+    · rw [dif_pos c2, dite_eq_right c1, dif_pos (by omega)]
       have a1 := (L.cloud_v τ ⟨i, c2⟩).1
       have a2 := teta_le_wj P le_rfl (show 1 ≤ D.R.m by omega) τ
       unfold wj at a2
@@ -163,7 +167,7 @@ theorem sigPar_gap (P : ParameterChoice' D L) (τ : D.what₂.Tau) {G : ℝ} (g1
       have a6 := mul_le_mul_of_nonneg_right a4 L.etaSz_pos.le
       push_cast at a3 ⊢
       linarith
-    · rw [dif_neg c2, dif_neg c1, dif_pos (by omega), dif_pos (by omega)]
+    · rw [dite_eq_right c2, dite_eq_right c1, dif_pos (by omega), dif_pos (by omega)]
       have a1 := (P.nodes_gap τ (i - (D.R.k - 1)) (by omega)).1
       have e : (⟨i - (D.R.k - 1) + 1, by omega⟩ : Fin D.R.m) = ⟨i + 1 - (D.R.k - 1), by omega⟩ :=
         Fin.ext (by show i - (D.R.k - 1) + 1 = i + 1 - (D.R.k - 1); omega)
@@ -301,7 +305,7 @@ theorem DF_wF_le {ka wL wF : WeightFamilies.Wt D j} {T nP nW : ℕ} (h1 : 1 ≤ 
       · have := rem_le (gapZ (ka.aP τ) i + 2) T (WeightFamilies.dimY D j)
         linarith
       · have := rem_le ((ka.aP τ i : ℤ) - ((WeightFamilies.dimY D j : ℤ) + 2) * nW - 2 * D.R.r) T (WeightFamilies.dimY D j)
-        have e : gapZ (ka.aP τ) i = ka.aP τ i := by unfold gapZ; rw [dif_neg hi]
+        have e : gapZ (ka.aP τ) i = ka.aP τ i := by unfold gapZ; rw [dite_eq_right hi]
         rw [e]
         linarith) (by positivity) i
     exact_mod_cast this
@@ -314,7 +318,7 @@ theorem DF_wF_le {ka wL wF : WeightFamilies.Wt D j} {T nP nW : ℕ} (h1 : 1 ≤ 
       · have := rem_le (gapZ (ka.aM τ) i + 2) T (WeightFamilies.dimY D j)
         linarith
       · have := rem_le (ka.aM τ i : ℤ) T (WeightFamilies.dimY D j)
-        have e : gapZ (ka.aM τ) i = ka.aM τ i := by unfold gapZ; rw [dif_neg hi]
+        have e : gapZ (ka.aM τ) i = ka.aM τ i := by unfold gapZ; rw [dite_eq_right hi]
         rw [e]
         linarith) (by positivity) i
     exact_mod_cast this

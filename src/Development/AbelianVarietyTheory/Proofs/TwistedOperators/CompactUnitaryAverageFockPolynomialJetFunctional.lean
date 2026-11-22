@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MvZOneEqMapUnivSubst
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EvalAtJetMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MvZOneEqMapUnivSubst
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EvalAtJetMap
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.L2.DIV MeasureTheory
 open scoped Matrix
 
@@ -62,11 +67,12 @@ theorem integrable_term {a b : ℕ} {K : Type} [Group K] [TopologicalSpace K] [I
     (Λ : FP ι a b →ₗ[ℂ] ℂ) (Q : FP ι a b) (y : ι → Matrix (Fin a) (Fin a) ℂ) (F : PY ι a) :
     Integrable (fun k => Λ (mvZ (fun τ => (r k τ)⁻¹) (fun _ => 1) Q) * evalAt (fun τ => r k τ * y τ) F) ν := by
   set U := GlobalTheory.KJAvg.univSubst Q with hU
-  set p : PY ι a := ∑ m ∈ U.support, C (Λ (monomial m 1)) * coeff m U with hp'
+  set p : PY ι a := ∑ m ∈ U.support, C (Λ (monomial m 1)) * AddMonoidAlgebra.coeff U m with hp'
   have hp : ∀ g : ι → Matrix (Fin a) (Fin a) ℂ, Λ (mvZ g (fun _ => 1) Q) = eval (fun w => g w.1 w.2.1 w.2.2) p := by
     intro g
     rw [GlobalTheory.KJAvg.mvZ_one_eq_map_univSubst, GlobalTheory.KJAvg.linear_eq_sum_coeff Λ U.support _ (support_map_subset _ _)]
-    simp only [hp', map_sum, map_mul, eval_C, coeff_map]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hp', map_sum, map_mul, eval_C, coeff_map]
     exact Finset.sum_congr rfl fun m _ => mul_comm _ _
   have e : (fun k => Λ (mvZ (fun τ => (r k τ)⁻¹) (fun _ => 1) Q) * evalAt (fun τ => r k τ * y τ) F) =
       fun k => eval (fun w => r k⁻¹ w.1 w.2.1 w.2.2) p * evalAt (fun τ => r k τ * y τ) F := by
@@ -78,8 +84,8 @@ theorem integrable_term {a b : ℕ} {K : Type} [Group K] [TopologicalSpace K] [I
 
 end GlobalTheory.AvgJet
 
-open GlobalTheory.AvgJet in
 
+open GlobalTheory.AvgJet in
 theorem GlobalTheory.AvgJet.avg_jet : ∀ (ι : Type) [Fintype ι] (a b : ℕ), a ≤ b → 0 < a → ∀ (lam : ι → DomWeight a) (lam' : ι → DomWeight b)
     (nn : ι → ℕ), Formalism.L2.Ker.JetInVV ℂ lam lam' nn → ∀ (K : Type) [Group K] [TopologicalSpace K] [IsTopologicalGroup K]
     [MeasurableSpace K] [BorelSpace K] (ν : Measure K) [IsProbabilityMeasure ν] [ν.IsMulLeftInvariant]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GHomprime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GDetrad
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GHomprime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GDetrad
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -43,10 +47,10 @@ private theorem UpperTheory.V.CA.detps_height {A : Type} [CommRing A] [IsNoether
   exact_mod_cast Finset.card_image_le.trans (by simp)
 
 theorem UpperTheory.V.CA.g_detps :
-    ∀ (R : Type) [CommRing R] [IsDomain R] [IsNoetherianRing R] (n : ℕ),
+    (∀ (R : Type) [CommRing R] [IsDomain R] [IsNoetherianRing R] (n : ℕ),
       let A := MvPowerSeries ((Fin (n + 1) × Fin (n + 1)) ⊕ Fin (n + 1)) R
       let I : Ideal A := Ideal.span (Set.range (fun a : Fin (n + 1) => ∑ b : Fin (n + 1), (MvPowerSeries.X (Sum.inl (a, b)) * MvPowerSeries.X (Sum.inr b) : A)) ∪ {Matrix.det (Matrix.of fun a b : Fin (n + 1) => (MvPowerSeries.X (Sum.inl (a, b)) : A))})
-      I.radical.IsPrime ∧ I.radical.height ≤ (n + 1 : ℕ) := by
+      I.radical.IsPrime ∧ I.radical.height ≤ (n + 1 : ℕ)) := by
   intro R _ _ _ n A I
   classical
   have hd := UpperTheory.V.CA.g_detrad R n
@@ -62,7 +66,8 @@ theorem UpperTheory.V.CA.g_detps :
     rw [hIp, Ideal.map_span, Set.image_union, Set.image_singleton, ← Set.range_comp]
     congr 3
     · funext a
-      simp [φ, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [φ, map_sum]
     · rw [RingHom.map_det]
       congr 1
       ext a b

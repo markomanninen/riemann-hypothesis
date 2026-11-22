@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.SemistableModelSemistable
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ThetaSetupAlgebraMaps
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.SemistableModelSemistable
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ThetaSetupAlgebraMaps
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -17,7 +21,7 @@ def per (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) 
   i := iC l
   t := tA l
   z := (algebraMap (AInf ℂ_[l] l) (ACris.ACris ℂ_[l] l)).comp (IsPerfectoidField.padicIntToWitt l)
-  φ := ACris.phi ℂ_[l] l
+  φ := ACris.phi (K := ℂ_[l]) (p := l)
   σA g := ACris.galCris (IntermediateField.fixingSubgroupEquiv K g)
   σ g := (σD g.1 : BdR l ≃+* BdR l).toRingHom
   q := qQ l
@@ -28,8 +32,5 @@ def PeriodRingFacts : Prop := ∀ (l : ℕ) [Fact l.Prime] (K : IntermediateFiel
 
 def BcrisRegularPeriodRing : Prop := ∀ (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) [FiniteDimensional ℚ_[l] K],
   (per l K).Reg (Bcr l)
-
-def BstRegularPeriodRing : Prop := ∀ (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) [FiniteDimensional ℚ_[l] K],
-  (per l K).Reg (Bst l)
 
 end CrystallineSemistableComparison

@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
-import ReciprocityTheory.GaloisValuations.ArithOfA
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCard
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsAlgClosureAlgebraicClosureRat
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsLocallyConstantRed
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import ReciprocityTheory.GaloisValuations.ArithOfA
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCard
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.ScaledValuations.ValuationApplyLtOneIff
+public import ReciprocityTheory.GaloisValuations.GlobalB
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.CocyclesCyclotomicFinrankThree
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,15 +23,7 @@ section Abstract
 variable {n : ℕ} [NeZero n] {G : Type} [Group G] [TopologicalSpace G] {R : Type} [CommRing R] [Finite R]
   [Algebra (ZMod n) R] [TopologicalSpace R] [DiscreteTopology R]
 
-variable (n) in
 
-def mulRep (γ : G →* Rˣ) : Representation (ZMod n) G R where
-  toFun g := LinearMap.mul (ZMod n) R (γ g)
-  map_one' := by ext; simp
-  map_mul' g h := by ext; simp [mul_assoc]
-
-omit [NeZero n] [TopologicalSpace G] [Finite R] [TopologicalSpace R] [DiscreteTopology R] in
-@[simp] theorem mulRep_apply (γ : G →* Rˣ) (g : G) (x : R) : mulRep n γ g x = (γ g : R) * x := rfl
 
 end Abstract
 

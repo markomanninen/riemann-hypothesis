@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CongruenceLevelEqDepthSucc
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.IntegralGLSuccEmbeddingMemParahoricTimesPrincipa
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CongruenceLevelEqDepthSucc
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.IntegralGLSuccEmbeddingMemParahoricTimesPrincipa
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem PhiQ_comp_of_red {E K : Type} [Field E] [NumberField E] [StarRing E] [Fi
     unfold LocE.PhiQ at hy
     split_ifs at hy with h
     · have := h.1 l.1 s.1 l.2 (by omega)
-      rwa [TopStep.entB_zero _ _ _ _ _ hc, dif_pos ⟨l.2, s.2⟩] at this
+      rwa [TopStep.entB_zero _ _ _ _ _ hc, dite_eq_left ⟨l.2, s.2⟩] at this
     · exact absurd rfl hy
   by_cases hy : ∀ s : Fin n', x (Pi.single ⟨s.1, by omega⟩ 1) ∈ stdAt E n P
   · have h : ∀ p p', TopStep.CongQ P (LocE.entB (qOf P) k₀ c' n' 0 n 0 0 (κ.1.toLinearMap ∘ₗ x : HomE E (n' + c') (n + 0)) p p')
@@ -74,38 +78,38 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
 
-variable {sel mu L} in
 
+variable {sel mu L} in
 def Idx.get {j : ℕ} (b : Idx sel mu L j) (h : j < R.m) : L.β j := b.1.get (b.2.2 h)
 
-variable {sel mu L} in
 
+variable {sel mu L} in
 def Idx.of {j : ℕ} (al : L.β j) (h : j < R.m) : Idx sel mu L j := ⟨some al, iff_of_true rfl h⟩
 
 def Idx.top {j : ℕ} (h : R.m ≤ j) : Idx sel mu L j := ⟨none, iff_of_false (by simp) (by omega)⟩
 
-variable {sel mu L} in
 
+variable {sel mu L} in
 theorem Idx.some_get {j : ℕ} (b : Idx sel mu L j) (h : j < R.m) : some (b.get h) = b.1 := Option.some_get _
 
-variable {sel mu L} in
 
+variable {sel mu L} in
 theorem Idx.get_eq {j : ℕ} {b : Idx sel mu L j} {al : L.β j} (e : b.1 = some al) (h : j < R.m) : b.get h = al :=
   Option.some_injective _ ((b.some_get h).trans e)
 
-variable {sel mu L} in
 
+variable {sel mu L} in
 theorem Idx.of_get {j : ℕ} (b : Idx sel mu L j) (h h' : j < R.m) : Idx.of (b.get h) h' = b := Subtype.ext (b.some_get h)
 
-variable {sel mu L} in
 
+variable {sel mu L} in
 theorem Idx.eq_top {j : ℕ} (b : Idx sel mu L j) (h : R.m ≤ j) : b = Idx.top sel mu L h := by
   obtain ⟨_ | b, hb⟩ := b
   · rfl
   · exact absurd (hb.1 rfl) (by omega)
 
-variable (R) in
 
+variable (R) in
 abbrev PtAt (u : Pr.Word) (j : ℕ) : Type :=
   PtY (Pr.vT u) Pr.vGs (QE sel (mu : Chr X.F X.E X.K)) (ysAt R sel mu cst j)
 
@@ -118,13 +122,13 @@ theorem ysAt_ys_of_ne {j : ℕ} (h : j + 1 ≠ R.m) (N : Submodule (𝓞 X.E) (S
   rw [ysAt, if_neg h]
   rfl
 
-variable {sel mu cst} in
 
+variable {sel mu cst} in
 theorem PtAt.mem_ybSet {u : Pr.Word} {j : ℕ} (p : PtAt R sel mu cst u j) (h : j + 1 = R.m) :
     p.1.2 ∈ ybSet sel mu cst p.1.1.deco.1.N := ysAt_ys_of_eq sel mu cst h _ ▸ p.2
 
-variable {sel mu cst} in
 
+variable {sel mu cst} in
 theorem PtAt.repY_mem {u : Pr.Word} {j : ℕ} (p : PtAt R sel mu cst u j) (h : j + 1 = R.m) : repY p.1.2 ∈ p.1.2 := by
   obtain ⟨y, -, hy⟩ := p.mem_ybSet h
   exact Classical.epsilon_spec (p := fun y => y ∈ p.1.2) ⟨y, by rw [hy]; simp⟩
@@ -178,12 +182,12 @@ theorem XiTop_tilF {u : Pr.Word} (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) 
   by_cases hP : P.1 ∈ Pr.vGs
   · have e1 : frsF sel mu (tilF sel mu u d) P = frsF sel mu (TopStep.tilTop H (toRow sel mu d)) P := by
       unfold frsF
-      rw [dif_pos hP, dif_pos hP, e]
+      rw [dite_eq_left hP, dite_eq_left hP, e]
     rw [e1]
   · obtain ⟨κ, hκ, e2⟩ := TopStep.exists_of_isLiftFr (TopStep.liftFr_spec (toRow sel mu d).2 P) (isLiftFr_toRow sel mu d P hP)
     have e1 : frsF sel mu (tilF sel mu u d) P = TopStep.sumE (N_m_succ R) (d.fr (rightOf P hP)) (TopStep.piU H P) := by
       unfold frsF
-      rw [dif_neg hP, tilF_fr sel mu hPr u hQ]
+      rw [dite_eq_right hP, tilF_fr sel mu hPr u hQ]
       congr 1
       exact Units.ext (unitOf_val (H.2.1 P))
     rw [e1, TopStep.frsF_tilTop_Q H _ P hP, TopStep.tilFr]
@@ -205,9 +209,6 @@ section Over
 
 variable {u : Pr.Word} (n : ℕ) {j : ℕ} (h : j = R.m) (p : ChPt (R := R) sel mu u (n + 1))
 
-theorem xiOver_rfl (Y : Set (Sp X.E (R.N (n + 1)))) (p' : ChPt (R := R) sel mu u R.m) :
-    xiOver Ch sel mu cst n rfl p Y p' = TopStep.XiTop Ch sel mu cst n p Y p' := rfl
-
 end Over
 
 section Unfold
@@ -217,16 +218,16 @@ variable {u : Pr.Word} {i : ℕ} {b : Idx sel mu L i} {b' : Idx sel mu L (i + 1)
 theorem xiAt_entry (h : i + 2 < R.m) {al : L.β i} {be : L.β (i + 1)} (e : b.1 = some al) (e' : b'.1 = some be)
     (p : PtAt R sel mu cst u i) (p' : PtAt R sel mu cst u (i + 1)) :
     xiAt Ch sel mu cst L u i b b' p p' = XiEntry Ch sel mu cst L i al be p.1.1 p'.1.1 := by
-  rw [xiAt, dif_pos h, Idx.get_eq e, Idx.get_eq e']
+  rw [xiAt, dite_eq_left h, Idx.get_eq e, Idx.get_eq e']
 
 theorem xiAt_penultimate_eq_xiCpl1 (h : i + 2 = R.m) {al : L.β i} (e : b.1 = some al) (p : PtAt R sel mu cst u i)
     (p' : PtAt R sel mu cst u (i + 1)) :
     xiAt Ch sel mu cst L u i b b' p p' = XiCpl1 Ch sel mu cst L i al p.1.1 p'.1.1 p'.1.2 := by
-  rw [xiAt, dif_neg (by omega), dif_pos h, Idx.get_eq e]
+  rw [xiAt, dite_eq_right (by omega), dite_eq_left h, Idx.get_eq e]
 
 theorem xiAt_of_le (h : R.m ≤ i) (p : PtAt R sel mu cst u i) (p' : PtAt R sel mu cst u (i + 1)) :
     xiAt Ch sel mu cst L u i b b' p p' = 0 := by
-  rw [xiAt, dif_neg (by omega), dif_neg (by omega), dif_neg (by omega)]
+  rw [xiAt, dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
 
 end Unfold
 
@@ -236,7 +237,7 @@ variable {u : Pr.Word} {n : ℕ} {b : Idx sel mu L (n + 1)} {b' : Idx sel mu L (
   (p : PtAt R sel mu cst u (n + 1)) (p' : PtAt R sel mu cst u (n + 1 + 1))
 
 theorem xiAt_last : xiAt Ch sel mu cst L u (n + 1) b b' p p' = xiOver Ch sel mu cst n h p.1.1 p.1.2 p'.1.1 := by
-  rw [xiAt, dif_neg (by omega), dif_neg (by omega), dif_pos h]
+  rw [xiAt, dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_left h]
   rfl
 
 end UnfoldLast
@@ -315,36 +316,6 @@ theorem k2top_eq_xiOver (h : n + 1 + 1 = R.m) (p : PtAt R sel mu cst u (n + 1)) 
         (frsF sel mu q) (xiOver Ch sel mu cst n rfl p.1.1 p.1.2 q) := if_pos (p.mem_ybSet h)
 
 end Ker
-
-example (P : LevFam X.E X.K R.r Pr.vGs) (u : Pr.Word) : ChainIn X.E X.K X.Tau R :=
-  chainAt sel mu cst L (topLev Ch sel mu cst P) u (fun _ _ _ => 1) (fun _ _ _ => 1) A.cD (thAt Ch sel mu cst L A u)
-
-example (u : Pr.Word) : ∃ (n : ℕ) (h : n + 1 + 1 = R.m) (_ : PtAt R sel mu cst u (n + 1)) (p' : PtAt R sel mu cst u (n + 1 + 1))
-    (d : XPt Pr R sel mu), p'.1.1 = tilAt sel mu u h d := by
-  have h : R.m - 2 + 1 + 1 = R.m := by have := R.two_le_m; omega
-  have : NeZero (R.N (R.m - 2 + 1)) := ⟨by have := R.m_add_three_le_k; unfold Ranks.N; omega⟩
-  obtain ⟨p, -⟩ := exists_ptAt (R := R) sel mu cst (u := u) (j := R.m - 2 + 1) (DecoF.base _ _ _ _ _)
-  obtain ⟨p', hp'⟩ := exists_ptAt sel mu cst (tilAt sel mu u h (DecoF.base _ _ _ _ _))
-  exact ⟨_, h, p, p', _, hp'⟩
-
-example {u : Pr.Word} (P : Pr.vT u) (i : ℕ)
-    (b : Idx sel mu L i) (b' : Idx sel mu L (i + 1)) (p : PtAt R sel mu cst u i) (p' : PtAt R sel mu cst u (i + 1)) :
-    xiAt Ch sel mu cst L u i b b' p p' 0 = 0 := by
-  by_contra hx
-  have h := phiT_of_xiAt_ne_zero Ch sel mu cst L hx P
-  obtain ⟨y, -, hy⟩ := p.1.1.deco.2.f_ne P
-  have h0 := p'.1.1.deco.2.f_add P 0 (zero_mem _) 0 (zero_mem _)
-  rw [add_zero, left_eq_add] at h0
-  exact hy ((h y (by_contra fun hn => hy (p.1.1.deco.2.f_off P y hn))).2.symm.trans h0)
-
-example [IsEmpty (rowSG Pr sel mu)] {u : Pr.Word} {i : ℕ} (h : i < R.m) (b : Idx sel mu L i) (b' : Idx sel mu L (i + 1))
-    (p : PtAt R sel mu cst u i) (p' : PtAt R sel mu cst u (i + 1)) (x : HomE X.E (R.N i) (R.N (i + 1))) :
-    xiAt Ch sel mu cst L u i b b' p p' x = phiT X.K p.1.1.deco.1 p'.1.1.deco.1 x := by
-  rcases lt_trichotomy (i + 2) R.m with h | h | h
-  · rw [xiAt_entry Ch sel mu cst L h (b.some_get (by omega)).symm (b'.some_get (by omega)).symm, XiEntry, Fintype.prod_empty, mul_one]
-  · rw [xiAt_penultimate_eq_xiCpl1 Ch sel mu cst L h (b.some_get (by omega)).symm, XiCpl1, Fintype.prod_empty, mul_one]
-  · obtain ⟨n, rfl⟩ : ∃ n, i = n + 1 := ⟨i - 1, by have := R.two_le_m; omega⟩
-    rw [xiAt_last Ch sel mu cst L (by omega), xiOver, Fintype.prod_empty, mul_one]
 
 end Chain
 

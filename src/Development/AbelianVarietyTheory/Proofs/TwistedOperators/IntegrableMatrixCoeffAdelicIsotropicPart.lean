@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaSeriesSummableOnCovolumeDomain
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EventuallyWeilMatrixCoeffFinitePointInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeMultipleMemOpenLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeFinitelyGenerated
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenNsmulCompletedHomLatticeFiniteAdelic
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaSeriesSummableOnCovolumeDomain
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EventuallyWeilMatrixCoeffFinitePointInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeMultipleMemOpenLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeFinitelyGenerated
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenNsmulCompletedHomLatticeFiniteAdelic
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,14 +61,14 @@ theorem exists_coords_all (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ
       LinearMap.continuous_of_finiteDimensional ((omO S T).flip (z (lam i)))
     exact hom.comp (continuous_pi' hθ T S)
   · show omO S T (piW θ T S (w + w')) (z (lam i)) = omO S T (piW θ T S w) (z (lam i)) + omO S T (piW θ T S w') (z (lam i))
-    rw [map_add, map_add, LinearMap.add_apply]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply]
   · intro y y' hyy
     by_contra hne
     have hd : y - y' ≠ 0 := sub_ne_zero.2 hne
     let Λ : Matrix (Fin T.rank) (Fin S.rank) D.host.E →+ ℝ :=
       { toFun := fun l => omO S T (z (y - y')) (z l)
         map_zero' := by rw [map_zero, map_zero]
-        map_add' := fun a b => by rw [map_add, map_add] }
+        map_add' := fun a b => by rw [map_add (f := _), map_add (f := _)] }
     have h1 : ∀ i, Λ (lam i) = 0 := fun i => by
       have := congrFun hyy i
       show omO S T (z (y - y')) (z (lam i)) = 0
@@ -316,8 +320,8 @@ end Lat
 
 section Main
 
-set_option synthInstance.maxHeartbeats 100000 in
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem core (D : D7) (V W S : HSp D) (hS : S.gram = 1) (C C' : Matrix (Fin V.rank) (Fin S.rank) D.host.E)
     (h1 : adj D C * V.gram * C' = 1) (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1))
     (μ : Measure (Mx D W.rank S.rank)) (hμ : μ.IsAddHaarMeasure) (μV : Measure (WO V W)) (𝓕V : Set (WO V W))
@@ -453,7 +457,7 @@ theorem core (D : D7) (V W S : HSp D) (hS : S.gram = 1) (C C' : Matrix (Fin V.ra
       have hx := hCb (ratW W S y + k)
       have hprod : ∏ i, (1 + ℓ (ratW W S y) i ^ 2) ≤ A * ∏ i, (1 + ℓ (ratW W S y + k) i ^ 2) := by
         rw [← Finset.prod_mul_distrib]
-        refine Finset.prod_le_prod (fun i _ => by positivity) (fun i _ => ?_)
+        refine Finset.prod_le_prod₀ (fun i _ => by positivity) (fun i _ => ?_)
         have e : ℓ (ratW W S y) i = ℓ (ratW W S y + k) i - ℓ k i := by rw [hℓa]; ring
         rw [e]
         have := hMi i k hk

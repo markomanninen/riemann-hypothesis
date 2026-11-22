@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.Exponents3
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.Exponents3
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -95,7 +99,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.absX :
     (fun q q' h => Subtype.ext h)
     (fun j q => C (fun i => u i (d j)) q.1) (fun q => C u' q.1)
     (fun q => by
-      refine tendsto_finset_sum _ fun i hi => ?_
+      refine tendsto_finsetSum _ fun i hi => ?_
       split_ifs
       · exact ((hu i hi).comp (d_top d hfac)).mul_const _
       · exact tendsto_const_nhds)

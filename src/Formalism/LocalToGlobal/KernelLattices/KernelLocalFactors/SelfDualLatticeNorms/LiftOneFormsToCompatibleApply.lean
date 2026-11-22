@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.KapVal
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.KapDet
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.KapSplit
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.KapVal
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.KapDet
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.KapSplit
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -34,6 +38,7 @@ theorem pi_unit {p : ℕ} [Fact p.Prime] (f : D.host.K →+* ℂ_[p]) (q : ℕ) 
     k.pi_gen q hq hs ▸ Ideal.pow_mem_pow (k.pp_over q hq hs) _
   obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 h1
   have h2 : ((c : D.host.K) * ((k.pi q : 𝓞 D.host.K) : D.host.K)) = ((q : ℕ) : D.host.K) ^ classNumber D.host.K := by
+    set_option synthInstance.maxHeartbeats 200000 in
     exact_mod_cast congrArg (fun z : 𝓞 D.host.K => (z : D.host.K)) hc
   have h3 : ‖f (c : D.host.K)‖ * ‖f ((k.pi q : 𝓞 D.host.K) : D.host.K)‖ = 1 := by
     rw [← norm_mul, ← map_mul, h2, map_pow, map_natCast, norm_pow,
@@ -124,7 +129,9 @@ theorem kappa_split {p : ℕ} [hp : Fact p.Prime] (ι : ℂ ≃+* ℂ_[p]) (hs :
       intro h0
       have := norm_eq_zero.1 h0
       have h1 := (map_eq_zero (f1 ι)).1 this
-      exact k.pi_ne_zero p hp.out hs (by exact_mod_cast h1))]
+      exact k.pi_ne_zero p hp.out hs (by
+        set_option synthInstance.maxHeartbeats 200000 in
+        exact_mod_cast h1))]
     simp
   · have hlt2 : ‖f2 ι ((k.pi p : 𝓞 D.host.K) : D.host.K)‖ < 1 := by rw [conjugate_embedding_apply]; exact hlt
     have e1 := norm_pow_eq (f2 ι) (k.pp p) (k.pi p) _ hgen hlt2 hx0
@@ -140,7 +147,9 @@ theorem kappa_split {p : ℕ} [hp : Fact p.Prime] (ι : ℂ ≃+* ℂ_[p]) (hs :
       intro h0
       have := norm_eq_zero.1 h0
       have h1 := (map_eq_zero (f2 ι)).1 this
-      exact k.pi_ne_zero p hp.out hs (by exact_mod_cast h1)
+      exact k.pi_ne_zero p hp.out hs (by
+        set_option synthInstance.maxHeartbeats 200000 in
+        exact_mod_cast h1)
     rw [e3, e2]
     rw [e4, inv_pow, ← hy] at e1
     have e5 : ‖ι (D.host.φ₀ (x : D.host.E))‖ ^ classNumber D.host.K

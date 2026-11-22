@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdelicLatticeCompletionLocalGlobalStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsLatticeVectorApproxAllFinitePlacesStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemDualSetOfMemSpan
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DualOfDualFrames
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsExtra
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSplittingOfCharacter
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsAddEquivField
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSecondFunctional
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MulVecMemIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemRangeBcOfTransposeMulEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdelicLatticeCompletionLocalGlobalStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsLatticeVectorApproxAllFinitePlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemDualSetOfMemSpan
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DualOfDualFrames
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsExtra
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSplittingOfCharacter
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsAddEquivField
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSecondFunctional
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MulVecMemIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemRangeBcOfTransposeMulEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,8 +105,8 @@ theorem approx_one {Λ Λ' : Submodule (𝓞 E) (Fin k → E)} (hfin : Module.Fi
     rw [show loc w x = -(T • z) from eq_neg_of_add_eq_zero_left e.symm]
     exact neg_mem (nsmul_mem_locLat w h z hz)
 
-set_option synthInstance.maxHeartbeats 200000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem mem_of_count {Λ Λ' : Submodule (𝓞 E) (Fin k → E)} (hfin : Module.Finite (𝓞 E) Λ') {T f : ℕ}
     (hT : T ≠ 0) (hf : f ≠ 0) (h : ∀ x ∈ Λ', T • x ∈ Λ)
     (hidx : Λ.toAddSubgroup.relIndex Λ'.toAddSubgroup = T ^ (2 * f))
@@ -129,11 +133,11 @@ theorem mem_of_count {Λ Λ' : Submodule (𝓞 E) (Fin k → E)} (hfin : Module.
     obtain ⟨x, hx, H⟩ := GlobalTheory.T.exists_lattice_vector_approx_all_finitePlaces F E k Λ' hfin T hT
       (fun v => if hv : (T : 𝓞 F) ∈ v.asIdeal then (y ⟨v, hv⟩).1 else 0) (fun v => by
         by_cases hv : (T : 𝓞 F) ∈ v.asIdeal
-        · rw [dif_pos hv]; exact (y ⟨v, hv⟩).2
-        · rw [dif_neg hv]; exact zero_mem _)
+        · rw [dite_eq_left hv]; exact (y ⟨v, hv⟩).2
+        · rw [dite_eq_right hv]; exact zero_mem _)
     refine ⟨⟨x, hx⟩, funext fun p => ?_⟩
     obtain ⟨z, hz, e⟩ := H p.1
-    rw [dif_pos p.2] at e
+    rw [dite_eq_left p.2] at e
     have h0 := hker p.1 p.2 (T • ⟨z, hz⟩) (nsmul_mem_locLat p.1 h z hz)
     have e' : y p = ⟨loc p.1 x, loc_mem p.1 hx⟩ + T • ⟨z, hz⟩ := Subtype.ext e
     have e2 := (congrArg (ψ p.1 p.2) e').trans ((ψ p.1 p.2).map_add _ _)
@@ -190,8 +194,8 @@ theorem map_smul_vec (p : E ⊗[F] v.adicCompletion F →+* v.adicCompletion F) 
 
 theorem e₁_add_e₂ (hs : IsSplitting σ v s) (x : Fin k → E ⊗[F] v.adicCompletion F) :
     e₁ hs • x + e₂ hs • x = x :=
-  vec_ext s (fun i => by rw [Pi.add_apply, map_add, map_smul_vec, map_smul_vec, prP_e₁, prP_e₂]; ring)
-    (fun i => by rw [Pi.add_apply, map_add, map_smul_vec, map_smul_vec, prPbar_e₁, prPbar_e₂]; ring)
+  vec_ext s (fun i => by rw [Pi.add_apply, map_add (f := _), map_smul_vec, map_smul_vec, prP_e₁, prP_e₂]; ring)
+    (fun i => by rw [Pi.add_apply, map_add (f := _), map_smul_vec, map_smul_vec, prPbar_e₁, prPbar_e₂]; ring)
 
 theorem e₂_e₁ (hs : IsSplitting σ v s) (x : Fin k → E ⊗[F] v.adicCompletion F) :
     e₂ hs • e₁ hs • x = 0 :=
@@ -207,10 +211,6 @@ theorem prPbar_sig (hs : IsSplitting σ v s) (a : E ⊗[F] v.adicCompletion F) :
 theorem sig_e₁ (hs : IsSplitting σ v s) : sigR σ (v.adicCompletion F) (e₁ hs) = e₂ hs :=
   s.injective (Prod.ext ((prP_sig hs _).trans ((prPbar_e₁ hs).trans (prP_e₂ hs).symm))
     ((prPbar_sig hs _).trans ((prP_e₁ hs).trans (prPbar_e₂ hs).symm)))
-
-theorem sig_e₂ (hs : IsSplitting σ v s) : sigR σ (v.adicCompletion F) (e₂ hs) = e₁ hs :=
-  s.injective (Prod.ext ((prP_sig hs _).trans ((prPbar_e₂ hs).trans (prP_e₁ hs).symm))
-    ((prPbar_sig hs _).trans ((prP_e₂ hs).trans (prPbar_e₁ hs).symm)))
 
 theorem map_gram {A K : Type} [CommRing A] [CommRing K] (τ : A →+* A) (p q : A →+* K)
     (h : ∀ a, p (τ a) = q a) (X J Y Z : Matrix (Fin k) (Fin k) A) (H : cT τ X * J * Y = Z) :
@@ -232,7 +232,8 @@ theorem hform_add_left {A : Type} [CommRing A] (τ : A →+* A) (J : Matrix (Fin
 theorem hform_loc (J : Matrix (Fin k) (Fin k) E) (x y : Fin k → E) :
     hform (sigR σ (v.adicCompletion F)) (J.map (inclE (F := F) (v.adicCompletion F))) (loc v x) (loc v y) =
       inclE (F := F) (v.adicCompletion F) (hform (σ : E →+* E) J x y) := by
-  simp only [hform, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul]
   rfl
 
 end Split
@@ -244,9 +245,9 @@ variable {R : Ranks} {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
     {ι : Type} [Fintype ι] {hc : ι → HCParam R} {C : ColumnChain R ι hc} {A : ColumnsAtT R C}
     {clsLat : ∀ i, C.cls i → Submodule (𝓞 E) (sp.X i).V}
 
+
 set_option synthInstance.maxHeartbeats 200000 in
 set_option maxHeartbeats 1000000 in
-
 theorem localAtT (L : ColLevel R F E sp gp C A clsLat) (N : Submodule (𝓞 E) (Fin R.k → E))
     (v : HeightOneSpectrum (𝓞 F)) (hv : (A.T : 𝓞 F) ∈ v.asIdeal)
     {s : E ⊗[F] v.adicCompletion F ≃+* v.adicCompletion F × v.adicCompletion F}
@@ -325,7 +326,7 @@ theorem localAtT (L : ColLevel R F E sp gp C A clsLat) (N : Submodule (𝓞 E) (
         refine Eq.trans (congrArg ε ?_) (ε.map_add _ _)
         refine (hcong _ (⟨lift y, hlift y⟩ + ⟨lift z, hlift z⟩) fun i => ?_).trans ((L.fT v hv).map_add _ _)
         show prP s (lift (y + z) i) = prP s (lift y i + lift z i)
-        rw [map_add, congrFun (hlift' (y + z)) i, congrFun (hlift' y) i, congrFun (hlift' z) i]
+        rw [map_add (f := _), congrFun (hlift' (y + z)) i, congrFun (hlift' y) i, congrFun (hlift' z) i]
         rfl
       map_smul' := fun a y => by
         obtain ⟨d, hd, hda⟩ := sur_prP hs a a.2
@@ -416,7 +417,7 @@ theorem dual_loc (L : ColLevel R F E sp gp C A clsLat) (v : HeightOneSpectrum (�
     | tmul a b =>
       show (star (star a)) ⊗ₜ[F] b = _
       rw [star_star]
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   · ext i j
     exact congrArg (inclE (F := F) (v.adicCompletion F)) (congrFun (congrFun sp.baseGram_isHermitian i) j)
 
@@ -436,9 +437,9 @@ theorem finite_dualLb (L : ColLevel R F E sp gp C A clsLat) : Module.Finite (�
   have h' : A.T • x.1 = A.T • y.1 := congrArg Subtype.val h
   exact nsmul_right_injective A.T_prime.ne_zero h'
 
+
 set_option synthInstance.maxHeartbeats 200000 in
 set_option maxHeartbeats 1000000 in
-
 theorem exists_local (L : ColLevel R F E sp gp C A clsLat)
     (v : HeightOneSpectrum (𝓞 F)) (hv : (A.T : 𝓞 F) ∈ v.asIdeal) :
     ∃ s : E ⊗[F] v.adicCompletion F ≃+* v.adicCompletion F × v.adicCompletion F,
@@ -510,8 +511,8 @@ theorem exists_local (L : ColLevel R F E sp gp C A clsLat)
   · exact (f₂.map_add _ _).trans ((congrArg (· + _) ((a2 x).trans (a2 y).symm)).trans
       ((f₂.map_add _ _).symm.trans (congrArg f₂ e)))
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem mem_of_nsmul_mem {k T : ℕ} {v : HeightOneSpectrum (𝓞 F)} (hv : (T : 𝓞 F) ∉ v.asIdeal)
     (Λ : Submodule (intV E v) (Fin k → E ⊗[F] v.adicCompletion F)) {y} (hy : T • y ∈ Λ) : y ∈ Λ := by
   have h1 : Valued.v (T : v.adicCompletion F) = 1 := by
@@ -576,9 +577,9 @@ theorem locLat_dual_le (L : ColLevel R F E sp gp C A clsLat) (v : HeightOneSpect
     (hv : (A.T : 𝓞 F) ∉ v.asIdeal) : locLat v (dualLb L) ≤ locLat v L.Lb :=
   fun y hy => mem_of_nsmul_mem hv _ (nsmul_mem_locLat v (nsmul_mem L) y hy)
 
+
 set_option synthInstance.maxHeartbeats 200000 in
 set_option maxHeartbeats 1000000 in
-
 theorem exists_overLattice (L : ColLevel R F E sp gp C A clsLat)
     (hpl : Nat.card {v : HeightOneSpectrum (𝓞 F) // (A.T : 𝓞 F) ∈ v.asIdeal} = R.f) :
     ∃ N : Submodule (𝓞 E) (Fin R.k → E), IsOverLattice L N ∧
@@ -587,7 +588,11 @@ theorem exists_overLattice (L : ColLevel R F E sp gp C A clsLat)
       L.U ≤ levelAfL sp.cm.sig sp.gram0 N := by
   choose s hs hfac hε hiso hcard f₂ hsur hk hk2 using exists_local L
   have hcount := mem_of_count (finite_dualLb L) A.T_prime.ne_zero
-    (show R.f ≠ 0 by unfold Ranks.f Ranks.n; positivity) (nsmul_mem L) L.Lb_index hpl
+    (show R.f ≠ 0 by
+      unfold Ranks.f Ranks.n
+      have := Nat.one_le_two_pow (n := R.e)
+      have := R.ord_pos
+      omega) (nsmul_mem L) L.Lb_index hpl
     (fun v h => L.fM v h × (intV E v ⧸ primeOf (prPbar (s v h))))
     (fun v h => by rw [Nat.card_prod, L.fM_card, hcard])
     (fun v h => ((L.fT v h).prod (f₂ v h)).toAddMonoidHom) hsur
@@ -699,7 +704,7 @@ theorem T_ne_g (D : D7) (u : D.what₂.Word) (i : Fin 2) : (D.mem u).A.T ≠ D.h
     rw [hm] at ha; push_cast at ha; linear_combination -ha
   have h2 : c π = 1 + (D.host.g i : 𝓞 D.host.E) * c (a * m) := by
     conv_lhs => rw [h1]
-    rw [map_add, map_one, map_mul c (D.host.g i : 𝓞 D.host.E), map_natCast]
+    rw [map_add (f := _), map_one, map_mul c (D.host.g i : 𝓞 D.host.E), map_natCast]
   have h3 : π * c π = (D.host.g i : 𝓞 D.host.E) := by
     apply RingOfIntegers.ext
     rw [← h]

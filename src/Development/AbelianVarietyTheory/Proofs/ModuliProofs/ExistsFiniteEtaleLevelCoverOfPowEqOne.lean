@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.BijectiveRestrictPointsOfEtaleOfHenselian
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsClopenWeilIsIff
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsLevelStructureOfWeilPairing
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LineBundleSymmetryHypothesisBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.BijectiveRestrictPointsOfEtaleOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsClopenWeilIsIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsLevelStructureOfWeilPairing
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LineBundleSymmetryHypothesisBaseChange
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -212,7 +216,7 @@ theorem existsUnique_comb (hL : Out.Laws) [IsLocallyNoetherian S] {o : Type} [Co
 theorem lbIso_cancel {X Y Z : Scheme.{0}} {L : LB X} {L₁ : LB Y} {L₂ : LB Z} (hL : L.IsLB) (h₁ : L₁.IsLB)
     (h₂ : L₂.IsLB) {ψ₁ : Y ⟶ X} {φ : Z ⟶ Y} {ψ : Z ⟶ X} (e : φ ≫ ψ₁ = ψ) (a : LBIso L₁ (L.pull ψ₁))
     (c : LBIso L₂ (L.pull ψ)) : LBIso L₂ (L₁.pull φ) :=
-  c.trans h₂ (pull_isLB hL _) (pull_isLB h₁ _) (LBIso.chartPull
+  c.trans h₂ (LB.isLB_pull hL _) (LB.isLB_pull h₁ _) (LBIso.chartPull
     (chartPullSame L (fun _ : PUnit => ψ) (fun _ => ψ₁) (fun _ => 1) φ fun _ => e.symm)
     (chartPullPull L₁ φ φ rfl) a.symm)
 
@@ -220,8 +224,8 @@ end GlobalTheory.LevelCover
 
 namespace GlobalTheory
 
-open LevelCover in
 
+open LevelCover in
 theorem exists_finiteEtale_level_cover_of_pow_eq_one : Out.Laws → Out.Laws2 → ∀ (o : Type) [CommRing o] (g N' : ℕ) (J : Type) (b : TBase o (N' ^ 2)) (R : Type) [CommRing R] [IsNoetherianRing R] (β : o →+* R) (P : Out.PolAV (Sp R)) (act : J → (P.A ⟶ P.A)) (Q : Fin (2 * g) → (Out.baseOver (Sp R) ⟶ P.A)), 0 < N' → β b.ζ ^ (N' ^ 2) = 1 → (P.g = g ∧ (∀ i, IsMonHom (act i)) ∧ (∀ i, Q i ^ N' = 1) ∧ (∀ (K : Type) [Field K] [IsAlgClosed K] (x : Sp K ⟶ Sp R) (y : Over.mk x ⟶ P.A), y ^ N' = 1 → ∃! c : Ix g N', Out.linComb (fun i => (Over.homMk x (by simp) : Over.mk x ⟶ Out.baseOver (Sp R)) ≫ Q i) (fun i => (c i).val) = y)) → ∃ (R₁ : Type) (_ : CommRing R₁) (_ : Algebra R R₁) (t₁ : TObj g (N' ^ 2) J b (spMap (algebraMap R R₁) ≫ spMap β)) (ψ₁ : t₁.A.left ⟶ P.A.left), Module.Finite R R₁ ∧ Algebra.Etale R R₁ ∧ (IsGrpPullback t₁.A P.A (spMap (algebraMap R R₁)) ψ₁ ∧ LBIso t₁.L (P.L.pull ψ₁) ∧ (∀ i, (t₁.act i).left ≫ ψ₁ = ψ₁ ≫ (act i).left) ∧ ∀ i, (t₁.pt i ^ N').left ≫ ψ₁ = (spMap (algebraMap R R₁)) ≫ (Q i).left) ∧ ∀ (R' : Type) [CommRing R'] (y : R →+* R') (t' : TObj g (N' ^ 2) J b (spMap y ≫ spMap β)) (ψ : t'.A.left ⟶ P.A.left), (IsGrpPullback t'.A P.A (spMap y) ψ ∧ LBIso t'.L (P.L.pull ψ) ∧ (∀ i, (t'.act i).left ≫ ψ = ψ ≫ (act i).left) ∧ ∀ i, (t'.pt i ^ N').left ≫ ψ = (spMap y) ≫ (Q i).left) → ∃! y₁ : R₁ →+* R', y₁.comp (algebraMap R R₁) = y ∧ (∀ i, (t'.pt i).left ≫ ψ = spMap y₁ ≫ (t₁.pt i).left ≫ ψ₁) ∧ TMap t' t₁ (spMap y₁) := by
   intro hL _ o _ g N' J b R _ _ β P act Q hN hζ ⟨hg, hact, hQ, _⟩
   have hu : IsUnit ((N' ^ 2 : ℕ) : Γ(Sp R, ⊤)) := by
@@ -278,18 +282,26 @@ theorem exists_finiteEtale_level_cover_of_pow_eq_one : Out.Laws → Out.Laws2 �
   let φ : t'.A.left ⟶ P₁.A.left := hψ.lift ψ (t'.A.hom ≫ spMap y₁) (by rw [hp'.1.w, Category.assoc, base])
   have φ₁ : φ ≫ ψ₁ = ψ := hψ.lift_fst _ _ _
   have φ₂ : φ ≫ P₁.A.hom = t'.A.hom ≫ spMap y₁ := hψ.lift_snd _ _ _
-  refine ⟨y₁, ⟨inj ((sc _).trans base), pts, φ, hp.cancel (hp'.congr base.symm φ₁.symm) φ₂,
-    lbIso_cancel P.isLB P₁.isLB t'.isLB φ₁ hb hb', fun i => hψ.hom_ext ?_ ?_, fun j => hψ.hom_ext ?_ ?_⟩,
-    fun y₂ ⟨b₂, p₂, _⟩ => inj ?_⟩
-  · rw [Category.assoc, φ₁, pts, Category.assoc]
-  · show (_ ≫ φ) ≫ _ = (_ ≫ (pt i).left) ≫ _
-    rw [Category.assoc, φ₂, ← Category.assoc, Over.w, Category.assoc, Over.w]
-    exact (Category.id_comp _).trans (Category.comp_id _).symm
-  · show (_ ≫ φ) ≫ _ = (φ ≫ (act₁ j).left) ≫ _
-    rw [Category.assoc, φ₁, ha', Category.assoc, ha, ← Category.assoc, φ₁]
-  · show (_ ≫ φ) ≫ _ = (φ ≫ (act₁ j).left) ≫ _
-    rw [Category.assoc, φ₂, ← Category.assoc, Over.w, Category.assoc, Over.w, φ₂]
-  · let h₂ : Over.mk ((Out.baseOver (Sp R')).hom ≫ spMap y) ⟶ Z := Over.homMk (spMap y₂ ≫ e.hom) (by
+  refine ⟨y₁, ?_, ?_⟩
+  · refine ⟨inj ((sc _).trans base), pts, φ, hp.cancel (hp'.congr base.symm φ₁.symm) φ₂,
+      lbIso_cancel P.isLB P₁.isLB t'.isLB φ₁ hb hb', ?_, ?_⟩
+    · intro i
+      apply hψ.hom_ext
+      · rw [Category.assoc, φ₁, pts, Category.assoc]
+      · show (_ ≫ φ) ≫ _ = (_ ≫ (pt i).left) ≫ _
+        rw [Category.assoc, φ₂, ← Category.assoc, Over.w, Category.assoc, Over.w]
+        exact (Category.id_comp _).trans (Category.comp_id _).symm
+    · intro j
+      apply hψ.hom_ext
+      · show (_ ≫ φ) ≫ _ = (φ ≫ (act₁ j).left) ≫ _
+        rw [Category.assoc, φ₁, ha', Category.assoc, ha, ← Category.assoc, φ₁]
+      · show (_ ≫ φ) ≫ _ = (φ ≫ (act₁ j).left) ≫ _
+        rw [Category.assoc, φ₂, ← Category.assoc, Over.w, Category.assoc, Over.w, φ₂]
+  · intro y₂ hy₂
+    have b₂ := hy₂.1
+    have p₂ := hy₂.2.1
+    apply inj
+    let h₂ : Over.mk ((Out.baseOver (Sp R')).hom ≫ spMap y) ⟶ Z := Over.homMk (spMap y₂ ≫ e.hom) (by
       show (_ ≫ _) ≫ _ = 𝟙 _ ≫ _
       rw [Category.assoc, he, ← sc, b₂, Category.id_comp])
     have : h₂ = h := hu h₂ fun i => Over.OverMorphism.ext (by

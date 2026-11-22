@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,7 @@ private theorem laurent_mul_C_coeff {B : Type*} [CommRing B] (y : LaurentPolynom
   rw [h, hCc, if_pos rfl]
 
 theorem mul_Phi_coeff {σ A : Type*} [CommRing A] (P : MvPolynomial σ (LaurentPolynomial A)) (m : σ →₀ ℕ) (k : ℤ) :
-    coeff m ((mul_Phi σ A P).coeff k) = (coeff m P).coeff k := by
+    AddMonoidAlgebra.coeff ((mul_Phi σ A P).coeff k) m = (AddMonoidAlgebra.coeff P m).coeff k := by
   classical
   induction P using MvPolynomial.induction_on' with
   | monomial m' c =>
@@ -114,7 +118,7 @@ theorem mul_Phi_coeff {σ A : Type*} [CommRing A] (P : MvPolynomial σ (LaurentP
       simp [AddMonoidAlgebra.mapRingHom]
     rw [hmap, MvPolynomial.C_mul_monomial, mul_one, MvPolynomial.coeff_monomial, MvPolynomial.coeff_monomial]
     split_ifs <;> simp
-  | add p q hp hq => simp [map_add, hp, hq]
+  | add p q hp hq => simp [map_add (f := _), hp, hq]
 
 def mul_degs {σ A : Type*} [CommRing A] (P : MvPolynomial σ (LaurentPolynomial A)) : Finset ℤ :=
   P.support.biUnion fun m => (P.coeff m).coeff.support
@@ -130,7 +134,7 @@ theorem mul_degs_eq {σ A : Type*} [CommRing A] (P : MvPolynomial σ (LaurentPol
     rw [← mul_Phi_coeff, h]
     simp
   · intro h
-    obtain ⟨m, hm⟩ : ∃ m, coeff m ((mul_Phi σ A P).coeff k) ≠ 0 := by
+    obtain ⟨m, hm⟩ : ∃ m, AddMonoidAlgebra.coeff ((mul_Phi σ A P).coeff k) m ≠ 0 := by
       by_contra hc
       push_neg at hc
       exact h (by ext m; simpa using hc m)

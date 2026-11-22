@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntAASubstOfHasSubst
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FormalExpMulFormalExpNeg
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntAASubstOfHasSubst
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FormalExpMulFormalExpNeg
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
@@ -23,7 +27,7 @@ theorem constantCoeff_ev {a : Fin m → Pt k n d} (ha : ∀ j i, constantCoeff (
   have h0 : constantCoeff (f - C (constantCoeff f)) = 0 := by simp
   unfold ev
   conv_lhs => rw [hsplit]
-  rw [subst_add hs, map_add, constantCoeff_subst_eq_zero hs (fun q => ha q.1 q.2) h0, add_zero]
+  rw [subst_add hs, map_add (f := _), constantCoeff_subst_eq_zero hs (fun q => ha q.1 q.2) h0, add_zero]
   simp
 
 theorem ev_ev {a : Fin m → Pt k n d} (ha : ∀ j i, constantCoeff (a j i) = 0)
@@ -52,17 +56,17 @@ private theorem coeff_subst_congr_lemma {σ τ : Type} [Finite σ] [Finite τ] {
     split_ifs with hy
     · exact hgg y (Nat.lt_succ_iff.mp hy)
     · rfl
-  have e1 := congrArg (MvPolynomial.coeff x)
+  have e1 := congrArg (AddMonoidAlgebra.coeff · x)
     (truncTotal_subst_eq_truncTotal_truncTotal_subst (k := x.degree + 1) (f := g) hA)
-  have e2 := congrArg (MvPolynomial.coeff x)
+  have e2 := congrArg (AddMonoidAlgebra.coeff · x)
     (truncTotal_subst_eq_truncTotal_truncTotal_subst (k := x.degree + 1) (f := g') hA)
   rw [coeff_truncTotal _ (Nat.lt_succ_self _)] at e1 e2
   rw [e1, e2, hT]
 
 private theorem pderiv_subst_coe_mvPolynomial_eq_sum {σ τ : Type} [Fintype σ] [DecidableEq σ]
     {A : σ → MvPowerSeries τ k} (hA : HasSubst A) (s : τ) (q : MvPolynomial σ k) :
-    pderiv k s (subst A (q : MvPowerSeries σ k)) =
-      ∑ r, subst A (pderiv k r (q : MvPowerSeries σ k)) * pderiv k s (A r) := by
+    pderiv s (subst A (q : MvPowerSeries σ k)) =
+      ∑ r, subst A (pderiv r (q : MvPowerSeries σ k)) * pderiv s (A r) := by
   induction q using MvPolynomial.induction_on with
   | C c =>
     rw [MvPolynomial.coe_C, subst_C, pderiv_C]
@@ -71,23 +75,23 @@ private theorem pderiv_subst_coe_mvPolynomial_eq_sum {σ τ : Type} [Fintype σ]
     intro r _
     rw [pderiv_C, ← substAlgHom_apply hA, map_zero, zero_mul]
   | add f g hf hg =>
-    simp only [MvPolynomial.coe_add, subst_add hA, map_add, hf, hg, add_mul, Finset.sum_add_distrib]
+    simp only [MvPolynomial.coe_add, subst_add hA, map_add (f := _), hf, hg, add_mul, Finset.sum_add_distrib]
   | mul_X f r0 hf =>
     rw [MvPolynomial.coe_mul, MvPolynomial.coe_X]
     simp only [← substAlgHom_apply hA] at hf ⊢
-    have hX : ∀ r, substAlgHom hA (pderiv k r (X r0 : MvPowerSeries σ k)) = if r = r0 then 1 else 0 := by
+    have hX : ∀ r, substAlgHom hA (pderiv r (X r0 : MvPowerSeries σ k)) = if r = r0 then 1 else 0 := by
       intro r
       split_ifs with hr
       · subst hr
         rw [pderiv_X_self, map_one]
       · rw [pderiv_X_of_ne (Ne.symm hr), map_zero]
-    simp only [Derivation.leibniz, smul_eq_mul, map_add, map_mul, substAlgHom_X, hX, hf, mul_ite,
+    simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, substAlgHom_X, hX, hf, mul_ite,
       mul_one, mul_zero, add_mul, Finset.sum_add_distrib, ite_mul, zero_mul, Finset.sum_ite_eq',
       Finset.mem_univ, if_true, Finset.mul_sum, mul_assoc]
 
 private theorem pderiv_subst_eq_sum_of_constantCoeff_eq_zero {σ τ : Type} [Fintype σ] [DecidableEq σ] [Finite τ]
     {A : σ → MvPowerSeries τ k} (hA : ∀ r, constantCoeff (A r) = 0) (f : MvPowerSeries σ k) (s : τ) :
-    pderiv k s (subst A f) = ∑ r, subst A (pderiv k r f) * pderiv k s (A r) := by
+    pderiv s (subst A f) = ∑ r, subst A (pderiv r f) * pderiv s (A r) := by
   classical
   have hS : HasSubst A := hasSubst_of_constantCoeff_zero hA
   ext x
@@ -97,25 +101,26 @@ private theorem pderiv_subst_eq_sum_of_constantCoeff_eq_zero {σ τ : Type} [Fin
     apply coeff_subst_congr_lemma hA
     intro z hz
     rw [MvPolynomial.coeff_coe, coeff_truncTotal]
-    rw [map_add, Finsupp.degree_single] at hz
+    rw [map_add (f := _), Finsupp.degree_single] at hz
     omega
   rw [coeff_pderiv, h1, ← coeff_pderiv, pderiv_subst_coe_mvPolynomial_eq_sum hS]
-  simp only [map_sum, MvPowerSeries.coeff_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPowerSeries.coeff_mul]
   refine Finset.sum_congr rfl fun r _ => Finset.sum_congr rfl fun y hy => ?_
   congr 1
   apply coeff_subst_congr_lemma hA
   intro z hz
   have hxy := Finset.HasAntidiagonal.mem_antidiagonal.mp hy
   have h2 : y.1.degree ≤ x.degree := by
-    rw [← hxy, map_add]
+    rw [← hxy, map_add (f := _)]
     omega
   rw [coeff_pderiv, coeff_pderiv, MvPolynomial.coeff_coe, coeff_truncTotal]
-  rw [map_add, Finsupp.degree_single]
+  rw [map_add (f := _), Finsupp.degree_single]
   omega
 
 theorem pderiv_ev {a : Fin m → Pt k n d} (ha : ∀ j i, constantCoeff (a j i) = 0)
     (f : PS k m d) (s : Fin n × Fin d) :
-    pderiv k s (ev a f) = ∑ j, ∑ i, ev a (pderiv k (j, i) f) * pderiv k s (a j i) := by
+    pderiv s (ev a f) = ∑ j, ∑ i, ev a (pderiv (j, i) f) * pderiv s (a j i) := by
   unfold ev
   rw [pderiv_subst_eq_sum_of_constantCoeff_eq_zero (A := fun q : Fin m × Fin d => a q.1 q.2) (fun q => ha q.1 q.2),
     Fintype.sum_prod_type]
@@ -224,7 +229,7 @@ theorem axis_right {φ : Pt k 1 d} (hφ : ∀ i, constantCoeff (φ i) = 0) (f : 
   rw [ev_ev_two hp0 hc1 const_axis, axis_pt_zero, e1]
 
 theorem pderiv_pt (j j' : Fin n) (i i' : Fin d) :
-    pderiv k (j, i) (pt k d j' i') = if j' = j ∧ i' = i then 1 else 0 := by
+    pderiv (j, i) (pt k d j' i') = if j' = j ∧ i' = i then 1 else 0 := by
   unfold pt
   by_cases hc : j' = j ∧ i' = i
   · obtain ⟨rfl, rfl⟩ := hc
@@ -234,9 +239,9 @@ theorem pderiv_pt (j j' : Fin n) (i i' : Fin d) :
     exact hc ⟨congrArg Prod.fst he, congrArg Prod.snd he⟩
 
 theorem pderiv_comp1 (φ : Pt k 1 d) (j j' : Fin n) (i l : Fin d) :
-    pderiv k (j, i) (comp1 φ (pt k d j') l) =
-      if j' = j then ev ![pt k d j'] (pderiv k ((0 : Fin 1), i) (φ l)) else 0 := by
-  show pderiv k (j, i) (ev ![pt k d j'] (φ l)) = _
+    pderiv (j, i) (comp1 φ (pt k d j') l) =
+      if j' = j then ev ![pt k d j'] (pderiv ((0 : Fin 1), i) (φ l)) else 0 := by
+  show pderiv (j, i) (ev ![pt k d j'] (φ l)) = _
   rw [pderiv_ev (const_one (fun i => const_pt j' i))]
   by_cases hj : j' = j
   · subst hj
@@ -245,21 +250,21 @@ theorem pderiv_comp1 (φ : Pt k 1 d) (j j' : Fin n) (i l : Fin d) :
 
 theorem pderiv_left {φ : Pt k 1 d} (hφ : ∀ i, constantCoeff (φ i) = 0) (f : PS k 2 d)
     (i : Fin d) :
-    pderiv k ((1 : Fin 2), i) (ev (n := 2) ![comp1 φ (pt k d 0), pt k d 1] f) =
-      ev (n := 2) ![comp1 φ (pt k d 0), pt k d 1] (pderiv k ((1 : Fin 2), i) f) := by
+    pderiv ((1 : Fin 2), i) (ev (n := 2) ![comp1 φ (pt k d 0), pt k d 1] f) =
+      ev (n := 2) ![comp1 φ (pt k d 0), pt k d 1] (pderiv ((1 : Fin 2), i) f) := by
   rw [pderiv_ev (const_two (const_comp1 hφ (fun i => const_pt 0 i)) (fun i => const_pt 1 i))]
   simp [Fin.sum_univ_two, pderiv_comp1, pderiv_pt]
 
 theorem pderiv_right {φ : Pt k 1 d} (hφ : ∀ i, constantCoeff (φ i) = 0) (f : PS k 2 d)
     (i : Fin d) :
-    pderiv k ((1 : Fin 2), i) (ev (n := 2) ![pt k d 0, comp1 φ (pt k d 1)] f) =
-      ∑ j, ev (n := 2) ![pt k d 0, comp1 φ (pt k d 1)] (pderiv k ((1 : Fin 2), j) f) *
-        ev (n := 2) ![pt k d 1] (pderiv k ((0 : Fin 1), i) (φ j)) := by
+    pderiv ((1 : Fin 2), i) (ev (n := 2) ![pt k d 0, comp1 φ (pt k d 1)] f) =
+      ∑ j, ev (n := 2) ![pt k d 0, comp1 φ (pt k d 1)] (pderiv ((1 : Fin 2), j) f) *
+        ev (n := 2) ![pt k d 1] (pderiv ((0 : Fin 1), i) (φ j)) := by
   rw [pderiv_ev (const_two (fun i => const_pt 0 i) (const_comp1 hφ (fun i => const_pt 1 i)))]
   simp [Fin.sum_univ_two, pderiv_comp1, pderiv_pt]
 
 theorem axis_pderiv (φ : PS k 1 d) (i : Fin d) :
-    ev (n := 1) ![pt k d 0, 0] (ev (n := 2) ![pt k d 1] (pderiv k ((0 : Fin 1), i) φ)) =
+    ev (n := 1) ![pt k d 0, 0] (ev (n := 2) ![pt k d 1] (pderiv ((0 : Fin 1), i) φ)) =
       C (coeff (Finsupp.single ((0 : Fin 1), i) 1) φ) := by
   rw [ev_ev_one (fun i => const_pt 1 i) const_axis, axis_pt_one, ev_origin]
   congr 1
@@ -288,12 +293,13 @@ private theorem ev_finset_sum_of_constantCoeff_eq_zero {a : Fin m → Pt k n d}
     (ha : ∀ j i, constantCoeff (a j i) = 0) {ι : Type} (s : Finset ι) (F : ι → PS k m d) :
     ev a (∑ j ∈ s, F j) = ∑ j ∈ s, ev a (F j) := by
   unfold ev
-  rw [← substAlgHom_apply (hasSubst_pts ha), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← substAlgHom_apply (hasSubst_pts ha), map_sum]
   simp only [substAlgHom_apply]
 
 private theorem pderiv_map_algebraMap' {R : Type} [CommRing R] [Algebra R k] {σ : Type} (s : σ)
     (W : MvPowerSeries σ R) :
-    pderiv k s (map (algebraMap R k) W) = map (algebraMap R k) (pderiv R s W) := by
+    pderiv s (map (algebraMap R k) W) = map (algebraMap R k) (pderiv s W) := by
   ext x
   rw [coeff_pderiv, coeff_map, coeff_map, coeff_pderiv, map_mul]
   simp
@@ -340,18 +346,18 @@ theorem main : ∀ (R : Type) [CommRing R] (d : ℕ) (O : Type) [CommRing O] [St
       ev (n := 2) ![pt k d 0, comp1 (B.actK k (star a)) (pt k d 1)] h) = 0 := by
     rw [ev_sub_of_constantCoeff_eq_zero const_axis, axis_left (hact a), axis_right (hact (star a)), hh.ax1,
       ev_zero hb0, sub_self]
-  have hE : ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (map (algebraMap R k) (B.ad a))) =
-      ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i)
+  have hE : ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), i) (map (algebraMap R k) (B.ad a))) =
+      ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), i)
         (ev (n := 2) ![comp1 (B.actK k a) (pt k d 0), pt k d 1] h -
           ev (n := 2) ![pt k d 0, comp1 (B.actK k (star a)) (pt k d 1)] h)) := by
     rw [hA, pderiv_formalExp hQ0, ev_mul_of_constantCoeff_eq_zero const_axis, ev_formalExp_of_constantCoeff_eq_zero const_axis hQ0, hEQ,
       formalExp_zero, one_mul]
-  have hsg : ∀ j, ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), j) h) = -sgOf k h j := by
+  have hsg : ∀ j, ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), j) h) = -sgOf k h j := by
     intro j
     simp only [sgOf, neg_neg]
   have key : ev (n := 1) ![comp1 (B.actK k a) (pt k d 0)] (sgOf k h i) -
       ∑ j, sgOf k h j * C (dAct k B (star a) j i) =
-      -ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (map (algebraMap R k) (B.ad a))) := by
+      -ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), i) (map (algebraMap R k) (B.ad a))) := by
     rw [hE, map_sub, ev_sub_of_constantCoeff_eq_zero const_axis, pderiv_left (hact a), pderiv_right (hact (star a)),
       axis_left (hact a), ev_finset_sum_of_constantCoeff_eq_zero const_axis]
     simp only [ev_mul_of_constantCoeff_eq_zero const_axis, axis_right (hact (star a)), axis_pderiv, hsg, ev_neg_of_constantCoeff_eq_zero hb0,
@@ -359,7 +365,7 @@ theorem main : ∀ (R : Type) [CommRing R] (d : ℕ) (O : Type) [CommRing O] [St
     ring
   rw [key, pderiv_map_algebraMap', ev_axis_map_algebraMap]
   intro x
-  exact RingHom.mem_range.mpr ⟨-coeff x (ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) (B.ad a))),
+  exact RingHom.mem_range.mpr ⟨-coeff x (ev (n := 1) ![pt R d 0, 0] (pderiv ((1 : Fin 2), i) (B.ad a))),
     by simp [coeff_map]⟩
 
 end GlobalTheory.GaugeAdjoint

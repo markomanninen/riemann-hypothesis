@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.OneLetterGaussJets.StatementN
-import Formalism.IncomingBounds.WeightIdentities
+module
+
+public import Formalism.GaussJetBounds.OneLetterGaussJets.StatementN
+public import Formalism.IncomingBounds.WeightIdentities
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

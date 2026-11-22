@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DividedPowerPadicValuationBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DividedPowerPadicValuationBound
+
+@[expose] public section
 
 noncomputable section
 

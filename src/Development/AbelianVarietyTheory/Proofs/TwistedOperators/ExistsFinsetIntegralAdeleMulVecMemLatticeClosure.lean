@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolMatchFiniteSetVacuum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RankAlgebraicDataSchrodingerModelLeAleph0
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNsmulMemLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolMatchFiniteSetVacuum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RankAlgebraicDataSchrodingerModelLeAleph0
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNsmulMemLattice
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -19,17 +23,11 @@ namespace GlobalTheory.AdelicLatticeIntegral
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem exists_nsmul_mem {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsLattice E)
+theorem exists_nsmul_mem {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsFullLattice E)
     (x : Fin n → E) : ∃ D : ℕ, D ≠ 0 ∧ D • x ∈ L := by
-  first
-  | exact @_root_.GlobalTheory.NatMultipleInLattice.exists_nsmul_mem_lattice
-  | exact _root_.GlobalTheory.NatMultipleInLattice.exists_nsmul_mem_lattice
-  | (apply _root_.GlobalTheory.NatMultipleInLattice.exists_nsmul_mem_lattice <;> assumption)
-  | (intros; apply _root_.GlobalTheory.NatMultipleInLattice.exists_nsmul_mem_lattice <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.NatMultipleInLattice.exists_nsmul_mem_lattice <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.NatMultipleInLattice.exists_nsmul_mem_lattice ..)
+  exact _root_.GlobalTheory.NatMultipleInLattice.exists_nsmul_mem_lattice L hL x
 
-theorem exists_nsmul_map_mem {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsLattice E)
+theorem exists_nsmul_map_mem {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsFullLattice E)
     (N : (Fin n → E) →ₗ[E] (Fin n → E)) : ∃ D : ℕ, D ≠ 0 ∧ ∀ y ∈ L, D • N y ∈ L := by
   obtain ⟨s, hs⟩ := hL.fg
   choose! D hD hDm using fun g => exists_nsmul_mem L hL (N g)
@@ -41,7 +39,7 @@ theorem exists_nsmul_map_mem {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (h
       obtain ⟨k, hk⟩ := Finset.dvd_prod_of_mem D hg
       rw [hk, mul_comm, mul_smul]; exact nsmul_mem (hDm g) k
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, smul_add]; exact L.add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), smul_add]; exact L.add_mem hx hy
   | smul r x _ hx =>
       have : N (r • x) = r • N x := N.map_smul_of_tower r x
       rw [this, smul_comm]; exact L.smul_mem r hx
@@ -51,8 +49,8 @@ end GlobalTheory.AdelicLatticeIntegral
 namespace GlobalTheory.AdelicLatticeIntegral
 
 theorem exists_finset_smul_mulVec_mem_closure : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n : ℕ)
-    (M : Matrix (Fin n) (Fin n) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)) (L : Submodule (𝓞 E) (Fin n → E)), L.IsLattice E →
-    ∃ S₁ : Finset (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F), ∀ w ∉ S₁, ∀ a : AF F, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F w) a →
+    (M : Matrix (Fin n) (Fin n) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (L : Submodule (𝓞 E) (Fin n → E)), L.IsFullLattice E →
+    ∃ S₁ : Finset (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)), ∀ w ∉ S₁, ∀ a : AF F, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F w) a →
       GlobalTheory.AdelicU.evFin F w a ∈ w.adicCompletionIntegers F → ∀ y ∈ L,
       a • (M *ᵥ fun i => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F) (y i)) ∈
         AddSubgroup.closure {z | ∃ b : AF F, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.AdelicU.evFin F w) b ∧
@@ -65,7 +63,7 @@ theorem exists_finset_smul_mulVec_mem_closure : ∀ (F E : Type) [Field F] [Numb
   let c : Fin n × Fin n × Fin (Module.finrank F E) → AF F := fun j => B.repr (M j.1 j.2.1) j.2.2
   let Nm : Fin n × Fin n × Fin (Module.finrank F E) → (Fin n → E) →ₗ[E] (Fin n → E) := fun j =>
     (LinearMap.single E (fun _ : Fin n => E) j.1) ∘ₗ (bF j.2.2 • LinearMap.proj j.2.1)
-  let incV : (Fin n → E) → (Fin n → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) := fun y i =>
+  let incV : (Fin n → E) → (Fin n → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) := fun y i =>
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F) (y i)
   have key : ∀ y, (M *ᵥ incV y) = ∑ j, c j • incV (Nm j y) := by
     intro y
@@ -87,7 +85,7 @@ theorem exists_finset_smul_mulVec_mem_closure : ∀ (F E : Type) [Field F] [Numb
   choose D hD0 hDL using fun j => exists_nsmul_map_mem L hL (Nm j)
   let c' : Fin n × Fin n × Fin (Module.finrank F E) → AF F :=
     fun j => c j * algebraMap F (AF F) ((D j : F)⁻¹)
-  have hfin : ∀ j, {w : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F |
+  have hfin : ∀ j, {w : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F) |
       ¬ GlobalTheory.AdelicU.evFin F w (c' j) ∈ w.adicCompletionIntegers F}.Finite :=
     fun j => Filter.eventually_cofinite.mp (GlobalTheory.AlgCountDim.eventually_evFin_integral (c' j))
   refine ⟨(Set.finite_iUnion hfin).toFinset, ?_⟩

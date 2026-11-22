@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoefExtendsHolomorphically
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CwContIntegralCommStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesUnitarySmoothBasic
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrechetContinuousContinuousOnOrbitHasDerivAt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoefExtendsHolomorphically
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CwContIntegralCommStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesUnitarySmoothBasic
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrechetContinuousContinuousOnOrbitHasDerivAt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
+
+@[expose] public section
 
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory
 open scoped InnerProductSpace ENNReal
@@ -122,7 +126,7 @@ theorem exists_kFin_ne_zero_of_cwCont : PI.KFinSmooth → ∀ (k r : ℕ) (ε : 
       _ = ∫ x, (fun z => q (y⁻¹ * z) • R.σ (κ z) v) (y * x) ∂(Formalism.REAL.muK ε) := by
           congr 1
           funext x
-          simp only [map_smul, inv_mul_cancel_left, hκm, hmul _ (hκG y) _ (hκG x)]
+          simp [hκm, hmul _ (hκG y) _ (hκG x)]
       _ = _ := integral_mul_left_eq_self (μ := Formalism.REAL.muK ε) (fun z => q (y⁻¹ * z) • R.σ (κ z) v) y
   let φ : C(Formalism.REAL.KG ε, ℂ) := ⟨fun x => ⟪Bm v, Bm (R.σ (κ x) v)⟫_ℂ, continuous_const.inner hf⟩
   have hφ : φ = 0 := by
@@ -139,7 +143,7 @@ theorem exists_kFin_ne_zero_of_cwCont : PI.KFinSmooth → ∀ (k r : ℕ) (ε : 
         rw [hab, Finset.sum_smul]
         simp only [mul_smul]
       simp_rw [hx]
-      rw [integral_finset_sum Finset.univ (f := fun i x => a i y • (b i x • R.σ (κ x) v))
+      rw [integral_finsetSum Finset.univ (f := fun i x => a i y • (b i x • R.σ (κ x) v))
         (fun i _ => (hint _ (b i).continuous).smul (a i y))]
       simp only [integral_smul, hc]
     have hFT : FiniteDimensional ℂ (Submodule.span ℂ (Set.range c)) :=

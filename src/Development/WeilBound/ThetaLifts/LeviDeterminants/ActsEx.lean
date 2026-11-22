@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.BetaSesquilinearity
-import Formalism.LogFactorialIndices.LogProductFormula
-import Formalism.LogFactorialIndices.SignedSubspaceIndex.SubspaceLatticeIndexSigned
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.BetaSesquilinearity
+public import Formalism.LogFactorialIndices.LogProductFormula
+public import Formalism.LogFactorialIndices.SignedSubspaceIndex.SubspaceLatticeIndexSigned
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem span_image_span {R S M N : Type} [Ring R] [Ring S] [AddCommGroup M] [Mod
     induction hx using Submodule.span_induction with
     | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul r y _ hy => rw [h]; exact Submodule.smul_mem _ _ hy
   · exact Submodule.span_mono (Set.image_mono Submodule.subset_span)
 
@@ -173,7 +177,6 @@ theorem indep_baseChange {K K' V V₁ ι : Type} [Field K] [Field K'] [Algebra K
     convert h1 using 1
     funext i
     rw [IsBaseChange.basis_apply, Module.Basis.coe_extend]
-    rfl
   have hsub : ∀ i, a i ∈ hs.extend (Set.subset_univ _) :=
     fun i => hs.subset_extend _ ⟨i, rfl⟩
   exact hB'.comp (fun i => ⟨a i, hsub i⟩) (fun i i' h => ha.injective (congrArg Subtype.val h))
@@ -240,7 +243,8 @@ theorem index_baseChange_lattice : RelIndexSpanImage := by
     all_goals rfl
   have hP' : ∀ i, j (b i) = ∑ k, (P.map (algebraMap K K')) k i • j (a k) := by
     intro i
-    rw [← hc i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc i, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, Matrix.map_apply, algebraMap_smul]
     all_goals rfl

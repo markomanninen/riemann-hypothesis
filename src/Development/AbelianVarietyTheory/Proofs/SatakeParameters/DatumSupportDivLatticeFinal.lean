@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.WeightedChainData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.WeightedChainData
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions
 
@@ -29,7 +33,8 @@ theorem smul_mem_of_inFr {a b : ℕ} (P : HeightOneSpectrum (𝓞 E)) (N : Submo
   refine (mem_localization_standardLattice P _).2 fun l => ?_
   have e2 : inFr f f' x (f.symm y) = ∑ s, f.symm y s • inFr f f' x (Pi.single s 1) := by
     conv_lhs => rw [pi_eq_sum_univ' (f.symm y)]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   rw [e2]
   simp only [Pi.smul_apply, Finset.sum_apply, smul_eq_mul, Finset.mul_sum]
   refine intAt_sum P _ _ fun s _ => ?_

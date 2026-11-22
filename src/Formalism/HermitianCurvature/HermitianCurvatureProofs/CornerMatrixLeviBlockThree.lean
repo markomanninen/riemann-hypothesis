@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixBlockThreeMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixBlockThreeMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 

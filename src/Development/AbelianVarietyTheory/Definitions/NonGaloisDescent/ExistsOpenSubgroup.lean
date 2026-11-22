@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsLabOfOrder
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LabelSettingTameGenerator
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BlocksUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsLabOfOrder
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LabelSettingTameGenerator
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BlocksUnique
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RankOneUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +21,8 @@ section Local
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
 variable {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)}
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem exists_open_subgroup {S : Set (Ine (F := E) A)} (hS : IsOpen S) (h1 : 1 ∈ S) :
     ∃ U : Subgroup (G E Ω), IsOpen (U : Set (G E Ω)) ∧ ∀ σ : Ine (F := E) A, (σ : G E Ω) ∈ U → σ ∈ S := by
   obtain ⟨V, hV, rfl⟩ := isOpen_induced_iff.mp hS
@@ -51,7 +56,7 @@ theorem exists_isTm {g : ℕ} [Fact g.Prime] (h : IsPlaceOver A w) (hw : normV w
     (hγ : TameGenAt A γ) {m : ℕ} (hm : 0 < m) (hc : m.Coprime g) {z : ℂ} (hz : z ^ m = 1) :
     ∃ χ : Ine (F := E) A →* ℂˣ, IsTm χ ∧ (χ ⟨γ, hγ.1⟩ : ℂ) = z := by
   have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed E
-  obtain ⟨ϖ, h1, h2⟩ := SetLike.exists_of_lt
+  obtain ⟨ϖ, h1, h2⟩ := IsConcreteLE.exists_of_lt
     (Ideal.pow_lt_self w.asIdeal w.ne_bot w.isPrime.ne_top 2 le_rfl)
   obtain ⟨x, hx⟩ := IsAlgClosed.exists_pow_nat_eq (algebraMap E Ω (ϖ : E)) hm
   have h0 : x ≠ 0 := by
@@ -103,7 +108,7 @@ theorem exists_isTm {g : ℕ} [Fact g.Prime] (h : IsPlaceOver A w) (hw : normV w
       simpa using this
   have hm1 : χ ⟨γ, hγ.1⟩ ^ m = 1 := (hker _ m).mpr (by rw [hx, AlgEquiv.commutes])
   have hord : orderOf (χ ⟨γ, hγ.1⟩) = m := by
-    refine orderOf_eq_of_pow_and_pow_div_prime hm hm1 fun p hp hpm e => ?_
+    refine orderOf_eq_of_pow_and_pow_div_prime hm1 fun p hp hpm e => ?_
     obtain ⟨σ, hσ, hσx⟩ := GlobalTheory.InertiaMovesRoot.exists_mem_Ine_apply_ne E Ω A w h p hp ϖ h1 h2 (x ^ (m / p))
       (by rw [← pow_mul, Nat.div_mul_cancel hpm, hx])
     have h5 : IsTm (χ ^ (m / p)) := hχ.of_le hχ fun σ e _ => by simp [e]
@@ -120,18 +125,6 @@ end Local
 section Om
 
 variable (D : D7)
-
-theorem exists_genFam : ∃ γ, GenFam D γ := by
-  choose γ₀ hγ₀ using fun w : PlE D.host =>
-    GlobalTheory.MemTame.exists_tameGenAt D.host.E D.nd.Om w _ (D.nd.plOm.2 w)
-  refine ⟨fun k => Function.extend (D.naut.plGw k) (D.ntypes.tg k) γ₀,
-    fun k v => (D.naut.plGw_inj k).extend_apply _ _ v, fun k w _ => ?_⟩
-  by_cases h : ∃ v, D.naut.plGw k v = w
-  · obtain ⟨v, rfl⟩ := h
-    simp only [(D.naut.plGw_inj k).extend_apply]
-    exact D.ntypes.tg_gen k v
-  · simp only [Function.extend_apply' _ _ _ h]
-    exact hγ₀ w
 
 theorem normV_eq {k : Fin 2} {w : PlE D.host} (hw : w ∈ placesOver D.host.E (D.host.g k)) :
     normV w = D.host.g k :=
@@ -156,8 +149,8 @@ theorem exists_order {g : ℕ} [Fact g.Prime] {x : Fbar g} (hx : x ≠ 0) :
     rw [hn]; exact dvd_pow_self _ n.ne_zero
   · exact congrArg Subtype.val (FiniteField.pow_card_sub_one_eq_one y hy)
 
-open Classical in
 
+open Classical in
 theorem exists_tameOm (γ : Fin 2 → PlE D.host → GE D.nd) (hγ : GenFam D γ) :
     ∃ Ω : TameOm D, ∀ k : Fin 2, ∀ w ∈ placesOver D.host.E (D.host.g k), ∀ x, x ≠ 0 →
       Ω.om k w x (γ k w) = D.ntypes.teichC k x := by
@@ -178,7 +171,7 @@ theorem exists_tameOm (γ : Fin 2 → PlE D.host → GE D.nd) (hγ : GenFam D γ
   let om : ∀ k : Fin 2, PlE D.host → Fb (D.host.g k) (D.host.g_prime k) → GE D.nd → ℂ := fun k w x σ =>
     if h : σ ∈ Ine (F := D.host.E) (D.nd.plOm.1 w) then χ k w x ⟨σ, h⟩ else 1
   have e : ∀ k w x σ (h : σ ∈ Ine (F := D.host.E) (D.nd.plOm.1 w)), om k w x σ = χ k w x ⟨σ, h⟩ :=
-    fun k w x σ h => dif_pos h
+    fun k w x σ h => dite_eq_left h
   have hv : ∀ k : Fin 2, ∀ w ∈ placesOver D.host.E (D.host.g k), ∀ x, x ≠ 0 →
       om k w x (γ k w) = D.ntypes.teichC k x := fun k w hw x hx => by
     rw [e _ _ _ _ (hγ.2 k w hw).1, h2 k w x hw hx]
@@ -211,19 +204,14 @@ theorem exists_tameOm (γ : Fin 2 → PlE D.host → GE D.nd) (hγ : GenFam D γ
   · rw [← hγ.1 k v]
     exact hv k _ (D.naut.plGw_over k v) x hx
 
-theorem nonempty_tameOm : Nonempty (TameOm D) := by
-  obtain ⟨γ, hγ⟩ := exists_genFam D
-  obtain ⟨Ω, -⟩ := exists_tameOm D γ hγ
-  exact ⟨Ω⟩
-
 end Om
 
 section Ties
 
 variable {D : D7} (T : GlobalTheory.RowTie.WDTie D.nd D.naut)
 
-include T in
 
+include T in
 theorem ineRep_of_tie : IneRep D := by
   intro k w _ L
   have key : ∀ (x : WD (E := D.host.E) (A := D.nd.plOm.1 w) (w := w) (D.nd.plOm.2 w)) (n : ℕ), x.lpDim = n →
@@ -264,176 +252,24 @@ theorem tameLP_iff {w : PlE D.host} (L : D.naut.LP w) : TameLP D L ↔ (T.e w L)
 theorem labDepth_of_tie {γ} (hγ : GenFam D γ) (h : LabAll T γ) : LabDepth D := by
   intro k w hw L
   have : Fact (D.host.g k).Prime := ⟨D.host.g_prime k⟩
-  rw [h k w hw, tameLP_iff T, ← T.dim]
+  rw [h k w hw L, tameLP_iff T L, ← T.dim w L]
   exact ⟨WD.lab_monic _ _ _, WD.natDegree_lab_eq_iff
     (TeichmullerInertiaLabelCondition.of_tameGenAt (normV_eq D hw) (hγ.2 k w hw) (D.ntypes.teichC_inj k)) _⟩
 
 theorem labGen_of_tie {γ} (hγ : GenFam D γ) (h : LabAll T γ) : LabGen D := by
   refine ⟨γ, hγ, fun k w hw L hL => ?_⟩
   have : Fact (D.host.g k).Prime := ⟨D.host.g_prime k⟩
-  rw [h k w hw, ← T.dim] at hL
-  rw [h k w hw, T.inePol w L _ (hγ.2 k w hw).1]
+  rw [h k w hw L, ← T.dim w L] at hL
+  rw [h k w hw L, T.inePol w L _ (hγ.2 k w hw).1]
   exact WD.inePol_eq_of_natDegree_lab _ _ _ hL
 
 end Ties
-
-section Rec
-
-open GlobalTheory.RowTie.Model GlobalTheory.HeightCounting
-
-def noBC {R : Ranks} {H : Formalism.BasicNotions.Host R} {what₂ : Rows.Data R} {N : NData R H what₂} (hE : IsEmpty N.Loc) (A : NAut N) :
-    NBC A where
-  AU := fun _ => PEmpty
-  multAU := fun _ a => a.elim
-  sphAU := fun _ a => a.elim
-  locAU := fun _ a => a.elim
-  satAU := fun _ a => a.elim
-  satAU_card := fun _ a => a.elim
-  Wt := fun _ => PEmpty
-  infW := fun _ a => a.elim
-  infW_card := fun _ a => a.elim
-  wtAU := fun _ a => a.elim
-  infW_alg := fun _ a => a.elim
-  embAV := fun i => hE.elim i
-  embAV_inj := fun i => hE.elim i
-  embAV_loc := fun i => hE.elim i
-  embAV_sat := fun i => hE.elim i
-  embAV_sph := fun i => hE.elim i
-  embAV_inf := fun i => hE.elim i
-
-set_option maxHeartbeats 2000000 in
-
-theorem exists_ties (D : D7) (hE : IsEmpty D.nd.Loc) :
-    ∃ D' : D7, Nonempty (GlobalTheory.RowTie.WDTie D'.nd D'.naut) ∧ IneRep D' ∧ LabDepth D' ∧ LabGen D' := by
-  have : IsEmpty (ndLab D.nd D.nd.lab D.nd.lab_monic).Loc := hE
-  obtain ⟨γ, hγ⟩ := exists_genFam D
-  let A := wdAut (ndLab D.nd D.nd.lab D.nd.lab_monic) D.naut D.ntypes.teichC γ
-  let D' : D7 := setAut D hE D.nd.lab D.nd.lab_monic A (noBC hE A) D.ntypes.tg_mem D.ntypes.tg_gen (fun k v L hL => by
-    have : Fact (D.host.g k).Prime := ⟨D.host.g_prime k⟩
-    have := WD.inePol_eq_of_natDegree_lab (D.ntypes.teichC k) (γ k (D.naut.plGw k v)) L hL
-    exact (congrArg (WD.inePol L) (hγ.1 k v).symm).trans this)
-  let T : GlobalTheory.RowTie.WDTie D'.nd D'.naut := tie (ndLab D.nd D.nd.lab D.nd.lab_monic) D.naut D.ntypes.teichC γ
-  have hγ' : GenFam D' γ := hγ
-  have hl : LabAll T γ := fun _ _ _ _ => rfl
-  exact ⟨D', ⟨T⟩, ineRep_of_tie T, labDepth_of_tie T hγ' hl, labGen_of_tie T hγ' hl⟩
-
-end Rec
 
 section Forms
 
 open TensorProduct
 
 variable {D : D7}
-
-def io (i : D.nd.Loc) : KK D.nd i →+* ℂ := (D.naut.iotaQC i).toRingHom.comp (D.naut.iotaQ i)
-
-theorem heckeEig_eq_top (i : D.nd.Loc) [Subsingleton (D.nd.X i)] (x : D.nd.X i) :
-    heckeEig (D.nd.T i) (D.nd.act i) x = ⊤ := by
-  refine iInf_eq_top.mpr fun f => eq_top_iff.mpr fun v _ => Module.End.mem_eigenspace_iff.mpr ?_
-  have hf : f = algebraMap (D.nd.O i) (D.nd.T i) ((f : D.nd.X i → D.nd.O i) x) :=
-    Subtype.ext (funext fun y => by rw [Subsingleton.elim y x]; rfl)
-  conv_lhs => rw [hf, AlgHom.commutes, Algebra.algebraMap_eq_smul_one, LinearMap.baseChange_smul]
-  rw [algebraMap_smul, LinearMap.smul_apply]
-  congr 1
-  exact LinearMap.congr_fun (LinearMap.baseChange_id) v
-
-theorem nonempty_sec (i : D.nd.Loc) (x : D.nd.X i) (hx : ∀ P, D.naut.ptV i P = some x) : Nonempty (Sec D i) := by
-  have hs : Subsingleton (D.nd.X i) := ⟨fun a b => by
-    obtain ⟨P, hP⟩ := D.naut.pt_surj i a
-    obtain ⟨Q, hQ⟩ := D.naut.pt_surj i b
-    rw [hx] at hP hQ
-    exact Option.some_injective _ (hP.symm.trans hQ)⟩
-  have htop : typeSum D i (some x) = ⊤ := by
-    rw [← D.naut.typeV_top i, typeSum]
-    simp [hx]
-  let b := Module.Free.chooseBasis D.what₂.LL (D.what₂.MtL (D.nd.mu i) (D.nd.j i))
-  obtain ⟨hli, hsp⟩ := D.what₂.jMt_basis _ _ b
-  have : Finite (Module.Free.ChooseBasisIndex D.what₂.LL (D.what₂.MtL (D.nd.mu i) (D.nd.j i))) := hli.finite
-  let := Fintype.ofFinite (Module.Free.ChooseBasisIndex D.what₂.LL (D.what₂.MtL (D.nd.mu i) (D.nd.j i)))
-  let bC := Basis.mk hli hsp.ge
-  have hdim : Fintype.card (Module.Free.ChooseBasisIndex D.what₂.LL (D.what₂.MtL (D.nd.mu i) (D.nd.j i))) =
-      finrank (KK D.nd i) (TensorProduct (D.nd.O i) (KK D.nd i) (D.nd.Mt i)) := by
-    have h1 := D.naut.eig_dim i x
-    rw [NData.mult, heckeMult, heckeEig_eq_top, finrank_top] at h1
-    rw [h1, ← finrank_eq_card_basis bC, ← finrank_top ℂ, ← htop]
-    rfl
-  have hspan : ⊤ ≤ Submodule.span (KK D.nd i) (Set.range fun s => D.nd.prMt i (b s)) := by
-    rw [← D.nd.prMt_span i, Submodule.span_le]
-    rintro _ ⟨y, rfl⟩
-    rw [← b.sum_repr y, map_sum]
-    exact Submodule.sum_mem _ fun s _ => by
-      rw [map_smulₛₗ]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨s, rfl⟩)
-  let bK := basisOfTopLeSpanOfCardEqFinrank _ hspan hdim
-  have hbK : ∀ s, bK s = D.nd.prMt i (b s) := fun s => congrFun (coe_basisOfTopLeSpanOfCardEqFinrank _ hspan hdim) s
-  let Φ : TensorProduct (D.nd.O i) (KK D.nd i) (D.nd.Mt i) →+ D.what₂.Mt (D.nd.mu i) (D.nd.j i) :=
-    { toFun := fun v => ∑ s, io i (bK.repr v s) • bC s
-      map_zero' := by simp
-      map_add' := fun u v => by simp [add_smul, Finset.sum_add_distrib] }
-  have hΦ : ∀ v, Φ v = ∑ s, io i (bK.repr v s) • bC s := fun _ => rfl
-  refine ⟨⟨Φ, (injective_iff_map_eq_zero Φ).mpr fun v hv => ?_, fun k v => ?_, fun y u _ => ?_, fun y => ?_⟩⟩
-  · have := Fintype.linearIndependent_iff.mp bC.linearIndependent _ ((hΦ v).symm.trans hv)
-    refine bK.repr.injective (Finsupp.ext fun s => ?_)
-    simpa using this s
-  · rw [hΦ, hΦ, Finset.smul_sum]
-    refine Finset.sum_congr rfl fun s _ => ?_
-    rw [map_smul, Finsupp.smul_apply, smul_eq_mul, map_mul, mul_smul]
-    rfl
-  · rw [Subsingleton.elim y x, htop]
-    trivial
-  · have h1 : D.nd.prMt i y = ∑ s, D.nd.embK i (b.repr y s) • bK s := by
-      conv_lhs => rw [← b.sum_repr y, map_sum]
-      simp only [map_smulₛₗ, hbK]
-    have h2 : D.what₂.jMt _ _ y = Φ (D.nd.prMt i y) := by
-      rw [hΦ]
-      conv_lhs => rw [← b.sum_repr y, map_sum]
-      refine Finset.sum_congr rfl fun s _ => ?_
-      rw [map_smulₛₗ, h1, bK.repr_sum_self, Basis.mk_apply]
-      congr 1
-      exact (D.naut.iota_LL i _).symm
-    rw [h2, sub_self]
-    exact zero_mem _
-
-theorem sec_ne_zero {i : D.nd.Loc} (S : Sec D i) : S.Φ ≠ 0 := by
-  obtain ⟨x⟩ := D.nd.neX i
-  obtain ⟨u, -, hu⟩ := (Submodule.ne_bot_iff _).mp (D.nd.eig_ne i x)
-  exact fun h => hu (S.inj (by simp [h]))
-
-theorem nonempty_cenO (S : ∀ i, Sec D i) (hpt : ∀ i P, D.naut.ptV i P ≠ none)
-    (a : ∀ i, ↥(Subalgebra.center (D.nd.O i) (MonoidAlgebra (D.nd.O i) (G0g D.nd))) →ₐ[D.nd.O i] D.nd.O i)
-    (ha : ∀ i z F, D.ntypes.onMt (D.nd.mu i) (D.nd.j i)
-      (PairedCharacterCondition.mapCoef (iotaO D.nd D.naut i) ((z : ↥(Subalgebra.center (D.nd.O i) (MonoidAlgebra (D.nd.O i) (G0g D.nd)))) :
-        MonoidAlgebra (D.nd.O i) (G0g D.nd))) F = iotaO D.nd D.naut i (a i z) • F) : Nonempty (CenO D) := by
-  refine ⟨⟨fun i => (Algebra.ofId _ _).comp (a i), fun i z f => Algebra.commutes (a i z) (D.nd.act i f), fun i z x y h => ?_⟩⟩
-  have h0 : typeSum D i none = ⊥ := by simp [typeSum, hpt]
-  have h1 : ∀ y, D.what₂.jMt _ _ y = (S i).Φ (D.nd.prMt i y) := fun y => by
-    have := (S i).split y
-    rwa [h0, Submodule.mem_bot, sub_eq_zero] at this
-  apply (S i).inj
-  have h2 : LinearMap.baseChange (KK D.nd i) (((Algebra.ofId _ (Module.End (D.nd.O i) (D.nd.Mt i))).comp (a i)) z)
-      (D.nd.prMt i x) = algebraMap _ (KK D.nd i) (a i z) • D.nd.prMt i x := by
-    rw [AlgHom.comp_apply, Algebra.ofId_apply, Algebra.algebraMap_eq_smul_one, LinearMap.baseChange_smul,
-      algebraMap_smul, LinearMap.smul_apply]
-    congr 1
-    exact LinearMap.congr_fun (LinearMap.baseChange_id) _
-  rw [h2, (S i).semi, ← h1, ← h1, h, ha]
-  rfl
-
-def omOf (P : PairedCharacterCondition.Pend D) : TameOm D :=
-  ⟨P.om, P.om_one, P.om_mul, P.tameInertiaChar_mul_root, P.om_wild, P.om_open, P.om_inj, P.om_tg⟩
-
-def cenOf (P : PairedCharacterCondition.Pend D) : CenO D := ⟨P.zO, P.zO_comm, P.zO_act⟩
-
-theorem mk_of (P : PairedCharacterCondition.Pend D) : GlobalTheory.PendOf.mk P.lz P.eSer_eq P.eSer_LL P.zetaPrimitiveRoot (omOf P) P.inertiaCharpoly_eigenvalues P.inertiaCharpoly_character (cenOf P)
-    P.zL_stable P.prMt_type P.Par_surj = P := by
-  have h : (fun i PI k v => {τ | ∃ F ∈ D.naut.typeV i PI, D.ntypes.onMt (D.nd.mu i) (D.nd.j i)
-      (Formalism.MainNotions.ArithmeticCylinders.atPlace D k v ((P.lz k).idem τ)) F ≠ 0}) = P.kty := by
-    funext i PI k v
-    ext τ
-    exact (P.kty_spec i PI k v τ).symm
-  cases P
-  simp only [GlobalTheory.PendOf.mk, omOf, cenOf]
-  congr 1
 
 end Forms
 

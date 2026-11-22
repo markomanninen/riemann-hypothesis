@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSAChar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSAChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,8 +125,8 @@ theorem addChar_sum {ι A : Type*} [AddCommMonoid A] (χ : AddChar A ℂ) (s : F
 
 end ChLiftW
 
-open Classical in
 
+open Classical in
 def sgl {F : Type} [Field F] (v : InfinitePlace F) (t : v.Completion) : InfiniteAdeleRing F :=
   Pi.single v t
 
@@ -155,7 +159,7 @@ theorem chLift_holds : ChLift := by
   choose ℓv hℓc hℓ using hloc
   let ℓ : InfiniteAdeleRing F →+ ℂ := AddMonoidHom.mk' (fun x => ∑ v, ℓv v (x v)) (fun a b => by
     show ∑ v, ℓv v (a v + b v) = _
-    simp [map_add, Finset.sum_add_distrib])
+    simp [map_add (f := _), Finset.sum_add_distrib])
   refine ⟨ℓ, ?_, fun x => ?_⟩
   · show Continuous (fun x : InfiniteAdeleRing F => ∑ v, ℓv v (x v))
     exact continuous_finsetSum _ fun v _ => (hℓc v).comp (continuous_apply v)

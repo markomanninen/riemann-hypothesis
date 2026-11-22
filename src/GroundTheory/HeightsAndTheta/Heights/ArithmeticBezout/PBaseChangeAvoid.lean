@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -40,6 +45,7 @@ theorem BaseChangeAvoid.proof : BaseChangeAvoid.Statement := by
   apply hu
   rw [← hc, Ideal.mem_comap]
   convert h using 1
-  simp [linForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [linForm, map_sum]
 
 end GroundTheory.Heights₂.Heights

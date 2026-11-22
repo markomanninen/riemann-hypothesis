@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -27,10 +31,10 @@ private noncomputable def leftT {K : Type} [Field K] [NumberField K] {n : ℕ} (
 private theorem leftT_apply {K : Type} [Field K] [NumberField K] {n : ℕ} (h g : AdelicGLn.FiniteAdelicGL K n) (e : TF K n) :
     leftT h e g = e (h⁻¹ * g) := rfl
 
-private theorem ofin_leftT {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+private theorem ofin_leftT {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure] (h : AdelicGLn.FiniteAdelicGL K n) (e : TF K n) :
     Ofin μ m (leftT h e) = rhoF μ h ∘L Ofin μ m e :=
-  integrated_left m ((rightRegularRep (rationalGLOne K n) μ).compHom (MultiplicityOne.finProj K n)
+  integrated_left m ((rightRegularRep (rationalGLOne (K := K) (n := n)) μ).compHom (MultiplicityOne.finProj K n)
       MultiplicityOne.continuous_finProj) h e (leftT h e) (fun g => leftT_apply h g e)
 
 private theorem coset_sum {G L ι : Type*} [Group G] [Group L] [Fintype ι] (loc : L →* G) (p : G → L)
@@ -114,7 +118,7 @@ private theorem cc_sum_apply {X ι : Type*} [TopologicalSpace X] (s : Finset ι)
   | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, CompactlySupportedContinuousMap.add_apply, ih]
 
 theorem UpperTheory.ConvolutionTheory.Tf.hopLevel :
-    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure] (w : Pl K) (J : Subgroup (GL (Fin n) (w.adicCompletion K))) (x : GL (Fin n) (w.adicCompletion K))
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure] (w : Pl K) (J : Subgroup (GL (Fin n) (w.adicCompletion K))) (x : GL (Fin n) (w.adicCompletion K))
       (U : Subgroup (AdelicGLn.FiniteAdelicGL K n)), IsOpen (J : Set (GL (Fin n) (w.adicCompletion K))) → IsCompact (J : Set (GL (Fin n) (w.adicCompletion K))) →
       IsOpen (U : Set (AdelicGLn.FiniteAdelicGL K n)) → IsCompact (U : Set (AdelicGLn.FiniteAdelicGL K n)) →
       J.map (AdelicGLn.localEmbedding w) ≤ U → (∀ u ∈ U, finAt w (finEmb K n u) ∈ J) →

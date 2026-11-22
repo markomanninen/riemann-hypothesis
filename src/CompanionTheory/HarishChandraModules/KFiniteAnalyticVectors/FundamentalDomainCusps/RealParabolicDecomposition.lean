@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.ShortIsot
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.ShortIsot
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+
+@[expose] public section
 
 open Matrix Topology Filter
 open scoped ComplexOrder
@@ -89,7 +93,7 @@ theorem exists_isPr (W : Submodule ℂ (Fin n → ℂ)) : ∃ p, IsPr W p := by
     conv_rhs => rw [← Matrix.toEuclideanLin.apply_symm_apply P]
     rfl
   refine ⟨Matrix.toEuclideanLin.symm P, ?_, fun z => ?_, fun w hw => ?_⟩
-  · refine Matrix.isHermitian_iff_isSymmetric.2 ?_
+  · refine Matrix.isSymmetric_toEuclideanLin_iff.mp ?_
     rw [LinearEquiv.apply_symm_apply]
     exact K.starProjection_isSymmetric
   · rw [hP]; exact K.starProjection_apply_mem _
@@ -117,7 +121,7 @@ theorem IsPr.entry {p : Matrix (Fin n) (Fin n) ℂ} (hp : IsPr W p) (i j : Fin n
     conv_rhs => rw [← hp.sq, ← hp.1]
     rw [hp.1]
     conv_rhs => rw [show p * p = pᴴ * p by rw [hp.1]]
-    simp only [mul_apply, conjTranspose_apply, Complex.ofReal_sum, Complex.ofReal_pow, Complex.star_def,
+    simp only [Matrix.mul_apply, conjTranspose_apply, Complex.ofReal_sum, Complex.ofReal_pow, Complex.star_def,
       Complex.conj_mul']
   have h1 : ∀ k, ‖p k j‖ ^ 2 ≤ ‖p j j‖ := fun k => by
     rw [← h j, Complex.norm_real, Real.norm_of_nonneg (Finset.sum_nonneg fun _ _ => sq_nonneg _)]

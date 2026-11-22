@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsVecFixGroup
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsVecFixGroup
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -50,13 +54,13 @@ theorem mem_lineStab {h : HermitianForm F E W} {v : Basis ι E W} {x₀ : W} {g 
       ((g : InfinitePlace E → GL ι ℂ) w : Matrix ι ι ℂ) *ᵥ vecAt v x₀ w = c • vecAt v x₀ w :=
   Iff.rfl
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem vecFixGroup_le_lineStab (h : HermitianForm F E W) (v : Basis ι E W) (x₀ : W) :
     vecFixGroup h v x₀ ≤ lineStab h v x₀ := fun g hg w => ⟨1, by rw [one_smul]; exact hg w⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem isClosed_lineStab (h : HermitianForm F E W) (v : Basis ι E W) (x₀ : W) :
     IsClosed (lineStab h v x₀ : Set (archUnitary h v)) := by
   have : (lineStab h v x₀ : Set (archUnitary h v)) = ⋂ w, (fun g : archUnitary h v =>
@@ -75,14 +79,10 @@ instance locallyCompactSpace_lineStab (h : HermitianForm F E W) (v : Basis ι E 
     LocallyCompactSpace (lineStab h v x₀) :=
   (isClosed_lineStab h v x₀).isClosedEmbedding_subtypeVal.locallyCompactSpace
 
-instance secondCountableTopology_lineStab (h : HermitianForm F E W) (v : Basis ι E W) (x₀ : W) :
-    SecondCountableTopology (lineStab h v x₀) :=
-  TopologicalSpace.Subtype.secondCountableTopology _
-
 end LineStab
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 def LineStabHaar.Statement (h : HermitianForm F E W) (v : Basis ι E W) : Prop :=

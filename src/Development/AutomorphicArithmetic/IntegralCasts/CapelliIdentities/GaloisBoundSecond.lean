@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 
@@ -87,7 +91,7 @@ private lemma key {F : Type} [Field F] [NumberField F] [NumberField.IsTotallyRea
     have h1 := sep N hN I x0 0 (hmem x0 hx0).2.1 ⟨0, I.zero_mem, by simp⟩ (hmem x0 hx0).1
     refine h1.trans ?_
     rw [← hcard, ← Finset.card_univ, ← Finset.prod_const]
-    refine Finset.prod_le_prod (fun w _ => w.1.nonneg _) fun w _ => ?_
+    refine Finset.prod_le_prod₀ (fun w _ => w.1.nonneg _) fun w _ => ?_
     rw [sub_zero, hwN, hC, mul_comm]
     exact mul_le_mul_of_nonneg_right ((hmem x0 hx0).2.2 w) hNr.le
   have hsC : s ≤ C := by
@@ -122,7 +126,7 @@ private lemma key {F : Type} [Field F] [NumberField F] [NumberField.IsTotallyRea
     have h1 := sep N hN I x x' (hmem x hx).2.1 (hmem x' hx').2.1 hne
     have hz : (N : F) * (x - x') ≠ 0 := mul_ne_zero hN'F (sub_ne_zero.2 hne)
     have h2 : ∏ w : InfinitePlace F, w ((N : F) * (x - x')) < ∏ _w : InfinitePlace F, s := by
-      refine Finset.prod_lt_prod_of_nonempty (fun w _ => w.pos_iff.2 hz) (fun w _ => ?_)
+      refine Finset.prod_lt_prod_of_nonempty₀ (fun w _ => w.pos_iff.2 hz) (fun w _ => ?_)
         Finset.univ_nonempty
       have hw := congrFun hff w
       have h3 := Int.abs_sub_lt_one_of_floor_eq_floor hw

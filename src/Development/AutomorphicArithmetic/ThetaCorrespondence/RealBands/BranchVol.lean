@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BranchDefs
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealInputOfBranching
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BranchDefs
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealInputOfBranching
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Ell GlobalTheory.SepReal UpperTheory.Lit.Branch
 open scoped InnerProductSpace

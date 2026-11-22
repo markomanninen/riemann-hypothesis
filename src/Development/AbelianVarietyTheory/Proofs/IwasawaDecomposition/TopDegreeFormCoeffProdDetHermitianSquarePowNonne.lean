@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegSqZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopDegreeFormCoeffLinearSubstEqAbsDetSqMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegSqZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopDegreeFormCoeffLinearSubstEqAbsDetSqMul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -80,7 +84,8 @@ theorem factorial_mul_det {R : Type} [CommRing R] {m : ℕ} (M : Matrix (Fin m) 
 
 theorem sqPoly_apply {m r : ℕ} (T : V n →ₗ[ℂ] Matrix (Fin m) (Fin r) ℂ) (i j : Fin m) :
     sqPoly T i j = ∑ k, pairForm (fun a => T (coordVec a) i k) (fun a => T (coordVec a) j k) := by
-  simp only [sqPoly, pairForm, Matrix.of_apply, Matrix.mul_apply, Matrix.conjTranspose_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sqPoly, pairForm, Matrix.of_apply, Matrix.mul_apply, Matrix.conjTranspose_apply, map_sum,
     Finset.sum_mul, Fintype.sum_prod_type]
   rw [Finset.sum_comm (γ := Fin r)]
   refine Finset.sum_congr rfl fun a _ => ?_
@@ -113,7 +118,8 @@ theorem topCoeff_prod_det_nonneg {B : Type} [Fintype B] (m r : B → ℕ)
     simp_rw [factorial_mul_det_sqPoly]
     rw [Finset.prod_univ_sum, Fintype.piFinset_univ, topCoeff_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Finset.prod_univ_sum, Fintype.piFinset_univ, topCoeff_sum, map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.prod_univ_sum, Fintype.piFinset_univ, topCoeff_sum, map_sum, Finset.sum_mul_sum]
     refine Finset.sum_congr rfl fun σ _ => ?_
     rw [Finset.prod_univ_sum, Fintype.piFinset_univ, topCoeff_sum]
     refine Finset.sum_congr rfl fun τ _ => ?_

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPowerSeries IsLocalRing
 open scoped TensorProduct
@@ -61,7 +65,8 @@ theorem mem_of_coeff_eq_zero {R σ : Type*} [CommRing R] [Finite σ] (N : ℕ)
   have hG : ∀ α e, coeff e (G α) = if A (α + e) = α then coeff (α + e) g else 0 := fun _ _ => rfl
   have : g = ∑ α ∈ S, monomial α 1 * G α := by
     ext d
-    simp only [map_sum, coeff_monomial_mul, one_mul, hG]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, coeff_monomial_mul, one_mul, hG]
     by_cases hd : N ≤ d.degree
     · rw [Finset.sum_eq_single_of_mem (A d) ((hS _).2 (hA d hd).2)]
       · simp [(hA d hd).1, add_tsub_cancel_of_le (hA d hd).1]
@@ -93,7 +98,7 @@ theorem exists_polynomial_sub_mem {O σ τ : Type*} [CommRing O] [Finite σ] [Fi
   let Φ : (Option τ → MvPowerSeries σ O) →ₗ[O] MvPowerSeries σ O :=
     { toFun := fun x => (truncTotal N (x none) : MvPolynomial σ O) + ∑ j, x (some j) * f j
       map_add' := fun x y => by
-        simp only [Pi.add_apply, map_add, MvPolynomial.coe_add, add_mul, Finset.sum_add_distrib]
+        simp only [Pi.add_apply, map_add (f := _), MvPolynomial.coe_add, add_mul, Finset.sum_add_distrib]
         ring
       map_smul' := fun c x => by
         simp only [Pi.smul_apply, map_smul, MvPolynomial.coe_smul, smul_add, Finset.smul_sum,
@@ -115,28 +120,5 @@ theorem exists_polynomial_sub_mem {O σ τ : Type*} [CommRing O] [Finite σ] [Fi
   refine ⟨truncTotal N (x none), Ideal.mem_span_range_iff_exists_fun.2 ⟨fun j => x (some j), ?_⟩⟩
   rw [← hx]
   exact (add_sub_cancel_left _ _).symm
-
-theorem mk_mem_span_map : ∀ (T O : Type) [CommRing T] [CommRing O] [Algebra T O] (I : Ideal T), I.FG → IsAdicComplete (I.map (algebraMap T O)) O → ∀ (σ : Type) [Fintype σ] (f : σ → MvPowerSeries σ T), (∃ N : ℕ, ∀ α : σ →₀ ℕ, α.degree = N → (monomial α (1 : T) : MvPowerSeries σ T) ∈ Ideal.span (Set.range f) ⊔ I.map (MvPowerSeries.C : T →+* MvPowerSeries σ T)) → Module.Finite T (MvPowerSeries σ T ⧸ Ideal.span (Set.range f)) → ∀ g : MvPowerSeries σ O, Ideal.Quotient.mk (Ideal.span (Set.range fun j => MvPowerSeries.map (algebraMap T O) (f j))) g ∈ Submodule.span O (Set.range fun h : MvPowerSeries σ T => Ideal.Quotient.mk (Ideal.span (Set.range fun j => MvPowerSeries.map (algebraMap T O) (f j))) (MvPowerSeries.map (algebraMap T O) h)) := by
-  intro T O _ _ _ I hI hO σ _ f ⟨N, hN⟩ _ g
-  obtain ⟨p, hp⟩ := exists_polynomial_sub_mem (hI.map (algebraMap T O))
-    (fun j => MvPowerSeries.map (algebraMap T O) (f j)) N (fun α hα => by
-      have hC : (MvPowerSeries.map (σ := σ) (algebraMap T O)).comp C =
-          (C : O →+* MvPowerSeries σ O).comp (algebraMap T O) := RingHom.ext fun a => map_C _ a
-      have := Ideal.mem_map_of_mem (MvPowerSeries.map (σ := σ) (algebraMap T O)) (hN α hα)
-      rw [Ideal.map_sup, Ideal.map_span, ← Set.range_comp, Ideal.map_map, hC,
-        ← Ideal.map_map, map_monomial, map_one] at this
-      exact this) g
-  rw [Ideal.Quotient.eq.2 hp]
-  clear hp
-  induction p using MvPolynomial.induction_on' with
-  | monomial α c =>
-    have : ((MvPolynomial.monomial α c : MvPolynomial σ O) : MvPowerSeries σ O) =
-        c • MvPowerSeries.map (algebraMap T O) (monomial α 1) := by
-      rw [MvPolynomial.coe_monomial, map_monomial, map_one, ← map_smul, smul_eq_mul, mul_one]
-    rw [this, ← Ideal.Quotient.mkₐ_eq_mk O, map_smul]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
-  | add p q hp hq =>
-    rw [MvPolynomial.coe_add, map_add]
-    exact add_mem hp hq
 
 end GlobalTheory.CompleteBaseChange

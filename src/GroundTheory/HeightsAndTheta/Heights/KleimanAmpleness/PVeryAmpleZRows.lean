@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleZRowsSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechPartitionSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ZChartSmulSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ZChartLocalSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleZRowsSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechPartitionSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ZChartSmulSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ZChartLocalSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -21,7 +26,7 @@ def onSet {i : ℕ} (s : Cech.Cochain (fun _ : Cell U => V) i) (A : Finset (Fin 
 theorem onSet_idx {i : ℕ} (s : Cech.Cochain (fun _ : Cell U => V) i) (I : Cech.Idx U i) :
     onSet s I.1.1 = s I := by
   unfold onSet
-  rw [dif_pos ⟨I.2, I.1.2.2⟩]
+  rw [dite_eq_left ⟨I.2, I.1.2.2⟩]
 
 theorem d_eq {i : ℕ} (s : Cech.Cochain (fun _ : Cell U => V) i) (K : Cech.Idx U (i + 1)) :
     Cech.d (fun _ : Cell U => V) (Cech.idRes R V U) i s K =
@@ -62,8 +67,8 @@ theorem const_zero {s : Cech.Cochain (fun _ : Cell U => V) 0}
 
 end VeryAmpleZRows
 
-open VeryAmpleZRows in
 
+open VeryAmpleZRows in
 theorem VeryAmpleZRows.proof (hPart : CechPartition.Statement.{u, v, w}) (hSmul : ZChartSmul.Statement.{u, v, w})
     (hLoc : ZChartLocal.Statement.{u, v, w}) : VeryAmpleZRows.Statement.{u, v, w} := by
   intro S _ Ω _ _ N x E _ _ _ _ G H r h hH J

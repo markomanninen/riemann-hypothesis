@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorsTransport
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassInvOfUnitTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticePrincMulUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomothetyLatSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModFMulPosPrincipal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsTransport
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassInvOfUnitTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticePrincMulUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomothetyLatSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModFMulPosPrincipal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.LatVal GlobalTheory.IndefiniteRowSideFullHecke.LatticeNormTransport
 open GlobalTheory.ToricTransport (coordIn)
 open scoped nonZeroDivisors
@@ -80,7 +85,8 @@ theorem conj_coordIn_toric : ∀ (hC : LatConj) {K : Type} [Field K] [NumberFiel
   rw [hsum, hsum, coordIn_eq_mul (E := E) d s κ Ω₀, coordIn_eq_mul (E := E) d s κ Ω₁]
   calc g (coordIn E d s κ Ω₀ 1 * ∑ q, (lamF s χ q.out)⁻¹ * S q 0)
       = ∑ q, (g (lamF s χ q.out))⁻¹ * g (coordIn E d s κ Ω₀ 1 * S q 0) := by
-        rw [Finset.mul_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.mul_sum, map_sum]
         refine Finset.sum_congr rfl fun q _ => ?_
         rw [show coordIn E d s κ Ω₀ 1 * ((lamF s χ q.out)⁻¹ * S q 0) =
           (lamF s χ q.out)⁻¹ * (coordIn E d s κ Ω₀ 1 * S q 0) by ring, map_mul, map_inv₀]

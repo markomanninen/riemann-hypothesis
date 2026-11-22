@@ -1,23 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.CmHostUnitAddConjEqOne
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinear
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaSeriesTestFunctionHolomorphicWeight
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConstOfNormFactorUnitFr
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FgOfSmulLe
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FramedPointGeneratorIsThetaLevelOne
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AnalyticFibreUnitFrameUniformisation
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UniformisationComponentLatticesMarkings
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProdLevelOneThetaEqVacuumTheta
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsLiftMarked
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.InjectiveOfKerCountable
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricLiftsOfFrames
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ClassSumEvalComplexPointEqClassicalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.CmHostUnitAddConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinear
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaSeriesTestFunctionHolomorphicWeight
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConstOfNormFactorUnitFr
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FgOfSmulLe
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FramedPointGeneratorIsThetaLevelOne
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AnalyticFibreUnitFrameUniformisation
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UniformisationComponentLatticesMarkings
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProdLevelOneThetaEqVacuumTheta
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsLiftMarked
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.InjectiveOfKerCountable
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricLiftsOfFrames
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ClassSumEvalComplexPointEqClassicalStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -69,7 +73,9 @@ theorem comp_eq_of_marked {Xo : Moduli Dw l₂} {c : Coeff l₂} [inst : Algebra
     have h1 : fnAt (basePt z) g₀ = fnAt (basePt z ≫ pullback.fst _ _ ≫ t) (toΓ (KA l) u) := rfl
     have h2 : fnAt (𝟙 (Sp (KA l))) (toΓ (KA l) u) = u := by
       simp [fnAt, toΓ]
-    rw [evR_fnRule, h1, basePt, pullback.lift_fst_assoc, hβ, ← Category.comp_id (Geo.Tor.spMap β), fnAt_comp, h2]
+    rw [evR_fnRule, h1, ← Category.assoc]
+    rw [basePt, pullback.lift_fst]
+    rw [hβ, ← Category.comp_id (Geo.Tor.spMap β), fnAt_comp, h2]
     simp [u]
   have h1 : ∀ z : FrPt Xo c (CAt σ), ‖Formalism.L2.PjFree.toC (evR Xo c (fnRule g₀) z)‖ = 1 := fun z => by
     obtain ⟨β, hβ⟩ := LevelFibre.exists_spMap (A := KA l) (B := ℂ) (z.x ≫ t)
@@ -134,7 +140,7 @@ theorem exists_lift_of_reached {Xo : Moduli Dw l} {c : Coeff l} {n : ℕ} (d : D
     obtain ⟨b, -, hb⟩ := MarkLift.modN_of_mem_half d.l₂ hu (Submodule.sub_mem _ (hpres (liftLa k) _ ha) ha')
     obtain ⟨b', hb'⟩ := MarkLift.modN_of_mem_bar d.l₂ hv hδ
     have e₀ : mk₂ (liftLa k (liftLa k.symm a')) = mk₂ a' + d.l₂.M • mk₂ (b + b') := by
-      rw [← map_nsmul, smul_add, ← hb, ← hb', ← add_smul, huv, one_smul, ← map_add, add_sub_cancel]
+      rw [← map_nsmul, smul_add, ← hb, ← hb', ← add_smul, huv, one_smul, ← map_add (f := _), add_sub_cancel]
     obtain ⟨t, ht, e₁⟩ := hk₂ _ ha
     have e₂ := (hper _ t ht).symm.trans ((congrArg (fun q => A.ex (pv X idx x ((d.l₂.M : E)⁻¹ • q))) (e₁.symm.trans e₀)).trans (hper _ _ (hm₂.mem _)))
     apply Over.OverMorphism.ext
@@ -227,8 +233,8 @@ theorem isSB_gphi {X : Data E r} {bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.
 
 end GlobalTheory.ClsVal.Const
 
-open GlobalTheory.ClsVal.Const in
 
+open GlobalTheory.ClsVal.Const in
 theorem GlobalTheory.ClsVal.rdU_eq_const_mul_clsSum : Formalism.MainNotions.ModuliIntegralCharts.H1.ChartIndepSt2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (r : ℕ) (U : Formalism.L2.PjFree.Unf Xo c σ r), GoodEmb c σ → Formalism.L2.PjFree.IsUnf U → 1 ≤ r → l.A = 1 → ∀ (W : UW U) (k : U.Comp) (n : ℕ) (a : (E →+* ℂ) × ℕ → ℕ), Dom a n → ∀ (Dc : Dic Dw c σ (U.X k) W.g Dw.p n a), Dc.e = W.e → ∀ v : TF n W.g, IsVac (U.X k) Dc.bas (H.w0 : E) (tens (stdL E n) (U.X k).Λ) v → ∃ C : ℂ, (∀ x ∈ (U.X k).dom, IsUnitFr (U.X k) x → ∀ (θ : (Fin W.g → ℂ) → ℂ) (κ : ℂ), IsTheta1 (U.X k) Dc.bas Dc.idx (H.w0 : E) x (U.X k).Λ θ → MeanOne (U.X k) Dc.bas Dc.idx x (U.X k).Λ θ → (∀ z : Fin n → Fin W.g → ℂ, ∏ b, θ (z b) = κ * thA (U.X k) Dc.bas Dc.idx v x z) → ‖κ‖ = ‖C‖) ∧ C ≠ 0 ∧ ∀ (d : DeltaDat Xo c n) [Algebra d.c₂.F ℂ], (∀ t : c.F, algebraMap d.c₂.F ℂ (d.eF t) = σ t) → d.IsLev → d.l₂.A = 1 → (∃ _ : StarRing (𝓞 E), IsNab d.Xo₂ d.c₂ d.nab₂) → ∀ cv : (Dw.La →ₗ[𝓞 E] (Fin r → E)) → ℂ, (∀ mk, ‖cv mk‖ = 1) → CvIs d (U.X k) Dc.bas Dc.idx W.e (U.X k).Λ cv → ∀ mk₂ : Dw.La →ₗ[𝓞 E] (Fin r → E), IsMark d.l₂ (U.X k).Λ mk₂ → MarkOver l d.l₂ (U.X k).Λ (W.mark k) mk₂ → (Dw.p = Dw.q → (∀ h : KA l ≤ KA d.l₂, d.r ≫ Xo.s = d.Xo₂.s ≫ Geo.Tor.spMap (IntermediateField.inclusion h).toRingHom) ∨ ∃ (x₀ : (U.X k).dom) (y₂ : FrPt d.Xo₂ d.c₂ ℂ) (A₂ : AnFib (U.X k) Dc.bas Dc.idx W.e x₀ (U.X k).Λ y₂), (letI : Algebra c.F ℂ := σ.toAlgebra; FrOver d y₂ (unC U k x₀)) ∧ A₂.Marked mk₂) → ∀ (Cl : Type) [Fintype Cl] (w : Cl → (Fin n → LevQ Dw d.l₂) → c.F) (La : Cl → GenLat E n) (Nc gam : Cl → ℕ) (vol : c.F) (ep : Cl → c.F) (Vs : Type) [AddCommGroup Vs] [Module c.F Vs] (io : Vs →ₗ[c.F] MvPolynomial (LtN Dw n) c.F) (xs : Cl → Vs), LatsOK d.l₂.M La Nc → (∀ j, io (xs j) ∈ HHa Dw.mult n c.F ComplexEmbedding.conjugate (InPsi H) (fun τ i => a (τ, i))) → ∀ Y : Cl → (Fin n → LevQ Dw d.l₂) → Matrix (Fin n) (Fin r) E, (∀ j, IsRoots d.l₂ (U.X k).Λ mk₂ (Nc j) (Y j)) → ∀ f ∈ sec Xo c a n, IsThClsD Xo c d w La Nc gam vol ep io xs f → ∀ x ∈ (U.X k).dom, Formalism.L2.PjFree.rdU U f k x = C * cv mk₂ * clsSum σ (U.X k) Dc.hr Dc.bas Dc.idx Dc.eL w La Nc gam vol ep (fun j => io (xs j)) (U.X k).Λ v Y x := by
   intro hCI E _ _ _ H Dw l Xo c σ r U hσ hU hr1 hA1 W k n a hdom Dc hDe v hv
   letI : Algebra c.F ℂ := σ.toAlgebra

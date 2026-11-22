@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.OkpInert
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.OkpInert
+
+@[expose] public section
 
 open NumberField
 

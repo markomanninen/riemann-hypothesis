@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.UniformContinuousConstSMulOfIsIsometricSMul
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.ExistsFactorialMulEqPow
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRham
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRhamMap
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Embedding
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.PadicField
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Action
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.MapEqPadicPowCyclotomicCharacter
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.UniformContinuousConstSMulOfIsIsometricSMul
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.ExistsFactorialMulEqPow
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRham
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRhamMap
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Embedding
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Section
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Action
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.MapEqPadicPowCyclotomicCharacter
+
+@[expose] public section
+
 namespace LogUniqueAlt
 section
 structure IsCrisDR (l : ℕ) [Fact l.Prime] (f : (Reformulated.AutPerF.Bcris l ↥(PadicComplexInt l)) →+* (Reformulated.AutPerF.BdR l ↥(PadicComplexInt l))) : Prop where
@@ -80,7 +85,8 @@ theorem general {p : ℕ} [Fact p.Prime] {R : Type*} [CommRing R] [Fact ¬IsUnit
   have e : algebraMap (Ainf p R) (BdRPlus p R) u - 1 =
       algebraMap (AinfInv p R) (BdRPlus p R) (algebraMap (Ainf p R) (AinfInv p R) (u - 1)) := by
     rw [← IsScalarTower.algebraMap_apply, map_sub, map_one]
-  rw [BdRPlus.eval_log, factorial_mul_truncLog, e, BdRPlus.eval_algebraMap, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [BdRPlus.eval_log, factorial_mul_truncLog, e, BdRPlus.eval_algebraMap, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp only [map_mul, map_pow, map_neg, map_one, map_natCast]
 

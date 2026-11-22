@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechTripleRestrictCompositeInjectiveSecond
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechTripleRestrictCompositeInjectiveSecond
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -14,10 +18,6 @@ variable {R : Type} [CommRing R]
 def secA {X X' : Scheme.{0}} {s : X ⟶ Sp R} {s' : X' ⟶ Sp R} {φ : X' ⟶ X}
     (h : φ ≫ s = s' ≫ spMap (RingHom.id R)) (p : Pair φ) : Sec s p.1.2.1 →ₐ[R] Sec s' p.1.1.1 :=
   { secPull s s' p with commutes' := (semiHom_secPull h p).map_algebraMap }
-
-theorem secA_apply {X X' : Scheme.{0}} {s : X ⟶ Sp R} {s' : X' ⟶ Sp R} {φ : X' ⟶ X}
-    (h : φ ≫ s = s' ≫ spMap (RingHom.id R)) (p : Pair φ) (x : Sec s p.1.2.1) :
-    secA h p x = secPull s s' p x := rfl
 
 theorem kunneth_open (A B : Over (Sp R)) (U : A.left.affineOpens) (V : B.left.affineOpens) :
     ∃ hV : IsAffineOpen ((fst A B).left ⁻¹ᵁ U.1 ⊓ (snd A B).left ⁻¹ᵁ V.1),
@@ -33,7 +33,7 @@ theorem kunneth_open (A B : Over (Sp R)) (U : A.left.affineOpens) (V : B.left.af
   let ma : pullback (spMap (algebraMap R Sa)) (spMap (algebraMap R Sb)) ⟶ pullback A.hom B.hom :=
     pullback.map _ _ _ _ iU iV (𝟙 _) (by rw [Category.comp_id, eU]) (by rw [Category.comp_id, eV])
   haveI hma : IsOpenImmersion ma :=
-    MorphismProperty.pullback_map (P := @IsOpenImmersion) (f := spMap (algebraMap R Sa)) (g := spMap (algebraMap R Sb))
+    CategoryTheory.MorphismProperty.pullbackMap (P := @IsOpenImmersion) (f := spMap (algebraMap R Sa)) (g := spMap (algebraMap R Sb))
       (IsAffineOpen.isOpenImmersion_fromSpec U.2) (IsAffineOpen.isOpenImmersion_fromSpec V.2) eU.symm eV.symm
   let j : Spec (CommRingCat.of (Sa ⊗[R] Sb)) ⟶ pullback A.hom B.hom := (pullbackSpecIso R Sa Sb).inv ≫ ma
   have hj : j.opensRange = (fst A B).left ⁻¹ᵁ U.1 ⊓ (snd A B).left ⁻¹ᵁ V.1 := by
@@ -325,8 +325,6 @@ def toAlg (m : CoefMap (RingHom.id R) F G) (T : D) : F.obj (m.G.obj T) →ₐ[R]
       rw [Algebra.algebraMap_eq_smul_one, m.smul, map_one, ← Algebra.algebraMap_eq_smul_one]
       rfl }
 
-theorem toAlg_apply (m : CoefMap (RingHom.id R) F G) (T : D) (x : F.obj (m.G.obj T)) :
-    toAlg m T x = m.α T x := rfl
 end
 
 section Main2
@@ -458,11 +456,11 @@ theorem primitive
     (hs : Function.Surjective (resSys A.hom S).pull1) (c : H1 (OSys A.hom S)) :
     (mMap A S).pull1 c = (pj A S).coef.pull1 ((boxL (OSys A.hom S)).pull1 c + (boxR (OSys A.hom S)).pull1 c) := by
   obtain ⟨c, rfl⟩ := hs c
-  rw [map_add, ← pMap_pull1, ← qMap_pull1]
+  rw [map_add (f := _), ← pMap_pull1, ← qMap_pull1]
   have hm : (mMap A S).pull1 ((resSys A.hom S).pull1 c) = _ := liftAlong_pull1 (wOver μ[A]) S.fn _ (wFn A S) _ c
   have hp : (pMap A S).pull1 ((resSys A.hom S).pull1 c) = _ := liftAlong_pull1 (wOver (fst A A)) S.fn _ (wFn A S) _ c
   have hq : (qMap A S).pull1 ((resSys A.hom S).pull1 c) = _ := liftAlong_pull1 (wOver (snd A A)) S.fn _ (wFn A S) _ c
-  rw [hm, hp, hq, ← map_add, primitive_structure_sheaf_cohomology_class A hAx]
+  rw [hm, hp, hq, ← map_add (f := _), primitive_structure_sheaf_cohomology_class A hAx]
 
 theorem exists_unit_mem (hR : IsField R) : ∃ a₀, η[A].left ⁻¹ᵁ (S.u a₀).1 = ⊤ := by
   letI := hR.toField

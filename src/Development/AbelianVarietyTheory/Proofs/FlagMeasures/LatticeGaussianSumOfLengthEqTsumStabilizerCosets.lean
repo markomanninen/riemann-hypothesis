@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFinEmb
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnitaryPointsDiscreteFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnitaryMulVecEqOfFormEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFinEmb
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnitaryPointsDiscreteFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnitaryMulVecEqOfFormEqStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean GlobalTheory.StabUnfold
 open scoped TensorProduct
@@ -15,7 +19,8 @@ theorem map_mulVec_incl {E A : Type} [CommRing E] [CommRing A] (ι : E →+* A) 
     (M : Matrix (Fin n) (Fin n) E) (w : Fin n → E) :
     M.map ι *ᵥ (fun i => ι (w i)) = fun i => ι ((M *ᵥ w) i) := by
   funext i
-  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
 
 theorem unitary_map {E A : Type} [CommRing E] [CommRing A] (σ : E →+* E) (s : A →+* A)
     (ι : E →+* A) (hι : ∀ e, s (ι e) = ι (σ e)) {n : ℕ} (J g : Matrix (Fin n) (Fin n) E)
@@ -97,7 +102,7 @@ theorem afVec_injective {m : ℕ} : Function.Injective (afVec I (m := m)) := by
       rw [← hz]
       exact z.isIntegral_coe
     have h2 : (2 : I.E)⁻¹ = algebraMap ℚ I.E (2 : ℚ)⁻¹ := by simp
-    rw [h2, isIntegral_algebraMap_iff (algebraMap ℚ I.E).injective] at hint
+    rw [h2, isIntegral_algebraMap_iff ] at hint
     obtain ⟨m, hm⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
     simp only [algebraMap_int_eq, eq_intCast] at hm
     have h3 : ((m * 2 : ℤ) : ℚ) = 1 := by

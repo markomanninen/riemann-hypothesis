@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+
+@[expose] public section
 
 theorem UpperTheory.weilDeligne_monodromy_upperTriangular :
     UpperTheory.V.Af.Wd.TriMono := by

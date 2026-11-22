@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.OfCharLevel
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.AnyFrame
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.OfCharLevel
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.AnyFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,7 @@ open Formalism.FrobeniusOrbits
 
 namespace AnyGrp
 
-open EvenGrp hiding data frame frame_e o_eq twoGroup QS_le exact_data theta theta_mem host host_q host_d host_QS psQ exact muPM
-  coprimeFifteen_of_coprime exists_sqq prim_theta keptInXp exceptional_character_condition o_eq_level
+open EvenGrp (B QS QS_pos good_QS QS_dvd QS_dvd_mul xi xi_unitsMap not_good thetaB coprime_QS dvd_of_dvd_QS)
 
 variable {M : ℕ} [NeZero M] (Ξ : Subgroup (DirichletCharacter ℂ M)) (e : ℕ)
 

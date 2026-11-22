@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapTP
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapTP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix
@@ -73,7 +77,7 @@ theorem kap_herm_contDiff {n : ℕ} (H : Matrix (Fin n) (Fin n) ℂ) :
     funext u; simp [herm, dotProduct, Complex.star_def]
   rw [e]
   refine ContDiff.sum fun i _ => ?_
-  exact (hconj.comp (contDiff_apply ℝ ℂ i)).mul ((contDiff_apply ℝ ℂ i).comp (kap_mulVec_contDiff H))
+  exact (hconj.comp (contDiff_apply ℝ (fun _ => ℂ) i)).mul ((contDiff_apply ℝ (fun _ => ℂ) i).comp (kap_mulVec_contDiff H))
 
 theorem kap_nrmW_contDiff (z : Fin (2 * r + k + 1) → ℂ) :
     ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun a => PRho.nrmW k r z a) := by

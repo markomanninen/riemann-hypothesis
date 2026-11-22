@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsTransportAdelicCorrection
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsScaleWithBoundedGamma
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsTransportAdelicCorrection
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsScaleWithBoundedGamma
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -34,8 +38,8 @@ structure XPart (D : D7) (u : D.what₂.Word) where
 
 @[reducible] def XPart.geo (a : XPart D u) (bot : StAt (D.sp.Y 0)) (mid : ℕ → GlobalTheory.ChainOnto.PiLocalization₂ D) : Geo D := ⟨a.c, bot, mid, a.top⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure YPart (a : XPart D u) where
   bot : StAt (D.sp.Y 0)
   mid : ℕ → GlobalTheory.ChainOnto.PiLocalization₂ D
@@ -49,29 +53,6 @@ structure YPart (a : XPart D u) where
     ((bes (j + 1 + 1) σ (idx_step h)).lev (a.x (j + 1 + 1)).vol)
   lnk : ∀ j σ h, Link ((bes j (σ + 1) h).lev (a.x j).vol) (bes (j + 1 + 1) σ (idx_step h)).L (bes (j + 1 + 1) σ (idx_step h)).ζ
   vL : ∀ j σ (h : j + 2 * (σ + 1) + 2 = D.R.m), VolM D (bes (j + 1 + 1) σ (idx_step h)).L.rank (D.sp.X (j + 1)).rank
-
-@[reducible] def XPart.dat (a : XPart D u) (b : YPart a) : Dat D u where
-  toGeo := a.geo b.bot b.mid
-  p := b.p
-  pT := b.pT
-  t := b.t
-  x := a.x
-  k := a.k
-  bes := b.bes
-  jac := b.jac
-  sBF := b.sBF
-  sFB := b.sFB
-  lnk := b.lnk
-  vL := b.vL
-  Lz := a.Lz
-  oT := a.oT
-  Ram := a.Ram
-  S := fun _ => 0
-  rd := a.rd
-  eT := a.eT
-
-@[reducible] def Dat.rescale (d : Dat D u) (s : ℕ → ℂ) : Dat D u :=
-  { d with k := fun j => ⟨(d.k j).om, (d.k j).vac, s j • (d.k j).c⟩ }
 
 section Off
 
@@ -94,39 +75,7 @@ structure OffX (a : XPart D u) (k : Type) [Field k] [ValuativeRel k] [Topologica
 
 variable {a : XPart D u} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {ι : Type}
 
-structure OffY (o : OffX a k ι) (b : YPart a) where
-  β₀ : ∀ j ρ h i, Frame (o.p i) (b.bes j ρ h).V₀ (Fin (D.sp.X j).rank ⊕ Fin 1)
-  L : ∀ j, Lat ((a.dat b).st j).V
-  M : ∀ j ρ h, Lat (b.bes j ρ h).V₀
-  τ : ∀ j (h : j + 2 * 0 + 2 = D.R.m), Matrix (Fin (b.bes j 0 h).L.rank) (Fin a.Lz.rank) D.host.E
-
-@[reducible] def OffX.off (o : OffX a k ι) {b : YPart a} (y : OffY o b) : OffDat (a.dat b) k ι :=
-  ⟨o.p, o.I, o.q, o.χ, o.hχ, o.β, o.Q, y.β₀, y.L, y.M, o.cT, o.cG, y.τ, o.ζ₀, o.γ, o.γ₀⟩
-
 def OffX.atT (o : OffX a k ι) (v : Pl D) : Prop := ∃ i, v = (o.p i).v
-
-structure PinOffX (o : OffX a k ι) : Prop where
-  nodup : o.I.Nodup
-  all : ∀ i, i ∈ o.I
-  inj : Function.Injective fun i => (o.p i).v
-  off : ∀ i, (o.p i).v ∉ a.c.S
-  overT : ∀ v : Pl D, o.atT v ↔ (((D.mem u).A.T : ℕ) : 𝓞 D.host.F) ∈ v.asIdeal
-  char : ∀ i, (o.p i).IsChar a.c.ψ (o.χ i) ∧ (o.p i).UnitAA
-  latT : ∀ j, j ≤ D.R.m → ∀ i, (o.β j i).IsLat (a.x j).L (o.Q j i).lat
-  parts : ∀ j, j < D.R.m → CombAt o.atT (o.cT j) ∧ CombAt (· ∈ a.c.S) (o.cG j) ∧
-    ∀ f, comb a.c.ψ _ _ (a.k j).c f = comb a.c.ψ _ _ (o.cG j) (comb a.c.ψ _ _ (o.cT j) f)
-  rep : ∀ j, j < D.R.m → ∀ f, Vac a.c.ψ _ _ (a.x j).L (a.x (j + 1)).L o.atT f →
-    OverAll a.c.ψ (o.β j) (o.β (j + 1)) (a.x j).L (a.x (j + 1)).L (fun i => phiOne (o.Q j i) (o.Q (j + 1) i)) o.I f
-      (comb a.c.ψ _ _ (o.cT j) f)
-  om : ∀ j, j < D.R.m → IsWeilDatumO a.c.ψ _ _ (a.c.μ (j + 1)) (a.c.μ (j + 1)) (a.k j).om
-  line : IsLineVec a.Lz o.ζ₀
-  norm : star o.ζ₀ ⬝ᵥ a.Lz.gram *ᵥ o.ζ₀ = (((D.mem u).A.T : ℕ) : D.host.E)
-  split : ∀ n (h : n = D.R.m) v, ¬ o.atT v → ∃ LZ : Lat a.Lz, IsSelfDualC _ LZ ∧ o.ζ₀ ∈ LZ ∧
-    OrthAt (a.oT n h) (a.x n).L a.top.Λ LZ v
-  topT : ∀ n (h : n = D.R.m) i, IsSumFrame (a.oT n h) o.ζ₀ (o.γ i) (o.γ₀ n h i) ∧
-    ∃ (Λ : Submodule 𝒪[k] (Fin D.sp.X'.rank → k)) (s : 𝓀[k]ˣ), (o.γ i).IsLat a.top.Λ Λ ∧
-      (∀ y, y ∈ (o.Q n i).ker ↔ ((o.γ₀ n h i).b' * (o.β n i).b) *ᵥ y ∈ lastKer Λ) ∧
-      (o.Q n i).HasVal (((o.β n i).b' * (o.γ₀ n h i).b) *ᵥ (o.q.inv • avec k (Fin D.sp.X'.rank) 1 1)) s
 
 end Off
 
@@ -177,19 +126,6 @@ attribute [instance] GX.fld GX.val GX.top GX.loc GX.mea GX.bor
 
 variable {a : XPart D u} {ζ₀ : Fin a.Lz.rank → D.host.E}
 
-def GX.Red {PP : Formalism.L2.DIV.Pl D.host.E} (G : GX a ζ₀ PP) (x : G.S.P.J) (g : GL (Fin D.R.r) (Formalism.L2.DIV.kP PP)) : Prop :=
-  ∀ (i j : Fin D.R.k ⊕ Fin (G.s + 1)) (a' b' : Fin D.R.r), a'.val = GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.framePos _ _ i →
-    b'.val = GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.framePos _ _ j → ∀ z : 𝓞 D.host.E, Ideal.Quotient.mk PP.asIdeal z = g.val a' b' →
-      valuation G.k ((x : GL (Fin D.R.k ⊕ Fin (G.s + 1)) G.k).val i j - (ofSplit G.q).pr (z : D.host.E)) < 1
-
-structure PinGX (G : ∀ PP : a.c.Pg, GX a ζ₀ PP.1) (cG : ∀ j, WO (D.sp.X j) (D.sp.X (j + 1)) →₀ ℂ) : Prop where
-  grp : ∀ g : ∀ PP : a.c.Pg, GL (Fin D.R.r) (Formalism.L2.DIV.kP PP.1), g ∈ a.c.P.H ↔ ∀ PP, ∃ x, (G PP).Red x (g PP)
-  chr : ∀ (g : a.c.P.H) (x : ∀ PP, (G PP).S.P.J), (∀ PP, (G PP).Red (x PP) (g.1 PP)) →
-    a.c.P.chi g = ∏ PP, (G PP).S.P.lam (x PP)
-  supp : ∀ j, ∀ w ∈ (cG j).support, GlobalTheory.FinPl.MxAt (· ∈ a.c.S) w
-  prod : ∀ j, j < D.R.m → ∀ f, IsThetaFunO a.c.ψ _ _ f → comb a.c.ψ _ _ (cG j) f =
-    a.c.Pg.attach.toList.foldr (fun PP f' => comb a.c.ψ _ _ ((G PP).cg j) f') f
-
 end AtLevel
 
 section World
@@ -199,25 +135,6 @@ open GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Core.Rk
 variable {B : Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} (w : World I l Z) {v : B.Word}
   (a : XPart (I.rec7 l Z) v) {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {ι : Type}
   (o : OffX a k ι) (G : ∀ PP : a.c.Pg, GX a o.ζ₀ PP.1)
-
-structure XPins : Prop where
-  com : a.c.Is
-  places : GlobalTheory.Core.Mi.IsTypePlaces a.c.Pg
-  top : a.top.st.Is a.c B.R.m
-  cpt : CoCpt (I.rec7 l Z).sp.X'
-  x : ∀ j, j ≤ B.R.m → (a.x j).Is
-  k : ∀ j, j < B.R.m → (a.k j).Is a.c.ψ a.c.θ (a.x j) (a.x (j + 1))
-  off : PinOffX o
-  lev : PinGX G o.cG
-  col : ∃ s : ℕ → ℂ, (∀ j, s j ≠ 0) ∧ ∀ b : YPart a, GlobalTheory.AdForm.PinCol w ((a.dat b).rescale s)
-  rdT : ∀ (b : YPart a) (y : OffY o b), GlobalTheory.FinPl.RdT (o.off y)
-  rd0 : a.rd 0 = (GlobalTheory.Core.Mi.chart0 (w.C.forms v).to0).rd a.c.θ
-
-structure YPins (b : YPart a) (y : OffY o b) : Prop where
-  base : (a.dat b).Base
-  off : GlobalTheory.FinPl.PinOff (o.off y)
-  lev : GlobalTheory.LocMod.PinG (a.dat b) y.τ o.cG
-  bot : GlobalTheory.Core.Mi.PinBot w.S (a.dat b)
 
 end World
 

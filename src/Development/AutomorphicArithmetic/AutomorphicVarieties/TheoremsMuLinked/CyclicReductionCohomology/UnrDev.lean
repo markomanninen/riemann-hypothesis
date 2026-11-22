@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th GlobalTheory.GalOfCusp
 
@@ -60,7 +64,7 @@ theorem UpperTheory.V.Th.unrDev :
       { toFun := fun z => ⟨fun g => ⟨μ (z.1 g), z.1 g, rfl⟩,
           ⟨IsLocallyConstant.desc _ Subtype.val (z.2.1.1.comp μ) Subtype.val_injective, fun g h => Subtype.ext (by
             show μ (z.1 (g * h)) = μ (z.1 g) + ρ g (μ (z.1 h))
-            rw [z.2.1.2, map_add, hμ (ρ g _), hμ (z.1 h), map_nsmul])⟩,
+            rw [z.2.1.2, map_add (f := _), hμ (ρ g _), hμ (z.1 h), map_nsmul])⟩,
           fun g hg => Subtype.ext (by
             show μ (z.1 g) = 0
             rw [z.2.2 g hg, map_zero])⟩

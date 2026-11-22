@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.ChainTwTopQ
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.HilbertNinetyNormOne
-import Formalism.LocalToGlobal.Columns.ChainTwFrA
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainTwTopQ
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.HilbertNinetyNormOne
+public import Formalism.LocalToGlobal.Columns.ChainTwFrA
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -14,10 +18,6 @@ open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV
 section TwK1b
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] (P : HeightOneSpectrum (𝓞 E))
-
-def NormalizesKOne (n r c : ℕ) (g : Sp E n ≃ₗ[E] Sp E n) : Prop :=
-  g ∈ LocE.JQ P (qOf P) r n 0 ∧ g ∈ stabL E n (LocE.sclLat P (qOf P) n (kOneLastExponents n c)) ∧
-    g ∈ stabL E n (LocE.sclLat P (qOf P) n (twistedLevelExponent n c))
 
 theorem twLamQB_red_one (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {kj n' N : ℕ} (hn : n' ≤ N) (y : Sp E N ≃ₗ[E] Sp E N)
     (hent : ∀ s t : Fin N, kj ≤ s.1 → s.1 < n' → kj ≤ t.1 → t.1 < n' →

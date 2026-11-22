@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -12,7 +16,8 @@ private theorem exists_eq_of_isSplitting {A R ι : Type} [CommRing A] [CommRing 
   classical
   let F : R ⊗[ℤ] A →ₐ[R] (Unit → R) := splitMap (fun _ : Unit => χ)
   have h1 : ∑ i, F (idem h i) () = 1 := by
-    rw [← Finset.sum_apply, ← map_sum, (completeOrthogonalIdempotents_idem h).complete, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_apply, ← map_sum, (completeOrthogonalIdempotents_idem h).complete, map_one]
     rfl
   obtain ⟨i, -, hi⟩ := Finset.exists_ne_zero_of_sum_ne_zero (h1 ▸ one_ne_zero :
     ∑ i, F (idem h i) () ≠ 0)

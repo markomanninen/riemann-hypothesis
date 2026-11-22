@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QCoreH
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FreeQuotPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QCoreH
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FreeQuotPf
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank.LocalQuotientRank
 
@@ -166,12 +170,14 @@ theorem detCT_ne_zero (M : Submodule (𝓞 K) V) (hM : M.FG)
     intro i
     have h1 := congrFun ha i
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply] at h1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, smul_eq_mul]
     calc _ = ∑ j, c i (e j) * a j := Finset.sum_congr rfl fun j _ => mul_comm _ _
       _ = 0 := h1
   have h2 : ∑ j, a j • f j = 0 := by
-    simp only [f, ← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [f, ← map_smul, ← map_sum]
     exact (Submodule.Quotient.mk_eq_zero P).mpr hx
   exact ha0 (funext (Fintype.linearIndependent_iff.mp hli a h2))
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ProjSt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ProjSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem ip_sum_right {ι : Type} (s : Finset ι) {u : H → ℂ} (hu : Continuou
     (hw : ∀ i, Continuous (w i)) : ip μ u (fun y => ∑ i ∈ s, c i * w i y) = ∑ i ∈ s, c i * ip μ u (w i) := by
   unfold ip
   simp only [Finset.mul_sum]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · refine Finset.sum_congr rfl fun i _ => ?_
     rw [← integral_const_mul]
     congr 1
@@ -53,7 +57,7 @@ theorem ip_sum_left {ι : Type} (s : Finset ι) {w : H → ℂ} (hw : Continuous
     rw [star_mul']
     ring
   simp only [key]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · refine Finset.sum_congr rfl fun i _ => ?_
     exact integral_const_mul _ _
   · intro i _
@@ -90,7 +94,7 @@ theorem gram_det (hc : ∀ i, Continuous (φ i)) (hli : LinearIndependent ℂ φ
   intro hdet
   obtain ⟨v, hv, hGv⟩ := Matrix.exists_mulVec_eq_zero_iff.mpr hdet
   have hψc : Continuous (fun x => ∑ l, v l * φ l x) :=
-    continuous_finset_sum _ fun l _ => continuous_const.mul (hc l)
+    continuous_finsetSum _ fun l _ => continuous_const.mul (hc l)
   have hip : ip μ (fun x => ∑ l, v l * φ l x) (fun x => ∑ l, v l * φ l x) = 0 := by
     rw [ip_sum_left μ Finset.univ hψc v φ hc]
     refine Finset.sum_eq_zero fun i _ => ?_
@@ -128,7 +132,7 @@ theorem proj_comb (hc : ∀ i, Continuous (φ i)) (hli : LinearIndependent ℂ �
 theorem ip_resid (hc : ∀ i, Continuous (φ i)) (hli : LinearIndependent ℂ φ) {g : H → ℂ} (hg : Continuous g) (k : Fin N) :
     ip μ (φ k) (fun x => g x - proj μ φ g x) = 0 := by
   have hG : IsUnit (gram μ φ).det := isUnit_iff_ne_zero.mpr (gram_det μ φ hc hli)
-  have hpc : Continuous (proj μ φ g) := continuous_finset_sum _ fun i _ => continuous_const.mul (hc i)
+  have hpc : Continuous (proj μ φ g) := continuous_finsetSum _ fun i _ => continuous_const.mul (hc i)
   have key : gram μ φ *ᵥ coef μ φ g = fun j => ip μ (φ j) g := by
     unfold coef
     rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hG, Matrix.one_mulVec]
@@ -160,7 +164,7 @@ theorem proj_left (hc : ∀ i, Continuous (φ i)) (hli : LinearIndependent ℂ �
     (hst : ∀ (i : Fin N) (a : H), ∃ d : Fin N → ℂ, (fun x => φ i (a * x)) = fun x => ∑ l, d l * φ l x)
     {g : H → ℂ} (hg : Continuous g) (a : H) :
     proj μ φ (fun x => g (a * x)) = fun x => proj μ φ g (a * x) := by
-  have hpc : Continuous (proj μ φ g) := continuous_finset_sum _ fun i _ => continuous_const.mul (hc i)
+  have hpc : Continuous (proj μ φ g) := continuous_finsetSum _ fun i _ => continuous_const.mul (hc i)
   have hcomb : ∃ e : Fin N → ℂ, (fun x => proj μ φ g (a * x)) = fun x => ∑ l, e l * φ l x := by
     choose d hd using fun i => hst i a
     refine ⟨fun l => ∑ i, coef μ φ g i * d i l, ?_⟩
@@ -181,7 +185,7 @@ theorem proj_left (hc : ∀ i, Continuous (φ i)) (hli : LinearIndependent ℂ �
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [ip_resid μ φ hc hli hg i, mul_zero]
   have hrc : Continuous (fun x => g (a * x) - proj μ φ g (a * x)) :=
-    (hg.comp (continuous_mul_left a)).sub (hpc.comp (continuous_mul_left a))
+    (hg.comp (continuous_const_mul a)).sub (hpc.comp (continuous_const_mul a))
   have hcoef0 : coef μ φ (fun x => g (a * x) - proj μ φ g (a * x)) = 0 := by
     unfold coef
     have hz : (fun j => ip μ (φ j) (fun x => g (a * x) - proj μ φ g (a * x))) = 0 := funext hr
@@ -197,7 +201,7 @@ theorem proj_left (hc : ∀ i, Continuous (φ i)) (hli : LinearIndependent ℂ �
   have hsplit : (fun x => g (a * x)) = fun x => proj μ φ g (a * x) + (g (a * x) - proj μ φ g (a * x)) := by
     funext x
     ring
-  have hadd := proj_add μ φ hc (hpc.comp (continuous_mul_left a)) hrc
+  have hadd := proj_add μ φ hc (hpc.comp (continuous_const_mul a)) hrc
   simp only [Function.comp_def] at hadd
   rw [hsplit, hadd, hpp, hproj0]
   funext x
@@ -234,7 +238,7 @@ theorem repKer : RepKer := by
   have key : ∀ f : H → ℂ, Continuous f → ∀ x,
       ∫ v, star (∑ j, star (∑ i, φ i 1 * (gram μ φ)⁻¹ i j) * φ j v) * f (x * v) ∂μ = proj μ φ f x := by
     intro f hf x
-    have hfx : Continuous (fun v => f (x * v)) := hf.comp (continuous_mul_left x)
+    have hfx : Continuous (fun v => f (x * v)) := hf.comp (continuous_const_mul x)
     have h1 : ∫ v, star (∑ j, star (∑ i, φ i 1 * (gram μ φ)⁻¹ i j) * φ j v) * f (x * v) ∂μ =
         ip μ (fun v => ∑ j, star (∑ i, φ i 1 * (gram μ φ)⁻¹ i j) * φ j v) (fun v => f (x * v)) := rfl
     rw [h1, ip_sum_left μ Finset.univ hfx _ φ hc]
@@ -246,7 +250,7 @@ theorem repKer : RepKer := by
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     ring
   refine ⟨fun v => star (∑ j, star (∑ i, φ i 1 * (gram μ φ)⁻¹ i j) * φ j v), ?_, ?_, ?_⟩
-  · exact continuous_star.comp (continuous_finset_sum _ fun j _ => continuous_const.mul (hc j))
+  · exact continuous_star.comp (continuous_finsetSum _ fun j _ => continuous_const.mul (hc j))
   · intro f hf
     have hfun : (fun x => ∫ v, star (∑ j, star (∑ i, φ i 1 * (gram μ φ)⁻¹ i j) * φ j v) * f (x * v) ∂μ) =
         proj μ φ f := funext (key f hf)

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 
 namespace GlobalTheory
@@ -91,7 +96,7 @@ theorem exists_conj_skew_det_unit_of_avoidance :
     have h1 := congrArg (Polynomial.eval (φ ρ)) h0
     rw [Polynomial.eval_map, Polynomial.eval₂_at_apply, Polynomial.eval_zero, hρev] at h1
     have hu := hx₀.map φ
-    rw [map_add, map_mul, map_sub, map_one, hφ, one_mul, sub_self, add_zero, h1] at hu
+    rw [map_add (f := _), map_mul, map_sub, map_one, hφ, one_mul, sub_self, add_zero, h1] at hu
     exact not_isUnit_zero hu
   obtain ⟨t, ht⟩ := H ψ hne
   refine ⟨J₀ᵀ⁻¹ * (v + algebraMap F R t • w), hcond _ (hcF t), ?_⟩

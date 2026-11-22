@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalSplittingSums
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalSplittingSums
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -28,8 +33,8 @@ def HasCentralChar (ρ : Representation ℂ (GL (Fin n) F) U) (ω : GL (Fin n) F
 
 variable {ρ : Representation ℂ (GL (Fin n) F) U} {ω : GL (Fin n) F → ℂ}
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem HasCentralChar.mul (h : HasCentralChar ρ ω) {u : U} (hu : u ≠ 0)
     {z z' : GL (Fin n) F} (hz : z ∈ Subgroup.center (GL (Fin n) F))
     (hz' : z' ∈ Subgroup.center (GL (Fin n) F)) : ω (z * z') = ω z * ω z' := by
@@ -37,15 +42,15 @@ theorem HasCentralChar.mul (h : HasCentralChar ρ ω) {u : U} (hu : u ≠ 0)
   rw [map_mul, Module.End.mul_apply, h z' hz', map_smul, h z hz, smul_smul] at h1
   exact (smul_left_injective ℂ hu h1).symm.trans (mul_comm _ _)
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem HasCentralChar.one (h : HasCentralChar ρ ω) {u : U} (hu : u ≠ 0) : ω 1 = 1 := by
   have h1 : ω 1 • u = (1 : ℂ) • u := by
     rw [one_smul, ← h 1 (Subgroup.one_mem _) u, map_one, Module.End.one_apply]
   exact smul_left_injective ℂ hu h1
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem HasCentralChar.inv_mul (h : HasCentralChar ρ ω) {u : U} (hu : u ≠ 0)
     {z : GL (Fin n) F} (hz : z ∈ Subgroup.center (GL (Fin n) F)) : ω z⁻¹ * ω z = 1 := by
   rw [← h.mul hu (inv_mem hz) hz, inv_mul_cancel, h.one hu]
@@ -62,8 +67,8 @@ theorem mem_centerSup {K : Subgroup (GL (Fin n) F)} {x : GL (Fin n) F} :
     x ∈ centerSup K ↔ ∃ z ∈ Subgroup.center (GL (Fin n) F), ∃ k ∈ K, z * k = x :=
   Subgroup.mem_sup_of_normal_left
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem rightInv_centerSup {X : Type*} {K : Subgroup (GL (Fin n) F)} {Φ : GL (Fin n) F → X}
     (hZ : ∀ g, ∀ z ∈ Subgroup.center (GL (Fin n) F), Φ (g * z) = Φ g)
     (hK : ∀ g, ∀ k ∈ K, Φ (g * k) = Φ g) : ∀ g, ∀ h ∈ centerSup K, Φ (g * h) = Φ g := by
@@ -97,8 +102,8 @@ def coeffSum (K : Subgroup (GL (Fin n) F)) (f : Module.Dual ℂ V) (u : U) (w : 
 variable {π ρ} {K : Subgroup (GL (Fin n) F)} {f : Module.Dual ℂ V} {u : U}
   {ω : GL (Fin n) F → ℂ}
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem coeffSum_summand_rightInv (hωπ : HasCentralChar π ω) (hωρ : HasCentralChar ρ ω)
     (hω : ∀ z ∈ Subgroup.center (GL (Fin n) F), ω z⁻¹ * ω z = 1)
     (hf : ∀ k ∈ K, ∀ x, f (π k x) = f x) (hu : u ∈ fixedVectors ρ K) (w : V) :
@@ -142,7 +147,7 @@ theorem coeffSum_add (w₁ w₂ : V) :
     (finite_support_coeffSum hπ hsc hKo hf w₂)]
   refine finsum_congr fun q => ?_
   dsimp only
-  rw [map_add, map_add, add_smul]
+  rw [map_add (f := _), map_add (f := _), add_smul]
 
 include hπ hsc hKo hf in
 theorem coeffSum_smul (c : ℂ) (w : V) :
@@ -153,8 +158,8 @@ theorem coeffSum_smul (c : ℂ) (w : V) :
   dsimp only
   rw [map_smul, map_smul, smul_eq_mul, mul_smul]
 
-include hπ hsc hKo hωπ hωρ hω hf hu in
 
+include hπ hsc hKo hωπ hωρ hω hf hu in
 theorem coeffSum_act (x : GL (Fin n) F) (w : V) :
     coeffSum π ρ K f u (π x w) = ρ x (coeffSum π ρ K f u w) := by
   have hΨ := coeffSum_summand_rightInv hωπ hωρ hω hf hu w
@@ -180,9 +185,9 @@ def coeffMap : Representation.IntertwiningMap π ρ where
 theorem coeffMap_apply (w : V) :
     coeffMap hπ hsc hKo hωπ hωρ hω hf hu w = coeffSum π ρ K f u w := rfl
 
+
 omit hωπ hωρ hω hu in
 include hπ hsc hKo hf in
-
 theorem map_coeffSum {σ : Representation ℂ (GL (Fin n) F) W}
     (p : Representation.IntertwiningMap ρ σ) (w : V) :
     p (coeffSum π ρ K f u w) = coeffSum π σ K f (p u) w := by

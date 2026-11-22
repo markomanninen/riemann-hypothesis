@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Metric Set Filter Topology Real
 
@@ -157,7 +161,7 @@ lemma rot_id (B : ℂ →L[ℝ] ℂ →L[ℝ] ℝ) (θ : ℝ) :
     apply Complex.ext <;> simp [circleMap, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im,
       Complex.cos_ofReal_re, Complex.sin_ofReal_re]
   rw [h2, h1]
-  simp only [map_add, map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [map_add (f := _), map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
     smul_eq_mul]
   linear_combination (B 1 1 + B Complex.I Complex.I) * Real.sin_sq_add_cos_sq θ
 

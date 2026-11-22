@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandSt
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtAdjoinIff
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandSt
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtAdjoinIff
+
+@[expose] public section
 
 open NumberField Module Filter Topology
 
@@ -115,7 +119,7 @@ def MassConst (K F : Type) [Field K] [NumberField K] [StarRing K] [Field F] [Num
     [Algebra F K] (m : ℕ) (c : ℝ) : Prop :=
   ∀ (V : Type) [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V]
     [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (𝓞 K) V),
-    h.IsSymm → IsTotPosDef h → finrank K V = m → Submodule.IsLattice K L →
+    h.IsSymm → IsTotPosDef h → finrank K V = m → Submodule.IsFullLattice K L →
     Formalism.HermitianLatticesTheory.IsIntegralLat h L → Formalism.HermitianLatticesTheory.mass h L = c * lamG F h L
 
 def LIStat : Prop :=
@@ -127,7 +131,7 @@ def LIStat : Prop :=
       (h' : V' →ₗ⋆[K] V' →ₗ[K] K) (S : VecSplit h h') (L : Submodule (𝓞 K) V)
       (𝔭 : Ideal (𝓞 F)) (n : 𝓞 F),
       h.IsSymm → IsTotPosDef h → 𝔭.IsMaximal → n ≠ 0 → h S.x₀ S.x₀ = algebraMap F K (n : F) →
-      Submodule.IsLattice K L → Formalism.HermitianLatticesTheory.IsIntegralLat h L →
+      Submodule.IsFullLattice K L → Formalism.HermitianLatticesTheory.IsIntegralLat h L →
       psiP S L 𝔭 = (Ideal.absNorm 𝔭 : ℝ) ^ ((finrank K V - 1) * (vF 𝔭 n + vd h L 𝔭)) *
         alphaStd K 𝔭 (finrank K V - 1) * alphaN h L 𝔭 n / alphaL h L 𝔭
 
@@ -137,8 +141,8 @@ def LocalDensityRatio : Prop :=
     ∀ (V : Type) [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V]
       [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K) (A₀ B₀ : Submodule (𝓞 K) V)
       (𝔭 : Ideal (𝓞 F)),
-      h.IsSymm → IsTotPosDef h → 𝔭.IsMaximal → Submodule.IsLattice K A₀ →
-      Submodule.IsLattice K B₀ → Formalism.HermitianLatticesTheory.IsIntegralLat h A₀ → Formalism.HermitianLatticesTheory.IsIntegralLat h B₀ →
+      h.IsSymm → IsTotPosDef h → 𝔭.IsMaximal → Submodule.IsFullLattice K A₀ →
+      Submodule.IsFullLattice K B₀ → Formalism.HermitianLatticesTheory.IsIntegralLat h A₀ → Formalism.HermitianLatticesTheory.IsIntegralLat h B₀ →
       alphaL h (locF 𝔭 A₀) 𝔭 * (Ideal.absNorm 𝔭 : ℝ) ^ (finrank K V * vd h (locF 𝔭 B₀) 𝔭) *
           orbCount h (locF 𝔭 B₀) (locF 𝔭 A₀) =
         alphaL h (locF 𝔭 B₀) 𝔭 * (Ideal.absNorm 𝔭 : ℝ) ^ (finrank K V * vd h (locF 𝔭 A₀) 𝔭) *

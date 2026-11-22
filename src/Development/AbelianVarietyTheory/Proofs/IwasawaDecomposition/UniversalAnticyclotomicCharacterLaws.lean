@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Formalism.LocalToGlobal.UnitaryNorms.CharHost
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.LocalToGlobal.UnitaryNorms.CharHost
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,13 +82,13 @@ def IsDel (M : ℕ) (T : Set (PlE H)) (d : G H.E Ω →* Multiplicative (ZMod (l
     (∀ v, v ∉ T → ∀ A : ValuationSubring Ω, IsPlaceOver A v → ∀ σ ∈ Ine (F := H.E) A, d σ = 1) ∧
     (∀ v, v ∈ T → ∀ A : ValuationSubring Ω, IsPlaceOver A v → ∀ c, ∃ σ ∈ Ine (F := H.E) A, d σ = c)
 
-open Classical in
 
+open Classical in
 def delOf (M : ℕ) (T : Set (PlE H)) : G H.E Ω →* Multiplicative (ZMod (l ^ M)) :=
   if h : ∃ d, IsDel H cc l M T d then h.choose else 1
 
 theorem isDel_delOf {M : ℕ} {T : Set (PlE H)} (h : ∃ d, IsDel H cc l M T d) : IsDel H cc l M T (delOf H cc l M T) := by
-  rw [delOf, dif_pos h]
+  rw [delOf, dite_eq_left h]
   exact h.choose_spec
 
 theorem delOf_laws (M : ℕ) (T : Set (PlE H)) :
@@ -95,11 +99,11 @@ theorem delOf_laws (M : ℕ) (T : Set (PlE H)) :
   by_cases h : ∃ d, IsDel H cc l M T d
   · obtain ⟨h1, h2, h3, h4, -⟩ := isDel_delOf H cc l h
     exact ⟨h1, h2, h3, h4⟩
-  · rw [delOf, dif_neg h]
+  · rw [delOf, dite_eq_right h]
     refine ⟨by simp, fun _ _ _ => by simp, fun _ _ _ _ _ _ => rfl, fun _ _ _ _ _ _ => rfl⟩
 
-open Classical in
 
+open Classical in
 def delCoord (Q : Finset (PlE H)) (M : ℕ) (P : PlE H) : G H.E Ω →* Multiplicative (ZMod (l ^ M)) :=
   if pair H P ⊆ ↑Q then delOf H cc l M (pair H P) else 1
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ThetaBasic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailExtra
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ThetaBasic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailExtra
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem pointwise_le (n M : ℕ) (h : 2 * n ≤ M) (m : Fin n → ℤ) :
   have hN0 : 0 < N := by linarith
   have hle : ∏ i, (1 + |(m i : ℝ)|) ^ 2 ≤ N ^ M := by
     calc ∏ i, (1 + |(m i : ℝ)|) ^ 2 ≤ ∏ _i : Fin n, N ^ 2 := by
-          apply Finset.prod_le_prod
+          apply Finset.prod_le_prod₀
           · intro i _; positivity
           · intro i _
             have h1 : |(m i : ℝ)| ≤ ‖fun i => (m i : ℝ)‖ := by

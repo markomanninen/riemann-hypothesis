@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -166,21 +171,6 @@ def Core.zero (U : (Sp ℤ).Opens) (hU : (U : Set (Sp ℤ)).Nonempty) : Core whe
   e_zero := by
     change _ = 𝟙 U.toScheme ≫ U.ι ≫ (Sp ℤ).topIso.inv
     simp
-
-instance : Inhabited Core := ⟨Core.zero ⊤ ⟨(⟨⊥, Ideal.isPrime_bot⟩ : PrimeSpectrum ℤ), trivial⟩⟩
-
-example (h : ((⊤ : (Sp ℤ).Opens) : Set (Sp ℤ)).Nonempty) (p : ℕ) [Fact p.Prime] (y : Sp (OO p) ⟶ Sp ℤ) :
-    (Core.zero ⊤ h).Cl y := fun _ _ => trivial
-
-example (U : (Sp ℤ).Opens) (hU : (U : Set (Sp ℤ)).Nonempty) : (Core.zero U hU).Indep := by
-  intro p _ y y' _ _ h b hb
-  have hι : (Core.zero U hU).GG.hom = (⊤ : (Sp ℤ).Opens).ι := Category.comp_id _
-  have : IsIso (Core.zero U hU).GG.hom := by
-    rw [hι]
-    exact inferInstanceAs (IsIso (Sp ℤ).topIso.hom)
-  refine ⟨y' ≫ inv (Core.zero U hU).GG.hom, by simp, ?_⟩
-  rw [← cancel_mono (Core.zero U hU).GG.hom]
-  simp only [Category.assoc, IsIso.inv_hom_id, Category.comp_id, hb, h]
 
 end GlobalTheory.ZJ
 end

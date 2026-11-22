@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleTwistIffAdmissibleUntwisted
-import Development.AbelianVarietyTheory.Definitions.Foundations.KumValUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleTwistIffAdmissibleUntwisted
+public import Development.AbelianVarietyTheory.Definitions.Foundations.KumValUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,11 +27,6 @@ def IsLamOf (X : Tower Ω ε) (A : ValuationSubring Ω) (N w : ℕ) (j : Ω →+
     ∀ (n : ℕ) (b : X.Fn l), b ∈ X.B N l w → ∀ φ : HahnSeries ℚ Ω, IsThB X A N l n b φ →
       Cg (n - c) (lam (seqN N j φ)) (per n * pr b 1)
 
-open Classical in
-
-def lamOf (X : Tower Ω ε) (A : ValuationSubring Ω) (N w : ℕ) (j : Ω →+* Qbar l) (pr : X.Fn l → Fin 2 → Qbar l) :
-    (ℕ → Qbar l) →ₗ[Qbar l] Qbar l :=
-  if h : ∃ lam, IsLamOf X A N w j pr lam then h.choose else 0
 
 def IsLamOfL (X : Tower Ω ε) (A : ValuationSubring Ω) (N w : ℕ) (j : Ω →+* Qbar l) (pr : X.Fn l → Fin 2 → Qbar l)
     (lam : (ℕ → Qbar l) →ₗ[Qbar l] Qbar l) : Prop :=
@@ -35,11 +34,6 @@ def IsLamOfL (X : Tower Ω ε) (A : ValuationSubring Ω) (N w : ℕ) (j : Ω →
     ∀ (n : ℕ), c ≤ n → ∀ (b : X.Fn l), b ∈ X.B N l w → ∀ φ : HahnSeries ℚ Ω, IsThB X A N l n b φ →
       Cg (n - c) (lam (seqN N j φ)) (per n * pr b 1)
 
-open Classical in
-
-def lamOfL (X : Tower Ω ε) (A : ValuationSubring Ω) (N w : ℕ) (j : Ω →+* Qbar l) (pr : X.Fn l → Fin 2 → Qbar l) :
-    (ℕ → Qbar l) →ₗ[Qbar l] Qbar l :=
-  if h : ∃ lam, IsLamOfL X A N w j pr lam then h.choose else 0
 
 theorem norm_l_pow (n : ℕ) : ‖((l : ℕ) : Qbar l) ^ n‖ = ((l : ℝ)⁻¹) ^ n := by
   have : ((l : ℕ) : Qbar l) = algebraMap ℚ_[l] (Qbar l) (l : ℚ_[l]) := by simp
@@ -101,7 +95,8 @@ theorem FinSupp.exists_sum {lam : (ℕ → Qbar l) →ₗ[Qbar l] Qbar l} (h : F
   refine ⟨S, fun f => ?_⟩
   have h0 := hS (f - ∑ s ∈ S, f s • (Pi.single s 1 : ℕ → Qbar l)) (fun t ht => by
     simp [Finset.sum_apply, Pi.single_apply, ht])
-  rw [map_sub, map_sum, sub_eq_zero] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum, sub_eq_zero] at h0
   rw [h0]
   exact Finset.sum_congr rfl fun s _ => by rw [map_smul, smul_eq_mul, mul_comm]
 
@@ -123,31 +118,7 @@ section Induced
 variable {X : Tower Ω ε} {A : ValuationSubring Ω} {N w : ℕ} {j : Ω →+* Qbar l} {pr : X.Fn l → Fin 2 → Qbar l}
   {lam : (ℕ → Qbar l) →ₗ[Qbar l] Qbar l}
 
-theorem IsLamOfL.smul (h : IsLamOfL X A N w j pr lam) (a : Qbar l) : IsLamOfL X A N w j (a • pr) (a • lam) := by
-  obtain ⟨hf, c, per, hper, hc⟩ := h
-  obtain ⟨k, hk⟩ := exists_le_l_pow l ‖a‖
-  refine ⟨hf.smul a, c + k, per, hper, fun n hn b hb φ hφ => ?_⟩
-  have h1 := cg_mul_left (k := k) (m := n - c) (by omega) hk (hc n (by omega) b hb φ hφ)
-  rw [Nat.sub_sub] at h1
-  simpa [mul_left_comm] using h1
-
-theorem IsLamOfL.congr (h : IsLamOfL X A N w j pr lam) {pr' : X.Fn l → Fin 2 → Qbar l}
-    (hp : ∀ b ∈ X.B N l w, pr' b 1 = pr b 1) : IsLamOfL X A N w j pr' lam := by
-  obtain ⟨hf, c, per, hper, hc⟩ := h
-  exact ⟨hf, c, per, hper, fun n hn b hb φ hφ => by rw [hp b hb]; exact hc n hn b hb φ hφ⟩
-
 end Induced
-
-example (j : Ω →+* Qbar l) : seqN 2 j (HahnSeries.single (((3 : ℕ) : ℚ) / (2 : ℕ)) (1 : Ω)) 3 = 1 := by
-  rw [seqN_single two_ne_zero]; simp
-
-example : FinSupp (((l : ℕ) : Qbar l)⁻¹ • LinearMap.proj (R := Qbar l) (φ := fun _ : ℕ => Qbar l) 1 +
-    LinearMap.proj (R := Qbar l) (φ := fun _ : ℕ => Qbar l) 5) :=
-  ((finSupp_proj 1).smul _).add (finSupp_proj 5)
-
-example (X : Tower Ω ε) (A : ValuationSubring Ω) (N w : ℕ) (j : Ω →+* Qbar l) (pr : X.Fn l → Fin 2 → Qbar l)
-    (lam : (ℕ → Qbar l) →ₗ[Qbar l] Qbar l) (h : IsLamOfL X A N w j pr lam) :
-    IsLamOfL X A N w j (((l : ℕ) : Qbar l)⁻¹ • pr) (((l : ℕ) : Qbar l)⁻¹ • lam) := h.smul _
 
 end GlobalTheory.KummerEisensteinGalois
 

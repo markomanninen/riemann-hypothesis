@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.KatoTwoOfUseN
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.AdmissibleTwistByDet
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.KatoTwoOfUseN
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.AdmissibleTwistByDet
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV UpperTheory.V.Base GlobalTheory.Ord2
 
@@ -15,14 +19,15 @@ theorem Used.adm {l : ℕ} [Fact l.Prime] {Ω : Type} [Field Ω] [CharZero Ω] [
     exact MonoidHom.ext u.θ_sq
   · rw [hdt]
     obtain ⟨φ, hφ⟩ := hs
-    have himag := u.imag
+    let : IsTotallyComplex K := u.imag
     have h3 : (θ s : Qbar l) * θ s = 1 := by rw [← sq, ← Units.val_pow_eq_pow_val, u.θ_sq s, Units.val_one]
     refine Units.ext ((mul_self_eq_one_iff.1 h3).resolve_left fun h => ?_)
     have h1 : s ∈ galOf ℚ K Ω := u.θ_ker ▸ (Units.ext h : θ s = 1)
     refine IsTotallyComplex.complexEmbedding_not_isReal (φ.comp (algebraMap K Ω)) ?_
     rw [ComplexEmbedding.isReal_iff]
-    ext x
-    rw [ComplexEmbedding.conjugate_coe_eq, RingHom.comp_apply, ← hφ, h1 x]
+    apply RingHom.ext
+    intro x
+    simp only [ComplexEmbedding.conjugate_coe_eq, RingHom.comp_apply, ← hφ, h1 x]
   · refine IrrTransfer.isIrr_of_range _ _ ?_ u.irr
     rintro ⟨τ, hτ⟩
     have hmem : galEmb ℚ K Ω τ ∈ H0g W := by

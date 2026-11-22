@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ConjugationDifferences.ExistsNatCastConjMem
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ConjugationDifferences.ExistsNormConjArchLe
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ConjugationDifferences.ExistsNatCastConjMem
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ConjugationDifferences.ExistsNormConjArchLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem siegel_of_sr {n : ℕ} {x : Fin n → ℝ} {t₀ : ℝ} (hx : ∀ r, -t�
   intro i j hij
   have h := hx j
   simp only [An.sr] at h
-  rw [dif_pos (show 0 < (j : ℕ) ∧ (j : ℕ) < n from ⟨by omega, j.2⟩)] at h
+  rw [dite_eq_left (show 0 < (j : ℕ) ∧ (j : ℕ) < n from ⟨by omega, j.2⟩)] at h
   have e : x ⟨(j : ℕ) - 1, by omega⟩ = x i := congrArg x (Fin.ext (by simp; omega))
   rw [e] at h
   rw [← Real.exp_add]
@@ -40,7 +44,7 @@ theorem siegel_of_sr {n : ℕ} {x : Fin n → ℝ} {t₀ : ℝ} (hx : ∀ r, -t�
 
 theorem exp_div_exp_eq {n r : ℕ} (hr : 0 < r) (hrn : r < n) (x : Fin n → ℝ) :
     Real.exp (x ⟨r, hrn⟩) / Real.exp (x ⟨r - 1, by omega⟩) = Real.exp (-An.sr x r) := by
-  rw [An.sr, dif_pos ⟨hr, hrn⟩, ← Real.exp_sub]
+  rw [An.sr, dite_eq_left ⟨hr, hrn⟩, ← Real.exp_sub]
   congr 1
   ring
 

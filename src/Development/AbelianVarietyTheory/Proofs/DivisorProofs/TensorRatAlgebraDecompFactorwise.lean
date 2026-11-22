@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -57,9 +62,9 @@ theorem tensor_decomp_factorwise : ∀ (S F B : Type) [Field S] [CharZero S] [Fi
     induction z using TensorProduct.induction_on with
     | zero => funext i; simp
     | add x y hx hy =>
-      rw [map_add, map_add, hx, hy]
+      rw [map_add (f := _), map_add (f := _), hx, hy]
       funext i
-      simp only [Pi.add_apply, map_add]
+      simp only [Pi.add_apply, map_add (f := _)]
     | tmul s f =>
       have key : ∀ i, (algebraMap F (L i) f) * ψ (s ⊗ₜ 1) i = ψ (s ⊗ₜ f) i := by
         intro i

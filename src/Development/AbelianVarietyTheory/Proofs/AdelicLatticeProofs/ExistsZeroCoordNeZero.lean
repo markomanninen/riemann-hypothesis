@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.AlgebraMapNormOfBasisOneSqrt
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.PosIndexMapEqCardOfCongrDiagonal
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.AlgebraMapNormOfBasisOneSqrt
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.PosIndexMapEqCardOfCongrDiagonal
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Matrix WithZero ComplexConjugate
@@ -19,9 +23,6 @@ variable {E : Type*} [Field E] {c : E →+* E} {n m : Type*} [Fintype n] [Decida
 
 def Congr (c : E →+* E) (G G' : Matrix n n E) : Prop :=
   ∃ P : Matrix n n E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map c
-
-theorem Congr.refl (G : Matrix n n E) : Congr c G G :=
-  ⟨1, by simp, by simp [Matrix.map_one _ (map_zero c) (map_one c)]⟩
 
 theorem Congr.trans {G G' G'' : Matrix n n E} (h : Congr c G G') (h' : Congr c G' G'') :
     Congr c G G'' := by
@@ -289,8 +290,8 @@ theorem congr_diagonal (H : Isotropy) (r : ℕ) : ∀ g g' : Fin r → E,
 
 end HermClass
 
-open HermClass in
 
+open HermClass in
 theorem landherr_of_isotropy
     (H : ∀ (F : Type) [Field F] [NumberField F] (ι : Type) [Fintype ι] (a : ι → F),
       5 ≤ Fintype.card ι → (∀ i, a i ≠ 0) → (∀ σ : F →+* ℝ, ∃ i j, σ (a i) < 0 ∧ 0 < σ (a j)) →

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransportStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsNumOf
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGtExtOfTorsion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransportStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsNumOf
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGtExtOfTorsion
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -58,7 +62,7 @@ theorem exists_arcF_over : Laws → BrGtSt → BrWpSt → AllD fun D => ∀ (R :
     show A.ν.eX (A.ν.eX.symm _) = ν'.eX (ν'.eX.symm (a • ν'.eX (I.e y)))
     rw [AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply, eX_numHom]
   · have h := numHom_qPt f hf A.bimult A.ν ν' hJ hth (A.hq n a) (hq' n a)
-    exact ⟨q' n a, h.1, h.2, (N'.qEq_equivalence n).refl _⟩
+    exact ⟨q' n a, h.1, h.2, ⟨0, by simp, by simp⟩⟩
 
 end GlobalTheory.ArcExt
 end

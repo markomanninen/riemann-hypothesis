@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLtOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLtOne
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.MonicNormLtOne.mc_norm_lt :
     ∀ {l : ℕ} [inst : Fact (Nat.Prime l)] {R : Type}

@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,19 +26,19 @@ theorem ee_mul_right (x : Gf) (h : D.H) : D.ee (x * h) = D.ee x * D.χ h := by
   unfold Dat.ee
   by_cases hx : x ∈ D.H
   · have hxh : x * (h : Gf) ∈ D.H := D.H.mul_mem hx h.2
-    rw [dif_pos hxh, dif_pos hx, ← Units.val_mul, ← map_mul]
+    rw [dite_eq_left hxh, dite_eq_left hx, ← Units.val_mul, ← map_mul]
     rfl
   · have hxh : x * (h : Gf) ∉ D.H := fun hh => hx (by simpa using D.H.mul_mem hh (D.H.inv_mem h.2))
-    rw [dif_neg hxh, dif_neg hx, zero_mul]
+    rw [dite_eq_right hxh, dite_eq_right hx, zero_mul]
 
 theorem ee_mul_left (x : Gf) (h : D.H) : D.ee (h * x) = D.χ h * D.ee x := by
   unfold Dat.ee
   by_cases hx : x ∈ D.H
   · have hxh : (h : Gf) * x ∈ D.H := D.H.mul_mem h.2 hx
-    rw [dif_pos hxh, dif_pos hx, ← Units.val_mul, ← map_mul]
+    rw [dite_eq_left hxh, dite_eq_left hx, ← Units.val_mul, ← map_mul]
     rfl
   · have hxh : (h : Gf) * x ∉ D.H := fun hh => hx (by simpa using D.H.mul_mem (D.H.inv_mem h.2) hh)
-    rw [dif_neg hxh, dif_neg hx, mul_zero]
+    rw [dite_eq_right hxh, dite_eq_right hx, mul_zero]
 
 theorem norm_ee_le (hD : D.Ax) (x : Gf) : ‖D.ee x‖ ≤ 1 := by
   unfold Dat.ee
@@ -56,7 +60,7 @@ theorem smulX_out (γ : PG F) (w : D.Xs) : (γ • w : D.Xs) = D.act γ.out w :=
 theorem tm_supp (k : I → ℕ) (ω : D.Om) (w : X I) (γ : PG F) (z : X I) (x : Gf)
     (h : ¬ γ • ω = ((x : Gf) : Gf ⧸ D.H)) : tm D k ω w (z, x) γ.out = 0 := by
   unfold tm
-  rw [Dat.ee, dif_neg, zero_mul]
+  rw [Dat.ee, dite_eq_right, zero_mul]
   intro hm
   apply h
   rw [smulO_out]
@@ -315,7 +319,7 @@ theorem qq_update (k : I → ℕ) (z w : X I) (v : I) (t : P) :
 
 theorem extendHalfPlane_coe_point (f : P → ℂ) (s : P) : ext1 f s.1 = f s := by
   unfold ext1
-  rw [dif_pos s.2]
+  rw [dite_eq_left s.2]
   rfl
 
 theorem hol_tsum {ι : Type} (f : ι → P → ℂ) (hf : ∀ i, Hol1 (f i))

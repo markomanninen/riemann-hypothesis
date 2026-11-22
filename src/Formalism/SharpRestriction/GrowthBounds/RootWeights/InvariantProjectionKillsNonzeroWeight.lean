@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DegreeZeroWeightsBounded
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DegreeZeroWeightsBounded
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,8 @@ theorem invariant_projection_through_zero_weight (D : Formalism.BasicNotions.D7)
     rw [Finset.mem_Icc]
     constructor <;> simp
   conv_lhs => rw [← hsum]
-  rw [map_sum, Finset.sum_eq_single_of_mem 0 h0]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single_of_mem 0 h0]
   intro μ _ hμ
   exact invariant_projection_kills_nonzero_weight D h2 E hE Inv hInv μ hμ _ (weight_projection_mem_weightSpace E hE Θ hΘ μ x)
 

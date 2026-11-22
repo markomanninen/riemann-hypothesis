@@ -1,7 +1,16 @@
-import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
-import Development.AutomorphicArithmetic.MeanSquareBounds.TailKExp
-import Development.AutomorphicArithmetic.MeanSquareBounds.kappaC
-import Formalism.GL3MeanSquares.ZeroFreeRegionGl2PrimeChoiceResults
+module
+
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+public import Development.AutomorphicArithmetic.MeanSquareBounds.TailKExp
+public import Development.AutomorphicArithmetic.MeanSquareBounds.kappaC
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.NumericalZeroDensityBound
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.CharacterEstimateOfHypothesis
+public import Mathlib
+public import Formalism.GL3MeanSquares.SecondEstimateOfIntervalHypothesis
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.TwistIsPrimitiveCharacter
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.WeightedVonMangoldtSumIdentity
+
+@[expose] public section
 
 open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
 

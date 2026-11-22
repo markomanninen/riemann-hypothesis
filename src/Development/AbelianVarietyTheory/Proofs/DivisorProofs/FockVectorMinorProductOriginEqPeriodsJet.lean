@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockMonomialAtOriginGaussianEntireOrthonormal
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockMonomialAtOriginGaussianEntireOrthonormal
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
 
 open NumberField MeasureTheory
 open scoped Classical
@@ -137,10 +141,11 @@ theorem fock_minorPol_zero : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (θ :
   have hmono := GlobalTheory.FockPos.fock_monomial_zero_of_on ψ θ S T 1 1 hstd hinf (hon S hgS) (hon T hgT) f _ hΦ hrd.2
   rw [hfr, hfr] at hmono
   set P := minorPol D t with hPdef
-  have hP : P = ∑ v ∈ P.support, MvPolynomial.coeff v P • MvPolynomial.monomial v (1 : ℂ) := by
+  have hP : P = ∑ v ∈ P.support, AddMonoidAlgebra.coeff P v • MvPolynomial.monomial v (1 : ℂ) := by
     conv_lhs => rw [MvPolynomial.as_sum P]
     exact Finset.sum_congr rfl fun v _ => by rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
-  conv_lhs => rw [hP, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [hP, map_sum, Finset.sum_apply]
   rw [Formalism.MainNotions.GL3Theta.applyAt0, Finset.mul_sum]
   refine Finset.sum_congr rfl fun v hv => ?_
   rw [map_smul, Pi.smul_apply, smul_eq_mul, hmono v]

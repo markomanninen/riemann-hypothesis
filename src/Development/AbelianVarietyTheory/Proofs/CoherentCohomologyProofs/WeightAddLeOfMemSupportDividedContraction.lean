@@ -1,6 +1,11 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
+open scoped IsMulCommutative
 
 namespace GlobalTheory.Wick
 
@@ -8,12 +13,14 @@ section Eval
 
 variable {k A : Type*} [CommSemiring k] [Semiring A] [Algebra k A] {σ ι κ : Type*}
 
-open scoped IsMulCommutative in
 
+open scoped IsMulCommutative in
 noncomputable def commEval (k : Type*) [CommSemiring k] [Algebra k A] (a : σ → A)
     (ha : ∀ i j, Commute (a i) (a j)) : MvPolynomial σ k →ₐ[k] A :=
   haveI : IsMulCommutative (Algebra.adjoin k (Set.range a)) :=
-    Algebra.isMulCommutative_adjoin k (by rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩; exact ha i j)
+    Algebra.isMulCommutative_adjoin k (by
+      rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ _
+      exact ha i j)
   (Algebra.adjoin k (Set.range a)).val.comp
     (aeval fun i => (⟨a i, Algebra.subset_adjoin ⟨i, rfl⟩⟩ : Algebra.adjoin k (Set.range a)))
 
@@ -28,34 +35,11 @@ theorem commute_commEval {a : σ → A} (ha : ∀ i j, Commute (a i) (a j)) {b :
     (hb : ∀ i, Commute b (a i)) (P : MvPolynomial σ k) : Commute b (commEval k a ha P) := by
   induction P using MvPolynomial.induction_on with
   | C c => rw [commEval_C]; exact (Algebra.commutes c b).symm
-  | add P Q hP hQ => rw [map_add]; exact hP.add_right hQ
+  | add P Q hP hQ => rw [map_add (f := _)]; exact hP.add_right hQ
   | mul_X P i hP => rw [map_mul, commEval_X]; exact hP.mul_right (hb i)
-
-theorem commute_mulLeft_mulRight {a : ι → A} {a' : κ → A} (ha : ∀ i j, Commute (a i) (a j))
-    (ha' : ∀ i j, Commute (a' i) (a' j)) (v w : ι ⊕ κ) :
-    Commute (Sum.elim (fun i => LinearMap.mulLeft k (a i)) (fun j => LinearMap.mulRight k (a' j)) v :
-      Module.End k A)
-      (Sum.elim (fun i => LinearMap.mulLeft k (a i)) (fun j => LinearMap.mulRight k (a' j)) w) := by
-  rcases v with v | v <;> rcases w with w | w <;> refine LinearMap.ext fun z => ?_
-  · simp [← mul_assoc, (ha v w).eq]
-  · simp [mul_assoc]
-  · simp [mul_assoc]
-  · simp [mul_assoc, (ha' v w).eq]
-
-noncomputable def orderedEval (k : Type*) [CommSemiring k] [Algebra k A] (a : ι → A) (a' : κ → A)
-    (ha : ∀ i j, Commute (a i) (a j)) (ha' : ∀ i j, Commute (a' i) (a' j)) :
-    MvPolynomial (ι ⊕ κ) k →ₗ[k] A :=
-  LinearMap.applyₗ (1 : A) ∘ₗ
-    (commEval k _ (commute_mulLeft_mulRight (k := k) ha ha')).toLinearMap
 
 variable {a : ι → A} {a' : κ → A} (ha : ∀ i j, Commute (a i) (a j))
   (ha' : ∀ i j, Commute (a' i) (a' j))
-
-@[simp] theorem orderedEval_C (c : k) : orderedEval k a a' ha ha' (C c) = algebraMap k A c := by
-  simp [orderedEval, Algebra.algebraMap_eq_smul_one]
-
-@[simp] theorem orderedEval_one : orderedEval k a a' ha ha' 1 = 1 := by
-  rw [← C_1, orderedEval_C, map_one]
 
 end Eval
 
@@ -64,8 +48,6 @@ section Divided
 variable {R S : Type*} [CommSemiring R] [CommSemiring S] {σ : Type*}
 
 def multiChoose (n β : σ →₀ ℕ) : ℕ := β.prod fun i e => (n i).choose e
-
-def multiFactorial (β : σ →₀ ℕ) : ℕ := β.prod fun _ e => e.factorial
 
 @[simp] theorem multiChoose_zero (n : σ →₀ ℕ) : multiChoose n 0 = 1 := by simp [multiChoose]
 
@@ -106,8 +88,8 @@ theorem multiChoose_mul_sub (n β : σ →₀ ℕ) (i : σ) :
   calc _ = (n i).choose (β i) * (n i - β i) * multiChoose n (β.erase i) := by ring
     _ = _ := by rw [← this]; ring
 
-variable (R) in
 
+variable (R) in
 noncomputable def dividedDeriv (β : σ →₀ ℕ) : Module.End R (MvPolynomial σ R) :=
   (basisMonomials σ R).constr R fun n => multiChoose n β • monomial (n - β) 1
 
@@ -119,7 +101,7 @@ theorem dividedDeriv_monomial (β n : σ →₀ ℕ) (c : R) :
     mul_one]
 
 theorem coeff_dividedDeriv (β m : σ →₀ ℕ) (P : MvPolynomial σ R) :
-    coeff m (dividedDeriv R β P) = multiChoose (m + β) β • coeff (m + β) P := by
+    AddMonoidAlgebra.coeff (dividedDeriv R β P) m = multiChoose (m + β) β • AddMonoidAlgebra.coeff P (m + β) := by
   classical
   induction P using MvPolynomial.induction_on' with
   | monomial n c =>
@@ -132,10 +114,19 @@ theorem coeff_dividedDeriv (β m : σ →₀ ℕ) (P : MvPolynomial σ R) :
       · rw [if_neg, smul_zero]
         rintro rfl
         exact h (tsub_add_cancel_of_le (le_of_multiChoose_ne_zero h0)).symm
-  | add P Q hP hQ => simp only [map_add, coeff_add, hP, hQ, smul_add]
+  | add P Q hP hQ =>
+    rw [map_add]
+    rw [AddMonoidAlgebra.coeff_add]
+    change ((dividedDeriv R β P).coeff m + (dividedDeriv R β Q).coeff m) =
+      multiChoose (m + β) β • (P.coeff (m + β) + Q.coeff (m + β))
+    rw [hP, hQ, smul_add]
 
-@[simp] theorem dividedDeriv_zero : dividedDeriv R (0 : σ →₀ ℕ) = 1 := by
-  refine LinearMap.ext fun P => MvPolynomial.ext _ _ fun m => ?_
+@[simp] theorem dividedDeriv_zero : dividedDeriv R (0 : σ →₀ ℕ) =
+    (1 : Module.End R (MvPolynomial σ R)) := by
+  apply LinearMap.ext
+  intro P
+  apply MvPolynomial.ext
+  intro m
   simp [coeff_dividedDeriv]
 
 theorem pderiv_dividedDeriv (β : σ →₀ ℕ) (i : σ) (P : MvPolynomial σ R) :
@@ -145,11 +136,11 @@ theorem pderiv_dividedDeriv (β : σ →₀ ℕ) (i : σ) (P : MvPolynomial σ R
     rw [dividedDeriv_monomial, dividedDeriv_monomial, map_nsmul, pderiv_monomial, smul_smul,
       ← multiChoose_mul_sub, tsub_tsub, mul_smul, smul_monomial (n i - β i)]
     simp [mul_comm]
-  | add P Q hP hQ => simp only [map_add, hP, hQ, smul_add]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ, smul_add]
 
 theorem dividedDeriv_single_one (i : σ) (P : MvPolynomial σ R) :
     dividedDeriv R (Finsupp.single i 1) P = pderiv i P := by
-  simpa using (pderiv_dividedDeriv 0 i P).symm
+  simpa [dividedDeriv_zero] using (pderiv_dividedDeriv 0 i P).symm
 
 theorem pderiv_pderiv_comm (i j : σ) (P : MvPolynomial σ R) :
     pderiv i (pderiv j P) = pderiv j (pderiv i P) := by
@@ -162,16 +153,6 @@ theorem pderiv_pderiv_comm (i j : σ) (P : MvPolynomial σ R) :
 theorem commute_pderiv (i j : σ) :
     Commute ((pderiv i).toLinearMap : Module.End R (MvPolynomial σ R)) (pderiv j).toLinearMap :=
   LinearMap.ext fun P => pderiv_pderiv_comm i j P
-
-theorem finsupp_induction_single {p : (σ →₀ ℕ) → Prop} (h0 : p 0)
-    (h : ∀ β i, p β → p (β + Finsupp.single i 1)) (β : σ →₀ ℕ) : p β := by
-  induction β using Finsupp.induction with
-  | zero => exact h0
-  | single_add i e f _ _ hf =>
-    clear * - hf h
-    induction e with
-    | zero => simpa using hf
-    | succ e ih => rw [Finsupp.single_add, add_right_comm]; exact h _ _ ih
 
 theorem dividedDeriv_add_single_X_mul (β : σ →₀ ℕ) (i : σ) (P : MvPolynomial σ R) :
     dividedDeriv R (β + Finsupp.single i 1) (X i * P) =
@@ -186,7 +167,7 @@ theorem dividedDeriv_add_single_X_mul (β : σ →₀ ℕ) (i : σ) (P : MvPolyn
     · simp [h0]
     · obtain ⟨m, rfl⟩ := exists_add_of_le (le_of_multiChoose_ne_zero h0)
       rw [add_tsub_cancel_left, add_assoc β, add_tsub_cancel_left, add_comm m]
-  | add P Q hP hQ => simp only [mul_add, map_add, hP, hQ]; abel
+  | add P Q hP hQ => simp only [mul_add, map_add (f := _), hP, hQ]; abel
 
 theorem dividedDeriv_X_mul_of_eq_zero {β : σ →₀ ℕ} {i : σ} (h : β i = 0) (P : MvPolynomial σ R) :
     dividedDeriv R β (X i * P) = X i * dividedDeriv R β P := by
@@ -199,35 +180,13 @@ theorem dividedDeriv_X_mul_of_eq_zero {β : σ →₀ ℕ} {i : σ} (h : β i = 
     by_cases h0 : multiChoose n β = 0
     · simp [h0]
     · rw [tsub_add_eq_add_tsub (le_of_multiChoose_ne_zero h0)]
-  | add P Q hP hQ => simp only [mul_add, map_add, hP, hQ]
+  | add P Q hP hQ => simp only [mul_add, map_add (f := _), hP, hQ]
 
 end Divided
 
 section Contraction
 
 variable {R S : Type*} [CommSemiring R] [CommSemiring S] {ι κ : Type*}
-
-theorem monomial_induction_inl {p : MvPolynomial (ι ⊕ κ) R → Prop} (c : R)
-    (h0 : ∀ t : κ →₀ ℕ, p (rename Sum.inr (monomial t c)))
-    (h : ∀ (s : ι ⊕ κ →₀ ℕ) (i : ι), p (monomial s c) → p (X (Sum.inl i) * monomial s c))
-    (s : ι ⊕ κ →₀ ℕ) : p (monomial s c) := by
-  suffices H : ∀ t : κ →₀ ℕ, p (monomial (s + t.mapDomain Sum.inr) c) by simpa using H 0
-  induction s using finsupp_induction_single with
-  | h0 => intro t; simpa [rename_monomial] using h0 t
-  | h s v ih =>
-    intro t
-    rcases v with i | j
-    · rw [add_right_comm, monomial_add_single, pow_one, mul_comm]; exact h _ _ (ih t)
-    · have := ih (Finsupp.single j 1 + t)
-      rwa [Finsupp.mapDomain_add, Finsupp.mapDomain_single, ← add_assoc] at this
-
-theorem induction_inl {p : MvPolynomial (ι ⊕ κ) R → Prop}
-    (h0 : ∀ q : MvPolynomial κ R, p (rename Sum.inr q))
-    (hadd : ∀ P Q, p P → p Q → p (P + Q))
-    (h : ∀ P (i : ι), p P → p (X (Sum.inl i) * P)) (P : MvPolynomial (ι ⊕ κ) R) : p P := by
-  induction P using MvPolynomial.induction_on' with
-  | monomial s c => exact monomial_induction_inl c (fun t => h0 _) (fun s i => h _ i) s
-  | add P Q hP hQ => exact hadd P Q hP hQ
 
 variable [Fintype κ]
 
@@ -252,69 +211,17 @@ theorem rowContraction_X_inl_mul (γ : ι → κ → R) (i i' : ι) (P : MvPolyn
   classical
   simp [rowContraction_apply, Finset.mul_sum, pderiv_X]
 
-@[simp] theorem rowContraction_C (γ : ι → κ → R) (i : ι) (c : R) :
-    rowContraction γ i (C c) = 0 := by
-  simp [rowContraction_apply]
-
 variable [Fintype ι]
 
-noncomputable def contraction (γ : ι → κ → R) : Module.End R (MvPolynomial (ι ⊕ κ) R) :=
-  ∑ i, ∑ j, γ i j • ((pderiv (Sum.inl i)).toLinearMap ∘ₗ (pderiv (Sum.inr j)).toLinearMap)
-
-theorem contraction_apply (γ : ι → κ → R) (P : MvPolynomial (ι ⊕ κ) R) :
-    contraction γ P = ∑ i, ∑ j, γ i j • pderiv (Sum.inl i) (pderiv (Sum.inr j) P) := by
-  simp [contraction, LinearMap.sum_apply]
-
-theorem contraction_eq_sum (γ : ι → κ → R) :
-    contraction γ = ∑ i, (pderiv (Sum.inl i)).toLinearMap * rowContraction γ i := by
-  refine LinearMap.ext fun P => ?_
-  simp [contraction_apply, rowContraction_apply, LinearMap.sum_apply]
-
-theorem commute_contraction_rowContraction (γ : ι → κ → R) (i : ι) :
-    Commute (contraction γ) (rowContraction γ i) := by
-  rw [contraction_eq_sum]
-  exact Commute.sum_left _ _ _ fun i' _ =>
-    (commute_pderiv_rowContraction _ _ _).mul_left (commute_rowContraction _ _ _)
-
-theorem contraction_rename_inr (γ : ι → κ → R) (q : MvPolynomial κ R) :
-    contraction γ (rename Sum.inr q) = 0 := by
-  classical
-  rw [contraction_apply]
-  refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun j _ => ?_
-  rw [pderiv_pderiv_comm, pderiv_eq_zero_of_notMem_vars (i := Sum.inl i), map_zero, smul_zero]
-  intro h
-  obtain ⟨j, -, hj⟩ := mem_vars_rename _ _ h
-  cases hj
-
-theorem contraction_X_inl_mul (γ : ι → κ → R) (i : ι) (P : MvPolynomial (ι ⊕ κ) R) :
-    contraction γ (X (Sum.inl i) * P) = X (Sum.inl i) * contraction γ P + rowContraction γ i P := by
-  classical
-  simp [contraction_eq_sum, LinearMap.sum_apply, rowContraction_X_inl_mul, Finset.mul_sum,
-    pderiv_X, Finset.sum_add_distrib, Pi.single_apply]
-
-theorem contraction_pow_X_inl_mul (γ : ι → κ → R) (n : ℕ) (i : ι) (P : MvPolynomial (ι ⊕ κ) R) :
-    (contraction γ ^ (n + 1)) (X (Sum.inl i) * P) =
-      X (Sum.inl i) * (contraction γ ^ (n + 1)) P +
-        (n + 1) • rowContraction γ i ((contraction γ ^ n) P) := by
-  induction n with
-  | zero => simp [contraction_X_inl_mul]
-  | succ n ih =>
-    have hc (Q) : contraction γ (rowContraction γ i Q) = rowContraction γ i (contraction γ Q) :=
-      LinearMap.congr_fun (commute_contraction_rowContraction γ i).eq Q
-    rw [pow_succ' _ (n + 1), Module.End.mul_apply, ih, map_add, contraction_X_inl_mul, map_nsmul,
-      hc, Module.End.mul_apply, ← Module.End.mul_apply (contraction γ) (contraction γ ^ n),
-      ← pow_succ', succ_nsmul' _ (n + 1), add_assoc]
 
 open scoped Classical in
-
 noncomputable def dividedContraction (γ : ι → κ → R) (n : ℕ) :
     Module.End R (MvPolynomial (ι ⊕ κ) R) :=
-  ∑ α ∈ (Finset.univ : Finset ι).finsuppAntidiag n,
-    commEval R (rowContraction γ) (commute_rowContraction γ) (monomial α 1) *
-      dividedDeriv R (α.mapDomain Sum.inl)
-
-@[simp] theorem dividedContraction_zero (γ : ι → κ → R) : dividedContraction γ 0 = 1 := by
-  simp [dividedContraction]
+  by
+    classical
+    exact ∑ α ∈ (Finset.univ : Finset ι).finsuppAntidiag n,
+      commEval R (rowContraction γ) (commute_rowContraction γ) (monomial α 1) *
+        dividedDeriv R (α.mapDomain Sum.inl)
 
 theorem dividedContraction_succ_rename_inr (γ : ι → κ → R) (n : ℕ) (q : MvPolynomial κ R) :
     dividedContraction γ (n + 1) (rename Sum.inr q) = 0 := by
@@ -331,11 +238,11 @@ theorem dividedContraction_succ_rename_inr (γ : ι → κ → R) (n : ℕ) (q :
     have : multiChoose (t.mapDomain (Sum.inr : κ → ι ⊕ κ)) (α.mapDomain Sum.inl) = 0 := by
       by_contra h
       have := le_of_multiChoose_ne_zero h (Sum.inl i)
-      rw [Finsupp.mapDomain_apply Sum.inl_injective, Finsupp.mapDomain_notin_range _ _ (by simp)]
+      rw [Finsupp.mapDomain_apply_of_injective Sum.inl_injective, Finsupp.mapDomain_notin_range _ _ (by simp)]
         at this
       exact hi (Nat.le_zero.mp this)
     rw [this, zero_smul]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, add_zero]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, add_zero]
 
 theorem dividedContraction_succ_X_inl_mul (γ : ι → κ → R) (n : ℕ) (i : ι)
     (P : MvPolynomial (ι ⊕ κ) R) :
@@ -355,7 +262,7 @@ theorem dividedContraction_succ_X_inl_mul (γ : ι → κ → R) (n : ℕ) (i : 
           if α i = 0 then 0 else rowContraction γ i (E (monomial (α - Finsupp.single i 1) 1)
             (dividedDeriv R ((α - Finsupp.single i 1).mapDomain Sum.inl) P)) := by
     split_ifs with h
-    · rw [dividedDeriv_X_mul_of_eq_zero (by rwa [Finsupp.mapDomain_apply Sum.inl_injective]), hX,
+    · rw [dividedDeriv_X_mul_of_eq_zero (by rwa [Finsupp.mapDomain_apply_of_injective Sum.inl_injective]), hX,
         add_zero]
     · obtain ⟨β, rfl⟩ : ∃ β, α = β + Finsupp.single i 1 :=
         ⟨α - Finsupp.single i 1, (tsub_add_cancel_of_le
@@ -364,7 +271,8 @@ theorem dividedContraction_succ_X_inl_mul (γ : ι → κ → R) (n : ℕ) (i : 
         dividedDeriv_add_single_X_mul, map_add, hX]
       congr 1
       rw [monomial_add_single, pow_one, mul_comm, map_mul, hE, commEval_X, Module.End.mul_apply]
-  simp only [dividedContraction, LinearMap.sum_apply, Module.End.mul_apply, ← hE, key,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dividedContraction, LinearMap.sum_apply, Module.End.mul_apply, ← hE, key,
     Finset.sum_add_distrib, Finset.mul_sum, map_sum]
   congr 1
   have hsum (β : ι →₀ ℕ) : Finset.univ.sum ⇑(β + Finsupp.single i 1 : ι →₀ ℕ) =
@@ -393,37 +301,11 @@ theorem dividedContraction_succ_X_inl_mul (γ : ι → κ → R) (n : ℕ) (i : 
       (Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr (Finset.mem_filter.mp hα).2))
   · intro β _; rw [add_tsub_cancel_right]
 
-theorem factorial_smul_dividedContraction (γ : ι → κ → R) (n : ℕ) :
-    n.factorial • dividedContraction γ n = contraction γ ^ n := by
-  refine LinearMap.ext fun P => ?_
-  rw [LinearMap.smul_apply]
-  induction P using induction_inl generalizing n with
-  | h0 q =>
-    rcases n with _ | n
-    · simp
-    · rw [dividedContraction_succ_rename_inr, pow_succ, Module.End.mul_apply,
-        contraction_rename_inr, map_zero, smul_zero]
-  | hadd P Q hP hQ => rw [map_add, map_add, smul_add, hP, hQ]
-  | h P i hP =>
-    rcases n with _ | n
-    · simp
-    · rw [dividedContraction_succ_X_inl_mul, contraction_pow_X_inl_mul, smul_add, ← mul_smul_comm,
-        hP, ← hP n, map_nsmul, smul_smul, Nat.factorial_succ]
-
-@[simp] theorem dividedContraction_one (γ : ι → κ → R) : dividedContraction γ 1 = contraction γ := by
-  simpa using factorial_smul_dividedContraction γ 1
-
 end Contraction
 
 section Integrality
 
 variable {R : Type*} [CommSemiring R] {ι κ : Type*}
-
-noncomputable def degreeLeft (P : MvPolynomial (ι ⊕ κ) R) : ℕ :=
-  weightedTotalDegree (Sum.elim (fun _ => 1) fun _ => 0 : ι ⊕ κ → ℕ) P
-
-noncomputable def degreeRight (P : MvPolynomial (ι ⊕ κ) R) : ℕ :=
-  weightedTotalDegree (Sum.elim (fun _ => 0) fun _ => 1 : ι ⊕ κ → ℕ) P
 
 variable [Fintype ι] [Fintype κ]
 
@@ -449,28 +331,5 @@ variable [Fintype κ]
 variable [Fintype ι] {a b : ι → A} {a' b' : κ → A} {γ : ι → κ → k} {v : M}
 
 end Formula
-
-example : ∃ (a b : Unit → Module.End ℚ (Polynomial ℚ)) (a' b' : Unit → Module.End ℚ (Polynomial ℚ))
-    (γ : Unit → Unit → ℚ) (v : Polynomial ℚ), v ≠ 0 ∧ γ () () = 1 ∧
-    (∀ i j, Commute (a i) (a j)) ∧ (∀ i j, Commute (a i) (b j)) ∧ (∀ i j, Commute (b i) (b j)) ∧
-    (∀ i j, Commute (a' i) (a' j)) ∧ (∀ i j, Commute (a' i) (b' j)) ∧
-    (∀ i j, Commute (b' i) (b' j)) ∧ (∀ i j, Commute (b i) (b' j)) ∧
-    (∀ i j, b i * a' j - a' j * b i = algebraMap ℚ _ (γ i j)) ∧
-    (∀ i, b i • v = 0) ∧ (∀ j, b' j • v = 0) := by
-  refine ⟨0, fun _ => Polynomial.derivative, fun _ => LinearMap.mulLeft ℚ Polynomial.X, 0,
-    fun _ _ => 1, 1, one_ne_zero, rfl, fun _ _ => Commute.refl _, fun _ _ => Commute.zero_left _,
-    fun _ _ => Commute.refl _, fun _ _ => Commute.refl _, fun _ _ => Commute.zero_right _,
-    fun _ _ => Commute.refl _, fun _ _ => Commute.zero_right _, fun _ _ => ?_, fun _ => by simp,
-    fun _ => by simp⟩
-  refine LinearMap.ext fun p => ?_
-  simp
-
-example : dividedContraction (fun _ _ : Unit => (1 : ℤ)) 2
-    (X (Sum.inl ()) * (X (Sum.inl ()) * rename Sum.inr (X () ^ 2))) = 2 := by
-  rw [dividedContraction_succ_X_inl_mul, dividedContraction_succ_X_inl_mul,
-    dividedContraction_succ_X_inl_mul]
-  simp only [dividedContraction_succ_rename_inr]
-  have h : pderiv (Sum.inr ()) (2 : MvPolynomial (Unit ⊕ Unit) ℤ) = 0 := pderiv_C (a := 2)
-  simp [rowContraction_apply, pderiv_X, h]
 
 end GlobalTheory.Wick

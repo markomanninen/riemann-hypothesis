@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.NonvanishingHypotheses
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.ReproCoreStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HermitianMeasures.OrbitIntegralAbsConvergent
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.NonvanishingHypotheses
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.ReproCoreStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HermitianMeasures.OrbitIntegralAbsConvergent
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,18 +40,5 @@ def SchurBStatement : Prop :=
     (μG : Measure (Mt k r)),
     Formalism.MainNotions.S.IsDSHpk k r ε lam σ → Formalism.MainNotions.S.IsHaarOn (UH (Hpk k r)) μG →
     Formalism.MainNotions.S.IsURepOn (UH (Hpk k r)) σ ∧ ∃ d : ℝ, S0.IsFdegB μG σ d
-
-def QuotScaleStatement : Prop :=
-  ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (μG μS μW μN ν : Measure (Mt k r)), inWb k r z → 0 < Tz k r z →
-    Formalism.MainNotions.S.IsHaarOn (UWset k r z) μW → Formalism.MainNotions.S.IsHaarOn (Nset k r) μN →
-    Formalism.MainNotions.S.IsHaarOn (Sset k r z) μS → Formalism.MainNotions.S.IsQuotMeas μG μS ν →
-    ∃ c : ℝ≥0, 0 < c ∧
-      Formalism.MainNotions.S.IsQuotMeas μG (ReciprocityTheory.ChartRestriction.DS.Mult1.S0.muSL μW μN) ((c : ℝ≥0∞) • ν)
-
-def ScaleNuStatement : Prop :=
-  ∀ (k r : ℕ) (Vp : Type) [NormedAddCommGroup Vp] (ν : Measure (Mt k r)) (c : ℝ≥0) (W : Mat k r → Vp),
-    Formalism.MainNotions.S.l2SG ((c : ℝ≥0∞) • ν) W = (c : ℝ≥0∞) * Formalism.MainNotions.S.l2SG ν W ∧
-      (0 < c → (AEStronglyMeasurable (fun x => W (Matrix.of x)) ((c : ℝ≥0∞) • ν) ↔
-        AEStronglyMeasurable (fun x => W (Matrix.of x)) ν))
 
 end ReciprocityTheory.ChartRestriction.DS.Lap

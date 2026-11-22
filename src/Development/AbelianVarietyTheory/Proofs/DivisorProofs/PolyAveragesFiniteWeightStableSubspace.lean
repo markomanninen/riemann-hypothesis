@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TotalDegreeBindLeOfLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TotalDegreeBindLeOfLinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem polyAverages_finiteWeightStableSubspace : PolyAvg := by
   let Xu : H → MvPolynomial (EntIdx n) ℂ →ₗ[ℂ] H := fun u =>
     { toFun := fun Q => ∫ k, eval (entVar (φ k)) Q • σ (φ k) u ∂(muK ε)
       map_add' := fun Q R => by
-        simp only [map_add, add_smul]
+        simp only [map_add (f := _), add_smul]
         exact integral_add (hint Q u) (hint R u)
       map_smul' := fun c Q => by
         simp only [smul_eval, mul_smul, RingHom.id_apply]
@@ -92,9 +96,10 @@ theorem polyAverages_finiteWeightStableSubspace : PolyAvg := by
   · rintro μ s ⟨Q, hQ, rfl⟩ hs0 hsw
     by_contra hμ
     rw [SetLike.mem_coe, mem_restrictTotalDegree] at hQ
-    have hsum : Xu u Q = ∑ m ∈ Q.support, coeff m Q • Xu u (monomial m 1) := by
+    have hsum : Xu u Q = ∑ m ∈ Q.support, AddMonoidAlgebra.coeff Q m • Xu u (monomial m 1) := by
       conv_lhs => rw [Q.as_sum]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [← map_smul, smul_monomial, smul_eq_mul, mul_one]
     have horth : ∀ m ∈ Q.support, inner ℂ (Xu u Q) (Xu u (monomial m 1)) = 0 := by
@@ -103,7 +108,7 @@ theorem polyAverages_finiteWeightStableSubspace : PolyAvg := by
       exact ⟨m, (le_totalDegree hm).trans hQ, h.symm⟩
     apply hs0
     rw [← inner_self_eq_zero (𝕜 := ℂ)]
-    calc inner ℂ (Xu u Q) (Xu u Q) = inner ℂ (Xu u Q) (∑ m ∈ Q.support, coeff m Q • Xu u (monomial m 1)) := by
+    calc inner ℂ (Xu u Q) (Xu u Q) = inner ℂ (Xu u Q) (∑ m ∈ Q.support, AddMonoidAlgebra.coeff Q m • Xu u (monomial m 1)) := by
           rw [← hsum]
       _ = 0 := by
           rw [inner_sum]

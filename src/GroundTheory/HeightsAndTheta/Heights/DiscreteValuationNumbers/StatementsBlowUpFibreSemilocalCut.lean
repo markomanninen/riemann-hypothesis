@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreDegreeCut
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreDegreeCut
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -33,8 +38,8 @@ def blowUpOverLoc (P W : Ideal (MRing ι R)) [P.IsPrime] (u : J → MRing ι R) 
       blowUpOf P u ≤ Q ∧ Q.comap (liftForm (ι := ι) (J := J) (R := R)) ≤ W),
     blowUpLocRing P u Q
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem blowUpEval_liftForm (P : Ideal (MRing ι R)) (u : J → MRing ι R) (f : MRing ι R) :
     blowUpEval P u (liftForm f) = Ideal.Quotient.mk P f := by
   show Polynomial.eval 1 (aeval (blowUpSubst P u) (liftForm f)) = _

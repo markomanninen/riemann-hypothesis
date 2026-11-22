@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.VaceigenDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.CyclicAndLine
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DualNumberGraphFiltrationIsotropicOfSkew
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.LocallyCompactOfGoodChar
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.VaceigenDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.CyclicAndLine
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DualNumberGraphFiltrationIsotropicOfSkew
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.LocallyCompactOfGoodChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,8 @@ theorem local_line {W : Type} [AddCommGroup W] [Module (AF F) W] {B : W → W �
     rw [← h]
     change _ = ψ (liftV v _)
     congr 1
-    simp only [co.form, up, LinearEquiv.apply_symm_apply, dotProduct, map_sub, map_sum, liftV_mul, mul_comm ((co.e γ).1 _)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [co.form, up, LinearEquiv.apply_symm_apply, dotProduct, map_sub, map_sum, liftV_mul, mul_comm ((co.e γ).1 _)]
     simp only [locCo, AddMonoidHom.coe_mk, ZeroHom.coe_mk, mul_comm]
   obtain ⟨a, ha⟩ := line_of_eigen S (locCo co v '' Γ) (fun w => χ (up w)) (φ := ⟨φ, hs⟩) (φ' := ⟨φ', hs'⟩)
     (fun w hw => ⟨up w, hΓ _ (hup w) (hd w hw), hlo w⟩) h0'
@@ -85,8 +90,8 @@ theorem local_line {W : Type} [AddCommGroup W] [Module (AF F) W] {B : W → W �
 
 end Vac
 
-open Vac in
 
+open Vac in
 theorem vacuum_eigenline_of_local : LocRepEx → VacEigen := by
   intro hA F E _ _ _ _ _ σ n d B X W M om P v k hk
   obtain ⟨ω, ρ, L⟩ := hA F E σ n d B X W M om P v

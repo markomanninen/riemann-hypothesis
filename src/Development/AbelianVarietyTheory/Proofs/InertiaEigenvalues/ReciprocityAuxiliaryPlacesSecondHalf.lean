@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TamePairingStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvCupPairingOfInvCupCharactersStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumInvEqZeroOfUnramifiedCocycleStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleUnramifiedOutsideVanishOnKernelStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActsTriviallyResidualOfComplexConjugateStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalCupPairingReducedCocyclesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TamePairingStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvCupPairingOfInvCupCharactersStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumInvEqZeroOfUnramifiedCocycleStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleUnramifiedOutsideVanishOnKernelStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActsTriviallyResidualOfComplexConjugateStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalCupPairingReducedCocyclesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,7 +142,7 @@ def cupZ (hK : IsRes i K) (hρ : IsDual i s ρ) (lam : K →+ ZMod (X.l i ^ 1)) 
       dsimp only
       rw [charRep_apply, ← lam_natCast_mul, ← eps_eq hK, ← red_dot hρ, x.2.2 g h, y.2.2 h k, map_mul,
         Module.End.mul_apply]
-      simp only [map_add, dotProduct_add, add_dotProduct]
+      simp only [map_add (f := _), dotProduct_add, add_dotProduct]
       abel⟩
 
 omit [TopologicalSpace K] [DiscreteTopology K] in
@@ -218,7 +222,7 @@ theorem loc_eq_zero_of_subsingleton (hK : IsRes i K) (hρ : IsDual i s ρ) (lam 
   change ((cycMod D.host.E N.Om (X.l i) 1 g : (ZMod (X.l i ^ 1))ˣ) : ZMod (X.l i ^ 1)) * lam (m ⬝ᵥ y.1 h) -
     lam (m ⬝ᵥ y.1 (g * h)) + lam (m ⬝ᵥ y.1 g) = lam (x.1 g ⬝ᵥ red i K ρ g (y.1 h))
   rw [← lam_natCast_mul, ← eps_eq hK, ← red_dot hρ, e, y.2.2]
-  simp only [map_add, map_sub, dotProduct_add, sub_dotProduct]
+  simp only [map_add (f := _), map_sub, dotProduct_add, sub_dotProduct]
   abel
 
 theorem continuous_cConj : Continuous (cConj X) := by
@@ -385,7 +389,7 @@ theorem reciprocity : Cheb → PoitouTateTotallyComplex → CohDimTwo → TameLo
   have hyI := vanish_NS h hK (Or.inr hρ) hy (S := placesOver D.host.E (X.l i) ∪ Spl (X := X) i)
     fun v hv => ⟨fun e => hv (Or.inl e), fun e => hv (Or.inr e), by simp⟩
   have hyI' : ∀ q v, Over (P q) v → ∀ B, IsPlaceOver B v → ∀ σ ∈ Ine (F := D.host.E) B, y.1 σ = 0 :=
-    fun q v hv B hB σ hσ => (hyI σ (mem_NS (fun e => e.elim (hS0 q v hv).1 (hS0 q v hv).2) hB hσ)).1
+    fun q v hv B hB σ hσ => (hyI σ (mem_NS (fun (e : v ∈ placesOver D.host.E (X.l i) ∪ Spl (X := X) i) => e.elim (hS0 q v hv).1 (hS0 q v hv).2) hB hσ)).1
   let t : ValuationSubring N.Om → ZMod (X.l i ^ 1) := fun A =>
     inv A (Submodule.Quotient.mk (locZ A (cupZ hK hρ lam x y)))
   have h0 : ∑ v ∈ S, t (Av v) = 0 :=
@@ -416,7 +420,8 @@ theorem reciprocity : Cheb → PoitouTateTotallyComplex → CohDimTwo → TameLo
       change inv _ _ = 0
       rw [this, map_zero]
   rw [h0, Fintype.sum_sum_type, ← Finset.sum_add_distrib] at h1
-  rw [map_sum, ← h1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← h1]
   refine Finset.sum_congr rfl fun a _ => ?_
   obtain ⟨e1, e2⟩ := hu a lam x y (hyI' _ _ (over_refl _) _ (N.plOm.2 _))
     (hyI' _ _ (Or.inr (hPb a)) _ (isPlaceOver_moveVal_cc X (hPb a) (N.plOm.2 _)))

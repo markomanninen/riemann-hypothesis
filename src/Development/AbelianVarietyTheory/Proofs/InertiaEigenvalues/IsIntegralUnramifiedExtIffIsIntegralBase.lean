@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfValNonneg
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegerSpanningFamilyOfUnramifiedExtStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfValNonneg
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegerSpanningFamilyOfUnramifiedExtStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem isIntegral_overExt_iff (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E) (hU :
       obtain ⟨c, hc⟩ := hu y
       have hy : y = ∑ i, c i • u i := by
         apply inj
-        rw [hc, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hc, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [Algebra.smul_def, map_mul, RingHom.algebraMap_toAlgebra, hf]
       rw [hy]

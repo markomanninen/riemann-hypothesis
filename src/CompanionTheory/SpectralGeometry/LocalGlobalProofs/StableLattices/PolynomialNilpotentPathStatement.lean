@@ -1,7 +1,8 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.PolynomialNilpotentPath
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.AbsoluteL2Bound
+module
 
-set_option maxHeartbeats 1000000 in
-theorem _root_.GlobalTheory.T.PolynomialNilpotentPath : CompanionTheory.RgExh.Dec.L.PolyNilPath := by
-  first | exact @GlobalTheory.CompanionTheory.PolyNilGrad.polyNilPath | exact GlobalTheory.CompanionTheory.PolyNilGrad.polyNilPath | (intros; apply GlobalTheory.CompanionTheory.PolyNilGrad.polyNilPath <;> assumption)
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.PolynomialNilpotentPath
+
+@[expose] public section
+
+theorem _root_.GlobalTheory.T.PolynomialNilpotentPath : CompanionTheory.RgExh.Dec.L.PolyNilPath :=
+  GlobalTheory.CompanionTheory.PolyNilGrad.polyNilPath

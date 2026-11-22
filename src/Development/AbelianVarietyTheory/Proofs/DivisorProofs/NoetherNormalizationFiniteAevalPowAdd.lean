@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -9,7 +14,7 @@ theorem noether_trick_monic {k : Type} [Field k] (f : Polynomial (Polynomial k))
       ((Polynomial.X : Polynomial (Polynomial k)) ^ M - Polynomial.C Polynomial.X)).Monic := by
   set r : Polynomial (Polynomial k) := X ^ M - C X with hr
   have hrm : r.Monic := monic_X_pow_sub_C _ hM0
-  have hrd : r.natDegree = M := natDegree_X_pow_sub_C
+  have hrd : r.natDegree = M := natDegree_X_pow_sub_C _
   rw [eval₂_eq_sum_range, Finset.sum_range_succ]
   have hlead : f.coeff f.natDegree = 1 := hf
   rw [hlead, map_one, one_mul]

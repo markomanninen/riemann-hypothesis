@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ClassCountBoundAtConstructedPoints
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ScaleOneLeA
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ClassNumberClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ClassCountBoundAtConstructedPoints
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ScaleOneLeA
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ClassNumberClosed
+
+@[expose] public section
 
 namespace GlobalTheory.Fc.R0
 

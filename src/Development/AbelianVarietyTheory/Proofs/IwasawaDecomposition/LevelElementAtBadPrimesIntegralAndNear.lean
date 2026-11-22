@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicMatrixCongruenceBadPrimeIffCompletion
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResidueEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelFrameCharacterMulMovedPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicMatrixCongruenceBadPrimeIffCompletion
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResidueEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelFrameCharacterMulMovedPoint
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -15,13 +20,13 @@ section Gen
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E]
   {hc : Formalism.BasicNotions.CMData F E} {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 E))}
 
-theorem int_of_pts {g m : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} {h : GLG E n SG} {c : GLQ E n Q}
-    (h1 : IsPtOf hc g p) (h2 : IsPtOf hc (g * m) (((1, h, c) : UF E n × GLG E n SG × GLQ E n Q) • p)) (r s : Fin n) :
+theorem int_of_pts {g m : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} {h : GLG (E := E) (n := n) (SG := SG)} {c : GLQ E n Q}
+    (h1 : IsPtOf hc g p) (h2 : IsPtOf hc (g * m) (((1, h, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p)) (r s : Fin n) :
     (m : Matrix (Fin n) (Fin n) (AfE F E)) r s ∈ Formalism.L2.Herm.intAf F E ∧
       ((m⁻¹ : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)) r s ∈ Formalism.L2.Herm.intAf F E := by
   have L1 := h1.lat
   have L2 := h2.lat
-  have hN : (((1, h, c) : UF E n × GLG E n SG × GLQ E n Q) • p).deco.1.N = p.deco.1.N := LevRead.smul_N p h c
+  have hN : (((1, h, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p).deco.1.N = p.deco.1.N := LevRead.smul_N p h c
   rw [hN] at L2
   have hstd : ∀ z : Fin n → AfE F E, z ∈ Formalism.L2.Herm.hatL (F := F) (stdLat E n) ↔ ∀ i, z i ∈ Formalism.L2.Herm.intAf F E :=
     fun z => Formalism.L2.Col.mem_latS_std z
@@ -180,8 +185,8 @@ theorem rhoP_ratA (P : HeightOneSpectrum (𝓞 E)) (G : ↥(Formalism.L2.Col.GLi
   rw [adAt_inclE]
   rfl
 
-theorem core {g m : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} {h : GLG E n SG} {c : GLQ E n Q}
-    (h1 : IsPtOf hc g p) (h2 : IsPtOf hc (g * m) (((1, h, c) : UF E n × GLG E n SG × GLQ E n Q) • p))
+theorem core {g m : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} {h : GLG (E := E) (n := n) (SG := SG)} {c : GLQ E n Q}
+    (h1 : IsPtOf hc g p) (h2 : IsPtOf hc (g * m) (((1, h, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p))
     (P : HeightOneSpectrum (𝓞 E)) :
     (∀ r s, IntAtA (F := F) P ((m : Matrix (Fin n) (Fin n) (AfE F E)) r s)) ∧
     (∀ r s, IntAtA (F := F) P (((m⁻¹ : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)) r s)) ∧
@@ -199,7 +204,7 @@ theorem core {g m : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} {h : GLG E n S
   · intro hP G hG hred r s
     obtain ⟨A, hA⟩ := LevRead.exists_isRed (P := P) (x := m⁻¹) (fun i j => hV _ (int_of_pts h1 h2 i j).2)
       (fun i j => by rw [inv_inv]; exact hV _ (int_of_pts h1 h2 i j).1)
-    have h2' : IsPtOf hc (g * (m⁻¹)⁻¹) (((1, h, c) : UF E n × GLG E n SG × GLQ E n Q) • p) := by rwa [inv_inv]
+    have h2' : IsPtOf hc (g * (m⁻¹)⁻¹) (((1, h, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p) := by rwa [inv_inv]
     have hAe := LevRead.eq_red h1 h2' ⟨P, hP⟩ hA
     have hB := isRed_ratA (F := F) hG hred
     have hC := hA.mul hB
@@ -224,8 +229,8 @@ end GlobalTheory.Mem.Col2.AdT.ReadBad
 
 namespace GlobalTheory.Mem.Col2.AdT.ReadBad
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem main : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m) (bad : Set (HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F))) (Ch : Type) (chOf : (I.stp u a i).Cl → Ch) (K : Charts I l Z u a i hi bad chOf) (k : Ch → GA B (B.R.N i)), ReadsAt I l Z K k → ∀ (c : (I.stp u a i).Cl) (x : GA B (B.R.N i)) (κ' : (I.stp u a i).G c.1), (I.stp u a i).gam c.1 κ' = 1 → PtOf ((show GA B (B.R.N i) from ((K (chOf c)).y ⟨c, rfl⟩).1) * x * k (chOf c)) ((I.stp u a i).act c.1 κ' ((I.stp u a i).rep c)).1.1 → ∀ P : SBof I a, (∀ r s, IntAtA (F := B.host.F) (show HeightOneSpectrum (𝓞 B.host.E) from GlobalTheory.TwU.seamP (sm I l Z) P.1) ((((k (chOf c))⁻¹ * x * k (chOf c) : GA B (B.R.N i)) : Matrix (Fin (B.R.N i)) (Fin (B.R.N i)) (AfE B.host.F B.host.E)) r s)) ∧ (∀ r s, IntAtA (F := B.host.F) (show HeightOneSpectrum (𝓞 B.host.E) from GlobalTheory.TwU.seamP (sm I l Z) P.1) (((((k (chOf c))⁻¹ * x * k (chOf c))⁻¹ : GA B (B.R.N i)) : Matrix (Fin (B.R.N i)) (Fin (B.R.N i)) (AfE B.host.F B.host.E)) r s)) ∧ ∀ g : Sp B.fields.E (B.R.N i) ≃ₗ[B.fields.E] Sp B.fields.E (B.R.N i), LiftsInv I κ' P g → GlobalTheory.TwU.NearAt (show HeightOneSpectrum (𝓞 B.host.E) from GlobalTheory.TwU.seamP (sm I l Z) P.1) ((I.cst a).D P) ((k (chOf c))⁻¹ * x * k (chOf c)) (GlobalTheory.TwU.seamGL (sm I l Z) g) := by
   intro B X I hOk l Z u a i hi bad Ch chOf K k hR c x κ' hγ hpt P
   have hpt0 := hR.pt c
@@ -233,12 +238,12 @@ theorem main : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → ∀ (l :
   have hp1 := IsPtOf.of_extTo (I.Q_subset_SQ a) hd hpt0
   have hγ' : toGLm B.fields.E (B.R.N i) κ'.1.1 = 1 := hγ
   have hκ1 : κ'.1 = 1 := Subtype.ext ((MulEquiv.map_eq_one_iff _).1 hγ')
-  have hinc : FrmG.incl _ _ κ' = ((1, κ'.2.1.1, κ'.2.2.1) : UF B.fields.E (B.R.N i) × GLG B.fields.E (B.R.N i) (B.primes X).vGs ×
+  have hinc : FrmG.incl _ _ κ' = ((1, κ'.2.1.1, κ'.2.2.1) : UF B.fields.E (B.R.N i) × GLG (E := B.fields.E) (n := B.R.N i) (SG := (B.primes X).vGs) ×
       GLQ B.fields.E (B.R.N i) (I.Q a)) := by
     show (κ'.1, κ'.2.1.1, κ'.2.2.1) = _
     rw [hκ1]
   have hp2 : IsPtOf B.sp.cm ((show GA B (B.R.N i) from ((K (chOf c)).y ⟨c, rfl⟩).1) * k (chOf c) * ((k (chOf c))⁻¹ * x * k (chOf c)))
-      (((1, κ'.2.1.1, κ'.2.2.1) : UF B.fields.E (B.R.N i) × GLG B.fields.E (B.R.N i) (B.primes X).vGs ×
+      (((1, κ'.2.1.1, κ'.2.2.1) : UF B.fields.E (B.R.N i) × GLG (E := B.fields.E) (n := B.R.N i) (SG := (B.primes X).vGs) ×
         GLQ B.fields.E (B.R.N i) (I.Q a)) • ((I.stp u a i).rep c).1.1) := by
     rw [← hinc, show ∀ yy : GA B (B.R.N i), yy * k (chOf c) * ((k (chOf c))⁻¹ * x * k (chOf c)) = yy * x * k (chOf c) from
       fun yy => by group]

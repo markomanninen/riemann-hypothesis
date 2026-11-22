@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
-import Development.AutomorphicArithmetic.ShortNorms.normPrimesN
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DivLeRpowThreeQuarters
+module
+
+public import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
+public import Development.AutomorphicArithmetic.ShortNorms.normPrimesN
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DivLeRpowThreeQuarters
+
+@[expose] public section
 
 open GlobalTheory.Mem.An
 

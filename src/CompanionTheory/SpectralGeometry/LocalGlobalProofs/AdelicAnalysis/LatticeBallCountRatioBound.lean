@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FiniteInterClosedBallOfSeparated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FiniteInterClosedBallOfSeparated
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -76,8 +80,8 @@ theorem Sep.exists_near {e : Λ →+ V} {r R : ℝ} (hr : 0 < r) {s : Finset Λ}
 
 end GlobalTheory.CompanionTheory.Adelic.Packing
 
-open GlobalTheory.CompanionTheory.Adelic.Packing in
 
+open GlobalTheory.CompanionTheory.Adelic.Packing in
 theorem GlobalTheory.CompanionTheory.Adelic.tsum_indicator_norm_le_packing :
     ∀ (V : Type) [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V] (Λ : Type)
       [AddCommGroup Λ] (e : Λ →+ V) (r R : ℝ), 0 < r → r ≤ R →

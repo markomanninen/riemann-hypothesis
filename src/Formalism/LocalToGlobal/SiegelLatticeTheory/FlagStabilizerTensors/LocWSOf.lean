@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ConcreteSettingExists
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ConcreteSettingExists
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,7 +162,10 @@ def WuBessel (C : Choice X θ) : Prop :=
 
 def bOf {C : Choice X θ} (hB : WuBessel C) (u : D.what₂.Word) (τ : D.what₂.Tau) :
     X.B.H (vOf X τ) → X.Vloc u (vOf X τ) :=
-  (hB u τ).choose
+  by
+    classical
+    unfold WuBessel at hB
+    exact (hB u τ).choose
 
 def v0Of (C : Choice X θ) (τ : D.what₂.Tau) : X.B.H (vOf X τ) :=
   sigB X (C.Q τ) (C.Qi τ) τ (C.y τ) (X.B.w (vOf X τ))

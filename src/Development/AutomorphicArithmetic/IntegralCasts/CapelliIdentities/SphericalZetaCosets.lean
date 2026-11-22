@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InstBorelGL
-import GroundTheory.LocalFields.PadicLogSeries
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InstBorelGL
+public import GroundTheory.LocalFields.PadicLogSeries
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ValuativeRel

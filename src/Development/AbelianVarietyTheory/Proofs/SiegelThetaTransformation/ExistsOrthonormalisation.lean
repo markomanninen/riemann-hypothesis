@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.Fischer
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MeasurePreservingMulLeft
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralTransportHermitianFrameChartMeasure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.Fischer
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MeasurePreservingMulLeft
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralTransportHermitianFrameChartMeasure
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open GlobalTheory.SW hiding Level
@@ -59,7 +63,7 @@ private lemma continuous_bOf :
     intro k
     unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.FrameDegreeData.dOf _root_.ReciprocityTheory.ChartRestriction.G.FD.gram _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC _root_.ReciprocityTheory.ChartRestriction.G.FD.col
     simp only [Matrix.of_apply]
-    exact continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ =>
+    exact continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun b _ =>
       ((hent a k).mul continuous_const).mul (Complex.continuous_conj.comp (hent b k))
   have hs : Continuous fun p : X.dom => _root_.ReciprocityTheory.ChartRestriction.G.FD.FrameDegreeData.sOf X p.1 τ := by
     unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.FrameDegreeData.sOf
@@ -69,9 +73,9 @@ private lemma continuous_bOf :
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.FrameDegreeData.bOf
   exact (hU τ).matrix_mul hs.matrix_diagonal
 
+
 open Matrix Complex NumberField MeasureTheory in
 open scoped ComplexConjugate ComplexOrder Real Classical in
-
 theorem _root_.GlobalTheory.Ker.exists_orthonormalisation : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r), ∃ o b : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r → _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r, ContinuousOn o X.dom ∧ ContinuousOn b X.dom ∧ (∀ x ∈ X.dom, _root_.GlobalTheory.Ker.IsONFr X (o x) ∧ b x ∈ _root_.ReciprocityTheory.ChartRestriction.G.FD.Bor X.Ψ r ∧ x = _root_.ReciprocityTheory.ChartRestriction.G.FD.rmul (o x) (b x) ∧ (∀ (τ : X.Ψ) (i : Fin r), ‖b x τ i i‖ ^ 2 = ‖_root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm x τ i.succ / _root_.ReciprocityTheory.ChartRestriction.G.FD.dmin X.Gm x τ i.castSucc‖) ∧ ∀ u : X.Ψ → Matrix (Fin r) (Fin r) ℂ, (∀ (τ : X.Ψ) v w, _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC τ.1 X.Gm (u τ *ᵥ v) (u τ *ᵥ w) = _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC τ.1 X.Gm v w) → X.lmulC u x ∈ X.dom ∧ o (X.lmulC u x) = X.lmulC u (o x)) ∧ ∃ δ : ℝ, 0 < δ ∧ _root_.GlobalTheory.SW.slab X δ ⊆ X.dom ∧ ∃ C : ℝ, ∀ x ∈ _root_.GlobalTheory.SW.slab X δ, ∀ τ i j, ‖b x τ i j‖ ≤ C ∧ C⁻¹ ≤ ‖b x τ i i‖ := by
   intro E _ _ _ r X
   have hcontB := continuous_bOf X
@@ -94,7 +98,7 @@ theorem _root_.GlobalTheory.Ker.exists_orthonormalisation : ∀ (E : Type) [Fiel
   have hTri : ∀ x ∈ X.dom, _root_.GlobalTheory.Ker.Ortho.tri X x ∈ _root_.ReciprocityTheory.ChartRestriction.G.FD.Bor X.Ψ r := by
     intro x hx
     unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.Bor
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     intro τ
     have hu := hdetB x hx τ
     haveI := Matrix.invertibleOfIsUnitDet _ hu
@@ -129,7 +133,7 @@ theorem _root_.GlobalTheory.Ker.exists_orthonormalisation : ∀ (E : Type) [Fiel
     refine ⟨?_, ?_⟩
     · have hx' := hx
       unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.dom _root_.ReciprocityTheory.ChartRestriction.G.FD.GG at hx' ⊢
-      simp only [Set.mem_setOf_eq] at hx' ⊢
+      simp only [Set.mem_ofPred_eq] at hx' ⊢
       intro τ
       obtain ⟨-, hpos⟩ := hx' τ
       refine ⟨fun h0 => ?_, fun i => by rw [hdm τ i]; exact hpos i⟩

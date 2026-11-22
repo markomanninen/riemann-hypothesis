@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KmapComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SCls
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CdFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CoeffSlD
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpecialLinearGroupIntMapZmodSurjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KmapComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SCls
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CdFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CoeffSlD
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpecialLinearGroupIntMapZmodSurjective
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix Classical
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym UpperTheory.Kd.K4 UpperTheory.V.Z.Kato.Nb
@@ -93,13 +97,13 @@ private theorem term (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ �
     have b3 := valDvd hl (h 0 1)
     rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq] at b1 b2 b3 ⊢
     rw [Int.cast_one, Int.cast_one] at b1
-    simp only [hm, mZl, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.map_apply, eq_intCast, map_mul, map_pow, map_add,
+    simp only [hm, mZl, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.map_apply, eq_intCast, map_mul, map_pow, map_add (f := _),
       ← b1, ← b2, ← b3, map_one, one_mul]
   have r4 := a5 _ _ (clsK X l n (slD X N (a (rt x h') (rt y h') : X.K))) hk
   have r5 := congrArg (fun z => ((mZl l (h : Matrix (Fin 2) (Fin 2) ℤ) *ᵥ u) 0) ^ w • z) r3
   simp only [smul_zero, ← map_smul] at r5
   have r6 := congrArg₂ (· + ·) r5 r4
-  simp only [← map_add, add_zero, smul_sub] at r6
+  simp only [← map_add (f := _), add_zero, smul_sub] at r6
   show AdicCompletion.eval _ _ _ (X.kmap l _ (_ • _) - _) = 0
   rw [← r6]
   rw [map_smul]

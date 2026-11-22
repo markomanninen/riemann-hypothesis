@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.ProperGenMap
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.ProperGenMap
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -36,13 +40,13 @@ theorem surj_of_core (hC : CupLaws) (P : HTPre l K) (M : Model l K) (n : ℕ)
   have hGe : ∀ s, Gx hC (b a' s0) ((b a').coord s) (oneH M.q) = (b a').coord s (b a' s0) := by
     intro s
     unfold Gx
-    rw [dif_pos (Nat.zero_add a')]
+    rw [dite_eq_left (Nat.zero_add a')]
     simp only [LinearMap.comp_apply, LinearMap.flip_apply, cupL_apply]
     rw [(hC _ _ M.q).2.2.2.1]
   have hGn : ∀ a, a ≠ a' → ∀ s, Gx hC (b a' s0) ((b a).coord s) (oneH M.q) = 0 := by
     intro a ha s
     unfold Gx
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
     rfl
   have hv : L (tgt hC (b a' s0) N) = z a' s0 * qC l N := by
     show ∑ a ∈ Finset.range (n + 1), ∑ s, z a s * (qC l N * kC K (Gx hC (b a' s0) ((b a).coord s) (oneH M.q))) = _

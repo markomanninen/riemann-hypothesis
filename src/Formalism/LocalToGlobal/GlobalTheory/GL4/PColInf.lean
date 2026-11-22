@@ -1,6 +1,24 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PColFin
-import Formalism.LocalToGlobal.GlobalTheory.GL4.FockSelfImEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PColFin
+public import Formalism.SharpRestriction.GlobalSchurBounds.FlipTwoThree
+public import Formalism.LocalToGlobal.HermitianColumns.ColsHerm
+public import Formalism.LocalToGlobal.HermitianForms.FormsTied
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.SuccessiveMinima.StatementMink
+public import Formalism.SharpRestriction.GlobalSchurBounds.IntegrableOfContinuousCircleMeasure
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Numeric
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Interlace
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFockbLemmas
+public import Formalism.BranchSandwichDivisors.StatementW
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.XiNorm
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchMap
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchScale
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFocksLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain MvPolynomial
 open scoped Matrix
@@ -146,7 +164,7 @@ def tcAt (v : InfinitePlace D.what₂.LL) (c : (D.mem u).C.cls 0) (x : ((D.fm u)
 
 theorem tcAt_add (v : InfinitePlace D.what₂.LL) (c : (D.mem u).C.cls 0) (x y : ((D.fm u).lat 0).V) :
     tcAt CV v c (x + y) = tcAt CV v c x + tcAt CV v c y := by
-  simp only [tcAt, map_add, Pi.add_apply]
+  simp only [tcAt, map_add (f := _), Pi.add_apply]
 
 theorem tcAt_smul (v : InfinitePlace D.what₂.LL) (c : (D.mem u).C.cls 0) (a : D.what₂.LL) (x : ((D.fm u).lat 0).V) :
     tcAt CV v c (a • x) = v.embedding a • tcAt CV v c x := by

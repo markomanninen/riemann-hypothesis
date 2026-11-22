@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.IsOrthCo
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.IsOrthCo
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.L2.PairingIndexBounds.F
 
 noncomputable section
@@ -70,16 +75,13 @@ theorem hform_add_left {N : ℕ} (σ : E →+* E) (J : Matrix (Fin N) (Fin N) E)
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [Pi.add_apply, map_add]
+  simp only [Pi.add_apply, map_add (f := _)]
   ring
 
 theorem hform_zero_left {N : ℕ} (σ : E →+* E) (J : Matrix (Fin N) (Fin N) E) (y : Fin N → E) :
     Formalism.UG.hform σ J 0 y = 0 := by
   unfold Formalism.UG.hform
   simp
-
-example {N : ℕ} (σ : E →+* E) (J : Matrix (Fin N) (Fin N) E) (L : Submodule (𝓞 E) (Fin N → E)) (y : Fin N → E) :
-    y ∈ Formalism.BasicNotions.dualSet σ J L ↔ ∀ x ∈ L, Formalism.UG.hform σ J x y ∈ (algebraMap (𝓞 E) E).range := Iff.rfl
 
 theorem smul_coe {W : Type*} [AddCommGroup W] [Module E W] [Module (𝓞 E) W] [IsScalarTower (𝓞 E) E W] (c : 𝓞 E) (w : W) :
     c • w = (c : E) • w := (algebraMap_smul E c w).symm

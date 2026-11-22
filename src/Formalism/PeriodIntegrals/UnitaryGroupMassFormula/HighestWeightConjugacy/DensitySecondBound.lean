@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.DensStepOf
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnitaryDense
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.DensStepOf
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnitaryDense
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem eval_det_Mx (Y : InfinitePlace L → Matrix (Fin n) (Fin n) ℂ) (w : In
 
 theorem eval_det_one_add_Mx (Y : InfinitePlace L → Matrix (Fin n) (Fin n) ℂ) (w : InfinitePlace L) :
     eval (coords Y) (1 + Mx w).det = (1 + Y w).det := by
-  rw [RingHom.map_det, map_add, map_one, eval_Mx]
+  rw [RingHom.map_det, map_add (f := _), map_one, eval_Mx]
 
 theorem eval_adj_Mx (Y : InfinitePlace L → Matrix (Fin n) (Fin n) ℂ) (w : InfinitePlace L) (i j : Fin n) :
     eval (coords Y) ((Mx w).adjugate i j) = (Y w).adjugate i j := by
@@ -69,7 +73,7 @@ theorem hom_exists (F : MvPolynomial ((L →+* ℂ) × Fin n × Fin n) ℂ) :
     obtain ⟨K1, P1, h1⟩ := hp
     obtain ⟨K2, P2, h2⟩ := hq
     refine ⟨K1 + K2, P1 * DlP ^ K2 + P2 * DlP ^ K1, fun Y hY => ?_⟩
-    simp only [map_add, map_mul, map_pow, eval_DlP, ← h1 Y hY, ← h2 Y hY]
+    simp only [map_add (f := _), map_mul, map_pow, eval_DlP, ← h1 Y hY, ← h2 Y hY]
     ring
   | mul_X p v hp =>
     obtain ⟨K, P, h⟩ := hp

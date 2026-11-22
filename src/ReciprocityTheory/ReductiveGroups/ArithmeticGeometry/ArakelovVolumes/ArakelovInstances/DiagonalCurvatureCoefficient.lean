@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.CoeffMatrixZeroCorrectedLineGramPoly
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.CoeffMatrixZeroCorrectedLineGramPoly
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -88,7 +92,7 @@ theorem fn_line (t : ℂ) (s : ℝ) :
       (Polynomial.evalRingHom (s : ℂ)).mapMatrix (lin A) = 1 + (s : ℂ) • A := by
     intro n A
     unfold lin
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     congr 1
     ext i j
     simp

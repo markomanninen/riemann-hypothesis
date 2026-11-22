@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V UpperTheory.V.Fb
 
 private theorem back_eq {E : Type*} [NormedField E] {n : ℕ} (g : GL (Fin n) E) (z : Fin n → E) :
@@ -60,7 +65,7 @@ private theorem finprod_bound {ι : Type*} {a b c : ι → ℝ} (ha : (Function.
     finprod_eq_prod_of_mulSupport_subset c (s := ((ha.union hb).union hc).toFinset)
       (fun v hv => by simp only [Set.Finite.coe_toFinset]; exact Or.inr hv),
     ← Finset.prod_mul_distrib]
-  exact Finset.prod_le_prod (fun i _ => h0 i) fun i _ => h i
+  exact Finset.prod_le_prod₀ (fun i _ => h0 i) fun i _ => h i
 
 private theorem combine {A B C P Q R S : ℝ} (hi : A ≤ C * P * Q) (hf : B ≤ R * S) (hA : 0 ≤ A)
     (hB : 0 ≤ B) : A * B ≤ C * (P * R) * (Q * S) :=
@@ -75,7 +80,7 @@ private theorem adelic_bound {K : Type} [Field K] [NumberField K] {n : ℕ}
     (Finset.prod_nonneg fun _ _ => pow_nonneg (Reduction.euclidNorm_nonneg _) _)
     (finprod_nonneg fun _ => norm_nonneg _)
   · rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
-    refine Finset.prod_le_prod (fun w _ => pow_nonneg (Reduction.euclidNorm_nonneg _) _)
+    refine Finset.prod_le_prod₀ (fun w _ => pow_nonneg (Reduction.euclidNorm_nonneg _) _)
       fun w _ => ?_
     rw [← mul_pow, ← mul_pow, Reduction.infComp_vecMul_GL]
     exact pow_le_pow_left₀ (Reduction.euclidNorm_nonneg _) (inf_bound _ _) _

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GeneratorChange
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowLatOfMove
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarLocInB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GeneratorChange
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowLatOfMove
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarLocInB
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem Cm_mul (ξ η : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (𝓞 D.hos
   rw [Matrix.mul_apply, Cm_apply, Matrix.mul_apply]
   simp only [Cm_apply]
   push_cast
-  rw [map_sum, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d _ => ?_
   have := uFi_mul Zd p d
   rw [map_mul]
@@ -54,11 +59,12 @@ theorem Cm_one : Cm Zd p 1 = 1 := by
   · subst h; simp [uFi_mul, mul_uFi]
   · simp [Matrix.one_apply_ne h]
 
-theorem comb_Cm {T' : D.host.E} (F' : LFlag (VS D) D.R.rS T')
+theorem comb_Cm {T' : D.host.E} (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (ξ : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (𝓞 D.host.E)) (b : Fin (D.R.rS + 1)) :
     comb (Cm Zd p ξ) (locF' Zd p F') b = uF Zd p b • baseChange₂ D p (frameAct (frame F') ξ b) := by
   simp only [comb, Cm_apply, locF'_eq, frameAct]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [Formalism.L2.SG.Pf.LocalDenominators.baseChange_smul₂, smul_smul, smul_smul]
   congr 1
@@ -111,7 +117,7 @@ theorem typed_data (g : Loc.SplitG (Zd.M p).L) (hg : (Zd.M p).split = some g) :
   · rw [hg, hs] at hagree; exact ⟨sg, rfl, hagree.2, hagree.1⟩
 
 theorem admissible_local_term {u u' : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u))
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (hR : IsRowLat D F0 Λ) (hA : IsAdmissible Λ (gS D) (lf D F0) F') (g : Loc.SplitG (Zd.M p).L)
     (hg : (Zd.M p).split = some g) :
     (locH Zd p).Admissible g (locTerm Zd p Λ (lf D F0) F' (Tu D u) (Tu D u')) := by
@@ -127,7 +133,7 @@ theorem admissible_local_term {u u' : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS 
   have hφ := bt_typed_frFac Zd hE hD p F0 Λ hΛfg hR.2.2 hFix.2.2.2 hgP
   have hO := bt_typed_O Zd hD p F0 Λ F' (Tu D u) (Tu D u') hR.2.2 sg hs hφ
   have hξ : AdmWit Λ (gS D) (lf D F0) F' (admXi D Λ (lf D F0) F') := by
-    unfold admXi; rw [dif_pos hA]; exact hA.choose_spec
+    unfold admXi; rw [dite_eq_left hA]; exact hA.choose_spec
   have hMΛ := bt_typed_Mle Zd hE p F0 Λ F' hΛfg hFix.2.2.1 hξ hgP
   intro b
   have hmem : algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((g.q : (D.s.atP p).Fp)⁻¹) •
@@ -144,10 +150,10 @@ theorem admissible_local_term {u u' : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS 
   rw [e]
   exact Submodule.subset_span ⟨_, hmem, rfl⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem admissible_local_partner {u u' : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u))
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (hR : IsRowLat D F0 Λ) (hA1 : AdmWit Λ (gS D) (lf D F0) F' 1) (g : Loc.SplitG (Zd.M p).L)
     (hg : (Zd.M p).split = some g) :
     (locH Zd p).Admissible g ⟨lattice₂ D Zd.M p Λ, (locTerm Zd p Λ (lf D F0) F' (Tu D u) (Tu D u')).f, locF' Zd p F',
@@ -165,7 +171,7 @@ theorem admissible_local_partner {u u' : D.what₂.Word} (F0 : FlagG (VS D) D.R.
   have hκ := (bt_kappa Zd p sg hs).1
   have hA : IsAdmissible Λ (gS D) (lf D F0) F' := ⟨1, hA1⟩
   have hξ : AdmWit Λ (gS D) (lf D F0) F' (admXi D Λ (lf D F0) F') := by
-    unfold admXi; rw [dif_pos hA]; exact hA.choose_spec
+    unfold admXi; rw [dite_eq_left hA]; exact hA.choose_spec
   have hMΛ := bt_typed_Mle Zd hE p F0 Λ F' hΛfg hFix.2.2.1 hξ hgP
   have hXfg : (XLam Λ (lf D F0)).FG := bt_fg_le hΛfg inf_le_left
   have hEq : lattice₂ D Zd.M p (Mplus Λ (gS D) (lf D F0) F' 1) =
@@ -210,7 +216,7 @@ variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
 theorem locTerm_f'_eq (p : PlF D) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) :
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) :
     (locTerm Zd p Λ (lf D F0) F' (Tu D u) (Tu D u')).f' =
       comb (Cm Zd p (admXi D Λ (lf D F0) F')⁻¹) (locF' Zd p F') := by
   funext b

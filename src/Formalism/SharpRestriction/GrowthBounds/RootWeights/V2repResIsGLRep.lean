@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2repExistsHwv
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2repExistsHwv
+
+@[expose] public section
 
 noncomputable section
 

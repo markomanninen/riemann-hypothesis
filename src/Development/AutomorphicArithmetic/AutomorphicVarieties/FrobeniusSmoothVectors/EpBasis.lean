@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -42,7 +46,7 @@ theorem UpperTheory.V.Fr.ep_basis :
   have hwev : ∀ j, w j ∈ evp σ j.2 := by
     intro j
     show σ (w j) = sg R j.2 * w j
-    simp only [w, hucomm, map_add, map_mul, hσ, hsgσ]
+    simp only [w, hucomm, map_add (f := _), map_mul, hσ, hsgσ]
     linear_combination (-(u * σ j.1.1)) * hsg j.2
   have hmemN : ∀ c ∈ maximalIdeal O, ∀ y ∈ J, c • y ∈ N := by
     intro c hc y hy

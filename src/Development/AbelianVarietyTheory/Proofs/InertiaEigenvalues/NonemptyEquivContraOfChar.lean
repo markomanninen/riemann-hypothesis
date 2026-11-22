@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InductionContragredient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqSumBallFn
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BallFnSubMemOfRadial
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BallFnMemAndOneMemOfSubMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InductionContragredient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqSumBallFn
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BallFnSubMemOfRadial
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BallFnMemAndOneMemOfSubMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem nonempty_equiv_contra_ofChar {χ : G →* ℂˣ} (hχ : IsSmoothChar χ)
     Nonempty ((ofChar χ⁻¹).Equiv (contra (ofChar χ))) := by
   have key : ∀ (c : ℂ) g, (ofChar χ).dual g (c • LinearMap.id) = ((χ g)⁻¹ * c : ℂ) • LinearMap.id := fun c g =>
     LinearMap.ext fun v => by
-      show c • ofChar χ g⁻¹ v = _
+      show c • ofChar χ (g⁻¹ : G) v = _
+      rw [ofChar_apply]
       simp [mul_left_comm, mul_assoc]
   let f : (ofChar χ⁻¹).IntertwiningMap (contra (ofChar χ)) :=
     { toFun := fun c => ⟨c • LinearMap.id, mem_smoothPart_of_nhds (Filter.mem_of_superset (hχ.mem_nhds (one_mem _))
@@ -79,7 +84,7 @@ theorem isCosocle_of_contra [T2Space G]
   let l : π.IntertwiningMap (ofChar χ) := ⟨(Φ (f 1)).1, fun g => LinearMap.ext fun v => by
     have h1 := congrArg (fun y => (Φ y).1 v) (f.isIntertwining _ _ g⁻¹ 1)
     have h2 := congrArg (fun y => y.1 v) (Φ.toIntertwiningMap.isIntertwining _ _ g⁻¹ (f 1))
-    have h3 : ofChar χ⁻¹ g⁻¹ 1 = (χ g : ℂ) • (1 : ℂ) := by simp
+    have h3 : ofChar χ⁻¹ (g⁻¹ : G) 1 = (χ g : ℂ) • (1 : ℂ) := by rw [ofChar_apply]; simp
     simp only [h3, map_smul] at h1
     rw [contra_apply, inv_inv] at h2
     exact h2.symm.trans h1.symm⟩
@@ -130,15 +135,15 @@ theorem Stable.mem_of_ballFn {S : Submodule ℂ (OnePoint k → ℂ)} (hS : Stab
 
 variable [DecidableEq k]
 
-variable (k) in
 
+variable (k) in
 def funRep : Representation ℂ (GL (Fin 2) k) (OnePoint k → ℂ) where
   toFun g := LinearMap.funLeft ℂ ℂ (g⁻¹ • ·)
   map_one' := by ext; simp
   map_mul' g h := by ext; simp [mul_smul]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 @[simp] theorem funRep_apply (g : GL (Fin 2) k) (F : OnePoint k → ℂ) (x : OnePoint k) :
     funRep k g F x = F (g⁻¹ • x) := rfl
 
@@ -270,8 +275,8 @@ def pts : (Σ _ : Fin 2, Fin 1) ≃ Fin 2 := stdBlocks (fun _ => 1) (by simp)
 theorem pts_apply (a : Fin 2) (i : Fin 1) : pts ⟨a, i⟩ = a :=
   Fin.ext ((stdBlocks_val (fun _ => 1) _ a i).trans (by simp))
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem mem_parab_pts {g : GL (Fin 2) k} : g ∈ parab k pts ↔ g • (∞ : OnePoint k) = ∞ := by
   rw [OnePoint.smul_infty_eq_self_iff, mem_parab_iff]
   simp only [pts_apply]
@@ -279,19 +284,32 @@ theorem mem_parab_pts {g : GL (Fin 2) k} : g ∈ parab k pts ↔ g • (∞ : On
   fin_cases a <;> fin_cases b <;> simp at hab
   exact h
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem exists_smul_infty (x : OnePoint k) : ∃ g : GL (Fin 2) k, g⁻¹ • (∞ : OnePoint k) = x := by
   induction x using OnePoint.rec with
   | infty => exact ⟨1, by simp⟩
   | coe x => exact ⟨(GeneralLinearGroup.mkOfDetNeZero !![x, 1; 1, 0] (by simp))⁻¹, by simp [OnePoint.smul_infty_eq_ite]⟩
 
-omit [DecidableEq k] in
 
+omit [DecidableEq k] in
 theorem law_detLevi (η : kˣ →* ℂˣ) (p : parab k pts) (c : ℂ) :
     twist (ofChar (detLevi pts η)) (deltaHalf k _) (leviProj k pts p) c = (detChar (Fin 2) η p : ℂ) * c := by
   have : GeneralLinearGroup.det (leviEmb k pts (leviProj k pts p)) =
-      GeneralLinearGroup.det (p : GL (Fin 2) k) := by rw [det_leviEmb, det_parab]
+      GeneralLinearGroup.det (p : GL (Fin 2) k) := by
+    classical
+    let g := leviProj k pts p
+    have hm : leviEmb k pts g ∈ parab k pts := by
+      apply mem_parab_iff.2
+      intro a b i j hab
+      simp [leviEmb, Matrix.blockDiagonal'_apply_ne, hab.ne']
+    have hp : leviProj k pts ⟨leviEmb k pts g, hm⟩ = g := by
+      funext a
+      ext i j
+      simp [leviProj, diagBlock, leviEmb, Matrix.blockDiagonal'_apply_eq]
+    have h := det_parab k pts ⟨leviEmb k pts g, hm⟩
+    rw [hp] at h
+    exact h.trans (det_parab k pts p).symm
   simp [detLevi, this, mul_assoc, mul_left_comm (deltaHalf k _ (leviProj k pts p) : ℂ)]
 
 theorem nonempty_equiv_parInd {η : kˣ →* ℂˣ} (hη : IsSmoothChar η) :
@@ -335,8 +353,8 @@ theorem nonempty_equiv_parInd {η : kˣ →* ℂˣ} (hη : IsSmoothChar η) :
     · show (detChar (Fin 2) η g : ℂ) * F (g⁻¹ • ∞) = _
       rw [hF, mul_inv_cancel_left₀ (Units.ne_zero _)]
 
-omit [DecidableEq k] in
 
+omit [DecidableEq k] in
 theorem exists_line {η : kˣ →* ℂˣ} (hη : IsSmoothChar η) :
     ∃ (V : Type) (_ : AddCommGroup V) (_ : Module ℂ V) (π : Representation ℂ (GL (Fin 2) k) V)
       (f : (detRep (Fin 2) η).IntertwiningMap π), Nonempty (π.Equiv (parInd pts (ofChar (detLevi pts η)))) ∧
@@ -357,7 +375,7 @@ theorem exists_line {η : kˣ →* ℂˣ} (hη : IsSmoothChar η) :
     have h2 := h ∞
     have h3 := h (0 : k)
     have h4 := h (1 : k)
-    simp [ballFn_coe, h1] at h2 h3 h4
+    simp [ballFn, ballFn_coe, h1] at h2 h3 h4
     exact ⟨h3.symm.trans h2, h4.symm.trans h2⟩
   refine ⟨_, _, _, _, f, nonempty_equiv_parInd hη, fun c d h => congrArg (fun F => F.1 ∞) h, fun h => ?_,
     fun S => (const_or_eq_top (subrepTwist _ _ S)).imp
@@ -366,15 +384,15 @@ theorem exists_line {η : kˣ →* ℂˣ} (hη : IsSmoothChar η) :
   · exact one_ne_zero (key 1 0 (by rw [h]; trivial)).1
   · have h2 := key (L (Submodule.Quotient.mk (E 1))) (-L (Submodule.Quotient.mk (E 0))) (by
       rw [← Submodule.Quotient.mk_eq_zero, ← L.map_eq_zero_iff]
-      rw [Submodule.Quotient.mk_add, Submodule.Quotient.mk_smul, Submodule.Quotient.mk_smul, map_add, map_smul, map_smul,
+      rw [Submodule.Quotient.mk_add, Submodule.Quotient.mk_smul, Submodule.Quotient.mk_smul, map_add (f := _), map_smul, map_smul,
         smul_eq_mul, smul_eq_mul]
       ring)
     rw [L.map_eq_zero_iff, Submodule.Quotient.mk_eq_zero] at h2
     exact one_ne_zero (key 0 1 (by rw [zero_smul, one_smul, zero_add]; exact h2.1)).2
 
-omit [DecidableEq k] in
 
-theorem exists_equiv_prodIrr {θ : Fin 2 → kˣ →* ℂˣ} (hθ : ∀ a, IsSmoothChar (θ a)) {x : Fin 2 → IrrGL k}
+omit [DecidableEq k] in
+theorem exists_equiv_prodIrr {θ : Fin 2 → kˣ →* ℂˣ} (hθ : ∀ a, IsSmoothChar (θ a)) {x : Fin 2 → IrrGL (k := k)}
     (hx : ∀ a, x a = IrrGL.ofChar (θ a) (hθ a)) {Θ : Levi k (fun _ : Fin 2 => Fin 1) →* ℂˣ}
     (hΘ : ∀ g, Θ g = ∏ a, θ a (GeneralLinearGroup.det (g a))) :
     ∃ hd : ∑ a, (x a).1 = 2, Nonempty ((parInd pts (ofChar Θ)).Equiv (prodIrr x hd)) := by
@@ -382,10 +400,12 @@ theorem exists_equiv_prodIrr {θ : Fin 2 → kˣ →* ℂˣ} (hθ : ∀ a, IsSmo
   have key : ∀ g y, piTensor (fun a => detRep (Fin 1) (θ a)) g y = (Θ g : ℂ) • y := by
     intro g y
     induction y using PiTensorProduct.induction_on with
-    | add x y hx hy => rw [map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
     | smul_tprod c x =>
-      rw [map_smul, smul_comm, piTensor_tprod, hΘ, Units.coe_prod, ← MultilinearMap.map_smul_univ]
-      simp [detRep]
+      rw [map_smul, smul_comm, piTensor_tprod, hΘ, Units.coe_prod]
+      simp only [detRep, ofChar_apply, ← smul_eq_mul]
+      rw [MultilinearMap.map_smul_univ]
+      simp [detChar]
   let φ : (ofChar Θ).Equiv (piTensor fun a => detRep (Fin 1) (θ a)) :=
     .mk (PiTensorProduct.constantBaseRingEquiv (Fin 2) ℂ).toLinearEquiv.symm fun g => LinearMap.ext fun c => by
       simp only [LinearMap.comp_apply]
@@ -405,31 +425,6 @@ theorem detLevi_pts (η : kˣ →* ℂˣ) (g : Levi k fun _ : Fin 2 => Fin 1) :
   rw [detLevi_apply, Fin.prod_univ_two, modExp_fin _ (fun _ => by simp), modExp_fin _ (fun _ => by simp)]
   norm_num
 
-theorem exists_equiv_segment_two (hχ : IsSmoothChar χ) :
-    ∃ hd : ∑ a, ((Segment.ofChar χ hχ 2 two_pos).term a).1 = 2,
-      Nonempty ((parInd pts (ofChar (detLevi pts (χ * absPow k (1 / 2))))).Equiv
-        (prodIrr (Segment.ofChar χ hχ 2 two_pos).term hd)) := by
-  have h := exists_equiv_prodIrr (θ := fun a => χ * absPow k (a : ℕ)) (fun _ => hχ.mul (isSmoothChar_absPow _))
-    (x := (Segment.ofChar χ hχ 2 two_pos).term) (fun _ => IrrGL.tw_ofChar _ _ hχ (isSmoothChar_absPow _))
-    (Θ := detLevi pts (χ * absPow k (1 / 2))) fun g => by
-      rw [detLevi_pts, Fin.prod_univ_two, mul_assoc χ, mul_assoc χ, ← absPow_add, ← absPow_add]
-      norm_num
-  exact h
-
-theorem isZSeg_detRep_two (hχ : IsSmoothChar χ) :
-    IsZSeg (Segment.ofChar χ hχ 2 two_pos) (detRep (Fin 2) (χ * absPow k (1 / 2))) := by
-  obtain ⟨hd, ⟨ψ⟩⟩ := exists_equiv_segment_two hχ
-  obtain ⟨V, _, _, π, f, ⟨φ⟩, hf, h0, h, -⟩ := exists_line (hχ.mul (isSmoothChar_absPow (1 / 2)))
-  exact ⟨hd, (isSocle_of_le (isIrreducible_ofChar _) f hf h0 h).of_equiv (.refl _) (φ.trans ψ)⟩
-
-theorem exists_isLSeg_two (hχ : IsSmoothChar χ) :
-    ∃ (V : Type) (_ : AddCommGroup V) (_ : Module ℂ V) (π : Representation ℂ (GL (Fin 2) k) V),
-      IsLSeg (Segment.ofChar χ hχ 2 two_pos) π ∧ ∀ ψ : GL (Fin 2) k →* ℂˣ, IsEmpty (π.Equiv (ofChar ψ)) := by
-  obtain ⟨hd, ⟨ψ⟩⟩ := exists_equiv_segment_two hχ
-  obtain ⟨V, _, _, π, f, ⟨φ⟩, -, h0, h, h1⟩ := exists_line (hχ.mul (isSmoothChar_absPow (1 / 2)))
-  exact ⟨_, _, _, quot f.range, ⟨hd, (isCosocle_quot h0 h).of_equiv (.refl _) (φ.trans ψ)⟩,
-    fun _ => ⟨fun e => h1.false e.toLinearEquiv⟩⟩
-
 theorem isCosocle_detRep_two {η : kˣ →* ℂˣ} (hη : IsSmoothChar η) :
     IsCosocle (detRep (Fin 2) η) (parInd pts (ofChar (detLevi pts η⁻¹)⁻¹)) := by
   have hΘ : IsSmoothChar (detLevi pts η⁻¹)⁻¹ :=
@@ -447,6 +442,7 @@ theorem isCosocle_detRep_two {η : kˣ →* ℂˣ} (hη : IsSmoothChar η) :
 theorem isL_detRep_two (hχ : IsSmoothChar χ) :
     IsL ({Segment.single _ (IrrGL.isCusp_ofChar χ hχ)} + {Segment.single _ ((IrrGL.isCusp_ofChar χ hχ).nu 1)})
       (detRep (Fin 2) (χ * absPow k (1 / 2))) := by
+  classical
   obtain ⟨hd, ⟨ψ⟩⟩ := exists_equiv_prodIrr (θ := ![χ * absPow k 1, χ])
     (Fin.forall_fin_two.2 ⟨hχ.mul (isSmoothChar_absPow _), hχ⟩)
     (x := ![(IrrGL.ofChar χ hχ).nu 1, IrrGL.ofChar χ hχ])
@@ -464,13 +460,5 @@ theorem isL_detRep_two (hχ : IsSmoothChar χ) :
     rfl
   · obtain ⟨rfl, rfl⟩ : i = 0 ∧ j = 1 := by omega
     exact (single_precedes χ hχ).2
-
-theorem segment_two_spec (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) :
-    IsZSeg (Segment.ofChar χ hχ 2 two_pos) (detRep (Fin 2) (χ * absPow k (1 / 2))) ∧
-    (∃ (V : Type) (_ : AddCommGroup V) (_ : Module ℂ V) (π : Representation ℂ (GL (Fin 2) k) V),
-      IsLSeg (Segment.ofChar χ hχ 2 two_pos) π ∧ ∀ ψ : GL (Fin 2) k →* ℂˣ, IsEmpty (π.Equiv (ofChar ψ))) ∧
-    IsL ({Segment.single _ (IrrGL.isCusp_ofChar χ hχ)} + {Segment.single _ ((IrrGL.isCusp_ofChar χ hχ).nu 1)})
-      (detRep (Fin 2) (χ * absPow k (1 / 2))) :=
-  ⟨isZSeg_detRep_two hχ, exists_isLSeg_two hχ, isL_detRep_two hχ⟩
 
 end GlobalTheory.LocGL

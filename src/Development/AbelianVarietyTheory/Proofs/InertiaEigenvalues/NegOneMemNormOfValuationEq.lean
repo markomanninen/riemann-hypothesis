@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.LocalFields.UnramifiedNormSurj
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.UnramifiedNormSurj
+
+@[expose] public section
+
 open ValuativeRel
 
 namespace GlobalTheory
 
-open GroundTheory.LocalField in
 
+open GroundTheory.LocalField in
 theorem neg_one_mem_norm_of_valuation_eq : ∀ (F E : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [Field E] [ValuativeRel E] [TopologicalSpace E] [IsNonarchimedeanLocalField E] [Algebra F E] [ValuativeExtension F E] [FiniteDimensional F E], (∀ y : E, ∃ x : F, y ≤ᵥ algebraMap F E x ∧ algebraMap F E x ≤ᵥ y) → ∃ z : E, Algebra.norm F z = -1 := by
   intro F E _ _ _ _ _ _ _ _ _ _ _ hval
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[E]

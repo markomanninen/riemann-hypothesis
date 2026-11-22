@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Polynomial DividedPowers GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
 
@@ -89,8 +94,8 @@ noncomputable def u {d : ℕ} (p : ℕ) [NeZero p] (k : Fin d) (m : ℕ) : Q p d
 
 abbrev A (p : ℕ) (D : Type) [CommRing D] (d : ℕ) := AddMonoidAlgebra D (Q p d)
 
-open AddMonoidAlgebra in
 
+open AddMonoidAlgebra in
 noncomputable def J (p : ℕ) [NeZero p] {D : Type} [CommRing D] {d : ℕ} (t : Fin d → D) : Ideal (A p D d) :=
   Ideal.span (Set.range fun k => single (u p k 0) 1 - single 0 (t k))
 
@@ -242,7 +247,7 @@ theorem φ_mul_gen (y : A p D d) (k : Fin d) :
     φ t (y * (single (u p k 0) 1 - single 0 (t k))) = 0 := by
   induction y using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [add_mul, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [add_mul, map_add (f := _), hx, hy, add_zero]
   | single a c =>
     rw [mul_sub, single_mul_single, single_mul_single, map_sub, φ_single, φ_single, fr_add, T_add,
       add_zero, mul_one, sub_eq_zero]
@@ -255,7 +260,7 @@ theorem φ_mul_of_mem {x : A p D d} (hx : x ∈ J p t) : ∀ y, φ t (y * x) = 0
     obtain ⟨k, rfl⟩ := h
     exact fun y => φ_mul_gen t y k
   | zero => simp
-  | add x y _ _ hx hy => exact fun z => by rw [mul_add, map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => exact fun z => by rw [mul_add, map_add (f := _), hx, hy, add_zero]
   | smul a x _ hx => exact fun y => by rw [smul_eq_mul, ← mul_assoc]; exact hx _
 
 theorem φ_of_mem {x : A p D d} (hx : x ∈ J p t) : φ t x = 0 := by
@@ -264,7 +269,8 @@ theorem φ_of_mem {x : A p D d} (hx : x ∈ J p t) : φ t x = 0 := by
 theorem lincomb_eq (l : I p d →₀ D) :
     Finsupp.linearCombination D (fun i : I p d => cl t i.1) l =
       Ideal.Quotient.mk (J p t) (∑ i ∈ l.support, single i.1 (l i)) := by
-  rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have : l i • (single i.1 (1 : D) : A p D d) = single i.1 (l i) := by
     rw [smul_single', mul_one]
@@ -272,7 +278,8 @@ theorem lincomb_eq (l : I p d →₀ D) :
   rfl
 
 theorem φ_sum (l : I p d →₀ D) : φ t (∑ i ∈ l.support, single i.1 (l i)) = l := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   conv_rhs => rw [← Finsupp.sum_single l]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [φ_single, fr_of_I, T_of_I, mul_one]
@@ -311,7 +318,7 @@ theorem spanning : ⊤ ≤ Submodule.span D (Set.range fun i : I p d => cl t i.1
   obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective x
   induction y using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy => rw [(Ideal.Quotient.mk (J p t)).map_add x y]; exact Submodule.add_mem _ hx hy
   | single a c =>
     rw [mk_single, cl_eq_smul]
     exact Submodule.smul_mem _ _ (Submodule.smul_mem _ _ (Submodule.subset_span ⟨fr a, rfl⟩))
@@ -359,7 +366,7 @@ theorem exists_lift (B : Type) [CommRing B] (f : D →+* B) (c : Fin d → ℕ �
       refine Ideal.span_le.2 ?_
       rintro _ ⟨k, rfl⟩
       show g₀ _ = 0
-      rw [map_sub, hg₀, hg₀, hθ, h0, map_one, one_mul]
+      rw [g₀.map_sub _ _, hg₀, hg₀, hθ, h0, map_one, one_mul]
       have : θ (Multiplicative.ofAdd 0) = 1 := map_one θ
       rw [this, mul_one, sub_self]
     exact fun x hx => this hx

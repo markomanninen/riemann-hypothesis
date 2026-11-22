@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.ExistsIntSmulMemSpan
-import ReciprocityTheory.SemistableReduction.EmbMatMulVecInjective
+module
+
+public import ReciprocityTheory.SemistableReduction.ExistsIntSmulMemSpan
+public import ReciprocityTheory.SemistableReduction.EmbMatMulVecInjective
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

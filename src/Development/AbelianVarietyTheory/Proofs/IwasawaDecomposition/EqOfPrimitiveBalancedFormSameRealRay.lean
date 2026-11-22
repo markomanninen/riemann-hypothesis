@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultCellsAmong
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAdmissibleFanOfCellMultOneCMField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultCellsAmong
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAdmissibleFanOfCellMultOneCMField
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan
 
@@ -28,8 +32,10 @@ theorem eq_of_isPrim_of_toReal_eq_smul : ∀ {O : Type} [CommRing O] (bar : O �
     exact_mod_cast this
   have habs : |(x a c : ℝ)| = b * |(y a c : ℝ)| := by
     rw [hR, abs_mul, abs_of_pos hb]
-  refine eq_of_isPrim hx hy px py (k := (y a c).natAbs) (n := (x a c).natAbs)
-    (Int.natAbs_pos.2 hac) (Int.natAbs_pos.2 hxac) (LinearMap.ext₂ fun u v => ?_)
+  apply eq_of_isPrim hx hy px py (k := (y a c).natAbs) (n := (x a c).natAbs)
+    (Int.natAbs_pos.2 hac) (Int.natAbs_pos.2 hxac)
+  apply LinearMap.ext₂
+  intro u v
   simp only [LinearMap.smul_apply, smul_eq_mul, Int.natCast_natAbs]
   have e : |(y a c : ℝ)| * (x u v : ℝ) = |(x a c : ℝ)| * (y u v : ℝ) := by
     rw [hR u v, habs]; ring

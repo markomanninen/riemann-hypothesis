@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
 namespace GlobalTheory.DirichletTail
@@ -219,7 +224,7 @@ theorem LFunction_eq_tsum {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (
   have h2 : (2 : ℂ) ∈ {z : ℂ | 0 < z.re} := by simp
   have hev : LFunction χ =ᶠ[𝓝 (2 : ℂ)] fun z ↦ ∑' n, term χ n z := by
     filter_upwards [(isOpen_lt continuous_const Complex.continuous_re).mem_nhds
-      (show (1 : ℝ) < (2 : ℂ).re by simp)] with z hz
+      (show (2 : ℂ) ∈ {z : ℂ | 1 < z.re} by simp)] with z hz
     exact LFunction_eq_tsum_of_one_lt χ hχ hz
   exact hL.eqOn_of_preconnected_of_eventuallyEq hT (convex_halfSpace_re_gt 0).isPreconnected h2 hev hs
 

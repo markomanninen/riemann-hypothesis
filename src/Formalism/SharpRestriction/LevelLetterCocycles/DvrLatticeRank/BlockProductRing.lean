@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.EigenRingInvariants
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.EigenRingInvariants
+
+@[expose] public section
 
 namespace DualFramesAlt.BlockProductRing
 

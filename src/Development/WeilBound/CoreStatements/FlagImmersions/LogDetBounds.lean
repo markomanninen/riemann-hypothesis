@@ -1,10 +1,14 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WedgeLatticeGeneratorStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombTangentIffLinearSumStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenFrameIffEigenspaceBasisStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplexStatement
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AlternatingMapSumSmulEqDetSmul
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WedgeLatticeGeneratorStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombTangentIffLinearSumStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenFrameIffEigenspaceBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplexStatement
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AlternatingMapSumSmulEqDetSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,8 @@ theorem exists_basis {V L W : Type} [CommRing V] [IsDomain V] [IsPrincipalIdealR
     · obtain ⟨u, rfl⟩ : w ∈ LinearMap.range f := hfr ▸ h₁ hw
       have hu : u ∈ N := hw
       have h := congrArg (fun t : N => f t) (b.sum_repr ⟨u, hu⟩)
-      simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul] at h
       rw [← h]
       exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
 
@@ -114,7 +119,8 @@ theorem log_norm_cp {Ω : Type} [Field Ω] (R : Subring Ω) (p : Nat.Primes) (f 
         simpa using hζ.geom_sum_eq_zero hp.one_lt)
       have hs' : ∑ i ∈ Finset.range p, f ⟨ζ, hζR⟩ ^ i = 0 := by
         have := congrArg f hs
-        rw [map_sum, map_zero] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_zero] at this
         simp only [map_pow] at this
         exact this
       have h1 : f ⟨ζ, hζR⟩ ≠ 1 := fun h1 => by

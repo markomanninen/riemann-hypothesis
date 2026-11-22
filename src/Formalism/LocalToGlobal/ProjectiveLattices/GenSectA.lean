@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ variable {K Ω D m}
 
 def sec (x : Fin m → Ω) (i : Fin D) : ΩT Ω D m := ∑ j, X (i.succ, j) * C (x j)
 
-variable (K) in
 
+variable (K) in
 def Is (x : Fin m → Ω) : Ideal (RS K Ω D m) :=
   Ideal.span (Set.range fun i : Fin D => algebraMap (ΩT Ω D m) (RS K Ω D m) (sec x i))
 
@@ -39,9 +43,10 @@ def Zs (j₀ : Fin m) (p : Fin (D + 1) × Fin m) : Prop := p.1 ≠ 0 ∧ p.2 = j
 
 instance (j₀ : Fin m) : DecidablePred (Zs (D := D) j₀) := fun p => by unfold Zs; infer_instance
 
-variable (Ω D) in
 
-abbrev CT (j₀ : Fin m) : Type := MvPolynomial {p : Fin (D + 1) × Fin m // ¬ Zs j₀ p} Ω
+variable (Ω D) in
+abbrev CT (j₀ : Fin m) : Type :=
+  MvPolynomial {p : Fin (D + 1) × Fin m // ¬ Zs j₀ p} Ω
 
 def xv (j₀ : Fin m) (p : Fin (D + 1) × Fin m) : CT Ω D j₀ :=
   if h : Zs j₀ p then 0 else X ⟨p, h⟩
@@ -86,15 +91,6 @@ theorem incl_C (j₀ : Fin m) (a : Ω) : incl (D := D) j₀ (C a) = C a := by
   | simp [incl]
   | exact (incl j₀).commutes a
 
-theorem psi_incl (x : Fin m → Ω) (j₀ : Fin m) (f : CT Ω D j₀) : psi x j₀ (incl j₀ f) = f := by
-  have h : (psi x j₀).comp (incl j₀) = AlgHom.id Ω (CT Ω D j₀) := by
-    apply MvPolynomial.algHom_ext
-    intro q
-    simp only [AlgHom.comp_apply, AlgHom.id_apply, incl, rename_X, psi, aeval_X]
-    rw [gs, if_neg q.2, xv_of_not q.2]
-    try rfl
-  exact DFunLike.congr_fun h f
-
 theorem gs_succ (x : Fin m → Ω) (j₀ : Fin m) (i : Fin D) (j : Fin m) :
     gs x j₀ (i.succ, j) = xv j₀ (i.succ, j) +
       if j = j₀ then -∑ k, xv j₀ (i.succ, k) * C (rr x j₀ k) else 0 := by
@@ -129,7 +125,8 @@ theorem psi_sec (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ ≠ 0) (i : Fi
     · intro h
       exact absurd (Finset.mem_univ j₀) h
   have h1 : psi x j₀ (sec x i) = ∑ j, gs x j₀ (i.succ, j) * C (x j) := by
-    simp only [sec, map_sum, map_mul, psi_X, psi_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [sec, map_sum, map_mul, psi_X, psi_C]
   rw [h1]
   simp only [gs_succ, add_mul]
   rw [Finset.sum_add_distrib, hI, neg_mul, hS]
@@ -157,7 +154,8 @@ theorem X_sub_incl_gs (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ ≠ 0) (
     unfold Zs
     exact ⟨Fin.succ_ne_zero i, rfl⟩
   rw [gs, if_pos hz]
-  simp only [map_neg, map_sum, map_mul, incl_C, incl_xv_succ, sub_neg_eq_add, sec, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_neg, map_sum, map_mul, incl_C, incl_xv_succ, sub_neg_eq_add, sec, Finset.mul_sum]
   have hX : (X (i.succ, j₀) : ΩT Ω D m) = ∑ j : Fin m, if j = j₀ then (X (i.succ, j₀) : ΩT Ω D m) else 0 := by
     simp
   rw [hX, ← Finset.sum_add_distrib]
@@ -194,7 +192,7 @@ theorem sub_incl_psi_mem (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ ≠ 0
   next f g hf hg =>
     have e : f + g - incl j₀ (psi x j₀ (f + g)) =
         (f - incl j₀ (psi x j₀ f)) + (g - incl j₀ (psi x j₀ g)) := by
-      simp only [map_add]
+      simp only [map_add (f := _)]
       ring
     rw [e]
     exact Ideal.add_mem _ hf hg
@@ -240,7 +238,8 @@ theorem pderiv_gs (x : Fin m → Ω) (j₀ : Fin m) (q : {p : Fin (D + 1) × Fin
   · have hne : p ≠ q.1 := fun h => q.2 (h ▸ hp)
     rw [gs, if_pos hp, if_neg hne, zero_sub, map_neg]
     congr 1
-    simp only [map_sum, Derivation.leibniz, pderiv_C, smul_zero, smul_eq_mul, pderiv_xv, mul_zero, zero_add]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Derivation.leibniz, pderiv_C, smul_zero, smul_eq_mul, pderiv_xv, mul_zero, zero_add]
     rw [Finset.sum_eq_single q.1.2]
     · by_cases h1 : p.1 = q.1.1
       · have e : (p.1, q.1.2) = q.1 := Prod.ext h1 rfl
@@ -266,7 +265,7 @@ theorem pderiv_aeval {ι : Type*} [Fintype ι] [DecidableEq ι] (j₀ : Fin m) (
        simp only [pderiv_C, map_zero, zero_mul, Finset.sum_const_zero])
     | simp
   next G₁ G₂ h₁ h₂ =>
-    simp only [map_add, h₁, h₂, add_mul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), h₁, h₂, add_mul, Finset.sum_add_distrib]
   next G i h =>
     have e1 : ∀ p, pderiv p (G * X i) = G * pderiv p (X i) + X i * pderiv p G := fun p => by
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
@@ -283,7 +282,7 @@ theorem pderiv_aeval {ι : Type*} [Fintype ι] [DecidableEq ι] (j₀ : Fin m) (
       · intro hi
         exact absurd (Finset.mem_univ i) hi
     rw [map_mul, aeval_X, Derivation.leibniz, smul_eq_mul, smul_eq_mul, h]
-    simp only [e1, map_add, add_mul, Finset.sum_add_distrib]
+    simp only [e1, map_add (f := _), add_mul, Finset.sum_add_distrib]
     rw [hs]
     simp only [map_mul, aeval_X, Finset.mul_sum, mul_assoc]
 

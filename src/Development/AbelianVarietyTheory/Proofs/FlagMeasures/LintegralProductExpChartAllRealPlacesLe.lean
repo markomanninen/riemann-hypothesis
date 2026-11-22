@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsLimitOfChart
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EventuallyBallSubset
+module
+
+public import Mathlib
+import all Mathlib.MeasureTheory.Constructions.Pi
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsLimitOfChart
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EventuallyBallSubset
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ContDiff
 
 namespace GlobalTheory.ProductChartAll
 
-open scoped ENNReal in
 
+open scoped ENNReal in
 theorem le_smul_pi {ι : Type} [Fintype ι] {α : ι → Type} [∀ i, MeasurableSpace (α i)]
     (ν : Measure (∀ i, α i)) (μ : ∀ i, Measure (α i)) {K : ℝ≥0∞} (h0 : K ≠ 0) (h1 : K ≠ ⊤)
     (h : ∀ s : ∀ i, Set (α i), (∀ i, MeasurableSet (s i)) →
@@ -32,12 +37,17 @@ theorem le_smul_pi {ι : Type} [Fintype ι] {α : ι → Type} [∀ i, Measurabl
           rfl
   refine Measure.le_iff.2 fun A hA => ?_
   have hA' := hout A
-  rw [Measure.smul_apply, smul_eq_mul, Measure.pi_def, toMeasure_apply _ _ hA]
+  have hpi : OuterMeasure.pi (fun i => (μ i).toOuterMeasure) A ≤ Measure.pi μ A := by
+    rw [Measure.pi]
+    exact le_toMeasure_apply _ _ _
   calc ν A = K * (K⁻¹ * ν A) := by
         rw [← mul_assoc, ENNReal.mul_inv_cancel h0 h1, one_mul]
     _ ≤ K * OuterMeasure.pi (fun i => (μ i).toOuterMeasure) A := by
         gcongr
         exact hA'
+    _ ≤ (K • Measure.pi μ) A := by
+        rw [Measure.smul_apply, smul_eq_mul]
+        gcongr
 
 theorem exp_sub_one_le {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) : Real.exp x - 1 ≤ 2 * x := by
   have hq := Real.abs_exp_sub_one_sub_id_le (x := x) (by rw [abs_of_nonneg h0]; exact h1)
@@ -45,8 +55,8 @@ theorem exp_sub_one_le {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) : Real.exp x - 1 
   have := (abs_le.mp hq).2
   linarith
 
-open scoped Matrix.Norms.Frobenius in
 
+open scoped Matrix.Norms.Frobenius in
 theorem dOp_chart_le {n : ℕ} {ε : Fin n → Bool} {s : ℝ} {E : Fin (n ^ 2) → Matrix (Fin n) (Fin n) ℂ}
     (hE : ∀ i j, ((E i * (E j)ᴴ).trace).re = if i = j then 1 else 0) (hs : 0 ≤ s)
     (hn : Real.exp (2 * n ^ 2 * s) ≤ 2) (a a' : UJ ε) (t t' : Fin (n ^ 2) → ℝ)
@@ -84,6 +94,9 @@ theorem dOp_chart_le {n : ℕ} {ε : Fin n → Bool} {s : ℝ} {E : Fin (n ^ 2) 
     calc T (NormedSpace.exp ((x i : ℂ) • E i)) = NormedSpace.exp (T ((x i : ℂ) • E i)) :=
           NormedSpace.map_exp T hTc _
       _ = NormedSpace.exp (x i • T (E i)) := by rw [map_smul, Complex.coe_smul]
+  haveI : CompleteSpace (EuclideanSpace ℂ (Fin n) →L[ℂ] EuclideanSpace ℂ (Fin n)) := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      infer_instance
   obtain ⟨-, B, hB, hBn, -, -, -⟩ := GlobalTheory.ProductChart.exists_deriv_prod hs t' (n ^ 2) (fun i => T (E i))
     (fun i => ContinuousLinearMap.proj i) hEn ht'
   obtain ⟨-, -, -, -, hPn, -, -⟩ := GlobalTheory.ProductChart.exists_deriv_prod hs t (n ^ 2) (fun i => T (E i))
@@ -255,7 +268,7 @@ theorem lintegral_chart_all_le : ∀ (I : AutInst) (c : InfinitePlace I.F → �
       rw [show (volume : Measure (InfinitePlace I.F → Fin (I.n ^ 2) → ℝ)) =
         Measure.pi fun _ => (volume : Measure (Fin (I.n ^ 2) → ℝ)) from rfl, Measure.restrict_pi_pi]
     have hmapm : Measurable fun t : InfinitePlace I.F → Fin (I.n ^ 2) → ℝ => fun v => Θv v (t v) :=
-      measurable_pi_lambda _ fun v => (hmeas v).comp (measurable_pi_apply v)
+      Measurable.of_eval fun v => (hmeas v).comp (measurable_pi_apply v)
     have hmap : (Measure.pi fun _ => (volume : Measure (Fin (I.n ^ 2) → ℝ)).restrict C).map
         (fun t v => Θv v (t v)) = Measure.pi ν :=
       Measure.pi_map_pi fun v => (hmeas v).aemeasurable

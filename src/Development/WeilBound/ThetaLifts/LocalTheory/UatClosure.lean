@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.SplitInv
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsPureML
-import Development.WeilBound.ThetaLifts.LatticeBasics.LeviEx
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.SplitInv
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsPureML
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LeviEx
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,7 +149,8 @@ theorem levi_t_one {B : Base F E} {i₀ i₁ : ℕ} (hH : H'.IsAdapted σ B W W�
   let y : Fin d → E := W.J *ᵥ fun i => σ (H'.y i)
   have h2 : incV F H'.x ⬝ᵥ incV F y = 1 := by
     have := congrArg (inclR (F := F) (E := E) (AF F)) hH.xy
-    simpa [form, dotProduct, incV, map_sum, y] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [form, dotProduct, incV, map_sum, y] using this
   have h3 := congrArg (· ⬝ᵥ incV F y) h1
   simp only [smul_dotProduct, h2, smul_eq_mul, mul_one] at h3
   exact Units.ext h3.symm

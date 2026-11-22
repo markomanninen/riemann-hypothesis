@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentForm
-import Development.WeilBound.CoreStatements.ThetaDilations.ThetaLint
-import Development.WeilBound.CoreStatements.ThetaDilations.SdTransport
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentForm
+public import Development.WeilBound.CoreStatements.ThetaDilations.ThetaLint
+public import Development.WeilBound.CoreStatements.ThetaDilations.SdTransport
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -163,9 +168,10 @@ theorem theta_map (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M n : ℕ} (J : M
     rw [← He.restrict_map, Measure.map_map He.measurable He.symm.measurable]
     simp
   unfold thetaMeas
-  rw [Measure.map_smul, hmass]
+  rw [Measure.map_smul, hmass] <;> try exact hmG.aemeasurable
   congr 1
-  rw [Measure.map_sum hmG.aemeasurable, ← SWIsom.sum_reindex (gramEquiv σ J g c hc hg T)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Measure.map_sum hmG.aemeasurable, ← SWIsom.sum_reindex (gramEquiv σ J g c hc hg T)]
   congr 1
   funext X
   rw [Measure.map_map hmG (hmf _)]

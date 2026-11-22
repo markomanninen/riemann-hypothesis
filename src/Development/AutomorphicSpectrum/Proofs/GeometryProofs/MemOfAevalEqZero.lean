@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,8 @@ theorem mConeMap_homog (y : (Σ k, ι k) → Ω) {h : MRing ι} {d : K → ℕ} 
   classical
   conv_lhs => rw [h.as_sum]
   conv_rhs => rw [h.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [mConeMap, aeval_monomial, aeval_monomial, map_mul, mul_assoc]
   congr 1
@@ -128,7 +133,7 @@ theorem aeval_scaled (y : (Σ k, ι k) → Ω) (τ : K → Ω) (h : MRing ι) :
     aeval (fun p : Σ k, ι k => y p * τ p.1) h = aeval τ (mConeMap y h) := by
   induction h using MvPolynomial.induction_on with
   | C a => simp [mConeMap]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p i hp =>
     rw [map_mul, map_mul, map_mul, hp]
     simp [mConeMap]
@@ -166,7 +171,7 @@ theorem chart_form {y : (Σ k, ι k) → Ω} {c : ∀ k, ι k} (hc : ∀ k, y �
     refine ⟨m1 + m2, G1 * cMon c m2 + G2 * cMon c m1,
       homog_add (homog_mul hG1 (homog_cMon c m2))
         (by rw [add_comm m1 m2]; exact homog_mul hG2 (homog_cMon c m1)), ?_⟩
-    rw [map_add, map_mul, map_mul, aeval_cMon, aeval_cMon, ← e1, ← e2]
+    rw [map_add (f := _), map_mul, map_mul, aeval_cMon, aeval_cMon, ← e1, ← e2]
     simp only [Pi.add_apply, pow_add, Finset.prod_mul_distrib]
     ring
   | mul x1 x2 _ _ ih1 ih2 =>
@@ -220,8 +225,8 @@ theorem zpow_factor_inv {a b : K → ℕ} (Y : K → Ω) (hY : ∀ k, Y k ≠ 0)
 
 end UnitChart
 
-open UnitChart in
 
+open UnitChart in
 theorem isUnitSec_iff_chart (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Ω : Type) [Field Ω]
     (y : (Σ k, ι k) → Ω) (f g : MRing ι) (df dg : K → ℕ) (_hy : ∀ k, ∃ i, y ⟨k, i⟩ ≠ 0)
     (hf : IsMultiHomog f df) (hg : IsMultiHomog g dg) (hfn : f ∉ mCoordIdeal y) (hgn : g ∉ mCoordIdeal y) :

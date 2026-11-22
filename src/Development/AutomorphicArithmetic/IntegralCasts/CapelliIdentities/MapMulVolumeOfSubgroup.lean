@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -17,19 +21,6 @@ private lemma continuous_mulE {n : ℕ} :
 
 private lemma measurable_mulE {n : ℕ} (a : Fin n → Fin n → ℂ) : Measurable (mulE a) :=
   (continuous_mulE.comp (Continuous.prodMk_right a)).measurable
-
-private lemma norm_mulE_le {n : ℕ} (a x : Fin n → Fin n → ℂ) :
-    ‖mulE a x‖ ≤ n * (‖a‖ * ‖x‖) := by
-  have h0 : (0 : ℝ) ≤ n * (‖a‖ * ‖x‖) := by positivity
-  refine (pi_norm_le_iff_of_nonneg h0).2 fun i => (pi_norm_le_iff_of_nonneg h0).2 fun j => ?_
-  rw [mulE_apply]
-  calc ‖∑ k, a i k * x k j‖ ≤ ∑ k, ‖a i k * x k j‖ := norm_sum_le _ _
-    _ ≤ ∑ _k : Fin n, ‖a‖ * ‖x‖ := by
-        refine Finset.sum_le_sum fun k _ => ?_
-        rw [norm_mul]
-        exact mul_le_mul ((norm_le_pi_norm (a i) k).trans (norm_le_pi_norm a i))
-          ((norm_le_pi_norm (x k) j).trans (norm_le_pi_norm x k)) (norm_nonneg _) (norm_nonneg _)
-    _ = n * (‖a‖ * ‖x‖) := by simp
 
 private lemma continuous_detE {n : ℕ} :
     Continuous (fun v : Fin n → Fin n → ℂ => (Matrix.of v).det) :=
@@ -53,7 +44,9 @@ private lemma exists_pair (n : ℕ) :
   have hU : IsOpen {v : Fin n → Fin n → ℂ | (Matrix.of v).det ≠ 0} :=
     isOpen_ne_fun continuous_detE continuous_const
   have h1 : (Matrix.of.symm (1 : Matrix (Fin n) (Fin n) ℂ)) ∈
-      {v : Fin n → Fin n → ℂ | (Matrix.of v).det ≠ 0} := by simp
+      {v : Fin n → Fin n → ℂ | (Matrix.of v).det ≠ 0} := by
+    simp only [Set.mem_ofPred_eq, Equiv.apply_symm_apply, Matrix.det_one]
+    exact one_ne_zero
   obtain ⟨V, hV, hi, hsub⟩ := exists_compact_subset hU h1
   refine ⟨V, (fun p : (Fin n → Fin n → ℂ) × (Fin n → Fin n → ℂ) =>
     ((Matrix.of p.2).det)⁻¹ • mulE p.1 (Matrix.of.symm (Matrix.of p.2).adjugate)) '' (V ×ˢ V),
@@ -120,67 +113,11 @@ private lemma key {n : ℕ} {G : Set (Fin n → Fin n → ℂ)} {μ : Measure (F
       rintro y ⟨⟨g, v⟩, ⟨-, hv⟩, he'⟩
       obtain ⟨rfl, h'⟩ := Prod.mk.inj he'
       exact hK y v hv w hw (mulE_cancel (hdet _ haG) h')
-    · have : μ ((fun g => (g, x)) ⁻¹' S) = 0 :=
-        measure_mono_null (fun g hg hgG => hne ⟨g, hg, hgG⟩) hG
+    · have : μ ((fun g => (g, x)) ⁻¹' S) = 0 := by
+        refine measure_mono_null ?_ hG
+        intro g hg hgG
+        exact hne ⟨g, hg, hgG⟩
       show μ _ ≤ _
       rw [this]
       exact zero_le
   exact h1.trans h2
-
-theorem UpperTheory.map_mul_volume_of_subgroup :
-    ∀ (n : ℕ) (G : Set (Fin n → Fin n → ℂ)) (μ : MeasureTheory.Measure (Fin n → Fin n → ℂ)),
-        μ Gᶜ = 0 →
-        (∀ a ∈ G, ‖(Matrix.of a).det‖ = 1) →
-        (∀ a ∈ G, MeasureTheory.Measure.map (fun x : Fin n → Fin n → ℂ => Matrix.of.symm (Matrix.of a * Matrix.of x))
-          (MeasureTheory.volume : MeasureTheory.Measure (Fin n → Fin n → ℂ)) = MeasureTheory.volume) →
-        (∀ a ∈ G, MeasureTheory.Measure.map (fun x : Fin n → Fin n → ℂ => Matrix.of.symm (Matrix.of a * Matrix.of x)) μ = μ) →
-        (∀ K : Set (Fin n → Fin n → ℂ), IsCompact K → μ K < ⊤) →
-        ∃ C : ℝ, ∀ R : ℝ, 1 ≤ R →
-          μ {g | Real.sqrt (∑ i, ∑ j, Complex.normSq (g i j)) ≤ R} ≤ ENNReal.ofReal (C * R ^ (2 * n ^ 2)) := by
-  intro n G μ hG hdet hvol hinv hfin
-  haveI : IsFiniteMeasureOnCompacts μ := ⟨fun K hK => hfin K hK⟩
-  haveI := haarE n
-  obtain ⟨V, K, hV, hK, hpos, hVK⟩ := exists_pair n
-  obtain ⟨M, hM0, hM⟩ := hV.isBounded.exists_pos_norm_le
-  have hdim : Module.finrank ℝ (Fin n → Fin n → ℂ) = 2 * n ^ 2 := by
-    simp [Module.finrank_pi_fintype]
-    ring
-  set c : ENNReal := μ K * volume (Metric.ball (0 : Fin n → Fin n → ℂ) 1) / volume V with hc
-  have hcf : c ≠ ⊤ :=
-    ENNReal.div_ne_top (ENNReal.mul_ne_top (hfin K hK).ne measure_ball_lt_top.ne) hpos.ne'
-  refine ⟨c.toReal * (n * M) ^ (2 * n ^ 2), fun R hR => ?_⟩
-  have hR0 : 0 ≤ R := zero_le_one.trans hR
-  have hk := key (μ := μ) hG (fun a ha h => by simpa [h] using hdet a ha) hvol hinv hV
-    (isCompact_closedBall (0 : Fin n → Fin n → ℂ) R)
-    (D := Metric.closedBall 0 (n * M * R)) measurableSet_closedBall hVK (fun g hg v hv => by
-      rw [mem_closedBall_zero_iff] at hg ⊢
-      refine (norm_mulE_le g v).trans ?_
-      have := hM v hv
-      calc (n : ℝ) * (‖g‖ * ‖v‖) ≤ n * (R * M) := by gcongr
-        _ = n * M * R := by ring)
-  rw [Measure.addHaar_closedBall volume _ (by positivity), hdim] at hk
-  have hsub : {g : Fin n → Fin n → ℂ | Real.sqrt (∑ i, ∑ j, Complex.normSq (g i j)) ≤ R} ⊆
-      Metric.closedBall 0 R := by
-    intro g hg
-    rw [mem_closedBall_zero_iff]
-    refine (pi_norm_le_iff_of_nonneg hR0).2 fun i => (pi_norm_le_iff_of_nonneg hR0).2 fun j => ?_
-    refine le_trans (Real.le_sqrt_of_sq_le ?_) hg
-    rw [← Complex.normSq_eq_norm_sq]
-    calc Complex.normSq (g i j) ≤ ∑ j, Complex.normSq (g i j) :=
-          Finset.single_le_sum (f := fun j => Complex.normSq (g i j))
-            (fun _ _ => Complex.normSq_nonneg _) (Finset.mem_univ j)
-      _ ≤ ∑ i, ∑ j, Complex.normSq (g i j) :=
-          Finset.single_le_sum (f := fun i => ∑ j, Complex.normSq (g i j))
-            (fun _ _ => Finset.sum_nonneg fun _ _ => Complex.normSq_nonneg _) (Finset.mem_univ i)
-  refine (measure_mono hsub).trans ?_
-  have hVf : volume V ≠ ⊤ := hV.measure_lt_top.ne
-  calc μ (Metric.closedBall 0 R) ≤ (μ K * (ENNReal.ofReal ((n * M * R) ^ (2 * n ^ 2)) *
-        volume (Metric.ball (0 : Fin n → Fin n → ℂ) 1))) / volume V := by
-        rw [ENNReal.le_div_iff_mul_le (Or.inl hpos.ne') (Or.inl hVf), mul_comm]
-        exact hk
-    _ = c * ENNReal.ofReal ((n * M * R) ^ (2 * n ^ 2)) := by
-        rw [hc, div_eq_mul_inv, div_eq_mul_inv]
-        ring
-    _ = ENNReal.ofReal (c.toReal * (n * M) ^ (2 * n ^ 2) * R ^ (2 * n ^ 2)) := by
-        rw [mul_assoc c.toReal, ← mul_pow, ENNReal.ofReal_mul ENNReal.toReal_nonneg,
-          ENNReal.ofReal_toReal hcf]

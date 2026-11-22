@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.TwistingSheafOneChartEqPreimageStandardChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.TwistingSheafOneChartEqPreimageStandardChart
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,8 @@ theorem jacOn_of_eq_one (f : Fin (D + 1) → Γ(Y, U)) (i : Fin (D + 1)) (hi : f
   · intro a _ ha
     obtain ⟨b, hb⟩ := Fin.exists_succAbove_eq (Ne.symm ha)
     rw [dOn_eq_zero_of_eq_one _ b (by rw [hb, hi]), smul_zero]
-  · simp
+  · intro h
+    exact (h (Finset.mem_univ i)).elim
 
 theorem isUnit_of_affine {f : Γ(Y, U)}
     (h : ∀ W : Y.Opens, IsAffineOpen W → ∀ hW : W ≤ U, IsUnit (resG Y hW f)) : IsUnit f := by

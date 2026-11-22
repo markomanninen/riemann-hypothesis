@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SegmentDerivatives.DerivJac
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.RightWhit
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspLinesIrr
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SegmentDerivatives.DerivJac
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.RightWhit
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspLinesIrr
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,23 +101,23 @@ def ConjDual : Prop :=
       ConjEquiv (twist ρ (detChar (Fin n) (absPow k (s : ℂ)))) (twist (contra ρ) (detChar (Fin n) (absPow k (s : ℂ))))
 
 def Herm : Prop :=
-  ∀ (x : IrrGL k), IsUnitarisable x.rep → ∀ (s : ℝ) (N : ℕ) (hd : ∑ a, (![x.nu (-(s : ℂ)), x.nu (s : ℂ)] a).1 = N),
+  ∀ (x : IrrGL (k := k)), IsUnitarisable x.rep → ∀ (s : ℝ) (N : ℕ) (hd : ∑ a, (![x.nu (-(s : ℂ)), x.nu (s : ℂ)] a).1 = N),
     (prodIrr ![x.nu (-(s : ℂ)), x.nu (s : ℂ)] hd).IsIrreducible → HasSesq (prodIrr ![x.nu (-(s : ℂ)), x.nu (s : ℂ)] hd)
 
 def ProdModel : Prop :=
-  ∀ (x : IrrGL k) (s : ℝ) (hd : ∑ a, (![x.nu (-(s : ℂ)), x.nu (s : ℂ)] a).1 = x.1 + x.1),
+  ∀ (x : IrrGL (k := k)) (s : ℝ) (hd : ∑ a, (![x.nu (-(s : ℂ)), x.nu (s : ℂ)] a).1 = x.1 + x.1),
     Nonempty ((prodIrr ![x.nu (-(s : ℂ)), x.nu (s : ℂ)] hd).Equiv
       (parInd (blk2 x.1) (twist (piTensor fun _ : Fin 2 => x.rep) (chi k x.1 s))))
 
-def CuspUnit : Prop := ∀ y : IrrGL k, y.IsCusp → ∃ (ρ : IrrGL k) (z : ℝ), ρ.IsCusp ∧ IsUnitarisable ρ.rep ∧ y = ρ.nu z
+def CuspUnit : Prop := ∀ y : IrrGL (k := k), y.IsCusp → ∃ (ρ : IrrGL (k := k)) (z : ℝ), ρ.IsCusp ∧ IsUnitarisable ρ.rep ∧ y = ρ.nu z
 
 def SomeRed : Prop :=
-  ∀ (x : IrrGL k), x.IsCusp → IsUnitarisable x.rep →
+  ∀ (x : IrrGL (k := k)), x.IsCusp → IsUnitarisable x.rep →
     ∃ s : ℝ, 0 ≤ s ∧ ∀ (N : ℕ) (hd : ∑ a, (![x.nu (-(s : ℂ)), x.nu (s : ℂ)] a).1 = N),
       ¬ (prodIrr ![x.nu (-(s : ℂ)), x.nu (s : ℂ)] hd).IsIrreducible
 
 def RedCl : Prop :=
-  ∀ (y : IrrGL k), y.IsCusp → ∀ (N : ℕ) (hd : ∑ a, (![y, y.nu 1] a).1 = N), ¬ (prodIrr ![y, y.nu 1] hd).IsIrreducible
+  ∀ (y : IrrGL (k := k)), y.IsCusp → ∀ (N : ℕ) (hd : ∑ a, (![y, y.nu 1] a).1 = N), ¬ (prodIrr ![y, y.nu 1] hd).IsIrreducible
 
 end R
 

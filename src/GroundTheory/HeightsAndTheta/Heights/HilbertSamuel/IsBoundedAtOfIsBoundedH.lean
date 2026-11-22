@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEuclideanSections
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEuclideanSections
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -60,25 +65,6 @@ def SectionL2Lattice.Statement : Prop :=
         IsSmallH (mCoordIdeal y) y A k (t : Ω) → (st : Ω) = s * t → ‖φ (n + k) st‖ ≤ ‖φ n s‖) ∧
       (∃ C : ℝ, ∀ n : ℕ, (r n : ℝ) ≤ C * ((n : ℝ) + 1) ^ D) ∧
       ∀ (n : ℕ) (s : chartLat y A.a n), ‖φ n s‖ = sectionL2Norm μ y A n (s : Ω)
-
-def natPtsMeasure : Measure ℂ :=
-  Measure.sum fun j : ℕ => ((2 : ENNReal)⁻¹ ^ (j + 1)) • Measure.dirac ((j : ℂ) + 1)
-
-def gridMeasure (J : Type) [Fintype J] : Measure (J → ℂ) :=
-  Measure.pi fun _ => natPtsMeasure
-
-theorem natPtsMeasure_univ : natPtsMeasure Set.univ = 1 := by
-  rw [natPtsMeasure, Measure.sum_apply _ MeasurableSet.univ]
-  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
-  rw [show (fun j : ℕ => (2 : ENNReal)⁻¹ ^ (j + 1)) = fun j => 2⁻¹ * (2⁻¹) ^ j by
-    funext j; rw [pow_succ, mul_comm]]
-  rw [ENNReal.tsum_mul_left, ENNReal.tsum_geometric, ENNReal.one_sub_inv_two, inv_inv]
-  exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
-
-instance : IsProbabilityMeasure natPtsMeasure := ⟨natPtsMeasure_univ⟩
-
-instance (J : Type) [Fintype J] : IsProbabilityMeasure (gridMeasure J) := by
-  unfold gridMeasure; infer_instance
 
 end
 

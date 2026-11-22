@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeIsobaric
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumHeckeEigenvalueGeneratingSeriesGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeIsobaric
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumHeckeEigenvalueGeneratingSeriesGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,10 +26,10 @@ theorem unramB_tprod_ne_zero {ι : Type} [Fintype ι] {X : ι → Type} [∀ i, 
 
 theorem unramB_irr_quot (w : HeightOneSpectrum (𝓞 E)) {V : Type} [AddCommGroup V] [Module ℂ V]
     (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V) (hρs : IsSmooth ρ) {f0 : V} (hf0ne : f0 ≠ 0)
-    (hf0K : f0 ∈ fixed ρ (GlobalTheory.LFun.KGL w n)) (B : Multiset ℂˣ)
-    (hsat : ∀ f ∈ fixed ρ (GlobalTheory.LFun.KGL w n), f ≠ 0 → GlobalTheory.LFun.IsSatVecGL w ρ f B) :
+    (hf0K : f0 ∈ fixed ρ (GlobalTheory.LFun.KGL w (n := n))) (B : Multiset ℂˣ)
+    (hsat : ∀ f ∈ fixed ρ (GlobalTheory.LFun.KGL w (n := n)), f ≠ 0 → GlobalTheory.LFun.IsSatVecGL w ρ f B) :
     ∃ P : SmIrr (GL (Fin n) (w.adicCompletion E)), GlobalTheory.SmGL.IsSubquotient P.ρ ρ ∧
-      GlobalTheory.LGrp.IsSpherical P.ρ (GlobalTheory.LFun.KGL w n) ∧ GlobalTheory.LFun.HasSatGL w P.ρ B := by
+      GlobalTheory.LGrp.IsSpherical P.ρ (GlobalTheory.LFun.KGL w (n := n)) ∧ GlobalTheory.LFun.HasSatGL w P.ρ B := by
   obtain ⟨hKo, hKc⟩ := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n
 
   obtain ⟨W, _, _, π, q, hπ, hq, hq0⟩ :=
@@ -61,20 +65,20 @@ theorem unramB_irr_quot (w : HeightOneSpectrum (𝓞 E)) {V : Type} [AddCommGrou
     ext g
     exact Subtype.ext_iff
   let P : SmIrr (GL (Fin n) (w.adicCompletion E)) := ⟨W, π, hπs, hπi⟩
-  have hy0K : q ⟨f0, GlobalTheory.FinZeta.GLSeries.self_mem_cyc _ f0⟩ ∈ fixed π (GlobalTheory.LFun.KGL w n) :=
+  have hy0K : q ⟨f0, GlobalTheory.FinZeta.GLSeries.self_mem_cyc _ f0⟩ ∈ fixed π (GlobalTheory.LFun.KGL w (n := n)) :=
     GlobalTheory.LGrp.mem_fixed.2 fun k hk => by
       rw [← hq]
       congr 1
       exact Subtype.ext (GlobalTheory.LGrp.mem_fixed.1 hf0K k hk)
-  have hsph : GlobalTheory.LGrp.IsSpherical P.ρ (GlobalTheory.LFun.KGL w n) := (Submodule.ne_bot_iff _).2 ⟨_, hy0K, hq0⟩
+  have hsph : GlobalTheory.LGrp.IsSpherical P.ρ (GlobalTheory.LFun.KGL w (n := n)) := (Submodule.ne_bot_iff _).2 ⟨_, hy0K, hq0⟩
   refine ⟨P, ⟨S, qI, fun z => hqs z⟩, hsph, hsph, fun x hx hx0 => ?_⟩
-  have hx' : x ∈ (fixed S.toRepresentation (GlobalTheory.LFun.KGL w n)).map qI.toLinearMap := by
+  have hx' : x ∈ (fixed S.toRepresentation (GlobalTheory.LFun.KGL w (n := n))).map qI.toLinearMap := by
     rw [GlobalTheory.LocGL.map_fixed_of_surjective hSs hKc (f := qI) fun z => hqs z]
     exact hx
   obtain ⟨u, hu, hux⟩ := Submodule.mem_map.1 hx'
   have hqu : q u = x := hux
   have hu0 : u ≠ 0 := fun e => hx0 (by rw [← hqu, e, map_zero])
-  have huK : u.1 ∈ fixed (ρ) (GlobalTheory.LFun.KGL w n) :=
+  have huK : u.1 ∈ fixed (ρ) (GlobalTheory.LFun.KGL w (n := n)) :=
     GlobalTheory.LGrp.mem_fixed.2 fun k hk => congrArg Subtype.val (GlobalTheory.LGrp.mem_fixed.1 hu k hk)
   have hu1 : GlobalTheory.LFun.IsSatVecGL w (ρ) u.1 B :=
     hsat _ huK fun e => hu0 (Subtype.ext e)
@@ -87,16 +91,16 @@ theorem unramB_irr_quot (w : HeightOneSpectrum (𝓞 E)) {V : Type} [AddCommGrou
 
 theorem unram_component {c : ℕ} {N : Fin c → ℕ} (h : ∑ i, N i = n) (w : HeightOneSpectrum (𝓞 E))
     (σ : ∀ i, SmIrr (GL (Fin (N i)) (w.adicCompletion E))) (B : Fin c → Multiset ℂˣ)
-    (hB : ∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (GlobalTheory.LFun.KGL w (N i)) ∧ GlobalTheory.LFun.HasSatGL w (σ i).ρ (B i)) :
+    (hB : ∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (GlobalTheory.LFun.KGL w (n := (N i))) ∧ GlobalTheory.LFun.HasSatGL w (σ i).ρ (B i)) :
     ∃ P : SmIrr (GL (Fin n) (w.adicCompletion E)), GlobalTheory.SmGL.IsSubquotient P.ρ (locProd h w σ) ∧
-      GlobalTheory.LGrp.IsSpherical P.ρ (GlobalTheory.LFun.KGL w n) ∧ GlobalTheory.LFun.HasSatGL w P.ρ (∑ i, B i) := by
+      GlobalTheory.LGrp.IsSpherical P.ρ (GlobalTheory.LFun.KGL w (n := n)) ∧ GlobalTheory.LFun.HasSatGL w P.ρ (∑ i, B i) := by
   classical
   letI := GlobalTheory.LocalData.complRel w
   haveI := GlobalTheory.LocalData.isLocalField w
-  have hKO : ∀ m, GlobalTheory.LFun.KGL w m = GlobalTheory.SplitWeil.KO (w.adicCompletion E) (Fin m) :=
+  have hKO : ∀ m, GlobalTheory.LFun.KGL w (n := m) = GlobalTheory.SplitWeil.KO (w.adicCompletion E) (Fin m) :=
     fun m => (GlobalTheory.SmGL.SphCompletion.KO_completion w m).symm
 
-  have hv : ∀ i, ∃ v ∈ fixed (σ i).ρ (GlobalTheory.LFun.KGL w (N i)), v ≠ 0 := fun i =>
+  have hv : ∀ i, ∃ v ∈ fixed (σ i).ρ (GlobalTheory.LFun.KGL w (n := (N i))), v ≠ 0 := fun i =>
     (Submodule.ne_bot_iff _).1 (hB i).1
   choose v hvK hv0 using hv
 
@@ -106,14 +110,14 @@ theorem unram_component {c : ℕ} {N : Fin c → ℕ} (h : ∑ i, N i = n) (w : 
       congr 1
       funext a
       exact GlobalTheory.LGrp.mem_fixed.1 (hvK a) (g a) (by rw [hKO]; exact hg a)
-  have hf0K : f0 ∈ fixed (locProd h w σ) (GlobalTheory.LFun.KGL w n) := by
+  have hf0K : f0 ∈ fixed (locProd h w σ) (GlobalTheory.LFun.KGL w (n := n)) := by
     rw [hKO]
     exact hf0
   have hf0ne : f0 ≠ 0 := by
     rintro rfl
     exact unramB_tprod_ne_zero v hv0 hf01.symm
 
-  have hsat : ∀ f ∈ fixed (locProd h w σ) (GlobalTheory.LFun.KGL w n), f ≠ 0 →
+  have hsat : ∀ f ∈ fixed (locProd h w σ) (GlobalTheory.LFun.KGL w (n := n)), f ≠ 0 →
       GlobalTheory.LFun.IsSatVecGL w (locProd h w σ) f (∑ i, B i) := by
     intro f hf hf0
     obtain ⟨S, hS, hfS⟩ := GlobalTheory.SatInd.exists_sat_multiProd h (fun a => (σ a).smooth) (fun a => (σ a).irred) hf hf0

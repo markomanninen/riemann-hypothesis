@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.IsCompactMaximalPairPlace
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.IsCompactMaximalPairPlace
+
+@[expose] public section
 
 open UpperTheory.V.Z.Tf.GlobalTraceComparison UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi UpperTheory.Zero.ConvolutionTheory.EB PositivityTheory.Rg.BcB.Desc
 
@@ -23,11 +27,11 @@ private theorem biInv_of_hecke {G : Type} [Group G] [TopologicalSpace G] {K : Su
   rw [(hf.2 b b.2 _).2, (hf.2 a a.2 x).1]
 
 private theorem cv_comm {E : Type} [Field E] [NumberField E] (n : ℕ) (w : GlobalTheory.BCT.Pl E)
-    {f g : GlobalTheory.BCT.GLw n w → ℂ} (hf : GlobalTheory.BCT.IsHecke (GlobalTheory.LFun.KGL w n) f)
-    (hg : GlobalTheory.BCT.IsHecke (GlobalTheory.LFun.KGL w n) g) :
-    UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.cv (GlobalTheory.LFun.KGL w n) f g = UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.cv (GlobalTheory.LFun.KGL w n) g f := by
+    {f g : GlobalTheory.BCT.GLw n w → ℂ} (hf : GlobalTheory.BCT.IsHecke (GlobalTheory.LFun.KGL w (n := n)) f)
+    (hg : GlobalTheory.BCT.IsHecke (GlobalTheory.LFun.KGL w (n := n)) g) :
+    UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.cv (GlobalTheory.LFun.KGL w (n := n)) f g = UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.cv (GlobalTheory.LFun.KGL w (n := n)) g f := by
   rw [cv_eq_conv _ hf hg, cv_eq_conv _ hg hf]
-  exact Formalism.UG.P.heckecomm_gelfand (GlobalTheory.LFun.KGL w n) Formalism.UG.P.heckecomm_tr Formalism.UG.P.heckecomm_tr_mul
+  exact Formalism.UG.P.heckecomm_gelfand (GlobalTheory.LFun.KGL w (n := n)) Formalism.UG.P.heckecomm_tr Formalism.UG.P.heckecomm_tr_mul
     Formalism.UG.P.heckecomm_tr_tr (fun x hx => Formalism.UG.P.heckecomm_tr_mem _ x hx)
     (Formalism.UG.P.heckecomm_tr_dc Formalism.UG.P.cartan_decomposition_holds E w n) f g (biInv_of_hecke hf) (biInv_of_hecke hg)
 

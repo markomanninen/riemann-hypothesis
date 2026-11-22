@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.DefsCS
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusBasic
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.DefsCS
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusBasic
+
+@[expose] public section
 
 open NumberField
 
@@ -24,7 +28,7 @@ theorem genusScale_span (hinj : Function.Injective (algebraMap R K))
     | mem b hb => exact hs a ha b hb
     | zero => simp
     | add u w _ _ hu hw =>
-        rw [map_add, mul_add]
+        rw [map_add (f := _), mul_add]
         exact add_mem hu hw
     | smul r u _ hu =>
         rw [genusBasic_hsmul_right, mul_left_comm]
@@ -34,7 +38,7 @@ theorem genusScale_span (hinj : Function.Injective (algebraMap R K))
   | mem a ha => exact key a ha y hy
   | zero => simp
   | add u w _ _ hu hw =>
-      rw [map_add, LinearMap.add_apply, mul_add]
+      rw [map_add (f := _), LinearMap.add_apply, mul_add]
       exact add_mem hu hw
   | smul r u _ hu =>
       rw [genusBasic_hsmul_left hinj hstar, mul_left_comm]
@@ -108,7 +112,6 @@ theorem genusScale : GenusScale := by
     have hm := genusBasic_mem_one_mul _ (hn (h a b)) (k : 𝓞 K)
     rwa [map_natCast] at hm
   intro M hM x hx y hy
-  have hM' : Submodule.IsLattice K M ∧ SameGenus h L M := hM
-  exact genusScale_transfer hinj hstar h _ L M hM'.2 hLd x hx y hy
+  exact genusScale_transfer hinj hstar h _ L M hM.2 hLd x hx y hy
 
 end Formalism.HermitianLatticesTheory

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartZeroSet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartZeroSet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -27,20 +32,19 @@ theorem scaleAll_mem (P : Ideal (MRing ι)) (hP : IsMultiHomogIdeal P) (c : K �
     | insert k s hk ih =>
       have h := scaleBlock_mem_zeroLocus P hP k (hc k) ih
       convert h using 1
-      funext p
-      simp only [scaleBlock, Finset.mem_insert]
-      by_cases hpk : p.1 = k
-      · subst hpk
-        simp [hk]
-      · simp [hpk]
+      funext ⟨j, a⟩
+      by_cases hpk : j = k
+      · subst j
+        simp [scaleBlock, hk]
+      · simp [scaleBlock, hpk]
   simpa using key Finset.univ
 
 def liftPoly {m : ℕ} (σ : Fin m ≃ ((k : K) → ι k)) (i : (k : K) → ι k) (f : MRing ι) :
     MvPolynomial (Fin m) ℂ :=
   eval₂ (algebraMap ℤ (MvPolynomial (Fin m) ℂ)) (fun p => X (σ.symm (Function.update i p.1 p.2))) f
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem eval_liftPoly {m : ℕ} (σ : Fin m ≃ ((k : K) → ι k)) (i : (k : K) → ι k) (x : Fin m → ℂ)
     (f : MRing ι) :
     eval x (liftPoly σ i f) = eval (chartLift σ i x) (map (Int.castRingHom ℂ) f) := by

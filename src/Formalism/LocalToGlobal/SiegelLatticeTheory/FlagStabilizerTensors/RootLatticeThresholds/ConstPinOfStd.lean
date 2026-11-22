@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyConst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
 
 variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word}
 
-variable (X u u') in
 
+variable (X u u') in
 def LemmaMSStd (ψ : AddChar (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF X.B.I.F) ℂ) : Prop :=
   Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsCharAF X.B.I.F ψ → Formalism.L2.SG.LocVol.IsStdChar ψ → Formalism.L2.SG.LocVol.ProdConv X u u' ψ →
     LemmaMS X u u' ψ

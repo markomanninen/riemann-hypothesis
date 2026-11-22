@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeNatCastIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsChooseSmallPadicValAxInductionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeNatCastIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsChooseSmallPadicValAxInductionStatement
+
+@[expose] public section
 
 open Polynomial
 
@@ -54,7 +58,8 @@ theorem exists_root_hasseDeriv [IsAlgClosed K] [CharZero K] (h0 : ϖ ≠ 0) (h1 
   have hfac := C_leadingCoeff_mul_prod_multiset_X_sub_C hcard
   have hev : Q.eval α = ((T.val.map fun t => α - t).map fun d => X + C d).prod.coeff j := by
     rw [hQ, ← taylor_coeff, taylor_apply, hP, prod_comp, Multiset.map_map]
-    congr 1
+    apply congrArg (fun p : K[X] => p.coeff j)
+    change (∏ t ∈ T, (X - C t).comp (X + C α)) = ∏ t ∈ T, (X + C (α - t))
     refine Finset.prod_congr rfl fun t _ => ?_
     simp [add_sub_assoc]
   have hge := ge_coeff_prod h0 h1 (T.val.map fun t => α - t) (q := a) (by
@@ -169,7 +174,7 @@ theorem exists_fixed [IsAlgClosed K] {p : ℕ} (hp : p.Prime) (h1 : A.valuation 
       rw [Multiset.mem_toFinset, mem_roots'] at *
       refine ⟨hβ.1, ?_⟩
       rw [← hQmap h hh]
-      exact hβ.2.map) (fun h hh => by
+      exact hβ.2.map (h : K →+* K)) (fun h hh => by
       have k1 := hαβ.symm.map h0 (h : K →+* K) (hH h hh) (map_natCast _ p)
       rw [map_sub] at k1
       exact Ge.trans k1 (((hα h hh).mono (by linarith)).trans hαβ))
@@ -179,8 +184,8 @@ theorem exists_fixed [IsAlgClosed K] {p : ℕ} (hp : p.Prime) (h1 : A.valuation 
 
 end Orbit
 
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Ord2 in
 
+open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Ord2 in
 theorem exists_fixed_congr (l : ℕ) [Fact l.Prime] (hl : l ≠ 2) (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω]
     (A : ValuationSubring Ω) (hA : OverL l A) (H : Subgroup (G ℚ Ω)) (hH : H ≤ Dec (F := ℚ) A) (m : ℕ) (x : Ω) (hx : x ∈ A)
     (hcg : ∀ h ∈ H, GlobalTheory.Glue.CgA A l (m + 1) (h x) x) :

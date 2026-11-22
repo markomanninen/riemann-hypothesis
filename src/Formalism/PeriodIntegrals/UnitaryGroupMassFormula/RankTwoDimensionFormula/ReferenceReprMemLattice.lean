@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.FlagLevelCharacterEqPsiDivN
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,9 +107,6 @@ theorem Z_of_sym {u w : VA X.B.I} {c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F}
   rw [e]
   exact Z_sig X.B.I X.B.g h
 
-theorem Z0 {x : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (h : ZMod' X.B.I X.B.g x) : ZMod' X.B.I X.B.g (x - 0) := by
-  simpa using h
-
 theorem hA_bw_bw (l m : Fin D.R.k) : hA X.B.I (X.bw l) (X.bw m) = 0 := by
   rw [X.bw_w l, X.bw_w m, hA_smul_left, hA_smul_right, ← mul_assoc, mul_comm (sigA X.B.I X.ew) X.ew,
     X.ew_orth, zero_mul]
@@ -124,9 +125,9 @@ theorem dual_coords {v : VA X.B.I} (hv : v ∈ X.B.I.Lf) : v - repr0 X v ∈ mL 
     · intro a
       by_cases hab : a = b
       · subst hab
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         exact Z_of_sym X (by rw [map_one]; simpa using (X.gramIntegral a a).2.2)
-      · rw [if_neg hab, sub_zero]
+      · rw [ite_eq_right hab, sub_zero]
         exact sym (by simpa [Ne.symm hab] using (X.gramIntegral b a).2.2)
     · intro a; simpa using (X.gramIntegral a b).1
     · simpa using sym (X.formsAtZero.2 b).1
@@ -167,9 +168,9 @@ theorem dual_coords {v : VA X.B.I} (hv : v ∈ X.B.I.Lf) : v - repr0 X v ∈ mL 
       refine Z_of_sym X ?_
       by_cases hlm : l = m
       · subst hlm
-        rw [if_pos rfl, sigA_sigA]
+        rw [ite_eq_left rfl, sigA_sigA]
         simpa using X.bw_dual l l
-      · rw [if_neg hlm, map_zero]
+      · rw [ite_eq_right hlm, map_zero]
         simpa [Ne.symm hlm] using X.bw_dual m l
   have hmL : mL X.B.I X.B.g ≤ ReprSub X := by
     unfold mL

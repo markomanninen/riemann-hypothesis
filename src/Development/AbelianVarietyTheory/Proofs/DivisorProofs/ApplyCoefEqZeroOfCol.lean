@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefHomGenHomMonomial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JointRowWeightAntitoneOfMaxPotential
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefHomGenHomMonomial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JointRowWeightAntitoneOfMaxPotential
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,7 +53,7 @@ def coefEnd (ν : Fin N → ℕ) (m : Fin N × Fin N →₀ ℕ) : Module.End O 
     (fun x hx => coeff_genHom_mem O N ν x hx m)
 
 theorem coe_coefEnd (ν : Fin N → ℕ) (m : Fin N × Fin N →₀ ℕ) (f : dualWeyl O N N ν) :
-    (coefEnd O N ν m f : MvPolynomial (Fin N × Fin N) O) = coeff m (genHom O N f) := rfl
+    (coefEnd O N ν m f : MvPolynomial (Fin N × Fin N) O) = AddMonoidAlgebra.coeff (genHom O N f) m := rfl
 
 theorem coe_rowProj (ν v : Fin N → ℕ) (f : dualWeyl O N N ν) :
     (rowProj O N ν v f : MvPolynomial (Fin N × Fin N) O) = weightedHomogeneousComponent (rowW N N) v f := rfl
@@ -119,16 +123,18 @@ variable {O N lam} {Gm : Type} [AddCommGroup Gm] [Module (alg O N lam) Gm] {R : 
 theorem sum_expand {Z I : Type} (θ : MvPolynomial Z O →ₐ[O] R) (ψ : Gm →+ R)
     (hψ : ∀ (c : O) z, ψ (algebraMap O (alg O N lam) c • z) = algebraMap O R c * ψ z) (s : Finset I) (p : I → MvPolynomial Z O)
     (a : I → alg O N lam) (U : Finset (Z →₀ ℕ)) (hU : ∀ i ∈ s, (p i).support ⊆ U) (z : Gm) :
-    ∑ i ∈ s, θ (p i) * ψ (a i • z) = ∑ μ ∈ U, θ (monomial μ 1) * ψ ((∑ i ∈ s, coeff μ (p i) • a i) • z) := by
-  simp only [Finset.sum_smul, map_sum, Finset.mul_sum]
+    ∑ i ∈ s, θ (p i) * ψ (a i • z) = ∑ μ ∈ U, θ (monomial μ 1) * ψ ((∑ i ∈ s, AddMonoidAlgebra.coeff (p i) μ • a i) • z) := by
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_smul, map_sum, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i hi => ?_
-  have : p i = ∑ μ ∈ U, coeff μ (p i) • monomial μ 1 := by
+  have : p i = ∑ μ ∈ U, AddMonoidAlgebra.coeff (p i) μ • monomial μ 1 := by
     conv_lhs => rw [(p i).as_sum]
     simp only [smul_monomial, smul_eq_mul, mul_one]
     exact Finset.sum_subset (hU i hi) fun m _ hm => by rw [notMem_support_iff.1 hm, map_zero]
   conv_lhs => rw [this]
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [Algebra.smul_def (A := alg O N lam), mul_smul, hψ, map_smul, Algebra.smul_def]
   ring
@@ -147,13 +153,13 @@ theorem transfer {Z I J : Type} (θ : MvPolynomial Z O →ₐ[O] R) (ψ : Gm →
   rw [sum_expand θ ψ hψ s p a U (fun i hi => (Finset.subset_biUnion_of_mem (fun i => (p i).support) hi).trans Finset.subset_union_left),
     sum_expand θ ψ hψ t q a' U (fun i hi => (Finset.subset_biUnion_of_mem (fun i => (q i).support) hi).trans Finset.subset_union_right)]
   refine Finset.sum_congr rfl fun μ _ => ?_
-  have h1 : ∑ i ∈ s, coeff μ (p i) • b i = ∑ j ∈ t, coeff μ (q j) • b' j := by
+  have h1 : ∑ i ∈ s, AddMonoidAlgebra.coeff (p i) μ • b i = ∑ j ∈ t, AddMonoidAlgebra.coeff (q j) μ • b' j := by
     ext1 f
     apply Subtype.ext
-    have := congrArg (coeff μ) (H f)
+    have := congrArg (AddMonoidAlgebra.coeff · μ) (H f)
     simp only [coeff_sum, mul_comm _ (C _), coeff_C_mul, coeff_map] at this
     simpa [smul_eq_C_mul, mul_comm] using this
-  have h2 : ∑ i ∈ s, coeff μ (p i) • a i = ∑ j ∈ t, coeff μ (q j) • a' j := by
+  have h2 : ∑ i ∈ s, AddMonoidAlgebra.coeff (p i) μ • a i = ∑ j ∈ t, AddMonoidAlgebra.coeff (q j) μ • a' j := by
     apply Subtype.ext
     have := congrArg (atN O N lam τ) h1
     simpa [hb, hb'] using this
@@ -250,12 +256,12 @@ theorem apply_coef_eq_zero_of_col (τ : ι) (w : Fin N → ℕ) (h0 : ∀ v, v �
 theorem apply_proj (τ : ι) (w : Fin N → ℕ) (h0 : ∀ v, v ≠ w → ∀ z, ψ (projA O N lam τ v • z) = 0) (z : Gm) :
     ψ (projA O N lam τ w • z) = ψ z := by
   let θ : MvPolynomial Empty O →ₐ[O] R := aeval fun _ => 0
-  have h1 := sum_unit c hc (ψ.comp (DistribMulAction.toAddMonoidHom Gm (projA O N lam τ w))) (fun r z => by
-    simp only [AddMonoidHom.comp_apply, DistribMulAction.toAddMonoidHom_apply]
+  have h1 := sum_unit c hc (ψ.comp (DistribSMul.toAddMonoidHom Gm (projA O N lam τ w))) (fun r z => by
+    simp only [AddMonoidHom.comp_apply, DistribSMul.toAddMonoidHom_apply]
     rw [smul_smul, ← Algebra.commutes, mul_smul, hψ]) θ τ z
   refine h1.symm.trans ((Finset.sum_congr rfl fun m _ => ?_).trans (sum_unit c hc ψ hψ θ τ z))
   refine congrArg (_ * ·) ?_
-  simp only [AddMonoidHom.comp_apply, DistribMulAction.toAddMonoidHom_apply]
+  simp only [AddMonoidHom.comp_apply, DistribSMul.toAddMonoidHom_apply]
   rw [smul_smul, proj_mul_coef c hc]
   split_ifs with h
   · rfl

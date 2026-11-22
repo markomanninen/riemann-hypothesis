@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitianStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSchwartzBruhatHalfIffPullbackMatrixStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatHalfSpanModulatedTranslatesStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitianStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSchwartzBruhatHalfIffPullbackMatrixStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatHalfSpanModulatedTranslatesStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,8 +74,8 @@ theorem heisO_eigen {l : WO S T} {f : WO S T → ℂ} (h : heisO ψ S T l f = f)
       ψ (symplO S T l y + symplO S T l x) • heisO ψ S T y (heisO ψ S T x f) := by
   rw [heisO_comm ψ S T l y, heisO_comm ψ S T l x, h, heisO_smul, smul_smul, AddChar.map_add_eq_mul]
 
-open Classical in
 
+open Classical in
 theorem ipO_translates (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {a : AE D}
     (ha : IsSplitIdem D a) {μ : Measure (WO S T)} {𝓕 : Set (WO S T)} (hμ : IsCovolOne (ratL T S) μ 𝓕)
     {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hl : IsLatVac (heisO ψ S T) (latO S T ΛS ΛT fun _ => True) f)
@@ -80,6 +84,14 @@ theorem ipO_translates (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT 
     ipO μ 𝓕 (heisO ψ S T y (heisO ψ S T x f)) (heisO ψ S T y' (heisO ψ S T x' f)) =
       if x - x' ∈ (latO S T ΛS ΛT fun _ => True) ∧ y - y' ∈ latO S T ΛS ΛT fun _ => True then
         ψ (symplO S T (y - y') x') else 0 := by
+  have theta_smul : ∀ (c : ℂ) {g : WO S T → ℂ}, IsThetaFunO ψ S T g → IsThetaFunO ψ S T (c • g) := by
+    intro c g hg
+    exact { quasi := by intro γ w; simp [hg.quasi]; ring
+            level := by
+              obtain ⟨U, hU, hUg⟩ := hg.level
+              exact ⟨U, hU, fun u hu h0 => by rw [heisO_smul, hUg u hu h0]⟩
+            cont := continuous_const.mul hg.cont
+            smooth := by intro k L hL hL' w; exact contDiff_const.mul (hg.smooth k L hL hL' w) }
   have hb := isSplitIdem_conj ha
   have h0 : cA D a * a = 0 := by rw [mul_comm]; exact ha.2.1
   have h0' : cA D (cA D a) * cA D a = 0 := by rw [mul_comm]; exact hb.2.1
@@ -92,7 +104,7 @@ theorem ipO_translates (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT 
       ipO μ 𝓕 (heisO ψ S T y (heisO ψ S T x f)) (heisO ψ S T y' (heisO ψ S T x' f)) = 0 := fun l h hne => by
     refine eq_zero_of_eq_mul hne ?_
     have e := ((I _ _ t1 t2).2.2.2.2.2.2.1 l).1
-    rw [heisO_eigen h, heisO_eigen h, ((I _ _ t1 (GlobalTheory.WeilVacMove.isTheta_smul _ t2)).2.2.1 _).1,
+    rw [heisO_eigen h, heisO_eigen h, ((I _ _ t1 (theta_smul _ t2)).2.2.1 _).1,
       ((I _ _ t1 t2).2.2.1 _).2, ← mul_assoc, char_mul_conj hψ] at e
     rw [symplO_sub_right, symplO_sub_right, sub_add_sub_comm, e]
   split_ifs with h
@@ -122,8 +134,8 @@ theorem halfInd_add {a : AE D} {Λ : AddSubgroup (WO S T)} {l : WO S T} (hl : l 
   refine if_congr (and_congr (Λ.add_mem_cancel_right hl) ⟨fun h => ?_, fun h => isHalf_add h hl'⟩) rfl rfl
   simpa using isHalf_sub h hl'
 
-open Classical in
 
+open Classical in
 theorem integral_waves (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {a : AE D}
     (ha : IsSplitIdem D a) {G : Type} [AddCommGroup G] [MeasurableSpace G] [MeasurableAdd G] (ν : Measure G)
     [ν.IsAddRightInvariant] {κ : WO S T → G} {σ : G → WO S T} (h1 : ∀ z, IsHalf a (σ z)) (h2 : ∀ z, κ (σ z) = z)
@@ -182,6 +194,33 @@ theorem integral_waves (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT 
 
 theorem placeModel_isometry : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) (sS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ) (sT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)) (f₀ : WO S T → ℂ) (μ : Measure (WO S T)) (𝓕 : Set (WO S T)), IsBase ψ θ S T sS sT ΛS ΛT f₀ → IsCovolOne (ratL T S) μ 𝓕 → ∀ (v : FinPl D) (a : AE D), IsSplitIdem D a → ∀ (m n : ℕ) (κ : WO S T → Matrix (Fin m) (Fin n) (Fv D.host.F v)), IsCoord a (latO S T ΛS ΛT fun _ => True) κ → ∀ Tm, IsPlaceModel ψ (symplO S T) (heisO ψ S T) a (latO S T ΛS ΛT fun _ => True) 1 f₀ Tm → ∀ ν : Measure (Fv D.host.F v), ν.IsAddHaarMeasure → GlobalTheory.SplitWeil.volM ν (Fin m) (Fin n) (κ '' {t | t ∈ (latO S T ΛS ΛT fun _ => True) ∧ IsHalf a t}) ≠ 0 ∧ GlobalTheory.SplitWeil.volM ν (Fin m) (Fin n) (κ '' {t | t ∈ (latO S T ΛS ΛT fun _ => True) ∧ IsHalf a t}) ≠ ⊤ ∧ ∀ Φ₁ ∈ GlobalTheory.SplitWeil.SB (Matrix (Fin m) (Fin n) (Fv D.host.F v)), ∀ Φ₂ ∈ GlobalTheory.SplitWeil.SB (Matrix (Fin m) (Fin n) (Fv D.host.F v)), ((GlobalTheory.SplitWeil.volM ν (Fin m) (Fin n) (κ '' {t | t ∈ (latO S T ΛS ΛT fun _ => True) ∧ IsHalf a t})).toReal : ℂ) * ipO μ 𝓕 (Tm (pull a κ Φ₁)) (Tm (pull a κ Φ₂)) = GlobalTheory.SplitWeil.ip ν Φ₁ Φ₂ := by
   intro D ψ θ S T sS sT ΛS ΛT f₀ μ 𝓕 hB hμ v a ha m n κ hκ Tm hTm ν hν
+  have theta_zero : IsThetaFunO ψ S T 0 := {
+    quasi := by intro γ w; simp
+    level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp [heisO]⟩
+    cont := continuous_const
+    smooth := by intro k L _ _ w; exact contDiff_const }
+  have theta_add : ∀ {f g : WO S T → ℂ}, IsThetaFunO ψ S T f → IsThetaFunO ψ S T g → IsThetaFunO ψ S T (f + g) := by
+    intro f g hf hg
+    exact { quasi := by intro γ w; simp [hf.quasi, hg.quasi, mul_add]
+            level := by
+              obtain ⟨U, hU, hUf⟩ := hf.level
+              obtain ⟨V, hV, hVg⟩ := hg.level
+              refine ⟨U ⊓ V, ?_, ?_⟩
+              · rw [AddSubgroup.coe_inf]; exact hU.inter hV
+              · intro u hu h0
+                have he : heisO ψ S T u (f + g) = heisO ψ S T u f + heisO ψ S T u g := by
+                  funext w; simp [heisO, mul_add]
+                rw [he, hUf u hu.1 h0, hVg u hu.2 h0]
+            cont := hf.cont.add hg.cont
+            smooth := by intro k L hL hL' w; exact (hf.smooth k L hL hL' w).add (hg.smooth k L hL hL' w) }
+  have theta_smul : ∀ (c : ℂ) {f : WO S T → ℂ}, IsThetaFunO ψ S T f → IsThetaFunO ψ S T (c • f) := by
+    intro c f hf
+    exact { quasi := by intro γ w; simp [hf.quasi]; ring
+            level := by
+              obtain ⟨U, hU, hUf⟩ := hf.level
+              exact ⟨U, hU, fun u hu h0 => by rw [heisO_smul, hUf u hu h0]⟩
+            cont := continuous_const.mul hf.cont
+            smooth := by intro k L hL hL' w; exact contDiff_const.mul (hf.smooth k L hL hL' w) }
   have hψ := base_std hB
   have hS := hB.2.2.1
   have hT := hB.2.2.2.1
@@ -215,10 +254,10 @@ theorem placeModel_isometry : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ 
       rw [(w1 x y hx hy).2 f₀ Tm hTm]
       exact GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ
         (GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ (base_theta hB) x) y
-    | zero => exact ⟨by rw [map_zero]; exact GlobalTheory.WeilVacMove.isTheta_zero, zero_mem _⟩
-    | add _ _ _ _ p q => exact ⟨by rw [map_add]; exact GlobalTheory.WeilVacMove.isTheta_add p.1 q.1, add_mem p.2 q.2⟩
+    | zero => exact ⟨by rw [map_zero]; exact theta_zero, zero_mem _⟩
+    | add _ _ _ _ p q => exact ⟨by rw [map_add (f := _)]; exact theta_add p.1 q.1, add_mem p.2 q.2⟩
     | smul c _ _ p =>
-      exact ⟨by rw [map_smul]; exact GlobalTheory.WeilVacMove.isTheta_smul c p.1, Submodule.smul_mem _ c p.2⟩
+      exact ⟨by rw [map_smul]; exact theta_smul c p.1, Submodule.smul_mem _ c p.2⟩
   have int : ∀ Ψ ∈ Submodule.span ℂ W, ∀ Ψ' ∈ Submodule.span ℂ W,
       Integrable (fun z => Ψ (σ z) * (starRingEnd ℂ) (Ψ' (σ z))) (GlobalTheory.SplitWeil.volM ν (Fin m) (Fin n)) :=
     fun Ψ h Ψ' h' => Continuous.integrable_of_hasCompactSupport
@@ -238,13 +277,13 @@ theorem placeModel_isometry : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ 
     | zero_left => simp [ipO]
     | zero_right => simp [ipO]
     | add_left x y z hx hy hz p q =>
-      rw [map_add, ((I _ _ (good x hx).1 (good z hz).1).2.2.2.1 _ (good y hy).1).1, mul_add, p, q,
+      rw [map_add (f := _), ((I _ _ (good x hx).1 (good z hz).1).2.2.2.1 _ (good y hy).1).1, mul_add, p, q,
         ← integral_add (int x hx z hz) (int y hy z hz)]
       simp only [Pi.add_apply, add_mul]
     | add_right x y z hx hy hz p q =>
-      rw [map_add, ((I _ _ (good y hy).1 (good x hx).1).2.2.2.1 _ (good z hz).1).2, mul_add, p, q,
+      rw [map_add (f := _), ((I _ _ (good y hy).1 (good x hx).1).2.2.2.1 _ (good z hz).1).2, mul_add, p, q,
         ← integral_add (int x hx y hy) (int x hx z hz)]
-      simp only [Pi.add_apply, map_add, mul_add]
+      simp only [Pi.add_apply, map_add (f := _), mul_add]
     | smul_left c x y hx hy p =>
       rw [map_smul, ((I _ _ (good x hx).1 (good y hy).1).2.2.1 c).1, mul_left_comm, p, ← integral_const_mul]
       simp only [Pi.smul_apply, smul_eq_mul, mul_assoc]

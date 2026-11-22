@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementJ
+module
+
+public import Formalism.HermitianCurvature.StatementJ
+
+@[expose] public section
 
 open Finset NumberField Formalism.FourierDecayAlt Formalism.FourierDecayAlt.J
 open scoped ComplexConjugate ComplexOrder
@@ -45,7 +49,8 @@ theorem pull [DecidableEq X] (η : α → X) (F : Finset α) (k : X → X → �
     intro c x'
     apply Finset.sum_image'
     intro i _
-    simp only [hb, map_sum, mul_sum, sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hb, map_sum, mul_sum, sum_mul]
     exact sum_congr rfl fun j hj => by rw [(mem_filter.1 hj).2]
   have key : ∑ x' ∈ F.image η, ∑ y' ∈ F.image η, b x' * conj (b y') * k x' y' =
       ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k (η x) (η y) := by

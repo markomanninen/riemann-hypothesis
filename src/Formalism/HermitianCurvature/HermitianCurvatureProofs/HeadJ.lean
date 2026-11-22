@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentiableAtOfPuncturedSmooth
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentiableAtOfPuncturedSmooth
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate

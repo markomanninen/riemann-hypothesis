@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.SchrodingerMatching.HaarFam
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMulRight
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.SchrodingerMatching.HaarFam
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,9 +35,9 @@ theorem inner_mul_right (V : HSp D) (y : Mx D V.rank n) (a : Mx D n n) :
   rw [adj_mul]
   simp only [Matrix.mul_assoc]
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem jt_conj (V : HSp D) (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D V.rank n)) (𝓕 : Set (Mx D V.rank n))
     (hμ : IsCovolOne (ratMx D V.rank n) μ 𝓕) (a : GL (Fin n) (AE D)) (φ : Mx D V.rank n → ℂ) (c : hermA D n) :
     PositivityTheory.PfSWUS.Loc.jtR (AF D.host.F) D.sp.cm.sig (HSpace.gram V) ψ (μ.map tupInv)
@@ -43,7 +47,6 @@ theorem jt_conj (V : HSp D) (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D
   have : IsTopologicalAddGroup (Mx D V.rank n) := k1
   have : BorelSpace (Mx D V.rank n) := ⟨rfl⟩
   have : BorelSpace (Fin n → Fin V.rank → AE D) := borel_tup
-  obtain ⟨j1, -⟩ := Formalism.IndefR.Eqv.ae_facts D
   unfold Jt
   rw [← GlobalTheory.RightMulJac.integral_mul_right D V.rank n μ 𝓕 hμ a]
   refine (integral_map_of tupInv tupOf tupOf_tupInv tupInv_tupOf tupInv_add continuous_tupInv continuous_tupOf μ

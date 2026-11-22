@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataRRMetric
-import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
-import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataRRMetric
+public import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
+public import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField
 
@@ -17,8 +21,5 @@ def eigIdxFiniteTypes (D : D7) (X : DivX D) : EigIdx D X where
     intro j _ π π' e _ _ h
     have h' : π = π' := h
     rw [h']
-
-@[simp] theorem eigIdxFiniteTypes_cOf (D : D7) (X : DivX D) (π : D.what₂.FT) :
-    (eigIdxFiniteTypes D X).cOf π = π := rfl
 
 end GlobalTheory

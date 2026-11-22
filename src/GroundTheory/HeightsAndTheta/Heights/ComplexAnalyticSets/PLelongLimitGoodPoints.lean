@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitGoodPoints
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDivisorGeneralPointBranches
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitAtBranches
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLelongLimit
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitGoodPoints
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDivisorGeneralPointBranches
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitAtBranches
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLelongLimit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -38,7 +43,7 @@ theorem LelongLimitGoodPoints.proof (hBr : DivisorGeneralPointBranches.Statement
       (_ : W' ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes),
       (localMult (J ⊔ Ideal.span {linForm u}) W' : ℝ) * varInt W' d f φ) =
       (localMult (J ⊔ Ideal.span {linForm u}) W : ℝ) * varInt W d f φ := by
-    rw [finsum_eq_single _ W fun W' hne => ?_, finsum_eq_dif, dif_pos hWm]
+    rw [finsum_eq_single _ W fun W' hne => ?_, finsum_eq_dif, dite_eq_left hWm]
     rw [finsum_eq_dif]
     split_ifs with hW'
     · rw [varInt_eq_zero_of_vanish W' f φ fun x hx => image_eq_zero_of_notMem_tsupport fun hxs =>

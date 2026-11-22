@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Eb GlobalTheory.GalOfCusp
 
@@ -64,7 +68,7 @@ private theorem cocycle_extends_to_conj_group {l : ℕ} [Fact l.Prime] (F : W.GF
       rw [zout _ hgh, zin _ hg, zout _ hh]
       have e : (⟨g * h * F.c, cocExt_mem F hgh⟩ : F.G₀) = ⟨g, hg⟩ * ⟨h * F.c, cocExt_mem F hh⟩ :=
         Subtype.ext (mul_assoc _ _ _)
-      rw [e, hyc, map_add, ← Rm, ← mul_assoc]
+      rw [e, hyc, map_add (f := _), ← Rm, ← mul_assoc]
       exact add_assoc _ _ _
     · have hgh : g * h ∉ F.η.ker := fun H => hg (by simpa using mul_mem H (inv_mem hh))
       rw [zout _ hgh, zout _ hg, zin _ hh]
@@ -73,7 +77,7 @@ private theorem cocycle_extends_to_conj_group {l : ℕ} [Fact l.Prime] (F : W.GF
         show g * h * F.c = g * F.c * ((F.conj ⟨h, hh⟩ : F.G₀) : F.Γ)
         rw [hconj]
         exact (I1 g h).symm
-      rw [e, hyc, hrel, map_add, map_sub]
+      rw [e, hyc, hrel, map_add (f := _), map_sub]
       have e1 : R (↑(⟨g * F.c, cocExt_mem F hg⟩ : F.G₀)) (R F.c (y ⟨h, hh⟩)) = R g (y ⟨h, hh⟩) := by
         rw [← Rm]
         show R (g * F.c * F.c) _ = _
@@ -94,7 +98,7 @@ private theorem cocycle_extends_to_conj_group {l : ℕ} [Fact l.Prime] (F : W.GF
         show g * h = g * F.c * ((F.conj ⟨h * F.c, cocExt_mem F hh⟩ : F.G₀) : F.Γ)
         rw [hconj]
         exact (I2 g h).symm
-      rw [e, hyc, hrel, map_add, map_sub, map_add]
+      rw [e, hyc, hrel, map_add (f := _), map_sub, map_add (f := _)]
       have e1 : R (↑(⟨g * F.c, cocExt_mem F hg⟩ : F.G₀)) (R F.c (y ⟨h * F.c, cocExt_mem F hh⟩)) =
           R g (y ⟨h * F.c, cocExt_mem F hh⟩) := by
         rw [← Rm]
@@ -131,11 +135,11 @@ theorem UpperTheory.V.Ws.Eb.cocExt :
   have hinv : ∀ g : F.G₀, R g (Z + R F.c Z) = Z + R F.c Z := by
     intro g
     have e2 := hZ (F.conj g)
-    rw [cc, hZ g, map_add, Rcc, map_sub, ← Rm, hconj] at e2
+    rw [cc, hZ g, map_add (f := _), Rcc, map_sub, ← Rm, hconj] at e2
     have ec : F.c * (F.c * (g : F.Γ) * F.c) = g * F.c := by
       rw [← mul_assoc, ← mul_assoc, hcc, one_mul]
     rw [ec, Rm] at e2
-    rw [map_add, ← sub_eq_zero, ← neg_eq_zero]
+    rw [map_add (f := _), ← sub_eq_zero, ← neg_eq_zero]
     rw [← sub_eq_zero] at e2
     rw [← e2]
     abel
@@ -147,7 +151,7 @@ theorem UpperTheory.V.Ws.Eb.cocExt :
     rw [hZ g]
     congr 1
     have hi := hinv (F.conj g)
-    rw [map_add] at hi
+    rw [map_add (f := _)] at hi
     rw [hwdef, map_smul, map_sub, ← smul_sub]
     have hb : R (F.conj g) (R F.c Z) = Z + R F.c Z - R (F.conj g) Z := by
       rw [← hi]

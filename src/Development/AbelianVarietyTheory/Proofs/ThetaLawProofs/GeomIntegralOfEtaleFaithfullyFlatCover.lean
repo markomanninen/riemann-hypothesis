@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
-import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsFiniteExtGeomIntegralLocalizationStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.GeomIntegralBaseChangeAndLocalization
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
+public import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsFiniteExtGeomIntegralLocalizationStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.GeomIntegralBaseChangeAndLocalization
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -129,14 +134,14 @@ theorem exists_geomInt_piece_of_finite_etale : ∀ (K : Type) [Field K] [NumberF
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [P, emb]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hPf : ∀ x, P (f x) = Algebra.TensorProduct.lift (AlgHom.id ℂ ℂ)
       (p.comp (IsScalarTower.toAlgHom K R R₁)) (fun _ _ => Commute.all _ _) x := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [P, f]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   obtain ⟨Q', hQE, hQ⟩ := exists_point_over_of_idempotent f hf1 hf2 P
     (Algebra.TensorProduct.lift (AlgHom.id ℂ ℂ) (σ₁.comp q) (fun _ _ => Commute.all _ _))
     (fun x hx => (hPf x).trans (hidem x hx)) (emb e) (he.map emb) ((hPemb e).trans hpe)
@@ -180,7 +185,7 @@ theorem exists_geomInt_piece_of_finite_etale : ∀ (K : Type) [Field K] [NumberF
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => rfl
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hG₀ : ∀ x, (G₀ x : ℂ) = Q' (emb x) := by
     intro x
     induction x using TensorProduct.induction_on with
@@ -190,7 +195,7 @@ theorem exists_geomInt_piece_of_finite_etale : ∀ (K : Type) [Field K] [NumberF
         simp [emb, TensorProduct.smul_tmul']
       rw [this, map_smul, smul_eq_mul]
       rfl
-    | add a b ha hb => simp only [map_add, ← ha, ← hb]; rfl
+    | add a b ha hb => simp only [map_add (f := _), ← ha, ← hb]; rfl
   obtain ⟨s, hs⟩ := exists_algHom_baseChange_away (k := k) e G ((hG e).trans hpe)
   obtain ⟨s₀, hs₀⟩ := exists_algHom_baseChange_away (k := k) e G₀
     (Subtype.ext ((hG₀ e).trans hQE))

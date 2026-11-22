@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGDict
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGDict
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem mem_O_iff {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
       exact hx.map ((M.L.cj : E →ₐ[F] E).restrictScalars 𝒪[F])
     have ht : x + M.L.cj x ∈ M.L.O := M.L.O.add_mem hx hcx
     have hn : x * M.L.cj x ∈ M.L.O := M.L.O.mul_mem hx hcx
-    obtain ⟨t, htd⟩ := (M.L.cj_fix (x + M.L.cj x)).mp (by rw [map_add, M.L.cj_cj, add_comm])
+    obtain ⟨t, htd⟩ := (M.L.cj_fix (x + M.L.cj x)).mp (by rw [map_add (f := _), M.L.cj_cj, add_comm])
     obtain ⟨n, hnd⟩ := (M.L.cj_fix (x * M.L.cj x)).mp (by rw [map_mul, M.L.cj_cj, mul_comm])
     refine ⟨⟨⟨t, mem_integer_of_isIntegral_map M ((M.L.O_def _).mp (htd ▸ ht))⟩, htd⟩,
       ⟨⟨n, mem_integer_of_isIntegral_map M ((M.L.O_def _).mp (hnd ▸ hn))⟩, hnd⟩⟩
@@ -98,7 +102,7 @@ theorem exists_omega0 {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
     {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : Model F E) :
     ∃ w : E, w ∈ M.L.O ∧ w ∉ Set.range (algebraMap F E) := by
   obtain ⟨y, hy⟩ := exists_not_mem_range M
-  obtain ⟨t, ht⟩ := (M.L.cj_fix (y + M.L.cj y)).mp (by rw [map_add, M.L.cj_cj, add_comm])
+  obtain ⟨t, ht⟩ := (M.L.cj_fix (y + M.L.cj y)).mp (by rw [map_add (f := _), M.L.cj_cj, add_comm])
   obtain ⟨n, hn⟩ := (M.L.cj_fix (y * M.L.cj y)).mp (by rw [map_mul, M.L.cj_cj, mul_comm])
   obtain ⟨c1, hc1, hc10, hc1t⟩ := exists_mul_mem_integer t
   obtain ⟨c2, hc2, hc20, hc2n⟩ := exists_mul_mem_integer n
@@ -191,7 +195,7 @@ theorem bD_mem {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
   obtain ⟨⟨T, hT⟩, ⟨N, hN⟩⟩ := (mem_O_iff M _).mp hx
   set x := algebraMap F E a + algebraMap F E b * w with hxdef
   have hcx : M.L.cj x = algebraMap F E a + algebraMap F E b * M.L.cj w := by
-    rw [hxdef, map_add, map_mul, cj_alg M, cj_alg M]
+    rw [hxdef, map_add (f := _), map_mul, cj_alg M, cj_alg M]
   have hE : algebraMap F E ((T : F) ^ 2 - 4 * (N : F)) = algebraMap F E (b ^ 2 * (t ^ 2 - 4 * n0)) := by
     have h1 : algebraMap F E ((T : F) ^ 2 - 4 * (N : F)) = (x - M.L.cj x) ^ 2 := by
       rw [map_sub, map_mul, map_pow, hT, hN, map_ofNat]
@@ -225,7 +229,7 @@ theorem oBasis {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
         rintro c1 c2 ⟨a1, h1⟩ ⟨a2, h2⟩
         refine ⟨a1 + a2, ?_⟩
         convert add_mem h1 h2 using 1
-        simp only [Subring.coe_add, add_div, map_add]
+        simp only [Subring.coe_add, add_div, map_add (f := _)]
         ring
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := by
@@ -281,7 +285,7 @@ theorem oBasis {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
       have e : algebraMap F E (p1 : F) + algebraMap F E (p2 : F) *
           (algebraMap F E ag + algebraMap F E ((g : F) / D) * w) =
           algebraMap F E ((p1 : F) + p2 * ag) + algebraMap F E ((p2 : F) * ((g : F) / D)) * w := by
-        simp only [map_add, map_mul]; ring
+        simp only [map_add (f := _), map_mul]; ring
       have hp' := hp
       simp only at hp'
       rw [e] at hp'
@@ -304,7 +308,7 @@ theorem card_quot_pi {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
       map_add' := by
         intro p p'
         apply Subtype.ext
-        simp only [Prod.fst_add, Prod.snd_add, AddMemClass.coe_add, map_add]
+        simp only [Prod.fst_add, Prod.snd_add, AddMemClass.coe_add, map_add (f := _)]
         ring }
   have hψ : ∀ p, (ψ p : E) = algebraMap F E (p.1 : F) + algebraMap F E (p.2 : F) * ω := fun p => rfl
   have hinj : Function.Injective ψ := by

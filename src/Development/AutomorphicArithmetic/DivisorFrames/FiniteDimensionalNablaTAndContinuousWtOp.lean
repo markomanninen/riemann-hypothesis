@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSystemOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearActionDualWeylTensor
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSystemOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearActionDualWeylTensor
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.BasicNotions GlobalTheory.DefU GlobalTheory.FrameAut Formalism.CohomologicalDescent.DepthNonnegative
 
 private theorem fd_dw (n : ℕ) (ν : Fin n → ℕ) : FiniteDimensional ℂ (Formalism.GradedWeylDivisibility.dualWeyl ℂ n n ν) := by
@@ -20,7 +25,7 @@ private theorem cont_rowAct (n : ℕ) (f : MvPolynomial (Fin n × Fin n) ℂ) :
     exact continuous_const
   | add p q hp hq =>
     intro ℓ
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact (hp ℓ).add (hq ℓ)
   | mul_X p v hp =>
     intro ℓ
@@ -30,12 +35,13 @@ private theorem cont_rowAct (n : ℕ) (f : MvPolynomial (Fin n × Fin n) ℂ) :
       have h1 : Formalism.GradedWeylDivisibility.rowAct ℂ g (MvPolynomial.X v : MvPolynomial (Fin n × Fin n) ℂ) =
           ∑ b : Fin n, MvPolynomial.C (g v.1 b) * MvPolynomial.X (b, v.2) := by
         simp only [Formalism.GradedWeylDivisibility.rowAct, MvPolynomial.aeval_X]
-      rw [map_mul, h1, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_mul, h1, Finset.mul_sum, map_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [mul_left_comm, ← MvPolynomial.smul_eq_C_mul, map_smul, smul_eq_mul]
       rfl
     simp only [e]
-    refine continuous_finset_sum _ fun b _ => ?_
+    refine continuous_finsetSum _ fun b _ => ?_
     exact (continuous_id.matrix_elem v.1 b).mul (hp _)
 
 private theorem cont_rep (n : ℕ) (ν : Fin n → ℕ) (ℓ : Formalism.GradedWeylDivisibility.dualWeyl ℂ n n ν →ₗ[ℂ] ℂ)
@@ -52,7 +58,7 @@ private theorem cont_rep (n : ℕ) (ν : Fin n → ℕ) (ℓ : Formalism.GradedW
 
 private theorem cont_multi {X ι : Type} [TopologicalSpace X] [Fintype ι] [DecidableEq ι] {V : ι → Type}
     [∀ i, AddCommGroup (V i)] [∀ i, Module ℂ (V i)] [∀ i, FiniteDimensional ℂ (V i)]
-    (m : MultilinearMap ℂ V ℂ) (F : ∀ i, X → V i) (hF : ∀ i (ℓ : V i →ₗ[ℂ] ℂ), Continuous fun x => ℓ (F i x)) :
+    (m : (∀ i, V i) →ₘₗ[ℂ] ℂ) (F : ∀ i, X → V i) (hF : ∀ i (ℓ : V i →ₗ[ℂ] ℂ), Continuous fun x => ℓ (F i x)) :
     Continuous fun x => m fun i => F i x := by
   let b := fun i => Module.finBasis ℂ (V i)
   have e : ∀ x, (m fun i => F i x) = ∑ r : ∀ i, Fin (Module.finrank ℂ (V i)),
@@ -61,12 +67,13 @@ private theorem cont_multi {X ι : Type} [TopologicalSpace X] [Fintype ι] [Deci
     have h1 : (fun i => F i x) = fun i => ∑ j, (b i).coord j (F i x) • b i j := by
       funext i
       simp only [Module.Basis.coord_apply, Module.Basis.sum_repr]
-    rw [h1, MultilinearMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, MultilinearMap.map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
-    rw [MultilinearMap.map_smul_univ]
+    simp only [MultilinearMap.map_smul_univ, RingHom.id_apply]
   simp only [e]
-  refine continuous_finset_sum _ fun r _ => ?_
-  exact (continuous_finset_prod _ fun i _ => hF i _).smul continuous_const
+  refine continuous_finsetSum _ fun r _ => ?_
+  exact (continuous_finsetProd _ fun i _ => hF i _).smul continuous_const
 
 theorem UpperTheory.finiteDimensional_nablaT_and_continuous_wtOp :
     ∀ (n : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι] (mu : ι → ℕ → ℕ) (sh : ι → ℤ),
@@ -84,12 +91,12 @@ theorem UpperTheory.finiteDimensional_nablaT_and_continuous_wtOp :
         (fun τ (g : ι → GL (Fin n) ℂ) => Formalism.UG.dualWeylRep ℂ n n _ (g τ) (x τ))
         (fun τ l => (cont_rep n _ l (x τ)).comp (continuous_apply τ))
     | add a b ha hb =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact ha.add hb
   simp only [wtOp_apply, map_smul]
   have h2 : Continuous fun g : ι → GL (Fin n) ℂ =>
       (∏ τ, Matrix.GeneralLinearGroup.det (g τ) ^ (-sh τ) : ℂˣ) := by
-    refine continuous_finset_prod _ fun τ _ => ?_
+    refine continuous_finsetProd _ fun τ _ => ?_
     refine Continuous.zpow ?_ _
     exact Matrix.GeneralLinearGroup.continuous_det.comp (continuous_apply τ)
   exact (Units.continuous_val.comp h2).smul h1

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.InvSqrtTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.InvSqrtTwo
+
+@[expose] public section
 
 noncomputable section
 

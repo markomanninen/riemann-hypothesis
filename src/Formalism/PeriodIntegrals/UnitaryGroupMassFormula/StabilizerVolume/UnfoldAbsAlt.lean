@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LintFibre
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LintFibre
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,11 +45,11 @@ theorem unfold_abs {Γ H : Subgroup G} [Countable Γ]
   obtain ⟨F0, hF0sub, hF0m, hF0ae⟩ := h𝓕.nullMeasurableSet.exists_measurable_subset_ae_eq
   have hc0m : Measurable (cntN Γ F0) := by
     unfold cntN
-    exact Measurable.ennreal_tsum fun γ =>
+    exact Measurable.tsum fun γ =>
       (measurable_const.indicator hF0m).comp (measurable_const_mul (γ : G))
   have hcfm : Measurable (cfun Γ F0 y0) := by
     unfold cfun
-    exact Measurable.ennreal_tsum fun x =>
+    exact Measurable.tsum fun x =>
       (measurable_const.indicator hF0m).comp ((measurable_const_mul _).comp measurable_inv)
   have hc0i : ∀ γ ∈ Γ, ∀ g : G, cntN Γ F0 (γ * g) = cntN Γ F0 g := by
     intro γ hγ g
@@ -78,7 +82,7 @@ theorem unfold_abs {Γ H : Subgroup G} [Countable Γ]
       rw [ae_iff]
       refine measure_mono_null ?_ h0
       intro g hg
-      simp only [Set.mem_setOf_eq, _root_.not_imp, not_not] at hg
+      simp only [Set.mem_setOf_eq, Classical.not_imp, not_not] at hg
       obtain ⟨-, h1, h2⟩ := hg
       constructor
       · rw [Set.mem_smul_set_iff_inv_smul_mem, inv_inv]

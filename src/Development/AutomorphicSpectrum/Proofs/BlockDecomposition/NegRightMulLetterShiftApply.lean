@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CenterEnvelopingAlgebraDirectSum
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ConstantTermParabolicFiniteType
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.StandardBlocksLevelSumStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CenterEnvelopingAlgebraDirectSum
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ConstantTermParabolicFiniteType
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.StandardBlocksLevelSumStatement
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.PairMult
 
 noncomputable section
@@ -102,14 +107,14 @@ theorem evB_intertwine {W : Type} [AddCommGroup W] [Module ℂ W] {lev : Fin n �
         have e2 : X2 p q t = -(X1 p q t) + if p = q then τ p • t else 0 := by
           rw [← ht p q hpq, LinearMap.add_apply]; abel
         rw [e1, e2]
-        split_ifs <;> simp [map_add, map_neg, map_mul, hρ p q hpq, Module.End.mul_apply, LinearMap.add_apply]
+        split_ifs <;> simp [map_add (f := _), map_neg, map_mul, hρ p q hpq, Module.End.mul_apply, LinearMap.add_apply]
       · simp only [if_true, hpq, leftMulLetter_apply, map_mul, Module.End.mul_apply, hρ p q hpq]
     · simp [hpq]
   | mul a c ha hc' =>
     simp only [map_mul, Module.End.mul_apply]
     rw [hc', ha]
   | add a c ha hc' =>
-    simp only [map_add, LinearMap.add_apply, ha, hc']
+    simp only [map_add (f := _), LinearMap.add_apply, ha, hc']
 
 end Regular
 
@@ -150,8 +155,10 @@ theorem gl_eq_sum {m : ℕ} (Z : Gl m) : Z = ∑ a, ∑ b, Z a b • (Matrix.sin
 theorem mem_of_eu {m : ℕ} (S : Subalgebra ℂ (UniversalEnvelopingAlgebra ℂ (Gl m))) (h : ∀ p q, eu m p q ∈ S)
     (a : UniversalEnvelopingAlgebra ℂ (Gl m)) : a ∈ S := by
   refine GlobalTheory.EnvCentre.mem_of_ι_mem (AlgHom.id ℂ _) S (fun Z => ?_) a
-  rw [gl_eq_sum Z, map_sum]
-  simp only [map_sum, map_smul, AlgHom.id_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [gl_eq_sum Z, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, AlgHom.id_apply]
   exact sum_mem fun p _ => sum_mem fun q _ => Subalgebra.smul_mem _ (h p q) _
 
 theorem center_gl_le (m : ℕ) :
@@ -181,7 +188,8 @@ theorem glLin_lie {A : Type} [Ring A] [Algebra ℂ A] {m : ℕ} {E : Fin m → F
     rw [single_lie, map_sub, glLin_single, glLin_single, LieRing.of_associative_ring_bracket, hE a b c d]
     split_ifs <;> simp [glLin_single]
   rw [gl_eq_sum Z, gl_eq_sum Z']
-  simp only [sum_lie, lie_sum, smul_lie, lie_smul, map_sum, map_smul, key]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sum_lie, lie_sum, smul_lie, lie_smul, map_sum, map_smul, key]
 
 def glHom {A : Type} [Ring A] [Algebra ℂ A] {m : ℕ} (E : Fin m → Fin m → A) (hE : GlRel E) : Gl m →ₗ⁅ℂ⁆ A :=
   { glLin E with map_lie' := fun {Z Z'} => glLin_lie hE Z Z' }
@@ -213,7 +221,7 @@ theorem mem_of_eb (S : Subalgebra ℂ (UD d)) (h : ∀ i p q, eb d i p q ∈ S) 
     rw [AlgHom.id_apply, ← mi_ι]
     exact this _
   | add y z hy hz =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact add_mem hy hz
 
 theorem center_UD_le : Subalgebra.center ℂ (UD d) ≤
@@ -254,7 +262,8 @@ open UniversalEnvelopingAlgebra
 theorem qdet_map {A A' : Type} [Ring A] [Algebra ℂ A] [Ring A'] [Algebra ℂ A'] (φ : A →ₐ[ℂ] A') {m : ℕ}
     (E : Fin m → Fin m → A) (u : ℂ) : φ (qdet E u) = qdet (fun a b => φ (E a b)) u := by
   unfold Formalism.REAL.qdet Formalism.REAL.qminor Formalism.REAL.Tm
-  simp only [map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 3
   funext k
@@ -299,7 +308,8 @@ theorem glHom_comm {A : Type} [Ring A] [Algebra ℂ A] {m m' : ℕ} {E : Fin m �
   rw [gl_eq_sum Z, gl_eq_sum Z']
   have h0 : ∀ p q r v, ⁅E p q, E' r v⁆ = 0 := fun p q r v => by
     rw [LieRing.of_associative_ring_bracket, (hc p q r v).eq, sub_self]
-  simp only [sum_lie, lie_sum, smul_lie, lie_smul, map_sum, map_smul, glLin_single, h0, smul_zero, sum_const_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sum_lie, lie_sum, smul_lie, lie_smul, map_sum, map_smul, glLin_single, h0, smul_zero, sum_const_zero]
 
 end Final
 

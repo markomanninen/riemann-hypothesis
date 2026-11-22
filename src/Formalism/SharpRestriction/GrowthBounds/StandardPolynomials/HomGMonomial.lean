@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsS
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXRen
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXSeg
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.SgKSPowP
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsS
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXRen
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXSeg
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.SgKSPowP
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,8 @@ theorem phi_plS (φ : MonH X →+ ℕ) (c : ℤ) :
       if nuS C0 CE1 CE2 mu X β j t.val < c ∧ c ≤ nuS C0 CE1 CE2 mu X β j (t.val + 1) then
         PS X j t * φ (Finsupp.single (phiS X j (t, Fin.castAdd X.m 0)) 1) else 0 := by
   unfold plS
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun t _ => ?_
   split_ifs
   · exact phi_single φ _ _
@@ -123,14 +128,14 @@ theorem kcol_pol {R : Type} [CommRing R] (ka : Fin (N + 1) → Fin n → ℤ) (c
     intro a b
     unfold xOf
     by_cases h1 : a < N
-    · rw [dif_pos h1]
+    · rw [dite_eq_left h1]
       have e : (if a = i.val then 1 else 0) = mdG N n i (Finsupp.single ((⟨a, h1⟩ : Fin N), b) 1) := by
         show _ = multideg (Finsupp.single ((⟨a, h1⟩ : Fin N), b) 1) i
         rw [md_single]
         simp [Fin.ext_iff]
       rw [e]
       exact homG_monomial _ _ _
-    · rw [dif_neg h1]; exact HomG.zero _ _
+    · rw [dite_eq_right h1]; exact HomG.zero _ _
   have key : multideg m i = _ :=
     KG_hom (mdG N n i) c (hsOf ka c) (xOf R N n) (fun a => if a = i.val then 1 else 0) hx N J m (Finset.mem_coe.1 hm)
   rw [key, Finset.sum_eq_single i.val]

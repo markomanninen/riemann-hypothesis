@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Finset Polynomial
 
 namespace GlobalTheory
@@ -6,7 +11,7 @@ namespace GlobalTheory
 lemma shiftDiffPoly_coeff_comp (f : ℂ[X]) (n : ℕ) :
     (f.comp (X + 1)).coeff n = ∑ i ∈ range (f.natDegree + 1), f.coeff i * (i.choose n : ℂ) := by
   rw [comp, eval₂_eq_sum_range]
-  simp [finset_sum_coeff, coeff_C_mul, coeff_X_add_one_pow]
+  simp [Polynomial.finsetSum_coeff, coeff_C_mul, coeff_X_add_one_pow]
 
 lemma shiftDiffPoly_coeff_top (f : ℂ[X]) (n : ℕ) (hn : f.natDegree ≤ n) :
     (f.comp (X + 1) - f).coeff n = 0 := by
@@ -39,14 +44,14 @@ theorem newton_recursion_poly_unique : ∀ (m N : ℕ) (p : ℕ → ℂ) (f r : 
     apply Polynomial.funext
     intro u
     simp only [hg, hPi, eval_sub, eval_mul, eval_pow, eval_X, eval_C, eval_comp, eval_add,
-      eval_one, eval_finset_sum]
+      eval_one, Polynomial.eval_finsetSum]
     rw [← hid u]
     congr 2
     apply Finset.sum_congr rfl
     intro k _
     ring
   have hPiN : Pi.coeff N = (m : ℂ) + 1 := by
-    rw [hPi, finset_sum_coeff, Finset.sum_range_succ', Finset.sum_eq_zero]
+    rw [hPi, Polynomial.finsetSum_coeff, Finset.sum_range_succ', Finset.sum_eq_zero]
     · simp only [pow_zero, one_mul, Nat.sub_zero, coeff_C_mul, hlead, hp0, mul_one, zero_add]
     · intro k hk
       rw [coeff_C_mul, coeff_eq_zero_of_natDegree_lt, mul_zero]

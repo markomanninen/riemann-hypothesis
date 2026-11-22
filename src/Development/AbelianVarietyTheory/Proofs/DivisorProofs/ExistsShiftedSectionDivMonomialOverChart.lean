@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGenPf
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SecLinOfSecScal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExponentFormsSymmOfIsUnitTauOnToricChartStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGenPf
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SecLinOfSecScal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExponentFormsSymmOfIsUnitTauOnToricChartStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -140,7 +145,7 @@ theorem nonneg_shift {X : Type} [AddCommGroup X] (g : LinearMap.BilinForm ℤ X)
   · subst h0
     have key : ∀ x : ℤ, 0 ≤ 2 * x * g mu α + g α α := fun x => by
       have := hnn (x • mu + α)
-      simp only [map_add, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hn, ← hs] at this
+      simp only [map_add (f := _), map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hn, ← hs] at this
       push_cast at this
       linarith
     have h0 : g mu α = 0 := by
@@ -239,11 +244,31 @@ theorem exists_shift_div_monomial : ∀ (E : Type) [Field E] [NumberField E] [Is
     have hρm : ρ' ≫ (𝟙 P.D.toPre.P.A * cP P.D.toPre _ mu) = toUnit T' ≫ P.D.toPre.c mu := by
       rw [MonObj.comp_mul, Category.comp_id, comp_cP, hρ1, _root_.one_mul]
       rfl
-    have C : IsCub (cubV P.D.toPre.cub z J) := isCub_cubV (T := T') P.D.toPre.cub hJ
-    have c1 : cubN (cubV P.D.toPre.cub z J) e (ρ' ≫ cP P.D.toPre _ α) (ρ' ≫ cP P.D.toPre _ mu) ρ' = 1 := by
-      rw [hρ1]; exact C.N_one _ _ _
-    have c2 : cubV P.D.toPre.cub z J (ρ' ≫ cP P.D.toPre _ α) ρ' (ρ' ≫ cP P.D.toPre _ mu) = 1 := by
-      rw [hρ1]; exact C.face₂ _ _
+    have face (x y : T' ⟶ P.D.toPre.P.A) : cubV (T := T') P.D.toPre.cub z J 1 x y = 1 := by
+      have h := val_corr hJ (P.D.toPre.cub.face 0) (lift x y).left
+      rw [val_one] at h
+      refine Eq.trans ?_ h
+      refine Eq.trans ?_ (val_cub P.D.toPre.cub (lift x y) hJ (pzero _ _) (x2 _ 0) (x2 _ 1)).symm
+      congr 1 <;> simp [x2, pzero, Hom.one_def]
+    have swap01 (x y w : T' ⟶ P.D.toPre.P.A) :
+        cubV (T := T') P.D.toPre.cub z J x y w = cubV (T := T') P.D.toPre.cub z J y x w := by
+      have h := (val_corr hJ P.D.toPre.cub.cubeSymmetric_swap_first (lift x (lift y w)).left).trans
+        (val_cub P.D.toPre.cub (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans h ?_
+      congr 1 <;> simp [x3]
+    have swap12 (x y w : T' ⟶ P.D.toPre.P.A) :
+        cubV (T := T') P.D.toPre.cub z J x y w = cubV (T := T') P.D.toPre.cub z J x w y := by
+      have h := (val_corr hJ P.D.toPre.cub.cubeSymmetric_swap_last (lift x (lift y w)).left).trans
+        (val_cub P.D.toPre.cub (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans h ?_
+      congr 1 <;> simp [x3]
+    have c1 : cubN (cubV (T := T') P.D.toPre.cub z J) e (ρ' ≫ cP P.D.toPre _ α) (ρ' ≫ cP P.D.toPre _ mu) ρ' = 1 := by
+      rw [hρ1]
+      apply Finset.prod_eq_one
+      intro i hi
+      rw [swap12, swap01, face]
+    have c2 : cubV (T := T') P.D.toPre.cub z J (ρ' ≫ cP P.D.toPre _ α) ρ' (ρ' ≫ cP P.D.toPre _ mu) = 1 := by
+      rw [hρ1, swap01, face]
     have hv := hσu T' ρ' z J hJ
     rw [c1, c2, hρu, hρm, inv_one, _root_.one_mul, _root_.one_mul] at hv
     show sval σ₁u ρ'.left z J = _

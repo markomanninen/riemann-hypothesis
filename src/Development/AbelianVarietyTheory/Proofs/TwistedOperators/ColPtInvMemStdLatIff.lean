@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevRowSuccInfUA
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteEmbeddingMemStabilizerAuxiliaryLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevRowSuccInfUA
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteEmbeddingMemStabilizerAuxiliaryLatticeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,21 @@ theorem levRow_stab (S : GridChoice W U) (t : T) :
   have hmem : finG (G.V (.grid (i + 1) D.R.m)) k ∈
       S.levRow t (i + 1) h ⊓ UA D.sp.cm (G.V (.grid (i + 1) D.R.m)).gram :=
     Subgroup.mem_inf.2 ⟨hk, GlobalTheory.LevSplit.finE_mem_UA _ _⟩
-  rw [GlobalTheory.FunObj.GridChoice.levRow_succ_inf_UA W S t i h, GridData.levMax, congLev_top] at hmem
+  have hlevel : S.levRow t (i + 1) h ⊓ UA D.sp.cm (G.V (.grid (i + 1) D.R.m)).gram =
+      G.levMax (.grid (i + 1) D.R.m) := by
+    have hm : D.R.m ≠ 0 := by have := D.R.two_le_m; omega
+    have hlocal (w : Pl D.host.E) (b : ℕ) (hb : b ≠ 0) :
+        givenLevel G t w (i + 1, b) =
+          GlobalTheory.SplitWeil.KO (Kw w) (Fin ((locGrid G t w).rank (i + 1, b))) := by
+      cases b with
+      | zero => exact (hb rfl).elim
+      | succ _ => rfl
+    rw [GridData.levMax]
+    exact GlobalTheory.FunObj.LevRowSucc.prodLev_inf_UA
+      (S.B.isFrame (i + 1) D.R.m (by omega) h le_rfl)
+      (G.isV (X := .grid (i + 1) D.R.m) ⟨h, le_rfl⟩ fun j e => by cases e).sd (locPl G t) _ _
+      (fun w => hlocal w.1 D.R.m hm)
+  rw [hlevel, GridData.levMax, congLev_top] at hmem
   exact (Subgroup.mem_inf.1 hmem).2
 
 theorem conj_stab (N : Std G U) {X : Node} (hX : DefNode D.R.m X) (g : FinPt G X)

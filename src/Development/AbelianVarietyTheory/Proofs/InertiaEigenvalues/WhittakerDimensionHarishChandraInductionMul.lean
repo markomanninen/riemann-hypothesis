@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardDoubleCosetMulCardInter
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniqueShuffle
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WhittakerTermEqZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsUnitOfUniUp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ShuffleNoDescentIffOpen
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardDoubleCosetMulCardInter
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniqueShuffle
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WhittakerTermEqZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsUnitOfUniUp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ShuffleNoDescentIffOpen
+
+@[expose] public section
 
 open Polynomial Formalism.MainNotions.ArithmeticCylinders GlobalTheory.GLq GlobalTheory.GLm
 open scoped Classical

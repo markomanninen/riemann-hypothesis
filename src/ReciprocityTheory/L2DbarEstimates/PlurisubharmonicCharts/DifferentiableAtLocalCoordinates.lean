@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalc
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalc
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 

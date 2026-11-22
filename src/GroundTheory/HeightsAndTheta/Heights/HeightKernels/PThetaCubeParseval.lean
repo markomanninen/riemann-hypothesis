@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsTheta
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsTheta
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -39,8 +44,8 @@ lemma measureReal_cube (g : ℕ) :
 
 end KThetaCubeParseval
 
-open KThetaCubeParseval in
 
+open KThetaCubeParseval in
 theorem ThetaCubeParseval.proof (h : ThetaCharIntegral.Statement) : ThetaCubeParseval.Statement := by
   intro g c hc
   set μ := volume.restrict (Set.Icc (0 : Fin g → ℝ) 1)

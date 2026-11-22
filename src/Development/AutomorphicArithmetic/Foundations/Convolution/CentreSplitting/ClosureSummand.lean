@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsClosure
-import GroundTheory.AutomorphicForms.L2LocalComponents
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsClosure
+public import GroundTheory.AutomorphicForms.L2LocalComponents
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -22,7 +26,7 @@ theorem UpperTheory.ConvolutionTheory.Dp.closureSummand :
       (by rintro _ ⟨φ, hφ, rfl⟩; exact Submodule.le_topologicalClosure (U.map (clsL μ)) ⟨φ, hφ, rfl⟩)
       ((Submodule.isClosed_topologicalClosure _).preimage (toLp μ).continuous) hy
   refine ⟨hle, Submodule.isClosed_topologicalClosure _, fun g v hv => ?_, fun e => h0 ?_, fun V' hV' hc hi => ?_⟩
-  · refine mem_of_mem_topologicalClosure (Submodule.isClosed_topologicalClosure _) (rightRegularRep (rationalGLOne K n) μ g) ?_ hv
+  · refine mem_of_mem_topologicalClosure (Submodule.isClosed_topologicalClosure _) (rightRegularRep (rationalGLOne (K := K) (n := n)) μ g) ?_ hv
     rintro _ ⟨φ, hφ, rfl⟩
     exact hmap _ (hI g _ (Submodule.le_topologicalClosure _ ⟨φ, hφ, rfl⟩))
   · refine eq_bot_iff.2 fun φ hφ => eq_zero_of_cuspVecL_eq_zero (μ := μ) (hU hφ) (toLp_injective μ ?_)

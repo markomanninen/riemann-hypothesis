@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDualPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameOfProjective
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDualPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameOfProjective
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -117,15 +121,15 @@ theorem appLE_base (h : V ≤ e ⁻¹ᵁ W) (k : W ≤ π ⁻¹ᵁ U) (hV : V �
 theorem le_nhd (h : V ≤ e ⁻¹ᵁ W) : V ≤ e ⁻¹ᵁ (W ⊓ π ⁻¹ᵁ e ⁻¹ᵁ W) :=
   le_inf h ((le_preimage_iff he).2 h)
 
+
 omit he in
 variable (e π W) in
-
 def center : Γ(X, W) →+ Γ(X, W ⊓ π ⁻¹ᵁ e ⁻¹ᵁ W) :=
   (resG X inf_le_left).toAddMonoidHom -
     ((π.appLE _ _ inf_le_right).hom.comp (e.appLE W _ le_rfl).hom).toAddMonoidHom
 
-omit he in
 
+omit he in
 theorem center_apply (f : Γ(X, W)) : center e W π f =
     resG X inf_le_left f - π.appLE _ _ inf_le_right (e.appLE W _ le_rfl f) := rfl
 
@@ -135,7 +139,7 @@ theorem appLE_center (f : Γ(X, W)) : e.appLE _ _ le_rfl (center e W π f) = 0 :
 
 def d (h : V ≤ e ⁻¹ᵁ W) : Γ(X, W) →+ Γ(conormal e, V) :=
   AddMonoidHom.mk' (fun f => cls (le_nhd he h) (center e W π f) (appLE_center he f)) fun f g => by
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact cls_add _ _ _ _ _ _
 
 theorem d_apply (h : V ≤ e ⁻¹ᵁ W) (f : Γ(X, W)) :
@@ -150,8 +154,8 @@ end Def
 
 variable {π : X ⟶ S} {e : S ⟶ X} {F F' : S.Modules} {U V V' : S.Opens} {W W' : X.Opens}
 
-variable (π e F) in
 
+variable (π e F) in
 @[ext] structure Der where
 
   app {W : X.Opens} {V : S.Opens} (h : V ≤ e ⁻¹ᵁ W) : Γ(X, W) →+ Γ(F, V)
@@ -185,7 +189,7 @@ def univ : Der π e (conormal e) where
     replace h₁ := h₁.trans (congrArg (· • _) (appLE_resG e _ _ f))
     replace h₂ := h₂.trans (congrArg (· • _) ((appLE_base he _ _ h _).trans (resG_appLE e _ _ g)))
     rw [d_apply, d_apply, d_apply, ← h₁, ← h₂, ← cls_add _ _ _ _ _ (by
-      rw [map_add, map_mul, map_mul, appLE_center he, appLE_center he]; simp)]
+      rw [map_add (f := _), map_mul, map_mul, appLE_center he, appLE_center he]; simp)]
     congr 1
     simp only [center_apply, map_mul]
     ring
@@ -221,7 +225,7 @@ def lift (D : Der π e F) : conormal e ⟶ F :=
   adj e (homOfLinear (F := ideal e) (G := (Scheme.Modules.pushforward e).obj F)
     (fun W =>
       { toFun s := D.app (le_refl (e ⁻¹ᵁ W)) ((idealSub e).incl.app W s)
-        map_add' s t := by rw [map_add]; exact map_add _ _ _
+        map_add' s t := by rw [map_add (f := _)]; exact map_add _ _ _
         map_smul' a s := by
           refine (D.app_mul _ a ((idealSub e).incl.app W s)).trans ?_
           rw [show e.appLE W _ le_rfl ((idealSub e).incl.app W s) = 0 from
@@ -239,13 +243,13 @@ def comp (D : Der π e F) (φ : F ⟶ F') : Der π e F' where
   res_app h h' f := (app_resM φ h' _).symm.trans (congrArg (φ.app _) (D.res_app h h' f))
   app_res h k f := congrArg (φ.app _) (D.app_res h k f)
   app_mul {W V} h f g := (congrArg (QCoh.appLinear φ V) (D.app_mul h f g)).trans (by
-    rw [map_add, map_smul, map_smul]; rfl)
+    rw [map_add (f := _), map_smul, map_smul]; rfl)
   app_base h k a := (congrArg (φ.app _) (D.app_base h k a)).trans (map_zero _)
 
 end Der
 
-variable (F) in
 
+variable (F) in
 def homEquivDer : (conormal e ⟶ F) ≃ Der π e F where
   toFun := (univ he).comp
   invFun := Der.lift
@@ -287,8 +291,8 @@ theorem map_id {φ : X ⟶ X} (hφ : φ = 𝟙 X) (w : φ ≫ π = π) (we : e �
   exact hom_ext he fun W f => (map_d he he w we _ le_rfl le_rfl f).trans
     (congrArg _ (resG_self _ f))
 
-include he in
 
+include he in
 theorem map_comp (he'' : e'' ≫ π'' = 𝟙 S) (w' : ψ ≫ π' = π'') (we' : e'' ≫ ψ = e')
     {χ : X'' ⟶ X} (hχ : ψ ≫ φ = χ) (w'' : χ ≫ π = π'') (we'' : e'' ≫ χ = e) :
     map he' w we ≫ map he'' w' we' = map he'' w'' we'' :=
@@ -299,8 +303,8 @@ theorem map_comp (he'' : e'' ≫ π'' = 𝟙 S) (w' : ψ ≫ π' = π'') (we' : 
       map_d he' he'' w' we' _ h'' le_rfl, map_d he he'' w'' we'' _ h''
         ((le_preimage_of_comp hχ).1 le_rfl), appLE_appLE hχ]
 
-include he in
 
+include he in
 theorem map_eq_zero (hφ : π' ≫ e = φ) : map he' w we = 0 :=
   hom_ext he fun W f => by
     have k := (le_preimage_of_comp hφ).2 (le_refl (φ ⁻¹ᵁ W))
@@ -364,8 +368,8 @@ theorem pullback_hom_ext {F : S'.Modules}
 
 end Base
 
-variable (π e) in
 
+variable (π e) in
 structure IsChart (U : S.Opens) (W : X.Opens) : Prop where
 
   affine_base : IsAffineOpen U
@@ -388,8 +392,8 @@ theorem isAffineOpen_and_isPushout {Y T : Scheme.{0}} {f : T ⟶ S} {g : Y ⟶ X
   have : IsAffine W := hW
   exact .of_isIso (Scheme.Hom.isPullback_resLE H k k' rfl).isoPullback.hom
 
-include he in
 
+include he in
 theorem exists_isChart_inf (hU : IsAffineOpen U) (hW : IsAffineOpen W) (k : W ≤ π ⁻¹ᵁ U) {x : S}
     (hx : e x ∈ W) (hV : x ∈ V) : ∃ U', x ∈ U' ∧ U' ≤ V ∧ U' ≤ U ∧ IsChart π e U' (W ⊓ π ⁻¹ᵁ U') := by
   obtain ⟨U', hU', hx', hle⟩ := QCoh.exists_affine_mem_le (U := V ⊓ e ⁻¹ᵁ W) x ⟨hV, hx⟩
@@ -398,8 +402,8 @@ theorem exists_isChart_inf (hU : IsAffineOpen U) (hW : IsAffineOpen W) (k : W �
     (isAffineOpen_and_isPushout (IsPullback.id_horiz π) hU hU' hW h k).1,
     le_inf (hle.trans inf_le_right) ((le_preimage_iff he).2 le_rfl), inf_le_right⟩
 
-include he in
 
+include he in
 theorem exists_isChart {x : S} (hV : x ∈ V) : ∃ U W, x ∈ U ∧ U ≤ V ∧ IsChart π e U W := by
   obtain ⟨U, hU, hx, -⟩ := QCoh.exists_affine_mem_le x hV
   obtain ⟨W, hW, hx', k⟩ := QCoh.exists_affine_mem_le (U := π ⁻¹ᵁ U) (e x)
@@ -456,13 +460,12 @@ theorem ofAugCot_bijective : Function.Bijective (c.ofAugCot he) := by
   · obtain ⟨x, rfl⟩ := (RingHom.ker (c.aug he)).toCotangent_surjective x
     rw [key]
     exact hb.lift_eq g _
-  · refine hb.inductionOn y (fun y => c.ofAugCot he (hb.lift g y) = y) (by rw [map_zero, map_zero]; rfl) (fun s => ?_)
-      (fun r y hy => ?_) fun y z hy hz => ?_
+  · refine hb.inductionOn y (fun s => ?_) (fun r y hy => ?_) fun y z hy hz => ?_
     · rw [hb.lift_eq]
       exact key _
     · rw [map_smul, map_smul, hy]
       rfl
-    · rw [map_add, map_add, hy, hz]
+    · rw [map_add (f := _), map_add (f := _), hy, hz]
       rfl
 
 def augCotEquiv : letI := c.algebra; AugCot (c.aug he) ≃ₗ[Γ(S, U)] Γ(conormal e, U) :=
@@ -478,22 +481,7 @@ theorem d_surjective : Function.Surjective (d he c.le) := fun s => by
   obtain ⟨a, rfl⟩ := AugCot.d_surjective _ x
   exact ⟨a, (c.augCotEquiv_d he a).symm⟩
 
-open scoped TensorProduct in
 
-def kaehlerEquiv : letI := c.algebra; letI := appLEAlgebra e c.le
-    Γ(conormal e, U) ≃ₗ[Γ(S, U)] Γ(S, U) ⊗[Γ(X, W)] Ω[Γ(X, W)⁄Γ(S, U)] :=
-  letI := c.algebra
-  letI := appLEAlgebra e c.le
-  (c.augCotEquiv he).symm ≪≫ₗ AugCot.kaehlerEquiv (c.aug he) fun _ => rfl
-
-open scoped TensorProduct in
-
-theorem kaehlerEquiv_d (a : Γ(X, W)) : letI := c.algebra; letI := appLEAlgebra e c.le
-    c.kaehlerEquiv he (d he c.le a) = 1 ⊗ₜ KaehlerDifferential.D _ _ a := by
-  letI := c.algebra
-  letI := appLEAlgebra e c.le
-  rw [← c.augCotEquiv_d he, kaehlerEquiv, LinearEquiv.trans_apply, LinearEquiv.symm_apply_apply]
-  exact AugCot.kaehlerEquiv_d _ _ a
 
 end IsChart
 
@@ -530,9 +518,9 @@ theorem prod_hom_ext {Y P : Scheme.{0}} {π₂ : Y ⟶ S} {e₂ : S ⟶ Y} (he�
       exact congr(($h₂).app U _)
   | zero => simp only [map_zero]
   | one => simp only [d_one, map_zero]
-  | add a b _ _ ha hb => simp only [map_add, ha, hb]
+  | add a b _ _ ha hb => simp only [map_add (f := _), ha, hb]
   | neg a _ ha => simp only [map_neg, ha]
-  | mul a b _ _ ha hb => simp only [d_mul, map_add, Scheme.Modules.Hom.app_smul, ha, hb]
+  | mul a b _ _ ha hb => simp only [d_mul, map_add (f := _), Scheme.Modules.Hom.app_smul, ha, hb]
 
 theorem IsChart.exists_isBaseChange [QuasiCompact e] (c : IsChart π e U W) {R A : Type}
     [CommRing R] [CommRing A] [Algebra R A] (ε : A →ₐ[R] R) [Algebra R Γ(S, U)]
@@ -569,8 +557,8 @@ theorem IsChart.isFrame_d [QuasiCompact e] (c : IsChart π e U W) {R A ι : Type
   convert Summand.isFrame_of_affine_basis c.affine_base (hl.basis b) using 2 with i
   rw [IsBaseChange.basis_apply, hb, hd]
 
-include he in
 
+include he in
 theorem isIso_baseMap {π' : X' ⟶ S'} {e' : S' ⟶ X'} {φ : X' ⟶ X} {f : S' ⟶ S} [QuasiCompact e]
     [QuasiCompact e'] (he' : e' ≫ π' = 𝟙 S') (H : IsPullback φ π' π f) (we : e' ≫ φ = f ≫ e) :
     IsIso (baseMap he' H.w we) := by
@@ -609,8 +597,8 @@ theorem isIso_baseMap {π' : X' ⟶ S'} {e' : S' ⟶ X'} {φ : X' ⟶ X} {f : S'
     (key V x hx).imp fun _ h => ⟨h.1, h.2.1, h.2.2.2⟩
   exact isIso_of_mono_of_epi _
 
-include he in
 
+include he in
 theorem exists_isFrame [QuasiCompact e] [Smooth π] (x : S) :
     ∃ (U : S.Opens) (n : ℕ) (s : Fin n → Γ(conormal e, U)), x ∈ U ∧ IsFrame s := by
   obtain ⟨U, W, hx, -, c⟩ := exists_isChart he (x := x) (V := ⊤) trivial
@@ -620,8 +608,8 @@ theorem exists_isFrame [QuasiCompact e] [Smooth π] (x : S) :
   have := Module.Projective.of_equiv (c.augCotEquiv he)
   exact Summand.exists_frame_of_projective c.affine_base ⟨x, hx⟩
 
-include he in
 
+include he in
 theorem isVB_conormal [QuasiCompact e] (n : ℕ) [h : SmoothOfRelativeDimension n π] :
     IsVB (conormal e) n := fun x => by
   obtain ⟨U, hU, W, hW, hx, k, hs⟩ := h.exists_isStandardSmoothOfRelativeDimension (e x)
@@ -635,8 +623,8 @@ theorem isVB_conormal [QuasiCompact e] (n : ℕ) [h : SmoothOfRelativeDimension 
   obtain ⟨b⟩ := AugCot.nonempty_basis_of_isStandardSmoothOfRelativeDimension (c.aug he) n
   exact ⟨U', _, hx', Summand.isFrame_of_affine_basis c.affine_base (b.map (c.augCotEquiv he))⟩
 
-include he in
 
+include he in
 theorem exists_isVB_conormal [QuasiCompact e] [Smooth π] [PreconnectedSpace S] :
     ∃ n, IsVB (conormal e) n := by
   let r (x : S) := Module.finrank (S.presheaf.stalk x) ((conormal e).presheaf.stalk x :)
@@ -650,9 +638,5 @@ theorem exists_isVB_conormal [QuasiCompact e] [Smooth π] [PreconnectedSpace S] 
   obtain ⟨U, m, s, hx, hs⟩ := exists_isFrame he x
   obtain rfl : m = n := (hr hs hx).symm.trans (congrFun hn x)
   exact ⟨U, s, hx, hs⟩
-
-theorem isZero_conormal_id : IsZero (conormal (𝟙 S)) :=
-  (IsZero.iff_id_eq_zero _).2 ((map_id (Category.comp_id (𝟙 S)) rfl (Category.comp_id _)
-    (Category.comp_id _)).symm.trans (map_eq_zero (Category.comp_id _) _ _ _ (Category.comp_id _)))
 
 end GlobalTheory.Conormal

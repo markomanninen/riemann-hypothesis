@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.Cyc.FontW
 
@@ -106,7 +110,8 @@ theorem avg_step (amul : ∀ g h β, a (g * h) β = a g (a h β))
   have hβ' : ∀ g, ∀ n ∈ N, a (g * n) β = a g β := fun g n hn => by rw [amul, hβ n hn]
   have hρ : ∀ σ, ρ σ (∑ s ∈ S, a s β • c s) = ∑ s ∈ S, a (σ * s) β • ρ σ (c s) := by
     intro σ
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun s _ => by rw [semi, amul]
   refine ⟨-∑ s ∈ S, a s β • c s, neg_mem (sum_mem fun s _ => Dv_smul _ (hk s)), fun r => ?_,
     fun σ => ?_⟩
@@ -140,7 +145,8 @@ theorem avg_step (amul : ∀ g h β, a (g * h) β = a g (a h β))
         refine QuotientAddGroup.eq_iff_sub_mem.2 ?_
         rw [hc, smul_add, add_sub_cancel_left]
         exact Dv_smul _ (Dv_map _ (hNW hn))) σ
-    rw [← map_sum, ← map_sum] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← map_sum] at h3
     exact h3
 
 theorem avg_cob (hM : Cpl l M) (amul : ∀ g h β, a (g * h) β = a g (a h β))
@@ -159,7 +165,7 @@ theorem avg_cob (hM : Cpl l M) (amul : ∀ g h β, a (g * h) β = a g (a h β))
     obtain ⟨d, hd, h1, h2⟩ := avg_step l 𝓕 a ρ amul ρmul semi htr (fun g => c g - (ρ g b - b))
       (fun g h => by simp only [hc, ρmul, map_sub]; abel) hb.1 k hb.2
     have e : ∀ g, c g - (ρ g (b + d) - (b + d)) = c g - (ρ g b - b) - (ρ g d - d) := fun g => by
-      rw [map_add]; abel
+      rw [map_add (f := _)]; abel
     refine ⟨b + d, ⟨?_, ?_⟩, by simpa using hd⟩
     · simpa only [e] using h1
     · simpa only [e] using h2

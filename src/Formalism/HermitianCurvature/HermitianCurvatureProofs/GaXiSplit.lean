@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroPointOver
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictUpperNeg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroPointOver
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictUpperNeg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

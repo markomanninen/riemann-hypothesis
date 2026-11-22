@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.FamOfApply
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.FamOfApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,15 +124,15 @@ def FamWt : Prop :=
 def NeatLev : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (l : ℕ), l.Prime → ∀ a : ℕ, 1 ≤ a → ∀ (w₀ : HeightOneSpectrum (𝓞 E)), ((l : ℕ) : 𝓞 E) ∈ w₀.asIdeal → IsSplitAt w₀ →
     ∀ (v' : HeightOneSpectrum (𝓞 E)), IsSplitAt v' → Apart v' w₀ →
-    ∀ (K : Subgroup (UA E a)), IsLevelAway w₀ K → (∀ x ∈ locU a v', cLoc v' x ∈ GlobalTheory.LFun.KGL v' a → x ∈ K) →
+    ∀ (K : Subgroup (UA E a)), IsLevelAway w₀ K → (∀ x ∈ locU a v', cLoc v' x ∈ GlobalTheory.LFun.KGL v' (n := a) → x ∈ K) →
     ∀ (Kv : Subgroup (GL (Fin a) (v'.adicCompletion E))), IsOpen (Kv : Set (GL (Fin a) (v'.adicCompletion E))) →
     ∀ (W : Wt E a) (f : algForms W), f ∈ UpperTheory.Gal.Gen.fixedBy W (K ⊓ Kv.comap (cLoc v')) →
     ∃ C : Subgroup (UA E a), IsLevel C ∧ K ≤ C ∧
       (∀ g : UA E a, ∀ γ ∈ ratU E a, ∀ c ∈ C, ∀ x ∈ infU E a, γ * g = g * c * x → c = 1) ∧
-      (∀ c ∈ C, cLoc v' c ∈ GlobalTheory.LFun.KGL v' a) ∧ f ∈ fixedBy W (C ⊓ Kv.comap (cLoc v'))
+      (∀ c ∈ C, cLoc v' c ∈ GlobalTheory.LFun.KGL v' (n := a)) ∧ f ∈ fixedBy W (C ⊓ Kv.comap (cLoc v'))
 
 def EllC : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a : ℕ) (C : Subgroup (UA E a)), C ≤ finU E a →
+  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a : ℕ) (C : Subgroup (UA E a)), C ≤ finU (E := E) (n := a) →
     (∀ g : UA E a, ∀ γ ∈ ratU E a, ∀ c ∈ C, ∀ x ∈ infU E a, γ * g = g * c * x → c = 1) → ∃ ℓ : UA E a → C, IsEll C ℓ
 
 def Twist : Prop :=
@@ -144,7 +148,7 @@ def Kap0 : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (a : ℕ) (v' : HeightOneSpectrum (𝓞 E)) (τ : E →+* ℂ), GlobalTheory.CongL.OverPl ι τ v' →
     ∃ κ : UA E a →* GL (Fin a) ℂ, (∀ γ ∈ ratU E a, κ γ = cEmb τ γ) ∧ (∀ x ∈ infU E a, κ x = 1) ∧ (∀ g, κ g = 1 ↔ cLoc v' g = 1) ∧
       (∀ i j, Continuous fun g => ι.symm ((κ g : Matrix (Fin a) (Fin a) ℂ) i j)) ∧
-      ∀ g, cLoc v' g ∈ GlobalTheory.LFun.KGL v' a → IntGL ι (κ g)
+      ∀ g, cLoc v' g ∈ GlobalTheory.LFun.KGL v' (n := a) → IntGL ι (κ g)
 
 def Kapl : Prop :=
   ∀ (k : Type) [NormedField k] [IsUltrametricDist k] (Y : Set k), IsCompact Y → ∀ δ ε : ℝ, 0 < δ → 0 < ε → ε ≤ 1 →
@@ -175,12 +179,12 @@ def Pieces : Prop :=
 def FamEx : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (a : ℕ), 1 ≤ a → ∀ (w₀ : HeightOneSpectrum (𝓞 E)), ((l : ℕ) : 𝓞 E) ∈ w₀.asIdeal → IsSplitAt w₀ →
     ∀ (v' : HeightOneSpectrum (𝓞 E)), IsSplitAt v' → Apart v' w₀ →
-    ∀ (K : Subgroup (UA E a)), IsLevelAway w₀ K → (∀ x ∈ locU a v', cLoc v' x ∈ GlobalTheory.LFun.KGL v' a → x ∈ K) →
+    ∀ (K : Subgroup (UA E a)), IsLevelAway w₀ K → (∀ x ∈ locU a v', cLoc v' x ∈ GlobalTheory.LFun.KGL v' (n := a) → x ∈ K) →
     ∀ (Kv : Subgroup (GL (Fin a) (v'.adicCompletion E))), IsOpen (Kv : Set (GL (Fin a) (v'.adicCompletion E))) →
     ∀ (W : Wt E a) (f : algForms W), f ∈ UpperTheory.Gal.Gen.fixedBy W (K ⊓ Kv.comap (cLoc v')) →
     ∀ τ : E →+* ℂ, GlobalTheory.CongL.OverPl ι τ v' → ∀ (X : Type) (b : UA E a → X → W.Sp),
     (∀ F : algForms W, ∃ R : ℝ, ∀ g i, ‖ι.symm (F.1 (b g i) g)‖ ≤ R) → ∀ ε : ℝ, 0 < ε →
-    ∃ (d : ℕ) (M : UA E a → GL (Fin a) ℂ), (∀ g, ∀ h ∈ finU E a, cLoc v' h = 1 → M (g * h) = M g) ∧
+    ∃ (d : ℕ) (M : UA E a → GL (Fin a) ℂ), (∀ g, ∀ h ∈ finU (E := E) (n := a), cLoc v' h = 1 → M (g * h) = M g) ∧
       ∀ ν : DomWeight a, ∃ B : GL (Fin a) ℂ → GL (Fin a) ℂ → W.Sp →ₗ[ℂ] (UA E a → ℂ), Fam τ W K ν d B ∧
         ∀ g i, ‖ι.symm (f.1 (b g i) g - B (M g) (M g) (b g i) g)‖ ≤ ε
 

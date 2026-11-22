@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitWeightedStabilizerSumEqSumOrbitReps
-import Formalism.HermitianLattices.FinalMass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitWeightedStabilizerSumEqSumOrbitReps
+public import Formalism.HermitianLattices.FinalMass
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
@@ -12,10 +16,10 @@ namespace GlobalTheory.Mass.GenusOrb
 section
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
 
+
 open NumberField Matrix in
 open scoped ENNReal Classical in
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] in
-
 theorem _root_.GlobalTheory.Mass.GenusOrb.trace_pos_of_PD (h : V →ₗ⋆[K] V →ₗ[K] K)
     (hp : _root_.GlobalTheory.Mass.PD h) (x : V) (hx : x ≠ 0) :
     0 < Algebra.trace ℚ K (h x x) := by
@@ -41,16 +45,16 @@ def autEquiv (h : V →ₗ⋆[K] V →ₗ[K] K) (M : Submodule (𝓞 K) V) :
 
 end
 
+
 open NumberField Matrix in
 open scoped ENNReal Classical in
-
 theorem _root_.GlobalTheory.Mass.GenusOrb.main : ∀ (K V : Type) [Field K] [NumberField K]
     [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V]
     [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K), _root_.Formalism.HermitianLatticesTheory.IsCMUnram K → h.IsSymm →
-    _root_.GlobalTheory.Mass.PD h → ∀ L : Submodule (𝓞 K) V, Submodule.IsLattice K L →
+    _root_.GlobalTheory.Mass.PD h → ∀ L : Submodule (𝓞 K) V, Submodule.IsFullLattice K L →
     ENNReal.ofReal (_root_.Formalism.HermitianLatticesTheory.mass h L) = _root_.GlobalTheory.Mass.orbMass (_root_.Formalism.HermitianLatticesTheory.isom h) (_root_.Formalism.HermitianLatticesTheory.genus h L) ∧
     0 < _root_.Formalism.HermitianLatticesTheory.mass h L ∧ _root_.GlobalTheory.Mass.Stable (_root_.Formalism.HermitianLatticesTheory.isom h) (_root_.Formalism.HermitianLatticesTheory.genus h L) ∧
-    (∀ M : Submodule (𝓞 K) V, Submodule.IsLattice K M →
+    (∀ M : Submodule (𝓞 K) V, Submodule.IsFullLattice K M →
       Finite (MulAction.stabilizer (_root_.Formalism.HermitianLatticesTheory.isom h) M)) ∧
     ∀ (s : Finset (Submodule (𝓞 K) V)) (N : Submodule (𝓞 K) V → ℝ≥0∞), _root_.Formalism.ThetaLiftIndependence.IsClassReps h L s →
       (∀ (g : _root_.Formalism.HermitianLatticesTheory.isom h) M, N (g • M) = N M) →
@@ -59,15 +63,28 @@ theorem _root_.GlobalTheory.Mass.GenusOrb.main : ∀ (K V : Type) [Field K] [Num
   intro K V _ _ _ _ _ _ _ _ h _ hsymm hp L hL
   have htr : ∀ x : V, x ≠ 0 → 0 < Algebra.trace ℚ K (h x x) :=
     _root_.GlobalTheory.Mass.GenusOrb.trace_pos_of_PD h hp
-  obtain ⟨hmass_ex, hmass_eq, hmass_pos⟩ := _root_.Formalism.HermitianLatticesTheory.final_massBasic K V h hsymm htr L hL
+  have hmass := by
+    first
+    | exact _root_.Formalism.HermitianLatticesTheory.final_massBasic K V h hsymm htr L hL
+    | exact _root_.Formalism.HermitianLatticesTheory.final_massBasic K V h hsymm htr L hL.toIsLattice
+  obtain ⟨hmass_ex, hmass_eq, hmass_pos⟩ := hmass
   have hgen : ∀ g ∈ _root_.Formalism.HermitianLatticesTheory.isom h, ∀ M ∈ _root_.Formalism.HermitianLatticesTheory.genus h L, _root_.Formalism.HermitianLatticesTheory.gmap g M ∈ _root_.Formalism.HermitianLatticesTheory.genus h L := by
     intro g hg M hM
     obtain ⟨hML, hLM⟩ := hM
     obtain ⟨heq, hinv, -⟩ := _root_.Formalism.HermitianLatticesTheory.final_genusBasic (𝓞 K) K V h hsymm _root_.Formalism.HermitianLatticesTheory.star_algebraMap_ringOfIntegers_mem_range
-    exact show Submodule.IsLattice K (_root_.Formalism.HermitianLatticesTheory.gmap g M) ∧ _root_.Formalism.HermitianLatticesTheory.SameGenus h L (_root_.Formalism.HermitianLatticesTheory.gmap g M) from
-      ⟨(_root_.Formalism.HermitianLatticesTheory.final_isomAct (𝓞 K) K V h g hg M).2.2.2.2.mpr hML, heq.trans hLM (hinv M g hg)⟩
+    have hfull : Submodule.IsFullLattice K (_root_.Formalism.HermitianLatticesTheory.gmap g M) := by
+      refine { toIsLattice := (_root_.Formalism.HermitianLatticesTheory.final_isomAct (𝓞 K) K V h g hg M).2.2.2.2.mpr hML.toIsLattice, span_eq_top := ?_ }
+      have he : ((_root_.Formalism.HermitianLatticesTheory.gmap g M : Submodule (𝓞 K) V) : Set V) = g '' (M : Set V) := by
+        ext x
+        simp [_root_.Formalism.HermitianLatticesTheory.gmap]
+      rw [he]
+      change Submodule.span K ((g : V →ₗ[K] V) '' (M : Set V)) = ⊤
+      rw [← Submodule.map_span, hML.span_eq_top, Submodule.map_top]
+      exact LinearMap.range_eq_top.mpr g.surjective
+    exact show Submodule.IsFullLattice K (_root_.Formalism.HermitianLatticesTheory.gmap g M) ∧ _root_.Formalism.HermitianLatticesTheory.SameGenus h L (_root_.Formalism.HermitianLatticesTheory.gmap g M) from
+      ⟨hfull, heq.trans hLM (hinv M g hg)⟩
   have hstab : _root_.GlobalTheory.Mass.Stable (_root_.Formalism.HermitianLatticesTheory.isom h) (_root_.Formalism.HermitianLatticesTheory.genus h L) := fun g M hM => hgen g.1 g.2 M hM
-  have hfin : ∀ M : Submodule (𝓞 K) V, Submodule.IsLattice K M →
+  have hfin : ∀ M : Submodule (𝓞 K) V, Submodule.IsFullLattice K M →
       Finite (MulAction.stabilizer (_root_.Formalism.HermitianLatticesTheory.isom h) M) := by
     intro M hM
     have hS := _root_.Formalism.HermitianLatticesTheory.final_autFinite K V h hsymm htr M hM

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+
+@[expose] public section
 
 open Topology
 
@@ -22,7 +26,7 @@ theorem UpperTheory.ConvolutionTheory.L1.closedProper :
     UpperTheory.ConvolutionTheory.L1.ClosedProper := by
   intro G _ _ _ _ _ _ γ hO D hD
   set O : Set G := {y | ∃ x, y = x⁻¹ * γ * x} with hOdef
-  letI : MulAction G O :=
+  let : MulAction G O :=
     { smul := fun g y => ⟨g * y.1 * g⁻¹, by
         obtain ⟨x, hx⟩ := y.2
         exact ⟨x * g⁻¹, by rw [hx]; group⟩⟩
@@ -30,23 +34,23 @@ theorem UpperTheory.ConvolutionTheory.L1.closedProper :
       mul_smul := fun a b y => Subtype.ext (by
         change a * b * y.1 * (a * b)⁻¹ = a * (b * y.1 * b⁻¹) * a⁻¹; group) }
   have hsm : ∀ (g : G) (y : O), ((g • y : O) : G) = g * y.1 * g⁻¹ := fun _ _ => rfl
-  haveI : ContinuousSMul G O := ⟨by
+  have : ContinuousSMul G O := ⟨by
     refine continuous_induced_rng.2 ?_
     change Continuous fun p : G × O => p.1 * p.2.1 * p.1⁻¹
     fun_prop⟩
-  haveI : MulAction.IsPretransitive G O := ⟨by
+  have : MulAction.IsPretransitive G O := ⟨by
     rintro ⟨_, a, rfl⟩ ⟨_, b, rfl⟩
     exact ⟨b⁻¹ * a, Subtype.ext (by rw [hsm]; group)⟩⟩
-  haveI : LocallyCompactSpace O := hO.locallyCompactSpace
+  have : LocallyCompactSpace O := hO.locallyCompactSpace
   let γ₀ : O := ⟨γ, 1, by group⟩
   have hopen : IsOpenMap (fun g : G => g • γ₀) := isOpenMap_smul_of_sigmaCompact γ₀
   have hsurj : Function.Surjective (fun g : G => g • γ₀) := fun y => MulAction.exists_smul_eq G γ₀ y
   have hD' : IsCompact (Subtype.val ⁻¹' D : Set O) := hO.isClosedEmbedding_subtypeVal.isCompact_preimage hD
   obtain ⟨K, hK, hDK⟩ := UpperTheory.ConvolutionTheory.L1.compact_lift hopen hsurj hD'
-  refine ⟨K⁻¹, hK.inv, fun x hx => ?_⟩
+  refine ⟨(·⁻¹) '' K, hK.image continuous_inv, fun x hx => ?_⟩
   obtain ⟨g, hg, hgx⟩ := hDK (a := ⟨x⁻¹ * γ * x, x, rfl⟩) hx
   have h1 : g * γ * g⁻¹ = x⁻¹ * γ * x := congrArg Subtype.val hgx
-  refine ⟨x * g, ?_, g⁻¹, by simpa using hg, by group⟩
+  refine ⟨x * g, ?_, g⁻¹, ⟨g, hg, rfl⟩, by group⟩
   rw [Subgroup.mem_centralizer_iff]
   rintro h rfl
   calc h * (x * g) = x * (x⁻¹ * h * x) * g := by group

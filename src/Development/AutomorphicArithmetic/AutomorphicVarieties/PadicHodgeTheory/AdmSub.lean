@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndepOnOfInvariant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RatioInvariantInK0
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndepOnOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RatioInvariantInK0
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 section Generic
@@ -24,7 +29,7 @@ private theorem rT_comm {V V' : Type} [AddCommGroup V] [Module Q V] [AddCommGrou
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [hf g]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private noncomputable def invMap {V V' : Type} [AddCommGroup V] [Module Q V] [AddCommGroup V'] [Module Q V']
     {ρ : Representation Q G V} {ρ' : Representation Q G V'} {f : V →ₗ[Q] V'}
@@ -108,7 +113,7 @@ theorem UpperTheory.V.Loc.isCrys_isDR_sub_quot :
   obtain ⟨K, e, -, -, he, -, hK, hK0⟩ := openField φ hφ
   obtain ⟨T⟩ := tiedP l
   have hF := GlobalTheory.Per.FontaineBound.isField_of_tied T
-  have := GlobalTheory.Per.FontaineBound.isDomain_cris ((PP l).PD K) hF
+  have := GlobalTheory.Per.FontaineBound.isDomain_cris (PD := (PP l).PD K) hF
   have := hF.isDomain
   have := ((PP l).PD K).finK₀
   have := K.2

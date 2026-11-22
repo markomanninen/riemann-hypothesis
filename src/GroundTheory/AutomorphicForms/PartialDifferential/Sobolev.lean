@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.Sobolev
 
@@ -21,8 +25,8 @@ theorem toTemperedDistribution_injective :
     (Lp.ker_toTemperedDistributionCLM_eq_bot (F := F) (μ := (volume : Measure E)))
   exact this h
 
-variable (E F) in
 
+variable (E F) in
 def sobolevSubmodule (s : ℝ) : Submodule ℂ 𝓢'(E, F) where
   carrier := {u | MemSobolev s 2 u}
   add_mem' hu hv := hu.add hv
@@ -46,12 +50,12 @@ theorem memSobolev_besselPotential_neg (s : ℝ) (f : Lp F 2 (volume : Measure E
     MemSobolev s 2 (besselPotential E F (-s) (f : 𝓢'(E, F))) :=
   ⟨f, by simp⟩
 
-variable (E F) in
 
+variable (E F) in
 def sobolevEquivLp (s : ℝ) : sobolevSubmodule E F s ≃ₗ[ℂ] Lp F 2 (volume : Measure E) where
   toFun := sobolevToLp
   map_add' u v := by
-    rw [sobolevToLp_eq_iff, Submodule.coe_add, map_add, besselPotential_eq_sobolevToLp, besselPotential_eq_sobolevToLp,
+    rw [sobolevToLp_eq_iff, Submodule.coe_add, map_add (f := _), besselPotential_eq_sobolevToLp, besselPotential_eq_sobolevToLp,
       ← Lp.toTemperedDistributionCLM_apply, ← Lp.toTemperedDistributionCLM_apply,
       ← Lp.toTemperedDistributionCLM_apply, map_add]
   map_smul' c u := by
@@ -72,8 +76,8 @@ theorem sobolevEquivLp_apply {s : ℝ} (u : sobolevSubmodule E F s) :
     (sobolevEquivLp E F s u : 𝓢'(E, F)) = besselPotential E F s (u : 𝓢'(E, F)) :=
   (besselPotential_eq_sobolevToLp u).symm
 
-variable (E F) in
 
+variable (E F) in
 def SobolevSpace (s : ℝ) : Type _ := sobolevSubmodule E F s
 
 namespace SobolevSpace
@@ -98,9 +102,6 @@ instance : InnerProductSpace ℂ (SobolevSpace E F s) :=
 def toDistribution (u : SobolevSpace E F s) : 𝓢'(E, F) := Subtype.val (show sobolevSubmodule E F s from u)
 
 theorem norm_def (u : SobolevSpace E F s) : ‖u‖ = ‖bessel s u‖ := rfl
-
-theorem inner_def (u v : SobolevSpace E F s) :
-    inner ℂ u v = inner ℂ (bessel s u) (bessel s v) := rfl
 
 end SobolevSpace
 
@@ -155,8 +156,8 @@ theorem exists_toDistribution_eq_iff (u : 𝓢'(E, F)) :
     (∃ v : SobolevSpace E F s, toDistribution v = u) ↔ MemSobolev s 2 u :=
   ⟨fun ⟨v, hv⟩ ↦ hv ▸ memSobolev_toDistribution v, fun hu ↦ ⟨mk u hu, rfl⟩⟩
 
-variable (E F s) in
 
+variable (E F s) in
 def toDistributionCLM : SobolevSpace E F s →L[ℂ] 𝓢'(E, F) :=
   besselPotential E F (-s) ∘L Lp.toTemperedDistributionCLM F (volume : Measure E) 2 ∘L
     (besselₗᵢ (E := E) (F := F) s).toContinuousLinearEquiv.toContinuousLinearMap
@@ -333,12 +334,6 @@ theorem norm_multiplier_apply_le (hm : m.HasTemperateGrowth)
 
 end SobolevSpace
 
-theorem Lp_two_norm_sq_eq_integral (f : Lp F 2 (volume : Measure E)) :
-    ‖f‖ ^ 2 = ∫ x, ‖f x‖ ^ 2 := by
-  rw [@norm_sq_eq_re_inner ℂ, MeasureTheory.L2.inner_def,
-    ← integral_re (MeasureTheory.L2.integrable_inner (𝕜 := ℂ) f f)]
-  simp_rw [inner_self_eq_norm_sq]
-
 def fourierFun {s : ℝ} (u : SobolevSpace E F s) (ξ : E) : F :=
   weight (-s) ξ • (𝓕 (SobolevSpace.bessel s u) : Lp F 2 (volume : Measure E)) ξ
 
@@ -376,14 +371,6 @@ theorem weight_smul_fourierFun {s : ℝ} (u : SobolevSpace E F s) (ξ : E) :
     weight s ξ • fourierFun u ξ = (𝓕 (SobolevSpace.bessel s u) : Lp F 2 (volume : Measure E)) ξ := by
   rw [fourierFun, smul_smul, weight_mul_weight]; simp [weight]
 
-theorem norm_sq_eq_integral {s : ℝ} (u : SobolevSpace E F s) :
-    ‖u‖ ^ 2 = ∫ ξ, (1 + ‖ξ‖ ^ 2) ^ s * ‖fourierFun u ξ‖ ^ 2 := by
-  rw [SobolevSpace.norm_def, ← Lp.norm_fourier_eq, Lp_two_norm_sq_eq_integral]
-  congr 1; ext ξ
-  rw [← weight_smul_fourierFun, norm_smul, norm_weight, mul_pow, ← Real.rpow_natCast,
-    ← Real.rpow_mul (by positivity)]
-  norm_num
-
 theorem memSobolev_iff_fourier {s : ℝ} (u : 𝓢'(E, F)) :
     MemSobolev s 2 u ↔ ∃ g : E → F, MemLp (fun ξ ↦ weight s ξ • g ξ) 2 (volume : Measure E) ∧
       ∀ φ : 𝓢(E, ℂ), 𝓕 u φ = ∫ ξ, φ ξ • g ξ := by
@@ -406,36 +393,6 @@ theorem memSobolev_iff_fourier {s : ℝ} (u : 𝓢'(E, F)) :
     rw [hξ]
     simp only [smul_smul, smul_eq_mul, mul_comm]
 
-theorem norm_sq_eq_integral_of_fourier {s : ℝ} (u : SobolevSpace E F s) (g : E → F)
-    (hg : MemLp (fun ξ ↦ weight s ξ • g ξ) 2 (volume : Measure E))
-    (hφ : ∀ φ : 𝓢(E, ℂ), 𝓕 (SobolevSpace.toDistribution u) φ = ∫ ξ, φ ξ • g ξ) :
-    g =ᵐ[volume] fourierFun u ∧ ‖u‖ ^ 2 = ∫ ξ, (1 + ‖ξ‖ ^ 2) ^ s * ‖g ξ‖ ^ 2 := by
-  have hL : hg.toLp _ = (𝓕 (SobolevSpace.bessel s u) : Lp F 2 (volume : Measure E)) := by
-    apply toTemperedDistribution_injective
-    simp only
-    rw [← smulLeftCLM_weight_fourier]
-    ext φ
-    rw [smulLeftCLM_apply_apply, hφ, Lp.toTemperedDistribution_apply]
-    apply integral_congr_ae
-    filter_upwards [hg.coeFn_toLp] with ξ hξ
-    rw [hξ, SchwartzMap.smulLeftCLM_apply_apply (weight_hasTemperateGrowth s)]
-    simp only [smul_smul, smul_eq_mul, mul_comm]
-  have hae : (fun ξ ↦ weight s ξ • g ξ) =ᵐ[volume] fun ξ ↦ weight s ξ • fourierFun u ξ := by
-    have h2 : ⇑(hg.toLp _) =ᵐ[volume] ⇑(𝓕 (SobolevSpace.bessel s u) :
-        Lp F 2 (volume : Measure E)) := by rw [hL]
-    filter_upwards [hg.coeFn_toLp, h2] with ξ h1 h2
-    rw [← h1, h2, weight_smul_fourierFun]
-  have hg' : g =ᵐ[volume] fourierFun u := by
-    filter_upwards [hae] with ξ h
-    have hw : weight s ξ ≠ 0 := by
-      unfold weight; exact_mod_cast (weight_pos s ξ).ne'
-    exact smul_right_injective F hw h
-  refine ⟨hg', ?_⟩
-  rw [norm_sq_eq_integral]
-  apply integral_congr_ae
-  filter_upwards [hg'] with ξ h
-  rw [h]
-
 theorem ae_eq_of_integral_schwartz_smul_eq {g₁ g₂ : E → F}
     (h₁ : LocallyIntegrable g₁ (volume : Measure E)) (h₂ : LocallyIntegrable g₂ (volume : Measure E))
     (h : ∀ φ : 𝓢(E, ℂ), HasCompactSupport φ → ∫ x, φ x • g₁ x = ∫ x, φ x • g₂ x) :
@@ -457,22 +414,7 @@ theorem ae_eq_of_integral_schwartz_smul_eq {g₁ g₂ : E → F}
   filter_upwards [this] with x hx
   exact sub_eq_zero.1 hx
 
-theorem integral_fourier_smul_eq_of_integrable (φ : 𝓢(E, ℂ)) {g : E → F}
-    (hg : Integrable g (volume : Measure E)) :
-    ∫ ξ, 𝓕 φ ξ • g ξ = ∫ x, φ x • 𝓕 g x := by
-  simpa using! VectorFourier.integral_fourierIntegral_smul_eq_flip (L := innerₗ E)
-    Real.continuous_fourierChar continuous_inner φ.integrable hg
-
 namespace SobolevSpace
-
-def lpEquivSobolevZero : Lp F 2 (volume : Measure E) ≃ₗᵢ[ℂ] SobolevSpace E F 0 :=
-  (besselₗᵢ 0).symm
-
-@[simp] theorem toDistribution_l2Equiv (f : Lp F 2 (volume : Measure E)) :
-    toDistribution (lpEquivSobolevZero f) = (f : 𝓢'(E, F)) := by
-  change toDistribution ((bessel 0).symm f) = _
-  rw [toDistribution_bessel_symm, neg_zero, besselPotential_zero]
-  rfl
 
 variable {s t : ℝ}
 
@@ -548,8 +490,8 @@ theorem lineDeriv_bound (v : E) (ξ : E) :
         gcongr
     _ = _ := by ring
 
-open LineDeriv in
 
+open LineDeriv in
 def lineDerivCLM (v : E) : SobolevSpace E F s →L[ℂ] SobolevSpace E F (s - 1) :=
   multiplier (m := fun ξ ↦ (2 * Real.pi * Complex.I) * ((inner ℝ ξ v : ℝ) : ℂ))
     (by fun_prop) (lineDeriv_bound v)

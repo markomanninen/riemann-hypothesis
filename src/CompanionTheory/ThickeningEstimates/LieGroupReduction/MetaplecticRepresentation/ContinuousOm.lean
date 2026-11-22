@@ -1,4 +1,8 @@
-import CompanionTheory.ThickeningEstimates.LieGroupReduction.LocalLift
+module
+
+public import CompanionTheory.ThickeningEstimates.LieGroupReduction.LocalLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ def Ann (s : Mat l) (f : Sch l) : Prop :=
 def Nrm (s : Mat l) (U : Sch l →L[ℂ] Sch l) : Prop :=
   ∀ s' : Sp l, ∀ f : Sch l, Ann s'.1 f → (U f 0) ^ 2 * dd (s * s'.1) = (f 0) ^ 2 * dd s'.1
 
-variable (l) in
 
+variable (l) in
 abbrev Amb : Type := Sp l × (L2 l ≃ₗᵢ[ℂ] L2 l) × (Sch l →L[ℂ] Sch l)ˣ
 
 structure Mem (x : Amb l) : Prop where
@@ -41,8 +45,8 @@ theorem Ann.map {s s' : Mat l} {U : Sch l →L[ℂ] Sch l} (h : ∀ w f, U (dRho
     (hf : Ann s' f) : Ann (s * s') (U f) := fun j => by
   rw [← mulVec_mulVec, ← mulVec_mulVec, ← h, ← h, hf j, map_smul]
 
-variable (l) in
 
+variable (l) in
 def sub : Subgroup (Amb l) where
   carrier := {x | Mem x}
   one_mem' := ⟨fun _ => rfl, fun w f => by simp, fun w f => by simp, fun s' f _ => by simp⟩
@@ -79,8 +83,8 @@ def sub : Subgroup (Amb l) where
       rw [e1, show (x.1⁻¹ * s').1 = x.1⁻¹.1 * s'.1 from rfl, ← Matrix.mul_assoc, e3, Matrix.one_mul] at h1
       exact h1.symm
 
-variable (l) in
 
+variable (l) in
 def G : Type := sub l
 
 instance : Group (G l) := inferInstanceAs (Group (sub l))
@@ -97,9 +101,6 @@ theorem mem (g : G l) : Mem (Subtype.val (p := (· ∈ sub l)) g) := Subtype.pro
 theorem om_sch (g : G l) (f : Sch l) : om g (schwartzToL2 l f) = schwartzToL2 l (omS g f) := (mem g).compat f
 
 theorem om_rho (g : G l) (w : l ⊕ l → ℝ) (f : L2 l) : om g (rho w f) = rho ((pr g).1 *ᵥ w) (om g f) := (mem g).rho w f
-
-theorem omS_dRho (g : G l) (w : l ⊕ l → ℝ) (f : Sch l) : omS g (dRho w f) = dRho ((pr g).1 *ᵥ w) (omS g f) :=
-  (mem g).dRho w f
 
 theorem omS_nrm (g : G l) : Nrm (pr g).1 (omS g) := (mem g).nrm
 

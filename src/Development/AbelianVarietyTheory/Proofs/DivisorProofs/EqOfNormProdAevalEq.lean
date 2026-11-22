@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -32,20 +37,20 @@ theorem eventually_norm_prod (s : Multiset (PadicAlgCl l)) (M : ℚ_[l][X]) :
     exact (tendsto_order.1 hl).2 _ (norm_pos_iff.2 this)
   filter_upwards [hev] with n hn
   conv_lhs => rw [← Multiset.filter_add_not (fun a => aeval a M = 0) s]
-  rw [Multiset.map_add, Multiset.prod_add, norm_mul, norm_prod_map, norm_prod_map]
+  rw [Multiset.map_add (f := _), Multiset.prod_add, norm_mul, norm_prod_map, norm_prod_map]
   congr 1
   · rw [Multiset.map_congr rfl (g := fun _ => ‖(l : ℚ_[l])‖ ^ n), Multiset.map_const',
       Multiset.prod_replicate, ← pow_mul]
     intro a ha
     have h0 : aeval a M = 0 := (Multiset.mem_filter.1 ha).2
-    rw [map_add, aeval_C, h0, zero_add, norm_algebraMap', norm_pow]
+    rw [map_add (f := _), aeval_C, h0, zero_add, norm_algebraMap', norm_pow]
   · apply congrArg
     apply Multiset.map_congr rfl
     intro a ha
     have hlt := hn a (Multiset.mem_toFinset.2 ha)
     have hc : ‖algebraMap ℚ_[l] (PadicAlgCl l) ((l : ℚ_[l]) ^ n)‖ = ‖(l : ℚ_[l])‖ ^ n := by
       rw [norm_algebraMap', norm_pow]
-    rw [map_add, aeval_C, IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm (by rw [hc]; exact hlt.ne'),
+    rw [map_add (f := _), aeval_C, IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm (by rw [hc]; exact hlt.ne'),
       hc, max_eq_left hlt.le]
 
 open Classical in
@@ -139,17 +144,17 @@ theorem norm_eq_rat (s t : Multiset (PadicAlgCl l)) (hst : Multiset.card s = Mul
     (R : ℚ[X]) :
     ‖(s.map fun a => aeval a (R.map (algebraMap ℚ ℚ_[l]))).prod‖ =
       ‖(t.map fun a => aeval a (R.map (algebraMap ℚ ℚ_[l]))).prod‖ := by
-  obtain ⟨b, hb⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors ℤ) R
+  obtain ⟨b, hbmem, hb⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors ℤ) R
   set G := IsLocalization.integerNormalization (nonZeroDivisors ℤ) R
   have key : ∀ a : PadicAlgCl l, aeval a G = ((b : ℤ) : PadicAlgCl l) * aeval a (R.map (algebraMap ℚ ℚ_[l])) := by
     intro a
     rw [aeval_map_algebraMap, ← aeval_map_algebraMap ℚ a G, hb, map_zsmul, zsmul_eq_mul]
-  have hb0 : ((b : ℤ) : PadicAlgCl l) ≠ 0 := Int.cast_ne_zero.2 (nonZeroDivisors.coe_ne_zero b)
+  have hb0 : ((b : ℤ) : PadicAlgCl l) ≠ 0 := Int.cast_ne_zero.2 (nonZeroDivisors.ne_zero hbmem)
   have hG := h G
   simp only [key] at hG
   rw [Multiset.prod_map_mul, Multiset.prod_map_mul, Multiset.map_const', Multiset.map_const',
     Multiset.prod_replicate, Multiset.prod_replicate, norm_mul, norm_mul, hst] at hG
-  exact mul_left_cancel₀ (by simpa using hb0) hG
+  exact mul_left_cancel₀ (norm_ne_zero_iff.2 (pow_ne_zero _ hb0)) hG
 
 theorem norm_eq_all (s t : Multiset (PadicAlgCl l))
     (h : ∀ R : ℚ[X], ‖(s.map fun a => aeval a (R.map (algebraMap ℚ ℚ_[l]))).prod‖ =
@@ -173,11 +178,12 @@ theorem norm_eq_all (s t : Multiset (PadicAlgCl l))
         ∑ i ∈ Finset.range (D + 1), algebraMap ℚ_[l] (PadicAlgCl l) ((r n i : ℚ) : ℚ_[l]) * a ^ i := by
       intro n
       rw [aeval_map_algebraMap]
-      simp [R, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [R, map_sum]
     simp only [e]
     rw [aeval_eq_sum_range]
     simp only [Algebra.smul_def]
-    exact tendsto_finset_sum _ fun i _ =>
+    exact tendsto_finsetSum _ fun i _ =>
       (((continuous_algebraMap ℚ_[l] (PadicAlgCl l)).tendsto _).comp (hcoef i)).mul_const _
   have hs := (tendsto_multiset_prod s fun a _ => hval a).norm
   have ht := (tendsto_multiset_prod t fun a _ => hval a).norm

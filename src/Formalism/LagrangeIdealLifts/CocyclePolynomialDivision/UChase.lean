@@ -1,6 +1,10 @@
-import Formalism.LagrangeIdealLifts.Statement
-import Formalism.WindowSums.AnnihilatorPolynomials.ValProd
-import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
+module
+
+public import Formalism.LagrangeIdealLifts.Statement
+public import Formalism.WindowSums.AnnihilatorPolynomials.ValProd
+public import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -221,12 +225,12 @@ theorem uChase_proof : UChase := by
   have hYq : W₁.QInv Y := uc_qinv_add W₁ (uc_qinv_sub W₁ (uc_qinv_smul W₁ _ hy₁)
     (uc_qinv_smul W₁ _ hy')) (uc_qinv_phi_sub W₁ hx₁)
   have hπY : S.π.f Y = 0 := by
-    simp only [hY, map_add, map_sub, uc_hom_tsmul, S.π.φ_comm, hπy, hπy', hπx]
+    simp only [hY, map_add (f := _), map_sub, uc_hom_tsmul, S.π.φ_comm, hπy, hπy', hπx]
     rw [map_smul W₂.φ]
     module
   have hπZ : S.π.f (B.X • m) = 0 := by
     rw [← hZ]
-    simp only [map_add, map_sub, uc_hom_tsmul, S.π.γ_comm, hπz, hπz', hπx]
+    simp only [map_add (f := _), map_sub, uc_hom_tsmul, S.π.γ_comm, hπz, hπz', hπx]
     rw [map_smul W₂.γ]
     module
   obtain ⟨Y₀, hY₀, hιY⟩ := uc_pull_qinv S hYq hπY
@@ -234,7 +238,7 @@ theorem uChase_proof : UChase := by
   have hdYZ : W₁.d1 Y (B.X • m) = K • W₁.d1 y₁ (B.X • n₁) := by
     rw [← hZ, hY]
     unfold WD.d1 at hd' ⊢
-    simp only [map_add, map_sub, map_smul]
+    simp only [map_add (f := _), map_sub, map_smul]
     have hc := W₁.comm x₁
     linear_combination (norm := module) (-L) • hd' - hc
   have hcob : W₀.IsCob2 (K • (B.X • y₀)) := by

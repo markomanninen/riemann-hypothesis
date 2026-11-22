@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GLnLattice
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GLnLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem borel_le_blockUpper {α : Type*} [LinearOrder α] {β : Fin n → α} (h
 
 theorem upper_mul_apply_self {A C : Matrix (Fin n) (Fin n) F} (hA : A.IsUpperTriangular)
     (hC : C.IsUpperTriangular) (i : Fin n) : (A * C) i i = A i i * C i i := by
-  rw [mul_apply, Finset.sum_eq_single i]
+  rw [Matrix.mul_apply, Finset.sum_eq_single i]
   · intro k _ hk
     rcases lt_or_gt_of_ne hk with h | h
     · rw [hA h, zero_mul]
@@ -349,25 +353,11 @@ theorem exists_borel_mul_integralGL (g : GL (Fin n) F) :
   rw [← mapSubmodule_standardLattice_eq_iff, mapSubmodule_mul, ← hL, ← hbL,
     mapSubmodule_inv_mapSubmodule]
 
-theorem borel_mul_integralGL :
-    (borel F n : Set (GL (Fin n) F)) * (integralGL F n : Set (GL (Fin n) F)) = Set.univ := by
-  refine Set.eq_univ_of_forall fun g => ?_
-  obtain ⟨b, hb, k, hk, rfl⟩ := exists_borel_mul_integralGL F n g
-  exact Set.mul_mem_mul hb hk
-
 theorem exists_blockUpper_mul_integralGL {α : Type*} [LinearOrder α] {β : Fin n → α}
     (hβ : Monotone β) (g : GL (Fin n) F) :
     ∃ p ∈ blockUpper F n β, ∃ k ∈ integralGL F n, g = p * k := by
   obtain ⟨b, hb, k, hk, rfl⟩ := exists_borel_mul_integralGL F n g
   exact ⟨b, borel_le_blockUpper F n hβ hb, k, hk, rfl⟩
-
-theorem blockUpper_mul_integralGL {α : Type*} [LinearOrder α] {β : Fin n → α}
-    (hβ : Monotone β) :
-    (blockUpper F n β : Set (GL (Fin n) F)) * (integralGL F n : Set (GL (Fin n) F)) =
-      Set.univ := by
-  refine Set.eq_univ_of_forall fun g => ?_
-  obtain ⟨p, hp, k, hk, rfl⟩ := exists_blockUpper_mul_integralGL F n hβ g
-  exact Set.mul_mem_mul hp hk
 
 end Decomposition
 

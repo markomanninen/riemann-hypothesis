@@ -1,9 +1,13 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemRiemannRochSpaceIffRegularAtEverywhere
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardAffineHyperplaneStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardTwoAffineHyperplanesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianCountFromHyperplanesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardFunctionalsVanishingSubspaceStatement
-import Mathlib
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemRiemannRochSpaceIffRegularAtEverywhere
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardAffineHyperplaneStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardTwoAffineHyperplanesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianCountFromHyperplanesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardFunctionalsVanishingSubspaceStatement
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ variable {k : Type} [Field k] [Fintype k] {n : ℕ} {V Γ : Type} [AddCommGroup 
 theorem zx_map (hD : LatData k n B red ρ t v) (γ : Γ) (x : Fin (n + 1) → k) (j : ℕ) :
     ρ γ (zx v x j) = zx v ((red γ).val *ᵥ x) j := by
   unfold zx
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [hD.equiv]
   refine Finset.sum_equiv (gmapEquiv (red γ)) ?_ (fun _ _ => rfl)
   intro M
@@ -111,7 +116,8 @@ theorem ux_map (hD : LatData k n B red ρ t v) {gam : (Fin (n + 1) → k) → Γ
     {y : V} (hy : y ∈ stabV red ρ) (γ : Γ) (x : Fin (n + 1) → k) :
     ρ γ (ux ρ t gam y x) = ux ρ t gam y ((red γ).val *ᵥ x) := by
   unfold ux
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_equiv (dualEquiv (red γ)) ?_ ?_
   · intro a
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, dualEquiv_dot]
@@ -241,7 +247,8 @@ theorem t_zx (hD : LatData k n B red ρ t v) (j : ℕ) :
     t (zx v (e0 k n) j) = ∑ M ∈ Finset.univ.filter
       (fun M : Submodule k (Fin (n + 1) → k) => M ≤ H0 k n ∧ Module.finrank k M + (j + 1) = n + 1), v M := by
   unfold zx
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_nbij' (fun M => M ⊓ H0 k n) (fun N => N ⊔ Submodule.span k {e0 k n}) ?_ ?_ ?_ ?_ ?_
   · intro M hM
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hM ⊢
@@ -287,7 +294,8 @@ theorem sum_hyperplanes_complement_flags (hD : LatData k n B red ρ t v) {gam : 
       (fun M : Submodule k (Fin (n + 1) → k) => M ≤ H0 k n ∧ Module.finrank k M + (j + 1) = n + 1), v M) =
     ∑ M ∈ Finset.univ.filter
       (fun M : Submodule k (Fin (n + 1) → k) => (∀ x ∈ M, a ⬝ᵥ x = 0) ∧ Module.finrank k M + (j + 1) = n + 1), v M := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [hD.equiv]
   refine Finset.sum_equiv (gmapEquiv (red (gam a))) ?_ (fun _ _ => rfl)
   intro M
@@ -413,7 +421,8 @@ theorem pairing (hD : LatData k n B red ρ t v) (lam : ℕ → ℂ)
       nsmul_eq_mul, hcard]
   have e2 : ∑ x ∈ Finset.univ.filter (fun x : Fin (n + 1) → k => x ≠ 0 ∧ x ∈ (⊤ : Submodule k (Fin (n + 1) → k))),
       B (zx v x j) (v ⊤) = ((Fintype.card k : ℂ) ^ (n + 1 - j) - 1) * lam j * B (v ⊤) (v ⊤) := by
-    rw [← LinearMap.sum_apply, ← map_sum, hsum, map_smul, LinearMap.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, hsum, map_smul, LinearMap.smul_apply, smul_eq_mul]
   rw [← e1, e2]
 
 theorem zx_zero (hD : LatData k n B red ρ t v) : zx v (e0 k n) 0 = v ⊤ := by

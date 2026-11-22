@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataHost
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataHost
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Rd4.exists_nat_smul_mem :
     ∀ {D : Formalism.BasicNotions.D7} {n : ℕ}
     {Λ : Submodule (NumberField.RingOfIntegers D.host.E) (Fin n → D.host.E)},
-    Submodule.IsLattice D.host.E Λ →
+    Submodule.IsFullLattice D.host.E Λ →
       ∀ (x : Fin n → D.host.E),
         ∃ (N : ℕ),
           (0 : ℕ) < N ∧

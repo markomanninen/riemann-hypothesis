@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SumLogEmbeddingsEqNorm
-import Development.WeilBound.CoreStatements.SesquilinearFractions.NPlaces
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SumLogEmbeddingsEqNorm
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.NPlaces
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CompanionTheory.Ar.Fl
 
 noncomputable section
@@ -22,7 +27,7 @@ theorem norm_natCast_lt_one_iff (n : ℕ) : ‖(n : ℂ_[p])‖ < 1 ↔ (p : ℕ
 def ballIdeal (κ : K →+* ℂ_[p]) : Ideal (𝓞 K) where
   carrier := {x | ‖κ (algebraMap (𝓞 K) K x)‖ < 1}
   add_mem' := fun {a b} ha hb => by
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha hb)
   zero_mem' := by simp
   smul_mem' := fun c x hx => by
@@ -228,7 +233,7 @@ theorem norm_absNorm_coprime (J : Ideal (𝓞 K)) (hJ : Ideal.absNorm J ≠ 0) {
   apply hx0
   have hj0 : (j : 𝓞 K ⧸ J) = 0 := Ideal.Quotient.eq_zero_iff_mem.2 hj
   have e' := congrArg (Ideal.Quotient.mk J) e
-  rw [map_add, map_mul, map_one] at e'
+  rw [map_add (f := _), map_mul, map_one] at e'
   calc x = (Ideal.Quotient.mk J j + Ideal.Quotient.mk J s * Ideal.Quotient.mk J ((p : ℕ) : 𝓞 K)) * x := by
           rw [e', one_mul]
     _ = 0 := by
@@ -277,8 +282,8 @@ theorem norm_sep (la : HeightOneSpectrum (𝓞 K)) (hp : ((p : ℕ) : 𝓞 K) �
   rw [hN, Rat.cast_intCast, norm_intCast_eq, ← Ideal.absNorm_span_singleton, hJ, map_mul, Nat.cast_mul,
     norm_mul, norm_absNorm_place la hp, norm_absNorm_coprime J hJ0 hj e, mul_one]
 
-open Classical in
 
+open Classical in
 theorem sum_lies (la : HeightOneSpectrum (𝓞 K)) (hp : ((p : ℕ) : 𝓞 K) ∈ la.asIdeal) {π : K}
     (hπ : la.valuation K π = WithZero.exp (-1 : ℤ)) :
     ∑ κ : K →+* ℂ_[p], (if placeOf κ = la then Real.log ‖κ π‖ else 0) =

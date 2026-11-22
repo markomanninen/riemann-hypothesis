@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BorderMinorRotation.QmBorderFullOf
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmBorderES
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmColExp
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowExp
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmSkip
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BorderMinorRotation.QmBorderFullOf
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmBorderES
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmColExp
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowExp
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmSkip
+
+@[expose] public section
 
 theorem quantum_minor_border_full : PI.QmBorderFull :=
   PI.qmBorderFull_of quantum_minor_border_es quantum_minor_column_expansion quantum_minor_row_expansion quantum_minor_skip

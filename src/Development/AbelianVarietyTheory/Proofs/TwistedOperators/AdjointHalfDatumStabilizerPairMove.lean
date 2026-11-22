@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDetInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDetInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ variable {κ : Type} [CommRing κ] {n r : ℕ}
 theorem topL_eq (hr : r ≤ n) (u : Matrix (Fin n) (Fin r) κ) : topL r u = u.submatrix (Fin.castLE hr) id := by
   ext i j
   simp only [topL, Matrix.submatrix_apply, id]
-  rw [dif_pos ⟨lt_of_lt_of_le i.2 hr, j.2⟩]
+  rw [dite_eq_left ⟨lt_of_lt_of_le i.2 hr, j.2⟩]
   rfl
 
 theorem lowZero_mul {G : GL (Fin n) κ} (hG : G ∈ blockTri (blk2 r)) (K : Matrix (Fin r) (Fin r) κ)
@@ -115,12 +119,12 @@ theorem red_mul {A : Type} [CommRing A] (R : Subring A) {a b : ℕ} (y : Matrix 
   refine ⟨mem, fun {κ} _ φ => ?_⟩
   have L1 : (Matrix.of fun i j => if h : N' i j ∈ R then φ ⟨N' i j, h⟩ else 0) = (y * N₀ * z).map φ := by
     ext i j
-    rw [Matrix.of_apply, dif_pos (mem i j), Matrix.map_apply]
+    rw [Matrix.of_apply, dite_eq_left (mem i j), Matrix.map_apply]
     congr 1
     exact Subtype.ext (by show N' i j = _; rw [hN']; rfl)
   have L2 : (Matrix.of fun i j => if h : N i j ∈ R then φ ⟨N i j, h⟩ else 0) = N₀.map φ := by
     ext i j
-    rw [Matrix.of_apply, dif_pos (hN i j), Matrix.map_apply]
+    rw [Matrix.of_apply, dite_eq_left (hN i j), Matrix.map_apply]
     rfl
   rw [L1, L2, Matrix.map_mul, Matrix.map_mul]
 

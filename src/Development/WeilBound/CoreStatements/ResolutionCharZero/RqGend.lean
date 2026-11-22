@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationCharZeroBotOfEff
-import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResIso
-import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResSnc
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationCharZeroBotOfEff
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResIso
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResSnc
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,19 +121,23 @@ theorem isLocallyGeneratedByNonZeroDivisor_comap_blowup {k : Type} [Field k] {X 
 theorem isLocallyGeneratedByNonZeroDivisor_exceptionalProduct_le {k : Type} [Field k] {X : Scheme.{0}}
     {p : X ⟶ Spec (CommRingCat.of k)} {I : X.IdealSheafData} {L : List X.IdealSheafData} {s : BlowupSequence X}
     (h : IsPrincipalizingSequence p I L s) :
-    ∀ i, i ≤ s.length → Blowup.IsLocallyGeneratedByNonZeroDivisor (s.exceptionalProduct i)
-  | 0, _ => by
+    ∀ i, i ≤ s.length → Blowup.IsLocallyGeneratedByNonZeroDivisor (s.exceptionalProduct i) := by
+  unfold IsPrincipalizingSequence at h
+  obtain ⟨ideal, boundary, -, -, -, -, -, -, -, -, -, hsm, -⟩ := h
+  intro i
+  induction i with
+  | zero =>
+    intro _
     simpa [BlowupSequence.exceptionalProduct] using Blowup.isLocallyGeneratedByNonZeroDivisor_top (s.obj 0)
-  | i + 1, hi => by
-    obtain ⟨-, -, -, -, -, -, -, -, -, -, -, hsm, -⟩ := id h
+  | succ i ih =>
+    intro hi
     have hlt : i < s.length := hi
     have hb : Blowup.IsBlowupAlongIdealSheaf (s.blowupMap i) (s.center i) := s.isBlowup i hlt
-    have ih := isLocallyGeneratedByNonZeroDivisor_exceptionalProduct_le h i hlt.le
     have : Smooth (s.structMap (i + 1) ≫ p) := hsm (i + 1) hi
     show Blowup.IsLocallyGeneratedByNonZeroDivisor
       ((s.exceptionalProduct i).comap (s.blowupMap i) * (s.center i).comap (s.blowupMap i))
     exact isLocallyGeneratedByNonZeroDivisor_mul
-      (isLocallyGeneratedByNonZeroDivisor_comap_blowup hb (s.structMap (i + 1) ≫ p) ih)
+      (isLocallyGeneratedByNonZeroDivisor_comap_blowup hb (s.structMap (i + 1) ≫ p) (ih hlt.le))
       (Blowup.IsBlowupAlongIdealSheaf.isLocallyGeneratedByNonZeroDivisor_comap hb)
 
 theorem isLocallyGeneratedByNonZeroDivisor_exceptionalProduct {k : Type} [Field k] {X : Scheme.{0}}
@@ -140,8 +148,10 @@ theorem isLocallyGeneratedByNonZeroDivisor_exceptionalProduct {k : Type} [Field 
 
 theorem gEff : GEff := by
   intro k _ _ X p _ _ _ I L s hI hL hs
-  obtain ⟨-, -, -, -, -, -, -, -, -, -, htop, -, -⟩ := id hs
+  have hEff := isLocallyGeneratedByNonZeroDivisor_exceptionalProduct hs
+  unfold IsPrincipalizingSequence at hs
+  obtain ⟨ideal, boundary, -, -, -, -, -, -, -, -, htop, -, -⟩ := hs
   rw [htop]
-  exact effCartier_of (isLocallyGeneratedByNonZeroDivisor_exceptionalProduct hs)
+  exact effCartier_of hEff
 
 end PositivityTheory.ResPlug.GEndGen

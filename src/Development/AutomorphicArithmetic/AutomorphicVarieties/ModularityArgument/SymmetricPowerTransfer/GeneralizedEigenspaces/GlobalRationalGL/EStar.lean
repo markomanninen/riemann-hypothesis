@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.BridgeEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.BridgeEx
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ open Loc Glob
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-variable (L) in
 
+variable (L) in
 structure Pre where
   Δ : Lp L
   e : Lsq (Lp L) Δ ≃+* L
@@ -39,7 +43,7 @@ def Pre.rho (P : Pre L) (v : Pl (Lp L)) (w : Plc L) (h : un w = v) : Lsq (Kv v) 
   map_one' := by simp [QuadraticAlgebra.re_one, QuadraticAlgebra.im_one]
   map_mul' x y := by
     have := P.rt_sq v w h
-    simp only [QuadraticAlgebra.re_mul, QuadraticAlgebra.im_mul, map_add, map_mul, map_zero]
+    simp only [QuadraticAlgebra.re_mul, QuadraticAlgebra.im_mul, map_add (f := _), map_mul, map_zero]
     linear_combination (-(P.φ v w h x.im * P.φ v w h y.im)) * this
   map_zero' := by simp
   map_add' x y := by simp; ring

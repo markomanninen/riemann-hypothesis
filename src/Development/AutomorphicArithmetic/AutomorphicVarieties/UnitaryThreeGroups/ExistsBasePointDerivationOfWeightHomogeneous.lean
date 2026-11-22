@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MopBase
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerExtend
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MopBase
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerExtend
+
+@[expose] public section
+
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.U3.Mop
 
 private theorem coeff_single_mul {E σ : Type} [CommRing E] (i : σ) (f g : MvPowerSeries σ E) :
@@ -90,7 +95,7 @@ theorem UpperTheory.exists_base_pointDerivation_of_weight_homogeneous :
         have hg' : WB.π g = 0 := hg
         rw [hren, hg', map_zero]
       | zero => exact map_zero L
-      | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+      | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
       | smul a x hx hx' =>
         have : x ∈ RingHom.ker W.π := by rw [hker]; exact hx
         rw [smul_eq_mul, hL, hx', h x this, smul_zero, zero_smul, add_zero]
@@ -116,7 +121,7 @@ theorem UpperTheory.exists_base_pointDerivation_of_weight_homogeneous :
       (fun f g => by
         have h1 : D (qh (W.π f) * qh (W.π g)) = _ := hD _ _
         simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, AlgHom.comp_apply, map_mul, h1, hxo])
-      (fun f g => by simp only [LinearMap.comp_apply, hL, map_add, map_smul])
+      (fun f g => by simp only [LinearMap.comp_apply, hL, map_add (f := _), map_smul])
       (fun s => by
         simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, AlgHom.comp_apply, hLX, hd3]
         rfl)

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathArgsOfNotMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathArgsOfNotMem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -145,6 +150,49 @@ theorem sand_vecAll_big {W : G.Weil} (ρ : RealMatch W) (e : AE D) (t : T) (i j 
 theorem oneFlip_sandwich : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} (M : Vol G) (B : Frames G) (ρ : RealMatch W) (t : T) (i j : ℕ) (hi : i < D.R.m) (hj : j < D.R.m) (c : ℂ), c ≠ 0 → CommutesWith W B ρ t ⟨i, hi⟩ ⟨j, hj⟩ c → M.Is t → GlobalTheory.FlipRun.CuspStep W M ρ t → ∀ (A : Path T (.grid 0 D.R.m) (.grid i (j + 1))) (Bp : Path T (.grid (i + 1) j) (.grid D.R.m 0)), GlobalTheory.FlipRun.OnGrid D.R.m t A → GlobalTheory.FlipRun.OnGrid D.R.m t Bp → ∀ (e : AE D), IsIdemSum e (locPl G t) → ∀ (α : PureT G A) (β : PureT G Bp) (φA : PureT G A) (φB : PureT G Bp), GlobalTheory.FlipRun.VecAll ρ e A φA α → GlobalTheory.FlipRun.VecAll ρ e Bp φB β → ∀ (σs : TotT G (routeSmall t i j)) (σb : TotT G (routeBig t i j)) (Φ : ∀ w, Matrix (Fin ((locGrid G t w).rank (i, j))) ((locGrid G t w).Cols i j) (Kw w) → ℂ), (∀ w ∈ locPl G t, GlobalTheory.SplitFlip.IsNatDatum (unifAt w) (depthAt G w) (Φ w)) → HasFlip B t ρ ⟨i, hi⟩ ⟨j, hj⟩ (depthAt G) Φ σb σs → ∀ F : Fn G (.grid 0 D.R.m), GlobalTheory.FlipRun.IsCuspListed W.θ _ F → ∀ Q : GlobalTheory.FlipRun.PolE G →₀ ℂ, liftT W M _ (GlobalTheory.FlipRun.tensE W _ Q (((σs).sum fun d c => Finsupp.single (((α).append d).append (β)) c) : TotT G ((A.comp (routeSmall t i j)).comp Bp))) F = c⁻¹ • liftT W M _ (GlobalTheory.FlipRun.tensE W _ (GlobalTheory.FlipRun.flipPolE ρ i j Q) (((σb).sum fun d c => Finsupp.single (((α).append d).append (β)) c) : TotT G ((A.comp (routeBig t i j)).comp Bp))) F := by
   intro D T L sc G W M B ρ t i j hi hj c hc hcomm hM hC A Bp hA hBp e he α β φA φB hα hβ σs σb Φ hΦ hflip F hF Q
   classical
+  let rec edges_bound {m : ℕ} {t : T} {i j : ℕ} : ∀ {Y : Node} (p : Path T (.grid i j) Y), OnGrid m t p →
+      ∃ i' j', Y = .grid i' j' ∧ i ≤ i' ∧ j' ≤ j ∧ (edges p).Nodup ∧
+        ∀ b ∈ edges p, i ≤ b.src.1 ∧ b.tgt.1 ≤ i' ∧ j' ≤ b.tgt.2 ∧ b.src.2 ≤ j
+    | _, .nil, _ => ⟨i, j, rfl, le_rfl, le_rfl, List.nodup_nil, fun _ h => absurd h List.not_mem_nil⟩
+    | _, .snoc a p, hg => by
+      obtain ⟨i', j', h1, h2, h3, h4, h5⟩ := edges_bound p hg.init
+      rw [edges_snoc]
+      rcases hg.last with ⟨k, l, -, -, rfl⟩ | ⟨k, l, -, -, rfl⟩
+      · obtain ⟨rfl, rfl⟩ : k = i' ∧ l = j' := Node.grid.inj h1
+        refine ⟨k + 1, l, rfl, by omega, h3, List.nodup_append.2 ⟨h4, List.nodup_singleton _, fun b hb c hc e => ?_⟩, fun b hb => ?_⟩
+        · obtain rfl := List.mem_singleton.1 hc
+          subst e
+          have := (h5 _ hb).2.1
+          simp [edgeOf] at this
+        · rcases List.mem_append.1 hb with hb | hb
+          · have := h5 b hb; omega
+          · obtain rfl := List.mem_singleton.1 hb
+            simp only [edgeOf]; omega
+      · obtain ⟨rfl, rfl⟩ : k = i' ∧ l + 1 = j' := Node.grid.inj h1
+        refine ⟨k, l, rfl, h2, by omega, List.nodup_append.2 ⟨h4, List.nodup_singleton _, fun b hb c hc e => ?_⟩, fun b hb => ?_⟩
+        · obtain rfl := List.mem_singleton.1 hc
+          subst e
+          have := (h5 _ hb).2.2.1
+          simp [edgeOf] at this
+        · rcases List.mem_append.1 hb with hb | hb
+          · have := h5 b hb; omega
+          · obtain rfl := List.mem_singleton.1 hb
+            simp only [edgeOf]; omega
+  
+  let rec pathConv_zip_fock (M : Vol G) (ρ : RealMatch W) (t : T) {e : AE D}
+      (he : IsIdemSum e (locPl G t)) (hC : CuspStep W M ρ t) {X : Node} :
+      ∀ {Y : Node} (p : Path T X Y), OnGrid D.R.m t p → ∀ (φ d : PureT G p), VecAll ρ e p φ d →
+        ∀ (P' : PolT G p) (F : Fn G X), IsCuspListed W.θ X F →
+        PathConv W M p (Path.Fam.zip (fun a (f : Sch G a) Q => W.fock a.pair f Q) d P') F ∧
+        IsCuspListed W.θ Y (liftP W M p (Path.Fam.zip (fun a (f : Sch G a) Q => W.fock a.pair f Q) d P') F)
+    | _, .nil, _, _, _, _, _, _, hF => ⟨trivial, hF⟩
+    | _, .snoc a p, hg, φ, d, hv, P', F, hF => by
+      have hg' : OnGrid D.R.m t p := fun b hb => hg b (List.mem_append_left [a] hb)
+      have ha : IsGridArrow D.R.m t a := hg a (List.mem_append_right p.arrows (List.mem_singleton_self a))
+      obtain ⟨h1, h2⟩ := pathConv_zip_fock M ρ t he hC p hg' φ.1 d.1 hv.1 P'.1 F hF
+      obtain ⟨h3, h4⟩ := hC a ha e he φ.2 d.2 hv.2 P'.2 _ h2
+      exact ⟨⟨h1, h3⟩, h4⟩
+  
   obtain ⟨e', he', ⟨φ₁, φ₂, hs, -⟩, ⟨ψ₁, ψ₂, hb, -⟩⟩ := id hflip
   have hgS : OnGrid D.R.m t (routeSmall t i j) := onGrid_routeSmall t hi hj
   have hgB : OnGrid D.R.m t (routeBig t i j) := onGrid_routeBig t hi hj

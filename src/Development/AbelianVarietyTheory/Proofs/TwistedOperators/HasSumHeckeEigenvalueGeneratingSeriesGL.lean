@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSubquotientOfSameSphericalHeckeEigenvalues
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSubquotSmIndCongr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSubquotientOfSameSphericalHeckeEigenvalues
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSubquotSmIndCongr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+
+@[expose] public section
 
 noncomputable section
 
@@ -269,24 +273,24 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open GlobalTheory.GLDoubling GlobalTheory.SplitWeil ValuativeRel MeasureTheory
 
-theorem hasSum_hecke_eigenvalues : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (r : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin r) (w.adicCompletion E)) V) (x : V) (B : Multiset ℂˣ), IsSatVecGL w ρ x B → ∀ ϖ, IsUnifV E w ϖ → ∀ t : (Fin r → ℤ) → GL (Fin r) (w.adicCompletion E), (∀ d, (t d).1 = Matrix.diagonal fun i => ϖ ^ d i) → ∀ c : (Fin r → ℤ) → ℂ, (∀ d, heckeVec ρ (KGL w r) (dosetInd ℂ (KGL w r) (t d)) x = c d • x) → ∃ δ : ℝ, 0 < δ ∧ ∀ X : ℝ, 0 < X → X < δ → HasSum (fun d : {d : Fin r → ℤ // Antitone d} => c d.1 * (X : ℂ) ^ (∑ i, |d.1 i|).toNat) (eulerFac B ((qV E w : ℂ) ^ (((r : ℂ) - 1) / 2) * X) * eulerFac (B.map (·⁻¹)) ((qV E w : ℂ) ^ (((r : ℂ) - 1) / 2) * X) * ∏ i ∈ Finset.range r, (1 - (qV E w : ℂ) ^ i * (X : ℂ) ^ 2)) := by
+theorem hasSum_hecke_eigenvalues : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (r : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin r) (w.adicCompletion E)) V) (x : V) (B : Multiset ℂˣ), IsSatVecGL w ρ x B → ∀ ϖ, IsUnifV E w ϖ → ∀ t : (Fin r → ℤ) → GL (Fin r) (w.adicCompletion E), (∀ d, (t d).1 = Matrix.diagonal fun i => ϖ ^ d i) → ∀ c : (Fin r → ℤ) → ℂ, (∀ d, heckeVec ρ (KGL w (n := r)) (dosetInd ℂ (KGL w (n := r)) (t d)) x = c d • x) → ∃ δ : ℝ, 0 < δ ∧ ∀ X : ℝ, 0 < X → X < δ → HasSum (fun d : {d : Fin r → ℤ // Antitone d} => c d.1 * (X : ℂ) ^ (∑ i, |d.1 i|).toNat) (eulerFac B ((qV E w : ℂ) ^ (((r : ℂ) - 1) / 2) * X) * eulerFac (B.map (·⁻¹)) ((qV E w : ℂ) ^ (((r : ℂ) - 1) / 2) * X) * ∏ i ∈ Finset.range r, (1 - (qV E w : ℂ) ^ i * (X : ℂ) ^ 2)) := by
   intro H E _ _ w r V _ _ ρ x B hx ϖ hϖ t ht c hc
   letI := GlobalTheory.LocalData.complRel w
   haveI := GlobalTheory.LocalData.isLocalField w
   haveI : CharZero (w.adicCompletion E) := charZero_of_injective_algebraMap (algebraMap E _).injective
   obtain ⟨ho, hcp⟩ := SatCompare.isOpen_isCompact_KGL w r
-  have hcomm : IsCommensurated (KGL w r) := Formalism.UG.Final.GLintComm E w r
-  have hKO : KO (w.adicCompletion E) (Fin r) = KGL w r := GlobalTheory.SmGL.SphCompletion.KO_completion w r
+  have hcomm : IsCommensurated (KGL w (n := r)) := Formalism.UG.Final.GLintComm E w r
+  have hKO : KO (w.adicCompletion E) (Fin r) = KGL w (n := r) := GlobalTheory.SmGL.SphCompletion.KO_completion w r
   obtain ⟨W, _, _, π, f, hirr, hf, hf0⟩ := exists_irrSmooth_quot ρ ho hx.1 hx.2.1
   have hx' : IsSatVecGL w (sub ρ (cyc ρ x) (cyc_stable ρ x)) ⟨x, self_mem_cyc ρ x⟩ B :=
     IsSatVecGL.of_map (cyc ρ x).subtype (fun _ _ => rfl) Subtype.val_injective hx
   have hy := hx'.map f hf hf0
   have hS := SatCompare.hasSatakeGL_of_isSatVecGL hirr hy
   obtain ⟨α, rfl, hα⟩ := (GlobalTheory.LGrp.SatakeCompare.hasSatakeGL_iff _ _ _ π _).1 hS
-  have hcy : ∀ d, heckeVec π (KGL w r) (dosetInd ℂ (KGL w r) (t d)) (f ⟨x, self_mem_cyc ρ x⟩) =
+  have hcy : ∀ d, heckeVec π (KGL w (n := r)) (dosetInd ℂ (KGL w (n := r)) (t d)) (f ⟨x, self_mem_cyc ρ x⟩) =
       c d • f ⟨x, self_mem_cyc ρ x⟩ := fun d => by
-    have hm := Formalism.UG.Final.DosetIndMem _ (KGL w r) ℂ (t d)
-    have e1 : heckeVec (sub ρ (cyc ρ x) (cyc_stable ρ x)) (KGL w r) (dosetInd ℂ (KGL w r) (t d))
+    have hm := Formalism.UG.Final.DosetIndMem _ (KGL w (n := r)) ℂ (t d)
+    have e1 : heckeVec (sub ρ (cyc ρ x) (cyc_stable ρ x)) (KGL w (n := r)) (dosetInd ℂ (KGL w (n := r)) (t d))
         ⟨x, self_mem_cyc ρ x⟩ = c d • (⟨x, self_mem_cyc ρ x⟩ : cyc ρ x) := by
       refine Subtype.val_injective ?_
       have := map_heckeVec (ρ := sub ρ (cyc ρ x) (cyc_stable ρ x)) (ρ' := ρ) hcomm hm (cyc ρ x).subtype
@@ -296,9 +300,9 @@ theorem hasSum_hecke_eigenvalues : GlobalTheory.Published.UnramifiedDoublingGL �
   obtain ⟨ω, hω, hval⟩ := exists_zonal hirr.1 hcp hcomm hy.2.1 hy.1
   letI : MeasurableSpace (GL (Fin r) (w.adicCompletion E)) := borel _
   haveI : BorelSpace (GL (Fin r) (w.adicCompletion E)) := ⟨rfl⟩
-  obtain ⟨μ, hμH, hμ⟩ : ∃ μ : Measure (GL (Fin r) (w.adicCompletion E)), μ.IsHaarMeasure ∧ μ (KGL w r : Set _) = 1 := by
+  obtain ⟨μ, hμH, hμ⟩ : ∃ μ : Measure (GL (Fin r) (w.adicCompletion E)), μ.IsHaarMeasure ∧ μ (KGL w (n := r) : Set _) = 1 := by
     let K₀ : TopologicalSpace.PositiveCompacts (GL (Fin r) (w.adicCompletion E)) :=
-      ⟨⟨KGL w r, hcp⟩, by rw [ho.interior_eq]; exact ⟨1, one_mem _⟩⟩
+      ⟨⟨KGL w (n := r), hcp⟩, by rw [ho.interior_eq]; exact ⟨1, one_mem _⟩⟩
     exact ⟨Measure.haarMeasure K₀, inferInstance, Measure.haarMeasure_self⟩
   have hμ' : μ (KO (w.adicCompletion E) (Fin r) : Set _) = 1 := by rw [hKO]; exact hμ
   have hω' : GlobalTheory.SmGL.IsZonal π (KO (w.adicCompletion E) (Fin r)) ω := by rw [hKO]; exact hω
@@ -311,13 +315,15 @@ theorem hasSum_hecke_eigenvalues : GlobalTheory.Published.UnramifiedDoublingGL �
       ω (torusElt (w.adicCompletion E) (Fin r) u d) := fun d => by
     have e1 := real_doset_eq_card μ ho hμ hcomm (t d)
     have e2 : cell (w.adicCompletion E) (Fin r) u d =
-        DoubleCoset.doubleCoset (t d) (KGL w r : Set _) (KGL w r : Set _) := by
+        DoubleCoset.doubleCoset (t d) (KGL w (n := r) : Set _) (KGL w (n := r) : Set _) := by
       rw [htt d, cell, hKO]
     rw [e2, e1, ← htt d, Complex.ofReal_natCast]
     exact hval (t d) (c d) (hcy d)
   obtain ⟨s₀, hs⟩ := GlobalTheory.Published.UnramifiedDoublingGL.hasSum H (w.adicCompletion E) r μ hμ' hu hα hω'
   have hq1 : 1 < qV E w := one_lt_absNorm w
-  have hqr : resCard (w.adicCompletion E) = qV E w := GlobalTheory.LocLanglands.resCard_eq_normV w
+  have hqr : resCard (w.adicCompletion E) = qV E w := by
+    simpa only [Formalism.ConjugateSelfDual.normV, Formalism.UG.qV, Ideal.absNorm_apply,
+      Submodule.cardQuot_apply] using GlobalTheory.LocLanglands.resCard_eq_normV w
   have hq0 : (0 : ℝ) < qV E w := by exact_mod_cast (by omega : 0 < qV E w)
   have hlq : 0 < Real.log (qV E w) := Real.log_pos (by exact_mod_cast hq1)
   refine ⟨Real.exp (-(s₀ + r / 2) * Real.log (qV E w)), Real.exp_pos _, fun X hX0 hXδ => ?_⟩

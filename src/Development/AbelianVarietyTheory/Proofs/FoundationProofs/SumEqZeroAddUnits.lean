@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+
+@[expose] public section
+
 open Classical GlobalTheory.FinWeil
 open scoped BigOperators
 
@@ -69,7 +74,7 @@ theorem sum_norm_units {k : Type} [Field k] [Fintype k] (s : k →+* k) (hs : �
         linear_combination -h
       · refine ⟨Units.mk0 _ h, Units.ext ?_⟩
         have h' := hne (Units.mk0 _ h)
-        rw [hD, div_eq_iff h', Units.val_mk0, map_add, map_one]
+        rw [hD, div_eq_iff h', Units.val_mk0, map_add (f := _), map_one]
         linear_combination -hx
     · rintro ⟨y, rfl⟩
       rw [hD, map_div₀, hs]
@@ -110,8 +115,6 @@ theorem sum_norm_units {k : Type} [Field k] [Fintype k] (s : k →+* k) (hs : �
     rw [MonoidHom.card_fiber_eq_of_mem_range N hy' (⟨1, map_one N⟩ : (1 : kˣ) ∈ Set.range N),
       Nat.card_eq_fintype_card, Fintype.card_subtype]
     congr 1
-    ext x
-    simp [MonoidHom.mem_ker]
 
 theorem sum_eq_zero_add_units {k : Type} [Field k] [Fintype k] {M : Type} [AddCommMonoid M]
     (g : k → M) : ∑ x : k, g x = g 0 + ∑ x : kˣ, g x := by
@@ -193,7 +196,7 @@ theorem gauss_quotient : ∀ {R : Type} [CommRing R] (σ : R →+* R) (w : R), (
     (fun a b => by
       obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
       obtain ⟨b, rfl⟩ := Ideal.Quotient.mk_surjective b
-      rw [← map_add, hf, hf, hf, mul_add, hadd])
+      rw [← map_add (f := _), hf, hf, hf, mul_add, hadd])
     (by rw [← map_zero (Ideal.Quotient.mk P), hf, mul_zero, h0])
     (Ideal.Quotient.mk P (t + σ t))
     (by rw [hs, map_add σ, hσ, add_comm])

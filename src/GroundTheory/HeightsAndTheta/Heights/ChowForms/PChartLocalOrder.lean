@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsBis
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartIncOrd
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsDehomogOrd
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsLocalMultOrd
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsBis
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartIncOrd
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsDehomogOrd
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsLocalMultOrd
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

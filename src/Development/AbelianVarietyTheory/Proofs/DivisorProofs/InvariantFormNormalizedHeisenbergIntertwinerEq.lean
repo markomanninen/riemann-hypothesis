@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+
+@[expose] public section
 
 open Classical GlobalTheory.FinWeil
 open scoped BigOperators
@@ -85,7 +89,8 @@ theorem invariantForm_normOp_eq : ∀ {R X M : Type} [CommRing R] [AddCommGroup 
     intro ℓ hl e he
     rw [hTe e he]
     unfold normOp
-    rw [(sumOp_eq_sum_transversal h A (A.map φ) hφA e he (Fin k) f hf ht).1, map_smul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [(sumOp_eq_sum_transversal h A (A.map φ) hφA e he (Fin k) f hf ht).1, map_smul, map_sum,
       smul_eq_mul, mul_assoc]
     congr 1
     rw [Finset.card_filter, Nat.cast_sum, Finset.sum_mul]

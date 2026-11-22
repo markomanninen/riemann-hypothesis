@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.IndefiniteReal.BridgeTie
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.GridTestLatticeLargestSlopeBound
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.MiddleNotMem
-import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.IndefiniteReal.BridgeTie
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GridTestLatticeLargestSlopeBound
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MiddleNotMem
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,19 +81,17 @@ def IsSumFrame {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : HermitianOrthogonalE
 
 def frameSign (R : Type) [Ring R] (c : ℕ) (p : Fin c) : R := if c < 2 * p.1 + 1 then -1 else 1
 
-example : frameSign ℤ 3 = ![1, 1, -1] ∧ frameSign ℤ 2 = ![1, -1] := by decide
-
 section Wt
 
 variable {ι : Type} [Fintype ι] {n : ℕ} (σ : ι → DomWeight n)
 
-open Classical in
 
+open Classical in
 def funOf : VV ℂ σ →ₗ[ℂ] VV ℂ fun τ => (σ τ).dual :=
   if h : ∃ φ : VV ℂ σ →ₗ[ℂ] VV ℂ fun τ => (σ τ).dual, ∀ F, IsFunForm σ F (φ F) then h.choose else 0
 
-open Classical in
 
+open Classical in
 def covOf : (VV ℂ fun τ => (σ τ).dual) →ₗ[ℂ] VV ℂ σ :=
   if h : ∃ φ : (VV ℂ fun τ => (σ τ).dual) →ₗ[ℂ] VV ℂ σ, ∀ f, IsFunForm σ (φ f) f then h.choose else 0
 
@@ -99,7 +101,7 @@ theorem readOK_of_equiv (φ : VV ℂ σ ≃ₗ[ℂ] VV ℂ fun τ => (σ τ).dua
   have h1 : ∃ φ : VV ℂ σ →ₗ[ℂ] VV ℂ fun τ => (σ τ).dual, ∀ F, IsFunForm σ F (φ F) := ⟨φ, h⟩
   have h2 : ∃ φ : (VV ℂ fun τ => (σ τ).dual) →ₗ[ℂ] VV ℂ σ, ∀ f, IsFunForm σ (φ f) f :=
     ⟨φ.symm, fun f => by simpa using h (φ.symm f)⟩
-  rw [ReadOK, funOf, covOf, dif_pos h1, dif_pos h2]
+  rw [ReadOK, funOf, covOf, dite_eq_left h1, dite_eq_left h2]
   exact ⟨h1.choose_spec, h2.choose_spec⟩
 
 def brPair {N : ℕ} (hN : N = n + 1) (Λ : ι → DomWeight N) : VV ℂ Λ →ₗ[ℂ] (VV ℂ fun τ => (σ τ).dual) →ₗ[ℂ] ℂ :=
@@ -111,9 +113,6 @@ noncomputable def chainTo {V : ℕ → Type} [∀ j, AddCommGroup (V j)] [∀ j,
     ∀ n, V 0 →ₗ[ℂ] V n
   | 0 => LinearMap.id
   | n + 1 => k n ∘ₗ chainTo k n
-
-example {V : ℕ → Type} [∀ j, AddCommGroup (V j)] [∀ j, Module ℂ (V j)] (k : ∀ j, V j →ₗ[ℂ] V (j + 1)) (v : V 0) :
-    chainTo k 2 v = k 1 (k 0 v) := rfl
 
 theorem one_le_sLen : 1 ≤ sLen D := (odd_sLen D).pos
 
@@ -143,42 +142,8 @@ def aaScalar (w : Pl D.host.E) : ℂ :=
   (aaTerm W w).coef * (aaTerm W w).datum 0 0 * ((oppositePath D.R.m).map fun b =>
     apow (genAt w D.host.AAbar / genAt w D.host.AA) (((bareGrid w).rank b.src * (bareGrid w).rank b.tgt : ℕ) / 4)).prod
 
-theorem invVol_conjLevel_one {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {Γ : Grid k}
-    (hs : 1 ≤ Γ.s) {j : ℕ} (hj : j < Γ.m) : invVol (conjLevel hs (fun _ => KO k _) 1 hj) = 1 := by
-  rw [← invVol_KO (k := k) (n := Fin (topRank Γ j)) (c := Γ.m - 1 - j), conjLevel]
-  congr 1
-  ext g
-  rw [Pi.one_apply, map_one, Subgroup.map_equiv_eq_comap_symm', Subgroup.map_equiv_eq_comap_symm', Subgroup.mem_comap,
-    Subgroup.mem_comap, mem_KO_iff, mem_KO_iff, ← map_inv, ← map_inv]
-  have h : topRank Γ j + (Γ.m - 1 - j) = Γ.rank (Γ.m, j) := by have := topRank_add hs j; omega
-  exact and_congr ((frame h).symm.forall_congr fun _ => (frame h).symm.forall_congr fun _ => Iff.rfl)
-    ((frame h).symm.forall_congr fun _ => (frame h).symm.forall_congr fun _ => Iff.rfl)
-
-theorem unfTerm_coef_one {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k]
-    [BorelSpace k] {Γ : Grid k} (hs : 1 ≤ Γ.s) (ψ : AddChar k Circle) (ν : Measure k) (keep : Bool) (S : Γ.Args → ℂ) :
-    (unfTerm ψ ν keep (Reps.through hs (fun _ => KO k _) fun _ => 1) S fun _ => DoubleCoset.mk _ _ 1).coef = 1 := by
-  simp only [unfTerm, UnfModel.elt_one, invVol_conjLevel_one, Finset.prod_const_one]
-
-theorem aaScalar_eq_one {w : Pl D.host.E} (h : FractionalIdeal.count D.host.E w D.host.AA = 0)
-    (h' : FractionalIdeal.count D.host.E w D.host.AAbar = 0) (hψ : ∀ a ∈ 𝒪[Kw w], psiAt W w a = 1) : aaScalar W w = 1 := by
-  have e1 : genAt w D.host.AA = 1 := by rw [genAt, h, zpow_zero]
-  have e2 : genAt w D.host.AAbar = 1 := by rw [genAt, h', zpow_zero]
-  have e3 : aaElt w = fun _ => 1 := funext fun j => Units.ext (by simp [aaElt, e1, e2, diagGL_val])
-  have key : ∀ g : ∀ j, GL (Fin ((bareGrid w).rank ((bareGrid w).m, j))) (Kw w), (g = fun _ => 1) →
-      let u := unfTerm (psiAt W w) (unitVol w) false (Reps.through (G := bareGrid w) one_le_sLen (fun _ => KO _ _) g) (aaVac w)
-        fun i => DoubleCoset.mk _ _ (g (i + 1))
-      u.datum 0 0 = 1 ∧ u.coef = 1 := by
-    rintro _ rfl
-    exact ⟨(UnfModel.vacuum_term (G := bareGrid w) one_le_sLen _ _ hψ (isUnitVol_unitVol w) (aaVac w)
-      (fun z hz => Set.indicator_of_mem (by simpa [e1] using hz) _)
-      (fun z hz => Set.indicator_of_notMem (by simpa [e1] using hz) _) _ _).1,
-      unfTerm_coef_one (Γ := bareGrid w) one_le_sLen _ _ _ _⟩
-  obtain ⟨e4, e5⟩ : (aaTerm W w).datum 0 0 = 1 ∧ (aaTerm W w).coef = 1 := key _ e3
-  have e6 : ∀ z, apow (1 : (Kw w)ˣ) z = 1 := apow_of_valuation_eq_one (map_one _)
-  simp only [aaScalar, e1, e2, e4, e5, div_one, e6, List.map_const', List.prod_replicate, one_pow, Rat.cast_one, mul_one]
 
 variable (G) in
-
 theorem topRank_eq (t : T) (w : Pl D.host.E) {j : ℕ} (h : j ≤ D.R.m) : topRank (locGrid G t w) j = (G.V (.top j)).rank :=
   (G.isV (X := .top j) h fun _ e => by cases e).rank.symm
 
@@ -206,21 +171,21 @@ structure GridChoice (U : Set T) where
   PA_one : ∀ w, FractionalIdeal.count D.host.E w D.host.AA ≠ 0 →
     ∃! w', w' ∈ PA ∧ w'.under (𝓞 D.host.F) = w.under (𝓞 D.host.F)
 
-variable (G) in
 
+variable (G) in
 abbrev PureDat (t : T) : Type := (∀ j : Fin D.R.m, FinDatum G t (.top t j)) × ∀ i : Fin D.R.m, FinDatum G t (.chi i D.R.m)
 
-variable (G) in
 
+variable (G) in
 abbrev CosFam (t : T) : Type := ∀ w : locPl G t, Cosets (G := locGrid G t w) one_le_sLen (givenLevel G t w)
+
 
 variable (G) in
 open Classical in
-
 def keepAt (w : Pl D.host.E) : Bool := decide (w ∉ G.pl.W0)
 
-variable (G) in
 
+variable (G) in
 def repsAt (t : T) (w : Pl D.host.E) : Reps (G := locGrid G t w) one_le_sLen (givenLevel G t w) :=
   Reps.through _ _ (stair _ (unifAt w) (cosExp G w))
 
@@ -345,7 +310,7 @@ theorem SumOK.vCore_add (h : S.SumOK t Φ) (Ψ F F') : S.vCore t Φ Ψ (F + F') 
   refine finsum_mem_congr rfl fun β _ => ?_
   have := h.cls β
   rw [← mul_add, classSum, classSum, classSum, ← finsum_add_distrib (Set.toFinite _) (Set.toFinite _)]
-  simp only [Pi.add_apply, map_add, mul_add]
+  simp only [Pi.add_apply, map_add (f := _), mul_add]
 
 theorem SumOK.vCore_eq (h : S.SumOK t Φ) (τ : CosFam G t → PureDat G t →₀ ℂ) (hτ : ∀ β ∈ S.supp t Φ, S.IsExpansion t Φ β (τ β))
     (Ψ F) : S.vCore t Φ Ψ F = ∑ β ∈ h.fin.toFinset, (∏ w, ((S.term t Φ β w).coef : ℂ)) * S.classSum Φ β (τ β) Ψ F := by
@@ -355,8 +320,8 @@ theorem SumOK.vCore_eq (h : S.SumOK t Φ) (τ : CosFam G t → PureDat G t →�
 
 end GridChoice
 
-variable (G) in
 
+variable (G) in
 theorem wt_top_eq : wt G (.top 0) = LaP G := funext fun τ => by
   have h : (wt G (.top 0) τ).w = (LaP G τ).w := funext (wt_top_zero G (rank_Xp G) τ)
   generalize wt G (.top 0) τ = a at h
@@ -366,8 +331,8 @@ theorem wt_top_eq : wt G (.top 0) = LaP G := funext fun τ => by
 def psiC (Ψ : GLf G → WtSp G) (x : FinPt G (.top 0)) : VV ℂ (wt G (.top 0)) :=
   ⟨(GlobalTheory.CoefModel.mapVV D.what₂.embLL (LaP G) (Ψ (finG (Xp G) x))).1, by rw [wt_top_eq]; exact Subtype.prop _⟩
 
-variable (G) in
 
+variable (G) in
 theorem rank_zero_m : D.sp.X'.rank = (G.V (.grid 0 D.R.m)).rank := (congrArg (·.sp.rank) (colY_m L)).symm
 
 def toXf (y : FinPt G (.grid 0 D.R.m)) : Bridge.Gf D.sp.X' :=
@@ -396,8 +361,8 @@ structure SumChoice (U : Set T) extends GridChoice W U where
 
 variable {U : Set T} (S : SumChoice W U)
 
-variable {W} in
 
+variable {W} in
 def SumChoice.formC (t : T) (u : (R.HX t).H) (y : FinPt G (.grid 0 D.R.m)) : VV ℂ (listedWt G (.grid 0 D.R.m)) :=
   S.co ((R.HX t).e u (toXf y))
 

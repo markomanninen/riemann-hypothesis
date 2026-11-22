@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.Global
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.RingHomOfBaseOrderToFraction
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootEqOfClose
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameCharacterIndependentUniformizer
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameRepConjugateInertia
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharEqOfApplyRootEqStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.Global
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.RingHomOfBaseOrderToFraction
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootEqOfClose
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameCharacterIndependentUniformizer
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameRepConjugateInertia
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharEqOfApplyRootEqStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2
 
 namespace GlobalTheory.TameTau

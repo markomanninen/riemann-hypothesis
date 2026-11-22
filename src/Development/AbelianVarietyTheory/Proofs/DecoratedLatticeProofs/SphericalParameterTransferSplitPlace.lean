@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsUnitaryChartsAllFinitePlacesFrameLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SatakeVectorIffInverseDoubleCosetsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeVacuumHeckeIdentitySplitPlaceChartsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeOperatorMoveAcrossInvariantBilinearStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SatakeEsymmScaledMultisetAddSegmentStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IntegralGLCommensuratedDoubleCosetCardInvSymmStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsUnitaryChartsAllFinitePlacesFrameLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SatakeVectorIffInverseDoubleCosetsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeVacuumHeckeIdentitySplitPlaceChartsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeOperatorMoveAcrossInvariantBilinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SatakeEsymmScaledMultisetAddSegmentStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IntegralGLCommensuratedDoubleCosetCardInvSymmStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,8 +54,8 @@ theorem seg_map_inv {K : Type} [Field K] [NumberField K] (w : HeightOneSpectrum 
   push_cast
   ring
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem transferOn_isSplit : ∀ D : D7, TransferOn D fun v => IsSplit (E := D.host.E) v := by
   intro D ψ S T χS χT om hW t ht v hv hunr w h U hU f hf X _ _ ρ x B hx X' _ _ ρ' b hb hne
   obtain ⟨eS, heS⟩ := (GlobalTheory.T.exists_unitaryCharts_allFinitePlaces_frameLattice D S v w h).1 hv
@@ -71,12 +75,12 @@ theorem transferOn_isSplit : ∀ D : D7, TransferOn D fun v => IsSplit (E := D.h
   let ρS := ρ.comp eS.symm.toMonoidHom
   let ρT := ρ'.comp eT.symm.toMonoidHom
 
-  have hKS : ∀ k ∈ KGL w S.rank, eS.symm k ∈ Kv S v := fun k hk => (heS.2 (eS.symm k)).2 (by simpa using hk)
-  have hKT : ∀ k ∈ KGL w T.rank, eT.symm k ∈ Kv T v := fun k hk => (heT.2 (eT.symm k)).2 (by simpa using hk)
-  have hfS : f ∈ fixed σU (KGL w S.rank) := GlobalTheory.LGrp.mem_fixed.2 fun k hk => Subtype.ext (by
+  have hKS : ∀ k ∈ KGL w (n := S.rank), eS.symm k ∈ Kv S v := fun k hk => (heS.2 (eS.symm k)).2 (by simpa using hk)
+  have hKT : ∀ k ∈ KGL w (n := T.rank), eT.symm k ∈ Kv T v := fun k hk => (heT.2 (eT.symm k)).2 (by simpa using hk)
+  have hfS : f ∈ fixed σU (KGL w (n := S.rank)) := GlobalTheory.LGrp.mem_fixed.2 fun k hk => Subtype.ext (by
     change σF k (f : WO S T → ℂ) = f
     rw [eσ]; exact hfix _ (hKS k hk) _ (one_mem _))
-  have hfT : f ∈ fixed πU (KGL w T.rank) := GlobalTheory.LGrp.mem_fixed.2 fun k hk => Subtype.ext (by
+  have hfT : f ∈ fixed πU (KGL w (n := T.rank)) := GlobalTheory.LGrp.mem_fixed.2 fun k hk => Subtype.ext (by
     change πF k (f : WO S T → ℂ) = f
     rw [eπ]; exact hfix _ (one_mem _) _ (hKT k hk))
   have hequiv : ∀ g (u : U), (b.flip x) (πU g u) = ρT g ((b.flip x) u) := fun g u => by
@@ -93,7 +97,7 @@ theorem transferOn_isSplit : ∀ D : D7, TransferOn D fun v => IsSplit (E := D.h
     rw [← e]
     congr 2
     exact Subtype.ext (by change σF g (u : WO S T → ℂ) = _; rw [eσ])
-  have hbfix : b f x ∈ fixed ρT (KGL w T.rank) := GlobalTheory.LGrp.mem_fixed.2 fun k hk => by
+  have hbfix : b f x ∈ fixed ρT (KGL w (n := T.rank)) := GlobalTheory.LGrp.mem_fixed.2 fun k hk => by
     have e := hequiv k f
     rw [GlobalTheory.LGrp.mem_fixed.1 hfT k hk] at e
     exact e.symm
@@ -102,36 +106,37 @@ theorem transferOn_isSplit : ∀ D : D7, TransferOn D fun v => IsSplit (E := D.h
   have hB'inv : (stepPar χS χT t (fun _ => B) w).map (·⁻¹) =
       (B.map (·⁻¹)).map ((val (F := D.host.F) χS w)⁻¹ * ((val (F := D.host.F) χT w)⁻¹)⁻¹ * ·) +
         GlobalTheory.LFun.seg w (val (F := D.host.F) χS w)⁻¹ t := by
-    rw [stepPar, Multiset.map_add, seg_map_inv, Multiset.map_map, Multiset.map_map]
+    rw [stepPar, Multiset.map_add (f := _), seg_map_inv, Multiset.map_map, Multiset.map_map]
     congr 1
     refine Multiset.map_congr rfl fun c _ => ?_
     simp only [Function.comp_apply, mul_inv]
   refine Or.inl ⟨hv, eT, heT, (GlobalTheory.T.satake_vector_iff_inverse_doubleCosets D.host.E w T.rank X' ρT (b f x) _ hne hbfix hcard).2 fun ϖ hϖ k hk => ?_⟩
   have hsubT : ∀ g (y : U), U.subtype (πU g y) = πF g (U.subtype y) := fun g y => rfl
   have hsubS : ∀ g (y : U), U.subtype (σU g y) = σF g (U.subtype y) := fun g y => rfl
-  have hInvT : (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) ∈ Hecke ℂ (KGL w T.rank) :=
-    (GlobalTheory.T.hecke_operator_move_across_invariant_bilinear _ (KGL w T.rank) hcT hsT ℂ ℂ ℂ 1 1 0 (fun _ _ _ => by simp) 0 (zero_mem _) 0 (zero_mem _) _
+  have hInvT : (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) ∈ Hecke ℂ (KGL w (n := T.rank)) :=
+    (GlobalTheory.T.hecke_operator_move_across_invariant_bilinear _ (KGL w (n := T.rank)) hcT hsT ℂ ℂ ℂ 1 1 0 (fun _ _ _ => by simp) 0 (zero_mem _) 0 (zero_mem _) _
       (Tj_mem_hecke hϖ k)).1
   let cf : ℕ → ℂ := fun j => if j ≤ k then (qV D.host.E w : ℂ) ^ ((S.rank - j) * (k - j)) *
     (Formalism.L2.Col.gaussBin (qV D.host.E w) t (k - j) : ℂ) *
     (((val (F := D.host.F) χS w : ℂˣ) : ℂ) * (Real.sqrt (qV D.host.E w) : ℂ) ^ S.rank)⁻¹ ^ k *
     (((val (F := D.host.F) χT w : ℂˣ) : ℂ) * (Real.sqrt (qV D.host.E w) : ℂ) ^ T.rank) ^ j else 0
-  have hH' : heckeVec πF (KGL w T.rank) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) (U.subtype f) =
-      ∑ j ∈ Finset.range (S.rank + 1), cf j • heckeVec σF (KGL w S.rank) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) (U.subtype f) :=
+  have hH' : heckeVec πF (KGL w (n := T.rank)) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) (U.subtype f) =
+      ∑ j ∈ Finset.range (S.rank + 1), cf j • heckeVec σF (KGL w (n := S.rank)) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) (U.subtype f) :=
     hH ϖ hϖ k hk
-  have e1 : U.subtype (heckeVec πU (KGL w T.rank) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) f) =
-      heckeVec πF (KGL w T.rank) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) (U.subtype f) :=
+  have e1 : U.subtype (heckeVec πU (KGL w (n := T.rank)) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) f) =
+      heckeVec πF (KGL w (n := T.rank)) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) (U.subtype f) :=
     map_heckeVec hcT hInvT U.subtype hsubT f
-  have e2 : ∀ j, U.subtype (heckeVec σU (KGL w S.rank) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) f) =
-      heckeVec σF (KGL w S.rank) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) (U.subtype f) := fun j =>
+  have e2 : ∀ j, U.subtype (heckeVec σU (KGL w (n := S.rank)) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) f) =
+      heckeVec σF (KGL w (n := S.rank)) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) (U.subtype f) := fun j =>
     map_heckeVec hcS (Tj_mem_hecke hϖ j) U.subtype hsubS f
-  have hT : heckeVec πU (KGL w T.rank) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) f =
-      ∑ j ∈ Finset.range (S.rank + 1), cf j • heckeVec σU (KGL w S.rank) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) f := by
+  have hT : heckeVec πU (KGL w (n := T.rank)) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) f =
+      ∑ j ∈ Finset.range (S.rank + 1), cf j • heckeVec σU (KGL w (n := S.rank)) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) f := by
     apply U.injective_subtype
-    rw [e1, hH', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, hH', map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, e2 j]
-  have hmove : ∀ j ∈ Finset.range (S.rank + 1), b (heckeVec σU (KGL w S.rank) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) f) x =
+  have hmove : ∀ j ∈ Finset.range (S.rank + 1), b (heckeVec σU (KGL w (n := S.rank)) (Tj ℂ S.rank (Ov D.host.E w) ϖ j) f) x =
       satEig (qV D.host.E w) S.rank (B.map (·⁻¹)) j • b f x := by
     intro j hj
     rw [(GlobalTheory.T.hecke_operator_move_across_invariant_bilinear _ _ hcS hsS U X X' σU ρS b hinv f hfS x hxS.2.1 _ (Tj_mem_hecke hϖ j)).2,
@@ -139,11 +144,12 @@ theorem transferOn_isSplit : ∀ D : D7, TransferOn D fun v => IsSplit (E := D.h
         (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)), map_smul]
   have hsym := GlobalTheory.T.satake_esymm_scaled_multiset_add_segment D.host.E w S.rank t k (B.map (·⁻¹)) (val (F := D.host.F) χS w)⁻¹
     (val (F := D.host.F) χT w)⁻¹ (by rw [Multiset.card_map, hxS.2.2.1]) (ht ▸ hk)
-  calc heckeVec ρT (KGL w T.rank) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) (b f x)
-      = b (heckeVec πU (KGL w T.rank) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) f) x :=
+  calc heckeVec ρT (KGL w (n := T.rank)) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) (b f x)
+      = b (heckeVec πU (KGL w (n := T.rank)) (fun g => Tj ℂ T.rank (Ov D.host.E w) ϖ k g⁻¹) f) x :=
         (map_heckeVec hcT hInvT (b.flip x) hequiv f).symm
     _ = ∑ j ∈ Finset.range (S.rank + 1), cf j • satEig (qV D.host.E w) S.rank (B.map (·⁻¹)) j • b f x := by
-        rw [hT, map_sum, LinearMap.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hT, map_sum, LinearMap.sum_apply]
         refine Finset.sum_congr rfl fun j hj => ?_
         rw [map_smul, LinearMap.smul_apply, hmove j hj]
     _ = satEig (qV D.host.E w) T.rank ((stepPar χS χT t (fun _ => B) w).map (·⁻¹)) k • b f x := by

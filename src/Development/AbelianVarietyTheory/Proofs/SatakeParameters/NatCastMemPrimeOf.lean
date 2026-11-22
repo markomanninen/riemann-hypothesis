@@ -1,21 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.IntegralJetsPairing
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.DualBasesOfSeries
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+
+@[expose] public section
 
 open NumberField Filter Topology
 
 noncomputable section
 
 namespace GlobalTheory.Proof.IdempotentLatticeSequence
-
-theorem mem_int_iff {p : ℕ} [Fact p.Prime] (x : ℂ_[p]) : x ∈ PadicComplexInt p ↔ ‖x‖ ≤ 1 := by
-  show x ∈ (PadicComplex.valued p).v.valuationSubring ↔ _
-  rw [Valuation.mem_valuationSubring_iff, PadicComplex.norm_eq_norm, Valuation.norm_def,
-    ← map_one (PadicComplex.valued p).v, ← Valuation.restrict_le_iff]
-  simpa only [map_one, NNReal.coe_le_one] using
-    ((Valuation.RankOne.strictMono (PadicComplex.valued p).v).le_iff_le (b := 1)).symm
 
 theorem norm_int_le {p : ℕ} [Fact p.Prime] {M : Type} [Field M] (φ : M →+* ℂ_[p]) (a : 𝓞 M) : ‖φ (a : M)‖ ≤ 1 := by
   obtain ⟨P, hmon, hev⟩ := RingOfIntegers.isIntegral_coe a
@@ -43,7 +41,8 @@ theorem flat_system {A B : Type} [CommRing A] [AddCommGroup B] [Module A B] [Mod
       simp [x, Fintype.linearCombination_apply, Pi.single_apply]
     rw [hr, hxa, LinearMap.comp_apply]
     conv_lhs => rw [← Finsupp.univ_sum_single (a' (Pi.single k 1))]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [← Finsupp.smul_single_one, map_smul]
   · have h1 := congrArg (fun v => v l) (LinearMap.congr_fun haf (Pi.single j 1))
@@ -51,7 +50,8 @@ theorem flat_system {A B : Type} [CommRing A] [AddCommGroup B] [Module A B] [Mod
     have hf : f (Pi.single j 1) = ∑ k, b k j • Pi.single k 1 := by
       ext k'
       simp [f, Matrix.mulVec, dotProduct, Pi.single_apply, Finset.sum_apply]
-    rw [hf, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf, map_sum] at h1
     simpa [Finsupp.finsetSum_apply, map_smul] using h1
 
 def primeOf {p : ℕ} [Fact p.Prime] {E : Type} [Field E] (φ : E →+* ℂ_[p]) : Ideal (𝓞 E) where
@@ -59,7 +59,7 @@ def primeOf {p : ℕ} [Fact p.Prime] {E : Type} [Field E] (φ : E →+* ℂ_[p])
   zero_mem' := by simp
   add_mem' := fun {a b} ha hb => by
     change ‖φ (algebraMap (𝓞 E) E (a + b))‖ < 1
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha hb)
   smul_mem' := fun c a ha => by
     change ‖φ (algebraMap (𝓞 E) E (c * a))‖ < 1

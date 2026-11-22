@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedValA
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedValB
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKerProd
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKurOmega
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.G2EqZeroOfHasCMByThree
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedValA
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedValB
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKerProd
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKurOmega
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.G2EqZeroOfHasCMByThree
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical

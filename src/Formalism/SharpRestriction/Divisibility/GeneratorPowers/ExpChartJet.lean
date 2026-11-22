@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartJetA
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartJetA
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,8 @@ variable {R : Type} [CommRing R]
 private lemma cc_psTrunc_lemma {κ : Type} [Fintype κ] [DecidableEq κ] (m : ℕ) (f : MvPowerSeries κ R) :
     MvPolynomial.constantCoeff (psTrunc m f) = MvPowerSeries.constantCoeff f := by
   unfold psTrunc
-  rw [map_sum, Finset.sum_eq_single 0]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single 0]
   · rw [MvPolynomial.constantCoeff_monomial, if_pos rfl]
     first | rfl | simp
   · intro e _ he
@@ -56,7 +61,7 @@ private lemma mono_mem_lemma_2 {κ : Type} (m : ℕ) (e : κ →₀ ℕ) (c : R)
   exact Ideal.prod_mem_prod fun j _ => Ideal.pow_mem_pow (hX j) _
 
 private lemma mem_of_coeff_lemma_3 {κ : Type} (m : ℕ) (Q : MvPolynomial κ R)
-    (h : ∀ e : κ →₀ ℕ, (e.sum fun _ k => k) ≤ m → MvPolynomial.coeff e Q = 0) : Q ∈ orig R κ ^ (m + 1) := by
+    (h : ∀ e : κ →₀ ℕ, (e.sum fun _ k => k) ≤ m → AddMonoidAlgebra.coeff Q e = 0) : Q ∈ orig R κ ^ (m + 1) := by
   rw [MvPolynomial.as_sum Q]
   refine Ideal.sum_mem _ fun e he => mono_mem_lemma_2 m e _ ?_
   by_contra hlt
@@ -81,7 +86,7 @@ private lemma mem_degLE_lemma_5 {κ : Type} [Fintype κ] [DecidableEq κ] (m : �
 
 private lemma coeff_psTrunc_lemma_4 {κ : Type} [Fintype κ] [DecidableEq κ] (m : ℕ) (f : MvPowerSeries κ R)
     (e : κ →₀ ℕ) :
-    MvPolynomial.coeff e (psTrunc m f) = if e ∈ degLE m then MvPowerSeries.coeff e f else 0 := by
+    AddMonoidAlgebra.coeff (psTrunc m f) e = if e ∈ degLE m then MvPowerSeries.coeff e f else 0 := by
   unfold psTrunc
   rw [MvPolynomial.coeff_sum]
   simp only [MvPolynomial.coeff_monomial]
@@ -229,9 +234,9 @@ theorem jetCopy_eq {d n : ℕ} (m : ℕ) (i : Fin n) :
   rw [Ideal.Quotient.eq]
   apply mem_of_coeff_lemma_3
   intro e he
-  rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_sub, coeff_psTrunc_lemma_4, if_pos ((mem_degLE_lemma_5 m e).mpr he),
-    cc_psTrunc_lemma, MvPowerSeries.constantCoeff_X, map_zero, MvPolynomial.coeff_zero, sub_zero,
-    ← MvPolynomial.coe_X, MvPolynomial.coeff_coe, sub_self]
+  rw [cc_psTrunc_lemma, MvPowerSeries.constantCoeff_X, map_zero, sub_zero, MvPolynomial.coeff_sub,
+    coeff_psTrunc_lemma_4, ite_eq_left ((mem_degLE_lemma_5 m e).mpr he), ← MvPolynomial.coe_X,
+    MvPolynomial.coeff_coe, sub_self]
 
 variable (C : ChartAt Xo c y) (φ : Fin C.d → MvPowerSeries (Fin 1 × Fin (dL Dw)) S)
 
@@ -346,12 +351,12 @@ theorem pOf_add (g g' : Fin 1 × Fin C.d → S) : pOf C (g + g') = pOf C g * pOf
       (![fun j => g (0, j), fun j => g' (0, j)] : Fin 2 → Fin C.d → S) 0 q.2) = tp g := by
     congr 1
     funext q
-    simp only [Matrix.cons_val_zero, fin_one_pair_eq]
+    exact congrArg g (fin_one_pair_eq q)
   have h1 : tp (fun q : Fin 1 × Fin C.d =>
       (![fun j => g (0, j), fun j => g' (0, j)] : Fin 2 → Fin C.d → S) 1 q.2) = tp g' := by
     congr 1
     funext q
-    simp only [Matrix.cons_val_one, Matrix.cons_val_zero, fin_one_pair_eq]
+    exact congrArg g' (fin_one_pair_eq q)
   have hF : (tp2 C g g').comp (jetSubstPS (m := 0 + 1) (fun p : Fin 1 × Fin C.d => C.B.G.F p.2)) = tp (g + g') := by
     apply jet_hom_ext
     intro q
@@ -444,12 +449,13 @@ variable {Xo : Moduli Dw l} {c : Coeff l} [StarRing (𝓞 E)]
 variable {S : Type} [CommRing S] [Algebra c.F S] [Algebra ℚ S] {y : FrPt Xo c S}
 
 theorem isExpChart_of_expOf (C : ChartAt Xo c y) (φ : Fin C.d → MvPowerSeries (Fin 1 × Fin (dL Dw)) S)
-    (hφ : IsExpOf C.B.G.F C.uvec φ) (hA : ExpActOf C φ) : IsExpChart y (xExp y C φ) where
-  zero := xExp_zero C φ hφ
-  trunc := xExp_trunc C φ
-  law := xExp_law C φ hφ
-  act := xExp_act C φ hφ hA
-  tan := xExp_tan C φ hφ
+    (hφ : IsExpOf C.B.G.F C.uvec φ) (hA : ExpActOf C φ) : IsExpChart y (xExp y C φ) := by
+  exact
+    { zero := xExp_zero C φ hφ
+      trunc := xExp_trunc C φ
+      law := xExp_law C φ hφ
+      act := xExp_act C φ hφ hA
+      tan := xExp_tan C φ hφ }
 
 end Main
 

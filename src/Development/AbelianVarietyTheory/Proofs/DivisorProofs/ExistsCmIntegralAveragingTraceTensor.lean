@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsStarNormLEOfIsCMField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsStarNormLEOfIsCMField
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,7 +44,8 @@ theorem exists_integral_orthogonal (σ : E ≃ₐ[ℚ] E) (hσ : ∀ x, σ (σ x
 theorem trace_mul_eq_repr (σ : E ≃ₐ[ℚ] E) {ι : Type} [Fintype ι] (e : Module.Basis ι ℚ E)
     (ho : ∀ i j, i ≠ j → Algebra.trace ℚ E (σ (e i) * e j) = 0) (y : E) (i : ι) :
     Algebra.trace ℚ E (σ (e i) * y) = e.repr y i * Algebra.trace ℚ E (σ (e i) * e i) := by
-  conv_lhs => rw [← e.sum_repr y, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← e.sum_repr y, Finset.mul_sum, map_sum]
   rw [Finset.sum_eq_single i]
   · rw [mul_smul_comm, map_smul, smul_eq_mul]
   · intro j _ hj
@@ -49,8 +54,8 @@ theorem trace_mul_eq_repr (σ : E ≃ₐ[ℚ] E) {ι : Type} [Fintype ι] (e : M
 
 end TraceTensor
 
-open TraceTensor in
 
+open TraceTensor in
 theorem exists_cm_trace_tensor : ∀ (E : Type) [Field E] [NumberField E] [NumberField.IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E), ∃ (n c : ℕ) (b : Fin n → NumberField.RingOfIntegers E) (T : Matrix (Fin n) (Fin n) ℤ), 0 < c ∧ (∀ s t, T s t = T t s) ∧ (∀ (a : NumberField.RingOfIntegers E) (g : NumberField.RingOfIntegers E →ₗ[ℤ] NumberField.RingOfIntegers E →ₗ[ℤ] ℤ), ∑ s, ∑ t, T s t * g (b s * a) (b t) = ∑ s, ∑ t, T s t * g (b s) (b t * H.bar a)) ∧ ∑ s, ∑ t, T s t • (H.bar (b s) * b t) = (c : NumberField.RingOfIntegers E) ∧ ∀ v : Fin n → ℤ, v ≠ 0 → 0 < ∑ s, ∑ t, T s t * v s * v t := by
   intro E _ _ _ H
   classical
@@ -85,7 +90,8 @@ theorem exists_cm_trace_tensor : ∀ (E : Type) [Field E] [NumberField E] [Numbe
   have hexp : ∀ x : 𝓞 E, C • x = ∑ j, (t j * Algebra.trace ℤ (𝓞 E) (H.bar (b j) * x)) • b j := by
     intro x
     apply RingOfIntegers.coe_injective
-    rw [map_zsmul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zsmul, map_sum]
     have hx := e.sum_repr (x : E)
     change C • (x : E) = _
     conv_lhs => rw [← hx, Finset.smul_sum]
@@ -120,7 +126,8 @@ theorem exists_cm_trace_tensor : ∀ (E : Type) [Field E] [NumberField E] [Numbe
       intro i
       have : C * g (b i * a) (b i) = g (C • (b i * a)) (b i) := by
         rw [map_smul, LinearMap.smul_apply, smul_eq_mul]
-      rw [mul_left_comm, this, hexp, map_sum, LinearMap.sum_apply, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [mul_left_comm, this, hexp, map_sum, LinearMap.sum_apply, Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, LinearMap.smul_apply, smul_eq_mul]
       ring
@@ -129,7 +136,8 @@ theorem exists_cm_trace_tensor : ∀ (E : Type) [Field E] [NumberField E] [Numbe
       intro j
       have : C * g (b j) (b j * H.bar a) = g (b j) (C • (b j * H.bar a)) := by
         rw [map_smul, smul_eq_mul]
-      rw [mul_left_comm, this, hexp, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [mul_left_comm, this, hexp, map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, smul_eq_mul, hsym]
       ring
@@ -139,7 +147,8 @@ theorem exists_cm_trace_tensor : ∀ (E : Type) [Field E] [NumberField E] [Numbe
   · simp only [Matrix.diagonal_apply, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
     have hc := StarNormBound.casimir σ e ho fun i => (hdq0 i).ne'
     apply RingOfIntegers.coe_injective
-    rw [map_sum, map_natCast, ← Int.cast_natCast, Int.toNat_of_nonneg hC.le, ← mul_one (C : E), ← hc,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_natCast, ← Int.cast_natCast, Int.toNat_of_nonneg hC.le, ← mul_one (C : E), ← hc,
       Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, map_mul]

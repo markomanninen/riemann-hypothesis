@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsSetLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsGradedLiftUnitaryLocalTame
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsLiftD
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsLiftU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsSmallExtensionFactorizationOfFunctional
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LiftAlongSurjectionGraded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CardDualResidueFieldEqCardOfMaximalIdealSmulEqZe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GradedMatrixMulInv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LocAtPushOfLocAt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsSetLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsGradedLiftUnitaryLocalTame
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsLiftD
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsLiftU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsSmallExtensionFactorizationOfFunctional
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LiftAlongSurjectionGraded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CardDualResidueFieldEqCardOfMaximalIdealSmulEqZe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GradedMatrixMulInv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LocAtPushOfLocAt
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -17,8 +21,8 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_unobstructed :
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
     F.LocVan → ∀ g₁, F.Marked g₁ → ∀ {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing R'] [Algebra O R'] [IsCO O R'] (𝒜 : ℤ → Submodule O R) [GradedAlgebra 𝒜] (p : R →ₐ[O] R') (j : ℤ), Function.Surjective p → SmallExt O 𝒜 (RingHom.ker p) j →
     Module.Finite (ResidueField O) (F.Ob j) → Nat.card (ResidueField O) ^ Module.finrank (ResidueField O) (F.Ob j) < Nat.card (RingHom.ker p) →
-      ∀ (r' : Γ →* GG 3 R'), F.IsPt g₁ r' → (∀ g, ∃ X, GrMat 𝒜 X ∧ X.map p = (r' g).mat) →
-      ∃ (R'' : Type) (_ : CommRing R'') (_ : Algebra O R'') (_ : IsCO O R'') (p₁ : R →ₐ[O] R'') (q : R'' →ₐ[O] R') (r : Γ →* GG 3 R''),
+      ∀ (r' : Γ →* GG (m := 3) (R := R')), F.IsPt g₁ r' → (∀ g, ∃ X, GrMat 𝒜 X ∧ X.map p = (r' g).mat) →
+      ∃ (R'' : Type) (_ : CommRing R'') (_ : Algebra O R'') (_ : IsCO O R'') (p₁ : R →ₐ[O] R'') (q : R'' →ₐ[O] R') (r : Γ →* GG (m := 3) (R := R'')),
         Function.Surjective p₁ ∧ q.comp p₁ = p ∧ ¬ Function.Injective q ∧ F.IsPt g₁ r ∧ push q r = r' := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF hV g₁ hg₁ R R' _ _ _ _ _ _ 𝒜 _ p j hp hI hfin hlt r' hr' hgr
   have := hI.fin
@@ -35,7 +39,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_unobstructed :
   have hsm : ∀ g, EntIn (maximalIdeal R) ((s g).mat - ((r0 F.η F.Ψ g).mat).map (algebraMap O R)) := fun g =>
     red_of_map p _ _ g _ (by rw [hs]; exact hr'.red g)
   have hsl : IsLocallyConstant s := lc_of_mat s hsc (by rw [funext hsr]; exact hF.η_cont)
-  have hex : ∀ v, ∃ r : F.D v →* GG 3 R, push p r = r'.comp (F.loc v) ∧ F.LocAt v r ∧ IsLocallyConstant (mats r) ∧
+  have hex : ∀ v, ∃ r : F.D v →* GG (m := 3) (R := R), push p r = r'.comp (F.loc v) ∧ F.LocAt v r ∧ IsLocallyConstant (mats r) ∧
       ∀ g, GrMat 𝒜 (r g).mat := fun v => by
     have h0 : Red (F.ηv v) (F.Ψv v) (r'.comp (F.loc v)) := ⟨fun g => hr'.mult _, fun g => hr'.red _⟩
     have hc : IsLocallyConstant (mats (r'.comp (F.loc v))) := hlc.comp_continuous (hloc v)
@@ -51,7 +55,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_unobstructed :
       fun g => red_of_map p _ _ g _ (by rw [hρ']; exact hr'.red _)⟩
   have hρL : ∀ v, IsLocallyConstant (ρ v) := fun v => lc_of_mat _ (hρc v) (by
     rw [funext (hρr v).mult]; exact hF.η_cont.comp_continuous (hloc v))
-  have hmul : ∀ x y : GG 3 R, GrMat 𝒜 x.mat → GrMat 𝒜 y.mat → GrMat 𝒜 (x * y⁻¹).mat := fun x y hx hy =>
+  have hmul : ∀ x y : GG (m := 3) (R := R), GrMat 𝒜 x.mat → GrMat 𝒜 y.mat → GrMat 𝒜 (x * y⁻¹).mat := fun x y hx hy =>
     (UpperTheory.graded_matrix_mul_inv 𝒜 x y⁻¹ hx (UpperTheory.graded_matrix_mul_inv 𝒜 y y hy hy).2).1
   choose K hK hKw using fun gg : Γ × Γ => exists_ex 𝒜 p j hI.wt hS (s gg.1 * s gg.2) (s (gg.1 * gg.2))
     (by rw [map_mul, hs, hs, hs, map_mul]) (hmul _ _ (UpperTheory.graded_matrix_mul_inv 𝒜 _ _ (hsg _) (hsg _)).1 (hsg _))
@@ -70,11 +74,11 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_unobstructed :
       rw [hA v g, mul_inv_cancel_right]; rfl
     rw [e]
     exact (hsl.comp_continuous (hloc v)).mul (hρL v).inv
-  let κ : (RingHom.ker p →ₗ[O] ResidueField O) → Γ × Γ → Gb (ResidueField O) j := fun φ gg =>
+  let κ : (RingHom.ker p →ₗ[O] ResidueField O) → Γ × Γ → Gb (k := ResidueField O) j := fun φ gg =>
     ⟨(K gg).map φ, fun a b hab => by rw [Matrix.map_apply, hKw gg a b hab, map_zero]⟩
-  let α : (RingHom.ker p →ₗ[O] ResidueField O) → ∀ v, F.D v → Gb (ResidueField O) j := fun φ v g =>
+  let α : (RingHom.ker p →ₗ[O] ResidueField O) → ∀ v, F.D v → Gb (k := ResidueField O) j := fun φ v g =>
     ⟨(A v g).map φ, fun a b hab => by rw [Matrix.map_apply, hAw v g a b hab, map_zero]⟩
-  have hval : Function.Injective (Gb.val : Gb (ResidueField O) j → _) := Subtype.val_injective
+  have hval : Function.Injective (Gb.val : Gb (k := ResidueField O) j → _) := Subtype.val_injective
   have hZ : ∀ φ, (κ φ, α φ) ∈ F.framedTwoCocycles j := fun φ => by
     refine ⟨⟨?_, fun g g' k => hval ?_⟩, (Submodule.mem_iInf _).2 fun v => ⟨?_, ?_⟩⟩
     · exact (IsLocallyConstant.desc (κ φ) Gb.val (hKc.comp fun Y => Y.map φ) hval).continuous
@@ -108,7 +112,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_unobstructed :
     exact (Submodule.Quotient.eq _).1 e
   obtain ⟨R'', _, _, _, p₁, q, ε, hp₁, hq, hqi, hε, hqε, hm, hk⟩ := UpperTheory.exists_small_extension_factorization_of_functional p hI.kill hI.le φ hφ
   have hS' : Sm ε := ⟨hm, hk⟩
-  have hqp : ∀ x : GG 3 R, GG.map (q : R'' →+* R') (GG.map (p₁ : R →+* R'') x) = GG.map (p : R →+* R') x :=
+  have hqp : ∀ x : GG (m := 3) (R := R), GG.map (q : R'' →+* R') (GG.map (p₁ : R →+* R'') x) = GG.map (p : R →+* R') x :=
     fun x => by rw [← hq]; rfl
   obtain ⟨r, hr, hrc, hrs⟩ := unobs F hF hV hS' j (fun g => GG.map (p₁ : R →+* R'') (s g)) hsr
     (fun g => red_of_map q _ _ g _ (by rw [hqp, hs]; exact hr'.red g)) (hsc.comp fun X => X.map p₁)

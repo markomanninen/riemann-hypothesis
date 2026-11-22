@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsValuationSubringLiftOfSpecialFibre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsValuationSubringLiftOfSpecialFibre
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -32,10 +36,10 @@ theorem exists_prime_not_mem_forall_gt_eq_maximalIdeal (C : Type) [CommRing C] [
       exact hxP (hP.mem_of_pow_mem n h)
     have hPL := IsLocalization.isPrime_of_isPrime_disjoint (Submonoid.powers x)
       (Localization.Away x) P hP hdisj
-    have hcomap := IsLocalization.comap_map_of_isPrime_disjoint (Submonoid.powers x)
+    have hcomap := IsLocalization.under_map_of_isPrime_disjoint (Submonoid.powers x)
       (Localization.Away x) hP hdisj
     have hMle : M ≤ P.map (algebraMap C (Localization.Away x)) := by
-      rw [← IsLocalization.map_comap (Submonoid.powers x) (Localization.Away x) M]
+      rw [← IsLocalization.map_under (Submonoid.powers x) (Localization.Away x) M]
       exact Ideal.map_mono hlt.le
     have heq := hM.eq_of_le hPL.ne_top hMle
     have : q = P := by rw [hqdef, heq]; exact hcomap

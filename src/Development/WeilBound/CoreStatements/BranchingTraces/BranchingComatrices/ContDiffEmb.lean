@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.HeBranching
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExpFromBlocks
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.HeBranching
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExpFromBlocks
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem contDiff_emb : ContDiff ℝ ∞ (emb e) := by
       (((blk e).toLinearMap ∘ₗ LinearMap.inl ℂ _ ℂ).restrictScalars ℝ)) A + blk e (0, 1) := by
     funext A
     show _ = blk e (A, 0) + blk e (0, 1)
-    rw [← map_add, emb_eq]; simp
+    rw [← map_add (f := _), emb_eq]; simp
   rw [h]
   exact (ContinuousLinearMap.contDiff _).add contDiff_const
 
@@ -113,7 +117,7 @@ theorem dsig_map (hP : Intertw ε' e π σ P) {X : Matrix (Fin n) (Fin n) ℂ} (
 
 theorem blk_inG (hF : Fits ε ε' e) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε' X) : inG ε (blk e (X, 0)) := by
   unfold inG at hX ⊢
-  rw [blk_ct, blk_J hF, ← map_mul, ← map_mul, ← map_add]
+  rw [blk_ct, blk_J hF, ← map_mul, ← map_mul, ← map_add (f := _)]
   simp [hX, ← Prod.zero_eq_mk]
 
 theorem inG_parts (Y : Matrix (Fin n) (Fin n) ℂ) :
@@ -148,12 +152,12 @@ theorem dsigC_map (hF : Fits ε ε' e) (hP : Intertw ε' e π σ P) {η : H}
     (hd : ∀ X, inG ε X → DifferentiableAt ℝ (fun t : ℝ => π (NormedSpace.exp ((t : ℂ) • X)) η) 0)
     (Y : Matrix (Fin n) (Fin n) ℂ) : P (dsigC ε π (blk e (Y, 0)) η) = dsigC ε' σ Y (P η) := by
   have e1 : (1 / 2 : ℂ) • (blk e (Y, 0) + thetaJ ε (blk e (Y, 0))) = blk e ((1 / 2 : ℂ) • (Y + thetaJ ε' Y), 0) := by
-    rw [blk_theta hF, ← map_add, ← map_smul]; simp
+    rw [blk_theta hF, ← map_add (f := _), ← map_smul]; simp
   have e2 : (1 / (2 * Complex.I)) • (blk e (Y, 0) - thetaJ ε (blk e (Y, 0))) =
       blk e ((1 / (2 * Complex.I)) • (Y - thetaJ ε' Y), 0) := by
     rw [blk_theta hF, ← map_sub, ← map_smul]; simp
   unfold dsigC
-  rw [e1, e2, map_add, map_smul, dsig_map hP (inG_parts Y).1 (hd _ (blk_inG hF (inG_parts Y).1)),
+  rw [e1, e2, map_add (f := _), map_smul, dsig_map hP (inG_parts Y).1 (hd _ (blk_inG hF (inG_parts Y).1)),
     dsig_map hP (inG_parts Y).2 (hd _ (blk_inG hF (inG_parts Y).2))]
 
 end PositivityTheory.UnitaryDecomposition.Com

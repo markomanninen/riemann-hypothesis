@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsPowMulPowEqOfIsZeroCechH
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AwayEquivAwayFracEqIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsPowMulPowEqOfIsZeroCechH
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsResMEqMulSecOfEqZpowSec
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,18 +48,18 @@ def chartEval (i : L.ι) {V : X.Opens} (h : V ≤ L.U i) : MvPolynomial ι R →
     (p : MvPolynomial ι R) : resG X h' (chartEval R x i h p) = chartEval R x i (h'.trans h) p := by
   induction p using MvPolynomial.induction_on with
   | C r => rw [chartEval_C, chartEval_C, resG_resG]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p j hp => simp only [map_mul, hp, chartEval_X, resG_resG]
 
-variable {R} in
 
+variable {R} in
 def formSec {p : MvPolynomial ι R} {d : ℤ} (hp : p ∈ polyGrading ι R d) : LB.Sec (lbZPow L d) :=
   zmkGlobal (fun i => chartEval R x i le_rfl p) fun i j => by
     rw [resG_chartEval, resG_chartEval, chartEval, chartEval, ← eval₂Hom_unit_mul _ _ _ hp]
     exact congrArg (fun b => eval₂Hom _ b p) (funext fun l => (x l).compat i j)
 
-variable {R} in
 
+variable {R} in
 @[simp] theorem zfun_formSec {p : MvPolynomial ι R} {d : ℤ} (hp : p ∈ polyGrading ι R d)
     (i : L.ι) : zfun (formSec x hp) i = chartEval R x i le_rfl p := zfun_zmkGlobal _ _ i
 
@@ -82,29 +87,29 @@ theorem nonzeroLocus_prodSec (hL : L.IsLB) (I : Finset ι) :
 
 variable (F : X.Modules) {G : X.Modules} {U V W : X.Opens}
 
-variable (V) in
 
+variable (V) in
 def gammaOp (j : ι) (n : ℤ) :
     sectionsOn (twistZ F L n) V →ₗ[R] sectionsOn (twistZ F L (n + 1)) V :=
   sectionsOn.map R (mulSec F (zofSec (x j)) n) V
 
-variable (V) in
 
+variable (V) in
 theorem gammaOp_commute : OperatorsCommute (gammaOp R x F V) := fun i j n a =>
   congr(sectionsOn.map R $(mulSecOfEq_comm (F := F) (zofSec (x j)) (zofSec (x i)) (n := n)
     rfl rfl rfl rfl) V a)
 
-variable (V) in
 
+variable (V) in
 abbrev GammaStar : Type := GrSum (gammaOp_commute R x F V)
 
-variable (V) in
 
+variable (V) in
 abbrev gammaGrading : ℤ → Submodule R (GammaStar R x F V) :=
   GrSum.grading (gammaOp_commute R x F V)
 
-variable (V) in
 
+variable (V) in
 abbrev gammaOf (n : ℤ) : sectionsOn (twistZ F L n) V →ₗ[R] GammaStar R x F V :=
   GrSum.of (gammaOp_commute R x F V) n
 
@@ -130,22 +135,10 @@ theorem gammaRes_gammaRes (h : V ≤ U) (h' : W ≤ V) (y : GammaStar R x F U) :
         sectionsOn.res_res]
   exact congr($e y)
 
-variable {F} in
 
-def gammaMap (φ : F ⟶ G) (V : X.Opens) :
-    GammaStar R x F V →ₗ[MvPolynomial ι R] GammaStar R x G V :=
-  GrSum.map _ _ (fun n => sectionsOn.map R (map (lbZPow L n) φ) V) fun j n a =>
-    congr(sectionsOn.map R $((mulSecOfEq_naturality (zofSec (x j)) (n := n) rfl φ).symm) V a)
 
-variable {F} in
-
-@[simp] theorem gammaMap_gammaOf (φ : F ⟶ G) (a : sectionsOn (twistZ F L n) V) :
-    gammaMap R x φ V (gammaOf R x F V n a) =
-      gammaOf R x G V n (sectionsOn.map R (map (lbZPow L n) φ) V a) := by
-  rw [gammaMap, GrSum.map_of]
 
 variable (V) in
-
 def gammaCoord (i : L.ι) : GammaStar R x F V →ₗ[R] sectionsOn F (V ⊓ L.U i) :=
   GrSum.desc _ fun _ =>
     { toFun := fun a => (sectionsOn.toΓ F _).symm (zcoord (sectionsOn.toΓ _ V a) i)
@@ -165,20 +158,20 @@ theorem gammaCoord_smul (i : L.ι) (p : MvPolynomial ι R) (y : GammaStar R x F 
   | C r =>
     rw [chartEval_C, ← algebraMap_eq, algebraMap_smul, map_smul]
     rfl
-  | add p q hp hq => simp only [add_smul, map_add, hp, hq]
+  | add p q hp hq => simp only [add_smul, map_add (f := _), hp, hq]
   | mul_X p j hp =>
     rw [mul_smul, hp, map_mul, mul_smul, chartEval_X]
     congr 1
     induction y using Decomposition.inductionOn (gammaGrading R x F V) with
     | zero => simp only [smul_zero, map_zero]
-    | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+    | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
     | homogeneous a =>
       obtain ⟨_, a, rfl⟩ := a
       rw [GrSum.X_smul_of, gammaCoord_gammaOf, gammaCoord_gammaOf, gammaOp, sectionsOn.toΓ_map,
         zcoord_mulSecOfEq_app, zfun_zofSec]
 
-variable {R x} in
 
+variable {R x} in
 theorem smul_gammaOf {p : MvPolynomial ι R} {e e' d : ℤ} (hp : p ∈ polyGrading ι R e)
     (σ : LB.Sec (lbZPow L e')) (hσ : ∀ i, zfun σ i = chartEval R x i le_rfl p) (he : e = e')
     (h : n + e' = d) (a : sectionsOn (twistZ F L n) V) :
@@ -212,8 +205,8 @@ section Loc
 variable [F.IsQuasicoherent] (hL : L.IsLB) (hW : IsCompact (W : Set X))
   (hW' : IsQuasiSeparated (W : Set X))
 
-include hL hW in
 
+include hL hW in
 theorem eventually_xProd_pow_smul_eq_zero {I : Finset ι} (h : V ≤ W)
     (hV : W ⊓ ⨅ j ∈ I, Out.nonzeroLocus (x j) ≤ V) (y : GammaStar R x F W)
     (hy : gammaRes R x F h y = 0) : ∀ᶠ k : ℕ in atTop, xProd R I ^ k • y = 0 := by
@@ -231,15 +224,15 @@ theorem eventually_xProd_pow_smul_eq_zero {I : Finset ι} (h : V ≤ W)
   rw [← hT, Finset.smul_sum]
   exact Finset.sum_eq_zero hk
 
-include hL hW hW' in
 
+include hL hW hW' in
 theorem eventually_exists_gammaRes_eq {I : Finset ι} (h : V ≤ W)
     (hV : V = W ⊓ ⨅ j ∈ I, Out.nonzeroLocus (x j)) (z : GammaStar R x F V) :
     ∀ᶠ k : ℕ in atTop, ∃ y, gammaRes R x F h y = xProd R I ^ k • z := by
   induction z using Decomposition.inductionOn (gammaGrading R x F V) with
   | zero => exact .of_forall fun k => ⟨0, by rw [smul_zero, map_zero]⟩
   | add y z hy hz =>
-    exact (hy.and hz).mono fun k ⟨⟨a, ha⟩, ⟨b, hb⟩⟩ => ⟨a + b, by rw [smul_add, map_add, ha, hb]⟩
+    exact (hy.and hz).mono fun k ⟨⟨a, ha⟩, ⟨b, hb⟩⟩ => ⟨a + b, by rw [smul_add, map_add (f := _), ha, hb]⟩
   | homogeneous b =>
     obtain ⟨_, b, rfl⟩ := b
     refine (eventually_exists_resM_eq_mulSecOfEq_zpowSec hL (prodSec x I) hW hW' h
@@ -311,10 +304,6 @@ def gammaCechIso [LinearOrder ι] (n : ℤ) : grCech ι (gammaGrading R x F W) n
   (cechFunctor ι R).mapIso (gammaCubeIso R x F hL hW hW' n)
 
 end Loc
-
-example (hL : L.IsLB) [Nontrivial Γ(F, V)] : Nontrivial (GammaStar R x F V) :=
-  ((GrSum.of_injective (gammaOp_commute R x F V) 0).comp
-    (ConcreteCategory.bijective_of_isIso ((twistZZeroIso F hL).hom.app V)).1).nontrivial
 
 end Twist
 

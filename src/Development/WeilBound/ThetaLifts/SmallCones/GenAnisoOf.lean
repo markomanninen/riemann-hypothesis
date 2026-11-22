@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SmallCones.HodgeTateFromSandwich
-import Development.WeilBound.ThetaLifts.SmallCones.ConeBasic
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.HodgeTateFromSandwich
+public import Development.WeilBound.ThetaLifts.SmallCones.ConeBasic
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
+
+@[expose] public section
 
 noncomputable section
 

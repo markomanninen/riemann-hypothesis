@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisRaynaudTangentInvariantFields
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantLiftAddInvariantCombination
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTorusWeightFunctionInvariantField
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.BijectiveRestrictPointsOfEtaleOfHenselian
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AwayToAwayRightEqOfComp
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LeISupInfPreimage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisRaynaudTangentInvariantFields
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantLiftAddInvariantCombination
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTorusWeightFunctionInvariantField
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.BijectiveRestrictPointsOfEtaleOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AwayToAwayRightEqOfComp
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LeISupInfPreimage
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
@@ -171,8 +175,8 @@ theorem epsTo_inr (S : Type) [CommRing S] [Algebra R S] (c : R) :
   rw [TrivSqZeroExt.map_inr]
   ext <;> simp [SqZero.epsTo, SqZero.dualTo_apply, TrivSqZeroExt.algebraMap_eq_inl']
 
-open GlobalTheory.InvFieldRing in
 
+open GlobalTheory.InvFieldRing in
 theorem isInv_pbT (φ : G ⟶ G') [IsMonHom φ] {v : TanM (𝟙 (Sp R)) G} {d : Fld G.left} (hd : IsInv G v d) {g : ℕ}
     {w : Fin g → TanM (𝟙 (Sp R)) G'} {d' : Fin g → Fld G'.left} (hd' : ∀ a, IsInv G' (w a) (d' a)) (c : Fin g → R)
     (hc : pushL φ v = ∑ a, c a • w a) (U : G'.left.Opens) (s : Γ(G'.left, U)) (W : G.left.Opens)
@@ -222,7 +226,8 @@ theorem isInv_pbT (φ : G ⟶ G') [IsMonHom φ] {v : TanM (𝟙 (Sp R)) G} {d : 
   have f₃ := congrArg TrivSqZeroExt.snd f₂
   simp only [TrivSqZeroExt.snd_sum, TrivSqZeroExt.inr_mul_inl, TrivSqZeroExt.snd_inr, MulOpposite.smul_eq_mul_unop,
     MulOpposite.unop_op, _root_.one_mul] at f₃
-  rw [HolHom.valR_eq _ _ hx, map_sub, ← HolHom.valR_eq _ _ hx, ← HolHom.valR_eq _ _ hx, f₃,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [HolHom.valR_eq _ _ hx, map_sub, ← HolHom.valR_eq _ _ hx, ← HolHom.valR_eq _ _ hx, f₃,
     GlobalTheory.KS.pbT_of_le _ hW, valR_appLE _ _ _ _ hW hx, HolHom.valR_eq _ _ hxU, map_sum, sub_eq_zero]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [map_mul, ← HolHom.valR_eq _ _ hxU, ← HolHom.valR_eq _ _ hxU,
@@ -244,7 +249,8 @@ theorem exists_dlg_eq_pbT : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRin
   refine ⟨g, w, dd', fun b a => w.repr (pushL Y.q (v b)) a, fun a b => v.repr (u a) b, hdd',
     fun m => ⟨w.repr m, (w.sum_repr m).symm⟩, fun a a' => ?_, fun b i i' W hW => ?_⟩
   · have h := congrArg (fun m => w.repr (pushL Y.q m) a') (v.sum_repr (u a))
-    simp only [map_sum, map_smul, hu, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hu, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul,
       Module.Basis.repr_self, Finsupp.single_apply] at h
     exact h
   · simp only [dlg, pbT_id]

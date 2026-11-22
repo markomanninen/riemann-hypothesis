@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.IntAOfNonpol
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.IntAOfNonpol
+
+@[expose] public section
 
 noncomputable section
 

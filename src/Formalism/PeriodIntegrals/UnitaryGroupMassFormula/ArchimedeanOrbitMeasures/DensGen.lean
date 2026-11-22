@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.MatNDHHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.MatNDHHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,8 @@ private theorem exists_linearMap_inner_eq_and_det_eq_gram_det (β : W → W → 
     have h1 : β x y = ∑ i, ⟪b i, x⟫ * β (b i) y := by
       conv_lhs => rw [← b.sum_repr' x]
       change (AddMonoidHom.mk' (fun x => β x y) (fun x x' => hL x x' y)) (∑ i, ⟪b i, x⟫ • b i) = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp [sL]
     have h2 : ⟪x, A y⟫ = ∑ i, β (b i) y * ⟪x, b i⟫ := by
       simp [A, inner_sum, inner_smul_right]
@@ -87,7 +92,7 @@ private theorem false_of_degenerate_of_fourier_inversion (ν : Measure W) [ν.Is
   have hψs : HasCompactSupport ψ := bump.hasCompactSupport.comp_left Complex.ofReal_zero
   have hψs' : HasCompactSupport (fun x => ψ (x + k)) := hψs.comp_homeomorph (Homeomorph.addRight k)
   let Φ : W → ℂ := fun x => ψ x - ψ (x + k)
-  have hΦc : Continuous Φ := hψc.sub (hψc.comp (continuous_add_right k))
+  have hΦc : Continuous Φ := hψc.sub (hψc.comp (Homeomorph.addRight k).continuous)
   have hΦs : HasCompactSupport Φ := hψs.sub hψs'
   have hzero : ∀ y, ∫ x, Φ x * ((𝐞 (β x y) : Circle) : ℂ) ∂ν = 0 := by
     intro y

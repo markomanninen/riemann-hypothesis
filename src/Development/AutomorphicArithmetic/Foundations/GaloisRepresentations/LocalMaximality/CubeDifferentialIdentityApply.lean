@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.PWdBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.PWdBasic
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -26,7 +31,7 @@ private theorem cubeDifferential_identity_apply {σ E : Type} [LinearOrder σ] [
 
 private theorem pk_mem {d : ℕ} {I : Finset (Fin (d + 1))} (h : I.Nonempty) : pk I ∈ I := by
   unfold pk
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact I.min'_mem h
 
 section
@@ -216,7 +221,8 @@ theorem UpperTheory.Gal.productCup_of_system.pCmp_of :
   have h0 : mulP F K (e (img (dj (pk J)))) = 0 := by
     have hv : mulP F K (c (uni (uni I J) (img (dj (pk J))))) = kap K x (img (dj (pk J))) •
         wd (fun _ => (1 : Module.End ℂ (DR ℂ K))) γ' (uni I J) := hval _ _ hcardL
-    rw [heq, map_sub, hv, sub_eq_zero, cubeDifferential_identity_apply, cubeDifferential_identity_apply, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [heq, map_sub, hv, sub_eq_zero, cubeDifferential_identity_apply, cubeDifferential_identity_apply, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, hY2 _ _ hcardL, smul_comm]
   rw [h0, smul_zero]

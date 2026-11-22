@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+
+@[expose] public section
 
 noncomputable section
 

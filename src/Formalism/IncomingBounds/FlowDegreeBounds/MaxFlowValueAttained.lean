@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.IncomingBounds.IncomingBound
+module
+
+public import Mathlib
+public import Formalism.IncomingBounds.IncomingBound
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -190,11 +194,6 @@ theorem convex_K : Convex ℝ (Kset l d) := by
     simp only [Prod.snd_add, Prod.smul_snd, smul_eq_mul]
     exact add_le_add (mul_le_mul_of_nonneg_left h1v ha) (mul_le_mul_of_nonneg_left h2v hb)
 
-def gmap (l d : ℕ) [NeZero d] (x : ZMod d → ℕ → ℝ) : (ZMod d → ℝ) × ℝ :=
-  (fun s => dpLoad l d x s, flowVal d x)
-
-def Cset (d : ℕ) : Set ((ZMod d → ℝ) × ℝ) := {q | (∀ s, 0 ≤ q.1 s) ∧ q.2 ≤ 0}
-
 theorem isClosed_K (hl : 1 ≤ l) : IsClosed (Kset l d) := by
   refine IsSeqClosed.isClosed ?_
   intro q p hq hlim
@@ -255,7 +254,8 @@ theorem exists_dual_lt (hl : 1 ≤ l) (D : ZMod d → ℝ) (hD : 0 ≤ D) {v : �
         simp [Prod.fst_sum, Finset.sum_apply, Pi.single_apply]
       · simp [Prod.snd_sum]
     conv_lhs => rw [hq]
-    simp only [map_add, map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul]
   obtain ⟨a, c, key'⟩ : ∃ (a : ZMod d → ℝ) (c : ℝ),
       ∀ q : (ZMod d → ℝ) × ℝ, f q = ∑ t, q.1 t * a t + q.2 * c := ⟨_, _, key⟩
   have hrec : ∀ q : (ZMod d → ℝ) × ℝ, (∀ s, 0 ≤ q.1 s) → q.2 ≤ 0 → q ∈ Kset l d :=

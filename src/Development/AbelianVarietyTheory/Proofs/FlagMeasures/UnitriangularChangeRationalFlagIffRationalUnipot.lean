@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupMUIndep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupMUIndep
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem X_orth_fvec (F : FlagG S r T) {x : S.V} (hx : x ∈ F.X) (b : Fin (r + 1
     rw [this]
     simp [Fin.castSucc_ne_last]
   | zero => simp
-  | add x y _ _ hx hy => simp [map_add, hx, hy]
+  | add x y _ _ hx hy => simp [map_add (f := _), hx, hy]
   | smul c x _ hx => simp [LinearMap.map_smulₛₗ₂, hx]
 
 theorem X_iso (F : FlagG S r T) {x y : S.V} (hx : x ∈ F.X) (hy : y ∈ F.X) : S.hT x y = 0 := by
@@ -57,7 +61,7 @@ theorem X_iso (F : FlagG S r T) {x y : S.V} (hx : x ∈ F.X) (hy : y ∈ F.X) : 
     rw [← fvec_castSucc]
     exact X_orth_fvec F hx _
   | zero => simp
-  | add y y' _ _ h h' => simp [map_add, h, h']
+  | add y y' _ _ h h' => simp [map_add (f := _), h, h']
   | smul c y _ h => simp [h]
 
 theorem isotropicSpan_orthogonal_anisotropicVector (F : FlagG S r T) {x : S.V} (hx : x ∈ F.X) : S.hT x F.z = 0 := by
@@ -68,7 +72,7 @@ theorem z_orth_X (F : FlagG S r T) {x : S.V} (hx : x ∈ F.X) : S.hT F.z x = 0 :
 
 theorem fvec_indep (F : FlagG S r T) (hT : T ≠ 0) : LinearIndependent E F.fvec := by
   unfold FlagG.fvec
-  refine linearIndependent_fin_snoc.2 ⟨F.e_indep, fun hz => ?_⟩
+  refine linearIndependent_finSnoc.2 ⟨F.e_indep, fun hz => ?_⟩
   have h := isotropicSpan_orthogonal_anisotropicVector F (x := F.z) hz
   rw [F.z_norm] at h
   exact hT (neg_eq_zero.1 h)
@@ -127,11 +131,11 @@ theorem exists_chg (F : FlagG S r T) (hT : T ≠ 0) {A : Matrix (Fin (r + 1)) (F
       e_iso := fun a b => X_iso F (heX a) (heX b)
       z_orth := fun a => by
         show S.hT (g a.castSucc) (g (Fin.last r)) = 0
-        rw [hz, map_add, isotropicSpan_orthogonal_anisotropicVector F (heX a), X_iso F (heX a) hzX, add_zero]
+        rw [hz, map_add (f := _), isotropicSpan_orthogonal_anisotropicVector F (heX a), X_iso F (heX a) hzX, add_zero]
       z_norm := by
         show S.hT (g (Fin.last r)) (g (Fin.last r)) = -T
         rw [hz]
-        simp only [map_add, LinearMap.add_apply]
+        simp only [map_add (f := _), LinearMap.add_apply]
         rw [isotropicSpan_orthogonal_anisotropicVector F hzX, z_orth_X F hzX, X_iso F hzX hzX, F.z_norm]
         simp }
   have hF : F₁.fvec = g := by
@@ -223,7 +227,7 @@ theorem exists_unip (F F₁ : FlagG S r T) (hT : T ≠ 0) {A : Matrix (Fin (r + 
     obtain ⟨p, hp, w, hw, rfl⟩ := Submodule.mem_sup.1 hx'
     have h1 : m p ∈ F.X := hmP hp
     have h2 : m w = 0 := hmC hw
-    have h3 : m (p + w) ∈ F.X := by rw [map_add, h2, add_zero]; exact h1
+    have h3 : m (p + w) ∈ F.X := by rw [map_add (f := _), h2, add_zero]; exact h1
     exact h3
 
 theorem Xa_coords (F : FlagG S r T) {j : ℕ} {x : S.V} (hx : x ∈ F.Xa j) :
@@ -291,10 +295,10 @@ theorem tri_of_unip (F F₁ : FlagG S r T) (n : S.V ≃ₗ[E] S.V)
 
 end Gen
 
-theorem flag_change : ∀ (D : D7) {T : D.host.E} (F : LFlag (VS D) D.R.rS T), T ≠ 0 →
+theorem flag_change : ∀ (D : D7) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T), T ≠ 0 →
     (∀ A : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E, Uni A →
-      ∃ F₁ : LFlag (VS D) D.R.rS T, Chg (frame F) A (frame F₁)) ∧
-    (∀ F₁ : LFlag (VS D) D.R.rS T, Tri D.host.E (frame F) (frame F₁) ↔
+      ∃ F₁ : LFlag (D.sp.Y 0) D.R.rS T, Chg (frame F) A (frame F₁)) ∧
+    (∀ F₁ : LFlag (D.sp.Y 0) D.R.rS T, Tri D.host.E (frame F) (frame F₁) ↔
       ∃ n ∈ Formalism.L2.SG.NGData.NRat F, ∀ a, frame F₁ a = n (frame F a)) := by
   intro D T F hT
   refine ⟨fun A hA => ?_, fun F₁ => ⟨?_, ?_⟩⟩

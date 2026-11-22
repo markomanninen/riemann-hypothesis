@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CyclotomicFrobeniusPowerSeriesXEqMulQuotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CyclotomicFrobeniusPowerSeriesXEqMulQuotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace GlobalTheory.Cyc
 
 variable (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [Algebra ℤ_[l] O]
 
-theorem cyc_eq_binomialSeries (c : ℤ_[l]) : cyc l O c = PowerSeries.binomialSeries O c - 1 := by
-  rw [cyc, GlobalTheory.Fon.map_binomialSeries _ (fun _ => rfl)]
+theorem cyc_eq_binomialSeries (c : ℤ_[l]) : cyc l O c = PowerSeries.binomialSeries O c - 1 :=
+  Series.cyc_eq l O c
 
 theorem act_X (c : ℤ_[l]) : act l O c PowerSeries.X = cyc l O c := PowerSeries.substAlgHom_X _
 
@@ -20,8 +24,7 @@ theorem act_apply (c : ℤ_[l]) (a : PowerSeries O) :
   congrFun (PowerSeries.coe_substAlgHom _) a
 
 theorem act_eq_gam (c : ℤ_[l]) : act l O c = GlobalTheory.Fon.gam O c :=
-  GlobalTheory.Fon.algHom_ext_X (by rw [act_X, GlobalTheory.Fon.gam_X, cyc_eq_binomialSeries])
-    (by rw [act_X, cyc_const])
+  Series.act_eq l O c
 
 theorem act_act (c c' : ℤ_[l]) (a : PowerSeries O) :
     act l O c (act l O c' a) = act l O (c * c') a := by

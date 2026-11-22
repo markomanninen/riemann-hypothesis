@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -153,7 +157,7 @@ theorem contDiffAt_fr {S : Scheme.{0}} {A : Over S} [GrpObj A] {L : RigLB A} {x0
     (ReciprocityTheory.AnForm.Osgood.osgood g {z | ⊤ ≤ (Φ.e z).left ⁻¹ᵁ L.L.U j} (Φ.fr j) (Φ.hol (L.L.U j) 0).1 (Φ.fr_hol j) _
       (top_le_of_mem h)).contDiffAt
   have h2 : ContDiff ℂ ω (colsOf n g) :=
-    contDiff_pi.2 fun i => contDiff_pi.2 fun j => contDiff_apply ℂ ℂ (finProdFinEquiv (i, j))
+    contDiff_pi.2 fun i => contDiff_pi.2 fun j => contDiff_apply ℂ (fun _ => ℂ) (finProdFinEquiv (i, j))
   have h3 : ContDiff ℂ ω (fun v => Λ (colsOf n g v)) :=
     (LinearMap.toContinuousLinearMap Λ).contDiff.comp h2
   exact h1.comp 0 h3.contDiffAt

@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.EtaleTateTwistTensorIsoOfGeneratorMapIso
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.EtaleTateTwistTensorIsoOfGeneratorMapIso
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -57,7 +61,7 @@ theorem μ_lift {A B : Shv R} {K : Cx R} (τ : Pair (sgl A) (sgl B) K) (U : Sche
 
 theorem tens_summand_zero {A B : Shv R} {a b : ℤ} (hab : a ≠ 0 ∨ b ≠ 0) {U : Scheme.{0}}
     (z : Sec ((sgl A).X a) U ⊗[ULift.{1} R] Sec ((sgl B).X b) U) : z = 0 := by
-  refine TensorProduct.induction_on z rfl (fun u v => ?_) (fun x y hx hy => by rw [hx, hy, add_zero])
+  refine TensorProduct.induction_on (motive := fun z => z = 0) z rfl (fun u v => ?_) (fun x y hx hy => by rw [hx, hy, add_zero])
   rcases hab with h | h
   · rw [sec_zero_of_isZero (isZero_sglX A h) u, TensorProduct.zero_tmul]
   · rw [sec_zero_of_isZero (isZero_sglX B h) v, TensorProduct.tmul_zero]

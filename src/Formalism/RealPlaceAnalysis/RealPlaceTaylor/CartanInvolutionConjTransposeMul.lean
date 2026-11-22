@@ -1,5 +1,9 @@
-import Formalism.RealPlaceAnalysis.SmoothOnG
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+module
+
+public import Formalism.RealPlaceAnalysis.SmoothOnG
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff

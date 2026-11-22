@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PMertensUpper
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PMertensUpper
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Small
 

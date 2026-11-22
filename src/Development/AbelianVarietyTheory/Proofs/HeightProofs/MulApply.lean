@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.OrbitGrowth
 
@@ -32,7 +36,7 @@ def good (A : Subalgebra ℂ (Module.End ℂ M)) : Submodule ℂ M where
     haveI : FiniteDimensional ℂ (orb A y) := hy
     show FiniteDimensional ℂ (orb A (x + y))
     have : orb A (x + y) ≤ orb A x ⊔ orb A y := orb_le.mpr (fun a ha => by
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (mem_orb ha) (mem_orb ha))
     exact Submodule.finiteDimensional_of_le this
   smul_mem' := by

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.IsCoordA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoprimeNsmulEndomorphismPreservesCompletio
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDvdOfEqNatMulIntegralAdeleAwayFromP
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.IsCoordA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoprimeNsmulEndomorphismPreservesCompletio
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDvdOfEqNatMulIntegralAdeleAwayFromP
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,25 +25,25 @@ theorem actQ_one (D : Datum p) (w : VQ D) : actQ D 1 w = w := by
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul q x => rw [actQ_tmul, one_smul]
-  | add u v hu hv => rw [map_add, hu, hv]
+  | add u v hu hv => rw [map_add (f := _), hu, hv]
 
 theorem actQ_mul (D : Datum p) (a b : D.O) (w : VQ D) : actQ D (a * b) w = actQ D a (actQ D b w) := by
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul q x => rw [actQ_tmul, actQ_tmul, actQ_tmul, mul_smul]
-  | add u v hu hv => rw [map_add, hu, hv, map_add, map_add]
+  | add u v hu hv => rw [map_add (f := _), hu, hv, map_add (f := _), map_add (f := _)]
 
 theorem actQ_add (D : Datum p) (a b : D.O) (w : VQ D) : actQ D (a + b) w = actQ D a w + actQ D b w := by
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul q x => rw [actQ_tmul, actQ_tmul, actQ_tmul, add_smul, TensorProduct.tmul_add]
-  | add u v hu hv => rw [map_add, hu, hv, map_add, map_add]; abel
+  | add u v hu hv => rw [map_add (f := _), hu, hv, map_add (f := _), map_add (f := _)]; abel
 
 theorem actQ_zero (D : Datum p) (w : VQ D) : actQ D 0 w = 0 := by
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul q x => rw [actQ_tmul, zero_smul, TensorProduct.tmul_zero]
-  | add u v hu hv => rw [map_add, hu, hv, add_zero]
+  | add u v hu hv => rw [map_add (f := _), hu, hv, add_zero]
 
 structure Sys (D : Datum p) where
   T : Module.End (AfP p) (AfP p ⊗[ℚ] VQ D)

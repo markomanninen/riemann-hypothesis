@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.SmallLevelClassSet
-import ReciprocityTheory.DualLattices.RidConvolutionDerivation
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AevalSurjectiveOfIsNilpotentKer
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.SmallLevelClassSet
+public import ReciprocityTheory.DualLattices.RidConvolutionDerivation
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AevalSurjectiveOfIsNilpotentKer
+
+@[expose] public section
 
 noncomputable section
 

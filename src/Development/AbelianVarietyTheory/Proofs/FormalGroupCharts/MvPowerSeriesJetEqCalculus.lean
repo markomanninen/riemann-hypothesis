@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -17,7 +21,7 @@ variable {R : Type} [CommRing R] {σ : Type} {m : ℕ}
 theorem jeq_refl (f : MvPowerSeries σ R) : JEq m f f := fun _ _ => rfl
 
 theorem jeq_add {f f' g g' : MvPowerSeries σ R} (h : JEq m f f') (k : JEq m g g') : JEq m (f + g) (f' + g') :=
-  fun e he => by rw [map_add, map_add, h e he, k e he]
+  fun e he => by rw [map_add (f := _), map_add (f := _), h e he, k e he]
 
 theorem jeq_sub {f f' g g' : MvPowerSeries σ R} (h : JEq m f f') (k : JEq m g g') : JEq m (f - g) (f' - g') :=
   fun e he => by rw [map_sub, map_sub, h e he, k e he]
@@ -28,7 +32,7 @@ theorem jeq_mul {f f' g g' : MvPowerSeries σ R} (h : JEq m f f') (k : JEq m g g
   rw [MvPowerSeries.coeff_mul, MvPowerSeries.coeff_mul]
   refine Finset.sum_congr rfl fun p hp => ?_
   have hsum := congrArg Finsupp.degree (Finset.HasAntidiagonal.mem_antidiagonal.mp hp)
-  rw [map_add] at hsum
+  rw [map_add (f := _)] at hsum
   rw [h p.1 (by omega), k p.2 (by omega)]
 
 theorem jeq_cancel {f g u : MvPowerSeries σ R} (hu : IsUnit (MvPowerSeries.constantCoeff u))

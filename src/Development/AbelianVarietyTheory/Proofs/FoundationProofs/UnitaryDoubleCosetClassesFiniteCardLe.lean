@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinsetSelfDualClassesRootDiscr
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinsetSelfDualClassesRootDiscr
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPointStatement
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -13,13 +18,13 @@ theorem doubleCoset_surj_of_le {G : Type*} [Group G] (H K J : Subgroup G) :
     Function.Surjective (fun p : DoubleCoset.Quotient (H : Set G) (K : Set G) × (K ⧸ J.subgroupOf K) =>
       DoubleCoset.mk H J (p.1.out * (p.2.out : G))) := by
   intro c
-  obtain ⟨h, k, hh, hk, e⟩ := DoubleCoset.mk_out_eq_mul H K c.out
+  obtain ⟨h, hh, k, hk, e⟩ := DoubleCoset.mk_out_eq_mul H K c.out
   refine ⟨(DoubleCoset.mk H K c.out, QuotientGroup.mk (⟨k⁻¹, K.inv_mem hk⟩ : K)), ?_⟩
   obtain ⟨j, hj⟩ := QuotientGroup.mk_out_eq_mul (J.subgroupOf K) (⟨k⁻¹, K.inv_mem hk⟩ : K)
   have hjJ : ((j : K) : G) ∈ J := Subgroup.mem_subgroupOf.mp j.2
   simp only
   rw [hj, e]
-  conv_rhs => rw [← DoubleCoset.out_eq' H J c]
+  conv_rhs => rw [← DoubleCoset.out_eq' c]
   rw [eq_comm, DoubleCoset.eq]
   refine ⟨h, hh, _, hjJ, ?_⟩
   simp [mul_assoc]
@@ -77,7 +82,7 @@ theorem cls_finite_card_le : ∀ (D : D7) (N : ℕ), Finite (Cls D N (intG D N))
     intro c c' e
     have e' : L₀ c.out = L₀ c'.out := congrArg Subtype.val e
     rw [← hL, ← hL, hLt] at e'
-    rw [← DoubleCoset.out_eq' _ _ c, ← DoubleCoset.out_eq' _ _ c', DoubleCoset.eq]
+    rw [← DoubleCoset.out_eq' c, ← DoubleCoset.out_eq' c', DoubleCoset.eq]
     refine ⟨h c'.out * (h c.out)⁻¹, Subgroup.mul_mem _ (hh _) (Subgroup.inv_mem _ (hh _)), _, e', ?_⟩
     group
   have hfin : Finite (Cls D N (intG D N)) := Finite.of_injective f hf

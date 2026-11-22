@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SameGenusFix
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SpanPowMulLe
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLocalData
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulOfMemSmulLocF
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SameGenusFix
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SpanPowMulLe
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLocalData
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulOfMemSmulLocF
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
+
+@[expose] public section
 
 open NumberField Module
 
@@ -22,10 +26,7 @@ theorem jK_ι (t : 𝓞 F) : jK (ι t) = algebraMap F K (t : F) := rfl
 
 theorem jK_ι_ne_zero {t : 𝓞 F} (ht : t ≠ 0) : jK (ι t) ≠ 0 := by
   rw [jK_ι]
-  intro h
-  apply ht
-  have h1 : ((t : F)) = 0 := (map_eq_zero_iff _ (algebraMap F K).injective).1 h
-  exact_mod_cast h1
+  exact (map_ne_zero_iff _ (algebraMap F K).injective).2 (RingOfIntegers.coe_ne_zero_iff.2 ht)
 
 theorem ne_zero_of_notMem {𝔭 : Ideal (𝓞 F)} {t : 𝓞 F} (ht : t ∉ 𝔭) : t ≠ 0 := by
   rintro rfl
@@ -53,7 +54,7 @@ theorem exists_mul_mem_span {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a 
       rw [hJ, pow_succ]
       exact Ideal.mul_mono_right hJ𝔭
     exact this (Ideal.mem_span_singleton_self a)
-  obtain ⟨t, htJ, ht𝔭⟩ := SetLike.not_le_iff_exists.1 hJp
+  obtain ⟨t, htJ, ht𝔭⟩ := IsConcreteLE.not_le_iff_exists.1 hJp
   refine ⟨t, ht𝔭, fun x hx => ?_⟩
   rw [hJ, mul_comm t x]
   exact Ideal.mul_mem_mul hx htJ
@@ -68,8 +69,7 @@ theorem div_mem_SP_iff {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a : �
   · rintro ⟨t, ht, w, hw⟩
     have e1 : ι t * z = w * ι a := by
       apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-      rw [map_mul, map_mul, hw]
-      field_simp
+      rw [map_mul, map_mul, hw, mul_assoc, div_mul_cancel₀ _ ha']
     obtain ⟨u, hu⟩ := exists_inv_mod h𝔭 ht (vF 𝔭 a)
     have hA : ι a ∈ extP K 𝔭 ^ vF 𝔭 a := localizedQuotients.ι_mem_pow (localValuationFiltration.mem_pow_vF h𝔭 ha)
     have e2 : z = ι u * (ι t * z) + ι (1 - t * u) * z := by
@@ -101,10 +101,8 @@ theorem div_mem_SP_iff {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a : �
     obtain ⟨w, hw⟩ := Ideal.mem_span_singleton'.1
       (hle (Ideal.mul_mem_mul (Ideal.mem_span_singleton_self _) hz))
     refine ⟨w, ?_⟩
-    have := congrArg jK hw
-    rw [map_mul, map_mul] at this
-    field_simp
-    rw [this]
+    rw [← mul_div_assoc]
+    exact (eq_div_iff ha').2 (by simpa only [map_mul] using congrArg jK hw)
 
 theorem exists_sub_div_mem_SP {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a : 𝓞 F} (ha : a ≠ 0) {r : K}
     (hr : haveI := h𝔭.isPrime; r ∈ HU.SP K 𝔭) :
@@ -126,25 +124,5 @@ theorem star_jK (w : 𝓞 K) : ∃ w' : 𝓞 K, jK w' = star (jK w) := StandardS
 
 theorem star_jK_ι (hF : IsFixF K F) (t : 𝓞 F) : star (jK (ι t)) = jK (ι t) :=
   (hF _).2 ⟨(t : F), rfl⟩
-
-theorem exists_common {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {ι' : Type} (s : Finset ι') (r : ι' → K)
-    (hr : haveI := h𝔭.isPrime; ∀ i ∈ s, r i ∈ HU.SP K 𝔭) :
-    ∃ t : 𝓞 F, t ∉ 𝔭 ∧ ∀ i ∈ s, ∃ w : 𝓞 K, jK w = jK (ι t) * r i := by
-  classical
-  have := h𝔭.isPrime
-  induction s using Finset.induction_on with
-  | empty => exact ⟨1, fun h => h𝔭.ne_top ((Ideal.eq_top_iff_one _).2 h), by simp⟩
-  | insert j s hj ih =>
-    obtain ⟨t, ht, hts⟩ := ih (fun i hi => hr i (Finset.mem_insert_of_mem hi))
-    obtain ⟨t', ht', w', hw'⟩ := HU.mem_SP.1 (hr j (Finset.mem_insert_self j s))
-    refine ⟨t * t', fun hm => (h𝔭.isPrime.mem_or_mem hm).elim ht ht', fun i hi => ?_⟩
-    rcases Finset.mem_insert.1 hi with rfl | hi
-    · refine ⟨ι t * w', ?_⟩
-      rw [map_mul, hw', map_mul, map_mul]
-      ring
-    · obtain ⟨w, hw⟩ := hts i hi
-      refine ⟨ι t' * w, ?_⟩
-      rw [map_mul, hw, map_mul, map_mul]
-      ring
 
 end Formalism.L2.SG.Pf.G2

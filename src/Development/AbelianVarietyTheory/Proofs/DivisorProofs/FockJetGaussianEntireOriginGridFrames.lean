@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasSign
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharacterHalfSymplecticFormRealPoint
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FoldrHolDEqIteratedFDeriv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPureTensorAtOriginEqThetaSeries
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorsOfThetaDatumInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasSign
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharacterHalfSymplecticFormRealPoint
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FoldrHolDEqIteratedFDeriv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPureTensorAtOriginEqThetaSeries
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorsOfThetaDatumInjective
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField Matrix MvPolynomial
 open GlobalTheory.SignedHC GlobalTheory.ChiGrid Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.FunObj
@@ -75,7 +80,7 @@ noncomputable def nrm {N N' : ℕ} (z : Formalism.MainNotions.TaylorLogMetric.VC
 theorem compAt_add {m n : ℕ} (τ : D.what₂.Tau) (x y : Mx D m n) : compAt θ τ (x + y) = compAt θ τ x + compAt θ τ y := by
   ext i j
   show θ τ (infPart D (x i j + y i j)) = θ τ (infPart D (x i j)) + θ τ (infPart D (y i j))
-  rw [RingHom.map_add, RingHom.map_add]
+  rw [RingHom.map_add (f := _), RingHom.map_add (f := _)]
 
 theorem zc_add (w w' : WO S T) : zc θ BS BT (w + w') = zc θ BS BT w + zc θ BS BT w' := by
   funext τ
@@ -278,7 +283,7 @@ theorem dRho_dir {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) (h
     have a1 := congrFun (congrFun hw i) j
     have a2 := congrFun (congrFun (hfin t) i) j
     simp only [Matrix.map_apply, Matrix.zero_apply] at a1 a2 ⊢
-    rw [Matrix.add_apply, (finPart D).map_add, a1, a2, add_zero]
+    rw [Matrix.add_apply, map_add (finPart D), a1, a2, add_zero]
   have hfun : (fun t : ℝ => heisO ψ S T (L t) G w) = fun t : ℝ =>
       Complex.exp (-(Real.pi * Complex.I) * ((t * om : ℝ) : ℂ)) *
         (Complex.exp (-((Real.pi * Formalism.L2.Pj.xiR D : ℝ) : ℂ) * nrm (z + ((t : ℂ) * α) • Formalism.MainNotions.TaylorLogMetric.coordV D v)) *
@@ -367,7 +372,7 @@ theorem fock_monomial_zero {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D �
       ∀ (t : ℂ) (a : Formalism.MainNotions.TaylorLogMetric.VC D S.rank T.rank), lam l (t • a) = starRingEnd ℂ t * lam l a := by
     intro l
     refine ⟨fun a b => ?_, fun t a => ?_⟩
-    · simp only [lam, Pi.add_apply, map_add]
+    · simp only [lam, Pi.add_apply, map_add (f := _)]
       ring
     · simp only [lam, Pi.smul_apply, smul_eq_mul, map_mul]
       ring

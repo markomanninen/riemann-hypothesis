@@ -1,13 +1,24 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.DifferentiableZeroModeLiftOf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ContinuousPointNormSqQuotient
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ColAbelC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ColAbelD
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.DifferentiableZeroModeLiftOf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ContinuousPointNormSqQuotient
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ColAbelC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ColAbelD
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
 open NumberField Complex
 
 noncomputable section
+
+private theorem sum_inner_ob_smul_e {ι : Type} [Fintype ι]
+    (K : Submodule ℝ (EuclideanSpace ℂ ι)) (a : EuclideanSpace ℂ ι)
+    (ha : a ∈ K) : ∑ i, (inner ℝ ((Col.ob K) i) (⟨a, ha⟩ : K)) • (Col.e K i) = a := by
+  have h := congrArg (fun w : K => (w : EuclideanSpace ℂ ι)) ((Col.ob K).sum_repr' ⟨a, ha⟩)
+  simp only [Submodule.coe_sum, Submodule.coe_smul] at h
+  exact h
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {X : PT E} {DF : ℕ} {P : Par X DF}
   {I : Submodule ℤ (Vsp X.dim)}
@@ -30,7 +41,90 @@ theorem cab_core (hP : Ext.PackingCount) (hGT : Ext.GaussianTailBound) (hA : Pro
   have hR0sq := P.hR0
   have hR0ne : P.R0 ≠ 0 := by intro h; rw [h] at hR0sq; norm_num at hR0sq
   have hR0pos : 0 < |P.R0| := abs_pos.mpr hR0ne
-  have hlat := cab_YB_abs hI hP P.q
+  have hlat : ∀ γ ∈ lat (Col.YB hI hP P.q).b, γ ≠ 0 →
+      |P.R0| ≤ Real.sqrt (P.q * Real.pi) * ‖γ‖ := by
+    intro γ hγ hne
+    have hl : γ ∈ Col.GB X I := by rw [← Col.lat_bB hI hP]; exact hγ
+    obtain ⟨x, hx, rfl⟩ := Col.mem_GB.1 hl
+    have hx' : x ∈ X.L ∧ ∀ a ∈ I, (Hf x a).im = 0 := hx
+    have hreal : ∀ a ∈ IR I, (Hf x a).im = 0 := by
+      intro a ha
+      induction ha using Submodule.span_induction with
+      | mem y hy => exact hx'.2 y hy
+      | zero => simp [Hf]
+      | add y w _ _ hy hw =>
+        have h1 : Hf x (y + w) = Hf x y + Hf x w := by
+          simp only [Hf, ← Finset.sum_add_distrib]
+          refine Finset.sum_congr rfl fun i _ => ?_
+          simp [mul_add]
+        rw [h1, Complex.add_im, hy, hw, add_zero]
+      | smul r y _ hy =>
+        have h1 : Hf x (r • y) = (r : ℂ) * Hf x y := by
+          simp only [Hf, Finset.mul_sum]
+          refine Finset.sum_congr rfl fun i _ => ?_
+          simp [Complex.real_smul] <;> ring
+        simp [h1, hy]
+    have hz : ∀ k, (Col.z (IR I) k x).im = 0 := fun k => hreal _ (Col.ob (IR I) k).2
+    have hp1 : Col.p1 (IR I) x ∈ IR I := by
+      have hsum : Col.p1 (IR I) x = ∑ k, (Col.z (IR I) k x).re • Col.e (IR I) k := by
+        simp only [Col.p1]
+        refine Finset.sum_congr rfl fun k _ => ?_
+        have hzk : Col.z (IR I) k x = ((Col.z (IR I) k x).re : ℂ) := by
+          apply Complex.ext <;> simp [hz k]
+        conv_lhs => rw [hzk]
+        exact (RCLike.real_smul_eq_coe_smul (K := ℂ) _ _).symm
+      rw [hsum]
+      exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Col.ob (IR I) k).2
+    have hnorm : ‖Col.wmap (IR I) x‖ = ‖x - Col.p1 (IR I) x‖ := by
+      first | rw [Col.norm_wmap (Col.hK_of hI)] | rw [Col.norm_wmap]
+      rw [Col.p2]
+    have hxI : x ∉ I := by
+      intro hxI
+      apply hne
+      have hxK : x ∈ IR I := Submodule.subset_span hxI
+      have hp : Col.p1 (IR I) x = x := by
+        conv_rhs => rw [← sum_inner_ob_smul_e (IR I) x hxK]
+        simp only [Col.p1]
+        refine Finset.sum_congr rfl fun k _ => ?_
+        have hzk : Col.z (IR I) k x =
+            ((inner ℝ ((Col.ob (IR I)) k) (⟨x, hxK⟩ : IR I) : ℝ) : ℂ) := by
+          apply Complex.ext
+          · simp only [Complex.ofReal_re, Submodule.coe_inner]
+            simp [Col.z, Col.e, Hf, real_inner_eq_re_inner, PiLp.inner_apply, mul_comm]
+          · simpa using hz k
+        rw [hzk, RCLike.real_smul_eq_coe_smul (K := ℂ)]
+        all_goals rfl
+      have h0 : ‖Col.wmap (IR I) x‖ = 0 := by rw [hnorm, hp, sub_self, norm_zero]
+      exact norm_eq_zero.mp h0
+    have ht := hI.thick x hx'.1 hx'.2 hxI
+    have hth : |P.R0| ≤ Real.sqrt (P.q * Real.pi) * P.th := by
+      have hq : (0 : ℝ) < P.q := by
+        have := P.hq
+        exact_mod_cast (by omega : 0 < P.q)
+      have hf1 : (1 : ℝ) ≤ PT.f E := by
+        have h2 : 1 ≤ PT.f E := le_trans (Nat.one_le_pow _ _ (by have := P.hm1; omega)) P.hmf
+        exact_mod_cast h2
+      have hRR : (1 : ℝ) ≤ RR (E := E) := by
+        have := P.hrd
+        show (1 : ℝ) ≤ PT.rd E ^ 7
+        exact one_le_pow₀ (by linarith)
+      have hRR3 : (1 : ℝ) ≤ RR (E := E) ^ 3 := one_le_pow₀ hRR
+      have hpi : (1 : ℝ) ≤ Real.pi := by linarith [Real.pi_gt_three]
+      have hc : 1 ≤ Real.pi * PT.f E * RR (E := E) ^ 3 :=
+        one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le hpi hf1) hRR3
+      rw [Par.th, th, ← Real.sqrt_mul (show (0 : ℝ) ≤ P.q * Real.pi by positivity), ← Real.sqrt_sq_eq_abs]
+      apply Real.sqrt_le_sqrt
+      have heq : (P.q : ℝ) * Real.pi * (PT.f E * P.R0 ^ 2 * RR (E := E) ^ 3 / P.q) =
+          (Real.pi * PT.f E * RR (E := E) ^ 3) * P.R0 ^ 2 := by
+        first | (field_simp; ring) | field_simp
+      rw [heq]
+      exact le_mul_of_one_le_left (sq_nonneg _) hc
+    calc |P.R0| ≤ Real.sqrt (P.q * Real.pi) * P.th := hth
+      _ ≤ Real.sqrt (P.q * Real.pi) * ‖Col.wmap (IR I) x‖ := by
+        gcongr
+        calc P.th ≤ Metric.infDist x (IR I) := ht
+          _ ≤ dist x (Col.p1 (IR I) x) := Metric.infDist_le_dist_of_mem hp1
+          _ = ‖Col.wmap (IR I) x‖ := by rw [dist_eq_norm, hnorm]
   have hGle : Col.gB (IR I) ≤ X.gA := cab_gB_le (IR I)
   have hGle' : (Col.gB (IR I) : ℝ) ≤ X.gA := by exact_mod_cast hGle
   have hcD : (c : ℝ) ≤ DF := by exact_mod_cast hc
@@ -117,10 +211,5 @@ theorem cab_core (hP : Ext.PackingCount) (hGT : Ext.GaussianTailBound) (hA : Pro
     linarith
 
 end
-
-theorem colAbel_holds (hx : Ext.All) (hA : PropAStatement) (hS : GSupStatement) :
-    ColAbelStatement := by
-  intro E _ _ _ X DF P I hI c hc σ ξ _ hξ1 hξI
-  exact cab_core hx.1 hx.2.1 hA hS hI c hc σ ξ hξ1 hξI
 
 end ReciprocityTheory.ChartRestriction.G.I2

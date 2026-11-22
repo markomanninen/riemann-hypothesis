@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV UpperTheory.Gal.Int.Geo TensorProduct
 
 noncomputable section
@@ -22,15 +27,11 @@ private def uu (p : X ⟶ S) (a : A ⟶ S) (b : B ⟶ S) (c : D ⟶ A) (d : D �
     (p' : pullback p b ⟶ B) (hp : p' = pullback.snd p b) :
     uu p a b c d w p' hp ≫ pullback.fst p a = pullback.fst p' d ≫ pullback.fst p b := pullback.lift_fst _ _ _
 
-@[reassoc] private theorem uu_snd (p : X ⟶ S) (a : A ⟶ S) (b : B ⟶ S) (c : D ⟶ A) (d : D ⟶ B) (w : c ≫ a = d ≫ b)
-    (p' : pullback p b ⟶ B) (hp : p' = pullback.snd p b) :
-    uu p a b c d w p' hp ≫ pullback.snd p a = pullback.snd p' d ≫ c := pullback.lift_snd _ _ _
-
 private theorem uu_sq (p : X ⟶ S) (a : A ⟶ S) (b : B ⟶ S) (c : D ⟶ A) (d : D ⟶ B) (w : c ≫ a = d ≫ b)
     (p' : pullback p b ⟶ B) (hp : p' = pullback.snd p b) :
     IsPullback (uu p a b c d w p' hp) (pullback.snd p' d) (pullback.snd p a) c := by
   subst hp
-  refine IsPullback.of_right (h₁₂ := pullback.fst p a) (v₁₃ := p) (h₂₂ := a) ?_ (uu_snd p a b c d w _ rfl)
+  refine IsPullback.of_right (h₁₂ := pullback.fst p a) (v₁₃ := p) (h₂₂ := a) ?_ (pullback.lift_snd _ _ _)
     (IsPullback.of_hasPullback p a)
   rw [uu_fst, w]
   exact (IsPullback.of_hasPullback (pullback.snd p b) d).paste_horiz (IsPullback.of_hasPullback p b)
@@ -45,7 +46,7 @@ private theorem uu_nat {Y : C} (p : Y ⟶ S) (q : X ⟶ S) (a : A ⟶ S) (b : B 
     uu p a b c d w p' hp ≫ fA = fD ≫ uu q a b c d w q' hq := by
   apply pullback.hom_ext
   · simp only [Category.assoc, h2, uu_fst, uu_fst_assoc, reassoc_of% h4, h1]
-  · simp only [Category.assoc, h3, uu_snd, reassoc_of% h5]
+  · simp only [Category.assoc, h3, uu, pullback.lift_snd, reassoc_of% h5]
 
 end Gen
 
@@ -70,7 +71,7 @@ theorem UpperTheory.exists_isPullback_geomFiber_baseChange_tower :
     uu_sq H.q _ _ _ _ w _ hZ
   have hu1 : u ≫ pullback.fst _ _ = pullback.fst _ _ ≫ pullback.fst _ _ := uu_fst H.q _ _ _ _ w _ hZ
   have hu2 : u ≫ pullback.snd _ _ = pullback.snd _ _ ≫ Spec.map (CommRingCat.ofHom j) :=
-    uu_snd H.q _ _ _ _ w _ hZ
+    pullback.lift_snd _ _ _
   have vs : ∀ g, v g ≫ H.sΩ Ω g = (bcAlong H τ).sΩ Ω' g ≫ u := fun g =>
     uu_nat (H.s g ≫ H.q) H.q _ _ _ _ w _ (hY g) _ hZ (H.s g) ((bcAlong H τ).s g) (H.sΩ Ω g) ((bcAlong H τ).sΩ Ω' g)
       (pullback.lift_fst _ _ _) (pullback.lift_fst _ _ _) (pullback.lift_snd _ _ _)

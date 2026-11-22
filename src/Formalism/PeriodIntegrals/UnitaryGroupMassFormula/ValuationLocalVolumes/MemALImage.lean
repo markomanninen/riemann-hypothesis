@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUHerm
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUHerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem aL_apply (g : Fv F v) (θ z : Fv F v ⊗[F] E) :
 
 theorem trace_aL (g : Fv F v) (θ z : Fv F v ⊗[F] E) (hθ : Algebra.trace (Fv F v) (Fv F v ⊗[F] E) θ = 1) :
     Algebra.trace (Fv F v) (Fv F v ⊗[F] E) (aL v g θ z) = g * Algebra.trace (Fv F v) (Fv F v ⊗[F] E) z := by
-  rw [aL_apply, map_add, map_smul, hθ, smul_eq_mul]
+  rw [aL_apply, map_add (f := _), map_smul, hθ, smul_eq_mul]
   ring
 
 theorem det_aL (hfin : Module.finrank F E = 2) (g : Fv F v) (θ Δ : Fv F v ⊗[F] E)
@@ -33,7 +37,7 @@ theorem det_aL (hfin : Module.finrank F E = 2) (g : Fv F v) (θ Δ : Fv F v ⊗[
     rw [LinearIndependent.pair_iff]
     intro s t hst
     have h1 := congrArg (Algebra.trace (Fv F v) (Fv F v ⊗[F] E)) hst
-    simp only [map_add, map_smul, hθ, hΔ, smul_eq_mul, mul_one, mul_zero, add_zero, map_zero] at h1
+    simp only [map_add (f := _), map_smul, hθ, hΔ, smul_eq_mul, mul_one, mul_zero, add_zero, map_zero] at h1
     subst h1
     rw [zero_smul, zero_add, smul_eq_zero] at hst
     exact ⟨rfl, hst.resolve_right hΔ0⟩
@@ -63,7 +67,7 @@ private theorem int_of_alg_lemma (z : Fv F v ⊗[F] E) (hz : z ∈ OEv (E := E) 
     convert this using 1
     exact (IsScalarTower.algebraMap_apply (𝓞 F) F (Fv F v) (⟨_, hint⟩ : 𝓞 F)).symm
   | zero => rw [map_zero]; exact zero_mem _
-  | add y w _ _ hy hw => rw [map_add]; exact add_mem hy hw
+  | add y w _ _ hy hw => rw [map_add (f := _)]; exact add_mem hy hw
   | smul c y _ hy =>
     rw [show c • y = (c : Fv F v) • y from rfl, map_smul, smul_eq_mul]
     exact mul_mem c.2 hy

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResVolume
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SmoothChartVolume
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.GenericComplexPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResVolume
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SmoothChartVolume
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.GenericComplexPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

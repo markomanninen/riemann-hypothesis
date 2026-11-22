@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSimpleSub
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSimpleStacked
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopBasisChange
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSimpleSub
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSimpleStacked
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopBasisChange
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

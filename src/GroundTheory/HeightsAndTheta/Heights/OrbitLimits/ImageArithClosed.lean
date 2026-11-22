@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageArith
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PBlockTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageArith
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PBlockTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

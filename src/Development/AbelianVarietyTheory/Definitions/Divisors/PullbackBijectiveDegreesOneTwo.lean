@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -126,11 +130,11 @@ def Z2 : AddSubgroup K.T2 where
   add_mem' {a b} ha hb := ⟨fun T T' T'' T''' φ ψ χ ↦ by
       have h1 := ha.1 T T' T'' T''' φ ψ χ
       have h2 := hb.1 T T' T'' T''' φ ψ χ
-      simp only [Prod.fst_add, Pi.add_apply, map_add]
+      simp only [Prod.fst_add, Pi.add_apply, map_add (f := _)]
       linear_combination (norm := abel1) h1 + h2,
-    fun T T' T'' φ ψ ↦ by simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add, ha.2.1 T T' T'', hb.2.1 T T' T'']; abel,
-    fun T T' φ ↦ by simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add, ha.2.2.1 T T' φ, hb.2.2.1 T T' φ]; abel,
-    fun T ↦ by simp only [Prod.snd_add, Pi.add_apply, map_add, ha.2.2.2 T, hb.2.2.2 T, add_zero]⟩
+    fun T T' T'' φ ψ ↦ by simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _), ha.2.1 T T' T'', hb.2.1 T T' T'']; abel,
+    fun T T' φ ↦ by simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _), ha.2.2.1 T T' φ, hb.2.2.1 T T' φ]; abel,
+    fun T ↦ by simp only [Prod.snd_add, Pi.add_apply, map_add (f := _), ha.2.2.2 T, hb.2.2.2 T, add_zero]⟩
   neg_mem' {a} ha := ⟨fun T T' T'' T''' φ ψ χ ↦ by
       have h1 := ha.1 T T' T'' T''' φ ψ χ
       simp only [Prod.fst_neg, Pi.neg_apply, map_neg]
@@ -324,20 +328,6 @@ variable {R : Type} [CommRing R] (F : C ⥤ CommAlgCat.{0} R)
   map φ := (mp F φ : F.obj _ →+* F.obj _).toAddMonoidHom
   map_id := mp_id F
   map_comp := mp_comp F
-
-@[reducible] def Cx.dR : Cx C where
-  M0 := Coef.ofAlg F
-  M1 := ⟨fun T ↦ Ω[F.obj T⁄R], fun φ ↦ (p1 F φ).toAddMonoidHom, fun _ ↦ oneFormsMapOfFunctorMorphism_id F, fun φ ψ ↦ oneFormsMapOfFunctorMorphism_comp F φ ψ⟩
-  M2 := ⟨fun T ↦ Om R (F.obj T) 2, fun φ ↦ (pOm F 2 φ).toAddMonoidHom, fun _ ↦ pOm_id F, fun φ ψ ↦ pOm_comp F φ ψ⟩
-  M3 := ⟨fun T ↦ Om R (F.obj T) 3, fun φ ↦ (pOm F 3 φ).toAddMonoidHom, fun _ ↦ pOm_id F, fun φ ψ ↦ pOm_comp F φ ψ⟩
-  d0 T := (D R (F.obj T)).toLinearMap.toAddMonoidHom
-  d1 T := (dOne R (F.obj T)).toAddMonoidHom
-  d2 T := (dTwo R (F.obj T)).toAddMonoidHom
-  diffZero_natural φ x := (p1_D F φ x).symm
-  diffOne_natural φ x := (pOm_dOne F φ x).symm
-  diffTwo_natural φ x := (pOm_dTwo F φ x).symm
-  diffOne_diffZero _ := dOne_D
-  diffTwo_comp_diffOne _ := dTwo_dOne
 
 end Alg
 

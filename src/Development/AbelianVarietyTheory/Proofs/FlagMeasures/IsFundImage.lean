@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalHaarMeasuresPullbackRealGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalHaarMeasuresPullbackRealGroup
+
+@[expose] public section
 
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals GlobalTheory.TypeAsm
@@ -28,7 +32,7 @@ theorem trI_emb : MeasurableEmbedding (trI C) := by
     (GlobalTheory.PullbackComparison.eM_emb C τ).exists_measurable_extend (g := id) measurable_id (fun _ => ⟨1⟩)
   refine MeasurableEmbedding.of_measurable_inverse
     (g := fun m => reix X (fun τ => g τ (m τ))) ?_ ?_ ?_ ?_
-  · exact measurable_pi_lambda _ fun τ =>
+  · exact Measurable.of_eval fun τ =>
       (GlobalTheory.PullbackComparison.eM_emb C τ).measurable.comp (measurable_pi_apply (vOf X τ))
   · have hR : Set.range (trI C) = Set.univ.pi fun τ => Set.range (GlobalTheory.PullbackComparison.eM C τ) := by
       ext m
@@ -42,7 +46,7 @@ theorem trI_emb : MeasurableEmbedding (trI C) := by
     rw [hR]
     exact MeasurableSet.univ_pi fun τ => (GlobalTheory.PullbackComparison.eM_emb C τ).measurableSet_range
   · exact (reix X).measurable.comp
-      (measurable_pi_lambda _ fun τ => (hg τ).comp (measurable_pi_apply τ))
+      (Measurable.of_eval fun τ => (hg τ).comp (measurable_pi_apply τ))
   · intro x
     have h1 : (fun τ => g τ (trI C x τ)) = (reix X).symm x := by
       funext τ

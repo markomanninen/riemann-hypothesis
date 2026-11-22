@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -29,7 +33,7 @@ def IdF.bot (A : C ⥤ CommAlgCat.{0} R) : IdF A :=
 def IdF.sup (a b : IdF A) : IdF A :=
   ⟨fun T => a.S T ⊔ b.S T, fun φ x hx => by
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (a.map_mem φ hy) (b.map_mem φ hz)⟩
 
 def IdF.span (A : C ⥤ CommAlgCat.{0} R) (c : R) : IdF A :=
@@ -106,9 +110,9 @@ structure Poly.Ladder (Q : Poly Φ) (a b : ℤ → IdF Φ.A) (r : ℤ) : Prop wh
   ca : ∀ r' ≤ r, Q.Crit a r'
   cb : ∀ r' ≤ r, Q.Crit b r'
 
-variable (Φ) in
 
-structure Frame (d : ℕ) where
+variable (Φ) in
+structure Frame (Φ : PDF R C) (d : ℕ) where
   D : C
   ne : ∀ T : C, Nonempty (D ⟶ T)
   τ : Fin d → ∀ {T : C}, (D ⟶ T) → (D ⟶ T) → Φ.A.obj T

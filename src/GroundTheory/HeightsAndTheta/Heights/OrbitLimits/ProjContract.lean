@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PIntNumPoint
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.BlockInclInjectiveOfEmbedding
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PIntNumPoint
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.BlockInclInjectiveOfEmbedding
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -31,8 +36,8 @@ section Theory
 variable {F : Type u} [Field F] {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type}
   [∀ k, Fintype (ι k)]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem ratDiv_eq (P : Ideal (NumbersDVR.MRing ι F)) (f g : NumbersDVR.MRing ι F)
     (W : Ideal (NumbersDVR.MRing ι F)) :
     NumbersDVR.ratDiv P f g W = AI.I1.ratDiv P f g W := by
@@ -40,8 +45,9 @@ theorem ratDiv_eq (P : Ideal (NumbersDVR.MRing ι F)) (f g : NumbersDVR.MRing ι
   rw [Bridge.divCycle_eq, Bridge.divCycle_eq]
 
 theorem isIntersectionTheory (I : AI.I1.IFamily F ι) (hI : AI.I1.IsFieldIntersection I) :
-    FieldNumbers.IsIntersectionTheory F I where
-  base P hP h0 := by
+    FieldNumbers.IsIntersectionTheory F I := by
+  constructor
+  · intro P hP h0
     choose i hi using hP.relevant
     have hd := (FieldNumbers.relDim_eq_iff_hasRelDim P 0).mp h0
     have hV : AI.I1.IsProjVarF P 0 := ⟨(Bridge.isMultiProjPrime_iff P).mp hP, hd⟩
@@ -50,9 +56,9 @@ theorem isIntersectionTheory (I : AI.I1.IFamily F ι) (hI : AI.I1.IsFieldInterse
     have h3 := (FieldNumbers.IntNumBase.full F K ι P hP h0).2
     have h4 : FieldNumbers.resDeg P = Module.finrank F
         (@FieldNumbers.homFracDegZero _ _ _ _ _ P hP.isPrime) := by
-      rw [FieldNumbers.resDeg, dif_pos hP.isPrime]
+      rw [FieldNumbers.resDeg, dite_eq_left hP.isPrime]
     rw [h1, ← h2, h3, h4]
-  cut P n hP hn bf bg f g hf hg hfP hgP bs := by
+  · intro P n hP hn bf bg f g hf hg hfP hgP bs
     have hd := (FieldNumbers.relDim_eq_iff_hasRelDim P (n + 1)).mp hn
     rw [hI.2 P n bs _ f g ⟨(Bridge.isMultiProjPrime_iff P).mp hP, hd⟩
       ⟨bf, bg, (Bridge.isMultiHomog_iff f bf).mp hf, (Bridge.isMultiHomog_iff g bg).mp hg, hfP, hgP,
@@ -84,7 +90,7 @@ theorem range_eq (hv : AI.I1.IsBlockMap κ v) :
     exact hv.2.2.2 _ ⟨k, rfl⟩
 
 def blockEquiv (hv : AI.I1.IsBlockMap κ v) : (Σ k, ι k) ≃ (Σ k, ι' (emb hv k)) :=
-  (Equiv.ofInjective v hv.2.1).trans ((Equiv.setCongr (range_eq hv)).trans
+  (Equiv.ofInjective v hv.2.1).trans ((Set.equivOfEq (range_eq hv)).trans
     (Equiv.ofInjective _ (FieldNumbers.PFContracted.blockIncl_injective_of_embedding (emb hv) ι')).symm)
 
 theorem blockIncl_blockEquiv (hv : AI.I1.IsBlockMap κ v) (p : Σ k, ι k) :
@@ -114,8 +120,8 @@ end Image
 
 end ProjContract
 
-open ProjContract in
 
+open ProjContract in
 theorem ProjContract.full :
     ∀ (F : Type u) [Field F] (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)]
       (K' : Type) [Fintype K'] (ι' : K' → Type) [∀ k, Fintype (ι' k)],

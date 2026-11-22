@@ -1,13 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaNsmul
-import Development.AbelianVarietyTheory.Definitions.Uniformization.InKLbPowIffPowEqOne
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FormallyUnramifiedMulInvertibleInteger
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeRel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
+public import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FormallyUnramifiedMulInvertibleInteger
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel GlobalTheory.UPel.HeckeImage
+open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel
 
 namespace GlobalTheory.TorsionRigid
 
-theorem eq_one_of_pow_eq_one_of_geometric : ∀ (S : Scheme.{0}) (A : Over S) [GrpObj A] [IsCommMonObj A], IsAbelianScheme A → ∀ (m : ℕ), 0 < m → IsUnit ((m : Γ(S, ⊤))) → ∀ (T : Over S) (x : T ⟶ A), x ^ m = 1 → (∀ (κ : Type) [Field κ] [IsAlgClosed κ] (q : Sp κ ⟶ T.left), (Over.homMk q rfl : Over.mk (q ≫ T.hom) ⟶ T) ≫ x = 1) → x = 1 := by
+theorem eq_one_of_pow_eq_one_of_geometric : ∀ (S : Scheme.{0}) (A : Over S) [GrpObj A] [IsCommMonObj A],
+    ReciprocityTheory.ChartRestriction.G.Semi.IsAbelianScheme A →
+    ∀ (m : ℕ), 0 < m → IsUnit ((m : Γ(S, ⊤))) → ∀ (T : Over S) (x : T ⟶ A), x ^ m = 1 →
+      (∀ (κ : Type) [Field κ] [IsAlgClosed κ] (q : Spec (CommRingCat.of κ) ⟶ T.left),
+        (Over.homMk q rfl : Over.mk (q ≫ T.hom) ⟶ T) ≫ x = 1) → x = 1 := by
   intro S A _ _ hA m _ hm T x hx hgeo
   let f := (ReciprocityTheory.ChartRestriction.G.Out.mulA A m).left
   haveI : FormallyUnramified f := GlobalTheory.formallyUnramified_mulA S A m hm
@@ -26,7 +38,7 @@ theorem eq_one_of_pow_eq_one_of_geometric : ∀ (S : Scheme.{0}) (A : Over S) [G
   have hr : Set.range p ⊆ Set.range (pullback.diagonal f) := by
     rintro _ ⟨t, rfl⟩
     let κ : Type := AlgebraicClosure (T.left.residueField t)
-    let q : Sp κ ⟶ T.left :=
+    let q : Spec (CommRingCat.of κ) ⟶ T.left :=
       Spec.map (CommRingCat.ofHom (algebraMap (T.left.residueField t) κ)) ≫ T.left.fromSpecResidueField t
     have hq : (Over.homMk q rfl : Over.mk (q ≫ T.hom) ⟶ T) ≫ x = (Over.homMk q rfl : Over.mk (q ≫ T.hom) ⟶ T) ≫ 1 := by
       rw [hgeo κ q, MonObj.comp_one]

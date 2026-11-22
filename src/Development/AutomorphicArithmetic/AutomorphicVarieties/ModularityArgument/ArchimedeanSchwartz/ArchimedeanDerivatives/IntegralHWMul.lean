@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetDIsTestAndIntegralParts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetDIsTestAndIntegralParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -193,7 +197,7 @@ theorem UpperTheory.V.Z.Inf.parts :
   · intro F hF
     rw [detD_eq, detD_eq]
     simp only [Finset.sum_mul, Finset.mul_sum]
-    rw [integral_finset_sum, integral_finset_sum, Finset.mul_sum]
+    rw [integral_finsetSum, integral_finsetSum, Finset.mul_sum]
     · refine Finset.sum_congr rfl fun p _ => ?_
       set w := word τ p (List.finRange n)
       set c : ℂ := (((Equiv.Perm.sign p : ℤˣ) : ℤ) : ℂ)

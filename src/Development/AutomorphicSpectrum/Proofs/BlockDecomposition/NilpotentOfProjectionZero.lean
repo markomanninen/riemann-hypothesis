@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.IsJointGenEig
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasselmanFirstPropertyStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsDomMonoid
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FixedVectorZeroOfDualStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.IsJointGenEig
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasselmanFirstPropertyStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsDomMonoid
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FixedVectorZeroOfDualStatement
+
+@[expose] public section
 
 open GlobalTheory.PRep PositivityTheory.SphericalProduct
 
@@ -63,7 +67,7 @@ theorem hecke_pow_kills_of_proj_eq_zero : ∀ (G : Type) [Group G] [TopologicalS
       obtain ⟨A, hA⟩ := ha
       obtain ⟨B, hB⟩ := hb
       refine ⟨max A B, fun r hr l hl => ?_⟩
-      rw [map_add, map_add, hA r (le_trans (le_max_left _ _) hr) l hl,
+      rw [map_add (f := _), map_add (f := _), hA r (le_trans (le_max_left _ _) hr) l hl,
         hB r (le_trans (le_max_right _ _) hr) l hl, add_zero]
     | smul c a _ ha =>
       obtain ⟨A, hA⟩ := ha

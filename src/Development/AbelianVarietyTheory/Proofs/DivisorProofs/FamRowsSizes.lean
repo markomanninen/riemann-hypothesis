@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightSWith
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ScaleLargeThree
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwoLeOfLogPos
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SevenLogLeLOfPowerBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightSWith
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ScaleLargeThree
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwoLeOfLogPos
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SevenLogLeLOfPowerBound
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Core GlobalTheory.Core.Ht2 GlobalTheory.CoreHt
 open GlobalTheory.ColumnNormCompare (numDatumOfParameters codeRec plRec)
 attribute [local instance] GlobalTheory.Mem.Col2.starE

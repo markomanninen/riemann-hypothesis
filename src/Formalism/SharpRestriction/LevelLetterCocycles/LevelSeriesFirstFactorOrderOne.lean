@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelOneUniformizerCoeffVanish
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfLevelZeroParts
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelOneUniformizerCoeffVanish
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfLevelZeroParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem cc_lev_ps (Ti : Formalism.MainNotions.UnusedSlot80.LevE.Comparison₂ W 
   obtain ⟨s', rfl⟩ : ∃ s', s = s' + 1 := ⟨s - 1, by omega⟩
   rw [pow_succ', pow_mul, hζ.pow_eq_one, one_pow]
   unfold qA
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
   have h0 := Formalism.MainNotions.UnusedSlot80.LevE.level_one_uniformizer_coeff_vanish hR (a - ((s' + 1 : ℕ) : ZMod n)) 1 0 (by omega)
   rw [pow_one, PowerSeries.coeff_zero_eq_constantCoeff_apply] at h0
   rw [h0, zero_add]
@@ -185,7 +189,8 @@ theorem dg_core {Fil : ℤ → Submodule LL V} (hF : Antitone Fil) {d I : ℕ} (
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun j _ => ?_
       have := congrArg (PowerSeries.coeff r.toNat) (hid j)
-      rw [mul_assoc, PowerSeries.coeff_C_mul, map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [mul_assoc, PowerSeries.coeff_C_mul, map_sum] at this
       simp only [PowerSeries.coeff_C_mul] at this
       rw [← Finset.sum_smul, this]
       congr 1
@@ -293,7 +298,8 @@ theorem lev0Mpr_of [NeZero n] (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W
 
   have hYΔ : ∀ δ ∈ W.DelF, W.γD T δ Y = Y := by
     intro δ hδ
-    rw [hY, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hY, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Formalism.MainNotions.UnusedSlot80.SatW.γD_smulA', haa'Δ j δ hδ, Formalism.MainNotions.UnusedSlot80.PhiPowers.φD_pow_Δ W T (hHΔ j).1.2 (e + 1) δ hδ]
   have hPz : ps W 0 ^ H • z = Y := by
@@ -352,7 +358,8 @@ theorem lev0Mpr_of [NeZero n] (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W
       rw [map_mul (algebraMap (LetA O n) W.EE) (DEN * lA W ^ κ) (aa' m), hfw', Formalism.MainNotions.UnusedSlot80.LevC.lE_eq,
         map_mul, map_mul]
       ring
-    rw [h2, h1, map_mul (algebraMap (LetA O n) W.EE) (ps W 0 ^ H), map_sum, Finset.mul_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, h1, map_mul (algebraMap (LetA O n) W.EE) (ps W 0 ^ H), map_sum, Finset.mul_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     have hgi := hgu i
     rw [hDENi i, IsScalarTower.algebraMap_apply O (LetA O n) W.EE (c₀ i m)]
@@ -393,7 +400,8 @@ theorem lev0Mpr_of [NeZero n] (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W
           exact hdec)
     have hdecB : levB T a' ζ ⟨W.Q ^ (H + H) • z, hK⟩ j' =
         ∑ j, smulS (W.lev a' ζ (cj j)) (levB T a' ζ ⟨_, hZN j⟩) j' := by
-      rw [hsub, map_sum, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsub, map_sum, Finset.sum_apply]
       exact Finset.sum_congr rfl fun j _ => by rw [Formalism.MainNotions.UnusedSlot80.LevE.levB_smul W levB Ti.hEq Ti.hsupp]
     rw [hdecB]
     set N₀ : ℤ := (((PD.p - 1) * A.M PD.p : ℕ) : ℤ) + H with hN₀
@@ -428,7 +436,8 @@ theorem lev0Mpr_of [NeZero n] (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W
         intro j
         rw [← huD]
         have h := congrArg (W.lev a' ζ) (hLetA' j)
-        simp only [map_mul, map_pow, map_sum, hl] at h
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_mul, map_pow, map_sum, hl] at h
         have h' : ∑ i, PowerSeries.C (algebraMap O LL (c₀ i j)) * W.lev a' ζ (W.q ^ (H + H) * Nn i) =
             W.lev a' ζ (W.q ^ (H + H)) * ∑ i, W.lev a' ζ (Nn i * algebraMap O (LetA O n) (c₀ i j)) := by
           rw [Finset.mul_sum]
@@ -437,7 +446,8 @@ theorem lev0Mpr_of [NeZero n] (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W
             AlgHom.commutes, PowerSeries.algebraMap_apply]
           ring
         rw [h']
-        simp only [hcj, map_mul, map_pow, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [hcj, map_mul, map_pow, map_sum]
         linear_combination h
       have hdg := dg_core hFa (fun j => W.lev a' ζ (cj j * (W.q ^ H * W.φA (abelian₂ W A a e)))) vv
         (fun i j => algebraMap O LL (c₀ i j)) (fun i => W.lev a' ζ (W.q ^ (H + H) * Nn i)) (fun i => α i 0)

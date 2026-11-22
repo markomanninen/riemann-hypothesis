@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafCmpPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafCmpPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry

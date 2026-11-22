@@ -1,9 +1,32 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianFormalDegree.VUnitInvVal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJmuDegG
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdCons
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.TransportInt
-import Development.WeilBound.HeckeVectors.HeckeDoubleCosets.HeckeCoefficientDegrees.NormDeg
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianFormalDegree.VUnitInvVal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqUnitNormalizationLe
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.PeriodIntegrals.UpqRep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdCons
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.TransportInt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.PeriodIntegrals.KFinSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsAuxiliaryXi
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationScalesHeisenbergMeasure
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+public import Mathlib.Analysis.Calculus.BumpFunction.Normed
+public import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BXiAsm
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.BesselDiscreteSeries.DecLowPf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousMulMt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.SchurH
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.UniformCoefficientBounds.FromDS
+public import CompanionTheory.AutomorphicTheory.RankOneEstimates.DecSender
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +49,25 @@ theorem fdeg_gap (n : ℕ) (ε : Fin n → Bool) : ∃ c : ℝ, 0 < c ∧
   refine ⟨c, hc, fun lam h H _ _ _ σ v hl hσ hgap hh hp hq hv => ?_⟩
   have hn : 1 ≤ n := hp.trans ((Finset.card_le_univ _).trans_eq (Fintype.card_fin n))
   have hn3 : (1 : ℝ) ≤ (n : ℝ) ^ 3 := one_le_pow₀ (by exact_mod_cast hn)
-  have ht := thrStar_le hn ε
+  have ht : thrStar ε ≤ 32 * (n : ℝ) ^ 3 := by
+    have hp_le : pOf ε ≤ n := (Finset.card_le_univ _).trans_eq (Fintype.card_fin n)
+    have hq_le : qOf ε ≤ n := (Finset.card_le_univ _).trans_eq (Fintype.card_fin n)
+    have hq0_le : S7.q0 ε ≤ n := (min_le_right _ _).trans hq_le
+    have hp_real : (pOf ε : ℝ) ≤ n := by exact_mod_cast hp_le
+    have hq_real : (qOf ε : ℝ) ≤ n := by exact_mod_cast hq_le
+    have hq0_real : (S7.q0 ε : ℝ) ≤ n := by exact_mod_cast hq0_le
+    have hn_real : (1 : ℝ) ≤ n := by exact_mod_cast hn
+    have hn_le_cube : (n : ℝ) ≤ (n : ℝ) ^ 3 := le_self_pow₀ hn_real (by norm_num)
+    have hsq_le_cube : (n : ℝ) ^ 2 ≤ (n : ℝ) ^ 3 :=
+      pow_le_pow_right₀ hn_real (by norm_num)
+    unfold thrStar
+    apply max_le
+    · have hprod : (n : ℝ) * pOf ε * qOf ε ≤ n * n * n := by gcongr
+      nlinarith
+    · have hsqrt : Real.sqrt (2 * (S7.q0 ε : ℝ)) ≤ 2 * n :=
+        Real.sqrt_le_iff.2 ⟨by positivity, by nlinarith⟩
+      have hprod : 16 * (n : ℝ) * S7.q0 ε ≤ 16 * n * n := by gcongr
+      nlinarith
   refine hH lam H σ v hl hσ h hgap (by linarith) hp hq (fun μ hμ hg => ?_) hv
   have hq0 : 1 ≤ S7.q0 ε := by unfold S7.q0; omega
   have h8 : 8 * (n : ℝ) * S7.q0 ε < h := by
@@ -39,87 +80,14 @@ theorem fdeg_gap (n : ℕ) (ε : Fin n → Bool) : ∃ c : ℝ, 0 < c ∧
   obtain ⟨Ψ, hP, -⟩ := exists_isPsiFor S7.psiExists T hμ hg hq0 h8
   exact ⟨T, Ψ, hP⟩
 
-theorem fdeg_gap' (n : ℕ) (ε : Fin n → Bool) : ∃ c : ℝ, 0 < c ∧
-    ∀ (lam : Fin n → ℝ) (h : ℝ) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-      [CompleteSpace H] (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (v : H),
-      Formalism.QuantumDeterminants.IsHCParam lam → PI.UpqRep.IsDS ε lam σ → Formalism.QuantumDeterminants.GapAtLeast ε lam h →
-      120 * (n : ℝ) ^ 3 ≤ h → 1 ≤ pOf ε → 1 ≤ qOf ε → v ≠ 0 →
-      PI.UpqRep.fdegOf (PI.UpqRep.muG ε) σ v = c * PI.UpqRep.fdegHC lam :=
-  fdeg_gap n ε
-
 end UJ
 
-open PI.UpqRep PI.UnitaryGroupMassFormula.FdegHpk in
-theorem fdegHpk_gap (k r : ℕ) (hk : 1 ≤ k) (ε : Fin (2 * r + k + 1) → Bool)
-    (μG : Measure (Formalism.QuantumDeterminants.Mt k r))
-    (hG : PI.BesselPeriodGGP.IsHaarOn (Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r)) μG) :
-    ∃ C : ℝ, 0 < C ∧ ∀ (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ) (H : Type) [NormedAddCommGroup H]
-      [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Formalism.FourierDecayAlt.ThreeDimData.Mx k r → (H →L[ℂ] H)) (w : H),
-      Formalism.QuantumDeterminants.IsHCParam lam → IsDSHpk k r ε lam σ → Formalism.QuantumDeterminants.GapAtLeast ε lam h →
-      120 * ((2 * r + k + 1 : ℕ) : ℝ) ^ 3 ≤ h → w ≠ 0 →
-      PI.BesselPeriodGGP.fdegH μG σ w = C * fdegHC lam := by
-  obtain ⟨cH, hcH, hH⟩ := fdeg_gap' (2 * r + k + 1) ε
-  have : SigmaFinite μG := hG.1
-  have key : ∀ P, IsCayleyU k r ε P → ∃ c : ℝ≥0∞, c ≠ 0 ∧ c ≠ ∞ ∧
-      μG = (c • muG ε).map (PI.UnitaryGroupMassFormula.BesselL2FixAtZero.conjPrime₂ ε P) := by
-    intro P hP
-    have hconc : μG {x | Matrix.of x ∉ PI.UpqRep.UH (Pᴴ * Jm ε * P)} = 0 := by
-      rw [hP.1.2]; exact hG.2.2.1
-    have hinv : ∀ s ∈ PI.UpqRep.UH (Pᴴ * Jm ε * P), μG.map (fun x => Matrix.of.symm (s * Matrix.of x)) = μG := by
-      rw [hP.1.2]; intro s hs; exact hG.2.2.2 s hs
-    exact PI.UnitaryGroupMassFormula.BesselL2FixAtZero.haar_transport ε P hP.1.1 μG hG.2.1 hconc hinv
-  by_cases hex : ∃ P, IsCayleyU k r ε P
-  swap
-  · refine ⟨1, one_pos, ?_⟩
-    intro lam h H _ _ _ σ w _ hds _ _ _
-    obtain ⟨P, hP, -⟩ := hds
-    exact absurd ⟨P, hP⟩ hex
-  obtain ⟨P₀, hP₀⟩ := hex
-  obtain ⟨c₀, hc0, hctop, hμ0⟩ := key P₀ hP₀
-  refine ⟨cH / c₀.toReal, div_pos hcH (ENNReal.toReal_pos hc0 hctop), ?_⟩
-  intro lam h H _ _ _ σ w hl hds hgap hh hw
-  obtain ⟨P, hP, hDS⟩ := hds
-  obtain ⟨c, -, hct, hμ⟩ := key P hP
-  have hcc : c = c₀ := scale_eq ε hP.1.1 hP₀.1.1 (by rw [hP.1.2, hP₀.1.2]) c c₀ hct (hμ.symm.trans hμ0)
-  obtain ⟨hp, hq⟩ := ReciprocityTheory.ChartRestriction.DS.Lap.TransportInt.cayley_signature (k := k) (r := r) (ε := ε) hP.1
-  have hp1 : 1 ≤ ReciprocityTheory.ChartRestriction.DS.pOf ε := by omega
-  have hq1 : 1 ≤ ReciprocityTheory.ChartRestriction.DS.qOf ε := by omega
-  have hread := hH lam h H (fun g => σ (P⁻¹ * g * P)) w hl hDS hgap hh hp1 hq1 hw
-  have hE := PI.UnitaryGroupMassFormula.BesselL2FixAtZero.conjP_measurableEmbedding ε P hP.1.1
-  unfold PI.BesselPeriodGGP.fdegH
-  rw [hμ, hE.integral_map, integral_smul_measure]
-  have hfun : (fun g : UJ ε => ‖⟪w, σ (Matrix.of (PI.UnitaryGroupMassFormula.BesselL2FixAtZero.conjPrime₂ ε P g)) w⟫_ℂ‖ ^ 2) =
-      fun g => ‖coefOn (ε := ε) (fun g => σ (P⁻¹ * g * P)) w w g‖ ^ 2 := rfl
-  rw [hfun, hcc, smul_eq_mul, div_mul_eq_div_div_swap]
-  unfold fdegOf at hread
-  rw [hread]
-  ring
 
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Formalism.FourierDecayAlt.P.CutBP Formalism.FourierDecayAlt.P.CutBP.Jmu
+open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Formalism.FourierDecayAlt.P.CutBP
 
 variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
   [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp]
   [FiniteDimensional ℂ Wq] [CompleteSpace Wp] [CompleteSpace Wq]
-
-theorem degree_hc_of_good_present_family (p : KB.Pl P Wp Wq) (F : JFam P.k P.r Wp Wq)
-    (lam0 : Fin (2 * P.r + P.k + 1) → ℤ) (q0 : ℕ) (hF : F.Good p.T.base lam0 q0)
-    (hP0 : Present F lam0) : DegHC p F lam0 q0 := by
-  have h0 := (hF lam0 (by simp [LatticeNorms.N1]) hP0.1).1
-  obtain ⟨C, hC, hd⟩ := fdegHpk_gap P.k P.r h0.2.2.2.1.1 F.ε p.T.base.μG
-    h0.2.2.2.2.2.2.2.2.2.2.2.1
-  refine ⟨C, hC, fun μ hμ hp => ?_⟩
-  have hG := (hF μ hμ hp.1).1
-  obtain ⟨P0, -, hw1, -⟩ := hG.2.2.2.2.1
-  have hw0 : (F.A μ).w0 ≠ 0 := fun h => by rw [h, norm_zero] at hw1; exact zero_ne_one hw1
-  exact hd _ F.h (F.A μ).H (F.A μ).σ (F.A μ).w0 hG.1 hG.2.1 hG.2.2.1 hG.2.2.2.1.2.1 hw0
-
-theorem degree_bound_of_hc (p : KB.Pl P Wp Wq) (F : JFam P.k P.r Wp Wq)
-    (lam0 : Fin (2 * P.r + P.k + 1) → ℤ)
-    (tau : (Fin (2 * P.r + P.k + 1) → ℤ) → Finset (Fin (2 * P.r + P.k + 1)) → ℂ) (c0 q0 : ℕ)
-    (H : ℝ) (hc0 : P.r + 1 ≤ c0) (hF : F.Good p.T.base lam0 q0) (hP0 : Present F lam0) :
-    PieriDegreeConditions p (pieriDataOfFamily p F lam0 tau c0 q0 H) :=
-  degree_bound_of_holomorphic_continuation p F lam0 tau c0 q0 H hc0 (normDegree_bound p F lam0 q0 hF)
-    CompanionTheory.LimBd.SchurHpk.threeDimData_schurH (degree_hc_of_good_present_family p F lam0 q0 hF hP0) hF hP0
 
 end CompanionTheory.D.Upq.Coef
 

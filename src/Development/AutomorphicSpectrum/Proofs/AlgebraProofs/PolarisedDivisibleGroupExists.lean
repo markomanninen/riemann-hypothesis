@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CompleteIntegersPropertiesStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PolarisedLatticeTowerExistsStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DivisibleGroupFromTowerStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DivisibleGroupTowerCompatibilityStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DivisibleGroupTowerDualStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DivisibleGroupTowerFreeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TateMapDualHomBidual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisRest
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CompleteIntegersPropertiesStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PolarisedLatticeTowerExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DivisibleGroupFromTowerStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DivisibleGroupTowerCompatibilityStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DivisibleGroupTowerDualStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DivisibleGroupTowerFreeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TateMapDualHomBidual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisRest
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct NumberField GlobalTheory GlobalTheory.PDivGroup GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT GlobalTheory.CompanionTheory.Ar.HT ReciprocityTheory.ChartRestriction.G.Semi
 
 noncomputable section
@@ -39,7 +44,7 @@ theorem exists_smul_eq {La M : Type} [AddCommGroup La] [AddCommGroup M] [Module 
     obtain ⟨d, hd, m, hm⟩ := hx
     obtain ⟨d', hd', m', hm'⟩ := hy
     refine ⟨d * d', mul_ne_zero hd hd', d' • m + d • m', ?_⟩
-    rw [map_add, map_smul, map_smul, hm, hm', smul_add, smul_smul, smul_smul, mul_comm d' d]
+    rw [map_add (f := _), map_smul, map_smul, hm, hm', smul_add, smul_smul, smul_smul, mul_comm d' d]
 
 theorem tmul_one_injective {W : Type} [AddCommGroup W] [Module O W] [Module.Free O W] {w : W}
     (h : (1 : C) ⊗ₜ[O] w = 0) : w = 0 := by
@@ -149,18 +154,21 @@ theorem exists_point {c : E ≃+* E} {κ : O} {N : ℕ} {La : Type} [AddCommGrou
             perfect := hperf, adj := hadj, om := LinearMap.range mk1, om_lat := ?_,
             ρΩ := omAct C c ρL, om_stable := ?_, ht := ht, ht_lin := ?_, ht_mem := ?_, κ_ne := hκ0,
             κ_mem := ?_, lagr := ?_ }, rfl, rfl, fun _ => rfl, rfl, rfl, ht1⟩
-  · refine ⟨?_, ?_⟩
+  · refine { fg := ?_, linearIndepOn := ?_, span_eq_top := ?_ }
     · rw [LinearMap.range_eq_map]
       exact (Module.Finite.fg_top).map _
+    · intro s _ h
+      exact (LinearIndependent.iff_fractionRing O C).mp h
     · rw [eq_top_iff]
-      intro t _
-      induction t using TensorProduct.induction_on with
+      intro x hx
+      clear hx
+      induction x using TensorProduct.induction_on with
       | zero => exact Submodule.zero_mem _
-      | tmul s w =>
-        have : s ⊗ₜ[O] w = s • ((1 : C) ⊗ₜ[O] w) := by simp [TensorProduct.smul_tmul']
+      | tmul c w =>
+        have : c ⊗ₜ[O] w = c • ((1 : C) ⊗ₜ[O] w) := by simp [TensorProduct.smul_tmul']
         rw [this]
         exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨w, rfl⟩)
-      | add x y hx hy => exact Submodule.add_mem _ (hx trivial) (hy trivial)
+      | add x y hx hy => exact Submodule.add_mem _ hx hy
   · rintro a _ ⟨w, rfl⟩
     exact ⟨w ∘ₗ ρL (RingOfIntegers.mapRingEquiv c a), rfl⟩
   · intro a x
@@ -169,7 +177,7 @@ theorem exists_point {c : E ≃+* E} {κ : O} {N : ℕ} {La : Type} [AddCommGrou
     | tmul s y =>
       have hs : ∀ z : La, s ⊗ₜ[ℤ] z = s • ((1 : C) ⊗ₜ[ℤ] z) := fun z => by simp [TensorProduct.smul_tmul']
       rw [hs, map_smul, map_smul, map_smul, map_smul, hρ, ht1, ht1, omAct_tmul, hlin]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · intro x hx
     rw [hT] at hx
     induction hx using Submodule.span_induction with
@@ -177,7 +185,7 @@ theorem exists_point {c : E ≃+* E} {κ : O} {N : ℕ} {La : Type} [AddCommGrou
       obtain ⟨a, rfl⟩ := h
       exact ⟨D (gen a), (ht1 a).symm⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul r x _ hx =>
       rw [← algebraMap_smul C r x, map_smul, algebraMap_smul]
       exact Submodule.smul_mem _ _ hx
@@ -213,7 +221,7 @@ theorem baseChange_alt {R A W : Type} [CommRing R] [CommRing A] [Algebra R A] [A
     LinearMap.BilinForm.baseChange A B z z = 0 := by
   have hs : ∀ x y, B x y = - B y x := fun x y => by
     have := h (x + y)
-    simp only [map_add, LinearMap.add_apply, h, zero_add, add_zero] at this
+    simp only [map_add (f := _), LinearMap.add_apply, h, zero_add, add_zero] at this
     exact eq_neg_of_add_eq_zero_right this
   have skew : ∀ z z' : A ⊗[R] W, LinearMap.BilinForm.baseChange A B z z' +
       LinearMap.BilinForm.baseChange A B z' z = 0 := by
@@ -221,13 +229,13 @@ theorem baseChange_alt {R A W : Type} [CommRing R] [CommRing A] [Algebra R A] [A
     induction z using TensorProduct.induction_on with
     | zero => simp
     | add x y hx hy =>
-      simp only [map_add, LinearMap.add_apply]
+      simp only [map_add (f := _), LinearMap.add_apply]
       linear_combination hx + hy
     | tmul a m =>
       induction z' using TensorProduct.induction_on with
       | zero => simp
       | add x y hx hy =>
-        simp only [map_add, LinearMap.add_apply]
+        simp only [map_add (f := _), LinearMap.add_apply]
         linear_combination hx + hy
       | tmul a' m' =>
         rw [LinearMap.BilinForm.baseChange_tmul, LinearMap.BilinForm.baseChange_tmul, hs m m', neg_smul,
@@ -235,7 +243,7 @@ theorem baseChange_alt {R A W : Type} [CommRing R] [CommRing A] [Algebra R A] [A
   induction z using TensorProduct.induction_on with
   | zero => simp
   | add x y hx hy =>
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     linear_combination hx + hy + skew x y
   | tmul a m => rw [LinearMap.BilinForm.baseChange_tmul, h, zero_smul]
 
@@ -245,7 +253,7 @@ theorem baseChange_perfect {R W : Type} [CommRing R] [AddCommGroup W] [Module.Fr
   classical
   have hs : ∀ x y, B x y = - B y x := fun x y => by
     have := h (x + y)
-    simp only [map_add, LinearMap.add_apply, h, zero_add, add_zero] at this
+    simp only [map_add (f := _), LinearMap.add_apply, h, zero_add, add_zero] at this
     exact eq_neg_of_add_eq_zero_right this
   let b := Module.finBasis ℤ W
   let bR := Algebra.TensorProduct.basis R b
@@ -259,12 +267,14 @@ theorem baseChange_perfect {R W : Type} [CommRing R] [AddCommGroup W] [Module.Fr
     refine bR.ext_elem fun k => ?_
     have h1 := LinearMap.congr_fun hx (1 ⊗ₜ d k)
     rw [← bR.sum_repr x] at h1
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hbR,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hbR,
       LinearMap.BilinForm.baseChange_tmul, hs (b _), hdb] at h1
     simpa [Finset.sum_ite_eq] using h1
   · intro f
     refine ⟨∑ i, f (1 ⊗ₜ b i) • ((1 : R) ⊗ₜ[ℤ] d i), bR.ext fun k => ?_⟩
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hbR,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hbR,
       LinearMap.BilinForm.baseChange_tmul, hdb]
     simp [Finset.sum_ite_eq]
 
@@ -313,8 +323,8 @@ theorem tate_dual_ext {G : PDivGroup p O} {χ ψ : G.dual.Tate} (h : ∀ n, char
   TateOver.ext (funext fun n => AlgHom.ext fun φ => by
     rw [← apply_charElem, ← apply_charElem, h])
 
-omit [Fact p.Prime] in
 
+omit [Fact p.Prime] in
 theorem lev_surjective {La : Type} [AddCommGroup La] (n : ℕ) : Function.Surjective (lev (La := La) p n) :=
   fun t => by
     obtain ⟨a, ha⟩ := Submodule.Quotient.mk_surjective _ (Multiplicative.toAdd t)
@@ -395,7 +405,7 @@ theorem tateMap_bijective {G : PDivGroup p O} (lam : G ⟶ G.dual) (ε : (mu p O
 
 end Bij
 
-theorem exists_HTPoint : FarguesHodgeTate → ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [IsDomain O] [Algebra O C] (hv : v.Integers O) (hp : v (p : C) < 1) (hO : IsAdicComplete (Ideal.span {(p : O)}) O) (E : Type) [Field E] [NumberField E] (c : E ≃+* E) (hc : ∀ x, c (c x) = x) (La : Type) [AddCommGroup La] [Module (𝓞 E) La] (EF : La →ₗ[ℤ] La →ₗ[ℤ] ℤ) (N : ℕ) (u : Fin N → La) (hu : IsPolLattice c p EF u) (L : Type) [AddCommGroup L] [Module O L] [Module.Free O L] [Module.Finite O L] (X : OrdTower p O La L) (ρL : 𝓞 E →+* Module.End O L) (ζ : ℕ → Oˣ) (κ : O), (∀ a : 𝓞 E, X.Acts (DistribMulAction.toAddMonoidHom La a) (ρL a)) → 2 * Module.finrank O L = Module.finrank ℤ La → (∀ n, IsPrimitiveRoot (ζ n) (p ^ n)) → (∀ n, ζ (n + 1) ^ p = ζ n) → X.PairingExtends EF ζ → IsHTConst v p κ → ∃ P : HTPoint C O c κ N (C ⊗[ℤ] La) (C ⊗[O] Module.Dual O L), IsPointOf p X.der EF ζ ρL u P := by
+theorem exists_HTPoint : FarguesHodgeTate → ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [IsDomain O] [Algebra O C] (hv : v.Integers O) (hp : v (p : C) < 1) (hO : IsAdicComplete (Ideal.span {(p : O)}) O) (E : Type) [Field E] [NumberField E] (c : E ≃+* E) (hc : ∀ x, c (c x) = x) (La : Type) [AddCommGroup La] [Module (𝓞 E) La] (EF : La →ₗ[ℤ] La →ₗ[ℤ] ℤ) (N : ℕ) (u : Fin N → La) (hu : IsPolLattice c p EF u) (L : Type) [AddCommGroup L] [Module O L] [Module.Free O L] [Module.Finite O L] (X : OrdTower p O La L) (ρL : 𝓞 E →+* Module.End O L) (ζ : ℕ → Oˣ) (κ : O), (∀ a : 𝓞 E, X.Acts (DistribSMul.toAddMonoidHom La a) (ρL a)) → 2 * Module.finrank O L = Module.finrank ℤ La → (∀ n, IsPrimitiveRoot (ζ n) (p ^ n)) → (∀ n, ζ (n + 1) ^ p = ζ n) → X.PairingExtends EF ζ → IsHTConst v p κ → ∃ P : HTPoint C O c κ N (C ⊗[ℤ] La) (C ⊗[O] Module.Dual O L), IsPointOf p X.der EF ζ ρL u P := by
   intro hF p _ C _ _ _ v O _ _ _ hv hp hO E _ _ c hc La _ _ EF N u hu L _ _ _ _ X ρL ζ κ hact hrank hprim hcomp
     hpair hκ
   classical

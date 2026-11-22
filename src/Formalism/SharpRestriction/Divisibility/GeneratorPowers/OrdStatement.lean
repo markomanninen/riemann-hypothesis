@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndAll
-import Formalism.LocalToGlobal.ProjectiveLattices.DatIndep
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndAll
+public import Formalism.LocalToGlobal.ProjectiveLattices.DatIndep
+
+@[expose] public section
 
 set_option autoImplicit false
 

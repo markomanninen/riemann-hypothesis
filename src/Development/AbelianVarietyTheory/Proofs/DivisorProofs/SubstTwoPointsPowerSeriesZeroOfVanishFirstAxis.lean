@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyValExtOfOverLa
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetFactorDepthInChartChartIndependent
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RelatedMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivAt0SubstLinearLipschitz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyValExtOfOverLa
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetFactorDepthInChartChartIndependent
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RelatedMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivAt0SubstLinearLipschitz
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -88,7 +92,8 @@ theorem subst_germ (cL : constantCoeff hL = 0) (ch : constantCoeff h = 0) {φ : 
       (fun b b' i => subst φ (t b b' i)) := by
   unfold germ
   have h0 : constantCoeff ((k : C) • (∑ j, ev1 (ψ j) hL - ∑ b, ∑ b', ev2 (s b) (t b b') h)) = 0 := by
-    simp [map_sum, constantCoeff_substOnePointPowerSeries_eq_zero (hψ _) cL, constantCoeff_germEvalPair_eq_zero (hs _) (ht _ _) ch]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, constantCoeff_substOnePointPowerSeries_eq_zero (hψ _) cL, constantCoeff_germEvalPair_eq_zero (hs _) (ht _ _) ch]
   rw [subst_mul hφ, subst_comp_subst_apply (a := fun q : Fin n × Fin d => ψ q.1 q.2)
     (hasSubst_of_constantCoeff_zero fun q => hψ q.1 q.2) hφ]
   congr 1
@@ -97,7 +102,8 @@ theorem subst_germ (cL : constantCoeff hL = 0) (ch : constantCoeff h = 0) {φ : 
   congr 1
   funext _
   rw [← coe_substAlgHom hφ]
-  simp only [map_smul, map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sub, map_sum]
   simp only [coe_substAlgHom, subst_substOnePointPowerSeries hφ (hψ _), subst_substTwoPointsPowerSeries hφ (hs _) (ht _ _)]
 
 end Germ
@@ -170,7 +176,8 @@ theorem exPt_hom [CharZero C] {v : AddValuation C (WithTop ℝ)} (G : FGLaw C d)
       have := congrFun hl e
       simp only [comp1] at this
       rw [this, ← coe_substAlgHom hs_oneVar]
-      simp only [map_sum, map_smul]) _ w hw (fun _ => rfl) i
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul]) _ w hw (fun _ => rfl) i
   refine Eq.trans ?_ h1.symm
   have hs : HasSubst (exPt (logFGLOf v G hG) w) := hasSubst_of_constantCoeff_zero (nc_exPt _ hw)
   show _ = subst (exPt (logFGLOf v G hG) w) _
@@ -326,8 +333,8 @@ theorem subst_univ (L : LogFGL v d) {hL : PS C 1 d} {h : PS C 2 d} (cL : constan
   simp only [subst_exPt L hs (hX _), subst_X hs]
   rfl
 
-include hGF heig in
 
+include hGF heig in
 theorem exists_germ_close (hR : ∀ r, IsIntV v (algebraMap R C r)) {h : PS C 2 d} (hc : B.IsCanonGauge C h) (w0 : O)
     (hu : ∀ l e, IsIntV v (u l e)) (hσ : ∀ b a, IsIntV v (σ b a)) {n : ℕ}
     (hU : ∀ x : Fin m → Fin n → O, ∃ U : PS R m d, FB.toK C U = FB.expS C ((∑ j : Fin n, ev (n := m)
@@ -410,9 +417,11 @@ theorem exists_germ_close (hR : ∀ r, IsIntV v (algebraMap R C r)) {h : PS C 2 
           fun b b' => comp1 (B.actK C (w0 * ∑ j : Fin n, star (x b j) * x b' j)) (pt C d b') := by
       rw [hU, ← GlobalTheory.JetSer.IntTrans.expS_nsmul]
       · rfl
-      · rw [map_sub, map_sum, map_sum, sub_eq_zero]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, map_sum, map_sum, sub_eq_zero]
         refine (Finset.sum_eq_zero fun j _ => constantCoeff_substOnePointPowerSeries_eq_zero (hΦ j) cL).trans (Finset.sum_eq_zero fun b _ => ?_).symm
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact Finset.sum_eq_zero fun b' _ => constantCoeff_germEvalPair_eq_zero (nc_pt b) (nc_actPt B _ b') ch
     rw [e0, subst_germ k g cL ch hs hΦ nc_pt fun b b' => nc_actPt B _ b']
     congr 1

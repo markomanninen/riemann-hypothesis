@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+
+@[expose] public section
+
 open NumberField Complex
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.HeckeTwo
@@ -36,8 +41,8 @@ theorem bound_eq (K₁ s x q : ℝ) (a b : ℕ) (hs : s ≠ 0) (hx : x ≠ 0) (h
 
 variable [IsTotallyReal F]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem norm_mixedEmbedding_le (x : F) : ‖mixedEmbedding F x‖ ≤ absSum x := by
   rw [mixedEmbedding.norm_eq_sup'_normAtPlace]
   refine Finset.sup'_le _ _ fun w _ => ?_
@@ -51,8 +56,8 @@ theorem absSum_pos {x : F} (hx : x ≠ 0) : 0 < absSum x := by
     hx ((mixedEmbedding F).injective (h.trans (map_zero _).symm))
   exact h.trans_le (norm_mixedEmbedding_le x)
 
-open scoped Classical in
 
+open scoped Classical in
 theorem summable_absSum_inv_pow (I : Frac F) {k : ℕ} (hk : Module.finrank ℚ F < k) :
     Summable (fun x : NZ (I : FractionalIdeal (𝓞 F)⁰ F) => ((absSum x.1) ^ k)⁻¹) := by
   let L := mixedEmbedding.idealLattice F I
@@ -104,7 +109,7 @@ theorem exists_absSum_lower (I : FractionalIdeal (𝓞 F)⁰ F) :
   rw [e2, abs_mul, ← hD, ← prod_abs_emb] at h1
   have hle : ∏ τ : Emb F, |τ x| ≤ absSum x ^ Fintype.card (Emb F) := by
     calc ∏ τ : Emb F, |τ x| ≤ ∏ _τ : Emb F, absSum x :=
-          Finset.prod_le_prod (fun _ _ => abs_nonneg _) (fun τ _ => abs_le_absSum x τ)
+          Finset.prod_le_prod₀ (fun _ _ => abs_nonneg _) (fun τ _ => abs_le_absSum x τ)
       _ = _ := by rw [Finset.prod_const, Finset.card_univ]
   have hS0 := absSum_nonneg x
   rcases le_or_gt 1 (absSum x) with hS | hS
@@ -117,8 +122,8 @@ theorem exists_absSum_lower (I : FractionalIdeal (𝓞 F)⁰ F) :
 
 end GlobalTheory.HeckeTwo.LatSum
 
-open GlobalTheory.HeckeTwo.LatSum in
 
+open GlobalTheory.HeckeTwo.LatSum in
 theorem GlobalTheory.HeckeTwo.summable_balanced_latSum :
     ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (𝔞 𝔟 : Frac F) (C₀ : ℝ) (m : ℕ), ∃ N : ℕ,
     ∀ ε : Quotient (unitRel (𝔟 : FractionalIdeal (𝓞 F)⁰ F)) → (𝓞 F)ˣ,
@@ -223,7 +228,7 @@ theorem GlobalTheory.HeckeTwo.summable_balanced_latSum :
     rw [hK₁]; nlinarith
   have hnum : ∏ τ : Emb F, (|τ b'| + |τ b'|⁻¹) ^ m ≤ (K₁ * s) ^ (m * n) := by
     calc ∏ τ : Emb F, (|τ b'| + |τ b'|⁻¹) ^ m ≤ ∏ _τ : Emb F, (K₁ * s) ^ m :=
-          Finset.prod_le_prod (fun _ _ => pow_nonneg (by positivity) _) (fun τ _ => pow_le_pow_left₀ (by positivity) (hA τ) m)
+          Finset.prod_le_prod₀ (fun _ _ => pow_nonneg (by positivity) _) (fun τ _ => pow_le_pow_left₀ (by positivity) (hA τ) m)
       _ = (K₁ * s) ^ (m * n) := by rw [Finset.prod_const, Finset.card_univ, ← pow_mul]
   have hden : (x * (s / (n * C₀))) ^ N ≤ ∏ τ : Emb F, (1 + |τ ν.1 * τ c.out.1|) ^ N := by
     rw [Finset.prod_pow]

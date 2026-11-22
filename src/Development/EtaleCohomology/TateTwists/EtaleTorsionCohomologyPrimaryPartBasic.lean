@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.CyclotomicPrimitiveRootProductIdentitiesOfAdjoin
+module
+
+public import Development.EtaleCohomology.TateTwists.CyclotomicPrimitiveRootProductIdentitiesOfAdjoin
+
+@[expose] public section
 
 namespace LateralTheory.Fin.PrimitiveRootsOfUnityBasicIdentities
 theorem etale_torsion_cohomology_primary_part_basic : LateralTheory.EtaleFoundations.PrimitiveRootsOfUnityBasicIdentities := by

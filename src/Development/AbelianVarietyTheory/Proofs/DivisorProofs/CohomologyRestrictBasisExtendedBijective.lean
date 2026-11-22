@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitMpTenExtIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SepOfFactoringCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueCommaOfBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCocycleCoboundaryCommaLocalBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoCocycleCoboundaryOfBasisFunctor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommaDescentRestrictionEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictPull1InjectiveOfSepGlue
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Pull1RestrictSurjectiveOfComma
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommaDescentInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasLocOAff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitMpTenExtIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SepOfFactoringCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueCommaOfBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCocycleCoboundaryCommaLocalBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoCocycleCoboundaryOfBasisFunctor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommaDescentRestrictionEquiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictPull1InjectiveOfSepGlue
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Pull1RestrictSurjectiveOfComma
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommaDescentInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasLocOAff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,7 +67,7 @@ theorem cocycleOne_vanishing_of_natural_additive_retract (i : ∀ T, F₁.obj T 
         y t t'' u (a ≫ b) = mp F₁ (G.map b) (y t t' u a) + y t' t'' (u ≫ G.map a) b) →
       ∃ g : (t : C') → (T ⟶ G.obj t) → F₁.obj (G.obj t), ∀ (t t' : C') (u : T ⟶ G.obj t) (a : t ⟶ t'), g t' (u ≫ G.map a) - mp F₁ (G.map a) (g t u) = y t t' u a := by
   intro T y hy
-  obtain ⟨g, hg⟩ := hv T (fun t t' u a ↦ i _ (y t t' u a)) fun t t' t'' u a b ↦ by rw [hy, map_add, hi]
+  obtain ⟨g, hg⟩ := hv T (fun t t' u a ↦ i _ (y t t' u a)) fun t t' t'' u a b ↦ by rw [hy, map_add (f := _), hi]
   exact ⟨fun t u ↦ r _ (g t u), fun t t' u a ↦ by rw [← hr, ← map_sub, hg, hri]⟩
 
 theorem cocycleTwo_vanishing_of_natural_additive_retract (i : ∀ T, F₁.obj T →+ F₂.obj T) (r : ∀ T, F₂.obj T →+ F₁.obj T)
@@ -83,9 +87,9 @@ theorem cocycleTwo_vanishing_of_natural_additive_retract (i : ∀ T, F₁.obj T 
         mp F₁ (G.map b) (y t t' u a) - y t t'' u (a ≫ b) + y t' t'' (u ≫ G.map a) b = z t t' t'' u a b := by
   intro T z hz
   obtain ⟨y, hy⟩ := hv T (fun t t' t'' u a b ↦ i _ (z t t' t'' u a b)) fun t t' t'' t''' u a b c ↦ by
-    rw [← hi, ← map_add, ← map_add, hz]
+    rw [← hi, ← map_add (f := _), ← map_add (f := _), hz]
   exact ⟨fun t t' u a ↦ r _ (y t t' u a), fun t t' t'' u a b ↦ by
-    rw [← hr, ← map_sub, ← map_add, hy, hri]⟩
+    rw [← hr, ← map_sub, ← map_add (f := _), hy, hri]⟩
 
 end Retract
 
@@ -115,7 +119,7 @@ theorem comm_ext {T S : C} (u : T ⟶ S) (x : R₁ ⊗[R₀] F.obj T) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem incl_mp {T S : C} (u : T ⟶ S) (x : R₁ ⊗[R₀] F.obj T) :
     incl R₁ F S (mp (ext R₁ F) u x) = mp (TenExt.tenExt R₁ F) u (incl R₁ F T x) := by

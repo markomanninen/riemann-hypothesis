@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsHarmonicProdOfDisjointColumns
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MatRmulUnipMulHeadProj
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsSymplecticCoordinatesAdapted
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsHarmonicProdOfDisjointColumns
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MatRmulUnipMulHeadProj
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsSymplecticCoordinatesAdapted
+
+@[expose] public section
 
 open NumberField Matrix Complex
 open scoped ComplexConjugate
@@ -77,13 +81,13 @@ theorem herm_eq_zero_of_EF {v w : Fin r → E} (h : ∀ α : 𝓞 E, EF X ((α :
     rw [← EF_smul_eq_sum X (α : E) v w, h, Rat.cast_zero]) τ).2
   simpa [(c_pos X τ).ne'] using h1
 
-open Classical in
 
+open Classical in
 def perLt (x : Frame X.Ψ r) (v : Fin r → E) (τ : X.Ψ) : X.Ψ × Fin r → ℂ := fun p =>
   if p.1 = τ ∧ (p.2 : ℕ) < X.p0 then per X x v p else 0
 
-open Classical in
 
+open Classical in
 def perGe (x : Frame X.Ψ r) (v : Fin r → E) (τ : X.Ψ) : X.Ψ × Fin r → ℂ := fun p =>
   if p.1 = τ ∧ X.p0 ≤ (p.2 : ℕ) then per X x v p else 0
 
@@ -210,7 +214,8 @@ theorem dot_cuspMat (u : Fin g → ℝ) (τ : X.Ψ) :
   have h : ‖∑ j, (u j : ℂ) * cuspLin X bas ξ τ j‖ ^ 2 = ((∑ j, (u j : ℂ) * cuspLin X bas ξ τ j) *
       conj (∑ j, (u j : ℂ) * cuspLin X bas ξ τ j)).re := by
     rw [mul_conj, normSq_eq_norm_sq, ofReal_re]
-  rw [cuspNu, h, map_sum, Finset.sum_mul_sum, re_sum, ← mul_assoc, Finset.mul_sum, dotProduct]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cuspNu, h, map_sum, Finset.sum_mul_sum, re_sum, ← mul_assoc, Finset.mul_sum, dotProduct]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [re_sum, mulVec, dotProduct, Finset.mul_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
@@ -250,8 +255,8 @@ theorem EF_bas_inl (v : X.Λ) (j : Fin g) :
 variable {S : Finset (Fin g)} (hA : IsAdapted X bas ξ S)
 include hA
 
-omit hs in
 
+omit hs in
 theorem IsAdapted.symm_apply_eq_zero {v : X.Λ} (hv : (v : Fin r → E) ∈ Submodule.span E {ξ})
     {t : Fin g ⊕ Fin g} (ht : ∀ k ∈ S, t ≠ Sum.inl k) : bas.symm v t = 0 := by
   have h := (hA v).1 hv
@@ -261,11 +266,11 @@ theorem IsAdapted.symm_apply_eq_zero {v : X.Λ} (hv : (v : Fin r → E) ∈ Subm
     obtain ⟨k, hk, rfl⟩ := hv
     rw [LinearEquiv.symm_apply_apply, Pi.single_eq_of_ne (ht k hk)]
   | zero => simp
-  | add u v _ _ hu hv => rw [map_add, Pi.add_apply, hu, hv, add_zero]
+  | add u v _ _ hu hv => rw [map_add (f := _), Pi.add_apply, hu, hv, add_zero]
   | smul c u _ hu => rw [map_smul, Pi.smul_apply, hu, smul_zero]
 
-omit hs in
 
+omit hs in
 theorem IsAdapted.symm_smul_eq_zero (hξ : ξ ∈ X.Λ) (α : 𝓞 E) {t : Fin g ⊕ Fin g}
     (ht : ∀ k ∈ S, t ≠ Sum.inl k) : bas.symm (α • ⟨ξ, hξ⟩) t = 0 :=
   hA.symm_apply_eq_zero (Submodule.mem_span_singleton.2 ⟨α, rfl⟩) ht
@@ -331,7 +336,7 @@ theorem IsAdapted.tauMat_flow (hξ : X.IsIso ξ) (s : X.Ψ → ℂ) {x : Frame X
   have h := mulVec_per_smul X idx (hMat X bas idx x) x s
     (-X.κ0 * herm X.Gm (bas (Pi.single (Sum.inr k) 1)) ξ) ξ j
   rw [tauMat, hA.hMat_flow hs idx hξ, Matrix.add_apply, tauMat, Matrix.sum_apply]
-  simp only [mul_apply, perMat_apply, per_flow hξ.2.1, mul_add, Finset.sum_add_distrib]
+  simp only [Matrix.mul_apply, perMat_apply, per_flow hξ.2.1, mul_add, Finset.sum_add_distrib]
   congr 1
   refine h.trans (Finset.sum_congr rfl fun τ _ => ?_)
   rw [(hA.hMat_mulVec_part hs idx hξ.1 hx τ j).1, (hA.hMat_mulVec_part hs idx hξ.1 hx τ j).2,
@@ -425,8 +430,8 @@ variable {bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ} (hs : IsSympl X bas)
   (hA : IsAdapted X bas ξ S) (idx : Fin g ≃ X.Ψ × Fin r)
 include hs hA
 
-include idx in
 
+include idx in
 theorem IsAdapted.part_ne_zero (hξ : X.IsIso ξ) {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ) :
     perLt X x ξ τ ≠ 0 ∧ perGe X x ξ τ ≠ 0 := by
   have hc := (c_pos X τ).ne'
@@ -598,7 +603,8 @@ theorem IsAdapted.flowCoeff_eq_zero (hξ : X.IsIso ξ) (n : ℕ) (a b : Fin n �
   rw [Finset.sum_apply, Finset.sum_eq_zero_iff_of_nonneg fun k _ => cuspNu_nonneg X bas ξ _ τ] at hm
   have h1 (k) := (cuspNu_eq_zero_iff X bas ξ _ τ).1 (hm k (Finset.mem_univ _))
   have h2 (k) := congrArg conj (h1 k)
-  simp only [map_sum, map_mul, conj_ofReal, map_zero] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, conj_ofReal, map_zero] at h2
   push_cast at h1 h2
   refine mul_eq_zero_of_right _ ?_
   rcases hc with ⟨i, hi, hc⟩ | ⟨i, hi, hc⟩
@@ -629,8 +635,8 @@ theorem IsAdapted.flowCoeff_eq_zero (hξ : X.IsIso ξ) (n : ℕ) (a b : Fin n �
       simp only [dotProduct, (hA.hMat_mulVec_part hs idx hξ.1 hy τ _).2, Pi.add_apply]
       rw [Finset.sum_congr rfl fun j _ => mul_left_comm _ _ _, ← Finset.mul_sum, h1, mul_zero]
 
-include idx in
 
+include idx in
 theorem IsAdapted.exists_unip (hξ : X.IsIso ξ) {x : Frame X.Ψ r} (hx : x ∈ X.dom) :
     ∃ K, coper X (rmul x (unip X K)) ξ = 0 :=
   exists_unip_coper_eq_zero hξ.2.1 (fun τ => (hx τ).1)
@@ -666,7 +672,7 @@ theorem exists_isAdapted (hs : IsSympl X bas) {ξ : Fin r → E} (hξ : herm X.G
   let J : Submodule ℤ (Fin g ⊕ Fin g → ℤ) :=
     { carrier := {m | (bas m : Fin r → E) ∈ Submodule.span E {ξ}}
       add_mem' := fun {u v} hu hv => by
-        rw [Set.mem_setOf_eq, map_add]; exact add_mem hu hv
+        rw [Set.mem_setOf_eq, map_add (f := _)]; exact add_mem hu hv
       zero_mem' := by simp
       smul_mem' := fun k u hu => by
         rw [Set.mem_setOf_eq, map_zsmul, AddSubgroupClass.coe_zsmul]; exact zsmul_mem hu k }
@@ -699,13 +705,6 @@ theorem exists_isAdapted (hs : IsSympl X bas) {ξ : Fin r → E} (hξ : herm X.G
     rw [← hJ, h₂, ← Submodule.apply_mem_span_image_iff_mem_span (f := bas.toLinearMap) bas.injective,
       Set.image_image]
     rfl
-
-example : ∃ (bas : (Fin 2 ⊕ Fin 2 → ℤ) ≃ₗ[ℤ] HyperbolicCusp.flagData.Λ) (S : Finset (Fin 2)),
-    IsSympl _ bas ∧ HyperbolicCusp.flagData.IsIso ![1, 1] ∧ IsAdapted _ bas ![1, 1] S ∧
-      Gauss.one ∈ HyperbolicCusp.flagData.dom ∧ ∀ τ, cuspLin _ bas ![1, 1] τ ≠ 0 := by
-  obtain ⟨bas, S, h₁, h₂⟩ := exists_isAdapted Gauss.isSympl_bas HyperbolicCusp.isIso_one.2.1
-  exact ⟨bas, S, h₁, HyperbolicCusp.isIso_one, h₂, Gauss.one_mem,
-    h₂.cuspLin_ne_zero h₁ HyperbolicCusp.isIso_one⟩
 
 end
 

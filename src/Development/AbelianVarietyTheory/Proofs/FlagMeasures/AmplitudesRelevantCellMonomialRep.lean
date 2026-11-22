@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitalSquareEqHilbertSchmidtNormalisedVector
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnipotentHaarMeasureRatioStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CutoffComputesBesselQuotientIntegral
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselNeZeroOfCyclicOrbit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrbitalSquareEqHilbertSchmidtNormalisedVector
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnipotentHaarMeasureRatioStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CutoffComputesBesselQuotientIntegral
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselNeZeroOfCyclicOrbit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,8 +89,8 @@ theorem zhat_of_zhatO {z z' : Fin (2 * r + k + 1) → ℂ} {g : MatKR k r} {Z : 
   rw [← h, ZhatO, ← mul_assoc, ← mul_pow]
   simp
 
-open GlobalTheory.ThA.OrbSq in
 
+open GlobalTheory.ThA.OrbSq in
 theorem monomial_of_pt {z z' : Fin (2 * r + k + 1) → ℂ} {g : MatKR k r} (hg : g ∈ UH (Hpk k r))
     {p : Point ℂ (r + 1)} (h : ZhatO k r z z' g = ptMat p) :
     (∃ d : Fin (r + 1) → ℂ, (∀ a, d a ≠ 0) ∧ Zhat k r z z' g = C2.monoP (permOf p) d) ∧
@@ -109,8 +113,8 @@ theorem monomial_of_pt {z z' : Fin (2 * r + k + 1) → ℂ} {g : MatKR k r} (hg 
   · rw [if_pos e, if_pos (by rw [e, permOf_invol]), e]
   · rw [if_neg e, if_neg (fun e' => e (by rw [e', permOf_invol])), star_zero]
 
-open GlobalTheory.ThA.OrbSq P.Dx1.Rel in
 
+open GlobalTheory.ThA.OrbSq P.Dx1.Rel in
 theorem relevant {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hz' : inWb k r z') {γ : MatKR k r}
     (hγ : γ ∈ UH (Hpk k r)) {q : Point ℂ (r + 1)} (hZ : ZhatO k r z z' γ = ptMat q) (c : ℝ) :
     ∀ a ∈ RStab k r γ, psi k r z c a = psi k r z' c (γ⁻¹ * a * γ) := by
@@ -256,7 +260,10 @@ theorem haar_conj {g : MatKR k r} (hg : g ∈ UH (Hpk k r)) {μ : Measure (Mt k 
   · have hcl : IsClosed {x : Mt k r | Matrix.of x ∈ C6.Rset g} := (P.Dx2.OrbJ.closedR hu).closed
     refine (Measure.map_apply hm hcl.measurableSet.compl).trans ?_
     have h0 : μ {x : Mt k r | Matrix.of x ∈ C6.Rset g⁻¹}ᶜ = 0 := h.conc
-    refine measure_mono_null (fun x hx (hx' : Matrix.of x ∈ C6.Rset g⁻¹) => hx ⟨?_, ?_⟩) h0
+    refine measure_mono_null (t := {x : Mt k r | Matrix.of x ∈ C6.Rset g⁻¹}ᶜ) ?_ h0
+    intro x hx hx'
+    apply hx
+    refine ⟨?_, ?_⟩
     · have := hx'.2
       rw [hii] at this
       exact this
@@ -283,8 +290,8 @@ theorem haar_conj {g : MatKR k r} (hg : g ∈ UH (Hpk k r)) {μ : Measure (Mt k 
     exact ⟨_, hx, conj_inv_conj hg x⟩
   · exact fun e => h.ne_zero ((Measure.map_eq_zero_iff hm.aemeasurable).1 e)
 
-open GlobalTheory.ThA.OrbSq P P.Dx2 in
 
+open GlobalTheory.ThA.OrbSq P P.Dx2 in
 theorem root_haar (hk : 1 ≤ k) {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hz' : inWb k r z')
     (hT : 0 < Tz k r z) (hT' : 0 < Tz k r z') {g : MatKR k r} (hg : g ∈ UH (Hpk k r)) (hpos : 0 < Gf k r z z' g)
     {γ : Point ℂ (r + 1)} {d : Fin (r + 1) → ℂ} (hd : ∀ a, d a ≠ 0) (hZw : Zhat k r z z' g = C2.monoP (permOf γ) d)
@@ -304,7 +311,7 @@ theorem root_haar (hk : 1 ≤ k) {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb
     have hq : q.1.2.val < r := by have h1 := q.2.1; have h2 := q.1.1.isLt; rw [Fin.lt_def] at h1; omega
     show star (C2.uMap k r Bs.z (Matrix.of x) q.1.2 q.1.1) = star (flagMat k r Bs.z (Matrix.of x) q.1.2 q.1.1)
     unfold C2.uMap flagMat
-    rw [dif_pos hq, dif_pos hq]
+    rw [dite_eq_left hq, dite_eq_left hq]
     exact congrArg star (DF.herm_es _ _)
   have hrc : rootCoords k r Bs.z γ = (cjE (rootEquiv γ)).symm ∘ Rad.phi0 Bs (permOf γ) := by
     funext x; simp [phi x]
@@ -323,7 +330,8 @@ theorem root_haar (hk : 1 ≤ k) {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb
       rw [← Matrix.conjTranspose_conjTranspose (C2.uMap k r Bs.z (Matrix.of x)), this]; rfl
   have e2 : μ = c • D.muR Bs g (permOf γ) := by
     rw [← e1, ← Measure.map_map hm ((cjE _).measurable.comp hrm), ← Measure.map_map (cjE _).measurable hrm, h2,
-      Measure.map_smul, Measure.map_smul, (cjE_mp _).map_eq, hmu]
+      Measure.map_smul _ (cjE _).measurable.aemeasurable,
+      Measure.map_smul _ hm.aemeasurable, (cjE_mp _).map_eq, hmu]
   rw [e2]
   exact ⟨haar_smul (Rad.haar_good Bs hg hd hG) hc0 hc, (Dx3.intR Bs hg hd hG (by linarith)).smul_measure hc⟩
 
@@ -350,8 +358,8 @@ theorem exists_orbQuot (L : LocBessel k r) (hκ : L.κN ≠ ⊤) {g : MatKR k r}
 
 theorem psi_ne (z : Fin (2 * r + k + 1) → ℂ) (c : ℂ) (a : MatKR k r) : psi k r z c a ≠ 0 := Complex.exp_ne_zero _
 
-open BranchingSupport GlobalTheory.CellAmp GlobalTheory.Amp Formalism.BasicNotions Finset in
 
+open BranchingSupport GlobalTheory.CellAmp GlobalTheory.Amp Formalism.BasicNotions Finset in
 theorem amp_at_monomial : ∀ (D : D7) τ w w' θ (W : LocW D.R.k D.R.rS) (hW : GoodW D τ w w' θ W) (lam0 : Fin (2 * D.R.rS + D.R.k + 1) → ℝ) (A₀ : LocS W) (hA : GoodS D lam0 A₀) (hT : 0 < Tr D w) (hT' : 0 < Tr D w'), 0 < θ → 0 < D.host.ka / gg D → ∀ γ p, RelPt D W.z W.z' γ p → ∀ θ' : ℝ, 0 < θ' → ∀ νR, RMeas D W γ θ' νR → ∃ (g₀ : MatKR D.R.k D.R.rS) (μR ν₀ : Measure (Mt D.R.k D.R.rS)) (ν : Measure (PairSp D.R.k D.R.rS)) (s : ℂ), CellData (toBessel D τ w w' θ W lam0 A₀ hW hA hT hT') W.μG g₀ μR ν₀ ν ∧ ν₀ {x | Matrix.of x ∉ UH (Hpk D.R.k D.R.rS)} = 0 ∧ (∀ l, DminN W.z W.z' γ l = DminN W.z W.z' g₀ l) ∧ ∀ (lam : Fin (2 * D.R.rS + D.R.k + 1) → ℝ) (A : LocS W), GoodS D lam A → A.J νR γ = s • A.J ν₀ g₀ := by
   intro D τ w w' θ W hW lam0 A₀ hA hT hT' _ hka γ p hp θ' hθ' νR hν
   obtain ⟨q, μ', ⟨n, hn, n', hn', g, rfl, hZ, μ₀, h0, h1, rfl⟩, hq⟩ := hν
@@ -389,7 +397,15 @@ theorem amp_at_monomial : ∀ (D : D7) τ w w' θ (W : LocW D.R.k D.R.rS) (hW : 
         rw [hii]
         exact h0
       rw [hμ, Measure.smul_apply, this, smul_zero])
-    (by rw [hμ, Measure.map_smul, h1, smul_smul])
+    (by
+      have hrm : Measurable (rootCoords D.R.k D.R.rS W.z' q) := by
+        refine Measurable.of_eval fun a => Continuous.measurable ?_
+        by_cases hi : ((a : Fin (D.R.rS + 1) × Fin (D.R.rS + 1)).1 : ℕ) < D.R.rS
+        · simp only [rootCoords, flagMat, hi, dite_true, Matrix.mulVec, dotProduct, Matrix.of_apply]
+          fun_prop
+        · simp only [rootCoords, flagMat, hi, dite_false]
+          exact continuous_const
+      rw [hμ, Measure.map_smul _ hrm.aemeasurable, h1, smul_smul])
   obtain ⟨ν, hν⟩ := exists_orbQuot L ENNReal.ofReal_ne_top hg hH (by positivity) hI
   have hR := haar_conj hg hH
   have hq₀ : IsQuotMeas W.μG μ (νR.map (lmulEquiv hn'.1)) := by
@@ -402,7 +418,7 @@ theorem amp_at_monomial : ∀ (D : D7) τ w w' θ (W : LocW D.R.k D.R.rS) (hW : 
       have := conj_inv_conj (inv_mem hn'.1) x
       rwa [Matrix.nonsing_inv_nonsing_inv _ (unit_det hn'.1)] at this
     have := quot_map hn'.1 hG hq
-    rwa [e1, Measure.map_smul, Measure.map_map (continuous_conj _).measurable (continuous_conj _).measurable, e2,
+    rwa [e1, Measure.map_smul _ (continuous_conj _).measurable.aemeasurable, Measure.map_map (continuous_conj _).measurable (continuous_conj _).measurable, e2,
       Measure.map_id] at this
   have hconc : νR.map (lmulEquiv hn'.1) {x | Matrix.of x ∉ UH (Hpk D.R.k D.R.rS)} = 0 :=
     CutQuot.null_of_stable (R := {x | Matrix.of x ∈ C6.Rset g⁻¹})

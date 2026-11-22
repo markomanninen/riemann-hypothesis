@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PhisBSelfAdj
-import Formalism.MahlerMeasure.MahlerMeasureProofs.PhiInt
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PhisBSelfAdj
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.PhiInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem pderiv_mul_free (v : σ) (g f : MvPolynomial σ ℚ_[p]) (hg : pderiv v 
 theorem pderiv_pair_free (w e : Fin r → σ) (v : σ) (hw : ∀ c, w c ≠ v) (he : ∀ c, e c ≠ v) :
     pderiv v (∑ c, X (w c) * X (e c) : MvPolynomial σ ℚ_[p]) = 0 := by
   classical
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun c _ => ?_
   rw [Derivation.leibniz, pderiv_X, pderiv_X, Pi.single_eq_of_ne (he c), Pi.single_eq_of_ne (hw c)]
   simp

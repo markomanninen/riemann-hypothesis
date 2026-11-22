@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.SpanPerpZero
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBStable
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.SpanPerpZero
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,8 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalism.BasicN
 theorem act_inv (f : Fin (r + 1) → S.V) (s : S.V ≃ₗ[E] S.V) (P : Matrix (Fin (r + 1)) (Fin (r + 1)) E)
     (hP : P * P⁻¹ = 1) (hs : ∀ b, s (f b) = ∑ c, P c b • f c) (b : Fin (r + 1)) :
     s (∑ c, P⁻¹ c b • f c) = f b := by
-  simp only [map_sum, map_smul, hs, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hs, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   simp_rw [← Finset.sum_smul]
   have h1 : ∀ d, ∑ c, P⁻¹ c b * P d c = (P * P⁻¹) d b := fun d => by
@@ -47,7 +52,8 @@ theorem eq_sL (F : Formalism.MainNotions.S.FlagG S r T) (F' : Formalism.MainNoti
   have hy : ∀ l, S.hT (gg F F' l) (x - ∑ m, cOf (gg F F') x m • gg F F' m) = 0 := by
     intro l
     have h1 := congrFun (gram_cOf (gg F F') hG x) l
-    rw [map_sub, map_sum, ← h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, ← h1]
     simp only [map_smul, smul_eq_mul, Matrix.mulVec, dotProduct, gramOf]
     rw [sub_eq_zero]
     exact Finset.sum_congr rfl fun m _ => mul_comm _ _
@@ -59,7 +65,7 @@ theorem eq_sL (F : Formalism.MainNotions.S.FlagG S r T) (F' : Formalism.MainNoti
       obtain ⟨l, rfl⟩ := hv
       exact hy l
     | zero => rw [map_zero, LinearMap.zero_apply]
-    | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+    | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
     | smul a v _ hv => rw [map_smulₛₗ, LinearMap.smul_apply, hv, smul_zero]
   have hpre : ∀ l, ∃ w ∈ Submodule.span E (Set.range (gg F F')), s w = gg F F' l := by
     intro l
@@ -108,7 +114,8 @@ theorem eq_sL (F : Formalism.MainNotions.S.FlagG S r T) (F' : Formalism.MainNoti
     simp
   have hx : x = (x - ∑ m, cOf (gg F F') x m • gg F F' m) + ∑ m, cOf (gg F F') x m • gg F F' m := by
     rw [sub_add_cancel]
-  rw [hx, map_add, map_add, map_sum, map_sum, hsy, sL_perp (F := F) (F' := F') hG _ hy]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx, map_add (f := _), map_add (f := _), map_sum, map_sum, hsy, sL_perp (F := F) (F' := F') hG _ hy]
   congr 1
   exact Finset.sum_congr rfl fun m _ => by rw [map_smul, map_smul, hframe m]
 
@@ -128,7 +135,8 @@ theorem nlam_of_frames (F : Formalism.MainNotions.S.FlagG S r T) (F' : Formalism
     ext a b
     have h := hs (F.fvec a) (F'.fvec b)
     rw [hsf, hsf'] at h
-    simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
       Finset.mul_sum] at h
     simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, Formalism.MainNotions.S.Zhat, Formalism.MainNotions.S.brS]
     rw [← h, Finset.sum_comm]

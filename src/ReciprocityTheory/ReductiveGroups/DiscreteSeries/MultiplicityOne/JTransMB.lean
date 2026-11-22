@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroupA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroupA
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,21 +78,21 @@ theorem Hpk_eq_Qm : Hpk k r = Qm 1 ((Hpk k r).submatrix Subtype.val Subtype.val)
   ext i j
   rw [Qm_apply]
   by_cases hi : pK k r i
-  · rw [Hpk_left i j hi, dif_pos hi]
+  · rw [Hpk_left i j hi, dite_eq_left hi]
     by_cases hj : pK k r j
-    · rw [dif_pos hj, Matrix.one_apply]
+    · rw [dite_eq_left hj, Matrix.one_apply]
       by_cases h : i = j
       · subst h; simp
       · simp [h]
-    · rw [dif_neg hj, if_neg]
+    · rw [dite_eq_right hj, if_neg]
       rintro rfl
       exact hj hi
-  · rw [dif_neg hi]
+  · rw [dite_eq_right hi]
     by_cases hj : pK k r j
-    · rw [dif_pos hj, Hpk_right i j hj, if_neg]
+    · rw [dite_eq_left hj, Hpk_right i j hj, if_neg]
       rintro rfl
       exact hi hj
-    · rw [dif_neg hj]
+    · rw [dite_eq_right hj]
       rfl
 
 theorem col_fix (x : Mat k r) (j : Fin (2 * r + k + 1)) (h : x *ᵥ bvec j = bvec j) (i : Fin (2 * r + k + 1)) :
@@ -194,19 +198,19 @@ theorem eq_Qm (x : Mat k r) (hx : x ∈ UH (Hpk k r))
   ext i j
   rw [Qm_apply]
   by_cases hi : pK k r i
-  · rw [dif_pos hi]
+  · rw [dite_eq_left hi]
     by_cases hj : pK k r j
-    · rw [dif_pos hj]
+    · rw [dite_eq_left hj]
       rfl
-    · rw [dif_neg hj, col_fix x j (mulVec_bvec_eq_of_fix_e_es_last_not_pK x he hl j hj) i, if_neg]
+    · rw [dite_eq_right hj, col_fix x j (mulVec_bvec_eq_of_fix_e_es_last_not_pK x he hl j hj) i, if_neg]
       rintro rfl
       exact hj hi
-  · rw [dif_neg hi, apply_eq_ite_of_fix_e_es_last_not_pK x hx he hl i hi j]
+  · rw [dite_eq_right hi, apply_eq_ite_of_fix_e_es_last_not_pK x hx he hl i hi j]
     by_cases hj : pK k r j
-    · rw [dif_pos hj, if_neg]
+    · rw [dite_eq_left hj, if_neg]
       rintro rfl
       exact hi hj
-    · rw [dif_neg hj, Matrix.one_apply]
+    · rw [dite_eq_right hj, Matrix.one_apply]
       by_cases h : i = j
       · subst h; simp
       · simp [h]
@@ -228,10 +232,10 @@ theorem Qm_fix_off (U : Matrix {i // pK k r i} {i // pK k r i} ℂ) (j : Fin (2 
   rw [InvGrp.col_apply, Qm_apply]
   simp only [bvec, Pi.single_apply]
   by_cases hi : pK k r i
-  · rw [dif_pos hi, dif_neg hj, if_neg]
+  · rw [dite_eq_left hi, dite_eq_right hj, if_neg]
     rintro rfl
     exact hj hi
-  · rw [dif_neg hi, dif_neg hj, Matrix.one_apply]
+  · rw [dite_eq_right hi, dite_eq_right hj, Matrix.one_apply]
     by_cases h : i = j
     · subst h; simp
     · simp [h]
@@ -246,11 +250,11 @@ theorem Qm_fix_vec (U : Matrix {i // pK k r i} {i // pK k r i} ℂ) (j : Fin (2 
       simp only [bvec, Pi.single_apply, Subtype.ext_iff]
     rw [h2] at hU
     by_cases hi : pK k r i
-    · rw [dif_pos hi, dif_pos hj]
+    · rw [dite_eq_left hi, dite_eq_left hj]
       have := congrFun hU ⟨i, hi⟩
       simp [Matrix.mulVec, dotProduct, Pi.single_apply] at this
       simp [bvec, Pi.single_apply, this]
-    · rw [dif_neg hi, dif_pos hj]
+    · rw [dite_eq_right hi, dite_eq_left hj]
       simp only [bvec, Pi.single_apply]
       rw [if_neg]
       rintro rfl

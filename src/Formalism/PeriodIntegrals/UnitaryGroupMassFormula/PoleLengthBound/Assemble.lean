@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.LeOrdASmulOsK
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.FiltOk
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.LeOrdASmulOsK
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.FiltOk
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,12 +70,15 @@ theorem psiRaw_add (a : Fin G.N → OsK X la G.w) (k : ℕ) (x y : ↥(HK X la G
 
 theorem psiRaw_smul (a : Fin G.N → OsK X la G.w) (k : ℕ) (r : Op X la G.N) (x : ↥(HK X la G.w wF))
     (hx : x ∈ Jid X la G.w ^ k • (⊤ : Submodule ↥(Frac0 X la G.w) ↥(HK X la G.w wF))) :
-    psiRaw G la a k (algebraMap (Op X la G.N) (Kp X la G.N) r • x) = r • psiRaw G la a k x := by
+    psiRaw G la a k (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ r • x) = r • psiRaw G la a k x := by
   funext α
   simp only [psiRaw, Pi.smul_apply, Finset.smul_sum]
   refine Finset.sum_congr rfl fun col _ => ?_
-  rw [restricted_derivative_linear G la k _ r x hx (le_of_eq (colIdx_mon col α))]
-  exact smul_comm _ _ _
+  calc
+    _ = a col • (r • rD G la (colIdx D j col α.1) x) :=
+      congrArg (fun y => a col • y)
+        (restricted_derivative_linear G la k _ r x hx (le_of_eq (colIdx_mon col α)))
+    _ = _ := smul_comm _ _ _
 
 theorem psiRaw_congr (a : Fin G.N → OsK X la G.w) {k T : ℕ} (hk : k < a0 D j T) {x x' : ↥(HK X la G.w wF)}
     (h : toWK X la G.w wF (a0 D j T) x = toWK X la G.w wF (a0 D j T) x') : psiRaw G la a k x = psiRaw G la a k x' := by
@@ -100,7 +107,7 @@ theorem exists_of_mem_Fk {T k : ℕ} {z : WK X la G.w wF (a0 D j T)} (hz : z ∈
     exact ⟨x1 + x2, Submodule.add_mem _ hx1 hx2, map_add _ _ _⟩
   | smul r z _ h =>
     obtain ⟨x, hx, rfl⟩ := h
-    refine ⟨algebraMap (Op X la G.N) (Kp X la G.N) r • x, Submodule.smul_of_tower_mem _ _ hx, ?_⟩
+    refine ⟨@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ r • x, Submodule.smul_of_tower_mem _ _ hx, ?_⟩
     rw [LinearMap.map_smul_of_tower]
     rfl
 
@@ -121,7 +128,7 @@ def psiL (a : Fin G.N → OsK X la G.w) (T k : ℕ) (hk : k < a0 D j T) :
   map_add' z1 z2 := by
     rw [← psiRaw_add]
     apply psiRaw_congr G la a hk
-    rw [map_add, pre_eq, pre_eq, pre_eq]
+    rw [map_add (f := _), pre_eq, pre_eq, pre_eq]
     rfl
   map_smul' r z := by
     rw [RingHom.id_apply, ← psiRaw_smul G la a k r _ (pre_mem G la z.2)]
@@ -136,14 +143,8 @@ theorem psiF_lt (a : ℕ → Fin G.N → OsK X la G.w) {T k : ℕ} (hk : k < a0 
     (x : ↥(HK X la G.w wF)) (hx : toWK X la G.w wF (a0 D j T) x = z) :
     psiF G la a T k z = psiRaw G la (a k) k x := by
   unfold psiF
-  rw [dif_pos hk]
+  rw [dite_eq_left hk]
   exact psiRaw_congr G la (a k) hk ((pre_eq G la z.2).trans hx.symm)
-
-theorem psiF_ge (a : ℕ → Fin G.N → OsK X la G.w) {T k : ℕ} (hk : ¬ k < a0 D j T) (z : ↥(Fk G la T k)) :
-    psiF G la a T k z = 0 := by
-  unfold psiF
-  rw [dif_neg hk]
-  rfl
 
 theorem taylorRead (hE5 : ColDeriv G la) (u : Fin G.N → OsK X la G.w) (hu : uSpec G la u) (k : ℕ)
     (a : Fin G.N → OsK X la G.w) (ha : ∑ col, a col * u col ^ k = 1) (cf : Mon (WeightFamilies.dimY D j) k → ↥(HK X la G.w wF))
@@ -229,7 +230,8 @@ theorem pole_length_assemble : Assemble := by
       have := prod_sfr_mem X la G.w α.1
       rwa [mon_sum] at this
     have hXA : toWK X la G.w wF (a0 D j T) Xs ∈ Q.AA T := by
-      rw [hXs, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hXs, map_sum]
       exact Submodule.sum_mem _ fun α _ => hE7 (x α) α.1 (hx2 α)
     refine ⟨⟨_, Submodule.subset_span ⟨Xs, hX, rfl⟩⟩, hXA, ?_⟩
     rw [psiF_lt G la a hk _ Xs rfl]

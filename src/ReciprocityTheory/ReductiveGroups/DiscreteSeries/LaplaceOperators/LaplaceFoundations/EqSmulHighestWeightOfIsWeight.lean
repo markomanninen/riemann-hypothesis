@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousTorepK
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.UniqueU
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.KEConjTranspose
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousTorepK
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.UniqueU
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.KEConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,8 @@ theorem eq_smul_highestWeight_of_isWeight {ε : Fin n → Bool} {Λ : Fin n → 
       abel
     rw [hl] at he'
     have h := congrArg ψ he'
-    simp only [map_sum, map_smul, root, map_sub, hψ, smul_eq_mul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, root, map_sub, hψ, smul_eq_mul] at h
     have hr : ∑ x, ∑ y, (cc x y : ℝ) * (((x : ℕ) : ℝ) - ((y : ℕ) : ℝ)) ≤ 0 := by
       refine Finset.sum_nonpos fun x _ => Finset.sum_nonpos fun y _ => ?_
       by_cases h0 : cc x y = 0

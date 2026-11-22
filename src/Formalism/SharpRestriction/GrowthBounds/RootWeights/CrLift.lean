@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.CasimirIsotypicNoHigherWeight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.CasimirIsotypicNoHigherWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem cr_lift [CharZero K] (E : GLOps n K V) (hT : (⨆ ν, weightSp E ν) = �
   have hg := v2rep_graded E W (fun a x hx => hW a a x hx) x0 hx0 (by rw [hT]; trivial)
   obtain ⟨f, hf, hsum⟩ := (Submodule.mem_iSup_iff_exists_finsupp _ _).1 hg
   have hm : ∑ ν ∈ f.support, Z.mkQ (f ν) = Z.mkQ x0 := by
-    rw [← hsum, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsum, Finsupp.sum, map_sum]
   have hc := v2rep_comp_mem (cr_quot E Z hZ) (weightSp (cr_quot E Z hZ) mu)
     (fun a x hx => cr_wt_diag_stable _ mu a x hx) f.support (fun ν => Z.mkQ (f ν))
     (fun ν _ => cr_quot_wt E Z hZ ν _ (hf ν).1) (by rw [hm]; exact hq)
@@ -87,7 +92,7 @@ theorem cr_CR [CharZero K] [FiniteDimensional K V] (E : GLOps n K V) (hR : Satis
     intro a b hab
     set z := E a b x' with hz
     have hzW2 : z ∈ W2 := by
-      have : z = E a b x + E a b (x' - x) := by rw [hz, ← map_add]; congr 1; abel
+      have : z = E a b x + E a b (x' - x) := by rw [hz, ← map_add (f := _)]; congr 1; abel
       rw [this]; exact W2.add_mem (hup a b hab) (hW2st a b _ h1)
     have hzwt : z ∈ weightSp E (mu + rootW a b) := v2rep_shift E hR a b mu x' h3
     set w1 := T z - ((cr_c mu : ℤ) : K) • z with hw1

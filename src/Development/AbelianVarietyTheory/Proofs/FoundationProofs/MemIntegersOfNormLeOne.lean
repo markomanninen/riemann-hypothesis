@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowMulMemAdd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoeffNormLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowMulMemAdd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoeffNormLeOne
+
+@[expose] public section
 
 noncomputable section
 

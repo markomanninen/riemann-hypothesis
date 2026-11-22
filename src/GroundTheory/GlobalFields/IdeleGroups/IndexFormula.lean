@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

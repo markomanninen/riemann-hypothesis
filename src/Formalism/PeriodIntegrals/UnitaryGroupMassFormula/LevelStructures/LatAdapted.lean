@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.FrameStd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.FrameStd
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ variable {D : D7} (X : HidaSetting D)
 abbrev crd (y : (VS D).V) : Fin X.B.I.n → X.B.I.E := crdOf X.B.I X.ιE X.bas y
 
 theorem crd_add (y z : (VS D).V) : crd X (y + z) = crd X y + crd X z := by
-  funext i; simp [crd, crdOf, map_add]
+  funext i; simp [crd, crdOf, map_add (f := _)]
 
 theorem crd_zero : crd X 0 = 0 := by
   funext i; simp [crd, crdOf]
@@ -60,7 +64,7 @@ theorem L_crd {x : Fin X.B.I.n → X.B.I.E} (hx : x ∈ X.B.I.L) : ∃ y ∈ (VS
 theorem ratV_add (R : Type) [CommRing R] [Algebra X.B.I.F R] (a b : Fin X.B.I.n → X.B.I.E) :
     ratV (F := X.B.I.F) R (a + b) = ratV (F := X.B.I.F) R a + ratV (F := X.B.I.F) R b := by
   funext i
-  simp [ratV, map_add]
+  simp [ratV, map_add (f := _)]
 
 def LX : Set (Fin X.B.I.n → X.B.I.E) := crd X '' (latSpanS (fun a => aaD D a) X.eX : Set (VS D).V)
 

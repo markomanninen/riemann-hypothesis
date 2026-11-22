@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSchwartzTranslate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzTranslationSeminormBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzCharacterSeminormBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSchwartzTranslate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzTranslationSeminormBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzCharacterSeminormBound
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.RealWeil Filter Topology
 open scoped SchwartzMap RealInnerProductSpace

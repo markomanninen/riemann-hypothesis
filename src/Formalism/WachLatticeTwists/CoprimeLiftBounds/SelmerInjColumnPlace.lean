@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
+
+@[expose] public section
 
 open Finset Classical
 
@@ -7,15 +11,6 @@ noncomputable section
 namespace Formalism.RepresentationBoundsCohomology.BR
 
 open Formalism.NG
-
-def StatLiftOver : Prop :=
-  ∀ (O D M₁ M₂ : Type*) [CommRing O] [Group D] [AddCommGroup M₁] [Module O M₁] [AddCommGroup M₂]
-    [Module O M₂] (ρ₁ : Representation O D M₁) (ρ₂ : Representation O D M₂) (p : M₁ →ₗ[O] M₂),
-    IsEquivMap ρ₁ ρ₂ p → Function.Surjective p →
-    ∀ (K' : coZ1s ρ₁) (κ : coZ1s ρ₂),
-      (∃ w : M₂, ∀ g, p ((K' : D → M₁) g) = (κ : D → M₂) g + (ρ₂ g w - w)) →
-      ∃ K : coZ1s ρ₁, (Submodule.mkQ _ K : H1z ρ₁) = Submodule.mkQ _ K' ∧
-        ∀ g, p ((K : D → M₁) g) = (κ : D → M₂) g
 
 def SelmerInjTensorForm : Prop :=
   ∀ (O : Type*) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]

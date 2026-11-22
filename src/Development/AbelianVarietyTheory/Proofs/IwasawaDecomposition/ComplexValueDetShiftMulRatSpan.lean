@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
-import Formalism.LocalToGlobal.KernelLattices.TopPin
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianChartComplexRationalIntegralFormsStatement
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KernelRationalReferenceTuple
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpwardOperatorPreservesRationality
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+public import Formalism.LocalToGlobal.KernelLattices.TopPin
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianChartComplexRationalIntegralFormsStatement
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KernelRationalReferenceTuple
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpwardOperatorPreservesRationality
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -36,25 +41,25 @@ theorem lamTG_add_sSharp {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.wh
   rw [hl, hs, h1, h2]
   have hw : DV.wSz D (i + 1) τ = (((D.hcW u τ).e ⟨i, hi⟩ : ℚ) : ℝ) := by
     unfold DV.wSz
-    rw [dif_pos ⟨by omega, by omega⟩, he]
+    rw [dite_eq_left ⟨by omega, by omega⟩, he]
     rfl
   unfold DV.nuRow
   rw [hw]
   unfold DV.srcPar sExp' Ranks.N
   by_cases hk : r.1 < D.R.k
-  · rw [dif_pos hk, dif_pos hk]
+  · rw [dite_eq_left hk, dite_eq_left hk]
     unfold hcToWeightQ rhoVec
     push_cast
     rw [ht]
     ring
-  · rw [dif_neg hk, dif_neg hk]
+  · rw [dite_eq_right hk, dite_eq_right hk]
     have hr := r.2
     unfold Ranks.N at hr
     have hb : (r.1 - D.R.k) / (D.R.t + 1) < i := by
       rw [Nat.div_lt_iff_lt_mul (by omega)]
       exact Nat.sub_lt_left_of_lt_add (by omega) hr
     have hbm : (r.1 - D.R.k) / (D.R.t + 1) < D.R.m := by omega
-    rw [dif_pos hbm]
+    rw [dite_eq_left hbm]
     have hdm := Nat.div_add_mod (r.1 - D.R.k) (D.R.t + 1)
     have hr' : (r.1 : ℝ) = D.R.k + (D.R.t + 1) * (((r.1 - D.R.k) / (D.R.t + 1) : ℕ) : ℝ) + (((r.1 - D.R.k) % (D.R.t + 1) : ℕ) : ℝ) := by
       have : r.1 = D.R.k + ((D.R.t + 1) * ((r.1 - D.R.k) / (D.R.t + 1)) + (r.1 - D.R.k) % (D.R.t + 1)) := by omega
@@ -76,7 +81,7 @@ theorem detShift_lamTG {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.what
     (lamTG M i τ).detShift = (nuT D u i τ (lastI D i) : ℤ) - (D.chTw u μ).sSharp i τ := by
   have h := lamTG_add_sSharp M μ i hi τ (lastI D i)
   unfold DomWeight.detShift
-  rw [dif_pos (N_pos D i)]
+  rw [dite_eq_left (N_pos D i)]
   show (lamTG M i τ).w (lastI D i) = _
   omega
 

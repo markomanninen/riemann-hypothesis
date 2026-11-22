@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteLevelAdelicSubset
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoeffChosenRedEqRedHom
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ESSingleCoeffCentral
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightConvUniqueAddSmulMulComm
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InflationBasic
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegrableCoeff
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralInvOfSupport
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsWeakIntegralOfStronglyContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteLevelAdelicSubset
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoeffChosenRedEqRedHom
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ESSingleCoeffCentral
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightConvUniqueAddSmulMulComm
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InflationBasic
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegrableCoeff
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralInvOfSupport
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsWeakIntegralOfStronglyContinuous
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.ArithmeticCylinders Formalism.L2.Theta Formalism.IndefR.Mult Formalism.IndefR.Links Formalism.IndefR.AutomorphicEvaluation Formalism.IndefR.principalLevelFrame Formalism.L2.DIV Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField ReciprocityTheory.Aut Formalism.AUTREP GlobalTheory.Mem.SRe GlobalTheory.LabPin
 open scoped InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LabPin.instCM
@@ -51,7 +56,7 @@ theorem mem_VT_of_sum_fixed : ∀ (D : D7) (X : HidaSetting D) (red : X.B.I.Gf �
   have hReT : ReT X {t} = X.B.Re.comp Ta := by
     have hex : ∃ T, X.B.I.IsRConvF X.B.μf X.B.fund X.B.R (eT X {t}) T := ⟨_, hRT⟩
     unfold ReT
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact huniq _ _ _ (Classical.choose_spec hex) hRT
   obtain ⟨z, hz⟩ := LinearMap.mem_range.1 hf
   have hRef : X.B.Re f = f := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffFinsuppProdConstFreeEqZeroOfDegreeLtStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffFinsuppProdConstFreeEqZeroOfDegreeLtStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,7 +63,8 @@ theorem eval_trunc'_subst_eq_sum :
   simp_rw [Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun α _ => ?_
-  rw [eval_trunc'_eq_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eval_trunc'_eq_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun β _ => ?_
   rw [map_mul, map_prod]
   simp_rw [map_pow]

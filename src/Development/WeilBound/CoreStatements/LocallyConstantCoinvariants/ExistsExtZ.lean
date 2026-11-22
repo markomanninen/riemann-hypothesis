@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.TopOfMap
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaEquivInducedFibreStatement
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.TopOfMap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaEquivInducedFibreStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Ind
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n d : ℕ}
 
-open Classical in
 
+open Classical in
 def extZ : SB (RankIn k (Fin n) (Fin d) {n}) →ₗ[ℂ] (Matrix (Fin n) (Fin d) k → ℂ) where
   toFun φ Y := if h : Yᵀ.rank = n then φ.1 ⟨Yᵀ, h⟩ else 0
   map_add' φ ψ := funext fun Y => by by_cases h : Yᵀ.rank = n <;> simp [h, -rank_transpose]
@@ -93,39 +97,5 @@ theorem irr_equiv {Γ G V U : Type} [Group Γ] [Group G] [AddCommGroup V] [Modul
   · refine Or.inr fun f hf => ?_
     obtain ⟨g, hg, e⟩ := h1 (h ⟨f, hf, rfl⟩)
     rwa [← E.toLinearEquiv.injective e]
-
-theorem irrSt_of (hB : GlobalTheory.Published.BernsteinUnitaryProductIrreducible) : IrrSt := by
-  intro k _ _ _ _ n d ν α hnd hν hα N hA hN
-  obtain ⟨t, rfl⟩ := Nat.exists_eq_add_of_le hnd
-  have hμ : IsSmoothChar ν⁻¹ := IsSmoothChar.inv hν.2
-  obtain ⟨E⟩ := GlobalTheory.T.omega_equiv_induced_fibre k (Fin n) (Fin (n + t)) (Fin n) (Fin t) (stdSum rfl) n (Fintype.card_fin n).symm ν⁻¹ hμ
-  have hR : twRel ((omegaOn (Fin n) (Fin (n + t)) ν⁻¹ {n}).comp (MonoidHom.inl _ _)) 1 ≤
-      (aug n (n + t) ν α).comap extZ := Submodule.span_le.2 (by
-    rintro _ ⟨g, φ, rfl⟩
-    refine Submodule.subset_span ⟨g, extZ φ, extZ_mem φ, ?_⟩
-    rw [MonoidHom.one_apply, Units.val_one, one_smul, map_sub]
-    congr 1
-    refine funext fun Y => (extZ_act _ g 1 φ Y).trans ?_
-    have n1 : nabs k 1 = 1 := by simp [nabs]
-    simp [omB, omChar, apow, val_absPow, n1])
-  rcases irr_equiv E (irr_ind hB n t hμ (fun y => by simp [hν.1 y])) (N.comap extZ) (hR.trans (Submodule.comap_mono hA)) (by
-    intro h φ hf
-    have h1 := hN (invT h) _ hf (extZ_mem φ)
-    rw [Submodule.mem_comap]
-    have c0 : (α (gdet (invT h)) : ℂ) * apow (gdet (invT h)) ((n : ℂ) / 2) ≠ 0 :=
-      mul_ne_zero (Units.ne_zero _) (Units.ne_zero (absPow k ((n : ℂ) / 2) (gdet (invT h))))
-    convert N.smul_mem ((omChar (Fin n) (Fin (n + t)) ν⁻¹ (1, h) : ℂ) /
-      ((α (gdet (invT h)) : ℂ) * apow (gdet (invT h)) ((n : ℂ) / 2))) h1 using 1
-    funext Y
-    have e1 : omB ν α 1 (invT h) (extZ φ) Y = (α (gdet (invT h)) : ℂ) * apow (gdet (invT h)) ((n : ℂ) / 2) *
-        extZ φ ((1 : GL (Fin n) k).valᵀ * Y * (invT h).val) := by
-      simp [omB, apow, nabs]
-    rw [extZ_act, Pi.smul_apply, e1, smul_eq_mul, ← mul_assoc, div_mul_cancel₀ _ c0]) with h | h
-  · refine Or.inl fun Φ hΦ => ?_
-    obtain ⟨φ, rfl⟩ := exists_extZ hΦ
-    exact (h ▸ Submodule.mem_top : φ ∈ N.comap extZ)
-  · refine Or.inr fun Φ hm hΦ => ?_
-    obtain ⟨φ, rfl⟩ := exists_extZ hΦ
-    exact hR (h hm)
 
 end PositivityTheory.KCo

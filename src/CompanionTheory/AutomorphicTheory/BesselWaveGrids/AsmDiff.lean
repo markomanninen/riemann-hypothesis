@@ -1,13 +1,17 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimE
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmBpAtEqOfShiftR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHatProdKBStmt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimE
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmBpAtEqOfShiftR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHatProdKBStmt
+
+@[expose] public section
 
 namespace CompanionTheory.WaveGrid
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.CutBP Formalism.FourierDecayAlt.P.CutBP2 Formalism.FourierDecayAlt.P.CutBPEq Formalism.FourierDecayAlt.TBB Formalism.QuantumDeterminants
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 def AsmDiff : Prop :=
   ∀ Cb C₃ CΛ C₀ : ℝ, 0 ≤ C₃ → 0 ≤ CΛ → 1 / 2 ≤ C₀ →
     ∃ C₄ c₃ Cc Cc' Cc'' : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
@@ -32,8 +36,8 @@ def AsmDiff : Prop :=
       LimBd p nn (TBBx4.fpm p f (fun _ => ContinuousLinearMap.id ℂ Wq) p₀) Y N →
       TBB.ThmBpAt p f b C₄ 0 p₀
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 def AsmEq : Prop :=
   ∀ Cb C₃ CΛ C₀ : ℝ, 0 ≤ C₃ → 0 ≤ CΛ → 1 / 2 ≤ C₀ →
     ∃ C₄ c₃ Cc Cc' Cc'' : ℝ, ∀ (P : M.Par) (Wp Wq : Type)

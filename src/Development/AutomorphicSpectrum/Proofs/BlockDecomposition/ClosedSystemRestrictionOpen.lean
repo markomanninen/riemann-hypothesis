@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosedSystemRestrictionSubobject
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubobjectLeOfAffineCover
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSections
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdealPowerSubobjectSections
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArtinReesClosedSystem
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RestrictPullbackIsoHomAppPullbackSections
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.QcohLocal
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.QcqsPushforward
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.HasFiniteBiproductsModules
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosedSystemRestrictionSubobject
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubobjectLeOfAffineCover
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSections
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdealPowerSubobjectSections
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArtinReesClosedSystem
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RestrictPullbackIsoHomAppPullbackSections
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.QcohLocal
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.QcqsPushforward
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.HasFiniteBiproductsModules
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -179,7 +183,7 @@ lemma exists_powSub_lift {A : Type} [CommRing A] [IsNoetherianRing A] (I : Ideal
     { carrier := {y | ∃ t ∈ JP, f.app W ((P.restrictAppIso O.ι W).inv t) = y}
       add_mem' := by
         rintro _ _ ⟨t, ht, rfl⟩ ⟨t', ht', rfl⟩
-        exact ⟨t + t', JP.add_mem ht ht', by rw [map_add, map_add]⟩
+        exact ⟨t + t', JP.add_mem ht ht', by rw [map_add (f := _), map_add (f := _)]⟩
       zero_mem' := ⟨0, JP.zero_mem, by rw [map_zero, map_zero]⟩
       smul_mem' := by
         rintro r _ ⟨t, ht, rfl⟩

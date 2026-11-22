@@ -1,9 +1,13 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.WchartLePreimage
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.WchartLePreimage
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,19 +23,17 @@ attribute [local instance] Over.cartesianMonoidalCategory
 variable {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] {ϖ : V} (hϖ : Irreducible ϖ)
   (D : DegData V (maximalIdeal V))
 
-include hϖ in
 
+include hϖ in
 theorem exists_QVal (χ : D.toPre.X) : ∃ n : ℤ, QVal D.toPre ϖ χ n :=
   exists_genHasVal hϖ D.toPre.P.L D.toPre.P.isLB _ _ _ _ (D.toPre.psi χ) (D.toPre.psi_gen χ)
 
-include hϖ in
 
+include hϖ in
 theorem QVal_unique {χ : D.toPre.X} {n m : ℤ} (hn : QVal D.toPre ϖ χ n) (hm : QVal D.toPre ϖ χ m) : n = m :=
   genHasVal_unique hϖ D.toPre.P.L D.toPre.P.isLB _ _ _ _ _ hn hm
 
 variable {Q : D.toPre.X → ℤ}
-
-macro "secTac" : tactic => `(tactic| (simp [Sum.forall, Fin.forall_fin_succ, Over.w, Over.w_assoc, eSec, Matrix.cons_val_zero, Matrix.cons_val_succ]))
 
 instance (P : PolAV (Spec (CommRingCat.of V))) : IsSeparated P.A.hom := by
   have : IsProper P.A.hom := P.isAb.proper
@@ -61,8 +63,8 @@ theorem rigK_val : GenHasVal ϖ D.toPre.P.L (fun _ : PUnit => 𝟙 _ ≫ eSec D.
   genHasVal_pullGen_of (ϖ := ϖ) D.toPre.P.L _ _ D.toPre.rig D.toPre.rig_gen (𝟙 _) (toUnit (TK V)).left
     (by rw [Category.comp_id]; rfl)
 
-include hϖ in
 
+include hϖ in
 theorem tau_val (hQ : IsQ D.toPre ϖ Q) (a b : D.toPre.X) :
     ∃ (φ : _) (hφ : _), (∀ k, φ k ≫ D.toPre.P.A.hom = 𝟙 _) ∧
       GenHasVal ϖ D.toPre.P.L φ _ hφ _ (D.toPre.tau a b) (bOf D.toPre Q a b) := by
@@ -75,10 +77,12 @@ theorem tau_val (hQ : IsQ D.toPre ϖ Q) (a b : D.toPre.X) :
     (genHasVal_invGen D.toPre.P.L hL _ _ _ _ _ (rigK_val D))
   have h4 : Q (a + b) + -Q a + -Q b + -0 = bOf D.toPre Q a b := by simp only [bOf]; ring
   rw [h4] at h3
-  exact ⟨_, _, by secTac, h3⟩
+  exact ⟨_, _, sumElim_sec (sumElim_sec (sumElim_sec
+    (fun _ => Over.w (D.toPre.c (a + b))) (fun _ => Over.w (D.toPre.c a)))
+    (fun _ => Over.w (D.toPre.c b))) (fun _ => by rw [Category.id_comp]; exact Over.w η[D.toPre.P.A]), h3⟩
+
 
 include hϖ in
-
 theorem bOf_add_left (hQ : IsQ D.toPre ϖ Q) (a a' b : D.toPre.X) :
     bOf D.toPre Q (a + a') b = bOf D.toPre Q a b + bOf D.toPre Q a' b := by
   have hL := D.toPre.P.isLB
@@ -96,19 +100,20 @@ theorem bOf_add_left (hQ : IsQ D.toPre ϖ Q) (a a' b : D.toPre.X) :
       (genHasVal_isGen D.toPre.P.L _ _ _ _ _ h2) (D.tau_bimult a a' b) h1) h2
   linarith
 
-include hϖ in
 
+include hϖ in
 theorem Q_neg (hQ : IsQ D.toPre ϖ Q) (χ : D.toPre.X) : Q (-χ) = Q χ := by
   have hL := D.toPre.P.isLB
   have hsym := genHasVal_pullGen_of (ϖ := ϖ) D.toPre.P.L _ _ D.toPre.sym D.toPre.sym_gen (D.toPre.c χ).left (D.toPre.xK χ)
     (ptK_eq D.toPre χ)
   have h1 := genHasVal_mulGen hϖ D.toPre.P.L hL _ _ _ _ _ _ _ _ _ _ (hQ (-χ)) hsym
   have := QVal_unique hϖ D
-    (genHasVal_corr hϖ D.toPre.P.L hL D.toPre.P.A.hom _ _ _ _ _ _ _ _ (by secTac) (by secTac) _ _ (D.toPre.psi_gen χ) (D.psi_even χ) h1) (hQ χ)
+    (genHasVal_corr hϖ D.toPre.P.L hL D.toPre.P.A.hom _ _ _ _ _ _ _ _ (sumElim_sec (fun _ => Over.w (D.toPre.c (-χ))) (fun k => by
+        fin_cases k <;> simp)) (fun _ => Over.w (D.toPre.c χ)) _ _ (D.toPre.psi_gen χ) (D.psi_even χ) h1) (hQ χ)
   linarith
 
-include hϖ in
 
+include hϖ in
 theorem Q_zero (hQ : IsQ D.toPre ϖ Q) : Q 0 = 0 := by
   have h := bOf_add_left hϖ D hQ 0 0 0
   simp only [bOf, add_zero] at h
@@ -119,8 +124,8 @@ theorem bOf_comm (χ χ' : D.toPre.X) : bOf D.toPre Q χ χ' = bOf D.toPre Q χ'
   rw [add_comm χ χ']
   ring
 
-include hϖ in
 
+include hϖ in
 theorem two_Q_eq (hQ : IsQ D.toPre ϖ Q) (χ : D.toPre.X) : 2 * Q χ = bOf D.toPre Q χ χ := by
   have h := bOf_add_left hϖ D hQ χ (-χ) χ
   have h0 := Q_zero hϖ D hQ
@@ -129,15 +134,15 @@ theorem two_Q_eq (hQ : IsQ D.toPre ϖ Q) (χ : D.toPre.X) : 2 * Q χ = bOf D.toP
   simp only [bOf]
   linarith
 
-include hϖ in
 
+include hϖ in
 theorem Q_pos (hQ : IsQ D.toPre ϖ Q) {χ : D.toPre.X} (hχ : χ ≠ 0) : 1 ≤ Q χ := by
   have h := genHasVal_ge_of_in hϖ D.toPre.P.L D.toPre.P.isLB (D.toPre.c χ).left (D.toPre.xK χ) (ptK_eq D.toPre χ)
     (-1) (D.toPre.psi χ) 1 (fun j W hW hle h => by rw [pow_one]; exact D.psi_pos χ hχ j W hW hle h) (hQ χ)
   exact_mod_cast h
 
-include hϖ in
 
+include hϖ in
 def bHom (hQ : IsQ D.toPre ϖ Q) : D.toPre.X →+ D.toPre.X →+ ℤ :=
   AddMonoidHom.mk' (fun a => AddMonoidHom.mk' (fun b => bOf D.toPre Q a b) (fun b b' => by
       rw [bOf_comm D (Q := Q) a (b + b'), bOf_add_left hϖ D hQ, bOf_comm D (Q := Q) b a,
@@ -147,8 +152,8 @@ def bHom (hQ : IsQ D.toPre ϖ Q) : D.toPre.X →+ D.toPre.X →+ ℤ :=
 include hϖ in
 lemma bHom_apply (hQ : IsQ D.toPre ϖ Q) (a b : D.toPre.X) : bHom hϖ D hQ a b = bOf D.toPre Q a b := rfl
 
-include hϖ in
 
+include hϖ in
 lemma gram_int_pos (hQ : IsQ D.toPre ϖ Q) {d : ℕ} (b : Module.Basis (Fin d) ℤ D.toPre.X) (m : Fin d → ℤ)
     (hm : m ≠ 0) : 0 < ∑ i, ∑ j, m i * bOf D.toPre Q (b i) (b j) * m j := by
   have hv : ∑ i, m i • b i ≠ 0 := by
@@ -157,7 +162,8 @@ lemma gram_int_pos (hQ : IsQ D.toPre ϖ Q) {d : ℕ} (b : Module.Basis (Fin d) �
   have lin : ∀ (a : D.toPre.X) (c : Fin d → ℤ),
       bOf D.toPre Q a (∑ i, c i • b i) = ∑ i, c i * bOf D.toPre Q a (b i) := by
     intro a c
-    rw [← bHom_apply hϖ D hQ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← bHom_apply hϖ D hQ, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, bHom_apply hϖ D hQ]
     first
@@ -177,9 +183,9 @@ lemma gram_int_pos (hQ : IsQ D.toPre ϖ Q) {d : ℕ} (b : Module.Basis (Fin d) �
   rw [← hexp]
   linarith
 
+
 open Matrix in
 include hϖ in
-
 theorem gram_posDef (hQ : IsQ D.toPre ϖ Q) {d : ℕ} (b : Module.Basis (Fin d) ℤ D.toPre.X) :
     (Matrix.of fun i j => (bOf D.toPre Q (b i) (b j) : ℝ)).PosDef := by
   classical
@@ -305,8 +311,8 @@ theorem exists_rosati_gen (hLaws : Laws) {O : Type} [Ring O] [StarRing O] [Modul
   have := ιD.onB.hom (star a)
   exact ReciprocityTheory.ChartRestriction.G.Geo.Tor.exists_ros hLaws.globalFns D.toPre.P.isAb D.toPre.P.isLB _ _ (ιD.onB.rosati a)
 
-include hϖ in
 
+include hϖ in
 theorem bOf_balance (hLaws : Laws) {O : Type} [Ring O] [StarRing O] [Module O D.toPre.X] (ιD : D.OAct O)
     (hQ : IsQ D.toPre ϖ Q) (a : O) (χ χ' : D.toPre.X) :
     bOf D.toPre Q (a • χ) χ' = bOf D.toPre Q χ (star a • χ') := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,8 +96,8 @@ theorem exists_twist_zero (ha : a ≠ 0) {φ : Sm F a} {s : ℂ} (h : lie F a (o
     field_simp; ring
   rw [this, zero_smul, map_zero]
 
-variable (F a) in
 
+variable (F a) in
 def ZeroCompl : Prop :=
   ∃ C : Submodule ℂ (Sm F a), (∀ φ ∈ C, IsCuspForm φ) ∧ (∀ φ, IsCuspForm φ → lie F a (oneL F a) φ = 0 → φ ∈ C) ∧ IsStable C ∧
     ∀ U ≤ C, IsStable U → ∃ D ≤ C, IsStable D ∧ U ⊓ D = ⊥ ∧ U ⊔ D = C

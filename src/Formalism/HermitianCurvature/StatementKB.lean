@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementTop
-import Formalism.HermitianCurvature.LevelRecursionCondNeeded
+module
+
+public import Formalism.HermitianCurvature.StatementTop
+public import Formalism.HermitianCurvature.LevelRecursionCondNeeded
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.KB
 

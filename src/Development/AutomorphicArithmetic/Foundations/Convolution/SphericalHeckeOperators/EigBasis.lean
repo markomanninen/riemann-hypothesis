@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -112,10 +116,11 @@ theorem UpperTheory.ConvolutionTheory.H.eigBasis :
   have hB : ∀ σ, B σ = v σ := fun σ => by
     simp [B, coe_basisOfLinearIndependentOfCardEqFinrank]
   have hΦinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     rw [← B.sum_repr x] at hx ⊢
-    simp only [map_sum, map_smul, hB] at hx
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hB] at hx
     have := Fintype.linearIndependent_iff.1 hlc (fun σ => B.repr x σ) hx
     simp [this]
   refine ⟨B, fun σ a ha => ?_, fun σ => ?_, ?_⟩
@@ -133,4 +138,5 @@ theorem UpperTheory.ConvolutionTheory.H.eigBasis :
   · apply hΦinj
     funext a
     rw [hΦ, hu _ a.toAdd.2]
-    simp only [map_sum, map_smul, hB, hv, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hχ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hB, hv, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hχ]

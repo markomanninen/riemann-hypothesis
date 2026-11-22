@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.SubConjTransposeOfSymm
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.SubConjTransposeOfSymm
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,14 +19,8 @@ variable {R M V : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGrou
 def IsLagSection (ω : LinearMap.BilinForm R M) (π : M →ₗ[R] V) (σ : V →ₗ[R] M) : Prop :=
   (∀ z, π (σ z) = z) ∧ ∀ z w, ω (σ z) (σ w) = 0
 
-def KerIsotropic (ω : LinearMap.BilinForm R M) (π : M →ₗ[R] V) : Prop :=
-  ∀ m m', π m = 0 → π m' = 0 → ω m m' = 0
-
 def beta (ω : LinearMap.BilinForm R M) (σ σ' : V →ₗ[R] M) : LinearMap.BilinForm R V :=
   LinearMap.compl₁₂ ω σ σ'
-
-@[simp] theorem beta_apply (ω : LinearMap.BilinForm R M) (σ σ' : V →ₗ[R] M) (z w : V) :
-    beta ω σ σ' z w = ω (σ z) (σ' w) := rfl
 
 end Defs
 
@@ -188,7 +186,7 @@ theorem secH_equivariant {τ : Matrix (Fin g) (Fin g) ℂ} (hY : IsUnit (τ.map 
 
 theorem beta_secL (σ : (Fin g → ℂ) →ₗ[ℂ] (Fin g ⊕ Fin g → ℂ)) (z w : Fin g → ℂ) :
     beta (omegaCx g) σ (secL g) z w = -((σ z ∘ Sum.inr) ⬝ᵥ w) := by
-  simp [omegaCx_eq_dot, secL_apply]
+  simp [beta, omegaCx_eq_dot, secL_apply]
 
 theorem beta_secH_secL' {τ : Matrix (Fin g) (Fin g) ℂ} (hτ : τ.IsSymm)
     (hY : IsUnit (τ.map Complex.im).det) (z w : Fin g → ℂ) :

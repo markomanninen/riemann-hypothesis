@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RembApply
-import Formalism.LatticeTheta.Statement
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RembApply
+public import Formalism.LatticeTheta.Statement
+
+@[expose] public section
+
 open NumberField nonZeroDivisors MeasureTheory GlobalTheory.LipschitzTR GlobalTheory.IndefiniteRowSideFullHecke.TraceDualDifferent
 open scoped FourierTransform RealInnerProductSpace
 
@@ -123,14 +128,14 @@ theorem summable_prod_wt (ι : Type) [Fintype ι] [DecidableEq ι] :
           exact Finset.prod_nonneg fun i _ => wt_nonneg _
     _ = ∏ i, ∑ m ∈ u.image (fun n : ι → ℤ => n i), wt m := (Finset.prod_univ_sum _ _).symm
     _ ≤ ∏ _i : ι, ∑' m, wt m := by
-        apply Finset.prod_le_prod
+        apply Finset.prod_le_prod₀
         · intro i _; exact Finset.sum_nonneg fun m _ => wt_nonneg m
         · intro i _; exact summable_wt.sum_le_tsum _ (fun m _ => wt_nonneg m)
 
 end GlobalTheory.LipschitzTR.LhsSum
 
-open GlobalTheory.LipschitzTR.LhsSum in
 
+open GlobalTheory.LipschitzTR.LhsSum in
 theorem GlobalTheory.LipschitzTR.summable_lhsTerm_ideal :
     ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (M : FractionalIdeal (𝓞 F)⁰ F), M ≠ 0 →
       ∀ (k : ℕ), 2 ≤ k → ∀ (z : (F →+* ℝ) → ℂ), (∀ τ, (z τ).im ≠ 0) →
@@ -154,7 +159,7 @@ theorem GlobalTheory.LipschitzTR.summable_lhsTerm_ideal :
     have h1 := hν _ hmem hne'
     have h2 : |∏ τ : F →+* ℝ, τ ((a : F) - b)| ≤ s ^ Fintype.card (F →+* ℝ) := by
       rw [Finset.abs_prod, ← Finset.card_univ, ← Finset.prod_const]
-      refine Finset.prod_le_prod (fun _ _ => abs_nonneg _) (fun τ _ => ?_)
+      refine Finset.prod_le_prod₀ (fun _ _ => abs_nonneg _) (fun τ _ => ?_)
       have hf := Int.abs_sub_lt_one_of_floor_eq_floor (congrFun hab τ)
       rw [← sub_div, abs_div, abs_of_pos hs0, div_lt_one hs0] at hf
       rw [map_sub]; exact hf.le
@@ -167,7 +172,7 @@ theorem GlobalTheory.LipschitzTR.summable_lhsTerm_ideal :
     (((summable_prod_wt (F →+* ℝ)).comp_injective hN).mul_left C) (fun a => ?_)
   simp only [lhsTerm, zpow_neg, zpow_natCast, ← Finset.prod_pow, ← Finset.prod_inv_distrib, norm_prod, norm_inv, norm_pow]
   rw [hC, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun _ _ => by positivity) (fun τ _ => ?_)
+  refine Finset.prod_le_prod₀ (fun _ _ => by positivity) (fun τ _ => ?_)
   have hD : 0 < c τ * (s / 2) := by have := hc0 τ; positivity
   have hfl := floor_bound hs0 hs1 (τ (a : F))
   have he : c τ * (s / 2) * (1 + |((N a τ : ℤ) : ℝ)|) ≤ ‖z τ + ((τ (a : F) : ℝ) : ℂ)‖ := by

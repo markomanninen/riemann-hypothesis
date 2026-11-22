@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

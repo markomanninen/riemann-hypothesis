@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.CayleyA
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.CayleyA
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ private theorem sum_sign_iteratedFDeriv_single_eq_zero_of_not_inj (F : Matrix ι
     rw [← symm_perm F hF (fun k => Matrix.single (r k) (σ (a k)) (1 : ℂ)) (Equiv.swap i j)]
     congr 1
     funext k
-    simp only [Function.comp, Equiv.Perm.mul_apply]
+    simp only [Equiv.Perm.mul_apply, Function.comp_apply]
     by_cases hki : k = i
     · subst hki
       rw [Equiv.swap_apply_left, Equiv.swap_apply_left, hij]
@@ -186,7 +190,8 @@ theorem equivar_thm : Equivar := by
       iteratedFDeriv_comp_clm F hF L _ _
     rw [h1]
     simp_rw [mul_single_eq]
-    rw [ContinuousMultilinearMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ContinuousMultilinearMap.map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [ContinuousMultilinearMap.map_smul_univ, smul_eq_mul]
   have hswap : detD (fun T => F (A * T)) = ∑ r : Fin (Fintype.card ι) → ι,

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,7 +67,7 @@ theorem exists_mem_Fil_corr (hF' : AbelianDeRham.Free) (hH : AbelianDeRham.Hodge
   haveI : Module.Projective T (primDR C) := (hF'.prim hC gC).2.1
   let l : primDR C →ₗ[T] R :=
     { toFun c := f ((AbelianDeRham.bcMor h).pull c)
-      map_add' := fun a b => by rw [map_add, map_add]
+      map_add' := fun a b => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun a b => by rw [LinearMap.map_smulₛₗ, map_smul, smul_eq_mul, RingHom.id_apply, Algebra.smul_def] }
   obtain ⟨d₀, hd₀⟩ := Module.projective_lifting_property (Algebra.linearMap T R) l su
   have e₀ : ∀ c, algebraMap T R (d₀ c) = f ((AbelianDeRham.bcMor h).pull c) := fun c => LinearMap.congr_fun hd₀ c
@@ -75,7 +79,7 @@ theorem exists_mem_Fil_corr (hF' : AbelianDeRham.Free) (hH : AbelianDeRham.Hodge
   have p1 : ∀ c, c - p c ∈ PrimitiveSubmodule C := fun c => by
     obtain ⟨a, b, rfl, -⟩ := Submodule.existsUnique_add_of_isCompl hN c
     have e : p b = b := congrArg N.subtype (Submodule.linearProjOfIsCompl_apply_left hN.symm b)
-    rw [map_add, p0 a a.2, e, zero_add, add_sub_cancel_right]
+    rw [map_add (f := _), p0 a a.2, e, zero_add, add_sub_cancel_right]
     exact a.2
   refine ⟨d₀ ∘ₗ p, (Submodule.mem_dualAnnihilator _).2 fun c hc => ?_, fun c => ?_⟩
   · rw [LinearMap.comp_apply, p0 c hc, map_zero]
@@ -89,7 +93,7 @@ theorem exists_corr (hF' : AbelianDeRham.Free) {R : Type} [CommRing R] {T : Type
   haveI : Module.Projective T (primDR C) := (hF'.prim hC gC).2.1
   let l : primDR C →ₗ[T] R :=
     { toFun c := f ((AbelianDeRham.bcMor h).pull c)
-      map_add' := fun a b => by rw [map_add, map_add]
+      map_add' := fun a b => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun a b => by rw [LinearMap.map_smulₛₗ, map_smul, smul_eq_mul, RingHom.id_apply, Algebra.smul_def] }
   obtain ⟨d₀, hd₀⟩ := Module.projective_lifting_property (Algebra.linearMap T R) l su
   have e₀ : ∀ c, algebraMap T R (d₀ c) = f ((AbelianDeRham.bcMor h).pull c) := fun c => LinearMap.congr_fun hd₀ c

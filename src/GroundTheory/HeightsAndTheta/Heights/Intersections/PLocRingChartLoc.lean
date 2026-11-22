@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StLocRingChartLoc
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingFrac
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StLocRingChartLoc
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingFrac
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -46,17 +51,18 @@ theorem LocRingChartLoc.proof : LocRingChartLoc.Statement := by
     intro u a hu
     conv_lhs => rw [u.as_sum]
     conv_rhs => rw [u.as_sum]
-    rw [map_sum, map_sum, Finset.sum_mul, map_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.sum_mul, map_prod]
     refine Finset.sum_congr rfl fun m hm => ?_
     have hT : ∏ k, q (X ⟨k, c k⟩ ^ a k) = ∏ p : Σ k, ι k, q (X ⟨p.1, c p.1⟩) ^ m p := by
       rw [Fintype.prod_sigma]
       refine Finset.prod_congr rfl fun k _ => ?_
       show q (X ⟨k, c k⟩ ^ a k) = ∏ y, q (X ⟨k, c k⟩) ^ m ⟨k, y⟩
       rw [map_pow, Finset.prod_pow_eq_pow_sum, hu m hm k]
-    have hθm : θ (monomial m (coeff m u)) = ((coeff m u : ℤ) : L) * ∏ p, g p ^ m p := by
+    have hθm : θ (monomial m (AddMonoidAlgebra.coeff u m)) = ((AddMonoidAlgebra.coeff u m : ℤ) : L) * ∏ p, g p ^ m p := by
       rw [show θ _ = eval₂ (Int.castRingHom L) g _ from rfl, eval₂_monomial, eq_intCast,
         Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
-    have hqm : q (monomial m (coeff m u)) = ((coeff m u : ℤ) : L) * ∏ p, q (X p) ^ m p := by
+    have hqm : q (monomial m (AddMonoidAlgebra.coeff u m)) = ((AddMonoidAlgebra.coeff u m : ℤ) : L) * ∏ p, q (X p) ^ m p := by
       rw [monomial_eq, map_mul, map_finsuppProd, Finsupp.prod_fintype _ _ (fun _ => by simp)]
       simp only [map_pow]
       congr 1

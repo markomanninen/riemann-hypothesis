@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PolyRep
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.GoodTopChernForm
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ChernWeilNumbers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PolyRep
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.GoodTopChernForm
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ChernWeilNumbers
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,14 +22,14 @@ section General
 
 variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] [NormedSpace ℝ E] [IsScalarTower ℝ ℂ E]
 
-omit [NormedSpace ℂ E] [IsScalarTower ℝ ℂ E] in
 
+omit [NormedSpace ℂ E] [IsScalarTower ℝ ℂ E] in
 theorem contDiffAt_aeval_int {σ : Type} {k : WithTop ℕ∞} {f : E → σ → ℂ} {z : E}
     (hf : ∀ s, ContDiffAt ℝ k (fun x => f x s) z) (P : MvPolynomial σ ℤ) :
     ContDiffAt ℝ k (fun x => aeval (f x) P) z := by
   induction P using MvPolynomial.induction_on with
   | C a => simp only [aeval_C]; exact contDiffAt_const
-  | add p q hp hq => simp only [map_add]; exact hp.add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
   | mul_X p s hp => simp only [map_mul, aeval_X]; exact hp.mul (hf s)
 
 theorem del_aeval_int {σ : Type} [Fintype σ] {f : E → σ → ℂ} {z : E}
@@ -37,12 +41,12 @@ theorem del_aeval_int {σ : Type} [Fintype σ] {f : E → σ → ℂ} {z : E}
   induction P using MvPolynomial.induction_on with
   | C a => simp only [aeval_C, pderiv_C, del_const]; simp
   | add p q hp hq =>
-    simp only [map_add, add_mul, Finset.sum_add_distrib, ← hp, ← hq]
+    simp only [map_add (f := _), add_mul, Finset.sum_add_distrib, ← hp, ← hq]
     rw [del_add (hd p) (hd q)]; rfl
   | mul_X p s hp =>
     simp only [map_mul, aeval_X]
     rw [del_mul (hd p) ((hf s).differentiableAt one_ne_zero), hp]
-    simp only [Derivation.leibniz, pderiv_X, smul_eq_mul, map_add, map_mul, aeval_X, add_mul,
+    simp only [Derivation.leibniz, pderiv_X, smul_eq_mul, map_add (f := _), map_mul, aeval_X, add_mul,
       Finset.sum_add_distrib, Finset.sum_mul, Pi.single_apply]
     congr 1
     · rw [Finset.sum_eq_single s] <;> simp +contextual [eq_comm]
@@ -115,7 +119,7 @@ theorem PolyRep.lie_sum_C_mul_X {ι κ : Type} [Fintype ι] [Fintype κ] {m : ι
         φ (aeval (fun w : EntIx m => (1 : Mat m ℂ) w.1 w.2.1 w.2.2) P) := fun S _ φ P => by
     induction P using MvPolynomial.induction_on with
     | C a => rw [aeval_C, aeval_C, eq_intCast, eq_intCast, map_intCast]
-    | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
     | mul_X p s hp =>
       rw [map_mul, map_mul, map_mul, hp, aeval_X, aeval_X, Pi.one_apply, Pi.one_apply, Matrix.one_apply,
         Matrix.one_apply]
@@ -126,7 +130,8 @@ theorem PolyRep.lie_sum_C_mul_X {ι κ : Type} [Fintype ι] [Fintype κ] {m : ι
   have key : ∀ (c : EntIx m → ℂ) (f : κ → κ → EntIx m → ℂ),
       (∑ a, ∑ b, C (∑ v, c v * f a b v) * X (a, b) : MvPolynomial (κ × κ) ℂ) =
         ∑ v, C (c v) * ∑ a, ∑ b, C (f a b v) * X (a, b) := fun c f => by
-    simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, mul_assoc]
     rw [eq_comm, Finset.sum_comm]
     exact Finset.sum_congr rfl fun a _ => Finset.sum_comm
   simp only [PolyRep.lie, Matrix.of_apply]

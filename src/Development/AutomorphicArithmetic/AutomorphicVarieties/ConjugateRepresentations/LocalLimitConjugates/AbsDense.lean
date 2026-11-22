@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory Filter Topology Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.UnitaryBC UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible
 open UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Bor UpperTheory.V.Lit.Dr
@@ -38,7 +42,7 @@ theorem UpperTheory.V.Cj.H.absDense :
     · intro g x hx v
       show inner ℂ (R g x) (u v) = 0
       have key : R g⁻¹ (u v) = u ⟨R g⁻¹ v, hD g⁻¹ v v.2⟩ := by
-        simp only [hu, map_add, map_smul]
+        simp only [hu, map_add (f := _), map_smul]
         rw [hA g⁻¹ v]
       rw [← hinv g (u v), hinner, key]
       exact hx _

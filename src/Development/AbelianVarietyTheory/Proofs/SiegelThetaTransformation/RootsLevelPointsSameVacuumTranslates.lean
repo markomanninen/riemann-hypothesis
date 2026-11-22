@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaSpanAdjoint
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DualHalfLevelMarkingExistsAndMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaSpanAdjoint
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DualHalfLevelMarkingExistsAndMatch
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -209,8 +213,8 @@ theorem heisG_add_two {bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ} (hs : I
   rw [h2fix, hexp, one_smul] at hcomp
   exact hcomp.symm
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem mul_mem_tens {Λ Λ' : Lt E n} {h : Matrix (Fin n) (Fin n) E} (hh : ∀ v ∈ Λ, h *ᵥ v ∈ Λ')
     {y : Matrix (Fin n) (Fin r) E} (hy : y ∈ tens Λ L) : h * y ∈ tens Λ' L := by
   let f : Matrix (Fin n) (Fin r) E →+ Matrix (Fin n) (Fin r) E :=
@@ -228,8 +232,8 @@ theorem mul_mem_tens {Λ Λ' : Lt E n} {h : Matrix (Fin n) (Fin n) E} (hh : ∀ 
     exact TensLat.pure_mem (hh v hv) hu
   exact key hy
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem smul_mem_tens' {Λ Λ' : Lt E n} {s : E} (hh : ∀ v ∈ Λ, s • v ∈ Λ')
     {y : Matrix (Fin n) (Fin r) E} (hy : y ∈ tens Λ L) : s • y ∈ tens Λ' L := by
   have key : tens Λ L ≤ (tens Λ' L).comap
@@ -282,7 +286,8 @@ theorem exists_levPerm {Λ Λ' : Lt E n} (hΛ : Λ ∈ Vset E n l.M) (hΛ' : Λ'
     intro A B hAB c d kc kd hc hd
     ext i j
     have e1 : ((c * d) i j : E) = ((kc * kd : ℕ) : E) * (A * B) i j := by
-      simp only [Matrix.mul_apply, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, map_sum, map_mul]
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [show (algebraMap (𝓞 E) E (c i l)) = (c i l : E) from rfl,
@@ -337,7 +342,7 @@ theorem ef_int (hL : SelfD X L) {mk : Dw.La →ₗ[𝓞 E] (Fin r → E)} (hmk :
     rw [LinearMap.map_add₂]
   have addR : ∀ v z z', EF X v (z + z') = EF X v z + EF X v z' := fun v z z' => by
     change EFBil X v (z + z') = EFBil X v z + EFBil X v z'
-    rw [LinearMap.map_add]
+    rw [LinearMap.map_add (f := _)]
   have hs' : 1 - s ∈ l.Mb.map (H.bar : 𝓞 E →+* 𝓞 E) := hs
   obtain ⟨p, hp, hpt⟩ := (Ideal.mem_map_iff_of_surjective (H.bar : 𝓞 E →+* 𝓞 E) H.bar.surjective).mp hs'
   have hpt' : H.bar p = 1 - s := hpt
@@ -498,7 +503,8 @@ theorem roots_move : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
     intro i
     have hxb : (k1 : 𝓞 E) • A' i - ∑ j, g1 i j • A j ∈ l.Mb • (⊤ : Submodule (𝓞 E) Dw.La) := by
       have h0 : (l.Mb • (⊤ : Submodule (𝓞 E) Dw.La)).mkQ ((k1 : 𝓞 E) • A' i - ∑ j, g1 i j • A j) = 0 := by
-        simp only [map_sub, map_smul, map_sum, Submodule.mkQ_apply, hAq, hA'q]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sub, map_smul, map_sum, Submodule.mkQ_apply, hAq, hA'q]
         rw [hq i, sub_self]
       exact (Submodule.Quotient.mk_eq_zero _).mp h0
     have hxf : (k1 : 𝓞 E) • A' i - ∑ j, g1 i j • A j ∈
@@ -524,7 +530,8 @@ theorem roots_move : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
     intro i
     have hCE : (l.M : E) • mk (C i) = (k1 : E) • mk (A' i) - ∑ j, (g1 i j : E) • mk (A j) := by
       have := congrArg mk (hC i)
-      simp only [map_sub, map_sum, LinearMap.map_smul, cs, hMc, hk1c] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, LinearMap.map_smul, cs, hMc, hk1c] at this
       exact this
     have hmkC : mk (C i) = (l.M : E)⁻¹ • ((k1 : E) • mk (A' i) - ∑ j, (g1 i j : E) • mk (A j)) := by
       rw [← hCE, smul_smul, inv_mul_cancel₀ hM0, one_smul]

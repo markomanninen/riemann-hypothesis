@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationOfData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitMpOmjExtIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CovBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCocycleCoboundaryCommaLocalBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueCommaOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationOfData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitMpOmjExtIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CovBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCocycleCoboundaryCommaLocalBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueCommaOfBasis
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,12 +67,12 @@ theorem oneCocycle_upwardFamily_isCoboundary : ∀ {R : Type} [CommRing R] {C : 
     intro i j k S u hi hj hk
     refine eq_zero_of_local₃ F G H hdir (hp i S u hi) (hp j S u hj) (hp k S u hk) _
       fun t S' ψ ai aj ak ⟨w⟩ ↦ ?_
-    rw [map_add, map_sub, hc j k S (hp j S u hj) (hp k S u hk) t S' ψ w aj ak,
+    rw [map_add (f := _), map_sub, hc j k S (hp j S u hj) (hp k S u hk) t S' ψ w aj ak,
       hc i k S (hp i S u hi) (hp k S u hk) t S' ψ w ai ak,
       hc i j S (hp i S u hi) (hp j S u hj) t S' ψ w ai aj]
     simp only [map_sub]
     ring
-  obtain ⟨e, he, he'⟩ := cech1 H hb (fun i j S (_ : G.obj t₀ ⟶ S) ↦ c i j S) hs hcc
+  obtain ⟨e, he, he'⟩ := Desc.cech1 H hb (fun i j S (_ : G.obj t₀ ⟶ S) ↦ c i j S) hs hcc
   have he'' : ∀ i j S (u : G.obj t₀ ⟶ S), IsUnit (mp F u (b i)) → IsUnit (mp F u (b j)) →
       c i j S = e j S u - e i S u := he'
 
@@ -89,7 +93,7 @@ theorem oneCocycle_upwardFamily_isCoboundary : ∀ {R : Type} [CommRing R] {C : 
     intro t ht u S ψ i j hi hj
     have key : X i t ht S - X j t ht S + c i j S = 0 :=
       eq_zero_of_local₃ F G H hdir ⟨ψ⟩ (hp i S _ hi) (hp j S _ hj) _ fun t' S' χ a0 ai aj ⟨w⟩ ↦ by
-        rw [map_add, map_sub, hX i t ht S ⟨ψ⟩ (hp i S _ hi) t' S' χ w a0 ai,
+        rw [map_add (f := _), map_sub, hX i t ht S ⟨ψ⟩ (hp i S _ hi) t' S' χ w a0 ai,
           hX j t ht S ⟨ψ⟩ (hp j S _ hj) t' S' χ w a0 aj,
           hc i j S (hp i S _ hi) (hp j S _ hj) t' S' χ w ai aj]
         simp only [map_sub]
@@ -133,7 +137,7 @@ theorem oneCocycle_upwardFamily_isCoboundary : ∀ {R : Type} [CommRing R] {C : 
       rw [map_sub, map_sub, hX i t' ht' S ⟨χ⟩ (hp i S _ hi') t'' S' ψ w ⟨a'⟩ ai,
         hX i t ht S ⟨G.map a ≫ χ⟩ (hp i S _ hi') t'' S' ψ w ⟨a ≫ a'⟩ ai, ← mp_comp,
         (Subsingleton.elim _ _ : χ ≫ ψ = G.map a' ≫ w), mp_comp, hyc t t' t'' ht a a']
-      simp only [map_sub, map_add]
+      simp only [map_sub, map_add (f := _)]
       ring
   linear_combination key
 

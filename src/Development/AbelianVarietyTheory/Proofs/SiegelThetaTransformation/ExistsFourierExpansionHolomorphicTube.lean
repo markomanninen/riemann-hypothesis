@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.NormLeTsumOfCubeFourierCoeffLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.NormLeTsumOfCubeFourierCoeffLe
+
+@[expose] public section
 
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
@@ -71,10 +75,10 @@ private lemma mFourierCoeff_lift_eq_integral {ι : Type} [Fintype ι] (g : C(Uni
   simp only [Pi.neg_apply, Int.cast_neg, neg_mul, Finset.sum_neg_distrib]
   ring
 
+
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real Classical in
 open MeasureTheory in
-
 theorem _root_.GlobalTheory.exists_fourier_expansion_tube :
     ∀ (ι : Type) [Fintype ι] (Ω : Set (ι → ℝ)) (f : (ι → ℂ) → ℂ), IsOpen Ω → Convex ℝ Ω →
       DifferentiableOn ℂ f {z | (fun i => (z i).im) ∈ Ω} →
@@ -94,8 +98,8 @@ theorem _root_.GlobalTheory.exists_fourier_expansion_tube :
     intro z hz w hw s t hs ht hst
     simp only [hT, Set.mem_setOf_eq] at hz hw ⊢
     convert hΩc hz hw hs ht hst using 1
-    funext i
-    simp
+    ext i
+    simp [Complex.mul_im]
   have hcont : ContinuousOn f T := hf.continuousOn
 
   have hmemT : ∀ (x y : ι → ℝ), y ∈ Ω → (fun i ↦ (x i : ℂ) + I * y i) ∈ T := by
@@ -257,7 +261,7 @@ theorem _root_.GlobalTheory.exists_fourier_expansion_tube :
   have key := UnitAddTorus.hasSum_mFourier_series_apply_of_summable hsum
     (fun i ↦ (x₀ i : UnitAddCircle))
   rw [hg] at key
-  convert key using 1
+  convert (preTransparency := .reducible) key using 1
   · funext ν
     rw [hgc ν, mFourier_apply_coe, hc_indep y₁ hy₁ y₀ hz, smul_eq_mul]
     conv_lhs => rw [hz']

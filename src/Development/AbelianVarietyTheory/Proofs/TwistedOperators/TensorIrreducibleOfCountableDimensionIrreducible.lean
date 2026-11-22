@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRtensOp
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DixmierCommutantScalar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRtensOp
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DixmierCommutantScalar
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -101,7 +105,7 @@ theorem tensor_irreducible : ∀ (V U : Type) [AddCommGroup V] [Module ℂ V] [A
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul m n => simp [e, TensorProduct.equivFinsuppOfBasisRight_apply_tmul_apply]
-    | add y z hy hz => simp only [map_add, Finsupp.add_apply, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), Finsupp.add_apply, hy, hz]
   have hex : ∃ n, ∃ y ∈ N, y ≠ 0 ∧ (e y).support.card = n := ⟨_, x₁, hx₁N, hx₁, rfl⟩
   obtain ⟨x, hxN, hx0, hxc⟩ := Nat.find_spec hex
   have hmin : ∀ y ∈ N, (e y).support.card < (e x).support.card → y = 0 := by

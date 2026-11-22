@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,7 +32,7 @@ section Conj
 variable {cj : E → E} (hcj : ∀ (φ : E →+* ℂ) (z : E), φ (cj z) = star (φ z))
 include hcj
 
-theorem cj_add (a b : E) : cj (a + b) = cj a + cj b := eq_of_emb fun φ => by rw [hcj, map_add, star_add, map_add, hcj, hcj]
+theorem cj_add (a b : E) : cj (a + b) = cj a + cj b := eq_of_emb fun φ => by rw [hcj, map_add (f := _), star_add, map_add (f := _), hcj, hcj]
 
 theorem cj_mul (a b : E) : cj (a * b) = cj a * cj b := eq_of_emb fun φ => by rw [hcj, map_mul, star_mul', map_mul, hcj, hcj]
 
@@ -112,8 +116,10 @@ theorem tr_ed_int (c : 𝓞 E) (i : Free.ChooseBasisIndex ℤ (𝓞 E)) :
   have h := integralBasis_repr_apply E c i
   simpa using h
 
-open scoped Classical in
 
+attribute [local instance] Classical.propDecidable
+
+open scoped Classical in
 theorem ortho (σ τ : E →+* ℂ) :
     ∑ i, σ (ed E i) * τ (integralBasis E i) = if σ = τ then 1 else 0 := by
   classical
@@ -136,12 +142,6 @@ theorem ortho (σ τ : E →+* ℂ) :
   · exact Finset.sum_congr rfl fun i _ => mul_comm _ _
   · exact if_congr eq_comm rfl rfl
 
-open scoped Classical in
-theorem casimir : ∑ i, ed E i * integralBasis E i = 1 := by
-  refine eq_of_emb fun σ => ?_
-  rw [map_sum, map_one]
-  simp_rw [map_mul]
-  rw [ortho σ σ, if_pos rfl]
 
 abbrev Dinv (E : Type) [Field E] [NumberField E] : FractionalIdeal (𝓞 E)⁰ E :=
   FractionalIdeal.dual ℤ ℚ (1 : FractionalIdeal (𝓞 E)⁰ E)

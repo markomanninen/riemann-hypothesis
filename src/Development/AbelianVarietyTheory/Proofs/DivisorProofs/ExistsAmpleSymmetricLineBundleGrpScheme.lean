@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
@@ -21,7 +26,7 @@ theorem exists_isAmpleLB_symm (S : Scheme.{0}) (G : Over S) [GrpObj G] (M₀ : L
   have h₁ : IsAmpleLB (M₀.pull i) := h₀.pull_of_isAffineHom i
   let M : LB G.left := LB.LinComb M₀ (K := Fin 2) ![𝟙 G.left, i] ![1, 1]
   have hM : M.IsLB := LB.isLB_linComb hL _ _
-  have hc : cls M hM = cls M₀ hL + pull i (cls M₀ hL) := by
+  have hc : cls M hM = cls M₀ hL + GlobalTheory.CechPic.pull i (cls M₀ hL) := by
     rw [cls_linComb hL]
     simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, one_zsmul, pull_id]
   refine ⟨M, h₀.tensor h₁ hM ?_, ?_⟩
@@ -31,7 +36,7 @@ theorem exists_isAmpleLB_symm (S : Scheme.{0}) (G : Over S) [GrpObj G] (M₀ : L
     rw [cls_div hd₁ (pull_isLB hL i), cls_div hM hL, hc, cls_pull hL]
     abel
   · refine (cls_eq_iff (pull_isLB hM i) hM).1 ?_
-    rw [cls_pull hM, hc, map_add, ← pull_comp, hii, pull_id]
+    rw [cls_pull hM, hc, map_add (f := _), ← pull_comp, hii, pull_id]
     exact add_comm _ _
 
 end GlobalTheory.SymAmple

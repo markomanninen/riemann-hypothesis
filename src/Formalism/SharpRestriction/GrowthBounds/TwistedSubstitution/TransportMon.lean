@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.PlaneCoeff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.PlaneCoeff
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,7 +138,7 @@ theorem LD_phSeg (hG : GeoOK Fr p nL) {O : Type} [CommRing O] (j : ℕ) (hj : j 
     rw [AlgHom.commutes, algebraMap_eq, rename_C]
     exact LD_C Fr p hk nL c
   | add a b _ _ ha hb =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact LD_add Fr p hk nL ha hb
   | mul a b _ _ ha hb =>
     rw [map_mul, map_mul]

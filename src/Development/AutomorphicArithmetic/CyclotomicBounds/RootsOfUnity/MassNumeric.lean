@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamLowNumericalEnd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamLowNumericalEnd
+
+@[expose] public section
 
 namespace UpperTheory.Mu
 

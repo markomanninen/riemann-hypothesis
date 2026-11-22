@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicComponentLeLowerWeights
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.CrAevalStable
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicComponentLeLowerWeights
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.CrAevalStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,7 +145,7 @@ private lemma aeval_apply_eq_eval_smul_of_eigenvector (f : Module.End K V) (c : 
   · intro a
     simp
   · intro p q hp hq
-    simp only [map_add, LinearMap.add_apply, hp, hq, Polynomial.eval_add, add_smul]
+    simp only [map_add (f := _), LinearMap.add_apply, hp, hq, Polynomial.eval_add, add_smul]
   · intro k a h
     rw [pow_succ, ← mul_assoc, map_mul, Polynomial.aeval_X, Polynomial.eval_mul, Polynomial.eval_X]
     change (aeval f (Polynomial.C a * X ^ k)) (f t) = _
@@ -203,7 +207,7 @@ theorem casimir_polynomial_isolates_level [CharZero K] (E : GLOps n K V) (hR : S
     obtain ⟨r1, e1, m1⟩ := hx
     obtain ⟨r2, e2, m2⟩ := hy
     refine ⟨r1 * r2, by simp [e1, e2], ?_⟩
-    rw [LinearMap.map_add]
+    rw [LinearMap.map_add (f := _)]
     refine add_mem ?_ ?_
     · rw [mul_comm, map_mul]
       change aeval (cr_C E) r2 (aeval (cr_C E) r1 x) ∈ _

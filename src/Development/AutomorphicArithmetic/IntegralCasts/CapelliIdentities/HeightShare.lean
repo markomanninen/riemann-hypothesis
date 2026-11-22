@@ -1,31 +1,35 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.SharpRestriction.CuspSpanNormBounds.Point
-import Formalism.HermitianLattices.StatementLat
-import Formalism.HarderNarasimhan.Statement
-import Formalism.FrobeniusOrbits.HostThickExists
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ZsmulGeneratorEqZeroOfProjection
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.LocalRingCardinality.DataRows
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HermitianLattices.StatementMass
-import Formalism.LocalRingCardinality.DataArith
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.LatticeSlopes.Statement
-import Formalism.FockGram.StatementHerm
-import Formalism.ThetaLiftIndependence.Statement
-import Formalism.SharpRestriction.CuspSpanNormBounds.DataS
-import Formalism.LocalRingCardinality.DataKernels
-import Formalism.HermitianLattices.StatementMaj
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.HenselQuad
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.SecondConstantOfGaussSum
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.HarderNarasimhan.Statement
+public import Formalism.FrobeniusOrbits.HostThickExists
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ZsmulGeneratorEqZeroOfProjection
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.LocalRingCardinality.DataRows
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.LocalRingCardinality.DataArith
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.FockGram.StatementHerm
+public import Formalism.ThetaLiftIndependence.Statement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.DataS
+public import Formalism.LocalRingCardinality.DataKernels
+public import Formalism.HermitianLattices.StatementMaj
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.HenselQuad
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.SecondConstantOfGaussSum
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.HeightShare.star_sqrt_neg :
     ∀ {D : Formalism.BasicNotions.D7} (x : D.host.E) (n : ℕ),

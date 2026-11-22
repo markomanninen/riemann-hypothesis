@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocGoodLocJ
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocGoodLocJ
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ def SameUlocJ (Uloc : ∀ v : HeightOneSpectrum (𝓞 D.host.F),
     Subgroup (GL (Fin (D.sp.X (i + 1)).rank) (D.host.E ⊗[D.host.F] v.adicCompletion D.host.F))) : Prop :=
   ∀ v, S.Uloc v = (Uloc v).map (reGL (rankN D (i + 1) hi) _).toMonoidHom
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def HypTJ : Prop :=
   ∀ (w' : HeightOneSpectrum (𝓞 D.host.F)) (h : ((D.what₂.places.resChar w : ℕ) : 𝓞 D.host.F) ∈ w'.asIdeal)
     (x : GL (Fin (D.sp.X (i + 1)).rank) (D.host.E ⊗[D.host.F] w'.adicCompletion D.host.F)),
@@ -40,8 +44,8 @@ def HypTJ : Prop :=
       GL (Fin (D.sp.X (i + 1)).rank) _) : Matrix (Fin (D.sp.X (i + 1)).rank) (Fin (D.sp.X (i + 1)).rank) _) a b ∈
         w'.adicCompletionIntegers D.host.F) → x ∈ Uloc w'
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem locHyp_locJ (hU : SameUlocJ hi S Uloc) (hB : FrRatJ t B) (hT : HypTJ t) : LocHyp S (locJ hi t B) := by
   refine locHyp_of (rankN D (i + 1) hi) (locJ hi t B) S (D.sp.X (i + 1)).gram (gramN_apply D (i + 1) hi) B rfl Uloc hU ?_
   intro v x0 hx0 h1 h2
@@ -50,8 +54,8 @@ theorem locHyp_locJ (hU : SameUlocJ hi S Uloc) (hB : FrRatJ t B) (hT : HypTJ t) 
   · rw [hfr]; exact h1
   · rw [hfr]; exact h2
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem comp_locJ (hU : SameUlocJ hi S Uloc)
     (x : UPts (sigD D) (gramN D (i + 1) hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) :
     ∃ (a : cmp) (γ : GL (Fin (D.R.N (i + 1))) D.host.E)
@@ -81,8 +85,8 @@ theorem gam_re (c : cmp) (γ : ((gatCh (gatJ Lv (i + 1)) em).lev c).Γ) :
   rw [map_mul, map_mul, map_inv, ← bc_reGL]
   rfl
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem gam_locJ (hU : SameUlocJ hi S Uloc) (c : cmp) (γ : ((gatCh (gatJ Lv (i + 1)) em).lev c).Γ) :
     ((locJ hi t B).yG c)⁻¹ * bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) ((locJ hi t B).gamI c γ) *
         (locJ hi t B).yG c ∈ UPts (sigD D) (gramN D (i + 1) hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F) ∧
@@ -106,8 +110,8 @@ def UnitCharacterChartCompatibility (e : D.what₂.LL →+* (D.gat u w hg).Kf)
     ∃ r : D.what₂.LL, D.what₂.embLL r = (S.chi κ : ℂ) ∧
       algebraMap (D.gat u w hg).O (D.gat u w hg).Kf ((ψ a : (D.gat u w hg).Oˣ) : (D.gat u w hg).O) * e r = 1
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem chi_locJ (e : D.what₂.LL →+* (D.gat u w hg).Kf) (heps : eps = 1) (hψ : UnitCharacterChartCompatibility hi S e ψ)
     (c : cmp) (γ : ((gatCh (gatJ Lv (i + 1)) em).lev c).Γ) (κ : S.U) (hκ : (locJ hi t B).IsAway c γ κ.1) :
     ∃ r : D.what₂.LL, D.what₂.embLL r = (S.chi κ : ℂ) ∧
@@ -129,8 +133,8 @@ section Asm
 variable {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   (M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure FormsIn (j : ℕ) (hj : j ≤ D.R.m) where
   T : ℕ
   bad : Set (HeightOneSpectrum (𝓞 D.host.F))
@@ -143,8 +147,8 @@ structure FormsIn (j : ℕ) (hj : j ≤ D.R.m) where
   val : ValuationCompatibleChart M eY okW chOf K
   tw : ∀ β, DetTw (K β).lev (embT D) (cTw D j)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure LocIn (X : Formalism.L2.Herm.Herm0 D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) {Fl : Fills (D.gat u w hg)} (Lv : Levels Fl) (i : ℕ) (Ch : Type) where
   cmpt : Ch → Type
@@ -161,8 +165,8 @@ attribute [instance] LocIn.fin
 
 variable {M}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def stepInOf (Fo : FormsIn M (i + 1) hi) (Lc : LocIn X u w hg Lv i Fo.Ch)
     (pos : (Σ v : Fin (Fl.Pj (i + 1)).nV, Fin ((Fl.Pj (i + 1)).n' v)) ≃ D.what₂.Tau) :
     StepIn M (i + 1) hi (gatJ Lv (i + 1)) where
@@ -182,8 +186,8 @@ def stepInOf (Fo : FormsIn M (i + 1) hi) (Lc : LocIn X u w hg Lv i Fo.Ch)
   loc := fun β => locJ hi (Lc.t β) Lc.B
   pos := pos
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 structure LocTies (Fo : FormsIn M (i + 1) hi) (Lc : LocIn X u w hg Lv i Fo.Ch)
     (pos : (Σ v : Fin (Fl.Pj (i + 1)).nV, Fin ((Fl.Pj (i + 1)).n' v)) ≃ D.what₂.Tau)
     (e : D.what₂.LL →+* (D.gat u w hg).Kf) (β : Fo.Ch) : Prop where
@@ -210,26 +214,41 @@ structure LocTies (Fo : FormsIn M (i + 1) hi) (Lc : LocIn X u w hg Lv i Fo.Ch)
   chiRat : ChiRatAll (Fo.K β).lev D.what₂.embLL
   chRat : ∀ cl, ∃ r : D.what₂.LL, D.what₂.embLL r = ((Fo.tw β).ch ((Fo.K β).y cl) : ℂ)
 
-set_option maxHeartbeats 8000000 in
 
+set_option maxHeartbeats 8000000 in
 theorem core_of {Fo : FormsIn M (i + 1) hi} {Lc : LocIn X u w hg Lv i Fo.Ch}
     {pos : (Σ v : Fin (Fl.Pj (i + 1)).nV, Fin ((Fl.Pj (i + 1)).n' v)) ≃ D.what₂.Tau}
     {e : D.what₂.LL →+* (D.gat u w hg).Kf} {β : Fo.Ch} (H : LocTies hi Fo Lc pos e β) :
-    (stepInOf hi Fo Lc pos).Core e β where
-  good := locGood_locJ hi (Lc.t β) Lc.B
-  int := locInt_locJ hi (Lc.t β) Lc.B
-  hypP := locHyp_locJ hi (Lc.t β) Lc.B (Fo.K β).lev H.sameU H.frRat H.hypT
-  bad_p := H.bad_p
-  comp := comp_locJ hi (Lc.t β) Lc.B (Fo.K β).lev H.sameU
-  gam := gam_locJ hi (Lc.t β) Lc.B (Fo.K β).lev H.sameU
-  gamU := locJ_UJ hi (Lc.t β) Lc.B
-  std := H.std
-  actB := locJ_actB hi (Lc.t β) Lc.B H.frRat
-  pos_emb := H.pos_emb
-  wt := H.wt
-  chi := chi_locJ hi (Lc.t β) Lc.B (Fo.K β).lev e rfl H.psi
-  chiRat := H.chiRat
-  chRat := H.chRat
+    (stepInOf hi Fo Lc pos).Core e β := by
+  have hGood : LocGood (sigD D) (gramN D (i + 1) hi) (locJ hi (Lc.t β) Lc.B) :=
+    { herm := isHerm_re (rankN D (i + 1) hi) _ (D.sp.X (i + 1)).gram _
+        (gramN_apply D (i + 1) hi) (gram_herm D.sp.cm (D.sp.X (i + 1)))
+      det := det_re (rankN D (i + 1) hi) (D.sp.X (i + 1)).gram _
+        (gramN_apply D (i + 1) hi) (gram_det_unit D.sp.cm (D.sp.X (i + 1)))
+      sig := fun v x => (X.g u w hg).spl_sig _ ((X.g u w hg).pl v).2 x
+      yG_mem := fun c => reGL_mem_UPts (rankN D (i + 1) hi) D.sp.cm.sig (D.sp.X (i + 1)).gram _
+        (gramN_apply D (i + 1) hi) _ _ ((Lc.t β).yG c).2
+      yG_p := fun c v => by
+        have hy := (Lc.t β).yG_p c _ ((X.g u w hg).pl v).2
+        have hbc := bc_reGL (rankN D (i + 1) hi) (prV (E := D.host.E) ((X.g u w hg).pl v).1)
+          ((Lc.t β).yG c).1
+        rw [hy, map_one] at hbc
+        exact hbc }
+  exact
+    { good := hGood
+      int := locInt_locJ hi (Lc.t β) Lc.B
+      hypP := locHyp_locJ hi (Lc.t β) Lc.B (Fo.K β).lev H.sameU H.frRat H.hypT
+      bad_p := H.bad_p
+      comp := comp_locJ hi (Lc.t β) Lc.B (Fo.K β).lev H.sameU
+      gam := gam_locJ hi (Lc.t β) Lc.B (Fo.K β).lev H.sameU
+      gamU := locJ_UJ hi (Lc.t β) Lc.B
+      std := H.std
+      actB := locJ_actB hi (Lc.t β) Lc.B H.frRat
+      pos_emb := H.pos_emb
+      wt := H.wt
+      chi := chi_locJ hi (Lc.t β) Lc.B (Fo.K β).lev e rfl H.psi
+      chiRat := H.chiRat
+      chRat := H.chRat }
 
 end Asm
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.TopForm
 open scoped TensorProduct
 
@@ -24,7 +29,8 @@ theorem dForm_append_eq_smul : ∀ {k K L : Type} [CommRing k] [CommRing K] [Com
     letI := j.toAlgebra
     haveI : IsScalarTower k K L := IsScalarTower.of_algebraMap_eq' hc.symm
     have := congrArg (KaehlerDifferential.map k k K L) (ha i)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_smul, KaehlerDifferential.map_D] at this
     refine this.trans (Finset.sum_congr rfl fun l _ => ?_)
     rw [← algebraMap_smul L]

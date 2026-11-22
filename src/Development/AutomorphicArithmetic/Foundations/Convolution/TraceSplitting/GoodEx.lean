@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+
+@[expose] public section
 
 theorem UpperTheory.ConvolutionTheory.T.goodEx :
     UpperTheory.ConvolutionTheory.T.GoodEx := by

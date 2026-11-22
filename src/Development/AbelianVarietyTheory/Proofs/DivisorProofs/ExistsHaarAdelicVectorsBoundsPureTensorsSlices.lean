@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IntegrableOfRapidDecay
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IntegrableOfRapidDecay
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField MeasureTheory
@@ -29,14 +33,34 @@ theorem splitE_apply (p : (κ → mixedEmbedding.mixedSpace F) × (κ → Finite
 theorem continuous_splitE : Continuous (splitE F κ) := by
   rw [show ⇑(splitE F κ) = fun p : (κ → mixedEmbedding.mixedSpace F) × (κ → FiniteAdeleRing (𝓞 F) F) =>
     fun i => ((InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (p.1 i), p.2 i) from rfl]
-  exact continuous_pi fun i => ((GlobalTheory.Core.Rk.RapidInt.continuous_ofMixed F).comp
+  have hc : Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm := by
+    refine continuous_pi fun v => ?_
+    rcases v.isReal_or_isComplex with hv | hv
+    · rw [(InfinitePlace.Completion.isometry_extensionEmbeddingOfIsReal hv).isEmbedding.continuous_iff]
+      exact ((continuous_apply _).comp continuous_fst).congr fun y =>
+        (congrFun (congrArg Prod.fst ((InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply y)) ⟨v, hv⟩).symm
+    · rw [(InfinitePlace.Completion.isometry_extensionEmbedding v).isEmbedding.continuous_iff]
+      exact ((continuous_apply _).comp continuous_snd).congr fun y =>
+        (congrFun (congrArg Prod.snd ((InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply y)) ⟨v, hv⟩).symm
+  exact continuous_pi fun i => (hc.comp
     ((continuous_apply i).comp continuous_fst)).prodMk ((continuous_apply i).comp continuous_snd)
 
 theorem continuous_splitE_symm : Continuous (splitE F κ).symm := by
   rw [show ⇑(splitE F κ).symm = fun x : κ → AdeleRing (𝓞 F) F =>
     ((fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F (x i).1, fun i => (x i).2) :
       (κ → mixedEmbedding.mixedSpace F) × (κ → FiniteAdeleRing (𝓞 F) F)) from rfl]
-  exact (continuous_pi fun i => (GlobalTheory.Core.Rk.RapidInt.continuous_toMixed F).comp
+  have hc : Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace F) := by
+    have he : (InfiniteAdeleRing.ringEquiv_mixedSpace F : InfiniteAdeleRing F → mixedEmbedding.mixedSpace F) =
+        fun x => ((fun v : {w : InfinitePlace F // InfinitePlace.IsReal w} =>
+            InfinitePlace.Completion.extensionEmbeddingOfIsReal v.2 (x v)),
+          (fun v : {w : InfinitePlace F // InfinitePlace.IsComplex w} =>
+            InfinitePlace.Completion.extensionEmbedding v.1 (x v))) := by
+      funext x; exact InfiniteAdeleRing.ringEquiv_mixedSpace_apply F x
+    rw [he]
+    refine Continuous.prodMk (continuous_pi fun v => ?_) (continuous_pi fun v => ?_)
+    · exact (InfinitePlace.Completion.isometry_extensionEmbeddingOfIsReal v.2).continuous.comp (continuous_apply _)
+    · exact (InfinitePlace.Completion.isometry_extensionEmbedding v.1).continuous.comp (continuous_apply _)
+  exact (continuous_pi fun i => hc.comp
     (continuous_fst.comp (continuous_apply i))).prodMk (continuous_pi fun i => continuous_snd.comp (continuous_apply i))
 
 theorem pureA_splitE (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ)
@@ -132,7 +156,7 @@ theorem haar_pure_slice_bounds : ∀ (F : Type) [Field F] [NumberField F] (κ : 
     rw [lintegral_prod _ hHm.aemeasurable, ← lintegral_const_mul' _ _ hcT]
     refine lintegral_mono fun z => ?_
     set T : Set (κ → FiniteAdeleRing (𝓞 F) F) := (fun y' => y' + -y) ⁻¹' S with hT
-    have hTm : MeasurableSet T := hSm.preimage (continuous_add_right (-y)).measurable
+    have hTm : MeasurableSet T := hSm.preimage (continuous_id.add continuous_const).measurable
     have hνT : ν T = ν S := measure_preimage_add_right ν (-y) S
     calc ν S * ‖GlobalTheory.WeilAdm.slice F Φ y z‖ₑ ^ 2
         = ∫⁻ y', T.indicator (fun _ => ‖GlobalTheory.WeilAdm.slice F Φ y z‖ₑ ^ 2) y' ∂ν := by

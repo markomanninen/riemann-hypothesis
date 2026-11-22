@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.TwistedScalarSection
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.TwistedScalarSection
+
+@[expose] public section
 
 noncomputable section
 
@@ -167,7 +171,7 @@ theorem tsb_det_diffAt {ι : Type} [Fintype ι] [DecidableEq ι] {A : ℂ → Ma
   simp only [Matrix.det_apply]
   refine DifferentiableAt.fun_sum fun σ _ => ?_
   simp only [Units.smul_def, zsmul_eq_mul]
-  exact (differentiableAt_const _).mul (DifferentiableAt.fun_finset_prod fun i _ => h _ _)
+  exact (differentiableAt_const _).mul (DifferentiableAt.fun_finsetProd fun i _ => h _ _)
 
 theorem tsb_mul_diff {n : ℕ} (X : Fin n → ℝ) (M : M2 n) (i j : Fin n ⊕ Fin n) :
     Differentiable ℂ (fun z => (M * aZ X z) i j) := by
@@ -199,6 +203,8 @@ theorem tsbFacts : TSBFacts := by
   have hΦc : Continuous Φ := ((tsb_mR_cont n).comp continuous_fst).matrix_mul ((tsb_aZ_cont X).comp continuous_snd)
   set O : Set (GR n × ℂ) := {yz | (u1 (Φ yz)).det ≠ 0 ∧ (u2 (Φ yz)).det ≠ 0} with hO
   have hOo : IsOpen O := by
+    change IsOpen ({yz : GR n × ℂ | (u1 (Φ yz)).det ≠ 0} ∩
+      {yz : GR n × ℂ | (u2 (Φ yz)).det ≠ 0})
     refine IsOpen.inter ?_ ?_
     · exact isOpen_ne_fun (((continuous_first_cayley_block n).comp hΦc).matrix_det) continuous_const
     · exact isOpen_ne_fun (((continuous_second_cayley_block n).comp hΦc).matrix_det) continuous_const

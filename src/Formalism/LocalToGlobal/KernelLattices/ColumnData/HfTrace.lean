@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndepOfGen
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndepOfGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,8 @@ theorem Hf_embV (T : Tor D) (hT : ∀ τ x, T.emb τ x = embT D τ x) {N N' : �
   congr 1
   rw [← sum_tau_trace]
   refine Finset.sum_congr rfl fun τ _ => ?_
-  simp only [embV, hT, map_sum, map_mul, emb_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [embV, hT, map_sum, map_mul, emb_conj]
 
 end Formalism.L2.Ker.Cd.IntegralLatticeDensity.FL
 
@@ -123,9 +128,6 @@ theorem HfGenRec_of_arith (h : HfArithRec) : HfGenRec := by
   intro D cc hcc δ hδ h0 N N' L L' hA c hc c' hc' A hA' B hB'
   rw [FL.Hf_embV D (tor0 D cc δ) (fun _ _ => rfl) A B]
   exact h D cc hcc δ hδ h0 N N' L L' hA c hc c' hc' A hA' B hB'
-
-theorem LinkThIndep_of_arith (hA : HfArithRec) (hB : SelfDualRec) : LinkThIndep :=
-  LinkThIndep_of_gen (HfGenRec_of_arith hA) hB
 
 end Formalism.L2.Ker.Cd.IntegralLatticeDensity
 

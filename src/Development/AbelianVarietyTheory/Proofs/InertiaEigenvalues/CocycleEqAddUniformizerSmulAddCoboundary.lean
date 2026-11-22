@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
+
+@[expose] public section
+
 open ReciprocityTheory.Gal
 
 namespace GlobalTheory

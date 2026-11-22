@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CapelliAlgebraMapOfGlRelations
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GlRelationsHasUniversalProperty
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CapelliAlgebraMapOfGlRelations
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GlRelationsHasUniversalProperty
+
+@[expose] public section
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 

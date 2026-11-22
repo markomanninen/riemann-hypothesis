@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.IsGalAd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.IsGalAd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,12 +32,8 @@ def SSatEx : Prop :=
 def SSatUniq : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (n : ℕ) (π : Cusp F n) v B B', π.sat v B → π.sat v B' → B = B'
 
-def SSmo : Prop :=
-  GlobalTheory.Mem.LiteralAutomorphy.LitN → StrongMultOneReal → ∀ (F : Type) [Field F] [NumberField F] (n : ℕ), 1 ≤ n → ∀ π π' : Cusp F n,
-    (∀ᶠ w : HeightOneSpectrum (𝓞 F) in Filter.cofinite, ∃ B, π.sat w B ∧ π'.sat w B) → π.Iso π'
-
 def SConjSpaceC : Prop :=
-  ∀ (M : Type) [Field M] [NumberField M] [IsTotallyComplex M] (σ : M ≃+* M) (s : Ad M ≃+* Ad M), IsGalAd σ s →
+  ∀ (M : Type) [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M] (σ : M ≃+* M) (s : Ad M ≃+* Ad M), IsGalAd σ s →
     ∀ (n : ℕ) (P : CuspSub M n), ∃ P' : CuspSub M n,
       (Cusp.cx P').space = (fun f : GA M n → ℂ => fun g => f (Matrix.GeneralLinearGroup.map s.toRingHom g)) '' (Cusp.cx P).space
 
@@ -43,7 +43,7 @@ def SConjSpaceR : Prop :=
       (Cusp.re P').space = (fun f : GA M n → ℂ => fun g => f (Matrix.GeneralLinearGroup.map s.toRingHom g)) '' (Cusp.re P).space
 
 def SConjSatC : Prop :=
-  ∀ (K M : Type) [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M] [IsTotallyComplex M] (σ : M ≃ₐ[K] M)
+  ∀ (K M : Type) [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M] [_root_.NumberField.IsTotallyComplex M] (σ : M ≃ₐ[K] M)
     (s : Ad M ≃+* Ad M), IsGalAd σ.toRingEquiv s → ∀ (n : ℕ) (P P' : CuspSub M n),
     (Cusp.cx P').space = (fun f : GA M n → ℂ => fun g => f (Matrix.GeneralLinearGroup.map s.toRingHom g)) '' (Cusp.cx P).space →
     ∃ g : HeightOneSpectrum (𝓞 M) → HeightOneSpectrum (𝓞 M), Function.Injective g ∧ (∀ w, (g w).under (𝓞 K) = w.under (𝓞 K)) ∧

@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdOKP
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.SelfDual
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseExP
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.RecursiveLatticeMembership.MemLamOfIff
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdOKP
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.SelfDual
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseExP
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.RecursiveLatticeMembership.MemLamOfIff
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -104,7 +108,8 @@ theorem Seam.stdH_vec (hok : s.Ok) {n : ℕ} (x y : Sp X.E n) :
     (letI := D.host.cmStar; stdH D.host.E n (s.vec x) (s.vec y)) = s.iE (hStd X.E n x y) := by
   rw [Formalism.L2.Ker.Cd.IntegralLatticeDensity.SD.stdH_eq]
   show _ = s.iE (∑ i, star (x i) * y i)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, hok.2]
   rfl
@@ -125,8 +130,45 @@ theorem Seam.sd_lat (hok : s.Ok) {n : ℕ} {N : Submodule (𝓞 X.E) (Sp X.E n)}
     exact Submodule.fg_span (S.finite_toSet.image _)
   · rw [eq_top_iff]
     intro y _
+    have hspan : Submodule.span X.E (N : Set (Sp X.E n)) = ⊤ := by
+      apply Submodule.dualAnnihilator_eq_bot_iff.mp
+      apply le_antisymm ?_ bot_le
+      intro f hf
+      let v : Sp X.E n := fun i => star (f (Pi.single i 1))
+      have hpair : hStd X.E n v = f := by
+        apply (Pi.basisFun X.E (Fin n)).ext
+        intro i
+        rw [Pi.basisFun_apply, hStd_apply, Finset.sum_eq_single i]
+        · simp [v]
+        · intro j _ hj
+          simp [hj]
+        · simp
+      have hline (r : X.E) : r • v ∈ N := by
+        rw [← show dual (hStd X.E n) N = N from hN.2, dualBasic_mem_dual]
+        intro y hy
+        have hy0 : hStd X.E n v y = 0 := by
+          rw [hpair]
+          exact (Submodule.mem_dualAnnihilator f).mp hf y (Submodule.subset_span hy)
+        have hz : hStd X.E n y v = 0 := by
+          simpa [hy0] using ((hStd_isSymm (E := X.E) (n := n)).eq v y).symm
+        simp [hz]
+      have hv : v = 0 := by
+        funext i
+        change v i = 0
+        by_contra hi
+        -- A nonzero coordinate on this line would make the field finite over its ring of integers.
+        let coord := (LinearMap.proj i : Sp X.E n →ₗ[X.E] X.E).restrictScalars (𝓞 X.E)
+        have htop : N.map coord = ⊤ := by
+          rw [eq_top_iff]
+          intro x _
+          exact ⟨(x / v i) • v, hline _, div_mul_cancel₀ _ hi⟩
+        have : Module.Finite (𝓞 X.E) X.E := Module.finite_def.mpr (htop ▸ hN.1.fg.map coord)
+        exact RingOfIntegers.not_isField X.E
+          (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 X.E) X.E) (Field.toIsField X.E))
+      rw [Submodule.mem_bot]
+      simpa [hv] using hpair.symm
     have h1 : (fun i => s.iE.symm (y i) : Sp X.E n) ∈ Submodule.span X.E (N : Set (Sp X.E n)) := by
-      rw [hN.1.span_eq_top]; trivial
+      rw [hspan]; trivial
     have h2 := s.vec_spanE _ h1
     rw [s.vec_surj] at h2
     exact Submodule.span_mono (fun z hz => Submodule.subset_span hz) h2
@@ -196,33 +238,7 @@ theorem ambOf_eSmooth (hok : s.Ok) (hcc : TaylorLogMetric.IsCurveIdeal D cc) (h�
   refine h.comp ?_
   exact contDiff_pi.2 fun τ => contDiff_apply ℂ _ (s.iT.symm τ)
 
-theorem ambOf_chiF_ne (hok : s.Ok) (hχ : TaylorLogMetric.IsChi D χ) {a b : ℕ} (ha : Even a) (hb : Even b) {N : Submodule (𝓞 X.E) (Sp X.E a)}
-    {N' : Submodule (𝓞 X.E) (Sp X.E b)} (hN : IsSdLat N) (hN' : IsSdLat N') : (ambOf s B χ cD : Amb X).chiF a b N N' ≠ 0 :=
-  Base.chiFac_ne_zero χ hχ (s.admissible_of_selfDual_lattices hok ha hb hN hN')
-
 end AmbE
-
-theorem isCurveIdeal_ccK (D : Car) : TaylorLogMetric.IsCurveIdeal D D.host.ccK :=
-  ⟨D.host.ccK_ne_bot, Nat.Coprime.mul_right (D.host.ccK_coprime 2 (by simp)) (D.host.ccK_coprime D.host.d (by simp))⟩
-
-theorem discr_lamOf_ne (D : Car) (cc : Ideal (𝓞 D.host.K)) (hcc : cc ≠ ⊥) : Formalism.MainNotions.TaylorLogMetric.discr (TaylorLogMetric.lamOf D cc 1) ≠ 0 := by
-  obtain ⟨L, hL⟩ := periodExists D cc 1 hcc one_ne_zero
-  have hL' : ∀ w : ℂ, w ∈ TaylorLogMetric.lamOf D cc 1 ↔ w ∈ L.lattice := by
-    intro w
-    rw [← hL]
-    rfl
-  have h4 := Formalism.L2.PairingIndexBounds.Rec.eisG_eq_G _ L hL' 2 (by norm_num)
-  have h6 := Formalism.L2.PairingIndexBounds.Rec.eisG_eq_G _ L hL' 3 (by norm_num)
-  have := Formalism.L2.Th1.F.discNeZero L
-  unfold Formalism.MainNotions.TaylorLogMetric.discr Formalism.MainNotions.TaylorLogMetric.g2 Formalism.MainNotions.TaylorLogMetric.g3
-  rw [h4, h6]
-  simpa [PeriodPair.g₂, PeriodPair.g₃] using this
-
-theorem twelfth_root_disc_ne_zero (D : Car) (cc : Ideal (𝓞 D.host.K)) (hcc : cc ≠ ⊥) {δ : ℂ} (hδ : TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) : δ ≠ 0 := by
-  intro e
-  apply discr_lamOf_ne D cc hcc
-  rw [← (show δ ^ 12 = Formalism.MainNotions.TaylorLogMetric.discr (TaylorLogMetric.lamOf D cc 1) from hδ), e]
-  norm_num
 
 end Formalism.L2.Ker.Cd
 
@@ -234,29 +250,7 @@ section OverColDat
 
 variable (d : ColDat)
 
-theorem seamD_ok (h : d.what₂.embLL.comp d.embE = d.host.φ₀) : (seamD d).Ok := by
-  refine ⟨fun τ x => ?_, fun x => Formalism.BasicNotions.Examples₂.star_eq_conj d.host x⟩
-  show d.what₂.embLL (d.embE (d.host.sigmaOf (d.eTau τ : d.R.GG) x)) = d.host.φ₀ (d.host.sigmaOf (d.eTau τ : d.R.GG) x)
-  rw [← h]
-  rfl
-
 variable {d} (I : AmbIn d)
-
-theorem AmbIn.ambient_isTwelfthRootDisc : Cd.TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice (carD d) d.host.ccK I.K.δ := I.K.delta_pow_twelve_eq_discr
-
-theorem AmbIn.δ_ne : I.K.δ ≠ 0 := Cd.twelfth_root_disc_ne_zero (carD d) d.host.ccK d.host.ccK_ne_bot I.ambient_isTwelfthRootDisc
-
-theorem AmbIn.stdOK : I.B.StdOK := Cd.IntegralLatticeDensity.SO.stdOK I.B (Cd.isCurveIdeal_ccK (carD d)) I.ambient_isTwelfthRootDisc
-
-theorem AmbIn.amb_σ₀ : I.amb.σ₀ = d.σ₀ := rfl
-
-theorem AmbIn.eSmooth (h : d.what₂.embLL.comp d.embE = d.host.φ₀) (i j : ℕ) : I.amb.ESmooth (d.R.N i) (d.R.N j) :=
-  Cd.ambOf_eSmooth (seamD d) I.B I.χ I.cD (seamD_ok d h) (Cd.isCurveIdeal_ccK (carD d)) I.ambient_isTwelfthRootDisc I.δ_ne (factNEven d.R i) (factNEven d.R j)
-
-theorem AmbIn.chiF_ne (h : d.what₂.embLL.comp d.embE = d.host.φ₀) (hχ : Cd.TaylorLogMetric.IsChi (carD d) I.χ) (i j : ℕ)
-    {N : Submodule (𝓞 d.X.E) (Sp d.X.E (d.R.N i))} {N' : Submodule (𝓞 d.X.E) (Sp d.X.E (d.R.N j))} (hN : IsSdLat N) (hN' : IsSdLat N') :
-    I.amb.chiF (d.R.N i) (d.R.N j) N N' ≠ 0 :=
-  Cd.ambOf_chiF_ne (seamD d) I.B I.χ I.cD (seamD_ok d h) hχ (factNEven d.R i) (factNEven d.R j) hN hN'
 
 end OverColDat
 

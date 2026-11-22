@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,8 +118,8 @@ theorem equivariant_of_wave {V : Type} [AddCommGroup V] [Module ℂ V] (h : IsBi
     · rw [map_zero, map_zero, ← map_zero T]; congr 1; funext t; simp
   | add f g _ _ hf hg =>
     refine ⟨fun x hx => ?_, fun y hy => ?_⟩
-    · rw [map_add, map_add, ← hf.1 x hx, ← hg.1 x hx, ← map_add]; rfl
-    · rw [map_add, map_add, ← hf.2 y hy, ← hg.2 y hy, ← map_add]; congr 1; funext t; simp [mul_add]
+    · rw [map_add (f := _), map_add (f := _), ← hf.1 x hx, ← hg.1 x hx, ← map_add (f := _)]; rfl
+    · rw [map_add (f := _), map_add (f := _), ← hf.2 y hy, ← hg.2 y hy, ← map_add (f := _)]; congr 1; funext t; simp [mul_add]
   | smul c f _ hf =>
     refine ⟨fun x hx => ?_, fun y hy => ?_⟩
     · rw [map_smul, map_smul, ← hf.1 x hx, ← map_smul]; rfl
@@ -164,7 +168,20 @@ theorem placeModel_wave (ψ : AddChar (AF D.host.F) ℂ) {e : AE D} (Λ : AddSub
     ∀ x ∈ half S T e, ∀ y ∈ half S T (cA D e),
       Tm (wave (fun x y : WO S T => ψ (symplO S T x y)) (Λ ⊓ half S T e) x y) = heisL S T ψ x (heisL S T ψ y f₀) := by
   intro x hx y hy
-  have hb := isBichar_symplO S T ψ
+  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y
+      rw [symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y
+      rw [symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y
+      have h := symplO_add_left S T 0 0 y
+      have hz : symplO S T 0 y = 0 := by simpa using h
+      rw [hz, AddChar.map_zero_eq_one]
+    · intro x
+      have h := symplO_add_right S T x 0 0
+      have hz : symplO S T x 0 = 0 := by simpa using h
+      rw [hz, AddChar.map_zero_eq_one]
   have s0 := GlobalTheory.isSBHalf_halfInd e Λ
   have s1 : IsSBHalf e Λ fun t => ψ (symplO S T t y) * halfInd e Λ t := by
     obtain ⟨k, hk, hk'⟩ := hden y hy
@@ -200,7 +217,9 @@ theorem placeModel_span_ne {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D �
       (f₀ ≠ 0 → Φ ≠ 0 → Tm Φ ≠ 0) := by
   have hdual := (GlobalTheory.LatVac.latO_selfDual_approx_sign D ψ S T _ _ hψ hS hT).1
   have hfin0 := GlobalTheory.LatFinMod.latO_finite_mod D S T _ _ hS.1.fg hT.1.fg fun _ => True
-  have hden0 := fun t ht => exists_nsmul_mem_latO' hS.1 hT.1 t ht
+  have hden0 := fun t ht => exists_nsmul_mem_latO'
+    (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hS)
+    (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hT) t ht
   have he' : cA D e * cA D e = cA D e := by rw [← RingHom.map_mul, he]
   have hsm : ∀ a : AE D, a * a = a → ∀ u ∈ latO S T ΛS ΛT fun _ => True,
       a • u ∈ (latO S T ΛS ΛT fun _ => True) ⊓ half S T a := fun a ha u hu =>
@@ -228,7 +247,20 @@ theorem placeModel_span_ne {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D �
   have tf : ∀ k : ℕ, 0 < k → Function.Injective fun t : WO S T => k • t := fun k hk a b hab => by
     rw [← inv_smul_nsmul S T hk a, ← inv_smul_nsmul S T hk b]
     exact congrArg _ hab
-  have hb := isBichar_symplO S T ψ
+  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y
+      rw [symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y
+      rw [symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y
+      have h := symplO_add_left S T 0 0 y
+      have hz : symplO S T 0 y = 0 := by simpa using h
+      rw [hz, AddChar.map_zero_eq_one]
+    · intro x
+      have h := symplO_add_right S T x 0 0
+      have hz : symplO S T x 0 = 0 := by simpa using h
+      rw [hz, AddChar.map_zero_eq_one]
   have hw := placeModel_wave ψ Λ hLL' (fun y hy => hden0 y (fY y hy)) hTm
   obtain ⟨h1, k, hk, h2, h3⟩ := hΦ
   have h1' : ∀ t, Φ t ≠ 0 → t ∈ half S T e := fun t ht => (isHalf_iff S T).1 (h1 t ht)
@@ -243,7 +275,7 @@ theorem placeModel_span_ne {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D �
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨⟨x + y, ?_⟩, rfl⟩)
     ext i j
     change infPart D (x i j + y i j) = 0
-    rw [RingHom.map_add, show infPart D (x i j) = 0 from congrFun (congrFun (fX x hx) i) j,
+    rw [RingHom.map_add (f := _), show infPart D (x i j) = 0 from congrFun (congrFun (fX x hx) i) j,
       show infPart D (y i j) = 0 from congrFun (congrFun (fY y hy) i) j, add_zero]
   · have c1 : cA D e * e = 0 := by rw [mul_comm, hec]
     have c2 : cA D (cA D e) * cA D e = 0 := by rw [cA_cA, hec]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+
+@[expose] public section
+
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present GlobalTheory.RedFun Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
 
@@ -114,11 +119,11 @@ theorem fixed_witt {O k C : Type} [CommRing O] [Field k] [Field C] [CharP k l] [
     intro y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     | tmul c r =>
       induction r using TensorProduct.induction_on with
       | zero => simp
-      | add a b ha hb => rw [TensorProduct.tmul_add, map_add, map_add, ha, hb]
+      | add a b ha hb => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), ha, hb]
       | tmul o w =>
         rw [hF', hG, hg, TensorProduct.smul_tmul', smul_eq_mul, mul_one, TensorProduct.smul_tmul,
           TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -127,11 +132,11 @@ theorem fixed_witt {O k C : Type} [CommRing O] [Field k] [Field C] [CharP k l] [
     intro y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
     | tmul c r =>
       induction r using TensorProduct.induction_on with
       | zero => simp
-      | add a b ha hb => rw [TensorProduct.tmul_add, map_add, map_add, ha, hb, map_add, map_add]
+      | add a b ha hb => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
       | tmul o w =>
         rw [hF']
         exact (hF' c o (φ w)).trans (by rw [hφ0]; rfl)

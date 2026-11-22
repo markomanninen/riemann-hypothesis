@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankZeroApply
-import Formalism.DoubleCosetMeasures.Statement
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankZeroApply
+public import Formalism.DoubleCosetMeasures.Statement
+
+@[expose] public section
 
 noncomputable section
 

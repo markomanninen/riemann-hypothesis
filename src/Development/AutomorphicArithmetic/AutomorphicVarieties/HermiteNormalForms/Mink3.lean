@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Torsfree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Cardsep
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Torsfree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Cardsep
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexOrder

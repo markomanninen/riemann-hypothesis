@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -67,9 +72,9 @@ section Eqv
 def EqvLin {X Y : Scheme.{0}} (t : SAB H Y) (p : X ⟶ Y) {Γ : Type} [Group Γ] (ρ' : Γ →* Aut X) (G' : Over X)
     [GrpObj G'] (ψ : G'.left ⟶ t.G.left) (act' : OAct (𝓞 E) G') (m : Γ → (G'.left ⟶ G'.left)) : Prop :=
   IsGrpPullback G' t.G p ψ ∧ (∀ a, (act'.act a).left ≫ ψ = ψ ≫ (t.act.act a).left) ∧
-    (∀ γ, IsGrpPullback G' G' (ρ' γ).hom (m γ)) ∧ (∀ γ a, (act'.act a).left ≫ m γ = m γ ≫ (act'.act a).left) ∧
+    (∀ γ, IsGrpPullback G' G' (ρ' γ).asIso.hom (m γ)) ∧ (∀ γ a, (act'.act a).left ≫ m γ = m γ ≫ (act'.act a).left) ∧
     (∀ γ₁ γ₂, m (γ₁ * γ₂) = m γ₂ ≫ m γ₁) ∧
-    ∀ γ (x : X), X.fromSpecResidueField x ≫ (ρ' γ).hom = X.fromSpecResidueField x →
+    ∀ γ (x : X), X.fromSpecResidueField x ≫ (ρ' γ).asIso.hom = X.fromSpecResidueField x →
       ∀ (T : Scheme.{0}) (w : T ⟶ G'.left) (v : T ⟶ Spec (X.residueField x)),
         w ≫ G'.hom = v ≫ X.fromSpecResidueField x → w ≫ m γ = w
 

@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreMore
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingLocal
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreTer
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StLocRingInj
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreFurther
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsBisAlt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreMore
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingLocal
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreTer
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StLocRingInj
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreFurther
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsBisAlt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -80,7 +85,8 @@ theorem regMaxAt_isMaximal (hO : RegularityOrder.Statement) (hL : LocRingLocal.S
   have hn : n ∈ (regMaxAt P W hW hPW hloc).comap (algebraMap ℤ (regRing P)) := by
     rw [Ideal.mem_comap, algebraMap_int_eq, eq_intCast]
     exact intCast_mem_regMaxAt hL hP.2.1.1 hW hPW hloc hnW
-  exact Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := ℤ) _
+  exact Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap ℤ (regRing P))
+    Algebra.IsIntegral.isIntegral _
     (_root_.IsPrime.to_maximal_ideal fun h => hn0 (by rw [h] at hn; exact hn))
 
 theorem RegularityMaximalSpectrum.proof (hO : RegularityOrder.Statement)

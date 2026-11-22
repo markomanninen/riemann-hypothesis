@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NullMeasurableSetShearImage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NullMeasurableSetShearImage
+
+@[expose] public section
+
 open MeasureTheory Function
 open scoped Pointwise
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumSublatticeIndexRpowLeSolomon
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumSublatticeIndexRpowLeSolomon
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace BigOperators
 set_option maxHeartbeats 1000000 in

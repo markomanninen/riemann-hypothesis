@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementQ
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+
+@[expose] public section
 
 noncomputable section
 

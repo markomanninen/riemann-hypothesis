@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdLiftDef
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdLiftDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem ladj_det : (ladjG S).det ≠ 0 := by
   have hy : ∑ k, v k • S.frame k = 0 := by
     apply ladj_ext S
     intro i
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have := congrFun hmul i
     simp only [Matrix.mulVec, dotProduct, ladjG, Pi.zero_apply] at this
     rw [← this]
@@ -41,7 +46,8 @@ def ladjOp (B : S.V →ₗ[E] S.V) : S.V →ₗ[E] S.V :=
 theorem ladj_frame (B : S.V →ₗ[E] S.V) (l : Fin S.rank) (y : S.V) :
     S.hT (S.frame l) (ladjOp S B y) = S.hT (B (S.frame l)) y := by
   have hu : IsUnit (ladjG S).det := isUnit_iff_ne_zero.2 (ladj_det S)
-  simp only [ladjOp, LinearMap.sum_apply, LinearMap.smulRight_apply, LinearMap.smul_apply, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ladjOp, LinearMap.sum_apply, LinearMap.smulRight_apply, LinearMap.smul_apply, map_sum, map_smul,
     smul_eq_mul]
   have h1 : ∀ i : Fin S.rank, (∑ k, (ladjG S)⁻¹ i k * S.hT (B (S.frame k)) y) * S.hT (S.frame l) (S.frame i) =
       ∑ k, (ladjG S l i * (ladjG S)⁻¹ i k) * S.hT (B (S.frame k)) y := by

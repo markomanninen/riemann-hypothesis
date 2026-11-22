@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -135,7 +139,7 @@ theorem avg_abs {ι : Type} [Fintype ι] [DecidableEq ι] (SaP SbP Sa Sb : Finse
       ← Finset.prod_univ_sum (fun _ : ι => Finset.range (J + 1)) (fun s j => q (al s + j) (be s + j) j), mul_comm]
     refine mul_le_mul_of_nonneg_left ?_ (hkf _ _)
     calc δ ^ Fintype.card ι = ∏ _s : ι, δ := by rw [Finset.prod_const, Finset.card_univ]
-      _ ≤ _ := Finset.prod_le_prod (fun _ _ => hδ0) fun s _ =>
+      _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => hδ0) fun s _ =>
         hδ (al s) ((Fintype.mem_piFinset.1 hal) s) (be s) ((Fintype.mem_piFinset.1 hbe) s)
   have h4 : δ ^ Fintype.card ι * ∑ al ∈ Ta, ∑ be ∈ Tb, kf al be ≤ ∑ A ∈ SA, ∑ B ∈ SB, kx A B := by
     refine le_trans ?_ (le_trans h2 h1)

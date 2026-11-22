@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.OrbitMeasurability.PerCont
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
-import GroundTheory.GlobalFields.IdeleGroups.Rational
-import GroundTheory.AutomorphicForms.GL2Classical.EigenformTranslates
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.OrbitMeasurability.PerCont
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+public import GroundTheory.GlobalFields.IdeleGroups.Rational
+public import GroundTheory.AutomorphicForms.GL2Classical.EigenformTranslates
+
+@[expose] public section
 
 noncomputable section
 
@@ -185,13 +189,11 @@ private theorem det_centralSection (s : {r : ℝ // 0 < r}) : Dt (centralSection
 
 private def toS (y : GL (Fin 2) (A ℚ)) (h : Dt y = 1) : G1 ℚ := ⟨y.val, congrArg Units.val h⟩
 
-private theorem gl_toS (y : GL (Fin 2) (A ℚ)) (h : Dt y = 1) : gl (toS y h) = y := Units.ext rfl
-
 private theorem toS_eq {y y' : GL (Fin 2) (A ℚ)} {h : Dt y = 1} {h' : Dt y' = 1} (g : G1 ℚ) (e : y = gl g * y') :
     toS y h = g * toS y' h' := Subtype.ext (congrArg Units.val e)
 
-open GroundTheory.Automorphic.Reduction in
 
+open GroundTheory.Automorphic.Reduction in
 private def Mx (Q : IdeleGroup ℚ → ℚˣ) (S : IdeleGroup ℚ → {r : ℝ // 0 < r}) (T : IdeleGroup ℚ → IdeleGroup ℚ)
     (x : GL (Fin 2) (A ℚ)) : GL (Fin 2) (A ℚ) :=
   ratGL ℚ 2 (dq (Q (Dt x)))⁻¹ * (centralSection ℚ 2 (S (Dt x)))⁻¹ * x * (dM (T (Dt x)))⁻¹

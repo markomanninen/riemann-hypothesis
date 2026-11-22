@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct
@@ -31,9 +35,9 @@ private theorem gdet_map_chi_mapRingHom_eq_map_chi {n : ℕ} {A G : Type} [CommR
           - (MonoidAlgebra.mapRingHom G Polynomial.C) (MonoidAlgebra.mapRingHom G f x) := by
     rw [map_sub, MonoidAlgebra.mapRingHom_single]
     congr 1
-    · simp [φ]
+    · simp [φ, Polynomial.mapRingHom]
     · ext g
-      simp [φ, MonoidAlgebra.mapRingHom]
+      simp [φ, Polynomial.mapRingHom, MonoidAlgebra.mapRingHom]
   rw [e] at key
   exact key
 
@@ -69,7 +73,7 @@ theorem UpperTheory.V.Pa.BC.pair_bc :
     obtain ⟨a, ha⟩ := IsCO.res_surj (O := O) x
     have hx : x = algebraMap O R a + (x - algebraMap O R a) := by ring
     have h2 : g (x - algebraMap O R a) ∈ maximalIdeal R' := map_nonunit g _ ha
-    rw [hx, map_add, map_add, map_add, hg, res_eq_zero_of_mem_maximalIdeal _ h2, res_eq_zero_of_mem_maximalIdeal _ ha, add_zero, add_zero,
+    rw [hx, map_add (f := _), map_add (f := _), map_add (f := _), hg, res_eq_zero_of_mem_maximalIdeal _ h2, res_eq_zero_of_mem_maximalIdeal _ ha, add_zero, add_zero,
       AlgHom.commutes, AlgHom.commutes, ResidueField.algebraMap_eq, ResidueField.algebraMap_eq,
       ResidueField.map_residue]
   have hs1 : ∀ h : F.G₀, (MonoidAlgebra.single h (1 : R') : MonoidAlgebra R' F.G₀)

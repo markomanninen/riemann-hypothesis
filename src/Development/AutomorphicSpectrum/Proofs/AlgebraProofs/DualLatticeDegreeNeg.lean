@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BundleDegreeEqSumValuationsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BundleDegreeEqSumValuationsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem isLatOf_dual (L : C.I → AddSubgroup V) (B : V →ₗ[K] V' →ₗ[K] K
     split_ifs <;> simp
   · intro hy x hx
     have hx' := (h x).1 hx
-    rw [← b.sum_repr x, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum, LinearMap.sum_apply]
     refine (C.v i).map_sum_le fun q _ => ?_
     rw [map_smul, LinearMap.smul_apply, smul_eq_mul, map_mul, ← hb]
     exact mul_le_one' (hx' q) (hy q)

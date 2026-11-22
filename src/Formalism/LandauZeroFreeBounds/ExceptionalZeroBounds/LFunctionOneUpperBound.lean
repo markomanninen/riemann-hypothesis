@@ -1,5 +1,9 @@
-import Formalism.LandauZeroFreeBounds.SameCharacterLFunctionOne
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LDerivNearOne
+module
+
+public import Formalism.LandauZeroFreeBounds.SameCharacterLFunctionOne
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LDerivNearOne
+
+@[expose] public section
 
 open Complex
 

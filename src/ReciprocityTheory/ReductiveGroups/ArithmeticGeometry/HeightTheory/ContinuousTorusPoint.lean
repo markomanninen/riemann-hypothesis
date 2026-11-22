@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AevalElimEqRenameLinearSubstitution
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AevalElimEqRenameLinearSubstitution
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -35,7 +39,7 @@ theorem torusProb_map_comp {κ κ' : Type} [Fintype κ] [Fintype κ'] (e : κ �
     Measure.map (fun θ : κ' → ℝ => θ ∘ e) (torusProb κ') = torusProb κ := by
   classical
   have hmeas : Measurable (fun θ : κ' → ℝ => θ ∘ e) :=
-    measurable_pi_lambda _ (fun a => measurable_pi_apply (e a))
+    Measurable.of_eval (fun a => measurable_pi_apply (e a))
   unfold torusProb
   symm
   refine Measure.pi_eq (fun s hs => ?_)
@@ -75,7 +79,7 @@ theorem torusMean_rename {κ κ' : Type} [Fintype κ] [Fintype κ'] (e : κ → 
   simp_rw [MvPolynomial.eval_rename]
   rw [← torusProb_map_comp e he, MeasureTheory.integral_map]
   · rfl
-  · exact (measurable_pi_lambda _ fun i => measurable_pi_apply (e i)).aemeasurable
+  · exact (Measurable.of_eval fun i => measurable_pi_apply (e i)).aemeasurable
   · exact (measurable_log_eval_torus f).aestronglyMeasurable
 
 theorem gaussAbs_rename_of_injective {K : Type} [Field K] [NumberField K] {κ κ' : Type} (e : κ → κ')

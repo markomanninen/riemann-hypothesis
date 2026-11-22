@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAnalyticFlagDomainFrameLiftAlgebraicChartStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHolomorphicInvertibleFrameCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricGramHolomorphicFrameFormStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAnalyticFlagDomainFrameLiftAlgebraicChartStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHolomorphicInvertibleFrameCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricGramHolomorphicFrameFormStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -42,7 +46,7 @@ theorem lieGram_local_model : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
     exact hzD
   · filter_upwards [hKev, hev] with w ⟨⟨g0, hg0⟩, hKw⟩ ⟨hsw, _⟩ τ
     have hex : ∃ g, FrameAt e f₀ A₀ A (c'.e.symm w) g := ⟨g0, hg0⟩
-    rw [lieGram, dif_pos hex]
+    rw [lieGram, dite_eq_left hex]
     show ((hodgeMet T.Z U).gram _ hex.choose τ)ᵀ = _
     rw [hKw hsw _ hex.choose_spec, Matrix.transpose_mul, Matrix.transpose_mul, (hG (s w) hsw).2.2.2.2 τ, hco]
     have hKt : ((K w τ)ᴴ)ᵀ = ((K w τ)ᵀ)ᴴ := by ext; simp

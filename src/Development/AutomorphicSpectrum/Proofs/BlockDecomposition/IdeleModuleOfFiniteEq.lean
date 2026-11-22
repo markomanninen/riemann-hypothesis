@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem norm_le_one_of_mem_OH {b : (FiniteAdeleRing (𝓞 k) k)ˣ}
 theorem finiteModule_le_one {b : (FiniteAdeleRing (𝓞 k) k)ˣ}
     (hb : (b : FiniteAdeleRing (𝓞 k) k) ∈ OH k) : finiteModule (ofFinite b) ≤ 1 := by
   rw [finiteModule, finprod_eq_prod _ (finite_mulSupport_norm _)]
-  exact Finset.prod_le_one (fun _ _ ↦ norm_nonneg _) fun v _ ↦ norm_le_one_of_mem_OH hb v
+  exact Finset.prod_le_one₀ (fun _ _ ↦ norm_nonneg _) fun v _ ↦ norm_le_one_of_mem_OH hb v
 
 theorem finiteModule_lt_one {b : (FiniteAdeleRing (𝓞 k) k)ˣ}
     (hb : (b : FiniteAdeleRing (𝓞 k) k) ∈ OH k) (hu : b ∉ finiteIntegralUnits k) :
@@ -58,7 +62,7 @@ theorem finiteModule_lt_one {b : (FiniteAdeleRing (𝓞 k) k)ˣ}
   rw [finiteModule, finprod_eq_prod _ hfin, ← Finset.mul_prod_erase _ _ hvS]
   calc _ ≤ ‖((ofFinite b : IdeleGroup k) : 𝔸[k]).2 v‖ * 1 :=
         mul_le_mul_of_nonneg_left
-          (Finset.prod_le_one (fun _ _ ↦ norm_nonneg _) fun u _ ↦ norm_le_one_of_mem_OH hb u)
+          (Finset.prod_le_one₀ (fun _ _ ↦ norm_nonneg _) fun u _ ↦ norm_le_one_of_mem_OH hb u)
           (norm_nonneg _)
     _ < 1 := by rwa [mul_one]
 

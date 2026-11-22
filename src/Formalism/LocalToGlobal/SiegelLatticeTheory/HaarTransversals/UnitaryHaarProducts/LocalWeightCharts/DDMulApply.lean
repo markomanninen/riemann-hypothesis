@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants
 
@@ -123,20 +127,21 @@ structure ColB (g : Mx k r) : Prop where
   ww : ∀ j c : Fin (k + 1), g (wI k r j) (wI k r c) = if j = c then 1 else 0
   sw : ∀ (a : Fin r) (j : Fin (k + 1)), g (esI k r a) (wI k r j) = 0
 
-theorem colB_of {g : Mx k r} (h : UnitaryGroupBasics.col k r g) : ColB g where
-  aa a b hab := by
+theorem colB_of {g : Mx k r} (h : UnitaryGroupBasics.col k r g) : ColB g := by
+  refine { aa := ?_, wa := ?_, sa := ?_, ww := ?_, sw := ?_ }
+  · intro a b hab
     rw [h _ _ (by simp only [eI]; omega) (Or.inl (by simp only [eI]; exact hab))]
     simp only [eI_inj]
-  wa j b := by
+  · intro j b
     rw [h _ _ (by simp only [eI]; omega) (Or.inr (by simp only [wI]; omega)),
       if_neg (eI_ne_wI b j).symm]
-  sa a b := by
+  · intro a b
     rw [h _ _ (by simp only [eI]; omega) (Or.inr (by simp only [esI]; omega)),
       if_neg (eI_ne_esI b a).symm]
-  ww j c := by
+  · intro j c
     rw [h _ _ (by simp only [wI]; omega) (Or.inr (by simp only [wI]; omega))]
     simp only [wI_inj]
-  sw a j := by
+  · intro a j
     rw [h _ _ (by simp only [wI]; omega) (Or.inr (by simp only [esI]; omega)),
       if_neg (wI_ne_esI j a).symm]
 

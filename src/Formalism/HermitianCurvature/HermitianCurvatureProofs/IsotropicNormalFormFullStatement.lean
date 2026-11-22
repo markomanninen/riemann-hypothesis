@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianPerturbedVectorOrthogonal
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianPerturbedVectorOrthogonal
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -52,7 +56,7 @@ theorem isotropicNormalFormFull_statement : IsotropicNormalFormFull := by
   have hV1c : ∀ b : Fin m, V1 (i.succAbove b).val = Vc b := by
     intro b
     simp only [V1]
-    rw [dif_pos ⟨(i.succAbove b).isLt, hsne b⟩, pidx_succAbove]
+    rw [dite_eq_left ⟨(i.succAbove b).isLt, hsne b⟩, pidx_succAbove]
   have hV1i : V1 i.val = ViF m i Vc := by
     simp [V1]
   have hyy' : ∀ a a' : Fin m, herm (Hpk k (m + 1)) (y (i.succAbove a)) (y (i.succAbove a')) = 0 :=
@@ -61,7 +65,7 @@ theorem isotropicNormalFormFull_statement : IsotropicNormalFormFull := by
     fun b c => NFOne.herm_comb k (m + 1) m (fun a => y (i.succAbove a)) hyy' _ _
 
   have V1_0 : ∀ c, m + 1 ≤ c → V1 c = 0 := by
-    intro c hc; simp only [V1]; rw [dif_neg (by omega), if_neg (by omega)]
+    intro c hc; simp only [V1]; rw [dite_eq_right (by omega), if_neg (by omega)]
   have V1_cases : ∀ c, c < m + 1 → (c = i.val ∧ V1 c = ViF m i Vc) ∨
       (∃ b : Fin m, (i.succAbove b).val = c ∧ V1 c = Vc b) := by
     intro c hc
@@ -69,7 +73,7 @@ theorem isotropicNormalFormFull_statement : IsotropicNormalFormFull := by
     · left; exact ⟨hci, by rw [hci, hV1i]⟩
     · right
       refine ⟨pidx m i c ⟨hc, hci⟩, succAbove_pidx m i c ⟨hc, hci⟩, ?_⟩
-      simp only [V1]; rw [dif_pos ⟨hc, hci⟩]
+      simp only [V1]; rw [dite_eq_left ⟨hc, hci⟩]
   have V1_s : ∀ b, b < m + 1 → ∀ q : Fin (2 * (m + 1) + k + 1), m + 1 + k < q.val →
       V1 b q = if (NFOne.sg k (m + 1) q).val = b then 1 else 0 := by
     intro b hb q hq
@@ -181,9 +185,9 @@ theorem isotropicNormalFormFull_statement : IsotropicNormalFormFull := by
       (c ≠ i.val ∧ V2 c = bvec (esI k (m + 1) ⟨c, hc⟩)) := by
     intro c hc
     by_cases hci : c = i.val
-    · left; refine ⟨hci, ?_⟩; simp only [V2]; rw [dif_pos hc, if_pos hci]
-    · right; refine ⟨hci, ?_⟩; simp only [V2]; rw [dif_pos hc, if_neg hci]
-  have V2_0 : ∀ c, m + 1 ≤ c → V2 c = 0 := by intro c hc; simp only [V2]; rw [dif_neg (by omega)]
+    · left; refine ⟨hci, ?_⟩; simp only [V2]; rw [dite_eq_left hc, if_pos hci]
+    · right; refine ⟨hci, ?_⟩; simp only [V2]; rw [dite_eq_left hc, if_neg hci]
+  have V2_0 : ∀ c, m + 1 ≤ c → V2 c = 0 := by intro c hc; simp only [V2]; rw [dite_eq_right (by omega)]
   have V2_s : ∀ b, b < m + 1 → ∀ q : Fin (2 * (m + 1) + k + 1), m + 1 + k < q.val →
       V2 b q = if (NFOne.sg k (m + 1) q).val = b then 1 else 0 := by
     intro b hb q hq

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.DzGenMat
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.DzGenMat
+
+@[expose] public section
 
 noncomputable section
 

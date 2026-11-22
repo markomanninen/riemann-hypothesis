@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrVGA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CoefOp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrVGA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CoefOp
+
+@[expose] public section
 
 noncomputable section
 

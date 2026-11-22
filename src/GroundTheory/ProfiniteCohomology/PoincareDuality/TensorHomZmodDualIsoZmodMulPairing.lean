@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
-import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -62,7 +67,7 @@ theorem bijective_toDualDual [NeZero n] (hD : Nonempty (D ≃+ ZMod n)) [Finite 
   have : Finite (dualRep D (dualRep D M)) := finite_dualRep
   refine Function.Injective.bijective_of_nat_card_le ?_
     ((card_dualRep_le hD).trans (card_dualRep_le hD))
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro m hm
   by_contra hne
   obtain ⟨f, hf⟩ := exists_dualRep_apply_ne_zero hD hM hne
@@ -96,7 +101,7 @@ theorem tensorHom_dualEvalAt (D X : Rep.{u} k G) (x : X) (hx : ∀ g : G, X.ρ g
   | tmul a ν =>
     change μ.hom (a ⊗ₜ[k] (ν : X →ₗ[k] D) x : (X ⊗ D : Rep k G)) = (ν : X →ₗ[k] D) a
     exact h a ν
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 end EvalAt
 
@@ -170,10 +175,10 @@ theorem dualShortComplex_surjective_g [NeZero n] (hD : Nonempty (D ≃+ ZMod n))
 
 theorem dualShortComplex_shortExact [NeZero n] (hD : Nonempty (D ≃+ ZMod n))
     {S : ShortComplex (Rep.{u} (ULift.{u} ℤ) G)} (hS : S.ShortExact)
-    (hn : ∀ x : S.X₂, n • x = 0) : (dualShortComplex D S).ShortExact where
-  exact := dualShortComplex_exact hS
-  mono_f := (Rep.mono_iff_injective _).2 (dualShortComplex_injective_f hS)
-  epi_g := (Rep.epi_iff_surjective _).2 (dualShortComplex_surjective_g hD hS hn)
+    (hn : ∀ x : S.X₂, n • x = 0) : (dualShortComplex D S).ShortExact := by
+  refine ShortComplex.ShortExact.mk' (dualShortComplex_exact hS) ?_ ?_
+  · exact (Rep.mono_iff_injective (dualShortComplex D S).f).2 (dualShortComplex_injective_f hS)
+  · exact (Rep.epi_iff_surjective (dualShortComplex D S).g).2 (dualShortComplex_surjective_g hD hS hn)
 
 end Exact
 
@@ -196,7 +201,7 @@ theorem dualRep_zmodRep_apply (ν : dualRep D (zmodRep.{u} G n)) (a : ZMod n) :
 include hD in
 theorem bijective_zmodDualHom : Function.Bijective (zmodDualHom n D).hom := by
   constructor
-  · rw [injective_iff_map_eq_zero]
+  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro ν hν
     rw [zmodDualHom_hom_apply] at hν
     refine DFunLike.ext _ _ fun a => ?_

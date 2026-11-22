@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.SpreadingOutLocallyQuasiFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroForallComplexPointExtend
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SpreadingOutLocallyQuasiFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroForallComplexPointExtend
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut Topology

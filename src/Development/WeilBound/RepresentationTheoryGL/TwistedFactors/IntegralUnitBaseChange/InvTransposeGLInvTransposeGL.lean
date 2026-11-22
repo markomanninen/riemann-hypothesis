@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Polynomial
 open scoped ENNReal
@@ -105,10 +109,11 @@ variable [MeasurableSpace G]
 def IsQuotNormaliser (H : Subgroup G) (μH : Measure H) (ρ : G → ℝ≥0∞) : Prop :=
   Measurable ρ ∧ ∀ g : G, ∫⁻ h, ρ ((h : G) * g) ∂μH = 1
 
-open Classical in
 
-def quotLIntegral (μG : Measure G) (H : Subgroup G) (μH : Measure H) (F : G → ℝ≥0∞) : ℝ≥0∞ :=
-  if hρ : ∃ ρ, IsQuotNormaliser H μH ρ then ∫⁻ g, F g * hρ.choose g ∂μG else 0
+open Classical in
+def quotLIntegral (μG : Measure G) (H : Subgroup G) (μH : Measure H) (F : G → ℝ≥0∞) : ℝ≥0∞ := by
+  classical
+  exact if hρ : ∃ ρ, IsQuotNormaliser H μH ρ then ∫⁻ g, F g * hρ.choose g ∂μG else 0
 
 theorem lintegral_normaliser_eq [MeasurableMul₂ G] [MeasurableInv G]
     {μG : Measure G} [μG.IsMulLeftInvariant] [SFinite μG]
@@ -152,7 +157,7 @@ theorem quotLIntegral_eq [MeasurableMul₂ G] [MeasurableInv G]
     {ρ : G → ℝ≥0∞} (hρ : IsQuotNormaliser H μH ρ) :
     quotLIntegral μG H μH F = ∫⁻ g, F g * ρ g ∂μG := by
   have hex : ∃ ρ, IsQuotNormaliser H μH ρ := ⟨ρ, hρ⟩
-  rw [quotLIntegral, dif_pos hex]
+  rw [quotLIntegral, dite_eq_left hex]
   exact lintegral_normaliser_eq hF hFH hex.choose_spec hρ
 
 def twOrbIntegral (θ : Monoid.End G) (μG : Measure G) (δ : G) (μδ : Measure (twCent θ δ))
@@ -210,7 +215,7 @@ theorem coeff_charpoly_normGL_fixed (σ : E ≃ₐ[k] E) (hℓ : σ ^ Module.fin
     (δ : GL n E) (i : ℕ) :
     σ (((normGL σ δ : GL n E) : Matrix n n E).charpoly.coeff i) =
       ((normGL σ δ : GL n E) : Matrix n n E).charpoly.coeff i := by
-  have h := congrArg (fun p => Polynomial.coeff p i) (charpoly_twNorm_map σ hℓ δ)
+  have h := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p i) (charpoly_twNorm_map σ hℓ δ)
   simpa [normGL, Polynomial.coeff_map] using h
 
 theorem charpoly_normGL_lifts [FiniteDimensional k E] [IsGalois k E] (σ : E ≃ₐ[k] E)
@@ -304,89 +309,19 @@ def invTransposeGL : Monoid.End (GL n E) where
 def thetaGL (σ : E ≃ₐ[k] E) (J : GL n E) : Monoid.End (GL n E) :=
   (MulAut.conj J).toMonoidHom.comp (invTransposeGL.comp (sigmaGL σ))
 
-theorem thetaGL_apply (σ : E ≃ₐ[k] E) (J g : GL n E) :
-    thetaGL σ J g = J * invTransposeGL (sigmaGL σ g) * J⁻¹ := rfl
-
-def unitaryGL (σ : E ≃ₐ[k] E) (J : GL n E) : Subgroup (GL n E) :=
-  MonoidHom.eqLocus (thetaGL σ J) (MonoidHom.id _)
-
-def normU (σ : E ≃ₐ[k] E) (J δ : GL n E) : GL n E := twNorm (thetaGL σ J) 2 δ
-
-def unitFnU [ValuativeRel E] (σ : E ≃ₐ[k] E) (J : GL n E) : unitaryGL σ J → ℝ≥0∞ :=
-  Set.indicator {u | (u : GL n E) ∈ unitGL (n := n) E} 1
-
 variable [TopologicalSpace E] [MeasurableSpace (GL n E)]
 
-structure StableData (σ : E ≃ₐ[k] E) (J : GL n E) (γ : unitaryGL σ J)
-    (μγ : Measure (Subgroup.centralizer ({γ} : Set (unitaryGL σ J)))) where
-  reps : Finset (unitaryGL σ J)
-  conj : unitaryGL σ J → GL n E
-  meas : (γ' : unitaryGL σ J) → Measure (Subgroup.centralizer ({γ'} : Set (unitaryGL σ J)))
-  conj_spec : ∀ γ' ∈ reps, ((γ' : GL n E)) = (conj γ')⁻¹ * (γ : GL n E) * conj γ'
-  distinct : ∀ γ₁ ∈ reps, ∀ γ₂ ∈ reps, (∃ u : unitaryGL σ J, γ₂ = u⁻¹ * γ₁ * u) → γ₁ = γ₂
-  exhaust : ∀ γ'' : unitaryGL σ J, (∃ g : GL n E, (γ'' : GL n E) = g⁻¹ * (γ : GL n E) * g) →
-    ∃ γ' ∈ reps, ∃ u : unitaryGL σ J, γ'' = u⁻¹ * γ' * u
-  haar : ∀ γ' ∈ reps, (meas γ').IsHaarMeasure
-  compat : ∀ γ' ∈ reps,
-    Measure.map (fun t : Subgroup.centralizer ({γ'} : Set (unitaryGL σ J)) =>
-        conj γ' * ((t : unitaryGL σ J) : GL n E) * (conj γ')⁻¹) (meas γ') =
-      Measure.map (fun t : Subgroup.centralizer ({γ} : Set (unitaryGL σ J)) =>
-        ((t : unitaryGL σ J) : GL n E)) μγ
-
-def stableOrbIntegralU (σ : E ≃ₐ[k] E) (J : GL n E) (μU : Measure (unitaryGL σ J))
-    {γ : unitaryGL σ J} {μγ : Measure (Subgroup.centralizer ({γ} : Set (unitaryGL σ J)))}
-    (D : StableData σ J γ μγ) (f : unitaryGL σ J → ℝ≥0∞) : ℝ≥0∞ :=
-  ∑ γ' ∈ D.reps, orbIntegral μU γ' (D.meas γ') f
-
-structure TwStableData (σ : E ≃ₐ[k] E) (J : GL n E) (γ : unitaryGL σ J)
-    (μγ : Measure (Subgroup.centralizer ({γ} : Set (unitaryGL σ J)))) where
-  reps : Finset (GL n E)
-  conj : GL n E → GL n E
-  meas : (δ : GL n E) → Measure (twCent (thetaGL σ J) δ)
-  norm_spec : ∀ δ ∈ reps, normU σ J δ = conj δ * (γ : GL n E) * (conj δ)⁻¹
-  distinct : ∀ δ₁ ∈ reps, ∀ δ₂ ∈ reps, TwConjugate (thetaGL σ J) δ₁ δ₂ → δ₁ = δ₂
-  exhaust : ∀ δ : GL n E, (∃ g : GL n E, normU σ J δ = g * (γ : GL n E) * g⁻¹) →
-    ∃ δ' ∈ reps, TwConjugate (thetaGL σ J) δ' δ
-  haar : ∀ δ ∈ reps, (meas δ).IsHaarMeasure
-  compat : ∀ δ ∈ reps,
-    Measure.map (fun x : twCent (thetaGL σ J) δ => (conj δ)⁻¹ * (x : GL n E) * conj δ) (meas δ) =
-      Measure.map (fun t : Subgroup.centralizer ({γ} : Set (unitaryGL σ J)) =>
-        ((t : unitaryGL σ J) : GL n E)) μγ
-
-def twStableOrbIntegralU (σ : E ≃ₐ[k] E) (J : GL n E) (μE : Measure (GL n E))
-    {γ : unitaryGL σ J} {μγ : Measure (Subgroup.centralizer ({γ} : Set (unitaryGL σ J)))}
-    (T : TwStableData σ J γ μγ) (f : GL n E → ℝ≥0∞) : ℝ≥0∞ :=
-  ∑ δ ∈ T.reps, twOrbIntegral (thetaGL σ J) μE δ (T.meas δ) f
-
 end Unitary
-
-def BCFLUnitU : Prop :=
-  ∀ (k E : Type) [Field k] [CharZero k] [ValuativeRel k] [TopologicalSpace k]
-    [IsNonarchimedeanLocalField k]
-    [Field E] [ValuativeRel E] [TopologicalSpace E] [IsNonarchimedeanLocalField E]
-    [Algebra k E] [ValuativeExtension k E] [FiniteDimensional k E] [IsGalois k E],
-    Module.finrank k E = 2 → IsUnramifiedLoc k E →
-    ∀ σ : E ≃ₐ[k] E, σ ≠ 1 →
-    ∀ (n : ℕ) (J : GL (Fin n) E), J ∈ unitGL (n := Fin n) E → thetaGL σ J ^ 2 = 1 →
-    ∀ [MeasurableSpace (GL (Fin n) E)] [BorelSpace (GL (Fin n) E)]
-      (μE : Measure (GL (Fin n) E)) (μU : Measure (unitaryGL σ J)),
-      μE.IsHaarMeasure → μU.IsHaarMeasure →
-      μE (unitGL (n := Fin n) E : Set (GL (Fin n) E)) = 1 →
-      μU {u | (u : GL (Fin n) E) ∈ unitGL (n := Fin n) E} = 1 →
-      ∀ (γ : unitaryGL σ J) (μγ : Measure (Subgroup.centralizer ({γ} : Set (unitaryGL σ J))))
-        (D : StableData σ J γ μγ) (T : TwStableData σ J γ μγ),
-        (((γ : GL (Fin n) E)) : Matrix (Fin n) (Fin n) E).charpoly.Separable →
-        μγ.IsHaarMeasure →
-        twStableOrbIntegralU σ J μE T (unitFn E) = stableOrbIntegralU σ J μU D (unitFnU σ J)
 
 section ComplexValued
 
 variable {G : Type*} [Group G] [MeasurableSpace G]
 
-open Classical in
 
-def quotIntegral (μG : Measure G) (H : Subgroup G) (μH : Measure H) (F : G → ℂ) : ℂ :=
-  if hρ : ∃ ρ, IsQuotNormaliser H μH ρ then ∫ g, F g * ((hρ.choose g).toReal : ℂ) ∂μG else 0
+open Classical in
+def quotIntegral (μG : Measure G) (H : Subgroup G) (μH : Measure H) (F : G → ℂ) : ℂ := by
+  classical
+  exact if hρ : ∃ ρ, IsQuotNormaliser H μH ρ then ∫ g, F g * ((hρ.choose g).toReal : ℂ) ∂μG else 0
 
 def twOrbIntegralC (θ : Monoid.End G) (μG : Measure G) (δ : G) (μδ : Measure (twCent θ δ))
     (f : G → ℂ) : ℂ :=
@@ -427,72 +362,10 @@ section UnitaryKappa
 variable {n : Type*} [Fintype n] [DecidableEq n]
 variable {k E : Type*} [Field k] [Field E] [Algebra k E]
 
-def theta1 (σ : E ≃ₐ[k] E) : Monoid.End (GL n E) := thetaGL σ 1
-
-theorem sigmaGL_invTransposeGL (τ : E ≃ₐ[k] E) (g : GL n E) :
-    sigmaGL τ (invTransposeGL g) = invTransposeGL (sigmaGL τ g) := by
-  apply Units.ext
-  show (Matrix.transpose ((g⁻¹ : GL n E) : Matrix n n E)).map τ.toAlgHom.toRingHom =
-    Matrix.transpose (((sigmaGL τ g)⁻¹ : GL n E) : Matrix n n E)
-  rw [← map_inv]
-  rfl
-
-theorem invTransposeGL_invTransposeGL (g : GL n E) :
-    invTransposeGL (invTransposeGL g) = g :=
-  Units.ext (Matrix.transpose_transpose _)
-
-theorem theta1_sq (σ : E ≃ₐ[k] E) (hσ : σ ^ 2 = 1) :
-    (theta1 σ : Monoid.End (GL n E)) ^ 2 = 1 := by
-  have hθ : ∀ g : GL n E, theta1 σ g = invTransposeGL (sigmaGL σ g) := fun g => by
-    rw [theta1, thetaGL_apply, one_mul, inv_one, mul_one]
-  have h2 : (sigmaGL σ : Monoid.End (GL n E)) ^ 2 = 1 := by
-    rw [← sigmaGL_pow, hσ, sigmaGL_one]
-  have hσσ : ∀ g : GL n E, sigmaGL σ (sigmaGL σ g) = g := fun g => by
-    show (sigmaGL σ * sigmaGL σ : Monoid.End (GL n E)) g = g
-    rw [← pow_two, h2]
-    rfl
-  refine MonoidHom.ext fun g => ?_
-  rw [pow_two]
-  show theta1 σ (theta1 σ g) = g
-  rw [hθ, hθ, sigmaGL_invTransposeGL, invTransposeGL_invTransposeGL, hσσ]
-
 def unitFnC (F : Type*) [Field F] [ValuativeRel F] : GL n F → ℂ :=
   Set.indicator ((unitGL (n := n) F : Subgroup (GL n F)) : Set (GL n F)) 1
 
-def unitFnUC [ValuativeRel E] (σ : E ≃ₐ[k] E) (J : GL n E) : unitaryGL σ J → ℂ :=
-  Set.indicator {u | (u : GL n E) ∈ unitGL (n := n) E} 1
-
 variable [TopologicalSpace E] [MeasurableSpace (GL n E)]
-
-structure KappaData (σ : E ≃ₐ[k] E) (γ₀ : GL n E) (ν : Measure (GL n E)) where
-  forms : Finset (GL n E)
-  herm : ∀ J ∈ forms, thetaGL σ J ^ 2 = 1
-  ι : Type
-  fin : Fintype ι
-  form : ι → GL n E
-  form_mem : ∀ x, form x ∈ forms
-  rep : (x : ι) → unitaryGL σ (form x)
-  conj : ι → GL n E
-  meas : (x : ι) → Measure (Subgroup.centralizer ({rep x} : Set (unitaryGL σ (form x))))
-  sign : ι → ℤ
-  conj_spec : ∀ x, ((rep x : unitaryGL σ (form x)) : GL n E) = (conj x)⁻¹ * γ₀ * conj x
-  distinct : ∀ x y, form x = form y →
-    (∃ u ∈ unitaryGL σ (form x), ((rep y : unitaryGL σ (form y)) : GL n E) =
-      u⁻¹ * ((rep x : unitaryGL σ (form x)) : GL n E) * u) → x = y
-  exhaust : ∀ J ∈ forms, ∀ γ'' ∈ unitaryGL σ J, (∃ g : GL n E, γ'' = g⁻¹ * γ₀ * g) →
-    ∃ x, form x = J ∧ ∃ u ∈ unitaryGL σ J,
-      γ'' = u⁻¹ * ((rep x : unitaryGL σ (form x)) : GL n E) * u
-  sign_spec : ∀ x, sign x = 1 ∨ sign x = -1
-  haar : ∀ x, (meas x).IsHaarMeasure
-  compat : ∀ x,
-    Measure.map (fun t : Subgroup.centralizer ({rep x} : Set (unitaryGL σ (form x))) =>
-      conj x * ((t : unitaryGL σ (form x)) : GL n E) * (conj x)⁻¹) (meas x) = ν
-
-def kappaOrbIntegral (σ : E ≃ₐ[k] E) {γ₀ : GL n E} {ν : Measure (GL n E)}
-    (D : KappaData σ γ₀ ν) (μU : (x : D.ι) → Measure (unitaryGL σ (D.form x)))
-    (f : (x : D.ι) → unitaryGL σ (D.form x) → ℂ) : ℂ :=
-  haveI := D.fin
-  ∑ x, (D.sign x : ℂ) * orbIntegralC (μU x) (D.rep x) (D.meas x) (f x)
 
 end UnitaryKappa
 

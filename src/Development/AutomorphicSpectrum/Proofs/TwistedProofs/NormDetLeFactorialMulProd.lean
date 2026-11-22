@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LatticeRigidity.HeightMinimum.PackingCountGeometricMean
+module
+
+public import Mathlib
+public import Formalism.LatticeRigidity.HeightMinimum.PackingCountGeometricMean
+
+@[expose] public section
 
 open Matrix
 open scoped ENNReal
@@ -16,7 +20,7 @@ theorem norm_det_le_factorial_mul_prod {a : ℕ} (P : Matrix (Fin a) (Fin a) ℂ
         have h1 : ‖Equiv.Perm.sign σ • ∏ i, P (σ i) i‖ = ∏ i, ‖P (σ i) i‖ := by
           rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h, norm_prod]
         rw [h1, ← Equiv.prod_comp σ c]
-        exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => hc _ _
+        exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => hc _ _
     _ = a.factorial * ∏ r, c r := by
         simp [Finset.card_univ, Fintype.card_perm]
 
@@ -130,7 +134,7 @@ theorem one_le_mul_norm_rowMap (R : Subring E) [Nonempty ι] (ε : ι → E →+
       _ = _ := by ring
   have h6 : 1 ≤ L ^ Fintype.card ι := by
     calc (1 : ℝ) ≤ ∏ i, ‖ε i z‖ := hprod z hzR hz0
-      _ ≤ ∏ _i : ι, L := Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => hbound i
+      _ ≤ ∏ _i : ι, L := Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => hbound i
       _ = L ^ Fintype.card ι := by simp [Finset.card_univ]
   by_contra hlt
   push_neg at hlt

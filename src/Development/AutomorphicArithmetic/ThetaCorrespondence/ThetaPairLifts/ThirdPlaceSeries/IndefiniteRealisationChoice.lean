@@ -1,13 +1,17 @@
-import Formalism.LocalToGlobal.IndefiniteRealisationChoice
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TSelF
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LayerTwoFamilyClass
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.DIVRecBridgeSel
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowSideDetermined
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.STiesR
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ClassOfRecordOfChoice
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IndefRRealT
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IndefRRealTP
+module
+
+public import Formalism.LocalToGlobal.IndefiniteRealisationChoice
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TSelF
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LayerTwoFamilyClass
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.DIVRecBridgeSel
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowSideDetermined
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.STiesR
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ClassOfRecordOfChoice
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IndefRRealT
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IndefRRealTP
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -103,21 +107,22 @@ theorem RemainingDivisionBounds.toRows_alt {eps : ℝ} {Fm : FamP eps} {Rt : Σ'
     (cut : ∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, ∀ μ, Formalism.BasicNotions.DV.Used (Fm.D x i) μ → Formalism.L2.G.ServJoint.CutUp (Fm.D x i) μ)
     (a : ∃ x0 : ℝ, ∀ x, x0 ≤ x → Fm.x1 < x → ∀ i : Fm.Ix x, Formalism.MainNotions.LocalQuadraticParts.adm2 (Fm.D x i) (Fm.L x i))
     (c2 : Formalism.MainNotions.LocalQuadraticParts.ComplementTwoFamily Fm) (c5 : Formalism.MainNotions.LocalQuadraticParts.ComplementCountFamily Fm) :
-    _root_.Formalism.L2.DIV.DivisionKernelConstantBounds Fm Rt Cabs CH where
-  pkg := pkg
-  adm2 := by
-    obtain ⟨x0, a⟩ := a
-    refine ⟨max x0 (Fm.x1 + 1), fun x hx i => a x (le_trans (le_max_left _ _) hx) ?_ i⟩
-    have := le_trans (le_max_right _ _) hx
-    linarith
-  cut := cut
-  c3 := Formalism.MainNotions.DIV.HookProducts.RBCompl3.rbCompl3 Fm
-  hh := r.hh c2
-  c2 := c2
-  c5 := c5
-  bu := r.bu
-  rr := r.rr
-  la := r.la
+    _root_.Formalism.L2.DIV.DivisionKernelConstantBounds Fm Rt Cabs CH := by
+  refine {
+    pkg := pkg
+    adm2 := ?_
+    cut := cut
+    c3 := Formalism.MainNotions.DIV.HookProducts.RBCompl3.rbCompl3 Fm
+    hh := r.hh c2
+    c2 := c2
+    c5 := c5
+    bu := r.bu
+    rr := r.rr
+    la := r.la }
+  obtain ⟨x0, a⟩ := a
+  refine ⟨max x0 (Fm.x1 + 1), fun x hx i => a x (le_trans (le_max_left _ _) hx) ?_ i⟩
+  have := le_trans (le_max_right _ _) hx
+  linarith
 end Formalism.L2.Top4
 end
 end

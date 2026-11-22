@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHat
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGTrChain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGQLFam
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGVsTr
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGTrChain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGQLFam
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGVsTr
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 
@@ -62,7 +66,7 @@ theorem jdg_gauge_of_core {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSp
   rw [Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ((hpair a b).2 ρ).symm]
   rw [Gauge.toSm_of_mem P (Subalgebra.sum_mem _ fun a _ => Subalgebra.sum_mem _ fun b _ => (hpair a b).1 ρ)]
   apply Subtype.ext
-  simp only [AddSubmonoidClass.coe_finset_sum]
+  simp only [AddSubmonoidClass.coe_finsetSum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [Gauge.toSm_of_mem P ((hpair a b).1 ρ)]
 

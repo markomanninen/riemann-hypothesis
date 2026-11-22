@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+
+@[expose] public section
 
 open Matrix Complex GlobalTheory.SW
 open scoped ComplexConjugate Real
@@ -31,11 +35,6 @@ theorem ech_add (s t : ℚ) : ech (s + t) = ech s * ech t := by
 
 theorem ech_zero : ech 0 = 1 := by
   simp [ech]
-
-theorem ech_int (m : ℤ) : ech (m : ℚ) = 1 := by
-  unfold ech
-  rw [show (2 : ℂ) * π * I * ((m : ℚ) : ℂ) = (m : ℂ) * (2 * π * I) by push_cast; ring]
-  exact Complex.exp_int_mul_two_pi_mul_I m
 
 theorem ech_eq_one_iff (t : ℚ) : ech t = 1 ↔ ∃ m : ℤ, t = m := by
   unfold ech

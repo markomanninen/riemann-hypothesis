@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementJF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
+module
+
+public import Formalism.HermitianCurvature.StatementJF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter
 
@@ -19,12 +23,12 @@ theorem jConv_of_jDom : Formalism.FourierDecayAlt.JF.JDom → Formalism.FourierD
     unfold xiP psi ell
     refine Continuous.mul ?_ (Continuous.star ?_)
     · refine Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp
-        (Complex.continuous_re.comp (continuous_const.mul (continuous_finset_sum _ fun a _ => ?_)))))
+        (Complex.continuous_re.comp (continuous_const.mul (continuous_finsetSum _ fun a _ => ?_)))))
       split_ifs
       · simp only [Matrix.of_apply]; fun_prop
       · simp only [Matrix.of_apply, Matrix.mulVec, dotProduct]; fun_prop
     · refine Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp
-        (Complex.continuous_re.comp (continuous_const.mul (continuous_finset_sum _ fun a _ => ?_)))))
+        (Complex.continuous_re.comp (continuous_const.mul (continuous_finsetSum _ fun a _ => ?_)))))
       split_ifs
       · simp only [Matrix.of_apply]; fun_prop
       · simp only [Matrix.of_apply, Matrix.mulVec, dotProduct]; fun_prop

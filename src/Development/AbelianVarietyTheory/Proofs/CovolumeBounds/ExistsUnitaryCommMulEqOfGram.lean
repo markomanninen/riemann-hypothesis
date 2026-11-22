@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsKMeas
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsUnitaryOfGramEq
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
 
-open Matrix MeasureTheory Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2 GlobalTheory.HCXi
+public import Mathlib
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsUnitaryOfGramEq
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
+
+open Matrix MeasureTheory Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 open scoped ENNReal ComplexOrder
 
 namespace GlobalTheory.HCXi
@@ -27,9 +31,9 @@ private lemma exists_unitary_fix_proj_of_gram_eq_of_mul_eq_zero {n m : ℕ} (Q :
   rw [mul_fromCols, fromCols_inj.eq_iff] at hW
   exact ⟨W, hWu, hW.2, hW.1⟩
 
+
 open Matrix MeasureTheory in
 open scoped ENNReal ComplexOrder in
-
 theorem _root_.GlobalTheory.HCXi.exists_unitary_comm_mul_eq_of_gram {n m : ℕ} (H : Matrix (Fin n) (Fin n) ℂ)
     (hH : Hᴴ = H) (hHH : H * H = 1)
     (A B : Matrix (Fin n) (Fin m) ℂ) (h1 : Aᴴ * A = Bᴴ * B) (h2 : Aᴴ * H * A = Bᴴ * H * B) :

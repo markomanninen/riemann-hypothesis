@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.JetsPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CoefficientConvolutionOfSubCoefficients
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.JetsPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CoefficientConvolutionOfSubCoefficients
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.DivSt
 
@@ -166,7 +170,7 @@ theorem lead_le {Xa : ArchInM X} (Fl : FlatM X Xa) {δ : ℕ} (t : Fin δ → Fr
       ring
     rw [e]
     have h1 : ∏ q, (‖Fl.s q x‖ * nL) ^ α q ≤ ∏ q, A ^ α q :=
-      Finset.prod_le_prod (fun q _ => pow_nonneg (mul_nonneg (norm_nonneg _) hnL) _)
+      Finset.prod_le_prod₀ (fun q _ => pow_nonneg (mul_nonneg (norm_nonneg _) hnL) _)
         (fun q _ => pow_le_pow_left₀ (mul_nonneg (norm_nonneg _) hnL) (hs q) _)
     have h2 : (‖Fl.w0 x‖ * nL) ^ (Xa.T - ∑ q, α q) ≤ A ^ (Xa.T - ∑ q, α q) :=
       pow_le_pow_left₀ (mul_nonneg (norm_nonneg _) hnL) hw _

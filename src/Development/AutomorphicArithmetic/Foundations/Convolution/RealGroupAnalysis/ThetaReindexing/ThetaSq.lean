@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -28,7 +32,7 @@ private theorem bar_mkE (D : Dat F E) (u t : A F) : D.bar (D.mkE u t) = D.mkE u 
   have h2 : D.bar (rt D.θ) = - rt D.θ := by
     have : D.bar (rt D.θ) = rt (D.σ D.θ) := AdeleBaseChange.smul_algebraMap D.σ D.θ
     rw [this, D.conj]; simp [UpperTheory.ConvolutionTheory.R2.rt]
-  simp only [Dat.mkE, map_add, map_mul, h1, h2, map_neg]
+  simp only [Dat.mkE, map_add (f := _), map_mul, h1, h2, map_neg]
   ring
 
 private theorem theta_sq (D : Dat F E) :
@@ -72,7 +76,7 @@ private theorem act_nU (D : Dat F E) (u t s z₀ z₁ : A F) :
       D.mkE (s - 2 * (u * z₀ - UpperTheory.ConvolutionTheory.R2.rt D.δ * (t * z₁))) 0 := by
     rw [gl_val]
     simp [Dat.herm, Matrix.mul_apply, Fin.sum_univ_two, h0, hb]
-    simp only [Dat.mkE, map_sub, map_mul, map_add, map_neg, map_zero, map_ofNat]
+    simp only [Dat.mkE, map_sub, map_mul, map_add (f := _), map_neg, map_zero, map_ofNat]
     linear_combination (2 * AdeleBaseChange.adeleMap F E t * AdeleBaseChange.adeleMap F E z₁) * hθ
   have z0 : D.co 0 = ![0, 0] := by rw [← h0, co_mkE]
   rw [Dat.act, Dat.unherm, e11, e01, e00, co_mkE, co_mkE, z0]
@@ -82,7 +86,7 @@ private theorem act_nU (D : Dat F E) (u t s z₀ z₁ : A F) :
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.ConvolutionTheory.R2.D.hatNE :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D), ∀ u t φ x z₀ z₁, hat (W.L (gl (nU (D.mkE u t))) φ).1 ![0, x, z₀, z₁] =
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D), ∀ u t φ x z₀ z₁, hat (W.L (gl (nU (D.mkE u t))) φ).1 ![0, x, z₀, z₁] =
       ψ (-(x * (2 * (u * z₀ - rt D.δ * (t * z₁))))) * hat φ.1 ![0, x, z₀, z₁] := by
   intro F E _ _ _ _ _ _ _ D W u t φ x z₀ z₁
   set T : A F := 2 * (u * z₀ - rt D.δ * (t * z₁)) with hT

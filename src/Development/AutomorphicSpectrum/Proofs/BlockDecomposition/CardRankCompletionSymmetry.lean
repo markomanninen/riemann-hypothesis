@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+
+@[expose] public section
+
 open Matrix GlobalTheory.CompanionTheory.Jp
 
 namespace GlobalTheory.CompanionTheory.Jp.CountRank
@@ -27,7 +32,8 @@ theorem card_injective {U V : Type} [AddCommGroup U] [Module k U] [AddCommGroup 
       rw [LinearMap.mem_ker] at hx
       have hsum : ∑ i, (b.repr x i) • (g ∘ b) i = 0 := by
         have h0 : g (∑ i, (b.repr x i) • b i) = 0 := by rw [b.sum_repr]; exact hx
-        rw [map_sum] at h0
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum] at h0
         simpa only [Function.comp_apply, map_smul] using h0
       have hc := Fintype.linearIndependent_iff.mp hli _ hsum
       apply b.repr.injective

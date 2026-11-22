@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OfNatTrans
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OfNatTrans
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

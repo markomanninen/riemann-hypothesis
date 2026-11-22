@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfCapJoints
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SinglePairFinsuppEqIff
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfCapJoints
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SinglePairFinsuppEqIff
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 

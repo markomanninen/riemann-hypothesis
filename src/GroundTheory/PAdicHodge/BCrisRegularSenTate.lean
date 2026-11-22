@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisEigen
-import GroundTheory.PAdicHodge.SenTateCharacters
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisEigen
+public import GroundTheory.PAdicHodge.SenTateCharacters
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

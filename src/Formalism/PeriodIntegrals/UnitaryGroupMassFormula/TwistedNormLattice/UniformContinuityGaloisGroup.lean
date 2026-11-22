@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.TwNormLat
+module
+
+public import Formalism.PeriodIntegrals.TwNormLat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -14,9 +18,6 @@ theorem one_notMem' : (1 : 𝓞 E) ∉ P.asIdeal :=
 theorem mul_notMem' {s t : 𝓞 E} (hs : s ∉ P.asIdeal) (ht : t ∉ P.asIdeal) : s * t ∉ P.asIdeal :=
   fun h => (P.isPrime.mem_or_mem h).elim hs ht
 
-theorem intAt_alg (x : 𝓞 E) : IntAt P (algebraMap (𝓞 E) E x) :=
-  ⟨x, 1, PI.TwNormLat.W.one_notMem' P, by simp⟩
-
 theorem intAt_zero : IntAt P (0 : E) := by
   exact ⟨0, 1, PI.TwNormLat.W.one_notMem' P, by simp⟩
 
@@ -30,7 +31,7 @@ theorem intAt_add {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a + b) 
   obtain ⟨r, s, hs, h⟩ := ha
   obtain ⟨r', s', hs', h'⟩ := hb
   refine ⟨r * s' + s * r', s * s', PI.TwNormLat.W.mul_notMem' P hs hs', ?_⟩
-  simp only [map_add, map_mul]
+  simp only [map_add (f := _), map_mul]
   rw [← h, ← h']
   ring
 
@@ -58,9 +59,6 @@ theorem intAt_pow {a : E} (ha : IntAt P a) (k : ℕ) : IntAt P (a ^ k) := by
   | succ k ih =>
     rw [pow_succ]
     exact PI.TwNormLat.W.intAt_mul P ih ha
-
-theorem intAt_sum {ι : Type*} (s : Finset ι) (f : ι → E) (h : ∀ i ∈ s, IntAt P (f i)) : IntAt P (∑ i ∈ s, f i) := by
-  exact Finset.sum_induction f (IntAt P) (fun _ _ ha hb => PI.TwNormLat.W.intAt_add P ha hb) (PI.TwNormLat.W.intAt_zero P) h
 
 abbrev qE : E := ((Ideal.absNorm P.asIdeal : ℕ) : E)
 

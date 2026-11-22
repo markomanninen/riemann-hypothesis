@@ -1,14 +1,19 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsAdmissibleSmoothingFactorAddIntVector
-import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.NormalModularTowerTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.AlgEquivMemRingOfIntegersModularTowerTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.MemRingOfIntegersModularTowerTopOfForallValuatio
-import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.ExistsIsLocallyConstantLiftToGeometricGalois
-import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.ValuationSiegelUnitLevelEqOne
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeClassEqKummerCharacterOfChosenRootFunctionFiStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCupProductCoboundaryTheoremStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteDimensionalLevStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsAdmissibleSmoothingFactorAddIntVector
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.NormalModularTowerTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.AlgEquivMemRingOfIntegersModularTowerTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.MemRingOfIntegersModularTowerTopOfForallValuatio
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.ExistsIsLocallyConstantLiftToGeometricGalois
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.EisensteinModularTowers.ValuationSiegelUnitLevelEqOne
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeClassEqKummerCharacterOfChosenRootFunctionFiStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCupProductCoboundaryTheoremStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteDimensionalLevStatement
+
+@[expose] public section
+
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.Glue GlobalTheory.KummerEisensteinGalois UpperTheory.Kd.L GlobalTheory.KEdge GlobalTheory.NeedB Polynomial
 attribute [local instance] algMdl algPoly algRat
@@ -55,7 +60,7 @@ private theorem polyMem (X : Tower Ω ε) (M : ℕ) (B : ValuationSubring (topBa
       rw [coe_jPoly, Polynomial.aeval_X]))
   induction P using Polynomial.induction_on with
   | C a => exact hC a
-  | add p q hp hq => rw [map_add, map_add]; exact add_mem hp hq
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _)]; exact add_mem hp hq
   | monomial n a h =>
     rw [pow_succ, ← mul_assoc, map_mul, map_mul]
     exact mul_mem h hX

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi6.det_ne_zero :
     ∀ {F : Type} [inst : NormedField F] [IsUltrametricDist F] {m : ℕ}
@@ -16,7 +20,7 @@ theorem UpperTheory.Reformulated.B.Qi6.det_ne_zero :
     have h := congrFun hMv a
     rw [Matrix.add_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec] at h
     exact eq_neg_of_add_eq_zero_left h
-  obtain ⟨b, -, hb⟩ := IsUltrametricDist.exists_norm_finset_sum_le (Finset.univ : Finset (Fin m))
+  obtain ⟨b, -, hb⟩ := IsUltrametricDist.exists_norm_finsetSum_le (Finset.univ : Finset (Fin m))
     (fun b => E a b * v b)
   have h1 : ‖v a‖ = ‖∑ b, E a b * v b‖ := by
     rw [← norm_neg (∑ b, E a b * v b), ← hrow, norm_mul, ht, one_mul]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry TensorProduct
@@ -19,7 +24,7 @@ private theorem lid_rTensor_subtype_mem_map {R A' : Type*} [CommRing R] [CommRin
       rw [hka, Algebra.smul_def]
       exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ k.2)
   | add y z hy hz =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact Submodule.add_mem _ hy hz
 
 private theorem algebraMap_tmul_one_eq_one_tmul_algebraMap {A B A' : Type*} [CommRing A] [CommRing B] [CommRing A']

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConnPhiExtensionGeneratorEqZeta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConnPhiExtensionGeneratorEqZeta
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,12 +17,6 @@ class TameDescentExponentData (K : Type) [NormedField K] (l e a : ℕ) [Fact l.P
   not_dvd : ¬ l ∣ a
   finite : FiniteDimensional ℚ_[l] K
   prim : ∃ ζ : K, IsPrimitiveRoot ζ e
-
-instance instTameDescentExponentDataPadicThree : TameDescentExponentData ℚ_[3] 3 2 1 where
-  succ_eq := rfl
-  not_dvd := by decide
-  finite := inferInstance
-  prim := ⟨-1, IsPrimitiveRoot.neg_one 0 (by decide)⟩
 
 section Group
 
@@ -51,7 +49,6 @@ theorem powL_one (ζ : rootsOfUnity e K) : powL l (1 : ZMod a) ζ = ζ ^ l := by
   rw [powL_apply, ZMod.val_one_eq_one_mod, pow_pow_mod l, pow_one]
 
 variable (K e a) in
-
 def frobAut : Multiplicative (ZMod a) →* MulAut (rootsOfUnity e K) where
   toFun s :=
     { powL l s.toAdd with
@@ -62,7 +59,6 @@ def frobAut : Multiplicative (ZMod a) →* MulAut (rootsOfUnity e K) where
   map_mul' s t := MulEquiv.ext fun ζ => powL_add l _ _ ζ
 
 variable (K e a) in
-
 abbrev TameGal : Type := rootsOfUnity e K ⋊[frobAut K l e a] Multiplicative (ZMod a)
 
 namespace TameGal
@@ -86,8 +82,6 @@ theorem shift_mul (g h : TameGal K l e a) : shift (g * h) = shift g + shift h :=
 @[simp] theorem shift_fr : shift (fr : TameGal K l e a) = 1 := rfl
 
 @[simp] theorem root_one (τ : ZMod a) : root (1 : TameGal K l e a) τ = 1 := by simp [root]
-
-@[simp] theorem root_fr (τ : ZMod a) : root (fr : TameGal K l e a) τ = 1 := by simp [root]
 
 @[simp] theorem root_inertia_zero (ζ : rootsOfUnity e K) :
     root (inertia ζ : TameGal K l e a) 0 = (ζ : Kˣ) := by simp [root]
@@ -161,8 +155,10 @@ theorem ringAct_apply (g : TameGal K l e a) (f : ZMod a → K⟦X⟧) (τ : ZMod
 
 theorem ringAct_frobTot (g : TameGal K l e a) (f : ZMod a → K⟦X⟧) :
     ringAct g (frobTot K a l f) = frobTot K a l (ringAct g f) := by
+  have frob_apply (s : ZMod a → K⟦X⟧) (τ : ZMod a) :
+      frobTot K a l s τ = frob K l (s (τ - 1)) := rfl
   ext τ n
-  rw [ringAct_apply, frobTot_apply, frobTot_apply, ringAct_apply, coeff_rescale, coeff_frob,
+  rw [ringAct_apply, frob_apply, frob_apply, ringAct_apply, coeff_rescale, coeff_frob,
     coeff_frob, coeff_rescale, TameGal.root_sub_one, sub_right_comm]
   split_ifs with h
   · rw [← pow_mul, Nat.mul_div_cancel' h]
@@ -185,7 +181,7 @@ theorem ringAct_E (g : TameGal K l e a) : ringAct g (fun _ => E K l e) = fun _ =
   ext1 τ
   have := congrFun (ringAct_X_pow g) τ
   rw [ringAct_apply] at this ⊢
-  rw [E, map_add, this, map_natCast]
+  rw [E, map_add (f := _), this, map_natCast]
 
 end Group
 
@@ -310,7 +306,7 @@ def ofMatrix (P : PhiMod O K l e a ι) (G : TameGal K l e a → ZMod a → Matri
         simp [one, matAct_apply]
       map_mul' := fun g h => by
         refine LinearMap.ext fun v => funext fun τ => ?_
-        rw [Module.End.mul_apply, matAct_apply, matAct_apply, matAct_apply, mul,
+        rw [mul_apply_eq_comp, matAct_apply, matAct_apply, matAct_apply, mul,
           ← Matrix.mulVec_mulVec]
         congr 1
         ext1 i
@@ -372,7 +368,8 @@ theorem act_mem_uPow {m : ℕ} {v : Vec K a ι} (hv : v ∈ uPow K a ι m) :
 
 theorem act_mem_Mext {B : Subalgebra O K⟦X⟧} (hA : A O K ≤ B) (hB : Rot e B) {v : Vec K a ι}
     (hv : v ∈ P.Mext B) : Δ.act g v ∈ P.Mext B := by
-  rw [eq_sum_bas v, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eq_sum_bas v, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [act_smul_tot]
   exact P.smul_tot_mem_Mext (hB.ringAct_mem g fun τ => mem_tot.1 hv τ i)
@@ -380,7 +377,8 @@ theorem act_mem_Mext {B : Subalgebra O K⟦X⟧} (hA : A O K ≤ B) (hB : Rot e 
 
 theorem act_mem_ext {B : Subalgebra O K⟦X⟧} (hA : A O K ≤ B) (hB : Rot e B) {v : Vec K a ι}
     (hv : v ∈ P.ext B) : Δ.act g v ∈ P.ext B := by
-  rw [P.eq_sum_phi_bas v, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.eq_sum_phi_bas v, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [act_smul_tot, act_phi]
   exact P.smul_tot_mem_ext (hB.ringAct_mem g fun τ => P.mem_extc_iff.1 (mem_tot.1 hv τ) i)
@@ -401,7 +399,7 @@ def actD : Representation K (TameGal K l e a) P.D where
   toFun g := red ∘ₗ Δ.act g ∘ₗ cst
   map_one' := LinearMap.ext fun d => by simp
   map_mul' g h := LinearMap.ext fun d => by
-    simp only [map_mul, LinearMap.comp_apply, Module.End.mul_apply, red_act_cst_red]
+    simp only [map_mul, LinearMap.comp_apply, mul_apply_eq_comp, red_act_cst_red]
 
 theorem red_act (v : Vec K a ι) : red (Δ.act g v) = Δ.actD g (red v) :=
   (Δ.red_act_cst_red g v).symm
@@ -417,7 +415,7 @@ abbrev inv : Submodule K (Vec K a ι) := Δ.act.invariants
 def isotypic (c : ZMod e) : Submodule K (Vec K a ι) where
   carrier := {v | ∀ ζ τ, Δ.act (TameGal.inertia ζ) v τ =
     (TameGal.inertia ζ : TameGal K l e a).root τ ^ c.val • v τ}
-  add_mem' hv hw ζ τ := by rw [map_add, Pi.add_apply, hv, hw, Pi.add_apply, smul_add]
+  add_mem' hv hw ζ τ := by rw [map_add (f := _), Pi.add_apply, hv, hw, Pi.add_apply, smul_add]
   zero_mem' ζ τ := by simp
   smul_mem' r v hv ζ τ := by rw [map_smul, Pi.smul_apply, hv, Pi.smul_apply, smul_comm]
 
@@ -428,7 +426,7 @@ def chars (τ : ZMod a) : Set (ZMod e) :=
 def plusAct : Module.End K (Vec K a (ι ⊕ Unit)) where
   toFun w := join (Δ.act g fun τ i => w τ (.inl i)) (ringAct g fun τ => w τ (.inr ()))
   map_add' v w := by
-    rw [← join_add, ← map_add, ← map_add]
+    rw [← join_add, ← map_add (f := _), ← map_add (f := _)]
     rfl
   map_smul' c v := by
     rw [RingHom.id_apply, ← join_smul, ← map_smul, ← map_smul]
@@ -445,7 +443,7 @@ def plus [NeZero e] {y : Vec K a ι} (hy : y ∈ P.Mext (invE l e (A O K))) (hin
         rw [← join_eta w, plusAct_join]
         simp
       map_mul' := fun g h => LinearMap.ext fun w => by
-        rw [← join_eta w, Module.End.mul_apply, plusAct_join, plusAct_join, plusAct_join, map_mul,
+        rw [← join_eta w, mul_apply_eq_comp, plusAct_join, plusAct_join, plusAct_join, map_mul,
           map_mul]
         rfl }
   act_smul_tot g f w := by
@@ -459,7 +457,15 @@ def plus [NeZero e] {y : Vec K a ι} (hy : y ∈ P.Mext (invE l e (A O K))) (hin
       rot_A.ringAct_mem g fun τ => mem_tot.1 hw τ (.inr ())⟩
   act_phi g w := by
     change Δ.plusAct g _ = (P.plus hy).phi (Δ.plusAct g _)
-    rw [← join_eta w, P.plus_phi_join, plusAct_join, plusAct_join, P.plus_phi_join, map_add, act_phi,
+    have phi_join (v : Vec K a ι) (f : ZMod a → K⟦X⟧) :
+        (P.plus hy).phi (join v f) = join (P.phi v + frobTot K a l f • y) (frobTot K a l f) := by
+      ext1 τ
+      rw [PhiMod.phi_apply, PhiMod.plus, PhiMod.mx_ofMatrix]
+      ext1 i
+      rcases i with i | i <;>
+        simp [join, Matrix.mulVec, dotProduct, PhiMod.phi_apply, frobTot, Fintype.sum_sum_type,
+          mul_comm]
+    rw [← join_eta w, phi_join, plusAct_join, plusAct_join, phi_join, map_add (f := _), act_phi,
       act_smul_tot, hinv g, ringAct_frobTot]
 
 theorem plus_act_join [NeZero e] {y : Vec K a ι} (hy : y ∈ P.Mext (invE l e (A O K)))
@@ -472,13 +478,5 @@ def frobPeriod (l : ℕ) {e : ℕ} (c : ZMod e) : ℕ := Function.minimalPeriod 
 
 def maxPeriod (l : ℕ) {e : ℕ} (T : Finset (ZMod e)) : ℕ :=
   (T ×ˢ T).sup fun p => frobPeriod l (p.1 - p.2)
-
-example : frobPeriod 3 (1 : ZMod 8) = 2 :=
-  Function.minimalPeriod_eq_prime (p := 2) (by decide) (by decide)
-
-example : ringAct (TameGal.inertia (rootsOfUnity.mkOfPowEq (-1 : ℚ_[3]) (n := 2) (by norm_num)) :
-    TameGal ℚ_[3] 3 2 1) (fun _ => X) 0 = -X := by
-  rw [ringAct_X]
-  simp
 
 end GlobalTheory.BK

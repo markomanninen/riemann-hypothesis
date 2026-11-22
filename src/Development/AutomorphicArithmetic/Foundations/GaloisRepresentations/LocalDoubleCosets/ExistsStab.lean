@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwKerWhitCharReflect
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.HeckeRepresentationSatake
-import GroundTheory.AutomorphicForms.LocallyConstantCompact
-import GroundTheory.AutomorphicForms.GLnLocal
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwKerWhitCharReflect
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.HeckeRepresentationSatake
+public import GroundTheory.AutomorphicForms.LocallyConstantCompact
+public import GroundTheory.AutomorphicForms.GLnLocal
+
+@[expose] public section
 
 noncomputable section
 

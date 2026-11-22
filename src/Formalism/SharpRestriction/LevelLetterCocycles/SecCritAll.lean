@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecCritZero
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecCritZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,12 +146,13 @@ theorem step_mpr (C : Ctx W) (A : ArcP n) (hA : A.OK) (c' : ZMod n) (hc' : c' �
           have := repVV_smul W T c' (e + 1) _ Λ' b sol _ _ (lA_mem W (Tt - t i)) (hzrep i)
           rwa [← lE_eq] at this)
     convert h1 using 1
-    funext m
-    simp only [lE_mul]
     have : ∀ i, Tt - t i + t i = Tt := fun i => Nat.sub_add_cancel (htle i)
-    simp only [this]
+    funext m
+    simp only [lE, ← mul_assoc, ← pow_add, this]
+    simp only [mul_assoc]
     rw [← Finset.mul_sum, ← Finset.mul_sum, ← hF m]
-    unfold lE; rw [pow_add]; ring
+    simp only [lE, pow_add]
+    ring
   have hZN : InFNc W T a' 1 (∑ i, lA W ^ (Tt - t i) • z i) :=
     inFNc_sum T a' _ _ fun i _ => inFNc_smul C.hR.1 T a' (lA_mem W _) (hzN i)
   have hZP : InFP W T c' (e + 1) 1 (Λ' • ∑ i, lA W ^ (Tt - t i) • z i) := by

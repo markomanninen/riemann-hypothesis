@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMemA
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImageStableDegreeBounds
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowerSeriesExistsUniqueDecompOverFrobeniusLikeEnStatement
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMemA
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImageStableDegreeBounds
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowerSeriesExistsUniqueDecompOverFrobeniusLikeEnStatement
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.BK Matrix GlobalTheory.LiftCoker
 
 noncomputable section
@@ -12,15 +17,16 @@ theorem map_decomp_frob {O K : Type} [CommRing O] [NormedField K] [Algebra O K] 
     (h : f = ∑ j : Fin l, X ^ j.val * PowerSeries.expand l (Fact.out : l.Prime).ne_zero (g j)) :
     PowerSeries.map (algebraMap O K) f =
       ∑ j : Fin l, X ^ j.val * frob K l (PowerSeries.map (algebraMap O K) (g j)) := by
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, map_pow, map_X, map_expand]
   rfl
 
 theorem colon_map_frob_le : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebra O K]
     [IsUnitBall O K] (l : ℕ) [Fact l.Prime] (ι κ : Type) [Fintype ι] [Fintype κ] (G : Matrix κ ι K⟦X⟧),
-    colon O K (G.map (frob K l)) ≤
-      (colon O K G).map (PowerSeries.expand l (Fact.out : l.Prime).ne_zero) := by
+    colon (O := O) (K := K) (G.map (frob K l)) ≤
+      (colon (O := O) (K := K) G).map (PowerSeries.expand l (Fact.out : l.Prime).ne_zero) := by
   intro O K _ _ _ _ _ l _ ι κ _ _ G β hβ
   have hl2 : 2 ≤ l := (Fact.out : l.Prime).two_le
   have decO : ∀ f : O⟦X⟧, ∃! g : Fin l → O⟦X⟧,
@@ -30,7 +36,7 @@ theorem colon_map_frob_le : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUlt
     GlobalTheory.T.powerSeries_existsUnique_decomp_over_frobeniusLike_endo l hl2 (frob K l) (fun f m => coeff_frob l f m)
   obtain ⟨b, hb, -⟩ := decO β
   have hbK := map_decomp_frob (K := K) l hb
-  have key : ∀ j, b j ∈ colon O K G := by
+  have key : ∀ j, b j ∈ colon (O := O) (K := K) G := by
     intro j w hw
     obtain ⟨M, hM, hMeq⟩ := hβ (frobV l w) (fun i => frob_mem_A l (hw i))
     have lift : ∀ k, ∃ μ : O⟦X⟧, PowerSeries.map (algebraMap O K) μ = M k := fun k => by
@@ -54,7 +60,8 @@ theorem colon_map_frob_le : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUlt
         ∑ j : Fin l, X ^ j.val *
           frob K l ((G *ᵥ fun k => PowerSeries.map (algebraMap O K) (c k j)) i) := by
       rw [e1]
-      simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, hMk, Finset.mul_sum, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, hMk, Finset.mul_sum, map_sum, map_mul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => ?_
       ring

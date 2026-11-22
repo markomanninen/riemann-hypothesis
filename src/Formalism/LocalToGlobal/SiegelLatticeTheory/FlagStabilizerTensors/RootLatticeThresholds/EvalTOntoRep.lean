@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EvalTReg
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ExplicitFormulaBoundHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EvalTReg
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ExplicitFormulaBoundHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ theorem contRep_reg {f : L2X X} {φ : X.B.I.GA → ℂ} (h : IsContRep X f φ) (
     IsContRep X (X.B.R y f) (fun x => φ (x * y)) := by
   have hm : MemLp φ 2 (muX X) := (Lp.memLp f).ae_eq h.2.2
   have ef : f = hm.toLp φ := Lp.ext (h.2.2.trans hm.coeFn_toLp.symm)
-  refine ⟨h.1.comp (continuous_mul_right y), fun γ hγ x => by simp only [mul_assoc, h.2.1 γ hγ], ?_⟩
+  refine ⟨h.1.comp (continuous_mul_const y), fun γ hγ x => by simp only [mul_assoc, h.2.1 γ hγ], ?_⟩
   rw [ef]
   exact Formalism.L2.SG.EvalTReg.reg_toLp_X X φ h.2.1 hm y
 

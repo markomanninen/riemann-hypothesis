@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -206,7 +210,8 @@ theorem volume_mul_norm_det_eq_one :
     refine ⟨∑ j, b.repr ⟨l, hl⟩ j * k j, ?_⟩
     rw [← imForm_apply]
     conv_lhs => rw [hl']
-    simp [map_sum, hk]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hk]
   have hone := abs_det_gram_eq_one (imForm Hm) bR
     (by rw [hGdet]; exact mul_ne_zero (pow_ne_zero 2 hD) hN)
     (fun i j => by

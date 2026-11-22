@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPointStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardFiniteSubgroupGLIntDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPointStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardFiniteSubgroupGLIntDvd
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators nonZeroDivisors
@@ -53,7 +57,8 @@ theorem norm_entry_le (c : E → E) (hc : ∀ (φ : E →+* ℂ) x, φ (c x) = s
     (γ : Matrix (Fin N) (Fin N) E) (h : γ * (γ.map c).transpose = 1) (φ : E →+* ℂ) (i j : Fin N) :
     ‖φ (γ i j)‖ ≤ 1 := by
   have h1 := congrArg φ (congrFun (congrFun h i) i)
-  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, hc,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, hc,
     Matrix.one_apply_eq, map_one, Complex.mul_conj'] at h1
   have h2 : ∑ k, ‖φ (γ i k)‖ ^ 2 = 1 := by exact_mod_cast h1
   have h3 : ‖φ (γ i j)‖ ^ 2 ≤ 1 := by
@@ -96,8 +101,9 @@ theorem exists_faithful (L : Submodule (𝓞 E) (Fin N → E)) (hf : L.FG)
     haveI : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hf
     haveI : Module.Finite ℤ L := Module.Finite.trans (𝓞 E) L
     exact Module.Finite.iff_fg.mp (inferInstanceAs (Module.Finite ℤ L))
-  haveI hlat : Submodule.IsLattice ℚ L' := by
-    refine ⟨hf', ?_⟩
+  haveI : Submodule.IsLattice ℚ L' := Submodule.IsLattice.of_fg ℚ hf'
+  haveI hlat : Submodule.IsFullLattice ℚ L' := by
+    refine ⟨?_⟩
     rw [eq_top_iff]
     intro x _
     obtain ⟨n, hn, hx⟩ := exists_int_smul_mem L hs x

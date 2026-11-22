@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitStab
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SelfDualLoc
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitStab
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SelfDualLoc
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped TensorProduct

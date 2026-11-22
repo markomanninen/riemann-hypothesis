@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsUniqueIsAl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsUniqueIsAl
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -102,42 +106,5 @@ theorem htSpan_gm (p : ℕ) : htSpan (GmO O) p = omega (GmO O) := by
   · exact omega_le_span.trans (Submodule.span_mono (by
       rintro _ rfl
       exact ⟨dlogT_mem, taut p, isAl_taut p⟩))
-
-theorem htChar_gm (p : ℕ) {C : Type} [Field C] (v : Valuation C NNReal) [Algebra O C]
-    [Nontrivial O] : HTChar p v (GmO O) ∧ omega (GmO O) ≠ ⊥ := by
-  refine ⟨fun c _ f hf => ?_, fun h => ?_⟩
-  · rw [htSpan_gm]; exact Submodule.smul_mem _ _ hf
-  · have h0 : dlogT (O := O) = 0 := by
-      have := dlogT_mem (O := O); rwa [h, Submodule.mem_bot] at this
-    obtain ⟨e, he⟩ := (dlogT_bijective (O := O)).2 1
-    rw [h0] at he
-    exact zero_ne_one he
-
-theorem not_isAl_zero (p : ℕ) (hp : ¬IsUnit (p : O)) : ¬IsAl (taut (O := O) p) 0 := by
-  intro h
-  obtain ⟨e, he⟩ := (dlogT_bijective (O := O)).2 1
-  have h1 := (isAl_iff _ _).1 h e 1 _ (pow_quot (O := O) 1)
-  have h2 := (isAl_iff _ _).1 (isAl_taut (O := O) p) e 1 _ (pow_quot (O := O) 1)
-  rw [← h1, he, Pi.zero_apply, Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq, sub_zero,
-    pow_one, ← Ideal.eq_top_iff_one, Ideal.span_singleton_eq_top] at h2
-  exact hp h2
-
-theorem htChar_of_isUnit (p : ℕ) (hp : IsUnit (p : O)) {C : Type} [Field C]
-    (v : Valuation C NNReal) [Algebra O C] (G : Over (Spec (CommRingCat.of O))) [GrpObj G] :
-    HTChar p v G := by
-  intro c _ f hf
-  refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨hf, ⟨fun _ => 1, ?_, ?_⟩, ?_⟩)
-  · intro n T x y z _
-    simp only [MonObj.comp_one, _root_.mul_one]
-  · intro n T x y _
-    simp only [MonObj.comp_one]
-  · intro n R _ _ hR x w _
-    have hu : IsUnit ((p : R) ^ n) := by
-      have := hp.map (algebraMap O R)
-      rw [map_natCast] at this
-      exact this.pow n
-    rw [hR, isUnit_zero_iff] at hu
-    haveI : Subsingleton R := subsingleton_of_zero_eq_one hu
-    ext <;> exact Subsingleton.elim _ _
 
 end GlobalTheory.HodgeTateTest

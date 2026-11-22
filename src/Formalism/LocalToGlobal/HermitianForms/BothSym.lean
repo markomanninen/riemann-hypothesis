@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.HermitianForms.TiedSym
-import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
-import Formalism.LocalToGlobal.HermitianColumns.SymAll
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.TiedSym
+public import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+public import Formalism.LocalToGlobal.HermitianColumns.SymAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem one_le_m (R : Ranks) : 1 ≤ R.m := by
   have h2 := R.two_le_m
   omega
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 structure ColsTiedSym (D : D7) where
   herm : Formalism.L2.Herm.ColsHermS D
   forms : ∀ u : D.what₂.Word, FormsTiedSym D u (herm.base.Ch u) (herm.base.chOf u)
@@ -83,16 +87,6 @@ structure ColsTiedSym (D : D7) where
   frame_level_zero_const : ∀ u u', (forms u).glev0.fr = (forms u').glev0.fr
   frP_const : ∀ u u', (forms u).glevP.fr = (forms u').glevP.fr
 
-set_option maxHeartbeats 4000000 in
-
-structure OneLevelSymmetricColumns (D : D7) extends ColsTiedSym D where
-  Ch_one : ∀ u i, Subsingleton (herm.base.Ch u i)
-  H_eq : ∀ u i (_ : 1 ≤ i) (_ : i + 2 ≤ D.R.m) β a v hv, (forms u).H i β a v hv = HXS D i v
-  lamC_eq : ∀ u i (_ : 1 ≤ i) (_ : i + 2 ≤ D.R.m) β a v hv (M : (forms u).H i β a v hv),
-    (((forms u).lamC i β a v hv M : ℂˣ) : ℂ) =
-      lamX ((forms u).gl.psi0 a v hv) ((forms u).gl.chiB a v hv) (D.R.N i) D.R.k (rSD D.R) D.R.t (D.R.m - 1 - i) i (k_le_N D.R i)
-        ((M : GL (Fin (D.R.N i)) (kv D.host.F v)) : Matrix (Fin (D.R.N i)) (Fin (D.R.N i)) (kv D.host.F v))
-  Yb_one : ∀ u, Subsingleton (forms u).Yb
 
 end Formalism.L2.Forms
 

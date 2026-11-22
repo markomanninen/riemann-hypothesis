@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.CuspRegions.CarrierEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.CuspRegions.CarrierEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ variable {E : Type} [Field E] [NumberField E]
 
 abbrev Orb (δ : ℚ) : Type := ↥{ξ : Fin 4 → ℚ | qr δ ξ = qr δ X0}
 instance (δ : ℚ) : MeasurableSpace (Orb δ) := ⊤
-variable (E) in
 
+variable (E) in
 abbrev Y (δ : ℚ) : Type := ↥(IdeleGroup.normOneSubgroup E) × G1 E × Orb δ
 
 def mY (δ : ℚ) (N : MeasE E) : Measure (Y E δ) :=
@@ -46,11 +50,11 @@ def AbsUnf : Prop := ∀ (G H ι : Type) [Group G] [TopologicalSpace G] [IsTopol
 def ZDom : Prop := ∀ (E : Type) [Field E] [NumberField E], normOneMeasure E (normOneFundamentalDomain E) < ⊤ ∧
   MeasurableSet (normOneFundamentalDomain E) ∧ ∃ C : Set (A E)ˣ, IsCompact C ∧ ∀ z ∈ normOneFundamentalDomain E, ((z : IdeleGroup E) : (A E)ˣ) ∈ C
 
-def Reps : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E), ∃ (j : G1 ℚ →* G1 E) (r : Orb D.δ → G1 E),
+def Reps : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E), ∃ (j : G1 ℚ →* G1 E) (r : Orb D.δ → G1 E),
   (∀ g, gl (j g) = em E (gl g)) ∧ Continuous j ∧ Function.Injective j ∧ (∀ i, r i ∈ Gam E ∧ rp i.1 = D.act (gl (r i)) (rp X0)) ∧
   (∀ δ ∈ Gam ℚ, j δ ∈ Gam E) ∧ ∀ γ ∈ Gam E, ∃! i, ∃ δ ∈ Gam ℚ, γ = r i * j δ
 
-def BddE : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (P : CuspSub E 2), ∀ φ ∈ P.V,
+def BddE : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (P : CuspSub E 2), ∀ φ ∈ P.V,
   ∀ C : Set (GL (Fin 2) (A E)), IsCompact C → ∃ B : ℝ, ∀ h : G1 E, ∀ k ∈ C, ‖φ.1 (gl h * k)‖ ≤ B
 
 def YInt : Prop := All fun _ _ _ _ D _ _ N P => ∀ φ ∈ P.V, Measurable (pY D) ∧ Measurable (fun y => φ.1 (el D y)) ∧
@@ -85,17 +89,17 @@ structure Bd (F : GL (Fin 2) (A ℚ) → ℂ) : Prop where
 def Ext : Prop := ∀ u : G1 ℚ → ℂ, CuspFn u → ∃ F : GL (Fin 2) (A ℚ) → ℂ, Bd F ∧ (∀ g, ∀ t ∈ UU, F (gl g * dM t) = u g) ∧
   ∀ x, ∫ b in fundamentalSet ℚ, F (gl (nU b) * x) ∂(adeleMeasure ℚ) = 0
 
-def PairL : Prop := ∀ (μ : Measure (GroundTheory.Automorphic.Reduction.normOneGL ℚ 2)) [μ.IsHaarMeasure] (F : GL (Fin 2) (A ℚ) → ℂ), Bd F → F ≠ 0 →
+def PairL : Prop := ∀ (μ : Measure (GroundTheory.Automorphic.Reduction.normOneGL (K := ℚ) (n := 2))) [μ.IsHaarMeasure] (F : GL (Fin 2) (A ℚ) → ℂ), Bd F → F ≠ 0 →
   (∀ x, ∫ b in fundamentalSet ℚ, F (gl (nU b) * x) ∂(adeleMeasure ℚ) = 0) →
   ∃ π : TR.CuspSub ℚ 2, PosInv π ∧ ∃ f ∈ π.V,
-    ∫ y, f.1 ((Quotient.out y : GroundTheory.Automorphic.Reduction.normOneGL ℚ 2) : GL (Fin 2) (A ℚ)) *
-      F ((Quotient.out y : GroundTheory.Automorphic.Reduction.normOneGL ℚ 2) : GL (Fin 2) (A ℚ))
-      ∂GroundTheory.Automorphic.RightCosetSpace.quotientMeasure (GroundTheory.Automorphic.Reduction.rationalGLOne ℚ 2) μ ≠ 0
+    ∫ y, f.1 ((Quotient.out y : GroundTheory.Automorphic.Reduction.normOneGL (K := ℚ) (n := 2)) : GL (Fin 2) (A ℚ)) *
+      F ((Quotient.out y : GroundTheory.Automorphic.Reduction.normOneGL (K := ℚ) (n := 2)) : GL (Fin 2) (A ℚ))
+      ∂GroundTheory.Automorphic.RightCosetSpace.quotientMeasure (GroundTheory.Automorphic.Reduction.rationalGLOne (K := ℚ) (n := 2)) μ ≠ 0
 
-def Fibre : Prop := ∀ (M : Meas ℚ) (μ : Measure (GroundTheory.Automorphic.Reduction.normOneGL ℚ 2)) [μ.IsHaarMeasure] (Φ : GL (Fin 2) (A ℚ) → ℂ),
+def Fibre : Prop := ∀ (M : Meas ℚ) (μ : Measure (GroundTheory.Automorphic.Reduction.normOneGL (K := ℚ) (n := 2))) [μ.IsHaarMeasure] (Φ : GL (Fin 2) (A ℚ) → ℂ),
   Bd Φ → (∀ t ∈ UU, ∫ g in M.D, Φ (gl g * dM t) ∂M.μ = 0) →
-    ∫ y, Φ ((Quotient.out y : GroundTheory.Automorphic.Reduction.normOneGL ℚ 2) : GL (Fin 2) (A ℚ))
-      ∂GroundTheory.Automorphic.RightCosetSpace.quotientMeasure (GroundTheory.Automorphic.Reduction.rationalGLOne ℚ 2) μ = 0
+    ∫ y, Φ ((Quotient.out y : GroundTheory.Automorphic.Reduction.normOneGL (K := ℚ) (n := 2)) : GL (Fin 2) (A ℚ))
+      ∂GroundTheory.Automorphic.RightCosetSpace.quotientMeasure (GroundTheory.Automorphic.Reduction.rationalGLOne (K := ℚ) (n := 2)) μ = 0
 
 def FormBd : Prop := ∀ π : TR.CuspSub ℚ 2, PosInv π → ∀ f ∈ π.V, Bd f.1 ∧ ∀ t ∈ UU, ∃ f' ∈ π.V, ∀ x, f'.1 x = f.1 (x * dM t)
 

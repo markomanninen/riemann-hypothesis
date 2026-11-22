@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieBasisIffIsUnitDet
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueDifferentialMonHomLieBasisStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLieRepresentationEigenLatticesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieBasisIffIsUnitDet
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueDifferentialMonHomLieBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLieRepresentationEigenLatticesStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,7 +26,8 @@ theorem forall_apply_eq_smul_iff {K O : Type} [Field K] {n : ℕ} (r : O → Mod
     (hχ : Function.Injective χ) (hr : ∀ a j, r a (Pi.single j 1) = Pi.single j (χ j a)) (i : Fin n) (c : Fin n → K) :
     (∀ a, r a c = χ i a • c) ↔ ∃ s : K, c = Pi.single i s := by
   have hd : ∀ a (d : Fin n → K) j, r a d j = χ j a * d j := fun a d j => by
-    conv_lhs => rw [pi_eq_sum_univ' d, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [pi_eq_sum_univ' d, map_sum]
     simp only [map_smul, hr, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     rw [Finset.sum_eq_single j (fun k _ hk => by simp [Pi.single_eq_of_ne hk.symm]) (by simp), Pi.single_eq_same,
       mul_comm]

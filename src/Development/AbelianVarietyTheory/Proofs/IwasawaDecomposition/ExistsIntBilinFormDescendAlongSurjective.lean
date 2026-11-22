@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan
 
 namespace GlobalTheory
@@ -24,12 +29,12 @@ theorem exists_bilinForm_descend_of_surjective {X Y : Type} [AddCommGroup X] [Ad
     exact this
   refine ⟨LinearMap.mk₂ ℤ (fun y y' => β (g y) (g y')) ?_ ?_ ?_ ?_, ?_⟩
   · intro y1 y2 y'
-    rw [key1 (g (y1 + y2)) (g y1 + g y2) (by rw [map_add, hg, hg, hg]), map_add,
+    rw [key1 (g (y1 + y2)) (g y1 + g y2) (by rw [map_add (f := _), hg, hg, hg]), map_add (f := _),
       LinearMap.add_apply]
   · intro c y y'
     rw [key1 (g (c • y)) (c • g y) (by rw [map_zsmul, hg, hg]), map_smul, LinearMap.smul_apply]
   · intro y y1 y2
-    rw [key2 (g (y1 + y2)) (g y1 + g y2) (by rw [map_add, hg, hg, hg]), map_add]
+    rw [key2 (g (y1 + y2)) (g y1 + g y2) (by rw [map_add (f := _), hg, hg, hg]), map_add (f := _)]
   · intro c y y'
     rw [key2 (g (c • y')) (c • g y') (by rw [map_zsmul, hg, hg]), map_smul]
   · intro x y

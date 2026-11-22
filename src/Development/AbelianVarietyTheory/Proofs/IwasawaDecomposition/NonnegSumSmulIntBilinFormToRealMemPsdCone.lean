@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.SubsingletonOfLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.SubsingletonOfLeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem eq_zero_of_self_eq_zero {X : Type} [AddCommGroup X] (γ : LinearMap.Bili
   have key : ∀ t : ℤ, 0 ≤ γ w w + 2 * t * γ u w := by
     intro t
     have h := hp (w + t • u)
-    simp only [map_add, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hu, hs w u] at h
+    simp only [map_add (f := _), map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hu, hs w u] at h
     linarith
   by_contra h
   have h1 := key (-(γ w w + 1) * γ u w)
@@ -23,14 +27,15 @@ theorem eq_zero_of_self_eq_zero {X : Type} [AddCommGroup X] (γ : LinearMap.Bili
 
 theorem sum_expand {X₁ ι : Type} [AddCommGroup X₁] [Fintype ι] (B : X₁ →ₗ[ℤ] X₁ →ₗ[ℤ] ℝ) (b : ι → X₁) (z : ι → ℤ) :
     ∑ k, ∑ l, (z k : ℝ) * z l * B (b k) (b l) = B (∑ k, z k • b k) (∑ l, z l • b l) := by
-  simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, zsmul_eq_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, zsmul_eq_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => by ring
 
 theorem sum_smul_toReal_mem_psdCone : ∀ (O : Type) [CommRing O] [IsDedekindDomain O] [CharZero O] [Module.Finite ℤ O] (bar : O → O) (X : Type)
     [AddCommGroup X] [Module O X] [Module.Finite O X] (m : ℕ) (γ : Fin m → LinearMap.BilinForm ℤ X) (c : Fin m → ℝ),
     (∀ i, γ i ∈ balForms bar X) → (∀ i y, 0 ≤ γ i y y) → (∀ i, 0 ≤ c i) →
-    ∑ i, c i • toReal (γ i) ∈ psdCone bar X := by
+    ∑ i, c i • toReal (γ i) ∈ psdCone (bar := bar) (X := X) := by
   intro O _ _ _ _ bar X _ _ _ m γ c hbal hpsd hc
   classical
   set S : Finset (Fin m) := Finset.univ.filter (fun i => 0 < c i) with hSdef
@@ -50,7 +55,7 @@ theorem sum_smul_toReal_mem_psdCone : ∀ (O : Type) [CommRing O] [IsDedekindDom
 
   let R : Submodule O X :=
     { carrier := {y | ∀ i ∈ S, ∀ z, γ i y z = 0}
-      add_mem' := fun {y y'} hy hy' i hi z => by rw [map_add, LinearMap.add_apply, hy i hi, hy' i hi, add_zero]
+      add_mem' := fun {y y'} hy hy' i hi z => by rw [map_add (f := _), LinearMap.add_apply, hy i hi, hy' i hi, add_zero]
       zero_mem' := fun i _ z => by simp
       smul_mem' := fun a y hy i hi z => by
         change γ i (a • y) z = 0
@@ -90,15 +95,15 @@ theorem sum_smul_toReal_mem_psdCone : ∀ (O : Type) [CommRing O] [IsDedekindDom
   have : Module.FinitePresentation O (X ⧸ R) := Module.finitePresentation_of_finite _ _
   have hproj : Module.Projective O (X ⧸ R) := Module.Flat.projective_of_finitePresentation
   have : Module.Finite ℤ (X ⧸ R) := Module.Finite.trans O (X ⧸ R)
-  have : IsAddTorsionFree (X ⧸ R) := by
-    refine ⟨fun n hn a b hab => ?_⟩
+  have : Module.IsTorsionFree ℤ (X ⧸ R) := by
+    refine ⟨fun {n} hn a b hab => ?_⟩
     induction a using Submodule.Quotient.induction_on with | H x => ?_
     induction b using Submodule.Quotient.induction_on with | H y => ?_
     simp only at hab
     rw [← Submodule.Quotient.mk_smul, ← Submodule.Quotient.mk_smul, Submodule.Quotient.eq] at hab
     rw [Submodule.Quotient.eq]
-    refine hZ n (by exact_mod_cast hn) (x - y) ?_
-    rw [natCast_zsmul, smul_sub]; exact hab
+    refine hZ n (isRegular_iff_ne_zero.mp hn) (x - y) ?_
+    rw [smul_sub]; exact hab
   have : Module.Free ℤ (X ⧸ R) := Module.free_of_finite_type_torsion_free'
 
   have hBq : ∀ x x' y y', Submodule.Quotient.mk (p := R) x = Submodule.Quotient.mk x' →
@@ -111,11 +116,11 @@ theorem sum_smul_toReal_mem_psdCone : ∀ (O : Type) [CommRing O] [IsDedekindDom
   let s := Function.surjInv (Submodule.Quotient.mk_surjective R)
   have hs : ∀ u, Submodule.Quotient.mk (p := R) (s u) = u := Function.surjInv_eq _
   let B₁ := (AddMonoidHom.mk' (fun u => (AddMonoidHom.mk' (fun v => B (s u) (s v)) (fun v v' => by
-      rw [← map_add]; exact hBq _ _ _ _ rfl (by rw [hs, Submodule.Quotient.mk_add, hs, hs]))).toIntLinearMap)
+      rw [← map_add (f := _)]; exact hBq _ _ _ _ rfl (by rw [hs, Submodule.Quotient.mk_add, hs, hs]))).toIntLinearMap)
     (fun u u' => by
       ext v
       change B (s (u + u')) (s v) = B (s u) (s v) + B (s u') (s v)
-      rw [← LinearMap.add_apply, ← map_add]
+      rw [← LinearMap.add_apply, ← map_add (f := _)]
       exact hBq _ _ _ _ (by rw [hs, Submodule.Quotient.mk_add, hs, hs]) rfl)).toIntLinearMap
   have hB₁ : ∀ u v, B₁ u v = B (s u) (s v) := fun u v => rfl
   have hBB₁ : ∀ a b, B a b = B₁ (Submodule.Quotient.mk a) (Submodule.Quotient.mk b) := fun a b =>

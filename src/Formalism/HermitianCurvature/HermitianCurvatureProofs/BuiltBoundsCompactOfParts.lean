@@ -1,14 +1,18 @@
-import Formalism.HermitianCurvature.ArchimedeanUniformConstantsCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopRatio
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModuleForms
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCFinal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalNormNonneg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfLocal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopOfLocal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordMemBoundedLetterLists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralFormulaPassesToLimits
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBJoint
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StepFormCptAllOfStepFormAll
+module
+
+public import Formalism.HermitianCurvature.ArchimedeanUniformConstantsCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopRatio
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModuleForms
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCFinal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalNormNonneg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfLocal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopOfLocal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordMemBoundedLetterLists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralFormulaPassesToLimits
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBJoint
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StepFormCptAllOfStepFormAll
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBASM
 
@@ -253,12 +257,6 @@ def BuiltBounds2CptOfParts : Prop :=
   (P5.ThmPActualCpt → KB.DegTop) → (P5.ThmPActualCpt → Top.VecVTypes) → (P5.ThmPActualCpt → PBL.TopRatio) →
   (P5.ThmPActualCpt → GermLocB) → (P5.ThmPActualCpt → PosB) → (P5.ThmPActualCpt → IntB) →
   (P5.ThmPActualCpt → DecayUnif) → (P5.ThmPActualCpt → ThresholdsPositive) → KB.BuiltBounds2Cpt
-
-def BuiltBounds2OfParts : Prop :=
-  (P5.ThmPActual → WaveLocB) → (P5.ThmPActual → LiftLocB) → PBL.TopLocB →
-  (P5.ThmPActual → KB.DegTop) → (P5.ThmPActual → Top.VecVTypes) → (P5.ThmPActual → PBL.TopRatio) →
-  (P5.ThmPActual → GermLocB) → (P5.ThmPActual → PosB) → (P5.ThmPActual → IntB) →
-  (P5.ThmPActual → DecayUnif) → (P5.ThmPActual → ThresholdsPositive) → KB.BuiltBounds2
 
 theorem builtBounds2CptOfParts : BuiltBounds2CptOfParts := by
   intro hW hL hTL hDT hVT hTR hG hP hI hD hTh hA Cb

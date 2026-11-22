@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ExistsMinNorm
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ExistsMinNorm
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 open NumberField Complex
@@ -6,11 +10,6 @@ noncomputable section
 variable {E : Type} [Field E] [NumberField E]
 
 namespace ChA
-
-def actHom {dim : (E →+* ℂ) → ℕ} (y : Vsp dim) : 𝓞 E →+ Vsp dim where
-  toFun α := act α y
-  map_zero' := by ext i; simp [act_apply]
-  map_add' α β := act_add_left α β y
 
 lemma act_omega_expand {dim : (E →+* ℂ) → ℕ} (ω : Fin (Module.finrank ℚ E) → 𝓞 E)
     (hω : LinearIndependent ℚ (fun j => (ω j : E))) (α : 𝓞 E) (y : Vsp dim) :
@@ -31,7 +30,8 @@ lemma act_omega_expand {dim : (E →+* ℂ) → ℕ} (ω : Fin (Module.finrank �
   have key : act α y = ∑ j, ((c j : ℝ)) • act (ω j) y := by
     ext i
     simp only [act, ← hc]
-    simp [map_sum, Rat.smul_def, map_mul, map_ratCast, Finset.sum_mul, Complex.real_smul, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Rat.smul_def, map_mul, map_ratCast, Finset.sum_mul, Complex.real_smul, mul_assoc]
   rw [key]
   exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
 
@@ -66,7 +66,8 @@ lemma rank_bound {dim : (E →+* ℂ) → ℕ} (L I : Submodule ℤ (Vsp dim))
     intro m hm
     have h1 : ∑ s : b, (∑ j, ((m (j, s) : ℂ) * σ (ω j : E))) • (s : Vsp dim) = 0 := by
       have := congrArg (prj σ) hm
-      rw [map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at this
       rw [← this, Fintype.sum_prod_type, Finset.sum_comm]
       refine Finset.sum_congr rfl fun s _ => ?_
       rw [Finset.sum_smul]
@@ -77,7 +78,8 @@ lemma rank_bound {dim : (E →+* ℂ) → ℕ} (L I : Submodule ℤ (Vsp dim))
     have h2 := Fintype.linearIndependent_iff.mp hli
       (fun s => ∑ j, ((m (j, s) : ℂ) * σ (ω j : E))) h1 s
     have h3 : σ (∑ j, ((m (j, s) : E)) * (ω j : E)) = 0 := by
-      rw [map_sum]; simpa [map_mul, map_intCast] using h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; simpa [map_mul, map_intCast] using h2
     have h4 : ∑ j, ((m (j, s) : ℚ)) • (ω j : E) = 0 := by
       have h5 := (map_eq_zero_iff σ σ.injective).mp h3
       simpa [Rat.smul_def] using h5

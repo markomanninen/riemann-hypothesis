@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.EulerFactors
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsFourierInfinite
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsFourierFinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.EulerFactors
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsFourierInfinite
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsFourierFinite
+
+@[expose] public section
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex WithZero
 open scoped NumberField.AdeleRing nonZeroDivisors

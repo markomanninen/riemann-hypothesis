@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.CubeOfTwoIdentities
-import Formalism.SharpRestriction.GlobalSchurBounds.StatementTranslationInvariantSeventh
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TestVectorMemSchwartzBruhat
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.CubeOfTwoIdentities
+public import Formalism.SharpRestriction.GlobalSchurBounds.StatementTranslationInvariantSeventh
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TestVectorMemSchwartzBruhat
+
+@[expose] public section
 
 namespace Formalism.MainNotions.Ext.CutA
 
@@ -64,7 +68,7 @@ theorem okpNeg_holds (D : D7) : OkpNeg D := by
   have hQ : (-1 : ℂ) ∈ Qbar := neg_mem (one_mem _)
   have hl : lamC lam (-1 : ℂ) = -1 := by
     unfold lamC
-    rw [dif_pos hQ]
+    rw [dite_eq_left hQ]
     have e : (⟨-1, hQ⟩ : Qbar) = -1 := Subtype.ext (by first | rfl | simp | norm_num)
     rw [e, map_neg, map_one]
   have hc : D.host.conj (-1 : D.host.E) = -1 := by simp
@@ -81,16 +85,16 @@ theorem okpTwo_holds (D : D7) : OkpTwo D := by
       | (have h := add_mem (one_mem Qbar) (one_mem Qbar); rwa [one_add_one_eq_two] at h)
   have hl : lamC lam (2 : ℂ) = 2 := by
     unfold lamC
-    rw [dif_pos hQ]
+    rw [dite_eq_left hQ]
     have e : (⟨2, hQ⟩ : Qbar) = 1 + 1 := Subtype.ext (by
       first
         | (show (2 : ℂ) = ((1 : Qbar) : ℂ) + ((1 : Qbar) : ℂ); norm_num)
         | (push_cast; norm_num)
         | rfl)
-    rw [e, map_add, map_one] <;> norm_num
+    rw [e, map_add (f := _), map_one] <;> norm_num
   have hc : D.host.conj (2 : D.host.E) = 2 := by
     first
-      | (rw [show (2 : D.host.E) = 1 + 1 by norm_num, map_add, map_one])
+      | (rw [show (2 : D.host.E) = 1 + 1 by norm_num, map_add (f := _), map_one])
       | exact map_ofNat _ 2
   have hz : (((2 : NumberField.RingOfIntegers D.host.K) : D.host.K) : D.host.E) = 2 := by
     rw [show (2 : NumberField.RingOfIntegers D.host.K) = 1 + 1 by norm_num]
@@ -100,7 +104,7 @@ theorem okpTwo_holds (D : D7) : OkpTwo D := by
       | norm_num
   have hφ : D.host.φ₀ (2 : D.host.E) = 2 := by
     first
-      | (rw [show (2 : D.host.E) = 1 + 1 by norm_num, map_add, map_one]; norm_num)
+      | (rw [show (2 : D.host.E) = 1 + 1 by norm_num, map_add (f := _), map_one]; norm_num)
       | simp
   unfold OKp
   refine subset_closure ⟨2, ?_⟩
@@ -109,32 +113,6 @@ theorem okpTwo_holds (D : D7) : OkpTwo D := by
 theorem cube_of (H : CubeOfTwoIdentities) (D : D7) (h2 : cube2 D) (h3 : cube3 D) : cube D := by
   intro p _ cc δ g hA
   exact H p g hA.2.2.2.2 (h2 p cc δ g hA) (h3 p cc δ g hA)
-
-theorem phGram_of (H : PhGramG) (D : D7) (he : endInt D) (ha : addInt D) (hn : phNorm D)
-    (hb : beConj D) (hB : beBiadd D) : GL3r7.PhGram D := by
-  intro p _ cc δ g hA hp
-  have key := H p g (OKp D g.lam) hA.2.2.2.2 (fun α hα => okpSwap_holds D p g.lam α hα)
-    (he p cc δ g hA) (ha p cc δ g hA).1 (hn p cc δ g hA hp) (hb p cc δ g hA hp)
-    (hB p cc δ g hA).1
-  intro κ _ k A hA'
-  exact key κ k A hA'
-
-theorem phUnitary_of (HU : GramUnitEq) (D : D7) (hG : GL3r7.PhGram D) : PhUnitary D := by
-  intro p _ cc δ g hA hp n de hde horth
-  have h1 := hG p cc δ g hA hp (Fin n) n de hde
-  rwa [HU p g hA.2.2.2.2 n de horth] at h1
-
-theorem phIsotropic_of (HI : GramIsoEq) (D : D7) (hG : GL3r7.PhGram D) : PhIsotropic D := by
-  intro p _ cc δ g hA hp n r b hb _ hiso
-  have h1 := hG p cc δ g hA hp (Fin n) r b hb
-  rwa [HI p g hA.2.2.2.2 (Fin n) r b hiso] at h1
-
-theorem phDual_of (HD : PhDualOfGram) (D : D7) (hG : GL3r7.PhGram D) : PhDual D := by
-  intro p _ cc δ g hA hp κ ι _ _ b b' hb hb' hd
-  exact HD p g (OKp D g.lam) hA.2.2.2.2
-    (by
-      intro κ' _ k A hA'
-      exact hG p cc δ g hA hp κ' k A hA') κ ι b b' hb hb' hd
 
 theorem jetsPh_of (HH : JetsHigh) (H1 : JetsOne) (H2 : JetsTwo) (D : D7) (hc : cube D) (hn : phNorm D)
     (hb : beConj D) (hdf : OkpDiff D) : jetsPh D := by
@@ -165,13 +143,5 @@ theorem jetsPh_of (HH : JetsHigh) (H1 : JetsOne) (H2 : JetsTwo) (D : D7) (hc : c
     rw [← mul_assoc, mul_inv_cancel₀ hpos.ne', one_mul, mul_one] at h3
     exact h3
 
-set_option maxHeartbeats 400000 in
-theorem beDiag_of (H : BeDiagG) (D : D7) (ht : OkpTrace D) (he : endInt D)
-    (ha : addInt D) (hn : phNorm D) (hb : beConj D) (hB : beBiadd D) : beDiag D := by
-  intro p _ cc δ g hA hp
-  have h2 := hn p cc δ g hA hp ((2 : ℂ_[p]), (2 : ℂ_[p])) (okpTwo_holds D p g.lam)
-  exact H p g (OKp D g.lam) hA.2.2.2.2 (fun α hα => okpSwap_holds D p g.lam α hα)
-    (he p cc δ g hA) (ha p cc δ g hA).1 (fun α hα => ht p g.lam α hα) h2
-    (hb p cc δ g hA hp) (hB p cc δ g hA).1
 
 end Formalism.MainNotions.Ext.CutA

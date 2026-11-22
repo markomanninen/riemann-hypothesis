@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.RatBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.RatBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem contDiff_herm (n : ℕ) : ContDiff ℝ (⊤ : ℕ∞) (herm (n := n)) := by
   refine contDiff_pi.2 fun i => contDiff_pi.2 fun j => ?_
   have hc : ∀ a b : Fin n, ContDiff ℝ (⊤ : ℕ∞) (fun x : E n => ((x a b : ℝ) : ℂ)) := fun a b =>
-    Complex.ofRealCLM.contDiff.comp ((contDiff_apply ℝ ℝ b).comp (contDiff_apply ℝ (Fin n → ℝ) a))
+    Complex.ofRealCLM.contDiff.comp ((contDiff_apply ℝ (fun _ => ℝ) b).comp (contDiff_apply ℝ (fun _ => (Fin n → ℝ)) a))
   simp only [herm]
   push_cast
   exact (((hc i j).add (hc j i)).div_const 2).add ((contDiff_const.mul ((hc i j).sub (hc j i))).div_const 2)

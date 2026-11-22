@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
 
 open Polynomial
 
@@ -45,8 +49,10 @@ theorem isAlgClosed_fractionRing (A : Type) [CommRing A] [IsDomain A] (h : Globa
   have hq0 : IsLocalization.integerNormalization (nonZeroDivisors A) p ≠ 0 := by
     intro h0
     have h1 := congrArg (fun r => r.coeff p.natDegree) hb
-    simp only [h0, Polynomial.map_zero, coeff_zero, coeff_smul, hmon.coeff_natDegree] at h1
-    rw [Algebra.smul_def, mul_one] at h1
+    simp only [h0, Polynomial.map_zero, coeff_zero] at h1
+    rw [Algebra.smul_def] at h1
+    change 0 = (C (algebraMap A (FractionRing A) b) * p).coeff p.natDegree at h1
+    rw [coeff_C_mul, hmon.coeff_natDegree, mul_one] at h1
     exact hbK h1.symm
   have hqz : aeval z (IsLocalization.integerNormalization (nonZeroDivisors A) p) = 0 := by
     rw [← aeval_map_algebraMap (FractionRing A), hb, Algebra.smul_def, map_mul, hpz, mul_zero]

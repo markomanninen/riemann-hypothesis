@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitMulMemIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitMulMemIff
+
+@[expose] public section
 
 open scoped BigOperators
 
@@ -115,7 +119,7 @@ theorem idx_std {ϖ : O} (hϖ : Irreducible ϖ) :
   have hadd : ∀ x y i, a (x + y) i = a x i + a y i := by
     intro x y i
     apply IsFractionRing.injective O K
-    rw [map_add, ha, ha, ha]; rfl
+    rw [map_add (f := _), ha, ha, ha]; rfl
   let ψ : L0.toAddSubgroup →+ (Fin r → IsLocalRing.ResidueField O) :=
     AddMonoidHom.mk' (fun x i => IsLocalRing.residue O (a x i)) (by
       intro x y; funext i; simp [hadd])

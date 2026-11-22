@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.PicData
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.PicData
+
+@[expose] public section
 
 open CategoryTheory TensorProduct UpperTheory.PicD
 
@@ -18,7 +22,7 @@ private theorem unit_of_surj {A C : Type} [CommRing A] [CommRing C] [Algebra A C
     | add x y hx hy =>
       obtain ⟨c1, h1⟩ := hx
       obtain ⟨c2, h2⟩ := hy
-      exact ⟨c1 + c2, by rw [map_add, h1, h2, add_mul]⟩
+      exact ⟨c1 + c2, by rw [map_add (f := _), h1, h2, add_mul]⟩
   obtain ⟨x, hx⟩ := hs 1
   obtain ⟨c, hc⟩ := key x
   exact ⟨c, by rw [← hc, hx]⟩
@@ -76,6 +80,6 @@ theorem UpperTheory.torsorRel_self_iff_exists_coboundary :
         induction x using TensorProduct.induction_on with
         | zero => simp
         | tmul a b => simp
-        | add x y hx hy => rw [map_add, map_add, hx, hy]
+        | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
       rw [e]
       exact (TensorProduct.lid A A).bijective

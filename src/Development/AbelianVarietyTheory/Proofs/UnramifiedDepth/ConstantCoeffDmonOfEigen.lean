@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffDmonOfSubMem
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NabValColumnsCongr
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffDmonOfSubMem
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NabValColumnsCongr
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -140,7 +144,8 @@ theorem nabVal_character_columns :
     refine I.mul_mem_left _ ?_
     rw [Fintype.prod_prod_type_right, ← Ideal.Quotient.eq, map_prod, map_prod]
     exact Finset.prod_congr rfl fun b _ => Ideal.Quotient.eq.2 (hs mo b hmo).1
-  · rw [add_sub_cancel, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    rw [add_sub_cancel, map_sum]
     refine Finset.sum_congr rfl fun mo hmo => ?_
     rw [map_mul, map_prod]
     congr 1

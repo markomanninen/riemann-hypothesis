@@ -1,4 +1,8 @@
-import Formalism.CharacterColumnKernels.StatGlobalModule
+module
+
+public import Formalism.CharacterColumnKernels.StatGlobalModule
+
+@[expose] public section
 
 namespace Formalism.NG
 open Module
@@ -65,7 +69,7 @@ private def colFreeMap (φY : Ymod r χ E →ₗ[A] V) (n : ι → V) (s : (l : 
     ColFreeJ A r χ E ι j →ₗ[A] V where
   toFun x := φY x.1 + ∑ l, ((x.2 l).1 • n l + ∑ a, (x.2 l).2.1 a • s l a + (x.2 l).2.2 • s0 l)
   map_add' x y := by
-    simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib]
+    simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib]
     abel
   map_smul' c x := by
     simp only [Prod.smul_fst, Prod.smul_snd, Pi.smul_apply, map_smul, smul_eq_mul, mul_smul,
@@ -258,18 +262,18 @@ theorem cupKillAdm : StatCupKillAdm := by
     intro g h k
     simp only [cup1]
     rw [← hβ g (a h) (ρ₂ h (b k)), ha g h, hb h k, map_mul, Module.End.mul_apply]
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     abel
   obtain ⟨c, hcN, hc⟩ := hH2 _ hz hc2 ⟨_, hc1, by
     intro g h
     simp only [cup1, hcomp, map_neg]
     rw [hj g (b h), he h, ← hβ' g (a h) (ρ₂' h e), ha g h, map_mul, Module.End.mul_apply]
-    simp only [map_sub, map_add, LinearMap.add_apply]
+    simp only [map_sub, map_add (f := _), LinearMap.add_apply]
     abel⟩
   refine ⟨fun g => ψ (c g), hCP _ hcN, ?_⟩
   intro g h
   simp only [cup1]
-  rw [← hφ g (b h), hγ, ← hψ g, ← map_sub, ← map_add]
+  rw [← hφ g (b h), hγ, ← hψ g, ← map_sub, ← map_add (f := _)]
   exact congrArg ψ (hc g h)
 
 theorem finPres : StatFinPres := by

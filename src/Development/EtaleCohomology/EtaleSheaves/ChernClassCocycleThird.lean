@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ChernClassEvaluation
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassEvaluation
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -85,8 +89,8 @@ theorem local_zero (q : ℕ) [NeZero q] {E : Spc} (L : E ⟶ ofCat (glCat 1))
   simp
   abel
 
-open LateralTheory.EtaleFoundations.FirstChernUniqueness in
 
+open LateralTheory.EtaleFoundations.FirstChernUniqueness in
 theorem etale_kummer_chern_cochain_coboundary_vanishes_on_tetrahedra_of_root_localization (hr : LateralTheory.E.ChernClassRootLocalization.LeafRootLoc) : LateralTheory.E.ChernClassExistence.EtaleKummerChernCochainCoboundaryVanishesOnTetrahedra := by
   intro q _ E L hi α hC U x
   apply LateralTheory.E.ChernClassRootLocalization.sec_sep

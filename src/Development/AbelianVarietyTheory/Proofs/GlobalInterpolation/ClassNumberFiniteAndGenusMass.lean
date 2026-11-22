@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumInvCardStabEq
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LatticeStabilizerDoubleCosetsClassRestMassStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumInvCardStabEq
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LatticeStabilizerDoubleCosetsClassRestMassStatement
+
+@[expose] public section
+
 open NumberField MeasureTheory Formalism.BasicNotions Formalism.MainNotions.StandardLattice Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

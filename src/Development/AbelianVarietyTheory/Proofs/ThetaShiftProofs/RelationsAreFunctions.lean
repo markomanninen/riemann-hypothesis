@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GtActIffEqGtSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GtActIffEqGtSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,26 +52,23 @@ theorem equiv_trans {p p' p'' : QkPt D F k} (h : QkPt.Equiv D F p p') (h' : QkPt
     QkPt.Equiv D F p p'' := by
   obtain ⟨z, hy, hg⟩ := (equiv_iff hB _ _).1 h
   obtain ⟨z', hy', hg'⟩ := (equiv_iff hB _ _).1 h'
-  exact (equiv_iff hB _ _).2 ⟨z + z', by rw [hy', hy, smul_add, add_assoc], by rw [hg', hg, map_add, add_assoc]⟩
+  exact (equiv_iff hB _ _).2 ⟨z + z', by rw [hy', hy, smul_add, add_assoc], by rw [hg', hg, map_add (f := _), add_assoc]⟩
 
 include hB in
 theorem equiv_equivalence : Equivalence (QkPt.Equiv D F (k := k)) :=
   ⟨qk_equiv_refl hB, equiv_symm hB, equiv_trans hB⟩
 
-def qkSetoid (F : Type) [Field F] [Algebra (FractionRing R) F] (k : ℕ) : Setoid (QkPt D F k) :=
-  ⟨QkPt.Equiv D F, equiv_equivalence hB⟩
-
 def qkZero (F : Type) [Field F] [Algebra (FractionRing R) F] (k : ℕ) : QkPt D F k :=
   qkMk hB 0 0 (by rw [nsmul_zero, map_zero])
 
 def qkAdd (p p' : QkPt D F k) : QkPt D F k :=
-  qkMk hB (p.y + p'.y) (p.g + p'.g) (by rw [nsmul_add, qk_nsmul hB, qk_nsmul hB, map_add])
+  qkMk hB (p.y + p'.y) (p.g + p'.g) (by rw [nsmul_add, qk_nsmul hB, qk_nsmul hB, map_add (f := _)])
 
 def qkNeg (p : QkPt D F k) : QkPt D F k :=
   qkMk hB (-p.y) (-p.g) (by rw [smul_neg, qk_nsmul hB, map_neg])
 
 def qkShift (p : QkPt D F k) (z : D.X) : QkPt D F k :=
-  qkMk hB (p.y + k • z) (p.g + iota hB F z) (by rw [nsmul_add, qk_nsmul hB, map_add, map_nsmul])
+  qkMk hB (p.y + k • z) (p.g + iota hB F z) (by rw [nsmul_add, qk_nsmul hB, map_add (f := _), map_nsmul])
 
 theorem equiv_qkShift (p : QkPt D F k) (z : D.X) : QkPt.Equiv D F p (qkShift hB p z) :=
   (equiv_iff hB _ _).2 ⟨z, rfl, rfl⟩
@@ -86,10 +87,10 @@ theorem qkAdd_congr {p p' q q' : QkPt D F k} (h : QkPt.Equiv D F p q) (h' : QkPt
   · show q.y + q'.y = p.y + p'.y + k • (z + z')
     rw [hy, hy', smul_add, add_add_add_comm]
   · show q.g + q'.g = p.g + p'.g + iota hB F (z + z')
-    rw [hg, hg', map_add, add_add_add_comm]
+    rw [hg, hg', map_add (f := _), add_add_add_comm]
+
 
 include hB in
-
 theorem qkAdd_iff_of_equiv {p p' q q' r r' : QkPt D F k} (h : QkPt.Equiv D F p q) (h' : QkPt.Equiv D F p' q')
     (e : QkAdd p p' r) : QkAdd q q' r' ↔ QkPt.Equiv D F r r' := by
   have a := (qkAdd_iff hB _ _ _).1 e
@@ -122,8 +123,8 @@ theorem qkSmul_congr (a : O) {p q : QkPt D F k} (h : QkPt.Equiv D F p q) :
   · show gtSmul hG oa a q.g = gtSmul hG oa a p.g + iota hB F (a • z)
     rw [hg, gtSmul_add, iota_smul hG oa]
 
-include hB hG in
 
+include hB hG in
 theorem qkAct_iff_of_equiv {a : O} {p q r r' : QkPt D F k} (h : QkPt.Equiv D F p q) (e : QkAct oa a p r) :
     QkAct oa a q r' ↔ QkPt.Equiv D F r r' := by
   have a₁ := (qkAct_iff hB hG oa _ _ _).1 e
@@ -154,7 +155,7 @@ theorem qkExt_congr {p q : QkPt D F k} (h : QkPt.Equiv D F p q) :
   obtain ⟨z, hy, hg⟩ := (equiv_iff hB _ _).1 h
   refine (equiv_iff hB _ _).2 ⟨z, hy, ?_⟩
   show gtExt D f hf q.g = gtExt D f hf p.g + iota hB F' z
-  rw [hg, map_add, gtExt_iota]
+  rw [hg, map_add (f := _), gtExt_iota]
 
 theorem qkExt_qkAdd (p q : QkPt D F k) :
     qkExt hB f hf (qkAdd hB p q) = qkAdd hB (qkExt hB f hf p) (qkExt hB f hf q) :=
@@ -186,41 +187,5 @@ theorem qkAct_of_qkExt {a : O} {p r : QkPt D F k} {p' r' : QkPt D F' k} (hp : Qk
   exact qkExt_congr hB f hf ((qkAct_iff hB hG oa _ _ _).1 h)
 
 end Extension
-
-theorem relations_are_functions (hG : GlobalFnsSt) {R : Type} [CommRing R] [IsDomain R] (D : DegPre R)
-    (hB : D.TauBimult) (F : Type) [Field F] [Algebra (FractionRing R) F] :
-    letI := gtGroup D F
-    (∀ g g' : GtPtF D F, g.b = g'.b → (∀ χ, LB.Gen.Corr D.P.L _ _ _ _ (g.s χ) (g'.s χ)) → g = g') ∧
-    ((∀ g g' g'' : GtPtF D F, g.IsAdd g' g'' ↔ g'' = g + g') ∧ (∀ g : GtPtF D F, g.IsZero ↔ g = 0) ∧
-      ∀ (k : ℕ) (g h : GtPtF D F), GtPtF.IsNsmul k g h ↔ h = k • g) ∧
-    ((∀ (y : D.X) (g : GtPtF D F), GtPtF.IsIota y g ↔ g = iota hB F y) ∧
-      (∀ g : GtPtF D F, gtProj D F g = Additive.ofMul g.b) ∧
-      (0 : GtPtF D F).b = 1 ∧ ∀ g g' : GtPtF D F, (g + g').b = g.b * g'.b) ∧
-    (∀ k : ℕ, Equivalence (QkPt.Equiv D F (k := k)) ∧ (∀ p p' : QkPt D F k, ∃ r, QkAdd p p' r) ∧
-      ∀ p p' q q' r r' : QkPt D F k, QkPt.Equiv D F p q → QkPt.Equiv D F p' q' → QkAdd p p' r →
-        (QkAdd q q' r' ↔ QkPt.Equiv D F r r')) ∧
-    (∀ (O : Type) [CommRing O] [StarRing O] [Module O D.X] (oa : D.OAct O),
-      letI := gtModule hG oa F
-      (∀ (a : O) (g g' : GtPtF D F), GtAct oa a g g' ↔ g' = a • g) ∧
-      (∀ (a : O) (y : D.X), iota hB F (a • y) = a • iota hB F y) ∧
-      (∀ (a : O) (g : GtPtF D F), (a • g).b = g.b ≫ oa.onB.act a) ∧
-      ∀ (k : ℕ) (a : O), (∀ p : QkPt D F k, ∃ r, QkAct oa a p r) ∧
-        ∀ p q r r' : QkPt D F k, QkPt.Equiv D F p q → QkAct oa a p r → (QkAct oa a q r' ↔ QkPt.Equiv D F r r')) ∧
-    ∀ (F' : Type) [Field F'] [Algebra (FractionRing R) F'] (f : F →+* F'),
-      f.comp (algebraMap (FractionRing R) F) = algebraMap (FractionRing R) F' → ∀ k : ℕ,
-      (∀ p : QkPt D F k, ∃! p' : QkPt D F' k, QkExt f p p') ∧
-      (∀ (p q : QkPt D F k) (p' q' : QkPt D F' k), QkExt f p p' → QkExt f q q' → QkPt.Equiv D F p q →
-        QkPt.Equiv D F' p' q') ∧
-      (∀ (p q r : QkPt D F k) (p' q' r' : QkPt D F' k), QkExt f p p' → QkExt f q q' → QkExt f r r' → QkAdd p q r →
-        QkAdd p' q' r') ∧
-      ∀ (O : Type) [CommRing O] [StarRing O] [Module O D.X] (oa : D.OAct O) (a : O) (p r : QkPt D F k)
-        (p' r' : QkPt D F' k), QkExt f p p' → QkExt f r r' → QkAct oa a p r → QkAct oa a p' r' :=
-  ⟨fun _ _ => gt_ext, ⟨isAdd_iff_eq, isZero_iff_eq, isNsmul_iff_eq⟩, ⟨isIota_iff_eq hB, gtProj_apply, zero_b, add_b⟩,
-    fun _ => ⟨equiv_equivalence hB, fun p p' => ⟨_, qkAdd_qkAdd hB p p'⟩,
-      fun _ _ _ _ _ _ h h' e => qkAdd_iff_of_equiv hB h h' e⟩,
-    fun _ _ _ _ oa => ⟨gtAct_iff_eq_gtSmul hG oa, iota_smul hG oa hB, gtSmul_b hG oa,
-      fun _ a => ⟨fun p => ⟨_, qkAct_qkSmul hB hG oa a p⟩, fun _ _ _ _ h e => qkAct_iff_of_equiv hB hG oa h e⟩⟩,
-    fun _ _ _ f hf _ => ⟨existsUnique_qkExt hB f hf, fun _ _ _ _ => equiv_of_qkExt hB f hf,
-      fun _ _ _ _ _ _ => qkAdd_of_qkExt hB f hf, fun _ _ _ _ oa _ _ _ _ _ => qkAct_of_qkExt hB f hf hG oa⟩⟩
 
 end GlobalTheory.TorusExt

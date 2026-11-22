@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SegmentProductDegreeDetermined
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SegmentProductDegreeDetermined
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem degAt_ph_detPl {R : Type} [CommRing R] {n' r : ℕ} [NeZero n'] (X : Dat
     split_ifs <;> simp
   unfold Dat.detPl
   rw [Matrix.det_apply']
-  simp only [map_sum, map_mul, map_prod, Matrix.of_apply, map_intCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_prod, Matrix.of_apply, map_intCast]
   apply degAt_sum
   intro σ _
   have e : ((Equiv.Perm.sign σ : ℤ) : RRing R n' (r + K)) = C ((Equiv.Perm.sign σ : ℤ) : R) := by simp

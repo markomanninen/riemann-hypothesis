@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapIntegralClosureTensorEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformizerEqPowRamificationIdxMulUnitIntegralClStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvrExistsUnitPowEqMulUniformizerStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KummerAevalValuationDvrStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KummerResidueMemAdjoinUnitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalizationNormalizationRootAdjoinIsDVRStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralClosureTensorLocalizationInjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalisationMulEqAevalRootStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapIntegralClosureTensorEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformizerEqPowRamificationIdxMulUnitIntegralClStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvrExistsUnitPowEqMulUniformizerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KummerAevalValuationDvrStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KummerResidueMemAdjoinUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalizationNormalizationRootAdjoinIsDVRStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralClosureTensorLocalizationInjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalisationMulEqAevalRootStatement
+
+@[expose] public section
+
 open IsLocalRing
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 1000000
@@ -77,12 +82,41 @@ theorem abhyankar_residueField_isSeparable : ∀ (S K L : Type) [CommRing S] [Is
   haveI : Algebra.IsIntegral (integralClosure S L) (integralClosure D (TensorProduct S D L)) :=
     Algebra.IsIntegral.tower_top S
   set P : Ideal (integralClosure S L) := Q.under (integralClosure S L) with hPdef
-  haveI hPmax : P.IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal Q
+  haveI hPmax : P.IsMaximal := Ideal.isMaximal_under_of_isIntegral_of_isMaximal Q
   haveI : P.LiesOver (maximalIdeal S) :=
-    ⟨(IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P)).symm⟩
+    ⟨(IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal P)).symm⟩
   letI := Localization.AtPrime.algebraOfLiesOver P Q
   obtain ⟨hVd, hVdvr⟩ := GlobalTheory.T.localization_normalization_rootAdjoin_isDVR S K L π e D ⟨φ⟩ hπ he Q
-  have hinj := GlobalTheory.T.integralClosure_tensor_localization_injective' S K L π e D ⟨φ⟩ hπ he Q
+  have hinj : Function.Injective
+      (algebraMap (Localization.AtPrime P) (Localization.AtPrime Q)) := by
+    rw [injective_iff_map_eq_zero]
+    intro z hz
+    obtain ⟨⟨x, s⟩, rfl⟩ := IsLocalization.mk'_surjective P.primeCompl z
+    have h1 : algebraMap (Localization.AtPrime P) (Localization.AtPrime Q)
+        (algebraMap (integralClosure S L) (Localization.AtPrime P) x) = 0 := by
+      rw [← IsLocalization.mk'_spec (Localization.AtPrime P) x s, map_mul, hz, zero_mul]
+    have h2 : algebraMap (integralClosure D (TensorProduct S D L)) (Localization.AtPrime Q)
+        (algebraMap (integralClosure S L) (integralClosure D (TensorProduct S D L)) x) = 0 := by
+      rw [← h1]
+      exact (Localization.localRingHom_to_map _ _ _ _ x).symm
+    obtain ⟨t, ht⟩ := (IsLocalization.map_eq_zero_iff Q.primeCompl (Localization.AtPrime Q) _).1 h2
+    have hx : x = 0 := by
+      by_contra hx0
+      have hxL : (x : L) ≠ 0 := fun h => hx0 (Subtype.ext h)
+      have ht' : ((t : integralClosure D (TensorProduct S D L)) : TensorProduct S D L) *
+          ((1 : D) ⊗ₜ[S] (x : L)) = 0 := by
+        have := congrArg (fun y : integralClosure D (TensorProduct S D L) => (y : TensorProduct S D L)) ht
+        simpa [algebraMap_integralClosure_tensor_eq] using this
+      have hu : ((1 : D) ⊗ₜ[S] (x : L)) * ((1 : D) ⊗ₜ[S] ((x : L)⁻¹)) = 1 := by
+        rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_inv_cancel₀ hxL]
+        rfl
+      have ht0 : ((t : integralClosure D (TensorProduct S D L)) : TensorProduct S D L) = 0 := by
+        have := congrArg (· * ((1 : D) ⊗ₜ[S] ((x : L)⁻¹))) ht'
+        simpa [mul_assoc, hu] using this
+      have : (t : integralClosure D (TensorProduct S D L)) = 0 := Subtype.ext ht0
+      exact t.2 (this ▸ Q.zero_mem)
+    subst hx
+    exact IsLocalization.mk'_zero _
   have hπP : algebraMap S (integralClosure S L) π ∈ P :=
     (Ideal.mem_of_liesOver P (maximalIdeal S) π).mp ((IsLocalRing.mem_maximalIdeal π).2 hπ.not_isUnit)
   obtain ⟨ϖ, hϖ, u', hπu'⟩ := GlobalTheory.T.uniformizer_eq_pow_ramificationIdx_mul_unit_integralClosure S K L π e D P hπ hπP
@@ -211,7 +245,7 @@ theorem abhyankar_residueField_isSeparable : ∀ (S K L : Type) [CommRing S] [Is
   haveI h4 : Algebra.IsSeparable (S ⧸ maximalIdeal S) (integralClosure D (TensorProduct S D L) ⧸ Q) :=
     Algebra.IsSeparable.trans (S ⧸ maximalIdeal S) (integralClosure S L ⧸ P) _
   haveI : (maximalIdeal D).LiesOver (maximalIdeal S) :=
-    ⟨(IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal D))).symm⟩
+    ⟨(IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal D))).symm⟩
   haveI : IsScalarTower (S ⧸ maximalIdeal S) (D ⧸ maximalIdeal D)
       (integralClosure D (TensorProduct S D L) ⧸ Q) := IsScalarTower.of_algebraMap_eq fun x => by
     obtain ⟨s, rfl⟩ := Ideal.Quotient.mk_surjective x

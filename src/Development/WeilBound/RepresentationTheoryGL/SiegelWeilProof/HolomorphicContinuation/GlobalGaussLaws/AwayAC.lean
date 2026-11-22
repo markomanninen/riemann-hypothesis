@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.AwayAB
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.AwayAB
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,6 +38,7 @@ theorem closure_triv (hG : GenA) (hDA : DecompAway) {θ : InfFam D} {τ : D.what
     x ∈ Submonoid.closure {x : G D n | IsTrivAt θ τ x ∧
       ((∃ b, mat x = blk4 1 b 0 1) ∨ (∃ a d, mat x = blk4 a 0 0 d) ∨ (∃ c, mat x = blk4 1 0 c 1))} := by
   classical
+  letI : Inv (Set (G D n)) := Set.inv
   choose π yf hπ using fun g => hDA D n θ τ ι hθ hι g
   have πmul : ∀ g h : G D n, π (g * h) = π g * π h := by
     intro g h

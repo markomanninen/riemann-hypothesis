@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
+
+@[expose] public section
 
 open Finset
 open scoped InnerProductSpace

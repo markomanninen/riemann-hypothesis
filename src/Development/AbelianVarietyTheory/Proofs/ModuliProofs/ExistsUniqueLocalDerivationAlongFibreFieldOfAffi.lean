@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLocalDerivationExtensionOfAffine
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLocalDerivationExtensionOfAffine
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct ContDiff
@@ -25,13 +30,13 @@ theorem exists_locDerK : ∀ (K : Type) [Field K] (R : Type) [CommRing R] (Y X :
     intro f
     haveI := hW.isLocalization_basicOpen f
     refine der_exists f (m.app (X.basicOpen f)).hom
-      (fun a => resG Y (pre_le m (X.basicOpen_le f)) (d₀ a)) (fun a b => by simp only [hadd, map_add])
+      (fun a => resG Y (pre_le m (X.basicOpen_le f)) (d₀ a)) (fun a b => by simp only [hadd, map_add (f := _)])
       (fun a b => ?_)
     have e : ∀ a, (m.app (X.basicOpen f)).hom (algebraMap Γ(X, W₀) Γ(X, X.basicOpen f) a) =
         resG Y (pre_le m (X.basicOpen_le f)) ((m.app W₀).hom a) :=
       fun a => app_res m (X.basicOpen_le f) a
     rw [e, e]
-    simp only [hmul, map_add, map_mul]
+    simp only [hmul, map_add (f := _), map_mul]
   choose δ δadd δmul δres using H
   have compat : ∀ (f g : Γ(X, W₀)) (k : X.basicOpen g ≤ X.basicOpen f) (s : Γ(X, X.basicOpen f)),
       resG Y (pre_le m k) (δ f s) = δ g (resG X k s) := by
@@ -40,7 +45,7 @@ theorem exists_locDerK : ∀ (K : Type) [Field K] (R : Type) [CommRing R] (Y X :
     refine der_unique f ((m.app (X.basicOpen g)).hom.comp (resG X k))
       (fun s => resG Y (pre_le m k) (δ f s)) (fun s => δ g (resG X k s)) (fun a b => ?_)
       (fun a b => ?_) (fun a => ?_) s
-    · simp only [δmul, map_add, map_mul, RingHom.comp_apply, app_res m k]
+    · simp only [δmul, map_add (f := _), map_mul, RingHom.comp_apply, app_res m k]
     · simp only [δmul, map_mul, RingHom.comp_apply]
     · change resG Y (pre_le m k) (δ f (resG X (X.basicOpen_le f) a)) =
         δ g (resG X k (resG X (X.basicOpen_le f) a))
@@ -70,11 +75,11 @@ theorem exists_locDerK : ∀ (K : Type) [Field K] (R : Type) [CommRing R] (Y X :
   · intro W h a b
     simp only [dif_pos h]
     refine sep m hW h _ _ (fun f k => ?_)
-    rw [map_add, ht W h _ f k, ht W h _ f k, ht W h _ f k, map_add, δadd]
+    rw [map_add (f := _), ht W h _ f k, ht W h _ f k, ht W h _ f k, map_add (f := _), δadd]
   · intro W h a b
     simp only [dif_pos h]
     refine sep m hW h _ _ (fun f k => ?_)
-    rw [map_add, map_mul, map_mul, ht W h _ f k, ht W h _ f k, ht W h _ f k, map_mul, δmul, app_res m k, app_res m k]
+    rw [map_add (f := _), map_mul, map_mul, ht W h _ f k, ht W h _ f k, ht W h _ f k, map_mul, δmul, app_res m k, app_res m k]
   · intro W W' h' h a
     simp only [dif_pos h, dif_pos (h'.trans h)]
     refine sep m hW (h'.trans h) _ _ (fun f k => ?_)

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPairApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPairApply
+
+@[expose] public section
+
 open scoped TensorProduct Matrix GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Classical
 open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift GlobalTheory.VacLn
 
@@ -90,7 +95,7 @@ theorem conj_mul_eq_zero_of_line {V : Type} [NormedAddCommGroup V] [NormedSpace 
 noncomputable def lin {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
     (B : V →ₗ[ℝ] V →ₗ[ℝ] ℝ) (a b : V) : V →ₗ[ℝ] ℂ where
   toFun z := 2 * Real.pi * Complex.I * (B z a : ℂ) + 2 * Real.pi * (B z b : ℂ)
-  map_add' x y := by simp only [map_add, LinearMap.add_apply, Complex.ofReal_add]; ring
+  map_add' x y := by simp only [map_add (f := _), LinearMap.add_apply, Complex.ofReal_add]; ring
   map_smul' c x := by
     simp only [map_smul, LinearMap.smul_apply, smul_eq_mul, Complex.ofReal_mul, RingHom.id_apply,
       Complex.real_smul]
@@ -141,7 +146,7 @@ theorem schwartz_vacuum_eq_smul : ∀ {V : Type} [NormedAddCommGroup V] [NormedS
         simp only [Set.mem_setOf_eq]
         by_contra hgt
         have := key _ hgt
-        rw [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul] at this
+        rw [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul] at this
         apply ht
         simp only [t₀]
         field_simp
@@ -223,7 +228,7 @@ theorem schwartz_vacuum_eq_smul : ∀ {V : Type} [NormedAddCommGroup V] [NormedS
       linear_combination h - (2 * Real.pi * (B z u.2 : ℂ) * g z) * Complex.I_sq
     have hk := conj_mul_eq_zero_of_line f g y₀ hv (fun z => by
       rw [hfu z, hgu z]
-      simp only [map_add, map_mul, map_ofNat, Complex.conj_ofReal, Complex.conj_I]
+      simp only [map_add (f := _), map_mul, map_ofNat, Complex.conj_ofReal, Complex.conj_I]
       ring)
     refine ⟨0, ?_⟩
     ext z

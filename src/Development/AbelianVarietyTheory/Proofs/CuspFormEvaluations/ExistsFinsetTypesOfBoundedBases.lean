@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegerApproximationCountHolds
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegerApproximationCountHolds
+
+@[expose] public section
 
 open NumberField Matrix Module
 open ReciprocityTheory.ChartRestriction.G.FD
@@ -41,7 +45,7 @@ theorem exists_generators_mod_smul {R : Type*} [CommRing R] [IsDedekindDomain R]
     let φ' : LinearMap.ker π →ₗ[R] (Fin r → R) :=
       LinearMap.pi fun i => (LinearMap.proj i.succ).comp (φ.comp (LinearMap.ker π).subtype)
     have hφ' : Function.Injective φ' := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro m hm
       refine Subtype.ext (hφ ?_)
       funext i
@@ -81,7 +85,7 @@ theorem card_quotient_range_vecMulLinear {r : ℕ} (N : Matrix (Fin r) (Fin r) (
     Nat.card ((Fin r → 𝓞 E) ⧸ LinearMap.range N.vecMulLinear) =
       (Algebra.norm ℤ N.det).natAbs := by
   have hinj : Function.Injective N.vecMulLinear := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     exact Matrix.eq_zero_of_vecMul_eq_zero hN hx
   let P : Submodule ℤ (Fin r → 𝓞 E) := (LinearMap.range N.vecMulLinear).restrictScalars ℤ
@@ -101,7 +105,7 @@ theorem natAbs_norm_le_pow {x : 𝓞 E} {a : ℝ} (h : ∀ σ : E →+* ℂ, ‖
   have h3 := congrArg norm (Algebra.norm_eq_prod_embeddings ℚ ℂ (x : E))
   have h4 : ∏ σ : E →ₐ[ℚ] ℂ, ‖σ (x : E)‖ ≤ a ^ finrank ℚ E := by
     rw [← AlgHom.card ℚ E ℂ, ← Finset.card_univ, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun σ _ => h σ.toRingHom
+    exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun σ _ => h σ.toRingHom
   rw [norm_prod, ← Algebra.coe_norm_int] at h3
   refine le_trans (le_of_eq ?_) (h3 ▸ h4)
   simp [Nat.cast_natAbs]
@@ -187,8 +191,8 @@ theorem exists_vecMul_eq {v : Fin r → Fin r → E} (hv : LinearIndependent E v
   ⟨x ᵥ* (Matrix.of v)⁻¹, by
     rw [vecMul_vecMul, nonsing_inv_mul _ (det_of_ne_zero hv).isUnit, vecMul_one]⟩
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem exists_gl_mulVec {v w : Fin r → Fin r → E} (hv : LinearIndependent E v)
     (hw : LinearIndependent E w) : ∃ γ : GL (Fin r) E, ∀ c : Fin r → E,
       (γ : Matrix (Fin r) (Fin r) E) *ᵥ (c ᵥ* Matrix.of w) = c ᵥ* Matrix.of v := by
@@ -234,7 +238,7 @@ theorem coe_pairing (v : Fin r → Fin r → E) (hv : ∀ i, v i ∈ X.L') (x : 
 
 theorem pairing_injective {v : Fin r → Fin r → E} (hv : ∀ i, v i ∈ X.L')
     (hi : LinearIndependent E v) : Function.Injective (pairing X v hv) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨c, hc⟩ := exists_vecMul_eq hi x
   have h : ((X.NA : E) • c) ᵥ* gramOf X.Gm v = 0 := by
@@ -278,7 +282,8 @@ theorem exists_mem_of_pairing {v w : Fin r → Fin r → E} (hv : ∀ i, v i ∈
       rw [h3, h4] at h2
       rw [smul_sub, smul_add, sub_vecMul, add_vecMul, Pi.sub_apply, Pi.add_apply, ← sub_sub, ← h2,
         hvA]
-      simp only [vecMulLinear_apply, vecMul, dotProduct, map_sum, Matrix.smul_apply, smul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [vecMulLinear_apply, vecMul, dotProduct, map_sum, Matrix.smul_apply, smul_eq_mul,
         map_mul, map_natCast, Pi.smul_apply, map_apply, Pi.zero_apply, ← Finset.sum_sub_distrib]
       refine Finset.sum_eq_zero fun i _ => ?_
       push_cast
@@ -373,7 +378,8 @@ theorem exists_finset_boundedBasis_of_gram (X : DataX E r) {B : ℝ} (hB : 0 ≤
     obtain ⟨γ, hγ, h⟩ := exists_mem_of_pairing X hv.1 w.2.1.1 hv.2.1 w.2.1.2.1 A hvA w.2.2
       fun m => by
         obtain ⟨c, m', rfl⟩ := hx m
-        rw [map_add, map_add, add_sub_add_comm, map_sum, map_sum, ← Finset.sum_sub_distrib,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_add (f := _), map_add (f := _), add_sub_add_comm, map_sum, map_sum, ← Finset.sum_sub_distrib,
           map_smul, map_smul, ← smul_sub]
         refine add_mem (Submodule.sum_mem _ fun j _ => ?_) ⟨(pairing X w.1 w.2.1.1 m' -
           pairing X v hv.1 m') ᵥ* N.adjugate, ?_⟩

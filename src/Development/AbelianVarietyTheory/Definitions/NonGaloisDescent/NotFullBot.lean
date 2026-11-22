@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ def Std {M : Type} [AddCommGroup M] [Module LL M] (D : Submodule LL M) (Λ : Sub
 def Graded {M : Type} [AddCommGroup M] [Module LL M] (Λ : Submodule LL (ℤ → M)) : Prop :=
   ∀ f : ℤ → M, f ∈ Λ ↔ (∃ m : ℤ, ∀ k < m, f k = 0) ∧ ∀ k, Pi.single k (f k) ∈ Λ
 
-variable (PD) in
 
+variable (PD) in
 def FilAt (T : LocLat G Qp LL O) (τ : K →ₐ[Qp] LL) (a : ℤ) : Submodule LL (T.V ⊗[Qp] BdR) :=
   FildR PD T.ρ τ a ⊔ ⨆ (τ' : K →ₐ[Qp] LL) (_ : τ' ≠ τ), DdRE PD T.ρ τ'
 

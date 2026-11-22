@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.LowestWeightNonposOffSet
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.LevNMonomial
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.MemSpanList
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TypeBd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.LowestWeightNonposOffSet
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.LevNMonomial
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.MemSpanList
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TypeBd
+
+@[expose] public section
 
 noncomputable section
 

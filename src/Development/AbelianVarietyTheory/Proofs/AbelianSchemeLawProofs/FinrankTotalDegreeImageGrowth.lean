@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -64,7 +69,7 @@ theorem exists_aeval_mul_mem {s n : ℕ} (y : Fin s → B) (b : Fin n → B)
     obtain ⟨D1, h1⟩ := h2
     obtain ⟨D2, h2⟩ := h1'
     refine ⟨max D1 D2, ?_⟩
-    rw [map_add, add_mul]
+    rw [map_add (f := _), add_mul]
     exact add_mem (boxSpan_mono y b (le_max_left _ _) h1) (boxSpan_mono y b (le_max_right _ _) h2)
   | mul_X p i h =>
     obtain ⟨D, hD⟩ := h
@@ -130,7 +135,8 @@ theorem upper {s n m : ℕ} (y : Fin s → B) (b : Fin n → B)
         boxSpan K y b (t * d + f 1) := by
     rintro _ ⟨p, hp, rfl⟩
     have hp' : p.totalDegree ≤ t := (MvPolynomial.mem_restrictTotalDegree _ _ _).1 hp
-    rw [p.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [p.as_sum, map_sum]
     refine Submodule.sum_mem _ fun a ha => ?_
     have h1 := prod_mul_mem_boxSpan y b (f 1) d r hr a.support a (hf 1)
     have h2 : ∑ i ∈ a.support, a i ≤ t := (MvPolynomial.le_totalDegree ha).trans hp'
@@ -170,7 +176,7 @@ theorem lower {s m : ℕ} (φ : MvPolynomial (Fin s) K →ₐ[K] B) (hφ : Funct
     intro a
     refine ⟨∏ i, q i ^ (a i : ℕ), ?_, ?_⟩
     · refine (MvPolynomial.mem_restrictTotalDegree _ _ _).2 ?_
-      refine (MvPolynomial.totalDegree_finset_prod _ _).trans ?_
+      refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
       calc ∑ i, (q i ^ (a i : ℕ)).totalDegree ≤ ∑ i, (t / E) * (q i).totalDegree :=
             Finset.sum_le_sum fun i _ => (MvPolynomial.totalDegree_pow _ _).trans
               (Nat.mul_le_mul_right _ (Nat.le_of_lt_succ (a i).2))

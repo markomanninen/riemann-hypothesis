@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+
+@[expose] public section
+
 open Complex ArithmeticFunction MeasureTheory Filter Topology NumberField GlobalTheory.Hk GlobalTheory.Mem
 open scoped Classical
 
@@ -33,7 +38,7 @@ lemma tsum_exp_eq_integral (c : ℕ → ℂ) (h0 : c 0 = 0) {t : ℝ} (ht : 0 < 
     apply setIntegral_congr_set
     have e1 : (Set.Ioi (1 : ℝ) : Set ℝ) =ᵐ[volume] Set.Ici 1 := Ioi_ae_eq_Ici
     have e2 : (Set.Ioi (1 : ℝ) ∩ Set.Ici (n : ℝ) : Set ℝ) =ᵐ[volume] (Set.Ici 1 ∩ Set.Ici (n : ℝ) : Set ℝ) :=
-      ae_eq_set_inter e1 (ae_eq_refl _)
+      ae_eq_set_inter e1 (Filter.EventuallyEqSet.rfl)
     rw [Set.Ici_inter_Ici, sup_eq_right.2 hn1] at e2
     exact e2.trans Ioi_ae_eq_Ici.symm
   have hv : ∀ n : ℕ, ∫ x in Set.Ioi (1 : ℝ), c n * (φ n x : ℂ) = c n * (Real.exp (-(t * n)) : ℂ) := by

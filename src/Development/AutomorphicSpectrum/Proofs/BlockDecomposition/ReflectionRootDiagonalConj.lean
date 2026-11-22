@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjTransposeAntidiagFixed
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjTransposeAntidiagFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -207,12 +211,12 @@ theorem torus_step : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicativ
         ∏ k : Fin (n / 2), (χ k : ℂ) ^ (o' k) * (q : ℂ) ^ (-(o' k) * (((n : ℤ) - 1) - 2 * (k.val : ℤ))) := by
       unfold chiDeltaU
       refine Finset.prod_congr rfl fun k _ => ?_
-      rw [dif_pos (hlt k), hsv, Matrix.diagonal_apply_eq]
+      rw [dite_eq_left (hlt k), hsv, Matrix.diagonal_apply_eq]
     have hR : chiDeltaU q (fun k => ((χ ∘ Equiv.swap i j) k : ℂ)) t =
         ∏ k : Fin (n / 2), (χ (Equiv.swap i j k) : ℂ) ^ (o k) * (q : ℂ) ^ (-(o k) * (((n : ℤ) - 1) - 2 * (k.val : ℤ))) := by
       unfold chiDeltaU
       refine Finset.prod_congr rfl fun k _ => ?_
-      rw [dif_pos (hlt k)]
+      rw [dite_eq_left (hlt k)]
       rfl
     have hci : (⟨i.val, hlt i⟩ : Fin n) = cI n a h 0 := Fin.ext (by simp [cI, hi])
     have hcj : (⟨j.val, hlt j⟩ : Fin n) = cI n a h 1 := Fin.ext (by simp [cI, hj])

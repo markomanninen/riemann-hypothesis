@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.Generators
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.PieceAdd
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.Generators
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.PieceAdd
+
+@[expose] public section
 
 open MvPolynomial Filter Topology PositivityTheory.Rg.Fx
 
@@ -12,7 +16,7 @@ private theorem UpperTheory.ConvolutionTheory.FX.aeval_single_zero {ι ι' : Typ
   | C a =>
     rw [aeval_C, aeval_C]
     rfl
-  | add p r hp hr => rw [map_add, map_add, hp, hr, AddMonoidAlgebra.single_add]
+  | add p r hp hr => rw [map_add (f := _), map_add (f := _), hp, hr, AddMonoidAlgebra.single_add]
   | mul_X p i hp =>
     rw [map_mul, map_mul, hp, aeval_X, aeval_X, AddMonoidAlgebra.single_mul_single, add_zero]
 
@@ -29,7 +33,8 @@ private theorem UpperTheory.ConvolutionTheory.FX.lin_push {ι ι' : Type} [Finty
     (v : ι → ℝ) :
     lin (Matrix.vecMul v (Matrix.of fun i j => if δ i = j then (1 : ℝ) else 0)) = rename δ (lin v) := by
   unfold lin
-  simp only [Matrix.vecMul, dotProduct, Matrix.of_apply, map_sum, map_mul, rename_C, rename_X,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.vecMul, dotProduct, Matrix.of_apply, map_sum, map_mul, rename_C, rename_X,
     Complex.ofReal_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -66,8 +71,9 @@ theorem UpperTheory.ConvolutionTheory.FX.piece_ren :
   obtain ⟨ha', h0', hs'⟩ := UpperTheory.ConvolutionTheory.FX.piece_add ι' k
   induction f using AddMonoidAlgebra.induction_linear with
   | zero => rw [map_zero, h0, h0', map_zero]
-  | add f g hf hg => rw [map_add, ha, ha', map_add, hf, hg]
+  | add f g hf hg => rw [map_add (f := _), ha, ha', map_add (f := _), hf, hg]
   | single v p =>
-    rw [UpperTheory.ConvolutionTheory.FX.ren_single, hs, hs', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [UpperTheory.ConvolutionTheory.FX.ren_single, hs, hs', map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_mul, map_mul, map_pow, rename_C, UpperTheory.ConvolutionTheory.FX.lin_push, rename_homogeneousComponent]

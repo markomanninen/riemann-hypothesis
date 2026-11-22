@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfB
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfB
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem filC_le_bot (τ : K →ₐ[Qp] LL) (h' : ℕ)
           push_cast at this
           omega
         unfold IsJumpV at hnj
-        push_neg at hnj
+        push Not at hnj
         rw [← ih, ← hnj]
         congr 1
         push_cast

@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NodeAgree
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRealIntertwinerOfCompactGroupIntertwiner
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteLastStepRealIntertwiner
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfExpMulZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsHoweDualityIntertwinerUnitaryPairLocalStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridRowRealParameterSuccAllPlusLowestWeightsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NodeAgree
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRealIntertwinerOfCompactGroupIntertwiner
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteLastStepRealIntertwiner
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfExpMulZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsHoweDualityIntertwinerUnitaryPairLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridRowRealParameterSuccAllPlusLowestWeightsStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
@@ -22,8 +27,8 @@ noncomputable section
 
 namespace GlobalTheory.GridJoin.ColIt
 
-open GlobalTheory.CompactIntertwiner in
 
+open GlobalTheory.CompactIntertwiner in
 theorem exists_isIntw {D : D7} {V W : HSp D} {S S' : D.what₂.Tau → SPar} {σ Xs : Type} [Finite σ]
     (θ : InfFam D) (M : DSModel V S) (M' : DSModel W S')
     (I : MvPolynomial σ ℂ →ₗ[ℂ] (⨂[ℂ] τ, M'.H τ) →ₗ[ℂ] ⨂[ℂ] τ, M.H τ)
@@ -56,7 +61,7 @@ theorem exists_isIntw {D : D7} {V W : HSp D} {S S' : D.what₂.Tau → SPar} {σ
     simpa using this.symm
   · intro φ w
     haveI := fun τ => (hM' τ).1
-    let m : MultilinearMap ℂ (fun τ => M'.H τ) ℂ :=
+    let m : (Π τ, M'.H τ) →ₘₗ[ℂ] ℂ :=
       (ellT M w ∘ₗ I φ).compMultilinearMap (PiTensorProduct.tprod ℂ)
     obtain ⟨c, -, hc⟩ := m.exists_bound_of_continuous (continuous_tprod M' this (ellT M w ∘ₗ I φ))
     refine ⟨c, fun v => ?_⟩
@@ -86,7 +91,7 @@ theorem exists_isIntw {D : D7} {V W : HSp D} {S S' : D.what₂.Tau → SPar} {σ
       rw [← hω' τ 1 (one_mem_UH _), GlobalTheory.PointAtPlaceHom.atTau_one hθ]
       exact congrArg (fun f : Module.End ℂ (Xs → ℂ) => f (pt ψ)) (map_one ω))
     apply hinj
-    rw [map_add, hIt, hIt, map_zero]
+    rw [map_add (f := _), hIt, hIt, map_zero]
     refine ellT_sep M (fun τ => (hM τ).1) _ fun w => ?_
     have hB := hasDerivAt_bilin (I.compr₂ (ellT M w)) (fun t : ℝ => ρ' τ (NormedSpace.exp (t • X)) φ) φ'
       (fun t : ℝ => actT M' τ (NormedSpace.exp (t • X)) (inclT M' v)) (inclT M' v')
@@ -96,11 +101,11 @@ theorem exists_isIntw {D : D7} {V W : HSp D} {S S' : D.what₂.Tau → SPar} {σ
     have h2 := hρ' τ 1 (one_mem_UH _) φ' (inclT M' v)
     rw [h1] at h2
     rw [h2] at hB
-    rw [map_add]
+    rw [map_add (f := _)]
     exact hB.unique (hasDerivAt_const _ _)
 
-open GlobalTheory.CompactHowe.LastStep in
 
+open GlobalTheory.CompactHowe.LastStep in
 theorem om_ptOf_exp {D : D7} {V W : HSp D} {S S' : D.what₂.Tau → SPar} {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D}
     (hθ : IsInfFam θ) (hV : V.SigOK) (hW : W.SigOK)
     (M : DSModel V S) (M' : DSModel W S') (hε : ∀ τ, M.ε τ = allPos V.rank) (hε' : ∀ τ, M'.ε τ = allPos W.rank)
@@ -158,8 +163,8 @@ theorem isVacVec_of_isVac {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam
   have := hn p hp
   simp [Formalism.IndefR.Datum.nrm2] at this
 
-open GlobalTheory.CompactHowe.LastStep in
 
+open GlobalTheory.CompactHowe.LastStep in
 theorem exists_col_intertwiner : ∀ {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn D.what₂.LL Γ Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} {sc : GlobalTheory.ChiGrid.Consts}, GlobalTheory.Published.DiscreteSeriesCover → GlobalTheory.Published.HarishChandraModules → HostHyp D → ∀ {F : Face D A}, GlobalTheory.Hk3.Core R F → sc.cGap = 1 → ∀ {G' : GlobalTheory.ChiGrid.GridData R.toLevCh sc} (W : G'.Weil), W.Over R → ∀ G : GlobalTheory.Grid.GridPre R, G.IsSpaces → G.IsChars → SpAgree G W → (∀ i, i < D.R.m → ∀ κ : G'.CosAt i, IsThetaAt W.ψ (symplO _ _) (heisO W.ψ _ _) G.idem (latO (G'.pS (.chi i 0)) (G'.pT (.chi i 0)) (G'.latS (.chi i 0) : Set _) (G'.latT (.chi i 0) : Set _) fun _ => True) 1 (W.vac i) (cosInd G.idem κ) (W.cosVec i κ)) → ∀ j, j < D.R.m → ∀ (ω : T → GlobalTheory.Grid.WRep (G.Xp j).V (G.nX j).V) (f : WO (G.Xp j).V (G.nX j).V → ℂ), (∀ t, GlobalTheory.Grid.IsWeil R.ψ false (G.Xp j).V (G.nX j).V (R.toLevCh.mu t (j + 1)) (R.toLevCh.mu t (j + 1)) (ω t)) → GlobalTheory.Grid.IsVac R.ψ R.θ false (G.Xp j) (G.nX j) f → ∃ It : GlobalTheory.Grid.Pol (G.Xp j) (G.nX j) →ₗ[ℂ] SmT (G.Xp j).M →ₗ[ℂ] SmT (G.nX j).M, ∀ t, GlobalTheory.Grid.IsIntw R.θ (G.nX j).M (G.Xp j).M (ω t).swap (GlobalTheory.Grid.fock R.ψ R.θ false (G.Xp j) (G.nX j) f) It := by
   intro D Γ _ _ Pl0 T A Ks _ _ _ R sc _hDS _hHC _hHost F hC _hgap G' W _hW G hsp _hch _hag _hcos j hj ω f hω hf
   classical

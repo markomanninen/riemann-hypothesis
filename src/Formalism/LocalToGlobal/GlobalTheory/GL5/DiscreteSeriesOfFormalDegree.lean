@@ -1,8 +1,16 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.MassRatioUnfoldedOfTheoremTwo
-import Formalism.SharpRestriction.GlobalSchurBounds.TheoremThreeUnderScaleOfGeneral
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
-import Formalism.GL3MeanSquares.HookFormulaTorsion.MassUpperBoundClosed
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TheoremThreeHypothesesOfMultiplicity
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.MassRatioUnfoldedOfTheoremTwo
+public import Formalism.SharpRestriction.GlobalSchurBounds.TheoremThreeUnderScaleOfGeneral
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.MassUpperBoundClosed
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+public import Formalism.SharpRestriction.CuspSpanNormBounds.DiscreteSeriesWeylDimension
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLe
+public import Formalism.PeriodIntegrals.ExplicitFormulaCounts.WeylForK
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,13 +21,13 @@ open scoped TensorProduct
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 
+variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem standardLattice_aux2b (D : D7) : Formalism.MainNotions.StandardLattice.MassRatio₂ D :=
   Formalism.MainNotions.StandardLattice.massRatio_of_modelMassRatio D Formalism.HermitianLattices.SiegelMassBounds.siegel_mass_ratio
 
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 
+variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem siegel_mass_ratio_family {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Formalism.MainNotions.flipTwoThree.fam0 Fm Formalism.MainNotions.StandardLattice.MassRatio₂ :=
   ⟨0, fun x _ _ i => standardLattice_aux2b (Fm.D x i)⟩
 
@@ -52,8 +60,8 @@ theorem volume_mass_ge_two (D : D7) (h2 : Conclusion2 D) (h : volumeAtLevelZero 
   | base => exact h
   | succ n hn ih => exact volume_mass_succ D h2 n hn ih
 
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 
+variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem vol_indef (D : D7) (h2 : Conclusion2 D) (h : volumeAtLevelZero D 2) :
     ∀ (Q : ℕ) (W : HSpace D.host.E) (P : ℕ), W.SigOK → (∀ τ, W.sig τ = (P, Q)) → 2 ≤ P →
       D.vol W = massI D (P + Q) := by
@@ -83,24 +91,10 @@ theorem vol_indef (D : D7) (h2 : Conclusion2 D) (h : volumeAtLevelZero D 2) :
     field_simp at hr
     exact hr
 
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 
-theorem definite_volume_mass_of_low (D : D7) (h2 : Conclusion2 D) (h0 : volumeAtLevelZero D 0) (h1 : volumeAtLevelZero D 1) (h2' : volumeAtLevelZero D 2) :
-    DefiniteVolumeEqMass D := by
-  intro W hW hsig
-  rcases (show W.rank = 0 ∨ W.rank = 1 ∨ 2 ≤ W.rank by omega) with e | e | e
-  · rw [e]; exact h0 W hW hsig e
-  · rw [e]; exact h1 W hW hsig e
-  · exact volume_mass_ge_two D h2 h2' _ e W hW hsig rfl
+
 
 variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
-
-theorem volume_mass_of_theorem_two (D : D7) (h2 : Conclusion2 D) (h0 : volumeAtLevelZero D 0) (h1 : volumeAtLevelZero D 1) (h2' : volumeAtLevelZero D 2) :
-    VolumeEqMass₂ D :=
-  ⟨definite_volume_mass_of_low D h2 h0 h1 h2', fun W P Q hW hs hP => vol_indef D h2 h2' Q W P hW hs hP⟩
-
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
-
 theorem volume_eq_mass_rank_two (D : D7) (h2 : Conclusion2 D) (h : volumeAtLevelZero D 2) : BaseVolumeEqualsMass D := by
   have hh := vol_indef D h2 h D.R.sigY0.2 (D.sp.Y 0) D.R.sigY0.1 (D.sp.Y_sig 0) (fun τ => D.sp.baseSpace_signature_eq τ)
     (by have := D.R.k_ge; simp only [Ranks.sigY0]; omega)
@@ -170,37 +164,8 @@ theorem volume_mass_of_class_data (D : D7) (n : ℕ) (hT : VolTie D) (hG : Genus
 
 def ClassItemsAt (D : D7) (n : ℕ) : Prop := GenusMassAt D n ∧ ClassFinAt D n ∧ ClassMassAt D n
 
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 
-theorem volume_eq_mass_of_ratio (D : D7) (hT : VolTie D) (hV : VolRatioTrue D) (hI : ClassItemsAt D 2) : BaseVolumeEqualsMass D :=
-  volume_eq_mass_rank_two D (theorem_two_of_volume_ratio D hV hT) (volume_mass_of_class_data D 2 hT hI.1 hI.2.1 hI.2.2)
 
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
-
-theorem volume_mass_of_items (D : D7) (hT : VolTie D) (hV : VolRatioTrue D) (hI0 : ClassItemsAt D 0)
-    (hI1 : ClassItemsAt D 1) (hI2 : ClassItemsAt D 2) : VolumeEqMass₂ D :=
-  volume_mass_of_theorem_two D (theorem_two_of_volume_ratio D hV hT) (volume_mass_of_class_data D 0 hT hI0.1 hI0.2.1 hI0.2.2)
-    (volume_mass_of_class_data D 1 hT hI1.1 hI1.2.1 hI1.2.2) (volume_mass_of_class_data D 2 hT hI2.1 hI2.2.1 hI2.2.2)
-
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
-
-theorem volume_eq_mass_family {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (tVol : Formalism.MainNotions.flipTwoThree.fam0 Fm VolTie)
-    (hV : Formalism.MainNotions.flipTwoThree.fam0 Fm VolRatioTrue) (hI : Formalism.MainNotions.flipTwoThree.fam0 Fm fun D => ClassItemsAt D 2) :
-    Formalism.MainNotions.flipTwoThree.fam0 Fm Formalism.MainNotions.StandardLattice.BaseVolumeEqualsMass :=
-  Formalism.MainNotions.family_property_mono (Formalism.MainNotions.low_weight_bound_at tVol (Formalism.MainNotions.low_weight_bound_at hV hI)) fun D h => volume_eq_mass_of_ratio D h.1 h.2.1 h.2.2
-
-theorem discrete_series_statement (D : D7) (hc : cdScaleTie D) (hd : dsigTie D) (hHC : HCFormalDegree D)
-    (hW : Formalism.MainNotions.DiscreteSeriesWeylDimension.WeylForK) (hL : Formalism.MainNotions.DiscreteSeriesWeylDimension.LowKMultOne)
-    (hE : Formalism.MainNotions.DiscreteSeriesWeylDimension.DiscreteSeriesExists) : Formalism.MainNotions.StandardLattice.SigmaDegreeTwoSidedBoundOfGap D :=
-  Formalism.MainNotions.StandardLattice.theorem_three_sigma_holds D (Formalism.MainNotions.RT.theorem_three_under_scale_of_degree D hHC hW hL hc)
-    (Formalism.MainNotions.DiscreteSeriesWeylDimension.lowest_K_type_count_of_weyl D hW hL) (Formalism.MainNotions.RT.dsigExT_of D hE hd)
-
-theorem discrete_series_of_formal_degree {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (hHC : Formalism.MainNotions.flipTwoThree.fam0 Fm HCFormalDegree)
-    (hW : Formalism.MainNotions.DiscreteSeriesWeylDimension.WeylForK) (hL : Formalism.MainNotions.DiscreteSeriesWeylDimension.LowKMultOne)
-    (hE : Formalism.MainNotions.DiscreteSeriesWeylDimension.DiscreteSeriesExists) : Formalism.MainNotions.flipTwoThree.fam0 Fm Formalism.MainNotions.StandardLattice.SigmaDegreeTwoSidedBoundOfGap := by
-  obtain ⟨x0, hx⟩ := hHC
-  exact ⟨x0, fun x h0 h1 i => discrete_series_statement (Fm.D x i) (Fm.ties x i).cdScale_tie (Fm.ties x i).dsig_tie
-    (hx x h0 h1 i) hW hL hE⟩
 
 end Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 

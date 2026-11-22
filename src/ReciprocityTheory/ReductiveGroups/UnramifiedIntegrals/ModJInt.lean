@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.Interface
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.IsIntegralOfRoot
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormLeOneOfIntegralInt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.Interface
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.IsIntegralOfRoot
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormLeOneOfIntegralInt
+
+@[expose] public section
 
 noncomputable section
 open Formalism.L2.Th1.CM
@@ -14,7 +18,7 @@ theorem norm_le_one_of_root {l : ℕ} [Fact l.Prime] {x : ℂ_[l]} (P : Polynomi
   push_neg at hlt
   have hsum := hm.as_sum
   rw [hsum] at h
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finset_sum,
+  simp only [Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finsetSum,
     Polynomial.eval₂_mul, Polynomial.eval₂_C] at h
   have hx1 : (1 : ℝ) ≤ ‖x‖ := hlt.le
   have hn0 : P.natDegree ≠ 0 := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.TameInertiaTowers.StatementField
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.StatementField
+
+@[expose] public section
 
 open NumberField
 
@@ -158,7 +162,7 @@ theorem layerReal_of (hG : LayerGalois) (hC : LayerConj) : LayerReal := by
       rw [hx σc hσc] at this
       exact this.symm
   have h4 : Module.finrank ℚ (maximalRealSubfield L) = 2 ^ n := by
-    have h := Module.finrank_mul_finrank ℚ (maximalRealSubfield L) L
+    have h := (letI : Module.Free (maximalRealSubfield L) L := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield L) L)
     rw [Algebra.IsQuadraticExtension.finrank_eq_two (maximalRealSubfield L) L, hfin,
       pow_succ] at h
     omega

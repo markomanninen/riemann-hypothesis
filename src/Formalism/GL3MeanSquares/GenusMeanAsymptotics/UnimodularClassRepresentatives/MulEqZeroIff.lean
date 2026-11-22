@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensitySixth
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NkCountLocF
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.TendstoMeanAlphaN
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensitySixth
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NkCountLocF
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.TendstoMeanAlphaN
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -75,7 +79,10 @@ private theorem iota_mul_mem_extP_pow_iff_mem_pow_sub_vF {𝔭 : Ideal (𝓞 F)}
     have h3 := (hcopK.pow_left (m := k - vF 𝔭 c)).dvd_of_dvd_mul_left h2
     exact (Ideal.span_singleton_le_iff_mem _).mp (Ideal.dvd_iff_le.mp h3)
   · intro h
-    have h' := Ideal.mul_mem_mul (localizedQuotients.ι_mem_pow (K := K) (localValuationFiltration.mem_pow_vF h𝔭 hc)) h
+    have hc' : ι c ∈ extP K 𝔭 ^ vF 𝔭 c := by
+      rw [extP, ← Ideal.map_pow]
+      exact Ideal.mem_map_of_mem ι (localValuationFiltration.mem_pow_vF h𝔭 hc)
+    have h' := Ideal.mul_mem_mul hc' h
     rwa [← pow_add, show vF 𝔭 c + (k - vF 𝔭 c) = k by omega] at h'
 
 theorem mul_eq_zero_iff {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {c : 𝓞 F} (hc : c ≠ 0) {k : ℕ}
@@ -123,13 +130,13 @@ private theorem card_subtype_comp_eq_card_mul_card_ker_of_surjective {A B : Type
     { toFun := fun a => (⟨f a.1, a.2⟩, ⟨a.1 - Function.surjInv hf (f a.1), by
         rw [AddMonoidHom.mem_ker, map_sub, hs, sub_self]⟩)
       invFun := fun p => ⟨Function.surjInv hf p.1.1 + p.2.1, by
-        rw [map_add, hs, AddMonoidHom.mem_ker.mp p.2.2, add_zero]; exact p.1.2⟩
+        rw [map_add (f := _), hs, AddMonoidHom.mem_ker.mp p.2.2, add_zero]; exact p.1.2⟩
       left_inv := fun a => Subtype.ext (by
         show Function.surjInv hf (f a.1) + (a.1 - Function.surjInv hf (f a.1)) = a.1
         abel)
       right_inv := fun p => by
         have e : f (Function.surjInv hf p.1.1 + p.2.1) = p.1.1 := by
-          rw [map_add, hs, AddMonoidHom.mem_ker.mp p.2.2, add_zero]
+          rw [map_add (f := _), hs, AddMonoidHom.mem_ker.mp p.2.2, add_zero]
         refine Prod.ext (Subtype.ext e) (Subtype.ext ?_)
         show Function.surjInv hf p.1.1 + p.2.1 - Function.surjInv hf (f (Function.surjInv hf p.1.1 + p.2.1)) = p.2.1
         rw [e]; abel }
@@ -227,7 +234,8 @@ theorem nkM_smul (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {𝔭 : Id
         star (fun i => rd K 𝔭 k (vF 𝔭 c) (x i)) ⬝ᵥ
             (H.map (Ideal.Quotient.mk (extP K 𝔭 ^ (k - vF 𝔭 c))) *ᵥ
               fun i => rd K 𝔭 k (vF 𝔭 c) (x i)) := by
-      simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, Pi.star_apply, rd_star,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, Pi.star_apply, rd_star,
         Matrix.map_apply, rd_mk]
     rw [map_smul_mk, Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul, map_mul, map_mul,
       mul_eq_mul_iff h𝔭 hc hk, e, rd_mk]

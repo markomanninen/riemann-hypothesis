@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafHensCutDef
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafHensCutDef
+
+@[expose] public section
 
 noncomputable section
 open TensorProduct
@@ -59,7 +63,7 @@ theorem sup_surj (hs : ∀ s : S, ∃ a : A, s - algebraMap A S a ∈ I.map (alg
       simp
     rw [e, map_mul]
     exact R.mul_mem (key hs _ s) (key hs' _ s')
-  | add x y hx hy => rw [map_add]; exact R.add_mem hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact R.add_mem hx hy
 
 theorem sup_univ (hu : Univ (algebraMap A S) I) (hu' : Univ (algebraMap A S') I) :
     Univ (algebraMap A (S ⊗[A] S')) I := by
@@ -91,7 +95,7 @@ theorem sup_univ (hu : Univ (algebraMap A S) I) (hu' : Univ (algebraMap A S') I)
       simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe] at a1 a2
       rw [a1, a2]
       simp [f, g]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem sup_good (h : Good (algebraMap A S) I) (h' : Good (algebraMap A S') I) :
     Good (algebraMap A (S ⊗[A] S')) I :=

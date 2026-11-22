@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrass
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrass
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,7 +18,7 @@ theorem det_eq_zero_of_diag_eq_zero {n : ℕ} {A : Matrix (Fin n) (Fin n) ℂ} (
     {i : Fin n} (hi : A i i = 0) : A.det = 0 := by
   have h0 : star (Pi.single i (1 : ℂ)) ⬝ᵥ A *ᵥ Pi.single i 1 = 0 := by
     simpa using hi
-  have hcol := (hA.dotProduct_mulVec_zero_iff _).mp h0
+  have hcol := (hA.dotProduct_mulVec_zero_iff).mp h0
   refine det_eq_zero_of_column_eq_zero i fun k => ?_
   simpa using congrFun hcol k
 
@@ -44,7 +49,7 @@ theorem le_of_diag_pos {n : ℕ} {A : Matrix (Fin n) (Fin n) ℂ} (hA : A.PosSem
     simpa using (congrArg Complex.re h).symm
   have hprod : ∏ i, hB.1.eigenvalues i ≤ 1 := by
     calc ∏ i, hB.1.eigenvalues i ≤ ∏ i, Real.exp (hB.1.eigenvalues i - 1) :=
-          prod_le_prod (fun i _ => hB.eigenvalues_nonneg i)
+          prod_le_prod₀ (fun i _ => hB.eigenvalues_nonneg i)
             (fun i _ => by linarith [Real.add_one_le_exp (hB.1.eigenvalues i - 1)])
       _ = Real.exp (∑ i, (hB.1.eigenvalues i - 1)) := (Real.exp_sum _ _).symm
       _ = 1 := by simp [sum_sub_distrib, htr]

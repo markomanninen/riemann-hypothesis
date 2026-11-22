@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+
+@[expose] public section
 
 open scoped TensorProduct
 open Algebra.TensorProduct (includeRight)
@@ -12,7 +16,8 @@ variable {O O' : Type} [CommRing O] [CommRing O'] [Algebra O O']
 
 theorem trace_fixed (ℓ : ℕ) (τ : O' ≃ₐ[O] O') (hτ : τ ^ ℓ = 1) (u : O') :
     τ (∑ j ∈ Finset.range ℓ, (τ ^ j) u) = ∑ j ∈ Finset.range ℓ, (τ ^ j) u := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have e := (Finset.sum_range_succ' (fun j => (τ ^ j) u) ℓ).symm.trans
     (Finset.sum_range_succ (fun j => (τ ^ j) u) ℓ)
   rw [hτ, pow_zero] at e
@@ -73,7 +78,7 @@ theorem map_pow_succ_apply (τ : O' ≃ₐ[O] O') (j : ℕ) (t : O' ⊗[O] R) :
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul u r => simp [Algebra.TensorProduct.map_tmul, pow_succ']
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem map_pow_fixed (τ : O' ≃ₐ[O] O') (s : O' ⊗[O] R)
     (hs : Algebra.TensorProduct.map τ.toAlgHom (AlgHom.id O R) s = s) (j : ℕ) :
@@ -84,7 +89,7 @@ theorem map_pow_fixed (τ : O' ≃ₐ[O] O') (s : O' ⊗[O] R)
     induction s using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul x r => simp
-    | add x y hx hy => rw [map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), hx, hy]
   | succ j ih => rw [GlobalTheory.CompanionTheory.NormLoc.map_pow_succ_apply, ih, hs]
 
 theorem trace_tensor_mem (ℓ : ℕ) (τ : O' ≃ₐ[O] O') (hτ : τ ^ ℓ = 1)
@@ -97,14 +102,13 @@ theorem trace_tensor_mem (ℓ : ℕ) (τ : O' ≃ₐ[O] O') (hτ : τ ^ ℓ = 1)
   | tmul x r =>
     obtain ⟨c, hc⟩ := hfix _ (GlobalTheory.CompanionTheory.NormLoc.trace_fixed ℓ τ hτ x)
     refine ⟨c • r, ?_⟩
-    simp only [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgEquiv.toAlgHom_eq_coe,
-      AlgEquiv.coe_algHom]
+    simp only [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgEquiv.coe_toAlgHom]
     rw [← TensorProduct.sum_tmul, ← hc, Algebra.TensorProduct.includeRight_apply,
       Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul]
   | add x y hx hy =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by simp only [map_add, Finset.sum_add_distrib, ha, hb]⟩
+    exact ⟨a + b, by simp only [map_add (f := _), Finset.sum_add_distrib, ha, hb]⟩
 
 theorem fixed_mem_range (ℓ : ℕ) (τ : O' ≃ₐ[O] O') (hτ : τ ^ ℓ = 1)
     (hfix : ∀ z : O', τ z = z → z ∈ Set.range (algebraMap O O')) (a : O')
@@ -114,8 +118,7 @@ theorem fixed_mem_range (ℓ : ℕ) (τ : O' ≃ₐ[O] O') (hτ : τ ^ ℓ = 1)
   have key : ∑ j ∈ Finset.range ℓ, Algebra.TensorProduct.map ((τ ^ j : O' ≃ₐ[O] O').toAlgHom)
       (AlgHom.id O R) ((a ⊗ₜ[O] (1 : R)) * s) = s := by
     simp only [map_mul, GlobalTheory.CompanionTheory.NormLoc.map_pow_fixed τ s hs]
-    simp only [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgEquiv.toAlgHom_eq_coe,
-      AlgEquiv.coe_algHom, map_one]
+    simp only [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgEquiv.coe_toAlgHom, map_one]
     rw [← Finset.sum_mul, ← TensorProduct.sum_tmul, ha, ← Algebra.TensorProduct.one_def, one_mul]
   rw [← key]
   exact GlobalTheory.CompanionTheory.NormLoc.trace_tensor_mem ℓ τ hτ hfix _

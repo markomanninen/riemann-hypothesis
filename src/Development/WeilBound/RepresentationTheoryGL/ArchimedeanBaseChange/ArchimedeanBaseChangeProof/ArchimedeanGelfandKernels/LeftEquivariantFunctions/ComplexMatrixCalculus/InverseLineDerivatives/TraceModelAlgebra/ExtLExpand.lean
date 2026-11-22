@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.InverseLineDerivatives.TraceModelAlgebra.TraceOnModel
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TrETransposeEqPhiSeq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandValueNegation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandOperatorCenterExpansion
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.InverseLineDerivatives.TraceModelAlgebra.TraceOnModel
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TrETransposeEqPhiSeq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandValueNegation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandOperatorCenterExpansion
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,8 @@ theorem extL_expand (lam : Fin n → ℤ) (i : Jd n lam) (F : Module.End ℂ (Mv
     rw [Submodule.coe_sum]
     simp only [Submodule.coe_smul]
   conv_rhs => rw [e]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_smul, map_smul, smul_eq_mul, mul_comm, Cxc.extL_spec lam l ⟨g, hg⟩]
 
@@ -59,10 +64,6 @@ theorem matB_zero (lam : Fin n → ℤ) : matB lam 0 = 0 := by
 
 theorem matB_one (lam : Fin n → ℤ) : matB lam 1 = 1 := by
   ext i j; simp only [matB, Module.End.one_apply]; exact extL_wb lam i j
-
-theorem matB_smul (lam : Fin n → ℤ) (s : ℂ) (F : Module.End ℂ (MvPolynomial (Fin n × Fin n) ℂ)) :
-    matB lam (s • F) = s • matB lam F := by
-  ext i j; simp [matB]
 
 theorem At_eq (lam : Fin n → ℤ) (a b : Fin n) : At lam a b = matB lam (Et lam a b) := rfl
 
@@ -94,7 +95,8 @@ theorem atTrace' : AtTrace := by
   simp only [Matrix.diag_apply, At_pow, matB]
   have e : ∑ a, Cxc.extL lam i ((Et lam ^ k) a a ((wb lam j : Formalism.BasicNotions.nablaSq ℂ n (dw lam)) : MvPolynomial (Fin n × Fin n) ℂ)) =
       Cxc.extL lam i ((Et lam ^ k).trace ((wb lam j : Formalism.BasicNotions.nablaSq ℂ n (dw lam)) : MvPolynomial (Fin n × Fin n) ℂ)) := by
-    rw [Matrix.trace, LinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.trace, LinearMap.sum_apply, map_sum]
     rfl
   rw [e, trace_on_model lam hlam k (wb lam j).2, map_smul, extL_wb, gelfC_eq, Matrix.smul_apply]
 

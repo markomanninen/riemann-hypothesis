@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormPairAlgebra.BRawHeadColsRight
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormPairAlgebra.BRawHeadColsRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,8 @@ theorem vecMul_cG (Y : Ix r → O) :
   unfold cG
   rw [Matrix.vecMul_vecMul, Matrix.nonsing_inv_mul _ hG, Matrix.vecMul_one]
 
-include hG in
 
+include hG in
 theorem inl_eq (Y : Ix r → O) :
     (fun j => (Y (Sum.inl j) : E)) = (Z.map O.subtype).mulVec (fun a => cG O cj Z T T' Y (Sum.inr a)) -
       Pi.single (Fin.last r) (T * cG O cj Z T T' Y (Sum.inl (Fin.last r))) := by
@@ -62,8 +66,8 @@ theorem inl_eq (Y : Ix r → O) :
   rw [← h]
   simp [Matrix.mulVec, dotProduct, Pi.single_apply, mul_comm]
 
-include hG in
 
+include hG in
 theorem inr_eq (Y : Ix r → O) :
     (fun j => (Y (Sum.inr j) : E)) =
       (fun b => ∑ a, cj ((Z.map O.subtype) a b) * cG O cj Z T T' Y (Sum.inl a)) -
@@ -74,8 +78,8 @@ theorem inr_eq (Y : Ix r → O) :
   rw [← h]
   simp [Pi.single_apply, mul_comm]
 
-include hu hG in
 
+include hu hG in
 theorem lam_cG (Y : Ix r → O) :
     lamC (Z.map O.subtype) (fun j => (Y (Sum.inl j) : E)) =
       cG O cj Z T T' Y (Sum.inr (Fin.last r)) -
@@ -83,8 +87,8 @@ theorem lam_cG (Y : Ix r → O) :
   rw [lamC, inl_eq O cj Z T T' hG Y, Matrix.mulVec_sub, Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hu,
     Matrix.one_mulVec, Pi.sub_apply, mulVec_single_apply']
 
-include hu hG in
 
+include hu hG in
 theorem lamS_cG (Y : Ix r → O) :
     lamStarC cj (Z.map O.subtype) (fun j => (Y (Sum.inr j) : E)) =
       cG O cj Z T T' Y (Sum.inl (Fin.last r)) -
@@ -96,8 +100,8 @@ theorem lamS_cG (Y : Ix r → O) :
   congr 1
   simp [Pi.single_apply]
 
-include hcj hu hG in
 
+include hcj hu hG in
 theorem formC_eqG (Y W : Ix r → O) :
     formC O cj (Z.map O.subtype) T T' Y W =
       bRaw O cj Z (fun j => Y (Sum.inl j)) (fun j => W (Sum.inr j)) +
@@ -126,7 +130,8 @@ theorem formC_eqG (Y W : Ix r → O) :
       simp only [Pi.sub_apply, mulVec_single_apply']
     have hL : cj (lamStarC cj Ze (fun j => (W (Sum.inr j) : E))) =
         ∑ j, Ze⁻¹ j (Fin.last r) * cj (W (Sum.inr j) : E) := by
-      simp only [lamStarC, map_sum, map_mul, hcj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [lamStarC, map_sum, map_mul, hcj]
     rw [hB, hL, Finset.mul_sum, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun j _ => by ring
 
@@ -140,7 +145,8 @@ theorem formC_eqG (Y W : Ix r → O) :
       intro a
       have := congrFun h2 a
       rw [← this]
-      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
     have hy' : ∀ k, ∑ a, c (Sum.inl a) * cj (Ze a k) =
         (Y (Sum.inr k) : E) + if k = Fin.last r then T' * c (Sum.inr (Fin.last r)) else 0 := by
       intro k
@@ -153,7 +159,8 @@ theorem formC_eqG (Y W : Ix r → O) :
         ∑ k, (Y (Sum.inr k) : E) * cj (pw k) := by
       unfold bRaw
       rw [← hZe, ← hpw]
-      simp only [map_sum, map_mul, hcj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, hcj]
     calc ∑ a, c (Sum.inl a) * cj (W (Sum.inl a) : E)
         = ∑ k, cj (pw k) * ∑ a, c (Sum.inl a) * cj (Ze a k) := by
           simp only [hw, Finset.mul_sum]
@@ -180,8 +187,8 @@ variable (hcj : ∀ x, cj (cj x) = x) (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) O)
   (hu : IsUnit (Z.map O.subtype).det) (T T' : E)
   (hG : IsUnit (gramC cj (Z.map O.subtype) T T').det)
 
-include hcj hu hG in
 
+include hcj hu hG in
 theorem uniq_core (d d' : E)
     (h1 : d = (Z.map O.subtype)⁻¹ (Fin.last r) (Fin.last r) * (T * d'))
     (h2 : d' = cj ((Z.map O.subtype)⁻¹ (Fin.last r) (Fin.last r)) * (T' * d)) :
@@ -210,7 +217,8 @@ theorem uniq_core (d d' : E)
       have e1 := congrFun (congrFun hPZ (Fin.last r)) b
       rw [Matrix.mul_apply, Matrix.one_apply] at e1
       have : ∑ a, c (Sum.inl a) * cj (Ze a b) = cj (∑ a, P (Fin.last r) a * Ze a b) * (T' * d) := by
-        rw [map_sum, Finset.sum_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.sum_mul]
         exact Finset.sum_congr rfl fun a _ => by simp only [c, Sum.elim_inl, map_mul]; ring
       rw [this, e1]
       simp only [c, Sum.elim_inr, Pi.zero_apply]

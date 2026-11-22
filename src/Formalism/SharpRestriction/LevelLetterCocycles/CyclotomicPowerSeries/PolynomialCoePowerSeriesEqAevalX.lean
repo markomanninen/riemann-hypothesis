@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.PsCycloStatement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.PsCycloStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem psCyclo_step {O : Type*} [CommRing O] (l : ℕ) (hl : l.Prime)
         PowerSeries O) := by
   rw [psCyclo_algHom_coe, polynomial_coe_powerSeries_eq_aeval_X,
     ← Polynomial.cyclotomic_expand_eq_cyclotomic hl hm]
-  simp only [Polynomial.aeval_comp, Polynomial.expand_aeval, hφ, map_add, Polynomial.aeval_X,
+  simp only [Polynomial.aeval_comp, Polynomial.expand_aeval, hφ, map_add (f := _), Polynomial.aeval_X,
     map_one]
   exact congrArg (fun y => Polynomial.aeval y (Polynomial.cyclotomic m O)) (by ring)
 

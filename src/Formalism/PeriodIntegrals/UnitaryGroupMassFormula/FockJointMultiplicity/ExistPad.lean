@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
+
+@[expose] public section
 
 open FockH1Action PI.FJM
 
@@ -17,19 +21,19 @@ theorem negPart_pw (b : List ℤ) (hb : b.Pairwise (· ≥ ·)) : (PI.FJM.negPar
 theorem posPart_getD (a : List ℤ) (ha : ∀ v ∈ a, 0 < v) (i : ℕ) :
     ((PI.FJM.posPart a).getD i 0 : ℚ) = if h : i < a.length then ((a[i] : ℤ) : ℚ) else 0 := by
   by_cases h : i < a.length
-  · rw [dif_pos h, List.getD_eq_getElem _ _ (by simpa [PI.FJM.posPart] using h)]
+  · rw [dite_eq_left h, List.getD_eq_getElem _ _ (by simpa [PI.FJM.posPart] using h)]
     simp only [PI.FJM.posPart, List.getElem_map]
     have hpos := ha _ (List.getElem_mem h)
     have := Int.toNat_of_nonneg hpos.le
     exact_mod_cast this
-  · rw [dif_neg h, List.getD_eq_default _ _ (by simpa [PI.FJM.posPart] using not_lt.1 h)]
+  · rw [dite_eq_right h, List.getD_eq_default _ _ (by simpa [PI.FJM.posPart] using not_lt.1 h)]
     simp
 
 theorem negPart_getD (b : List ℤ) (hb : ∀ v ∈ b, v < 0) (j : ℕ) :
     ((PI.FJM.negPart b).getD j 0 : ℚ) =
       if h : j < b.length then -((b[b.length - 1 - j]'(by omega) : ℤ) : ℚ) else 0 := by
   by_cases h : j < b.length
-  · rw [dif_pos h, List.getD_eq_getElem _ _ (by simpa [PI.FJM.negPart] using h)]
+  · rw [dite_eq_left h, List.getD_eq_getElem _ _ (by simpa [PI.FJM.negPart] using h)]
     simp only [PI.FJM.negPart, List.getElem_reverse, List.getElem_map, List.length_map]
     have hneg := hb _ (List.getElem_mem (l := b) (n := b.length - 1 - j) (by omega))
     have := Int.toNat_of_nonneg (show 0 ≤ -b[b.length - 1 - j] by omega)
@@ -38,7 +42,7 @@ theorem negPart_getD (b : List ℤ) (hb : ∀ v ∈ b, v < 0) (j : ℕ) :
     rw [h2]
     push_cast
     ring
-  · rw [dif_neg h, List.getD_eq_default _ _ (by simpa [PI.FJM.negPart] using not_lt.1 h)]
+  · rw [dite_eq_right h, List.getD_eq_default _ _ (by simpa [PI.FJM.negPart] using not_lt.1 h)]
     simp
 
 theorem pad_getD (a b : List ℤ) (n : ℕ) (hn : a.length + b.length ≤ n) (ha : ∀ v ∈ a, 0 < v)
@@ -50,13 +54,13 @@ theorem pad_getD (a b : List ℤ) (n : ℕ) (hn : a.length + b.length ≤ n) (ha
   simp only [List.getElem_map]
   by_cases h1 : i < a.length
   · rw [List.getElem_append_left (by simp; omega), List.getElem_append_left h1,
-      dif_pos h1, dif_neg (by omega)]
+      dite_eq_left h1, dite_eq_right (by omega)]
     simp
   · by_cases h2 : i < a.length + (n - a.length - b.length)
     · rw [List.getElem_append_left (by simp; omega), List.getElem_append_right (by omega),
-        dif_neg h1, dif_neg (by omega)]
+        dite_eq_right h1, dite_eq_right (by omega)]
       simp
-    · rw [List.getElem_append_right (by simp; omega), dif_neg h1, dif_pos (by omega)]
+    · rw [List.getElem_append_right (by simp; omega), dite_eq_right h1, dite_eq_left (by omega)]
       simp only [neg_neg, sub_neg_eq_add, zero_add]
       congr 2
       simp

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormConsMul
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LamFamily
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AppendCons
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AffineFinsetInf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CupMemRelS
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DCupZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormConsMul
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LamFamily
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AppendCons
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AffineFinsetInf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CupMemRelS
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DCupZero
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false

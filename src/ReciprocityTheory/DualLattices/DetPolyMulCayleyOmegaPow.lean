@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.FischerAdjointStatement
+module
+
+public import ReciprocityTheory.DualLattices.FischerAdjointStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,11 +30,6 @@ theorem deriv_finsetProd {ι : Type*} [DecidableEq ι] (D : Derivation R A A) (t
       smul_eq_mul, smul_eq_mul, Finset.mul_sum]
     ring
 
-theorem deriv_finsetProd_eq_zero {ι : Type*} [DecidableEq ι] (D : Derivation R A A) (t : Finset ι)
-    (P : ι → A) (h : ∀ k ∈ t, D (P k) = 0) : D (∏ k ∈ t, P k) = 0 := by
-  rw [deriv_finsetProd]
-  exact Finset.sum_eq_zero fun k₀ hk₀ => Finset.prod_eq_zero hk₀ (by simp [h k₀ hk₀])
-
 theorem leibniz_ofFn {m s : ℕ} (ds : Fin m → Derivation R A A) (P : Fin s → A) :
     (List.ofFn fun i => (ds i : A →ₗ[R] A)).prod (∏ k, P k) =
       ∑ φ : Fin m → Fin s,
@@ -40,7 +39,8 @@ theorem leibniz_ofFn {m s : ℕ} (ds : Fin m → Derivation R A A) (P : Fin s �
   | succ m ih =>
     have hce : ∀ x : Fin s × (Fin m → Fin s),
         (Fin.consEquiv fun _ => Fin s) x = Fin.cons x.1 x.2 := fun x => rfl
-    rw [List.ofFn_succ, List.prod_cons, Module.End.mul_apply, ih (fun i => ds i.succ), map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [List.ofFn_succ, List.prod_cons, Module.End.mul_apply, ih (fun i => ds i.succ), map_sum,
       ← (Fin.consEquiv fun _ => Fin s).sum_comp, Fintype.sum_prod_type]
     simp only [Derivation.coeFn_coe, deriv_finsetProd, hce, List.ofFn_succ, Fin.cons_zero,
       Fin.cons_succ, List.prod_cons, Module.End.mul_apply]
@@ -72,7 +72,8 @@ def linSub (g : Matrix (Fin n) (Fin n) R) :
 
 theorem pderiv_linSub_X (g : Matrix (Fin n) (Fin n) R) (a b : Fin n) (v : Fin n × Fin n) :
     pderiv (a, b) (linSub g (X v)) = if v.2 = b then C (g v.1 a) else 0 := by
-  simp only [linSub, aeval_X, map_sum, Derivation.leibniz, pderiv_C, pderiv_X, smul_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [linSub, aeval_X, map_sum, Derivation.leibniz, pderiv_C, pderiv_X, smul_zero,
     add_zero, smul_eq_mul, Pi.single_apply, Prod.mk.injEq]
   by_cases hb : v.2 = b
   · subst hb; simp
@@ -85,13 +86,13 @@ theorem pderiv_linSub (g : Matrix (Fin n) (Fin n) R) (a b : Fin n)
   next c =>
     simp [linSub]
   next p q hp hq =>
-    simp only [map_add, hp, hq, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hp, hq, mul_add, Finset.sum_add_distrib]
   next p v hp =>
     have hs : ∀ i, linSub g (Pi.single (M := fun _ : Fin n × Fin n => MvPolynomial (Fin n × Fin n) R) (i, b) 1 v) =
         if v = (i, b) then 1 else 0 := fun i => by
       rw [Pi.single_apply]; split_ifs <;> simp
     rw [map_mul, Derivation.leibniz, hp, pderiv_linSub_X]
-    simp only [Derivation.leibniz, pderiv_X, map_add, map_mul, smul_eq_mul, mul_add,
+    simp only [Derivation.leibniz, pderiv_X, map_add (f := _), map_mul, smul_eq_mul, mul_add,
       Finset.sum_add_distrib, Finset.mul_sum]
     congr 1
     · simp only [hs, mul_ite, mul_one, mul_zero]
@@ -121,7 +122,8 @@ theorem dOp_linSub {m : ℕ} (g : Matrix (Fin n) (Fin n) R) (r c : Fin m → Fin
       simp only [dOp, List.ofFn_succ, List.prod_cons, Module.End.mul_apply, Derivation.coeFn_coe]
     have hce : ∀ x : Fin n × (Fin m → Fin n),
         (Fin.consEquiv fun _ => Fin n) x = Fin.cons x.1 x.2 := fun x => rfl
-    rw [key, ih, map_sum, ← (Fin.consEquiv fun _ => Fin n).sum_comp, Fintype.sum_prod_type]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [key, ih, map_sum, ← (Fin.consEquiv fun _ => Fin n).sum_comp, Fintype.sum_prod_type]
     simp only [hce, key, Fin.cons_zero, Fin.cons_succ, Fin.prod_univ_succ, Derivation.leibniz,
       pderiv_C, smul_zero, smul_eq_mul, mul_zero, add_zero, pderiv_linSub, Finset.mul_sum, map_mul]
     exact Finset.sum_comm.trans
@@ -168,11 +170,13 @@ theorem cayOp_linSub (g : Matrix (Fin n) (Fin n) R) (q : MvPolynomial (Fin n × 
     _ = ∑ τ : Fin n → Fin n, C ((g.submatrix τ id).det) * linSub g (dOp τ id q) := by
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl fun τ _ => ?_
-        rw [← hdet, map_sum, Finset.sum_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hdet, map_sum, Finset.sum_mul]
     _ = ∑ e : Equiv.Perm (Fin n), C ((g.submatrix e id).det) * linSub g (dOp e id q) :=
         sum_fun_eq_sum_perm _ fun τ hτ => by rw [h0 τ hτ, map_zero, zero_mul]
     _ = C g.det * linSub g (cayOp n R q) := by
-        simp only [cayOp, LinearMap.sum_apply, LinearMap.smul_apply, cayMono_eq_dOp, map_sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [cayOp, LinearMap.sum_apply, LinearMap.smul_apply, cayMono_eq_dOp, map_sum,
           Finset.mul_sum, Matrix.det_permute, map_zsmul, map_mul, map_intCast]
         refine Finset.sum_congr rfl fun e _ => ?_
         rw [zsmul_eq_mul]
@@ -349,7 +353,8 @@ theorem eval_fibOp_cayDet (σ : Fin n → Fin n) {s : ℕ} (φ : Fin n → Fin s
   have hS : ((List.finRange n).filter fun j => φ j = k).toFinset =
       Finset.univ.filter fun b => φ b = k := by
     ext b; simp
-  rw [hf, hc, map_sum, map_sum, Matrix.det_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hf, hc, map_sum, map_sum, Matrix.det_apply]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [map_zsmul, list_pderiv_yP σ τ _ (List.Nodup.filter _ (List.nodup_finRange n)) ∅ (by simp),
     Finset.empty_union, hS, map_zsmul, Units.smul_def]
@@ -406,7 +411,8 @@ theorem sum_prod_factorial_fibres (s : ℕ) : ∀ m : ℕ,
       have := Finset.card_eq_sum_card_fiberwise (f := φ) (s := univ) (t := univ)
         (fun x _ => mem_univ _)
       simpa using this.symm
-    rw [sum_prod_factorial_add_ite, hsum, add_comm m s]
+    simpa only [hsum, Nat.add_comm m s] using
+      (sum_prod_factorial_add_ite fun k : Fin s => #{a | φ a = k})
 
 theorem eval_one_cayOp_pow (s : ℕ) :
     eval onePt (cayOp n ℤ (cayDet n ℤ ^ s)) = ((∏ k ∈ range n, (s + k) : ℕ) : ℤ) := by
@@ -420,12 +426,14 @@ theorem eval_one_cayOp_pow (s : ℕ) :
   have h1 : ∀ σ : Equiv.Perm (Fin n), eval onePt (cayMono n ℤ σ (cayDet n ℤ ^ s)) =
       ∑ φ : Fin n → Fin s, if φ ∘ σ = φ then (Equiv.Perm.sign σ : ℤ) else 0 := by
     intro σ
-    rw [cayMono_pow, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [cayMono_pow, map_sum]
     simp only [map_prod, eval_fibOp_cayDet, prod_det_funMat]
   have hsq : ∀ σ : Equiv.Perm (Fin n),
       (Equiv.Perm.sign σ : ℤ) * (Equiv.Perm.sign σ : ℤ) = 1 := fun σ => by
     rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h]
-  simp only [cayOp, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul, h1,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cayOp, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul, h1,
     Finset.smul_sum, smul_ite, smul_zero, smul_eq_mul, Finset.mul_sum, mul_ite, mul_zero, hsq]
   rw [Finset.sum_comm]
   simp only [hstab]
@@ -452,7 +460,8 @@ theorem cayOp_map (p : MvPolynomial (Fin n × Fin n) ℤ) :
     | cons j l ih =>
       simp only [List.map_cons, List.prod_cons, Module.End.mul_apply, ih, Derivation.coeFn_coe,
         pderiv_map]
-  simp only [cayOp, cayMono, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul, hl]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cayOp, cayMono, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul, hl]
 
 theorem cayDet_map : map (Int.castRingHom R) (cayDet n ℤ) = cayDet n R := by
   show map (Int.castRingHom R) (Matrix.mvPolynomialX (Fin n) (Fin n) ℤ).det =

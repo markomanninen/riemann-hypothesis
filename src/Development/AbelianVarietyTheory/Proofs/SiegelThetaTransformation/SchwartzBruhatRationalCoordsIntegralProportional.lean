@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FinsumQuotientOfLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FinsumQuotientOfLe
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real
@@ -93,7 +98,7 @@ theorem haar_comp (e : Matrix κ ι K ≃+ Matrix κ' ι' K') (D D' : ℕ) (hD :
     rwa [← hg]
   have hsum := finsum_quotient_of_le ((perSub_le (R * D) S).trans (hle R))
     (by rw [hidx]; positivity) (fun m => φ (e m))
-    (fun x y hy => by rw [map_add]; exact periodic hφ _ _ hy) hfin
+    (fun x y hy => by rw [map_add (f := _)]; exact periodic hφ _ _ hy) hfin
   have hsum2 : ∑ᶠ q : Matrix κ ι K ⧸ t R, φ (e q.out) =
       ∑ᶠ q : Matrix κ' ι' K' ⧸ perSub K' κ' ι' R, φ q.out := by
     rw [← finsum_comp_equiv g]

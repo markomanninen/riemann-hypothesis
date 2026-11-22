@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
-import Formalism.DropLevelBounds.ThBounds
-import Formalism.IncomingBounds.IncomingBound
-import Development.AutomorphicArithmetic.OrbitLabellings.AttainsBlockListOfWeightsAlongOrbits
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DropLevelsBasic
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MulFlowValLe
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
+public import Formalism.DropLevelBounds.ThBounds
+public import Formalism.IncomingBounds.IncomingBound
+public import Development.AutomorphicArithmetic.OrbitLabellings.AttainsBlockListOfWeightsAlongOrbits
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DropLevelsBasic
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MulFlowValLe
+
+@[expose] public section
 
 open scoped BigOperators
 open Classical
@@ -123,13 +127,6 @@ private theorem exists_good {S : ℕ} {G : Set ℕ} (h : Windows S G) {r : ℝ} 
     omega
   have : (y' : ℝ) ≤ y + S := by exact_mod_cast (by omega : y' ≤ y + S)
   linarith
-
-private theorem logTerm_nonneg {l n : ℕ} (hl : 5 ≤ l) (hn : 1 ≤ n) :
-    0 ≤ (n : ℝ) * (Real.logb l n + 1) := by
-  have h1 : (1 : ℝ) < l := by exact_mod_cast (by omega : 1 < l)
-  have h2 : (1 : ℝ) ≤ n := by exact_mod_cast hn
-  have := Real.logb_nonneg h1 h2
-  positivity
 
 section
 variable {l d : ℕ} [NeZero d]
@@ -480,8 +477,8 @@ private theorem inv_le {l : ℕ} (hl : 5 ≤ l) : ((l : ℝ) - 1)⁻¹ ≤ 2 * (
   · unfold gam; positivity
   · unfold rho; positivity
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 private theorem orbit (l d : ℕ) [NeZero d] (hl : 5 ≤ l) (m k : ℕ) (hmk : m + 3 ≤ k) (hm : 1 ≤ m) (W : ZMod d → ℕ) (w : ZMod d → ℝ)
     (T θ E : ℝ) (hT : 1 ≤ T) (hw : ∀ a, 0 < w a) (hlo : ∀ a, (1 - θ) * w a ≤ T * W a) (hhi : ∀ a, T * W a ≤ w a + E)
     (hE : 0 ≤ E) (hθ : 0 ≤ θ ∧ θ ≤ 1) (hθm : ((k : ℝ) - 1) * θ ≤ 5 * m) (Good : ZMod d → ℕ → Set ℕ)

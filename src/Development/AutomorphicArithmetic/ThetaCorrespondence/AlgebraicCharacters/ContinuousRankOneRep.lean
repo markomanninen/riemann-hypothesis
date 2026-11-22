@@ -1,17 +1,22 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.ChBasic
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.ChCoef
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.EmbOrbitAlt
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.WdAtModel
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.ArtNorm
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.ExField
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.EmbOrbit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaWDUnr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaDeRham
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteEmb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.EpsArt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaCyc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRecLawsSuppUnitSurj
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.ChBasic
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.ChCoef
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.EmbOrbitAlt
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.WdAtModel
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.ArtNorm
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.ExField
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.EmbOrbit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaWDUnr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaDeRham
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteEmb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.EpsArt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaCyc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRecLawsSuppUnitSurj
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.WeilDeligne GlobalTheory.GalOfCusp GlobalTheory.HeckeGal
 open GlobalTheory.LocLanglands GlobalTheory.Published GlobalTheory.Pst GlobalTheory.TripleGal UpperTheory.V.W UpperTheory.V
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -40,7 +45,7 @@ private theorem alg_cont (wt : Emb l w → ℤ) : Continuous (alg wt) := by
   have : (alg wt : _ → _) = fun x => ∏ τ : Emb l w, (Units.map τ.1.toMonoidHom x) ^ wt τ := by
     funext x; simp [alg]
   rw [this]
-  exact continuous_finset_prod _ fun τ _ => (Continuous.units_map _ τ.2).zpow _
+  exact continuous_finsetProd _ fun τ _ => (Continuous.units_map _ τ.2).zpow _
 
 private theorem cont_gq (s : GQ l) : Continuous s := by
   refine (AddMonoidHomClass.isometry_of_norm s fun x => ?_).continuous
@@ -62,7 +67,7 @@ private theorem ord_zero [Nonempty (Emb l w)] (u : (w.adicCompletion F)ˣ) (hu :
     simp only [Units.val_one, norm_one, zpow_one, norm_prod] at h2
     refine absurd h2.symm (ne_of_lt ?_)
     obtain ⟨τ⟩ := ‹Nonempty (Emb l w)›
-    have := Finset.prod_lt_prod_of_nonempty (s := Finset.univ) (f := fun τ : Emb l w => ‖τ.1 u‖) (g := fun _ => 1)
+    have := Finset.prod_lt_prod_of_nonempty₀ (s := Finset.univ) (f := fun τ : Emb l w => ‖τ.1 u‖) (g := fun _ => 1)
       (fun τ _ => by simp) (fun τ _ => norm_lt τ u h) ⟨τ, by simp⟩
     simpa using this
   have h1 := key u hu
@@ -166,7 +171,8 @@ private theorem df_ex (ha : IsLocalArtin h a) : ∃ δ : (Emb l w → ℤ) →+ 
 private theorem hom_sum {M : Type} [CommGroup M] (δ : (Emb l w → ℤ) →+ Additive M) (wt : Emb l w → ℤ) [DecidableEq (Emb l w)] :
     (δ wt).toMul = ∏ τ : Emb l w, (δ (Pi.single τ 1)).toMul ^ wt τ := by
   conv_lhs => rw [pi_eq_sum_univ' wt]
-  simp only [map_sum, map_zsmul, toMul_sum, toMul_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, toMul_sum, toMul_zsmul]
 
 include hG hB in
 private theorem df_coef (hC : ChCoef) [DecidableEq (Emb l w)] {d d' : Weil h →* (Qbar l)ˣ} (s : GQ l) (τ τ' : Emb l w)

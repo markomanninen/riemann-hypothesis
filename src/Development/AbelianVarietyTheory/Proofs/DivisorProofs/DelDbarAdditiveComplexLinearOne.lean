@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DelOperatorAtDbarOperatorAtLinearLocalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DelOperatorAtDbarOperatorAtLinearLocalStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,13 +37,13 @@ theorem differentiableAt_coef {α : A.Fld} (h : A.IsForm α) (x : A.Pt) (S : Fin
 
 theorem loc_one_eventuallyEq (x : A.Pt) : A.loc 1 x.1.1 =ᶠ[𝓝 x.crd] fun _ => 1 :=
   Filter.eventually_of_mem (target_mem_nhds A x) fun v hv => by
-    rw [HolAtlas.loc, dif_pos hv]
+    rw [HolAtlas.loc, dite_eq_left hv]
     rfl
 
 end GlobalTheory.CxForm.GlobLin
 
-open GlobalTheory.CxForm.GlobLin in
 
+open GlobalTheory.CxForm.GlobLin in
 theorem GlobalTheory.CxForm.HolAtlas.del_dbar_linear : ∀ (M : Type) [TopologicalSpace M] (n : ℕ) (A : HolAtlas M n),
     (A.del 1 = 0 ∧ A.dbar 1 = 0) ∧
     ∀ (c : ℂ) (α β : A.Fld), A.IsForm α → A.IsForm β →

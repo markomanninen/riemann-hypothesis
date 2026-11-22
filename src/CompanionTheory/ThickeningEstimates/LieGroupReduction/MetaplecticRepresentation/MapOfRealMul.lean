@@ -1,4 +1,8 @@
-import CompanionTheory.ThickeningEstimates.LieGroupReduction.MetaplecticRepresentation.ContinuousOm
+module
+
+public import CompanionTheory.ThickeningEstimates.LieGroupReduction.MetaplecticRepresentation.ContinuousOm
+
+@[expose] public section
 
 noncomputable section
 
@@ -186,8 +190,8 @@ theorem exists_det_ne (s : Mat l) (h : dd s ≠ 0) : ∃ t : ℝ, (s.toBlocks₁
   apply hP
   apply Polynomial.eq_zero_of_infinite_isRoot
   convert Set.infinite_univ (α := ℝ)
-  ext t
-  simp only [Set.mem_setOf_eq, Polynomial.IsRoot.def, hev, hall, Set.mem_univ]
+  change _ ↔ True
+  simp [Polynomial.IsRoot.def, hev, hall]
 
 end C
 

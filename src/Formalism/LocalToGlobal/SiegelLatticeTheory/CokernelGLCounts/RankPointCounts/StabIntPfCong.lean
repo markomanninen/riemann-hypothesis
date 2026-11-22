@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfLat
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.AtNormRep
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfLat
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.AtNormRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem ddS_pow_le_one (h : ℕ) : ddS D ^ h ≤ 1 := by
 theorem one_le_ddPow (h : ℕ) : (1 : FI D) ≤ ddPow D h := by
   unfold ddPow
   rw [zpow_neg, zpow_natCast]
-  have := FractionalIdeal.inv_anti_mono (pow_ne_zero h (ddS_ne (D := D))) one_ne_zero (ddS_pow_le_one (D := D) h)
+  have := FractionalIdeal.inv_anti_mono (pow_ne_zero h (ddS_ne (D := D))) (ddS_pow_le_one (D := D) h)
   rwa [inv_one] at this
 
 theorem mem_dd_of_int {h : ℕ} {x : D.host.E} (hx : x ∈ (1 : FI D)) : x ∈ ddPow D h := one_le_ddPow h hx

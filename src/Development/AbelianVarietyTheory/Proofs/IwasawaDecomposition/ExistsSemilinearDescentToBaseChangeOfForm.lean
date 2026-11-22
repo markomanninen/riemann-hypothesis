@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -30,7 +35,7 @@ theorem exists_semilinear_descent_to_baseChange :
       ∀ x, Φ x = ∑ k, rd (π (B.repr x k)) • ((1 : KT) ⊗ₜ[Ks] (⟨bs k, hb k⟩ : WK)) :=
     ⟨{ toFun := fun x => ∑ k, rd (π (B.repr x k)) • ((1 : KT) ⊗ₜ[Ks] (⟨bs k, hb k⟩ : WK))
        map_zero' := by simp
-       map_add' := by intro x y; simp [map_add, add_smul, Finset.sum_add_distrib] },
+       map_add' := by intro x y; simp [map_add (f := _), add_smul, Finset.sum_add_distrib] },
      fun _ => rfl⟩
   have key : ∀ (l : LL) (w : WK), Φ (l • (w : WL)) = rd (π l) • ((1 : KT) ⊗ₜ[Ks] w) := by
     intro l w
@@ -57,7 +62,8 @@ theorem exists_semilinear_descent_to_baseChange :
     rw [map_smul, Finsupp.smul_apply, smul_eq_mul, hπx, map_mul, mul_smul]
   · intro f fr hf x
     conv_lhs => rw [← B.sum_repr x]
-    rw [map_sum, map_sum, hΦ x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, hΦ x, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, hB, ← hf ⟨bs k, hb k⟩, key, map_smul, LinearMap.baseChange_tmul]
   · intro w

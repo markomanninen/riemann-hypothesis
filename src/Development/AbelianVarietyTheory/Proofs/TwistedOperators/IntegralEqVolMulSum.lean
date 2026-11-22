@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ClassSumIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GamOrdNeZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryGroupAdelicClassesViaFiniteAdelicPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ClassSumIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GamOrdNeZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryGroupAdelicClassesViaFiniteAdelicPart
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory Formalism.L2.Theta
 open Formalism.IndefR
@@ -104,12 +108,12 @@ theorem isReps_out (V : HSp D) (K : Subgroup (GL (Fin V.rank) (Lev.EAf D))) :
     Bridge.IsReps ((finPt V).comp (GQ V).subtype) (K.comap (finG V)) (fun c : FinCl V K => Quotient.out c) := by
   intro h
   refine ⟨DoubleCoset.mk _ _ h, ?_, ?_⟩
-  · obtain ⟨r, hr, k, hk, e⟩ := (DoubleCoset.eq _ _ _ _).1 (DoubleCoset.out_eq' _ _ (DoubleCoset.mk (ratFin V) (K.comap (finG V)) h))
+  · obtain ⟨r, hr, k, hk, e⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 (DoubleCoset.out_eq' (DoubleCoset.mk (ratFin V) (K.comap (finG V)) h))
     obtain ⟨γ, hγ, rfl⟩ := (mem_ratFin V r).1 hr
     exact ⟨⟨γ, hγ⟩, ⟨k, hk⟩, e⟩
   · rintro c ⟨γ, k, e⟩
-    rw [← DoubleCoset.out_eq' _ _ c]
-    refine (DoubleCoset.eq _ _ _ _).2 ⟨finPt V γ, (mem_ratFin V _).2 ⟨γ, γ.2, rfl⟩, k, k.2, e⟩
+    rw [← DoubleCoset.out_eq' c]
+    refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨finPt V γ, (mem_ratFin V _).2 ⟨γ, γ.2, rfl⟩, k, k.2, e⟩
 
 theorem card_stab (V : HSp D) (K : Subgroup (GL (Fin V.rank) (Lev.EAf D))) (x : GfC V) :
     Nat.card (Bridge.stab ((finPt V).comp (GQ V).subtype) (K.comap (finG V)) x) = gamOrd V K x := by
@@ -287,9 +291,6 @@ def IsInvAt {ι : Type} [DecidableEq ι] (V : ι → HSp D) (K : ∀ v, Subgroup
     (f : (∀ v, GfC (V v)) → ℂ) : Prop :=
   ∀ v (x : ∀ v, GfC (V v)), (∀ γ ∈ ratFin (V v), ∀ z, f (Function.update x v (γ * z)) = f (Function.update x v z)) ∧
     ∀ k ∈ (K v).comap (finG (V v)), ∀ z, f (Function.update x v (z * k)) = f (Function.update x v z)
-
-example {ι : Type} [DecidableEq ι] (V : ι → HSp D) (K : ∀ v, Subgroup (GL (Fin (V v).rank) (Lev.EAf D))) :
-    IsInvAt V K fun _ => 1 := fun _ _ => ⟨fun _ _ _ => rfl, fun _ _ _ => rfl⟩
 
 theorem finCl_regroup_pi {ι : Type} [Fintype ι] [DecidableEq ι] (V : ι → HSp D)
     (hV : ∀ v, ∀ φ : D.host.E →+* ℂ, ((V v).gram.map φ).PosDef) {K K'' : ∀ v, Subgroup (GL (Fin (V v).rank) (Lev.EAf D))}

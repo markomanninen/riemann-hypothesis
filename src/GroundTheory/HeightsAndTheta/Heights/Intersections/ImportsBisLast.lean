@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsExtraAlt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsExtraAlt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -16,7 +21,7 @@ theorem VerticalClosedPoints.proof (hE : regularityEmbedding_holds.Statement) (h
   obtain ⟨x, hx⟩ := exists_funField_mul_eq hf hg hgP
   obtain ⟨e, he⟩ := hE K ι P R hP hR hRu
   rw [hV K ι P f g a x hP hf hg hfP hgP hx]
-  have hA : IsSectionOn P (HermLine.ofMetrics (fun k => fsMetric (ι k)) (fun k => (a k : ℤ))) g :=
+  have hA : IsSectionOn P (HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (fun k => (a k : ℤ))) g :=
     ⟨a, fun _ => rfl, hg, hgP⟩
   have key : ∀ t : R, Real.log ‖e t x‖ =
       Real.log (‖eval (t : (Σ k, ι k) → ℂ) (map (Int.castRingHom ℂ) f)‖ /

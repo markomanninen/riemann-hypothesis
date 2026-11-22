@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EtaProdEqOfEverywhereNormDiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EtaProdEqOfEverywhereNormDiv
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -63,12 +68,14 @@ theorem neg_one_not_mem_normGroup {K L : Type} [Field K] [NumberField K] [Field 
       (InfinitePlace.isReal_mk_iff.2 (ComplexEmbedding.isReal_iff.2 (RingHom.ext fun x => ?_)))
     change starRingEnd ℂ (τ x) = τ x
     rw [← b.sum_repr x, Fin.sum_univ_two, h0, Algebra.smul_def, Algebra.smul_def]
-    simp only [map_add, map_mul, map_one, hτ, h3, Complex.conj_ofReal]
+    simp only [map_add (f := _), map_mul, map_one, hτ, h3, Complex.conj_ofReal]
   rw [mem_normGroup_iff_form b h0 h1]
   rintro ⟨x, y, hxy⟩
   let f := InfinitePlace.Completion.ringEquivRealOfIsReal hw
-  have hf : f (algebraMap K w.Completion δ) = InfinitePlace.embedding_of_isReal hw δ :=
-    InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv _).symm δ)
+  have hf : f (algebraMap K w.Completion δ) = InfinitePlace.embedding_of_isReal hw δ := by
+    rw [InfinitePlace.Completion.algebraMap_apply]
+    simpa [f, InfinitePlace.Completion.instCoe] using
+      InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv _).symm δ)
   have := congrArg f hxy
   simp only [Units.val_neg, Units.val_one, map_neg, map_one, map_sub, map_mul, map_pow, hf] at this
   nlinarith [sq_nonneg (f x), sq_nonneg (f y)]

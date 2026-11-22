@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.StatementK
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DivAssembly
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.AbsorbE
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.StatementK
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DivAssembly
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.AbsorbE
+
+@[expose] public section
 
 open Finset
 

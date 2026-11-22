@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.PsiShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.CwShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.CoordMk
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.PsiShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.CwShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.CoordMk
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -16,7 +20,10 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.fW :
     simp [cc, Real.pi_ne_zero]
   have h2 : ∀ i j, O.d w i * O.d w j * W.Om (wW F) =
       W.Om (wW F) * (O.p D.δ w i * O.p D.δ w j) := fun i j => by
-    rw [mul_assoc, dW, ← mul_assoc, dW, mul_assoc]
+    calc
+      _ = O.d w i * (W.Om (wW F) * O.p D.δ w j) := by rw [mul_assoc, dW F E D W O w j]
+      _ = (O.d w i * W.Om (wW F)) * O.p D.δ w j := by rw [mul_assoc]
+      _ = _ := by rw [dW F E D W O w i, mul_assoc]
   have comm : O.x w 0 * O.x w 1 = O.x w 1 * O.x w 0 := (weyl F O w w 0 1).1
   have p0 : O.p D.δ w 0 = (-cc) • O.x w 1 := rfl
   have p1 : O.p D.δ w 1 = (-cc) • O.x w 0 := rfl

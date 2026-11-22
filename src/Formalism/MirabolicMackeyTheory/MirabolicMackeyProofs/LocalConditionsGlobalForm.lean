@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.StatementT
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.StatementT
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 

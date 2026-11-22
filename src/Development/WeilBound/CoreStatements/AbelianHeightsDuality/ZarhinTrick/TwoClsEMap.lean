@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.IsPolarisationOfRelAmple
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibAmpleD
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLam
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.CeLiftSqToBase
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.PullPowAddInv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.IsPolarisationOfRelAmple
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibAmpleD
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLam
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.CeLiftSqToBase
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.PullPowAddInv
+
+@[expose] public section
 
 set_option autoImplicit false
 

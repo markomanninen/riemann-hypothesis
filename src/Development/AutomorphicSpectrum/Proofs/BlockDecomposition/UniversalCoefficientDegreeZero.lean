@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ theorem exists_unit_on_model : ∀ (R A₀ A₁ P₀ P₁ : Type) [CommRing R] [
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul r x => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   obtain ⟨x, y, hx, hxy⟩ := (hq R).2 ((1 : R) ⊗ₜ[R] e) (by simp [hde])
   have hxe : ψ₀.lTensor R x = (1 : R) ⊗ₜ[R] e := by
     simpa [sub_eq_zero] using hxy

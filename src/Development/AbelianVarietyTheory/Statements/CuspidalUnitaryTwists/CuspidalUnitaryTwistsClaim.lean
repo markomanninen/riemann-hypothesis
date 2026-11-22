@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ChapterMu
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ChapterMu
+
+@[expose] public section
 
 noncomputable section
 

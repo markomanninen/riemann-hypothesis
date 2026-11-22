@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteChart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMemberStepCharts
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevQFiniteIndexAndRoot
-import Formalism.LocalToGlobal.Columns.TwQBOpen
-import Formalism.LocalToGlobal.Columns.TwQExact
-import Formalism.LocalToGlobal.Columns.TwQLat
-import Formalism.LocalToGlobal.Columns.TwQLev
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteChart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMemberStepCharts
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevQFiniteIndexAndRoot
+public import Formalism.LocalToGlobal.Columns.TwQBOpen
+public import Formalism.LocalToGlobal.Columns.TwQExact
+public import Formalism.LocalToGlobal.Columns.TwQLat
+public import Formalism.LocalToGlobal.Columns.TwQLev
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +53,8 @@ section Pt
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
   {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)} {u : Pr.Word} {j : ℕ}
 
-open Classical in
 
+open Classical in
 def cqOf (q : PtAt R sel mu cst u j) (P : QE sel (mu : Chr X.F X.E X.K)) : Set (Sp X.E (R.N j)) :=
   cosetIn q ⟨P.1, Finset.mem_union_right _ P.2⟩
 

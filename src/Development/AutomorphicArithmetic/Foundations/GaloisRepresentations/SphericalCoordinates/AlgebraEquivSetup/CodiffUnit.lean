@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.DatumToG
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.DatumToG
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,11 +17,6 @@ def BarEx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],
 
 def QuadEx : Prop := ∀ d : ℕ, 0 < d → ∃ (tr nm : ℤ) (f : ℚ), tr ^ 2 - 4 * nm < 0 ∧ ((tr ^ 2 - 4 * nm : ℤ) : ℚ) = f ^ 2 * (-(d : ℚ)) ∧
   ∀ (q : ℕ) [Fact q.Prime], IsSquare (-(d : ℚ_[q])) → ¬ (q : ℤ) ∣ tr ^ 2 - 4 * nm ∧ ∃ r : ℤ, (q : ℤ) ∣ r ^ 2 - tr * r + nm
-
-def OmegaEx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (bar : 𝓞 E ≃+* 𝓞 E),
-  (∀ a : 𝓞 E, ((bar a : 𝓞 E) : E) = IsCMField.complexConj E (a : E)) → ∀ (d : ℕ) (x : E), 0 < d → x ^ 2 = -(d : E) →
-  ∀ (tr nm : ℤ) (f : ℚ), ((tr ^ 2 - 4 * nm : ℤ) : ℚ) = f ^ 2 * (-(d : ℚ)) →
-  ∃ ω : 𝓞 E, ω + bar ω = (tr : 𝓞 E) ∧ ω * bar ω = (nm : 𝓞 E)
 
 def CEx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (τ₀ : E →+* ℂ) (M : ℕ), 0 < M →
   ∃ c : 𝓞 E, IsCMField.complexConj E (c : E) = c ∧ (τ₀ (c : E)).re < 0 ∧
@@ -62,10 +61,6 @@ def PerfOf : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A :
 def PerfCof : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E),
   ∃ e : ℕ, 0 < e ∧ ∀ q : ℕ, e.Coprime q → A.PerfAt q
 
-def ArithEx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (d : ℕ), (0 < d ∧ ∃ x : E, x ^ 2 = -(d : E)) →
-  ∀ (τ₀ : E →+* ℂ) (Q : Finset ℕ), (∀ q ∈ Q, ∃ _ : Fact q.Prime, IsSquare (-(d : ℚ_[q]))) →
-  ∃ A : Arith E, A.τ₀ = τ₀ ∧ (∀ (q : ℕ) [Fact q.Prime], IsSquare (-(d : ℚ_[q])) → A.SplitK q) ∧ ∀ q ∈ Q, A.Good q
-
 def FormOKSt : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ), A.FormOK n
 
 def FormPerfSt : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n q : ℕ), A.PerfAt q → A.FormPerf n q
@@ -77,16 +72,16 @@ abbrev Phi {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Arith E) : Ty
 def RealIso : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ),
   ∃ Θ : ℝ ⊗[ℤ] (Fin n → 𝓞 E) ≃ₗ[ℝ] (Phi A × Fin n → ℂ), ∀ (x : Fin n → 𝓞 E) τ i, Θ (1 ⊗ₜ x) (τ, i) = τ.1 (x i : E)
 
-open Classical in
 
+open Classical in
 def TraceType : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E),
   (∀ x : E, ((Algebra.trace ℚ E x : ℚ) : ℝ) = ∑ τ : Phi A, 2 * (τ.1 x).re) ∧
   (∀ f : (E →+* ℂ) → ℂ, ∑ τ ∈ Finset.univ.filter (fun τ : E →+* ℂ => τ (A.ω : E) = (starRingEnd ℂ) (A.τ₀ (A.ω : E))), f τ =
     ∑ τ : Phi A, f (ComplexEmbedding.conjugate τ.1)) ∧
   (∀ v : InfinitePlace E, ∃! τ : Phi A, InfinitePlace.mk τ.1 = v) ∧ (A.τ₀ (A.ω : E)).im ≠ 0
 
-open Classical in
 
+open Classical in
 def FormCoord : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ)
   (Θ : ℝ ⊗[ℤ] (Fin n → 𝓞 E) ≃ₗ[ℝ] (Phi A × Fin n → ℂ)), (∀ (x : Fin n → 𝓞 E) τ i, Θ (1 ⊗ₜ x) (τ, i) = τ.1 (x i : E)) →
   ∀ x y, (A.EF n).baseChange ℝ x y =
@@ -136,9 +131,9 @@ def RepLaws : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A 
   (rep : Matrix (Fin n) (Fin n) E →ₐ[ℚ] Module.End ℚ (ℚ ⊗[ℤ] (Fin n → 𝓞 E))), RepOK A n rep →
   Function.Injective rep ∧
   (∀ M : Module.End ℚ (ℚ ⊗[ℤ] (Fin n → 𝓞 E)), (∃ x, rep x = M) ↔ ∀ b : 𝓞 E,
-    M * (DistribMulAction.toLinearMap ℤ (Fin n → 𝓞 E) b).baseChange ℚ =
-      (DistribMulAction.toLinearMap ℤ (Fin n → 𝓞 E) b).baseChange ℚ * M) ∧
-  (∀ c : 𝓞 E, rep (algebraMap E _ (c : E)) = (DistribMulAction.toLinearMap ℤ (Fin n → 𝓞 E) c).baseChange ℚ) ∧
+    M * (DistribSMul.toLinearMap ℤ (Fin n → 𝓞 E) b).baseChange ℚ =
+      (DistribSMul.toLinearMap ℤ (Fin n → 𝓞 E) b).baseChange ℚ * M) ∧
+  (∀ c : 𝓞 E, rep (algebraMap E _ (c : E)) = (DistribSMul.toLinearMap ℤ (Fin n → 𝓞 E) c).baseChange ℚ) ∧
   ∀ (x : Matrix (Fin n) (Fin n) (𝓞 E)) (v : Fin n → 𝓞 E),
     rep (x.map (algebraMap (𝓞 E) E)) ((1 : ℚ) ⊗ₜ[ℤ] v) = (1 : ℚ) ⊗ₜ[ℤ] (x *ᵥ v)
 

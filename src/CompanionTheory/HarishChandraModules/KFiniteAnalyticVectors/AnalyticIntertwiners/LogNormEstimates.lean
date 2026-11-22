@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.Clause1
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Upqcpt
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Upqcpt
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+
+@[expose] public section
 
 open Matrix
 open scoped InnerProductSpace ComplexConjugate
@@ -100,7 +104,7 @@ theorem adj_ruleD {ι : M.V →ₗ[ℂ] H₁} (h : SkewD M ι) (Z : Mat p q) (v 
     simp [neg_smul, smul_neg]
   rw [eA]
   conv_lhs => rw [eZ]
-  simp only [map_add, map_smul, map_neg, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.neg_apply,
+  simp only [map_add (f := _), map_smul, map_neg, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.neg_apply,
     inner_add_left, inner_smul_left, inner_add_right, inner_smul_right, inner_neg_right,
     h Y₁ (mem_upq_of_adjZD h1), h Y₂ (mem_upq_of_adjZD h2), Complex.conj_I]
   ring
@@ -261,7 +265,7 @@ theorem form_propD (ι₁ : M.V →ₗ[ℂ] H₁) (ι₂ : M.V →ₗ[ℂ] H₂)
   have hv₀wt : (v₀ : M.V) ∈ wtSub M.act μ := (Submodule.mem_inf.1 v₀.2).1
   let F : M.V →ₗ[ℂ] ℂ :=
     { toFun := fun w => ⟪ι₂ (v₀ : M.V), ι₂ w⟫_ℂ - (lam : ℂ) * ⟪ι₁ (v₀ : M.V), ι₁ w⟫_ℂ
-      map_add' := fun a b => by simp only [map_add, inner_add_right]; ring
+      map_add' := fun a b => by simp only [map_add (f := _), inner_add_right]; ring
       map_smul' := fun c a => by simp only [map_smul, inner_smul_right, smul_eq_mul, RingHom.id_apply]; ring }
   have hFZ : ∀ Z w, F (M.act Z w) = ⟪ι₂ (M.act (adjZ Z) (v₀ : M.V)), ι₂ w⟫_ℂ -
       (lam : ℂ) * ⟪ι₁ (M.act (adjZ Z) (v₀ : M.V)), ι₁ w⟫_ℂ := fun Z w => by
@@ -316,24 +320,24 @@ theorem form_propD (ι₁ : M.V →ₗ[ℂ] H₁) (ι₂ : M.V →ₗ[ℂ] H₂)
     have hFl : F l = 0 := by
       have hlR := (Submodule.mem_inf.1 hl).2
       refine Submodule.span_induction (p := fun x _ => F x = 0) ?_ (map_zero F) (fun x y _ _ hx hy => by
-        rw [map_add, hx, hy, add_zero]) (fun c x _ hx => by rw [map_smul, hx, smul_zero]) hlR
+        rw [map_add (f := _), hx, hy, add_zero]) (fun c x _ hx => by rw [map_smul, hx, smul_zero]) hlR
       rintro x ⟨a, b, hab, u, -, rfl⟩
       exact hR a b hab u
     have hFy : F (w - l) = 0 := by
       simp only [F, LinearMap.coe_mk, AddHom.coe_mk]
       rw [key2 _ hyhw, sub_self]
     have : w = (w - l) + l := by abel
-    rw [this, map_add, hFy, hFl, add_zero]
+    rw [this, map_add (f := _), hFy, hFl, add_zero]
   have hall : ∀ w, F w = 0 := fun w => by
     refine Submodule.iSup_induction (fun ν => wtSub M.act ν) (motive := fun x => F x = 0) (M.wts w)
-      (fun ν x hx => ?_) (map_zero F) (fun x y hx hy => by simp only [map_add, hx, hy, add_zero])
+      (fun ν x hx => ?_) (map_zero F) (fun x y hx hy => by simp only [map_add (f := _), hx, hy, add_zero])
     by_cases h : ν = μ
     · subst h; exact heq x hx
     · exact hne ν h x hx
 
   let R : Submodule ℂ M.V :=
     { carrier := {x | ∀ w, ⟪ι₂ x, ι₂ w⟫_ℂ = (lam : ℂ) * ⟪ι₁ x, ι₁ w⟫_ℂ}
-      add_mem' := fun {a b} ha hb w => by simp only [Set.mem_setOf_eq, map_add, inner_add_left, ha w, hb w]; ring
+      add_mem' := fun {a b} ha hb w => by simp only [Set.mem_setOf_eq, map_add (f := _), inner_add_left, ha w, hb w]; ring
       zero_mem' := fun w => by simp
       smul_mem' := fun c a ha w => by simp only [Set.mem_setOf_eq, map_smul, inner_smul_left, ha w]; ring }
   have hRst : ∀ Z, ∀ y ∈ R, M.act Z y ∈ R := fun Z y hy w => by

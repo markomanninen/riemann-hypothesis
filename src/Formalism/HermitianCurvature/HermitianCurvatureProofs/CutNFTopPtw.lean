@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimENF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutDec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModuleForms
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCap
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimENF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutDec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModuleForms
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCap
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 

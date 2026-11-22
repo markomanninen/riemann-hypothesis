@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqLeShifted
-import Formalism.HermitianCurvature.StatementU
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqLeShifted
+public import Formalism.HermitianCurvature.StatementU
+
+@[expose] public section
 
 open Matrix Finset
 

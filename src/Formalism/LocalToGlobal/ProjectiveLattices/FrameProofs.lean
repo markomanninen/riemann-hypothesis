@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem wtField_of (hD : BorDesc Xo c) : WtField Xo c := by
     congr 1
     simp only [wchar, map_prod, map_pow, ht]
   unfold evR evalAt
-  rw [dif_pos hy, dif_pos hy']
+  rw [dite_eq_left hy, dite_eq_left hy']
   exact key _ _ _ _ _ _ hy.choose_spec.choose_spec.choose_spec hy'.choose_spec.choose_spec.choose_spec
 
 theorem valV_algebraMap_unit (T : CDVR) {u : T.V} (hu : IsUnit u) :

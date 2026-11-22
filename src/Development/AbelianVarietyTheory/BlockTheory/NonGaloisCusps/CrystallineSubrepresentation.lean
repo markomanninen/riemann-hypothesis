@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem actVB_mulVB (ρ : Representation LL G V) (g : G) (c : K₀) (x : V ⊗[Q
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVB, mulVB]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem comm_smul (c : K₀) (x : B ⊗[Qp] V) :
     TensorProduct.comm Qp B V (c • x) =
@@ -47,14 +51,14 @@ theorem comm_smul (c : K₀) (x : B ⊗[Qp] V) :
   | tmul b v =>
     rw [TensorProduct.smul_tmul', Algebra.smul_def]
     simp [mulVB]
-  | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+  | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
 
 def DcrisK₀ (ρ : Representation LL G V) : Submodule K₀ (B ⊗[Qp] V) where
   carrier := {x | TensorProduct.comm Qp B V x ∈ Dcris PD ρ}
   zero_mem' := by simp
   add_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq, map_add] at ha hb ⊢
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at ha hb ⊢
     exact (Dcris PD ρ).add_mem ha hb
   smul_mem' := by
     intro c x hx
@@ -82,7 +86,7 @@ theorem tensorB_mem {ρ : Representation LL G V} {ρ' : Representation LL G V'} 
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [tensorB, actVB, hf g]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   rw [mem_Dcris] at hx ⊢
   intro g
   rw [← hm, hx]
@@ -175,24 +179,6 @@ def LetterDim : Prop :=
     ∀ τ₀ : K₀ →ₐ[Qp] LL,
       FiniteDimensional LL ↥(DcrisL PD ρ τ₀) ∧ finrank LL ↥(DcrisL PD ρ τ₀) = finrank LL V
 
-def DcrisTensor : Prop :=
-  Dcris PD (Representation.trivial LL G LL) =
-      LinearMap.range (AlgebraTensorModule.map (LinearMap.id : LL →ₗ[LL] LL)
-        (IsScalarTower.toAlgHom Qp K₀ B).toLinearMap) ∧
-  ∀ (V : Type) [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
-    [FiniteDimensional LL V] (ρ : Representation LL G V)
-    (V' : Type) [AddCommGroup V'] [Module LL V'] [Module Qp V'] [IsScalarTower Qp LL V']
-    [FiniteDimensional LL V'] (ρ' : Representation LL G V'),
-    IsCrys PD ρ → IsCrys PD ρ' →
-    LinearMap.range ((prodB (LL := LL)).comp
-        (TensorProduct.map (Dcris PD ρ).subtype (Dcris PD ρ').subtype)) = Dcris PD (ρ.tprod ρ') ∧
-    ∀ τ₀ : K₀ →ₐ[Qp] LL,
-      Function.Injective ((prodB (LL := LL)).comp
-        (TensorProduct.map (DcrisL PD ρ τ₀).subtype (DcrisL PD ρ' τ₀).subtype)) ∧
-      LinearMap.range ((prodB (LL := LL)).comp
-        (TensorProduct.map (DcrisL PD ρ τ₀).subtype (DcrisL PD ρ' τ₀).subtype)) =
-        DcrisL PD (ρ.tprod ρ') τ₀
-
 def FormalismFor : Prop :=
   InvariantsEq PD ∧ DimLe PD LL ∧ ComparisonBij PD LL ∧ SubCrys PD LL ∧ QuotCrys PD LL ∧
     SumCrys PD LL ∧ TensorCrys PD LL ∧ DualCrys PD LL ∧ DcrisExact PD LL ∧ LetterDim PD LL
@@ -223,13 +209,9 @@ def LocDcrisExact : Prop := ∀ K LL : FinExt l, DcrisExact (P.PD K) ↥LL.1
 
 def LocLetterDim : Prop := ∀ K LL : FinExt l, LetterDim (P.PD K) ↥LL.1
 
-def LocDcrisTensor : Prop := ∀ K LL : FinExt l, DcrisTensor (P.PD K) ↥LL.1
-
 def FontaineFormalism : Prop :=
   LocInvariantsEq l P ∧ LocDimLe l P ∧ LocComparisonBij l P ∧ LocSubCrys l P ∧ LocQuotCrys l P ∧
     LocSumCrys l P ∧ LocTensorCrys l P ∧ LocDualCrys l P ∧ LocDcrisExact l P ∧ LocLetterDim l P
-
-def FontaineFormalismTensor : Prop := FontaineFormalism l P ∧ LocDcrisTensor l P
 
 theorem fontaineFormalism_iff :
     FontaineFormalism l P ↔ ∀ K LL : FinExt l, FormalismFor (P.PD K) ↥LL.1 :=
@@ -241,11 +223,6 @@ theorem fontaineFormalism_iff :
       fun K LL => (h K LL).2.2.2.2.2.1, fun K LL => (h K LL).2.2.2.2.2.2.1,
       fun K LL => (h K LL).2.2.2.2.2.2.2.1, fun K LL => (h K LL).2.2.2.2.2.2.2.2.1,
       fun K LL => (h K LL).2.2.2.2.2.2.2.2.2⟩⟩
-
-example (h : FontaineFormalism l P) (K LL : FinExt l)
-    (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (hT : IsCrys (P.PD K) T.ρ) :
-    IsCrys (P.PD K) T.ρ.dual ∧ Function.Bijective (comparison (P.PD K) T.ρ) :=
-  ⟨h.2.2.2.2.2.2.2.1 K LL T.V T.ρ hT, h.2.2.1 K LL T.V T.ρ hT⟩
 
 end Local
 

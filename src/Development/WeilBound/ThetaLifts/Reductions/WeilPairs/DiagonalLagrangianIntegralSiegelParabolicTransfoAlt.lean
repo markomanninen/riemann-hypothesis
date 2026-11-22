@@ -1,13 +1,18 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.DiagonalLagrangianIntegralSiegelParabolicTransfoBis
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LamFormula
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ProjFacts
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SymplOHF
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.MapHaar
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SchAFacts
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ParsevalPol
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaTransformEqOrientedThetaFunctionCM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCM
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.DiagonalLagrangianIntegralSiegelParabolicTransfoBis
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LamFormula
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ProjFacts
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SymplOHF
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.MapHaar
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SchAFacts
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ParsevalPol
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaTransformEqOrientedThetaFunctionCM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCM
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.PsiCutSupported
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.PsiCutSupported
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,12 +18,12 @@ variable {N r : ℕ}
 
 theorem stg_castSucc (ν : Fin (N + 1) → Fin r → ℤ) (l : Fin N) : ν l.castSucc = stg ν l.val := by
   unfold stg
-  rw [dif_pos (by have := l.isLt; omega)]
+  rw [dite_eq_left (by have := l.isLt; omega)]
   rfl
 
 theorem stg_succ (ν : Fin (N + 1) → Fin r → ℤ) (l : Fin N) : ν l.succ = stg ν (l.val + 1) := by
   unfold stg
-  rw [dif_pos (by have := l.isLt; omega)]
+  rw [dite_eq_left (by have := l.isLt; omega)]
   rfl
 
 theorem stg_plPart {K : ℕ} (μ : Fin (N + 1) → Fin (r + K) → ℤ) (i : ℕ) (m : Fin r) :

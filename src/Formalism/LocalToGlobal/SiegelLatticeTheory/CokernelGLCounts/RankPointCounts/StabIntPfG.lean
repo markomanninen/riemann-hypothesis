@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfL
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfL
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ namespace Formalism.L2.SG.Pf.StabIntSh
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-variable (D) in
 
+variable (D) in
 def QLocG : Prop :=
   ∀ (δ : ∀ p : PlF D, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
     (∀ q, Agree δ M q) → ∀ (p : PlF D) (g : Loc.SplitG (M p).L), (M p).split = some g →
@@ -60,15 +64,15 @@ theorem ratio {F : Type*} [Field F] {γ : F} (hγ : γ ≠ 0) {m n : ℕ} (h : m
     (γ ^ m)⁻¹ / (γ ^ n)⁻¹ = γ ^ (n - m) := by
   rw [inv_div_inv, pow_sub₀ γ hγ h, div_eq_mul_inv]
 
-include hA hs in
 
+include hA hs in
 theorem e_conj (z : D.host.E) :
     g.e ((D.s.atP p).ιE (D.conjF z)) = (g.e ((D.s.atP p).ιE z)).swap := by
   rw [← (D.s.atP p).cj_ιE, ← (hA p).2.2.1]
   exact g.e_cj _
 
-include hA in
 
+include hA in
 theorem mem_O_split (w : (D.s.atP p).Ep) :
     w ∈ (D.s.atP p).O ↔ (g.e w).1 ∈ 𝒪[(D.s.atP p).Fp] ∧ (g.e w).2 ∈ 𝒪[(D.s.atP p).Fp] := by
   have hint : ∀ s : (D.s.atP p).Fp, IsIntegral 𝒪[(D.s.atP p).Fp] s ↔ s ∈ 𝒪[(D.s.atP p).Fp] := fun s =>
@@ -80,8 +84,8 @@ theorem mem_O_split (w : (D.s.atP p).Ep) :
     IsIntegral.pair_iff, hint, hint]
   rfl
 
-include hs in
 
+include hs in
 theorem mem_R_split (w : (D.s.atP p).Ep) :
     w ∈ (M p).R ↔ (g.e w).1 ∈ 𝒪[(D.s.atP p).Fp] ∧ (g.e w).2 ∈ 𝒪[(D.s.atP p).Fp] ∧
       ∃ t ∈ 𝒪[(D.s.atP p).Fp], (g.e w).1 - (g.e w).2 = (g.q : (D.s.atP p).Fp) * t := by

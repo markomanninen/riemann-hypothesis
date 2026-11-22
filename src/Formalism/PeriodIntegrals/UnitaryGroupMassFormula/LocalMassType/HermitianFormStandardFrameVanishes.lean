@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WField
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WField
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,8 @@ theorem hform_sum_left {A : Type} [CommRing A] {n m : ℕ} (σ : A →+* A)
     (J : Matrix (Fin n) (Fin n) A) (α : Fin m → A) (Y : Fin m → Fin n → A) (y : Fin n → A) :
     Formalism.UG.hform σ J (∑ c, α c • Y c) y = ∑ c, σ (α c) * Formalism.UG.hform σ J (Y c) y := by
   unfold Formalism.UG.hform
-  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.sum_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.sum_mul,
     Finset.mul_sum]
   calc _ = ∑ i, ∑ c, ∑ j, σ (α c) * (σ (Y c i) * J i j * y j) :=
         Finset.sum_congr rfl fun i _ => by
@@ -43,7 +48,8 @@ theorem sigma_invol (hCM : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
 theorem hE_symm (hCM : IsCMExt F E σ) (hJ : IsHermND σ J) (x y : Fin n → E) :
     hE σ J x y = σ (hE σ J y x) := by
   unfold hE Formalism.UG.hform
-  simp only [map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   show σ (x j) * J j i * y i = σ (σ (y i)) * σ (J i j) * σ (x j)
@@ -77,7 +83,8 @@ theorem hR_ratV (v : HeightOneSpectrum (𝓞 F)) (a b : Fin n → E) :
     hR (Fv F v) σ J (ratV (F := F) (Fv F v) a) (ratV (F := F) (Fv F v) b) =
       inclR (Fv F v) (hE σ J a b) := by
   unfold hR hE Formalism.UG.hform
-  simp only [map_sum, map_mul, ratV, JR, Matrix.map_apply, sigR_inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, ratV, JR, Matrix.map_apply, sigR_inclR]
   rfl
 
 end Herm

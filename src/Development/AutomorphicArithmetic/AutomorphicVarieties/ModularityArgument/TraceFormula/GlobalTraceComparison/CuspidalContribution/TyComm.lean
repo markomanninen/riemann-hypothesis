@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.CuspidalContribution.LevShrink
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.CuspSupportOf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.CuspidalContribution.LevShrink
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.CuspSupportOf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.LFun UpperTheory.V.Z.Tf.GlobalTraceComparison UpperTheory.V.Z.Tf.GlobalTraceComparison.Cusp
@@ -26,7 +30,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Cusp.stabT :
   intro E _ _ _ a bad L W hL hW S hS hty
   obtain ⟨h1, h2, h3⟩ := hullOps capAct E a S
   have hb := hullBdd typesComm E a S hS L hL.isOpen
-  have hK : ∀ w ∉ bad, fixed (finRep E a) L ≤ fixed (fL a w) (KGL w a) := fun w hw φ hφ =>
+  have hK : ∀ w ∉ bad, fixed (finRep E a) L ≤ fixed (fL a w) (KGL w (n := a)) := fun w hw φ hφ =>
     GlobalTheory.LGrp.mem_fixed.2 fun k hk => GlobalTheory.LGrp.mem_fixed.1 hφ _ (hL.loc w hw k hk)
   refine ⟨hull S ⊓ fixed (finRep E a) L, le_inf h1 fun φ hφ => ?_, ?_, fun φ hφ => ⟨?_, fun u hu g => ?_, ?_⟩,
     fun w hw => inf_le_right.trans (hK w hw), ?_⟩
@@ -52,10 +56,10 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Cusp.stabT :
       exact e.symm
     · have hc := Final.GLintComm E w a
       refine ⟨?_, GlobalTheory.LGrp.mem_fixed.2 fun u hu => ?_⟩
-      · change heckeVec (fL a w) (KGL w a) h φ ∈ hull S
-        rw [heckeVec, finsum_eq_sum (fun c : _ ⧸ KGL w a => h c.out • fL a w c.out φ) (finite_heckeVec hc hh (fL a w) φ)]
+      · change heckeVec (fL a w) (KGL w (n := a)) h φ ∈ hull S
+        rw [heckeVec, finsum_eq_sum (fun c : _ ⧸ KGL w (n := a) => h c.out • fL a w c.out φ) (finite_heckeVec hc hh (fL a w) φ)]
         exact Submodule.sum_mem _ fun c _ => Submodule.smul_mem _ _ (h3 _ φ hφ)
-      · change finRep E a u (heckeVec (fL a w) (KGL w a) h φ) = heckeVec (fL a w) (KGL w a) h φ
+      · change finRep E a u (heckeVec (fL a w) (KGL w (n := a)) h φ) = heckeVec (fL a w) (KGL w (n := a)) h φ
         have hk := hL.int u hu w
         obtain ⟨u', hu', e1, e3⟩ : ∃ u' ∈ L, GeneralLinearGroup.map (pLoc E w) u' = 1 ∧
             u = locGL E a w (GeneralLinearGroup.map (pLoc E w) u) * u' :=

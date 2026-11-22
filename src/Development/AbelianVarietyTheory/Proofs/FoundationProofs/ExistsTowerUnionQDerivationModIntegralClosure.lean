@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDerivationTowerLevelAlgebraPrescribedStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDerivationOnISupOfCompatibleStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationOnAdjoinMemSpanImageStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDerivationTowerLevelAlgebraPrescribedStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDerivationOnISupOfCompatibleStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationOnAdjoinMemSpanImageStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,10 +26,16 @@ theorem isDerOn_mono {B B' : Subalgebra A S} {D : S → M} (h : IsDerOn B D) (hl
     h.alg⟩
 
 theorem isDerOn_sub {B : Subalgebra A S} {D₁ D₂ : S → M} (h₁ : IsDerOn B D₁) (h₂ : IsDerOn B D₂) :
-    IsDerOn B (fun x => D₁ x - D₂ x) where
-  add x hx y hy := by simp only [h₁.add x hx y hy, h₂.add x hx y hy]; abel
-  mul x hx y hy := by simp only [h₁.mul x hx y hy, h₂.mul x hx y hy, smul_sub]; abel
-  alg a := by simp [h₁.alg a, h₂.alg a]
+    IsDerOn B (fun x => D₁ x - D₂ x) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro x hx y hy
+    simp only [h₁.add x hx y hy, h₂.add x hx y hy]
+    abel
+  · intro x hx y hy
+    simp only [h₁.mul x hx y hy, h₂.mul x hx y hy, smul_sub]
+    abel
+  · intro a
+    simp [h₁.alg a, h₂.alg a]
 
 theorem isDerOn_pow {B : Subalgebra A S} {D : S → M} (h : IsDerOn B D) {x : S} (hx : x ∈ B)
     {n : ℕ} (hn : 1 ≤ n) : D (x ^ n) = ((n : S) * x ^ (n - 1)) • D x := by

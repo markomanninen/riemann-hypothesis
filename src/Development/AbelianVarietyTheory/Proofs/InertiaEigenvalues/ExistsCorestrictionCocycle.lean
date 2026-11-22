@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -21,7 +25,7 @@ theorem exists_corestriction_cocycle : ∀ (R G X : Type) [CommRing R] [Group G]
     intro a b x
     rw [map_mul]; rfl
   refine ⟨fun g => ∑ q : G ⧸ H, ρ (g • q).out (f ((g • q).out⁻¹ * g * q.out)), ?_, ?_, ?_, ?_⟩
-  · refine continuous_finset_sum _ fun q _ => ?_
+  · refine continuous_finsetSum _ fun q _ => ?_
     rw [continuous_iff_continuousAt]
     intro g₀
     have hk : Continuous fun g : G => (g₀ • q).out⁻¹ * g * q.out := by fun_prop
@@ -41,14 +45,15 @@ theorem exists_corestriction_cocycle : ∀ (R G X : Type) [CommRing R] [Group G]
       exact QuotientGroup.eq.mpr (by simpa [mul_assoc] using hg)
     rw [this]
   · intro g h
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     rw [← Equiv.sum_comp (MulAction.toPerm h)
       (fun q : G ⧸ H => ρ (g • q).out (f ((g • q).out⁻¹ * g * q.out))), ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun q _ => ?_
     simp only [MulAction.toPerm_apply, mul_smul]
     have e : (g • h • q).out⁻¹ * (g * h) * q.out =
         ((g • h • q).out⁻¹ * g * (h • q).out) * ((h • q).out⁻¹ * h * q.out) := by group
-    rw [e, hc _ (corCoc_mem H g (h • q)) _ (corCoc_mem H h q), map_add, hmul, hmul]
+    rw [e, hc _ (corCoc_mem H g (h • q)) _ (corCoc_mem H h q), map_add (f := _), hmul, hmul]
     congr 3
     group
   · refine ⟨0, fun h hh => ?_⟩
@@ -71,7 +76,8 @@ theorem exists_corestriction_cocycle : ∀ (R G X : Type) [CommRing R] [Group G]
     have hre : ∑ q : G ⧸ H, (f₀ q.out + ρ q.out x) =
         ∑ q : G ⧸ H, (f₀ (g • q).out + ρ (g • q).out x) :=
       (Equiv.sum_comp (MulAction.toPerm g) (fun q : G ⧸ H => f₀ q.out + ρ q.out x)).symm
-    rw [hidx, map_sum, hre, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hidx, map_sum, hre, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib,
       ← Finset.sum_sub_distrib]
     refine Y.sum_mem fun q _ => ?_
     set s' := (g • q).out
@@ -85,7 +91,7 @@ theorem exists_corestriction_cocycle : ∀ (R G X : Type) [CommRing R] [Group G]
     rw [map_sub, map_sub, map_sub, hmul, e] at a1
     have := Y.add_mem (Y.sub_mem a1 a2) a3
     convert this using 1
-    rw [map_add, hmul]
+    rw [map_add (f := _), hmul]
     abel
 
 end GlobalTheory

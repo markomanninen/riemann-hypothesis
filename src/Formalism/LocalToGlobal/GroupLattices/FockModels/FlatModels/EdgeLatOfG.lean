@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
+
+@[expose] public section
 
 open MvPolynomial
 

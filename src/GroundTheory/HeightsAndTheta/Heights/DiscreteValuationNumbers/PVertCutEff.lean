@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivisorIdealBotUniformiser
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PRepresentative
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDimStrictDrop
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialQuotDim
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialIdealCorresp
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialIdealMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialDimBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivisorIdealBotUniformiser
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PRepresentative
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDimStrictDrop
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialQuotDim
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialIdealCorresp
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialIdealMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialDimBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -71,7 +76,7 @@ theorem VertCutEff.proof (h1 : VNumCut.Statement.{u}) (h2 : DivisorIdealCycle.St
           (Q.mul_mem_left x (hQ.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self v)))))⟩ hQW⟩
     have hpos : divCycle P v W ≠ 0 := by
       unfold divCycle
-      rw [dif_pos ⟨hWv, hrel⟩]
+      rw [dite_eq_left ⟨hWv, hrel⟩]
       have hne := length_localizedQuot_ne_top (P ⊔ Ideal.span {v}) W hWv
       have hnz : multAt (P ⊔ Ideal.span {v}) W ≠ 0 := by
         unfold multAt
@@ -86,7 +91,7 @@ theorem VertCutEff.proof (h1 : VNumCut.Statement.{u}) (h2 : DivisorIdealCycle.St
       exact_mod_cast htn
     have hu0 : divCycle P u W = 0 := by
       unfold divCycle
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨h, -⟩
       exact huW (h.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self u)))
     have e1 := congrFun (DivCycleMul.proof O K ι P u f hP huP hV.num_not_mem) W

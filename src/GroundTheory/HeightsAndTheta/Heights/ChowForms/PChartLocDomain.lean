@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsBis
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsBis
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -17,7 +22,8 @@ theorem aeval_mul_of_isHomogeneous {A : Type*} [CommRing A] [Algebra F A]
     aeval (fun m => c * x m) g = c ^ d * aeval x g := by
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   have hd := hg (mem_support_iff.mp hs)
   simp only [aeval_monomial, mul_pow]
@@ -45,7 +51,8 @@ theorem linForm_not_mem_sup {I : Ideal (MvPolynomial (Fin n) F)} (hI : IsProjPri
     fun hg => by rw [← hφ]; exact aeval_mul_of_isHomogeneous hg _ _
   have hle : I ⊔ Ideal.span {linForm t - 1} ≤ RingHom.ker ψ := by
     refine sup_le (fun g hg => ?_) ?_
-    · rw [RingHom.mem_ker, ← sum_homogeneousComponent g, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [RingHom.mem_ker, ← sum_homogeneousComponent g, map_sum]
       refine Finset.sum_eq_zero fun d _ => ?_
       rw [hhom (homogeneousComponent_isHomogeneous d g)]
       have : φ (homogeneousComponent d g) = 0 := by

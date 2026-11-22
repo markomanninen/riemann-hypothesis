@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.ContSplit
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LevelKSplit
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.ContSplit
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LevelKSplit
+
+@[expose] public section
 
 noncomputable section
 

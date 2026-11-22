@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.OneBlockPnPt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.MemMIdealOverIff
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockEqChartRing
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPointDegreePos
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.OneBlockPnPt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.MemMIdealOverIff
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockEqChartRing
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPointDegreePos
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -56,7 +61,7 @@ theorem residue_coe {F : Type} [Field F] {K : Type} {ι : K → Type} {Ω : Type
     IndefiniteRowSideFullHecke.Kleiman2.residue F y c p (a : Ω) =
       algebraMap (chartRingOver F y c ⧸ p) (IndefiniteRowSideFullHecke.Kleiman2.ResField F y c p) (Ideal.Quotient.mk p a) := by
   unfold IndefiniteRowSideFullHecke.Kleiman2.residue
-  rw [dif_pos a.2]
+  rw [dite_eq_left a.2]
 
 theorem mIdealOver_oneBlock_eq {S : Type} [CommRing S] {Ω' : Type} [Field Ω'] [Algebra S Ω'] {N : ℕ}
     (z : Fin (N + 1) → Ω') :

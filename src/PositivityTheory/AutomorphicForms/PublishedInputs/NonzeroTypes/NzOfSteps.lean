@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.FiniteDimensionalTranslationCoordinates
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NzOfTypeData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.FiniteDimensionalTranslationCoordinates
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NzOfTypeData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,19 @@ theorem typeData_of (P : GlobalTheory.Mem.LiteralAutomorphy.LitN) (a1 : ArtinTra
     refine and_congr_right fun _ => forall_congr' fun s => ?_
     rw [a3 E Ω A w h a ha n χ ho μ hμ G σ hG s]
   obtain ⟨hJK, h1J, hmul, hinv, hne, hKCo, h1KC, hKCJ, hlam1, hst, hfin, hv0m, hv00, hv0e⟩ := cp (w.adicCompletion E) n G
-  have hK : KO (w.adicCompletion E) (Fin n) = GlobalTheory.LFun.KGL w n := SphCompletion.KO_completion w n
+  have hK : KO (w.adicCompletion E) (Fin n) = GlobalTheory.LFun.KGL w (n := n) := SphCompletion.KO_completion w n
+  let T (K : Subgroup (GL (Fin n) (w.adicCompletion E))) : Prop :=
+    ∃ (J : Subgroup ↥K) (lam : ↥J →* ℂˣ) (m : ℕ) (V0 : Representation ℂ ↥K (Fin m → ℂ))
+        (v0 : Fin m → ℂ), IsOpen (J : Set ↥K) ∧ IsOpen (lam.ker : Set ↥J) ∧ GlobalTheory.PRep.IsSmooth V0 ∧
+        v0 ≠ 0 ∧ (∀ j : ↥J, V0 (j : ↥K) v0 = ((lam j : ℂˣ) : ℂ) • v0) ∧
+        (∀ π : SmIrr (GL (Fin n) (w.adicCompletion E)),
+          (∃ x : π.V, x ≠ 0 ∧ ∀ j : ↥J, π.ρ ((j : ↥K) : GL (Fin n) (w.adicCompletion E)) x = ((lam j : ℂˣ) : ℂ) • x) →
+            Cond h rc χ ho π) ∧
+        ∀ π : SmIrr (GL (Fin n) (w.adicCompletion E)), Cond h rc χ ho π →
+          ∃ f : (Fin m → ℂ) →ₗ[ℂ] π.V, Function.Injective f ∧ ∀ k v, f (V0 k v) = π.ρ k (f v)
+  change T _
   rw [← hK]
+  dsimp only [T]
   let J : Subgroup ↥(KO (w.adicCompletion E) (Fin n)) :=
     { carrier := {j | (j : GL (Fin n) (w.adicCompletion E)) ∈ G.JSet}
       mul_mem' := fun {x y} hx hy => (hmul _ hx _ hy).1

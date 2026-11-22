@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
-import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
-import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TwoMulChainStartIndexAddOneOfOdd
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FactorizationLeFourFifteenths
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WeightSubstNonneg
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffLeafGaugeSubMainTermEqZeroOnFirstAxisStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PderivLeafGaugeEqPairingAddIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.HPullWUpGTwoGroupEmbeddingEqRenameStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LinearSubstCoordinateWeightNonnegRadiusStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
+public import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TwoMulChainStartIndexAddOneOfOdd
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FactorizationLeFourFifteenths
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WeightSubstNonneg
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffLeafGaugeSubMainTermEqZeroOnFirstAxisStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PderivLeafGaugeEqPairingAddIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.HPullWUpGTwoGroupEmbeddingEqRenameStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LinearSubstCoordinateWeightNonnegRadiusStatement
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds GlobalTheory.MainTerm Classical
 
@@ -38,13 +42,14 @@ theorem wtNonneg_rename (v : AddValuation C (WithTop ℝ)) {σ τ : Type} [Finit
 theorem wtNonneg_add (v : AddValuation C (WithTop ℝ)) {τ : Type} (ρ : τ → ℝ) {F G : MvPowerSeries τ C}
     (hF : WtNonneg v ρ F) (hG : WtNonneg v ρ G) : WtNonneg v ρ (F + G) := by
   intro α
-  rw [map_add]
+  rw [map_add (f := _)]
   exact v.map_le_add (hF α) (hG α)
 
 theorem wtNonneg_sum (v : AddValuation C (WithTop ℝ)) {τ ι : Type} (ρ : τ → ℝ) (s : Finset ι)
     {F : ι → MvPowerSeries τ C} (hF : ∀ i ∈ s, WtNonneg v ρ (F i)) : WtNonneg v ρ (∑ i ∈ s, F i) := by
   intro α
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact v.map_le_sum fun i hi => hF i hi α
 
 theorem wtNonneg_smul (V : VF C) {τ : Type} (ρ : τ → ℝ) {c : C} (hc : V.Ge 0 c) {F : MvPowerSeries τ C}
@@ -80,21 +85,25 @@ theorem constantCoeff_linPull {σ ι : Type} [Fintype σ] [Fintype ι] (e : ι �
   have h0 : ∀ x : σ, MvPowerSeries.constantCoeff
       (∑ c : ι, e c x • (MvPowerSeries.X c : MvPowerSeries ι C)) = 0 := by
     intro x
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   exact MvPowerSeries.constantCoeff_subst_eq_zero (MvPowerSeries.hasSubst_of_constantCoeff_zero h0) h0 hF
 
 theorem pderiv_mainM (V : VF C) (i : ℕ) {ι ι' : Type} [Fintype ι] [Fintype ι'] (Φ : ι' → ι → C) (b : ι') :
-    MvPowerSeries.pderiv C (Sum.inr b) (mainM V i Φ) =
+    MvPowerSeries.pderiv (R := C) (Sum.inr b) (mainM V i Φ) =
       ((V.l : C) ^ expE V.l i)⁻¹ • ∑ c : ι,
         Φ b c • (MvPowerSeries.X (Sum.inl c) : MvPowerSeries (ι ⊕ ι') C) ^ (V.l ^ i) := by
   unfold mainM
-  rw [Derivation.map_smul, map_sum, Finset.sum_eq_single b]
-  · rw [map_sum]
-    congr 1
-    refine Finset.sum_congr rfl fun c _ => ?_
-    simp [Derivation.leibniz, Derivation.leibniz_pow, MvPowerSeries.pderiv_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Derivation.map_smul, map_sum, Finset.sum_eq_single b]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      congr 1
+      refine Finset.sum_congr rfl fun c _ => ?_
+      simp [Derivation.leibniz, Derivation.leibniz_pow, MvPowerSeries.pderiv_X]
   · intro b' _ hb
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun c _ => ?_
     simp [Derivation.leibniz, Derivation.leibniz_pow, MvPowerSeries.pderiv_X, hb]
   · simp
@@ -131,7 +140,7 @@ theorem weight_gauge_sub_main : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [N
       rw [le_add_coe_iff, radius_one _ _ hl0, zero_sub] at this
       exact this
     obtain ⟨γ, hγ, hd⟩ := GlobalTheory.T.pderiv_leafGauge_eq_pairing_add_integral C V d I J X hA g a i hi hid S t ht (Fin N) (Fin M) e v' he hv hv' b
-    have hE : MvPowerSeries.pderiv C (Sum.inr b)
+    have hE : MvPowerSeries.pderiv (R := C) (Sum.inr b)
         (X.hM g a i e v' - mainM V i (fun b c => ∑ κ : J g, ∑ k : I (1 - g), Φt c κ * X.pair g κ k * v' b k)) =
         MvPowerSeries.subst (fun w : WV I => hPullW (upG w.1 (t w.1 w.2)) (fun c => toW g (e c))
           (fun b => toW (1 - g) (v' b))) γ + ∑ κ : J g, (∑ k, X.pair g κ k * v' b k) •
@@ -140,7 +149,8 @@ theorem weight_gauge_sub_main : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [N
               Φt δ κ • (MvPowerSeries.X δ : MvPowerSeries (Fin N) C) ^ (V.l ^ i)) := by
       rw [map_sub, hd, pderiv_mainM, add_sub_assoc]
       congr 1
-      simp only [hpull.1, map_sub, smul_sub, Finset.sum_sub_distrib, map_smul, map_sum, map_pow,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hpull.1, map_sub, smul_sub, Finset.sum_sub_distrib, map_smul, map_sum, map_pow,
         MvPowerSeries.rename_X]
       congr 1
       simp only [Finset.smul_sum, smul_smul]

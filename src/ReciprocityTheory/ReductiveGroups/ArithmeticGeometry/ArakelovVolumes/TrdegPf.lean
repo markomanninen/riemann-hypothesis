@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.DiffIndepStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.DiffIndepStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR
 
@@ -11,12 +15,12 @@ theorem kaehlerD_aeval_eq_sum {K : Type*} {Ω : Type*} [Field K] [Field Ω] [Alg
   next a =>
     simp [Derivation.map_algebraMap]
   next p q hp hq =>
-    simp only [map_add, hp, hq, add_smul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hp, hq, add_smul, Finset.sum_add_distrib]
   next p j hp =>
     have h1 : ∀ i, aeval x (pderiv i (p * X j)) =
         x j * aeval x (pderiv i p) + (if j = i then aeval x p else 0) := by
       intro i
-      rw [Derivation.leibniz, pderiv_X, Pi.single_apply, smul_eq_mul, smul_eq_mul, map_add,
+      rw [Derivation.leibniz, pderiv_X, Pi.single_apply, smul_eq_mul, smul_eq_mul, map_add (f := _),
         map_mul, map_mul, aeval_X]
       split_ifs <;> simp only [map_one, map_zero, mul_one, mul_zero, zero_add, add_zero]
       ring
@@ -31,8 +35,8 @@ theorem exists_pderiv_ne_zero_lt {K : Type*} [Field K] [CharZero K] {D : ℕ}
     ∃ i, pderiv i P ≠ 0 ∧ (pderiv i P).totalDegree < P.totalDegree := by
   have coeff_pderiv_eq_coeff_add_single_lemma {K : Type _} [Field K] {D : ℕ} (i : Fin D)
       (n : Fin D →₀ ℕ) (P : MvPolynomial (Fin D) K) :
-      MvPolynomial.coeff n (MvPolynomial.pderiv i P) =
-        MvPolynomial.coeff (n + Finsupp.single i 1) P * ((n i : K) + 1) := by
+      AddMonoidAlgebra.coeff (MvPolynomial.pderiv i P) n =
+        AddMonoidAlgebra.coeff P (n + Finsupp.single i 1) * ((n i : K) + 1) := by
     refine MvPolynomial.induction_on' P ?_ ?_
     · intro s a
       rw [MvPolynomial.pderiv_monomial, MvPolynomial.coeff_monomial, MvPolynomial.coeff_monomial]
@@ -48,7 +52,7 @@ theorem exists_pderiv_ne_zero_lt {K : Type*} [Field K] [CharZero K] {D : ℕ}
           simp [hs]
         · rfl
     · intro p q hp hq
-      simp only [map_add, MvPolynomial.coeff_add, hp, hq, add_mul]
+      simp only [map_add (f := _), MvPolynomial.coeff_add, hp, hq, add_mul]
   classical
   obtain ⟨m, hm, hmdeg⟩ : ∃ m ∈ P.support, 0 < m.sum (fun _ e => e) := by
     by_contra h
@@ -66,14 +70,14 @@ theorem exists_pderiv_ne_zero_lt {K : Type*} [Field K] [CharZero K] {D : ℕ}
   have hnm : m - Finsupp.single i 1 + Finsupp.single i 1 = m := tsub_add_cancel_of_le hle
   refine ⟨i, ?_, ?_⟩
   · intro h0
-    have h3 := congrArg (MvPolynomial.coeff (m - Finsupp.single i 1)) h0
+    have h3 := congrArg (AddMonoidAlgebra.coeff · (m - Finsupp.single i 1)) h0
     rw [coeff_pderiv_eq_coeff_add_single_lemma, hnm, MvPolynomial.coeff_zero] at h3
     rcases mul_eq_zero.mp h3 with h | h
     · exact (MvPolynomial.mem_support_iff.mp hm) h
     · exact (Nat.cast_add_one_ne_zero _) h
   · have key : ∀ n ∈ (pderiv i P).support, (n.sum fun _ e => e) + 1 ≤ P.totalDegree := by
       intro n hn
-      have hc : MvPolynomial.coeff (n + Finsupp.single i 1) P ≠ 0 := by
+      have hc : AddMonoidAlgebra.coeff P (n + Finsupp.single i 1) ≠ 0 := by
         intro h
         apply MvPolynomial.mem_support_iff.mp hn
         rw [coeff_pderiv_eq_coeff_add_single_lemma, h, zero_mul]
@@ -102,7 +106,7 @@ theorem differentialIndependence.{u, v} : DiffIndepStatement.{u, v} := by
     rcases Nat.eq_zero_or_pos N with h0 | hpos
     · rw [h0, MvPolynomial.totalDegree_eq_zero_iff_eq_C] at hN
       rw [hN, MvPolynomial.aeval_C] at hP
-      have hc : MvPolynomial.coeff 0 P = 0 := (algebraMap K Ω).injective (by rw [hP, map_zero])
+      have hc : AddMonoidAlgebra.coeff P 0 = 0 := (algebraMap K Ω).injective (by rw [hP, map_zero])
       rw [hN, hc, map_zero]
     · obtain ⟨i, hi, hlt⟩ := exists_pderiv_ne_zero_lt P (by omega)
       have hD := kaehlerD_aeval_eq_sum x P

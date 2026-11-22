@@ -1,11 +1,16 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory Opposite AlgebraicGeometry TopologicalSpace
@@ -24,7 +29,7 @@ private theorem one_mem_of_mul_mem_of_dual_derivations {k : Type u} [Field k] {B
       (Ideal.Quotient.mk I) (δ (c * f)) =
         (Ideal.Quotient.mk I) c * (Ideal.Quotient.mk I) (δ f) := by
     intro δ c
-    rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add, map_mul, map_mul, hπf,
+    rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add (f := _), map_mul, map_mul, hπf,
       zero_mul, add_zero]
   have k11 : (Ideal.Quotient.mk I) a * (Ideal.Quotient.mk I) (δ₁ f) = 1 := by
     rw [← key δ₁ a, ← hy₁, e11, map_one]
@@ -62,14 +67,28 @@ private theorem one_mem_of_coord_mem_span_singleton_of_ne {k : Type u} [Field k]
   obtain ⟨b, hb⟩ := Ideal.mem_span_singleton'.mp hm2
   have hne' : (ULift.up j₁ : ULift.{u} (Fin m)) ≠ ULift.up j₂ := fun hc =>
     hne (congrArg ULift.down hc)
-  exact one_mem_of_mul_mem_of_dual_derivations I _ _ h a b
-    (EtaleCoordinates.partialDeriv k (ULift.{u} (Fin m)) B (ULift.up j₁))
-    (EtaleCoordinates.partialDeriv k (ULift.{u} (Fin m)) B (ULift.up j₂))
-    hh ha.symm hb.symm
-    (EtaleCoordinates.partialDeriv_coord_self k (ULift.{u} (Fin m)) B (ULift.up j₁))
-    (EtaleCoordinates.partialDeriv_coord_of_ne k (ULift.{u} (Fin m)) B _ _ hne')
-    (EtaleCoordinates.partialDeriv_coord_of_ne k (ULift.{u} (Fin m)) B _ _ hne'.symm)
-    (EtaleCoordinates.partialDeriv_coord_self k (ULift.{u} (Fin m)) B (ULift.up j₂))
+  classical
+  let ι := ULift.{u} (Fin m)
+  have hc : IsBaseChange B (KaehlerDifferential.map k k (MvPolynomial ι k) B) :=
+    KaehlerDifferential.isBaseChange_of_formallyEtale k (MvPolynomial ι k) B
+  let basis : Module.Basis ι B (KaehlerDifferential k B) :=
+    (Algebra.TensorProduct.basis B (KaehlerDifferential.mvPolynomialBasis k ι)).map hc.equiv
+  have hbasis (i : ι) : basis i = KaehlerDifferential.D k B (EtaleCoordinates.coord k ι B i) := by
+    simp only [basis, Module.Basis.map_apply, Algebra.TensorProduct.basis_apply,
+      KaehlerDifferential.mvPolynomialBasis_apply, IsBaseChange.equiv_tmul, one_smul,
+      KaehlerDifferential.map_D]
+    rfl
+  let δ (i : ι) : Derivation k B B :=
+    ((Finsupp.lapply i).comp basis.repr.toLinearMap).compDer (KaehlerDifferential.D k B)
+  have hδ (i j : ι) : δ i (EtaleCoordinates.coord k ι B j) = if i = j then 1 else 0 := by
+    change basis.repr (KaehlerDifferential.D k B (EtaleCoordinates.coord k ι B j)) i = _
+    rw [← hbasis, Module.Basis.repr_self, Finsupp.single_apply]
+    exact if_congr eq_comm rfl rfl
+  exact one_mem_of_mul_mem_of_dual_derivations I
+    (EtaleCoordinates.coord k ι B (ULift.up j₁))
+    (EtaleCoordinates.coord k ι B (ULift.up j₂)) h a b
+    (δ (ULift.up j₁)) (δ (ULift.up j₂)) hh ha.symm hb.symm
+    (by simp [hδ]) (by simp [hδ, hne']) (by simp [hδ, hne'.symm]) (by simp [hδ])
 
 private theorem ideal_eq_bot_of_opens_eq {X : Scheme.{u}} (D : X.IdealSheafData)
     (W₁ W₂ : X.affineOpens) (hW : (W₁ : X.Opens) = (W₂ : X.Opens))

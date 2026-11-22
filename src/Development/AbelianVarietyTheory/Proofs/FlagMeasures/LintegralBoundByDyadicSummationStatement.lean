@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralBoundByDyadicSummation
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralBoundByDyadicSummation
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal
 set_option maxHeartbeats 1000000 in

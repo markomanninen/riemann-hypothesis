@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwOCommD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwOCommD
+
+@[expose] public section
+
 open CategoryTheory Limits Opposite AlgebraicTopology GlobalTheory.EZ
 
 noncomputable section
@@ -118,11 +123,12 @@ theorem idA {a b p q : ℕ} (f : bo a b ⟶ bo (p + 1) q) :
     H1 f ≫ dT (p + 1 + 1) q (p + 1) q = f - H1 (f ≫ dT (p + 1) q p q) := by
   refine hom_induct (fun f => H1 f ≫ dT (p + 1 + 1) q (p + 1) q = f - H1 (f ≫ dT (p + 1) q p q)) ?_ ?_ ?_ ?_ f
   · simp
-  · intro f g hf hg; simp only [map_add, Preadditive.add_comp, Preadditive.add_comp, hf, hg]; abel
+  · intro f g hf hg; simp only [map_add (f := _), Preadditive.add_comp, Preadditive.add_comp, hf, hg]; abel
   · intro r f hf; simp only [map_zsmul, Preadditive.zsmul_comp, hf, smul_sub]
   · intro α β
     rw [bisimplicialChainConeFirstIndex_operatorOfSimplexMaps, dT_h (p + 1) q, dT_h p q]
-    simp only [Preadditive.comp_sum, Preadditive.comp_zsmul, bop_comp, map_sum, map_zsmul, bisimplicialChainConeFirstIndex_operatorOfSimplexMaps]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Preadditive.comp_sum, Preadditive.comp_zsmul, bop_comp, map_sum, map_zsmul, bisimplicialChainConeFirstIndex_operatorOfSimplexMaps]
     rw [Finset.sum_range_succ' _ (p + 1 + 1)]
     simp only [simplexClampedFaceHom_zero_comp_simplexConeMap, faceSucc_cone, pow_succ, mul_neg_one, neg_smul, Finset.sum_neg_distrib, pow_zero,
       one_smul, idc_self', Category.id_comp]
@@ -132,11 +138,12 @@ theorem idB {a b p q : ℕ} (f : bo a b ⟶ bo p (q + 1)) :
     H1 f ≫ dT (p + 1) (q + 1) (p + 1) q = -H1 (f ≫ dT p (q + 1) p q) := by
   refine hom_induct (fun f => H1 f ≫ dT (p + 1) (q + 1) (p + 1) q = -H1 (f ≫ dT p (q + 1) p q)) ?_ ?_ ?_ ?_ f
   · simp
-  · intro f g hf hg; simp only [map_add, Preadditive.add_comp, hf, hg, neg_add]
+  · intro f g hf hg; simp only [map_add (f := _), Preadditive.add_comp, hf, hg, neg_add]
   · intro r f hf; simp only [map_zsmul, Preadditive.zsmul_comp, hf, smul_neg]
   · intro α β
     rw [bisimplicialChainConeFirstIndex_operatorOfSimplexMaps, dT_v (p + 1) q, dT_v p q]
-    simp only [Preadditive.comp_sum, Preadditive.comp_zsmul, Preadditive.comp_neg, bop_comp, map_sum, map_zsmul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Preadditive.comp_sum, Preadditive.comp_zsmul, Preadditive.comp_neg, bop_comp, map_sum, map_zsmul,
       bisimplicialChainConeFirstIndex_operatorOfSimplexMaps, idc_self', Category.id_comp, pow_succ, mul_neg_one, neg_smul]
 
 theorem idC {a b q : ℕ} (f : bo a b ⟶ bo 0 (q + 1)) :
@@ -145,7 +152,7 @@ theorem idC {a b q : ℕ} (f : bo a b ⟶ bo 0 (q + 1)) :
     f - H2 (f ≫ dT 0 (q + 1) 0 q)) ?_ ?_ ?_ ?_ f
   · simp
   · intro f g hf hg
-    simp only [map_add, Preadditive.add_comp] at hf hg ⊢
+    simp only [map_add (f := _), Preadditive.add_comp] at hf hg ⊢
     rw [show H1 f ≫ dT 1 (q + 1) 0 (q + 1) + H1 g ≫ dT 1 (q + 1) 0 (q + 1) +
       (H2 f ≫ dT 0 (q + 1 + 1) 0 (q + 1) + H2 g ≫ dT 0 (q + 1 + 1) 0 (q + 1)) =
       (H1 f ≫ dT 1 (q + 1) 0 (q + 1) + H2 f ≫ dT 0 (q + 1 + 1) 0 (q + 1)) +
@@ -155,7 +162,8 @@ theorem idC {a b q : ℕ} (f : bo a b ⟶ bo 0 (q + 1)) :
     simp only [map_zsmul, Preadditive.zsmul_comp, ← smul_add, hf, smul_sub]
   · intro α β
     rw [bisimplicialChainConeFirstIndex_operatorOfSimplexMaps, bisimplicialChainConeSecondIndex_operatorOfSimplexMaps, bisimplicialTotalDifferentialOperator_one_zero_eq_sum, dT_v 0 (q + 1), dT_v 0 q]
-    simp only [Preadditive.comp_sum, Preadditive.comp_zsmul, bop_comp, map_sum, map_zsmul, bisimplicialChainConeSecondIndex_operatorOfSimplexMaps]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Preadditive.comp_sum, Preadditive.comp_zsmul, bop_comp, map_sum, map_zsmul, bisimplicialChainConeSecondIndex_operatorOfSimplexMaps]
     rw [Finset.sum_range_succ' _ (q + 1 + 1)]
     simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add, face_zero_cone_identity, simplexClampedFaceHom_one_comp_simplexConeMap_zero, simplexClampedFaceHom_zero_comp_simplexConeMap,
       faceSucc_cone, pow_succ, mul_neg_one, neg_smul, Finset.sum_neg_distrib, pow_zero, one_smul, idc_self',
@@ -165,11 +173,12 @@ theorem idC {a b q : ℕ} (f : bo a b ⟶ bo 0 (q + 1)) :
 theorem idD {a b q : ℕ} (f : bo a b ⟶ bo 1 q) : H2 (f ≫ dT 1 q 0 q) = 0 := by
   refine hom_induct (fun f => H2 (f ≫ dT 1 q 0 q) = 0) ?_ ?_ ?_ ?_ f
   · simp
-  · intro f g hf hg; simp only [map_add, Preadditive.add_comp, hf, hg, add_zero]
+  · intro f g hf hg; simp only [map_add (f := _), Preadditive.add_comp, hf, hg, add_zero]
   · intro r f hf; simp only [map_zsmul, Preadditive.zsmul_comp, hf, smul_zero]
   · intro α β
     rw [bisimplicialTotalDifferentialOperator_one_zero_eq_sum]
-    simp [Preadditive.comp_sum, Preadditive.comp_zsmul, bop_comp, map_sum, map_zsmul, bisimplicialChainConeSecondIndex_operatorOfSimplexMaps,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Preadditive.comp_sum, Preadditive.comp_zsmul, bop_comp, map_sum, map_zsmul, bisimplicialChainConeSecondIndex_operatorOfSimplexMaps,
       Finset.sum_range_succ]
 
 theorem sum_dT {a b : ℕ} (u : ∀ a' b' : ℕ, bo a b ⟶ bo a' b') (c d : ℕ) :
@@ -211,7 +220,7 @@ theorem totChains_acyclic : ∀ a b k : ℕ, 1 ≤ k → ∀ z : ∀ a' b' : ℕ
   | succ p =>
     show H1 (z (p + 1) d) ≫ dT (p + 1 + 1) d (p + 1) d + H1 (z p (d + 1)) ≫ dT (p + 1) (d + 1) (p + 1) d = _
     have h2 : H1 (z (p + 1) d ≫ dT (p + 1) d p d) + H1 (z p (d + 1) ≫ dT p (d + 1) p d) = 0 := by
-      rw [← map_add, cyc p d (by omega), map_zero]
+      rw [← map_add (f := _), cyc p d (by omega), map_zero]
     rw [idA, idB, ← sub_eq_add_neg, sub_sub, h2, sub_zero]
   | zero =>
     obtain ⟨q, rfl⟩ : ∃ q, d = q + 1 := ⟨d - 1, by omega⟩

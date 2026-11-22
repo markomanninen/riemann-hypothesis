@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -83,7 +87,7 @@ theorem sc_first {O E R : Type} [CommRing O] [Field E] [Algebra O E] [CommRing R
   have h1 : ∀ i, D i 1 = 0 := fun i => by simpa using hD i 1 1
   let L : R →ₗ[O] MvPowerSeries (Fin n) E :=
     { toFun := fun a => MvPowerSeries.C (algebraMap O E (x a)) + ∑ i, MvPowerSeries.C (D i a) * MvPowerSeries.X i
-      map_add' := fun a b => by simp only [map_add, add_mul, Finset.sum_add_distrib]; ring
+      map_add' := fun a b => by simp only [map_add (f := _), add_mul, Finset.sum_add_distrib]; ring
       map_smul' := fun c a => by
         simp only [map_smul, RingHom.id_apply]
         simp only [smul_eq_mul, map_mul, Algebra.smul_def, mul_add, Finset.mul_sum, mul_assoc,
@@ -95,7 +99,7 @@ theorem sc_first {O E R : Type} [CommRing O] [Field E] [Algebra O E] [CommRing R
   · show Ideal.Quotient.mk _ (L (a * b)) = Ideal.Quotient.mk _ (L a) * Ideal.Quotient.mk _ (L b)
     rw [← map_mul, eq_comm, Ideal.Quotient.eq]
     have : L a * L b - L (a * b) = (∑ i, MvPowerSeries.C (D i a) * MvPowerSeries.X i) * (∑ i, MvPowerSeries.C (D i b) * MvPowerSeries.X i) := by
-      simp only [L, LinearMap.coe_mk, AddHom.coe_mk, hD, map_mul, map_add, add_mul, mul_assoc, Finset.sum_add_distrib, ← Finset.mul_sum]
+      simp only [L, LinearMap.coe_mk, AddHom.coe_mk, hD, map_mul, map_add (f := _), add_mul, mul_assoc, Finset.sum_add_distrib, ← Finset.mul_sum]
       ring
     rw [this, zero_add, pow_two]
     exact Ideal.mul_mem_mul (hm a) (hm b)

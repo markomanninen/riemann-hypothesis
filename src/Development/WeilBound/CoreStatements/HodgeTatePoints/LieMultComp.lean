@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.KeyBadSt
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsThetaMeanSquareNorm
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ZhangDimensionPushDownGrassmannianHeightBounds
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.RulePow
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLevelGoodAtAllPrimesAndIdx
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLieCoordinatesLieMultIff
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoHost
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoSquare
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoDatum
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoPoint
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoExt
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoFrame
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoModel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.KeyBadSt
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsThetaMeanSquareNorm
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ZhangDimensionPushDownGrassmannianHeightBounds
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.RulePow
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLevelGoodAtAllPrimesAndIdx
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLieCoordinatesLieMultIff
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoHost
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoSquare
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoDatum
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoPoint
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoExt
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoFrame
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoModel
+
+@[expose] public section
 
 noncomputable section
 

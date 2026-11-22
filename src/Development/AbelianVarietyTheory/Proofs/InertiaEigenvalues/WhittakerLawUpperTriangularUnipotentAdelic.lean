@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,7 @@ theorem whittakerLaw_upperUnipotent_identityColumns (ψ : AddChar (Ad E) ℂ) (f
       rw [e, sub_mul, one_mul, posM_col_mul y _ hrow, Matrix.sub_apply]
     have hz : ∀ i j : Fin a, ¬ ((i : ℕ) < n ∧ (j : ℕ) = n) → posM (Subtype.val : UnipotentBlockColumnIndex a n n → Fin a × Fin a) y i j = 0 := by
       intro i j h
-      rw [posM_block_entry, dif_neg]
+      rw [posM_block_entry, dite_eq_right]
       rintro ⟨h1, h2, h3⟩
       exact h ⟨h1, by omega⟩
     have e1 := ih ((blkU y)⁻¹ * u) ?_ ?_ ?_ g
@@ -145,7 +149,7 @@ theorem whittakerLaw_upperUnipotent_identityColumns (ψ : AddChar (Ad E) ℂ) (f
       rw [hval]
       by_cases hjn : (j : ℕ) = n
       · by_cases hin : (i : ℕ) < n
-        · rw [posM_block_entry, dif_pos ⟨hin, by omega, by omega⟩, sub_eq_zero]
+        · rw [posM_block_entry, dite_eq_left ⟨hin, by omega, by omega⟩, sub_eq_zero]
         · rw [hz i j (fun h => hin h.1), sub_zero]
           exact ht i j (by
             have : (j : ℕ) < i := by

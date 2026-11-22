@@ -1,21 +1,24 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PseudoCoefficientUpqTrivial
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesCharacter
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LanglandsClassification
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LabesseWaldspurger
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RadfordShufflePolynomialHolds
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PseudoCoefficientUpqTrivial
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesCharacter
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LanglandsClassification
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LabesseWaldspurger
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RadfordShufflePolynomialHolds
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
+
+@[expose] public section
+
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -36,8 +39,8 @@ section Comb
 
 variable {α β ι : Type} {Hs : α ⊕ β → Type} {E : ι → Type}
 
-open Classical in
 
+open Classical in
 def comb (p : ι → α) (A : ∀ i, E i → Hs (.inl (p i))) (y0 : ∀ v, Hs v) (z : ∀ i, E i) : ∀ v, Hs v
   | .inl a => if h : ∃ i, p i = a then cast (congrArg (fun a => Hs (.inl a)) h.choose_spec) (A h.choose (z h.choose))
       else y0 (.inl a)
@@ -48,8 +51,6 @@ variable {p : ι → α} {A : ∀ i, E i → Hs (.inl (p i))} {y0 : ∀ v, Hs v}
 theorem cast_apply_eq {i j : ι} (e : p i = p j) (h : i = j) :
     cast (congrArg (fun a => Hs (.inl a)) e) (A i (z i)) = A j (z j) := by
   subst h; rfl
-
-@[simp] theorem comb_inr (b : β) : comb p A y0 z (.inr b) = y0 (.inr b) := rfl
 
 theorem comb_inl (hp : Function.Injective p) (i : ι) : comb p A y0 z (.inl (p i)) = A i (z i) := by
   have h : ∃ j, p j = p i := ⟨i, rfl⟩
@@ -232,10 +233,10 @@ theorem exists_homDS_comb (hB : IsFactorisation D.sp.cm.sig V.gram (fun v => (R 
     refine (pow_left_inj₀ (by positivity) (by positivity) two_ne_zero).1 ?_
     rw [mul_pow, mul_pow, key y hy v a, key y hy v b]
     ring
-  let f : MultilinearMap ℂ M.H H :=
+  let f : MultilinearMap (RingHom.id ℂ) M.H H :=
     { toFun := fun z => B (c z)
       map_update_add' := fun z τ x x' => by
-        simp only [hcdef, comb_update hinj, map_add]
+        simp only [hcdef, comb_update hinj, map_add (f := _)]
         have h := hB.pure_update (hc z) (.inl (placeOf D τ)) 1 (A τ x) (A τ x')
         rw [hcdef] at h
         simpa using h
@@ -246,10 +247,12 @@ theorem exists_homDS_comb (hB : IsFactorisation D.sp.cm.sig V.gram (fun v => (R 
         rw [hcdef] at h h0'
         simpa [h0'] using h }
   have hf : ∀ z, f z = B (c z) := fun z => rfl
-  let u : ∀ τ, M.H τ := fun τ => unitVec (M.H τ)
-  have hu : ∀ τ, ‖u τ‖ = 1 := fun τ => by
+  have hex : ∀ τ, ∃ x : M.H τ, ‖x‖ = 1 := fun τ => by
     haveI := (isIrrUnitary_dsRep M τ).irred.1
-    exact norm_unitVec _
+    obtain ⟨x, hx⟩ := exists_ne (0 : M.H τ)
+    refine ⟨‖x‖⁻¹ • x, ?_⟩
+    simp [norm_smul, hx]
+  choose u hu using hex
   have hsc : ∀ z τ (x : M.H τ), ‖f (Function.update z τ x)‖ = ‖f (Function.update z τ (u τ))‖ * ‖x‖ := by
     intro z τ x
     have := scale (c z) (hc z) (.inl (placeOf D τ)) (A τ x) (A τ (u τ))

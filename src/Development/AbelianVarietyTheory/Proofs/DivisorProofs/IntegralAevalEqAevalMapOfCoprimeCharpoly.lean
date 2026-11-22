@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyEqPowOfIrreducible
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyEqPowOfIrreducible
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem exists_eq_uniformizer_smul {O K : Type} [CommRing O] [IsDomain O] [IsDis
   have hF : aeval γ F = 0 := by
     have h1 : aeval γ F = u ^ m • aeval y Q := by
       rw [aeval_eq_sum_range (p := Q) y, Finset.smul_sum]
-      simp only [F, map_sum, map_mul, aeval_C, map_pow, hf]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [F, map_sum, map_mul, aeval_C, map_pow, hf]
       refine Finset.sum_congr rfl fun i hi => ?_
       have him : i ≤ m := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
       have hAlg : ∀ (c : O) (X : Matrix (Fin n) (Fin n) K), algebraMap O _ c * X = c • X :=
@@ -42,7 +47,8 @@ theorem exists_eq_uniformizer_smul {O K : Type} [CommRing O] [IsDomain O] [IsDis
   let φ := residue O
   have hφπ : φ π = 0 := (residue_eq_zero_iff π).2 ((mem_maximalIdeal _).2 hπ.not_isUnit)
   have hFm : F.map φ = (f.map φ) ^ m := by
-    simp only [F, Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_pow, map_C, map_mul, map_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_pow, map_C, map_mul, map_pow]
     rw [Finset.sum_range_succ, Finset.sum_eq_zero, zero_add, hQm.coeff_natDegree, Nat.sub_self,
       pow_zero, mul_one, map_one, C_1, one_mul]
     intro i hi
@@ -68,7 +74,7 @@ theorem exists_eq_uniformizer_smul {O K : Type} [CommRing O] [IsDomain O] [IsDis
   have hP0 : aeval γ P₀ = 0 := by
     rw [← aeval_map_algebraMap K, ← hγ, aeval_self_charpoly]
   have hfe : f = P₀ * q + h * C π := by rw [hh]; ring
-  rw [hfe, map_add, map_mul, map_mul, hP0, zero_mul, zero_add, aeval_C, ← Algebra.commutes,
+  rw [hfe, map_add (f := _), map_mul, map_mul, hP0, zero_mul, zero_add, aeval_C, ← Algebra.commutes,
     ← Algebra.smul_def]
 
 theorem isIntegral_aeval_eq_aeval_map : ∀ {O K : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K] [Algebra O K]
@@ -92,11 +98,11 @@ theorem isIntegral_aeval_eq_aeval_map : ∀ {O K : Type} [CommRing O] [IsDomain 
       have h1 : π • (π ^ k • aeval γ p) = π • aeval γ h := by rw [smul_smul, ← pow_succ', ← hf, hh]
       rw [← algebraMap_smul K π (π ^ k • aeval γ p), ← algebraMap_smul K π (aeval γ h)] at h1
       exact (smul_right_injective _ hπK h1).symm
-  obtain ⟨b, hb⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors O) p
-  obtain ⟨k, v, hv⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible (nonZeroDivisors.ne_zero b.2) hπ
+  obtain ⟨b, hb, hbmap⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors O) p
+  obtain ⟨k, v, hv⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible (nonZeroDivisors.ne_zero hb) hπ
   refine key k (C (↑v⁻¹ : O) * IsLocalization.integerNormalization (nonZeroDivisors O) p) ?_
-  rw [map_mul, aeval_C, ← aeval_map_algebraMap K γ (IsLocalization.integerNormalization _ p), hb,
-    ← algebraMap_smul K (b : O) p, map_smul, algebraMap_smul, ← Algebra.smul_def, smul_smul, hv,
+  rw [map_mul, aeval_C, ← aeval_map_algebraMap K γ (IsLocalization.integerNormalization _ p), hbmap,
+    ← algebraMap_smul K b p, map_smul, algebraMap_smul, ← Algebra.smul_def, smul_smul, hv,
     ← mul_assoc, Units.inv_mul, one_mul]
 
 end GlobalTheory.MaxOrder

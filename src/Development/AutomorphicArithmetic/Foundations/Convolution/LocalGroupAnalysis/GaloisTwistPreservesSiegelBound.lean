@@ -1,9 +1,14 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SiegelConj
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
-import Development.AutomorphicArithmetic.AdelicQuotients.OneLeEntryBoundOfBorelDiagonalDecomp
-import Development.AutomorphicArithmetic.AdelicQuotients.ExistsLowerEntryNeZeroOfNormCharpolyIrreducible
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SiegelConj
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+public import Development.AutomorphicArithmetic.AdelicQuotients.OneLeEntryBoundOfBorelDiagonalDecomp
+public import Development.AutomorphicArithmetic.AdelicQuotients.ExistsLowerEntryNeZeroOfNormCharpolyIrreducible
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.AdeleBaseChange
 open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.Tf.Geo
@@ -52,11 +57,15 @@ private theorem map_pos' (s : ℝ) (hs : 0 < s) :
     rw [GroundTheory.Global.InfinitePlace.infiniteAdeleRingMap_apply]
     have := GroundTheory.Global.InfinitePlace.liesOver_comap (K := F) w
     have : CharZero (w.comap (algebraMap F E)).Completion := algebraRat.charZero _
+    letI : Algebra (w.comap (algebraMap F E)).Completion w.Completion :=
+      AbsoluteValue.Completion.algebraOfLiesOver _ _
+    rw [AbsoluteValue.Completion.algebraMap_eq_of_liesOver (w.comap (algebraMap F E)).1 w.1]
     exact real_fix (InfinitePlace.Completion.extensionEmbedding (w.comap (algebraMap F E)))
-      ((InfinitePlace.Completion.extensionEmbedding w).comp NumberField.LiesOver.completionMap)
+      ((InfinitePlace.Completion.extensionEmbedding w).comp
+        (AbsoluteValue.Completion.map (w.comap (algebraMap F E)).1 w.1))
       (InfinitePlace.Completion.isometry_extensionEmbedding _)
       ((InfinitePlace.Completion.isometry_extensionEmbedding w).continuous.comp
-        NumberField.LiesOver.continuous_completionMap) _ s (ext_pos s hs _)
+        (AbsoluteValue.Completion.continuous_map _ _)) _ s (ext_pos s hs _)
   · have h1 : ((posIdele (K := F) s hs : IdeleGroup F) : 𝔸[F]).2 = 1 := by
       refine DFunLike.ext _ _ fun v => ?_
       exact posIdele_finite s hs v

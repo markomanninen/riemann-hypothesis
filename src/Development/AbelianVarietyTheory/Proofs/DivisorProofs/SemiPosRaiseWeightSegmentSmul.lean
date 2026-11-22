@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatLocA
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxC
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatLocA
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxC
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.VolBr GlobalTheory.HSAmp

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+
+@[expose] public section
 
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
 private theorem phi_sub (l : ℕ) {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ]
-    (hΦ : PhiCond Γ l) (H : Subgroup Γ) (hH : IsOpen (H : Set Γ)) : PhiCond H l := by
+    (hΦ : PhiCond (Γ := Γ) l) (H : Subgroup Γ) (hH : IsOpen (H : Set Γ)) : PhiCond (Γ := H) l := by
   intro K hK
   have hK' : IsOpen ((K.map H.subtype : Subgroup Γ) : Set Γ) := by
     rw [Subgroup.coe_map]
@@ -52,7 +56,7 @@ private theorem eq_zero_of_forall_hom_zmod_eq_zero_of_l_smul (l : ℕ) [Fact l.P
   simpa using this
 
 theorem UpperTheory.V.Pa.finZ :
-    ∀ (l : ℕ) [Fact l.Prime] (R Γ M : Type) [CommRing R] [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [AddCommGroup M] [Module R M] [Finite M] (ρ : Representation R Γ M), PhiCond Γ l → LC ρ → (∀ m : M, l • m = 0) → Finite (Zl ρ) ∧ ∀ H : Subgroup Γ, IsOpen (H : Set Γ) → PhiCond H l := by
+    ∀ (l : ℕ) [Fact l.Prime] (R Γ M : Type) [CommRing R] [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [AddCommGroup M] [Module R M] [Finite M] (ρ : Representation R Γ M), PhiCond (Γ := Γ) l → LC ρ → (∀ m : M, l • m = 0) → Finite (Zl ρ) ∧ ∀ H : Subgroup Γ, IsOpen (H : Set Γ) → PhiCond (Γ := H) l := by
   intro l _ R Γ M _ _ _ _ _ _ _ _ ρ hΦ hρ hl
   refine ⟨?_, fun H hH => phi_sub l hΦ H hH⟩
   let N : Subgroup Γ :=
@@ -96,7 +100,7 @@ theorem UpperTheory.V.Pa.finZ :
   · intro k k'
     show Multiplicative.ofAdd (f (z.1 ((k * k' : N) : Γ))) =
       Multiplicative.ofAdd (f (z.1 k)) * Multiplicative.ofAdd (f (z.1 k'))
-    rw [Subgroup.coe_mul, zN _ z.2 _ _ k.2, map_add, ofAdd_add]
+    rw [Subgroup.coe_mul, zN _ z.2 _ _ k.2, map_add (f := _), ofAdd_add]
   · have hlc : IsLocallyConstant (fun k : N => Multiplicative.ofAdd (f (z.1 k))) :=
       (((mem_Zl ρ).1 z.2).1.comp_continuous continuous_subtype_val).comp _
     rw [MonoidHom.coe_ker]

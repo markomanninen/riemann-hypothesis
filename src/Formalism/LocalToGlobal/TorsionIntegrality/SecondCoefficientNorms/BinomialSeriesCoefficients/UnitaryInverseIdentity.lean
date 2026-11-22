@@ -1,13 +1,18 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SecondCoeffConsistency
-import Formalism.GL3MeanSquares.HookFormulaTorsion.ArithmeticFrobeniusAction
-import Mathlib
-import Formalism.GL3MeanSquares.HookFormulaTorsion.HyperbolicPlaneSplit
-import Formalism.GL3MeanSquares.HookFormulaTorsion.FourFoldOrthogonalSum
-import Formalism.GL3MeanSquares.HookFormulaTorsion.FinsuppZmodOneEqSingle
-import Formalism.GL3MeanSquares.HookFormulaTorsion.BimultiplicativeDivisibleTorsion
-import Formalism.GL3MeanSquares.FinalB
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SecondCoeffConsistency
+public import Mathlib
+public import Formalism.GL3MeanSquares.InvariantSeriesBidegreeOneOne
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.HyperbolicPlaneSplit
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.FourFoldOrthogonalSum
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.CocycleIsCoboundary
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.BimultiplicativeDivisibleTorsion
+public import Formalism.GL3MeanSquares.ConcavityEquidistribution
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.HilbertSchmidtHalfBound
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -36,7 +41,7 @@ theorem lg_zero : LG R (0 : MvPowerSeries σ K) := by
 theorem lg_add {f g : MvPowerSeries σ K} (hf : LG R f) (hg : LG R g) : LG R (f + g) := by
   classical
   unfold LG at *
-  refine ⟨by rw [map_add, hf.1, hg.1, add_zero], ?_⟩
+  refine ⟨by rw [map_add (f := _), hf.1, hg.1, add_zero], ?_⟩
   rw [mvExp_add hf.1 hg.1]
   intro n
   rw [MvPowerSeries.coeff_mul]
@@ -436,7 +441,7 @@ theorem norm_adjoint_all_places : NormAdjAll := by
   have hA : ∀ α : O, AdjAt R l linv ph (τ α) (τ (star α)) := by
     intro α
     obtain ⟨u, v, rfl⟩ := hsum α
-    rw [star_add, map_add, map_add]
+    rw [star_add, map_add (f := _), map_add (f := _)]
     exact adjoint_additive_alt K R l linv ph _ _ _ _ hFr hF1 (hE _) (hE _) (hE _) (hE _) (hAu u) (hAu v)
   intro α
   refine ⟨?_, hA α⟩

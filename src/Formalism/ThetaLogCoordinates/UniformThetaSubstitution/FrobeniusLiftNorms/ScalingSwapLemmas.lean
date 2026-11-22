@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FirstDeriv
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FirstDeriv
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ theorem swap_two_C_mul (a : K) (f : MvPowerSeries (Fin 2) K) : swap2 (C a * f) =
 
 theorem swap_two_sum {α : Type} (s : Finset α) (f : α → MvPowerSeries (Fin 2) K) :
     swap2 (∑ k ∈ s, f k) = ∑ k ∈ s, swap2 (f k) := by
-  simp only [swap_two_eq_rename_equiv, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [swap_two_eq_rename_equiv, map_sum]
 
 theorem swap_two_map (σ : K →+* K) (f : MvPowerSeries (Fin 2) K) :
     swap2 (map σ f) = map σ (swap2 f) := by
@@ -395,7 +400,8 @@ theorem StepZero_of (hM : LamModule) (hS : SimeqRules) (hL : LawSymm) : StepZero
         ∑ k ∈ range N, MvPowerSeries.subst (sc2 (ζ ^ k) (ζ⁻¹ ^ (p * k))) be) =
         (N : K)⁻¹ * ((∑ k ∈ range N, (ζ ^ n 0 * ζ⁻¹ ^ (p * n 1)) ^ k) *
           MvPowerSeries.coeff n be) := by
-      rw [MvPowerSeries.coeff_C_mul, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [MvPowerSeries.coeff_C_mul, map_sum, Finset.sum_mul]
       congr 1
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [coeff_subst_scale_two, mul_pow, ← pow_mul, ← pow_mul, ← pow_mul, ← pow_mul, mul_comm k (n 0),
@@ -465,13 +471,15 @@ theorem mapSimeq_statement : MapSimeq := by
     have hA : MvPowerSeries.map j (Aser K0 p) = Aser K p := by
       ext n
       rw [MvPowerSeries.coeff_map]
-      simp only [Aser, MvPowerSeries.coeff_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Aser, MvPowerSeries.coeff_apply, map_sum]
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
       split_ifs <;> simp
     have hA' : MvPowerSeries.map j (Aser' K0 p) = Aser' K p := by
       ext n
       rw [MvPowerSeries.coeff_map]
-      simp only [Aser', MvPowerSeries.coeff_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Aser', MvPowerSeries.coeff_apply, map_sum]
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
       split_ifs <;> simp
     unfold Gser

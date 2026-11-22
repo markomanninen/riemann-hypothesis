@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LeOfOneLeMul
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickDefs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LeOfOneLeMul
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem mult_level (p : ℕ) [hp : Fact p.Prime] {ι : Type} [Fintype ι] {n : �
     have e : ∑ c : Fin n, be (s, c) = d s := hbe s
     rw [e] at this
     exact this
-  rw [h3, padicValNat.mul hMn0 hE0]
+  rw [h3, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hMn0 hE0]
   omega
 
 theorem mult_level_real (p : ℕ) [hp : Fact p.Prime] {ι : Type} [Fintype ι] {n : ℕ} (d : ι → ℕ) (be : ι × Fin n →₀ ℕ)

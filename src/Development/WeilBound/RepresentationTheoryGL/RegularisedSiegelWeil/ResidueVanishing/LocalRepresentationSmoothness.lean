@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ResidueVanishing.Leaves
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ResidueVanishing.Leaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,7 +146,7 @@ theorem local_representation_smoothness : PositivityTheory.Rg.Rsw.Kplug.K1 := by
 
   have hZ : {z : ℂ | d.IsRoot z}.Finite := Polynomial.finite_setOfPred_isRoot hd0
   have hO : IsOpen (U ∩ ({z : ℂ | d.IsRoot z} \ {s₀})ᶜ) :=
-    isOpen_interior.inter (hZ.subset fun x hx => hx.1).isClosed.isOpen_compl
+    isOpen_interior.inter (hZ.subset fun x (hx : x ∈ {z : ℂ | d.IsRoot z} \ {s₀}) => hx.1).isClosed.isOpen_compl
   obtain ⟨ε₁, hε₁, hball⟩ := Metric.isOpen_iff.1 hO s₀ ⟨hs₀, fun h => h.2 rfl⟩
   have hcb : closedBall s₀ (ε₁ / 2) ⊆ ball s₀ ε₁ := closedBall_subset_ball (half_lt_self hε₁)
   refine ⟨U, d, Ek V Φ d, ε₁ / 2, isOpen_interior, hRD, hs₀, hd0, ?_, ?_, ?_, ?_, ?_⟩

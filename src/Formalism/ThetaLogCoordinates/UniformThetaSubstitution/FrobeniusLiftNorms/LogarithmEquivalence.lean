@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartB
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BallRing
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartB
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BallRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,7 @@ theorem exp_integral_add {K ι : Type} [NormedField K] [IsUltrametricDist K] [Ch
     (ha : MvPowerSeries.constantCoeff a = 0 ∧ Integral (mvExp a))
     (hb : MvPowerSeries.constantCoeff b = 0 ∧ Integral (mvExp b)) :
     MvPowerSeries.constantCoeff (a + b) = 0 ∧ Integral (mvExp (a + b)) := by
-  refine ⟨by rw [map_add, ha.1, hb.1, add_zero], ?_⟩
+  refine ⟨by rw [map_add (f := _), ha.1, hb.1, add_zero], ?_⟩
   rw [mvExp_add ha.1 hb.1]
   exact integral_mul' ha.2 hb.2
 
@@ -141,33 +145,6 @@ theorem simeqRules : SimeqRules := by
     have hs : MvPowerSeries.HasSubst φ := MvPowerSeries.hasSubst_of_constantCoeff_zero h0
     rw [← MvPowerSeries.subst_sub hs, ← subst_mvExp' hs h.1]
     exact ⟨MvPowerSeries.constantCoeff_subst_eq_zero hs h0 h.1, integral_subst' h0 hφ h.2⟩
-
-theorem traceDual : TraceDual := by
-  intro F L ι _ _ _ _ _ _ _ b σ τ
-  classical
-  let A : Matrix ι (L ≃ₐ[F] L) L := fun r ρ =>
-    ρ ((Algebra.traceForm F L).dualBasis (traceForm_nondegenerate F L) b r)
-  let B : Matrix (L ≃ₐ[F] L) ι L := fun ρ r => ρ (b r)
-  have hAB : A * B = 1 := by
-    ext r s
-    rw [Matrix.mul_apply]
-    have e : ∑ ρ : L ≃ₐ[F] L, A r ρ * B ρ s = algebraMap F L (Algebra.trace F L
-        ((Algebra.traceForm F L).dualBasis (traceForm_nondegenerate F L) b r * b s)) := by
-      rw [trace_eq_sum_automorphisms]
-      exact Finset.sum_congr rfl fun ρ _ => (map_mul ρ _ _).symm
-    rw [e, ← Algebra.traceForm_apply, LinearMap.BilinForm.apply_dualBasis_left, Matrix.one_apply]
-    by_cases h : r = s
-    · rw [if_pos h, if_pos h.symm, map_one]
-    · rw [if_neg h, if_neg (Ne.symm h), map_zero]
-  have e : ι ≃ (L ≃ₐ[F] L) := Fintype.equivOfCardEq (by
-    rw [← Module.finrank_eq_card_basis b, ← IsGalois.card_aut_eq_finrank, Nat.card_eq_fintype_card])
-  have hBA : B * A = 1 := (Matrix.mul_eq_one_comm_of_equiv e).1 hAB
-  have key : ∑ r, σ ((Algebra.traceForm F L).dualBasis (traceForm_nondegenerate F L) b r) * τ (b r) =
-      (1 : Matrix (L ≃ₐ[F] L) (L ≃ₐ[F] L) L) τ σ := by
-    rw [← hBA, Matrix.mul_apply]
-    exact Finset.sum_congr rfl fun r _ => mul_comm _ _
-  rw [key]
-  exact ⟨fun h => by rw [h, Matrix.one_apply_eq], fun h => Matrix.one_apply_ne (Ne.symm h)⟩
 
 theorem ps_map_subst {R S : Type} [CommRing R] [CommRing S] (h : R →+* S) {a : PowerSeries R}
     (ha : PowerSeries.HasSubst a) (f : PowerSeries R) :
@@ -291,13 +268,12 @@ theorem norm_lamF_sub {K : Type} [NormedField K] [IsUltrametricDist K] {p : ℕ}
 def altR (R : Type) [CommRing R] (p : ℕ) : PowerSeries R :=
   PowerSeries.mk fun n => ∑ l ∈ range (n + 1), if n = (p ^ 2) ^ l then (-1 : R) ^ l else 0
 
-theorem altF_eq_altR (K : Type) [Field K] (p : ℕ) : altF K p = altR K p := rfl
-
 theorem map_altR {R S : Type} [CommRing R] [CommRing S] (h : R →+* S) (p : ℕ) :
     PowerSeries.map h (altR R p) = altR S p := by
   ext n
   unfold altR
-  rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, PowerSeries.coeff_mk, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, PowerSeries.coeff_mk, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   split_ifs
   · rw [map_pow, map_neg, map_one]
@@ -324,7 +300,7 @@ theorem constantCoeff_altR (R : Type) [CommRing R] {p : ℕ} (hp : 2 ≤ p) :
 theorem altR_add_expand (R : Type) [CommRing R] {p : ℕ} (hp : 2 ≤ p) (hq : p ^ 2 ≠ 0) :
     altR R p + PowerSeries.expand (p ^ 2) hq (altR R p) = PowerSeries.X := by
   ext n
-  rw [map_add, PowerSeries.coeff_expand, PowerSeries.coeff_X]
+  rw [map_add (f := _), PowerSeries.coeff_expand, PowerSeries.coeff_X]
   have hq1 : 1 < p ^ 2 := by nlinarith
   by_cases h : ∃ l, n = (p ^ 2) ^ l
   · obtain ⟨l, rfl⟩ := h
@@ -479,7 +455,5 @@ theorem equivalence_rules : SimeqRules := LogarithmEquivalence.simeqRules
 theorem log_rescale_alt : LogRescale := LogarithmEquivalence.logRescale
 
 theorem log_rescale_unique : LogRescaleUnique := LogarithmEquivalence.logRescaleUnique
-
-theorem trace_duality : TraceDual := LogarithmEquivalence.traceDual
 
 end Formalism.InvariantFactorPaths.G7

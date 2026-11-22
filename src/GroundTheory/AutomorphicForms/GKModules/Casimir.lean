@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.ZKFinite
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.ZKFinite
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -24,7 +28,7 @@ theorem mem_center_of_forall_ι_commute {z : UniversalEnvelopingAlgebra ℝ L}
   | algebraMap r => rw [AlgHom.commutes]; exact Algebra.commutes r z
   | ι x => exact hz x
   | mul a b ha hb => rw [map_mul, mul_assoc, hb, ← mul_assoc, ha, mul_assoc]
-  | add a b ha hb => rw [map_add, add_mul, mul_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), add_mul, mul_add, ha, hb]
 
 variable (B : LinearMap.BilinForm ℝ L)
 variable {ι : Type*} [Fintype ι] (b : Module.Basis ι ℝ L) (ε : ι → ℝ)
@@ -42,7 +46,8 @@ theorem eq_sum_of_orthogonal [DecidableEq ι] (hε : ∀ i, ε i * ε i = 1)
   congr 1
   have e : B (b j) Y = b.repr Y j * ε j := by
     have := congrArg (B (b j)) (b.sum_repr Y)
-    rw [← this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, map_sum]
     simp [horth]
   rw [e, ← mul_assoc, mul_comm (ε j), mul_assoc, hε, mul_one]
 
@@ -71,7 +76,8 @@ theorem casimir_mem_center [DecidableEq ι] (hε : ∀ i, ε i * ε i = 1)
       noncomm_ring
     rw [e1]
     conv_lhs => rw [eq_sum_of_orthogonal hε horth ⁅X, b i⁆]
-    simp only [map_sum, map_smul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm,
       ← Finset.sum_add_distrib, ← smul_add, T]
   have hS : ∑ i, ∑ j, a i j • T i j = 0 := by
     set S := ∑ i, ∑ j, a i j • T i j
@@ -116,14 +122,108 @@ theorem exists_aeval_laplacian_eq_zero [DecidableEq ι] (K : Subgroup G)
     (f : h.smoothFuns (F := F)) (hfK : IsRightKFinite K (f : G → F)) (hfZ : h.IsZFinite f) :
     ∃ P : Polynomial ℂ, P.Monic ∧ 0 < P.natDegree ∧ Polynomial.aeval (h.laplacian (F := F) b) P f = 0 := by
   have hε2 : ∀ i, ε i * ε i = 1 := fun i => by rcases hε i with e | e <;> rw [e] <;> norm_num
-  set V := h.zkSpan K f
-  haveI : FiniteDimensional ℂ V := h.finiteDimensional_zkSpan K f hfK hfZ
+  let zSpan (w : h.smoothFuns (F := F)) : Submodule ℂ (h.smoothFuns (F := F)) :=
+    Submodule.span ℂ ((fun z => h.rightUAction z w) '' (h.centerU : Set _))
+  let V : Submodule ℂ (h.smoothFuns (F := F)) := Submodule.span ℂ (Set.range fun p : h.centerU × K =>
+    h.rightUAction (p.1 : UniversalEnvelopingAlgebra ℝ h.lieSubalgebra)
+      (h.rightTranslateEnd (p.2 : G) f))
+  have hzt : ∀ a : G, zSpan (h.rightTranslateEnd a f) ≤ (zSpan f).map (h.rightTranslateEnd a) := by
+    intro a
+    rw [Submodule.span_le]
+    rintro _ ⟨z, hz, rfl⟩
+    dsimp [zSpan]
+    have e : h.rightUAction z (h.rightTranslateEnd a f) =
+        h.rightTranslateEnd a (h.rightUAction (h.AdU a⁻¹ z) f) := by
+      exact LinearMap.congr_fun (h.rightUAction_comp_rightTranslate a z) f
+    rw [e]
+    exact Submodule.mem_map_of_mem (Submodule.subset_span ⟨_, h.AdU_mem_centerU a⁻¹ hz, rfl⟩)
+  haveI : FiniteDimensional ℂ (zSpan f) := by
+    change FiniteDimensional ℂ (Submodule.span ℂ ((fun z => h.rightUAction z f) '' (h.centerU : Set _)))
+    exact hfZ
+  let W : Submodule ℂ (h.smoothFuns (F := F)) :=
+    Submodule.span ℂ (Set.range fun k : K => h.rightTranslateEnd (k : G) f)
+  haveI : FiniteDimensional ℂ W := by
+    have hW : W.map (h.smoothFuns (F := F)).subtype =
+        Submodule.span ℂ (Set.range fun k : K => rightTranslate (k : G) (f : G → F)) := by
+      rw [Submodule.map_span, ← Set.range_comp]
+      rfl
+    haveI : FiniteDimensional ℂ (W.map (h.smoothFuns (F := F)).subtype) := by
+      rw [hW]
+      exact hfK
+    exact (Submodule.equivMapOfInjective _ (h.smoothFuns (F := F)).injective_subtype W).symm.finiteDimensional
+  have hfin : ∀ w ∈ W, FiniteDimensional ℂ (zSpan w) := by
+    intro w hw
+    induction hw using Submodule.span_induction with
+    | mem x hx =>
+        obtain ⟨k, rfl⟩ := hx
+        exact Submodule.finiteDimensional_of_le (hzt k)
+    | zero =>
+        refine Submodule.finiteDimensional_of_le (S₂ := ⊥) ?_
+        change Submodule.span ℂ ((fun z => h.rightUAction z (0 : h.smoothFuns (F := F))) ''
+          (h.centerU : Set _)) ≤ ⊥
+        rw [Submodule.span_le]
+        rintro _ ⟨z, -, rfl⟩
+        simp
+    | add x y _ _ hx hy =>
+        refine Submodule.finiteDimensional_of_le (S₂ := zSpan x ⊔ zSpan y) ?_
+        change Submodule.span ℂ ((fun z => h.rightUAction z (x + y)) ''
+          (h.centerU : Set _)) ≤ zSpan x ⊔ zSpan y
+        rw [Submodule.span_le]
+        rintro _ ⟨z, hz, rfl⟩
+        dsimp only
+        rw [SetLike.mem_coe, map_add (f := _)]
+        exact Submodule.add_mem_sup (Submodule.subset_span ⟨z, hz, rfl⟩)
+          (Submodule.subset_span ⟨z, hz, rfl⟩)
+    | smul c x _ hx =>
+        refine Submodule.finiteDimensional_of_le (S₂ := zSpan x) ?_
+        change Submodule.span ℂ ((fun z => h.rightUAction z (c • x)) ''
+          (h.centerU : Set _)) ≤ zSpan x
+        rw [Submodule.span_le]
+        rintro _ ⟨z, hz, rfl⟩
+        dsimp only
+        rw [SetLike.mem_coe, map_smul]
+        exact Submodule.smul_mem _ c (Submodule.subset_span ⟨z, hz, rfl⟩)
+  haveI : Module.Free ℂ W := Module.Free.of_divisionRing ℂ W
+  let wb := Module.finBasis ℂ W
+  haveI : ∀ i, FiniteDimensional ℂ (zSpan (wb i : h.smoothFuns (F := F))) :=
+    fun i => hfin _ (wb i).2
+  haveI : FiniteDimensional ℂ V := by
+    refine Submodule.finiteDimensional_of_le
+      (S₂ := ⨆ i, zSpan (wb i : h.smoothFuns (F := F))) ?_
+    rw [Submodule.span_le]
+    rintro _ ⟨⟨z, k⟩, rfl⟩
+    have hk : h.rightTranslateEnd (k : G) f ∈ W := Submodule.subset_span ⟨k, rfl⟩
+    have e : h.rightTranslateEnd (k : G) f =
+        ∑ i, wb.repr ⟨_, hk⟩ i • (wb i : h.smoothFuns (F := F)) := by
+      conv_lhs => rw [show h.rightTranslateEnd (k : G) f =
+        ((⟨_, hk⟩ : W) : h.smoothFuns (F := F)) from rfl, ← wb.sum_repr ⟨_, hk⟩]
+      rw [Submodule.coe_sum]
+      simp only [Submodule.coe_smul]
+    simp only [SetLike.mem_coe]
+    rw [e, map_sum]
+    refine Submodule.sum_mem _ fun i _ => ?_
+    rw [map_smul]
+    exact Submodule.smul_mem _ _
+      ((le_iSup (fun i => zSpan (wb i : h.smoothFuns (F := F))) i)
+        (Submodule.subset_span ⟨z, z.2, rfl⟩))
   have hVK : ∀ (k : K), ∀ w ∈ V, h.rightTranslateEnd (k : G) w ∈ V :=
-    fun k w hw => h.rightTranslate_mem_zkSpan K f k hw
+    fun k w hw => by
+      induction hw using Submodule.span_induction with
+      | mem x hx =>
+          obtain ⟨⟨z, k₀⟩, rfl⟩ := hx
+          have e := LinearMap.congr_fun (h.rightTranslate_comp_rightUAction (F := F) (k : G) z)
+            (h.rightTranslateEnd (k₀ : G) f)
+          simp only [Module.End.mul_apply] at e
+          rw [e, ← Module.End.mul_apply (h.rightTranslateEnd (k : G)), rightTranslateEnd_mul]
+          exact Submodule.subset_span ⟨(⟨_, h.AdU_mem_centerU (k : G) z.2⟩, k * k₀), rfl⟩
+      | zero => simp
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
+      | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
   have hΔ : h.laplacian (F := F) b = h.rightUAction (casimir b ε) +
       ∑ i, (1 - ε i) • (h.rightDerivEnd (h.ofLie (b i)) * h.rightDerivEnd (h.ofLie (b i))) := by
-    simp only [laplacian, casimir, map_sum, map_smul, map_mul, rightUAction_ι,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [laplacian, casimir, map_sum, map_smul, map_mul, rightUAction_ι,
       ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← add_smul, add_sub_cancel, one_smul]
@@ -131,14 +231,24 @@ theorem exists_aeval_laplacian_eq_zero [DecidableEq ι] (K : Subgroup G)
   have hmapsto : ∀ w ∈ V, h.laplacian (F := F) b w ∈ V := by
     intro w hw
     rw [hΔ, LinearMap.add_apply, LinearMap.sum_apply]
-    refine Submodule.add_mem _ (h.rightUAction_mem_zkSpan K f hΩ hw) (Submodule.sum_mem _ fun i _ => ?_)
+    refine Submodule.add_mem _ ?_ (Submodule.sum_mem _ fun i _ => ?_)
+    · induction hw using Submodule.span_induction with
+      | mem x hx =>
+          obtain ⟨⟨z, k⟩, rfl⟩ := hx
+          rw [← Module.End.mul_apply, ← map_mul]
+          have hΩ' : casimir b ε ∈ h.centerU := hΩ
+          exact Submodule.subset_span ⟨(⟨casimir b ε * z,
+            Subalgebra.mul_mem _ hΩ' z.2⟩, k), rfl⟩
+      | zero => simp
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
+      | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
     rw [LinearMap.smul_apply, Module.End.mul_apply]
     rcases hε i with e | e
     · rw [e, sub_self, zero_smul]; exact Submodule.zero_mem _
     · refine Submodule.smul_of_tower_mem _ _ ?_
       exact h.rightDeriv_mem_of_isKStable K hVK (hK i e)
         (h.rightDeriv_mem_of_isKStable K hVK (hK i e) hw)
-  have hf : f ∈ V := h.self_mem_zkSpan K f
+  have hf : f ∈ V := Submodule.subset_span ⟨(1, 1), by simp [rightTranslateEnd_one]⟩
   by_cases hf0 : f = 0
   · refine ⟨Polynomial.X, Polynomial.monic_X, by simp, ?_⟩
     simp [hf0]
@@ -166,7 +276,8 @@ theorem exists_aeval_laplacian_eq_zero [DecidableEq ι] (K : Subgroup G)
       Q = ∑ j : Fin (n + 1), Polynomial.C (g j) * Polynomial.X ^ (j : ℕ) := ⟨_, rfl⟩
   have hQf : Polynomial.aeval Δ Q f = 0 := by
     have e1 : Polynomial.aeval Δ Q f = ∑ j : Fin (n + 1), g j • (Δ ^ (j : ℕ)) f := by
-      rw [hQdef, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hQdef, map_sum, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, Polynomial.aeval_C, map_pow, Polynomial.aeval_X, Module.End.mul_apply,
         Module.algebraMap_end_apply]
@@ -176,7 +287,7 @@ theorem exists_aeval_laplacian_eq_zero [DecidableEq ι] (K : Subgroup G)
     intro h0
     apply hi
     have := congrArg (fun P => P.coeff (i : ℕ)) h0
-    simp only [hQdef, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow,
+    simp only [hQdef, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow,
       Polynomial.coeff_zero] at this
     rw [Finset.sum_eq_single i] at this
     · simpa using this

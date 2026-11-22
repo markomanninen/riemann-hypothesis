@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixUnique
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixUnique
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.CechKS
@@ -18,12 +23,11 @@ theorem exists_const_add_eps_const {K : Type} [Field K] {A : Over (Sp K)} [GrpOb
     ∃ a b : primDR A, liftSemi (constMor A).pull z =
       (constMor A).pull a + (DualNumber.eps : DualNumber K) • (constMor A).pull b := by
   induction z with
-  | zero => exact ⟨0, 0, by rw [map_zero, map_zero, smul_zero, add_zero]⟩
   | add x y hx hy =>
     obtain ⟨a, b, e⟩ := hx
     obtain ⟨a', b', e'⟩ := hy
     refine ⟨a + a', b + b', ?_⟩
-    rw [map_add, e, e', map_add, map_add, smul_add]
+    rw [map_add (f := _), e, e', map_add (f := _), map_add (f := _), smul_add]
     abel
   | tmul r c =>
     refine ⟨r.fst • c, r.snd • c, ?_⟩
@@ -43,7 +47,17 @@ theorem liftMor_pull_eq_const_add_eps : GlobalTheory.Published.AbelianDeRham →
       (liftMor (epsDP K) h).pull x = (constMor A).pull ((fibMor h).pull x) +
         (DualNumber.eps : DualNumber K) • (constMor A).pull b := by
   intro P K _ A _ A' _ i h g hA hg x
-  have a₀ := PolPull.isAbelianScheme_of_isGrpPullback hA h
+  have a₀ : IsAbelianScheme A := by
+    haveI := hA.comm
+    haveI : IsCommMonObj A := by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
+        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨inferInstance, MorphismProperty.of_isPullback (P := @Smooth) h.1 hA.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) h.1 hA.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hA.geomConnected⟩
   have g₀ := (smoothOfRelativeDimension_isStableUnderBaseChange g).of_isPullback h.1 hg
   obtain ⟨z, hz⟩ := constMor_surjective P a₀ g₀ ((liftMor (epsDP K) h).pull x)
   obtain ⟨a, b, e⟩ := exists_const_add_eps_const z
@@ -51,7 +65,7 @@ theorem liftMor_pull_eq_const_add_eps : GlobalTheory.Published.AbelianDeRham →
   have red : (redMor A).pull ((liftMor (epsDP K) h).pull x) = (fibMor h).pull x :=
     GrpMor.pull_pull (liftMor (epsDP K) h) (redMor A) (fibMor h) (fun _ => rfl) (by simp) x
   have ra : (fibMor h).pull x = a := by
-    rw [← red, e, map_add, LinearMap.map_smulₛₗ, redMor_constMor, redMor_constMor]
+    rw [← red, e, map_add (f := _), LinearMap.map_smulₛₗ, redMor_constMor, redMor_constMor]
     have : (TrivSqZeroExt.fstHom K K K).toRingHom (DualNumber.eps : DualNumber K) = 0 := rfl
     rw [this, zero_smul, add_zero]
   exact ⟨b, by rw [ra]; exact e⟩

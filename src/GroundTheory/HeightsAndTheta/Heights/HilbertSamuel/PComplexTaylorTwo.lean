@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.MaIntEmpty
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsComplexTaylor
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.MaIntEmpty
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsComplexTaylor
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -77,7 +82,8 @@ theorem re_complexLinearCoeffs_dot {D : ℕ} (L : (Fin D → ℂ) →L[ℝ] ℝ)
     ext k
     apply Complex.ext <;> simp [Finset.sum_apply, Pi.single_apply, Finset.sum_add_distrib]
   conv_rhs => rw [hz]
-  simp only [map_sum, map_add, map_smul, dotProduct, Complex.re_sum, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_add (f := _), map_smul, dotProduct, Complex.re_sum, smul_eq_mul]
   refine Finset.sum_congr rfl fun j _ => ?_
   simp only [complexLinearCoeffs, Complex.mul_re, Complex.sub_re, Complex.sub_im, Complex.mul_im,
     Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im]
@@ -108,7 +114,8 @@ theorem re_dot_complexQuadMatrix {D : ℕ} (H : (Fin D → ℂ) →L[ℝ] (Fin D
   have expand : ∀ c : Fin D → (Fin D → ℂ),
       H (Finset.sum Finset.univ c) (Finset.sum Finset.univ c) = ∑ i, ∑ k, H (c i) (c k) := by
     intro c
-    simp only [map_sum, _root_.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, _root_.sum_apply]
     rw [Finset.sum_comm]
   have e1 : H z z = ∑ i, ∑ k, H (c i) (c k) := by
     calc H z z = H (∑ j, c j) (∑ j, c j) := by rw [← hz]
@@ -123,7 +130,7 @@ theorem re_dot_complexQuadMatrix {D : ℕ} (H : (Fin D → ℂ) →L[ℝ] (Fin D
   rw [← Finset.sum_sub_distrib, Finset.sum_div]
   refine Finset.sum_congr rfl fun k _ => ?_
   subst hc hd
-  simp only [map_add, map_smul, _root_.add_apply, _root_.smul_apply, smul_eq_mul]
+  simp only [map_add (f := _), map_smul, _root_.add_apply, _root_.smul_apply, smul_eq_mul]
   simp only [complexQuadMatrix, Complex.mul_re, Complex.mul_im, Complex.div_ofNat_re,
     Complex.div_ofNat_im, Complex.sub_re, Complex.sub_im, Complex.ofReal_re, Complex.ofReal_im,
     Complex.I_re, Complex.I_im]

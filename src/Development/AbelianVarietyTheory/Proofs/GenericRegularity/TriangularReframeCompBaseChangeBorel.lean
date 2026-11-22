@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsCombAtGMulVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsCombAtGMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,17 +53,6 @@ theorem Reframe.trans {g g' : ∀ τ : E →+* ℂ, Matrix (Fin (Dw.mult τ)) (F
   exact GlobalTheory.TangentLinear.isCombAt_mulVec _ _ _ _ _ _ _ (y.u τ) (y.tan τ) (y'.u τ) (g τ) (fun j => g' τ j i)
     (y''.u τ i) (hc τ) h2
 
-private theorem spMap_comp_moduli_spaces {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B)
-    (g : B →+* C) : spMap g ≫ spMap f = spMap (g.comp f) := by
-  unfold spMap
-  rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]
-
-private theorem comp_list_prod' {X Y : Over Xo.X} (f : X ⟶ Y) (L : List (Y ⟶ Xo.univ.t.G)) :
-    f ≫ L.prod = (L.map (f ≫ ·)).prod := by
-  induction L with
-  | nil => simp
-  | cons a L ih => rw [List.prod_cons, MonObj.comp_mul, ih, List.map_cons, List.prod_cons]
-
 theorem Reframe.baseChange {T : Type} [CommRing T] [Algebra c.F T] (φ : S →ₐ[c.F] T)
     {g : ∀ τ : E →+* ℂ, Matrix (Fin (Dw.mult τ)) (Fin (Dw.mult τ)) S} {y y' : FrPt Xo c S} {z z' : FrPt Xo c T}
     (h : Reframe g y y') (hz : FrMap φ y z) (hz' : FrMap φ y' z') : Reframe (fun τ => (g τ).map φ) z z' := by
@@ -67,28 +60,7 @@ theorem Reframe.baseChange {T : Type} [CommRing T] [Algebra c.F T] (φ : S →�
   obtain ⟨hzx, hzu, -⟩ := hz
   obtain ⟨hzx', hzu', -⟩ := hz'
   refine ⟨by rw [hzx', hzx, hx], fun τ i => ?_⟩
-  obtain ⟨u, hu, hp⟩ := hc τ i
-  have r1 : (dualMap φ.toRingHom).comp (algebraMap S (DualNumber S)) =
-      (algebraMap T (DualNumber T)).comp φ.toRingHom := by
-    refine RingHom.ext fun s => TrivSqZeroExt.ext ?_ ?_ <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
-  have r2 : ∀ a : S, (dualMap φ.toRingHom).comp (epsMul a) =
-      (epsMul (φ.toRingHom a)).comp (dualMap φ.toRingHom) := by
-    intro a
-    refine RingHom.ext fun s => TrivSqZeroExt.ext ?_ ?_ <;> simp [dualMap, epsMul, mul_comm]
-  have hw : spMap (dualMap φ.toRingHom) ≫ (tEps y.x).hom = (tEps z.x).hom := by
-    show spMap (dualMap φ.toRingHom) ≫ (spMap (algebraMap S (DualNumber S)) ≫ y.x) =
-      spMap (algebraMap T (DualNumber T)) ≫ z.x
-    rw [hzx, ← Category.assoc, ← Category.assoc, spMap_comp_moduli_spaces, spMap_comp_moduli_spaces, r1]
-  obtain ⟨F, hF⟩ : ∃ F : tEps z.x ⟶ tEps y.x, F.left = spMap (dualMap φ.toRingHom) :=
-    ⟨Over.homMk _ hw, rfl⟩
-  refine ⟨fun j => F ≫ u j, fun j => ?_, ?_⟩
-  · have hu' : (u j).left = spMap (epsMul (g τ j i)) ≫ y.u τ j := hu j
-    show (F ≫ u j).left = spMap (epsMul (φ.toRingHom (g τ j i))) ≫ z.u τ j
-    rw [Over.comp_left, hF, hu', hzu τ j, ← Category.assoc, ← Category.assoc, spMap_comp_moduli_spaces,
-      spMap_comp_moduli_spaces, r2]
-  · have hl : (List.ofFn fun j => F ≫ u j).prod = F ≫ (List.ofFn u).prod := by
-      simp only [comp_list_prod', List.map_ofFn, Function.comp_def]
-    rw [hl, Over.comp_left, hF, hp, hzu' τ i]
+  exact isCombAt_pull φ.toRingHom hzx (hzu τ) (hzu' τ i) (hc τ i)
 
 private theorem appLE_id_apply' {X : Scheme} (U : X.Opens) (e : U ≤ (𝟙 X) ⁻¹ᵁ U) (r : Γ(X, U)) :
     (Scheme.Hom.appLE (𝟙 X) U U e).hom r = r := by

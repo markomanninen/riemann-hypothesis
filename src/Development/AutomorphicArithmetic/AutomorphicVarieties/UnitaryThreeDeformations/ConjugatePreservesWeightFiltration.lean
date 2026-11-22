@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NormCob
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ZetaReducibleRepEqSubInvAndIsUnit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NormCob
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ZetaReducibleRepEqSubInvAndIsUnit
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -119,7 +123,7 @@ private theorem dual_number_maximal_ideal_pow [IsLocalRing O] [IsLocalRing (Dual
         by rw [TrivSqZeroExt.snd_add]; exact Ideal.add_mem _ hy.2 hz.2⟩
 
 private theorem triangular_dual_number_diagonal [IsLocalRing O] [IsLocalRing (DualNumber O)] {D : Type} [Group D] (η : D →* ℤˣ)
-    (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG 3 (DualNumber O)) (hm : HasMult η r)
+    (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG (m := 3) (R := DualNumber O)) (hm : HasMult η r)
     (hf : ∀ g, mf (r g).mat = Matrix.diagonal fun a => psi Ψ a g)
     (x : D) (hx : η x = 1) (hx2 : IsUnit ((Ψ x : O) ^ 2 - 1))
     (h : GL (Fin 3) (DualNumber O)) (hh : InHat h) (ht : TriIn η Ψ I r h) :
@@ -185,7 +189,7 @@ private theorem triangular_dual_number_diagonal [IsLocalRing O] [IsLocalRing (Du
     show ms (r g).mat a b = _
     linear_combination this
 
-private theorem exists_cocycle_of_dual_lift {Γ : Type} [Group Γ] (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ) (r : Γ →* GG 3 (DualNumber O))
+private theorem exists_cocycle_of_dual_lift {Γ : Type} [Group Γ] (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ) (r : Γ →* GG (m := 3) (R := DualNumber O))
     (hm : HasMult η r) (hf : ∀ g a b, ((r g).mat a b).fst = (r0 η Ψ g).mat a b) :
     ∃ γ : Γ → Matrix (Fin 3) (Fin 3) O, IsCoc (r0 η Ψ) γ ∧
       ∀ g, ms (r g).mat = γ g * (r0 η Ψ g).mat := by
@@ -232,7 +236,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.eq_rz_of_vanE :
     ∀ {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    F.VanE → ∀ g₁, F.Marked g₁ → ∀ [IsLocalRing (DualNumber O)] (j : ℤ), j ≤ 0 → ∀ (r : Γ →* GG 3 (DualNumber O)), F.IsPt g₁ r →
+    F.VanE → ∀ g₁, F.Marked g₁ → ∀ [IsLocalRing (DualNumber O)] (j : ℤ), j ≤ 0 → ∀ (r : Γ →* GG (m := 3) (R := DualNumber O)), F.IsPt g₁ r →
       (∀ g a b, ((r g).mat a b).fst = (r0 F.η F.Ψ g).mat a b) → (∀ g a b, F.η g = 1 → wt a b ≠ j → ((r g).mat a b).snd = 0) → r = F.rz (DualNumber O) := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F ok van g₁ mk _ j hj r pt hf hw
   obtain ⟨γ, hcoc, hγ⟩ := exists_cocycle_of_dual_lift F.η F.Ψ r pt.mult hf

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGeneratorCmDifferentIdealScaledStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeImageRationalHomLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGeneratorCmDifferentIdealScaledStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeImageRationalHomLatticeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def IC (D : D7) (cc : Ideal (𝓞 D.host.K)) {n : ℕ} (L : Lat D n) : Lat D n :
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {n : ℕ}
 
 theorem cv_add (x y : Fin n → D.host.E) : cv D (x + y) = cv D x + cv D y := by
-  funext j; simp only [cv, Pi.add_apply, map_add]
+  funext j; simp only [cv, Pi.add_apply, map_add (f := _)]
 
 theorem cv_smul (a : 𝓞 D.host.E) (x : Fin n → D.host.E) :
     cv D (a • x) = ((sgO D a : 𝓞 D.host.E) : D.host.E) • cv D x := by
@@ -113,14 +117,15 @@ def Row (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {N : ℕ} (N' : ℕ) (t
     (i : Fin N') : 𝓞 D.host.E →+ VC D N N' where
   toFun a := Pt D cc δ N N' (Pi.single i ((a • t₀) • cv D b))
   map_zero' := by simp
-  map_add' a a' := by rw [add_smul, add_smul, Pi.single_add, map_add]
+  map_add' a a' := by rw [add_smul, add_smul, Pi.single_add, map_add (f := _)]
 
 theorem Row_apply (δ : ℂ) {N N' : ℕ} (t₀ : D.host.E) (b : Fin N → D.host.E) (i : Fin N') (a : 𝓞 D.host.E) :
     Row D cc δ N' t₀ b i a = Pt D cc δ N N' (Pi.single i ((a • t₀) • cv D b)) := rfl
 
 theorem sum_Row (δ : ℂ) {N N' : ℕ} (t₀ : D.host.E) (b : Fin N → D.host.E) (a : Fin N' → 𝓞 D.host.E) :
     ∑ i, Row D cc δ N' t₀ b i (a i) = Pt D cc δ N N' (fun i => (a i • t₀) • cv D b) := by
-  simp only [Row_apply, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Row_apply, ← map_sum]
   rw [Finset.univ_sum_single (fun i => (a i • t₀) • cv D b)]
 
 theorem Hf_zero_left (T : Tor D) {N N' : ℕ} (y : VC D N N') : Hf D T 0 y = 0 := by simp [Hf]
@@ -206,12 +211,12 @@ theorem triDat_rows : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), cc �
   refine ⟨Row D cc δ N' t₀ b, Row D cc δ N' t₀ x, fun i =>
     { toFun := fun s => Hf D (tor0 D cc δ) (Row D cc δ N' t₀ x i s) (Row D cc δ N' t₀ b i 1)
       map_zero' := by rw [map_zero, Hf_zero_left]
-      map_add' := fun s s' => by rw [map_add, Hf_add_left] }, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      map_add' := fun s s' => by rw [map_add (f := _), Hf_add_left] }, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro i j a a'
     exact Hf_Row δ t₀ b x i j a a'
   · intro i a
     refine ⟨single_mem hδ hB i (smul_cv_mem (hat a) bB), single_mem hδ hC i (smul_cv_mem (hat a) bC), ?_⟩
-    rw [Row_apply, Row_apply, ← map_add, ← Pi.single_add, ← smul_add, ← cv_add]
+    rw [Row_apply, Row_apply, ← map_add (f := _), ← Pi.single_add, ← smul_add, ← cv_add]
     exact single_mem hδ hA i (smul_cv_mem (hat a) bA)
   · intro i p hpP
     have h1 := P_smul_cv hσ (fun p h => (hp p h).1) hpP ht₀

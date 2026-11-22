@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.HfRsmulRight
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.HfRsmulRight
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 open NumberField Complex
@@ -17,7 +21,7 @@ private lemma Hf_im_IR_lemma {dim : (E →+* ℂ) → ℕ} {I : Submodule ℤ (V
     | zero => simp [Hf]
     | add y z _ _ h1 h2 =>
       have e : Hf x (y + z) = Hf x y + Hf x z := by
-        simp only [Hf, PiLp.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+        simp only [Hf, PiLp.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
       rw [e, Complex.add_im, h1, h2, add_zero]
     | smul r y _ h =>
       have e : Hf x (r • y) = (r : ℂ) * Hf x y := by
@@ -124,11 +128,6 @@ def actL {dim : (E →+* ℂ) → ℕ} (α : 𝓞 E) : Vsp dim →ₗ[ℂ] Vsp d
   toFun := act α
   map_add' v w := by ext i; simp only [act_apply, PiLp.add_apply]; ring
   map_smul' c v := by ext i; simp only [act_apply, PiLp.smul_apply, smul_eq_mul, RingHom.id_apply]; ring
-
-lemma act_add_left {dim : (E →+* ℂ) → ℕ} (α β : 𝓞 E) (v : Vsp dim) :
-    act (α + β) v = act α v + act β v := by
-  ext i
-  simp [act, add_mul]
 
 lemma Hf_act [IsCMField E] {dim : (E →+* ℂ) → ℕ} (α : 𝓞 E) (x a : Vsp dim) :
     Hf (act α x) a = Hf x (act (conjO α) a) := by

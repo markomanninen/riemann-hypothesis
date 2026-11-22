@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaSection
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionProduct
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturbSemipos
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefAmpleGeneric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefAmpleFibre
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZCombLimit
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaSection
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionProduct
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturbSemipos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefAmpleGeneric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefAmpleFibre
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZCombLimit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -24,8 +29,8 @@ theorem HermLine.zcomb_isConjInvariantH {A B : HermLine ι} (hA : IsConjInvarian
   rw [hA z, hB z]
 
 theorem fsH_isConjInvariantH (ι : K → Type) [∀ k, Fintype (ι k)] : IsConjInvariantH (fsH ι) := fun z => by
-  show ∏ k, (fsMetric (ι k)).ρ (fun i => (starRingEnd ℂ) (z ⟨k, i⟩)) ^ (1 : K → ℤ) k =
-    ∏ k, (fsMetric (ι k)).ρ (fun i => z ⟨k, i⟩) ^ (1 : K → ℤ) k
+  show ∏ k, (fsMetric (ι := ι k)).ρ (fun i => (starRingEnd ℂ) (z ⟨k, i⟩)) ^ (1 : K → ℤ) k =
+    ∏ k, (fsMetric (ι := ι k)).ρ (fun i => z ⟨k, i⟩) ^ (1 : K → ℤ) k
   exact Finset.prod_congr rfl fun k _ => by rw [ProjLine.isConjInvariant_fs (fun i => z ⟨k, i⟩)]
 
 theorem zcomb_metric_identity {a b : ℝ} (ha : a ≠ 0) (hb : b ≠ 0) (q k p n : ℕ) :

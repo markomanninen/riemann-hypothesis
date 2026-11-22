@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -32,7 +37,7 @@ theorem exists_integer_map_eq_w0 :
       simpa using hb
     refine ⟨⟨(1 + b) / 2, isIntegral_half_one_add _ hd16 b hb'⟩, ?_⟩
     change D.host.φ₀ (algebraMap D.host.K D.host.E ((1 + b) / 2)) = _
-    rw [map_div₀, map_add, map_one, map_ofNat, map_div₀, map_add, map_one, map_ofNat]
+    rw [map_div₀, map_add (f := _), map_one, map_ofNat, map_div₀, map_add (f := _), map_one, map_ofNat]
     change (1 + D.host.φ₀ (b : D.host.E)) / 2 = _
     rw [hφ, w0]
   let b : D.host.K := ⟨D.host.sqd, IntermediateField.mem_adjoin_simple_self ℚ _⟩

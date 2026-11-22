@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.IsOpenPart
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmHostRootComplexEqPmSqrt
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.IsOpenPart
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmHostRootComplexEqPmSqrt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,23 +114,11 @@ def polar [AddCommMonoid A] (top : A → ℝ) (M : Multiset A) : ℝ :=
 def numL (num : Multiset A → ℝ) (d : ℕ) : MvPolynomial A ℝ →ₗ[ℝ] ℝ :=
   (MvPolynomial.basisMonomials A ℝ).constr ℝ fun m => if m.degree = d then num (Finsupp.toMultiset m) else 0
 
-example (a b : ℝ) : polar (fun x : ℝ => x ^ 2) {a, b} = a * b := by
-  have h : ({a, b} : Multiset ℝ) = a ::ₘ b ::ₘ 0 := rfl
-  simp only [h, polar, Multiset.powerset_cons, Multiset.powerset_zero]
-  simp
-  ring
-
-theorem numL_X_pow (num : Multiset A → ℝ) (d : ℕ) (a : A) :
-    numL num d (MvPolynomial.X a ^ d) = num (Multiset.replicate d a) := by
-  have h : (MvPolynomial.X a ^ d : MvPolynomial A ℝ) = MvPolynomial.basisMonomials A ℝ (Finsupp.single a d) := by
-    simp [MvPolynomial.X_pow_eq_monomial]
-  rw [h, numL, Module.Basis.constr_basis]
-  simp [Multiset.nsmul_singleton]
-
 theorem numL_homog (num : Multiset A → ℝ) (d e : ℕ) (he : e ≠ d) (P : MvPolynomial A ℝ) (hP : P.IsHomogeneous e) :
     numL num d P = 0 := by
   classical
-  rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum]
   refine Finset.sum_eq_zero fun m hm => ?_
   have h1 : m.degree = e := by
     have := hP (MvPolynomial.mem_support_iff.1 hm)
@@ -160,20 +152,6 @@ def mixEv (S : Finset ℕ) (R : ℝ) (p : ℕ) (c : Comp) : MvPolynomial (DV.Vm 
 
 def arMix (S : Finset ℕ) (R : ℝ) (p : ℕ) : MvPolynomial (DV.Vm Tau N) ℝ →ₗ[ℝ] ℝ :=
   ∑ c, numL (I.num c) (Formalism.DegreeFormula.dimFl Tau N + 1) ∘ₗ (I.mixEv S R p c).toLinearMap
-
-def realExample (Tau : Type) (N g : ℕ) : ArIn Tau N g Unit where
-  A _ := ℝ
-  num _ M := M.prod
-  root a R _ _ := if a 2 then R else 1
-  whole a R _ _ := if a 2 then R else 1
-
-theorem realToy_arDeg {Tau : Type} [Fintype Tau] {N g : ℕ} (x : Tau × Fin N) (S : Finset ℕ) (R : ℝ) :
-    (realExample Tau N g).arDeg S R (MvPolynomial.X x ^ (Formalism.DegreeFormula.dimFl Tau N + 1)) =
-      (if 2 ∈ S then R else 1) ^ (Formalism.DegreeFormula.dimFl Tau N + 1) := by
-  rw [arDeg, LinearMap.sum_apply, Fintype.sum_unique]
-  change numL _ _ (MvPolynomial.rename _ _) = _
-  rw [map_pow, MvPolynomial.rename_X, numL_X_pow]
-  simp [realExample, ind, -Multiset.replicate_succ]
 
 theorem arDeg_homog (S : Finset ℕ) (R : ℝ) (P : MvPolynomial (DV.Rt Tau N) ℝ) (d : ℕ)
     (hd : d ≠ Formalism.DegreeFormula.dimFl Tau N + 1) (hP : P.IsHomogeneous d) : I.arDeg S R P = 0 := by
@@ -214,15 +192,15 @@ def OnComp (k : s.Comp) (z : gen s.T.Z) : Prop :=
 
 def compPt (y : Pt s) : s.Comp := Classical.epsilon fun k => ∀ pt, OnComp s k (y.y pt)
 
-open Classical in
 
+open Classical in
 def lnAt (p : ℕ) (b : Bool) (y : Pt s) (x : DV.Rt D.what₂.Tau N) : ℝ :=
   if h : p.Prime then (haveI := Fact.mk h; y.lnRoot (iotaP p) p b (DV.tauEmb D x.1) x.2) else 0
 
 def phi (p : ℕ) (y : Pt s) (x : DV.Rt D.what₂.Tau N) : ℝ := lnAt s p false y x - lnAt s p true y x
 
-open Classical in
 
+open Classical in
 def normDet (p : ℕ) (b : Bool) (τ : D.what₂.Tau) (y : Pt s) (a : Qb) : ℝ :=
   if h : p.Prime then (haveI := Fact.mk h; ‖iotaP p a‖ * Real.exp (∑ i, lnAt s p b y (τ, i))) else 1
 
@@ -262,9 +240,6 @@ def GlobSt.projLine {M : ℕ → Type} (m : ∀ p, M p) : GlobSt M where
   ampleGen d := 0 < d
   limRA d := 0 ≤ d
 
-example {M : ℕ → Type} (m : ∀ p, M p) : (GlobSt.projLine m).nefFibM (0 : ℚ) ∧ ¬ (GlobSt.projLine m).ampleGen (0 : ℚ) :=
-  ⟨le_refl (0 : ℚ), lt_irrefl (0 : ℚ)⟩
-
 structure AdmSt (D : D7) (N j : ℕ) (jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)) : Type 1 where
   admitted : ∀ (p : ℕ) [Fact p.Prime], PlL D p → Type
   mdl : ∀ (p : ℕ) [Fact p.Prime] (la : PlL D p), admitted p la → DV.Mdl D p N (DV.rkOf (DV.PsiOf D (jC p la)) N j)
@@ -281,16 +256,6 @@ section OfPkg
 variable {Comp : Type} {jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)} {ng : NgPkg}
   (P : PadPkg D N j Comp jC ng)
 
-def LocSt.ofPkg : LocSt D N j ng := ⟨P.loc, P.ex, P.locB, P.pbKF⟩
-
-def GlobSt.ofPkg : GlobSt fun p => (P.loc p).Mdl :=
-  ⟨P.Xg, P.bc, P.DivG, P.effD, P.noVertD, P.posBdD, P.ampleOnAbelianBase, P.Met, P.nefFibM, P.ampleGen, P.limRA⟩
-
-open PadPkg in
-
-def AdmSt.ofPkg : AdmSt D N j jC :=
-  ⟨fun p _ la => P.Mp p la, fun p _ la z => md P p la z, fun p _ la z => P.CurveM p la z,
-    fun p _ la z => P.degM p la z, fun p _ la => P.htMdl p la⟩
 
 end OfPkg
 
@@ -319,21 +284,6 @@ section Unfold
 
 variable {jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)} {ng : NgPkg} (L : LocSt D N j ng)
   (G : GlobSt fun p => (L.loc p).Mdl) (M : AdmSt D N j jC) (F : FlatSt s) (I : ArIn D.what₂.Tau N (D.R.f * N) s.Comp)
-
-theorem locSt_padOf : LocSt.ofPkg (padOf s L G M F I) = L := rfl
-
-theorem globSt_padOf : GlobSt.ofPkg (padOf s L G M F I) = G := rfl
-
-def mpEquiv (p : ℕ) [h : Fact p.Prime] (la : PlL D p) : (padOf s L G M F I).Mp p la ≃ M.admitted p la where
-  toFun z := z h.out
-  invFun a := fun _ => a
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-theorem normDet_false (p : ℕ) (hp : p.Prime) (τ : D.what₂.Tau) (y : Pt s) (a : Qb) :
-    normDet s p false τ y a = normDet s p true τ y a * Real.exp (∑ i, phi s p y (τ, i)) := by
-  simp only [normDet, dif_pos hp, phi, Finset.sum_sub_distrib]
-  rw [_root_.mul_assoc, ← Real.exp_add, add_sub_cancel]
 
 end Unfold
 

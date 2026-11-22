@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerGlobalFactors.MapRestrictIntH
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerGlobalFactors.MapRestrictIntH
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,7 +141,7 @@ theorem herm_split (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (ψ : AddChar (AF
       ∏ v ∈ S, ∫ x, g v x ∂GlobalTheory.CompanionTheory.SW.coordHerm (Fv F v) σ bs (lam v) n := by
     rw [integral_indicator (measurableSet_intHR σ hCM bs n S)]
     have hρ : Measurable (fun y (v : S) => HS.hV σ v.1 y) :=
-      measurable_pi_lambda _ fun v => (HS.continuous_hermV σ hCM n v.1).measurable
+      Measurable.of_eval fun v => (HS.continuous_hermV σ hCM n v.1).measurable
     have hmap := HS.map_restrict_intH σ hCM bs lam hlam lf hlf h1 n S
     have e4 : ∫ y in HS.intHR σ bs n S, fS y ∂GlobalTheory.CompanionTheory.SW.coordHerm (Af F) σ bs lf n =
         ∫ x, ∏ v : S, g v.1 (x v) ∂((GlobalTheory.CompanionTheory.SW.coordHerm (Af F) σ bs lf n).restrict (HS.intHR σ bs n S)).map

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.general_b_fact_upper_bis
 
@@ -39,7 +43,8 @@ theorem goal1 :
       simp only [Module.Basis.constr_basis] at this
       simpa using this
     rw [← b.sum_repr y]
-    simp only [map_sum, h2, map_smul, smul_eq_mul, hb, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, h2, map_smul, smul_eq_mul, hb, map_mul]
   have hsm : ∀ c : K, w.valuation K c ≤ 1 → ∀ (Tt : Set Fn) (z : Fn),
       z ∈ Submodule.span O Tt → φ c • z ∈ Submodule.span O Tt := by
     intro c hc Tt z hz
@@ -88,7 +93,8 @@ theorem goal1 :
         simp only [neg_mul, neg_smul, mul_smul, Finset.sum_neg_distrib, ← Finset.smul_sum, e',
           smul_neg, neg_neg, inv_smul_smul₀ hl0]
       have hx0mem : cmp x0 ∈ Submodule.span O (cmp '' (S.erase x0 : Set V)) := by
-        rw [show cmp x0 = cmp (∑ x ∈ S.erase x0, (-(lam x0)⁻¹ * lam x) • x) from congrArg cmp hrel,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [show cmp x0 = cmp (∑ x ∈ S.erase x0, (-(lam x0)⁻¹ * lam x) • x) from congrArg cmp hrel,
           map_sum]
         refine Submodule.sum_mem _ fun x hx => ?_
         rw [h2]
@@ -123,7 +129,7 @@ theorem goal1 :
       obtain ⟨t, ht⟩ : ∃ t, t = f v / f x1 := ⟨_, rfl⟩
       have hφt : φ t = algebraMap O Kf o := by
         have e := hg v
-        rw [hvz, map_add, hgz, add_zero, ← algebraMap_smul Kf o (cmp x1), map_smul, hg,
+        rw [hvz, map_add (f := _), hgz, add_zero, ← algebraMap_smul Kf o (cmp x1), map_smul, hg,
           smul_eq_mul] at e
         rw [ht, map_div₀, ← e, mul_div_assoc, div_self ((map_ne_zero φ).2 hf0), mul_one]
       have htv : w.valuation K t ≤ 1 := (h1 t).2 ⟨o, hφt.symm⟩
@@ -156,7 +162,7 @@ theorem goal1 :
     induction hy' using Submodule.span_induction with
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       rw [← algebraMap_smul K a x, h2]
       exact hsm _ (w.valuation_le_one (K := K) a) _ _ hx

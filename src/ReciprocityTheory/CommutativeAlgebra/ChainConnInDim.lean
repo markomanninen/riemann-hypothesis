@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 
@@ -10,16 +14,6 @@ def ConnInDim (k : WithBot ℕ∞) : Prop :=
   ∀ I : Ideal R, ringKrullDim (R ⧸ I) < k → IsConnected ((zeroLocus (I : Set R))ᶜ : Set (PrimeSpectrum R))
 
 def Linked (k : WithBot ℕ∞) (p q : Ideal R) : Prop := k ≤ ringKrullDim (R ⧸ (p ⊔ q))
-
-def ChainConnInDim (k : WithBot ℕ∞) : Prop :=
-  (minimalPrimes R).Nonempty ∧
-  ∀ p ∈ minimalPrimes R, ∀ q ∈ minimalPrimes R,
-    Relation.ReflTransGen (fun a b : Ideal R => a ∈ minimalPrimes R ∧ b ∈ minimalPrimes R ∧ Linked R k a b) p q
-    ∧ k ≤ ringKrullDim (R ⧸ p)
-
-def puncturedSpec [IsLocalRing R] : Set (PrimeSpectrum R) := {IsLocalRing.closedPoint R}ᶜ
-
-noncomputable def sdim : WithBot ℕ∞ := ⨅ p ∈ minimalPrimes R, ringKrullDim (R ⧸ p)
 
 def AraLE {R : Type*} [CommRing R] (a : Ideal R) (r : ℕ) : Prop :=
   ∃ s : Finset R, s.card ≤ r ∧ (Ideal.span (s : Set R)).radical = a.radical

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieDesc
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieDesc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,19 +30,20 @@ theorem HiOrd.mul_left {K : ℕ} {g : PS k n d} (h : HiOrd K g) (a : PS k n d) :
   refine Finset.sum_eq_zero fun pq hpq => ?_
   have hpq' : pq.1 + pq.2 = μ := Finset.HasAntidiagonal.mem_antidiagonal.1 hpq
   have h2 : Finsupp.degree pq.2 < K :=
-    lt_of_le_of_lt (by rw [← hpq', map_add]; exact Nat.le_add_left _ _) hμ
+    lt_of_le_of_lt (by rw [← hpq', map_add (f := _)]; exact Nat.le_add_left _ _) hμ
   rw [h _ h2, mul_zero]
 
 theorem HiOrd.sum {K : ℕ} {α : Type} (s : Finset α) (g : α → PS k n d) (h : ∀ i ∈ s, HiOrd K (g i)) :
     HiOrd K (∑ i ∈ s, g i) := by
   intro μ hμ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun i hi => h i hi μ hμ
 
 theorem HiOrd.deriv {K : ℕ} {g : PS k n d} (h : HiOrd (K + 1) g) (i : Fin n × Fin d) :
-    HiOrd K (MvPowerSeries.pderiv k i g) := by
+    HiOrd K (MvPowerSeries.pderiv (R := k) i g) := by
   intro μ hμ
-  rw [MvPowerSeries.coeff_pderiv, h _ (by rw [map_add, Finsupp.degree_single]; omega), zero_mul]
+  rw [MvPowerSeries.coeff_pderiv, h _ (by rw [map_add (f := _), Finsupp.degree_single]; omega), zero_mul]
 
 theorem HiOrd.dofN {K : ℕ} {g : PS k n d} (h : HiOrd (K + 1) g) (F : Fin d → PS k 2 d) (b : Fin n)
     (u : Fin d → k) : HiOrd K (DofN F b u g) := by
@@ -74,7 +79,8 @@ theorem const_dpolyN_eq_zero (F : Fin d → PS k 2 d) {ι : Type} [Fintype ι] (
     (P : MvPolynomial ι k) {g : PS k n d} (h : HiOrd (P.totalDegree + 1) g) :
     constantCoeff (DpolyN F cp u P g) = 0 := by
   unfold DpolyN
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun m hm => ?_
   have hd : Finsupp.degree m ≤ P.totalDegree := by
     have h1 := MvPolynomial.le_totalDegree hm
@@ -85,7 +91,7 @@ theorem const_dpolyN_eq_zero (F : Fin d → PS k 2 d) {ι : Type} [Fintype ι] (
 
 theorem dofN_add (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (f g : PS k n d) :
     DofN F b u (f + g) = DofN F b u f + DofN F b u g := by
-  simp only [DofN, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [DofN, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem dofN_smul (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (c : k) (f : PS k n d) :
     DofN F b u (c • f) = c • DofN F b u f := by
@@ -136,7 +142,7 @@ def nabL (F : Fin d → PS k 2 d) {ι : Type} [Fintype ι] (cp : ι → Fin n) (
     (P : MvPolynomial ι k) (G : PS k n d) : PS k n d →ₗ[k] k where
   toFun f := constantCoeff (DpolyN F cp u P (f * G))
   map_add' f g := by
-    rw [add_mul, dpolyN_add, map_add]
+    rw [add_mul, dpolyN_add, map_add (f := _)]
   map_smul' c f := by
     rw [smul_mul_assoc, dpolyN_smul, ← coeff_zero_eq_constantCoeff_apply, ← coeff_zero_eq_constantCoeff_apply,
       map_smul]
@@ -154,9 +160,10 @@ theorem hiOrd_sub_trunc (f : PS k n d) (D : ℕ) :
   omega
 
 theorem coe_eq_sum (p : MvPolynomial (Fin n × Fin d) k) :
-    (p : PS k n d) = ∑ μ ∈ p.support, MvPolynomial.coeff μ p • monomial μ (1 : k) := by
+    (p : PS k n d) = ∑ μ ∈ p.support, AddMonoidAlgebra.coeff p μ • monomial μ (1 : k) := by
   ext ν
-  rw [MvPolynomial.coeff_coe, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPolynomial.coeff_coe, map_sum]
   simp only [map_smul, MvPowerSeries.coeff_monomial, smul_eq_mul, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq]
   split_ifs with h
@@ -166,15 +173,16 @@ theorem coe_eq_sum (p : MvPolynomial (Fin n × Fin d) k) :
 theorem nabL_trunc (F : Fin d → PS k 2 d) {ι : Type} [Fintype ι] (cp : ι → Fin n) (u : ι → Fin d → k)
     (P : MvPolynomial ι k) (G : PS k n d) (f : PS k n d) :
     nabL F cp u P G f = ∑ μ ∈ (trunc' k (cst P.totalDegree) f).support,
-      MvPolynomial.coeff μ (trunc' k (cst P.totalDegree) f) * nabL F cp u P G (monomial μ (1 : k)) := by
+      AddMonoidAlgebra.coeff (trunc' k (cst P.totalDegree) f) μ * nabL F cp u P G (monomial μ (1 : k)) := by
   set T : PS k n d := ((trunc' k (cst P.totalDegree) f : MvPolynomial _ k) : PS k n d) with hTdef
   have h0 : nabL F cp u P G (f - T) = 0 := by
     show constantCoeff (DpolyN F cp u P ((f - T) * G)) = 0
     rw [mul_comm]
     exact const_dpolyN_eq_zero F cp u P ((hiOrd_sub_trunc f P.totalDegree).mul_left G)
   have hsplit : nabL F cp u P G f = nabL F cp u P G (f - T) + nabL F cp u P G T := by
-    rw [← map_add, sub_add_cancel]
-  rw [hsplit, h0, zero_add, hTdef, coe_eq_sum, map_sum]
+    rw [← map_add (f := _), sub_add_cancel]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsplit, h0, zero_add, hTdef, coe_eq_sum, map_sum]
   simp only [map_smul, smul_eq_mul]
 
 theorem dpolyN_sub (F : Fin d → PS k 2 d) {ι : Type} [Fintype ι] (cp : ι → Fin n) (u : ι → Fin d → k)
@@ -197,7 +205,8 @@ theorem const_dpolyN_lin (F : Fin d → PS k 2 d) {ι : Type} [Fintype ι] (cp :
       ∑ i ∈ s, c i * constantCoeff (∑ m ∈ S, MvPowerSeries.C ((Q i).coeff m) * DmonN F cp u m g) :=
     Finset.sum_congr rfl fun i hi => by rw [hQ i hi]
   rw [hR]
-  simp only [map_sum, map_mul, MvPowerSeries.constantCoeff_C, MvPolynomial.coeff_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, MvPowerSeries.constantCoeff_C, MvPolynomial.coeff_sum,
     MvPolynomial.coeff_smul, smul_eq_mul, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun m _ => by ring

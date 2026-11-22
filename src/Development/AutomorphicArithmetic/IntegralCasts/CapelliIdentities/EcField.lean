@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qh13.Plc :
     (F : Type) → [Field F] → Type :=
@@ -36,7 +40,8 @@ theorem UpperTheory.Reformulated.B.Qh13.ec_field :
       (Algebra.IsAlgebraic.isAlgebraic x).isIntegral
   have hf : ∀ y : L, f y ∈ K := by
     intro y
-    rw [← b.sum_repr y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr y, map_sum]
     refine sum_mem fun i _ => ?_
     rw [Rat.smul_def, map_mul, map_ratCast]
     exact mul_mem (SubfieldClass.ratCast_mem K _)

@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ namespace GlobalTheory.CompanionTheory.RankinStepC
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
 
-variable (F) in
 
+variable (F) in
 def Pv : ValueGroupWithZero F := valuation F ((uniformizer F : 𝒪[F]) : F)
 
 theorem Pv_lt_one : Pv F < 1 := by

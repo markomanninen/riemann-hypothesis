@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open scoped NNReal
 
 variable (F : Type) [Field F] [NumberField F] {E : Type} [Field E] [NumberField E] [Algebra F E]
 
-open Classical in
 
+open Classical in
 def htE (x : E) : ℝ≥0 :=
   (∏ w : InfinitePlace F, max 1 (Finset.univ.sup fun τ : EmbOver E w => ‖τ.1 x‖₊)) *
     ∏ᶠ v : HeightOneSpectrum (𝓞 F), max 1 (absFin F v ((1 : Fv F v) ⊗ₜ[F] x))

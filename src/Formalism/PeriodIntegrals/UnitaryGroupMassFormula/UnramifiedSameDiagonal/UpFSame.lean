@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnramifiedSameDiagonal.SameCommon
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnramifiedSameDiagonal.SameCommon
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,9 +13,9 @@ open NumberField IsDedekindDomain Matrix CrossDiaZero
 
 variable {D : D7} {u : D.what₂.Word}
 
+
 set_option maxHeartbeats 8000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem upFSame (T : Forms0 D u) (v : (D.mem u).A.vT) (k : ℤ)
     (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
     (hδ : IsDia T.cls0.lev (T.atT.eV v).1 (T.atT.eV v).2 k δ)

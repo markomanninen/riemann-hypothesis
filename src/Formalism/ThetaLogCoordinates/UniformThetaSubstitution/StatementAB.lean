@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.GrowthSums.StatementA
-import Formalism.GaussJetBounds.StatementI
-import Formalism.GaussJetBounds.StatementH
+module
+
+public import Mathlib
+public import Formalism.GrowthSums.StatementA
+public import Formalism.GaussJetBounds.StatementI
+public import Formalism.GaussJetBounds.StatementH
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ def shiftPoly {K ι κ : Type} [Field K] [Fintype κ] (b : κ → ι → K) (Q :
 
 def hasseDir {K ι κ : Type} [Field K] [Fintype κ] (b : κ → ι → K) (β : κ →₀ ℕ)
     (Q : MvPolynomial ι K) : MvPolynomial ι K :=
-  MvPolynomial.coeff β (shiftPoly b Q)
+  AddMonoidAlgebra.coeff (shiftPoly b Q) β
 
 def JetPairingHasseIdentity : Prop :=
   ∀ (K ι κ : Type) [Field K] [Fintype ι] [Fintype κ] (b : κ → ι → K) (β : κ →₀ ℕ)
@@ -35,8 +39,8 @@ def JetPairingHasseIdentity : Prop :=
 def HasseDerivIntegralHomogeneous : Prop :=
   ∀ (K ι κ : Type) [NormedField K] [IsUltrametricDist K] [Fintype κ] (b : κ → ι → K)
     (β : κ →₀ ℕ) (Q : MvPolynomial ι K),
-    ((∀ n, ‖MvPolynomial.coeff n Q‖ ≤ 1) → (∀ k x, ‖b k x‖ ≤ 1) →
-      ∀ n, ‖MvPolynomial.coeff n (hasseDir b β Q)‖ ≤ 1) ∧
+    ((∀ n, ‖AddMonoidAlgebra.coeff Q n‖ ≤ 1) → (∀ k x, ‖b k x‖ ≤ 1) →
+      ∀ n, ‖AddMonoidAlgebra.coeff (hasseDir b β Q) n‖ ≤ 1) ∧
     (∀ d, Q.IsHomogeneous d → (hasseDir b β Q).IsHomogeneous (d - ∑ k, β k)) ∧
     (∀ d, Q.IsHomogeneous d → d < ∑ k, β k → hasseDir b β Q = 0)
 
@@ -64,33 +68,6 @@ def MinorHits : Prop :=
       (∃ k k', k ≠ k' ∧ 1 ≤ β k ∧ 1 ≤ β k' ∧ pos k = pos k' ∧ (ξ k = ξ k' ∨ col k = col k')) ∨
       (∃ k, 1 ≤ β k ∧ (pos k ≠ s ∨ col k ∉ Set.range I))) →
     hasseDir (fun k => colDir (pos k) (ξ k) (col k)) β (minorAt s T I) = 0
-
-def HitsCap : Prop :=
-  ∀ (K σ κ : Type) [Field K] [DecidableEq σ] [Fintype κ] (r0 r1 C : ℕ) (l : Fin C → ℕ)
-    (sf : Fin C → σ) (T : ∀ c, Fin (l c) → Fin r0 → K) (I : ∀ c, Fin (l c) → Fin r1) (pos : κ → σ)
-    (ξ : κ → Fin r0 → K) (col : κ → Fin r1) (S : Finset κ),
-    (∀ k ∈ S, ∀ k' ∈ S, pos k = pos k' ∧ ξ k = ξ k') →
-    ∀ β : κ →₀ ℕ, C < ∑ k ∈ S, β k →
-      hasseDir (fun k => colDir (pos k) (ξ k) (col k)) β (∏ c, minorAt (sf c) (T c) (I c)) = 0
-
-def HitsColumns : Prop :=
-  ∀ (K σ κ : Type) [Field K] [DecidableEq σ] [Fintype κ] (r0 r1 C : ℕ) (l : Fin C → ℕ)
-    (sf : Fin C → σ) (T : ∀ c, Fin (l c) → Fin r0 → K) (I : ∀ c, Fin (l c) → Fin r1) (pos : κ → σ)
-    (ξ : κ → Fin r0 → K) (col : κ → Fin r1) (S : Finset κ) (J : Finset (Fin r1)),
-    (∀ k ∈ S, ∀ k' ∈ S, pos k = pos k') → (∀ k ∈ S, col k ∈ J) →
-    ∀ β : κ →₀ ℕ, ∑ c, ((univ.image (I c)) ∩ J).card < ∑ k ∈ S, β k →
-      hasseDir (fun k => colDir (pos k) (ξ k) (col k)) β (∏ c, minorAt (sf c) (T c) (I c)) = 0
-
-def EdgeScale : Prop :=
-  ∀ (K σ : Type) [Field K] (r0 r1 l : ℕ) (s : σ) (T : Fin l → Fin r0 → K) (I : Fin l → Fin r1)
-    (τ : Fin r1 → K),
-    MvPolynomial.aeval (fun x : σ × Fin r0 × Fin r1 =>
-        (MvPolynomial.C (τ x.2.2) * MvPolynomial.X x : MvPolynomial (σ × Fin r0 × Fin r1) K))
-      (minorAt s T I) = MvPolynomial.C (∏ c, τ (I c)) * minorAt s T I
-
-def ColumnCount : Prop :=
-  ∀ (μ : YoungDiagram) (i : ℕ),
-    ∑ a ∈ range i, μ.rowLen a = ∑ c ∈ range (μ.rowLen 0), min (μ.colLen c) i
 
 def lgN (p x : ℕ) : ℕ := if x = 0 then 0 else Nat.log p x + 1
 

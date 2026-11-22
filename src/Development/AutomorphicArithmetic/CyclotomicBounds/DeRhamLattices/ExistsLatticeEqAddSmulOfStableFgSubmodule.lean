@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations TensorProduct UpperTheory.KN
 
 theorem _root_.UpperTheory.KN.exists_lattice_eq_add_smul_of_stable_fg_submodule :
@@ -30,7 +35,7 @@ theorem _root_.UpperTheory.KN.exists_lattice_eq_add_smul_of_stable_fg_submodule 
   · intro g x hx
     obtain ⟨a, ha, u, hu, rfl⟩ := (hmem x).1 hx
     refine (hmem _).2 ⟨ρ g a, hst g a ha, ρ g u, Λ.stable g u hu, ?_⟩
-    rw [map_add, ← algebraMap_smul LL μ u, map_smul, algebraMap_smul]
+    rw [map_add (f := _), ← algebraMap_smul LL μ u, map_smul, algebraMap_smul]
   · haveI : Module.Finite O ↥(A ⊔ Λ.T.map (μ • (LinearMap.id : V →ₗ[O] V))) :=
       Module.Finite.iff_fg.2 hfg
     infer_instance

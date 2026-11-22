@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EulerEAddSmulMemEisensteinShiftGraded
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemAnalyticFiltrationIffLatticeFiltrationAdd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemLOfEPowSmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EulerEAddSmulMemEisensteinShiftGraded
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemAnalyticFiltrationIffLatticeFiltrationAdd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemLOfEPowSmulMem
+
+@[expose] public section
 
 noncomputable section
 open PowerSeries GlobalTheory.BK
@@ -13,8 +17,8 @@ variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Comple
   [IsUnitBall O K] {l e a : ℕ} [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a]
   [TameDescentExponentData K l e a] {ι κ : Type} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] {η H : ℕ}
 
-omit [CompleteSpace K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] in
 
+omit [CompleteSpace K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] in
 theorem C_mem_invL (c : K) : (C c : K⟦X⟧) ∈ invL l (A O K) :=
   (mem_invL_A_iff l).2 ⟨‖c‖, fun n => by
     rw [coeff_C]
@@ -22,8 +26,8 @@ theorem C_mem_invL (c : K) : (C c : K⟦X⟧) ∈ invL l (A O K) :=
     · exact le_rfl
     · simp⟩
 
-omit [CompleteSpace K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] [Fintype ι] [DecidableEq ι] in
 
+omit [CompleteSpace K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] [Fintype ι] [DecidableEq ι] in
 theorem smul_mem_of_invL {B : Subalgebra O K⟦X⟧} (hB : invL l (A O K) ≤ B)
     (W : Submodule B (Vec K a ι)) (c : K) {x : Vec K a ι} (hx : x ∈ W) : c • x ∈ W := by
   have := W.smul_mem ⟨C c, hB (C_mem_invL c)⟩ hx
@@ -35,8 +39,8 @@ omit [CompleteSpace K] [NeZero a] [TameDescentExponentData K l e a] [Fintype ι]
 theorem Ezpow_zero : Ezpow K l e 0 = 1 := by
   simpa using Ezpow_natCast (K := K) l e 0
 
-omit [CompleteSpace K] [NeZero a] [TameDescentExponentData K l e a] [Fintype ι] [DecidableEq ι] in
 
+omit [CompleteSpace K] [NeZero a] [TameDescentExponentData K l e a] [Fintype ι] [DecidableEq ι] in
 theorem shiftE_le {B : Subalgebra O K⟦X⟧} (hB : invL l (A O K) ≤ B)
     (W : Submodule B (Vec K a ι)) {i j : ℤ} (h : i ≤ j) : shiftE l e j W ≤ shiftE l e i W := by
   intro v hv
@@ -57,8 +61,8 @@ variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Comple
   [IsUnitBall O K] {l e a : ℕ} [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a]
   [TameDescentExponentData K l e a] {ι κ : Type} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] {η H : ℕ}
 
-omit [CompleteSpace K] in
 
+omit [CompleteSpace K] in
 theorem EN_mem_shiftE_Man (D : BKDat O K l e a ι η H) (k : ℤ) {y : Vec K a ι}
     (hy : y ∈ shiftE l e k (D.Mext (Rpi O K l e))) : D.EN y ∈ shiftE l e k (D.Mext (Rpi O K l e)) := by
   rw [mem_shiftE] at hy ⊢
@@ -89,8 +93,8 @@ variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Comple
 
 section Proj
 
-variable (l e) in
 
+variable (l e) in
 noncomputable def cst : ℕ → K
   | 0 => 1
   | n + 1 => (((n + 1 : ℕ) : ℤ) * e * l : ℤ) * cst n
@@ -122,7 +126,7 @@ theorem app_proj {Q : PhiMod O K l e a κ} (F : Hom P Q) (n : ℕ) (v : Vec K a 
   induction n with
   | zero => rfl
   | succ n ih =>
-    rw [proj_succ, proj_succ, map_add, Hom.app_EN, LinearMap.map_smul_of_tower, ih]
+    rw [proj_succ, proj_succ, map_add (f := _), Hom.app_EN, LinearMap.map_smul_of_tower, ih]
 
 theorem proj_mem_shiftE_Lan (D : BKDat O K l e a ι η H) (n : ℕ) {x : Vec K a ι}
     (hx : x ∈ shiftE l e 1 (D.ext (Rpi O K l e))) :
@@ -234,7 +238,7 @@ theorem app_mem_shiftE {P : PhiMod O K l e a ι} {Q : PhiMod O K l e a κ} (F : 
 theorem app_mem_filL {P : PhiMod O K l e a ι} {Q : PhiMod O K l e a κ} (F : Hom P Q) (k : ℤ)
     {v : Vec K a ι} (hv : v ∈ P.filL k) : F.app v ∈ Q.filL k := by
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hv
-  rw [map_add]
+  rw [map_add (f := _)]
   exact add_mem (Submodule.mem_sup_left (Submodule.mem_inf.2
       ⟨F.app_mem_ext (le_away _ _) hy.1,
         app_mem_shiftE F (fun v hv => F.app_mem_Mext (le_away _ _) hv) k hy.2⟩))
@@ -257,7 +261,7 @@ theorem mem_filL_of_app_mem (D₀ : BKDat O K l e a ι η H) (D₁ : BKDat O K l
   have h1 := proj_mem_shiftE_Man D₁ N k hyM'
   have h3 := mem_shiftE_Man_of_Lan D₁ (k := k) (by omega) (proj_mem_shiftE_Lan D₁ N hz')
   have hw : F.app (proj D₀.toPhiMod N x) ∈ shiftE l e k (D₁.Mext (Rpi O K l e)) := by
-    rw [app_proj, ← hyz, map_add]
+    rw [app_proj, ← hyz, map_add (f := _)]
     exact add_mem h1 h3
   have hw' := mem_of_app_mem F n hΛ k hw
   have hs := proj_sub_mem D₀ N hxL
@@ -282,8 +286,8 @@ theorem mem_filL_of_app_mem (D₀ : BKDat O K l e a ι η H) (D₁ : BKDat O K l
 
 end GlobalTheory.BK.SubJumps
 
-open GlobalTheory.BK in
 
+open GlobalTheory.BK in
 theorem GlobalTheory.BK.jumps_subset_of_split_mono : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrametricDist K] [CompleteSpace K] [Algebra O K] [IsUnitBall O K] (l e a : ℕ) [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] (ι κ : Type) [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] (η H : ℕ) (D₀ : BKDat O K l e a ι η H) (D₁ : BKDat O K l e a κ η H) (F : GlobalTheory.BK.Hom D₀.toPhiMod D₁.toPhiMod) (n : ℕ), (∀ τ : ZMod a, ∃ Λ : Matrix ι κ K⟦X⟧, (∀ i k, Λ i k ∈ A O K) ∧ Λ * F.mat τ = (l : K) ^ n • (1 : Matrix ι ι K⟦X⟧)) → D₀.jumps ⊆ D₁.jumps := by
   intro O K _ _ _ _ _ _ l e a _ _ _ _ _ ι κ _ _ _ _ η H D₀ D₁ F n hΛ i hi h1
   apply hi

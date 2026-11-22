@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.InflationRestriction.Transgression
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.Transgression
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -36,11 +41,11 @@ theorem cohomologyRes_π (y : cocycles A 1) :
 
 theorem isTgLift_cocycleOneApplyG (y : cocycles A 1) :
     IsTgLift A N (cocycleOneApply A N ((cocyclesMapAlong N.subtype (continuous_subgroup_subtype N)
-      (𝟙 _) 1).hom y)) (cocycleOneApplyG A y) where
-  map_one := cocycle_one_apply_one A (iCycles_d_apply _ 1 2 y)
-  mul_right g n := by
+      (𝟙 _) 1).hom y)) (cocycleOneApplyG A y) := by
+  refine ⟨cocycle_one_apply_one A (iCycles_d_apply _ 1 2 y), ?_, ?_⟩
+  · intro g n
     rw [cocycleOneApply_cocyclesMapAlong, cocycleOneApplyG_mul]
-  conj h n := by
+  · intro h n
     rw [cocycleOneApply_cocyclesMapAlong, cocycleOneApply_cocyclesMapAlong]
     have e : h * (GroundTheory.GroupCoh.conjHom N h n : G) = n * h := by
       simp only [GroundTheory.GroupCoh.coe_conjHom_apply]; group
@@ -95,8 +100,8 @@ section Exactness
 
 variable [CompactSpace G] [TotallyDisconnectedSpace G] (hN : IsClosed (N : Set G))
 
-include hN in
 
+include hN in
 theorem cohomologyInfl_transgression (h : cohomologyConjInvariants A N 1) :
     (cohomologyInfl A N 2).hom (transgression A N hN h) = 0 := by
   obtain ⟨z, y, hy, hyc, -, ht⟩ := isTransgression_transgression A N hN h

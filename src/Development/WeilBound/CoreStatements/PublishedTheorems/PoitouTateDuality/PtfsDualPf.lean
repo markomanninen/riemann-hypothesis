@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
-import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,8 @@ variable {Γ H : Type} [Group Γ] [Group H] [TopologicalSpace Γ] [TopologicalSp
   (hM : ∀ g m, eM (ρ g m) = A.ρ (θ g) (eM m)) (rr : ZMod N ≃+ D.V)
   (hr : ∀ g c, D.ρ (θ g) (rr c) = rr ((χ g : ZMod N) * c))
 
-include hM hr in
 
+include hM hr in
 theorem dualGen : ∃ eD : TDual (ZMod N) M ≃+ (dualRep D A).V,
     (∀ g f, eD (twDual χ ρ g f) = (dualRep D A).ρ (θ g) (eD f)) ∧
       ∀ f m, (eD f : A.V →ₗ[ULift.{0} ℤ] D.V) (eM m) = rr (f m) := by
@@ -81,7 +85,7 @@ theorem dualGen : ∃ eD : TDual (ZMod N) M ≃+ (dualRep D A).V,
         rw [AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply]
       map_add' := fun f f' => LinearMap.ext fun a => by
         show rr ((f + f') (eM.symm a)) = rr (f (eM.symm a)) + rr (f' (eM.symm a))
-        rw [← map_add]
+        rw [← map_add (f := _)]
         rfl }
   refine ⟨eD, fun g f => ?_, fun f m => ?_⟩
   · refine LinearMap.ext fun a => ?_
@@ -102,8 +106,8 @@ theorem exists_root_of_primitive {L : Type} [Field L] {N : ℕ} (hN0 : N ≠ 0) 
       rw [Units.val_pow_eq_pow_val, IsUnit.unit_spec, hz.pow_eq_one, Units.val_one]))⟩,
     IsUnit.unit_spec _⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem gsRoots_act_rootOf (Kf : FiniteSubfield) [NumberField Kf.1] [IsAlgClosure Kf.1 (AlgebraicClosure ℚ)]
     (S : Finset (HeightOneSpectrum (𝓞 Kf.1))) {l r : ℕ} [Fact l.Prime] [NeZero (l ^ r)]
     (ζ : AlgebraicClosure ℚ) (hζ : IsPrimitiveRoot ζ (l ^ r))

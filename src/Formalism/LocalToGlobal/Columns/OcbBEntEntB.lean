@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.ChainOneB
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainOneB
+
+@[expose] public section
 
 noncomputable section
 

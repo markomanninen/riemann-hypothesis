@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AnalyticVectorExponentialSeriesStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SmoothVectorsInvariantSubspaceStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVectorStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionAdditiveStatement
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.CommutatorAdjointHolds
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AnalyticVectorExponentialSeriesStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SmoothVectorsInvariantSubspaceStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVectorStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionAdditiveStatement
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.CommutatorAdjointHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,15 +18,16 @@ open Topology Filter
 
 namespace GlobalTheory.CompanionTheory.Hypotheses₂.HCA.AnalyticWords
 
-variable {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-
 local notation "Jε" => ReciprocityTheory.ChartRestriction.DS.Jm
+
+variable {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 def projJ (ε : Fin n → Bool) (Y : Matrix (Fin n) (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ :=
   (1 / 2 : ℝ) • (Y - Jε ε * Yᴴ * Jε ε)
 
 theorem Jm_herm (ε : Fin n → Bool) : (Jε ε)ᴴ = Jε ε := by
-  simp only [ReciprocityTheory.ChartRestriction.DS.Jm, diagonal_conjTranspose]
+  delta ReciprocityTheory.ChartRestriction.DS.Jm
+  rw [diagonal_conjTranspose]
   congr 1; funext a; by_cases h : ε a <;> simp [h]
 
 theorem inG_projJ (ε : Fin n → Bool) (Y : Matrix (Fin n) (Fin n) ℂ) : ReciprocityTheory.ChartRestriction.DS.inG ε (projJ ε Y) := by
@@ -75,7 +80,8 @@ theorem mnorm_projL_le (ε : Fin n → Bool) (Y : Fin n → Fin n → ℂ) : mno
     have e : projL ε Y a b = (1 / 2 : ℝ) • (Y a b - (if ε a = true then (1 : ℂ) else -1) * star (Y b a) *
         (if ε b = true then (1 : ℂ) else -1)) := by
       show projJ ε (Matrix.of Y) a b = _
-      simp only [projJ, ReciprocityTheory.ChartRestriction.DS.Jm, Matrix.smul_apply, Matrix.sub_apply, Matrix.mul_diagonal,
+      delta projJ ReciprocityTheory.ChartRestriction.DS.Jm
+      simp only [Matrix.smul_apply, Matrix.sub_apply, Matrix.mul_diagonal,
         Matrix.diagonal_mul, conjTranspose_apply, Matrix.of_apply]
     rw [e, norm_smul]
     have h3 : ‖Y a b - (if ε a = true then (1 : ℂ) else -1) * star (Y b a) *
@@ -141,12 +147,12 @@ def act (hG : IsLinRed (UJset ε)) (hrep : Formalism.QuantumDeterminants.IsCRepO
   map_add' Y Z := by
     refine LinearMap.ext fun x => Subtype.ext ?_
     show dRep π (projL ε (Y + Z)) x = dRep π (projL ε Y) x + dRep π (projL ε Z) x
-    rw [map_add]
+    rw [(projL ε).map_add]
     exact (GlobalTheory.T.derived_action_additive hG hrep x.2 x.2 (projL_mem ε Y) (projL_mem ε Z)).1
   map_smul' r Y := by
     refine LinearMap.ext fun x => Subtype.ext ?_
     show dRep π (projL ε (r • Y)) x = r • dRep π (projL ε Y) x
-    rw [map_smul]
+    rw [(projL ε).map_smul]
     exact dRep_smul hG hrep x.2 (projL_mem ε Y) r
 
 theorem word_eq (hG : IsLinRed (UJset ε)) (hrep : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) π)
@@ -155,7 +161,7 @@ theorem word_eq (hG : IsLinRed (UJset ε)) (hrep : Formalism.QuantumDeterminants
   induction l with
   | nil => simp
   | cons a l ih =>
-    simp only [List.map_cons, List.prod_cons, List.foldr_cons, Module.End.mul_apply]
+    simp only [List.map_cons, List.prod_cons, List.foldr_cons, mul_apply_eq_comp]
     rw [← ih]
     rfl
 
@@ -176,14 +182,14 @@ theorem exists_series [CompleteSpace H] (hrep : Formalism.QuantumDeterminants.Is
   obtain ⟨C, hC, hb⟩ := hw
   let v' : smoothSub hG hrep := ⟨v, hs⟩
   let ev : Module.End ℝ (smoothSub hG hrep) →ₗ[ℝ] H := (smoothSub hG hrep).subtype ∘ₗ LinearMap.applyₗ v'
-  let q : ∀ m : ℕ, MultilinearMap ℝ (fun _ : Fin m => Fin n → Fin n → ℂ) H := fun m =>
+  let q : ∀ m : ℕ, (Fin m → Fin n → Fin n → ℂ) →ₘₗ[ℝ] H := fun m =>
     ((m.factorial : ℝ)⁻¹) • ev.compMultilinearMap
       ((MultilinearMap.mkPiAlgebraFin ℝ m (Module.End ℝ (smoothSub hG hrep))).compLinearMap fun _ => act hG hrep)
   have hq : ∀ m (Y : Fin m → Fin n → Fin n → ℂ), q m Y =
       ((m.factorial : ℝ)⁻¹) • (List.ofFn fun i => projL ε (Y i)).foldr (dRep π) v := fun m Y => by
     have h := word_eq hG hrep (List.ofFn Y) v'
     simp only [List.map_ofFn] at h
-    simp only [q, MultilinearMap.smul_apply, LinearMap.compMultilinearMap_apply,
+    simp only [q, smul_apply, LinearMap.compMultilinearMap_apply,
       MultilinearMap.compLinearMap_apply, MultilinearMap.mkPiAlgebraFin_apply]
     congr 1
   have hqb : ∀ m (Y : Fin m → Fin n → Fin n → ℂ), ‖q m Y‖ ≤ C ^ (m + 1) * ((n : ℝ) ^ 2) ^ m * ∏ i, ‖Y i‖ := by
@@ -197,7 +203,7 @@ theorem exists_series [CompleteSpace H] (hrep : Formalism.QuantumDeterminants.Is
     rw [hq, norm_smul, norm_inv, Real.norm_natCast, inv_mul_le_iff₀ hf]
     refine h.trans ?_
     have h2 : ∏ i, (mnorm ∘ fun i => projL ε (Y i)) i ≤ ((n : ℝ) ^ 2) ^ m * ∏ i, ‖Y i‖ := by
-      refine (Finset.prod_le_prod (fun i _ => mnorm_nonneg _) fun i _ => mnorm_projL_le ε (Y i)).trans (le_of_eq ?_)
+      refine (Finset.prod_le_prod₀ (fun i _ => mnorm_nonneg _) fun i _ => mnorm_projL_le ε (Y i)).trans (le_of_eq ?_)
       rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     refine (mul_le_mul_of_nonneg_left h2 (by positivity)).trans (le_of_eq (by ring))
   let p : FormalMultilinearSeries ℝ (Fin n → Fin n → ℂ) H := fun m => (q m).mkContinuous _ (hqb m)

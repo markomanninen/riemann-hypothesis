@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Forms GlobalTheory.Mem.Col2
 
 namespace GlobalTheory.Mem.Col2.LRank
 
-open scoped TensorProduct in
 
+open scoped TensorProduct in
 theorem natCard_quot {R N : Type} [CommRing R] [IsDomain R] [AddCommGroup N] [Module R N]
     [Module.Finite R N] [Module.Projective R N] (I : Ideal R) [Finite (R ⧸ I)] :
     Nat.card (N ⧸ (I • ⊤ : Submodule R N)) = Nat.card (R ⧸ I) ^ Module.finrank R N := by
@@ -46,26 +50,28 @@ theorem finrank_of_card {F V : Type} [Field F] [Finite F] [AddCommGroup V] [Modu
   rw [h] at h2
   exact (Nat.pow_right_injective h1 h2).symm
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem finrank_red {E : Type} [Field E] [NumberField E] {n : ℕ} (N : Submodule (𝓞 E) (Fin n → E))
-    (hN : Submodule.IsLattice E N) (P : HeightOneSpectrum (𝓞 E)) :
+    (hN : Submodule.IsFullLattice E N) (P : HeightOneSpectrum (𝓞 E)) :
     Module.finrank (Res P) (TDat.Red N P) = n := by
-  have : Module.Finite (𝓞 E) N := Module.Finite.iff_fg.2 (Submodule.IsLattice.fg (self := hN))
+  let : Submodule.IsFullLattice E N := hN
+  have : Module.Finite (𝓞 E) N := Submodule.IsLattice.finite E N
   have : Module.FinitePresentation (𝓞 E) N := Module.finitePresentation_of_finite _ _
   have : Module.Flat (𝓞 E) N := inferInstance
   have : Module.Projective (𝓞 E) N := Module.Flat.projective_of_finitePresentation
   have : Finite (𝓞 E ⧸ P.asIdeal) := Ideal.finiteQuotientOfFreeOfNeBot _ P.ne_bot
   have hr : Module.finrank (𝓞 E) N = n := by
-    simpa using finrank_of_span_top N hN.span_eq_top
+    exact (Submodule.IsFullLattice.finrank_eq E N).trans (Module.finrank_fin_fun E)
   have h := natCard_quot (R := 𝓞 E) (N := N) P.asIdeal
   rw [hr] at h
   exact finrank_of_card (F := Res P) h
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem ranks : ∀ {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {n : ℕ} {S : GStep E K n} {ST : Finset (HeightOneSpectrum (𝓞 E))} (A : TDat S ST) (T : ℕ), S.Ok → A.Ok T → (∀ P c, Module.finrank (Res P.1) (A.lv P c) = n) ∧ ∀ P c, Module.finrank (Res P.1) (A.lk P c) = n := by
   intro E K _ _ _ _ n S ST A T _ h
-  exact ⟨fun P c => finrank_red _ (h.N_lat _ _) P.1, fun P c => finrank_red _ (h.dnN_lat _ _ P) P.1⟩
+  exact ⟨fun P c => finrank_red _ (h.N_lat c.1 (S.rep c)) P.1,
+    fun P c => finrank_red _ (h.dnN_lat c.1 (S.rep c) P) P.1⟩
 
 end GlobalTheory.Mem.Col2.LRank

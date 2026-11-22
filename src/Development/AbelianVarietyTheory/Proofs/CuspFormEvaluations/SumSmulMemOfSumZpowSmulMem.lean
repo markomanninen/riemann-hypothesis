@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -20,10 +24,12 @@ theorem sum_smul_mem_of_sum_pow_smul_mem (W : Submodule K V) (S : Finset ι) (e 
     refine Set.Infinite.mono (s := {0}ᶜ) ?_ (Set.finite_singleton (0 : K)).infinite_compl
     intro u hu
     have := hφ _ (h u hu)
-    simp only [map_sum, map_smul, smul_eq_mul] at this
-    simpa [Polynomial.eval_finset_sum, mul_comm] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul] at this
+    simpa [Polynomial.eval_finsetSum, mul_comm] using this
   have := congrArg (Polynomial.lsum (R := K) (fun n => f n • (LinearMap.id : K →ₗ[K] K))) hP
-  simpa [map_sum, Polynomial.lsum_apply, Polynomial.sum_monomial_index] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, Polynomial.lsum_apply, Polynomial.sum_monomial_index] using this
 
 theorem sum_smul_mem_of_sum_zpow_smul_mem (W : Submodule K V) (S : Finset ι) (e : ι → ℤ) (v : ι → V)
     (h : ∀ u : K, u ≠ 0 → ∑ i ∈ S, u ^ e i • v i ∈ W) (f : ℤ → K) :
@@ -54,7 +60,7 @@ theorem derivation_mem_of_aeval_mem {σ : Type*} (W : Submodule K (MvPolynomial 
       (Φ P).eval (C s) = aeval (fun v => X v + s • D (X v)) P := by
     induction P using MvPolynomial.induction_on with
     | C r => simp [Φ, algHom_C]
-    | add P Q hP hQ => simp only [map_add, Polynomial.eval_add, hP, hQ]
+    | add P Q hP hQ => simp only [map_add (f := _), Polynomial.eval_add, hP, hQ]
     | mul_X P v hP =>
       rw [map_mul, map_mul, Polynomial.eval_mul, hP]
       simp only [Φ, aeval_X, Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C,
@@ -62,7 +68,7 @@ theorem derivation_mem_of_aeval_mem {σ : Type*} (W : Submodule K (MvPolynomial 
   have hco (P : MvPolynomial σ K) : (Φ P).coeff 0 = P ∧ (Φ P).coeff 1 = D P := by
     induction P using MvPolynomial.induction_on with
     | C r => simp [Φ, algHom_C, Polynomial.coeff_C]
-    | add P Q hP hQ => simp only [map_add, Polynomial.coeff_add, hP, hQ, and_self]
+    | add P Q hP hQ => simp only [map_add (f := _), Polynomial.coeff_add, hP, hQ, and_self]
     | mul_X P v hP =>
       have e : Φ (P * X v) = Φ P * Polynomial.C (X v) +
           Polynomial.X * (Φ P * Polynomial.C (D (X v))) := by
@@ -88,13 +94,11 @@ end General
 variable {R : Type*} [CommRing R] {T : Type*} {p q : ℕ} {κ : Type*}
 
 variable (R p q) in
-
 noncomputable def colDer (t : T) (k l : κ) : Derivation R (Poly R T p q κ) (Poly R T p q κ) :=
   ∑ a : Fin p, (X (xVar t a k) : Poly R T p q κ) • pderiv (xVar t a l) -
     ∑ b : Fin q, (X (yVar t b l) : Poly R T p q κ) • pderiv (yVar t b k)
 
 variable (R p q) in
-
 noncomputable def colLie (t : T) (k l : κ) : Module.End R (Poly R T p q κ) :=
   (colDer R p q t k l).toLinearMap
 
@@ -164,7 +168,6 @@ theorem colLie_monomial (t : T) (k : κ) (m : Var T p q κ →₀ ℕ) (c : R) :
     Int.cast_natCast, sub_smul, Finset.sum_smul, Nat.cast_smul_eq_nsmul]
 
 variable (R T p q κ) in
-
 theorem iSup_iInf_eigenspace_colLie :
     ⨆ μ : T → κ → ℤ, (⨅ t, ⨅ k, Module.End.eigenspace (colLie R p q t k k) (μ t k : R)) = ⊤ := by
   rw [eq_top_iff]
@@ -238,7 +241,7 @@ theorem exists_colAct_eq_aeval (t : T) {k l : κ} (hkl : k ≠ l) (s : R) :
         ext i
         simp [g₀, transvection, Matrix.one_apply, Matrix.single_apply, Pi.single_apply, eq_comm, ite_and]
         split_ifs <;> simp_all
-      rw [this, map_add, map_smul, xForm_single, xForm_single]
+      rw [this, map_add (f := _), map_smul, xForm_single, xForm_single]
       by_cases hj : j = l <;> simp [hj]
     · have : (((Pi.mulSingle t g₀ : T → GL κ R) t')⁻¹ : GL κ R).val j = Pi.single j 1 := by
         ext i
@@ -252,7 +255,7 @@ theorem exists_colAct_eq_aeval (t : T) {k l : κ} (hkl : k ≠ l) (s : R) :
         ext i
         simp [g₀, transvection, Matrix.one_apply, Matrix.single_apply, Pi.single_apply, eq_comm, ite_and]
         split_ifs <;> simp_all
-      rw [this, map_add, map_smul, yForm_single, yForm_single]
+      rw [this, map_add (f := _), map_smul, yForm_single, yForm_single]
       by_cases hj : j = k <;> simp [hj]
     · have : (fun i => (((Pi.mulSingle t g₀ : T → GL κ R) t') : GL κ R).val i j) = Pi.single j 1 := by
         ext i
@@ -319,12 +322,14 @@ theorem colLie_mem_of_colAct_mem {K : Type*} [Field K] [Infinite K] [Fintype κ]
   by_cases hkl : k = l
   · subst hkl
     have := sum_smul_mem_of_sum_zpow_smul_mem W w.support (fun m => colWeight m t k)
-      (fun m => monomial m (coeff m w)) (fun u hu => by
+      (fun m => monomial m (AddMonoidAlgebra.coeff w m)) (fun u hu => by
         obtain ⟨g, hg⟩ := exists_colAct_monomial (p := p) (q := q) t k (Units.mk0 u hu)
         have := hW g w hw
-        rw [w.as_sum, map_sum] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [w.as_sum, map_sum] at this
         simpa only [hg, Units.val_zpow_eq_zpow_val, Units.val_mk0] using this) Int.cast
-    rw [w.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [w.as_sum, map_sum]
     simpa only [colLie_monomial] using this
   · refine derivation_mem_of_aeval_mem W (colDer K p q t k l) w fun s => ?_
     obtain ⟨g, hg⟩ := exists_colAct_eq_aeval (p := p) (q := q) t hkl s

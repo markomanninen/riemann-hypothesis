@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ActsComp
-import Development.WeilBound.ThetaLifts.CartanFactorisation.UnitDef
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ActsComp
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.UnitDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,7 +143,7 @@ theorem killInf' (hU : Unimod) (hT : ThetaBasic) (hO : ArchOp) (hLie : ArchLie) 
         exact sk δ hδ x y)
       (N.comap Q.subtype ⊔ LinearMap.ker β) le_sup_right (fun δ hδ x hx y h => by
         obtain ⟨x₁, h₁, x₂, h₂, rfl⟩ := Submodule.mem_sup.1 hx
-        rw [show y = D δ hδ (x₁ + x₂) from Subtype.ext ((hD δ hδ _ _).1 h), map_add]
+        rw [show y = D δ hδ (x₁ + x₂) from Subtype.ext ((hD δ hδ _ _).1 h), map_add (f := _)]
         exact Submodule.add_mem_sup (a1.2 _ (Or.inr ⟨δ, hδ, rfl⟩) _ h₁) (a2.2 _ (Or.inr ⟨δ, hδ, rfl⟩) _ h₂)) with h | h
     · exact h (Submodule.mem_sup_left hf)
     · refine absurd ?_ (hsum N _ hN.prop.1 ((hiff _).1 a2) hN.prop.2 fun e => ht (inj (e.trans (Submodule.map_subtype_top Q).symm)))

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
-import Formalism.GelfandTransference.HadamardGelfand.Highest
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyLineUnit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
+public import Formalism.GelfandTransference.Statement
+public import Formalism.GelfandTransference.GelfandCentral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyLineUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +30,7 @@ theorem hv_ne (lam : Fin n → ℤ) : hv lam ≠ 0 := fun h =>
 
 theorem dw_w {lam : Fin n → ℤ} (h : Antitone lam) (a : Fin n) : (dw lam).w a = lam a := by
   unfold dw
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem Rm_mulVec (lam : Fin n → ℤ) {x : Mat n} (h : IsUnit x.det) (v : nablaSq ℂ n (dw lam)) :
     Rm lam x *ᵥ ((wb lam).repr v : Jd n lam → ℂ) =

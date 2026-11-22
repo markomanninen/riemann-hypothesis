@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LenCob
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActDEqOfEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LenCob
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActDEqOfEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem algebraMap_inj : Function.Injective (algebraMap ℤ_[l] O) := by
   have hk : RingHom.ker (algebraMap ℤ_[l] O) ≠ ⊥ := fun h0 => h ((RingHom.injective_iff_ker_eq_bot _).2 h0)
   have hp : (RingHom.ker (algebraMap ℤ_[l] O)).IsPrime := RingHom.ker_isPrime _
   have hm : ((⊥ : Ideal O).comap (algebraMap ℤ_[l] O)).IsMaximal := hp.isMaximal hk
-  have : (⊥ : Ideal O).IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap _ hm
+  have : (⊥ : Ideal O).IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := ℤ_[l]) ⊥ hm
   exact IsDiscreteValuationRing.not_a_field O (IsLocalRing.eq_maximalIdeal this).symm
 
 instance faithful : FaithfulSMul ℤ_[l] O := (faithfulSMul_iff_algebraMap_injective _ _).2 (algebraMap_inj O)
@@ -326,10 +330,11 @@ theorem vecS_mulVec (B : LocBridge l E Ω Gw O) {k : ℕ} (M : ↥Gw →* Matrix
   funext i
   change Br.toLLK B (∑ j, algebraMap O (FractionRing O) (M (Br.ι B g) i j) * u j) =
     ∑ j, Br.locM B M g i j * Br.toLLK B (u j)
-  simp only [map_sum, map_mul, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, h]
+
 
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem cob_of_bridge (B : LocBridge l E Ω Gw O) {k : ℕ} (M : ↥Gw →* Matrix (Fin k) (Fin k) O)
     (c : ↥Gw → KOG O k) (hc : (fun g => Br.phi B k (c (Br.ι B g))) ∈ BD (Br.lat B M)) :
     ∃ m, ∀ g, c g = WKG M g m - m := by
@@ -366,9 +371,9 @@ theorem chiRatO_apply (D : D7) (i : D.nd.Loc) (c : ℕ) (h1 : 1 ≤ c) (h2 : c �
     MonoidHom.comp_apply, ← map_zpow, Nat.cast_sub h1, Nat.cast_one]
   rfl
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem main : ∀ (D : D7) (i : D.nd.Loc) (c : ℕ) (C : Submodule (D.nd.O i) (GE D.nd → KOG (D.nd.O i) 1)), C ≤ Z1 (WKG (chiRatO D.nd i c)) → 2 ≤ c → c ≤ D.R.t → (∀ f ∈ C, ∀ (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i)), locFun i (chiRatO D.nd i c) w hw f ∈ BD (Br.locLat D.nbr i w hw (chiRatO D.nd i c))) → (∀ v, v ∉ placesOver D.host.E (D.nd.l i) → resIne i C v = ⊥) → Module.length (D.nd.O i) ↥C ≤ lenCob i (chiRatO D.nd i c) (C) + lenQ i ((D.nd.l i : ℕ) : D.nd.O i) * Formalism.GaloisCohomology.shaLen (D.nd.ldat (D.nd.l i)) ((c - 1 : ℕ) : ℤ) := by
   intro D i c C hZ h2 ht hloc hine
   obtain ⟨p, hp, hps⟩ := exists_coord (l := D.nd.l i) (D.nd.O i)
@@ -388,7 +393,7 @@ theorem main : ∀ (D : D7) (i : D.nd.Loc) (c : ℕ) (C : Submodule (D.nd.O i) (
     refine ⟨⟨(continuous_of_discreteTopology (f := fun y => p y j)).comp (hZ f.2).1, fun g h => ?_⟩,
       fun v hv g hg => ?_, fun w hw => ?_⟩
     · show p (f.1 (g * h)) j = p (f.1 g) j + twG _ _ g (p (f.1 h) j)
-      rw [(hZ f.2).2, map_add, Pi.add_apply, hact]
+      rw [(hZ f.2).2, map_add (f := _), Pi.add_apply, hact]
     · have h0 : LinearMap.funLeft (D.nd.O i) (KOG (D.nd.O i) 1) Subtype.val f.1 ∈ resIne i C v :=
         ⟨f.1, f.2, rfl⟩
       rw [hine v hv, Submodule.mem_bot] at h0

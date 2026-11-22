@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.DatumOfRecordSignature
-import Formalism.LocalToGlobal.ProjectiveLattices.SumEmbeddingsEq
-import Formalism.LocalToGlobal.ProjectiveLattices.DatMat
-import Formalism.LocalToGlobal.ProjectiveLattices.DatTheta
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.DatumOfRecordSignature
+public import Formalism.LocalToGlobal.ProjectiveLattices.SumEmbeddingsEq
+public import Formalism.LocalToGlobal.ProjectiveLattices.DatMat
+public import Formalism.LocalToGlobal.ProjectiveLattices.DatTheta
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,8 @@ theorem hT_emb (τ : D.host.E →+* ℂ) (v w : (D.sp.W j).V) :
     τ ((D.sp.W j).hT v w) = star (fun i => τ ((D.sp.W j).frame.repr v i)) ⬝ᵥ
       (GW D j τ *ᵥ fun i => τ ((D.sp.W j).frame.repr w i)) := by
   rw [sesq_repr (D.sp.W j).hT (D.sp.W j).frame v w]
-  simp only [map_sum, map_mul, emb_star, dotProduct, mulVec, GW, HSpace.gram, Matrix.map_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, emb_star, dotProduct, mulVec, GW, HSpace.gram, Matrix.map_apply,
     Pi.star_apply, Complex.star_def, Finset.mul_sum]
   refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun k _ => by ring))
 
@@ -122,17 +127,17 @@ theorem efR_formula (ε : ℤ) (hI : DatInt D j) (x y : ℝ ⊗[ℤ] latW D j) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | add x1 x2 h1 h2 =>
-    rw [map_add, LinearMap.add_apply, h1, h2, ← Finset.sum_add_distrib]
+    rw [map_add (f := _), LinearMap.add_apply, h1, h2, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl (fun τ _ => ?_)
-    simp only [map_add, Pi.add_apply, star_add, add_dotProduct, mul_add, Complex.add_re]
+    simp only [map_add (f := _), Pi.add_apply, star_add, add_dotProduct, mul_add, Complex.add_re]
     try ring
   | tmul a v =>
     induction y using TensorProduct.induction_on with
     | zero => simp
     | add y1 y2 h1 h2 =>
-      rw [map_add, h1, h2, ← Finset.sum_add_distrib]
+      rw [map_add (f := _), h1, h2, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl (fun τ _ => ?_)
-      simp only [map_add, Pi.add_apply, mulVec_add, dotProduct_add, mul_add, Complex.add_re]
+      simp only [map_add (f := _), Pi.add_apply, mulVec_add, dotProduct_add, mul_add, Complex.add_re]
       try ring
     | tmul a' w =>
       rw [LinearMap.BilinForm.baseChange_tmul, thW_tmul, thW_tmul]
@@ -221,7 +226,7 @@ theorem thW_AW (D : D7) (j : ℕ) (a : 𝓞 D.host.E) (A : ℝ ⊗[ℤ] latW D j
     try rfl
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add z1 z2 h1' h2' => rw [map_add, map_add, h1', h2', map_add (thW D j), map_add (AW D j a)]
+  | add z1 z2 h1' h2' => rw [map_add (f := _), map_add (f := _), h1', h2', map_add (thW D j), map_add (AW D j a)]
   | tmul x m =>
     have e : x ⊗ₜ[ℤ] m = x • ((1 : ℝ) ⊗ₜ[ℤ] m) := by
       rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -383,8 +388,5 @@ theorem datDom_holds (D : D7) (j : ℕ) (hj : 1 ≤ j ∧ j ≤ D.R.m) (hI : Dat
   · rcases hε with rfl | rfl
     · exact absurd ⟨hI, by rwa [one_smul] at hd⟩ h
     · exact hd
-
-def datumW (D : D7) (j : ℕ) (hj : 1 ≤ j ∧ j ≤ D.R.m) : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum (hostOfRecord D) :=
-  datumOfRecord D j hj Formalism.IndefR.Fin.factPrincipalDatum (datDom_holds D j hj _)
 
 end Formalism.L2.Pj

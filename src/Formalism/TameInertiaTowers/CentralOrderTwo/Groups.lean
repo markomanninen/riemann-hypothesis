@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.TameInertiaTowers.StatementGroup
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.StatementGroup
+
+@[expose] public section
 
 open Subgroup
 open scoped commutatorElement
@@ -139,7 +143,7 @@ theorem commGen : CommGen := by
     _ ≤ Nat.card (∀ i, Subgroup.zpowers (c i)) :=
         Nat.card_le_card_of_surjective _ φ.rangeRestrict_surjective
     _ = ∏ i, Nat.card (Subgroup.zpowers (c i)) := Nat.card_pi
-    _ ≤ ∏ _i : Fin 5, 2 := Finset.prod_le_prod (fun _ _ => Nat.zero_le _) (fun i _ => hfin i)
+    _ ≤ ∏ _i : Fin 5, 2 := Finset.prod_le_prod₀ (fun _ _ => Nat.zero_le _) (fun i _ => hfin i)
     _ = 2 ^ 5 := by simp
 
 theorem rankBound : RankBound := by

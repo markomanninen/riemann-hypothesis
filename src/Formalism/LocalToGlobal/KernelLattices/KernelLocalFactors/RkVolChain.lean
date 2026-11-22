@@ -1,65 +1,70 @@
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolKerStd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
-import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.LocNormAmbOfOf
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseLinkOfNonzeroDelta
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseExP
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ProvisionExtensionLink
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.Imports
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.DetIdealsKernelNormOne
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.GMConjTranspose
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MemSmulLat
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.NormOneUnitIdeal
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.Reduction
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.EqPOf
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SplitPairOfGen
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JArith
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JFinal
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantOfTrianglesData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.ZeroInjectionMemFourthPower
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.OneEntryMem
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.PullMulRight
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantHolds
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JNoEig
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JNormOne
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MemStandardThetaLatticeIffAdelicIdeal
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.FinrankRow
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MuConc
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MuFinal
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.NormOneUnitIdealAlt
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.CharacterFactorUnitaryAction
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.ReductionOf
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqFacts
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqFinal
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLComm
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLInput
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLLaw
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLMain
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLMat
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLTop
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.PolFamInhabited
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.RightMoveTrianglesOfUnit
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.Family
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.HfArith
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndepOfGen
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.HermitianPairingIntegral
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.HfTrace
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.AmbOfENeSd
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IopIso
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IopNorm
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsometryLinkageTrivialLevel
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsometryLinkageAtSplitPrime
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkChi
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndep
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThU
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.SelfDual
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.Smooth
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdLat
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdOKP
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ThIndep
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.RkVolKerStd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.LocNormAmbOfOf
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseLinkOfNonzeroDelta
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseExP
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ProvisionExtensionLink
+public import Mathlib
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CardTrivialFirstComponent
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Development.AutomorphicArithmetic.WeightCongruences.IsRootOfIntegral
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.MuCardLeTwo
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.DetIdealsKernelNormOne
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.GMConjTranspose
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MemSmulLat
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.NormOneUnitIdeal
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.Reduction
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.EqPOf
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SplitPairOfGen
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JArith
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JFinal
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantOfTrianglesData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.ZeroInjectionMemFourthPower
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.OneEntryMem
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.PullMulRight
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantHolds
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JNoEig
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JNormOne
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MemStandardThetaLatticeIffAdelicIdeal
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.FinrankRow
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MuConc
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MuFinal
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.NormOneUnitIdealAlt
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.CharacterFactorUnitaryAction
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.ReductionOf
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqFacts
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqFinal
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLComm
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLInput
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLLaw
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLMain
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLMat
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLTop
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.RightMoveTrianglesOfUnit
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.Family
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.HfArith
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndepOfGen
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.HermitianPairingIntegral
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.HfTrace
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.AmbOfENeSd
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IopIso
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IopNorm
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PFourSq
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndep
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThU
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.SelfDual
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.Smooth
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdLat
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.StdOKP
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ThIndep
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -91,7 +96,7 @@ variable (H : Sesq V) (H' : Sesq W) (hH : ∀ x y, H x y = H' (e x) (e y))
 include hH
 
 theorem opU_pb (x z : V) (F : W → ℂ) : opU H x (fun v => F (e v)) z = opU H' (e x) F (e z) := by
-  simp only [opU, map_add, hH]
+  simp only [opU, map_add (f := _), hH]
 
 theorem herm_pb (h : IsHerm H') : IsHerm H := fun x y => by rw [hH, hH]; exact h _ _
 
@@ -100,8 +105,8 @@ theorem semi_pb {Λ : AddSubgroup W} {α : V → ℂ} {α' : W → ℂ} (hα : �
   refine ⟨fun x hx => by rw [hα x hx]; exact h.1 _ hx, fun x hx y hy => ?_⟩
   have hx' : e x ∈ Λ := hx
   have hy' : e y ∈ Λ := hy
-  have hxy : e (x + y) ∈ Λ := by rw [map_add]; exact Λ.add_mem hx' hy'
-  rw [hα _ hxy, hα x hx', hα y hy', map_add, h.2 _ hx' _ hy']
+  have hxy : e (x + y) ∈ Λ := by rw [map_add (f := _)]; exact Λ.add_mem hx' hy'
+  rw [hα _ hxy, hα x hx', hα y hy', map_add (f := _), h.2 _ hx' _ hy']
   simp only [altE, hH]
 
 theorem fixed_pb {Λ : AddSubgroup W} {α : V → ℂ} {α' : W → ℂ} (hα : ∀ x, e x ∈ Λ → α x = α' (e x)) {F : W → ℂ}

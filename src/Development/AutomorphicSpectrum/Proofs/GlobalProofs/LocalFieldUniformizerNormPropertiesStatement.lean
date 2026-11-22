@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocalFieldUniformizerNormProperties
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InstBorelGL
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocalFieldUniformizerNormProperties
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InstBorelGL
+
+@[expose] public section
+
 open MeasureTheory Matrix GlobalTheory.CompanionTheory.QL
 open scoped ComplexConjugate ValuativeRel
 set_option maxHeartbeats 1000000 in

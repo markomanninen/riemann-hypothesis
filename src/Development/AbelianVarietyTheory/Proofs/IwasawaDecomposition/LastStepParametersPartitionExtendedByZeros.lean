@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HcParameterEAddHalfShiftLeBSucc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HcParameterEAddHalfShiftLeBSucc
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.Chain GlobalTheory.CompactHowe Matrix
 open scoped TensorProduct
@@ -125,7 +129,7 @@ lemma partition {n t : ℕ} (e s p : ℤ) (ht : (t : ℤ) = 2 * s + 1) (hn : (n 
     · omega
   · intro b hb
     simp only [ν]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
   · intro a
     have := a.2
     rw [lowK_allPos, hν _ a (by simp [Fin.val_rev]; omega), hlz, hnR]
@@ -137,12 +141,12 @@ lemma partition {n t : ℕ} (e s p : ℤ) (ht : (t : ℤ) = 2 * s + 1) (hn : (n 
     by_cases hc : (b : ℕ) < t
     · have h0 : ν (Fin.rev b) = 0 := by
         simp only [ν]
-        rw [dif_neg (by simp only [Fin.val_rev]; omega)]
+        rw [dite_eq_right (by simp only [Fin.val_rev]; omega)]
       rw [dif_pos hc, h0]
       push_cast
       rw [htR, hnR]
       ring
-    · rw [dif_neg hc, hν _ ⟨b - t, by omega⟩ (by simp only [Fin.val_rev]; omega)]
+    · rw [dite_eq_right hc, hν _ ⟨b - t, by omega⟩ (by simp only [Fin.val_rev]; omega)]
       simp only
       rw [Nat.cast_sub (by omega)]
       push_cast

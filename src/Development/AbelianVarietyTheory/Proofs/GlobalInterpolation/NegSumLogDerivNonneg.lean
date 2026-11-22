@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
@@ -13,7 +17,7 @@ theorem hasSum_re_neg_logDeriv (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ
   rw [LSeries_twist_vonMangoldt_eq χ hs, ← deriv_LFunction_eq_deriv_LSeries χ hs,
     ← LFunction_eq_LSeries χ hs] at h
   have h' := Complex.hasSum_re h
-  convert h' using 1
+  convert (preTransparency := .reducible) h' using 1
   · funext n
     rcases eq_or_ne n 0 with rfl | hn
     · simp

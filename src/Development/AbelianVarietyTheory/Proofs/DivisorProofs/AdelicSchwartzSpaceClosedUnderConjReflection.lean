@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 namespace AdelicReflection
 section
@@ -58,11 +62,11 @@ theorem schA_conj_neg : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fi
   | add a b _ _ ha hb =>
     convert Submodule.add_mem _ ha hb using 1
     funext x
-    simp
+    simp only [Pi.add_apply, map_add]
   | smul c a _ ha =>
     convert Submodule.smul_mem _ (starRingEnd ℂ c) ha using 1
     funext x
-    simp
+    simp only [Pi.smul_apply, smul_eq_mul, map_mul]
 
 end GlobalTheory.CompanionTheory.AdelicReflect
 

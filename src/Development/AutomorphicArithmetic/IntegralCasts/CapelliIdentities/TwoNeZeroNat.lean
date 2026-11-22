@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.hecke_existence.HasChar :
     ℕ → {M : ℕ} → DirichletCharacter ℂ M → (UpperHalfPlane → ℂ) → Prop :=

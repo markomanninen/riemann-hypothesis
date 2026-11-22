@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RegularTwistedOrbitLocalFinitenessStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralPropertiesStatement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RegularTwistedOrbitLocalFinitenessStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralPropertiesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ private lemma out_orbit {G : Type} [Group G] (θ : G →* G) (K : Subgroup G) (h
     ∃ k ∈ K, ∃ k' ∈ K,
       (Quotient.out (DoubleCoset.mk (twCent θ δ) K x))⁻¹ * δ * θ (Quotient.out (DoubleCoset.mk (twCent θ δ) K x)) =
         k * (x⁻¹ * δ * θ x) * k' := by
-  obtain ⟨h, hh, k, hk, e⟩ := (DoubleCoset.eq (twCent θ δ) K _ _).1
-    (DoubleCoset.out_eq' (twCent θ δ) K (DoubleCoset.mk (twCent θ δ) K x))
+  obtain ⟨h, hh, k, hk, e⟩ := (@DoubleCoset.eq _ _ (twCent θ δ) K _ _).1
+    (DoubleCoset.out_eq' (DoubleCoset.mk (twCent θ δ) K x))
   generalize Quotient.out (DoubleCoset.mk (twCent θ δ) K x) = o at e
   have hc : h * δ = δ * θ h := hh
   refine ⟨k, hk, (θ k)⁻¹, K.inv_mem (hθ k hk), ?_⟩
@@ -39,13 +43,13 @@ private theorem orbFin_prod {G H : Type} [Group G] [Group H] [TopologicalSpace G
   have hφ : Function.Injective φ := by
     intro q q' e
     obtain ⟨e1, e2⟩ := Prod.mk.inj e
-    obtain ⟨a, ha, k, hk, f1⟩ := (DoubleCoset.eq _ _ _ _).1 e1
-    obtain ⟨b, hb, l, hl, f2⟩ := (DoubleCoset.eq _ _ _ _).1 e2
+    obtain ⟨a, ha, k, hk, f1⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 e1
+    obtain ⟨b, hb, l, hl, f2⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 e2
     have hab : (a, b) ∈ twCent (θ.prodMap θ') (δ, δ') :=
       Prod.ext (show a * δ = δ * θ a from ha) (show b * δ' = δ' * θ' b from hb)
     have key : DoubleCoset.mk (twCent (θ.prodMap θ') (δ, δ')) (K.prod K') (Quotient.out q) =
         DoubleCoset.mk (twCent (θ.prodMap θ') (δ, δ')) (K.prod K') (Quotient.out q') :=
-      (DoubleCoset.eq _ _ _ _).2 ⟨(a, b), hab, (k, l), ⟨hk, hl⟩, Prod.ext f1 f2⟩
+      (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨(a, b), hab, (k, l), ⟨hk, hl⟩, Prod.ext f1 f2⟩
     rwa [DoubleCoset.out_eq', DoubleCoset.out_eq'] at key
   refine (Set.Finite.preimage hφ.injOn ((h1 _ c1).prod (h2 _ c2))).subset ?_
   intro q hq

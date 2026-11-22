@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+
+@[expose] public section
 
 open scoped Matrix
 
@@ -22,7 +26,7 @@ theorem opClos_op (X : ActualOps k r z z' π π') (l : Fin r) (B : Submodule ℂ
     obtain ⟨js, Ψ, hΨ, rfl⟩ := hx
     exact Submodule.subset_span ⟨j :: js, Ψ, hΨ, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ a hx
 
 theorem act_mem_of_entSub {S : Type} [Fintype S] [DecidableEq S] (C : Submodule ℂ (RadSp k r z z' π π'))

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.TensorLeibnizRule
 
@@ -19,10 +23,10 @@ theorem lTensor_leibniz {R S : Type} [CommRing R] [Algebra ℂ R] [CommRing S] [
         Derivation.leibniz, smul_eq_mul, TensorProduct.tmul_add]
       rw [mul_comm r' r]
     | add y₁ y₂ h₁ h₂ =>
-      rw [mul_add, map_add, h₁, h₂, map_add, mul_add, add_mul]
+      rw [mul_add, map_add (f := _), h₁, h₂, map_add (f := _), mul_add, add_mul]
       abel
   | add x₁ x₂ h₁ h₂ =>
-    rw [add_mul, map_add, h₁, h₂, map_add, add_mul, mul_add]
+    rw [add_mul, map_add (f := _), h₁, h₂, map_add (f := _), add_mul, mul_add]
     abel
 
 end GlobalTheory.TensorLeibnizRule

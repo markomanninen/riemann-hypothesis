@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleCoefficientsAnalytic
-import Development.AutomorphicSpectrum.PublishedTheorems.Jets₂.IsPermissibleOfCentre
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviModulusOneLinearReductiveExpMulExp
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdmissibleUnitaryKFinite
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviSubmoduleDense
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsIsotypicSum
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SpecialLinearMulApplyZeroZero
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PolyGrowthOfIsometricOnK
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.RpowNegLeOfDichotomy
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AlmostIsomOfGrowth
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsUnitaryIwasawaLeviOne
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SecondCountableGrp
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVector
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionAdditive
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsBasisLieOfOrthogonal
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SumSquaresComm
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.WordBoundOfDelta
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AnalyticOnUJOfWordBound
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IterateRealSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleCoefficientsAnalytic
+public import Development.AutomorphicSpectrum.PublishedTheorems.Jets₂.IsPermissibleOfCentre
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviModulusOneLinearReductiveExpMulExp
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdmissibleUnitaryKFinite
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviSubmoduleDense
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsIsotypicSum
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SpecialLinearMulApplyZeroZero
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PolyGrowthOfIsometricOnK
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.RpowNegLeOfDichotomy
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AlmostIsomOfGrowth
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsUnitaryIwasawaLeviOne
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SecondCountableGrp
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVector
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionAdditive
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsBasisLieOfOrthogonal
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SumSquaresComm
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.WordBoundOfDelta
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AnalyticOnUJOfWordBound
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IterateRealSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,11 +122,11 @@ theorem almostIsom_of_unitary {G : Set (Matrix (Fin n) (Fin n) ℂ)} {π : Matri
     fun c x y => inner_smul_right x y c, fun x y => (inner_conj_symm y x).symm, fun x => ?_, fun x y => ?_,
     fun X hX t x => ?_⟩
   · show 1 * ‖x‖ ^ 2 ≤ (⟪x, x⟫_ℂ).re
-    rw [one_mul, inner_self_eq_norm_sq_to_K]; norm_cast
+    rw [one_mul]
+    exact (inner_self_eq_norm_sq (𝕜 := ℂ) x).ge
   · show ‖⟪x, y⟫_ℂ‖ ≤ 1 * ‖x‖ * ‖y‖
     rw [one_mul]; exact norm_inner_le_norm x y
-  · have h : ∀ u : H, (⟪u, u⟫_ℂ).re = ‖u‖ ^ 2 := fun u => by
-      rw [inner_self_eq_norm_sq_to_K]; norm_cast
+  · have h (u : H) : (⟪u, u⟫_ℂ).re = ‖u‖ ^ 2 := inner_self_eq_norm_sq (𝕜 := ℂ) u
     show (⟪π _ x, π _ x⟫_ℂ).re ≤ _ * (⟪x, x⟫_ℂ).re
     simp only [h, hU.2.1 _ (hX t) x]
     simp

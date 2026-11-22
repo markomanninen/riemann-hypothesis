@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointMemHalfPlane
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointMemHalfPlane
+
+@[expose] public section
 
 open Set Filter Topology Complex MeasureTheory intervalIntegral
 

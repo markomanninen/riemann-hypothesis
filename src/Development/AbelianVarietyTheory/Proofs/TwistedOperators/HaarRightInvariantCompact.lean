@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.UPartBot
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAdmOnOfFiniteDimensional
+module
 
-open MeasureTheory Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.FlagMeas GlobalTheory.RealInd GlobalTheory.OpTrace GlobalTheory.LeviFactor
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsStandardIndModule
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAdmOnOfFiniteDimensional
+
+@[expose] public section
+
+open MeasureTheory Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.FlagMeas GlobalTheory.RealInd GlobalTheory.OpTrace
 open GlobalTheory.AutomorphicL2Unitary (IsTopIrreducible IsIrredSubrep)
 open scoped InnerProductSpace
 open scoped Pointwise
@@ -38,7 +42,7 @@ theorem map_mul_right_eq_of_mem_compact {G : Type} [Group G] [TopologicalSpace G
   have hcOne : c = 1 := by
     have hcEq : (c : ENNReal) * μ S = 1 * μ S := by
       have hcS := hmapS
-      rw [hmapEq, Measure.smul_apply, ENNReal.smul_def, smul_eq_mul] at hcS
+      rw [hmapEq, smul_apply, ENNReal.smul_def, smul_eq_mul] at hcS
       rw [one_mul]
       exact hcS
     exact_mod_cast (ENNReal.mul_left_inj hSpos hSfin).1 hcEq

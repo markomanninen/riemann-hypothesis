@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtChart
+
+@[expose] public section
+
 open TensorProduct
 
 noncomputable section
@@ -8,12 +13,12 @@ namespace GlobalTheory.DenseSec
 theorem locQuot_finiteType_formallyUnramified (R : Type) [CommRing R] (A : Type) [CommRing A] [Algebra R A]
     (g : ℕ) (t : Fin g → A) (h : A) (hE : GlobalTheory.DenseSec.EtChart R A t h) (Ω : Type) [Field Ω] [Algebra R Ω]
     (I : Ideal (TensorProduct R Ω A)) :
-    letI : Algebra (MvPolynomial (Fin g) Ω) (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) :=
+    (letI : Algebra (MvPolynomial (Fin g) Ω) (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) :=
       (MvPolynomial.aeval (fun i => algebraMap (TensorProduct R Ω A ⧸ I)
         (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) (Ideal.Quotient.mk I (1 ⊗ₜ[R] t i)))).toRingHom.toAlgebra
     Algebra.FiniteType (MvPolynomial (Fin g) Ω) (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) ∧
       Algebra.FormallyUnramified (MvPolynomial (Fin g) Ω)
-        (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) := by
+        (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h)))) := by
   letI algPD : Algebra (MvPolynomial (Fin g) Ω) (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) :=
     (MvPolynomial.aeval (fun i => algebraMap (TensorProduct R Ω A ⧸ I)
       (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) (Ideal.Quotient.mk I (1 ⊗ₜ[R] t i)))).toRingHom.toAlgebra
@@ -33,7 +38,8 @@ theorem locQuot_finiteType_formallyUnramified (R : Type) [CommRing R] (A : Type)
   have hu : IsUnit (f h) := by rw [hf]; exact IsLocalization.Away.algebraMap_isUnit _
   let ψ0 : Localization.Away h →+* Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h)) :=
     IsLocalization.Away.lift h hu
-  have hψ0 : ∀ a, ψ0 (algebraMap A (Localization.Away h) a) = f a := fun a => IsLocalization.lift_eq _ _
+  have hψ0 : ∀ a, ψ0 (algebraMap A (Localization.Away h) a) = f a :=
+    IsLocalization.Away.lift_eq h hu
   have hΩ : ∀ w : Ω, algebraMap Ω (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) w =
       algebraMap (TensorProduct R Ω A ⧸ I) (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h)))
         (Ideal.Quotient.mk I (w ⊗ₜ[R] 1)) := by
@@ -64,15 +70,14 @@ theorem locQuot_finiteType_formallyUnramified (R : Type) [CommRing R] (A : Type)
       algebraMap _ (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h))) x ∈ Φ.range := by
     intro x
     obtain ⟨b, rfl⟩ := Ideal.Quotient.mk_surjective x
-    induction b using TensorProduct.induction_on with
-    | zero => simp
+    induction b using TensorProduct.inductionOn with
     | tmul w a =>
       refine ⟨MvPolynomial.C w ⊗ₜ algebraMap A _ a, ?_⟩
       show Φ (MvPolynomial.C w ⊗ₜ algebraMap A _ a) = _
       rw [hΦ, hψ0, hf]
       show MvPolynomial.aeval _ (MvPolynomial.C w) * _ = _
       rw [MvPolynomial.aeval_C, hΩ, ← map_mul, ← map_mul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-    | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+    | add x y hx hy => rw [RingHom.map_add (Ideal.Quotient.mk I), RingHom.map_add (algebraMap (Ω ⊗[R] A ⧸ I) (Localization.Away (Ideal.Quotient.mk I (1 ⊗ₜ[R] h)))) ]; exact add_mem hx hy
   have hsurj : Function.Surjective Φ := by
     intro z
     obtain ⟨⟨x, s⟩, rfl⟩ := IsLocalization.mk'_surjective

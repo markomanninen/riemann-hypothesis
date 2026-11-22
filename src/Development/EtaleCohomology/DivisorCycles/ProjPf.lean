@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCount
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCount
+
+@[expose] public section
 
 open Matrix Polynomial PositivityTheory.AutomorphicGaloisHodgeTate.Div
 namespace LateralTheory.DivDb.ProjPf
@@ -74,7 +78,8 @@ theorem Proj_of : Proj := by
       apply V; intro k
       simp only [hb, eval_sub, eval_finsetSum, evb e he, eval_one]
       simp
-    rw [map_sub, map_one, map_sum, sub_eq_zero] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_one, map_sum, sub_eq_zero] at h
     exact h
   · intro h0
     have h1 : minpoly C X ∣ b i := (minpoly.dvd_iff).2 h0
@@ -94,7 +99,8 @@ theorem Proj_of : Proj := by
       apply V; intro k
       simp only [hb, eval_sub, eval_X, eval_finsetSum, eval_mul, eval_C, evb e he]
       simp
-    rw [map_sub, aeval_X, map_sum, sub_eq_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, aeval_X, map_sum, sub_eq_zero] at this
     refine this.trans (Finset.sum_congr rfl fun i _ => ?_)
     rw [map_mul, aeval_C, Algebra.smul_def]
   · exact Polynomial.aeval_mem_adjoin_singleton C _

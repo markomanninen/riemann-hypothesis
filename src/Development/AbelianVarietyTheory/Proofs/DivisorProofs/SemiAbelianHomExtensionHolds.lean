@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.SemiabelianTori.GeometricallyConnectedSplitTorusAff
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.GlobalTheory.ImportsAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.SemiabelianTori.GeometricallyConnectedSplitTorusAff
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.GlobalTheory.ImportsAlt
+
+@[expose] public section
 
 namespace GlobalTheory
 

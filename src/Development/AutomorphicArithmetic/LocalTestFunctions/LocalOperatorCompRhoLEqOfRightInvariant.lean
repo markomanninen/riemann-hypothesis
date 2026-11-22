@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.NormIntLe
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HomConv
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.NormIntLe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HomConv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -15,7 +19,7 @@ private theorem map_right_eq_of_CO {G : Type} [Group G] [TopologicalSpace G] [Is
     [LocallyCompactSpace G] [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G]
     (m : Measure G) [m.IsHaarMeasure] {J : Subgroup G} (hJ : CO J) {k : G} (hk : k ∈ J) :
     Measure.map (· * k) m = m := by
-  have hcont : Measurable (· * k : G → G) := (continuous_mul_right k).measurable
+  have hcont : Measurable (· * k : G → G) := (continuous_mul_const k).measurable
   haveI : (Measure.map (· * k) m).IsHaarMeasure := Measure.isHaarMeasure_map_mul_right m k
   have h := Measure.isMulLeftInvariant_eq_smul (Measure.map (· * k) m) m
   have hmeas : MeasurableSet (J : Set G) := hJ.2.measurableSet
@@ -35,7 +39,7 @@ private theorem map_right_eq_of_CO {G : Type} [Group G] [TopologicalSpace G] [Is
   rw [h, hc, one_smul]
 
 theorem UpperTheory.localOperator_comp_rhoL_eq_of_right_invariant :
-    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (w : Pl K)
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (w : Pl K)
           [MeasurableSpace (Gw n w)] [BorelSpace (Gw n w)] (mw : Measure (Gw n w)) [mw.IsHaarMeasure] (J : Subgroup (Gw n w)), CO J →
           ∀ (φ : Gw n w → ℂ), (∀ k ∈ J, ∀ x, φ (x * k) = φ x) → ∀ T : LL μ →L[ℂ] LL μ, IsOloc μ w mw φ T →
           ∀ k ∈ J, T ∘L rhoL μ w k = T := by
@@ -45,7 +49,7 @@ theorem UpperTheory.localOperator_comp_rhoL_eq_of_right_invariant :
     simp only [rhoL, rhoF, map_mul]
     exact UnitaryRep.map_mul_apply _ _ _ v
   have hmp : MeasurePreserving (· * k : Gw n w → Gw n w) mw mw :=
-    ⟨(continuous_mul_right k).measurable, map_right_eq_of_CO mw hJ hk⟩
+    ⟨(continuous_mul_const k).measurable, map_right_eq_of_CO mw hJ hk⟩
   refine ContinuousLinearMap.ext fun v => ext_inner_left ℂ fun u => ?_
   rw [ContinuousLinearMap.comp_apply, hT u, hT u v,
     ← hmp.integral_comp (Homeomorph.mulRight k).measurableEmbedding

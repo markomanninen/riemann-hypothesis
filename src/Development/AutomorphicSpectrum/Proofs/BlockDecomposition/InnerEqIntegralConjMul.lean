@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,15 +72,16 @@ theorem opAdj_of : KerBasic → RowInt → SchurInt → OpExA → OpAdj := by
         = ∑ j, ∫ x, conj (∫ y, ker X.Γ (adj (Φ j i)) x y * (g j : X.G → ℂ) y ∂X.ν)
             * (f i : X.G → ℂ) x ∂X.ν := by
       intro i
-      rw [inner_eq_integral_conj_mul, ← integral_finset_sum _ fun j _ => (key i j).1]
+      rw [inner_eq_integral_conj_mul, ← MeasureTheory.integral_finsetSum _ fun j _ => (key i j).1]
       refine integral_congr_ae ?_
       filter_upwards [hT' g i] with x hx
-      rw [hx, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx, map_sum, Finset.sum_mul]
     have hr : ∀ j, inner ℂ (g j) (T f j)
         = ∑ i, ∫ y, conj ((g j : X.G → ℂ) y)
             * ∫ x, ker X.Γ (Φ j i) y x * (f i : X.G → ℂ) x ∂X.ν ∂X.ν := by
       intro j
-      rw [inner_eq_integral_conj_mul, ← integral_finset_sum _ fun i _ => (key i j).2.1]
+      rw [inner_eq_integral_conj_mul, ← MeasureTheory.integral_finsetSum _ fun i _ => (key i j).2.1]
       refine integral_congr_ae ?_
       filter_upwards [hT f j] with y hy
       rw [hy, Finset.mul_sum]

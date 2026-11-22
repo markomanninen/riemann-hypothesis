@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.OrderAsym
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.OrderAsym
+
+@[expose] public section
 
 open PositivityTheory.RgJS
 open scoped ComplexConjugate
@@ -109,7 +113,8 @@ theorem bcSumD (l : ℕ) (W W' : Type) (q : W → ℕ) (q' : W' → ℕ) (u : W'
   have hn : ∀ v, ‖c v‖ = 1 := fun v => Complex.norm_eq_one_of_pow_eq_one (hc v) (by omega)
   rw [tsum_congr e1, r2, ← Summable.tsum_finsetSum fun j _ => Summable.of_norm (by simpa [e2, hn] using hs)]
   refine tsum_congr fun p => ?_
-  simp only [e2, ← Finset.sum_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e2, ← Finset.sum_mul, ← map_sum]
   congr 1
   simp only [ω]
   split_ifs with h

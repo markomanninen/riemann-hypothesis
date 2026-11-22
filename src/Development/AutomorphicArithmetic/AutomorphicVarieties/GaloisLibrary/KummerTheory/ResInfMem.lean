@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PlaceDict
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PlaceDict
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 open Pointwise
@@ -14,7 +18,8 @@ private theorem UpperTheory.V.Kum.coc_conj_triv {R Γ M : Type} [CommRing R] [Gr
 theorem UpperTheory.V.Kum.resInfMem :
     ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (D : LData F Ω l) (e : ℤ), (Sha D e).map (resInf D e) ≤ EqHom l (Uinf F Ω l) (qzG F Ω l e) := by
   intro F Ω _ _ _ _ _ l _ D e
-  rintro _ ⟨x, hx, rfl⟩
+  intro y hy
+  obtain ⟨x, hx, rfl⟩ := Submodule.mem_map.mp hy
   obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ x
   obtain ⟨p1, p2, p3, p4⟩ := placeDict F Ω
   have hchi : ∀ g : G F Ω, D.chi (toGS Ω _ g) = cycZ F Ω l g := fun g => DFunLike.congr_fun D.hchi g

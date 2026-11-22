@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDimensionalOfSlices
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CapelliLowestGelfandConj
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDimensionalOfSlices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CapelliLowestGelfandConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ private theorem commutator_eq_of_glRel {M : Type*} [AddCommGroup M] [Module ℂ 
       rw [show (p + q) * Matrix.single c d 1 - Matrix.single c d 1 * (p + q) =
           (p * Matrix.single c d 1 - Matrix.single c d 1 * p) +
             (q * Matrix.single c d 1 - Matrix.single c d 1 * q) by noncomm_ring]
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [← hp, ← hq]
       noncomm_ring
     · intro i j x
@@ -65,7 +69,7 @@ private theorem commutator_eq_of_glRel {M : Type*} [AddCommGroup M] [Module ℂ 
   · simp
   · intro p q hp hq
     rw [show Z * (p + q) - (p + q) * Z = (Z * p - p * Z) + (Z * q - q * Z) by noncomm_ring]
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [← hp, ← hq]
     noncomm_ring
   · intro i j x

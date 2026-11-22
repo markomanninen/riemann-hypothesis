@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HenselStepCardComap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HenselStepCardComap
+
+@[expose] public section
 
 open GlobalTheory.GramCount
 open scoped Classical

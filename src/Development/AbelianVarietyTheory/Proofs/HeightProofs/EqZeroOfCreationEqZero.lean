@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix GlobalTheory.FockCompare GlobalTheory.IndefiniteRowSideFullHecke.FockOrthogonalDecomposition
 open scoped TensorProduct ContDiff ComplexOrder
@@ -78,14 +82,14 @@ theorem eq_zero_of_creation_eq_zero : ∀ (G R : Type) [AddCommGroup G] [NormedA
       have e := congrFun h0 (w + ι x)
       have hfd : fderiv ℝ (fun y : R => f (w + ι x + ι y)) 0 = fderiv ℝ (fun y : R => f (w + ι y)) x := by
         have : (fun y : R => f (w + ι x + ι y)) = fun y => (fun y : R => f (w + ι y)) (x + y) := by
-          funext y; simp only [map_add, add_assoc]
+          funext y; simp only [map_add (f := _), add_assoc]
         rw [this, fderiv_comp_add_left (f := fun y : R => f (w + ι y)), add_zero]
       simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply, hform f hf, hfd] at e
       have e1 : om (π (w + ι x)) u = om (π w) u + t * om u u' := by
-        rw [map_add, hπ, map_add, LinearMap.add_apply, hx]
+        rw [map_add (f := _), hπ, map_add (f := _), LinearMap.add_apply, hx]
         simp [huu, hanti u u']
       have e2 : om (π (w + ι x)) u' = om (π w) u' + s * om u u' := by
-        rw [map_add, hπ, map_add, LinearMap.add_apply, hx]
+        rw [map_add (f := _), hπ, map_add (f := _), LinearMap.add_apply, hx]
         simp [huu]
       rw [e1, e2] at e
       push_cast at e

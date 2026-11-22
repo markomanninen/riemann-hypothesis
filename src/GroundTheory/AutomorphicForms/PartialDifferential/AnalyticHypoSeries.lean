@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.Sobolev
 
@@ -152,7 +156,7 @@ theorem analyticAt_of_norm_iteratedFDeriv_le {f : E → F} {x₀ : E} {r C M : �
           _ ≤ |C| * M' ^ (N + 1) * ((N + 1).factorial : ℝ) * ‖y‖ ^ (N + 1) := by
               gcongr
               exact hb' _ (hline τ hτ) _
-      have hT := taylor_mean_remainder_bound (f := g) (n := N) zero_le_one hgC
+      have hT := taylor_mean_remainder_bound (f := g) (n := N) hgC
         (right_mem_Icc.2 zero_le_one) hbd
       have hsumeq : taylorWithinEval g N (Icc 0 1) 0 1 =
           ∑ k ∈ Finset.range (N + 1), p k (fun _ ↦ y) := by

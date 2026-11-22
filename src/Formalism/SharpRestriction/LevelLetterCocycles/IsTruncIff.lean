@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
+
+@[expose] public section
 
 noncomputable section
 

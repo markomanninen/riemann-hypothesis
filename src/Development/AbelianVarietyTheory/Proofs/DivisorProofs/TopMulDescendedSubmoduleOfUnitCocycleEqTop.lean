@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+
+@[expose] public section
+
 open TensorProduct GlobalTheory.EtC
 
 namespace GlobalTheory.DescTop
@@ -45,12 +50,13 @@ theorem top_mul_descMod_eq_top (A B : Type) [CommRing A] [CommRing B] [Algebra A
       Algebra.TensorProduct.lmul' A (LinearMap.lTensor B (LinearMap.ker (F - G)).subtype w) ∈
         (⊤ : Submodule A B) * descMod A B u := by
     intro w
-    induction w using TensorProduct.induction_on with
-    | zero => simp
+    induction w using TensorProduct.inductionOn with
     | tmul c m =>
       rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.lmul'_apply_tmul]
       exact Submodule.mul_mem_mul Submodule.mem_top (by rw [hD]; exact m.2)
-    | add x y hx hy => rw [map_add, map_add]; exact Submodule.add_mem _ hx hy
+    | add x y hx hy =>
+      simp only [map_add]
+      exact Submodule.add_mem _ hx hy
   have hv := hmem z
   rw [hz] at hv
   set v := Algebra.TensorProduct.lmul' A (((u⁻¹ : (B ⊗[A] B)ˣ) : B ⊗[A] B)) with hvdef

@@ -1,6 +1,10 @@
-import ReciprocityTheory.SemistableReduction.SemiDeg
-import ReciprocityTheory.SemistableReduction.SemiContract
-import ReciprocityTheory.SemistableReduction.LatAll
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDeg
+public import ReciprocityTheory.SemistableReduction.SemiContract
+public import ReciprocityTheory.SemistableReduction.LatAll
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights.Closed
 

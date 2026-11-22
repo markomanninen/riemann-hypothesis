@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealisedOne
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
-import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrSumOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealisedOne
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrSumOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ theorem mem_SB_iff (g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ) :
     g ∈ SB (κ → FiniteAdeleRing (𝓞 F) F) ↔ g ∈ finiteSchwartzBruhatPi F :=
   (mem_finiteSchwartzBruhatPi F).symm
 
-theorem schA_eq : schA F κ = schwartzBruhatPi F κ := by
+theorem schA_eq : schA F κ = schwartzBruhatPi (K := F) (ι := κ) := by
   unfold schA schwartzBruhatPi
   congr 1
 

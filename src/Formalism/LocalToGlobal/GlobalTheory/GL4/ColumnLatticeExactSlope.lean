@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL4.MemDualCrdLat
-import Formalism.LocalToGlobal.Columns.BrpStarLatLattice
-import Formalism.SharpRestriction.GlobalSchurBounds.TotallyPositiveTraceGeOfNormDiscr
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PZBasis
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.MemDualCrdLat
+public import Formalism.LocalToGlobal.Columns.BrpStarLatLattice
+public import Formalism.SharpRestriction.GlobalSchurBounds.TotallyPositiveTraceGeOfNormDiscr
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PZBasis
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix
@@ -15,15 +19,17 @@ open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.HN Forma
 
 section BC
 
-variable {F E K : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] [IsTotallyComplex E]
-  [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+variable {F E K : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] [_root_.NumberField.IsTotallyComplex E]
+  [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
 
 theorem emb_hform (σ : E →+* ℂ) (hσ : ∀ a, σ (star a) = starRingEnd ℂ (σ a)) {n : ℕ} (H : Matrix (Fin n) (Fin n) E)
     (x y : Fin n → E) :
     σ (Formalism.DivisionValues.hform H x y) = ∑ i, ∑ j, starRingEnd ℂ (σ (x i)) * σ (H i j) * σ (y j) := by
-  rw [Formalism.DivisionValues.hform, Matrix.toLinearMapₛₗ₂'_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Formalism.DivisionValues.hform, Matrix.toLinearMapₛₗ₂'_apply, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [smul_eq_mul, smul_eq_mul, map_mul, map_mul, starRingEnd_apply, hσ, RingHom.id_apply]
   ring
@@ -62,7 +68,8 @@ private theorem hform_crd_lemma (S : HSpace E) (y : S.V) :
   unfold crd
   conv_rhs => rw [← S.frame.sum_equivFun y]
   rw [Formalism.DivisionValues.hform, Matrix.toLinearMapₛₗ₂'_apply]
-  simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, Finset.smul_sum, Formalism.BasicNotions.HSpace.gram,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, Finset.smul_sum, Formalism.BasicNotions.HSpace.gram,
     smul_eq_mul, RingHom.id_apply, Finset.mul_sum]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -100,9 +107,11 @@ theorem bc_mu (hc : CMData F E) (S : HSpace E) (hsig : S.SigOK) (hpos : S.IsPosD
     (bc_smul : ∀ (a : E) y, bc (a • y) = algebraMap E K a • bc y) (L : Submodule (𝓞 E) S.V) (hL : Submodule.IsLattice E L)
     (bc_L : Q.L = Submodule.span (𝓞 K) (bc '' (L : Set S.V)))
     (bc_norm : ∀ (v : InfinitePlace K) y, (majAt Q.b Q.X v (bc y) (bc y)).re = (v.embedding (algebraMap E K (S.hT y y))).re) :
-    Q.mu = muDef (Pi.basisFun E (Fin S.rank)) (fun v => Formalism.L2.Geo.Def.frameOf (S.gram.map v.embedding)) (crdLat S L) := by
+    Q.mu = muDef (Pi.basisFun E (Fin S.rank)) (fun v => Formalism.L2.Geo.Def.frameOf (S.gram.map v.embedding)) (crdLat S L) ∧
+      Submodule.IsFullLattice E L := by
   classical
-  have hM := crdLat_lattice S L hL
+  have hM : Submodule.IsLattice E (crdLat S L) :=
+    Submodule.IsLattice.of_fg E (hL.fg.map _)
   have hY : ∀ v : InfinitePlace E, IsUnit (Formalism.L2.Geo.Def.frameOf (S.gram.map v.embedding)).det ∧
       ((Formalism.L2.Geo.Def.frameOf (S.gram.map v.embedding))⁻¹).conjTranspose * (Formalism.L2.Geo.Def.frameOf (S.gram.map v.embedding))⁻¹ =
         S.gram.map v.embedding := by
@@ -118,7 +127,8 @@ theorem bc_mu (hc : CMData F E) (S : HSpace E) (hsig : S.SigOK) (hpos : S.IsPosD
     intro y
     show ∑ a, algebraMap E K (crd S y a) • bc (S.frame a) = bc y
     conv_rhs => rw [← S.frame.sum_repr y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun a _ => (bc_smul _ _).symm
   have hset : bc '' (L : Set S.V) = f '' (ιm '' (crdLat S L : Set (Fin S.rank → E))) := by
     ext z
@@ -142,11 +152,10 @@ theorem bc_mu (hc : CMData F E) (S : HSpace E) (hsig : S.SigOK) (hpos : S.IsPosD
   haveI : FiniteDimensional K Q.V := Module.Finite.of_basis Q.b
   have hinj : Function.Injective f := (LinearMap.injective_iff_surjective_of_finrank_eq_finrank hfr).2 hsurj
   obtain ⟨XK, hP1, hP3, hfg0, hmu'⟩ := pull_coords Q hQ f hinj hsurj
-  rw [hmu']
   have hcomap : Q.L.comap (f.restrictScalars (𝓞 K)) = Submodule.span (𝓞 K) (ιm '' (crdLat S L : Set (Fin S.rank → E))) := by
     rw [hQL]
     exact Submodule.comap_map_eq_of_injective (f := f.restrictScalars (𝓞 K)) hinj _
-  rw [hcomap] at hfg0 ⊢
+  rw [hcomap] at hfg0
   have hbc := Formalism.HermiteSiegelSlopes.baseChange E K (Fin S.rank) (fun v => Formalism.L2.Geo.Def.frameOf (S.gram.map v.embedding)) XK
     (fun v => (hY v).1) hP1
     (fun w x => by
@@ -158,12 +167,31 @@ theorem bc_mu (hc : CMData F E) (S : HSpace E) (hsig : S.SigOK) (hpos : S.IsPosD
       rw [re_comap] at h2
       exact h1.trans h2.symm) (crdLat S L) hM.fg
   have hE : Nontrivial (Fin S.rank → E) := Pi.nontrivial_at ⟨0, hn⟩
-  have hrM : rkK (crdLat S L) = S.rank := by
-    show finrank E (Submodule.span E ((crdLat S L : Submodule (𝓞 E) (Fin S.rank → E)) : Set (Fin S.rank → E))) = _
-    rw [hM.span_eq_top]; simp
-  have hneM : crdLat S L ≠ ⊥ := Formalism.L2.Col.isLattice_ne_bot hM
-  have hfgT := hfg0
-  have hrT : rkK (Submodule.span (𝓞 K) (ιm '' (crdLat S L : Set (Fin S.rank → E)))) = S.rank := hbc.1.trans hrM
+  have hspanT : Submodule.span K ((Submodule.span (𝓞 K) (ιm '' (crdLat S L : Set (Fin S.rank → E))) : Submodule (𝓞 K) (Fin S.rank → K)) : Set (Fin S.rank → K)) = ⊤ := by
+    apply (LinearMap.map_injective (LinearMap.ker_eq_bot.mpr hinj) : Function.Injective (Submodule.map f))
+    rw [Submodule.map_top, LinearMap.range_eq_top.mpr hsurj, Submodule.map_span]
+    have himage : f '' ((Submodule.span (𝓞 K) (ιm '' (crdLat S L : Set (Fin S.rank → E))) : Submodule (𝓞 K) (Fin S.rank → K)) : Set (Fin S.rank → K)) = (Q.L : Set Q.V) := by
+      rw [hQL]
+      rfl
+    rw [himage, hQ.2.2]
+  have hrT : rkK (Submodule.span (𝓞 K) (ιm '' (crdLat S L : Set (Fin S.rank → E)))) = S.rank := by
+    change finrank K (Submodule.span K ((Submodule.span (𝓞 K) (ιm '' (crdLat S L : Set (Fin S.rank → E))) : Submodule (𝓞 K) (Fin S.rank → K)) : Set (Fin S.rank → K))) = _
+    rw [hspanT]
+    simp
+  have hrM : rkK (crdLat S L) = S.rank := hbc.1.symm.trans hrT
+  have hfullM : Submodule.IsFullLattice E (crdLat S L) := by
+    refine { toIsLattice := hM, span_eq_top := ?_ }
+    apply Submodule.eq_top_of_finrank_eq
+    simpa [rkK] using hrM
+  have hfull : Submodule.IsFullLattice E L := by
+    refine { toIsLattice := hL, span_eq_top := ?_ }
+    apply (LinearMap.map_injective (LinearMap.ker_eq_bot.mpr (crd S).injective) :
+      Function.Injective (Submodule.map (crd S).toLinearMap))
+    rw [Submodule.map_span, Submodule.map_top, LinearMap.range_eq_top.mpr (crd S).surjective]
+    exact hfullM.span_eq_top
+  refine ⟨?_, hfull⟩
+  rw [hmu', hcomap]
+  have hneM : crdLat S L ≠ ⊥ := Formalism.L2.Col.isLattice_ne_bot hfullM
   have hneT : Submodule.span (𝓞 K) (ιm '' (crdLat S L : Set (Fin S.rank → E))) ≠ ⊥ := by
     intro h0
     rw [h0] at hrT
@@ -171,7 +199,7 @@ theorem bc_mu (hc : CMData F E) (S : HSpace E) (hsig : S.SigOK) (hpos : S.IsPosD
       show finrank K (Submodule.span K ((⊥ : Submodule (𝓞 K) (Fin S.rank → K)) : Set (Fin S.rank → K))) = 0
       simp
     omega
-  rw [Formalism.L2.Col.brp_mu_degT _ _ hP1 _ hfgT hneT (by rw [hrT]; exact hn),
+  rw [Formalism.L2.Col.brp_mu_degT _ _ hP1 _ hfg0 hneT (by rw [hrT]; exact hn),
     Formalism.L2.Col.brp_mu_degT _ _ (fun v => (hY v).1) _ hM.fg hneM (by rw [hrM]; exact hn), hrM, hrT]
   congr 2
   exact hbc.2
@@ -190,7 +218,7 @@ theorem q_lattice_slope (D : D7) : QSlope D := by
     (by rw [Fintype.card_congr (CV.eQ c τ), Fintype.card_fin, H.rank]) (CV.bc c τ) (CV.bc_smul c τ) (D.clsLat u 0 c) (H.lat c)
     (CV.bc_L c τ) (CV.bc_norm c τ)
   have hT : (Tu D u) ^ (2 * D.R.f) ≠ 0 := pow_ne_zero _ H.Tpos.ne'
-  rw [h1, eLat_mu D.sp.cm (D.sp.X 0) (D.sp.X_sig 0) (D.X_posDef 0 (Nat.zero_le _)) hn _ (H.lat c) _ hT (CV.latT c), H.deg, H.rank,
+  rw [h1.1, eLat_mu D.sp.cm (D.sp.X 0) (D.sp.X_sig 0) (D.X_posDef 0 (Nat.zero_le _)) hn _ h1.2 _ hT (CV.latT c), H.deg, H.rank,
     Ranks.N_zero]
   have hf : (0 : ℝ) < (D.R.f : ℝ) := by
     have : 0 < 2 * D.R.f := by rw [← H.deg]; exact Module.finrank_pos

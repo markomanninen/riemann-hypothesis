@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 open scoped Classical
@@ -29,9 +33,7 @@ theorem unitary_tensor_places_positions : ∀ (J ι : Type) [Fintype J] [Decidab
   have hC' : ∀ j (a b : ι), ∑ y, C j a y * star (C j b y) = if a = b then 1 else 0 := by
     intro j a b
     have := congrFun (congrFun ((mem_unitaryGroup_iff).1 (hC j)) a) b
-    rw [mul_apply, one_apply] at this
-    simp only [star_apply] at this
-    convert this using 1
+    simpa only [Matrix.mul_apply, star_apply, Matrix.one_apply] using this
   have hD : ∀ j (S S'' : Fin (n j) → ι),
       ∑ y : Fin (n j) → ι, (∏ r, C j (S r) (y r)) * star (∏ r, C j (S'' r) (y r)) =
         if S = S'' then 1 else 0 := fun j =>
@@ -41,9 +43,6 @@ theorem unitary_tensor_places_positions : ∀ (J ι : Type) [Fintype J] [Decidab
     (fun j a b => by simpa only [of_apply] using hD j a b)
   rw [mem_unitaryGroup_iff]
   ext T T''
-  rw [mul_apply, one_apply]
-  simp only [star_apply, of_apply]
-  simp only [of_apply] at key
-  exact key T T''
+  simpa only [Matrix.mul_apply, star_apply, of_apply, Matrix.one_apply] using key T T''
 
 end GlobalTheory

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsNormBoundThreeFamilies
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceCompactSupportCoefficient
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPosCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StepFormCptAllOfStepFormAll
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsNormBoundThreeFamilies
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceCompactSupportCoefficient
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPosCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StepFormCptAllOfStepFormAll
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBASM
 
@@ -52,11 +56,11 @@ theorem rr_top_rep (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp))
     unfold KB.Pl.RR D.RRplace
     by_cases hx : D.IsLocPt x (P.r + 1)
     · by_cases hy : D.IsLocPt y (P.r + 1)
-      · rw [dif_pos ⟨hx, hy⟩, dif_neg (by omega), if_pos rfl, if_pos hw]
+      · rw [dite_eq_left ⟨hx, hy⟩, dite_eq_right (by omega), if_pos rfl, if_pos hw]
         simp only [hx, hy, if_true, B.hsInner]
-      · rw [dif_neg (fun h => hy h.2)]
+      · rw [dite_eq_right (fun h => hy h.2)]
         simp [hy]
-    · rw [dif_neg (fun h => hx h.1)]
+    · rw [dite_eq_right (fun h => hx h.1)]
       simp [hx]
   · refine ⟨Wd.Ix (Fin w.length) × M.Ty P, inferInstance, fun k x => if D.IsLocPt x (P.r + 1) then
       ((Top.dH P p.l0 (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') w x k.1 k.2 : ℝ) : ℂ) •
@@ -65,15 +69,15 @@ theorem rr_top_rep (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp))
     unfold KB.Pl.RR D.RRplace
     by_cases hx : D.IsLocPt x (P.r + 1)
     · by_cases hy : D.IsLocPt y (P.r + 1)
-      · rw [dif_pos ⟨hx, hy⟩, dif_neg (by omega), if_pos rfl, if_neg hw]
+      · rw [dite_eq_left ⟨hx, hy⟩, dite_eq_right (by omega), if_pos rfl, if_neg hw]
         unfold Top.topOf
         refine Finset.sum_congr rfl fun e _ => Finset.sum_congr rfl fun ρ _ => ?_
         simp only [hx, hy, if_true, B.hsInner, inner_smul_left, inner_smul_right, Complex.conj_ofReal]
         push_cast
         ring
-      · rw [dif_neg (fun h => hy h.2)]
+      · rw [dite_eq_right (fun h => hy h.2)]
         simp [hy]
-    · rw [dif_neg (fun h => hx h.1)]
+    · rw [dite_eq_right (fun h => hx h.1)]
       simp [hx]
 
 end top

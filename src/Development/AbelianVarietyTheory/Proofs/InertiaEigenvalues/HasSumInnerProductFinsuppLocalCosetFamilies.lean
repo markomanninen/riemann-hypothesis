@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TrivialLevelCosetRepresentativeMemLevel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TrivialLevelCosetRepresentativeMemLevel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -55,7 +60,7 @@ theorem isFinIdem_fid (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)) : IsFinId
     obtain ⟨ε, hε⟩ := GlobalTheory.IdemSupport.exists_placeIdem (D := D) v
     exact ⟨_, ε, hε, rfl⟩
   unfold Eu.fid
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem fid_orth {v w : HeightOneSpectrum (𝓞 D.host.F)} (h : v ≠ w) : Eu.fid D v * Eu.fid D w = 0 := by
@@ -136,7 +141,7 @@ theorem cmp_famProd (R : RealDat D A Ks) (i : Fin D.R.m) (v : HeightOneSpectrum 
     (F : ∀ v, Eu.LX R i v) (hF : {w | F w ≠ Eu.lx0 R i w}.Finite) :
     (c (Eu.famProd R i F))⁻¹ * Eu.rep (F v) ∈ levW R i := by
   unfold Eu.famProd
-  rw [dif_pos hF, map_listProd c v (fun w => Eu.rep (F w)) (cmp_self _ (rep_supp (F v)).2 (hc _).1 (hc _).2)
+  rw [dite_eq_left hF, map_listProd c v (fun w => Eu.rep (F w)) (cmp_self _ (rep_supp (F v)).2 (hc _).1 (hc _).2)
     (fun w hw => cmp_other _ (trivAt_of_supp _ (fid_orth hw.symm) (rep_supp (F w)).2) (hc _).1 (hc _).2) _
     (Finset.nodup_toList _)]
   split_ifs with h
@@ -194,7 +199,7 @@ theorem coef_famProd (R : RealDat D A Ks) (i : Fin D.R.m) (t : T) (hM : FinMult 
     coef R i t μ 𝓕 (Eu.famProd R i F) = ∏ᶠ v, Eu.acoef R i t μ 𝓕 v (F v) := by
   rw [finprod_eq_prod_of_mulSupport_subset (s := hF.toFinset), ← Finset.prod_map_toList]
   · unfold Eu.famProd
-    rw [dif_pos hF]
+    rw [dite_eq_left hF]
     refine mul_listProd (coef R i t μ 𝓕) (Model.coef_one R i t hVN μ 𝓕 hμ) (fun w => Eu.rep (F w))
       (fun v => GfC (Wc D i) ⊓ GlobalTheory.IdemSupport.suppGroup (Wc D i) (1 - Eu.fid D v)) (fun v w hw => ?_)
       (fun v γ hγ => ?_) _ (Finset.nodup_toList _)
@@ -212,7 +217,7 @@ theorem trPair_eq_bop {R : RealDat D A Ks} {i : Fin D.R.m} (h : TransLaws R i) {
     (hγ : γ ∈ GfC (Wc D i)) (x y) : trPair R i γ x y = ⟪x, Eu.Bop R i γ y⟫_ℂ := by
   have hex := h.2.2.1 γ hγ
   unfold Eu.Bop
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec.2 x y
 
 theorem coef_out (R : RealDat D A Ks) (i : Fin D.R.m) (t : T) (hM : FinMult R i t) (hLF : LevFix R i t)
@@ -240,8 +245,8 @@ theorem hasSum_reindex {X Y : Type} (e : X → Y) (he : Function.Bijective e) (a
   rw [← hc, ← hp]
   rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem hasSum_families : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks), ∀ i t, LevProd R i → TransLaws R i → FinMult R i t → LevFix R i t → VecNe R i t → FinSum R i t → ∀ th, IsRaw R i t th → ∀ (μ : Measure (WO (Vc D i) (Wc D i))) (𝓕 : Set (WO (Vc D i) (Wc D i))), IsCovolOne (ratL (Wc D i) (Vc D i)) μ 𝓕 → ∃ a : ℝ, 0 < a ∧ ∀ x y, HasSum (fun F : {F : ∀ v, Eu.LX R i v // {w | F w ≠ Eu.lx0 R i w}.Finite} => (a : ℂ) * ((∏ᶠ v, Eu.acoef R i t μ 𝓕 v (F.1 v)) * ⟪x, Eu.Bfam R i F.1 y⟫_ℂ)) ⟪LinearMap.adjoint th x, LinearMap.adjoint th y⟫_ℂ := by
   intro D G _ _ Pl0 T A Ks _ _ _ R i t hP hT hM hLF hVN hS th hth μ 𝓕 hμ
   refine (hS th hth μ 𝓕 hμ).imp fun a H => ⟨H.1, fun x y => ?_⟩

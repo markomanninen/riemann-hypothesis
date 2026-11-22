@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric Set
 
 namespace GlobalTheory
@@ -86,7 +91,8 @@ private theorem measure_ball_mul_le_mul_of_forall_measure_ball_le (lam ν : Meas
         lintegral_mono fun x => by
           by_cases hx : x ∈ ball (0 : V) ρ
           · rw [indicator_of_mem hx]
-            exact (measure_mono fun y hy => hy.2).trans (hb x hx)
+            refine le_trans (measure_mono ?_) (hb x hx)
+            exact fun y hy => hy.2
           · rw [indicator_of_notMem hx]
             have hempty : Prod.mk x ⁻¹'
                 {p : V × V | p.1 ∈ ball (0 : V) ρ ∧ p.2 ∈ ball p.1 s} = ∅ :=
@@ -94,8 +100,8 @@ private theorem measure_ball_mul_le_mul_of_forall_measure_ball_le (lam ν : Meas
             rw [hempty, measure_empty]
     _ = lam (ball 0 ρ) * b := by rw [lintegral_indicator_const measurableSet_ball, mul_comm]
 
-open MeasureTheory Filter Topology Metric Set in
 
+open MeasureTheory Filter Topology Metric Set in
 theorem _root_.GlobalTheory.exists_pos_finite_density_of_almost_translation_invariant :
     ∀ (V : Type) [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] (lam ν : Measure V) [lam.IsAddHaarMeasure] [IsFiniteMeasure ν], (∀ r : ℝ, 0 < r → ν (ball 0 r) ≠ 0) → (∀ κ : ℝ, 1 < κ → ∃ δ : ℝ, 0 < δ ∧ ∀ x ∈ ball (0 : V) δ, ∀ r ∈ Ioo (0 : ℝ) δ, ν (ball 0 r) ≤ ν (ball x (κ * r)) ∧ ν (ball x r) ≤ ν (ball 0 (κ * r))) → ∃ c : ENNReal, c ≠ 0 ∧ c ≠ ⊤ ∧ Tendsto (fun r : ℝ => ν (ball 0 r) / lam (ball 0 r)) (𝓝[>] 0) (𝓝 c) := by
   intro V _ _ _ _ _ lam ν _ _ hpos hinv

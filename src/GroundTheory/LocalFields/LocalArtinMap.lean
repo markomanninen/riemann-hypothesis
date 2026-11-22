@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.MaximalAbelianExtension
-import GroundTheory.LocalFields.LocalReciprocityUniversal
-import GroundTheory.LocalFields.Existence
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.MaximalAbelianExtension
+public import GroundTheory.LocalFields.LocalReciprocityUniversal
+public import GroundTheory.LocalFields.Existence
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 section Def
 
-variable (K Ω) in
 
+variable (K Ω) in
 def localArtinMap :
     Kˣ →* (maximalAbelianExtension K Ω ≃ₐ[K] maximalAbelianExtension K Ω) :=
   (topologicalAbelianizationEquiv K Ω).toMulEquiv.toMonoidHom.comp (localReciprocityLimit K Ω)

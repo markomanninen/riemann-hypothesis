@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.GenericIrreducibility.CentralProd2
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.GenericIrreducibility.CentralProd2
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.Gal Formalism.ConjugateSelfDual IsDedekindDomain GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.CuspRep GlobalTheory.DefiniteBC
 open scoped TensorProduct
@@ -46,13 +50,13 @@ theorem factorIrr (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [Is
   have hV : Nontrivial V := by
     by_contra hV
     rw [not_nontrivial_iff_subsingleton] at hV
-    exact h0 fun z => z.induction_on rfl
+    exact h0 fun z => TensorProduct.induction_on (motive := fun z => z = 0) z rfl
       (fun x w => by rw [Subsingleton.elim x 0, TensorProduct.zero_tmul])
       (fun a b ha hb => by rw [ha, hb, add_zero])
   have hW : Nontrivial W := by
     by_contra hW
     rw [not_nontrivial_iff_subsingleton] at hW
-    exact h0 fun z => z.induction_on rfl
+    exact h0 fun z => TensorProduct.induction_on (motive := fun z => z = 0) z rfl
       (fun x w => by rw [Subsingleton.elim w 0, TensorProduct.tmul_zero])
       (fun a b ha hb => by rw [ha, hb, add_zero])
   refine ⟨(GlobalTheory.CuspRep.isIrreducible_iff A).2 ⟨hV, fun S hS => ?_⟩,
@@ -73,13 +77,13 @@ theorem factorIrr (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [Is
         exact ⟨⟨A ((GlobalTheory.SmGL.leviTwo k (Fin r) (Fin t)).symm l).1 x, hS _ _ x.2⟩ ⊗ₜ
           B ((GlobalTheory.SmGL.leviTwo k (Fin r) (Fin t)).symm l).2 w, by simp [ρ']⟩
       | add a b ha hb =>
-        rw [map_add, map_add]; exact add_mem ha hb
+        rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
     have hLR : ∀ y ∈ R, L y ∈ S := by
       rintro _ ⟨z, rfl⟩
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul x w => rw [LinearMap.rTensor_tmul, hL]; exact S.smul_mem _ x.2
-      | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
     rcases key R hR with h | h
     · left
       refine (Submodule.eq_bot_iff S).2 fun s hs => ?_
@@ -110,13 +114,13 @@ theorem factorIrr (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [Is
         exact ⟨A ((GlobalTheory.SmGL.leviTwo k (Fin r) (Fin t)).symm l).1 x ⊗ₜ
           ⟨B ((GlobalTheory.SmGL.leviTwo k (Fin r) (Fin t)).symm l).2 w, hS _ _ w.2⟩, by simp [ρ']⟩
       | add a b ha hb =>
-        rw [map_add, map_add]; exact add_mem ha hb
+        rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
     have hLR : ∀ y ∈ R, L y ∈ S := by
       rintro _ ⟨z, rfl⟩
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul x w => rw [LinearMap.lTensor_tmul, hL]; exact S.smul_mem _ w.2
-      | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
     rcases key R hR with h | h
     · left
       refine (Submodule.eq_bot_iff S).2 fun s hs => ?_

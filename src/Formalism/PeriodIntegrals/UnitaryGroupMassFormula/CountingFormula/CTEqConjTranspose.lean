@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Lemmata.MiscLemmasI.Imports
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Lemmata.MiscLemmasI.Imports
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexOrder

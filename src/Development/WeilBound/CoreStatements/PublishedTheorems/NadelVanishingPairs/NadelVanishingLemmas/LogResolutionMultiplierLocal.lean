@@ -1,18 +1,22 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.KltOfSncCoefficientsStatement
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.DiscrepancyFormulaDivisor
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.FormOrderBirationalPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimeDivisorOverSourceBirational
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrdFunctionFieldPullbackPrimeDivisorOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalTopFormPullbackBijectiveBirational
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimeDivisorOverTargetBirational
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimeDivisorCentreThroughImage
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.DivisorCenterProperLift
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.KltOfSncCoefficientsStatement
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.DiscrepancyFormulaDivisor
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.FormOrderBirationalPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimeDivisorOverSourceBirational
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrdFunctionFieldPullbackPrimeDivisorOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalTopFormPullbackBijectiveBirational
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimeDivisorOverTargetBirational
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimeDivisorCentreThroughImage
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.DivisorCenterProperLift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Filter
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -104,12 +108,12 @@ theorem discrep_ratPull_fnPull {k : Type} [Field k] {X Y : Scheme.{0}} [IsIntegr
     by_cases h : ∃ a, E.IsFormOrd η a
     · have h' : ∃ a, E'.IsFormOrd (EtaleKlt.ratPull p s n η) a :=
         ⟨h.choose, (isFormOrd_iff_isFormOrd_ratPull s hb hE η _).1 h.choose_spec⟩
-      rw [dif_pos h', dif_pos h]
+      rw [dite_eq_left h', dite_eq_left h]
       exact DivOver.IsFormOrd.unique hη' h'.choose_spec
         ((isFormOrd_iff_isFormOrd_ratPull s hb hE η _).1 h.choose_spec)
     · have h' : ¬ ∃ a, E'.IsFormOrd (EtaleKlt.ratPull p s n η) a :=
         fun ⟨a, ha⟩ => h ⟨a, (isFormOrd_iff_isFormOrd_ratPull s hb hE η a).2 ha⟩
-      rw [dif_neg h', dif_neg h]
+      rw [dite_eq_right h', dite_eq_right h]
   unfold discrep
   rw [key, DivOver.Over.ord_fnPull_of_bijective k X Y p s hb E' E hE g]
 
@@ -130,7 +134,13 @@ private theorem toFunctionField_mem_divOver_ring {k : Type} [Field k] {X : Schem
   have : toFunctionField p a = Cartier.constFn p a := by
     simp [toFunctionField, Cartier.constFn, Cartier.fnOf, DVR.FlatBC.algX, Scheme.Hom.appLE,
       Scheme.Hom.appTop]
-    rfl
+    change _ = (X.presheaf.germ ⊤ (genericPoint X) trivial).hom
+      ((p.app ⊤ ≫ X.presheaf.map (𝟙 (Opposite.op ⊤))).hom ((Scheme.ΓSpecIso (CommRingCat.of k)).inv.hom a))
+    let f : Γ(Sp k, ⊤) ⟶ Γ(X, ⊤) := p.app ⊤
+    change (f ≫ X.presheaf.germ ⊤ (genericPoint X) trivial).hom _ =
+      (X.presheaf.germ ⊤ (genericPoint X) trivial).hom
+        ((f ≫ X.presheaf.map (𝟙 (Opposite.op ⊤))).hom _)
+    simp
   rw [this]
   exact E.const_mem a
 

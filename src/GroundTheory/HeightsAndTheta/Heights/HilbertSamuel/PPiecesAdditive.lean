@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPiecesAdditive
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEmbeddingWeight
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPiecesAdditive
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEmbeddingWeight
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -74,8 +79,8 @@ theorem exists_weight {P : Ideal (MRing ι)} (hP : IsMultiHomogIdeal P) {J : Typ
       exact h0.self_of_nhdsSet _
         (Set.mem_iUnion₂.2 ⟨j, Finset.mem_erase.2 ⟨hji, Finset.mem_univ _⟩, hmem j z hz hj⟩)
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem sheetDensity_sum (P : Ideal (MRing ι)) {e : ℕ}
     (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ)) (φ : Fin e → ((Σ k, ι k) → ℂ) → ℝ)
     {J : Type} [Fintype J] (c : J → ℝ) (g : J → ((Σ k, ι k) → ℂ) → ℝ) (y : Fin e → ℂ)
@@ -116,8 +121,8 @@ theorem integrable_piece (hInt : PtsIntegrableStatement) {P : Ideal (MRing ι)} 
 
 end PiecesAdditiveAlt
 
-open PiecesAdditiveAlt in
 
+open PiecesAdditiveAlt in
 theorem PiecesAdditive.proof (hInt : PtsIntegrableStatement) : PiecesAdditive.Statement := by
   intro K _ ι _ P e L J _ S c hP hL hS hsm huniq
   classical

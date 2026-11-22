@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FieldNormSurjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TsenLangRatFunc
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FiniteExtensionLang
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FieldNormSurjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TsenLangRatFunc
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FiniteExtensionLang
+
+@[expose] public section
 
 open Polynomial
 

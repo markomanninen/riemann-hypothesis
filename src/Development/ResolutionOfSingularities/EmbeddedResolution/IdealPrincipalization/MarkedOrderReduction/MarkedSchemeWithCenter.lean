@@ -1,9 +1,14 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -36,16 +41,8 @@ def transport (D : MarkedSchemeWithCenter k) {A : Scheme.{u}} (e : A ≅ D.ambie
   center := D.center.comap e.hom
 
 @[simp]
-theorem transport_ambient (D : MarkedSchemeWithCenter k) {A : Scheme.{u}} (e : A ≅ D.ambient) :
-    (D.transport e).ambient = A := rfl
-
-@[simp]
 theorem transport_ideal (D : MarkedSchemeWithCenter k) {A : Scheme.{u}} (e : A ≅ D.ambient) :
     (D.transport e).ideal = D.ideal.comap e.hom := rfl
-
-@[simp]
-theorem transport_boundary (D : MarkedSchemeWithCenter k) {A : Scheme.{u}} (e : A ≅ D.ambient) :
-    (D.transport e).boundary = D.boundary.map (fun J => J.comap e.hom) := rfl
 
 @[simp]
 theorem transport_projectionToBase (D : MarkedSchemeWithCenter k) {A : Scheme.{u}} (e : A ≅ D.ambient) :
@@ -87,10 +84,6 @@ def dataAt (s : MarkedBlowupSequenceData p I m E) (i : ℕ) : MarkedSchemeWithCe
   boundary := s.boundary i
   structMap := s.proj i ≫ p
   center := s.toBlowupSequenceData.center i
-
-@[simp]
-theorem dataAt_ambient (s : MarkedBlowupSequenceData p I m E) (i : ℕ) :
-    (s.dataAt i).ambient = s.toBlowupSequenceData.obj i := rfl
 
 @[simp]
 theorem dataAt_ideal (s : MarkedBlowupSequenceData p I m E) (i : ℕ) :

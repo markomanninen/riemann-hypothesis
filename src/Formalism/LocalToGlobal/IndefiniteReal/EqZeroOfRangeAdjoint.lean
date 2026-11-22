@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
-import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -30,7 +34,8 @@ def uL (j : Bs.J) (t : Bs.Tup) : Fin ((lv (fc X.zs) b).dZ j t) → X.FLC j t :=
 
 theorem tC_eq (j : Bs.J) (t : Bs.Tup) (c : Fin ((lv (fc X.zs) b).dZ j t) → ℂ) :
     X.tC cr b j t c = X.θ' j t (lin (X.uL cr b j t) c) := by
-  simp only [tC, uL, lin, Fintype.linearCombination_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tC, uL, lin, Fintype.linearCombination_apply, map_sum, map_smul]
 
 theorem jL_toL (j : Bs.J) (t : Bs.Tup) (x : Fin ((lv (fc X.zs) b).dZ j t) → K) :
     X.jL j t (cr.toL X.zs b j t x) = lin (X.uL cr b j t) (cpt Bs.v0.embedding x) := by
@@ -38,7 +43,8 @@ theorem jL_toL (j : Bs.J) (t : Bs.Tup) (x : Fin ((lv (fc X.zs) b).dZ j t) → K)
     ext i
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hx]
-  simp only [map_sum, map_smul, map_smulₛₗ, lin, Fintype.linearCombination_apply, cpt, uL]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_smulₛₗ, lin, Fintype.linearCombination_apply, cpt, uL]
 
 theorem lin_mem {E : Type} [AddCommGroup E] [Module ℂ E] {n : ℕ} {v : Fin n → E} {S : Submodule ℂ E}
     (h : ∀ k, v k ∈ S) (c : Fin n → ℂ) : lin v c ∈ S := by

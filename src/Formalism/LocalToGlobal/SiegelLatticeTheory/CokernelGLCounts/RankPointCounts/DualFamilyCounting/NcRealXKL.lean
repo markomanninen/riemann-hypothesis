@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXKS
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXKS
+
+@[expose] public section
 
 noncomputable section
 
@@ -245,7 +249,8 @@ theorem skew_conj (F Δ : Matrix (Fin r) (Fin r) ℂ) (hΔ : ∀ i j, star (Δ j
     star ((Fᴴ * Δ * F) a b) = -(Fᴴ * Δ * F) b a := by
   have hD : Δᴴ = -Δ := by
     ext i j
-    rw [conjTranspose_apply, hΔ, neg_apply]
+    rw [conjTranspose_apply, hΔ]
+    rfl
   have hM : (Fᴴ * Δ * F)ᴴ = -(Fᴴ * Δ * F) := by
     rw [conjTranspose_mul, conjTranspose_mul, conjTranspose_conjTranspose, hD]
     simp only [Matrix.mul_assoc, Matrix.neg_mul, Matrix.mul_neg]
@@ -581,13 +586,13 @@ theorem cont_shG (i : WlocSk.NB.CI k r) :
   rcases i with p | q | p
   · show Continuous fun mc : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ × (WlocSk.NB.CI k r → ℂ) =>
       ∑ c, if p.1.1 < c then WlocSk.NB.bA mc.1 p.1.1 c * WlocSk.NB.cA mc.2 c p.1.2 else 0
-    refine continuous_finset_sum _ fun c _ => ?_
+    refine continuous_finsetSum _ fun c _ => ?_
     by_cases h : p.1.1 < c
     · simp only [if_pos h]; exact (hent _ _).mul (hcA _ _)
     · simp only [if_neg h]; exact continuous_const
   · show Continuous fun mc : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ × (WlocSk.NB.CI k r → ℂ) =>
       (∑ c, if q.1 < c then WlocSk.NB.bA mc.1 q.1 c * WlocSk.NB.cB mc.2 c q.2 else 0) + WlocSk.NB.bB mc.1 q.1 q.2
-    refine (continuous_finset_sum _ fun c _ => ?_).add (hent _ _)
+    refine (continuous_finsetSum _ fun c _ => ?_).add (hent _ _)
     by_cases h : q.1 < c
     · simp only [if_pos h]; exact (hent _ _).mul (hcB _ _)
     · simp only [if_neg h]; exact continuous_const
@@ -598,15 +603,10 @@ theorem cont_shG (i : WlocSk.NB.CI k r) :
       (continuous_apply b).comp ((continuous_apply a).comp cont_dlt)
     exact ((h1 _ _).sub (h1 _ _).star).div_const 2
 
-theorem cont_shH (a : Fin r) :
-    Continuous fun mc : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ × (WlocSk.NB.CI k r → ℂ) =>
-      WlocSk.NB.shH mc.1 mc.2 a :=
-  Complex.continuous_im.comp ((continuous_apply a).comp ((continuous_apply a).comp cont_dlt))
-
 variable {ι : Type}
 
 theorem meas_chAt (T : ℝ) (v : ι) : Measurable (fun x : (∀ q : CBlk r, CSpc ι k q) => chAt T x v) := by
-  refine Measurable.prodMk (measurable_pi_lambda _ fun c => ?_) (measurable_pi_lambda _ fun a => ?_)
+  refine Measurable.prodMk (Measurable.of_eval fun c => ?_) (Measurable.of_eval fun a => ?_)
   · rcases c with p | ⟨b, j⟩ | p
     · exact (measurable_pi_apply v).comp (measurable_pi_apply (Sum.inl (Sum.inl p) : CBlk r))
     · exact ((measurable_pi_apply j).comp ((measurable_pi_apply v).comp
@@ -666,23 +666,23 @@ theorem meas_Bk (T : ℝ) (p : CBlk r) :
         WlocSk.NB.shH (ph0 cc.1) cc.2.1 a) (f := fun z : (∀ q : CBlk r, CSpc ι k q) × (∀ q : CBlk r, CSpc ι k q) =>
         (chAt T z.1 v, chAt T z.2 v)) hc.measurable (hmc v)
   rcases p with ((p | b) | (p | a))
-  · refine measurable_pi_lambda _ fun v => ?_
+  · refine Measurable.of_eval fun v => ?_
     have h2 : Measurable fun z : (∀ q : CBlk r, CSpc ι k q) × (∀ q : CBlk r, CSpc ι k q) =>
         (z.1 (Sum.inl (Sum.inl p)) : ι → ℂ) v :=
       (measurable_pi_apply v).comp ((measurable_pi_apply (Sum.inl (Sum.inl p) : CBlk r)).comp measurable_fst)
     exact (hG _ v).sub h2
-  · refine measurable_pi_lambda _ fun v => measurable_pi_lambda _ fun j => ?_
+  · refine Measurable.of_eval fun v => Measurable.of_eval fun j => ?_
     have h2 : Measurable fun z : (∀ q : CBlk r, CSpc ι k q) × (∀ q : CBlk r, CSpc ι k q) =>
         (z.1 (Sum.inl (Sum.inr b)) : ι → Fin (k + 1) → ℂ) v j :=
       (measurable_pi_apply j).comp ((measurable_pi_apply v).comp
         ((measurable_pi_apply (Sum.inl (Sum.inr b) : CBlk r)).comp measurable_fst))
     exact (measurable_const.mul (hG _ v)).sub h2
-  · refine measurable_pi_lambda _ fun v => ?_
+  · refine Measurable.of_eval fun v => ?_
     have h2 : Measurable fun z : (∀ q : CBlk r, CSpc ι k q) × (∀ q : CBlk r, CSpc ι k q) =>
         (z.1 (Sum.inr (Sum.inl p)) : ι → ℂ) v :=
       (measurable_pi_apply v).comp ((measurable_pi_apply (Sum.inr (Sum.inl p) : CBlk r)).comp measurable_fst)
     exact (hG _ v).sub h2
-  · refine measurable_pi_lambda _ fun v => ?_
+  · refine Measurable.of_eval fun v => ?_
     have h2 : Measurable fun z : (∀ q : CBlk r, CSpc ι k q) × (∀ q : CBlk r, CSpc ι k q) =>
         (z.1 (Sum.inr (Sum.inr a)) : ι → ℝ) v :=
       (measurable_pi_apply v).comp ((measurable_pi_apply (Sum.inr (Sum.inr a) : CBlk r)).comp measurable_fst)

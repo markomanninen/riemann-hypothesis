@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.SdUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensHI
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.SdUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensHI
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem vol_mul_vol_ann {μ : Measure V} {χ : V → V → ℂ} (hμ : SelfDual 
     HasCompactSupport.intro hLc fun x hx => Set.indicator_of_notMem hx _
   have hT : ∀ y, ∫ x, Φ x * χ x y ∂μ = (L' : Set V).indicator (fun _ => ((c : ℝ) : ℂ)) y := by
     intro y
-    rw [hΦ, transform_indicator μ χ hχ L hLo y, hA]
+    rw [hΦ, PI.VolStabSW.SdUniqW.transform_indicator μ χ hχ L hLo y, hA]
   have hI : Integrable (fun y => ∫ x, Φ x * χ x y ∂μ) μ := by
     have e : (fun y => ∫ x, Φ x * χ x y ∂μ) = (L' : Set V).indicator (fun _ => ((c : ℝ) : ℂ)) :=
       funext hT

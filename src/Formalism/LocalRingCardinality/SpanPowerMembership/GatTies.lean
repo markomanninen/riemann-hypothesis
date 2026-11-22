@@ -1,7 +1,11 @@
-import Formalism.LocalRingCardinality.DataGatTies
-import Formalism.LocalRingCardinality.HostCls
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Formalism.LocalRingCardinality.SpanPowerMembership.GatSetting
+module
+
+public import Formalism.LocalRingCardinality.DataGatTies
+public import Formalism.LocalRingCardinality.HostCls
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Formalism.LocalRingCardinality.SpanPowerMembership.GatSetting
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ abbrev Quo : Type := G ⧸ Subgroup.zpowers g
 
 def eQuo : Fin (Nat.card (Quo g)) ≃ Quo g := (Finite.equivFin (Quo g)).symm
 
-open Classical in
 
+open Classical in
 def secOf (T : Set G) (q : Quo g) : G :=
   if h : ∃ x ∈ T, (QuotientGroup.mk x : Quo g) = q then h.choose else q.out
 
@@ -27,13 +31,6 @@ theorem mk_secOf (T : Set G) (q : Quo g) : (QuotientGroup.mk (secOf g T q) : Quo
   split_ifs with h
   · exact h.choose_spec.2
   · exact QuotientGroup.out_eq' q
-
-theorem secOf_mk (T : Set G) (hT : Set.InjOn (fun x => (QuotientGroup.mk x : Quo g)) T) {x : G}
-    (hx : x ∈ T) : secOf g T (QuotientGroup.mk x) = x := by
-  have h : ∃ y ∈ T, (QuotientGroup.mk y : Quo g) = QuotientGroup.mk x := ⟨x, hx, rfl⟩
-  unfold secOf
-  rw [dif_pos h]
-  exact hT h.choose_spec.1 hx h.choose_spec.2
 
 def orbFun (T : Set G) (x : Σ _ : Fin (Nat.card (Quo g)), Fin (orderOf g)) : G :=
   secOf g T (eQuo g x.1) * g ^ (x.2 : ℕ)
@@ -69,18 +66,6 @@ theorem orbEquiv_step (T : Set G) (v : Fin (Nat.card (Quo g))) (s : Fin (orderOf
   show orbFun g T ⟨v, posAdd s 1⟩ = orbFun g T ⟨v, s⟩ * g
   simp only [orbFun, posAdd, pow_mod_orderOf, pow_succ, mul_assoc]
 
-def orbIdx (x : G) : Fin (Nat.card (Quo g)) := (eQuo g).symm (QuotientGroup.mk x)
-
-theorem orbEquiv_idx (T : Set G) (hT : Set.InjOn (fun x => (QuotientGroup.mk x : Quo g)) T) {x : G}
-    (hx : x ∈ T) (s : Fin (orderOf g)) : orbEquiv g T ⟨orbIdx g x, s⟩ = x * g ^ (s : ℕ) := by
-  show secOf g T (eQuo g (orbIdx g x)) * g ^ (s : ℕ) = x * g ^ (s : ℕ)
-  rw [orbIdx, Equiv.apply_symm_apply, secOf_mk g T hT hx]
-
-theorem orbIdx_injOn (T : Set G) (hT : Set.InjOn (fun x => (QuotientGroup.mk x : Quo g)) T) :
-    Set.InjOn (orbIdx g) T := by
-  intro x hx y hy h
-  exact hT hx hy ((eQuo g).symm.injective h)
-
 end Orbit
 
 variable {R : Ranks} (H : Host R) (p : ℕ)
@@ -109,13 +94,6 @@ theorem of_cls (h : H.cls p = .inertClass) : p ∉ H.small ∧ p ≠ H.q ∧ p �
     cases h
   exact ⟨h1, h2, h3, h4, h5⟩
 
-theorem of_cls_q (hp : p.Prime) (h : H.cls p = .inertClass) : jacobiSym (-(H.q : ℤ)) p ≠ 1 := by
-  rw [← H.psAt_prime hp (not_dvd_conductor_of_inert hp h)]
-  exact (of_cls H p h).2.2.2.2
-
-theorem coprime_two_pow (hp : p.Prime) (h2 : p ≠ 2) : p.Coprime (2 ^ (R.e + 2)) :=
-  Nat.Coprime.pow_right _ ((Nat.coprime_primes hp Nat.prime_two).mpr h2)
-
 private theorem coprime_of_cls (hp : p.Prime) (hc : H.cls p = .inertClass) : p.Coprime H.condN := by
   obtain ⟨h2, hq, hd, -, -⟩ := of_cls H p hc
   have h1 : ¬ p ∣ H.QS := fun h => h2 (Nat.mem_primeFactors.2 ⟨hp, h, H.QS_pos.ne'⟩)
@@ -126,7 +104,7 @@ def hOf : R.MA :=
   if h : p.Coprime H.condN then (H.art (ZMod.unitOfCoprime p h)).2 else 1
 
 theorem hOf_of_coprime (h : p.Coprime H.condN) : hOf H p = (H.art (ZMod.unitOfCoprime p h)).2 := by
-  rw [hOf, dif_pos h]
+  rw [hOf, dite_eq_left h]
 
 theorem unit_eq_neg_one (x : ℤˣ) (h : (x : ℤ) ≠ 1) : x = -1 := by
   rcases Int.units_eq_one_or x with hx | hx
@@ -149,14 +127,6 @@ theorem frob_val (hp : p.Prime) (hc : H.cls p = .inertClass) (P : Ideal (𝓞 H.
   · show (H.gal σ).2 = hOf H p
     rw [hOf_of_coprime H p hco, h4]
 
-theorem hH_hOf (hp : p.Prime) (hN : ¬ p ∣ H.condN) (h2 : p ≠ 2) :
-    R.hH (hOf H p) = hcl R.e (ZMod.unitOfCoprime p (coprime_two_pow (R := R) p hp h2)) := by
-  have hco := hp.coprime_iff_not_dvd.2 hN
-  rw [hOf_of_coprime H p hco]
-  refine H.art_h _ _ ?_
-  rw [ZMod.coe_unitOfCoprime]
-  exact ((ZMod.natCast_eq_natCast_iff _ _ _).2 ((H.val_unitOfCoprime hco).of_dvd H.tower_dvd_condN)).symm
-
 open Ideal in
 theorem exists_frob (hp : p.Prime) (hc : H.cls p = .inertClass) :
     ∃ (P : Ideal (𝓞 H.E)) (_ : P.IsPrime) (_ : P.LiesOver (Ideal.span {(p : ℤ)}))
@@ -174,13 +144,6 @@ theorem hOf_even (hp : p.Prime) (hc : H.cls p = .inertClass) (hn : HNeZero H p) 
   obtain ⟨P, hP, hL, σ, hσ⟩ := exists_frob H p hp hc
   have h1 := @hn P hP hL σ hσ
   rwa [@frob_val R H p hp hc P hP hL σ hσ] at h1
-
-theorem hOf_ne_one (hp : p.Prime) (hc : H.cls p = .inertClass) (hn : HNeZero H p) :
-    hOf H p ≠ 1 := by
-  intro h
-  have h1 := hOf_even H p hp hc hn
-  rw [h, orderOf_one] at h1
-  exact Nat.not_even_one h1
 
 def inPsi (φ : Formalism.HC.Frame) : φ.MA →* ↥φ.Psi :=
   (MonoidHom.inr G0 φ.MA).codRestrict φ.Psi (fun _ => rfl)
@@ -247,22 +210,6 @@ def placesOf (S : Served H p) (T : Set ↥(R.Psi)) (r : ℕ) (lam : ↥(R.Psi) �
       ⟨i.1, by have h1 := k_pos R; have h2 := i.2; simp only [Ranks.N]; omega⟩
     dom := fun v s a b hab => (lam (posPsi S T ⟨v, s⟩)).anti (show (_ : Fin _) ≤ _ from hab) }
 
-def gatOf (S : Served H p) (T : Set ↥(R.Psi)) (r : ℕ) (lam : ↥(R.Psi) → DomWeight (R.N 0)) : GAtP p :=
-  haveI : Fact p.Prime := ⟨S.prime⟩
-  { O := On p (orderOf (gPsi S))
-    Kf := Kn p (orderOf (gPsi S))
-    P := placesOf S T r lam
-    comp := Empty
-    lev := fun c => c.elim
-    e := 0 }
-
-theorem gatOf_d (S : Served H p) (T : Set ↥(R.Psi)) (r : ℕ) (lam : ↥(R.Psi) → DomWeight (R.N 0)) :
-    (gatOf S T r lam).d = 0 := by
-  haveI : Fact p.Prime := ⟨S.prime⟩
-  haveI : IsEmpty (gatOf S T r lam).comp := inferInstanceAs (IsEmpty Empty)
-  show Module.finrank _ (gatOf S T r lam).M = 0
-  exact Module.finrank_zero_of_subsingleton
-
 theorem orderOf_frobenius_image_eq (S : Served H p) (P : Ideal (𝓞 H.E)) [P.IsPrime]
     [P.LiesOver (Ideal.span {(p : ℤ)})] (σ : H.E ≃ₐ[ℚ] H.E) (hσ : IsArithFrobAt ℤ σ P) :
     orderOf (gPsi S) = orderOf (H.galE σ).2 := by
@@ -292,40 +239,5 @@ open Formalism.MainNotions.G Formalism.FrobeniusOrbits NumberField LevelValuatio
 
 variable (D : D7) (h0 : ∀ u, Module.finrank ℂ (D.mem u).A.Mu0 = 0)
   (rOf : D.what₂.Word → ℕ → ℕ) (bs : D.what₂.Word → ℕ → Set ↥(D.R.Psi))
-
-def withGat : D7 :=
-  { D with
-    gat := fun u w h => gatOf (served_of h) (bs u (D.what₂.places.resChar w))
-      (rOf u (D.what₂.places.resChar w)) (fun ψ => (D.fm u).lam 0 (D.eTau.symm ψ))
-    gat_d := fun u _ h => (gatOf_d _ _ _ _).trans (h0 u).symm }
-
-def gatTies : GatTies (withGat D h0 rOf bs) where
-  gat_k := fun _ _ _ => k_pos D.R
-  gat_n := fun _ _ h _ P hP hL σ hσ => @orderOf_frobenius_image_eq _ D.host _ (served_of h) P hP hL σ hσ
-  gat_pos := fun u w h => (posPsi (served_of h) (bs u (D.what₂.places.resChar w))).trans D.eTau.symm
-  gat_step := fun u w h v s P hP hL σ hσ =>
-    @position_succ_eq_mul_frobenius _ D.host _ (served_of h) (bs u (D.what₂.places.resChar w)) _ D.eTau v s P hP hL σ hσ
-  gat_lam := fun _ _ _ _ _ _ => rfl
-
-theorem withGat_r (u w h) :
-    ((withGat D h0 rOf bs).gat u w h).P.r = rOf u (D.what₂.places.resChar w) := rfl
-
-theorem withGat_n' (u w h v) :
-    ((withGat D h0 rOf bs).gat u w h).P.n' v = orderOf (gPsi (H := D.host) (served_of h)) := rfl
-
-theorem gatTies_pos (u w h v s) :
-    D.eTau ((gatTies D h0 rOf bs).gat_pos u w h ⟨v, s⟩) =
-      posPsi (served_of h) (bs u (D.what₂.places.resChar w)) ⟨v, s⟩ :=
-  D.eTau.apply_symm_apply _
-
-theorem gatTies_pos_base (u) (w : D.what₂.places.Pl)
-    (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
-    (hT : Set.InjOn (fun x => (QuotientGroup.mk x : Quo (gPsi (H := D.host) (served_of h))))
-      (bs u (D.what₂.places.resChar w)))
-    {x : ↥(D.R.Psi)} (hx : x ∈ bs u (D.what₂.places.resChar w))
-    (s : Fin (orderOf (gPsi (H := D.host) (served_of h)))) :
-    D.eTau ((gatTies D h0 rOf bs).gat_pos u w h ⟨orbIdx (gPsi (served_of h)) x, s⟩) =
-      x * gPsi (served_of h) ^ (s : ℕ) := by
-  exact (gatTies_pos D h0 rOf bs u w h _ s).trans (orbEquiv_idx (gPsi (served_of h)) _ hT hx s)
 
 end Formalism.BasicNotions.Examples₂

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemOfIrred
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemOfIrred
+
+@[expose] public section
 
 open UpperTheory.V.Z.GSp4Splitting PositivityTheory.RgBcC PositivityTheory.RgBcC.RealD PositivityTheory.Rg.BcB.Desc
 
@@ -43,7 +47,7 @@ private theorem exists_equiv {A : Subalgebra ℂ (Module.End ℂ F)} (hA : Faith
     · right
       exact Submodule.map_injective_of_injective W.injective_subtype (by rw [h, Submodule.map_subtype_top])
   have hi : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     refine Subtype.ext (hA W hW.1 hW.2.1 a.1 a.2 fun x hx => ?_)
     exact congrArg Subtype.val (LinearMap.congr_fun ha ⟨x, hx⟩)
@@ -93,7 +97,8 @@ private theorem trace_form {W : Type} [AddCommGroup W] [Module ℂ W] [FiniteDim
   have h2 : a = ∑ i, (b.coord i).smulRight (a (b i)) := by
     refine b.ext fun j => ?_
     simp [Finsupp.single_apply]
-  rw [h2, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum, map_sum, Finset.sum_mul]
   exact Finset.sum_congr rfl fun i _ => h1 _ _
 
 private theorem free_etale_sheaf_zmod_exists_hom_sending_generator {A : Subalgebra ℂ (Module.End ℂ F)} [Nontrivial F] (hA : Faith A) {Θ : Module.End ℂ F}
@@ -166,7 +171,7 @@ private theorem loc {A : Subalgebra ℂ (Module.End ℂ F)} [Nontrivial F] (hA :
           mul_assoc, ← (hc _).eq, mul_assoc]) (ρ a)
     change LinearMap.trace ℂ F ((ρ.symm (ρ a)).1 * c) = _ * LinearMap.trace ℂ F ((ρ.symm e).1 * c) at h1
     rw [AlgEquiv.symm_apply_apply] at h1
-    rw [h1, trOn, dif_pos (hW.2.1 a.1 a.2), hρ]
+    rw [h1, trOn, dite_eq_left (hW.2.1 a.1 a.2), hρ]
 
 private theorem prod_step {ι X : Type} [Fintype ι] [DecidableEq ι] [AddCommMonoid X] [Module ℂ X] {N : ι → Type}
     (Φ : (∀ i, N i) → X) (l : ∀ i, N i → ℂ) (e : ∀ i, N i)
@@ -328,7 +333,7 @@ theorem UpperTheory.V.Z.GSp4Splitting.multiFac :
   · have h1 : ∀ i, trOn (W i) (a i * (t i).1) = ε i * trOn (W i) (a i * Θ) := fun i => by
       have p1 : ∀ x ∈ W i, (a i * (t i).1) x ∈ W i := (hW i).2.1 _ (mul_mem (ha i) (t i).2)
       have p2 : ∀ x ∈ W i, (a i * Θ) x ∈ W i := fun x hx' => (hW i).2.1 _ (ha i) _ (hst i x hx')
-      rw [trOn, trOn, dif_pos p1, dif_pos p2, ← smul_eq_mul (ε i), ← map_smul]
+      rw [trOn, trOn, dite_eq_left p1, dite_eq_left p2, ← smul_eq_mul (ε i), ← map_smul]
       congr 1
       ext x
       simp [hΘW i x.1 x.2, smul_smul, hε]

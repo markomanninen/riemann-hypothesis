@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.CharacterColumnKernels.StatementRho
-import Formalism.GaloisCohomology.LocalTateDualityK
-import ReciprocityTheory.Hypotheses.GalCohDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
+module
+
+public import Mathlib
+public import Formalism.CharacterColumnKernels.StatementRho
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import ReciprocityTheory.Hypotheses.GalCohDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
+
+@[expose] public section
+
 open ReciprocityTheory.Gal
 
 namespace GlobalTheory.CofinGen
@@ -50,7 +55,7 @@ theorem exists_inj (hϖ : Irreducible ϖ) {M : Type} [AddCommGroup M] [Module O 
     simpa using hϖ.ne_zero
   set w : FractionRing O := (algebraMap O (FractionRing O) ϖ)⁻¹ with hw
   have hinj : Function.Injective (LinearMap.toSpanSingleton O (FractionRing O) w) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     rw [LinearMap.toSpanSingleton_apply, Algebra.smul_def, mul_eq_zero] at hc
     rcases hc with hc | hc
@@ -93,8 +98,8 @@ theorem exists_inj (hϖ : Irreducible ϖ) {M : Type} [AddCommGroup M] [Module O 
       apply hy
       rw [← hw1, this, map_smul, hx, smul_zero]
 
-omit [IsDomain O] [IsDiscreteValuationRing O] in
 
+omit [IsDomain O] [IsDiscreteValuationRing O] in
 theorem exists_socle {Y : Type} [AddCommGroup Y] [Module O Y]
     (hp : ∀ y : Y, ∃ n : ℕ, ϖ ^ n • y = 0) (T : Submodule O Y) (y : Y) (hy : y ∈ T) (h0 : y ≠ 0) :
     ∃ z ∈ T, z ≠ 0 ∧ ϖ • z = 0 := by
@@ -140,8 +145,8 @@ theorem pw_anti {Y : Type} [AddCommGroup Y] [Module O Y] {n m : ℕ} (h : n ≤ 
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le h
   exact mem_pw.2 ⟨ϖ ^ k • z, by rw [pow_add, mul_smul]⟩
 
-omit [IsDomain O] [IsDiscreteValuationRing O] in
 
+omit [IsDomain O] [IsDiscreteValuationRing O] in
 theorem exists_uniform {Y : Type} [AddCommGroup Y] [Module O Y] {S : Set Y} (hS : S.Finite) :
     ∃ N, ∀ y ∈ S, y ∈ pw ϖ Y N → y ∈ ⨅ n, pw ϖ Y n := by
   have h1 : ∀ y : Y, ∃ N, y ∈ pw ϖ Y N → y ∈ ⨅ n, pw ϖ Y n := by
@@ -214,11 +219,11 @@ theorem aux (hϖ : Irreducible ϖ) (k : ℕ) : ∀ {Y : Type} [AddCommGroup Y] [
       (fun t => (hp t.1).imp fun n hn => Subtype.ext hn) hf' rfl
     have hbij : Function.Bijective (i.coprod (LinearMap.ker r).subtype) := by
       constructor
-      · rw [injective_iff_map_eq_zero]
+      · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
         rintro ⟨s, t⟩ h
         have h1 : i s + t.1 = 0 := h
         have h2 := congrArg r h1
-        rw [map_add, hri, t.2, add_zero, map_zero] at h2
+        rw [map_add (f := _), hri, t.2, add_zero, map_zero] at h2
         subst h2
         rw [map_zero, zero_add] at h1
         exact Prod.ext rfl (Subtype.ext h1)

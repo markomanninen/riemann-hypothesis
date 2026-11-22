@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Formalism.REAL Finset
 namespace GlobalTheory
 
@@ -22,7 +27,8 @@ theorem qminor_intertwine : ∀ (V W : Type) [AddCommGroup V] [Module ℂ V] [Ad
     unfold Tm
     split_ifs <;> simp [h, Module.algebraMap_end_apply]
   unfold qminor
-  rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [Module.End.mul_apply, Module.End.mul_apply, Module.End.intCast_apply,
     Module.End.intCast_apply, map_zsmul]

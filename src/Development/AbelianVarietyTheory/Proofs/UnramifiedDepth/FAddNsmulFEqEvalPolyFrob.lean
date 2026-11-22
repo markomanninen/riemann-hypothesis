@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.PSerFrobStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.PSerFrobStatement
+
+@[expose] public section
+
 open TensorProduct IsLocalRing Matrix ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2
 
 namespace GlobalTheory
@@ -7,10 +12,10 @@ namespace GlobalTheory
 private def btPolySub (p : ℕ) (g : ℕ) (W : Type) [CommRing W] :
     Subalgebra W (MvPolynomial (Fin g) W) where
   carrier := {q | ∀ m : Fin g →₀ ℕ, (∃ i, ¬ p ∣ m i) →
-    MvPolynomial.coeff m q ∈ Ideal.span {(p : W)}}
+    AddMonoidAlgebra.coeff q m ∈ Ideal.span {(p : W)}}
   add_mem' := by
     intro a b ha hb m hm
-    rw [MvPolynomial.coeff_add]
+    rw [AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
     exact Ideal.add_mem _ (ha m hm) (hb m hm)
   mul_mem' := by
     intro a b ha hb m hm
@@ -26,7 +31,7 @@ private def btPolySub (p : ℕ) (g : ℕ) (W : Type) [CommRing W] :
   algebraMap_mem' := by
     intro r m hm
     obtain ⟨i, hi⟩ := hm
-    rw [MvPolynomial.algebraMap_eq, MvPolynomial.coeff_C, if_neg]
+    rw [MvPolynomial.algebraMap_eq, MvPolynomial.coeff_C, ite_eq_right]
     · exact Ideal.zero_mem _
     · rintro rfl
       exact hi (by simp)
@@ -35,7 +40,8 @@ private lemma btPoly_map_tEval {R₀ : Type} [CommRing R₀] {ι : Type} [Fintyp
     (N : ℕ) (f : MvPowerSeries ι R₀) {S S' : Type} [CommRing S] [Algebra R₀ S] [CommRing S']
     [Algebra R₀ S'] (φ : S →ₐ[R₀] S') (a : ι → S) :
     φ (tEval N f a) = tEval N f (fun i => φ (a i)) := by
-  simp [tEval, map_sum, map_prod]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [tEval, map_sum, map_prod]
 
 private lemma btPoly_unif {ι S : Type} [Fintype ι] [CommRing S] (a : ι → S)
     (h : ∀ i, IsNilpotent (a i)) : ∃ M, ∀ M' ≥ M, ∀ i, a i ^ M' = 0 := by
@@ -86,7 +92,7 @@ theorem fAdd_nsmulF_eq_eval_poly_frob :
   (∀ {R₀ : Type} [CommRing R₀] (p : ℕ) [Fact p.Prime] {g : ℕ} {B : BX R₀} (K : LAlg R₀) (ch : FormalChartAtZero B K g), PSerFrobStatement p K ch) →
   (∀ {R₀ : Type} [CommRing R₀] (p : ℕ) [Fact p.Prime] {g : ℕ} {B : BX R₀} {K : LAlg R₀} (ch : FormalChartAtZero B K g) (W : Type) [CommRing W] [Algebra R₀ W] (c : Fin g → W),
     (∀ i, IsNilpotent (c i)) → ∀ N : ℕ, ∃ Γ : Fin g → MvPolynomial (Fin g) W,
-      (∀ k m, (∃ i, ¬ p ∣ m i) → MvPolynomial.coeff m (Γ k) ∈ Ideal.span {(p : W)}) ∧
+      (∀ k m, (∃ i, ¬ p ∣ m i) → AddMonoidAlgebra.coeff (Γ k) m ∈ Ideal.span {(p : W)}) ∧
       ∀ y : Fin g → W, (∀ i, y i ^ N = 0) → fAdd ch.F c (nsmulF ch.F y p) = fun k => MvPolynomial.eval y (Γ k)) := by
   intro H1 H2 R₀ _ p _ g B K ch W _ _ c hc N
   obtain ⟨G, hG, hGe⟩ := H2 p K ch N
@@ -116,7 +122,7 @@ theorem fAdd_nsmulF_eq_eval_poly_frob :
       · exact Subalgebra.algebraMap_mem (btPolySub p g W) (c i)
       · intro m hm
         obtain ⟨r, hr⟩ := hG i m hm
-        change MvPolynomial.coeff m (MvPolynomial.map (algebraMap R₀ W) (G i)) ∈ _
+        change AddMonoidAlgebra.coeff (MvPolynomial.map (algebraMap R₀ W) (G i)) m ∈ _
         rw [MvPolynomial.coeff_map, hr, map_mul, map_natCast]
         exact Ideal.mul_mem_right _ _ (Ideal.subset_span rfl)
   · funext k
@@ -140,7 +146,7 @@ theorem fAdd_nsmulF_eq_eval_poly_frob :
     rw [hGe W y hy]
     change nEval _ _ = _
     rw [(H1 (ch.F k) W _).1 (max M₁ M₂), ← e1]
-    · simp [MvPolynomial.coe_aeval_eq_eval]
+    · simp
     · rintro (i | i)
       · exact hM₂ _ (le_max_right _ _) i
       · have := hM₁ _ (le_max_left M₁ M₂) i

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StRankFracDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StRankFracDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -9,9 +14,8 @@ namespace GroundTheory.Heights₂.Heights.Inter
 theorem RankFracDegree.isFractionRing_of_closure {F Ω A : Type} [Field F] [Field Ω] [Algebra F Ω] [CommRing A]
     (K : IntermediateField F Ω) (f : A →+* Ω) (hf : Function.Injective f) (hK : ∀ a, f a ∈ K)
     (hcl : K.toSubfield ≤ Subfield.closure (Set.range f)) :
-    let _ := (f.codRestrict K hK).toAlgebra
-    IsFractionRing A K := by
-  intro _
+    @IsFractionRing A _ K _ (f.codRestrict K hK).toAlgebra := by
+  let _ : Algebra A K := (f.codRestrict K hK).toAlgebra
   have hmap : ∀ a, ((algebraMap A K a : K) : Ω) = f a := fun _ => rfl
   have hnz : ∀ a : A, a ∈ nonZeroDivisors A → f a ≠ 0 := by
     intro a ha h0

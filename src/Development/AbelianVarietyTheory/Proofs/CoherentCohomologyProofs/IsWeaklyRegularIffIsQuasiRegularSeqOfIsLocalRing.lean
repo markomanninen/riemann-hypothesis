@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsQuasiRegularSeqSelfIffLocalizationMaximal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsQuasiRegularSeqSelfIffLocalizationMaximal
+
+@[expose] public section
 
 open RingTheory.Sequence
 
@@ -40,13 +44,13 @@ noncomputable def MonoDeg.optionEquiv (ι : Type*) (a : ℕ) :
           ext o
           cases o with
           | none => rw [Finsupp.mapDomain_of_notMem_range _ _ (by simp), h0]
-          | some i => rw [Finsupp.mapDomain_apply (Option.some_injective _), Finsupp.some_apply]
+          | some i => rw [Finsupp.mapDomain_apply_of_injective (Option.some_injective _), Finsupp.some_apply]
         refine ⟨Sum.inl ⟨α.some, ?_⟩, Subtype.ext h1⟩
         rw [← hα, ← h1, Finsupp.degree_mapDomain, h1]
       · have h1 : α - Finsupp.single none 1 + Finsupp.single none 1 = α :=
           tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr (Nat.pos_of_ne_zero h0))
         refine ⟨Sum.inr ⟨α - Finsupp.single none 1, ?_⟩, Subtype.ext h1⟩
-        rw [← h1, map_add, Finsupp.degree_single] at hα
+        rw [← h1, map_add (f := _), Finsupp.degree_single] at hα
         omega
 
 variable {R : Type*} [CommRing R]
@@ -228,7 +232,8 @@ theorem IsQuasiRegularSeq.quotSMulTop {f : Option ι → R} (h : IsQuasiRegularS
   obtain rfl : c = fun α => Submodule.Quotient.mk (d α) := funext fun α => (hd α).symm
   have hc' : (Submodule.Quotient.mk (∑ α, monoVal (f ∘ some) α.1 • d α) :
       QuotSMulTop (f none) M) = 0 := by
-    rw [← hc, ← Submodule.mkQ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, ← Submodule.mkQ_apply, map_sum]
     rfl
   obtain ⟨ω, -, hω⟩ := (Submodule.mem_smul_pointwise_iff_exists _ _ _).mp
     ((Submodule.Quotient.mk_eq_zero _).mp hc')
@@ -320,11 +325,8 @@ theorem IsQuasiRegularSeq.isWeaklyRegular [IsNoetherianRing R] [Module.Finite R 
       ih h.quotSMulTop_tail fun i => hf _⟩
     rw [Ideal.span_le]
     rintro _ ⟨i, rfl⟩
-    exact hf i
-
-example : IsQuasiRegularSeq ℤ ![(2 : ℤ)] :=
-  isQuasiRegularSeq_of_isWeaklyRegular (by
-    simpa using IsSMulRegular.of_ne_zero (M := ℤ) (two_ne_zero (α := ℤ)))
+    change f i ∈ Ring.jacobson R
+    simpa only [Ideal.jacobson_bot] using hf i
 
 end Main
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,13 +37,13 @@ theorem deriv_aeval {B : Type*} [CommRing B] [Algebra R B] (D : Derivation R B B
   · rename_i a
     simp [aeval_C]
   · rename_i p q hp hq
-    simp only [map_add, hp, hq, add_mul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hp, hq, add_mul, Finset.sum_add_distrib]
   · rename_i p w hp
     have h1 : ∀ v, pderiv v (p * X w) = pderiv v p * X w + p * pderiv v (X w) := by
       intro v
       simp only [Derivation.leibniz, smul_eq_mul]
       ring
-    simp only [h1, map_add, map_mul, aeval_X, add_mul, Finset.sum_add_distrib]
+    simp only [h1, map_add (f := _), map_mul, aeval_X, add_mul, Finset.sum_add_distrib]
     have h2 : ∑ v ∈ S, aeval φ p * aeval φ (pderiv v (X w : MvPolynomial σ R)) * D (φ v) =
         aeval φ p * D (φ w) := by
       simp_rw [mul_assoc]
@@ -86,7 +90,7 @@ theorem aeval_translate_eq {K : Type*} [Field K] [CharZero K] [Algebra R K] (f :
     · rename_i a
       simp [aeval_C, Polynomial.algebraMap_apply]
     · rename_i p q hp hq
-      simp only [map_add, Polynomial.eval_add, hp, hq]
+      simp only [map_add (f := _), Polynomial.eval_add, hp, hq]
     · rename_i p n hp
       rw [map_mul, aeval_X, Polynomial.eval_mul, hp, map_mul, aeval_X]
       congr 1

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StModelLocalizationMaximalPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StModelLocalizationMaximalPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -27,7 +32,7 @@ theorem ModelLocalizationMaximalPoint.proof : ModelLocalizationMaximalPoint.Stat
     | C c =>
       have h : algebraMap A R' (C c) = Ideal.Quotient.mk M.ideal (C c) := by rw [hφ, rename_C]
       exact h ▸ isIntegral_algebraMap
-    | add p r hp hr => rw [map_add]; exact hp.add hr
+    | add p r hp hr => rw [map_add (f := _)]; exact hp.add hr
     | mul_X p s hp =>
       rw [map_mul]
       refine hp.mul ?_
@@ -57,6 +62,7 @@ theorem ModelLocalizationMaximalPoint.proof : ModelLocalizationMaximalPoint.Stat
     rintro _ ⟨f, hf, rfl⟩ hfQ
     apply hf
     have h : f ∈ Q'.comap (algebraMap A R') := hfQ
+    change f ∈ Ideal.under A Q' at h
     rw [hQ'm] at h
     exact h
   have hPQ' : P = Q'.map (algebraMap R' L) := by
@@ -68,7 +74,9 @@ theorem ModelLocalizationMaximalPoint.proof : ModelLocalizationMaximalPoint.Stat
   have hQeq : P.comap (algebraMap R' L) = Q' := by
     rw [hPQ']
     exact IsLocalization.under_map_of_isPrime_disjoint (normalModelSubmonoid M q) L hQ'prime hdisj
-  have hQ'max : Q'.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap Q' (hQ'm ▸ hm)
+  have hQ'max : Q'.IsMaximal := by
+    letI : Q'.IsPrime := hQ'prime
+    exact Ideal.isMaximal_of_isIntegral_of_isMaximal_under Q' (hQ'm ▸ hm)
 
   let N := P.comap ((algebraMap R' L).comp (Ideal.Quotient.mk M.ideal))
   have hNmax : N.IsMaximal := by

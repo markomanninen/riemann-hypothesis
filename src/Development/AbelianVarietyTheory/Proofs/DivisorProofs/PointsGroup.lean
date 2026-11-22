@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct WithConv
 
@@ -7,21 +11,23 @@ namespace GlobalTheory.HopfShear
 variable {R A B X Y : Type} [CommRing R] [CommRing A] [CommRing B] [CommRing X] [CommRing Y]
   [HopfAlgebra R A] [HopfAlgebra R B] [Algebra R X] [Algebra R Y]
 
-open Algebra.TensorProduct Bialgebra HopfAlgebra in
 
+open Algebra.TensorProduct Bialgebra HopfAlgebra in
 @[reducible] noncomputable def pointsGroup : Group (WithConv (A →ₐ[R] X)) where
   __ := (inferInstance : Monoid (WithConv (A →ₐ[R] X)))
   inv f := toConv <| f.ofConv.comp (HopfAlgebra.antipodeAlgHom R A)
   inv_mul_cancel f := by
-    have H : (lmul' R).comp (Algebra.TensorProduct.map f.ofConv f.ofConv) =
-      f.ofConv.comp (lmul' R) := by ext <;> simp
-    trans toConv <| ((lmul' R).comp (Algebra.TensorProduct.map f.ofConv f.ofConv)).comp
+    have H : (Algebra.TensorProduct.lmul' R).comp (Algebra.TensorProduct.map f.ofConv f.ofConv) =
+      f.ofConv.comp (Algebra.TensorProduct.lmul' R) := by ext <;> simp
+    trans toConv <|
+      ((Algebra.TensorProduct.lmul' R).comp (Algebra.TensorProduct.map f.ofConv f.ofConv)).comp
       ((Algebra.TensorProduct.map
-      (HopfAlgebra.antipodeAlgHom R A) (.id _ _)).comp (comulAlgHom R A))
+        (HopfAlgebra.antipodeAlgHom R A) (.id _ _)).comp (Bialgebra.comulAlgHom R A))
     · rw [AlgHom.comp_assoc, ← AlgHom.comp_assoc (Algebra.TensorProduct.map f.ofConv f.ofConv),
         ← Algebra.TensorProduct.map_comp]; rfl
     rw [H, AlgHom.comp_assoc, WithConv.ext_iff, ← AlgHom.toLinearMap_injective.eq_iff]
-    change f.ofConv.toLinearMap.comp (toConv (antipode R (A := A)) * toConv LinearMap.id).ofConv =
+    change f.ofConv.toLinearMap.comp
+      (toConv (HopfAlgebra.antipode R (A := A)) * toConv LinearMap.id).ofConv =
       ofConv (1 : WithConv <| A →ₗ[R] X)
     rw [LinearMap.antipode_mul_id]
     ext
@@ -39,9 +45,6 @@ noncomputable def post (h : X →ₐ[R] Y) : WithConv (A →ₐ[R] X) →* WithC
 
 theorem pre_apply (f : B →ₐc[R] A) (x : WithConv (A →ₐ[R] X)) (b : B) :
     (pre f x).ofConv b = x.ofConv (f b) := rfl
-
-theorem post_apply (h : X →ₐ[R] Y) (x : WithConv (A →ₐ[R] X)) (a : A) :
-    (post h x).ofConv a = h (x.ofConv a) := rfl
 
 theorem conv_ext {x y : WithConv (A →ₐ[R] X)} (h : ∀ a, x.ofConv a = y.ofConv a) : x = y :=
   ofConv_injective (AlgHom.ext h)

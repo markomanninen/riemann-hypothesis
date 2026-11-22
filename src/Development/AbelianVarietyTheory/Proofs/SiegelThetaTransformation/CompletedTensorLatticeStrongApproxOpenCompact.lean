@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.SmulBasisMemHatIff
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenNsmulCompletedHomLatticeFiniteAdelic
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.SmulBasisMemHatIff
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenNsmulCompletedHomLatticeFiniteAdelic
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,7 +149,7 @@ def sgl (p : Fin r × Fin n × Fin d) : Matrix (Fin n) (Fin r) E := Matrix.singl
 def co (p : Fin r × Fin n × Fin d) : Matrix (Fin r) (Fin n) (AF F ⊗[F] E) →+ Af F where
   toFun w := sndA F ((Algebra.TensorProduct.basis (AF F) b).coord p.2.2 (w p.1 p.2.1))
   map_zero' := by rw [Matrix.zero_apply, LinearMap.map_zero, map_zero]
-  map_add' x y := by rw [Matrix.add_apply, LinearMap.map_add, map_add]
+  map_add' x y := by rw [Matrix.add_apply, LinearMap.map_add (f := _), map_add (f := _)]
 
 theorem continuous_co (p : Fin r × Fin n × Fin d) : Continuous (co b p) := by
   haveI : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
@@ -179,8 +183,10 @@ theorem eq_sum_coord (z : AF F ⊗[F] E) : z = ∑ j, (Algebra.TensorProduct.bas
 theorem fin_sub (w : Matrix (Fin r) (Fin n) (AF F ⊗[F] E)) :
     (w - ∑ p, fT F (co b p w) (sgl b p)).map (finG F E) = 0 := by
   refine Matrix.ext fun a k => ?_
-  rw [Matrix.map_apply, Matrix.sub_apply, map_sub, sum_fT, Matrix.zero_apply, sub_eq_zero, map_sum]
-  conv_lhs => rw [eq_sum_coord b (w a k), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.map_apply, Matrix.sub_apply, map_sub, sum_fT, Matrix.zero_apply, sub_eq_zero, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [eq_sum_coord b (w a k), map_sum]
   rfl
 
 theorem fst_coord (z : AF F ⊗[F] E) (j) : fstA F ((Algebra.TensorProduct.basis (AF F) b).repr z j) =
@@ -191,7 +197,7 @@ theorem fst_coord (z : AF F ⊗[F] E) (j) : fstA F ((Algebra.TensorProduct.basis
     change _ = (Algebra.TensorProduct.basis (Ainf F) b).repr (fstA F a ⊗ₜ[F] x) j
     simp only [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply, smul_eq_mul,
       map_mul, AlgHom.commutes]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem eq_sum_of_fin {w : Matrix (Fin r) (Fin n) (AF F ⊗[F] E)} (hw : w.map (infG F E) = 0) :
     w = ∑ p, fT F (co b p w) (sgl b p) := by
@@ -214,8 +220,8 @@ theorem fT_algebraMap (x : F) (y : Matrix (Fin n) (Fin r) E) : fT F (algebraMap 
 
 variable {A : AddSubgroup (Matrix (Fin n) (Fin r) E)}
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_gen (hfg : A.toIntSubmodule.FG) : ∃ (m : ℕ) (x : Fin m → Matrix (Fin n) (Fin r) E),
     ∀ u, u ∈ hatG F A ↔ ∃ c : Fin m → Af F, (∀ k, c k ∈ intG F) ∧ ∑ k, fT F (c k) (x k) = u := by
   obtain ⟨m, x, hx⟩ := Submodule.fg_iff_exists_fin_generating_family.1 hfg
@@ -229,7 +235,8 @@ theorem exists_gen (hfg : A.toIntSubmodule.FG) : ∃ (m : ℕ) (x : Fin m → Ma
       have hv' : v ∈ Submodule.span ℤ (Set.range x) := by rw [hx]; exact hv
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).1 hv'
       refine ⟨fun k => c k • a, fun k => zsmul_mem (show a ∈ intG F from ha) _, ?_⟩
-      simp only [map_sum, map_zsmul, LinearMap.smul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul, LinearMap.smul_apply]
     | zero => exact ⟨0, fun k => zero_mem _, by simp⟩
     | add y z _ _ hy hz =>
       obtain ⟨c, hc, rfl⟩ := hy
@@ -249,7 +256,7 @@ theorem isCompact_hatG (hfg : A.toIntSubmodule.FG) :
   obtain ⟨m, x, hx⟩ := exists_gen (F := F) hfg
   have hI : IsCompact (intAf F) := GlobalTheory.AdeleCocompact.isCompact_integral F
   have hg : Continuous fun c : Fin m → Af F => ∑ k, fT F (c k) (x k) :=
-    continuous_finset_sum _ fun k _ => (continuous_fT (x k)).comp (continuous_apply k)
+    continuous_finsetSum _ fun k _ => (continuous_fT (x k)).comp (continuous_apply k)
   convert (isCompact_univ_pi fun _ => hI).image hg using 1
   ext u
   exact (hx u).trans ⟨fun ⟨c, hc, e⟩ => ⟨c, fun k _ => hc k, e⟩, fun ⟨c, hc, e⟩ => ⟨c, fun k => hc k trivial, e⟩⟩
@@ -276,12 +283,12 @@ theorem exists_mod (hO : ∀ c : 𝓞 F, ∀ y ∈ A, (c : F) • y ∈ A) {N : 
     obtain ⟨α, hα, y, hy, rfl⟩ := hw
     obtain ⟨x, β, hβ, rfl⟩ := (GlobalTheory.AdLat.strong_approximation_mod_nat F N hN).2 α hα
     refine ⟨_, hO x y hy, _, fT_mem (α := β) hβ hy, ?_⟩
-    rw [map_add, LinearMap.add_apply, fT_algebraMap, map_nsmul, LinearMap.smul_apply]
+    rw [map_add (f := _), LinearMap.add_apply, fT_algebraMap, map_nsmul, LinearMap.smul_apply]
   | zero => exact ⟨0, zero_mem _, 0, zero_mem _, by simp⟩
   | add x x' _ _ h h' =>
     obtain ⟨y, hy, u, hu, rfl⟩ := h
     obtain ⟨y', hy', u', hu', rfl⟩ := h'
-    exact ⟨y + y', add_mem hy hy', u + u', add_mem hu hu', by rw [map_add, smul_add]; abel⟩
+    exact ⟨y + y', add_mem hy hy', u + u', add_mem hu hu', by rw [map_add (f := _), smul_add]; abel⟩
   | neg x _ h =>
     obtain ⟨y, hy, u, hu, rfl⟩ := h
     exact ⟨-y, neg_mem hy, -u, neg_mem hu, by rw [map_neg, smul_neg]; abel⟩
@@ -293,9 +300,10 @@ theorem exists_rat (hden : ∀ y, ∃ N : ℕ, 0 < N ∧ N • y ∈ A) {u : Mat
   obtain ⟨N, hN, hA⟩ := exists_common A (sgl b) fun p => hden _
   choose x a ha hx using fun p => (GlobalTheory.AdLat.strong_approximation_mod_nat F N hN).1 (co b p u)
   refine ⟨∑ p, x p • sgl b p, ?_⟩
-  rw [eq_sum_of_fin b hu, map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eq_sum_of_fin b hu, map_sum, ← Finset.sum_sub_distrib]
   refine sum_mem fun p _ => ?_
-  rw [hx, map_add, LinearMap.add_apply, fT_algebraMap, add_sub_cancel_left, map_nsmul, LinearMap.smul_apply,
+  rw [hx, map_add (f := _), LinearMap.add_apply, fT_algebraMap, add_sub_cancel_left, map_nsmul, LinearMap.smul_apply,
     ← map_nsmul]
   exact fT_mem (ha p) (hA p)
 

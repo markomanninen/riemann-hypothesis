@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.StatementB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralZeroFrequencyInvariant
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+module
+
+public import Formalism.HermitianCurvature.StatementB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralZeroFrequencyInvariant
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ENNReal
@@ -185,13 +189,6 @@ theorem exp_neg_dilation_generator_eq_aDil (k r : ℕ) (s : ℝ) :
 
 theorem exp_neg_mem (k r : ℕ) (s : ℝ) : NormedSpace.exp (-((s : ℂ) • X0 k r)) ∈ GV k r := by
   rw [exp_neg_dilation_generator_eq_aDil]; exact aDil_mem k r (Real.exp_pos _)
-
-theorem aDil_one (k r : ℕ) : aDil k r 1 = 1 := by
-  unfold aDil
-  rw [← Matrix.diagonal_one]
-  congr 1
-  funext i
-  split_ifs <;> simp
 
 theorem aDil_mul_eq_mul_aDil (k r : ℕ) (t t' : ℝ) : aDil k r (t * t') = aDil k r t * aDil k r t' := by
   unfold aDil
@@ -532,15 +529,6 @@ theorem dilationAction_continuousOn (k r : ℕ) :
   · exact (continuous_fst.comp (continuous_snd.comp continuous_fst)).continuousOn
   · exact continuousOn_conj_by_dilation k r (fun q => q.1.2.2) (continuous_snd.comp (continuous_snd.comp continuous_fst))
       (fun q => q.2.2) (continuous_snd.comp continuous_snd) (fun q hq => hq.2.2)
-
-theorem dilationAction_one (p : SS k r) : dilation₂ (1, 1) p = p := by
-  have h : ∀ x : Mt k r, conjM (aDil k r 1) x = x := by
-    intro x
-    unfold conjM
-    rw [aDil_one, inv_one, Matrix.one_mul, Matrix.mul_one]
-    rfl
-  unfold dilation₂
-  simp only [h]
 
 theorem inSS_mem (D : RealPlaceData k r Wp Wq) {p : SS k r} (hp : D.inSS p) :
     (Matrix.of p.1.2 * Matrix.of p.1.1 : Mat k r) ∈ GV k r ∧ (Matrix.of p.2.2 * Matrix.of p.2.1 : Mat k r) ∈ GV k r :=
@@ -1940,8 +1928,8 @@ theorem wt_continuous (D : RealPlaceData k r Wp Wq) : Continuous (fun x : (ℝ �
     (lam_continuous k r D.z).comp (continuous_snd.comp (continuous_fst.comp continuous_snd))
   have c2 : Continuous (fun x : (ℝ × ℝ) × SS k r => lam k r D.z' (Matrix.of x.2.2.2)) :=
     (lam_continuous k r D.z').comp (continuous_snd.comp (continuous_snd.comp continuous_snd))
-  refine Continuous.mul (Continuous.inv₀ (by fun_prop) (fun x => by positivity))
-    (Continuous.inv₀ (by fun_prop) (fun x => by positivity))
+  refine Continuous.fun_mul (Continuous.fun_inv₀ (by fun_prop) (fun x => by positivity))
+    (Continuous.fun_inv₀ (by fun_prop) (fun x => by positivity))
 
 theorem phase_continuous (D : RealPlaceData k r Wp Wq) :
     Continuous (fun x : ((ℝ × ℝ) × SS k r) × (ℝ × ℝ) => phase D x.1.1 x.1.2 x.2) := by
@@ -2202,7 +2190,7 @@ theorem Et_eq (D : RealPlaceData k r Wp Wq) (F F' : Mat k r → (Wq →L[ℂ] Wp
   unfold Et
   by_cases ht : t ∈ Quad
   · rw [Set.indicator_of_mem (show (p, t) ∈ {p | D.inSS p} ×ˢ Quad from ⟨hp, ht⟩)]
-  · rw [Set.indicator_of_notMem (fun h => ht h.2)]
+  · rw [Set.indicator_of_notMem (by exact fun h => ht h.2)]
     exact (Ef_zero D F F' p (fun h => ht (box_subset_quadrant h))).symm
 
 theorem Et_zero (D : RealPlaceData k r Wp Wq) (F F' : Mat k r → (Wq →L[ℂ] Wp)) (p : SS k r) {t : ℝ × ℝ}
@@ -2213,7 +2201,7 @@ theorem Et_zero (D : RealPlaceData k r Wp Wq) (F F' : Mat k r → (Wq →L[ℂ] 
   · exact Set.indicator_of_notMem h _
 
 theorem Et_zero' (D : RealPlaceData k r Wp Wq) (F F' : Mat k r → (Wq →L[ℂ] Wp)) {p : SS k r} (hp : ¬ D.inSS p)
-    (t : ℝ × ℝ) : Et D F F' (p, t) = 0 := Set.indicator_of_notMem (fun h => hp h.1) _
+    (t : ℝ × ℝ) : Et D F F' (p, t) = 0 := Set.indicator_of_notMem (by exact fun h => hp h.1) _
 
 theorem stronglyMeasurable_indicator_of_continuousOn' {X : Type*} [TopologicalSpace X] [MeasurableSpace X] [OpensMeasurableSpace X]
     {s : Set X} (hs : MeasurableSet s) {f : X → ℂ} (hf : ContinuousOn f s) :
@@ -2308,7 +2296,7 @@ theorem Bt_eq (D : RealPlaceData k r Wp Wq) (F F' : Mat k r → (Wq →L[ℂ] Wp
   unfold Bt
   by_cases ht : t ∈ Quad
   · rw [Set.indicator_of_mem (show (p, t) ∈ {p | D.inSS p} ×ˢ Quad from ⟨hp, ht⟩)]
-  · rw [Set.indicator_of_notMem (fun h => ht h.2)]
+  · rw [Set.indicator_of_notMem (by exact fun h => ht h.2)]
     exact (regularized_bracket_zero_off_box D F F' p (fun h => ht (box_subset_quadrant h))).symm
 
 theorem Bt_zero (D : RealPlaceData k r Wp Wq) (F F' : Mat k r → (Wq →L[ℂ] Wp)) (p : SS k r) {t : ℝ × ℝ}
@@ -2319,7 +2307,7 @@ theorem Bt_zero (D : RealPlaceData k r Wp Wq) (F F' : Mat k r → (Wq →L[ℂ] 
   · exact Set.indicator_of_notMem h _
 
 theorem Bt_zero' (D : RealPlaceData k r Wp Wq) (F F' : Mat k r → (Wq →L[ℂ] Wp)) {p : SS k r} (hp : ¬ D.inSS p)
-    (t : ℝ × ℝ) : Bt D F F' (p, t) = 0 := Set.indicator_of_notMem (fun h => hp h.1) _
+    (t : ℝ × ℝ) : Bt D F F' (p, t) = 0 := Set.indicator_of_notMem (by exact fun h => hp h.1) _
 
 theorem Bt_measurable (H : Hyp D Ξ α) {F F' : Mat k r → (Wq →L[ℂ] Wp)} {c c' : ℝ} (hF : AdmW α c 2 2 F)
     (hF' : AdmW α c' 2 2 F') : StronglyMeasurable (Bt D F F') := by
@@ -2634,7 +2622,7 @@ theorem phase_function_add_left (H : Hyp D Ξ α) {A₁ A₂ B : Mat k r → (Wq
   rw [← integral_add (ph_integrable H h₁ hB hq) (ph_integrable H h₂ hB hq)]
   congr 1
   funext g
-  rw [rho_eq, rho_eq, rho_eq, Pi.add_apply, map_add, hsInner_add_left]
+  rw [rho_eq, rho_eq, rho_eq, Pi.add_apply, map_add (f := _), hsInner_add_left]
 
 theorem phase_function_add_right (H : Hyp D Ξ α) {A B₁ B₂ : Mat k r → (Wq →L[ℂ] Wp)} {cA c₁ c₂ : ℝ} (hA : admitted α cA A)
     (h₁ : admitted α c₁ B₁) (h₂ : admitted α c₂ B₂) {q : SS k r} (hq : D.inSS q) :
@@ -2750,7 +2738,7 @@ theorem exists_bound_isTest_support {w : ℝ → ℝ} (h : IsTest w) :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ τ, w τ ≠ 0 → 0 < τ ∧ max 1 (τ ^ 2)⁻¹ ≤ M := by
   obtain ⟨_, hc, hs⟩ := h
   have hcont : ContinuousOn (fun τ : ℝ => (τ ^ 2)⁻¹) (tsupport w) := by
-    apply ContinuousOn.inv₀ (by fun_prop)
+    apply ContinuousOn.fun_inv₀ (by fun_prop)
     intro τ hτ
     have : 0 < τ := hs hτ
     positivity
@@ -3203,13 +3191,9 @@ theorem top_beta_zero [Subsingleton (Wq →L[ℂ] Wp)] (D : RealPlaceData k r Wp
   simp [hb, ho]
 
 theorem top_hyp (hN : DilN) (hU : DilUW) [Nontrivial (Wq →L[ℂ] Wp)] {D : RealPlaceData k r Wp Wq}
-    {Ξ : Mat k r → NNReal} {A : ℝ} (hA : AB k r ≤ A) (h1 : CoefBound D Ξ A) (h2 : XiInt D Ξ 2) : Hyp D Ξ A where
-  α_nonneg := le_trans (B2.AB_nonneg k r) hA
-  coef := h1
-  xi := h2
-  T0 := exists_norm_eq (Wq →L[ℂ] Wp) zero_le_one
-  dilN := hN
-  dilUW := hU
+    {Ξ : Mat k r → NNReal} {A : ℝ} (hA : AB k r ≤ A) (h1 : CoefBound D Ξ A) (h2 : XiInt D Ξ 2) : Hyp D Ξ A := by
+  exact ⟨le_trans (B2.AB_nonneg k r) hA, h1, h2,
+    exists_norm_eq (Wq →L[ℂ] Wp) zero_le_one, hN, hU⟩
 
 theorem top_regBound (hN : DilN) (hU : DilUW) : StepRegBound := by
   intro k r Wp Wq _ _ _ _ _ _ D Ξ A hA h1 h2

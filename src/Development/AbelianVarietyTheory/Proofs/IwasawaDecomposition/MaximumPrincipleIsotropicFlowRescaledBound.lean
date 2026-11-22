@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OrbitThickSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FjCauchyBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bNormHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bExpHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.EmbeddingHermitianPairs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OrbitThickSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FjCauchyBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bNormHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bExpHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.EmbeddingHermitianPairs
+
+@[expose] public section
 
 open NumberField Complex ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.CuspFrom
 
@@ -96,9 +100,8 @@ theorem stepBound (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (
         X.flow ξ (fun τ => (((y * I : ℂ) * -b τ).re : ℂ) + b τ) x := by
       rw [hx'def, EmbeddingHermitianPairs.flow_flow X hξ.2.1]
       congr 1
-      funext τ
-      simp only [Pi.add_apply]
       congr 1
+      funext τ
       exact Complex.ext (by simp) (by rw [hs]; simp)
     rw [he]
     exact h
@@ -117,7 +120,7 @@ theorem stepBound (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (
     exact (div_nonneg_iff.mp this).elim (fun h => h.1) (fun h => absurd h.2 (not_le.mpr hn'))
   have hr := (m3bNorm_holds r X _ (FjCauchy.isIsoV_embV X hξ) la x hx b hx').2
   have hr2 : X.nfac la x / X.nfac la x' ≤ ∏ τ, q τ ^ (-w) := by
-    refine le_trans hr (Finset.prod_le_prod (fun τ _ => ?_) fun τ _ => ?_)
+    refine le_trans hr (Finset.prod_le_prod₀ (fun τ _ => ?_) fun τ _ => ?_)
     all_goals
       have hqq : 1 + (b τ).im / X.ttV (X.embV ξ) x τ = q τ := by
         change 1 + (b τ).im / X.tt ξ x τ = q τ

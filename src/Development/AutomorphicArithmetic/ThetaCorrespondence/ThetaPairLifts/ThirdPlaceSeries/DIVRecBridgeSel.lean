@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Divisibility.RecBridgeSel
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkedFamiliesKernelFrame
+module
+
+public import Formalism.LocalToGlobal.Divisibility.RecBridgeSel
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkedFamiliesKernelFrame
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -177,19 +181,21 @@ structure DivisionKernelConstantBounds {eps : ℝ} (Fm : FamP eps)
   la : ∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, 0 ≤ (Fm.L x i).La
 theorem DivisionKernelConstantBounds.toT {eps : ℝ} {Fm : FamP eps}
     {Rk : Σ' x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, _root_.Formalism.L2.DIV.DivisionKernelData (Fm.ex x hx i)} {Cabs CH : ℝ}
-    (B : _root_.Formalism.L2.DIV.DivisionKernelConstantBounds Fm Rk Cabs CH) : BridgeRowsT Fm (_root_.Formalism.L2.DIV.divisionKernelToColumns Rk) Cabs CH where
-  pkg := fun hN => by
-    obtain ⟨C, x0, h⟩ := B.pkg hN
-    exact ⟨C, x0, fun x hx0 hx h' i => (h x hx0 hx h' i).map _root_.Formalism.L2.DIV.DivisionPackageKernel'.toDivisionPackageColumns⟩
-  adm2 := B.adm2
-  cut := B.cut
-  c3 := B.c3
-  hh := B.hh
-  c2 := B.c2
-  c5 := B.c5
-  bu := B.bu
-  rr := B.rr
-  la := B.la
+    (B : _root_.Formalism.L2.DIV.DivisionKernelConstantBounds Fm Rk Cabs CH) : BridgeRowsT Fm (_root_.Formalism.L2.DIV.divisionKernelToColumns Rk) Cabs CH := by
+  refine {
+    pkg := ?_
+    adm2 := B.adm2
+    cut := B.cut
+    c3 := B.c3
+    hh := B.hh
+    c2 := B.c2
+    c5 := B.c5
+    bu := B.bu
+    rr := B.rr
+    la := B.la }
+  intro hN
+  obtain ⟨C, x0, h⟩ := B.pkg hN
+  exact ⟨C, x0, fun x hx0 hx h' i => (h x hx0 hx h' i).map _root_.Formalism.L2.DIV.DivisionPackageKernel'.toDivisionPackageColumns⟩
 theorem linkDIVt_of_bridge_kernel {eps : ℝ} (Fm : FamP eps)
     (Rk : Σ' x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, _root_.Formalism.L2.DIV.DivisionKernelData (Fm.ex x hx i)) (Cabs CH : ℝ)
     (B : _root_.Formalism.L2.DIV.DivisionKernelConstantBounds Fm Rk Cabs CH) : LinkDIVt Fm Cabs CH :=

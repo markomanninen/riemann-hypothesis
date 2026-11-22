@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AnFibLift
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsLevMoveOfFrOver
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FramedPointsLiftToLevelCover
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrMoveTransfer
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AnFibLift
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsLevMoveOfFrOver
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FramedPointsLiftToLevelCover
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrMoveTransfer
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -83,7 +87,7 @@ theorem exists_emb {l : Geo.Tor.Level H} {L : Lt E r} {mk : Dw.La →ₗ[𝓞 E]
       obtain ⟨b, -, hb⟩ := modN_of_mem_half l hu ha
       refine ⟨a, (Submodule.Quotient.eq _).2 (mem_mults.2 ⟨-(mk b + t), L.neg_mem (L.add_mem (h.mem b) ht), ?_⟩)⟩
       have : a = u • a + v • a := by rw [← add_smul, huv, one_smul]
-      have e : mk a = l.M • mk b + mk (v • a) := by rw [← map_nsmul, ← hb, ← map_add, ← this]
+      have e : mk a = l.M • mk b + mk (v • a) := by rw [← map_nsmul, ← hb, ← map_add (f := _), ← this]
       show mk (v • a) - (mk a + l.M • t) = _
       rw [e, smul_neg, smul_add]
       abel
@@ -124,8 +128,8 @@ theorem exists_aut {l l₂ : Geo.Tor.Level H} (hd : l.Dvd l₂) {L : Lt E r} {mk
     obtain ⟨b, -, hb⟩ := modN_of_mem_half l₂ hu ha
     obtain ⟨b', -, hb'⟩ := modN_of_mem_half l₂ hu ha'
     refine ⟨t + mk₃ b' - mk₂ b, L.sub_mem (L.add_mem ht (h₃.mem _)) (h₂.mem _), ?_⟩
-    have g₂ : mk₂ a = l₂.M • mk₂ b + mk₂ (v • a) := by rw [← map_nsmul, ← hb, ← map_add, ← hs]
-    have g₃ : mk₃ (liftLa k a) = l₂.M • mk₃ b' + mk₃ (v • liftLa k a) := by rw [← map_nsmul, ← hb', ← map_add, ← hs]
+    have g₂ : mk₂ a = l₂.M • mk₂ b + mk₂ (v • a) := by rw [← map_nsmul, ← hb, ← map_add (f := _), ← hs]
+    have g₃ : mk₃ (liftLa k a) = l₂.M • mk₃ b' + mk₃ (v • liftLa k a) := by rw [← map_nsmul, ← hb', ← map_add (f := _), ← hs]
     rw [g₂, g₃, smul_sub, smul_add, ← e]
     abel
 
@@ -167,15 +171,17 @@ theorem emb_ext (hA : l.A = 1) {β β' : KA l →+* ℂ} (h : β (baseKA l).ρ =
   have hz : zeta l.A = 1 := by rw [hA, zeta]; simp [Complex.exp_two_pi_mul_I]
   have := IntermediateField.algHom_ext_of_eq_adjoin ℚ (S := KA l) (s := {H.rt0, zeta l.A}) rfl
     (φ₁ := β.toRatAlgHom) (φ₂ := β'.toRatAlgHom) (by
-      rintro x (rfl | rfl)
+      intro x hx
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+      rcases hx with (rfl | rfl)
       · exact h
       · have e : ∀ hx, (⟨zeta l.A, hx⟩ : KA l) = 1 := fun hx => Subtype.ext hz
         rw [e]
         exact β.map_one.trans β'.map_one.symm)
   exact RingHom.ext fun a => DFunLike.congr_fun this a
 
-open OverMove in
 
+open OverMove in
 theorem move_fibre {r : Xo₂.X ⟶ Xo.X} {m : SABMap Xo₂.univ.t Xo.univ.t r} (hm : Lev m) {ρ : Xo₂.X ⟶ Xo₂.X}
     {ν : SABMap Xo₂.univ.t Xo₂.univ.t ρ} {f : D.La →ₗ[𝓞 E] D.La} (hν : IsLevMove ρ ν f LinearMap.id)
     (hf : ∀ a, f a - a ∈ l.Mb • (⊤ : Submodule (𝓞 E) D.La)) {x : Sp ℂ ⟶ Xo₂.X} {z : Sp ℂ ⟶ Xo.X} (hz : x ≫ r = z)
@@ -211,8 +217,8 @@ theorem move_fibre {r : Xo₂.X ⟶ Xo.X} {m : SABMap Xo₂.univ.t Xo.univ.t r} 
 
 end Geometry
 
-open GlobalTheory.Dict.Lift in
 
+open GlobalTheory.Dict.Lift in
 theorem anFib_lift_ex : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (n : ℕ) (d : DeltaDat Xo c n) [Algebra c.F ℂ] [Algebra d.c₂.F ℂ], (∀ t : c.F, algebraMap d.c₂.F ℂ (d.eF t) = algebraMap c.F ℂ t) → d.IsLev → ∀ (r g : ℕ) (X : Data E r) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (e : Fin g ≃ Lt1 Dw) (x : Frame X.Ψ r) (L : Lt E r) (y : FrPt Xo c ℂ) (A : AnFib X bas idx e x L y), IsSympl X bas → x ∈ X.dom → SelfD X L → ∀ y₂ : FrPt d.Xo₂ d.c₂ ℂ, FrOver d y₂ y → ∀ mk : Dw.La →ₗ[𝓞 E] (Fin r → E), A.Marked mk → ∃ A₂ : AnFib X bas idx e x L y₂, (∀ z, (A₂.ex z).left ≫ d.m.φ = (A.ex z).left) ∧ (∀ θ, A.Reads 1 y.s θ → A₂.Reads 1 y₂.s θ) ∧ ∃ mk₂ : Dw.La →ₗ[𝓞 E] (Fin r → E), IsMark d.l₂ L mk₂ ∧ A₂.Marked mk₂ ∧ MarkOver l d.l₂ L mk mk₂ := by
   intro E _ _ _ H Dw l Xo c n d _ _ _ hlev r g X bas idx e x L y A hsym hx hL y₂ hover mk hmk
   obtain ⟨hb, hu, w, pm, t, hw, hrig, pm1, pm2, hst, hpm⟩ := hover

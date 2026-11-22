@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowMapVUpdateZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EdgeFactorNeZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepType
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridStandardVacuumScalarEqProdLocalPlaces
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatHatStabOfHatL
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowPt0InvMemStdLatIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetIdeleConjugatedTopPointEqProdLocal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetUnitaryConjAtPlaceEqDetLatticeBasisComponent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderMemAndPlaceAboveEqOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridRowLevelZeroInfUnitaryEqDatumLevel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FinPartDetAtInvInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowMapVUpdateZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EdgeFactorNeZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepType
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridStandardVacuumScalarEqProdLocalPlaces
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatHatStabOfHatL
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowPt0InvMemStdLatIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetIdeleConjugatedTopPointEqProdLocal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetUnitaryConjAtPlaceEqDetLatticeBasisComponent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderMemAndPlaceAboveEqOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridRowLevelZeroInfUnitaryEqDatumLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FinPartDetAtInvInt
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
@@ -40,7 +44,7 @@ private theorem cpt_tensor_comm_eq_finAdEquiv (Q : Pl D.host.E) (y : TensorProdu
     rw [GlobalTheory.LFun.toFinAd_tmul, mul_comm]
     rfl
   | add y z hy hz =>
-    simp only [map_add] at *
+    simp only [map_add (f := _)] at *
     rw [hy, hz]
     rfl
 
@@ -51,7 +55,7 @@ private theorem eq_locIdele_of_idemAt {e : AE D} {w : Pl D.host.E} (he : Formali
   obtain ⟨hinf, hin, hout⟩ := GlobalTheory.FunObj.Comparison₂.cpt_idemSum hs
   apply GlobalTheory.LFun.eq_locIdele
   · show infPart D (x : AE D) = 1
-    rw [hx, map_add, map_mul, map_sub, map_one, hinf]
+    rw [hx, map_add (f := _), map_mul, map_sub, map_one, hinf]
     ring
   · refine Subtype.ext (funext fun Q => ?_)
     have hb := cpt_tensor_comm_eq_finAdEquiv Q (finPart D (x : AE D))
@@ -59,7 +63,7 @@ private theorem eq_locIdele_of_idemAt {e : AE D} {w : Pl D.host.E} (he : Formali
     change (GlobalTheory.LFun.finAdEquiv D.host.F D.host.E (finPart D (x : AE D))) Q =
       Neutral.B1.finiteSingle D.host.E w (y : Kw w) Q
     rw [← hb, hx]
-    simp only [map_add, map_mul, map_sub, map_one]
+    simp only [map_add (f := _), map_mul, map_sub, map_one]
     by_cases hQ : Q = w
     · subst hQ
       rw [GlobalTheory.LFun.finSingle_self, hin Q (by simp), ← hy]
@@ -67,9 +71,9 @@ private theorem eq_locIdele_of_idemAt {e : AE D} {w : Pl D.host.E} (he : Formali
     · rw [GlobalTheory.LFun.finSingle_ne hQ, hout Q (by simpa using hQ)]
       ring
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem detIdl_conj {e : AE D} {w : Pl D.host.E} (he : Formalism.L2.NTheta.IsIdemAt e w) (V : HSp D) (k u : GfC V) {n : ℕ}
     (h : n = V.rank) (β : GL (Fin V.rank) (Lev.EAf D)) :
     detIdl e V ((u⁻¹ * k * u : GfC V) : GA D V) = GlobalTheory.LFun.locIdele D.host.F w (gdet (inBasis h β w (finG V k))) := by
@@ -91,8 +95,8 @@ theorem kapAt_mem (S : GridChoice W U) {t : T} {k : FinPt G (.grid 0 D.R.m)}
     kapAt S t w.1 k ∈ givenLevel G t w.1 (0, D.R.m) := by
   exact Subgroup.mem_iInf.mp (Subgroup.mem_inf.mp hk).1 w
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem splitScal_eq (S : GridChoice W U) {μ₀ : T} (hL : L.Is μ₀) {t : T} {k : FinPt G (.grid 0 D.R.m)}
     (hk : finG (G.V (.grid 0 D.R.m)) k ∈ S.levRow t 0 (Nat.zero_le _)) (w : locPl G t) :
     splitScal G (.chi 0 D.R.m) w.1 1 ((S.N.u (.grid 0 D.R.m))⁻¹ * k * S.N.u (.grid 0 D.R.m)).1 =
@@ -152,8 +156,8 @@ theorem toPair_zero (G : GridData L sc) (x : GA D (G.V (.grid 0 D.R.m))) :
     G.toPair (.chi 0 D.R.m : Pair T) x 1 = (1, x) := by
   simp [GridData.toPair]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem moved_latT (S : GridChoice W U) {μ₀ : T} (hL : L.Is μ₀) {t : T} {k : FinPt G (.grid 0 D.R.m)}
     (hk : finG (G.V (.grid 0 D.R.m)) k ∈ S.levRow t 0 (Nat.zero_le _)) (y) :
     y ∈ latHat D.host.F D.host.E (S.N.latT (.chi 0 D.R.m) : Set (Fin (G.pT (.chi 0 D.R.m)).rank → D.host.E)) ↔
@@ -174,8 +178,8 @@ theorem moved_latT (S : GridChoice W U) {μ₀ : T} (hL : L.Is μ₀) {t : T} {k
   rw [hm, hU z, hK, hU, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, ← Units.val_mul, ← Units.val_mul]
   simp only [mul_assoc, mul_inv_cancel_left]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem vac_scalar (S : GridChoice W U) {μ₀ : T} (hL : L.Is μ₀) {t : T} {k : FinPt G (.grid 0 D.R.m)}
     (hk : finG (G.V (.grid 0 D.R.m)) k ∈ S.levRow t 0 (Nat.zero_le _)) (c : ℂ)
     (hc : W.om (.chi 0 D.R.m) (G.toPair (.chi 0 D.R.m) ((S.N.u (.grid 0 D.R.m))⁻¹ * k * S.N.u (.grid 0 D.R.m)).1 1)
@@ -246,8 +250,8 @@ theorem iter_lam_eq {μ : ℕ → Kˣ →* ℂˣ} (hμ : ∀ c, IsTame (μ c)) (
   rw [iter_lam_eq_prod_chi hμ j hχ (N.submatrix ea ea) (fun c => dBlk (blkOf r t) (c.val + 1) g) hu g' hg']
   exact (Finset.prod_range (fun c => χ (c + 1) (dBlk (blkOf r t) (c + 1) g))).symm
 
-omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem block_triangular_second_diagonal_block_det_eq (ha : IsIx ea) {g : GL (Fin a) κ} (hg : g ∈ blockTri (blk2 r)) :
     (dBlk (blk2 r) 1 g : κ) = ((g.val.submatrix ea ea).toBlocks₂₂).det := by
   have hmem : ∀ x : Fin j × Fin t, blk2 r (ea (.inr x)) = 1 := by
@@ -285,9 +289,8 @@ theorem parahoric_lam_eq {δ : Kˣ →* ℂˣ} (hδ : IsTame δ) (h : IsRed φ �
 
 end Red
 
-open GlobalTheory.FunObj.Comparison₂ in
-open Classical in
 
+open GlobalTheory.FunObj.Comparison₂ Classical in
 theorem stepType_lam {μ₀ : T} (hL : L.Is μ₀) (t : T) {j n : ℕ} (hj : j ≤ D.R.m) (w : Pl D.host.E)
     {ea : Ix (Fin D.R.r) (Fin D.R.t) j ≃ Fin n} (ha : IsIx ea) (N : Matrix (Fin n) (Fin n) (OA D)) (g : GL (Fin n) (kP w))
     (hr : g.val = N.map (resS D.host.F w)) (κ : GL (Ix (Fin D.R.r) (Fin D.R.t) j) (Kw w))
@@ -374,10 +377,9 @@ theorem stepType_lam {μ₀ : T} (hL : L.Is μ₀) (t : T) {j n : ℕ} (hj : j �
       rw [if_neg hP', if_neg hQ', mul_one]
       rfl
 
-set_option maxHeartbeats 1000000 in
-open GlobalTheory.FunObj.Comparison₂ in
-open Classical in
 
+set_option maxHeartbeats 1000000 in
+open GlobalTheory.FunObj.Comparison₂ Classical in
 theorem endLamAt_eq {μ₀ : T} (hL : L.Is μ₀) (G : GridData L sc) (t : T) {j n : ℕ} (hj : j ≤ D.R.m) (w : Pl D.host.E)
     (h : (locGrid G t w).rank (0, j) = n) (β x : GL (Fin n) (Lev.EAf D)) (hx : x ∈ St β)
     (hP : w ∈ L.Pg → redFn β w x ∈ blockTri (blkOf D.R.r D.R.t)) (hQ : w ∈ L.Q t → redFn β w x ∈ blockTri (blk2 D.R.r))
@@ -411,8 +413,8 @@ theorem endLamAt_eq {μ₀ : T} (hL : L.Is μ₀) (G : GridData L sc) (t : T) {j
   unfold endLamAt
   rw [dif_pos hk', hlam, Units.val_inv_eq_inv_val]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem levFn_mul_endLamAt {μ₀ : T} (hL : L.Is μ₀) (G : GridData L sc) (t : T)
     (h : ∀ w, (locGrid G t w).rank (0, D.R.m) = D.sp.X'.rank) (x : GL (Fin D.sp.X'.rank) (Lev.EAf D))
     (hx : x ∈ lev D.sp.cm D.sp.X'.gram L.βX (Lev.flag1L (L.datXt t)))
@@ -466,8 +468,8 @@ private theorem reGL_symm_mem_of_mem_givenLevel (G : GridData L sc) (t : T) (w :
     obtain ⟨y, hy, rfl⟩ := Subgroup.mem_map.mp hκ
     simpa using hy
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem chi_mul_endLam {G : GridData L sc} {W : G.Weil} {U : Set T} (S : GridChoice W U) {μ₀ : T} (hL : L.Is μ₀) {t : T}
     {k : FinPt G (.grid 0 D.R.m)} (hk : finG (G.V (.grid 0 D.R.m)) k ∈ S.levRow t 0 (Nat.zero_le _))
     (hk' : toXf k ∈ (levEnv D.sp.X' L.βX (L.datXt t)).J) :
@@ -504,18 +506,5 @@ theorem scalar_of_is {G : GridData L sc} {W : G.Weil} {U : Set T} (S : GridChoic
   have h1 := vac_scalar S hL hk c hc
   have h2 := chi_mul_endLam S hL hk hk'
   linear_combination c * h2 + h1
-
-theorem scalar : GlobalTheory.FunPr.Hypotheses₂ → SumOKK → Big fun {D} {_Γ} _ _ {_Pl0} {T} {_A} {_Ks} _ _ _ {R} ch =>
-    ∀ (t : T) (k : FinPt ch.G (.grid 0 D.R.m)), finG (ch.G.V (.grid 0 D.R.m)) k ∈ ch.S.levRow t 0 (Nat.zero_le _) →
-    ∀ (hk : toXf k ∈ (levEnv D.sp.X' R.βX (R.datXt t)).J) (c : ℂ),
-      ch.W.om (.chi (GlobalTheory.FirstRowVertex.firstIx D) D.R.m : Pair T) (ch.G.toPair (.chi (GlobalTheory.FirstRowVertex.firstIx D) D.R.m : Pair T) ((ch.S.N.u (.grid 0 D.R.m))⁻¹ * k * ch.S.N.u (.grid 0 D.R.m)).1 1) (ch.S.Z.vac (.chi (GlobalTheory.FirstRowVertex.firstIx D) D.R.m : Pair T)) = c • ch.S.Z.vac (.chi (GlobalTheory.FirstRowVertex.firstIx D) D.R.m : Pair T) →
-      (((levEnv D.sp.X' R.βX (R.datXt t)).χ ⟨toXf k, hk⟩ : ℂˣ) : ℂ) * c *
-          ∏ w : locPl ch.G t, GlobalTheory.FirstRowEndLaw.endLam ch.G t w.1 (GlobalTheory.FirstRowTermLaw.kapAt ch.S.toGridChoice t w.1 k) =
-        ∏ w : locPl ch.G t, (locGrid ch.G t w).edgeFactor .one
-          (Pi.mulSingle (0, D.R.m) (GlobalTheory.FirstRowTermLaw.kapAt ch.S.toGridChoice t w k)) (.ex 0 D.R.m) := by
-  intro _ _
-  refine ⟨0, fun ε CF _ => ⟨0, ?_⟩⟩
-  intro D large₂ _ _ Γ _ _ Pl0 T A Ks _ _ _ R F hS ch _ _ t k hk hk' c hc
-  exact scalar_of_is ch.S.toGridChoice hS.core.lev t k hk hk' c hc
 
 end GlobalTheory.FirstRowScalar

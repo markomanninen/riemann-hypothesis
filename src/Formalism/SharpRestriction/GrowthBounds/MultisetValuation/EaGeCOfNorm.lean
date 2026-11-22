@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaRestSExpVOf
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaNuTwoLeOne
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.EGaussK
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaRestSExpVOf
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaNuTwoLeOne
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.EGaussK
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,6 @@ def ea_ball (K' : Type) [NormedField K'] [IsUltrametricDist K'] : Subring K' whe
     show ‖-a‖ ≤ 1
     rw [norm_neg]
     exact ha
-
-theorem ea_mem_ball {K' : Type} [NormedField K'] [IsUltrametricDist K'] {x : K'} : x ∈ ea_ball K' ↔ ‖x‖ ≤ 1 := Iff.rfl
 
 variable {p : ℕ} [hp : Fact p.Prime] {X : Sys p}
 
@@ -94,11 +96,11 @@ theorem ea_lowN (D : Formalism.BasicNotions.D7) (Y : Pend X) (hNm : ea_RestNorm 
       (u : Fin (X.G.P.n' v) → K') (F : MvPowerSeries (X.ZA j) K'), vp ^ (p ^ 2 - 1) = (p : K') →
       ‖(p : K')‖ = (p : ℝ)⁻¹ → (∀ s, ‖u s‖ ≤ 1) →
       ea_InClassA X (ea_ball K') j (X.hhA K' j v u) (atPi vp F) → ∀ (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-      ‖MvPolynomial.coeff n (applyD (P I) F)‖ ≤ (p : ℝ) ^ (-g)) :
+      ‖AddMonoidAlgebra.coeff (applyD (P I) F) n‖ ≤ (p : ℝ) ^ (-g)) :
     ∀ U : MvPowerSeries (X.EA j ⊕ X.EA j) Y.Kc, IntR Y.Oc (inParamK p Y.Kc U) →
       ∀ (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-        Y.geC (MvPolynomial.coeff n (applyD (P I)
-          (X.ThZA Y.Kc j (MvPowerSeries.map (algebraMap (K0 p) Y.Kc) (expS p (-Y.PhAt j v)) * U)))) g := by
+        Y.geC (AddMonoidAlgebra.coeff (applyD (P I)
+          (X.ThZA Y.Kc j (MvPowerSeries.map (algebraMap (K0 p) Y.Kc) (expS p (-Y.PhAt j v)) * U))) n) g := by
   intro U hU I n
   obtain ⟨E⟩ := hNm
   obtain ⟨u, hu, hcls⟩ := hS (hA.1 p) hA.2.2.2.1 v j U hU E.K' (ea_ball E.K') E.vp E.vp_pow (ea_Rp_le_ball Y E)
@@ -155,16 +157,16 @@ def ea_Exp (X : Sys p) (v : X.Pl) (j i : ℕ) (I : X.ColCh j) : ℕ :=
 
 def ea_BrJet (X : Sys p) : Prop :=
   ∀ (v : X.Pl) (j : ℕ) (K' : Type) [Field K'] (F : MvPowerSeries (X.ZA j) K') (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-    MvPolynomial.coeff n (applyD (X.PIv j I v) F) = 0 ∨
-      ∃ n', MvPolynomial.coeff n (applyD (X.PIv j I v) F) =
-        MvPolynomial.coeff n' (Formalism.DworkPowerSeriesWeights.frameJet (ea_colN X v j) (ea_hts X v j) (ea_hp X v j) (ea_Ic X v j I)
-          (resV (ea_eps X v j) F))
+    AddMonoidAlgebra.coeff (applyD (X.PIv j I v) F) n = 0 ∨
+      ∃ n', AddMonoidAlgebra.coeff (applyD (X.PIv j I v) F) n =
+        AddMonoidAlgebra.coeff (Formalism.DworkPowerSeriesWeights.frameJet (ea_colN X v j) (ea_hts X v j) (ea_hp X v j) (ea_Ic X v j I)
+          (resV (ea_eps X v j) F)) n'
 
 def ea_BrScale (X : Sys p) : Prop :=
   ∀ (v : X.Pl) (j i : ℕ) (K' : Type) [Field K'] (F : MvPowerSeries (X.ZA j) K') (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-    MvPolynomial.coeff n (applyD (PIvS X j I (fun _ => i) v) F) = 0 ∨
-      MvPolynomial.coeff n (applyD (PIvS X j I (fun _ => i) v) F) =
-        (p : K') ^ (ea_Exp X v j i I) * MvPolynomial.coeff n (applyD (X.PIv j I v) F)
+    AddMonoidAlgebra.coeff (applyD (PIvS X j I (fun _ => i) v) F) n = 0 ∨
+      AddMonoidAlgebra.coeff (applyD (PIvS X j I (fun _ => i) v) F) n =
+        (p : K') ^ (ea_Exp X v j i I) * AddMonoidAlgebra.coeff (applyD (X.PIv j I v) F) n
 
 def ea_BrClass (X : Sys p) : Prop :=
   ∀ (v : X.Pl) (j : ℕ) (K' : Type) [NormedField K'] [IsUltrametricDist K'] (vp : K') (u : Fin (X.G.P.n' v) → K')

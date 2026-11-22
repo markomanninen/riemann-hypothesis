@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PaddedWittNormSquare
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PaddedLastEntry
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PaddedWittNormSquare
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PaddedLastEntry
+
+@[expose] public section
 
 noncomputable section
 

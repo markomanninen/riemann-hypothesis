@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.SingleMemDualLatticeStandard
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualPtsOnPlane
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.SingleMemDualLatticeStandard
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualPtsOnPlane
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,19 +18,21 @@ namespace StandardDualMetricPullback
 
 variable {K : Type} [Field K] [NumberField K] {i : ℕ} {T : Type} [Fintype T] [DecidableEq T]
 
-omit [DecidableEq T] in
 
+omit [DecidableEq T] in
 theorem linApply_eq (b : Module.Basis T ℤ (dualLattice (HermLattice.standard K i)))
     (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b))) (z : (Σ _ : Unit, T) → ℂ) (j : Fin i) :
     linApply (ι₂ := PBlk i) (dualStdCoordMat b) z ⟨(), j⟩ =
       ∑ τ : K →+* ℂ, dualRecover b hb (fun t => z ⟨(), t⟩) (τ, j) := by
+  classical
   set W := dualRecover b hb (fun t => z ⟨(), t⟩)
   have hMW : dualEmbMatrix b *ᵥ W = fun t => z ⟨(), t⟩ :=
     (LinearEquiv.ofBijective _ hb).apply_symm_apply _
   have hA : ∀ p : (K →+* ℂ) × Fin i,
       ∑ t, (dualStdCoordMat b () j t : ℂ) * dualEmbMatrix b t p = p.1 ((Pi.single j 1 : Fin i → K) p.2) := by
     intro p
-    rw [← dualStdCoordMat_sum b j, Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← dualStdCoordMat_sum b j, Finset.sum_apply, map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     simp [dualEmbMatrix, Pi.smul_apply, zsmul_eq_mul]
   calc linApply (ι₂ := PBlk i) (dualStdCoordMat b) z ⟨(), j⟩
@@ -45,8 +52,8 @@ theorem linApply_eq (b : Module.Basis T ℤ (dualLattice (HermLattice.standard K
 
 end StandardDualMetricPullback
 
-open StandardDualMetricPullback in
 
+open StandardDualMetricPullback in
 theorem DualStdMetricPull.proof : DualStdMetricPull.Statement := by
   intro K _ _ i T _ _ b hb z hz
   set W := dualRecover b hb (fun t => z ⟨(), t⟩)

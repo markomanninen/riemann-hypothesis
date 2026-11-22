@@ -1,6 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -22,7 +28,7 @@ theorem isFinite_fromSpecResidueField_comp_of_isClosed_of_closedPoint : ∀ (R :
   rw [HasRingHomProperty.Spec_iff (P := @LocallyOfFiniteType)] at hf
   generalize Spec.preimage (X.left.fromSpecResidueField x ≫ X.hom) = φ at hf hpt ⊢
   let K := X.left.residueField x
-  let p0 : PrimeSpectrum K := ⟨⊥, Ideal.bot_prime⟩
+  let p0 : PrimeSpectrum K := ⟨⊥, Ideal.isPrime_bot⟩
   have hker : RingHom.ker φ.hom = maximalIdeal R := by
     have h1 := congrArg PrimeSpectrum.asIdeal (hpt p0)
     have h2 : (Spec.map φ).base p0 = PrimeSpectrum.comap φ.hom p0 := rfl

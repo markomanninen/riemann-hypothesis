@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevTransportHer
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevTransportHer
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ENNReal

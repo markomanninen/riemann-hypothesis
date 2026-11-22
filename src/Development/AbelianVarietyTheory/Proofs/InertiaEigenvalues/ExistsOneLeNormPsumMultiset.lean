@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TendstoPrimeIdealZetaSumUniv
+module
+
+public import Mathlib
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TendstoPrimeIdealZetaSumUniv
+
+@[expose] public section
 
 open Finset MvPolynomial
 
@@ -23,7 +27,8 @@ theorem norm_eval_esymm_le (f : σ → ℂ) {c : ℝ} (hc0 : 0 ≤ c) (hc : c �
   | _ k ih =>
     intro hk1 hkn
     have hN := congrArg (MvPolynomial.eval f) (MvPolynomial.mul_esymm_eq_sum σ ℂ k)
-    simp only [map_mul, map_pow, map_neg, map_one, map_sum, map_natCast] at hN
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_pow, map_neg, map_one, map_sum, map_natCast] at hN
     have hsub : (antidiagonal k).filter (fun a => a.1 < k) ⊆ (range k).image (fun j => (j, k - j)) := by
       intro a ha
       simp only [mem_filter, Finset.HasAntidiagonal.mem_antidiagonal] at ha

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocPoly
-import GroundTheory.AutomorphicForms.GL2.GJMatrixSchwartz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocPoly
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixSchwartz
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GroundTheory.Global GroundTheory.Automorphic.GJMatrix GlobalTheory.HenQ
 open GlobalTheory.CuspRep (GA Af Ad ratGL finGL locGL pFin pLoc)
 open scoped nonZeroDivisors
@@ -10,7 +15,7 @@ namespace GlobalTheory.HenQ
 variable {K : Type} [Field K] [NumberField K]
 
 theorem valued_det_of_KGL {w : HeightOneSpectrum (𝓞 K)} {n : ℕ} {g : GL (Fin n) (w.adicCompletion K)}
-    (hg : g ∈ GlobalTheory.LFun.KGL w n) : Valued.v g.val.det = 1 := by
+    (hg : g ∈ GlobalTheory.LFun.KGL w (n := n)) : Valued.v g.val.det = 1 := by
   obtain ⟨g0, rfl⟩ := hg
   set O := (w.adicCompletionIntegers K).toSubring
   have hd : ∀ h : GL (Fin n) O, ((Formalism.UG.bc O.subtype h).val.det) = ((h.val.det : O) : w.adicCompletion K) := by

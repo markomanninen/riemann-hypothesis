@@ -1,5 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ProperCut
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ProperL
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.T2SpaceTensorProductFiniteExtension
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.InclRAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,8 +62,5 @@ theorem properOrb_of_one (h1 : ProperOne) (hI : InvNbhd) : ProperOrb := by
   refine ⟨(c, g • rmulT X b (Y0 X u')), ⟨hc, hg⟩, ?_⟩
   show rmulT X c (g • rmulT X b (Y0 X u')) = g • Y0 X u'
   rw [smul_rmulT, rmulT_rmulT, hbc, rmulT_one]
-
-theorem constTest_of_polar_one (hP : PolarLoc) (h1 : ProperOne) (hI : InvNbhd) : ConstTest :=
-  constTest_of_polar_prop hP (properOrb_of_one h1 hI)
 
 end PI.AprimeInfW

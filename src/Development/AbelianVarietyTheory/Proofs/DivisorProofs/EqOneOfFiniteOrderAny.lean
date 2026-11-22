@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AdicSumSectionsOfFiniteSumsOnThickenings
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProductOfSectionsExpandsToConvolution
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HeckeOperatorMultiplicativeOnSectionProducts
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsAutomorphismInducingFrobeniusAllDegrees
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EqOneOfFiniteOrderOfFixThreeTorsion
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.InducedFrobeniusCompUniqueOrigin
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsInducedTranslationFrobeniusOnSections
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.InducesFrobeniusOnSectionsTranslationIffImage
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.DimEqRankAddDim
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CardQuotientKTorsionPairs
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairing
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AdicSumSectionsOfFiniteSumsOnThickenings
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProductOfSectionsExpandsToConvolution
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HeckeOperatorMultiplicativeOnSectionProducts
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsAutomorphismInducingFrobeniusAllDegrees
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EqOneOfFiniteOrderOfFixThreeTorsion
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.InducedFrobeniusCompUniqueOrigin
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsInducedTranslationFrobeniusOnSections
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.InducesFrobeniusOnSectionsTranslationIffImage
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.DimEqRankAddDim
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CardQuotientKTorsionPairs
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
@@ -235,7 +239,8 @@ theorem sumF_any : LL → AnyD fun {R} _ _ {I} D F _ _ => ∀ (K : Type) [Fintyp
     have e₁ := fun j => gs_loc₀ P (hv' j) _ p hp hJ'
     rw [gs_eq _ p _ hp] at e₀
     simp only [gs_eq _ p _ hp] at e₁
-    rw [loc₀_sub_sum, gs_eq _ p _ hp, map_sub, map_sub, map_sum, map_sum, e₀, Finset.sum_congr rfl fun j _ => e₁ j,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [loc₀_sub_sum, gs_eq _ p _ hp, map_sub, map_sub, map_sum, map_sum, e₀, Finset.sum_congr rfl fun j _ => e₁ j,
       ← Finset.mul_sum]
     exact sub_eq_zero.2 (congrArg _ h₃)
 
@@ -323,7 +328,8 @@ theorem prodConv_any : LL → AnyUF fun {R} _ _ {I} {D} {A} {G} _ _ U F _ _ => �
   have hs : ∀ β, famProj D.toPre F k'' β (∑ p : Fin n × Fin n', (c p.1 * c' p.2) • famPull D.toPre (FractionRing R) F hG k'' (Φ p)) =
       ∑ p : Fin n × Fin n', (c p.1 * c' p.2 * (algebraMap (FractionRing R) F (algebraMap R (FractionRing R) (r p)))⁻¹) •
         termPull D.toPre (FractionRing R) F k'' β (genericTerm D k'' β ((y p).2 β)) := fun β => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [d₂, map_smulₛₗ, map_smulₛₗ, smul_smul, inv_mul_cancel_right₀ (hr' p)]; rfl
   have hE := expandsG_of_fintype U.toUnifPre F k'' v'' _ _ y hy (hv.trans (Finset.sum_congr (M := GroupSec U.toUnifPre F k'') rfl fun p _ => by
@@ -548,24 +554,25 @@ section
 open SerreField GlobalTheory.FiniteOrderFix
 
 theorem eq_one_of_field_any (h : Laws) {K : Type} [Field K] [IsAlgClosed K] (P : PolAV (Sp K))
-    {M : ℕ} (hMp : M.Prime) (hM : 3 ≤ M) (hMK : (M : K) ≠ 0) (σ : CategoryTheory.End P.A) [hσ : IsMonHom (σ : P.A ⟶ P.A)] {m : ℕ} (hm : m ≠ 0)
-    (hord : σ ^ m = 1) (hfix : ∀ x : baseOver (Sp K) ⟶ P.A, x ^ M = 1 → x ≫ σ = x) : σ = 1 := by
+    {M : ℕ} (hMp : M.Prime) (hM : 3 ≤ M) (hMK : (M : K) ≠ 0)
+    (σ : CategoryTheory.End P.A) [hσ : IsMonHom σ.asHom] {m : ℕ} (hm : m ≠ 0)
+    (hord : σ ^ m = 1) (hfix : ∀ x : baseOver (Sp K) ⟶ P.A, x ^ M = 1 → x ≫ σ.asHom = x) : σ = 1 := by
   have hdiv := DivisibleHom.exists_eq_pow_of_torsion_comp_eq_one (fun S _ P n hn =>
     ⟨(h.mulN S P n hn).1, (h.mulN S P n hn).2.1, (h.mulN S P n hn).2.2.1, (h.mulN S P n hn).2.2.2.1⟩)
   have hfix' := fix_torsion_of_fix_geometric_of_isDominant h.mulN P M (by omega) (by
     simpa using hMK.isUnit.map
-      (Scheme.ΓSpecIso (CommRingCat.of K)).inv.hom) (𝟙 _) σ hσ hfix
-  let τ : P.A ⟶ P.A := σ
+      (Scheme.ΓSpecIso (CommRingCat.of K)).inv.hom) (𝟙 _) σ.asHom hσ hfix
+  let τ : P.A ⟶ P.A := σ.asHom
   have hu : IsMonHom (τ * (𝟙 P.A)⁻¹) := by
     rw [Hom.mul_def, Hom.inv_def]; infer_instance
   obtain ⟨⟨φ, hφ, e⟩, -⟩ := hdiv _ P P.A M (by omega) (τ * (𝟙 P.A)⁻¹) hu (fun T x hx => by
     rw [MonObj.comp_mul, GrpObj.comp_inv, hfix' T x hx, Category.comp_id, mul_inv_cancel])
   have hpow : ∀ (n : ℕ) (x : P.A ⟶ P.A), (toRing τ ^ n).1 (Additive.ofMul x) =
-      Additive.ofMul (x ≫ (σ ^ n : CategoryTheory.End P.A)) := fun n x => by
+      Additive.ofMul (x ≫ (σ ^ n).asHom) := fun n x => by
     induction n with
     | zero => exact congrArg Additive.ofMul (Category.comp_id x).symm
     | succ n ih =>
-      rw [pow_succ', pow_succ', End.mul_def, ← Category.assoc]
+      rw [pow_succ', pow_succ', End.mul_asHom, ← Category.assoc]
       exact (congrArg (toRing τ).1 ih).trans (toRing_apply _ _)
   have key : toRing τ = 1 := by
     refine serre_prime (homRing P.A) M hMp hM ?_ ?_ (toRing τ) (toRing φ) m hm ?_ ?_
@@ -590,13 +597,17 @@ theorem eq_one_of_field_any (h : Laws) {K : Type} [Field K] [IsAlgClosed K] (P :
       change _ = Additive.ofMul (𝟙 P.A) + ((M : homRing P.A) * toRing φ).1 _
       rw [natCast_mul_apply, toRing_apply, toRing_apply, Category.id_comp, Category.id_comp,
         ← ofMul_pow, ← e, ← ofMul_mul, mul_comm, inv_mul_cancel_right]
-    · exact homRing_ext (by rw [hpow, hord, Category.id_comp]; rfl)
+    · exact homRing_ext (by rw [hpow, hord, End.one_asHom, Category.id_comp]; rfl)
   have h1 := congrArg (fun g : homRing P.A => g.1 (Additive.ofMul (𝟙 P.A))) key
   simp only [toRing_apply, Category.id_comp] at h1
-  exact h1
+  exact End.ext h1
 
 theorem eq_one_of_finite_order_any :
-    LL → ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (P : PolAV S) (F : Type) [Field F] [IsAlgClosed F] (M : ℕ), M.Prime → 3 ≤ M → (M : F) ≠ 0 → ∀ (p : Spec (CommRingCat.of F) ⟶ S) (h : CategoryTheory.End (Over.mk p ⊗ P.A)), h ≫ fst _ _ = fst _ _ → ptSecT P.A 1 ≫ h = ptSecT P.A 1 → (∃ n, 1 ≤ n ∧ h ^ n = 1) → (∀ x : Over.mk p ⟶ P.A, x ^ M = 1 → ptSecT P.A x ≫ h = ptSecT P.A x) → h = 1 := by
+    LL → ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (P : PolAV S) (F : Type) [Field F] [IsAlgClosed F]
+      (M : ℕ), M.Prime → 3 ≤ M → (M : F) ≠ 0 → ∀ (p : Spec (CommRingCat.of F) ⟶ S)
+      (h : CategoryTheory.End (Over.mk p ⊗ P.A)), h.asHom ≫ fst _ _ = fst _ _ →
+      ptSecT P.A 1 ≫ h.asHom = ptSecT P.A 1 → (∃ n, 1 ≤ n ∧ h ^ n = 1) →
+      (∀ x : Over.mk p ⟶ P.A, x ^ M = 1 → ptSecT P.A x ≫ h.asHom = ptSecT P.A x) → h = 1 := by
   rintro ⟨laws, -⟩ S _ P F _ _ M hMp hM hMF p h hfst h0 ⟨n, hn, hord⟩ hfix
   obtain ⟨P', g, hg, -, pm, -⟩ := laws.polBaseChange S _ p P
   have hg' : IsPullback (snd (Over.mk p) P.A).left (fst (Over.mk p) P.A).left P.A.hom p :=
@@ -604,17 +615,18 @@ theorem eq_one_of_finite_order_any :
   let e := hg.isoIsPullback _ _ hg'
   have e₁ : e.hom ≫ (snd (Over.mk p) P.A).left = g := hg.isoIsPullback_hom_fst _ _ hg'
   have e₂ : e.hom ≫ (fst (Over.mk p) P.A).left = P'.A.hom := hg.isoIsPullback_hom_snd _ _ hg'
-  have e₃ : h.left ≫ (fst (Over.mk p) P.A).left = (fst (Over.mk p) P.A).left := congrArg (·.left) hfst
-  let σ : CategoryTheory.End P'.A := Over.homMk (e.hom ≫ h.left ≫ e.inv) (by
-    rw [← e₂, Category.assoc, Category.assoc, e.inv_hom_id_assoc, e₃])
-  have hσ : σ.left ≫ e.hom = e.hom ≫ h.left := by
-    change (e.hom ≫ h.left ≫ e.inv) ≫ e.hom = _
+  have e₃ : h.asHom.left ≫ (fst (Over.mk p) P.A).left = (fst (Over.mk p) P.A).left :=
+    congrArg (·.left) hfst
+  let σ : CategoryTheory.End P'.A := End.of (Over.homMk (e.hom ≫ h.asHom.left ≫ e.inv) (by
+    rw [← e₂, Category.assoc, Category.assoc, e.inv_hom_id_assoc, e₃]))
+  have hσ : σ.asHom.left ≫ e.hom = e.hom ≫ h.asHom.left := by
+    change (e.hom ≫ h.asHom.left ≫ e.inv) ≫ e.hom = _
     simp
-  have hpow : ∀ k : ℕ, (σ ^ k).left ≫ e.hom = e.hom ≫ (h ^ k).left := fun k => by
+  have hpow : ∀ k : ℕ, (σ ^ k).asHom.left ≫ e.hom = e.hom ≫ (h ^ k).asHom.left := fun k => by
     induction k with
     | zero => exact (Category.id_comp _).trans (Category.comp_id _).symm
     | succ k ih =>
-      rw [pow_succ', pow_succ', End.mul_def, End.mul_def, Over.comp_left, Over.comp_left, Category.assoc, hσ,
+      rw [pow_succ', pow_succ', End.mul_asHom, End.mul_asHom, Over.comp_left, Over.comp_left, Category.assoc, hσ,
         reassoc_of% ih]
   let c : Over.mk p ⟶ Over.mk ((baseOver (Sp F)).hom ≫ p) := Over.homMk (𝟙 _) (by simp)
   let ρ : (baseOver (Sp F) ⟶ P'.A) →* (Over.mk p ⟶ P.A) := MonoidHom.mk' (fun x => c ≫ toBase hg.w x)
@@ -625,20 +637,21 @@ theorem eq_one_of_finite_order_any :
       exact Category.id_comp _
     · rw [← Over.comp_left, ptSecT, lift_fst, Category.assoc, e₂]
       exact (Over.w x).symm
-  have key : ∀ x, ptSecT P.A (ρ x) ≫ h = ptSecT P.A (ρ x) → x ≫ σ = x := fun x hx => by
+  have key : ∀ x, ptSecT P.A (ρ x) ≫ h.asHom = ptSecT P.A (ρ x) → x ≫ σ.asHom = x := fun x hx => by
     have := congrArg (·.left) hx
     simp only [Over.comp_left, hρ] at this
     refine Over.OverMorphism.ext ((cancel_mono e.hom).1 ?_)
     rw [Over.comp_left, Category.assoc, hσ, ← Category.assoc, this]
   have hη : (1 : baseOver (Sp F) ⟶ P'.A) = η[P'.A] :=
     (congrArg (· ≫ η[P'.A]) toUnit_unit).trans (Category.id_comp _)
-  have : IsMonHom (σ : P'.A ⟶ P'.A) := laws.rigidity _ _ _ P'.isAb P'.isAb σ (by
+  have : IsMonHom σ.asHom := laws.rigidity _ _ _ P'.isAb P'.isAb σ.asHom (by
     have := key 1 (by rw [map_one]; exact h0)
     rwa [hη] at this)
   have h1 : σ = 1 := eq_one_of_field_any laws P' hMp hM hMF σ (m := n) (by omega)
-    (Over.OverMorphism.ext ((cancel_mono e.hom).1 ((hpow n).trans (by rw [hord]; exact (hpow 0).symm))))
+    (End.ext (Over.OverMorphism.ext ((cancel_mono e.hom).1
+      ((hpow n).trans (by rw [hord]; exact (hpow 0).symm)))))
     fun x hx => key x (hfix _ (by rw [← map_pow, hx, map_one]))
-  refine Over.OverMorphism.ext ((cancel_epi e.hom).1 ?_)
+  refine End.ext (Over.OverMorphism.ext ((cancel_epi e.hom).1 ?_))
   rw [← hσ, h1]
   exact hpow 0
 
@@ -650,71 +663,78 @@ open GlobalTheory.InducedTranslation
 theorem exists_pow_eq_translT_any (hL : LL) {S : Scheme.{0}} [IsLocallyNoetherian S] (P : PolAV S) {F : Type} [Field F]
     [IsAlgClosed F] {M : ℕ} (hMp : M.Prime) (hM : 3 ≤ M) (hMF : (M : F) ≠ 0) (p : Spec (CommRingCat.of F) ⟶ S)
     [Finite {x : Over.mk p ⟶ P.A // x ^ M = 1}] (ψ : CategoryTheory.End (Over.mk p ⊗ P.A))
-    (hψ : ψ ≫ fst _ _ = fst _ _) {N : ℕ} (hN : 1 ≤ N) (hord : ψ ^ N = 1) {m : ℕ}
+    (hψ : ψ.asHom ≫ fst _ _ = fst _ _) {N : ℕ} (hN : 1 ≤ N) (hord : ψ ^ N = 1) {m : ℕ}
     (hm : Nat.card (Equiv.Perm {x : Over.mk p ⟶ P.A // x ^ M = 1}) ∣ m) :
-    ∃ x : Over.mk p ⟶ P.A, (ψ ^ m : CategoryTheory.End _) = translT P.A x := by
-  obtain ⟨a, ha⟩ : ∃ a, a = ptSecT P.A 1 ≫ ψ ≫ snd _ _ := ⟨_, rfl⟩
-  obtain ⟨h, hh⟩ : ∃ h : CategoryTheory.End (Over.mk p ⊗ P.A), h = ψ ≫ translT P.A a⁻¹ := ⟨_, rfl⟩
-  have hfst : h ≫ fst _ _ = fst _ _ := by rw [hh, Category.assoc, translT_fst, hψ]
-  have h0 : ptSecT P.A 1 ≫ h = ptSecT P.A 1 := by
+    ∃ x : Over.mk p ⟶ P.A, (ψ ^ m).asHom = translT P.A x := by
+  obtain ⟨a, ha⟩ : ∃ a, a = ptSecT P.A 1 ≫ ψ.asHom ≫ snd _ _ := ⟨_, rfl⟩
+  obtain ⟨h, hh⟩ : ∃ h : CategoryTheory.End (Over.mk p ⊗ P.A), h.asHom = ψ.asHom ≫ translT P.A a⁻¹ :=
+    ⟨End.of _, rfl⟩
+  have hfst : h.asHom ≫ fst _ _ = fst _ _ := by rw [hh, Category.assoc, translT_fst, hψ]
+  have h0 : ptSecT P.A 1 ≫ h.asHom = ptSecT P.A 1 := by
     rw [hh, ← Category.assoc, ptSecT, eq_lift hψ, lift_translT, Category.id_comp, ← ptSecT, ← ptSecT, ← ha,
       inv_mul_cancel]
-  have hψh : ψ = h ≫ translT P.A a := by
+  have hψh : ψ.asHom = h.asHom ≫ translT P.A a := by
     rw [hh, Category.assoc, translT_comp, mul_inv_cancel, translT_one, Category.comp_id]
-  have hmul := fun {Z} (t : Z ⟶ Over.mk p) => map_mul_of_fix_origin hL.1 P h hfst h0 t
-  have hcomm : ∀ x, translT P.A x ≫ h = h ≫ translT P.A (ptSecT P.A x ≫ h ≫ snd _ _) := fun x => end_ext (by
-    rw [← Category.assoc, lift_translT, eq_lift hfst, hmul, ← Category.assoc (lift _ _) h (translT _ _), eq_lift hfst,
-      lift_translT, ptSecT, ← Category.assoc (fst _ _), comp_lift, Category.comp_id])
-  have hpow : ∀ n : ℕ, ∃ x, (ψ ^ n : CategoryTheory.End _) = (h ^ n : CategoryTheory.End _) ≫ translT P.A x :=
+  have hmul := fun {Z} (t : Z ⟶ Over.mk p) => map_mul_of_fix_origin hL.1 P h.asHom hfst h0 t
+  have hcomm : ∀ x, translT P.A x ≫ h.asHom = h.asHom ≫ translT P.A (ptSecT P.A x ≫ h.asHom ≫ snd _ _) :=
+    fun x => end_ext (by
+      rw [← Category.assoc, lift_translT, eq_lift hfst, hmul, ← Category.assoc (lift _ _) h.asHom (translT _ _),
+        eq_lift hfst, lift_translT, ptSecT, ← Category.assoc (fst _ _), comp_lift, Category.comp_id])
+  have hpow : ∀ n : ℕ, ∃ x, (ψ ^ n).asHom = (h ^ n).asHom ≫ translT P.A x :=
     fun n => by
     induction n with
     | zero => exact ⟨1, by rw [translT_one, Category.comp_id, pow_zero, pow_zero]⟩
     | succ n ih =>
       obtain ⟨x, hx⟩ := ih
-      refine ⟨a * (ptSecT P.A x ≫ h ≫ snd _ _), ?_⟩
-      rw [pow_succ', pow_succ', End.mul_def, End.mul_def, hx, ← translT_comp, Category.assoc, Category.assoc,
-        ← Category.assoc h, ← hcomm, Category.assoc, ← hψh]
-  have h0' : ∀ n : ℕ, ptSecT P.A 1 ≫ (h ^ n : CategoryTheory.End _) = ptSecT P.A 1 := fun n => by
+      refine ⟨a * (ptSecT P.A x ≫ h.asHom ≫ snd _ _), ?_⟩
+      rw [pow_succ', pow_succ', End.mul_asHom, End.mul_asHom, hx, ← translT_comp, Category.assoc, Category.assoc,
+        ← Category.assoc h.asHom, ← hcomm, Category.assoc, ← hψh]
+  have h0' : ∀ n : ℕ, ptSecT P.A 1 ≫ (h ^ n).asHom = ptSecT P.A 1 := fun n => by
     induction n with
     | zero => exact Category.comp_id _
-    | succ n ih => rw [pow_succ', End.mul_def, ← Category.assoc, ih, h0]
+    | succ n ih => rw [pow_succ', End.mul_asHom, ← Category.assoc, ih, h0]
   have hhN : h ^ N = 1 := by
     obtain ⟨x, hx⟩ := hpow N
     have e := congrArg (ptSecT P.A 1 ≫ · ≫ snd _ _) hx
     simp only [hord] at e
-    rw [End.one_def, Category.id_comp, ← Category.assoc, ← Category.assoc, h0', ptSecT, lift_translT, lift_snd,
+    rw [End.one_asHom, Category.id_comp, ← Category.assoc, ← Category.assoc, h0', ptSecT, lift_translT, lift_snd,
       lift_snd, Category.id_comp, _root_.mul_one] at e
     rw [← e, translT_one, Category.comp_id, hord] at hx
-    exact hx.symm
+    exact End.ext hx.symm
   let φ : (Over.mk p ⟶ P.A) →* (Over.mk p ⟶ P.A) :=
-    MonoidHom.mk' (fun x => ptSecT P.A x ≫ h ≫ snd _ _) (hmul (𝟙 _))
+    MonoidHom.mk' (fun x => ptSecT P.A x ≫ h.asHom ≫ snd _ _) (hmul (𝟙 _))
   let f : {x : Over.mk p ⟶ P.A // x ^ M = 1} → {x : Over.mk p ⟶ P.A // x ^ M = 1} :=
     fun x => ⟨φ x.1, by rw [← map_pow, x.2, map_one]⟩
-  have hf : ∀ (n : ℕ) x, ptSecT P.A (f^[n] x).1 = ptSecT P.A x.1 ≫ (h ^ n : CategoryTheory.End _) := fun n x => by
+  have hf : ∀ (n : ℕ) x, ptSecT P.A (f^[n] x).1 = ptSecT P.A x.1 ≫ (h ^ n).asHom := fun n x => by
     induction n with
     | zero => exact (Category.comp_id _).symm
     | succ n ih =>
-      rw [Function.iterate_succ_apply', pow_succ', End.mul_def, ← Category.assoc, ← ih]
+      rw [Function.iterate_succ_apply', pow_succ', End.mul_asHom, ← Category.assoc, ← ih]
       exact (eq_lift hfst _ _).symm
   have hinj : Function.Injective f := by
     obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := ⟨N - 1, by omega⟩
     refine Function.LeftInverse.injective (g := f^[n]) fun x => Subtype.ext ?_
     have e := congrArg (· ≫ snd _ _) (hf (n + 1) x)
     simp only [hhN] at e
-    rwa [End.one_def, Category.comp_id, ptSecT, ptSecT, lift_snd, lift_snd] at e
+    rwa [End.one_asHom, Category.comp_id, ptSecT, ptSecT, lift_snd, lift_snd] at e
   let π : Equiv.Perm _ := Equiv.ofBijective f (Finite.injective_iff_bijective.1 hinj)
   have hπ : π ^ m = 1 := by
     obtain ⟨c, rfl⟩ := hm
     rw [pow_mul, pow_card_eq_one', one_pow]
+  have hfst_pow : ∀ n : ℕ, (h ^ n).asHom ≫ fst _ _ = fst _ _ := by
+    intro n
+    induction n with
+    | zero => exact Category.id_comp _
+    | succ n ih => rw [pow_succ', End.mul_asHom, Category.assoc, hfst, ih]
   have h1 : h ^ m = 1 := eq_one_of_finite_order_any hL S P F M hMp hM hMF p (h ^ m)
-    (pow_fst h hfst m) (h0' m) ⟨N, hN, by rw [← pow_mul, mul_comm, pow_mul, hhN, one_pow]⟩ fun x hx => by
+    (hfst_pow m) (h0' m) ⟨N, hN, by rw [← pow_mul, mul_comm, pow_mul, hhN, one_pow]⟩ fun x hx => by
       have e : f^[m] ⟨x, hx⟩ = ⟨x, hx⟩ := by
         have := congrArg (fun s : Equiv.Perm _ => s ⟨x, hx⟩) hπ
         simp only [Equiv.Perm.coe_pow, Equiv.Perm.coe_one, id] at this
         exact this
       rw [← hf m ⟨x, hx⟩, e]
   obtain ⟨x, hx⟩ := hpow m
-  exact ⟨x, by rw [hx, h1, End.one_def, Category.id_comp]⟩
+  exact ⟨x, by rw [hx, h1, End.one_asHom, Category.id_comp]⟩
 
 theorem existsTransl_any :
     LL → AnyUF fun {R} _ _ {I} {D} {A} {G} _ _ U F _ _ => ∀ (k : ℕ), 1 ≤ k → ∀ p : QkPt D.toPre F k, ∃ x : TFK (R := R) F ⟶ A.A, ∀ (n N : ℕ), 1 ≤ n → N = k * n → ∀ q : QkPt D.toPre F N, q.y = n • p.y → q.g = p.g → IndAt U.toUnifPre F N q (translT A.A x) := by
@@ -730,16 +750,17 @@ theorem existsTransl_any :
   obtain ⟨g', hg'⟩ := (gtOnto_any hL R I hR D F).2.1 m (by omega) p.g
   obtain ⟨ψ, hψ⟩ := existsAut_any hL R I hR D A G hG U F k hk p
   obtain ⟨τ, q, h1, hord, e⟩ := eq_pow_of_rel D.tau_bimult p g' hg'
-    (E := CategoryTheory.End (TFK (R := R) F ⊗ A.A)) (IndAt U.toUnifPre F (k * m))
+    (E := CategoryTheory.End (TFK (R := R) F ⊗ A.A))
+    (fun q χ => IndAt U.toUnifPre F (k * m) q χ.asHom)
     (fun a b c s t hs => by
-      obtain ⟨c₁, c₂, c₃, c₄⟩ := indAtComp_any hL R I hR D A G hG U F (k * m) (by omega) a b c s t hs
-      exact ⟨c₁, c₂, c₃ hN, c₄⟩)
+      obtain ⟨c₁, c₂, c₃, c₄⟩ := indAtComp_any hL R I hR D A G hG U F (k * m) (by omega) a b c s.asHom t.asHom hs
+      exact ⟨c₁, c₂, fun ht => End.ext (c₃ hN ht), c₄⟩)
     (fun q => by
       obtain ⟨χ, hχ⟩ := existsAut_any hL R I hR D A G hG U F (k * m) (by omega) q
-      exact ⟨χ.hom, hχ 1 (k * m) le_rfl (_root_.mul_one _).symm q (one_nsmul _).symm rfl⟩)
-    ψ.hom (hψ m _ (by omega) rfl)
+      exact ⟨End.of χ.hom, hχ 1 (k * m) le_rfl (_root_.mul_one _).symm q (one_nsmul _).symm rfl⟩)
+    (End.of ψ.hom) (hψ m _ (by omega) rfl)
   obtain ⟨x, hx⟩ := exists_pow_eq_translT_any hL A hMp hM hMF (jFK (R := R) F) τ h1.1 (by omega : 1 ≤ k * m) hord hm
-  have e' : ψ.hom = translT A.A x := e.trans hx
+  have e' : ψ.hom = translT A.A x := (congrArg End.asHom e).trans hx
   refine ⟨x, ?_⟩
   rw [← e']
   exact hψ
@@ -757,8 +778,66 @@ theorem cardQk_any : LL → AnyD fun {R} _ _ {I} D F _ _ => ∀ (k : ℕ), (k : 
   have h₁ := (GlobalTheory.GtCount.card_gtTors hL.1 hL.2.1 R D.toPre F k hkF).1
   simp only [GlobalTheory.GtCount.gtTors_iff] at h₁
   have h₂ := (gtOnto_any hL R I hA D F).2.1 k hk
-  rw [card_qk_eq_mul D.tau_bimult (by omega) fun y => (h₂ _).imp fun _ e => ((isNsmul_iff_eq _ _ _).1 e).symm, h₁,
-    ← pow_add]
+  let hB := D.tau_bimult
+  have hIota : ∃ iota : D.toPre.X →+ GtPtF D.toPre F, ∀ y, GtPtF.IsIota y (iota y) := by
+    choose iota hiota using (fun y : D.toPre.X => exists_iota (F := F) hB y)
+    refine ⟨AddMonoidHom.mk' iota ?_, hiota⟩
+    intro x y
+    obtain ⟨bx, vx⟩ := (isIota_iff_val _ _).1 (hiota x)
+    obtain ⟨b_y, vy⟩ := (isIota_iff_val _ _).1 (hiota y)
+    obtain ⟨bxy, vxy⟩ := (isIota_iff_val _ _).1 (hiota (x + y))
+    refine (isAdd_iff_eq _ _ _).1 ((isAdd_iff_val _ _ _).2
+      ⟨by rw [bx, b_y, bxy, cPoint_add], fun χ z J hJ => ?_⟩)
+    have C : IsCub (th D.toPre (T := TF (R := R) F) z J) := isCub_cubV D.toPre.cub hJ
+    rw [vx χ z J hJ, vy χ z J hJ, vxy χ z J hJ, bx, b_y, C.s01, C.s12]
+    exact tau_mul (𝟙 (TF (R := R) F)) hJ hB x y χ
+  obtain ⟨iota, hiota⟩ := hIota
+  have iota_iff (y : D.toPre.X) (g : GtPtF D.toPre F) : GtPtF.IsIota y g ↔ g = iota y :=
+    ⟨fun h => isIota_unique h (hiota y), fun h => h ▸ hiota y⟩
+  have qk_equiv (p p' : QkPt D.toPre F k) :
+      QkPt.Equiv D.toPre F p p' ↔ ∃ z : D.toPre.X, p'.y = p.y + k • z ∧ p'.g = p.g + iota z :=
+    exists_congr fun z => and_congr Iff.rfl
+      ⟨fun ⟨g, hg, hadd⟩ => ((isAdd_iff_eq _ _ _).1 hadd).trans (congrArg (p.g + ·) ((iota_iff z g).1 hg)),
+        fun h => ⟨iota z, hiota z, (isAdd_iff_eq _ _ _).2 h⟩⟩
+  have qk_nsmul (p : QkPt D.toPre F k) : k • p.g = iota p.y := by
+    obtain ⟨g, hg, hi⟩ := p.eq
+    exact ((isNsmul_iff_eq _ _ _).1 hg).symm.trans ((iota_iff p.y g).1 hi)
+  let qkMk (y : D.toPre.X) (g : GtPtF D.toPre F) (h : k • g = iota y) : QkPt D.toPre F k :=
+    ⟨y, g, k • g, (isNsmul_iff_eq _ _ _).2 rfl, (iota_iff y (k • g)).2 h⟩
+  have hd : ∀ y : D.toPre.X, ∃ g : GtPtF D.toPre F, k • g = iota y := fun y =>
+    (h₂ (iota y)).imp fun _ e => ((isNsmul_iff_eq _ _ _).1 e).symm
+  have hcard : Nat.card (Quot (QkPt.Equiv D.toPre F (k := k))) =
+      k ^ D.toPre.rank * Nat.card {g : GtPtF D.toPre F // k • g = 0} := by
+    choose r hr using hd
+    let K : AddSubgroup D.toPre.X := (nsmulAddMonoidHom k : D.toPre.X →+ D.toPre.X).range
+    have hK : Nat.card (D.toPre.X ⧸ K) = k ^ D.toPre.rank := AddSubgroup.index_range_nsmul D.toPre.X k
+    let f : (D.toPre.X ⧸ K) × {g : GtPtF D.toPre F // k • g = 0} →
+        Quot (QkPt.Equiv D.toPre F (k := k)) := fun x =>
+      Quot.mk _ (qkMk x.1.out (r x.1.out + x.2.1) (by rw [nsmul_add, hr, x.2.2, add_zero]))
+    rw [← hK, ← Nat.card_prod]
+    refine (Nat.card_congr (Equiv.ofBijective f ⟨?_, ?_⟩)).symm
+    · rintro ⟨c, t⟩ ⟨c', t'⟩ h
+      obtain ⟨z, hy, hg⟩ := (qk_equiv _ _).1 ((equiv_equivalence hB).eqvGen_iff.1 (Quot.eqvGen_exact h))
+      change c'.out = c.out + k • z at hy
+      change r c'.out + t'.1 = r c.out + t.1 + iota z at hg
+      obtain rfl : c = c' := by
+        rw [← QuotientAddGroup.out_eq' c, ← QuotientAddGroup.out_eq' c', QuotientAddGroup.eq]
+        exact ⟨z, by rw [hy, neg_add_cancel_left]; rfl⟩
+      have hz : z = 0 := by
+        have h0 : (k : ℤ) • z = 0 := by rw [natCast_zsmul]; exact left_eq_add.1 hy
+        exact (smul_eq_zero.1 h0).resolve_left (by exact_mod_cast (Nat.ne_zero_of_lt hk))
+      rw [hz, map_zero, add_zero, add_right_inj] at hg
+      exact Prod.ext rfl (Subtype.ext hg.symm)
+    · rintro ⟨p⟩
+      obtain ⟨z, hz⟩ : -p.y + (QuotientAddGroup.mk p.y : D.toPre.X ⧸ K).out ∈ K := by
+        rw [← QuotientAddGroup.eq, QuotientAddGroup.out_eq']
+      have hy : (QuotientAddGroup.mk p.y : D.toPre.X ⧸ K).out = p.y + k • z := by
+        rw [show k • z = _ from hz, add_neg_cancel_left]
+      refine ⟨⟨QuotientAddGroup.mk p.y, p.g + iota z - r (QuotientAddGroup.mk p.y : D.toPre.X ⧸ K).out, ?_⟩,
+        (Quot.sound ((qk_equiv _ _).2 ⟨z, hy, ?_⟩)).symm⟩
+      · rw [nsmul_sub, hr, hy, nsmul_add, qk_nsmul, map_add, map_nsmul, sub_self]
+      · exact add_sub_cancel _ _
+  rw [hcard, h₁, ← pow_add]
   congr 1
   ring
 

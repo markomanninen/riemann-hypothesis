@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SemiDegM
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegM
+
+@[expose] public section
 
 noncomputable section
 

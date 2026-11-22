@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.Theta NumberField MeasureTheory Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.RowDict
 open scoped InnerProductSpace

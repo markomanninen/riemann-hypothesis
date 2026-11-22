@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceAt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatLevel
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatSelf
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceAt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatLevel
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatSelf
+
+@[expose] public section
 
 noncomputable section
 

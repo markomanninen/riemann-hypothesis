@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatCDefs
-import GroundTheory.PAdicHodge.ACrisBdRGalois
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatCDefs
+public import GroundTheory.PAdicHodge.ACrisBdRGalois
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -52,7 +56,7 @@ theorem map_adjoin_mem (T : A →+* B) (g : B →+* C) (f : W →+* C)
     obtain ⟨n, rfl⟩ := hy
     exact map_dp_mem T g f hf ξ hl M n (hd n)
   | algebraMap x => rw [hf]; exact Subring.subset_closure (Or.inl (Set.mem_range_self x))
-  | add x y _ _ hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _)]; exact add_mem hx hy
   | mul x y _ _ hx hy => rw [map_mul, map_mul]; exact mul_mem hx hy
 
 end Abstract
@@ -80,8 +84,8 @@ theorem pk_toB_mem (k M : ℕ) {s : 𝔸} (hs : s ∈ ACris.ACrisZero ℂ_[l] l)
     (Fact.out : l.Prime).ne_zero M (fun n => ACris.dpow n (xi0 l))
     (factorial_mul_dpow_xi l) (mem_adjoin_dpow l hs)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem cris_in (l : ℕ) [Fact l.Prime] (M k : ℕ) (c : Acris l) :
     Lat.pk l k (ACris.iota ℂ_[l] l c) ∈ Lat.sub (Lat.fk l k) (xi0 l) l M := by
   obtain ⟨s, hs, hst⟩ := (ACris.embedding₂ ℂ_[l] l k c).2

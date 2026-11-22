@@ -1,13 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
-import Formalism.SharpRestriction.ParConsts
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsPlaceCofactorValuationLowerBound
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ModelsOK
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Cobdry
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualOm
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetZ
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConstantCoeffJetLogG
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
+public import Formalism.SharpRestriction.ParConsts
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsPlaceCofactorValuationLowerBound
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ModelsOK
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Cobdry
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualOm
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetZ
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConstantCoeffJetLogG
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.FrobeniusOrbits GlobalTheory.TwU GlobalTheory.OnePlace Classical
 
 noncomputable section
@@ -29,7 +34,8 @@ theorem comb {κ ι ρ : Type} [Fintype ρ] (S : Finset ι) (a : ι → ℂ_[p])
     ∑ i ∈ S, C (a i) * ∑ r', C (b i r') * L r' = L r := by
   simp_rw [Finset.mul_sum, ← mul_assoc, ← map_mul]
   rw [Finset.sum_comm]
-  simp_rw [← Finset.sum_mul, ← map_sum, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [← Finset.sum_mul, ← map_sum, h]
   simp
 
 theorem sum_even {M : Type} [AddCommMonoid M] {n' : ℕ} (he : Even n') (g : ℕ → M) :
@@ -74,7 +80,8 @@ theorem subst_sum_C_mul {κ τ ι : Type} (x : κ → MvPowerSeries τ ℂ_[p]) 
     (c : ι → ℂ_[p]) (f : ι → MvPowerSeries κ ℂ_[p]) :
     subst x (∑ i ∈ S, C (c i) * f i) = ∑ i ∈ S, C (c i) * subst x (f i) := by
   rw [← coe_substAlgHom hx]
-  simp only [map_sum, map_mul, coe_substAlgHom, subst_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, coe_substAlgHom, subst_C]
 
 theorem subst_lg {κ τ : Type} [Finite κ] (x : κ → MvPowerSeries τ ℂ_[p]) (hx0 : ∀ r, constantCoeff (x r) = 0) (k : κ) :
     subst x (GlobalTheory.ThBe0.lg (l := p) k) = PowerSeries.subst (x k) (Formalism.MainNotions.GL3Theta.logF p) := by
@@ -131,7 +138,8 @@ theorem coordZ_jetZ : ∀ {p : ℕ} [Fact p.Prime] (σ : ℂ_[p] →+* ℂ_[p]),
   · have hm : MvPowerSeries.map (Formalism.L2.G.Pend.k0ToC p) (coordZ B (FormalGroupSystem.K0 p) 1 (Sum.inl (r, a, b))) =
         ∑ s ∈ Finset.univ.filter (fun s : Fin n' => ¬ IsOddPos s),
           C ((σ ^ s.val) (Formalism.L2.G.Pend.wToC p (B.omS r))) * (X (s, a, b) : MvPowerSeries (Zidx n' r0 r1) ℂ_[p]) := by
-      simp only [coordZ, map_sum, map_mul, map_C, map_X, one_mul, Algebra.algebraMap_self, RingHom.id_apply, Formalism.L2.G.Pend.witt_fraction_to_Cp_algebraMap,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [coordZ, map_sum, map_mul, map_C, map_X, one_mul, Algebra.algebraMap_self, RingHom.id_apply, Formalism.L2.G.Pend.witt_fraction_to_Cp_algebraMap,
         pow_wToC σ hσ]
     rw [hm, subst_jetZ_lin]
     have hin : ∑ s ∈ Finset.univ.filter (fun s : Fin n' => ¬ IsOddPos s),
@@ -158,7 +166,8 @@ theorem coordZ_jetZ : ∀ {p : ℕ} [Fact p.Prime] (σ : ℂ_[p] →+* ℂ_[p]),
   · have hm : MvPowerSeries.map (Formalism.L2.G.Pend.k0ToC p) (coordZ B (FormalGroupSystem.K0 p) 1 (Sum.inr (r, a, b))) =
         ∑ s ∈ Finset.univ.filter (fun s : Fin n' => IsOddPos s),
           C ((σ ^ s.val) (Formalism.L2.G.Pend.wToC p (B.om r))) * (X (s, a, b) : MvPowerSeries (Zidx n' r0 r1) ℂ_[p]) := by
-      simp only [coordZ, map_sum, map_mul, map_C, map_X, one_mul, Algebra.algebraMap_self, RingHom.id_apply, Formalism.L2.G.Pend.witt_fraction_to_Cp_algebraMap,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [coordZ, map_sum, map_mul, map_C, map_X, one_mul, Algebra.algebraMap_self, RingHom.id_apply, Formalism.L2.G.Pend.witt_fraction_to_Cp_algebraMap,
         pow_wToC σ hσ]
     rw [hm, subst_jetZ_lin]
     have hin : ∑ s ∈ Finset.univ.filter (fun s : Fin n' => IsOddPos s),
@@ -178,7 +187,8 @@ theorem coordZ_jetZ : ∀ {p : ℕ} [Fact p.Prime] (σ : ℂ_[p] →+* ℂ_[p]),
           σ ((σ ^ (2 * k)) (Formalism.L2.G.Pend.wToC p (B.om r) * Formalism.L2.G.Pend.wToC p (B.omS r'))) := fun k => by
         rw [← map_mul, pow_succ']; rfl
       simp only [hk]
-      rw [← map_sum, hD.dual r r']
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hD.dual r r']
       by_cases h : r = r' <;> simp [h, eq_comm]
     rw [hin, GlobalTheory.BeProps.subst_psubst (hasSubst_copy a b) (hx0 _)]
     rfl

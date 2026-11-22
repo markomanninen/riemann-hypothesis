@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaReindexing.ActMat
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaReindexing.DetAE
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaReindexing.ActMat
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaReindexing.DetAE
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -76,15 +80,6 @@ private theorem theta_eq : rt D.θ = AdeleBaseChange.adeleBasis D.b 1 := by
 
 private theorem coordinate_one_zero : D.co 1 0 = 1 := by
   simp [Dat.co, one_eq D]
-
-private theorem coordinate_one_one : D.co 1 1 = 0 := by
-  simp [Dat.co, one_eq D]
-
-private theorem coordinate_squareRoot_zero : D.co (rt D.θ) 0 = 0 := by
-  simp [Dat.co, theta_eq D]
-
-private theorem coordinate_squareRoot_one : D.co (rt D.θ) 1 = 1 := by
-  simp [Dat.co, theta_eq D]
 
 private theorem act_aE (α : (A E)ˣ) (v : V4 F) :
     D.act (aE α) v = ![v 0, v 1 * D.co ((α : A E) * D.bar α) 0,

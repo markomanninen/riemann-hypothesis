@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.CvHecke
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.UnitHecke
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedOpenCompactEqFiniteLevelSuStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.CvHecke
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.UnitHecke
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedOpenCompactEqFiniteLevelSuStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixed
+
+@[expose] public section
 
 open UpperTheory.V.Z.Tf.GlobalTraceComparison UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi UpperTheory.Zero.ConvolutionTheory.EB PositivityTheory.Rg.BcB.Desc
 open GlobalTheory.BCT GlobalTheory.LFun GlobalTheory.PRep
@@ -114,7 +118,7 @@ private theorem tr_core (hTr : UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.TrLe
   unfold trc
   rw [← hlev]
   unfold twTr trOn
-  rw [dif_pos hstab, dif_pos hpres, hres, map_smul, smul_eq_mul]
+  rw [dite_eq_left hstab, dite_eq_left hpres, hres, map_smul, smul_eq_mul]
   field_simp
 
 theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.seenTr_pf :
@@ -123,13 +127,13 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.seenTr_pf :
   obtain ⟨-, -, hKo, hKc, -⟩ := UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.unitHecke E n 0 0 w
   have hNc : IsCompact (N : Set (GLw n w)) :=
     hKc.of_isClosed_subset (Subgroup.isClosed_of_isOpen N hNo) hNK
-  haveI : Finite ((KGL w n : Subgroup (GLw n w)) ⧸ N.subgroupOf (KGL w n)) :=
-    GlobalTheory.TwTrLevel.finite_quot (KGL w n) (KGL w n) N hKc hKo hNo le_rfl
-  have hi : N.relIndex (KGL w n) ≠ 0 := Subgroup.index_ne_zero_of_finite
-  have hiC : ((N.relIndex (KGL w n) : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hi
-  refine ⟨((N.relIndex (KGL w n) : ℕ) : ℂ) ^ 2, pow_ne_zero _ hiC, ?_⟩
+  haveI : Finite ((KGL w (n := n) : Subgroup (GLw n w)) ⧸ N.subgroupOf (KGL w (n := n))) :=
+    GlobalTheory.TwTrLevel.finite_quot (KGL w (n := n)) (KGL w (n := n)) N hKc hKo hNo le_rfl
+  have hi : N.relIndex (KGL w (n := n)) ≠ 0 := Subgroup.index_ne_zero_of_finite
+  have hiC : ((N.relIndex (KGL w (n := n)) : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hi
+  refine ⟨((N.relIndex (KGL w (n := n)) : ℕ) : ℂ) ^ 2, pow_ne_zero _ hiC, ?_⟩
   intro φ₁ φ₂ hb
-  refine tr_core hTr hCv τ.ρ (KGL w n) N hKo hKc hNo hNc hNK hiC (hAdm E n w τ N hNo) _ _ _ (hb false) (hb true) ?_
+  refine tr_core hTr hCv τ.ρ (KGL w (n := n)) N hKo hKc hNo hNc hNK hiC (hAdm E n w τ N hNo) _ _ _ (hb false) (hb true) ?_
   funext g
   have h₁ := hb false
   have h₂ := hb true
@@ -148,7 +152,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.seenTr_pf :
   rw [hcv]
   unfold PositivityTheory.Rg.BcB.G8.seen
   rw [if_pos hw]
-  rw [hint_fst (KGL w n) N (KGL w 0) _ hNK ?_ hi]
+  rw [hint_fst (KGL w (n := n)) N (KGL w (n := 0)) _ hNK ?_ hi]
   · congr 1
     refine finsum_congr fun q => ?_
     rw [hpr]

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormOfClassSums
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AeZeroOfSmall
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TotallyDefiniteMass
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockNormMinorProductDeltaAtEmbeddingPosStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormOfClassSums
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AeZeroOfSmall
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TotallyDefiniteMass
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockNormMinorProductDeltaAtEmbeddingPosStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,8 +105,8 @@ theorem conj_l2_inner {X : Type} [MeasurableSpace X] (μ : Measure X) (𝓖 : Se
 variable {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks)
 
-open Datum in
 
+open Datum in
 theorem l2_upwardLift {F : Face D A} (hI : InnerProductFormulaC R F) (hFo : FockCoefficientC R F)
     {i t σ s P cμ cη m ω BW f₀ f c io} (hd : IsLiftDataC R F i t σ s P cμ cη m ω BW f₀ f c io)
     {ν : Measure (GA D (Vc D i))} {𝓕 : Set (GA D (Vc D i))} (hν : IsMeasDef (Vc D i) (levV R i t P m) ν 𝓕)
@@ -131,11 +135,54 @@ theorem l2_upwardLift {F : Face D A} (hI : InnerProductFormulaC R F) (hFo : Fock
       starRingEnd ℂ (petW R i (rTr (Wc D i) y.rep (U₁ (v b))) (U₂ fun ρ => e ρ))) (fun y b => ?_) fun b => ?_
   · have h1 := hFo i t σ s P cμ cη m ω BW f₀ f c io hd μ 𝓧 hμ y.rep (y.out).2 (fun ρ => realMat (Wc D i) Fr ρ (b ρ))
       (fun ρ => realMat_mem i hFr ρ (b ρ)) e e w w
-    have h2 := GlobalTheory.RealEquiv.mult_realElt D _ _ R.θ (R.MW i σ) _ _ U₁ h₁ (fun ρ => realMat (Wc D i) Fr ρ (b ρ))
-      (fun ρ => realMat_mem i hFr ρ (b ρ)) (fun ρ => e ρ) (v b) fun _ => rfl
+    let g : D.what₂.Tau → Matrix (Fin (Wc D i).rank) (Fin (Wc D i).rank) ℂ :=
+      fun ρ => realMat (Wc D i) Fr ρ (b ρ)
+    let v₀ : (R.MW i σ).Vec := fun ρ => e ρ
+    have translate_eq (U : MMap (R.MW i σ)) (hU : U ∈ R.Wall i σ) :
+        U (v b) = rTr (Wc D i) (realElt R.θ (Wc D i) g) (U v₀) := by
+      classical
+      unfold RealDat.Wall Mult at hU
+      induction hU using Submodule.span_induction with
+      | mem U hU =>
+        have equiv_list (l : List D.what₂.Tau) (hl : l.Nodup) :
+            U (fun ρ => if ρ ∈ l then v b ρ else v₀ ρ) =
+              rTr (Wc D i) (l.map fun ρ => atTau R.θ (Wc D i) ρ (g ρ)).prod (U v₀) := by
+          induction l with
+          | nil =>
+            funext x
+            simp [rTr]
+          | cons ρ l ih =>
+            rw [List.nodup_cons] at hl
+            have h := hU.equiv ρ (g ρ) (realMat_mem i hFr ρ (b ρ))
+              (fun τ => if τ ∈ l then v b τ else v₀ τ) (v b ρ) (by simp only [ite_eq_right hl.1]; rfl)
+            rw [ih hl.2, ← rTr_mul] at h
+            simp only [List.map_cons, List.prod_cons, ← h]
+            congr 1
+            funext τ
+            by_cases hτρ : τ = ρ
+            · subst τ
+              simp
+            · rw [Function.update_of_ne hτρ]
+              simp [hτρ]
+        rw [realElt, ← equiv_list Finset.univ.toList (Finset.nodup_toList _)]
+        simp
+      | zero =>
+        funext x
+        simp [rTr]
+      | add U U' _ _ hU hU' =>
+        funext x
+        have h := congrFun hU x
+        have h' := congrFun hU' x
+        simp only [rTr, _root_.add_apply, Pi.add_apply] at h h' ⊢
+        rw [h, h']
+      | smul a U _ hU =>
+        funext x
+        have h := congrFun hU x
+        simp only [rTr, _root_.smul_apply, Pi.smul_apply] at h ⊢
+        rw [h]
     have h3 : rTr (Wc D i) (y.rep * realElt R.θ (Wc D i) fun ρ => realMat (Wc D i) Fr ρ (b ρ)) (U₁ fun ρ => e ρ) =
         rTr (Wc D i) y.rep (U₁ (v b)) := by
-      rw [h2]
+      rw [translate_eq U₁ h₁]
       funext g
       exact congrArg (U₁ fun ρ => e ρ) (mul_assoc _ _ _).symm
     rw [hw, mul_one] at h1
@@ -147,8 +194,8 @@ theorem l2_upwardLift {F : Face D A} (hI : InnerProductFormulaC R F) (hFo : Fock
     simp only [inner_conj_symm]
     exact h1
 
-open Datum in
 
+open Datum in
 theorem form_of_data {F : Face D A} (hS : SourceLevelLawC R F) (hI : InnerProductFormulaC R F) (hFo : FockCoefficientC R F)
     {i t σ s P cμ cη m ω BW f₀ f c io} (hd : IsLiftDataC R F i t σ s P cμ cη m ω BW f₀ f c io)
     {ν : Measure (GA D (Vc D i))} {𝓕 : Set (GA D (Vc D i))} (hν : IsMeasDef (Vc D i) (levV R i t P m) ν 𝓕)
@@ -177,12 +224,78 @@ theorem form_of_data {F : Face D A} (hS : SourceLevelLawC R F) (hI : InnerProduc
   let φ : c.W →ₗ[ℂ] (WO (Vc D i) (Wc D i) → ℂ) :=
     pureTensorO R.ψ R.θ (Vc D i) (Wc D i) (fun _ => 1) (cart (R.MW i σ)) (R.BV i) BW f ∘ₗ io (PiTensorProduct.tprod ℂ e)
   let b := stdOrthonormalBasis ℂ c.W
-  have key := form_eq_sum hd.2.2.2.2.2.1 c hd.2.2.2.2.2.2.2.2.2.1 (R.βV i) (datV i R.Pg (R.Q t) P m) φ
-    (fun w => hd.2.2.2.2.2.2.2.2.1 _) (fun u hu w => hd.2.2.2.2.2.2.2.2.2.2.1 u hu _ w)
-    (fun κ hκ w => hS i t σ s P cμ cη m ω BW f₀ f c io hd κ hκ _) (R.HW i σ) hW hν hy HV hV (fun ρ => e ρ) he th
-    (fun x g => (hth x e g).2) (fun U w h => (hI' _ (hm U) _ (hm U) e e (io (PiTensorProduct.tprod ℂ e) w) 0).1 h) y₁ y₂ b
-    fun k => (hI' _ (hm y₁) _ (hm y₂) e e (io (PiTensorProduct.tprod ℂ e) (b k)) (io (PiTensorProduct.tprod ℂ e) (b k))).2.1
-  have h2 := fun k => l2_upwardLift R hI hFo hd hν hμ hFr hmR (hm y₁) (hm y₂) (isMultiplicityInner_of_model (R.HW i σ) hW y₁ y₂) K hK e δ hδ (b k)
+  let L := datV i R.Pg (R.Q t) P m
+  let v : (R.MW i σ).Vec := fun ρ => e ρ
+  let H := R.HW i σ
+  let Fw := fun U : H.H => H.e U v
+  have hMult (x y : H.H) : IsMultIP (R.MW i σ) (R.νW i) (R.fdW i) (H.e x) (H.e y)
+      (ipM (R.MW i σ) (R.νW i) (R.fdW i) (H.e x) (H.e y)) := by
+    have hex (x y : H.H) (hxy : inner ℂ x y ≠ 0) :
+        ∃ c', IsMultIP (R.MW i σ) (R.νW i) (R.fdW i) (H.e x) (H.e y) c' := by
+      by_contra hc
+      apply hxy
+      rw [hW x y, ipM, dite_eq_right hc, mul_zero]
+    refine ipM_spec _ _ _ _ _ ?_
+    by_cases hx : x = 0
+    · subst x
+      exact ⟨0, fun v₁ v₂ => by simp⟩
+    by_cases hxy : inner ℂ x y = 0
+    · obtain ⟨c₁, hc₁⟩ := hex x (x + y) (by rw [inner_add_right, hxy, add_zero]; exact inner_self_ne_zero.2 hx)
+      obtain ⟨c₂, hc₂⟩ := hex x x (inner_self_ne_zero.2 hx)
+      refine ⟨c₁ - c₂, fun v₁ v₂ => ?_⟩
+      have h : (fun g => star (H.e x v₁ g) * H.e y v₂ g) =
+          fun g => star (H.e x v₁ g) * H.e (x + y) v₂ g - star (H.e x v₁ g) * H.e x v₂ g := by
+        funext g
+        simp [mul_add]
+      rw [h]
+      exact ⟨(hc₁ v₁ v₂).1.sub (hc₂ v₁ v₂).1,
+        by rw [integral_sub (hc₁ v₁ v₂).1 (hc₂ v₁ v₂).1, (hc₁ v₁ v₂).2, (hc₂ v₁ v₂).2, sub_mul]⟩
+    · exact hex x y hxy
+  have hω := hd.2.2.2.2.2.1
+  have hc := hd.2.2.2.2.2.2.2.2.2.1
+  have hφ : ∀ w, IsThetaFunO R.ψ (Vc D i) (Wc D i) (φ w) := fun _ => hd.2.2.2.2.2.2.2.2.1 _
+  have hinf : ∀ u ∈ GinfC (Vc D i), ∀ w, ω (u, 1) (φ w) = φ (c.ρ u w) :=
+    fun u hu w => hd.2.2.2.2.2.2.2.2.2.2.1 u hu _ w
+  have hlev : ∀ κ ∈ Lev.levA (Vc D i) (levV R i t P m), ∀ w,
+      ω (κ, 1) (φ w) = (Lev.levChi (Vc D i) (R.βV i) L κ)⁻¹ • φ w :=
+    fun κ hκ _ => hS i t σ s P cμ cη m ω BW f₀ f c io hd κ hκ _
+  have hint (U) (w : c.W) (h) :
+      IntegrableOn (fun g => thetaKO ω h g (φ w) * starRingEnd ℂ (Fw U g)) (R.fdW i) (R.νW i) :=
+    (hI' _ (hm U) _ (hm U) e e (io (PiTensorProduct.tprod ℂ e) w) 0).1 h
+  have upVec U := exists_upVec hω c hc (R.βV i) L φ hφ hinf hlev (R.νW i) (R.fdW i) (Fw U) (hint U)
+  let Ψ := fun U => (upVec U).choose
+  have Ψ_inner U := (upVec U).choose_spec.1
+  have Ψ_law U := (upVec U).choose_spec.2
+  have key : inner ℂ (LinearMap.adjoint th y₁) (LinearMap.adjoint th y₂) = (N : ℂ) ^ 2 *
+      ∑ k, l2 ν 𝓕 (upLift R i ω (φ (b k)) (Fw y₁)) (upLift R i ω (φ (b k)) (Fw y₂)) := by
+    refine form_of_classSums ν 𝓕 (R.νW i) (R.fdW i) (fun h g w => thetaKO ω h g (φ w))
+      (fun j => finLift (Vc D i) (y j))
+      (fun j => ((Nat.card (Bridge.stab (Bridge.ratF (Vc D i)) (grpOf (Vc D i) (R.βV i) L) (y j)) : ℂ))⁻¹)
+      (fun x j => HV.e x (y j)) Fw N th Ψ b hV.2.2 ?_ ?_ hint Ψ_inner ?_ y₁ y₂ ?_ ?_
+    · intro U U'
+      have h := (hMult U U' v v).2
+      rw [Finset.prod_eq_one, mul_one] at h
+      · rw [hW U U', l2_eq_star, h]
+      · intro ρ _
+        rw [inner_self_eq_norm_sq_to_K, he ρ]
+        simp
+    · intro x g
+      exact (hth x e g).2.trans (theta_classSum hω c hc (R.βV i) L φ hφ hinf hlev hν hy (HMod_mem hV x) g)
+    · intro U
+      have hmem : (fun u => Ψ U (finLift (Vc D i) u)) ∈
+          Bridge.AdForms (Bridge.ratF (Vc D i)) c.coef.ρ (grpOf (Vc D i) (R.βV i) L)
+            (chrOf (Vc D i) (R.βV i) L) :=
+        mem_adForms (finHom (Vc D i)).rangeRestrict (GQ (Vc D i)) c.ρ (finLift (Vc D i))
+          (finLift_spec (Vc D i)) (fun u => hc.1 _ (finLift_mem (Vc D i) u)) (Ψ U)
+          fun γ hγ k hk x => Ψ_law U γ hγ k ((mem_grpOf (Vc D i) (R.βV i) L k).1 hk) x
+      exact (HMod_onto hV (Submodule.smul_mem _ (N : ℂ) hmem)).imp fun a ha j => congrFun ha (y j)
+    · refine integral_eq_classSum (Vc D i) (R.βV i) L hν hy _ fun γ hγ k hk x => ?_
+      exact (congrArg₂ (inner ℂ) (Ψ_law y₁ γ hγ k hk x) (Ψ_law y₂ γ hγ k hk x)).trans
+        (inner_law c.ρ hc.2.1 (norm_levChi (R.βV i) L k) _ _ _)
+    · intro k
+      exact (hI' _ (hm y₁) _ (hm y₂) e e (io (PiTensorProduct.tprod ℂ e) (b k))
+        (io (PiTensorProduct.tprod ℂ e) (b k))).2.1
+  have h2 := fun k => l2_upwardLift R hI hFo hd hν hμ hFr hmR (hm y₁) (hm y₂) (hMult y₁ y₂) K hK e δ hδ (b k)
     (by rw [inner_self_eq_norm_sq_to_K, b.orthonormal.1 k]; simp)
   refine key.trans ((congrArg _ (Finset.sum_congr rfl fun k _ => h2 k)).trans ?_)
   rw [hW y₁ y₂, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
@@ -210,8 +323,8 @@ theorem vol_mul_nrm {i : Fin D.R.m} (hp : (Vc D i).IsPosDef) {t P m} {ν : Measu
     mul_right_comm, hn]
   field_simp
 
-open Datum in
 
+open Datum in
 theorem scalar_of_data {F : Face D A} (hS : SourceLevelLawC R F) (hI : InnerProductFormulaC R F) (hFo : FockCoefficientC R F)
     (hZ : FiniteZetaL R F) (hL : LevelIndexNormC R F) (hδ : RealLowestKTypeCoeffSquareIntegrable R) (hp : ∀ i, (Vc D i).IsPosDef) :
     ∃ a : Fin D.R.m → (D.what₂.LL →+* ℂ) → ℝ, (∀ i σ, 0 < a i σ) ∧

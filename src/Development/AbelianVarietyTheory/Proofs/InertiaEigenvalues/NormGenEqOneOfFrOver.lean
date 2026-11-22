@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CabsGenEqOneOfNormPin
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FramedPointsLiftToLevelCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CabsGenEqOneOfNormPin
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FramedPointsLiftToLevelCover
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem exists_isometry_of_hol' {S : Scheme.{0}} {t : SAB H S} {y : Sp ℂ ⟶ S
   choose r₀ hr₀ using hmem
   let r₁ : D.La →ₗ[𝓞 E] D'.La :=
     { toFun := r₀
-      map_add' := fun a b => hP'.2.1 (by rw [map_add, hr₀, hr₀, hr₀, map_add, map_add])
+      map_add' := fun a b => hP'.2.1 (by rw [map_add (f := _), hr₀, hr₀, hr₀, map_add (f := _), map_add (f := _)])
       map_smul' := fun c a => hP'.2.1 (by
         rw [hr₀, show P (c • a) = fun k => ty k (c : E) * P a k from funext (hP.1 c a), hcomm, ← hr₀]
         exact (funext (hP'.1 c (r₀ a))).symm) }
@@ -205,8 +209,8 @@ open NumberField AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestric
 open scoped Matrix
 open GlobalTheory.UnitFrameGen MeasureTheory
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem norm_gen_eq_one_of_frOver {E : Type} [Field E] [NumberField E] [IsCMField E]
     {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H} {l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H} {Xo : Moduli Dw l}
     {c : Coeff l} {n : ℕ} (d : DeltaDat Xo c n) {σ : c.F →+* ℂ} {σ₂ : d.c₂.F →+* ℂ} {σ' : KA l →+* ℂ}

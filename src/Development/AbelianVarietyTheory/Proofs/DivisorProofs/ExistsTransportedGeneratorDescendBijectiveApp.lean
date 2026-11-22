@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIntegralOfTorsion
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsDescendThrough
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIntegralOfTorsion
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsDescendThrough
+
+@[expose] public section
 
 set_option autoImplicit false
 

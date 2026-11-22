@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+
+@[expose] public section
 
 open Matrix Polynomial UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
 
@@ -104,7 +108,7 @@ theorem UpperTheory.Reformulated.B.CubicCharpolyDiscriminant.tauEx :
     · rw [hs, ← Matrix.map_mul, M.2.2, Matrix.map_one _ (map_zero φ) (map_one φ)]
   have hle := disc_nonpos _ hu (σ τ) (by
     rw [Matrix.charpoly_map, h2]
-    simp only [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_add, Polynomial.map_pow,
+    simp only [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_pow,
       Polynomial.map_X, Polynomial.map_one, Polynomial.map_C, hφa])
   have hne' : σ (τ ^ 2 - 4) ≠ 0 := (map_ne_zero σ).2 hne
   have e : σ (τ ^ 2 - 4) = σ τ ^ 2 - 4 := by

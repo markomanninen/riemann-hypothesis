@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
+
+@[expose] public section
+
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
 
@@ -401,8 +406,8 @@ theorem exp_factor {a b c d u v w : ℂ} (h : a * b = d * c) (h' : u + v = w) :
 
 end GlobalTheory.SW.DblPair
 
-open GlobalTheory.SW.DblPair in
 
+open GlobalTheory.SW.DblPair in
 theorem GlobalTheory.SW.iota_act_dbl : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : Data E r) (g : ℕ) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (n : ℕ), IsSympl X bas → Even n → ∀ γ₁ γ₂ : GL (Fin r) E, IsUn X γ₁ → IsUn X γ₂ → iota X γ₁ γ₂ ∈ UU E r ∧ ∃ a : ℂ, a ≠ 0 ∧ ∀ x₁ ∈ X.dom, ∀ x₂ ∈ X.dom, hAct X.Ψ (iota X γ₁ γ₂) (dblZ X x₁ x₂) = dblZ X (lact γ₁ x₁) (lact γ₂ x₂) ∧ ∀ z₁ w : Fin n → Fin g → ℂ, (dblz X idx (lact γ₁ x₁) (lact γ₂ x₂) z₁ w = fun τ => Matrix.of fun k => (hDen' X.Ψ (iota X γ₁ γ₂) (dblZ X x₁ x₂) τ)⁻¹ *ᵥ dblz X idx x₁ x₂ z₁ w τ k) ∧ (dblz' X idx (lact γ₁ x₁) (lact γ₂ x₂) z₁ w = fun τ => Matrix.of fun k => dblz' X idx x₁ x₂ z₁ w τ k ᵥ* (hDen X.Ψ (iota X γ₁ γ₂) (dblZ X x₁ x₂) τ)⁻¹) ∧ kZero X idx (lact γ₁ x₁) (lact γ₂ x₂) z₁ w * hFac X.Ψ (iota X γ₁ γ₂) (dblZ X x₁ x₂) (dblz X idx x₁ x₂ z₁ w) (dblz' X idx x₁ x₂ z₁ w) = a * kZero X idx x₁ x₂ z₁ w := by
   intro E _ _ _ r X g bas idx n _ hn γ₁ γ₂ h₁ h₂
   have hι := iota_mem X h₁ h₂

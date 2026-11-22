@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ApproxStep
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ApproxStep
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 namespace GlobalTheory.FLam
@@ -46,15 +51,15 @@ theorem σ_τ {p : ℕ} [Fact p.Prime] {O : Type} [CommRing O] [Fact ¬IsUnit (p
   have e2 : F.a (WittVector.frobenius (Sandwich.mu ε)) = p * (p * F.τ) := by
     have hsq : (p * F.τ) * (p * F.τ) = 0 := by
       rw [show (p : F.B) * F.τ * (p * F.τ) = p * p * (F.τ * F.τ) by ring, F.τ_sq, mul_zero]
-    rw [frobenius_mu, map_sub, map_pow, map_add, map_one, ← F.p_τ, add_comm,
+    rw [frobenius_mu, map_sub, map_pow, map_add (f := _), map_one, ← F.p_τ, add_comm,
       one_add_pow_of_sq _ hsq]
     ring
   rw [mul_sub, e1, e2, sub_self]
 
 end GlobalTheory.FLam
 
-open GlobalTheory.FLam in
 
+open GlobalTheory.FLam in
 theorem GlobalTheory.FLam.exists_lam : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] [IsDomain O], v.Integers O → ∀ (ε : PreTilt O p) (hε : IsPrimitiveSystem ε), ∀ F : BFrame ε, ∀ u : F.B, F.τ ∣ u - 1 → ∃ l : F.B, F.τ ∣ l - 1 ∧ F.σ l = u * l := by
   intro p _ C _ _ _ v O _ _ _ _ _ _ ε _ F u hu
   obtain ⟨w, hw⟩ := hu
@@ -62,6 +67,6 @@ theorem GlobalTheory.FLam.exists_lam : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [
   obtain ⟨c, hc⟩ := exists_fixed (p : F.B) F.σ (map_natCast F.σ p) w
   refine ⟨1 + F.τ * c, ⟨c, by ring⟩, ?_⟩
   have hu' : u = 1 + F.τ * w := by rw [← hw]; ring
-  rw [map_add, map_one, map_mul, σ_τ, hu']
+  rw [map_add (f := _), map_one, map_mul, σ_τ, hu']
   have hτ := F.τ_sq
   linear_combination (-(w * c)) * hτ - F.τ * hc

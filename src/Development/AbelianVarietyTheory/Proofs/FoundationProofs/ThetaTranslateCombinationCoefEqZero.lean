@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,12 +17,13 @@ theorem sum_trivial_char_eq_zero {G ι : Type} [Monoid G] [Fintype ι] (κ : ι 
   have li := linearIndependent_monoidHom G ℂ
   rw [linearIndependent_iff] at li
   have h0 := li (∑ i, Finsupp.single (κ i) (c i)) (by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     funext y
     simp only [Finsupp.linearCombination_single, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
     exact h y)
   have h1 := congrArg (fun l : (G →* ℂ) →₀ ℂ => l 1) h0
-  simp only [Finsupp.finset_sum_apply, Finsupp.single_apply, Finsupp.coe_zero, Pi.zero_apply] at h1
+  simp only [Finsupp.finsetSum_apply, Finsupp.single_apply, Finsupp.coe_zero, Pi.zero_apply] at h1
   rw [← h1]
   exact Finset.sum_congr rfl fun i _ => by congr
 
@@ -69,7 +74,8 @@ theorem coef_eq_zero : ∀ (D : D7) (T : Tor D) (N N' : ℕ) (A : AddSubgroup (V
   have key := sum_trivial_char_eq_zero (fun i => kap D T A (z i)) (fun i => a i * Wd D T (z i) e v) (by
     intro y
     have h1 := congrArg (WdL D T ((Multiplicative.toAdd y : A) : VC D N N')) hsum
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     have h2 := congrFun h1 v
     rw [Finset.sum_apply, Pi.zero_apply] at h2
     rw [← h2]

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocUApply
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocUApply
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.C.Sf
 
@@ -44,7 +49,7 @@ theorem UpperTheory.isotypic_subspace_product_closed :
       obtain ⟨a, ha⟩ := h1
       obtain ⟨b, hb⟩ := h2
       refine ⟨X.add_mem a b, (congrArg Subtype.val (map_add (c i (B i)) ⟨u, a⟩ ⟨v, b⟩)).trans ?_⟩
-      rw [map_add, ← ha, ← hb]; rfl
+      rw [map_add (f := _), ← ha, ← hb]; rfl
     | smul k u _ h1 =>
       obtain ⟨a, ha⟩ := h1
       refine ⟨X.smul_mem k a, (congrArg Subtype.val (map_smul (c i (B i)) k ⟨u, a⟩)).trans ?_⟩

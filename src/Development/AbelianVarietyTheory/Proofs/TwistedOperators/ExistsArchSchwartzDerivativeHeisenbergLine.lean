@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+
+@[expose] public section
 
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 open scoped SchwartzMap
@@ -40,8 +44,8 @@ open scoped Classical
 
 variable {F : Type} [Field F] [NumberField F]
 
-variable (F) in
 
+variable (F) in
 def trForm {κ : Type} [Fintype κ] (y : κ → AF F) : (κ → mixedEmbedding.mixedSpace F) →L[ℝ] ℝ :=
   LinearMap.toContinuousLinearMap
     ((Algebra.trace ℝ (mixedEmbedding.mixedSpace F)).comp
@@ -51,8 +55,8 @@ theorem trForm_apply {κ : Type} [Fintype κ] (y : κ → AF F) (z : κ → mixe
     trForm F y z = Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (∑ i, z i * evI F (y i)) := by
   simp [trForm, LinearMap.sum_apply]
 
-variable (F) in
 
+variable (F) in
 def mult {κ : Type} [Fintype κ] (y : κ → AF F) : (κ → mixedEmbedding.mixedSpace F) →L[ℝ] ℂ :=
   (-(2 * Real.pi * Complex.I)) • (Complex.ofRealCLM.comp (trForm F y))
 
@@ -60,8 +64,8 @@ theorem mult_apply {κ : Type} [Fintype κ] (y : κ → AF F) (z : κ → mixedE
     mult F y z = -(2 * Real.pi * Complex.I) * (trForm F y z : ℂ) := by
   simp [mult]
 
-variable (F) in
 
+variable (F) in
 def heisD {κ : Type} [Fintype κ] (v : κ → mixedEmbedding.mixedSpace F) (y : κ → AF F) :
     SInf F κ →ₗ[ℂ] SInf F κ :=
   (LineDeriv.lineDerivOpCLM ℂ (SInf F κ) v + SchwartzMap.smulLeftCLM ℂ (⇑(mult F y))).toLinearMap
@@ -109,7 +113,7 @@ theorem exists_heisLine_deriv {E : Type} [Field E] [NumberField E] [Algebra F E]
     have hxy : evI F (x ⬝ᵥ y₁) = ∑ i, z i * evI F (y₁ i) := by
       simp only [dotProduct, evI_sum, evI_mul, hz]
     have htr : Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (evI F A) = t * (P + t * Q) := by
-      rw [hA, evI_mul, evI_add, evI_mul, evI_realAd, ← Algebra.smul_def, ← Algebra.smul_def, map_smul, map_add,
+      rw [hA, evI_mul, evI_add, evI_mul, evI_realAd, ← Algebra.smul_def, ← Algebra.smul_def, map_smul, map_add (f := _),
         map_smul, hxy, hP, trForm_apply, hQ, smul_eq_mul, smul_eq_mul]
     have harg : (fun i => evI F ((x + realAd F t • x₁) i)) = z + t • v := by
       funext i
@@ -133,8 +137,8 @@ theorem exists_heisLine_deriv {E : Type} [Field E] [NumberField E] [Algebra F E]
 
 end GlobalTheory.HeisDeriv
 
-open GlobalTheory.HeisDeriv in
 
+open GlobalTheory.HeisDeriv in
 theorem GlobalTheory.HeisDeriv.exists_actsD_heisLine : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
     {n d : ℕ} {X : Spc F E n} {W : Spc F E d} (M : Model σ X W) (ψ : AddChar (AF F) ℂ), IsStd ψ →
     ∀ u : Matrix (Fin n) (Fin d) (AE F E), At (evI F) u →

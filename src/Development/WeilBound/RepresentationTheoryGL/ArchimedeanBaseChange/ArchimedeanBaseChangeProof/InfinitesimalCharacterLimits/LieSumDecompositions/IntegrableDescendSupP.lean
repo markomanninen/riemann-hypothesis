@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.GrowPHolds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieDerivativeL2InnerProduct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfMemWeakIn
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.GrowPHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieDerivativeL2InnerProduct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfMemWeakIn
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.Leaf2Aux
 
 namespace Pair
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
 
 def rmulEquiv (x : GA E N) : Quot (latticeGL E N) ≃ᵐ Quot (latticeGL E N) where
   toFun := rmul (latticeGL E N) x
@@ -47,19 +51,19 @@ theorem exists_eps (a : ℕ → ℝ) (N : ℕ) (h : ∀ r, 0 < r → r < N → 0
 def supP (K : Set (GA E N)) (f g : GA E N → ℂ) (y : GA E N) : ℝ :=
   sSup ((fun k => ‖f (y * k)‖ * ‖g (y * k)‖) '' K)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_supP {K : Set (GA E N)} (hK : IsCompact K) {f g : GA E N → ℂ} (hf : Continuous f)
     (hg : Continuous g) : Continuous (supP K f g) :=
   hK.continuous_sSup (f := fun y k => ‖f (y * k)‖ * ‖g (y * k)‖)
     ((hf.comp continuous_mul).norm.mul (hg.comp continuous_mul).norm)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem le_supP {K : Set (GA E N)} (hK : IsCompact K) {f g : GA E N → ℂ} (hf : Continuous f) (hg : Continuous g)
     (y : GA E N) {k : GA E N} (hk : k ∈ K) : ‖f (y * k)‖ * ‖g (y * k)‖ ≤ supP K f g y :=
   le_csSup (hK.image ((hf.comp (continuous_const.mul continuous_id)).norm.mul
     (hg.comp (continuous_const.mul continuous_id)).norm)).bddAbove ⟨k, hk, rfl⟩
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem supP_nonneg (K : Set (GA E N)) (f g : GA E N → ℂ) (y : GA E N) : 0 ≤ supP K f g y :=
   Real.sSup_nonneg (by rintro _ ⟨k, -, rfl⟩; positivity)
 
@@ -69,7 +73,7 @@ theorem supP_left {K : Set (GA E N)} {f g : GA E N → ℂ} (hf : LeftInv (latti
   unfold supP
   simp only [mul_assoc, hf γ hγ, hg γ hγ]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem bnd_supP {K : Set (GA E N)} (hK : IsCompact K) (hK0 : K.Nonempty) {f g : GA E N → ℂ}
     {m₁ m₂ : ℕ → ℝ} (hf : An.Bnd f m₁) (hg : An.Bnd g m₂) :
     An.Bnd (fun y => (supP K f g y : ℂ)) (m₁ + m₂) := by
@@ -202,7 +206,7 @@ theorem pairLin_of (hI : IntBnd) : PairLin := by
   · unfold pr pet
     rw [← integral_add (integrable_pet hI hf h₁) (integrable_pet hI hf h₂)]
     refine integral_congr_ae (Eventually.of_forall fun q => ?_)
-    simp only [descend, Pi.add_apply, map_add, mul_add]
+    simp only [descend, Pi.add_apply, map_add (f := _), mul_add]
   · unfold pr pet
     rw [← integral_const_mul]
     refine integral_congr_ae (Eventually.of_forall fun q => ?_)

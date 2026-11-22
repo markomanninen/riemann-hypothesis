@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.Bridge
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HasRatBasisOfAct
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.Bridge
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HasRatBasisOfAct
+
+@[expose] public section
 
 open Formalism.IndefR.Bridge Formalism.L2.DIV Formalism.DivisionValues Formalism.L2.Col NumberField MeasureTheory Polynomial
 
@@ -50,8 +54,6 @@ theorem mem_cmComplex_iff {K : Type} [Field K] [NumberField K] [StarRing K] (σ 
     let _ : Algebra K (algebraicClosure ℚ ℂ) := s.toAlgebra
     have : Algebra.IsAlgebraic ℚ (algebraicClosure ℚ ℂ) := by
       convert algebraicClosure.isAlgebraic ℚ ℂ
-      · rfl
-      · exact Subsingleton.elim _ _
     have : Algebra.IsAlgebraic K (algebraicClosure ℚ ℂ) :=
       Algebra.IsAlgebraic.tower_top (K := ℚ) K
     have h1 := h (ComplexEmbedding.lift (algebraicClosure ℚ ℂ) φ)
@@ -76,11 +78,13 @@ theorem act_mem (hσ : ∀ a : K, σ (star a) = starRingEnd ℂ (σ a)) (hχ : �
     mem_cmComplex_of_pow hn (by rw [← Units.val_pow_eq_pow_val, hk, Units.val_one])
   have h2 : P.coef x = ∑ j, σ (S.bV.repr x j) • P.coef (S.bV j) := by
     conv_lhs => rw [← S.bV.sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smulₛₗ]
   rw [map_smul, Finsupp.smul_apply, smul_eq_mul, h2]
   refine cmComplex.mul_mem h1 ?_
-  simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul]
   refine cmComplex.sum_mem fun j _ => cmComplex.mul_mem ((mem_cmComplex_iff σ hσ _).2 (hx j)) ?_
   obtain ⟨c, hc, e⟩ := hρ γ j
   rw [e]
@@ -105,7 +109,8 @@ theorem classPres_dcOp_rat : ∀ {G Γ W K : Type} [Group G] [Group Γ] [NormedA
   refine ⟨hb, (forms_rat S).2 T hb fun f hf c i => ?_⟩
   rw [← PresRat.mem_cmComplex_iff σ hσ, ← PresBasic.repr_coef P, ← PresBasic.ext_y P, hT]
   unfold dcOp
-  rw [map_sum, Finsupp.coe_finsetSum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finsupp.coe_finsetSum, Finset.sum_apply]
   exact PresRat.cmComplex.sum_mem fun a _ => PresRat.act_mem P hσ hχ hρ _ _ _ (hf _) i
 
 end GlobalTheory

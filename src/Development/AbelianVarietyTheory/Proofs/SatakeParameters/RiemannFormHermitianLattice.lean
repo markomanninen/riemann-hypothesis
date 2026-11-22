@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SurjectiveOfLocallySurjective
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraEqRangeExteriorPower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SurjectiveOfLocallySurjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraEqRangeExteriorPower
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.PD GlobalTheory.CechDR GlobalTheory.HodgeCoh
 
 set_option autoImplicit false
@@ -18,7 +23,7 @@ theorem mOm_ιMulti_D_algebraMap (k K A : Type) [Field k] [Field K] [Algebra k K
     ExteriorAlgebra.ιMulti_apply, map_list_prod, List.map_ofFn]
   congr 2
   funext i
-  simp only [Function.comp_apply, SemiHom.mDR_ι, SemiHom.m1_D]
+  exact (SemiHom.mDR_ι _ _).trans (congrArg _ (SemiHom.m1_D _ _))
 
 theorem mOm_injective_and_omB (k K A : Type) [Field k] [Field K] [Algebra k K] [CommRing A]
     [Algebra k A] [Algebra A K] [IsScalarTower k A K] [IsFractionRing A K] [Algebra.Smooth k A]
@@ -41,7 +46,7 @@ theorem mOm_injective_and_omB (k K A : Type) [Field k] [Field K] [Algebra k K] [
     intro x y hxy
     obtain ⟨c, hc⟩ := IsLocalizedModule.exists_of_eq (S := nonZeroDivisors A) hxy
     exact (Module.IsTorsionFree.isSMulRegular (M := ⋀[A]^q Ω[A⁄k])
-      (isRegular_of_ne_zero (nonZeroDivisors.coe_ne_zero c))) hc
+      (isRegular_iff_ne_zero.mpr (nonZeroDivisors.coe_ne_zero c))) hc
   have hsm : ∀ (a : A) (z : Om k A q), ((semiHom_algebraMap k A K).mOm q (a • z) : DR k K) =
       algebraMap A K a • ((semiHom_algebraMap k A K).mOm q z : DR k K) := fun a z => by
     rw [SemiHom.mOm_smul]; rfl
@@ -50,7 +55,7 @@ theorem mOm_injective_and_omB (k K A : Type) [Field k] [Field K] [Algebra k K] [
       { carrier := {y | ∃ z : Om k A q, ((semiHom_algebraMap k A K).mOm q z : DR k K) = y}
         add_mem' := by
           rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩
-          exact ⟨a + b, by rw [map_add]; rfl⟩
+          exact ⟨a + b, by rw [map_add (f := _)]; rfl⟩
         zero_mem' := ⟨0, by rw [map_zero]; rfl⟩
         smul_mem' := by
           rintro c _ ⟨a, rfl⟩
@@ -79,7 +84,7 @@ theorem mOm_injective_and_omB (k K A : Type) [Field k] [Field K] [Algebra k K] [
       rw [mOm_ιMulti_D_algebraMap]
       exact ιMulti_D_mem_omB_regForms B q fun j => ⟨algebraMap A K (w j), (hB _).2 ⟨w j, rfl⟩⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add _ _ _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
+    | add _ _ _ _ h1 h2 => rw [map_add (f := _)]; exact add_mem h1 h2
     | smul a z _ h => rw [hsm]; exact smul_mem_omB_regForms B q ((hB _).2 ⟨a, rfl⟩) h
 
 end GlobalTheory.PD

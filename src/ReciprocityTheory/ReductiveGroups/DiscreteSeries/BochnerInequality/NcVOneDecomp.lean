@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CrossOpEigGap
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CrossOpEigGap
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,7 @@ theorem Wp_bound (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : IsKIrrHW ε E (
           rw [crossOp_symm hU, hCy, inner_smul_right, horth', mul_zero]
         have hre : RCLike.re (inner ℂ (crossOp ε E 1 0 (y + z)) (y + z)) =
             a * ‖y‖ ^ 2 + RCLike.re (inner ℂ (crossOp ε E 1 0 z) z) := by
-          rw [map_add, inner_add_left, inner_add_right, inner_add_right, h1, hCy, inner_smul_left,
+          rw [map_add (f := _), inner_add_left, inner_add_right, inner_add_right, h1, hCy, inner_smul_left,
             inner_smul_left, horth, inner_self_eq_norm_sq_to_K]
           simp
           left

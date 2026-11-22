@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsTop
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsTop
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -16,16 +21,18 @@ theorem sameFactor_descFactorial_le (n₁ N : ℕ) :
   | 1, _, _ => by simp [Nat.descFactorial]
   | k + 2, _, hN => by
     have ih : (n₁ + (k + 1)).descFactorial (k + 1) * 2 ^ k ≤ (n₁ + 1) * (2 * (n₁ + N)) ^ k := by
-      simpa using sameFactor_descFactorial_le n₁ N (k + 1) (by omega) (by omega)
+      simpa only [Nat.add_sub_cancel] using
+        sameFactor_descFactorial_le n₁ N (k + 1) (by omega) (by omega)
     have hd : (n₁ + (k + 2)).descFactorial (k + 2) =
-        (n₁ + (k + 1) + 1) * (n₁ + (k + 1)).descFactorial (k + 1) := by
-      rw [show n₁ + (k + 2) = n₁ + (k + 1) + 1 by omega, Nat.succ_descFactorial_succ]
-    rw [show k + 2 - 1 = k + 1 by omega, pow_succ, pow_succ, hd]
-    calc (n₁ + (k + 1) + 1) * (n₁ + (k + 1)).descFactorial (k + 1) * (2 ^ k * 2)
-        = ((n₁ + (k + 1)).descFactorial (k + 1) * 2 ^ k) * (2 * (n₁ + (k + 1) + 1)) := by ring
-      _ ≤ ((n₁ + 1) * (2 * (n₁ + N)) ^ k) * (2 * (n₁ + N)) :=
-          Nat.mul_le_mul ih (by omega)
-      _ = (n₁ + 1) * ((2 * (n₁ + N)) ^ k * (2 * (n₁ + N))) := by ring
+        (n₁ + (k + 1) + 1) * (n₁ + (k + 1)).descFactorial (k + 1) :=
+      Nat.succ_descFactorial_succ (n₁ + (k + 1)) (k + 1)
+    rw [show k + 2 - 1 = k + 1 by omega, pow_succ 2 k, pow_succ (2 * (n₁ + N)) k, hd]
+    have hleft :
+        (n₁ + (k + 1) + 1) * (n₁ + (k + 1)).descFactorial (k + 1) * (2 ^ k * 2) =
+          ((n₁ + (k + 1)).descFactorial (k + 1) * 2 ^ k) * (2 * (n₁ + (k + 1) + 1)) := by
+      ring
+    rw [hleft, ← mul_assoc (n₁ + 1)]
+    exact Nat.mul_le_mul ih (by omega)
 
 theorem sameFactor_choose_le (r a k : ℕ) (hk1 : 1 ≤ k) (hkN : k ≤ r + a) :
     (Nat.choose (r * a + k) k : ℚ) * 2 ^ (k - 1) / ((r * a : ℕ) + 1 : ℚ) ≤
@@ -79,19 +86,20 @@ theorem SameFactorBound.proof (hF : SameFactorFormula.Statement) (hS : SchurSign
 
   have hSeq : S = ∑ nu ∈ partitionsOf r k, C (chi nu) * Sν nu := by
     apply Flag.powerSumHom_injective
-    rw [hSP, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hSP, map_sum]
     refine Finset.sum_congr rfl fun nu hnu => ?_
     rw [map_mul, hSν1 nu hnu]
     congr 1
     simp [powerSumHom, hchi]
   set e : Fin (r + a) →₀ ℕ := Finsupp.single (⟨k - 1, by omega⟩ : Fin (r + a)) 1 with he
-  have hcoef : |coeff e S| ≤
+  have hcoef : |S.coeff e| ≤
       (∑ nu ∈ (partitionsOf r k).filter (fun nu => ∀ i : Fin r, (i : ℕ) ≠ 0 → nu i ≤ 1),
         |chi nu|) / k := by
     rw [hSeq, coeff_sum]
     simp only [coeff_C_mul]
-    calc |∑ nu ∈ partitionsOf r k, chi nu * coeff e (Sν nu)|
-        ≤ ∑ nu ∈ partitionsOf r k, |chi nu * coeff e (Sν nu)| := Finset.abs_sum_le_sum_abs _ _
+    calc |∑ nu ∈ partitionsOf r k, chi nu * (Sν nu).coeff e|
+        ≤ ∑ nu ∈ partitionsOf r k, |chi nu * (Sν nu).coeff e| := Finset.abs_sum_le_sum_abs _ _
       _ = ∑ nu ∈ partitionsOf r k,
             if ∀ i : Fin r, (i : ℕ) ≠ 0 → nu i ≤ 1 then |chi nu| / k else 0 := by
           refine Finset.sum_congr rfl fun nu hnu => ?_
@@ -112,7 +120,7 @@ theorem SameFactorBound.proof (hF : SameFactorFormula.Statement) (hS : SchurSign
       (numStandardTable (rectangle r a) : ℚ) ^ (f' + 1 - 1) with hK
   have hK0 : 0 ≤ K := by positivity
   have hTabs : |restTerm (f' + 1) (r + a) Q k τ (smallPowerSum (f' + 1) r a c (k - 1) τ)| =
-      |C₀| * K * |coeff e S| := by
+      |C₀| * K * |S.coeff e| := by
     rw [hTk, show ∀ x : ℚ, C₀ * k * ((f' + 1) * (r * a) + 1).factorial /
         (((r * a + 1).factorial : ℚ) * ((r * a).factorial : ℚ) ^ (f' + 1 - 1)) *
         (numStandardTable (rectangle r a) : ℚ) ^ (f' + 1 - 1) * x = C₀ * K * x from
@@ -121,7 +129,7 @@ theorem SameFactorBound.proof (hF : SameFactorFormula.Statement) (hS : SchurSign
   set B : ℚ := (Nat.choose (r * a + k) k : ℚ) * 2 ^ (k - 1) *
     numStandardTable (rectangle r a) with hBdef
   have hk0 : (0 : ℚ) < k := by exact_mod_cast (show 0 < k by omega)
-  have hcoefB : |coeff e S| ≤ B / k := le_trans hcoef (div_le_div_of_nonneg_right hhook hk0.le)
+  have hcoefB : |S.coeff e| ≤ B / k := le_trans hcoef (div_le_div_of_nonneg_right hhook hk0.le)
   have hKB : K * (B / k) = ((f' + 1) * (r * a) + 1 : ℕ) *
       ((((f' + 1) * (r * a)).factorial / ((r * a).factorial : ℚ) ^ (f' + 1) *
         (numStandardTable (rectangle r a) : ℚ) ^ (f' + 1))) *
@@ -135,7 +143,7 @@ theorem SameFactorBound.proof (hF : SameFactorFormula.Statement) (hS : SchurSign
   have hP : (0 : ℚ) ≤ ((f' + 1) * (r * a) + 1 : ℕ) *
       ((((f' + 1) * (r * a)).factorial / ((r * a).factorial : ℚ) ^ (f' + 1) *
         (numStandardTable (rectangle r a) : ℚ) ^ (f' + 1))) := by positivity
-  calc |C₀| * K * |coeff e S| ≤ |C₀| * K * (B / k) :=
+  calc |C₀| * K * |S.coeff e| ≤ |C₀| * K * (B / k) :=
         mul_le_mul_of_nonneg_left hcoefB (by positivity)
     _ = |C₀| * (((f' + 1) * (r * a) + 1 : ℕ) *
           ((((f' + 1) * (r * a)).factorial / ((r * a).factorial : ℚ) ^ (f' + 1) *

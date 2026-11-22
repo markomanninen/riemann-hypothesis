@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergmanIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BergmanSectionPairing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergmanIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BergmanSectionPairing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -32,8 +37,8 @@ theorem val_mem (v : SectionInnerProductSpace V) : val V v ∈ V := (show V from
 variable [CompactSpace X] [T2Space X] [MeasurableSpace X] [BorelSpace X]
   (W : Weight L) (dV : SmoothVolume A) (n : ℕ)
 
-omit [CompactSpace X] [T2Space X] [BorelSpace X] in
 
+omit [CompactSpace X] [T2Space X] [BorelSpace X] in
 theorem integral_pairing_self (s : Fin A.n → X → ℂ) :
     ∫ x, pairing W n s s x ∂dV.μ = ((sectionL2NormSq W dV n s : ℝ) : ℂ) := by
   simp_rw [pairing_self]
@@ -67,16 +72,14 @@ def core (hV : V ≤ L.sections n) : InnerProductSpace.Core ℂ (SectionInnerPro
       (pairing_integrable W dV n (hV (val_mem V v)) (hV (val_mem V w))), map_add]
     congr 1
     funext x
-    simp only [pairing, Pi.add_apply, map_add]
-    ring
+    simp only [pairing, Pi.add_apply, map_add, add_mul]
   smul_left u w r := by
     show ∫ x, pairing W n (val V (r • u)) (val V w) x ∂dV.μ =
       conj r * ∫ x, pairing W n (val V u) (val V w) x ∂dV.μ
     rw [← integral_const_mul, map_smul]
     congr 1
     funext x
-    simp only [pairing, Pi.smul_apply, smul_eq_mul, map_mul]
-    ring
+    simp only [pairing, Pi.smul_apply, smul_eq_mul, map_mul, mul_assoc]
   definite v h := by
     have hs : val V v ∈ L.sections n := hV (val_mem V v)
     have hl : sectionL2NormSq W dV n (val V v) = 0 := by
@@ -129,7 +132,8 @@ theorem bergman_eq_sum (hV : V ≤ L.sections n) [FiniteDimensional ℂ V] :
   have hr : ∀ v, ev v = ⟪r, v⟫_ℂ := fun v ↦ by
     calc ev v = ev (∑ i, ⟪b i, v⟫_ℂ • b i) := by rw [b.sum_repr']
       _ = ∑ i, ev (b i) * ⟪b i, v⟫_ℂ := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           exact Finset.sum_congr rfl fun i _ ↦ by rw [map_smul, smul_eq_mul, mul_comm]
       _ = ⟪r, v⟫_ℂ := by
           rw [sum_inner]

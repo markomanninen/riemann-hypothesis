@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsHomOpenPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsHomOpenPart
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH
@@ -29,12 +34,14 @@ theorem crd_mulVec_of_hasVal : ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebr
   have key : (a.appLE _ _ ea).hom ((st i).f (k PUnit.unit)) =
       ∑ j, (q.appLE _ _ eq).hom (c i j) * (σ j).f k := by
     apply N'.res_injective _ hC
-    rw [map_sum, ha.valF_appLE ea hC, ht i _ ⟨_, ea hC.some_mem⟩, htu]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ha.valF_appLE ea hC, ht i _ ⟨_, ea hC.some_mem⟩, htu]
     simp only [map_mul, hq.valF_appLE eq hC, AlgHom.id_apply, Matrix.mulVec, dotProduct, Matrix.map_apply,
       Finset.sum_div]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [res_apply, hu j k hC, mul_div_assoc]
-  rw [← valR_appLE x a ea hk, key, valR_eq x _ hk, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← valR_appLE x a ea hk, key, valR_eq x _ hk, map_sum, Finset.mul_sum]
   simp only [Matrix.mulVec, dotProduct, Matrix.map_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, ← valR_eq x _ hk, ← valR_eq x _ hk, valR_appLE x q eq hk, hw j, mul_left_comm]

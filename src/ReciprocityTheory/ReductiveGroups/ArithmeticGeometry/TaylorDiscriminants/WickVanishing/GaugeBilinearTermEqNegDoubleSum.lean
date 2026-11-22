@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -156,7 +160,7 @@ theorem coeff_eq_zero_of_axes (h : PS k 2 d) (h0 : ev (n := 1) ![0, pt k d 0] h 
 
 theorem gaugeBilinearTerm_eq_neg_double_sum (h : PS k 2 d) (i j : Fin d) :
     sg1 k h i j = -coeff (single ((0 : Fin 2), j) 1 + single ((1 : Fin 2), i) 1) h := by
-  show coeff (single ((0 : Fin 1), j) 1) (-ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) h)) = _
+  unfold sg1 sgOf
   rw [map_neg, coeff_ev_zero_right, Finsupp.embDomain_single, coeff_pderiv]
   have he : eXv d ((0 : Fin 1), j) = ((0 : Fin 2), j) := rfl
   rw [he]
@@ -204,7 +208,7 @@ private theorem coeff_mul_eq_zero_of_order_two_of_degree_le_two {n : ℕ} (f g :
   apply Finset.sum_eq_zero
   intro p hp
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-  have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← hp, map_add]
+  have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← hp, map_add (f := _)]
   by_cases h1 : p.1.degree < 2
   · rw [hf _ h1, zero_mul]
   · rw [hg _ (by omega), mul_zero]
@@ -217,7 +221,7 @@ private theorem coeff_mul_eq_zero_of_left_vanishes_degree_le_two {n : ℕ} (F g 
   apply Finset.sum_eq_zero
   intro p hp
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-  have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← hp, map_add]
+  have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← hp, map_add (f := _)]
   rw [hF _ (by omega), zero_mul]
 
 theorem coeff_expS_two {n : ℕ} (f : PS k n d) (hf : ∀ m : Fin n × Fin d →₀ ℕ, m.degree < 2 → coeff m f = 0)

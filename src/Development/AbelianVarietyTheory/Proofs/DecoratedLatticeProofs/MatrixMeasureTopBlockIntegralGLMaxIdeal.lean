@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockVolumeProd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MatrixEntrywiseProductMeasureUniformizerPowerBox
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChainStepIdentities
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValTwoBlockParahoricInfTorusConjBlockwise
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockVolumeProd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MatrixEntrywiseProductMeasureUniformizerPowerBox
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChainStepIdentities
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValTwoBlockParahoricInfTorusConjBlockwise
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.IndefR.Datum
 open scoped NNReal ENNReal
@@ -136,8 +140,8 @@ theorem volKO_real (ν : Measure k) [ν.IsAddHaarMeasure] (r : ℕ) :
 end Loc
 end GlobalTheory.RectBlockVolume
 
-open ValuativeRel in
 
+open ValuativeRel in
 theorem GlobalTheory.RectBlockVolume.vol_topBlock_KO : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] (ν : Measure k), ν.IsAddHaarMeasure → ∀ (a b r : ℕ), r ≤ a → r ≤ b → (GlobalTheory.SplitWeil.volM ν (Fin b) (Fin a) {x | topL r x ∈ Units.val '' (GlobalTheory.SplitWeil.KO k (Fin r) : Set (GL (Fin r) k)) ∧ (∀ i j, ValuativeRel.valuation k (x i j) ≤ 1) ∧ ∀ i j, r ≤ i.val → j.val < r → ValuativeRel.valuation k (x i j) < 1}).toReal = (GlobalTheory.SplitWeil.volM ν (Fin b) (Fin a) {x | ∀ i j, ValuativeRel.valuation k (x i j) ≤ 1}).toReal * ((∏ n ∈ Finset.Ioc 0 r, (1 - ((GlobalTheory.SplitWeil.resCard k : ℝ) ^ n)⁻¹)) * ((GlobalTheory.SplitWeil.resCard k : ℝ) ^ (r * (b - r)))⁻¹) := by
   intro k _ _ _ _ _ _ ν hν a b r hra hrb
   haveI := hν
@@ -161,7 +165,7 @@ theorem GlobalTheory.RectBlockVolume.vol_topBlock_KO : ∀ (k : Type) [Field k] 
     have htop : topL r (GlobalTheory.RectBlockVolume.reidx r a' b' y) = y.toBlocks₁₁ := by
       ext i j
       simp only [topL]
-      rw [dif_pos ⟨by omega, by omega⟩]
+      rw [dite_eq_left ⟨by omega, by omega⟩]
       have e1 : (⟨i.val, by omega⟩ : Fin (r + b')) = finSumFinEquiv (Sum.inl i) := Fin.ext (by simp)
       have e2 : (⟨j.val, by omega⟩ : Fin (r + a')) = finSumFinEquiv (Sum.inl j) := Fin.ext (by simp)
       rw [e1, e2, GlobalTheory.RectBlockVolume.reidx_apply]

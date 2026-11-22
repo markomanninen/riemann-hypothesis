@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.AdmissibleModel.WeylDim
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Formalism.PolynomialDimension.WeylDim
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.AdmissibleModel.WeylDim
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+public import Formalism.PolynomialDimension.WeylDim
+
+@[expose] public section
 
 open Formalism.BasicNotions
 

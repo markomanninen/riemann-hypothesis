@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ArtinMapSecondEqJacobiSymOfModEq
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.EqOfPowEqOne
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ArtinMapSecondEqJacobiSymOfModEq
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.EqOfPowEqOne
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise
@@ -373,7 +377,7 @@ theorem exact_art (he : 1 ≤ e) : ∃ u : (ZMod (2 ^ (e + 2) * q * d))ˣ,
     have hc1 : Nat.Coprime (2 ^ (e + 1)) q :=
       Nat.Coprime.pow_left _ ((Nat.coprime_primes Nat.prime_two hqp).mpr (Ne.symm hq2))
     have hc2 : Nat.Coprime (2 ^ (e + 1) * q) d :=
-      Nat.Coprime.mul (Nat.Coprime.pow_left _ ((Nat.coprime_primes Nat.prime_two hdp).mpr (Ne.symm hd2)))
+      Nat.Coprime.mul_left (Nat.Coprime.pow_left _ ((Nat.coprime_primes Nat.prime_two hdp).mpr (Ne.symm hd2)))
         ((Nat.coprime_primes hqp hdp).mpr hqd)
     exact (Nat.modEq_and_modEq_iff_modEq_mul hc2).mp
       ⟨(Nat.modEq_and_modEq_iff_modEq_mul hc1).mp ⟨hx1, huy⟩, huz⟩
@@ -609,7 +613,7 @@ theorem hostDer : HostDer (hostRaw φ hinj hH he h) := by
     refine ⟨?_, g2, v, g3, (hH_ggIso φ hinj _).trans g4⟩
     have h1 := (gal_eq_art φ hinj hH he h σ _).mpr
       ((frob_art hH h p hp P σ (ZMod.unitOfCoprime p hcop) (ZMod.coe_unitOfCoprime _ _)).mp hσ)
-    rw [h1, HostRaw.psAt, dif_pos (show Nat.Coprime p (hostRaw φ hinj hH he h).condN from hcop)]
+    rw [h1, HostRaw.psAt, dite_eq_left (show Nat.Coprime p (hostRaw φ hinj hH he h).condN from hcop)]
     rfl
   · have hm : ((l : ℤ) : 𝓞 (hostE ζ a b)) ∈ P := by
       have : Fact l.Prime := ⟨hl⟩
@@ -650,30 +654,9 @@ theorem hostDer : HostDer (hostRaw φ hinj hH he h) := by
 
 def hostAx : HostAx φ := ⟨hostRaw φ hinj hH he h, hostDer φ hinj hH he h⟩
 
-include hinj in
-theorem twoGroup : φ.TwoGroup := ⟨φ.e, ord_eq φ hinj⟩
 
-theorem muPM (hq : q ≠ 3) : (hostRaw φ hinj hH he h).MuPM := fun x hx => Formalism.FrobeniusOrbits.Final.host_field.2.2.2.2.2.2.2.2.2.2.1 φ.e q d hH hq L ζ a b h x hx
-
-theorem coprimeFifteen_of_coprime : (hostRaw φ hinj hH he h).CoprimeFifteen := by
-  show Nat.Coprime (2 ^ (φ.e + 2)) 15
-  exact Nat.Coprime.pow_left _ (by norm_num)
-
-include hinj he in
-theorem qs_le : 2 ^ (φ.e + 2) ≤ φ.ord ^ 2 := by
-  rw [ord_eq φ hinj, ← pow_mul]
-  exact Nat.pow_le_pow_right (by norm_num) (by omega)
 
 end D7
-
-theorem exists_hostAx (φ : Frame) (hinj : Function.Injective φ.h) (he : 2 ≤ φ.e) {q d : ℕ} (hH : FrobeniusOrbits.HostHyp q d) :
-    ∃ H : HostAx φ, H.q = q ∧ H.d = d ∧ H.QS = 2 ^ (φ.e + 2) ∧ φ.TwoGroup ∧ H.toHostRaw.CoprimeFifteen ∧
-      (q ≠ 3 → H.toHostRaw.MuPM) ∧ H.toHostRaw.PsQ ∧ H.toHostRaw.Exact ∧
-      ∃ s : H.E, s ^ 2 = -(H.q : H.E) ∧ ∀ σ : H.E ≃ₐ[ℚ] H.E, σ s = ((((H.gal σ).1.1 : ℤˣ) : ℤ) : H.E) * s := by
-  obtain ⟨L, hF, hN, ζ, a, b, h⟩ := Formalism.TwoAdicCyclotomicDecomposition.layerExists (φ.e + 2) q d
-  exact ⟨D7.hostAx φ hinj hH he h, rfl, rfl, rfl, D7.twoGroup φ hinj, D7.coprimeFifteen_of_coprime φ hinj hH he h,
-    fun hq => D7.muPM φ hinj hH he h hq, D7.psQ φ hinj hH he h, D7.exact φ hinj hH he h,
-    D7.sqq φ hinj hH he h, D7.sqq_sq φ hinj hH he h, fun σ => D7.gal_sqq φ hH h σ⟩
 
 end Formalism.HC
 

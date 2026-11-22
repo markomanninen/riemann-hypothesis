@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralUnfoldingVariablesMemFieldRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralUnfoldingVariablesMemFieldRange
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory.TwistedCosetSum
@@ -86,7 +91,7 @@ theorem integral_eq_sum_twisted : ∀ {X : Type} [AddCommGroup X] [TopologicalSp
   have hmeas : ∀ c : X ⧸ U, MeasurableSet ((fun x => -(Quotient.out c) + x) ⁻¹' (U : Set X)) := fun c =>
     (hU.preimage (continuous_const.add continuous_id)).measurableSet
   have hsum : ∫ y, g y ∂μ = ∑ c ∈ T, ∫ y, ((fun x => -(Quotient.out c) + x) ⁻¹' (U : Set X)).indicator g y ∂μ := by
-    rw [← integral_finset_sum _ fun c _ => hint.indicator (hmeas c)]
+    rw [← integral_finsetSum _ fun c _ => hint.indicator (hmeas c)]
     exact congrArg _ hdec
   refine ⟨(T.filter fun c => ∫ y, ((fun x => -(Quotient.out c) + x) ⁻¹' (U : Set X)).indicator g y ∂μ ≠ 0).image
     Quotient.out, ?_⟩

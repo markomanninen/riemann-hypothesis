@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelRep
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.SymIdx
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.PeakCone
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ExistsEigv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelRep
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.SymIdx
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.PeakCone
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ExistsEigv
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,11 +113,11 @@ structure Ok : Prop where
   disj : Disjoint d.T d.S₀ ∧ Disjoint d.T d.Bad ∧ Disjoint d.S₀ d.Bad
   unif : ∀ w, ordL (d.ϖ w : w.adicCompletion E) = 1
   cone : ∀ w ∈ d.T, (↑(d.c w).support : Set (Fin n → ℤ)) ⊆ coneGL n 2
-  K' : ∀ w ∈ d.S₀, IsOpen (d.K' w : Set (GLw n w)) ∧ d.K' w ≤ GlobalTheory.LFun.KGL w n ∧
-    (∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ d.K' w, k * k' * k⁻¹ ∈ d.K' w) ∧ (∀ x ∈ d.X w, x ∈ GlobalTheory.LFun.KGL w n) ∧
-    (∀ k ∈ GlobalTheory.LFun.KGL w n, ∃! x ∈ d.X w, x⁻¹ * k ∈ d.K' w) ∧ IsHk (d.K' w) (d.e w)
-  L : ∀ a ≤ n, ∀ w ∈ d.S₀ ∪ d.Bad, ∃ L₁ L₂, d.L a w = Subgroup.prod L₁ L₂ ∧ IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) L₁ ∧
-    IsLevel (thL (n - a) w) (GlobalTheory.LFun.KGL w (n - a)) L₂
+  K' : ∀ w ∈ d.S₀, IsOpen (d.K' w : Set (GLw n w)) ∧ d.K' w ≤ GlobalTheory.LFun.KGL w (n := n) ∧
+    (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ d.K' w, k * k' * k⁻¹ ∈ d.K' w) ∧ (∀ x ∈ d.X w, x ∈ GlobalTheory.LFun.KGL w (n := n)) ∧
+    (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∃! x ∈ d.X w, x⁻¹ * k ∈ d.K' w) ∧ IsHk (d.K' w) (d.e w)
+  L : ∀ a ≤ n, ∀ w ∈ d.S₀ ∪ d.Bad, ∃ L₁ L₂, d.L a w = Subgroup.prod L₁ L₂ ∧ IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) L₁ ∧
+    IsLevel (thL (n - a) w) (GlobalTheory.LFun.KGL w (n := (n - a))) L₂
   LS : ∀ a (ha : a ≤ n), ∀ w ∈ d.S₀, ∀ m ∈ d.L a w, m ∈ leviOf (Nat.add_sub_of_le ha) w (d.K' w) ∧
     d.μ w (GeneralLinearGroup.det m.1 ^ (n - a) * GeneralLinearGroup.det m.2 ^ a) = 1
   fix : ∀ a ≤ n, ∀ w ∈ d.Bad, IsHecke (d.L a w) (d.fix a w)

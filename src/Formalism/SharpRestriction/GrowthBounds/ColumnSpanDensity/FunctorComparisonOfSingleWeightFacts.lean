@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FunctorComparisonOfSingleWeight
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorKP
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FunctorComparisonOfSingleWeight
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorKP
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf
 
@@ -22,8 +26,8 @@ private theorem exists_linearMap_prod_rename_eq {K : Type} [Field K] (I β γ : 
       (∑ j, Finsupp.mapDomain (fun v : β => (j, v)) (g j)).curry i = g i := by
     intro g i
     ext b
-    rw [Finsupp.curry_apply, Finsupp.finset_sum_apply, Finset.sum_eq_single i]
-    · exact Finsupp.mapDomain_apply (fun a c h => (Prod.ext_iff.1 h).2) _ _
+    rw [Finsupp.curry_apply, Finsupp.finsetSum_apply, Finset.sum_eq_single i]
+    · exact Finsupp.mapDomain_apply_of_injective (fun a c h => (Prod.ext_iff.1 h).2) _ _
     · intro j _ hj
       apply Finsupp.mapDomain_notin_range
       rintro ⟨c, hc⟩
@@ -31,10 +35,10 @@ private theorem exists_linearMap_prod_rename_eq {K : Type} [Field K] (I β γ : 
     · intro h
       exact absurd (Finset.mem_univ i) h
   refine ⟨Φ, fun P => ?_⟩
-  let L : MultilinearMap K (fun _ : I => MvPolynomial β K) (MvPolynomial (I × γ) K) :=
+  let L : (I → MvPolynomial β K) →ₘₗ[K] MvPolynomial (I × γ) K :=
     Φ.compMultilinearMap ((MultilinearMap.mkPiAlgebra K I (MvPolynomial (I × β) K)).compLinearMap
       (fun i => (MvPolynomial.rename (fun v : β => (i, v))).toLinearMap))
-  let M : MultilinearMap K (fun _ : I => MvPolynomial β K) (MvPolynomial (I × γ) K) :=
+  let M : (I → MvPolynomial β K) →ₘₗ[K] MvPolynomial (I × γ) K :=
     (MultilinearMap.mkPiAlgebra K I (MvPolynomial (I × γ) K)).compLinearMap
       (fun i => (MvPolynomial.rename (fun v : γ => (i, v))).toLinearMap ∘ₗ f i)
   have hLM : L = M := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,10 +46,12 @@ theorem exists_equiv_of_torsion {k A : Type*} [Field k] [CommRing A] [Algebra k 
   show T (a • m) = a • T m
   rw [← hM.mk_smul, T.map_smul, hM'.mk_smul]
 
-open Classical in
 
+open Classical in
 def pidem (A : Type*) [CommRing A] [IsArtinianRing A] [IsReduced A] (I : MaximalSpectrum A) : A :=
-  (IsArtinianRing.equivPi A).symm (Pi.single I 1)
+  by
+    classical
+    exact (IsArtinianRing.equivPi A).symm (Pi.single I 1)
 
 section idem
 open Classical
@@ -77,7 +83,8 @@ theorem pidem_idem (I : MaximalSpectrum A) : IsIdempotentElem (pidem A I) := by
 theorem sum_pidem [Fintype (MaximalSpectrum A)] : ∑ I, pidem A I = 1 := by
   apply (IsArtinianRing.equivPi A).injective
   funext L
-  rw [map_sum, Finset.sum_apply, map_one, Pi.one_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply, map_one, Pi.one_apply]
   simp_rw [equivPi_pidem]
   simp [Pi.single_apply]
 

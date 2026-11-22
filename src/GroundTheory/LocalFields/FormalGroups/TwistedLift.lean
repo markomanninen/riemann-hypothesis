@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.FormalGroups.LubinTateGroup
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.FormalGroups.LubinTateGroup
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.FormalGroup
 
@@ -63,8 +67,8 @@ variable [Finite ι] {u π : B} {f g : PowerSeries B}
   (hf0 : PowerSeries.constantCoeff f = 0) (hf1 : PowerSeries.coeff 1 f = π)
   (hg0 : PowerSeries.constantCoeff g = 0) (hg1 : PowerSeries.coeff 1 g = u * π)
 
-include hf0 hf1 hg0 hg1 in
 
+include hf0 hf1 hg0 hg1 in
 theorem coeff_twistedDefect_sub_twistedDefect {φ ψ : MvPowerSeries ι B} {n : ℕ}
     (h : (n : ℕ∞) ≤ order (φ - ψ)) {e : ι →₀ ℕ} (he : e.degree ≤ n) :
     coeff e (twistedDefect σ g f φ) - coeff e (twistedDefect σ g f ψ) =
@@ -126,8 +130,8 @@ theorem twistedDefect_zero : twistedDefect σ g f (0 : MvPowerSeries ι B) = 0 :
   rw [twistedDefect, h0, map_zero, ← coe_substAlgHom (hasSubst_substEach hf0), map_zero,
     PowerSeries.subst_zero_of_constantCoeff_zero hg0, sub_zero]
 
-omit [Finite ι] in
 
+omit [Finite ι] in
 theorem eq_coeff_of_two_le_order_sub {φ ψ : MvPowerSeries ι B}
     (h : (2 : ℕ∞) ≤ order (φ - ψ)) {e : ι →₀ ℕ} (he : e.degree ≤ 1) : coeff e φ = coeff e ψ := by
   have he2 : (e.degree : ℕ∞) < 2 := by
@@ -142,8 +146,8 @@ theorem constantCoeff_eq_zero_of_two_le_order_sub {φ ψ : MvPowerSeries ι B}
   rw [← coeff_zero_eq_constantCoeff_apply, ← eq_coeff_of_two_le_order_sub h (by simp),
     coeff_zero_eq_constantCoeff_apply, hφ]
 
-include hf0 hf1 hg0 hg1 hreg hT hdiv in
 
+include hf0 hf1 hg0 hg1 hreg hT hdiv in
 theorem twistStep_eq_self_iff {ℓ : MvPowerSeries ι B} (hℓ : constantCoeff ℓ = 0)
     (hℓ1 : ∀ e : ι →₀ ℕ, e.degree = 1 → u * π * coeff e ℓ = π * σ (coeff e ℓ))
     (φ : MvPowerSeries ι B) :
@@ -208,8 +212,8 @@ theorem twistStep_eq_self_iff {ℓ : MvPowerSeries ι B} (hℓ : constantCoeff �
     · rw [hdef, map_zero, hdivBy0, sub_zero]
       exact Function.leftInverse_invFun (hT e.degree (by omega)).1 _
 
-include hf0 hf1 hg0 hg1 hreg hT hdiv in
 
+include hf0 hf1 hg0 hg1 hreg hT hdiv in
 theorem existsUnique_twisted {ℓ : MvPowerSeries ι B} (hℓ : constantCoeff ℓ = 0)
     (hℓ1 : ∀ e : ι →₀ ℕ, e.degree = 1 → u * π * coeff e ℓ = π * σ (coeff e ℓ)) :
     ∃! φ : MvPowerSeries ι B,
@@ -219,8 +223,8 @@ theorem existsUnique_twisted {ℓ : MvPowerSeries ι B} (hℓ : constantCoeff �
   exact ⟨φ, (twistStep_eq_self_iff σ hf0 hf1 hg0 hg1 hreg hT hdiv hℓ hℓ1 φ).1 hφ,
     fun ψ hψ => huniq ψ ((twistStep_eq_self_iff σ hf0 hf1 hg0 hg1 hreg hT hdiv hℓ hℓ1 ψ).2 hψ)⟩
 
-include hf0 hf1 hg0 hg1 in
 
+include hf0 hf1 hg0 hg1 in
 theorem IsTwistedLift.linear {ℓ φ : MvPowerSeries ι B} (h : IsTwistedLift σ g f ℓ φ)
     (e : ι →₀ ℕ) (he : e.degree = 1) : u * π * coeff e ℓ = π * σ (coeff e ℓ) := by
   obtain ⟨h0, h2, heq⟩ := h
@@ -238,8 +242,8 @@ theorem IsTwistedLift.linear {ℓ φ : MvPowerSeries ι B} (h : IsTwistedLift σ
     he, pow_one, eq_coeff_of_two_le_order_sub h2 he.le] at this
   linear_combination -this
 
-include hf0 hf1 hg0 hg1 hreg hT hdiv in
 
+include hf0 hf1 hg0 hg1 hreg hT hdiv in
 theorem IsTwistedLift.unique {ℓ φ ψ : MvPowerSeries ι B} (hφ : IsTwistedLift σ g f ℓ φ)
     (hψ : IsTwistedLift σ g f ℓ ψ) : φ = ψ :=
   (existsUnique_twisted σ hf0 hf1 hg0 hg1 hreg hT hdiv

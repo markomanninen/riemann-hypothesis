@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace DiscreteGroups.T1.Desc.TraceUniqueU3
 

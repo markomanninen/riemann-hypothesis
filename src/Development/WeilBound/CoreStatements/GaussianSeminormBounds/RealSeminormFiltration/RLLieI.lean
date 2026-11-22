@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieE
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieE
+
+@[expose] public section
 
 noncomputable section
 

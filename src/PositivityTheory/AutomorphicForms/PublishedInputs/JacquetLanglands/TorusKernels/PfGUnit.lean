@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,9 +36,8 @@ theorem pow_lN (ν : Valuation ℂ ℝ≥0) (l : ℕ) {b : ℂ} (hb : ν b ≤ 1
     have e : b ^ (l ^ (N + 1)) = (b ^ (l ^ N)) ^ l := by rw [pow_succ, pow_mul]
     rw [e]
     refine (pow_l ν l hb' ((pow_sub ν hb _).trans hbp)).trans ?_
-    calc ν (l : ℂ) * ν (b ^ (l ^ N) - 1) ≤ ν (l : ℂ) * (ν (l : ℂ) ^ N * ν (b - 1)) :=
-          mul_le_mul_of_nonneg_left (pow_lN ν l hb hbp N) zero_le
-      _ = ν (l : ℂ) ^ (N + 1) * ν (b - 1) := by ring
+    rw [pow_succ', mul_assoc]
+    exact mul_le_mul_of_nonneg_left (pow_lN ν l hb hbp N) zero_le
 
 theorem lt_one_le (a : WithZero (Multiplicative ℤ)) (h : a < 1) : a ≤ WithZero.exp (-1 : ℤ) := by
   by_cases h0 : a = 0

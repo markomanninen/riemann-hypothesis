@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.KerIso
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DeterminantKernelFiniteness.ExistsNatMulMemFracFam
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DeterminantKernelFiniteness.ValuationLeOneOfDenom
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.KerIso
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DeterminantKernelFiniteness.ExistsNatMulMemFracFam
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DeterminantKernelFiniteness.ValuationLeOneOfDenom
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -31,7 +35,8 @@ lemma exists_denom_forward {K E : Type} [Field K] [NumberField K] [Field E] [Num
   refine ⟨N, hN0, fun x hx w => ?_⟩
   have hxs : g₀ x w = ∑ a, φ a w (x a) := by
     conv_lhs => rw [← Finset.univ_sum_single x]
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     rfl
   have hterm : ∀ a, (N : K) * φ a w (x a) ∈ (algebraMap (𝓞 K) K).range := by
     intro a
@@ -41,10 +46,12 @@ lemma exists_denom_forward {K E : Type} [Field K] [NumberField K] [Field E] [Num
         rw [hz, Algebra.smul_def, inv_mul_cancel_left₀ hα0]
       rw [h1]
       conv_lhs => rw [← b.sum_repr z]
-      rw [map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_zsmul, mul_smul_comm]
-    rw [hxa, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxa, map_sum, Finset.mul_sum]
     refine Subring.sum_mem _ fun i _ => ?_
     rw [map_zsmul, mul_smul_comm]
     exact zsmul_mem (hN (a, i, w)) _
@@ -62,7 +69,8 @@ lemma exists_denom_backward {K E : Type} [Field K] [NumberField K] [Field E] [Nu
   refine ⟨N, hN0, fun v hv a => ?_⟩
   have hv' : g₀.symm v = ∑ w, v w • g₀.symm (Pi.single w 1) := by
     conv_lhs => rw [← Finset.univ_sum_single v]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [← map_smul]
     congr 1

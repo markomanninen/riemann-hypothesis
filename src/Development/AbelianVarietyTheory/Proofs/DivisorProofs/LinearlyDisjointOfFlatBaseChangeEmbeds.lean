@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
@@ -24,13 +29,15 @@ theorem linDisj_of_flat (R R₁ K L : Type) [CommRing R] [CommRing R₁] [CommRi
   set x : (Fin n → R) ⊗[R] R₁ := ∑ j, Pi.single j 1 ⊗ₜ[R] r j with hx
   have hx0 : x = 0 := by
     apply hft
-    rw [map_zero, hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, hx, map_sum]
     simp only [LinearMap.rTensor_tmul]
     have := h n u r hr
     simpa [f, Fintype.linearCombination_apply_single] using this
   funext i
   have key : TensorProduct.lid R R₁ ((LinearMap.proj (R := R) (φ := fun _ : Fin n => R) i).rTensor R₁ x) = r i := by
-    rw [hx, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, map_sum]
     simp [LinearMap.rTensor_tmul, Pi.single_apply]
   rw [← key, hx0]
   simp

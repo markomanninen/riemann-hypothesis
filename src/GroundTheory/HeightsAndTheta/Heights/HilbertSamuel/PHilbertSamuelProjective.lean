@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeronese
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPointHeightFS
-import ReciprocityTheory.GeometryOfNumbers.AsymptoticSequences.ClosingHS
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeronese
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPointHeightFS
+public import ReciprocityTheory.GeometryOfNumbers.AsymptoticSequences.ClosingHS
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

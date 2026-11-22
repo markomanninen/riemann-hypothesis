@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfA
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem ev_add (a b : LetA O n) (i : ℤ) :
     ev W c ζ Eπ h' (a + b) i = ev W c ζ Eπ h' a i + ev W c ζ Eπ h' b i := by
   unfold ev
   split_ifs
-  · rw [map_add (W.lev c ζ) a b, add_mul, map_add]
+  · rw [map_add (W.lev c ζ) a b, add_mul, map_add (f := _)]
   · rw [add_zero]
 
 theorem ev_zero (i : ℤ) : ev W c ζ Eπ h' (0 : LetA O n) i = 0 := by

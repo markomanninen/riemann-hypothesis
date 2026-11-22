@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.DCdE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaHeisenbergCommutingThetaOperator
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.DCdE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaHeisenbergCommutingThetaOperator
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels

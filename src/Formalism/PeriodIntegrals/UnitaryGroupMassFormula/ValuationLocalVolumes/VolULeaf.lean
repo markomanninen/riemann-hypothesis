@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUHaar
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolTProd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUHaar
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolTProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem sd_facts (hψ : IsCharAF F ψ) (hfin : Module.finrank F E = 2) (hann : A
     have hex' : ∃ μ : Measure (ι → Fv F v ⊗[F] E), SelfDual μ fun x y : ι → Fv F v ⊗[F] E =>
         psiV F ψ v (∑ i : ι, Algebra.trace (Fv F v) (Fv F v ⊗[F] E) (x i * y i)) := hex
     unfold sdE
-    rw [dif_pos hex']
+    rw [dite_eq_left hex']
     exact hex'.choose_spec
   haveI : (sdE (E := E) ψ v ι).IsAddHaarMeasure := hsd.1
   refine ⟨inferInstance, inferInstance, ?_⟩

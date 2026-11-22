@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ConjPushMat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WeightedEntrySubMemIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WPresGen
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ConjPushMat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WeightedEntrySubMemIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WPresGen
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
 private theorem hom_ext_ker {Γ R : Type} [Group Γ] [CommRing R] {η : Γ →* ℤˣ} {c : Γ} (hc : η c = -1)
-    {r r' : Γ →* GG 3 R} (h : ∀ g, (r g).right = (r' g).right) (e : (r c).mat = (r' c).mat)
+    {r r' : Γ →* GG (m := 3) (R := R)} (h : ∀ g, (r g).right = (r' g).right) (e : (r c).mat = (r' c).mat)
     (h' : ∀ g, η g = 1 → (r g).mat = (r' g).mat) : r = r' := by
   have k : ∀ g, (r g).mat = (r' g).mat → r g = r' g := fun g hg =>
     SemidirectProduct.ext (Units.ext hg) (h g)
@@ -29,7 +33,8 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_adapted :
     ∀ {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (u : Γ →* GG 3 R), F.IsUniv g₁ u →
+    ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R]
+      (u : Γ →* GG (m := 3) (R := R)), F.IsUniv g₁ u →
     ∃ W : WPres O ℤ R, F.Adapted u W ∧ Frame.Minimal W := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF g₁ _ R _ _ _ u hu
   let x : {g // F.η g = 1} × Fin 3 × Fin 3 → R := fun s =>

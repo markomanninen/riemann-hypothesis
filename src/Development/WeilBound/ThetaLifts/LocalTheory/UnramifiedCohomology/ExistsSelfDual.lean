@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.VaceigenDual
-import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasFrame
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSubConjNotMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.VaceigenDual
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasFrame
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSubConjNotMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,11 +36,39 @@ theorem mem_int {t : F} (h : v.valuation F t ≤ 1) : algebraMap F (Fv F v) t �
 theorem selfDual_of {J₀ : Matrix (Fin n) (Fin n) E} (hd : J₀.det ≠ 0) {L : Submodule (𝓞 E) (Fin n → E)}
     (hL : L.IsLattice E) (h1 : ∀ y ∈ L, ∀ x ∈ L, inclR (Fv F v) (hE σ J₀ x y) ∈ intLoc F E v) {s : 𝓞 F} (hs : s ∉ v.asIdeal)
     (h2 : ∀ y ∈ SelfDual.dualGlob σ J₀ L, algebraMap F E s • y ∈ L) : IsSelfDualAt σ J₀ L v := by
+  classical
+  let b := Pi.basisFun E (Fin n)
+  let M : Submodule (𝓞 E) (Fin n → E) := L ⊔ Submodule.span (𝓞 E) (Set.range b)
+  have hM : Submodule.IsFullLattice E M := by
+    refine { toIsLattice := ?_, span_eq_top := ?_ }
+    · exact Submodule.IsLattice.of_fg E (hL.fg.sup (Submodule.fg_span (Set.finite_range b)))
+    · apply top_unique
+      rw [← b.span_eq]
+      apply Submodule.span_mono
+      intro x hx
+      exact (show Submodule.span (𝓞 E) (Set.range b) ≤ M from le_sup_right) (Submodule.subset_span hx)
+  have hs0 : (s : F) ≠ 0 := fun h => hs (by
+    have : s = 0 := Subtype.ext h
+    rw [this]
+    exact zero_mem _)
+  have hsE : algebraMap F E (s : F) ≠ 0 := (map_ne_zero _).2 hs0
+  have hfull : Submodule.IsFullLattice E L := by
+    have hdual := SelfDual.isLattice_dualGlob (σ := σ) (L := M) hd hM
+    refine { toIsLattice := hL, span_eq_top := ?_ }
+    apply top_unique
+    rw [← Submodule.IsFullLattice.span_eq_top (self := hdual)]
+    apply Submodule.span_le.mpr
+    intro y hy
+    have hy' : y ∈ SelfDual.dualGlob σ J₀ L := fun x hx => hy x ((show L ≤ M from le_sup_left) hx)
+    have hyL := h2 y hy'
+    have heq : y = (algebraMap F E (s : F))⁻¹ • (algebraMap F E (s : F) • y) := by rw [smul_smul, inv_mul_cancel₀ hsE, one_smul]
+    rw [heq]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hyL)
   refine le_antisymm (fun y hy => ?_) ?_
   · induction hy using AddSubgroup.closure_induction with
     | mem z hz =>
       obtain ⟨a, ha, y, hy, rfl⟩ := hz
-      obtain ⟨k, S, Φ, e1, hS, hΦ⟩ := SelfDual.exists_frame L hL
+      obtain ⟨k, S, Φ, e1, hS, hΦ⟩ := SelfDual.exists_frame L hfull
       have : (fun i => inclR (Fv F v) (y i)) ∈ dualLoc σ J₀ L v := (SelfDual.mem_dualLoc_iff_of_frame e1 hS hΦ v _).2 fun j => by
         rw [SelfDual.map_mulVec_inclR, ← SelfDual.hform_col]
         exact h1 y hy _ (hS j)
@@ -48,7 +80,7 @@ theorem selfDual_of {J₀ : Matrix (Fin n) (Fin n) E} (hd : J₀.det ≠ 0) {L :
     | zero => exact zero_mem _
     | add a b _ _ ha hb => exact add_mem ha hb
     | neg a _ ha => exact neg_mem ha
-  · rw [← SelfDual.latLoc_dualGlob hd hL]
+  · rw [← SelfDual.latLoc_dualGlob hd hfull]
     intro y hy
     induction hy using AddSubgroup.closure_induction with
     | mem z hz =>
@@ -87,7 +119,7 @@ theorem exists_selfDual {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n} {r s :
     exact mul_ne_zero (pow_ne_zero _ h) (hY.elim (fun h => (Vac.herm_det h).ne_zero) fun h => (Vac.skew_det h).ne_zero)
   rcases hY with hY | hY
   · refine ⟨1, one_ne_zero, ⟨fun i j => by simp [hY.herm], hdet 1 one_ne_zero⟩,
-      selfDual_of (hdet 1 one_ne_zero) hY.lat (fun y hy x hx => SelfDual.inclR_mem_intLoc v ?_) (s := 1)
+      selfDual_of (hdet 1 one_ne_zero) hY.lat.toIsLattice (fun y hy x hx => SelfDual.inclR_mem_intLoc v ?_) (s := 1)
         ((Ideal.ne_top_iff_one _).1 v.isPrime.ne_top) fun y hy => ?_⟩
     · rw [hE_smul, one_mul]; exact ⟨⟨_, (hY.dual y).1 hy x hx⟩, rfl⟩
     · simp only [OneMemClass.coe_one, map_one, one_smul]
@@ -104,7 +136,7 @@ theorem exists_selfDual {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n} {r s :
     have hδE : algebraMap F E δ ≠ 0 := (map_ne_zero _).2 hδ0
     have hξ : (dd : E) / algebraMap F E δ ≠ 0 := div_ne_zero hdd hδE
     have hv0 : v.valuation F δ ≠ 0 := (Valuation.ne_zero_iff _).2 hδ0
-    refine ⟨_, hξ, ⟨fun i j => ?_, hdet _ hξ⟩, selfDual_of (hdet _ hξ) hY.lat (fun y hy x hx => ?_) hsv fun y hy => ?_⟩
+    refine ⟨_, hξ, ⟨fun i j => ?_, hdet _ hξ⟩, selfDual_of (hdet _ hξ) hY.lat.toIsLattice (fun y hy x hx => ?_) hsv fun y hy => ?_⟩
     · simp only [Matrix.smul_apply, Matrix.transpose_apply, smul_eq_mul, map_mul, map_div₀, AlgHom.commutes, hY.skew, hd,
         map_sub, hσ]
       ring

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowVLift
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowVLift
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+
+@[expose] public section
 
 noncomputable section
 

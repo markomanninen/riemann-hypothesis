@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits
 
@@ -34,7 +38,7 @@ theorem isUnit_of_pow_mul_unit_add_eq_zero (X : Scheme.{0}) [ConnectedSpace X]
       have hsum : X.presheaf.germ ⊤ x trivial u =
           X.presheaf.germ ⊤ x trivial (u + a * b) +
             -(X.presheaf.germ ⊤ x trivial a * X.presheaf.germ ⊤ x trivial b) := by
-        rw [map_add, map_mul]; ring
+        rw [map_add (f := _), map_mul]; ring
       rw [hsum] at hU
       rcases IsLocalRing.isUnit_or_isUnit_of_isUnit_add hU with h1 | h1
       · exact h1

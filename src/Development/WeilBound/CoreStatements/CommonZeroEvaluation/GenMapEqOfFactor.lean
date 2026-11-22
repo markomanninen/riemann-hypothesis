@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory
 open GlobalTheory.CompanionTheory.Ar

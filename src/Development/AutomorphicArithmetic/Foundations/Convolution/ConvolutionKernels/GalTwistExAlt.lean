@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalEquiv
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TwOpEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.PresOfOrder
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdHeight
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.CommProj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalEquiv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TwOpEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.PresOfOrder
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdHeight
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.CommProj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.CuspidalSpectrum GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalProjection PositivityTheory.Rg.Tf.Core UpperTheory.ConvolutionTheory.K

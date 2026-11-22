@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,8 +31,8 @@ variable {S S' : Scheme.{0}} {G : Over S} [GrpObj G] {G' : Over S'} [GrpObj G'] 
   (act' : O → ((Over.pullback g).obj G ⟶ (Over.pullback g).obj G)) [∀ a, IsMonHom (act' a)]
   (hact' : ∀ a, act' a = (Over.pullback g).map (b a)) (τ : O →+* k)
 
-include hc hg hab hact' in
 
+include hc hg hab hact' in
 theorem lieMult_of_finrank {N : ℕ} (hN : Module.finrank k (eigLat hx act' (fun a => τ a)) = N) :
     Geo.Tor.LieMult act tk τ N := by
   let B := Module.finBasisOfFinrankEq k _ hN
@@ -49,9 +53,27 @@ theorem lieMult_of_finrank {N : ℕ} (hN : Module.finrank k (eigLat hx act' (fun
   let Wd : (Fin N → k) → (viaT tk (sp (R₀ := k) (DualNumber k)) ⟶ G') :=
     fun d => (List.ofFn fun i => liftT tk (spMap (scaleD (d i))) ≫ vB i).prod
   have hPW : ∀ d, Rel (F := F) tk g (Wd d) (P d) := fun d => rel_prod hc hg _ _ fun i => rel_pre _ (hv i)
+  have list_prod_tan_aux : ∀ {M : ℕ} (u : Fin M → (sp (R₀ := k) (DualNumber k) ⟶ (Over.pullback g).obj G))
+      (hu : ∀ i, IsTan (u i)), ∃ h : IsTan (List.ofFn u).prod,
+        tcoord hx _ h = ∑ i, tcoord hx (u i) (hu i) := by
+    intro M
+    induction M with
+    | zero =>
+      intro u hu
+      have e0 : (List.ofFn u).prod = 1 := by simp
+      refine ⟨e0 ▸ isTan_one, ?_⟩
+      rw [tcoord_congr hx e0 _ isTan_one, tcoord_one]
+      simp
+    | succ M ih =>
+      intro u hu
+      obtain ⟨h, e⟩ := ih (fun i => u i.succ) (fun i => hu i.succ)
+      have e0 : (List.ofFn u).prod = u 0 * (List.ofFn fun i => u i.succ).prod := by
+        rw [List.ofFn_succ, List.prod_cons]
+      refine ⟨e0 ▸ isTan_mul (hu 0) h, ?_⟩
+      rw [tcoord_congr hx e0 _ (isTan_mul (hu 0) h), tcoord_mul hx (hu 0) h, e, Fin.sum_univ_succ]
   have hPeq : ∀ d, P d = tvec (x := x) (∑ i, d i • (B i : Fin n → k)) := by
     intro d
-    obtain ⟨h, e⟩ := list_prod_tan' hx (fun i => spMap (scaleD (d i)) ≫ tvec (x := x) (B i : Fin n → k))
+    obtain ⟨h, e⟩ := list_prod_tan_aux (M := N) (fun i => spMap (scaleD (d i)) ≫ tvec (x := x) (B i : Fin n → k))
       (fun i => isTan_scale (d i) (isTan_tvec hx _))
     refine (tcoord_spec hx (P d) h).trans ?_
     show tvec (x := x) (tcoord hx (P d) h) = _

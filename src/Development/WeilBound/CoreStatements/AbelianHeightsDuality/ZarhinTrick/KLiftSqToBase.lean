@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.IsPolarisationOfRelAmple
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.IsLBZb
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLam
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.EightfoldProjection
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.IsPolarisationOfRelAmple
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.IsLBZb
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLam
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.EightfoldProjection
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -48,11 +52,6 @@ theorem kToBase_one (G : Over S) [GrpObj G] {Y : Over (Sp Ω)} :
     toBase G s (1 : Y ⟶ (Over.pullback s).obj G) = 1 := by
   apply Over.OverMorphism.ext
   simp only [toBase, Hom.one_def]
-  simp
-  erw [pullback.lift_fst]
-  have hc : pullback.fst (𝟙 S) s = pullback.snd (𝟙 S) s ≫ s := by
-    simpa using (pullback.condition (f := 𝟙 S) (g := s))
-  erw [reassoc_of% hc]
   simp
 
 theorem kLift_sqToBase (G : Over S) {Y : Over (Sp Ω)} (a u : Y ⟶ (Over.pullback s).obj G) :

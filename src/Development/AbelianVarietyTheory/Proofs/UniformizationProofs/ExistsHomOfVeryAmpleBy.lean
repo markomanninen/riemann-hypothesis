@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsoOfSectionRingEquiv
-import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.ConstantThetaDeformationZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsoOfSectionRingEquiv
+public import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.ConstantThetaDeformationZero
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
@@ -52,7 +56,7 @@ theorem ker_le (f : X ⟶ Spec (CommRingCat.of R)) (f' : X' ⟶ Spec (CommRingCa
   rw [RingHom.mem_ker] at hp ⊢
   obtain ⟨e, F, hF, G, hG⟩ := (ThetaDeform.exists_homogeneous i p).exists
   have hFi : eval₂Hom (cst f _) (r i) F = 0 := by
-    rw [eq_add_of_sub_eq hG, map_add, hp, map_mul, map_sub, map_one, eval₂Hom_X', (hr' i).self_eq_one]
+    rw [eq_add_of_sub_eq hG, map_add (f := _), hp, map_mul, map_sub, map_one, eval₂Hom_X', (hr' i).self_eq_one]
     simp
   have hn : ∀ j, ∃ n, r j i ^ n * eval₂Hom (cst f _) (r j) F = 0 := fun j => by
     refine exists_pow_mul_eq_zero_of_res_basicOpen_eq_zero_of_isAffineOpen X (ha j) _ _ (fn_ext fun y hy => ?_)
@@ -72,7 +76,7 @@ theorem ker_le (f : X ⟶ Spec (CommRingCat.of R)) (f' : X' ⟶ Spec (CommRingCa
     obtain ⟨b, hb⟩ := Nat.exists_eq_add_of_le' (Finset.le_sup (f := m) (Finset.mem_univ j))
     rw [hb, map_mul, map_pow, eval₂Hom_X', pow_add, _root_.mul_assoc, hm j, mul_zero]
   have e₂ := h'.eval_eq_zero f' (hv _ hx)
-  rw [eq_add_of_sub_eq hG, map_mul, map_pow, map_add, map_mul, map_sub, map_one, eval₂Hom_X', h'.self_eq_one] at e₂
+  rw [eq_add_of_sub_eq hG, map_mul, map_pow, map_add (f := _), map_mul, map_sub, map_one, eval₂Hom_X', h'.self_eq_one] at e₂
   simpa using e₂
 
 def Propor (s : Fin (n + 1) → H.Sec) (s' : Fin (n + 1) → H'.Sec) (φ : Z ⟶ X) (ψ : Z ⟶ X') : Prop :=
@@ -113,7 +117,7 @@ theorem Propor.unique (f : X ⟶ Spec (CommRingCat.of R)) {φ₁ φ₂ : Z ⟶ X
     ring
   induction p using MvPolynomial.induction_on with
   | C a => rw [eval₂Hom_C, gs_cst f _ z _ (m₁ z), gs_cst f _ z _ (m₂ z), e]
-  | add p q hp hq => rw [map_add, gs_add _ z _ (m₁ z), gs_add _ z _ (m₂ z), hp, hq]
+  | add p q hp hq => rw [map_add (f := _), gs_add _ z _ (m₁ z), gs_add _ z _ (m₂ z), hp, hq]
   | mul_X p j hp =>
     rw [map_mul, gs_mul _ z _ (m₁ z), gs_mul _ z _ (m₂ z), hp, eval₂Hom_X']
     exact congrArg _ (((mem_nonzeroLocus_iff_pull _ ψ z hk').1 (hψ z)).mul_right_cancel
@@ -220,8 +224,8 @@ theorem exists_iso {φ : X' ⟶ X} (h : Propor s s' φ (𝟙 X')) (hc : ⨆ i, n
 
 end MapToProj
 
-open MapToProj in
 
+open MapToProj in
 theorem exists_hom_of_veryAmpleBy : ∀ (R : Type) [CommRing R] (X : Scheme.{0}) (f : X ⟶ Spec (CommRingCat.of R)) (H : LB X) (n : ℕ) (s : Fin (n + 1) → LB.Sec H), H.IsLB → VeryAmpleBy f H s → ∀ (X' : Scheme.{0}) (f' : X' ⟶ Spec (CommRingCat.of R)) (H' : LB X') (s' : Fin (n + 1) → LB.Sec H'), H'.IsLB → (⨆ i, nonzeroLocus (s' i) = ⊤) → (∀ (t : ℕ) (F : MvPolynomial (Fin (n + 1)) R), F.IsHomogeneous t → (∀ k : (H).ι, MvPolynomial.eval₂Hom (cst (f) ((H).U k)) (fun j => (s j).f k) (F) = 0) → (∀ k : (H').ι, MvPolynomial.eval₂Hom (cst (f') ((H').U k)) (fun j => (s' j).f k) (F) = 0)) → ∃ (φ : X' ⟶ X) (w : LB.Iso H' (H.pull φ)), φ ≫ f = f' ∧ w.IsGen ∧ (∀ j, (∀ z (k : (H).ι) (k' : (H').ι), (φ) z ∈ (H).U k → z ∈ (H').U k' → gs (φ) z _ ((s j).f k) = (Geo.Tor.gw (w) (𝟙 _) z k k').val * gs (𝟙 _) z _ ((s' j).f k'))) := by
   intro R _ X f H n s _ ⟨hc, hs⟩ X' f' H' s' _ hc' hv
   choose ha r hr hsur using hs

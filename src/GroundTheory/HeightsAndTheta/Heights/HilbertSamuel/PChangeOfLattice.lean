@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNestedLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNestedLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -48,7 +53,7 @@ theorem matActC_smul_one [DecidableEq J] (q : ℚ) (z : J → ℂ) :
 
 theorem contDiff_matActC {k : WithTop ℕ∞} (A : Matrix J J ℚ) : ContDiff ℝ k (matActC A) := by
   refine contDiff_pi.2 fun i => ?_
-  exact ContDiff.sum fun j _ => contDiff_const.mul (contDiff_apply ℝ ℂ j)
+  exact ContDiff.sum fun j _ => contDiff_const.mul (contDiff_apply ℝ (fun _ => ℂ) j)
 
 theorem matAct_mem_span {A : Matrix J J ℚ} (hA : ∀ i j, ∃ k : ℤ, A i j = k) (x : J → Ω) (i : J) :
     matAct A x i ∈ Submodule.span ℤ (Set.range x) := by
@@ -91,7 +96,7 @@ theorem sec_eq_pow (x : J → Ω) (n : ℕ) : sec ℤ x n = Submodule.span ℤ (
       Set.range x := by
     rw [← Set.range_comp]
     congr 1
-    funext i
+    funext j
     simp
   rw [sec, ← homogeneousSubmodule_one_pow, Submodule.map_pow, homogeneousSubmodule_one_eq_span_X,
     Submodule.map_span, e]

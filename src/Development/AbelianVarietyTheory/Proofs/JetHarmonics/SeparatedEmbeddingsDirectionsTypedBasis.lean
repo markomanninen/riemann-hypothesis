@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GeZeroOfIsIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GeZeroOfIsIntegral
+
+@[expose] public section
 
 open scoped BigOperators TensorProduct
 open Classical NumberField IsDedekindDomain Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds Formalism.L2.Pj Formalism.L2.DIV Formalism.BasicNotions GlobalTheory.RowLaw GlobalTheory.RowAt GlobalTheory.GoodDepth
@@ -26,7 +30,8 @@ theorem directions_typed_basis : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     intro a ℓ
     funext i
     have h := congrArg ι (GlobalTheory.EigDir.linEig_holds E H Dw l Xo c T.Fr y.1 C3.ch a ℓ i)
-    rw [map_sum, map_mul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_mul] at h
     refine Eq.trans ?_ h
     show ∑ j, M a i j * ι (chartUnitVectors C3 ℓ j) = _
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -49,7 +54,8 @@ theorem directions_typed_basis : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
         obtain ⟨W, hW⟩ := GlobalTheory.LabelledDirections.exists_dual w emb hw2
         refine ⟨fun s i => ι (algebraMap T.V T.Fr (W s i)), fun s i => hval _, fun i i' => ?_⟩
         have := congrArg (ι.comp (algebraMap T.V T.Fr)) (hW i i')
-        rw [map_sum, apply_ite (ι.comp (algebraMap T.V T.Fr)), map_one, map_zero] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, apply_ite (ι.comp (algebraMap T.V T.Fr)), map_one, map_zero] at this
         refine Eq.trans ?_ this
         refine Finset.sum_congr rfl fun s _ => ?_
         rw [map_mul, hw1]

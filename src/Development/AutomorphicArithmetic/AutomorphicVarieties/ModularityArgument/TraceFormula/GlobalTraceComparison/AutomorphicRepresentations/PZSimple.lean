@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
+
+@[expose] public section
 
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
 open UpperTheory.V.Z.Tf.GlobalTraceComparison UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi UpperTheory.Zero.ConvolutionTheory.EB PositivityTheory.Rg.BcB.Desc
@@ -38,7 +42,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.zSimple_pf :
     intro i hi hiZ f hf
     haveI := y.fd
     haveI : Nontrivial y.Y := Submodule.nontrivial_iff_ne_bot.2 y.ne
-    have hNw : N i.1 = KGL i.1 n := (hN i.1).2.2.2 hiZ
+    have hNw : N i.1 = KGL i.1 (n := n) := (hN i.1).2.2.2 hiZ
     let T : Module.End ℂ y.Y := (Lw N i.1 i.2 f).restrict
       (fun x hx => hY E n S Z N hSec hZ hN π y i hi f hf x hx)
     obtain ⟨c, hc⟩ := Module.End.exists_eigenvalue T

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk67.pow_sub_mem :
     ∀ {E : Type} [inst : Field E]

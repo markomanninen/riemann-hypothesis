@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StProjChartHolo
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StProjChartHolo
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

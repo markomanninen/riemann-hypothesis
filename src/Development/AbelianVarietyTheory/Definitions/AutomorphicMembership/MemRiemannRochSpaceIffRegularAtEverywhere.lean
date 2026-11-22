@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContractsOfConstant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContractsOfConstant
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -75,37 +79,22 @@ theorem topologicalKrullDim_eq : topologicalKrullDim Y.X = Y.dim := by
       (Opens.mem_top (genericPoint Y.X))
     exact (hc U hU ⟨_, hx⟩).ge.trans (topologicalKrullDim_subspace_le _ _)
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 def coneIdeal : Ideal (MvPolynomial (Fin (Y.N + 1)) F) :=
   (show ProjectiveSpectrum (ProjSpace.grading F Y.N) from
     Y.ι (genericPoint Y.X)).asHomogeneousIdeal.toIdeal
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
-theorem isPrime_coneIdeal : Y.coneIdeal.IsPrime :=
-  (show ProjectiveSpectrum (ProjSpace.grading F Y.N) from Y.ι (genericPoint Y.X)).isPrime
-
-attribute [local instance] MvPolynomial.gradedAlgebra in
-
-theorem range_ι : Set.range Y.ι =
-    ProjectiveSpectrum.zeroLocus (ProjSpace.grading F Y.N) Y.coneIdeal := by
-  have h := ((genericPoint_spec Y.X).image Y.ι.continuous).def
-  rw [Set.image_univ, Y.ι.isClosedEmbedding.isClosed_range.closure_eq] at h
-  refine h.symm.trans ((ProjectiveSpectrum.zeroLocus_vanishingIdeal_eq_closure
-    (ProjSpace.grading F Y.N) _).symm.trans ?_)
-  exact congrArg (fun J : HomogeneousIdeal (ProjSpace.grading F Y.N) =>
-    ProjectiveSpectrum.zeroLocus (ProjSpace.grading F Y.N) J)
-      (ProjectiveSpectrum.vanishingIdeal_singleton _)
 
 section OfImmersion
 
 variable {Z : Scheme.{0}} {N : ℕ} (i : Z ⟶ PSpace F N) [IsClosedImmersion i] (d : ℕ)
   [SmoothOfRelativeDimension d (i ≫ PSpace.str F N)] [GeometricallyIntegral (i ≫ PSpace.str F N)]
 
+
 omit [SmoothOfRelativeDimension d (i ≫ PSpace.str F N)]
   [GeometricallyIntegral (i ≫ PSpace.str F N)] in
-
 theorem subschemeι_ker : i.ker.subschemeι = inv i.toImage ≫ i := by
   rw [IsIso.eq_inv_comp]; exact i.toImage_imageι
 
@@ -149,8 +138,6 @@ abbrev Fn : Type := Y.X.functionField
 
 instance algebraFn : Algebra F Y.Fn := (Cartier.constFn Y.str).toAlgebra
 
-theorem algebraMap_Fn : algebraMap F Y.Fn = Cartier.constFn Y.str := rfl
-
 instance isScalarTower_Fn : IsScalarTower F Γ(Y.X, ⊤) Y.Fn :=
   .of_algebraMap_eq fun a => congrArg (fnOf ⊤ trivial) (LB.resG_self (X := Y.X) le_top _)
 
@@ -163,17 +150,13 @@ def Eff (Δ : Y.Dv) : Prop := Δ.Eff
 
 def H0 (Δ : Y.Dv) : Submodule F Y.Fn := Δ.sections.restrictScalars F
 
-variable {Y} in
 
+variable {Y} in
 theorem mem_riemannRochSpace_iff_regularAt_everywhere {Δ : Y.Dv} {f : Y.Fn} : f ∈ Y.H0 Δ ↔ ∀ x, Δ.RegularAt x f := mem_sections
 
-variable {Y} in
 
-theorem mem_riemannRoch_iff_effective {Δ : Y.Dv} {g : Y.Fnˣ} :
-    (g : Y.Fn) ∈ Y.H0 Δ ↔ Y.Eff (principal g + Δ) := mem_sections_iff_eff
 
 variable {Y} in
-
 theorem eff_iff_one_mem {Δ : Y.Dv} : Y.Eff Δ ↔ (1 : Y.Fn) ∈ Y.H0 Δ := mem_riemannRochSpace_iff_regularAt_everywhere.symm
 
 theorem eff_zero : Y.Eff 0 := CartierDiv.eff_zero
@@ -189,14 +172,14 @@ theorem riemannRoch_mono (Δ Δ' : Y.Dv) (h : Y.Eff (Δ' - Δ)) : Y.H0 Δ ≤ Y.
 
 abbrev lb (Δ : Y.Dv) : LB Y.X := toLB Δ
 
-variable {Y} in
 
+variable {Y} in
 def cohEquiv {Δ : Y.Dv} {L : LB Y.X} {r : L.ι → Y.Fnˣ} (h : Presents Δ L r) :
     coh (twist (structureModule Y.X) L) 0 ≃ₗ[F] Y.H0 Δ :=
   ((cohZeroTwistEquiv L).trans h.secEquiv).restrictScalars F
 
-variable {Y} in
 
+variable {Y} in
 theorem finrank_sections_projectiveLine {Δ : Y.Dv} {L : LB Y.X} {r : L.ι → Y.Fnˣ} (h : Presents Δ L r) :
     Module.finrank F (Y.H0 Δ) = lbH0 F L := (cohEquiv h).finrank_eq.symm
 
@@ -204,36 +187,7 @@ instance finiteDimensional_riemannRochSpace (Δ : Y.Dv) : FiniteDimensional F (Y
   have := finite_coh_zero_twist_of_isProjOver Y.algebraMap_Γ Y.isProjOver (isLB_toLB Δ)
   .equiv (cohEquiv (presents_toLB Δ))
 
-def omega0 : RatForms Y.str Y.dim := baseForm Y.str Y.dim
-
 def KY : Y.Dv := canonical Y.str Y.dim
-
-theorem omega0_ne_zero : Y.omega0 ≠ 0 := baseForm_ne_zero _ _
-
-theorem isDivOfForm_KY : IsDivOfForm Y.KY Y.omega0 := isDivOfForm_canonical _ _
-
-theorem exists_frame_KY (x : Y.X) : ∃ (U : Y.X.Opens) (hx : x ∈ U)
-    (ω : TopForm.FormsOn Y.str Y.dim U) (g : Y.Fnˣ), TopForm.IsFrame ω ∧
-      Y.omega0 = (g : Y.Fn) • formOf U (gen_mem hx) ω ∧ ∀ y ∈ U, Y.KY.IsEqn y g := by
-  obtain ⟨U, ω, hx, hω⟩ := TopForm.exists_isFrame Y.str Y.dim x
-  obtain ⟨c, hc⟩ := (isFreeGen_formOf (gen_mem hx) hω).2 Y.omega0
-  have h0 : c ≠ 0 := fun e => Y.omega0_ne_zero (by rw [← hc, e]; exact zero_smul _ _)
-  exact ⟨U, hx, ω, Units.mk0 c h0, hω, hc.symm,
-    fun y hy => Y.isDivOfForm_KY U ω hω y hy _ hc.symm⟩
-
-theorem regularAt_KY_iff {U : Y.X.Opens} {x : Y.X} (hx : x ∈ U) {ω : TopForm.FormsOn Y.str Y.dim U}
-    (hω : TopForm.IsFrame ω) {f c : Y.Fn} (e : f • Y.omega0 = c • formOf U (gen_mem hx) ω) :
-    Y.KY.RegularAt x f ↔ RegAt x c := by
-  obtain ⟨g, hg⟩ := (isFreeGen_formOf (gen_mem hx) hω).2 Y.omega0
-  replace hg : g • formOf U (gen_mem hx) ω = Y.omega0 := hg
-  have h0 : g ≠ 0 := fun e => Y.omega0_ne_zero (by rw [← hg, e, zero_smul])
-  rw [← hg, smul_smul] at e
-  rw [(Y.isDivOfForm_KY U ω hω x hx (Units.mk0 g h0) hg.symm).regularAt_iff,
-    ← (isFreeGen_formOf (gen_mem hx) hω).1 e]
-  rfl
-
-theorem toPic_KY (K : CanonLB Y.str Y.dim) : toPic Y.KY = cls K.bundle K.isLB :=
-  (presents_canonical _ _).toPic_eq.trans ((cls_eq_iff _ _).2 (CanonLB.lbIso _ K))
 
 abbrev Cl : Type := Closeds Y.X
 
@@ -255,19 +209,7 @@ theorem properCl_iff (Z : Y.Cl) : Y.properCl Z ↔ genericPoint Y.X ∉ Z :=
   not_congr ⟨fun h => h.ge (Set.mem_univ _), fun h => top_le_iff.1
     (((genericPoint_spec Y.X).mem_closed_set_iff Z.isClosed).1 h)⟩
 
-theorem properCl_supp (Δ : Y.Dv) : Y.properCl (Y.supp Δ) := Δ.supp_ne_top
 
-variable {Y} in
-
-theorem vanishOn.properCl {Δ : Y.Dv} {f : Y.Fn} {Z : Y.Cl} (h : Y.vanishOn Δ f Z) (hf : f ≠ 0) :
-    Y.properCl Z := by
-  rintro rfl
-  exact hf (VanishesOn.eq_zero h)
-
-variable {Y} in
-
-theorem Eff.vanishOn_one_iff {Δ : Y.Dv} (h : Y.Eff Δ) {Z : Y.Cl} :
-    Y.vanishOn Δ 1 Z ↔ Y.subCl Z (Y.supp Δ) := CartierDiv.Eff.vanishesOn_one_iff h
 
 theorem isCompleteCurve_iff (Z : Y.Cl) : IsCompleteCurve F Z ↔
     IsIrreducible (Z : Set Y.X) ∧ topologicalKrullDim (Z : Set Y.X) = 1 :=
@@ -282,38 +224,11 @@ abbrev sysOf {L : LB Y.X} (hL : L.IsLB) {n : ℕ} (s : Fin n → L.Sec) : LinSys
   N := n
   b := s
 
-theorem isVariety_sysOf (h : 1 ≤ Y.dim) {L : LB Y.X} (hL : L.IsLB) {n : ℕ} (s : Fin n → L.Sec) :
-    (Y.sysOf hL s).IsVariety := ⟨Y.smooth, Y.isProjOver, Y.geometricallyConnected_str, h⟩
 
-variable {Y} in
-
-def sec {Δ : Y.Dv} (f : Y.H0 Δ) : (Y.lb Δ).Sec := (presents_toLB Δ).secEquiv.symm ⟨f.1, f.2⟩
-
-variable {Y} in
-
-@[simp] theorem rat_sec {Δ : Y.Dv} (f : Y.H0 Δ) : (presents_toLB Δ).rat (sec f) = f :=
-  congrArg Subtype.val ((presents_toLB Δ).secEquiv.apply_symm_apply ⟨f.1, f.2⟩)
 
 section LinSys
 
 variable {Δ : Y.Dv} {n : ℕ} (b : Fin n → Y.H0 Δ)
-
-abbrev linSys : LinSys F := Y.sysOf (isLB_toLB Δ) fun j => sec (b j)
-
-theorem ratSet_linSys : Presents.ratSet (S := Y.linSys b) (presents_toLB Δ) =
-    Set.range fun j => (b j : Y.Fn) :=
-  congrArg Set.range (funext fun j => rat_sec (b j))
-
-theorem bpf_iff : Y.bpf Δ (Set.range fun j => (b j : Y.Fn)) ↔ (Y.linSys b).BasePointFree :=
-  Y.ratSet_linSys b ▸ Presents.basePointFree_iff (S := Y.linSys b) (presents_toLB Δ)
-
-theorem phiBir_iff : Y.phiBir Δ (Set.range fun j => (b j : Y.Fn)) ↔
-    (∃ j, (Y.linSys b).b j ≠ 0) ∧ (Y.linSys b).Birational :=
-  Y.ratSet_linSys b ▸ Presents.birational_iff (S := Y.linSys b) (presents_toLB Δ)
-
-theorem phiNoContr_iff (h : (Y.linSys b).BasePointFree) (bd : Y.Cl) :
-    Y.phiNoContr Δ (Set.range fun j => (b j : Y.Fn)) bd ↔ (Y.linSys b).NoContract bd :=
-  Y.ratSet_linSys b ▸ Presents.noContract_iff (S := Y.linSys b) (presents_toLB Δ) h bd
 
 end LinSys
 
@@ -356,8 +271,8 @@ theorem chartEval_coordSec (i : Fin (Y.N + 1)) (g : MvPolynomial (Fin (Y.N + 1))
     rfl
   · exact funext fun l => LB.resG_self _ _
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem mem_nonzeroLocus_form {d : ℕ} {g : MvPolynomial (Fin (Y.N + 1)) F} (hg : g.IsHomogeneous d)
     (y : Y.X) : y ∈ nonzeroLocus (Y.coordSys.form hg) ↔
       Y.ι y ∈ Proj.basicOpen (grading F Y.N) g := by
@@ -373,8 +288,8 @@ theorem basePointFree_coordSys : Y.coordSys.BasePointFree := eq_top_iff.2 fun y 
   have ⟨j, hj⟩ := exists_mem_chart F Y.N (Y.ι y)
   Opens.mem_iSup.2 ⟨j, (Y.nonzeroLocus_coordSec j).ge hj⟩
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem eq_of_sameImage {y y' : Y.X} (h : Y.coordSys.SameImage y y') : y = y' := by
   refine Y.ι.isClosedEmbedding.injective
     (ProjectiveSpectrum.ext (HomogeneousIdeal.ext' fun d g hg => ?_))
@@ -389,13 +304,10 @@ theorem noContract_coordSys (bd : Set Y.X) : Y.coordSys.NoContract bd := fun C _
   rw [hC] at this
   exact absurd this (by decide)
 
-theorem exists_coord_ne_zero : ∃ i, Y.ι (genericPoint Y.X) ∈ chart F Y.N i :=
-  exists_mem_chart F Y.N _
-
 variable {i : Fin (Y.N + 1)} (hi : Y.ι (genericPoint Y.X) ∈ chart F Y.N i)
 
-include hi in
 
+include hi in
 theorem genericPoint_mem_twistingSheafOne_chart : genericPoint Y.X ∈ Y.O1.U (Y.idx i) := (Y.twistingSheafOne_chart_eq_preimage_standardChart i).ge hi
 
 def hyp : Y.Dv := ofLB Y.isLineBundle_twistingSheafOne (Y.idx i) (Y.genericPoint_mem_twistingSheafOne_chart hi)
@@ -422,16 +334,7 @@ theorem coordFn_self : Y.coordFn hi i = 1 := by
 theorem coordFn_mem (j : Fin (Y.N + 1)) : Y.coordFn hi j ∈ Y.H0 (Y.hyp hi) :=
   (Y.presents_hyp hi).rat_mem _
 
-theorem generatesAt_coordFn_iff (j : Fin (Y.N + 1)) (y : Y.X) :
-    (Y.hyp hi).GeneratesAt y (Y.coordFn hi j) ↔ Y.ι y ∈ chart F Y.N j := by
-  rw [coordFn, Presents.generatesAt_rat_iff, nonzeroLocus_coordSec]
-  rfl
-
 theorem eff_hyp : Y.Eff (Y.hyp hi) := eff_iff_one_mem.2 (Y.coordFn_self hi ▸ Y.coordFn_mem hi i)
-
-theorem mem_supp_hyp (y : Y.X) : y ∈ Y.supp (Y.hyp hi) ↔ Y.ι y ∉ chart F Y.N i := by
-  rw [← Y.generatesAt_coordFn_iff hi, coordFn_self, ← notMem_supp_iff, not_not]
-  rfl
 
 theorem bpf_hyp : Y.bpf (Y.hyp hi) (Set.range (Y.coordFn hi)) :=
   (Presents.basePointFree_iff (S := Y.coordSys) (Y.presents_hyp hi)).2 Y.basePointFree_coordSys
@@ -439,29 +342,6 @@ theorem bpf_hyp : Y.bpf (Y.hyp hi) (Set.range (Y.coordFn hi)) :=
 theorem phiNoContr_hyp (bd : Y.Cl) : Y.phiNoContr (Y.hyp hi) (Set.range (Y.coordFn hi)) bd :=
   (Presents.noContract_iff (S := Y.coordSys) (Y.presents_hyp hi) Y.basePointFree_coordSys _).2
     (Y.noContract_coordSys _)
-
-theorem phiBir_hyp : Y.phiBir (Y.hyp hi) (Set.range (Y.coordFn hi)) := by
-  refine ⟨(Y.bpf_hyp hi).mem, (Y.bpf_hyp hi).exists_ne_zero, eq_top_iff.2 fun f _ => ?_⟩
-  have hU : IsAffineOpen (Y.ι ⁻¹ᵁ chart F Y.N i) := (isAffineOpen_chart F Y.N i).preimage _
-  have : Nonempty (Y.ι ⁻¹ᵁ chart F Y.N i :) := ⟨⟨_, hi⟩⟩
-  have := functionField_isFractionRing_of_isAffineOpen _ _ hU
-  have key (a : Γ(Y.X, Y.ι ⁻¹ᵁ chart F Y.N i)) :
-      algebraMap _ Y.Fn a ∈ ratioField F (Set.range (Y.coordFn hi)) := by
-    obtain ⟨a, rfl⟩ := Y.ι.app_surjective _ (isAffineOpen_chart F Y.N i) a
-    obtain ⟨g, rfl⟩ := aeval_ratio_surjective F Y.N i a
-    have e := Y.aeval_coordFn hi g
-    rw [chartHom, ← LB.resG_app, fnOf_resG] at e
-    refine e ▸ (?_ : aeval (Y.coordFn hi) g ∈ _)
-    clear e
-    induction g using MvPolynomial.induction_on with
-    | C a => rw [algHom_C]; exact IntermediateField.algebraMap_mem _ a
-    | add p q hp hq => rw [map_add]; exact add_mem hp hq
-    | mul_X p j hp =>
-      rw [map_mul, aeval_X]
-      exact mul_mem hp (IntermediateField.subset_adjoin _ _ ⟨_, ⟨j, rfl⟩, _, ⟨i, rfl⟩,
-        by rw [coordFn_self]; exact one_ne_zero, by rw [coordFn_self, div_one]⟩)
-  obtain ⟨a, b, -, rfl⟩ := IsFractionRing.div_surjective (A := Γ(Y.X, Y.ι ⁻¹ᵁ chart F Y.N i)) f
-  exact div_mem (key a) (key b)
 
 end Hyperplane
 
@@ -496,8 +376,6 @@ instance geometricallyIntegral_id_str : GeometricallyIntegral (𝟙 _ ≫ PSpace
 
 def proj : Var F := Var.ofClosedImmersion (𝟙 (PSpace F n)) n
 
-instance : Inhabited (Var F) := ⟨proj F 0⟩
-
 theorem proj_dim : (proj F n).dim = n := rfl
 
 instance isIso_proj_ι : IsIso (proj F n).ι :=
@@ -526,47 +404,12 @@ theorem finrank_riemannRoch_hyperplane : Module.finrank F ((proj F n).H0 (projHy
     ← projSys.algebraΓ_eq] at e
   exact e
 
-theorem riemannRoch_hyperplane_ne_bot : (proj F n).H0 (projHyp F n) ≠ ⊥ := fun h => by
-  have := finrank_riemannRoch_hyperplane F n
-  rw [h, finrank_bot] at this
-  omega
-
 theorem exists_nonconstant_line : ∃ f ∈ (proj F 1).H0 (projHyp F 1),
     f ∉ Set.range (algebraMap F (proj F 1).Fn) := by
   by_contra! h
   exact (proj F 1).not_phiNoContr_of_constant rfl
     (fun f hf => h f (((proj F 1).bpf_hyp _).mem f hf))
     ((proj F 1).phiNoContr_hyp (proj_gen_mem F 1 0) ⊥)
-
-example : Module.finrank F ((proj F 1).H0 (projHyp F 1)) = 2 := finrank_riemannRoch_hyperplane F 1
-
-example : (proj F 1).Eff (projHyp F 1) ∧ projHyp F 1 ≠ 0 ∧ ¬ (proj F 1).Eff (-projHyp F 1) := by
-  have h : projHyp F 1 ≠ 0 := fun e => by
-    have h₁ := ((proj F 1).presents_hyp (proj_gen_mem F 1 0)).toPic_eq
-    have hA := (proj F 1).isAmple_projective_O_one
-    refine hA.not_isNef_dual (k := F) (((proj F 1).isCompleteCurve_iff ⊤).2
-      ⟨IrreducibleSpace.isIrreducible_univ _,
-        (topologicalKrullDim_eq_of_isEmbedding Topology.IsEmbedding.id Set.range_id).trans
-          (proj F 1).topologicalKrullDim_eq⟩)
-      ((isNef_triv F _).of_cls_eq (isLB_dual hA.isLB) ?_)
-    rw [cls_dual hA.isLB, ← h₁, show (proj F 1).hyp (proj_gen_mem F 1 0) = 0 from e, map_zero,
-      neg_zero]
-    rfl
-  exact ⟨(proj F 1).eff_hyp _, h, fun h' => h (CartierDiv.Eff.eq_zero ((proj F 1).eff_hyp _) h')⟩
-
-example : (proj F 1).bpf 0 {1} ∧ ¬ (proj F 1).phiBir 0 {1} ∧ ¬ (proj F 1).phiNoContr 0 {1} ⊥ := by
-  refine ⟨⟨?_, fun x => ⟨1, rfl, generatesAt_zero_iff.2 (unitAt_one x)⟩⟩, fun h => ?_,
-    (proj F 1).not_phiNoContr_of_constant rfl ?_⟩
-  · intro f hf
-    rw [Set.mem_singleton_iff.1 hf]
-    exact mem_sections.2 CartierDiv.eff_zero
-  · obtain ⟨f, -, hf⟩ := exists_nonconstant_line F
-    have hle : ratioField F ({1} : Set (proj F 1).Fn) ≤ ⊥ := IntermediateField.adjoin_le_iff.2 (by
-      rintro _ ⟨f, hf, g, hg, -, rfl⟩
-      rw [Set.mem_singleton_iff.1 hf, Set.mem_singleton_iff.1 hg, div_one]
-      exact one_mem _)
-    exact hf (IntermediateField.mem_bot.1 (hle (h.ratioField_eq.ge trivial)))
-  · exact fun f hf => ⟨1, (map_one _).trans (Set.mem_singleton_iff.1 hf).symm⟩
 
 end Proj
 

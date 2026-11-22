@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -35,7 +40,6 @@ noncomputable def cochainsShortComplexMapAlong :
     funext h
     exact congrArg (fun ψ => ψ.hom (((cochainsComplexι S.X₂).f n).hom x (⇑φ ∘ h))) α.comm₂₃
 
-@[reassoc]
 theorem δ_comp_cohomologyMapAlong (hS : S.ShortExact) (hT : T.ShortExact) (i j : ℕ)
     (hij : i + 1 = j) :
     δ hS i j hij ≫ cohomologyMapAlong (A := S.X₁) φ hφ α.τ₁ j =
@@ -61,13 +65,12 @@ instance isDiscreteRep_map_res_X₃ : IsDiscreteRep (X.map (Rep.resFunctor U.sub
 
 variable {X}
 
+
 omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep X.X₁] [IsDiscreteRep X.X₂]
   [IsDiscreteRep X.X₃] in
-
 theorem shortExact_map_res (hX : X.ShortExact) : (X.map (Rep.resFunctor U.subtype)).ShortExact :=
   (Rep.shortExact_res U.subtype).2 hX
 
-@[reassoc]
 theorem δ_comp_cohomologyRes (hX : X.ShortExact) (i j : ℕ) (hij : i + 1 = j) :
     δ hX i j hij ≫ cohomologyRes X.X₁ U j =
       cohomologyRes X.X₃ U i ≫ δ (shortExact_map_res U hX) i j hij :=
@@ -81,8 +84,8 @@ section Inflation
 variable (X : ShortComplex (Rep.{u} k G)) [IsDiscreteRep X.X₁] [IsDiscreteRep X.X₂]
   [IsDiscreteRep X.X₃] (N : Subgroup G) [N.Normal]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 instance quotientToInvariantsFunctor_preservesZeroMorphisms :
     (Rep.quotientToInvariantsFunctor.{u} k N).PreservesZeroMorphisms where
   map_zero _ _ := by
@@ -112,7 +115,6 @@ noncomputable def mapQuotientToInvariantsResToSelf :
 
 variable {X}
 
-@[reassoc]
 theorem δ_comp_cohomologyInfl (hX : X.ShortExact)
     (hXN : (X.map (Rep.quotientToInvariantsFunctor k N)).ShortExact) (i j : ℕ)
     (hij : i + 1 = j) :

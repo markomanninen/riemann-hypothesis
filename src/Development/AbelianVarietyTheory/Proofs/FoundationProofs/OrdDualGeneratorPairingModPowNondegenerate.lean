@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DvdOfMemIk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DvdOfMemIk
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.Ord2.GwIneq
 open scoped Matrix
 
@@ -28,7 +33,7 @@ theorem pair_nondeg (l : ℕ) [Fact l.Prime] (c : Coef l) (n : ℕ) (b : Qn c n)
     { toFun := q
       map_add' := fun x y => by
         apply mul_left_cancel₀ hl
-        rw [← hq, mul_add, map_add, hq, hq, mul_add]
+        rw [← hq, mul_add, map_add (f := _), hq, hq, mul_add]
       map_smul' := fun r x => by
         apply mul_left_cancel₀ hl
         rw [← hq, mul_smul_comm, map_smul, hq, RingHom.id_apply, smul_eq_mul, smul_eq_mul]
@@ -45,6 +50,3 @@ theorem pair_nondeg (l : ℕ) [Fact l.Prime] (c : Coef l) (n : ℕ) (b : Qn c n)
   exact smul_mem_Ik c n (Ideal.mem_span_singleton_self _) a0
 
 end GlobalTheory.Ord2.SelPerp
-
-example : ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) (n : ℕ) (b : Qn c n), (∀ a : Qn c n, GlobalTheory.Ord2.SelPerp.tbA c n (a * b) = 0) → b = 0 :=
-  GlobalTheory.Ord2.SelPerp.pair_nondeg

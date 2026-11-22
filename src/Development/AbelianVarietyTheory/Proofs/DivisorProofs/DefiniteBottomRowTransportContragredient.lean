@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinPt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplTupBijective
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMinorsMemInv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpDiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvalBasePtTopMinors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinPt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplTupBijective
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMinorsMemInv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpDiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvalBasePtTopMinors
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset MeasureTheory
 open Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open Formalism.DivisionValues (vw)
@@ -43,7 +48,7 @@ theorem exists_nodes (T G : Module.End ℂ V) (t : ℂ) (v : V) (hv : v ∈ Subm
     obtain ⟨s, hs⟩ := hx
     obtain ⟨s', hs'⟩ := hy
     refine ⟨s ∪ s', fun p hp => ?_⟩
-    rw [map_add, map_add, hs p fun k hk => hp k (by simp [hk]), hs' p fun k hk => hp k (by simp [hk])]
+    rw [map_add (f := _), map_add (f := _), hs p fun k hk => hp k (by simp [hk]), hs' p fun k hk => hp k (by simp [hk])]
   | smul c x _ hx =>
     obtain ⟨s, hs⟩ := hx
     exact ⟨s, fun p hp => by rw [map_smul, map_smul, hs p hp]⟩
@@ -60,7 +65,7 @@ theorem transfer (q : V →ₗ[ℂ] Q) (q' : V' →ₗ[ℂ] Q) (T G : Module.End
   generalize Lagrange.interpolate (s ∪ s') (fun k : ℤ => (k : ℂ)) (fun k => t ^ k) = p
   induction p using Polynomial.induction_on with
   | C c => simp [hP]
-  | add p r hp hr => simp only [map_add, LinearMap.add_apply, hp, hr]
+  | add p r hp hr => simp only [map_add (f := _), LinearMap.add_apply, hp, hr]
   | monomial n c ih =>
     have e : Polynomial.C c * Polynomial.X ^ (n + 1) = Polynomial.X * (Polynomial.C c * Polynomial.X ^ n) := by ring
     rw [e, map_mul, map_mul (Polynomial.aeval T'), Polynomial.aeval_X, Polynomial.aeval_X, Module.End.mul_apply,
@@ -110,7 +115,8 @@ theorem rowSub_one' (P : Pol ι d a) : rowSub (1 : ι → Matrix (Fin d) (Fin d)
 
 theorem rho_rowSub_X (S A : ι → Matrix (Fin d) (Fin d) ℂ) (y : Var ι d a) :
     rho S (rowSub A (X y)) = rowSub (S * A) (X y) := by
-  rw [← rowSub_mul, rowSub_X A, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← rowSub_mul, rowSub_X A, map_sum, map_sum]
   simp only [map_smul, Derivation.map_smul, rho_X]
 
 def natSet (S : ι → Matrix (Fin d) (Fin d) ℂ) (t : ℂ) : Set (Pol ι d a) :=
@@ -459,8 +465,8 @@ theorem unitary_inv_transpose {n : ℕ} (κ : Matrix.unitaryGroup (Fin n) ℂ) :
 
 end Fock
 
-open Matrix in
 
+open Matrix in
 theorem row_transport : ∀ (D : D7) (M M' X : HSp D) (A : GlobalTheory.ChainFr.Fr M) (A' : GlobalTheory.ChainFr.Fr M') (B : GlobalTheory.ChainFr.Fr X)
     (eS eS' : D.what₂.Tau → ℚ) (n₀ : D.what₂.Tau → ℕ) (Q : Type) [AddCommGroup Q] [Module ℂ Q]
     (q : PolF D X.rank M.rank →ₗ[ℂ] Q) (q' : PolF D X.rank M'.rank →ₗ[ℂ] Q),
@@ -481,8 +487,8 @@ theorem row_transport : ∀ (D : D7) (M M' X : HSp D) (A : GlobalTheory.ChainFr.
     have hc : (n₀ τ : ℂ) = (eS τ : ℂ) - eS' τ - ((M.rank : ℂ) + M'.rank) / 2 := by
       have := congrArg (fun x : ℚ => (x : ℂ)) (hn τ)
       simpa using this
-    simp only [map_add, map_neg, map_smul, ← hP] at h
-    rw [map_add, map_neg, map_smul]
+    simp only [map_add (f := _), map_neg, map_smul, ← hP] at h
+    rw [map_add (f := _), map_neg, map_smul]
     exact scalar_shift _ _ _ _ _ _ _ _ _ hc h
   have hdet : ∀ τ, (κ τ : Matrix (Fin X.rank) (Fin X.rank) ℂ).det ≠ 0 := fun τ =>
     (Matrix.UnitaryGroup.det_isUnit (κ τ)).ne_zero

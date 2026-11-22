@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SumExpSt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpoFrobIndep
-import Formalism.PieriBlockIdeals.PieriColumnMinors.CorollaryOfParamsSevenLinkageAlt
-import Formalism.PieriBlockIdeals.PieriColumnMinors.WeightBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SumExpSt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpoFrobIndep
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.CorollaryOfParamsSevenLinkageAlt
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.WeightBounds
+
+@[expose] public section
 
 set_option autoImplicit false
 

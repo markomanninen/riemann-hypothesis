@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.SchToPol
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SchToPol
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,8 +45,54 @@ theorem leviEx : LeviEx := by
     exact τ.injective (by rw [hB.cm.2.2.2, hB.cm.2.2.2, star_star])
   let N : Matrix (Fin d) (Fin 2) E := (Matrix.of ![H.x, H.y])ᵀ
   let P := Matrix.fromCols H.ι N
+  have hsk (x y : Fin d → E) : form σ W.J x y = -σ (form σ W.J y x) := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, inv, hW.skew, ← Finset.sum_neg_distrib]
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
+  have hFull : W.L.IsFullLattice E := by
+    let := hW.lat
+    refine { span_eq_top := ?_ }
+    let U := Submodule.span E (W.L : Set (Fin d → E))
+    change U = ⊤
+    by_contra hU
+    let g : (Fin d → E) →ₗ[E] Module.Dual E U :=
+      ((dotProductBilin E E).compl₂ (Matrix.mulVecLin W.Jᵀ)).domRestrict₂ U
+    have hdim : Module.finrank E (Module.Dual E U) < Module.finrank E (Fin d → E) := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt hU
+    obtain ⟨z, hz, hz₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    let y : Fin d → E := fun i => σ (z i)
+    have hy₀ : y ≠ 0 := by
+      intro hy
+      apply hz₀
+      exact funext fun i => σ.injective ((congrFun hy i).trans (map_zero σ).symm)
+    have horth (x : Fin d → E) (hx : x ∈ W.L) : form σ W.J y x = 0 := by
+      have hz' : z ⬝ᵥ W.Jᵀ *ᵥ x = 0 :=
+        congrArg (fun f : Module.Dual E U => f ⟨x, Submodule.subset_span hx⟩)
+          (LinearMap.mem_ker.mp hz)
+      have hzero : form σ W.J x y = 0 := by
+        rw [Matrix.dotProduct_transpose_mulVec] at hz'
+        simpa only [form, y, inv] using hz'
+      rw [hsk, hzero, map_zero, neg_zero]
+    have hline (a : E) : a • y ∈ W.L := by
+      have hzform (x : Fin d → E) (hx : x ∈ W.L) : form σ W.J (a • y) x = 0 := by
+        simpa only [form, smul_dotProduct, smul_eq_mul] using
+          (show a * form σ W.J y x = 0 by rw [horth x hx, mul_zero])
+      exact (hW.dual _).2 fun x hx o => by rw [hzform x hx, mul_zero, map_zero]; exact isIntegral_zero
+    let i : E →ₗ[𝓞 E] W.L :=
+      ((LinearMap.toSpanSingleton E _ y).restrictScalars (𝓞 E)).codRestrict W.L hline
+    let : Module.Finite (𝓞 E) W.L := Module.Finite.iff_fg.mpr hW.lat.fg
+    let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective E hy₀ (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
   have su : Function.Surjective P.mulVec := fun z => by
-    have hz : z ∈ Submodule.span E (W.L : Set (Fin d → E)) := hW.lat.span_eq_top ▸ Submodule.mem_top
+    letI := hFull
+    have hz : z ∈ Submodule.span E (W.L : Set (Fin d → E)) := by
+      rw [Submodule.IsFullLattice.span_eq_top]
+      exact Submodule.mem_top
     refine (Submodule.span_le (p := LinearMap.range P.mulVecLin)).2 (fun z hz => ?_) hz
     obtain ⟨a, b, u, -, -, -, rfl⟩ := hH.split z hz
     refine ⟨Sum.elim u ![a, b], ?_⟩
@@ -61,7 +111,8 @@ theorem leviEx : LeviEx := by
   have o2 : Nᵀ * W.J * H.ι.map σ = 0 := by
     ext j i
     have := congrArg σ (congrFun (congrFun o1 i) j)
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, inv, hW.skew, Matrix.zero_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, inv, hW.skew, Matrix.zero_apply,
       map_zero, Finset.sum_mul] at this ⊢
     rw [Finset.sum_comm, ← neg_eq_zero, ← this, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun a _ => ?_

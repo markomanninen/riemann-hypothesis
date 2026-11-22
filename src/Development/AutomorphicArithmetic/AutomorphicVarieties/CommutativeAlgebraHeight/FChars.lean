@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -19,7 +23,7 @@ private theorem piB_map {n : ℕ} {k G : Type} [Field k] [Group G] (χ : Fin n �
     piB χ B (MonoidAlgebra.mapRingHom G (algebraMap k B) y) i = algebraMap k B (piB χ k y i) := by
   induction y using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, Pi.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, ha, hb]
   | single g r => rw [MonoidAlgebra.mapRingHom_single, piB_single, piB_single]; simp
 
 private theorem D_eq {n : ℕ} {k G : Type} [Field k] [Group G] (χ : Fin n → G →* kˣ)
@@ -30,7 +34,7 @@ private theorem D_eq {n : ℕ} {k G : Type} [Field k] [Group G] (χ : Fin n → 
   congr 1
   induction x using MonoidAlgebra.induction_linear with
   | zero => simp [Pi.zero_def]
-  | add a b ha hb => simp only [map_add, ha, hb, Matrix.diagonal_add]; rfl
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, Matrix.diagonal_add]; rfl
   | single g r =>
     ext i j
     by_cases h : i = j
@@ -59,12 +63,12 @@ theorem UpperTheory.V.CA.f_chars :
     have := h k z
     rw [D_eq, Finset.prod_eq_zero (Finset.mem_univ i)] at this
     · exact zero_ne_one this
-    · rw [map_add, map_mul, map_one, Pi.add_apply, Pi.mul_apply, piB_map, hz]
+    · rw [map_add (f := _), map_mul, map_one, Pi.add_apply, Pi.mul_apply, piB_map, hz]
       have hi' : piB χ k y i ≠ 0 := hi
       simp [hi']
   · rw [D_eq]
     refine Finset.prod_eq_one fun i _ => ?_
-    rw [map_add, map_mul, map_one, Pi.add_apply, Pi.mul_apply, piB_map, h]
+    rw [map_add (f := _), map_mul, map_one, Pi.add_apply, Pi.mul_apply, piB_map, h]
     simp
   · unfold GDet.chi
     rw [D_eq]

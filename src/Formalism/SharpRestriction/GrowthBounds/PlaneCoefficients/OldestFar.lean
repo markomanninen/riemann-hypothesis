@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ValSCongrSupp
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ValSCongrSupp
+
+@[expose] public section
 
 noncomputable section
 

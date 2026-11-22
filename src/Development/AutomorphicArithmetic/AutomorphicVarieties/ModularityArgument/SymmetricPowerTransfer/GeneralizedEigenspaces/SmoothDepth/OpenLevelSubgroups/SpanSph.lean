@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.Factor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.OpenLev
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.Factor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.OpenLev
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.W (Plc Lp)
@@ -14,20 +18,20 @@ namespace UpperTheory.V.Z.Sym.Al.SphericalSpanAlt
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 
-private noncomputable def intPts (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) : Subgroup (finU L n) :=
+private noncomputable def intPts (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) : Subgroup (finU (E := L) (n := n)) :=
   (GroundTheory.Automorphic.AdelicGLn.integralFiniteGL L n).comap (GlobalTheory.BCT.GlobLev.finPart L n)
 
-private theorem isOpen_intPts : IsOpen (intPts L n : Set (finU L n)) :=
+private theorem isOpen_intPts : IsOpen (intPts L n : Set (finU (E := L) (n := n))) :=
   (GroundTheory.Automorphic.AdelicGLn.isOpen_integralFiniteGL L n).preimage GlobalTheory.BCT.GlobLev.continuous_finPart
 
-private theorem isCompact_intPts : IsCompact (intPts L n : Set (finU L n)) := by
+private theorem isCompact_intPts : IsCompact (intPts L n : Set (finU (E := L) (n := n))) := by
   refine IsCompact.of_isClosed_subset (GlobalTheory.BCT.GlobLev.isClosedEmbedding_finU.isCompact_preimage
     ((GroundTheory.Automorphic.AdelicGLn.isCompact_integralFiniteGL L n).image GlobalTheory.BCT.GlobLev.continuous_finGL_ad))
     (Subgroup.isClosed_of_isOpen _ isOpen_intPts) fun x hx => ⟨GlobalTheory.BCT.GlobLev.finPart L n x, hx, ?_⟩
   have h1 : Matrix.GeneralLinearGroup.map (pInf L) ((x : UA L n) : GA L n) = 1 := x.2
   exact ga_ext (by rw [pInf_finGL, h1]) (by rw [pFin_finGL]; rfl)
 
-private theorem mem_intPts {k : finU L n} (h : ∀ u, cLoc u (k : UA L n) ∈ GlobalTheory.LFun.KGL u n) : k ∈ intPts L n := by
+private theorem mem_intPts {k : finU (E := L) (n := n)} (h : ∀ u, cLoc u (k : UA L n) ∈ GlobalTheory.LFun.KGL u (n := n)) : k ∈ intPts L n := by
   rw [intPts, Subgroup.mem_comap, GroundTheory.Automorphic.AdelicGLn.mem_integralFiniteGL_iff, ← map_inv]
   simp only [GlobalTheory.BCT.GlobLev.mem_KGL_iff_val, ← map_inv, GroundTheory.Global.mem_integralFiniteAdeles] at h ⊢
   exact ⟨fun i j u => (h u).1 i j, fun i j u => (h u).2 i j⟩
@@ -39,19 +43,19 @@ namespace UpperTheory.V.Z.Sym.Al.SphericalSpanAlt
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 
 private theorem finite_quot (w : Plc L) (U : Subgroup (UA L n))
-    (hU : IsOpen {x : finU L n | (x : UA L n) ∈ U}) :
+    (hU : IsOpen {x : finU (E := L) (n := n) | (x : UA L n) ∈ U}) :
     Finite ((locU n w ⊓ Kall L n : Subgroup (UA L n)) ⧸ U.subgroupOf (locU n w ⊓ Kall L n)) := by
   haveI : CompactSpace (intPts L n) := isCompact_iff_compactSpace.1 isCompact_intPts
-  let U' : Subgroup (finU L n) := U.subgroupOf (finU L n)
-  have hU' : IsOpen (U' : Set (finU L n)) := hU
+  let U' : Subgroup (finU (E := L) (n := n)) := U.subgroupOf (finU (E := L) (n := n))
+  have hU' : IsOpen (U' : Set (finU (E := L) (n := n))) := hU
   let H : Subgroup (intPts L n) := U'.subgroupOf (intPts L n)
   have hH : IsOpen (H : Set (intPts L n)) := hU'.preimage continuous_subtype_val
   haveI : Finite (intPts L n ⧸ H) := Subgroup.quotient_finite_of_isOpen H hH
   haveI : H.FiniteIndex := Subgroup.finiteIndex_of_finite_quotient
-  have hfin : ∀ k : (locU n w ⊓ Kall L n : Subgroup (UA L n)), (k : UA L n) ∈ finU L n := fun k =>
+  have hfin : ∀ k : (locU n w ⊓ Kall L n : Subgroup (UA L n)), (k : UA L n) ∈ finU (E := L) (n := n) := fun k =>
     (Subgroup.mem_inf.1 (Subgroup.mem_inf.1 k.2).2).1
   have hint : ∀ (k : (locU n w ⊓ Kall L n : Subgroup (UA L n))) (u : Plc L),
-      cLoc u (k : UA L n) ∈ GlobalTheory.LFun.KGL u n := fun k u =>
+      cLoc u (k : UA L n) ∈ GlobalTheory.LFun.KGL u (n := n) := fun k u =>
     Subgroup.mem_comap.1 (Subgroup.mem_iInf.1 (Subgroup.mem_inf.1 (Subgroup.mem_inf.1 k.2).2).2 u)
   let f : (locU n w ⊓ Kall L n : Subgroup (UA L n)) →* intPts L n :=
     { toFun := fun k => ⟨⟨k.1, hfin k⟩, mem_intPts (hint k)⟩
@@ -132,8 +136,8 @@ theorem UpperTheory.V.Z.Sym.Al.spanSph :
   have hcoef : ∀ g, CoefIn (φg g) π := fun g f' => hπ.stable (x g) _ (hc f')
   choose U hUo hUf using fun g => openLev L n V π hπ (φg g) (hcoef g)
   let U0 : Subgroup (UA L n) := ⨅ g ∈ c.support, U g
-  have hU0 : IsOpen {k : finU L n | (k : UA L n) ∈ U0} := by
-    have e : {k : finU L n | (k : UA L n) ∈ U0} = ⋂ g ∈ c.support, {k : finU L n | (k : UA L n) ∈ U g} := by
+  have hU0 : IsOpen {k : finU (E := L) (n := n) | (k : UA L n) ∈ U0} := by
+    have e : {k : finU (E := L) (n := n) | (k : UA L n) ∈ U0} = ⋂ g ∈ c.support, {k : finU (E := L) (n := n) | (k : UA L n) ∈ U g} := by
       ext k
       simp only [U0, Subgroup.mem_iInf, Set.mem_setOf_eq, Set.mem_iInter]
     rw [e]
@@ -160,7 +164,8 @@ theorem UpperTheory.V.Z.Sym.Al.spanSph :
         nsmul_eq_mul]
     rw [e1, Finset.sum_congr rfl fun q _ => hψsum _, Finset.sum_comm]
     refine Finset.sum_congr rfl fun g _ => ?_
-    rw [← Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.mul_sum, map_sum]
     refine congrArg (c g * ·) (Finset.sum_congr rfl fun q _ => ?_)
     have hm : (rep q * x g) * y g = y g * (rep q * x g) :=
       f1 _ ((locU n w).mul_mem (hrepl q) (hx g)) _ (hy g)

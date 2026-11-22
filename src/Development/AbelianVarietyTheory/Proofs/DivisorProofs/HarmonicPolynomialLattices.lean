@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatTranslateOfPrime
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualWeylLatticeBaseChangeSpanProof
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockMinorProductEqSignDualWeylExtremalVector
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockHarmonicValueSpaceMapEqDualWeylModuleFunctio
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarmonicPolynomialEqZeroOfFunction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockHarmonicLatticeFgAndSpansValueSpace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapVVSymmMapVV
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatTranslateOfPrime
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualWeylLatticeBaseChangeSpanProof
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockMinorProductEqSignDualWeylExtremalVector
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockHarmonicValueSpaceMapEqDualWeylModuleFunctio
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarmonicPolynomialEqZeroOfFunction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockHarmonicLatticeFgAndSpansValueSpace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapVVSymmMapVV
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,8 +27,8 @@ namespace GlobalTheory.SmallSpan
 
 variable {D : D7} {m n : ℕ}
 
-open GlobalTheory.ExportSeries.Onto in
 
+open GlobalTheory.ExportSeries.Onto in
 theorem exists_harm (w : Weight D n) (B : GLR D n) (hw : w.Good) (hm : ∀ τ, w.p τ + w.q τ ≤ m) (F : VV ℂ w.lam) :
     ∃ P ∈ harm m w B, harmFn m w B P = coefFn (RingHom.id ℂ) w.lam (F : Pol ℂ D.what₂.Tau n) := by
   obtain ⟨s, hs⟩ := GlobalTheory.ExportSeries.DeltaExtremal.harmFn_delta D m n w B hw hm
@@ -47,12 +51,12 @@ theorem exists_harm (w : Weight D n) (B : GLR D n) (hw : w.Good) (hm : ∀ τ, w
     exact Submodule.subset_span ⟨_, ⟨_, rfl⟩, rfl⟩
   exact hle (Submodule.mem_map_of_mem F.2)
 
-open GlobalTheory.ExportSeries.HarmLattice in
 
+open GlobalTheory.ExportSeries.HarmLattice in
 theorem harmLat_le_span {K₀ K : Type} [Field K₀] [NumberField K₀] [Field K] [NumberField K] (f : K₀ →+* K) (σ : K →+* ℂ)
     (emb : D.what₂.Tau → (D.host.E →+* K₀)) (O O' : Subring ℂ) (hO' : ∀ a : 𝓞 K, σ a ∈ O') (w : Weight D n) (B : GLR D n)
     (hw : w.Good) (hm : ∀ τ, w.p τ + w.q τ ≤ m) {M : Submodule (𝓞 D.host.E) (Fin n → D.host.E)}
-    (hM : Submodule.IsLattice D.host.E M) {P : PolF D m n} (hP : P ∈ harmLat σ (fun τ => f.comp (emb τ)) O' m w B M) :
+    (hM : Submodule.IsFullLattice D.host.E M) {P : PolF D m n} (hP : P ∈ harmLat σ (fun τ => f.comp (emb τ)) O' m w B M) :
     P ∈ Submodule.span O' (harmLat (σ.comp f) emb O m w B M : Set (PolF D m n)) := by
   set N := Submodule.span O' (harmLat (σ.comp f) emb O m w B M : Set (PolF D m n))
   have hN : N ≤ (harm m w B).restrictScalars O' := Submodule.span_le.2 fun Q hQ => hQ.1
@@ -73,7 +77,7 @@ theorem harmLat_le_span {K₀ K : Type} [Field K₀] [NumberField K₀] [Field K
         change MvPolynomial.map (σ.comp f) x.1 = MvPolynomial.map σ y.1
         rw [e, MvPolynomial.map_map]
     | zero => rw [map_zero, map_zero]; exact zero_mem _
-    | add _ _ _ _ h1 h2 => rw [map_add, map_add]; exact add_mem h1 h2
+    | add _ _ _ _ h1 h2 => rw [map_add (f := _), map_add (f := _)]; exact add_mem h1 h2
     | smul a F _ h1 =>
       rw [← algebraMap_smul K a F, LinearMap.map_smulₛₗ, map_smul]
       exact Submodule.smul_mem _ (⟨σ a, hO' a⟩ : O') h1
@@ -85,13 +89,63 @@ theorem harmLat_le_span {K₀ K : Type} [Field K₀] [NumberField K₀] [Field K
   exact hQ
 
 theorem isLattice_latAt {S T : HSp D} {B : Base S T} (hF : B.F.Good) (h : Bridge.Gf S) :
-    Submodule.IsLattice D.host.E (B.latAt h) :=
-  Formalism.UG.P.global_lattice_isLattice_holds _ _ _ _ (Module.Finite.iff_fg.2 hF.sdS.1.fg) hF.sdS.1.span_eq_top _
-
-theorem smallSt : GlobalTheory.BigOn.Exp.TupLe.SmallSt := by
-  intro D _ _ _ _ _ _ _ _ _ p j _ _ B hB _ O O' _ hO' h P hP
-  exact harmLat_le_span D.LL0.val.toRingHom D.what₂.embLL (labLL0 D) O O' hO'.int B.w B.F.BS hB.wt
-    (GlobalTheory.CoefLatConj.pq_le hB) (isLattice_latAt hB.frame _) hP
+    Submodule.IsFullLattice D.host.E (B.latAt h) :=
+  by
+  classical
+  have hspan : Submodule.span D.host.E (B.F.ΛS : Set (Fin S.rank → D.host.E)) = ⊤ := by
+    let W := Submodule.span D.host.E (B.F.ΛS : Set (Fin S.rank → D.host.E))
+    change W = ⊤
+    by_contra hW
+    let g : (Fin S.rank → D.host.E) →ₗ[D.host.E] Module.Dual D.host.E W :=
+      { toFun := fun x => { toFun := fun y => ∑ i, ∑ j, x i * S.gram i j * y.1 j
+                            map_add' := by intros; simp [mul_add, Finset.sum_add_distrib]
+                            map_smul' := by intros; simp [mul_comm, mul_left_comm, mul_assoc, Finset.mul_sum] }
+        map_add' := by intros; ext y; simp [add_mul, Finset.sum_add_distrib]
+        map_smul' := by intros; ext y; simp [mul_comm, mul_left_comm, mul_assoc, Finset.mul_sum] }
+    have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E (Fin S.rank → D.host.E) := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt hW
+    obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    let v : Fin S.rank → D.host.E := fun i => star (x i)
+    have hv0 : v ≠ 0 := by
+      intro hv
+      apply hx0
+      funext i
+      have hi := congrFun hv i
+      simpa [v] using congrArg star hi
+    have hline (r : D.host.E) : r • v ∈ B.F.ΛS := by
+      apply (hF.sdS.2 _).2
+      intro y hy
+      have hz : (∑ i, ∑ j, x i * S.gram i j * y j) = 0 :=
+        congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+      have hzy : (∑ i, ∑ j, star (y i) * S.gram i j * v j) = 0 := by
+        have hg (i j : Fin S.rank) : star (S.gram i j) = S.gram j i := by
+          exact S.herm.eq _ _
+        have hs : (starRingEnd D.host.E) (∑ i, ∑ j, x i * S.gram i j * y j) = 0 := by rw [hz, map_zero]
+        simp only [map_sum, map_mul] at hs
+        change (∑ i, ∑ j, star (x i) * star (S.gram i j) * star (y j)) = 0 at hs
+        simp only [hg] at hs
+        rw [Finset.sum_comm] at hs
+        simpa [mul_comm, mul_left_comm, mul_assoc] using hs
+      refine ⟨0, ?_⟩
+      simp only [map_zero, Pi.smul_apply, smul_eq_mul]
+      calc
+        0 = r * (∑ i, ∑ j, star (y i) * S.gram i j * v j) := by rw [hzy, mul_zero]
+        _ = ∑ i, ∑ j, star (y i) * S.gram i j * (r * v j) := by simp [Finset.mul_sum, mul_comm, mul_left_comm, mul_assoc]
+    obtain ⟨i, hi⟩ : ∃ i, v i ≠ 0 := by
+      by_contra hn
+      apply hv0
+      funext i
+      simpa using not_exists.mp hn i
+    let coord := (LinearMap.proj i : (Fin S.rank → D.host.E) →ₗ[D.host.E] D.host.E).restrictScalars (𝓞 D.host.E)
+    have htop : B.F.ΛS.map coord = ⊤ := by
+      rw [eq_top_iff]
+      intro a _
+      exact ⟨(a / v i) • v, hline _, div_mul_cancel₀ _ hi⟩
+    have : Module.Finite (𝓞 D.host.E) D.host.E := Module.finite_def.mpr (htop ▸ hF.sdS.1.fg.map coord)
+    exact RingOfIntegers.not_isField D.host.E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 D.host.E) D.host.E) (Field.toIsField D.host.E))
+  exact Formalism.UG.P.csGlob_lattice _ (Module.Finite.iff_fg.2 hF.sdS.1.fg) hspan _
 
 end GlobalTheory.SmallSpan
 

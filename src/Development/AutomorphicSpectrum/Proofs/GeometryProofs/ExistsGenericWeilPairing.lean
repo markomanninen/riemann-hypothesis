@@ -1,12 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ThetaMove
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WeilPairingBaseChangeUnitStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ThetaMove
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WeilPairingBaseChangeUnitStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -58,7 +63,7 @@ theorem ef_dvd : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Hos
     let ψ : D.La →ₗ[ℤ] ℤ :=
       { toFun := fun c => D.EF a c / n
         map_add' := fun c c' => by
-          rw [map_add]; exact Int.add_ediv_of_dvd_left (h c)
+          rw [map_add (f := _)]; exact Int.add_ediv_of_dvd_left (h c)
         map_smul' := fun z c => by
           rw [map_smul, smul_eq_mul, smul_eq_mul, RingHom.id_apply]
           exact Int.mul_ediv_assoc z (h c) }
@@ -71,7 +76,7 @@ theorem ef_dvd : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Hos
   refine ⟨first, fun c h => first c fun a => ?_⟩
   have hs : D.EF c a = - D.EF a c := by
     have h0 := D.alt (a + c)
-    simp only [map_add, LinearMap.add_apply, D.alt a, D.alt c, zero_add, add_zero] at h0
+    simp only [map_add (f := _), LinearMap.add_apply, D.alt a, D.alt c, zero_add, add_zero] at h0
     linarith
   rw [hs]; exact (h a).neg_right
 
@@ -271,7 +276,7 @@ theorem genWeil_of_obj : Out.WeilSt → ∀ (E : Type) [Field E] [NumberField E]
     have h2 := val _ _ hx hg a c ha hc
     have h3 := val _ _ hx' hg a' c ha' hc
     apply Units.map_injective (f := iK.toMonoidHom) iK.injective
-    rw [map_mul, ← h1, ← h2, ← h3, map_add, LinearMap.add_apply, zpow_add]
+    rw [map_mul, ← h1, ← h2, ← h3, map_add (f := _), LinearMap.add_apply, zpow_add]
   have hr : ∀ x g g', x ^ n = 1 → g ^ n = 1 → g' ^ n = 1 → e x (g * g') = e x g * e x g' := by
     intro x g g' hx hg hg'
     obtain ⟨a, ha⟩ := coord x hx
@@ -282,7 +287,7 @@ theorem genWeil_of_obj : Out.WeilSt → ∀ (E : Type) [Field E] [NumberField E]
     have h2 := val _ _ hx hg a c ha hc
     have h3 := val _ _ hx hg' a c' ha hc'
     apply Units.map_injective (f := iK.toMonoidHom) iK.injective
-    rw [map_mul, ← h1, ← h2, ← h3, map_add, zpow_add]
+    rw [map_mul, ← h1, ← h2, ← h3, map_add (f := _), zpow_add]
   have hL4 := ef_dvd E H D n
   have zeroOf : ∀ a c, ζK ^ D.EF a c = 1 → (n : ℤ) ∣ D.EF a c := fun a c h => (hpK.zpow_eq_one_iff_dvd _).1 h
   have nondegR : ∀ g, g ^ n = 1 → (∀ x, x ^ n = 1 → e x g = 1) → g = 1 := by

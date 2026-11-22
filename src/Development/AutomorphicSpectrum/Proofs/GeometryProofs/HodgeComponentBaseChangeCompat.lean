@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCompCompareGeneric
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCompCompareGeneric
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem isLocalRing_of_value {Ω : Type} [Field Ω] (W : Subring Ω) (φ : W →
   refine IsLocalRing.of_nonunits_add fun a b ha hb hu => ?_
   have h0 : ∀ c : W, c ∈ nonunits W → φ c = 0 := fun c hc => by_contra fun h => hc (hW c h)
   have := hu.map φ
-  rw [map_add, h0 a ha, h0 b hb, add_zero] at this
+  rw [map_add (f := _), h0 a ha, h0 b hb, add_zero] at this
   exact not_isUnit_zero this
 
 theorem exists_stalkHom {X : Scheme.{0}} {Ω₁ Ω : Type} [Field Ω₁] [Field Ω]
@@ -77,23 +81,33 @@ theorem exists_common_point : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
   obtain ⟨σ₁, a₁, b₁⟩ := exists_stalkHom 𝔐.ξ (RingHom.id Ω) W φ z₁ (𝔐.all _) h₁
   obtain ⟨σ₂, a₂, b₂⟩ := exists_stalkHom 𝔐₀.ξ i W φ z₂ (𝔐₀.all _) h₂
   refine ⟨σ₁, σ₂, a₁, a₂, b₁, b₂, ?_⟩
-  have l₁ := isLocalHom_of_value W φ z₁ σ₁ b₁
-  have l₂ := isLocalHom_of_value W φ z₂ σ₂ b₂
-  obtain ⟨V, hV⟩ := (LocalSubring.mk W).exists_le_valuationSubring
-  obtain ⟨hWV, hloc⟩ := LocalSubring.le_def.1 hV
-  have hc : 𝔐.f (centre z₁) = 𝔐₀.f (centre z₂) :=
-    image_eq_of_domBy E H D l Xo c Y S S₀ Ω Ω₀ K K₀ J J₀ y y₀ 𝔐 𝔐₀ i hξ V ⟨centre z₁, 𝔐.all _⟩ ⟨centre z₂, 𝔐₀.all _⟩
-      (domBy_of_stalkHom 𝔐.ξ (RingHom.id Ω) ⟨centre z₁, 𝔐.all _⟩ W V hWV hloc σ₁ l₁ a₁)
-      (domBy_of_stalkHom 𝔐₀.ξ i ⟨centre z₂, 𝔐₀.all _⟩ W V hWV hloc σ₂ l₂ a₂)
-  refine LieTangent.ext_of_injective (R := W) (φ := W.subtype) Subtype.val_injective ?_ ?_
-  · exact (point_closed _ 𝔐.f σ₁ l₁).trans (hc.trans (point_closed _ 𝔐₀.f σ₂ l₂).symm)
-  · have e₁ := spec_stalkHom 𝔐.ξ (RingHom.id Ω) ⟨centre z₁, 𝔐.all _⟩ W σ₁ a₁
-    have e₂ := spec_stalkHom 𝔐₀.ξ i ⟨centre z₂, 𝔐₀.all _⟩ W σ₂ a₂
-    have hid : spMap (RingHom.id Ω) = 𝟙 _ := by simp [spMap]
-    rw [hid, Category.id_comp] at e₁
-    have f₁ := congrArg (· ≫ 𝔐.f) e₁
-    have f₂ := congrArg (· ≫ 𝔐₀.f) e₂
-    simp only [Category.assoc] at f₁ f₂
-    exact f₁.trans (hξ.trans f₂.symm)
+  have e₁ := spec_stalkHom 𝔐.ξ (RingHom.id Ω) ⟨centre z₁, 𝔐.all _⟩ W σ₁ a₁
+  have e₂ := spec_stalkHom 𝔐₀.ξ i ⟨centre z₂, 𝔐₀.all _⟩ W σ₂ a₂
+  have hid : spMap (RingHom.id Ω) = 𝟙 _ := by simp [spMap]
+  rw [hid, Category.id_comp] at e₁
+  have f₁ := congrArg (· ≫ 𝔐.f) e₁
+  have f₂ := congrArg (· ≫ 𝔐₀.f) e₂
+  simp only [Category.assoc] at f₁ f₂
+  have hgen : spMap W.subtype ≫ (spMap σ₁ ≫ 𝔐.X.fromSpecStalk (centre z₁) ≫ 𝔐.f) =
+      spMap W.subtype ≫ (spMap σ₂ ≫ 𝔐₀.X.fromSpecStalk (centre z₂) ≫ 𝔐₀.f) := by
+    simpa only [Category.assoc] using f₁.trans (hξ.trans f₂.symm)
+  have hdom : IsDominant (spMap W.subtype) := ⟨(PrimeSpectrum.denseRange_comap_iff_ker_le_nilRadical W.subtype).2 (by
+    rw [(RingHom.injective_iff_ker_eq_bot W.subtype).1 Subtype.val_injective]; exact bot_le)⟩
+  have hbase : (spMap σ₁ ≫ 𝔐.X.fromSpecStalk (centre z₁) ≫ 𝔐.f) ≫ Y.s =
+      (spMap σ₂ ≫ 𝔐₀.X.fromSpecStalk (centre z₂) ≫ 𝔐₀.f) ≫ Y.s := by
+    have hsepZ : IsSeparated (specZIsTerminal.from (Sp (𝓞 c.F))) := inferInstance
+    refine ext_of_isDominant_of_isSeparated (X := Sp W) (specZIsTerminal.from (Sp (𝓞 c.F)))
+      (specZIsTerminal.hom_ext _ _) (spMap W.subtype) ?_
+    simp only [← Category.assoc] at hgen ⊢
+    rw [hgen]
+  have hsep : IsSeparated Y.s := by
+    obtain ⟨N, j, hj, he⟩ := Y.proj
+    letI : IsClosedImmersion j := hj
+    rw [← he]
+    have : IsSeparated (PSpace.str (𝓞 c.F) N) := by
+      unfold PSpace.str
+      infer_instance
+    infer_instance
+  exact ext_of_isDominant_of_isSeparated (X := Sp W) Y.s hbase (spMap W.subtype) hgen
 
 end GlobalTheory.CompanionTheory.Ar.OrArch

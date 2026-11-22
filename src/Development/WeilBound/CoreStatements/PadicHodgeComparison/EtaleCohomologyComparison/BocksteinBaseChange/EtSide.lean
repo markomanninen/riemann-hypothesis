@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HarishChandraFormulaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HarishChandraFormulaStatement
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -59,14 +63,14 @@ structure EtSide : Prop where
     (hu : ∀ a, u a ≫ M.p = (P a).p), (∀ a, G (P a) ∧ (P a).Conn (d a)) ∧
     ∀ (j : ℕ) (v : M.V j), (∀ a, Model.pullV (u a) (hu a) j v = 0) → v = 0
 
-open GlobalTheory.EtC in
 
+open GlobalTheory.EtC in
 def InBock : Prop := ∀ (p a b : ℕ) [Fact p.Prime] (X : Scheme.{0}), IsUnit (p : Γ(X, ⊤)) → ∀ (n i : ℤ)
   (z : Ht (p ^ (a + b)) (sch.obj X) n i), red (p ^ (a + b)) (p ^ b) _ n i z = 0 →
     p ^ a • z = 0 ∧ ∃ w : Ht (p ^ a) (sch.obj X) n i, red (p ^ (a + b)) (p ^ a) _ n i z = p ^ b • w
 
-open GlobalTheory.EtC in
 
+open GlobalTheory.EtC in
 def InRoot : Prop := ∀ (q : ℕ) [NeZero q] (X : Scheme.{0}), Nonempty (Prim q Γ(X, ⊤)) → ∀ i : ℤ,
   ∃ (u : Ht q (sch.obj X) 0 i) (v : Ht q (sch.obj X) 0 (-i)), cup q v u = (one q (sch.obj X)).cast (by ring) (by ring)
 
@@ -74,8 +78,8 @@ def IsSum {X : Scheme.{0}} {r : ℕ} {Y : Fin r → Scheme.{0}} (j : ∀ s, Y s 
   (∀ s, IsOpenImmersion (j s)) ∧ (∀ x : X, ∃ s, x ∈ Set.range (j s)) ∧
     ∀ s s', s ≠ s' → Disjoint (Set.range (j s)) (Set.range (j s'))
 
-open GlobalTheory.EtC in
 
+open GlobalTheory.EtC in
 def InSum : Prop := ∀ (R : Type) [CommRing R] (F : Shv R) {X : Scheme.{0}} {r : ℕ} {Y : Fin r → Scheme.{0}} (j : ∀ s, Y s ⟶ X),
   IsSum j → ∀ n : ℤ, Function.Bijective fun (x : H R (sch.obj X) F n) (s : Fin r) => pull R (sch.map (j s)) F n x
 

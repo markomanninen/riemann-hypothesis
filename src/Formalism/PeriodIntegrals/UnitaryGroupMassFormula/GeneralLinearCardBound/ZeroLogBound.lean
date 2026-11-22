@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GZeroLogBound
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.GZeroLogBound
+
+@[expose] public section
 
 noncomputable section
 

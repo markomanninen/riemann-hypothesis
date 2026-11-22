@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.RingDataObjects
-import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.LemmaDetPoly
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.RingDataObjects
+public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.LemmaDetPoly
+
+@[expose] public section
 
 open Finset Classical Polynomial
 
@@ -58,7 +62,8 @@ theorem lift_mem {a : Xs → Matrix d d O} (ha : a ∈ tSpan T r) :
   refine ⟨s, fun g x => C (c g x), fun g => C_mem_polyT T (hc g), ?_⟩
   funext x
   ext i j
-  simp [rPoly, Finset.sum_apply, Matrix.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [rPoly, Finset.sum_apply, Matrix.sum_apply, map_sum]
 
 private theorem matrix_charpolyRev_map {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S)
     (M : Matrix d d R) : (M.map f).charpolyRev = M.charpolyRev.map f := by
@@ -97,19 +102,6 @@ theorem detT (hG1 : ∀ (g : G) (k : ℕ), (fun x => (Matrix.charpolyRev (r g x)
   exact hu k
 
 end
-
-theorem charT : StatCharT := by
-  intro O _ X T d _ _ G _ r hG1 a ha k
-  have hA : (fun x => (a x).map C) ∈ spanSub (polyT T) (rPoly r) := lift_mem T r ha
-  have hM : (fun x => 1 - (Polynomial.X : O[X]) • (a x).map C) ∈ spanSub (polyT T) (rPoly r) := by
-    have he : (fun x => 1 - (Polynomial.X : O[X]) • (a x).map C) =
-        1 - algebraMap O[X] (X → Matrix d d O[X]) Polynomial.X * (fun x => (a x).map C) := by
-      funext x
-      simp [Algebra.algebraMap_eq_smul_one, smul_mul_assoc]
-    rw [he]
-    exact Subalgebra.sub_mem _ (Subalgebra.one_mem _)
-      (Subalgebra.mul_mem _ (Subalgebra.algebraMap_mem _ _) hA)
-  exact detT T r hG1 _ hM k
 
 theorem blockPolyT : StatBlockPolyT := by
   intro O _ X T d _ _ G _ r hG1 e he a ha k

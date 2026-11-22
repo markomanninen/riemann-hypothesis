@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.DiscrMaximalRealCyclotomic
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.DirichletDensity.HostDensityArith
-import Formalism.CMTypeGalois.HalfTypesFromGeneral
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.DiscrMaximalRealCyclotomic
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.DirichletDensity.HostDensityArith
+public import Formalism.CMTypeGalois.HalfTypesFromGeneral
+
+@[expose] public section
 
 open NumberField IntermediateField NumberField.InfinitePlace
 

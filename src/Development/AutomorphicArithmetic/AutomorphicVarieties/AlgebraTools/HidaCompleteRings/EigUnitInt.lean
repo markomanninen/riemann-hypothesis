@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.OrdBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.OrdBasic
+
+@[expose] public section
 
 open UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite TensorProduct
 
@@ -17,7 +21,7 @@ private theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.eigenvalue_
         LinearMap.baseChange_smul, LinearMap.baseChange_one, LinearMap.smul_apply,
         Module.End.one_apply, algebraMap_smul]
     | add p q hp hq =>
-      rw [map_add, map_add, LinearMap.baseChange_add, LinearMap.add_apply, hp, hq, add_smul]
+      rw [map_add (f := _), map_add (f := _), LinearMap.baseChange_add, LinearMap.add_apply, hp, hq, add_smul]
     | monomial n a ih =>
       rw [pow_succ, ← mul_assoc, map_mul (Polynomial.aeval T), map_mul (Polynomial.aeval μ),
         Polynomial.aeval_X, Polynomial.aeval_X, LinearMap.baseChange_mul, Module.End.mul_apply,

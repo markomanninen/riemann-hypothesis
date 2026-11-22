@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAdj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAe
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RconvEqIntegralKernel
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAdj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RconvEqIntegralKernel
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.CuspidalSpectrum GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalProjection PositivityTheory.Rg.Tf.Core UpperTheory.ConvolutionTheory.K
@@ -16,7 +20,7 @@ theorem UpperTheory.ConvolutionTheory.K.kerId :
   have ext : ∀ u w : RightCosetSpace (Gam K n) → ℂ, Continuous u → Continuous w →
       u =ᵐ[quotientMeasure (Gam K n) μ] w → ∀ z : G1 K n, u (mk _ z) = w (mk _ z) := by
     intro u w hu hw h z
-    have h1 := (quasiMeasurePreserving_mk (Gam K n) μ).ae_eq_comp h
+    have h1 := MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K n) μ) h
     exact congrFun ((hu.comp (continuous_mk _)).ae_eq_iff_eq μ (hw.comp (continuous_mk _)) |>.1 h1) z
   have s1 : ∀ φ : L2 μ, rconv (Gam K n) μ f φ x = rconv (Gam K n) μ a (M (Rop μ g φ)) x := by
     intro φ

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaSplit
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaSplit
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter MeasureTheory
 open scoped NumberField.AdeleRing Pointwise

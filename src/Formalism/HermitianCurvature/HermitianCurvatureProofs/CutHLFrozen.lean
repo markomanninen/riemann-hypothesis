@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate
@@ -130,7 +134,7 @@ private theorem x0_esI_apply_eq_dite_Z {k r j : ℕ} (hj : j + 1 ≤ r) (Z : Mat
     · have hl' : l = Fin.castAdd 1 ⟨l.val, hl⟩ := by
         ext
         simp
-      rw [hl', finSumFinEquiv_symm_apply_castAdd, fromBlocks_apply₁₁, dif_pos (by omega)]
+      rw [hl', finSumFinEquiv_symm_apply_castAdd, fromBlocks_apply₁₁, dite_eq_left (by omega)]
       congr 1
       ext
       simp [hv]
@@ -138,11 +142,11 @@ private theorem x0_esI_apply_eq_dite_Z {k r j : ℕ} (hj : j + 1 ≤ r) (Z : Mat
         ext
         simp
         omega
-      rw [hl', finSumFinEquiv_symm_apply_natAdd, fromBlocks_apply₁₂, dif_neg (by omega)]
+      rw [hl', finSumFinEquiv_symm_apply_natAdd, fromBlocks_apply₁₂, dite_eq_right (by omega)]
       rfl
-  · rw [fromBlocks_apply₂₁, fromCols_apply_inr, dif_neg (by omega)]
+  · rw [fromBlocks_apply₂₁, fromCols_apply_inr, dite_eq_right (by omega)]
     rfl
-  · rw [fromBlocks_apply₂₂, dif_neg (by omega)]
+  · rw [fromBlocks_apply₂₂, dite_eq_right (by omega)]
     rfl
 
 private theorem xi0_apply_eq_esI_apply {k r : ℕ} (g : B.Mat k r) (a : Fin r) (p : Fin (2 * r + k + 1)) :
@@ -193,7 +197,7 @@ theorem xi0_row_independent_of_tau (hj : j + 1 ≤ r) (Z : Matrix (Fin j) (Fin j
 
 theorem xi0_x0_eI_j_eq_zero (hj : j + 1 ≤ r) (Z : Matrix (Fin j) (Fin j) ℂ) (τ : ℂ) (γ : B.Mat k (r - (j + 1)))
     (a : Fin r) (ha : a.val < j) : PBG.xi0 (x0 k r j hj Z τ γ) a (eI k r ⟨j, by omega⟩) = 0 := by
-  rw [xi0_apply_eq_esI_apply, x0_esI_apply_eq_dite_Z hj Z τ γ a ha, dif_neg]
+  rw [xi0_apply_eq_esI_apply, x0_esI_apply_eq_dite_Z hj Z τ γ a ha, dite_eq_right]
   simp [eI]
 
 theorem y0_row_independent_of_tau (hj : j + 1 ≤ r) {Z : Matrix (Fin j) (Fin j) ℂ} {τ τ' : ℂ} (hZ : Z.det ≠ 0) (hτ : τ ≠ 0)
@@ -214,7 +218,7 @@ theorem y0_x0_esI_j_eq_zero_of_det_ne_zero (hj : j + 1 ≤ r) {Z : Matrix (Fin j
     unfold GBasic.sgn
     split_ifs <;> norm_num
   apply mul_left_cancel₀ hs
-  rw [sgn_sig_mul_y0_eq_star_esI_apply_of_mem_GV _ (LevelPointCoordinates.x0_GV hj hZ hτ hγ), x0_esI_apply_eq_dite_Z hj Z τ γ a ha, dif_neg, mul_zero, star_zero]
+  rw [sgn_sig_mul_y0_eq_star_esI_apply_of_mem_GV _ (LevelPointCoordinates.x0_GV hj hZ hτ hγ), x0_esI_apply_eq_dite_Z hj Z τ γ a ha, dite_eq_right, mul_zero, star_zero]
   have : j + 1 ≤ r := hj
   have hse : (GBasic.sig k r (esI k r ⟨j, by omega⟩)).val = j := by
     unfold GBasic.sig

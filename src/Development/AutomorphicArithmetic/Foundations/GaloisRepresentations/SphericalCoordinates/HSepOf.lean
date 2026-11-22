@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -58,7 +62,7 @@ private theorem exists_integral_bezout_of_separable {F : Type} [Field F] [Number
   refine ⟨q, u, v, y, hy0, ?_, ?_⟩
   · rw [hq]; exact dvd_mul_left _ _
   · apply Polynomial.map_injective (algebraMap (𝓞 F) F) RingOfIntegers.coe_injective
-    rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, ← Polynomial.derivative_map,
+    rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, ← Polynomial.derivative_map,
       hq, hu, hv, Polynomial.map_C, Polynomial.derivative_C_mul, map_pow, map_intCast, C_pow]
     simp only [map_intCast, C_eq_intCast]
     linear_combination ((y : F[X])) ^ 2 * hab
@@ -76,7 +80,9 @@ private theorem isSemisimple_of_commute_of_integral_bezout {R : Type} [CommRing 
     · rw [Set.mem_singleton_iff.1 ha]; exact (hc c').symm
     · rw [Set.mem_singleton_iff.1 ha, Set.mem_singleton_iff.1 hb]
   let A := Algebra.adjoin ℂ S
-  letI : CommRing A := Algebra.adjoinCommRingOfComm ℂ hS
+  letI : IsMulCommutative A := Algebra.isMulCommutative_adjoin ℂ (fun a ha b hb _ => hS a ha b hb)
+  letI : CommRing A := { (inferInstance : Ring A) with
+    mul_comm := isMulCommutative_iff.mp inferInstance }
   have hfA : ∀ c, f c ∈ A := fun c => Algebra.subset_adjoin (Or.inl ⟨c, rfl⟩)
   have hhA : h ∈ A := Algebra.subset_adjoin (Or.inr rfl)
   let fA : R →+* A := f.codRestrict A hfA
@@ -92,7 +98,7 @@ private theorem isSemisimple_of_commute_of_integral_bezout {R : Type} [CommRing 
   have hx0 : aeval x q = 0 := Subtype.ext (by rw [hev]; exact hq)
   have hunit : IsUnit (aeval x (derivative q)) := by
     have e := congrArg (aeval x) huv
-    rw [map_add, map_mul, map_mul, hx0, mul_zero, zero_add, aeval_C] at e
+    rw [map_add (f := _), map_mul, map_mul, hx0, mul_zero, zero_add, aeval_C] at e
     have hu : IsUnit (algebraMap R A ((y : R) ^ 2)) := by
       rw [map_pow, map_intCast, ← map_intCast (algebraMap ℂ A)]
       exact (IsUnit.map _ (isUnit_iff_ne_zero.2 (by exact_mod_cast hy))).pow 2
@@ -156,7 +162,8 @@ theorem UpperTheory.Gal.W2.hSep_of :
     have hk := hkill q hdvd
     rw [eval₂_eq_sum]
     have e2 : (q.sum fun i b => f b * (e H) ^ i) = e (q.sum fun i b => ρ (a b) * H ^ i) := by
-      simp only [Polynomial.sum, map_sum, map_mul, map_pow]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Polynomial.sum, map_sum, map_mul, map_pow]
       rfl
     rw [e2, hk, map_zero]
   have hss := isSemisimple_of_commute_of_integral_bezout f hf (e H) hc q u v y hy hq huv

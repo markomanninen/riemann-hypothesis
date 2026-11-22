@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SiegelWeilVolume.AddEquivAddHaarCharEqOne
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SiegelWeilVolume.AddEquivAddHaarCharEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,13 +52,11 @@ def diagUnit (d : Fin a → Kˣ) : (Matrix (Fin a) (Fin a) K)ˣ where
   val_inv := by
     rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
-    funext i
-    simp
+    exact funext fun i => (d i).mul_inv
   inv_val := by
     rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
-    funext i
-    simp
+    exact funext fun i => (d i).inv_mul
 
 theorem mulTup_diagonal (f : Fin a → K) (X : Fin a → Fin M → K) :
     mulTup (Matrix.diagonal f) X = fun j i => f j * X j i := by

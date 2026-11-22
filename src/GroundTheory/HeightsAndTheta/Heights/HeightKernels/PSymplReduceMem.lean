@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -27,7 +32,7 @@ theorem omega_tail (h2 : SymplCons.Statement) {n : ℕ} (x y : Fin (n + 1) ⊕ F
 theorem J_succ {n : ℕ} (a b : Fin n ⊕ Fin n) :
     J (Fin (n + 1)) ℝ (Sum.map Fin.succ Fin.succ a) (Sum.map Fin.succ Fin.succ b) =
       J (Fin n) ℝ a b := by
-  rcases a with i | i <;> rcases b with j | j <;> simp [J, one_apply, Fin.succ_inj]
+  rcases a with i | i <;> rcases b with j | j <;> simp [J, Matrix.one_apply, Fin.succ_inj]
 
 theorem J_succ_e {n : ℕ} (a : Fin n ⊕ Fin n) :
     J (Fin (n + 1)) ℝ (Sum.map Fin.succ Fin.succ a) (Sum.inl 0) = 0 := by
@@ -48,8 +53,8 @@ theorem reduce_row {n : ℕ} (H : Matrix (Fin (n + 1) ⊕ Fin (n + 1)) (Fin (n +
 
 end PSymplReduceMem
 
-open PSymplReduceMem in
 
+open PSymplReduceMem in
 theorem SymplReduceMem.proof (h1 : SymplOmegaMem.Statement) (h2 : SymplCons.Statement) :
     SymplReduceMem.Statement := by
   intro n H hH he

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.PendingAdmissibility.LocalFDerivAdmissibility.AdmTwoPendantIff
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.PendingAdmissibility.LocalFDerivAdmissibility.AdmTwoPendantIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,8 @@ theorem subst_invF_actS (X : Sys p) (Kc : Type) [Field Kc] [Algebra (Formalism.M
     rw [Matrix.map_mul, Matrix.submatrix_mul_equiv]
   simp only [actS, invF]
   simp_rw [← MvPowerSeries.smul_eq_C_mul]
-  rw [← MvPowerSeries.coe_substAlgHom hI, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hI, map_sum]
   simp_rw [map_smul, MvPowerSeries.coe_substAlgHom, MvPowerSeries.subst_X hI]
   simp only [invF]
   simp_rw [← MvPowerSeries.smul_eq_C_mul, Finset.smul_sum, smul_smul]

@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+module
+
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants Formalism.L2.Theta GlobalTheory.SmVec GlobalTheory.CompanionTheory.UnitaryFramesMetricPeriods
 open scoped InnerProductSpace

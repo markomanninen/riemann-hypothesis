@@ -1,10 +1,14 @@
-import Formalism.PeriodIntegrals.ZuckTensor
-import Formalism.PeriodIntegrals.KFinSmooth
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.CoreDefs
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.HermitianCurvature.StatementQ
+module
+
+public import Formalism.PeriodIntegrals.ZuckTensor
+public import Formalism.PeriodIntegrals.KFinSmooth
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.CoreDefs
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.HermitianCurvature.StatementQ
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,10 +82,6 @@ def CoefCC : Prop :=
   PI.KFinSmooth → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (A h : ℝ), KDecay k r ε A h →
     ∀ (μ : Fin (2 * r + k + 1) → ℝ) (φ : B.Mat k r → ℂ) (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] (T : E)
       (m : ℕ), IsCoef k r ε μ φ → PI.ZuckTensor.GapAtLeast ε μ h → B.InCC A m (fun g => φ g • T)
-
-def DecayOfInf : Prop :=
-  PI.KFinSmooth → ThreeDimData.DecInf → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (h : ℝ), ThreeDimData.GapOK k r h →
-    B.AB k r ≤ ThreeDimData.aOf r h - 1 ∧ KDecay k r ε (ThreeDimData.aOf r h - 1) h
 
 def CVBridge : Prop :=
   ∀ (k r : ℕ) (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] (Y : ℂ) (F : B.Mat k r → E),

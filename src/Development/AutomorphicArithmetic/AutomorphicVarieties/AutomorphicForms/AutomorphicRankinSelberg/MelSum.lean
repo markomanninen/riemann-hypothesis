@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,10 +47,10 @@ theorem melSum : MelSum := by
       (4 * Real.pi) ^ t / Real.Gamma t * ∫ y in Ioi (0 : ℝ), P y * y ^ (t - 1) := by
     intro N
     simp_rw [hval]
-    rw [← Finset.mul_sum, ← integral_finset_sum _ (fun n _ => melSum_int ht (hr n) _)]
+    rw [← Finset.mul_sum, ← integral_finsetSum _ (fun n _ => melSum_int ht (hr n) _)]
     apply mul_le_mul_of_nonneg_left _ hCpos.le
     apply setIntegral_mono_on
-    · exact integrable_finset_sum _ (fun n _ => melSum_int ht (hr n) _)
+    · exact integrable_finsetSum _ (fun n _ => melSum_int ht (hr n) _)
     · exact hI
     · exact measurableSet_Ioi
     · intro y hy

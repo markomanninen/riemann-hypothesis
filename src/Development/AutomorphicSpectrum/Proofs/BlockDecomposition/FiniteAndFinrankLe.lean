@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WedgeOfBijective
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WedgeOfBijective
+
+@[expose] public section
 
 set_option autoImplicit false
 

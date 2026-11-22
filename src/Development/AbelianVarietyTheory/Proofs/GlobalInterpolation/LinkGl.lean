@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.TuSizeOfRealPlaceSecondLayer
-import Formalism.SharpRestriction.GlobalSchurBounds.LogXLowerFamilyOfTheorems
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermRepUnram
-import Formalism.LocalToGlobal.TieTwRecOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.JoinSISel
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.TuSizeOfRealPlaceSecondLayer
+public import Formalism.SharpRestriction.GlobalSchurBounds.LogXLowerFamilyOfTheorems
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermRepUnram
+public import Formalism.LocalToGlobal.TieTwRecOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.JoinSISel
+
+@[expose] public section
 
 noncomputable section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Pk Formalism.MainNotions.Lnk Formalism.MainNotions.GlobalTheoryTheory Formalism.L2.GlobalTheoryTheory Formalism.MainNotions.RT Formalism.L2.Top3 Formalism.L2.Top4
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem GlobalTheory.Top.link_gl : ∀ (𝒜 : FamClass)
     (hduty : ∀ {eps : ℝ} (Fm : FamP eps), 𝒜 Fm → Duty Fm)
     (tie : Closed (D3 3 𝒜) fun Fm _ => RealPlaceSecondLayerConditions Fm)

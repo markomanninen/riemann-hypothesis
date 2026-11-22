@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,27 +39,27 @@ def Bin (a b a' b' : E) : Prop :=
 
 section
 variable {n : ℕ} (a b : E) (J K : Matrix (Fin n) (Fin n) E)
-@[simp] theorem blk_00 : blk a J 0 0 = a := rfl
-@[simp] theorem blk_0s (j : Fin n) : blk a J 0 j.succ = 0 := rfl
 @[simp] theorem cornerScalarBlockMatrix_apply_succ_zero (i : Fin n) : blk a J i.succ 0 = 0 := rfl
 @[simp] theorem blk_ss (i j : Fin n) : blk a J i.succ j.succ = J i j := rfl
 
 theorem blk_mul : blk a J * blk b K = blk (a * b) (J * K) := by
   ext i j
-  cases i using Fin.cases <;> cases j using Fin.cases <;> simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  cases i using Fin.cases <;> cases j using Fin.cases <;> simp [blk, Matrix.mul_apply, Fin.sum_univ_succ]
 
 theorem cT_blk : cT s (blk a J) = blk (s a) (cT s J) := by
   ext i j
-  cases i using Fin.cases <;> cases j using Fin.cases <;> simp [cT]
+  cases i using Fin.cases <;> cases j using Fin.cases <;> simp [cT, blk]
 
 theorem det_blk : (blk a J).det = a * J.det := by
   rw [Matrix.det_succ_row_zero, Fin.sum_univ_succ]
   have : (blk a J).submatrix Fin.succ Fin.succ = J := by
     ext i j; simp
-  simp [this]
+  simp only [Fin.succAbove_zero, this, show blk a J 0 0 = a from rfl,
+    show ∀ i : Fin n, blk a J 0 i.succ = 0 from fun _ => rfl,
+    Fin.val_zero, pow_zero, one_mul, mul_zero, zero_mul, Finset.sum_const_zero, add_zero]
 
 theorem blk_inj {a b : E} {J K : Matrix (Fin n) (Fin n) E} (h : blk a J = blk b K) : a = b ∧ J = K :=
-  ⟨by simpa using congrFun (congrFun h 0) 0, by
+  ⟨by simpa [blk] using congrFun (congrFun h 0) 0, by
     ext i j; simpa using congrFun (congrFun h i.succ) j.succ⟩
 
 theorem hn_blk : HN s (blk a J) ↔ s a = a ∧ a ≠ 0 ∧ HN s J := by
@@ -63,17 +67,17 @@ theorem hn_blk : HN s (blk a J) ↔ s a = a ∧ a ≠ 0 ∧ HN s J := by
   rw [det_blk, mul_ne_zero_iff]
   constructor
   · rintro ⟨h, h1, h2⟩
-    exact ⟨by simpa using h 0 0, h1, fun i j => by simpa using h i.succ j.succ, h2⟩
+    exact ⟨by simpa [blk] using h 0 0, h1, fun i j => by simpa using h i.succ j.succ, h2⟩
   · rintro ⟨h, h1, h2, h3⟩
     refine ⟨fun i j => ?_, h1, h3⟩
-    cases i using Fin.cases <;> cases j using Fin.cases <;> simp [h, h2]
+    cases i using Fin.cases <;> cases j using Fin.cases <;> simp [blk, h, h2]
 
 theorem det_cT : (cT s J).det = s J.det := by
   rw [cT, Matrix.det_transpose, RingHom.map_det]; rfl
 
 theorem hform_blk (x y : Fin (n + 1) → E) :
     hform s (blk a J) x y = s (x 0) * a * y 0 + hform s J (Fin.tail x) (Fin.tail y) := by
-  simp [hform, Fin.sum_univ_succ, Fin.tail]
+  simp [blk, hform, Fin.sum_univ_succ, Fin.tail]
 end
 
 theorem gram_apply {n m : ℕ} (J : Matrix (Fin n) (Fin n) E) (P Q : Matrix (Fin n) (Fin m) E)
@@ -107,7 +111,8 @@ theorem Cong.hn (hs : ∀ x, s (s x) = x) {n : ℕ} {J K : Matrix (Fin n) (Fin n
   obtain ⟨P, hP, rfl⟩ := h
   refine ⟨fun i j => ?_, ?_⟩
   · rw [gram_apply, gram_apply]
-    simp only [hform, map_sum, map_mul, hs, hJ.1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hform, map_sum, map_mul, hs, hJ.1]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
   · simp [det_cT, hP, hJ.2]
@@ -131,18 +136,18 @@ theorem two_gram {n : ℕ} (J : Matrix (Fin n) (Fin n) E) {a b a' b' p q r u : E
   induction i using Fin.cases with
   | zero =>
     induction j using Fin.cases with
-    | zero => simp [two, Fin.tail, hform, h1, -Fin.succ_zero_eq_one, -Fin.succ_zero_eq_one', ← add_assoc]
+    | zero => simp [blk, two, Fin.tail, hform, h1, -Fin.succ_zero_eq_one, -Fin.succ_zero_eq_one', ← add_assoc]
     | succ j =>
       cases j using Fin.cases <;>
-        simp [two, Fin.tail, hform, h2, -Fin.succ_zero_eq_one, -Fin.succ_zero_eq_one', ← add_assoc]
+        simp [blk, two, Fin.tail, hform, h2, -Fin.succ_zero_eq_one, -Fin.succ_zero_eq_one', ← add_assoc]
   | succ i =>
     induction j using Fin.cases with
     | zero =>
       cases i using Fin.cases <;>
-        simp [two, Fin.tail, hform, h3, -Fin.succ_zero_eq_one, -Fin.succ_zero_eq_one', ← add_assoc]
+        simp [blk, two, Fin.tail, hform, h3, -Fin.succ_zero_eq_one, -Fin.succ_zero_eq_one', ← add_assoc]
     | succ j =>
       cases i using Fin.cases <;> cases j using Fin.cases <;>
-        simp [two, Fin.tail, hform, h4, -Fin.succ_zero_eq_one, -Fin.succ_zero_eq_one', ← add_assoc,
+        simp [blk, two, Fin.tail, hform, h4, -Fin.succ_zero_eq_one, -Fin.succ_zero_eq_one', ← add_assoc,
           Matrix.one_apply, apply_ite s]
 
 theorem Bin.cong {a b a' b' : E} (h : Bin s a b a' b') (ha : a' ≠ 0) (hb : b' ≠ 0) {n : ℕ}
@@ -171,11 +176,11 @@ theorem cong_of_col {n : ℕ} {J R S : Matrix (Fin (n + 1)) (Fin (n + 1)) E} {a 
     intro j
     have := congrFun (congrFun hU 0) j.succ
     rw [gram_apply, hform_blk] at this
-    simpa [hform, Fin.tail, hc, ha, Matrix.one_apply, Fin.succ_ne_zero] using this
+    simpa [blk, hform, Fin.tail, hc, ha, Matrix.one_apply, Fin.succ_ne_zero] using this
   have hU' : U = blk 1 (U.submatrix Fin.succ Fin.succ) := by
     ext i j
     cases i using Fin.cases <;> cases j using Fin.cases <;>
-      simp [hc, hr, Matrix.one_apply, Fin.succ_ne_zero]
+      simp [blk, hc, hr, Matrix.one_apply, Fin.succ_ne_zero]
   rw [hU', cT_blk, blk_mul, blk_mul] at hU
   rw [hU', det_blk, one_mul] at hd
   exact ⟨_, hd, (blk_inj hU).2⟩
@@ -225,8 +230,8 @@ theorem exists_compl (hs : ∀ x, s (s x) = x) {n : ℕ} {J : Matrix (Fin (n + 1
     cases i using Fin.cases <;> cases j using Fin.cases
     · rw [gram_apply]
       simp only [U0]
-      simp [hform, Pi.single_apply, hK0]
-    · simp [hr]
+      simp [blk, hform, Pi.single_apply, hK0]
+    · simp [blk, hr]
     · rw [← hG.1, hr]; simp
     · simp
 
@@ -245,7 +250,7 @@ theorem exists_aniso (hs : ∀ x, s (s x) = x) {n : ℕ} {J : Matrix (Fin (n + 1
   have h0 : J = 0 := by
     ext i j
     have := h (Pi.single i (J i j) + Pi.single j 1)
-    simp only [hform, Pi.add_apply, map_add, add_mul, mul_add, Finset.sum_add_distrib] at this
+    simp only [hform, Pi.add_apply, map_add (f := _), add_mul, mul_add, Finset.sum_add_distrib] at this
     simp [Pi.single_apply, apply_ite s, hd] at this
     rw [← hJ.1 j i] at this
     have h2 : (2 : E) * (s (J i j) * J i j) = 0 := by linear_combination this
@@ -262,8 +267,8 @@ theorem Quad.finite {V : Type} [AddCommGroup V] [Module E V] {g : V → E} (h : 
     Polynomial.C (g v) * Polynomial.X ^ 2
   have hp : p ≠ 0 := by
     intro h0
-    have h1 := congrArg (fun q => Polynomial.coeff q 0) h0
-    have h2 := congrArg (fun q => Polynomial.coeff q 2) h0
+    have h1 := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q 0) h0
+    have h2 := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q 2) h0
     simp [p, Polynomial.coeff_X, Polynomial.coeff_C] at h1 h2
     tauto
   have := (Polynomial.finite_setOf_isRoot hp).preimage
@@ -276,7 +281,7 @@ theorem quad_hform {V : Type} [AddCommGroup V] [Module E V] {n : ℕ} (J : Matri
     (f : V →ₗ[E] (Fin n → E)) : Quad fun z => hform s J (f z) (f z) := by
   intro u v
   refine ⟨hform s J (f u) (f v) + hform s J (f v) (f u), fun t => ?_⟩
-  simp only [hform, map_add, map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_mul, map_natCast,
+  simp only [hform, map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_mul, map_natCast,
     Finset.sum_mul, add_mul, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 
@@ -332,7 +337,7 @@ theorem adj_of (hs : ∀ x, s (s x) = x) {n : ℕ} {a a' : E} {J₁ J₂ : Matri
     simp only [cT_mul, Matrix.mul_assoc]
   · intro i
     cases i using Fin.cases <;>
-      simp [Matrix.mul_apply, Fin.sum_univ_succ, two, hP0, ← ht, -Fin.succ_zero_eq_one,
+      simp [blk, Matrix.mul_apply, Fin.sum_univ_succ, two, hP0, ← ht, -Fin.succ_zero_eq_one,
         -Fin.succ_zero_eq_one']
 
 theorem chain (hs : ∀ x, s (s x) = x) {n : ℕ} {a a' : E} {J₁ J₂ : Matrix (Fin (n + 1)) (Fin (n + 1)) E}
@@ -362,8 +367,8 @@ section Cob
 
 variable {E : Type} [Field E] {s : E →+* E} {Γ : Type} [CommGroup Γ]
 
-open Classical in
 
+open Classical in
 def pot (s : E →+* E) (C : ∀ n : ℕ, E → Matrix (Fin n) (Fin n) E → Γ) :
     ∀ n : ℕ, Matrix (Fin n) (Fin n) E → Γ :=
   fun n => Nat.rec (motive := fun n => Matrix (Fin n) (Fin n) E → Γ) (fun _ => 1)
@@ -409,7 +414,7 @@ theorem cob_all [CharZero E] (hs : ∀ x, s (s x) = x) (C : ∀ n : ℕ, E → M
         obtain ⟨P, -, hP⟩ := h
         have := congrFun (congrFun hP 0) 0
         rw [gram_apply, hform_blk] at this
-        exact ⟨1, 0, 0, P 0 0, by simp, by simp, by simp, by simpa [hform] using this⟩
+        exact ⟨1, 0, 0, P 0 0, by simp, by simp, by simp, by simpa [blk, hform] using this⟩
       have := h2 0 1 a 1 a' J₁ (ho _ hJ) (ho _ hJ') hb
       rw [h1 _ 1 _ _ (ho _ hJ) h] at this
       rw [mul_left_cancel this]
@@ -533,7 +538,8 @@ theorem gram_consCol (hs : ∀ x, σ (σ x) = x) {n : ℕ} {J : Matrix (Fin (n +
     · exact h2 _
     · rename_i i
       have := congrArg σ (h2 i)
-      simp only [hE, hform, map_sum, map_mul, RingHom.coe_coe, hs, hJ.1, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hE, hform, map_sum, map_mul, RingHom.coe_coe, hs, hJ.1, map_zero] at this
       rw [Finset.sum_comm] at this
       rw [cornerScalarBlockMatrix_apply_succ_zero, ← this]
       exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by
@@ -551,7 +557,7 @@ theorem exists_coboundary : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
     intro M J x a B J' hM h
     obtain ⟨hd, e⟩ := gram_consCol hs h
     have := H1 M J x a B J' (e0 E M) (incl E M) (Matrix.GeneralLinearGroup.mkOfDetNeZero _ hd) 1 hM h
-      (by ext i; simp [e0, consCol]) (by ext i j; simp [mul_incl, consCol])
+      (by ext i; simp [e0, consCol, Function.swap]) (by ext i j; simp [mul_incl, consCol])
     rw [← this, ← e]
     rfl
   obtain ⟨A, hA1, hA2⟩ := cob_two (s := (σ : E →+* E)) hs
@@ -562,12 +568,12 @@ theorem exists_coboundary : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
       have hd : (blk 1 Q).det ≠ 0 := by simp [det_blk, hQ]
       have := H1 n _ _ a _ J (e0 E n) (incl E n) (Matrix.GeneralLinearGroup.mkOfDetNeZero _ hd)
         (Matrix.GeneralLinearGroup.mkOfDetNeZero _ hQ) hn (stepData_std hJ)
-        (by ext i; cases i using Fin.cases <;> simp [e0])
+        (by ext i; cases i using Fin.cases <;> simp [blk, e0, Function.swap])
         (by
           ext i j
           rw [mul_incl]
           cases i using Fin.cases <;>
-            simp [incl, Matrix.mul_apply, Matrix.one_apply, Fin.succ_ne_zero, (Fin.succ_ne_zero _).symm])
+            simp [blk, incl, Matrix.mul_apply, Matrix.one_apply, Fin.succ_ne_zero, (Fin.succ_ne_zero _).symm])
       rw [← this]
       simp [cT_blk, blk_mul])
     (by

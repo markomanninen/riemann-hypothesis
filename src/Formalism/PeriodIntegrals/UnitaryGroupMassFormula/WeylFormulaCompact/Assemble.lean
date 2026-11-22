@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.WeylForKOfSteps
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.TypePlOf
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.WeylForKOfSteps
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.TypePlOf
+
+@[expose] public section
 
 noncomputable section
 

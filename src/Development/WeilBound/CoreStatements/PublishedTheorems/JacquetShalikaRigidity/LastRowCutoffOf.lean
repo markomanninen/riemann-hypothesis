@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasCompactSupportEtaOf
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasCompactSupportEtaOf
+
+@[expose] public section
 
 namespace PositivityTheory.AdelicQuotientData
 

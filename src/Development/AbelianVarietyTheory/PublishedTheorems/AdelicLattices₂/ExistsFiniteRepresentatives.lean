@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.ExistsFiniteOrthogonalLengths
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.ExistsFiniteOrthogonalLengths
+
+@[expose] public section
 
 namespace GlobalTheory.HermClass
 
@@ -74,11 +78,13 @@ theorem exists_finite_classes {V : Type} [AddCommGroup V] [Module E V] [FiniteDi
   choose v hvΛ hvo hvS using hv
   have hexp : ∀ a (c : Fin n → E) (y : V), h (∑ i, c i • v a i) y = ∑ i, c i * h (v a i) y := by
     intro a c y
-    simp [map_sum, LinearMap.sum_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, LinearMap.sum_apply, smul_eq_mul]
   have hexp2 : ∀ a (x : V) (c : Fin n → E),
       h x (∑ j, c j • v a j) = ∑ j, star (c j) * h x (v a j) := by
     intro a x c
-    simp [map_sum, smul_eq_mul, starRingEnd_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, smul_eq_mul, starRingEnd_apply]
   have hcoef : ∀ a (c : Fin n → E) j, h (∑ i, c i • v a i) (v a j) = c j * h (v a j) (v a j) := by
     intro a c j
     rw [hexp, Finset.sum_eq_single j]

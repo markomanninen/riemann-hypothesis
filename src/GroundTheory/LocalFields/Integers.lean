@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.FiniteExtension
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.FiniteExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,9 +86,9 @@ theorem free_integer : Module.Free 𝒪[K] 𝒪[L] := Module.free_of_finite_type
 
 instance : Module.Free 𝒪[K] 𝒪[L] := free_integer K L
 
+
 omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [TopologicalSpace L]
   [IsNonarchimedeanLocalField L] [FiniteDimensional K L] in
-
 theorem finrank_integer : Module.finrank 𝒪[K] 𝒪[L] = Module.finrank K L :=
   (IsFractionRing.finrank_eq 𝒪[K] K 𝒪[L] L).symm
 
@@ -121,7 +125,7 @@ instance uniquePrimesOver : Unique ((IsLocalRing.maximalIdeal 𝒪[K]).primesOve
   uniq P := Subtype.ext (Set.mem_singleton_iff.1 ((Set.ext_iff.1 (primesOver_eq K L) P.1).1 P.2))
 
 theorem ramificationIndex_mul_residueDegree :
-    ramificationIndex K L * residueDegree K L = Module.finrank K L := by
+    ramificationIndex K L * ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) = Module.finrank K L := by
   let : Fintype ((IsLocalRing.maximalIdeal 𝒪[K]).primesOver 𝒪[L]) := Fintype.ofFinite _
   have := Ideal.sum_ramification_inertia_eq_finrank (IsLocalRing.maximalIdeal 𝒪[K]) 𝒪[L]
   rw [Fintype.sum_unique, finrank_integer] at this
@@ -147,9 +151,9 @@ theorem map_maximalIdeal :
 
 theorem ramificationIndex_pos : 0 < ramificationIndex K L := Ideal.ramificationIdx_pos _ _
 
-theorem residueDegree_pos : 0 < residueDegree K L := Ideal.inertiaDeg_pos _ _
+theorem residueDegree_pos : 0 < ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := Ideal.inertiaDeg_pos _ _
 
-theorem residueDegree_eq_finrank : residueDegree K L = Module.finrank 𝓀[K] 𝓀[L] :=
+theorem residueDegree_eq_finrank : ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) = Module.finrank 𝓀[K] 𝓀[L] :=
   Ideal.inertiaDeg_eq_of_isMaximal (IsLocalRing.maximalIdeal 𝒪[K]) (IsLocalRing.maximalIdeal 𝒪[L])
 
 end Topological
@@ -161,7 +165,7 @@ variable (K L M : Type*) [Field K] [ValuativeRel K] [Field L] [ValuativeRel L]
 
 theorem valuativeExtension_trans [ValuativeExtension K L] [ValuativeExtension L M] :
     ValuativeExtension K M where
-  vle_iff_vle a b := by
+  vle_iff_vle {a b} := by
     rw [IsScalarTower.algebraMap_apply K L M, IsScalarTower.algebraMap_apply K L M,
       ValuativeExtension.vle_iff_vle, ValuativeExtension.vle_iff_vle]
 
@@ -172,7 +176,7 @@ instance isScalarTower_integer : IsScalarTower 𝒪[K] 𝒪[L] 𝒪[M] :=
     Subtype.ext (IsScalarTower.algebraMap_apply K L M (x : K))
 
 theorem residueDegree_tower :
-    residueDegree K M = residueDegree K L * residueDegree L M :=
+    ((IsLocalRing.maximalIdeal 𝒪[M]).inertiaDeg (𝒪[K])) = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) * ((IsLocalRing.maximalIdeal 𝒪[M]).inertiaDeg (𝒪[L])) :=
   Ideal.inertiaDeg_tower _ _
 
 theorem ramificationIndex_tower [TopologicalSpace L] [IsNonarchimedeanLocalField L]

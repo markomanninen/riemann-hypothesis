@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -15,7 +19,8 @@ theorem freeModule_adicComplete_separated : ∀ {R : Type} [CommRing R] (ϖ : R)
     refine ⟨b.equivFun.symm c, ?_⟩
     apply b.equivFun.injective
     funext i
-    simp only [map_sub, map_sum, map_smul, LinearEquiv.apply_symm_apply, Pi.sub_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul, LinearEquiv.apply_symm_apply, Pi.sub_apply,
       Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     exact hc' i
   · intro m hm

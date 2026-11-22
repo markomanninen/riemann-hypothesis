@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.IteratedHeckeBounds.NormSqLeSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.IteratedHeckeBounds.NormSqLeSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,8 @@ theorem mn_map (S : Subgroup G) {E E' : Type} [AddCommGroup E] [Module ℝ E] [A
   · rw [mn_zero h, mn_zero h, map_zero]
   · haveI := fin_of_ne h
     letI := Fintype.ofFinite (Quotient (QuotientGroup.rightRel S))
-    rw [mn_fin, mn_fin, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mn_fin, mn_fin, map_smul, map_sum]
 
 theorem mn_integral (S : Subgroup G) {X E : Type} [MeasurableSpace X] {μ : Measure X} [NormedAddCommGroup E]
     [NormedSpace ℝ E] (e : Quotient (QuotientGroup.rightRel S) → X → E) (he : ∀ c, Integrable (e c) μ) :
@@ -46,7 +51,7 @@ theorem mn_integral (S : Subgroup G) {X E : Type} [MeasurableSpace X] {μ : Meas
   · haveI := fin_of_ne h
     letI := Fintype.ofFinite (Quotient (QuotientGroup.rightRel S))
     simp only [mn_fin]
-    rw [integral_smul, integral_finset_sum _ fun c _ => he c]
+    rw [integral_smul, integral_finsetSum _ fun c _ => he c]
 
 theorem mn_contOn (S : Subgroup G) {X E : Type} [TopologicalSpace X] [NormedAddCommGroup E] [NormedSpace ℝ E]
     (e : Quotient (QuotientGroup.rightRel S) → X → E) {s : Set X} (he : ∀ c, ContinuousOn (e c) s) :
@@ -57,7 +62,7 @@ theorem mn_contOn (S : Subgroup G) {X E : Type} [TopologicalSpace X] [NormedAddC
   · haveI := fin_of_ne h
     letI := Fintype.ofFinite (Quotient (QuotientGroup.rightRel S))
     simp only [mn_fin]
-    exact (continuousOn_finset_sum _ fun c _ => he c).const_smul _
+    exact (continuousOn_finsetSum _ fun c _ => he c).const_smul _
 
 theorem dC_mn (S : Subgroup G) {Y : Type} {m : ℕ} (F : Quotient (QuotientGroup.rightRel S) → (Fin (m + 1) → Y) → ℝ) :
     dC (fun y => mn S fun c => F c y) = fun y => mn S fun c => dC (F c) y := by
@@ -111,7 +116,8 @@ theorem intS_eq {q : ℕ} (ω : Form (HS L N) q) (y : Fin (q + 1) → HS L N) :
 
 theorem intS_pb {q : ℕ} (g : Gp L N) (ω : Form (HS L N) q) (y : Fin (q + 1) → HS L N) :
     intS (pb g ω) y = intS ω fun j => actL g (y j) := by
-  simp only [intS, pb, ContinuousAlternatingMap.compContinuousLinearMap_apply, Function.comp_def, map_add, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [intS, pb, ContinuousAlternatingMap.compContinuousLinearMap_apply, Function.comp_def, map_add (f := _), map_sum,
     map_smul, map_sub]
 
 theorem intP_pb {q : ℕ} (g : Gp L N) (ω : Form (HS L N) q) (y : Fin (q + 1) → Pos L N) :
@@ -123,7 +129,7 @@ private theorem isClosed_sx (q : ℕ) : IsClosed (sx q) := by
   refine IsClosed.inter ?_ ?_
   · simp only [Set.setOf_forall]
     exact isClosed_iInter fun j => isClosed_le continuous_const (continuous_apply j)
-  · exact isClosed_le (continuous_finset_sum _ fun j _ => continuous_apply j) continuous_const
+  · exact isClosed_le (continuous_finsetSum _ fun j _ => continuous_apply j) continuous_const
 
 private theorem isCompact_sx (q : ℕ) : IsCompact (sx q) := by
   refine (isCompact_Icc (a := (0 : Fin q → ℝ)) (b := 1)).of_isClosed_subset (isClosed_sx q) ?_

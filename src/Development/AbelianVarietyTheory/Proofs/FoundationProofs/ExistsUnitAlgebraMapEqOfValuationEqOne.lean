@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -13,12 +17,6 @@ theorem mem_primeCompl_span [(Ideal.span {π}).IsPrime] {b : R} :
     b ∈ (Ideal.span {π}).primeCompl ↔ ¬ π ∣ b := by
   rw [Ideal.mem_primeCompl_iff, Ideal.mem_span_singleton]
 
-theorem eq_zero_of_forall_pow_dvd [IsDomain R] [IsNoetherianRing R] (hπ : ¬ IsUnit π) {x : R}
-    (hx : ∀ e : ℕ, π ^ e ∣ x) : x = 0 := by
-  by_contra h
-  obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hπ h
-  exact hn (hx _)
-
 section AtPrime
 
 variable [(Ideal.span {π}).IsPrime] (S : Type*) [CommRing S] [Algebra R S]
@@ -28,9 +26,6 @@ theorem maximalIdeal_eq_span [IsLocalRing S] :
     maximalIdeal S = Ideal.span {algebraMap R S π} := by
   rw [← IsLocalization.AtPrime.map_eq_maximalIdeal (Ideal.span {π}) S, Ideal.map_span,
     Set.image_singleton]
-
-theorem isUnit_algebraMap_iff (x : R) : IsUnit (algebraMap R S x) ↔ ¬ π ∣ x := by
-  rw [IsLocalization.AtPrime.isUnit_to_map_iff S (Ideal.span {π}), mem_primeCompl_span]
 
 include π in
 theorem algebraMap_atPrime_injective [IsDomain R] : Function.Injective (algebraMap R S) :=
@@ -50,7 +45,7 @@ theorem isDiscreteValuationRing [IsDomain R] [IsNoetherianRing R] [IsDomain S] (
   have hf : ¬ IsField S := by
     rw [isField_iff_maximalIdeal_eq, maximalIdeal_eq_span (π := π) S, Ideal.span_singleton_eq_bot]
     exact hne
-  refine ((IsDiscreteValuationRing.TFAE S hf).out 0 4).2 ?_
+  refine ((IsDiscreteValuationRing.TFAE S hf).out 1 5).2 ?_
   exact ⟨⟨_, maximalIdeal_eq_span (π := π) S⟩⟩
 
 theorem irreducible_algebraMap [IsDomain R] [IsNoetherianRing R] (hπ : π ≠ 0) :
@@ -100,7 +95,7 @@ theorem range_inf_range (hπ : π ≠ 0) :
 
 omit [(Ideal.span {π}).IsPrime] in
 theorem algebraMap_away_injective (hπ : π ≠ 0) : Function.Injective (algebraMap A K) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   have hinj := FaithfulSMul.algebraMap_injective R K
   obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective (Submonoid.powers π) y
@@ -109,8 +104,8 @@ theorem algebraMap_away_injective (hπ : π ≠ 0) : Function.Injective (algebra
     map_eq_zero_iff _ hinj] at h
   simp [h]
 
-variable {A S} in
 
+variable {A S} in
 theorem exists_algebraMap_eq (hπ : π ≠ 0) {y : A} {z : S}
     (h : algebraMap A K y = algebraMap S K z) :
     ∃ r : R, algebraMap R A r = y := by
@@ -119,8 +114,8 @@ theorem exists_algebraMap_eq (hπ : π ≠ 0) {y : A} {z : S}
     exact ⟨⟨y, rfl⟩, ⟨z, h.symm⟩⟩
   exact ⟨r, algebraMap_away_injective A K hπ (by rw [← IsScalarTower.algebraMap_apply, hr])⟩
 
-variable {A S} in
 
+variable {A S} in
 theorem exists_unit_algebraMap_eq (hπ : π ≠ 0) {y : A} (hy : IsUnit y) {z : S} (hz : IsUnit z)
     (h : algebraMap A K y = algebraMap S K z) :
     ∃ r : R, IsUnit r ∧ algebraMap R A r = y := by
@@ -129,8 +124,8 @@ theorem exists_unit_algebraMap_eq (hπ : π ≠ 0) {y : A} (hy : IsUnit y) {z : 
   have h' : algebraMap A K (y⁻¹ : Aˣ) = algebraMap S K (z⁻¹ : Sˣ) := by
     refine mul_left_cancel₀ (y.isUnit.map (algebraMap A K)).ne_zero ?_
     rw [← map_mul, Units.mul_inv, map_one, h, ← map_mul, Units.mul_inv, map_one]
-  obtain ⟨r, hr⟩ := exists_algebraMap_eq K hπ h
-  obtain ⟨r', hr'⟩ := exists_algebraMap_eq K hπ h'
+  obtain ⟨r, hr⟩ := exists_algebraMap_eq (A := A) (S := S) (K := K) hπ h
+  obtain ⟨r', hr'⟩ := exists_algebraMap_eq (A := A) (S := S) (K := K) hπ h'
   refine ⟨r, IsUnit.of_mul_eq_one r' (FaithfulSMul.algebraMap_injective R K ?_), hr⟩
   rw [IsScalarTower.algebraMap_apply R A K, map_mul, hr, hr', Units.mul_inv, map_one, map_one]
 
@@ -144,14 +139,6 @@ variable [(Ideal.span {π}).IsPrime]
   [IsDomain S] [IsDiscreteValuationRing S]
   (K : Type*) [Field K] [Algebra R K] [FaithfulSMul R K]
   [Algebra A K] [IsScalarTower R A K] [Algebra S K] [IsScalarTower R S K] [IsFractionRing S K]
-
-theorem exists_unit_algebraMap_eq_of_valuation_eq_one (hπ : π ≠ 0) {y : A} (hy : IsUnit y)
-    (h : (IsDiscreteValuationRing.maximalIdeal S).valuation K (algebraMap A K y) = 1) :
-    ∃ r : R, IsUnit r ∧ algebraMap R A r = y := by
-  obtain ⟨z, hz⟩ := IsDiscreteValuationRing.exists_lift_of_le_one h.le
-  refine exists_unit_algebraMap_eq K hπ hy (z := z) ?_ hz.symm
-  rw [← hz, IsDedekindDomain.HeightOneSpectrum.valuation_eq_one_iff_notMem] at h
-  exact notMem_maximalIdeal.1 h
 
 end Valuation
 

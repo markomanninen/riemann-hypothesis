@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.OrdFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.OrdLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DcSumEqOfMk
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.OrdFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.OrdLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DcSumEqOfMk
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Hi
 
@@ -27,7 +31,8 @@ private theorem ordProj_higman {A G M : Type} [CommRing A] [Group G] [Fintype G]
     conv_rhs => rw [← hs (φ (ρ g⁻¹ (e v)))]
     rw [Finsupp.linearCombination_apply, Finsupp.linearCombination_apply,
       Finsupp.sum_mapRange_index (by simp), Finsupp.sum_mapDomain_index (by simp) (by intros; simp [add_smul])]
-    simp only [Finsupp.sum, map_sum, map_smul, id, MonoidAlgebra.lsingle_apply, hsm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finsupp.sum, map_sum, map_smul, id, MonoidAlgebra.lsingle_apply, hsm]
   have hk : ∀ (k g : G) v, MonoidAlgebra.single k (1 : A) • L g v = L (k * g) (MonoidAlgebra.single k (1 : A) • v) := by
     intro k g v
     have he : e (MonoidAlgebra.single k (1 : A) • v) = ρ k (e v) := by (simp [e]) <;> rfl
@@ -44,9 +49,11 @@ private theorem ordProj_higman {A G M : Type} [CommRing A] [Group G] [Fintype G]
     exact (Equiv.sum_comp (Equiv.mulLeft k) (fun g => L g (MonoidAlgebra.single k (1 : A) • v))).symm
   refine ⟨⟨MonoidAlgebra.equivariantOfLinearOfComm (∑ g, L g) hF, fun v => ?_⟩⟩
   rw [MonoidAlgebra.equivariantOfLinearOfComm_apply]
-  simp only [LinearMap.sum_apply, map_sum, hL]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, map_sum, hL]
   apply e.injective
-  simp only [map_sum, LinearEquiv.apply_symm_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearEquiv.apply_symm_apply]
   exact h' (e v)
 
 private theorem ordProj_dc {A H M : Type} [CommRing A] [Group H] [AddCommGroup M] [Module A M]
@@ -365,7 +372,8 @@ private theorem ordProj_phi (hθ : X.I.ContChar θ) (U V : Subgroup X.Ub) [(V.su
     have hs : ∑ q, X.ra τ ((q.out : U) : X.Ub) ((X.U A m X.I.z ^ n) ((Mχ (ρ q⁻¹ v) : X.Sp τ θ V) : X.Fn A m))
         = (X.U A m X.I.z ^ n) (v : X.Fn A m) := by
       simp_rw [ordProj_pow X τ θ hθ]
-      rw [← map_sum, hd]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hd]
     rw [Submodule.coe_sum]
     simp only [LinearMap.comp_apply, hc, map_sub, Finset.sum_sub_distrib, hs]
     abel
@@ -452,7 +460,8 @@ theorem UpperTheory.V.Hi.ordProj :
       have key : ∀ u ∈ U, X.ra τ u ((∑ q, ρ q ⟨f, hf⟩ : X.Ord τ θ V) : X.Fn A m)
           = ((∑ q, ρ q ⟨f, hf⟩ : X.Ord τ θ V) : X.Fn A m) := by
         intro u hu
-        rw [show X.ra τ u = X.ra τ ((⟨u, hu⟩ : U) : X.Ub) from rfl, ← hρ, map_sum, htrinvL]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [show X.ra τ u = X.ra τ ((⟨u, hu⟩ : U) : X.Ub) from rfl, ← hρ, map_sum, htrinvL]
       exact key
     · intro f hf
       have hfV : f ∈ X.Ord τ θ V := by
@@ -477,7 +486,8 @@ theorem UpperTheory.V.Hi.ordProj :
         rw [← htr]
         simpa using LinearMap.mem_ker.1 hk
       have hsumw : ∑ q, φ (ρ q⁻¹ ⟨f, hfV⟩) = 0 := by
-        rw [← map_sum, Fintype.sum_equiv (Equiv.inv _) (fun q => ρ q⁻¹ ⟨f, hfV⟩) (fun q => ρ q ⟨f, hfV⟩)
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, Fintype.sum_equiv (Equiv.inv _) (fun q => ρ q⁻¹ ⟨f, hfV⟩) (fun q => ρ q ⟨f, hfV⟩)
           (fun q => rfl), hf0, map_zero]
       have hfe : (⟨f, hfV⟩ : X.Ord τ θ V) = ∑ q, (ρ q (φ (ρ q⁻¹ ⟨f, hfV⟩)) - φ (ρ q⁻¹ ⟨f, hfV⟩)) := by
         rw [Finset.sum_sub_distrib, hsumw, sub_zero]

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NodeYPredEqChainVertexAtRowZeroLast
-import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NodeYPredEqChainVertexAtRowZeroLast
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,16 +29,16 @@ def IsUnitDet (e : AE D) {k : ℕ} (N : Matrix (Fin k) (Fin k) (Lev.EAf D)) (x :
   infPart D (x : AE D) = 1 ∧ toEAf D (x : AE D) = 1 - toEAf D e + toEAf D e * N.det ∧
     toEAf D ((x⁻¹ : (AE D)ˣ) : AE D) ∈ Formalism.L2.Herm.intAf D.host.F D.host.E
 
-open Classical in
 
+open Classical in
 def unitChar (ν : (AE D)ˣ →* Circle) (e : AE D) {k : ℕ} (N : Matrix (Fin k) (Fin k) (Lev.EAf D)) : ℂ :=
   if h : ∃ x, IsUnitDet e N x then (((ν h.choose)⁻¹ : Circle) : ℂ) else 0
 
 def rightBlock {κ : Type} [Zero κ] {k d : ℕ} (a : ℕ) (Y : Matrix (Fin k) (Fin d) κ) : Matrix (Fin k) (Fin k) κ :=
   fun i j => if h : a + j.1 < d then Y i ⟨a + j.1, h⟩ else 0
 
-open Classical in
 
+open Classical in
 def stdFst (ν : (AE D)ˣ →* Circle) (e : AE D) (I : Ideal (𝓞 D.host.E)) (A WW : HSp D) (βA : GL (Fin A.rank) (Lev.EAf D))
     (βW : GL (Fin WW.rank) (Lev.EAf D)) (x : WO A WW) : ℂ :=
   if IsHalf e x ∧ IsIntM (frMapO A WW βA βW x) ∧ ∀ i j, A.rank ≤ i.1 → InId I (frMapO A WW βA βW x i j) then
@@ -45,8 +49,8 @@ def dualCoord (A' WW : HSp D) (βA' : GL (Fin A'.rank) (Lev.EAf D)) (βW : GL (F
     Matrix (Fin A'.rank) (Fin WW.rank) (Lev.EAf D) :=
   eToEAf D D.host.xi0 • frMapAdj A' WW βA' βW y
 
-open Classical in
 
+open Classical in
 def stdSnd (ν : (AE D)ˣ →* Circle) (e : AE D) (I : Ideal (𝓞 D.host.E)) (a : ℕ) (A' WW : HSp D)
     (βA' : GL (Fin A'.rank) (Lev.EAf D)) (βW : GL (Fin WW.rank) (Lev.EAf D)) (y : WO A' WW) : ℂ :=
   if IsHalf (cA D e) y ∧ IsIntM (dualCoord A' WW βA' βW y) ∧ ∀ i j, j.1 < a → InId I (dualCoord A' WW βA' βW y i j) then
@@ -70,9 +74,9 @@ def Rig.Is {V : HSp D} (r : Rig V) : Prop :=
 def Rig.IsStd {V : HSp D} (r : Rig V) : Prop :=
   V.gram = 1 ∧ (∀ y, y ∈ r.Λ ↔ ∀ i, ∃ b : 𝓞 D.host.E, (b : D.host.E) = y i) ∧ ∀ τ, r.s τ = 1 ∧ r.B τ = 1
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure Tri (T : Type) (A A' WW : HSp D) where
 
   rA : Rig A
@@ -177,8 +181,8 @@ def beta (i j : Fin D.R.m) (_ : T) : (AE D)ˣ →* Circle := G.chi (D.R.m - i) *
 
 def nuH (i j : Fin D.R.m) (t : T) : Formalism.L2.Host.HChar D.host.E := R.C.mu0 j * R.xiH t / G.chiH (D.R.m - i)
 
-open Classical in
 
+open Classical in
 def places (t : T) : Finset (Pl D.host.E) := G.toPlaceDat.W R.Pg ∪ R.Q t
 
 def IsSum (N₁ N₂ : Node D) (WW : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin WW.rank → D.host.E)) : Prop :=
@@ -186,18 +190,6 @@ def IsSum (N₁ N₂ : Node D) (WW : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin
     ∃ (ι₁ : N₁.V.V →ₗ[D.host.E] WW.V) (ι₂ : N₂.V.V →ₗ[D.host.E] WW.V),
       Formalism.BasicNotions.HSpace.IsIsomEmb N₁.V WW ι₁ ∧ Formalism.BasicNotions.HSpace.IsIsomEmb N₂.V WW ι₂ ∧ (∀ x y, WW.hD (ι₁ x) (ι₂ y) = 0) ∧
       ∀ z : WW.V, WW.frame.equivFun z ∈ Λ ↔ ∃ x y, N₁.InLat x ∧ N₂.InLat y ∧ z = ι₁ x + ι₂ y
-
-structure Square (i j : Fin D.R.m) where
-
-  WW : HSp D
-
-  X : Tri T (G.V (i + 1) (j + 1)).V (G.V i j).V WW
-
-def Square.Is {G : GridPre R} {i j : Fin D.R.m} (Q : Square G i j) : Prop :=
-  IsSum (G.V i (j + 1)) (G.V (i + 1) j) Q.WW Q.X.rW.Λ ∧ Q.X.rA.Λ = (G.V (i + 1) (j + 1)).Λ ∧ Q.X.rA'.Λ = (G.V i j).Λ ∧
-    Q.X.Is R.ψ R.θ (alpha R i j) (beta G i j) (nuH G i j) (places G)
-
-def Square.IsConst {G : GridPre R} {i j : Fin D.R.m} (Q : Square G i j) (c : T → ℂ) : Prop := Q.X.IsConst R.ψ R.θ c
 
 def BottomInField (i j : Fin D.R.m) : Prop :=
   ∃ (A A' WW : HSp D) (X : Tri T A A' WW),
@@ -220,41 +212,6 @@ structure FieldCond : Prop where
   ratios : ∀ i j, LRatiosInField G i j
 
   bottom : ∀ i j, BottomInField G i j
-
-def PrimeToPolarisation : Prop :=
-  ∀ t, ∀ w ∈ places G t, ((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∉ w.asIdeal
-
-def cTotal {m : ℕ} (c : Fin m → Fin m → T → ℂ) (t : T) : ℂ := ∏ i, ∏ j, c i j t
-
-def ratio (R : RealDat D Fam Ks) (x : (AE D)ˣ) (c : Fin D.R.m → Fin D.R.m → T → ℂ) (t : T) : ℂ :=
-  (R.xi t x : ℂ) * cTotal c t / cTotal c Fam.μ0
-
-structure Concl : Prop where
-
-  data : ∀ i j, ∃ Q : Square G i j, Q.Is
-
-  const : ∀ i j (Q : Square G i j), Q.Is → ∃ c, Q.IsConst c
-
-  square : ∀ i j (Q : Square G i j), Q.Is → ∀ c, Q.IsConst c → ∀ t,
-    c t ≠ 0 ∧ ∃ y : D.what₂.LLˣ, D.what₂.embLL y = c t / c Fam.μ0
-
-  total : ∀ (Q : ∀ i j, Square G i j) (c : Fin D.R.m → Fin D.R.m → T → ℂ), (∀ i j, (Q i j).Is ∧ (Q i j).IsConst (c i j)) →
-    ∀ (x : (AE D)ˣ) (t : T), cTotal c t ≠ 0 ∧ ∃ y : D.what₂.LLˣ, D.what₂.embLL y = ratio R x c t
-
-def RatiosInField : Prop :=
-  ∀ (D : D7) (G₀ : Type) [Group G₀] [Fintype G₀] (Pl0 T : Type) (Fam : FamIn D.what₂.LL G₀ Pl0 T D.R.m)
-    (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D Fam Ks) (F : Face D Fam) (G : GridPre R),
-    R.Char F → G.Is → PrimeToPolarisation G → FieldCond G → Concl G
-
-example : rightBlock 1 (!![3, 5] : Matrix (Fin 1) (Fin 2) ℤ) = !![5] := by decide
-
-example (i j : ℕ) : rkV D (i + 1) (j + 1) + rkV D i j = rkV D i (j + 1) + rkV D (i + 1) j := by
-  simp only [rkV]; ring
-
-example (i j : Fin D.R.m) (t : T) : alpha R i j t / beta G i j t = R.toLevCh.mu t (j.1 + 1) / G.chi (D.R.m - i) := by
-  unfold alpha beta; exact mul_div_mul_right_eq_div _ _ _
-
-example {u v c c' : ℂ} (hv : v ≠ 0) (h : u = c * v) (h' : u = c' * v) : c = c' := mul_right_cancel₀ hv (h.symm.trans h')
 
 end GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle
 

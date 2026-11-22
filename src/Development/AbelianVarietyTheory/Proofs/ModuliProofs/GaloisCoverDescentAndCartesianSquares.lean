@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.BijectiveRestrictPointsOfEtaleOfHenselian
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.BijectiveRestrictPointsOfEtaleOfHenselian
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -168,40 +172,18 @@ theorem isPullback (h : IsGaloisCover Ga ρ π) (h' : IsGaloisCover Ga ρ' π') 
   exact IsPullback.of_iso_pullback ⟨w⟩ (asIso φ) hφ1 hφ2
 
 theorem of_isPullback (h : IsGaloisCover Ga ρ π) (hp : IsPullback u π' π v) (hu : ∀ a, ρ' a ≫ u = u ≫ ρ a)
-    (hπ : ∀ a, ρ' a ≫ π' = π') : IsGaloisCover Ga ρ' π' where
-  finite := h.finite
-  one := by
-    apply hp.hom_ext
+    (hπ : ∀ a, ρ' a ≫ π' = π') : IsGaloisCover Ga ρ' π' := by
+  refine ⟨h.finite, ?_, ?_, hπ, ?_, ?_, ?_, existsUnique_act_of_isPullback_isGaloisCover h hp hu hπ⟩
+  · apply hp.hom_ext
     · rw [hu 1, h.one, Category.id_comp, Category.comp_id]
     · rw [hπ 1, Category.id_comp]
-  mul := by
-    intro a c
+  · intro a c
     apply hp.hom_ext
     · rw [hu, h.mul, Category.assoc, hu c, reassoc_of% (hu a)]
     · rw [hπ, Category.assoc, hπ c, hπ a]
-  inv := hπ
-  fin := by
-    have := h.fin
-    exact MorphismProperty.of_isPullback hp h.fin
-  etale := by
-    have := h.etale
-    exact MorphismProperty.of_isPullback hp h.etale
-  onto := by
-    have := h.onto
-    exact MorphismProperty.of_isPullback hp h.onto
-  fibre := by
-    intro K _ _ y y' hy
-    have hyu : (y ≫ u) ≫ π = (y' ≫ u) ≫ π := by
-      simp only [Category.assoc, hp.w]
-      simp only [← Category.assoc, hy]
-    obtain ⟨a, ha, hauniq⟩ := h.fibre K (y ≫ u) (y' ≫ u) hyu
-    refine ⟨a, ?_, ?_⟩
-    · apply hp.hom_ext
-      · rw [Category.assoc, hu, ← Category.assoc, ha]
-      · rw [Category.assoc, hπ, hy]
-    · intro b hb
-      apply hauniq
-      rw [Category.assoc, ← hu, ← Category.assoc, hb]
+  · exact MorphismProperty.of_isPullback hp h.fin
+  · exact MorphismProperty.of_isPullback hp h.etale
+  · exact MorphismProperty.of_isPullback hp h.onto
 
 end GlobalTheory.ZM.IsGaloisCover
 

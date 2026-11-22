@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryLocalFinitenessRegularSemisimpleCentraliz
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InverseDoubleCosetNonsplitStatement
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckecomm
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FixedSpaceRankOne.FinrankFixedEqOne
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryLocalFinitenessRegularSemisimpleCentraliz
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InverseDoubleCosetNonsplitStatement
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckecomm
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FixedSpaceRankOne.FinrankFixedEqOne
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,16 +57,6 @@ theorem gelPair_KL (hE : Unr E) (n : ℕ) (w : Pl E) : GelPair (KL n w) := by
   by_cases hw : IsSplitAt w
   · exact gelPair_split n w hw
   · exact gelPair_inert hE n w hw
-
-theorem sphOne_uncond : PositivityTheory.Rg.BcB.F.Eig.SphOne := by
-  intro E _ _ _ hE n w σ hne hfd
-  haveI := hfd
-  exact finrank_fixed_eq_one (gelPair_KL hE n w) σ.ρ σ.irred hne
-
-theorem sphOne : PositivityTheory.Rg.BcB.F.Eig.LocAlg → PositivityTheory.Rg.BcB.F.Eig.SphOne := by
-  intro _ E _ _ _ hE n w σ hne hfd
-  haveI := hfd
-  exact finrank_fixed_eq_one (gelPair_KL hE n w) σ.ρ σ.irred hne
 
 end PositivityTheory.Rg.BcB.F.EigA
 

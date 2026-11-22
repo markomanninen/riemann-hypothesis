@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SplitLineSubtraction.SubtractOf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamWeightDirectSum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SplitLineSubtraction.SubtractOf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamWeightDirectSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem denseId_holds : CpFacts → DgFacts → DenseId := by
     intro n b hb
     simp only [lin, Polynomial.eval_prod, Polynomial.eval_sub, Polynomial.eval_X,
       Polynomial.eval_C]
-    exact continuous_finset_prod _ fun i _ =>
+    exact continuous_finsetProd _ fun i _ =>
       continuous_const.sub (Units.continuous_val.comp (hb i))
   have h := Continuous.ext_on hD ((key r hr).mul (keyl a' ha')) ((key r' hr').mul (keyl a ha))
     (fun g hg => by

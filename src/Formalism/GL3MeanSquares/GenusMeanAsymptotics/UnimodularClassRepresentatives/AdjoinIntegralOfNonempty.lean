@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
+
+@[expose] public section
 
 open NumberField Module Formalism.HermitianLattices.Ext.L3.SplitA
 
@@ -90,11 +94,7 @@ theorem adjoin_integral_of_nonempty (hK : Formalism.HermitianLatticesTheory.IsCM
 
 private theorem isLattice_gmap_of_isLattice (g : V ≃ₗ[K] V) {L : Submodule (𝓞 K) V}
     (hL : Submodule.IsLattice K L) : Submodule.IsLattice K (Formalism.HermitianLatticesTheory.gmap g L) := by
-  obtain ⟨hfg, hspan⟩ := hL
-  refine ⟨hfg.map _, ?_⟩
-  show Submodule.span K ((L.map ((g : V →ₗ[K] V).restrictScalars (𝓞 K)) : Set V)) = ⊤
-  rw [Submodule.map_coe, LinearMap.coe_restrictScalars, Submodule.span_image, hspan,
-    Submodule.map_top, LinearEquiv.range]
+  exact Submodule.IsLattice.of_fg K (hL.fg.map _)
 
 private theorem comap_algebraMap_isMaximal_of_isMaximal (P : Ideal (𝓞 K)) (hP : P.IsMaximal) :
     (P.comap (algebraMap (𝓞 F) (𝓞 K))).IsMaximal := by
@@ -104,13 +104,75 @@ private theorem comap_algebraMap_isMaximal_of_isMaximal (P : Ideal (𝓞 K)) (hP
   | exact inferInstance
   | exact Ideal.IsMaximal.under (𝓞 F) P
 
+private theorem patch_exists_common_multiple {N : Submodule (𝓞 K) V}
+    (hN : Submodule.IsFullLattice K N)
+    (s : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal})
+    (B : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal} → Submodule (𝓞 K) V)
+    (hBlat : ∀ 𝔭, Submodule.IsFullLattice K (B 𝔭)) (hBs : ∀ 𝔭 ∉ s, B 𝔭 = N) :
+    ∃ n : ℤ, n ≠ 0 ∧ ∀ x ∈ N, n • x ∈ ⨅ 𝔭, locF 𝔭.1 (B 𝔭) := by
+  classical
+  choose n hn hnx using fun 𝔭 => LocF.exists_zsmul_le hN.toIsLattice (hBlat 𝔭)
+  refine ⟨∏ 𝔭 ∈ s, n 𝔭, Finset.prod_ne_zero_iff.mpr fun 𝔭 _ => hn 𝔭, ?_⟩
+  intro x hx
+  rw [Submodule.mem_iInf]
+  intro 𝔭
+  apply LocF.le_locF
+  by_cases h𝔭 : 𝔭 ∈ s
+  · obtain ⟨m, hm⟩ := Finset.dvd_prod_of_mem (fun 𝔭 => n 𝔭) h𝔭
+    rw [hm, mul_comm, mul_smul]
+    exact zsmul_mem (hnx 𝔭 x hx) _
+  · rw [hBs 𝔭 h𝔭]
+    exact zsmul_mem hx _
+
+private theorem span_le_of_smul_mem_span (A B : Set V) (a : K) (ha : a ≠ 0)
+    (h : ∀ x ∈ A, a • x ∈ Submodule.span K B) :
+    Submodule.span K A ≤ Submodule.span K B := by
+  apply Submodule.span_le.mpr
+  intro x hx
+  have hx' := (Submodule.span K B).smul_mem a⁻¹ (h x hx)
+  rw [inv_smul_smul₀ ha] at hx'
+  exact hx'
+
+private theorem patch_isFullLattice {N : Submodule (𝓞 K) V}
+    (hN : Submodule.IsFullLattice K N)
+    (s : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal})
+    (B : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal} → Submodule (𝓞 K) V)
+    (hBlat : ∀ 𝔭, Submodule.IsFullLattice K (B 𝔭)) (hBs : ∀ 𝔭 ∉ s, B 𝔭 = N)
+    (hMlat : Submodule.IsLattice K (⨅ 𝔭, locF 𝔭.1 (B 𝔭))) :
+    Submodule.IsFullLattice K (⨅ 𝔭, locF 𝔭.1 (B 𝔭)) := by
+  classical
+  refine { toIsLattice := hMlat, span_eq_top := ?_ }
+  obtain ⟨n, hn, hnx⟩ := patch_exists_common_multiple hN s B hBlat hBs
+  have hnK : (n : K) ≠ 0 := Int.cast_ne_zero.mpr hn
+  rw [eq_top_iff, ← hN.span_eq_top]
+  apply span_le_of_smul_mem_span _ _ (n : K) hnK
+  intro x hx
+  apply Submodule.subset_span
+  rw [Int.cast_smul_eq_zsmul]
+  exact hnx x hx
+
 theorem card_fibG_eq_card_pi (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) (S : VecSplit h h')
-    {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L) {Λ' : Submodule (𝓞 K) V'}
-    (hΛ' : Submodule.IsLattice K Λ') (s : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal})
+    {L : Submodule (𝓞 K) V} (hL : Submodule.IsFullLattice K L) {Λ' : Submodule (𝓞 K) V'}
+    (hΛ' : Submodule.IsFullLattice K Λ') (s : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal})
     (hs1 : ∀ 𝔭 ∉ s, fibSet S L 𝔭.1 Λ' = {locF 𝔭.1 (S.adjoin Λ')}) :
     Nat.card (fibG S L Λ') = Nat.card (∀ 𝔭 : s, fibSet S L 𝔭.1.1 Λ') := by
   classical
-  have hN : Submodule.IsLattice K (S.adjoin Λ') := (VecSplit.isLattice_adjoin_iff' (S := S) Λ').2 hΛ'
+  have hN : Submodule.IsFullLattice K (S.adjoin Λ') := by
+    refine { toIsLattice := (VecSplit.isLattice_adjoin_iff' (S := S) Λ').2 hΛ'.toIsLattice, span_eq_top := ?_ }
+    rw [eq_top_iff]
+    intro v _
+    obtain ⟨c, a, rfl⟩ := S.cover v
+    refine add_mem (Submodule.smul_mem _ c (Submodule.subset_span (S.x₀_mem_adjoin _))) ?_
+    have ha : a ∈ Submodule.span K (Λ' : Set V') := by
+      rw [hΛ'.span_eq_top]
+      exact Submodule.mem_top
+    have hle : Submodule.map S.ι (Submodule.span K (Λ' : Set V')) ≤
+        Submodule.span K (S.adjoin Λ' : Set V) := by
+      rw [Submodule.map_span]
+      apply Submodule.span_mono
+      rintro _ ⟨b, hb, rfl⟩
+      exact Submodule.mem_sup_right (Submodule.mem_map_of_mem hb)
+    exact hle (Submodule.mem_map_of_mem ha)
   have hsing : ∀ 𝔭 ∉ s, locF 𝔭.1 (S.adjoin Λ') ∈ fibSet S L 𝔭.1 Λ' := fun 𝔭 h𝔭 => by
     rw [hs1 𝔭 h𝔭]; rfl
   let Φ : fibG S L Λ' → ∀ 𝔭 : s, fibSet S L 𝔭.1.1 Λ' := fun Λ 𝔭 =>
@@ -138,15 +200,19 @@ theorem card_fibG_eq_card_pi (hK : Formalism.HermitianLatticesTheory.IsCMUnram K
     choose g hgi hgf using hg
     let B : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal} → Submodule (𝓞 K) V := fun 𝔭 =>
       if h𝔭 : 𝔭 ∈ s then Formalism.HermitianLatticesTheory.gmap (g ⟨𝔭, h𝔭⟩) L else S.adjoin Λ'
-    have hBlat : ∀ 𝔭, Submodule.IsLattice K (B 𝔭) := by
+    have hBlat : ∀ 𝔭, Submodule.IsFullLattice K (B 𝔭) := by
       intro 𝔭
       by_cases h𝔭 : 𝔭 ∈ s
       · simp only [B, dif_pos h𝔭]
-        exact isLattice_gmap_of_isLattice _ hL
+        refine { toIsLattice := isLattice_gmap_of_isLattice _ hL.toIsLattice, span_eq_top := ?_ }
+        change Submodule.span K ((g ⟨𝔭, h𝔭⟩ : V →ₗ[K] V) '' (L : Set V)) = ⊤
+        rw [Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+        exact (g ⟨𝔭, h𝔭⟩).surjective
       · simp only [B, dif_neg h𝔭]
         exact hN
     have hBs : ∀ 𝔭 ∉ s, B 𝔭 = S.adjoin Λ' := fun 𝔭 h𝔭 => by simp only [B, dif_neg h𝔭]
     obtain ⟨hMlat, hMloc⟩ := LocF.patch hN s B hBlat hBs
+    have hMfull := patch_isFullLattice hN s B hBlat hBs hMlat
     have hBf : ∀ 𝔭 (h𝔭 : 𝔭 ∈ s), locF 𝔭.1 (B 𝔭) = (f ⟨𝔭, h𝔭⟩).1 := by
       intro 𝔭 h𝔭
       simp only [B, dif_pos h𝔭]
@@ -158,7 +224,7 @@ theorem card_fibG_eq_card_pi (hK : Formalism.HermitianLatticesTheory.IsCMUnram K
       · rw [hBf 𝔭 h𝔭]; exact (f ⟨𝔭, h𝔭⟩).2
       · rw [hBs 𝔭 h𝔭]; exact hsing 𝔭 h𝔭
     have hMmem : (⨅ 𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, locF 𝔭.1 (B 𝔭)) ∈ fibG S L Λ' := by
-      refine ⟨⟨hMlat, ?_⟩, ?_, ?_⟩
+      refine ⟨⟨hMfull, ?_⟩, ?_, ?_⟩
       · intro P hP
         have h𝔭 : (P.comap (algebraMap (𝓞 F) (𝓞 K))).IsMaximal := comap_algebraMap_isMaximal_of_isMaximal P hP
         obtain ⟨-, ⟨g', hg', e'⟩, -, -⟩ := hBmem ⟨_, h𝔭⟩

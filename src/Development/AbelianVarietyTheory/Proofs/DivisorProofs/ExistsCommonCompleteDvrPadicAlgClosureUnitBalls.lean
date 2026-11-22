@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PadicIntermediateFieldIntRingCompleteDvrStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TestFieldFiniteOverPadic
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.UniformityLowerBounds
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsLastMore
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NormPsiPullLocalRingsOfIntegersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiNormIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PadicIntermediateFieldIntRingCompleteDvrStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TestFieldFiniteOverPadic
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.UniformityLowerBounds
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsLastMore
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NormPsiPullLocalRingsOfIntegersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiNormIff
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
@@ -43,7 +48,7 @@ theorem comp_secK (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
     rw [RingHom.comp_apply, RingHom.comp_apply, RingHom.comp_apply]
     refine (IsFractionRing.lift_algebraMap (intRing_injective K) w).trans ?_
     have := (IsLocalization.algEquiv (nonZeroDivisors (intRing K)) (FractionRing (intRing K)) K).commutes w
-    simp only [AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe, AlgEquiv.toRingEquiv_toRingHom,
+    simp only [AlgEquiv.coe_toRingEquiv, RingEquiv.toRingHom_eq_coe, AlgEquiv.toRingEquiv_toRingHom,
       RingHom.coe_coe, this]
     rfl
   rw [h, RingHom.comp_assoc]

@@ -1,12 +1,16 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.EigInert
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.JacquetLemma
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryIwahoriFacts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriGlValuedDatum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsStrictDom
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeCharacterExistsUniqueStatement
-import GroundTheory.GlobalFields.LocalAtPlace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.EigInert
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.JacquetLemma
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryIwahoriFacts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriGlValuedDatum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsStrictDom
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeCharacterExistsUniqueStatement
+public import GroundTheory.GlobalFields.LocalAtPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -187,7 +191,7 @@ theorem cone_anti {m : ℕ} {l : Fin m → ℤ} (hl : Cone l) {i j : Fin m} (h :
 theorem wexp_lt (n : ℕ) (l : Fin (n / 2) → ℤ) (i : Fin (n / 2)) (h : (i : ℕ) < n) :
     wexp n l ⟨i, h⟩ = l i := by
   unfold wexp
-  rw [dif_pos (show ((⟨i, h⟩ : Fin n) : ℕ) < n / 2 from i.2)]
+  rw [dite_eq_left (show ((⟨i, h⟩ : Fin n) : ℕ) < n / 2 from i.2)]
 
 theorem wexp_rev (n : ℕ) (l : Fin (n / 2) → ℤ) (i : Fin n) : wexp n l i.rev = - wexp n l i := by
   unfold wexp
@@ -197,14 +201,14 @@ theorem wexp_rev (n : ℕ) (l : Fin (n / 2) → ℤ) (i : Fin n) : wexp n l i.re
   · have h2 : ¬ (i.rev : ℕ) < n / 2 := by omega
     have h3 : n - 1 - (i.rev : ℕ) < n / 2 := by omega
     have e : (⟨n - 1 - (i.rev : ℕ), h3⟩ : Fin (n / 2)) = ⟨i, h1⟩ := Fin.ext (by show n - 1 - (i.rev : ℕ) = i; omega)
-    rw [dif_neg h2, dif_pos h3, dif_pos h1, e]
+    rw [dite_eq_right h2, dite_eq_left h3, dite_eq_left h1, e]
   · by_cases h4 : n - 1 - (i : ℕ) < n / 2
     · have h5 : (i.rev : ℕ) < n / 2 := by omega
       have e : (⟨(i.rev : ℕ), h5⟩ : Fin (n / 2)) = ⟨n - 1 - i, h4⟩ := Fin.ext (by show (i.rev : ℕ) = n - 1 - i; omega)
-      rw [dif_pos h5, dif_neg h1, dif_pos h4, neg_neg, e]
+      rw [dite_eq_left h5, dite_eq_right h1, dite_eq_left h4, neg_neg, e]
     · have h5 : ¬ (i.rev : ℕ) < n / 2 := by omega
       have h6 : ¬ n - 1 - (i.rev : ℕ) < n / 2 := by omega
-      rw [dif_neg h5, dif_neg h6, dif_neg h1, dif_neg h4, neg_zero]
+      rw [dite_eq_right h5, dite_eq_right h6, dite_eq_right h1, dite_eq_right h4, neg_zero]
 
 theorem wexp_anti (n : ℕ) {l : Fin (n / 2) → ℤ} (hl : Cone l) {i j : Fin n} (h : i < j) :
     wexp n l j < wexp n l i := by
@@ -212,25 +216,25 @@ theorem wexp_anti (n : ℕ) {l : Fin (n / 2) → ℤ} (hl : Cone l) {i j : Fin n
   have hjn := j.2
   unfold wexp
   by_cases hj : (j : ℕ) < n / 2
-  · rw [dif_pos hj, dif_pos (show (i : ℕ) < n / 2 by omega)]
+  · rw [dite_eq_left hj, dite_eq_left (show (i : ℕ) < n / 2 by omega)]
     exact cone_anti hl (Fin.mk_lt_mk.2 hij)
-  · rw [dif_neg hj]
+  · rw [dite_eq_right hj]
     by_cases hi : (i : ℕ) < n / 2
-    · rw [dif_pos hi]
+    · rw [dite_eq_left hi]
       have := hl.2 ⟨i, hi⟩
       split_ifs with hj'
       · have := hl.2 ⟨_, hj'⟩
         omega
       · omega
-    · rw [dif_neg hi]
+    · rw [dite_eq_right hi]
       by_cases hj' : n - 1 - (j : ℕ) < n / 2
-      · rw [dif_pos hj']
+      · rw [dite_eq_left hj']
         by_cases hi' : n - 1 - (i : ℕ) < n / 2
-        · rw [dif_pos hi']
+        · rw [dite_eq_left hi']
           have := cone_anti hl (Fin.mk_lt_mk.2 (show n - 1 - (j : ℕ) < n - 1 - i by omega) :
             (⟨n - 1 - (j : ℕ), hj'⟩ : Fin (n / 2)) < ⟨n - 1 - (i : ℕ), hi'⟩)
           omega
-        · rw [dif_neg hi']
+        · rw [dite_eq_right hi']
           have := hl.2 ⟨_, hj'⟩
           omega
       · exfalso
@@ -288,7 +292,7 @@ theorem chi_eq {n : ℕ} {w : Pl E} {ϖ : (w.adicCompletion E)ˣ}
     intro i h
     rw [ht, tdiag_val, Matrix.diagonal_apply_eq, GlobalTheory.CompanionTheory.KUFactsU.ordL_zpow hv, wexp_lt]
   unfold chiDeltaU pw
-  rw [Finset.prod_congr rfl fun i _ => by rw [dif_pos (show (i : ℕ) < n by have := i.2; omega), hent],
+  rw [Finset.prod_congr rfl fun i _ => by rw [dite_eq_left (show (i : ℕ) < n by have := i.2; omega), hent],
     Finset.prod_mul_distrib, ← GlobalTheory.BorelUMod.zpow_finset_sum hq0]
   congr 1
   · exact Finset.prod_congr rfl fun i _ => by rw [Units.val_zpow_eq_zpow_val]

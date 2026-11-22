@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.SegreIdealIsHomogeneous
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FromSpecResidueFieldAppTopIso
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjDehomA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.SegreIdealIsHomogeneous
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FromSpecResidueFieldAppTopIso
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjDehomA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -31,8 +35,8 @@ instance locallyOfFiniteType_toSpecC {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)}
   have h1 : LocallyOfFiniteType (Proj.toSpecZero (segreGrading P)) := inferInstance
   exact @locallyOfFiniteType_comp _ _ _ (Proj.toSpecZero (segreGrading P)) _ h1 h2
 
-open Classical in
 
+open Classical in
 def chartUpd (p : (k : K) → ι k) (q : Σ k, ι k) : (k : K) → ι k :=
   Function.update p q.1 q.2
 
@@ -64,7 +68,7 @@ theorem val_polyToAway {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMulti
       (Localization.Away (segreW P p)), ← Localization.mk_one_eq_algebraMap]
     rfl
   | add f g hf hg =>
-    simp only [map_add, HomogeneousLocalization.val_add, hf, hg, eval₂_add]
+    simp only [map_add (f := _), HomogeneousLocalization.val_add, hf, hg, eval₂_add]
   | mul_X f q hf =>
     rw [map_mul, HomogeneousLocalization.val_mul, hf, eval₂_mul, eval₂_X]
     congr 1

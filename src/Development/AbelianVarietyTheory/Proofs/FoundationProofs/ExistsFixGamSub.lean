@@ -1,12 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAutAll
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntPrimeDivRootOfUnitySubOnePow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerQqPowLevelEqQ
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingCyclotomicTowerLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteGaloisApproximation
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntPrimeDivRootOfUnitySubOnePow
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.K5.MonX
 
-open GlobalTheory.K5 GlobalTheory.KumDlog GlobalTheory.K5.Rel
+open GlobalTheory.K5 GlobalTheory.KumDlog
 
 theorem exists_pow_eq {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) {m n i : ℕ} (hm : 1 ≤ m)
     (hi : ¬ p ^ (n - m) ∣ i) :
@@ -34,8 +41,8 @@ theorem exists_pow_eq {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) {m n i : ℕ} (hm
   obtain ⟨e, d, hd, hed⟩ := Nat.exists_eq_pow_mul_and_not_dvd (Nat.sub_ne_zero_of_lt hK1) p
     hp.ne_one
   have hd0 : d ≠ 0 := by rintro rfl; exact hd (dvd_zero _)
-  rw [hed, padicValNat.mul (pow_ne_zero _ hp.ne_zero) hd0, padicValNat.prime_pow,
-    padicValNat.eq_zero_of_not_dvd hd, add_zero] at hval
+  rw [hed, Nat.multiplicity_mul (pow_ne_zero _ hp.ne_zero) hd0,
+    Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hd, add_zero] at hval
   have hK : (1 + p ^ m) ^ (p ^ (n - v - 1 - m)) = 1 + p ^ e * d := by omega
   refine ⟨p ^ (n - v - 1 - m), d, u, hd, hu, ?_, p ^ (e - 1) * d, ?_⟩
   · rw [hK, mul_add, mul_one, show n - 1 = v + e by omega, pow_add]
@@ -46,12 +53,12 @@ end GlobalTheory.K5.MonX
 
 namespace GlobalTheory.K5.MonX
 
-open GlobalTheory.K5 GlobalTheory.KumDlog GlobalTheory.K5.Rel
+open GlobalTheory.K5 GlobalTheory.KumDlog
 
 end GlobalTheory.K5.MonX
 
 namespace GlobalTheory.K5.MonX
 
-open GlobalTheory.K5 GlobalTheory.KumDlog GlobalTheory.K5.Rel
+open GlobalTheory.K5 GlobalTheory.KumDlog
 
 end GlobalTheory.K5.MonX

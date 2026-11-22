@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsTheta
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ThetaGauss
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsTheta
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ThetaGauss
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -28,8 +33,8 @@ theorem thetaSummand_shift {g : ℕ} (X Y : Matrix (Fin g) (Fin g) ℝ) (a b u�
 
 end KThetaInnerMean
 
-open KThetaInnerMean in
 
+open KThetaInnerMean in
 theorem ThetaInnerMean.proof (h₁ : ThetaSummandNorm.Statement) (h₂ : ThetaCubeParseval.Statement) :
     ThetaInnerMean.Statement := by
   intro g X Y a b u₁ hY

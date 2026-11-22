@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem isProj_eig_average {G M : Type} [Group G] [AddCommGroup M] [Module ℂ M
     intro h
     have hsum : ρ h (∑ g : P, (((χ g)⁻¹ : ℂˣ) : ℂ) • ρ g x)
         = ((χ h : ℂˣ) : ℂ) • ∑ g : P, (((χ g)⁻¹ : ℂˣ) : ℂ) • ρ g x := by
-      rw [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.smul_sum]
       refine Fintype.sum_equiv (Equiv.mulLeft h) _ _ fun g => ?_
       have hc : ((χ h : ℂˣ) : ℂ) * (((χ (h * g))⁻¹ : ℂˣ) : ℂ) = (((χ g)⁻¹ : ℂˣ) : ℂ) := by
         rw [← Units.val_mul, map_mul, mul_inv, mul_inv_cancel_left]
@@ -45,7 +50,8 @@ theorem card_mul_finrank_eig (G M : Type) [Group G] [Finite G] [AddCommGroup M] 
   classical
   haveI : Fintype P := Fintype.ofFinite P
   have htr := (isProj_eig_average ρ P χ).trace
-  rw [map_smul, map_sum, smul_eq_mul] at htr
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum, smul_eq_mul] at htr
   simp only [map_smul, smul_eq_mul] at htr
 
   rw [Finset.sum_eq_single (1 : P) (fun g _ hg => by

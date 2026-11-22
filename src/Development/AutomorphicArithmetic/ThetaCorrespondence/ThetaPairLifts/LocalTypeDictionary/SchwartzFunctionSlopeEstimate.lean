@@ -1,8 +1,28 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilLineCmModelAction
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.MetaplecticScalarDerivativeNonempty
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilLineCmModelActionStatement
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilLineCmModelAction
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.MetaplecticScalarDerivativeNonempty
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsThetaSubSelf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HypothesesAbsDet
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjUInvMemGfC
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsThetaSubGAlgDOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRealmapsIsomorphism
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOneParamSubgroupTransposeGramLieAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerSkewPlaneUniqueDual
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionUnitaryCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPairingStdP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulRealAdEqZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAdmissibleFiniteFactorArchimedeanSchwartzStatement
+
+@[expose] public section
 
 section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
@@ -151,7 +171,60 @@ theorem lift_splits_locally : _root_.GlobalTheory.FunPr.ThetaLocalInputs → ∀
   have hiso : ∀ t f, ∫ x, ‖T t f x‖ ^ 2 ∂μ = ∫ x, ‖f x‖ ^ 2 ∂μ := fun t f =>
     GlobalTheory.T.weil_representation_integral_action M ψ χX χW om hW μ inferInstance (γ (Multiplicative.ofAdd t)) f (T t f) (hT t f)
   obtain ⟨hc1, -⟩ := GlobalTheory.T.archimedeanOneParameterFamily_continuous M ψ χX χW om hW γ hγ T hT
-  exact _root_.GlobalTheory.SchwartzSlope.schwartz_slope_bound hP (Fin n × Fin d → mixedEmbedding.mixedSpace F) μ _ (GlobalTheory.ArchUniq.Coord.isPairing_trP (F := F) (Fin n × Fin d)) A T hAc hadd h0 hA hiso hc1
+  have trace_pi_real_eq_sum' {ι : Type} [Fintype ι] (f : ι → ℝ) :
+      Algebra.trace ℝ (ι → ℝ) f = ∑ i, f i := by
+    rw [Algebra.trace_eq_matrix_trace (Pi.basisFun ℝ ι)]
+    simp [Matrix.trace, Algebra.leftMulMatrix_eq_repr_mul, Pi.single_apply]
+
+  have trace_pi_complex_eq_sum_two_mul_re {ι : Type} [Fintype ι] (f : ι → ℂ) :
+      Algebra.trace ℝ (ι → ℂ) f = ∑ i, 2 * (f i).re := by
+    rw [Algebra.trace_eq_matrix_trace (Pi.basis fun _ : ι => Complex.basisOneI)]
+    simp [Matrix.trace, Algebra.leftMulMatrix_eq_repr_mul, Fintype.sum_sigma, Pi.single_apply, Fin.sum_univ_two,
+      Complex.coe_basisOneI, Complex.coe_basisOneI_repr]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    ring
+
+  have eq_zero_of_trace (x : mixedEmbedding.mixedSpace F)
+      (h : ∀ b, Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (x * b) = 0) : x = 0 := by
+    refine Prod.ext (funext fun w => ?_) (funext fun w => ?_)
+    · have h1 := h (Pi.single w 1, 0)
+      rw [Algebra.trace_prod_apply, trace_pi_real_eq_sum', trace_pi_complex_eq_sum_two_mul_re] at h1
+      simpa [Pi.single_apply] using h1
+    · have h1 := h (0, Pi.single w (star (x.2 w)))
+      rw [Algebra.trace_prod_apply, trace_pi_real_eq_sum', trace_pi_complex_eq_sum_two_mul_re] at h1
+      have h2 : (x.2 w).re * (x.2 w).re + (x.2 w).im * (x.2 w).im = 0 := by
+        simpa [Pi.single_apply, apply_ite Complex.re, mul_ite, Finset.sum_ite_eq, Finset.sum_ite_eq', Complex.star_def,
+          Complex.mul_conj] using h1
+      have hre : (x.2 w).re = 0 := by nlinarith [mul_self_nonneg (x.2 w).re, mul_self_nonneg (x.2 w).im]
+      have him : (x.2 w).im = 0 := by nlinarith [mul_self_nonneg (x.2 w).re, mul_self_nonneg (x.2 w).im]
+      show x.2 w = 0
+      exact Complex.ext hre him
+
+  have hPair : GlobalTheory.ArchUniq.IsPairing (GlobalTheory.ArchUniq.trP F (Fin n × Fin d)) := by
+    exact {
+      addL x x' y := by
+        simp only [GlobalTheory.ArchUniq.trP, Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _)]
+      addR x y y' := by
+        simp only [GlobalTheory.ArchUniq.trP, Pi.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
+      smulL c x y := by
+        simp only [GlobalTheory.ArchUniq.trP, Pi.smul_apply, smul_mul_assoc, ← Finset.smul_sum, map_smul, smul_eq_mul]
+      smulR c x y := by
+        simp only [GlobalTheory.ArchUniq.trP, Pi.smul_apply, mul_smul_comm, ← Finset.smul_sum, map_smul, smul_eq_mul]
+      nondegL x hx := by
+        funext i
+        apply eq_zero_of_trace
+        intro b
+        have h := hx (Pi.single i b)
+        simpa [GlobalTheory.ArchUniq.trP, Pi.single_apply, mul_ite, Finset.sum_ite_eq'] using h
+      nondegR y hy := by
+        funext i
+        apply eq_zero_of_trace
+        intro b
+        have h := hy (Pi.single i b)
+        simpa [GlobalTheory.ArchUniq.trP, Pi.single_apply, ite_mul, Finset.sum_ite_eq', mul_comm] using h
+    }
+
+  exact _root_.GlobalTheory.SchwartzSlope.schwartz_slope_bound hP (Fin n × Fin d → mixedEmbedding.mixedSpace F) μ _ hPair A T hAc hadd h0 hA hiso hc1
 end GlobalTheory.SchwartzSlope
 end
 end

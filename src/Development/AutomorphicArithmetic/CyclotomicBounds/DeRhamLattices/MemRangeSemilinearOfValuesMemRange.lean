@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem _root_.UpperTheory.KN.mem_range_semilinear_of_values_mem_range :
     ∀ (K M N V U I J : Type) [Field K] [AddCommGroup M] [Module K M] [AddCommGroup N] [Module ℂ N] [AddCommGroup V] [Module K V] [AddCommGroup U] [Module ℂ U]
@@ -57,11 +61,14 @@ theorem _root_.UpperTheory.KN.mem_range_semilinear_of_values_mem_range :
     obtain ⟨v, hv⟩ := hjm m h
     rw [← hv, Rc0]
   have e1 : ev (jm (c.sum fun m a => lam a • m)) h = c.sum fun m a => σ (lam a) • ev (jm m) h := by
-    simp [Finsupp.sum, map_sum, map_smulₛₗ, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finsupp.sum, map_sum, map_smulₛₗ, Finset.sum_apply]
   have e2 : ev (c.sum fun m a => a • jm m) h = c.sum fun m a => a • ev (jm m) h := by
-    simp [Finsupp.sum, map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finsupp.sum, map_sum, Finset.sum_apply]
   have e3 : c0 (R (c.sum fun m a => a • ev (jm m) h)) = c.sum fun m a => σ (lam a) • ev (jm m) h := by
-    simp only [Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finsupp.sum, map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     conv_lhs => rw [← hu m]
     rw [KR, map_smulₛₗ, hu m]

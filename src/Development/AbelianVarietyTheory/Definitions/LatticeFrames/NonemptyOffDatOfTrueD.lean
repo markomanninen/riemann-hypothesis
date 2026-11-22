@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SingleMemIdAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsScaleWithBoundedGamma
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SingleMemIdAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsScaleWithBoundedGamma
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,20 +21,6 @@ namespace GlobalTheory.FinPl.OffInh
 
 variable {D : D7} {u : D.what₂.Word} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {ι : Type}
-
-def reindex {p : SplitPt D k} {S : HSp D} {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n']
-    (β : Frame p S n) (e : n' ≃ n) : Frame p S n' where
-  b := β.b.submatrix id e
-  b' := β.b'.submatrix e id
-  bb' := (Matrix.submatrix_mul_equiv β.b β.b' id e id).trans (by rw [β.bb', Matrix.submatrix_id_id])
-  b'b := (Matrix.submatrix_mul_equiv β.b' β.b e (Equiv.refl _) e).trans (by rw [β.b'b, Matrix.submatrix_one_equiv])
-  gl := β.gl.comp (Units.map (Matrix.reindexAlgEquiv k k e).toRingEquiv.toMonoidHom)
-  gl_supp g := β.gl_supp _
-  gl_mat g := by
-    refine (β.gl_mat _).trans ?_
-    have h : g.val = (g.val.submatrix e.symm e.symm).submatrix e e := by simp
-    conv_rhs => rw [h, Matrix.submatrix_mul_equiv, Matrix.submatrix_mul_equiv, Matrix.submatrix_id_id]
-    rfl
 
 attribute [local instance] GlobalTheory.FinPl.Model.relAt GlobalTheory.FinPl.Model.locAt
 

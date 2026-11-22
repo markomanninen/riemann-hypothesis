@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
+
+@[expose] public section
 
 open ValuativeRel UpperTheory.V UpperTheory.V.Z.Sym
 
@@ -12,4 +16,5 @@ theorem UpperTheory.V.Z.Sym.Al.dcMap {k : Type} [Field k] [ValuativeRel k] [Topo
   have hJ := ((Sig.finFacts k W).2.2.2.2.2 n).1 a
   haveI := Set.Finite.to_subtype hJ
   haveI := Fintype.ofFinite (MulAction.orbit (W.J n) (a : GL (Fin n) k ⧸ W.J n))
-  simp only [Hi.dc, finsum_eq_sum_of_fintype, LinearMap.sum_apply, map_sum, hf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hi.dc, finsum_eq_sum_of_fintype, LinearMap.sum_apply, map_sum, hf]

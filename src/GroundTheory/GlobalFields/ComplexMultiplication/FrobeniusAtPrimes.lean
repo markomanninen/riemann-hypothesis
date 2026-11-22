@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimesIsogeny
-import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimesLocal
-import GroundTheory.GlobalFields.ComplexMultiplication.BadPrimesFinite
-import GroundTheory.GlobalFields.ComplexMultiplication.AlgebraicityDescent
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimesIsogeny
+public import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimesLocal
+public import GroundTheory.GlobalFields.ComplexMultiplication.BadPrimesFinite
+public import GroundTheory.GlobalFields.ComplexMultiplication.AlgebraicityDescent
+
+@[expose] public section
 
 namespace GroundTheory.Global
 namespace Elliptic
@@ -43,8 +47,8 @@ theorem residue_smul_of_isArithFrobAt {σ : L ≃ₐ[K] L} (hσ : IsArithFrobAt 
     algebraMap_mem_maximalIdeal_localizationAt_iff]
   exact hσ a
 
-omit [NumberField L] in
 
+omit [NumberField L] in
 theorem smul_notMem_of_isArithFrobAt {σ : L ≃ₐ[K] L} (hσ : IsArithFrobAt (𝓞 K) σ 𝔓.asIdeal)
     {s : 𝓞 L} (hs : s ∉ 𝔓.asIdeal) : σ • s ∉ 𝔓.asIdeal := by
   intro h
@@ -133,7 +137,7 @@ theorem absNorm_prime_of_mem_degreeOnePrimes {K : Type*} [Field K] [NumberField 
   rw [← h]
   have hne : v.asIdeal.under (𝓞 ℚ) ≠ ⊥ := by
     intro hb
-    exact v.ne_bot (Ideal.eq_bot_of_comap_eq_bot hb)
+    exact v.ne_bot (Ideal.eq_bot_of_under_eq_bot hb)
   have : (v.asIdeal.under (𝓞 ℚ)).IsMaximal := Ideal.IsPrime.isMaximal inferInstance hne
   exact absNorm_prime_of_ringOfIntegers_rat _ hne
 
@@ -142,11 +146,10 @@ end DegreeOne
 section LatticeForm
 
 variable {K : Type*} [Field K] [NumberField K] (σ₀ : K →+* ℂ) (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
 
 include hK in
-
-theorem exists_unit_of_homConstSet_eq (L L' : PeriodPair) (hL : latticeEnd L = cmRing σ₀)
+theorem exists_unit_of_homConstSet_eq (L L' : PeriodPair) (hL : periodLatticeEnd L = cmRingOfEmbedding σ₀)
     (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (hL' : L'.lattice = idealLattice σ₀ ↑𝔞⁻¹ * L.lattice)
     (φ : Isogeny (weierstrassCurve L) (weierstrassCurve L'))
     (hφ : (homConstSet (weierstrassCurve L) (weierstrassCurve L') : Set ℂ) =
@@ -161,9 +164,9 @@ theorem exists_unit_of_homConstSet_eq (L L' : PeriodPair) (hL : latticeEnd L = c
   have hM' := eq_image_mul_inv hc hM
   have hP : (idealPeriodPair σ₀ hK 𝔞⁻¹).lattice = idealLattice σ₀ ↑𝔞⁻¹ :=
     lattice_idealPeriodPair σ₀ hK _
-  have hPend : latticeEnd (idealPeriodPair σ₀ hK 𝔞⁻¹) = cmRing σ₀ := latticeEnd_idealPeriodPair σ₀ hK _
+  have hPend : periodLatticeEnd (idealPeriodPair σ₀ hK 𝔞⁻¹) = cmRingOfEmbedding σ₀ := latticeEnd_idealPeriodPair σ₀ hK _
   have mult : ∀ d : ℂ, (idealLattice σ₀ ↑𝔞⁻¹ : Set ℂ) = (d * ·) '' idealLattice σ₀ ↑𝔞⁻¹ →
-      d ∈ cmRing σ₀ := by
+      d ∈ cmRingOfEmbedding σ₀ := by
     intro d hd
     rw [← hPend]
     intro l hl
@@ -190,27 +193,27 @@ end LatticeForm
 section Main
 
 variable {K : Type*} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K] {L : IntermediateField K ℂ} [NumberField L]
+  [_root_.NumberField.IsTotallyComplex K] {L : IntermediateField K ℂ} [NumberField L]
 
-omit [NumberField K] [IsTotallyComplex K] [NumberField L] in
 
+omit [NumberField K] [_root_.NumberField.IsTotallyComplex K] [NumberField L] in
 theorem algebraMap_mem_of_liesOver {𝔭 : HeightOneSpectrum (𝓞 K)} {𝔓 : HeightOneSpectrum (𝓞 L)}
     [h : 𝔓.asIdeal.LiesOver 𝔭.asIdeal] {a : 𝓞 K} (ha : a ∈ 𝔭.asIdeal) :
     algebraMap (𝓞 K) (𝓞 L) a ∈ 𝔓.asIdeal := by
   rw [h.over] at ha
   exact ha
 
-omit [NumberField K] [IsTotallyComplex K] [NumberField L] in
 
+omit [NumberField K] [_root_.NumberField.IsTotallyComplex K] [NumberField L] in
 theorem isogBaseChange_eq_map {A A' : WeierstrassCurve L} [A.IsElliptic] [A'.IsElliptic]
     (φ : Isogeny A A') : isogBaseChange (F' := ℂ) φ = φ.map (algebraMap L ℂ) :=
   Isogeny.ext_xy
     (by rw [isogBaseChange_alt, ← ffMap_algebraMap_eq_bcEmb]; exact (Isogeny.map_x _ φ).symm)
     (by rw [isogBaseChange_y, ← ffMap_algebraMap_eq_bcEmb]; exact (Isogeny.map_y _ φ).symm)
 
+
 omit [NumberField L] in
 include hK in
-
 theorem exists_isogBaseChange_eq_of_isogeny {A A' : WeierstrassCurve L} [A.IsElliptic]
     [A'.IsElliptic] (hA : Nonempty (isogEnd (A.baseChange ℂ) ≃+* 𝓞 K)) (φ : Isogeny A A')
     (ψ : Isogeny (A.baseChange ℂ) (A'.baseChange ℂ)) :
@@ -222,9 +225,10 @@ theorem exists_isogBaseChange_eq_of_isogeny {A A' : WeierstrassCurve L} [A.IsEll
   intro g
   set D := dualOver (isogBaseChange (F' := ℂ) φ)
   obtain ⟨Λ, C, hC⟩ := exists_variableChange_eq_weierstrassCurve (A.baseChange ℂ)
-  have hΛ : latticeEnd Λ = cmRing (algebraMap K ℂ) := latticeEnd_eq_cmRing_of_ringEquiv
-    (algebraMap K ℂ) hK Λ ((latticeEndEquiv Λ).trans ((vcEndEquiv C hC).symm.trans hA.some))
-  have hmem : endConst (A.baseChange ℂ) (D.comp ψ).toHom ∈ cmRing (algebraMap K ℂ) := by
+  have hΛ : _root_.periodLatticeEnd Λ = cmRingOfEmbedding (algebraMap K ℂ) :=
+    latticeEnd_eq_cmRing_of_ringEquiv (algebraMap K ℂ) hK Λ
+      ((latticeEndEquiv Λ).trans ((vcEndEquiv C hC).symm.trans hA.some))
+  have hmem : endConst (A.baseChange ℂ) (D.comp ψ).toHom ∈ cmRingOfEmbedding (algebraMap K ℂ) := by
     rw [← hΛ, ← range_endConst hC]
     exact ⟨_, rfl⟩
   obtain ⟨a, ha⟩ := (mem_cmRing (algebraMap K ℂ)).1 hmem
@@ -254,8 +258,8 @@ theorem exists_isogBaseChange_eq_of_isogeny {A A' : WeierstrassCurve L} [A.IsEll
   have h2 := congrArg Subtype.val hQ'
   exact Isogeny.ext' h2
 
-include hK in
 
+include hK in
 theorem exists_mem_maximalIdeal_invConst (𝔭 : HeightOneSpectrum (𝓞 K))
     (𝔓 : HeightOneSpectrum (𝓞 L)) [𝔓.asIdeal.LiesOver 𝔭.asIdeal]
     {W W' : WeierstrassCurve (localizationAt L 𝔓)} [W.IsElliptic] [W'.IsElliptic]
@@ -314,12 +318,12 @@ theorem exists_mem_maximalIdeal_invConst (𝔭 : HeightOneSpectrum (𝓞 K))
       rw [← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply (𝓞 K) K L, map_mul,
         mul_assoc])
     (fun x y ⟨m₁, hm₁, e₁⟩ ⟨m₂, hm₂, e₂⟩ ↦
-      ⟨m₁ + m₂, add_mem hm₁ hm₂, by rw [map_add, e₁, e₂, map_add, mul_add]⟩)
+      ⟨m₁ + m₂, add_mem hm₁ hm₂, by rw [map_add (f := _), e₁, e₂, map_add (f := _), mul_add]⟩)
   obtain ⟨m, hm, e⟩ := key
   exact ⟨m, hm, by rw [e, map_one, mul_one]⟩
 
-include hK in
 
+include hK in
 theorem reduceIsogeny_eq_comp_frobeniusIsogeny_of_homConstSet (𝔭 : HeightOneSpectrum (𝓞 K))
     (hv : (Ideal.absNorm 𝔭.asIdeal).Prime) (𝔓 : HeightOneSpectrum (𝓞 L))
     [𝔓.asIdeal.LiesOver 𝔭.asIdeal]
@@ -359,8 +363,8 @@ theorem reduceIsogeny_eq_comp_frobeniusIsogeny_of_homConstSet (𝔭 : HeightOneS
   obtain ⟨ψ, h1, h2, -, h4, h5⟩ := reduceIsogeny_eq_comp_frobeniusIsogeny L p φ hdeg' hc hcφ
   exact ⟨hp, hdeg', ⟨ψ, h1, h2, h4, h5⟩, residue_j_eq_pow L p φ hdeg' hc hcφ⟩
 
-include hK in
 
+include hK in
 theorem reduceIsogeny_congr_eq_comp_frobeniusIsogeny (𝔭 : HeightOneSpectrum (𝓞 K))
     (hv : (Ideal.absNorm 𝔭.asIdeal).Prime) (𝔓 : HeightOneSpectrum (𝓞 L))
     [𝔓.asIdeal.LiesOver 𝔭.asIdeal] {A A' : WeierstrassCurve L} [A.IsElliptic] [A'.IsElliptic]
@@ -391,22 +395,22 @@ end Main
 section Global
 
 variable {K : Type*} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K] {L : IntermediateField K ℂ} [NumberField L]
+  [_root_.NumberField.IsTotallyComplex K] {L : IntermediateField K ℂ} [NumberField L]
 
 abbrev primeClass (𝔭 : HeightOneSpectrum (𝓞 K)) : ClassGroup (𝓞 K) :=
   ClassGroup.mk0 ⟨𝔭.asIdeal, mem_nonZeroDivisors_of_ne_zero 𝔭.ne_bot⟩
 
-omit [NumberField K] [IsTotallyComplex K] [NumberField L] in
 
+omit [NumberField K] [_root_.NumberField.IsTotallyComplex K] [NumberField L] in
 theorem ELL.j_eq_algebraMap_j {A : WeierstrassCurve L} [A.IsElliptic] {x : ELL K}
     {h : Nonempty (isogEnd (A.baseChange ℂ) ≃+* 𝓞 K)}
     (hx : (⟨A.baseChange ℂ, h⟩ : CMCurve K).toEll = x) : ELL.j x = algebraMap L ℂ A.j := by
   rw [← hx, ELL.j_toEll]
   exact WeierstrassCurve.map_j _ _
 
+
 omit [NumberField L] in
 include hK in
-
 theorem exists_isogeny_primeClass_smul
     (E : ELL K → WeierstrassCurve L) [∀ x, (E x).IsElliptic]
     (hE : ∀ x, ∃ h : Nonempty (isogEnd ((E x).baseChange ℂ) ≃+* 𝓞 K),
@@ -436,8 +440,8 @@ theorem exists_isogeny_primeClass_smul
     (isogBaseChange φ) (by rw [invConst_isogBaseChange]; exact hφ')
   rwa [degree_isogBaseChange] at h
 
-include hK in
 
+include hK in
 theorem frobenius_at_primes_of_degree_one (hL : ∀ x : ELL K, ELL.j x ∈ L)
     (E : ELL K → WeierstrassCurve L) [∀ x, (E x).IsElliptic]
     (hE : ∀ x, ∃ h : Nonempty (isogEnd ((E x).baseChange ℂ) ≃+* 𝓞 K),

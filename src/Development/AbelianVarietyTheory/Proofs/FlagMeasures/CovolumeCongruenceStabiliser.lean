@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExponentialUnipotentStabilizerStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRootStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentLieLatticeDomainVolumeBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsCoveringSetExpLieLatticeRootGroupStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExponentialUnipotentStabilizerStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRootStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentLieLatticeDomainVolumeBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsCoveringSetExpLieLatticeRootGroupStatement
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.MainNotions.S GlobalTheory.LoopV
 open scoped ENNReal Classical
@@ -96,7 +100,8 @@ theorem expT_map {K F : Type} [Field K] [Field F] {N : ℕ} (φ : K →+* F)
     (x : Matrix (Fin N) (Fin N) K) : expT (x.map φ) = (expT x).map φ := by
   have hp : ∀ i : ℕ, (x.map φ) ^ i = (x ^ i).map φ := fun i => (map_pow φ.mapMatrix x i).symm
   ext a b
-  simp only [expT, hp, Matrix.sum_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [expT, hp, Matrix.sum_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul,
     map_sum, map_mul, map_inv₀, map_natCast]
 
 theorem expT_conj {K : Type} [Field K] {N : ℕ} (U x : Matrix (Fin N) (Fin N) K)
@@ -239,7 +244,7 @@ theorem discrete_lattice {K : Type} [Field K] [NumberField K] {ι : Type} [Finty
     ∑ q : R, τ v (U⁻¹ i q.1.1) * τ v (U q.1.2 j) * c v q
   have hΦ : Continuous Φ := by
     refine continuous_pi fun v => continuous_pi fun i => continuous_pi fun j => ?_
-    refine continuous_finset_sum _ fun q _ => ?_
+    refine continuous_finsetSum _ fun q _ => ?_
     exact continuous_const.mul ((continuous_apply q).comp (continuous_apply v))
   have hΦ0 : Φ 0 = 0 := by
     funext v i j
@@ -257,7 +262,8 @@ theorem discrete_lattice {K : Type} [Field K] [NumberField K] {ι : Type} [Finty
           simp only [Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hU, Matrix.mul_one,
             Matrix.nonsing_inv_mul_cancel_left _ _ hU]
         conv_lhs => rw [hx]
-        rw [GlobalTheory.LieCovol.mul_mul_apply _ _ _ R hxR, map_sum, ← Finset.sum_coe_sort R]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [GlobalTheory.LieCovol.mul_mul_apply _ _ _ R hxR, map_sum, ← Finset.sum_coe_sort R]
         refine Finset.sum_congr rfl fun q _ => ?_
         rw [map_mul, map_mul, hxc v q]
       rw [h2]

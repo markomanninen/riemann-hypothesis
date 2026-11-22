@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.InFrameForm
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.VolImageMulVec
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.AdeleLC
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.InFrameForm
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.VolImageMulVec
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.AdeleLC
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem OE_isCompact (v : HeightOneSpectrum (𝓞 F)) : IsCompact (OE E v : Set 
   haveI := isModuleTopology_tens (E := E) v
   haveI : IsTopologicalRing (v.adicCompletion F ⊗[F] E) := GlobalTheory.Doubling.isTopologicalRing_tens
   refine (isCompact_univ_pi fun _ => Formalism.L2.S.S7.AdeleLC.isCompact_integers v).image ?_
-  refine continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun j _ => ?_
   have hc : Continuous fun a : v.adicCompletion F => a ⊗ₜ[F] ((RingOfIntegers.basis E j : 𝓞 E) : E) := by
     have : (fun a : v.adicCompletion F => a ⊗ₜ[F] ((RingOfIntegers.basis E j : 𝓞 E) : E)) =
         fun a => a • ((1 : v.adicCompletion F) ⊗ₜ[F] ((RingOfIntegers.basis E j : 𝓞 E) : E)) := by

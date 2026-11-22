@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsSplitFrame
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DualBetaReferenceCongruence
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsSplitFrame
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DualBetaReferenceCongruence
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem resT_congr (TR : TypedRed X) (v : TR.Pl) {x y : X.B.I.E ⊗[X.B.I.F] Af 
     exact ⟨X.ew * t, (IntAf X.B.I.F X.B.I.E).mul_mem X.ew_int ht, mul_left_comm _ _ _⟩
   have hsplit : (⟨x, hxm⟩ : IntAf X.B.I.F X.B.I.E) = ⟨y, hy⟩ + ⟨_, hgt⟩ := Subtype.ext hx
   simp only [resT, dif_pos hxm, dif_pos hy]
-  rw [hsplit, map_add, h0, add_zero]
+  rw [hsplit, map_add (TR.res v), h0, add_zero]
 
 theorem idxDLevi : IdxDLevi := by
   intro D X TR e he b bs hF hL hC C C' _ hCint v i j
@@ -84,7 +88,8 @@ theorem idxDLevi : IdxDLevi := by
     rw [sMat_mulVec]
     simp only [hh]
     rw [← unitaryCongruence.hL_apply]
-    simp only [map_add, map_sum, map_smul, unitaryCongruence.hL_apply, smul_eq_mul, hzero, mul_zero, zero_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_smul, unitaryCongruence.hL_apply, smul_eq_mul, hzero, mul_zero, zero_mul,
       add_zero]
   rw [hexp]
   have hCm : ∀ p q, (C - 1) p q ∈ IntAf X.B.I.F X.B.I.E := by

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilThetaConvergence.WeilThetaConvergenceOfSiegelSet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SiegelSetUnitary
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilThetaConvergence.WeilThetaConvergenceOfSiegelSet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SiegelSetUnitary
+
+@[expose] public section
 
 namespace PositivityTheory.Rg.Sw.Glob
 

@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.NeutralLocalFields.Duality
-import ReciprocityTheory.GroupCohomology.ImportsAlt
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.QZDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.MemZmultiplesOfAddOrderOf
+module
+
+public import Mathlib
+public import ReciprocityTheory.NeutralLocalFields.Duality
+public import ReciprocityTheory.GroupCohomology.ImportsAlt
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.QZDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.MemZmultiplesOfAddOrderOf
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -52,19 +56,16 @@ theorem h_rat_subsingleton [CompactSpace G] [T2Space G] [TotallyDisconnectedSpac
   · simpa [nsmul_eq_mul, hk'] using h
   · simp only [nsmul_eq_mul]; field_simp
 
-theorem admissible_int_rat_sequence : admitted (trivMap G (Int.castAddHom ℚ)) (trivMap G (QuotientAddGroup.mk' (Int.castAddHom ℚ).range)) where
-  i_id := rfl
-  p_id := rfl
-  emb := by
-    have hi : Injective (trivMap G (Int.castAddHom ℚ)).u := Int.cast_injective (α := ℚ)
+theorem admissible_int_rat_sequence : admitted (trivMap G (Int.castAddHom ℚ)) (trivMap G (QuotientAddGroup.mk' (Int.castAddHom ℚ).range)) := by
+  refine ⟨rfl, rfl, ?_, ?_, ?_⟩
+  · have hi : Injective (trivMap G (Int.castAddHom ℚ)).u := Int.cast_injective (α := ℚ)
     exact (Topology.IsOpenEmbedding.of_continuous_injective_isOpenMap continuous_of_discreteTopology hi
       fun _ _ => isOpen_discrete _).isEmbedding
-  exact := by
-    intro (y : ℚ)
+  · intro (y : ℚ)
     show (QuotientAddGroup.mk y : QZ) = 0 ↔ y ∈ Set.range (Int.castAddHom ℚ)
     rw [QuotientAddGroup.eq_zero_iff]; rfl
-  sec := ⟨Function.surjInv (QuotientAddGroup.mk'_surjective (Int.castAddHom ℚ).range),
-    continuous_of_discreteTopology, Function.surjInv_eq _⟩
+  · exact ⟨Function.surjInv (QuotientAddGroup.mk'_surjective (Int.castAddHom ℚ).range),
+      continuous_of_discreteTopology, Function.surjInv_eq _⟩
 
 theorem conn_int_rat_bijective [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
     (δ : ∀ n, (trivRep G QZ).H n →ₗ[ℤ] (trivRep G ℤ).H (n + 1))

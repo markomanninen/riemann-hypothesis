@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -18,7 +22,8 @@ private theorem exists_intertwiner_decomp_of_kernel_intertwines {σ O : Type} [F
     fun _ _ => rfl
   refine ⟨H, ?_, ?_⟩
   · ext n
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [coeff_monomial_mul, one_mul]
     by_cases hn : n.support.Nonempty
     · have hi0 : hn.choose ∈ n.support := hn.choose_spec
@@ -72,9 +77,11 @@ private lemma π_mem_sq {O X R : Type} [CommRing O] [AddCommGroup X] [CommRing R
     erw [WPres.origin_π]
     rw [← coeff_zero_eq_constantCoeff_apply, coeff_monomial, if_neg]
     exact (Finsupp.single_ne_zero.2 one_ne_zero).symm
-  rw [hf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hf, map_sum]
   refine Ideal.sum_mem _ fun i _ => ?_
-  rw [hk i, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hk i, Finset.mul_sum, map_sum]
   refine Ideal.sum_mem _ fun j _ => ?_
   rw [← mul_assoc, map_mul, map_mul, pow_two]
   exact Ideal.mul_mem_right _ _ (Ideal.mul_mem_mul (hz i) (hz j))

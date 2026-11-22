@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupAutomorphicRepsOfInvariantForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInvariantPositivePeterssonFormStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupAutomorphicRepsOfInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInvariantPositivePeterssonFormStatement
+
+@[expose] public section
 
 open GlobalTheory.UnitaryBC GlobalTheory.DefU
 
@@ -29,7 +33,7 @@ private theorem proj_of_sum {G V : Type} [Group G] [AddCommGroup V] [Module ℂ 
     by_contra hn
     have hm : C ⊔ N ∈ P := ⟨sup_le hCA hNA, fun x v hv => by
       obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hv
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (hCs x a ha) (hNs x b hb), hn⟩
     exact hNC (le_sup_right.trans (hC.le_of_ge hm le_sup_left))
   obtain ⟨U, hUS, hUC⟩ : ∃ U ∈ S, ¬ U ≤ C := by
@@ -49,7 +53,7 @@ private theorem proj_of_sum {G V : Type} [Group G] [AddCommGroup V] [Module ℂ 
     have hYs := hSs Y hY
     rcases hSi Y hY ((C ⊔ U) ⊓ Y) inf_le_right (fun x v hv => ⟨by
         obtain ⟨a, ha, b, hb, e⟩ := Submodule.mem_sup.1 hv.1
-        rw [← e, map_add]
+        rw [← e, map_add (f := _)]
         exact Submodule.add_mem_sup (hCs x a ha) (hUs x b hb), hYs x v hv.2⟩) with h | h
     · exfalso
       obtain ⟨c, hc, y, hy, e⟩ := Submodule.mem_sup.1 (hsup Y (hSA Y hY) hYs hYC)
@@ -81,10 +85,10 @@ private theorem proj_of_sum {G V : Type} [Group G] [AddCommGroup V] [Module ℂ 
     congrArg Subtype.val (Submodule.linearProjOfIsCompl_apply_left hc ⟨u, hu⟩)
   have hprC : ∀ c ∈ C, pr c = 0 := fun c hc' => by
     have h0 : Submodule.linearProjOfIsCompl U (C ⊔ D) hc c = 0 :=
-      Submodule.linearProjOfIsCompl_apply_right' hc (Submodule.mem_sup_left hc')
+      Submodule.projectionOnto_apply_of_mem_right hc (Submodule.mem_sup_left hc')
     simp [pr, h0]
   have hform : ∀ c ∈ C, ∀ u ∈ U, pr (c + u) = u := fun c hc' u hu => by
-    rw [map_add, hprC c hc', hprU u hu, zero_add]
+    rw [map_add (f := _), hprC c hc', hprU u hu, zero_add]
   refine ⟨U, hUS, pr, ?_, fun f hf => ?_⟩
   · obtain ⟨c, hc', u, hu, e⟩ := Submodule.mem_sup.1 (hAle hψA)
     rw [← e, hform c hc' u hu]
@@ -93,7 +97,7 @@ private theorem proj_of_sum {G V : Type} [Group G] [AddCommGroup V] [Module ℂ 
     exact hψC (e ▸ hc')
   · obtain ⟨c, hc', u, hu, rfl⟩ := Submodule.mem_sup.1 (hAle hf)
     refine ⟨by rw [hform c hc' u hu]; exact hu, fun x => ?_⟩
-    rw [hform c hc' u hu, map_add, hform _ (hCs x c hc') _ (hUs x u hu)]
+    rw [hform c hc' u hu, map_add (f := _), hform _ (hCs x c hc') _ (hUs x u hu)]
 
 theorem UpperTheory.TP.projEx :
     UpperTheory.TP.ProjEx := by

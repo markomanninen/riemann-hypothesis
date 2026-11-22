@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.IsArchimedeanLocalEquivariantMap
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PolDense
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.IsArchimedeanLocalEquivariantMap
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PolDense
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ def MeasEx : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n : ℕ) (X : Spc F E n) (r s : ℕ), B.IsGood σ → X.IsHerm σ B r s →
     ∀ K : Subgroup (UA σ X.J), IsStab B K → ∃ m : LocMeas K, m.Is
 
-open Classical in
 
+open Classical in
 def ConeFacB : Prop :=
   ∃ e₁ e₂ : ℤˣ, ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (a b : ℕ) (G : Geo σ a (b + 2)) (G₁ : Geo σ a b) (H : Plane E (b + 2) b) (H' : Plane E (a + (b + 2)) (a + b)), CfgB B G G₁ H H' →
     ∀ e ei ev, IsEv B G.M' G₁.M' H.ι H'.ι (isoB H H') e → IsEvLoc G.M' G₁.M' e ei ev →
@@ -35,8 +39,8 @@ def ConeFacB : Prop :=
             (κ * ((idealVal X.ν H.𝔟 ^ (e₁ : ℤ) * idealVal X.ν H'.𝔟 ^ (e₂ : ℤ) : ℂˣ) : ℂ) * charL X.ν (X.S₀ : Set (Pl F)) ((((a - (b + 2)) / 2 + 1) : ℕ) : ℂ)) •
               pure (L f) fun v => if v ∈ T then Λ v (φ v) else G₁.M'.vac v
 
-open Classical in
 
+open Classical in
 def ConeFacA : Prop :=
   ∃ e₁ e₂ : ℤˣ, ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (b a' : ℕ) (G : Geo σ (b + 2) a') (G₁ : Geo σ b a') (H : Plane E (b + 2) b) (H' : Plane E (b + 2 + a') (b + a')), CfgA B G G₁ H H' →
     ∀ e ei ev, IsEv B G.M G₁.M H.ι H'.ι (isoA H H') e → IsEvLoc G.M G₁.M e ei ev →
@@ -112,11 +116,6 @@ def RealUniq : Prop :=
 def StepTy {a a' a₁ a₁' : ℕ} (G : Geo σ a a') (G₁ : Geo σ a₁ a₁') (X : Chars F E) (χ : Chr F E) (r : ℝ) : Prop :=
   (a₁ = a ∧ a₁' + 2 = a' ∧ G₁.p = G.p ∧ G₁.q + 1 = G.q ∧ χ = X.β ∧ r = a / 2) ∨
     (a₁ + 2 = a ∧ a₁' = a' ∧ G₁.p + 1 = G.p ∧ G₁.q = G.q ∧ χ = X.α ∧ r = a' / 2)
-
-def UnramifiedDeterminedBySpherical : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (a a' a₁ a₁' : ℕ) (G : Geo σ a a') (G₁ : Geo σ a₁ a₁') (X : Chars F E) om om' om₁ om₁' R Rf R₁ Rf₁
-    (H' : Plane E (a + a') (a₁ + a₁')) (i₀ i₁ : ℕ) χ r, IsMatched B G X om om' R Rf → IsMatched B G₁ X om₁ om₁' R₁ Rf₁ →
-    StepTy G G₁ X χ r → H'.IsAdapted σ B G.W G₁.W i₀ i₁ → ∀ v ∉ X.T, ∀ lam, IsFiniteLocalEquivariantMap om om₁ H' v χ r (Rf.p v) (Rf₁.p v) lam → lam (Rf.p v (G.M.vac v)) = 0 → lam = 0
 
 def RamifiedMultiplicityOne : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (a a' a₁ a₁' : ℕ) (G : Geo σ a a') (G₁ : Geo σ a₁ a₁') (X : Chars F E) om om' om₁ om₁' R Rf R₁ Rf₁

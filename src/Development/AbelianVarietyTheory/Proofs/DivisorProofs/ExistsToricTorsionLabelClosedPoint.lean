@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompleteLocalBaseAtClosedPointGroupImports
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsLastTail
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDominantOfGeneric
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValGPtOfStalk
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedPointCompletionPositiveResidueChar
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSemiAbelianOfGenericAbelianOfClosedIsGt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompleteLocalBaseAtClosedPointGroupImports
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsLastTail
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDominantOfGeneric
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValGPtOfStalk
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedPointCompletionPositiveResidueChar
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSemiAbelianOfGenericAbelianOfClosedIsGt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
@@ -36,7 +41,7 @@ theorem exists_label : ∀ (o' Ω : Type) [CommRing o'] [Field Ω] [Algebra o' �
     { toFun := fun χ => w ^ (lam (Multiplicative.toAdd χ)).val
       map_one' := by simp
       map_mul' := fun a b => by
-        rw [toAdd_mul, map_add, ZMod.val_add, ← pow_eq_pow_mod _ hw, pow_add] }
+        rw [toAdd_mul, map_add (f := _), ZMod.val_add, ← pow_eq_pow_mod _ hw, pow_add] }
   have hτ : τ ^ (S.r * S.N) = 1 := by
     refine MonoidHom.ext fun χ => ?_
     rw [MonoidHom.pow_apply, MonoidHom.one_apply]

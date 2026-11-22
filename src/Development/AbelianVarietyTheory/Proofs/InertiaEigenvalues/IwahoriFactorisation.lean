@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.UnipotentBorder
 
@@ -14,7 +18,7 @@ def IsLU {m : ℕ} (L : Matrix (Fin m) (Fin m) O) : Prop :=
 
 theorem udl_apply {m : ℕ} (U L : Matrix (Fin m) (Fin m) O) (d : Fin m → O) (i j : Fin m) :
     (U * diagonal d * L) i j = ∑ k, U i k * d k * L k j := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp only [mul_diagonal]
 
 theorem last_row {n : ℕ} {U L : Matrix (Fin (n+1)) (Fin (n+1)) O} (hU : IsUU U)

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.HasympAll
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.HasympAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,8 @@ theorem killB_multiHomog (T : Finset K) {s : MRing ι} {c : K → ℕ} (hs : IsM
   by_cases hT : ∃ k ∈ T, c k ≠ 0
   · left
     obtain ⟨k, hkT, hck⟩ := hT
-    rw [s.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [s.as_sum, map_sum]
     apply Finset.sum_eq_zero
     intro m hm
     have h := hs m hm k
@@ -51,16 +56,16 @@ theorem killB_multiHomog (T : Finset K) {s : MRing ι} {c : K → ℕ} (hs : IsM
     rw [killB_monomial, if_pos ⟨⟨k, i⟩, hkT, hi⟩]
   · right
     push_neg at hT
-    have key : ∀ m ∈ s.support, killB T (monomial m (coeff m s)) = monomial m (coeff m s) := by
+    have key : ∀ m ∈ s.support, killB T (monomial m (AddMonoidAlgebra.coeff s m)) = monomial m (AddMonoidAlgebra.coeff s m) := by
       intro m hm
       rw [killB_monomial, if_neg]
       rintro ⟨p, hpT, hp⟩
       have h := hs m hm p.1
       rw [hT p.1 hpT] at h
       exact hp ((Finset.sum_eq_zero_iff.mp h) p.2 (Finset.mem_univ _))
-    calc killB T s = killB T (∑ m ∈ s.support, monomial m (coeff m s)) := by rw [← s.as_sum]
-      _ = ∑ m ∈ s.support, killB T (monomial m (coeff m s)) := map_sum _ _ _
-      _ = ∑ m ∈ s.support, monomial m (coeff m s) := Finset.sum_congr rfl key
+    calc killB T s = killB T (∑ m ∈ s.support, monomial m (AddMonoidAlgebra.coeff s m)) := by rw [← s.as_sum]
+      _ = ∑ m ∈ s.support, killB T (monomial m (AddMonoidAlgebra.coeff s m)) := map_sum _ _ _
+      _ = ∑ m ∈ s.support, monomial m (AddMonoidAlgebra.coeff s m) := Finset.sum_congr rfl key
       _ = s := s.as_sum.symm
 
 theorem le_comap_killB {P : Ideal (MRing ι)} (hP : IsMultiHomogIdeal P) (T : Finset K) :

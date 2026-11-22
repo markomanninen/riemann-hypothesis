@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GluedLatticePrescribedLocalComponents
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatGlueLatIffDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GluedLatticePrescribedLocalComponents
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatGlueLatIffDual
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH NumberField IsDedekindDomain Matrix
 open Formalism.L2.DIV (Pl)
 open Formalism.IndefR.Lev (EAf)

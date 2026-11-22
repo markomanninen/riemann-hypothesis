@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KappaSumZeroAndStableSumMulZeroOfNotIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitLemmaResiduallyUnipotentViaCayley
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitLemmaResiduallyUnipotentCayleyTransform
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KappaSumZeroAndStableSumMulZeroOfNotIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitLemmaResiduallyUnipotentViaCayley
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitLemmaResiduallyUnipotentCayleyTransform
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem inv_small {O A : Type} [CommRing O] [IsLocalRing O] [CommRing A] [Algebr
   have hR : aeval D R = 0 := by
     have : aeval D R = algebraMap O A β ^ n * aeval g Q := by
       conv_rhs => rw [aeval_eq_sum_range, Finset.mul_sum]
-      simp only [R, map_sum, map_mul, map_pow, aeval_C, map_sub, aeval_X]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [R, map_sum, map_mul, map_pow, aeval_C, map_sub, aeval_X]
       refine Finset.sum_congr rfl fun i hi => ?_
       have hin : i ≤ n := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
       rw [Algebra.smul_def, hD]
@@ -35,7 +40,8 @@ theorem inv_small {O A : Type} [CommRing O] [IsLocalRing O] [CommRing A] [Algebr
     rw [← IsLocalRing.residue_ne_zero_iff_isUnit]
     have hb : IsLocalRing.residue O β = 0 := (IsLocalRing.residue_eq_zero_iff _).2 hβ
     have ha : IsLocalRing.residue O α ≠ 0 := (IsLocalRing.residue_ne_zero_iff_isUnit _).2 hα
-    simp only [R, eval_finsetSum, eval_mul, eval_C, eval_pow, eval_sub, eval_X, map_sum, map_mul, map_pow,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [R, eval_finsetSum, eval_mul, eval_C, eval_pow, eval_sub, eval_X, map_sum, map_mul, map_pow,
       map_sub, map_zero, hb]
     rw [Finset.sum_eq_single n]
     · simp [n, hQm.coeff_natDegree, ha]
@@ -87,8 +93,8 @@ theorem congruence_selfadj (B : InvAlg K) (a x y : K.O) (ha0 : a ≠ 0)
   have sa : B.σ (algebraMap K.O B.A a) = algebraMap K.O B.A a := by
     rw [σ_algebraMap, hac, ← IsScalarTower.algebraMap_apply]
   have h1 := congrArg B.σ hY
-  simp only [map_mul, map_sub, map_add, sx, sy, sa] at h1 hY hw
-  rw [map_add, map_one, map_mul, sa] at hu
+  simp only [map_mul, map_sub, map_add (f := _), sx, sy, sa] at h1 hY hw
+  rw [map_add (f := _), map_one, map_mul, sa] at hu
   set G := B.g
   set S := B.σ B.g
   set xA := algebraMap K.O B.A x

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DivDerZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DivDerZero
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,23 +24,27 @@ structure IsT (t : Fin n → Fin n → ℝ) : Prop where
   anti : ∀ a b, t b a = - t a b
   pm : ∀ a b, a ≠ b → t a b = 1 ∨ t a b = -1
 
-theorem isTournament_standard : IsT (t0 (n := n)) where
-  diag a := by simp [t0]
-  anti a b := by
+theorem isTournament_standard : IsT (t0 (n := n)) := by
+  constructor
+  · intro a
+    simp [t0]
+  · intro a b
     unfold t0
     split_ifs <;> first | (exfalso; simp only [Fin.lt_def] at *; omega) | norm_num
-  pm a b h := by
+  · intro a b h
     unfold t0
     have : (a : ℕ) ≠ b := fun e => h (Fin.ext e)
     split_ifs <;> first | (exfalso; simp only [Fin.lt_def] at *; omega) | norm_num
 
-theorem isT_tB {B : Finset (Fin n × Fin n)} (hB : ∀ p ∈ B, p.1 < p.2) : IsT (tB B) where
-  diag a := by simp [tB, t0]
-  anti a b := by
+theorem isT_tB {B : Finset (Fin n × Fin n)} (hB : ∀ p ∈ B, p.1 < p.2) : IsT (tB B) := by
+  constructor
+  · intro a
+    simp [tB, t0]
+  · intro a b
     have := isTournament_standard.anti a b
     simp only [tB, this]
     ring
-  pm a b h := by
+  · intro a b h
     have h1 : (a, b) ∈ B → (b, a) ∉ B := fun x y => by
       have := hB _ x; have := hB _ y; simp only [Fin.lt_def] at *; omega
     have h2 : (a, b) ∈ B → t0 a b = 1 := fun x => by
@@ -60,7 +68,7 @@ theorem cyc_eq {t : Fin n → Fin n → ℝ} (h : IsT t) (a c : Fin n) : cyc t a
   split_ifs with e
   · subst e; simp [h.diag]
   · rw [h.diag]
-    rcases h.pm c a e with x | x <;> simp [x, h.anti c a, h.diag]
+    rcases h.pm c a e with x | x <;> simp [x, h.anti c a]
 
 theorem cyc_le {t : Fin n → Fin n → ℝ} (h : IsT t) {a b c : Fin n} (hab : a ≠ b) (hbc : b ≠ c) (hca : c ≠ a) :
     cyc t a b c ≤ 1 := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 open Polynomial
@@ -21,7 +25,8 @@ theorem twistedTrace_equivariant_and_injective_of_groupDet :
   intro H K R _ _ _ _ _ _ st h1 hmul χ u hdet
   refine ⟨?_, ?_, ?_⟩
   · intro F g
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Fintype.sum_equiv (Equiv.mulRight g) _ _ fun h => ?_
     rw [map_smul, ← hmul, Equiv.coe_mulRight, smul_smul, ← Units.val_mul]
     congr 2
@@ -40,7 +45,8 @@ theorem twistedTrace_equivariant_and_injective_of_groupDet :
       (by rwa [Matrix.det_transpose]) F ?_
     funext g
     have h2 := congrArg (st g) h0
-    rw [map_sum, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h2
     have h3 : ((χ g : Kˣ) : K) • ∑ h, st (h * g) u * F h = 0 := by
       rw [← h2, Finset.smul_sum]
       refine Finset.sum_congr rfl fun h _ => ?_

@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 
@@ -98,7 +102,7 @@ private theorem sum_mul_count_eq_sum_sum_apply {n K : ℕ} (sz : Fin K → ℕ) 
 private theorem rowWt_bidetExp_eq_count {n K : ℕ} (sz : Fin K → ℕ) (hsz : ∀ k, sz k ≤ n)
     (I : ∀ k, Fin (sz k) → Fin n) (i : Fin n) :
     rowWt (bidetExp sz hsz I) i = ∑ k, ∑ p : Fin (sz k), if I k p = i then 1 else 0 := by
-  simp only [rowWt, rowDeg, bidetExp, Finsupp.finset_sum_apply, Finsupp.single_apply]
+  simp only [rowWt, rowDeg, bidetExp, Finsupp.finsetSum_apply, Finsupp.single_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Finset.sum_comm]
@@ -123,7 +127,7 @@ private theorem shapeDeg_rev_eq_count_of_shifted {n K : ℕ} (sz : Fin K → ℕ
 private theorem bidetExp_apply_eq_card_of_canonical {n K : ℕ} (sz : Fin K → ℕ) (hsz : ∀ k, sz k ≤ n)
     (I : ∀ k, Fin (sz k) → Fin n) (hcan : ∀ k p, (I k p : ℕ) + sz k = n + p) (i j : Fin n) :
     bidetExp sz hsz I (i, j) = (Finset.univ.filter fun k => sz k + (i : ℕ) = n + j).card := by
-  simp only [bidetExp, Finsupp.finset_sum_apply, Finsupp.single_apply]
+  simp only [bidetExp, Finsupp.finsetSum_apply, Finsupp.single_apply]
   rw [Finset.card_filter]
   refine Finset.sum_congr rfl fun k _ => ?_
   exact sum_ite_pair_castLE_eq_of_shifted_index (hsz k) (I k) (fun p => by have := hcan k p; have := hsz k; omega) i j

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Formalism.HermitianLattices.FinalNeighbourConstruct
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Formalism.HermitianLattices.FinalNeighbourConstruct
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
@@ -58,9 +62,11 @@ theorem finrank_le_of_span_range {K V E : Type} [Field K] [NumberField K] [AddCo
   let g : Fin (Module.finrank ℚ K) × Fin (Module.finrank K V) → E := fun p => ι (bK p.1 • bV p.2)
   have hsub : Set.range ι ⊆ Submodule.span ℝ (Set.range g) := by
     rintro _ ⟨v, rfl⟩
-    rw [← bV.sum_repr v, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← bV.sum_repr v, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
-    rw [← bK.sum_repr (bV.repr v j), Finset.sum_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← bK.sum_repr (bV.repr v j), Finset.sum_smul, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [Rat.smul_def, mul_smul, map_ratCast_smul ι K ℝ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨(i, j), rfl⟩)

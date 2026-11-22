@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat GlobalTheory.UnRep
 open scoped TensorProduct Matrix
@@ -28,7 +32,8 @@ theorem herm_smul_left (x w : Fin n → E) (e : E) :
   ring
 
 theorem herm_conj (h : IsHermForm c G) (x y : Fin n → E) : c (hermE c G x y) = hermE c G y x := by
-  simp only [hermE, map_sum, map_mul, h.1, h.2.2.1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermE, map_sum, map_mul, h.1, h.2.2.1]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
@@ -69,8 +74,8 @@ theorem exists_refl (h : IsHermForm c G) (x z : Fin n → E) (hz : hermE c G z z
 
 end GlobalTheory.UnRep.ReflStep
 
-open GlobalTheory.UnRep.ReflStep in
 
+open GlobalTheory.UnRep.ReflStep in
 theorem GlobalTheory.UnRep.exists_refl_prod_mulVec_eq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (c : E ≃ₐ[F] E) (n : ℕ) (G : Matrix (Fin n) (Fin n) E), IsHermForm c G → ∀ x z : Fin n → E, hermE c G x x ≠ 0 → hermE c G z z = hermE c G x x → ∃ l : List ((Fin n → E) × E), (∀ p ∈ l, hermE c G p.1 p.1 ≠ 0 ∧ p.2 * c p.2 = 1 ∧ p.1 ∈ Submodule.span E {x, z}) ∧ (l.map fun p => refl c G p.1 p.2).prod *ᵥ z = x := by
   intro F E _ _ _ _ _ c n G h x z hx hz
   have hxs : x ∈ Submodule.span E ({x, z} : Set (Fin n → E)) := Submodule.subset_span (by simp)

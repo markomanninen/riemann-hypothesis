@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.SchPhiOneApply
-import Mathlib
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.SchPhiOneApply
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -296,7 +300,8 @@ theorem exists_kIrreducible_highestWeight {N : Type*} [NormedAddCommGroup N] [In
     · simp [h1, h2, Ne.symm h1, Ne.symm h2]
   have hHr : ∀ a b x, H (A a b x) = A a b (H x) + (((b : ℕ) : ℂ) - ((a : ℕ) : ℂ)) • A a b x := by
     intro a b x
-    rw [← sub_eq_iff_eq_add', hH, hH, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sub_eq_iff_eq_add', hH, hH, map_sum, ← Finset.sum_sub_distrib]
     simp only [map_smul, ← smul_sub, hcomm1]
     simp only [smul_sub, smul_ite, smul_zero, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     rw [← sub_smul]
@@ -476,7 +481,7 @@ theorem partialSum_succ_alt (hU : IsKUnitary ε E) {Y : Type*} [AddCommGroup Y] 
   obtain ⟨hkS, hkf⟩ := hKmem k hk
   have hx : (WithLp.linearEquiv 2 ℂ (Fin n → D)) c = x₀ - (WithLp.linearEquiv 2 ℂ (Fin n → D)) k := by
     have h3 := congrArg (WithLp.linearEquiv 2 ℂ (Fin n → D)) hkc
-    rw [LinearEquiv.apply_symm_apply, map_add] at h3
+    rw [LinearEquiv.apply_symm_apply, map_add (f := _)] at h3
     rw [h3]
     abel
   have hxS : (WithLp.linearEquiv 2 ℂ (Fin n → D)) c ∈ S := by

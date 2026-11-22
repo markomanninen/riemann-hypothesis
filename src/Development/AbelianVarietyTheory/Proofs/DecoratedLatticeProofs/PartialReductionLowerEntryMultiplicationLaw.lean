@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChLApply
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatCompAffineMatrixStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IntegralCoordinateShearHaarLocalFieldStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChLApply
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatCompAffineMatrixStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IntegralCoordinateShearHaarLocalFieldStatement
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData
 
 noncomputable section
@@ -10,16 +15,16 @@ namespace GlobalTheory.PartRed.LowLaw
 section Alg
 variable {k : Type} [Field k] {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] {c : ℕ}
 
-omit [Fintype n'] [DecidableEq n'] in
 
+omit [Fintype n'] [DecidableEq n'] in
 theorem rowAdd_mul_apply (r l : Fin c) (a : k) (t : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k)
     (p : n ⊕ Fin c) (q : n' ⊕ Fin (c + 1)) :
     ((fromBlocks 1 0 0 (transvection r l a) : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k) * t) p q =
       t p q + if p = Sum.inr r then a * t (Sum.inr l) q else 0 := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   rcases p with p | p
-  · simp [Fintype.sum_sum_type, one_apply]
-  · simp [Fintype.sum_sum_type, transvection, add_mul, Finset.sum_add_distrib, one_apply, single_apply,
+  · simp [Fintype.sum_sum_type, Matrix.one_apply]
+  · simp [Fintype.sum_sum_type, transvection, add_mul, Finset.sum_add_distrib, Matrix.one_apply, single_apply,
       ite_and, eq_comm]
 
 theorem mem_trans {ρ : ℕ} {e : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1))} :
@@ -109,11 +114,11 @@ theorem embA_elem_mem (r l : Fin c) (h : r ≠ l) (hrl : r.val < l.val) (a : k) 
   intro r' s hrs
   rw [embA_elem_val]
   rcases r' with r' | r' <;> rcases s with s | s
-  · simp [one_apply]
-  · simp [one_apply]
-  · simp [one_apply]
+  · simp [Matrix.one_apply]
+  · simp [Matrix.one_apply]
+  · simp [Matrix.one_apply]
   · simp only [lev, Sum.elim_inr] at hrs
-    simp only [fromBlocks_apply₂₂, transvection, Matrix.add_apply, single_apply, one_apply, Sum.inr.injEq]
+    simp only [fromBlocks_apply₂₂, transvection, Matrix.add_apply, single_apply, Matrix.one_apply, Sum.inr.injEq]
     have : ¬ (r = r' ∧ l = s) := by
       rintro ⟨rfl, rfl⟩
       omega

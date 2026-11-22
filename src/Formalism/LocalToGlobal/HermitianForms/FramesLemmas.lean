@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem exists_isON_of_gram (σ : E →+* E) (emb : ι → E →+* ℂ) (hc : �
     intro τ
     rw [← hC]
     ext a b
-    simp only [gramC, atInf, Matrix.map_apply, Matrix.mul_apply, map_sum, map_mul, conjTranspose_apply, cT, Matrix.transpose_apply, hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [gramC, atInf, Matrix.map_apply, Matrix.mul_apply, map_sum, map_mul, conjTranspose_apply, cT, Matrix.transpose_apply, hc]
     rfl
   refine ⟨⟨fun τ => (atInf emb (C : Matrix (Fin n) (Fin n) E) τ)⁻¹, fun τ => ?_⟩, fun τ => Or.inl ?_⟩
   · rw [det_nonsing_inv]; exact (hu τ).ringInverse
@@ -64,11 +69,5 @@ theorem exists_isON_of_gram (σ : E →+* E) (emb : ι → E →+* ℂ) (hc : �
       Matrix.nonsing_inv_mul _ (by rw [det_conjTranspose]; exact (hu τ).star), Matrix.one_mul, Matrix.mul_nonsing_inv _ (hu τ)]
 
 end Gen
-
-theorem ValTied.exists_isON {D : D7} {u : D.what₂.Word} {eV : (D.mem u).A.vT ≃ PlT D u} {i : ℕ} {hi : i ≤ D.R.m}
-    {K : ClsTied u i hi} (W : ValTied u eV i hi K)
-    (hc : ∀ τ x, embT D τ (sigD D x) = starRingEnd ℂ (embT D τ x)) : ∃ o : Fr D i hi, o.IsON := by
-  obtain ⟨C, hC, -, -⟩ := W.de
-  exact exists_isON_of_gram (sigD D : D.host.E →+* D.host.E) (embT D) hc _ C hC
 
 end Formalism.L2.Forms

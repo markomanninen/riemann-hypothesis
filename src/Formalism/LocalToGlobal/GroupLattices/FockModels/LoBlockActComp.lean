@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,8 @@ theorem lo_blockAct_comp (K : Type) [CommRing K] {S : Type} {k n : ℕ} (M N : S
     (blockAct K (n := n) M).comp (blockAct K N) = blockAct K (fun s => N s * M s) := by
   apply MvPolynomial.algHom_ext
   intro v
-  simp only [AlgHom.comp_apply, blockAct, aeval_X, map_sum, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AlgHom.comp_apply, blockAct, aeval_X, map_sum, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
     Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun b _ => ?_

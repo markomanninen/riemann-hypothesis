@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotentsStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotentsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -180,8 +184,8 @@ theorem hatL_smul (Λ Λ' : Submodule (𝓞 E) (Fin n → E)) (N : ℕ) (h : ∀
   · intro c a _ ha
     rw [smul_comm]; exact Submodule.smul_mem _ c ha
 
-variable (F E) in
 
+variable (F E) in
 def swp : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F ⊗[F] E →+* E ⊗[F] Formalism.L2.Herm.Af F :=
   (Algebra.TensorProduct.comm F (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F) E).toAlgHom.toRingHom
 
@@ -209,7 +213,7 @@ theorem swp_int {z : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.A
     exact Subring.mul_mem _ (oToS F E x).2 (one_tmul_mem ha)
   · rw [map_zero]; exact Subring.zero_mem _
   · intro a b _ _ ha hb
-    rw [map_add]; exact Subring.add_mem _ ha hb
+    rw [map_add (f := _)]; exact Subring.add_mem _ ha hb
   · intro a _ ha
     rw [map_neg]; exact Subring.neg_mem _ ha
 
@@ -232,7 +236,7 @@ theorem latHat_iff (Λ : Submodule (𝓞 E) (Fin n → E))
       rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
     · simp only [Pi.zero_apply, map_zero]; exact Submodule.zero_mem _
     · intro a b _ _ ha hb
-      simp only [Pi.add_apply, map_add]; exact Submodule.add_mem _ ha hb
+      simp only [Pi.add_apply, map_add (f := _)]; exact Submodule.add_mem _ ha hb
     · intro a _ ha
       simp only [Pi.neg_apply, map_neg]; exact Submodule.neg_mem _ ha
   · have gen : ∀ (b : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F) (_ : b ∈ Formalism.MainNotions.StandardLattice.intAf F) (c : 𝓞 E), ∀ y ∈ H,
@@ -271,7 +275,7 @@ theorem latHat_iff (Λ : Submodule (𝓞 E) (Fin n → E))
       · intro a b _ _ ha hb t ht y hy
         obtain ⟨a', rfl⟩ := swp_bij.2 a
         obtain ⟨b', rfl⟩ := swp_bij.2 b
-        have : t = a' + b' := swp_bij.1 (by rw [ht, map_add])
+        have : t = a' + b' := swp_bij.1 (by rw [ht, map_add (f := _)])
         rw [this, add_smul]; exact add_mem (ha _ rfl y hy) (hb _ rfl y hy)
       · intro a _ ha t ht y hy
         obtain ⟨a', rfl⟩ := swp_bij.2 a
@@ -296,7 +300,7 @@ theorem latHat_iff (Λ : Submodule (𝓞 E) (Fin n → E))
         choose a' ha' using fun i => swp_bij.2 (a i)
         choose b' hb' using fun i => swp_bij.2 (b i)
         have : y = a' + b' := funext fun i => swp_bij.1 (by
-          rw [congrFun hy i, Pi.add_apply, Pi.add_apply, map_add, ha', hb'])
+          rw [congrFun hy i, Pi.add_apply, Pi.add_apply, map_add (f := _), ha', hb'])
         rw [this]; exact add_mem (ha _ (funext ha')) (hb _ (funext hb'))
       · intro c a _ ha y hy
         choose a' ha' using fun i => swp_bij.2 (a i)
@@ -327,7 +331,7 @@ theorem finSw_cA (z : Formalism.L2.Theta.AE D) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rfl
-  | add a b ha hb => rw [RingHom.map_add, RingHom.map_add, ha, hb, RingHom.map_add, RingHom.map_add]
+  | add a b ha hb => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), ha, hb, RingHom.map_add (f := _), RingHom.map_add (f := _)]
 
 theorem finE_mem_UA (V : HSp D) (g : GA D V) : finE V g ∈ UA D.sp.cm V.gram := by
   have h : Formalism.UG.cT (cA D) (Formalism.L2.Theta.mt V g) * V.gram.map (incA D) * Formalism.L2.Theta.mt V g =
@@ -371,7 +375,7 @@ theorem idem_div_int {P : HeightOneSpectrum (𝓞 D.host.E)} {e f : Formalism.L2
     rcases h with ⟨⟨_, h⟩, rfl⟩ | ⟨rfl, _, h⟩
     · have a1 := swapAE_int (not_not.1 fun hn => h1 ((h y y0).2 hn))
       have a2 := sigR_int (swapAE_int (not_not.1 fun hn => h2 ((h y' y0').2 hn)))
-      rw [add_mul, RingHom.map_add]
+      rw [add_mul, RingHom.map_add (f := _)]
       refine Subring.add_mem _ a1 ?_
       have : cA D e * incA D ((y : D.host.E)⁻¹) = cA D (e * incA D ((y' : D.host.E)⁻¹)) := by
         rw [map_mul]
@@ -497,8 +501,8 @@ theorem comp_gen {R : Type} [CommRing R] {S : Subring R} {n : ℕ} (H : Submodul
   rw [e3, Matrix.add_mulVec, Matrix.one_mulVec, Matrix.smul_mulVec, Matrix.sub_mulVec, Matrix.one_mulVec]
   exact H.add_mem hy (H.smul_mem u (H.sub_mem (h y hy) hy))
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem lev_split : ∀ {D : D7} (V : HSp D) (β : GL (Fin V.rank) (Formalism.IndefR.Lev.EAf D)) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (N : ℕ) (L : Formalism.L2.DIV.LevDat D.host.E ℂ V.rank), Formalism.IndefR.Lev.IsBaseFrame V β Λ N → (∀ k ∈ Formalism.IndefR.Lev.levG V β L, ∃ n : ℕ, 0 < n ∧ Formalism.IndefR.Lev.levChi V β L k ^ n = 1) ∧ ∀ (P : HeightOneSpectrum (𝓞 D.host.E)) e f, IsPrimeIdem P e f → ((N : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal → (∀ PP, PP ∈ L.Pg ∨ PP ∈ L.Q → PP ≠ P ∧ ¬ Formalism.IndefR.Lev.IsConjPl PP P) → (∀ g, SuppF V f g → (g ∈ Formalism.IndefR.Lev.levG V β L ↔ g ∈ KsphC V ∅)) ∧ (∀ g ∈ Formalism.IndefR.Lev.levG V β L, SuppF V f g → Formalism.IndefR.Lev.levChi V β L g = 1) ∧ ∀ k ∈ Formalism.IndefR.Lev.levG V β L, ∃ k₁ ∈ Formalism.IndefR.Lev.levG V β L, ∃ k₂ ∈ Formalism.IndefR.Lev.levG V β L, SuppF V f k₁ ∧ SuppF V (1 - f) k₂ ∧ k = k₁ * k₂ := by
   intro D V β Λ N L hB
   obtain ⟨hfr, -, -, h01, h10⟩ := hB

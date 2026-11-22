@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.FrameMemSG
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondProjSplitMulVec
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.StRedCore
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.FrameMemSG
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondProjSplitMulVec
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.StRedCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,46 +16,6 @@ open scoped TensorProduct
 section Reindex
 
 variable {K : Type} [Field K] {n ι : Type} [Fintype n] [DecidableEq n] [Fintype ι] [DecidableEq ι] {m : ℕ}
-
-private theorem linearEquiv_mem_span_image_of_mem_span {𝕜 A B : Type} [Field 𝕜] [AddCommGroup A] [Module 𝕜 A]
-    [AddCommGroup B] [Module 𝕜 B] (f : A ≃ₗ[𝕜] B) (T : Set A) (x : A)
-    (hx : x ∈ Submodule.span 𝕜 T) : f x ∈ Submodule.span 𝕜 (f '' T) := by
-  have h : Submodule.span 𝕜 T ≤ (Submodule.span 𝕜 (f '' T)).comap (f : A →ₗ[𝕜] B) := by
-    rw [Submodule.span_le]
-    intro t ht
-    show f t ∈ Submodule.span 𝕜 (f '' T)
-    exact Submodule.subset_span ⟨t, ht, rfl⟩
-  exact h hx
-
-theorem flagC_reindex (e : n ≃ ι) (M : Matrix n n K) (v : Fin m → n → K) :
-    FlagC (Matrix.reindex e e M) (fun b => v b ∘ e.symm) ↔ FlagC M v := by
-  have hmv : ∀ w : n → K, Matrix.reindex e e M *ᵥ (w ∘ e.symm) = (M *ᵥ w) ∘ e.symm := by
-    intro w
-    funext i
-    simp only [Matrix.mulVec, dotProduct, Matrix.reindex_apply, Matrix.submatrix_apply,
-      Function.comp_apply]
-    exact Fintype.sum_equiv e.symm _ _ (fun _ => rfl)
-  let L : (n → K) ≃ₗ[K] (ι → K) := LinearEquiv.funCongrLeft K K e.symm
-  have hL : ∀ w : n → K, L w = w ∘ e.symm := fun _ => rfl
-  unfold FlagC
-  apply forall_congr'
-  intro b
-  show Matrix.reindex e e M *ᵥ (v b ∘ e.symm) - v b ∘ e.symm ∈
-      Submodule.span K ((fun c => v c ∘ e.symm) '' {a | a < b}) ↔
-      M *ᵥ v b - v b ∈ Submodule.span K (v '' {a | a < b})
-  have himg : (fun c => v c ∘ e.symm) '' {a | a < b} = L '' (v '' {a | a < b}) := by
-    rw [Set.image_image]
-    try rfl
-  have hw : Matrix.reindex e e M *ᵥ (v b ∘ e.symm) - v b ∘ e.symm = L (M *ᵥ v b - v b) := by
-    rw [hmv, map_sub, hL, hL]
-  rw [himg, hw]
-  constructor
-  · intro h
-    have h2 := linearEquiv_mem_span_image_of_mem_span L.symm _ _ h
-    first
-      | rwa [LinearEquiv.symm_apply_apply, LinearEquiv.symm_image_image] at h2
-      | simpa [Set.image_image] using h2
-  · exact linearEquiv_mem_span_image_of_mem_span L _ _
 
 end Reindex
 
@@ -111,9 +75,13 @@ private theorem mem_span_image_iff_pr1_pr2_mem_span {ι : Type} [Fintype ι] (s 
   · rintro ⟨c, rfl⟩
     refine ⟨⟨fun i => (θ (c i)).1, ?_⟩, ⟨fun i => (θ (c i)).2, ?_⟩⟩
     · rw [map_sum]
-      simp only [h1]
+      apply Finset.sum_congr rfl
+      intro i hi
+      exact (h1 (c i) (u ↑i)).symm
     · rw [map_sum]
-      simp only [h2]
+      apply Finset.sum_congr rfl
+      intro i hi
+      exact (h2 (c i) (u ↑i)).symm
   · rintro ⟨⟨a, ha⟩, ⟨b, hb⟩⟩
     refine ⟨fun i => θ.symm (a i, b i), ?_⟩
     apply hinj
@@ -128,14 +96,16 @@ private theorem pr1_lin_eq_cmp1_mulVec (g : HA R σ J) (v : Fin n → R ⊗[F] E
     pr1 θ (lin R σ J g v) = cmp1 σ J θ g *ᵥ pr1 θ v := by
   have hp : ∀ (w : Fin n → R ⊗[F] E) (k : Fin n), pr1 θ w k = (θ (w k)).1 := fun _ _ => rfl
   funext i
-  simp only [hp, lin, Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct, cmp1, Matrix.map_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hp, lin, Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct, cmp1, Matrix.map_apply,
     map_sum, Prod.fst_sum, map_mul, Prod.fst_mul]
 
 private theorem pr2_lin_eq_cmp2_mulVec (g : HA R σ J) (v : Fin n → R ⊗[F] E) :
     pr2 θ (lin R σ J g v) = cmp2 σ J θ g *ᵥ pr2 θ v := by
   have hp : ∀ (w : Fin n → R ⊗[F] E) (k : Fin n), pr2 θ w k = (θ (w k)).2 := fun _ _ => rfl
   funext i
-  simp only [hp, lin, Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct, cmp2, Matrix.map_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hp, lin, Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct, cmp2, Matrix.map_apply,
     map_sum, Prod.snd_sum, map_mul, Prod.snd_mul]
 
 theorem mem_Ssub_iff_flagC {r : ℕ} (P : Frame E n r) (g : HA R σ J) :

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.CardStepOf
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.CardStepOf
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UJClassMass Formalism.HermitianLatticesTheory Formalism.ThetaLiftIndependence
 
@@ -13,10 +17,10 @@ def LSLat : Prop :=
     (h : V →ₗ⋆[E] V →ₗ[E] E) (M : ℕ) (b : Module.Basis (Fin M) E V) (L0 : Submodule (𝓞 E) V),
     (∀ a, σ a = star a) → (∃ θ : E, σ θ ≠ θ) →
     (∀ (τ : E →+* ℂ) (a : E), τ (star a) = starRingEnd ℂ (τ a)) →
-    h.IsSymm → h.Nondegenerate → Submodule.IsLattice E L0 →
+    h.IsSymm → h.Nondegenerate → Submodule.IsFullLattice E L0 →
     (∀ τ : E →+* ℂ, HasSignature ((gramOf h b).map τ) M 0) →
     ∀ g : HA (AF F) σ (gramOf h b), ∃ N : Submodule (𝓞 E) V,
-      (N : Set V) = latSet σ (gramOf h b) b L0 g ∧ Submodule.IsLattice E N
+      (N : Set V) = latSet σ (gramOf h b) b L0 g ∧ Submodule.IsFullLattice E N
 
 def LSOne : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E]
@@ -25,7 +29,7 @@ def LSOne : Prop :=
     (h : V →ₗ⋆[E] V →ₗ[E] E) (M : ℕ) (b : Module.Basis (Fin M) E V) (L0 : Submodule (𝓞 E) V),
     (∀ a, σ a = star a) → (∃ θ : E, σ θ ≠ θ) →
     (∀ (τ : E →+* ℂ) (a : E), τ (star a) = starRingEnd ℂ (τ a)) →
-    h.IsSymm → h.Nondegenerate → Submodule.IsLattice E L0 →
+    h.IsSymm → h.Nondegenerate → Submodule.IsFullLattice E L0 →
     (∀ τ : E →+* ℂ, HasSignature ((gramOf h b).map τ) M 0) →
     PI.UnitaryGroupMassFormula.UJClassFin.abelian₂ σ (gramOf h b) (crdOf b L0) 1 = crdOf b L0
 
@@ -36,7 +40,7 @@ def LSLoc : Prop :=
     (h : V →ₗ⋆[E] V →ₗ[E] E) (M : ℕ) (b : Module.Basis (Fin M) E V) (L0 : Submodule (𝓞 E) V),
     (∀ a, σ a = star a) → (∃ θ : E, σ θ ≠ θ) →
     (∀ (τ : E →+* ℂ) (a : E), τ (star a) = starRingEnd ℂ (τ a)) →
-    h.IsSymm → h.Nondegenerate → Submodule.IsLattice E L0 →
+    h.IsSymm → h.Nondegenerate → Submodule.IsFullLattice E L0 →
     (∀ τ : E →+* ℂ, HasSignature ((gramOf h b).map τ) M 0) →
     ∀ (g : HA (AF F) σ (gramOf h b)) (p : Ideal (𝓞 E)), p.IsMaximal →
       ∃ γ : GamG σ (gramOf h b), ∀ x : Fin M → E,

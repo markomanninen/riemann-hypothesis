@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalLog
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsClosedDerivativeFamiliesModerateGrowthStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalLog
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsClosedDerivativeFamiliesModerateGrowthStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ def act (h : ModRep ε ρ) {g : Mx n} (hg : g ∈ UJset ε) : Fam ε ρ →L[ℂ
         exp_mul_eq (isUnit_of_UJ hg)]
       rfl,
     fun l₁ l₂ a Y Z => by
-      simp only [List.map_append, List.map_cons, adInv_lin, v.2.2.1, map_add, map_smul],
+      simp only [List.map_append, List.map_cons, adInv_lin, v.2.2.1, map_add (f := _), map_smul],
     fun l₁ l₂ Y Z T hT => by
       simp only [List.map_append, List.map_cons, ← map_sub, v.2.2.2 _ _ _ _ _ (adInv_br hg hT)]⟩
   map_add' _ _ := Subtype.ext <| funext fun _ => map_add (ρ g) _ _
@@ -113,14 +117,14 @@ theorem continuous_sn (b : Fin d → lie (Jm ε)) (k : ℕ) : Continuous (sn ρ 
   | zero => exact (continuous_eval []).norm
   | succ k ih =>
     rw [show ⇑(sn ρ b (k + 1)) = _ from funext (sn_succ b k)]
-    exact continuous_finset_sum _ fun j _ => ih.comp (der ρ (b j)).continuous
+    exact continuous_finsetSum _ fun j _ => ih.comp (der ρ (b j)).continuous
 
 def sz (φ : Fin d → (Mx n →ₗ[ℝ] ℝ)) (X : Mx n) : ℝ := ∑ j, |φ j X|
 
 theorem sz_nonneg (φ : Fin d → (Mx n →ₗ[ℝ] ℝ)) (X : Mx n) : 0 ≤ sz φ X := Finset.sum_nonneg fun _ _ => abs_nonneg _
 
 theorem continuous_sz (φ : Fin d → (Mx n →ₗ[ℝ] ℝ)) : Continuous (sz φ) :=
-  continuous_finset_sum _ fun j _ => (φ j).continuous_of_finiteDimensional.abs
+  continuous_finsetSum _ fun j _ => (φ j).continuous_of_finiteDimensional.abs
 
 theorem exists_sz_le (φ : Fin d → (Mx n →ₗ[ℝ] ℝ)) : ∃ C, 0 ≤ C ∧ ∀ X, sz φ X ≤ C * (1 + hs X) := by
   letI : NormedAddCommGroup (Mx n) := Matrix.normedAddCommGroup
@@ -233,7 +237,8 @@ theorem br_mem (X Y : lie (Jm ε)) : (Y * X - X * Y : Mx n) ∈ lie (Jm ε) := b
 
 theorem map_der_eq (hb : ∀ X : lie (Jm ε), ∑ j, φ j X • b j = X) (T : Fam ε ρ →L[ℂ] Fam ε ρ) (X : lie (Jm ε))
     (v : Fam ε ρ) (l : List (lie (Jm ε))) : (T (der ρ X v)).1 l = ∑ j, φ j X • (T (der ρ (b j) v)).1 l := by
-  rw [der_eq hb, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [der_eq hb, map_sum]
   simp only [map_smul, Submodule.coe_sum, Finset.sum_apply, Submodule.coe_smul, Pi.smul_apply]
   simp only [Complex.coe_smul]
 
@@ -279,12 +284,12 @@ theorem continuous_mexp : Continuous (NormedSpace.exp : Mx n → Mx n) := by
   letI := Matrix.linftyOpNormedAlgebra (R := ℝ) (n := Fin n) (α := ℂ)
   exact continuous_iff_continuousAt.2 fun x => (NormedSpace.exp_analytic (𝕂 := ℝ) x).continuousAt
 
-open Classical in
 
+open Classical in
 def piOp (h : ModRep ε ρ) (g : Mx n) : Fam ε ρ →L[ℂ] Fam ε ρ := if hg : g ∈ UJset ε then act h hg else 1
 
-open Classical in
 
+open Classical in
 def dpiOp (ε : Fin n → Bool) (ρ : Mx n → (E →L[ℂ] E)) (X : Mx n) : Fam ε ρ →L[ℂ] Fam ε ρ :=
   if hX : X ∈ lie (Jm ε) then der ρ ⟨X, hX⟩ else 0
 

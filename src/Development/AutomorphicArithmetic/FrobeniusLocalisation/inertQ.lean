@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdTameWild
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.MemRam
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdTameWild
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.MemRam
+
+@[expose] public section
 
 open UpperTheory.HF
 

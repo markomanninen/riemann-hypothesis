@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ def inertG (l : ℕ) : Subgroup φ.GG := H.imgOne (ordCompl[l] H.condN)
 
 def el (l : ℕ) : ℕ := Nat.card (H.inertG l)
 
-open Classical in
 
+open Classical in
 def artL (l : ℕ) : φ.GG :=
   if h : ∃ u : (ZMod H.condN)ˣ, (u : ZMod H.condN).val ≡ l [MOD ordCompl[l] H.condN] ∧
       (u : ZMod H.condN).val ≡ 1 [MOD ordProj[l] H.condN] then H.art h.choose else 1
@@ -40,8 +44,6 @@ def smallR : Finset ℕ := H.small ∩ H.ram
 def rad : ℕ := ∏ l ∈ H.ram, l
 
 def QSc : ℕ := ∏ l ∈ H.smallR, l ^ H.sl l
-
-def eL : ℕ := sInf {m : ℕ | 0 < m ∧ (m : NumberField.RingOfIntegers H.E) ∈ differentIdeal ℤ (NumberField.RingOfIntegers H.E)}
 
 theorem mem_unitsOne {f : ℕ} (hf : f ∣ H.condN) (u : (ZMod H.condN)ˣ) :
     u ∈ H.unitsOne f ↔ (u : ZMod H.condN).val ≡ 1 [MOD f] := by

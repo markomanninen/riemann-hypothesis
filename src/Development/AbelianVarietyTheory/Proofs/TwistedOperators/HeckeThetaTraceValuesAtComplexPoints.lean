@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AbsGeneratorRatioEqOneOfUnitFrameMove
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeIsogenyLiftsToLatticeMapScalingForms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AbsGeneratorRatioEqOneOfUnitFrameMove
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeIsogenyLiftsToLatticeMapScalingForms
+
+@[expose] public section
+
 open NumberField AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.HeckeEx
 open GlobalTheory.Dict (castFr)
 open GlobalTheory.FrameNorm (IsUnitFr)
@@ -197,7 +202,8 @@ theorem bv_values (hβ : β.IsGen) (hβ₀ : β₀.IsGen) {s : LB.Sec (LPow A L.
     Set.mem_iInter.2 fun _ => by
       show (rpt ψa ≫ (snd (Over.mk x') A).left) cpt ∈ L.L.U i
       rw [rpt_snd]; exact hi
-  rw [← ev_gs (rpt ψa) _ ml (s'.f fun _ => i), ← hl, H, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← ev_gs (rpt ψa) _ ml (s'.f fun _ => i), ← hl, H, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [rpt_transl]
   set c := cr m * a with hc

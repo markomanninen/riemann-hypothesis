@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TypeSlice
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.OrbZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeCentralizerComm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapQrOneBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TypeSlice
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.OrbZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeCentralizerComm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapQrOneBijective
+
+@[expose] public section
 
 set_option autoImplicit false
 

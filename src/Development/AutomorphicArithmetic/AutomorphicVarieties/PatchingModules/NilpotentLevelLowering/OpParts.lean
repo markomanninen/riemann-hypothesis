@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.PsModule
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.PsLinSmall
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.SpLocIdem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.FreeSummand
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TopNilMapMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.ChiApi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.PairMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.PsModule
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.PsLinSmall
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.SpLocIdem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.FreeSummand
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TopNilMapMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.ChiApi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.PairMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N ValuativeRel IsLocalRing
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
@@ -59,7 +63,7 @@ theorem nilPart {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ]
       add_mem' := by
         intro a b ha hb
         show e (a + b) = a + b
-        rw [map_add, show e a = a from ha, show e b = b from hb]
+        rw [map_add (f := _), show e a = a from ha, show e b = b from hb]
       zero_mem' := by
         show e 0 = 0
         exact map_zero e
@@ -313,7 +317,7 @@ theorem quotPart {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ
       rw [MvPolynomial.rename_C, hC1, hCw, map_smul]
     · rename_i p1 p2 hp1 hp2
       intro m
-      simp only [map_add, LinearMap.add_apply, hp1, hp2]
+      simp only [map_add (f := _), LinearMap.add_apply, hp1, hp2]
     · rename_i p1 s hp1
       intro m
       simp only [map_mul, MvPolynomial.rename_X, Module.End.mul_apply]
@@ -329,13 +333,13 @@ theorem quotPart {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ
       · intro n
         rw [zero_smul, map_zero, map_zero]
       · intro x w _ _ hx hw n
-        rw [add_smul, map_add, map_add, hx, hw, add_zero]
+        rw [add_smul, map_add (f := _), map_add (f := _), hx, hw, add_zero]
       · intro a x _ hx n
         rw [smul_eq_mul, mul_comm, mul_smul]
         exact hx _
     refine Submodule.smul_induction_on hn (fun b hb n _ => key b hb n) ?_
     intro a b ha hb
-    rw [map_add, map_add, ha, hb, add_zero]
+    rw [map_add (f := _), map_add (f := _), ha, hb, add_zero]
   have hprJ : ∀ m, tr m = 0 → pr m ∈ J := by
     intro m hm
     rw [← LinearMap.mem_ker, hker] at hm
@@ -349,7 +353,7 @@ theorem quotPart {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ
       exact Submodule.zero_mem _
     · intro a b ha hb
       show pr (a + b) ∈ J
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ ha hb
   obtain ⟨j, hj0⟩ := exLift J.mkQ.toAddMonoidHom J.mkQ_surjective
     (tr.toAddMonoidHom.comp i.toAddMonoidHom)
@@ -477,7 +481,7 @@ theorem tensSec {B A A' M : Type} [CommRing B] [CommRing A] [Algebra B A] [CommR
   | tmul a m =>
     rw [LinearMap.rTensor_tmul, LinearMap.comp_apply, AlgHom.toLinearMap_apply, hsL,
       TensorProduct.smul_tmul', smul_eq_mul]
-  | add x y hx hy => rw [map_add, smul_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), smul_add, hx, hy]
 
 theorem nilMap {Λ V V' : Type} [CommRing Λ] [AddCommGroup V] [Module Λ V] [AddCommGroup V'] [Module Λ V']
     (I : Ideal Λ) (f : V →+ V') (hf : ∀ (c : Λ) v, f (c • v) = c • f v) {v : V} (hv : v ∈ (I • ⊤ : Submodule Λ V)) :
@@ -512,7 +516,7 @@ private theorem module_finite_mSplitAlg_of_monic {B κ : Type} [CommRing B] [Fin
     obtain ⟨p, rfl⟩ := Ideal.Quotient.mk_surjective x
     induction p using MvPolynomial.induction_on
     · exact isIntegral_algebraMap
-    · rw [map_add]
+    · rw [map_add (f := _)]
       exact IsIntegral.add ‹_› ‹_›
     · rw [map_mul]
       exact IsIntegral.mul ‹_› (hroot _ _)
@@ -578,7 +582,7 @@ theorem spPart {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ] 
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a m => simp [Pt, TensorProduct.smul_tmul', LinearMap.rTensor_tmul]
-    | add y w hy hw => rw [smul_add, map_add, hy, hw, map_add, smul_add]
+    | add y w hy hw => rw [smul_add, map_add (f := _), hy, hw, map_add (f := _), smul_add]
   have hπe : π e = 1 := by
     have h0 : 1 - e ∈ RingHom.ker π := by
       rw [he2]
@@ -615,7 +619,7 @@ theorem spPart {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ] 
     intro j i
     have hc : Sp.mk P ub (MvPowerSeries.C (ub j i)) = algebraMap B (Sp P ub) (ub j i) :=
       (Sp.mk P ub).commutes (ub j i)
-    rw [map_sub, hπ1, AlgHom.commutes, Sp.u, map_add, hc, add_sub_cancel_left]
+    rw [map_sub, hπ1, AlgHom.commutes, Sp.u, map_add (f := _), hc, add_sub_cancel_left]
   have hpowW : ∀ (x : PU R q n) (r : ℕ) (w : W), (((act x).restrictScalars Λ) ^ r) w = act (x ^ r) w := by
     intro x r w
     rw [map_pow, Module.End.pow_apply, Module.End.pow_apply]
@@ -665,7 +669,7 @@ theorem spPart {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ] 
     simp only [map_pow]
     rw [hτ, pow_add, mul_comm, ← smul_smul]
     apply nilMap _ φ hφΛ
-    exact nilMap (maximalIdeal Λ ^ k) (DistribMulAction.toAddMonoidHom (MSplitAlg P n ⊗[B] M)
+    exact nilMap (maximalIdeal Λ ^ k) (DistribSMul.toAddMonoidHom (MSplitAlg P n ⊗[B] M)
       ((MSplitAlg.root P n j i - algebraMap B (MSplitAlg P n) (ub j i)) ^ s))
       (fun c w => smul_comm _ c w) ((mem_map_algebraMap_smul_top_iff_mem_smul_top _ _).mp hd)
   · intro v hv

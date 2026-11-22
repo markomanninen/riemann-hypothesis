@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -15,7 +20,7 @@ theorem constantCoeff_eq_zero_of_isProjPrime {F : Type*} [Field F] {n : ℕ}
   rw [homogeneousComponent_zero] at h0
   apply hP.isPrime.ne_top
   refine Ideal.eq_top_of_isUnit_mem _ h0 ?_
-  have hc : coeff 0 f ≠ 0 := by simpa [constantCoeff] using h
+  have hc : AddMonoidAlgebra.coeff f 0 ≠ 0 := by simpa [constantCoeff] using h
   exact hc.isUnit.map C
 
 theorem one_le_of_isProjPrime {F : Type*} [Field F] {n k : ℕ}
@@ -46,8 +51,9 @@ theorem ChowFormExists.proof (h₁ : IncIdealDim.Statement) (h₂ : IncIdealPrim
   have hQ : (incIdeal P k).IsPrime := h₂ F n k P hP.isPrime hP.isRelevant
   have hdimQ := h₁ F n k (k - 1) P hP (by rw [Nat.sub_add_cancel hk]; exact hdim)
   have hS : ringKrullDim (MvPolynomial (Fin k × Fin n) F) = ((k * n : ℕ) : WithBot ℕ∞) := by
-    rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field,
+    rw [MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, ringKrullDim_eq_zero_of_field,
       Nat.card_eq_fintype_card, Fintype.card_prod, Fintype.card_fin, Fintype.card_fin, zero_add]
+  letI : (incIdeal P k).IsPrime := hQ
   have hsum := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient F (incIdeal P k)
   rw [hdimQ, hS] at hsum
   have hkn : k ≤ k * n := Nat.le_mul_of_pos_right k hn

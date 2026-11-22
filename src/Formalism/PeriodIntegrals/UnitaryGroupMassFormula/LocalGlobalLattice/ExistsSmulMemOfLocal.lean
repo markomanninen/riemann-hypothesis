@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.LatLocGlob
-import Lemmata.GeneralBFactThirdBisAlt.Imports
+module
+
+public import Formalism.PeriodIntegrals.LatLocGlob
+public import Lemmata.GeneralBFactThirdBisAlt.Imports
+
+@[expose] public section
 
 noncomputable section
 

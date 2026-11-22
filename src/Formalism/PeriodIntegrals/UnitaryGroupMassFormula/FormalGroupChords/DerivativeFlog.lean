@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FglChordFactor
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.DXEqDerivative
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.DvCoeffMulEqZeroOfLtOrder
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.GlueHoldsVar
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.NormDeltaWc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.SubstPairSecondVariable
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FglChordFactor
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.DXEqDerivative
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.DvCoeffMulEqZeroOfLtOrder
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.GlueHoldsVar
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.NormDeltaWc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.SubstPairSecondVariable
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem subst_isWq {W : WeierstrassCurve ℂ_[p]} {wq t : PowerSeries ℂ_[p]} (
   have hX : PowerSeries.substAlgHom ht (PowerSeries.X : PowerSeries ℂ_[p]) = t := by
     rw [← hφ, PowerSeries.subst_X ht]
   conv_lhs => rw [h']
-  simp only [hφ, map_add, map_mul, map_pow, map_one, AlgHom.commutes, hX]
+  simp only [hφ, map_add (f := _), map_mul, map_pow, map_one, AlgHom.commutes, hX]
 
 theorem fix_unique {a₁ a₂ a₃ a₄ a₆ : ℂ_[p]} {t V₁ V₂ : PowerSeries ℂ_[p]} (ht : PowerSeries.constantCoeff t = 0)
     (h₁ : V₁ = 1 + cP a₁ * t * V₁ + cP a₂ * t ^ 2 * V₁ + cP a₃ * t ^ 3 * V₁ ^ 2 + cP a₄ * t ^ 4 * V₁ ^ 2 +
@@ -98,13 +102,13 @@ theorem wq_iW {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : IsW
           - (i * D) ^ 2 * PowerSeries.X ^ 3 + i * D * PowerSeries.X ^ 4 - PowerSeries.X ^ 5)) * e
       + hw + wq * (D + 1) * hD
 
-theorem dX_eq (f : PowerSeries ℂ_[p]) : dX f = PowerSeries.derivative ℂ_[p] f := by
+theorem dX_eq (f : PowerSeries ℂ_[p]) : dX f = PowerSeries.derivative (R := ℂ_[p]) f := by
   ext n
   rw [dX, PowerSeries.coeff_mk, PowerSeries.coeff_derivative]
   ring
 
 theorem derivative_flog' (W : WeierstrassCurve ℂ_[p]) (wq : PowerSeries ℂ_[p]) :
-    PowerSeries.derivative ℂ_[p] (flog W wq) = omegaW W wq := by
+    PowerSeries.derivative (R := ℂ_[p]) (flog W wq) = omegaW W wq := by
   ext n
   rw [PowerSeries.coeff_derivative, flog, PowerSeries.coeff_mk, if_neg (Nat.succ_ne_zero n), Nat.add_sub_cancel]
   push_cast
@@ -117,7 +121,7 @@ theorem flog_const (W : WeierstrassCurve ℂ_[p]) (wq : PowerSeries ℂ_[p]) :
 theorem omega_mul {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : IsWq W wq) :
     omegaW W wq * (wq * (algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₁ * PowerSeries.X +
       algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₃ * PowerSeries.X ^ 3 * wq - 2)) =
-      -2 * wq - PowerSeries.X * PowerSeries.derivative ℂ_[p] wq := by
+      -2 * wq - PowerSeries.X * PowerSeries.derivative (R := ℂ_[p]) wq := by
   have hM : PowerSeries.constantCoeff (wq * (algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₁ * PowerSeries.X +
       algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₃ * PowerSeries.X ^ 3 * wq - 2)) ≠ 0 := by
     have h2 : PowerSeries.constantCoeff (2 : PowerSeries ℂ_[p]) = 2 := map_ofNat _ 2
@@ -125,7 +129,7 @@ theorem omega_mul {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h :
   simp only [omegaW]
   rw [mul_assoc, PowerSeries.inv_mul_cancel _ hM, mul_one, dX_eq]
 
-theorem deriv_ext {f g : PowerSeries ℂ_[p]} (hd : PowerSeries.derivative ℂ_[p] f = PowerSeries.derivative ℂ_[p] g)
+theorem deriv_ext {f g : PowerSeries ℂ_[p]} (hd : PowerSeries.derivative (R := ℂ_[p]) f = PowerSeries.derivative (R := ℂ_[p]) g)
     (h0 : PowerSeries.constantCoeff f = PowerSeries.constantCoeff g) : f = g := by
   ext n
   rcases n with _ | n
@@ -137,13 +141,13 @@ theorem deriv_ext {f g : PowerSeries ℂ_[p]} (hd : PowerSeries.derivative ℂ_[
     | exact mul_right_cancel₀ (Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n)) e
 
 private theorem derivative_subst_eq_subst_derivative_mul (a f : PowerSeries ℂ_[p]) (ha : PowerSeries.HasSubst a) :
-    PowerSeries.derivative ℂ_[p] (PowerSeries.subst a f) =
-      PowerSeries.subst a (PowerSeries.derivative ℂ_[p] f) * PowerSeries.derivative ℂ_[p] a := by
-  have hpd : ∀ g : PowerSeries ℂ_[p], MvPowerSeries.pderiv ℂ_[p] () g = PowerSeries.derivative ℂ_[p] g := by
+    PowerSeries.derivative (R := ℂ_[p]) (PowerSeries.subst a f) =
+      PowerSeries.subst a (PowerSeries.derivative (R := ℂ_[p]) f) * PowerSeries.derivative (R := ℂ_[p]) a := by
+  have hpd : ∀ g : PowerSeries ℂ_[p], MvPowerSeries.pderiv (R := ℂ_[p]) () g = PowerSeries.derivative (R := ℂ_[p]) g := by
     intro g
     refine PowerSeries.ext fun n => ?_
     rw [PowerSeries.coeff_derivative]
-    show MvPowerSeries.coeff (Finsupp.single () n) (MvPowerSeries.pderiv ℂ_[p] () g) = _
+    show MvPowerSeries.coeff (Finsupp.single () n) (MvPowerSeries.pderiv (R := ℂ_[p]) () g) = _
     rw [MvPowerSeries.coeff_pderiv, ← Finsupp.single_add, Finsupp.single_eq_same]
     rfl
   have := PI.AddIntG.Wk.pderiv_subst (σ := Unit) ha f ()
@@ -163,18 +167,18 @@ theorem flog_iW {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : I
     have hD0 : Dser W wq = 1 - (cP W.a₁ * PowerSeries.X + cP W.a₃ * PowerSeries.X ^ 3 * wq) := rfl
     have hom := omega_mul h
     have hom' := congrArg (PowerSeries.substAlgHom hs) hom
-    simp only [map_add, map_sub, map_mul, map_pow, map_neg, map_ofNat, AlgHom.commutes, hX] at hom'
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_neg, map_ofNat, AlgHom.commutes, hX] at hom'
     simp only [← hφ] at hom'
     rw [hwi] at hom'
     have hcw := derivative_subst_eq_subst_derivative_mul (iW W wq) wq hs
     rw [hwi] at hcw
-    have hdwD : PowerSeries.derivative ℂ_[p] (wq * Dser W wq ^ 2) =
-        PowerSeries.derivative ℂ_[p] wq * Dser W wq ^ 2 +
-          wq * (2 * Dser W wq * PowerSeries.derivative ℂ_[p] (Dser W wq)) := by
+    have hdwD : PowerSeries.derivative (R := ℂ_[p]) (wq * Dser W wq ^ 2) =
+        PowerSeries.derivative (R := ℂ_[p]) wq * Dser W wq ^ 2 +
+          wq * (2 * Dser W wq * PowerSeries.derivative (R := ℂ_[p]) (Dser W wq)) := by
       rw [pow_two, Derivation.leibniz, Derivation.leibniz]
       simp only [smul_eq_mul]
       ring
-    have e2 := congrArg (PowerSeries.derivative ℂ_[p]) e
+    have e2 := congrArg (PowerSeries.derivative (R := ℂ_[p])) e
     rw [Derivation.leibniz, map_neg, PowerSeries.derivative_X] at e2
     simp only [smul_eq_mul] at e2
     have hDM : Dser W wq * (wq * (algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₁ * PowerSeries.X +
@@ -184,15 +188,15 @@ theorem flog_iW {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : I
       have h2 : PowerSeries.constantCoeff (2 : PowerSeries ℂ_[p]) = 2 := map_ofNat _ 2
       simp [D_const, wq_const' h, h2] at h00
     rw [derivative_subst_eq_subst_derivative_mul (iW W wq) (flog W wq) hs, derivative_flog', map_neg, derivative_flog']
-    have key : (PowerSeries.subst (iW W wq) (omegaW W wq) * PowerSeries.derivative ℂ_[p] (iW W wq) +
+    have key : (PowerSeries.subst (iW W wq) (omegaW W wq) * PowerSeries.derivative (R := ℂ_[p]) (iW W wq) +
         omegaW W wq) * (Dser W wq * (wq * (algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₁ * PowerSeries.X +
         algebraMap ℂ_[p] (PowerSeries ℂ_[p]) W.a₃ * PowerSeries.X ^ 3 * wq - 2))) = 0 := by
-      linear_combination Dser W wq * hom + PowerSeries.derivative ℂ_[p] (iW W wq) * hom'
-        - PowerSeries.derivative ℂ_[p] (iW W wq) * PowerSeries.subst (iW W wq) (omegaW W wq) * wq *
+      linear_combination Dser W wq * hom + PowerSeries.derivative (R := ℂ_[p]) (iW W wq) * hom'
+        - PowerSeries.derivative (R := ℂ_[p]) (iW W wq) * PowerSeries.subst (iW W wq) (omegaW W wq) * wq *
           Dser W wq * (cP W.a₁ + cP W.a₃ * wq * ((iW W wq * Dser W wq) ^ 2 -
             iW W wq * Dser W wq * PowerSeries.X + PowerSeries.X ^ 2)) * e
-        - PowerSeries.derivative ℂ_[p] wq * Dser W wq * e
-        + 2 * PowerSeries.derivative ℂ_[p] (iW W wq) * PowerSeries.subst (iW W wq) (omegaW W wq) * wq *
+        - PowerSeries.derivative (R := ℂ_[p]) wq * Dser W wq * e
+        + 2 * PowerSeries.derivative (R := ℂ_[p]) (iW W wq) * PowerSeries.subst (iW W wq) (omegaW W wq) * wq *
           Dser W wq * hD0
         - 2 * wq * Dser W wq * e2 + iW W wq * (hcw - hdwD)
     have h3 := (mul_eq_zero.1 key).resolve_right hDM

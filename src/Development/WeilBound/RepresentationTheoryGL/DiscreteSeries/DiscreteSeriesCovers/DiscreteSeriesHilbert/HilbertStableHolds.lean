@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.DiscreteSeriesHilbert.StepSqInt
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.DiscreteSeriesHilbert.StepSqInt
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+
+@[expose] public section
 
 noncomputable section
 

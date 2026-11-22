@@ -1,25 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTermOrigin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableRisingS
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemIntegersOfMemHatO
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomothetyLatSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticePrincMulUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualFormExistsUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannClEqSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualFormValueOfValues
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualFormBaseOfValue
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeformedProductDerivativeTermNormLeUniform
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasFDerivAtDeformedProductDerivativeTerm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeriesDifferentiable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivFormulaOfSeries
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableOnWirtWordMulExpCompStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedComplexPartialDerivativeEqWirtingerWordStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEquivCmTypeRealEmbeddingsMaxRealSubfieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsElementPosImUnderCmTypeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrderLatticeEqSteinitzFormCmStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSumDeformedLatticeEisensteinSummandWeightTwoStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasFDerivAtWeightTwoDerivativeEisensteinTermStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightTwoDerivativeEisensteinTermUniformBoundStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTermOrigin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableRisingS
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemIntegersOfMemHatO
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomothetyLatSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticePrincMulUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualFormExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannClEqSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualFormValueOfValues
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualFormBaseOfValue
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeformedProductDerivativeTermNormLeUniform
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasFDerivAtDeformedProductDerivativeTerm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeriesDifferentiable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivFormulaOfSeries
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableOnWirtWordMulExpCompStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedComplexPartialDerivativeEqWirtingerWordStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEquivCmTypeRealEmbeddingsMaxRealSubfieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsElementPosImUnderCmTypeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrderLatticeEqSteinitzFormCmStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSumDeformedLatticeEisensteinSummandWeightTwoStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasFDerivAtWeightTwoDerivativeEisensteinTermStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightTwoDerivativeEisensteinTermUniformBoundStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.WeightTwoSum GlobalTheory.DeformedSum
 open scoped ContDiff nonZeroDivisors
@@ -139,7 +143,7 @@ theorem derivFormula_two (hH : HeckeWeightTwo) (E : Type) [Field E] [NumberField
   obtain ⟨𝔞, 𝔟, a₀, hL⟩ := GlobalTheory.T.orderLattice_eq_steinitzForm_cm E c y hc θ₀ (hnot θ₀ hθ₀)
   set θ : E := θ₀ + a₀ with hθdef
   have hθ : ∀ i, 0 < (φ i θ).im := fun i => by
-    rw [hθdef, map_add, he]; simpa using hθ₀ i
+    rw [hθdef, map_add (f := _), he]; simpa using hθ₀ i
   obtain ⟨G, ⟨hG1, hG2, hG3⟩, hG0, -⟩ := hH (maximalRealSubfield E) hF 𝔞 𝔟
   have hP := GlobalTheory.WeightTwoSum.isOpen_polydisc I
   have hmaps : Set.MapsTo (modPt φ e θ) (polydisc I) (upperHalf _) := fun z hz τ => modPt_im_pos φ e θ hθ hz τ

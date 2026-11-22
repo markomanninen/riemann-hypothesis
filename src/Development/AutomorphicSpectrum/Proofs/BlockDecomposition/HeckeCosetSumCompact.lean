@@ -1,15 +1,19 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutOfLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousBlkOneVal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ComapUNAndMapSM
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintEqOfLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBlocksOfUpper
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumParabolicQuotientFubini
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviProjectionMaximalCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedIntegralMatricesTwoSidedMu
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportTwistedConstantTermSplitPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockUpperTimesUnipotentMulBlockDiagonal
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutOfLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousBlkOneVal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ComapUNAndMapSM
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintEqOfLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBlocksOfUpper
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumParabolicQuotientFubini
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviProjectionMaximalCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedIntegralMatricesTwoSidedMu
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportTwistedConstantTermSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockUpperTimesUnipotentMulBlockDiagonal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcN.F2
@@ -163,20 +167,20 @@ theorem blk_add (h : a + b = n) (w : Pl E) (m : GLw a w × GLw b w)
   rw [GlobalTheory.LeviFubini.blk_mul_blk]
   simp [add_comm]
 
-theorem iwasawa_sum (h : a + b = n) (w : Pl E) (Ψ : GLw n w → ℂ) (hΨ : GlobalTheory.LFun.KGL w n ≤ rStab Ψ)
-    (hfin : {p : GLw n w ⧸ GlobalTheory.LFun.KGL w n | Ψ p.out ≠ 0}.Finite) :
-    ∑ᶠ p : GLw n w ⧸ GlobalTheory.LFun.KGL w n, Ψ p.out =
-      ∑ᶠ c : (GLw a w × GLw b w) ⧸ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b),
+theorem iwasawa_sum (h : a + b = n) (w : Pl E) (Ψ : GLw n w → ℂ) (hΨ : GlobalTheory.LFun.KGL w (n := n) ≤ rStab Ψ)
+    (hfin : {p : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n) | Ψ p.out ≠ 0}.Finite) :
+    ∑ᶠ p : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n), Ψ p.out =
+      ∑ᶠ c : (GLw a w × GLw b w) ⧸ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)),
         ∑ᶠ x : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) ⧸ intMat a b w,
           Ψ (blk h w c.out (Multiplicative.toAdd x.out)) := by
   obtain ⟨hN, hM⟩ := GlobalTheory.CompanionTheory.LeviInt.comap_uN_and_map_sM E a b n h w
   let P := GlobalTheory.LeviFubini.parB h w
-  let KP : Subgroup P := (GlobalTheory.LFun.KGL w n).subgroupOf P
-  let ι : P ⧸ KP → GLw n w ⧸ GlobalTheory.LFun.KGL w n := fun q => QuotientGroup.mk (q.out : GLw n w)
+  let KP : Subgroup P := (GlobalTheory.LFun.KGL w (n := n)).subgroupOf P
+  let ι : P ⧸ KP → GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n) := fun q => QuotientGroup.mk (q.out : GLw n w)
   have hι : Function.Bijective ι := by
     constructor
     · intro q q' hqq
-      have h1 : ((q.out : GLw n w))⁻¹ * (q'.out : GLw n w) ∈ GlobalTheory.LFun.KGL w n := QuotientGroup.eq.1 hqq
+      have h1 : ((q.out : GLw n w))⁻¹ * (q'.out : GLw n w) ∈ GlobalTheory.LFun.KGL w (n := n) := QuotientGroup.eq.1 hqq
       rw [← QuotientGroup.out_eq' q, ← QuotientGroup.out_eq' q']
       exact QuotientGroup.eq.2 h1
     · intro p
@@ -186,9 +190,9 @@ theorem iwasawa_sum (h : a + b = n) (w : Pl E) (Ψ : GLw n w → ℂ) (hΨ : Glo
       obtain ⟨⟨y, hy⟩, hy'⟩ := QuotientGroup.mk_out_eq_mul KP ⟨blk h w m Y, GlobalTheory.LeviFubini.blk_mem h w m Y⟩
       refine QuotientGroup.eq.2 ?_
       rw [hy']
-      have hy2 : (y : GLw n w) ∈ GlobalTheory.LFun.KGL w n := hy
+      have hy2 : (y : GLw n w) ∈ GlobalTheory.LFun.KGL w (n := n) := hy
       have e : (blk h w m Y * (y : GLw n w))⁻¹ * (blk h w m Y * k) = (y : GLw n w)⁻¹ * k := by group
-      show (blk h w m Y * (y : GLw n w))⁻¹ * (blk h w m Y * k) ∈ GlobalTheory.LFun.KGL w n
+      show (blk h w m Y * (y : GLw n w))⁻¹ * (blk h w m Y * k) ∈ GlobalTheory.LFun.KGL w (n := n)
       rw [e]
       exact mul_mem (inv_mem hy2) hk
   have hterm : ∀ q : P ⧸ KP, Ψ (ι q).out = Ψ (q.out : GLw n w) := fun q => out_inv hΨ _
@@ -197,16 +201,16 @@ theorem iwasawa_sum (h : a + b = n) (w : Pl E) (Ψ : GLw n w → ℂ) (hΨ : Glo
     show Ψ (ι q).out ≠ 0
     rw [hterm]
     exact hq
-  have e1 : ∑ᶠ p : GLw n w ⧸ GlobalTheory.LFun.KGL w n, Ψ p.out = ∑ᶠ q : P ⧸ KP, Ψ (q.out : GLw n w) :=
-    (finsum_comp (g := fun p : GLw n w ⧸ GlobalTheory.LFun.KGL w n => Ψ p.out) ι hι).symm.trans (finsum_congr hterm)
-  have hl : KP.map (GlobalTheory.LeviFubini.levH h w) ≤ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) := by
+  have e1 : ∑ᶠ p : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n), Ψ p.out = ∑ᶠ q : P ⧸ KP, Ψ (q.out : GLw n w) :=
+    (finsum_comp (g := fun p : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n) => Ψ p.out) ι hι).symm.trans (finsum_congr hterm)
+  have hl : KP.map (GlobalTheory.LeviFubini.levH h w) ≤ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) := by
     rintro _ ⟨p, hp, rfl⟩
     exact GlobalTheory.LeviFubini.levH_mem_KGL_of_mem E a b n h w p hp
   have e2 := GlobalTheory.split_quotient_finsum_regroup P (GLw a w × GLw b w)
     (Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E))) ℂ (GlobalTheory.LeviFubini.levH h w)
     (GlobalTheory.LeviFubini.sM h w) (GlobalTheory.LeviFubini.uN h w) (GlobalTheory.LeviFubini.levH_sM h w) (GlobalTheory.LeviFubini.levH_uN h w)
     (GlobalTheory.LeviFubini.uN_injective h w) (GlobalTheory.LeviFubini.exists_uN h w) KP
-    ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) hM hl (fun p => Ψ p)
+    ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) hM hl (fun p => Ψ p)
     (fun p q hq => hΨ hq (p : GLw n w)) hfinP
   have hN' : KP.comap (GlobalTheory.LeviFubini.uN h w) = intMat a b w := hN
   rw [hN'] at e2
@@ -214,28 +218,28 @@ theorem iwasawa_sum (h : a + b = n) (w : Pl E) (Ψ : GLw n w → ℂ) (hΨ : Glo
   exact congrArg Ψ (GlobalTheory.LeviFubini.sM_mul_uN h w _ _)
 
 theorem lev_mul_mem (h : a + b = n) (w : Pl E) (p p' : GlobalTheory.LeviFubini.parB h w)
-    (hc : ((p' : GLw n w))⁻¹ * (p : GLw n w) ∈ GlobalTheory.LFun.KGL w n) :
-    (GlobalTheory.LeviFubini.levH h w p')⁻¹ * GlobalTheory.LeviFubini.levH h w p ∈ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) := by
+    (hc : ((p' : GLw n w))⁻¹ * (p : GLw n w) ∈ GlobalTheory.LFun.KGL w (n := n)) :
+    (GlobalTheory.LeviFubini.levH h w p')⁻¹ * GlobalTheory.LeviFubini.levH h w p ∈ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) := by
   have h2 := GlobalTheory.LeviFubini.levH_mem_KGL_of_mem E a b n h w (p'⁻¹ * p) (by simpa using hc)
   rw [map_mul, map_inv] at h2
   exact Subgroup.mem_prod.2 h2
 
 theorem lev_coset (h : a + b = n) (w : Pl E) (m m' : GLw a w × GLw b w)
     (Y Y' : Matrix (Fin a) (Fin b) (w.adicCompletion E))
-    (hc : (blk h w m' Y')⁻¹ * blk h w m Y ∈ GlobalTheory.LFun.KGL w n) :
-    m'⁻¹ * m ∈ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) := by
+    (hc : (blk h w m' Y')⁻¹ * blk h w m Y ∈ GlobalTheory.LFun.KGL w (n := n)) :
+    m'⁻¹ * m ∈ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) := by
   have h2 := lev_mul_mem h w ⟨blk h w m Y, GlobalTheory.LeviFubini.blk_mem h w m Y⟩
     ⟨blk h w m' Y', GlobalTheory.LeviFubini.blk_mem h w m' Y'⟩ hc
   rwa [GlobalTheory.LeviFubini.levH_blk, GlobalTheory.LeviFubini.levH_blk] at h2
 
-theorem finite_lev (h : a + b = n) (w : Pl E) (Z : Set (GLw n w ⧸ GlobalTheory.LFun.KGL w n)) (hZ : Z.Finite)
-    (B : Set ((GLw a w × GLw b w) ⧸ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)))
+theorem finite_lev (h : a + b = n) (w : Pl E) (Z : Set (GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n))) (hZ : Z.Finite)
+    (B : Set ((GLw a w × GLw b w) ⧸ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))))
     (hB : ∀ c ∈ B, ∃ (m : GLw a w × GLw b w) (Y : Matrix (Fin a) (Fin b) (w.adicCompletion E)),
-      (QuotientGroup.mk m : (GLw a w × GLw b w) ⧸ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) = c ∧
-        (QuotientGroup.mk (blk h w m Y) : GLw n w ⧸ GlobalTheory.LFun.KGL w n) ∈ Z) : B.Finite := by
+      (QuotientGroup.mk m : (GLw a w × GLw b w) ⧸ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) = c ∧
+        (QuotientGroup.mk (blk h w m Y) : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n)) ∈ Z) : B.Finite := by
   have hex : ∀ c : B, ∃ (m : GLw a w × GLw b w) (Y : Matrix (Fin a) (Fin b) (w.adicCompletion E)),
-      (QuotientGroup.mk m : (GLw a w × GLw b w) ⧸ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) = c.1 ∧
-        (QuotientGroup.mk (blk h w m Y) : GLw n w ⧸ GlobalTheory.LFun.KGL w n) ∈ Z := fun c => hB c.1 c.2
+      (QuotientGroup.mk m : (GLw a w × GLw b w) ⧸ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) = c.1 ∧
+        (QuotientGroup.mk (blk h w m Y) : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n)) ∈ Z := fun c => hB c.1 c.2
   choose tm tY ht1 ht2 using hex
   haveI := hZ.to_subtype
   have hinj : Function.Injective fun c : B => (⟨_, ht2 c⟩ : Z) := by
@@ -250,29 +254,29 @@ theorem finite_lev (h : a + b = n) (w : Pl E) (Z : Set (GLw n w ⧸ GlobalTheory
 
 end Blocks
 
-theorem integral_decomposition : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a b : ℕ) (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) → K' ≤ GlobalTheory.LFun.KGL w n → (∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') → ∀ X : Finset (GLw n w), (∀ x ∈ X, x ∈ GlobalTheory.LFun.KGL w n) → (∀ k ∈ GlobalTheory.LFun.KGL w n, ∃! x ∈ X, x⁻¹ * k ∈ K') → ∀ φ : GLw n w → ℂ, (∀ g, ∀ k ∈ K', φ (g * k) = φ g) → HasCompactSupport φ → hint (GlobalTheory.LFun.KGL w n) φ = ((X.card : ℂ))⁻¹ * ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) fun m => hint (intMat a b w) fun Y => φ (blk h w m (Multiplicative.toAdd Y) * y) := by
+theorem integral_decomposition : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a b : ℕ) (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) → K' ≤ GlobalTheory.LFun.KGL w (n := n) → (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') → ∀ X : Finset (GLw n w), (∀ x ∈ X, x ∈ GlobalTheory.LFun.KGL w (n := n)) → (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∃! x ∈ X, x⁻¹ * k ∈ K') → ∀ φ : GLw n w → ℂ, (∀ g, ∀ k ∈ K', φ (g * k) = φ g) → HasCompactSupport φ → hint (GlobalTheory.LFun.KGL w (n := n)) φ = ((X.card : ℂ))⁻¹ * ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) fun m => hint (intMat a b w) fun Y => φ (blk h w m (Multiplicative.toAdd Y) * y) := by
   intro E _ _ _ n a b h w K' hK'o hK'K hnorm X hX hu φ hφ hφc
   have hφS : K' ≤ rStab φ := fun k hk g => hφ g k hk
-  have hKo : IsOpen (GlobalTheory.LFun.KGL w n : Set (GLw n w)) := Subgroup.isOpen_mono hK'K hK'o
+  have hKo : IsOpen (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) := Subgroup.isOpen_mono hK'K hK'o
   have hZ' := finite_mk_support K' hK'o φ hφc
-  have hZ := finite_mk_support (GlobalTheory.LFun.KGL w n) hKo φ hφc
+  have hZ := finite_mk_support (GlobalTheory.LFun.KGL w (n := n)) hKo φ hφc
   have hfin0 : {q : GLw n w ⧸ K' | φ q.out ≠ 0}.Finite :=
     hZ'.subset fun q hq => ⟨q.out, hq, QuotientGroup.out_eq' q⟩
   let Ψ : GLw n w → ℂ := fun g => ∑ y ∈ X, φ (g * y)
-  have hΨ : GlobalTheory.LFun.KGL w n ≤ rStab Ψ := fun k hk g => sum_mul_mem X hX hu φ hφS g k hk
-  have hfinΨ : {p : GLw n w ⧸ GlobalTheory.LFun.KGL w n | Ψ p.out ≠ 0}.Finite := by
+  have hΨ : GlobalTheory.LFun.KGL w (n := n) ≤ rStab Ψ := fun k hk g => sum_mul_mem X hX hu φ hφS g k hk
+  have hfinΨ : {p : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n) | Ψ p.out ≠ 0}.Finite := by
     refine hZ.subset fun p hp => ?_
     obtain ⟨y, hy, hy0⟩ := Finset.exists_ne_zero_of_sum_ne_zero hp
     refine ⟨p.out * y, hy0, ?_⟩
     rw [QuotientGroup.mk_mul_of_mem _ (hX y hy)]
     exact QuotientGroup.out_eq' p
   have hcard := relIndex_eq_card X hX hu
-  have hcard0 : K'.relIndex (GlobalTheory.LFun.KGL w n) ≠ 0 := by
+  have hcard0 : K'.relIndex (GlobalTheory.LFun.KGL w (n := n)) ≠ 0 := by
     obtain ⟨x, ⟨hx, -⟩, -⟩ := hu 1 (one_mem _)
     rw [hcard]
     exact Finset.card_ne_zero.2 ⟨x, hx⟩
-  have hLHS : hint (GlobalTheory.LFun.KGL w n) φ =
-      ((X.card : ℂ))⁻¹ * ∑ᶠ p : GLw n w ⧸ GlobalTheory.LFun.KGL w n, Ψ p.out := by
+  have hLHS : hint (GlobalTheory.LFun.KGL w (n := n)) φ =
+      ((X.card : ℂ))⁻¹ * ∑ᶠ p : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n), Ψ p.out := by
     rw [GlobalTheory.CompanionTheory.HintSmaller.hint_eq_of_le _ K' φ hK'K hφS hcard0 hfin0, hcard,
       finsum_fibre hK'K X hX hu φ hφS hfin0]
   obtain ⟨hN, hM⟩ := GlobalTheory.CompanionTheory.LeviInt.comap_uN_and_map_sM E a b n h w
@@ -327,10 +331,10 @@ theorem integral_decomposition : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
         GlobalTheory.CompanionTheory.HintLevel.hint_eq_level _ (intMat a b w) L _ hLle (hLinv y hy m) hLfin, ← Finset.mul_sum]
     congr 1
     exact (finsum_sum_comm X _ fun y hy => hNfin m y hy).symm
-  have hdiag : ∀ c ∈ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b), blk h w c 0 ∈ GlobalTheory.LFun.KGL w n := by
+  have hdiag : ∀ c ∈ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)), blk h w c 0 ∈ GlobalTheory.LFun.KGL w (n := n) := by
     intro c hc
     exact hM ⟨c, hc, rfl⟩
-  have hNK : ∀ Z ∈ intMat a b w, blk h w 1 (Multiplicative.toAdd Z) ∈ GlobalTheory.LFun.KGL w n := by
+  have hNK : ∀ Z ∈ intMat a b w, blk h w 1 (Multiplicative.toAdd Z) ∈ GlobalTheory.LFun.KGL w (n := n) := by
     intro Z hZ
     rw [← hN] at hZ
     exact hZ
@@ -341,12 +345,12 @@ theorem integral_decomposition : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     exact hΨ (hNK Z hZ) _
   let f : GLw a w × GLw b w →* GLw n w := (GlobalTheory.LeviFubini.parB h w).subtype.comp (GlobalTheory.LeviFubini.sM h w)
   have hf : ∀ c, f c = blk h w c 0 := fun c => rfl
-  have hSMK : K'.comap f ≤ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) := by
+  have hSMK : K'.comap f ≤ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) := by
     intro c hc
     have h1 := GlobalTheory.LeviFubini.levH_mem_KGL_of_mem E a b n h w (GlobalTheory.LeviFubini.sM h w c) (hK'K hc)
     rw [GlobalTheory.LeviFubini.levH_sM] at h1
     exact Subgroup.mem_prod.2 h1
-  have hSMfin : (K'.comap f).relIndex ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) ≠ 0 := by
+  have hSMfin : (K'.comap f).relIndex ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) ≠ 0 := by
     rw [Subgroup.relIndex_comap]
     intro h0
     refine hcard0 (Subgroup.relIndex_eq_zero_of_le_right ?_ h0)
@@ -374,11 +378,11 @@ theorem integral_decomposition : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
       hint (intMat a b w) (fun Y => φ (blk h w m (Multiplicative.toAdd Y) * y))
     rw [e]
     exact hh
-  have hTinv : (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) ≤ rStab (fun m =>
+  have hTinv : (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) ≤ rStab (fun m =>
       hint (intMat a b w) (fun Y => Ψ (blk h w m (Multiplicative.toAdd Y)))) := by
     intro c hc m
     have hcK := Subgroup.mem_prod.1 hc
-    have hd : CtLevel.dgM h w c ∈ GlobalTheory.LFun.KGL w n := by
+    have hd : CtLevel.dgM h w c ∈ GlobalTheory.LFun.KGL w (n := n) := by
       rw [← blk_zero_eq_dgM]
       exact hdiag c hc
     have e : (fun Y => Ψ (blk h w (m * c) (Multiplicative.toAdd Y))) = fun Y =>
@@ -401,16 +405,16 @@ theorem integral_decomposition : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     obtain ⟨Y, hY⟩ := CtLevel.exists_ne_zero_of_hint_ne_zero _ _ hq
     refine ⟨q.out, Multiplicative.toAdd Y, rfl, blk h w q.out (Multiplicative.toAdd Y) * y, hY, ?_⟩
     exact QuotientGroup.mk_mul_of_mem _ (hX y hy)
-  have hself : ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)).relIndex
-      ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) ≠ 0 := by
+  have hself : ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))).relIndex
+      ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) ≠ 0 := by
     rw [Subgroup.relIndex_self]
     exact one_ne_zero
   have hselfN : (intMat a b w).relIndex (intMat a b w) ≠ 0 := by
     rw [Subgroup.relIndex_self]
     exact one_ne_zero
-  have hR : ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) (fun m =>
+  have hR : ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) (fun m =>
       hint (intMat a b w) (fun Y => φ (blk h w m (Multiplicative.toAdd Y) * y))) =
-      ∑ᶠ p : GLw n w ⧸ GlobalTheory.LFun.KGL w n, Ψ p.out := by
+      ∑ᶠ p : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n), Ψ p.out := by
     rw [Finset.sum_congr rfl fun y hy =>
         GlobalTheory.CompanionTheory.HintLevel.hint_eq_level _ _ (K'.comap f) _ hSMK (hFinv y hy) hSMfin, ← Finset.mul_sum,
       ← finsum_sum_comm X _ hFfin]

@@ -1,21 +1,26 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorRadical
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.GermRegularParameters
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinatePolynomialRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsChartNormalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothRegular
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorRadical
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.GermRegularParameters
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinatePolynomialRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsChartNormalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothRegular
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory Opposite AlgebraicGeometry TopologicalSpace
@@ -187,15 +192,23 @@ theorem strictNormalCrossingsRestrictToClopen : StrictNormalCrossingsRestrictToC
       (γ i = none → restrictIdeal ((E[i]'h).comap (T.ι ≫ Z.subschemeι)) V' = ⊤) ∧
       (∀ j, γ i = some j →
         restrictIdeal ((E[i]'h).comap (T.ι ≫ Z.subschemeι)) V'
-          = (c.restrict hV'V).coordIdeal {j}) := by
+          = (c.restrictCompat hV'V).coordIdeal {j}) := by
     intro i h
     refine ⟨fun hg => restrictIdeal_eq_top_of_le _ hV'V ((hγ i h).1 hg), fun j hg => ?_⟩
-    exact restrictIdeal_eq_restrict_coordIdeal_of_le hV'V c _ {j} ((hγ i h).2 j hg)
+    have hh : ((E[i]'h).comap (T.ι ≫ Z.subschemeι)).comap V.ι =
+        (coordSubspaceIdeal k n {j}).comap c.map := by
+      rw [← restrictIdeal_eq_comap_ι, (hγ i h).2 j hg,
+        EtaleChart.coordIdeal_eq_comap_coordSubspaceIdeal]
+    rw [restrictIdeal_eq_comap_ι, EtaleChart.coordIdeal_eq_comap_coordSubspaceIdeal]
+    change _ = (coordSubspaceIdeal k n {j}).comap (T.toScheme.homOfLE hV'V ≫ c.map)
+    rw [Scheme.IdealSheafData.comap_comp (coordSubspaceIdeal k n {j}), ← hh,
+      ← Scheme.IdealSheafData.comap_comp ((E[i]'h).comap (T.ι ≫ Z.subschemeι)),
+      Scheme.homOfLE_ι]
   obtain ⟨J₀, hJ₀mem, hJ₀⟩ :=
     exists_finset_comap_prod_ideal_eq_span_prod_coord (T.ι ≫ Z.subschemeι) ⟨U, hU⟩ hV' hV'U
-      (c.restrict hV'V) E γ (fun i h => (hγ' i h).1) (fun i h => (hγ' i h).2) hinjγ
+      (c.restrictCompat hV'V) E γ (fun i h => (hγ' i h).1) (fun i h => (hγ' i h).2) hinjγ
   have hJ₀prime : ∀ j ∈ J₀,
-      (c.restrict hV'V).coord j ∈ (hV'.primeIdealOf ⟨y, hyV'⟩).asIdeal := by
+      (c.restrictCompat hV'V).coord j ∈ (hV'.primeIdealOf ⟨y, hyV'⟩).asIdeal := by
     intro j hj
     obtain ⟨i, hi, hγi⟩ := hJ₀mem j hj
     rw [FunctorialResolution.EmbeddedResolution.EtaleChart.coord_restrict c hV'V j]
@@ -209,32 +222,32 @@ theorem strictNormalCrossingsRestrictToClopen : StrictNormalCrossingsRestrictToC
       rw [h10]
       exact Submodule.zero_mem _
     · exact hs
-  have hcinj : Function.Injective (c.restrict hV'V).coord := by
+  have hcinj : Function.Injective (c.restrictCompat hV'V).coord := by
     have h := @etaleChartCoord_injective k _ n ↥(T.toScheme.presheaf.obj (op V')) _
-      (c.restrict hV'V).algebra ((c.restrict hV'V).algebra_etale hV') hntr
+      (c.restrictCompat hV'V).algebra ((c.restrictCompat hV'V).algebra_etale hV') hntr
     intro a b hab
     refine h ?_
     simp only [etaleChartCoord_eq_coord]
     exact hab
   have hrad := @isRadical_span_singleton_prod_etaleChartCoord k _ n
-    ↥(T.toScheme.presheaf.obj (op V')) _ (c.restrict hV'V).algebra
-    ((c.restrict hV'V).algebra_etale hV') J₀
+    ↥(T.toScheme.presheaf.obj (op V')) _ (c.restrictCompat hV'V).algebra
+    ((c.restrictCompat hV'V).algebra_etale hV') J₀
   simp only [etaleChartCoord_eq_coord] at hrad
   obtain ⟨N, f, hfcoord, hfreg⟩ :=
-    exists_isRegularParameterSystem_with_coords_of_mem_prime hV' (c.restrict hV'V) y hyV'
+    exists_isRegularParameterSystem_with_coords_of_mem_prime hV' (c.restrictCompat hV'V) y hyV'
       J₀ hJ₀prime
   choose ι hι using hfcoord
   have hinj2 : ∀ a ∈ J₀.attach, ∀ b ∈ J₀.attach,
       (fun j : { x // x ∈ J₀ } => ι j.1 j.2) a = (fun j : { x // x ∈ J₀ } => ι j.1 j.2) b →
         a = b := by
     intro a _ b _ hab
-    have h1 : (c.restrict hV'V).coord a.1 = (c.restrict hV'V).coord b.1 := by
+    have h1 : (c.restrictCompat hV'V).coord a.1 = (c.restrictCompat hV'V).coord b.1 := by
       rw [← hι a.1 a.2, ← hι b.1 b.2]
       exact congrArg f hab
     exact Subtype.ext (hcinj h1)
   have hprodJ : (∏ i ∈ J₀.attach.image (fun j : { x // x ∈ J₀ } => ι j.1 j.2), f i)
-      = ∏ j ∈ J₀, (c.restrict hV'V).coord j := by
-    rw [Finset.prod_image hinj2, ← Finset.prod_attach J₀ (fun j => (c.restrict hV'V).coord j)]
+      = ∏ j ∈ J₀, (c.restrictCompat hV'V).coord j := by
+    rw [Finset.prod_image hinj2, ← Finset.prod_attach J₀ (fun j => (c.restrictCompat hV'V).coord j)]
     exact Finset.prod_congr rfl fun j _ => hι j.1 j.2
   refine ⟨isRegularLocalRing_stalk_of_smooth (T.ι ≫ (Z.subschemeι ≫ p)) y,
     ⟨V', hV'⟩, hyV', N, f, J₀.attach.image (fun j : { x // x ∈ J₀ } => ι j.1 j.2), hfreg, ?_⟩

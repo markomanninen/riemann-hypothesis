@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,9 +14,9 @@ open AddMonoidAlgebra
 
 variable {n : ℕ}
 
-variable (n) in
 
-abbrev LaurentRing : Type := AddMonoidAlgebra ℂ (Fin n → ℤ)
+variable (n) in
+abbrev LaurentRing (n : ℕ) : Type := AddMonoidAlgebra ℂ (Fin n → ℤ)
 
 abbrev monomial (l : Fin n → ℤ) : LaurentRing n := single l 1
 
@@ -133,14 +137,14 @@ theorem exists_ker_evalAt_comp_eq {A : Type*} [CommRing A] [Algebra ℂ A]
   let ψ : LaurentRing n →ₐ[ℂ] ℂ := e'.symm.toAlgHom.comp (Ideal.Quotient.mkₐ ℂ Q)
   have hker : ∀ p, ψ p = 0 ↔ p ∈ Q := by
     intro p
-    simp only [ψ, AlgHom.comp_apply, AlgEquiv.toAlgHom_eq_coe, AlgEquiv.coe_algHom,
+    simp only [ψ, AlgHom.comp_apply, AlgEquiv.coe_toAlgHom,
       Ideal.Quotient.mkₐ_eq_mk]
     rw [AlgEquiv.symm_apply_eq, map_zero, Ideal.Quotient.eq_zero_iff_mem]
   obtain ⟨w, hw⟩ := exists_eq_evalAt ψ
   refine ⟨w, Ideal.ext fun a => ?_⟩
   rw [RingHom.mem_ker, AlgHom.comp_apply, ← hw, hker]
   have h1 : Φ a = algebraMap Φ.range (LaurentRing n) (e a) := rfl
-  rw [h1, ← Ideal.mem_comap, hQP]
+  rw [h1, ← Ideal.mem_under, hQP]
   change e.symm (e a) ∈ I ↔ a ∈ I
   rw [AlgEquiv.symm_apply_apply]
 

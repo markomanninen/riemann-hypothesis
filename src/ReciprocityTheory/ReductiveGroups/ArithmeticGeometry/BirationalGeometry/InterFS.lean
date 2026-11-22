@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,11 +22,6 @@ theorem maDensity_congr_of_eventuallyEq {D : ℕ} {φ ψ : Fin D → (Fin D → 
     unfold cxHessian
     rw [h2 k]
   simp only [maDensity, hH]
-
-local instance instRealIPS : InnerProductSpace ℝ E := InnerProductSpace.rclikeToReal ℂ E
-
-def affL (b : E) : (Fin 1 → ℂ) →L[ℝ] E :=
-  (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 1 => ℂ) 0).smulRight b
 
 theorem mixedDisc_one (A : Fin 1 → Matrix (Fin 1) (Fin 1) ℂ) : mixedDisc A = A 0 0 0 := by
   unfold mixedDisc

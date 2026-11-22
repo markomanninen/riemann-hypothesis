@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LinearIndependentVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsTotallyComplexOfI
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BddAboveSubDegsOfJointlyMono
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCohSubDegEqSum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBasisOfIntFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProperToroidalModelStructureMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LinearIndependentVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsTotallyComplexOfI
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BddAboveSubDegsOfJointlyMono
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCohSubDegEqSum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBasisOfIntFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProperToroidalModelStructureMap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -116,48 +120,9 @@ section Inhabitants
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H}
   {Xo : ∀ l : Level H, Moduli Dw l} {p : ℕ} {W : ValuationSubring ℂ} {Y : LocalSystem Xo p W} {i₀ : Idx H p}
 
-theorem Mdl.exists_point (h1 : 1 ≤ Dw.p + Dw.q) (Z : Mdl Y i₀) {k : Type} [Field k] [IsAlgClosed k]
-    (φ : Z.i.c.V W →+* k) : ∃ x : Sp k ⟶ Z.X, x ≫ Z.s = spMap φ := by
-  have := SharedLaws.isProper_toroidalModel_structureMap Z
-  have := Z.flat
-  obtain ⟨z⟩ := SharedLaws.nonempty_model h1 Z
-  have : Surjective Z.s := ⟨fun y => by
-    have h₀ : IsLocalRing.closedPoint (Z.i.c.V W) ∈ Set.range Z.s :=
-      (IsLocalRing.specializes_closedPoint (Z.s z)).mem_closed Z.s.isClosedMap.isClosed_range ⟨z, rfl⟩
-    exact (Flat.generalizingMap Z.s).stableUnderGeneralization_range (IsLocalRing.specializes_closedPoint y) h₀⟩
-  let f := pullback.snd Z.s (spMap φ)
-  have : CompactSpace ↥(pullback Z.s (spMap φ)) := QuasiCompact.compactSpace_of_compactSpace f
-  have : Nonempty ↥(pullback Z.s (spMap φ)) := f.surjective.nonempty
-  obtain ⟨y, -, hy⟩ := isClosed_univ.exists_closed_singleton (X := ↥(pullback Z.s (spMap φ))) Set.univ_nonempty
-  exact ⟨pointOfClosedPoint f y hy ≫ pullback.fst _ _, by
-    rw [Category.assoc, pullback.condition, ← Category.assoc, pointOfClosedPoint_comp, Category.id_comp]⟩
-
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.ModuliIntegralCharts GlobalTheory.ShFam
 
 variable {D : D7} {A : Amb D} {N j : ℕ} {S : Sig A N j} {κ : Lv A}
-
-instance At.nonempty_crv (ct : At S κ p) : Nonempty ct.Crv := by
-  have := Fact.mk ct.hp
-  have := ct.YY.i.c.fin
-  have : NumberField ct.YY.i.c.F := NumberField.mk
-  have hV := SharedLaws.mem_nonunits_V ct.YY.i.c ct.hp.ne_zero ct.hW
-  obtain ⟨-, h₂⟩ := GlobalTheory.isDiscreteValuationRing_and_finite_residueField_of_numberField (ct.YY.i.c.V ct.W) ct.hp.ne_zero hV
-  have : CharP (IsLocalRing.ResidueField (ct.YY.i.c.V ct.W)) p := (CharP.charP_iff_prime_eq_zero ct.hp).2 (by
-    rw [← map_natCast (IsLocalRing.residue _), IsLocalRing.residue_eq_zero_iff, ← ValuationSubring.coe_mem_nonunits_iff]
-    simpa using hV)
-  letI := ZMod.algebra (IsLocalRing.ResidueField (ct.YY.i.c.V ct.W)) p
-  letI := ZMod.algebra ct.Fbar p
-  let ψ : IsLocalRing.ResidueField (ct.YY.i.c.V ct.W) →ₐ[ZMod p] ct.Fbar := IsAlgClosed.lift
-  obtain ⟨x, -⟩ := ct.YY.exists_point (one_le_two.trans (S.two_le.trans S.rank_eq.ge))
-    (ψ.toRingHom.comp (IsLocalRing.residue _))
-  exact Curve.nonempty_of_point x
-
-instance At.nonempty_crvQ (ct : At S κ p) : Nonempty ct.CrvQ := by
-  have := ct.YY.i.c.fin
-  let ψ : ct.YY.i.c.F →ₐ[ℚ] AlgebraicClosure κ.c.F := IsAlgClosed.lift
-  obtain ⟨x, -⟩ := ct.YY.exists_point (one_le_two.trans (S.two_le.trans S.rank_eq.ge))
-    (ψ.toRingHom.comp (ct.YY.i.c.V ct.W).subtype)
-  exact Curve.nonempty_of_point x
 
 end Inhabitants
 
@@ -239,7 +204,8 @@ theorem exists_subsheaf {α : Type} [Fintype α] (rk : α → ℕ) (σ : α → 
       · refine (GlobalTheory.LB.resG_pull_g (L := grLB hZ _) c.f _ _ _).trans ((valR_affPt hT.1 _).symm.trans
           ((valR_appLE _ _ _ (le_preimage_affPt hT.1) _).trans ?_))
         exact (congrArg _ (IntChart.tr_neg_oneAt j.1.2 j'.1.2 hZ _ _)).trans (valR_res _ _ (le_preimage_inf h h') _)
-      · simp only [hres _ hT, h₃, map_sum, map_smul]) S hS
+      set_option synthInstance.maxHeartbeats 100000 in
+        · simp only [hres _ hT, h₃, map_sum, map_smul]) S hS
   refine ⟨G, i, hi, hd, fun hp hS => ?_⟩
   have := hi.mono
   refine Twist.isIso_of_cover i hc fun j V hV => ⟨QCoh.injective_app_of_mono i V, fun x => (hs j V hV x).2 ?_⟩
@@ -350,21 +316,6 @@ def crdTrue (ct : At S κ p) : CrDSt ct where
   eDeg_def hu c := ct.eDeg_eq c hu
   Pm_head c τ _ _ h := (ct.sum_degPiece_head c τ h).trans_le (c.sum_degStep_le _ _ _)
   Pm_tail c τ _ h _ := (ct.sum_degPiece_tail c τ h).trans_le (c.sum_degStep_le _ _ _)
-
-example (ct : At S κ p) : (crdTrue ct).nefQ 0 := fun c => by simp [At.degWt]
-
-example (ct : At S κ p) (c : ct.Crv) (τ : PsiT D) (hj : 1 ≤ j) :
-    (crdTrue ct).degGrD c τ 1 ∈ subDegs ct.Fbar c.lie ∧
-      (crdTrue ct).degLdR c (fun τ' i => At.indWt τ 1 τ' i) = -((crdTrue ct).degGrD c τ 1 : ℝ) := by
-  refine ⟨?_, ?_⟩
-  · have := c.sum_degStep_mem ct.hasDR (embOf D τ) 1
-    rwa [← ct.sum_degPiece_head c τ hj, Finset.Icc_self, Finset.sum_singleton] at this
-  · refine (ct.degWt_intCast c _ (isGrLB_grLB ct.hasDR _)).trans ?_
-    rw [← c.degGr_eq ct.hasDR (isGrLB_grLB ct.hasDR _)]
-    change _ = -((c.degGr ct.hasDR (-_) : ℤ) : ℝ)
-    simp
-
-example (ct : At S κ p) : Nonempty (crdTrue ct).Crv ∧ Nonempty (crdTrue ct).CrvQ := ⟨ct.nonempty_crv, ct.nonempty_crvQ⟩
 
 end Place
 

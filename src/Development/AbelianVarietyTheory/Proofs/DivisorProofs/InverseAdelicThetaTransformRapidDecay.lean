@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrandPeriodic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrandPeriodic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.SWQ GlobalTheory.ThetaTransform
 open scoped Matrix Classical
@@ -38,12 +42,12 @@ theorem continuous_eMsymm : Continuous (eM F).symm := by
 
 theorem embR_add' {N : ℕ} (a b : Fin N → mixedEmbedding.mixedSpace F) : embR (a + b) = embR a + embR b := by
   funext i
-  simp only [embR, Pi.add_apply, map_add, pairA]
+  simp only [embR, Pi.add_apply, map_add (f := _), pairA]
   exact Prod.ext rfl (add_zero 0).symm
 
 theorem fstA_add_embR {N : ℕ} (x : Fin N → AF F) (t : Fin N → mixedEmbedding.mixedSpace F) (l : Fin N) :
     fstA F ((x + embR t) l) = fstA F (x l) + (eM F).symm (t l) := by
-  rw [Pi.add_apply, map_add]; rfl
+  rw [Pi.add_apply, map_add (f := _)]; rfl
 
 theorem dot_embR_single {N : ℕ} (z : Fin N → AF F) (l : Fin N) (y : mixedEmbedding.mixedSpace F) :
     z ⬝ᵥ embR (Pi.single l y) = pairA F (fstA F (z l) * (eM F).symm y) 0 := by
@@ -75,7 +79,7 @@ theorem phase {ψ : AddChar (AF F) ℂ} {lam : InfinitePlace F → ℝ} (hL : Is
       lam w₀.1 * (rc w₀ (fstA F (z l)) * s) := by
     rw [Finset.sum_eq_single w₀.1]
     · congr 1
-      rw [re, mul_apply', map_mul, ext_symm, dif_pos w₀.2, Complex.re_mul_ofReal, rc]
+      rw [re, mul_apply', map_mul, ext_symm, dite_eq_left w₀.2, Complex.re_mul_ofReal, rc]
       have := re_eq (fstA F (z l)) w₀.1 w₀.2
       rw [re] at this
       rw [this]
@@ -224,7 +228,7 @@ theorem invV_decay : ∀ (F : Type) [Field F] [NumberField F] (N : ℕ) [Inverti
         intro l w₀
         have hn := norm_invV_deriv l w₀ (x + embR t) (hrel l w₀ (x + embR t))
         have hrc : rc w₀ (fstA F ((x + embR t) l)) = rc w₀ (fstA F (x l)) + (t l).1 w₀ := by
-          rw [fstA_add_embR, rc, rc, map_add, RingEquiv.apply_symm_apply]; rfl
+          rw [fstA_add_embR, rc, rc, map_add (f := _), RingEquiv.apply_symm_apply]; rfl
         rw [hrc, ← hgdef] at hn
         have ha : 0 < 2 * Real.pi * |lam w₀.1| := by
           have := hL.1 w₀.1

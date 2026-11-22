@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 
 private theorem truncSub {R : Type} [CommRing R] (H : PowerSeries R) (g N : ℕ) (t : R) :
@@ -16,7 +21,7 @@ private theorem truncSub {R : Type} [CommRing R] (H : PowerSeries R) (g N : ℕ)
     rw [hQ]
     generalize P = S
     induction S using Polynomial.induction_on' with
-    | add f h hf hh => simp only [Polynomial.coe_add, map_add, hf, hh, Polynomial.add_comp]
+    | add f h hf hh => simp only [Polynomial.coe_add, map_add (f := _), hf, hh, Polynomial.add_comp]
     | monomial n a =>
       have hC : sb g (PowerSeries.C a : PowerSeries R) = PowerSeries.C a := (sb (R := R) g).commutes a
       rw [← Polynomial.C_mul_X_pow_eq_monomial]
@@ -127,7 +132,7 @@ private theorem tvalExp (l : ℕ) [Fact l.Prime] (H : PowerSeries (Qbar l)) (hH 
   let S : Polynomial (OO l) := ∑ n ∈ Finset.range N, Polynomial.C (⟨H.coeff n, hH n⟩ : OO l) * (Polynomial.X - 1) ^ n
   refine ⟨S.natDegree + 1, fun i => (OO l).subtype (S.coeff i), fun i => (S.coeff i).2, fun z => ?_⟩
   rw [← Polynomial.eval₂_eq_sum_range]
-  simp [S, tval, Polynomial.eval₂_finset_sum, Polynomial.eval₂_pow]
+  simp [S, tval, Polynomial.eval₂_finsetSum, Polynomial.eval₂_pow]
 
 private theorem sumJ (l : ℕ) [Fact l.Prime] (φ : DirichletCharacter (Qbar l) l) (k r : ℕ) (ξ : Qbar l)
     (hξ : IsPrimitiveRoot ξ (l ^ r)) (M g : ℕ) (a : ℕ → Qbar l) :

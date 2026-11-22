@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CdUniv
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdAd
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrRatio
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CdUniv
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdAd
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrRatio
+
+@[expose] public section
 
 noncomputable section
 namespace PositivityTheory.Xgn.GermSystem
@@ -100,18 +104,18 @@ theorem coord_tan (l : Fin d) : IsCombAtG t x g.tg (fun j => lin φ.1 1 j l) (g�
     funext j; simp
   rw [comb_iff, tg_eq, tv_gd, tv_gd, hφ, PP, ← e, GlobalTheory.ChartCompare.hcomp, vec_subst, e₂]
 
-omit hφ in
 
+omit hφ in
 abbrev vE (g : GermAt t x d) (m : ℕ) {Z : Scheme.{0}} (r : Z ⟶ Sp (Jet S (Fin 2 × Fin d) m)) (z : Z)
     (J : (Z ⟶ t.G.left) → t.PP.L.ι) : (Z.presheaf.stalk z)ˣ :=
   val (L := t.PP.L) (φ := cφG t ![jptG t x d g.x m (0 : Fin 2), jptG t x d g.x m (1 : Fin 2)]) (ε := cε 2) (g.e m) r z J
 
-omit hφ in
 
+omit hφ in
 abbrev bb (φ : Q S d 1) : Fin 2 → Q S d 2 := ![ac φ (gen 0), ac φ (gen 1)]
 
-omit hφ in
 
+omit hφ in
 def LamEq (g g₂ : GermAt t x d) (φ : Q S d 1) (lam : PS S 2 d) : Prop :=
   ∀ m, ∃ U : (Jet S (Fin 2 × Fin d) m)ˣ, (U : Jet S (Fin 2 × Fin d) m) = psJet m lam ∧
     ∀ (Z : Scheme.{0}) (r : Z ⟶ Sp (Jet S (Fin 2 × Fin d) m)) (z : Z) (J), Good t.PP.L z J →

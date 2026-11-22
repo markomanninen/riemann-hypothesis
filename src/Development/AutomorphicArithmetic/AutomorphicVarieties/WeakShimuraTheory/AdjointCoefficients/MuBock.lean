@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -32,7 +36,7 @@ private theorem sep {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGrou
       (IsLocallyConstant.iff_continuous _).2 QuotientGroup.continuous_mk
     exact this.comp (fun y => c (Additive.ofMul y))
   · intro x y
-    simp only [QuotientGroup.mk_mul, ofMul_mul, map_add]
+    simp only [QuotientGroup.mk_mul, ofMul_mul, map_add (f := _)]
   · intro x hx
     have : (x : G ⧸ N) = 1 := (QuotientGroup.eq_one_iff x).2 (hKN hx)
     simp only [this, ofMul_one, map_zero]
@@ -134,7 +138,8 @@ private theorem core {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGro
   haveI : IsClosed (C : Set G) := hC
   let K : Subgroup G := (Subgroup.zpowers (s : G ⧸ C)).comap (QuotientGroup.mk' C)
   have hKc : IsClosed (K : Set G) := by
-    have : IsClosed (Subgroup.zpowers (s : G ⧸ C) : Set (G ⧸ C)) := (finite_zpowers.2 hfo).isClosed
+    haveI : Finite (Subgroup.zpowers (s : G ⧸ C)) := finite_zpowers.2 hfo
+    have : IsClosed (Subgroup.zpowers (s : G ⧸ C) : Set (G ⧸ C)) := Set.toFinite _ |>.isClosed
     exact this.preimage QuotientGroup.continuous_mk
   have hCK : C ≤ K := fun x hx => by
     show (x : G ⧸ C) ∈ Subgroup.zpowers (s : G ⧸ C)

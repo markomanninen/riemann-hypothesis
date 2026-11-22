@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowerEmbF
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RightTranslationActionApply
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SumFibreEqSumOrbits
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbFColZeroMemMram
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TilLatticesOfLevel
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowerEmbF
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RightTranslationActionApply
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SumFibreEqSumOrbits
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbFColZeroMemMram
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TilLatticesOfLevel
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,8 @@ theorem comp_appOf {K : Type} [Field K] [NumberField K] [StarRing K] {S₀ S S�
     (A.comp h S.outSec).appOf h₀ S₀.outSec φ d₁ =
       (cplKer2 A).appOf (cplGSD_ok Y h) (cplGSD S Y).outSec ((cplKer1 A).appOf h₀ S₀.outSec φ) d₁ := by
   unfold ClsKer.appOf
-  simp only [cpl_comp_k, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cpl_comp_k, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum, map_smul,
     Finset.smul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun q _ => Finset.sum_congr rfl fun c _ => ?_
@@ -105,8 +110,8 @@ theorem ker_top (hL : L.Ok Ch sel mu cst G m2) (p : PtAt R sel mu cst u (m2 + 1)
   rw [← stepC_eq_stepT W Ch sel mu cst (muqTie_of_ok Ch sel mu cst L hL) A u (m2 + 1) (by omega)]
   rfl
 
-variable {W Ch u} in
 
+variable {W Ch u} in
 theorem k2top_tilF (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hm : R.m = m2 + 2) (hc : cst.Ok) (H : TilOk Pr sel mu u)
     {T : ChTh W sel mu u m2} (hT : TameFr T.top) (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1))))
     (d : XPt Pr R sel mu) :
@@ -134,8 +139,8 @@ theorem k2top_tilF (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hm : R.m = m2
 
 variable (Tp : TopLev X Pr R (QE sel (mu : Chr X.F X.E X.K)))
 
-variable (sel mu cst L) in
 
+variable (sel mu cst L) in
 structure Reps where
   rp : ∀ j b, MulAction.orbitRel.Quotient ((stepAt sel mu cst L Tp u j).G b) (GStep.D (stepAt sel mu cst L Tp u j) b) →
     (stepAt sel mu cst L Tp u j).D b
@@ -300,12 +305,13 @@ theorem colAt_top (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (H : TilOk Pr s
   · show (k2.op hC (midForm W Ch A hK hF hL φ)).1 (toRow sel mu d) =
       ((∑ a, ((((chKerC W Ch sel mu cst L A u m2 b hY P hK).cp a).comp (hF (m2 + 1) b) _).opOf (hF m2 a) _) ∘ₗ (LinearMap.proj a))
         ((chKerC W Ch sel mu cst L A u m2 b hY P hK).kk.colTo hF m2 (startC hL u φ))).1 (toRow sel mu d)
-    rw [midForm, map_sum, LinearMap.sum_apply, Submodule.coe_sum, Submodule.coe_sum, Finset.sum_apply, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [midForm, map_sum, LinearMap.sum_apply, Submodule.coe_sum, Submodule.coe_sum, Finset.sum_apply, Finset.sum_apply]
     exact Finset.sum_congr rfl fun a _ => (comp_appOf ((chKerC W Ch sel mu cst L A u m2 b hY P hK).cp a) (hF m2 a) (hF (m2 + 1) b)
       ((chKerC W Ch sel mu cst L A u m2 b hY P hK).kk.colTo hF m2 (startC hL u φ) a).1 (toRow sel mu d)).symm
 
-omit hF hL in
 
+omit hF hL in
 theorem pair_smul (hW : W.Ok) (ψ : (evGSD W Ch sel mu P u).EqFun) (z : (mtildeGSD W Ch sel mu P).EqFun)
     (g : (mtildeGSD W Ch sel mu P).G) (d : (mtildeGSD W Ch sel mu P).D) :
     pairBK W.sgTrue (brC W u (ψ.1 (g • d))) (z.1 (g • d)) = pairBK W.sgTrue (brC W u (ψ.1 d)) (z.1 d) := by

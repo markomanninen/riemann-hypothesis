@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafGhostCut
-import Mathlib.Algebra.Homology.DerivedCategory.HomologySequence
-import Mathlib.Algebra.Homology.DerivedCategory.TStructure
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafGhostCut
+public import Mathlib.Algebra.Homology.DerivedCategory.HomologySequence
+public import Mathlib.Algebra.Homology.DerivedCategory.TStructure
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex

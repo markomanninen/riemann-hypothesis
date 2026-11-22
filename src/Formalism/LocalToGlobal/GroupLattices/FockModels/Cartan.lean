@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ProjectionLemmaBaseLevel
-import Formalism.LocalToGlobal.GroupLattices.FockModels.MulMemRiemannRochSpaceAdd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionLemmaBaseLevel
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.MulMemRiemannRochSpaceAdd
+
+@[expose] public section
 
 open MvPolynomial
 

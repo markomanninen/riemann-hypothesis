@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHat
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAGrp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbDegTopOfPolyTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAGrp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbDegTopOfPolyTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
+
+@[expose] public section
 
 open Matrix
 
@@ -91,20 +95,43 @@ theorem minorCell_of {k r : ℕ} (Bs : B.RealPlaceData k r Wp Wq) {J : Mx k r �
     intro c hc
     have h := hcellB c hc
     exact ⟨Formalism.FourierDecayAlt.P.OrbitalIntegralIdentities.glev0 h.1, fun l _ => h.2.2 l (by simp), h.2.1⟩
-  have hdiff : ∀ x' : SA (Wq →L[ℂ] Wp) hD, ∀ c ∈ OmX r, DifferentiableAt ℝ
+  have hdiff : ∀ x' : SA (E := Wq →L[ℂ] Wp) hD, ∀ c ∈ OmX r, DifferentiableAt ℝ
       (fun c' => ((x' : Module.End ℂ (VS k r 0 D (Wq →L[ℂ] Wp))) v₀ : Mx k r → (Wq →L[ℂ] Wp))
         (wCell k r (Fin.last r) c' * x.2)) c :=
     fun x' c hc => cell_diff Bs ((x' : Module.End ℂ (VS k r 0 D (Wq →L[ℂ] Wp))) v₀).2.1 hx.2.1 hx.2.2 hc
-  have hWS : ∀ x' : SA (Wq →L[ℂ] Wp) hD,
+  have hWS : ∀ x' : SA (E := Wq →L[ℂ] Wp) hD,
       resW ((x' : Module.End ℂ (VS k r 0 D (Wq →L[ℂ] Wp))) v₀ : Mx k r → (Wq →L[ℂ] Wp)) x.2 ∈ WSm r (Wq →L[ℂ] Wp) :=
     fun x' => resG_wsm Bs ((x' : Module.End ℂ (VS k r 0 D (Wq →L[ℂ] Wp))) v₀).2.1 hx.2.1 hx.2.2
   have hcl := claim hD v₀ x.2 y hRR hLR hTC hGP Bs.z Bs.z' Bs.z_mem Bs.z'_mem hN hf hLf hRf rfl hx.2.1 hcell hdiff hWS
     r le_rfl 1 (Subalgebra.one_mem _) x.1 hx.1
   rw [mul_one] at hcl
+  have vAB_loc : ∀ (i : ℕ) (f₁ f₂ : (Fin r → ℂ) → (Wq →L[ℂ] Wp)),
+      (∀ c ∈ OmX r, f₁ c = f₂ c) → ∀ c ∈ OmX r,
+      (Q.vAB r y i).1 f₁ c = (Q.vAB r y i).1 f₂ c ∧
+      (Q.vAB r y i).2 f₁ c = (Q.vAB r y i).2 f₂ c := by
+    intro i
+    induction i with
+    | zero => intro f₁ f₂ h c hc; exact ⟨h c hc, rfl⟩
+    | succ i ih =>
+      intro f₁ f₂ h c hc
+      have hi' := ih f₁ f₂ h
+      by_cases hi : i < r
+      · simp only [Q.vAB, dif_pos hi]
+        refine ⟨?_, ?_⟩
+        · simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, cOp]
+          have hev : (Q.vAB r y i).1 f₁ =ᶠ[nhds c] (Q.vAB r y i).1 f₂ := by
+            filter_upwards [(Formalism.FourierDecayAlt.P.Qx3.isOpen_OmX r).mem_nhds hc] with c' hc'
+            exact (hi' c' hc').1
+          simp only [pOp, wirt, if_pos hc, hev.fderiv_eq]
+          rw [(hi' c hc).1, (hi' c hc).2]
+        · simp only [ciOp]
+          rw [(hi' c hc).1]
+      · simp only [Q.vAB, dif_neg hi]
+        exact hi' c hc
   have eR : Q.crd (Q.vAB r y r).1 (Q.resG k r (Fin.last r) J) x.1 x.2 =
       (Q.vAB r y r).1 (fun c' => Q.resG k r (Fin.last r)
-        (((1 : SA (Wq →L[ℂ] Wp) hD) : Module.End ℂ (VS k r 0 D (Wq →L[ℂ] Wp))) v₀ : Mx k r → (Wq →L[ℂ] Wp)) c' x.2) x.1 := by
-    refine (vAB_loc y r _ _ (fun c' hc' => ?_) x.1 hx.1).1
+        (((1 : SA (E := Wq →L[ℂ] Wp) hD) : Module.End ℂ (VS k r 0 D (Wq →L[ℂ] Wp))) v₀ : Mx k r → (Wq →L[ℂ] Wp)) c' x.2) x.1 := by
+    refine (vAB_loc r _ _ (fun c' hc' => ?_) x.1 hx.1).1
     rw [resG_last, resG_last]
     congr 1
     exact (cut_of_mem _ (hcell c' hc')).symm
@@ -112,10 +139,10 @@ theorem minorCell_of {k r : ℕ} (Bs : B.RealPlaceData k r Wp Wq) {J : Mx k r �
   congr 1
   have hγ := hcell x.1 hx.1
   have e1 : ((qminor (EA (E := Wq →L[ℂ] Wp) hD) (C3.xR k r r le_rfl) (C3.xR k r r le_rfl)
-      (y + ((2 * r + k : ℕ) : ℂ) / 2) : SA (Wq →L[ℂ] Wp) hD) : Module.End ℂ (VS k r 0 D (Wq →L[ℂ] Wp))) =
+      (y + ((2 * r + k : ℕ) : ℂ) / 2) : SA (E := Wq →L[ℂ] Wp) hD) : Module.End ℂ (VS k r 0 D (Wq →L[ℂ] Wp))) =
       qminor (Eh (E := Wq →L[ℂ] Wp) (i := 0) hD) (cI ∘ C3.xR k r r le_rfl) (cI ∘ C3.xR k r r le_rfl)
         (y + ((2 * r + k : ℕ) : ℂ) / 2) := by
-    have := map_qminor (SA (Wq →L[ℂ] Wp) hD).val (EA hD) (C3.xR k r r le_rfl) (C3.xR k r r le_rfl)
+    have := map_qminor (SA (E := Wq →L[ℂ] Wp) hD).val (EA hD) (C3.xR k r r le_rfl) (C3.xR k r r le_rfl)
       (y + ((2 * r + k : ℕ) : ℂ) / 2)
     rw [Subalgebra.coe_val] at this
     rw [this]

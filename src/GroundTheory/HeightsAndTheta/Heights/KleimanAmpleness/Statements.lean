@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -28,17 +33,6 @@ def CechTop.Statement : Prop :=
     [AddCommGroup M] [Module (Poly S N) M] [Module S M] [IsScalarTower S (Poly S N) M]
     (𝓜 : GradedPMod S N M) (i : ℕ) (c : ℤ), N < i → Subsingleton (cohom 𝓜 i c)
 
-def CechFlat.Statement : Prop :=
-  ∀ (S : Type u) [CommRing S] [IsNoetherianRing S] (N : ℕ) (S' : Type u) [CommRing S']
-    [Algebra S S'] [Module.Flat S S'] (M M' : Type v)
-    [AddCommGroup M] [Module (Poly S N) M] [Module S M] [IsScalarTower S (Poly S N) M]
-    [AddCommGroup M'] [Module (Poly S' N) M'] [Module S' M'] [IsScalarTower S' (Poly S' N) M']
-    [Module S M'] [IsScalarTower S S' M']
-    (𝓜 : GradedPMod S N M) (𝓜' : GradedPMod S' N M') (f : M →ₗ[S] M'),
-    IsBaseChange S' f → (∀ (i : Fin (N + 1)) (m : M), f ((X i : Poly S N) • m) = (X i : Poly S' N) • f m) →
-    (∀ (c : ℤ) (m : M), m ∈ 𝓜.piece c → f m ∈ 𝓜'.piece c) →
-    ∀ (i : ℕ) (c : ℤ), Nonempty (cohom 𝓜' i c ≃ₗ[S'] S' ⊗[S] cohom 𝓜 i c)
-
 def Extension.Statement : Prop :=
   ∀ (S : Type u) [CommRing S] [IsNoetherianRing S] (Ω : Type w) [Field Ω] [Algebra S Ω] (N : ℕ)
     (x : Fin (N + 1) → Ω) (E : Type v) [AddCommGroup E] [Module Ω E] [Module S E]
@@ -65,11 +59,6 @@ def PrimeFiltration.Exists.Statement : Prop :=
         pp ∈ (Module.annihilator (Poly S N) M).minimalPrimes →
         (((Finset.univ.filter fun k => F.prime k = pp).card : ℕ) : ℕ∞) =
           Module.length (Localization.AtPrime pp) (LocalizedModule pp.primeCompl M)
-
-def PrimeFiltration.Irrelevant.Statement : Prop :=
-  ∀ (S : Type u) [CommRing S] [IsNoetherianRing S] (N : ℕ) (pp : Ideal (Poly S N)), pp.IsPrime →
-    (∀ p ∈ pp, ∀ d : ℕ, homogeneousComponent d p ∈ pp) → (∀ i, (X i : Poly S N) ∈ pp) →
-    ∃ c₀ : ℕ, ∀ c ≥ c₀, ∀ f : Poly S N, f.IsHomogeneous c → f ∈ pp
 
 def PrimeFiltration.Point.Statement : Prop :=
   ∀ (S : Type u) [CommRing S] [IsNoetherianRing S] (Ω : Type w) [Field Ω] [Algebra S Ω] (N : ℕ)
@@ -98,10 +87,6 @@ def PrimeFiltration.Restrict.Statement : Prop :=
                 aeval (fun i => ψ (ratio hj i)) f / aeval (fun i => ψ (ratio hj i)) s * r q) ∧
             Submodule.span (chartRing S (fun i => ψ (ratio hj i)) I) (r '' Q.sub (liftChart hxy I)) =
               Q'.sub I
-
-def PrimeFiltration.Statement : Prop :=
-  PrimeFiltration.Exists.Statement.{u, v, w} ∧ PrimeFiltration.Irrelevant.Statement.{u} ∧
-    PrimeFiltration.Point.Statement.{u, w} ∧ PrimeFiltration.Restrict.Statement.{u, w}
 
 def SerrePoly.Statement : Prop :=
   ∀ (S : Type u) [CommRing S] [IsNoetherianRing S] (N : ℕ),

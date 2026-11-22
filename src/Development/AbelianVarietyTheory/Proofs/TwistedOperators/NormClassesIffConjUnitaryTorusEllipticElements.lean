@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+
+@[expose] public section
+
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots GlobalTheory.TrEll
@@ -34,7 +39,7 @@ theorem comm_of_alpha (f : (k ⊗[F] Fld P) →ₗ[k ⊗[F] E] (k ⊗[F] Fld P))
         rw [mul_assoc, ha, hb, mul_assoc]
       add_mem' := fun {a b} ha hb y => by
         simp only [Set.mem_setOf_eq] at *
-        rw [add_mul, map_add, ha, hb, add_mul]
+        rw [add_mul, map_add (f := _), ha, hb, add_mul]
       algebraMap_mem' := fun a y => by
         rw [← Algebra.smul_def, map_smul, Algebra.smul_def] }
   have h1 : ∀ l : Fld P, (1 : k) ⊗ₜ[F] l ∈ S := by
@@ -78,7 +83,7 @@ theorem trBase_perfect [NumberField E] (w : k ⊗[F] Fld P) (hw : ∀ y, trBase 
     induction z using TensorProduct.induction_on with
     | zero => simp
     | add u v hu hv =>
-      simp only [add_mul, map_add, Finset.sum_add_distrib, hu, hv]
+      simp only [add_mul, map_add (f := _), Finset.sum_add_distrib, hu, hv]
     | tmul a l =>
       have hl : ∑ i, Algebra.trace E (Fld P) (l * b i) • d i = l := by
         conv_rhs => rw [← d.sum_repr l]
@@ -105,7 +110,8 @@ theorem hform_mulVec_of_unitary {A : Type} [CommRing A] (s : A →+* A) (G M : M
     Formalism.UG.hform s G (M *ᵥ a) (M *ᵥ b) = Formalism.UG.hform s G a b := by
   have e : (fun i => s ((M *ᵥ a) i)) = Matrix.vecMul (fun i => s (a i)) (Formalism.UG.cT s M) := by
     ext i
-    simp [Formalism.UG.cT, Matrix.vecMul, Matrix.mulVec, dotProduct, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Formalism.UG.cT, Matrix.vecMul, Matrix.mulVec, dotProduct, map_sum, mul_comm]
   rw [hform_eq_vecMul, hform_eq_vecMul, e, Matrix.dotProduct_mulVec, Matrix.vecMul_vecMul, Matrix.vecMul_vecMul, ← Matrix.mul_assoc, h]
 
 theorem matrix_ext_mulVec {A : Type} [CommRing A] {M N : Matrix (Fin n) (Fin n) A} (h : ∀ v, M *ᵥ v = N *ᵥ v) :

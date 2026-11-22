@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenLocOfCenReal
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoreEq
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoFormsOff
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsRhoPtOfSplitting
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsComp
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroWild
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroSupport
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalGlobalAboveL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FcLargeOfSup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenLocOfCenReal
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoreEq
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoFormsOff
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsRhoPtOfSplitting
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsComp
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroWild
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroSupport
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalGlobalAboveL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FcLargeOfSup
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,12 +25,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 def autOf {D : D7} {μt : D.what₂.Tup} {j : ℕ} (Mr : MtReal D μt j) (S : Submodule ℂ (GAf D.host.E D.R.nV → Mr.wt.W))
     (hS : NG.IsIrrRep Mr.wt.ρ S) : NG.AutRep D.host.E D.R.nV :=
   { Mr.wt with S := S, irrS := hS }
-
-def AtRows (hL : GlobalTheory.Published.LocalLanglandsGL)
-    (q : ∀ (D : D7) (cf : CharFrame D) (rep : D.what₂.FT → NG.FinTyp D.host.E D.R.r) (Rw : RowSide D), ParIn hL D cf rep Rw →
-      MtFam D → Prop) : Prop :=
-  OverRows fun _ _ _ _ w Z _ _ _ _ Y => ∀ Rw (a : ParIn hL (w.st Z).toD7 (TC.cf w.I w.l Z) (repOf Y) Rw) (M : MtFam (w.st Z).toD7) tup Q,
-    MtAd Y M → MtInput (w.st Z).toD7 M tup Q → q (w.st Z).toD7 (TC.cf w.I w.l Z) (repOf Y) Rw a M
 
 theorem evG_and {p q : Ctx → Prop} (hp : EvG p) (hq : EvG q) : EvG fun K => p K ∧ q K := by
   obtain ⟨a, ha, hp⟩ := hp

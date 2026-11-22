@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountSt
-import ReciprocityTheory.SemistableReduction.SemiDegC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountSt
+public import ReciprocityTheory.SemistableReduction.SemiDegC
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 open scoped ComplexOrder MatrixOrder
@@ -50,7 +54,8 @@ theorem posDef_map {K : Type} [Field K] [StarRing K] {n : ℕ} (σ : K →+* ℂ
   set f : (Fin n → K) → (Fin n → ℂ) := fun y i => σ (y i) with hf
   have hqv : ∀ y, star (f y) ⬝ᵥ (G.map σ *ᵥ f y) = σ (star y ⬝ᵥ (G *ᵥ y)) := by
     intro y
-    simp [hf, dotProduct, mulVec, map_sum, map_mul, hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hf, dotProduct, mulVec, map_sum, map_mul, hs]
   have hnn : ∀ y : Fin n → K, 0 ≤ star (f y) ⬝ᵥ (G.map σ *ᵥ f y) := by
     intro y
     rw [Complex.le_def]
@@ -71,7 +76,7 @@ theorem posDef_map {K : Type} [Field K] [StarRing K] {n : ℕ} (σ : K →+* ℂ
     fun_prop
   have hpsdM : (G.map σ).PosSemidef := PosSemidef.of_dotProduct_mulVec_nonneg hH hpsd
   refine PosDef.of_dotProduct_mulVec_pos hH fun w hw => lt_of_le_of_ne (hpsd w) fun h0 => ?_
-  have hk : G.map σ *ᵥ w = 0 := (hpsdM.dotProduct_mulVec_zero_iff w).1 h0.symm
+  have hk : G.map σ *ᵥ w = 0 := (hpsdM.dotProduct_mulVec_zero_iff).1 h0.symm
   have hdet : (G.map σ).det = 0 := Matrix.exists_mulVec_eq_zero_iff.1 ⟨w, hw, hk⟩
   have hdσ : σ G.det = 0 := by
     rw [RingHom.map_det]
@@ -191,12 +196,12 @@ theorem star_form {m : ℕ} {J : Matrix (Fin m) (Fin m) E} (hJ : Jᴴ = J) (x y 
     star (star x ⬝ᵥ (J *ᵥ y)) = star y ⬝ᵥ (J *ᵥ x) := by
   rw [star_dotProduct, star_mulVec, star_star, hJ, ← dotProduct_mulVec]
 
-noncomputable def fam [IsTotallyComplex E] (hs : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEnd ℂ (φ a))
+noncomputable def fam [_root_.NumberField.IsTotallyComplex E] (hs : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEnd ℂ (φ a))
     {m : ℕ} (J : Matrix (Fin m) (Fin m) E) (hJ : Jᴴ = J)
     (hp : ∀ (φ : E →+* ℂ) (y : Fin m → E), y ≠ 0 → 0 < (φ (star y ⬝ᵥ (J *ᵥ y))).re) :
     ReciprocityTheory.GeometryOfNumbersTheory.HermFam E (Fin m → E) where
   form σ x y := σ (star x ⬝ᵥ (J *ᵥ y))
-  add_right σ x y z := by rw [mulVec_add, dotProduct_add, map_add]
+  add_right σ x y z := by rw [mulVec_add, dotProduct_add, map_add (f := _)]
   smul_right σ a x y := by rw [mulVec_smul, dotProduct_smul, smul_eq_mul, map_mul]
   conj_symm σ x y := by rw [← hs, star_form hJ]
   posDef σ n v hv := by
@@ -234,8 +239,8 @@ theorem one_lt_ratio {f : ℕ} (hf : 0 < f) {D P n : ℝ} (hD : 0 < D) (hP : 0 <
         rw [div_lt_div_iff_of_pos_right hP]
         nlinarith [mul_pos h4 hD]
 
-open ReciprocityTheory.GeometryOfNumbersTheory in
 
+open ReciprocityTheory.GeometryOfNumbersTheory in
 theorem exists_short_vector : ∀ (E : Type) [Field E] [NumberField E] [StarRing E], Formalism.HermitianLatticesTheory.IsCMUnram E → ∀ (J : Matrix (Fin 2) (Fin 2) E), Jᴴ = J → (∀ (φ : E →+* ℂ) (y : Fin 2 → E), y ≠ 0 → 0 < (φ (star y ⬝ᵥ (J *ᵥ y))).re) → ∀ Λ : Submodule (𝓞 E) (Fin 2 → E), Submodule.IsLattice E Λ → (∀ x, x ∈ Λ ↔ ∀ y ∈ Λ, star y ⬝ᵥ (J *ᵥ x) ∈ (algebraMap (𝓞 E) E).range) → ∃ u ∈ Λ, u ≠ 0 ∧ ∀ φ : E →+* ℂ, (φ (star u ⬝ᵥ (J *ᵥ u))).re ≤ 2 * Formalism.HermitianLatticesTheory.vInv E := by
   intro E _ _ _ hCM J hJ hp Λ hΛ hdual
   classical
@@ -247,9 +252,53 @@ theorem exists_short_vector : ∀ (E : Type) [Field E] [NumberField E] [StarRing
     intro σ x y
     rw [hform, hform, ComplexEmbedding.conjugate_coe_eq]
   have hfg : Λ.FG := hΛ.fg
+  have hspan : Submodule.span E (Λ : Set (Fin 2 → E)) = ⊤ := by
+    by_contra hspan
+    obtain ⟨φ, hφ0, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+    have hinj : Function.Injective J.mulVecLin := by
+      apply LinearMap.ker_eq_bot.mp
+      rw [LinearMap.ker_eq_bot']
+      intro x hx
+      by_contra hx0
+      obtain ⟨σ⟩ : Nonempty (E →+* ℂ) := inferInstance
+      have ht := hp σ x hx0
+      change J *ᵥ x = 0 at hx
+      simp [hx] at ht
+    obtain ⟨u, hu⟩ := (LinearMap.injective_iff_surjective.mp hinj)
+      (fun i => star (φ (Pi.single i 1)))
+    have hpair (y : Fin 2 → E) : star y ⬝ᵥ (J *ᵥ u) = star (φ y) := by
+      change J *ᵥ u = _ at hu
+      rw [hu, dotProduct]
+      conv_rhs => rw [φ.pi_apply_eq_sum_univ y, star_sum]
+      simp only [smul_eq_mul, Pi.star_apply]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      have he : (Pi.single i 1 : Fin 2 → E) = (fun j => if i = j then 1 else 0) := by
+        funext j
+        simp [Pi.single_apply, eq_comm]
+      simp [star_mul, he, mul_comm]
+    have hu0 : u ≠ 0 := by
+      intro hzero
+      apply hφ0
+      apply LinearMap.ext
+      intro y
+      have := hpair y
+      simp [hzero] at this
+      exact star_eq_zero.mp this.symm
+    have hline (a : E) : a • u ∈ Λ := (hdual _).2 fun y hy => by
+      have hy0 : φ y = 0 := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+      have he : J *ᵥ (a • u) = a • (J *ᵥ u) := map_smul J.mulVecLin a u
+      rw [he, dotProduct_smul, hpair, hy0]
+      simp
+    let i : E →ₗ[𝓞 E] Λ :=
+      ((LinearMap.toSpanSingleton E _ u).restrictScalars (𝓞 E)).codRestrict Λ hline
+    let : Module.Finite (𝓞 E) Λ := Module.Finite.iff_fg.mpr hfg
+    let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective E hu0 (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
   have hrank : latRank E Λ = 2 := by
     unfold latRank
-    rw [hΛ.span_eq_top, finrank_top, Module.finrank_fin_fun]
+    rw [hspan, finrank_top, Module.finrank_fin_fun]
   obtain ⟨v, hv⟩ : ∃ v : Fin 2 → (Fin 2 → E), IsFrame E Λ v := by
     have := exists_isFrame (K := E) Λ hfg
     rw [hrank] at this

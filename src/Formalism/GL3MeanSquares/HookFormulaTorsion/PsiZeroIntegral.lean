@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
-import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
+public import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
+
+@[expose] public section
 
 open Finset Filter Topology ArithmeticFunction MeasureTheory
 
@@ -69,12 +73,6 @@ private lemma rem_measurable (a : ℕ → ℂ) (m : ℂ) : Measurable (rem a m) 
 private lemma F_measurable (a : ℕ → ℂ) (m : ℂ) (s : ℂ) :
     Measurable (fun t : ℝ => rem a m t * (t : ℂ) ^ s) := by
   exact (rem_measurable a m).mul (Complex.measurable_ofReal.pow_const s)
-
-private lemma cpow_contOn (s : ℂ) : ContinuousOn (fun t : ℝ => (t : ℂ) ^ s) (Set.Ici 1) := by
-  intro t ht
-  have ht' : (0 : ℝ) < t := lt_of_lt_of_le one_pos ht
-  exact (Complex.continuous_ofReal.continuousAt.cpow continuousAt_const
-    (Complex.ofReal_mem_slitPlane.2 ht')).continuousWithinAt
 
 private lemma core_bigO {a : ℕ → ℂ} {m : ℂ} (h : RemBound a m) :
     (fun t : ℝ => rem a m t * (t : ℂ) ^ (-(((1 : ℝ) : ℂ) + 1))) =O[atTop] dom := by
@@ -364,8 +362,8 @@ private theorem logDerivSeries_main : Formalism.HermitianLattices.GL2a2.LogDeriv
   have hf_int : LocallyIntegrableOn (deriv (fun t : ℝ => ((t⁻¹ : ℝ) : ℂ))) (Set.Ici 1) := by
     have hc : ContinuousOn (fun t : ℝ => ((-(t ^ 2)⁻¹ : ℝ) : ℂ)) (Set.Ici 1) := by
       apply Complex.continuous_ofReal.comp_continuousOn
-      apply ContinuousOn.neg
-      apply ContinuousOn.inv₀ (by fun_prop)
+      apply ContinuousOn.fun_neg
+      apply ContinuousOn.fun_inv₀ (by fun_prop)
       intro t ht
       exact pow_ne_zero 2 (show (0 : ℝ) < t from lt_of_lt_of_le one_pos ht).ne'
     exact (hc.congr (fun t ht => hdf t (show (0 : ℝ) < t from lt_of_lt_of_le one_pos ht).ne')).locallyIntegrableOn

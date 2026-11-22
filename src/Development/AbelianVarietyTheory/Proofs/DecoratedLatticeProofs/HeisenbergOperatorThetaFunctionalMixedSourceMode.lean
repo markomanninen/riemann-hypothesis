@@ -1,14 +1,37 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MixedModelTargetHeisenbergAnisotropicPart
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicMatrixQuotientPeriodicIntegralContinuousPaStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittSourceMixedCoordHeisenbergRestrictionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionMixedCoordsRankZeroStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaSeriesSummableOnCovolumeDomain
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisThetaLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MixedModelTargetHeisenbergAnisotropicPart
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicMatrixQuotientPeriodicIntegralContinuousPaStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittSourceMixedCoordHeisenbergRestrictionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionMixedCoordsRankZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaSeriesSummableOnCovolumeDomain
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisThetaLaws
+
+namespace I195MixedCoordinates_5a743adb4eaabe3d936622f8
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+end I195MixedCoordinates_5a743adb4eaabe3d936622f8
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
@@ -19,14 +42,13 @@ noncomputable section
 
 namespace GlobalTheory.HeisMixSource
 
-theorem heis_mixS : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (v : VolM D T.rank ρ) (f : WO S T → ℂ), IsThetaFunO ψ S T f → (∀ x a, d.mixS T ψ v.μ v.𝓕 (heisO ψ S T (d.extX T a) f) x = d.mixS T ψ v.μ v.𝓕 f (x + a)) ∧ (∀ x a, d.mixS T ψ v.μ v.𝓕 (heisO ψ S T (d.extY T a) f) x = ψ (symplO S T (d.extX T x) (d.extY T a)) • d.mixS T ψ v.μ v.𝓕 f x) ∧ (∀ x w, d.mixS T ψ v.μ v.𝓕 (heisO ψ S T (d.ext0 T w) f) x = heisO ψ S₀ T w (d.mixS T ψ v.μ v.𝓕 f x)) ∧ (Continuous fun p : Mx D T.rank ρ × WO S₀ T => d.mixS T ψ v.μ v.𝓕 f p.1 p.2) ∧ ∀ w, HasSum (fun x : Matrix (Fin T.rank) (Fin ρ) D.host.E => d.mixS T ψ v.μ v.𝓕 f (rat x) w) (f (d.ext0 T w)) := by
+theorem heis_mixS : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (v : VolM D T.rank ρ) (f : WO S T → ℂ), IsThetaFunO ψ S T f → (∀ x a, (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 (heisO ψ S T (d.extX T a) f) x = (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 f (x + a)) ∧ (∀ x a, (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 (heisO ψ S T (d.extY T a) f) x = ψ (symplO S T (d.extX T x) (d.extY T a)) • (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 f x) ∧ (∀ x w, (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 (heisO ψ S T (d.ext0 T w) f) x = heisO ψ S₀ T w ((_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 f x)) ∧ (Continuous fun p : Mx D T.rank ρ × WO S₀ T => (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 f p.1 p.2) ∧ ∀ w, HasSum (fun x : Matrix (Fin T.rank) (Fin ρ) D.host.E => (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 f (rat x) w) (f (d.ext0 T w)) := by
   intro D ψ hψ S S₀ T ρ d v f hf
   have hψc : Continuous ψ := hψ.1.1
   refine ⟨fun x a => GlobalTheory.MixModel.Check.mixS_heis_extX d v.μ v.𝓕 f a x, fun x a => ?_,
     fun x w => GlobalTheory.MixModel.Check.mixedModelSource_heisenberg_anisotropic_part d v.μ v.𝓕 f w x, ?_, fun w => ?_⟩
   · funext w₀
-    rw [GlobalTheory.MixModel.Check.mixS_heis_extY d v.covol hf a x w₀]
-    rfl
+    exact GlobalTheory.MixModel.Check.mixS_heis_extY d v.covol hf a x w₀
   · have hX : Continuous (d.extX T) := continuous_id.matrix_mul continuous_const
     have hY : Continuous (d.extY T) := continuous_id.matrix_mul continuous_const
     have h0 : Continuous (d.ext0 T) := continuous_id.matrix_mul continuous_const
@@ -49,9 +71,9 @@ theorem heis_mixS : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D �
     rcases Nat.eq_zero_or_pos ρ with rfl | hρ
     · have hz := (GlobalTheory.T.wittDecomposition_mixedCoords_rank_zero D ψ).1 S S₀ T d v.μ v.𝓕 v.covol f
       haveI : Subsingleton (Matrix (Fin T.rank) (Fin 0) D.host.E) := ⟨fun a b => Matrix.ext fun _ j => j.elim0⟩
-      have h1 : ∀ x : Matrix (Fin T.rank) (Fin 0) D.host.E, d.mixS T ψ v.μ v.𝓕 f (rat x) w = f (d.ext0 T w) :=
-        fun x => by rw [hz]
-      rw [show (fun x : Matrix (Fin T.rank) (Fin 0) D.host.E => d.mixS T ψ v.μ v.𝓕 f (rat x) w) =
+      have h1 : ∀ x : Matrix (Fin T.rank) (Fin 0) D.host.E, (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 f (rat x) w = f (d.ext0 T w) :=
+        fun x => congrFun (hz (rat x)) w
+      rw [show (fun x : Matrix (Fin T.rank) (Fin 0) D.host.E => (_root_.I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d) T ψ v.μ v.𝓕 f (rat x) w) =
         fun _ => f (d.ext0 T w) from funext h1]
       exact hasSum_single (f := fun _ : Matrix (Fin T.rank) (Fin 0) D.host.E => f (d.ext0 T w))
         (0 : Matrix (Fin T.rank) (Fin 0) D.host.E) fun b hb => absurd (Subsingleton.elim b 0) hb
@@ -74,8 +96,10 @@ theorem heis_mixS : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D �
       rw [hg0] at H
       convert H using 1
       funext y
-      rw [hXe, ← hres, GlobalTheory.MixModel.Check.mixedModelSource_heisenberg_anisotropic_part]
+      rw [hXe, ← hres]
+      change d.mixS T ψ v.μ v.𝓕 f (rat y) w =
+        d.mixS T ψ v.μ v.𝓕 (heisO ψ S T (d.ext0 T w) f) (rat y) 0
+      rw [GlobalTheory.MixModel.Check.mixedModelSource_heisenberg_anisotropic_part]
       simp only [heisO, symplOH_zero_left, AddChar.map_zero_eq_one, one_mul, zero_add]
-      rfl
 
 end GlobalTheory.HeisMixSource

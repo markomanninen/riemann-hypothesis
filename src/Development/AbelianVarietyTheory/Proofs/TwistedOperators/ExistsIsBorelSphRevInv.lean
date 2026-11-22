@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,8 @@ theorem invRevT_mem_borel {b : GL (Fin n) R} (hb : b ∈ GlobalTheory.SmGL.borel
 theorem inv_diag_mul {b : GL (Fin n) R} (hb : b ∈ GlobalTheory.SmGL.borel R (Fin n)) (i : Fin n) :
     (b⁻¹).val i i * b.val i i = 1 := by
   have h := congrFun (congrFun (Units.inv_mul b) i) i
-  rw [mul_apply, one_apply_eq, Finset.sum_eq_single i] at h
+  change ((b⁻¹).val * b.val) i i = (1 : Matrix (Fin n) (Fin n) R) i i at h
+  rw [Matrix.mul_apply, one_apply_eq, Finset.sum_eq_single i] at h
   · exact h
   · intro j _ hj
     rcases lt_or_gt_of_ne hj with h' | h'
@@ -61,7 +66,7 @@ theorem invRevT_mem_KO {g : GL (Fin n) k} (hg : g ∈ KO k (Fin n)) : invRevT g 
 
 theorem ord_inv_eq_neg (x : kˣ) : ord k x⁻¹ = -ord k x := by
   have h := ord_mul k x⁻¹ x
-  rw [inv_mul_cancel, ord_eq_zero (by simp)] at h
+  rw [inv_mul_cancel, ord_eq_zero (k := k) (x := 1) (by simp)] at h
   omega
 
 def cosetMap : GL (Fin n) k ⧸ KO k (Fin n) → GL (Fin n) k ⧸ KO k (Fin n) :=

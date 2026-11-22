@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsIntCoordGeoNum
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsIntCoordGeoNum
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -16,32 +21,34 @@ def substR (R : Type) [CommRing R] (A : Matrix T T₂ ℤ) :
     MRingOver R (dualBlocks T₂) →ₐ[R] MRingOver R (dualBlocks T) :=
   aeval fun p => ∑ t, C ((A t p.2 : ℤ) : R) * X (⟨(), t⟩ : Σ k : Unit, dualBlocks T k)
 
-omit [Fintype T₂] [DecidableEq T] [DecidableEq T₂] in
 
+omit [Fintype T₂] [DecidableEq T] [DecidableEq T₂] in
 theorem substR_int (A : Matrix T T₂ ℤ) : substR ℤ A = intCoordSubst A := by
   unfold substR intCoordSubst
   simp
 
-omit [DecidableEq T₂] in
 
+omit [DecidableEq T₂] in
 theorem substR_substR (R : Type) [CommRing R] {A : Matrix T T₂ ℤ} {B : Matrix T₂ T ℤ}
     (hAB : A * B = 1) (f : MRingOver R (dualBlocks T)) : substR R A (substR R B f) = f := by
   have h : (substR R A).comp (substR R B) = AlgHom.id R _ := by
     refine MvPolynomial.algHom_ext fun p => ?_
     obtain ⟨⟨⟩, t⟩ := p
-    simp only [AlgHom.comp_apply, AlgHom.id_apply, substR, aeval_X, map_sum, map_mul, aeval_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, AlgHom.id_apply, substR, aeval_X, map_sum, map_mul, aeval_C,
       algebraMap_eq]
     simp_rw [Finset.mul_sum, ← mul_assoc, ← C_mul]
     rw [Finset.sum_comm]
-    simp_rw [← Finset.sum_mul, ← map_sum C, ← Int.cast_mul, ← Int.cast_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp_rw [← Finset.sum_mul, ← map_sum C, ← Int.cast_mul, ← Int.cast_sum]
     have h1 : ∀ x : T, ∑ s, B s t * A x s = (A * B) x t := fun x => by
       simp [Matrix.mul_apply, mul_comm]
     simp_rw [h1, hAB, Matrix.one_apply]
     simp
   exact DFunLike.congr_fun h f
 
-omit [DecidableEq T] in
 
+omit [DecidableEq T] in
 theorem isWH_iff {R : Type} [CommRing R] (f : MRingOver R (dualBlocks T)) (m : Unit → ℕ) :
     IsWeightedHomogeneous (NumbersDVR.blockWeight (dualBlocks T)) f m ↔ f.IsHomogeneous (m ()) := by
   have hw : ∀ d : (Σ k : Unit, dualBlocks T k) →₀ ℕ,
@@ -58,8 +65,8 @@ theorem isWH_iff {R : Type} [CommRing R] (f : MRingOver R (dualBlocks T)) (m : U
     cases u
     exact h hd
 
-omit [DecidableEq T] [DecidableEq T₂] in
 
+omit [DecidableEq T] [DecidableEq T₂] in
 theorem substR_isWH (R : Type) [CommRing R] (A : Matrix T T₂ ℤ) {f : MRingOver R (dualBlocks T₂)}
     {m : Unit → ℕ} (hf : IsWeightedHomogeneous (NumbersDVR.blockWeight (dualBlocks T₂)) f m) :
     IsWeightedHomogeneous (NumbersDVR.blockWeight (dualBlocks T)) (substR R A f) m := by
@@ -89,18 +96,19 @@ theorem comap_substR (R : Type) [CommRing R] {A : Matrix T T₂ ℤ} {B : Matrix
     rw [Ideal.mem_comap, Ideal.mem_comap, substR_substR R hAB]
     exact hg
 
-omit [Fintype T₂] [DecidableEq T] [DecidableEq T₂] in
 
+omit [Fintype T₂] [DecidableEq T] [DecidableEq T₂] in
 theorem red_substR (p : ℕ) (A : Matrix T T₂ ℤ) (f : MRingOver ℤ (dualBlocks T₂)) :
     MvPolynomial.map (Int.castRingHom (ZMod p)) (substR ℤ A f) =
       substR (ZMod p) A (MvPolynomial.map (Int.castRingHom (ZMod p)) f) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [substR]
-  | add f g hf hg => rw [map_add, map_add, hf, hg, map_add, map_add]
+  | add f g hf hg => rw [map_add (f := _), map_add (f := _), hf, hg, map_add (f := _), map_add (f := _)]
   | mul_X f q hf =>
     rw [map_mul, map_mul, hf, map_mul, map_mul, map_X]
     congr 1
-    simp [substR, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [substR, map_sum]
 
 theorem hilbFn_comap (F : Type) [Field F] {A : Matrix T T₂ ℤ} {B : Matrix T₂ T ℤ}
     (hAB : A * B = 1) (hBA : B * A = 1) (Q : Ideal (MRingOver F (dualBlocks T))) :
@@ -142,8 +150,8 @@ theorem hilbFn_comap (F : Type) [Field F] {A : Matrix T T₂ ℤ} {B : Matrix T�
 
 end IntegralCoordGeometricNumber
 
-open IntegralCoordGeometricNumber in
 
+open IntegralCoordGeometricNumber in
 theorem IntCoordGeoNum.proof : IntCoordGeoNum.Statement := by
   intro T T₂ _ _ _ _ A B hAB hBA V n p hV hp hpV hdim a
   have : Fact p.Prime := ⟨hp⟩

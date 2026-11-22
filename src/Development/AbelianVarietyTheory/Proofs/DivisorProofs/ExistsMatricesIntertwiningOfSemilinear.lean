@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory
@@ -39,9 +44,11 @@ theorem exists_matrices_intertwining_of_semilinear : ∀ (l : ℕ) [Fact l.Prime
   · intro i c
     have key : ∀ a, Tq i (j (b a)) = ∑ k, emb (σ (MvPolynomial.X i) k a) • j (b k) := by
       intro a
-      rw [← hX, hσ, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hX, hσ, map_sum]
       simp [LinearMap.map_smulₛₗ]
-    rw [he, he, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [he, he, map_sum]
     simp_rw [LinearMap.map_smul, key, Finset.smul_sum, smul_smul]
     simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Finset.sum_smul]
     rw [Finset.sum_comm]

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StValCentreZ
-import GroundTheory.HeightsAndTheta.Heights.Intersections.KerIsMultiHomogIdeal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StValCentreZ
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.KerIsMultiHomogIdeal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -46,7 +51,7 @@ theorem ValCentreZ.proof : ValCentreZ.Statement := by
     intro g
     induction g using MvPolynomial.induction_on with
     | C a => rw [chartHom_coe, eval₂Hom_C, eq_intCast]; exact intCast_mem R a
-    | add f g hf hg => rw [map_add, Subring.coe_add]; exact add_mem hf hg
+    | add f g hf hg => rw [map_add (f := _), Subring.coe_add]; exact add_mem hf hg
     | mul_X f p hf =>
       rw [map_mul, Subring.coe_mul]
       refine mul_mem hf ?_

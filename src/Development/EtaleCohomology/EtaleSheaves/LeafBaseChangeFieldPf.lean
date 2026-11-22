@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafCurveVCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafCurveVCut
+
+@[expose] public section
 
 noncomputable section
 open Polynomial IntermediateField

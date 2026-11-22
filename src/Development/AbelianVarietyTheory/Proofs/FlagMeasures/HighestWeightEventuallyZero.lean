@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FirstSlotSliceSlotMixedCasimirZero
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantOrthogonalInf
-import Formalism.RealPlaceAnalysis.FinalF
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDerivPhiConj
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DerivExpEntry
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiEntriesCentreEigenfunctionsDiscreteSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FirstSlotSliceSlotMixedCasimirZero
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantOrthogonalInf
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDerivPhiConj
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DerivExpEntry
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiEntriesCentreEigenfunctionsDiscreteSeries
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId GlobalTheory.Jet
 open scoped InnerProductSpace ComplexOrder
@@ -31,7 +35,7 @@ lemma continuous_inv_toMK (ε : Fin n → Bool) : Continuous (fun k : KG ε => (
   exact Units.continuous_coe_inv.comp (continuous_subtype_val.comp continuous_subtype_val)
 
 private lemma one_mem_Omega : (1 : Mt) ∈ Omega n := by
-  simp only [GlobalTheory.Dec.Omega, Set.mem_setOf_eq]
+  simp only [GlobalTheory.Dec.Omega, Set.mem_ofPred_eq]
   intro i
   simp only [Formalism.MainNotions.S.leadMinor, Matrix.submatrix_one _ (Fin.castLE_injective _), Matrix.det_one]
   exact one_ne_zero
@@ -77,7 +81,7 @@ lemma continuousOn_dInt {ε : Fin n → Bool} {l : Fin n → Fin n → Mt → �
     (continuous_toMK_inv_mul_mul_toMK' ε X).comp continuous_snd
   have hmaps : Set.MapsTo (fun x : Mt × KG ε => (toMK x.2)⁻¹ * x.1 * toMK x.2) (U1 ε ×ˢ Set.univ) (Omega n) :=
     fun x hx => hx.1 _ (toMK_mem_Kset x.2)
-  refine continuousOn_finset_sum _ fun c _ => continuousOn_finset_sum _ fun d _ => ?_
+  refine continuousOn_finsetSum _ fun c _ => continuousOn_finsetSum _ fun d _ => ?_
   exact (hX.matrix_elem c d).continuousOn.mul ((hl c d).comp hc.continuousOn hmaps)
 
 lemma integrable_dInt {ε : Fin n → Bool} {l : Fin n → Fin n → Mt → ℂ}
@@ -97,7 +101,7 @@ private lemma leadMinor_map_star (M : Mt) (m : ℕ) (hm : m ≤ n) :
   rw [e, Matrix.det_transpose, Matrix.det_conjTranspose]
 
 private lemma map_star_mem_Omega {M : Mt} (h : M ∈ Omega n) : M.map star ∈ Omega n := by
-  simp only [GlobalTheory.Dec.Omega, Set.mem_setOf_eq] at h ⊢
+  simp only [GlobalTheory.Dec.Omega, Set.mem_ofPred_eq] at h ⊢
   intro i
   rw [leadMinor_map_star]
   exact star_ne_zero.mpr (h i)
@@ -120,8 +124,15 @@ lemma rd_integral {ε : Fin n → Bool} {lam : Fin n → ℝ} {l : Fin n → Fin
     (h : ∀ᶠ y in nhds z, y ∈ U1 ε) :
     Rd X (fun z => ∫ k : KG ε, Phi lam (((toMK k)⁻¹ * z * toMK k).map star) * w k ∂(muK ε)) z =
       ∫ k, dInt l X z k * w k ∂(muK ε) := by
-  have hcurve : Continuous (fun s : ℝ => z * NormedSpace.exp ((s : ℂ) • X)) :=
-    continuous_iff_continuousAt.mpr fun t => (GlobalTheory.Dec.PsiEig.hasDerivAt_curveR z X t).continuousAt
+  have hcurve : Continuous (fun s : ℝ => z * NormedSpace.exp ((s : ℂ) • X)) := by
+    have hsmul : Continuous (fun s : ℝ => (s : ℂ) • X) :=
+      Complex.continuous_ofReal.smul continuous_const
+    have hexp : Continuous (NormedSpace.exp : Mt → Mt) := by
+      let : NormedRing Mt := Matrix.linftyOpNormedRing
+      let : NormedAlgebra ℚ Mt := Matrix.linftyOpNormedAlgebra
+      have hcomplete : CompleteSpace Mt := FiniteDimensional.completeSpace ℂ Mt
+      exact @NormedSpace.exp_continuous Mt _ _ hcomplete
+    exact continuous_const.matrix_mul (hexp.comp hsmul)
   have hS0 : ∀ᶠ s : ℝ in nhds 0, z * NormedSpace.exp ((s : ℂ) • X) ∈ U1 ε := by
     have ht : Filter.Tendsto (fun s : ℝ => z * NormedSpace.exp ((s : ℂ) • X)) (nhds 0) (nhds z) := by
       simpa using hcurve.tendsto 0
@@ -177,7 +188,7 @@ lemma rd_integral {ε : Fin n → Bool} {lam : Fin n → ℝ} {l : Fin n → Fin
 
 private lemma dInt_add_smul {ε : Fin n → Bool} (l : Fin n → Fin n → Mt → ℂ) (X Y z : Mt) (k : KG ε)
     (c : ℂ) : dInt l (X + c • Y) z k = dInt l X z k + c * dInt l Y z k := by
-  simp only [dInt, Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul, Matrix.add_apply,
+  simp only [dInt, Matrix.mul_add, Matrix.mul_smul, Matrix.smul_mul, Matrix.add_apply,
     Matrix.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib, Finset.mul_sum, mul_assoc]
 
 lemma eab_integral {ε : Fin n → Bool} {lam : Fin n → ℝ} {l : Fin n → Fin n → Mt → ℂ}
@@ -257,10 +268,10 @@ theorem eab_integral_eq_zero : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [N
         exact eab_integral hlc hd (hw a b) hz hg a b
     _ = ∫ k, ∑ a, ∑ b, dInt l (Matrix.single a b 1) (umat g) k *
         (⟪y, σ (toMK k) (u : H)⟫_ℂ * ⟪σ (toMK k) (u : H), (at1 G a b : V)⟫_ℂ) ∂(muK ε) := by
-        rw [integral_finset_sum _ fun a _ =>
-          integrable_finset_sum _ fun b _ => integrable_dInt hlc _ hz1 (hw a b)]
+        rw [integral_finsetSum _ fun a _ =>
+          integrable_finsetSum _ fun b _ => integrable_dInt hlc _ hz1 (hw a b)]
         refine Finset.sum_congr rfl fun a _ => ?_
-        rw [integral_finset_sum _ fun b _ => integrable_dInt hlc _ hz1 (hw a b)]
+        rw [integral_finsetSum _ fun b _ => integrable_dInt hlc _ hz1 (hw a b)]
     _ = 0 := by simp only [hpt, integral_zero]
 
 end GlobalTheory.Jet.SchmidIntegral

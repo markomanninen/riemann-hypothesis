@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PotentiallySemistableCyclotomicSum
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsBisExtra
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamPeriodRingFieldTPowFiltrationUnitsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ScalGLCommute
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PotentiallySemistableCyclotomicSum
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsBisExtra
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamPeriodRingFieldTPowFiltrationUnitsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ScalGLCommute
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Pst GlobalTheory.PMon TensorProduct
 open scoped Formalism.Per
 noncomputable section
@@ -92,7 +97,8 @@ theorem frame_scal {n : Type} [Fintype n] [DecidableEq n] {K K' : FinExt l} (hK 
     rw [hQ, ← Matrix.diagonal_smul]
     congr 1
     funext j
-    simp only [Pi.smul_apply, smul_eq_mul, zpow_add, Units.val_mul, map_mul, mul_comm]
+    simp only [Pi.smul_apply, smul_eq_mul, zpow_add, Units.val_mul, map_mul]
+    exact mul_comm _ _
   rw [hmat, scalGL_mul_val, hmap, hs, hdiag, smul_mul_smul_comm, smul_mul_smul_comm]
   have hUg := hU ⟨g, GK_le hK g.2⟩
   rw [hUg, ← Units.val_mul, ← Units.val_mul]
@@ -104,8 +110,8 @@ end GlobalTheory.PMon.Twist
 
 namespace GlobalTheory.PMon.Twist
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem framed_twist : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (_ : LocTied l P AI) (n : Type)
     [Fintype n] [DecidableEq n] (K K' : FinExt l) (hK : K.1 ≤ K'.1) (r N : ℕ) (hr : 0 < r)
     (ρ : ↥(GK K) →* GL n ↥(MaximalUnramifiedExtension l)) (w : Fin r → n → ℤ) (χ : ↥(GK K') →* (↥(MaximalUnramifiedExtension l))ˣ) (x : P.R.Bˣ) (a : ℤ),

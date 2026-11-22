@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -64,7 +68,7 @@ private lemma db_eq_wdb_comp_chart_symm {n : ℕ} {M : Type*} [TopologicalSpace 
   have hspec := Classical.choose_spec hex
   have hE : (g ∘ (Classical.choose hex).symm) =ᶠ[𝓝 (z p)] (g ∘ e0.symm) :=
     (chart_symm_eventuallyEq_of_isChart z _ e0 hspec.1 he0 p hspec.2 hp).fun_comp g
-  rw [db, dif_pos hex]
+  rw [db, dite_eq_left hex]
   unfold wdb
   rw [hE.fderiv_eq]
 

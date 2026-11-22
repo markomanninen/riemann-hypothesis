@@ -1,5 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PNamed
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.PNamed
+
+@[expose] public section
+
 open NumberField MeasureTheory Formalism.BasicNotions Formalism.MainNotions.StandardLattice Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

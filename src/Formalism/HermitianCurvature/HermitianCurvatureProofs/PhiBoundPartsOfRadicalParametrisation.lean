@@ -1,12 +1,16 @@
-import Formalism.HermitianCurvature.StatementU
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CayleyTransformPreservesForm
+module
+
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CayleyTransformPreservesForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,7 +138,8 @@ lemma aesm_fderiv {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [Finite
     simp only [FunLike.coe_sum, Finset.sum_apply, ContinuousLinearMap.smulRight_apply,
       LinearMap.coe_toContinuousLinearMap']
     conv_lhs => rw [← b.sum_repr v]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, Module.Basis.coord_apply]
   rw [e]
@@ -497,8 +502,8 @@ lemma cd_Mv : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (Mv : (J k r → �
   rw [← contDiffOn_univ, cdm_iff]
   intro p q
   simp only [Mv, Matrix.of_apply]
-  exact ((Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ ℝ (p, q, false))).add
-    ((Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ ℝ (p, q, true))).mul contDiff_const)).contDiffOn
+  exact ((Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) (p, q, false))).add
+    ((Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) (p, q, true))).mul contDiff_const)).contDiffOn
 
 def Lt (i : J k r) : Mat k r := (nrm (true, prj (Eb i))).2
 
@@ -633,7 +638,8 @@ lemma aC_apply (g0 : Mat k r) (i : J k r) (Y W : J k r → ℝ) :
   have e1 : -(fderiv ℝ (chart g0) Y W) * (chart g0 Y)⁻¹ =
       ∑ b, W b • (-(fderiv ℝ (chart g0) Y (ebv b)) * (chart g0 Y)⁻¹) := by
     conv_lhs => rw [hW]
-    rw [map_sum, ← Finset.sum_neg_distrib, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← Finset.sum_neg_distrib, Finset.sum_mul]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_smul, ← smul_neg, Matrix.smul_mul]
   rw [e1, kc_sum]
@@ -680,7 +686,8 @@ lemma hasFDeriv_chart {g0 : Mat k r} (hg0 : g0 ∈ GV k r) {H : Mat k r → E}
   simp only [ContinuousLinearMap.smulRight_apply]
   have hop : ∀ i, op true (Lt i) H c = fderiv ℝ h' c (-(Lt i * c)) := fun i =>
     op_eq_op' 0 true hU hcd hff (Lt_unit i).1 c hcU hcG
-  simp_rw [hop, ← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [hop, ← map_smul, ← map_sum]
   congr 1
   set Xv := -(fderiv ℝ (chart g0) Y W) * c⁻¹ with hXv
   have hXl : inLie k r Xv := tangent hg0 hY W
@@ -691,11 +698,6 @@ lemma hasFDeriv_chart {g0 : Mat k r} (hg0 : g0 ∈ GV k r) {H : Mat k r → E}
     _ = -((∑ i, kc i Xv • Lt i) * c) := by rw [← expandL hXl]
     _ = ∑ i, aC g0 i Y W • -(Lt i * c) := by
         simp only [hA, Finset.sum_mul, Matrix.smul_mul, smul_neg, Finset.sum_neg_distrib]
-
-lemma continuous_gN : Continuous (gN : Mat k r → ℝ) := by
-  unfold gN
-  exact Real.continuous_sqrt.comp (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
-    Complex.continuous_normSq.comp ((continuous_apply j).comp (continuous_apply i)))
 
 lemma cont_chart {g0 : Mat k r} (hg0 : g0 ∈ GV k r) {H : Mat k r → E}
     (hH : CkOn ((0 : ℕ) : ℕ∞) (GV k r) H) : ContinuousOn (fun Y => H (chart g0 Y)) (Dom k r) := by
@@ -1464,22 +1466,8 @@ theorem Ux10.phi_bound_parts_of_radical_parametrisation (hR : RadicalParam) : Po
 theorem Ux10.phiSupport_of_parts (hM : SliceMem) (hR : RadicalParam) : PhiSupport :=
   Ux10.phiSupport_of hM hR hat_z_on_slice
 
-theorem Ux10.size_decay_of_slice_membership (hM : SliceMem) : CoordinateDecay :=
-  norm_decay_of_coordinate_sizes
-    (coordinate_sizes_of_parts hM block3_apply_embedding aux_statement_17 hat_z_on_slice level_determinant_z)
-
-theorem Ux10.derivative_cost_of_slice_and_radical (hM : SliceMem) (hR : RadicalParam) (hCP : DerivativeCostFromComponents) : DerivativeCost :=
-  hCP hM hR slice_right_coordinates slice_left_coordinates slice_z_coordinates directions_in_parabolic
-    (coordinate_sizes_of_parts hM block3_apply_embedding aux_statement_17 hat_z_on_slice level_determinant_z)
-
-theorem Ux10.phi_bound_of_slice_radical_cost (hM : SliceMem) (hR : RadicalParam) (hCP : DerivativeCostFromComponents) : PointwiseIntegralBound :=
-  Ux10.phi_bound_parts_of_radical_parametrisation hR hM (Ux10.derivative_cost_of_slice_and_radical hM hR hCP) (Ux10.size_decay_of_slice_membership hM) weight_integrability
-
 theorem phi_bound_of_parts : Formalism.FourierDecayAlt.U.PointwiseIntegralBoundFromComponents := Ux10.phi_bound_parts_of_radical_parametrisation radical_parametrisation
 
 theorem phi_support_determinant : Formalism.FourierDecayAlt.U.PhiSupport := Ux10.phiSupport_of_parts slice_membership radical_parametrisation
-
-theorem Ux10.phi_bound_of_derivative_cost_parts (hCP : DerivativeCostFromComponents) : PointwiseIntegralBound :=
-  Ux10.phi_bound_of_slice_radical_cost slice_membership radical_parametrisation hCP
 
 end Formalism.FourierDecayAlt.P

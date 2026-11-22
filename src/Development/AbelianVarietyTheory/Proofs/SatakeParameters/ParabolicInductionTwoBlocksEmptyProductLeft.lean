@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MultiProdCompCongr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MultiProdCompCongr
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.SplitRead GlobalTheory.ProdReorder
 set_option synthInstance.maxHeartbeats 400000
 
@@ -55,7 +60,7 @@ theorem ind₂_line_left {r : ℕ} (h : 0 + r = r) {M V : Type} [AddCommGroup M]
           rw [map_mul, Module.End.mul_apply, hg'])⟩
       map_add' := fun v w => Subtype.ext (Subtype.ext (funext fun x => by
         show L (π x (v + w)) = L (π x v) + L (π x w)
-        rw [map_add, map_add]))
+        rw [map_add (f := _), map_add (f := _)]))
       map_smul' := fun c v => Subtype.ext (Subtype.ext (funext fun x => by
         show L (π x ((c : ℂ) • v)) = (c : ℂ) • L (π x v)
         rw [map_smul, map_smul]))
@@ -75,8 +80,8 @@ theorem ind₂_line_left {r : ℕ} (h : 0 + r = r) {M V : Type} [AddCommGroup M]
       exact h1.symm
   exact ⟨(GlobalTheory.LocGL.equivOfBijective f hb).symm⟩
 
-variable (k) in
 
+variable (k) in
 theorem ind₂_unit_left (r t : ℕ) (h : t + r = r) (V : Type) [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin r) k) V) (hπ : IsSmooth π) (d : Fin 0 → ℕ) (X : Fin 0 → Type)
     [∀ a, AddCommGroup (X a)] [∀ a, Module ℂ (X a)] (τ : ∀ a, Representation ℂ (GL (Fin (d a)) k) (X a))

@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniqueIsometryFixingBothFramesOfFrameAdaptStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermRowDoubleCosetEqIffIsometriesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniqueIsometryFixingBothFramesOfFrameAdaptStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermRowDoubleCosetEqIffIsometriesStatement
+
+@[expose] public section
+
 open scoped Classical ENNReal
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.Unfold
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -17,30 +22,30 @@ variable {D : D7}
 theorem inv_app (a : GV D) (x : (VS D).V) : a⁻¹ (a x) = x := by
   show (a⁻¹ * a) x = x; rw [inv_mul_cancel]; rfl
 
-theorem xsp_eq {T : D.host.E} (P : LFlag (VS D) D.R.rS T) : Xsp P = Xflag P D.R.rS := by
+theorem xsp_eq {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) : Xsp P = Xflag P D.R.rS := by
   show Submodule.span _ _ = Submodule.span _ _
   congr 1
   ext v; simp [Fin.is_lt]
 
-theorem xflag_mono {T : D.host.E} (P : LFlag (VS D) D.R.rS T) {i j : ℕ} (hij : i ≤ j) : Xflag P i ≤ Xflag P j := by
+theorem xflag_mono {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) {i j : ℕ} (hij : i ≤ j) : Xflag P i ≤ Xflag P j := by
   show Submodule.span _ _ ≤ Submodule.span _ _
   apply Submodule.span_mono
   rintro _ ⟨k, hk, rfl⟩
   exact ⟨k, lt_of_lt_of_le hk hij, rfl⟩
 
-theorem e_mem_xflag {T : D.host.E} (P : LFlag (VS D) D.R.rS T) (i : Fin D.R.rS) {j : ℕ} (hij : i.1 < j) :
+theorem e_mem_xflag {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (i : Fin D.R.rS) {j : ℕ} (hij : i.1 < j) :
     P.fl.e i ∈ Xflag P j :=
   Submodule.subset_span ⟨i, hij, rfl⟩
 
-theorem frame_cs {T : D.host.E} (P : LFlag (VS D) D.R.rS T) (i : Fin D.R.rS) : frame P i.castSucc = P.fl.e i := by
+theorem frame_cs {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (i : Fin D.R.rS) : frame P i.castSucc = P.fl.e i := by
   show FlagG.fvec P.fl i.castSucc = _
   unfold FlagG.fvec; simp
 
-theorem frame_last {T : D.host.E} (P : LFlag (VS D) D.R.rS T) : frame P (Fin.last D.R.rS) = P.fl.z := by
+theorem frame_last {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) : frame P (Fin.last D.R.rS) = P.fl.z := by
   show FlagG.fvec P.fl (Fin.last _) = _
   unfold FlagG.fvec; simp
 
-theorem tri_fwd {T T' : D.host.E} (P : LFlag (VS D) D.R.rS T) (Q : LFlag (VS D) D.R.rS T') (φ : GV D)
+theorem tri_fwd {T T' : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (Q : LFlag (D.sp.Y 0) D.R.rS T') (φ : GV D)
     (h : ∀ a : Fin (D.R.rS + 1), φ (frame P a) - frame Q a ∈ Xflag Q a.val) :
     ∀ j, (Xflag P j).map (φ : (VS D).V →ₗ[D.host.E] (VS D).V) ≤ Xflag Q j := by
   intro j
@@ -54,7 +59,7 @@ theorem tri_fwd {T T' : D.host.E} (P : LFlag (VS D) D.R.rS T) (Q : LFlag (VS D) 
   rw [h2]
   exact add_mem (xflag_mono Q (le_of_lt hi) h1) (e_mem_xflag Q i hi)
 
-theorem tri_rev {T T' : D.host.E} (P : LFlag (VS D) D.R.rS T) (Q : LFlag (VS D) D.R.rS T') (φ : GV D)
+theorem tri_rev {T T' : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (Q : LFlag (D.sp.Y 0) D.R.rS T') (φ : GV D)
     (h : ∀ a : Fin (D.R.rS + 1), φ (frame P a) - frame Q a ∈ Xflag Q a.val) :
     ∀ j, Xflag Q j ≤ (Xflag P j).map (φ : (VS D).V →ₗ[D.host.E] (VS D).V) := by
   intro j
@@ -77,7 +82,7 @@ theorem tri_rev {T T' : D.host.E} (P : LFlag (VS D) D.R.rS T) (Q : LFlag (VS D) 
     refine sub_mem (Submodule.mem_map_of_mem (e_mem_xflag P i hi)) ?_
     exact Submodule.map_mono (xflag_mono P (Nat.le_succ j)) (ih (xflag_mono Q hij h1))
 
-theorem xsp_map_of_tri {T T' : D.host.E} (P : LFlag (VS D) D.R.rS T) (Q : LFlag (VS D) D.R.rS T') (φ : GV D)
+theorem xsp_map_of_tri {T T' : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (Q : LFlag (D.sp.Y 0) D.R.rS T') (φ : GV D)
     (h : ∀ a : Fin (D.R.rS + 1), φ (frame P a) - frame Q a ∈ Xflag Q a.val) :
     (Xsp P).map (φ : (VS D).V →ₗ[D.host.E] (VS D).V) = Xsp Q ∧
       ∀ j, (Xflag P j).map (φ : (VS D).V →ₗ[D.host.E] (VS D).V) ≤ Xflag Q j := by
@@ -85,7 +90,7 @@ theorem xsp_map_of_tri {T T' : D.host.E} (P : LFlag (VS D) D.R.rS T) (Q : LFlag 
   rw [xsp_eq, xsp_eq]
   exact le_antisymm (tri_fwd P Q φ h _) (tri_rev P Q φ h _)
 
-theorem tri_inv {T T' : D.host.E} (P : LFlag (VS D) D.R.rS T) (Q : LFlag (VS D) D.R.rS T') (φ : GV D)
+theorem tri_inv {T T' : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (Q : LFlag (D.sp.Y 0) D.R.rS T') (φ : GV D)
     (h : ∀ a : Fin (D.R.rS + 1), φ (frame P a) - frame Q a ∈ Xflag Q a.val) :
     ∀ a : Fin (D.R.rS + 1), φ⁻¹ (frame Q a) - frame P a ∈ Xflag P a.val := by
   intro a
@@ -96,7 +101,7 @@ theorem tri_inv {T T' : D.host.E} (P : LFlag (VS D) D.R.rS T) (Q : LFlag (VS D) 
   show -(φ⁻¹ (φ z)) ∈ _
   rw [inv_app]; exact neg_mem hz
 
-theorem nrat_tri {T : D.host.E} (P : LFlag (VS D) D.R.rS T) (n : GV D) (hn : n ∈ NRat P) :
+theorem nrat_tri {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (n : GV D) (hn : n ∈ NRat P) :
     ∀ a : Fin (D.R.rS + 1), n (frame P a) - frame P a ∈ Xflag P a.val := by
   intro a
   refine Fin.lastCases ?_ (fun i => ?_) a
@@ -127,10 +132,10 @@ theorem mem_orth_iff (A : Submodule D.host.E (VS D).V) (y : (VS D).V) :
     y ∈ orth (VS D) A ↔ ∀ x ∈ A, (VS D).hT x y = 0 := by
   unfold orth; simp [Submodule.mem_iInf, LinearMap.mem_ker]
 
-theorem frame_mapLF {T : D.host.E} (P : LFlag (VS D) D.R.rS T) (γ : GV D) (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) :
+theorem frame_mapLF {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (γ : GV D) (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) :
     ∀ a, frame (mapLF γ P) a = γ (frame P a) := by
   intro a
-  unfold mapLF; rw [dif_pos hγ]
+  unfold mapLF; rw [dite_eq_left hγ]
   show FlagG.fvec (mapFlag γ hγ P.fl) a = γ (FlagG.fvec P.fl a)
   unfold FlagG.fvec
   refine Fin.lastCases ?_ (fun i => ?_) a
@@ -147,7 +152,7 @@ theorem orth_map (K : GV D) (hK : K ∈ Formalism.HermitianLatticesTheory.isom (
     obtain ⟨x, hx, rfl⟩ := Submodule.mem_map.1 hz
     rw [show ((K : (VS D).V →ₗ[D.host.E] (VS D).V) x) = K x from rfl, iso_app hK]; exact H x hx
 
-theorem iso_xsp {T : D.host.E} (P : LFlag (VS D) D.R.rS T) : ∀ x ∈ Xsp P, x ∈ orth (VS D) (Xsp P) := by
+theorem iso_xsp {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) : ∀ x ∈ Xsp P, x ∈ orth (VS D) (Xsp P) := by
   have h1 : ∀ j, Xsp P ≤ LinearMap.ker ((VS D).hT (P.fl.e j)) := by
     intro j
     show Submodule.span _ _ ≤ _
@@ -166,7 +171,7 @@ theorem iso_xsp {T : D.host.E} (P : LFlag (VS D) D.R.rS T) : ∀ x ∈ Xsp P, x 
   have := h2 hz
   simpa using this
 
-theorem nrat_inv_orth {T : D.host.E} (P : LFlag (VS D) D.R.rS T) (n : GV D) (hn : n ∈ NRat P) :
+theorem nrat_inv_orth {T : D.host.E} (P : LFlag (D.sp.Y 0) D.R.rS T) (n : GV D) (hn : n ∈ NRat P) :
     ∀ y ∈ orth (VS D) (Xsp P), n⁻¹ y ∈ orth (VS D) (Xsp P) := by
   intro y hy
   rw [mem_orth_iff] at hy ⊢
@@ -179,7 +184,7 @@ theorem nrat_inv_orth {T : D.host.E} (P : LFlag (VS D) D.R.rS T) (n : GV D) (hn 
   exact hy _ h1
 
 theorem lrep_map (K : GV D) (hK : K ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) {T T' : D.host.E}
-    (P : LFlag (VS D) D.R.rS T) (Q : LFlag (VS D) D.R.rS T')
+    (P : LFlag (D.sp.Y 0) D.R.rS T) (Q : LFlag (D.sp.Y 0) D.R.rS T')
     (hPQ : (Xsp P).map (K : (VS D).V →ₗ[D.host.E] (VS D).V) = Xsp Q) (Λ : LV D) (y : (VS D).V) :
     K y ∈ Lrep (Formalism.HermitianLatticesTheory.gmap K Λ) Q ↔ y ∈ Lrep Λ P := by
   have hg : K y ∈ Formalism.HermitianLatticesTheory.gmap K Λ ↔ y ∈ Λ := by
@@ -195,7 +200,7 @@ theorem lrep_map (K : GV D) (hK : K ∈ Formalism.HermitianLatticesTheory.isom (
   show _ ∧ K y ∈ orth (VS D) (Xsp Q) ↔ _ ∧ y ∈ orth (VS D) (Xsp P)
   rw [← hPQ, orth_map K hK]
 
-theorem sup_eq_of_corr {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (M N : LV D)
+theorem sup_eq_of_corr {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (M N : LV D)
     (h1 : ∀ x ∈ Lrep M F, ∃ y ∈ Lrep N F, x - y ∈ Xsp F)
     (h2 : ∀ y ∈ Lrep N F, ∃ x ∈ Lrep M F, x - y ∈ Xsp F) :
     Lsub M F = Lsub N F := by
@@ -213,7 +218,7 @@ theorem sup_eq_of_corr {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (M N : LV D)
     have : y = x + -(x - y) := by abel
     rw [this]; exact Submodule.add_mem_sup hx (neg_mem hxy)
 
-theorem gdat_eq_of_corr {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (M N : LV D)
+theorem gdat_eq_of_corr {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (M N : LV D)
     (h1 : ∀ x ∈ Lrep M F, ∃ y ∈ Lrep N F, x - y ∈ Xsp F)
     (h2 : ∀ y ∈ Lrep N F, ∃ x ∈ Lrep M F, x - y ∈ Xsp F)
     (h3 : ∀ x ∈ Lrep M F', ∃ y ∈ Lrep N F', x - y ∈ Xsp F')
@@ -244,7 +249,7 @@ theorem gdat_eq_of_corr {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFla
       rw [this]; exact sub_mem e2 d1
 
 theorem ngx_map (K : GV D) {T1 T2 T3 T4 : D.host.E}
-    (P : LFlag (VS D) D.R.rS T1) (P' : LFlag (VS D) D.R.rS T2) (Q : LFlag (VS D) D.R.rS T3) (Q' : LFlag (VS D) D.R.rS T4)
+    (P : LFlag (D.sp.Y 0) D.R.rS T1) (P' : LFlag (D.sp.Y 0) D.R.rS T2) (Q : LFlag (D.sp.Y 0) D.R.rS T3) (Q' : LFlag (D.sp.Y 0) D.R.rS T4)
     (h1 : (Xsp P).map (K : (VS D).V →ₗ[D.host.E] (VS D).V) = Xsp Q)
     (h2 : (Xsp P').map (K : (VS D).V →ₗ[D.host.E] (VS D).V) = Xsp Q') (Λ : LV D) (g : ℕ) (y : (VS D).V) :
     K y ∈ NgX (Formalism.HermitianLatticesTheory.gmap K Λ) g Q Q' ↔ y ∈ NgX Λ g P P' := by
@@ -280,8 +285,8 @@ theorem map_mul' (a b : GV D) (A : Submodule D.host.E (VS D).V) :
       (A.map (b : (VS D).V →ₗ[D.host.E] (VS D).V)).map (a : (VS D).V →ₗ[D.host.E] (VS D).V) := by
   rw [← Submodule.map_comp]; rfl
 
-theorem tri_comp {T T' T'' : D.host.E} {P : LFlag (VS D) D.R.rS T} {Q : LFlag (VS D) D.R.rS T'}
-    {R : LFlag (VS D) D.R.rS T''} {φ ψ : GV D}
+theorem tri_comp {T T' T'' : D.host.E} {P : LFlag (D.sp.Y 0) D.R.rS T} {Q : LFlag (D.sp.Y 0) D.R.rS T'}
+    {R : LFlag (D.sp.Y 0) D.R.rS T''} {φ ψ : GV D}
     (hφ : ∀ a : Fin (D.R.rS + 1), φ (frame P a) - frame Q a ∈ Xflag Q a.val)
     (hψ : ∀ a : Fin (D.R.rS + 1), ψ (frame Q a) - frame R a ∈ Xflag R a.val) :
     ∀ a : Fin (D.R.rS + 1), (ψ * φ) (frame P a) - frame R a ∈ Xflag R a.val := by
@@ -292,7 +297,7 @@ theorem tri_comp {T T' T'' : D.host.E} {P : LFlag (VS D) D.R.rS T} {Q : LFlag (V
   rw [e]
   exact add_mem ((xsp_map_of_tri Q R ψ hψ).2 a.val (Submodule.mem_map_of_mem (hφ a))) (hψ a)
 
-theorem same_key_lrel : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word), ∀ (F : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (w : Point D.host.E (D.R.rS + 1)), ZhatOM (ZhatL F F') = ptMat w → Gval F F' ≠ 0 → ∀ (t t' : TauC Y u u') (Λ₁ Λ₂ : LV D), TG F F' t Λ₁ → TG F F' t' Λ₂ → key t = key t' → LRel F F' Λ₁ Λ₂ := by
+theorem same_key_lrel : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word), ∀ (F : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (w : Point D.host.E (D.R.rS + 1)), ZhatOM (ZhatL F F') = ptMat w → Gval F F' ≠ 0 → ∀ (t t' : TauC Y u u') (Λ₁ Λ₂ : LV D), TG F F' t Λ₁ → TG F F' t' Λ₂ → key t = key t' → LRel F F' Λ₁ Λ₂ := by
   intro D X Y u u' F F' w hZ hG t t' Λ₁ Λ₂ hT1 hT2 hk
   obtain ⟨g1, hA1, hA1', rfl⟩ := hT1
   obtain ⟨g2, hA2, hA2', rfl⟩ := hT2
@@ -393,7 +398,7 @@ theorem same_key_lrel : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.
   have NK := ngx_map (h * g1) _ _ _ _ hKX hKY t.lam (gS D)
   have N2 := ngx_map g2 _ _ _ _ hg2X hg2Y t.lam (gS D)
 
-  have lo : ∀ {T : D.host.E} {P : LFlag (VS D) D.R.rS T} {Λ : LV D} {x : (VS D).V}, x ∈ Lrep Λ P → x ∈ orth (VS D) (Xsp P) :=
+  have lo : ∀ {T : D.host.E} {P : LFlag (D.sp.Y 0) D.R.rS T} {Λ : LV D} {x : (VS D).V}, x ∈ Lrep Λ P → x ∈ orth (VS D) (Xsp P) :=
     fun hx => (Submodule.mem_inf.1 hx).2
   apply gdat_eq_of_corr
   · intro x hx

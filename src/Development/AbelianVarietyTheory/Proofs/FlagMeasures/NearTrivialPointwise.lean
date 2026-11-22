@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LamXEquivariant
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LamXEquivariant
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped TensorProduct
@@ -14,7 +18,7 @@ open Formalism.MainNotions.S GlobalTheory.Count Formalism.HN
 
 section General
 
-variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V] [Module K V]
+variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι] (b : Module.Basis ι K V)
   (X : InfinitePlace K → Matrix ι ι ℂ)
 

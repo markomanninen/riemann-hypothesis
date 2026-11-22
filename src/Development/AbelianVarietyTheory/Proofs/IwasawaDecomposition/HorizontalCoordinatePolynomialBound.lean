@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -104,7 +108,8 @@ theorem exists_comb {J : Type} [Fintype J] (x : J → Di.La) (f : (E →+* ℂ) 
   obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hv
   refine ⟨fun t k => (n : ℂ)⁻¹ * f t (a k : E), fun Q hQ z => ?_⟩
   have h := congrArg (fun w => Q w z) ha
-  simp only [map_sum, Finset.sum_apply, hQ, map_nsmul, Pi.smul_apply, nsmul_eq_mul] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_apply, hQ, map_nsmul, Pi.smul_apply, nsmul_eq_mul] at h
   have hn' : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hn
   simp only [_root_.mul_assoc]
   rw [← Finset.mul_sum, h, inv_mul_cancel_left₀ hn']

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCPDecompDefs
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCPDecompDefs
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q NumberField
 open scoped ComplexConjugate Matrix
@@ -20,10 +24,6 @@ lemma gg_eval (ζ : ℂ) : gg TT ζ = MvPolynomial.eval ![ζ, conj ζ, sig TT ζ
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Complex.mul_conj]
   push_cast
   ring
-
-lemma ps_congr {f g : ℂ → ℂ} (hf : PS TT f) (h : ∀ ζ, TT < Complex.normSq ζ → f ζ = g ζ) : PS TT g := by
-  obtain ⟨m, p, hp⟩ := hf
-  exact ⟨m, p, fun ζ hζ => by rw [← h ζ hζ]; exact hp ζ hζ⟩
 
 lemma ps_const (c : ℂ) : PS TT (fun _ => c) := ⟨0, MvPolynomial.C c, fun ζ _ => by simp⟩
 

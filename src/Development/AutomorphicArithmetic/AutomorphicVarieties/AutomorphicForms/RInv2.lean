@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BlochKatoSelmerVanishes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BlochKatoSelmerVanishes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,19 +74,9 @@ theorem revGL_mul_invT_unip {r : ℕ} (x : BlockIx a r → R) :
   congr 1
   · exact if_congr (by rw [eq_comm, Fin.rev_eq_iff]) rfl rfl
   · by_cases h : (j : ℕ) < r ∧ r ≤ (i.rev : ℕ)
-    · rw [dif_pos h, dif_pos (by simp only [Fin.val_rev] at h ⊢; omega)]
+    · rw [dite_eq_left h, dite_eq_left (by simp only [Fin.val_rev] at h ⊢; omega)]
       simp [blockRev]
-    · rw [dif_neg h, dif_neg (by simp only [Fin.val_rev] at h ⊢; omega), neg_zero]
-
-def smIrrInvT [TopologicalSpace R] (σ : SmIrr (GL (Fin a) R)) : SmIrr (GL (Fin a) R) where
-  V := σ.V
-  ρ := σ.ρ.comp (invT a R)
-  smooth v := (σ.smooth v).preimage continuous_invT
-  irred := by
-    obtain ⟨h0, h⟩ := (GlobalTheory.CuspRep.isIrreducible_iff _).1 σ.irred
-    refine (GlobalTheory.CuspRep.isIrreducible_iff _).2 ⟨h0, fun W hW => h W fun g v hv => ?_⟩
-    have h1 : σ.ρ (invT a R (invT a R g)) v ∈ W := hW (invT a R g) v hv
-    rwa [invT_invT] at h1
+    · rw [dite_eq_right h, dite_eq_right (by simp only [Fin.val_rev] at h ⊢; omega), neg_zero]
 
 end Ring
 
@@ -109,8 +103,8 @@ theorem isUnit_invTL {x : Fin a → Fin a → A} (hx : IsUnit (Matrix.of x)) : I
   rw [e, invTL_val]
   exact (invT a A u).isUnit
 
-omit [NormedAlgebra ℝ A] in
 
+omit [NormedAlgebra ℝ A] in
 theorem norm_transpose (x : Matrix (Fin a) (Fin a) A) : ‖Matrix.of.symm xᵀ‖ = ‖Matrix.of.symm x‖ := by
   have h : ∀ x : Matrix (Fin a) (Fin a) A, ‖Matrix.of.symm xᵀ‖ ≤ ‖Matrix.of.symm x‖ := fun x =>
     (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun i => (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun j =>
@@ -205,7 +199,7 @@ theorem isCuspidal_invT {φ : GA E a → ℂ} (hl : ∀ γ g, φ (ratGL E a γ *
     hF.image_of_equiv em.toEquiv
       (MeasurePreserving.symm em ⟨em.measurable, rfl⟩).quasiMeasurePreserving er fun y x => by
         change e (e.symm y.1 + x) = y.1 + e x
-        rw [map_add, e.apply_symm_apply]
+        rw [map_add (f := _), e.apply_symm_apply]
   have key := h (a - r) (by omega) (by omega) _ _ hμ' hF' (revGL a (Ad E) * invT a (Ad E) g)
   rw [setIntegral_map_equiv, Set.preimage_image_eq _ em.injective] at key
   rw [← key]
@@ -237,19 +231,5 @@ theorem hasSatGL_invT {w : HeightOneSpectrum (𝓞 E)} {V W : Type} [AddCommGrou
     refine key x (h.2 x (GlobalTheory.LGrp.mem_fixed.2 fun k hk => T.injective ?_) ((map_ne_zero_iff T T.injective).1 h0))
     have := GlobalTheory.LGrp.mem_fixed.1 hy _ ((hK k).1 hk)
     rwa [hT, show GlobalTheory.LFun.ConjPlace.invT _ a k = _ from hc k, invT_invT] at this
-
-theorem invT_mem_KLev {M : ℕ} {k : GL (Fin a) (Af E)} (hk : k ∈ Af.KLev E a M) : invT a (Af E) k ∈ Af.KLev E a M := by
-  obtain ⟨k, h, rfl⟩ := hk
-  refine ⟨invT a _ k, ?_, map_invT _ k⟩
-  have h' : GeneralLinearGroup.map _ k = 1 := h
-  change GeneralLinearGroup.map _ (invT a _ k) = 1
-  rw [map_invT, h', map_one]
-
-theorem hasFixed_invT {R V W : Type} [CommRing R] [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-    {ρ : Representation ℂ (GL (Fin a) R) V} {ρ' : Representation ℂ (GL (Fin a) R) W}
-    (T : V ≃ₗ[ℂ] W) (hT : ∀ g x, ρ' g (T x) = T (ρ (invT a _ g) x)) {U : Subgroup (GL (Fin a) R)}
-    (hU : ∀ u ∈ U, invT a R u ∈ U) (h : Af.HasFixed ρ U) : Af.HasFixed ρ' U := by
-  obtain ⟨v, h0, hv⟩ := h
-  exact ⟨T v, (map_ne_zero_iff T T.injective).2 h0, fun u hu => by rw [hT, hv _ (hU u hu)]⟩
 
 end UpperTheory.V.InvT

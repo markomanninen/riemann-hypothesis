@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearIndependentOfDistinctValuationLikeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLeCardValuesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearIndependentOfDistinctValuationLikeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLeCardValuesStatement
+
+@[expose] public section
 
 open Filter Topology
 
@@ -28,7 +32,7 @@ theorem lexOrder_add_of_lt' {g h : MvPowerSeries (Fin D) ℂ} (hlt : lexOrder g 
     obtain ⟨d, hd⟩ := exists_finsupp_eq_lexOrder_of_ne_zero hg
     rw [hd]
     apply lexOrder_le_of_coeff_ne_zero
-    rw [map_add, coeff_eq_zero_of_lt_lexOrder (φ := h) (d := d) (by rw [← hd]; exact hlt), add_zero]
+    rw [map_add (f := _), coeff_eq_zero_of_lt_lexOrder (φ := h) (d := d) (by rw [← hd]; exact hlt), add_zero]
     exact coeff_ne_zero_of_lexOrder hd.symm
   · calc lexOrder g = min (lexOrder g) (lexOrder h) := (min_eq_left hlt.le).symm
       _ ≤ _ := min_lexOrder_le
@@ -114,9 +118,11 @@ theorem evalAt_mul (k : ℕ) (u v : A) : evalAt φ k (u * v) = evalAt φ k u * e
 theorem evalAt_pow (k : ℕ) (u : A) {m : ℕ} (hm : m ≠ 0) : evalAt φ k (u ^ m) = evalAt φ k u ^ m := by
   unfold evalAt; split_ifs <;> simp [zero_pow hm]
 
-open Classical in
 
-noncomputable def firstIdx (u : A) : ℕ := if h : ∃ k, evalAt φ k u ≠ 0 then Nat.find h else 0
+open Classical in
+noncomputable def firstIdx (u : A) : ℕ := by
+  classical
+  exact if h : ∃ k, evalAt φ k u ≠ 0 then Nat.find h else 0
 
 noncomputable def val (u : A) : Lex (ℕ × WithTop (Lex (Fin D →₀ ℕ))) :=
   toLex (firstIdx φ u, lexOrder (evalAt φ (firstIdx φ u) u))
@@ -308,8 +314,8 @@ end Vectors
 
 end HilbertSamuelPS
 
-open HilbertSamuelPS MvPowerSeries in
 
+open HilbertSamuelPS MvPowerSeries in
 theorem finrank_mul_pow_le_finrank_of_powerSeries :
     ∀ (D n : ℕ) (A : Type) [CommRing A] [Algebra ℂ A] (φ : Fin n → (A →ₐ[ℂ] MvPowerSeries (Fin D) ℂ)) (x : Fin D → A) (c : Fin D → ℂ), (∀ u : A, (∀ j, φ j u = 0) → u = 0) → (∀ j i, φ j (x i) = MvPowerSeries.X i + MvPowerSeries.C (c i)) → ∀ (F G : Submodule ℂ A) [Module.Finite ℂ F] [Module.Finite ℂ G] (m : ℕ), 0 < m → (∀ (f : Fin m → A) (a : Fin D → ℕ), (∀ l, f l ∈ F) → (∀ i, a i < m) → (∏ l, f l) * ∏ i, x i ^ a i ∈ G) → Module.finrank ℂ F * m ^ D ≤ Module.finrank ℂ G := by
   intro D n A _ _ φ x c hinj hx F G _ _ m hm hG

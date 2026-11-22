@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExpCritPOf
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LemKD
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExpCritPOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LemKD
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -26,8 +30,8 @@ theorem l_mem_maxOL {l : ℕ} [Fact l.Prime] (P : LocPrime l) (LL : FinExt l) [I
   rw [h4] at hv
   exact zero_ne_one hv
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem expCrit_D (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F) (CR CA CB CK : ℝ) (hA : Formalism.MainNotions.RamifiedCoefficientChains.admitted D HW F Cm CR CA CB CK)
     (hL : Formalism.MainNotions.UnusedSlot80.LevCoeff D HW F)

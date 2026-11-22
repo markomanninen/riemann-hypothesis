@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RegularFunctionConstOfFiniteValuesOnPeriodSpace
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsCoeffFieldIdempotentCuttingPeriodSpacesStatement
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEquivOfSumEq
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LevelOfSplitAndLevelCoeffExist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RegularFunctionConstOfFiniteValuesOnPeriodSpace
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsCoeffFieldIdempotentCuttingPeriodSpacesStatement
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEquivOfSumEq
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LevelOfSplitAndLevelCoeffExist
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem ringHom_ext {l : Level H} (hA : l.A = 1) {f f' : KA l →+* ℂ} (h : f 
     rw [eq_ratCast (algebraMap ℚ (KA l)) r, map_ratCast, map_ratCast]
   | add x y hx hy ihx ihy =>
     show f (⟨x, hx⟩ + ⟨y, hy⟩) = f' (⟨x, hx⟩ + ⟨y, hy⟩)
-    rw [map_add, map_add, ihx, ihy]
+    rw [map_add (f := _), map_add (f := _), ihx, ihy]
   | inv x hx ih =>
     show f (⟨x, hx⟩⁻¹) = f' (⟨x, hx⟩⁻¹)
     rw [map_inv₀, map_inv₀, ih]
@@ -55,7 +59,7 @@ theorem ringHom_ext {l : Level H} (hA : l.A = 1) {f f' : KA l →+* ℂ} (h : f 
 theorem valAt'_top {X : Scheme.{0}} (x : Sp ℂ ⟶ X) (f : Γ(X, ⊤)) :
     valAt' x ⊤ f = (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom (x.appTop.hom f) := by
   unfold valAt'
-  rw [dif_pos (by simp)]
+  rw [dite_eq_left (by simp)]
   unfold valAt
   rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
   rfl

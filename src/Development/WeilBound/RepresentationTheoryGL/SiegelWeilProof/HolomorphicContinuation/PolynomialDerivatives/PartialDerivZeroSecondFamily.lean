@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.CoeffSmulX
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.CoeffSmulX
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,15 +35,15 @@ theorem mem_first_family_iff (ε : Fin m → Bool) (p : PX m n) : p ∈ F1 ε �
   unfold F1
   rw [Subalgebra.mem_toSubmodule, MvPolynomial.mem_supported]
   constructor
-  · intro h s hs k hk; exact h (mem_vars k |>.mpr ⟨s, hs, hk⟩)
-  · intro h k hk; obtain ⟨s, hs, hk'⟩ := (mem_vars k).mp hk; exact h s hs k hk'
+  · intro h s hs k hk; exact h (MvPolynomial.mem_vars_iff_mem_support k |>.mpr ⟨s, hs, hk⟩)
+  · intro h k hk; obtain ⟨s, hs, hk'⟩ := (MvPolynomial.mem_vars_iff_mem_support k).mp hk; exact h s hs k hk'
 
 theorem mem_second_family_iff (ε : Fin m → Bool) (p : PX m n) : p ∈ F2 ε ↔ ∀ s ∈ p.support, ∀ k ∈ s.support, ¬ inF1 ε k := by
   unfold F2
   rw [Subalgebra.mem_toSubmodule, MvPolynomial.mem_supported]
   constructor
-  · intro h s hs k hk; exact h (mem_vars k |>.mpr ⟨s, hs, hk⟩)
-  · intro h k hk; obtain ⟨s, hs, hk'⟩ := (mem_vars k).mp hk; exact h s hs k hk'
+  · intro h s hs k hk; exact h (MvPolynomial.mem_vars_iff_mem_support k |>.mpr ⟨s, hs, hk⟩)
+  · intro h k hk; obtain ⟨s, hs, hk'⟩ := (MvPolynomial.mem_vars_iff_mem_support k).mp hk; exact h s hs k hk'
 
 theorem pderiv_mem_supported (S : Set (Fin m × Fin n × Bool)) (k) {p : PX m n} (hp : p ∈ supported ℂ S) :
     pderiv k p ∈ supported ℂ S := by
@@ -48,15 +52,16 @@ theorem pderiv_mem_supported (S : Set (Fin m × Fin n × Bool)) (k) {p : PX m n}
   | mem x hx =>
     obtain ⟨j, _, rfl⟩ := hx
     rw [pderiv_X]
-    by_cases h : k = j
-    · subst h; simp [Subalgebra.one_mem]
-    · simp [Pi.single_apply, Ne.symm h, h]
-  | algebraMap r => simp
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+    rcases eq_or_ne j k with rfl | h
+    · simp only [Pi.single_eq_same]; exact Subalgebra.one_mem _
+    · rw [Pi.single_eq_of_ne h]; exact Subalgebra.zero_mem _
+  | algebraMap r => simp [Subalgebra.zero_mem]
+  | add x y _ _ hx hy => rw [map_add (f := pderiv k)]; exact Subalgebra.add_mem _ hx hy
   | mul x y hx' hy' hx hy =>
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
-    exact add_mem (mul_mem (Algebra.adjoin_le (fun z hz => Algebra.subset_adjoin hz) hx') hy)
-      (mul_mem (Algebra.adjoin_le (fun z hz => Algebra.subset_adjoin hz) hy') hx)
+    have hx'' : x ∈ supported ℂ S := by rw [supported_eq_adjoin_X]; exact hx'
+    have hy'' : y ∈ supported ℂ S := by rw [supported_eq_adjoin_X]; exact hy'
+    exact Subalgebra.add_mem _ (Subalgebra.mul_mem _ hx'' hy) (Subalgebra.mul_mem _ hy'' hx)
 
 theorem partial_deriv_mem_first_family (ε : Fin m → Bool) (k) {p : PX m n} (hp : p ∈ F1 ε) : pderiv k p ∈ F1 ε :=
   pderiv_mem_supported _ k hp
@@ -73,13 +78,13 @@ theorem variable_mul_mem_second_family (ε : Fin m → Bool) {k} (hk : ¬ inF1 �
 theorem partial_deriv_zero_first_family (ε : Fin m → Bool) {k} (hk : ¬ inF1 ε k) {p : PX m n} (hp : p ∈ F1 ε) : pderiv k p = 0 := by
   apply pderiv_eq_zero_of_notMem_vars
   intro hv
-  obtain ⟨s, hs, hks⟩ := (mem_vars k).mp hv
+  obtain ⟨s, hs, hks⟩ := (MvPolynomial.mem_vars_iff_mem_support k).mp hv
   exact hk ((mem_first_family_iff ε p).mp hp s hs k hks)
 
 theorem partial_deriv_zero_second_family (ε : Fin m → Bool) {k} (hk : inF1 ε k) {p : PX m n} (hp : p ∈ F2 ε) : pderiv k p = 0 := by
   apply pderiv_eq_zero_of_notMem_vars
   intro hv
-  obtain ⟨s, hs, hks⟩ := (mem_vars k).mp hv
+  obtain ⟨s, hs, hks⟩ := (MvPolynomial.mem_vars_iff_mem_support k).mp hv
   exact (mem_second_family_iff ε p).mp hp s hs k hks hk
 
 def piC (c : ℝ) (s : Fin m × Fin n × Bool →₀ ℕ) : ℂ :=
@@ -102,7 +107,7 @@ theorem contr_add (c : ℝ) (p q : PX m n) : contr c (p + q) = contr c p + contr
   rw [contr_eqS c (p.support ∪ q.support) MvPolynomial.support_add, contr_eqS c (p.support ∪ q.support) Finset.subset_union_left,
     contr_eqS c (p.support ∪ q.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun s _ => ?_
-  split_ifs <;> simp [coeff_add, add_mul]
+  split_ifs <;> simp [MvPolynomial.coeff_add, add_mul]
 
 theorem contr_smul (c : ℝ) (r : ℂ) (p : PX m n) : contr c (r • p) = r * contr c p := by
   classical
@@ -189,7 +194,8 @@ theorem contr_mono (ε : Fin m → Bool) (c : ℝ) {s u : Fin m × Fin n × Bool
 theorem contr_eq_bf (ε : Fin m → Bool) (c : ℝ) {h g : PX m n} (hh : h ∈ F1 ε) (hg : g ∈ F2 ε) :
     contr c (h * g) = bf (fun s => (wt c s : ℂ)) h (rename pE g) := by
   conv_lhs => rw [h.as_sum, g.as_sum, Finset.sum_mul_sum, contr_sum]
-  conv_rhs => rw [h.as_sum, g.as_sum, map_sum, bf_sum_left]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [h.as_sum, g.as_sum, map_sum, bf_sum_left]
   refine Finset.sum_congr rfl fun s hs => ?_
   rw [contr_sum, bf_sum_right]
   refine Finset.sum_congr rfl fun u hu => ?_

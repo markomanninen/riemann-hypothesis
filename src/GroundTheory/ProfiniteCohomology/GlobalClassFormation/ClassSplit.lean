@@ -1,16 +1,19 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupDecompositionGlobal
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassLevels
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ResLocal
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.NatCardGroupCohomologyTwoIdeleClassRepDvd
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LevelCyclic
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupDecompositionGlobal
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassLevels
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ResLocal
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.NatCardGroupCohomologyTwoIdeleClassRepDvd
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LevelCyclic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IntermediateField GroundTheory.Global FiniteSubfield
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -30,31 +33,27 @@ variable {K E : FiniteSubfield} [Fact (K ≤ E)] [IsGalois K.1 E.1]
 
 attribute [local instance] normal_subgroupOf_of_isGalois
 
-variable (K E) in
 
+variable (K E) in
 def quotGalEquiv :
     (K.1.fixingSubgroup ⧸ E.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup) ≃* Gal(E.1/K.1) :=
   (QuotientGroup.quotientMulEquivOfEq (ker_restrictHom (F := K) (E := E)).symm).trans
     (QuotientGroup.quotientKerEquivOfSurjective _ (restrictHom_surjective (F := K) (E := E)))
 
-theorem quotGalEquiv_mk (g : K.1.fixingSubgroup) :
-    quotGalEquiv K E (QuotientGroup.mk g) = restrictHom (E := E) g :=
-  rfl
-
 instance isDiscreteRep_res_classLimitRep (S : Subgroup K.1.fixingSubgroup) :
     IsDiscreteRep (Rep.res S.subtype (classLimitRep K)) :=
   isDiscreteRep_res_res classRep K.1.fixingSubgroup S
 
-omit [Fact (K ≤ E)] [IsGalois K.1 E.1] in
 
+omit [Fact (K ≤ E)] [IsGalois K.1 E.1] in
 theorem mem_invariants_of (c : IdeleClassGroup E.1) :
     Additive.ofMul (IdeleClassLimit.of E c) ∈
       ((Rep.res (E.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup).subtype (classLimitRep K)).ρ).invariants :=
   fun h => congrArg Additive.ofMul (IdeleClassLimit.smul_of_eq_of_mem_fixingSubgroup
     (Subgroup.mem_subgroupOf.1 h.2) c)
 
-variable (K E) in
 
+variable (K E) in
 def classInvMor : Rep.res (quotGalEquiv K E).toMonoidHom (ideleClassRep K.1 E.1) ⟶
     (classLimitRep K).quotientToInvariants (E.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup) :=
   Rep.ofHom ⟨LinearMap.codRestrict _ (MonoidHom.toAdditive (IdeleClassLimit.of E)).toIntLinearMap
@@ -62,15 +61,11 @@ def classInvMor : Rep.res (quotGalEquiv K E).toMonoidHom (ideleClassRep K.1 E.1)
     induction q using QuotientGroup.induction_on with
     | H g =>
       ext c
-      change Additive.ofMul (IdeleClassLimit.of E
-          (restrictHom (E := E) g • Additive.toMul (α := IdeleClassGroup E.1) c)) =
-        Additive.ofMul ((g : ℚ̄ ≃ₐ[ℚ] ℚ̄) • IdeleClassLimit.of E (Additive.toMul (α := IdeleClassGroup E.1) c))
-      rw [IdeleClassLimit.smul_of_of_normal]⟩
-
-theorem classInvMor_hom_apply (c : Additive (IdeleClassGroup E.1)) :
-    (classInvMor K E).hom c = ⟨Additive.ofMul (IdeleClassLimit.of E (Additive.toMul c)),
-      mem_invariants_of (Additive.toMul c)⟩ :=
-  rfl
+      let σ := restrictHom (F := K) (E := E) g
+      let x : IdeleClassGroup E.1 := Additive.toMul c
+      have h := (IdeleClassLimit.smul_of g.val E x).trans
+        (of_ideleClassEquiv_congr (mapEquiv g.val E) σ.toRingEquiv (fun _ => rfl) x)
+      exact congrArg Additive.ofMul h.symm⟩
 
 theorem classInvMor_bijective : Function.Bijective (classInvMor K E).hom := by
   constructor

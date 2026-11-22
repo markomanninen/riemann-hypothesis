@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
+
 open CategoryTheory GlobalTheory.CxCoh
 
 namespace GlobalTheory.CxCoh.VertSurj
@@ -44,9 +49,9 @@ theorem surj_of_id {C' : Type b} [Category.{0} C'] {K K' : Cx C'} (m : CxMap K K
     (by rw [map_sub, ← comp_commutes_diffZero, hf₁, hE, sub_self])
   have hfa : ∀ T T' (φ : T ⟶ T'), a0 T' (f₁ T T' φ + f₂ T T' φ) =
       f' T T' φ - (w T' - K'.M0.map φ (w T)) := by
-    intro T T' φ; rw [map_add, hf₂]; abel
+    intro T T' φ; rw [map_add (f := _), hf₂]; abel
   have hfd : ∀ T T' (φ : T ⟶ T'), K.d0 T' (f₁ T T' φ + f₂ T T' φ) = ω T' - K.M1.map φ (ω T) := by
-    intro T T' φ; rw [map_add, hf₁, hf₂0, add_zero]
+    intro T T' φ; rw [map_add (f := _), hf₁, hf₂0, add_zero]
   let f : K.M0.c1 := fun T T' φ ↦ f₁ T T' φ + f₂ T T' φ
   have hfa' : ∀ T T' (φ : T ⟶ T'), a0 T' (f T T' φ) = f' T T' φ - (w T' - K'.M0.map φ (w T)) := hfa
   have hfd' : ∀ T T' (φ : T ⟶ T'), K.d0 T' (f T T' φ) = ω T' - K.M1.map φ (ω T) := hfd
@@ -57,8 +62,8 @@ theorem surj_of_id {C' : Type b} [Category.{0} C'] {K K' : Cx C'} (m : CxMap K K
     · funext T T' T'' φ ψ
       show K.M0.map ψ (f T T' φ) - f T T'' (φ ≫ ψ) + f T' T'' ψ = 0
       apply (hQ T'').inj0
-      · simp only [map_add, map_sub, K.diffZero_natural, hfd', K.M1.map_comp]; abel
-      · rw [map_add, map_sub, compDegreeZero_natural, hfa', hfa', hfa']
+      · simp only [map_add (f := _), map_sub, K.diffZero_natural, hfd', K.M1.map_comp]; abel
+      · rw [map_add (f := _), map_sub, compDegreeZero_natural, hfa', hfa', hfa']
         simp only [map_sub, K'.M0.map_comp]
         linear_combination (norm := abel1) hA T T' T'' φ ψ
     · funext T T' φ

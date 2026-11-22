@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementA
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.JetsLin
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.ThetaAdditiveHomogeneousHomothety
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementA
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.JetsLin
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.ThetaAdditiveHomogeneousHomothety
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -81,7 +85,8 @@ theorem product_scaling_jets : ProdScaleJets := by
     rw [hres]
     exact hC _ ((hB _).mpr (hr k))
   unfold Formalism.L2.Th1.E.thetaProd
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_induction _ (JetsIn (Formalism.G.unitBall K)) (fun f g hf hg => hadd f g hf hg) ?_ ?_
   · simpa using hC 0 (Formalism.G.unitBall K).zero_mem
   · intro k _
@@ -102,7 +107,8 @@ theorem linear_scaling_jets : LinScale := by
     congr 1
     funext i
     show linSub (scl m c) (∑ x, MvPowerSeries.C (A i x) * MvPowerSeries.X x) = _
-    rw [← Formalism.L2.Th1.G.linSubHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Formalism.L2.Th1.G.linSubHom_apply, map_sum]
     refine Finset.sum_congr rfl (fun x _ => ?_)
     rw [map_mul, Formalism.L2.Th1.G.linSubHom_apply, Formalism.L2.Th1.G.linSubHom_apply,
       Formalism.L2.Th1.G.linSub_C, Formalism.L2.Th1.G.linSub_X, sum_C_scl_mul_X, map_mul]

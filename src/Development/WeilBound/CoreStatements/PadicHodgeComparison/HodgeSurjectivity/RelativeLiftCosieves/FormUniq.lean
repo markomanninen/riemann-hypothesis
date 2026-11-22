@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.RelativeLiftCosieves.LiftsNonempty
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.RelativeLiftCosieves.LiftsNonempty
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -317,7 +321,8 @@ theorem d_mkC {n a : ℕ} (z : Cn (modF (AF q V)) n) (hz : InF q V a z) :
   rw [Submodule.coe_sum]
   show _ = Ideal.Quotient.mk _ (∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) •
     (tv (AF q V) s z i.succAbove (Fin.strictMono_succAbove i).monotone : (s.obj (Fin.last (n + 1))).obj.B))
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul]
   rfl
@@ -327,8 +332,8 @@ theorem mkC_cocycle {a : ℕ} (z : Cn (modF (AF q V)) a) (hz : InF q V a z) (hd 
   rw [d_mkC]
   exact mkC_eq_zero _ _ hd
 
-variable (q V) in
 
+variable (q V) in
 abbrev FL (Λ : Lifts q V) {a : ℕ} (g₀ : Sec q V) (g : Fin a → Sec q V) : Cn (modF (AF q V)) a :=
   Fm (AF q V) (cz fun T => Λ.v T g₀) a fun j => cz fun T => Λ.v T (g j)
 
@@ -341,8 +346,8 @@ theorem FL_dmem (Λ : Lifts q V) {a : ℕ} (g₀ : Sec q V) (g : Fin a → Sec q
     InF q V (a + 1) (d _ a (FL q V Λ g₀ g)) :=
   dFm_mem _ (dcz_mem (isL Λ g₀)) a _ fun j => dcz_mem (isL Λ (g j))
 
-variable (q V) in
 
+variable (q V) in
 def clsL (Λ : Lifts q V) {a : ℕ} (g₀ : Sec q V) (g : Fin a → Sec q V) : CH.H (SqF q V a) a :=
   (CH.cx (SqF q V a)).cls (mkC (FL q V Λ g₀ g) (FL_mem Λ g₀ g)) (mkC_cocycle _ _ (FL_dmem Λ g₀ g))
 

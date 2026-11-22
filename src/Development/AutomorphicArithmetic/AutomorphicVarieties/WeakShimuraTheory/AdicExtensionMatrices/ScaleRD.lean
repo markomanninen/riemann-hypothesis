@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -33,7 +37,7 @@ private theorem laurent_smul_one_apply_eq_single_of_eq_single {R S : Type} [Comm
   · simp [Matrix.smul_apply, Matrix.one_apply_ne h]
 
 theorem UpperTheory.V.Ws.sxScaleRD :
-    ∀ {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace Γ] {Φ : Fr O Γ} {Λ : Type} [CommRing Λ] [IsLocalRing Λ] {a : O →+* Λ} {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R] {S : Type} [CommRing S] [Algebra Λ S] [IsCO Λ S] {c : ℕ} {e : S →+* LaurentSeries R} {τ : ℤ × ℤ →+ ℤ} {D : RD Φ R}, IsNilpotent (maximalIdeal R) → Laur Λ c e → (∀ i j, -(c : ℤ) ≤ τ (wt i j)) → Φ.Near a τ D → ∃ D' : RD Φ S, Φ.Near a 0 D' ∧ (∀ g i j, e (D'.r g i j) = HahnSeries.single (τ (wt i j)) (D.r g i j)) ∧ ∀ v i s, e (D'.ψ v i s) = HahnSeries.single 0 (D.ψ v i s) := by
+    ∀ {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace Γ] {Φ : Fr O Γ} {Λ : Type} [CommRing Λ] [IsLocalRing Λ] {a : O →+* Λ} {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R] {S : Type} [CommRing S] [Algebra Λ S] [IsCO Λ S] {c : ℕ} {e : S →+* LaurentSeries R} {τ : ℤ × ℤ →+ ℤ} {D : RD Φ R}, IsNilpotent (maximalIdeal R) → Laur (Λ := Λ) c e → (∀ i j, -(c : ℤ) ≤ τ (wt i j)) → Φ.Near a τ D → ∃ D' : RD Φ S, Φ.Near a 0 D' ∧ (∀ g i j, e (D'.r g i j) = HahnSeries.single (τ (wt i j)) (D.r g i j)) ∧ ∀ v i s, e (D'.ψ v i s) = HahnSeries.single 0 (D.ψ v i s) := by
   intro O Γ _ _ _ Φ Λ _ _ a R _ _ _ S _ _ _ c e τ D hnil hL hc hN
   classical
   have hw0 : ∀ i : Fin 4, wt i i = 0 := by decide
@@ -46,10 +50,10 @@ theorem UpperTheory.V.Ws.sxScaleRD :
     obtain ⟨l, hl⟩ := IsCO.res_surj (O := Λ) x
     obtain ⟨y, hy, hye⟩ := hL.mem 0 _ (Or.inr ⟨by omega, hl⟩)
     refine ⟨y + algebraMap Λ S l, ?_, ?_⟩
-    · rw [map_add, hye, hL.alg, ← HahnSeries.single_add, sub_add_cancel]
-    · rw [map_add, hresm y hy, AlgHom.commutes, zero_add]
+    · rw [map_add (f := _), hye, hL.alg, ← HahnSeries.single_add, sub_add_cancel]
+    · rw [map_add (f := _), hresm y hy, AlgHom.commutes, zero_add]
       conv_rhs => rw [← sub_add_cancel x (algebraMap Λ R l)]
-      rw [map_add, hresm _ hl, AlgHom.commutes, zero_add]
+      rw [map_add (f := _), hresm _ hl, AlgHom.commutes, zero_add]
   have hent : ∀ g i j, ∃ y, e y = HahnSeries.single (τ (wt i j)) (D.r g i j) := by
     intro g i j
     rcases lt_trichotomy (τ (wt i j)) 0 with h | h | h

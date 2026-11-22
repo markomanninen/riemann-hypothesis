@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerWeight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.SchPhiOneApply
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BochIneq
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerWeight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.SchPhiOneApply
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BochIneq
+
+@[expose] public section
 
 noncomputable section
 

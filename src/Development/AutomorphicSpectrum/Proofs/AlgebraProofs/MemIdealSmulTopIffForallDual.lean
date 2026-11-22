@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Filter Topology
 open scoped Pointwise ENNReal

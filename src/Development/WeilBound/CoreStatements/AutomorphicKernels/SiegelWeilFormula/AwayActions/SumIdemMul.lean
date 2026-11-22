@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.SigmaSigma
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.DecAlg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOrthogonalIdempotentsAdeleUnitCombination
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.SigmaSigma
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.DecAlg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOrthogonalIdempotentsAdeleUnitCombination
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ theorem map_incM_sum {Ω ι : Type} [Field Ω] [Fintype ι] (ψ : AE F E →+* �
     (f : ι → Matrix (Fin n) (Fin n) E) (s : ι → F) :
     (incM F (∑ i, s i • f i)).map ψ = ∑ i, ψ (algebraMap F (AE F E) (s i)) • (f i).map (ψ.comp (inclR (F := F) (AF F))) := by
   ext a b
-  simp only [incM, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, map_sum, RingHom.comp_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [incM, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, map_sum, RingHom.comp_apply, smul_eq_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Algebra.smul_def, map_mul, map_mul]
   congr 2
@@ -91,7 +96,8 @@ theorem isEH_sum {n : ℕ} (ε : ℤ) {ι : Type} [Fintype ι] (f : ι → Matri
   unfold IsEH at *
   have e : (∑ i, s i • f i).map σ = ∑ i, s i • (f i).map σ := by
     ext a b
-    simp only [Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [Algebra.smul_def, map_mul, AlgHom.commutes, ← Algebra.smul_def]
   rw [Matrix.transpose_sum, e, Finset.smul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_eq_zero fun i _ => ?_
@@ -208,7 +214,7 @@ theorem qs_incM {n : ℕ} (ε : ℤ) {g : Matrix (Fin n) (Fin n) E} (hg : IsEH �
     simpa using this
   simp only [incM, Matrix.add_apply, Matrix.transpose_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul,
     Matrix.zero_apply, cA_inclR]
-  rw [show ((ε : ℤ) : AE F E) = inclR (F := F) (AF F) (ε : E) from (map_intCast _ _).symm, ← map_mul, ← map_add, hab,
+  rw [show ((ε : ℤ) : AE F E) = inclR (F := F) (AF F) (ε : E) from (map_intCast _ _).symm, ← map_mul, ← map_add (f := _), hab,
     map_zero]
 
 end PositivityTheory.SiegelWeilFormula.KAway

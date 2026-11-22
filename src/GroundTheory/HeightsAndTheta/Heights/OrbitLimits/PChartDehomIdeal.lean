@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartDehomIdeal
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartZeroSet
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartDehomIdeal
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartZeroSet
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

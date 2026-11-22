@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.MulLatticeOne
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DiamondSamePlaceMatchings
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.MulLatticeOne
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DiamondSamePlaceMatchings
+
+@[expose] public section
 
 noncomputable section
 

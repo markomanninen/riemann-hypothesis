@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NotLossLeOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryRationalConjIntersectionCardDvdInvariant
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardFiniteSubgroupGLIntDvd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralEqVolMulSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
-import Formalism.LocalToGlobal.Divisibility.LinkDef
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NotLossLeOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryRationalConjIntersectionCardDvdInvariant
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardFiniteSubgroupGLIntDvd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralEqVolMulSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+public import Formalism.LocalToGlobal.Divisibility.LinkDef
+
+@[expose] public section
 
 open NumberField
 
@@ -285,15 +289,5 @@ end GlobalTheory.GamLoss
 
 namespace GlobalTheory.GamLoss
 open GlobalTheory.SumSize GlobalTheory.RowClaim
-
-theorem finGamK : GlobalTheory.FunPr.Hypotheses₂ → FinGamK := by
-  intro _
-  refine ⟨0, fun CF _ => ⟨90, fun ε C hC => ⟨0, fun D large₂ _ _ Γ _ _ Pl0 T A Ks _ _ _ R F _ ch _ _ _ => ?_⟩⟩⟩
-  have hL : (1 : ℝ) ≤ large₂.sc.L := Real.one_le_rpow large₂.sc.one_lt_alt.le large₂.sc.eps_pos.le
-  have hb : (1 : ℝ) ≤ large₂.sc.b := Real.one_le_exp (by linarith)
-  have hlb : (1 : ℝ) ≤ Real.log large₂.sc.b := by
-    show (1 : ℝ) ≤ Real.log (Real.exp large₂.sc.L)
-    rw [Real.log_exp]; exact hL
-  exact finGamAt_of ch hC hb hlb
 
 end GlobalTheory.GamLoss

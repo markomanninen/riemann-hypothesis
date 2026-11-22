@@ -1,7 +1,12 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
+
+@[expose] public section
+
 open Matrix GlobalTheory.HolDS
 open Formalism.REAL (GlRel IsUnitary IsWeight KHighest root Jm inG)
 open Formalism.QuantumDeterminants (lowK IsHCParam)
@@ -26,8 +31,10 @@ theorem height_cdom {n : ℕ} {ε : Fin n → Bool} {μ Λ : Fin n → ℝ} (h :
     height n (Λ - μ) ≤ 0 ∧ (height n (Λ - μ) = 0 → Λ = μ) := by
   obtain ⟨c, hc, e⟩ := h
   have hval : height n (Λ - μ) = ∑ a, ∑ b, (c a b : ℝ) * ((a : ℝ) - (b : ℝ)) := by
-    rw [e, map_sum]; refine Finset.sum_congr rfl fun a _ => ?_
-    rw [map_sum]; refine Finset.sum_congr rfl fun b _ => ?_
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]; refine Finset.sum_congr rfl fun a _ => ?_
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_smul, height_root, smul_eq_mul]
   have term : ∀ a b, (c a b : ℝ) * ((a : ℝ) - (b : ℝ)) ≤ 0 ∧
       ((c a b : ℝ) * ((a : ℝ) - (b : ℝ)) = 0 → c a b = 0) := by

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.CycGrp
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.CycGrp
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise
@@ -87,23 +91,10 @@ theorem ps_root : ∃ a : H.E, a ≠ 0 ∧ ∀ σ : H.E ≃ₐ[ℚ] H.E, σ a = 
     rw [h, h3, h4]
     simp
 
-theorem hostCore : HostCore H where
-  art_surj := art_surj H
-  cm := cm H
-  conj_iff := conj_iff H
-  finrank_E := finrank_E H
-  finrank_F := finrank_F H
-  mem_F := mem_F H
-  art_ch := art_ch H
-  ps_d := ps_d H
-  frob := frob H
-  frob_any := frob_any H
-  inertia := inertia H
-  decomp := decomp H
-  inertia_d := inertia_d H
-  decomp_typeI := decomp_typeI H
-  decompConj := decompConj H
-  unramEF := unramEF H
+theorem hostCore : HostCore H :=
+  ⟨art_surj H, cm H, conj_iff H, finrank_E H, finrank_F H, mem_F H, art_ch H, ps_d H,
+    frob H, frob_any H, inertia H, decomp H, inertia_d H, decomp_typeI H, decompConj H,
+    unramEF H⟩
 
 end Formalism.HC.Der
 

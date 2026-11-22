@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsAlgebraicIndependentGenericPoint
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFormDegreeLeHilbertDegreeEvalNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsAlgebraicIndependentGenericPoint
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFormDegreeLeHilbertDegreeEvalNeZero
+
+@[expose] public section
 
 open MvPolynomial Filter
 
@@ -21,7 +25,8 @@ attribute [local instance] MvPolynomial.gradedAlgebra in
 private lemma homogeneousComponent_add_X_pow_mul {K : Type} [Field K] {N : ℕ} (j : Fin N) (m n : ℕ)
     (g : MvPolynomial (Fin N) K) :
     homogeneousComponent (n + m) (X j ^ m * g) = X j ^ m * homogeneousComponent n g := by
-  conv_lhs => rw [← sum_homogeneousComponent g, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← sum_homogeneousComponent g, Finset.mul_sum, map_sum]
   have hterm : ∀ i, homogeneousComponent (n + m) (X j ^ m * homogeneousComponent i g) =
       if n + m = m + i then X j ^ m * homogeneousComponent i g else 0 := fun i =>
     homogeneousComponent_of_mem
@@ -49,7 +54,7 @@ private lemma homogeneousComponent_mem_of_isPrime_of_X_pow_saturation {K : Type}
       exact hX j
     intro g hg n
     rcases Nat.eq_zero_or_pos n with rfl | hn
-    · have hsub : g - C (coeff 0 g) ∈ Q := by
+    · have hsub : g - C (AddMonoidAlgebra.coeff g 0) ∈ Q := by
         apply hspan
         rw [mem_ideal_span_X_image]
         intro e he
@@ -126,16 +131,18 @@ private lemma exists_homogeneous_mem_of_X_pow_mul_mem_of_homogeneous {K : Type} 
     rw [homogeneousComponent_of_mem hh, if_pos rfl]
   rw [← hG] at hQ
   obtain ⟨f, -, hf⟩ := Submodule.mem_span_finset.mp hQ
-  rw [hhn, ← hf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hhn, ← hf, map_sum]
   refine I.sum_mem fun g hgG => ?_
-  rw [smul_eq_mul, as_sum (f g), Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [smul_eq_mul, as_sum (f g), Finset.sum_mul, map_sum]
   refine I.sum_mem fun e _ => ?_
   by_cases hdeg : B ≤ (e.sum fun _ k => k)
   · exact hI _ (hkey g hgG e hdeg _) n
   · rw [homogeneousComponent_eq_zero]
     · exact I.zero_mem
-    · have h1 := totalDegree_mul (monomial e (coeff e (f g))) g
-      have h2 := totalDegree_monomial_le e (coeff e (f g))
+    · have h1 := totalDegree_mul (monomial e (AddMonoidAlgebra.coeff (f g) e)) g
+      have h2 := totalDegree_monomial_le e (AddMonoidAlgebra.coeff (f g) e)
       have h3 : g.totalDegree ≤ D := Finset.le_sup (f := totalDegree) hgG
       have h4 : (e.sum fun _ => id) = (e.sum fun _ k => k) := rfl
       omega
@@ -147,7 +154,7 @@ private lemma coe_decompose_homogeneousSubmodule_eq_homogeneousComponent {K : Ty
     ((DirectSum.decompose (homogeneousSubmodule (Fin N) K) g n : MvPolynomial (Fin N) K)) =
       homogeneousComponent n g := by
   conv_lhs => rw [← sum_homogeneousComponent g]
-  rw [DirectSum.decompose_sum, DFinsupp.finset_sum_apply, AddSubmonoidClass.coe_finset_sum,
+  rw [DirectSum.decompose_sum, DFinsupp.finsetSum_apply, AddSubmonoidClass.coe_finsetSum,
     Finset.sum_eq_single n]
   · exact DirectSum.decompose_of_mem_same _ (homogeneousComponent_mem n g)
   · intro i _ hi
@@ -166,9 +173,9 @@ private lemma isHomogeneous_of_forall_homogeneousComponent_mem {K : Type} [Field
   rw [coe_decompose_homogeneousSubmodule_eq_homogeneousComponent]
   exact hI g hg n
 
+
 open MvPolynomial Filter in
 attribute [local instance] MvPolynomial.gradedAlgebra in
-
 theorem _root_.GlobalTheory.prime_saturation_homogeneous_and_hilbertPoly_eq (K : Type) [Field K] (N : ℕ)
     (I Q : Ideal (MvPolynomial (Fin N) K))
     (hI : ∀ g ∈ I, ∀ n : ℕ, homogeneousComponent n g ∈ I) (hQ : Q.IsPrime) (hIQ : I ≤ Q)

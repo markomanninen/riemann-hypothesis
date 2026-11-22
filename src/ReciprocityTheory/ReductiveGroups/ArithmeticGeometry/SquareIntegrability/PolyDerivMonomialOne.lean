@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -55,7 +59,7 @@ theorem fderiv_prod_single {n : ℕ} {h : Fin n → W → ℂ} (hh : ∀ k, Diff
   have hP : HasFDerivAt (fun y : Fin n → W => ∏ k, h k (y k))
       (∑ k, (∏ j ∈ Finset.univ.erase k, h j (x j)) •
         ((fderiv ℂ (h k) (x k)).comp (ContinuousLinearMap.proj k))) x :=
-    HasFDerivAt.finset_prod (fun k _ => hd k)
+    HasFDerivAt.finsetProd (fun k _ => hd k)
   rw [hP.fderiv]
   simp only [ContinuousLinearMap.coe_sum', Finset.sum_apply, ContinuousLinearMap.coe_smul',
     Pi.smul_apply, ContinuousLinearMap.coe_comp', Function.comp_apply, ContinuousLinearMap.proj_apply,

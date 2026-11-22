@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.GlobalReciprocity.PrimesAbove
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.GlobalReciprocity.PrimesAbove
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -7,8 +11,6 @@ namespace Cyclotomic
 
 open IsDedekindDomain NumberField IntermediateField GroundTheory.LocalField.Abstract ProfiniteInteger
 open scoped Pointwise GroundTheory.LocalField.Abstract
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -72,6 +74,8 @@ end FiniteLevel
 
 section Lift
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 variable (P : Ideal (𝓞 ℚ̄))
 
 def decompositionDegreeImageIn (L : IntermediateField ℚ ℚ̄) : AddSubgroup ℤ̂ where
@@ -123,7 +127,7 @@ theorem exists_mem_stabilizer_toPadicInt_ne_zero [P.IsPrime] (p : ℕ) [Fact p.P
   obtain ⟨h, ⟨hP, hL⟩, hh⟩ := hy
   have hh : Multiplicative.toAdd (degree h) = ofPadics f := hh
   refine ⟨h, hP, hL, fun q ↦ ?_⟩
-  rw [map_mul, toAdd_mul, map_add]
+  rw [map_mul, toAdd_mul, map_add (f := _)]
   change toPadicInt q t₀ + toPadicInt q (Multiplicative.toAdd (degree h)) ≠ 0
   rw [hh, hf]
   by_cases h0 : toPadicInt q t₀ = 0

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.KillAddQ
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.FoldrIterateEqTG
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.KillAddQ
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.FoldrIterateEqTG
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,7 @@ theorem exp_factor {k : Type} [CommRing k] [Algebra ℚ k] {σ : Type} (f : MvPo
     · simp [PowerSeries.coeff_exp]
     · simp [PowerSeries.coeff_exp, hE, PowerSeries.coeff_succ_X_mul]
   refine ⟨PowerSeries.subst f E, ?_⟩
-  rw [hexp, ← PowerSeries.coe_substAlgHom ha, map_add, map_one, map_mul,
+  rw [hexp, ← PowerSeries.coe_substAlgHom ha, map_add (f := _), map_one, map_mul,
     PowerSeries.coe_substAlgHom, PowerSeries.subst_X ha]
 
 end ReciprocityTheory.ChartRestriction.G.TB.G2
@@ -33,7 +37,7 @@ open ReciprocityTheory.ChartRestriction.G.TB.G2
 variable {k : Type} [CommRing k] {d n : ℕ}
 
 theorem dAdd_add (u : Fin d → k) (b : Fin n) (f g : PS k n d) : dAdd u b (f + g) = dAdd u b f + dAdd u b g := by
-  simp only [dAdd, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [dAdd, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem dAdd_C (u : Fin d → k) (b : Fin n) (a : k) : dAdd u b (C a : PS k n d) = 0 := by
   unfold dAdd

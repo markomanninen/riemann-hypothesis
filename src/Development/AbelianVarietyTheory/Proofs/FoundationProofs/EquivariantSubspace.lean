@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.FormalDegreeBessel.StatementRP
+module
+
+public import Mathlib
+public import Formalism.FormalDegreeBessel.StatementRP
+
+@[expose] public section
 
 open Formalism.QuantumDeterminants
 

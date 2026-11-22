@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NonzeroLocusSecMonoConst
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NonzeroLocusSecMonoConst
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw PositivityTheory.FormalThickening
 open GlobalTheory.ProjSpace GlobalTheory.QCoh.Qcqs GlobalTheory.Cartier
@@ -77,7 +81,7 @@ theorem pow_mul_word_const
   rw [key k le_rfl]
   congr 1
   funext l
-  simp
+  simp [l.isLt]
 
 end Ring
 
@@ -88,7 +92,7 @@ theorem prod_update_mul {M τ : Type} [CommMonoid M] {k : ℕ} (φ : τ → M) (
     rw [Multiset.map_map]
     rfl
   have := congrArg (fun s => (s.map φ).prod) (wordSet_update_add f l a)
-  simpa [Multiset.map_add, Multiset.prod_add, key] using this
+  simpa [Multiset.map_add (f := _), Multiset.prod_add, key] using this
 
 section Root
 
@@ -183,10 +187,10 @@ theorem rootG_cocycle (h : VeroneseRel u) (i j l : τ) :
     exact rootRatio_mul hk h l _ _)
 
 theorem rootLB_isLB (h : VeroneseRel u) (hc : ⨆ i : τ, nonzeroLocus (u fun _ => i) = ⊤) :
-    (rootLB hk h).IsLB where
+    (rootLB hk h).IsLB := {
   cover := hc
   g_self := rootG_self hk h
-  cocycle := rootG_cocycle hk h
+  cocycle := rootG_cocycle hk h }
 
 def rootIso (h : VeroneseRel u) : LB.Iso (pw (rootLB hk h) (k : ℤ)) Q where
   s p := (isUnit_resG_sec (u fun _ => (show τ from p.2)) p.1 inf_le_right inf_le_left).unit

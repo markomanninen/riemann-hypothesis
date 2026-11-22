@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Ci
 
@@ -18,7 +22,7 @@ private theorem prj_mem_iff {V : Submodule ℂ H} (hV : IsClosed (V : Set H)) (v
   rw [Submodule.starProjection_eq_self_iff, hV.submodule_topologicalClosure_eq]
 
 private noncomputable def cprs (E : Submodule ℂ H) [FiniteDimensional ℂ E] (T : H →L[ℂ] H) : Module.End ℂ E :=
-  (E.orthogonalProjection : H →ₗ[ℂ] E) ∘ₗ (T : H →ₗ[ℂ] H) ∘ₗ E.subtype
+  (E.orthogonalProjectionOnto : H →ₗ[ℂ] E) ∘ₗ (T : H →ₗ[ℂ] H) ∘ₗ E.subtype
 
 private theorem cprs_coe (E : Submodule ℂ H) [FiniteDimensional ℂ E] (T : H →L[ℂ] H) (v : E) :
     (cprs E T v : H) = E.starProjection (T v) := rfl
@@ -31,7 +35,7 @@ private theorem trOn_eq (E : Submodule ℂ H) [FiniteDimensional ℂ E] (T : H �
   refine HasSum.tsum_eq ?_
   have h := hasSum_sum (s := Finset.univ) fun k _ =>
     (GroundTheory.Automorphic.stdHilbertBasis ℂ H).hasSum_inner_mul_inner (ContinuousLinearMap.adjoint S (b k : H)) (b k : H)
-  convert h using 1
+  convert (preTransparency := .reducible) h using 1
   · rfl
   · funext i
     rw [ContinuousLinearMap.comp_apply, b.starProjection_eq_sum_rankOne]
@@ -52,14 +56,14 @@ private theorem comm_proj (E : Submodule ℂ H) [FiniteDimensional ℂ E] (U : H
 private theorem cprs_mul_right (E : Submodule ℂ H) [FiniteDimensional ℂ E] (T U : H →L[ℂ] H) (h : ∀ v ∈ E, U v ∈ E) :
     cprs E T * cprs E U = cprs E (T * U) := by
   ext v
-  rw [Module.End.mul_apply, cprs_coe, cprs_coe, cprs_coe, Submodule.starProjection_eq_self_iff.2 (h _ v.2)]
+  rw [mul_apply_eq_comp, cprs_coe, cprs_coe, cprs_coe, Submodule.starProjection_eq_self_iff.2 (h _ v.2)]
   rfl
 
 private theorem cprs_mul_left (E : Submodule ℂ H) [FiniteDimensional ℂ E] (T U : H →L[ℂ] H)
     (h : ∀ v, E.starProjection (U v) = U (E.starProjection v)) :
     cprs E U * cprs E T = cprs E (U * T) := by
   ext v
-  rw [Module.End.mul_apply, cprs_coe, cprs_coe, cprs_coe, ContinuousLinearMap.mul_apply, h, h,
+  rw [mul_apply_eq_comp, cprs_coe, cprs_coe, cprs_coe, mul_apply_eq_comp, h, h,
     Submodule.starProjection_eq_self_iff.2 (E.starProjection_apply_mem _)]
 
 private theorem mem_eig {V : Submodule ℂ H} (hV : IsClosed (V : Set H)) (A U : H →L[ℂ] H) (x : ℝ)
@@ -69,11 +73,11 @@ private theorem mem_eig {V : Submodule ℂ H} (hV : IsClosed (V : Set H)) (A U :
   refine Submodule.mem_inf.2 ⟨?_, ?_⟩
   · rw [← prj_mem_iff hV] at hv1 ⊢
     have := congrArg (fun L : H →L[ℂ] H => L v) h1.eq
-    simp only [ContinuousLinearMap.mul_apply, hv1] at this
+    simp only [mul_apply_eq_comp, hv1] at this
     exact this.symm
   · rw [Module.End.mem_eigenspace_iff] at hv2 ⊢
     have := congrArg (fun L : H →L[ℂ] H => L v) h2.eq
-    simp only [ContinuousLinearMap.mul_apply] at this
+    simp only [mul_apply_eq_comp] at this
     simp only [ContinuousLinearMap.coe_coe] at hv2 ⊢
     rw [← this, hv2, map_smul]
 

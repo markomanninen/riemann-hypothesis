@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Real Set Filter Topology
 open scoped ENNReal Nat
@@ -27,7 +31,7 @@ theorem lintegral_radial {A : ℝ} (hA : 0 < A) (m : ℕ) :
   have hl : Tendsto (fun r : ℝ ↦ -(2 * (m + 1) * (A + r ^ 2) ^ (m + 1))⁻¹) atTop (𝓝 0) := by
     rw [← neg_zero]
     refine Tendsto.neg (Tendsto.inv_tendsto_atTop ?_)
-    refine Tendsto.const_mul_atTop (by positivity) ?_
+    refine Tendsto.const_mul_atTop (by change (0 : ℝ) < 2 * ((m : ℝ) + 1); positivity) ?_
     exact (tendsto_pow_atTop (Nat.succ_ne_zero m)).comp
       (tendsto_atTop_add_const_left _ _ (tendsto_pow_atTop two_ne_zero))
   rw [← ofReal_integral_eq_lintegral_ofReal (integrableOn_Ioi_deriv_of_nonneg' hd hnn hl)
@@ -86,44 +90,6 @@ theorem lintegral_pi_inv_pow (n : ℕ) : ∀ (m : ℕ) {A : ℝ}, 0 < A →
     rw [lintegral_const_mul _ (by fun_prop), lintegral_complex_inv_pow hA,
       ← ENNReal.ofReal_mul (by positivity), show m + 1 + n = m + n + 1 by ring,
       Nat.factorial_succ m]
-    congr 1
-    push_cast
-    field_simp
-    ring
-
-theorem lintegral_prod_partial_sums (n : ℕ) : ∀ {A : ℝ}, 0 < A →
-    ∫⁻ z : Fin n → ℂ, ENNReal.ofReal
-      (∏ i : Fin n, ((A + ∑ k, if k ≤ i then ‖z k‖ ^ 2 else 0) ^ 2)⁻¹) =
-      ENNReal.ofReal (π ^ n / n ! * (A ^ n)⁻¹) := by
-  induction n with
-  | zero =>
-    intro A hA
-    simp [volume_pi]
-  | succ n ih =>
-    intro A hA
-    have hm : ∀ (N : ℕ) (B : ℝ), Measurable fun z : Fin N → ℂ ↦ ENNReal.ofReal
-        (∏ i : Fin N, ((B + ∑ k, if k ≤ i then ‖z k‖ ^ 2 else 0) ^ 2)⁻¹) := fun N B ↦ by
-      refine ENNReal.measurable_ofReal.comp (Finset.measurable_prod _ fun i _ ↦ ?_)
-      refine ((Measurable.const_add (Finset.measurable_sum _ fun k _ ↦ ?_) B).pow_const 2).inv
-      split_ifs <;> fun_prop
-    rw [lintegral_fin_succ (hm _ _)]
-    simp only [Fin.prod_univ_succ, Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ, ← add_assoc,
-      Fin.zero_le, if_true, Fin.succ_le_succ_iff, Fin.le_zero_iff, Fin.succ_ne_zero, if_false,
-      Finset.sum_const_zero, add_zero]
-    have h : ∀ z : ℂ, ∫⁻ w : Fin n → ℂ,
-        ENNReal.ofReal (((A + ‖z‖ ^ 2) ^ 2)⁻¹ *
-          ∏ i : Fin n, ((A + ‖z‖ ^ 2 + ∑ k, if k ≤ i then ‖w k‖ ^ 2 else 0) ^ 2)⁻¹) =
-        ENNReal.ofReal (π ^ n / n !) *
-          ENNReal.ofReal (((A + ‖z‖ ^ 2) ^ (n + 2))⁻¹) := fun z ↦ by
-      simp only [ENNReal.ofReal_mul (show 0 ≤ ((A + ‖z‖ ^ 2) ^ 2)⁻¹ by positivity)]
-      rw [lintegral_const_mul _ (hm _ _), ih (by positivity),
-        ← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul (by positivity)]
-      congr 1
-      field_simp
-      ring
-    simp only [h]
-    rw [lintegral_const_mul _ (by fun_prop), lintegral_complex_inv_pow hA,
-      ← ENNReal.ofReal_mul (by positivity), Nat.factorial_succ n]
     congr 1
     push_cast
     field_simp

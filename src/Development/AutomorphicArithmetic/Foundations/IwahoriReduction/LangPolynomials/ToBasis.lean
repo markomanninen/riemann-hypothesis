@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.KumAlg
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DvdOfNormLe
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FrobEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.KumAlg
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DvdOfNormLe
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FrobEx
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 
 namespace UpperTheory.Kd.C7.ToBasisLogarithm
@@ -44,7 +49,7 @@ private theorem coords {c : Coef l} (β : Bas c) (hβ : ∀ i, ‖β.val i‖ �
   refine ⟨fun i => (β.e.repr ⟨o, ho⟩ i).appr n, ?_⟩
   have h1 : o = ∑ i, β.val i * algebraMap ℤ_[l] (PadicAlgCl l) (β.e.repr ⟨o, ho⟩ i) := by
     have := congrArg (fun x : c.O => (x : PadicAlgCl l)) (β.e.sum_repr ⟨o, ho⟩)
-    simp only [AddSubmonoidClass.coe_finset_sum, Subalgebra.coe_smul] at this
+    simp only [AddSubmonoidClass.coe_finsetSum, Subalgebra.coe_smul] at this
     refine this.symm.trans (Finset.sum_congr rfl fun i _ => ?_)
     rw [Algebra.smul_def, mul_comm]; rfl
   refine cg_trans (b := ∑ i, β.val i * algebraMap ℤ_[l] (PadicAlgCl l) (β.e.repr ⟨o, ho⟩ i)) ?_ (cg_sum n _ _ fun i => ?_)
@@ -89,7 +94,7 @@ private theorem logd {Ω : Type} [Field Ω] {ι : Type} (S : Finset ι) (P : ι 
 private theorem pv_mem {Ω : Type} [Field Ω] [Algebra ℚ Ω] {A : ValuationSubring Ω} (P : Polynomial (R0 A)) {z : Ω} (hz : z ∈ A) :
     (P.map (R0 A).subtype).eval z ∈ A := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [Polynomial.map_add, Polynomial.eval_add]; exact A.add_mem _ _ hp hq
+  | add p q hp hq => rw [Polynomial.map_add (f := _), Polynomial.eval_add]; exact A.add_mem _ _ hp hq
   | monomial n a =>
     rw [Polynomial.map_monomial, Polynomial.eval_monomial]
     exact A.mul_mem _ _ a.2.1 (A.toSubring.pow_mem hz n)
@@ -98,7 +103,7 @@ private theorem pv_conj {Ω : Type} [Field Ω] [Algebra ℚ Ω] {A : ValuationSu
     {s : G ℚ Ω} (hs : s ∈ Ine (F := ℚ) A) :
     (P.map (R0 A).subtype).eval (s z) = s ((P.map (R0 A).subtype).eval z) := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [Polynomial.map_add, Polynomial.eval_add, Polynomial.eval_add, map_add, hp, hq]
+  | add p q hp hq => rw [Polynomial.map_add (f := _), Polynomial.eval_add, Polynomial.eval_add, map_add (f := _), hp, hq]
   | monomial n a =>
     rw [Polynomial.map_monomial, Polynomial.eval_monomial, Polynomial.eval_monomial, map_mul, map_pow]
     congr 1
@@ -182,7 +187,8 @@ theorem UpperTheory.Kd.C7.pToBasis :
     have hne : ∀ k, (P k).eval (ζ m ^ (b : ZMod (l ^ m)).val) ≠ 0 := fun k => by
       rw [hev]; exact (map_ne_zero s).2 (hu k).2.1
     unfold htv
-    simp only [hmap, logd _ P _ _ hne, map_sum, map_mul j, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hmap, logd _ P _ _ hne, map_sum, map_mul j, map_natCast]
     refine cg_swap β.val o _ a ha fun k => hj _ ?_
     rw [div_eq_mul_inv]
     refine A.mul_mem _ _ (A.mul_mem _ _ hz ?_) ?_

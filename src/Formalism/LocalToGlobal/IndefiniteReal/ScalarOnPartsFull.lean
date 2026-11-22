@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
-import Formalism.LocalToGlobal.HeckeThetaElements.DefsWt
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
+public import Formalism.LocalToGlobal.HeckeThetaElements.DefsWt
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,10 +41,6 @@ def parW (W : HSp D) (κ : ∀ τ : D.what₂.Tau, Fin (W.sig (tauE D τ)).1 ⊕
     (τ : D.what₂.Tau) : SPar :=
   Formalism.L2.NTheta.holPar _ _ (κ τ)
 
-def adWt (W : HSp D) (κgeo : ∀ τ : D.what₂.Tau, Fin (W.sig (tauE D τ)).1 ⊕ Fin (W.sig (tauE D τ)).2 → ℤ)
-    (e : D.what₂.Tau → ℤ) : ∀ τ : D.what₂.Tau, Fin (W.sig (tauE D τ)).1 ⊕ Fin (W.sig (tauE D τ)).2 → ℤ :=
-  fun τ a => κgeo τ a - e τ
-
 def weylDimU {p : ℕ} (lam : Fin p → ℤ) : ℚ :=
   ∏ i : Fin p, ∏ j ∈ Finset.univ.filter (fun j : Fin p => i < j),
     (((lam i - lam j : ℤ) : ℚ) + ((j : ℕ) : ℚ) - ((i : ℕ) : ℚ)) / (((j : ℕ) : ℚ) - ((i : ℕ) : ℚ))
@@ -73,12 +73,12 @@ def DSModel.sm (M : DSModel V S) (τ : D.what₂.Tau) : Submodule ℂ (M.H τ) :
 
 abbrev DSModel.Vec (M : DSModel V S) : Type := ∀ τ : D.what₂.Tau, M.sm τ
 
-abbrev MMap (M : DSModel V S) : Type := MultilinearMap ℂ (fun τ : D.what₂.Tau => M.sm τ) (GA D V → ℂ)
+abbrev MMap (M : DSModel V S) : Type := MultilinearMap (RingHom.id ℂ) (fun τ : D.what₂.Tau => M.sm τ) (GA D V → ℂ)
 
 variable (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ))
 
-open Classical in
 
+open Classical in
 structure IsMultMap (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (T : MMap M) : Prop where
   aut : ∀ v, IsAutFunSm θ V (T v)
   cusp : ∀ v, IsCuspFun V (T v)
@@ -95,14 +95,10 @@ def IsMultIP (M : DSModel V S) (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) (T 
   ∀ v v' : M.Vec, IntegrableOn (fun g => star (T v g) * T' v' g) 𝓕 μ ∧
     ∫ g in 𝓕, star (T v g) * T' v' g ∂μ = c * ∏ τ, ⟪(v τ : M.H τ), (v' τ : M.H τ)⟫_ℂ
 
-open Classical in
 
+open Classical in
 def ipM (M : DSModel V S) (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) (T T' : MMap M) : ℂ :=
   if h : ∃ c, IsMultIP M μ 𝓕 T T' c then h.choose else 0
-
-def ipW {W : HSp D} {κ : ∀ τ : D.what₂.Tau, Fin (W.sig (tauE D τ)).1 ⊕ Fin (W.sig (tauE D τ)).2 → ℤ}
-    (M : DSModel W (parW W κ)) (μ : Measure (GA D W)) (𝓕 : Set (GA D W)) (T T' : MMap M) : ℂ :=
-  (∏ τ, ((dimK _ _ (κ τ) : ℚ) : ℂ)) * ipM M μ 𝓕 T T'
 
 def postOn (M : DSModel V S) (L : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ)) : MMap M →ₗ[ℂ] MMap M where
   toFun T := L.compMultilinearMap T
@@ -117,20 +113,20 @@ def heckeLin (V : HSp D) (R : Finset (GA D V)) : (GA D V → ℂ) →ₗ[ℂ] (G
 def locPart (V : HSp D) (K : Set (GA D V)) (e : Formalism.L2.Theta.AE D) : Set (GA D V) :=
   {k | k ∈ K ∧ Formalism.L2.Theta.SuppAt e V k}
 
-variable (V) in
 
+variable (V) in
 def IsCosetRep (K : Set (GA D V)) (α : GA D V) (R : Finset (GA D V)) : Prop :=
   (∀ γ ∈ R, γ ∈ GfC V ∧ ∃ k₁ ∈ K, ∃ k₂ ∈ K, γ = k₁ * α * k₂) ∧
     ∀ x : GA D V, (∃ k₁ ∈ K, ∃ k₂ ∈ K, x = k₁ * α * k₂) → ∃! γ, γ ∈ R ∧ γ⁻¹ * x ∈ K
 
-variable (D) in
 
+variable (D) in
 def OffS (S : Finset (HeightOneSpectrum (𝓞 D.host.F))) (P : HeightOneSpectrum (𝓞 D.host.E)) : Prop :=
   ∀ v ∈ S, ∃ x : 𝓞 D.host.F, x ∈ v.asIdeal ∧
     ∀ y : 𝓞 D.host.E, (y : D.host.E) = algebraMap D.host.F D.host.E (x : D.host.F) → y ∉ P.asIdeal
 
-variable (V) in
 
+variable (V) in
 def IsHeckeOpAt (J : Set (GA D V)) (χ : GA D V → ℂ) (S : Finset (HeightOneSpectrum (𝓞 D.host.F)))
     (P : HeightOneSpectrum (𝓞 D.host.E)) (k : ℕ) (R : Finset (GA D V)) : Prop :=
   ∃ (e : Formalism.L2.Theta.AE D) (ϖ : 𝓞 D.host.E) (α : GA D V),
@@ -161,15 +157,15 @@ def IsPrimeIdem (P : HeightOneSpectrum (𝓞 D.host.E)) (e f : Formalism.L2.Thet
     ∀ x : 𝓞 D.host.E, x ≠ 0 →
       (x ∈ P.asIdeal ↔ finPart D (e * incA D ((x : D.host.E)⁻¹)) ∉ intAE D))
 
-variable (V) in
 
+variable (V) in
 def SuppF (f : Formalism.L2.Theta.AE D) (g : GA D V) : Prop :=
   ∀ i j, f * (Formalism.L2.Theta.mt V g - 1) i j = (Formalism.L2.Theta.mt V g - 1) i j
 
 def IntVec {n : ℕ} (z : Fin n → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E) : Prop := ∀ i, z i ∈ intAE D
 
-variable (V) in
 
+variable (V) in
 def DivAt (e : Formalism.L2.Theta.AE D) (ϖ : D.host.E) (d : List ℤ) (α : GA D V) : Prop :=
   d.length = V.rank ∧ ∃ B : Matrix (Fin V.rank) (Fin V.rank) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E),
     (∀ z, IntVec z → (fun a => finPart D e * B.mulVec z a) ∈ Formalism.L2.NTheta.LamHat V) ∧
@@ -182,8 +178,8 @@ def DivAt (e : Formalism.L2.Theta.AE D) (ϖ : D.host.E) (d : List ℤ) (α : GA 
       (fun a => finPart D e * (finMat D.sp.cm.sig V.gram α).mulVec y a) =
         fun a => finPart D e * B.mulVec (fun i => finPart D (incA D (ϖ ^ (d.getD i.1 0))) * z i) a)
 
-variable (V) in
 
+variable (V) in
 def Hecke₂ (J : Set (GA D V)) (χ : GA D V → ℂ) (S : Finset (HeightOneSpectrum (𝓞 D.host.F)))
     (P : HeightOneSpectrum (𝓞 D.host.E)) (d : List ℤ) (R : Finset (GA D V)) : Prop :=
   ∃ (e f : Formalism.L2.Theta.AE D) (ϖ : 𝓞 D.host.E) (α : GA D V),
@@ -213,16 +209,6 @@ def SphOff (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpect
     (∀ g, SuppF V f g → (g ∈ J ↔ g ∈ KsphC V ∅)) ∧ (∀ g ∈ J, SuppF V f g → χ g = 1)
 
 def splitLab (n k : ℕ) : List ℤ := List.replicate (n - k) 0 ++ List.replicate k (-1)
-
-def ScalarOnPartsFull (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ)
-    (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F))) (e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ))
-    (L : MMap M →ₗ[ℂ] MMap M) : Prop :=
-  ∀ c, ∃ l : ℂ, ∀ T ∈ partFull θ M J χ Sb c ⊓ goodPart θ M J χ e, L T = l • T
-
-def ScalarOnParts (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ)
-    (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F))) (e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ))
-    (L : MMap M →ₗ[ℂ] MMap M) : Prop :=
-  ∀ c, ∃ l : ℂ, ∀ T ∈ part θ M J χ Sb c ⊓ goodPart θ M J χ e, L T = l • T
 
 def tparRec (D : D7) : TPar D := tparHC D (fun _ => -(1 / 2)) (fun _ => Or.inr rfl)
 
@@ -265,11 +251,11 @@ theorem hasPeterssonInner_unique (M : DSModel V S) (μ : Measure (GA D V)) (𝓕
 
 theorem ipM_spec (M : DSModel V S) (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) (T T' : MMap M)
     (h : ∃ c, IsMultIP M μ 𝓕 T T' c) : IsMultIP M μ 𝓕 T T' (ipM M μ 𝓕 T T') := by
-  rw [ipM, dif_pos h]
+  rw [ipM, dite_eq_left h]
   exact h.choose_spec
 
-variable (V) in
 
+variable (V) in
 def DSExists (S : D.what₂.Tau → SPar) : Prop :=
   V.SigOK → (∀ τ, GoodPar V.rank (V.sig (tauE D τ)).1 (V.sig (tauE D τ)).2 (S τ)) → Nonempty (DSModel V S)
 
@@ -282,35 +268,12 @@ def SchurMult (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (μ : M
   IsInfFam θ → μ.IsHaarMeasure → IsFundamentalDomain (GQ V) 𝓕 μ →
     ∀ T ∈ Mult θ M J χ, ∀ T' ∈ Mult θ M J χ, ∃ c, IsMultIP M μ 𝓕 T T' c
 
-def MultIndep (M M' : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) :
-    Prop :=
-  IsInfFam θ → ∃ U : ∀ τ, M'.H τ ≃ₗᵢ[ℂ] M.H τ,
-    (∀ τ, ∀ g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ), ∀ w, U τ (M'.rep τ g w) = M.rep τ g (U τ w)) ∧
-    ∃ Φ : Mult θ M J χ ≃ₗ[ℂ] Mult θ M' J χ,
-      (∀ (T : Mult θ M J χ) (v' : M'.Vec) (v : M.Vec), (∀ τ, (v τ : M.H τ) = U τ (v' τ)) →
-        (Φ T : MMap M') v' = (T : MMap M) v) ∧
-      ∀ T T' : Mult θ M J χ, ipM M' μ 𝓕 (Φ T) (Φ T') = ipM M μ 𝓕 T T'
-
 def LabelUnique (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F))) : Prop :=
   ∀ P d R R', Hecke₂ V J χ Sb P d R → Hecke₂ V J χ Sb P d R' →
     ∀ F : GA D V → ℂ, (∀ k ∈ J, ∀ g, F (g * k) = χ k * F g) → heckeLin V R F = heckeLin V R' F
 
-def FullDecomp (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F)))
-    (e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ)) (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) : Prop :=
-  IsInfFam θ → SphOff J χ Sb → μ.IsHaarMeasure → IsFundamentalDomain (GQ V) 𝓕 μ →
-    (∀ P d R, Hecke₂ V J χ Sb P d R → ∀ T ∈ goodPart θ M J χ e, heckeOn M R T ∈ goodPart θ M J χ e) →
-    (goodPart θ M J χ e = ⨆ c ∈ IxFull θ M J χ Sb e, (partFull θ M J χ Sb c ⊓ goodPart θ M J χ e)) ∧
-    ∀ c ∈ IxFull θ M J χ Sb e, ∀ c' ∈ IxFull θ M J χ Sb e, c ≠ c' →
-      ∀ T ∈ partFull θ M J χ Sb c ⊓ goodPart θ M J χ e, ∀ T' ∈ partFull θ M J χ Sb c' ⊓ goodPart θ M J χ e,
-        ipM M μ 𝓕 T T' = 0
-
 def SplitDict (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F))) : Prop :=
   ∀ P k R, IsHeckeOpAt V J χ Sb P k R → Hecke₂ V J χ Sb P (splitLab V.rank k) R
-
-def DualConj (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F)))
-    (e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ)) : Prop :=
-  IsInfFam θ → SphOff J χ Sb →
-    ∀ c ∈ IxFull θ M J χ Sb e, ∀ P d, (∃ R, Hecke₂ V J χ Sb P d R) → c P (dualLab d) = star (c P d)
 
 theorem dualPar_dualPar (S : SPar) : dualPar (dualPar S) = S := by
   simp [dualPar, Finset.image_image, Function.comp_def]
@@ -324,9 +287,6 @@ theorem heckeLin_apply (R : Finset (GA D V)) (F : GA D V → ℂ) (g : GA D V) :
 theorem goodPart_le (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ)) :
     goodPart θ M J χ e ≤ Mult θ M J χ := inf_le_left
 
-theorem part_le (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F)))
-    (c : HeightOneSpectrum (𝓞 D.host.E) → ℕ → ℂ) : part θ M J χ Sb c ≤ Mult θ M J χ := inf_le_left
-
 theorem mem_goodPart (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ))
     (T : MMap M) : T ∈ goodPart θ M J χ e ↔ T ∈ Mult θ M J χ ∧ ∀ v, e (T v) = T v := by
   rw [goodPart, Submodule.mem_inf, LinearMap.mem_ker]
@@ -338,21 +298,6 @@ theorem mem_goodPart (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) 
   · intro h
     ext v
     simp [postOn_apply, h]
-
-theorem mem_part (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F)))
-    (c : HeightOneSpectrum (𝓞 D.host.E) → ℕ → ℂ) (T : MMap M) :
-    T ∈ part θ M J χ Sb c ↔ T ∈ Mult θ M J χ ∧
-      ∀ P k R, IsHeckeOpAt V J χ Sb P k R → ∀ v, heckeLin V R (T v) = c P k • T v := by
-  simp only [part, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker]
-  refine and_congr Iff.rfl ?_
-  refine forall_congr' fun P => forall_congr' fun k => forall_congr' fun R => forall_congr' fun _ => ?_
-  constructor
-  · intro h v
-    have h1 := congrArg (fun S => S v) h
-    simpa [heckeOn, postOn_apply, sub_eq_zero] using h1
-  · intro h
-    ext v
-    simp [heckeOn, postOn_apply, h]
 
 theorem mem_partFull (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ)
     (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F))) (c : HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ) (T : MMap M) :

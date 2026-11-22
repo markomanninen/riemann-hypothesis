@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLow
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralBoundOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLow
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralBoundOfParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 
@@ -12,22 +16,47 @@ open Classical
 
 theorem nPt_append_one (P : M.Par) (TT : ℝ) (a : C.LPt) (j : ℕ) (ha : D.IsLocPt a j) (hj : j + 1 ≤ P.r) (c : ℂ) :
     TBB.nPt P.k P.r TT (a ++ [(1, c)]) = TBB.nPt P.k P.r TT a * KB.levW P (j + 1) c := by
-  unfold TBB.nPt
-  rw [Formalism.FourierDecayAlt.P.PBD.weight_product_append, ha.2,
-    Formalism.FourierDecayAlt.P.PBD.weight_product_indep_of_real_parameter P.k P.r (D.ptGG TT (a ++ [(1, c)])) (D.ptGG TT a) (fun _ _ => 1) a 1 le_rfl
-      (by rw [ha.2]; omega)]
-  congr 1
-  simp only [C.nAux, KB.levW]
-  rw [if_neg (by omega), if_neg (by omega)]
-  have e : 1 + j + 1 - 1 = j + 1 := by omega
-  rw [e]
-  simp only [one_mul, mul_one, Nat.cast_one]
-  congr 1
-  ring
+  let GG := D.ptGG TT (a ++ [(1, c)])
+  let GG' := D.ptGG TT a
+  have happend : ∀ (l : C.LPt) (b : ℕ), b + D.ptSize l = j + 1 →
+      C.nAux P.k P.r GG (fun _ _ => 1) b (l ++ [(1, c)]) =
+        C.nAux P.k P.r GG' (fun _ _ => 1) b l * KB.levW P (j + 1) c := by
+    intro l
+    induction l with
+    | nil =>
+      intro b hb
+      change b + 0 = j + 1 at hb
+      rw [Nat.add_zero] at hb
+      subst b
+      have htop : j + 1 ≠ P.r + 1 := by omega
+      have hexp : C.Mlev P.k P.r (j + 1) + 1 - 3 = C.Mlev P.k P.r (j + 1) - 2 := by ring
+      simp only [List.nil_append, C.nAux, KB.levW, Nat.add_sub_cancel, htop, false_and,
+        if_false, Nat.cast_one, one_mul, mul_one, hexp]
+    | cons x l ih =>
+      rcases x with ⟨s, t⟩
+      intro b hb
+      change b + (s + D.ptSize l) = j + 1 at hb
+      have htop : b + s - 1 ≠ P.r + 1 := by omega
+      simp only [List.cons_append, C.nAux, htop, false_and, if_false, ih (b + s) (by omega), mul_assoc]
+  exact happend a 1 (by rw [ha.2, Nat.add_comm])
 
 theorem nPt_nonneg_loc (P : M.Par) (TT : ℝ) (a : C.LPt) (j : ℕ) (ha : D.IsLocPt a j) (hj : j ≤ P.r) :
-    0 ≤ TBB.nPt P.k P.r TT a :=
-  Formalism.FourierDecayAlt.P.PBD.lpt_value_nonneg_of_pos_of_size_le P.k P.r _ (fun _ _ => 1) (fun _ _ => one_pos) a 1 le_rfl (by rw [ha.2]; omega)
+    0 ≤ TBB.nPt P.k P.r TT a := by
+  have hnonneg : ∀ (l : C.LPt) (b : ℕ), b + D.ptSize l ≤ P.r + 1 →
+      0 ≤ C.nAux P.k P.r (D.ptGG TT a) (fun _ _ => 1) b l := by
+    intro l
+    induction l with
+    | nil =>
+      intro b _
+      simp [C.nAux]
+    | cons x l ih =>
+      rcases x with ⟨s, t⟩
+      intro b hb
+      change b + (s + D.ptSize l) ≤ P.r + 1 at hb
+      have htop : b + s - 1 ≠ P.r + 1 := by omega
+      simp only [C.nAux, htop, false_and, if_false, one_mul]
+      exact mul_nonneg (zpow_nonneg (norm_nonneg _) _) (ih (b + s) (by omega))
+  exact hnonneg a 1 (by rw [ha.2]; omega)
 
 theorem levW_nonneg_low (P : M.Par) (j : ℕ) (hj : j + 1 ≤ P.r) (c : ℂ) : 0 ≤ KB.levW P (j + 1) c := by
   simp only [KB.levW]
@@ -69,11 +98,9 @@ theorem glFibre : GLFibre := by
   unfold TBB.NP
   congr 1
   unfold KB.Pl.RR D.RRplace
-  rw [dif_pos ⟨ha, hb⟩, dif_pos hjr]
+  rw [dite_eq_left ⟨ha, hb⟩, dite_eq_left hjr]
   rfl
 
 end
 
 end Formalism.FourierDecayAlt.P.CutBP
-
-theorem Formalism.FourierDecayAlt.P.CutBP.low_level_fibre : Formalism.FourierDecayAlt.P.CutBP.GLFibre := Formalism.FourierDecayAlt.P.CutBP.glFibre

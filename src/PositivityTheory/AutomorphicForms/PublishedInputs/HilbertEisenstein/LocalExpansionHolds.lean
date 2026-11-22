@@ -1,21 +1,25 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
-import GroundTheory.AutomorphicForms.GL2.GodementSectionFactor
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
-import GroundTheory.LocalFields.LocalZetaGauss
-import GroundTheory.LocalFields.LocalZeta
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchInt
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.UnitaryTransvectionZeroSecondMemClosure
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HcToIdele
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchimedeanIntegralHolds
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.CoefficientDivisorHolds
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.QuasiCharConductorLoc
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.InverseSubstitutionHolds
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.LocalIntegralOfSubstitution
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.CharacterProductHolds
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.CharacterPositiveHolds
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import GroundTheory.GlobalFields.TateThesis.FiniteOrderParams
-import GroundTheory.GlobalFields.WeilGroups.QuasiCharacterDecomposition
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
+public import GroundTheory.AutomorphicForms.GL2.GodementSectionFactor
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
+public import GroundTheory.LocalFields.LocalZetaGauss
+public import GroundTheory.LocalFields.LocalZeta
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchInt
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.UnitaryTransvectionZeroSecondMemClosure
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HcToIdele
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchimedeanIntegralHolds
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.CoefficientDivisorHolds
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.QuasiCharConductorLoc
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.InverseSubstitutionHolds
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.LocalIntegralOfSubstitution
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.CharacterProductHolds
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.CharacterPositiveHolds
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import GroundTheory.GlobalFields.TateThesis.FiniteOrderParams
+public import GroundTheory.GlobalFields.WeilGroups.QuasiCharacterDecomposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,21 +54,21 @@ theorem pInf_yAd (y : (UpperTheory.V.TR.Rinf F)ˣ) (yf : (Af F)ˣ) : UpperTheory
   have hf : ∀ x, UpperTheory.V.TR.pInf F (sFin F x) = 0 := fun x => map_zero (UpperTheory.V.TR.infEq F).symm
   have h1 : UpperTheory.V.TR.pInf F ((UpperTheory.V.TR.infId F y : (Ad F)ˣ) : Ad F) = y.val := by
     change UpperTheory.V.TR.pInf F (1 - UpperTheory.V.TR.sInf F 1 + UpperTheory.V.TR.sInf F y.val) = y.val
-    rw [map_add, map_sub, map_one, hs, hs]; ring
+    rw [map_add (f := _), map_sub, map_one, hs, hs]; ring
   have h2 : UpperTheory.V.TR.pInf F ((finId F yf : (Ad F)ˣ) : Ad F) = 1 := by
     change UpperTheory.V.TR.pInf F (1 - sFin F 1 + sFin F (yf : Af F)) = 1
-    rw [map_add, map_sub, map_one, hf, hf]; ring
+    rw [map_add (f := _), map_sub, map_one, hf, hf]; ring
   rw [yAd, Units.val_mul, map_mul, h1, h2, mul_one]
 
 theorem pFin_yAd (y : (UpperTheory.V.TR.Rinf F)ˣ) (yf : (Af F)ˣ) : pFin F (yAd y yf) = (yf : Af F) := by
   have h1 : pFin F ((UpperTheory.V.TR.infId F y : (Ad F)ˣ) : Ad F) = 1 := by
     change pFin F (1 - UpperTheory.V.TR.sInf F 1 + UpperTheory.V.TR.sInf F y.val) = 1
-    rw [map_add, map_sub, map_one]
+    rw [map_add (f := _), map_sub, map_one]
     change (1 : Af F) - 0 + 0 = 1
     ring
   have h2 : pFin F ((finId F yf : (Ad F)ˣ) : Ad F) = yf := by
     change pFin F (1 - sFin F 1 + sFin F (yf : Af F)) = yf
-    rw [map_add, map_sub, map_one]
+    rw [map_add (f := _), map_sub, map_one]
     change (1 : Af F) - 1 + (yf : Af F) = yf
     ring
   rw [yAd, Units.val_mul, map_mul, h1, h2, one_mul]
@@ -165,6 +169,7 @@ theorem fin_int (hLI : LocInt) (hFS : FinSplit) (hOP : OmegaProd) (hCD : CoefDiv
         Cf * (ωF ω (xiF ξ))⁻¹ * coefAt (divS ω c) (algebraMap F (Af F) (ξ : F) * (yf : Af F)) := by
   classical
   have hfin0 : {w : HeightOneSpectrum (𝓞 F) | c w ≠ 0 ∨ dd w ≠ 0}.Finite := by
+    change ({w | c w ≠ 0} ∪ {w | dd w ≠ 0}).Finite
     refine (L2.finite_support H).union ((Ideal.finite_factors (differentIdeal_ne_bot (A := ℤ) (B := 𝓞 F))).subset ?_)
     intro w hw
     have hw' : ordI w (differentIdeal ℤ (𝓞 F)) ≠ 0 := by

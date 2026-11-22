@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartGram
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramPolar
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramSchur
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramHess
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartGram
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramPolar
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramSchur
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramHess
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

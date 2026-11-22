@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeVarSurj
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeVarSurj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -10,8 +15,8 @@ noncomputable section
 
 universe u
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem ConeVarSurj.proof : ConeVarSurj.Statement.{u} := by
   intro F _ K _ _ ι _ P hP W hW hPW v hv
   have := hP.isPrime
@@ -50,8 +55,10 @@ theorem ConeVarSurj.proof : ConeVarSurj.Statement.{u} := by
     ∑ d ∈ D h, monomial (Finsupp.equivFunOnFinite.symm d) (c h d)
   have hQ : ∀ h, coneVarMap P W hPW v (Q h) =
       algebraMap (MRing ι F ⧸ P) (coneLocal P W hPW) (Ideal.Quotient.mk P h) := fun h => by
-    conv_rhs => rw [← hsum h, map_sum, map_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← hsum h, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun d _ => ?_
     rw [coneVarMap, aeval_monomial, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
     apply Subtype.ext

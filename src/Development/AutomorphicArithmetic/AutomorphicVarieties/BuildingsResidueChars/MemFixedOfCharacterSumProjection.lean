@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+
+@[expose] public section
 
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.Z.Desc.V0
 
@@ -66,7 +70,7 @@ private theorem opE_sum {G R W Q : Type} [Group G] [CommRing R] [AddCommGroup W]
     [Fintype Q] (ρ : Representation R G W) (g : Q → G) (c : Q → ℤ) :
     opE ρ (∑ x, Finsupp.single (g x) (c x)) = ∑ x, c x • ρ (g x) := by
   show (∑ x, Finsupp.single (g x) (c x)).sum (fun h n => n • ρ h) = _
-  rw [← Finsupp.sum_finset_sum_index (fun a => zero_smul ℤ (ρ a)) (fun a m n => add_smul m n (ρ a))]
+  rw [← Finsupp.sum_finsetSum_index (fun a => zero_smul ℤ (ρ a)) (fun a m n => add_smul m n (ρ a))]
   exact Finset.sum_congr rfl fun x _ => Finsupp.sum_single_index (zero_smul ℤ (ρ (g x)))
 
 theorem UpperTheory.mem_fixed_of_character_sum_projection :
@@ -92,7 +96,8 @@ theorem UpperTheory.mem_fixed_of_character_sum_projection :
   have hE : opE ρ (∑ x, Finsupp.single (ι (s x)) (c x)) = ∑ x, c x • ρ (ι (s x)) :=
     opE_sum ρ (fun x => ι (s x)) c
   rw [hE]
-  simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul, Finset.smul_sum, smul_smul, hT]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul, Finset.smul_sum, smul_smul, hT]
   calc ∑ a, ∑ b, (c a * c b) • ρ (ι (s (b * a))) v
       = ∑ b, ∑ a, (c a * c b) • ρ (ι (s (b * a))) v := Finset.sum_comm
     _ = ∑ b, ∑ z, (c b * c (b⁻¹ * z)) • ρ (ι (s z)) v := by

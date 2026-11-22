@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFEBlockKernel
-import GroundTheory.AutomorphicForms.SmoothRepContragredient
-import GroundTheory.AutomorphicForms.CompactModCentre
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFEBlockKernel
+public import GroundTheory.AutomorphicForms.SmoothRepContragredient
+public import GroundTheory.AutomorphicForms.CompactModCentre
+
+@[expose] public section
 
 noncomputable section
 

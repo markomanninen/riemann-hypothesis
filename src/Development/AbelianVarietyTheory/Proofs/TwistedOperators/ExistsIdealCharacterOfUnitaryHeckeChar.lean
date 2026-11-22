@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RayCharacterExtendsToIdeals
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RayCharacterExtendsToIdeals
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding Classical
 open scoped ContDiff
@@ -23,7 +27,23 @@ theorem exists_ideal_character_of_unitary_hchar : ∀ (K : Type) [Field K] [Numb
     intro P
     constructor
     · intro h
-      obtain ⟨Q, hQ, hQP⟩ := (P.prime.dvd_finset_prod_iff _).1 (Ideal.dvd_iff_le.2 h)
+      have hprod : ∀ (T : Finset (HeightOneSpectrum (𝓞 K))),
+          P.asIdeal ∣ ∏ Q ∈ T, Q.asIdeal ^ (n Q + 1) →
+          ∃ Q ∈ T, P.asIdeal ∣ Q.asIdeal ^ (n Q + 1) := by
+        intro T
+        induction T using Finset.induction_on with
+        | empty =>
+          simp only [Finset.prod_empty]
+          intro hd
+          exact (P.prime.not_dvd_one hd).elim
+        | @insert Q T hQT ih =>
+          simp only [Finset.prod_insert hQT]
+          intro hd
+          rcases P.prime.dvd_or_dvd hd with hd | hd
+          · exact ⟨Q, Finset.mem_insert_self _ _, hd⟩
+          · obtain ⟨R, hR, hd⟩ := ih hd
+            exact ⟨R, Finset.mem_insert_of_mem hR, hd⟩
+      obtain ⟨Q, hQ, hQP⟩ := hprod S (Ideal.dvd_iff_le.2 h)
       have h1 : Q.asIdeal ≤ P.asIdeal := Ideal.le_of_dvd (P.prime.dvd_of_dvd_pow hQP)
       have h2 : Q = P := HeightOneSpectrum.ext (Q.isMaximal.eq_of_le P.isPrime.ne_top h1)
       exact h2 ▸ hQ
@@ -91,7 +111,7 @@ theorem exists_ideal_character_of_unitary_hchar : ∀ (K : Type) [Field K] [Numb
       have e1 := (Units.coeHom ℂ).map_finprod hfs
       rw [Units.coeHom_apply] at e1
       rw [e1, ← hφ, ← Ideal.finprod_heightOneSpectrum_factorization hne,
-        φ.map_finprod (Ideal.finite_mulSupport hne)]
+        φ.map_finprod (Ideal.hasFiniteMulSupport hne)]
       refine finprod_congr fun v => ?_
       rw [HeightOneSpectrum.maxPowDividing, map_pow, hφ, hord, Units.coeHom_apply]
       by_cases hv : v ∈ S

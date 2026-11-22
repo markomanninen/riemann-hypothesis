@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MemHalfCosetSelf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MemHalfCosetSelf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,8 +106,8 @@ theorem eq_sum_halfCoset_indicator {e : AE D} {Λ : AddSubgroup (Mx D m n)} {K :
 
 end Coset
 
-open Classical in
 
+open Classical in
 def cosetDatum {t : T} {p : Pair T} (d : FinDatum G t p) (K : ℕ) (r : WO (G.pS p) (G.pT p)) : FinDatum G t p :=
   if h : 0 < K ∧ IsHalf d.e r ∧ K • r ∈ pairLat G p then
     { d with fn := (halfCoset d.e (pairLat G p) K r).indicator 1, sb := isSBHalf_halfCoset_indicator h.1 h.2.1 h.2.2 }

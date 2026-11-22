@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.SchurEigenProjections.BigProjP
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.SchurEigenProjections.BigProjP
+
+@[expose] public section
 
 namespace PositivityTheory.RgHe.A.Pf
 

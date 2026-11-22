@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FlatMvPowerSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FlatMvPowerSeries
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 

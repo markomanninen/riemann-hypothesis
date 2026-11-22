@@ -1,8 +1,12 @@
-import Development.EtaleCohomology.EtaleTrace.LFinCut
-import Development.EtaleCohomology.KummerTheory.FinBock
-import Development.EtaleCohomology.WeilConjectures.AdicFinPf
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.OneMul
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SplitsSelfOfIso
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LFinCut
+public import Development.EtaleCohomology.KummerTheory.FinBock
+public import Development.EtaleCohomology.WeilConjectures.AdicFinPf
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.OneMul
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SplitsSelfOfIso
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC

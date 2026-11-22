@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBlocks
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBlocks
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.FA GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 
@@ -82,7 +87,7 @@ theorem exists_re_change {A : FinHolAtlas e X} {th th' : LocPot X} (hth : IsPote
   obtain ⟨W, oW, mW, G₁, h₁, e₁⟩ := exists_re_base hth hu
   obtain ⟨V, oV, mV, G₂, h₂, e₂⟩ := hsame u (Set.mem_univ _)
   refine ⟨W ∩ V, oW.inter oV, ⟨mW, mV⟩, fun z => G₁ z + G₂ z, fun k => ?_, ?_⟩
-  · exact ((h₁ k).mono fun y hy => ⟨hy.1, hy.2.1⟩).add ((h₂ k).mono fun y hy => ⟨hy.1, hy.2.2⟩)
+  · exact ((h₁ k).mono (by exact fun y hy => ⟨hy.1, hy.2.1⟩)).add ((h₂ k).mono fun y hy => ⟨hy.1, hy.2.2⟩)
   · rintro z ⟨a, b⟩
     have h1 := e₁ z a
     have h2 := e₂ z b
@@ -129,7 +134,7 @@ theorem isPsh_transport {A : FinHolAtlas e X} {Θ th th' : LocPot X} {f : X → 
       (contDiffAt_two hf isOpen_univ j hyt (Set.mem_univ _))).add
       (contDiffAt_const.mul (contDiffAt_two (hΘ.1 _) (Θ.isOpen_U _) j hyt (Θ.mem_U _)))
   have hG : A.HoloOn (W₁ ∩ W₂) fun z => G₁ z + (c : ℂ) * G₂ z := fun k =>
-    ((h₁ k).mono fun y hy => ⟨hy.1, hy.2.1⟩).add
+    ((h₁ k).mono (by exact fun y hy => ⟨hy.1, hy.2.1⟩)).add
       ((analyticOnNhd_const (v := (c : ℂ))).mul ((h₂ k).mono fun y hy => ⟨hy.1, hy.2.2⟩))
   rw [levi_eq_of_sub_re A j hyt (o₁.inter o₂) ⟨m₁, m₂⟩ hG
     (a := (th + LocPot.ofFun f + Θ.rsmul c).φ x)

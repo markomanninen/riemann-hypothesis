@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceThickening
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniformizationEndomorphismOfLinear
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecEqZeroAndHomEqOfThickenings
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsNsmulIffEq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.CancelSecAct
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceThickening
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniformizationEndomorphismOfLinear
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecEqZeroAndHomEqOfThickenings
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsNsmulIffEq
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.CancelSecAct
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
@@ -51,7 +55,7 @@ theorem Rep.mul {s s' : FreeAbelianGroup (T₀ ⟶ D.P.A)} {v v' : Vals D T₀} 
   obtain ⟨K', _, φ', ε', t', ht', f', e'⟩ := h'
   refine ⟨K ⊕ K', inferInstance, _, _, LB.mulGen D.P.L _ _ _ _ t t', mulGen_isGen _ _ _ _ _ _ _ ht ht',
     fun U _ h => ?_, fun T ρ z J hJ => (val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (e T ρ z J hJ) (e' T ρ z J hJ))⟩
-  rw [map_add, toMul_add]
+  rw [map_add (f := _), toMul_add]
   exact prod_sum₂ (K := K) (K' := K') (U := U) _ (f U h) (f' U h)
 
 theorem Rep.cub (x x' y : T₀ ⟶ D.P.A) :
@@ -60,7 +64,7 @@ theorem Rep.cub (x x' y : T₀ ⟶ D.P.A) :
   refine ⟨thK, inferInstance, _, _, LB.pullGen D.P.L (thφ D.P.A (x3 D.P.A)) thε D.cub.t (lift x (lift x' y)).left,
     pullGen_isGen _ _ _ _ D.cub.isGen _, fun U _ h => (prod_cub x x' y h).trans ?_,
     fun T ρ z J hJ => val_cub D.cub ρ hJ _ _ _⟩
-  simp only [map_add, map_sub, lift_apply_of, toMul_add, toMul_sub, toMul_ofMul, div_eq_mul_inv]
+  simp only [map_add (f := _), map_sub, lift_apply_of, toMul_add, toMul_sub, toMul_ofMul, div_eq_mul_inv]
 
 abbrev CmpGen (D : DegPre R) (a : D.P.A ⟶ D.P.A) (p χ : D.X) : Type :=
   LB.Gen (LB.LinComb D.P.L (Sum.elim (D.Oφ (𝟙 _) p) (D.Oφ a χ)) (Sum.elim Oε Oinvε))
@@ -77,7 +81,7 @@ theorem Rep.cmp {a : D.P.A ⟶ D.P.A} {p χ : D.X} {u : CmpGen D a p χ} (hu : N
       (OLinEnd.prod_Oφ_inv D _ χ h))).trans ?_
   rw [Category.comp_id]
   apply Additive.ofMul.injective
-  simp only [map_add, map_sub, lift_apply_of, ofMul_mul, ofMul_inv, ofMul_toMul]
+  simp only [map_add (f := _), map_sub, lift_apply_of, ofMul_mul, ofMul_inv, ofMul_toMul]
   abel
 
 theorem Rep.unique {s s' : FreeAbelianGroup (T₀ ⟶ D.P.A)} {v v' : Vals D T₀} (h : Rep s v) (h' : Rep s' v')
@@ -278,7 +282,7 @@ theorem exists_act (hG : GlobalFnsSt) (E : EndU U) (g : GtPtF D.toPre F) : ∃ g
       have e₁ := congrArg Additive.ofMul
         (cmp_add_char hG (E.u_norm χ) (E.u_norm χ') (E.u_norm (χ + χ')) (map_add _ _ _) hJ g.b)
       have e₂ := charVal_add g hJ (E.h χ) (E.h χ')
-      rw [← map_add] at e₂
+      rw [← map_add (f := _)] at e₂
       have e₃ := congrArg Additive.ofMul e₂
       refine (congrArg₂ (· * ·) (vv _ y J hJ) rfl).trans (Eq.trans ?_ (congrArg₂ (· * ·) (vv _ y J hJ) (vv _ y J hJ)).symm)
       apply Additive.ofMul.injective

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+
+@[expose] public section
 
 noncomputable section
 

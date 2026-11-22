@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.IsHeightUnique
+module
+
+public import ReciprocityTheory.DualLattices.IsHeightUnique
+
+@[expose] public section
 
 noncomputable section
 

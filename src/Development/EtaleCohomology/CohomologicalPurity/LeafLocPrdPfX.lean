@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -18,7 +22,8 @@ theorem hs_pull_id_RLocP (q : ℕ) (P : Arrow Spc) (n i : ℤ) (x : Hs q P n i) 
   apply Subtype.ext
   change pull _ (dbl.map (𝟙 P)) _ _ x.1 = x.1
   have e : dbl.map (𝟙 P) = 𝟙 _ := by
-    apply pushout.hom_ext <;> (simp [dbl.map]; rfl)
+    set_option synthInstance.maxHeartbeats 200000 in
+      apply pushout.hom_ext <;> (simp [dbl.map]; rfl)
   rw [e, pull_id]
 
 theorem LeafLocPrd_of (hCl : LeafCl) (hPR : LeafPrdRing) (hZ : LeafZ) (hAbv : LeafAbv) (hAN : LeafActNat) : LeafLocPrd := by

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechHcEqCoh
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CohMkEqZero
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechDSq
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechHcEqCoh
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CohMkEqZero
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechDSq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Swarm

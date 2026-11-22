@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FirstOrderPointsCommuteStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FirstOrderPointsCommuteStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem fst_comp_dualMap (φ : C →+* B) :
     (TrivSqZeroExt.fstHom B B B).toRingHom.comp (dualMap φ) =
       φ.comp (TrivSqZeroExt.fstHom C C C).toRingHom := by
   refine RingHom.ext fun c => ?_
-  simp [dualMap]
+  simp [GlobalTheory.CompanionTheory.Ar.dualMap]
 
 def epsIdeal (B : Type) [CommRing B] : Ideal (DualNumber B) :=
   RingHom.ker (TrivSqZeroExt.fstHom B B B).toRingHom
@@ -126,7 +130,7 @@ theorem tan_local (G : Over S) [GrpObj G] [IsLocalRing B] (φ : C →+* B) (y : 
     rw [hone]; exact top_le_comp _ _ U h1
   have key := GlobalTheory.T.first_order_points_commute S G B (spMap φ ≫ y) (DualNumber B) (algebraMap B (DualNumber B)) (epsIdeal B)
     epsIdeal_sq (restr φ y ≫ v) (restr φ y ≫ w) (red_restr G φ y v tv) (red_restr G φ y w tw) U hxv hxw hxvw hx1 s
-  rw [map_add, map_add,
+  rw [map_add (f := _), map_add (f := _),
     appTop_appLE (spMap (dualMap φ)) _ _ hmul U hvw hxvw s,
     appTop_appLE (spMap (dualMap φ)) _ _ hone U h1 hx1 s,
     appTop_appLE (spMap (dualMap φ)) v.left (restr φ y ≫ v).left rfl U hv hxv s,

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
-import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+public import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
+
+@[expose] public section
 
 namespace LateralTheory.E.LeafA6ringCut
 

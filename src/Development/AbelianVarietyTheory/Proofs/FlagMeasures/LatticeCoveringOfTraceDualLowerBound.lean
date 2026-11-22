@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.RealPlaceAnalysis.Complexify
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransferenceCoverHolds
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.RealPlaceAnalysis.Complexify
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransferenceCoverHolds
+
+@[expose] public section
+
 open Formalism.HN Formalism.HermitianLatticesTheory Matrix NumberField Finset
 
 namespace GlobalTheory.TraceCover
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K]
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
 
 theorem eq_zero_of_sum_re (a : InfinitePlace K → ℂ)
     (h : ∀ x : K, ∑ w, (w.embedding x * a w).re = 0) : a = 0 := by
@@ -74,8 +79,8 @@ theorem trace_eq_sum (a : K) :
     (IsTotallyComplex.isComplex w).mult_eq_two]
   simp
 
-omit [IsTotallyComplex K] in
 
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem exists_basis {ι : Type} [Fintype ι] (L : Submodule (𝓞 K) (ι → K)) (hfg : L.FG)
     (hsp : Submodule.span K (L : Set (ι → K)) = ⊤) :
     ∃ (κ : Type) (_ : Fintype κ) (b : Module.Basis κ ℚ (ι → K)),
@@ -120,15 +125,17 @@ theorem exists_basis {ι : Type} [Fintype ι] (L : Submodule (𝓞 K) (ι → K)
   rw [Module.Basis.coe_mk]
   exact hmem y
 
-omit [IsTotallyComplex K] in
 
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem exists_trace_form {ι : Type} [Fintype ι] (φ : (ι → K) →ₗ[ℚ] ℚ) :
     ∃ f : ι → K, ∀ y, Algebra.trace ℚ K (f ⬝ᵥ y) = φ y := by
   classical
   let D := (Algebra.traceForm ℚ K).toDual (traceForm_nondegenerate ℚ K)
   refine ⟨fun i => D.symm (φ ∘ₗ LinearMap.single ℚ (fun _ => K) i), fun y => ?_⟩
-  rw [dotProduct, map_sum]
-  conv_rhs => rw [← Finset.univ_sum_single y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← Finset.univ_sum_single y, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Algebra.traceForm_apply]
   exact LinearMap.BilinForm.apply_toDual_symm_apply _ _
@@ -150,15 +157,15 @@ noncomputable def rho (M : InfinitePlace K → ((ι → ℂ) ≃ₗ[ℂ] (ι' �
       ext p
       have : (fun j : ι => p.1.embedding ((x + y) j)) =
           (fun j => p.1.embedding (x j)) + (fun j => p.1.embedding (y j)) := by funext j; simp
-      simp only [this, map_add]; rfl }
+      simp only [this, map_add (f := _)]; rfl }
 
 noncomputable def form (M : InfinitePlace K → ((ι → ℂ) ≃ₗ[ℂ] (ι' → ℂ)))
     (u : PiLp 2 (fun _ : InfinitePlace K × ι' => ℂ)) (w : InfinitePlace K) : (ι → ℂ) →ₗ[ℂ] ℂ where
   toFun z := (fun i => starRingEnd ℂ (u (w, i))) ⬝ᵥ M w z
-  map_add' x y := by rw [map_add, dotProduct_add]
+  map_add' x y := by rw [map_add (f := _), dotProduct_add]
   map_smul' c x := by rw [map_smul, dotProduct_smul]; rfl
 
-omit [IsTotallyComplex K] [Fintype ι] in
+omit [_root_.NumberField.IsTotallyComplex K] [Fintype ι] in
 theorem inner_rho (M : InfinitePlace K → ((ι → ℂ) ≃ₗ[ℂ] (ι' → ℂ)))
     (u : PiLp 2 (fun _ : InfinitePlace K × ι' => ℂ)) (y : ι → K) :
     inner ℝ (rho M y) u = ∑ w, (form M u w (fun j => w.embedding (y j))).re := by
@@ -169,7 +176,7 @@ theorem inner_rho (M : InfinitePlace K → ((ι → ℂ) ≃ₗ[ℂ] (ι' → �
   rw [Complex.inner, mul_comm]
   rfl
 
-omit [IsTotallyComplex K] [Fintype ι] [NumberField K] in
+omit [_root_.NumberField.IsTotallyComplex K] [Fintype ι] [NumberField K] in
 theorem eq_zero_of_form (M : InfinitePlace K → ((ι → ℂ) ≃ₗ[ℂ] (ι' → ℂ)))
     (u : PiLp 2 (fun _ : InfinitePlace K × ι' => ℂ)) (h : ∀ w, form M u w = 0) : u = 0 := by
   classical
@@ -207,7 +214,7 @@ theorem span_rho (M : InfinitePlace K → ((ι → ℂ) ≃ₗ[ℂ] (ι' → ℂ
 
 end Main
 
-theorem cover : ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ι ι' : Type) [Fintype ι] [Fintype ι'] (L : Submodule (𝓞 K) (ι → K)) (M : InfinitePlace K → ((ι → ℂ) ≃ₗ[ℂ] (ι' → ℂ))) (lam : ℝ), L.FG → Submodule.span K (L : Set (ι → K)) = ⊤ → 0 < lam → (∀ (f : ι → K) (c : InfinitePlace K → ι' → ℂ), f ≠ 0 → (∀ y ∈ L, ∃ m : ℤ, Algebra.trace ℚ K (f ⬝ᵥ y) = m) → (∀ (w : InfinitePlace K) (y : ι → ℂ), (fun i => w.embedding (f i)) ⬝ᵥ y = c w ⬝ᵥ M w y) → lam ^ 2 ≤ ∑ w, ∑ i, ‖c w i‖ ^ 2) → ∀ t : InfinitePlace K → ι' → ℂ, ∃ y ∈ L, Real.sqrt (∑ w, ∑ i, ‖t w i - M w (fun j => w.embedding (y j)) i‖ ^ 2) ≤ (Fintype.card (InfinitePlace K) : ℝ) * (Fintype.card ι : ℝ) / (2 * lam) := by
+theorem cover : ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ι ι' : Type) [Fintype ι] [Fintype ι'] (L : Submodule (𝓞 K) (ι → K)) (M : InfinitePlace K → ((ι → ℂ) ≃ₗ[ℂ] (ι' → ℂ))) (lam : ℝ), L.FG → Submodule.span K (L : Set (ι → K)) = ⊤ → 0 < lam → (∀ (f : ι → K) (c : InfinitePlace K → ι' → ℂ), f ≠ 0 → (∀ y ∈ L, ∃ m : ℤ, Algebra.trace ℚ K (f ⬝ᵥ y) = m) → (∀ (w : InfinitePlace K) (y : ι → ℂ), (fun i => w.embedding (f i)) ⬝ᵥ y = c w ⬝ᵥ M w y) → lam ^ 2 ≤ ∑ w, ∑ i, ‖c w i‖ ^ 2) → ∀ t : InfinitePlace K → ι' → ℂ, ∃ y ∈ L, Real.sqrt (∑ w, ∑ i, ‖t w i - M w (fun j => w.embedding (y j)) i‖ ^ 2) ≤ (Fintype.card (InfinitePlace K) : ℝ) * (Fintype.card ι : ℝ) / (2 * lam) := by
   intro K _ _ _ ι ι' _ _ L M lam hfg hsp hlam hdual t
   classical
   obtain ⟨κ, _, b, hb⟩ := exists_basis L hfg hsp

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped BigOperators ComplexOrder
@@ -23,7 +27,7 @@ theorem coeff_mem_of_mem_map {R M : Type} [CommRing R] [AddCommGroup M] (I : Ide
     exact I.zero_mem
   | add y z _ _ hy hz =>
     intro φ
-    rw [map_add]
+    rw [map_add (f := _)]
     exact I.add_mem (hy φ) (hz φ)
   | smul r y _ hy =>
     intro φ

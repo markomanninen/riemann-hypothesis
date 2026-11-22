@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ThetaKernelFiring
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaMultiplicity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaPrimeMultOfFiresAt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ThetaKernelFiring
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaMultiplicity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaPrimeMultOfFiresAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ open GlobalTheory.IndefiniteRowSideFullHecke.ThetaKernelFiring GlobalTheory.Inde
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_isThetaMult_of_firesAt {R : RealDat D A Ks} {i : Fin D.R.m} {t : T}
     (h : ∀ x, FiresAt R i t x) : ∃ y : (R.HV i t).H →ₗ[ℂ] MMap (R.MW i (sg0 D A)), IsThetaMult R i t y :=
   GlobalTheory.ThetaFiresLinear.exists_linear_lift (lowT (R.MW i (sg0 D A))) (R.Wall i (sg0 D A)) (R.νV i t) (R.fdV i t)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem decomp (ρ : H → Module.End ℂ P) (c : H → Module.End ℂ Q) [Nontr
         | grade0 z => simp [eP, eQ]
         | grade1 h => simpa [eP, eQ] using hU i h y
         | mul a b ha hb => rw [mul_smul, mul_smul, ha, hb]
-        | add a b ha hb => rw [add_smul, add_smul, map_add, ha, hb] }
+        | add a b ha hb => rw [add_smul, add_smul, map_add (f := _), ha, hb] }
   let T : (Fin m → P) →ₗ[A] Q := ∑ i, V i ∘ₗ LinearMap.proj i
   have hT : T (fun i => z i • x i) = ∑ i, z i • (g i : Q) := by
     simp only [T, LinearMap.sum_apply, hx, ← map_smul]
@@ -58,7 +62,8 @@ theorem decomp (ρ : H → Module.End ℂ P) (c : H → Module.End ℂ Q) [Nontr
   · simpa [eP, eQ] using (T ∘ₗ π ∘ₗ LinearMap.single A (fun _ => P) i).map_smul (FreeAlgebra.ι ℂ h) y
   · have e : π (fun i => z i • x i) = fun i => z i • x i :=
       congrArg Subtype.val (Submodule.linearProjOfIsCompl_apply_left hC ⟨_, show T _ ∈ R from hT ▸ hf⟩)
-    simp only [LinearMap.restrictScalars_apply, LinearMap.comp_apply, ← map_sum, LinearMap.single_apply, Finset.univ_sum_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.restrictScalars_apply, LinearMap.comp_apply, ← map_sum, LinearMap.single_apply, Finset.univ_sum_single]
     exact hT.symm.trans (congrArg T e.symm)
 
 end PositivityTheory.ThKEnd.Orth

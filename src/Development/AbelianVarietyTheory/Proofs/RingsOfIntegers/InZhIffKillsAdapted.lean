@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InZhGeoInjStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InZhGeoInjStable
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
@@ -66,11 +70,6 @@ theorem map_inj {a b : Matrix (Fin n) (Fin n) (𝓞 E)}
   have h' := congrArg (fun m : Matrix (Fin n) (Fin n) E => m i j) h
   simp only [Matrix.map_apply] at h'
   exact FaithfulSMul.algebraMap_injective (𝓞 E) E h'
-
-theorem map_smul' (c : ℕ) (a : Matrix (Fin n) (Fin n) (𝓞 E)) :
-    ((c : 𝓞 E) • a).map (algebraMap (𝓞 E) E) = (c : E) • a.map (algebraMap (𝓞 E) E) := by
-  ext i j
-  simp only [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_mul, map_natCast]
 
 theorem exists_adj : ∃ r : Matrix (Fin n) (Fin n) (𝓞 E),
     r * (A.p * A.q) = ((A.k ^ 2 : ℕ) : 𝓞 E) • ((N ^ 2 : ℕ) : 𝓞 E) • (1 : Matrix (Fin n) (Fin n) (𝓞 E)) := by

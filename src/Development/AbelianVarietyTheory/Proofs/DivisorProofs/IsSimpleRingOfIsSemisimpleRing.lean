@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentralizerAlgO
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorOrderFaithfulLattice
-import GroundTheory.Brauer.DoubleCentralizer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentralizerAlgO
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorOrderFaithfulLattice
+public import GroundTheory.Brauer.DoubleCentralizer
+
+@[expose] public section
 
 open scoped TensorProduct
 namespace GlobalTheory.UPel.HT
@@ -18,7 +22,7 @@ theorem Datum.tmul_one_injective : Function.Injective (fun x : D.La => (1 : ℚ)
   simpa using h
 
 theorem Datum.actQ_injective : Function.Injective D.actQ := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro b hb
   apply GlobalTheory.HTFaith.faithful p D b
   intro y
@@ -35,7 +39,7 @@ theorem Datum.exists_of_mem_algO {g : Module.End ℚ D.VQ} (hg : g ∈ D.algO) :
     obtain ⟨q, x, rfl⟩ := hg
     obtain ⟨q', x', rfl⟩ := hh
     refine ⟨1 / (q.den * q'.den), (q.num * q'.den : ℤ) • x + (q'.num * q.den : ℤ) • x', ?_⟩
-    rw [map_add, map_zsmul, map_zsmul, smul_add, ← Int.cast_smul_eq_zsmul ℚ, ← Int.cast_smul_eq_zsmul ℚ,
+    rw [map_add (f := _), map_zsmul, map_zsmul, smul_add, ← Int.cast_smul_eq_zsmul ℚ, ← Int.cast_smul_eq_zsmul ℚ,
       smul_smul, smul_smul]
     congr 2
     · push_cast; conv_lhs => rw [← Rat.num_div_den q]
@@ -89,7 +93,8 @@ theorem Datum.finrank_algO (D : Datum p) : Module.finrank ℚ D.algO = D.m ^ 2 *
       obtain ⟨q, x, rfl⟩ := D.exists_of_mem_algO hg
       refine Submodule.smul_mem _ q ?_
       have hx : D.actQ x = f x := rfl
-      rw [hx, ← b.sum_repr x, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx, ← b.sum_repr x, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [map_zsmul, ← Int.cast_smul_eq_zsmul ℚ]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -110,7 +115,7 @@ theorem Datum.toReal_tmul (D : Datum p) (q : ℚ) (x : D.La) : D.toReal (q ⊗�
 theorem Datum.toReal_smul (D : Datum p) (q : ℚ) (t : D.VQ) : D.toReal (q • t) = (q : ℝ) • D.toReal t := by
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => rw [smul_add, map_add, ha, hb, map_add, smul_add]
+  | add a b ha hb => rw [smul_add, map_add (f := _), ha, hb, map_add (f := _), smul_add]
   | tmul q' x =>
     rw [TensorProduct.smul_tmul', D.toReal_tmul, D.toReal_tmul, TensorProduct.smul_tmul', smul_eq_mul, smul_eq_mul,
       Rat.cast_mul]
@@ -121,25 +126,25 @@ theorem Datum.toReal_injective (D : Datum p) : Function.Injective D.toReal := by
     simpa using h)
 
 def Datum.actReal (D : Datum p) (x : D.O) : ℝ ⊗[ℤ] D.La →ₗ[ℝ] ℝ ⊗[ℤ] D.La :=
-  LinearMap.baseChange ℝ (DistribMulAction.toLinearMap ℤ D.La x)
+  LinearMap.baseChange ℝ (DistribSMul.toLinearMap ℤ D.La x)
 
 theorem Datum.actReal_tmul (D : Datum p) (x : D.O) (r : ℝ) (y : D.La) : D.actReal x (r ⊗ₜ y) = r ⊗ₜ (x • y) := rfl
 
 theorem Datum.toReal_actQ (D : Datum p) (x : D.O) (t : D.VQ) : D.toReal (D.actQ x t) = D.actReal x (D.toReal t) := by
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
   | tmul q y => rw [D.actQ_tmul, D.toReal_tmul, D.toReal_tmul, D.actReal_tmul]
 
 theorem Datum.ER_actReal (D : Datum p) (x : D.O) (a c : ℝ ⊗[ℤ] D.La) :
     D.EF.baseChange ℝ (D.actReal x a) c = D.EF.baseChange ℝ a (D.actReal (D.star x).unop c) := by
   induction a using TensorProduct.induction_on with
   | zero => simp
-  | add a a' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+  | add a a' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
   | tmul r y =>
     induction c using TensorProduct.induction_on with
     | zero => simp
-    | add c c' h h' => simp only [map_add, h, h']
+    | add c c' h h' => simp only [map_add (f := _), h, h']
     | tmul r' z => rw [D.actReal_tmul, D.actReal_tmul, LinearMap.BilinForm.baseChange_tmul,
         LinearMap.BilinForm.baseChange_tmul, D.adj]
 
@@ -304,37 +309,5 @@ theorem Datum.algO_simple (D : Datum p) : IsSimpleRing D.algO := by
   rcases hc01 with h0 | h1
   · left; apply Subtype.ext; rw [hc, h0, map_zero]; rfl
   · right; apply Subtype.ext; rw [hc, h1, map_one]; rfl
-
-theorem endO_centralSimple : ∀ {p : ℕ} [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p),
-    Algebra.IsCentral D.F D.endO ∧ IsSimpleRing D.endO ∧ Module.finrank D.F D.endO = D.n ^ 2 := by
-  intro p _ D
-  haveI : IsSimpleRing D.algO := D.algO_simple
-  haveI : IsSimpleRing (Module.End ℚ D.VQ) := GroundTheory.Brauer.isSimpleRing_end ℚ ℚ D.VQ
-  have hs := GroundTheory.Brauer.isSimpleRing_centralizer D.algO
-  have hdim := GroundTheory.Brauer.finrank_mul_finrank_centralizer D.algO
-  have hcc := GroundTheory.Brauer.centralizer_centralizer D.algO
-  rw [D.centralizer_algO] at hs hdim hcc
-  haveI := D.freeLa; haveI := D.finLa
-  have hV : Module.finrank ℚ D.VQ = D.m * D.n * Module.finrank ℚ D.F := by
-    rw [Module.finrank_baseChange, D.rankLa]
-  rw [Module.finrank_linearMap, hV, D.finrank_algO] at hdim
-  have hd : 0 < Module.finrank ℚ D.F := Module.finrank_pos
-  have hm := D.m_pos
-  have hC : Module.finrank ℚ D.endO = D.n ^ 2 * Module.finrank ℚ D.F := by
-    have h2 : D.m ^ 2 * Module.finrank ℚ D.F * Module.finrank ℚ D.endO =
-        D.m ^ 2 * Module.finrank ℚ D.F * (D.n ^ 2 * Module.finrank ℚ D.F) := by rw [hdim]; ring
-    exact Nat.eq_of_mul_eq_mul_left (by positivity) h2
-  have htow := Module.finrank_mul_finrank ℚ D.F D.endO
-  refine ⟨⟨fun z hz => ?_⟩, hs, ?_⟩
-  · have hz' : (z : Module.End ℚ D.VQ) ∈ D.algO := by
-      rw [← hcc, Subalgebra.mem_centralizer_iff]
-      intro y hy
-      exact congrArg Subtype.val (Subalgebra.mem_center_iff.1 hz ⟨y, hy⟩)
-    have hz2 : (z : Module.End ℚ D.VQ) ∈ Subalgebra.centralizer ℚ (D.algO : Set (Module.End ℚ D.VQ)) := by
-      rw [D.centralizer_algO]; exact z.2
-    obtain ⟨c, hc⟩ := D.center_algO z hz' fun h hh => (Subalgebra.mem_centralizer_iff ℚ).1 hz2 h hh
-    exact ⟨c, Subtype.ext hc.symm⟩
-  · rw [hC] at htow
-    exact Nat.eq_of_mul_eq_mul_left hd (by rw [htow, mul_comm])
 
 end GlobalTheory.UPel.HT

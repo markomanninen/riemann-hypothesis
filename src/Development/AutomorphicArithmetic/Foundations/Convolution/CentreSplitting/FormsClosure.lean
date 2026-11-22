@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -21,8 +25,8 @@ theorem UpperTheory.ConvolutionTheory.Dp.formsClosure :
       Submodule.le_topologicalClosure _ ⟨u, hu, rfl⟩
     have hcV : clsL μ c ∈ (U.map (clsL μ)).topologicalClosure := by
       have h : clsL μ (u + c) ∈ (U.map (clsL μ)).topologicalClosure := hφV
-      rw [map_add] at h
-      simpa using Submodule.sub_mem _ h huV
+      rw [map_add (f := _)] at h
+      simpa only [add_sub_cancel_left] using Submodule.sub_mem _ h huV
     have hle : U.map (clsL μ) ≤ (ℂ ∙ clsL μ c)ᗮ := by
       rintro _ ⟨v, hv, rfl⟩
       rw [Submodule.mem_orthogonal_singleton_iff_inner_left, hin]

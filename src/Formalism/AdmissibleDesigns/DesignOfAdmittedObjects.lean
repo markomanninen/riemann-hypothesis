@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RingDataOfIdempotents
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingDataOfIdempotents
+
+@[expose] public section
 
 noncomputable section
 
@@ -140,13 +144,15 @@ theorem act_inR {a : N.X i → MatN N i} (ha : InR N i r a) :
       ∑ k, toK N i (f k π) • (mapM (toK N i) (rO N i r π) (g k)).mulVec u := by
     rw [Finset.sum_apply]
     change ((toK N i).mapMatrix (∑ k, f k π • rO N i r π (g k))).mulVec u = _
-    rw [map_sum, Matrix.sum_mulVec]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Matrix.sum_mulVec]
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [← Matrix.smul_mulVec]
     congr 1
     ext a b
     simp [mapM, Matrix.smul_apply]
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   refine Finset.sum_congr rfl (fun k _ => ?_)
   rw [map_smul, hL]
 
@@ -202,8 +208,6 @@ theorem prod_Icc_fin (t : ℕ) (F : ℕ → Polynomial (N.O i)) :
   simp_rw [add_comm 1]
   rw [Finset.prod_Ico_add' F 0 t 1, zero_add]
   rfl
-
-def sOf (S : IdempotentChoiceData N i) : N.X i → MatN N i := S.X0 - S.eB * repX N r S.g0 * S.eB
 
 section Comp
 

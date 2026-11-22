@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -32,7 +37,7 @@ theorem isMultiHomog_rename [DecidableEq K] (k₀ : K) {N : ℕ} (e : ι k₀ �
   · subst hk
     have hval : ∀ i, Finsupp.mapDomain (fun j => (⟨k, e.symm j⟩ : Σ k, ι k)) m ⟨k, i⟩ = m (e i) := fun i => by
       have hi : (⟨k, i⟩ : Σ k, ι k) = (fun j => (⟨k, e.symm j⟩ : Σ k, ι k)) (e i) := by simp
-      rw [hi, Finsupp.mapDomain_apply hρ]
+      rw [hi, Finsupp.mapDomain_apply_of_injective hρ]
     simp_rw [hval]
     rw [Pi.single_eq_same, Equiv.sum_comp e (fun j => m j), ← hd]
     simp [Finsupp.weight_apply, Finsupp.sum_fintype]

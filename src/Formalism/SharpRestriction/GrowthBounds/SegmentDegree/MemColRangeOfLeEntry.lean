@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.KillKcolTau
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.KillKcolTau
+
+@[expose] public section
 
 noncomputable section
 

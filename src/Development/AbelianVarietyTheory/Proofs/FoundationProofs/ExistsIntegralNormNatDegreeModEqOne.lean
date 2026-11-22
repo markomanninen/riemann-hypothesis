@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FieldNormSurjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TsenLangRatFunc
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FiniteExtensionLang
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FieldNormSurjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TsenLangRatFunc
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FiniteExtensionLang
+
+@[expose] public section
 
 open Polynomial
 
 namespace GlobalTheory
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.exists_integral_norm_natDegree_mod_eq_one :
     ∀ (k K : Type) [Field k] [IsAlgClosed k] [CharZero k] [Field K] [Algebra k[X] K] [Algebra (RatFunc k) K]
       [IsScalarTower k[X] (RatFunc k) K] [FiniteDimensional (RatFunc k) K] (N : ℕ), 1 ≤ N →

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorsionEqOneOfTranslationKeepsRatios
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorsionEqOneOfTranslationKeepsRatios
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,19 +20,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.O
   ReciprocityTheory.ChartRestriction.G.H1.SectionArithmetic ReciprocityTheory.ChartRestriction.G.H1.SquareUnits GlobalTheory.ThetaScalar
 
 variable {S : Scheme.{0}} {A : Over S} [GrpObj A] {L : LB A.left} {k : ℤ} {T : Over S}
-
-def noCharts (X : Scheme.{0}) : LB X := ⟨PEmpty, PEmpty.elim, fun i => i.elim⟩
-
-theorem weilIs_noCharts (k : ℤ) (x y : T ⟶ A) (c : Γ(T.left, ⊤)ˣ) : WeilIs A (noCharts A.left) k x y c :=
-  fun _ => ⟨⊤, trivial,
-    ⟨⟨_, ⟨fun j => (j 0).elim⟩, fun j => (j 0).elim⟩, ⟨_, ⟨fun j => (j 0).elim⟩, fun j => (j 0).elim⟩, rfl, rfl⟩,
-    fun _ _ _ _ j => (j (Sum.inl 0)).elim⟩
-
-theorem not_isLB_noCharts (X : Scheme.{0}) [Nonempty X] : ¬ (noCharts X).IsLB := fun h => by
-  obtain ⟨x⟩ := ‹Nonempty X›
-  have hx : x ∈ ⨆ i, (noCharts X).U i := h.cover ▸ trivial
-  obtain ⟨i, -⟩ := Opens.mem_iSup.1 hx
-  exact i.elim
 
 theorem weilIs_unique_of_local (p : T.left) (hp : ∀ V : T.left.Opens, p ∈ V → V = ⊤) (hL : L.IsLB) {x y : T ⟶ A}
     {c c' : Γ(T.left, ⊤)ˣ} (h : WeilIs A L k x y c) (h' : WeilIs A L k x y c') :

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveLocalPositiveCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftLocalBuiltPlaces
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveLocalPositiveCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftLocalBuiltPlaces
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -216,8 +220,8 @@ end
 
 end Formalism.FourierDecayAlt.P.PBL
 
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P.PBL Formalism.FourierDecayAlt.P.LiftDegreeLemmas in
 
+open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P.PBL Formalism.FourierDecayAlt.P.LiftDegreeLemmas in
 theorem Formalism.FourierDecayAlt.P.lift_local_compact_support_route : Formalism.FourierDecayAlt.P.PBL.LiftLocBC := by
   intro hA hSS hDL hFP Cb Cc E _ _ _ Wp Wq _ _ _ _ _ _ S p f χ A₀ hCc hB
   refine ⟨fun b s v => lamLift S b s v, fun b s hb hs hbs v => thr_lift hCc hB b s hb hs hbs v, fun F hF v => ?_⟩

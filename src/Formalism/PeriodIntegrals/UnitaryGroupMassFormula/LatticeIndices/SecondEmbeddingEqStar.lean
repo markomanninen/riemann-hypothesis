@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.FirstRaisingMemEquivariant
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.FirstRaisingMemEquivariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem unitElt_holds (hθ : IsSplitEquiv X p θ) : UnitElt X p θ := by
   let P : Ideal (𝓞 X.B.I.E) :=
     { carrier := {x | Valued.v (iota1 X p θ (algebraMap (𝓞 X.B.I.E) X.B.I.E x)) < 1}
       add_mem' := fun {x y} hx hy => by
-        simp only [Set.mem_setOf_eq, map_add] at hx hy ⊢
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at hx hy ⊢
         exact Valuation.map_add_lt _ hx hy
       zero_mem' := by simp
       smul_mem' := fun c x hx => by
@@ -115,7 +119,8 @@ theorem dual_gen (hθ : IsSplitEquiv X p θ) (l l' : Fin X.B.I.n → X.B.I.E) (h
   obtain ⟨o, ho⟩ := (X.B.I.L_dual l).1 hl l' hl'
   have key : (fun j => iota2 X p θ (l' j)) ⬝ᵥ (J1 X p θ *ᵥ fun j => iota1 X p θ (l j)) =
       iota1 X p θ (Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J l' l) := by
-    simp only [Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, firstForm_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, firstForm_apply,
       secondEmbedding_eq_star X p θ hθ, starRingEnd_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.mul_sum]

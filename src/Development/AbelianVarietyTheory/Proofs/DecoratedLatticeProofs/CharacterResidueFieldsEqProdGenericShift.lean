@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV GlobalTheory.FlagBasis
 open scoped TensorProduct
 
@@ -47,7 +52,7 @@ theorem prod_shift {ι : Type} (k : ι → Type) [∀ i, CommRing (k i)] {S : Ty
       map_add_eq_mul' := fun x y => by
         rw [← hadd]
         refine hdep _ _ (fun j hj => ?_)
-        rw [map_add, map_add, (hσ _ _ j hj).1, (hσ _ _ j hj).2, (hσ _ _ j hj).1, (hσ _ _ j hj).2,
+        rw [map_add (f := _), map_add (f := _), (hσ _ _ j hj).1, (hσ _ _ j hj).2, (hσ _ _ j hj).1, (hσ _ _ j hj).2,
           (hσ _ _ j hj).1, (hσ _ _ j hj).2, Pi.single_add]
         simp }
   let c₂ : ∀ i, AddChar (k i) ℂ := fun i =>
@@ -57,7 +62,7 @@ theorem prod_shift {ι : Type} (k : ι → Type) [∀ i, CommRing (k i)] {S : Ty
       map_add_eq_mul' := fun x y => by
         rw [← hadd]
         refine hdep _ _ (fun j hj => ?_)
-        rw [map_add, map_add, (hσ _ _ j hj).1, (hσ _ _ j hj).2, (hσ _ _ j hj).1, (hσ _ _ j hj).2,
+        rw [map_add (f := _), map_add (f := _), (hσ _ _ j hj).1, (hσ _ _ j hj).2, (hσ _ _ j hj).1, (hσ _ _ j hj).2,
           (hσ _ _ j hj).1, (hσ _ _ j hj).2, Pi.single_add]
         simp }
   have hc₁ : ∀ i x, c₁ i x = χ (σ (Pi.single i x) 0) := fun _ _ => rfl
@@ -97,7 +102,8 @@ theorem prod_shift {ι : Type} (k : ι → Type) [∀ i, CommRing (k i)] {S : Ty
     · rw [(hs j hj).2 hji, Pi.single_eq_of_ne hji]
   · have h1 : χ s = χ (∑ i ∈ Pg, (σ (Pi.single i (p i s)) 0 + σ 0 (Pi.single i (p' i s)))) := by
       refine hdep _ _ (fun j hj => ?_)
-      simp only [map_sum, map_add, (hσ _ _ j hj).1, (hσ _ _ j hj).2, Pi.zero_apply, add_zero,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_add (f := _), (hσ _ _ j hj).1, (hσ _ _ j hj).2, Pi.zero_apply, add_zero,
         zero_add]
       constructor
       · rw [Finset.sum_eq_single j (fun b _ hb => Pi.single_eq_of_ne (Ne.symm hb) _)

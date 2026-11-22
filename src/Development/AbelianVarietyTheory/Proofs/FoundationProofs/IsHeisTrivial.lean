@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,9 +105,5 @@ theorem neg_comp (x : X) (v : M) : W (-x) (W x v) = γ (w • -x) x • v := by
   rw [h.comp, neg_add_cancel, h.zero]
 
 end IsHeis
-
-theorem isHeis_trivial (σ : R →+* R) (w : R) (h1 : ∀ r, σ (σ r) = r) (h2 : w + σ w = 1) :
-    IsHeis σ w (fun _ _ : X => (1 : ℂ)) (fun _ => (LinearMap.id : M →ₗ[ℂ] M)) :=
-  ⟨h1, h2, by simp, by simp, by simp, by simp, by simp, by simp⟩
 
 end GlobalTheory.FinWeil

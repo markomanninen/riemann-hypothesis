@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Submodule
 
@@ -96,7 +100,8 @@ theorem mem_span_equivValues (a : ι → Module.End ℂ P)
         rw [hS'I, hSa, ← hS'I k p]; rfl
       have hy_eq : y = ∑ k, f k • S' k (q k) := by
         apply hinj _ hy _ (sum_mem fun k _ => N.smul_mem _ (hS'N k _))
-        rw [← hfg, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hfg, map_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [map_smul, hS'I, hq]
       rw [hy_eq]

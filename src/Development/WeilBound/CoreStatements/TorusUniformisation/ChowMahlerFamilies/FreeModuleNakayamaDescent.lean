@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace PositivityTheory.Xgn.FreeNakayamaDescent
@@ -73,8 +78,7 @@ theorem abstract_descent (F k A S M N ι : Type) [Field F] [Field k] [CommRing A
     intro i n
     obtain ⟨t, rfl⟩ := e.surjective n
     induction t with
-    | zero => simp
-    | add u v hu hv => simp only [map_add, hu, hv, smul_add]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv, smul_add]
     | tmul s m =>
       have h1 : (s ⊗ₜ[F] m : k ⊗[F] M) = s • (1 ⊗ₜ[F] m) := by simp [smul_tmul']
       rw [h1, map_smul, map_smul, hact, map_smul, map_smul, smul_comm, hc]

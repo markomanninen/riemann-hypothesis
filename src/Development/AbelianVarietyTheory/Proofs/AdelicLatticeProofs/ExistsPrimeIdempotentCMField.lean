@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.ThmBInHecke
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmConjugationOnPrimesProperties
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmExtensionAdelesStandardModelDictionaryStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AdeleIdemPrimeCriterion
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.ThmBInHecke
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmConjugationOnPrimesProperties
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmExtensionAdelesStandardModelDictionaryStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AdeleIdemPrimeCriterion
+
+@[expose] public section
+
 open NumberField IsDedekindDomain NumberField.mixedEmbedding Complex Classical HeckeCharacterZeroLocus.ThmBIn
 open scoped TensorProduct ContDiff nonZeroDivisors
 
@@ -127,7 +132,7 @@ theorem exists_isPrimeIdem : ∀ (F E : Type) [Field F] [NumberField F] [Field E
         · rw [hc0 Q (by rw [hQ]; exact fun h => hP h.symm), mul_zero]; rfl
         · rw [he0 Q hQ, zero_mul]; rfl
     · apply Φ.injective
-      rw [map_add, ← hη]
+      rw [map_add (f := _), ← hη]
       refine prod_ext ?_ fun Q => ?_
       · rw [Prod.fst_add, he1, hc1, hη1, add_zero]
       · rw [addap, hη3]

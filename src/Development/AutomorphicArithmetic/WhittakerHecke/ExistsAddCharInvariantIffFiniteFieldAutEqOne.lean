@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq
 
 theorem UpperTheory.exists_addChar_invariant_iff_finiteField_aut_eq_one :

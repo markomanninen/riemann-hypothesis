@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValues
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtIffValueAtStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentresStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtComplexEmbedding
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkClosedPointToToStalk
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordValuationBoundLocal
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ExistsRingHomComplex
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValues
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtIffValueAtStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentresStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtComplexEmbedding
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkClosedPointToToStalk
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordValuationBoundLocal
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ExistsRingHomComplex
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GlobalTheory.CompanionTheory.Ar.Cusp.PtHt
@@ -97,7 +102,7 @@ theorem vertical_value : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
   have hex : ∃ v, IsValueAt Dc.y (MvPolynomial.aeval Dc.y (Dc.vnum p) / MvPolynomial.aeval Dc.y (Dc.vden p) *
       chartMono Dc.y cc (-Dc.vdeg p)) (fun q => e₀ (w q)) v := by
     by_contra h
-    exact hne (by rw [GroundTheory.Heights₂.Heights.LowerBoundFree.valAt, dif_neg h])
+    exact hne (by rw [GroundTheory.Heights₂.Heights.LowerBoundFree.valAt, dite_eq_right h])
   obtain ⟨v, hv⟩ := hex
   rw [valAt_eq (hm e₀) hv] at hne
   obtain ⟨t, ht, het⟩ := descend hξ z e₀ ((tv e₀ _ _).2 hv)
@@ -106,7 +111,7 @@ theorem vertical_value : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
   have hccz : ∀ k, e (w ⟨k, cc k⟩) ≠ 0 := fun k => (map_ne_zero e).2 (hcc k)
   have hc : ∃ c : (k : K) → J k, ∀ k, (fun q => e (w q)) ⟨k, c k⟩ ≠ 0 := ⟨cc, hccz⟩
   unfold ComponentData.vertFactor
-  rw [dif_pos hc]
+  rw [dite_eq_left hc]
   have hcs := hc.choose_spec
   generalize hc.choose = c at hcs ⊢
   have hcs' : ∀ k, e (w ⟨k, c k⟩) ≠ 0 := hcs

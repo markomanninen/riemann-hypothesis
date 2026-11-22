@@ -1,8 +1,12 @@
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQWordAdj
-import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+module
+
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQWordAdj
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -79,9 +83,9 @@ theorem rowGen_derivative {r n : ℕ} (a b : Fin r) (f : MvPolynomial (Fin r × 
       rowGen ℚ a b (der r n a b f) := by
   induction f using MvPolynomial.induction_on with
   | C c => simp [rowGen_C', ← MvPolynomial.algebraMap_eq]
-  | add p q hp hq => rw [map_add, map_add, map_add, map_add, mul_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), mul_add, hp, hq]
   | mul_X p v hp =>
-    rw [map_mul, Polynomial.derivative_mul, Derivation.leibniz, map_add, smul_eq_mul, smul_eq_mul, map_mul, map_mul,
+    rw [map_mul, Polynomial.derivative_mul, Derivation.leibniz, map_add (f := _), smul_eq_mul, smul_eq_mul, map_mul, map_mul,
       ← hp, der_X, rowGen_X']
     by_cases h1 : v.1 = b
     · by_cases h2 : a = b
@@ -102,7 +106,7 @@ theorem rowDiv_zero' {r n : ℕ} (a b : Fin r) (f : MvPolynomial (Fin r × Fin n
   unfold rowDiv
   induction f using MvPolynomial.induction_on with
   | C c => simp [rowGen_C']
-  | add p q hp hq => rw [map_add, Polynomial.coeff_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), Polynomial.coeff_add, hp, hq]
   | mul_X p v hp =>
     rw [map_mul, Polynomial.mul_coeff_zero, hp, rowGen_X']
     split_ifs <;> simp
@@ -110,7 +114,7 @@ theorem rowDiv_zero' {r n : ℕ} (a b : Fin r) (f : MvPolynomial (Fin r × Fin n
 theorem rowDiv_succ {r n : ℕ} (a b : Fin r) (k : ℕ) (f : MvPolynomial (Fin r × Fin n) ℚ) :
     ((k + 1 : ℕ) : ℚ) • rowDiv ℚ a b (k + 1) f =
       rowDiv ℚ a b k (der r n a b f) - (if a = b then (k : ℚ) • rowDiv ℚ a b k f else 0) := by
-  have h := congrArg (fun P => Polynomial.coeff P k) (rowGen_derivative a b f)
+  have h := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P k) (rowGen_derivative a b f)
   beta_reduce at h
   unfold rowDiv
   rw [← h, add_mul, one_mul, Polynomial.coeff_add, Polynomial.coeff_derivative]
@@ -122,11 +126,11 @@ theorem rowDiv_succ {r n : ℕ} (a b : Fin r) (k : ℕ) (f : MvPolynomial (Fin r
       rw [Polynomial.coeff_X_mul, Polynomial.coeff_derivative]
       simp only [MvPolynomial.smul_eq_C_mul]
       push_cast
-      simp only [map_add, map_natCast, map_one]
+      simp only [map_add (f := _), map_natCast, map_one]
       ring
   · simp only [hab, if_false, zero_mul, Polynomial.coeff_zero, add_zero, sub_zero, MvPolynomial.smul_eq_C_mul]
     push_cast
-    simp only [map_add, map_natCast, map_one]
+    simp only [map_add (f := _), map_natCast, map_one]
     ring
 
 theorem rowDiv_one {r n : ℕ} (a b : Fin r) (f : MvPolynomial (Fin r × Fin n) ℚ) :

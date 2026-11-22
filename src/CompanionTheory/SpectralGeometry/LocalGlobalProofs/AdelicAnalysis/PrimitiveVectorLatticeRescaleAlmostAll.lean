@@ -1,7 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.IntegralAlmostAllPlaces
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSquareOfValuedSubOneLt
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.IntegralAlmostAllPlaces
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSquareOfValuedSubOneLt
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -85,16 +90,17 @@ theorem repr_mul (h0 : B 0 = 1) (h1 : B 1 * B 1 = algebraMap L K Δ) (x y : K) :
         (algebraMap L K (B.repr y 0) + algebraMap L K (B.repr y 1) * B 1) :=
       congrArg₂ (· * ·) hx hy
     rw [e1, Algebra.smul_def, Algebra.smul_def, h0]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
     linear_combination (algebraMap L K (B.repr x 1) * algebraMap L K (B.repr y 1)) * h1
   have := repr_coord B (B.repr x 0 * B.repr y 0 + Δ * (B.repr x 1 * B.repr y 1))
     (B.repr x 0 * B.repr y 1 + B.repr x 1 * B.repr y 0)
   rw [← e] at this
   exact this
 
-variable (B Δ) in
 
-def nrm (x : K) : L := B.repr x 0 ^ 2 - Δ * B.repr x 1 ^ 2
+variable (B Δ) in
+def nrm (B : Module.Basis (Fin 2) L K) (Δ : L) (x : K) : L :=
+  B.repr x 0 ^ 2 - Δ * B.repr x 1 ^ 2
 
 theorem nrm_mul (h0 : B 0 = 1) (h1 : B 1 * B 1 = algebraMap L K Δ) (x y : K) :
     nrm B Δ (x * y) = nrm B Δ x * nrm B Δ y := by
@@ -190,18 +196,20 @@ theorem mul_ef {e f : K} (he : e * e = e) (hf : f * f = f) (hef : e * f = 0) (α
 
 theorem int_ef {e f : K} (he : ∀ l, w (B.repr e l) ≤ 1) (hf : ∀ l, w (B.repr f l) ≤ 1) {α β : L}
     (hα : w α ≤ 1) (hβ : w β ≤ 1) (l : Fin 2) : w (B.repr (α • e + β • f) l) ≤ 1 := by
-  simp only [map_add, map_smul, Finsupp.add_apply, Finsupp.smul_apply, smul_eq_mul]
+  simp only [map_add (f := _), map_smul, Finsupp.add_apply, Finsupp.smul_apply, smul_eq_mul]
   refine (w.map_add _ _).trans (max_le ?_ ?_)
   · rw [map_mul]; exact mul_le_one' hα (he l)
   · rw [map_mul]; exact mul_le_one' hβ (hf l)
 
-variable (B) in
-
-def idm (s : L) : K := (2⁻¹ : L) • B 0 + ((2 * s)⁻¹ : L) • B 1
 
 variable (B) in
+def idm (B : Module.Basis (Fin 2) L K) (s : L) : K :=
+  (2⁻¹ : L) • B 0 + ((2 * s)⁻¹ : L) • B 1
 
-def ev (s : L) (x : K) : L := B.repr x 0 + s * B.repr x 1
+
+variable (B) in
+def ev (B : Module.Basis (Fin 2) L K) (s : L) (x : K) : L :=
+  B.repr x 0 + s * B.repr x 1
 
 theorem mul_idm (h0 : B 0 = 1) (h1 : B 1 * B 1 = algebraMap L K Δ) (h2 : (2 : L) ≠ 0) {s : L}
     (hs0 : s ≠ 0) (hs : s * s = Δ) (x : K) : x * idm B s = ev B s x • idm B s := by
@@ -219,7 +227,7 @@ theorem mul_idm (h0 : B 0 = 1) (h1 : B 1 * B 1 = algebraMap L K Δ) (h2 : (2 : L
         congrArg (· * idm B s) hx
     _ = ev B s x • idm B s := by
       unfold ev
-      rw [Algebra.smul_def, map_add, map_mul]
+      rw [Algebra.smul_def, map_add (f := _), map_mul]
       linear_combination (algebraMap L K (B.repr x 1)) * hd
 
 theorem ev_idm (h2 : (2 : L) ≠ 0) {s : L} (hs0 : s ≠ 0) :
@@ -236,7 +244,7 @@ theorem idm_add (h0 : B 0 = 1) (h2 : (2 : L) ≠ 0) {s : L} (hs : s ≠ 0) :
   have e : ((2 * -s)⁻¹ : L) = -(2 * s)⁻¹ := by field_simp
   rw [e, neg_smul, h0, Algebra.smul_def, mul_one]
   have e2 : algebraMap L K (2⁻¹ : L) + algebraMap L K (2⁻¹ : L) = 1 := by
-    rw [← map_add, ← map_one (algebraMap L K)]; congr 1; field_simp; norm_num
+    rw [← map_add (f := _), ← map_one (algebraMap L K)]; congr 1; field_simp; norm_num
   linear_combination e2
 
 theorem split_case (h0 : B 0 = 1) (h1 : B 1 * B 1 = algebraMap L K Δ)
@@ -336,7 +344,7 @@ theorem split_case (h0 : B 0 = 1) (h1 : B 1 * B 1 = algebraMap L K Δ)
       by_cases hk : k = m
       · subst hk; simpa using hg l
       · simp [Pi.single_apply, hk]
-    simp only [Pi.add_apply, map_add, Finsupp.add_apply]
+    simp only [Pi.add_apply, map_add (f := _), Finsupp.add_apply]
     exact (w.map_add _ _).trans (max_le (h1' e i he_int) (h1' f j hf_int))
   · simp only [Units.val_mk, Pi.add_apply, add_mul, Finset.sum_add_distrib, Pi.single_apply,
       ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, huy]
@@ -386,7 +394,7 @@ theorem exists_basis {σ : E →ₐ[F] E} (h : IsCMExt F E σ) :
     intro s t hst
     rw [Algebra.smul_def, Algebra.smul_def, mul_one] at hst
     have h2 := congrArg σ hst
-    rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσ, map_zero] at h2
+    rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσ, map_zero] at h2
     have hs2 : algebraMap F E (2 * s) = 0 := by
       rw [map_mul, map_ofNat]
       linear_combination hst + h2
@@ -405,7 +413,7 @@ theorem exists_basis {σ : E →ₐ[F] E} (h : IsCMExt F E σ) :
     rw [Fin.sum_univ_two, hB0, hB1, Algebra.smul_def, Algebra.smul_def, mul_one] at hs
     exact ⟨_, _, hs⟩
   have h2 := congrArg σ hs
-  rw [map_mul, map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσ] at h2
+  rw [map_mul, map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσ] at h2
   have hc : algebraMap F E β = 0 := by
     have : (2 * δ) * algebraMap F E β = 0 := by
       linear_combination h2 - hs
@@ -428,7 +436,8 @@ theorem change_basis {d d' : ℕ} (b : Module.Basis (Fin d) F E) (b' : Module.Ba
         (Algebra.TensorProduct.basis (Fv F v) b').repr
           ((Algebra.TensorProduct.basis (Fv F v) b) j) k := by
     conv_lhs => rw [← (Algebra.TensorProduct.basis (Fv F v) b).sum_repr x]
-    simp [map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Finsupp.finsetSum_apply]
   rw [key]
   refine sum_mem fun j _ => mul_mem (hx j) ?_
   have e : (Algebra.TensorProduct.basis (Fv F v) b) j = inclR (Fv F v) (b j) := by

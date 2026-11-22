@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+
+@[expose] public section
 
 open Filter Topology
 open GlobalTheory GlobalTheory.VolBr
@@ -12,6 +16,7 @@ theorem finrank_span_finset_le_of_indep {G : Type} [AddCommGroup G] [IsAddTorsio
     (hr : ∀ (n : ℕ) (e : Fin n → G), LinearIndependent ℤ e → (∀ j, e j ∈ (T : Set G)) → n ≤ r) :
     Module.finrank ℤ (Submodule.span ℤ (T : Set G)) ≤ r := by
   classical
+  haveI : HasUniqueDiv G := IsAddTorsionFree.hasUniqueDiv
   obtain ⟨s, hs, hmax⟩ := exists_maximal_linearIndepOn ℤ (Subtype.val : ↥(T : Set G) → G)
   have ha : ∀ i : (T : Set G), ∃ a : ℤ, a ≠ 0 ∧ a • (i : G) ∈ Submodule.span ℤ (Subtype.val '' s) := by
     intro i
@@ -62,6 +67,7 @@ theorem encard_finset_le_pow_mul {G : Type} [AddCommGroup G] [IsAddTorsionFree G
     (T : Finset G) (hT : (T : Set G) ⊆ B R) :
     (T : Set G).encard ≤ ((q ^ r : ℕ) : ℕ∞) * (B (2 * R / q)).encard := by
   classical
+  haveI : HasUniqueDiv G := IsAddTorsionFree.hasUniqueDiv
   haveI : NeZero q := ⟨hq.ne'⟩
   set L := Submodule.span ℤ (T : Set G) with hLdef
   have hd : Module.finrank ℤ L ≤ r :=

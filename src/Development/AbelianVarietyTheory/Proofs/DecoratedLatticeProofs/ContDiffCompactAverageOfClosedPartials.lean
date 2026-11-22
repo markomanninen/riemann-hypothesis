@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ContDiff
 
@@ -19,7 +24,8 @@ theorem clm_expand (L : (Fin n → ℝ) →L[ℝ] ℂ) : L = ∑ i, L (Pi.single
   ext1 u
   have e : L u = ∑ i, u i • L (Pi.single i 1) := by
     conv_lhs => rw [← Finset.univ_sum_single u]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← map_smul]
     congr 1
@@ -57,13 +63,13 @@ theorem hasFDerivAt_avg (μ : Measure K) [IsFiniteMeasure μ] {F : K → (Fin n 
       rw [clm_expand (fderiv ℝ (F k) t)] at h
       simpa only [he] using h)
   refine key.congr_fderiv ?_
-  rw [integral_finset_sum _ fun i _ => (integrable_cont μ (hGk i t₀)).smul_const _]
+  rw [MeasureTheory.integral_finsetSum _ fun i _ => (integrable_cont μ (hGk i t₀)).smul_const _]
   exact Finset.sum_congr rfl fun i _ => integral_smul_const _ _
 
 end GlobalTheory.AvgSmooth
 
-open GlobalTheory.AvgSmooth in
 
+open GlobalTheory.AvgSmooth in
 theorem GlobalTheory.AvgSmooth.main : ∀ (K : Type) [TopologicalSpace K] [CompactSpace K] [MeasurableSpace K] [BorelSpace K] (μ : Measure K) [IsFiniteMeasure μ] (n : ℕ) (φ : Fin n → (Fin n → ℝ) → ℂ), (∀ i, ContDiff ℝ ∞ (φ i)) → ∀ 𝒢 : Set (K → (Fin n → ℝ) → ℂ), (∀ F ∈ 𝒢, Continuous fun p : K × (Fin n → ℝ) => F p.1 p.2) → (∀ F ∈ 𝒢, ∀ k, Differentiable ℝ (F k)) → (∀ F ∈ 𝒢, ∀ i, ∃ F' ∈ 𝒢, ∀ k t, fderiv ℝ (F k) t (Pi.single i 1) = F' k t + φ i t * F k t) → ∀ F ∈ 𝒢, ContDiff ℝ ∞ fun t => ∫ k, F k t ∂μ := by
   intro K _ _ _ _ μ _ n φ hφ 𝒢 hc hd hder
   have hk : ∀ F ∈ 𝒢, ∀ t, Integrable (fun k => F k t) μ := fun F hF t =>

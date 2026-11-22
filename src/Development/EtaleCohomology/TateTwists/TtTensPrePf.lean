@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.TtTensExPf
+module
+
+public import Development.EtaleCohomology.TateTwists.TtTensExPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 open scoped DirectSum TensorProduct
@@ -46,7 +50,7 @@ theorem dT_of (I J : Cx R) (U : Scheme.{0}) (s t w : ℤ) (h : s + t = w) (a : S
 theorem dT_dT (I J : Cx R) (U : Scheme.{0}) (w : ℤ) : (dT I J U (w + 1)).comp (dT I J U w) = 0 := by
   apply DirectSum.linearMap_ext; rintro ⟨⟨s, t⟩, h⟩; apply TensorProduct.ext'; intro a b
   simp only [LinearMap.comp_apply, DirectSum.lof_eq_of, LinearMap.zero_apply]
-  rw [dT_of, map_add, map_zsmul, dT_of, dT_of]
+  rw [dT_of, map_add (f := _), map_zsmul, dT_of, dT_of]
   simp [dI_dI, Int.negOnePow_succ]
 
 theorem res_of (I J : Cx R) {V U : Scheme.{0}} (g : V ⟶ U) (s t w : ℤ) (h : s + t = w)
@@ -74,7 +78,7 @@ theorem dT_res (I J : Cx R) {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) :
     dT I J V w ∘ₗ Tens.res g w = Tens.res g (w + 1) ∘ₗ dT I J U w := by
   apply DirectSum.linearMap_ext; rintro ⟨⟨s, t⟩, h⟩; apply TensorProduct.ext'; intro a b
   simp only [LinearMap.comp_apply, DirectSum.lof_eq_of]
-  rw [res_of, dT_of, dT_of, map_add, map_zsmul, res_of, res_of, dI_res, dI_res]
+  rw [res_of, dT_of, dT_of, map_add (f := _), map_zsmul, res_of, res_of, dI_res, dI_res]
 
 def PF (I J : Cx R) (w : ℤ) : Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} (ULift.{1} R) where
   obj U := ModuleCat.of (ULift.{1} R) (Tens I J U.unop w)

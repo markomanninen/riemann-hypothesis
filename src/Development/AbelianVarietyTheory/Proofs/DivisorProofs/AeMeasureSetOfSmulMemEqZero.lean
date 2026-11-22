@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal Pointwise
 
@@ -7,16 +12,16 @@ namespace GlobalTheory.CovolIndep
 theorem isFundamentalDomain_of_ae_eq {Γ X : Type} [Group Γ] [Countable Γ] [MeasurableSpace X]
     [MulAction Γ X] [MeasurableConstSMul Γ X] {μ : Measure X} [SMulInvariantMeasure Γ X μ]
     {s t : Set X} (h : IsFundamentalDomain Γ s μ) (hst : t =ᵐ[μ] s) :
-    IsFundamentalDomain Γ t μ where
-  nullMeasurableSet := h.nullMeasurableSet.congr hst.symm
-  ae_covers := by
+    IsFundamentalDomain Γ t μ := by
+  refine ⟨h.nullMeasurableSet.congr hst.symm, ?_, ?_⟩
+  ·
     have hall : ∀ᵐ x ∂μ, ∀ g : Γ, (g • x ∈ t) = (g • x ∈ s) := by
       rw [ae_all_iff]
       intro g
-      exact (measurePreserving_smul g μ).quasiMeasurePreserving.ae_eq hst
+      exact ((measurePreserving_smul g μ).quasiMeasurePreserving.ae hst).mono fun _ hx => propext hx
     filter_upwards [h.ae_covers, hall] with x ⟨g, hg⟩ hx
     exact ⟨g, by rw [hx g]; exact hg⟩
-  aedisjoint a b hab := by
+  · intro a b hab
     have key : ∀ c : Γ, (c • t : Set X) =ᵐ[μ] (c • s : Set X) := fun c => by
       rw [← Set.preimage_smul_inv, ← Set.preimage_smul_inv]
       exact (measurePreserving_smul c⁻¹ μ).quasiMeasurePreserving.preimage_ae_eq hst

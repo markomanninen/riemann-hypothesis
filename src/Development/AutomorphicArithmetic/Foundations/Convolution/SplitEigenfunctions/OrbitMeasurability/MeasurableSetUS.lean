@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.OrbitMeasurability.PerCont
-import Development.AutomorphicArithmetic.WhittakerHecke.IsCompactIntegralIdeleUnitsAndAbsEqOne
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.OrbitMeasurability.PerCont
+public import Development.AutomorphicArithmetic.WhittakerHecke.IsCompactIntegralIdeleUnitsAndAbsEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,9 +33,9 @@ def US : Subgroup (A ℚ)ˣ where
         rw [← map_mul, ← map_mul, Units.inv_mul, map_one, map_one]
       rwa [ha' v, mul_one] at h
 
-abbrev GG : Type := ↥(GroundTheory.Automorphic.Reduction.normOneGL ℚ 2)
+abbrev GG : Type := ↥(GroundTheory.Automorphic.Reduction.normOneGL (K := ℚ) (n := 2))
 
-abbrev Ga : Subgroup GG := GroundTheory.Automorphic.Reduction.rationalGLOne ℚ 2
+abbrev Ga : Subgroup GG := GroundTheory.Automorphic.Reduction.rationalGLOne (K := ℚ) (n := 2)
 
 theorem det_el (g : G1 ℚ) (t : (A ℚ)ˣ) : GroundTheory.Automorphic.AdelicGLn.det ℚ 2 (gl g * dM t) = t := by
   refine Units.ext ?_
@@ -41,7 +45,7 @@ theorem det_el (g : G1 ℚ) (t : (A ℚ)ˣ) : GroundTheory.Automorphic.AdelicGLn
   rw [h, Matrix.det_mul, g.det_coe, one_mul, Matrix.det_fin_two_of]
   simp
 
-theorem mem_norm (g : G1 ℚ) (t : US) : gl g * dM (t : (A ℚ)ˣ) ∈ GroundTheory.Automorphic.Reduction.normOneGL ℚ 2 := by
+theorem mem_norm (g : G1 ℚ) (t : US) : gl g * dM (t : (A ℚ)ˣ) ∈ GroundTheory.Automorphic.Reduction.normOneGL (K := ℚ) (n := 2) := by
   rw [GroundTheory.Automorphic.Reduction.mem_normOneGL, det_el]
   exact UpperTheory.isCompact_integralIdeleUnits_and_abs_eq_one.2 _ t.2
 

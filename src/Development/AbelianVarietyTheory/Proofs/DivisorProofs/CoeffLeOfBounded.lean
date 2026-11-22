@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogGaussAbsSupportFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogGaussAbsSupportFinite
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,7 +19,7 @@ namespace GlobalTheory.HSFloor
 
 theorem coeff_le_of_bounded {E : Type} [Field E] {σ : Type} [Fintype σ] (k : MvPolynomial σ E)
     (s : E →+* ℂ) (B : ℝ) (hB : ∀ z : σ → ℂ, (∀ i, ‖z i‖ ≤ 1) → ‖eval₂ s z k‖ ≤ B) (m : σ →₀ ℕ) :
-    ‖s (coeff m k)‖ ≤ B := by
+    ‖s (k.coeff m)‖ ≤ B := by
 
   obtain ⟨θ, hθ⟩ := (ReciprocityTheory.MultiplicativeHeights.Closed.torus_l2_cauchy_inequality σ (MvPolynomial.map s k)).2 m
   have hz : ∀ i, ‖ReciprocityTheory.MultiplicativeHeights.torusPoint θ i‖ ≤ 1 := by
@@ -30,12 +34,13 @@ theorem floor : ∀ (E : Type) [Field E] [NumberField E] (σ : Type) [Fintype σ
     -mean E (fun s => Real.log (B s)) ≤ finPart k := by
   intro E _ _ σ _ k B hk hB
   obtain ⟨m, hm⟩ := MvPolynomial.ne_zero_iff.mp hk
-  refine le_trans ?_ ((GlobalTheory.HSFinPart.finPart_props E σ σ).2.2 k m hm)
+  refine le_trans (b := -mean E (fun s => Real.log ‖s (k.coeff m)‖)) ?_
+    ((GlobalTheory.HSFinPart.finPart_props E σ σ).2.2 k m hm)
   rw [neg_le_neg_iff]
   unfold mean
   gcongr with τ _
 
-  have hpos : 0 < ‖τ (coeff m k)‖ := norm_pos_iff.mpr ((map_ne_zero τ).mpr hm)
+  have hpos : 0 < ‖τ (k.coeff m)‖ := norm_pos_iff.mpr ((map_ne_zero τ).mpr hm)
   exact Real.log_le_log hpos (coeff_le_of_bounded k τ (B τ) (hB τ) m)
 
 end GlobalTheory.HSFloor

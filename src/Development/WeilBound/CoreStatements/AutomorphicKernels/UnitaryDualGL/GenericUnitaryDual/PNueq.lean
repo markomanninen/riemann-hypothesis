@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitaryDualGL.TemperedEigenvalueNorms.AddOneLeOfPrecedes
-import Development.WeilBound.CoreStatements.PublishedTheorems.LanglandsClassification.Bridge
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitaryDualGL.TemperedEigenvalueNorms.AddOneLeOfPrecedes
+public import Development.WeilBound.CoreStatements.PublishedTheorems.LanglandsClassification.Bridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem eq_of_nu_eq {Δ Δ' : Segment k} (hΔ : PositivityTheory.UdReth2.IsCentr
   simp only [nn, add_neg_cancel, n0] at this
   exact this
 
-theorem eq_of_isLSeg' {Δ : Segment k} {δ δ' : IrrGL k} (h : IsLSeg Δ δ.rep) (h' : IsLSeg Δ δ'.rep) : δ = δ' :=
+theorem eq_of_isLSeg' {Δ : Segment k} {δ δ' : IrrGL (k := k)} (h : IsLSeg Δ δ.rep) (h' : IsLSeg Δ δ'.rep) : δ = δ' :=
   PositivityTheory.Lit1.eq_of_isLSeg h h'
 
 end Local

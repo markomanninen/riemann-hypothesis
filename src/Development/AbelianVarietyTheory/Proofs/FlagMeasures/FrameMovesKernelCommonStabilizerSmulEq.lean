@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NoLeak
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IndexMeasureIntegralTransportAndChangeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFramesStabilizerActsOnTermsStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NoLeak
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IndexMeasureIntegralTransportAndChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFramesStabilizerActsOnTermsStatement
+
+@[expose] public section
 
 noncomputable section
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL GlobalTheory.IdxInt MeasureTheory
@@ -79,7 +83,7 @@ private lemma apply_mem_sup_iff_of_apply_mem_iff (h : S.GLV) (A B : Submodule E 
   constructor
   · rintro ⟨y, hy, z, hz, hyz⟩
     refine ⟨h.symm y, (hA _).mp (by simpa using hy), h.symm z, (hB _).mp (by simpa using hz), ?_⟩
-    rw [← map_add, hyz, LinearEquiv.symm_apply_apply]
+    rw [← map_add (f := _), hyz, LinearEquiv.symm_apply_apply]
   · rintro ⟨y, hy, z, hz, rfl⟩
     exact ⟨h y, (hA y).mpr hy, h z, (hB z).mpr hz, (map_add h y z).symm⟩
 
@@ -134,7 +138,7 @@ private lemma eich_apply_apply_of_mem_St {h : S.GLV}
       _root_.GlobalTheory.HL.hf L S.Hm x y := form_apply_apply_of_mem_St S hh
   unfold _root_.GlobalTheory.HL.eich
   rw [hform, hform]
-  simp only [map_add, map_sub, map_smul]
+  simp only [map_add (f := _), map_sub, map_smul]
 
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
@@ -149,12 +153,12 @@ private lemma apply_mem_moved_smul_iff_of_mem_St {h : S.GLV}
     _root_.GlobalTheory.HL.eich L S.Hm a b c v ∈ Λ
   rw [eich_apply_apply_of_mem_St S hh, _root_.GlobalTheory.FrameAct.mem_smul_iff]
 
+
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] in
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] in
 variable {L : _root_.Formalism.MainNotions.S.Loc.LocE F E} {r k : ℕ} (S : _root_.GlobalTheory.HL.Frames L r k) in
-
 theorem _root_.GlobalTheory.HL.kern_smul_eq : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] (L : _root_.Formalism.MainNotions.S.Loc.LocE F E), ∀ (r k : ℕ) (S : _root_.GlobalTheory.HL.Frames L r k), ∀ (d : S.Datum) (Λ : Submodule L.O S.V), S.IsTerm d Λ → ∀ (β J βJ : ℕ) (Λ₁ : Submodule L.O S.V), ∀ h ∈ S.St, S.kern β J βJ d (h • Λ) (h • Λ₁) = S.kern β J βJ d Λ Λ₁ := by
   intro F _ _ _ _ _ E _ _ _ L r k S d Λ hT β J βJ Λ₁ h hh
   have hform := form_apply_apply_of_mem_St S hh
@@ -167,7 +171,7 @@ theorem _root_.GlobalTheory.HL.kern_smul_eq : ∀ {F : Type} [Field F] [Valuativ
     simp only [AddSubgroup.mem_prod]
     change (h a, h b) ∈ S.refB J (h • Λ) ∧ h u ∈ S.refU J (h • Λ) ∧ t ∈ S.refT ↔
       (a, b) ∈ S.refB J Λ ∧ u ∈ S.refU J Λ ∧ t ∈ S.refT
-    rw [mem_refB_iff, mem_refB_iff, ← map_add,
+    rw [mem_refB_iff, mem_refB_iff, ← map_add (f := _),
       _root_.GlobalTheory.FrameAct.spanTo_iff S h hh,
       _root_.GlobalTheory.FrameAct.spanTo_iff' S h hh]
     have hth := _root_.GlobalTheory.FrameAct.inTh_iff S h Λ (a + b)

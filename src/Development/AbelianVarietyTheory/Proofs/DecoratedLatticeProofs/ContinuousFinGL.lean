@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryClassRepresentativesBijective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FiniteAdeleIdempotentOfFMulSelf
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryClassRepresentativesBijective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FiniteAdeleIdempotentOfFMulSelf
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousPf
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
 open scoped TensorProduct Classical
@@ -180,11 +185,15 @@ theorem law_cont (θ : InfFam D) (hθ : IsInfFam θ) (V : HSp D) (T f : ℕ) (ba
       (1 : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ) τ * (infM θ V rfl g τ * y.1 τ) := fun τ =>
     continuous_const.matrix_mul ((continuous_infM θ hθ V τ).matrix_mul continuous_const)
   have hFc : Continuous F := by
-    refine Continuous.mul (continuous_finset_prod _ fun τ _ => ((hM τ).matrix_det).zpow₀ _ fun g => Or.inl ?_) ?_
-    · obtain ⟨-, hu, -⟩ := key y g
+    have hdet : ∀ τ g, ((1 : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ) τ *
+        (infM θ V rfl g τ * y.1 τ)).det ≠ 0 := by
+      intro τ g
+      obtain ⟨-, hu, -⟩ := key y g
       rw [Pi.one_apply, one_mul, det_mul]
       exact ((hu τ).mul (y.2 τ)).ne_zero
-    · exact (MvPolynomial.continuous_eval P).comp (continuous_pi fun q => (hM q.1).matrix_elem q.2.1 q.2.2)
+    exact Continuous.mul
+      (continuous_finsetProd _ fun τ _ => ((hM τ).matrix_det).zpow₀ _ fun g => Or.inl (hdet τ g))
+      ((MvPolynomial.continuous_eval P).comp (continuous_pi fun q => (hM q.1).matrix_elem q.2.1 q.2.2))
   refine hFc.continuousAt.congr ?_
   have hN : IsOpen {g : GA D V | ((fin2 (g0⁻¹ * g) : GL (Fin V.rank) (EAf D)) ∈ S.U) ∧ pf V (g0⁻¹ * g) ∈ W} :=
     (hO.preimage (hc2.comp (continuous_const.mul continuous_id))).inter

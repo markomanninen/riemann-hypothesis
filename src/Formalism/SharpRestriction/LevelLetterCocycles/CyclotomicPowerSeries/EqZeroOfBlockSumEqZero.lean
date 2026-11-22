@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ def powerSeriesBlockSplit (m : ℕ) (g : ℕ → O) : Fin m → PowerSeries O :=
 
 theorem blockSum_add (ι : PowerSeries O →ₐ[O] PowerSeries O) (m : ℕ) (b b' : Fin m → PowerSeries O) :
     powerSeriesBlockSum ι m (b + b') = powerSeriesBlockSum ι m b + powerSeriesBlockSum ι m b' := by
-  simp only [powerSeriesBlockSum, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [powerSeriesBlockSum, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem blockSum_sub (ι : PowerSeries O →ₐ[O] PowerSeries O) (m : ℕ) (b b' : Fin m → PowerSeries O) :
     powerSeriesBlockSum ι m (b - b') = powerSeriesBlockSum ι m b - powerSeriesBlockSum ι m b' := by
@@ -51,7 +55,8 @@ theorem coeff_blockSum_eq_zero {ι : PowerSeries O →ₐ[O] PowerSeries O} {m :
     (hX : ι X = w * X ^ m) (hm : 0 < m) (h : ℕ → O) (n : ℕ) (hh : ∀ n' ≤ n, h n' = 0) :
     coeff n (powerSeriesBlockSum ι m (powerSeriesBlockSplit m h)) = 0 := by
   unfold powerSeriesBlockSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [coeff_X_pow_mul']
   split_ifs with hi
@@ -135,7 +140,7 @@ theorem coeff_blockSum_triangular {ι : PowerSeries O →ₐ[O] PowerSeries O} {
     · simp
     · rw [if_neg (not_lt.mpr h.le), if_neg h.ne', if_pos h, zero_add, zero_add]
   conv_lhs => rw [hsplit]
-  rw [blockSplit_add, blockSplit_add, blockSum_add, blockSum_add, map_add, map_add,
+  rw [blockSplit_add, blockSplit_add, blockSum_add, blockSum_add, map_add (f := _), map_add (f := _),
     coeff_blockSum_single hX hm n (g n),
     coeff_blockSum_eq_zero hX hm (fun n' => if n < n' then g n' else 0) n
       (fun n' hn' => if_neg (not_lt.mpr hn')), add_zero]

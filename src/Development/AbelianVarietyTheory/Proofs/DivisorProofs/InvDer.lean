@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,6 +19,6 @@ def atZero (H : MvPowerSeries (Fin d ⊕ Fin d) R) : MvPowerSeries (Fin d) R :=
 
 def invDer (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R) (u : Fin d → R)
     (F : MvPowerSeries (Fin d) R) : MvPowerSeries (Fin d) R :=
-  ∑ i, u i • atZero (pderiv R (Sum.inr i) (subst μ F))
+  ∑ i, u i • atZero (pderiv (R := R) (Sum.inr i) (subst μ F))
 
 end GlobalTheory.LawDer

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Formalism.LocalRingCardinality.DataForms
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Formalism.LocalRingCardinality.DataForms
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 open NumberField
 
@@ -69,7 +73,7 @@ theorem integers_mem_inverse_half_different {R : Ranks} (H : Host R) (a : 𝓞 H
     FractionalIdeal.coeIdeal_ne_zero.mpr hb
 
   have h1 : (1 : FractionalIdeal (nonZeroDivisors (𝓞 H.E)) H.E) ≤ H.AA0 := by
-    have := FractionalIdeal.inv_anti_mono hne one_ne_zero hle
+    have := FractionalIdeal.inv_anti_mono hne hle
     simpa [Host.AA0] using this
   exact h1 ((FractionalIdeal.mem_one_iff _).mpr ⟨a, rfl⟩)
 
@@ -105,7 +109,7 @@ theorem ellT_ne_bot {D : D7} {M : IntermediateField ℚ ℂ} [NumberField M]
     refine Submodule.subset_span ⟨(a : D.host.E), integers_mem_inverse_half_different D.host a, ?_⟩
     funext j
     unfold Formalism.MainNotions.TaylorLogMetric.liftM
-    rw [dif_pos (hM j _)]
+    rw [dite_eq_left (hM j _)]
     rfl
   intro h
   have hs' : s ∈ ellT D M τ := by

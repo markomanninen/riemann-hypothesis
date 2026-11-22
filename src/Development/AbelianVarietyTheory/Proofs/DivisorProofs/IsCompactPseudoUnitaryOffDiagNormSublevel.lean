@@ -1,5 +1,10 @@
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
+module
+
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
+
+@[expose] public section
+
 open MeasureTheory Matrix
 open Formalism.REAL (UJ KG toM toMK muK expG inG Jm Kset)
 
@@ -103,7 +108,7 @@ theorem isCompact_offDiag_sublevel : ∀ (n : ℕ) (ε : Fin n → Bool) (C : �
   set F : Matrix (Fin n) (Fin n) ℂ → ℝ := fun M =>
     ∑ z : {z : Fin n × Fin n // ε z.1 = true ∧ ε z.2 = false}, ‖M z.1.1 z.1.2‖ ^ 2 with hF
   have hFc : Continuous F :=
-    continuous_finset_sum _ fun z _ => (continuous_norm.comp (continuous_id.matrix_elem z.1.1 z.1.2)).pow 2
+    continuous_finsetSum _ fun z _ => (continuous_norm.comp (continuous_id.matrix_elem z.1.1 z.1.2)).pow 2
   have hK : IsCompact {M : Matrix (Fin n) (Fin n) ℂ | inUJ ε M ∧ F M ≤ C} := by
     refine IsCompact.of_isClosed_subset ((hermitian_small_ball n ε).1 (n + 4 * C)) ?_ ?_
     · exact (indefinite_unitary_closed n ε).inter (isClosed_le hFc continuous_const)

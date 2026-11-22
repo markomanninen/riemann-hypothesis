@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MvPolynomial

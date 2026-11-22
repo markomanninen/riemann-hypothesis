@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MulqLawsStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationDataTorsionStructureAlgClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MulqLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationDataTorsionStructureAlgClosed
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Ex
 open scoped BigOperators
 
@@ -163,7 +168,7 @@ theorem exists_partner {e : N.X ≃+ N'.X} (hB : μ.B e) (j k : ℕ) (hk : k = n
   subst hk
   obtain ⟨p', h⟩ := μ.tot j p
   obtain ⟨z, hz⟩ := hB j p p' h
-  refine ⟨p' * N'.qTriv _ (-z), (μ.eqv _ p p p' _ h ((N.qEq_equivalence _).refl p)).2
+  refine ⟨p' * N'.qTriv _ (-z), (μ.eqv _ p p p' _ h (show N.QEq p p from ⟨0, by simp, by simp⟩)).2
     ((N'.qEq_iff _ _).2 ⟨-z, rfl⟩), ?_⟩
   change p'.1.1.toAdd + n ^ j • (-z) = _
   rw [hz, smul_neg, add_neg_cancel_right]

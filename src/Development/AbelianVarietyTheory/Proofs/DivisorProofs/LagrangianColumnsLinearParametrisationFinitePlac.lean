@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagWZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergInvariantFormVanishesLagrangianTest
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagWZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergInvariantFormVanishesLagrangianTest
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels MeasureTheory GlobalTheory.LatVac GlobalTheory.InertVacLag GlobalTheory.InertLagChar
 open scoped TensorProduct Matrix GlobalTheory.VacAny
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -14,31 +19,31 @@ open GlobalTheory.LatVac GlobalTheory.InertVacLag GlobalTheory.InertLagUniq
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-abbrev lift (v : Pl F) : Fv F v ⊗[F] E →ₗ[F] AE F E := (liftV v).rTensor E
+abbrev lift (v : Pl (F := F)) : Fv F v ⊗[F] E →ₗ[F] AE F E := (liftV v).rTensor E
 
-theorem compFin_lift (v : Pl F) (t : Fv F v ⊗[F] E) : compFin F E v (lift v t) = t := by
+theorem compFin_lift (v : Pl (F := F)) (t : Fv F v ⊗[F] E) : compFin F E v (lift v t) = t := by
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul x e => simp [compFin, evFin_liftV]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
-theorem liftV_one_smul_eq (v : Pl F) (a : AE F E) : liftV v (1 : Fv F v) • a = lift v (compFin F E v a) := by
+theorem liftV_one_smul_eq (v : Pl (F := F)) (a : AE F E) : liftV v (1 : Fv F v) • a = lift v (compFin F E v a) := by
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul x e =>
     rw [TensorProduct.smul_tmul', smul_eq_mul, liftV_one_mul]
     simp [compFin]
-  | add x y hx hy => rw [smul_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [smul_add, hx, hy, map_add (f := _), map_add (f := _)]
 
-theorem compFin_smul (v : Pl F) (r : AF F) (a : AE F E) : compFin F E v (r • a) = evFin F v r • compFin F E v a := by
+theorem compFin_smul (v : Pl (F := F)) (r : AF F) (a : AE F E) : compFin F E v (r • a) = evFin F v r • compFin F E v a := by
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul x e =>
     rw [TensorProduct.smul_tmul', smul_eq_mul]
     simp [compFin, TensorProduct.smul_tmul']
-  | add x y hx hy => rw [smul_add, map_add, hx, hy, map_add, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
 
-theorem at_map_lift {α β : Type} (v : Pl F) (A : Matrix α β (Fv F v ⊗[F] E)) : At (evFin F v) (A.map (lift v)) := by
+theorem at_map_lift {α β : Type} (v : Pl (F := F)) (A : Matrix α β (Fv F v ⊗[F] E)) : At (evFin F v) (A.map (lift v)) := by
   intro u hu
   ext i k
   simp only [Matrix.smul_apply, Matrix.map_apply, Matrix.zero_apply]
@@ -47,15 +52,15 @@ theorem at_map_lift {α β : Type} (v : Pl F) (A : Matrix α β (Fv F v ⊗[F] E
   | tmul x e =>
     simp only [LinearMap.rTensor_tmul, TensorProduct.smul_tmul', smul_eq_mul]
     rw [← smul_eq_mul, at_liftV v x u hu, TensorProduct.zero_tmul]
-  | add x y hx hy => rw [map_add, smul_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), smul_add, hx, hy, add_zero]
 
-theorem eq_map_lift {α β : Type} (v : Pl F) (z : Matrix α β (AE F E)) (hz : At (evFin F v) z) :
+theorem eq_map_lift {α β : Type} (v : Pl (F := F)) (z : Matrix α β (AE F E)) (hz : At (evFin F v) z) :
     z = (z.map (compFin F E v)).map (lift v) := by
   conv_lhs => rw [← liftV_one_smul v z hz]
   ext i k
   simp only [Matrix.smul_apply, Matrix.map_apply, liftV_one_smul_eq]
 
-theorem map_lift_compFin {α β : Type} (v : Pl F) (A : Matrix α β (Fv F v ⊗[F] E)) :
+theorem map_lift_compFin {α β : Type} (v : Pl (F := F)) (A : Matrix α β (Fv F v ⊗[F] E)) :
     (A.map (lift v)).map (compFin F E v) = A := by
   ext i k; simp [compFin_lift]
 
@@ -76,7 +81,7 @@ theorem card_eq_of_inv {R : Type} [CommRing R] [Nontrivial R] {α β : Type} [Fi
   exact this.symm
 
 theorem eq_zero_of_locCo {W : Type} [AddCommGroup W] [Module (AF F) W] {B : W → W → AF F} {κ : Type} [Fintype κ]
-    (co : Darboux B κ) (v : Pl F) (u : W) (hu : At (evFin F v) u) (h0 : locCo co v u = 0) : u = 0 := by
+    (co : Darboux B κ) (v : Pl (F := F)) (u : W) (hu : At (evFin F v) u) (h0 : locCo co v u = 0) : u = 0 := by
   have h1 : co.e u = liftV v (1 : Fv F v) • co.e u := by rw [← LinearEquiv.map_smul, liftV_one_smul v u hu]
   have h2 : co.e u = 0 := by
     rw [h1]
@@ -121,7 +126,7 @@ end GlobalTheory.InertLagParam
 namespace GlobalTheory.InertLagParam
 open GlobalTheory.LatVac GlobalTheory.InertVacLag GlobalTheory.InertLagUniq
 
-theorem param : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) (v : Pl F)
+theorem param : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) (v : Pl (F := F))
     (m : ℕ) (C : Matrix (Fin d) (Fin m) (AE F E)), IsLagrAt σ W v C →
     d = 2 * m ∧ ∃ (N : ℕ) (j : (Fin N → Fv F v) →ₗ[Fv F v] (Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v))
       (ζ : (Fin N → Fv F v) → Matrix (Fin n) (Fin m) (AE F E)), Function.Injective j ∧
@@ -147,7 +152,7 @@ theorem param : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFiel
   have hζat : ∀ y, At (evFin F v) (ζ y) := fun y => at_map_lift v _
   have hζc : ∀ y, (ζ y).map (compFin F E v) = e y := fun y => map_lift_compFin v _
   have hζadd : ∀ y y', ζ (y + y') = ζ y + ζ y' := fun y y' => by
-    simp only [ζ, map_add]
+    simp only [ζ, map_add (f := _)]
     exact Matrix.map_add _ (map_add _) _ _
   have hζsmul : ∀ (a : Fv F v) y, ζ (a • y) = liftV v a • ζ y := fun a y => by
     have hat : At (evFin F v) (liftV v a • ζ y) := fun u hu => by rw [smul_comm, hζat y u hu, smul_zero]
@@ -157,7 +162,7 @@ theorem param : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFiel
     simp [ζ, compFin_smul, evFin_liftV, compFin_lift] <;> rfl
   let j : (Fin N → Fv F v) →ₗ[Fv F v] (Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v) :=
     { toFun := fun y => locCo M.co v (ζ y * Cᵀ)
-      map_add' := fun y y' => by rw [hζadd, Matrix.add_mul, map_add]
+      map_add' := fun y y' => by rw [hζadd, Matrix.add_mul, map_add (f := _)]
       map_smul' := fun a y => by
         rw [hζsmul, Matrix.smul_mul]
         ext k <;> simp [locCo, evFin_liftV, -Matrix.smul_mul] }

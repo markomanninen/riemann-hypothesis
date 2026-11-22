@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -109,12 +113,10 @@ theorem e_smul (d : Darboux B κ) (r : AF F) (u : W) : d.e (r • u) = (r • (d
   rfl
 
 theorem realAd_add (s h : ℝ) : realAd F (s + h) = realAd F s + realAd F h := by
-  simp only [realAd, map_add]
-  rfl
+  simp only [realAd, map_add (f := _)]
 
 theorem realAd_zero : realAd F 0 = 0 := by
   simp only [realAd, map_zero]
-  rfl
 
 theorem rho_line_add (d : Darboux B κ) (ψ : AddChar (AF F) ℂ) (u : W) (s h : ℝ) (Ψ : (κ → AF F) → ℂ)
     (z : κ → AF F) :
@@ -181,8 +183,9 @@ theorem pureA_add (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (g : (κ �
   unfold pureA
   congr 2
   funext i
-  simp only [Pi.add_apply]
-  rw [show ((algebraMap F (AF F) (ξ i) + y i) : AF F).1 = (algebraMap F (AF F) (ξ i)).1 + (y i).1 from rfl, map_add,
+  change InfiniteAdeleRing.ringEquiv_mixedSpace F ((algebraMap F (AF F) (ξ i) + y i).1) =
+    mixedEmbedding F (ξ i) + evI F (y i)
+  rw [show ((algebraMap F (AF F) (ξ i) + y i) : AF F).1 = (algebraMap F (AF F) (ξ i)).1 + (y i).1 from rfl, map_add (f := _),
     InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp]
   rfl
 
@@ -285,7 +288,7 @@ variable {F : Type} [Field F] [NumberField F]
 
 theorem evI_add_realAd_mul (t : ℝ) (x z : AF F) : evI F (x + realAd F t * z) = evI F x + t • evI F z := by
   unfold evI
-  rw [show Prod.fst (x + realAd F t * z) = Prod.fst x + Prod.fst (realAd F t) * Prod.fst z from rfl, map_add, map_mul,
+  rw [show Prod.fst (x + realAd F t * z) = Prod.fst x + Prod.fst (realAd F t) * Prod.fst z from rfl, map_add (f := _), map_mul,
     show Prod.fst (realAd F t) = (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (algebraMap ℝ _ t) from rfl,
     RingEquiv.apply_symm_apply, Algebra.smul_def]
 
@@ -295,8 +298,8 @@ theorem snd_add_realAd_mul (t : ℝ) (x z : AF F) : Prod.snd (x + realAd F t * z
 
 end GlobalTheory.HeisLineTheta
 
-open GlobalTheory.HeisLineTheta in
 
+open GlobalTheory.HeisLineTheta in
 theorem GlobalTheory.HeisLineTheta.hasDerivAt_thetaSum_line : ∀ {F : Type} [Field F] [NumberField F] {W : Type} [AddCommGroup W] [Module (AF F) W] {B : W → W → AF F}
     {κ : Type} [Fintype κ] (d : GlobalTheory.WeilM.Darboux B κ) (ψ : AddChar (AF F) ℂ), GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsStd ψ →
     ∀ u : W, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F) u →
@@ -328,8 +331,7 @@ theorem GlobalTheory.HeisLineTheta.hasDerivAt_thetaSum_line : ∀ {F : Type} [Fi
     rw [norm_rho hψ, norm_rho hψ, e_smul]
     congr 2
     funext i
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, hy, add_assoc]
-    rfl
+    simp [hy, ha, ha', Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_assoc]
   obtain ⟨c, hc, hcb⟩ := majorant hΦ' (fun i => Prod.snd (a' i)) R
   obtain ⟨c0, hc0, hcb0⟩ := majorant hΦ (fun i => Prod.snd (a' i)) R
   have hmem : (0 : ℝ) ∈ Set.Ioo (-1 : ℝ) 1 := ⟨by norm_num, by norm_num⟩

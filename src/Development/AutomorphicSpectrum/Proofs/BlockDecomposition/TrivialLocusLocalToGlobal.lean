@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.LeftZeroDuality.H1StructureDimLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPowMulOfAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsIsoAppOfIsAbelianScheme
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.LeftZeroDuality.H1StructureDimLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPowMulOfAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsIsoAppOfIsAbelianScheme
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryWindowLevelDimOnAdmissible
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LvlDimCondition
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryWindowLevelDimOnAdmissible
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LvlDimCondition
+
+@[expose] public section
 
 noncomputable section
 

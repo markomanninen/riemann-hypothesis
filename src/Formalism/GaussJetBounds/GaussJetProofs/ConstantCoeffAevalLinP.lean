@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.StatementJ
-import Formalism.GaussJetBounds.GaussJetProofs.ThmAOp
+module
+
+public import Formalism.GaussJetBounds.StatementJ
+public import Formalism.GaussJetBounds.GaussJetProofs.ThmAOp
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -17,12 +21,12 @@ variable {K : Type u} [Field K] {ι : Type}
 lemma jetPair_eq_sum (P : MvPolynomial ι K) (F : MvPowerSeries ι K) (S : Finset (ι →₀ ℕ))
     (hS : P.support ⊆ S) :
     jetPair P F =
-      ∑ κ ∈ S, MvPolynomial.coeff κ P * ((mfact κ : ℕ) : K) * MvPowerSeries.coeff κ F := by
+      ∑ κ ∈ S, AddMonoidAlgebra.coeff P κ * ((mfact κ : ℕ) : K) * MvPowerSeries.coeff κ F := by
   classical
   unfold jetPair
   refine Finset.sum_subset hS ?_
   intro κ _ hκ
-  have h0 : MvPolynomial.coeff κ P = 0 := by simpa [MvPolynomial.mem_support_iff] using hκ
+  have h0 : AddMonoidAlgebra.coeff P κ = 0 := by simpa [MvPolynomial.mem_support_iff] using hκ
   simp [h0]
 
 lemma jetPair_add_left (P Q : MvPolynomial ι K) (F : MvPowerSeries ι K) :
@@ -57,10 +61,6 @@ lemma jetPair_sum_left {α : Type*} (s : Finset α) (P : α → MvPolynomial ι 
   intro a s ha ih
   rw [Finset.sum_insert ha, Finset.sum_insert ha, jetPair_add_left, ih]
 
-lemma jetPair_add_right (P : MvPolynomial ι K) (F G : MvPowerSeries ι K) :
-    jetPair P (F + G) = jetPair P F + jetPair P G := by
-  simp only [jetPair, map_add, mul_add, Finset.sum_add_distrib]
-
 lemma jetPair_C_mul_right (c : K) (P : MvPolynomial ι K) (F : MvPowerSeries ι K) :
     jetPair P (MvPowerSeries.C c * F) = c * jetPair P F := by
   simp only [jetPair, MvPowerSeries.coeff_C_mul, Finset.mul_sum]
@@ -69,7 +69,8 @@ lemma jetPair_C_mul_right (c : K) (P : MvPolynomial ι K) (F : MvPowerSeries ι 
 
 lemma jetPair_sum_right {α : Type*} (s : Finset α) (P : MvPolynomial ι K)
     (F : α → MvPowerSeries ι K) : jetPair P (∑ a ∈ s, F a) = ∑ a ∈ s, jetPair P (F a) := by
-  simp only [jetPair, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [jetPair, map_sum, Finset.mul_sum]
   exact Finset.sum_comm
 
 lemma jetPair_C_left (c : K) (F : MvPowerSeries ι K) :
@@ -112,7 +113,7 @@ lemma mfact_add_single (κ : ι →₀ ℕ) (i : ι) :
   ring
 
 lemma jetPair_mul_X (P : MvPolynomial ι K) (i : ι) (F : MvPowerSeries ι K) :
-    jetPair (P * MvPolynomial.X i) F = jetPair P (MvPowerSeries.pderiv K i F) := by
+    jetPair (P * MvPolynomial.X i) F = jetPair P (MvPowerSeries.pderiv (R := K) i F) := by
   classical
   rw [jetPair, MvPolynomial.support_mul_X, Finset.sum_map, jetPair]
   refine Finset.sum_congr rfl (fun κ _ => ?_)
@@ -142,13 +143,13 @@ lemma pderiv_aeval_linP (A : ι → ι' → K) (i : ι) (G : MvPolynomial ι' K)
   induction G using MvPolynomial.induction_on
   · simp
   · rename_i p q hp hq
-    simp only [map_add, hp, hq, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hp, hq, mul_add, Finset.sum_add_distrib]
   · rename_i p j hp
     have hk : ∀ k : ι', MvPolynomial.aeval (linP A) (MvPolynomial.pderiv k (p * MvPolynomial.X j)) =
         MvPolynomial.aeval (linP A) p * (if j = k then 1 else 0) +
           linP A j * MvPolynomial.aeval (linP A) (MvPolynomial.pderiv k p) := by
       intro k
-      rw [Derivation.leibniz, MvPolynomial.pderiv_X, smul_eq_mul, smul_eq_mul, map_add, map_mul,
+      rw [Derivation.leibniz, MvPolynomial.pderiv_X, smul_eq_mul, smul_eq_mul, map_add (f := _), map_mul,
         map_mul, MvPolynomial.aeval_X, Pi.single_apply]
       split_ifs <;> simp
     simp only [hk, mul_add, Finset.sum_add_distrib]
@@ -172,14 +173,14 @@ lemma constantCoeff_aeval_linP (A : ι → ι' → K) (G : MvPolynomial ι' K) :
   induction G using MvPolynomial.induction_on
   · simp
   · rename_i p q hp hq
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   · rename_i p j hp
     simp only [map_mul, MvPolynomial.aeval_X, hp, MvPolynomial.constantCoeff_X, mul_zero]
     simp [linP]
 
 private theorem mvPowerSeries_pderiv_coe_eq_coe_pderiv {L : Type u} [Field L] {σ : Type} (i : σ)
     (G : MvPolynomial σ L) :
-    MvPowerSeries.pderiv L i (G : MvPowerSeries σ L) =
+    MvPowerSeries.pderiv (R := L) i (G : MvPowerSeries σ L) =
       ((MvPolynomial.pderiv i G : MvPolynomial σ L) : MvPowerSeries σ L) := by
   ext n
   rw [MvPowerSeries.coeff_pderiv, MvPolynomial.coeff_coe, MvPolynomial.coeff_coe,
@@ -204,13 +205,14 @@ lemma jetPair_poly (A : ι → ι' → K) (P : MvPolynomial ι K) :
     | simpa [MvPolynomial.constantCoeff_eq] using h
   · rename_i P Q hP hQ
     intro G
-    rw [jetPair_add_left, hP, hQ, map_add, jetPair_add_left]
+    rw [jetPair_add_left, hP, hQ, map_add (f := _), jetPair_add_left]
   · rename_i P i hP
     intro G
     have hsum : ∀ (f : ι' → MvPolynomial ι K),
         ((∑ j, f j : MvPolynomial ι K) : MvPowerSeries ι K) = ∑ j, (f j : MvPowerSeries ι K) := by
       intro f
-      rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
       simp only [MvPolynomial.coeToMvPowerSeries.ringHom_apply]
     rw [jetPair_mul_X, mvPowerSeries_pderiv_coe_eq_coe_pderiv, pderiv_aeval_linP, hsum, jetPair_sum_right]
     rw [map_mul, MvPolynomial.aeval_X]
@@ -224,7 +226,7 @@ lemma jetPair_poly (A : ι → ι' → K) (P : MvPolynomial ι K) :
 
 lemma jetPair_monomial_right (P : MvPolynomial ι' K) (μ : ι' →₀ ℕ) :
     jetPair P ((MvPolynomial.monomial μ (1 : K) : MvPolynomial ι' K) : MvPowerSeries ι' K) =
-      MvPolynomial.coeff μ P * ((mfact μ : ℕ) : K) := by
+      AddMonoidAlgebra.coeff P μ * ((mfact μ : ℕ) : K) := by
   classical
   rw [jetPair_eq_sum P _ (insert μ P.support) (Finset.subset_insert _ _), Finset.sum_eq_single μ]
   · simp [MvPolynomial.coeff_coe]
@@ -241,7 +243,8 @@ theorem jet_pair_linearity : JetPairLin.{u} := by
   have ha0 : ∀ j, MvPowerSeries.constantCoeff (a j) = 0 := fun j => by simp [ha]
   have hs : MvPowerSeries.HasSubst a := MvPowerSeries.hasSubst_of_constantCoeff_zero ha0
   have hcoe : ∀ j, a j = ((linP A j : MvPolynomial ι K) : MvPowerSeries ι K) := fun j => by
-    rw [ha, linP, ← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ha, linP, ← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
     simp
   have hmon : ∀ μ : ι' →₀ ℕ, (μ.prod fun s e => a s ^ e) =
       ((MvPolynomial.aeval (linP A) (MvPolynomial.monomial μ (1 : K)) : MvPolynomial ι K) :
@@ -300,8 +303,10 @@ lemma subst_linSub {K : Type u} [Field K] {d N0 N1 : ℕ} {ι ι' : Type} [Finty
     | (rw [← MvPowerSeries.coe_substAlgHom ha]
        exact (MvPowerSeries.substAlgHom ha).commutes c)
   unfold linSub
-  rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
-  simp only [map_mul, MvPowerSeries.coe_substAlgHom, hC, MvPowerSeries.subst_X ha, h, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, MvPowerSeries.coe_substAlgHom, hC, MvPowerSeries.subst_X ha, h, map_sum,
     Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun y _ => ?_))
@@ -436,7 +441,8 @@ theorem thmAGen : ThmAGen.{u} := by
     have h1 := hbe.2.2.1 0 (by rwa [MvPowerSeries.coeff_zero_eq_constantCoeff_apply])
     simp [degE] at h1
   have hB : MvPowerSeries.constantCoeff (bSum (frameM (N1 := N1) x) be) = 0 := by
-    simp only [bSum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bSum, map_sum]
     refine Finset.sum_eq_zero (fun ab _ => ?_)
     rw [cc_subst_lemma, hbe0]
     intro s
@@ -460,7 +466,8 @@ theorem thmAGen : ThmAGen.{u} := by
       exact hlin z
     · rw [← MvPowerSeries.coe_substAlgHom hsub, map_smul]
       congr 1
-      simp only [bSum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [bSum, map_sum]
       refine Finset.sum_congr rfl (fun ab _ => ?_)
       rw [MvPowerSeries.coe_substAlgHom, MvPowerSeries.subst_comp_subst_apply (hL ab.1 ab.2) hsub]
       congr 1

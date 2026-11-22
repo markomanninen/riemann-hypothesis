@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.GenericMap.aux1 :
     ∀ {Ω : Type} [inst : Field Ω],

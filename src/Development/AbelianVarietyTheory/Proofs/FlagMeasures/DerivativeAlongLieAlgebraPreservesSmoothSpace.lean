@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfInnerSmooth
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RWordRTrAdelic
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasFDerivAtOfContinuousPartialsStatement
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ISmulOneMemUnitaryLie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfInnerSmooth
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RWordRTrAdelic
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasFDerivAtOfContinuousPartialsStatement
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ISmulOneMemUnitaryLie
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem exists_coords {n : ℕ} (S : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ))
       map_add' := fun Z Z' => by simpa using congrFun (hL 1 Z Z.2 Z' Z'.2) x
       map_smul' := fun a Z => by simpa [h0] using congrFun (hL a Z Z.2 0 S.zero_mem) x }
   have h1 : L Y x = l ⟨Y, hY⟩ := rfl
-  rw [h1, ← b.sum_repr ⟨Y, hY⟩, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, ← b.sum_repr ⟨Y, hY⟩, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   have h2 : c j Y = b.repr ⟨Y, hY⟩ j := LinearMap.congr_fun (hc j) ⟨Y, hY⟩
   rw [map_smul, LinearMap.coe_toContinuousLinearMap', h2, Complex.real_smul]
@@ -43,13 +48,13 @@ theorem exists_coords {n : ℕ} (S : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ))
 
 variable {D : D7} {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)} {V : HSp D}
 
-variable (V) in
 
+variable (V) in
 def lieSub (τ : D.what₂.Tau) : Submodule ℝ (Matrix (Fin V.rank) (Fin V.rank) ℂ) :=
   GlobalTheory.UnitaryLieAlgebra.unitaryLie (gramAt D V τ)
 
-variable (θ) in
 
+variable (θ) in
 def SmFam {k : ℕ} (B : (Fin k → ℝ) → GA D V) : Prop :=
   ∀ τ, (ContDiff ℝ ∞ fun t => infMat D.sp.cm.sig V.gram (θ τ) (B t)) ∧
     ContDiff ℝ ∞ fun t => infMat D.sp.cm.sig V.gram (θ τ) (B t)⁻¹
@@ -61,7 +66,7 @@ theorem SmFam.mul {k : ℕ} {A B : (Fin k → ℝ) → GA D V} (hA : SmFam θ A)
 
 theorem SmFam.tail {k : ℕ} {A : (Fin k → ℝ) → GA D V} (hA : SmFam θ A) :
     SmFam θ fun t : Fin (k + 1) → ℝ => A (Fin.tail t) := fun τ => by
-  have h : ContDiff ℝ ∞ fun t : Fin (k + 1) → ℝ => Fin.tail t := contDiff_pi.2 fun i => contDiff_apply ℝ ℝ i.succ
+  have h : ContDiff ℝ ∞ fun t : Fin (k + 1) → ℝ => Fin.tail t := contDiff_pi.2 fun i => contDiff_apply ℝ (fun _ => ℝ) i.succ
   exact ⟨(hA τ).1.comp h, (hA τ).2.comp h⟩
 
 theorem contDiff_oneP (hθ : IsInfFam θ) {τ : D.what₂.Tau} {X : Matrix (Fin V.rank) (Fin V.rank) ℂ}
@@ -80,11 +85,11 @@ theorem smFam_oneP (hθ : IsInfFam θ) {τ : D.what₂.Tau} {X : Matrix (Fin V.r
   have hi : ∀ t, (oneP θ V τ X t)⁻¹ = oneP θ V τ X (-t) := fun t => inv_eq_of_mul_eq_one_right (by
     rw [← oneP_add hθ hX, add_neg_cancel, oneP_zero hθ])
   simp only [hi]
-  exact ⟨(contDiff_oneP hθ hX τ').comp (contDiff_apply ℝ ℝ i),
-    (contDiff_oneP hθ hX τ').comp (contDiff_apply ℝ ℝ i).neg⟩
+  exact ⟨(contDiff_oneP hθ hX τ').comp (contDiff_apply ℝ (fun _ => ℝ) i),
+    (contDiff_oneP hθ hX τ').comp (contDiff_apply ℝ (fun _ => ℝ) i).neg⟩
+
 
 variable (θ) in
-
 def prodP {k : ℕ} (τs : Fin k → D.what₂.Tau) (Xs : Fin k → Matrix (Fin V.rank) (Fin V.rank) ℂ) (t : Fin k → ℝ) :
     GA D V := (List.ofFn fun i => oneP θ V (τs i) (Xs i) (t i)).prod
 

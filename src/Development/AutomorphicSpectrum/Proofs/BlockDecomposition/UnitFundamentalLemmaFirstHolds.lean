@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+
+@[expose] public section
 
 open MeasureTheory Polynomial PositivityTheory.Rg.Tf.Loc
 open scoped ENNReal
@@ -196,7 +200,7 @@ theorem map_aeval_fixed {n : ℕ} (σ : E ≃ₐ[k] E) (Γ : Matrix (Fin n) (Fin
     (aeval Γ p).map σ = aeval Γ (p.map (σ : E →+* E)) := by
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
-    rw [map_add, Polynomial.map_add, map_add, ← hp, ← hq]
+    rw [map_add (f := _), Polynomial.map_add (f := _), map_add (f := _), ← hp, ← hq]
     ext i j
     simp
   | monomial m a =>
@@ -405,8 +409,8 @@ theorem unit_fundamental_lemma_nonintegral (hD : D0a) (hL2 : L2) (hun : IsUnrami
       exact isUnitIntegral_of_incl hO γ h2))
   rw [twOrbIntegral, orbIntegral, quotLIntegral_zero' _ _ _ _ zE, quotLIntegral_zero' _ _ _ _ zk]
 
-open ValuativeRel in
 
+open ValuativeRel in
 theorem t2Space_of_nonarchimedeanLocalField (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F]
     [IsNonarchimedeanLocalField F] : T2Space F := by
   letI := IsTopologicalAddGroup.rightUniformSpace F

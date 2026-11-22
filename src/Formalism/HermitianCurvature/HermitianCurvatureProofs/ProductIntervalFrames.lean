@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.FrameExists2
-import Formalism.HermitianCurvature.StatementQ
+module
+
+public import Formalism.HermitianCurvature.FrameExists2
+public import Formalism.HermitianCurvature.StatementQ
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -28,7 +32,7 @@ theorem rho_eq (n r : ℕ) (T T' : ℝ) (u : ℕ → ℝ) (ρ : M.Ty (par n r T 
     M.rho (par n r T T' u) ρ ((j : ℕ) + 1) = u ((j : ℕ) + 2) + 1 / 2 + (((ρ j : Fin _) : ℕ) : ℝ) := by
   have hj := j.isLt
   simp only [M.rho, M.Par.lo, par, max_self]
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
   rfl
 
 theorem wid_eq (n r : ℕ) (T T' : ℝ) (u : ℕ → ℝ) (L : Fin (n + 1) → ℤ)

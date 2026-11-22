@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinatePolynomialsFormMemKernelDifferential
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinatePolynomialsFormMemKernelDifferential
+
+@[expose] public section
+
 open MeasureTheory Topology Matrix
 open scoped ENNReal NNReal
 
@@ -15,9 +20,6 @@ def bd (a : A) (M : Matrix (Fin m) (Fin m) A) : Matrix (Fin (m + 1)) (Fin (m + 1
   fun i j => Fin.cases (Fin.cases a (fun _ => 0) j)
     (fun i' => Fin.cases 0 (fun j' => M i' j') j) i
 
-@[simp] lemma bd_zero_zero (a : A) (M : Matrix (Fin m) (Fin m) A) : bd a M 0 0 = a := rfl
-@[simp] lemma bd_zero_succ (a : A) (M : Matrix (Fin m) (Fin m) A) (j : Fin m) :
-    bd a M 0 j.succ = 0 := rfl
 @[simp] lemma bd_succ_zero (a : A) (M : Matrix (Fin m) (Fin m) A) (i : Fin m) :
     bd a M i.succ 0 = 0 := rfl
 @[simp] lemma bd_succ_succ (a : A) (M : Matrix (Fin m) (Fin m) A) (i j : Fin m) :
@@ -27,42 +29,36 @@ lemma bd_mul (a b : A) (M N : Matrix (Fin m) (Fin m) A) :
     bd a M * bd b N = bd (a * b) (M * N) := by
   ext i j
   refine Fin.cases ?_ (fun i' => ?_) i <;> refine Fin.cases ?_ (fun j' => ?_) j <;>
-    simp [Matrix.mul_apply, Fin.sum_univ_succ]
+    simp [bd, Matrix.mul_apply, Fin.sum_univ_succ]
 
 lemma det_bd (a : A) (M : Matrix (Fin m) (Fin m) A) : (bd a M).det = a * M.det := by
   rw [Matrix.det_succ_row_zero, Fin.sum_univ_succ]
   have : (bd a M).submatrix Fin.succ Fin.succ = M := by
     ext i j; simp
-  simp [this]
+  simp [bd, this]
 
 lemma cT_bd (σ : A →+* A) (a : A) (M : Matrix (Fin m) (Fin m) A) :
     cT σ (bd a M) = bd (σ a) (cT σ M) := by
   ext i j
   refine Fin.cases ?_ (fun i' => ?_) i <;> refine Fin.cases ?_ (fun j' => ?_) j <;>
-    simp [cT]
+    simp [bd, cT]
 
 lemma bd_diagonal (a : A) (d : Fin m → A) :
     bd a (Matrix.diagonal d) = Matrix.diagonal (Fin.cons a d : Fin (m + 1) → A) := by
   have h0 : ∀ j' : Fin m, (0 : Fin (m + 1)) ≠ j'.succ := fun j' => (Fin.succ_ne_zero j').symm
   ext i j
   refine Fin.cases ?_ (fun i' => ?_) i <;> refine Fin.cases ?_ (fun j' => ?_) j <;>
-    simp [Matrix.diagonal_apply, h0]
+    simp [bd, Matrix.diagonal_apply, h0]
 
 def uni (r : Fin m → A) : Matrix (Fin (m + 1)) (Fin (m + 1)) A :=
   fun i j => Fin.cases (Fin.cases 1 r j)
     (fun i' => Fin.cases 0 (fun j' => (1 : Matrix (Fin m) (Fin m) A) i' j') j) i
 
-@[simp] lemma uni_zero_zero (r : Fin m → A) : uni r 0 0 = 1 := rfl
-@[simp] lemma uni_zero_succ (r : Fin m → A) (j : Fin m) : uni r 0 j.succ = r j := rfl
-@[simp] lemma uni_succ_zero (r : Fin m → A) (i : Fin m) : uni r i.succ 0 = 0 := rfl
-@[simp] lemma uni_succ_succ (r : Fin m → A) (i j : Fin m) :
-    uni r i.succ j.succ = (1 : Matrix (Fin m) (Fin m) A) i j := rfl
-
 lemma det_uni (r : Fin m → A) : (uni r).det = 1 := by
   rw [Matrix.det_succ_column_zero, Fin.sum_univ_succ]
   have : (uni r).submatrix Fin.succ Fin.succ = 1 := by
-    ext i j; simp
-  simp [this]
+    ext i j; simp [uni, Matrix.one_apply]
+  simp [uni, this]
 
 def schur (K : Matrix (Fin (m + 1)) (Fin (m + 1)) A) (b : A) : Matrix (Fin m) (Fin m) A :=
   fun i j => K i.succ j.succ - K i.succ 0 * b * K 0 j.succ
@@ -70,18 +66,18 @@ def schur (K : Matrix (Fin (m + 1)) (Fin (m + 1)) A) (b : A) : Matrix (Fin m) (F
 lemma mul_uni (K : Matrix (Fin (m + 1)) (Fin (m + 1)) A) (r : Fin m → A) (i : Fin (m + 1)) :
     (K * uni r) i 0 = K i 0 ∧ ∀ j : Fin m, (K * uni r) i j.succ = K i j.succ + K i 0 * r j := by
   constructor
-  · simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  · simp [uni, Matrix.mul_apply, Fin.sum_univ_succ, Matrix.one_apply]
   · intro j
-    simp [Matrix.mul_apply, Fin.sum_univ_succ, Matrix.one_apply, add_comm]
+    simp [uni, Matrix.mul_apply, Fin.sum_univ_succ, Matrix.one_apply, add_comm]
 
 lemma cT_uni_mul (σ : A →+* A) (P : Matrix (Fin (m + 1)) (Fin (m + 1)) A) (r : Fin m → A)
     (j : Fin (m + 1)) :
     (cT σ (uni r) * P) 0 j = P 0 j ∧
       ∀ i : Fin m, (cT σ (uni r) * P) i.succ j = P i.succ j + σ (r i) * P 0 j := by
   constructor
-  · simp [cT, Matrix.mul_apply, Fin.sum_univ_succ]
+  · simp [uni, cT, Matrix.mul_apply, Fin.sum_univ_succ]
   · intro i
-    simp [cT, Matrix.mul_apply, Fin.sum_univ_succ, Matrix.one_apply, add_comm,
+    simp [uni, cT, Matrix.mul_apply, Fin.sum_univ_succ, Matrix.one_apply, add_comm,
       apply_ite σ]
 
 lemma schur_step (σ : A →+* A) (K : Matrix (Fin (m + 1)) (Fin (m + 1)) A)
@@ -98,8 +94,12 @@ lemma schur_step (σ : A →+* A) (K : Matrix (Fin (m + 1)) (Fin (m + 1)) A)
   rw [Matrix.mul_assoc]
   ext i j
   refine Fin.cases ?_ (fun i' => ?_) i <;> refine Fin.cases ?_ (fun j' => ?_) j
-  · rw [(cT_uni_mul σ _ r 0).1, (mul_uni K r 0).1]; simp
-  · rw [(cT_uni_mul σ _ r _).1, (mul_uni K r 0).2, hzero]; simp
+  · rw [(cT_uni_mul σ _ r 0).1, (mul_uni K r 0).1]
+    change K 0 0 = K 0 0
+    rfl
+  · rw [(cT_uni_mul σ _ r _).1, (mul_uni K r 0).2, hzero]
+    change 0 = 0
+    rfl
   · rw [(cT_uni_mul σ _ r 0).2, (mul_uni K r _).1, (mul_uni K r 0).1, hσr]
     simp only [bd_succ_zero]
     have : b * K i'.succ 0 * K 0 0 = (b * K 0 0) * K i'.succ 0 := by ring

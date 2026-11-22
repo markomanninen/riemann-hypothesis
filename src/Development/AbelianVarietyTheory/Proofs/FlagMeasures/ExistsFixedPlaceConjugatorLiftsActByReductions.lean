@@ -1,31 +1,37 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteLevelAdelicSubset
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsReductionActionChosenPlaces
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RedBasicsPf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GoodAtReductionConjugatedUnitaryElement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAddEquivOfCard
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeSelfDualHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.InstCMHostS
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WBEqPrimeComap
-import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommTensCastRSymmMap
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SurjectiveReductionOntoFiniteLevelGroup
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RestrictedBlockUnipotentSymmetric
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSplitPlaceEqFixedTypePrimePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelesCmFieldEqZeroOfComponentsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceProjectionEqZeroOfPlaceComponentEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegralIdempotentSplitPlaceCmFiniteAdelesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemMaximalCompactUnitaryOfSplitPlaceLiftStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryConjugatorOfSplitIdempotentsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmFieldFiniteAdeleTensorEquivMemIntegralAdelesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ResidueCmFieldFiniteAdeleTensorEquivEqNatCastStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRectangularConjInstanceMatrixStandardPsiStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemMaximalCompactOfTrivialOffSplitPairStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDegreeOnePrimeFrameReducedMatricesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceBaseNeOfDistinctTypePrimesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteLevelAdelicSubset
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsReductionActionChosenPlaces
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RedBasicsPf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GoodAtReductionConjugatedUnitaryElement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeSpec
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeSelfDualHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InstCMHostS
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WBEqPrimeComap
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommTensCastRSymmMap
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SurjectiveReductionOntoFiniteLevelGroup
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RestrictedBlockUnipotentSymmetric
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSplitPlaceEqFixedTypePrimePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelesCmFieldEqZeroOfComponentsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceProjectionEqZeroOfPlaceComponentEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegralIdempotentSplitPlaceCmFiniteAdelesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemMaximalCompactUnitaryOfSplitPlaceLiftStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryConjugatorOfSplitIdempotentsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmFieldFiniteAdeleTensorEquivMemIntegralAdelesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ResidueCmFieldFiniteAdeleTensorEquivEqNatCastStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRectangularConjInstanceMatrixStandardPsiStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemMaximalCompactOfTrivialOffSplitPairStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDegreeOnePrimeFrameReducedMatricesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceBaseNeOfDistinctTypePrimesStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.ArithmeticCylinders Formalism.L2.Theta Formalism.IndefR.Mult Formalism.IndefR.Links Formalism.IndefR.AutomorphicEvaluation Formalism.IndefR.principalLevelFrame Formalism.L2.DIV Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField ReciprocityTheory.Aut Formalism.AUTREP GlobalTheory.Mem.SRe GlobalTheory.LabPin
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LabPin.instCM
 open scoped TensorProduct
@@ -120,7 +126,7 @@ theorem res_eq_of_off {R k : Type} [CommRing R] [CommRing k] (S : Subring R) (re
     res ⟨a, ha⟩ = res ⟨d, hd⟩ := by
   have e1 : a = d + e * (a - d) := by linear_combination h
   have h1 : (⟨a, ha⟩ : S) = ⟨d, hd⟩ + ⟨e, he⟩ * (⟨a, ha⟩ - ⟨d, hd⟩) := Subtype.ext e1
-  rw [h1, map_add, map_mul, hres, zero_mul, add_zero]
+  rw [h1, map_add (f := _), map_mul, hres, zero_mul, add_zero]
 
 theorem smul_conj_sub_one {R : Type} [CommRing R] {m n : ℕ} (U : Matrix (Fin m) (Fin n) R) (U' : Matrix (Fin n) (Fin m) R)
     (hUU : U * U' = 1) (C : GL (Fin n) R) (X : Matrix (Fin n) (Fin n) R) (f : R) (hX : f • (X - 1) = 0) :
@@ -168,8 +174,6 @@ theorem res_one_apply {R k : Type} [CommRing R] [CommRing k] (S : Subring R) (re
     have : (⟨(1 : Matrix (Fin m) (Fin m) R) a b, hd⟩ : S) = 0 := Subtype.ext (by show (1 : Matrix (Fin m) (Fin m) R) a b = (0 : R); exact Matrix.one_apply_ne hab')
     rw [this, map_zero, Matrix.one_apply_ne hij, ZMod.val_zero, Nat.cast_zero]
 
-local notation "INST" D => Formalism.L2.SG.InstExistsPf.instOf D
-
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 4000000 in
 theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc D 0) D.R.r)
@@ -186,15 +190,17 @@ theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc
           ∀ kv' : Σ k : Fin 2, D.nd.PlG k, kv' ≠ kv →
             (fr kv'.1 kv'.2).ActsAs (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * x * c⁻¹)))).2 1 := by
   classical
-  obtain ⟨β₀, hβ₀⟩ := Formalism.L2.DIV.frame_exists_alt (INST D).F (INST D).E (INST D).n (INST D).L ⟨(INST D).L_fg, (INST D).L_span⟩
+  letI : Submodule.IsLattice (Formalism.L2.SG.InstExistsPf.instOf D).E (Formalism.L2.SG.InstExistsPf.instOf D).L :=
+    Submodule.IsLattice.of_fg _ (Formalism.L2.SG.InstExistsPf.instOf D).L_fg
+  obtain ⟨β₀, hβ₀⟩ := Formalism.L2.DIV.frame_exists_alt (Formalism.L2.SG.InstExistsPf.instOf D).F (Formalism.L2.SG.InstExistsPf.instOf D).E (Formalism.L2.SG.InstExistsPf.instOf D).n (Formalism.L2.SG.InstExistsPf.instOf D).L ⟨(Formalism.L2.SG.InstExistsPf.instOf D).L_span⟩
   obtain ⟨U, U', hUU, hUU', hFM⟩ := GlobalTheory.T.exists_rectangular_conj_instanceMatrix_standardPsi D hF PY t hStd
   have hsp := fun kv : Σ k : Fin 2, D.nd.PlG k => GlobalTheory.SplitPlaceOfFixed.exists_splitPlace_plGw D kv
   choose sp hsp using hsp
   have hid := fun kv : Σ k : Fin 2, D.nd.PlG k => GlobalTheory.T.exists_integralIdempotent_splitPlace_cmFiniteAdeles D.host.E (sp kv)
   choose ε₀ hε₀ using hid
-  let σ : Formalism.IndefR.Lev.EAf D →+* Formalism.IndefR.Lev.EAf D := Formalism.L2.SG.HidaSetting.sigA (INST D)
+  let σ : Formalism.IndefR.Lev.EAf D →+* Formalism.IndefR.Lev.EAf D := Formalism.L2.SG.HidaSetting.sigA (Formalism.L2.SG.InstExistsPf.instOf D)
   let θ : ReciprocityTheory.Aut.AL D.host.E ≃+* Formalism.IndefR.Lev.EAf D := adeleEquiv D hF
-  have hθσ : ∀ a, θ (conjAL D.host.E a) = σ (θ a) := fun a => GlobalTheory.ConjFrame.swapAE_conjAL hF a
+  have hθσ : ∀ a, θ (conjAL D.host.E a) = σ (θ a) := fun a => GlobalTheory.ConjFrame.swapAE_conjAL (D := D) hF a
   have hσσ : ∀ a, σ (σ a) = a := by
     intro a
     obtain ⟨b, rfl⟩ := θ.surjective a
@@ -225,11 +231,11 @@ theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc
     exact ⟨rfl, rfl⟩
   obtain ⟨Z, P, Z', P', hZZ', hZ'Z, hPP', hP'P, hZ, hZ', hPXP⟩ :=
     frame_algebra (R := Formalism.IndefR.Lev.EAf D) hn U U' hUU hUU' β₀
-  obtain ⟨cE, hcE, hcZ⟩ := GlobalTheory.T.exists_unitary_conjugator_of_split_idempotents (Formalism.IndefR.Lev.EAf D) σ hσσ (INST D).n D.R.r
+  obtain ⟨cE, hcE, hcZ⟩ := GlobalTheory.T.exists_unitary_conjugator_of_split_idempotents (Formalism.IndefR.Lev.EAf D) σ hσσ (Formalism.L2.SG.InstExistsPf.instOf D).n D.R.r
     (Σ k : Fin 2, D.nd.PlG k) ε hεidem hεσ hεorth Z P Z' P' hZZ' hZ'Z hPP' hP'P
   obtain ⟨cA, hcA1, hcA2, hcA3⟩ := exists_unitary_transport θ (conjAL D.host.E) σ hθσ D.R.r cE hcE
   let c : GAf D.host.E D.R.r := ⟨cA, hcA1⟩
-  have hfr := fun kv : Σ k : Fin 2, D.nd.PlG k => GlobalTheory.T.exists_degreeOne_prime_frame_reduced_matrices (INST D) β₀ hβ₀ D.R.r (D.host.g kv.1) hn
+  have hfr := fun kv : Σ k : Fin 2, D.nd.PlG k => GlobalTheory.T.exists_degreeOne_prime_frame_reduced_matrices (Formalism.L2.SG.InstExistsPf.instOf D) β₀ hβ₀ D.R.r (D.host.g kv.1) hn
     (D.naut.plGw kv.1 kv.2) (D.host.g_prime kv.1) (Formalism.L2.SG.Pf.RowDictPf.card_res_host kv.1 kv.2)
   choose fr hfr using hfr
   refine ⟨c, fun k v => fr ⟨k, v⟩, ?_⟩
@@ -241,7 +247,7 @@ theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc
   have hxU : x ∈ Umax D.host.E D.R.r :=
     GlobalTheory.T.mem_maximalCompactUnitary_of_splitPlaceLift D.host.E D.R.r (sp kv) (D.host.g kv.1) (D.host.g_prime kv.1) hgw x γ hlift
   have hKof : ∀ z : GAf D.host.E D.R.r,
-      (INST D).fmat (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * z * c⁻¹)))).2 =
+      (Formalism.L2.SG.InstExistsPf.instOf D).fmat (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * z * c⁻¹)))).2 =
         U * ((cE : Matrix (Fin D.R.r) (Fin D.R.r) (Formalism.IndefR.Lev.EAf D)) *
           ((z : GL (Fin D.R.r) (AL D.host.E)) : Matrix (Fin D.R.r) (Fin D.R.r) (AL D.host.E)).map θ *
           ((cE⁻¹ : GL (Fin D.R.r) (Formalism.IndefR.Lev.EAf D)) : Matrix (Fin D.R.r) (Fin D.R.r) (Formalism.IndefR.Lev.EAf D))) * U' := by
@@ -253,22 +259,22 @@ theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc
     rw [Matrix.map_mul, Matrix.map_mul, hcA2, hcA3]
   have hAeq : ∀ z : GAf D.host.E D.R.r,
       (((β₀⁻¹ * ((Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * z * c⁻¹)))).2 :
-        GL (Fin (INST D).n) ((INST D).E ⊗[(INST D).F] Formalism.MainNotions.S.Af (INST D).F)) * β₀ :
-          GL (Fin (INST D).n) ((INST D).E ⊗[(INST D).F] Formalism.MainNotions.S.Af (INST D).F)).val :
-            Matrix (Fin (INST D).n) (Fin (INST D).n) (Formalism.IndefR.Lev.EAf D))) =
+        GL (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) ((Formalism.L2.SG.InstExistsPf.instOf D).E ⊗[(Formalism.L2.SG.InstExistsPf.instOf D).F] Formalism.MainNotions.S.Af (Formalism.L2.SG.InstExistsPf.instOf D).F)) * β₀ :
+          GL (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) ((Formalism.L2.SG.InstExistsPf.instOf D).E ⊗[(Formalism.L2.SG.InstExistsPf.instOf D).F] Formalism.MainNotions.S.Af (Formalism.L2.SG.InstExistsPf.instOf D).F)).val :
+            Matrix (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Formalism.IndefR.Lev.EAf D))) =
         Z * ((cE : Matrix (Fin D.R.r) (Fin D.R.r) (Formalism.IndefR.Lev.EAf D)) *
           ((z : GL (Fin D.R.r) (AL D.host.E)) : Matrix (Fin D.R.r) (Fin D.R.r) (AL D.host.E)).map θ *
           ((cE⁻¹ : GL (Fin D.R.r) (Formalism.IndefR.Lev.EAf D)) : Matrix (Fin D.R.r) (Fin D.R.r) (Formalism.IndefR.Lev.EAf D))) * Z' := by
     intro z
     rw [hZ, hZ']
-    show ((β₀⁻¹).val : Matrix (Fin (INST D).n) (Fin (INST D).n) (Formalism.IndefR.Lev.EAf D)) *
-      (INST D).fmat (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * z * c⁻¹)))).2 * (β₀.val : Matrix (Fin (INST D).n) (Fin (INST D).n) (Formalism.IndefR.Lev.EAf D)) = _
+    show ((β₀⁻¹).val : Matrix (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Formalism.IndefR.Lev.EAf D)) *
+      (Formalism.L2.SG.InstExistsPf.instOf D).fmat (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * z * c⁻¹)))).2 * (β₀.val : Matrix (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Formalism.IndefR.Lev.EAf D)) = _
     rw [hKof z]
     exact assoc_five _ _ _ _ _
-  have hpart : ∀ z : GAf D.host.E D.R.r, ∀ a b : Fin (INST D).n,
+  have hpart : ∀ z : GAf D.host.E D.R.r, ∀ a b : Fin (Formalism.L2.SG.InstExistsPf.instOf D).n,
       ε kv * (@id (Formalism.IndefR.Lev.EAf D) ((β₀⁻¹ * ((Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * z * c⁻¹)))).2 :
-        GL (Fin (INST D).n) ((INST D).E ⊗[(INST D).F] Formalism.MainNotions.S.Af (INST D).F)) * β₀ :
-          GL (Fin (INST D).n) ((INST D).E ⊗[(INST D).F] Formalism.MainNotions.S.Af (INST D).F)).val a b)) =
+        GL (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) ((Formalism.L2.SG.InstExistsPf.instOf D).E ⊗[(Formalism.L2.SG.InstExistsPf.instOf D).F] Formalism.MainNotions.S.Af (Formalism.L2.SG.InstExistsPf.instOf D).F)) * β₀ :
+          GL (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) ((Formalism.L2.SG.InstExistsPf.instOf D).E ⊗[(Formalism.L2.SG.InstExistsPf.instOf D).F] Formalism.MainNotions.S.Af (Formalism.L2.SG.InstExistsPf.instOf D).F)).val a b)) =
         ε kv * θ (((z : GL (Fin D.R.r) (AL D.host.E)) : Matrix (Fin D.R.r) (Fin D.R.r) (AL D.host.E))
           (Fin.cast hn a) (Fin.cast hn b)) := by
     intro z a b
@@ -293,7 +299,7 @@ theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc
       by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
   obtain ⟨f, hfdef⟩ : ∃ f : Formalism.IndefR.Lev.EAf D, f = θ (1 - (ε₀ kv + conjAL D.host.E (ε₀ kv))) := ⟨_, rfl⟩
   have hf : f = 1 - ε kv - σ (ε kv) := by
-    rw [hfdef, map_sub, map_add, map_one, hθσ]; ring
+    rw [hfdef, map_sub, map_add (f := _), map_one, hθσ]; ring
   have hfx : f • ((((x : GL (Fin D.R.r) (AL D.host.E)) : Matrix (Fin D.R.r) (Fin D.R.r) (AL D.host.E)).map θ) - 1) = 0 := by
     ext i j
     have h1 : f * θ (((x : GL (Fin D.R.r) (AL D.host.E)) : Matrix (Fin D.R.r) (Fin D.R.r) (AL D.host.E)) i j -
@@ -303,8 +309,8 @@ theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc
     rw [← h1, map_sub]
     congr 2
     by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
-  obtain ⟨MK, hMK⟩ : ∃ MK : Matrix (Fin (INST D).n) (Fin (INST D).n) (Formalism.IndefR.Lev.EAf D),
-      MK = (INST D).fmat (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * x * c⁻¹)))).2 := ⟨_, rfl⟩
+  obtain ⟨MK, hMK⟩ : ∃ MK : Matrix (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Formalism.IndefR.Lev.EAf D),
+      MK = (Formalism.L2.SG.InstExistsPf.instOf D).fmat (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * x * c⁻¹)))).2 := ⟨_, rfl⟩
   have hfK : f • (MK - 1) = 0 := by
     rw [hMK, hKof x]
     exact smul_conj_sub_one U U' hUU cE _ f hfx
@@ -318,8 +324,8 @@ theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc
     rw [e1]
     exact (h2 _).symm
   have hcc : ∀ i : Fin D.R.r, Fin.cast hn (Fin.cast hn.symm i) = i := fun i => Fin.ext rfl
-  have hK : (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * x * c⁻¹)))).2 ∈ (INST D).Kset := by
-    refine GlobalTheory.T.mem_maximalCompact_of_trivial_off_splitPair (INST D) β₀ hβ₀ (ε kv) (hεidem kv) (hεσ kv) hεint _ (fun i j => ?_) (fun i j => ?_) (fun i j => ?_)
+  have hK : (Formalism.IndefR.RationalEmbedding.iota D (MulAut.conj t (PY.ψ (c * x * c⁻¹)))).2 ∈ (Formalism.L2.SG.InstExistsPf.instOf D).Kset := by
+    refine GlobalTheory.T.mem_maximalCompact_of_trivial_off_splitPair (Formalism.L2.SG.InstExistsPf.instOf D) β₀ hβ₀ (ε kv) (hεidem kv) (hεσ kv) hεint _ (fun i j => ?_) (fun i j => ?_) (fun i j => ?_)
     · have h1 := congrFun (congrFun hfK i) j
       simp only [Matrix.smul_apply, smul_eq_mul, Matrix.zero_apply] at h1
       rw [hf, hMK] at h1
@@ -360,19 +366,19 @@ theorem core0 (D : D7) (t : Formalism.L2.Theta.GA D (D.sp.Y 0)) (PY : RowPsi (Yc
     have he : θ (ε₀ kv + conjAL D.host.E (ε₀ kv)) ∈ Formalism.L2.Herm.intAf (↥D.host.F) D.host.E := GlobalTheory.T.cmFieldFiniteAdeleTensorEquiv_mem_integralAdeles D hF _ hemem
     have hcomp : compAt D.host.E (sp kv').v (ε₀ kv + conjAL D.host.E (ε₀ kv)) = 0 := by
       have := (hε₀ kv).2.2.2.2.2 (sp kv').v (hdist kv' kv hne)
-      rw [map_add, this.1, this.2, add_zero]
+      rw [map_add (f := _), this.1, this.2, add_zero]
     have hres0 : Formalism.L2.DIV.resS (↥D.host.F) (sp kv').w ⟨_, he⟩ = 0 := by
       have h1 := GlobalTheory.T.residue_cmFieldFiniteAdeleTensorEquiv_eq_natCast D hF (sp kv') (ε₀ kv + conjAL D.host.E (ε₀ kv)) he 0 hemem
         (by rw [GlobalTheory.T.splitPlaceProjection_eq_zero_of_placeComponent_eq_zero D.host.E (sp kv') _ hcomp, Nat.cast_zero, sub_zero, map_zero]; exact zero_lt_one)
       rw [Nat.cast_zero] at h1
       exact h1
-    have h3 := smul_conj_sub_one' ((β₀⁻¹ : GL _ _).val : Matrix (Fin (INST D).n) (Fin (INST D).n) (Formalism.IndefR.Lev.EAf D))
-      (β₀.val : Matrix (Fin (INST D).n) (Fin (INST D).n) (Formalism.IndefR.Lev.EAf D)) MK β₀.inv_mul f hfK
+    have h3 := smul_conj_sub_one' ((β₀⁻¹ : GL _ _).val : Matrix (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Formalism.IndefR.Lev.EAf D))
+      (β₀.val : Matrix (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Formalism.IndefR.Lev.EAf D)) MK β₀.inv_mul f hfK
     have h4 := congrFun (congrFun h3 (Fin.cast hn.symm i)) (Fin.cast hn.symm j)
     simp only [Matrix.smul_apply, smul_eq_mul, Matrix.sub_apply, Matrix.zero_apply] at h4
     have hfe : f = 1 - θ (ε₀ kv + conjAL D.host.E (ε₀ kv)) := by rw [hfdef, map_sub, map_one]
     rw [hfe, hMK] at h4
-    have hd : (1 : Matrix (Fin (INST D).n) (Fin (INST D).n) (Formalism.IndefR.Lev.EAf D)) (Fin.cast hn.symm i) (Fin.cast hn.symm j) ∈
+    have hd : (1 : Matrix (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Fin (Formalism.L2.SG.InstExistsPf.instOf D).n) (Formalism.IndefR.Lev.EAf D)) (Fin.cast hn.symm i) (Fin.cast hn.symm j) ∈
         Formalism.L2.Herm.intAf (↥D.host.F) D.host.E := by
       by_cases hij' : Fin.cast hn.symm i = Fin.cast hn.symm j
       · rw [hij', Matrix.one_apply_eq]; exact one_mem _

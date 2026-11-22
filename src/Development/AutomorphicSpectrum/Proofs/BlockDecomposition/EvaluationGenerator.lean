@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem mem_JJ_of {Z : Module.End ℂ V} {N : Submodule ℂ V} (hZ : ∀ y ∈ N
       rw [Module.End.mem_eigenspace_iff, hD, Submodule.mkQ_apply, Submodule.mapQ_apply, hk]
       rfl
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
   have h3 : (JJ N).mkQ t = (JJ N).mkQ p := (Submodule.Quotient.eq _).mpr h
   rw [← h3] at h2
@@ -209,7 +213,7 @@ theorem Tl_comm (h : PairRel E1 E2) (l : Lt n) :
   simp only [op, if_true, Bool.false_eq_true, if_false] at h1 h2
   cases s
   · simp only [Tl, Ts, Bool.false_eq_true, if_false, map_sub, h1, h2, smul_sub]
-  · simp only [Tl, Ts, if_true, map_add, h1, h2, smul_add]
+  · simp only [Tl, Ts, if_true, map_add (f := _), h1, h2, smul_add]
 
 theorem ZZ_NV (h : PairRel E1 E2) (y : V) (hy : y ∈ NV lev E1 E2) :
     ZZ lev E1 E2 y ∈ NV lev E1 E2 := by
@@ -221,7 +225,7 @@ theorem ZZ_NV (h : PairRel E1 E2) (y : V) (hy : y ∈ NV lev E1 E2) :
     rw [sub_eq_iff_eq_add.mp h1]
     exact (NV lev E1 E2).add_mem ((NV lev E1 E2).smul_mem _ (mem_NV_Tl hl _)) (mem_NV_Tl hl _)
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact (NV lev E1 E2).add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact (NV lev E1 E2).add_mem hx hy
   | smul c x _ hx => rw [map_smul]; exact (NV lev E1 E2).smul_mem c hx
 
 theorem adZ_evB (h : PairRel E1 E2) (b : FreeAlgebra ℂ (Bool × Fin n × Fin n)) :
@@ -233,7 +237,7 @@ theorem adZ_evB (h : PairRel E1 E2) (b : FreeAlgebra ℂ (Bool × Fin n × Fin n
     · rw [evB_ι_of_eq lev E1 E2 hl, ZZ_comm h, hl, sub_self, zero_smul]
     · rw [evB_ι_of_ne lev E1 E2 hl, map_zero]
   | mul a b ha hb => rw [map_mul, adZ_mul, ha, hb]; simp
-  | add a b ha hb => rw [map_add, map_add, ha, hb, add_zero]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, add_zero]
 
 def brA (y p : Bool × Fin n × Fin n) : FreeAlgebra ℂ (Bool × Fin n × Fin n) :=
   if y.1 = p.1 ∧ y.2.2 = p.2.1 then FreeAlgebra.ι ℂ (y.1, y.2.1, p.2.2) else 0
@@ -307,7 +311,7 @@ theorem Low.levi {lev : Fin n → ℕ} {u : FreeAlgebra ℂ (Bool × Fin n × Fi
     obtain ⟨b', hb'⟩ := hv
     refine ⟨b + b', fun V _ _ E1 E2 hE => ?_⟩
     have := (PP (ZZ lev E1 E2)).add_mem (hb V E1 E2 hE) (hb' V E1 E2 hE)
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     convert this using 1; abel
   | smul c u _ hu =>
     obtain ⟨b, hb⟩ := hu
@@ -328,7 +332,7 @@ theorem Red.add {a a' : FreeAlgebra ℂ (Bool × Fin n × Fin n)} (h : Red lev a
   obtain ⟨u', hu', h'⟩ := h'
   refine ⟨u + u', Low.add _ _ hu hu', fun V _ _ E1 E2 hE => ?_⟩
   have := (JJ (NV lev E1 E2)).add_mem (h V E1 E2 hE) (h' V E1 E2 hE)
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
   convert this using 1; abel
 
 theorem Red.smul (c : ℂ) {a : FreeAlgebra ℂ (Bool × Fin n × Fin n)} (h : Red lev a) :
@@ -379,7 +383,7 @@ theorem Low.red_mul (hm : Monotone lev) {u : FreeAlgebra ℂ (Bool × Fin n × F
       · rw [mul_zero]; exact Red.of_low (Low.zero lev)
     refine ((((ih p).mul_low y hy).add h1).add (h2.smul (-1))).congr fun V _ _ E1 E2 hE => ?_
     have h := sub_eq_iff_eq_add.mp (op_br hE y p)
-    simp only [map_add, map_mul, evaluation_generator, map_smul, mul_assoc, h]
+    simp only [map_add (f := _), map_mul, evaluation_generator, map_smul, mul_assoc, h]
     simp only [mul_add, mul_sub, neg_smul, one_smul]
     abel
   | add u v _ _ hu hv => intro p; rw [add_mul]; exact (hu p).add (hv p)

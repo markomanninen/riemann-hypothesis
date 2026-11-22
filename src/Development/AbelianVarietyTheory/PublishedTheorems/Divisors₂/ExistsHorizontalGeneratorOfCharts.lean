@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -205,7 +209,8 @@ theorem oneForm_single (b : Fin n → (Fin n → ℂ) → ℂ) (z : Fin n → �
 theorem clm_ext_single {L M : (Fin n → ℂ) →L[ℂ] ℂ}
     (h : ∀ i, L (Pi.single i 1) = M (Pi.single i 1)) : L = M := by
   ext v
-  rw [← Finset.univ_sum_single v, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.univ_sum_single v, map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have : (Pi.single i (v i) : Fin n → ℂ) = v i • (Pi.single i 1 : Fin n → ℂ) := by
     rw [← Pi.single_smul]; simp

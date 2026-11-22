@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,28 +14,13 @@ variable {k Ω : Type} [Field k] [Field Ω] [Algebra k Ω] (R : Type) [CommRing 
 
 def act (σ : Ω ≃ₐ[k] Ω) : (Ω ⊗[k] R) ≃ₐ[k] (Ω ⊗[k] R) := Algebra.TensorProduct.congr σ AlgEquiv.refl
 
-def actHom : (Ω ≃ₐ[k] Ω) →* RingAut (Ω ⊗[k] R) where
-  toFun σ := (act R σ).toRingEquiv
-  map_one' := by
-    ext x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a r => simp [act]
-    | add x y hx hy => simp only [map_add] at hx hy ⊢; rw [hx, hy]
-  map_mul' σ τ := by
-    ext x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a r => simp [act]
-    | add x y hx hy => simp only [map_add] at hx hy ⊢; rw [hx, hy]
-
 @[simp] theorem act_tmul (σ : Ω ≃ₐ[k] Ω) (a : Ω) (r : R) : act R σ (a ⊗ₜ r) = σ a ⊗ₜ r := rfl
 
 theorem smul_eq_act (σ : Ω ≃ₐ[k] Ω) (x : Ω ⊗[k] R) : σ • x = act R σ x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a r => rw [TensorProduct.smul_tmul', act_tmul, AlgEquiv.smul_def]
-  | add x y hx hy => rw [smul_add, hx, hy, map_add]
+  | add x y hx hy => rw [smul_add, hx, hy, map_add (f := _)]
 
 scoped instance instAct : MulSemiringAction (Ω ≃ₐ[k] Ω) (Ω ⊗[k] R) :=
   { TensorProduct.leftDistribMulAction with
@@ -56,7 +45,7 @@ theorem repr_act {ι : Type} (b : Module.Basis ι k R) (σ : Ω ≃ₐ[k] Ω) (x
   | tmul a r =>
     simp only [act_tmul, Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply,
       smul_eq_mul, map_mul, AlgEquiv.commutes]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 variable [IsGalois k Ω]
 

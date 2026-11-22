@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTop
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTop
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt NumberField MeasureTheory
 open scoped ComplexOrder

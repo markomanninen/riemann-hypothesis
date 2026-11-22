@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompleteLocalBaseAtClosedPointGroupImports
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionLabelEqWeilPairingToricTorsionPointStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsToricTorsionLabelClosedPointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompleteLocalBaseAtClosedPointGroupImports
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionLabelEqWeilPairingToricTorsionPointStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsToricTorsionLabelClosedPointStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
@@ -25,7 +30,7 @@ theorem mk_eq_of_forall_char {X : Type} [AddCommGroup X] [Module.Free ℤ X] [Mo
     have h1 := h ((Int.castAddHom (ZMod k)).comp (b.coord i).toAddMonoidHom)
     rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
     simp only [AddMonoidHom.comp_apply, LinearMap.toAddMonoidHom_coe, Module.Basis.coord_apply, Int.coe_castAddHom] at h1
-    simp only [map_add, map_neg, Finsupp.add_apply, Finsupp.neg_apply, Int.cast_add, Int.cast_neg, h1, neg_add_cancel]
+    simp only [map_add (f := _), map_neg, Finsupp.add_apply, Finsupp.neg_apply, Int.cast_add, Int.cast_neg, h1, neg_add_cancel]
   choose c hc using hc
   refine ⟨∑ i, c i • b i, ?_⟩
   rw [nsmulAddMonoidHom_apply]
@@ -51,11 +56,11 @@ theorem mk_symm_eq_iff {X Y : Type} [AddCommGroup X] [AddCommGroup Y] (k : ℕ) 
   · rintro ⟨z, hz⟩
     refine ⟨e z, ?_⟩
     rw [nsmulAddMonoidHom_apply] at hz ⊢
-    rw [← map_nsmul, hz, map_add, map_neg, AddEquiv.apply_symm_apply]
+    rw [← map_nsmul, hz, map_add (f := _), map_neg, AddEquiv.apply_symm_apply]
   · rintro ⟨z, hz⟩
     refine ⟨e.symm z, ?_⟩
     rw [nsmulAddMonoidHom_apply] at hz ⊢
-    rw [← map_nsmul, hz, map_add, map_neg, AddEquiv.symm_apply_apply]
+    rw [← map_nsmul, hz, map_add (f := _), map_neg, AddEquiv.symm_apply_apply]
 
 end GlobalTheory.Poinc.LabConst
 

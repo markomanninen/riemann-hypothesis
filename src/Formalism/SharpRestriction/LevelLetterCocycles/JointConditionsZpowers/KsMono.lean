@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+
+@[expose] public section
 
 noncomputable section
 

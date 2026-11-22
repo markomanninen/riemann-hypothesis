@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -42,8 +47,8 @@ variable {K : Type*} {ι : K → Type*} {R : Type*} [CommRing R]
 def multAt (J W : Ideal (MRing ι R)) [W.IsPrime] : ℕ∞ :=
   Module.length (Localization.AtPrime W) (LocalizedModule W.primeCompl (MRing ι R ⧸ J))
 
+open scoped Classical in
 open Classical in
-
 def divCycle (P : Ideal (MRing ι R)) (f : MRing ι R) (W : Ideal (MRing ι R)) : ℤ :=
   if h : W ∈ (P ⊔ Ideal.span {f}).minimalPrimes ∧ IsRelevant W then
     haveI : W.IsPrime := h.1.1.1
@@ -65,8 +70,8 @@ variable {K : Type*} [DecidableEq K] {ι : K → Type*} {F : Type*} [Field F]
 def gradedPiece (P : Ideal (MRing ι F)) (m : K → ℕ) : Submodule F (MRing ι F ⧸ P) :=
   (weightedHomogeneousSubmodule F (blockWeight ι) m).map (Ideal.Quotient.mkₐ F P).toLinearMap
 
+open scoped Classical in
 open Classical in
-
 def hilbFn (P : Ideal (MRing ι F)) (m : K → ℤ) : ℤ :=
   if ∀ k, 0 ≤ m k then (Module.finrank F (gradedPiece P (fun k => (m k).toNat)) : ℤ) else 0
 
@@ -76,8 +81,8 @@ def diffStep (b : K → ℤ) (h : (K → ℤ) → ℤ) : (K → ℤ) → ℤ :=
 def mixedDiff {n : ℕ} (bs : Fin n → K → ℤ) (h : (K → ℤ) → ℤ) : (K → ℤ) → ℤ :=
   (List.ofFn bs).foldr diffStep h
 
+open scoped Classical in
 open Classical in
-
 def eventualValue (f : (K → ℤ) → ℤ) : ℤ :=
   if h : ∃ c, ∀ᶠ m in Filter.atTop, f m = c then h.choose else 0
 
@@ -125,63 +130,36 @@ section Examples
 variable {K : Type*} [DecidableEq K] {ι : K → Type*}
 
 theorem isMultiProjPrime_bot {R : Type*} [CommRing R] [IsDomain R] [∀ k, Nonempty (ι k)] :
-    IsMultiProjPrime (⊥ : Ideal (MRing ι R)) where
-  isPrime := Ideal.isPrime_bot
-  multiHomog := by
-    intro f hf b
+    IsMultiProjPrime (⊥ : Ideal (MRing ι R)) := by
+  refine ⟨Ideal.isPrime_bot, ?_, ?_⟩
+  · intro f hf b
     rw [Ideal.mem_bot] at hf ⊢
     simp [hf]
-  relevant := by
-    intro k
+  · intro k
     refine ⟨Classical.arbitrary _, ?_⟩
     rw [Ideal.mem_bot]
     exact X_ne_zero _
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem divCycle_one {R : Type*} [CommRing R] (P : Ideal (MRing ι R)) (W : Ideal (MRing ι R)) :
     divCycle P 1 W = 0 := by
   unfold divCycle
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨h, -⟩
   have hW : W.IsPrime := h.1.1
   have : P ⊔ Ideal.span {(1 : MRing ι R)} = ⊤ := by
     rw [Ideal.span_singleton_one, sup_top_eq]
   exact hW.ne_top (top_le_iff.mp (this ▸ h.1.2))
 
-theorem isVerticalDivisor_uniformiser {O : Type*} [CommRing O] [IsDomain O]
-    [IsDiscreteValuationRing O] (ϖ : O) (H : Ideal (MRing ι O)) [H.IsPrime]
-    (hϖ : (C ϖ : MRing ι O) ∉ H) :
-    IsVerticalDivisor H ϖ 0 (C ϖ) 1 where
-  degrees := ⟨0, 0, isWeightedHomogeneous_C _ _, isWeightedHomogeneous_one _ _, by
-    funext k; simp⟩
-  num_not_mem := hϖ
-  den_not_mem := Ideal.IsPrime.ne_top' ∘ (Ideal.eq_top_of_isUnit_mem _ · isUnit_one)
-  vertical := by
-    intro W hW
-    unfold ratDiv at hW
-    rw [divCycle_one, sub_zero] at hW
-    unfold divCycle at hW
-    split_ifs at hW with h
-    · exact h.1.1.2 (Ideal.mem_sup_right (Ideal.subset_span rfl))
-    · exact absurd rfl hW
-  unit_off_special := by
-    intro W hW _ _ hϖW
-    refine ⟨1, C ϖ, ?_, hϖW, ?_⟩
-    · exact (Ideal.ne_top_iff_one W).mp hW.ne_top
-    · rw [one_mul, mul_one, sub_self]
-      exact H.zero_mem
-
 theorem isModelOver_projectiveSpace {O : Type*} [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] (n : ℕ) :
-    IsModelOver (⊥ : Ideal (MRing (fun _ : Unit => Fin (n + 1)) O)) n where
-  multiProj := isMultiProjPrime_bot
-  noTorsion := by
-    ext a
+    IsModelOver (⊥ : Ideal (MRing (fun _ : Unit => Fin (n + 1)) O)) n := by
+  refine ⟨isMultiProjPrime_bot, ?_, ?_⟩
+  · ext a
     simp only [Ideal.mem_comap, Ideal.mem_bot, C_eq_zero]
-  dim := by
-    rw [ringKrullDim_eq_of_ringEquiv (RingEquiv.quotientBot _),
-      MvPolynomial.ringKrullDim_of_isNoetherianRing, IsDiscreteValuationRing.ringKrullDim_eq_one]
+  · rw [ringKrullDim_eq_of_ringEquiv (RingEquiv.quotientBot _),
+      MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, IsDiscreteValuationRing.ringKrullDim_eq_one]
     have hc : Nat.card ((_ : Unit) × Fin (n + 1)) = n + 1 := by
       rw [Nat.card_eq_fintype_card, Fintype.card_sigma]
       simp

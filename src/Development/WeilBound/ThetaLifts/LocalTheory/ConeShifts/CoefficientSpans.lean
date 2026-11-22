@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.Plane
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.Plane
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,15 +101,16 @@ theorem key {B : Base F E} {M : Model σ X W} {M₁ : Model σ X₁ W₁} {H : P
 
 theorem lat_compact {B : Base F E} {r s r' s'} (hX : X.IsHerm σ B r s) (hW : W.IsSkew σ B r' s') (M : Model σ X W) (v : Pl F) :
     ∃ C, IsCompact C ∧ ∀ γ ∈ latAtV X W v, locCo M.co v γ ∈ C := by
-  obtain ⟨I, _, g, hg⟩ := GlobalTheory.LatParam.latAtV_param X W hX.lat hW.lat v
+  obtain ⟨I, _, g, hg⟩ := GlobalTheory.LatParam.latAtV_param X W hX.lat.toIsLattice hW.lat.toIsLattice v
   haveI := GlobalTheory.AdelicUnitaryTop.compactSpace_adicCompletionIntegers F v
   refine ⟨Set.range fun a : I → v.adicCompletionIntegers F => ∑ m, (a m : Fv F v) • locCo M.co v (incM F (g m)),
-    isCompact_range (continuous_finset_sum _ fun m _ => (show Continuous fun a : I → v.adicCompletionIntegers F => (a m : Fv F v) from
+    isCompact_range (continuous_finsetSum _ fun m _ => (show Continuous fun a : I → v.adicCompletionIntegers F => (a m : Fv F v) from
       continuous_subtype_val.comp (continuous_apply m)).smul continuous_const),
     fun γ hγ => ?_⟩
   obtain ⟨a, rfl⟩ := (hg γ).1 hγ
   refine ⟨a, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun m _ => by rw [locCo_smul, GlobalTheory.EmbChart.evFin_atPlace]
 
 theorem exists_nat (v : Pl F) {U : Set (Fv F v)} (hU : U ∈ 𝓝 0) : ∃ N : ℕ, N ≠ 0 ∧ (N : Fv F v) ∈ U := by

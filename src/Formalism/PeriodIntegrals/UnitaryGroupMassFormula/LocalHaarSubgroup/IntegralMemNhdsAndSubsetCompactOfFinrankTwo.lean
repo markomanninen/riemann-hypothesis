@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalHaarSubgroup.ExistsHaarOfSubgroup
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalHaarSubgroup.ExistsHaarOfSubgroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem key_bound [Nontrivial V] [Module.Finite K V] {θ : V} {d : K}
         rw [← key _ (hQx _ hx1), e]
         exact hp
       rw [hr] at hrx
-      simp only [map_add, map_mul, aeval_X, aeval_C] at hrx
+      simp only [map_add (f := _), map_mul, aeval_X, aeval_C] at hrx
       have hw : r.coeff 1 = 0 := by
         by_contra hw
         apply hθr
@@ -64,7 +68,7 @@ theorem key_bound [Nontrivial V] [Module.Finite K V] {θ : V} {d : K}
             (algebraMap K V (r.coeff 1) * algebraMap K V b) = 1 := by
           rw [← map_mul, ← map_mul, inv_mul_cancel₀ hwb, map_one]
         refine ⟨-(r.coeff 1 * a + r.coeff 0) * (r.coeff 1 * b)⁻¹, ?_⟩
-        rw [map_mul, map_neg, map_add, map_mul]
+        rw [map_mul, map_neg, map_add (f := _), map_mul]
         linear_combination (-(algebraMap K V (r.coeff 1 * b)⁻¹)) * hrx + θ * hinv
       have hu : r.coeff 0 = 0 := by
         rw [hw] at hrx

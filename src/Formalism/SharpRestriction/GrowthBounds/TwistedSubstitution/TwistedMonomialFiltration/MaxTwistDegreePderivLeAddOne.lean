@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TwistedMonomialFiltration.SumCCMulSumOfMulEqOne
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TwistedMonomialFiltration.SumCCMulSumOfMulEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,11 +15,11 @@ open Formalism.MainNotions.G Formalism.MainNotions.TestSideWords.TwistedFiltrati
 variable {R : Type*} [CommRing R] {ι : Type} {n : ℕ} [NeZero n] (LL : Letters ι) (S : Set ι)
 
 theorem coeff_divDer (be μ : ι × Fin n →₀ ℕ) (F : MvPolynomial (ι × Fin n) R) :
-    coeff μ (divDer be F) = coeff (μ + be) F * ((be.prod fun k j => ((μ + be) k).choose j : ℕ) : R) := by
+    AddMonoidAlgebra.coeff (divDer be F) μ = AddMonoidAlgebra.coeff F (μ + be) * ((be.prod fun k j => ((μ + be) k).choose j : ℕ) : R) := by
   classical
   rw [divDer, coeff_sum]
   rw [Finset.sum_congr rfl (g := fun m => if m = μ + be then
-      coeff m F * ((be.prod fun k j => (m k).choose j : ℕ) : R) else 0)]
+      AddMonoidAlgebra.coeff F m * ((be.prod fun k j => (m k).choose j : ℕ) : R) else 0)]
   · rw [Finset.sum_ite_eq']
     split_ifs with h
     · rfl
@@ -30,7 +34,7 @@ theorem coeff_divDer (be μ : ι × Fin n →₀ ℕ) (F : MvPolynomial (ι × F
         intro h3
         apply h2
         rw [← h3, tsub_add_cancel_of_le h1]
-    · rw [if_neg h1, coeff_zero, if_neg]
+    · rw [if_neg h1, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, if_neg]
       rintro rfl
       exact h1 le_add_self
 
@@ -61,9 +65,9 @@ theorem divDer_single_one (v : ι × Fin n) (F : MvPolynomial (ι × Fin n) R) :
         rw [hv, Nat.cast_zero, mul_zero]
       · rfl
   | add p q hp hq =>
-    rw [map_add, ← hp, ← hq]
+    rw [map_add (f := _), ← hp, ← hq]
     ext μ
-    rw [coeff_add, coeff_divDer, coeff_divDer, coeff_divDer, coeff_add, add_mul]
+    rw [MvPolynomial.coeff_add, coeff_divDer, coeff_divDer, coeff_divDer, MvPolynomial.coeff_add, add_mul]
 
 theorem vecDeg_zero' (S : Set ι) : vecDeg LL S (0 : ι × Fin n →₀ ℕ) = 0 := by
   simp [vecDeg]
@@ -103,14 +107,6 @@ theorem twistSub_X_out (j : Fin n) (v : ι × Fin n) (h : v.1 ∉ S) :
     twistSub (R := R) LL S j (X v) = X v := by
   simp [twistSub, h]
 
-theorem mem_of_X_mul_mem {e t : ℤ} (v : ι × Fin n) (P : MvPolynomial (ι × Fin n) (GLLaurent R n))
-    (h : X v * P ∈ (laurentCoeffFiltration R n (ι × Fin n) e).F t) : P ∈ (laurentCoeffFiltration R n (ι × Fin n) e).F t := by
-  rw [laurentCoeffFiltration, flt_lift_mem] at h ⊢
-  intro m
-  have hm := h (Finsupp.single v 1 + m)
-  rw [coeff_X_mul] at hm
-  simpa using hm
-
 theorem valS_X_mul_of (F : MvPolynomial (ι × Fin n) R) (v : ι × Fin n) (h : v.1 ∈ S → LL.vec v.1 = true) :
     valS LL S F ≤ valS LL S (X v * F) := by
   have hv := flt_op_valS LL S F (Finsupp.single v 1) 0 0
@@ -140,25 +136,6 @@ theorem valS_pderiv (F : MvPolynomial (ι × Fin n) R) (v : ι × Fin n) :
   rw [divDer_single_one, MvPolynomial.monomial_zero', C_1, one_mul, Nat.cast_one] at hv
   exact hv
 
-private lemma withTop_int_le_of_forall_coe_le {a b : WithTop ℤ}
-    (h : ∀ t : ℤ, (t : WithTop ℤ) ≤ a → (t : WithTop ℤ) ≤ b) : a ≤ b := by
-  cases b with
-  | top => exact le_top
-  | coe m =>
-    cases a with
-    | top => exact absurd (WithTop.coe_le_coe.mp (h (m + 1) le_top)) (by omega)
-    | coe k => exact h k le_rfl
-
-theorem valS_X_mul_out (F : MvPolynomial (ι × Fin n) R) (v : ι × Fin n) (h : v.1 ∉ S) :
-    valS LL S (X v * F) = valS LL S F := by
-  apply le_antisymm
-  · apply withTop_int_le_of_forall_coe_le
-    intro t ht
-    rw [flt_le_valS] at ht ⊢
-    rw [map_mul, twistSub_X_out LL S _ v h] at ht
-    exact mem_of_X_mul_mem v _ ht
-  · exact valS_X_mul_of LL S F v (fun hv => absurd hv h)
-
 theorem maxTwistDegree_X_mul_le_of (F : MvPolynomial (ι × Fin n) R) (v : ι × Fin n) (h : v.1 ∈ S → LL.vec v.1 = false) :
     lam1S LL S (X v * F) ≤ lam1S LL S F := by
   have hv := flt_op_lam1S LL S F (Finsupp.single v 1) 0 0
@@ -187,24 +164,5 @@ theorem maxTwistDegree_pderiv_le_add_one (F : MvPolynomial (ι × Fin n) R) (v :
     (by rw [vecDeg_zero', zero_add]; exact covDeg_single_le LL S v)
   rw [divDer_single_one, MvPolynomial.monomial_zero', C_1, one_mul, Nat.cast_one] at hv
   exact hv
-
-private lemma withBot_int_le_of_forall_le_coe {a b : WithBot ℤ}
-    (h : ∀ M : ℤ, b ≤ (M : WithBot ℤ) → a ≤ (M : WithBot ℤ)) : a ≤ b := by
-  cases a with
-  | bot => exact bot_le
-  | coe k =>
-    cases b with
-    | bot => exact absurd (WithBot.coe_le_coe.mp (h (k - 1) bot_le)) (by omega)
-    | coe m => exact h m le_rfl
-
-theorem maxTwistDegree_X_mul_of_not_mem (F : MvPolynomial (ι × Fin n) R) (v : ι × Fin n) (h : v.1 ∉ S) :
-    lam1S LL S (X v * F) = lam1S LL S F := by
-  apply le_antisymm
-  · exact maxTwistDegree_X_mul_le_of LL S F v (fun hv => absurd hv h)
-  · apply withBot_int_le_of_forall_le_coe
-    intro M hM
-    rw [flt_lam1S_le] at hM ⊢
-    rw [map_mul, twistSub_X_out LL S _ v h] at hM
-    exact mem_of_X_mul_mem v _ hM
 
 end Formalism.MainNotions.TestSideWords.TwistedFiltration.G2

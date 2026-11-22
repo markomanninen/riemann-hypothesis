@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FuncSt
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FuncSt
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,9 +81,6 @@ section Cent
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 
 variable (F : Type) [Field F] [NumberField F]
-
-def ratV (r : ℕ) : AddSubgroup (Fin r → AF F) :=
-  (AddMonoidHom.compLeft (algebraMap F (AF F)).toAddMonoidHom (Fin r)).range
 
 end Cent
 

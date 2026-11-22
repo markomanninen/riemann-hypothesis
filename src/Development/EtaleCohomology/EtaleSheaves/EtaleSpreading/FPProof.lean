@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleSpreading.LiftPolys
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleSpreading.LiftPolys
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits

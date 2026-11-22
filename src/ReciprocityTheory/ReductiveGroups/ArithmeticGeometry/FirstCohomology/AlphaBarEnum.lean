@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.AlphaPair
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.AlphaPair
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -153,7 +157,8 @@ theorem alphaBarEnum_holds (hW : WeilSt) (hM : MulNSt) : AlphaBarEnumStatement :
       ∃ z ∈ killSub F P.A ρ α, ∃ c c' : Γ((TFK (R := V) F).left, ⊤)ˣ,
         WeilIs P.A.A P.A.L N z x c ∧ WeilIs P.A.A P.A.L N z x' c' ∧ c ≠ c' := by
     intro x hx x' hx' hne
-    obtain ⟨z, hz, rest⟩ := sep_core (F := F) P.A P.oA Dw hI N hN1 α u u' hαN huu x x' hx hx' hne
+    obtain ⟨z, hz, rest⟩ := alphaPair_holds E H V t P hTor α N hN1 hαN ⟨u, u', huu⟩ hNV
+      F Dw hI x x' hx hx' hne
     exact ⟨z, hz, rest⟩
   have sep2 : ∀ x ∈ killSub F P.A ρ α, ∀ x' ∈ killSub F P.A ρ α, x ≠ x' →
       ∃ z ∈ killSub F P.A ρ (star α), ∃ c c' : Γ((TFK (R := V) F).left, ⊤)ˣ,
@@ -161,7 +166,8 @@ theorem alphaBarEnum_holds (hW : WeilSt) (hM : MulNSt) : AlphaBarEnumStatement :
     intro x hx x' hx' hne
     have h1 : star α * star (star α) = (N : 𝓞 E) := by rw [star_star, mul_comm]; exact hαN
     have h2 : u' * star α + u * star (star α) = 1 := by rw [star_star, add_comm]; exact huu
-    obtain ⟨z, hz, rest⟩ := sep_core (F := F) P.A P.oA Dw hI N hN1 (star α) u' u h1 h2 x x'
+    obtain ⟨z, hz, rest⟩ := alphaPair_holds E H V t P hTor (star α) N hN1 h1 ⟨u', u, h2⟩ hNV
+      F Dw hI x x'
       (by rw [star_star]; exact hx) (by rw [star_star]; exact hx') hne
     exact ⟨z, hz, rest⟩
   have hle1 := card_killSub_le F hW P.A ρ N (star α) α hkB hkA sep1

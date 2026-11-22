@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
 open scoped Manifold
@@ -13,7 +18,7 @@ lemma exp_eq_conj_qParam (T : ℝ) (n : ℕ) (x y : ℝ) :
   rw [Function.Periodic.qParam, ← Complex.exp_nat_mul, one_div, ← Complex.exp_neg, ← Complex.exp_conj,
     Complex.ofReal_exp, ← Complex.exp_add]
   congr 1
-  simp only [map_neg, map_mul, map_div₀, map_add, Complex.conj_ofReal, Complex.conj_I, map_natCast, map_ofNat]
+  simp only [map_neg, map_mul, map_div₀, map_add (f := _), Complex.conj_ofReal, Complex.conj_I, map_natCast, map_ofNat]
   push_cast
   linear_combination (4 * (Real.pi : ℂ) * n * y / T) * Complex.I_sq
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ThetaBDeRhamPlusFieldCycloUnitBdRZpow
-import GroundTheory.PAdicHodge.LogMul
-import GroundTheory.PAdicHodge.TiltValuation
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ThetaBDeRhamPlusFieldCycloUnitBdRZpow
+public import GroundTheory.PAdicHodge.LogMul
+public import GroundTheory.PAdicHodge.TiltValuation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -15,12 +20,12 @@ section Cp
 variable {p : ℕ} [hp : Fact p.Prime]
 
 local notation "𝒪" => normInteger ℂ_[p]
-local notation "𝒪♭" => PreTilt (normInteger ℂ_[p]) p
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "𝔪" => maximalIdeal (BDeRhamPlus (normInteger ℂ_[p]) p)
+local notation "𝒪♭" => PreTilt 𝒪 p
+local notation "𝔹" => BDeRhamPlus 𝒪 p
+local notation "𝔪" => maximalIdeal 𝔹
+
 
 variable (p) in
-
 def pRootSeq : ℕ → ℂ_[p]
   | 0 => p
   | (n + 1) => (IsAlgClosed.exists_pow_nat_eq (pRootSeq n) hp.out.pos).choose
@@ -44,16 +49,16 @@ theorem norm_pRootSeq_le (n : ℕ) : ‖pRootSeq p n‖ ≤ 1 := by
   have : 1 < ‖pRootSeq p n‖ ^ p ^ n := one_lt_pow₀ hlt (pow_ne_zero _ hp.out.ne_zero)
   linarith
 
-variable (p) in
 
+variable (p) in
 def pRootSeqInt (n : ℕ) : 𝒪 :=
   ⟨pRootSeq p n, mem_normInteger.2 (norm_pRootSeq_le n)⟩
 
 theorem pRootSeqInt_succ_pow (n : ℕ) : pRootSeqInt p (n + 1) ^ p = pRootSeqInt p n :=
   Subtype.ext (by simp [pRootSeqInt, pRootSeq_succ_pow])
 
-variable (p) in
 
+variable (p) in
 def pFlat : 𝒪♭ :=
   IsPerfectoidField.ofCompatible p (pRootSeqInt p) pRootSeqInt_succ_pow
 
@@ -83,11 +88,9 @@ theorem qBdR_mem : qBdR (p := p) ∈ 𝔪 := by
   simp only [eq_ratCast, Rat.cast_inv, Rat.cast_natCast, h]
   rw [inv_mul_cancel₀ natCast_p_ne_zero_cp, sub_self]
 
+
 variable (p) in
-
 def uBdR : 𝔹 := logOnePlus 𝔪 (qBdR (p := p)) qBdR_mem
-
-theorem uBdR_mem : uBdR p ∈ 𝔪 := logOnePlus_mem qBdR_mem
 
 variable {K : IntermediateField ℚ_[p] (PadicAlgCl p)}
 

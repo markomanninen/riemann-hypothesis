@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverOfSubsingleton
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverOfSubsingleton
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -86,7 +90,8 @@ theorem char_ext {n M : ℕ} [NeZero M] {U : Type} [CommGroup U] (f f' : (Fin n 
     refine (Finset.univ_sum_single a).symm.trans (Finset.sum_congr rfl fun i _ => ?_)
     rw [← Pi.single_smul, nsmul_one, ZMod.natCast_zmod_val]
   have : F a = F' a := by
-    rw [e, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum, map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_nsmul, map_nsmul]; exact congrArg _ (h i)
   exact this
 
@@ -317,7 +322,8 @@ theorem relation_iff {R V V' I κ : Type} [CommRing R] [AddCommGroup V] [Module 
     ∑ a ∈ F, l a • t a = 0 ↔ ∑ a ∈ F, l a • t' a = 0 := by
   have q : ∀ a, B.equiv B' (Equiv.refl _) (t a) = t' a := fun a => by
     rw [h, h', Units.smul_def, Units.smul_def, map_smul, Module.Basis.equiv_apply, Equiv.refl_apply]
-  rw [← (B.equiv B' (Equiv.refl _)).map_eq_zero_iff, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (B.equiv B' (Equiv.refl _)).map_eq_zero_iff, map_sum]
   simp only [map_smul, q]
 
 theorem exists_basis_field (hLaw : Laws) {g m r N N' : ℕ} (hN : N = m ^ 2) (hN' : N' = r * m) {K : Type} [Field K]
@@ -349,8 +355,8 @@ theorem exists_basis_field (hLaw : Laws) {g m r N N' : ℕ} (hN : N = m ^ 2) (hN
 
 end ThetaCoord
 
-open ThetaCoord in
 
+open ThetaCoord in
 theorem theta_coordinates : Laws → ∀ (g m r N N' : ℕ), N = m ^ 2 → N' = r * m →
     (∀ (S : Scheme.{0}) [IsLocallyNoetherian S] [Subsingleton S] [Nonempty S] (P : PolAV S) (hg : P.g = g)
       (ze : Γ((baseOver S).left, ⊤)ˣ) (lev : Level P (N' ^ 2) ze)

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.FirstChernCompatibleSystem
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.FirstChernCompatibleSystem
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Opposite CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.E GlobalTheory.EtC
 
@@ -20,7 +25,7 @@ theorem stAdd : CrystallineSemistableComparison.E.StAdd := by
     obtain ⟨a', rfl, ha'⟩ := hx'
     obtain ⟨h1, h2⟩ := ih (k + 1) _ _ ha ha'
     refine ⟨⟨a + a', by simp, ?_⟩, ⟨a - a', by simp, ?_⟩⟩
-    · simpa [map_add, smul_add] using h1
+    · simpa [map_add (f := _), smul_add] using h1
     · simpa [map_sub, smul_sub] using h2
 
 end GlobalTheory.CompanionTheory.StairAdd

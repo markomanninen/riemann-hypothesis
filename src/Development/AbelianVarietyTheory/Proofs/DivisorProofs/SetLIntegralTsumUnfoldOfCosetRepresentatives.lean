@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
+
+@[expose] public section
+
 open MeasureTheory Filter Topology GlobalTheory.ResLine
 open scoped ENNReal Pointwise
 

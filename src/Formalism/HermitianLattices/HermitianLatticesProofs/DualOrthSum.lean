@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.DualOrthSum
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.DualOrthSum
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,14 +44,14 @@ theorem dualOrthSum : DualOrthSum := by
       rw [mem_dual_iff_hermitian_lattices] at hxd ⊢
       intro y hy
       obtain ⟨y₁, hy₁, y₂, hy₂, rfl⟩ := Submodule.mem_sup.mp hy
-      rw [map_add, LinearMap.add_apply, h21 y₂ (hL₂ hy₂) x hxV, add_zero]
+      rw [map_add (f := _), LinearMap.add_apply, h21 y₂ (hL₂ hy₂) x hxV, add_zero]
       exact hxd y₁ hy₁
     · intro x hx
       obtain ⟨hxd, hxV⟩ := Submodule.mem_inf.mp hx
       rw [mem_dual_iff_hermitian_lattices] at hxd ⊢
       intro y hy
       obtain ⟨y₁, hy₁, y₂, hy₂, rfl⟩ := Submodule.mem_sup.mp hy
-      rw [map_add, LinearMap.add_apply, h12 y₁ (hL₁ hy₁) x hxV, zero_add]
+      rw [map_add (f := _), LinearMap.add_apply, h12 y₁ (hL₁ hy₁) x hxV, zero_add]
       exact hxd y₂ hy₂
 
 end Formalism.HermitianLatticesTheory

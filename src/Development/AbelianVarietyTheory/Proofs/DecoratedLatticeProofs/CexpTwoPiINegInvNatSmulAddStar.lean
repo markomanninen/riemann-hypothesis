@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ThetaIdentityOfMapsAll
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.KerJoinS
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.I0M
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceCharacterConductorIntegers
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransportedFiniteCharacterInverseExpTrace
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ThetaIdentityOfMapsAll
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.KerJoinS
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.I0M
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceCharacterConductorIntegers
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransportedFiniteCharacterInverseExpTrace
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.Core.Rk GlobalTheory.Core.Mi
 open scoped TensorProduct InnerProductSpace Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -51,7 +56,8 @@ theorem theta_form (v : InfinitePlace I.F) (M : Matrix (Fin I.n) (Fin I.n) (AF I
     thetaV I v (∑ i, ∑ j, inclR (AF I.F) (star (p i) * I.J i j) * (M *ᵥ fun k => inclR (AF I.F) (q k)) j) =
       hJ (I.ε v) (rv I v p) (((I.P v)⁻¹ * M.map (thetaV I v) * I.P v) *ᵥ rv I v q) := by
   rw [rv, rv, hJ_frame]
-  simp only [map_sum, map_mul, thetaV_inclR, phi_star, Matrix.mulVec, dotProduct, Matrix.map_apply, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, thetaV_inclR, phi_star, Matrix.mulVec, dotProduct, Matrix.map_apply, Pi.star_apply,
     Finset.mul_sum, mul_assoc]
 
 theorem sig_inclE (x : I.E) : Formalism.UG.sigR I.cm.sig (Formalism.MainNotions.S.Af I.F) (Formalism.UG.inclE (F := I.F) (Formalism.MainNotions.S.Af I.F) x) =
@@ -63,7 +69,8 @@ theorem sig_inclE (x : I.E) : Formalism.UG.sigR I.cm.sig (Formalism.MainNotions.
 theorem tau_form (M : Matrix (Fin I.n) (Fin I.n) (AF I.F ⊗[I.F] I.E)) (p q : Fin I.n → I.E) :
     tauF I (∑ i, ∑ j, inclR (AF I.F) (star (p i) * I.J i j) * (M *ᵥ fun k => inclR (AF I.F) (q k)) j) =
       hA I (incl I p) (M.map (tauF I) *ᵥ incl I q) := by
-  simp only [map_sum, map_mul, tauF_inclR, Matrix.mulVec, dotProduct, Matrix.map_apply, hA, Formalism.UG.hform, incl, sig_inclE]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, tauF_inclR, Matrix.mulVec, dotProduct, Matrix.map_apply, hA, Formalism.UG.hform, incl, sig_inclE]
 
 theorem trace_tmul' (a : AF I.F) (x : I.E) :
     Algebra.trace (AF I.F) (AF I.F ⊗[I.F] I.E) (a ⊗ₜ[I.F] x) = a * algebraMap I.F (AF I.F) (Algebra.trace I.F I.E x) := by
@@ -82,10 +89,10 @@ theorem evV_trace (v : InfinitePlace I.F) (y : AF I.F ⊗[I.F] I.E) :
       simp [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR]
       rfl
     rw [hs] at h1
-    rw [trace_tmul', map_mul, evV_algebraMap, ← I.φ_over, GlobalTheory.St.G.trace_cm_eq_add_star I.cm, map_add, mul_add,
+    rw [trace_tmul', map_mul, evV_algebraMap, ← I.φ_over, GlobalTheory.St.G.trace_cm_eq_add_star I.cm, map_add (f := _), mul_add,
       ← thetaV_tmul, ← thetaV_tmul, h1]
     rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, star_add]; ring
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), star_add]; ring
 
 theorem tmul_mem_int {x : I.E} (hx : IsIntegral ℤ x) {b : Formalism.MainNotions.S.Af I.F} (hb : b ∈ Formalism.UG.intAd I.F) :
     x ⊗ₜ[I.F] b ∈ IntAf I.F I.E := by
@@ -115,7 +122,7 @@ theorem fin_char (ψ : AddChar (AF I.F) ℂ)
     rw [map_zero, neg_zero, map_zero, hint 0 (zero_mem _)]
     exact hψi 0 (zero_mem _)
   | add x y hx hy =>
-    rw [map_add, neg_add, map_add, hadd, ← hx, ← hy, ← padd]
+    rw [map_add (f := _), neg_add, map_add (f := _), hadd, ← hx, ← hy, ← padd]
     rfl
   | tmul a x =>
     obtain ⟨N, s, hN0, hs⟩ := ((IsFractionRing.isAlgebraic_iff ℤ ℚ I.E).2
@@ -164,7 +171,8 @@ theorem pX_mulVec {D : D7} {V₀ : HSp D} {ρ : ℕ} (d : HypDec (D.sp.Y 0) V₀
     (d.pX *ᵥ (mt (D.sp.Y 0) n *ᵥ ratV q)) a = hN n (fun k => d.e' k a) q := by
   rw [hN, Finset.sum_comm, Matrix.mulVec, dotProduct]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [← Finset.sum_mul, ← map_sum (incA D)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.sum_mul, ← map_sum (incA D)]
   rfl
 
 theorem blockX_eq {D : D7} {V₀ : HSp D} {ρ : ℕ} (d : HypDec (D.sp.Y 0) V₀ ρ) (n : GA D (D.sp.Y 0)) (a b : Fin ρ) :
@@ -202,14 +210,14 @@ theorem simpleSum_eq (D : D7) {V₀ : HSp D} {ρ : ℕ} (d : HypDec (D.sp.Y 0) V
   · have h2 : ¬ (a.1 + 1 = ρ) := by omega
     rw [Finset.sum_eq_single (⟨a.1 + 1, h1⟩ : Fin ρ) (fun b _ hb => if_neg fun e => hb (Fin.ext e))
       (fun h => absurd (Finset.mem_univ _) h), if_pos rfl, ell, if_neg h2, zero_mul, add_zero, blockX_eq, hF, hE, hN_smul,
-      nxt, dif_pos h1]
+      nxt, dite_eq_left h1]
     congr 2
     have e : ρ - (a : ℕ) = (ρ - (a.1 + 1)) + 1 := by omega
     rw [star_inv₀, star_star, e, pow_succ]
     field_simp
   · have h2 : a.1 + 1 = ρ := by omega
     rw [Finset.sum_eq_zero (fun b _ => if_neg (by have := b.2; omega)), zero_add, ell, if_pos h2, one_mul, coefX_eq, hF, hz,
-      hN_smul, nxt, dif_neg h1]
+      hN_smul, nxt, dite_eq_right h1]
     congr 2
     have e : ρ - (a : ℕ) = 1 := by omega
     rw [star_inv₀, star_star, e, pow_one]
@@ -390,8 +398,8 @@ theorem core (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1
 end GlobalTheory.Core.TieSign
 end
 
-open GlobalTheory.Core.TieSign GlobalTheory.Core.SBesEx in
 
+open GlobalTheory.Core.TieSign GlobalTheory.Core.SBesEx in
 theorem GlobalTheory.Core.Mi.tiepsi_sign : ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (h : X.B.I = Formalism.L2.SG.InstExistsPf.instOf D) (u : D.what₂.Word) (ψ : AddChar (AF D.host.F) ℂ), IdE X → IsStdChar D ψ (-1) → ∃ lam : D.host.E, (lam = (X.B.g : D.host.E) ∨ lam = -(X.B.g : D.host.E)) ∧ ∀ t : D.host.E, t ≠ 0 → ∀ (V₀ L : HSp D) (d : HypDec (D.sp.Y 0) V₀ D.R.rS) (o : OrthDec V₀ (D.sp.X 0) L) (ζ : Fin L.rank → D.host.E), d.e = GlobalTheory.Core.SBesEx.eM X h t lam → d.e' = GlobalTheory.Core.SBesEx.e'M X h t lam → d.i₀ *ᵥ vecB o ζ = t • GlobalTheory.Core.SBesEx.cY X h (X.zu u) → ∀ n ∈ flagN d, star (psiBes ψ d 1 (vecB o ζ) n) = X.psiInfU u (iotaX X h n).1 * X.psiFinU u (iotaX X h n).2 := by
   intro D X h u ψ hE hψ
   have hg : X.B.g ≠ 0 := Formalism.L2.SG.Pf.modulus_g_ne_zero X

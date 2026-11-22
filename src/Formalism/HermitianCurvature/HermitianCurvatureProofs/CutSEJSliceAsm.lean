@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEPairAtDeriv
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEPairAtDeriv
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate
@@ -28,7 +32,7 @@ theorem hsVecR_dSl (U V : Wq →L[ℂ] Wp) :
   have hs : B.hsVec (U - V) = B.hsVec U - B.hsVec V := by
     rw [sub_eq_add_neg, hsVec_add', ← neg_one_smul ℂ V, hsVec_smul', neg_one_smul, sub_eq_add_neg]
   rw [hs]
-  simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I, Complex.add_re, Complex.ofReal_re,
+  simp only [map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_I, Complex.add_re, Complex.ofReal_re,
     Complex.mul_re, Complex.I_re, Complex.ofReal_im, Complex.I_im, Complex.add_im, Complex.mul_im]
   simp only [mul_zero, mul_one, sub_zero, zero_add, add_zero, zero_sub]
   rw [← Complex.coe_smul, ← Complex.coe_smul]
@@ -75,7 +79,7 @@ theorem four_le_seven (X : ActualOps k r z z' π π') (l : Fin r) (Ξ : RadSp k 
     4 * ∑ i, ‖hsVecR ((wd7 X l Ξ i : Fn k r (Wq →L[ℂ] Wp)) p g)‖ ^ 2 := by
   set a := fun Ψ : RadSp k r z z' π π' => hsVecR ((Ψ : Fn k r (Wq →L[ℂ] Wp)) p g) with ha
   have eA : ∀ Ψ Ψ' : RadSp k r z z' π π', a (Ψ + Ψ') = a Ψ + a Ψ' := fun Ψ Ψ' => by
-    simp only [ha, Submodule.coe_add, Pi.add_apply, map_add]
+    simp only [ha, Submodule.coe_add, Pi.add_apply, map_add (f := _)]
   have eS : ∀ Ψ Ψ' : RadSp k r z z' π π', a (Ψ - Ψ') = a Ψ - a Ψ' := fun Ψ Ψ' => by
     simp only [ha, Submodule.coe_sub, Pi.sub_apply, map_sub]
   have eI : ∀ Ψ : RadSp k r z z' π π', ‖a (Complex.I • Ψ)‖ = ‖a Ψ‖ := fun Ψ => by

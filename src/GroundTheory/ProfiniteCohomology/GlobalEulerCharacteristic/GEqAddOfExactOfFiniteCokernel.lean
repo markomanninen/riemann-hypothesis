@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.UnitsDefs
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.ModNEquivOfSurjectiveApplyModNRep
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnits
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.UnitsDefs
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.ModNEquivOfSurjectiveApplyModNRep
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnits
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -177,7 +182,7 @@ theorem exists_logLatticeProd_real_equiv :
     | tmul r x =>
       rw [LinearMap.baseChange_tmul, LinearMap.liftBaseChange_tmul, LinearMap.liftBaseChange_tmul,
         map_smul, logLatticeProdMap_comm]
-    | add y z hy hz => rw [map_add, map_add, hy, hz, map_add, map_add]
+    | add y z hy hz => rw [map_add (f := _), map_add (f := _), hy, hz, map_add (f := _), map_add (f := _)]
   refine ⟨e, fun g y ↦ ?_⟩
   apply P.injective
   simp only [e, LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply]
@@ -217,7 +222,7 @@ theorem g_logLattice_add_one :
     intro x y h
     rw [hψ, hψ] at h
     have h' := hφi h
-    exact _root_.Prod.ext (Prod.mk.inj h').1 (ULift.ext _ _ (Prod.mk.inj h').2)
+    exact _root_.Prod.ext (Prod.mk.inj h').1 (ULift.ext (Prod.mk.inj h').2)
   have hψγ : ∀ (γ : L ≃ₐ[K] L) x, ψ (γ • x) = γ • ψ x := by
     intro γ x
     change φ (logLatticeRep K L γ x.1, x.2.down) =

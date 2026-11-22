@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ lemma inner_h {b : Module.Basis ι ℂ V} (hb : Orthonormal ℂ b) (f : V →ₗ
     (hy : (b.repr y).support ⊆ T) :
     inner ℂ (∑ j ∈ T, starRingEnd ℂ (f (b j)) • b j) y = f y := by
   rw [sum_inner]
-  conv_rhs => rw [repr_sum (b := b) T y hy, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [repr_sum (b := b) T y hy, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [inner_smul_left, inner_basis hb, map_smul, smul_eq_mul, starRingEnd_self_apply, mul_comm]
 
@@ -36,7 +41,8 @@ lemma inner_fc {b : Module.Basis ι ℂ V} (hb : Orthonormal ℂ b) (μ : ι →
   have hyU : (b.repr y).support ⊆ (b.repr y).support ∪ S := Finset.subset_union_left
   have hfc : fc b μ φ y = ∑ j ∈ (b.repr y).support ∪ S, b.repr y j • ((φ (μ j) : ℂ) • b j) := by
     conv_lhs => rw [repr_sum (b := b) _ y hyU]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, fc, Module.Basis.constr_basis]
   have key : ∀ j, inner ℂ y (b.repr y j • ((φ (μ j) : ℂ) • b j)) = ((φ (μ j) * ‖b.repr y j‖ ^ 2 : ℝ) : ℂ) := by
@@ -54,7 +60,8 @@ lemma inner_fc {b : Module.Basis ι ℂ V} (hb : Orthonormal ℂ b) (μ : ι →
 
 lemma beta_sum {E : Fin n → Fin n → Module.End ℂ V} (A : Module.End ℂ V) {κ : Type} (s : Finset κ) (v : κ → V) :
     beta ε E A (∑ k ∈ s, v k) (∑ k ∈ s, v k) = ∑ l ∈ s, ∑ k ∈ s, beta ε E A (v k) (v l) := by
-  simp only [beta, map_sum, sum_inner, inner_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [beta, map_sum, sum_inner, inner_sum]
   rw [Finset.sum_comm]
   refine sum_congr rfl fun _ _ => ?_
   rw [Finset.sum_comm]
@@ -63,7 +70,8 @@ lemma eig_sum {E : Fin n → Fin n → Module.End ℂ V} {b : Module.Basis ι �
     (heig : ∀ i, Eig ε E (μ i) (b i)) (s : Finset ι) (c : ι → ℂ) (ν : ℝ) (hs : ∀ j ∈ s, μ j = ν) :
     Eig ε E ν (∑ j ∈ s, c j • b j) := by
   unfold Eig
-  rw [map_sum, smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, smul_sum]
   refine sum_congr rfl fun j hj => ?_
   rw [map_smul, show casimirK ε E (b j) = _ from heig j, hs j hj, smul_comm]
 

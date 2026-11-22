@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDS
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothBr
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDS
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothBr
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,9 +29,8 @@ theorem Jm_conjTranspose (ε : Fin n → Bool) : (Jm ε)ᴴ = Jm ε := by
     | (unfold Jm
        rw [Matrix.diagonal_conjTranspose]
        congr 1
-       funext a
-       simp only [Pi.star_apply]
-       split_ifs <;> simp)
+       funext i
+       by_cases h : ε i = true <;> simp [h])
     | (ext i j
        by_cases h : i = j <;> by_cases hε : ε i <;> simp [Jm, Matrix.diagonal_apply, h, hε])
 
@@ -179,8 +182,8 @@ section Op
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {ε : Fin n → Bool}
   {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)}
 
-variable (ε σ) in
 
+variable (ε σ) in
 def smSub : Submodule ℂ H where
   carrier := {v | IsSmoothVecU ε σ v}
   add_mem' hv hw := IsSmoothVecU.add hv hw
@@ -196,8 +199,8 @@ def dSlin (hσ : IsURepOn (UJset ε) σ) (X : Matrix (Fin n) (Fin n) ℂ) (hX : 
   map_add' v w := Subtype.ext (dS_add_vec hσ hX v.2 w.2)
   map_smul' c v := Subtype.ext (dS_smul_vec (σ := σ) c X (v : H))
 
-open Classical in
 
+open Classical in
 def Tm (hσ : IsURepOn (UJset ε) σ) (X : Matrix (Fin n) (Fin n) ℂ) : Module.End ℂ (smSub ε σ) :=
   if h : inG ε X then dSlin hσ X h else 0
 
@@ -367,7 +370,8 @@ theorem actM_EcL (hσ : IsURepOn (UJset ε) σ) (X : Matrix (Fin n) (Fin n) ℂ)
     simp
   unfold actM
   conv_rhs => rw [hX]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
 
 end Ec
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -30,7 +34,7 @@ theorem inj_of_isPushout {A B F G : Type} [CommRing A] [CommRing B] [CommRing F]
   haveI : Module.Flat A F := hf
   have hP : Algebra.IsPushout A F B G := (CommRingCat.isPushout_iff_isPushout).1 sq
   have hP' : Algebra.IsPushout A B F G := hP.symm
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have e1 : Algebra.IsPushout.equiv A B F G ((1 : B) ⊗ₜ x) = 0 := by
     rw [Algebra.IsPushout.equiv_tmul]; simpa [RingHom.algebraMap_toAlgebra] using hx
@@ -70,7 +74,7 @@ theorem ideal_mul_of_isPushout {A B F G : Type} [CommRing A] [CommRing B] [CommR
       intro b
       obtain ⟨y1, hy1, e1⟩ := hz b
       obtain ⟨y2, hy2, e2⟩ := hw' b
-      exact ⟨y1 + y2, Ideal.add_mem _ hy1 hy2, by rw [map_add, e1, e2, map_add, add_mul]⟩
+      exact ⟨y1 + y2, Ideal.add_mem _ hy1 hy2, by rw [map_add (f := _), e1, e2, map_add (f := _), add_mul]⟩
     | smul m z _ hz =>
       intro b
       obtain ⟨y1, hy1, e1⟩ := hz b
@@ -87,7 +91,6 @@ theorem ideal_mul_of_isPushout {A B F G : Type} [CommRing A] [CommRing B] [CommR
   have hP' : Algebra.IsPushout A B F G := hP.symm
   intro x hx r
   induction r using hP'.out.inductionOn with
-  | zero => exact ⟨0, Ideal.zero_mem _, by simp⟩
   | tmul m =>
     refine ⟨x * m, Ideal.mul_mem_right _ _ hx, ?_⟩
     rw [map_mul]; rfl
@@ -99,7 +102,7 @@ theorem ideal_mul_of_isPushout {A B F G : Type} [CommRing A] [CommRing B] [CommR
   | add n1 n2 h1 h2 =>
     obtain ⟨y1, hy1, e1⟩ := h1
     obtain ⟨y2, hy2, e2⟩ := h2
-    exact ⟨y1 + y2, Ideal.add_mem _ hy1 hy2, by rw [map_add, e1, e2, mul_add]⟩
+    exact ⟨y1 + y2, Ideal.add_mem _ hy1 hy2, by rw [map_add (f := _), e1, e2, mul_add]⟩
 
 theorem ker_le_of_isPushout {A Q F G : Type} [CommRing A] [CommRing Q] [CommRing F] [CommRing G]
     (f : A →+* F) (q : A →+* Q) (h : F →+* G) (k : Q →+* G)

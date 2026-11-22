@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -37,7 +41,7 @@ theorem exists_isLocalHom_adicCompletion_extend (O : Type) [CommRing O] [IsLocal
     simp only [f, RingHom.comp_apply, RingHom.coe_coe, AlgHom.commutes]
     exact Ideal.quotientMap_mk
   refine ⟨IsAdicComplete.liftRingHom (maximalIdeal V) f hf, ?_, hev⟩
-  apply ((IsLocalRing.local_hom_TFAE _).out 0 2).mpr
+  apply ((IsLocalRing.local_hom_tfae _).out 1 3).mpr
   rw [AdicCompletion.maximalIdeal_eq_map, Ideal.map_map, Ideal.map_le_iff_le_comap]
   intro a ha
   rw [Ideal.mem_comap, RingHom.comp_apply, hev]

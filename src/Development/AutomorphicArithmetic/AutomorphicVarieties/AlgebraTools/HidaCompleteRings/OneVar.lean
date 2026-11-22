@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.Weier
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.Weier
+
+@[expose] public section
+
 open IsLocalRing
 
 theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.oneVar :

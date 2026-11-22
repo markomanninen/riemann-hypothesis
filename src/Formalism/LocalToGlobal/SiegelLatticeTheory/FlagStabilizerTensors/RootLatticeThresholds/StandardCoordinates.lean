@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotientSpan
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotientSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ variable {D : D7} {X : HidaSetting D} (v : InfinitePlace X.B.I.F) {lam : ℂ} (h
   {Q : Matrix (Fin X.B.I.n) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ} {Qi : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin X.B.I.n) ℂ}
   (hT : IsTranspC X v lam D.R.k D.R.rS Q Qi) (u' : D.what₂.Word)
 
-include hT in
 
+include hT in
 theorem fam_eq (hl : lam ≠ 0) (b : Fin (D.R.rS + 1)) :
     Formalism.L2.SG.RealObj.frm X u' 1 v b =
       (lam ^ (D.R.rS - b.val))⁻¹ • (Q *ᵥ Formalism.QuantumDeterminants.fvec D.R.k D.R.rS (Qi *ᵥ rv X.B.I v (X.zR u')) b) := by
@@ -23,7 +27,7 @@ theorem fam_eq (hl : lam ≠ 0) (b : Fin (D.R.rS + 1)) :
   refine Fin.lastCases ?_ (fun c => ?_) b
   · rw [Fin.snoc_last]
     unfold Formalism.QuantumDeterminants.fvec
-    rw [dif_neg (by simp), Matrix.mulVec_mulVec, hT.2.1, Matrix.one_mulVec, Fin.val_last, Nat.sub_self, pow_zero,
+    rw [dite_eq_right (by simp), Matrix.mulVec_mulVec, hT.2.1, Matrix.one_mulVec, Fin.val_last, Nat.sub_self, pow_zero,
       inv_one, one_smul]
   · rw [Fin.snoc_castSucc]
     have h1 := (hT.2.2.2 c c rfl).1
@@ -31,8 +35,8 @@ theorem fam_eq (hl : lam ≠ 0) (b : Fin (D.R.rS + 1)) :
     simp only [Fin.coe_castSucc, Fin.is_lt, dif_pos, Fin.eta]
     rw [h1, smul_smul, inv_mul_cancel₀ (pow_ne_zero _ hl), one_smul]
 
-include hT hl in
 
+include hT hl in
 theorem stCoordV_gen (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (y : Formalism.REAL.UJ (X.B.I.ε v))
     (p : Formalism.L2.SG.RealObj.FreeE w) :
     Formalism.L2.SG.NGPin.stCoordV X u' w γ v y p =
@@ -75,8 +79,8 @@ theorem stCoordV_gen (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (y : Fo
   rw [mul_pow, mul_pow]
   field_simp
 
-include hT hl in
 
+include hT hl in
 theorem coord_conj (M H : Matrix (Fin X.B.I.n) (Fin X.B.I.n) ℂ)
     (hHU : Hᴴ * Formalism.REAL.Jm (X.B.I.ε v) * H = Formalism.REAL.Jm (X.B.I.ε v)) (hHu : IsUnit H.det)
     (he : ∀ b, H *ᵥ rv X.B.I v (X.eR b) = rv X.B.I v (X.eR b)) (hz : H *ᵥ rv X.B.I v (X.zR u') = rv X.B.I v (X.zR u'))

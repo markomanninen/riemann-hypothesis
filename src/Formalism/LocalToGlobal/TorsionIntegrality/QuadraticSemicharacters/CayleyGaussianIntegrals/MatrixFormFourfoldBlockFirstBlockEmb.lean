@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.LineTransport
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.ProductThetaMem
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.LocalComponentGL
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.LineTransport
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.ProductThetaMem
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.LocalComponentGL
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -82,7 +86,7 @@ theorem restrict_mem (h : Matrix n n ℂ) (Λ : AddSubgroup (n → ℂ)) (α : (
   · intro x hx v
     have h1 := hP.2 (emb0 x) (firstBlockEmb_mem_fourfoldLattice Λ hx) (z₁ + emb0 v)
     simp only [opU, prod_blockSlice_firstBlockEmb α hα0, matrixForm_fourfoldBlock_firstBlockEmb, slice_add, hz₁, zero_add] at h1 ⊢
-    rw [blockSlice_firstBlockEmb, if_pos rfl, blockSlice_firstBlockEmb, if_pos rfl, add_assoc, ← map_add] at h1
+    rw [blockSlice_firstBlockEmb, if_pos rfl, blockSlice_firstBlockEmb, if_pos rfl, add_assoc, ← map_add (f := _)] at h1
     exact h1
 
 end Blocks
@@ -206,7 +210,7 @@ theorem quadMultiplierSemicharacter : AlphaQSemi := by
     obtain ⟨t, rfl⟩ := hb
     refine ⟨k - (t + 1) * e, ?_⟩
     have hs := re_swap H hH x y
-    simp only [qOf, map_add, LinearMap.add_apply, Complex.add_re]
+    simp only [qOf, map_add (f := _), LinearMap.add_apply, Complex.add_re]
     rw [hs, he]
     push_cast at hk ⊢
     linarith

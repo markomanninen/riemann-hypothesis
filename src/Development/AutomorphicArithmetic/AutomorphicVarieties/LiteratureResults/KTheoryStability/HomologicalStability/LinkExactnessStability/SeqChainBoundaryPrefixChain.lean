@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+
+@[expose] public section
 
 open GlobalTheory.SeqCx Matrix
 
@@ -14,8 +18,8 @@ theorem bd_single_append (V : Type) (τ w : List V) :
     bd V (Finsupp.single (τ ++ w) 1) =
       Finsupp.mapDomain (fun σ => σ ++ w) (bd V (Finsupp.single τ 1)) +
       (-1 : ℤ) ^ τ.length • Finsupp.mapDomain (fun w => τ ++ w) (bd V (Finsupp.single w 1)) := by
-  rw [bd_single_eq_sum_neg_one_pow_eraseIdx, bd_single_eq_sum_neg_one_pow_eraseIdx, bd_single_eq_sum_neg_one_pow_eraseIdx, List.length_append, Finset.sum_range_add,
-    Finsupp.mapDomain_finset_sum, Finsupp.mapDomain_finset_sum, Finset.smul_sum]
+  simp only [bd_single_eq_sum_neg_one_pow_eraseIdx, Finsupp.mapDomain_finsetSum, Finset.smul_sum]
+  rw [List.length_append, Finset.sum_range_add]
   congr 1
   · refine Finset.sum_congr rfl fun i hi => ?_
     rw [Finset.mem_range] at hi
@@ -30,7 +34,7 @@ theorem bd_mapDomain_prepend : ∀ (V : Type) (τ : List V) (c : List V →₀ �
   induction c using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    rw [Finsupp.mapDomain_add, map_add, hf, hg, map_add, Finsupp.mapDomain_add, smul_add,
+    rw [Finsupp.mapDomain_add, map_add (f := _), hf, hg, map_add (f := _), Finsupp.mapDomain_add, smul_add,
       Finsupp.sum_add_index' (by intro; simp) (by intros; simp [add_smul])]
     abel
   | single w a =>

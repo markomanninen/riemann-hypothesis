@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.RefLinked
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreeWeightFormula
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PolarizationPolynomialCoeffBoundStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreeLinearFunctionalsStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RealTowerGeometricAgreementStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.RefLinked
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreeWeightFormula
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PolarizationPolynomialCoeffBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreeLinearFunctionalsStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RealTowerGeometricAgreementStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,10 +22,16 @@ namespace RealProp
 theorem map_monomial_eq_zero {J : Type} [Fintype J] [DecidableEq J] (d : ℕ) (Φ : MvPolynomial J ℝ →ₗ[ℝ] ℝ)
     (h : ∀ c : J → ℝ, Φ ((-∑ x, C (c x) * X x) ^ d) = 0) (m : J →₀ ℕ) (hm : m.degree = d) :
     Φ (monomial m 1) = 0 := by
-  obtain ⟨Pl, -, hev, hco, -⟩ := GlobalTheory.T.polarization_polynomial_coeff_bound J d Φ
+  obtain ⟨Pl, -, hev, hco, -⟩ : ∃ Pl : MvPolynomial J ℝ,
+      Pl.IsHomogeneous d ∧
+      (∀ c : J → ℝ, eval c Pl = Φ ((-∑ x, C (c x) * X x) ^ d)) ∧
+      (∀ m : J →₀ ℕ, m.degree = d → AddMonoidAlgebra.coeff Pl m =
+        (-1) ^ d * (m.multinomial : ℝ) * Φ (monomial m 1)) ∧
+      (∀ m : J →₀ ℕ, m.degree = d → |Φ (monomial m 1)| ≤ |Pl.coeff m|) :=
+    GlobalTheory.T.polarization_polynomial_coeff_bound J d Φ
   have hP : Pl = 0 := MvPolynomial.funext fun c => by rw [hev c, h c, map_zero]
   have h0 := hco m hm
-  rw [hP, coeff_zero] at h0
+  simp only [hP, AddMonoidAlgebra.coeff_zero] at h0
   have hmul : ((m.multinomial : ℕ) : ℝ) ≠ 0 := by
     exact_mod_cast (Nat.multinomial_pos _ _).ne'
   have hpow : ((-1 : ℝ) ^ d) ≠ 0 := pow_ne_zero _ (by norm_num)
@@ -32,12 +42,13 @@ theorem eval_toWt {Ψ : Type} {N : ℕ} (lam : Ψ × Fin N → ℝ) (P : MvPolyn
   unfold PB.toWt
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n hp => simp only [map_mul, hp, aeval_X, eval_X, PB.gap]
 
 theorem eval_degPoly_comap_some {e : ℕ} {σ : Type} [Fintype σ] (S : PB.AnSys e (Option σ)) (c : σ → ℝ) :
     eval c (S.comap some).degPoly = eval (fun o : Option σ => o.elim 0 c) S.degPoly := by
-  simp only [PB.AnSys.degPoly, PB.formPoly, map_sum, map_mul, map_prod, eval_C, eval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PB.AnSys.degPoly, PB.formPoly, map_sum, map_mul, map_prod, eval_C, eval_X]
   refine Fintype.sum_of_injective (fun w j => some (w j)) ?_ _ _ ?_ ?_
   · intro w w' hw
     funext j
@@ -97,7 +108,7 @@ theorem degree_mapDomain_some {J : Type} (m : J →₀ ℕ) : (m.mapDomain some)
   show ∑ i ∈ (m.mapDomain some).support, (m.mapDomain some) i = ∑ i ∈ m.support, m i
   rw [Finsupp.mapDomain_support_of_injective (Option.some_injective _), Finset.sum_image
     (fun x _ y _ hxy => Option.some_injective _ hxy)]
-  exact Finset.sum_congr rfl fun x _ => Finsupp.mapDomain_apply (Option.some_injective _) m x
+  exact Finset.sum_congr rfl fun x _ => Finsupp.mapDomain_apply_of_injective (Option.some_injective _) m x
 
 theorem geoFun_monomial {Ψ : Type} [Fintype Ψ] {N : ℕ} (M : RootModel Ψ N) (m : Option (Ψ × Fin N) →₀ ℕ) :
     M.geoFun (monomial m 1) = M.geoMono m := by
@@ -111,7 +122,8 @@ theorem geoFun_monomial_of_ne {Ψ : Type} [Fintype Ψ] {N : ℕ} (M : RootModel 
 
 theorem neg_sum_eq_linA {Ψ : Type} [Fintype Ψ] {N : ℕ} (a : Option (Ψ × Fin N) → ℝ) :
     (-∑ x, C (a x) * X x : RPA Ψ N) = linA (fun τ i => a (some (τ, i))) (-a none) := by
-  simp only [linA, toA, linRoot, Fintype.sum_option, map_neg, map_sum, map_mul, rename_C, rename_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [linA, toA, linRoot, Fintype.sum_option, map_neg, map_sum, map_mul, rename_C, rename_X]
   ring
 
 theorem dimFl_eq_antisymDegree (Ψ : Type) [Fintype Ψ] (N : ℕ) : dimFl Ψ N = antisymDegree Ψ N := by
@@ -148,8 +160,8 @@ theorem exists_geoFun_eq (hProp : PB.Proportional) (hI : PB.Inputs) (II : Inters
 
 end RealProp
 
-open RealProp in
 
+open RealProp in
 theorem rootTower_proportional_of_unif : PB.Proportional → PB.Inputs → ∀ II : IntersectionSystem,
     IsFullIntersectionSystem II → ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) [Nonempty Ψ] (T : RootTower Ψ N)
     (R : RealTower T), R.Unif → T.Proportional := by

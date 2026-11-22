@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SupWOfSup
-import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ThresholdProductsBounded
-import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsPlaceWithVectors
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliParamMemIntAddHalf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CapParamOfIsHCTypeW
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsType
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PlExists
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNormalisedLocalBesselDatumStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SupWOfSup
+public import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ThresholdProductsBounded
+public import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsPlaceWithVectors
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliParamMemIntAddHalf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CapParamOfIsHCTypeW
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsType
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PlExists
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNormalisedLocalBesselDatumStatement
+
+@[expose] public section
 
 open BpJoin Formalism.FourierDecayAlt Formalism.MainNotions.S Formalism.MainNotions.S.ThB Formalism.BasicNotions Formalism.QuantumDeterminants GlobalTheory.ThA
 

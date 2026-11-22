@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DerRingInjective
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelBaseChangeMapStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DerRingInjective
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelBaseChangeMapStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -174,17 +178,17 @@ theorem extForm_apply (hβ : IsBaseChange B β) (f : Module.Dual R L) (y : L) :
 
 theorem expand (hβ : IsBaseChange B β) (he : ∀ y, ∑ k, w k y • e k = y) (l : L') :
     l = ∑ k, extForm hβ (w k) l • β (e k) := by
-  refine hβ.inductionOn l (fun l => l = ∑ k, extForm hβ (w k) l • β (e k)) ?_ ?_ ?_ ?_
-  · simp
+  refine hβ.inductionOn l ?_ ?_ ?_
   · intro y
     simp only [extForm_apply, algebraMap_smul]
     conv_lhs => rw [← he y]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   · intro s n h
     simp only [map_smul, smul_eq_mul, mul_smul, ← Finset.smul_sum]
     rw [← h]
   · intro a b ha hb
-    simp only [map_add, add_smul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), add_smul, Finset.sum_add_distrib]
     rw [← ha, ← hb]
 
 theorem dual_expand (he : ∀ y, ∑ k, w k y • e k = y) (f : Module.Dual R L) : ∑ k, f (e k) • w k = f := by
@@ -216,7 +220,8 @@ theorem resum (he : ∀ y, ∑ k, w k y • e k = y) (q : J → V) :
       (TrivSqZeroExt.inr (q j) : TrivSqZeroExt R V) • β (e j) := by
     intro j
     conv_rhs => rw [← he (e j)]
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, TrivSqZeroExt.inr_smul, smul_assoc, smul_comm]
   simp only [inr_sum, Finset.sum_smul]
@@ -229,7 +234,8 @@ theorem extForm_inr (hβ : IsBaseChange (TrivSqZeroExt R V) β) (he : ∀ y, ∑
       TrivSqZeroExt.inr (φ f) := by
   rw [extForm_sum]
   conv_rhs => rw [← dual_expand he f]
-  rw [map_sum, inr_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, inr_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, TrivSqZeroExt.inr_smul, Algebra.smul_def, mul_comm]
 
@@ -239,7 +245,8 @@ theorem fst_extForm (hβ : IsBaseChange (TrivSqZeroExt R V) β) (he : ∀ y, ∑
   rw [extForm_sum] at h₁
   have h₂ := congrArg TrivSqZeroExt.fst h₁
   have h₃ := congrArg (w k) h
-  simp only [map_sum, map_smul, map_zero, smul_eq_mul] at h₃
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_zero, smul_eq_mul] at h₃
   rw [h₂, ← h₃]
   simp [TrivSqZeroExt.algebraMap_eq_inl, TrivSqZeroExt.fst_sum]
 
@@ -313,7 +320,7 @@ variable {L' : Type} [AddCommGroup L'] [Module (TrivSqZeroExt R V) L'] [Module R
 
 theorem cMor_pt (M : LieModel G x L) (M' : LieModel G (xB x V) L')
     (hj : ∀ y, (M'.pt (β y)).left =
-      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
+      Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
     (q : V) (y : L) :
     cMor x V ≫ hom x (LinearMap.toSpanSingleton R V q) ≫ M.pt y =
       M'.pt ((TrivSqZeroExt.inr q : TrivSqZeroExt R V) • β y) := by
@@ -322,7 +329,7 @@ theorem cMor_pt (M : LieModel G x L) (M' : LieModel G (xB x V) L')
 
 theorem dMor_pt (M : LieModel G x L) (M' : LieModel G (xB x V) L')
     (hj : ∀ y, (M'.pt (β y)).left =
-      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
+      Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
     (b : TrivSqZeroExt R V) (y : L) :
     dMor x V ≫ M'.pt (b • β y) = M.pt (b.fst • y) := by
   ext1
@@ -332,7 +339,7 @@ theorem dMor_pt (M : LieModel G x L) (M' : LieModel G (xB x V) L')
 
 theorem cMor_hom_univ (M : LieModel G x L) (M' : LieModel G (xB x V) L')
     (hj : ∀ y, (M'.pt (β y)).left =
-      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
+      Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
     (e : J → L) (w : J → Module.Dual R L) (φ : Module.Dual R L →ₗ[R] V) :
     cMor x V ≫ hom x φ ≫ univ M e w =
       M'.pt (∑ k, (TrivSqZeroExt.inr (φ (w k)) : TrivSqZeroExt R V) • β (e k)) := by
@@ -355,7 +362,7 @@ theorem hom_zero_tan {v : ob x V ⟶ G} (hv : zsec x ≫ v = 1) : hom x (0 : V �
 
 theorem exists_form (M : LieModel G x L) (M' : LieModel G (xB x V) L')
     (hj : ∀ y, (M'.pt (β y)).left =
-      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
+      Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
     (hβ : IsBaseChange (TrivSqZeroExt R V) β) {e : J → L} {w : J → Module.Dual R L}
     (he : ∀ y, ∑ k, w k y • e k = y) {v : ob x V ⟶ G} (hv : zsec x ≫ v = 1) :
     ∃ φ : Module.Dual R L →ₗ[R] V, hom x φ ≫ univ M e w = v := by
@@ -383,7 +390,7 @@ theorem exists_form (M : LieModel G x L) (M' : LieModel G (xB x V) L')
 
 theorem form_unique (M : LieModel G x L) (M' : LieModel G (xB x V) L')
     (hj : ∀ y, (M'.pt (β y)).left =
-      Spec.map (CommRingCat.ofHom (dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
+      Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap R (TrivSqZeroExt R V)))) ≫ (M.pt y).left)
     (hβ : IsBaseChange (TrivSqZeroExt R V) β) {e : J → L} {w : J → Module.Dual R L}
     (he : ∀ y, ∑ k, w k y • e k = y) {φ φ' : Module.Dual R L →ₗ[R] V}
     (h : hom x φ ≫ univ M e w = hom x φ' ≫ univ M e w) : φ = φ' := by
@@ -412,7 +419,8 @@ theorem tangent_universal (S : Scheme.{0}) (G : Over S) [GrpObj G] [IsCommMonObj
     have h := LinearMap.congr_fun hfg y
     simp only [LinearMap.comp_apply, LinearMap.id_apply] at h
     conv_rhs => rw [← h, ← Finset.univ_sum_single (g y)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     have : Pi.single k (g y k) = g y k • (Pi.single k 1 : Fin n → R) := by
       rw [← Pi.single_smul, smul_eq_mul, _root_.mul_one]

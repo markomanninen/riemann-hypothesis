@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Counterexamples.TwistSurvey.ConjModelCast
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.DSLowK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Counterexamples.TwistSurvey.ConjModelCast
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.DSLowK
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
@@ -9,8 +13,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.HolDict
 
-open Formalism.L2.NTheta in
 
+open Formalism.L2.NTheta in
 theorem lamAt_strictAnti {R : Ranks} (h : HCParam R) {n : ℕ} (hn : n = R.r) :
     StrictAnti fun a : Fin n => lamAt h a := by
   intro a b hab
@@ -24,8 +28,8 @@ theorem lamAt_strictAnti {R : Ranks} (h : HCParam R) {n : ℕ} (hn : n = R.r) :
   show lamAt h b < lamAt h a
   linarith
 
-open Formalism.L2.NTheta in
 
+open Formalism.L2.NTheta in
 theorem holPar_kapW_eq {R : Ranks} (h : HCParam R) {n p q : ℕ} (hn : n = R.r) (hpq : p + q = n) :
     holPar p q (kapW h p q) = Finset.univ.image fun a : Fin n => (lamAt h a, decide ((a : ℕ) < p)) := by
   have ho : Odd (p + q) := by rw [hpq, hn]; exact odd_r R
@@ -41,8 +45,8 @@ theorem holPar_kapW_eq {R : Ranks} (h : HCParam R) {n p q : ℕ} (hn : n = R.r) 
     · refine ⟨Sum.inr ⟨a - p, by have := a.2; omega⟩, ?_⟩
       simp [ha, show p + ((a : ℕ) - p) = a by omega]
 
-open Formalism.L2.NTheta in
 
+open Formalism.L2.NTheta in
 theorem isEnum_holPar_kapW {R : Ranks} (h : HCParam R) {n p q : ℕ} (hn : n = R.r) (hpq : p + q = n)
     {lam : Fin n → ℝ} {ε : Fin n → Bool} (he : IsEnum (holPar p q (kapW h p q)) lam ε) (a : Fin n) :
     lam a = (lamAt h a : ℝ) ∧ ε a = decide ((a : ℕ) < p) := by

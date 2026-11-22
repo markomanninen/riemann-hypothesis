@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultilinearSumEqOfProdFunEqStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedKernelOfVectorAddStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedKernelOfVectorSmulStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearMapChainCompositeUpdateAddStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearMapChainCompositeUpdateSmulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultilinearSumEqOfProdFunEqStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedKernelOfVectorAddStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedKernelOfVectorSmulStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearMapChainCompositeUpdateAddStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearMapChainCompositeUpdateSmulStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.TopZeroInv
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -16,13 +21,45 @@ namespace GlobalTheory.TopZeroInv
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T}
 
-variable (W) in
 
+variable (W) in
 def thetaSub (p : Pair T) : Submodule ℂ (WO (G.pS p) (G.pT p) → ℂ) where
   carrier := {f | IsThetaFunO W.ψ _ _ f}
-  add_mem' := GlobalTheory.OrientedHeis.theta_add
-  zero_mem' := GlobalTheory.OrientedHeis.theta_zero
-  smul_mem' c _ hf := GlobalTheory.OrientedHeis.theta_smul c hf
+  add_mem' := by
+    intro f g hf hg
+    change IsThetaFunO W.ψ _ _ f at hf
+    change IsThetaFunO W.ψ _ _ g at hg
+    refine ⟨?_, ?_, hf.cont.add hg.cont, fun k L hL hfin w =>
+      (hf.smooth k L hL hfin w).add (hg.smooth k L hL hfin w)⟩
+    · intro γ w
+      simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+    · obtain ⟨A, hA, hAf⟩ := hf.level
+      obtain ⟨B, hB, hBg⟩ := hg.level
+      refine ⟨A ⊓ B, hA.inter hB, fun u hu hfin => ?_⟩
+      funext w
+      have ef := congrFun (hAf u hu.1 hfin) w
+      have eg := congrFun (hBg u hu.2 hfin) w
+      unfold heisO at ef eg ⊢
+      rw [Pi.add_apply, Pi.add_apply, mul_add, ef, eg]
+  zero_mem' := by
+    refine ⟨?_, ⟨⊤, isOpen_univ, ?_⟩, continuous_const, fun _ _ _ _ _ => contDiff_const⟩
+    · intro γ w
+      simp only [Pi.zero_apply, mul_zero]
+    · intro u _ _
+      funext w
+      simp only [heisO, Pi.zero_apply, mul_zero]
+  smul_mem' c f hf := by
+    change IsThetaFunO W.ψ _ _ f at hf
+    refine ⟨?_, ?_, hf.cont.const_smul c, fun k L hL hfin w =>
+      (hf.smooth k L hL hfin w).const_smul c⟩
+    · intro γ w
+      rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    · obtain ⟨A, hA, hAf⟩ := hf.level
+      refine ⟨A, hA, fun u hu hfin => ?_⟩
+      funext w
+      have ef := congrFun (hAf u hu hfin) w
+      unfold heisO at ef ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, ef]
 
 theorem colV_congr (S : GridChoice W U) {t : T} {fs fs' : Vecs G t} (h : ∀ j, fs (.inl j) = fs' (.inl j))
     (x : ∀ j, FinPt G (.top j)) : colV S fs x = colV S fs' x := by
@@ -136,7 +173,7 @@ theorem pairVec_apply (S : GridChoice W U) {t : T} (x : ∀ j, FinPt G (.top j))
 
 def pairML (S : GridChoice W U) {t : T} (x : ∀ j, FinPt G (.top j)) (y : ∀ i, FinPt G (.grid i D.R.m))
     (v : VV ℂ (wt G (.top 0))) (w : VV ℂ (listedWt G (.grid 0 D.R.m))) :
-    MultilinearMap ℂ (fun l : Arr D => thetaSub W (arrP t l)) ℂ where
+    (∀ l : Arr D, thetaSub W (arrP t l)) →ₘₗ[ℂ] ℂ where
   toFun fs := pairVec S (t := t) x y (fun l => ((fs l : thetaSub W (arrP t l)) : WO (G.pS (arrP t l)) (G.pT (arrP t l)) → ℂ)) v w
   map_update_add' := by
     intro inst m i a b
@@ -156,7 +193,7 @@ def pairML (S : GridChoice W U) {t : T} (x : ∀ j, FinPt G (.top j)) (y : ∀ i
   map_update_smul' := by
     intro inst m i c a
     obtain rfl : inst = (by clear inst; infer_instance : DecidableEq (Arr D)) := Subsingleton.elim _ _
-    simp only [coe_update, Submodule.coe_smul]
+    simp only [coe_update, Submodule.coe_smul, RingHom.id_apply]
     rcases i with j₀ | i₀
     · have hr : ∀ F, rowV S (Function.update (fun l => (m l : WO (G.pS (arrP t l)) (G.pT (arrP t l)) → ℂ)) (.inl j₀) F) y =
           rowV S (fun l => (m l : WO (G.pS (arrP t l)) (G.pT (arrP t l)) → ℂ)) y := fun F =>

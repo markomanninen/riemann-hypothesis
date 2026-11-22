@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.FactorizationFactorialLe
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.FactorizationFactorialLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -99,7 +104,8 @@ theorem IsAdicSum.map {S : Type*} [CommRing S] {J : Ideal S} (f : R →+* S) (hf
     {a : ℕ → R} {s : R} (hs : IsAdicSum I a s) : IsAdicSum J (fun n => f (a n)) (f s) := fun k => by
   obtain ⟨N, hN⟩ := hs k
   refine ⟨N, fun M hM => ?_⟩
-  rw [← map_sum, ← map_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← map_sub]
   exact (Ideal.pow_right_mono hf k).trans (Ideal.le_comap_pow f k) (hN M hM)
 
 theorem IsAdicSum.mem {J : Ideal R} {k : ℕ} (hJ : I ^ k ≤ J) {a : ℕ → R} {s : R}
@@ -112,23 +118,23 @@ end AdicSum
 
 namespace ACris
 
-section Log
-
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
 
 local notation "𝒪" => normInteger K
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "θ" => fontaineTheta (normInteger K) p
+local notation "𝒪♭" => PreTilt 𝒪 p
 local notation "𝔸" => Localization.Away (p : AInf K p)
-local notation "φ" => WittVector.frobeniusEquiv p (PreTilt (normInteger K) p)
+local notation "θ" => fontaineTheta 𝒪 p
 local notation "𝔭" => Ideal.span {(p : ACris K p)}
 
-omit [IsPerfectoidField K p] in
+section Log
 
-theorem pow_dvd_factorial {k n : ℕ} (h : p * k ≤ n) : p ^ k ∣ n.factorial :=
-  ((pow_dvd_pow p (by rw [padicValNat_factorial_mul]; omega)).trans pow_padicValNat_dvd).trans
-    (Nat.factorial_dvd_factorial h)
+omit [IsPerfectoidField K p] in
+theorem pow_dvd_factorial {k n : ℕ} (h : p * k ≤ n) : p ^ k ∣ n.factorial := by
+  have hk : k ≤ multiplicity p (p * k).factorial := by
+    rw [multiplicity_factorial_mul]
+    exact Nat.le_add_left _ _
+  exact (pow_dvd_of_le_multiplicity hk).trans (Nat.factorial_dvd_factorial h)
 
 theorem natCast_mem_pow {k n : ℕ} (h : p ^ k ∣ n) :
     (n : ACrisZero K p) ∈ Ideal.span {(p : ACrisZero K p)} ^ k := by
@@ -146,7 +152,8 @@ theorem algebraMap_mem_pow {k : ℕ} {y : ACrisZero K p} (hy : y ∈ Ideal.span 
   exact Ideal.mem_map_of_mem _ hy
 
 theorem algebraMap_p_mem : algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p) ∈ 𝔭 := by
-  simpa using algebraMap_mem_pow (k := 1) (y := (p : ACrisZero K p)) (by simpa using Ideal.mem_span_singleton_self _)
+  rw [map_natCast]
+  exact Ideal.mem_span_singleton_self _
 
 def dpowZero {x : AInf K p} (hx : x ∈ RingHom.ker θ) (n : ℕ) : ACrisZero K p :=
   ⟨dpow n x, dpow_mem hx n⟩
@@ -195,49 +202,41 @@ section Theta
 variable [CharZero K]
 
 theorem theta_logTerm {x : AInf K p} (hx : x ∈ RingHom.ker θ) (n : ℕ) :
-    theta K p (logTerm hx n) = 0 := by
+    theta (K := K) (p := p) (logTerm hx n) = 0 := by
   rw [logTerm, AdicCompletion.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply,
     theta_of, logTermZero, map_mul, dpowZero, thetaZero_dpow hx n.succ_ne_zero, mul_zero]
 
-theorem theta_log {x : AInf K p} (hx : x ∈ RingHom.ker θ) : theta K p (log hx) = 0 := by
-  have hle : 𝔭 ≤ (Ideal.span {(p : 𝒪)}).comap (theta K p) := by
+theorem theta_log {x : AInf K p} (hx : x ∈ RingHom.ker θ) :
+    theta (K := K) (p := p) (log hx) = 0 := by
+  have hle : 𝔭 ≤ (Ideal.span {(p : 𝒪)}).comap (theta (K := K) (p := p)) := by
     rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_natCast]
     exact Ideal.mem_span_singleton_self _
-  have h := (isAdicSum_log hx).map (theta K p) hle
-  have h0 : IsAdicSum (Ideal.span {(p : 𝒪)}) (fun n => theta K p (logTerm hx n)) 0 := by
+  have h := (isAdicSum_log hx).map (theta (K := K) (p := p)) hle
+  have h0 : IsAdicSum (Ideal.span {(p : 𝒪)}) (fun n => theta (K := K) (p := p) (logTerm hx n)) 0 := by
     have := isAdicSum_of_eq_zero (I := Ideal.span {(p : 𝒪)})
-      (a := fun n => theta K p (logTerm hx n)) (m := 0) (fun n _ => theta_logTerm hx n)
+      (a := fun n => theta (K := K) (p := p) (logTerm hx n)) (m := 0) (fun n _ => theta_logTerm hx n)
     simpa using this
   exact h.unique h0
 
-theorem theta_periodT {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) : theta K p (periodT hε) = 0 :=
+theorem theta_periodT {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) :
+    theta (K := K) (p := p) (periodT hε) = 0 :=
   theta_log _
 
 end Theta
 
 end Log
 
-end ACris
-
-namespace ACris
-
 section Divisibility
 
-variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
-variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
-
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "θ" => fontaineTheta (normInteger K) p
-local notation "𝔸" => Localization.Away (p : AInf K p)
-local notation "φ" => WittVector.frobeniusEquiv p (PreTilt (normInteger K) p)
-local notation "𝔭" => Ideal.span {(p : ACris K p)}
+local notation "φ" => WittVector.frobeniusEquiv p 𝒪♭
 
 theorem xi_sub_pow_mem (ε : 𝒪♭) :
     AInf.xi (K := K) ε - ((φ).symm (AInf.mu ε)) ^ (p - 1) ∈ Ideal.span {(p : AInf K p)} := by
   haveI := IsPerfectoidField.isDomain_preTilt (K := K) p
   rw [mem_span_p_iff_coeff_zero_eq_zero, ← WittVector.constantCoeff_apply,
     AInf.frobeniusEquiv_symm_mu, AInf.xi]
-  simp only [map_sub, map_sum, map_pow, map_one, WittVector.constantCoeff_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_pow, map_one, WittVector.constantCoeff_apply,
     teichmuller_coeff_zero]
   set e := (_root_.frobeniusEquiv 𝒪♭ p).symm ε
   have h1 := geom_sum_mul e p
@@ -315,8 +314,8 @@ theorem logTermZero_pred_eq {x : AInf K p} (hx : x ∈ RingHom.ker θ) {c : ACri
     _ = (p : 𝔸) * (algebraMap (AInf K p) 𝔸 x * ((-1) ^ (p - 1) * (c : 𝔸))) := by
         rw [hcc]; ring
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem log_pow_mem {x : AInf K p} (hx : x ∈ RingHom.ker θ) {c : ACrisZero K p}
     (hc : (algebraMap (AInf K p) (ACrisZero K p) x) ^ (p - 1) = (p : ACrisZero K p) * c) :
     log hx ^ (p - 1) ∈ 𝔭 := by
@@ -337,7 +336,7 @@ theorem log_pow_mem {x : AInf K p} (hx : x ∈ RingHom.ker θ) {c : ACrisZero K 
       algebraMap (ACrisZero K p) (ACris K p) (b0 n) ∈ 𝔭 ^ k := fun k n hn => by
     have hnp : ¬ n < p := by nlinarith [hp.out.one_lt]
     refine algebraMap_mem_pow ?_
-    simp only [b0, hnp, if_false]
+    simp only [b0, hnp, ite_false]
     refine Ideal.mul_mem_right _ _ (Ideal.mul_mem_left _ _ (natCast_mem_pow ?_))
     obtain ⟨d, hd⟩ := pow_dvd_factorial (p := p) hn
     rw [hd, pow_succ', mul_assoc, Nat.mul_div_cancel_left _ hp.out.pos]
@@ -348,14 +347,14 @@ theorem log_pow_mem {x : AInf K p} (hx : x ∈ RingHom.ker θ) {c : ACrisZero K 
   have hsplit : ∀ n, a0 n + (p : ACrisZero K p) * b0 n = logTermZero hx n := fun n => by
     by_cases hn : n < p
     · simp [a0, b0, hn]
-    · simp only [a0, b0, hn, if_false, zero_add, logTermZero]
+    · simp only [a0, b0, hn, ite_false, zero_add, logTermZero]
       have hdvd : p ∣ n.factorial := Nat.dvd_factorial hp.out.pos (not_lt.1 hn)
       conv_rhs => rw [← Nat.mul_div_cancel' hdvd, Nat.cast_mul]
       ring
   have hsplit' : ∀ n, algebraMap (ACrisZero K p) (ACris K p) (a0 n) +
       algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p) *
         algebraMap (ACrisZero K p) (ACris K p) (b0 n) = logTerm hx n := fun n => by
-    rw [logTerm, ← hsplit n, map_add, map_mul]
+    rw [logTerm, ← hsplit n, RingHom.map_add, map_mul]
   have ha'sum : IsAdicSum 𝔭 (fun n => algebraMap (ACrisZero K p) (ACris K p) (a0 n))
       (∑ n ∈ Finset.range p, algebraMap (ACrisZero K p) (ACris K p) (a0 n)) :=
     isAdicSum_of_eq_zero fun n hn => by simp [a0, not_lt.2 hn]
@@ -368,11 +367,11 @@ theorem log_pow_mem {x : AInf K p} (hx : x ∈ RingHom.ker θ) {c : ACrisZero K 
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun n hn => ?_
     have hn' := Finset.mem_range.1 hn
-    simp only [a0, hn', if_true]
+    simp only [a0, hn', ite_true]
     rw [hw n hn', map_mul]
   have hp0 : Ideal.Quotient.mk 𝔭 (algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p)) = 0 :=
     Ideal.Quotient.eq_zero_iff_mem.2 algebraMap_p_mem
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_pow, ht, hfin, map_add, map_mul (Ideal.Quotient.mk 𝔭)
+  rw [← Ideal.Quotient.eq_zero_iff_mem, map_pow, ht, hfin, RingHom.map_add, map_mul (Ideal.Quotient.mk 𝔭)
     (algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p)), hp0, zero_mul, add_zero, map_mul,
     mul_pow, ← map_pow, ← map_pow, hc, map_mul, map_mul, hp0, zero_mul, zero_mul]
 

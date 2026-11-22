@@ -1,4 +1,8 @@
-import ReciprocityTheory.GaloisValuations.GlobalEA
+module
+
+public import ReciprocityTheory.GaloisValuations.GlobalEA
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ theorem resGal_mem_Dec_iff {σ : G L Ω} :
   rw [mem_decompositionSubgroup_iff_galois_valuations, mem_decompositionSubgroup_iff_galois_valuations]
   simp only [resGal_apply]
 
-variable (F L) in
 
+variable (F L) in
 def decRes (A : ValuationSubring Ω) : Dec (F := L) A →* Dec (F := F) A :=
   ((resGal F L Ω).comp (Dec (F := L) A).subtype).codRestrict (Dec (F := F) A)
     (fun σ => resGal_mem_Dec_iff.mpr σ.2)
@@ -107,9 +111,6 @@ end frob
 section conj
 
 variable {L Ω : Type*} [Field L] [NumberField L] [Field Ω] [Algebra L Ω]
-
-def mapPlace (τ : Ω ≃+* Ω) (A : ValuationSubring Ω) : ValuationSubring Ω :=
-  A.comap τ.symm.toRingHom
 
 def conjV (s : L ≃+* L) (w : HeightOneSpectrum (𝓞 L)) : HeightOneSpectrum (𝓞 L) where
   asIdeal := w.asIdeal.comap (RingOfIntegers.mapRingEquiv s.symm : 𝓞 L →+* 𝓞 L)

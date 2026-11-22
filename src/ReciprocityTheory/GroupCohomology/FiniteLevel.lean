@@ -1,7 +1,11 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
-import ReciprocityTheory.GroupCohomology.ResNormalHolds
-import ReciprocityTheory.GroupCohomology.InfRes
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+public import ReciprocityTheory.GroupCohomology.ResNormalHolds
+public import ReciprocityTheory.GroupCohomology.InfRes
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 

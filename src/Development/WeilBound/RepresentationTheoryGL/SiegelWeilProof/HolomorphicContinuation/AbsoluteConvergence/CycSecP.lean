@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.CycSec
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.CycSec
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,30 +75,30 @@ theorem dsum_apply {ι : Type*} (s : Finset ι) (D : ι → Derivation ℂ (PX m
   classical
   induction s using Finset.induction_on with
   | empty => simp
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, Derivation.add_apply, ih]
+  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, add_apply, ih]
 
 def eulD (H : Matrix (Fin n) (Fin n) ℂ) : Derivation ℂ (PX m n) (PX m n) :=
   ∑ a : Fin m, ∑ j : Fin n, ((∑ i, X (a, i, false) * C (H i j)) • pderiv (a, j, false) +
     (∑ i, X (a, i, true) * C (star (H i j))) • pderiv (a, j, true))
 
 theorem eulH_eq (H : Matrix (Fin n) (Fin n) ℂ) (R : PX m n) : eulH H R = eulD H R := by
-  simp [eulH, eulD, dsum_apply, smul_eq_mul]
+  simp [eulH, eulD, smul_eq_mul]
 
 theorem eulD_X_false (H : Matrix (Fin n) (Fin n) ℂ) (a : Fin m) (j : Fin n) :
     eulD H (X (a, j, false) : PX m n) = ∑ i, X (a, i, false) * C (H i j) := by
-  simp [eulD, dsum_apply, pderiv_X, Pi.single_apply, ite_and, Finset.sum_ite_eq]
+  simp [eulD, pderiv_X, Pi.single_apply, ite_and, Finset.sum_ite_eq]
 
 theorem eulD_X_true (H : Matrix (Fin n) (Fin n) ℂ) (a : Fin m) (j : Fin n) :
     eulD H (X (a, j, true) : PX m n) = ∑ i, X (a, i, true) * C (star (H i j)) := by
-  simp [eulD, dsum_apply, pderiv_X, Pi.single_apply, ite_and, Finset.sum_ite_eq]
+  simp [eulD, pderiv_X, Pi.single_apply, ite_and, Finset.sum_ite_eq]
 
 theorem eulH_gen (ε : Fin m → Bool) (H : Matrix (Fin n) (Fin n) ℂ) (k : Bool × Fin n × Fin n) :
     eulH H (gen ε k) ∈ Mon ε 1 := by
   have : eulH H (gen ε k) = ∑ l, C (H l k.2.2) * gen ε (k.1, k.2.1, l) + ∑ l, C (star (H l k.2.1)) * gen ε (k.1, l, k.2.2) := by
     obtain ⟨b, i, j⟩ := k
     rw [eulH_eq]
-    simp only [gen, Qb, map_sum, Derivation.leibniz, smul_eq_mul, eulD_X_false, eulD_X_true, Finset.mul_sum,
-      Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [gen, Qb, map_sum, Derivation.leibniz, smul_eq_mul, eulD_X_false, eulD_X_true, Finset.mul_sum]
     rw [Finset.sum_add_distrib]
     congr 1
     · rw [Finset.sum_comm]

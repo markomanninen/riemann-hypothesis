@@ -1,21 +1,25 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsDCOfMemDoubleCoset
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiInvolutionOfChars
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegrableOnFundamentalDomainMulRight
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotentsStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAntiStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabelStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMulStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsHyperspecialDoubleCosetOfElementaryDivisorStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ElementaryDivisorsInvHeckeElementSplitPlaceStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsDCOfMemDoubleCoset
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiInvolutionOfChars
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegrableOnFundamentalDomainMulRight
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotentsStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAntiStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabelStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMulStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsHyperspecialDoubleCosetOfElementaryDivisorStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ElementaryDivisorsInvHeckeElementSplitPlaceStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem memLp_translate (h𝓕 : IsFundamentalDomain Γ 𝓕 μ) {F : H → ℂ}
   have h1 := GlobalTheory.integrableOn_fundamentalDomain_mul_right h𝓕 y (fun h => star (F h) * F h)
     (fun γ hγ h => by simp only [hl γ hγ]) hi
   have hm : AEStronglyMeasurable (fun h => F (h * y)) (μ.restrict 𝓕) :=
-    (hc.comp (continuous_mul_right y)).aestronglyMeasurable
+    (hc.comp (continuous_mul_const y)).aestronglyMeasurable
   rw [memLp_two_iff_integrable_sq_norm hm]
   refine h1.norm.congr (Filter.Eventually.of_forall fun h => ?_)
   simp [sq]
@@ -73,8 +77,8 @@ theorem integral_adjoint (h𝓕 : IsFundamentalDomain Γ 𝓕 μ) (K : Subgroup 
     simp only [this]
     rw [hr k₁ hk₁, ← mul_assoc, hr' k₂ hk₂]
   simp_rw [star_sum, Finset.sum_mul, Finset.mul_sum]
-  rw [integral_finset_sum _ fun a _ => by simpa [IntegrableOn] using hint a 1,
-    integral_finset_sum _ fun a _ => by simpa [IntegrableOn] using hint 1 a,
+  rw [integral_finsetSum _ fun a _ => by simpa [IntegrableOn] using hint a 1,
+    integral_finsetSum _ fun a _ => by simpa [IntegrableOn] using hint 1 a,
     Finset.sum_congr rfl h1, Finset.sum_congr rfl h2, Finset.sum_const, Finset.sum_const, hcard]
 
 end Generic
@@ -116,7 +120,7 @@ theorem gelf_rTr {k : GA D V} (hk : k ∈ GfC V) (τ : D.what₂.Tau) (n : ℕ) 
 theorem isAutFunSm_rTr {k : GA D V} (hk : k ∈ GfC V) {φ : GA D V → ℂ} (h : IsAutFunSm θ V φ) :
     IsAutFunSm θ V (rTr V k φ) := by
   haveI : IsTopologicalGroup (GA D V) := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.topGroupHA _ _
-  refine { left := fun γ hγ g => ?_, level := ?_, cont := h.cont.comp (continuous_mul_right k),
+  refine { left := fun γ hγ g => ?_, level := ?_, cont := h.cont.comp (continuous_mul_const k),
            smooth := fun n τs Xs hX g => ?_, zfin := ?_, growth := ?_ }
   · unfold rTr
     rw [mul_assoc, h.left γ hγ]

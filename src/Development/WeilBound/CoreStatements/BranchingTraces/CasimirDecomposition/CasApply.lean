@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.ZuckermanGapSmall
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.PoulsenSmoothVectorsDense
+module
+
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.ZuckermanGapSmall
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.PoulsenSmoothVectorsDense
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace Classical
@@ -61,7 +65,7 @@ theorem decReg (S : Steps) (Lb : Lib t) (hk : 1 ≤ k) (b : Bool) {μ : Fin (2 *
     intro f g hf hg'
     obtain ⟨α, β, hab, h0⟩ := m1 _ _ ((he f).1 hf) ((he g).1 hg')
     refine ⟨α, β, hab, e.map_eq_zero_iff.1 ?_⟩
-    rw [map_add, map_smul, map_smul, h0]
+    rw [map_add (f := _), map_smul, map_smul, h0]
 
 def kOp (U : URep k r) : Module.End ℂ (M (vr k r true, U)) :=
   LinearMap.pi fun c => ∑ b, U.dC (Matrix.single c b 1) ∘ₗ LinearMap.proj b
@@ -101,7 +105,8 @@ theorem kOp_io {μ : Fin (2 * r + k + 1) → ℝ} {U T : URep k r} (hk : 1 ≤ k
   have S := zuckerman_ingredients
   have hL := S.homLie k r _ _ i (S.okTriv k r) (S.okVr k r true) hi
   have h1 : cas (vr k r true, U) (i y) = i (cas (one T) y) := by
-    simp only [cas, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [cas, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     rw [← LinearMap.comp_apply (L _ (Matrix.single b a 1)) i, ← hL, LinearMap.comp_apply,
       ← LinearMap.comp_apply (L _ (Matrix.single a b 1)) i, ← hL, LinearMap.comp_apply]

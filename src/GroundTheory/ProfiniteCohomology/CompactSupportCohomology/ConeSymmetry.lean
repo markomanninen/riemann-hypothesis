@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ConePairing
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ConePairing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -115,8 +120,8 @@ theorem coconeLeftμ_sub_coconeRightμ_eq_d {r s m : ℕ} (h : r + s = m + 1)
     exact shiftLeft_sub_shiftRight μLL ρA ρB μL μR hLL hRR h x0 b y0 c (congrArg Prod.snd hX)
       (congrArg Prod.snd hY)
 
-include hLL hRR in
 
+include hLL hRR in
 theorem coconeLeft_homology_eq_coconeRight_homology {r s n : ℕ} (h : r + s = n)
     (x : (mappingCoconeNat fA).homology r) (y : (mappingCoconeNat fB).homology s) :
     (coconeLeft μL ρB μK hL).homology h x

@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.PairLift GlobalTheory.Chain.RealIt
@@ -72,12 +76,12 @@ lemma swapHom_pderiv (n : Fin b × Fin a) (Q : LPol b a) :
     swapHom ε ε' (pderiv n Q) = C (swSign ε ε' n) * pderiv n.swap (swapHom ε ε' Q) := by
   induction Q using MvPolynomial.induction_on with
   | C c => simp
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add, map_add, mul_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _), mul_add]
   | mul_X p m hp =>
     have hs := C_swSign_mul_self (σ := Fin a × Fin b) ε ε' n
     by_cases h : n = m
     · subst h
-      simp only [pderiv_mul, pderiv_X_self, map_add, map_mul, hp, swapHom_X, pderiv_C, mul_one, zero_mul, zero_add]
+      simp only [pderiv_mul, pderiv_X_self, map_add (f := _), map_mul, hp, swapHom_X, pderiv_C, mul_one, zero_mul, zero_add]
       linear_combination (-(swapHom ε ε' p)) * hs
     · have h' : m.swap ≠ n.swap := fun e => h (Prod.swap_injective e).symm
       simp only [pderiv_mul, pderiv_X_of_ne (Ne.symm h), pderiv_X_of_ne h', map_mul, hp, swapHom_X,
@@ -123,13 +127,13 @@ lemma swapHom_half (c : Prop) [Decidable c] (Q : LPol b a) :
 lemma swapHom_termT (i l : Fin b) (j : Fin a) (Q : LPol b a) :
     swapHom ε ε' ((rai ε ε' i j * low ε ε' l j + if i = l then (1 / 2 : ℂ) • 1 else 0) Q) =
       (rai ε' ε j i * low ε' ε j l + if i = l then (1 / 2 : ℂ) • 1 else 0) (swapHom ε ε' Q) := by
-  rw [LinearMap.add_apply, LinearMap.add_apply, map_add, Module.End.mul_apply, Module.End.mul_apply, swapHom_rai,
+  rw [LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), Module.End.mul_apply, Module.End.mul_apply, swapHom_rai,
     swapHom_low, swapHom_half]
 
 lemma swapHom_termS (i : Fin b) (j k : Fin a) (Q : LPol b a) :
     swapHom ε ε' ((rai ε ε' i j * low ε ε' i k + if j = k then (1 / 2 : ℂ) • 1 else 0) Q) =
       (rai ε' ε j i * low ε' ε k i + if j = k then (1 / 2 : ℂ) • 1 else 0) (swapHom ε ε' Q) := by
-  rw [LinearMap.add_apply, LinearMap.add_apply, map_add, Module.End.mul_apply, Module.End.mul_apply, swapHom_rai,
+  rw [LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), Module.End.mul_apply, Module.End.mul_apply, swapHom_rai,
     swapHom_low, swapHom_half]
 
 def swapEquiv : LPol b a ≃+ LPol a b :=
@@ -150,10 +154,12 @@ theorem locS_locT_exchange : ∀ (a b : ℕ) (ε : Fin a → Bool) (ε' : Fin b 
   · rw [swapEquiv_apply, swapEquiv_apply, swapHom_smul]
   · rw [swapEquiv_apply, swapEquiv_apply]
     unfold locT locS
-    simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, swapHom_smul, swapHom_termT, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, swapHom_smul, swapHom_termT, Matrix.map_apply]
   · rw [swapEquiv_apply, swapEquiv_apply]
     unfold locT locS
-    simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, swapHom_smul, swapHom_termS, Matrix.map_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, swapHom_smul, swapHom_termS, Matrix.map_apply,
       starRingEnd_self_apply]
 
 end GlobalTheory.Chain.RealIt.SwapFock

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -91,7 +96,7 @@ theorem mappingCoconeNatD_comp (n : ℕ) :
   change shiftNegOneSucc L (n + 1) ((f.f (n + 1)).hom ((K.d n (n + 1)).hom x)) +
     (shiftNegOneD L (n + 1)).hom (shiftNegOneSucc L n ((f.f n).hom x) +
       (shiftNegOneD L n).hom y) = 0
-  rw [map_add, shiftNegOneD_shiftNegOneD_apply, add_zero, shiftNegOneSucc_apply,
+  rw [map_add (f := _), shiftNegOneD_shiftNegOneD_apply, add_zero, shiftNegOneSucc_apply,
     shiftNegOneSucc_apply, shiftNegOneD_succ_apply]
   change ((f.f (n + 1)).hom ((K.d n (n + 1)).hom x) : L.X (n + 1)) +
     -(L.d n (n + 1)).hom ((f.f n).hom x) = 0
@@ -165,8 +170,8 @@ variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologic
   {ι : Type u} {H : ι → Type u} [∀ v, Group (H v)] [∀ v, TopologicalSpace (H v)]
   [∀ v, IsTopologicalGroup (H v)]
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem continuous_toMonoidHom {H' : Type u} [Group H'] [TopologicalSpace H'] (ψ : H' →ₜ* G) :
     Continuous ψ.toMonoidHom :=
   ψ.continuous_toFun

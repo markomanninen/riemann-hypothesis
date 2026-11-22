@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+
+@[expose] public section
 
 open CrystallineSemistableComparison
 
@@ -94,7 +98,7 @@ theorem stable_surj (hN : ∀ n x, x ∈ N (n + 1) → S.r n x ∈ N n)
       hxk (k + 1)
     obtain ⟨v, hv, hve⟩ := Submodule.mem_map.mp h1
     refine ⟨v + imgPt S y k (n + 1), ?_, ?_⟩
-    · rw [map_add, hve]
+    · rw [map_add (f := _), hve]
       show x - S.r n (imgPt S y k (n + 1)) + S.r n (imgPt S y k (n + 1)) = x
       exact sub_add_cancel _ _
     · rw [add_sub_cancel_right]

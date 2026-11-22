@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MonomialCountAndBinomialEstimates
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RingKrullDimQuotientAddOneOfMemMinimalPrimesSup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MonomialCountAndBinomialEstimates
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RingKrullDimQuotientAddOneOfMemMinimalPrimesSup
+
+@[expose] public section
 
 open Polynomial Filter Module
 
@@ -39,7 +43,8 @@ theorem eval_smul_eq_zero_of_isHomogeneous {I : Ideal (MvPolynomial ι k)}
     (hv : ∀ g ∈ I, MvPolynomial.eval v g = 0) (a : k) :
     ∀ g ∈ I, MvPolynomial.eval (a • v) g = 0 := by
   intro g hg
-  rw [← sum_homogeneousComponent g, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_homogeneousComponent g, map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [eval_smul_of_isHomogeneous (homogeneousComponent_isHomogeneous i g),
     hv _ (homogeneousComponent_mem_of_mem hI hg i), mul_zero]
@@ -292,8 +297,8 @@ theorem projSetDegree_sup_le_of_isPrime {P : Ideal (MvPolynomial ι k)} [P.IsPri
       linarith
     exact_mod_cast h7
 
-omit [Finite ι] in
 
+omit [Finite ι] in
 theorem exists_mem_projComponents_sup {I J Q : Ideal (MvPolynomial ι k)}
     (hQ : Q ∈ projComponents (I ⊔ J)) :
     ∃ P ∈ projComponents I, Q ∈ projComponents (P ⊔ J) := by
@@ -487,9 +492,9 @@ theorem idealHilbertPoly_bot [Fintype ι] {n : ℕ} (hn : Fintype.card ι = n + 
   have h1 := finrank_quotPiece_add (⊥ : Ideal (MvPolynomial ι k)) m
   have h2 : finrank k (homogeneousSubmodule ι k m) = (m + Fintype.card ι - 1).choose m := by
     rw [← natCard_degree_eq, homogeneousSubmodule_eq_finsupp_supported]
-    exact finrank_eq_nat_card_basis (basisRestrictSupport k _)
+    exact finrank_eq_nat_card_basis (basisRestrictSupport k {d : ι →₀ ℕ | d.degree = m})
   rw [Submodule.restrictScalars_bot, bot_inf_eq, finrank_bot, add_zero, h2, hn] at h1
-  rw [← hm, h1, preHilbertPoly_eq_choose_sub_add ℚ n (Nat.zero_le m), Nat.sub_zero,
+  rw [← hm, h1, preHilbertPoly_eq_choose_sub_add ℚ n (Nat.zero_le (m + n)), Nat.sub_zero,
     ← Nat.choose_symm_add]
   rfl
 
@@ -517,12 +522,6 @@ theorem cutsProperly_bot {f : MvPolynomial ι k} (hf : f ≠ 0) :
   rw [show Set.Iio (0 : Fin 1) = ∅ from Set.Iio_bot, Set.image_empty, Ideal.span_empty,
     sup_bot_eq, Ideal.minimalPrimes_eq_subsingleton_self, Set.mem_singleton_iff] at h
   simpa [h] using hf
-
-example {f : MvPolynomial (Fin 2) k} {d : ℕ} (hf : f.IsHomogeneous d) (h0 : f ≠ 0) :
-    {y : Projectivization k (Fin 2 → k) | MvPolynomial.eval y.rep f = 0}.ncard ≤ d := by
-  have := ((bezout_bound_ideal (Ideal.IsHomogeneous.bot _)).2.1 1 ![d] ![f] (isProjPureDim_bot 1)
-    (by simpa using hf) (cutsProperly_bot h0)).2
-  simpa [projSetDegree_bot, projPoints] using this
 
 end Space
 

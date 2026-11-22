@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.InfInvA
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.IILeft
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.DetOneAddSmulSingleSame
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.FderivXZxSkew
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.InfInvA
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.IILeft
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.DetOneAddSmulSingleSame
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.FderivXZxSkew
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,15 +63,15 @@ theorem infInv_of (hL : LeftDeriv) (hP : LawDeriv) (hI : PtId) (hC : CDiff) : In
     exact hI n (fun y => F1 y * F2 y) (ι k) Z (hKk k) ((hΘc.contDiffAt hnh).of_le (by simp))
       (fun Y hY => hlawΘ (ι k) (hKk k).1 Y hY)
   simp_rw [key]
-  rw [integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · refine Finset.sum_eq_zero (fun a _ => ?_)
-    rw [integral_finset_sum]
+    rw [MeasureTheory.integral_finsetSum]
     · refine Finset.sum_eq_zero (fun b _ => ?_)
       rw [integral_add (hA a b).1 (hB a b).1, (hA a b).2, (hB a b).2, add_zero]
     · intro b _
       exact (hA a b).1.add (hB a b).1
   · intro a _
-    exact integrable_finset_sum _ (fun b _ => (hA a b).1.add (hB a b).1)
+    exact MeasureTheory.integrable_finsetSum _ (fun b _ => (hA a b).1.add (hB a b).1)
 
 end PositivityTheory.Rg.Sw.LVs.II
 

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemExpSolCons
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemExpSolCons
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology
 
 namespace GlobalTheory
@@ -40,7 +45,8 @@ theorem finiteDim_norm_le_on_Icc_of_determined :
   have e : (⟨f, hf⟩ : V) = S (T ⟨f, hf⟩) := (LinearMap.congr_fun hS _).symm
   have e2 : T ⟨f, hf⟩ = ∑ k, (f (a k)) • (Pi.single k 1 : κ → ℂ) := by
     ext j; simp [T, ev, Finset.sum_apply, Pi.single_apply]
-  rw [e2, map_sum] at e
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e2, map_sum] at e
   have e3 := congrFun (congrArg Subtype.val e) t
   have hft : f t = ∑ k, f (a k) * g k t := by
     simpa [g, Finset.sum_apply] using e3

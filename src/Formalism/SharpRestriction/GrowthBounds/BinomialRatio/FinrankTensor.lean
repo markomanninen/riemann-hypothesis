@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankDefs
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankDefs
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,8 +125,8 @@ theorem kerY_args (hW : WeilExistsFull D) (hV : VacExistsO D) (hS : StepVecExist
     fun t P => hPt R.ψ R.θ h.1.std h.1.inf _ _ _ _ _ _ _ P (hT.1 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (sd _ hm).1 sdX.1 (sd _ hm).2 sdX.2
       (hvX t))⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem chain_exists (hI : ItExists D A Ks F) (hO : IoChainExists D A Ks F) (hG : GoodLands D A Ks F) (R : RealDat D A Ks)
     (h : R.Pre1 F) (hK : R.KerY) : ∃ R' : RealDat D A Ks, R'.Pre1 F ∧ R'.IsChain ∧ R'.FullY := by
   obtain ⟨h1, ItX, hX⟩ := hI R h hK
@@ -221,8 +225,8 @@ theorem subspaces_of_scalar_update (kap lam) : ((R.upd6 kap lam).toCx F).zs = (R
 
 end RealDat
 
-open Classical in
 
+open Classical in
 theorem scal_exists (R : RealDat D A Ks) : ∃ kap lam, (R.upd6 kap lam).IsScal F := by
   choose l0 h0 h0' using fun i t p => exists_val (p := R.Eig0 i t p) RealDat.base_eigenvalue_unique (Real.exp ((F.Zsc (R.toCx F).zs).l6m i))
   choose l1 h1 h1' using fun i p v => exists_val (p := R.EigOff F i p v) RealDat.eigOff_unique (Real.exp ((F.Zsc (R.toCx F).zs).l6m i))
@@ -249,19 +253,8 @@ theorem scal_exists (R : RealDat D A Ks) : ∃ kap lam, (R.upd6 kap lam).IsScal 
       exact hp b ((RealDat.part_at_of_scalar_update _ _ _ _ _ _).2 hb))
   · exact (if_neg hv).trans (if_neg hv).symm
 
-variable (D A Ks) in
 
-def SeedExists (F : Face D A) : Prop := ∃ R : RealDat D A Ks, R.Pre0 F
 
-variable (D A Ks) in
-
-def ModelsExist (F : Face D A) : Prop := ∀ R : RealDat D A Ks, R.Pre0 F → ∃ R' : RealDat D A Ks, R'.Pre1 F
-
-variable (D A Ks) in
-
-def ArithExists (F : Face D A) : Prop :=
-  ∀ R : RealDat D A Ks, R.Pre1 F → R.IsChain → R.FullY → R.IsThP → R.FullP →
-    ∃ nW FW mu twPl err0, (R.upd5 nW FW mu twPl err0).grp_chiW ∧ (R.upd5 nW FW mu twPl err0).IsTup F
 
 end Stages4
 

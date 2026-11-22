@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReindexDblIncM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReindexDblIncM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrInt
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -89,7 +94,8 @@ theorem exists_diag_lagrangian : ∀ (F E : Type) [Field F] [NumberField F] [Fie
     have h := co.form ((incM F x).submatrix (fold nT) id) ((incM F x').submatrix (fold nT) id)
     rw [symp, hTens_fold, mul_zero, map_zero, ← hg, ← hg, hx, hx', hι, hι, eq_comm, sub_eq_zero] at h
     apply hinj
-    simpa only [dotProduct, map_sum, map_mul] using h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [dotProduct, map_sum, map_mul] using h
   · have : Module.Finite F E := Module.Finite.of_restrictScalars_finite ℚ F E
     have h1 : Module.finrank F ((LinearMap.range g).comap ι) = nT * nS * Module.finrank F E := by
       rw [(Submodule.equivMapOfInjective ι hιi _).finrank_eq, Submodule.map_comap_eq_of_le hle,

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,11 +37,15 @@ def ptAlg (z : Pt (SpAlg R D) E) : D →ₐ[R] E :=
         exact Over.w z
       exact congrArg (fun f ↦ CommRingCat.Hom.hom f r) h }
 
-theorem spOver_ptAlg (z : Pt (SpAlg R D) E) : spOver (ptAlg z) = z :=
-  Over.OverMorphism.ext (Spec.map_preimage (R := CommRingCat.of D) (S := CommRingCat.of E) z.left)
+theorem spOver_ptAlg (z : Pt (SpAlg R D) E) : spOver (ptAlg z) = z := by
+  apply Over.OverMorphism.ext
+  rw [spOver_left]
+  exact Spec.map_preimage (R := CommRingCat.of D) (S := CommRingCat.of E) z.left
 
 theorem ptAlg_spOver (α : D →ₐ[R] E) : ptAlg (spOver α) = α := by
   refine AlgHom.ext fun r ↦ ?_
+  change (Spec.preimage (R := CommRingCat.of D) (S := CommRingCat.of E) (spOver α).left).hom r = α r
+  rw [spOver_left]
   exact congrArg (fun f ↦ CommRingCat.Hom.hom f r) (Spec.preimage_map (CommRingCat.ofHom (α : D →+* E)))
 
 theorem ptAlg_comp (ψ : E →ₐ[R] E') (z : Pt (SpAlg R D) E) : ptAlg (spOver ψ ≫ z) = ψ.comp (ptAlg z) := by

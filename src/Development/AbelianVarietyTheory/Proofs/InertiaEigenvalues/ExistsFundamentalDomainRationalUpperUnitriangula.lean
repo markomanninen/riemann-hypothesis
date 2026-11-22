@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
-import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
-import GroundTheory.GlobalFields.Adele.Discrete
-import GroundTheory.GlobalFields.Adele.IntegersLattice
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueRatUnitriangularMulEntriesMemFundameStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCompactAdelicUnitriangularEntriesMemCompactStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+public import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+public import GroundTheory.GlobalFields.Adele.Discrete
+public import GroundTheory.GlobalFields.Adele.IntegersLattice
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueRatUnitriangularMulEntriesMemFundameStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCompactAdelicUnitriangularEntriesMemCompactStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Formalism.UG GlobalTheory.CuspRep MeasureTheory
 open scoped ENNReal
@@ -77,8 +81,9 @@ theorem exists_fundamentalDomain_NE (E : Type) [Field E] [NumberField E] (n : �
   set K : Set (GA E n) := {g : GA E n | g ∈ NA E n ∧ ∀ i j : Fin n, i < j →
     (g : Matrix (Fin n) (Fin n) (Ad E)) i j ∈ C} with hKdef
   have hK : IsCompact ((Subtype.val : NA E n → GA E n) ⁻¹' K) := by
-    rw [Subtype.isCompact_iff, Set.image_preimage_eq_inter_range, Subtype.range_coe_subtype,
-      Set.inter_eq_left.2 (fun g hg => hg.1)]
+    rw [Subtype.isCompact_iff, Set.image_preimage_eq_inter_range, Subtype.range_coe_subtype]
+    change IsCompact (K ∩ (NA E n : Set (GA E n)))
+    rw [Set.inter_eq_left.2 (fun g (hg : g ∈ K) => hg.1)]
     exact GlobalTheory.T.isCompact_adelicUnitriangular_entries_mem_compact E n C hC
   refine (measure_mono fun u hu => ?_).trans_lt hK.measure_lt_top
   refine ⟨u.2, fun i j hij => ?_⟩

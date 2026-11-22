@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ScalesBy
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ScalesBy
+
+@[expose] public section
+
 open scoped TensorProduct NNReal ENNReal Matrix
 open NumberField MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.ResLine GlobalTheory.ResidueEisenstein
 open GlobalTheory.Doubling (absE)
@@ -10,15 +15,15 @@ namespace GlobalTheory.ResidueEisenstein.HtCont
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n k : ℕ} {J : Matrix (Fin n) (Fin n) E} {X : Matrix (Fin n) (Fin k) E}
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem scalesBy_mul {p q : GAd σ J} {β γ : GL (Fin k) (AF F ⊗[F] E)} (e : ScalesBy σ J X p β)
     (e' : ScalesBy σ J X q γ) : ScalesBy σ J X (p * q) (β * γ) := by
   unfold ScalesBy at *
   rw [map_mul, Units.val_mul, Matrix.mul_assoc, e', ← Matrix.mul_assoc, e, Units.val_mul, Matrix.mul_assoc]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem scalesBy_inv {p : GAd σ J} {β : GL (Fin k) (AF F ⊗[F] E)} (e : ScalesBy σ J X p β) :
     ScalesBy σ J X p⁻¹ β⁻¹ := by
   unfold ScalesBy at *

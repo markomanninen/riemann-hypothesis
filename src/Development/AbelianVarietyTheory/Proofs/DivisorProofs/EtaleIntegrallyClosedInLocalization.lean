@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMaximalIdealEqOrigin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMaximalIdealEqOrigin
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 open GlobalTheory.LocAcyc GlobalTheory.KeyOriginNoeth GlobalTheory.KeyOriginBC
@@ -60,7 +65,6 @@ theorem etale_integrallyClosed_localization : ∀ (S E : Type) [CommRing S] [IsD
       (TensorProduct.toIntegralClosure S E SM y : T) = b ⊗ₜ[S] (1 : SM) := by
     intro y
     induction y with
-    | zero => exact ⟨0, by simp⟩
     | tmul b c =>
       obtain ⟨r, hr⟩ := IsIntegrallyClosedIn.isIntegral_iff.1 c.2
       refine ⟨r • b, ?_⟩
@@ -69,7 +73,7 @@ theorem etale_integrallyClosed_localization : ∀ (S E : Type) [CommRing S] [IsD
     | add u v hu hv =>
       obtain ⟨a, ha⟩ := hu
       obtain ⟨b, hb⟩ := hv
-      exact ⟨a + b, by rw [map_add, Subalgebra.coe_add, ha, hb, TensorProduct.add_tmul]⟩
+      exact ⟨a + b, by rw [map_add (f := _), Subalgebra.coe_add, ha, hb, TensorProduct.add_tmul]⟩
   obtain ⟨b, hb⟩ := key y
   refine ⟨b, ?_⟩
   have : e.symm x = algebraMap E T b := by

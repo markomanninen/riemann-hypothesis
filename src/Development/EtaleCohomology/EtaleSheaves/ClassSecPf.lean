@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LocSecPfB
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LocSecPfB
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4 CochainComplex CochainComplex.HomComplex
@@ -57,7 +61,7 @@ theorem cyc_add (z w : Cocycle (LateralTheory.E.LocSecPf.pt R X) (res R F) n) :
     cyc X F n e he (z + w) = cyc X F n e he z + cyc X F n e he w := by
   apply Subtype.ext
   change ee X F e n (fz X F n (z + w)) = ee X F e n (fz X F n z) + ee X F e n (fz X F n w)
-  rw [fz_add, map_add]
+  rw [fz_add, map_add (f := _)]
 
 def phi : Cocycle (LateralTheory.E.LocSecPf.pt R X) (res R F) n →+ (S X F n).moduleCatLeftHomologyData.H where
   toFun z := (LinearMap.range (S X F n).moduleCatToCycles).mkQ (cyc X F n e he z)
@@ -66,11 +70,9 @@ def phi : Cocycle (LateralTheory.E.LocSecPf.pt R X) (res R F) n →+ (S X F n).m
       have h := cyc_add X F n e he 0 0
       rw [add_zero] at h
       exact (add_eq_left.mp h.symm)
-    rw [this, map_zero]
-    rfl
+    rw [this, (LinearMap.range (S X F n).moduleCatToCycles).mkQ.map_zero]
   map_add' z w := by
-    rw [cyc_add, map_add]
-    rfl
+    rw [cyc_add, (LinearMap.range (S X F n).moduleCatToCycles).mkQ.map_add]
 
 theorem phi_eq_zero_iff (z : Cocycle (LateralTheory.E.LocSecPf.pt R X) (res R F) n) :
     phi X F n e he z = 0 ↔ z ∈ coboundaries _ _ _ := by

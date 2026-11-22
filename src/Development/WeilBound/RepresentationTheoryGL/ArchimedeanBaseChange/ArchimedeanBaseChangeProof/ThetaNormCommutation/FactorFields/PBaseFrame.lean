@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteTwistedClassesCharpoly
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteTwistedClassesCharpoly
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem PositivityTheory.Rg.BcB.G3.baseFrame_pf : BaseFrame := by
   have indep' : ∀ u v : F', j u + p s * j v = 0 → u = 0 ∧ v = 0 := by
     intro u v h
     have h2 := congrArg c' h
-    simp only [map_add, map_mul, hcj, hcps, map_zero] at h2
+    simp only [map_add (f := _), map_mul, hcj, hcps, map_zero] at h2
     have hu : j u = 0 := by
       have h3 : (2 : E') * j u = 0 := by linear_combination h + h2
       exact (mul_eq_zero.1 h3).resolve_left two_ne_zero
@@ -36,7 +40,7 @@ theorem PositivityTheory.Rg.BcB.G3.baseFrame_pf : BaseFrame := by
   have indepE : ∀ a b : F, algebraMap F E a + s * algebraMap F E b = 0 → a = 0 ∧ b = 0 := by
     intro a b h
     have h1 := congrArg p h
-    simp only [map_add, map_mul, ← hj, map_zero] at h1
+    simp only [map_add (f := _), map_mul, ← hj, map_zero] at h1
     obtain ⟨h2, h3⟩ := indep' _ _ h1
     exact ⟨(map_eq_zero (algebraMap F F')).1 h2, (map_eq_zero (algebraMap F F')).1 h3⟩
   have hli : LinearIndependent F ![(1 : E), s] := by
@@ -100,7 +104,7 @@ theorem PositivityTheory.Rg.BcB.G3.baseFrame_pf : BaseFrame := by
     obtain ⟨φ, hφdef⟩ : ∃ φ : B →ₗ[F] (Fin n × Fin n × Fin 2 → F),
         ∀ b i, φ b i = bE.repr (ρ b i.1 i.2.1) i.2.2 :=
       ⟨{ toFun := fun b i => bE.repr (ρ b i.1 i.2.1) i.2.2
-         map_add' := fun a b => by funext i; simp [map_add]
+         map_add' := fun a b => by funext i; simp [map_add (f := _)]
          map_smul' := fun r b => by funext i; simp [map_smul] }, fun _ _ => rfl⟩
     have hφ : Function.Injective φ := by
       refine (injective_iff_map_eq_zero φ).2 fun b hb => ?_
@@ -126,10 +130,10 @@ theorem PositivityTheory.Rg.BcB.G3.baseFrame_pf : BaseFrame := by
           TensorProduct.piScalarRightHom_tmul, hφdef, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul,
           Algebra.smul_def, map_mul]
         conv_lhs => rw [hdec (ρ b i k)]
-        simp only [map_add, map_mul, ← hj]
+        simp only [map_add (f := _), map_mul, ← hj]
         ring
       | add X Y hX hY =>
-        simp only [map_add, Matrix.add_apply, hX, hY, Pi.add_apply]
+        simp only [map_add (f := _), Matrix.add_apply, hX, hY, Pi.add_apply]
         ring
     refine (injective_iff_map_eq_zero ρ').2 fun X hX => ?_
     have hW : TensorProduct.piScalarRight F F F' (Fin n × Fin n × Fin 2) (φ.lTensor F' X) = 0 := by
@@ -157,7 +161,7 @@ theorem PositivityTheory.Rg.BcB.G3.baseFrame_pf : BaseFrame := by
       congr 1
       rw [← Matrix.map_mul, hadj, ← Matrix.transpose_map, Matrix.map_mul, Matrix.transpose_map, Matrix.transpose_map]
     | add X Y hX hY =>
-      rw [map_add, add_mul, hX, hY, Matrix.map_add _ (map_add c'), Matrix.transpose_add, mul_add]
+      rw [map_add (f := _), add_mul, hX, hY, Matrix.map_add _ (map_add c'), Matrix.transpose_add, mul_add]
   ·
     intro X
     rw [hN']
@@ -166,7 +170,7 @@ theorem PositivityTheory.Rg.BcB.G3.baseFrame_pf : BaseFrame := by
     | tmul x b =>
       rw [hρt, Matrix.smul_mul, Matrix.mul_smul, ← Matrix.map_mul, ← Matrix.map_mul, hcm]
     | add X Y hX hY =>
-      rw [map_add, add_mul, mul_add, hX, hY]
+      rw [map_add (f := _), add_mul, mul_add, hX, hY]
   ·
     intro x hx
     rw [hN'] at hx
@@ -176,7 +180,7 @@ theorem PositivityTheory.Rg.BcB.G3.baseFrame_pf : BaseFrame := by
     have hTadd : ∀ y z : Matrix (Fin n) (Fin n) E', (∃ a b, y = ρ' a + p s • ρ' b) →
         (∃ a b, z = ρ' a + p s • ρ' b) → ∃ a b, y + z = ρ' a + p s • ρ' b := by
       rintro y z ⟨a, b, rfl⟩ ⟨a', b', rfl⟩
-      exact ⟨a + a', b + b', by rw [map_add, map_add, smul_add]; abel⟩
+      exact ⟨a + a', b + b', by rw [map_add (f := _), map_add (f := _), smul_add]; abel⟩
     have hT0 : ∃ a b, (0 : Matrix (Fin n) (Fin n) E') = ρ' a + p s • ρ' b := ⟨0, 0, by simp⟩
     have hTsmul : ∀ (e : E') (y : Matrix (Fin n) (Fin n) E'), (∃ a b, y = ρ' a + p s • ρ' b) →
         ∃ a b, e • y = ρ' a + p s • ρ' b := by
@@ -184,7 +188,7 @@ theorem PositivityTheory.Rg.BcB.G3.baseFrame_pf : BaseFrame := by
       obtain ⟨u, v, rfl⟩ := hspE' e
       refine ⟨(u ⊗ₜ (1 : B)) * a + ((1 : F') ⊗ₜ algebraMap F B d) * ((v ⊗ₜ (1 : B)) * b),
         (u ⊗ₜ (1 : B)) * b + (v ⊗ₜ (1 : B)) * a, ?_⟩
-      simp only [map_add, map_mul, hρu, hD, Matrix.smul_mul, one_mul]
+      simp only [map_add (f := _), map_mul, hρu, hD, Matrix.smul_mul, one_mul]
       module
     have hTpow : ∀ k : ℕ, ∃ a b, ((δ * thetaGL n c δ).val.map p) ^ k = ρ' a + p s • ρ' b := by
       intro k

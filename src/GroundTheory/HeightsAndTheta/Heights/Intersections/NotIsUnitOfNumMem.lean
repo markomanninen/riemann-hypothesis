@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerRest
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.CurvePt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerRest
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.CurvePt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -152,7 +157,7 @@ theorem exists_rep {W : Ideal (MRing ι)} (hW : W.IsPrime) {x : FractionRing (MR
     refine ⟨u * v' + u' * v, v * v', a + a',
       isMultiHomog_add' (AvoidRing.isMultiHomog_mul hu hv') (by rw [add_comm]; exact AvoidRing.isMultiHomog_mul hu' hv),
       AvoidRing.isMultiHomog_mul hv hv', fun h => (hW.mem_or_mem h).elim hvW hvW', ?_⟩
-    rw [map_mul, map_add, map_mul, map_mul, ← e, ← e']
+    rw [map_mul, map_add (f := _), map_mul, map_mul, ← e, ← e']
     ring
   | neg x _ hx =>
     obtain ⟨u, v, a, hu, hv, hvW, e⟩ := hx
@@ -230,8 +235,8 @@ end Loc
 
 end regularityLocalResidue_holds
 
-open regularityLocalResidue_holds in
 
+open regularityLocalResidue_holds in
 theorem regularityLocalResidue_holds.proof : regularityLocalResidue_holds.Statement := by
   intro K _ ι _ P s a W b hP hs hsP hW _
   classical
@@ -260,7 +265,7 @@ theorem regularityLocalResidue_holds.proof : regularityLocalResidue_holds.Statem
   have hT : ∀ k, (X ⟨k, T k⟩ : MRing ι) ∉ W := fun k => (hWrel k).choose_spec
   set J := W ⊔ Ideal.span (Set.range fun k => (X ⟨k, T k⟩ : MRing ι) - 1) with hJ
   have hgeo : geoNum 0 W b = ((Module.length ℤ (MRing ι ⧸ J)).toNat : ℤ) := by
-    rw [geoNum, dif_pos hWrel]
+    rw [geoNum, dite_eq_left hWrel]
   obtain ⟨hCf, hCfin, hCcard⟩ := chart_field_card hWmh hT hdim (charOf W) hp
   letI : Field (MRing ι ⧸ J) := hCf.toField
   let g := chartMap hPW T hT

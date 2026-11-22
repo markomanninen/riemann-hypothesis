@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PullIopOf
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PullIopOf
+
+@[expose] public section
 
 noncomputable section
 open Classical Polynomial

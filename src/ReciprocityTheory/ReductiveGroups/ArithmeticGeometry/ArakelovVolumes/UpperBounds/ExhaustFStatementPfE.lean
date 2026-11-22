@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfD
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfD
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.ExF
 
@@ -80,7 +84,7 @@ theorem levi_rhF_nonneg (x0 : Frame X.Ψ r) (ho : IsOrth X x0) {z0 : V (nd X)} (
     intro y hy
     simp only [hP, hHf]
     rw [← Finset.prod_mul_distrib, map_prod]
-    exact Finset.prod_le_prod (fun τ _ => mul_nonneg (det_re_pos_im (hAm y hy τ)).1.le
+    exact Finset.prod_le_prod₀ (fun τ _ => mul_nonneg (det_re_pos_im (hAm y hy τ)).1.le
       (det_re_pos_im (hAm z0 hz0 τ)).1.le)
       (fun τ _ => det_mul_det_le_normSq_det _ _ (hAm y hy τ) (hAm z0 hz0 τ))
   have hself : Complex.normSq (Hf z0) = P z0 * P z0 := by
@@ -154,7 +158,7 @@ private theorem det_one_sub_mul_conjTranspose_mem_Icc {p q : ℕ} (Z : Matrix (F
     rfl
   have h0 : 0 ≤ ∏ i, hH.eigenvalues i := Finset.prod_nonneg fun i _ => (hev i).1
   rw [hd, Complex.ofReal_re, Complex.norm_real, Real.norm_of_nonneg h0]
-  exact ⟨h0, Finset.prod_le_one (fun i _ => (hev i).1) fun i _ => (hev i).2, rfl⟩
+  exact ⟨h0, Finset.prod_le_one₀ (fun i _ => (hev i).1) fun i _ => (hev i).2, rfl⟩
 
 theorem rhF_nonneg (x0 : Frame X.Ψ r) (ho : IsOrth X x0) {z : V (nd X)} (hz : z ∈ OmF X x0) : 0 ≤ rhF X x0 z := by
   rw [rhF_eq_sum X x0 ho z, neg_nonneg]
@@ -217,8 +221,8 @@ theorem isClosed_psdF : IsClosed {z : V (nd X) | ∀ τ, (Am X z τ).PosSemidef}
   have he : ∀ a c, Continuous fun z : V (nd X) => Am X z τ a c := fun a c => (cd_Am_entry X τ a c).continuous
   have hf : Continuous fun z : V (nd X) => star x ⬝ᵥ (Am X z τ) *ᵥ x := by
     simp only [dotProduct, Matrix.mulVec]
-    exact continuous_finset_sum _ fun a _ =>
-      continuous_const.mul (continuous_finset_sum _ fun c _ => (he a c).mul continuous_const)
+    exact continuous_finsetSum _ fun a _ =>
+      continuous_const.mul (continuous_finsetSum _ fun c _ => (he a c).mul continuous_const)
   exact isClosed_le continuous_const hf
 
 theorem isCompact_subF (x0 : Frame X.Ψ r) (ho : IsOrth X x0) (a : ℝ) : IsCompact {z : V (nd X) | z ∈ OmF X x0 ∧ eF X x0 z ≤ a} := by
@@ -227,11 +231,11 @@ theorem isCompact_subF (x0 : Frame X.Ψ r) (ho : IsOrth X x0) (a : ℝ) : IsComp
   · refine (isClosed_psdF X).inter (isClosed_le ?_ ?_)
     · exact Real.continuous_exp.comp ((Continuous.log (continuous_const.add (continuous_norm.pow 2))
         fun z => (by positivity : (0 : ℝ) < 1 + ‖z‖ ^ 2).ne').sub continuous_const)
-    · exact continuous_finset_prod _ fun τ _ => Complex.continuous_re.comp (cd_detAm X τ).continuous
+    · exact continuous_finsetProd _ fun τ _ => Complex.continuous_re.comp (cd_detAm X τ).continuous
   · refine (Metric.isBounded_iff_subset_closedBall 0).2 ⟨Real.exp a, fun z hz => ?_⟩
     obtain ⟨hpsd, hle⟩ := hz
     have hP : ∏ τ, (Am X z τ).det.re ≤ 1 :=
-      Finset.prod_le_one (fun τ _ => (det_one_sub_mul_conjTranspose_mem_Icc (Zt X z τ) (hpsd τ)).1)
+      Finset.prod_le_one₀ (fun τ _ => (det_one_sub_mul_conjTranspose_mem_Icc (Zt X z τ) (hpsd τ)).1)
         fun τ _ => (det_one_sub_mul_conjTranspose_mem_Icc (Zt X z τ) (hpsd τ)).2.1
     have h1 : Real.log (1 + ‖z‖ ^ 2) - a ≤ 0 := Real.exp_le_one_iff.1 (le_trans hle hP)
     have h2 : 1 + ‖z‖ ^ 2 ≤ Real.exp a := by

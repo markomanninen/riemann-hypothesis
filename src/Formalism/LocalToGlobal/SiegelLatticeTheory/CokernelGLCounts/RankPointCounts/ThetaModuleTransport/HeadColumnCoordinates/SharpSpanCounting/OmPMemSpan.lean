@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.AdjLast
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.AdjLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem h_omP_omP (f f' : Fin (r + 1) → V) (T' : F) (hF' : Formalism.MainNotio
       funext a
       rfl
     have h2 : H.Dl f f' r = ((H.Zhat f f').submatrix Fin.castSucc Fin.castSucc).det := by
-      rw [Formalism.MainNotions.S.Loc.HermSp.Dl, dif_pos (Nat.le_succ r), hcast]
+      rw [Formalism.MainNotions.S.Loc.HermSp.Dl, dite_eq_left (Nat.le_succ r), hcast]
     rw [← h2, hD0, mul_zero]
   have hterm : ∀ b b', (H.Zhat f f').adjugate b (Fin.last r) *
       (M.L.cj ((H.Zhat f f').adjugate b' (Fin.last r)) * H.h (f' b) (f' b')) = 0 := by
@@ -41,7 +45,8 @@ theorem h_z_omP (f f' : Fin (r + 1) → V) (hD : IsUnit (H.Dl f f' (r + 1))) :
       M.L.cj (H.Zhat f f').det := by
     have h1 := congrFun (congrFun (Matrix.mul_adjugate (H.Zhat f f')) (Fin.last r)) (Fin.last r)
     rw [Matrix.mul_apply, Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, mul_one] at h1
-    rw [← h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1, map_sum]
     exact Finset.sum_congr rfl fun b _ => by rw [map_mul, mul_comm]
   unfold omP
   rw [h_smul_right, Formalism.MainNotions.S.Loc.HermSp.om', h_sum_right]
@@ -103,7 +108,7 @@ theorem mkW_decomp (f f' : Fin (r + 1) → V) (T T' : F) (hF : Formalism.MainNot
       (H.h u (f (Fin.last r)) + algebraMap F E T * H.h u (omP H f f')) •
         H.mkW f ⟨omP H f f', omP_mem H f f' hD⟩ := by
   have hmem := decomp H f f' T T' hF hF' hD hD0 u hu u.2 _ _ rfl rfl
-  rw [← sub_eq_zero, ← map_smul, ← map_smul, ← map_add, ← map_sub, Formalism.MainNotions.S.Loc.HermSp.mkW,
+  rw [← sub_eq_zero, ← map_smul, ← map_smul, ← map_add (f := _), ← map_sub, Formalism.MainNotions.S.Loc.HermSp.mkW,
     Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, Submodule.mem_comap]
   exact hmem
 

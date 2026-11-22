@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieLat
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieLat
+
+@[expose] public section
 
 open MvPolynomial Matrix Formalism.GradedWeylDivisibility Formalism.MainNotions.G Formalism.BasicNotions Formalism.L2.Forms
 

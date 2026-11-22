@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffMonicPolySum
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevelStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitExEveryDatum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffMonicPolySum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitExEveryDatum
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef NumberField IsDedekindDomain GlobalTheory.EtaJoin
 
 noncomputable section
@@ -148,7 +153,7 @@ theorem dual_eig (htop : ⨆ x, heckeEig T act x = ⊤) (x0 : X)
     · rw [hx]
     · rw [hφ x hx u hux, mul_zero, mul_zero]
   · simp
-  · intro a b ha hb; rw [map_add, map_add, map_add, ha, hb, mul_add]
+  · intro a b ha hb; rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb, mul_add]
 
 end Hecke
 
@@ -180,7 +185,7 @@ theorem typeTie_holds : ∀ (D : D7) (M : MtFam D) (i : D.nd.Loc), HeckeTied D M
   have hb := D.what₂.jMt_basis (D.nd.mu i) (D.nd.j i) b
   let f0 : D.what₂.MtL (D.nd.mu i) (D.nd.j i) →ₛₗ[D.what₂.embLL] ℂ :=
     { toFun := fun z => ι (φ (D.nd.prMt i z))
-      map_add' := fun a c => by simp only [map_add]
+      map_add' := fun a c => by simp only [map_add (f := _)]
       map_smul' := fun a z => by
         show ι (φ (D.nd.prMt i (a • z))) = D.what₂.embLL a • ι (φ (D.nd.prMt i z))
         rw [LinearMap.map_smulₛₗ, map_smul, smul_eq_mul, map_mul, hι, smul_eq_mul] }

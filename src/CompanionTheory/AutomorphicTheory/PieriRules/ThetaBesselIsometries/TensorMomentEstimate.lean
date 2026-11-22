@@ -1,13 +1,17 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.DiscreteSeriesUnitarySmoothBasicStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.FrepDiscreteSeriesSumStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.TensorRawOfFrepStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.ExistsKTypeNonzeroBesselStatement
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.BesselSumDecompositionStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.DiscreteSeriesUnitarySmoothBasicStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.FrepDiscreteSeriesSumStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.TensorRawOfFrepStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.ExistsKTypeNonzeroBesselStatement
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.BesselSumDecompositionStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+
+@[expose] public section
 
 namespace GlobalTheory
 end GlobalTheory
@@ -45,7 +49,7 @@ theorem bessel_add {k r : ℕ} {R : Rep k r} {Wp : Type} [NormedAddCommGroup Wp]
   refine ⟨fun v hv w hw => ?_, fun a v hv => ?_, fun g hg m hm v hv => ?_, max |C| |C'|, Ws ++ Ws', ?_, fun v hv => ?_⟩
   · simp only [h1 v hv w hw, h1' v hv w hw]; abel
   · simp only [h2 a v hv, h2' a v hv, smul_add]
-  · simp only [h3 g hg m hm v hv, h3' g hg m hm v hv, map_add, smul_add]
+  · simp only [h3 g hg m hm v hv, h3' g hg m hm v hv, map_add (f := _), smul_add]
   · intro w hw
     rcases List.mem_append.1 hw with e | e
     exacts [hW w e, hW' w e]

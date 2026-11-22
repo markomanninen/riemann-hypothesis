@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.KDecayOfGap
+module
+
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.KDecayOfGap
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqConjOfInFrame
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridFiniteDatumVectorThetaFockVacuum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsColIntertwiner
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqConjOfInFrame
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridFiniteDatumVectorThetaFockVacuum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsColIntertwiner
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+
+@[expose] public section
 
 noncomputable section
 
@@ -170,8 +174,7 @@ theorem om_ptTop_movedVec : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts
     have h := GlobalTheory.GridJoin.ColIt.hasInfExp_mu L hL t j τ
     have e : (((rowEntries D sc.cGap τ).e j : ℤ) : ℚ) = (D.hc τ).e j := by
       show (((num D sc.cGap τ).e ((j : ℕ) + 1) : ℤ) : ℚ) = _
-      rw [num_e D sc.cGap τ (by omega) hj]
-      rfl
+      exact GlobalTheory.SignedHC.GridData.extend_cast 1 (D.hc τ).e_int ⟨j, j.2⟩
     rwa [e]
   have key := GlobalTheory.VacuumCharacter.vacuum_character D W.ψ W.θ (G.V (.top j)) (G.V (.top ((j : ℕ) + 1)))
     (G.chrS (.top t j)) (G.chrT (.top t j)) (W.om (.top t j)) hW W.θ_is (hX0.sigOK G) (hX1.sigOK G) (fun _ => 1) hS hT

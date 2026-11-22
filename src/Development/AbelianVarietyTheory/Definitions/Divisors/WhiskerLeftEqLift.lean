@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -35,11 +39,6 @@ def Norm (e : Y ⟶ X) (W : X.Opens) (L M : LB X) (w : Cmp W L M) (r : RigD e L)
     gm e y _ (w a b) * gm (𝟙 Y) y _ (r' b) = gm (𝟙 Y) y _ (r a)
 
 def FnBij (p : X ⟶ Y) : Prop := ∀ V : Y.Opens, Function.Bijective (p.app V).hom
-
-theorem isOn_top {L : LB X} (hL : L.IsLB) : IsOn ⊤ L :=
-  ⟨fun _ ↦ le_top, fun x _ ↦ exists_chart hL x, fun x _ _ _ ha hb hc ↦ gm_cocycle hL (𝟙 X) x ha hb hc⟩
-
-theorem fnBij_id : FnBij (𝟙 X) := fun _ ↦ Function.bijective_id
 
 variable {S : Scheme.{0}} (A : Over S) [GrpObj A]
 
@@ -78,8 +77,8 @@ theorem famCls_surj {T : Over S} (c : (addF A).obj (Opposite.op T)) :
   obtain ⟨N, hN, rfl⟩ := cls_surj c
   exact ⟨N, ⟨hN, (isAdditive_iff hN).2 hc⟩, rfl⟩
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem whiskerLeft_eq_lift {T T' : Over S} (u : T' ⟶ T) : A ◁ u = lift (fst A T') (snd A T' ≫ u) := by
   ext <;> simp
 

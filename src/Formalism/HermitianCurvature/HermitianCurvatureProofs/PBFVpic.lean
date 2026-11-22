@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVrad
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVrad
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -39,13 +43,9 @@ theorem JF_uInv (Bs : B.RealPlaceData k r Wp Wq) (ε : ℝ) (s : ℂ) {h : B.Mat
       have h1 := uInv_nice Bs ε s w (fun e' => x (Fin.cons 1 e')) (fun e' => hx _) (fun a => e a.succ)
       have h2 := uInv_nice Bs ε s w (fun e' => x (Fin.cons 0 e')) (fun e' => hx _) (fun a => e a.succ)
       have e1 := JCx2.bc_JF_add h1 (JCx2.mn_nice_smul c h2) hh
-      calc B.JF Bs ((KB.uInv s w (fun e' => x (Fin.cons 1 e')) fun a => e a.succ) +
-            c • (KB.uInv s w (fun e' => x (Fin.cons 0 e')) fun a => e a.succ)) h
-          = B.JF Bs (fun g => (KB.uInv s w (fun e' => x (Fin.cons 1 e')) fun a => e a.succ) g +
-            (fun g => c • (KB.uInv s w (fun e' => x (Fin.cons 0 e')) fun a => e a.succ) g) g) h := rfl
-        _ = _ := e1
-        _ = _ := by
-          rw [JCx2.bc_JF_smul, JF_uInv Bs ε s hh w _ (fun e' => hx _), JF_uInv Bs ε s hh w _ (fun e' => hx _)]
+      simp only [Pi.add_def, Pi.smul_apply]
+      rw [e1, JCx2.bc_JF_smul, JF_uInv Bs ε s hh w _ (fun e' => hx _),
+        JF_uInv Bs ε s hh w _ (fun e' => hx _)]
 
 end Pic
 

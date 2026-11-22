@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoincareDuality.InducedDual
-import GroundTheory.ProfiniteCohomology.PoincareDuality.TensorHomZmodDualIsoZmodMulPairing
-import GroundTheory.ProfiniteCohomology.CupProducts.CohomologyMapRightUnitorCupUnitClass
-import GroundTheory.ProfiniteCohomology.Characters
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.InducedDual
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.TensorHomZmodDualIsoZmodMulPairing
+public import GroundTheory.ProfiniteCohomology.CupProducts.CohomologyMapRightUnitorCupUnitClass
+public import GroundTheory.ProfiniteCohomology.Characters
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -120,8 +125,8 @@ theorem zmodH0Class_surjective : Function.Surjective (zmodH0Class (H := H) (n :=
 
 variable [NeZero n] (D' : Rep.{u} (ULift.{u} ℤ) H) [IsDiscreteRep D'] (hD : ∀ d : D', n • d = 0)
 
-omit [TopologicalSpace H] [IsTopologicalGroup H] [IsDiscreteRep D'] in
 
+omit [TopologicalSpace H] [IsTopologicalGroup H] [IsDiscreteRep D'] in
 theorem unitHom_tensorHom_zmodMulPairing (a : ZMod n) :
     (unitHom (zmodRep.{u} H n) (ULift.up a) (fun g => zmodRep_ρ_apply g _) ⊗ₘ 𝟙 D') ≫ zmodMulPairing n D' hD =
       (λ_ D').hom ≫ (a.val • 𝟙 D') := by
@@ -224,8 +229,8 @@ instance finite_coind_zmodRep (W : OpenSubgroup Γ) :
     Finite (Rep.coind (W : Subgroup Γ).subtype (zmodRep.{u} (W : Subgroup Γ) n)) :=
   finite_coind_trivial _ _
 
-omit [IsTopologicalGroup Γ] [CompactSpace Γ] [NeZero n] in
 
+omit [IsTopologicalGroup Γ] [CompactSpace Γ] [NeZero n] in
 theorem nsmul_coind_zmodRep_eq_zero (W : OpenSubgroup Γ)
     (f : Rep.coind (W : Subgroup Γ).subtype (zmodRep.{u} (W : Subgroup Γ) n)) : n • f = 0 :=
   Subtype.ext (funext fun x => nsmul_zmodRep_eq_zero (W : Subgroup Γ) n (f.1 x))

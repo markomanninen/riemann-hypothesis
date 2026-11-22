@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.StatementK
+module
+
+public import Formalism.GaussJetBounds.StatementK
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -52,7 +56,7 @@ def GenericExists : Prop :=
     ∃ (K : Type) (_ : NormedField K), IsUltrametricDist K ∧ CharZero K ∧
       ∃ (φ : ℂ_[l] →+* K) (Y : σ → K), (∀ z, ‖φ z‖ = ‖z‖) ∧
         (∀ P : MvPolynomial σ ℂ_[l],
-          ‖MvPolynomial.eval₂ φ Y P‖ = ⨆ n : σ →₀ ℕ, ‖MvPolynomial.coeff n P‖) ∧
+          ‖MvPolynomial.eval₂ φ Y P‖ = ⨆ n : σ →₀ ℕ, ‖AddMonoidAlgebra.coeff P n‖) ∧
         IsGeneric l Y
 
 end Formalism.DworkPowerSeriesWeights

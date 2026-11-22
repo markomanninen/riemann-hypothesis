@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
-import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+
+@[expose] public section
+
 open Module NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Col Matrix
 open scoped ComplexOrder
 

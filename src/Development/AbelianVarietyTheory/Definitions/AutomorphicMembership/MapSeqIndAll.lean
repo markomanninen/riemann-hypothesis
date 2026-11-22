@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ClosureImageSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ClosureImageSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ def unitLat (K : Type) [Field K] [NumberField K] [StarRing K] (n : ℕ) : HLat K
   HLat.ofCoord (Submodule.span (𝓞 K) (Set.range (Pi.basisFun K (Fin n)))) fun _ => 1
 
 theorem ofCoord_good {d : ℕ} {L : Submodule (𝓞 K) (Fin d → K)} {X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ}
-    (hL : Submodule.IsLattice K L) (hX : ∀ v, IsUnit (X v).det) : (HLat.ofCoord L X).Good :=
-  ⟨hX, hL.fg, hL.span_eq_top⟩
+    (hL : Submodule.IsFullLattice K L) (hX : ∀ v, IsUnit (X v).det) : (HLat.ofCoord L X).Good :=
+  ⟨hX, hL.toIsLattice.fg, hL.span_eq_top⟩
 
 theorem unitLat_good (n : ℕ) : (unitLat K n).Good :=
   ⟨fun _ => by
@@ -144,15 +148,11 @@ variable (Z : ReadL R F X0 Y)
 theorem mjH_succ (i : Fin D.R.m) : mjH Z ((i : ℕ) + 1) = HLat.ofCoord ((s0Of R F).M i) ((s0Of R F).XW i) :=
   latSeq_succ _ _ _ i
 
-theorem mjH_off {j : ℕ} (h : j = 0 ∨ D.R.m < j) : mjH Z j = unitLat D.what₂.LL (Module.finrank ℂ (D.what₂.Mj j)) :=
-  latSeq_off _ _ _ h
-
-def mjCoord (i : Fin D.R.m) : (Fin ((s0Of R F).dW i) → D.what₂.LL) ≃ₗ[D.what₂.LL] (mjH Z ((i : ℕ) + 1)).V :=
-  castV (mjH_succ Z i).symm
-
 theorem mjH_good (hH : Holds R F) (j : ℕ) : (mjH Z j).Good :=
   mapSeq_ind_all _ _ D.what₂.Mj Z.jW (fun _ A _ => A.Good)
-    (fun i => ofCoord_good (hH.prim.mLat i) fun v => frame_gram_unit _ (RealDat3.kForm_of (F := F) hH.prim.unif false i v).1)
+    (fun i => by
+      exact ofCoord_good (hH.prim.mLat i) fun v =>
+        frame_gram_unit _ (RealDat3.kForm_of (F := F) hH.prim.unif false i v).1)
     (fun _ => unitLat_good _) j
 
 theorem jM_basis (hH : Holds R F) (j : ℕ) : LinearIndependent ℂ (fun k => jM Z j ((mjH Z j).b k)) ∧
@@ -188,33 +188,16 @@ def mjIds (Xd : DivX D) (h : Xd.MjH = mjH Z) : MjHIds D A3.A Xd (A3.indefDown (s
   eW i := castV ((mjH_succ Z i).symm.trans (congrFun h _).symm)
 
 theorem mjHTie_of_eq (Xd : DivX D) (h : Xd.MjH = mjH Z) (hj : HEq Xd.jM (jM Z)) :
-    MjHTie D A3.A Xd (A3.indefDown (s0Of R F)) Z.jW (mjIds Z Xd h) where
-  j_eq i x := map_castV _ _ D.what₂.Mj Z.jW h hj i _ x
-  hlat i := hLatTie_castV ((mjH_succ Z i).symm.trans (congrFun h _).symm)
+    MjHTie D A3.A Xd (A3.indefDown (s0Of R F)) Z.jW (mjIds Z Xd h) := by
+  constructor
+  · intro i x
+    exact map_castV _ _ D.what₂.Mj Z.jW h hj i _ x
+  · intro i
+    exact hLatTie_castV ((mjH_succ Z i).symm.trans (congrFun h _).symm)
 
 theorem exists_mjHTie (Xd : DivX D) (h : Xd.MjH = mjH Z) (hj : HEq Xd.jM (jM Z)) :
     ∃ JM, MjHTie D A3.A Xd (A3.indefDown (s0Of R F)) Z.jW JM :=
   ⟨_, mjHTie_of_eq Z Xd h hj⟩
-
-def withMj (hP : Pins R F cG) (hH : Holds R F) (Xd : DivX D)
-    (iM : ∀ j c, (mjH Z j).V →ₗ[D.what₂.LL] Xd.geo.Fn (Xd.Yv j c))
-    (hiM : ∀ j c x, iM j c x ∈ Xd.geo.H0 (Xd.Yv j c) (Xd.Lw j c (DV.kapW D j))) : DivX D :=
-  { Xd with
-    MjH := mjH Z
-    MjH_good := mjH_good Z hH
-    jM := jM Z
-    jM_basis := jM_basis Z hH
-    jM_lat := jM_lat Z hP hH
-    MjLat_sub := mjLat_sub Z hP hH
-    jM_metric := jM_metric Z hH
-    iMj := iM
-    iMj_mem := hiM }
-
-theorem mjHTie_withMj (hP : Pins R F cG) (hH : Holds R F) (Xd : DivX D)
-    (iM : ∀ j c, (mjH Z j).V →ₗ[D.what₂.LL] Xd.geo.Fn (Xd.Yv j c))
-    (hiM : ∀ j c x, iM j c x ∈ Xd.geo.H0 (Xd.Yv j c) (Xd.Lw j c (DV.kapW D j))) :
-    MjHTie D A3.A (withMj Z hP hH Xd iM hiM) (A3.indefDown (s0Of R F)) Z.jW (mjIds Z _ rfl) :=
-  mjHTie_of_eq Z _ rfl HEq.rfl
 
 section Reface
 
@@ -224,13 +207,6 @@ variable {Dc : ∀ Zs : DefSub A3.fam3.amb3, DefCols (A3.side3 F.P1 F.ψ1 Zs)} {
   (Z' : ReadL ((R.updS kap lam).withErr err) (reFace F Dc Sp Zsc) X0 Y')
 
 end Reface
-
-example : Module.finrank ℚ (unitLat ℚ 1).V = 1 := Module.finrank_fin_fun ℚ
-
-example : Subsingleton (unitLat ℚ 0).V := inferInstanceAs (Subsingleton (Fin 0 → ℚ))
-
-example (M : Submodule (𝓞 ℚ) (Fin 3 → ℚ)) : Module.finrank ℚ
-    (latSeq (m := 1) (d := fun _ => 3) (fun _ => M) (fun _ _ => 1) (fun _ => ℂ) 1).V = 3 := Module.finrank_fin_fun ℚ
 
 end GlobalTheory.Mem.R3
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+
+@[expose] public section
 
 open Filter Topology Complex GlobalTheory.Mem.An
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.KFinOfMem
-import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsGauss
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.KFinOfMem
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsGauss
+
+@[expose] public section
 
 noncomputable section
 

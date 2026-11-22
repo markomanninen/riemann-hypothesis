@@ -1,5 +1,9 @@
-import Formalism.MahlerMeasure.StatementTM
-import Formalism.PolynomialDimension.DigitSumValuationBound
+module
+
+public import Formalism.MahlerMeasure.StatementTM
+public import Formalism.PolynomialDimension.DigitSumValuationBound
+
+@[expose] public section
 
 namespace Formalism.CountingSumsFrames
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SobBdSeminorm
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SobBdSeminorm
+
+@[expose] public section
 
 noncomputable section
 

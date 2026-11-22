@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base
 
@@ -14,8 +18,8 @@ private theorem algebraMap_inj : Function.Injective (algebraMap ℤ_[l] O) := by
   have hp : (RingHom.ker (algebraMap ℤ_[l] O)).IsPrime := RingHom.ker_isPrime _
   have hmax : (RingHom.ker (algebraMap ℤ_[l] O)).IsMaximal := hp.isMaximal hne
   have hbot : (⊥ : Ideal O).IsMaximal := by
-    apply Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := ℤ_[l])
-    rw [← RingHom.ker_eq_comap_bot]
+    apply Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := ℤ_[l])
+    rw [Ideal.under_def, ← RingHom.ker_eq_comap_bot]
     exact hmax
   exact IsDiscreteValuationRing.not_a_field O (IsLocalRing.eq_maximalIdeal hbot).symm
 

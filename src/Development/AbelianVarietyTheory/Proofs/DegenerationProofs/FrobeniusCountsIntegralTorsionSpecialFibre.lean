@@ -1,12 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFrobGBaseChange
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.EqOneOfPowOfClosedPoint
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrobeniusOnTorsionStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFrobGBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.EqOneOfPowOfClosedPoint
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrobeniusOnTorsionStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -124,7 +129,7 @@ theorem frobenius_on_integral_torsion : ∀ (W R Ω : Type) [CommRing W] [CommRi
     rw [map_natCast, CharP.cast_eq_zero] at this
     exact not_isUnit_zero this
   have hq : 2 ≤ p ^ r := hp.two_le.trans (Nat.le_self_pow (by omega) p)
-  obtain ⟨t, a, m, C, Q, V, hm, hroot, hV, hcount, hQ, hT⟩ := GlobalTheory.T.frobenius_on_torsion_alt _ p l hl hlp _
+  obtain ⟨t, a, m, C, Q, V, hm, hroot, hV, hcount, hQ, hT⟩ := GlobalTheory.SS.frobenius_on_torsion _ p l hl hlp _
     (smConn_pullback _ G hG) g (by
       show SmoothOfRelativeDimension g (pullback.snd _ _)
       exact (smoothOfRelativeDimension_isStableUnderBaseChange g).of_isPullback
@@ -132,7 +137,7 @@ theorem frobenius_on_integral_torsion : ∀ (W R Ω : Type) [CommRing W] [CommRi
   obtain ⟨H₀, red, hH, hred, hinj⟩ := GlobalTheory.RedPts.exists_reduction W R Ω hi G hG
   let H : Subgroup M := H₀.comap θ.toMonoidHom
   let κ : H →* H₀ := (θ.toMonoidHom.subgroupComap H₀)
-  have step : ∀ x : H, ∃ h : Ψ x ∈ H, red (κ ⟨_, h⟩) = red (κ x) ≫ (show _ ⟶ _ from F) := by
+  have step : ∀ x : H, ∃ h : Ψ x ∈ H, red (κ ⟨_, h⟩) = red (κ x) ≫ F.asHom := by
     intro x
     obtain ⟨s, hs, hs'⟩ := (hH _).1 x.2
     have a1 : (spMap σ ≫ s) ≫ G.hom = spMap (algebraMap W R) := by
@@ -157,7 +162,7 @@ theorem frobenius_on_integral_torsion : ∀ (W R Ω : Type) [CommRing W] [CommRi
       exact RingHom.ext hσ'
     · exact (Over.w _).trans (Over.w _).symm
   have iter : ∀ (n : ℕ) (x : H), ∃ h : (Ψ ^ n) x ∈ H,
-      red (κ ⟨_, h⟩) = red (κ x) ≫ (show _ ⟶ _ from F ^ n) := by
+      red (κ ⟨_, h⟩) = red (κ x) ≫ (F ^ n).asHom := by
     intro n
     induction n with
     | zero => exact fun x => ⟨x.2, (Category.comp_id _).symm⟩
@@ -170,7 +175,7 @@ theorem frobenius_on_integral_torsion : ∀ (W R Ω : Type) [CommRing W] [CommRi
       rw [e, Category.assoc]
       rfl
   obtain ⟨U, hU1, hU2, hU3⟩ := transfer H (red.comp κ) (Ψ ^ m)
-    (fun j x => x ≫ (show _ ⟶ _ from (F ^ m) ^ j)) (fun j x => by
+    (fun j x => x ≫ ((F ^ m) ^ j).asHom) (fun j x => by
       have e : (Ψ ^ m : MulAut M)^[j] x = (Ψ ^ (m * j)) x := by
         rw [pow_mul]
         generalize (x : M) = y

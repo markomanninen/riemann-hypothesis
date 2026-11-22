@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.Frames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SupLeL2PrincipalTorus
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiableOnDetHMat
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FirstMinimumEqZeroOfRankZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiablePolyDeriv
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.L2CanThEqInvSqrtTwoPowMulDetIm
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.Frames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SupLeL2PrincipalTorus
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiableOnDetHMat
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FirstMinimumEqZeroOfRankZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiablePolyDeriv
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.L2CanThEqInvSqrtTwoPowMulDetIm
+
+@[expose] public section
 
 open NumberField Matrix Complex
 open scoped ComplexConjugate Real
@@ -76,11 +80,11 @@ theorem bchar_wtOf_mul {u : Frame X.Ψ r} (hu : u ∈ Bor X.Ψ r) (c : X.Ψ → 
   rintro ⟨τ, i | i⟩ -
   · have h : u τ (rowIdx hr (.inl i)) (rowIdx hr (.inl i)) ≠ 0 := PerMove.bor_diag_ne hu τ _
     simp only [rowOf_apply, wtOf_inl, Sum.elim_inl]
-    rw [rowFac, if_neg (by simp), zpow_add₀ h, zpow_natCast, zpow_natCast, inv_inv, inv_pow]
+    rw [rowFac, ite_eq_right (by simp), zpow_add₀ h, zpow_natCast, zpow_natCast, inv_inv, inv_pow]
     field_simp
   · have h : u τ (rowIdx hr (.inr i)) (rowIdx hr (.inr i)) ≠ 0 := PerMove.bor_diag_ne hu τ _
     simp only [rowOf_apply, wtOf_inr, Sum.elim_inr]
-    rw [rowFac, if_pos (by have := i.isLt; simp only [rowIdx_inr]; omega), zpow_sub₀ h,
+    rw [rowFac, ite_eq_left (by have := i.isLt; simp only [rowIdx_inr]; omega), zpow_sub₀ h,
       _root_.zpow_neg, zpow_natCast, zpow_natCast, inv_pow]
     field_simp
 
@@ -126,8 +130,8 @@ theorem pnorm_thFr_rmul (hs : IsSympl X bas) (hP : P ∈ Harm.rowHighest ℂ c c
 
 section Torus
 
-variable (X) in
 
+variable (X) in
 def scaleUp : (Fin g → ℂ) ≃ₗ[ℂ] EuclideanSpace ℂ (Fin g) where
   toFun z := WithLp.toLp 2 fun i => (√(X.c (idx i).1) : ℂ) * z i
   invFun v := fun i => v i / (√(X.c (idx i).1) : ℂ)
@@ -153,8 +157,8 @@ theorem Hf_scaleUp (z w : Fin g → ℂ) : Hf (scaleUp X idx z) (scaleUp X idx w
   rw [← h]
   ring
 
-variable (X bas) in
 
+variable (X bas) in
 def canSec (a b : Fin g → ℝ) (x : Frame X.Ψ r) (v : EuclideanSpace ℂ (Fin g)) : ℂ :=
   canFn X bas idx a b x fun i => v i / (√(X.c (idx i).1) : ℂ)
 
@@ -237,8 +241,8 @@ theorem l2_canSec_pos : 0 < (frameTorus idx hs ho a b).l2 1 (canSec X bas idx a 
   rw [l2_canSec_eq_inv_sqrt_two_pow_mul_det_im]
   positivity
 
-include ho in
 
+include ho in
 theorem norm_scaleUp_per (v : Fin r → E) : ‖scaleUp X idx (per X x v ∘ idx)‖ =
     √(∑ τ, X.c τ * X.maj x τ (Data.emb τ.1 v)) := by
   have h := Hf_scaleUp idx (per X x v ∘ idx) (per X x v ∘ idx)
@@ -248,8 +252,8 @@ theorem norm_scaleUp_per (v : Fin r → E) : ‖scaleUp X idx (per X x v ∘ idx
   congr 1
   exact ofReal_injective (by rw [← h, ofReal_pow]; rfl)
 
-include hs ho in
 
+include hs ho in
 theorem per_ne_zero {v : Fin r → E} (hv : v ∈ X.Λ) (h0 : v ≠ 0) : per X x v ∘ idx ≠ 0 := by
   intro h
   obtain ⟨m, hm⟩ := bas.surjective ⟨v, hv⟩
@@ -266,7 +270,7 @@ theorem firstMinimum_principalTorusAtOrthonormalFrame : (frameTorus idx hs ho a 
   set S := {t | ∃ v ∈ X.Λ, v ≠ 0 ∧ t = ∑ τ, X.c τ * X.maj x τ (Data.emb τ.1 v)} with hS
   have h1 : {t : ℝ | ∃ y ∈ lat (frameTorus idx hs ho a b).b, y ≠ 0 ∧ t = ‖y‖} = Real.sqrt '' S := by
     ext t
-    simp only [mem_lat_frameTorus, hS, Set.mem_setOf_eq, Set.mem_image]
+    simp only [mem_lat_frameTorus, hS, Set.mem_ofPred_eq, Set.mem_image]
     constructor
     · rintro ⟨_, ⟨v, hv, rfl⟩, h0, rfl⟩
       refine ⟨_, ⟨v, hv, ?_, rfl⟩, (norm_scaleUp_per idx ho v).symm⟩
@@ -287,13 +291,13 @@ theorem firstMinimum_principalTorusAtOrthonormalFrame : (frameTorus idx hs ho a 
 
 end Torus
 
-variable (X) in
 
+variable (X) in
 def orthoDir (l : Harm.Var X.Ψ q0 X.p0 (Fin n)) : Fin n → EuclideanSpace ℂ (Fin g) :=
   Pi.single l.2.2 (EuclideanSpace.single (idx.symm (rowOf X hr (l.1, l.2.1))) 1)
 
-variable (X bas) in
 
+variable (X bas) in
 def orthoJet (P : Harm.Poly ℂ X.Ψ q0 X.p0 (Fin n)) (x : Frame X.Ψ r) : ℂ :=
   polyDeriv P (orthoDir X idx hr) (fun w => ∏ k, canSec X bas idx (a k) (b k) x (w k)) 0
 
@@ -393,7 +397,7 @@ theorem norm_orthoJet_le (hs : IsSympl X bas) {d : ℕ} (hP : P.IsHomogeneous d)
     funext l k
     ext i
     have he : e l = (l.2.2, idx.symm (rowOf X hr (l.1, l.2.1))) := rfl
-    rw [Function.comp_apply, hφ, EuclideanSpace.single_apply]
+    rw [Function.comp_apply, hφ, PiLp.single_apply]
     simp only [Equiv.symm_apply_eq, he, Prod.mk.injEq]
     by_cases hk : k = l.2.2
     · simp [orthoDir, hk, -rowOf_apply]
@@ -415,7 +419,7 @@ theorem norm_orthoJet_le (hs : IsSympl X bas) {d : ℕ} (hP : P.IsHomogeneous d)
     · ring
   · rw [hn, Finset.mul_sum, Real.exp_sum, Function.comp_apply, norm_prod, ← Finset.prod_pow,
       ← Finset.prod_mul_distrib, ← Fin.prod_const n K, ← Finset.prod_mul_distrib, ← Finset.prod_pow]
-    refine Finset.prod_le_prod (fun k _ => by positivity) fun k _ => ?_
+    refine Finset.prod_le_prod₀ (fun k _ => by positivity) fun k _ => ?_
     refine (sup_le_l2_principal_torus _ _ 1 le_rfl _ (canSec_mem_Sec idx hs ho (a k) (b k))
       (φ w k)).trans_eq ?_
     rw [firstMinimum_principalTorusAtOrthonormalFrame, mul_pow, Real.sq_sqrt (l2_canSec_pos idx hs ho _ _).le, hK, mul_pow,
@@ -481,16 +485,6 @@ theorem isModerate_sum_thFr (hs : IsSympl X bas) (hn : Even n) {J : Type*} (s : 
   refine Finset.sum_le_sum fun j hj => ?_
   rw [norm_mul, mul_assoc, mul_assoc]
   exact mul_le_mul_of_nonneg_left (hC j hj x hx) (norm_nonneg _)
-
-example : HyperbolicCusp.flagData.IsModerate
-    (wtOf HyperbolicCusp.flagData Gauss.hr (fun _ _ => 0) (fun _ _ => 0) 2)
-    (thFr HyperbolicCusp.flagData Gauss.hr Gauss.bas Gauss.idx 2 0 0 1) ∧
-    thFr HyperbolicCusp.flagData Gauss.hr Gauss.bas Gauss.idx 2 0 0 1 Gauss.one ≠ 0 :=
-  ⟨isModerate_thFr _ _ _ _ Gauss.isSympl_bas even_two (by
-    simpa [Harm.minorProd] using Harm.minorProd_mem_rowHighest (R := ℂ) (κ := Fin 2)
-      (fun (_ : HyperbolicCusp.flagData.Ψ) (_ : Fin 1) => 0)
-      (fun _ (_ : Fin HyperbolicCusp.flagData.p0) => 0) (ε := 0) (φ := 0)
-      (fun _ _ _ => by simp)), Gauss.thFr_one_ne_zero 2⟩
 
 end
 

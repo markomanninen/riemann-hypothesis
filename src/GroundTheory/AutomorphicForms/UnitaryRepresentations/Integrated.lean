@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.UnitaryRepresentations.IsInvariantIffCommuteStarProjection
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.UnitaryRepresentations.IsInvariantIffCommuteStarProjection
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -50,7 +54,7 @@ noncomputable def integratedForm (f : G →₁[μ] ℂ) : H →L⋆[ℂ] H →L[
         rw [← integral_const_mul]
         congr 1; ext g; ring)
       (fun w v₁ v₂ => by
-        simp only [map_add, inner_add_right, mul_add]
+        simp only [map_add (f := _), inner_add_right, mul_add]
         exact integral_add (π.integrable_mul_inner_orbit μ f w v₁)
           (π.integrable_mul_inner_orbit μ f w v₂))
       (fun c w v => by

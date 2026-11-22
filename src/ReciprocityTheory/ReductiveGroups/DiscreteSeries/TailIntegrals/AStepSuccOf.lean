@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.AStepFin
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.AStepFin
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Xi
 

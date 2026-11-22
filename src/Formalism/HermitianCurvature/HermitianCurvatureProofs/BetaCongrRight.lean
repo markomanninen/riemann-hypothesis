@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormModel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormModel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ContDiff
@@ -118,7 +122,7 @@ theorem form_model : Formalism.FourierDecayAlt.P.FormNormSumIdentities.FormModel
   have hcc : ∀ u e, CCle a mm (comp u e) ‖u‖ := fun u e => FormNormSumIdentities.ccle_comp (Mo.mem u) e
   have hin : ∀ u e, InCC a mm (comp u e) := fun u e => ⟨_, hcc u e⟩
   have hadd : ∀ u u', comp (u + u') = comp u + comp u' := by
-    intro u u'; funext e γ; simp [comp, map_add]
+    intro u u'; funext e γ; simp [comp, map_add (f := _)]
   have hsmul : ∀ (c : ℂ) u, comp (c • u) = c • comp u := by
     intro c u; funext e γ; simp [comp, map_smul]
   have hzero : comp 0 = 0 := by funext e γ; simp [comp]

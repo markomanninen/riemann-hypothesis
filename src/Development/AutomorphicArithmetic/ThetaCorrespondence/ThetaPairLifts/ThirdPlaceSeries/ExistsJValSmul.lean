@@ -1,9 +1,13 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchurScalarLemma
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RealPack
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopReadAt
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ReadsOfVal
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IndefRRealT
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchurScalarLemma
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RealPack
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopReadAt
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ReadsOfVal
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IndefRRealT
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -37,8 +41,8 @@ theorem GlobalTheory.TopVal.exists_jVal_smul_alt : ∀ {B : GlobalTheory.Mem.Bas
     (Formalism.L2.Forms.rankP (I.rec7 l Z)) B.wts.sgTrue B.embLL B.fields.emb
     (fun τ x => DFunLike.congr_fun (B.fields_embC τ) x) cv hcv h0 _ _ _ e j₀ hJ.inj hr hJ.eqv
   refine ⟨a, ha, fun w v => (h w v).trans ?_⟩
-  unfold GlobalTheory.TopVal.pairVal
+  delta GlobalTheory.TopVal.pairVal
   rw [LinearMap.smul_apply]
-  erw [map_smul, map_smul, LinearMap.smul_apply]
+  erw [LinearMap.map_smul, LinearMap.map_smul, LinearMap.smul_apply]
   rfl
 end

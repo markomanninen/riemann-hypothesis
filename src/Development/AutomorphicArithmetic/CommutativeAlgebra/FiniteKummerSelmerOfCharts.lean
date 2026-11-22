@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsFiniteSpanKummerSelmerRepresentatives
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NoethSp
-import Development.AutomorphicArithmetic.CommutativeAlgebra.FiniteKummerSelmerOnPrimeStratum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsFiniteSpanKummerSelmerRepresentatives
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NoethSp
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.FiniteKummerSelmerOnPrimeStratum
+
+@[expose] public section
 
 open GroundTheory.FunctionField UpperTheory.Et.Sel
 open scoped TensorProduct

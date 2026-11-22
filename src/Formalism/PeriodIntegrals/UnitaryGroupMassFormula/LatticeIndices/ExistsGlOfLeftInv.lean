@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace MassDataIdxAdA
 
@@ -21,13 +25,14 @@ theorem exists_gl_of_left_inv (g : O) (hg : ¬ IsUnit g) (C R N : Matrix ι ι K
     simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.add_apply, Matrix.smul_apply,
       smul_eq_mul] at h ⊢
     have hs : ((∑ k, R' i k * C' k j : O) : K) = ∑ k, R i k * C k j := by
-      rw [show ((∑ k, R' i k * C' k j : O) : K) = algebraMap O K (∑ k, R' i k * C' k j) from rfl,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [show ((∑ k, R' i k * C' k j : O) : K) = algebraMap O K (∑ k, R' i k * C' k j) from rfl,
         map_sum]
       simp only [map_mul]
       rfl
     rw [hs, h]
     change _ = algebraMap O K ((1 : Matrix ι ι O) i j + g * N' i j)
-    rw [map_add, map_mul]
+    rw [map_add (f := _), map_mul]
     have hN'' : algebraMap O K (N' i j) = N i j := rfl
     have hg' : algebraMap O K g = (g : K) := rfl
     rw [hN'', hg']

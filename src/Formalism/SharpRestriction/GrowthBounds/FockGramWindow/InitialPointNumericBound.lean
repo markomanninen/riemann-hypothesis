@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.FirstCoefficientLeDiv
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.FirstCoefficientLeDiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +12,7 @@ open MvPolynomial Finset Formalism.MainNotions.G Formalism.MainNotions.flipOneTh
 
 theorem clog_le_lg (p : ℕ) (hp : 1 < p) (x : ℕ) (hx : 2 ≤ x) : (Nat.clog p x : ℝ) ≤ Real.logb p x + 1 := by
   have hpos : 0 < Nat.clog p x := Nat.clog_pos hp (by omega)
-  have hk := Nat.pow_pred_clog_lt_self hp (by omega : 1 < x)
+  have hk := Nat.pow_pred_clog_lt_self p (by omega : 1 < x)
   have hpR : (1 : ℝ) < p := by exact_mod_cast hp
   have hxR : (0 : ℝ) < x := by positivity
   have h1 : (p : ℝ) ^ (Nat.clog p x).pred < x := by exact_mod_cast hk

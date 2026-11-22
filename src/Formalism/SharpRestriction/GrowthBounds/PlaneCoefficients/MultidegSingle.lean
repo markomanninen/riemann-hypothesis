@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.FrRevInj
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.FrRevInj
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,11 +172,12 @@ end LkD
 theorem lkDeg : LkDeg := by
   intro p _ n' r _ _ O _ _ _ Fr L₁ N₁ hV J _ Dt hS hJ j F hF δ hδ ν hν m'
   have hFs := congrArg (PhiJ Fr Dt j) F.as_sum
-  rw [map_sum] at hFs
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at hFs
   rw [hFs] at hν
   obtain ⟨μ, hμ, hν'⟩ := Finset.mem_biUnion.1 (MvPolynomial.support_sum hν)
   obtain ⟨ν0, a0, b0⟩ := LkD.PhiJ_monomial Dt hV hS.2.1 hJ j μ (fun v hv =>
-    (mem_supported.1 hF) (Finset.mem_coe.2 ((mem_vars v).2 ⟨μ, hμ, hv⟩)))
+    (mem_supported.1 hF) (Finset.mem_coe.2 ((mem_vars_iff_mem_support v).2 ⟨μ, hμ, hv⟩)))
   rw [a0] at hν'
   have := support_monomial_subset hν'
   rw [Finset.mem_singleton] at this
@@ -205,7 +210,7 @@ theorem lkVars : LkVars := by
     intro F
     induction F using MvPolynomial.induction_on with
     | C a => rw [MvPolynomial.algHom_C]; exact Subalgebra.algebraMap_mem _ a
-    | add f g hf hg => rw [map_add]; exact Subalgebra.add_mem _ hf hg
+    | add f g hf hg => rw [map_add (f := _)]; exact Subalgebra.add_mem _ hf hg
     | mul_X f u hf => rw [map_mul]; exact Subalgebra.mul_mem _ hf (hX u)
   intro F v hv
   exact (mem_supported.1 (hall F)) (Finset.mem_coe.2 hv)

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingKrullDimQuotientMvPolynomialEqNat
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingCoeffNonnegOfEventuallyEvalNat
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingKrullDimQuotientMvPolynomialEqNat
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingCoeffNonnegOfEventuallyEvalNat
+
+@[expose] public section
 
 open Polynomial Filter Module
 
@@ -194,8 +198,8 @@ theorem idealHilbertPoly_ne_zero_of_X_notMem {P : Ideal (MvPolynomial ι k)} [hP
   rw [hbot, Submodule.mem_bot, Ideal.Quotient.eq_zero_iff_mem] at hmem
   exact h (hP.mem_of_pow_mem _ hmem)
 
-omit [Finite ι] in
 
+omit [Finite ι] in
 theorem exists_form_lt_sup_lt_colon {I : Ideal (MvPolynomial ι k)}
     (hI : I.IsHomogeneous (homogeneousSubmodule ι k)) (h : I ≠ ⊤) (hp : ¬ I.IsPrime) :
     ∃ (d : ℕ) (f : MvPolynomial ι k), f.IsHomogeneous d ∧ I < I ⊔ Ideal.span {f} ∧
@@ -286,7 +290,7 @@ theorem ringKrullDim_quotient_le_zero_of_forall_X_mem {I : Ideal (MvPolynomial �
   | add p q hp hq =>
     obtain ⟨a, ha⟩ := hp
     obtain ⟨b, hb⟩ := hq
-    exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
   | mul_X p i _ =>
     exact ⟨0, by rw [map_zero, eq_comm, Ideal.Quotient.eq_zero_iff_mem]; exact I.mul_mem_left _ (h i)⟩
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial GlobalTheory.CuspRep GlobalTheory.WeilDeligne UpperTheory.V.Hi
 open UpperTheory.V.W (Plc)
@@ -105,7 +109,8 @@ private theorem exists_linearEquiv_diagonal_chars_of_eigenbasis {G : Type} [Grou
     have hli := linearIndependent_monoidHom G ℂ
     set l : (G →* ℂ) →₀ ℂ := ∑ j, Finsupp.single (ψ j) 1 - ∑ i, Finsupp.single (χ' i) 1 with hl
     have hlc : Finsupp.linearCombination ℂ (fun f : G →* ℂ => (f : G → ℂ)) l = 0 := by
-      rw [hl, map_sub, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hl, map_sub, map_sum, map_sum]
       simp only [Finsupp.linearCombination_single, one_smul]
       funext g
       simp only [Pi.sub_apply, Finset.sum_apply, Pi.zero_apply]
@@ -115,7 +120,7 @@ private theorem exists_linearEquiv_diagonal_chars_of_eigenbasis {G : Type} [Grou
       rw [this, sub_self]
     have hl0 : l = 0 := linearIndependent_iff.mp hli l hlc
     have hφ := congrArg (fun f => f φ) hl0
-    simp only [hl, Finsupp.sub_apply, Finsupp.finset_sum_apply, Finsupp.single_apply,
+    simp only [hl, Finsupp.sub_apply, Finsupp.finsetSum_apply, Finsupp.single_apply,
       Finsupp.coe_zero, Pi.zero_apply, Finset.sum_boole, sub_eq_zero] at hφ
     rw [Fintype.card_subtype, Fintype.card_subtype]
     exact_mod_cast hφ

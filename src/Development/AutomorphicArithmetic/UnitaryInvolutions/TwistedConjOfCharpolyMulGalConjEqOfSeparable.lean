@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ModelEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ReflectCpInv
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.TBase
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.TClass
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ThInvVal
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ModelEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ReflectCpInv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.TBase
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.TClass
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ThInvVal
+
+@[expose] public section
+
 open Matrix Polynomial
 open scoped TensorProduct
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenFibMapAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenFibMapAlgebraMap
+
+@[expose] public section
+
 open CategoryTheory Limits
 
 noncomputable section
@@ -17,9 +22,6 @@ theorem genFibMap_comp {T E F O : Type} [CommRing T] [CommRing E] [CommRing F] [
 def den {T O : Type} [CommRing T] [CommRing O] [Algebra T O] (t : nonZeroDivisors T) :
     Algebra.algebraMapSubmonoid O (nonZeroDivisors T) :=
   ⟨algebraMap T O t, Submonoid.mem_map_of_mem _ t.2⟩
-
-@[simp] theorem den_coe {T O : Type} [CommRing T] [CommRing O] [Algebra T O] (t : nonZeroDivisors T) :
-    ((den (O := O) t : Algebra.algebraMapSubmonoid O (nonZeroDivisors T)) : O) = algebraMap T O t := rfl
 
 theorem exists_mk' {T O : Type} [CommRing T] [CommRing O] [Algebra T O] (x : GenFib T O) :
     ∃ (a : O) (t : nonZeroDivisors T), x = IsLocalization.mk' (GenFib T O) a (den t) := by
@@ -44,7 +46,7 @@ theorem genFibMap_mk' {T E O : Type} [CommRing T] [CommRing E] [CommRing O] [Alg
   simp only [genFibMap, IsLocalization.map_mk']
   congr 1
   ext
-  simp
+  exact ψ.commutes t
 
 theorem exists_finitePresentation_lift (T R O : Type) [CommRing T] [CommRing R] [CommRing O]
     [Algebra T R] [Algebra R O] [Algebra T O] [IsScalarTower T R O]

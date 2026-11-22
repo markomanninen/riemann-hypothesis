@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.EichLApply
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.EichLApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem skL_apply (D : Formalism.BasicNotions.D7) (S : Matrix (Fin D.R.rS) (Fin 
 
 theorem hE_skL (D : Formalism.BasicNotions.D7) (S : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E) (b : Fin D.R.rS)
     (v : (VS D).V) : (VS D).hT (D.sp.hypE b) (skL D S v) = (VS D).hT (D.sp.hypE b) v := by
-  rw [skL_apply, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [skL_apply, map_add (f := _), map_sum]
   simp [D.sp.hyp_ee]
 
 theorem skL_inv (D : Formalism.BasicNotions.D7) (S : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E) (v : (VS D).V) :
@@ -65,7 +70,8 @@ theorem skL_isom (D : Formalism.BasicNotions.D7) (S : Matrix (Fin D.R.rS) (Fin D
   have key := dsum_cancel S (fun b => (VS D).hT (D.sp.hypE b) v) (fun b => star ((VS D).hT (D.sp.hypE b) u))
   beta_reduce at key
   rw [skL_apply, skL_apply]
-  simp only [map_add, map_sum, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.map_smulₛₗ₂, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.map_smulₛₗ₂, map_smul,
     D.sp.hyp_ee, hue, smul_eq_mul, mul_zero, Finset.sum_const_zero, add_zero, starRingEnd_apply, star_sum,
     star_mul', hS]
   linear_combination key
@@ -107,7 +113,7 @@ theorem skL_X (D : Formalism.BasicNotions.D7) (S : Matrix (Fin D.R.rS) (Fin D.R.
       obtain ⟨b, rfl⟩ := hy
       exact D.sp.hyp_ee a' b
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add, hy, hz, add_zero]
+    | add y z _ _ hy hz => rw [map_add (f := _), hy, hz, add_zero]
     | smul c y _ hy => rw [map_smul, hy, smul_zero]
   rw [skL_apply]
   simp [h0]
@@ -167,7 +173,8 @@ private theorem pW_skL (D : Formalism.BasicNotions.D7) (S : Matrix (Fin D.R.rS) 
     split_ifs <;> simp
   have hz : ∀ a, (VS D).hT D.sp.zm (D.sp.hypE a) = 0 := fun a => (D.sp.hyp_orthz a).1
   rw [skL_apply]
-  simp only [pW, map_add, map_sum, map_smul, hf, hz, D.sp.hyp_ee, smul_eq_mul, mul_zero, add_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pW, map_add (f := _), map_sum, map_smul, hf, hz, D.sp.hyp_ee, smul_eq_mul, mul_zero, add_zero,
     mul_ite, mul_one, Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true, add_smul,
     Finset.sum_add_distrib, Finset.sum_const_zero, zero_smul]
   module
@@ -197,7 +204,8 @@ theorem alM_skE (D : Formalism.BasicNotions.D7) {T : D.host.E} (T' : D.host.E) (
     simp only [fr, act]
     exact (congrFun (Fin.comp_snoc (fun w => (skE D S) w) x.1 x.2) b).symm
   simp only [alM, Matrix.add_apply, Matrix.mul_apply, betaZ, Matrix.submatrix_apply, id]
-  rw [hfr, skL_apply, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hfr, skL_apply, map_add (f := _), map_sum]
   simp only [map_smul, smul_eq_mul, hf, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
     if_true, hZ]
 

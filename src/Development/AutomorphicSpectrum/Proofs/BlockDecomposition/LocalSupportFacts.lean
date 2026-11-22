@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrbitCompactModCentralizerSeparableLocalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormCommutingTwistedConjCompactMemTwistedCentral
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrbitCompactModCentralizerSeparableLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormCommutingTwistedConjCompactMemTwistedCentral
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem finite_of_subset_mul' {G : Type} [Group G] [TopologicalSpace G] [IsTopol
   simp only [Set.mem_iUnion, Set.mem_preimage, SetLike.mem_coe] at this
   obtain ⟨g, hg, hgd⟩ := this
   refine ⟨g, hg, ?_⟩
-  rw [← DoubleCoset.out_eq' T K' q, DoubleCoset.eq]
+  rw [← DoubleCoset.out_eq' q, DoubleCoset.eq]
   exact ⟨t, ht, g * d, hgd, by simp [hx, mul_assoc]⟩
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]

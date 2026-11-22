@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.closure_span_coefficients :
     ∀ {R M L : Type} [Ring R] [AddCommGroup M] [Module R M] [AddCommGroup L] (O : AddSubgroup R) (f : L →+ M) {m : ℕ} (x : Fin m → L),
@@ -14,7 +18,8 @@ theorem UpperTheory.closure_span_coefficients :
       have hl : l ∈ Submodule.span ℤ (Set.range x) := hx ▸ Submodule.mem_top
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).1 hl
       refine ⟨fun i => c i • a, fun i => O.zsmul_mem ha _, ?_⟩
-      rw [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_zsmul, smul_assoc, smul_comm]
     | zero => exact ⟨0, fun _ => O.zero_mem, by simp⟩

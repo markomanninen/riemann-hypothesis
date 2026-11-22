@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsGLSubmatrix
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HasComplementOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsGLSubmatrix
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HasComplementOfBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E]
 theorem coords_gram (B : HSpace E) (x y : B.V) :
     ∑ l, (∑ k, star (B.frame.repr x k) * B.gram k l) * B.frame.repr y l = B.hT x y := by
   conv_rhs => rw [← B.frame.sum_repr x, ← B.frame.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
     Finset.sum_mul, HSpace.gram, RingHom.id_apply, starRingEnd_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun k _ => by ring
 
@@ -39,7 +44,7 @@ theorem middleSymmetricBasisVectors_gram_antiDiagonal (c : ℕ) (neg : Bool) (p 
   have hm : 2 * p.1 + 1 = c → (P ≤ p.1 ↔ neg = true) := by
     intro h; rw [hP]; cases neg <;> simp <;> omega
   rw [← hP]
-  simp only [middleSymmetricBasisVector, map_add, LinearMap.add_apply, Examples₂.diagForm_single_left, Pi.single_apply, Pi.add_apply,
+  simp only [middleSymmetricBasisVector, map_add (f := _), LinearMap.add_apply, Examples₂.diagForm_single_left, Pi.single_apply, Pi.add_apply,
     GlobalTheory.UnitPerp.negFrom, Examples₂.sgn, antiDiagonalSignGramMatrix, Fin.ext_iff, Fin.val_rev, decide_eq_true_eq]
   generalize p.1 = a at *
   generalize q.1 = b at *

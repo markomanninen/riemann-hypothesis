@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqCjOneSmul
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseChangeEquivCrdOver
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaLiftAtReferenceTupleOverEnlargedBase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqCjOneSmul
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseChangeEquivCrdOver
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaLiftAtReferenceTupleOverEnlargedBase
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Cx Formalism.IndefR.RecTie
 open scoped TensorProduct InnerProductSpace ComplexOrder
@@ -15,27 +20,15 @@ namespace GlobalTheory.Mem.R3.Rw.WeilAtExt
 
 open Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.WeilFull GlobalTheory.Mem.R3.Rw.LiftExt
 
-local macro "ksub " h:ident x:ident y:term : tactic => `(tactic| (
-  have e : @Eq (type_of% $x) (by kexactB $y) $x := by kexactB (@eq_of_heq (type_of% $x) $x (by kexactB $y) (by kexactB $h)).symm
-  clear $h
-  subst e))
-
-set_option hygiene false in
-
-local macro "pre_sub" : tactic => `(tactic| (
-  rcases B' with ⟨P'⟩
-  change P' = B.toPre at hP
-  subst hP))
-
-local macro "keq " n:ident x:term:max y:term:max h:term:max : tactic => `(tactic|
-  have $n : @Eq (type_of% $x) $x (by kexactB $y) := by kexactB (@eq_of_heq (type_of% $x) $x (by kexactB $y) (by kexactB $h)))
 
 section Leaves
 
 variable {B B' : Base} {C : Cols B} {C' : Cols B'} (a : Late B C) (a' : Late B' C')
 
 private theorem thetaFun_heq (hP : B'.toPre = B.toPre) : HEq (@IsThetaFunO a'.D) (@IsThetaFunO a.D) := by
-  pre_sub
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
   have e : @Eq (type_of% (@IsThetaFunO a.D)) ((by with_unfolding_all exact ((@IsThetaFunO a'.D) :))) (@IsThetaFunO a.D) := by
     funext ψ S T f
     refine propext ⟨fun h => ?_, fun h => ?_⟩
@@ -46,7 +39,9 @@ private theorem thetaFun_heq (hP : B'.toPre = B.toPre) : HEq (@IsThetaFunO a'.D)
   exact (by with_unfolding_all exact ((heq_of_eq e) :))
 
 private theorem vacuum_heq (hP : B'.toPre = B.toPre) : HEq (@IsVacuum a'.D) (@IsVacuum a.D) := by
-  pre_sub
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
   have e : @Eq (type_of% (@IsVacuum a.D)) ((by with_unfolding_all exact ((@IsVacuum a'.D) :))) (@IsVacuum a.D) := by
     funext m n x1 x2 x3 x4 x5 x6 x7
     refine propext ⟨fun h => ?_, fun h => ?_⟩
@@ -58,7 +53,9 @@ private theorem vacuum_heq (hP : B'.toPre = B.toPre) : HEq (@IsVacuum a'.D) (@Is
   exact (by with_unfolding_all exact ((heq_of_eq e) :))
 
 private theorem placeModel_heq (hP : B'.toPre = B.toPre) : HEq (@IsPlaceModel a'.D) (@IsPlaceModel a.D) := by
-  pre_sub
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
   have e : @Eq (type_of% (@IsPlaceModel a.D)) ((by with_unfolding_all exact ((@IsPlaceModel a'.D) :))) (@IsPlaceModel a.D) := by
     funext m n x1 x2 x3 x4 x5 x6 x7 x8
     refine propext ⟨fun h => ?_, fun h => ?_⟩
@@ -70,7 +67,9 @@ private theorem placeModel_heq (hP : B'.toPre = B.toPre) : HEq (@IsPlaceModel a'
   exact (by with_unfolding_all exact ((heq_of_eq e) :))
 
 private theorem pairSetup_heq (hP : B'.toPre = B.toPre) : HEq (@Fock.Sk.PairSetup a'.D) (@Fock.Sk.PairSetup a.D) := by
-  pre_sub
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
   have e : @Eq (type_of% (@Fock.Sk.PairSetup a.D)) ((by with_unfolding_all exact ((@Fock.Sk.PairSetup a'.D) :))) (@Fock.Sk.PairSetup a.D) := by
     funext x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
     refine propext ⟨fun h => ?_, fun h => ?_⟩
@@ -94,15 +93,25 @@ private theorem weilFull_of (hP : B'.toPre = B.toPre) (hV : HEq V' V) (hW : HEq 
     {ω ω'} (hω : HEq ω' ω) (h : IsWeilFull ψ V W μ (μ * η⁻¹) ω) : IsWeilFull ψ' V' W' μ' (μ' * η'⁻¹) ω' := by
   have k1 := thetaFun_heq a a' hP
   have k2 := pairSetup_heq a a' hP
-  pre_sub
-  ksub hV V' V
-  ksub hW W' W
-  ksub hψ ψ' ψ
-  ksub hμ μ' μ
-  ksub hη η' η
-  ksub hω ω' ω
-  keq e1 (@IsThetaFunO a'.D) (@IsThetaFunO a.D) k1
-  keq e2 (@Fock.Sk.PairSetup a'.D) (@Fock.Sk.PairSetup a.D) k2
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
+  have : V' = V := by with_unfolding_all exact eq_of_heq hV
+  subst V'
+  have : W' = W := by with_unfolding_all exact eq_of_heq hW
+  subst W'
+  have : ψ' = ψ := by with_unfolding_all exact eq_of_heq hψ
+  subst ψ'
+  have : μ' = μ := by with_unfolding_all exact eq_of_heq hμ
+  subst μ'
+  have : η' = η := by with_unfolding_all exact eq_of_heq hη
+  subst η'
+  have : ω' = ω := by with_unfolding_all exact eq_of_heq hω
+  subst ω'
+  have e1 : @Eq (type_of% (@IsThetaFunO a'.D)) (@IsThetaFunO a'.D) ((by with_unfolding_all exact (@IsThetaFunO a.D :))) := by
+    with_unfolding_all exact (eq_of_heq k1 : _)
+  have e2 : @Eq (type_of% (@Fock.Sk.PairSetup a'.D)) (@Fock.Sk.PairSetup a'.D) ((by with_unfolding_all exact (@Fock.Sk.PairSetup a.D :))) := by
+    with_unfolding_all exact (eq_of_heq k2 : _)
   refine ⟨⟨(by with_unfolding_all exact (h.datum.std :)), (by with_unfolding_all exact (h.datum.hecS :)), (by with_unfolding_all exact (h.datum.hecT :)), (by with_unfolding_all exact (h.datum.resS :)), (by with_unfolding_all exact (h.datum.resT :)), ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_⟩
   · rewrite [e1]; exact (by with_unfolding_all exact (h.datum.om_pres :))
   · rewrite [e1]; exact (by with_unfolding_all exact (h.datum.om_heis :))
@@ -134,48 +143,70 @@ private theorem thPVec_of (hP : B'.toPre = B.toPre) (hV : HEq V' V) (hW : HEq W'
   have k1 := thetaFun_heq a a' hP
   have k2 := vacuum_heq a a' hP
   have k3 := placeModel_heq a a' hP
-  pre_sub
-  ksub hV V' V
-  ksub hW W' W
-  ksub hψ ψ' ψ
-  ksub hθ θ' θ
-  ksub hs s' s
-  ksub hΛV ΛV' ΛV
-  ksub hΛW ΛW' ΛW
-  ksub hβV βV' βV
-  ksub hβW βW' βW
-  ksub hPg Pg' Pg
-  ksub h₀ f₀' f₀
-  ksub hf f' f
-  keq e1 (@IsThetaFunO a'.D) (@IsThetaFunO a.D) k1
-  keq e2 (@IsVacuum a'.D) (@IsVacuum a.D) k2
-  keq e3 (@IsPlaceModel a'.D) (@IsPlaceModel a.D) k3
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
+  have : V' = V := by with_unfolding_all exact eq_of_heq hV
+  subst V'
+  have : W' = W := by with_unfolding_all exact eq_of_heq hW
+  subst W'
+  have : ψ' = ψ := by with_unfolding_all exact eq_of_heq hψ
+  subst ψ'
+  have : θ' = θ := by with_unfolding_all exact eq_of_heq hθ
+  subst θ'
+  have : s' = s := by with_unfolding_all exact eq_of_heq hs
+  subst s'
+  have : ΛV' = ΛV := by with_unfolding_all exact eq_of_heq hΛV
+  subst ΛV'
+  have : ΛW' = ΛW := by with_unfolding_all exact eq_of_heq hΛW
+  subst ΛW'
+  have : βV' = βV := by with_unfolding_all exact eq_of_heq hβV
+  subst βV'
+  have : βW' = βW := by with_unfolding_all exact eq_of_heq hβW
+  subst βW'
+  have : Pg' = Pg := by with_unfolding_all exact eq_of_heq hPg
+  subst Pg'
+  have : f₀' = f₀ := by with_unfolding_all exact eq_of_heq h₀
+  subst f₀'
+  have : f' = f := by with_unfolding_all exact eq_of_heq hf
+  subst f'
+  have e1 : @Eq (type_of% (@IsThetaFunO a'.D)) (@IsThetaFunO a'.D) ((by with_unfolding_all exact (@IsThetaFunO a.D :))) := by
+    with_unfolding_all exact (eq_of_heq k1 : _)
+  have e2 : @Eq (type_of% (@IsVacuum a'.D)) (@IsVacuum a'.D) ((by with_unfolding_all exact (@IsVacuum a.D :))) := by
+    with_unfolding_all exact (eq_of_heq k2 : _)
+  have e3 : @Eq (type_of% (@IsPlaceModel a'.D)) (@IsPlaceModel a'.D) ((by with_unfolding_all exact (@IsPlaceModel a.D :))) := by
+    with_unfolding_all exact (eq_of_heq k3 : _)
   delta IsThPVecOf IsVacO IsThetaAt
   rewrite [e1, e2, e3]
   exact (by with_unfolding_all exact (h :))
 
 variable {S : a.D.what₂.Tau → SPar} {S' : a'.D.what₂.Tau → SPar} {M : DSModel W S} {M' : DSModel W' S'}
 
-set_option hygiene false in
-
-local macro "tie_cases" : tactic => `(tactic| (
-  pre_sub
-  ksub hW W' W
-  obtain ⟨H', s', l', ε', f', _, _, _, _⟩ := M'
-  rename_i n' i' _ _ _ _
-  obtain ⟨h1, h2, h3, h4, h5, h6, h7⟩ := h
-  dsimp only at h1 h2 h3 h4 h5 h6 h7
-  ksub h1 H' M.H
-  ksub h2 n' M.nacg
-  ksub h3 i' M.ips
-  ksub h4 s' M.σ
-  ksub h5 l' M.lam
-  ksub h6 ε' M.ε
-  ksub h7 f' M.fr))
 
 private theorem cart_heq (hP : B'.toPre = B.toPre) (hW : HEq W' W) (h : DSTie M' M) : HEq (cart M') (cart M) := by
-  tie_cases
-  exact (by with_unfolding_all exact ((HEq.refl (cart M)) :))
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
+  have : W' = W := by with_unfolding_all exact eq_of_heq hW
+  subst W'
+  rcases M with @⟨H, nacg, ips, σ, lam, ε, fr, enum, ds, fu, fg⟩
+  rcases M' with @⟨H', nacg', ips', σ', lam', ε', fr', enum', ds', fu', fg'⟩
+  rcases h with ⟨h1, h2, h3, h4, h5, h6, h7⟩
+  have : H' = H := by with_unfolding_all exact eq_of_heq h1
+  subst H'
+  have : nacg' = nacg := by with_unfolding_all exact eq_of_heq h2
+  subst nacg'
+  have : ips' = ips := by with_unfolding_all exact eq_of_heq h3
+  subst ips'
+  have : σ' = σ := by with_unfolding_all exact eq_of_heq h4
+  subst σ'
+  have : lam' = lam := by with_unfolding_all exact eq_of_heq h5
+  subst lam'
+  have : ε' = ε := by with_unfolding_all exact eq_of_heq h6
+  subst ε'
+  have : fr' = fr := by with_unfolding_all exact eq_of_heq h7
+  subst fr'
+  with_unfolding_all rfl
 
 private theorem ioW_of (hP : B'.toPre = B.toPre) (hV : HEq V' V) (hW : HEq W' W) (h : DSTie M' M)
     {θ : InfFam a.D} {θ' : InfFam a'.D} (hθ : HEq θ' θ)
@@ -184,22 +215,55 @@ private theorem ioW_of (hP : B'.toPre = B.toPre) (hV : HEq V' V) (hW : HEq W' W)
     {BV BV'} (hBV : HEq BV' BV) {io io'} (hio : HEq io' io) {ω ω'} (hω : HEq ω' ω) {v v'} (hv : HEq v' v) {Δ Δ'} (hΔ : HEq Δ' Δ)
     (h0 : IsIoW θ M c ω (pureTensorO ψ θ V W (fun _ => 1) (cart M) BV (onb M) v) Δ io) :
     IsIoW θ' M' c' ω' (pureTensorO ψ' θ' V' W' (fun _ => 1) (cart M') BV' (onb M') v') Δ' io' := by
-  tie_cases
-  ksub hV V' V
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
+  have : W' = W := by with_unfolding_all exact eq_of_heq hW
+  subst W'
+  rcases M with @⟨H, nacg, ips, σ, lam, ε, fr, enum, ds, fu, fg⟩
+  rcases M' with @⟨H', nacg', ips', σ', lam', ε', fr', enum', ds', fu', fg'⟩
+  rcases h with ⟨h1, h2, h3, h4, h5, h6, h7⟩
+  have : H' = H := by with_unfolding_all exact eq_of_heq h1
+  subst H'
+  have : nacg' = nacg := by with_unfolding_all exact eq_of_heq h2
+  subst nacg'
+  have : ips' = ips := by with_unfolding_all exact eq_of_heq h3
+  subst ips'
+  have : σ' = σ := by with_unfolding_all exact eq_of_heq h4
+  subst σ'
+  have : lam' = lam := by with_unfolding_all exact eq_of_heq h5
+  subst lam'
+  have : ε' = ε := by with_unfolding_all exact eq_of_heq h6
+  subst ε'
+  have : fr' = fr := by with_unfolding_all exact eq_of_heq h7
+  subst fr'
+  have : V' = V := by with_unfolding_all exact eq_of_heq hV
+  subst V'
   obtain ⟨W₁, ρ₁⟩ := c'
   rename_i nW' iW' _
   dsimp only at c1 c2 c3 c4
-  ksub c1 W₁ c.W
-  ksub c3 nW' c.nW
-  ksub c4 iW' c.iW
-  ksub c2 ρ₁ c.ρ
-  ksub hθ θ' θ
-  ksub hψ ψ' ψ
-  ksub hBV BV' BV
-  ksub hio io' io
-  ksub hω ω' ω
-  ksub hv v' v
-  ksub hΔ Δ' Δ
+  have : W₁ = c.W := by with_unfolding_all exact eq_of_heq c1
+  subst W₁
+  have : nW' = c.nW := by with_unfolding_all exact eq_of_heq c3
+  subst nW'
+  have : iW' = c.iW := by with_unfolding_all exact eq_of_heq c4
+  subst iW'
+  have : ρ₁ = c.ρ := by with_unfolding_all exact eq_of_heq c2
+  subst ρ₁
+  have : θ' = θ := by with_unfolding_all exact eq_of_heq hθ
+  subst θ'
+  have : ψ' = ψ := by with_unfolding_all exact eq_of_heq hψ
+  subst ψ'
+  have : BV' = BV := by with_unfolding_all exact eq_of_heq hBV
+  subst BV'
+  have : io' = io := by with_unfolding_all exact eq_of_heq hio
+  subst io'
+  have : ω' = ω := by with_unfolding_all exact eq_of_heq hω
+  subst ω'
+  have : v' = v := by with_unfolding_all exact eq_of_heq hv
+  subst v'
+  have : Δ' = Δ := by with_unfolding_all exact eq_of_heq hΔ
+  subst Δ'
   exact (by with_unfolding_all exact (h0 :))
 
 end Comparison₂
@@ -208,17 +272,16 @@ section Fields
 
 variable {B B' : Base} {C : Cols B} {C' : Cols B'} {a : Late B C} {a' : Late B' C'}
 
-set_option hygiene false in
-
-local macro "pre_cases" : tactic => `(tactic| (
-  pre_sub
-  have e : @Eq (type_of% i') (by kexactB i) i' := by kexactB (Fin.ext h : @Eq (type_of% i') (by kexactB i) i')
-  clear h
-  subst e))
 
 private theorem delta_heq (hP : B'.toPre = B.toPre) {i : Fin a.D.R.m} {i' : Fin a'.D.R.m} (h : (i : ℕ) = i') :
     HEq (RealDat.Delta i') (RealDat.Delta i) := by
-  pre_cases
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
+  have hi : i' = i := by
+    apply Fin.ext
+    exact h.symm
+  subst i'
   exact (by with_unfolding_all exact ((HEq.refl (RealDat.Delta i)) :))
 
 private theorem frames_heq (hP : B'.toPre = B.toPre) {i : Fin a.D.R.m} {i' : Fin a'.D.R.m} (h : (i : ℕ) = i')
@@ -229,11 +292,21 @@ private theorem frames_heq (hP : B'.toPre = B.toPre) {i : Fin a.D.R.m} {i' : Fin
     {βV : ∀ i, GL (Fin (Vc a.D i).rank) (Lev.EAf a.D)} {βV' : ∀ i, GL (Fin (Vc a'.D i).rank) (Lev.EAf a'.D)} (hβV : HEq βV' βV)
     {βW : ∀ i, GL (Fin (Wc a.D i).rank) (Lev.EAf a.D)} {βW' : ∀ i, GL (Fin (Wc a'.D i).rank) (Lev.EAf a'.D)} (hβW : HEq βW' βW) :
     HEq (ΛV' i') (ΛV i) ∧ HEq (ΛW' i') (ΛW i) ∧ HEq (βV' i') (βV i) ∧ HEq (βW' i') (βW i) := by
-  pre_cases
-  ksub hΛV ΛV' ΛV
-  ksub hΛW ΛW' ΛW
-  ksub hβV βV' βV
-  ksub hβW βW' βW
+  rcases B' with ⟨P'⟩
+  change P' = B.toPre at hP
+  subst hP
+  have hi : i' = i := by
+    apply Fin.ext
+    exact h.symm
+  subst i'
+  have : ΛV' = ΛV := by with_unfolding_all exact eq_of_heq hΛV
+  subst ΛV'
+  have : ΛW' = ΛW := by with_unfolding_all exact eq_of_heq hΛW
+  subst ΛW'
+  have : βV' = βV := by with_unfolding_all exact eq_of_heq hβV
+  subst βV'
+  have : βW' = βW := by with_unfolding_all exact eq_of_heq hβW
+  subst βW'
   exact (by with_unfolding_all exact ((And.intro (HEq.refl (ΛV i)) (And.intro (HEq.refl (ΛW i)) (And.intro (HEq.refl (βV i)) (HEq.refl (βW i))))) :))
 
 variable {G G' : Type} [Group G] [Fintype G] [Group G'] [Fintype G'] {Pl0 T0 Pl0' T0' : Type}
@@ -289,10 +362,10 @@ theorem _root_.GlobalTheory.T.referenceTuple_weilDatum_vector_polynomialMap_enla
   have hm := LiftExt.m_eq (a := Z) (a' := Z') hP
   let i : Fin (w.st Z).toD7.R.m := Fin.cast hm i'
   have h : (i : ℕ) = i' := rfl
-  obt ⟨⟨hψ, hθ, hβW, -, -, -, hβV, hΛV, hΛW, hPg, -, -, h1, -⟩, h2⟩ := hS
-  obt ⟨c1, c2, c3, c4, hvac, hio, hBV, m1, m2, m3, m4, m5, m6, m7, -⟩ := h1 i i' h
-  obt ⟨hω, hv, -⟩ := h2 i i' h
-  obt ⟨hμ, hη, hQ', hQ⟩ := hL
+  obtain ⟨⟨hψ, hθ, hβW, -, -, -, hβV, hΛV, hΛW, hPg, -, -, h1, -⟩, h2⟩ := hS
+  obtain ⟨c1, c2, c3, c4, hvac, hio, hBV, m1, m2, m3, m4, m5, m6, m7, -⟩ := h1 i i' h
+  obtain ⟨hω, hv, -⟩ := h2 i i' h
+  obtain ⟨hμ, hη, hQ', hQ⟩ := hL
   have hb := RealDat.thP_of_weak z.pins.char.base.thP hEx
   exact exists_isOrbQuot_of_isHaarOn (a := Z) (a' := Z') (R := z.R.toRealDat) (R' := R'.toRealDat) hP h hψ hθ hβW hβV hΛV hΛW hPg c1 c2 c3 c4 hvac hio hBV
     ⟨m1, m2, m3, m4, m5, m6, m7⟩ hω hv (hμ i i' h).1 hη hQ' hQ ⟨z.pins.char.fullP i _, hb.vP i _, hb.ioP i _⟩

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HighestWeightTensor
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HighestWeightTensor
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.TensorHW
 
@@ -38,7 +42,7 @@ lemma proj_fin {W : Submodule ℂ V} (hW : KStable act W) {ν : Ix p q → ℚ} 
     have := ih hF.2 ((((ν a : ℚ) : ℂ) - ((μ a : ℚ) : ℂ)) • y) (Submodule.smul_mem _ _ hy)
       (act (Eab a a) z2 - ((μ a : ℚ) : ℂ) • z2) (sub_mem h3 (Submodule.smul_mem _ _ h2)) (by
         convert W.sub_mem (hW _ (isKC_Eab (same_refl a)) _ h) (W.smul_mem ((μ a : ℚ) : ℂ) h) using 1
-        rw [map_add, map_add, mem_wt.1 hy, mem_wt.1 h1]
+        rw [map_add (f := _), map_add (f := _), mem_wt.1 hy, mem_wt.1 h1]
         module)
     exact (W.smul_mem_iff hc).1 this
 
@@ -133,8 +137,8 @@ lemma pair_root (l μ : Ix p q → ℚ) (a b : Ix p q) :
 def Below (ν μ : Ix p q → ℚ) : Prop :=
   ∀ l : Ix p q → ℚ, (∀ a b, posC a b → l b < l a) → pair l ν < pair l μ
 
-open Classical in
 
+open Classical in
 def rho (p q : ℕ) : Ix p q → ℚ :=
   fun x => ∑ c, ((if posC x c then 1 else 0) - (if posC c x then 1 else 0))
 
@@ -147,8 +151,8 @@ lemma rho_lt {a b : Ix p q} (h : posC a b) : rho p q b < rho p q a := by
   · have h1 : ¬ posC a a := fun h => posC_ne h rfl
     simp [h, h1, posC_asymm h]
 
-open Classical in
 
+open Classical in
 def casVal (μ : Ix p q → ℚ) : ℚ :=
   ∑ a, ∑ b, ((if a = b then μ a * μ a else 0) + (if posC a b then μ a - μ b else 0))
 
@@ -361,7 +365,7 @@ lemma stable_sup {A B : Submodule ℂ V} (hA : KStable act A) (hB : KStable act 
     KStable act (A ⊔ B) := by
   intro Z hZ w hw
   obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 hw
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (hA Z hZ x hx) (hB Z hZ y hy)
 
 lemma casK_hw (hL : IsKLieAct act) {μ : Ix p q → ℚ} {x : V} (hx : x ∈ hwSub act μ) :

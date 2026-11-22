@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.BesselNonvanishingReduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.L2NormScaling
+module
+
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.BesselNonvanishingReduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.L2NormScaling
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 open scoped InnerProductSpace ENNReal NNReal ComplexConjugate
@@ -25,9 +29,6 @@ def UniqGap : Prop :=
       PI.BesselMapUniq.IsBesselMapSm (k := k) (r := r) z (PI.BesselMapUniq.psiGen k r z c) σ π B₂ →
       ∃ a b : ℂ, (a ≠ 0 ∨ b ≠ 0) ∧ ∀ v ∈ PI.UpqRep.smoothVecs (k := k) (r := r) σ, a • B₁ v + b • B₂ v = 0
 
-theorem uniqGap_of_uniq (h : PI.BesselMapUniq.BesselMapUniq) : UniqGap :=
-  fun k r ε lam _ H _ _ σ z c u Wp _ _ π _ _ _ => h k r ε lam H σ z c u Wp π
-
 def Shape : Prop :=
   CompanionTheory.D.Upq.BesselFunctionalConstruction.Inputs → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)
     (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Mx k r → (H →L[ℂ] H)) (w0 : H)
@@ -49,15 +50,6 @@ def DDFormOne : Prop :=
     Side k r ε lam h σ w0 z c u π μW μN μG νq →
     DDForm z c π μW μN μG νq σ w0
 
-def AtFormOne : Prop :=
-  CompanionTheory.D.Upq.BesselFunctionalConstruction.Inputs → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)
-    (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Mx k r → (H →L[ℂ] H)) (w0 : H)
-    (Wp : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [CompleteSpace Wp] [FiniteDimensional ℂ Wp]
-    (z : Fin (2 * r + k + 1) → ℂ) (c : ℂ) (u : Fin k → ℝ) (π : Mx k r → (Wp →L[ℂ] Wp))
-    (μW μN μG νq : Measure (Formalism.QuantumDeterminants.Mt k r)),
-    Side k r ε lam h σ w0 z c u π μW μN μG νq →
-    AtForm z c π μW μN μG νq σ
-
 def AtFormAdmOne : Prop :=
   CompanionTheory.D.Upq.BesselFunctionalConstruction.Inputs → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)
     (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Mx k r → (H →L[ℂ] H)) (w0 : H)
@@ -69,9 +61,6 @@ def AtFormAdmOne : Prop :=
 
 def DDFormOneOfSteps : Prop :=
   PsiConst → SchurH → NormInv → GrowthS → GrowthG → CompanionTheory.D.Upq.BesselFunctionalConstruction.DecDD → CompanionTheory.D.Upq.BesselFunctionalConstruction.BeConv → CompanionTheory.D.Upq.BesselFunctionalConstruction.NormIdSm → CompanionTheory.D.Upq.BesselFunctionalConstruction.BeBessel → Shape → DDFormOne
-
-def AtFormOneOfSteps : Prop :=
-  SchurH → CompanionTheory.D.Upq.BesselFunctionalConstruction.BeConv → CompanionTheory.D.Upq.BesselFunctionalConstruction.NormIdSm → CompanionTheory.D.Upq.BesselFunctionalConstruction.BeBessel → Shape → CompanionTheory.D.Upq.BesselFunctionalConstruction.KFinForm → CompanionTheory.D.Upq.BesselFunctionalConstruction.ZeroCase → AtFormOne
 
 def AtFormAdmOneOfSteps : Prop :=
   SchurH → CompanionTheory.D.Upq.BesselFunctionalConstruction.BeConv → CompanionTheory.D.Upq.BesselFunctionalConstruction.NormIdSm → CompanionTheory.D.Upq.BesselFunctionalConstruction.BeBessel → Shape → CompanionTheory.D.Upq.BesselFunctionalConstruction.KFinForm → CompanionTheory.D.Upq.BesselFunctionalConstruction.ZeroCase → CompanionTheory.D.Upq.BesselFunctionalConstruction.ZeroCaseDD → AtFormAdmOne

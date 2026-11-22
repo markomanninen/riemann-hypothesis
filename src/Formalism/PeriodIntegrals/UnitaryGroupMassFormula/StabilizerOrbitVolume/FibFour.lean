@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.FibOfTens
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.FibOfTens
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,23 +26,6 @@ def IsCcOn (U : Set V) (φ : V → ℝ) : Prop :=
 theorem densAll_iff (μ : Measure V) (f : V → Y) (ι : X → Y) (ν : Measure X) (U : Set V) :
     DensAll μ f ι ν U ↔ DensOn (IsCcOn U) μ f ι ν :=
   ⟨fun h φ hφ => h φ hφ.1 hφ.2.1 hφ.2.2, fun h φ h1 h2 h3 => h φ ⟨h1, h2, h3⟩⟩
-
-def fourT (μ : Measure V) (f : V → Y) (χ : Y → X → ℂ) (φ : V → ℝ) (S : X) : ℂ :=
-  ∫ v, (φ v : ℂ) * χ (f v) S ∂μ
-
-def invT (μ : Measure V) (f : V → Y) (ι : X → Y) (χ : Y → X → ℂ) (ν : Measure X) (φ : V → ℝ)
-    (b : X) : ℂ :=
-  ∫ S, fourT μ f χ φ S * starRingEnd ℂ (χ (ι b) S) ∂ν
-
-def NSPhase (P : (V → ℝ) → Prop) (μ : Measure V) (f : V → Y) (χ : Y → X → ℂ) (ν : Measure X) :
-    Prop :=
-  ∀ φ, P φ → Integrable (fourT μ f χ φ) ν
-
-def InvDens (P : (V → ℝ) → Prop) (μ : Measure V) (f : V → Y) (ι : X → Y) (χ : Y → X → ℂ)
-    (ν : Measure X) : Prop :=
-  ∀ φ, P φ → Integrable (fourT μ f χ φ) ν →
-    Continuous (invT μ f ι χ ν φ) ∧ ∀ S : Set X, IsCompact S →
-      ∫ v in f ⁻¹' (ι '' S), (φ v : ℂ) ∂μ = ∫ b in S, invT μ f ι χ ν φ b ∂ν
 
 def DensApprox (P : (V → ℝ) → Prop) (μ : Measure V) (f : V → Y) (ι : X → Y) (ν : Measure X)
     (U : Set V) : Prop :=

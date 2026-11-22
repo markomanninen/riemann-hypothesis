@@ -1,13 +1,36 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceModeStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilOperatorsWittParabolicOriginToPointStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinateOriginUnipotentRadicalInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisThetaLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceModeStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilOperatorsWittParabolicOriginToPointStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinateOriginUnipotentRadicalInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisThetaLaws
+
+namespace I195MixedCoordinates_c87fda97bbaf39bed14145da
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+end I195MixedCoordinates_c87fda97bbaf39bed14145da
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
@@ -30,7 +53,7 @@ theorem symplO_zero_left' {S T : HSp D} (y : WO S T) : symplO S T 0 y = 0 := by
   simp [symplO, hO]
 
 theorem symplO_eq_two {S T : HSp D} (x y : WO S T) : symplO S T x y = symplOH S T x y + symplOH S T x y := by
-  rw [symplOH, ← add_mul, ← map_add, add_halves, map_one, one_mul]
+  rw [symplOH, ← add_mul, ← map_add (f := _), add_halves, map_one, one_mul]
 
 theorem heisO_smul (ψ : AddChar (AF D.host.F) ℂ) {S T : HSp D} (w : WO S T) (c : ℂ) (f : WO S T → ℂ) :
     heisO ψ S T w (c • f) = c • heisO ψ S T w f := by
@@ -40,12 +63,12 @@ theorem heisO_smul (ψ : AddChar (AF D.host.F) ℂ) {S T : HSp D} (w : WO S T) (
 
 theorem mixS_smul (ψ : AddChar (AF D.host.F) ℂ) {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
     (μ : Measure (Mx D T.rank ρ)) (𝓕 : Set (Mx D T.rank ρ)) (c : ℂ) (f : WO S T → ℂ) (x : Mx D T.rank ρ) :
-    d.mixS T ψ μ 𝓕 (c • f) x = c • d.mixS T ψ μ 𝓕 f x := by
+    (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (c • f) x = c • (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 f x := by
   funext w
-  simp only [HypDec.mixS, heisO_smul, Pi.smul_apply, smul_eq_mul]
+  simp only [_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source, heisO_smul, Pi.smul_apply, smul_eq_mul]
   rw [← integral_const_mul]
 
-theorem mixS_unip : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (χS χT : (AE D)ˣ →* Circle) (om : Om S T), IsWeilDatumO ψ S T χS χT om → ∀ (μ : Measure (Mx D T.rank ρ)) (𝓕 : Set (Mx D T.rank ρ)), IsCovolOne (ratMx D T.rank ρ) μ 𝓕 → ∀ f, IsThetaFunO ψ S T f → ∀ x : Mx D T.rank ρ, (∀ b, d.mixS T ψ μ 𝓕 (om (d.nB b, 1) f) x = heisO ψ S₀ T (x ⬝ b) (d.mixS T ψ μ 𝓕 (f) x)) ∧ ∀ c, d.mixS T ψ μ 𝓕 (om (d.nC c, 1) f) x = ψ (d.qS T c x) • d.mixS T ψ μ 𝓕 (f) x := by
+theorem mixS_unip : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (χS χT : (AE D)ˣ →* Circle) (om : Om S T), IsWeilDatumO ψ S T χS χT om → ∀ (μ : Measure (Mx D T.rank ρ)) (𝓕 : Set (Mx D T.rank ρ)), IsCovolOne (ratMx D T.rank ρ) μ 𝓕 → ∀ f, IsThetaFunO ψ S T f → ∀ x : Mx D T.rank ρ, (∀ b, (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (om (d.nB b, 1) f) x = heisO ψ S₀ T (x ⬝ b) ((_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (f) x)) ∧ ∀ c, (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (om (d.nC c, 1) f) x = ψ (d.qS T c x) • (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (f) x := by
   intro D ψ S S₀ T ρ d χS χT om hom μ 𝓕 hμ f hf x
   have hstd := hom.std
   obtain ⟨hth, hcomp, -⟩ := GlobalTheory.HeisThetaLaws.heis_theta_laws D ψ hstd S T
@@ -53,15 +76,26 @@ theorem mixS_unip : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S S₀ T : HS
   have hzB := fun g (hg : IsThetaFunO ψ S T g) => (GlobalTheory.T.mixedCoordinate_origin_unipotentRadical_invariant D ψ S S₀ T ρ d χS χT om hom μ 𝓕 hμ g hg).1
   have hzC := fun g (hg : IsThetaFunO ψ S T g) => (GlobalTheory.T.mixedCoordinate_origin_unipotentRadical_invariant D ψ S S₀ T ρ d χS χT om hom μ 𝓕 hμ g hg).2
 
+  change ∀ n : GA D S,
+    (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (om (n, 1) f) x =
+      (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕
+        (om (n, 1) (heisO ψ S T (d.extX T x ⬝ mt S n) f)) 0 at hmove
+  change ∀ g, IsThetaFunO ψ S T g → ∀ b,
+    (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (om (d.nB b, 1) g) 0 =
+      (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 g 0 at hzB
+  change ∀ g, IsThetaFunO ψ S T g → ∀ c,
+    (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (om (d.nC c, 1) g) 0 =
+      (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 g 0 at hzC
+
   have eX : ∀ (a : Mx D T.rank ρ) (g : WO S T → ℂ), IsThetaFunO ψ S T g →
-      d.mixS T ψ μ 𝓕 (heisO ψ S T (d.extX T a) g) 0 = d.mixS T ψ μ 𝓕 g a := fun a g hg => by
+      (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (heisO ψ S T (d.extX T a) g) 0 = (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 g a := fun a g hg => by
     have := (GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hstd S S₀ T ρ d ⟨μ, 𝓕, hμ⟩ g hg).1 0 a
     simpa only [zero_add] using this
   have eY : ∀ (a : Mx D T.rank ρ) (g : WO S T → ℂ), IsThetaFunO ψ S T g →
-      d.mixS T ψ μ 𝓕 (heisO ψ S T (d.extY T a) g) x = ψ (symplO S T (d.extX T x) (d.extY T a)) • d.mixS T ψ μ 𝓕 g x :=
+      (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (heisO ψ S T (d.extY T a) g) x = ψ (symplO S T (d.extX T x) (d.extY T a)) • (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 g x :=
     fun a g hg => (GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hstd S S₀ T ρ d ⟨μ, 𝓕, hμ⟩ g hg).2.1 x a
   have jointCmpEmbeddingY : ∀ (a : Mx D T.rank ρ) (g : WO S T → ℂ), IsThetaFunO ψ S T g →
-      d.mixS T ψ μ 𝓕 (heisO ψ S T (d.extY T a) g) 0 = d.mixS T ψ μ 𝓕 g 0 := fun a g hg => by
+      (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (heisO ψ S T (d.extY T a) g) 0 = (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 g 0 := fun a g hg => by
     have := (GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hstd S S₀ T ρ d ⟨μ, 𝓕, hμ⟩ g hg).2.1 0 a
     rw [map_zero, GlobalTheory.MixUnip.symplO_zero_left', AddChar.map_zero_eq_one, one_smul] at this
     exact this
@@ -77,7 +111,7 @@ theorem mixS_unip : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S S₀ T : HS
       rw [HypDec.symplOH_extX_extY, e, trHalf_half, ← symplOH_eq, GlobalTheory.OrientedHeis.symplOH_self, add_zero]
     have hXY' : symplOH S T X (d.extY T (-a)) = 0 := by
       have h := GlobalTheory.OrientedHeis.symplOH_add_right (S := S) (T := T) X (d.extY T a) (d.extY T (-a))
-      rw [← map_add, add_neg_cancel, map_zero, symplOH_zero_right, hXY, zero_add] at h
+      rw [← map_add (f := _), add_neg_cancel, map_zero, symplOH_zero_right, hXY, zero_add] at h
       exact h.symm
     have hkey : heisO ψ S T (X ⬝ mt S (d.nB b)) f =
         heisO ψ S T (d.extY T (-a)) (heisO ψ S T X (heisO ψ S T Z f)) := by
@@ -89,14 +123,14 @@ theorem mixS_unip : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S S₀ T : HS
     rw [hmove (d.nB b), hzB _ (hth _ _ hf), hkey, jointCmpEmbeddingY _ _ (hth _ _ (hth _ _ hf)), eX _ _ (hth _ _ hf)]
     exact (GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hstd S S₀ T ρ d ⟨μ, 𝓕, hμ⟩ f hf).2.2.1 x (x ⬝ b)
   · have hq : d.qS T c x = symplOH S T (d.extX T x) (d.extY T (x ⬝ c.1)) := rfl
-    have hL : d.mixS T ψ μ 𝓕 (heisO ψ S T (d.extX T x) (heisO ψ S T (d.extY T (x ⬝ c.1)) f)) 0 =
-        ψ (d.qS T c x) • ψ (d.qS T c x) • d.mixS T ψ μ 𝓕 f x := by
+    have hL : (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 (heisO ψ S T (d.extX T x) (heisO ψ S T (d.extY T (x ⬝ c.1)) f)) 0 =
+        ψ (d.qS T c x) • ψ (d.qS T c x) • (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 f x := by
       have h2 := eY (x ⬝ c.1) f hf
       have h3 := eX x (heisO ψ S T (d.extY T (x ⬝ c.1)) f) (hth _ _ hf)
       rw [h3, h2, GlobalTheory.MixUnip.symplO_eq_two, AddChar.map_add_eq_mul, ← hq, mul_smul]
     have hc' : heisO ψ S T (d.extX T x) (heisO ψ S T (d.extY T (x ⬝ c.1)) f) =
         ψ (d.qS T c x) • heisO ψ S T (d.extX T x + d.extY T (x ⬝ c.1)) f := hcomp _ _ _
-    have h1 := congrArg (fun g => d.mixS T ψ μ 𝓕 g 0) hc'
+    have h1 := congrArg (fun g => (_root_.I195MixedCoordinates_c87fda97bbaf39bed14145da.source d) T ψ μ 𝓕 g 0) hc'
     rw [hL, GlobalTheory.MixUnip.mixS_smul] at h1
     have hne : ψ (d.qS T c x) ≠ 0 := by
       have h := AddChar.map_add_eq_mul ψ (d.qS T c x) (-d.qS T c x)

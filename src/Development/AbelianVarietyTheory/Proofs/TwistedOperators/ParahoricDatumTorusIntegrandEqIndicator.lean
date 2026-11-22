@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound
 
 noncomputable section
@@ -84,15 +89,15 @@ theorem integrand : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace 
   unfold datum
   by_cases h2 : InSupp x
   · by_cases h1 : InSupp (x * (mtor ϖ e : GL (A ⊕ D) k).val)
-    · rw [dif_pos h1, dif_pos h2, Set.indicator_of_mem (show x ∈ S from hboth.1 ⟨h2, h1⟩)]
+    · rw [dite_eq_left h1, dite_eq_left h2, Set.indicator_of_mem (show x ∈ S from hboth.1 ⟨h2, h1⟩)]
       have hu : Units.mk0 _ h1.det_ne = Units.mk0 _ h2.det_ne := by
         ext
         simp [h11]
       rw [hu, ← map_inv, Complex.mul_conj, Complex.normSq_eq_norm_sq, hξ]
       simp
-    · rw [dif_neg h1, Set.indicator_of_notMem (show x ∉ S from fun h => h1 (hboth.2 h).2)]
+    · rw [dite_eq_right h1, Set.indicator_of_notMem (show x ∉ S from fun h => h1 (hboth.2 h).2)]
       simp
-  · rw [dif_neg h2, Set.indicator_of_notMem (show x ∉ S from fun h => h2 (hboth.2 h).1)]
+  · rw [dite_eq_right h2, Set.indicator_of_notMem (show x ∉ S from fun h => h2 (hboth.2 h).1)]
     simp
 
 end GlobalTheory.TorusIntegrand

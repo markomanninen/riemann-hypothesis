@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.Ired
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaMvpsCot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetCore
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.Ired
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaMvpsCot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetCore
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem det_mem_annihilator_of_relations {B N ι : Type} [CommRing B] [AddCommGroup N] [Module B N] [Fintype ι] [DecidableEq ι]
@@ -68,7 +73,8 @@ private theorem cotangent_independent_of_residues (O : Type) [CommRing O] [IsDom
       funext a
       have h4 := h2 (some (Sum.inl a))
       rw [GlobalTheory.FormalIsogeny.mem_maximalIdeal_iff_constantCoeff, ← residue_eq_zero_iff] at h4
-      simpa [Finset.sum_apply, map_sum, map_mul] using h4
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [Finset.sum_apply, map_sum, map_mul] using h4
     · exact h2 (some (Sum.inr j))
 
 theorem UpperTheory.V.Pa.presOut1 :
@@ -154,7 +160,8 @@ theorem UpperTheory.V.Pa.presOut1 :
     simp only [ζ, Matrix.of_apply, sub_smul, Finset.sum_sub_distrib, hwe, sub_self]
   have hzζ : ∀ i j, F (z i j) = algebraMap B A (ζ i j) := by
     intro i j
-    simp only [z, ζ, Matrix.of_apply, map_sub, map_sum, map_mul, hC', hF1, hFv]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [z, ζ, Matrix.of_apply, map_sub, map_sum, map_mul, hC', hF1, hFv]
   have hann := det_mem_annihilator_of_relations ζ m hm hζ
   have hdetQ : ζ.det ∈ Q := by
     rcases hQr with h | h
@@ -183,7 +190,8 @@ theorem UpperTheory.V.Pa.presOut1 :
     rintro _ ⟨i, rfl⟩
     show F (∑ j, z i j * MvPowerSeries.X (Sum.inr j)) = 0
     have := congrArg Subtype.val (hζ i)
-    simp only [map_sum, map_mul, hzζ, hF2, ← Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hzζ, hF2, ← Algebra.smul_def]
     simpa using this
   · rw [hdim]
     refine le_trans (le_of_eq ?_) (add_le_add_left hd _)

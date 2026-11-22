@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasPolyhedralCoverBalancedFormsCMField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SiegelGramMemConeIntegerSquares
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdaptedSiegelBasisBalancedForms
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasPolyhedralCoverBalancedFormsCMField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SiegelGramMemConeIntegerSquares
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdaptedSiegelBasisBalancedForms
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,11 +39,9 @@ theorem hasRedCover_int : ∀ (X : Type) [AddCommGroup X] [Module.Finite ℤ X] 
   let b₀ : Module.Basis (Fin n) ℤ X := Module.finBasisOfFinrankEq ℤ X hn
   obtain ⟨B₀, hs₀, hp₀⟩ := exists_isPosDef_of_basis b₀
   obtain ⟨S, hS⟩ := GlobalTheory.SiegelCone.gram_mem_cone n
-  refine GlobalTheory.RedTh.hasRedCover_of_fintype (ι := ↥S) _ (fun l => GlobalTheory.RedTh.sqForm b₀ l.1) (fun l y z => ?_)
-    (fun l y => ?_) fun B hB => ?_
-  · simp only [GlobalTheory.RedTh.sqForm_apply, mul_comm]
-  · simp only [GlobalTheory.RedTh.sqForm_apply]
-    exact mul_self_nonneg _
+  refine GlobalTheory.RedTh.hasRedCover_of_fintype (ι := ↥S) _ (fun l => GlobalTheory.RedTh.sqForm b₀ l.1)
+    (fun l y z => by simp only [GlobalTheory.RedTh.sqForm_apply, mul_comm])
+    (fun l y => by simp only [GlobalTheory.RedTh.sqForm_apply]; exact mul_self_nonneg _) fun B hB => ?_
   obtain ⟨X₁, _, m₁, hproj, r, B₁, hr, hB₁, hp₁, hBr⟩ := hB
   obtain rfl : m₁ = AddCommGroup.toIntModule X₁ := Subsingleton.elim _ _
   have : Module.Finite ℤ X₁ := Module.Finite.of_surjective r hr

@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroPlacesOverPrimesLifts
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsIsBIffCoreB
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowIdentificationsRealRowSideOfChainComparisonStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftIdentificationsOfLiftsComparisonStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIdentificationTypeRepresentativesClassesStatement
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GoodRowsLevelSubPrincipalLevelHilbertModel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalizationFreeStageTrueGroupColumnChoiceStep
-import Formalism.LocalRingCardinality.DataBu
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroPlacesOverPrimesLifts
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsIsBIffCoreB
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowIdentificationsRealRowSideOfChainComparisonStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftIdentificationsOfLiftsComparisonStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIdentificationTypeRepresentativesClassesStatement
+public import Lean
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GoodRowsLevelSubPrincipalLevelHilbertModel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalizationFreeStageTrueGroupColumnChoiceStep
+public import Formalism.LocalRingCardinality.DataBu
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Cx Formalism.IndefR.RecTie
 open scoped TensorProduct InnerProductSpace ComplexOrder
@@ -148,9 +153,9 @@ theorem muAt_eq (m : Moved o) (v) : (w.st o.Z).toD7.what₂.muAt v = m.y.tup (m.
 
 end GlobalTheory.Mem.R3.Rw.ComplexificationCasts
 
+
 set_option maxHeartbeats 4000000 in
 open GlobalTheory.Mem.R3.Rw.ComplexificationCasts in
-
 theorem GlobalTheory.Mem.R3.Rw.read_of_moved : ∀ (B : Base) (f : Fr B.toPre) (T : TwDat B) (w : ColW B f T) (Z₀ : w.Lt) (hX : B.fields.Ok) (Wt : Set B.places.Pl) (z₀ : Dat (w.st Z₀) w.I hX T Wt), ∀ (q : RowPk w z₀) (o : q.Over), Inputs (w.D o.Z) → o.Fits → ∀ m : Moved o, ∀ s : Side0 o, ∃ Y : Read m.z.R.toRealDat m.z.F.lv2 s.p0, Y.tup = m.y.tup ∧ Y.tupT = m.y.tupT ∧ Y.PY = m.y.PY ∧ Y.PW = m.y.PW ∧ (∀ t, HEq (Y.jA t) ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)).j) ∧ (∀ t, HEq (Y.jA0 t) ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)).j) ∧ (∀ (i : Fin (w.D o.Z).R.m) t x, HEq (Y.eMt i t x) x) ∧ (∀ π, (principalLevelFrame.rowRepR m.z.R.θ (Y.eFT π)).Iso (m.t.rep π)) ∧ (∀ x, HEq (Y.Ish.jE x).1 ((m.t.ch true).jE x)) ∧ (∀ x, HEq (Y.Iz.jE x).1 ((m.t.ch false).jE x)) ∧ (∀ i x, HEq (Y.mj.eW i x) (m.t.lf.eW i x)) ∧ (∀ μ h i x, HEq (Y.IL.jMt μ h i x).1 (m.t.lf.jMt μ i x)) := by
   intro B f T w Z₀ hX Wt z₀ q o hin hfits m s
   have hB : m.z.R.toRealDat.BaseW m.z.F.lv2 := m.z.pins.char.base
@@ -196,54 +201,54 @@ theorem GlobalTheory.Mem.R3.Rw.read_of_moved : ∀ (B : Base) (f : Fr B.toPre) (
     eFT := eF
     ιW := m.y.ιW
     tied := ⟨h1R, h0R, hLT, colTie m.y hB hN.bu⟩
-    prtE := fun π => by kexactB (h1P π).trans ((heF π).2.1 true).symm
-    prtE0 := fun π => by kexactB (h0P π).trans ((heF π).2.1 false).symm
-    prtWE := fun i π => by kexactB (hPW i π).trans ((heF π).2.2.1 i).symm
+    prtE := fun π => by exact (h1P π).trans ((heF π).2.1 true).symm
+    prtE0 := fun π => by exact (h0P π).trans ((heF π).2.1 false).symm
+    prtWE := fun i π => by exact (hPW i π).trans ((heF π).2.2.1 i).symm
     xi := fun _ _ => rfl
     isomFin := m.y.isomFin
     frameMatch := m.y.frameMatch
     hF := m.y.hF
     stdPsi := m.y.stdPsi
-    jA := fun t => by kexactB ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)).j
-    jA0 := fun t => by kexactB ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)).j
-    eMt := fun i t => by kexactB (LinearEquiv.funCongrLeft B.LL B.LL (finCongr (congrArg Mat1.n (m.t.hL i t))))
-    formsA := fun t => by kexactB ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)).forms
-    latA := fun t => by kexactB ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)).latT
-    formsAtBottomLevel := fun t => by kexactB ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)).forms
-    latA0 := fun t => by kexactB ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)).latT
-    formsL := fun i t => by kexactB (cast_forms (m.t.hL i t) (q.p.tL (m.y.tup t) ((i : ℕ) + 1)))
-    latL := fun i t => by kexactB (cast_lat (m.t.hL i t) (q.p.tL (m.y.tup t) ((i : ℕ) + 1)))
+    jA := fun t => by exact ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)).j
+    jA0 := fun t => by exact ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)).j
+    eMt := fun i t => by exact (LinearEquiv.funCongrLeft B.LL B.LL (finCongr (congrArg Mat1.n (m.t.hL i t))))
+    formsA := fun t => by exact ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)).forms
+    latA := fun t => by exact ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)).latT
+    formsAtBottomLevel := fun t => by exact ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)).forms
+    latA0 := fun t => by exact ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)).latT
+    formsL := fun i t => by exact (cast_forms (m.t.hL i t) (q.p.tL (m.y.tup t) ((i : ℕ) + 1)))
+    latL := fun i t => by exact (cast_lat (m.t.hL i t) (q.p.tL (m.y.tup t) ((i : ℕ) + 1)))
     topRead := fun t h x => by
-      kexactB ((h1X _ h _).trans ((congrArg ((m.t.ch true).jX (m.y.tup t))
+      exact ((h1X _ h _).trans ((congrArg ((m.t.ch true).jX (m.y.tup t))
         (((q.p.ch true).multTop (m.y.tup t)).apply_symm_apply _)).trans ((m.t.ch true).top t ((hU _).1 h) x)))
     topRead0 := fun t h x => by
-      kexactB ((h0X _ h _).trans ((congrArg ((m.t.ch false).jX (m.y.tup t))
+      exact ((h0X _ h _).trans ((congrArg ((m.t.ch false).jX (m.y.tup t))
         (((q.p.ch false).multTop (m.y.tup t)).apply_symm_apply _)).trans ((m.t.ch false).top t ((hU _).1 h) x)))
     mtRead := fun i t h x => by
-      kexactB ((hMt _ h i _).trans ((congrArg (m.t.lf.jMt (m.y.tup t) i)
+      exact ((hMt _ h i _).trans ((congrArg (m.t.lf.jMt (m.y.tup t) i)
         (cast_apply (m.t.hL i t) (q.p.tL (m.y.tup t) ((i : ℕ) + 1)) x)).trans (m.t.lf.read i t ((hU _).1 h) x)))
     mj := mj
     mjRead := fun i v => by
-      kexactB ((hMj i v).trans ((m.t.lf.jMj_read i v).trans
+      exact ((hMj i v).trans ((m.t.lf.jMj_read i v).trans
         (congrArg (fun u => PiTensorProduct.lift ((m.z.R.HW i _).e u)) (hEW i v).symm)))
-    stable := fun μ => by kexactB (m.t.tA true μ).stable
-    stable0 := fun μ => by kexactB (m.t.tA false μ).stable
-    eE := by kexactB eE
-    eE_read := fun x => by kexactB ((h1E x).trans (heE x))
-    dall := by kexactB m.t.dall
+    stable := fun μ => by exact (m.t.tA true μ).stable
+    stable0 := fun μ => by exact (m.t.tA false μ).stable
+    eE := by exact eE
+    eE_read := fun x => by exact ((h1E x).trans (heE x))
+    dall := by exact m.t.dall
     junk := fun μ h => iota_eq_zero _ m.y.hm μ ((m.t.ch true).junk μ fun h' => h ((hU μ).2 h'))
     cen0 := fun cG hk t => by
-      kexactB (cen_of_tie ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)) (m.z.R.eG.trans cG) (fun z x => s.cen (m.y.tup t) z x)
+      exact (cen_of_tie ((m.t.tA false (m.y.tup t)).cast (m.t.hA false t)) (m.z.R.eG.trans cG) (fun z x => s.cen (m.y.tup t) z x)
         (s.is _ (stdIso_of_keep m.z cG hk) (m.y.tup t)))
     cen1 := fun cG hk t => by
-      kexactB (cen_of_tie ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)) (m.z.R.eG.trans cG)
+      exact (cen_of_tie ((m.t.tA true (m.y.tup t)).cast (m.t.hA true t)) (m.z.R.eG.trans cG)
         (fun z x => o.N.ntypes.cenAmb (m.y.tup t) z x) ((hfits.cen _ (stdIso_of_keep m.z cG hk)).amb (m.y.tup t)))
     lam := hN.lam
-    occ := by kexactB hocc
+    occ := by exact hocc
     kap := q.kap o.η o.hη o.V o.S o.N o.G
     bu := hN.bu
     ze := hN.ze }, rfl, rfl, rfl, rfl, fun t => HEq.rfl, fun t => HEq.rfl, fun i t x => ?_, fun π => (heF π).1,
     fun x => heq_of_eq (h1E x), fun x => heq_of_eq (h0E x), fun i x => heq_of_eq (hEW i x), fun μ h i x => heq_of_eq (hMt μ h i x)⟩
-  kexactB (heq_funCongr (K := B.LL) (congrArg Mat1.n (m.t.hL i t)) x)
+  exact (heq_funCongr (K := B.LL) (congrArg Mat1.n (m.t.hL i t)) x)
 
 end

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+
+@[expose] public section
 
 open GlobalTheory.LeviCut
 
@@ -49,7 +53,7 @@ theorem comm_pow_apply (Z Y P : Module.End ℚ W) (h : Z * Y - Y * Z = P) (hP : 
     simp only [LinearMap.sub_apply, Module.End.mul_apply] at e
     have hp : P ((Y ^ (k + 1)) v) = Y (P ((Y ^ k) v)) := by
       rw [pow_succ_apply', ← Module.End.mul_apply P Y, hP, Module.End.mul_apply]
-    rw [pow_succ_apply' Y (k + 1) v, pow_succ_apply' Y (k + 1) (Z v), eq_add_of_sub_eq e, ih, hp, map_add, map_smul]
+    rw [pow_succ_apply' Y (k + 1) v, pow_succ_apply' Y (k + 1) (Z v), eq_add_of_sub_eq e, ih, hp, map_add (f := _), map_smul]
     push_cast
     module
 
@@ -66,7 +70,7 @@ theorem sl2_X_Ypow (X Y H : Module.End ℚ W) (hXY : X * Y - Y * X = H) (hHY : H
     have e := LinearMap.congr_fun hXY ((Y ^ (k + 1)) v)
     simp only [LinearMap.sub_apply, Module.End.mul_apply] at e
     have hH := eig_pow H Y (-2) c hHY v hv (k + 1)
-    rw [pow_succ_apply' Y (k + 1) v, pow_succ_apply' Y (k + 1) (X v), eq_add_of_sub_eq e, ih, hH, map_add,
+    rw [pow_succ_apply' Y (k + 1) v, pow_succ_apply' Y (k + 1) (X v), eq_add_of_sub_eq e, ih, hH, map_add (f := _),
       map_smul, ← pow_succ_apply' Y k v]
     push_cast
     module
@@ -84,7 +88,7 @@ theorem sl2_Xpow_Y (X Y H : Module.End ℚ W) (hXY : X * Y - Y * X = H) (hHX : H
     have e := LinearMap.congr_fun hXY ((X ^ (l + 1)) u)
     simp only [LinearMap.sub_apply, Module.End.mul_apply] at e
     have hH := eig_pow H X 2 c hHX u hu (l + 1)
-    rw [pow_succ_apply' X (l + 1) (Y u), ih, map_add, map_smul, eq_add_of_sub_eq e, hH,
+    rw [pow_succ_apply' X (l + 1) (Y u), ih, map_add (f := _), map_smul, eq_add_of_sub_eq e, hH,
       ← pow_succ_apply' X (l + 1) u, ← pow_succ_apply' X l u]
     push_cast
     module
@@ -147,7 +151,8 @@ theorem rankTwo : RankTwo := by
       (((k : ℚ) + 1) * coef (j + 1) (k + 1)) • (D q o ^ k) ((D o q ^ (k + 1)) T) := ⟨_, rfl⟩
 
   have hZT' : D p q T' = D p o U := by
-    rw [hT', hproj, map_sum, Finset.sum_range_succ', hU, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT', hproj, map_sum, Finset.sum_range_succ', hU, map_sum]
     simp only [map_smul, pow_zero, Module.End.one_apply, hpqT, smul_zero, add_zero]
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [comm_pow_apply _ _ _ rZYq rYpYq, hZv, map_zero, zero_add, smul_smul, mul_comm]
@@ -170,14 +175,16 @@ theorem rankTwo : RankTwo := by
       rw [Finset.sum_range_succ, ih, hXq_step n, Finset.sum_range_succ, ← key n]
       module
   have hXqT' : D o q T' = (-((j : ℚ) + 1)) • U := by
-    rw [hT', hproj, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT', hproj, map_sum]
     simp only [map_smul]
     rw [hS K, hXqK, map_zero, smul_zero, zero_add, hU, Finset.smul_sum]
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [smul_smul]
 
   have hHpU : (D o o - D p p) U = (1 : ℚ) • U := by
-    rw [hU, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hU, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [map_smul, eig_pow _ _ (-1) _ hHpYq _ (eig_pow _ _ 1 0 hHpXq T hHpT (k + 1)) k, smul_smul, smul_smul]
     congr 1; push_cast; ring
@@ -196,7 +203,7 @@ theorem rankTwo : RankTwo := by
     simp only [Module.End.mul_apply] at c
     rw [e1, comm_pow_apply _ _ _ rZXp hP, hZT', LinearMap.neg_apply, c, hXqT', map_smul, neg_smul, neg_neg,
       sl2_Xpow_Y _ _ _ sXYp hHpXp U 1 hHpU l]
-    simp only [map_add, map_smul]
+    simp only [map_add (f := _), map_smul]
     rw [← pow_succ_apply2 (D p o) (l + 1)]
     push_cast
     module
@@ -206,7 +213,7 @@ theorem rankTwo : RankTwo := by
     induction n with
     | zero => simp [hZT']
     | succ n ih =>
-      rw [Finset.sum_range_succ, map_add, ih, map_smul, hf n, smul_add, smul_smul, coef_succ_mul, neg_smul]
+      rw [Finset.sum_range_succ, map_add (f := _), ih, map_smul, hf n, smul_add, smul_smul, coef_succ_mul, neg_smul]
       abel
   rw [← hT', hproj, hT5 K, hXpU, map_zero, smul_zero]
 

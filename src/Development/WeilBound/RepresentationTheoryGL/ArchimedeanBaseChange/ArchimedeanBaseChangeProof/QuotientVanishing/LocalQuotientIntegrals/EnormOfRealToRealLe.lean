@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,9 +33,9 @@ theorem pf_QAdd : QAdd := by
   classical
   by_cases hex : ∃ ρ, IsQuotNormaliser T ν ρ
   · have hL : ∀ F : G → ℂ, quotLIntegral μ T ν (fun x => ‖F x‖ₑ) =
-        ∫⁻ g, ‖F g‖ₑ * hex.choose g ∂μ := fun F => by rw [quotLIntegral, dif_pos hex]
+        ∫⁻ g, ‖F g‖ₑ * hex.choose g ∂μ := fun F => by rw [quotLIntegral, dite_eq_left hex]
     have hI : ∀ F : G → ℂ, quotIntegral μ T ν F =
-        ∫ g, F g * ((hex.choose g).toReal : ℂ) ∂μ := fun F => by rw [quotIntegral, dif_pos hex]
+        ∫ g, F g * ((hex.choose g).toReal : ℂ) ∂μ := fun F => by rw [quotIntegral, dite_eq_left hex]
     have hint : ∀ F : G → ℂ, Measurable F → quotLIntegral μ T ν (fun x => ‖F x‖ₑ) ≠ ⊤ →
         Integrable (fun g => F g * ((hex.choose g).toReal : ℂ)) μ := fun F hF h =>
       QuotientIntegral.integrable_mul hF hex.choose_spec.1 (by rwa [hL] at h)

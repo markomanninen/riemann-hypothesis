@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormalLocusRep
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalRep
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNmSectionsRational
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.FiniteIntegralClosureCharZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormalLocusRep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalRep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNmSectionsRational
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.FiniteIntegralClosureCharZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -31,8 +36,8 @@ theorem isFractionRing_chartRingZ (y : (Σ k, ι k) → Ω) (hbir : Birational y
   change z = aeval y g * _ / (aeval y h * _)
   rw [hgh, mul_assoc, mul_div_assoc, div_self (mul_ne_zero hh0 hP), mul_one]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem charZero_of_isHorizontal (y : (Σ k, ι k) → Ω) (hH : IsHorizontal (mCoordIdeal y)) : CharZero Ω := by
   refine charZero_of_inj_zero fun n hn => ?_
   have hmem : ((n : ℤ) : ℤ) ∈ (mCoordIdeal y).comap (C : ℤ →+* MRing ι) := by
@@ -42,8 +47,8 @@ theorem charZero_of_isHorizontal (y : (Σ k, ι k) → Ω) (hH : IsHorizontal (m
   rw [hH, Ideal.mem_bot] at hmem
   exact_mod_cast hmem
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem charZero_chartRingZ [CharZero Ω] (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) : CharZero (chartRingZ y c) :=
   charZero_of_inj_zero fun n hn => by
     have : ((n : chartRingZ y c) : Ω) = 0 := by rw [hn]; rfl
@@ -74,6 +79,7 @@ theorem exists_conductor [CharZero Ω] (y : (Σ k, ι k) → Ω) (hbir : Biratio
   suffices key : ∀ x ∈ Submodule.span A (S : Set (integralClosure A Ω)), ((b : A) : Ω) * (x : Ω) ∈ A from
     key _ htop
   intro x hx
+  set_option synthInstance.maxHeartbeats 200000 in
   induction hx using Submodule.span_induction with
   | mem x hx =>
     obtain ⟨r, hr⟩ := hb (x : Ω) (Finset.mem_image_of_mem _ hx)
@@ -84,15 +90,15 @@ theorem exists_conductor [CharZero Ω] (y : (Σ k, ι k) → Ω) (hbir : Biratio
     simp only [Subalgebra.coe_add, mul_add]
     exact add_mem hx hz
   | smul r x _ hx =>
-    have : ((b : A) : Ω) * ((r • x : integralClosure A Ω) : Ω) = (r : Ω) * (((b : A) : Ω) * (x : Ω)) := by
+    have : ((b : A) : Ω) * (((r : A) • x : integralClosure A Ω) : Ω) = (r : Ω) * (((b : A) : Ω) * (x : Ω)) := by
       rw [Subalgebra.coe_smul, Algebra.smul_def]
       show _ * ((r : Ω) * _) = _
       ring
     rw [this]
     exact mul_mem r.2 hx
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_prod {J : Type} (s : Finset J) (H : J → MRing ι) (N : J → K → ℕ)
     (hH : ∀ j ∈ s, IsMultiHomog (H j) (N j)) : IsMultiHomog (∏ j ∈ s, H j) (∑ j ∈ s, N j) := by
   classical
@@ -113,8 +119,8 @@ theorem notMem_mCoordIdeal (y : (Σ k, ι k) → Ω) {f : MRing ι} {d : K → �
 
 end NormalLocusRep
 
-open NormalLocusRep in
 
+open NormalLocusRep in
 theorem NormalLocusRep.proof : NormalLocusRep.Statement := by
   intro K _ ι _ Ω _ y D hV hbir
   classical

@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.UnivFrame
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueScaledBaseChangeFibreSectionStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ScaledBaseChangeFibreSectionCalculusStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ScaledBaseChangeFibreSectionNonvanishingIffStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLocalGeneratorStableBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueGlueSectionsPrincipalCoverStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.UnivFrame
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueScaledBaseChangeFibreSectionStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ScaledBaseChangeFibreSectionCalculusStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ScaledBaseChangeFibreSectionNonvanishingIffStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLocalGeneratorStableBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueGlueSectionsPrincipalCoverStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Frames
 
@@ -96,15 +101,10 @@ theorem secNZ_pull {φ : S →+* T} {x : Sp S ⟶ Xo.X} {x' : Sp T ⟶ Xo.X} (hx
     {s : LB.Sec (PPx x)} {s' : LB.Sec (PPx x')} (h : SecBC φ 1 x x' s s') (hs : SecNZ x s) : SecNZ x' s' :=
   fun p' => (GlobalTheory.T.scaledBaseChange_fibreSection_nonvanishing_iff E H Dw l Xo S T φ x x' hx s s' h p').2 (hs _)
 
-theorem sec_ext {X : Scheme.{0}} {L : LB X} {s t : LB.Sec L} (h : ∀ i, s.f i = t.f i) : s = t := by
-  cases s; cases t
-  congr
-  exact funext h
-
 end GlobalTheory.Frames.NonzeroGenerates
 
-open GlobalTheory.Frames.NonzeroGenerates in
 
+open GlobalTheory.Frames.NonzeroGenerates in
 theorem GlobalTheory.Frames.secGen_of_secNZ : Out.SecBaseChangeSt → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (S : Type) [CommRing S] (x : Sp S ⟶ Xo.X) (s : LB.Sec (PPx x)), SecNZ x s → SecGen x s := by
   intro hBC E _ _ _ H Dw l Xo S _ x s hs t
   classical
@@ -119,11 +119,11 @@ theorem GlobalTheory.Frames.secGen_of_secNZ : Out.SecBaseChangeSt → ∀ (E : T
     refine hg (hle (Ideal.subset_span ?_))
     intro T _ ψ φ hφ s' hs'
     have e : spMap φ ≫ x = spMap ψ ≫ spMap (algebraMap S (Localization.Away g)) ≫ x := by
-      rw [← hφ, spMap_comp', Category.assoc]
-    obtain ⟨θ', hθ'⟩ := exists_pull ψ _ _ e θ
-    exact secGen_of_secGen (hθ T ψ _ θ' e hθ').1 (secNZ_pull rfl hs' hs)
-  choose sl hsl using fun g : S => exists_pull (algebraMap S (Localization.Away g)) x _ rfl s
-  choose tl htl using fun g : S => exists_pull (algebraMap S (Localization.Away g)) x _ rfl t
+      rw [← hφ, GlobalTheory.Frames.NonzeroGenerates.spMap_comp', Category.assoc]
+    obtain ⟨θ', hθ'⟩ := GlobalTheory.Frames.NonzeroGenerates.exists_pull ψ _ _ e θ
+    exact GlobalTheory.Frames.NonzeroGenerates.secGen_of_secGen (hθ T ψ _ θ' e hθ').1 (GlobalTheory.Frames.NonzeroGenerates.secNZ_pull rfl hs' hs)
+  choose sl hsl using fun g : S => GlobalTheory.Frames.NonzeroGenerates.exists_pull (algebraMap S (Localization.Away g)) x _ rfl s
+  choose tl htl using fun g : S => GlobalTheory.Frames.NonzeroGenerates.exists_pull (algebraMap S (Localization.Away g)) x _ rfl t
   have hgen : ∀ g : G, SecGen _ (sl g) := fun g => g.2 _ (RingHom.id _) _ (RingHom.id_comp _) _ (hsl g)
   choose c hc hcu using fun g : G => hgen g (tl g)
   have key : ∀ (g : G) (h : S) (α : Localization.Away g.1 →+* Localization.Away h),
@@ -132,10 +132,10 @@ theorem GlobalTheory.Frames.secGen_of_secNZ : Out.SecBaseChangeSt → ∀ (E : T
     intro g h α hα
     have e : spMap (algebraMap S (Localization.Away h)) ≫ x =
         spMap α ≫ spMap (algebraMap S (Localization.Away g.1)) ≫ x := by
-      rw [← hα, spMap_comp', Category.assoc]
-    have h1 : SecBC α 1 _ _ (sl g) (sl h) := (pull_trans_iff rfl e (hsl g)).2 (by rw [hα]; exact hsl h)
-    have h2 : SecBC α 1 _ _ (tl g) (tl h) := (pull_trans_iff rfl e (htl g)).2 (by rw [hα]; exact htl h)
-    exact (pull_iff_of_mul e (hc g) h1).1 h2
+      rw [← hα, GlobalTheory.Frames.NonzeroGenerates.spMap_comp', Category.assoc]
+    have h1 : SecBC α 1 _ _ (sl g) (sl h) := (GlobalTheory.Frames.NonzeroGenerates.pull_trans_iff rfl e (hsl g)).2 (by rw [hα]; exact hsl h)
+    have h2 : SecBC α 1 _ _ (tl g) (tl h) := (GlobalTheory.Frames.NonzeroGenerates.pull_trans_iff rfl e (htl g)).2 (by rw [hα]; exact htl h)
+    exact (GlobalTheory.Frames.NonzeroGenerates.pull_iff_of_mul e (hc g) h1).1 h2
   obtain ⟨a, ha, hau⟩ := Localization.existsUnique_algebraMap_eq_of_span_eq_top G hG c (fun g h => by
     have hα : (IsLocalization.Away.awayToAwayRight (S := Localization.Away g.1)
         (P := Localization.Away (g.1 * h.1)) g.1 h.1).comp (algebraMap S _) = algebraMap S _ :=
@@ -144,10 +144,10 @@ theorem GlobalTheory.Frames.secGen_of_secNZ : Out.SecBaseChangeSt → ∀ (E : T
         (P := Localization.Away (g.1 * h.1)) h.1 g.1).comp (algebraMap S _) = algebraMap S _ :=
       RingHom.ext fun r => IsLocalization.Away.awayToAwayLeft_eq h.1 g.1 r
     exact (g.2 _ _ _ hα _ (hsl _) (tl _)).unique (key g _ _ hα) (key h _ _ hβ))
-  refine ⟨a, ?_, fun b hb => hau b fun g => hcu g _ ((pull_iff_of_mul rfl hb (hsl g)).1 (htl g))⟩
-  obtain ⟨t₀, ht₀⟩ := exists_mul x a s
+  refine ⟨a, ?_, fun b hb => hau b fun g => hcu g _ ((GlobalTheory.Frames.NonzeroGenerates.pull_iff_of_mul rfl hb (hsl g)).1 (htl g))⟩
+  obtain ⟨t₀, ht₀⟩ := GlobalTheory.Frames.NonzeroGenerates.exists_mul x a s
   have hloc : ∀ g : G, SecBC (algebraMap S (Localization.Away g.1)) 1 x _ t₀ (tl g) := fun g =>
-    (pull_iff_of_mul rfl ht₀ (hsl g)).2 (by rw [ha g]; exact hc g)
+    (GlobalTheory.Frames.NonzeroGenerates.pull_iff_of_mul rfl ht₀ (hsl g)).2 (by rw [ha g]; exact hc g)
   obtain ⟨F, hF, h1⟩ := Submodule.mem_span_finite_of_mem_span ((Ideal.eq_top_iff_one _).1 hG)
   let h : Fin F.card → S := fun i => (F.equivFin.symm i).1
   have hr : Set.range h = F := by
@@ -163,13 +163,13 @@ theorem GlobalTheory.Frames.secGen_of_secNZ : Out.SecBaseChangeSt → ∀ (E : T
   have glue := GlobalTheory.T.existsUnique_glue_sections_principal_cover E H Dw l Xo S x F.card h hh (fun i => tl (h i)) (fun i j α β hα hβ u hu => by
     have e1 : spMap (algebraMap S (Localization.Away (h i * h j))) ≫ x =
         spMap α ≫ spMap (algebraMap S (Localization.Away (h i))) ≫ x := by
-      rw [← hα, spMap_comp', Category.assoc]
+      rw [← hα, GlobalTheory.Frames.NonzeroGenerates.spMap_comp', Category.assoc]
     have e2 : spMap (algebraMap S (Localization.Away (h i * h j))) ≫ x =
         spMap β ≫ spMap (algebraMap S (Localization.Away (h j))) ≫ x := by
-      rw [← hβ, spMap_comp', Category.assoc]
-    have h3 := (pull_trans_iff rfl e1 (htl (h i))).1 hu
+      rw [← hβ, GlobalTheory.Frames.NonzeroGenerates.spMap_comp', Category.assoc]
+    have h3 := (GlobalTheory.Frames.NonzeroGenerates.pull_trans_iff rfl e1 (htl (h i))).1 hu
     rw [hα] at h3
-    exact (pull_trans_iff rfl e2 (htl (h j))).2 (by rw [hβ]; exact h3))
+    exact (GlobalTheory.Frames.NonzeroGenerates.pull_trans_iff rfl e2 (htl (h j))).2 (by rw [hβ]; exact h3))
   have : t = t₀ := glue.unique (fun i => htl (h i)) (fun i => hloc ⟨h i, hmem i⟩)
   rw [this]
   exact ht₀

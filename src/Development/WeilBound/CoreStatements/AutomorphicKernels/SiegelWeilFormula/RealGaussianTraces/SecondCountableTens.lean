@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.Integr
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SiegelWeilUnitaryConvergentOfSiegelWeilConvergen
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.Integr
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SiegelWeilUnitaryConvergentOfSiegelWeilConvergen
+
+@[expose] public section
 
 noncomputable section
 
@@ -220,7 +224,7 @@ theorem exists_hermHomeo (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (ψ : AddCh
     rw [← ContinuousAddEquiv.symm_apply_apply eT ((S : Matrix (Fin n) (Fin n) (Ainf F ⊗[F] E)) a b)]
     congr 1
     funext i
-    simp only [w, fwd]
+    dsimp only [w, fwd]
     rw [herm_hinv _ (Matrix.isHermitian_mul_mul_conjTranspose _ (isHerm_map σ (θ i) (hP.conj i) S)),
       gl_sandwich3, heT]
     rfl
@@ -300,7 +304,7 @@ theorem exists_map_eq_smul {G W : Type} [AddCommGroup G] [TopologicalSpace G]
   haveI : ContinuousAdd G := by
     refine ⟨?_⟩
     have h : (fun p : G × G => p.1 + p.2) = fun p => e.symm (e p.1 + e p.2) := by
-      funext p; rw [← map_add, ContinuousAddEquiv.symm_apply_apply]
+      funext p; rw [← map_add (f := _), ContinuousAddEquiv.symm_apply_apply]
     rw [h]
     exact e.symm.continuous.comp ((e.continuous.comp continuous_fst).add (e.continuous.comp continuous_snd))
   haveI : (μ.map e).IsAddHaarMeasure :=

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorGenericStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RegularUnitPoints
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorGenericStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RegularUnitPoints
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
@@ -63,9 +67,6 @@ section Ring
 
 variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommRingCat.of Ω) ⟶ X} {q : Cpt ξ}
 
-theorem unitAt_mul {a b : Ω} (ha : unitAt ξ q a) (hb : unitAt ξ q b) : unitAt ξ q (a * b) :=
-  ⟨mul_ne_zero ha.1 hb.1, mul_mem ha.2.1 hb.2.1, by rw [mul_inv]; exact mul_mem ha.2.2 hb.2.2⟩
-
 theorem unitAt_natCast (h : ∀ r : ℕ, r.Prime → ¬ InFibre ξ r q) (n : ℕ) (hn : n ≠ 0) : unitAt ξ q (n : Ω) :=
   _root_.UpperTheory.Reformulated.B.RegularUnitPoints.main h n hn
 
@@ -91,13 +92,15 @@ theorem lat_stable (M : LieModel G ξ E) {O : Type} [CommRing O] (act : Reciproc
     ρ a e ∈ M.lat q := by
   obtain ⟨v, hv⟩ := (M.mem_lat_iff q e).1 he
   refine (M.mem_lat_iff q _).2 ⟨v ≫ act.act a, ?_⟩
-  rw [LieModel.extends_iff] at hv ⊢
+  unfold LieModel.Extends at hv ⊢
   have := act.hom a
   refine ⟨?_, ?_⟩
   · have h1 := hv.1
     rw [LieTangent.isTanAt_iff] at h1 ⊢
     rw [← Category.assoc, h1, MonObj.one_comp]
-  · rw [h a e, hv.2, Category.assoc]
+  · have hpt := congrArg (fun f => f.left) (h a e)
+    simp only [Over.comp_left] at hpt ⊢
+    rw [hpt, hv.2, Category.assoc]
 
 end Stable
 
@@ -127,7 +130,8 @@ theorem mem_of_sum_mem (P : Submodule R E) {O : Type} [CommRing O] (ρ : O →+*
       have hg : (∑ u ∈ A, (σ u a - σ t a) • f u) ∈ P := by
         have e : (∑ u ∈ A, (σ u a - σ t a) • f u) =
             ρ a (f t + ∑ u ∈ A, f u) - σ t a • (f t + ∑ u ∈ A, f u) := by
-          rw [map_add, map_sum, mem_eigSp_apply (hf t (Finset.mem_insert_self _ _)) a, smul_add, Finset.smul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_add (f := _), map_sum, mem_eigSp_apply (hf t (Finset.mem_insert_self _ _)) a, smul_add, Finset.smul_sum]
           simp only [sub_smul, Finset.sum_sub_distrib]
           rw [Finset.sum_congr rfl fun u hu =>
             (mem_eigSp_apply (hf u (Finset.mem_insert_of_mem hu)) a).symm]

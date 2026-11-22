@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.AmpNZTie
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.AmpFinal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.MomTie
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CoefDecay
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.AmpNZTie
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.AmpFinal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.MomTie
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CoefDecay
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal InnerProductSpace
@@ -89,11 +93,5 @@ theorem coefficients_in_compact_closure : Formalism.MainNotions.S.Pv.BetaCut.Coe
 theorem ampNZ_of_parts (hE : AmpOrbCoefDD) (hBI : Formalism.MainNotions.S.Pv.BetaCut.BetaInfCoefNZ) : AmpNZ :=
   ampNZ_of (ampNZCoef_of hE coefficients_in_compact_closure hBI)
 
-variable [Fact Formalism.FourierDecayAlt.ThreeDimData.DecLow] [Fact Formalism.L2.SG.LitS.PfNVG.BesselNVG] in
-
-theorem amplitude_uniform_of_coefficients (hJ : PI.BesselMapUniq.BesselMapUniq) (hKD : Formalism.MainNotions.S.Pv.AmpDD.KDense)
-    (hRJ : RootJac) (hRH : RootHaar) (hOQ : OrbQuotEx) (hRA : RelAtPt) (hE : AmpOrbCoefDD)
-    (hBI : Formalism.MainNotions.S.Pv.BetaCut.BetaInfCoefNZ) : AmpUnif :=
-  Formalism.L2.S.Pv.AmpFinal.amplitude_uniform_of_orbit hJ hKD hRJ hRH hOQ hRA (ampNZ_of_parts hE hBI)
 
 end Formalism.MainNotions.S.Pv.LemmaJ

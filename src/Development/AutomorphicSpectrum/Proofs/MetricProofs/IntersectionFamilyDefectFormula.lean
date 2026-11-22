@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridge
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UnitRatioSameDivisorMultiplicitiesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridge
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UnitRatioSameDivisorMultiplicitiesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem isSmoothHerm_fsOfDeg (γ : K → ℕ) : IsSmoothHerm (fsOfDeg γ : HermL
     refine ContDiffOn.sqrt ?_ fun z hz => (sum_sq_pos (hz k)).ne'
     refine ContDiff.contDiffOn ?_
     refine ContDiff.sum fun i _ => ?_
-    exact (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ _)
+    exact (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) _)
   exact h1.congr fun z hz =>
     show (blockSet ι).indicator (fun z : (Σ k, ι k) → ℂ => ∏ k, blockNorm k z ^ γ k) z = _ from
       indicator_of_mem (show z ∈ blockSet ι from hz) _
@@ -222,7 +226,7 @@ theorem arInt_eq_mInt (hB : ResBridgeStatement) (hG : GoodProjExistsStatement) (
     arInt P s A L = mInt R.A (fun j => potOf R (L j)) (fun x => logNorm A s (R.lift x x)) := by
   have hex := hG K ι P e hP
   unfold arInt ptsIntegral
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hB K ι P J e R _ L A s hP hex.choose_spec hL hA hs
 
 theorem logNorm_sub_eq {M A B : HermLine ι} {f g : MRing ι} {z : (Σ k, ι k) → ℂ}

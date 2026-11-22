@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ParametersTermRelations
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.DataInst
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GrowthOfBasic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDerivativeHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermExpansionMatrixFunction
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ParametersTermRelations
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.DataInst
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GrowthOfBasic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDerivativeHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermExpansionMatrixFunction
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+
+@[expose] public section
 
 noncomputable section
 

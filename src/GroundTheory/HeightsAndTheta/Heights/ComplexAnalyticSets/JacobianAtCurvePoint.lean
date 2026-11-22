@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GradientAtPoint
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPlace
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.SmoothOfRegular
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GradientAtPoint
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPlace
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.SmoothOfRegular
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -90,7 +95,7 @@ theorem exists_of_isDiscreteValuationRing (I : Ideal (MvPolynomial σ ℂ)) (w :
       rw [RingHom.mem_ker, map_mul] at h1
       exact (mul_eq_zero.1 h1).resolve_left hs
     have h2 : eval w s • grad w x = grad w z := by
-      rw [← grad_mul_of_eval_eq_zero w s x hxm, ← hyz, map_add, grad_eq_zero_of_mem_sq w hy, zero_add]
+      rw [← grad_mul_of_eval_eq_zero w s x hxm, ← hyz, map_add (f := _), grad_eq_zero_of_mem_sq w hy, zero_add]
     have h3 : grad w z ∈ V := ⟨z, hz, rfl⟩
     have h4 : grad w x = (eval w s)⁻¹ • grad w z := by
       rw [← h2, smul_smul, inv_mul_cancel₀ hs, one_smul]
@@ -109,7 +114,7 @@ theorem exists_of_isDiscreteValuationRing (I : Ideal (MvPolynomial σ ℂ)) (w :
       have hp0 : algebraMap _ S p = 0 := by
         rw [hRS, ← RingHom.mem_ker, hker]
         exact Ideal.mem_map_of_mem _ hp
-      rw [show X i - C (w i) = (X i - C (w i) - p) + p by ring, map_add, hp0, add_zero, ← hmap,
+      rw [show X i - C (w i) = (X i - C (w i) - p) + p by ring, map_add (f := _), hp0, add_zero, ← hmap,
         ← Ideal.map_pow]
       exact Ideal.mem_map_of_mem _ h2
     have hgen : maximalIdeal S =
@@ -173,7 +178,8 @@ theorem exists_of_isDiscreteValuationRing (I : Ideal (MvPolynomial σ ℂ)) (w :
     · rintro _ ⟨p, hp, rfl⟩
       have hp' : p ∈ Ideal.span (Set.range g) := by rw [Ideal.span, hg]; exact hp
       obtain ⟨r, rfl⟩ := Ideal.mem_span_range_iff_exists_fun.1 hp'
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Submodule.sum_mem _ fun j _ => ?_
       rw [grad_mul_of_eval_eq_zero w _ _ (RingHom.mem_ker.1 (hIm (hgI j)))]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -210,7 +216,8 @@ theorem exists_of_isDiscreteValuationRing (I : Ideal (MvPolynomial σ ℂ)) (w :
     have hzm : p - ∑ j, C (c j) * f j ∈ ptMax w :=
       Ideal.sub_mem _ (hIm hp) (Ideal.sum_mem _ fun j _ => Ideal.mul_mem_left _ _ (hIm (hfI j)))
     have hzg : grad w (p - ∑ j, C (c j) * f j) = 0 := by
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp_rw [C_mul', map_smul]
       rw [← hc, sub_eq_zero]
       rfl

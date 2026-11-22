@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 
@@ -15,7 +19,7 @@ theorem gramSt_det_one_add_eq {Q : Matrix ι ι ℂ} (hQ : Q.PosSemidef) :
   have hspec := hQ.1.spectral_theorem
   have h1 : (1 + Q) = Unitary.conjStarAlgAut ℂ _ U
       (1 + diagonal (RCLike.ofReal ∘ hQ.1.eigenvalues)) := by
-    rw [map_add, map_one, ← hspec]
+    rw [map_add (f := _), map_one, ← hspec]
   have hd : (1 + diagonal (RCLike.ofReal ∘ hQ.1.eigenvalues) : Matrix ι ι ℂ) =
       diagonal (fun i => ((1 + hQ.1.eigenvalues i : ℝ) : ℂ)) := by
     ext i j
@@ -55,7 +59,7 @@ theorem gramSt_det_re_le_of_sub {G H : Matrix ι ι ℂ} (hG : G.PosDef)
   have h1 : (1:ℝ) ≤ ∏ i, (1 + hQ.1.eigenvalues i) := by
     calc (1:ℝ) = ∏ _i : ι, (1:ℝ) := by simp
       _ ≤ ∏ i, (1 + hQ.1.eigenvalues i) :=
-        Finset.prod_le_prod (fun _ _ => zero_le_one)
+        Finset.prod_le_prod₀ (fun _ _ => zero_le_one)
           (fun i _ => by linarith [hQ.eigenvalues_nonneg i])
   nlinarith
 

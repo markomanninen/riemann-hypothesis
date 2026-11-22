@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CommuteRowOpRightMixedOp
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Sl2NonnegWeightOfHighestWeightVector
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EqZeroOfPartialSumsNonneg
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowAddGenericRowAddTerm
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ColumnDegreeLe
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ProdLeadMinorDiagonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CommuteRowOpRightMixedOp
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Sl2NonnegWeightOfHighestWeightVector
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EqZeroOfPartialSumsNonneg
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowAddGenericRowAddTerm
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ColumnDegreeLe
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ProdLeadMinorDiagonal
+
+@[expose] public section
 
 open MvPolynomial Matrix GlobalTheory.Capelli
 
@@ -16,7 +20,7 @@ namespace HighestUnique
 variable {K σ : Type*} [Field K]
 
 theorem coeff_X_mul_pderiv (u : σ) (m : σ →₀ ℕ) (P : MvPolynomial σ K) :
-    coeff m (X u * pderiv u P) = (m u : K) * coeff m P := by
+    AddMonoidAlgebra.coeff (X u * pderiv u P) m = (m u : K) * AddMonoidAlgebra.coeff P m := by
   classical
   induction P using MvPolynomial.induction_on' with
   | monomial d r =>
@@ -24,7 +28,7 @@ theorem coeff_X_mul_pderiv (u : σ) (m : σ →₀ ℕ) (P : MvPolynomial σ K) 
     split_ifs with h
     · subst h; simp
     · simp
-  | add P Q hP hQ => simp only [map_add, mul_add, coeff_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), mul_add, MvPolynomial.coeff_add, hP, hQ]
 
 theorem eval_congr_vars {P : MvPolynomial σ K} {x x' : σ → K} (h : ∀ s ∈ P.vars, x s = x' s) :
     eval x P = eval x' P :=
@@ -68,14 +72,14 @@ theorem weight_of_mem_support (z : Fin p × Fin n → σ) (y : Fin q × Fin n �
     {P : MvPolynomial σ K} {k : Fin n} {w : ℤ} (h : mixedOp K z y k k P = (w : K) • P)
     {m : σ →₀ ℕ} (hm : m ∈ P.support) :
     ∑ a, (m (z (a, k)) : ℤ) - ∑ b, (m (y (b, k)) : ℤ) = w := by
-  have := congrArg (coeff m) h
+  have := congrArg (AddMonoidAlgebra.coeff · m) h
   rw [mixedOp_apply, coeff_sub, coeff_sum, coeff_sum, coeff_smul] at this
   simp only [coeff_X_mul_pderiv, ← Finset.sum_mul, ← sub_mul, smul_eq_mul] at this
   have h2 := mul_right_cancel₀ (mem_support_iff.1 hm) this
   exact_mod_cast h2
 
-omit [CharZero K] in
 
+omit [CharZero K] in
 theorem rowOp_self (z : Fin p × Fin n → σ) {P : MvPolynomial σ K} {a : Fin p} {d : ℕ}
     (h : ∀ m ∈ P.support, ∑ k, m (z (a, k)) = d) : rowOp K z a a P = ((d : ℤ) : K) • P := by
   ext m
@@ -102,7 +106,7 @@ theorem casimir_rows [DecidableEq σ] (z : Fin p × Fin n → σ) (hz : Function
     rw [rowOp_apply]
     exact ((rowAdd_invariant_iff (fun k => z (a, k)) (fun k => z (b, k))
       (fun k l e => by simpa using hz e)
-      (fun k l e => hab.ne (congrArg Prod.fst (hz e))) P).out 1 2).1 (hinv a b hab)
+      (fun k l e => hab.ne (congrArg Prod.fst (hz e))) P).out 2 3).1 (hinv a b hab)
 
 theorem sum_filter_pad (hp : p ≤ n) (a : Fin p → ℕ) (i : ℕ) :
     ∑ k ∈ Finset.univ.filter (fun k : Fin n => (k : ℕ) < i),
@@ -208,14 +212,14 @@ theorem notMem_vars : (∀ i (k : Fin n), p ≤ k → z (i, k) ∉ P.vars) ∧
         have := k.2
         rw [mixedWeight_apply] at h₂
         split_ifs with hk
-        · rw [dif_pos hk, dif_neg (by omega)] at h₂
+        · rw [dite_eq_left hk, dite_eq_right (by omega)] at h₂
           linarith
         · positivity
       have h₄ := (Finset.sum_eq_sum_iff_of_le h₁).1
         ((sum_dite_lt (by omega) fun i => (a i : ℤ)).trans hsa.symm)
       intro i k hk
       have h₅ := h₄ k (Finset.mem_univ _)
-      rw [dif_neg (by omega), eq_comm,
+      rw [dite_eq_right (by omega), eq_comm,
         Finset.sum_eq_zero_iff_of_nonneg fun _ _ => by positivity] at h₅
       exact_mod_cast h₅ i (Finset.mem_univ _)
     · have h₁ : ∀ k ∈ (Finset.univ : Finset (Fin n)),
@@ -227,14 +231,14 @@ theorem notMem_vars : (∀ i (k : Fin n), p ≤ k → z (i, k) ∉ P.vars) ∧
         have := k.2
         rw [mixedWeight_apply] at h₂
         split_ifs with hk
-        · rw [dif_pos hk, dif_neg (by omega)] at h₂
+        · rw [dite_eq_left hk, dite_eq_right (by omega)] at h₂
           linarith
         · positivity
       have h₄ := (Finset.sum_eq_sum_iff_of_le h₁).1
         ((sum_dite_rev_lt (by omega) fun i => (b i : ℤ)).trans hsb.symm)
       intro i k hk
       have h₅ := h₄ k (Finset.mem_univ _)
-      rw [dif_neg (by omega), eq_comm,
+      rw [dite_eq_right (by omega), eq_comm,
         Finset.sum_eq_zero_iff_of_nonneg fun _ _ => by positivity] at h₅
       exact_mod_cast h₅ i (Finset.mem_univ _)
   constructor
@@ -267,21 +271,21 @@ theorem exists_eq_mul_prod_minors [DecidableEq σ] (z : Fin p × Fin n → σ)
     exact hv i k hk ((mem_vars_iff_mem_support _).2 ⟨m, hm, Finsupp.mem_support_iff.2 h0⟩)
   · have h₁ := ((rowAdd_invariant_iff (fun k => z (i, k)) (fun k => z (j, k))
       (fun k l e => by simpa using hz e)
-      (fun k l e => hij.ne (congrArg Prod.fst (hz e))) P).out 1 2).1 (hinv i j hij)
+      (fun k l e => hij.ne (congrArg Prod.fst (hz e))) P).out 2 3).1 (hinv i j hij)
     refine ((rowAdd_invariant_iff (fun k => z (i, e k)) (fun k => z (j, e k))
       (fun k l e => he (by simpa using hz e))
-      (fun k l e => hij.ne (congrArg Prod.fst (hz e))) P).out 2 1).1 (Eq.trans ?_ h₁)
+      (fun k l e => hij.ne (congrArg Prod.fst (hz e))) P).out 3 2).1 (Eq.trans ?_ h₁)
     refine Fintype.sum_of_injective e he _ _ (fun k hk => ?_) fun _ => rfl
     rw [pderiv_eq_zero_of_notMem_vars (hv j k hk), mul_zero]
   · exact ((rowAdd_invariant_iff (fun i => z (i, e k)) (fun i => z (i, e l))
       (fun k l e => by simpa using hz e)
-      (fun i j e => hkl.ne (he (congrArg Prod.snd (hz e)))) P).out 2 1).1
+      (fun i j e => hkl.ne (he (congrArg Prod.snd (hz e)))) P).out 3 2).1
       ((colOp_apply _ _ _ _).symm.trans (hcol k l hkl))
 
 end HighestUnique
 
-open HighestUnique in
 
+open HighestUnique in
 theorem exists_eq_smul_basePoly {K T : Type*} [Field K] [CharZero K] [Fintype T] {p q n : ℕ}
     (h : p + q ≤ n) (c : T → Fin p → ℕ) (c' : T → Fin q → ℕ) {P : Poly K T p q (Fin n)}
     (hP : P ∈ rowHighest K c c') (κ : T → Fin n → ℤ) (hκ : ∀ t, Antitone (κ t))

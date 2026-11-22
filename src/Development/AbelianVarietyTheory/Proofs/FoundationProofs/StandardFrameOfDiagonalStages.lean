@@ -1,11 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsReframeVStdOfPosDef
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdentityClassLatticeEqSelfDualFrameLattice
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DuStarPos
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsDiagSpacesNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjugateEmbApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsReframeVStdOfPosDef
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdentityClassLatticeEqSelfDualFrameLattice
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DuStarPos
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SpreadLe
+public import Formalism.SharpRestriction.InertJacobiLevels.HostFam
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpacesNormHasFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjugateEmbApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,15 +36,6 @@ def coordPre (P : PreCh) (L : LevCh P) : Pre :=
 
 theorem diagSpaces_coordPre (P : PreCh) (L : LevCh P) : DiagSpaces (coordPre P L).sp :=
   DiagSp.spacesNorm_coord _ _ _ _ _ _
-
-def coordV (D : D7) : D7 :=
-  { D with
-    sp := { D.sp with
-      V := fun _ => Examples₂.posSpace Examples₂.star_isIntegral D.R.nV
-      V_sig := fun _ => Examples₂.posSpace_sigOK _ _
-      V_rank := fun _ _ _ => rfl
-      Vneg := fun _ => false
-      V_std := fun _ _ _ => DiagSp.ortho_sign D.R.nV false } }
 
 end GlobalTheory.StdFrameObj
 

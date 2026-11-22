@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.StatementAdmAt
-import Formalism.LocalToGlobal.InertKernelTheory.TranslatesOfInertKernelAtPlace
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementAdmAt
+public import Formalism.LocalToGlobal.InertKernelTheory.TranslatesOfInertKernelAtPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,8 +70,8 @@ def AdmGen2 : Prop :=
     adm3b D X → ArchimedeanSignatureMatching D X (pendG X E hfin hst hLT pos fd B χ lam SS cl Ξ₀ muT) →
       admitted D X (pendG X E hfin hst hLT pos fd B χ lam SS cl Ξ₀ muT)
 
-open Formalism.L2.KerInert.SecondKernelInstances Formalism.L2.KerInert.SecondKernelCoupled in
 
+open Formalism.L2.KerInert.SecondKernelInstances Formalism.L2.KerInert.SecondKernelCoupled in
 def AdmAt2 : Prop :=
   ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (Gi : G.Inst D L) (Gl : G.LatInst D) (Kc0 : G.Consts) (Dx : DivX D)
     (cX : ExtraC) (ex : Extra D L hT Gi Gl Kc0 Dx cX) (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup)
@@ -93,8 +97,8 @@ def AdmAt2 : Prop :=
       (0 < D.R.m → ∃ lp, TiesC (pendG (sysAt Ch std vp unif eO eO_spec dG dG_spec om) E hfin hst hLT pos (fdAtL Ch std vp unif eO eO_spec dG dG_spec om I L0 a bad) B χ lam SS cl Ξ₀ muT) t u μ KA.cmp ι Rd Sr (D.R.m - 1) lp ∧ HeckeC (pendG (sysAt Ch std vp unif eO eO_spec dG dG_spec om) E hfin hst hLT pos (fdAtL Ch std vp unif eO eO_spec dG dG_spec om I L0 a bad) B χ lam SS cl Ξ₀ muT) u μ (D.R.m - 1) lp)) →
       admitted D (sysAt Ch std vp unif eO eO_spec dG dG_spec om) (pendG (sysAt Ch std vp unif eO eO_spec dG dG_spec om) E hfin hst hLT pos (fdAtL Ch std vp unif eO eO_spec dG dG_spec om I L0 a bad) B χ lam SS cl Ξ₀ muT)
 
-open Formalism.L2.KerInert.SecondKernelInstances in
 
+open Formalism.L2.KerInert.SecondKernelInstances in
 def AdmAtEnt2 : Prop :=
   ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (Gi : G.Inst D L) (Gl : G.LatInst D) (Kc0 : G.Consts) (Dx : DivX D)
     (cX : ExtraC) (ex : Extra D L hT Gi Gl Kc0 Dx cX) (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFormsHilbertModuleExists
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFormsHilbertModuleExists
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ theorem exists_baseChange {G Γ W W' K M : Type} [Group G] [Group Γ] [NormedAdd
   obtain ⟨j, hj⟩ := GlobalTheory.HilbertModel.exists_lift_fun σ hH (fun x h => c₁ (v x h))
     (fun a b => by
       funext h
-      have : v (a + b) h = v a h + v b h := hinj (by rw [map_add, ← hv, ← hv, ← hv, map_add]; rfl)
-      rw [this, map_add]; rfl)
+      have : v (a + b) h = v a h + v b h := hinj (by rw [map_add (f := _), ← hv, ← hv, ← hv, map_add (f := _)]; rfl)
+      rw [this, map_add (f := _)]; rfl)
     (fun c a => by
       funext h
       have : v (c • a) h = c • v a h := hinj (by rw [map_smulₛₗ, ← hv, ← hv, map_smulₛₗ]; rfl)
@@ -131,21 +135,6 @@ theorem levChar_mem (R : RealDat D A Ks) (hL : R.toLevCh.Is A.μ0) (hW : R.grp_c
   rw [Units.val_inv_eq_inv_val]
   exact inv_mem (chi_mem R hW i PP hP u)
 
-set_option maxHeartbeats 2000000 in
-
-theorem exists_conjForms : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), R.Char F → ∀ (i : Fin D.R.m), ∀ gramR c0R c0L, Comparison₂ R gramR c0R c0L → ∀ (σ : D.what₂.LL →+* ℂ) (c : CoefA (Vc D i)) (c₁ : VsV D i D.what₂.LL →ₛₗ[σ] c.W), CoefAt i σ c c₁ → ∃ (H : HMod (Bridge.Gf (Vc D i) → c.W)) (j : A.fam.amb.FL i A.μ0 →ₛₗ[σ] H.H), IsConjForms R i σ (c0L i) c c₁ H j := by
-  intro D G _ _ Pl0 T0 A Ks _ _ _ R F hC i gramR c0R c0L hT σ c c₁ hc
-  have h1 := hT.coefL i A.μ0
-  obtain ⟨e, -, he, -⟩ := h1
-  have hact : ∀ γ : GQ (Vc D i), ∃ T : VsV D i D.what₂.LL → VsV D i D.what₂.LL,
-      (∀ v, c0L i (T v) = (R.cV i).coef.ρ γ (c0L i v)) ∧ ∀ v, c₁ (T v) = c.coef.ρ γ (c₁ v) := fun γ =>
-    (exists_ratMat (Vc D i) γ).elim fun γE hγ =>
-      ⟨rhoVr (labLL D) (lamV D i) γE, (hT.mapL i).1 γ γE hγ, hc.act γ γE hγ⟩
-  have h2 := exists_baseChange (W' := c.W) σ c.coef.ρ (R.B.L i A.μ0).pres (c0L i) c₁ e he hact
-    (levChar_mem R hC.lev hC.grp.chiW i)
-  obtain ⟨H, j, hm, hb⟩ := h2
-  refine ⟨H, j, hc.coef, hc.act, hc.indep, hc.span, hc.pair, hm, fun x h => ?_⟩
-  exact (hb x h).imp fun v hv => ⟨(congrFun (hC.models.jV i A.μ0 x) h).trans hv.1, hv.2⟩
 
 end GlobalTheory.ConjForms
 

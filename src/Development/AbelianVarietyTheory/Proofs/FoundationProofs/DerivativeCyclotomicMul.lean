@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+
+@[expose] public section
+
 open GlobalTheory.K5 Polynomial TrivSqZeroExt
 
 noncomputable section
@@ -13,7 +18,7 @@ theorem aeval_dual {S : Type*} [CommRing S] [Algebra R S] (a m : S) (f : R[X]) :
     (aeval (inl a + inr m : DualNumber S) f).snd = aeval a (derivative f) * m := by
   induction f using Polynomial.induction_on' with
   | add f g hf hg =>
-    rw [map_add, fst_add, snd_add, hf.1, hf.2, hg.1, hg.2, map_add, map_add, map_add, add_mul]
+    rw [map_add (f := _), fst_add, snd_add, hf.1, hf.2, hg.1, hg.2, map_add (f := _), map_add (f := _), map_add (f := _), add_mul]
     exact ⟨rfl, rfl⟩
   | monomial k c =>
     rw [aeval_monomial, aeval_monomial, derivative_monomial, aeval_monomial]
@@ -94,7 +99,7 @@ theorem exists_derivation (Φ : R[X]) (N : ℕ) (q : R) (I : Ideal R[X][X])
     rw [hC, (aeval_dual _ _ _).2]; simp
   let L : (R[X][X] ⧸ I) →ₗ[R] S :=
     { toFun := fun z => (ψ z).snd
-      map_add' := fun a b => by rw [map_add, snd_add]
+      map_add' := fun a b => by rw [RingHom.map_add ψ, snd_add]
       map_smul' := fun c z => by
         rw [Algebra.smul_def, hleib, halg, smul_zero, add_zero, RingHom.id_apply, algebraMap_smul] }
   refine ⟨Derivation.mk' L hleib, ?_, ?_⟩
@@ -148,7 +153,7 @@ theorem derivative_cyclotomic_mul (m : ℕ) :
       (p : On p (m + 1)) ^ (m + 1) * xn p (m + 1) ^ (p ^ (m + 1) - 1) := by
   have h := congrArg (fun f => aeval (xn p (m + 1)) (derivative f))
     (cyclotomic_prime_pow_mul_X_pow_sub_one (O0 p) p m)
-  simp only [derivative_mul, map_add, map_mul, aeval_xn_cyclotomic, zero_mul, add_zero] at h
+  simp only [derivative_mul, map_add (f := _), map_mul, aeval_xn_cyclotomic, zero_mul, add_zero] at h
   simpa [derivative_X_pow] using h
 
 end GlobalTheory.K5.DlogUniq

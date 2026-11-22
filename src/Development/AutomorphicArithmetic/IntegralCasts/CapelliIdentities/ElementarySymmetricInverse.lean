@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private theorem aux {ι : Type*} [DecidableEq ι] (t : Finset ι) (f : ι → ℂ)
     (hf : ∀ i ∈ t, f i ≠ 0) (j : ℕ) (hj : j ≤ t.card) :

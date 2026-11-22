@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSdLatTwOExpS
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsNatSmulMemOfFg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSdLatTwOExpS
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsNatSmulMemOfFg
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions Formalism.L2.Th1.H GlobalTheory.ThetaMove GlobalTheory.IndefiniteRowSideFullHecke.IndexExponentDegree
 
@@ -115,8 +119,35 @@ end
 
 theorem common_refinement : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ) (M₁ M₂ : Submodule (𝓞 E) (Sp E n)) (S : Finset (HeightOneSpectrum (𝓞 E))), (∀ P ∈ S, conjPrime₂ P ∉ S) → IsSdLat M₁ → IsSdLat M₂ → (∀ Q : HeightOneSpectrum (𝓞 E), Q ∉ S → conjPrime₂ Q ∉ S → localization₂ Q.asIdeal M₁ = localization₂ Q.asIdeal M₂) → ∃ F G : Submodule (𝓞 E) (Sp E n), IsSdLat F ∧ IsSdLat G ∧ Dom S M₁ F ∧ Dom S M₂ F ∧ Dom S G M₁ ∧ Dom S G M₂ := by
   intro E _ _ _ n M₁ M₂ S hS h₁ h₂ hQ
-  obtain ⟨a, ha, hA⟩ := exists_nat_smul_le (full_of_span h₁.1.span_eq_top) h₂.1.fg
-  obtain ⟨b, hb, hB⟩ := exists_nat_smul_le (full_of_span h₂.1.span_eq_top) h₁.1.fg
+  have hfull (L : Submodule (𝓞 E) (Sp E n)) (hL : IsSdLat L) : Full L := by
+    apply full_of_span
+    let W := Submodule.span E (L : Set (Sp E n))
+    change W = ⊤
+    by_contra h
+    let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+    let g : Sp E n →ₗ[E] Module.Dual E W :=
+      (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+    have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Sp E n) := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt h
+    obtain ⟨x, hx, hx₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    have hsmul (a : E) : a • e x ∈ L := by
+      rw [← hL.2, dualBasic_mem_dual]
+      intro y hy
+      apply hStd_mem_one_symm
+      have hxy : hStd E n (e x) y = 0 :=
+        congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+      simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+    let i : E →ₗ[𝓞 E] L :=
+      ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+    let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.1.fg
+    let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+  obtain ⟨a, ha, hA⟩ := exists_nat_smul_le (hfull M₁ h₁) h₂.1.fg
+  obtain ⟨b, hb, hB⟩ := exists_nat_smul_le (hfull M₂ h₂) h₁.1.fg
   have hm : 0 < a * b := Nat.mul_pos ha hb
   have hA' : ∀ x ∈ M₂, ((a * b : ℕ) : 𝓞 E) • x ∈ M₁ := fun x hx => by
     rw [Nat.cast_mul, mul_comm, mul_smul]; exact M₁.smul_mem _ (hA x hx)

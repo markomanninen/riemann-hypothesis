@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeAt
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SumEmbeddingDualInt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeAt
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SumEmbeddingDualInt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
@@ -61,13 +65,15 @@ variable {E : Type} [Field E] [NumberField E] {Ω : Type} [Field Ω] {Vs : Type}
 theorem psi_sum {J : Type} (ψ : R' →+* C) (s : Finset J) (c : J → R') (x : J → Fin g → R') :
     (fun k => ψ ((s.sum fun i : J => c i • x i) k)) = Finset.sum s (fun i : J => ψ (c i) • fun k => ψ (x i k)) := by
   funext k
-  simp [Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Finset.sum_apply, map_sum]
 
 theorem rho_comb_mem {ρ : 𝓞 E →+* Module.End Ω Vs} {ℓ : Fin g → Vs}
     (hst : ∀ a i, ρ a (ℓ i) ∈ Submodule.span R' (Set.range ℓ)) (a : 𝓞 E) (x : Fin g → R') :
     ρ a (comb ℓ x) ∈ Submodule.span R' (Set.range ℓ) := by
   unfold comb
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [map_smul]
   exact Submodule.smul_mem _ (x i) (hst a i)
@@ -178,7 +184,8 @@ theorem values_basis : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs C : Type)
       have hv' : v = ∑ k, v k • (Pi.single k (1 : C) : Fin g → C) := by
         funext j
         simp [Finset.sum_apply, Pi.single_apply]
-      rw [hv', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hv', map_sum]
       refine Submodule.sum_mem _ fun k _ => ?_
       rw [map_smul, hC]
       refine Submodule.smul_mem _ _ (Submodule.sum_mem _ fun i _ => ?_)
@@ -191,7 +198,8 @@ theorem values_basis : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs C : Type)
     have : comb ℓ y = ∑ i, (y i : Ω) • B i := by
       unfold comb
       exact Finset.sum_congr rfl fun i _ => by rw [hB]
-    rw [this, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum, Finsupp.finsetSum_apply]
     simp [Finsupp.single_apply]
   have htrΩ : (∑ k, ((∑ i, c k i • x i) k : R') : R') = (n : R') := by
     apply Subtype.ext
@@ -204,10 +212,12 @@ theorem values_basis : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs C : Type)
   have htrC : (Module.finrank C (HT.eigSp ρC σC) : C) = (n : C) := by
     have h1 := HT.EigDim.trace_eigProj ρC σC
     rw [LinearMap.trace_eq_matrix_trace C (Pi.basisFun C (Fin g)), Matrix.trace] at h1
-    rw [← h1, ← map_natCast ψ n, ← htrΩ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1, ← map_natCast ψ n, ← htrΩ, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Matrix.diag_apply, LinearMap.toMatrix_apply, Pi.basisFun_apply, hC]
-    simp [Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finset.sum_apply, map_sum]
   have hfr : Module.finrank C (HT.eigSp ρC σC) = n := by exact_mod_cast htrC
   refine ⟨?_, hspan⟩
   rw [linearIndependent_iff_card_eq_finrank_span, Set.finrank, hspan, hfr, Fintype.card_fin]

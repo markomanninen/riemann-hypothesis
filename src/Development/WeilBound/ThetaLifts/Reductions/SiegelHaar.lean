@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.HaarProductClosedCompact
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarProductClosedCompactHolds
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmulNn
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.HaarProductClosedCompact
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarProductClosedCompactHolds
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SmulNn
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -41,16 +45,12 @@ instance : Group (Heis β) where
   inv x := (-x.1, -x.2 + β x.1 x.1)
   mul_assoc x y z := Prod.ext (add_assoc _ _ _) (by
     change x.2 + y.2 + β x.1 y.1 + z.2 + β (x.1 + y.1) z.1 = x.2 + (y.2 + z.2 + β y.1 z.1) + β x.1 (y.1 + z.1)
-    simp only [map_add, AddMonoidHom.add_apply]
+    simp only [map_add (f := _), AddMonoidHom.add_apply]
     abel)
   one_mul x := Prod.ext (zero_add _) (by change 0 + x.2 + β 0 x.1 = x.2; simp)
   mul_one x := Prod.ext (add_zero _) (by change x.2 + 0 + β x.1 0 = x.2; simp)
   inv_mul_cancel x := Prod.ext (neg_add_cancel _) (by
     change -x.2 + β x.1 x.1 + x.2 + β (-x.1) x.1 = 0; simp)
-
-theorem Heis.mul_def (x y : Heis β) : x * y = (x.1 + y.1, x.2 + y.2 + β x.1 y.1) := rfl
-
-theorem Heis.inv_def (x : Heis β) : x⁻¹ = (-x.1, -x.2 + β x.1 x.1) := rfl
 
 variable [TopologicalSpace A] [TopologicalSpace B]
 
@@ -72,14 +72,14 @@ instance [MeasurableSpace A] [MeasurableSpace B] [BorelSpace A] [BorelSpace B] [
 
 variable [IsTopologicalAddGroup A] [IsTopologicalAddGroup B]
 
-theorem Heis.isTopologicalGroup (hβ : Continuous fun p : A × A => β p.1 p.2) : IsTopologicalGroup (Heis β) where
+theorem Heis.isTopologicalGroup (hβ : Continuous fun p : A × A => β p.1 p.2) : IsTopologicalGroup (Heis β) := {
   continuous_mul := by
     change Continuous fun p : (A × B) × A × B => ((p.1.1 + p.2.1, p.1.2 + p.2.2 + β p.1.1 p.2.1) : A × B)
     exact (continuous_fst.fst.add continuous_snd.fst).prodMk ((continuous_fst.snd.add continuous_snd.snd).add
       (hβ.comp (continuous_fst.fst.prodMk continuous_snd.fst)))
   continuous_inv := by
     change Continuous fun p : A × B => ((-p.1, -p.2 + β p.1 p.1) : A × B)
-    exact continuous_fst.neg.prodMk (continuous_snd.neg.add (hβ.comp (continuous_fst.prodMk continuous_fst)))
+    exact continuous_fst.neg.prodMk (continuous_snd.neg.add (hβ.comp (continuous_fst.prodMk continuous_fst))) }
 
 variable [LocallyCompactSpace A] [SecondCountableTopology A] [T2Space A] [MeasurableSpace A] [BorelSpace A]
   [LocallyCompactSpace B] [SecondCountableTopology B] [T2Space B] [MeasurableSpace B] [BorelSpace B]
@@ -282,8 +282,8 @@ theorem lintegral_siegel_le (μ : Measure G) [μ.IsHaarMeasure] (P K : Subgroup 
     by_cases ht : t ∈ D <;> simp [ht]
   rw [e, ← hC _ (hh.indicator hD), ← lintegral_indicator hT.measurableSet]
   refine mul_le_mul_right ?_ _
-  refine (lintegral_map_le _ ((↑) : P → G)).trans (lintegral_mono fun p => ?_)
-  refine (lintegral_map_le _ ((↑) : K → G)).trans ?_
+  refine (lintegral_map_le _ hmP.aemeasurable).trans (lintegral_mono fun p => ?_)
+  refine (lintegral_map_le _ hmK.aemeasurable).trans ?_
   refine (lintegral_mono (g := fun _ => T.indicator (fun p => D.indicator h (τ p)) p) fun k => ?_).trans
     (by rw [lintegral_const, hκ, mul_one])
   refine (hφ _).trans ?_

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.DiagIntegrable
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.DiagIntegrable
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -26,20 +30,17 @@ theorem relIdx_self (Λ : AddSubgroup V) : relIdx Λ Λ = 1 := AddSubgroup.relIn
 
 theorem data_neg {H : Sesq V} {Λ : AddSubgroup V} {α : V → ℂ} (hH : IsHerm H) (hP : IsPosDef H)
     (hsd : IsSelfDual H Λ) (hα : IsSemiChar H Λ α) :
-    UnitaryData H Λ α (LinearEquiv.neg ℂ) (LinearEquiv.smulOfNeZero ℂ V 2 two_ne_zero) where
-  herm := hH
-  pos := hP
-  selfDual := hsd
-  semi := hα
-  isom := by
-    intro x y
+    UnitaryData H Λ α (LinearEquiv.neg ℂ) (LinearEquiv.smulOfNeZero ℂ V 2 two_ne_zero) := by
+  refine ⟨hH, hP, hsd, hα, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro x y
     simp
-  semi' := by rw [img_neg]; exact hα
-  inv := fun x hx => (semiCharBasic V H hH Λ α hα).2.1 x hx
-  idx₁ := by rw [img_neg, relIdx_self]; exact one_ne_zero
-  idx₂ := by rw [img_neg, relIdx_self]; exact one_ne_zero
-  cay := by
-    intro x
+  · rwa [img_neg]
+  · exact fun x hx => (semiCharBasic V H hH Λ α hα).2.1 x hx
+  · rw [img_neg, relIdx_self]
+    exact one_ne_zero
+  · rw [img_neg, relIdx_self]
+    exact one_ne_zero
+  · intro x
     simp [two_smul]
 
 theorem inter_self {H : Sesq V} {Λ : AddSubgroup V} {α : V → ℂ} (hH : IsHerm H) (hα : IsSemiChar H Λ α)

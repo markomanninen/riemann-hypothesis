@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,8 +42,6 @@ instance : IsScalarTower R B (Tw R p M) := ⟨fun r b m ↦ by
 instance : IsScalarTower R Bᵐᵒᵖ (Tw R p M) := ⟨fun r b m ↦ by
   change p (r • b.unop) • (show M from m) = p (algebraMap R B r) • p b.unop • (show M from m)
   rw [Algebra.smul_def, map_mul, mul_smul]⟩
-
-theorem smul_def (b : B) (m : Tw R p M) : b • m = (p b • (show M from m) : M) := rfl
 
 end Tw
 
@@ -97,7 +99,7 @@ variable {R R₀ : Type} [CommRing R] [CommRing R₀] {I : Ideal R} {X₀ : Sche
 def derP : Derivation R (S.F.obj U) (M S U) :=
   Derivation.mk'
     { toFun := fun b ↦ (D R₀ (Sec s₀ U.unop.1) (S.p U b) : Ω[Sec s₀ U.unop.1⁄R₀])
-      map_add' := fun a b ↦ by simp only [map_add]; rfl
+      map_add' := fun a b ↦ by simp only [map_add (f := _)]; rfl
       map_smul' := fun r b ↦ by
         change D R₀ (Sec s₀ U.unop.1) (S.p U (r • b)) =
           S.p U (algebraMap R (S.F.obj U) r) • D R₀ (Sec s₀ U.unop.1) (S.p U b)
@@ -171,12 +173,12 @@ def psiAlg {α β : S.F.obj U →ₐ[R] S'.F.obj V} {θ : Ω[Sec s₀ U.unop.1�
     rw [map_zero, map_zero, add_zero]
   map_add' x y := by
     change β (x.fst + y.fst) + θ ((show Ω[Sec s₀ U.unop.1⁄R₀] from x.snd) + (show Ω[Sec s₀ U.unop.1⁄R₀] from y.snd)) = _
-    rw [map_add, map_add]; abel
+    rw [map_add (f := _), map_add (f := _)]; abel
   map_mul' x y := by
     change β (x.fst * y.fst) + θ ((S.p U x.fst • (show Ω[Sec s₀ U.unop.1⁄R₀] from y.snd)) +
       S.p U y.fst • (show Ω[Sec s₀ U.unop.1⁄R₀] from x.snd)) = (β x.fst + θ x.snd) * (β y.fst + θ y.snd)
     have hI' := map_sq hI (S'.F.obj V)
-    rw [map_add, hθ.smul, hθ.smul, map_mul]
+    rw [map_add (f := _), hθ.smul, hθ.smul, map_mul]
     have ex := hθ.der x.fst
     have ey := hθ.der y.fst
     have z1 := mul_eq_zero_of_mem hI' (hθ.mem (D R₀ _ (S.p U x.fst))) (hθ.mem y.snd)
@@ -193,7 +195,7 @@ def psiHom (α β : S.thickObj hI U ⟶ S'.thickObj hI V) (θ : Ω[Sec s₀ U.un
   φ₀ := β.φ₀
   comm c := by
     change β.φ₀ (S.p U c.fst) = S'.p V (β.φ c.fst + θ (show Ω[Sec s₀ U.unop.1⁄R₀] from c.snd))
-    rw [map_add, (S'.ker V _).2 (hθ.mem _), add_zero]
+    rw [map_add (f := _), (S'.ker V _).2 (hθ.mem _), add_zero]
     exact β.comm c.fst
   dp := isDPMorphism_sqDP (red_sq S U hI) (map_sq hI _) _ fun c hc ↦
     add_mem (β.mem (T := S.thickObj hI U) ((S.ker U _).1 hc)) (hθ.mem _)
@@ -299,13 +301,15 @@ theorem ev_sub_ev_eq : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ide
   have e1 : ev f β = ψ.φ (ev f (inlHom S hI U)) + ev f ψ := by
     rw [← ev_comp]
     congr 1
-    refine Thick.hom_ext fun b ↦ ?_
+    apply Thick.Hom.ext'
+    ext b
     change β.φ b = β.φ b + θ 0
     rw [map_zero, add_zero]
   have e2 : ev f α = ψ.φ (ev f (derHom S hI U)) + ev f ψ := by
     rw [← ev_comp]
     congr 1
-    refine Thick.hom_ext fun b ↦ ?_
+    apply Thick.Hom.ext'
+    ext b
     change α.φ b = β.φ (derSec (derP S U) b).fst + θ (show Ω[Sec s₀ U.unop.1⁄R₀] from (derSec (derP S U) b).snd)
     rw [fst_derSec, snd_derSec, derP_apply, hθ.der]
     abel

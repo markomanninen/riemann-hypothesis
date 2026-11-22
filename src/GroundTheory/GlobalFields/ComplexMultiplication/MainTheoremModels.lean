@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldModels
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldModels
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -83,10 +88,10 @@ end ShortModel
 section Models
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
+
 
 include hK in
-
 theorem exists_shortModels_isogenous (M : IntermediateField K ℂ) [FiniteDimensional K M] :
     ∃ L : IntermediateField K ℂ, M ≤ L ∧ FiniteDimensional K L ∧ IsGalois K L ∧
       ∃ hL : ∀ x : ELL K, ELL.j x ∈ L,

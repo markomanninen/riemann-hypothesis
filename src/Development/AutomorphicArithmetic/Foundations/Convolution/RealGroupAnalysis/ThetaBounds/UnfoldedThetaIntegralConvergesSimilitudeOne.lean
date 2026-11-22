@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.IsotypQuot
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CmBridge
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.IsotypQuot
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CmBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,8 +68,8 @@ variable {F}
 def Par (c : ℝ → GL (Fin 2) (TR.Rinf F)) (Y : TR.Lie F 2) : Prop :=
   (∀ s t, c (s + t) = c s * c t) ∧ HasDerivAt (fun t => TR.toL (c t).val) Y 0
 
-variable (F) in
 
+variable (F) in
 def ParCont : Prop := Continuous (TR.infGL F 2) ∧ ∀ (c : ℝ → GL (Fin 2) (TR.Rinf F)) Y, Par c Y →
   c 0 = 1 ∧ Continuous c ∧ Par (fun t => c (-t)) (-Y)
 
@@ -79,11 +83,11 @@ end Base
 
 section Ext
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E]
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 def Ht (y : GL (Fin 2) (Cinf E)) : ℝ := 1 + ‖toL y.val‖ + ‖toL (y⁻¹).val‖
-variable (F) in
 
+variable (F) in
 def One (y : GL (Fin 2) (Cinf E)) : Prop := nu F (infGL E 2 y) = 1
 
 def ex (X : Lie E 2) (t : ℝ) : GL (Fin 2) (Cinf E) := (Matrix.isUnit_exp (t • Matrix.of X)).unit
@@ -91,54 +95,54 @@ def ex (X : Lie E 2) (t : ℝ) : GL (Fin 2) (Cinf E) := (Matrix.isUnit_exp (t �
 def zE (s : Cinf E) : Lie E 2 := toL (Matrix.scalar (Fin 2) s)
 
 def zF (s : TR.Rinf F) : TR.Lie F 2 := TR.toL (Matrix.scalar (Fin 2) s)
-variable (F) in
 
+variable (F) in
 def trI (s : Cinf E) : TR.Rinf F := fun v => ∑ w : InfinitePlace E, if w.comap (algebraMap F E) = v then 2 * (s w).re else 0
 
-variable (E) in
 
+variable (E) in
 def ExPar : Prop := ∀ X : Lie E 2, (∀ s t, ex X (s + t) = ex X s * ex X t) ∧ Continuous (ex X) ∧
   HasDerivAt (fun t => toL (ex X t).val) X 0 ∧ ((Matrix.of X).trace = 0 → ∀ t, (ex X t).val.det = 1) ∧
   ∀ s t, (ex (X + zE s) t) = ex (zE s) t * ex X t
-variable (E) in
 
+variable (E) in
 def SmFre : Prop := ∀ (Φ : GL (Fin 2) (A E) → ℂ) (T : Lie E 2 →ₗ[ℝ] (GL (Fin 2) (A E) → ℂ)),
   (∀ X g, Continuous fun y => T X (g * infGL E 2 y)) →
   (∀ X g, HasDerivAt (fun t => Φ (g * infGL E 2 (ex X t))) (T X g) 0) →
   ∀ g, DifferentiableAt ℝ (chart Φ g) (oneL E 2) ∧ ∀ X, fderiv ℝ (chart Φ g) (oneL E 2) X = T X g
-variable (E) in
 
+variable (E) in
 def SmCrit : Prop := ∀ S : Submodule ℂ (GL (Fin 2) (A E) → ℂ), (∀ Φ ∈ S, ∀ g, Continuous fun y => Φ (g * infGL E 2 y)) →
   (∀ Φ ∈ S, ∃ T : Lie E 2 →ₗ[ℝ] (GL (Fin 2) (A E) → ℂ), (∀ X, T X ∈ S) ∧
     ∀ X g, HasDerivAt (fun t => Φ (g * infGL E 2 (ex X t))) (T X g) 0) → S ≤ Sm E 2
-variable (F E) in
 
+variable (F E) in
 def NormInf : Prop := ∀ s : (Cinf E)ˣ, ∃ u : (TR.Rinf F)ˣ,
   (∀ v, u.val v = ∏ w : InfinitePlace E, if w.comap (algebraMap F E) = v then ‖s.val w‖ ^ 2 else 1) ∧
     ideleNorm F E (infId E s) = TR.infId F u
-variable (E) in
 
+variable (E) in
 def HtLe : Prop := Continuous (Ht (E := E)) ∧ ∀ y : GL (Fin 2) (Cinf E), 1 ≤ Ht y ∧ Ht y ≤ 3 * GlobalTheory.CuspRep.height y ∧
   ∀ y', Ht (y * y') ≤ 2 * Ht y * Ht y'
-variable (F E) in
 
+variable (F E) in
 def Dec : Prop := ∃ (σ : GL (Fin 2) (Cinf E) → (Cinf E)ˣ) (τ : GL (Fin 2) (Cinf E) → GL (Fin 2) (Cinf E)),
   Continuous σ ∧ Continuous τ ∧ ∀ y, infGL E 2 y = Matrix.GeneralLinearGroup.scalar (Fin 2) (infId E (σ y)) * infGL E 2 (τ y) ∧
     One F (τ y) ∧ Ht (τ y) ≤ 4 * Ht y ^ 2 ∧ 1 + ‖(σ y).val‖ + ‖(σ y)⁻¹.val‖ ≤ 2 * Ht y
-variable (F E) in
 
+variable (F E) in
 def OneOf : Prop := ∀ y : GL (Fin 2) (Cinf E), (∀ w, ‖y.val.det w‖ = 1) → One F y
-variable (F E) in
 
+variable (F E) in
 def OmGrowth : Prop := Continuous (fun s : (Cinf E)ˣ => ideleNorm F E (infId E s)) ∧ ∀ ω : (A F)ˣ →* ℂˣ, Continuous ω →
   ∃ (C : ℝ) (N : ℕ), ∀ s : (Cinf E)ˣ, ‖((ω (ideleNorm F E (infId E s)) : ℂˣ) : ℂ)‖ ≤ C * (1 + ‖s.val‖ + ‖s⁻¹.val‖) ^ N
-variable (F E) in
 
+variable (F E) in
 def CenExp : Prop := ∀ s : Cinf E, ∃ (z : ℝ → (A E)ˣ) (c : ℝ → GL (Fin 2) (TR.Rinf F)), Par c (zF (trI F s)) ∧
   ∀ t, infGL E 2 (ex (zE s) t) = Matrix.GeneralLinearGroup.scalar (Fin 2) (z t) ∧
     Matrix.GeneralLinearGroup.scalar (Fin 2) (ideleNorm F E (z t)) = TR.infGL F 2 (c t)
-variable (F E) in
 
+variable (F E) in
 def FinTr : Prop := ∃ κ : GL (Fin 2) (Af E) →* GL (Fin 2) (Af F), Continuous κ ∧ ∀ k, dM (nu F (finGL E 2 k)) = finGL F 2 (κ k)
 
 variable (D : Dat F E)

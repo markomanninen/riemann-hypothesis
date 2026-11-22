@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalSpreadUniversalAbelianScheme
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaSysUOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalSpreadUniversalAbelianScheme
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaSysUOver
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.ZH GlobalTheory.UPoinc GlobalTheory.UCovSep

@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.CharHost
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.CharHost
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host Formalism.BasicNotions Formalism.FrobeniusOrbits GlobalTheory.HeckeGal
 
 namespace GlobalTheory.Mem.CharAlg
 
-theorem bijective_cmType {L : Type} [Field L] [IsTotallyComplex L] {I : Type} (φ : I → L →+* ℂ)
+theorem bijective_cmType {L : Type} [Field L] [_root_.NumberField.IsTotallyComplex L] {I : Type} (φ : I → L →+* ℂ)
     (h : Function.Bijective fun i => InfinitePlace.mk (φ i)) :
     Function.Bijective (Sum.elim φ (fun i => ComplexEmbedding.conjugate (φ i))) := by
   have hne : ∀ i j, φ i ≠ ComplexEmbedding.conjugate (φ j) := by
@@ -33,13 +37,13 @@ theorem bijective_cmType {L : Type} [Field L] [IsTotallyComplex L] {I : Type} (�
     · exact ⟨Sum.inl i, hi⟩
     · exact ⟨Sum.inr i, hi⟩
 
-theorem prod_split {L : Type} [Field L] [NumberField L] [IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L →+* ℂ)
+theorem prod_split {L : Type} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L →+* ℂ)
     (h : Function.Bijective fun i => InfinitePlace.mk (φ i)) (f : (L →+* ℂ) → ℂ) :
     ∏ ψ, f ψ = ∏ i, (f (φ i) * f (ComplexEmbedding.conjugate (φ i))) := by
   rw [← (bijective_cmType φ h).prod_comp f, Fintype.prod_sum_type, Finset.prod_mul_distrib]
   rfl
 
-theorem isAlg_of {L : Type} [Field L] [NumberField L] [IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L →+* ℂ)
+theorem isAlg_of {L : Type} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L →+* ℂ)
     (h : Function.Bijective fun i => InfinitePlace.mk (φ i)) (χ : HChar L) (a b : I → ℤ)
     (hχ : ∀ k : Lˣ, ((χ.inf k : ℂˣ) : ℂ) = ∏ i, (φ i k ^ a i * (starRingEnd ℂ (φ i k)) ^ b i)) :
     ∃ n, χ.IsAlg n := by

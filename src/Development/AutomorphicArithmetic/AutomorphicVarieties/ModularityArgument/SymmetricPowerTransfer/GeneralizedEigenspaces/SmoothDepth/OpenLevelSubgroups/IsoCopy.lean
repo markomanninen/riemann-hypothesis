@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.W (Plc Lp)
@@ -63,7 +67,7 @@ theorem UpperTheory.V.Z.Sym.Al.isoCopy :
       Representation.IntertwiningMap.equivLinearMapAsModule ν μ
         ((q i).intertwiningMap_of_isIntertwiningMap ν μ (hq i))
     have hinj : Function.Injective (LinearMap.pi Q) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       exact hsep x fun i => congrFun hx i
     have hNs : IsSemisimpleModule (MonoidAlgebra ℂ H) ν.asModule :=
@@ -95,4 +99,5 @@ theorem UpperTheory.V.Z.Sym.Al.isoCopy :
     obtain ⟨t, ht⟩ := exists_ne (0 : τ.asModule)
     have hG : G t = 0 := LinearMap.congr_fun h0 t
     have : (e1.symm (e2.symm t) : S) = 0 := Subtype.ext hG
-    exact ht (by simpa using this)
+    have hz : e2.symm t = 0 := e1.symm.injective (this.trans e1.symm.map_zero.symm)
+    exact ht (e2.symm.injective (hz.trans e2.symm.map_zero.symm))

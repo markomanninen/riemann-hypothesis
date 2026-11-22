@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem norm_iteratedFDeriv_dy_le (ρ : ContDiffBump (0 : Z)) (j k : ℕ) (z : Z
   rw [dy_eq, ContinuousLinearMap.iteratedFDeriv_comp_right (sc j) (ρ.contDiff (n := (k : ℕ∞))) z le_rfl]
   refine (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans ?_
   have hp : ∏ _i : Fin k, ‖(sc j : Z →L[ℝ] Z)‖ ≤ 1 :=
-    Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun _ _ => norm_sc_le j)
+    Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun _ _ => norm_sc_le j)
   calc ‖iteratedFDeriv ℝ k ρ (sc j z)‖ * ∏ _i : Fin k, ‖(sc j : Z →L[ℝ] Z)‖
       ≤ ‖iteratedFDeriv ℝ k ρ (sc j z)‖ * 1 := mul_le_mul_of_nonneg_left hp (norm_nonneg _)
     _ = _ := mul_one _

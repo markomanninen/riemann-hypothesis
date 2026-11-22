@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColumnKernelComponentsIntegral
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColumnKernelComponentsIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,8 +80,8 @@ lemma colStep_HomD (c : ℤ) (hP hN : ℕ) (hne : hP ≠ hN) (i : Fin N) (d : Fi
   split_ifs
   all_goals first | exact hw | exact hc | exact (hne (by omega)).elim
 
-open Classical in
 
+open Classical in
 def dgS (p : ℕ) (pos : Fin N → ℤ) (mu : Fin (N + 1) → Fin k → ℤ) (c : ℤ) (j : ℕ) (s : ℤ) : Fin N → ℕ :=
   fun i => if i.val < j ∧ IsUsed mu c i then p ^ (s - pos i).toNat else 0
 

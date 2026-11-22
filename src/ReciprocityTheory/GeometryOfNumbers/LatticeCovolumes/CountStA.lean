@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ConjSymm
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.EllipsoidSt
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MeasurePreservingSwapPi
+module
+
+public import Mathlib
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ConjSymm
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.EllipsoidSt
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MeasurePreservingSwapPi
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 
@@ -56,10 +60,6 @@ section Form
 
 variable {K : Type*} [Field K] {V : Type*} [AddCommGroup V] [Module K V]
 
-theorem HermFam.form_add_left (h : HermFam K V) (σ : K →+* ℂ) (x x' y : V) :
-    h.form σ (x + x') y = h.form σ x y + h.form σ x' y := by
-  rw [← h.conj_symm, h.add_right, map_add, h.conj_symm, h.conj_symm]
-
 theorem HermFam.form_smul_left (h : HermFam K V) (σ : K →+* ℂ) (a : K) (x y : V) :
     h.form σ (a • x) y = starRingEnd ℂ (σ a) * h.form σ x y := by
   rw [← h.conj_symm, h.smul_right, map_mul, h.conj_symm]
@@ -70,7 +70,8 @@ theorem HermFam.form_sum_right (h : HermFam K V) (σ : K →+* ℂ) (x : V) {ι 
 
 theorem HermFam.form_sum_left (h : HermFam K V) (σ : K →+* ℂ) (y : V) {ι : Type*}
     (s : Finset ι) (f : ι → V) : h.form σ (∑ i ∈ s, f i) y = ∑ i ∈ s, h.form σ (f i) y := by
-  rw [← h.conj_symm, h.form_sum_right, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h.conj_symm, h.form_sum_right, map_sum]
   simp only [h.conj_symm]
 
 theorem HermFam.form_expand (h : HermFam K V) (σ : K →+* ℂ) {n : ℕ} (c : Fin n → K)

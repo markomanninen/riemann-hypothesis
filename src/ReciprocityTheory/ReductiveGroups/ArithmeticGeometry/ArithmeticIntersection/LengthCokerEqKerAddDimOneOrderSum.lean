@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.LengthEqRangeAddRange
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.LengthEqRangeAddRange
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AI
 
@@ -196,7 +200,7 @@ theorem dim_quot_eq_one_iff (hdim : ringKrullDim A = 1) (q : Ideal A) [q.IsPrime
       have hprime : ((IsLocalRing.maximalIdeal A).map (Ideal.Quotient.mk q)).IsPrime :=
         Ideal.map_isPrime_of_surjective Ideal.Quotient.mk_surjective
           (by rw [Ideal.mk_ker]; exact IsLocalRing.le_maximalIdeal (Ideal.IsPrime.ne_top ‹_›))
-      let P0 : PrimeSpectrum (A ⧸ q) := ⟨⊥, Ideal.bot_prime⟩
+      let P0 : PrimeSpectrum (A ⧸ q) := ⟨⊥, Ideal.isPrime_bot⟩
       let P1 : PrimeSpectrum (A ⧸ q) := ⟨_, hprime⟩
       have hlt : P0 < P1 := lt_of_le_of_ne (show P0 ≤ P1 from bot_le)
         (fun h => hbot (congrArg PrimeSpectrum.asIdeal h).symm)

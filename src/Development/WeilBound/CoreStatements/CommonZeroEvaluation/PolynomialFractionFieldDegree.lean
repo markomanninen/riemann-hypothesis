@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ModelDimension
 
@@ -23,7 +27,7 @@ theorem polynomial_fraction_field_degree : ∀ (κ K L I : Type) [Field κ] [Fie
     intro p
     induction p using MvPolynomial.induction_on with
     | C a => simp [ρ, f]
-    | add p q hp hq => rw [map_add]; exact S.add_mem hp hq
+    | add p q hp hq => rw [map_add (f := _)]; exact S.add_mem hp hq
     | mul_X p i hp =>
       rw [map_mul]
       exact S.mul_mem hp (by simpa [ρ] using IntermediateField.subset_adjoin K (Set.range T) ⟨i, rfl⟩)

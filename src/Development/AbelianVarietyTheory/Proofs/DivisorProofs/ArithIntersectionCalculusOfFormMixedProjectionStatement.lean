@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArithIntersectionCalculusOfFormMixedProjection
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialIsomClassInt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqGenericPoint
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ArFormExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArithIntersectionCalculusOfFormMixedProjection
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialIsomClassInt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqGenericPoint
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ArFormExists
+
+@[expose] public section
+
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.arithIntersectionCalculus_of_form_mixed_projection : GlobalTheory.Published.ArFormExists → GlobalTheory.Published.ArMix → GlobalTheory.Published.HeightProjection → GlobalTheory.Published.ArCalc := by
   first | exact @GlobalTheory.Published.arCalc_of_form_mix_projection | exact GlobalTheory.Published.arCalc_of_form_mix_projection | (intros; apply GlobalTheory.Published.arCalc_of_form_mix_projection <;> assumption)

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Pj
 
 namespace GlobalTheory.ComplexEmbedding

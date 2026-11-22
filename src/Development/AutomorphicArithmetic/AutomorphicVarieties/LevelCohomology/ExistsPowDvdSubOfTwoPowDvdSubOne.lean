@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.exists_pow_dvd_sub_of_two_pow_dvd_sub_one :
     ∀ (Q a c : ℤ) (e n : ℕ), 2 ≤ e → Odd a → Q = 1 + 2 ^ e * a → (2 : ℤ) ^ e ∣ c - 1 → ∃ i : ℕ, (2 : ℤ) ^ n ∣ Q ^ i - c := by

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR KaehlerDifferential GlobalTheory.W1
 
 set_option autoImplicit false
@@ -53,7 +58,8 @@ private theorem Wit.loc {B B' : Type} [CommRing B] [CommRing B'] [Algebra ℂ B]
       fun i => u • KaehlerDifferential.map ℂ ℂ B B' (ω₁ i), fun i => ?_, ?_⟩
     · rw [he]; exact hb i
     · have : ω = u • (algebraMap B B' (c : B) • ω) := by rw [smul_smul, hu, one_smul]
-      rw [this, hc'', map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, hc'', map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, ← algebraMap_smul B' (b i), smul_comm]
 
@@ -92,7 +98,7 @@ private theorem exists_basicOpen_two {X : Scheme.{0}} {U O : X.Opens} (hU : IsAf
   · exact ⟨f₂, h₂, c₂, b₂⟩
   have key : ∀ (x : X) (hx : x ∈ U), x ∈ X.basicOpen (f₁ + f₂) ↔
       IsUnit ((X.presheaf.germ U x hx).hom f₁ + (X.presheaf.germ U x hx).hom f₂) := fun x hx => by
-    rw [Scheme.mem_basicOpen _ _ _ hx, map_add]
+    rw [Scheme.mem_basicOpen _ _ _ hx, map_add (f := _)]
   have mix : ∀ {R : Type} [CommRing R] [IsLocalRing R] {u v : R}, IsUnit u → ¬ IsUnit v → IsUnit (u + v) :=
     fun {R} _ _ {u v} hu hv => by
       have h : IsUnit ((u + v) + (-v)) := by simpa using hu

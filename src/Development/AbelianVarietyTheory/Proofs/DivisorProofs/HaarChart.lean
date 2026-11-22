@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
+
+@[expose] public section
 
 open NumberField MeasureTheory ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHaarVolume
 open scoped ENNReal
@@ -18,12 +22,6 @@ def HaarChart (X : Data E r) (c : ℝ≥0∞) : Prop :=
 def trF {E' : Type} [Field E'] [NumberField E'] [IsCMField E'] (X : Data E r) (X' : Data E' r) (e : X.Ψ ≃ X'.Ψ)
     (y : Frame X.Ψ r) : Frame X'.Ψ r :=
   fun τ' => (mat (baseFr X') τ' * (mat (baseFr X) (e.symm τ'))⁻¹ * mat y (e.symm τ') : Matrix (Fin r) (Fin r) ℂ)
-
-example (X : Data E r) (y : Frame X.Ψ r) : trF X X (Equiv.refl _) y = y := by
-  funext τ
-  show mat (baseFr X) τ * (mat (baseFr X) τ)⁻¹ * mat y τ = mat y τ
-  have h : (mat (baseFr X) τ).det ≠ 0 := (X.signature τ).choose_spec.1
-  rw [Matrix.mul_nonsing_inv _ h.isUnit, Matrix.one_mul]
 
 end
 

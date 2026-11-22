@@ -1,4 +1,8 @@
-import Formalism.LagrangeIdealLifts.Statement
+module
+
+public import Formalism.LagrangeIdealLifts.Statement
+
+@[expose] public section
 
 namespace Formalism.LIFT
 
@@ -40,7 +44,7 @@ theorem uGraded_of (h : GradedStep) : UGraded := by
       have e1 : B.X • (((B.u : ℤ_[ℓ]) ^ (K + 1) - 1) • x + B.X ^ K • n')
           = ((B.u : ℤ_[ℓ]) ^ (K + 1) - 1) • (B.X • x) + B.X ^ (K + 1) • n' := by
         rw [smul_add, smul_comm, ← mul_smul, ← pow_succ']
-      rw [e1, LinearMap.map_add, LinearMap.map_smul]
+      rw [e1, LinearMap.map_add (f := _), LinearMap.map_smul]
       have e2 : W.γ (B.X ^ (K + 1) • n') = ((B.u : ℤ_[ℓ]) ^ (K + 1)) • (B.X ^ (K + 1) • n')
           + B.X ^ (K + 1 + 1) • n'' := by rw [← hg]; abel
       rw [e2]
@@ -74,7 +78,7 @@ theorem aeval_mem {D : Type} [AddCommGroup D] [Module ℤ_[ℓ] D] (g : D →ₗ
     rw [Polynomial.aeval_C, Module.algebraMap_end_apply]
     exact hsmul c x hx
   · intro p q hp hq x hx
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact hadd _ _ (hp x hx) (hq x hx)
   · intro k c h x hx
     rw [pow_succ, ← mul_assoc, aeval_mul_X, Module.End.mul_apply]
@@ -89,7 +93,7 @@ theorem hom_aeval {D D' : Type} [AddCommGroup D] [Module A D] [Module ℤ_[ℓ] 
     rw [Polynomial.aeval_C, Polynomial.aeval_C, Module.algebraMap_end_apply,
       Module.algebraMap_end_apply, LinearMap.map_smul_of_tower]
   · intro p q hp hq x
-    rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, map_add, hp, hq]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), hp, hq]
   · intro k c h x
     rw [pow_succ, ← mul_assoc, aeval_mul_X, aeval_mul_X, Module.End.mul_apply,
       Module.End.mul_apply, h, f.γ_comm]
@@ -118,7 +122,7 @@ theorem wBTail_of (hG : GradedStep) (hL : LagrangeIdealCyc) : WBTail := by
   let S : D₂ → Prop := fun y => ∃ m ∈ W₁.N, y = f.f (B.X ^ a • m)
   have hadd : ∀ x y, S x → S y → S (x + y) := by
     rintro x y ⟨m, hm, rfl⟩ ⟨m', hm', rfl⟩
-    exact ⟨m + m', W₁.N.add_mem hm hm', by rw [smul_add, map_add]⟩
+    exact ⟨m + m', W₁.N.add_mem hm hm', by rw [smul_add, map_add (f := _)]⟩
   have hsmul : ∀ (c : ℤ_[ℓ]) x, S x → S (c • x) := by
     rintro c x ⟨m, hm, rfl⟩
     exact ⟨c • m, Submodule.smul_of_tower_mem _ _ hm,
@@ -145,7 +149,7 @@ theorem wBTail_of (hG : GradedStep) (hL : LagrangeIdealCyc) : WBTail := by
     exact ⟨m₂, hm₂, by rw [h2, LinearMap.map_smul, hfm₂, ← mul_smul, ← pow_add, two_mul]⟩
   have key : S (Polynomial.aeval W₂.γ (Polynomial.C ((ℓ : ℤ_[ℓ]) ^
       (2 * a * s + padicValNat ℓ (2 * a).factorial))) (B.X ^ a • n)) := by
-    rw [← hαβ, map_add, map_mul, map_mul, LinearMap.add_apply, Module.End.mul_apply,
+    rw [← hαβ, map_add (f := _), map_mul, map_mul, LinearMap.add_apply, Module.End.mul_apply,
       Module.End.mul_apply]
     exact hadd _ _ (aeval_mem W₂.γ S hadd hsmul hγS α _ hP₁)
       (aeval_mem W₂.γ S hadd hsmul hγS β _ hP₂)

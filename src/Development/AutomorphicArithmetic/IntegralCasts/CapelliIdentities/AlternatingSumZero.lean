@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.AlternatingSumZero.alt_sum_zero.{u_1} :
     ∀ {A : Type u_1} [inst : AddCommGroup A] {n : ℕ}

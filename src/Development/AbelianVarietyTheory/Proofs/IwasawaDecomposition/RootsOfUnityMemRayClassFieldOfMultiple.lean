@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeNormOfKummer
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeNormOfKummer
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,17 +17,6 @@ namespace GlobalTheory.Mem.RayZeta
 variable {K M L : Type} [Field K] [NumberField K] [Field M] [NumberField M] [Field L] [NumberField L]
   [Algebra K M] [Algebra K L] [Algebra M L] [IsScalarTower K M L]
 
-omit [NumberField M] [NumberField L] in
-
-theorem isFrob_restrictNormal [Normal K M] {v : HeightOneSpectrum (𝓞 K)} {σ : L ≃ₐ[K] L} (h : GlobalTheory.NT.IsFrob L v σ) :
-    GlobalTheory.NT.IsFrob M v (σ.restrictNormal M) := by
-  obtain ⟨P, hP, hPo, hx⟩ := h
-  refine ⟨P.under (𝓞 M), inferInstance, inferInstance, fun x => ?_⟩
-  have h1 : algebraMap (𝓞 M) (𝓞 L) (σ.restrictNormal M • x) = σ • algebraMap (𝓞 M) (𝓞 L) x := by
-    apply RingOfIntegers.ext
-    exact σ.restrictNormal_commutes M x
-  rw [Ideal.under, Ideal.mem_comap, map_sub, map_pow, h1]
-  exact hx _
 
 open NumberField IsDedekindDomain in
 open scoped nonZeroDivisors IntermediateField in
@@ -59,11 +52,11 @@ private theorem eq_of_pow_eq_one_of_sub_mem_prime {R : Type} [CommRing R] [IsDom
       · exact P.pow_mem_of_mem hx0 _ hp0
     exact Ideal.IsPrime.ne_top ‹_› ((Ideal.eq_top_iff_one _).mpr this)
 
+
 open NumberField IsDedekindDomain in
 open scoped nonZeroDivisors IntermediateField in
 variable {K M L : Type} [Field K] [NumberField K] [Field M] [NumberField M] [Field L] [NumberField L]
   [Algebra K M] [Algebra K L] [Algebra M L] [IsScalarTower K M L] in
-
 theorem _root_.GlobalTheory.Mem.RayZeta.root_mem_rayField : ∀ (K M L : Type) [Field K] [NumberField K]
     [Field M] [NumberField M] [Field L] [NumberField L]
     [Algebra K M] [Algebra K L] [Algebra M L] [IsScalarTower K M L] [IsGalois K L] (𝔮 : Ideal (𝓞 K))

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem hf_add_right (x y z : n → A) : hform s J x (y + z) = hform s J x y + h
   simp only [hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
 
 theorem hf_add_left (x y z : n → A) : hform s J (x + y) z = hform s J x z + hform s J y z := by
-  simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hf_smul_right (c : A) (x y : n → A) : hform s J x (c • y) = c * hform s J x y := by
   simp only [hform, Finset.mul_sum, Pi.smul_apply, smul_eq_mul]
@@ -31,7 +35,8 @@ theorem hf_smul_left (c : A) (x y : n → A) : hform s J (c • x) y = s c * hfo
 
 theorem hf_herm (hs : ∀ a, s (s a) = a) (hJ : ∀ i j, s (J j i) = J i j) (x y : n → A) :
     s (hform s J x y) = hform s J y x := by
-  simp only [hform, map_sum, map_mul, hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hs]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJ]

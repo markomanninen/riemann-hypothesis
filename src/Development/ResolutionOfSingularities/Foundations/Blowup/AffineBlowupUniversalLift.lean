@@ -1,6 +1,11 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
-import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
+public import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry
 
 noncomputable section
@@ -53,7 +58,8 @@ theorem exists_algebraMap_eq_polynomialEvalInvSelf (I : Ideal R) (φ : R →+* S
       Polynomial.eval₂
         (((algebraMap S (Localization.Away s)) : S →+* Localization.Away s).comp φ)
         (Localization.Away.invSelf s) (p : Polynomial R) := rfl
-  rw [map_sum, hEval, Polynomial.eval₂_eq_sum_range]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, hEval, Polynomial.eval₂_eq_sum_range]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [RingHom.comp_apply, hc i, map_mul, map_pow, mul_assoc, ← mul_pow,
     algebraMap_mul_invSelf s, one_pow, mul_one]
@@ -70,7 +76,7 @@ theorem algebraMap_reesAlgebraLiftFun (I : Ideal R) (φ : R →+* S) (s : S)
       polynomialEvalInvSelf φ s (p : Polynomial R) :=
   (exists_algebraMap_eq_polynomialEvalInvSelf I φ s hI p).choose_spec
 
-private theorem reesAlgebraLiftFun_one (I : Ideal R) (φ : R →+* S) (s : S)
+theorem reesAlgebraLiftFun_one (I : Ideal R) (φ : R →+* S) (s : S)
     (hI : Ideal.map φ I = Ideal.span {s}) (hs : s ∈ nonZeroDivisors S) :
     reesAlgebraLiftFun I φ s hI hs 1 = 1 := by
   have hinj : Function.Injective (algebraMap S (Localization.Away s)) :=
@@ -79,7 +85,7 @@ private theorem reesAlgebraLiftFun_one (I : Ideal R) (φ : R →+* S) (s : S)
   rw [algebraMap_reesAlgebraLiftFun I φ s hI hs 1]
   simp
 
-private theorem reesAlgebraLiftFun_mul (I : Ideal R) (φ : R →+* S) (s : S)
+theorem reesAlgebraLiftFun_mul (I : Ideal R) (φ : R →+* S) (s : S)
     (hI : Ideal.map φ I = Ideal.span {s}) (hs : s ∈ nonZeroDivisors S)
     (p q : ↥(reesAlgebra I)) :
     reesAlgebraLiftFun I φ s hI hs (p * q) = reesAlgebraLiftFun I φ s hI hs p * reesAlgebraLiftFun I φ s hI hs q := by
@@ -94,7 +100,7 @@ private theorem reesAlgebraLiftFun_mul (I : Ideal R) (φ : R →+* S) (s : S)
       = (p : Polynomial R) * (q : Polynomial R) := rfl
   rw [map_mul, algebraMap_reesAlgebraLiftFun, algebraMap_reesAlgebraLiftFun, algebraMap_reesAlgebraLiftFun, hcoe, map_mul]
 
-private theorem reesAlgebraLiftFun_zero (I : Ideal R) (φ : R →+* S) (s : S)
+theorem reesAlgebraLiftFun_zero (I : Ideal R) (φ : R →+* S) (s : S)
     (hI : Ideal.map φ I = Ideal.span {s}) (hs : s ∈ nonZeroDivisors S) :
     reesAlgebraLiftFun I φ s hI hs 0 = 0 := by
   have hinj : Function.Injective (algebraMap S (Localization.Away s)) :=
@@ -103,7 +109,7 @@ private theorem reesAlgebraLiftFun_zero (I : Ideal R) (φ : R →+* S) (s : S)
   rw [algebraMap_reesAlgebraLiftFun I φ s hI hs 0]
   simp
 
-private theorem reesAlgebraLiftFun_add (I : Ideal R) (φ : R →+* S) (s : S)
+theorem reesAlgebraLiftFun_add (I : Ideal R) (φ : R →+* S) (s : S)
     (hI : Ideal.map φ I = Ideal.span {s}) (hs : s ∈ nonZeroDivisors S)
     (p q : ↥(reesAlgebra I)) :
     reesAlgebraLiftFun I φ s hI hs (p + q) = reesAlgebraLiftFun I φ s hI hs p + reesAlgebraLiftFun I φ s hI hs q := by
@@ -116,7 +122,7 @@ private theorem reesAlgebraLiftFun_add (I : Ideal R) (φ : R →+* S) (s : S)
   apply hinj
   have hcoe : ((p + q : ↥(reesAlgebra I)) : Polynomial R)
       = (p : Polynomial R) + (q : Polynomial R) := rfl
-  rw [map_add, algebraMap_reesAlgebraLiftFun, algebraMap_reesAlgebraLiftFun, algebraMap_reesAlgebraLiftFun, hcoe, map_add]
+  rw [map_add (f := _), algebraMap_reesAlgebraLiftFun, algebraMap_reesAlgebraLiftFun, algebraMap_reesAlgebraLiftFun, hcoe, map_add (f := _)]
 
 def reesAlgebraLift (I : Ideal R) (φ : R →+* S) (s : S)
     (hI : Ideal.map φ I = Ideal.span {s}) (hs : s ∈ nonZeroDivisors S) :

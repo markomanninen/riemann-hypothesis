@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.DataDIV
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Formalism.LocalRingCardinality.DataDIV
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 noncomputable section
 

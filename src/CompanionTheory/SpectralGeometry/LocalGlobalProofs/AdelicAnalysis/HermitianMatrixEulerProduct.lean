@@ -1,10 +1,15 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LinearChangeEulerProductStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LinearChangeEulerProductStatement
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -23,9 +28,8 @@ variable (R : Type) [CommRing R] [Algebra F R]
 theorem sigR_smul (σ : E →ₐ[F] E) (r : R) (y : R ⊗[F] E) :
     sigR R σ (r • y) = r • sigR R σ y := by
   induction y with
-  | zero => simp
   | tmul s e => simp [TensorProduct.smul_tmul', HaarCoord.sigR_tmul]
-  | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+  | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
 
 variable {d n : ℕ}
 
@@ -170,9 +174,8 @@ theorem phi_tmul (r : F) (e : E) : phi R (r ⊗ₜ[F] e) = algebraMap F R r ⊗�
 
 theorem phi_sig (σ : E →ₐ[F] E) (y : F ⊗[F] E) : phi R (sigR F σ y) = sigR R σ (phi R y) := by
   induction y with
-  | zero => simp
   | tmul r e => rw [HaarCoord.sigR_tmul, phi_tmul, phi_tmul, HaarCoord.sigR_tmul]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem phi_incl (e : E) : phi R (inclR F e) = inclR R e := by
   have h1 : inclR F e = (1 : F) ⊗ₜ[F] e := rfl
@@ -181,7 +184,8 @@ theorem phi_incl (e : E) : phi R (inclR F e) = inclR R e := by
 
 theorem offE_map (b : Module.Basis (Fin d) F E) (x : Idx n d → F) (p) :
     phi R (offE F b x p) = offE R b (fun i => algebraMap F R (x i)) p := by
-  simp [offE, map_sum, phi_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [offE, map_sum, phi_tmul]
 
 theorem psi_map (σ : E →ₐ[F] E) (b : Module.Basis (Fin d) F E) (x : Idx n d → F) :
     (psi F σ b x).map (phi R) = psi R σ b (fun i => algebraMap F R (x i)) := by
@@ -294,7 +298,7 @@ theorem continuous_tmul [IsTopologicalRing R] [ContinuousAdd (R ⊗[F] E)]
 theorem continuous_offE [IsTopologicalRing R] [ContinuousAdd (R ⊗[F] E)]
     [ContinuousSMul R (R ⊗[F] E)] (b : Module.Basis (Fin d) F E) (p) :
     Continuous fun x : Idx n d → R => offE R b x p :=
-  continuous_finset_sum _ fun k _ => (continuous_tmul R (b k)).comp (continuous_apply _)
+  continuous_finsetSum _ fun k _ => (continuous_tmul R (b k)).comp (continuous_apply _)
 
 theorem continuous_psi [IsTopologicalRing R] [ContinuousAdd (R ⊗[F] E)]
     [ContinuousSMul R (R ⊗[F] E)] {σ : E →ₐ[F] E} (hsig : Continuous (sigR R σ))
@@ -371,7 +375,8 @@ theorem map_eq_of_coord {σ : E →ₐ[F] E} (hcm : IsCMExt F E σ)
   rw [hτeq, ← Measure.map_map K.continuous.measurable (hT.measurable.comp K.symm.continuous.measurable),
     ← Measure.map_map hT.measurable K.symm.continuous.measurable, hc _ hμ, Measure.map_smul,
     Measure.map_map K.continuous.measurable K.symm.continuous.measurable]
-  simp
+  · simp
+  · exact K.continuous.measurable.aemeasurable
 
 end Main
 

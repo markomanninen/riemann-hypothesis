@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CobordismLinearRelations.ClozelConjCOfSteps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CobordismLinearRelations.ClozelConjCOfSteps
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.LFun
 open UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Bor UpperTheory.V.Cj
 open scoped TensorProduct
@@ -18,9 +23,10 @@ private theorem hcob_map {Γ M M' : Type} [Group Γ] [AddCommGroup M] [Module �
       rw [b1 γ x hx, hT]
     · change T (c x) = _
       rw [b2 x hx]
-      simp only [hd, map_sum, map_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hd, map_sum, map_zsmul]
 
-private theorem sigCob_one {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+private theorem sigCob_one {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
     (U : Subgroup (GL (Fin a) (Af E))) (σ : ℂ ≃+* ℂ) {Ξ Ξ' : AlgRep E a} (h : Ξ.d = Ξ'.d) (hσ : ConjMat σ h) (q : ℕ)
     (c : List ↥(⊤ : Subgroup (GL (Fin a) E)) → (GL (Fin a) (Af E) ⧸ U) → Fin Ξ.d → ℂ)
     (hc : HCob (levelRep ⊤ U (ratC Ξ)) q c) : HCob (levelRep ⊤ U (ratC Ξ')) q (sigC σ h c) := by
@@ -31,7 +37,8 @@ private theorem sigCob_one {E : Type} [Field E] [NumberField E] [IsTotallyComple
   refine hcob_map _ _ T (fun γ f => ?_) q c hc
   funext y i
   change σ ((ratC Ξ γ *ᵥ f _) (Fin.cast h.symm i)) = (ratC Ξ' γ *ᵥ fun j => σ (f _ (Fin.cast h.symm j))) i
-  simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, ← hσ _ _ _]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, ← hσ _ _ _]
   exact Fintype.sum_equiv (finCongr h) _ _ fun j => rfl
 
 theorem UpperTheory.V.Cj.sigCob :

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIdempotentIsUnitOneAddOrSubAdeleStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIdempotentIsUnitOneAddOrSubAdeleStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat
 open scoped TensorProduct Matrix nonZeroDivisors
@@ -18,7 +22,7 @@ theorem hilbert90_involution_of_idempotent_unit {R : Type} [CommRing R] (σ : R 
     have h : d ^ 2 * d' ^ 2 = 1 := by rw [← mul_pow, hd', one_pow]
     linear_combination (1 + d ^ 2 + d' ^ 2 + d ^ 2 * d' ^ 2) * he + (1 - e) * h
   have hx : σ (e * (1 + u) + (1 - e) * d * (1 - u)) = e * (1 + σ u) - (1 - e) * d * (1 - σ u) := by
-    simp only [map_add, map_mul, map_sub, map_one, hσe, hd]; ring
+    simp only [map_add (f := _), map_mul, map_sub, map_one, hσe, hd]; ring
   have hN : (e * (1 + u) + (1 - e) * d * (1 - u)) * (e * (1 + σ u) - (1 - e) * d * (1 - σ u)) =
       2 * (e * (1 + s) + (1 - e) * (1 - s)) * (e - (1 - e) * d ^ 2) := by
     have hv : σ u = 2 * s - u := by linear_combination hs
@@ -59,7 +63,7 @@ theorem hilbert90_adeleRing_tensor_quadratic : ∀ (F E : Type) [Field F] [Numbe
       intro g
       rcases aut_eq_one_or_of_finrank_two c h2 hc g with rfl | rfl
       · rfl
-      · rw [map_add, hcc, add_comm]
+      · rw [map_add (f := _), hcc, add_comm]
     obtain ⟨t, ht⟩ := this
     exact ⟨t, ht.symm⟩
   have hsg : ∀ (a : AdeleRing (𝓞 F) F) (x : E), sg (AdeleRing (𝓞 F) F) c (a ⊗ₜ x) = a ⊗ₜ c x := by
@@ -69,7 +73,7 @@ theorem hilbert90_adeleRing_tensor_quadratic : ∀ (F E : Type) [Field F] [Numbe
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => rw [hsg, hsg, hcc]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hT : ∀ z, ∃ t : AdeleRing (𝓞 F) F, z + sg (AdeleRing (𝓞 F) F) c z = t ⊗ₜ 1 := by
     intro z
     induction z using TensorProduct.induction_on with
@@ -82,7 +86,7 @@ theorem hilbert90_adeleRing_tensor_quadratic : ∀ (F E : Type) [Field F] [Numbe
       obtain ⟨t, ht⟩ := hx
       obtain ⟨t', ht'⟩ := hy
       refine ⟨t + t', ?_⟩
-      rw [map_add, TensorProduct.add_tmul, ← ht, ← ht']; ring
+      rw [map_add (f := _), TensorProduct.add_tmul, ← ht, ← ht']; ring
   obtain ⟨y, hy⟩ : ∃ y, c y ≠ y := by
     by_contra h
     push Not at h
@@ -104,9 +108,9 @@ theorem hilbert90_adeleRing_tensor_quadratic : ∀ (F E : Type) [Field F] [Numbe
   · change sg _ c _ = _
     rw [hι, hsg, map_one]
   · change u + sg _ c u = _
-    rw [ht, two_mul, ← map_add, ← add_smul, hι]
+    rw [ht, two_mul, ← map_add (f := _), ← add_smul, hι]
     norm_num
   · have := hun.map ι
-    simpa only [map_add, map_mul, map_sub, map_one] using this
+    simpa only [map_add (f := _), map_mul, map_sub, map_one] using this
 
 end GlobalTheory.AdLat

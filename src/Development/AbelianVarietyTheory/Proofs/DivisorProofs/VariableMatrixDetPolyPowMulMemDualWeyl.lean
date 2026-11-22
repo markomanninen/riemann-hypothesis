@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped TensorProduct
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.L2.Pj GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.ExpFrame GlobalTheory.ExpTie GlobalTheory.FrameOf

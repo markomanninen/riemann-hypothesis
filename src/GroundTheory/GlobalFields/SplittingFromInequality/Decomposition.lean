@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.SplittingFromInequality.Galois
-import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
-import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
-import GroundTheory.LocalFields.UnramifiedGalois
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SplittingFromInequality.Galois
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
+public import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
+public import GroundTheory.LocalFields.UnramifiedGalois
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -16,8 +20,8 @@ section FixedField
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
   [IsGalois K L]
 
-omit [NumberField K] [NumberField L] [IsGalois K L] in
 
+omit [NumberField K] [NumberField L] [IsGalois K L] in
 theorem card_stabilizer_fixedField_eq (H : Subgroup Gal(L/K)) (w : HeightOneSpectrum (𝓞 L))
     (hD : MulAction.stabilizer Gal(L/K) w.asIdeal ≤ H) [FiniteDimensional K L] :
     Nat.card (MulAction.stabilizer Gal(L/fixedField H) w.asIdeal) =
@@ -64,8 +68,8 @@ theorem splitsCompletely_fixedField_of_stabilizer_le (H : Subgroup Gal(L/K))
   have : w.1.asIdeal.LiesOver v.asIdeal := Ideal.LiesOver.trans w.1.asIdeal w'.asIdeal v.asIdeal
   exact ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_stabilizer_le H v w' w.1 (hD w.1 this)
 
-omit [NumberField K] [NumberField L] [IsGalois K L] in
 
+omit [NumberField K] [NumberField L] [IsGalois K L] in
 theorem below_smul (σ : Gal(L/K)) (w : HeightOneSpectrum (𝓞 L)) : below K (σ • w) = below K w :=
   (below_eq_iff (σ • w) (below K w)).2 (by rw [smul_asIdeal]; infer_instance)
 
@@ -111,15 +115,15 @@ section Frobenius
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
   [IsGalois K L]
 
-open AdicLiesOver in
 
+open AdicLiesOver in
 theorem stabilizer_eq_zpowers_arithFrobAt (v : HeightOneSpectrum (𝓞 K))
     (w : HeightOneSpectrum (𝓞 L)) [w.asIdeal.LiesOver v.asIdeal]
     (he : w.asIdeal.ramificationIdx (𝓞 K) = 1) :
     MulAction.stabilizer Gal(L/K) w.asIdeal =
       Subgroup.zpowers (arithFrobAt (𝓞 K) Gal(L/K) w.asIdeal) := by
-  have h : GroundTheory.LocalField.ramificationIndex (v.adicCompletion K) (w.adicCompletion L) = 1 := by
-    rw [GroundTheory.LocalField.ramificationIndex, ramificationIdx_integer v w, he]
+  have h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation (w.adicCompletion L)))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation (v.adicCompletion K)))) = 1 := by
+    rw [ramificationIdx_integer v w, he]
   have hfr : decompositionToLocal v w (arithFrobAtDecomposition w) =
       GroundTheory.LocalField.frobenius _ _ h :=
     (eq_decompositionToLocal_arithFrobAt v w he _

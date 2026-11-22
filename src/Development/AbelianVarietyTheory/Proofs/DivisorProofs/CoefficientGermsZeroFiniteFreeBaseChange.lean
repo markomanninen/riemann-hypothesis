@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameCarriedAlong
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecCarriedOver
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.BoxProductLinearIndependent
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameCarriedAlong
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecCarriedOver
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.BoxProductLinearIndependent
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -59,16 +64,19 @@ theorem germ_eq_zero : ∀ (R R₁ : Type) [CommRing R] [CommRing R₁] (ρ₁ :
   have r2 : r ≫ pullback.snd f (spMap ρ₁) = Spec.map iR := pullback.lift_snd _ _ _
   have key : (∑ l, iR.hom (b l) * iA.hom (gs (𝟙 X) x U (a l)) : B) = 0 := by
     refine eq_zero_of_germOf_max _ fun z hz => ?_
+    letI : z.asIdeal.IsMaximal := hz
     have hm : (z.asIdeal.comap (algebraMap A (A ⊗[R] R₁))).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := A) (S := A ⊗[R] R₁) z.asIdeal
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := A) z.asIdeal
     have hc : Spec.map iA z = closedPoint A := PrimeSpectrum.ext (IsLocalRing.eq_maximalIdeal hm)
     have hzx : pullback.fst f (spMap ρ₁) (r z) = x := by
       have : (r ≫ pullback.fst f (spMap ρ₁)) z = X.fromSpecStalk x (Spec.map iA z) := by rw [r1]; rfl
       rw [hc, Scheme.fromSpecStalk_closedPoint] at this
       exact this
     have e := congrArg (r.stalkMap z).hom (h (r z) hzx)
-    rw [map_zero, map_sum] at e
-    rw [← e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_mul, map_mul, ← gs_comp' r _ z ⊤ trivial, ← gs_comp' r _ z U (hzx ▸ hx), r1, r2,
       gs_fromSpecStalk x hx, ← germOf_apply, ← germOf_map, ← germOf_map, Category.id_comp, Category.id_comp]

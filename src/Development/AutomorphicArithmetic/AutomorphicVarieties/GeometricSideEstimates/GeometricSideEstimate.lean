@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.Poisson
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.Poisson
+
+@[expose] public section
 
 open UpperTheory.V.Lit.Geo
 

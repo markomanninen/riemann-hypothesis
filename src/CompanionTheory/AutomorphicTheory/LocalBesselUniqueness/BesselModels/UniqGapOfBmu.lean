@@ -1,19 +1,31 @@
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.WuFinal
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.AmplitudeOrbitalIntegral
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.BesselSchurOfDec
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.MultiplicityOneUnitaryBranchingOfUniqGap
-import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
-import CompanionTheory.AutomorphicTheory.RankOneTori.KDense
+module
+
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.WuFinal
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.AmplitudeOrbitalIntegral
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.Inputs
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.MomSchurG
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.PeriodG
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.MomTie
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AmpOrbClosed
+public import Formalism.SharpRestriction.CuspSpanNormBounds.HCFiniteKMultiplicityGapped
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeGapDS
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.BesselSplit
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.OrbitDerivatives.HasDerivAtMatrixExpZero
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.AtFormAdmOneOfSteps
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocUniqGen
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SchurRelationsDiscreteSeries
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AIsL
+public import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
+public import CompanionTheory.AutomorphicTheory.RankOneTori.KDense
+
+@[expose] public section
 
 namespace CompanionTheory.Lime.BM
 
-theorem uniqGap_of_bmu (h : CompanionTheory.Bmu.BesselMapUniqGap) : UniqGap := h
-
 theorem wuDecayOfGap (h : CompanionTheory.Bmu.BesselMapUniqGap) : Formalism.L2.SG.Pf.WuDecayOfGap :=
   Formalism.L2.SG.Pf.wuDecayOfGap_of_uniqGap h
-
-theorem besselOfW (h : CompanionTheory.Bmu.BesselMapUniqGap) : Formalism.L2.SG.LocWSOf.BesselOfW :=
-  Formalism.MainNotions.BridgeCS3dBOW.besselOfW_gap h
 
 theorem ampUnif (h : CompanionTheory.Bmu.BesselMapUniqGap) : Formalism.MainNotions.S.Pv.LemmaJ.AmpUnif :=
   Formalism.L2.S.Pv.AmpOrbCoef.BM.ampUnif_gap h

@@ -1,5 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.IntegralTensorBasisLinIndep
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.PairingContinuityBound
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.LocalBasisChangeDecompCompatible
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.PairingContinuityBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,11 +28,11 @@ def gExt (g : ∀ τ : {τ // τ ≠ τ₀}, κ τ.1) (k : κ τ₀) : ∀ τ, �
 theorem gRest_gExt (g : ∀ τ : {τ // τ ≠ τ₀}, κ τ.1) (k : κ τ₀) : gRest τ₀ κ (gExt τ₀ κ g k) = g := by
   funext τ
   unfold gRest gExt
-  rw [dif_neg τ.2]
+  rw [dite_eq_right τ.2]
 
 theorem gExt_self (g : ∀ τ : {τ // τ ≠ τ₀}, κ τ.1) (k : κ τ₀) : gExt τ₀ κ g k τ₀ = k := by
   unfold gExt
-  rw [dif_pos rfl]
+  rw [dite_eq_left rfl]
 
 theorem ten_eq_psi (g : ∀ τ, κ τ) :
     Formalism.L2.Forms.ten (fun τ => b τ (g τ)) = mvPolynomialProductExtension τ₀ κ b (Pi.single (gRest τ₀ κ g) (b τ₀ (g τ₀))) := by
@@ -76,7 +81,8 @@ theorem tenSpan_eq_psi (Λ : Submodule O (MvPolynomial (Fin N × Fin N) ℂ))
       exact hle hv
     have hsum : h = ∑ g', Pi.single g' (h g') := (Finset.univ_sum_single h).symm
     show mvPolynomialProductExtension τ₀ κ b h ∈ tenSpan κ b O
-    rw [hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_sum]
     exact Submodule.sum_mem _ fun g' _ => hsingle g' (h g') (hh g' (Set.mem_univ _))
 
 theorem psi_subP (o : ι → Matrix (Fin N) (Fin N) ℂ) (ho : ∀ τ, τ ≠ τ₀ → o τ = 1)
@@ -88,7 +94,8 @@ theorem psi_subP (o : ι → Matrix (Fin N) (Fin N) ℂ) (ho : ∀ τ, τ ≠ τ
     have h1 : (Formalism.L2.Forms.subP o).comp (rename (Prod.mk τ)) = (rename (Prod.mk τ)).comp (Formalism.GradedWeylDivisibility.rowAct ℂ (o τ)) := by
       apply MvPolynomial.algHom_ext
       intro v
-      simp [Formalism.L2.Forms.subP, Formalism.GradedWeylDivisibility.rowAct, rename_X, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Formalism.L2.Forms.subP, Formalism.GradedWeylDivisibility.rowAct, rename_X, map_sum]
     exact AlgHom.congr_fun h1 q
   have hone : ∀ q : MvPolynomial (Fin N × Fin N) ℂ, Formalism.GradedWeylDivisibility.rowAct ℂ (1 : Matrix (Fin N) (Fin N) ℂ) q = q := by
     intro q
@@ -97,7 +104,8 @@ theorem psi_subP (o : ι → Matrix (Fin N) (Fin N) ℂ) (ho : ∀ τ, τ ≠ τ
       intro v
       simp [Formalism.GradedWeylDivisibility.rowAct, Matrix.one_apply]
     rw [h1, AlgHom.id_apply]
-  simp only [mvPolynomialProductExtension, LinearMap.coe_mk, AddHom.coe_mk, map_sum, map_mul, map_prod, hren]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mvPolynomialProductExtension, LinearMap.coe_mk, AddHom.coe_mk, map_sum, map_mul, map_prod, hren]
   refine Finset.sum_congr rfl fun g _ => ?_
   congr 1
   refine Finset.prod_congr rfl fun τ _ => ?_

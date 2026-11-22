@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SandwichRhoAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartIntegralLocal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SandwichRhoAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartIntegralLocal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 
@@ -77,12 +81,12 @@ lemma continuous_xiP (D : RealPlaceData k r Wp Wq) : Continuous (xiP D) := by
   have key : ∀ z : Fin (2 * r + k + 1) → ℂ, Continuous fun M : Mt k r => ell k r z (Matrix.of M) := by
     intro z
     unfold ell
-    refine continuous_finset_sum _ fun a _ => ?_
+    refine continuous_finsetSum _ fun a _ => ?_
     by_cases h : a.val + 1 < r
     · simp only [h, ↓reduceDIte, Matrix.of_apply]
       exact (continuous_apply _).comp (continuous_apply _)
     · simp only [h, ↓reduceDIte, Matrix.mulVec, dotProduct, Matrix.of_apply]
-      refine continuous_finset_sum _ fun j _ => ?_
+      refine continuous_finsetSum _ fun j _ => ?_
       first
         | fun_prop
         | exact (((continuous_apply j).comp (continuous_apply (eI k r a))).mul continuous_const :)

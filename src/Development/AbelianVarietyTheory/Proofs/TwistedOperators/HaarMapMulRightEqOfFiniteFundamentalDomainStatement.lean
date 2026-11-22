@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarMapMulRightEqOfFiniteFundamentalDomain
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NullMeasurableSetShearImage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarMapMulRightEqOfFiniteFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NullMeasurableSetShearImage
+
+@[expose] public section
+
 open MeasureTheory Function
 open scoped Pointwise
 set_option maxHeartbeats 1000000 in

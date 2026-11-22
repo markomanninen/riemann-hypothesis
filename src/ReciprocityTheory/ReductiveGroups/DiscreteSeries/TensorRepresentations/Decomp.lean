@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Unitarize
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DecompC
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Unitarize
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DecompC
+
+@[expose] public section
 
 noncomputable section
 

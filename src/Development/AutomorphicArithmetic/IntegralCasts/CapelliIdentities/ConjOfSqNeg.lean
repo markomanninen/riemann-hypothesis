@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh17.conj_of_sq_neg :
     ∀ {t : ℂ} {r : ℝ},

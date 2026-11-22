@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Topology
 
 noncomputable section
@@ -88,8 +93,8 @@ end GlobalTheory.SupercuspUnitary
 
 namespace GlobalTheory
 
-open GlobalTheory.SupercuspUnitary in
 
+open GlobalTheory.SupercuspUnitary in
 theorem isUnitarisable_of_isSupercuspidal : ∀ (G V : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) (l : Module.Dual ℂ V), l ∈ smoothPart ρ.dual →
     l ≠ 0 → ρ.IsIrreducible → IsSupercuspidal ρ →
@@ -106,7 +111,7 @@ theorem isUnitarisable_of_isSupercuspidal : ∀ (G V : Type) [Group G] [Topologi
   have hadd1 : ∀ v v' w q, qterm ρ l (v + v') w q = qterm ρ l v w q + qterm ρ l v' w q := by
     intro v v' w q
     induction q using QuotientGroup.induction_on with
-    | H g => simp only [qterm_mk, term, map_add, add_mul]
+    | H g => simp only [qterm_mk, term, map_add (f := _), add_mul]
   have hsmul1 : ∀ (a : ℂ) v w q, qterm ρ l (a • v) w q = a * qterm ρ l v w q := by
     intro a v w q
     induction q using QuotientGroup.induction_on with
@@ -114,7 +119,7 @@ theorem isUnitarisable_of_isSupercuspidal : ∀ (G V : Type) [Group G] [Topologi
   have hadd2 : ∀ v w w' q, qterm ρ l v (w + w') q = qterm ρ l v w q + qterm ρ l v w' q := by
     intro v w w' q
     induction q using QuotientGroup.induction_on with
-    | H g => simp only [qterm_mk, term, map_add, mul_add]
+    | H g => simp only [qterm_mk, term, map_add (f := _), mul_add]
   have hsmul2 : ∀ (a : ℂ) v w q, qterm ρ l v (a • w) q = starRingEnd ℂ a * qterm ρ l v w q := by
     intro a v w q
     induction q using QuotientGroup.induction_on with

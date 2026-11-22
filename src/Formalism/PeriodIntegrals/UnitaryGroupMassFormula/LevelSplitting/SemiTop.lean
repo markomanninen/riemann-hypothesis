@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.MulInvPiGMemN
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemidirectExistsOfParts
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.MulInvPiGMemN
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemidirectExistsOfParts
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,10 +25,8 @@ theorem piMat_eq (g : HA R σ J) :
       LinearMap.toMatrix' (datR R σ J P T).pW *
         ((HA.mat R σ J g : GL (Fin M) (R ⊗[F] E)) : Matrix (Fin M) (Fin M) (R ⊗[F] E)) *
           LinearMap.toMatrix' (datR R σ J P T).pW := by
-  rw [piMat, PI.LevelKSplit.W.SemiG.Dat.Pi, map_add, LinearMap.toMatrix'_comp,
+  rw [piMat, PI.LevelKSplit.W.SemiG.Dat.Pi, map_add (f := _), LinearMap.toMatrix'_comp,
     LinearMap.toMatrix'_comp, lin, ← Matrix.toLin'_apply', LinearMap.toMatrix'_toLin', Matrix.mul_assoc]
-
-theorem mat_inv (g : HA R σ J) : HA.mat R σ J g⁻¹ = (HA.mat R σ J g)⁻¹ := rfl
 
 theorem continuous_piMat : Continuous fun g : HA R σ J => piMat (P := P) (T := T) g := by
   have hm : Continuous fun g : HA R σ J =>
@@ -40,8 +42,8 @@ theorem continuous_piMat : Continuous fun g : HA R σ J => piMat (P := P) (T := 
 theorem continuous_piMat_inv : Continuous fun g : HA R σ J => piMat (P := P) (T := T) g⁻¹ := by
   exact (continuous_piMat (P := P) (T := T)).comp continuous_inv
 
-variable (R) in
 
+variable (R) in
 def fwdM (hP : P.IsStd σ J T) (p : Nsub R σ J P × Hsub R σ J P) : Ssub R σ J P :=
   ⟨(p.1 : HA R σ J) * (p.2 : HA R σ J), (Ssub R σ J P).mul_mem (N_le_S' (R := R) hP p.1.2) (H_le_S p.2.2)⟩
 
@@ -58,8 +60,8 @@ theorem continuous_piG : Continuous fun s : Ssub R σ J P => piG hσσ hJ hP (s 
   · exact (continuous_piMat (P := P) (T := T)).comp continuous_subtype_val
   · exact (continuous_piMat_inv (P := P) (T := T)).comp continuous_subtype_val
 
-variable (R) in
 
+variable (R) in
 def bwdM (s : Ssub R σ J P) : Nsub R σ J P × Hsub R σ J P :=
   (⟨(s : HA R σ J) * (piG (R := R) hσσ hJ hP (s : HA R σ J) s.2)⁻¹, mul_inv_piG_mem_N hσσ hJ hP s.2⟩,
     ⟨piG (R := R) hσσ hJ hP (s : HA R σ J) s.2, piG_mem_H hσσ hJ hP (s : HA R σ J) s.2⟩)
@@ -90,8 +92,8 @@ theorem fwd_bwd : Function.RightInverse (bwdM R hσσ hJ hP) (fwdM R hP) := by
   apply Subtype.ext
   exact inv_mul_cancel_right _ _
 
-variable (R) in
 
+variable (R) in
 def homeoNH : (Nsub R σ J P × Hsub R σ J P) ≃ₜ Ssub R σ J P where
   toFun := fwdM R hP
   invFun := bwdM R hσσ hJ hP

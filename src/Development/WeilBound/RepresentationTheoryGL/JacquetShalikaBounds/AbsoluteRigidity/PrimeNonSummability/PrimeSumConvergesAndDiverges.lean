@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
-import GroundTheory.GlobalFields.TateThesis.PrimeZetaPole
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+public import GroundTheory.GlobalFields.TateThesis.PrimeZetaPole
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,11 +18,11 @@ theorem two_le (S : Finset (HeightOneSpectrum (𝓞 E))) (w : Off E S) : 2 ≤ n
 
 theorem conv (S : Finset (HeightOneSpectrum (𝓞 E))) (σ : ℝ) (hσ : 1 < σ) :
     Summable fun w : Off E S => (nq w : ℝ) ^ (-σ) :=
-  (GroundTheory.Global.summable_absNorm_rpow_neg (L := E) hσ).subtype {w | w ∉ S}
+  (GroundTheory.Global.summable_absNorm_rpow_neg (L := E) hσ).subtype (fun w => w ∉ S)
 
 theorem not_summable_all : ¬ Summable fun w : HeightOneSpectrum (𝓞 E) => (Ideal.absNorm w.asIdeal : ℝ)⁻¹ := by
   intro h
-  have ht := GroundTheory.Global.tendsto_primeIdealZetaSum_univ_atTop E
+  have ht := GroundTheory.Global.tendsto_primeIdealZetaSum_univ_atTop (K := E)
   set C : ℝ := ∑' w : (Set.univ : Set (HeightOneSpectrum (𝓞 E))), (Ideal.absNorm w.1.asIdeal : ℝ)⁻¹ with hC
   have hb : ∀ s : ℝ, 1 < s → (Set.univ : Set (HeightOneSpectrum (𝓞 E))).primeIdealZetaSum s ≤ C := by
     intro s hs

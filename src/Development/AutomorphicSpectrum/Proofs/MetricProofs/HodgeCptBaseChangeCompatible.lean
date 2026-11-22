@@ -1,44 +1,48 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeA
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.OmegaLatticeDominantCompatStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeDominantCompatStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionIntegrallyClosedStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtNoetherianModelNoetherianStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NotInFibreOfIsUnit
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeVectorBundlePullbackStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackMapStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackActionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionPullbackStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapOfFieldExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenspaceFieldExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeStableUnderActionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralElementRegularStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DifferentIdealLocalGeneratorStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DifferentScaledLatticeExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianSchemePointObjectStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushInvertibleIffOfIsReduced
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateOmegaCoherentStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundleStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenericWeilPairingStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HodgeComponentFactorPoint
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointNormalCoords
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointComponentLocalRing
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeA
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.OmegaLatticeDominantCompatStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeDominantCompatStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionIntegrallyClosedStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtNoetherianModelNoetherianStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NotInFibreOfIsUnit
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeVectorBundlePullbackStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackMapStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackActionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionPullbackStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapOfFieldExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenspaceFieldExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeStableUnderActionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralElementRegularStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DifferentIdealLocalGeneratorStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DifferentScaledLatticeExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianSchemePointObjectStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushInvertibleIffOfIsReduced
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateOmegaCoherentStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundleStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenericWeilPairingStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HodgeComponentFactorPoint
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointNormalCoords
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointComponentLocalRing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -101,14 +105,16 @@ theorem flat_ker {R R' : Type} [CommRing R] [CommRing R'] (φ : R →+* R') (hφ
     have h2 : f (Pi.single k 1) = ∑ r, A k r • (Pi.single r 1 : Ix → R) := by
       funext t
       simp [f, Matrix.mulVec_single_one, Finset.sum_apply, Pi.single_apply]
-    rw [h2, map_sum] at h1
-    simpa [Matrix.mulVec, dotProduct, Finsupp.finset_sum_apply] using h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum] at h1
+    simpa [Matrix.mulVec, dotProduct, Finsupp.finsetSum_apply] using h1
   · have h1 := congrArg (fun g => g (Pi.single k 1)) hxy
     simp only [LinearMap.comp_apply] at h1
     have h2 : X (Pi.single k 1) = x k := by simp [X, Fintype.linearCombination_apply, Pi.single_apply]
     rw [← h2, h1]
     conv_lhs => rw [← Finsupp.sum_single (a (Pi.single k 1))]
-    rw [Finsupp.sum_fintype _ _ (by simp), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.sum_fintype _ _ (by simp), map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [← mul_one (a (Pi.single k 1) l), ← smul_eq_mul, ← Finsupp.smul_single, map_smul, Algebra.smul_def, mul_comm]
     rfl
@@ -152,7 +158,8 @@ theorem span_image_frame (hj : IsExtOver i j) (hsp : Submodule.span Ω' (Set.ran
   rintro _ ⟨e, rfl⟩
   have he : e ∈ Submodule.span Ω (Set.range b) := hbs ▸ Submodule.mem_top
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun Ω).1 he
-  simp only [SetLike.mem_coe, map_sum, hj.1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [SetLike.mem_coe, map_sum, hj.1]
   exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
 
 theorem coef_zero (hj : IsExtOver i j) (hb : LinearIndependent Ω b) (f : V →ₗ[Ω] V) (f' : V' →ₗ[Ω'] V')
@@ -160,17 +167,20 @@ theorem coef_zero (hj : IsExtOver i j) (hb : LinearIndependent Ω b) (f : V →�
     (h0 : f' (∑ l, c l • j (b l)) = 0) (k : Fin r) : ∑ l, c l * i (C l k) = 0 := by
   have hli : LinearIndependent Ω' fun k => j (b k) := hj.2 r b hb
   have hjf : ∀ l, f' (j (b l)) = ∑ k, i (C l k) • j (b k) := fun l => by
-    rw [hf, hC, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf, hC, map_sum]
     exact Finset.sum_congr rfl fun k _ => hj.1 _ _
   have h1 : ∑ k, (∑ l, c l * i (C l k)) • j (b k) = 0 := by
-    rw [← h0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h0, map_sum]
     simp only [map_smul, hjf, Finset.sum_smul, Finset.smul_sum, smul_smul]
     exact Finset.sum_comm
   exact Fintype.linearIndependent_iff.1 hli _ h1 k
 
 theorem comb_ker (f : V →ₗ[Ω] V) (C : Fin r → Fin r → Ω) (hC : ∀ l, f (b l) = ∑ k, C l k • b k) (y : Fin r → Ω)
     (h0 : ∀ q, ∑ k, C k q * y k = 0) : f (∑ k, y k • b k) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, hC, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   simp only [← Finset.sum_smul]
@@ -203,7 +213,8 @@ theorem flat_lat (hφ : φ.Flat) (hφi : ∀ a, (φ a : Ω') = i a) (hj : IsExtO
       rintro _ ⟨e, he, rfl⟩
       have he' : e ∈ Submodule.span R (Set.range b) := hL ▸ he
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun R).1 he'
-      simp only [SetLike.mem_coe, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [SetLike.mem_coe, map_sum]
       refine Submodule.sum_mem _ fun k _ => ?_
       have : j (c k • b k) = (⟨i (c k), hR _ (c k).2⟩ : R') • j (b k) := hj.1 (c k : Ω) (b k)
       rw [this]
@@ -238,7 +249,8 @@ theorem flat_lat (hφ : φ.Flat) (hφi : ∀ a, (φ a : Ω') = i a) (hj : IsExtO
         simpa using this
     have hsum : e' = ∑ n, cc n • j (Ee n) := by
       have hjE : ∀ n, j (Ee n) = ∑ k, i (y n k) • j (b k) := fun n => by
-        simp only [Ee, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Ee, map_sum]
         exact Finset.sum_congr rfl fun k _ => hj.1 _ _
       show e' = ∑ n, (cc n : Ω') • j (Ee n)
       simp only [hjE, Finset.smul_sum, smul_smul]
@@ -287,7 +299,8 @@ theorem flat_dual (hφ : φ.Flat) (hφi : ∀ a, (φ a : Ω') = i a) (hj : IsExt
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun Ω').1 (hjs ▸ Submodule.mem_top : e' ∈ _)
     replace hc := hc.symm
     have hev : ∀ w, jd w e' = ∑ l, c l * i (w (b l)) := fun w => by
-      rw [hc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hc, map_sum]
       simp [hjd]
     have hCe : ∀ t l, ∃ C : Fin r → R, f t (b l) = ∑ k, (C k : Ω) • b k := fun t l => by
       obtain ⟨C, hC⟩ := (Submodule.mem_span_range_iff_exists_fun R).1 (hfL t l)
@@ -339,7 +352,8 @@ theorem flat_dual (hφ : φ.Flat) (hφi : ∀ a, (φ a : Ω') = i a) (hj : IsExt
       have h3 := congrArg Subtype.val (hy2 n a)
       simp only [AddSubmonoidClass.coe_finsetSum, Subring.coe_mul, Subring.coe_zero, Subring.coe_add, Subring.coe_neg,
         Subring.coe_natCast] at h3
-      simp only [Ee, map_smul, map_sum, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Ee, map_smul, map_sum, smul_eq_mul]
       have h4 : ∑ k, (y n k : Ω) * g a (b k) = (N : Ω) * v n a := by
         have e1 : ∑ k, (y n k : Ω) * g a (b k) = ∑ k, g a (b k) * (y n k : Ω) :=
           Finset.sum_congr rfl fun _ _ => mul_comm _ _
@@ -368,7 +382,8 @@ theorem flat_dual (hφ : φ.Flat) (hφi : ∀ a, (φ a : Ω') = i a) (hj : IsExt
       have hN' : (N : Ω') ≠ 0 := fun e => hN (i.injective (by simpa using e))
       have hjE : ∀ n, j (Ee n) = (N : Ω')⁻¹ • ∑ k, i (y n k) • j (b k) := fun n => by
         simp only [Ee]
-        rw [hj.1, map_sum, map_inv₀, map_natCast]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hj.1, map_sum, map_inv₀, map_natCast]
         congr 1
         exact Finset.sum_congr rfl fun k _ => hj.1 _ _
       show e' = ∑ n, (cc n : Ω') • j (Ee n)
@@ -458,8 +473,8 @@ theorem exists_flat_regAt {X Z : Scheme.{0}} {Ω Ω' : Type} [Field Ω] [Field �
     rw [RingEquiv.symm_apply_apply]
     exact h1
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem hodgeCpt_pull_smooth : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F)) (S : Finset ℕ) (Ω Ω' : Type) [Field Ω] [Field Ω'] (i : Ω →+* Ω') (K K' : Type) [Fintype K] [Fintype K'] (J : K → Type) (J' : K' → Type) [∀ k, Fintype (J k)] [∀ k, Fintype (J' k)] (y : (Σ k, J k) → Ω) (y' : (Σ k, J' k) → Ω') (A : HodgeCpt Y S y) (Z : Scheme.{0}) (ξ' : Spec (CommRingCat.of Ω') ⟶ Z) (h : Z ⟶ A.X), (∀ q : Z, genPt ξ' ⤳ q) → CoordTie ℤ ξ' (seg y') → ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme Z → GlobalTheory.CompanionTheory.Ar.Dominates ξ' A.ξ h i → Smooth h → ∃ (A' : HodgeCpt Y S y') (e : A'.X ≅ Z) (j : A.Li →+ A'.Li), A'.ξ ≫ e.hom = ξ' ∧ HodgeOver A' A (e.hom ≫ h) i j ∧ A'.R = A.R ∧ Submodule.span Ω' (Set.range j) = ⊤ ∧ ∀ s, A'.V s = (A.V s).pull A'.ξ (e.hom ≫ h) j := by
   intro E _ _ _ H D l Xo c Y S Ω Ω' _ _ i K K' _ _ J J' _ _ y y' A Z ξ' h hall htie hnorm hdom hsmh
   haveI : CharZero Ω := charZero_of_injective_ringHom A.cst.injective
@@ -483,15 +498,23 @@ theorem hodgeCpt_pull_smooth : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
   obtain ⟨Li', acg', mod', ⟨M'⟩⟩ := GlobalTheory.CompanionTheory.Ar.lieModel_exists Z t'.G Ω' ξ'
   obtain ⟨ρ', hρ', -⟩ := GlobalTheory.CompanionTheory.Ar.lieModel_exists_unique_act Z t'.G Ω' ξ' Li' M' (𝓞 E) t'.act.act t'.act.hom t'.act.one
     t'.act.mul t'.act.add
-  obtain ⟨j, hj⟩ := GlobalTheory.T.lie_model_pullback_map A.X Z Ω Ω' A.ξ ξ' h i A.t.G t'.G mh.φ A.Li Li' A.M M' hdom mh.cart
+  obtain ⟨j, hj⟩ := GlobalTheory.CompanionTheory.Ar.LieJ.exists_map A.X Z Ω Ω' A.ξ ξ' h i A.t.G t'.G mh.φ A.Li Li' A.M M' hdom mh.cart
   have hsm : Smooth A.t.G.hom := A.t.semi.smooth
-  obtain ⟨hext, hspan, hlat⟩ := GlobalTheory.T.lie_lattice_dominant_compat A.X Z Ω Ω' A.ξ ξ' h i A.t.G t'.G mh.φ A.Li Li' A.M M' j hgen hgen' hdom
+  obtain ⟨hext, hspan, hlat⟩ := GlobalTheory.CompanionTheory.Ar.LiePull.main A.X Z Ω Ω' A.ξ ξ' h i A.t.G t'.G mh.φ A.Li Li' A.M M' j hgen hgen' hdom
     mh.cart hsm hj
-  have hρj := GlobalTheory.T.lie_model_pullback_action A.X Z Ω Ω' A.ξ ξ' h i A.t.G t'.G mh.φ A.Li Li' A.M M' j (𝓞 E) A.t.act.act t'.act.act A.ρ ρ'
-    hdom mh.cart hj A.act hρ' (fun a => mh.act a)
-  obtain ⟨jd, hjd⟩ := GlobalTheory.T.dual_map_of_field_extension Ω Ω' i A.Li Li' j hext hspan
+  have hρj : ∀ a e, ρ' a (j e) = j (A.ρ a e) := by
+    intro a e
+    apply M'.inj
+    rw [hρ' a (j e)]
+    apply Over.OverMorphism.ext
+    apply mh.cart.1.hom_ext
+    · simp only [Over.comp_left, Category.assoc, mh.act a]
+      rw [← Category.assoc, hj e, hj (A.ρ a e), A.act a e, Over.comp_left]
+      simp only [Category.assoc]
+    · rw [Over.w, Over.w]
+  obtain ⟨jd, hjd⟩ := GlobalTheory.CompanionTheory.Ar.DualExt.dual_ext Ω Ω' i A.Li Li' j hext hspan
   have hW : ∀ s, eigSp ρ' ((i.comp A.cst).comp (labelEmb c s)) = Submodule.span Ω' (j '' (A.Vgen s : Set A.Li)) := fun s =>
-    GlobalTheory.T.eigenspace_field_extension E Ω Ω' i A.Li Li' j A.ρ ρ' (A.emb s) hext hspan hρj
+    GlobalTheory.CompanionTheory.Ar.EigExt.eigSp_ext E Ω Ω' i A.Li Li' j A.ρ ρ' (A.emb s) hext hspan hρj
   have hdm := GlobalTheory.CompanionTheory.Ar.RegAtDom.regAt_dominates A.X Ω A.ξ Z Ω' ξ' h i hdom
   have hsp : ∀ p' : Cpt ξ', genPt A.ξ ⤳ h p'.1 := fun p' => (hdm p').choose
   have hreg : ∀ (p' : Cpt ξ'), ∀ a ∈ regAt A.ξ ⟨h p'.1, hsp p'⟩, i a ∈ regAt ξ' p' := fun p' => (hdm p').choose_spec.1

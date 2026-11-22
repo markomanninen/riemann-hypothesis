@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -19,7 +24,8 @@ theorem SpecFirstMemIncIdeal.proof : SpecFirstMemIncIdeal.Statement := by
     induction i using Fin.cases with
     | zero =>
       have h := hxW _ ht
-      simpa [w, linForm, map_sum, aeval_X, aeval_C] using h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [w, linForm, map_sum, aeval_X, aeval_C] using h
     | succ i => simpa [w] using hv i
   have hfw : aeval w f = 0 := (hf.2 f).mpr dvd_rfl w hw
   have hev : aeval v (specFirst f t) = aeval w f := by

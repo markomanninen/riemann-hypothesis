@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JoinedMapsAgreeCohomologyZeroOneInstancesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JoinedMapsAgreeCohomologyTwoInstancesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VerticalH0BijectiveH1InjectiveUniversesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VerticalH1SurjectiveUniversesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VerticalH2InjectiveAllUniversesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VerticalH2SurjectiveUniversesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JoinedMapsAgreeCohomologyZeroOneInstancesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JoinedMapsAgreeCohomologyTwoInstancesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VerticalH0BijectiveH1InjectiveUniversesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VerticalH1SurjectiveUniversesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VerticalH2InjectiveAllUniversesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VerticalH2SurjectiveUniversesStatement
+
+@[expose] public section
+
 open CategoryTheory GlobalTheory.CxCoh
 
 set_option autoImplicit false
@@ -106,8 +111,8 @@ def eMap (K : Cx C) (ℓ : D ⥤ C) (q : C ⥤ D) (S : C ⥤ C) (w : q ⋙ ℓ �
 
 end GlobalTheory.CxCoh.Collapse
 
-open GlobalTheory.CxCoh.Collapse in
 
+open GlobalTheory.CxCoh.Collapse in
 theorem GlobalTheory.CxCoh.collapse_resMap_bij : ∀ (C : Type 1) [Category.{0} C] (D : Type) [Category.{0} D] (K : Cx C) (ℓ : D ⥤ C)
     (q : C ⥤ D) (S : C ⥤ C) (u : 𝟭 C ⟶ S) (w : q ⋙ ℓ ⟶ S) (ε : 𝟭 D ⟶ ℓ ⋙ q), (∀ T, K.QAt (u.app T)) →
     (∀ U, K.QAt (ℓ.map (ε.app U) ≫ w.app (ℓ.obj U))) → (K.resMap ℓ).Bij := by

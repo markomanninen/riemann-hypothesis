@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
-import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.LinksExistW
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatZOfTests
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NHkRow
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HeckePin
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RationalHeckeScalars
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ZeroDegreeOfPinFor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemNotMem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksExistW
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatZOfTests
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NHkRow
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HeckePin
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RationalHeckeScalars
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ZeroDegreeOfPinFor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemNotMem
+
+@[expose] public section
 
 namespace RationalFamilyExistence
 section

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,11 +27,11 @@ theorem plane_core {R : Type*} [CommRing R] (σ : R ≃+* R) (α β t s c : R)
       (!![1 + s * t, c * t; s, c] : Matrix (Fin 2) (Fin 2) R).det = c := by
   have h3σ : σ c * (1 + σ t * α) = 1 := by
     have h4 := congrArg σ h3
-    simpa only [map_mul, map_add, map_one, hα] using h4
+    simpa only [map_mul, map_add (f := _), map_one, hα] using h4
   refine ⟨?_, ?_⟩
   · ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Fin.sum_univ_two, map_add, map_mul, map_one]
+      simp [Matrix.mul_apply, Fin.sum_univ_two, map_add (f := _), map_mul, map_one]
     · linear_combination h2 + σ s * s * h1
     · linear_combination h3 + σ s * c * h1
     · linear_combination h3σ + σ c * s * h1
@@ -87,7 +91,7 @@ theorem plane_exists {R : Type*} [CommRing R] (σ : R ≃+* R) (hσ : ∀ x, σ 
     rw [hc]
     linear_combination ((↑nu⁻¹ : R₀) : R) * hnR + hninv
   have hσc : σ c = (1 + t * α) * ((↑nu⁻¹ : R₀) : R) := by
-    rw [hc, map_mul, map_add, map_one, map_mul, hσ, hfix, hfix]
+    rw [hc, map_mul, map_add (f := _), map_one, map_mul, hσ, hfix, hfix]
   refine ⟨t, -((α : R) * τ * c), c, ?_, ?_, h3, -(τ * c), by ring⟩
   · rw [hσt, ht]
     linear_combination hxR + (x : R) * hτ

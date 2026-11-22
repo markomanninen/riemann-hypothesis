@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.PsiDatumStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LholClmEventually
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IntegrableComplexContinuousBoundedSupport
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.PsiDatumStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LholClmEventually
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IntegrableComplexContinuousBoundedSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 theorem coefX_add_smul (σ : Mat k r → (H →L[ℂ] H)) (x₀ : Mat k r) (w m₁ m₂ : H) (c : ℂ) (g : Mat k r) :
     coefX σ x₀ w (m₁ + c • m₂) g = coefX σ x₀ w m₁ g + c * coefX σ x₀ w m₂ g := by
-  simp only [coefX, map_add, map_smul, inner_add_right, inner_smul_right]
+  simp only [coefX, map_add (f := _), map_smul, inner_add_right, inner_smul_right]
 
 theorem coefX_sub (σ : Mat k r → (H →L[ℂ] H)) (x₀ : Mat k r) (w m₁ m₂ : H) (g : Mat k r) :
     coefX σ x₀ w (m₁ - m₂) g = coefX σ x₀ w m₁ g - coefX σ x₀ w m₂ g := by

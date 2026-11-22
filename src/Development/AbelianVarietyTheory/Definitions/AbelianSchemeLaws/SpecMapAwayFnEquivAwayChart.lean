@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjDehomA
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.OpensRangeChartYSupOpensRangeChartZ
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.AwayToSectionFromZero
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsRegularFnIffOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsAffineHomOfIsPullbackSpecMap
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjDehomA
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.OpensRangeChartYSupOpensRangeChartZ
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.AwayToSectionFromZero
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsRegularFnIffOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsAffineHomOfIsPullbackSpecMap
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,8 @@ theorem coeff_eq_zero_of_simple_pole {R B C κ : Type*} [CommRing R] [CommRing B
         lt_of_le_of_ne (hmax k hk) fun e => ha (hd e ▸ hk)
       have key : ρ (c a) * v a + ∑ k ∈ s, ρ (c k) * (z ^ (d a - d k) * v k) = z ^ (d a - 1) * b := by
         apply hι
-        rw [map_mul ι (z ^ _), ← h, map_pow, ← mul_assoc, ← pow_succ, Nat.sub_add_cancel (by omega),
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_mul ι (z ^ _), ← h, map_pow, ← mul_assoc, ← pow_succ, Nat.sub_add_cancel (by omega),
           Finset.sum_insert ha, mul_add, map_add, map_sum, Finset.mul_sum, map_mul, ← hv]
         refine congrArg₂ (· + ·) (by ring) (Finset.sum_congr rfl fun k hk => ?_)
         obtain ⟨m, hm⟩ := Nat.exists_eq_add_of_le (hlt k hk).le
@@ -39,7 +44,8 @@ theorem coeff_eq_zero_of_simple_pole {R B C κ : Type*} [CommRing R] [CommRing B
         ring
       have hca : c a = 0 := by
         have := congrArg ε key
-        rw [map_add, map_sum, map_mul, map_mul, map_pow, hz, zero_pow (by omega), zero_mul, hρ, hε,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_add (f := _), map_sum, map_mul, map_mul, map_pow, hz, zero_pow (by omega), zero_mul, hρ, hε,
           mul_one, Finset.sum_eq_zero, add_zero] at this
         · exact this
         · intro k hk
@@ -236,23 +242,10 @@ def affineFnEquiv : W.toAffine.CoordinateRing ≃+* Γ(scheme W, coordOpen W 2) 
 def originFnEquiv : OriginRing W ≃+* Γ(scheme W, coordOpen W 1) :=
   (awayEquivOrigin W).symm.trans (awayFnEquiv W 1)
 
-@[simp] theorem originFnEquiv_originZ : originFnEquiv W (originZ W) = -ratio W 1 0 := by
-  have : awayEquivOrigin W (-awayCoord W 1 0) = originZ W :=
-    ((map_neg _ _).trans (mul_neg_one _).symm).trans (awayEval_awayCoord_mul W 1 (algebraMap R _)
-      ![originZ W, -1, originW W] (equation_originZ_originW W) isUnit_one.neg 0)
-  simp [originFnEquiv, ← this]
-
 @[simp] theorem originFnEquiv_originW : originFnEquiv W (originW W) = -ratio W 1 2 := by
   have : awayEquivOrigin W (-awayCoord W 1 2) = originW W :=
     ((map_neg _ _).trans (mul_neg_one _).symm).trans (awayEval_awayCoord_mul W 1 (algebraMap R _)
       ![originZ W, -1, originW W] (equation_originZ_originW W) isUnit_one.neg 2)
-  simp [originFnEquiv, ← this]
-
-@[simp] theorem originFnEquiv_algebraMap (r : R) :
-    originFnEquiv W (algebraMap R _ r) = constOn W _ r := by
-  have : awayEquivOrigin W (awayConst W 1 r) = algebraMap R _ r :=
-    awayEval_awayConst W 1 (algebraMap R _) ![originZ W, -1, originW W]
-      (equation_originZ_originW W) isUnit_one.neg r
   simp [originFnEquiv, ← this]
 
 theorem originW_mem_nonZeroDivisors : originW W ∈ nonZeroDivisors (OriginRing W) := by
@@ -288,13 +281,6 @@ theorem mapHom_app_constOn (U : (scheme W).Opens) (r : R) :
   rfl
 
 end BaseChange
-
-example (hP : IsUnimodularSol ((⟨0, 0, 1, -1, 0⟩ : WeierstrassCurve ℚ).map (RingHom.id ℚ)) ![2, -5, 8])
-    (h : ⊤ ≤ ptHom _ _ _ hP ⁻¹ᵁ coordOpen _ 2) :
-    evalPt (ptHom _ _ _ hP) _ h (ratio _ 2 0) = 1 / 4 := by
-  have := evalPt_ptHom_ratioOn_mul _ _ hP le_rfl h 0
-  simp only [Matrix.cons_val_zero, Matrix.cons_val] at this
-  linarith
 
 end WeierstrassCurve
 

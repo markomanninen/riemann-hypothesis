@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -179,8 +183,6 @@ structure LinDat {p : ℕ} [Fact p.Prime] {g d r m : ℕ} {C : Type} [Field C] {
 
 theorem isEigBasis_iff {O OE : Type} [CommRing O] [CommRing OE] {d s : ℕ} (act : OE → Fin d → PS O 1 d)
     (τ : OE →+* O) (w : Fin s → Fin d → O) : IsEigBasis act τ w ↔ EigB (fun a => linPart (act a)) τ w := Iff.rfl
-
-theorem lin_eq_linPart {O : Type} [CommRing O] {d : ℕ} (φ : Fin d → PS O 1 d) : lin φ = linPart φ := rfl
 
 theorem splitEx_one {R : Type} [CommRing R] (d : ℕ) :
     SplitEx (1 : Matrix (Fin d) (Fin d) R) (0 : Matrix (Fin 0) (Fin d) R) :=

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TopLeWchartNsmul
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormPullEqOfLbIsoPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TopLeWchartNsmul
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormPullEqOfLbIsoPow
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames CategoryTheory.MonObj GlobalTheory.AbelianLetters
 open scoped LaurentSeries
@@ -95,7 +100,7 @@ theorem exists_entire_unit_automorphy :
     exact div_ne_zero (hne _ _ hj) (mul_ne_zero (val_ne_zero _ φ w _ _ hj hi) (u.fr_ne _ _ hi))
   · obtain ⟨j, i, hj, hi⟩ := hchart z
     have hper : u.ex (F (z + la)) = u.ex (F z) := by
-      rw [map_add, hl, u.ex_add, (u.ker l).2 l.2, _root_.mul_one]
+      rw [map_add (f := _), hl, u.ex_add, (u.ker l).2 l.2, _root_.mul_one]
     have hj' : ⊤ ≤ ((u.ex (F (z + la))).left ≫ φ) ⁻¹ᵁ L.U j := by rwa [hper]
     have hi' : ⊤ ≤ (u.ex (F (z + la))).left ⁻¹ᵁ L'.U i := by rwa [hper]
     have h1 := hu.2.2.2 l i (F z) hi
@@ -107,7 +112,7 @@ theorem exists_entire_unit_automorphy :
     rw [hrφ (j, i) z ⟨hj, hi⟩, hrφ (j, i) (z + la) ⟨hj', hi'⟩]
     simp only [hper] at t2 ⊢
     rw [← mul_div_assoc, ← mul_div_assoc, ← t1, ← t2]
-    rw [map_add, hl] at n2 ⊢
+    rw [map_add (f := _), hl] at n2 ⊢
     rw [h1] at n1 ⊢
     have n4 := left_ne_zero_of_mul n1
     simp only [hermForm]

@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
-import GroundTheory.AutomorphicForms.ReductionIdele
-import GroundTheory.AutomorphicForms.GL2.GJGlobalLattice
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+public import GroundTheory.AutomorphicForms.ReductionIdele
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalLattice
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -17,7 +22,7 @@ private theorem re_mul' (a b : A ℚ) :
 
 private theorem re_add' (a b : A ℚ) :
     UpperTheory.ConvolutionTheory.RankTwoDescent.re (a + b) = UpperTheory.ConvolutionTheory.RankTwoDescent.re a + UpperTheory.ConvolutionTheory.RankTwoDescent.re b := by
-  simp only [UpperTheory.ConvolutionTheory.RankTwoDescent.re, map_add, Pi.add_apply]
+  simp only [UpperTheory.ConvolutionTheory.RankTwoDescent.re, map_add (f := _), Pi.add_apply]
 
 private theorem pInf_id' (u : (TR.Rinf ℚ)ˣ) : TR.pInf ℚ (TR.infId ℚ u).val = u.val := by
   change TR.pInf ℚ (1 - TR.sInf ℚ 1 + TR.sInf ℚ _) = _
@@ -25,15 +30,15 @@ private theorem pInf_id' (u : (TR.Rinf ℚ)ˣ) : TR.pInf ℚ (TR.infId ℚ u).va
   simp [h]
 
 private theorem re_iy' {s : ℝ} (hs : s ≠ 0) : UpperTheory.ConvolutionTheory.RankTwoDescent.re (UpperTheory.ConvolutionTheory.RankTwoDescent.iy s : A ℚ) = s := by
-  simp only [UpperTheory.ConvolutionTheory.RankTwoDescent.re, UpperTheory.ConvolutionTheory.RankTwoDescent.iy, dif_neg hs, pInf_id']
+  simp only [UpperTheory.ConvolutionTheory.RankTwoDescent.re, UpperTheory.ConvolutionTheory.RankTwoDescent.iy, dite_eq_right hs, pInf_id']
 
 private theorem snd_iy' {s : ℝ} (hs : s ≠ 0) : (UpperTheory.ConvolutionTheory.RankTwoDescent.iy s : A ℚ).2 = 1 := by
-  simp only [UpperTheory.ConvolutionTheory.RankTwoDescent.iy, dif_neg hs]
+  simp only [UpperTheory.ConvolutionTheory.RankTwoDescent.iy, dite_eq_right hs]
   change (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) - 0 + 0 = 1
   simp
 
 theorem UpperTheory.schwartzBruhat_translate_decay_bound :
-    ∀ (Φ : (Fin 2 → A ℚ) → ℂ), Φ ∈ schwartzBruhatPi ℚ (Fin 2) → ∀ (C : Set (GL (Fin 2) (A ℚ))), IsCompact C → ∀ N : ℕ,
+    ∀ (Φ : (Fin 2 → A ℚ) → ℂ), Φ ∈ schwartzBruhatPi (K := ℚ) (ι := Fin 2) → ∀ (C : Set (GL (Fin 2) (A ℚ))), IsCompact C → ∀ N : ℕ,
         ∃ (B κ : ℝ) (L : Set (Fin 2 → FiniteAdeleRing (𝓞 ℚ) ℚ)), 0 ≤ B ∧ 0 < κ ∧ κ ≤ 1 ∧ IsCompact L ∧
           ∀ (t : ℝ), ∀ k ∈ C, ∀ y : Fin 2 → A ℚ,
             ‖Φ fun j => (UpperTheory.ConvolutionTheory.RankTwoDescent.iy (Real.exp t) : A ℚ) * (y ᵥ* k.val) j‖ ≤
@@ -50,7 +55,7 @@ theorem UpperTheory.schwartzBruhat_translate_decay_bound :
     (((continuous_apply Rat.infinitePlace).comp continuous_fst).comp (hent i j)).norm
   obtain ⟨B1, hB1⟩ := hC.exists_bound_of_continuousOn
     (f := fun k : GL (Fin 2) (A ℚ) => ∑ i, ∑ j, ‖((k⁻¹).val i j).1 Rat.infinitePlace‖)
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => hnorm i j).continuousOn
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => hnorm i j).continuousOn
   have hBk0 : 0 ≤ max B1 0 := le_max_right _ _
   have hBk : ∀ k ∈ C, ∀ i j, |UpperTheory.ConvolutionTheory.RankTwoDescent.re ((k⁻¹).val i j)| ≤ max B1 0 := by
     intro k hk i j

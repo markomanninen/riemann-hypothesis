@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.JointServices.ValIntNonneg
-import Formalism.LocalToGlobal.Divisibility.DivisibilityProofs.NumbersP
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.JointServices.ValIntNonneg
+public import Formalism.LocalToGlobal.Divisibility.DivisibilityProofs.NumbersP
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.BasicNotions.DV

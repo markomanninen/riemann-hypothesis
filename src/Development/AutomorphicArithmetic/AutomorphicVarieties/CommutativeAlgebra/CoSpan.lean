@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -69,7 +73,7 @@ theorem UpperTheory.V.Alg.co_span :
     have h2 : y * z = (y - algebraMap O R a) * (z - algebraMap O R b) + a • z + b • y
         - algebraMap O R (a * b) := by
       simp only [Algebra.smul_def, map_mul]; ring
-    rw [h2, map_sub, map_add, map_add, h1, hD _ (hON _), map_smul, map_smul, hres y a ha, hres z b hb]
+    rw [h2, map_sub, map_add (f := _), map_add (f := _), h1, hD _ (hON _), map_smul, map_smul, hres y a ha, hres z b hb]
     simp only [Algebra.smul_def]; ring
   let f : R →ₐ[O] DualNumber (ResidueField O) :=
     { toFun := fun y => (res O R y, D y)

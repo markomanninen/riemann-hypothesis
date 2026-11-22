@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -9,21 +13,26 @@ theorem one_mem_of_mul_mem_of_forall_prime_not_dvd (X : Type) [Finite X]
   have h1 : ∀ x : X, ∃ f ∈ S, f x = 1 := by
     intro x
     obtain ⟨d, hd⟩ := Int.subgroup_cyclic (S.map (Pi.evalAddMonoidHom (fun _ : X => ℤ) x))
-    rw [← AddSubgroup.zmultiples_eq_closure] at hd
-    have hd1 : d.natAbs = 1 := by
+    have hd1 : (d : ℤ).natAbs = 1 := by
       rw [Nat.eq_one_iff_not_exists_prime_dvd]
       intro p pp hpd
       obtain ⟨f, hf, hnd⟩ := hp x p pp
       apply hnd
-      have hmem : f x ∈ AddSubgroup.zmultiples d := by
-        rw [← hd]
-        exact ⟨f, hf, rfl⟩
+      have hmem : f x ∈ AddSubgroup.zmultiples (d : ℤ) := by
+        obtain ⟨z, hz⟩ := hd ⟨f x, ⟨f, hf, rfl⟩⟩
+        rw [Int.mem_zmultiples_iff]
+        refine ⟨z, ?_⟩
+        simpa [zsmul_eq_mul, mul_comm] using (congrArg Subtype.val hz).symm
       exact (Int.natCast_dvd.mpr hpd).trans (Int.mem_zmultiples_iff.mp hmem)
-    have : (1 : ℤ) ∈ AddSubgroup.zmultiples d := by
+    have : (1 : ℤ) ∈ AddSubgroup.zmultiples (d : ℤ) := by
       rw [Int.mem_zmultiples_iff]
       exact isUnit_iff_dvd_one.mp (Int.isUnit_iff_natAbs_eq.mpr hd1)
-    rw [← hd] at this
-    obtain ⟨f, hf, hfx⟩ := this
+    have hmap : (1 : ℤ) ∈ S.map (Pi.evalAddMonoidHom (fun _ : X => ℤ) x) := by
+      obtain ⟨z, hz⟩ := Int.mem_zmultiples_iff.mp this
+      have hzmem : z • (d : ℤ) ∈ S.map (Pi.evalAddMonoidHom (fun _ : X => ℤ) x) :=
+        AddSubgroup.zsmul_mem _ d.property z
+      simpa [hz, mul_comm] using hzmem
+    obtain ⟨f, hf, hfx⟩ := hmap
     exact ⟨f, hf, hfx⟩
   choose f hfS hf1 using h1
   have key : ∀ s : Finset X, 1 - ∏ x ∈ s, (1 - f x) ∈ S := by

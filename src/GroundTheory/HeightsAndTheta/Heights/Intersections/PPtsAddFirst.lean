@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsAddFirst
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsAddFirst
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

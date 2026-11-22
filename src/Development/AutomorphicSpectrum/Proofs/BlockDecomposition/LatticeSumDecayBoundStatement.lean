@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeSumDecayBound
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeSumDecayBound
+
+@[expose] public section
+
 open scoped ENNReal
 
 set_option maxHeartbeats 1000000 in

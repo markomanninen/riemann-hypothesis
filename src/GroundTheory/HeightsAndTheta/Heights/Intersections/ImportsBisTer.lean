@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsLocalizationConeVarMap
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsLocalizationConeVarMap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -8,14 +13,14 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo IsLocalRing
 
 noncomputable section
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem regularityLocalFlat_holds.proof : regularityLocalFlat_holds.Statement := by
   intro K _ ι _ P W hP hW hPW
   have := hP.1
   have := hW.1
   choose v hv using hW.2.2
-  have hA := regularityLocalFlat_holds.isLocalRing hPW
+  have hA := regularityLocalFlat_holds.isLocalRing (P := P) (W := W) hPW
   have hloc := regularityLocalFlat_holds.isLocalization_coneVarMap hPW hP.2.1 hW.2.1 v hv
   let _ := (regularityLocalFlat_holds.coneVarMap P W hPW v).toRingHom.toAlgebra
   have := regularityLocalFlat_holds.isPrime_map_C K (maximalIdeal (locRing P W))

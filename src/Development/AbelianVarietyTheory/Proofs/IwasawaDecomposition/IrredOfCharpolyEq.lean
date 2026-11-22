@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.IrreducibilityOfTheoremThree
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRepMatrixEqTopOfAbsIrreducible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyMonoidAlgebraLiftEqOfCharpolyEq
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.IrreducibilityOfTheoremThree
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRepMatrixEqTopOfAbsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyMonoidAlgebraLiftEqOfCharpolyEq
+
+@[expose] public section
+
 open Formalism.MainNotions.N
 
 noncomputable section
@@ -22,7 +27,7 @@ theorem liftRep_mem (ρ : Γ →* GL (Fin a) k) (W : Submodule k (Fin a → k))
     ∀ x ∈ W, liftRep ρ α *ᵥ x ∈ W := by
   induction α using MonoidAlgebra.induction_linear with
   | zero => intro x _; simp [W.zero_mem]
-  | add p q hp hq => intro x hx; rw [map_add, add_mulVec]; exact W.add_mem (hp x hx) (hq x hx)
+  | add p q hp hq => intro x hx; rw [map_add (f := _), add_mulVec]; exact W.add_mem (hp x hx) (hq x hx)
   | single g c =>
     intro x hx
     rw [MonoidAlgebra.lift_single, Matrix.smul_mulVec]
@@ -72,7 +77,7 @@ theorem irred_of_charpoly_eq [IsAlgClosed k] (ρ ρ' : Γ →* GL (Fin a) k)
     ⟨0, fun x _ => by simp, by simp⟩
     (by
       rintro _ _ ⟨α, hα, rfl⟩ ⟨β, hβ, rfl⟩
-      exact ⟨α + β, fun x hx => by rw [map_add, add_mulVec, hα x hx, hβ x hx, add_zero],
+      exact ⟨α + β, fun x hx => by rw [map_add (f := _), add_mulVec, hα x hx, hβ x hx, add_zero],
         map_add _ _ _⟩)
     (by
       rintro _ ⟨α, hα, rfl⟩

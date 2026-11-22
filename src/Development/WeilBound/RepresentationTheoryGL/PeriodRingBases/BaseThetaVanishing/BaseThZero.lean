@@ -1,11 +1,15 @@
-import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
+
+@[expose] public section
 
 noncomputable section
 
 namespace period_ring_base
 
-open Formalism.Per6 hiding σB aB
-open GroundTheory.PAdicHodge DeRhamPotentiallySemistable.DRPst PfDRPst Matrix
+open Formalism.Per6
+open GroundTheory.PAdicHodge DeRhamPotentiallySemistable.DRPst Matrix
 
 open Topology Filter
 
@@ -19,7 +23,7 @@ theorem toBot_mul (g h : GQ l) : toBot (g * h) = toBot g * toBot h := AlgEquiv.e
 
 theorem th_alg (b : BdRp l) : th l (algebraMap (BdRp l) (BdR l) b) = θD l b := by
   have hm : algebraMap (BdRp l) (BdR l) b ∈ Plus l := ⟨b, rfl⟩
-  rw [th, dif_pos hm]
+  rw [th, dite_eq_left hm]
   congr 1
   exact IsFractionRing.injective (BdRp l) (BdR l) (RingHom.mem_range.1 hm).choose_spec
 
@@ -81,7 +85,7 @@ theorem base_σC_mul : ∀ (g h : GQ l) x, σC (g * h) x = σC g (σC h x) := by
 theorem base_σ_u : ∀ g : GQ l, σD g (uQ l) = uQ l + qQ l (κ g) * tQ l := by
   intro g
   show σD g (algebraMap (BdRp l) (BdR l) (uBdR l)) = _
-  rw [σD_alg, gal_smul_uBdR_eq untilt_epsilon untilt_frobeniusEquiv_symm_epsilon_ne_one (toBot g), map_add,
+  rw [σD_alg, gal_smul_uBdR_eq untilt_epsilon untilt_frobeniusEquiv_symm_epsilon_ne_one (toBot g), map_add (f := _),
     map_mul, tQ_alg]
   rfl
 
@@ -103,7 +107,7 @@ theorem base_th_σ : ∀ (g : GQ l) x, x ∈ Plus l → th l (σD g x) = σC g (
 
 theorem base_th_add : ∀ x ∈ Plus l, ∀ y ∈ Plus l, th l (x + y) = th l x + th l y := by
   rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩
-  rw [← map_add, th_alg, th_alg, th_alg, map_add]
+  rw [← map_add (f := _), th_alg, th_alg, th_alg, map_add (f := _)]
 
 theorem base_th_mul : ∀ x ∈ Plus l, ∀ y ∈ Plus l, th l (x * y) = th l x * th l y := by
   rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩

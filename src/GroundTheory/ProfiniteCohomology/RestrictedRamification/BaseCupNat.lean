@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoincarePairs.Natural
-import GroundTheory.ProfiniteCohomology.PoincarePairs
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.CompactCupEqCompactCupRight
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.Natural
+public import GroundTheory.ProfiniteCohomology.PoincarePairs
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.CompactCupEqCompactCupRight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

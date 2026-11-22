@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RulePos
+module
+
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.RulePos
+
+@[expose] public section
 
 noncomputable section
 
@@ -6,8 +10,8 @@ namespace Formalism.MainNotions.V.Pf.V2.Calc
 
 open IsLocalRing Filter
 
-open E4 in
 
+open E4 in
 theorem ruleMono : RuleMono := by
   intro k X ts F' F F'' hv hF' hF hF'' S hA
   have hle : F.Ann ≤ F'.Ann := by

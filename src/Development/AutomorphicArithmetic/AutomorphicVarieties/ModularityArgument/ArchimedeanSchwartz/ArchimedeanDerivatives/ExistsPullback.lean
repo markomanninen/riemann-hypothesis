@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.NormChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExpOfMultiset
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdelicAbsValueCpowCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalLetterCentralExponentPropertiesStatement
-import GroundTheory.AutomorphicForms.TensorProductTheorem.CentralCusp
-import GroundTheory.AutomorphicForms.UnitaryAdmissible.CuspCentral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.NormChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExpOfMultiset
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdelicAbsValueCpowCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalLetterCentralExponentPropertiesStatement
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.CentralCusp
+public import GroundTheory.AutomorphicForms.UnitaryAdmissible.CuspCentral
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,15 +26,15 @@ private theorem exists_pullback {V C L G : Type*} [AddCommGroup V] [Module ℂ V
     ∃ Bf : V →ₗ⋆[ℂ] V →ₗ[ℂ] ℂ, (∀ x y, Bf y x = starRingEnd ℂ (Bf x y)) ∧ (∀ x, x ≠ 0 → 0 < (Bf x x).re) ∧
       ∀ g x y, Bf (T g x) (T g y) = Bf x y := by
   refine ⟨LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) (fun φ ψ => inner ℂ (p (j φ)) (p (j ψ)))
-    (fun _ _ _ => by rw [map_add, map_add, inner_add_left]) (fun _ _ _ => by rw [map_smul, map_smul, inner_smul_left]; rfl)
-    (fun _ _ _ => by rw [map_add, map_add, inner_add_right]) (fun _ _ _ => by rw [map_smul, map_smul, inner_smul_right]; rfl),
+    (fun _ _ _ => by rw [map_add (f := _), map_add (f := _), inner_add_left]) (fun _ _ _ => by rw [map_smul, map_smul, inner_smul_left]; rfl)
+    (fun _ _ _ => by rw [map_add (f := _), map_add (f := _), inner_add_right]) (fun _ _ _ => by rw [map_smul, map_smul, inner_smul_right]; rfl),
     fun x y => (inner_conj_symm (p (j y)) (p (j x))).symm,
     fun x hx => re_inner_self_pos (𝕜 := ℂ).2 fun h => hx (hj x (h1 _ (hP x) (by rw [h, inner_zero_left]))), fun g x y => ?_⟩
   change inner ℂ (p (j (T g x))) (p (j (T g y))) = inner ℂ (p (j x)) (p (j y))
   rw [hT, hT]
   exact hS g _ _ (hP x) (hP y)
 
-private theorem exists_form {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} (π : CuspSub E a)
+private theorem exists_form {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} (π : CuspSub E a)
     (h0 : ∀ φ ∈ π.V, lie E a (oneL E a) φ = 0) (w : HeightOneSpectrum (𝓞 E)) :
     ∃ Bf : π.V →ₗ⋆[ℂ] π.V →ₗ[ℂ] ℂ, (∀ x y, Bf y x = starRingEnd ℂ (Bf x y)) ∧ (∀ x, x ≠ 0 → 0 < (Bf x x).re) ∧
       ∀ g x y, Bf (π.locRep w g x) (π.locRep w g y) = Bf x y := by
@@ -48,12 +52,12 @@ private theorem exists_form {E : Type} [Field E] [NumberField E] [IsTotallyCompl
     have := (hj x).1
     rw [h1, map_zero] at this
     exact Subtype.ext this.symm
-  exact exists_pullback j (CuspidalSpectrum.cuspToL2 (Measure.haar : Measure (Reduction.normOneGL E a)))
+  exact exists_pullback j (CuspidalSpectrum.cuspToL2 (Measure.haar : Measure (Reduction.normOneGL (K := E) (n := a))))
     (fun g => π.locRep w g) (fun g => finRepCusp E a (locGL E a w g)) (· ∈ centralCuspForms E a) hc
     (fun x hx h => eq_zero_of_petersson_inner_self_eq_zero _ hx h) hinj hτ
     fun g x y hx hy => petersson_inner_finiteAdelic_invariant _ _ hx hy
 
-private theorem exists_twist {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} (ha : 1 ≤ a) (σ : CuspSub E a) :
+private theorem exists_twist {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} (ha : 1 ≤ a) (σ : CuspSub E a) :
     ∃ (χ : HChar E) (s : ℝ), (∀ φ ∈ (σ.twist χ).V, lie E a (oneL E a) φ = 0) ∧
       ∀ w : HeightOneSpectrum (𝓞 E), χ.UnrAt w ∧ ‖((χ.val w : ℂˣ) : ℂ)‖ = (Ideal.absNorm w.asIdeal : ℝ) ^ s := by
   have hd : ((a : ℂ) * (Module.finrank ℚ E : ℂ)) ≠ 0 :=

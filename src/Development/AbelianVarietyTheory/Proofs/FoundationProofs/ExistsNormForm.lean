@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -42,7 +46,7 @@ theorem form_bound {k σ : Type} [Field k] [Infinite k] [Fintype σ] (n : ℕ)
     have hcm : c = (F.coeff m0).natDegree :=
       le_antisymm (Finset.sup_le fun m hm => hmax m hm) (hcle m0 hm0)
     intro hG'
-    have h1 := congrArg (MvPolynomial.coeff m0) hG'
+    have h1 := congrArg (AddMonoidAlgebra.coeff · m0) hG'
     rw [hG, MvPolynomial.coeff_sum, Finset.sum_eq_single m0] at h1
     · rw [MvPolynomial.coeff_monomial, if_pos rfl, hcm, MvPolynomial.coeff_zero] at h1
       exact (MvPolynomial.mem_support_iff.mp hm0) (Polynomial.leadingCoeff_eq_zero.mp h1)
@@ -64,7 +68,7 @@ theorem form_bound {k σ : Type} [Field k] [Infinite k] [Fintype σ] (n : ℕ)
     have := hcle m hm
     omega
   · intro d p hp hpl
-    rw [MvPolynomial.eval_eq, Polynomial.finset_sum_coeff]
+    rw [MvPolynomial.eval_eq, Polynomial.finsetSum_coeff]
     have hterm : ∀ m ∈ F.support, (F.coeff m * ∏ i ∈ m.support, p i ^ m i).coeff (n * d + c) =
         (F.coeff m).coeff c * ∏ i ∈ m.support, lam i ^ m i := by
       intro m hm
@@ -75,7 +79,8 @@ theorem form_bound {k σ : Type} [Field k] [Infinite k] [Fintype σ] (n : ℕ)
     rw [Finset.sum_congr rfl hterm]
     have hev : MvPolynomial.eval lam G =
         ∑ m ∈ F.support, (F.coeff m).coeff c * ∏ i ∈ m.support, lam i ^ m i := by
-      rw [hG, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hG, map_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [MvPolynomial.eval_monomial, Finsupp.prod]
     rw [← hev]
@@ -108,7 +113,8 @@ theorem exists_norm_form {R A : Type} [CommRing R] [CommRing A] [Algebra R A] (n
     rw [Algebra.norm_eq_matrix_det b, RingHom.map_det]
     congr 1
     ext a c
-    simp [map_sum, Matrix.sum_apply, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Matrix.sum_apply, mul_comm]
 
 theorem norm_degree (k A : Type) [Field k] [Infinite k] [CommRing A] [IsDomain A]
     [Algebra k[X] A] (n : ℕ) (b : Module.Basis (Fin n) k[X] A) :

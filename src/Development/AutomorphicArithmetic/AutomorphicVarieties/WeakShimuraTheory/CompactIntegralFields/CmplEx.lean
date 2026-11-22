@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SpaceMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CmplPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SpaceMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CmplPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -22,12 +26,10 @@ theorem UpperTheory.V.Ws.cmplEx :
   · intro R' _ _ _ P' hP'
     obtain ⟨g, hg⟩ := X.univ R' _ P' hres hP'
     have hgx : (res Λ R').comp g = x := by
-      apply X.hom_ext
-      rw [← hmap, hg, hP'.red]
+      exact X.hom_ext _ _ (by rw [← hmap, hg, hP'.red])
     obtain ⟨h, hh, hu⟩ := huniv R' g hgx
     refine ⟨h, ?_, fun h' hh' => hu h' ?_⟩
     · dsimp only
       rw [hmap, hh, hg]
     · dsimp only at hh' ⊢
-      apply X.hom_ext
-      rw [← hmap, hh', hg]
+      exact X.hom_ext _ _ (by rw [← hmap, hh', hg])

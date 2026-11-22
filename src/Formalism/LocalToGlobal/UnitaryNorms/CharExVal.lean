@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.UnitaryNorms.CharExCol
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AlgValsFin
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.CharExCol
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AlgValsFin
+
+@[expose] public section
 
 namespace Formalism.L2.Host
 

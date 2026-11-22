@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,11 +29,11 @@ theorem lift_abstract (φ : A →+* B) (p : T → A →+* ℂ) (s : (T → ℂ) 
   let m : (T → Matrix n n ℂ) → Matrix n n A := fun g => 1 + Matrix.of fun i j => s fun τ => (g τ - 1) i j
   have m1 : ∀ g, (m g).map φ = 1 := by
     intro g; ext i j
-    simp only [m, Matrix.map_apply, Matrix.add_apply, Matrix.of_apply, map_add, hfin, add_zero, Matrix.one_apply]
+    simp only [m, Matrix.map_apply, Matrix.add_apply, Matrix.of_apply, map_add (f := _), hfin, add_zero, Matrix.one_apply]
     split_ifs <;> simp
   have m2 : ∀ g τ, (m g).map (p τ) = g τ := by
     intro g τ; ext i j
-    simp only [m, Matrix.map_apply, Matrix.add_apply, Matrix.of_apply, map_add, hcomp, Matrix.sub_apply,
+    simp only [m, Matrix.map_apply, Matrix.add_apply, Matrix.of_apply, map_add (f := _), hcomp, Matrix.sub_apply,
       Matrix.one_apply]
     split_ifs <;> simp
   have mext : ∀ x y : Matrix n n A, x.map φ = y.map φ → (∀ τ, x.map (p τ) = y.map (p τ)) → x = y := by
@@ -73,7 +77,7 @@ theorem snd_sigR {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] 
       sigR (Af F) σ ((Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)).toRingHom z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [RingHom.map_zero]
-  | add a b ha hb => simp only [RingHom.map_add, ha, hb]
+  | add a b ha hb => simp only [RingHom.map_add (f := _), ha, hb]
   | tmul a x => rfl
 
 theorem lift_unitary (D : D7) (θ : InfFam D) (σ : (D.what₂.Tau → ℂ) →+ AE D) (h : Chart θ σ) (V : HSp D)

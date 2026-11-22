@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlESymmApply
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlESymmApply
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZSt
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZZLoc
-import Formalism.SelfDualUnimodular.LocalLatticeDictionary.SemiGenusLocal
-import Formalism.SelfDualUnimodular.LocalLatticeDictionary.AlgebraMapNeZero
-import Formalism.SelfDualUnimodular.LocalLatticeDictionary.LocFin
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZSt
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZZLoc
+public import Formalism.SelfDualUnimodular.LocalLatticeDictionary.SemiGenusLocal
+public import Formalism.SelfDualUnimodular.LocalLatticeDictionary.AlgebraMapNeZero
+public import Formalism.SelfDualUnimodular.LocalLatticeDictionary.LocFin
+
+@[expose] public section
 
 namespace Formalism.L2.SG.Pf.LatDictZ
 

@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.StatBridgeChiOne
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.StatBridgeChiOne
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+
+@[expose] public section
 
 open Formalism.NG
 open Formalism.RepresentationBoundsCohomology.BR

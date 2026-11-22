@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DuStarPos
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SpreadLe
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
-import Formalism.SharpRestriction.InertJacobiLevels.HostFam
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DuStarPos
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SpreadLe
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+public import Formalism.SharpRestriction.InertJacobiLevels.HostFam
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain GlobalTheory.Mem
 open scoped TensorProduct
@@ -24,14 +28,14 @@ theorem mod_eq_one_of_norm {E : Type} [Field E] [NumberField E] (c : E →+* E) 
   have hm0 : (m : E) ≠ 0 := by exact_mod_cast (by omega : m ≠ 0)
   have hm0' : (m : ℚ) ≠ 0 := by exact_mod_cast (by omega : m ≠ 0)
   have hx : algebraMap ℚ E (((p : ℚ) - 1) / m) = (a : E) + c a + (m : E) * ((a : E) * c a) := by
-    rw [map_div₀, map_sub, map_natCast, map_natCast, map_one, ← hn, hπ, map_add, map_one, map_mul, map_natCast]
+    rw [map_div₀, map_sub, map_natCast, map_natCast, map_one, ← hn, hπ, map_add (f := _), map_one, map_mul, map_natCast]
     field_simp
     ring
   have hxi : IsIntegral ℤ (algebraMap ℚ E (((p : ℚ) - 1) / m)) := by
     rw [hx]
     exact (hai.add hci).add (hmi.mul (hai.mul hci))
   have hqi : IsIntegral ℤ (((p : ℚ) - 1) / m) :=
-    (isIntegral_algebraMap_iff (algebraMap ℚ E).injective).1 hxi
+    (isIntegral_algebraMap_iff ).1 hxi
   obtain ⟨k, hk⟩ := IsIntegrallyClosed.isIntegral_iff.1 hqi
   have hk' : ((p : ℚ) - 1) = (k : ℚ) * m := by
     have : (k : ℚ) = ((p : ℚ) - 1) / m := by simpa using hk

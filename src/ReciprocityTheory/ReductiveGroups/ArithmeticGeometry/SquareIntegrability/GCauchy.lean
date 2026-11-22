@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ContDiffOfDifferentiableFd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.RCauchy
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ContDiffOfDifferentiableFd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.RCauchy
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -24,7 +28,7 @@ theorem gCauchy : GCauchyStatement := by
     ext j
     simp only [T, ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe,
       LinearMap.coe_toContinuousLinearMap', Function.comp_apply, LinearMap.funLeft_apply,
-      EuclideanSpace.equiv, PiLp.continuousLinearEquiv_symm_apply, EuclideanSpace.single_apply]
+      EuclideanSpace.equiv, PiLp.continuousLinearEquiv_symm_apply, PiLp.single_apply]
     by_cases h : j = i
     · subst h; simp
     · simp [h, Pi.single_apply, e.injective.ne h]

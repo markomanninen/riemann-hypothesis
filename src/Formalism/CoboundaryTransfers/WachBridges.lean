@@ -1,24 +1,21 @@
-import Formalism.CoboundaryTransfers.GammaStableTransfers.MemCoboundariesOfIsOneCoboundary
-import Formalism.CoboundaryTransfers.GammaStableTransfers.GammaStableOfGammaQUnitHolds
-import Formalism.CoboundaryTransfers.GammaStableTransfers.DiffOneSmulOfTower
-import Formalism.CoboundaryTransfers.GammaStableTransfers.TorsionKilledCriterionHolds
-import Formalism.CoboundaryTransfers.GammaStableTransfers.BridgeCL
-import Formalism.CoboundaryTransfers.GammaStableTransfers.BridgeLIFT
-import Formalism.CoboundaryTransfers.GammaStableTransfers.DepthPageFirstZetaFactorEqPrimePower
-import Formalism.CoboundaryTransfers.GammaStableTransfers.Transfer
-import Formalism.CoboundaryTransfers.GammaStableTransfers.WachLatticeNonemptyGamma
-import Formalism.CoboundaryTransfers.GammaStableTransfers.IntegralWachDefinitions
+module
+
+public import Formalism.CoboundaryTransfers.GammaStableTransfers.MemCoboundariesOfIsOneCoboundary
+public import Formalism.CoboundaryTransfers.GammaStableTransfers.GammaStableOfGammaQUnitHolds
+public import Formalism.CoboundaryTransfers.GammaStableTransfers.DiffOneSmulOfTower
+public import Formalism.CoboundaryTransfers.GammaStableTransfers.TorsionKilledCriterionHolds
+public import Formalism.CoboundaryTransfers.StatementBridge
+public import Formalism.WachModuleLifts.StatementW
+public import Formalism.LagrangeIdealLifts.Statement
+public import Formalism.FrobeniusContraction.Statement
+public import Formalism.CoboundaryTransfers.GammaStableTransfers.Transfer
+public import Formalism.CoboundaryTransfers.StatementAPI
+
+@[expose] public section
 
 noncomputable section
 
 namespace Formalism.CoboundaryTransfers
-
-theorem wach_api : Complex ∧ Submods ∧ CocZf ∧ HomMaps ∧ GammaQNOf ∧ DiagramChase₂ ∧ CoboundaryTransfer ∧
-    GradedStep ∧ GammaOnto ∧ ColBound ∧ LiftHf ∧ Mono ∧ IntDefs ∧ NonemptyQ ∧ NonemptyU ∧
-    NonemptyG :=
-  ⟨differentialsComplex_holds, cochainsSubmodules_holds, cocyclesFinite_holds, homPreservesCochains_holds, gammaStableOfGammaQUnit_holds, cocycleLiftOfExact_holds,
-    torsionKilledCriterion_holds, gammaGradedStep_holds, gammaImageProduct_holds, cokernelLengthBound_holds, finiteClassesLift_holds, liftsAt_mono,
-    integral_wach_definitions, wach_lattice_nonempty_Q, wach_lattice_nonempty_unramified, wach_lattice_nonempty_gamma⟩
 
 theorem lift_wach (O A : Type) [CommRing O] [CommRing A] [Algebra O A] (B : Base O A) (M : ℕ)
     (D₀ D₁ D₂ : Type)

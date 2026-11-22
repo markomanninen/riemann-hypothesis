@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
-import Formalism.SharpRestriction.GlobalTheoremInputs
+module
+
+public import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem sum_val_le {D : D7} (L : SizeData₂ D) (N : ℕ) (hN : N ≠ 0) :
   have h1 : Real.log N = ∑ l ∈ N.primeFactors, (padicValNat l N : ℝ) * Real.log l := by
     rw [Real.log_nat_eq_sum_factorization, Finsupp.sum, Nat.support_factorization]
     refine Finset.sum_congr rfl fun l hl => ?_
-    rw [Nat.factorization_def _ (Nat.prime_of_mem_primeFactors hl)]
+    rw [Nat.factorization_def _ (Nat.prime_of_mem_primeFactors hl), Nat.padicValNat_def]
   rw [h1, ← Finset.sum_filter_add_sum_filter_not _ (fun w => D.what₂.places.resChar w ∈ N.primeFactors)]
   have h0 : ∑ w ∈ (L.supp.filter (fun w => D.what₂.muAt w ≠ D.what₂.mu0)).filter
       (fun w => ¬ D.what₂.places.resChar w ∈ N.primeFactors),
@@ -28,7 +32,7 @@ theorem sum_val_le {D : D7} (L : SizeData₂ D) (N : ℕ) (hN : N ≠ 0) :
     have h2 := (Finset.mem_filter.1 hw).2
     have h3 : ¬ D.what₂.places.resChar w ∣ N := fun h =>
       h2 (Nat.mem_primeFactors.2 ⟨D.what₂.places.resChar_prime w, h, hN⟩)
-    rw [padicValNat.eq_zero_of_not_dvd h3]; simp
+    rw [Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd h3]; simp
   rw [h0, add_zero, ← Finset.sum_fiberwise_of_maps_to (g := fun w => D.what₂.places.resChar w) (t := N.primeFactors)
     (fun w hw => (Finset.mem_filter.1 hw).2)]
   refine Finset.sum_le_sum fun l hl => ?_

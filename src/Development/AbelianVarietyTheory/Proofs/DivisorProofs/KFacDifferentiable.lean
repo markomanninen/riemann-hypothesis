@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ def hTrans (σ : ℂ) (ν y : ℝ) : ℂ :=
 
 def cConst (σ : ℂ) : ℂ := hTrans σ 0 1
 
-variable (F) in
 
+variable (F) in
 def kFac (σ : ℂ) : ℂ :=
   ∏ _τ : Emb F, ((2 * (Real.pi : ℂ) * I)⁻¹ ^ 2 * ((2 * Real.pi : ℝ) : ℂ) ^ (-2 * σ))
 
@@ -46,17 +50,17 @@ def bOne (𝔞 𝔟 : Frac F) (σ : ℂ) (z : Emb F → ℂ) : ℂ :=
 
 def bZero (Zb : ℂ → ℂ) (𝔞 𝔟 : Frac F) (σ : ℂ) (z : Emb F → ℂ) : ℂ :=
   if σ = 0 then 0 else
-    kFac F σ * (omegaFactor 𝔞 : ℂ) * ((nrm 𝔟 : ℝ) : ℂ) ^ (-1 - 2 * σ) * Zb (1 + 2 * σ) *
+    kFac (F := F) σ * ((omegaFactor (F := F) 𝔞) : ℂ) * (((nrm (F := F) 𝔟) : ℝ) : ℂ) ^ (-1 - 2 * σ) * Zb (1 + 2 * σ) *
       ∏ τ : Emb F, (cConst σ * (((z τ).im : ℝ) : ℂ) ^ (-1 - 2 * σ))
 
 def gFun (Zb : ℂ → ℂ) (𝔞 𝔟 : Frac F) (σ : ℂ) (z : Emb F → ℂ) : ℂ :=
-  aPart 𝔞 σ + bZero Zb 𝔞 𝔟 σ z + kFac F σ * (omegaFactor 𝔞 : ℂ) * bOne 𝔞 𝔟 σ z
+  aPart 𝔞 σ + bZero Zb 𝔞 𝔟 σ z + kFac (F := F) σ * ((omegaFactor (F := F) 𝔞) : ℂ) * bOne 𝔞 𝔟 σ z
 
 def IsGood (P : ℂ → (Emb F → ℂ) → ℂ) : Prop :=
   (∀ σ ∈ halfPlane, ContDiffOn ℝ ∞ (P σ) (upperHalf F)) ∧
   (∀ w : List (Emb F × Bool), ∀ z ∈ upperHalf F, DifferentiableOn ℂ (fun σ => wirtWord w (P σ) z) halfPlane)
 
-theorem kFac_differentiable : Differentiable ℂ (kFac F) := by
+theorem kFac_differentiable : Differentiable ℂ (kFac (F := F)) := by
   intro σ
   unfold kFac
   rw [show (fun σ : ℂ => ∏ _τ : Emb F, ((2 * (Real.pi : ℂ) * I)⁻¹ ^ 2 * ((2 * Real.pi : ℝ) : ℂ) ^ (-2 * σ))) =
@@ -65,8 +69,5 @@ theorem kFac_differentiable : Differentiable ℂ (kFac F) := by
   refine DifferentiableAt.pow (DifferentiableAt.const_mul ?_ _) _
   refine DifferentiableAt.const_cpow (differentiableAt_id.const_mul _) (Or.inl ?_)
   exact_mod_cast (mul_pos two_pos Real.pi_pos).ne'
-
-example (𝔞 : Frac F) (σ : ℂ) (z : Emb F → ℂ) (a : F) : eisTerm 2 σ z (a, 0) = eisTerm 2 σ 0 (a, 0) := by
-  simp [eisTerm, latPt]
 
 end GlobalTheory.HeckeTwo

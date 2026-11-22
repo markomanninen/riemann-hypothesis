@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.CBlockValAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SChain
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SPrism
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SPrismMul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.CBlockValAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SChain
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SPrism
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SPrismMul
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK UpperTheory.V.ZK.Cl
 
@@ -35,8 +39,10 @@ theorem UpperTheory.V.ZK.Cl.cChain :
       have e := sPrism A H (k t) m (cm A (σH.comp (d t)) (m + 1) z)
       rw [hcyc, map_zero, add_zero, ← h2] at e
       rw [e, hconj t]
-    rw [map_add, map_sub, map_sum, h1, h1, hb]
-    simp only [map_smul, hp, map_sum, ← h2, smul_sub, Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sub, map_sum, h1, h1, hb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, hp, map_sum, ← h2, smul_sub, Finset.sum_sub_distrib]
     abel
   · have hk : ∀ t, H.subtype (k t) = (g t₀)⁻¹ * g t := by
       intro t
@@ -56,8 +62,10 @@ theorem UpperTheory.V.ZK.Cl.cChain :
     have hS := sPrism A G (g t₀) (m + 1) (cm A ρ (m + 2) b)
     rw [h1, hb, ← h2] at hS
     refine LinearMap.mem_range.mpr ⟨prism A (g t₀) (m + 2) (cm A ρ (m + 2) b) - ∑ t, n t • e t, ?_⟩
-    rw [map_sub, map_sum, eq_sub_of_add_eq hS]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, eq_sub_of_add_eq hS]
     simp only [map_smul, he, mul_inv_cancel_left]
-    simp only [map_add, map_sub, map_sum, map_smul, h3, hk, ← h2, hincl1, hincl2, hincl3]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sub, map_sum, map_smul, h3, hk, ← h2, hincl1, hincl2, hincl3]
     simp only [smul_sub, Finset.sum_sub_distrib]
     abel

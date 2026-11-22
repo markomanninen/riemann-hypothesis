@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.TB
 
@@ -25,7 +29,5 @@ theorem detAlg_holds : DetAlgSt := by
   have h := hr (MvPolynomial (Fin n) K ⧸ J) (Ideal.Quotient.factorₐ K hIJ)
   rw [← Ideal.Quotient.eq_zero_iff_mem]
   exact h
-
-example : (⊥ : Ideal (MvPolynomial (Fin 0) ℚ)).IsRadical := Ideal.isRadical_bot
 
 end ReciprocityTheory.ChartRestriction.G.TB

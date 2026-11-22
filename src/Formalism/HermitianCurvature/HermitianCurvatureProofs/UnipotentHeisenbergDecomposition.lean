@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLeviConjugationMeasure
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLeviConjugationMeasure
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ENNReal NNReal
@@ -157,13 +161,13 @@ lemma mat_ext {m : ℕ} {A B : Matrix (Fin m) (Fin m) ℂ} (h : ∀ u, A *ᵥ u 
 @[simp] lemma dual_base_vector_restriction_zero : res (es0 k r') = 0 := by
   funext j; simp only [es0, bvec, res]; exact Pi.single_eq_of_ne (lv_ne_iL j) _
 @[simp] lemma lift_F (y : Fin (2 * r' + k + 1) → ℂ) : liftVec k 1 r' y (iF k r') = 0 := by
-  simp only [liftVec]; rw [dif_neg (by rw [iF_val]; omega)]
+  simp only [liftVec]; rw [dite_eq_right (by rw [iF_val]; omega)]
 @[simp] lemma lift_L (y : Fin (2 * r' + k + 1) → ℂ) : liftVec k 1 r' y (iL k r') = 0 := by
-  simp only [liftVec]; rw [dif_neg (by rw [iL_val]; omega)]
+  simp only [liftVec]; rw [dite_eq_right (by rw [iL_val]; omega)]
 @[simp] lemma lift_res (y : Fin (2 * r' + k + 1) → ℂ) : res (liftVec k 1 r' y) = y := by
   funext j
   have := j.isLt
-  simp only [liftVec, res]; rw [dif_pos (by rw [lv_val]; omega)]
+  simp only [liftVec, res]; rw [dite_eq_left (by rw [lv_val]; omega)]
   congr 1
 
 lemma res_add (u w : Fin (2 * (1 + r') + k + 1) → ℂ) : res (u + w) = res u + res w := rfl
@@ -179,24 +183,24 @@ lemma herm_lift (u : Fin (2 * (1 + r') + k + 1) → ℂ) (y : Fin (2 * r' + k + 
 
 lemma lev_F (g : Mat k r') (q : Fin (2 * (1 + r') + k + 1)) :
     ιLev k 1 r' g (iF k r') q = if iF k r' = q then 1 else 0 := by
-  unfold ιLev; rw [dif_neg (by rw [iF_val]; omega)]
+  unfold ιLev; rw [dite_eq_right (by rw [iF_val]; omega)]
 
 lemma lev_L (g : Mat k r') (q : Fin (2 * (1 + r') + k + 1)) :
     ιLev k 1 r' g (iL k r') q = if iL k r' = q then 1 else 0 := by
-  unfold ιLev; rw [dif_neg (by rw [iL_val]; omega)]
+  unfold ιLev; rw [dite_eq_right (by rw [iL_val]; omega)]
 
 lemma lev_mF (g : Mat k r') (i : Fin (2 * r' + k + 1)) : ιLev k 1 r' g (lv k r' i) (iF k r') = 0 := by
   have := i.isLt
-  unfold ιLev; rw [dif_pos (by rw [lv_val]; omega), dif_neg (by rw [iF_val]; omega)]
+  unfold ιLev; rw [dite_eq_left (by rw [lv_val]; omega), dite_eq_right (by rw [iF_val]; omega)]
 
 lemma lev_mL (g : Mat k r') (i : Fin (2 * r' + k + 1)) : ιLev k 1 r' g (lv k r' i) (iL k r') = 0 := by
   have := i.isLt
-  unfold ιLev; rw [dif_pos (by rw [lv_val]; omega), dif_neg (by rw [iL_val]; omega)]
+  unfold ιLev; rw [dite_eq_left (by rw [lv_val]; omega), dite_eq_right (by rw [iL_val]; omega)]
 
 lemma lev_mm (g : Mat k r') (i j : Fin (2 * r' + k + 1)) : ιLev k 1 r' g (lv k r' i) (lv k r' j) = g i j := by
   have := i.isLt
   have := j.isLt
-  unfold ιLev; rw [dif_pos (by rw [lv_val]; omega), dif_pos (by rw [lv_val]; omega)]
+  unfold ιLev; rw [dite_eq_left (by rw [lv_val]; omega), dite_eq_left (by rw [lv_val]; omega)]
   congr 1
 
 lemma lev_mulVec_F (g : Mat k r') (u : Fin (2 * (1 + r') + k + 1) → ℂ) :

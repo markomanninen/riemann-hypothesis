@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColGeR
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PatternGroupStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColGeR
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PatternGroupStatement
+
+@[expose] public section
 
 open ReciprocityTheory.Ty.Fin GlobalTheory.CompanionTheory.TyFin.ColStep
 
@@ -10,7 +14,6 @@ noncomputable section
 namespace GlobalTheory.CompanionTheory.TyFin.ColStep.Avg
 
 open Classical in
-
 theorem sum_eq_zero_of_translates {G : Type} [Group G] [Fintype G] (N A : Set G) (h1 : (1 : G) ∈ A)
     (hN : ∀ v ∈ A, ∀ u, u * v ∈ N ↔ u ∈ N) (L χ : G → ℂ)
     (hL : ∀ u ∈ N, ∀ v ∈ A, L (u * v) = L u)
@@ -68,7 +71,7 @@ theorem unip_entry {v : GL (Fin d) K} (hv : v ∈ Formalism.IrreducibleCountingL
 
 theorem unip_subset_patSet {v : GL (Fin d) K}
     (hv : v ∈ Formalism.IrreducibleCountingLemmas.TYPES.unip K (Formalism.IrreducibleCountingLemmas.TYPES.twoBlock d j)) :
-    v ∈ patSet K (colGe d j) := by
+    v ∈ patSet (K := K) (colGe d j) := by
   intro i l
   constructor
   · rintro rfl
@@ -88,7 +91,7 @@ theorem unip_subset_patSet {v : GL (Fin d) K}
       · have := unip_entry hv (not_lt.1 hi) (not_lt.1 hl)
         simpa [e] using this
 
-theorem mul_entry {u v : GL (Fin d) K} (hu : u ∈ patSet K (colGe d j))
+theorem mul_entry {u v : GL (Fin d) K} (hu : u ∈ patSet (K := K) (colGe d j))
     (hv : v ∈ Formalism.IrreducibleCountingLemmas.TYPES.unip K (Formalism.IrreducibleCountingLemmas.TYPES.twoBlock d j)) {i l : Fin d}
     (hi : j ≤ (i : ℕ)) (hl : j ≤ (l : ℕ)) :
     ((u * v : GL (Fin d) K) : Matrix (Fin d) (Fin d) K) i l = (u : Matrix (Fin d) (Fin d) K) i l := by
@@ -106,7 +109,7 @@ theorem mul_entry {u v : GL (Fin d) K} (hu : u ∈ patSet K (colGe d j))
       rw [unip_entry hv hjk hl, if_neg hk, mul_zero]
   · simp
 
-theorem patChar_mul_unip (ψ₀ : AddChar K ℂ) {u v : GL (Fin d) K} (hu : u ∈ patSet K (colGe d j))
+theorem patChar_mul_unip (ψ₀ : AddChar K ℂ) {u v : GL (Fin d) K} (hu : u ∈ patSet (K := K) (colGe d j))
     (hv : v ∈ Formalism.IrreducibleCountingLemmas.TYPES.unip K (Formalism.IrreducibleCountingLemmas.TYPES.twoBlock d j)) :
     patChar (colGeE K d (j + 1)) ψ₀ (u * v) = patChar (colGeE K d (j + 1)) ψ₀ u := by
   unfold patChar
@@ -130,11 +133,11 @@ theorem wh_zero_row (K : Type) [Field K] [Fintype K] [DecidableEq K] (d j : ℕ)
     simp [Matrix.one_apply]
   have hP := isPat_colGe d j
   have hN : ∀ v ∈ Formalism.IrreducibleCountingLemmas.TYPES.unip K (Formalism.IrreducibleCountingLemmas.TYPES.twoBlock d j), ∀ u : GL (Fin d) K,
-      u * v ∈ patSet K (colGe d j) ↔ u ∈ patSet K (colGe d j) := by
+      u * v ∈ patSet (K := K) (colGe d j) ↔ u ∈ patSet (K := K) (colGe d j) := by
     intro v hv u
     have hv' : v ∈ GlobalTheory.CompanionTheory.PatGrp.patSubgroup (K := K) hP := unip_subset_patSet hv
     exact (GlobalTheory.CompanionTheory.PatGrp.patSubgroup (K := K) hP).mul_mem_cancel_right hv'
-  have key := sum_eq_zero_of_translates (patSet K (colGe d j))
+  have key := sum_eq_zero_of_translates (patSet (K := K) (colGe d j))
     (Formalism.IrreducibleCountingLemmas.TYPES.unip K (Formalism.IrreducibleCountingLemmas.TYPES.twoBlock d j)) h1 hN
     (fun u => (patChar (colGeE K d (j + 1)) ψ₀ u)⁻¹) χ
     (fun u hu v hv => by simp only [patChar_mul_unip ψ₀ hu hv]) (by simpa using hs)

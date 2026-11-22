@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeDescendsToFinitelyGeneratedSubringStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeDescendsToFinitelyGeneratedSubringStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -55,16 +59,18 @@ theorem frame_bc {σ : S →+* R} {n : ℕ} {p : Fin n → P} {l : Fin n → Dua
   induction hc using Submodule.span_induction with
   | mem _ hc =>
     obtain ⟨c, rfl⟩ := hc
-    conv_rhs => rw [← hp c, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← hp c, map_sum]
     simp [hl, LinearMap.map_smulₛₗ]
   | zero => simp
-  | add a b _ _ ha hb => simp only [map_add, add_smul, Finset.sum_add_distrib, ha, hb]
+  | add a b _ _ ha hb => simp only [map_add (f := _), add_smul, Finset.sum_add_distrib, ha, hb]
   | smul r a _ ha => simp only [map_smul, smul_eq_mul, mul_smul, ← Finset.smul_sum, ha]
 
 theorem dual_frame {n : ℕ} {p : Fin n → P} {l : Fin n → Dual S P}
     (hp : ∀ c, ∑ i, l i c • p i = c) (x : Dual S P) : ∑ i, x (p i) • l i = x := by
   ext c
-  conv_rhs => rw [← hp c, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← hp c, map_sum]
   simp [mul_comm]
 
 theorem exists_descent {τ : S →+* S₀} {σ₁ : S₀ →+* R} {σ : S →+* R} (hσ : ∀ a, σ₁ (τ a) = σ a)
@@ -83,7 +89,8 @@ theorem exists_descent {τ : S →+* S₀} {σ₁ : S₀ →+* R} {σ : S →+* 
   have fr := frame_bc hp f hf hl
   refine ⟨∑ i, (LinearMap.applyₗ (f₀ (p i))).smulRight (∑ j, b i j • l₁ j), fun x x' hx c ↦ ?_⟩
   conv_lhs => rw [← dual_frame fr x', ← fr (f₁ c)]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.smulRight_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.smulRight_apply,
     LinearMap.applyₗ_apply_apply, smul_eq_mul, map_mul, hb, k, ← hx, hc, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ ↦ Finset.sum_congr rfl fun j _ ↦ by ring
@@ -164,11 +171,12 @@ theorem ann_bc {Q Q' : Type*} [AddCommGroup Q] [Module S Q] [AddCommGroup Q'] [M
       exact (Submodule.mem_dualAnnihilator _).1 hu _
         (hW ▸ Submodule.subset_span ⟨_, Submodule.projection_apply_mem hN c, rfl⟩)
     have : v (f (θ c)) = v (f (q (θ c))) := by
-      conv_lhs => rw [← Submodule.projection_add_projection_eq_self hN c, map_add, map_add, map_add, z,
+      conv_lhs => rw [← Submodule.projection_add_projection_eq_self hN c, map_add (f := _), map_add (f := _), map_add (f := _), z,
         zero_add]
       simp [q]
     rw [this, ← hp (q (θ c))]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hee _ _ (ha' _), ha,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hee _ _ (ha' _), ha,
       LinearMap.map_smulₛₗ, smul_eq_mul, LinearMap.comp_apply, mul_comm]
   · rintro ⟨w, rfl⟩
     choose l' hl using fun i ↦ ef (l i)
@@ -182,8 +190,8 @@ theorem ann_bc {Q Q' : Type*} [AddCommGroup Q] [Module S Q] [AddCommGroup Q'] [M
 
 end Linear
 
-open scoped CategoryTheory.Obj in
 
+open scoped CategoryTheory.Obj in
 theorem exists_factor {S S' S'' : Scheme.{0}} {G : Over S} [GrpObj G] {G'' : Over S''} [GrpObj G'']
     {f : S' ⟶ S} {k : S'' ⟶ S'} {t : S'' ⟶ S} {φ : G''.left ⟶ G.left} (h : IsGrpPullback G'' G t φ)
     (e : k ≫ f = t) {g : ℕ} (hG : IsAbelianScheme G) (hg : SmoothOfRelativeDimension g G.hom) :
@@ -208,8 +216,7 @@ theorem bc_facts (P : AbelianDeRham) {S R : Type} [CommRing S] [CommRing R] {σ 
   refine ⟨top_le_iff.1 fun c _ ↦ ?_, h₁.exists, h₂⟩
   obtain ⟨z, rfl⟩ := h₁.2 c
   induction z with
-  | zero => simp
-  | add x y hx hy => rw [map_add]; exact add_mem (hx trivial) (hy trivial)
+  | add x y hx hy => simpa only [map_add] using add_mem (hx trivial) (hy trivial)
   | tmul x c => rw [liftSemi_tmul]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨c, rfl⟩)
 
 theorem exists_noeth_model (P : AbelianDeRham) {R : Type} [CommRing R] {g : ℕ} (A : Over (Sp R)) [GrpObj A]

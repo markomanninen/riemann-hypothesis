@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -126,8 +130,11 @@ theorem closure_mratio_of_eq (c : ∀ k, Bk n k) {W : (MP ℤ m n).Opens} (hW : 
   exact h
 
 theorem isAffineOpen_mchart_and_closure : ∀ (m : ℕ) (n : Fin (m + 1) → ℕ) (c : ∀ k, Bk n k),
-    IsAffineOpen (mchart c) ∧ Subring.closure (Set.range (mratio c)) = ⊤
-  | 0, n, c => by
+    IsAffineOpen (mchart c) ∧ Subring.closure (Set.range (mratio c)) = ⊤ := by
+  intro m
+  induction m with
+  | zero =>
+    intro n c
     let W : (MP ℤ 0 n).Opens := chart ℤ (n 0) (c 0)
     have e : W = mchart c := by
       apply Opens.ext
@@ -143,9 +150,10 @@ theorem isAffineOpen_mchart_and_closure : ∀ (m : ℕ) (n : Fin (m + 1) → ℕ
     refine Subring.subset_closure ⟨⟨0, j⟩, ?_⟩
     simp only [pullRatio, W]
     exact appLE_id_apply _ _ _
-  | m + 1, n, c => by
+  | succ m ih =>
+    intro n c
     let c' : ∀ k, Bk (Fin.tail n) k := fun j => c j.succ
-    obtain ⟨hV, hG⟩ := isAffineOpen_mchart_and_closure m (Fin.tail n) c'
+    obtain ⟨hV, hG⟩ := ih (Fin.tail n) c'
     have hU := isAffineOpen_chart ℤ (n 0) (c 0)
     let f := toSpecBase ℤ (n 0)
     let g := mpStr ℤ m (Fin.tail n)
@@ -293,9 +301,9 @@ theorem ptIdeal_le_of_specializes {x y : MP ℤ m n} (h : x ⤳ y) : ptIdeal x �
   rw [mem_ptIdeal_iff _ hx] at hf
   rw [mem_ptIdeal_iff _ hy]
   ext a
-  rw [coeff_map, coeff_zero]
-  have := congrArg (coeff a) hf
-  rw [coeff_map, coeff_zero] at this
+  have := congrArg (AddMonoidAlgebra.coeff · a) hf
+  rw [coeff_map] at this ⊢
+  change _ = 0 at this ⊢
   exact evaluation_eq_zero_of_specializes h hx hy _ this
 
 def mono (c : ∀ k, Bk n k) (a : Fin (m + 1) → ℕ) : Geo.MRing (Bk n) := ∏ k, X ⟨k, c k⟩ ^ a k
@@ -319,7 +327,7 @@ theorem exists_form (c : ∀ k, Bk n k)
     obtain ⟨f, a, hf⟩ := hs
     obtain ⟨g, b, hg⟩ := ht
     refine ⟨f * mono c b + g * mono c a, a + b, ?_⟩
-    simp only [map_add, map_mul, Phi_mono, hf, hg, Pi.add_apply, pow_add, Finset.prod_mul_distrib]
+    simp only [map_add (f := _), map_mul, Phi_mono, hf, hg, Pi.add_apply, pow_add, Finset.prod_mul_distrib]
     ring
   | neg s _ hs =>
     obtain ⟨f, a, hf⟩ := hs

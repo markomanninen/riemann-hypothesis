@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.StarFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.StarFacts
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.Pa UpperTheory.V.Th UpperTheory.V.Th.Coc
 
@@ -53,14 +57,14 @@ theorem UpperTheory.V.Th.Coc.polar :
   let eD : MonoidAlgebra R F.G₀ →+ Matrix (Fin n) (Fin n) X :=
     AddMonoidHom.mk' (fun a => Q * (d (F.star O R n a))ᵀ * Pb) (by
       intro a b
-      simp only [hsa, map_add, Matrix.transpose_add, Matrix.mul_add, Matrix.add_mul])
+      simp only [hsa, map_add (f := _), Matrix.transpose_add, Matrix.mul_add, Matrix.add_mul])
   have heD : ∀ a, eD a = Q * (d (F.star O R n a))ᵀ * Pb := fun a => rfl
   have h0 : F.star O R n 0 = 0 := by simpa using hsr 0 0
   have htS : ∀ a, t (F.star O R n a) = t a := by
     intro a
     induction a using MonoidAlgebra.induction_linear with
     | zero => rw [h0]
-    | add a b ha hb => rw [hsa, map_add, map_add, ha, hb]
+    | add a b ha hb => rw [hsa, map_add (f := _), map_add (f := _), ha, hb]
     | single g r =>
       have hs : (MonoidAlgebra.single g r : MonoidAlgebra R F.G₀) = r • MonoidAlgebra.single g 1 := by
         rw [MonoidAlgebra.smul_single', mul_one]

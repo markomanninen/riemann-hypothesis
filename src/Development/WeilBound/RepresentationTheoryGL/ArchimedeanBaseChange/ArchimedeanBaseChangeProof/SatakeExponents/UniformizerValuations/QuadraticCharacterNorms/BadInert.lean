@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.BadEx2
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.SymIdx
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableTwistedOrbitalIntegralIntegralNormCongruen
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.BadEx2
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.SymIdx
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableTwistedOrbitalIntegralIntegralNormCongruen
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem and4 {A B C D A' B' C' D' : Prop} (h1 : A ∧ B ↔ A' ∧ B') (h2 : C �
     fun ⟨a, b, c, d⟩ => ⟨(h1.2 ⟨a, b⟩).1, (h1.2 ⟨a, b⟩).2, (h2.2 ⟨c, d⟩).1, (h2.2 ⟨c, d⟩).2⟩⟩
 
 abbrev Cnd (n m : ℕ) (w : Pl E) (y : GLw n w) : Prop :=
-  y ∈ GlobalTheory.LFun.KGL w n ∧ nrmL n w y ∈ {g : GLw n w | g ∈ GlobalTheory.LFun.KGL w n ∧ ∀ i j,
+  y ∈ GlobalTheory.LFun.KGL w (n := n) ∧ nrmL n w y ∈ {g : GLw n w | g ∈ GlobalTheory.LFun.KGL w (n := n) ∧ ∀ i j,
     Valued.v (g.val i j - (1 : Matrix (Fin n) (Fin n) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(m : ℤ))}
 
 theorem cnd_iff {w : Pl E} (hw : ¬ IsSplitAt w) (n m : ℕ) {k : GLw n w} (hk : k ∈ GlobalTheory.PrincCong.congSub w n m)
@@ -47,7 +51,7 @@ theorem cnd_iff {w : Pl E} (hw : ¬ IsSplitAt w) (n m : ℕ) {k : GLw n w} (hk :
 
 theorem hecke_phi {w : Pl E} (hw : ¬ IsSplitAt w) (a b m : ℕ) (r c : ℂ) :
     IsHecke ((GlobalTheory.PrincCong.congSub w a m).prod (GlobalTheory.PrincCong.congSub w b m))
-      (fun y : GLw a w × GLw b w => r * (c * (if y.1 ∈ GlobalTheory.LFun.KGL w a ∧ nrmL a w y.1 ∈ {g : GLw a w | g ∈ GlobalTheory.LFun.KGL w a ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin a) (Fin a) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(m : ℤ))} ∧ y.2 ∈ GlobalTheory.LFun.KGL w b ∧ nrmL b w y.2 ∈ {g : GLw b w | g ∈ GlobalTheory.LFun.KGL w b ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin b) (Fin b) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(m : ℤ))} then 1 else 0))) := by
+      (fun y : GLw a w × GLw b w => r * (c * (if y.1 ∈ GlobalTheory.LFun.KGL w (n := a) ∧ nrmL a w y.1 ∈ {g : GLw a w | g ∈ GlobalTheory.LFun.KGL w (n := a) ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin a) (Fin a) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(m : ℤ))} ∧ y.2 ∈ GlobalTheory.LFun.KGL w (n := b) ∧ nrmL b w y.2 ∈ {g : GLw b w | g ∈ GlobalTheory.LFun.KGL w (n := b) ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin b) (Fin b) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(m : ℤ))} then 1 else 0))) := by
   refine ⟨?_, fun k hk x => ?_⟩
   · have ha := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w a
     have hb := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w b
@@ -67,7 +71,7 @@ theorem hecke_phi {w : Pl E} (hw : ¬ IsSplitAt w) (a b m : ℕ) (r c : ℂ) :
       exact ite_congr' (and4 f1 f2)
 
 theorem lone_eq {w : Pl E} {n m : ℕ} {KB : Subgroup (UL n w)} (hKB : IsCong m KB) :
-    U.lone KB = fun γ => ((KB.relIndex (KL n w) : ℕ) : ℂ) * ((({γ : UL n w | γ.1 ∈ {g : GLw n w | g ∈ GlobalTheory.LFun.KGL w n ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin n) (Fin n) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(m : ℤ))}} : Set (UL n w))).indicator 1 γ) := by
+    U.lone KB = fun γ => ((KB.relIndex (KL n w) : ℕ) : ℂ) * ((({γ : UL n w | γ.1 ∈ {g : GLw n w | g ∈ GlobalTheory.LFun.KGL w (n := n) ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin n) (Fin n) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(m : ℤ))}} : Set (UL n w))).indicator 1 γ) := by
   funext γ
   unfold U.lone
   simp only [Set.indicator_apply, Pi.one_apply]
@@ -90,7 +94,7 @@ theorem match_of {w : Pl E} (hw : ¬ IsSplitAt w) {n a b : ℕ} (μ : (w.adicCom
   rw [GlobalTheory.BCT.StTwLevel.clSum_const_mul]
   ring
 
-theorem bad_inert_pair_indicator_eq (n a b k : ℕ) (w : Pl E) : MB.pairIndicatorMatch n a b w k = fun y : GLw a w × GLw b w => ((-((Real.sqrt (qV E w : ℝ) : ℝ) : ℂ)) ^ (k * a * b))⁻¹ * (if y.1 ∈ GlobalTheory.LFun.KGL w a ∧ nrmL a w y.1 ∈ {g : GLw a w | g ∈ GlobalTheory.LFun.KGL w a ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin a) (Fin a) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(k : ℤ))} ∧ y.2 ∈ GlobalTheory.LFun.KGL w b ∧ nrmL b w y.2 ∈ {g : GLw b w | g ∈ GlobalTheory.LFun.KGL w b ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin b) (Fin b) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(k : ℤ))} then 1 else 0) := by
+theorem bad_inert_pair_indicator_eq (n a b k : ℕ) (w : Pl E) : MB.pairIndicatorMatch n a b w k = fun y : GLw a w × GLw b w => ((-((Real.sqrt (qV E w : ℝ) : ℝ) : ℂ)) ^ (k * a * b))⁻¹ * (if y.1 ∈ GlobalTheory.LFun.KGL w (n := a) ∧ nrmL a w y.1 ∈ {g : GLw a w | g ∈ GlobalTheory.LFun.KGL w (n := a) ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin a) (Fin a) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(k : ℤ))} ∧ y.2 ∈ GlobalTheory.LFun.KGL w (n := b) ∧ nrmL b w y.2 ∈ {g : GLw b w | g ∈ GlobalTheory.LFun.KGL w (n := b) ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin b) (Fin b) (w.adicCompletion E)) i j) ≤ WithZero.exp (-(k : ℤ))} then 1 else 0) := by
   funext y
   unfold MB.pairIndicatorMatch MB.congK
   congr 2
@@ -110,7 +114,7 @@ theorem badInert2 (h2 : M2) : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
   have hM := h2 E hE w hw n a (n - a) m (Nat.add_sub_cancel' ha) hm
   have e : fixFn n a w μ m KB = fun y => ((KB.relIndex (KL n w) : ℕ) : ℂ) * MB.pairIndicatorMatch n a (n - a) w m y := by
     unfold fixFn
-    rw [dif_pos ha, if_neg hw]
+    rw [dite_eq_left ha, if_neg hw]
   rw [e, BadInertP.bad_inert_pair_indicator_eq]
   exact ⟨_, ⟨_, _, rfl, GlobalTheory.BCT.StTwLevel.lev_level hw a m, GlobalTheory.BCT.StTwLevel.lev_level hw (n - a) m⟩,
     BadInertP.hecke_phi hw a (n - a) m ((KB.relIndex (KL n w) : ℕ) : ℂ)

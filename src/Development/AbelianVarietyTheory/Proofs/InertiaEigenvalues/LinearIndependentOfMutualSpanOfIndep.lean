@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -22,7 +27,7 @@ theorem linIndep_of_mutual_span_of_indep :
       smul_add := fun r x y => map_add (act r) x y
       add_smul := fun r s w => by
         show act (r + s) w = act r w + act s w
-        rw [map_add, AddMonoidHom.add_apply]
+        rw [map_add (f := _), AddMonoidHom.add_apply]
       zero_smul := fun w => by
         show act 0 w = 0
         rw [map_zero, AddMonoidHom.zero_apply] }

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.IsPhysSet
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.IsPhysSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,7 @@ theorem map_contractLeft {M N : Type*} [AddCommGroup M] [Module ℂ M] [AddCommG
       CliffordAlgebra.contractLeft d (ExteriorAlgebra.map f x) := by
   induction x using CliffordAlgebra.left_induction with
   | algebraMap r => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | ι_mul x m hx =>
     rw [CliffordAlgebra.contractLeft_ι_mul, map_sub, map_smul, map_mul, hx, map_mul,
       ExteriorAlgebra.map_apply_ι, CliffordAlgebra.contractLeft_ι_mul, LinearMap.comp_apply]

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+
+@[expose] public section
 
 open NumberField Matrix Module
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -20,7 +24,7 @@ theorem symm_contraction (F F₀ : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ) (N : V �
       s * starRingEnd ℂ t * F z w + starRingEnd ℂ s * t * F (N z) (N w) +
       starRingEnd ℂ s * starRingEnd ℂ t * F (N z) w + s * t * F z (N w) := by
     intro s t z w
-    simp only [map_add, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       Complex.conj_conj]
     ring
   have expand₀ : ∀ (s t : ℂ) (z w : V), F₀ (s • z) (t • w) = s * starRingEnd ℂ t * F₀ z w := by
@@ -82,13 +86,13 @@ theorem exists_lin_anti (T : V →+ V) (hT : ∀ (r : ℝ) z, T ((r : ℂ) • z
     rw [smul_smul, Complex.I_mul_I, neg_smul, one_smul, map_neg]
   have hTc : ∀ (c : ℂ) z, T (c • z) = (c.re : ℂ) • T z + (c.im : ℂ) • T (Complex.I • z) := by
     intro c z
-    conv_lhs => rw [← Complex.re_add_im c, add_smul, mul_smul, map_add, hT, hT]
+    conv_lhs => rw [← Complex.re_add_im c, add_smul, mul_smul, map_add (f := _), hT, hT]
   refine ⟨{ toFun := fun z => (1 / 2 : ℂ) • (T z - Complex.I • T (Complex.I • z)),
             map_add' := ?_, map_smul' := ?_ },
           { toFun := fun z => (1 / 2 : ℂ) • (T z + Complex.I • T (Complex.I • z)),
             map_add' := ?_, map_smul' := ?_ }, ?_⟩
   · intro x y
-    simp only [smul_add, map_add]
+    simp only [smul_add, map_add (f := _)]
     module
   · intro c z
     simp only [RingHom.id_apply]
@@ -99,12 +103,12 @@ theorem exists_lin_anti (T : V →+ V) (hT : ∀ (r : ℝ) z, T ((r : ℂ) • z
       | ring1
       | linear_combination ((c.im : ℂ) / 2) * Complex.I_sq
   · intro x y
-    simp only [smul_add, map_add]
+    simp only [smul_add, map_add (f := _)]
     module
   · intro c z
     rw [hTc c z, smul_comm Complex.I c z, hTc c (Complex.I • z), hTI]
     conv_rhs => rw [← Complex.re_add_im c]
-    simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+    simp only [map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_I]
     match_scalars <;>
       first
       | ring1
@@ -255,7 +259,8 @@ theorem isHermitian_iff (G : Matrix (Fin g) (Fin g) ℂ) :
   constructor
   · intro hG z w
     rw [sesq_apply, sesq_apply, hermForm, hermForm]
-    simp only [dotProduct, mulVec, map_sum, map_mul, Finset.mul_sum, Pi.star_apply, Complex.star_def,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, mulVec, map_sum, map_mul, Finset.mul_sum, Pi.star_apply, Complex.star_def,
       Complex.conj_conj]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -278,7 +283,8 @@ theorem exists_anti (N : (Fin g → ℂ) →ₗ⋆[ℂ] (Fin g → ℂ)) : ∃ Z
     simp [Pi.single_apply]
   rw [anti_apply]
   conv_lhs => rw [hz]
-  simp only [map_sum, LinearMap.map_smulₛₗ, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, mulVec, dotProduct,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, mulVec, dotProduct,
     Matrix.of_apply, Pi.star_apply, Complex.star_def]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 
@@ -358,7 +364,7 @@ theorem exists_herm (G Z : Matrix (Fin g) (Fin g) ℂ) (hG : G.IsHermitian)
     intro z
     have e : z + N z = M *ᵥ (M⁻¹ *ᵥ z + N (M⁻¹ *ᵥ z)) := by
       conv_lhs => rw [← hMMi z]
-      simp only [hMv, map_add, map_sub]
+      simp only [hMv, map_add (f := _), map_sub]
       abel
     rw [e, hMiM]
   have hF : ∀ x y, sesq ((M⁻¹)ᵀ * G) x y = sesq G (M⁻¹ *ᵥ x) y :=
@@ -382,7 +388,7 @@ theorem exists_herm (G Z : Matrix (Fin g) (Fin g) ℂ) (hG : G.IsHermitian)
   · intro z w
     obtain ⟨u, rfl⟩ : ∃ u, z = M *ᵥ u := ⟨M⁻¹ *ᵥ z, (hMMi z).symm⟩
     rw [hF, hcomm, hMiM, hMv]
-    simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply, Complex.add_im, Complex.sub_im]
+    simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply, Complex.add_im, Complex.sub_im]
     rw [hs u w, hs (N u) w, hH (N w) u, hH (N w) (N u), Complex.conj_im, Complex.conj_im]
     ring
 
@@ -407,7 +413,7 @@ theorem im_eq_of_span (P : M → (Fin g → ℂ)) (hs : Submodule.span ℝ (Set.
     | zero => intro b; simp
     | add y y' _ _ hy hy' =>
       intro b
-      simp only [map_add, LinearMap.add_apply, Complex.add_im, hy b, hy' b]
+      simp only [map_add (f := _), LinearMap.add_apply, Complex.add_im, hy b, hy' b]
     | smul r y _ hy =>
       intro b
       simp only [map_smul]
@@ -420,7 +426,7 @@ theorem im_eq_of_span (P : M → (Fin g → ℂ)) (hs : Submodule.span ℝ (Set.
     exact step z b
   | zero => simp
   | add y y' _ _ hy hy' =>
-    simp only [map_add, Complex.add_im, hy, hy']
+    simp only [map_add (f := _), Complex.add_im, hy, hy']
   | smul r y _ hy =>
     simp only [map_smul]
     simp only [hre]
@@ -460,7 +466,8 @@ theorem exists_extend [Module.Finite ℤ M] (P P' : M →+ (Fin g → ℂ)) (hi 
   have hsp : ⊤ ≤ Submodule.span ℝ (Set.range v) := by
     rw [← hs, Submodule.span_le]
     rintro _ ⟨a, rfl⟩
-    rw [SetLike.mem_coe, ← b.sum_repr a, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [SetLike.mem_coe, ← b.sum_repr a, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_zsmul]
     exact zsmul_mem (Submodule.subset_span (Set.mem_range_self i) : v i ∈ Submodule.span ℝ (Set.range v)) _
@@ -524,7 +531,7 @@ private lemma re_sesq_convex_of_pos_def (G : Matrix (Fin g) (Fin g) ℂ) (hp : �
     by_cases h : x - y = 0
     · simp [h]
     · exact (hp _ h).le
-  simp only [map_add, map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
+  simp only [map_add (f := _), map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
     map_smulₛₗ, Complex.conj_ofReal, smul_eq_mul, Complex.add_re, Complex.sub_re,
     Complex.re_ofReal_mul] at hxy ⊢
   have hc' : c = 1 - a := by linarith
@@ -575,7 +582,7 @@ theorem isOpen_convex {m : ℕ} (G : Matrix (Fin g) (Fin g) ℂ) (hp : ∀ z, z 
     exact sub_pos.mp (pos_of_mul_pos_right h1 hpos.le)
   · intro b1 hb1 b2 hb2 a c ha hc hac z hz
     have hW : anti (Z (a • b1 + c • b2)) z = (a : ℂ) • anti (Z b1) z + (c : ℂ) • anti (Z b2) z := by
-      rw [map_add, LinearMap.map_smul_of_tower, LinearMap.map_smul_of_tower, hA, hA, hA, Matrix.add_mulVec,
+      rw [map_add (f := _), LinearMap.map_smul_of_tower, LinearMap.map_smul_of_tower, hA, hA, hA, Matrix.add_mulVec,
         Matrix.smul_mulVec, Matrix.smul_mulVec, Complex.coe_smul, Complex.coe_smul]
     have e1 := hb1 z hz
     have e2 := hb2 z hz
@@ -728,14 +735,14 @@ theorem isPeriod_add (P : D.La →+ (Fin g → ℂ)) (hl : ∀ (a : 𝓞 E) x, P
 
   let T : (Fin g → ℂ) →ₗ[ℝ] (Fin g → ℂ) :=
     { toFun := fun z => z + anti Z z
-      map_add' := fun x y => by simp only [map_add]; abel
+      map_add' := fun x y => by simp only [map_add (f := _)]; abel
       map_smul' := fun r x => by
         simp only [RingHom.id_apply, smul_add, ← Complex.coe_smul, LinearMap.map_smulₛₗ,
           Complex.conj_ofReal] }
   have hT : ∀ z, T z = z + anti Z z := fun z => rfl
 
   have hTi : Function.Injective T := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     by_contra hne
     have hN : anti Z z = -z := eq_neg_of_add_eq_zero_right (by rw [← hT]; exact hz)
@@ -784,7 +791,7 @@ theorem exists_contraction (P : D.La →+ (Fin g → ℂ)) (hl : ∀ (a : 𝓞 E
     simpa using this
 
   have hAi : Function.Injective A := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     by_contra hne
     have e1 : T z = C z := by rw [hAC', hz, zero_add]
@@ -836,7 +843,7 @@ theorem exists_contraction (P : D.La →+ (Fin g → ℂ)) (hl : ∀ (a : 𝓞 E
   let F : (Fin g → ℂ) →ₗ[ℂ] (Fin g → ℂ) →ₗ⋆[ℂ] ℂ := ((sesq Hm').comp A).compl₂ A
   have hFa : ∀ z w, F z w = sesq Hm' (A z) (A w) := fun z w => rfl
   have hFT : ∀ z w, F (z + N z) (w + N w) = sesq Hm' (T z) (T w) := by
-    have e : ∀ u, A (u + N u) = T u := fun u => by rw [map_add, hN, hA, hAC']
+    have e : ∀ u, A (u + N u) = T u := fun u => by rw [map_add (f := _), hN, hA, hAC']
     intro z w
     rw [hFa, e, e]
   obtain ⟨hsy, hct⟩ := symm_contraction F (sesq G) N
@@ -852,7 +859,7 @@ theorem exists_contraction (P : D.La →+ (Fin g → ℂ)) (hl : ∀ (a : 𝓞 E
   · exact hsy
   · exact hct
   · intro x
-    rw [map_add, hh, hh, hN, hA, ← hAC', hTP]
+    rw [map_add (f := _), hh, hh, hN, hA, ← hAC', hTP]
 
 theorem conj_rt (H : Host E) (τ : E →+* ℂ) :
     (τ (H.rt : E) = H.rt0 ↔ ¬ ComplexEmbedding.conjugate τ (H.rt : E) = H.rt0) := by
@@ -989,7 +996,7 @@ theorem period_chart : (∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
 
   have hF : ∀ Z : Matrix (Fin g) (Fin g) ℂ, ∃ F : (Fin g → ℂ) →ₗ[ℝ] (Fin g → ℂ), ∀ z, F z = z + anti Z z := by
     intro Z
-    refine ⟨⟨⟨fun z => z + anti Z z, fun x y => by simp only [map_add]; abel⟩, fun r z => ?_⟩, fun z => rfl⟩
+    refine ⟨⟨⟨fun z => z + anti Z z, fun x y => by simp only [map_add (f := _)]; abel⟩, fun r z => ?_⟩, fun z => rfl⟩
     simp only [RingHom.id_apply, smul_add]
     congr 1
     rw [anti_apply, anti_apply, star_smul, star_trivial, Matrix.mulVec_smul]

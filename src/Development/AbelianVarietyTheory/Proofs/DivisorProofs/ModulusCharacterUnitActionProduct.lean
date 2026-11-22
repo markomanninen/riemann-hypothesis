@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullSpMapComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentMapIsIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralSurjectionCechDescentTateTwist
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyNegativeVanishingDegreeZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimplicialCochainClassesBasicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyOneCechCocycleOfPullbackZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimplicialCochainCoboundaryOfClassZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecWidePushoutIsoWidePullbackYonedaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCohomologyZeroLaurentSurjectiveStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullSpMapComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentMapIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralSurjectionCechDescentTateTwist
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyNegativeVanishingDegreeZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimplicialCochainClassesBasicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyOneCechCocycleOfPullbackZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimplicialCochainCoboundaryOfClassZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecWidePushoutIsoWidePullbackYonedaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCohomologyZeroLaurentSurjectiveStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC Simplicial
 open scoped TensorProduct
 
@@ -38,7 +43,7 @@ theorem laurent_ext {R S : Type} [CommRing R] [CommRing S] {φ ψ : LaurentPolyn
     | pred k ih => rw [sub_eq_add_neg, LaurentPolynomial.T_add, map_mul, map_mul, ih, hTm]
   refine RingHom.ext fun p => ?_
   induction p using LaurentPolynomial.induction_on' with
-  | add p r hp hr => rw [map_add, map_add, hp, hr]
+  | add p r hp hr => rw [map_add (f := _), map_add (f := _), hp, hr]
   | C_mul_T n a => rw [map_mul, map_mul, hC, hTn]
 
 def ev1 (R : Type) [CommRing R] : LaurentPolynomial R →+* R := LaurentPolynomial.eval₂ (RingHom.id R) 1
@@ -157,7 +162,7 @@ theorem laurent_univ (R : Type) [CommRing R] (g : Fin (1 + 1) → (LaurentPolyno
         change φ (LaurentPolynomial.C (a ⊗ₜ[A] 1)) * φ (LaurentPolynomial.C (1 ⊗ₜ[A] b)) = _
         rw [show (a ⊗ₜ[A] (1 : A')) = inc A A' 0 a from rfl, show ((1 : A') ⊗ₜ[A] b) = inc A A' 1 b from rfl, h0, h1]
         simp [ψ0, g0, g1]
-      | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+      | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
     refine laurent_ext hC ?_
     have h0 := RingHom.congr_fun (hφ 0) (LaurentPolynomial.T 1)
     simp only [RingHom.comp_apply, GmPhiNat.laurentMap_T] at h0
@@ -273,8 +278,8 @@ theorem cobd_laurent (q : ℕ) [NeZero q] (hint : Algebra.IsIntegral A A')
 
 end GlobalTheory.EtC.KerLaurent
 
-open GlobalTheory.EtC.KerLaurent in
 
+open GlobalTheory.EtC.KerLaurent in
 theorem GlobalTheory.EtC.kerLaurent : ∀ (q : ℕ) [NeZero q] (A A' : Type) [CommRing A] [CommRing A'] [Algebra A A'],
     Algebra.IsIntegral A A' → RingHom.ker (algebraMap A A') ≤ nilradical A → IsUnit (q : A) →
     (∀ j : ℤ, Subsingleton (Ht q (sp A) 1 j)) → ∀ (i : ℤ) (x : Ht q (sp (LaurentPolynomial A)) 1 i),

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationCocycleLiftCriterion
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ReLtOneOfZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NeOneOfIsPrimitive
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InRegionMono
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationCocycleLiftCriterion
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ReLtOneOfZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NeOneOfIsPrimitive
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InRegionMono
+
+@[expose] public section
+
 open Complex DirichletCharacter Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory
 
 namespace GlobalTheory.ZerosNearOne

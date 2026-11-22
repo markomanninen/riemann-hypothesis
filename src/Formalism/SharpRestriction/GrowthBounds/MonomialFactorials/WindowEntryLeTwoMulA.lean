@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SegDistsLtG
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SegDistsLtG
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem chain_wt (a : Fin X.s → ℕ) (hT : a ∈ Fintype.piFinset (fun _ : Fin
       (segChain X.p (X.S C0 CE1 CE2) a b).deg q ≤ coarseC X.p (X.S C0 CE1 CE2) a b (topOf q hq) := by
     unfold segChain
     dsimp only
-    rw [dif_neg hq]
+    rw [dite_eq_right hq]
     split_ifs with h2 h3 h3
     · exact Or.inl (hK.2.2.1 _ h3).2.1
     · exact Or.inl (hK.2.1 _ (not_lt.mp h3)).1

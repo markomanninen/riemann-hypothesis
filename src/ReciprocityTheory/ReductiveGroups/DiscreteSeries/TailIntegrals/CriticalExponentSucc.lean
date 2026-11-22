@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.VolumeUnivFinZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.VolumeUnivFinZero
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory Module
@@ -178,11 +182,6 @@ lemma ch_pt (p m : ℕ) (ν : Fin (p + 2) → ℝ) (y : TDom p m) :
   rw [hkey, htp, show de ((a, Fin.cons 0 b, r) : Xp (p + 1) m) 1 = d1 from rfl]
   simp only [Fin.tail]
   ring
-
-lemma cont_ins (p m : ℕ) : Continuous fun z : ℂ × TDom p m =>
-    ((z.2.1, Fin.cons z.1 z.2.2.1, z.2.2.2) : Xp (p + 1) m) :=
-  continuous_snd.fst.prodMk
-    ((cont_cons.comp (continuous_fst.prodMk continuous_snd.snd.fst)).prodMk continuous_snd.snd.snd)
 
 lemma ch_step (p m : ℕ) (ν : Fin (p + 2) → ℝ) :
     CHInt (p + 1) m ν = kc (2 + ν 0) * TailInt p m (ν 0) (Fin.tail ν) := by

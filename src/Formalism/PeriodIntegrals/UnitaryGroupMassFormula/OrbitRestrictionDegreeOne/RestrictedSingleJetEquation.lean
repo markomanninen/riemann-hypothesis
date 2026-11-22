@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitRestrictionDegreeOne.Lemmas
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitRestrictionDegreeOne.Lemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,13 +56,16 @@ theorem restricted_single_jet_equation (p : ℕ) [Fact p.Prime] (hn : nP D p = 1
           (X (z, a, b) : MvPowerSeries (Pl D × Fin N0 × Fin N1) ℂ_[p])
         else C (ep z) * X (z, a, b)) (be z) with hSdef
   have hS : constantCoeff S = 0 := by
-    rw [hSdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hSdef, map_sum]
     apply Finset.sum_eq_zero
     intro y _
-    rw [← coeff_zero_eq_constantCoeff_apply, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← coeff_zero_eq_constantCoeff_apply, map_smul, map_sum]
     rw [Finset.sum_eq_zero, smul_zero]
     intro a _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     apply Finset.sum_eq_zero
     intro b _
     rw [coeff_zero_eq_constantCoeff_apply]
@@ -67,11 +74,14 @@ theorem restricted_single_jet_equation (p : ℕ) [Fact p.Prime] (hn : nP D p = 1
       subst (fun s : ZMod 2 => if s = 0 then
           (X ((0 : ZMod 1), a, b) : MvPowerSeries (ZMod 1 × Fin N0 × Fin N1) ℂ_[p])
         else C (ep z) * X ((0 : ZMod 1), a, b)) (be z) := by
-    rw [hSdef, map_sum, Finset.sum_eq_single z]
-    · rw [map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hSdef, map_sum, Finset.sum_eq_single z]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, map_sum]
       congr 1
       refine Finset.sum_congr rfl (fun a _ => ?_)
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl (fun b _ => ?_)
       rw [killCompl_subst e (hσ z a b)]
       congr 1
@@ -80,10 +90,12 @@ theorem restricted_single_jet_equation (p : ℕ) [Fact p.Prime] (hn : nP D p = 1
       · rw [he, killCompl_X_one, if_pos rfl]
       · rw [map_mul, killCompl_C, he, killCompl_X_one, if_pos rfl]
     · intro y _ hy
-      rw [map_smul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, map_sum]
       rw [Finset.sum_eq_zero, smul_zero]
       intro a _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       apply Finset.sum_eq_zero
       intro b _
       rw [killCompl_subst e (hσ y a b)]

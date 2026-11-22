@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -44,7 +48,7 @@ private theorem ipo_rho {f : R →ₐ[O] K} (hf : IsLocPt f) :
       exact_mod_cast this
     | zero => simp
     | add x y hx hy ihx ihy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ihx ihy)
     | smul a x hx ihx =>
       rw [smul_eq_mul]
@@ -69,7 +73,7 @@ private theorem ipo_pow {f : R →ₐ[O] K} (hf : IsLocPt f) {ε : ℝ} (hε : 0
         rw [map_mul, norm_mul, pow_succ]
         exact mul_le_mul (ih a ha) (hρ b hb) (norm_nonneg _) (pow_nonneg hρ0 _)
       · intro x y hx hy
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
   obtain ⟨n, hn⟩ := exists_pow_lt_of_lt_one hε hρ1
   refine ⟨n + 1, fun z hz => (key n z hz).trans_lt ?_⟩
@@ -123,7 +127,7 @@ private theorem diagonal_rep_map_entries {G A B : Type} [Group G] [CommRing A] [
 
 theorem UpperTheory.V.U3.isPt_push :
     ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
-      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : D.ULoc} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ (S : D.Ring U g₁),
+      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ (S : D.Ring U g₁),
       ∀ f : S.R →ₐ[c.O] PadicAlgCl l, IsLocPt f → D.IsPt U g₁ (push f S.r.hom) := by
   intro Ω _ _ _ K _ _ _ l _ c N _ e ψ D U g₁ _ S f hf
   have hid : S.r.map (AlgHom.id c.O S.R) = S.r := GLift.ext rfl
@@ -139,7 +143,7 @@ theorem UpperTheory.V.U3.isPt_push :
     rw [hm, h1, ← f.commutes, ← map_sub]
     refine hf _ ((res_eq_zero_iff c.O S.R _).1 ?_)
     have h2 : res c.O S.R ((S.r.hom g).mat a b) = (rbar c.O D.η D.Ψ g).mat a b :=
-      congrArg (fun x : GG 3 (ResidueField c.O) => x.mat a b) (S.r.red g)
+      congrArg (fun x : GG (m := 3) (R := ResidueField c.O) => x.mat a b) (S.r.red g)
     have h3 : (rbar c.O D.η D.Ψ g).mat a b = residue c.O ((r0 D.η D.Ψ g).mat a b) := diagonal_rep_map_entries _ _ _ _ _ _
     rw [map_sub, AlgHom.commutes, h2, h3]
     exact sub_self _

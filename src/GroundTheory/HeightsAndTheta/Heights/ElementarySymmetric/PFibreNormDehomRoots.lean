@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormDehomRoots
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFormsGeneric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullSectionIntegral
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsCharpolyRootLift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormDehomRoots
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFormsGeneric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullSectionIntegral
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsCharpolyRootLift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -15,8 +20,8 @@ namespace FibreNormDehomRoots
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem eval_mConeMap (y : (Σ k, ι k) → Ω) (t : K → Ω) (f : MRing ι) :
     MvPolynomial.eval t (mConeMap y f) = aeval (fun p => y p * t p.1) f := by
   rw [mConeMap, aeval_def, aeval_def, eval₂_comp_left]
@@ -30,22 +35,22 @@ theorem aeval_scale {g : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d) (y : 
   rw [← eval_mConeMap, ProjLine.mConeMap_eq_of_isMultiHomog y hg, map_mul, eval_C, map_prod]
   simp only [map_pow, eval_X]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem aeval_eq_zero_of_mem {y : (Σ k, ι k) → Ω} {f : MRing ι} (hf : f ∈ mCoordIdeal y) (t : K → Ω) :
     aeval (fun p => y p * t p.1) f = 0 := by
   rw [← eval_mConeMap, RingHom.mem_ker.1 hf, map_zero]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_monomial {ν : (Σ k, ι k) →₀ ℕ} {d : K → ℕ} (h : ∀ k, ∑ i, ν ⟨k, i⟩ = d k) :
     IsMultiHomog (monomial ν (1 : ℤ)) d := by
   intro m hm k
   rw [Finset.mem_singleton.1 (support_monomial_subset hm)]
   exact h k
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem sum_single_block (k : K) (i₀ i₁ : ι k) (k' : K) :
     ∑ i, (Finsupp.single (⟨k, i₀⟩ : Σ k, ι k) 1) ⟨k', i⟩ =
       ∑ i, (Finsupp.single (⟨k, i₁⟩ : Σ k, ι k) 1) ⟨k', i⟩ := by
@@ -75,8 +80,8 @@ theorem aeval_mem_chartLatNm {y : (Σ k, ι k) → Ω} {g : MRing ι} {d : K →
   rw [mem_integralClosure_iff]
   exact isIntegral_algebraMap (x := (⟨_, hmem⟩ : chartRingZ y c))
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem ringHom_aeval {A A' σ : Type*} [CommRing A] [CommRing A'] [Algebra ℤ A] [Algebra ℤ A'] (φ : A →+* A')
     (x : σ → A)
     (f : MvPolynomial σ ℤ) : φ (aeval x f) = aeval (fun p => φ (x p)) f := by
@@ -84,8 +89,8 @@ theorem ringHom_aeval {A A' σ : Type*} [CommRing A] [CommRing A'] [Algebra ℤ 
   congr 1
   exact RingHom.ext_int _ _
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem ringHom_aeval_eq_eval {A A' σ : Type*} [CommRing A] [CommRing A'] [Algebra ℤ A] (φ : A →+* A')
     (x : σ → A)
     (f : MvPolynomial σ ℤ) : φ (aeval x f) = eval (fun p => φ (x p)) (map (Int.castRingHom A') f) := by
@@ -93,19 +98,19 @@ theorem ringHom_aeval_eq_eval {A A' σ : Type*} [CommRing A] [CommRing A'] [Alge
   congr 1
   exact RingHom.ext_int _ _
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem field_ratio {F : Type*} [Field F] {x₁ c l : F} (p : F) (h₁ : x₁ ≠ 0) (hc : c ≠ 0) (hl : l ≠ 0) :
     x₁ * p / l ^ (1 * 1) / (x₁ * c / l ^ (1 * 1)) = p * c⁻¹ := by
   field_simp
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem field_chart {F : Type*} [Field F] {lb la E : F} (hl : la ≠ 0) : lb * E = lb / la * (la * E) := by
   field_simp
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem field_section {F : Type*} [Field F] {s H Ph Pe la : F} (m : ℕ) (hl : la ≠ 0) :
     s * H * (Ph * Pe ^ m) = s / la ^ m * (la * Pe) ^ m * (H * Ph) := by
   field_simp
@@ -115,8 +120,8 @@ abbrev chartClosure (y : (Σ k, ι k) → Ω) [CharZero Ω] {D : ℕ} (L : Fin (
     Subalgebra (Algebra.adjoin ℚ (Set.range fun k => aeval y (L k) / aeval y (L a))) Ω :=
   integralClosure (Algebra.adjoin ℚ (Set.range fun k => aeval y (L k) / aeval y (L a))) Ω
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem proof (hG : PullFormsGeneric.Statement) (hS : PullSectionIntegral.Statement)
     (hR : CharpolyRootLift.Statement) : FibreNormDehomRoots.Statement := by
   classical
@@ -142,15 +147,16 @@ theorem proof (hG : PullFormsGeneric.Statement) (hS : PullSectionIntegral.Statem
 
   have hsplit : ∀ (g : MRing ι) (hg : IsMultiHomog g e),
       (⟨aeval y g / aeval y (L a) ^ (1 * 1), memM g hg⟩ : chartClosure y L a) =
-        ∑ x ∈ g.support.attach, ((coeff x.1 g : ℤ) : chartClosure y L a) *
+        ∑ x ∈ g.support.attach, ((AddMonoidAlgebra.coeff g x.1 : ℤ) : chartClosure y L a) *
           ⟨aeval y (monomial x.1 (1 : ℤ)) / aeval y (L a) ^ (1 * 1), memM _ (isMultiHomog_monomial (hg x.1 x.2))⟩ := by
     intro g hg
     apply Subtype.ext
     simp only [AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul, SubringClass.coe_intCast]
-    rw [Finset.sum_attach g.support (fun x => ((coeff x g : ℤ) : Ω) *
+    rw [Finset.sum_attach g.support (fun x => ((AddMonoidAlgebra.coeff g x : ℤ) : Ω) *
       (aeval y (monomial x (1 : ℤ)) / aeval y (L a) ^ (1 * 1)))]
     conv_lhs => rw [g.as_sum]
-    rw [map_sum, Finset.sum_div]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_div]
     refine Finset.sum_congr rfl fun x _ => ?_
     simp only [aeval_monomial, map_one, one_mul, algebraMap_int_eq, eq_intCast, mul_div_assoc]
   obtain ⟨ν, hν, hψv⟩ : ∃ (ν : (Σ k, ι k) →₀ ℕ) (hν : ν ∈ (L a).support),
@@ -163,7 +169,8 @@ theorem proof (hG : PullFormsGeneric.Statement) (hS : PullSectionIntegral.Statem
         show aeval y (L a) / aeval y (L a) ^ (1 * 1) = 1
         rw [mul_one, pow_one, div_self hla])
     have h2 := congrArg ψ ((hsplit (L a) (hLe a)).symm.trans h1)
-    rw [map_one, map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_one, map_sum] at h2
     simp only [map_mul, map_intCast] at h2
     rw [Finset.sum_eq_zero (fun x _ => by rw [h x.1 x.2, mul_zero])] at h2
     exact zero_ne_one h2
@@ -242,8 +249,7 @@ theorem proof (hG : PullFormsGeneric.Statement) (hS : PullSectionIntegral.Statem
     exact field_ratio _ (hy1 p.1) (hyk p.1) hla
   let z : (Σ k, ι k) → ℂ := fun p => ψ' (xc p)
   have hιF : ∀ f : MRing ι, ι' (aeval xc f) = aeval (fun p => y p * (y ⟨p.1, cc p.1⟩)⁻¹) f := fun f => by
-    rw [ringHom_aeval]
-    simp only [hιxc]
+    simpa only [hιxc] using (ringHom_aeval ι' xc f)
   have hψF : ∀ f : MRing ι, ψ' (aeval xc f) = eval z (map (Int.castRingHom ℂ) f) := fun f =>
     ringHom_aeval_eq_eval ψ' xc f
   have hz : z ∈ mcPts (mCoordIdeal y) := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -52,7 +56,7 @@ def wpShift (e : PowerSeries K) (c : K) : PowerSeries K :=
   1 + PowerSeries.X ^ 2 * (e - PowerSeries.C c)
 
 def HasSecondLogDeriv (f g : PowerSeries K) : Prop :=
-  PowerSeries.derivative K (PowerSeries.derivative K f) * f - (PowerSeries.derivative K f) ^ 2
+  PowerSeries.derivative (R := K) (PowerSeries.derivative (R := K) f) * f - (PowerSeries.derivative (R := K) f) ^ 2
     = g * f ^ 2
 
 def IsEndoZ (e : PowerSeries K) {ι : Type} [Fintype ι] (neg : ι → ι) (c : ι → K)

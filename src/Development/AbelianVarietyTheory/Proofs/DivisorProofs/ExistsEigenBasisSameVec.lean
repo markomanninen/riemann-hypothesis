@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadsZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadsZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -98,7 +102,7 @@ theorem exists_matches (Y : Model Xo c (RingHom.id c.F)) (V : (Xo.XF c).Opens) (
     ∃ a : Framed Y V τ.1 S (algebraMap c.F S), Matches Y V τ y a := by
   obtain ⟨v, hv, ev⟩ := exists_eigenBasis_sameVec Y y τ.1 Dw.p (if_pos τ.2)
   obtain ⟨w, hw, ew⟩ := exists_eigenBasis_sameVec Y y (conjEmb τ.1) Dw.q (if_neg (conj_not_mem τ))
-  refine ⟨⟨ptF y ≫ Y.jQ, by rw [Category.assoc, Y.jQ_over]; exact pullback.lift_snd _ _ _, ?_, v, w, hv, hw⟩,
+  refine ⟨⟨ptF y ≫ Y.jQ, by rw [Category.assoc, Y.jQ_over, ptF, pullback.lift_snd], ?_, v, w, hv, hw⟩,
     rfl, ev, ew⟩
   rintro _ ⟨z, rfl⟩
   exact subset_closure ⟨ptF y z, hy z, by simp⟩

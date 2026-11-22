@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlgebraMapZpInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlgebraMapZpInjective
+
+@[expose] public section
+
 open scoped MatrixGroups
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois GlobalTheory.GeoFix
 
@@ -50,7 +55,10 @@ theorem exists_inR_mul_eq_psi : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field 
           exact inR_mul (inR_psi ψ c') (inR_pow hN i)
         · rintro rfl
           rw [map_zero, map_neg] at hD
-          exact h0 (hc.inj (by rw [map_zero]; exact neg_eq_zero.1 hD.symm))
+          apply h0
+          apply hc.inj
+          rw [map_zero (algebraMap (O0 p) Ω)]
+          exact neg_eq_zero.mp hD.symm
         · have hf' : f = Polynomial.X * g + Polynomial.C (f.coeff 0) := by
             rw [← hg]; ring
           rw [hf', Polynomial.eval₂_add, Polynomial.eval₂_mul, Polynomial.eval₂_X, Polynomial.eval₂_C] at hf

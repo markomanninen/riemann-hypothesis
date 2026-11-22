@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneCodiff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGoodIndexNormalizationNegativeInert
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCmIdempotentsSelectConjugatePrimes
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneCodiff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGoodIndexNormalizationNegativeInert
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCmIdempotentsSelectConjugatePrimes
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem exists_trace_one (hu : Algebra.Unramified (𝓞 F) (𝓞 E)) : ∃ b : �
     rw [hd] at hmem
     obtain ⟨c, hc⟩ := (FractionalIdeal.mem_one_iff _).1 hmem
     have hint : IsIntegral ℤ t := by
-      rw [← isIntegral_algebraMap_iff (algebraMap F E).injective, ← hc]
+      rw [← isIntegral_algebraMap_iff (B := E), ← hc]
       exact RingOfIntegers.isIntegral_coe c
     exact ht1 ((FractionalIdeal.mem_one_iff _).2 ⟨⟨t, hint⟩, rfl⟩)
 
@@ -112,7 +116,8 @@ theorem exists_move (h : IsCMExt F E σ) (hu : Algebra.Unramified (𝓞 F) (𝓞
   have : Algebra.IsQuadraticExtension F E := { finrank_eq_two' := h.2.2.1 }
   have : IsGalois F E := inferInstance
   have hσ := sg_sg h
-  have : (P.under (𝓞 F)).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+  haveI : P.IsMaximal := hP
+  have : (P.under (𝓞 F)).IsMaximal := Ideal.isMaximal_under_of_isIntegral_of_isMaximal P
   have hcard := Ideal.card_inertia_eq_ramificationIdxIn (G := E ≃ₐ[F] E) (P.under (𝓞 F)) P
   rw [Ideal.ramificationIdxIn_eq_ramificationIdx (P.under (𝓞 F)) P (E ≃ₐ[F] E),
     Ideal.ramificationIdx_eq_one_of_isUnramifiedAt] at hcard

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Filter Topology
 
@@ -97,13 +101,6 @@ lemma pat_smul {l : Fin r} {A : Mx k r} (c : ℂ) (hA : Pat k r l A) : Pat k r l
   intro h0
   apply h
   rw [Matrix.smul_apply, h0, smul_zero]
-
-lemma pat_neg {l : Fin r} {A : Mx k r} (hA : Pat k r l A) : Pat k r l (-A) := by
-  intro i j h
-  apply hA
-  intro h0
-  apply h
-  rw [Matrix.neg_apply, h0, neg_zero]
 
 lemma pat_sub {l : Fin r} {A B : Mx k r} (hA : Pat k r l A) (hB : Pat k r l B) : Pat k r l (A - B) := by
   intro i j h
@@ -367,7 +364,7 @@ theorem lam {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (z : Fin (2 *
     hE, hE2, smul_smul, ← add_smul]
   congr 1
   rw [Complex.star_def]
-  simp only [map_add, map_mul, map_neg, Complex.conj_I]
+  simp only [map_add (f := _), map_mul, map_neg, Complex.conj_I]
   ring
 
 end Formalism.FourierDecayAlt.Q.QRR

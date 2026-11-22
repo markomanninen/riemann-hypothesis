@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.SumSliceEq
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.SumSliceEq
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -63,7 +67,7 @@ theorem qt_em {ι : Type} [Fintype ι] [DecidableEq ι] (k l : ι) {d : E} (hd :
   obtain ⟨gβ, hgβ⟩ := ia_bound P hN hp hq β
   obtain ⟨gd, hgd⟩ := ia_bound P hN hp hq d
   obtain ⟨gi, hgi⟩ := ia_bound P hN hp hq d⁻¹
-  obtain ⟨a2, b2, hsc⟩ := weighted_sum_scaling hN hp hq hK hd (a + gc + gβ) b
+  obtain ⟨a2, b2, hsc⟩ := weighted_sum_scaling (K := K) hN hp hq hK hd (a + gc + gβ) b
 
   have hcl : ∀ t : ι → E, (∀ j, IntAt P ((qOf P : E) ^ a * t j)) →
       IntAt P ((qOf P : E) ^ (a + gc + gβ) * (c * t l + β)) := by

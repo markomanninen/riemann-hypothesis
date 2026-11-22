@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.BlkFockLe
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NfAllSmulReB
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.BlkFockLe
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NfAllSmulReB
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,11 +28,12 @@ theorem map_rowSubK {R S : Type} [CommRing R] [CommRing S] (j : R →+* S) (o : 
     map j (rowSubK o P) = rowSubK (fun τ => (o τ).map j) (map j P) := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [rowSubK, MvPolynomial.algebraMap_eq]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
   | mul_X p v hp =>
     simp only [map_mul, hp]
     congr 1
-    simp [rowSubK, map_sum, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [rowSubK, map_sum, Matrix.map_apply]
 
 theorem blkRow_comp (K L : ι → Matrix (Fin n) (Fin n) ℂ) (P : MvPolynomial (ι × Fin n × Fin n) ℂ) :
     blkRow K (blkRow L P) = blkRow (fun τ => L τ * K τ) P := by
@@ -36,7 +41,8 @@ theorem blkRow_comp (K L : ι → Matrix (Fin n) (Fin n) ℂ) (P : MvPolynomial 
     apply MvPolynomial.algHom_ext
     intro v
     rw [AlgHom.comp_apply]
-    simp only [blkRow, aeval_X, map_sum, map_mul, aeval_C, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul, ← mul_assoc,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [blkRow, aeval_X, map_sum, map_mul, aeval_C, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul, ← mul_assoc,
       MvPolynomial.algebraMap_eq]
     rw [Finset.sum_comm]
   rw [← e, AlgHom.comp_apply]

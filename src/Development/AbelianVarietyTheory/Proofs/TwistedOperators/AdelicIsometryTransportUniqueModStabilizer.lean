@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,18 +125,18 @@ theorem col_mem_gen {A : Type} [CommRing A] (S : Subring A) {n : ℕ} (β : GL (
   · exact one_mem _
   · exact zero_mem _
 
-theorem idem_smul_eq_of_fix {W : HSp D} {L : Lat W} (hL : Submodule.IsLattice D.host.E L) {w : Pl D.host.E} {n : ℕ}
+theorem idem_smul_eq_of_fix {W : HSp D} {L : Lat W} (hL : Submodule.IsFullLattice D.host.E L) {w : Pl D.host.E} {n : ℕ}
     {B : Matrix (Fin W.rank) (Fin n) (EAf D)} (hB : IsBasisAt W w L B) {k : Matrix (Fin W.rank) (Fin W.rank) (EAf D)}
     (h1 : HMul.hMul k B = B) : idem w • k = idem w • (1 : Matrix (Fin W.rank) (Fin W.rank) (EAf D)) := by
   obtain ⟨-, e, he, -, hc⟩ := hB
   obtain rfl := eq_idem he
-  obtain ⟨β, rfl⟩ := exists_eq_lat hL
+  obtain ⟨β, rfl⟩ := GlobalTheory.AdIsom.exists_eq_lat (D := D) (Λ := L) hL
   refine smul_eq_of_fix β (fun j => ?_) h1
   have h := (mem_hat_lat β _).2 (col_mem_gen (OA D) β j)
   obtain ⟨c, hc'⟩ := (hc _).1 ⟨smul_mem_hat (idem_mem w) h, by rw [smul_smul, idem_mul_self]⟩
   exact ⟨_, hc'⟩
 
-theorem transport_unique : ∀ (D : D7) (W Y : HSp D) (L : Lat W) (Λ : Lat Y) (S : Finset (Pl D.host.E)), IsSplitSet S → ∀ (n : ℕ) (be : Pl D.host.E → Matrix (Fin W.rank) (Fin n) (EAf D)) (be' : Pl D.host.E → Matrix (Fin Y.rank) (Fin n) (EAf D)), Submodule.IsLattice D.host.E L → (∀ w ∈ S, IsBasisAt W w L (be w)) → ∀ x, IsTransport W Y L Λ S be be' x → ∀ x', IsTransport W Y L Λ S be be' x' ↔ ∃ k, InStabAway W L S k ∧ x' = HMul.hMul x (k.1 : Matrix (Fin W.rank) (Fin W.rank) (EAf D)) := by
+theorem transport_unique : ∀ (D : D7) (W Y : HSp D) (L : Lat W) (Λ : Lat Y) (S : Finset (Pl D.host.E)), IsSplitSet S → ∀ (n : ℕ) (be : Pl D.host.E → Matrix (Fin W.rank) (Fin n) (EAf D)) (be' : Pl D.host.E → Matrix (Fin Y.rank) (Fin n) (EAf D)), Submodule.IsFullLattice D.host.E L → (∀ w ∈ S, IsBasisAt W w L (be w)) → ∀ x, IsTransport W Y L Λ S be be' x → ∀ x', IsTransport W Y L Λ S be be' x' ↔ ∃ k, InStabAway W L S k ∧ x' = HMul.hMul x (k.1 : Matrix (Fin W.rank) (Fin W.rank) (EAf D)) := by
   intro D W Y L Λ S _ n be be' hL hbe x hx x'
   obtain ⟨⟨hb, hf⟩, hl, hs⟩ := hx
   constructor

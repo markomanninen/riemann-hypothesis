@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH
@@ -26,7 +31,7 @@ theorem cf_zero (χ : X) : cf hb χ 0 = 0 := by
 theorem cf_add (χ : X) (s t : R) : cf hb χ (s + t) = cf hb χ s + cf hb χ t := by
   obtain ⟨a, rfl⟩ := hb.2 s
   obtain ⟨b, rfl⟩ := hb.2 t
-  rw [← map_add, cf_apply, cf_apply, cf_apply, AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
+  rw [← map_add (f := _), cf_apply, cf_apply, cf_apply, AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
 
 theorem cf_sum {K : Type} (χ : X) (T : Finset K) (s : K → R) :
     cf hb χ (∑ i ∈ T, s i) = ∑ i ∈ T, cf hb χ (s i) :=
@@ -70,7 +75,7 @@ theorem part_map {A' R' : Type} [CommRing A'] [CommRing R'] {f' : A' →+* R'}
   | zero => simp only [map_zero, part, cf_zero, zero_mul]
   | add x y hx hy =>
     simp only [part] at hx hy
-    simp only [map_add, part, cf_add, add_mul, hx, hy]
+    simp only [map_add (f := _), part, cf_add, add_mul, hx, hy]
   | single ψ b =>
     obtain ⟨b', e⟩ := hσ b ψ
     rw [AddMonoidAlgebra.liftNCRingHom_single, e, part_mono, part_mono]

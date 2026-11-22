@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalFormOfThreeInputs
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalFormOfThreeInputs
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem isDVR (P : LocPrime l) (LL : FinExt l) : IsDiscreteValuationRing ↥(OL 
   haveI : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
   haveI : ValuationRing ↥(OL LL) := valuationRing P LL
   haveI : IsNoetherianRing ↥(OL LL) := integralClosure.isNoetherianRing (A := ℤ_[l]) (K := ℚ_[l]) ↥LL.1
-  exact ((IsDiscreteValuationRing.TFAE ↥(OL LL) (not_isField P LL)).out 1 0).mp (valuationRing P LL)
+  exact ((IsDiscreteValuationRing.TFAE ↥(OL LL) (not_isField P LL)).out 2 1).mp (valuationRing P LL)
 
 theorem isFractionRing (LL : FinExt l) : IsFractionRing ↥(OL LL) ↥LL.1 := by
   haveI : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
@@ -250,6 +254,7 @@ theorem gen_core (LT : LocTheory) (hgen : H1fGeneratorBoundAll LT) (hfon : Fonta
     rw [Finset.sum_const, Finset.card_univ, card_emb K LL hg, nsmul_eq_mul]))
   have hV : (finrank ↥LL.1 T.V : ℤ) = r := by exact_mod_cast hr
   rw [hV] at hcard
+  set_option synthInstance.maxHeartbeats 200000 in
   have h0' : finrank ↥LL.1 ↥(H0V T.ρ) ≤ r := hr ▸ Submodule.finrank_le _
   exact arith ht hcard h0' hS
 

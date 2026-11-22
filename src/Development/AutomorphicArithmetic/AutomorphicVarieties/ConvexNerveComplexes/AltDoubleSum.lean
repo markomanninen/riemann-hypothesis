@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+
+@[expose] public section
 
 open Set UpperTheory.V.ConeExtensionAcyclic
 
@@ -60,7 +64,7 @@ private theorem UpperTheory.V.ConeExtensionAcyclic.alt_double_sum {M : Type*} [A
     rw [two_nsmul, smul_zero]
     nth_rewrite 1 [hneg]
     exact neg_add_cancel S
-  exact nsmul_right_injective (by norm_num) h2
+  exact eq_of_nsmul_eq_nsmul_of_addCommute (by norm_num) (AddCommute.all _ _) h2
 
 theorem UpperTheory.V.ConeExtensionAcyclic.bd_bd :
     ∀ (I : Type) (n : ℕ) (c : Ch I (n + 2)), bd I n (bd I (n + 1) c) = 0 := by
@@ -68,7 +72,8 @@ theorem UpperTheory.V.ConeExtensionAcyclic.bd_bd :
   have hlin : (bd I n).comp (bd I (n + 1)) = 0 := by
     apply Finsupp.lhom_ext
     intro t a
-    simp only [LinearMap.comp_apply, LinearMap.zero_apply, bd, Finsupp.linearCombination_single,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.comp_apply, LinearMap.zero_apply, bd, Finsupp.linearCombination_single,
       map_smul, map_sum, one_smul, smul_smul, Finset.smul_sum]
     have hterm : ∀ (i : Fin (n + 2)) (j : Fin (n + 1)),
         (a * (-1) ^ (i : ℕ) * (1 * (-1) ^ (j : ℕ))) •

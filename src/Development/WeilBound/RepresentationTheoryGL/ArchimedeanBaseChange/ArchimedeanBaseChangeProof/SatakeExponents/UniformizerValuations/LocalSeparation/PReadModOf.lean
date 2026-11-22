@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,13 +27,11 @@ def prodT (A : Submodule ℂ P1) (B : Submodule ℂ P2) : A ⊗[ℂ] B →ₗ[�
     (fun u v v' => by funext x; simp [mul_add])
     (fun c u v => by funext x; simp; ring))
 
-@[simp] theorem prodT_tmul (A : Submodule ℂ P1) (B : Submodule ℂ P2) (u : A) (v : B) :
-    prodT A B (u ⊗ₜ v) = fun x => u.1.1 x.1 * v.1.1 x.2 := rfl
-
 theorem prodT_sum (A : Submodule ℂ P1) (B : Submodule ℂ P2) {κ : Type} (s : Finset κ) (x : κ → A) (y : κ → B) :
     prodT A B (∑ k ∈ s, x k ⊗ₜ y k) = fun z => ∑ k ∈ s, (x k).1.1 z.1 * (y k).1.1 z.2 := by
   funext z
-  simp [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, Finset.sum_apply, prodT] 
 
 theorem linInd {Y : Type} {P : Submodule ℂ (Y → ℂ)} {A : Submodule ℂ P} {κ : Type} (b : Module.Basis κ ℂ A) :
     LinearIndependent ℂ (fun k => (b k).1.1) :=
@@ -176,7 +178,7 @@ theorem sep_pair [TopologicalSpace G1] [TopologicalSpace G2] {X1 X2 : Type} [Add
       · exact Subtype.ext (Subtype.ext (hz k hk))
       · exact Finsupp.notMem_support_iff.1 hk
     have : t = (TensorProduct.equivFinsuppOfBasisRight b2).symm m := by simp [m]
-    rw [this, hm, map_zero]
+    rw [this, hm, LinearEquiv.map_zero]
   set e := LinearEquiv.ofInjective Ψ hinj
   have hL : ∀ j : J1 × J2, ∃ g : (Y1 × Y2 → ℂ) →ₗ[ℂ] X1 ⊗[ℂ] X2, g ∘ₗ (LinearMap.range Ψ).subtype =
       (TensorProduct.map (L1 j.1 ∘ₗ S1.subtype) (L2 j.2 ∘ₗ S2.subtype)) ∘ₗ e.symm.toLinearMap :=
@@ -190,7 +192,8 @@ theorem sep_pair [TopologicalSpace G1] [TopologicalSpace G2] {X1 X2 : Type} [Add
       L j (fun z => ∑ k ∈ s, (x k).1.1 z.1 * (y k).1.1 z.2) = ∑ k ∈ s, L1 j.1 (x k).1 ⊗ₜ L2 j.2 (y k).1 := by
     intro j κ s x y
     rw [← prodT_sum, spec]
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
 
   have hdec : ∀ G ∈ LinearMap.range Ψ, SmVec ρ G → ∃ (U1 : Subgroup G1) (U2 : Subgroup G2) (κ : Type) (s : Finset κ)
       (x : κ → S1) (y : κ → S2), IsOpen (U1 : Set G1) ∧ IsOpen (U2 : Set G2) ∧ (∀ k, (x k).1 ∈ fixed ρ1 U1) ∧
@@ -212,8 +215,8 @@ theorem sep_pair [TopologicalSpace G1] [TopologicalSpace G2] {X1 X2 : Type} [Add
     | tmul u v =>
       refine ⟨(⟨ρ1 g.1 u.1, hs1 g.1 u.1 u.2⟩ : S1) ⊗ₜ (⟨ρ2 g.2 v.1, hs2 g.2 v.1 v.2⟩ : S2), ?_⟩
       funext z
-      simp [Ψ, hρ, hρ1, hρ2]
-    | add t t' ht ht' => rw [map_add, map_add]; exact add_mem ht ht'
+      simp [Ψ, prodT, hρ, hρ1, hρ2]
+    | add t t' ht ht' => rw [map_add (f := _), map_add (f := _)]; exact add_mem ht ht'
   · intro j g G hG hsm
     obtain ⟨U1, U2, κ, s, x, y, hU1o, hU2o, hx, hy, -, rfl⟩ := hdec G hG hsm
     have hG' : ρ g (fun z => ∑ k ∈ s, (x k).1.1 z.1 * (y k).1.1 z.2) =
@@ -221,7 +224,8 @@ theorem sep_pair [TopologicalSpace G1] [TopologicalSpace G2] {X1 X2 : Type} [Add
           ((⟨ρ2 g.2 (y k).1, hs2 g.2 _ (y k).2⟩ : S2)).1.1 z.2 := by
       funext z
       simp [hρ, hρ1, hρ2]
-    rw [hG', specS, specS, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hG', specS, specS, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [heq1 j.1 g.1 _ (x k).2 ⟨U1, hU1o, hx k⟩, heq2 j.2 g.2 _ (y k).2 ⟨U2, hU2o, hy k⟩, GlobalTheory.SmGL.extTensor_tmul]
   · intro G hG hsm h0
@@ -237,8 +241,10 @@ theorem sep_pair [TopologicalSpace G1] [TopologicalSpace G2] {X1 X2 : Type} [Add
         refine hsep1 _ (Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (x k).2)
           ⟨U1, hU1o, Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (hx k)⟩ fun j1 => ?_
         have h := congrArg (fun u => TensorProduct.rid ℂ X1 (LinearMap.lTensor X1 β u)) (h0 (j1, j2))
-        simp only [specS, map_sum, LinearMap.lTensor_tmul, TensorProduct.rid_tmul, map_zero] at h
-        simpa [map_sum, hc] using h
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [specS, map_sum, LinearMap.lTensor_tmul, TensorProduct.rid_tmul, map_zero] at h
+        set_option synthInstance.maxHeartbeats 100000 in
+          simpa [map_sum, hc] using h
       exact linearIndependent_iff'.1 hli s c (by
         have := congrArg (fun v : P1 => v.1) hw
         simpa using this) k hk

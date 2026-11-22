@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -23,17 +27,15 @@ theorem galMap_galElt [DecidableEq G] (act : G →* (C ≃ₐ[R] C)) (σ : C →
     (b : R) (hxy : ∀ g, ∑ i, x i * act g (y i) = if g = 1 then algebraMap R C b else 0) (h : G) :
     galMap act σ (galElt act σ x y h) = Pi.single h (algebraMap R O b) := by
   funext g
-  simp only [galElt, map_sum, Finset.sum_apply, galMap_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [galElt, map_sum, Finset.sum_apply, galMap_tmul]
   have : ∀ i, σ (x i) * σ (act g (act h⁻¹ (y i))) = σ (x i * act (g * h⁻¹) (y i)) := by
     intro i; simp [map_mul]
-  simp_rw [this, ← map_sum, hxy]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [this, ← map_sum, hxy]
   by_cases hg : g = h
   · subst hg; simp
   · have : g * h⁻¹ ≠ 1 := fun e => hg (mul_inv_eq_one.mp e)
     simp [this, hg]
 
 end GlobalTheory.GoodEtale
-
-example (R : Type) [CommRing R] (o r : R) :
-    GlobalTheory.GoodEtale.galMap (G := Unit) 1 (AlgHom.id R R) (o ⊗ₜ r) () = o * r := by
-  simp

@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.SmallLevelClassSet
+module
+
+public import ReciprocityTheory.DualLattices.SmallLevelClassSet
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DescCocycle
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsGenOfUniqueFactorizationMonoid
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsUnitSmulEqOfBijectiveToSpanSingleton
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthRestrictScalarsEqSumInertiaDegOfSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DescCocycle
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsGenOfUniqueFactorizationMonoid
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsUnitSmulEqOfBijectiveToSpanSingleton
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthRestrictScalarsEqSumInertiaDegOfSubset
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
@@ -122,8 +127,19 @@ theorem exists_trivial_near_fibre : ∀ {X Y : Scheme.{0}} (f : X ⟶ Y) [IsFini
     (GlobalTheory.LB.isFrame_chartSec hL i).unit he' inf_le_right inf_le_left
   have hu : ∀ i, ((u i : Γ(X, f ⁻¹ᵁ Y.basicOpen r ⊓ L.U i)ˣ) : Γ(X, f ⁻¹ᵁ Y.basicOpen r ⊓ L.U i)) =
       GlobalTheory.LB.coord e i := fun i => by
-    rw [GlobalTheory.LB.IsFrame.val_unit, GlobalTheory.LB.repr_chartSec, GlobalTheory.LB.chartEquiv_apply, GlobalTheory.LB.coord_map,
-      GlobalTheory.LB.resG_resG, GlobalTheory.LB.resG_self]
+    rw [GlobalTheory.LB.IsFrame.val_unit]
+    apply GlobalTheory.LB.IsFrame.repr_eq
+    apply Subtype.ext
+    funext j
+    change GlobalTheory.LB.coord (GlobalTheory.LB.coord e i •
+      (GlobalTheory.LB.toMod L).presheaf.map (homOfLE inf_le_right).op
+        (GlobalTheory.LB.chartSec hL i)) j =
+      GlobalTheory.LB.coord ((GlobalTheory.LB.toMod L).presheaf.map
+        (homOfLE inf_le_left).op e) j
+    simp only [GlobalTheory.LB.coord_smul, GlobalTheory.LB.coord_map,
+      GlobalTheory.LB.coord_chartSec, GlobalTheory.LB.resG_resG]
+    rw [mul_comm]
+    exact (GlobalTheory.LB.coord_rel e j i _ _ _).symm
   refine ⟨u, fun i j x hxV hi hj => ?_⟩
   have hxO : x ∈ f ⁻¹ᵁ Y.basicOpen r ⊓ L.U i ⊓ L.U j := ⟨⟨hxV, hi⟩, hj⟩
   rw [← gm_res (𝟙 X) x (inf_le_left : f ⁻¹ᵁ Y.basicOpen r ⊓ L.U i ⊓ L.U j ≤ _) hxO,

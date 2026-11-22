@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDimensionalOfSlices
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LeviEqISupParts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockEmbNormalises
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDimensionalOfSlices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LeviEqISupParts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockEmbNormalises
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -179,8 +184,8 @@ theorem blk_pair (h : l + d ≤ r) (Z W : Matrix (Fin n) (Fin r) E) :
       (Formalism.UG.cT (σ : E →+* E) Z * J * W).submatrix (bIdx h) (bIdx h) := by
   ext; rfl
 
-variable (σ J X Y) in
 
+variable (σ J X Y) in
 def IsBlockPoint (h : l + d ≤ r) (u : GAd σ J) : Prop :=
   ∃ P Q : Matrix (Fin d) (Fin d) (AF F ⊗[F] E), (GlobalTheory.AdelicU.matHom (AF F) σ J u).1 =
     1 + adMat F (GlobalTheory.BlockForms.blkCols h X) * P * adMat F (Formalism.UG.cT (σ : E →+* E) (GlobalTheory.BlockForms.blkCols h Y) * J) +
@@ -366,7 +371,7 @@ theorem exists_of_mem {h : l + d ≤ r} {T : Finset (Fin r)} {k : Fin r} (hkT : 
 
 end Adelic
 
-theorem glPart_eq_range : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [IsTotallyComplex E] [Algebra F E]
+theorem glPart_eq_range : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Algebra F E]
     (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J →
     ∀ (r : ℕ) (X Y : Matrix (Fin n) (Fin r) E), IsWittFrame σ J X Y →
     ∀ (T : Finset (Fin r)) (k : Fin r), k ∈ T → ∀ (l d : ℕ) (h : l + d ≤ r) (ι : GlobalTheory.CuspRep.GA E d →* GAd σ J),

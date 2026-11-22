@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+
+@[expose] public section
 
 open Polynomial
 
@@ -13,7 +17,6 @@ theorem precomplete_of_finite (O : Type) [CommRing O] (I : Ideal O) [IsPrecomple
   intro z
   obtain ⟨t, rfl⟩ := AdicCompletion.ofTensorProduct_surjective_of_finite I M z
   induction t with
-  | zero => exact ⟨0, by simp⟩
   | tmul r x =>
     obtain ⟨a, rfl⟩ := AdicCompletion.of_surjective I O r
     refine ⟨a • x, ?_⟩
@@ -23,7 +26,7 @@ theorem precomplete_of_finite (O : Type) [CommRing O] (I : Ideal O) [IsPrecomple
   | add a b ha hb =>
     obtain ⟨x, hx⟩ := ha
     obtain ⟨y, hy⟩ := hb
-    exact ⟨x + y, by rw [map_add, map_add, hx, hy]⟩
+    exact ⟨x + y, by rw [map_add (f := _), map_add (f := _), hx, hy]⟩
 
 theorem exists_pow_idem (M : Type) [Monoid M] [Finite M] (x : M) :
     ∃ n : ℕ, 0 < n ∧ x ^ n * x ^ n = x ^ n := by
@@ -61,8 +64,7 @@ theorem isLocalRing_of_finite (O : Type) [CommRing O] [IsLocalRing O] [IsNoether
   haveI : Finite (R ⧸ J) := Module.finite_of_finite (O ⧸ IsLocalRing.maximalIdeal O)
   have hjac : ∀ y ∈ J, IsUnit (1 + y) := by
     intro y hy
-    have := Ideal.mem_jacobson_bot.1 (hH.jac hy) 1
-    simpa [add_comm] using this
+    exact Ideal.isUnit_of_sub_one_mem_jacobson (1 + y) (by simpa using hH.jac hy)
   refine IsLocalRing.of_isUnit_or_isUnit_one_sub_self fun x => ?_
   obtain ⟨n, hn, h⟩ := exists_pow_idem (R ⧸ J) (Ideal.Quotient.mk J x)
   have hm : (X ^ 2 - X : R[X]).Monic := by monicity!
@@ -109,7 +111,7 @@ theorem odd_of_involution (k : Type) [Field k] [Finite k] (τ : k →+* k) (hτ 
     · rintro ⟨⟨u, hu⟩, ⟨v, hv⟩⟩ ⟨⟨u', hu'⟩, ⟨v', hv'⟩⟩ h
       have h1 : u + v * a = u' + v' * a := h
       have h2 := congrArg τ h1
-      rw [map_add, map_add, map_mul, map_mul, (hF _).1 hu, (hF _).1 hv, (hF _).1 hu',
+      rw [map_add (f := _), map_add (f := _), map_mul, map_mul, (hF _).1 hu, (hF _).1 hv, (hF _).1 hu',
         (hF _).1 hv'] at h2
       have h3 : (v - v') * (a - τ a) = 0 := by linear_combination h1 - h2
       have h4 : v = v' := sub_eq_zero.1 ((mul_eq_zero.1 h3).resolve_right hδ)
@@ -148,22 +150,24 @@ theorem odd_of_involution (k : Type) [Field k] [Finite k] (τ : k →+* k) (hτ 
   have h1s : 1 < q ^ f := by rw [← hcF]; exact Fintype.one_lt_card
   have haF : a ∉ (F : Set k).toFinset := by
     rw [Set.mem_toFinset]; exact fun h => hta ((hF a).1 h)
-  refine FiniteField.X_pow_card_sub_X_ne_zero k h1s ?_
-  refine Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' _
-    (insert a (F : Set k).toFinset) ?_ ?_
-  · intro x hx
-    rcases Finset.mem_insert.1 hx with rfl | hx
-    · simp [has]
-    · rw [Set.mem_toFinset] at hx
-      have := congrArg Subtype.val (FiniteField.pow_card (⟨x, hx⟩ : F))
-      rw [hcF] at this
-      simp only [eval_sub, eval_pow, eval_X]
-      exact sub_eq_zero.2 this
-  · rw [FiniteField.X_pow_card_sub_X_natDegree_eq k h1s, Finset.card_insert_of_notMem haF,
-      Set.toFinset_card]
-    have : Fintype.card (F : Set k) = q ^ f := by
-      rw [← hcard, Nat.card_eq_fintype_card]; exact Fintype.card_congr (Equiv.refl _)
-    omega
+  have hne : (X ^ (q ^ f) - X : k[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero (R := k) h1s
+  have hzero : (X ^ (q ^ f) - X : k[X]) = 0 := by
+    refine Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' _
+      (insert a (F : Set k).toFinset) ?_ ?_
+    · intro x hx
+      rcases Finset.mem_insert.1 hx with rfl | hx
+      · simp [has]
+      · rw [Set.mem_toFinset] at hx
+        have := congrArg Subtype.val (FiniteField.pow_card (⟨x, hx⟩ : F))
+        rw [hcF] at this
+        simp only [eval_sub, eval_pow, eval_X]
+        exact sub_eq_zero.2 this
+    · rw [Polynomial.natDegree_X_pow_sub_X h1s, Finset.card_insert_of_notMem haF,
+        Set.toFinset_card]
+      have : Fintype.card (F : Set k) = q ^ f := by
+        rw [← hcard, Nat.card_eq_fintype_card]; exact Fintype.card_congr (Equiv.refl _)
+      omega
+  exact hne hzero
 
 open GlobalTheory.UnitLemma
 
@@ -192,7 +196,7 @@ theorem exists_conj_int (K : UQ) :
   · rw [← hc]; simp
   · simp only [map_mul, ← hc]
   · simp only [← hc]; simp
-  · simp only [map_add, ← hc]
+  · simp only [map_add (f := _), ← hc]
 
 theorem exists_fixed_odd (K : UQ) (L : Type) [Field L] [Algebra K.E L] [Algebra K.O L]
     [IsScalarTower K.O K.E L] [Module.Finite K.E L] (τ : L →+* L) (hτ : ∀ x, τ (τ x) = x)
@@ -219,7 +223,7 @@ theorem exists_fixed_odd (K : UQ) (L : Type) [Field L] [Algebra K.E L] [Algebra 
     IsDiscreteValuationRing.not_isField K.O
       ((Algebra.IsIntegral.isField_iff_isField injR).2 h)
   haveI : IsDiscreteValuationRing R :=
-    ((IsDiscreteValuationRing.TFAE R hnf).out 2 0).1 ‹IsDedekindDomain R›
+    ((IsDiscreteValuationRing.TFAE R hnf).out 3 1).1 ‹IsDedekindDomain R›
   have hint : ∀ x : R, τ (x : L) ∈ R := by
     intro x
     exact IsIntegral.map_of_comp_eq c τ (by ext z; simp [hτO]) x.2
@@ -248,7 +252,7 @@ theorem exists_fixed_odd (K : UQ) (L : Type) [Field L] [Algebra K.E L] [Algebra 
     have key : ∀ s : R, s + t s * u ∉ IsLocalRing.maximalIdeal R →
         ∃ p : R, t p = p ∧ IsLocalRing.maximalIdeal R = Ideal.span {p} := by
       intro s hs
-      refine ⟨s * p + t (s * p), by rw [map_add, htt, add_comm], ?_⟩
+      refine ⟨s * p + t (s * p), by rw [map_add (f := _), htt, add_comm], ?_⟩
       have : s * p + t (s * p) = (s + t s * u) * p := by rw [map_mul, ← hu]; ring
       rw [this, hm, Ideal.span_singleton_mul_left_unit (IsLocalRing.notMem_maximalIdeal.1 hs)]
     by_cases h1 : 1 + t 1 * u ∈ IsLocalRing.maximalIdeal R
@@ -355,7 +359,7 @@ theorem exists_plus_eta_norm (K : UQ) (B : InvAlg K) (f : B.A) (hf : IsIdempoten
   refine ⟨f * y + (1 - f), ⟨?_, ?_⟩, ?_, ?_⟩
   · refine IsUnit.of_mul_eq_one (f * z + (1 - f)) ?_
     linear_combination (y * z - y - z + 1) * hff + hz
-  · rw [map_add, map_mul, map_sub, map_one, hσ]
+  · rw [map_add (f := _), map_mul, map_sub, map_one, hσ]
     linear_combination hy2
   · linear_combination (1 - y) * hff
   · let e := AlgEquiv.prodQuotientOfIsIdempotentElem K.E (e := 1 - f) (f := f) hf.one_sub hf

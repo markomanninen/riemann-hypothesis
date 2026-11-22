@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioCover
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioCover
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.CechDR GlobalTheory.CechPer
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -75,7 +80,7 @@ theorem exists_isEv (u : HolUnif A L g) (U : A.left.Opens) {z : Fin g → ℂ} (
 theorem isEv_evForm (u : HolUnif A L g) (U : A.left.Opens) {z : Fin g → ℂ} (hz : z ∈ pre u.ex U) :
     IsEv u.ex U z (evForm u.ex U z) := by
   have h := exists_isEv u U hz
-  rw [evForm, dif_pos h]
+  rw [evForm, dite_eq_left h]
   exact h.choose_spec
 
 theorem evForm_rules : ∀ (A : Over (Sp ℂ)) [GrpObj A] (g : ℕ) (L : LB A.left) (u : HolUnif A L g), ∀ (U : A.left.Opens),
@@ -100,7 +105,7 @@ theorem evForm_rules : ∀ (A : Over (Sp ℂ)) [GrpObj A] (g : ℕ) (L : LB A.le
     intro a
     rw [hE a b, hD]
   | zero => intro a; simp
-  | add x y _ _ hx hy => intro a; rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y _ _ hx hy => intro a; rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
   | smul s x _ hx =>
     intro a
     rw [smul_smul, hx, hx, smul_smul, holUnif_val_mul]

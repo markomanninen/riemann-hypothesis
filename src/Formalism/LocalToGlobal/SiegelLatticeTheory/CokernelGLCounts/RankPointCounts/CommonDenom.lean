@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.IsOpenAddSubgroup
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.IsOpenAddSubgroup
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+
+@[expose] public section
 
 noncomputable section
 

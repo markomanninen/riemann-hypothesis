@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergWordL2Bound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergWordL2Bound
+
+@[expose] public section
+
 open NumberField MeasureTheory
 
 namespace GlobalTheory.WeilM
@@ -13,6 +18,15 @@ theorem schA_memLp_two : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [F
   letI : MeasurableSpace (κ → AdeleRing (𝓞 F) F) := borel _
   intro μ hμ Φ hΦ
   obtain ⟨n, g, f, hg, rfl⟩ := GlobalTheory.ThetaSobolevBase.exists_sumPure hΦ
-  exact memLp_finset_sum' _ fun i _ => GlobalTheory.ThetaSobolevBase.memLp_pureA μ hμ (f i) (hg i)
+  classical
+  unfold GlobalTheory.ThetaSobolevBase.sumPure
+  have hs : ∀ s : Finset (Fin n), MemLp (∑ i ∈ s, GlobalTheory.WeilM.pureA F (f i) (g i)) 2 μ := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty => simp
+    | @insert i s hi ih =>
+      simpa [Finset.sum_insert, hi] using
+        (GlobalTheory.ThetaSobolevBase.memLp_pureA μ hμ (f i) (hg i)).add ih
+  simpa using hs Finset.univ
 
 end GlobalTheory.WeilM

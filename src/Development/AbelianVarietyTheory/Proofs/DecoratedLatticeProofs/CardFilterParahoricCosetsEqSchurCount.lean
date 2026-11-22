@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LowerDiagonalBlockAsGLMemIntegralGeneralLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LowerDiagonalBlockAsGLMemIntegralGeneralLinear
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound GlobalTheory.ParHecke
 
@@ -15,7 +19,7 @@ variable {k : Type} [Field k] [ValuativeRel k]
 
 theorem val_lt_mul_right {l m n : Type} [Fintype m] {c : Matrix l m k} {P : Matrix m n k}
     (hc : ∀ i j, valuation k (c i j) < 1) (hP : IsIntM P) (i j) : valuation k ((c * P) i j) < 1 := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   exact Valuation.map_sum_lt _ one_ne_zero fun m _ => by
     rw [mul_comm]; exact GlobalTheory.DatumEigen.val_mul_lt (hP _ _) (hc _ _)
 
@@ -41,7 +45,7 @@ theorem nlow_mem {v : Matrix D' A k} (hv : ∀ i j, valuation k (v i j) < 1) : n
   · rw [val_nlow, det_fromBlocks_zero₁₂, det_one, det_one, one_mul, map_one]
 
 theorem torus_int {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k) (s : Finset D) :
-    IsIntM (torusElt k D ϖ (indic s)).val := by
+    IsIntM (GlobalTheory.GLDoubling.torusElt k D ϖ (indic s)).val := by
   have hlt : valuation k (ϖ : k) < 1 := hϖ ▸ uniformizer_lt_one
   rw [val_torusElt]
   intro i j
@@ -104,9 +108,9 @@ theorem inSupp_mul_iff {x : Matrix (A ⊕ D') (A ⊕ D) k} (hx : InSupp x) (V : 
 theorem key_mem {Y : GL (A ⊕ D') k} (hY : Y ∈ parahoric k A D') {E T : GL D' k} (hE : E ∈ KO k D')
     (hEY : E.val = Y.val.toBlocks₂₂) (hT : IsIntM T.val)
     (hl : ∀ i l, valuation k (((T⁻¹).val * Y.val.toBlocks₂₁) i l) < 1) :
-    dg A T⁻¹ * Y * dg A (E⁻¹ * T) ∈ parahoric k A D' := by
+    dg (A := A) T⁻¹ * Y * dg (A := A) (E⁻¹ * T) ∈ parahoric k A D' := by
   obtain ⟨y11, y12, -, -⟩ := isIntM_toBlocks (isIntM_of_mem_parahoric hY)
-  have hv : (dg A T⁻¹ * Y * dg A (E⁻¹ * T)).val =
+  have hv : (dg (A := A) T⁻¹ * Y * dg (A := A) (E⁻¹ * T)).val =
       fromBlocks Y.val.toBlocks₁₁ (Y.val.toBlocks₁₂ * (E⁻¹ * T).val) ((T⁻¹).val * Y.val.toBlocks₂₁) 1 := by
     rw [Units.val_mul, Units.val_mul, val_dg, val_dg, fromBlocks_diag_mul, mul_fromBlocks_diag]
     simp only [toBlocks_fromBlocks₁₁, toBlocks_fromBlocks₁₂, toBlocks_fromBlocks₂₁, toBlocks_fromBlocks₂₂]
@@ -119,7 +123,7 @@ theorem key_mem {Y : GL (A ⊕ D') k} (hY : Y ∈ parahoric k A D') {E T : GL D'
     exact isIntM_fromBlocks_iff.2 ⟨y11, isIntM_mul y12 hq, isIntM_of_lt hl, isIntM_one⟩
   · have h1 : (T⁻¹).val.det * T.val.det = 1 := by
       rw [← det_mul, ← Units.val_mul, inv_mul_cancel, Units.val_one, det_one]
-    have e : (dg A T⁻¹ * Y * dg A (E⁻¹ * T)).val.det = ((T⁻¹).val.det * T.val.det) * Y.val.det * (E⁻¹).val.det := by
+    have e : (dg (A := A) T⁻¹ * Y * dg (A := A) (E⁻¹ * T)).val.det = ((T⁻¹).val.det * T.val.det) * Y.val.det * (E⁻¹).val.det := by
       rw [Units.val_mul, Units.val_mul, det_mul, det_mul, det_dg, det_dg, Units.val_mul, det_mul]; ring
     rw [e, h1, one_mul, map_mul, val_det_of_mem_KO (mem_parahoric.1 hY).1, val_det_of_mem_KO (inv_mem hE), one_mul]
   · intro i l
@@ -132,10 +136,18 @@ namespace GlobalTheory.ParHeckeTarget
 open GlobalTheory.ParHeckeSource
 open Classical
 
-theorem card_filter_eq : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (A D D' : Type) [Fintype A] [DecidableEq A] [Fintype D] [DecidableEq D] [Fintype D'] [DecidableEq D'] (ϖ : kˣ), valuation k (ϖ : k) = uniformizer k → ∀ (s : Finset D') (R : Finset (GL (A ⊕ D') k)) d, IsReps (mtor ϖ (indic s)) R d → ∀ RK, IsRepsK (torusElt k D' ϖ (indic s)) RK → ∀ x : Matrix (A ⊕ D') (A ⊕ D) k, InSupp x → (R.filter fun j => InSupp (((j * mtor ϖ (indic s))⁻¹).1 * x)).card = (RK.filter fun g => ∀ i l, ((g⁻¹).1 * schur x) i l ∈ 𝒪[k]).card := by
+theorem card_filter_eq : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
+    [IsNonarchimedeanLocalField k] (A D D' : Type) [Fintype A] [DecidableEq A]
+    [Fintype D] [DecidableEq D] [Fintype D'] [DecidableEq D'] (ϖ : kˣ),
+    valuation k (ϖ : k) = uniformizer k → ∀ (s : Finset D') (R : Finset (GL (A ⊕ D') k)) d,
+    IsReps (GlobalTheory.ZonalCellDecomposition.mtor ϖ (indic s)) R d →
+    ∀ RK, IsRepsK (GlobalTheory.GLDoubling.torusElt k D' ϖ (indic s)) RK →
+    ∀ x : Matrix (A ⊕ D') (A ⊕ D) k, InSupp x →
+      (R.filter fun j => InSupp (((j * GlobalTheory.ZonalCellDecomposition.mtor ϖ (indic s))⁻¹).1 * x)).card =
+        (RK.filter fun g => ∀ i l, ((g⁻¹).1 * schur x) i l ∈ 𝒪[k]).card := by
   intro k _ _ _ _ A D D' _ _ _ _ _ _ ϖ hϖ s R d hR RK hRK x hx
   rw [mtor_eq_dg] at hR ⊢
-  set T := torusElt k D' ϖ (indic s) with hTdef
+  set T := GlobalTheory.GLDoubling.torusElt k D' ϖ (indic s) with hTdef
   have hT : IsIntM T.val := torus_int hϖ s
   set S := schur x with hSdef
   have hν : ∀ i l, valuation k ((-(x.toBlocks₂₁ * x.toBlocks₁₁⁻¹)) i l) < 1 := by
@@ -147,26 +159,26 @@ theorem card_filter_eq : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalS
   have hc : c ∈ parahoric k A D' := nlow_mem hν
   have hcx : c.val * x = fromBlocks x.toBlocks₁₁ x.toBlocks₁₂ 0 S := nlow_mul_eq hx
   have hJR : ∀ j ∈ R, j ∈ parahoric k A D' := fun j hj => (hR.1 j hj).1
-  have hcond : ∀ j ∈ parahoric k A D', InSupp (((j * dg A T)⁻¹).val * x) ↔
+  have hcond : ∀ j ∈ parahoric k A D', InSupp (((j * dg (A := A) T)⁻¹).val * x) ↔
       (∀ i l, valuation k (((T⁻¹).val * ((c * j)⁻¹).val.toBlocks₂₁) i l) < 1) ∧
         IsIntM ((T⁻¹).val * ((c * j)⁻¹).val.toBlocks₂₂ * S) := by
     intro j hj
     have hY : (c * j)⁻¹ ∈ parahoric k A D' := inv_mem (mul_mem hc hj)
-    have e1 : (j * dg A T)⁻¹ = dg A T⁻¹ * (c * j)⁻¹ * c := by rw [map_inv]; group
-    have e2 : (dg A T⁻¹ * (c * j)⁻¹).val = fromBlocks ((c * j)⁻¹).val.toBlocks₁₁ ((c * j)⁻¹).val.toBlocks₁₂
+    have e1 : (j * dg (A := A) T)⁻¹ = dg (A := A) T⁻¹ * (c * j)⁻¹ * c := by rw [map_inv]; group
+    have e2 : (dg (A := A) T⁻¹ * (c * j)⁻¹).val = fromBlocks ((c * j)⁻¹).val.toBlocks₁₁ ((c * j)⁻¹).val.toBlocks₁₂
         ((T⁻¹).val * ((c * j)⁻¹).val.toBlocks₂₁) ((T⁻¹).val * ((c * j)⁻¹).val.toBlocks₂₂) := by
       rw [Units.val_mul, val_dg, fromBlocks_diag_mul]
     obtain ⟨y11, y12, -, -⟩ := isIntM_toBlocks (isIntM_of_mem_parahoric hY)
-    rw [e1, Units.val_mul (dg A T⁻¹ * (c * j)⁻¹) c, Matrix.mul_assoc, hcx,
+    rw [e1, Units.val_mul (dg (A := A) T⁻¹ * (c * j)⁻¹) c, Matrix.mul_assoc, hcx,
       inSupp_mul_iff hx _ (by rw [e2, toBlocks_fromBlocks₁₁]; exact y11)
         (by rw [e2, toBlocks_fromBlocks₁₁]; exact (GlobalTheory.DatumEigen.val_det_blocks hY).1)
         (by rw [e2, toBlocks_fromBlocks₁₂]; exact y12),
       e2, toBlocks_fromBlocks₂₁, toBlocks_fromBlocks₂₂]
   have hkey : ∀ j ∈ parahoric k A D', (∀ i l, valuation k (((T⁻¹).val * ((c * j)⁻¹).val.toBlocks₂₁) i l) < 1) →
-      (c * j * dg A T)⁻¹ * dg A ((lowerDiagonalBlockAsGL ((c * j)⁻¹))⁻¹ * T) ∈ parahoric k A D' := fun j hj hl => by
+      (c * j * dg (A := A) T)⁻¹ * dg (A := A) ((lowerDiagonalBlockAsGL ((c * j)⁻¹))⁻¹ * T) ∈ parahoric k A D' := fun j hj hl => by
     have hY : (c * j)⁻¹ ∈ parahoric k A D' := inv_mem (mul_mem hc hj)
     have := key_mem hY (lowerDiagonalBlockAsGL_mem_integralGeneralLinear hY) (lowerDiagonalBlockAsGL_val_eq_toBlocks_two_two hY) hT hl
-    rw [show (c * j * dg A T)⁻¹ = dg A T⁻¹ * (c * j)⁻¹ by rw [map_inv]; group]
+    rw [show (c * j * dg (A := A) T)⁻¹ = dg (A := A) T⁻¹ * (c * j)⁻¹ by rw [map_inv]; group]
     exact this
   let pick : GL (A ⊕ D') k → GL D' k := fun j =>
     if h : ∃ g, g ∈ RK ∧ g⁻¹ * ((lowerDiagonalBlockAsGL ((c * j)⁻¹))⁻¹ * T) ∈ KO k D' then h.choose else 1
@@ -204,7 +216,7 @@ theorem card_filter_eq : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalS
     obtain ⟨-, hK1⟩ := spec j₁ hJ1
     obtain ⟨-, hK2⟩ := spec j₂ hJ2
     rw [he] at hK1
-    have hm : (j₁ * dg A T)⁻¹ * (j₂ * dg A T) ∈ parahoric k A D' := by
+    have hm : (j₁ * dg (A := A) T)⁻¹ * (j₂ * dg (A := A) T) ∈ parahoric k A D' := by
       have := mul_mem (mul_mem (mul_mem m1 (dg_mem (inv_mem hK1))) (dg_mem hK2)) (inv_mem m2)
       convert this using 1
       simp only [map_mul, map_inv]; group
@@ -213,14 +225,14 @@ theorem card_filter_eq : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalS
     simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_coe, Finset.mem_filter] at hg
     obtain ⟨hgR, hSg⟩ := hg
     obtain ⟨κ, hκ, κ', hκ', hgdef⟩ := hRK.1 g hgR
-    have hj₀ : c⁻¹ * dg A κ ∈ parahoric k A D' := mul_mem (inv_mem hc) (dg_mem hκ)
+    have hj₀ : c⁻¹ * dg (A := A) κ ∈ parahoric k A D' := mul_mem (inv_mem hc) (dg_mem hκ)
     obtain ⟨j, ⟨hjR, hm⟩, -⟩ := hR.2 _ hj₀
-    set n := (j * dg A T)⁻¹ * (c⁻¹ * dg A κ * dg A T) with hndef
+    set n := (j * dg (A := A) T)⁻¹ * (c⁻¹ * dg (A := A) κ * dg (A := A) T) with hndef
     have hJ := hJR j hjR
     have hY : (c * j)⁻¹ ∈ parahoric k A D' := inv_mem (mul_mem hc hJ)
-    have eV : dg A T⁻¹ * (c * j)⁻¹ = n * dg A (κ * T)⁻¹ := by
+    have eV : dg (A := A) T⁻¹ * (c * j)⁻¹ = n * dg (A := A) (κ * T)⁻¹ := by
       rw [hndef]; simp only [map_mul, map_inv]; group
-    have hb : ∀ (P : Matrix (A ⊕ D') (A ⊕ D') k), P = (dg A T⁻¹ * (c * j)⁻¹).val →
+    have hb : ∀ (P : Matrix (A ⊕ D') (A ⊕ D') k), P = (dg (A := A) T⁻¹ * (c * j)⁻¹).val →
         P.toBlocks₂₁ = (T⁻¹).val * ((c * j)⁻¹).val.toBlocks₂₁ ∧
           P.toBlocks₂₂ = (T⁻¹).val * ((c * j)⁻¹).val.toBlocks₂₂ := by
       rintro P rfl

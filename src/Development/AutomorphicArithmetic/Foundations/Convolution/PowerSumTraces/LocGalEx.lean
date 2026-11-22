@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistFactor
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
-import Development.AutomorphicArithmetic.AdelicQuotients.AdeleGaloisActionBaseChangeCompat
-import Development.AutomorphicArithmetic.AdelicQuotients.CentralSectionBaseChange
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.CharacterColumnKernelsOfBlockChiCOfBlockChiOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.TwUnitary
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Development.WeilBound.NonsplitUniqueness.Places
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistFactor
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+public import Development.AutomorphicArithmetic.AdelicQuotients.AdeleGaloisActionBaseChangeCompat
+public import Development.AutomorphicArithmetic.AdelicQuotients.CentralSectionBaseChange
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.CharacterColumnKernelsOfBlockChiCOfBlockChiOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.TwUnitary
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import Development.WeilBound.NonsplitUniqueness.Places
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.L1 UpperTheory.ConvolutionTheory.C
@@ -36,20 +40,18 @@ private theorem galOf_mul' {A B : Type*} [CommRing A] [Algebra F A] [CommRing B]
       (Algebra.TensorProduct.map (τ : E →ₐ[F] E) (AlgHom.id F A) x) =
       Algebra.TensorProduct.map ((σ * τ : E ≃ₐ[F] E) : E →ₐ[F] E) (AlgHom.id F A) x := by
     intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
+    induction x using TensorProduct.inductionOn with
     | tmul a c => simp
-    | add a c ha hc => simp only [map_add, ha, hc]
+    | add a c ha hc => simp only [map_add (f := _), ha, hc]
   simp [galOf, h]
 
 private theorem galOf_one' {A B : Type*} [CommRing A] [Algebra F A] [CommRing B] [Algebra E B] (e : E ⊗[F] A ≃ₐ[E] B)
     (b : B) : galOf e (1 : E ≃ₐ[F] E) b = b := by
   have h : ∀ x : E ⊗[F] A, Algebra.TensorProduct.map ((1 : E ≃ₐ[F] E) : E →ₐ[F] E) (AlgHom.id F A) x = x := by
     intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
+    induction x using TensorProduct.inductionOn with
     | tmul a c => simp
-    | add a c ha hc => simp only [map_add, ha, hc]
+    | add a c ha hc => simp only [map_add (f := _), ha, hc]
   simp [galOf, h]
 
 private theorem gal_module [IsGalois F E] (σ : E ≃ₐ[F] E) (hσ : σ = 1 ∨ ∀ τ, τ ∈ Subgroup.zpowers σ) (n : ℕ)
@@ -65,8 +67,8 @@ private theorem gal_module [IsGalois F E] (σ : E ≃ₐ[F] E) (hσ : σ = 1 ∨
   · exact (UpperTheory.ConvolutionTheory.G.character_column_kernels_of_block_chi_c_of_block_chi_one F E σ hσ n hn).2.2 g
 
 private theorem e_proj [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : σ = 1 ∨ ∀ τ, τ ∈ Subgroup.zpowers σ) {n : ℕ}
-    {μ : Measure (normOneGL E n)} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
-    {g g' : AdelicGLn.AdelicGL E n} (hg : mapGL n (galAd σ) g = g') {x y : normOneGL E n}
+    {μ : Measure (normOneGL (K := E) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
+    {g g' : AdelicGLn.AdelicGL E n} (hg : mapGL n (galAd σ) g = g') {x y : normOneGL (K := E) (n := n)}
     (hx : (x : AdelicGLn.AdelicGL E n) = g * (centralSection E n (detModule E n g))⁻¹)
     (hy : (y : AdelicGLn.AdelicGL E n) = g' * (centralSection E n (detModule E n g'))⁻¹) :
     θ.e x = y := by
@@ -74,7 +76,7 @@ private theorem e_proj [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : σ = 1 ∨ ∀
   rw [hθ, hx, hy, map_mul, map_inv, gal_central, hg, ← hg, gal_module σ hσ]
 
 private theorem e_finProj [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : σ = 1 ∨ ∀ τ, τ ∈ Subgroup.zpowers σ) {n : ℕ}
-    {μ : Measure (normOneGL E n)} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
+    {μ : Measure (normOneGL (K := E) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
     {u u' : AdelicGLn.FiniteAdelicGL E n} (h : mapGL n (galAd σ) (finEmb E n u) = finEmb E n u') :
     θ.e (MultiplicityOne.finProj E n u) = MultiplicityOne.finProj E n u' :=
   e_proj hσ hθ h rfl rfl
@@ -246,8 +248,8 @@ theorem UpperTheory.ConvolutionTheory.C.locGalEx :
   have hloc := sOf_isLocGal σ w hw n
   refine ⟨hw, sOf σ w hw n, hloc, fun μ _ θ hθ => ?_⟩
   have hint : ∀ g x, θ.U (rhoL μ w.1 g x) = rhoL μ w.1 (sOf σ w hw n g) (θ.U x) := fun g x => by
-    change θ.U (rightRegularRep (rationalGLOne E n) μ (MultiplicityOne.finProj E n _) x) =
-      rightRegularRep (rationalGLOne E n) μ (MultiplicityOne.finProj E n _) (θ.U x)
+    change θ.U (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (MultiplicityOne.finProj E n _) x) =
+      rightRegularRep (rationalGLOne (K := E) (n := n)) μ (MultiplicityOne.finProj E n _) (θ.U x)
     rw [(UpperTheory.ConvolutionTheory.Dp.twUnitary E n μ θ).2.2, e_finProj hσ hθ (gal_local hw hloc g)]
     rfl
   refine ⟨hint, fun V τ hV hVU hocc => ?_⟩
@@ -277,3 +279,4 @@ theorem UpperTheory.ConvolutionTheory.C.locGalEx :
   have e2 : τ'.ρ (s g) = τ.ρ g := congrArg τ.ρ (s.symm_apply_apply g)
   rw [e2] at e
   exact e
+

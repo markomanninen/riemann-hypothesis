@@ -1,8 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.LcgLinCombEqProd
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.BoxSymIsSymmetry
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PullGenBoxGen
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.IsIsoPullbackHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.LcgLinCombEqProd
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.BoxSymIsSymmetry
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PullGenBoxGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PsiWeightZeroLinearCombination
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+
+@[expose] public section
 
 set_option autoImplicit false
 

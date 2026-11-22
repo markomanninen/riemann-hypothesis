@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,19 +47,22 @@ theorem li_pi_of_basis [Finite C] [Fintype J] (e : Module.Basis J K V) (ev : V �
   funext i c
   have h4 : b i c = ∑ j, e.repr (b i c) j • e j := (e.sum_repr _).symm
   conv_lhs => rw [h4]
-  simp only [map_sum, LinearMap.map_smulₛₗ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ]
   simp [T, r, LinearMap.sum_apply, RingHom.algebraMap_toAlgebra]
 
 theorem mem_span_basis_image [Fintype J] (e : Module.Basis J K V) (ev : V →ₛₗ[σ] W) (x : V) :
     ev x ∈ Submodule.span ℂ (Set.range fun j => ev (e j)) := by
-  rw [← e.sum_repr x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← e.sum_repr x, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [LinearMap.map_smulₛₗ]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
 
 theorem rho_sum_translates {G : Type} [Group G] [Fintype G] (ρ : G →* Module.End K V) (g : G) (x : V) :
     ρ g (∑ t, ρ t x) = ∑ t, ρ t x := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Fintype.sum_equiv (Equiv.mulLeft g) _ _ fun t => ?_
   simp [map_mul]
 
@@ -66,8 +73,8 @@ namespace GStep
 variable {E K ι : Type} [Field E] [NumberField E] [StarRing E] [Field K] [NumberField K] [StarRing K] [Fintype ι] {n : ℕ}
   (S : GStep E K n) (emb : ι → E →+* K) (σ : K →+* ℂ) (lam : ι → DomWeight n)
 
-omit [StarRing E] [StarRing K] in
 
+omit [StarRing E] [StarRing K] in
 theorem evV_rho_eq_tr (b : S.β) (g : S.G b) (F : VV K lam) :
     evV emb (1 : Matrix (Fin n) (Fin n) E) lam σ (S.rho emb lam b g F) =
       S.tr emb σ b g (evV emb (1 : Matrix (Fin n) (Fin n) E) lam σ F) := by
@@ -127,7 +134,8 @@ theorem lawBasis_of_ok (h : (S.fam emb lam).Ok) : S.LawBasis emb σ lam h := by
           show _ = evV emb (1 : Matrix (Fin n) (Fin n) E) lam σ ((Pi.single c (∑ t, ρc t F) : S.Cl → VV K lam) c')
           by_cases hc : c' = c
           · subst hc
-            rw [Pi.single_eq_same, Pi.single_eq_same, map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [Pi.single_eq_same, Pi.single_eq_same, map_sum]
             exact Finset.sum_congr rfl fun g _ => (S.evV_rho_eq_tr emb σ lam c'.1 g.1 F).symm
           · rw [Pi.single_eq_of_ne hc, Pi.single_eq_of_ne hc, map_zero]
         rw [SetLike.mem_coe, Submodule.mem_comap, hx]

@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem inner_cls {n : ℕ} [MeasurableSpace (G n)] (μ : Measure (G n)) {V : Ty
     (hg : MemLp (fun y : G n => g y.val) 2 μ) :
     ⟪cls μ f, cls μ g⟫_ℂ = ∫ y : G n, ⟪f y.val, g y.val⟫_ℂ ∂μ := by
   unfold cls
-  rw [dif_pos hf, dif_pos hg, L2.inner_def]
+  rw [dite_eq_left hf, dite_eq_left hg, L2.inner_def]
   refine integral_congr_ae ?_
   filter_upwards [hf.coeFn_toLp, hg.coeFn_toLp] with y h1 h2
   rw [h1, h2]
@@ -105,7 +109,7 @@ theorem rowLeft (hLS : LtSob) (hLC : LtComm) : RowLeft := by
   have hbSec : IsSec E b := hrowb.2.1
   have hψs : IsSec E ψ := by
     intro g hg k'
-    simp only [hψd, Pi.add_apply, Pi.smul_apply, map_add, map_smul]
+    simp only [hψd, Pi.add_apply, Pi.smul_apply, map_add (f := _), map_smul]
     rw [hbSec g hg k', haSec g hg k']
   have hcψ : cls μ ψ = cls μ a - cls μ b := by
     rw [hψd, hCF.2.1 (-1) b a (hL2 hbS) (hL2 haS)]

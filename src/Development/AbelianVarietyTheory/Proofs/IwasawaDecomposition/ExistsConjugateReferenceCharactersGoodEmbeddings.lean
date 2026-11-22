@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JEvExists
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Formalism.LocalRingCardinality.DataKap
-import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
-import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
-import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsGaloisConjugatesHeckeCharTrivialOnRealIdel
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousCharacterFiniteOrderIntegralUnits
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenCongruenceIdelesAndRealFiniteParts
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIndexUnitIdlSup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterInfinityExponentGroupLaws
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationVacuumCosetVectorsGrid
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoInfMulProd
-import Development.AbelianVarietyTheory.Counterexamples.TwistSurvey.ConjModelCast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JEvExists
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Formalism.LocalRingCardinality.DataKap
+public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsGaloisConjugatesHeckeCharTrivialOnRealIdel
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousCharacterFiniteOrderIntegralUnits
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenCongruenceIdelesAndRealFiniteParts
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIndexUnitIdlSup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterInfinityExponentGroupLaws
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationVacuumCosetVectorsGrid
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoInfMulProd
+public import Development.AbelianVarietyTheory.Counterexamples.TwistSurvey.ConjModelCast
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,8 @@ theorem exists_transport_of_norm {G K : Type} [CommGroup G] [TopologicalSpace G]
   · show σ (y x) = σ z
     rw [σ₀.injective ((hy x).symm.trans h)]
 
-open Classical in
 
+open Classical in
 theorem exists_pow_eq (L : Type) [Field L] [NumberField L] (t : (FiniteAdeleRing (𝓞 L) L)ˣ) :
     ∃ n : ℕ, 0 < n ∧ ∃ e : Lˣ, ∀ v, Valued.v
       ((t ^ n * (FiniteAdeleRing.unitEmbedding (𝓞 L) L e)⁻¹ : (FiniteAdeleRing (𝓞 L) L)ˣ).1 v) = 1 := by
@@ -111,8 +115,8 @@ theorem hasInfExp_of_type (D : D7) {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.
 theorem tauE_injective (D : D7) : Function.Injective (tauE D) := fun _ _ h =>
   D.eTau.injective (Subtype.ext ((factEmb D.R D.host).1.1 h))
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem exists_conj (D : D7) (Q : Par D) (χ₀ : (AE D)ˣ →* Circle) (hH : IsHeckeChar D χ₀) (hF : ∀ a, χ₀ (idF D a) = 1)
     (hy : ∀ x : (AE D)ˣ, infPart D (x : AE D) = 1 → ∃ y : Q.c.F, ((χ₀ x : Circle) : ℂ) = Q.c.F.val.toRingHom y)
     (c : D.what₂.Tau → ℚ) (hc : ∀ τ, HasInfExp D χ₀ τ (c τ)) (σ : Q.c.F →+* ℂ) :
@@ -131,10 +135,10 @@ theorem exists_conj (D : D7) (Q : Par D) (χ₀ : (AE D)ˣ →* Circle) (hH : Is
     ⟨(hb x).1, (hb x).2 ▸ hx.1, by rw [← map_inv, (hb _).2]; exact hx.2⟩
   let A : (AE D)ˣ →* Circle := ∏ τ, angle D (θ (relab Q.c σ (tauE D τ))) ^ k τ
   have hA : ∀ x, A x = ∏ τ, angle D (θ (relab Q.c σ (tauE D τ))) x ^ k τ := fun x => by
-    simp only [A, MonoidHom.finset_prod_apply, MonoidHom.zpow_apply]
+    simp only [A, MonoidHom.finsetProd_apply, MonoidHom.zpow_apply]
   have Ac : Continuous A := by
     rw [show (A : _ → _) = _ from funext hA]
-    exact continuous_finset_prod _ fun τ _ => (continuous_angle D (θc _)).zpow _
+    exact continuous_finsetProd _ fun τ _ => (continuous_angle D (θc _)).zpow _
   have key : ∀ (e : D.host.Eˣ) (r : (AF D.host.F)ˣ) (x : (AE D)ˣ), Units.map (incA D).toMonoidHom e * idF D r = x →
       ∃ w : Q.c.F, ((χ₀ (b x) : Circle) : ℂ) = Q.c.F.val.toRingHom w⁻¹ ∧ ((A x : Circle) : ℂ) = σ w := by
     intro e r x hx

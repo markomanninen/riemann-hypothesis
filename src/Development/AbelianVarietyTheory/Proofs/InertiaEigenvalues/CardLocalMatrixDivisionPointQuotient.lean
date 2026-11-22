@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsIotaAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsIotaAt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 noncomputable section
@@ -19,7 +24,7 @@ def red (N m n : ℕ) : ↥(locDiv w N m n) →+
     simp
   map_add' X Y := by
     funext i j
-    rw [Pi.add_apply, Pi.add_apply, ← map_add]
+    rw [Pi.add_apply, Pi.add_apply, ← map_add (f := _)]
     congr 1
     apply Subtype.ext
     simp [mul_add]

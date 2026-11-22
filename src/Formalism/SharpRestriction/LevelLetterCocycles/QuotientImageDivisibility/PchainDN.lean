@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PchainDNAlt
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PchainDNAlt
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -18,7 +22,7 @@ theorem linLift (K : Submodule O M) (R : A → M → Prop) (hex : ∀ a, ∃ x, 
   choose g hg using hex
   refine ⟨{ toFun := fun a => K.mkQ (g a), map_add' := ?_, map_smul' := ?_ }, fun a => ⟨g a, hg a, rfl⟩⟩
   · intro a a'
-    rw [← map_add]
+    rw [← map_add (f := _)]
     exact (Submodule.Quotient.eq K).2 (huniq _ _ _ (hg (a + a')) (hadd _ _ _ _ (hg a) (hg a')))
   · intro o a
     rw [RingHom.id_apply, ← map_smul]

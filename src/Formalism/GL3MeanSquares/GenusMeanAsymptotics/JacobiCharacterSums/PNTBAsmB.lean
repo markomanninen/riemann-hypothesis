@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTEOf
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTEOf
+
+@[expose] public section
 
 open Finset Complex Classical
 
@@ -20,12 +24,6 @@ def excT {M : ℕ} (e : Option (DirichletCharacter ℂ M × ℝ)) (χ : Dirichle
 
 theorem mainPsi_eq {M : ℕ} (e : Option (DirichletCharacter ℂ M × ℝ)) (χ : DirichletCharacter ℂ M) (y : ℝ) :
     mainPsi e χ y = (if χ = 1 then (y : ℂ) else 0) - excT e χ y := rfl
-
-theorem excI_nonneg {M : ℕ} (e : Option (DirichletCharacter ℂ M × ℝ)) (χ : DirichletCharacter ℂ M) :
-    0 ≤ excI e χ := by
-  rcases e with _ | ⟨χ₁, β₁⟩
-  · exact le_rfl
-  · simp only [excI]; split_ifs <;> norm_num
 
 theorem sum_excI_le {M : ℕ} [NeZero M] (e : Option (DirichletCharacter ℂ M × ℝ)) :
     ∑ χ : DirichletCharacter ℂ M, excI e χ ≤ 1 := by

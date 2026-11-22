@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocRankFrac
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocRankFrac
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

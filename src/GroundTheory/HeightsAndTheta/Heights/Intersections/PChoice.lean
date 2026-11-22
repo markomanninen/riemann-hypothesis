@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -28,8 +33,8 @@ theorem homog_one : IsMultiHomog (1 : MRingOver R ι) 0 := by
   subst hm'
   simp
 
-open Classical in
 
+open Classical in
 theorem homog_X (k : K) (i : ι k) :
     IsMultiHomog (X ⟨k, i⟩ : MRingOver R ι) (Pi.single k 1) := by
   classical
@@ -185,27 +190,5 @@ theorem exists_form_avoid (S : Set (Ideal (MRingOver R ι))) (hS : S.Finite)
     exact key W' hW' (hle' h)
 
 end Choice
-
-theorem Choice.proof : Choice.Statement := by
-  intro K _ ι _ P d a m Y x _ hY
-  obtain ⟨d₀, hd₀⟩ := Choice.exists_form_avoid (R := ℤ) (Set.range x) (Set.finite_range x)
-    (by rintro _ ⟨i, rfl⟩; exact (hY i).2.2.2.1)
-  refine ⟨∑ l, (d₀ l + (a l).natAbs), fun k hk => ?_⟩
-  have hle : ∀ l, d₀ l + (a l).natAbs ≤ k := fun l =>
-    le_trans (Finset.single_le_sum (f := fun l => d₀ l + (a l).natAbs)
-      (fun _ _ => Nat.zero_le _) (Finset.mem_univ l)) hk
-  have hnn : ∀ l, (d₀ l : ℤ) ≤ a l + k := by
-    intro l
-    have h1 := hle l
-    omega
-  refine ⟨?_, ?_⟩
-  · obtain ⟨s, hs, hsx⟩ := hd₀ (fun l => (a l + k).toNat) (fun l => by
-      have := hnn l
-      show d₀ l ≤ (a l + k).toNat
-      omega)
-    exact ⟨fun l => (a l + k).toNat, s, fun l => Int.toNat_of_nonneg (le_trans (by positivity) (hnn l)),
-      hs, fun i => hsx (x i) ⟨i, rfl⟩⟩
-  · obtain ⟨t, ht, htx⟩ := hd₀ (fun _ => k) (fun l => le_trans (Nat.le_add_right _ _) (hle l))
-    exact ⟨t, ht, fun i => htx (x i) ⟨i, rfl⟩⟩
 
 end GroundTheory.Heights₂.Heights.Inter

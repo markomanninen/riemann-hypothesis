@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicHatMulOfMulClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicHatMulOfMulClosed
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.DIV GlobalTheory.FlagBasis GlobalTheory.LevNorm
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -17,13 +22,7 @@ theorem integral_adelic_lattice_mul_mem {z w : GlobalTheory.AdLat.RA F E}
     (hz : z ∈ GlobalTheory.AdLat.hat1 F ((1 : FractionalIdeal (nonZeroDivisors (𝓞 E)) E) : Set E))
     (hw : w ∈ GlobalTheory.AdLat.hat1 F ((1 : FractionalIdeal (nonZeroDivisors (𝓞 E)) E) : Set E)) :
     z * w ∈ GlobalTheory.AdLat.hat1 F ((1 : FractionalIdeal (nonZeroDivisors (𝓞 E)) E) : Set E) := by
-  first
-  | exact @_root_.GlobalTheory.AdelicLatticeClosure.adelic_hat_one_mul_mem
-  | exact _root_.GlobalTheory.AdelicLatticeClosure.adelic_hat_one_mul_mem
-  | (apply _root_.GlobalTheory.AdelicLatticeClosure.adelic_hat_one_mul_mem <;> assumption)
-  | (intros; apply _root_.GlobalTheory.AdelicLatticeClosure.adelic_hat_one_mul_mem <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.AdelicLatticeClosure.adelic_hat_one_mul_mem <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.AdelicLatticeClosure.adelic_hat_one_mul_mem ..)
+  exact GlobalTheory.AdelicLatticeClosure.adelic_hat_one_mul_mem hz hw
 
 theorem one_int_af : ∀ v : HeightOneSpectrum (𝓞 F),
     (1 : FiniteAdeleRing (𝓞 F) F) v ∈ v.adicCompletionIntegers F := fun v => by

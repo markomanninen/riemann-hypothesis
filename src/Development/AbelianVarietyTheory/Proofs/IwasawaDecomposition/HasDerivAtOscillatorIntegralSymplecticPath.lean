@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionUnitaryGroupHermitian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionOfGaussianPairings
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergSmoothOfWeakDerivativeClosedSet
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeisenbergSmoothVectorDerivativeCalculus
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivCompress
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasDerivAtLineDH
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivEqQuadComm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MovedVacuumDeriv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionUnitaryGroupHermitian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionOfGaussianPairings
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergSmoothOfWeakDerivativeClosedSet
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeisenbergSmoothVectorDerivativeCalculus
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivCompress
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasDerivAtLineDH
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivEqQuadComm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MovedVacuumDeriv
+
+@[expose] public section
 
 open MeasureTheory Complex Matrix GlobalTheory.RealWeil GlobalTheory.Mem.Lift
 open scoped RealInnerProductSpace ContDiff Real ComplexOrder Topology
@@ -25,19 +29,6 @@ set_option linter.unusedSectionVars false
 noncomputable def omL (J : V ≃ₗᵢ[ℝ] V) : V →L[ℝ] V →L[ℝ] ℝ :=
   (innerSL ℝ : V →L[ℝ] V →L[ℝ] ℝ).bilinearComp (ContinuousLinearMap.id ℝ V)
     (J.toContinuousLinearEquiv : V →L[ℝ] V)
-
-theorem hasDerivAt_heis (h : IsHeis (omJ J) ρ) {b : ℝ → V} {Y : ℝ → B} {b' : V} {Y' : B} (hb : HasDerivAt b b' 0)
-    (hY : HasDerivAt Y Y' 0) (hs : Sm ρ (Y 0)) :
-    HasDerivAt (fun t => ρ (b t) (Y t)) (ρ (b 0) Y' + fderiv ℝ (fun u => ρ u (Y 0)) (b 0) b') 0 := by
-  have h1 : HasDerivAt (fun t => ρ (b t) (Y 0)) (fderiv ℝ (fun u => ρ u (Y 0)) (b 0) b') 0 :=
-    (ContDiff.differentiable hs (by simp) (b 0)).hasFDerivAt.comp_hasDerivAt (0 : ℝ) hb
-  have h2 : HasDerivAt (fun t => ρ (b t) (Y t - Y 0)) (ρ (b 0) Y') 0 := by
-    rw [hasDerivAt_iff_tendsto_slope] at hY ⊢
-    have hc : Continuous fun p : V × B => ρ p.1 p.2 := h.continuous continuous_fst continuous_snd
-    have := (hc.tendsto (b 0, Y')).comp ((hb.continuousAt.tendsto.mono_left nhdsWithin_le_nhds).prodMk_nhds hY)
-    refine this.congr fun t => ?_
-    simp [slope]
-  simpa using h2.fun_add h1
 
 open MeasureTheory Complex Matrix in
 open scoped RealInnerProductSpace ContDiff Real ComplexOrder Topology in
@@ -163,7 +154,7 @@ private lemma quad_integral_eq_integral_quad (hJ : ∀ x, J (J x) = -x)
     rw [← comm1]
     exact (_root_.GlobalTheory.Mem.Lift.DCalc.dH_calculus V B _ ρ hself hb _ hIs).1 v
   unfold _root_.GlobalTheory.Mem.Lift.quad
-  rw [integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl fun i _ => ?_
     rw [integral_smul, comm1, comm2]
   · intro i _
@@ -223,13 +214,13 @@ private lemma tendsto_heis_action_apply {om : V → V → ℝ} (h : _root_.Globa
     _ ≤ ‖ρ (u i) (v i - v₀)‖ + ‖ρ (u i) v₀ - ρ u₀ v₀‖ := norm_add_le _ _
     _ = ‖v i - v₀‖ + ‖ρ (u i) v₀ - ρ u₀ v₀‖ := by rw [h.2.2.1]
 
+
 open MeasureTheory Complex Matrix in
 open scoped RealInnerProductSpace ContDiff Real ComplexOrder Topology in
 variable {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [MeasurableSpace V]
   [BorelSpace V] {B : Type} [NormedAddCommGroup B] [NormedSpace ℂ B] [CompleteSpace B] {J : V ≃ₗᵢ[ℝ] V}
   {ρ : V → B →L[ℂ] B} in
 set_option linter.unusedSectionVars false in
-
 theorem _root_.GlobalTheory.Mem.Lift.OscDeriv.hasDerivAt_osc : ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] (B : Type) [NormedAddCommGroup B] [NormedSpace ℂ B] [CompleteSpace B] (J : V ≃ₗᵢ[ℝ] V) (ρ : V → B →L[ℂ] B), (∀ x, J (J x) = -x) → ∀ h : _root_.GlobalTheory.RealWeil.IsHeis (_root_.GlobalTheory.RealWeil.omJ J) ρ, ∀ (a : ℝ → V →L[ℝ] V) (X : V →L[ℝ] V), a 0 = 1 → HasDerivAt a X 0 → (∀ t x y, _root_.GlobalTheory.RealWeil.omJ J (a t x) (a t y) = _root_.GlobalTheory.RealWeil.omJ J x y) → ∀ (κ : Type) [Fintype κ] (c : κ → ℂ) (p q : κ → V), _root_.GlobalTheory.Mem.Lift.IsQuadOf (_root_.GlobalTheory.RealWeil.omJ J) X c p q → ∃ lam : ℂ, ∀ f, _root_.GlobalTheory.RealWeil.Sm ρ f → HasDerivAt (fun t : ℝ => ∫ w, ρ (a t w) (∫ u, _root_.GlobalTheory.RealWeil.gau u • ρ (a t u) (_root_.GlobalTheory.RealWeil.proj h (ρ (-w) f)))) (_root_.GlobalTheory.Mem.Lift.quad ρ c p q f + lam • f) 0 := by
   intro V _ _ _ _ _ B _ _ _ J ρ hJ h a X ha0 hX hsym κ _ c p q hQ
   obtain ⟨⟨C0, hC0⟩, lam, hlam⟩ :=
@@ -309,7 +300,7 @@ theorem _root_.GlobalTheory.Mem.Lift.OscDeriv.hasDerivAt_osc : ∀ (V : Type) [N
       _ = _ := by ring
   have hquadint : Integrable (fun w => _root_.GlobalTheory.Mem.Lift.quad ρ c p q (ρ w (y w))) := by
     unfold _root_.GlobalTheory.Mem.Lift.quad
-    exact integrable_finset_sum _ fun i _ => (hD2 _ _).smul (c i)
+    exact MeasureTheory.integrable_finsetSum _ fun i _ => (hD2 _ _).smul (c i)
   have hD : ∫ w, (ρ w (_root_.GlobalTheory.Mem.Lift.quad ρ c p q (y w) + lam • y w) +
       fderiv ℝ (fun u => ρ u (y w)) w (X w)) = _root_.GlobalTheory.Mem.Lift.quad ρ c p q f + lam • f := by
     have hLim : ∀ w, ρ w (_root_.GlobalTheory.Mem.Lift.quad ρ c p q (y w) + lam • y w) +

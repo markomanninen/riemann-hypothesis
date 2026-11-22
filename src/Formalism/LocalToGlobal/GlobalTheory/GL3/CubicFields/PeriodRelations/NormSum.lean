@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.PeriodRelations.Bridge
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.PeriodRelations.Bridge
+
+@[expose] public section
 
 noncomputable section
 

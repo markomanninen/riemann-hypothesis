@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.ExistsAverage
 
@@ -27,7 +31,8 @@ private theorem exists_op {K : Type*} {M : Type*} [Group K] [AddCommGroup M] [Mo
   refine ⟨((Fintype.card (K ⧸ H) : ℕ) : ℂ)⁻¹ • ∑ q : K ⧸ H, (ρ q.out : M →ₗ[ℂ] M),
     ?_, ?_, ?_, ?_⟩
   · intro m hm k
-    rw [hA, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hA, map_smul, map_sum]
     congr 1
     refine Fintype.sum_equiv (Equiv.mulLeft (k : K ⧸ H)) _ _ fun q => ?_
     rw [← Module.End.mul_apply, ← map_mul, key m hm]
@@ -92,7 +97,7 @@ theorem exists_avg {K : Type*} {M : Type*} [Group K] [AddCommGroup M] [Module �
         obtain ⟨H, h1, h2, h3⟩ := hx
         obtain ⟨H', h1', h2', h3'⟩ := hy
         refine ⟨H ⊓ H', inferInstance, inferInstance, fun A hA => ?_⟩
-        rw [map_add, h3 A fun m hm => hA m fun h hh => hm h hh.1,
+        rw [map_add (f := _), h3 A fun m hm => hA m fun h hh => hm h hh.1,
           h3' A fun m hm => hA m fun h hh => hm h hh.2, add_zero]
       | smul c x _ hx =>
         obtain ⟨H, h1, h2, h3⟩ := hx
@@ -115,7 +120,7 @@ theorem exists_avg {K : Type*} {M : Type*} [Group K] [AddCommGroup M] [Module �
     rwa [sub_sub_sub_cancel_left] at this
   refine ⟨{ toFun := f, map_add' := ?_, map_smul' := ?_ }, hf1, ?_, ?_⟩
   · intro x y
-    refine huniq _ _ (fun k => by rw [map_add, hf1, hf1]) ?_
+    refine huniq _ _ (fun k => by rw [map_add (f := _), hf1, hf1]) ?_
     rw [add_sub_add_comm]
     exact N.add_mem (hf2 x) (hf2 y)
   · intro c x

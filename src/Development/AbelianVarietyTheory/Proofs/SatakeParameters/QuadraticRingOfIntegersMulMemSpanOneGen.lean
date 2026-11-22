@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory
@@ -66,7 +71,7 @@ private theorem exists_integral_generator_common_denom_of_finrank_two
     { carrier := {z | ∃ u v : 𝓞 F, z = algebraMap (𝓞 F) (𝓞 E) u + algebraMap (𝓞 F) (𝓞 E) v * θ}
       add_mem' := by
         rintro _ _ ⟨u, v, rfl⟩ ⟨u', v', rfl⟩
-        exact ⟨u + u', v + v', by simp only [map_add]; ring⟩
+        exact ⟨u + u', v + v', by simp only [map_add (f := _)]; ring⟩
       zero_mem' := ⟨0, 0, by simp⟩
       smul_mem' := by
         rintro c _ ⟨u, v, rfl⟩
@@ -93,8 +98,8 @@ private theorem exists_integral_generator_common_denom_of_finrank_two
   obtain ⟨u, v, huv⟩ := hall y
   exact ⟨u, v, huv⟩
 
-open NumberField IsDedekindDomain in
 
+open NumberField IsDedekindDomain in
 theorem _root_.GlobalTheory.quadratic_ringOfIntegers_mul_mem_span_one_gen : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E], Module.finrank F E = 2 → ∃ (θ : 𝓞 E) (D : 𝓞 F), D ≠ 0 ∧ ∀ y : 𝓞 E, ∃ u v : 𝓞 F, algebraMap (𝓞 F) (𝓞 E) D * y = algebraMap (𝓞 F) (𝓞 E) u + algebraMap (𝓞 F) (𝓞 E) v * θ := by
   intro F E _ _ _ _ _ h
   obtain ⟨θ, -, D, hD, hy⟩ := exists_integral_generator_common_denom_of_finrank_two F E h

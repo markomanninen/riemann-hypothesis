@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsSpecFirst
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsSpecFirst
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -16,7 +21,7 @@ theorem eval_specRest {k E : Type*} [CommRing k] [CommRing E] (φ : k →+* E) {
   induction g using MvPolynomial.induction_on with
   | C a => simp [specRest, specFirst]
   | add p q hp hq =>
-    simp only [specRest, specFirst, eval₂_add, map_add] at hp hq ⊢
+    simp only [specRest, specFirst, eval₂_add, map_add (f := _)] at hp hq ⊢
     rw [hp, hq]
   | mul_X p ij hp =>
     simp only [specRest, specFirst, eval₂_mul, eval₂_X, map_mul, bind₁_X_right] at hp ⊢
@@ -38,7 +43,8 @@ theorem SecLinNZD.proof (h1 : ChowNormForm.Statement) (h2 : NormFormEval.Stateme
       (hy'.eq_zero_of_aeval_eq_zero _ (by rw [aeval_def]; exact h0))
   have hsum : (∑ j, algebraMap E (SecAlg QE y) (algebraMap k E (u j)) * secCoord QE y j) =
       secLin QE y (fun j => algebraMap k E (u j)) := by
-    simp only [secLin, linForm, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [secLin, linForm, map_sum, map_mul]
     rfl
   have hnorm : Algebra.norm E (secLin QE y (fun j => algebraMap k E (u j))) ≠ 0 := by
     have h := h2 E (SecAlg QE y) n (secCoord QE y) (fun j => algebraMap k E (u j))

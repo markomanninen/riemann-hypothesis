@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,13 +27,13 @@ theorem iso_sum_tensor (a : WDRep h V) (b : WDRep h V') (c : WDRep h V'') :
     | tmul x y =>
       obtain ⟨x₁, x₂⟩ := x
       simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · induction v using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul x y =>
       obtain ⟨x₁, x₂⟩ := x
       simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem iso_tw_tensor (a : WDRep h V) (c : WDRep h V') (s : ℝ) :
     ((a.tw s).tensor c).Iso ((a.tensor c).tw s) :=
@@ -44,20 +48,20 @@ theorem iso_tensor_assoc (a : WDRep h V) (b : WDRep h V') (c : WDRep h V'') :
   refine ⟨TensorProduct.assoc ℂ V V' V'', fun σ v => ?_, fun v => ?_⟩
   · induction v using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x z =>
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul x y => simp
-      | add x y hx hy => simp only [map_add, add_tmul, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), add_tmul, hx, hy]
   · induction v using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x z =>
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul x y => simp [tmul_add, add_tmul, add_assoc]
-      | add x y hx hy => simp only [map_add, add_tmul, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), add_tmul, hx, hy]
 
 theorem iso_zero_tensor (a : WDRep h V) (c : WDRep h V') [Subsingleton V] (b : WDRep h V'') [Subsingleton V''] :
     (a.tensor c).Iso b := by
@@ -93,11 +97,11 @@ theorem iso_tensor_line (a : WDRep h V) (c : WDRep h V') (hN : c.N = 0) (hd : fi
   · induction v using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [hρ]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · induction v using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [hN]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end WDRep
 
@@ -108,7 +112,7 @@ theorem lpChar_laws (a b c : WD h) (s : ℝ) :
     (a.lpTw s).lpChar c = (a.lpChar c).lpTw s ∧
     a.lpChar (c.lpTw s) = (a.lpChar c).lpTw s ∧
     (a.lpChar b).lpChar c = a.lpChar (b.lpChar c) ∧
-    (WD.lpZero h).lpChar c = WD.lpZero h ∧
+    (WD.lpZero (h := h)).lpChar c = WD.lpZero (h := h) ∧
     (c.unr → c.lpDim = 1 → c.frobEig = {1} → a.lpChar c = a) := by
   induction a using ind with
   | hP n a =>
@@ -145,7 +149,7 @@ theorem lpChar_laws_closed : ∀ (E Ω : Type) [Field E] [NumberField E] [Field 
     (a.lpTw s).lpChar c = (a.lpChar c).lpTw s ∧
     a.lpChar (c.lpTw s) = (a.lpChar c).lpTw s ∧
     (a.lpChar b).lpChar c = a.lpChar (b.lpChar c) ∧
-    (WD.lpZero h).lpChar c = WD.lpZero h ∧
+    (WD.lpZero (h := h)).lpChar c = WD.lpZero (h := h) ∧
     (c.unr → c.lpDim = 1 → c.frobEig = {1} → a.lpChar c = a) :=
   fun _ _ _ _ _ _ _ _ _ _ a b c s => WD.lpChar_laws a b c s
 

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThickTransComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
-import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.TorusPointForms
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThickTransComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
+public import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.TorusPointForms
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -54,50 +58,18 @@ def FamSmul {k : ℕ} (c : F) (s s' : Fam D F k) : Prop :=
 def FamAdd {k : ℕ} (s s' s'' : Fam D F k) : Prop :=
   ∀ α j, (s''.s α).f j = (s.s α).f j + (s'.s α).f j
 
-def CommIs {k : ℕ} (p p' : QPair D F k) (ζ : Fˣ) : Prop :=
-  ∀ (t : LineGen D F k p.1.2.base) (t' : LineGen D F k p'.1.2.base) (s s₁ s₂ r₁ r₂ : Fam D F k),
-    IsPh p' t' s s₁ → IsPh p t s₁ s₂ → IsPh p t s r₁ → IsPh p' t' r₁ r₂ → FamSmul (ζ : F) r₂ s₂
-
-def PairingIs {k : ℕ} (a b : Qk D F k) (ζ : Fˣ) : Prop :=
-  1 ≤ k ∧ D.TauBimult ∧
-    ∀ p p' : QPair D F k, Qk.mk p = a → Qk.mk p' = b → CommIs p p' ζ
-
-def cubPow (k : ℕ) (x x' : TF (R := R) F ⟶ D.P.A) :
-    LB.Gen (LB.LinComb D.P.L (K := Fin k × thK)
-      (fun q => (lift (x ^ (q.1 : ℕ)) (lift x x')).left ≫ thφ D.P.A (x3 D.P.A) q.2)
-      (fun q => thε q.2)) where
-  s := fun j => ∏ i : Fin k,
-    res ((fun _ hy => Set.mem_iInter.2 fun I => Set.mem_iInter.1 hy (i, I)) :
-        LB.wchart D.P.L (K := Fin k × thK)
-          (fun q => (lift (x ^ (q.1 : ℕ)) (lift x x')).left ≫ thφ D.P.A (x3 D.P.A) q.2) j ≤
-        LB.wchart D.P.L
-          (fun I => (lift (x ^ (i : ℕ)) (lift x x')).left ≫ thφ D.P.A (x3 D.P.A) I)
-          (fun I => j (i, I)))
-      ((cubAt D (x ^ (i : ℕ)) x x').s (fun I => j (i, I)))
-
-def constF (c : Fˣ) :
-    LB.Gen (LB.LinComb D.P.L (Y := (TF (R := R) F).left) (K := PEmpty) PEmpty.elim PEmpty.elim) where
-  s := fun _ => res (X := (TF (R := R) F).left) le_top (Units.map (scal F).toMonoidHom c)
-
-def RatioIs {k : ℕ} (p p' : QPair D F k) (ζ : Fˣ) : Prop :=
-  LB.Gen.Corr D.P.L _ _ _ _
-    (LB.mulGen D.P.L _ _ _ _ (p.1.2.form p'.1.1) (cubPow k p'.1.2.base p.1.2.base))
-    (LB.mulGen D.P.L _ _ _ _
-      (LB.mulGen D.P.L _ _ _ _ (p'.1.2.form p.1.1) (cubPow k p.1.2.base p'.1.2.base))
-      (constF (D := D) ζ))
-
 variable (R F) in
-
-abbrev TKF : Over (Spec (CommRingCat.of (FractionRing R))) :=
+abbrev TKF (R : Type) [CommRing R] [IsDomain R]
+    (F : Type) [Field F] [Algebra (FractionRing R) F] :
+    Over (Spec (CommRingCat.of (FractionRing R))) :=
   Over.mk (Spec.map (CommRingCat.ofHom (algebraMap (FractionRing R) F)))
 
-variable (P : PolAV (Spec (CommRingCat.of (FractionRing R))))
-
 variable (F) in
+abbrev SecA (F : Type) [Field F] [Algebra (FractionRing R) F]
+    (P : PolAV (Spec (CommRingCat.of (FractionRing R)))) (k : ℕ) : Type :=
+  LB.Sec (LPow P.A P.L (k : ℤ) (TKF R F))
 
-abbrev SecA (k : ℕ) : Type := LB.Sec (LPow P.A P.L (k : ℤ) (TKF R F))
-
-variable {P}
+variable {P : PolAV (Spec (CommRingCat.of (FractionRing R)))}
 
 structure IsLinBij {k : ℕ} (E : SecA F P k → Fam D F k → Prop) : Prop where
   existsUnique_right : ∀ σ, ∃! s, E σ s
@@ -124,29 +96,6 @@ def IsImageQ {k : ℕ} (E : SecA F P k → Fam D F k → Prop) (a : Qk D F k)
 
 variable (D F)
 
-def PhOperatorSt : Prop :=
-  D.TauBimult → ∀ (k : ℕ) (p : QPair D F k) (t : LineGen D F k p.1.2.base),
-    (∀ s, ∃! s', IsPh p t s s') ∧
-    ∀ t' : LineGen D F k p.1.2.base, ∃ c : Fˣ,
-      ∀ s s' s'', IsPh p t s s' → IsPh p t' s s'' → FamSmul (c : F) s' s''
-
-def PairingRatioSt : Prop :=
-  D.TauBimult → ∀ k : ℕ, 1 ≤ k → ∀ (p p' : QPair D F k) (ζ : Fˣ),
-    PairingIs (Qk.mk p) (Qk.mk p') ζ ↔ RatioIs p p' ζ
-
 variable (P)
-
-def ImageSt : Prop :=
-  CharZero F → ∀ (k : ℕ) (E : SecA F P k → Fam D F k → Prop),
-    (∀ p x x', IsImage E p x → IsImage E p x' → x = x') ∧
-    (∀ p x, IsImage E p x ↔ IsImageQ E (Qk.mk p) x) ∧
-    ∀ a a' x x' (ζ : Fˣ), IsImageQ E a x → IsImageQ E a' x' →
-      (PairingIs a a' ζ ↔ WeilIs P.A P.L (k : ℤ) x x' (Units.map (scal F).toMonoidHom ζ))
-
-example {k : ℕ} (s : Fam D F k) : FamSmul (1 : F) s s := fun α j => by
-  simp [liftFun]
-
-example {k : ℕ} (E : SecA F P k → Fam D F k → Prop) (p : QPair D F k) (x : TKF R F ⟶ P.A)
-    (h : IsImageQ E (Qk.mk p) x) : x ^ k = 1 := (h p rfl).2.2.2.1
 
 end GlobalTheory.IndefiniteRowSideFullHecke.TranslatedLineGenerators

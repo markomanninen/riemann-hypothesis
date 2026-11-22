@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+
+@[expose] public section
 
 open PowerSeries Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct
 
@@ -85,7 +89,7 @@ theorem free_of_regular {O M : Type} [CommRing O] [IsDomain O] [IsDiscreteValuat
         sub_add_cancel])
     exact ⟨z, trivial, hz.symm⟩
   refine (Module.free_quotSMulTop_iff_free O⟦X⟧ M ?_ hX).mp inferInstance
-  rw [IsLocalRing.jacobson_eq_maximalIdeal _ bot_ne_top, IsLocalRing.mem_maximalIdeal,
+  rw [IsLocalRing.ringJacobson_eq_maximalIdeal, IsLocalRing.mem_maximalIdeal,
     mem_nonunits_iff, isUnit_iff_constantCoeff]
   simp
 
@@ -123,7 +127,8 @@ theorem basis_of_baseChange {ι R N E D : Type} [Finite ι] [CommRing R] [IsLoca
       (IsLocalRing.maximalIdeal R)).to_subtype
     refine Finite.of_injective (fun n : MaximalSpectrum (ι → R) =>
       (⟨n.asIdeal, n.isMaximal.isPrime, ⟨(IsLocalRing.eq_maximalIdeal
-        (@Ideal.isMaximal_comap_of_isIntegral_of_isMaximal R _ _ _ _ _ n.asIdeal n.isMaximal)).symm⟩⟩ :
+        (@Ideal.isMaximal_comap_of_isIntegral_of_isMaximal R _ _ _ _
+          (algebraMap_isIntegral_iff.mpr inferInstance) n.asIdeal n.isMaximal)).symm⟩⟩ :
         (IsLocalRing.maximalIdeal R).primesOver (ι → R))) fun a b hab => ?_
     exact MaximalSpectrum.ext (congrArg Subtype.val hab)
   refine Module.nonempty_basis_of_flat_of_finrank_eq _ _ _ fun P => ?_
@@ -181,8 +186,8 @@ theorem basis_of_regular {ι O N E D : Type} [Finite ι] [CommRing O] [IsDomain 
   haveI : Module.Free O⟦X⟧ N := free_of_regular c hc hc' hX h
   exact basis_of_baseChange hE f hf
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem wach_free {l : ℕ} [Fact l.Prime] (P : LocPrime l) (H : LocHW l P) (K : FinExt l) (s : ℕ)
     (LL : FinExt l) (h : Good K s LL) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL))
     (hT : IsCrys (P.PD K) T.ρ) :

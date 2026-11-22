@@ -1,9 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackey
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.Splitting
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackey
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.Splitting
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
+set_option synthInstance.maxHeartbeats 400000
 
 noncomputable section
 
@@ -213,7 +219,7 @@ theorem realMemberPlace_injective : Function.Injective (realMemberPlace S ιr hL
       Subtype.ext ((ιr v).injective e)
     rw [AlgEquiv.mul_apply, hinj, ← AlgEquiv.mul_apply, mul_inv_cancel, AlgEquiv.one_apply]
   have hdd : d = d' := by
-    rw [← DoubleCoset.out_eq' _ _ d, ← DoubleCoset.out_eq' _ _ d', DoubleCoset.eq]
+    rw [← DoubleCoset.out_eq' d, ← DoubleCoset.out_eq' d', DoubleCoset.eq]
     exact ⟨_, hmem, 1, one_mem _, by group⟩
   subst hdd
   rfl
@@ -234,7 +240,7 @@ theorem realMemberPlace_surjective : Function.Surjective (realMemberPlace S ιr 
   let d : MackeyDoubleCoset (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))
       (gsRealFamily S ιr v).toMonoidHom :=
     DoubleCoset.mk _ _ x
-  obtain ⟨a, b, ha, hb, hab⟩ := DoubleCoset.mk_out_eq_mul
+  obtain ⟨a, ha, b, hb, hab⟩ := DoubleCoset.mk_out_eq_mul
     (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)) (gsRealFamily S ιr v).toMonoidHom.range x
   obtain ⟨h, rfl⟩ := MonoidHom.mem_range.1 hb
   have hout : d.out = a * x * gsRealFamily S ιr v h := hab

@@ -1,11 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.ChebBd
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspTrBand
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClass
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SmoothDecay
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OpBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.EvExSub
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CuspidalMultiplicityOneTotallyComplex
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.ChebBd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspTrBand
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClass
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SmoothDecay
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OpBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.EvExSub
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CuspidalMultiplicityOneTotallyComplex
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -90,7 +95,7 @@ private theorem cheb_ev {σ : Type} (ψ : MvPolynomial (Option σ) ℂ →+* (H 
   have h1 : ∀ (y : MvPolynomial (Option σ) ℂ) (p : Polynomial ℂ), ψ (Polynomial.aeval y p) = Polynomial.aeval (ψ y) p := by
     intro y p
     induction p using Polynomial.induction_on' with
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | monomial k c =>
       simp only [Polynomial.aeval_monomial, map_mul, map_pow, MvPolynomial.algebraMap_eq, hc, Algebra.algebraMap_eq_smul_one]
   have hs : IsSelfAdjoint A := isSelfAdjoint_of_nonneg hA
@@ -149,8 +154,8 @@ end SlopeTestRemainingChoices
 
 set_option maxHeartbeats 800000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cuspPart :
-    ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n l : ℕ), 0 < n →
-      ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (θ : Twist μ) (𝔰 : Side θ l) (ev : PR K n →+* (LL μ →L[ℂ] LL μ)),
+    ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n l : ℕ), 0 < n →
+      ∀ (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (θ : Twist μ) (𝔰 : Side θ l) (ev : PR K n →+* (LL μ →L[ℂ] LL μ)),
       𝔰.toAmp.IsEv ev → (∀ P, Inner μ (ev P)) → ∃ C₁ : ℝ, ∀ η : ℝ, 0 < η → η ≤ 1 → ∃ s : Finset (ℝ × Submodule ℂ (LL μ)),
         (∀ p, p ∈ s ↔ η < p.1 ∧ IsSummand μ p.2 ∧ p.2.map (θ.U : LL μ →ₗ[ℂ] LL μ) = p.2 ∧ eigIn p.2 𝔰.toAmp.A p.1 ≠ ⊥) ∧
         (∀ p ∈ s, FiniteDimensional ℂ (eigIn p.2 𝔰.toAmp.A p.1)) ∧

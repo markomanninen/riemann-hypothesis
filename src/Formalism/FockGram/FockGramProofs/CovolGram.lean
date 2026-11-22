@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.FockGram.StatementLat
+module
+
+public import Mathlib
+public import Formalism.FockGram.StatementLat
+
+@[expose] public section
 
 open Matrix LinearMap Module MeasureTheory
 

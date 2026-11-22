@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,7 +17,8 @@ variable (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algeb
 theorem algebraMap_intTrace_eq_sum (x : 𝓞 L) :
     algebraMap (𝓞 K) (𝓞 L) (Algebra.intTrace (𝓞 K) (𝓞 L) x) = ∑ σ : L ≃ₐ[K] L, σ • x := by
   apply FaithfulSMul.algebraMap_injective (𝓞 L) L
-  rw [← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply (𝓞 K) K L,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply (𝓞 K) K L,
     Algebra.algebraMap_intTrace (L := L), trace_eq_sum_automorphisms, map_sum]
   rfl
 
@@ -93,8 +98,8 @@ theorem not_pow_dvd (n : ℕ) (hn : 0 < n) (P Q : Ideal (𝓞 L)) [hP : P.IsMaxi
   have h11 := Ideal.dvd_iff_le.1 ((mul_dvd_mul_iff_left h0).1 h10)
   exact hP.ne_top (by rw [← hPQ, sup_eq_left.2 h11])
 
-omit K L in
 
+omit K L in
 theorem natCast_mul_finrank_mem_differentIdeal :
     ∀ (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L] [IsGalois K L] (n : ℕ), 0 < n →
       (∀ 𝔭 : HeightOneSpectrum (𝓞 K), (n : 𝓞 K) ∉ 𝔭.asIdeal → GlobalTheory.NT.UnramIn L 𝔭) →

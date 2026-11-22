@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowSubst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowSubst
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -168,7 +172,7 @@ def leadExp (m : Fin N × Fin N →₀ ℕ) : Fin N × Fin N →₀ ℕ := ∑ v
 
 theorem leadExp_apply (m : Fin N × Fin N →₀ ℕ) (w : Fin N × Fin N) :
     leadExp N m w = ∑ v, m v * lead N v w := by
-  simp [leadExp, Finsupp.finset_sum_apply]
+  simp [leadExp, Finsupp.finsetSum_apply]
 
 theorem image_monomial_lead [Nontrivial O] (m : Fin N × Fin N →₀ ℕ) :
     (ord N).degree (lduHom O N (monomial m 1)) = leadExp N m ∧
@@ -232,8 +236,8 @@ end GlobalTheory.GenCoef.LduLead
 
 namespace GlobalTheory.GenCoef
 
-open LduLead in
 
+open LduLead in
 theorem lduHom_coeff_smul_injective : ∀ (O : Type) [CommRing O] (N : ℕ) (M : Type) [AddCommGroup M] [Module O M]
     (s : Finset (Fin N × Fin N →₀ ℕ)) (c : (Fin N × Fin N →₀ ℕ) → M),
     (∀ n, ∑ m ∈ s, (lduHom O N (monomial m 1)).coeff n • c m = 0) → ∀ m ∈ s, c m = 0 := by

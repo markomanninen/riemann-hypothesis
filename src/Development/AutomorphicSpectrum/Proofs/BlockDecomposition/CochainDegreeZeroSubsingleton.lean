@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Polynomial CrystallineSemistableComparison CrystallineSemistableComparison.CH
 universe w w' v u v' u' v'' u''
@@ -17,8 +22,6 @@ def val {x y : Mn} (h : x ⟶ y) : ℕ := Multiplicative.toAdd (show Multiplicat
 theorem val_comp {x y z : Mn} (f : x ⟶ y) (g : y ⟶ z) : val (f ≫ g) = val f + val g := by
   change Multiplicative.toAdd ((show Multiplicative ℕ from g) * (show Multiplicative ℕ from f)) = _
   rw [toAdd_mul, add_comm]; rfl
-
-theorem val_id (x : Mn) : val (𝟙 x) = 0 := rfl
 
 def natF : ℕ ⥤ Mn where
   obj _ := SingleObj.star _
@@ -255,7 +258,8 @@ theorem dp_zsmul {n : ℕ} (e : ℤ) (φ : Ch n → Vv N) (s : Ch (n + 1)) :
 
 theorem dp_map {n : ℕ} (g : Vv N →ₗ[R] Vv N) (φ : Ch n → Vv N) (s : Ch (n + 1)) :
     dp N (fun x => g (φ x)) s = g (dp N φ s) := by
-  simp [dp, map_sum, map_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [dp, map_sum, map_zsmul]
 
 theorem dp_zero {n : ℕ} (s : Ch (n + 1)) : dp N (fun _ : Ch n => 0) s = 0 := by
   simp [dp]
@@ -343,14 +347,14 @@ theorem exact_hi {p : ℕ} (f : Ch (p + 2) → Vv N) (hf : d N (p + 2) (f : Cn N
     have h0 : dp N w (E a m) + (-1 : ℤ) ^ (p + 1) • v (E a m) = 0 := hR0 a m
     have hG : gp N 1 (dp N w (E a m)) + (-1 : ℤ) ^ (p + 1) • gp N 1 (v (E a m)) = 0 := by
       have := congrArg (gp N 1) h0
-      simpa only [map_add, map_zsmul, map_zero] using this
+      simpa only [map_add (f := _), map_zsmul, map_zero] using this
     have h1 : dp N u (E 0 (E a m)) + (-1 : ℤ) ^ (p + 2) • u (E a m) + (-1 : ℤ) ^ (p + 3) • gp N 1 (v (E a m)) = 0 :=
       rel N f hf 0 1 (E a m)
     have hB : dp N u (E 0 (E a m)) = dp N (fun x => u (E 0 x)) (E a m) + (-1 : ℤ) ^ (p + 1) • u (E a m) :=
       dp_EE N u a 0 m
     have hP : Pp N (fun i => u (E i m)) (a + 1) = gp N 1 (Pp N (fun i => u (E i m)) a) + u (E a m) := rfl
     rw [d_EE, hd, hz (a + 1) m, hz a m, hP, gp_add N a 1 (w m)]
-    simp only [map_add, map_zsmul]
+    simp only [map_add (f := _), map_zsmul]
     rcases neg_one_pow_eq_or ℤ p with hp | hp <;> simp only [pow_succ, hp] at hG h1 hB ⊢
     · linear_combination (norm := module) hB - h1 + hG
     · linear_combination (norm := module) h1 - hB - hG

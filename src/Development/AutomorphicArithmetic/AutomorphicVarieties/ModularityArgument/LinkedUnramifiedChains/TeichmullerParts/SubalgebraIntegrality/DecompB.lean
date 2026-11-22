@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.SubalgebraIntegrality.DecompA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.SubalgebraIntegrality.DecompA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,15 +15,15 @@ theorem core3 {E : Type} [Field E] [NumberField E] [IsCMField E] {n m d : ℕ} {
     [Group Gp] [AddCommGroup D] [Module ℂ D] [FiniteDimensional ℂ D] [Fintype Jx] (X : Frame Γ Ga Gp)
     (ξ : Gp →* GL (Fin d) ℂ) (τ : X.Ub →* GL (Fin m) ℂ) (U₀ : Subgroup X.Ub) (I : Subgroup Gp) (J : UA E n →* Ga × Gp)
     (tf : (Ga × Gp → Fin d → ℂ) →ₗ[ℂ] D →ₗ[ℂ] (UA E n → ℂ)) (r : UA E n → D → D)
-    (hJinf : ∀ x ∈ infU E n, J x = 1) (hRfin : ∀ k ∈ finU E n, ∀ ℓ, r k ℓ = ℓ)
+    (hJinf : ∀ x ∈ infU E n, J x = 1) (hRfin : ∀ k ∈ finU (E := E) (n := n), ∀ ℓ, r k ℓ = ℓ)
     (hinj : ∀ F ∈ X.AF ξ, (∀ ℓ, tf F ℓ = 0) → F = 0)
-    (haut : ∀ F ∈ X.AF ξ, IsOpen {k : finU E n | ∀ g, F (g * J k) = F g} → ∀ ℓ, IsAutFormU (tf F ℓ))
+    (haut : ∀ F ∈ X.AF ξ, IsOpen {k : finU (E := E) (n := n) | ∀ g, F (g * J k) = F g} → ∀ ℓ, IsAutFormU (tf F ℓ))
     (htr : ∀ F ℓ x, RU E n x (tf F ℓ) = tf (fun g => F (g * J x)) (r x ℓ))
-    (hsurj : Function.Surjective fun k : finU E n => J k)
+    (hsurj : Function.Surjective fun k : finU (E := E) (n := n) => J k)
     (hsur : ∀ Φ : D →ₗ[ℂ] (UA E n → ℂ), (∀ ℓ, IsAutFormU (Φ ℓ)) → (∀ ℓ, ∀ x ∈ infU E n, RU E n x (Φ ℓ) = Φ (r x ℓ)) →
       ∃ F ∈ X.AF ξ, ∀ ℓ, tf F ℓ = Φ ℓ)
-    (hev : ∀ᶠ k : finU E n in nhds 1, (∃ u ∈ U₀, (u : Ga) = (J k).1 ∧ τ u = 1) ∧ (J k).2 ∈ I)
-    (Kf : Subgroup (finU E n)) (hKf : ∀ k ∈ Kf, (∃ u ∈ U₀, (u : Ga) = (J k).1 ∧ τ u = 1) ∧ (J k).2 ∈ I)
+    (hev : ∀ᶠ k : finU (E := E) (n := n) in nhds 1, (∃ u ∈ U₀, (u : Ga) = (J k).1 ∧ τ u = 1) ∧ (J k).2 ∈ I)
+    (Kf : Subgroup (finU (E := E) (n := n))) (hKf : ∀ k ∈ Kf, (∃ u ∈ U₀, (u : Ga) = (J k).1 ∧ τ u = 1) ∧ (J k).2 ∈ I)
     (Pw : Submodule ℂ (UA E n → ℂ) → Prop)
     (hwt : ∀ σ, IsAutRepU σ → (Submodule.pi Set.univ (fun _ => X.AF ξ) ⊓ fixd (X.raF d τ) U₀) ⊓
       Submodule.span ℂ {F : Fin m → X.Fn ℂ d | ∀ i ℓ, tf (F i) ℓ ∈ σ} ≠ ⊥ → Pw σ)
@@ -48,7 +52,7 @@ theorem core3 {E : Type} [Field E] [NumberField E] [IsCMField E] {n m d : ℕ} {
     change (1 : Matrix (Fin m) (Fin m) ℂ) i i • _ = _
     rw [Matrix.one_apply_eq, one_smul]
   have hfixG : ∀ G : Fin m → Ga × Gp → Fin d → ℂ, (∀ u i, ∑ j, a u i j • T u (G j) = G i) →
-      ∀ k : finU E n, ((∃ u ∈ U₀, (u : Ga) = (J k).1 ∧ τ u = 1) ∧ (J k).2 ∈ I) → ∀ i g, G i (g * J k) = G i g := by
+      ∀ k : finU (E := E) (n := n), ((∃ u ∈ U₀, (u : Ga) = (J k).1 ∧ τ u = 1) ∧ (J k).2 ∈ I) → ∀ i g, G i (g * J k) = G i g := by
     rintro G hG k ⟨⟨u, hu, huk, h1⟩, hk⟩ i g
     have h2 : ∑ j, (τ u).val i j • (fun g => G j (g * ((u : Ga), 1))) = G i := hG (.inl ⟨u, hu⟩) i
     rw [h1] at h2
@@ -87,7 +91,7 @@ theorem core3 {E : Type} [Field E] [NumberField E] [IsCMField E] {n m d : ℕ} {
         exact h1.symm)
     (GlobalTheory.PRep.fixed (GlobalTheory.BCT.RF E n) Kf) Pw
     (fun G hGA hG i ℓ => haut (G i) (hGA i) (by
-      let S : Subgroup (finU E n) :=
+      let S : Subgroup (finU (E := E) (n := n)) :=
         { carrier := {k | ∀ g, G i (g * J k) = G i g}
           one_mem' := fun g => by rw [OneMemClass.coe_one, map_one, mul_one]
           mul_mem' := fun {x y} hx hy g => by rw [Subgroup.coe_mul, map_mul, ← mul_assoc, hy, hx]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.GermVanishesOfGenericVanishing
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.GermVanishesOfGenericVanishing
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory
 
 namespace GlobalTheory.CompanionTheory.Ggeo

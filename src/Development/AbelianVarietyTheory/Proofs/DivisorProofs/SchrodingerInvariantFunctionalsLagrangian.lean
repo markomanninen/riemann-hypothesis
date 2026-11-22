@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterInvariantAdelicFormEqMulEvalZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicStoneVonNeumannLagrangianUniqueness
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzVanishingDecompositionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslationInvariantFunctionalLinearZeroStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterInvariantAdelicFormEqMulEvalZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicStoneVonNeumannLagrangianUniqueness
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzVanishingDecompositionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslationInvariantFunctionalLinearZeroStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix TensorProduct
@@ -31,15 +35,16 @@ theorem arch (V : Type) [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimens
     ext x
     rw [hsum x, SchwartzMap.sum_apply]
   have : T (f - f 0 • f₀) = 0 := by
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     exact Finset.sum_eq_zero fun i _ => kills_linear_mul V T hT (L i) (h i) (g i) (hg i)
   rw [map_sub, map_smul, sub_eq_zero] at this
   rw [this, smul_eq_mul, mul_comm]
 
 open scoped Classical
 
-open GlobalTheory.CharInvForm in
 
+open GlobalTheory.CharInvForm in
 theorem charInv : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ), IsStd ψ → ∀ (κ : Type) [Fintype κ]
     (l : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ),
     (∀ (y : κ → AF F), ∀ φ ∈ schA F κ, l (fun x => ψ (x ⬝ᵥ y) * φ x) = l φ) →
@@ -52,17 +57,15 @@ theorem charInv : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) 
     let T : SchwartzMap (κ → mixedEmbedding.mixedSpace F) ℂ →ₗ[ℂ] ℂ :=
       { toFun := fun f => l (pureA F f g)
         map_add' := fun f f' => by
-          rw [← map_add]
+          rw [← map_add (f := _)]
           congr 1
           funext x
-          simp only [pureA, SchwartzMap.add_apply, Pi.add_apply]
-          ring
+          simp [pureA, add_mul]
         map_smul' := fun s f => by
           rw [RingHom.id_apply, ← map_smul]
           congr 1
           funext x
-          simp only [pureA, SchwartzMap.smul_apply, Pi.smul_apply, smul_eq_mul]
-          ring }
+          simp [pureA, mul_assoc] }
     obtain ⟨α, hα⟩ := arch _ T (by
       intro L f f' hff'
       obtain ⟨Y, hY⟩ := GlobalTheory.TraceDual.exists_trace_rep F κ L
@@ -71,25 +74,22 @@ theorem charInv : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) 
         (pureA F f g) (mem_schA f hg)]
       congr 1
       funext x
-      simp only [pureA, hff', psi_dot_inf hψ, hY]
-      ring)
+      simp only [pureA, hff', psi_dot_inf hψ, hY, mul_assoc])
     exact ⟨α, hα⟩
 
   obtain ⟨f₀, hf₀⟩ := exists_schwartz_one (κ → mixedEmbedding.mixedSpace F)
   let a : ((κ → Af F) → ℂ) →ₗ[ℂ] ℂ :=
     { toFun := fun g => l (pureA F f₀ g)
       map_add' := fun g g' => by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         congr 1
         funext x
-        simp only [pureA, Pi.add_apply]
-        ring
+        simp [pureA, mul_add]
       map_smul' := fun s g => by
         rw [RingHom.id_apply, ← map_smul]
         congr 1
         funext x
-        simp only [pureA, Pi.smul_apply, smul_eq_mul]
-        ring }
+        simp [pureA, mul_comm, mul_assoc] }
   obtain ⟨c, hc⟩ := GlobalTheory.CharForm.exists_eq_mul_apply_zero (κ → Af F) {χ | ∃ y : κ → Af F, χ = fun x => ψ (pairA F 0 (x ⬝ᵥ y))}
     (by
       intro N hN
@@ -106,8 +106,7 @@ theorem charInv : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) 
       rw [← hinv (fun i => pairA F 0 (y i)) (pureA F f₀ g) (mem_schA f₀ hg)]
       congr 1
       funext x
-      simp only [pureA, dot_pairA_fin]
-      ring)
+      simp [pureA, dot_pairA_fin, mul_left_comm])
   refine ⟨c, fun φ hφ => ?_⟩
   induction hφ using Submodule.span_induction with
   | mem Φ hΦ =>
@@ -121,7 +120,7 @@ theorem charInv : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) 
     rw [hα f, hαc, pureA_zero]
     ring
   | zero => simp
-  | add φ φ' _ _ h h' => rw [map_add, h, h', Pi.add_apply, mul_add]
+  | add φ φ' _ _ h h' => rw [map_add (f := _), h, h', Pi.add_apply, mul_add]
   | smul s φ _ h => rw [map_smul, h, Pi.smul_apply, smul_eq_mul, smul_eq_mul]; ring
 
 theorem eval_mem_adm {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] (x : κ → AF F) :
@@ -163,7 +162,7 @@ theorem main : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F : Type) [Field F] [Nu
     have e2 := e φ hφ
     have e3 := e φ' hφ'
     simp only [LinearMap.proj_apply] at e1 e2 e3
-    rw [← e1, map_add, map_smul, map_smul, e2, e3]
+    rw [← e1, map_add (f := _), map_smul, map_smul, e2, e3]
     rfl
   have key : ∀ l : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ, (∀ (t : AF F), ∀ w ∈ L, ∀ φ ∈ schA F κ,
       l (schr ψ (t • ((fun i => algebraMap F (AF F) (w.1 i)), (fun i => algebraMap F (AF F) (w.2 i)))) φ) = l φ) →
@@ -174,7 +173,7 @@ theorem main : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F : Type) [Field F] [Nu
         map_add' := fun φ φ' => by
           have := hlin 1 1 φ.1 φ.2 φ'.1 φ'.2
           simp only [one_smul] at this
-          simp only [Submodule.coe_add, this, map_add]
+          simp only [Submodule.coe_add, this, map_add (f := _)]
         map_smul' := fun s φ => by
           have := hlin s 0 φ.1 φ.2 0 (Submodule.zero_mem _)
           simp only [zero_smul, add_zero] at this

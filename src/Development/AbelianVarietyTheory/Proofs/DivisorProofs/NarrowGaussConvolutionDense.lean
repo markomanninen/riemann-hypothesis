@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemClosureWideGaussianMulSchwartzStatement
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemClosureWideGaussianMulSchwartzStatement
+
+@[expose] public section
+
 open FourierTransform MeasureTheory Filter Topology
 
 namespace GlobalTheory.NarrowGauss

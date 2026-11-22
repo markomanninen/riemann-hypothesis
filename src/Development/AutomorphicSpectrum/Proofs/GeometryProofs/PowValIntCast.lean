@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsHTAtIff
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDualBC
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatPar
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverZpOfInFibre
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HTChartExistsHoldsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateChartIntegralStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsHTAtIff
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDualBC
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatPar
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverZpOfInFibre
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HTChartExistsHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateChartIntegralStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,7 @@ theorem exists_chart (h876 : type_of% @GlobalTheory.T.section_eq_zero_of_values)
   have hfin : Module.Finite A L₀ := (lie_proj X t.G A x L₀ M₀).1
   obtain ⟨j₀, j, hj, hjj, hj₀, hspan, hrk₀⟩ : ∃ (j₀ : L₀ →+ Li) (j : Module.Dual A L₀ →ₗ[A] Module.Dual Ω Li),
       IsBaseChange Ω j ∧ (∀ w b, j w (j₀ b) = algebraMap A Ω (w b)) ∧
-      (∀ v, (M.pt (j₀ v)).left = Spec.map (CommRingCat.ofHom (dualMap (algebraMap A Ω))) ≫ (M₀.pt v).left) ∧
+      (∀ v, (M.pt (j₀ v)).left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap A Ω))) ≫ (M₀.pt v).left) ∧
       ((∀ w w' : Module.Dual Ω Li, (∀ b, w (j₀ b) = w' (j₀ b)) → w = w') ∧
         ∀ w : Module.Dual Ω Li, ∃ w' : L₀ →ₗ[A] Ω, ∀ b, w' b = w (j₀ b)) ∧
       Module.finrank Ω Li = Module.finrank A L₀ := by
@@ -118,7 +122,6 @@ theorem exists_chart (h876 : type_of% @GlobalTheory.T.section_eq_zero_of_values)
   refine ⟨Dc, hDe, fun a w => ?_, fun w => ⟨?_, fun h => ?_⟩, fun q hq => le_antisymm (fun w hw => ?_) ?_,
     fun q hq z w' => ?_, fun c hPt hc => ?_⟩
   · induction w using hj.inductionOn with
-    | zero => simp
     | tmul w =>
       rw [hDc.2.1, ModelTest.bar_eq H]
       refine hspan.1 _ _ fun b => ?_
@@ -126,7 +129,7 @@ theorem exists_chart (h876 : type_of% @GlobalTheory.T.section_eq_zero_of_values)
         rw [hρ, hj₀, hρ₀, Over.comp_left, Over.comp_left, hj₀, Category.assoc]))
       rw [LinearMap.comp_apply, this, hjj, hjj]; rfl
     | smul s w ih => rw [map_smul, ih, LinearMap.smul_comp]
-    | add w w' ih ih' => rw [map_add, ih, ih', LinearMap.add_comp]
+    | add w w' ih ih' => rw [map_add (f := _), ih, ih', LinearMap.add_comp]
   · rw [hDc.1]
     rintro ⟨w₀, rfl⟩ q hq
     exact (hom q hq _).2 fun b => by rw [hjj]; exact hsub q hq _
@@ -164,15 +167,15 @@ theorem exists_chart (h876 : type_of% @GlobalTheory.T.section_eq_zero_of_values)
     exact (hom q hq _).2 fun b => by rw [hjj]; exact hsub q hq _
   · obtain ⟨χ, w₀, hχ, hh, hHT⟩ := hDc.2.2 z
     refine isHTAt_iff lie_proj h876 hξ t.PP.L hn hfull M x κ hx' Γ i htor M₀ j₀ (by rw [hκ']; exact hj₀) _ χ w₀ _
-      (fun s k _ _ a xk gk c h1 h2 => ?_) hHT (fun b => by rw [hh, hjj, hκ]) q hq
+      (fun s k _ _ a xk gk c h1 h2 => by
+        obtain ⟨z', rfl⟩ := hsurj s
+        have hz' : z' = Multiplicative.ofAdd (Multiplicative.toAdd z') := rfl
+        rw [hz'] at h2 ⊢
+        rw [hπ] at h2
+        rw [hev.weil _ _ k a xk gk c h1 (h2.trans (congrArg (spMap a ≫ ·) (hpt _))), hχ, hDe, he, hκ,
+          ← pow_val_intCast ζ₀ (p ^ m) hev.prim.pow_eq_one, Units.val_pow_eq_pow_val, Units.val_pow_eq_pow_val, map_pow,
+          map_pow, map_pow, hζ]) hHT (fun b => by rw [hh, hjj, hκ]) q hq
       (fun a => by rw [hκ]; exact hsub q hq a) w'
-    obtain ⟨z', rfl⟩ := hsurj s
-    have hz' : z' = Multiplicative.ofAdd (Multiplicative.toAdd z') := rfl
-    rw [hz'] at h2 ⊢
-    rw [hπ] at h2
-    rw [hev.weil _ _ k a xk gk c h1 (h2.trans (congrArg (spMap a ≫ ·) (hpt _))), hχ, hDe, he, hκ,
-      ← pow_val_intCast ζ₀ (p ^ m) hev.prim.pow_eq_one, Units.val_pow_eq_pow_val, Units.val_pow_eq_pow_val, map_pow,
-      map_pow, map_pow, hζ]
   · refine h576 hPt E H D p A Ω m _ Dc u hu X t x Γ i htor L₀ M₀ ρ₀ hρ₀ j hj π ζ c hDc hπ (by rw [hDe]; exact he)
       (by rw [← hrk₀, hrk]) hprop' (fun k _ _ f => ?_) (cp_descend hinj p c hc)
     obtain ⟨I, h1, h2⟩ := htate k f

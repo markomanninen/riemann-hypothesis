@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IrreducibleInvariant
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IrreducibleInvariant
+
+@[expose] public section
 
 open Formalism.ConjugateSelfDual Formalism.MainNotions.N Polynomial UpperTheory.V.Af
 open scoped Matrix
@@ -176,7 +180,7 @@ theorem UpperTheory.V.Sd.ribetLat :
   have hprod : ∀ s, (∏ j, (X - C ((![a, b] j s : (Qbar l)ˣ) : Qbar l))) =
       X ^ 2 - C ((a s : Qbar l) + b s) * X + C ((a s : Qbar l) * b s) := by
     intro s
-    simp only [Fin.prod_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, map_add, map_mul]
+    simp only [Fin.prod_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, map_add (f := _), map_mul]
     ring
   have htr : ∀ s, ‖(ρ s : Matrix (Fin 2) (Fin 2) (Qbar l)).trace - (a s + b s)‖ < 1 := by
     intro s

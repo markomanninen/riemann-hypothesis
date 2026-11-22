@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+
+@[expose] public section
+
 open ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Sh
 
 namespace GlobalTheory

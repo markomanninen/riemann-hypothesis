@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.LinIndToLp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.LinIndToLp
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem gram_re_det_le (v : Fin m → EuclideanSpace ℂ (Fin n)) (M : ℝ) (hM 
         _ = ‖v j‖ := by rw [hu.1 j, one_mul]
         _ ≤ M := hM j
     calc ∏ j, ‖τ j j‖ ^ 2 ≤ ∏ _j : Fin m, M ^ 2 :=
-          Finset.prod_le_prod (fun j _ => by positivity) fun j _ => pow_le_pow_left₀ (norm_nonneg _) (hτj j) 2
+          Finset.prod_le_prod₀ (fun j _ => by positivity) fun j _ => pow_le_pow_left₀ (norm_nonneg _) (hτj j) 2
       _ = (M ^ 2) ^ m := by simp
   · rw [gram_det_zero v hv, Complex.zero_re]
     by_cases hm : m = 0

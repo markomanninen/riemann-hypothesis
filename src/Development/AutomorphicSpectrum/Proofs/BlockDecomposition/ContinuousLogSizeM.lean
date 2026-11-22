@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ThetaBasic
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SizeBasicOfConjPlaces
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ThetaBasic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SizeBasicOfConjPlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem continuous_iSup_fin {X ι : Type} [TopologicalSpace X] [Fintype ι] (f :
     rw [this]
     exact Continuous.finset_sup'_apply _ fun i _ => hf i
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 theorem continuous_cW (w : HeightOneSpectrum (𝓞 E)) : Continuous (cW w : Ad E → w.adicCompletion E) :=
   (RestrictedProduct.continuous_eval w).comp continuous_snd
@@ -65,8 +69,8 @@ theorem continuous_logSizeM (hS : SzFin) :
       ∑ v, Real.posLog (⨆ p : Fin n × Fin n, ‖cV v (A p.1 p.2)‖ ^ 2) +
         ∑ w ∈ (hS E (Fin n) (Fin n) A₀).toFinset,
           Real.posLog (⨆ p : Fin n × Fin n, ‖cW w (A p.1 p.2)‖) :=
-    (continuous_finset_sum _ fun v _ => continuous_inf v).add
-      (continuous_finset_sum _ fun w _ => continuous_fin w)
+    (continuous_finsetSum _ fun v _ => continuous_inf v).add
+      (continuous_finsetSum _ fun w _ => continuous_fin w)
   refine hc.continuousAt.congr ?_
   filter_upwards [eventually_finsum hS A₀] with A hA
   rw [logSizeM, hA]

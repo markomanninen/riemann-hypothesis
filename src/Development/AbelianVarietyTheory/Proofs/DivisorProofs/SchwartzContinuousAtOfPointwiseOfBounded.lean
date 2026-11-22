@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 
@@ -27,7 +31,7 @@ theorem norm_fderiv_le_of_small_of_lipschitz {V E : Type*} [NormedAddCommGroup V
       rw [Metric.mem_closedBall, dist_eq_norm, add_sub_cancel_left, hh]
     have hmv := Convex.norm_image_sub_le_of_norm_fderiv_le (fun x _ => hψd x) hb
       (convex_closedBall v t) (Metric.mem_closedBall_self ht.le) hvh
-    rw [add_sub_cancel_left, hh, map_add] at hmv
+    rw [add_sub_cancel_left, hh, map_add (f := _)] at hmv
     have e1 : g (v + h) - (fderiv ℝ g v v + fderiv ℝ g v h) - (g v - fderiv ℝ g v v) =
         (g (v + h) - g v) - fderiv ℝ g v h := by abel
     rw [e1] at hmv

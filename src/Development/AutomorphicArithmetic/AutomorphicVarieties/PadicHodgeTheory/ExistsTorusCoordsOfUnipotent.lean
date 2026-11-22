@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module Topology UpperTheory.V.Loc UpperTheory.V.U3
 
@@ -82,7 +86,11 @@ private theorem exists_triM (A : GL (Fin 3) B)
 end
 
 theorem UpperTheory.exists_torus_coords_of_unipotent :
-    ∀ {G B : Type} [Group G] [CommRing B] {η : G →* ℤˣ} (h : B), 2 * h = 1 → ∀ u : G →* GG 3 B, HasMult η u → (∀ g a b, wt a b < 0 → (u g).mat a b = 0) → ∃ (T : Tor η B) (β : G → B × B) (γ : G → B), T.Coord h β γ u ∧ (∀ g g', β (g * g') = β g + T.M1 g (β g')) ∧ T.IsGam h β γ := by
+    ∀ {G B : Type} [Group G] [CommRing B] {η : G →* ℤˣ} (h : B),
+      2 * h = 1 → ∀ u : G →* GG (m := 3) (R := B), HasMult η u →
+        (∀ g a b, wt a b < 0 → (u g).mat a b = 0) →
+        ∃ (T : Tor η B) (β : G → B × B) (γ : G → B),
+          T.Coord h β γ u ∧ (∀ g g', β (g * g') = β g + T.M1 g (β g')) ∧ T.IsGam h β γ := by
   intro G B _ _ η h h2 u hm hu
   have ex : ∀ g, ∃ (t : Fin 3 → Bˣ) (x y z : B), (u g).mat = triM t x y z :=
     fun g => exists_triM (u g).left (hu g)

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmVacuumEqSplitFacSmulSum
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmVacuumEqSplitFacSmulSum
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem idemSum_mul_eq_zero {P P' : Finset (Pl D.host.E)} {e e' : AE D} (he : Is
     (hPP : ∀ w ∈ P, ∀ w' ∈ P', w ≠ w' ∧ ¬ Formalism.IndefR.Lev.IsConjPl (D := D) w w') : e * (e' + cA D e') = 0 := by
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := he
   obtain ⟨⟨es', hes', rfl⟩, -⟩ := he'
-  rw [map_sum, ← Finset.sum_add_distrib, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_add_distrib, Finset.mul_sum]
   refine Finset.sum_eq_zero fun w' hw' => ?_
   rw [Finset.sum_mul]
   refine Finset.sum_eq_zero fun w hw => ?_

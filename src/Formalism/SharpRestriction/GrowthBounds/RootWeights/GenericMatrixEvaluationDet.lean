@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.EBeta
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationBoundDetPowerFactor
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.EBeta
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationBoundDetPowerFactor
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,8 +99,8 @@ section main
 variable {R : Type} [CommRing R] {ι : Type} {r : ℕ} [NeZero r] (LL : Letters ι) (S : Set ι)
   {k1 : Type} [CommRing k1]
 
-open Classical in
 
+open Classical in
 def mul_ew (v : ι × Fin r) : ℤ := if v.2 = lastIdx r ∧ v.1 ∈ S then (if LL.vec v.1 then 1 else -1) else 0
 
 def mul_dl : MvPolynomial (ι × Fin r) k1 →+* LaurentPolynomial (MvPolynomial (ι × Fin r) k1) :=
@@ -127,7 +131,7 @@ theorem mul_dl_monomial (m : ι × Fin r →₀ ℕ) (c : k1) :
   rw [Finsupp.prod, prod_T_eq_T_sum, ← mul_eWt_eq, ← mul_assoc, RingHom.comp_apply, ← map_mul, C_mul_monomial, mul_one]
 
 theorem mul_dl_coeff (H : MvPolynomial (ι × Fin r) k1) (m : ι × Fin r →₀ ℕ) (k : ℤ) :
-    coeff m ((mul_dl LL S H).coeff k) = if eWt LL S m = k then coeff m H else 0 := by
+    AddMonoidAlgebra.coeff ((mul_dl LL S H).coeff k) m = if eWt LL S m = k then AddMonoidAlgebra.coeff H m else 0 := by
   classical
   induction H using MvPolynomial.induction_on' with
   | monomial d c =>
@@ -138,14 +142,14 @@ theorem mul_dl_coeff (H : MvPolynomial (ι × Fin r) k1) (m : ι × Fin r →₀
       by_cases hk : eWt LL S d = k <;> simp [hk]
     · by_cases hk : eWt LL S d = k <;> simp [hk, hdm]
   | add p q hp hq =>
-    simp only [map_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, coeff_add, hp, hq]
+    simp only [map_add (f := _), AddMonoidAlgebra.coeff_add, Finsupp.add_apply, MvPolynomial.coeff_add, hp, hq]
     split_ifs <;> simp
 
 def mul_Dg (B : Type*) [CommRing B] (r : ℕ) [NeZero r] (k : ℤ) : Matrix (Fin r) (Fin r) (LaurentPolynomial B) :=
   Matrix.diagonal (fun a => if a = lastIdx r then LaurentPolynomial.T k else 1)
 
-open Classical in
 
+open Classical in
 def mul_xx (g0 g0inv : Matrix (Fin r) (Fin r) k1) (v : ι × Fin r) : MvPolynomial (ι × Fin r) k1 :=
   if v.1 ∈ S then
     (if LL.vec v.1 then ∑ a : Fin r, C (g0inv a v.2) * X (v.1, a)
@@ -203,7 +207,8 @@ theorem mul_square (j : R →+* k1) (g0 g0inv : Matrix (Fin r) (Fin r) k1) (h : 
         have hm' := congrFun hm c
         simp only [Matrix.vecMul, dotProduct, mul_Dg, Matrix.diagonal_mul] at hm'
         rw [e1, e2]
-        simp only [map_sum, map_mul, coe_eval₂Hom, eval₂_C, eval₂_X, mul_dl, hx]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul, coe_eval₂Hom, eval₂_C, eval₂_X, mul_dl, hx]
         have ht' : ∀ b, (AddMonoidAlgebra.mapRingHom ℤ
             (mul_sp ((C : k1 →+* MvPolynomial (ι × Fin r) k1).comp j) _ _ hK))
             (twistMat R r (lastIdx r) 1 b c) = _ := ht
@@ -235,7 +240,8 @@ theorem mul_square (j : R →+* k1) (g0 g0inv : Matrix (Fin r) (Fin r) k1) (h : 
         have hm' := congrFun hm c
         simp only [Matrix.mulVec, dotProduct, mul_Dg, Matrix.mul_diagonal] at hm'
         rw [e1, e2]
-        simp only [map_sum, map_mul, coe_eval₂Hom, eval₂_C, eval₂_X, mul_dl, hx]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul, coe_eval₂Hom, eval₂_C, eval₂_X, mul_dl, hx]
         have ht' : ∀ b, (AddMonoidAlgebra.mapRingHom ℤ
             (mul_sp ((C : k1 →+* MvPolynomial (ι × Fin r) k1).comp j) _ _ hK))
             (twistMat R r (lastIdx r) (-1) c b) = _ := ht

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open PowerSeries
 
 namespace GlobalTheory.PadicUnitGen
@@ -41,7 +46,7 @@ theorem exists_pow_approx {l : ℕ} [hl : Fact l.Prime] (u : ℤ_[l]) (h2 : l �
     have hd : (l : ℤ_[l]) ∣ c - u ^ m * (j * (w + l * y)
         + (l : ℤ_[l]) ^ k * l * (w + l * y) ^ 2 * z) := by
       rw [dvd_iff_toZMod]
-      simp only [map_sub, map_mul, map_add, map_pow, hl0, hu1, map_natCast, hj,
+      simp only [map_sub, map_mul, map_add (f := _), map_pow, hl0, hu1, map_natCast, hj,
         ZMod.natCast_zmod_val, ZMod.natCast_self]
       field_simp
       ring
@@ -68,12 +73,14 @@ theorem exists_lift {l : ℕ} [hl : Fact l.Prime] (Δ : Subgroup ℤ_[l]ˣ) [Fin
     rcases mul_eq_zero.1 h3 with h | h
     · exfalso
       have := congrArg (PadicInt.toZMod (p := l)) h
-      simp only [map_sum, map_pow, h1, one_pow, Finset.sum_const, Finset.card_range,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_pow, h1, one_pow, Finset.sum_const, Finset.card_range,
         nsmul_eq_mul, mul_one, map_zero] at this
       rw [Nat.cast_pred hl.out.pos] at this
       simp at this
-    · ext
-      simpa using sub_eq_zero.1 h
+    · apply Subtype.ext
+      apply Units.ext
+      exact sub_eq_zero.1 h
   have hbij : Function.Bijective f := by
     refine hinj.bijective_of_nat_card_le ?_
     rw [hΔ, Nat.card_eq_fintype_card, ZMod.card_units]

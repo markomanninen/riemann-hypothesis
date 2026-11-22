@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CompactCellConvergence.MsetOfClosed
-import Formalism.SharpRestriction.CuspSpanNormBounds.SpanMemOfImage
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CompactCellConvergence.MsetOfClosed
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SpanMemOfImage
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ENNReal

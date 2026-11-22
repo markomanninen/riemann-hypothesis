@@ -12,10 +12,33 @@ Comparator's output will be added here when the run finishes.
 | Joined archive | `cat lean.tar.gz.part{01..14} > lean.tar.gz`: 239,275,554 bytes, sha256 `9631b4f020199e580ba86178cb56c6e9b09f690c2369a80dc4334aa93f49c7fc` |
 
 The first commit of this repository, `40e56bab`, is the archive's `lean/` directory exactly as
-published. Later commits add only `src/Challenge.lean`, `comparator.json`, `export-targets.txt`, a marked
-block at the end of `lakefile.toml` that registers the `Challenge` library, the README, this folder and the CI
-workflow. `git diff 40e56bab HEAD --stat` shows this, and CI downloads the archive again and
-compares it with the tree.
+published. Later commits add `src/Challenge.lean`, `comparator.json`, `export-targets.txt`, the
+README, this folder, the CI workflow and, since
+[#7](https://github.com/leanprover-community/riemann-hypothesis/pull/7), the build cache in
+`scripts/`.
+
+Merged pull requests have since changed the submission's own files under `src/`, mainly by
+deleting files the proof does not use and by shortening proofs.
+`git diff --name-status 40e56bab HEAD -- src` lists every change in the tree you have, and
+`git diff 40e56bab HEAD -- src/Statements.lean` shows what has changed in the file that states
+the five theorems.
+
+The manual `mirror` job in CI downloads the archive again, compares it with commit `40e56bab`
+byte for byte, and prints that list. The sections below on size, the static scan and the build
+describe the original 175,187 files, not the current tree.
+
+`lakefile.toml` is the original with two additions:
+
+- three lines at the top, which set `platformIndependent = true` for the build cache;
+- a marked block at the end, which registers the `Challenge` library, the `cache` executable and
+  the cache server.
+
+CI checks that the original file sits unchanged between the two. Neither addition makes Lake
+treat an existing build as out of date; that was tested on a small Lean `v4.33.1` project, not
+on this one.
+
+The build cache is described in [CACHE.md](CACHE.md). The steps in the README's "Checking it" do
+not use it.
 
 The server answers HTTP 200 with an HTML page for any path, so a `part15` URL appears to exist.
 Check the joined sha256, not the status codes.
@@ -46,7 +69,7 @@ option or `skipKernelTC`. All notation is `local` or `scoped`, and nothing in th
 or writes files, starts processes or reads the environment.
 
 The source does use Lean's metaprogramming API in these places (corrected after
-[issue #2](https://github.com/Deicyde/riemann-hypothesis/issues/2); an earlier version of these
+[issue #2](https://github.com/leanprover-community/riemann-hypothesis/issues/2); an earlier version of these
 notes listed only the first two):
 
 - `BuildAid/D1.lean` … `D5.lean` each add one name to Lean's deny list for library suggestions.
@@ -255,11 +278,74 @@ on one thread.
 - An independent run (Andrew Sutherland, on the Lean Zulip) reports a solution export of
   61,570,595,788 bytes with these export targets, sha256
   `5ea74b912147c5c93cc2b6d70cc727cf908df2f62ac6a20480a3fa02f6be244e`. The exporter took about
-  1 h 20 min on one thread and peaked at 163 GB of memory. If the export is deterministic, any
-  other build of this repository should produce the same checksum.
+  1 h 20 min on one thread and peaked at 163 GB of memory. A second independent build, in a
+  different directory, reports the same size and checksum: see
+  [Comparing builds](#comparing-builds).
 - Our estimate for the kernels, scaled from the smoke test and uncertain by a factor of 2 to 3:
   roughly 4 hours each for Lean's kernel and the hardened build at about 150 GB of memory, and
   under an hour for nanoda.
+
+## Comparing builds
+
+To compare two builds of this repository, compare the checksums of their exports. The checksums
+of the compiled `.olean` files agree in full only between builds made in the same directory.
+patunz reported this in
+[issue #6](https://github.com/leanprover-community/riemann-hypothesis/issues/6). Apart from the
+cache bootstrap's figures, the measurements in this section were made by the people named, not
+by us.
+
+**Cause.** In Lean `v4.33.1`, `Lean.Linter.recordLints`
+([`PersistentLintLog.lean`](https://github.com/leanprover/lean4/blob/v4.33.1/src/Lean/Linter/PersistentLintLog.lean))
+stores each linter message in the environment extension `lintLogExt`, with the name of the
+source file, so that `lake lint` can read the messages back from the `.olean`. Lake passes the
+source file to `lean` as an absolute path. So a module that emits a linter message has its
+build directory written into its `.olean`, and a module that emits none does not. This is how
+Lean and Lake behave; the submission does nothing to cause it.
+
+**Compiled files.** Andrew Sutherland's `project-oleans.sha256`
+(<https://math.mit.edu/~drew/grh/>, sha256
+`375cbee2fc3fc0f5088ef2e6dc9a5ac5530924310dc62422ec65aac9dc4c1d25`) gives a checksum for each of
+the 175,187 compiled files of a build whose project root was `/home/ubuntu/grh/src/lean`. Two
+`lake build`s at other paths have been compared with it:
+
+| Build | Compared | Identical | Different |
+|---|---:|---:|---:|
+| patunz, build in progress ([gist](https://gist.github.com/patunz/c542c37ca851b788eccdefa4f07a8ef7/d6d8da67f26f9e6e2a6b56c2a84cbf4d4e428e4b)) | 40,281 | 20,994 | 19,287 |
+| ishaan2006, complete ([result](https://github.com/ishaan2006/rh-lean-reproduction/blob/ea1d0a9901f07063f83c13bddb1fd7e1893089a7/results/olean_comparison.txt)) | 175,187 | 76,968 | 98,219 |
+
+- In the first, no module without a warning differs.
+- In the second, each of the 98,219 differing files contains that build's path, and none of the
+  76,968 identical files does. `Main.olean` is identical.
+- Recompiled with the source at Sutherland's path, the one module patunz tried
+  ([comment](https://github.com/leanprover-community/riemann-hypothesis/issues/6#issuecomment-7061992853))
+  and a random sample of 300 of ishaan2006's differing modules
+  ([result](https://github.com/ishaan2006/rh-lean-reproduction/blob/ea1d0a9901f07063f83c13bddb1fd7e1893089a7/results/path_sample_result.txt))
+  all have the manifest's checksums.
+
+So a manifest of `.olean` checksums can be checked in full only by a build at the same path.
+From any other path, only the modules without linter messages can match. Sutherland's build
+called `lean` directly with the inputs Lake supplies, and nobody has reported a complete
+`lake build` at his path.
+
+The cache bootstrap met the same difference between the two builds it draws on. Of the modules
+it attested, 10,813 matched exactly and 10,141 matched once only the file names stored in
+`lintLogExt` were changed ([CACHE.md](CACHE.md)).
+
+**Exports.** lean4export writes declarations, and the entries of `lintLogExt` are not
+declarations, so the stored path is not exported. The reports agree with that:
+
+- *Solution.* ishaan2006's build, the one with 98,219 differing `.olean` files, gives an export
+  with the size and sha256 quoted under [Building](#building)
+  ([result](https://github.com/ishaan2006/rh-lean-reproduction/blob/ea1d0a9901f07063f83c13bddb1fd7e1893089a7/results/export_result.txt)).
+- *Challenge.* Ticobit ran step 1 of the README in two directories on one machine (macOS,
+  arm64). Both exports have the sha256 given in the README,
+  `bd484ac9886a96f26b1d9a7a59ebd45b7a70d102c015d4f31f9302bbdd6ab2b9`
+  ([result](https://github.com/Ticobit/rh-verification/blob/639250def42a6219c732abb6dbf632ff1373c546/issue6/EXPORT_TEST.md)).
+- Ticobit's parse of Sutherland's solution export finds neither `/` nor `\` in any of its
+  7,125,163 name strings or 162 string literals
+  ([result](https://github.com/Ticobit/rh-verification/blob/639250def42a6219c732abb6dbf632ff1373c546/issue6/SOLUTION_NDJSON_CHECK.md)).
+
+None of these builds was sandboxed, and the solution export has been reproduced once.
 
 ## Limits
 

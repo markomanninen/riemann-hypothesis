@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SepAtBIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSectionOfIsIsoRestrict
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SepAtBIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSectionOfIsIsoRestrict
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZH GlobalTheory.Poinc GlobalTheory.UPoinc GlobalTheory.TorRef
@@ -23,7 +28,7 @@ theorem flat_of_generic_zero : ∀ {X : Scheme.{0}} [IsIntegral X] (s : X ⟶ Sp
   have : IsIntegral (Spec R) := isIntegral_of_isOpenImmersion j
   have : IsDomain R := (affine_isIntegral_iff R).1 this
   obtain ⟨φ, hφ⟩ := Spec.map_surjective (j ≫ s)
-  let p0 : PrimeSpectrum R := ⟨⊥, Ideal.bot_prime⟩
+  let p0 : PrimeSpectrum R := ⟨⊥, Ideal.isPrime_bot⟩
   have hg : genericPoint X ∈ Set.range j :=
     (genericPoint_specializes (j (Classical.arbitrary (Spec R)))).mem_open
       j.isOpenEmbedding.isOpen_range ⟨_, rfl⟩
@@ -34,7 +39,7 @@ theorem flat_of_generic_zero : ∀ {X : Scheme.{0}} [IsIntegral X] (s : X ⟶ Sp
   have h4 : ((j ≫ s) p0).asIdeal ≤ ⊥ := hx ▸ (PrimeSpectrum.le_iff_specializes _ _).2 h3
   rw [← hφ] at h4
   have hinj : Function.Injective φ.hom := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro n hn
     have : n ∈ ((Spec.map φ) p0).asIdeal := by
       show n ∈ Ideal.comap φ.hom ⊥

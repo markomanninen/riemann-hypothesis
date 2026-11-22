@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreesLargeOfStd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreesLargeOfStd
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem nu_le_last (hP : IsPair A Ai Ci mu lam) (hr : s ≤ r) (i : ℕ) (hi : i
   have e2 : (⟨r - 1 - (s - 1 - i), by omega⟩ : Fin r).succ = ⟨r - 1 - (s - 1 - i) + 1, by omega⟩ := rfl
   rw [e2] at hI
   unfold pairN
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   have e3 : (⟨r - s + i, by omega⟩ : Fin r) = ⟨r - 1 - (s - 1 - i), by omega⟩ := Fin.ext (by simp; omega)
   rw [e3]
   linarith
@@ -48,7 +52,7 @@ theorem last_ge_mass (hP : IsPair A Ai Ci mu lam) (hr : 1 ≤ r) (i : ℕ) (hi :
   rw [e] at hm
   have hw : wbK mu (2 * i + 3) (r - 1) = mu ⟨2 * i + 3, by omega⟩ (⟨r - 1, by omega⟩ : Fin r).succ := by
     unfold wbK
-    rw [dif_pos ⟨by omega, by omega⟩]
+    rw [dite_eq_left ⟨by omega, by omega⟩]
     rfl
   rw [hw]
   have h1 : -(mu ⟨2 * i + 3, by omega⟩ (⟨r - 1, by omega⟩ : Fin r).succ) ≤

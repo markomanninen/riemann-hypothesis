@@ -1,15 +1,20 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameExtension
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Definitions.Jets.Imports
-import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OpNormSumSmulSqLe
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HypAndAdj
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PieriRaisingSubmoduleGlSuccStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsTypeOfIrreducibleStable
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CoefHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsTensorStandardRep
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameExtension
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+public import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OpNormSumSmulSqLe
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HypAndAdj
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PieriRaisingSubmoduleGlSuccStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsTypeOfIrreducibleStable
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CoefHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsTensorStandardRep
+
+@[expose] public section
+
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 open Formalism.REAL (qdet GlRel IsHW)
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,7 @@ theorem neg_log_le {t a : ℝ} {k : ℕ} (ht : 0 ≤ t) (ha : 0 ≤ a) (h : 1 �
 
 section Adelic
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n k : ℕ}
 
 theorem rows_mul_frame (x : GA E n) (M : Matrix (Fin n) (Fin k) E) (s : Fin k → Fin n)
     (hs : M.submatrix s id = 1) :
@@ -215,7 +219,7 @@ theorem continuous_cV (v : InfinitePlace E) : Continuous (cV v : Ad E → ℂ) :
     (InfinitePlace.Completion.isometryEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)).continuous.comp
       ((continuous_apply w).comp continuous_fst))
 
-def intAd (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] : Set (Ad E) :=
+def intAd (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] : Set (Ad E) :=
   {a | ∀ w : HeightOneSpectrum (𝓞 E), ‖cW w a‖ ≤ 1}
 
 theorem isOpen_intAd : IsOpen (intAd E) := by
@@ -231,7 +235,7 @@ theorem isOpen_intAd : IsOpen (intAd E) := by
   rw [h2]
   exact h.preimage continuous_snd
 
-def intGA (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) : Set (GA E n) :=
+def intGA (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) : Set (GA E n) :=
   {u | (∀ i j, u.val i j ∈ intAd E) ∧ ∀ i j, (u⁻¹ : GA E n).val i j ∈ intAd E}
 
 theorem isOpen_intGA : IsOpen (intGA E n) := by
@@ -311,7 +315,7 @@ theorem degBdd_of : WedgeF → WedgeI → MulF → MulI → SzFin → FinSupp �
       rw [hsp] at h
       exact h.symm
     rw [h]
-    refine ((continuous_finset_sum _ fun v _ => ?_).add (continuous_fin_part hF _)).neg
+    refine ((continuous_finsetSum _ fun v _ => ?_).add (continuous_fin_part hF _)).neg
     exact continuous_inf_part v _ fun x =>
       (hFS E (Fin n) (Fin k) _ _ (rows_mul_frame x M s hs)).1 v
 

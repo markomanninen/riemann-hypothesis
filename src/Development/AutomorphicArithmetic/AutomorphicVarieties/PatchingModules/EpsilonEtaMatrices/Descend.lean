@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.PolZCases
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdicLC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.LcOfOpen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DdSumZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.PolZCases
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdicLC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.LcOfOpen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DdSumZero
+
+@[expose] public section
+
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
 private theorem pow_mem_of_PL (l : ℕ) {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ]
@@ -25,12 +30,12 @@ private theorem pow_mem_of_PL (l : ℕ) {Γ : Type} [Group Γ] [TopologicalSpace
     simp only [PL, SetLike.mem_coe, Subgroup.mem_iInf]
     exact fun U hU => this ⟨U, hU⟩
   obtain ⟨U, hU⟩ := hV.isClosed_compl.isCompact.elim_directed_family_closed (fun U : ι => (U.1 : Set Γ))
-    (fun U => U.1.toOpenSubgroup.isClosed) hs hd
+    (fun U => U.1.toOpenSubgroup.isClosed) (Set.disjoint_iff_inter_eq_empty.mpr hs) hd
   intro h hh
   obtain ⟨e, he⟩ := U.2 h hh
   refine ⟨e, ?_⟩
   by_contra hn
-  exact Set.eq_empty_iff_forall_notMem.1 hU _ ⟨hn, he⟩
+  exact Set.disjoint_left.1 hU hn he
 
 private theorem affine_ker {R Γ M : Type} [CommRing R] [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ]
     [AddCommGroup M] [Module R M] [Finite M] (ρ : Representation R Γ M) (hρ : LC ρ) (y : Γ → M) (hy : y ∈ Zl ρ) :
@@ -42,7 +47,7 @@ private theorem affine_ker {R Γ M : Type} [CommRing R] [Group Γ] [TopologicalS
       map_one' := funext fun m => by simp [y1]; rfl
       map_mul' := fun g h => funext fun m => by
         show _ = y g + ρ g (y h + ρ h m)
-        rw [h2, map_mul, map_add, add_assoc]; rfl }
+        rw [h2, map_mul, map_add (f := _), add_assoc]; rfl }
   have key : ∀ g, g ∈ a.ker ↔ ρ g = 1 ∧ y g = 0 := by
     intro g
     rw [MonoidHom.mem_ker]
@@ -143,7 +148,7 @@ private theorem epsD_one (l : ℕ) [Fact l.Prime] (F : GFrame l) (n : ℕ) (x : 
     have := (finAm l F n x m k.g).2.2.2.2.1 1
     rwa [nsmul_eq_mul, mul_one] at this
   have : ((F.ε g : ℤ_[l]ˣ) : ℤ_[l]) - 1 ∈ RingHom.ker (PadicInt.toZMod (p := l)) := by
-    rw [RingHom.mem_ker, map_sub, hg, map_one, sub_self]
+    rw [RingHom.mem_ker, RingHom.map_sub, hg, map_one, sub_self]
   rw [PadicInt.ker_toZMod, PadicInt.maximalIdeal_eq_span_p, Ideal.mem_span_singleton] at this
   obtain ⟨c, hc⟩ := this
   rw [epsD, eq_add_of_sub_eq hc]

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.ContentLargeFromSupplies
-import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
-import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
-import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
-import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ConstantCoeffSubstSame
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.ContentLargeFromSupplies
+public import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
+public import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
+public import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ConstantCoeffSubstSame
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -76,7 +80,8 @@ theorem IntCoeff.pow {V : VF K} {σ : Type} {F : MvPowerSeries σ K} (hF : IntCo
 theorem intCoeff_linear {V : VF K} {σ ι : Type} [Fintype ι] (c : ι → K) (hc : ∀ i, V.Ge 0 (c i)) (w : ι → σ) :
     IntCoeff V (∑ i, c i • (X (w i) : MvPowerSeries σ K)) := by
   intro μ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine VF.Ge.sum fun i _ => ?_
   rw [coeff_smul, coeff_X]
   refine (hc i).mul_int ?_
@@ -102,7 +107,8 @@ theorem support_subst_rename {σ ι τ : Type} [Finite σ] [Finite ι] (f : ι �
 
 theorem cc_linear {τ ι : Type} [Fintype ι] (c : ι → K) (w : ι → τ) :
     constantCoeff (∑ i, c i • (X (w i) : MvPowerSeries τ K)) = 0 := by
-  simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 theorem diagCoord_subst {n : ℕ} {ι : Type} [Fintype ι] (w : Fin n → PVar n) (ρ : Fin n)
     (t : ι → MvPowerSeries ι K) (ht : ∀ x, OrdGE 2 (t x - X x)) (E : Fin n → ι → K) (p : Fin n → ι)
@@ -116,7 +122,8 @@ theorem diagCoord_subst {n : ℕ} {ι : Type} [Fintype ι] (w : Fin n → PVar n
   · intro m hm
     refine support_subst_rename w (fun x => ∑ c, E c x • (X c : MvPowerSeries (Fin n) K))
       (fun x => cc_linear (fun c => E c x) id) _ (fun x => ?_) _ m hm
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   · intro m hm
     have e1 : ∑ b, B b • t (p b) = ∑ b, B b • (t (p b) - X (p b)) + ∑ b, B b • X (p b) := by
       rw [← Finset.sum_add_distrib]
@@ -126,9 +133,11 @@ theorem diagCoord_subst {n : ℕ} {ι : Type} [Fintype ι] (w : Fin n → PVar n
       rw [Finset.sum_comm]
       simp only [← Finset.sum_smul, mul_comm (B _), hE]
       simp
-    rw [e1, ← coe_substAlgHom hs, map_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, ← coe_substAlgHom hs, map_add (f := _), map_sum, map_sum]
     simp only [map_smul, substAlgHom_X]
-    rw [e2, map_add, map_sum, Finset.sum_eq_zero, zero_add]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2, map_add (f := _), map_sum, Finset.sum_eq_zero, zero_add]
     intro b _
     rw [coeff_smul, coe_substAlgHom, ordGE_subst _ ha (ht _) m (by omega), mul_zero]
 
@@ -187,7 +196,8 @@ def rowForm {n : ℕ} (g : Fin 2) (E : Fin n → I g → K) (E' : Fin n → I (1
 omit [∀ g, Fintype (I g)] in
 theorem cc_rowForm {n : ℕ} (g : Fin 2) (E : Fin n → I g → K) (E' : Fin n → I (1 - g) → K) (ρ : Fin n)
     (w : WV I) : constantCoeff (rowForm g E E' ρ w) = 0 := by
-  simp [rowForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [rowForm, map_sum]
 
 theorem jetAt0_rowForm {n : ℕ} (g : Fin 2) (E : Fin n → I g → K) (E' : Fin n → I (1 - g) → K)
     (Q : MvPolynomial (PVar n) K) (G : MvPowerSeries (Fin n × WV I) K) :
@@ -254,7 +264,8 @@ theorem restr_rows {n0 n : ℕ} (hn : n0 ≤ n) (g : Fin 2) (E : Fin n → I g �
         (fun b : Fin n0 => toW (1 - g) (E' (Fin.castLE hn b)))) := by
   have hrange : ∀ c : Fin n, c ∉ Set.range (Fin.castLE hn) → ¬ c.val < n0 :=
     fun c hc h => hc ⟨⟨c.val, h⟩, rfl⟩
-  rw [restr_eq_killCompl, Finset.sum_filter, ← Fintype.sum_of_injective (Fin.castLE hn)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [restr_eq_killCompl, Finset.sum_filter, ← Fintype.sum_of_injective (Fin.castLE hn)
     (Fin.castLE_injective hn) (fun ρ => subst (rowForm g E E' (Fin.castLE hn ρ)) h) _
     (fun c hc => if_neg (hrange c hc)) (fun ρ => (if_pos ρ.2).symm), map_sum]
   unfold hRows
@@ -263,12 +274,14 @@ theorem restr_rows {n0 n : ℕ} (hn : n0 ≤ n) (g : Fin 2) (E : Fin n → I g �
       (fun b => X (Sum.inr (ρ, b)))) :=
     hasSubst_of_constantCoeff_zero fun u => by rcases u with u | u <;> simp
   unfold hPullW
-  rw [killCompl_subst _ (cc_rowForm g E E' _), subst_comp_subst_apply
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [killCompl_subst _ (cc_rowForm g E E' _), subst_comp_subst_apply
     (hasSubst_of_constantCoeff_zero fun w => by simp [map_sum]) hs]
   congr 1
   funext w
   rw [← coe_substAlgHom hs]
-  simp only [rowForm, map_add, map_sum, map_smul, substAlgHom_X, Sum.elim_inl, Sum.elim_inr]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rowForm, map_add (f := _), map_sum, map_smul, substAlgHom_X, Sum.elim_inl, Sum.elim_inr]
   congr 1
   · symm
     refine Fintype.sum_of_injective (Fin.castLE hn) (Fin.castLE_injective hn) _ _ (fun c hc => ?_) (fun c => ?_)
@@ -300,7 +313,8 @@ theorem det_change {n : ℕ} (g : Fin 2) (p : Fin n → I g) (A : Fin n → Fin 
   rw [letterDet, ← Matrix.det_transpose (Matrix.of A), RingHom.map_det, mul_comm, ← Matrix.det_mul]
   congr 1
   refine Matrix.ext fun ρ c => ?_
-  simp only [Matrix.mul_apply, Matrix.of_apply, RingHom.mapMatrix_apply, Matrix.map_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, Matrix.of_apply, RingHom.mapMatrix_apply, Matrix.map_apply,
     Matrix.transpose_apply, map_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => ?_
@@ -398,7 +412,8 @@ theorem block_of_normal_form (X : RowData K V d I J) (g : Fin 2) (a : ZMod d) (i
       simp only [γ]
       split_ifs
       · rw [map_one, map_one]
-      · simp only [map_mul, map_pow, map_sum, map_smul, substAlgHom_X]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_mul, map_pow, map_sum, map_smul, substAlgHom_X]
         simp only [coe_substAlgHom, subst_upG _ (cc_rowForm g E v' ρ)]
         have e1 : (fun x => rowForm g E v' ρ ⟨g, x⟩) = fun x => ∑ c, E c x •
             (MvPowerSeries.X (Sum.inl (ρ, c)) : MvPowerSeries (PVar X.n) K) := by
@@ -411,7 +426,8 @@ theorem block_of_normal_form (X : RowData K V d I J) (g : Fin 2) (a : ZMod d) (i
         rw [e1, e2,
           ← coe_substAlgHom (hasSubst_of_constantCoeff_zero fun x => cc_linear (fun c => E c x) _),
           ← coe_substAlgHom (hasSubst_of_constantCoeff_zero fun x => cc_linear (fun c => v' c x) _)]
-        simp only [map_sum, map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul]
     rw [hF, jetAt0_rowForm, map_mul, map_pow, map_pow, detL, detR, AlgHom.map_det, AlgHom.map_det]
     have d1 := det_change g p Ab
     have d2 := det_change (1 - g) p' Y

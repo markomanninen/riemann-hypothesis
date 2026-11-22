@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.EpsteinZeta.DedekindFactorK
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.EpsteinZeta.DedekindFactorK
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem ib_exists_basis {K : Type} [Field K] [NumberField K] (φ : K →+* ℂ) 
     intro s t hst
     have h1 : (s : ℂ) * a₀ + (t : ℂ) * b₀ = 0 := by
       have := congrArg ψ hst
-      simpa [map_add, map_zsmul, he, hf, zsmul_eq_mul] using this
+      simpa [map_add (f := _), map_zsmul, he, hf, zsmul_eq_mul] using this
     rw [ib_im_conj_mul] at hab₀
     have hre := congrArg Complex.re h1
     have him := congrArg Complex.im h1
@@ -56,7 +60,7 @@ theorem ib_exists_basis {K : Type} [Field K] [NumberField K] (φ : K →+* ℂ) 
       rw [← h₀]
       exact AddSubgroup.subset_closure ⟨c, Submodule.mem_top, by simp [hψ]⟩
     obtain ⟨m, n, hmn⟩ := AddSubgroup.mem_closure_pair.mp hc
-    have : c = m • e + n • f := hinj (by rw [← hmn]; simp [map_add, he, hf, zsmul_eq_mul])
+    have : c = m • e + n • f := hinj (by rw [← hmn]; simp [map_add (f := _), he, hf, zsmul_eq_mul])
     rw [this]
     exact add_mem (Submodule.smul_mem _ _ (Submodule.subset_span ⟨0, rfl⟩))
       (Submodule.smul_mem _ _ (Submodule.subset_span ⟨1, rfl⟩))
@@ -69,7 +73,7 @@ theorem ib_im_det {K : Type} [Field K] [NumberField K] (ψ : 𝓞 K →+* ℂ) (
   have hv : ∀ j, ψ (v j) = (B.repr (v j) 0 : ℂ) * a₀ + (B.repr (v j) 1 : ℂ) * b₀ := by
     intro j
     conv_lhs => rw [← B.sum_repr (v j)]
-    simp [Fin.sum_univ_two, map_add, hB0, hB1, zsmul_eq_mul]
+    simp [Fin.sum_univ_two, map_add (f := _), hB0, hB1, zsmul_eq_mul]
   rw [Module.Basis.det_apply, Matrix.det_fin_two, hv 0, hv 1]
   simp only [Module.Basis.toMatrix_apply, ib_im_conj_mul]
   push_cast
@@ -110,7 +114,7 @@ theorem latI_basis (K : Type) [Field K] [NumberField K] (hK : Module.finrank ℚ
       refine ⟨bI.repr ⟨c, hc⟩ 0, bI.repr ⟨c, hc⟩ 1, ?_⟩
       show _ = ψ c
       conv_rhs => rw [hc']
-      simp [map_add]
+      simp [map_add (f := _)]
     · rw [AddSubgroup.closure_le, Set.insert_subset_iff, Set.singleton_subset_iff]
       exact ⟨AddSubgroup.subset_closure ⟨_, (bI 0).2, by simp [hψ]⟩,
         AddSubgroup.subset_closure ⟨_, (bI 1).2, by simp [hψ]⟩⟩

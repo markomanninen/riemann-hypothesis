@@ -1,12 +1,16 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutTraceA
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.RedWpAutDef
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.GamQFEqOneIffK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.RedWpAutLat
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IsStdCharFOfIsGoodK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.HermitianFormSelfadjointGlobal
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.RedWpAutSer
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutTraceA
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.RedWpAutDef
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.GamQFEqOneIffK
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.RedWpAutLat
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IsStdCharFOfIsGoodK
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.HermitianFormSelfadjointGlobal
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.RedWpAutSer
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -67,8 +71,6 @@ theorem ratWF_injective_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ�
 def ratEquivF_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι) : Matrix (Fin nT) (Fin nS) E ≃ ratLF F E nS nT :=
   Equiv.ofBijective (fun y => ⟨ratWF y, y, rfl⟩)
     ⟨fun _ _ h => _root_.PositivityTheory.ThKW.Trc.ratWF_injective_k C (congrArg Subtype.val h), by rintro ⟨_, y, rfl⟩; exact ⟨y, rfl⟩⟩
-theorem coe_ratEquivF_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι) (y : Matrix (Fin nT) (Fin nS) E) :
-    (_root_.PositivityTheory.ThKW.Trc.ratEquivF_k C y : WOF F E nS nT) = ratWF y := rfl
 theorem serF_eq_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι) (a : IxF F nS nT → ℂ) (x : WOF F E nS nT) :
     serF σ JS JT ξ₀ B θ ι s Λ w a x = ∑' y : Matrix (Fin nT) (Fin nS) E,
       B.ψ (symplOHF σ JS JT ξ₀ (ratWF y) x) * B.ψ (symplOHF σ JS JT ξ₀ (iotaVF ι a) (ratWF y + x)) *
@@ -77,7 +79,8 @@ theorem serF_eq_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι
           (jV s (infRatF (tauB B) y + (a + piWF θ x))) : ℝ)) := by
   unfold serF GlobalTheory.HeisenbergGaussianSeries.series
   rw [← (_root_.PositivityTheory.ThKW.Trc.ratEquivF_k C).tsum_eq]
-  simp only [_root_.PositivityTheory.ThKW.Trc.coe_ratEquivF_k, piWA_apply, iotaA_apply, _root_.PositivityTheory.ThKW.piWF_ratWF_k C]
+  have hc (y : Matrix (Fin nT) (Fin nS) E) : ((ratEquivF_k C y : ratLF F E nS nT) : WOF F E nS nT) = ratWF y := rfl
+  simp only [hc, piWA_apply, iotaA_apply, _root_.PositivityTheory.ThKW.piWF_ratWF_k C]
 section Act
 variable {g : GAF σ JS} {h : GAF σ JT} {a : Matrix (Fin nS) (Fin nS) E} {b : Matrix (Fin nT) (Fin nT) E}
 theorem act_iota_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι) (v : IxF F nS nT → ℂ) :
@@ -156,8 +159,8 @@ theorem chiLat_mul_exp_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ�
     show B.ψ (symplOHF σ JS JT ξ₀ (intAF F w • (finRatF F (b * y * a - y) : WOF F E nS nT))
       (finRatF F (b * y * a - y))) = _
     have e : (finRatF F (b * y * a - y) : WOF F E nS nT) + finRatF F y = finRatF F (b * y * a) := by
-      rw [← XFF.coe_add, ← map_add, sub_add_cancel]
-    have h1 := _root_.PositivityTheory.ThKW.Trc.phase_identity_k C (W := intAF F w) (by rw [cAF_intAF, ← map_add, hw, map_one])
+      rw [← XFF.coe_add, ← map_add (f := _), sub_add_cancel]
+    have h1 := _root_.PositivityTheory.ThKW.Trc.phase_identity_k C (W := intAF F w) (by rw [cAF_intAF, ← map_add (f := _), hw, map_one])
       (finRatF F (b * y * a - y) : WOF F E nS nT) (finRatF F y)
       (by rw [e, ← act_finRat ha hb, ← actOF_smul, _root_.PositivityTheory.ThKW.Trc.symplOHF_act_k C])
     have h2 : gamQF σ JS JT ξ₀ B.ψ (sgOF σ w • (b * y * a - y)) y =
@@ -191,7 +194,7 @@ theorem left_side_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ 
       Complex.exp (-(Real.pi * Complex.I) * (omV (HMF JS JT ξ₀ (tauB B)) (z + u) (x + v) : ℝ)) := by
     rw [← Complex.exp_add, ← Complex.exp_add, ← mul_add, ← mul_add, ← Complex.ofReal_add, ← Complex.ofReal_add]
     congr 3
-    simp only [map_add, map_sub, map_neg, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.neg_apply]
+    simp only [map_add (f := _), map_sub, map_neg, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.neg_apply]
     linarith [halt x u, halt v z, halt v x, halt v u]
   rw [e1, ← e2]
   ring
@@ -214,7 +217,7 @@ theorem right_side_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ
       Complex.exp (2 * Real.pi * Complex.I * ((-omV (HMF JS JT ξ₀ (tauB B)) (infRatF (tauB B) y)) v : ℝ)) := by
     rw [← Complex.exp_add]
     congr 1
-    simp only [map_add, map_neg, LinearMap.neg_apply, e2, halt v (infRatF (tauB B) y)]
+    simp only [map_add (f := _), map_neg, LinearMap.neg_apply, e2, halt v (infRatF (tauB B) y)]
     push_cast
     ring
   rw [coefQF, GlobalTheory.HeisLineF.symplOHF_add_right, AddChar.map_add_eq_mul, _root_.PositivityTheory.ThKW.beta_iota_right_k C, _root_.PositivityTheory.ThKW.beta_iota_left_k C,
@@ -248,7 +251,8 @@ theorem summable_coefQF_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ�
   rw [← (_root_.PositivityTheory.ThKW.Trc.ratEquivF_k C).summable_iff] at h
   refine h.congr fun y => ?_
   have e : ‖phaseF σ JS JT ξ₀ B.ψ w u‖ = 1 := hψ.2.1 _
-  simp only [Function.comp_apply, _root_.PositivityTheory.ThKW.Trc.coe_ratEquivF_k, piWA_apply, _root_.PositivityTheory.ThKW.piWF_ratWF_k C, add_zero, zero_mul, Real.exp_zero,
+  have hc (y : Matrix (Fin nT) (Fin nS) E) : ((ratEquivF_k C y : ratLF F E nS nT) : WOF F E nS nT) = ratWF y := rfl
+  simp only [Function.comp_apply, hc, piWA_apply, _root_.PositivityTheory.ThKW.piWF_ratWF_k C, add_zero, zero_mul, Real.exp_zero,
     mul_one]
   rw [coefQF, norm_mul (phaseF σ JS JT ξ₀ B.ψ w u), e, one_mul]
 theorem gauss_mul_integral_A_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι) (hG : GoodLat Λ) (hR : RatSD σ JS JT ξ₀ Λ)

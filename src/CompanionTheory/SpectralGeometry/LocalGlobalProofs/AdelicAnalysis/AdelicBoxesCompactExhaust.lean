@@ -1,9 +1,14 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleLocalGlobalProperties
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ContDiffOnChartGlobalWhittakerCoefficient
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TotallyRealContinuousEmbeddingInfiniteAdeles
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleLocalGlobalProperties
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ContDiffOnChartGlobalWhittakerCoefficient
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TotallyRealContinuousEmbeddingInfiniteAdeles
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -20,8 +25,7 @@ theorem repr_map {R S : Type} [CommRing R] [CommRing S] [Algebra F R] [Algebra F
     (Algebra.TensorProduct.basis S b).repr (Algebra.TensorProduct.map g (AlgHom.id F E) y) k =
       g ((Algebra.TensorProduct.basis R b).repr y k) := by
   induction y with
-  | zero => simp
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
   | tmul r e =>
     simp [Algebra.TensorProduct.basis_repr_tmul]
 
@@ -182,8 +186,8 @@ theorem size_eq (X : Fin n → Fin M → AF F ⊗[F] E) :
 
 theorem cont_size : Continuous fun X : Fin n → Fin M → AF F ⊗[F] E => sizeTup b (projInf X) := by
   simp only [size_eq]
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun i _ =>
-    continuous_finset_sum _ fun k _ => continuous_finset_sum _ fun w _ => ?_
+  refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun i _ =>
+    continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun w _ => ?_
   exact (cont_norm_w w).comp (cont_fstA.comp ((cont_repr (AF F) b k).comp
     ((continuous_apply i).comp (continuous_apply a))))
 
@@ -241,8 +245,8 @@ theorem cinf_cpt (r : ℝ) :
     {c | ∑ a, ∑ i, ∑ k, ∑ w : InfinitePlace F, ‖c a i k w‖ ≤ r}
   have hcl : IsClosed S := by
     refine isClosed_le ?_ continuous_const
-    refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun i _ =>
-      continuous_finset_sum _ fun k _ => continuous_finset_sum _ fun w _ => ?_
+    refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun i _ =>
+      continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun w _ => ?_
     exact (cont_norm_w w).comp ((continuous_apply k).comp ((continuous_apply i).comp (continuous_apply a)))
   have hB : IsCompact (Set.pi Set.univ fun _ : Fin n => Set.pi Set.univ fun _ : Fin M =>
       Set.pi Set.univ fun _ : Fin d => {y : Ainf F | ∀ w, ‖y w‖ ≤ r}) :=

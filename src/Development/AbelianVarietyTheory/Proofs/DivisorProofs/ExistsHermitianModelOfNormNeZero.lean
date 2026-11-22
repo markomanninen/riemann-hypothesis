@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPlaceKappaOrbitalUnitEqSignedLatticeSumImpo
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPlaceKappaOrbitalUnitEqSignedLatticeSumImpo
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFacts
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Polynomial Matrix
 
 noncomputable section
@@ -17,13 +22,15 @@ theorem trace_sigma {K : UQ} (B : InvAlg K) (w : B.A) :
   have hsp : ∀ y : B.A, B.σ y = ∑ j, K.c (b.repr y j) • B.σ (b j) := by
     intro y
     conv_lhs => rw [← b.sum_repr y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [sigma_smul]
   have li : LinearIndependent K.E (fun i => B.σ (b i)) := by
     rw [Fintype.linearIndependent_iff]
     intro g hg i
     have h1 := congrArg B.σ hg
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [sigma_smul, B.σ_σ] at h1
     have h2 := Fintype.linearIndependent_iff.1 b.linearIndependent (fun j => K.c (g j)) h1 i
     simpa using h2
@@ -41,7 +48,8 @@ theorem trace_sigma {K : UQ} (B : InvAlg K) (w : B.A) :
     simp only [← hb']
     rw [b'.repr_sum_self]
   rw [Algebra.trace_eq_matrix_trace b' (B.σ w), Algebra.trace_eq_matrix_trace b w]
-  simp only [Matrix.trace, Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [hb', ← map_mul, hrep]
 
@@ -56,7 +64,7 @@ theorem herm_smul_right (h : V → V → K.E)
 
 theorem herm_add_right (h : V → V → K.E) (hadd : ∀ y y' z, h (y + y') z = h y z + h y' z)
     (hsym : ∀ y z, h z y = K.c (h y z)) (y z z' : V) : h y (z + z') = h y z + h y z' := by
-  rw [hsym (z + z') y, hadd, map_add, ← hsym, ← hsym]
+  rw [hsym (z + z') y, hadd, map_add (f := _), ← hsym, ← hsym]
 
 theorem herm_expand (h : V → V → K.E) (hadd : ∀ y y' z, h (y + y') z = h y z + h y' z)
     (hsmul : ∀ (a : K.E) y z, h (a • y) z = a * h y z) (hsym : ∀ y z, h z y = K.c (h y z))
@@ -113,9 +121,9 @@ theorem exists_unit_vector [FiniteDimensional K.E V] (h : V → V → K.E)
     rw [← algebraMap_smul K.E (1 : K.O) y, herm_expand h hadd hsmul hsym, ha2, ha3, ← ha, hzy,
       map_one, map_one] at ha4
     have e1 : a1 = θ * θ' * a2 + θ * a + θ' * UnramNorm.cO K a + a3 := hinj (by
-      rw [← ha1]; simp only [map_add, map_mul]; rfl)
+      rw [← ha1]; simp only [map_add (f := _), map_mul]; rfl)
     have e4 : a4 = a2 + a + UnramNorm.cO K a + a3 := hinj (by
-      rw [← ha4]; simp only [map_add, map_mul]; ring)
+      rw [← ha4]; simp only [map_add (f := _), map_mul]; ring)
     have hmem : (θ - θ') * a ∈ m := by
       have : (θ - θ') * a = (a1 - θ * θ' * a2 - a3) - θ' * (a4 - a2 - a3) := by
         rw [e1, e4]; ring
@@ -260,7 +268,8 @@ theorem exists_basis_of_orthonormal {K : UQ} {V : Type} [AddCommGroup V] [Module
     rw [Fintype.linearIndependent_iff]
     intro g hg i
     have h1 := congrArg (ℓ (v i)) hg
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [map_smul, smul_eq_mul] at h1
     change ∑ j, g j * h (v j) (v i) = 0 at h1
     simpa [hv] using h1
@@ -275,7 +284,7 @@ theorem exists_model : ∀ (K : GlobalTheory.UnitLemma.UQ) (B : GlobalTheory.Uni
   obtain ⟨L, ⟨hfg, hspan⟩, -, hdual⟩ := exists_mem_X_of_N_ne_zero B (x : B.A) hN
   have hadd : ∀ y y' z, B.herm x (y + y') z = B.herm x y z + B.herm x y' z := by
     intro y y' z
-    simp only [InvAlg.herm, mul_add, add_mul, map_add]
+    simp only [InvAlg.herm, mul_add, add_mul, map_add (f := _)]
   have hsmul : ∀ (a : K.E) y z, B.herm x (a • y) z = a * B.herm x y z := by
     intro a y z
     simp only [InvAlg.herm, mul_smul_comm, smul_mul_assoc, map_smul, smul_eq_mul]
@@ -292,7 +301,8 @@ theorem exists_model : ∀ (K : GlobalTheory.UnitLemma.UQ) (B : GlobalTheory.Uni
   have hexp : ∀ y w, B.herm x y w = ∑ i, b.repr y i * B.herm x (b i) w := by
     intro y w
     have h1 : ℓ w y = ℓ w (∑ i, b.repr y i • b i) := by rw [b.sum_repr]
-    rw [map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h1
     simp only [map_smul, smul_eq_mul] at h1
     exact h1
   have hcol : ∀ i z, B.herm x (b i) z = K.c (b.repr z i) := by

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdeleCongruenceUnitCriterion
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdeleCongruenceUnitCriterion
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,10 @@ def scaledInt (a : F) : AddSubgroup (κ → FiniteAdeleRing (𝓞 F) F) where
   carrier := {z | ∀ i (v : HeightOneSpectrum (𝓞 F)),
     (algebraMap F (v.adicCompletion F) a)⁻¹ * (z i) v ∈ v.adicCompletionIntegers F}
   zero_mem' := fun i v => by
-    show (algebraMap F (v.adicCompletion F) a)⁻¹ * (0 : FiniteAdeleRing (𝓞 F) F) v ∈ _
-    simp
+    change (algebraMap F (v.adicCompletion F) a)⁻¹ * (0 : v.adicCompletion F) ∈
+      v.adicCompletionIntegers F
+    rw [mul_zero]
+    exact zero_mem _
   add_mem' := fun {z w} hz hw i v => by
     show (algebraMap F (v.adicCompletion F) a)⁻¹ * ((z i + w i) v) ∈ _
     have e : (z i + w i) v = (z i) v + (w i) v := rfl

@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LocLemma
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.OddDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.HomBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.BndOps
-import Mathlib.Algebra.DualNumber
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LocLemma
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.OddDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.HomBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.BndOps
+public import Mathlib.Algebra.DualNumber
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 namespace UpperTheory.V.Pa
@@ -15,7 +20,8 @@ variable {F R : Type} [CommRing F] [CommRing R] {n : ℕ}
 private theorem mapd_mul (a : R →+* F) (d : R →+ F) (hd : ∀ y z, d (y * z) = a y * d z + d y * a z)
     (Y Z : Matrix (Fin n) (Fin n) R) : (Y * Z).map d = Y.map a * Z.map d + Y.map d * Z.map a := by
   ext i j
-  simp only [map_apply, mul_apply, map_sum, hd, Finset.sum_add_distrib, Matrix.add_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, Matrix.mul_apply, map_sum, hd, Finset.sum_add_distrib, Matrix.add_apply]
 
 private def toDual (a : R →+* F) (d : R →+ F) (hd : ∀ y z, d (y * z) = a y * d z + d y * a z) (h1 : d 1 = 0) :
     R →+* DualNumber F where
@@ -37,13 +43,13 @@ private def evE (F : Type) [CommRing F] {n : ℕ} (p : Fin n → Prop) (b : Prop
   mul_mem' := by
     intro Y Z hY hZ i j
     refine ⟨fun hij => ?_, fun hij => ?_⟩
-    · rw [mul_apply, TrivSqZeroExt.fst_sum]
+    · rw [Matrix.mul_apply, TrivSqZeroExt.fst_sum]
       refine Finset.sum_eq_zero fun k _ => ?_
       rw [TrivSqZeroExt.fst_mul]
       by_cases hk : p i ↔ p k
       · rw [(hZ k j).1 (by tauto), mul_zero]
       · rw [(hY i k).1 hk, zero_mul]
-    · rw [mul_apply, TrivSqZeroExt.snd_sum]
+    · rw [Matrix.mul_apply, TrivSqZeroExt.snd_sum]
       refine Finset.sum_eq_zero fun k _ => ?_
       rw [DualNumber.snd_mul]
       have e1 : (Y i k).fst * (Z k j).snd = 0 := by
@@ -81,12 +87,12 @@ private theorem scal_mem (p : Fin n → Prop) (b : Prop) (y : DualNumber F) (hy 
 private theorem snd_l (A : Matrix (Fin n) (Fin n) F) (Z : Matrix (Fin n) (Fin n) (DualNumber F)) :
     (A.map (TrivSqZeroExt.inlHom F F) * Z).map TrivSqZeroExt.snd = A * Z.map TrivSqZeroExt.snd := by
   ext i j
-  simp [mul_apply, TrivSqZeroExt.snd_sum]
+  simp [Matrix.mul_apply, TrivSqZeroExt.snd_sum]
 
 private theorem snd_r (A : Matrix (Fin n) (Fin n) F) (Z : Matrix (Fin n) (Fin n) (DualNumber F)) :
     (Z * A.map (TrivSqZeroExt.inlHom F F)).map TrivSqZeroExt.snd = Z.map TrivSqZeroExt.snd * A := by
   ext i j
-  simp [mul_apply, TrivSqZeroExt.snd_sum, mul_comm]
+  simp [Matrix.mul_apply, TrivSqZeroExt.snd_sum, mul_comm]
 
 private theorem map_snd_sub (Y Z : Matrix (Fin n) (Fin n) (DualNumber F)) :
     (Y - Z).map TrivSqZeroExt.snd = Y.map TrivSqZeroExt.snd - Z.map TrivSqZeroExt.snd := by
@@ -95,7 +101,7 @@ private theorem map_snd_sub (Y Z : Matrix (Fin n) (Fin n) (DualNumber F)) :
 
 private theorem snd_1 : (1 : Matrix (Fin n) (Fin n) (DualNumber F)).map TrivSqZeroExt.snd = 0 := by
   ext i j
-  rw [map_apply, one_apply]
+  rw [Matrix.map_apply, Matrix.one_apply]
   split_ifs <;> simp
 
 end SlopeTestRemainingChoices
@@ -152,14 +158,12 @@ private theorem locDual {F R H : Type} [Field F] [Infinite F] [CommRing R] [Grou
       rw [map_zero, map_list_prod, List.map_ofFn] at this
       rw [← this]
       congr 2
-      funext i
-      simp only [Function.comp, map_sub]
-      congr 1
-      refine Matrix.ext fun r s => ?_
-      simp only [RingHom.mapMatrix_apply, map_apply, Matrix.algebraMap_matrix_apply]
+      funext r
+      refine Matrix.ext fun i j => ?_
+      simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.sub_apply, Matrix.algebraMap_matrix_apply, MonoidHom.comp_apply, Function.comp_apply, map_sub]
       split_ifs
       · rfl
-      · exact (map_zero π).symm)
+      · simp)
     (fun g => ⟨fun i j => ⟨fun hij => hρ g i j hij, fun _ => rfl⟩,
       fun i j => ⟨fun hij => (toDual_fst a d hd h1 _).trans ((hUa g i j).trans (hρ g i j hij)),
         fun hij => (toDual_snd a d hd h1 _).trans (hdU g i j hij)⟩⟩)
@@ -209,7 +213,7 @@ private theorem selGen {l : ℕ} [Fact l.Prime] {L : Loc} {G G0 : Glob l L} (h :
     rw [this, map_zero]
   have hsc : ∀ c : x.Fr, ((DD.C c : DD x.Fr e) • (1 : Matrix (Fin n) (Fin n) (DD x.Fr e))).map d = 0 := fun c => by
     ext i j
-    rw [map_apply, Matrix.smul_apply, one_apply]
+    rw [map_apply, Matrix.smul_apply, Matrix.one_apply]
     split_ifs
     · rw [smul_eq_mul, mul_one]; exact hC c
     · rw [smul_zero]; exact map_zero d
@@ -219,7 +223,7 @@ private theorem selGen {l : ℕ} [Fact l.Prime] {L : Loc} {G G0 : Glob l L} (h :
   · rw [hV]
     intro i j hij
     show ((u g).map d * ρ g⁻¹) i j = 0
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     refine Finset.sum_eq_zero fun k _ => ?_
     by_cases hk : ((k : ℕ) < x.a) ↔ ((j : ℕ) < x.a)
     · rw [map_apply, hdU g i k (by tauto), zero_mul]

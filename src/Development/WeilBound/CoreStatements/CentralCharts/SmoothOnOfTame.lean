@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.CentralCharts.ExistsPermFirst
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.ExistsPermFirst
+
+@[expose] public section
 
 noncomputable section
 

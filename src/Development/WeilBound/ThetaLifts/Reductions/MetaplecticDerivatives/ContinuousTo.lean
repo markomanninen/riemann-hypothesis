@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.ContinuousPair
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.ContinuousPair
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+
+@[expose] public section
 
 noncomputable section
 

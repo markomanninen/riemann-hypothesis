@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem qConjOf_holds : QConjOf := by
       rintro ⟨ρ, hρ⟩
       exact hex ⟨_, normaliser_unconj hH' hρ⟩
     unfold quotIntegral
-    rw [dif_neg hex, dif_neg hex']
+    rw [dite_eq_right hex, dite_eq_right hex']
 
 end GlobalTheory.CompanionTheory.QConjug
 

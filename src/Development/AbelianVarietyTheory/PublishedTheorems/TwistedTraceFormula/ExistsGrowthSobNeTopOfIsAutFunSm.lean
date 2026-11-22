@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GrowthSizeRWordNeTopOfLe
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsQuotHeightMulExpInfLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GrowthSizeRWordNeTopOfLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsQuotHeightMulExpInfLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,14 +25,6 @@ def CuspDecaySobolev : Prop :=
       ∃ (d : ℕ) (C : ℝ≥0), ∀ φ : GA D V → ℂ, IsAutFun V φ → (∀ k ∈ U, k ∈ GfC V → ∀ g, φ (g * k) = φ g) →
         φ ∈ SmFun θ V → (∀ k, growthSob θ V k N φ ≠ ∞) → IsCuspFun V φ →
           decaySize V M φ ≤ C * growthSob θ V d N φ
-
-def UnitaryReduction : Prop :=
-  ∀ (D : D7) (V : HSp D),
-    (∃ A : ℕ, ∀ (μ : Measure (GA D V)) (𝓕 : Set (GA D V)), μ.IsHaarMeasure → IsFundamentalDomain (GQ V) 𝓕 μ →
-      IntegrableOn (fun g => (quotHeight V g ^ A)⁻¹) 𝓕 μ) ∧
-    ∀ U : Subgroup (GA D V), IsOpen (U : Set (GA D V)) →
-      ∃ S : Finset (GA D V), (∀ x ∈ S, x ∈ GfC V) ∧
-        ∀ g, ∃ γ ∈ GQ V, ∃ x ∈ S, ∃ a ∈ GinfC V, ∃ k ∈ U, k ∈ GfC V ∧ g = γ * x * a * k
 
 end GlobalTheory.Published
 
@@ -60,13 +56,6 @@ theorem exists_finset_doubleCosets (V : HSp D) (U : Subgroup (GA D V)) (hU : IsO
     refine ⟨γ⁻¹, inv_mem hγ, p x, Finset.mem_image_of_mem p hx, q x * a, mul_mem (hq x) ha, k, hk, hk', ?_⟩
     rw [mul_assoc γ⁻¹, mul_assoc γ⁻¹, ← mul_assoc (p x), ← e x, ← h, inv_mul_cancel_left]
 
-theorem _root_.GlobalTheory.Published.unitaryReduction_holds : GlobalTheory.Published.UnitaryReduction := fun _ V =>
-  ⟨⟨0, fun _ _ => integrableOn_inv_quotHeight_pow 0⟩, exists_finset_doubleCosets V⟩
-
-theorem exists_growthSob_ne_top_of_isAutFunSm (hθ : IsInfFam θ) (h : IsAutFunSm θ V φ) :
-    UnifModGrowth V θ φ ∧ ∃ N, ∀ d, growthSob θ V d N φ ≠ ∞ :=
-  ⟨unifModGrowth_of_isAutFunSm hθ h, exists_growthSob_ne_top h.smooth (unifModGrowth_of_isAutFunSm hθ h)⟩
-
 theorem growthSize_sum_le {T : (GA D V → ℂ) → GA D V → ℂ} (hT : LinOnSm θ V T) {ι : Type} (s : Finset ι) (c : ι → ℂ)
     {f : ι → GA D V → ℂ} (hf : ∀ a, f a ∈ SmFun θ V) (N : ℕ) :
     growthSize V N (T (∑ a ∈ s, c a • f a)) ≤ ∑ a ∈ s, ‖c a‖ₑ * growthSize V N (T (f a)) := by
@@ -76,7 +65,7 @@ theorem growthSize_sum_le {T : (GA D V → ℂ) → GA D V → ℂ} (hT : LinOnS
     have := hT.smul 0 0
     rw [zero_smul, zero_smul] at this
     rw [Finset.sum_empty, Finset.sum_empty, this]
-    exact ((growthSize_const (0 : ℂ)).trans enorm_zero).le
+    exact ((growthSize_const (0 : ℂ)).trans eNorm_zero).le
   | insert a s ha ih =>
     rw [Finset.sum_insert ha, Finset.sum_insert ha, hT.add _ (Submodule.smul_mem _ _ (hf a)) _
       (sum_mem fun b _ => Submodule.smul_mem _ _ (hf b)), hT.smul, ← growthSize_smul]
@@ -99,7 +88,8 @@ theorem exists_growthSize_rWord_le (hθ : IsInfFam θ)
     have e : rWord θ V (p :: l) φ = Rder θ V p.1 p.2 (rWord θ V l φ) := rfl
     rw [e, Rder_eq_sum_glDer hθ hm (hl p List.mem_cons_self)]
     refine (growthSize_sum_le (linOnSm_glWord l') _ _ (fun a => (linOnSm_RderC p.1 _).mem _ hm) N).trans ?_
-    rw [ENNReal.coe_mul, ENNReal.coe_finset_sum, mul_assoc, Finset.sum_mul]
+    push_cast
+    rw [mul_assoc, Finset.sum_mul]
     refine Finset.sum_le_sum fun a _ => mul_le_mul' le_rfl ?_
     have := hc φ hs N d (l' ++ [(p.1, a)])
       (by simp only [List.length_append, List.length_cons, List.length_nil] at hd ⊢; omega)

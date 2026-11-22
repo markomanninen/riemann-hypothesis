@@ -1,9 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
+
+@[expose] public section
+
 open scoped Matrix GlobalTheory.VacAny
 open NumberField IsDedekindDomain MeasureTheory Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RatWeilOp
-
-open private exists_symmetric_X_isUnit_det_add_mul_of_symplectic from Mathlib.LinearAlgebra.SymplecticGroup
 
 namespace GlobalTheory.SpGen
 open Matrix
@@ -33,7 +36,76 @@ theorem symplectic_generated_levi_lower_weyl :
     simpa [Matrix.mul_neg, Matrix.neg_mul] using ha
   obtain ⟨A, B, C, D, rfl⟩ : ∃ A B C D, a = fromBlocks A B C D :=
     ⟨_, _, _, _, a.fromBlocks_toBlocks.symm⟩
-  obtain ⟨X, hX, hu⟩ := exists_symmetric_X_isUnit_det_add_mul_of_symplectic hsp
+  have hExists : ∃ X : Matrix κ κ K, X.IsSymm ∧ IsUnit (A + X * C).det := by
+    -- Use the field case of Mathlib's construction in LinearAlgebra/SymplecticGroup.
+    have hker (x : κ → K) (hAx : A • x = 0) (hCx : C • x = 0) : x = 0 := by
+      rw [smul_eq_mulVec] at hAx hCx
+      have hunit := (fromBlocks A B C D).isUnit_iff_isUnit_det.2
+        (SymplecticGroup.symplectic_det hsp)
+      have hzero : fromBlocks A B C D *ᵥ Sum.elim x 0 =
+          fromBlocks A B C D *ᵥ Sum.elim 0 0 := by
+        simp [fromBlocks_mulVec, hAx, hCx]
+      exact (Sum.elim_eq_iff.1 (mulVec_injective_iff_isUnit.2 hunit hzero)).1
+    have hsymm := (SymplecticGroup.fromBlocks_mem_iff.1 hsp).1
+    obtain ⟨V, U, e, hV, hU, heq⟩ := exists_rank_normal_form C
+    set R := V * C * U with hR
+    set S := Vᵀ⁻¹ * A * U with hS
+    let f := fun M : Matrix κ κ K ↦ M.submatrix e.symm e.symm
+    have hf (M : Matrix κ κ K) : f M = M.submatrix e.symm e.symm := rfl
+    have f_unit {M} : IsUnit M → IsUnit (f M) := (isUnit_submatrix_equiv ..).2
+    have f_mul (M N) : f (M * N) = f M * f N := submatrix_mul _ _ _ _ _ e.symm.bijective
+    let _ : Invertible V := hV.invertible
+    let _ : Invertible U := hU.invertible
+    let _ : Invertible (f Vᵀ) := (f_unit (V.isUnit_transpose.2 hV)).invertible
+    have hker' (x : Fin C.rank ⊕ Fin (Fintype.card κ - C.rank) → K)
+        (hxS : f S • x = 0) (hxR : f R • x = 0) : x = 0 := by
+      refine (f_unit hU).smul_left_cancel.1 ?_
+      rw [f_mul, f_mul, mul_assoc, mul_smul, IsUnit.smul_eq_zero, mul_smul, hf,
+        smul_eq_mulVec, submatrix_mulVec_equiv, Equiv.symm_symm] at hxS hxR
+      · rw [Equiv.comp_symm_eq, Pi.zero_comp] at hxS hxR
+        exact e.surjective.injective_comp_right <| by simpa using hker _ hxS hxR
+      · exact f_unit hV
+      · exact f_unit <| isUnit_nonsing_inv_iff.2 <| V.isUnit_transpose.2 hV
+    have hSR : Sᵀ * R = Rᵀ * S := by
+      simp only [hR, mul_assoc, transpose_mul, transpose_nonsing_inv, transpose_transpose, hS,
+        inv_mul_cancel_left_of_invertible, mul_inv_cancel_left_of_invertible]
+      rw [← mul_assoc Aᵀ, hsymm, mul_assoc]
+    have hblocks : (f S).toBlocks₁₁ᵀ = (f S).toBlocks₁₁ ∧ (f S).toBlocks₁₂ = 0 := by
+      apply_fun reindex e e at hSR
+      rw [reindex_apply, reindex_apply, ← hf, ← hf, f_mul, f_mul Rᵀ, heq, hf,
+        ← transpose_submatrix, ← hf S, ← (f S).fromBlocks_toBlocks, hf (_)ᵀ, hf
+        ((fromBlocks 1 0 0 0).submatrix _ _)] at hSR
+      simp [fromBlocks_transpose, fromBlocks_multiply] at hSR
+      tauto
+    have h₂₂ : IsUnit (f S).toBlocks₂₂ := by
+      refine mulVec_injective_iff_isUnit.1 ?_
+      rw [← coe_mulVecLin, ← LinearMap.ker_eq_bot]
+      refine ker_mulVecLin_eq_bot_iff.2 fun x hx ↦ Sum.elim_injective' <|
+        (hker' _ ?_ ?_).trans Sum.elim_zero_zero.symm
+      · rw [← (f S).fromBlocks_toBlocks]
+        simp [hx, hblocks.2, fromBlocks_mulVec]
+      · simp [hf, heq, fromBlocks_mulVec]
+    set Y : Matrix (Fin C.rank ⊕ Fin (Fintype.card κ - C.rank))
+      (Fin C.rank ⊕ Fin (Fintype.card κ - C.rank)) K :=
+      fromBlocks (1 - (f S).toBlocks₁₁) 0 0 0 with hY
+    have hYsymm : Y.IsSymm := by
+      rw [hY, isSymm_fromBlocks_iff]
+      exact ⟨IsSymm.sub isSymm_one hblocks.1, by simp⟩
+    set X := f Vᵀ * Y * f V with hX
+    refine ⟨X.submatrix e e, IsSymm.submatrix ?_ e, (isUnit_iff_isUnit_det _).1
+      ((isUnit_submatrix_equiv e.symm e.symm).1 ?_)⟩
+    · simp_rw [hX, Matrix.IsSymm, transpose_mul, hYsymm.eq, hf, transpose_submatrix,
+        transpose_transpose, mul_assoc]
+    · have hsum : f (A + X.submatrix e e * C) = f Vᵀ * (f S + Y * f R) * f U⁻¹ := by
+        simp_rw [hf, submatrix_add, Pi.add_apply, hS, hR, ← hf, f_mul, hf, mul_add, ← mul_assoc,
+          ← inv_submatrix_equiv, add_mul, mul_assoc _ (U.submatrix _ _), mul_inv_of_invertible]
+        simp [hX]
+        rfl
+      rw [← hf, hsum, IsUnit.mul_iff, IsUnit.mul_iff]
+      refine ⟨⟨isUnit_of_invertible _, ?_⟩, f_unit (isUnit_nonsing_inv_iff.2 hU)⟩
+      nth_rw 1 [hY, heq, ← (f S).fromBlocks_toBlocks, hblocks.2]
+      simpa [hf, fromBlocks_multiply, fromBlocks_add] using h₂₂
+  obtain ⟨X, hX, hu⟩ := hExists
   have hUX : (fromBlocks 1 X 0 1 : Matrix (κ ⊕ κ) (κ ⊕ κ) K) ∈ symplecticGroup κ K := by
     simp [SymplecticGroup.fromBlocks_mem_iff, hX.eq]
   have hprod : (fromBlocks 1 X 0 1 : Matrix (κ ⊕ κ) (κ ⊕ κ) K) * fromBlocks A B C D =

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.ClassSum
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.ClassSum
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -23,8 +27,8 @@ def chiIdem (χ : G → K) : MonoidAlgebra K G :=
 
 def idemOf (X : Finset (G → K)) : MonoidAlgebra K G := ∑ χ ∈ X, chiIdem χ
 
-open Classical in
 
+open Classical in
 def lvlIdem (P : Subgroup G) (ψ : P →* Kˣ) : MonoidAlgebra K G :=
   ∑ h : P, MonoidAlgebra.single (h : G) ((Nat.card P : K)⁻¹ * ((ψ h⁻¹ : Kˣ) : K))
 
@@ -45,8 +49,8 @@ def subDim (Z : Submodule K (Fin n → K)) : ℕ := finrank K Z
 def SubHasRatBasis (Z : Submodule K (Fin n → K)) : Prop :=
   ∃ b : Basis (Fin (subDim Z)) K Z, ∀ j i, (b j : Fin n → K) i ∈ cmMax K
 
-open Classical in
 
+open Classical in
 def subBasis (Z : Submodule K (Fin n → K)) : Basis (Fin (subDim Z)) K Z :=
   if h : SubHasRatBasis Z then h.choose else finBasis K Z
 
@@ -165,10 +169,6 @@ def IdemOfCentral : Prop :=
     (∀ χ ∈ X, IsAbsIrrChar χ) →
       idemOf X * idemOf X = idemOf X ∧ ∀ b : MonoidAlgebra K G, b * idemOf X = idemOf X * b
 
-def IdemOfOrth : Prop :=
-  ∀ (K : Type) [Field K] [CharZero K] (G : Type) [Group G] [Fintype G] (X Y : Finset (G → K)),
-    (∀ χ ∈ X, IsAbsIrrChar χ) → (∀ χ ∈ Y, IsAbsIrrChar χ) → Disjoint X Y → idemOf X * idemOf Y = 0
-
 def LvlIdemSpec : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (v0 : InfinitePlace K), IsConjAt v0 →
     ∀ (G : Type) [Group G] [Fintype G] (P : Subgroup G) (ψ : P →* Kˣ),
@@ -244,23 +244,6 @@ def LvlOpSpec : Prop :=
     ∀ (P : Subgroup G) (ψ : P →* Kˣ) (a : MonoidAlgebra K G), a * lvlIdem P ψ = lvlIdem P ψ * a →
       S.lvlE r P ψ * S.lvlOp r P ψ a = S.gaMat r a * S.lvlE r P ψ ∧
       ∀ b : MonoidAlgebra K G, S.lvlOp r P ψ (b * a) = S.lvlOp r P ψ b * S.lvlOp r P ψ a
-
-def LvlOpIntegral : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (v0 : InfinitePlace K), IsConjAt v0 →
-    ∀ (S : CSD K), (S.H.map v0.embedding).PosDef →
-    ∀ (G : Type) [Group G] [Fintype G] (r : Representation K G S.Forms), S.ActGood r →
-    ∀ (X : Finset (G → K)), (∀ χ ∈ X, IsAbsIrrChar χ) → ∀ (P : Subgroup G) (ψ : P →* Kˣ),
-      (∀ x ∈ S.lvlNab r P ψ,
-        (Fintype.card G : 𝓞 K) • (S.lvlOp r P ψ (idemOf X)).mulVec x ∈ S.lvlNab r P ψ) ∧
-      ∀ x ∈ S.lvlDel r P ψ,
-        (Fintype.card G : 𝓞 K) • (S.lvlOp r P ψ (idemOf X)).mulVec x ∈ S.lvlDel r P ψ
-
-def LvlDualLe : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (v0 : InfinitePlace K), IsConjAt v0 →
-    ∀ (S : CSD K) (s : ℕ), S.Good s → (S.H.map v0.embedding).PosDef →
-    ∀ (G : Type) [Group G] [Fintype G] (r : Representation K G S.Forms), S.ActGood r →
-    ∀ (P : Subgroup G) (ψ : P →* Kˣ),
-      ∀ y ∈ Formalism.HermitianLatticesTheory.dual (hform (S.lvlH r P ψ)) (S.lvlNab r P ψ), (s : 𝓞 K) • y ∈ S.lvlDel r P ψ
 
 def GoodPartSpec : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (S : CSD K) (G : Type) [Group G] [Fintype G]

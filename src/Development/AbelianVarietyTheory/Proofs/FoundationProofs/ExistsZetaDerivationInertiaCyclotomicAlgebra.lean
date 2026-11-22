@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemCycAlgOfPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTowerUnionZetaDerivationModIntegralClosure
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CyclotomicDvdOfAevalPrimitiveRootInertiaFixedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemCycAlgOfPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTowerUnionZetaDerivationModIntegralClosure
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CyclotomicDvdOfAevalPrimitiveRootInertiaFixedStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.RecOne GlobalTheory.AlmostEt
 open scoped Matrix NNReal
 
@@ -34,11 +39,11 @@ theorem exists_der_one (z : S) (μ : M)
   · intro x hx y hy
     obtain ⟨f, rfl⟩ := hm x hx
     obtain ⟨g, rfl⟩ := hm y hy
-    rw [← map_add, key, key, key, derivative_add, map_add, add_smul]
+    rw [← map_add (f := _), key, key, key, derivative_add, map_add (f := _), add_smul]
   · intro x hx y hy
     obtain ⟨f, rfl⟩ := hm x hx
     obtain ⟨g, rfl⟩ := hm y hy
-    rw [← map_mul, key, key, key, derivative_mul, map_add, add_smul, map_mul, map_mul, smul_smul, smul_smul,
+    rw [← map_mul, key, key, key, derivative_mul, map_add (f := _), add_smul, map_mul, map_mul, smul_smul, smul_smul,
       add_comm, mul_comm (aeval z (derivative f))]
   · intro a
     have : algebraMap R S a = aeval z (C a) := by simp
@@ -87,7 +92,7 @@ theorem cyc_rel [CharZero Ω] {p : ℕ} [hp : Fact p.Prime] {A : ValuationSubrin
     exact hzA.isRoot_cyclotomic hpos
   have hid := congrArg (fun f => aeval z (derivative f))
     (cyclotomic_prime_pow_mul_X_pow_sub_one R p m)
-  simp only [derivative_mul, derivative_sub, derivative_X_pow, derivative_one, map_add, map_mul,
+  simp only [derivative_mul, derivative_sub, derivative_X_pow, derivative_one, map_add (f := _), map_mul,
     map_sub, hroot, zero_mul, add_zero, sub_zero] at hid
   rw [frac_smul_mk]
   set F := aeval z (derivative (cyclotomic (p ^ (m + 1)) R))
@@ -175,7 +180,7 @@ theorem zeta_derivation_cyc : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω
     have hroot : aeval (zs (m + 1)) (cyclotomic (p ^ (N + m + 1)) (fixA A)) = 0 := by
       rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic]
       exact hzA.isRoot_cyclotomic (pow_pos hp.out.pos _)
-    rw [derivative_mul, map_add, map_mul, map_mul, hroot, zero_mul, add_zero, mul_comm, mul_smul,
+    rw [derivative_mul, map_add (f := _), map_mul, map_mul, hroot, zero_mul, add_zero, mul_comm, mul_smul,
       cyc_rel (N + m) (zs (m + 1)) (hprim (m + 1)), smul_zero]
   choose D hD hDz using hlev
   have hval : ∀ m, D m (zs m) = Submodule.Quotient.mk ((zs m : Ω) * p / (p : Ω) ^ (N + m)) := by

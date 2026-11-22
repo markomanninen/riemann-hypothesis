@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubsetOfClosedFibre
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSectionsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdealPowerSubobjectSectionsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArtinReesClosedSystem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubsetOfClosedFibre
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSectionsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdealPowerSubobjectSectionsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArtinReesClosedSystem
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry GroundTheory.Arith.SchemeCoh GlobalTheory.CompanionTheory.GE
 
 set_option autoImplicit false
@@ -84,7 +89,7 @@ theorem mem_of_badSet_closedFibre : ∀ {A : Type} [CommRing A] [IsNoetherianRin
     obtain ⟨s, hs, t, ht, rfl⟩ := hsum m
     have h1 : N.mkQ (s + t) = N.mkQ t := by
       have h0 : N.mkQ s = 0 := (Submodule.Quotient.mk_eq_zero N).2 hs
-      rw [map_add, h0, zero_add]
+      rw [map_add (f := _), h0, zero_add]
     rw [h1]
     have h2 : N.mkQ t ∈ (J • ⊤ : Submodule Γ(X, V) Γ(P, V)).map N.mkQ := ⟨t, ht, rfl⟩
     rw [Submodule.map_smul'', Submodule.map_top, Submodule.range_mkQ] at h2

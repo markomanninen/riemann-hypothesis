@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.ExistsFromRowsMulVecIff
-import ReciprocityTheory.DualLattices.HasLenCokerDet
+module
+
+public import ReciprocityTheory.DualLattices.ExistsFromRowsMulVecIff
+public import ReciprocityTheory.DualLattices.HasLenCokerDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,8 @@ lemma P_fix (x : Fin g → R) (hx : x ∈ LinearMap.range (Matrix.mulVecLin P)) 
 
 lemma matU_mulVec (y : Fin d → R) : matU P φ *ᵥ y = (φ.symm y : Fin g → R) := by
   conv_rhs => rw [sum_single' y]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   funext k
   simp [matU, Matrix.mulVec, dotProduct, Finset.sum_apply, mul_comm]
 
@@ -57,10 +62,12 @@ lemma matV_mulVec (w : Fin g → R) :
     apply Subtype.ext
     simp only [Submodule.coe_sum, Submodule.coe_smul]
     conv_lhs => rw [sum_single' w]
-    rw [show P *ᵥ (∑ k, w k • (Pi.single k 1 : Fin g → R)) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show P *ᵥ (∑ k, w k • (Pi.single k 1 : Fin g → R)) =
         Matrix.mulVecLin P (∑ k, w k • (Pi.single k 1 : Fin g → R)) from rfl, map_sum]
     simp only [map_smul, Matrix.mulVecLin_apply]
-  rw [hw, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hw, map_sum]
   simp only [LinearEquiv.map_smul]
   funext l
   simp only [Matrix.mulVec, dotProduct, matV, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]

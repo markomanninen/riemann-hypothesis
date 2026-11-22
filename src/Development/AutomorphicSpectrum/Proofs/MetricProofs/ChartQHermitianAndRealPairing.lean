@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogPeriodLimit
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIsChart
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIntPreimageOfOrthogonalKernelStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RiemannFormHermitianLatticeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogPeriodLimit
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIsChart
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIntPreimageOfOrthogonalKernelStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RiemannFormHermitianLatticeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -244,7 +248,7 @@ theorem lower_center {L : Flat.LogPeriods n a g Λ} {bas : Module.Basis (Fin g �
       intro i _
       simpa using (h.B_psd i).dotProduct_mulVec_nonneg v
     have h1 := (Finset.sum_eq_zero_iff_of_nonneg hnn).1 h0 j (Finset.mem_univ j)
-    exact ((h.B_psd j).dotProduct_mulVec_zero_iff v).1 (by simpa using h1)
+    exact ((h.B_psd j).dotProduct_mulVec_zero_iff).1 (by simpa using h1)
   have := GlobalTheory.CompanionTheory.ChartBlockLower.im_lower_on_kernel n a g L.a_le (Metric.ball 0 ρ) T0 B c
     Metric.isOpen_ball (h.T_cont.mono (Metric.ball_subset_ball h.ρ_le)) h.B_psd h.c_pos h.im_lower
     0 (Metric.mem_ball_self h.ρ_pos) 0 (fun j hj => (hj rfl).elim) (fun j _ => rfl) v
@@ -352,7 +356,8 @@ theorem limit_form : ∀ (n a g : ℕ) (Λ : Type) [AddCommGroup Λ] (L : Flat.L
       simpa [vCo_mk, uCo_mk, hv0] using h1
     have h2 : star ((A 0)ᵀ *ᵥ cst (uCo bas (x : Λ))) = (A 0)ᴴ *ᵥ cst (uCo bas (x : Λ)) := by
       funext i
-      simp [cst, mulVec, dotProduct, Matrix.conjTranspose_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [cst, mulVec, dotProduct, Matrix.conjTranspose_apply, map_sum]
     rw [hper, hv0, cst_zero, mulVec_zero, add_zero, h2]
     simp only [chartQ]
     rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Matrix.mulVec_mulVec _ ((A 0)ᴴ)⁻¹,

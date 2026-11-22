@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantLemmas.WickFormula.OrdEvalEqSumOf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantLemmas.WickFormula.OrdEvalEqSumOf
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -156,7 +160,8 @@ theorem b_mul_ordEval {k AA M : Type} [CommRing k] [Ring AA] [Algebra k AA] [Add
         ∑ j, κ i j • ((c * (m (Sum.inr j) : k)) •
           omon (a + b) (a' + b') (m - Finsupp.single (Sum.inr j) 1)) := by
       change E _ = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [E, AddMonoidHom.mk'_apply, ordEval_smul, ordEval_monomial]
     rw [hdl, hsum, ordEval_monomial]
     simp only [omon_lower]
@@ -170,7 +175,7 @@ theorem b_mul_ordEval {k AA M : Type} [CommRing k] [Ring AA] [Algebra k AA] [Add
     congr 1
     ring
   | add P Q hP hQ =>
-    rw [ordEval_add, mul_add, hP, hQ, map_add, ordEval_add, add_mul]
+    rw [ordEval_add, mul_add, hP, hQ, map_add (f := _), ordEval_add, add_mul]
     abel
 
 theorem bComm_holds : BComm := by

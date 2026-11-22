@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AinfAdicTopologicalBasisOverBreuilKisinStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AinfAdicTopologicalBasisOverBreuilKisinStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -21,8 +26,8 @@ theorem red_sec : Function.RightInverse (sec l a) (red l a) := fun f =>
 theorem red_l : red l a (l : (Wq l a)⟦X⟧) = 0 := by
   rw [map_natCast]; exact l_eq_zero l a
 
-omit [NeZero a] in
 
+omit [NeZero a] in
 theorem sub_teich_dvd (x : Ainf l) : ∃ z, x = WittVector.teichmuller l (x.coeff 0) + (l : Ainf l) * z := by
   have h : x - WittVector.teichmuller l (x.coeff 0) ∈ Ideal.span {(l : Ainf l)} := by
     rw [← WittVector.ker_constantCoeff, RingHom.mem_ker, map_sub]
@@ -32,8 +37,8 @@ theorem sub_teich_dvd (x : Ainf l) : ∃ z, x = WittVector.teichmuller l (x.coef
 
 end GlobalTheory.BSP.ResTilt
 
-open GlobalTheory.BSP.ResTilt in
 
+open GlobalTheory.BSP.ResTilt in
 theorem GlobalTheory.BSP.exists_resTilt_retract : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K),
     ∃ (ek : (Fq l bk.a)⟦X⟧ →+* OCb l) (pr : OCb l →+ (Fq l bk.a)⟦X⟧),
       (∀ s : bk.S, ek (PowerSeries.map (WittVector.constantCoeff (p := l) (R := Fq l bk.a)) s) =
@@ -53,15 +58,15 @@ theorem GlobalTheory.BSP.exists_resTilt_retract : ∀ (l : ℕ) [Fact l.Prime] (
     obtain ⟨z, hz⟩ := sub_teich_dvd l x
     conv_lhs => rw [hz]
     have e : (l : Ainf l) = bk.ev (l : bk.S) := (map_natCast _ _).symm
-    rw [map_add, e, tb.c_mul, map_add, map_mul, red_l l bk.a, zero_mul, add_zero]
+    rw [map_add (f := _), e, tb.c_mul, map_add (f := _), map_mul, red_l l bk.a, zero_mul, add_zero]
   let pr : OCb l →+ (Fq l bk.a)⟦X⟧ :=
     { toFun := P
       map_zero' := by simp [P]
       map_add' := fun y y' => by
         have h := hwd (WittVector.teichmuller l y + WittVector.teichmuller l y')
-        rw [map_add, map_add] at h
+        rw [map_add (f := _), map_add (f := _)] at h
         have h0 : (WittVector.teichmuller l y + WittVector.teichmuller l y').coeff 0 = y + y' := by
-          rw [← WittVector.constantCoeff_apply, map_add]; simp [WittVector.constantCoeff_apply]
+          rw [← WittVector.constantCoeff_apply, map_add (f := _)]; simp [WittVector.constantCoeff_apply]
         rw [h0] at h
         exact h.symm }
   have hmul : ∀ a y, pr (ek a * y) = a * pr y := fun f y => by

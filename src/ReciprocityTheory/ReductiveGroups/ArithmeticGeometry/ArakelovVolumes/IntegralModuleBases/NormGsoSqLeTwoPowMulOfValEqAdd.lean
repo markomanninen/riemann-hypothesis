@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReducedBases.LatticeReduction
-import ReciprocityTheory.ReducedBases.TBInjective
+module
+
+public import ReciprocityTheory.ReducedBases.LatticeReduction
+public import ReciprocityTheory.ReducedBases.TBInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,7 @@ theorem red_norm_sq_le (b : Fin d → E) (hr : IsRed b) (m D : ℝ) (hm0 : 0 < m
   have hLpos : 0 < L := by rw [hL]; positivity
   have hG : ∀ j, L ≤ ‖gs b j‖ ^ 2 := fun j => by rw [hL]; exact gs_sq_ge b hr m hm j
   have hprod : L ^ (d - 1) ≤ ∏ j ∈ univ.erase i, ‖gs b j‖ ^ 2 := by
-    have := Finset.prod_le_prod (s := univ.erase i) (f := fun _ => L) (g := fun j => ‖gs b j‖ ^ 2)
+    have := Finset.prod_le_prod₀ (s := univ.erase i) (f := fun _ => L) (g := fun j => ‖gs b j‖ ^ 2)
       (fun _ _ => hLpos.le) (fun j _ => hG j)
     rw [Finset.prod_const, Finset.card_erase_of_mem (mem_univ i), Finset.card_univ,
       Fintype.card_fin] at this

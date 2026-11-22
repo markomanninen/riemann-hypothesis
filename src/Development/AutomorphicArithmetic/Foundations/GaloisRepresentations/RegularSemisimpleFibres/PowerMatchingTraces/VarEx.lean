@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.LocTw
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPow
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocGalEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExTwist
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursIff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.LocTw
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPow
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocGalEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExTwist
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,9 +25,11 @@ namespace UpperTheory.Gal.InertialTypesAlt.G
 
 theorem varEx : VarEx := by
   intro F E _ _ _ _ _ _ _ _ σ hσ hp n hn P hP v w hv
-  let μE : Measure (normOneGL E n) := Measure.haar
-  let μF : Measure (normOneGL F n) := Measure.haar
-  obtain ⟨hw, s, hs, hloc⟩ := locGalEx F E σ hp n v w hv
+  let μE : Measure (normOneGL (K := E) (n := n)) := Measure.haar
+  let μF : Measure (normOneGL (K := F) (n := n)) := Measure.haar
+  have hlocEx := UpperTheory.ConvolutionTheory.C.locGalEx F E σ hp n v w hv
+  have hw := hlocEx.1
+  obtain ⟨s, hs, hloc⟩ := hlocEx.2
   refine ⟨s, hs, fun τ' hτ' => ?_⟩
   obtain ⟨χ', ⟨z, hz'⟩, V, hV⟩ := Dp.exTwist E n μE P hn
   obtain ⟨hex, htw⟩ := T.powTwist F E

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinpolyEqOfAevalOfLinearIndependent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaDistributionHeisenbergInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorRatAlgebraDecompFactorwise
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinpolyEqOfAevalOfLinearIndependent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaDistributionHeisenbergInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorRatAlgebraDecompFactorwise
+
+@[expose] public section
 
 open Polynomial
 open scoped TensorProduct
@@ -30,7 +34,8 @@ theorem eq_zero_of_isNilpotent (n : ℕ) (x₀ : B) (hsep : (minpoly F x₀).Sep
     let e : K ⊗[F] B := (1 : K) ⊗ₜ[F] x₀
     let hp : K[X] := ∑ j : Fin n, C (ψ (c j) i) * X ^ (j : ℕ)
     have hΦw : Φ (∑ j, cen S F B (c j) * ((1 : S) ⊗ₜ[ℚ] x₀) ^ (j : ℕ)) i = aeval e hp := by
-      simp only [hp, map_sum, map_mul, map_pow, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply, hΦ2, hΦ1,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hp, map_sum, map_mul, map_pow, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply, hΦ2, hΦ1,
         aeval_C, aeval_X, e]
       rfl
     obtain ⟨m, hm⟩ := h
@@ -51,7 +56,7 @@ theorem eq_zero_of_isNilpotent (n : ℕ) (x₀ : B) (hsep : (minpoly F x₀).Sep
     have hz : hp = 0 := Polynomial.eq_zero_of_dvd_of_degree_lt hd2 hdeglt
     intro j
     have := congrArg (fun q : K[X] => q.coeff (j : ℕ)) hz
-    simp only [hp, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow, Polynomial.coeff_zero] at this
+    simp only [hp, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow, Polynomial.coeff_zero] at this
     rw [Finset.sum_eq_single j] at this
     · simpa using this
     · intro b _ hb
@@ -94,7 +99,7 @@ theorem cen_comm (z : S ⊗[ℚ] F) (y : S ⊗[ℚ] B) : Commute (cen S F B z) y
       rw [Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_comm s s',
         Algebra.commutes]
     | add a b ha hb => exact Commute.add_right ha hb
-  | add a b ha hb => rw [map_add]; exact Commute.add_left ha hb
+  | add a b ha hb => rw [map_add (f := _)]; exact Commute.add_left ha hb
 
 theorem exists_conj_of_traces [Algebra.IsCentral F B] [IsSimpleRing B] (n : ℕ) (hn : Module.finrank F B = n ^ 2)
     (x₀ : B) (hsep : (minpoly F x₀).Separable) (hdeg : (minpoly F x₀).natDegree = n) (y : S ⊗[ℚ] B)
@@ -118,12 +123,14 @@ theorem exists_conj_of_traces [Algebra.IsCentral F B] [IsSimpleRing B] (n : ℕ)
     rfl
   have htr : ∀ H : (S ⊗[ℚ] F)[X], trL S B (ev y H) = trL S B (ev e₀ H) := by
     intro H
-    rw [hev, hev, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hev, hev, map_sum, map_sum]
     exact Finset.sum_congr rfl fun k _ => hT _ k
   let R : (S ⊗[ℚ] F)[X] := ∑ j : Fin n, C (c j) * X ^ (j : ℕ)
   have hevR : ∀ u, ev u R = ∑ j : Fin n, cen S F B (c j) * u ^ (j : ℕ) := by
     intro u
-    simp only [R, map_sum, map_mul, map_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [R, map_sum, map_mul, map_pow]
     refine Finset.sum_congr rfl fun j _ => ?_
     show Polynomial.eval₂ _ u (C (c j)) * Polynomial.eval₂ _ u X ^ (j : ℕ) = _
     rw [Polynomial.eval₂_C, Polynomial.eval₂_X]
@@ -221,7 +228,7 @@ theorem isClosed_conjClass [TopologicalSpace S] [IsTopologicalRing S] [T2Space S
   refine IsClosed.inter (isClosed_iInter fun i => ?_) (isClosed_iInter fun z => isClosed_iInter fun k => ?_)
   · have hc : Continuous fun y : (S ⊗[ℚ] B)ˣ => b.coord i (Pv (y : S ⊗[ℚ] B)) := by
       refine (IsModuleTopology.continuous_of_linearMap (b.coord i)).comp ?_
-      exact continuous_finset_sum _ fun j _ => continuous_const.mul (Units.continuous_val.pow j)
+      exact continuous_finsetSum _ fun j _ => continuous_const.mul (Units.continuous_val.pow j)
     exact isClosed_eq hc continuous_const
   · have hc : Continuous fun y : (S ⊗[ℚ] B)ˣ => trL S B (cen S F B z * (y : S ⊗[ℚ] B) ^ k) :=
       (IsModuleTopology.continuous_of_linearMap (trL S B)).comp

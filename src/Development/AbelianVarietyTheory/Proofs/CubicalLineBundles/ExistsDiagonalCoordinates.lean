@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+
+@[expose] public section
 
 open NumberField
 open scoped TensorProduct
@@ -51,7 +55,6 @@ theorem tensor_unif {X Y V : Type} [AddCommGroup X] [Module O X]
   obtain ⟨Φ, hΦ⟩ := exists_lift P hP
   have hc : ∀ t, ex (Φ t) = eqv (TensorProduct.comm O X M (e₀.rTensor M t)) := fun t => by
     induction t with
-    | zero => simp
     | tmul z a => simp [hΦ, hex]
     | add x y hx hy => simp [hx, hy]
   have hker : ∀ t, ex (Φ t) = 0 → ∃ a, t = 1 ⊗ₜ a := fun t ht => by
@@ -73,9 +76,8 @@ theorem tensor_unif {X Y V : Type} [AddCommGroup X] [Module O X]
   refine ⟨eq_top_iff.2 fun v _ => ?_, fun v => ⟨fun hv => ?_, ?_⟩, fun V' _ _ f hf => ?_⟩
   · obtain ⟨t, rfl⟩ := hsurj v
     induction t with
-    | zero => simp
     | tmul z a => rw [hΦ]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩)
-    | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ (hx trivial) (hy trivial)
+    | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ (hx trivial) (hy trivial)
   · obtain ⟨t, rfl⟩ := hsurj v
     obtain ⟨a, rfl⟩ := hker t hv
     exact ⟨a, by rw [hΦ, one_smul]⟩
@@ -111,7 +113,8 @@ theorem exists_diagonal_coordinates {V : Type} [AddCommGroup V] [Module ℂ V] [
   generalize b.reindex e = b' at hb
   obtain ⟨z, rfl⟩ := b'.equivFun.symm.surjective v
   have : r a (b'.equivFun.symm z) = b'.equivFun.symm fun j => (e.symm j).1 (a : E) * z j := by
-    simp only [Module.Basis.equivFun_symm_apply, map_sum, map_smul, hb, smul_smul, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Module.Basis.equivFun_symm_apply, map_sum, map_smul, hb, smul_smul, mul_comm]
   rw [this]
   simp only [LinearEquiv.apply_symm_apply]
 

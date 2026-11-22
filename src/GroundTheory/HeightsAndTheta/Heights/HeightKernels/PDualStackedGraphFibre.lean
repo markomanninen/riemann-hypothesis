@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExc
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedDegree
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeIndex
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExc
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeIndex
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,8 +19,8 @@ namespace StackedGraphFibre
 
 variable {K' : Type} [Fintype K'] {ι : K' → Type} [∀ k, Fintype (ι k)]
 
-open Classical in
 
+open Classical in
 def vertWeight {n : ℕ} (L : Fin n → HermLine ι) (W : Ideal (MRing ι)) : ℝ :=
   if IsHorizontal W then 0 else (geoNum n W (fun j => (L j).a) : ℝ) * Real.log (charOf W)
 
@@ -58,8 +63,8 @@ theorem vertR_sub (P : Ideal (MRing ι)) {n : ℕ} (L : Fin n → HermLine ι) (
 
 end StackedGraphFibre
 
-open StackedGraphFibre in
 
+open StackedGraphFibre in
 theorem DualStackedGraphFibre.proof (hCyc : DualStackedExcCycle.Statement)
     (hSec : DualStackedExcGeoSecond.Statement) (hFir : DualStackedExcGeoFirst.Statement) :
     DualStackedGraphFibre.Statement := by

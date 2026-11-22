@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AlgebraicValuesFinite.ClassSame
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AlgebraicValuesFinite.ClassSame
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,9 +44,9 @@ theorem keyIdOf : KeyIdOf L := by
 
   have hreal : (∏ φ : L →+* ℂ, ‖φ (k : L)‖ ^ s) *
       ∏ v ∈ T, (((Ideal.absNorm v.asIdeal : ℕ) : ℝ) ^ (-s)) ^ ordF v k = 1 := by
-    rw [Real.finset_prod_rpow Finset.univ (fun φ : L →+* ℂ => ‖φ (k : L)‖) (fun φ _ => norm_nonneg _) s,
+    rw [Real.finsetProd_rpow Finset.univ (fun φ : L →+* ℂ => ‖φ (k : L)‖) (fun φ _ => norm_nonneg _) s,
       hP k T hT,
-      ← Real.finset_prod_rpow T _ (fun v _ => zpow_nonneg (absNorm_pos v).le _) s,
+      ← Real.finsetProd_rpow T _ (fun v _ => zpow_nonneg (absNorm_pos v).le _) s,
       ← Finset.prod_mul_distrib]
     exact Finset.prod_eq_one (fun v _ => factor_one _ (absNorm_pos v) _ s)
   have hc1 : ∏ φ : L →+* ℂ, ((‖φ (k : L)‖ : ℝ) : ℂ) ^ (s : ℂ)

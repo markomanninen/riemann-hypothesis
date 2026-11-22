@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem comp_eigProj (𝓗 : HodgeLat L ρ bar r) {σ σ' : E →+* Ω}
     rw [h1, hσ b]
   have hsum : ∑ k, σ' (HT.dualInt E k) * σ' ((RingOfIntegers.basis E k : 𝓞 E) : E) = 1 := by
     have h1 := congrArg σ' (HT.LatBasic.sum_dualInt_mul (E := E))
-    rw [map_sum, map_one] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one] at h1
     rw [← h1]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, NumberField.integralBasis_apply]
@@ -41,7 +46,8 @@ theorem comp_eigProj (𝓗 : HodgeLat L ρ bar r) {σ σ' : E →+* Ω}
     have e := LinearMap.congr_fun (key (RingOfIntegers.basis E k)) x
     rw [LinearMap.comp_apply, LinearMap.smul_apply, smul_eq_mul] at e
     rw [LinearMap.smul_apply, map_smul, e, smul_eq_mul, mul_assoc]
-  rw [LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
   simp_rw [hk]
   rw [← Finset.sum_mul, hsum, one_mul]
 

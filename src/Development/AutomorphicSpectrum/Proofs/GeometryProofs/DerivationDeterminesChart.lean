@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.OneLeftSpMap
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ImplicitFunctionHolomorphicStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AnChart
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.OneLeftSpMap
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ImplicitFunctionHolomorphicStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AnChart
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem dualEval_fst [Fintype ι] (ψ : R →+* ℂ) (x v : ι → ℂ) (p : MvP
   induction p using MvPolynomial.induction_on with
   | C a => simp [dualEval, dirDeriv_C]
   | add p q hp hq =>
-    simp [map_add, hp.1, hp.2, hq.1, hq.2, dirDeriv_add]
+    simp [map_add (f := _), hp.1, hp.2, hq.1, hq.2, dirDeriv_add]
   | mul_X p i hp =>
     have hX : dualEval ψ x v (X i) = TrivSqZeroExt.inl (x i) + TrivSqZeroExt.inr (v i) := by
       simp [dualEval]
@@ -117,7 +121,7 @@ theorem der_eq_dirDeriv [Fintype ι] (P : Algebra.SubmersivePresentation R A ι 
     rw [dirDeriv_C, show algebraMap P.Ring A (C a) = algebraMap R A a from
       (IsScalarTower.algebraMap_apply R P.Ring A a).symm]
     exact h0 a
-  | add p q hp hq => rw [map_add, map_add, hp, hq, dirDeriv_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, dirDeriv_add]
   | mul_X p i hp =>
     have hX : algebraMap P.Ring A (X i) = P.val i := by simp
     rw [map_mul, hL, dirDeriv_mul, dirDeriv_X, hX, hp, algebraMap_ring_eq]
@@ -234,7 +238,8 @@ theorem bijective_base [Fintype ι] (P : Algebra.SubmersivePresentation R A ι �
         Dc c (algebraMap P.Ring A (Sum.elim P.relation T j)) := fun c j => by
       rw [hF, der_eq_dirDeriv P χ₀ (Dc c) (h0 c) (hL c)]
     refine ⟨v₁ + ∑ c, (w (Sum.inr c) - F v₁ (Sum.inr c)) • (fun i => Dc c (P.val i)), ?_⟩
-    rw [map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum]
     funext j
     simp only [map_smul, Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hFc]
     rcases j with j | c'

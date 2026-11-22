@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.CompOfBis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.StableBlockGA
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.CompOfBis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.StableBlockGA
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,17 +41,17 @@ def EvalD : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Glob
       ∀ f : ∀ w : Pl E, GLw n w → ℂ, (∀ w ∈ Z, IsHecke (K' w) fun x : UL n w => f w x.1) →
       ∀ T : Finset (Pl E), SplitIn S T → Disjoint T Z → ∀ e₁ e₂ k, GlobalTheory.BCT.IsTest (KL n) K' (famU Z T f e₁ e₂ k) ∧
         trOn (forms S lam K') (hop S K' (famU Z T f e₁ e₂ k)) =
-          dimW lam * ∑ i, (∏ w ∈ Z, trc (t i w).ρ (KGL w n) (f w)) * val1 T e₁ e₂ (B i) ^ k
+          dimW lam * ∑ i, (∏ w ∈ Z, trc (t i w).ρ (KGL w (n := n)) (f w)) * val1 T e₁ e₂ (B i) ^ k
 
 def CpUniq : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], GlobalTheory.BCT.Unr E → ∀ n : ℕ, 1 ≤ n → ∀ σ : Submodule ℂ (UA E n → ℂ), IsAutRepU σ → ∀ w, IsSplitAt w →
   ∀ τ τ' : SmIrr (GLw n w), Cp σ w τ → Cp σ w τ' →
-    (∀ B, HasSatGL w τ.ρ B → HasSatGL w τ'.ρ B) ∧ ∀ f, trc τ.ρ (KGL w n) f = trc τ'.ρ (KGL w n) f
+    (∀ B, HasSatGL w τ.ρ B → HasSatGL w τ'.ρ B) ∧ ∀ f, trc τ.ρ (KGL w (n := n)) f = trc τ'.ρ (KGL w (n := n)) f
 
 def LevInd : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E), IsSplitAt w → ∀ K : Subgroup (UL n w), IsOpen (K : Set (UL n w)) → K ≤ KL n w →
-  ∃ f : GLw n w → ℂ, Lc (KGL w n) f ∧ (∀ K₁ ≤ K, IsHecke K₁ fun x : UL n w => f x.1) ∧
-    ∀ τ : SmIrr (GLw n w), fixed (τ.ρ.comp (UL n w).subtype) K ≠ ⊥ → trc τ.ρ (KGL w n) f ≠ 0
+  ∃ f : GLw n w → ℂ, Lc (KGL w (n := n)) f ∧ (∀ K₁ ≤ K, IsHecke K₁ fun x : UL n w => f x.1) ∧
+    ∀ τ : SmIrr (GLw n w), fixed (τ.ρ.comp (UL n w).subtype) K ≠ ⊥ → trc τ.ρ (KGL w (n := n)) f ≠ 0
 
-def LcLev : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E), IsSplitAt w → ∀ f : GLw n w → ℂ, Lc (KGL w n) f →
+def LcLev : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E), IsSplitAt w → ∀ f : GLw n w → ℂ, Lc (KGL w (n := n)) f →
   ∃ K : Subgroup (UL n w), IsOpen (K : Set (UL n w)) ∧ K ≤ KL n w ∧ IsHecke K fun x : UL n w => f x.1
 
 def ChoiceM : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ), 1 ≤ n → ∀ π : CuspSub E n, (∀ w, ¬ IsSplitAt w → ∃ B, (CG.mk π).HasSat w B) →
@@ -55,7 +59,7 @@ def ChoiceM : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n 
   ∀ K' : ∀ w : Pl E, Subgroup (UL n w), IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' → (∀ w, ¬ IsSplitAt w → K' w = KL n w) →
   ∃ (Z : Finset (Pl E)) (B : Pl E → Multiset ℂˣ) (τ : ∀ w : Pl E, SmIrr (GLw n w)) (w₀ : Pl E) (f₀ : GLw n w₀ → ℂ),
     SplitIn S Z ∧ (∀ w ∈ S, w ∉ Z → K' w = KL n w) ∧ (∀ w, Off Z w → (CG.mk π).HasSat w (B w) ∧ μ.UnrAt w) ∧
-    (∀ w ∈ Z, π.IsLocComp w (τ w)) ∧ w₀ ∈ Z ∧ Lc (KGL w₀ n) f₀ ∧ trc (τ w₀).ρ (KGL w₀ n) f₀ ≠ 0 ∧
+    (∀ w ∈ Z, π.IsLocComp w (τ w)) ∧ w₀ ∈ Z ∧ Lc (KGL w₀ (n := n)) f₀ ∧ trc (τ w₀).ρ (KGL w₀ (n := n)) f₀ ≠ 0 ∧
     ∀ y, f₀ y ≠ 0 → y.val.charpoly.Separable
 
 def OffSec : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (S : Set (Pl E)) (K' K'' : ∀ w : Pl E, Subgroup (UL n w)), (∀ w ∈ S, K' w = K'' w) →
@@ -72,7 +76,7 @@ def CountAt : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Gl
       ∀ f : ∀ w : Pl E, GLw n w → ℂ, (∀ w ∈ Z, IsHecke (K' w) fun x : UL n w => f w x.1) →
       ∀ T : Finset (Pl E), SplitIn S T → Disjoint T Z → ∀ e₁ e₂, val1 T e₁ e₂ B = 1 → (∀ j, val1 T e₁ e₂ (C j) = 0) →
         ∀ k, GlobalTheory.BCT.IsTest (KL n) K' (famU Z T f e₁ e₂ k) ∧ (1 ≤ k → trOn (forms S lam K') (hop S K' (famU Z T f e₁ e₂ k)) =
-          dimW lam * ((Nat.card {i // At π (σ i)} : ℂ) * ∏ w ∈ Z, trc (τ w).ρ (KGL w n) (f w)))
+          dimW lam * ((Nat.card {i // At π (σ i)} : ℂ) * ∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) (f w)))
 
 def RCountAt : Prop := CompOf → EvalD → CpUniq → Places → CountAt
 
@@ -81,7 +85,7 @@ def Ident : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Glob
   ∀ (μ : HChar E) (e : InfinitePlace E → ℤ), IsMu μ e → ∀ S : Set (Pl E), IsSection S → ∀ Z : Finset (Pl E), SplitIn S Z →
   ∀ (B : Pl E → Multiset ℂˣ) (τ : ∀ w : Pl E, SmIrr (GLw n w)) (f : ∀ w : Pl E, GLw n w → ℂ),
     (∀ w, Off Z w → (CG.mk π).HasSat w (B w) ∧ μ.UnrAt w) →
-    (∀ w ∈ Z, π.IsLocComp w (τ w) ∧ Lc (KGL w n) (f w) ∧ trc (τ w).ρ (KGL w n) (f w) ≠ 0) →
+    (∀ w ∈ Z, π.IsLocComp w (τ w) ∧ Lc (KGL w (n := n)) (f w) ∧ trc (τ w).ρ (KGL w (n := n)) (f w) ≠ 0) →
     (∃ w ∈ Z, ∀ y, f w y ≠ 0 → y.val.charpoly.Separable) →
     ∀ K' : ∀ w : Pl E, Subgroup (UL n w), IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' → (∀ w ∉ Z, K' w = KL n w) →
     (∀ w ∈ Z, IsHecke (K' w) fun x : UL n w => f w x.1) →

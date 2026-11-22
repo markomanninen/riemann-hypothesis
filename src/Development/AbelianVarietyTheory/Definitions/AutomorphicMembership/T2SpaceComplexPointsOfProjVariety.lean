@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemRiemannRochSpaceIffRegularAtEverywhere
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemRiemannRochSpaceIffRegularAtEverywhere
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -52,10 +56,6 @@ theorem of_algebraMap (a : F) : of σ (algebraMap F A a) = algebraMap ℂ (CxExt
 theorem of_smul (a : F) (x : A) : of σ (a • x) = σ a • of σ x := by
   rw [Algebra.smul_def, map_mul, of_algebraMap, ← Algebra.smul_def]
 
-theorem of_injective : Function.Injective (of σ : A → CxExt σ A) := by
-  letI := σ.toAlgebra
-  exact Algebra.TensorProduct.includeRight_injective (R := F) (A := ℂ) (B := A) σ.injective
-
 private theorem complex_smul_of_eq (c : ℂ) (a : A) :
     c • of σ a = (letI := σ.toAlgebra; (c ⊗ₜ[F] a : ℂ ⊗[F] A) : CxExt σ A) := by
   letI := σ.toAlgebra
@@ -65,8 +65,8 @@ private theorem complex_smul_of_eq (c : ℂ) (a : A) :
   | (show c • ((1 : ℂ) ⊗ₜ[F] a) = c ⊗ₜ[F] a
      simp [TensorProduct.smul_tmul'])
 
-variable {σ} in
 
+variable {σ} in
 @[elab_as_elim] theorem induction {P : CxExt σ A → Prop} (x : CxExt σ A)
     (smul : ∀ (c : ℂ) (a : A), P (c • of σ a)) (add : ∀ x y, P x → P y → P (x + y)) : P x := by
   letI := σ.toAlgebra
@@ -79,8 +79,8 @@ variable {σ} in
   · intro x y hx hy
     exact add x y hx hy
 
-variable {σ} in
 
+variable {σ} in
 def lift {B : Type} [CommRing B] [Algebra ℂ B] (φ : A →+* B)
     (h : ∀ a, φ (algebraMap F A a) = algebraMap ℂ B (σ a)) : CxExt σ A →ₐ[ℂ] B :=
   letI := σ.toAlgebra
@@ -89,8 +89,8 @@ def lift {B : Type} [CommRing B] [Algebra ℂ B] (φ : A →+* B)
   Algebra.TensorProduct.lift (Algebra.ofId ℂ B) ({ φ with commutes' := h } : A →ₐ[F] B)
     fun _ _ => Commute.all _ _
 
-variable {σ} in
 
+variable {σ} in
 @[simp] theorem lift_of {B : Type} [CommRing B] [Algebra ℂ B] (φ : A →+* B)
     (h : ∀ a, φ (algebraMap F A a) = algebraMap ℂ B (σ a)) (a : A) : lift φ h (of σ a) = φ a := by
   first
@@ -119,7 +119,7 @@ theorem map_injective {f : A →ₐ[F] A'} (hf : Function.Injective f) :
       (fun c a => ?_) (fun x y hx hy => ?_)
     · rw [map_smul, map_of, complex_smul_of_eq, complex_smul_of_eq, LinearMap.lTensor_tmul]
       rfl
-    · rw [map_add, hx, hy]
+    · rw [map_add (f := _), hx, hy]
       exact (map_add (LinearMap.lTensor ℂ f.toLinearMap : ℂ ⊗[F] A →ₗ[F] ℂ ⊗[F] A') x y).symm
   have hinj := Module.Flat.lTensor_preserves_injective_linearMap (M := ℂ) f.toLinearMap hf
   intro x y hxy
@@ -151,10 +151,10 @@ theorem exists_components (f : A →ₐ[F] A') (x : CxExt σ A) :
       | exact (map_smul f _ _).symm
       | simp
     · have e1 : TensorProduct.equivFinsuppOfBasisLeft (N := A') b (map σ f (y + z)) = TensorProduct.equivFinsuppOfBasisLeft (N := A') b (map σ f y) + TensorProduct.equivFinsuppOfBasisLeft (N := A') b (map σ f z) := by
-        rw [map_add]
+        rw [map_add (f := _)]
         exact map_add _ _ _
       have e2 : TensorProduct.equivFinsuppOfBasisLeft (N := A) b (y + z) = TensorProduct.equivFinsuppOfBasisLeft (N := A) b y + TensorProduct.equivFinsuppOfBasisLeft (N := A) b z := map_add _ _ _
-      rw [e1, e2, Finsupp.add_apply, Finsupp.add_apply, hy, hz, map_add]
+      rw [e1, e2, Finsupp.add_apply, Finsupp.add_apply, hy, hz, map_add (f := _)]
   · intro i y a
     refine CxExt.induction (P := fun y => TensorProduct.equivFinsuppOfBasisLeft (N := A') b (y * of σ a : CxExt σ A') i =
       TensorProduct.equivFinsuppOfBasisLeft (N := A') b y i * a) y (fun c a' => ?_) (fun y z hy hz => ?_)
@@ -175,8 +175,6 @@ variable (Y : Var F) (σ : F →+* ℂ)
 
 abbrev pts : Type := CxPts Y.str σ
 
-instance compactSpace_pts : CompactSpace (Y.pts σ) := CxPts.compactSpace σ Y.isProjOver
-
 instance secondCountable_pts : SecondCountableTopology (Y.pts σ) :=
   CxPts.secondCountableTopology_of_isProjOver σ Y.isProjOver
 
@@ -190,11 +188,6 @@ def cx : Y.Fn →+* Y.FnC σ := CxExt.of σ
 
 theorem cx_smul (a : F) (f : Y.Fn) : Y.cx σ (a • f) = σ a • Y.cx σ f :=
   CxExt.of_smul σ a f
-
-theorem cx_injective : Function.Injective (Y.cx σ) :=
-  CxExt.of_injective σ
-
-instance nontrivial_FnC : Nontrivial (Y.FnC σ) := (Y.cx_injective σ).nontrivial
 
 instance algebraStalk (x : Y.X) : Algebra F (Y.X.presheaf.stalk x) :=
   ((Y.X.presheaf.germ ⊤ x trivial).hom.comp (algX Y.str ⊤)).toAlgebra
@@ -218,7 +211,7 @@ theorem evStalk_germ {y : Y.pts σ} {U : Y.X.Opens} (h : base y ∈ U) (a : Γ(Y
   have e := congrArg (fun φ => φ.hom a) (Scheme.germ_stalkClosedPointTo y.1 U h)
   refine e.trans ?_
   show _ = valR y.1 U a
-  rw [valR, dif_pos hy]
+  rw [valR, dite_eq_left hy]
   rfl
 
 theorem evStalk_ne_zero_iff {y : Y.pts σ} (a : Y.X.presheaf.stalk (base y)) :
@@ -241,8 +234,8 @@ def HasVal (y : Y.pts σ) (f : Y.FnC σ) (c : ℂ) : Prop :=
 
 def RegC (y : Y.pts σ) (f : Y.FnC σ) : Prop := ∃ c, HasVal y f c
 
-open Classical in
 
+open Classical in
 def val (y : Y.pts σ) (f : Y.FnC σ) : ℂ := if h : RegC y f then h.choose else 0
 
 variable {y : Y.pts σ} {f f' : Y.FnC σ} {c c' : ℂ}
@@ -262,13 +255,13 @@ theorem HasVal.unique (h : HasVal y f c) (h' : HasVal y f c') : c = c' := by
 theorem HasVal.regC (h : HasVal y f c) : RegC y f := ⟨c, h⟩
 
 theorem RegC.hasVal (h : RegC y f) : HasVal y f (val y f) := by
-  rw [val, dif_pos h]
+  rw [val, dite_eq_left h]
   exact h.choose_spec
 
 theorem HasVal.val_eq (h : HasVal y f c) : val y f = c := h.regC.hasVal.unique h
 
 theorem val_of_not_regC (h : ¬ RegC y f) : val y f = 0 := by
-  rw [val, dif_neg h]
+  rw [val, dite_eq_right h]
 
 theorem regC_of_val_ne_zero (h : val y f ≠ 0) : RegC y f := by
   by_contra h'
@@ -286,9 +279,9 @@ theorem HasVal.add (h : HasVal y f c) (h' : HasVal y f' c') : HasVal y (f + f') 
   obtain ⟨a, b, hb, hf, ha⟩ := h
   obtain ⟨a', b', hb', hf', ha'⟩ := h'
   refine ⟨a * b' + a' * b, b * b', by rw [map_mul]; exact mul_ne_zero hb hb', ?_, ?_⟩
-  · simp only [map_mul, map_add]
+  · simp only [map_mul, map_add (f := _)]
     linear_combination (germIncl y b') * hf + (germIncl y b) * hf'
-  · simp only [map_mul, map_add]
+  · simp only [map_mul, map_add (f := _)]
     linear_combination (germEv y b') * ha + (germEv y b) * ha'
 
 theorem HasVal.mul (h : HasVal y f c) (h' : HasVal y f' c') : HasVal y (f * f') (c * c') := by
@@ -303,14 +296,6 @@ theorem HasVal.mul (h : HasVal y f c) (h' : HasVal y f' c') : HasVal y (f * f') 
 theorem HasVal.smul (a : ℂ) (h : HasVal y f c) : HasVal y (a • f) (a * c) := by
   rw [Algebra.smul_def]
   exact (hasVal_algebraMap (y := y) a).mul h
-
-theorem HasVal.neg (h : HasVal y f c) : HasVal y (-f) (-c) := by
-  have e := h.smul (-1)
-  rwa [neg_one_smul, neg_one_mul] at e
-
-theorem HasVal.sub (h : HasVal y f c) (h' : HasVal y f' c') : HasVal y (f - f') (c - c') := by
-  rw [sub_eq_add_neg, sub_eq_add_neg]
-  exact h.add h'.neg
 
 theorem HasVal.pow (h : HasVal y f c) (n : ℕ) : HasVal y (f ^ n) (c ^ n) := by
   induction n with
@@ -394,7 +379,8 @@ theorem regC_cx_iff {g : Y.Fn} : RegC y (Y.cx σ g) ↔ RegAt (base y) g := by
       have hk := key i
       rw [← hu] at hk
       rw [map_mul, ← hk, ← mul_assoc, ← map_mul, Units.inv_mul, map_one, one_mul]
-    rw [hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_smul]
     simp only [germEv, CxExt.lift_of]
@@ -439,7 +425,7 @@ theorem exists_spread {x : Y.X} (a : CxExt σ (Y.X.presheaf.stalk x)) :
       exact ((hA₁.mono s₁) i).add ((hA₂.mono s₂) i)
     · obtain ⟨b₁, f₁, g₁⟩ := e₁ z (s₁ hz)
       obtain ⟨b₂, f₂, g₂⟩ := e₂ z (s₂ hz)
-      exact ⟨b₁ + b₂, by rw [map_add, map_add, f₁, f₂], by rw [map_add, g₁, g₂]⟩
+      exact ⟨b₁ + b₂, by rw [map_add (f := _), map_add (f := _), f₁, f₂], by rw [map_add (f := _), g₁, g₂]⟩
 
 def regSet (f : Y.FnC σ) : Set (Y.pts σ) := {y | RegC y f}
 
@@ -465,37 +451,19 @@ theorem RegC.exists_nhds (h : RegC y f) : ∃ N : Set (Y.pts σ), IsOpen N ∧ y
     (isOpen_ptsIn U).inter ((hB.continuousOn (isOpen_ptsIn V)).isOpen_inter_preimage
       (isOpen_ptsIn V) isOpen_compl_singleton),
     ⟨Var.mem_ptsIn_iff.mpr hU, yV, hBy⟩, fun z hz => ⟨_, key z hz.1 hz.2.1 hz.2.2⟩, ?_⟩
-  refine ((hA.mono fun z hz => hz.1).mul ((hB.mono fun z hz => hz.2.1).inv
-    fun z hz => hz.2.2)).congr ?_
+  refine ((hA.mono (show ptsIn Y.str σ U ∩ (ptsIn Y.str σ V ∩ B ⁻¹' {0}ᶜ) ⊆
+    ptsIn Y.str σ U from fun z hz => hz.1)).mul
+    ((hB.mono (show ptsIn Y.str σ U ∩ (ptsIn Y.str σ V ∩ B ⁻¹' {0}ᶜ) ⊆
+      ptsIn Y.str σ V from fun z hz => hz.2.1)).inv
+      (show ∀ z ∈ ptsIn Y.str σ U ∩ (ptsIn Y.str σ V ∩ B ⁻¹' {0}ᶜ), B z ≠ 0 from
+        fun z hz => hz.2.2))).congr ?_
   intro z hz
   rw [(key z hz.1 hz.2.1 hz.2.2).val_eq, div_eq_mul_inv]
-
-theorem isOpen_regSet (f : Y.FnC σ) : IsOpen (regSet f) := by
-  refine isOpen_iff_forall_mem_open.mpr fun z hz => ?_
-  obtain ⟨N, hN, hzN, hNs, -⟩ := (show RegC z f from hz).exists_nhds
-  exact ⟨N, hNs, hN, hzN⟩
 
 theorem holoOn_val (f : Y.FnC σ) : (Y.an σ).HoloOn (regSet f) fun z => val z f := by
   choose N hN hyN hNs hNh using fun z : regSet f => (show RegC z.1 f from z.2).exists_nhds
   exact AnRead.holoOn_of_cover (R := Y.an σ) hN (fun z hz => ⟨⟨z, hz⟩, hyN ⟨z, hz⟩⟩)
     fun j => (hNh j).mono Set.inter_subset_right
-
-theorem continuousOn_val (f : Y.FnC σ) : ContinuousOn (fun z => val z f) (regSet f) :=
-  (holoOn_val f).continuousOn (isOpen_regSet f)
-
-theorem exists_open_regC (f : Y.FnC σ) :
-    ∃ U : Y.X.Opens, genericPoint Y.X ∈ U ∧ ptsIn Y.str σ U ⊆ regSet f := by
-  refine CxExt.induction f (fun c g => ?_) (fun f₁ f₂ h₁ h₂ => ?_)
-  · obtain ⟨U, hU, a, rfl⟩ := (regAt_genericPoint g).exists_fnOf
-    refine ⟨U, hU, fun z hz => ?_⟩
-    exact ⟨_, (hasVal_cx_fnOf (Var.mem_ptsIn_iff.mp hz) (gen_mem hU) a).smul c⟩
-  · obtain ⟨U₁, hU₁, s₁⟩ := h₁
-    obtain ⟨U₂, hU₂, s₂⟩ := h₂
-    refine ⟨U₁ ⊓ U₂, ⟨hU₁, hU₂⟩, fun z hz => ?_⟩
-    have hz' := Var.mem_ptsIn_iff.mp hz
-    obtain ⟨c₁, e₁⟩ := s₁ (Var.mem_ptsIn_iff.mpr hz'.1)
-    obtain ⟨c₂, e₂⟩ := s₂ (Var.mem_ptsIn_iff.mpr hz'.2)
-    exact ⟨_, e₁.add e₂⟩
 
 end Var
 

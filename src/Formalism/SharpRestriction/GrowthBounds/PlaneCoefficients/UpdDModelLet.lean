@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.WordLossNonneg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.WordLossNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,9 +88,6 @@ def XXg (Dt : SignedChainData p O r J) (d : TL J Dt.nL r → ℕ) (th : ∀ j, F
   (∀ (rho : (ZMod J × Fin r) × Fin r → ℕ) (j : ZMod J) (i : Fin (Dt.nch j)),
     geZ (valS Dt.modelLet (Dt.chainML j i) (Dt.Fdig rho F)) (th j i)) ∧
   ∀ (j : ZMod J) (m : Fin r), m.val + 2 ≤ r → geZ (valS Dt.trueLet (Dt.TSet j m) F) (thL j m)
-
-theorem XX_iff (Dt : SignedChainData p O r J) (F : MvPolynomial (TL J Dt.nL r × Fin r) (KK O)) :
-    Dt.XX F ↔ XXg Dt Dt.d Dt.th Dt.thL F := Iff.rfl
 
 theorem updD_XX (Dt : SignedChainData p O r J) (d : TL J Dt.nL r → ℕ) (th : ∀ j, Fin (Dt.nch j) → ℝ) (thL : ZMod J → Fin r → ℝ)
     (h : ∀ j (m : Fin r), m.val + 2 ≤ r → 0 < thL j m) (F : MvPolynomial (TL J Dt.nL r × Fin r) (KK O))

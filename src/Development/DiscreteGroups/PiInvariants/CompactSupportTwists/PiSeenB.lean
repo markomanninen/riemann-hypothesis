@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+
+@[expose] public section
 
 set_option linter.all false
 
@@ -16,7 +20,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 theorem conj_sum_mul {ι : Type*} (s : Finset ι) (c f : ι → ℂ) (U V : ℂ) :
     starRingEnd ℂ ((∑ a ∈ s, c a * f a) * U) * V = ∑ a ∈ s, starRingEnd ℂ (c a) * (starRingEnd ℂ (f a * U) * V) := by
-  rw [Finset.sum_mul, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun a _ => ?_
   simp only [map_mul]
   ring
@@ -56,7 +61,7 @@ theorem poly_vanish (hn : 1 ≤ n) (D : Dom E n 0) {π : CuspSub E n} (hθ : The
     refine Finset.sum_congr rfl fun k _ => ?_
     ring
   simp_rw [e]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · refine Finset.sum_eq_zero fun k _ => ?_
     rw [integral_const_mul, h k, mul_zero]
   · intro k _

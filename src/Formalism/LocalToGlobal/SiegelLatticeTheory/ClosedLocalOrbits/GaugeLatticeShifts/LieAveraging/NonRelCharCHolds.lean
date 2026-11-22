@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LieAveraging.LiePowRPerp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LieAveraging.LiePowRPerp
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,8 @@ def Φ (v : InfinitePlace X.B.I.F) (y : D.host.E) : ℂ := X.B.I.φ v (X.ιE.sym
 theorem Φ_add (v) (a b : D.host.E) : Φ X v (a + b) = Φ X v a + Φ X v b := by
   simp [Φ]
 theorem Φ_sum (v) {ι : Type} (s : Finset ι) (f : ι → D.host.E) : Φ X v (∑ i ∈ s, f i) = ∑ i ∈ s, Φ X v (f i) := by
-  simp [Φ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Φ, map_sum]
 theorem Φ_star (v) (a : D.host.E) : Φ X v (star a) = star (Φ X v a) := by
   have hb : star a = D.host.conj a := Formalism.BasicNotions.bridge_star_holds _ _ a
   have h1 : X.ιE.symm (star a) = star (X.ιE.symm a) := by
@@ -113,15 +118,15 @@ theorem trace_zero (X : HidaSetting D) {y : D.host.E} (hy : y + star y = 0) : Al
   · exact absurd h5 two_ne_zero
   · exact h5
 
-open Formalism.L2.SG.TermOp.Vanish in
 
+open Formalism.L2.SG.TermOp.Vanish in
 theorem nonRelCharC_holds : NonRelCharC := by
   intro D X Yf u u' t ht
   have hiso : t.lin ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := t.rep.2.2.1
   have hisoF : ∀ a b, (VS D).hT (t.lin a) (t.lin b) = (VS D).hT a b := hiso
   set F' := mapFlag t.lin hiso (X.Fu u') with hF'
   have hfr : t.frame = ⟨F', t.lin (X.Fu u').z⟩ := by
-    unfold GTerm.frame mapLF; rw [dif_pos hiso]; rfl
+    unfold GTerm.frame mapLF; rw [dite_eq_left hiso]
   have hnr : ¬ Relevant D.host.F (X.Fu u) F' := by
     intro h; apply ht
     unfold GTerm.relevant TermDef.Term.relevant TermDef.IsRel

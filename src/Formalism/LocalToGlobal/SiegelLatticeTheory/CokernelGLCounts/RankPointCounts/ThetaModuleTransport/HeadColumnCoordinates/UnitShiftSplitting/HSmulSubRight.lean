@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.ExistsUnitShift
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.ExistsUnitShift
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem zz_mem_R {g : SplitG M.L} (hs : M.split = some g) (H : HermSp M V) {r : 
     rw [if_pos ⟨rfl, rfl⟩]
     rw [hF.2] at i1
     rw [hF.2, hF'.2] at i3
-    simp only [map_mul, map_sub, map_add, map_neg, e_alg, e_cj, cj_alg, eqi, cqi, Prod.fst_mul, Prod.snd_mul,
+    simp only [map_mul, map_sub, map_add (f := _), map_neg, e_alg, e_cj, cj_alg, eqi, cqi, Prod.fst_mul, Prod.snd_mul,
       Prod.fst_sub, Prod.snd_sub, Prod.fst_add, Prod.snd_add, Prod.fst_neg, Prod.snd_neg] at i1 i3
     rw [← hz] at i1 i3
     apply mem_R_of hs
@@ -74,7 +78,7 @@ theorem zz_mem_R {g : SplitG M.L} (hs : M.split = some g) (H : HermSp M V) {r : 
     rw [hF.1 b a hba'] at i1
     rw [hF.1 a b hab'] at i2
     rw [hF.1 b a hba', hF'.1 b a hba'] at i3
-    simp only [map_mul, map_sub, map_add, map_neg, map_zero, e_alg, e_cj, cj_alg, eqi, cqi, Prod.fst_mul, Prod.snd_mul,
+    simp only [map_mul, map_sub, map_add (f := _), map_neg, map_zero, e_alg, e_cj, cj_alg, eqi, cqi, Prod.fst_mul, Prod.snd_mul,
       Prod.fst_sub, Prod.snd_sub, Prod.fst_add, Prod.snd_add, Prod.fst_neg, Prod.snd_neg, Prod.fst_zero,
       Prod.snd_zero] at i1 i2 i3
     rw [← hz] at i1 i3

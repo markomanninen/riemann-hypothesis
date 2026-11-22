@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETrunc
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListProductMass
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLemmaETruncSmooth
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETrunc
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListProductMass
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLemmaETruncSmooth
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

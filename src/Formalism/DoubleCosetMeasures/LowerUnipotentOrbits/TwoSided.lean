@@ -1,4 +1,8 @@
-import Formalism.DoubleCosetMeasures.Statement
+module
+
+public import Formalism.DoubleCosetMeasures.Statement
+
+@[expose] public section
 
 set_option maxHeartbeats 400000
 
@@ -53,10 +57,10 @@ theorem intTwoSided : Formalism.DoubleCosetMeasures.IntTwoSided := by
   intro G₁ G₂ _ _ _ _ _ _ _ _ _ _ μ₁ μ₂ _ _ _ _ K₁ K₂ hK₁ hK₂ E _ _ _ f hf hcs
   set g : Quotient (QuotientGroup.rightRel K₁) × (G₂ ⧸ K₂) → E := fun p => f (p.1.out, p.2.out) with hg
   have hopen : ∀ p, IsOpen (box K₁ K₂ p) := fun p =>
-    (hK₁.preimage (continuous_mul_right _)).prod (hK₂.preimage (continuous_mul_left _))
+    (hK₁.preimage (continuous_mul_const _)).prod (hK₂.preimage (continuous_const_mul _))
   have hmeas : ∀ p, MeasurableSet (box K₁ K₂ p) := fun p =>
-    (hK₁.preimage (continuous_mul_right _)).measurableSet.prod
-      (hK₂.preimage (continuous_mul_left _)).measurableSet
+    (hK₁.preimage (continuous_mul_const _)).measurableSet.prod
+      (hK₂.preimage (continuous_const_mul _)).measurableSet
   have hfg : ∀ z, f z = g (clsTS K₁ K₂ z) := fun z => inv_eq_cls K₁ K₂ f hf z
   have hfin : (Function.support g).Finite := by
     obtain ⟨t, ht⟩ := hcs.elim_finite_subcover (fun p => box K₁ K₂ p) hopen
@@ -109,7 +113,7 @@ theorem intTwoSided : Formalism.DoubleCosetMeasures.IntTwoSided := by
       · rw [Set.indicator_of_mem hz, Set.indicator_of_mem hz, hfg z, (mem_box_iff K₁ K₂ p z).1 hz]
       · rw [Set.indicator_of_notMem hz, Set.indicator_of_notMem hz]
     conv_lhs => rw [hdecomp]
-    rw [integral_finset_sum S hI]
+    rw [MeasureTheory.integral_finsetSum S hI]
     exact Finset.sum_congr rfl fun p _ => hpiece p
   · rw [integral_undef hint]
     have hex : ∃ p ∈ S, ¬ Integrable ((box K₁ K₂ p).indicator (fun _ => g p)) (μ₁.prod μ₂) := by
@@ -117,7 +121,7 @@ theorem intTwoSided : Formalism.DoubleCosetMeasures.IntTwoSided := by
       push_neg at hne
       apply hint
       rw [hdecomp]
-      exact integrable_finset_sum S hne
+      exact MeasureTheory.integrable_finsetSum S hne
     obtain ⟨p, -, hnp⟩ := hex
     have htop : μ₁ (K₁ : Set G₁) * μ₂ (K₂ : Set G₂) = ⊤ := by
       by_contra hne

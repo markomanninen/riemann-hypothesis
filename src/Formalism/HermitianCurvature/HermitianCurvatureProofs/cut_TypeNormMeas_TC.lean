@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeas
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeas
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.TNM
 
@@ -148,7 +152,7 @@ theorem type_commutation_holds : TypeComm := by
   have hidem : E (E x) = E x := congrArg (fun L : Wp →L[ℂ] Wp => L x) (TP.idem ρ)
   have hsplit : x = E x + (x - E x) := by abel
   have hy : E (x - E x) = 0 := by rw [map_sub, hidem, sub_self]
-  conv_lhs => rw [hsplit, map_add, map_add, hker _ hy, add_zero, kg x]
+  conv_lhs => rw [hsplit, map_add (f := _), map_add (f := _), hker _ hy, add_zero, kg x]
 
 end
 

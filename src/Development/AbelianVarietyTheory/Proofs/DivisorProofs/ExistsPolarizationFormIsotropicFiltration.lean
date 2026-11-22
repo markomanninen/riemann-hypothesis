@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolarizationCrystalFormPerfectSelfAnnihila
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsDetEquivOfSubsingleton
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolarizationCrystalFormPerfectSelfAnnihila
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsDetEquivOfSubsingleton
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -25,7 +29,7 @@ theorem mem_of_annihilates {R V : Type*} [CommRing R] [AddCommGroup V] [Module R
   have hΦ' : ∀ v : V, ∀ g : W, Φ (e.symm v).2 g = ψ v g := by
     intro v g
     have h := congrArg (fun u ↦ ψ u g) (hdec v)
-    simp only [map_add, LinearMap.add_apply] at h
+    simp only [map_add (f := _), LinearMap.add_apply] at h
     rw [hiso _ (Submodule.coe_mem _) g g.2, zero_add] at h
     simpa [Φ] using h
   have hΦ : Function.Surjective Φ := by
@@ -91,7 +95,7 @@ theorem mem_of_annihilates_dual {R M : Type*} [CommRing R] [AddCommGroup M] [Mod
       rintro φ ⟨h1, h2⟩
       rw [Submodule.mem_bot]
       refine LinearMap.ext fun x ↦ ?_
-      rw [← hdec x, map_add, (Submodule.mem_dualAnnihilator _).1 h1 _ (Submodule.coe_mem _),
+      rw [← hdec x, map_add (f := _), (Submodule.mem_dualAnnihilator _).1 h1 _ (Submodule.coe_mem _),
         (Submodule.mem_dualAnnihilator _).1 h2 _ (Submodule.coe_mem _)]
       simp
     · rw [codisjoint_iff_le_sup]
@@ -143,7 +147,20 @@ theorem polForm_exists : GlobalTheory.Published.AbelianDeRham → ∀ {E : Type}
       (∀ f ∈ Fil A, ∀ g ∈ Fil A, ψ f g = 0) ∧ LinearMap.IsPerfPair ψ ∧
       ∀ f, (∀ g ∈ Fil A, ψ f g = 0) → f ∈ Fil A := by
   intro P E _ _ _ H Dw l Xo S _ x A _ π hπ
-  have hA := PolPull.isAbelianScheme_of_isGrpPullback (ObjDim.isAbelianScheme Xo.univ) hπ
+  open ReciprocityTheory.ChartRestriction.G.Semi CategoryTheory.Limits
+    CategoryTheory.MonoidalCategory CategoryTheory.CartesianMonoidalCategory CategoryTheory.MonObj in
+  have hA : IsAbelianScheme A := by
+    have hG := ObjDim.isAbelianScheme Xo.univ
+    have := hG.comm
+    have hcomm : IsCommMonObj A := by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (hπ.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← hπ.2 T x y (pushPt hπ.1.w x) (pushPt hπ.1.w y) rfl rfl,
+        ← hπ.2 T y x (pushPt hπ.1.w y) (pushPt hπ.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨hcomm, MorphismProperty.of_isPullback (P := @Smooth) hπ.1 hG.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) hπ.1 hG.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) hπ.1 hG.geomConnected⟩
   have gA := (smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback hπ.1
     (ObjDim.smoothOfRelativeDimension Xo.univ)
   obtain ⟨h0, -, -, -, e, he⟩ := P.1 S A _ hA gA
@@ -157,7 +174,8 @@ theorem polForm_exists : GlobalTheory.Published.AbelianDeRham → ∀ {E : Type}
   let b' : Fin n → primDR A := fun k ↦ ⟨b k, hm _⟩
   have hz' : IsChern (dp0 S) (A.hom ≫ 𝟙 _) (Xo.univ.t.PP.L.pull π) (∑ k, cup _ (a' k).1 (b' k).1) := by
     have : z = ∑ k, cup _ (a k) (b k) := by
-      rw [← e.apply_symm_apply z, ← hab, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← e.apply_symm_apply z, ← hab, map_sum]
       exact Finset.sum_congr rfl fun k _ ↦ he _ _
     exact this ▸ hz
   have hpol : IsPolForm (dp0 S) (𝟙 _) A (Xo.univ.t.PP.L.pull π) (wedgeForm (dp0 S) (𝟙 _) A a' b') :=

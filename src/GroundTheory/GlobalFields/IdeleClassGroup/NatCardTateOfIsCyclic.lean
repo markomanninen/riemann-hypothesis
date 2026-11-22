@@ -1,19 +1,23 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleClassGroup.InvariantsGalois
-import GroundTheory.GlobalFields.SecondInequality.Cyclic
-import GroundTheory.LocalFields.HerbrandCyclic
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleClassGroup.InvariantsGalois
+public import GroundTheory.GlobalFields.SecondInequality.Cyclic
+public import GroundTheory.LocalFields.HerbrandCyclic
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open NumberField IntermediateField GroundTheory.LocalField.Abstract
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
 namespace IdeleClassLimit
 
 open FiniteSubfield
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 theorem natCard_tate_of_isCyclic (K L : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) [(L.subgroupOf K).Normal]
     [(L.subgroupOf K).FiniteIndex] {F E : FiniteSubfield} (hFE : F ≤ E)

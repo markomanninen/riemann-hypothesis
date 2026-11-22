@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -43,7 +47,7 @@ theorem UpperTheory.Gal.W2.rootsFull_of :
     fun σ => (hTC F O bar g ρ a n t₀ ε hS H Sb ty ev hD σ).2
   obtain ⟨ψ, hψm, hψd, hψ⟩ :=
     hNP F n (evFull ty ev) hcard (hPS F O bar g ρ a D P₀ hP ga H hga Sb ty ev hD)
-  obtain ⟨b, hb⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors (𝓞 F)) ψ
+  obtain ⟨b, hbmem, hb⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors (𝓞 F)) ψ
   set q := IsLocalization.integerNormalization (nonZeroDivisors (𝓞 F)) ψ
   have hb' : q.map (algebraMap (𝓞 F) F) = Polynomial.C (algebraMap (𝓞 F) F (b : 𝓞 F)) * ψ := by
     rw [hb, Polynomial.C_mul', algebraMap_smul]
@@ -69,7 +73,7 @@ theorem UpperTheory.Gal.W2.rootsFull_of :
     have := (hχ.2 q).1 hk
     rw [hb'] at this
     have hne : algebraMap (𝓞 F) F (b : 𝓞 F) ≠ 0 :=
-      (IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors b.2)
+      (IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hbmem)
     exact (Polynomial.dvd_C_mul hne).1 this
   have heq : ψ = χ :=
     Polynomial.eq_of_monic_of_dvd_of_natDegree_le hχ.1 hψm hdvd (by rw [hψd, hdeg])

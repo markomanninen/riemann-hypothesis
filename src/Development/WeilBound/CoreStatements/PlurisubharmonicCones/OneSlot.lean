@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntersectionFamilyDefectFormula
+module
+
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntersectionFamilyDefectFormula
+
+@[expose] public section
 
 noncomputable section
 

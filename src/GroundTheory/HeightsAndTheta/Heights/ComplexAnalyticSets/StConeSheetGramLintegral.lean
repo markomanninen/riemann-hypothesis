@@ -1,5 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StConeSheetGram
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsCurrent
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartGram
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeIntegralMass
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -10,8 +17,9 @@ open scoped ENNReal
 
 noncomputable section
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def sheetThrough {n d : ℕ} (J : Ideal (MvPolynomial (Fin n) ℂ)) (A : Matrix (Fin d) (Fin n) ℂ)
     (x : Fin n → ℂ) : (Fin d → ℂ) → Fin n → ℂ :=
   if hs : ∃ s, IsSheetAt J A x s then hs.choose else 0

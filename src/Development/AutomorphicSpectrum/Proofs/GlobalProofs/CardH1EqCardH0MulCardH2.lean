@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecompositionGroupEquivLocalGaloisGroup
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTopEuler
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecompositionGroupEquivLocalGaloisGroup
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTopEuler
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel Formalism.ConjugateSelfDual
 
@@ -10,8 +14,8 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.Hypotheses₂.LocalEuler
 
-open PositivityTheory.LocalTateOrthogonality.Gcoh in
 
+open PositivityTheory.LocalTateOrthogonality.Gcoh in
 theorem card_H1_eq_card_H0_mul_card_H2 (p : ℕ) [Fact p.Prime] (K : IntermediateField ℚ_[p] (PadicAlgCl p))
     (hK : FiniteDimensional ℚ_[p] K) (l : ℕ) [hl : Fact l.Prime] (hlp : l ≠ p) (r : ℕ) (M : Type)
     [AddCommGroup M] [Module (ZMod (l ^ r)) M] [Finite M] [TopologicalSpace M] [DiscreteTopology M]

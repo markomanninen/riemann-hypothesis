@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeightFunctionsExist
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsRhoRight
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeightFunctionsExist
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsRhoRight
+
+@[expose] public section
 
 noncomputable section
 

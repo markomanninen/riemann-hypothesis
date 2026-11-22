@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.BaseChange.FiniteCoord
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.BaseChange.FiniteCoord
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -78,8 +82,8 @@ local instance : Algebra K (FiniteAdeleRing (𝓞 L) L) :=
 local instance : IsScalarTower K L (FiniteAdeleRing (𝓞 L) L) :=
   .of_algebraMap_eq fun _ ↦ rfl
 
-variable (K L) in
 
+variable (K L) in
 def finiteTensorMap : L ⊗[K] FiniteAdeleRing (𝓞 K) K →ₐ[L] FiniteAdeleRing (𝓞 L) L :=
   Algebra.TensorProduct.lift (Algebra.ofId L _)
     { finiteAdeleMap K L with commutes' := finiteAdeleMap_algebraMap } fun _ _ ↦ Commute.all _ _
@@ -108,9 +112,11 @@ theorem finiteCoord_algebraMap_mul (i : ι) (l : L) (a : FiniteAdeleRing (𝓞 K
 theorem finiteTensorMap_sum_finiteCoord (y : FiniteAdeleRing (𝓞 L) L) :
     finiteTensorMap K L (∑ i, b i ⊗ₜ finiteCoord b i y) = y := by
   refine FiniteAdeleRing.ext (K := L) fun w ↦ ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   change evalAddHom w (∑ i, finiteTensorMap K L (b i ⊗ₜ finiteCoord b i y)) = y w
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have h := congrFun (sum_localCoord b (below K w) (fun w' ↦ y w'.1)) ⟨w, liesOver_below w⟩
   rw [Finset.sum_apply] at h
   rw [← h]
@@ -126,10 +132,10 @@ theorem sum_finiteCoord_finiteTensorMap (t : L ⊗[K] FiniteAdeleRing (𝓞 K) K
     simp_rw [finiteTensorMap_tmul, finiteCoord_algebraMap_mul, ← Algebra.smul_def,
       TensorProduct.tmul_smul, TensorProduct.smul_tmul', ← TensorProduct.sum_tmul, b.sum_repr]
   | add s t hs ht =>
-    simp_rw [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, hs, ht]
+    simp_rw [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, hs, ht]
+
 
 variable (K L) in
-
 def finiteTensorEquiv : L ⊗[K] FiniteAdeleRing (𝓞 K) K ≃ₐ[L] FiniteAdeleRing (𝓞 L) L :=
   AlgEquiv.ofBijective (finiteTensorMap K L)
     ⟨Function.LeftInverse.injective

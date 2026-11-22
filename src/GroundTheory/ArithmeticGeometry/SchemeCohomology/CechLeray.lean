@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.Cartan
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechToDerived
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.SheafH
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.Cartan
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechToDerived
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.SheafH
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -85,8 +90,8 @@ lemma DeltaRel.add {n : ℕ} {σ σ' : Cochain Q U n} {c c' : cechH F U (n + 1)}
     DeltaRel U f g n (σ + σ') (c + c') := by
   obtain ⟨τ, ρ, hρ, hτ, hρτ, rfl⟩ := h
   obtain ⟨τ', ρ', hρ', hτ', hρτ', rfl⟩ := h'
-  exact ⟨τ + τ', ρ + ρ', by rw [map_add, hρ, hρ', add_zero], by rw [map_add, hτ, hτ'],
-    by rw [map_add, map_add, hρτ, hρτ'], (cls_add _ _ hρ hρ' _).symm⟩
+  exact ⟨τ + τ', ρ + ρ', by rw [map_add (f := _), hρ, hρ', add_zero], by rw [map_add (f := _), hτ, hτ'],
+    by rw [map_add (f := _), map_add (f := _), hρτ, hρτ'], (cls_add _ _ hρ hρ' _).symm⟩
 
 namespace IsCechShortExact
 
@@ -94,7 +99,7 @@ variable (hS : IsCechShortExact U f g)
 include hS
 
 lemma push_injective' (n : ℕ) : Function.Injective (push U f n) :=
-  push_injective U f n fun i => hS.injective i
+  fun _ _ h => funext fun i => hS.injective i (congrFun h i)
 
 lemma push_surjective (n : ℕ) (σ : Cochain Q U n) : ∃ τ, push U g n τ = σ := by
   choose τ hτ using fun i => hS.surjective i (σ i)
@@ -106,16 +111,23 @@ lemma push_exact (n : ℕ) (τ : Cochain I U n) (hτ : push U g n τ = 0) :
   exact ⟨α, funext hα⟩
 
 lemma push_push (n : ℕ) (α : Cochain F U n) : push U g n (push U f n α) = 0 := by
-  rw [push_comp, hS.zero, push_zero']
+  funext i
+  change g.app _ (f.app _ (α i)) = 0
+  rw [← ConcreteCategory.comp_apply, ← NatTrans.comp_app, hS.zero]
+  rfl
 
 lemma exists_deltaRel {n : ℕ} (σ : Cochain Q U n) (hσ : d Q U n σ = 0) :
     ∃ c, DeltaRel U f g n σ c := by
+  have hpush {P P' : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (φ : P ⟶ P') (k : ℕ)
+      (s : Cochain P U k) : push U φ (k + 1) (d P U k s) = d P' U k (push U φ k s) := by
+    funext i
+    simp only [push, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul, app_res]
   obtain ⟨τ, hτ⟩ := hS.push_surjective n σ
-  have h0 : push U g (n + 1) (d I U n τ) = 0 := by rw [push_d, hτ, hσ]
+  have h0 : push U g (n + 1) (d I U n τ) = 0 := by rw [hpush, hτ, hσ]
   obtain ⟨ρ, hρ⟩ := hS.push_exact (n + 1) _ h0
   have hρc : d F U (n + 1) ρ = 0 := by
     apply hS.push_injective' (n + 2)
-    rw [map_zero, push_d, hρ, d_d]
+    rw [map_zero, hpush, hρ, d_d]
   exact ⟨cls ρ hρc, τ, ρ, hρc, hτ, hρ, rfl⟩
 
 lemma deltaRel_unique {n : ℕ} {σ : Cochain Q U n} {c c' : cechH F U (n + 1)}
@@ -124,9 +136,12 @@ lemma deltaRel_unique {n : ℕ} {σ : Cochain Q U n} {c c' : cechH F U (n + 1)}
   obtain ⟨τ', ρ', hρ', hτ', hρτ', rfl⟩ := h'
   rw [cls_eq_cls_iff, coboundaries_succ]
   obtain ⟨α, hα⟩ := hS.push_exact n (τ' - τ) (by rw [map_sub, hτ, hτ', sub_self])
+  have hpush : push U f (n + 1) (d F U n α) = d I U n (push U f n α) := by
+    funext i
+    simp only [push, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul, app_res]
   refine AddMonoidHom.mem_range.2 ⟨α, ?_⟩
   apply hS.push_injective' (n + 1)
-  rw [push_d, hα, map_sub, map_sub, hρτ, hρτ']
+  rw [hpush, hα, map_sub, map_sub, hρτ, hρτ']
 
 def deltaFun (n : ℕ) (σ : cocycles Q U n) : cechH F U (n + 1) :=
   Classical.choose (hS.exists_deltaRel σ.1 ((mem_cocycles _).1 σ.2))
@@ -145,10 +160,14 @@ lemma delta_spec (n : ℕ) (σ : cocycles Q U n) : DeltaRel U f g n σ.1 (hS.del
   hS.deltaFun_spec n σ
 
 lemma delta_surjective (hI : CechAcyclic I U) (n : ℕ) : Function.Surjective (hS.delta n) := by
+  have hpush {P P' : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (φ : P ⟶ P') (k : ℕ)
+      (s : Cochain P U k) : push U φ (k + 1) (d P U k s) = d P' U k (push U φ k s) := by
+    funext i
+    simp only [push, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul, app_res]
   intro c
   obtain ⟨ρ, hρ, rfl⟩ := exists_cls c
-  obtain ⟨τ, hτ⟩ := hI n (push U f (n + 1) ρ) (by rw [← push_d, hρ, map_zero])
-  have hσ : d Q U n (push U g n τ) = 0 := by rw [← push_d, hτ, hS.push_push]
+  obtain ⟨τ, hτ⟩ := hI n (push U f (n + 1) ρ) (by rw [← hpush, hρ, map_zero])
+  have hσ : d Q U n (push U g n τ) = 0 := by rw [← hpush, hτ, hS.push_push]
   exact ⟨⟨push U g n τ, (mem_cocycles _).2 hσ⟩,
     hS.deltaRel_unique (hS.delta_spec n _) ⟨τ, ρ, hρ, rfl, hτ.symm, rfl⟩⟩
 
@@ -159,8 +178,11 @@ lemma delta_eq_zero_iff (n : ℕ) (σ : cocycles Q U n) :
     obtain ⟨τ, ρ, hρ, hτ, hρτ, hc⟩ := hS.delta_spec n σ
     rw [h0, eq_comm, cls_eq_zero_iff, coboundaries_succ] at hc
     obtain ⟨β, hβ⟩ := AddMonoidHom.mem_range.1 hc
+    have hpush : push U f (n + 1) (d F U n β) = d I U n (push U f n β) := by
+      funext i
+      simp only [push, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul, app_res]
     refine ⟨τ - push U f n β, ?_, ?_⟩
-    · rw [map_sub, ← hρτ, ← hβ, push_d, sub_self]
+    · rw [map_sub, ← hρτ, ← hβ, hpush, sub_self]
     · rw [map_sub, hS.push_push, sub_zero, hτ]
   · rintro ⟨κ, hκ, hgκ⟩
     exact hS.deltaRel_unique (hS.delta_spec n σ)
@@ -169,17 +191,20 @@ lemma delta_eq_zero_iff (n : ℕ) (σ : cocycles Q U n) :
 lemma ker_delta_succ (hI : CechAcyclic I U) (m : ℕ) :
     (hS.delta (m + 1)).ker =
       (coboundaries Q U (m + 1)).addSubgroupOf (cocycles Q U (m + 1)) := by
+  have hpush (s : Cochain I U m) : push U g (m + 1) (d I U m s) = d Q U m (push U g m s) := by
+    funext i
+    simp only [push, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul, app_res]
   ext σ
   rw [AddMonoidHom.mem_ker, hS.delta_eq_zero_iff, AddSubgroup.mem_addSubgroupOf,
     coboundaries_succ]
   constructor
   · rintro ⟨κ, hκ, hgκ⟩
     obtain ⟨θ, hθ⟩ := hI m κ hκ
-    exact AddMonoidHom.mem_range.2 ⟨push U g m θ, by rw [← push_d, hθ, hgκ]⟩
+    exact AddMonoidHom.mem_range.2 ⟨push U g m θ, by rw [← hpush, hθ, hgκ]⟩
   · intro hσ
     obtain ⟨θ, hθ⟩ := AddMonoidHom.mem_range.1 hσ
     obtain ⟨θ', hθ'⟩ := hS.push_surjective m θ
-    exact ⟨d I U m θ', d_d I U m θ', by rw [push_d, hθ', hθ]⟩
+    exact ⟨d I U m θ', d_d I U m θ', by rw [hpush, hθ', hθ]⟩
 
 def deltaEquiv (hI : CechAcyclic I U) (m : ℕ) :
     cechH Q U (m + 1) ≃+ cechH F U (m + 2) :=
@@ -268,6 +293,10 @@ theorem surjective_of_goodAcyclic (hF : GoodAcyclic B Good S.X₁) (V : Opens X)
   choose x hx using hUO
   have hUV : ∀ a, U a ≤ V := fun a => (hx a).trans (hOV (x a))
   have hsup : iSup U = V := hC.iSup_eq V U hgood
+  have hpush {P P' : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (φ : P ⟶ P') (k : ℕ)
+      (σ : Cochain P U k) : push U φ (k + 1) (d P U k σ) = d P' U k (push U φ k σ) := by
+    funext i
+    simp only [push, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul, app_res]
   let τ0 : Cochain S.X₂.obj U 0 := fun i =>
     res S.X₂.obj ((inter_le U i 0).trans (hx (i 0))) (t (x (i 0)))
   have hτ0 : push U S.g.hom 0 τ0 = constCochain S.X₃.obj U hUV s := by
@@ -276,15 +305,17 @@ theorem surjective_of_goodAcyclic (hF : GoodAcyclic B Good S.X₁) (V : Opens X)
     rw [app_res, ht]
     exact res_res _ _ _ s
   have hdτ0 : push U S.g.hom 1 (d _ U 0 τ0) = 0 := by
-    rw [push_d, hτ0, d_constCochain]
+    rw [hpush, hτ0, d_constCochain]
   choose ρ hρ using fun j => app_exact_of_shortExact hS _ _ (congrFun hdτ0 j)
   have hρ' : push U S.f.hom 1 ρ = d _ U 0 τ0 := funext hρ
   have hρc : d S.X₁.obj U 1 ρ = 0 := by
-    apply push_injective U S.f.hom 2 (fun j => app_injective_of_shortExact hS _)
-    rw [map_zero, push_d, hρ', d_d]
+    have hinj : Function.Injective (push U S.f.hom 2) :=
+      fun _ _ h => funext fun j => app_injective_of_shortExact hS _ (congrFun h j)
+    apply hinj
+    rw [map_zero, hpush, hρ', d_d]
   obtain ⟨β, hβ⟩ := hF V hV κ U hgood 0 ρ hρc
   have hc : d S.X₂.obj U 0 (τ0 - push U S.f.hom 0 β) = 0 := by
-    rw [map_sub, ← push_d, hβ, hρ', sub_self]
+    rw [map_sub, ← hpush, hβ, hρ', sub_self]
   obtain ⟨t', ht'⟩ := exists_glue S.X₂.obj S.X₂.property U V hUV hsup.ge _ hc
   refine ⟨t', ?_⟩
   apply TopCat.Sheaf.eq_of_locally_eq' S.X₃ U V (fun a => homOfLE (hUV a)) hsup.ge
@@ -340,8 +371,8 @@ def hDeltaEquiv (m : ℕ) : Sheaf.H.{w'} S.X₃ (m + 1) ≃+ Sheaf.H.{w'} S.X₁
         rw [← hx, H.eq_zero_of_injective S.X₂ x, map_zero],
       fun x => H.exact₁ hS rfl x (H.eq_zero_of_injective S.X₂ _)⟩
 
-include hS in
 
+include hS in
 theorem nonempty_cechH_one_equiv (U : ι → Opens X) (hU : iSup U = ⊤)
     (hC : IsCechShortExact U S.f.hom S.g.hom) (hI : CechAcyclic S.X₂.obj U) :
     Nonempty (cechH S.X₁.obj U 1 ≃+ Sheaf.H.{w'} S.X₁ 1) := by

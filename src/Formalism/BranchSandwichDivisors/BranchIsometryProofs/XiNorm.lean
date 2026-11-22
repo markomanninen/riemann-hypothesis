@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.BranchSandwichDivisors.StatementW
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFocksLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFockbLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetMinor
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylNonDom
+module
+
+public import Mathlib
+public import Formalism.BranchSandwichDivisors.StatementW
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFocksLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFockbLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetMinor
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylNonDom
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.REAL
 
@@ -91,7 +95,8 @@ lemma xn_part1 (ι : κ → Fin r) (hι : Function.Injective ι) {p : ℕ} (hp :
         {v : Fin r × Fin n | ∃ i, v.1 = ι (a i)} := by
       rintro ⟨i, hi⟩
       exact hb (Finset.mem_image.2 ⟨i, Finset.mem_univ _, (hι hi).symm⟩)
-    rw [xn_lap ι hp a b, map_sum, Finset.sum_eq_single (Fin.last p), ← xn_cof_last ι hp a]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [xn_lap ι hp a b, map_sum, Finset.sum_eq_single (Fin.last p), ← xn_cof_last ι hp a]
     · rw [Derivation.leibniz, xn_pderiv_supported _ _ hns _ (xn_cof_supported ι hp a _), smul_zero,
         zero_add, MvPolynomial.pderiv_X, smul_eq_mul]
       simp [Pi.single_apply, Fin.ext_iff]
@@ -154,7 +159,7 @@ lemma xn_key (ι : κ → Fin r) (hι : Function.Injective ι) {p : ℕ} (hp : p
         Finset.sum_const, Finset.card_image_of_injective _ ha]
       simp only [Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
       ring
-    rw [hsum, map_add, map_sub, map_natCast, map_natCast]
+    rw [hsum, map_add (f := _), map_sub, map_natCast, map_natCast]
     ring
   · have hz : initMinor ℂ (ι ∘ a) (Nat.le_of_succ_le hp) = 0 :=
       xn_minor_zero _ _ fun h => ha h.of_comp
@@ -260,7 +265,7 @@ private lemma coeff_pderiv_eq_mul_coeff_single_add (v : Fin r × Fin n) (m : (Fi
         simp
       · rfl
   next p q hp hq =>
-    simp only [map_add, MvPolynomial.coeff_add, hp, hq, mul_add]
+    simp only [map_add (f := _), MvPolynomial.coeff_add, hp, hq, mul_add]
 
 private lemma fockF_X_mul_eq_pderiv (v : Fin r × Fin n) (G H : MvPolynomial (Fin r × Fin n) ℂ) :
     fockF (X v * G) H = fockF G (pderiv v H) := by
@@ -524,7 +529,7 @@ lemma xn_E_eq (t s : Fin n) (f : MvPolynomial (Fin r × Fin n) ℂ) :
   next a =>
     simp [MvPolynomial.derivation_C]
   next p q hp hq =>
-    simp only [map_add, mul_add, Finset.sum_add_distrib, hp, hq]
+    simp only [map_add (f := _), mul_add, Finset.sum_add_distrib, hp, hq]
   next p v hp =>
     have e := xn_E_X t s v
     simp only [Derivation.leibniz, smul_eq_mul, mul_add, Finset.sum_add_distrib, ← hp]
@@ -569,7 +574,7 @@ lemma xn_hR {μ : Fin n → ℕ} {f : MvPolynomial (Fin r × Fin n) ℂ} (hf : f
     intro g
     induction g using MvPolynomial.induction_on
     next a => simp [MvPolynomial.derivation_C]
-    next p q hp hq => simp only [map_add, hp, hq]
+    next p q hp hq => simp only [map_add (f := _), hp, hq]
     next p v hp =>
       rw [map_mul (colAddGen ℂ (r := r) t s), Derivation.leibniz (pderiv (R := ℂ) none), smul_eq_mul,
         smul_eq_mul, map_add, map_mul ε, map_mul ε, hp, hεc, hεc, hXv,
@@ -596,7 +601,7 @@ lemma xn_hW {μ : Fin n → ℕ} {f : MvPolynomial (Fin r × Fin n) ℂ} (hf : f
     next v k d hv hk ih =>
       obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
       rw [MvPolynomial.monomial_single_add, Derivation.leibniz, ih, Derivation.leibniz_pow]
-      simp only [ndEul, MvPolynomial.mkDerivation_X, map_add, Pi.add_apply, Nat.add_sub_cancel]
+      simp only [ndEul, MvPolynomial.mkDerivation_X, map_add (f := _), Pi.add_apply, Nat.add_sub_cancel]
       first
       | rw [Finsupp.weight_single_index]
       | rw [Finsupp.weight_single]
@@ -605,7 +610,8 @@ lemma xn_hW {μ : Fin n → ℕ} {f : MvPolynomial (Fin r × Fin n) ℂ} (hf : f
       ring
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   rw [hmono, hwh (MvPolynomial.mem_support_iff.1 hd)]
 
@@ -866,11 +872,11 @@ lemma xn_interlace {n : ℕ} (lam sg : Fin n → ℕ) (hI : Interlace (lamZ lam)
   obtain ⟨h1, h2⟩ := hI i
   have hi := i.isLt
   simp only [lamZ, Fin.coe_castSucc, Fin.val_succ] at h1 h2
-  rw [dif_pos hi] at h1
+  rw [dite_eq_left hi] at h1
   unfold nuNext
   constructor
   · split_ifs with hh
-    · rw [dif_pos hh] at h2
+    · rw [dite_eq_left hh] at h2
       exact_mod_cast h2
     · exact Nat.zero_le _
   · exact_mod_cast h1
@@ -881,12 +887,12 @@ lemma xnLam_anti {n : ℕ} (lam sg : Fin n → ℕ) (hI : Interlace (lamZ lam) (
   unfold xnLam
   by_cases h1 : q + 1 < n
   · have h0 : q < n := by omega
-    rw [dif_pos h1, dif_pos h0]
+    rw [dite_eq_left h1, dite_eq_left h0]
     obtain ⟨ha, hb⟩ := xn_interlace lam sg hI ⟨q, h0⟩
     unfold nuNext at ha
-    rw [dif_pos h1] at ha
+    rw [dite_eq_left h1] at ha
     exact le_trans ha hb
-  · rw [dif_neg h1]
+  · rw [dite_eq_right h1]
     exact Nat.zero_le _
 
 lemma xn_stage (n : ℕ) (lam sg : Fin n → ℕ) (hI : Interlace (lamZ lam) (fun i => (sg i : ℤ)))

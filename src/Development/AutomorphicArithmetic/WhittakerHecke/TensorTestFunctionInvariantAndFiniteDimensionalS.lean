@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -15,7 +19,7 @@ theorem UpperTheory.tensorTestFunction_invariant_and_finiteDimensional_span :
           U ≤ AdelicGLn.integralFiniteGL K n → IsOpen (U : Set (AdelicGLn.FiniteAdelicGL K n)) → (∀ u ∈ U, ∀ h, e (u * h) = e h) →
           (∀ u ∈ U, ∀ z, tens β e ((MultiplicityOne.finProj K n u)⁻¹ * z) = tens β e z) ∧ (LeftFin β →
           FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k : (maxCompact : Subgroup (AdelicGLn.AdelicGL K n)) =>
-            fun z : normOneGL K n => tens β e ((Subgroup.inclusion maxCompact_le_normOneGL k)⁻¹ * z)))) := by
+            fun z : normOneGL (K := K) (n := n) => tens β e ((Subgroup.inclusion maxCompact_le_normOneGL k)⁻¹ * z)))) := by
   intro K _ _ n hn β e U hU hUo he
   have happ : ∀ (β : TI K n) (e : TF K n) x, tens β e x = tensFun β e x :=
     fun β e => (UpperTheory.ConvolutionTheory.Tf.tensApply K n hn β e).1
@@ -46,7 +50,7 @@ theorem UpperTheory.tensorTestFunction_invariant_and_finiteDimensional_span :
           exact ⟨k, funext fun g => (htb k g).symm⟩))
       have := Submodule.finiteDimensional_of_le hle
       exact Module.Finite.equiv (Submodule.equivMapOfInjective _ hc _).symm
-    let L : TF K n → TI K n →ₗ[ℂ] (normOneGL K n → ℂ) := fun e' =>
+    let L : TF K n → TI K n →ₗ[ℂ] (normOneGL (K := K) (n := n) → ℂ) := fun e' =>
       { toFun := fun f => tens f e'
         map_add' := fun f g => by rw [(UpperTheory.ConvolutionTheory.Tf.tensApply K n hn f e').2.2.1]; rfl
         map_smul' := fun a f => by rw [((UpperTheory.ConvolutionTheory.Tf.tensApply K n hn f e').2.2.2.2 a).1]; rfl }

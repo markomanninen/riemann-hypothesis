@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial in
 private theorem UpperTheory.Reformulated.B.Ybf4.isIntegral_det_of_isIntegral {R E : Type} [CommRing R] [Field E]
@@ -9,7 +13,7 @@ private theorem UpperTheory.Reformulated.B.Ybf4.isIntegral_det_of_isIntegral {R 
     (IsScalarTower.toAlgHom R E K).mapMatrix
   have hφ : IsIntegral R (φ γ) := h.map φ
   have hdet : algebraMap E K γ.det = (φ γ).det := RingHom.map_det (algebraMap E K) γ
-  rw [← isIntegral_algebraMap_iff (B := K) (algebraMap E K).injective, hdet,
+  rw [← isIntegral_algebraMap_iff (B := K) , hdet,
     Matrix.det_eq_prod_roots_charpoly]
   refine IsIntegral.multiset_prod fun μ hμ => ?_
   have hspec : μ ∈ spectrum K (φ γ) :=

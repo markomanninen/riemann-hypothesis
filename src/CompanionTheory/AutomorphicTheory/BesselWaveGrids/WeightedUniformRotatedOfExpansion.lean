@@ -1,8 +1,12 @@
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.TiedNum
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.NormalizedMeasureScaling
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.PowFourLeRpowNineHalves
-import Formalism.SharpRestriction.CuspSpanNormBounds.TheoremBConstants
-import Formalism.SharpRestriction.CuspSpanNormBounds.RatioInvLeFrameFactor
+module
+
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.TiedNum
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.NormalizedMeasureScaling
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.PowFourLeRpowNineHalves
+public import Formalism.SharpRestriction.CuspSpanNormBounds.TheoremBConstants
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RatioInvLeFrameFactor
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,9 +38,8 @@ theorem wLoc1N_of (hW : ∀ Cb, WEnd.WBp Cb) {Cgc : ℝ} (hCC : CoefCC1 Cgc) (Ch
   obtain ⟨C₅, Cg₁, hC5, H⟩ := hW Cb (2 * |Ch|) Ca (by positivity)
   refine ⟨C₅ + 8, max (max Cg₁ Cgc) 1000, by linarith, ?_⟩
   intro Cg hCg D L f μsec ka b hμN hL hg4 hf hsec l a ha γ hG
-  have g1 : Cg₁ ≤ Cg := le_trans (le_max_of_le_left (le_max_left _ _)) hCg
-  have g2 : Cgc ≤ Cg := le_trans (le_max_of_le_left (le_max_right _ _)) hCg
-  have g3 : 1000 ≤ Cg := le_trans (le_max_right _ _) hCg
+  simp only [max_le_iff] at hCg
+  obtain ⟨⟨g1, g2⟩, g3⟩ := hCg
   unfold WIneq
   by_cases h0 : orbSq L f γ = 0
   · simp [h0]
@@ -77,7 +80,7 @@ theorem wLoc1N_of (hW : ∀ Cb, WEnd.WBp Cb) {Cgc : ℝ} (hCC : CoefCC1 Cgc) (Ch
     obtain ⟨Pm, Qm, h1, h2, h3⟩ := hf
     exact ⟨L.Hs, _, _, _, L.σ, Pm, Qm, L.hlam, hε' ▸ L.hσ, h1, h2, fun g _ => h3 g⟩
   have hr2 : 36 * ((D.R.rS : ℝ) + 1) ^ 2 ≤ Cg * ((D.R.rS : ℝ) + 1) ^ 2 := mul_le_mul_of_nonneg_right (by linarith) (by positivity)
-  have hr1 : 1 ≤ ((D.R.rS : ℝ) + 1) ^ 2 := by nlinarith [(Nat.cast_nonneg D.R.rS : (0 : ℝ) ≤ D.R.rS)]
+  have hr1 : 1 ≤ ((D.R.rS : ℝ) + 1) ^ 2 := one_le_pow₀ (le_add_of_nonneg_left (Nat.cast_nonneg _))
   obtain ⟨pl, ⟨hz, hz', hπ, hπ', hμW, hμN', hμW'⟩, hcase⟩ :
       ∃ pl : Formalism.FourierDecayAlt.KB.Pl (parOfL L (lamN L.u) (lamN L.u')) L.Wp L.Wq, PlTie L pl ∧
         ((30 * ((D.R.rS : ℝ) + 1) ^ 2 + 6 ≤ |lamN L.u pl.l0 - lamN L.u' pl.l0| ∧
@@ -131,18 +134,15 @@ theorem wLoc1N_of (hW : ∀ Cb, WEnd.WBp Cb) {Cgc : ℝ} (hCC : CoefCC1 Cgc) (Ch
   have hJ := Ties.energy_identity D.R.k D.R.rS L f μsec _ _ pl hk1 hcStd hN0 hNt ⟨hz, hz', hπ, hπ', hμW, hμN', hμW'⟩ hf hInCC
     hsec
   have hπb : Real.pi ^ (2 * (2 * D.R.rS + 2) ^ 2) ≤ b ^ (4 * ((2 * D.R.rS + 2 : ℕ) : ℝ) ^ 5) := by
-    have h1 : Real.pi ≤ b ^ 2 := by nlinarith [Real.pi_lt_four]
-    refine (pow_le_pow_left₀ Real.pi_pos.le h1 _).trans ?_
-    rw [← pow_mul, ← Real.rpow_natCast]
-    refine Real.rpow_le_rpow_of_exponent_le hb1 ?_
+    refine (bp_pow hb0 (x := 2) (by rw [Real.rpow_two]; nlinarith [Real.pi_lt_four]) Real.pi_pos.le _).trans
+      (bp_mono hb1 ?_)
     have h2 : ((2 * D.R.rS + 2 : ℕ) : ℝ) ^ 2 ≤ ((2 * D.R.rS + 2 : ℕ) : ℝ) ^ 5 :=
       pow_le_pow_right₀ (by exact_mod_cast (by omega : 1 ≤ 2 * D.R.rS + 2)) (by norm_num)
     push_cast at h2 ⊢
     linarith
-  have hpc : Real.pi ^ (2 * Formalism.MainNotions.BigCellDensity.pc D.R.rS (γ.1.map Prod.snd)) ≤ Real.pi ^ (2 * (2 * D.R.rS + 2) ^ 2) := by
-    refine pow_le_pow_right₀ (by linarith [Real.pi_gt_three]) ?_
-    have := pc_le D.R.rS (γ.1.map Prod.snd)
-    nlinarith
+  have hpc : Real.pi ^ (2 * Formalism.MainNotions.BigCellDensity.pc D.R.rS (γ.1.map Prod.snd)) ≤ Real.pi ^ (2 * (2 * D.R.rS + 2) ^ 2) :=
+    pow_le_pow_right₀ (by linarith [Real.pi_gt_three])
+      (Nat.mul_le_mul_left 2 ((pc_le D.R.rS _).trans (Nat.pow_le_pow_left (by omega) 2)))
   change ENNReal.ofReal (‖MomL.mnr (Nat.le_of_lt_succ l.isLt : (l : ℕ) ≤ D.R.rS) _‖ ^ (2 * a) * Formalism.FourierDecayAlt.TBB.Ew pl _ f (D.R.rS + 1) [] _) ≤
     ENNReal.ofReal (b ^ (C₅ * ((2 * D.R.rS + 2 : ℕ) : ℝ) ^ 5) * max 1 (1 / Formalism.FourierDecayAlt.TBB.Gp pl _) ^ (40 * (D.R.rS + 1) ^ 2)) *
       Formalism.FourierDecayAlt.TBB.jN2 pl f at hB
@@ -179,11 +179,8 @@ theorem wLoc1_of_N {D : D7} {Ch Cg Ca C : ℝ}
     ⟨a1, a2, a3, ENNReal.inv_pos.2 hc1, ENNReal.inv_ne_top.2 hc0, a6⟩ hg hf hsec l a ha γ hγ
   unfold WIneq at hB ⊢
   rw [Ties.jNorm2_eq L c⁻¹ _ h3 f μsec]
-  calc _ ≤ _ * (_ * orbSq (Ties.withN L c⁻¹) f γ) :=
-        mul_le_mul' le_rfl (Ties.orbSq_le L c⁻¹ _ (mul_ne_zero hs0 hs0) (ENNReal.mul_ne_top hs1 hs1) h3 f γ)
-    _ = _ * (_ * orbSq (Ties.withN L c⁻¹) f γ) := mul_left_comm _ _ _
-    _ ≤ _ * (_ * jNorm2 (Ties.withN L c⁻¹) f μsec) := mul_le_mul' le_rfl hB
-    _ = _ := mul_left_comm _ _ _
+  refine (mul_le_mul' le_rfl (Ties.orbSq_le L c⁻¹ _ (mul_ne_zero hs0 hs0) (ENNReal.mul_ne_top hs1 hs1) h3 f γ)).trans ?_
+  exact (mul_left_comm _ _ _).trans_le ((mul_le_mul' le_rfl hB).trans_eq (mul_left_comm _ _ _))
 
 theorem dpt_le {r : ℕ} {ka B : ℝ} (hka : 0 < ka) (h1 : ka ≤ B) (h2 : ka⁻¹ ≤ B) (hB : 1 ≤ B) (γ : Point ℂ (r + 1))
     (l : Fin (r + 1)) : ‖Dpt γ l‖ ≤ B ^ (2 * r + 2) ^ 2 *
@@ -192,24 +189,17 @@ theorem dpt_le {r : ℕ} {ka B : ℝ} (hka : 0 < ka) (h1 : ka ≤ B) (h2 : ka⁻
   rw [Formalism.MainNotions.FrameBoundFromBesselTorus.leadMinor_ptTr, norm_mul, Complex.norm_real, Real.norm_eq_abs, ← mul_assoc]
   refine le_mul_of_one_le_left (norm_nonneg _) ?_
   have key : ∀ a : ℕ, 1 ≤ B ^ (4 * r) * Formalism.MainNotions.FrameBoundFromBesselTorus.tF r ka⁻¹ (ka ^ r) a ^ 2 := fun a => by
-    unfold Formalism.MainNotions.FrameBoundFromBesselTorus.tF
-    have e1 : 1 ≤ B * ka := by
-      have := mul_le_mul_of_nonneg_right h2 hka.le
-      rwa [inv_mul_cancel₀ hka.ne'] at this
-    have e2 : 1 ≤ B * ka⁻¹ := by
-      have := mul_le_mul_of_nonneg_right h1 (inv_pos.2 hka).le
-      rwa [mul_inv_cancel₀ hka.ne'] at this
     have e3 : 1 ≤ B ^ r * ka⁻¹ ^ (r - a) :=
-      (one_le_pow₀ e2 (n := r - a)).trans (by
+      (one_le_pow₀ (n := r - a) (show 1 ≤ B * ka⁻¹ from (le_mul_inv_iff₀ hka).2 (by rwa [one_mul]))).trans (by
         rw [mul_pow]
         exact mul_le_mul_of_nonneg_right (pow_le_pow_right₀ hB (Nat.sub_le _ _)) (by positivity))
-    have e4 : 1 ≤ (B * ka) ^ r * (B ^ r * ka⁻¹ ^ (r - a)) := one_le_mul_of_one_le_of_one_le (one_le_pow₀ e1) e3
-    calc (1 : ℝ) ≤ ((B * ka) ^ r * (B ^ r * ka⁻¹ ^ (r - a))) ^ 2 := one_le_pow₀ e4
-      _ = _ := by ring
+    calc (1 : ℝ) ≤ ((B * ka) ^ r * (B ^ r * ka⁻¹ ^ (r - a))) ^ 2 :=
+        one_le_pow₀ (one_le_mul_of_one_le_of_one_le (one_le_pow₀ ((inv_le_iff_one_le_mul₀ hka).1 h2)) e3)
+      _ = _ := by unfold Formalism.MainNotions.FrameBoundFromBesselTorus.tF; ring
   set S := Finset.univ.filter fun a : Fin (r + 1) => a.val < l.val + 1
   have hc : S.card ≤ r + 1 := (Finset.card_filter_le _ _).trans (by simp)
   have h3 : 1 ≤ ∏ a ∈ S, B ^ (4 * r) * Formalism.MainNotions.FrameBoundFromBesselTorus.tF r ka⁻¹ (ka ^ r) a ^ 2 :=
-    le_trans (by simp) (Finset.prod_le_prod (f := fun _ => (1 : ℝ)) (fun _ _ => zero_le_one) fun a _ => key a)
+    le_trans (by simp) (Finset.prod_le_prod₀ (f := fun _ => (1 : ℝ)) (fun _ _ => zero_le_one) fun a _ => key a)
   rw [Finset.prod_mul_distrib, Finset.prod_const, ← pow_mul] at h3
   refine h3.trans (mul_le_mul (pow_le_pow_right₀ hB ?_) (le_abs_self _)
     (Finset.prod_nonneg fun _ _ => sq_nonneg _) (by positivity))
@@ -234,20 +224,12 @@ theorem w_in_frame {D : D7} {Ch Cg Cgf Ca C : ℝ} (hFr : FrameBesselBound D Cgf
   obtain ⟨γ₁, hγ₁, hG₁, -, hle⟩ := hpt γ hG
   have hγe : γ₁ = Formalism.MainNotions.FrameBoundFromBesselTorus.ptTr ka⁻¹ (ka ^ D.R.rS) (inv_pos.2 hka) hτ γ := Subtype.ext hγ₁
   have hsq : (ka ^ D.R.rS) ^ 2 = ka ^ (2 * D.R.rS) := by rw [← pow_mul, mul_comm]
-  have hinv : ka ^ (2 * D.R.rS) * (1 / ka) ^ (2 * D.R.rS) = 1 := by
-    rw [← mul_pow, mul_one_div, div_self hka.ne', one_pow]
-  have hone : (ka / ka) ^ (2 * D.R.rS) = 1 := by rw [div_self hka.ne', one_pow]
+  have hT : ∀ t : ℝ, ka ^ (2 * D.R.rS) * t * (1 / ka) ^ (2 * D.R.rS) = t * (ka / ka) ^ (2 * D.R.rS) := fun t => by
+    rw [div_self hka.ne', one_pow, mul_one, mul_right_comm, ← mul_pow, mul_one_div_cancel hka.ne', one_pow, one_mul]
   have hL₁ : LocOk D Ch Cg L₁ L₁.lam ka b 1 := by
     refine ⟨hk, e1.trans hε, ?_, e6, e7, ?_, ?_, ?_⟩
     · rw [e5, inv_mul_cancel₀ hka.ne']
-    · rw [e1, e2, e3, e4, e8, e9, hsq]
-      have a1 : ka ^ (2 * D.R.rS) * Tz D.R.k D.R.rS L.z * (1 / ka) ^ (2 * D.R.rS) =
-          Tz D.R.k D.R.rS L.z * (ka / ka) ^ (2 * D.R.rS) := by
-        rw [hone, mul_one, mul_right_comm, hinv, one_mul]
-      have a2 : ka ^ (2 * D.R.rS) * Tz D.R.k D.R.rS L.z' * (1 / ka) ^ (2 * D.R.rS) =
-          Tz D.R.k D.R.rS L.z' * (ka / ka) ^ (2 * D.R.rS) := by
-        rw [hone, mul_one, mul_right_comm, hinv, one_mul]
-      rw [a1, a2]
+    · rw [e1, e2, e3, e4, e8, e9, hsq, hT, hT]
       exact hStd
     · rw [e8, hsq, one_pow, mul_one, mul_comm]; exact hT1
     · rw [e9, hsq, one_pow, mul_one, mul_comm]; exact hT1'
@@ -281,7 +263,7 @@ theorem weight_le {ι : Type} [Fintype ι] [Nonempty ι] (s x : ι → ℝ) (N :
     rw [mul_comm 2 (∑ i, N i), pow_mul, ← Finset.prod_pow_eq_pow_sum]
     have hn : ∀ i, 0 ≤ 1 + s i * x i ^ 2 := fun i => add_nonneg zero_le_one (mul_nonneg (hs0 i) (sq_nonneg _))
     refine pow_le_pow_left₀ (Finset.prod_nonneg fun i _ => pow_nonneg (hn i) _)
-      (Finset.prod_le_prod (fun i _ => pow_nonneg (hn i) _) fun i _ => pow_le_pow_left₀ (hn i) ?_ _) 2
+      (Finset.prod_le_prod₀ (fun i _ => pow_nonneg (hn i) _) fun i _ => pow_le_pow_left₀ (hn i) ?_ _) 2
     have h1 : s i * x i ^ 2 ≤ σ * M := mul_le_mul (hs i) ((hl i (Finset.mem_univ _)).trans hx) (sq_nonneg _) (by linarith)
     have h2 : 1 ≤ σ * M := one_le_mul_of_one_le_of_one_le hσ hM
     linarith
@@ -290,17 +272,16 @@ theorem weight_le {ι : Type} [Fintype ι] [Nonempty ι] (s x : ι → ℝ) (N :
   · refine ⟨l, _, le_rfl, (key _ h le_rfl).trans (le_of_eq ?_)⟩
     rw [mul_pow (2 * σ), ← pow_mul]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem weighted_uniform_rotated_of_expansion_alt_alt (hW : ∀ Cb, WEnd.WBp Cb) {Cgc Cgf : ℝ} (hCC : CoefCC1 Cgc)
     (hOB : ∀ D : D7, Formalism.MainNotions.FrameBoundFromBesselTorus.OneBesselTor D Cgf) : Formalism.MainNotions.RotatedPoints.WeightedBoundRotatedUniform := by
   intro Aw Ch hAw
   obtain ⟨C, Cg₀, hC, H⟩ := wLoc1N_of hW hCC Ch (2 * (1 + Aw + 10))
   refine ⟨((4 + |Ch|) * (2 * (1 + Aw + 10)) + |Ch| * (4 * (1 + Aw + 10)) + 4 * |Ch| + C + (3 + 3 * |Ch|) * 10) + 6,
     max (max Cg₀ Cgf) 2, fun Cg hCg0 D => ?_⟩
-  have g1 : Cg₀ ≤ Cg := le_trans (le_max_of_le_left (le_max_left _ _)) hCg0
-  have g2 : Cgf ≤ Cg := le_trans (le_max_of_le_left (le_max_right _ _)) hCg0
-  have hCg : 2 ≤ Cg := le_trans (le_max_right _ _) hCg0
+  simp only [max_le_iff] at hCg0
+  obtain ⟨⟨g1, g2⟩, hCg⟩ := hCg0
   have hFr := Formalism.MainNotions.OnePlaceExpansion.frame_bound_of_bessel_torus D Cgf 2 le_rfl (hOB D)
   have H1 := wLoc1_of_N (H Cg g1 D)
   refine Formalism.MainNotions.RotatedPoints.weighted_bound_rotated_of_one_place (A := AQ D 10) hCg ?_
@@ -324,10 +305,7 @@ theorem weighted_uniform_rotated_of_expansion_alt_alt (hW : ∀ Cb, WEnd.WBp Cb)
   set xG : ℝ := Complex.normSq (plEmb D v (leadMinorK (ptMat γ) (D.R.rS + 1) le_rfl)) -
     (T : ℝ) * (T' : ℝ) * Complex.normSq (plEmb D v (leadMinorK (ptMat γ) D.R.rS (Nat.le_succ _))) with hxGd
   have hxG : plEmb D v (Gglob D T T' γ) = (xG : ℂ) := plEmb_Gglob D T T' v γ
-  have hxG0 : xG ≠ 0 := by
-    intro h0
-    have : plEmb D v (Gglob D T T' γ) = 0 := by rw [hxG, h0]; simp
-    exact hγ.2.1 ((map_eq_zero (plEmb D v)).1 this)
+  have hxG0 : xG ≠ 0 := fun h0 => hγ.2.1 ((map_eq_zero (plEmb D v)).1 (by rw [hxG, h0, Complex.ofReal_zero]))
   have habs : absV D v (Gglob D T T' γ) = |xG| := by
     unfold absV; rw [hxG, Complex.norm_real, Real.norm_eq_abs]
   have hGreal : Gpt (T : ℝ) (T' : ℝ) (ptLoc D v γ) = ((∏ i : Fin D.R.rS, alf D i) ^ 2) ^ 2 * xG :=
@@ -348,10 +326,8 @@ theorem weighted_uniform_rotated_of_expansion_alt_alt (hW : ∀ Cb, WEnd.WBp Cb)
     rw [habs, abs_of_nonneg hxGnn]
     unfold dLoc absV
     rw [← Complex.normSq_eq_norm_sq]
-    have : 0 ≤ (T : ℝ) * (T' : ℝ) * Complex.normSq (plEmb D v (leadMinorK (ptMat γ) D.R.rS (Nat.le_succ _))) := by
-      have := Complex.normSq_nonneg (plEmb D v (leadMinorK (ptMat γ) D.R.rS (Nat.le_succ _)))
-      positivity
-    linarith
+    linarith [mul_nonneg (mul_nonneg (Nat.cast_nonneg T) (Nat.cast_nonneg T'))
+      (Complex.normSq_nonneg (plEmb D v (leadMinorK (ptMat γ) D.R.rS (Nat.le_succ _))))]
   have hn0 : 0 ≤ nLoc D T T' v γ := by
     unfold nLoc ptWeight
     exact ptWeightFrom_nonneg _ _ _ _ _ 0 (fun b hb => ((ptLoc D v γ).2.1 b hb).2)
@@ -371,11 +347,9 @@ theorem weighted_uniform_rotated_of_expansion_alt_alt (hW : ∀ Cb, WEnd.WBp Cb)
   obtain ⟨l, a, ha, hwt⟩ := weight_le (sQ D) (fun l => ‖Dpt (ptLoc D v γ) l‖) (Formalism.MainNotions.TheoremBConstants.NQ D A p) _ hσ1 (sQ_nonneg D)
     fun l => alfProd_inv_le_b D Ch b hCh hb2 hka hk2 _ (by omega)
   simp only [Fl_eq] at hwt
-  have hSN := sum_weighted_point_counts_le_cube D Aw 10 hAw (by norm_num)
   have hS2 : ((2 * ∑ l, Formalism.MainNotions.TheoremBConstants.NQ D A p l : ℕ) : ℝ) ≤ 2 * (1 + Aw + 10) * M ^ 3 := by
-    rw [Nat.cast_mul, Nat.cast_ofNat]
-    have : ((∑ l, Formalism.MainNotions.TheoremBConstants.NQ D A p l : ℕ) : ℝ) ≤ (1 + Aw + 10) * M ^ 3 := hSN
-    linarith only [this]
+    rw [Nat.cast_mul, Nat.cast_ofNat, mul_assoc]
+    exact mul_le_mul_of_nonneg_left (sum_weighted_point_counts_le_cube D Aw 10 hAw (by norm_num)) zero_le_two
   have ha' : (a : ℝ) ≤ 2 * (1 + Aw + 10) * M ^ 3 := le_trans (by exact_mod_cast ha) hS2
   have hloc := w_in_frame hFr H1 (X.L v) (X.f v) (X.μsec v) (kaRe D) b (hlam ▸ hL) (hP v) hgF
     (Real.one_le_rpow hb1 hCh) (X.hcoef v) (X.hsec v) l a ha' (Pv.Frames.turnPt (ptLoc D v γ)) hGne
@@ -383,14 +357,9 @@ theorem weighted_uniform_rotated_of_expansion_alt_alt (hW : ∀ Cb, WEnd.WBp Cb)
   simp only [Dpt_norm_turnPt, Pv.Frames.ptWeight_turnPt, Pv.Frames.GPoint_turnPt] at hloc
   rw [(X.hT v).1, (X.hT v).2, hGreal] at hloc
   have hw := weights_le D T T' v γ A p hp hGd
-  have h1 : wLoc D v γ ^ 2 * (1 + dLoc D v γ) ^ A * nLoc D T T' v γ * WLoc D T T' v γ ^ p ≤
-      (∏ l, Fl D v γ l ^ Formalism.MainNotions.TheoremBConstants.NQ D A p l) ^ 2 * nLoc D T T' v γ := by
-    calc wLoc D v γ ^ 2 * (1 + dLoc D v γ) ^ A * nLoc D T T' v γ * WLoc D T T' v γ ^ p
-        = (wLoc D v γ ^ 2 * (1 + dLoc D v γ) ^ A * WLoc D T T' v γ ^ p) * nLoc D T T' v γ := by ring
-      _ ≤ _ := mul_le_mul_of_nonneg_right hw hn0
   have hY0 : 0 ≤ (2 * b ^ ((3 + Ch) * M ^ 2)) ^ (2 * ∑ l, Formalism.MainNotions.TheoremBConstants.NQ D A p l) := by positivity
-  have h2 := h1.trans ((mul_le_mul_of_nonneg_right hwt hn0).trans (le_of_eq (mul_assoc _ _ _)))
-  refine (mul_le_mul' (ENNReal.ofReal_le_ofReal h2) le_rfl).trans ?_
+  refine (mul_le_mul' (ENNReal.ofReal_le_ofReal ((mul_right_comm _ (nLoc D T T' v γ) _).trans_le
+    ((mul_le_mul_of_nonneg_right (hw.trans hwt) hn0).trans_eq (mul_assoc _ _ _)))) le_rfl).trans ?_
   rw [ENNReal.ofReal_mul hY0, mul_assoc]
   refine (mul_le_mul' le_rfl hloc).trans ?_
   rw [← mul_assoc, ← ENNReal.ofReal_mul hY0]
@@ -403,9 +372,8 @@ theorem weighted_uniform_rotated_of_expansion_alt_alt (hW : ∀ Cb, WEnd.WBp Cb)
       rw [show (4 + Ch) * M ^ 2 = M ^ 2 + (3 + Ch) * M ^ 2 by ring, Real.rpow_add hb0]
       refine mul_le_mul_of_nonneg_right (hb2.trans ?_) (by positivity)
       simpa using bp_mono hb1 hM2
-    refine (bp_pow hb0 e1 (by positivity) _).trans (bp_mono hb1 ?_)
-    calc _ ≤ (4 + Ch) * M ^ 2 * (2 * (1 + Aw + 10) * M ^ 3) := mul_le_mul_of_nonneg_left hS2 (by positivity)
-      _ = _ := by ring
+    exact (bp_pow hb0 e1 (by positivity) _).trans
+      (bp_mono hb1 ((mul_le_mul_of_nonneg_left hS2 (by positivity)).trans_eq (by ring)))
   have n2 : ((b ^ Ch) ^ (2 * D.R.rS + 2) ^ 2) ^ (2 * a) ≤ b ^ (Ch * (4 * (1 + Aw + 10)) * M ^ 5) := by
     refine (bp_pow hb0 (bp_pow hb0 le_rfl (by positivity) _) (by positivity) _).trans (bp_mono hb1 ?_)
     rw [Nat.cast_pow, ← hM, Nat.cast_mul, Nat.cast_ofNat]
@@ -414,12 +382,12 @@ theorem weighted_uniform_rotated_of_expansion_alt_alt (hW : ∀ Cb, WEnd.WBp Cb)
       _ = _ := by ring
   have n3 : FrC D 2 (kaRe D) ≤ b ^ (4 * Ch * M ^ 5) :=
     (num_Fr D Ch 2 b (kaRe D) hCh (by norm_num) hb2 hka hk1 hk2).trans
-      (bp_mono hb1 (by nlinarith [mul_le_mul_of_nonneg_left hM25 hCh]))
+      (bp_mono hb1 (by linarith [mul_le_mul_of_nonneg_left hM25 hCh]))
   have n4 := num_G D Ch 10 b hCh (by norm_num) hb2 hka hk1 hk2 A (AQ_ge D 10) xG hxG0
   rw [show 10 * ((2 * D.R.rS + 2 : ℕ) : ℝ) ^ 2 = ((40 * (D.R.rS + 1) ^ 2 : ℕ) : ℝ) by push_cast; ring, Real.rpow_natCast,
     show ((40 * (D.R.rS + 1) ^ 2 : ℕ) : ℝ) = 10 * M ^ 2 by rw [hM]; push_cast; ring] at n4
   have n5 : b ^ ((3 + 3 * Ch) * M ^ 2 * (10 * M ^ 2)) ≤ b ^ ((3 + 3 * Ch) * 10 * M ^ 5) :=
-    bp_mono hb1 (by nlinarith [mul_le_mul_of_nonneg_left hM45 (show 0 ≤ (3 + 3 * Ch) * 10 by positivity)])
+    bp_mono hb1 (by linarith [mul_le_mul_of_nonneg_left hM45 (show 0 ≤ (3 + 3 * Ch) * 10 by positivity)])
   have n6 := n4.trans (mul_le_mul_of_nonneg_right n5 (by positivity))
   have hF0 := FrC_nonneg D 2 (kaRe D) hka
   rw [habs, add_mul _ _ (M ^ 5), add_mul _ _ (M ^ 5), add_mul _ _ (M ^ 5), add_mul _ _ (M ^ 5), Real.rpow_add hb0, Real.rpow_add hb0, Real.rpow_add hb0,

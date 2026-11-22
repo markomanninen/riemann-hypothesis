@@ -1,15 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCocyclesOmega
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneDiagSumEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagSumCoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorsCharTorsVal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupCocycleMemCobRangeOfDiagonalSumZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimitiveDeRhamClassTorsionCharacterStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqZeroOfCobOneEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCocyclesOmega
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneDiagSumEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagSumCoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorsCharTorsVal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupCocycleMemCobRangeOfDiagonalSumZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimitiveDeRhamClassTorsionCharacterStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,7 +32,7 @@ namespace GlobalTheory.PtExt
 
 theorem pullTwo_mulBy_pow_self (p : ℕ) (R : Type) [CommRing R] (G : PDivGroup p R) (n : ℕ)
     (c : G.A n ⊗[R] G.A n) :
-    pullbackTwo (mulBy R (G.A n) (p ^ n)) c =
+    pullbackTwo (PDiv.mulBy (R := R) (A := G.A n) (p ^ n)) c =
       (Algebra.TensorProduct.lift (Bialgebra.counitAlgHom R (G.A n)) (Bialgebra.counitAlgHom R (G.A n))
         (fun _ _ ↦ Commute.all _ _) c) • (1 : G.A n ⊗[R] G.A n) := by
   induction c using TensorProduct.induction_on with
@@ -35,16 +41,18 @@ theorem pullTwo_mulBy_pow_self (p : ℕ) (R : Type) [CommRing R] (G : PDivGroup 
     have ha := G.mulBy_pow_self n a
     have hb := G.mulBy_pow_self n b
     simp only [pullbackTwo, TensorProduct.map_tmul, Algebra.TensorProduct.lift_tmul]
-    change mulBy R (G.A n) (p ^ n) a ⊗ₜ[R] mulBy R (G.A n) (p ^ n) b = _
+    change PDiv.mulBy (R := R) (A := G.A n) (p ^ n) a ⊗ₜ[R]
+      PDiv.mulBy (R := R) (A := G.A n) (p ^ n) b = _
     rw [ha, hb]
     simp [Algebra.algebraMap_eq_smul_one, Algebra.TensorProduct.one_def, TensorProduct.smul_tmul', smul_smul,
       TensorProduct.tmul_smul, mul_comm]
-  | add x y hx hy => rw [map_add, hx, hy, map_add, add_smul]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _), add_smul]
 
 theorem exists_isCan_rigToExt_eq : ∀ (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] (N : ℕ), (p : R) ^ N = 0 →
     ∀ (A : Over (Sp R)) [GrpObj A], IsAbelianScheme A → AllPrim (dp0 R) (𝟙 _) A →
-    Function.Surjective (toH1O (A.hom ≫ 𝟙 _)) → ∀ (G : PDivGroup p R) (t : G.TorsionTower A) (x : G.RigExt),
-    ∃ (c : primDR A) (x' : G.RigExt), IsCan t c x' ∧ G.rigToExt x' = G.rigToExt x := by
+    Function.Surjective (toH1O (A.hom ≫ 𝟙 _)) →
+    ∀ (G : PDivGroup p R) (t : PDivGroup.TorsionTower G A) (x : G.RigExt),
+      ∃ (c : primDR A) (x' : G.RigExt), IsCan t c x' ∧ G.rigToExt x' = G.rigToExt x := by
   intro p _ R _ N hN A _ hA hP hS G t x
   obtain ⟨⟨z, w⟩, rfl⟩ := Submodule.mkQ_surjective _ x
   have hq : ((p ^ N : ℕ) : R) = 0 := by rw [Nat.cast_pow, hN]

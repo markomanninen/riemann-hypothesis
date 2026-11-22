@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsCompactCutoffCoefficient
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleOfRange
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCoefficientHasCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
-import Formalism.DoubleCosetMeasures.Statement
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsCompactCutoffCoefficient
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleOfRange
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCoefficientHasCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
+public import Formalism.DoubleCosetMeasures.Statement
+
+@[expose] public section
 
 noncomputable section
 

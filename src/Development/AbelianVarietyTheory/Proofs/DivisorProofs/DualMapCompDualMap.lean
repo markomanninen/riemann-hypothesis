@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransl
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransl
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -105,7 +109,7 @@ theorem IsRep.add {J : Type} {W : J → X.Opens} {c c' : Z1 (O (dp0 R) s)} {F F'
   refine ⟨G + G', fun j P Q φ hP ↦ ?_, fun j j' P hj hj' ↦ ?_⟩
   · change ev c φ.triv + ev c' φ.triv = _
     rw [hG j P Q φ hP, hG' j P Q φ hP]
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
     abel
   · simp only [Pi.add_apply]
     rw [← hF j j' P hj hj', ← hF' j j' P hj hj']
@@ -343,8 +347,8 @@ theorem fibMor (h : IsGrpPullback A A' (DeRham.epsRed K) i) : GrpMor (dp0 (DualN
     (TrivSqZeroExt.fstHom K K K).toRingHom (DeRham.epsRed K) i := GrpMor.of_isGrpPullback (isDPMorphism_of_eq_bot _ rfl _ _)
   (by rw [Category.comp_id, Category.id_comp] <;> rfl) h
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 @[reducible] def Pt.eps (P : GPt A) : Thick (epsDP K) (A.hom ≫ DeRham.epsRed K) where
   B := DualNumber P.B
   alg := (dualMap (algebraMap K P.B)).toAlgebra

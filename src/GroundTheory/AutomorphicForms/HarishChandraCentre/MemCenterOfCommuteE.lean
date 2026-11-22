@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -61,7 +65,8 @@ theorem eq_sum_E (X : gl n) : X = ∑ a : Fin n × Fin n, X a.1 a.2 • E a := b
 theorem ι_eq_sum_e (X : gl n) :
     UniversalEnvelopingAlgebra.ι ℂ X = ∑ a : Fin n × Fin n, X a.1 a.2 • e (n := n) a := by
   conv_lhs => rw [eq_sum_E X]
-  simp [e, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [e, map_sum, map_smul]
 
 theorem U.induction {C : U n → Prop}
     (halg : ∀ r : ℂ, C (algebraMap ℂ _ r)) (hι : ∀ x, C (UniversalEnvelopingAlgebra.ι ℂ x))
@@ -73,7 +78,7 @@ theorem U.induction {C : U n → Prop}
   | algebraMap r => rw [AlgHom.commutes]; exact halg r
   | ι x => exact hι x
   | mul a b ha hb => rw [map_mul]; exact hmul _ _ ha hb
-  | add a b ha hb => rw [map_add]; exact hadd _ _ ha hb
+  | add a b ha hb => rw [map_add (f := _)]; exact hadd _ _ ha hb
 
 theorem mem_center_of_commute_e {z : U n} (hz : ∀ a, e a * z = z * e a) :
     z ∈ Subalgebra.center ℂ (U n) := by

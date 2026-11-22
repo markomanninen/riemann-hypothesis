@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ProofRowTieValsE
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ProofRowTieValsE
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,8 @@ theorem exp_sum {σ ι : Type} (s : Finset ι) {f : ι → MvPowerSeries σ C}
   · intro a t ha ih h
     have ht : ∀ i ∈ t, MvPowerSeries.constantCoeff (f i) = 0 := fun i hi => h i (Finset.mem_insert_of_mem hi)
     rw [Finset.sum_insert ha, Finset.prod_insert ha, VP.exp_add (h a (Finset.mem_insert_self a t)), ih ht]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero ht
 
 variable (Y : FBChart C V O dd) (p : ∀ o, SelfData Y d (I0 o))
@@ -126,7 +131,7 @@ theorem HK_ad (x : O) {κ κ' : WVO (IS I0) → C} (h : GK Y p κ) (h' : GK Y p 
 theorem lamAct_tr : lamAct Y p Y.w0 + lamAct Y p (star Y.w0) = 1 := by
   funext w
   simp only [Pi.add_apply, Pi.one_apply, lamAct]
-  rw [← map_add, Y.halfIntegralGenerator_add_conj_eq_one, map_one]
+  rw [← map_add (f := _), Y.halfIntegralGenerator_add_conj_eq_one, map_one]
 
 theorem HK_pair {a b : WVO (IS I0) → C} (ha : GK Y p a) (hb : GK Y p b) :
     Cg V (AA Y p) (HK Y p a (lamAct Y p Y.w0 * b) + HK Y p b (lamAct Y p Y.w0 * a)) (HK Y p a b) := by
@@ -351,7 +356,8 @@ theorem hRow_eqS (o : Orb) : (Y.rawSelf (p o)).hRow = (Y.k : C) • ∑ col : Fi
   congr 1
   show MvPowerSeries.subst (fun q : Fin 2 × (Fin 2 × Fin dd) => (Y.rawSelf (p o)).expPt q.1 q.2)
     (∑ col, hCol col Y.h) = _
-  rw [← MvPowerSeries.coe_substAlgHom hS, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hS, map_sum]
   refine Finset.sum_congr rfl fun col _ => ?_
   have hX : MvPowerSeries.HasSubst (fun q : Fin 2 × Fin dd =>
       (MvPowerSeries.X (q.1, (col, q.2)) : MvPowerSeries (Fin 2 × (Fin 2 × Fin dd)) C)) :=
@@ -373,7 +379,8 @@ theorem toAllS_hRow (o : Orb) : toAllS (I := IS I0) o (mvExp (Y.rawSelf (p o)).h
       ((MvPowerSeries.X (⟨o, w⟩ : WVO (IS I0))) : MvPowerSeries (WVO (IS I0)) C) = 0 :=
     fun w => MvPowerSeries.constantCoeff_X _
   have hcc : MvPowerSeries.constantCoeff (Y.rawSelf (p o)).hRow = 0 := by
-    rw [hRow_eqS, MvPowerSeries.smul_eq_C_mul, map_mul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hRow_eqS, MvPowerSeries.smul_eq_C_mul, map_mul, map_sum,
       Finset.sum_eq_zero fun col _ => VP.cc_hAt (Y := Y) (fun i => cc_expPtS Y p o 0 (col, i))
         (fun i => cc_expPtS Y p o 1 (col, i)), mul_zero]
   have hS : MvPowerSeries.HasSubst (fun w : WV (IS I0 o) =>
@@ -385,7 +392,8 @@ theorem toAllS_hRow (o : Orb) : toAllS (I := IS I0) o (mvExp (Y.rawSelf (p o)).h
   unfold toAllS
   rw [VP.subst_exp hX hcc, hRow_eqS]
   congr 1
-  rw [← MvPowerSeries.coe_substAlgHom hS, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hS, map_smul, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun col _ => ?_
   rw [MvPowerSeries.coe_substAlgHom, VP.hAt_subst (hA := hX) (hu := fun i => cc_expPtS Y p o 0 (col, i))
@@ -420,7 +428,8 @@ theorem unitSelf_of {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [Com
     intro o _
     have h0 : MvPowerSeries.constantCoeff (∑ col, VS.HK Y p (VS.lamG Y p o col 0 * VS.ind (o, 0))
         (VS.lamG Y p o col 1 * VS.ind (o, 1))) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_eq_zero fun _ _ => VS.cc_HK Y p _ _
     exact (VS.Cg.nsmul hA (VS.Cg.refl (V := V) hA h0) Y.k).1
   rw [hL, hR]

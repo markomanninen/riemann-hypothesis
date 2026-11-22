@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsDblOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsDblOf
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -34,7 +38,8 @@ theorem dot_pairVec (J : Matrix (Fin n) (Fin n) E) (w v : Fin n → E) : w ⬝�
 
 theorem form_symm {J : Matrix (Fin n) (Fin n) E} (hσ : ∀ a, σ (σ a) = a) (hJ : ∀ i j, σ (J j i) = J i j)
     (a b : Fin n → E) : form σ J a b = σ (form σ J b a) := by
-  simp only [form, dotProduct, mulVec, map_sum, map_mul, hσ, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, dotProduct, mulVec, map_sum, map_mul, hσ, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJ j i]; ring
@@ -75,20 +80,20 @@ theorem frameS_mul_frameT (hσ : ∀ a, σ (σ a) = a) (hJ : ∀ i j, σ (J j i)
   rw [frameS, frameT, fromRows_mul_fromCols, coef_mul_self hdet gram, ← fromBlocks_one]
   congr 1
   · ext i k; fin_cases k
-    · simpa [mul_apply, mulVec, dotProduct] using congrFun hQx i
-    · simpa [mul_apply, mulVec, dotProduct] using congrFun hQy i
+    · simpa [Matrix.mul_apply, mulVec, dotProduct] using congrFun hQx i
+    · simpa [Matrix.mul_apply, mulVec, dotProduct] using congrFun hQy i
   · ext r k; fin_cases r
     · have := (orth (Pi.single k 1)).2
       simp only [form, dotProduct, mulVec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
-      simpa [mul_apply, pairVec, mulVec, dotProduct, mul_comm] using this
+      simpa [Matrix.mul_apply, pairVec, mulVec, vecMul, dotProduct, mul_comm] using this
     · have := (orth (Pi.single k 1)).1
       simp only [form, dotProduct, mulVec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
-      simpa [mul_apply, pairVec, mulVec, dotProduct, mul_comm] using this
+      simpa [Matrix.mul_apply, pairVec, mulVec, vecMul, dotProduct, mul_comm] using this
   · ext r k; fin_cases r <;> fin_cases k
-    · simpa [mul_apply, pairVec, Fin.sum_univ_two, ← dot_pairVec, dotProduct, mul_comm] using xy
-    · simpa [mul_apply, pairVec, ← dot_pairVec, dotProduct, mul_comm] using yy
-    · simpa [mul_apply, pairVec, ← dot_pairVec, dotProduct, mul_comm] using xx
-    · simpa [mul_apply, pairVec, ← dot_pairVec, dotProduct, mul_comm] using yx
+    · simpa [Matrix.mul_apply, pairVec, vecMul, Fin.sum_univ_two, ← dot_pairVec, dotProduct, mul_comm] using xy
+    · simpa [Matrix.mul_apply, pairVec, vecMul, ← dot_pairVec, dotProduct, mul_comm] using yy
+    · simpa [Matrix.mul_apply, pairVec, vecMul, ← dot_pairVec, dotProduct, mul_comm] using xx
+    · simpa [Matrix.mul_apply, pairVec, vecMul, ← dot_pairVec, dotProduct, mul_comm] using yx
 
 end Frame
 
@@ -105,7 +110,7 @@ theorem frameT_mul_frameS_eq : frameT ι x y * frameS σ J J₁ ι x y =
   rw [frameT, frameS, fromCols_mul_fromRows, add_assoc]
   congr 1
   ext i j
-  simp [mul_apply, Fin.sum_univ_two, vecMulVec]
+  simp [Matrix.mul_apply, Fin.sum_univ_two, vecMulVec]
 
 theorem herm_map_transpose (hJ : ∀ i j, σ (J j i) = J i j) : (J.map σ)ᵀ = J := by
   ext i j; simp [hJ]
@@ -136,30 +141,30 @@ theorem frame_gram (hσ : ∀ a, σ (σ a) = a) (hJ : ∀ i j, σ (J j i) = J i 
   congr 1
   · ext k r; fin_cases r
     · have := (orth (Pi.single k 1)).1
-      simp [form, mul_apply, mulVec, dotProduct, Pi.single_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
+      simp [form, Matrix.mul_apply, mulVec, dotProduct, Pi.single_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
       first | exact this | (rw [Finset.sum_comm]; exact this)
     · have := (orth (Pi.single k 1)).2
-      simp [form, mul_apply, mulVec, dotProduct, Pi.single_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
+      simp [form, Matrix.mul_apply, mulVec, dotProduct, Pi.single_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
       first | exact this | (rw [Finset.sum_comm]; exact this)
   · ext r k; fin_cases r
     · have := o1 k
-      simp [form, mul_apply, mulVec, dotProduct, Pi.single_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
+      simp [form, Matrix.mul_apply, mulVec, dotProduct, Pi.single_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
       first | exact this | (rw [Finset.sum_comm]; exact this)
     · have := o2 k
-      simp [form, mul_apply, mulVec, dotProduct, Pi.single_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
+      simp [form, Matrix.mul_apply, mulVec, dotProduct, Pi.single_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
       first | exact this | (rw [Finset.sum_comm]; exact this)
   · ext r k; fin_cases r <;> fin_cases k
     · have := xx
-      simp [form, mul_apply, mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
+      simp [form, Matrix.mul_apply, mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
       first | exact this | (rw [Finset.sum_comm]; exact this)
     · have := xy
-      simp [form, mul_apply, mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
+      simp [form, Matrix.mul_apply, mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
       first | exact this | (rw [Finset.sum_comm]; exact this)
     · have := yx
-      simp [form, mul_apply, mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
+      simp [form, Matrix.mul_apply, mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
       first | exact this | (rw [Finset.sum_comm]; exact this)
     · have := yy
-      simp [form, mul_apply, mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
+      simp [form, Matrix.mul_apply, mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum, mul_assoc] at this ⊢
       first | exact this | (rw [Finset.sum_comm]; exact this)
 
 end Frame2
@@ -170,16 +175,16 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F] E) {n 
 theorem fromBlocks_mul_fromRows' {R : Type} [CommRing R] {l m₁ m₂ k₁ k₂ : Type} [Fintype k₁] [Fintype k₂]
     (A : Matrix m₁ k₁ R) (B : Matrix m₁ k₂ R) (C : Matrix m₂ k₁ R) (D : Matrix m₂ k₂ R) (P : Matrix k₁ l R)
     (Q : Matrix k₂ l R) : fromBlocks A B C D * fromRows P Q = fromRows (A * P + B * Q) (C * P + D * Q) := by
-  ext (i | i) j <;> simp [mul_apply, Fintype.sum_sum_type]
+  ext (i | i) j <;> simp [Matrix.mul_apply, Fintype.sum_sum_type]
+
 
 variable (n₁) in
-
 def rotC : Matrix ((Fin n₁ ⊕ Fin 2) ⊕ (Fin n₁ ⊕ Fin 2)) ((Fin n₁ ⊕ Fin 2) ⊕ (Fin n₁ ⊕ Fin 2)) E :=
   fromBlocks (fromBlocks 1 0 0 !![2⁻¹, 0; 0, 1]) (fromBlocks 0 0 0 !![2⁻¹, 0; 0, -1])
     (fromBlocks 0 0 0 !![0, 2⁻¹; -1, 0]) (fromBlocks 1 0 0 !![0, 2⁻¹; 1, 0])
 
-variable (n₁) in
 
+variable (n₁) in
 def rotCinv : Matrix ((Fin n₁ ⊕ Fin 2) ⊕ (Fin n₁ ⊕ Fin 2)) ((Fin n₁ ⊕ Fin 2) ⊕ (Fin n₁ ⊕ Fin 2)) E :=
   fromBlocks (fromBlocks 1 0 0 !![1, 0; 0, 2⁻¹]) (fromBlocks 0 0 0 !![0, -2⁻¹; 1, 0])
     (fromBlocks 0 0 0 !![1, 0; 0, -2⁻¹]) (fromBlocks 1 0 0 !![0, 2⁻¹; 1, 0])
@@ -194,7 +199,7 @@ theorem rotC_mul_rotCinv [CharZero E] : rotC (E := E) n₁ * rotCinv n₁ = 1 :=
   all_goals (first | rw [← fromBlocks_one] | rw [← fromBlocks_zero] | skip)
   all_goals (congr 1)
   all_goals (try simp)
-  all_goals (ext i j; fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_two] <;> norm_num)
+  all_goals (ext i j; fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two] <;> norm_num)
 
 theorem rotC_map [CharZero E] : (rotC (E := E) n₁).map σ = rotC n₁ := by
   have h2 : σ 2⁻¹ = 2⁻¹ := by rw [map_inv₀, map_ofNat]
@@ -202,7 +207,7 @@ theorem rotC_map [CharZero E] : (rotC (E := E) n₁).map σ = rotC n₁ := by
   congr 1
   all_goals (congr 1)
   all_goals (ext i j)
-  all_goals (first | (fin_cases i <;> fin_cases j <;> simp [h2]) | simp [one_apply, apply_ite])
+  all_goals (first | (fin_cases i <;> fin_cases j <;> simp [h2]) | simp [Matrix.one_apply, apply_ite])
 
 theorem rotC_unitary [CharZero E] (G₁ : Matrix (Fin n₁) (Fin n₁) E) :
     (rotC n₁)ᵀ * fromBlocks (fromBlocks G₁ 0 0 !![0, 1; 1, 0]) 0 0 (-fromBlocks G₁ 0 0 !![0, 1; 1, 0]) * rotC n₁ =
@@ -216,7 +221,7 @@ theorem rotC_unitary [CharZero E] (G₁ : Matrix (Fin n₁) (Fin n₁) E) :
   all_goals (first | rw [← fromBlocks_zero] | skip)
   all_goals (congr 1)
   all_goals (try simp)
-  all_goals (ext i j; fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_two] <;> norm_num)
+  all_goals (ext i j; fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two] <;> norm_num)
 
 end Rot
 
@@ -224,8 +229,8 @@ section RotG
 variable {F E : Type} [Field F] [Field E] [Algebra F E] [CharZero E] {σ : E →ₐ[F] E} {n n₁ : ℕ}
   {J : Matrix (Fin n) (Fin n) E} {J₁ : Matrix (Fin n₁) (Fin n₁) E} {ι : Matrix (Fin n) (Fin n₁) E} {x y : Fin n → E}
 
-variable (σ J J₁ ι x y) in
 
+variable (σ J J₁ ι x y) in
 def rotG : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) E :=
   (Matrix.fromBlocks (frameT ι x y) (0 : Matrix (Fin n) (Fin n₁ ⊕ Fin 2) E) 0 (frameT ι x y) :
       Matrix (Fin n ⊕ Fin n) ((Fin n₁ ⊕ Fin 2) ⊕ (Fin n₁ ⊕ Fin 2)) E) * (rotC n₁ : Matrix _ _ E) *
@@ -238,7 +243,7 @@ theorem map_mul_σ {a b c : Type} [Fintype b] (M : Matrix a b E) (N : Matrix b c
 theorem zero_map_σ {a b : Type} : (0 : Matrix a b E).map σ = 0 := by ext; simp
 
 theorem one_map_σ {a : Type} [DecidableEq a] : (1 : Matrix a a E).map σ = 1 := by
-  ext i j; simp [one_apply, apply_ite]
+  ext i j; simp [Matrix.one_apply, apply_ite]
 
 theorem rotG_mul_diag : rotG σ J J₁ ι x y * (diagCols (Fin n) : Matrix (Fin n ⊕ Fin n) (Fin n) E) =
     fromRows (ι * coef σ J J₁ ι + vecMulVec x (pairVec σ J y)) (ι * coef σ J J₁ ι + vecMulVec x (pairVec σ J x)) := by
@@ -248,7 +253,7 @@ theorem rotG_mul_diag : rotG σ J J₁ ι x y * (diagCols (Fin n) : Matrix (Fin 
   simp only [Matrix.zero_mul, add_zero, zero_add, ← Matrix.add_mul, fromBlocks_add]
   simp only [frameS, frameT, fromBlocks_mul_fromRows', Matrix.one_mul, Matrix.zero_mul, add_zero, zero_add,
     fromCols_mul_fromRows]
-  congr 1 <;> congr 1 <;> ext i j <;> simp [mul_apply, Fin.sum_univ_two, vecMulVec] <;> norm_num
+  congr 1 <;> congr 1 <;> ext i j <;> simp [Matrix.mul_apply, Fin.sum_univ_two, vecMulVec] <;> norm_num
 
 theorem dblT_mul_dblS (hTS : frameT ι x y * frameS σ J J₁ ι x y = 1) :
     fromBlocks (frameT ι x y) 0 0 (frameT ι x y) * fromBlocks (frameS σ J J₁ ι x y) 0 0 (frameS σ J J₁ ι x y) = 1 := by
@@ -320,7 +325,7 @@ theorem map_add_c {a b : Type} (M N : Matrix a b A) : (M + N).map c = M.map c + 
 theorem map_sub_c {a b : Type} (M N : Matrix a b A) : (M - N).map c = M.map c - N.map c := by ext; simp
 
 theorem map_one_c : (1 : Matrix m m A).map c = 1 := by
-  ext i j; by_cases h : i = j <;> simp [one_apply, h]
+  ext i j; by_cases h : i = j <;> simp [Matrix.one_apply, h]
 
 theorem extM_form (hQ : Q * ι = 1) (h2 : Qᵀ * K₁ = K * ι.map c) (h3 : ιᵀ * K = K₁ * Q.map c) (g : Matrix k k A) :
     (extM ι Q g)ᵀ * K * (extM ι Q g).map c =
@@ -348,8 +353,8 @@ theorem extM_unitary (hQ : Q * ι = 1) (h2 : Qᵀ * K₁ = K * ι.map c) (h3 : �
   simp only [extM_one, transpose_one, Matrix.one_mul, Matrix.mul_one, map_one_c] at h1
   rw [extM_form hQ h2 h3, hg]; exact h1.symm
 
-variable (c K K₁ ι Q) in
 
+variable (c K K₁ ι Q) in
 def extHom (hQ : Q * ι = 1) (h2 : Qᵀ * K₁ = K * ι.map c) (h3 : ιᵀ * K = K₁ * Q.map c) : UG c K₁ →* UG c K where
   toFun g := ⟨⟨extM ι Q g.1.1, extM ι Q (g.1⁻¹ : GL k A).1, by rw [extM_mul hQ, Units.mul_inv, extM_one],
     by rw [extM_mul hQ, Units.inv_mul, extM_one]⟩, extM_unitary hQ h2 h3 _ g.2⟩
@@ -371,11 +376,11 @@ theorem extM_mul_self (hQ : Q * ι = 1) (g : Matrix k k A) : extM ι Q g * ι = 
 
 theorem mul_vecMulVec' {a b : Type} [Fintype b] (M : Matrix a b A) (u : b → A) (v : k → A) :
     M * vecMulVec u v = vecMulVec (M *ᵥ u) v := by
-  ext i j; simp [vecMulVec, mul_apply, mulVec, dotProduct, Finset.sum_mul, mul_assoc]
+  ext i j; simp [vecMulVec, Matrix.mul_apply, mulVec, dotProduct, Finset.sum_mul, mul_assoc]
 
 theorem vecMulVec_mul' {a b : Type} [Fintype b] (u : a → A) (v : b → A) (M : Matrix b k A) :
     vecMulVec u v * M = vecMulVec u (v ᵥ* M) := by
-  ext i j; simp [vecMulVec, mul_apply, vecMul, dotProduct, Finset.mul_sum, mul_assoc]
+  ext i j; simp [vecMulVec, Matrix.mul_apply, vecMul, dotProduct, Finset.mul_sum, mul_assoc]
 
 theorem det_extM (hQ : Q * ι = 1) (t : Matrix k k A) : (extM ι Q t).det = t.det := by
   have e : extM ι Q t = 1 + ι * ((t - 1) * Q) := by
@@ -429,7 +434,7 @@ theorem pairVec_vecMul {v : Fin n → E} (hv : ∀ u, form σ J (ι *ᵥ u) v = 
   have := hv (Pi.single k 1)
   simp only [form, dotProduct, mulVec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
     if_true] at this
-  simpa [vecMul, pairVec, mulVec, dotProduct, mul_comm] using this
+  simpa [vecMul, pairVec, mulVec, vecMul, dotProduct, mul_comm] using this
 
 end More
 
@@ -442,7 +447,7 @@ theorem incM_mul' {a b d : Type} [Fintype b] (M : Matrix a b E) (N : Matrix b d 
 theorem incM_add' {a b : Type} (M N : Matrix a b E) : incM F (M + N) = incM F M + incM F N := by ext; simp [incM]
 
 theorem incM_one' {a : Type} [DecidableEq a] : incM F (1 : Matrix a a E) = 1 := by
-  ext i j; by_cases h : i = j <;> simp [incM, one_apply, h]
+  ext i j; by_cases h : i = j <;> simp [incM, Matrix.one_apply, h]
 
 theorem incM_zero' {a b : Type} : incM F (0 : Matrix a b E) = 0 := by ext; simp [incM]
 
@@ -525,7 +530,7 @@ theorem z_part {d : Type} [Fintype d] (z : Matrix d m A) (x a b : m → A) :
     mul_fromCols, Matrix.mul_one, fromBlocks_transpose, transpose_zero, fromCols_mul_fromBlocks]
   simp only [Matrix.mul_zero, add_zero, zero_add, fromCols_add', transpose_add, transpose_mul, Matrix.mul_add,
     Matrix.mul_assoc]
-  congr 1 <;> congr 1 <;> ext i j <;> simp [vecMulVec, mul_apply, mulVec, dotProduct, Finset.sum_mul, mul_comm, mul_left_comm] <;>
+  congr 1 <;> congr 1 <;> ext i j <;> simp [vecMulVec, Matrix.mul_apply, mulVec, dotProduct, Finset.sum_mul, mul_comm, mul_left_comm] <;>
     (rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun _ _ => by ring)
 
 end ExtDiag
@@ -568,11 +573,13 @@ theorem exists_dbl_emb : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
   have hdblX₁ : dbl (incM F X₁.J) = incM F (fromBlocks X₁.J 0 0 (-X₁.J)) := by
     rw [dbl, incM_fromBlocks', incM_zero', incM_neg']
   have hembA : dblEmb (F := F) H.ι = incM F (fromBlocks H.ι 0 0 H.ι) := by
-    rw [dblEmb, incM_fromBlocks', incM_zero']
+    change fromBlocks (incM F H.ι) 0 0 (incM F H.ι) = _
+    rw [incM_fromBlocks', incM_zero']
   have hQdA : (fromBlocks (incM F Q) 0 0 (incM F Q) : Matrix (Fin n₁ ⊕ Fin n₁) (Fin n ⊕ Fin n) (AE F E)) =
       incM F (fromBlocks Q 0 0 Q) := by rw [incM_fromBlocks', incM_zero']
   have hQd : fromBlocks (incM F Q) 0 0 (incM F Q) * dblEmb (F := F) H.ι = 1 := by
-    rw [dblEmb, fromBlocks_multiply, hQA]; simp
+    change fromBlocks (incM F Q) 0 0 (incM F Q) * fromBlocks (incM F H.ι) 0 0 (incM F H.ι) = 1
+    rw [fromBlocks_multiply, hQA]; simp
   have h2d : (fromBlocks (incM F Q) 0 0 (incM F Q))ᵀ * dbl (incM F X₁.J) =
       dbl (incM F X.J) * (dblEmb (F := F) H.ι).map (cA σ) := by
     rw [hdblX, hdblX₁, hembA, hQdA, incM_map_cA, ← incM_transpose', ← incM_mul', ← incM_mul']
@@ -649,7 +656,9 @@ theorem exists_dbl_emb : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
           rw [Matrix.mul_add, Matrix.mul_add, ← Matrix.mul_assoc, hmι, mul_vecMulVec', mul_vecMulVec', hmx', hmy']
         _ = extM (incM F H.ι) (incM F Q) (mat g₁) := by
           rw [extM, ← hIdA]; abel
-    rw [hembv, hgd, dblEmb, hQd_def, extM_diag, extM_one, ← hm]
+    rw [hembv, hgd, hQd_def]
+    change extM (fromBlocks (incM F H.ι) 0 0 (incM F H.ι)) _ _ = _
+    rw [extM_diag, extM_one, ← hm]
   ·
     intro p₁ t₁ hp
     refine ⟨⟨extM (incM F H.ι) (incM F Q) t₁.1, extM (incM F H.ι) (incM F Q) (t₁⁻¹).1,

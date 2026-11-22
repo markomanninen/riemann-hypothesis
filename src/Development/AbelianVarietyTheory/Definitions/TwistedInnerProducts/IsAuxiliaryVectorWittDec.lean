@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TowerEx
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TowerEx
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ structure Pieces.Is (ψ : AddChar (AF D.host.F) ℂ) : Prop where
   dualA' : ∀ a', MxAt (fun _ => True) a' → (a' ∈ p.A₂ ↔ ∀ a ∈ p.A₁, ψ (symplO V W (dV.extX W a) (dV.extY W a')) = 1)
   dualB : ∀ ξ, MxAt (fun _ => True) ξ → (ξ ∈ p.B₁ ↔ ∀ η ∈ p.B₂, ψ (symplO V₀ W (dW.incX V₀ ξ) (dW.incY V₀ η)) = 1)
   dualB' : ∀ η, MxAt (fun _ => True) η → (η ∈ p.B₂ ↔ ∀ ξ ∈ p.B₁, ψ (symplO V₀ W (dW.incX V₀ ξ) (dW.incY V₀ η)) = 1)
-  uni : ∀ u : UX D ρ, MxAt (fun _ => True) (u.1.1 - 1) → x ⬝ u.1.1 - x ∈ p.A₁ → psiUni ψ u.1 = 1
+  uni : ∀ u : UX D ρ, MxAt (fun _ => True) (u.1.1 - 1) → x * u.1.1 - x ∈ p.A₁ → psiUni ψ u.1 = 1
   fin₀ : ∀ u ∈ p.Γ₀, MxAt (fun _ => True) (show Mx D W₀.rank V₀.rank from u)
   vac₀ : ∃ f, VacG ψ V₀ W₀ p.Γ₀ f ∧ f ≠ 0
 
@@ -63,9 +67,9 @@ def cls (ψ : AddChar (AF D.host.F) ℂ) : Set (WO V W → ℂ) :=
     IsLatVac (fun w f => heisO ψ V W w f) (p.Γ₀.map ((dV.ext0 W).comp (dW.inc0 V₀))) Φ}
 
 structure Cond (ψ : AddChar (AF D.host.F) ℂ) (P : GlobalTheory.FinPl.Pl D → Prop) (h : GA D W) : Prop where
-  pt : ∃ u : UX D ρ, ∃ a ∈ p.A₁, MxOff P (mt W h⁻¹ ⬝ (x ⬝ u.1.1) - x - a)
-  shift : ∀ N : Mx D ρ ρ, MxAt P N → (∀ i j, j ≤ i → N i j = 0) → mt W h⁻¹ ⬝ (x ⬝ N) ∈ p.A₁ → psiE ψ (upSum N) = 1
-  iso : ∀ ξ ∈ p.B₁, ∀ ξ' : Mx D σ V₀.rank, MxAt P ξ → mt W h ⬝ dW.incX V₀ ξ = dW.incX V₀ ξ' →
+  pt : ∃ u : UX D ρ, ∃ a ∈ p.A₁, MxOff P (mt W h⁻¹ * (x * u.1.1) - x - a)
+  shift : ∀ N : Mx D ρ ρ, MxAt P N → (∀ i j, j ≤ i → N i j = 0) → mt W h⁻¹ * (x * N) ∈ p.A₁ → psiE ψ (upSum N) = 1
+  iso : ∀ ξ ∈ p.B₁, ∀ ξ' : Mx D σ V₀.rank, MxAt P ξ → mt W h * dW.incX V₀ ξ = dW.incX V₀ ξ' →
     ψ (symplO V₀ W (dW.incAdj V₀ y) (dW.incX V₀ ξ')) = ψ (symplO V₀ W (dW.incAdj V₀ y) (dW.incX V₀ ξ))
 
 def CondK (ψ : AddChar (AF D.host.F) ℂ) (LW : Lat W) (P : GlobalTheory.FinPl.Pl D → Prop) (h : GA D W) : Prop :=
@@ -123,21 +127,6 @@ theorem inK_inv {κ : GA D S} (h : InK S LS P κ) : InK S LS P κ⁻¹ :=
 variable {V₀ W W₀ : HSp D} {ρ σ : ℕ} {dW : HypDec W W₀ σ} {p : Pieces V₀ W W₀ ρ σ} {x : Mx D W.rank ρ} {y : Mx D V₀.rank σ}
   {LW : Lat W} {h κ : GA D W}
 
-theorem CondK.cond (H : CondK dW p x y ψ LW P h) : Cond dW p x y ψ P h := by
-  simpa only [mul_one] using H 1 inK_one
-
-theorem condK_mul (hκ : InK W LW P κ) : CondK dW p x y ψ LW P (h * κ) ↔ CondK dW p x y ψ LW P h :=
-  ⟨fun H k hk => by simpa only [mul_assoc, mul_inv_cancel_left] using H _ (inK_mul (inK_inv hκ) hk),
-    fun H k hk => by simpa only [mul_assoc] using H _ (inK_mul hκ hk)⟩
-
-theorem cosetAt_mul {R : Subgroup (GA D W)} {v : GlobalTheory.FinPl.Pl D} (hκ : InK W LW (· = v) κ) :
-    CosetAt W R LW v (h * κ) ↔ CosetAt W R LW v h :=
-  ⟨fun ⟨r, a, b, k, hk, e⟩ => ⟨r, a, b, _, inK_mul hk (inK_inv hκ), by rw [← mul_assoc, ← e, mul_inv_cancel_right]⟩,
-    fun ⟨r, a, b, k, hk, e⟩ => ⟨r, a, b, _, inK_mul hk hκ, by rw [e, mul_assoc]⟩⟩
-
-theorem cosetAt_of_inK {R : Subgroup (GA D W)} {v : GlobalTheory.FinPl.Pl D} (hκ : InK W LW (· = v) κ) : CosetAt W R LW v κ :=
-  ⟨1, one_mem _, one_mem _, κ, hκ, (one_mul κ).symm⟩
-
 end Stab
 
 variable {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}
@@ -146,14 +135,14 @@ def idLat {n : ℕ} (I : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) (Λ : Subm
     Submodule (𝓞 D.host.E) (Fin n → D.host.E) :=
   Submodule.span (𝓞 D.host.E) {z | ∃ s ∈ I, ∃ y ∈ Λ, z = s • y}
 
-variable (G) in
 
+variable (G) in
 def shiftId : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E :=
   ((G.modul : Ideal (𝓞 D.host.E)) : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) *
     ((G.pl.modulBar sc : Ideal (𝓞 D.host.E)) : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E)⁻¹
 
-variable (G) in
 
+variable (G) in
 def latBig (i : ℕ) : AddSubgroup (WO (G.V (.grid (i + 1) 0)) (G.V (.grid i 0))) :=
   latO _ _ (G.Λ (.grid (i + 1) 0) : Set _) (idLat (shiftId G) (G.Λ (.grid i 0)) : Set _) fun _ => True
 
@@ -195,9 +184,6 @@ abbrev yBF (F : Frames G) (ρ : ℕ) (h : 2 * ρ + 2 ≤ D.R.m) := yZero (F.V₀
 
 def OnStd (Q : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}, G.Weil → Frames G → Prop) : Prop :=
   All fun {_} _ _ _ {G} W _ => ∀ F : Frames G, Std F → Q W F
-
-example {m n : ℕ} : IsBump (0 : Mx D m n → ℂ) :=
-  ⟨continuous_const, HasCompactSupport.zero, ⟨⊤, isOpen_univ, fun _ _ _ _ => rfl⟩, fun _ _ _ _ _ => contDiff_const⟩
 
 end GlobalTheory.AscFin
 

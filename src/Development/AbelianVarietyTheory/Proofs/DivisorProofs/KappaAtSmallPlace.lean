@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassesAt
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassesAt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,7 +32,7 @@ theorem norm_ev_intAf_le {i : E →+* PadicAlgCl l} {ev : FiniteAdeleRing (𝓞 
       exact h.2.1 _ y.2
   | zero => simp
   | one => simp
-  | add x y _ _ hx hy => rw [map_add, map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
   | neg x _ hx => rwa [map_neg, map_neg, norm_neg]
   | mul x y _ _ hx hy => rw [map_mul, map_mul, norm_mul]; exact mul_le_one₀ hx (norm_nonneg _) hy
 
@@ -70,10 +74,6 @@ theorem kapAt (j : Fin D.R.m) (P : Par) (w : HeightOneSpectrum (𝓞 D.what₂.L
         (Formalism.IndefR.Lev.swapAE D (matOf j κ.1 (rk a) (rk c))) = matOf j κ.1 (rk a) (rk c) :=
       (Algebra.TensorProduct.comm D.host.F (FiniteAdeleRing (𝓞 D.host.F) D.host.F) D.host.E).symm_apply_apply _
     rwa [he] at h
-
-theorem kapSt : InRange fun _ _ _ _ p j P _ w => SmallAt p j P w → KapAt p j P w :=
-  ⟨1, one_pos, fun _ _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun _ _ _ _ =>
-    ⟨0, fun _ _ _ _ p _ _ j P _ _ _ w _ _ _ => kapAt p j P w⟩⟩⟩
 
 end Pt
 

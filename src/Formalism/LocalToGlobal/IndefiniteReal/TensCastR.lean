@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.IndefiniteReal.ConjSubConjSub
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
-import ReciprocityTheory.Automorphisms.Unitary
-import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedRowLoc
-import Formalism.LocalToGlobal.Columns.MtRowFrame
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.ConjSubConjSub
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import ReciprocityTheory.Automorphisms.Unitary
+public import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedRowLoc
+public import Formalism.LocalToGlobal.Columns.MtRowFrame
+
+@[expose] public section
 
 noncomputable section
 

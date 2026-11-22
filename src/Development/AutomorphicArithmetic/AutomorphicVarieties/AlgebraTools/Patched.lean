@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ULimTrans
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TowerCompl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.QRegLim
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.QRegScal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.QRegTower
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ULimScal
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ULimTrans
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TowerCompl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.QRegLim
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.QRegScal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.QRegTower
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ULimScal
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct

@@ -1,21 +1,27 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.CoefDataExists
-import Development.WeilBound.CoreStatements.PublishedTheorems.SiegelWeilSchrodinger.SiegelWeilUnitarySchrodingerLit
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaDecompositionUnitary
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelParabolicUnnMatrixBlockUpperTriangular
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.EisensteinMaximalParabolic
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AbsThetaIntegralLeSobolevSeminormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableThetaKernelWeilRange
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SobolevSeminormWeilThetaPolynomialInHeight
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaKernelMulConjCuspFormIntegrableOn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsDetRoot
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsCommonLevelSobolevBoundWeilCompact
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSobolevBoundThetaPointwise
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaSobolevSeminormSubTendstoZeroOfWordsUnif
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsWeilDatumDoubledOfSchrodingerFormulas
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousWeilSchrodingerStandardUnnEvalZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaKernelEqTsumSchrodingerFunctionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardUnitaryChartMemRationalIffStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.CoefDataExists
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SiegelWeilSchrodinger.SiegelWeilUnitarySchrodingerLit
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaDecompositionUnitary
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelParabolicUnnMatrixBlockUpperTriangular
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EisensteinIsotropicLine
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AnalyticOnNhdTsumNpow
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AbsThetaIntegralLeSobolevSeminormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableThetaKernelWeilRange
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SobolevSeminormWeilThetaPolynomialInHeight
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaKernelMulConjCuspFormIntegrableOn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsDetRoot
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsCommonLevelSobolevBoundWeilCompact
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSobolevBoundThetaPointwise
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaSobolevSeminormSubTendstoZeroOfWordsUnif
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsWeilDatumDoubledOfSchrodingerFormulas
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousWeilSchrodingerStandardUnnEvalZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaKernelEqTsumSchrodingerFunctionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardUnitaryChartMemRationalIffStatement
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
@@ -82,7 +88,10 @@ theorem l2_om_tendsto (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ)
   rw [hz] at hsq
   have e : ∀ x : GA D S, l2O μ 𝓕 (om (x, 1) f - f) =
       (∫⁻ w, ‖(om (x, 1) f - f) w‖ₑ ^ 2 ∂μ.restrict 𝓕) ^ (1 / 2 : ℝ) := fun x => by
-    rw [← l2O_sq_eq_lintegral, ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
+    first
+    | rw [← l2O_sq_eq_lintegral μ 𝓕 _ ((hom.om_pres _ f hf).cont.sub hf.cont)]
+    | rw [← l2O_sq_eq_lintegral μ 𝓕 _]
+    rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
     norm_num
   simp only [e]
   have := (ENNReal.continuous_rpow_const (y := (1 / 2 : ℝ))).tendsto 0 |>.comp hsq
@@ -145,7 +154,7 @@ theorem l2_word_tendsto (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam �
       have hor := hom.om_pres (x, 1) _ (hr x)
       have e1 : heisDer ψ θ a (om (x, 1) f) =
           om (x, 1) (heisDer ψ θ a f) + om (x, 1) (Formalism.IndefR.Datum.dRho (heisO ψ S T) θ a.1 (zx x - z) f) := by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         have := GlobalTheory.ThetaDens.WeilCompact.dRho_om hom hθ x 1 a.1 z hf
         refine this.trans (congrArg _ ?_)
         exact dRho_dir_split hψ hθ hf a.1 _ z
@@ -161,7 +170,7 @@ theorem l2_word_tendsto (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam �
       simp only [hzx, inv_one, GlobalTheory.WeilVacMove.mt_one, GlobalTheory.WeilVacMove.compAt_one, Matrix.one_mul, Matrix.mul_one]
     set c : GA D S → ℝ := fun x => ∑ i, ∑ j, (|((zx x - z) i j).re| + |((zx x - z) i j).im|) with hc
     have hcc : Continuous c := by
-      refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+      refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
       have h3 : Continuous fun x => (zx x - z) i j := (hzc.sub continuous_const).matrix_elem i j
       exact (continuous_abs.comp (Complex.continuous_re.comp h3)).add (continuous_abs.comp (Complex.continuous_im.comp h3))
     have hc1 : c 1 = 0 := by simp [hc, hz1]
@@ -188,8 +197,8 @@ theorem l2_word_tendsto (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam �
 theorem sobO_om_tendsto (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ) {μ : Measure (WO S T)} {𝓕 : Set (WO S T)}
     (hμ : IsCovolOne (ratL T S) μ 𝓕) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (d : ℕ) :
     Tendsto (fun x : GA D S => sobO ψ θ μ 𝓕 d (om (x, 1) f - f)) (𝓝 1) (𝓝 0) := by
-  have := tendsto_finset_sum (Finset.range (d + 1)) fun k _ =>
-    tendsto_finset_sum (Finset.univ : Finset (Fin k → D.what₂.Tau × Fin T.rank × Fin S.rank × Bool))
+  have := tendsto_finsetSum (Finset.range (d + 1)) fun k _ =>
+    tendsto_finsetSum (Finset.univ : Finset (Fin k → D.what₂.Tau × Fin T.rank × Fin S.rank × Bool))
       fun a _ => l2_word_tendsto hom hθ hμ (List.ofFn a) f hf
   simp only [Finset.sum_const_zero] at this
   exact this

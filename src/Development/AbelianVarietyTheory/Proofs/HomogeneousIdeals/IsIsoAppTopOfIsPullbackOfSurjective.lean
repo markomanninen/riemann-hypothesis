@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TensorProduct Opposite
 
@@ -27,7 +31,7 @@ theorem mem_map_of_tmul_eq_zero {R A M : Type*} [CommRing R] [CommRing A] [Algeb
       simp only [LinearMap.lTensor_tmul, Submodule.subtype_apply, TensorProduct.rid_tmul,
         Algebra.smul_def]
       exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ (hJ _ (LinearMap.mem_ker.mp r.2)))
-    | add a b ha hb => simpa only [map_add] using Ideal.add_mem _ ha hb
+    | add a b ha hb => simpa only [map_add (f := _)] using Ideal.add_mem _ ha hb
   simpa [hy] using key y
 
 theorem mem_map_of_mul_mem_map {R A : Type*} [CommRing R] [CommRing A] (φ : R →+* A)
@@ -142,7 +146,7 @@ theorem eq_zero_of_forall_affineOpens (x : Γ(X, ⊤))
 
 theorem injective_appTop_of_isPullback (H : IsPullback g q p f) [IsAffine S] [IsAffine T] [Flat p]
     (hf : Function.Injective f.appTop) : Function.Injective g.appTop := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   refine eq_zero_of_forall_affineOpens x fun U ↦ ?_
   have := mem_map_ker_of_app_eq_zero H U.2 (X.presheaf.map (homOfLE (le_top : U.1 ≤ ⊤)).op x) (by
@@ -395,7 +399,7 @@ theorem isIso_appTop_of_section_of_fiber (p : X ⟶ S) [IsAffine S] [IsLocallyNo
   have h1 : p.appTop ≫ e.appTop = 𝟙 _ := by
     rw [← Scheme.Hom.comp_appTop, he, Scheme.Hom.id_appTop]
   have h2 : Function.Injective e.appTop := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     refine eq_zero_of_forall_affineOpens x fun U ↦ ?_
     have := mem_map_of_compatible hq he ⊥
@@ -515,13 +519,6 @@ theorem isIso_appTop_of_isAffine (p : X ⟶ S) [IsAffine S] [IsLocallyNoetherian
   have := isIso_appTop_of_section (pullback.snd p (i ≫ p)) (e := pullback.lift i (𝟙 T) (by simp))
     (pullback.lift_snd _ _ _)
   exact isIso_appTop_of_isPullback_of_surjective (.of_hasPullback p (i ≫ p))
-
-theorem isIso_app (p : X ⟶ S) [IsLocallyNoetherian S] [Flat p]
-    [UniversallyClosed p] [LocallyOfFiniteType p] [GeometricallyIntegral p] (U : S.Opens) :
-    IsIso (p.app U) :=
-  isIso_app_of_forall_affineOpens p (fun V ↦
-    have : IsAffine V.1 := V.2
-    isIso_appTop_of_isAffine (p ∣_ V.1)) U
 
 end Main
 

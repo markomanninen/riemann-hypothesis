@@ -1,30 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
 namespace GlobalTheory.ClassFin
-
-theorem AdelicPair.exists_mul_mem {R : Type} [CommRing R] [Algebra ℚ R] {R₀ : Subring R}
-    (h : AdelicPair R R₀) (r : R) : ∃ M : ℕ, 0 < M ∧ (M : R) * r ∈ R₀ := by
-  obtain ⟨q, a, ha, e⟩ := h.approx 1 one_pos r
-  refine ⟨q.den, q.den_pos, ?_⟩
-  have h1 : (q.den : R) * algebraMap ℚ R q = (q.num : R) := by
-    rw [← map_natCast (algebraMap ℚ R), ← map_mul, ← map_intCast (algebraMap ℚ R)]
-    congr 1
-    exact Rat.den_mul_eq_num q
-  rw [e, mul_add, h1]
-  exact R₀.add_mem (intCast_mem R₀ _)
-    (R₀.mul_mem (natCast_mem R₀ _) (R₀.mul_mem (natCast_mem R₀ _) ha))
-
-theorem AdelicPair.exists_mul_mem_family {R : Type} [CommRing R] [Algebra ℚ R] {R₀ : Subring R}
-    (h : AdelicPair R R₀) (κ : Type) [Fintype κ] (r : κ → R) :
-    ∃ M : ℕ, 0 < M ∧ ∀ k, (M : R) * r k ∈ R₀ := by
-  classical
-  choose m hm hmem using fun k => h.exists_mul_mem (r k)
-  refine ⟨∏ k, m k, Finset.prod_pos fun k _ => hm k, fun k => ?_⟩
-  rw [← Finset.prod_erase_mul Finset.univ m (Finset.mem_univ k), Nat.cast_mul, mul_assoc]
-  exact R₀.mul_mem (natCast_mem R₀ _) (hmem k)
 
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct in
@@ -38,9 +22,9 @@ private lemma exists_pos_nat_clearing_rat_denominators {κ : Type} [Fintype κ] 
   calc ((q k).den : ℚ) * m * q k = m * (q k * (q k).den) := by ring
     _ = m * (q k).num := by rw [Rat.mul_den_eq_num]
 
+
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct in
-
 theorem _root_.GlobalTheory.ClassFin.adelicPair_elementary : ∀ (R : Type) [CommRing R] [Algebra ℚ R] (R₀ : Subring R), _root_.GlobalTheory.ClassFin.AdelicPair R R₀ → (∀ M : ℕ, 0 < M → ∀ r ∈ R₀, ∃ z : ℤ, ∃ a ∈ R₀, r = (z : R) + (M : R) * a) ∧ (∀ (κ : Type) [Fintype κ] (r : κ → R), ∃ M : ℕ, 0 < M ∧ ∀ k, (M : R) * r k ∈ R₀) ∧ Function.Injective (algebraMap ℚ R) := by
   intro R _ _ R₀ hR
   refine ⟨fun M hM r hr => ?_, fun κ _ r => ?_, ?_⟩

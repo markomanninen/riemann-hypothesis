@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsFactorizationNearRootOfUnityHenselian
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsTwoChartAdjoinRootLaurent
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsMonicLaurentPolynomialNearRootOfUnity
-import Development.AutomorphicArithmetic.CommutativeAlgebra.RootsOfUnityLiftModNilpotentUnique
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsFactorizationNearRootOfUnityHenselian
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsTwoChartAdjoinRootLaurent
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsMonicLaurentPolynomialNearRootOfUnity
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.RootsOfUnityLiftModNilpotentUnique
+
+@[expose] public section
 
 noncomputable section
 open IsLocalRing UpperTheory.Et
@@ -21,7 +25,7 @@ private lemma mm_map {A E D : Type} [CommRing A] [IsLocalRing A] [CommRing E] [A
       rw [AlgHom.map_smul_of_tower]
       exact Submodule.smul_mem_smul hr (h y hy))
     (fun a b ha hb => by
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem ha hb)
 
 private lemma adjoin_map {A E D : Type} [CommRing A] [CommRing E] [Algebra A E] [CommRing D] [Algebra A D]
@@ -73,7 +77,7 @@ private lemma unity_ratio {A D : Type} [CommRing A] [CommRing D] [IsDomain D] [A
     obtain ⟨η, hη⟩ := root_mem ((algebraMap D (FractionRing D)).comp C.val.toRingHom) hC
       (algebraMap D (FractionRing D) a / algebraMap D (FractionRing D) b) q
       (Polynomial.X ^ q - Polynomial.C 1) (Polynomial.monic_X_pow_sub_C 1 hq.ne')
-      (Polynomial.natDegree_X_pow_sub_C)
+      (Polynomial.natDegree_X_pow_sub_C 1)
       (by simp [div_pow, ← map_pow, h, div_self hbq])
     have hη' : algebraMap D (FractionRing D) (η : D) = algebraMap D (FractionRing D) a / algebraMap D (FractionRing D) b := hη
     refine ⟨η, η.2, ?_, ?_⟩
@@ -86,7 +90,7 @@ private lemma qth_root {A D : Type} [CommRing A] [CommRing D] [IsDomain D] [Alge
     (S : Subalgebra A D) (hS : Roots S) (q : ℕ) (hq : 0 < q) (c : D) (hc : c ∈ S) :
     ∃ u ∈ S, u ^ q = c := by
   obtain ⟨a, ha⟩ := hS (Polynomial.X ^ q - Polynomial.C ⟨c, hc⟩) (Polynomial.monic_X_pow_sub_C _ hq.ne')
-    (by rw [Polynomial.natDegree_X_pow_sub_C]; exact hq)
+    (by rw [Polynomial.natDegree_X_pow_sub_C _]; exact hq)
   refine ⟨a, a.2, ?_⟩
   simp only [Polynomial.eval_sub, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C] at ha
   have := congrArg Subtype.val (sub_eq_zero.mp ha)

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.SlopeAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.QuadLift
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.SlopeAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.QuadLift
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Int
 

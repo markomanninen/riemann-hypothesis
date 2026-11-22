@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnramifiedSameDiagonal.UpFSame
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.DiaConj
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.HeckeRamifiedZeroOfMatchingsAndDu
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnramifiedSameDiagonal.UpFSame
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.DiaConj
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.HeckeRamifiedZeroOfMatchingsAndDu
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +15,9 @@ open NumberField IsDedekindDomain Matrix CrossDiaZero
 
 variable {D : D7} {u : D.what₂.Word}
 
+
 set_option maxHeartbeats 8000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem upSame_one (T : Forms0 D u) (v : (D.mem u).A.vT) (a : ((D.mem u).A.Fv v)ˣ) (k : ℤ)
     (hk : (k : (D.mem u).A.Fv v) = a) (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
     (hδ : IsDia T.cls0.lev (T.atT.eV v).1 (T.atT.eV v).2 k δ) (c c2 : (D.mem u).C.cls 0)
@@ -40,7 +44,7 @@ theorem upSame_one (T : Forms0 D u) (v : (D.mem u).A.vT) (a : ((D.mem u).A.Fv v)
 
   have hδ' := Formalism.L2.GlobalTheoryTheory.UnramifiedDiagonal.isDia_conj T.cls0.lev (T.atT.eV v).1 (T.atT.eV v).2 hδ κ
   have hcl := T.val0.dil v a k hk c1 _ hδ'
-  obtain ⟨hh, hhH, κ0, hκK, e⟩ := (DoubleCoset.eq _ _ _ _).1 hcl
+  obtain ⟨hh, hhH, κ0, hκK, e⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 hcl
   have hκ0 : κ0.1 ∈ T.cls0.lev.U := hκK
   obtain ⟨γ', hγ', hge⟩ := Subgroup.mem_map.1 (Subgroup.mem_subgroupOf.1 hhH)
   have hx1 : (T.cls0.y c1 * Formalism.L2.GlobalTheoryTheory.UnramifiedDiagonal.conjPt T.cls0.lev δ κ).1 =
@@ -149,9 +153,9 @@ theorem upSame_one (T : Forms0 D u) (v : (D.mem u).A.vT) (a : ((D.mem u).A.Fv v)
   rw [efin]
   exact mul_mem hmm κd.2
 
+
 set_option maxHeartbeats 8000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem upSame (T : Forms0 D u) : Formalism.L2.GlobalTheoryTheory.UnramifiedDiagonal.UpDiaSame0F T := by
   intro v a k hk δ hδ c γd hγd κd hx
   set c2 := (D.fm u).dil 0 v a c with hc2

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineHomOfFlatQuotientOfAffineKernel
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RingHomFlatCodescendsAlongFaithfullyFlat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineHomOfFlatQuotientOfAffineKernel
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RingHomFlatCodescendsAlongFaithfullyFlat
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,8 +51,8 @@ theorem IsInvariant.smul_comp {q : X ⟶ Y} (h : IsInvariant G q) {T : Over S} (
     (g • x) ≫ q = x ≫ q := by
   rw [Hom.smul_def, Category.assoc, h, lift_snd_assoc]
 
-variable {G} in
 
+variable {G} in
 def IsInvariant.desc {q : X ⟶ Y} (h : IsInvariant G q) : orbitPresheaf G X ⟶ yoneda.obj Y where
   app T := ↾(Quotient.lift (fun x => x ≫ q) (by
     rintro _ y ⟨g, rfl⟩
@@ -100,28 +104,29 @@ theorem IsFppfTorsor.existsUnique_smul (h : IsFppfTorsor G q) {T : Over S} (x y 
       · rw [h.1.lift_snd, lift_snd]
     rw [← this, lift_fst]
 
-set_option backward.isDefEq.respectTransparency.types false in
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem IsFppfTorsor.of_descendsAlong (h : IsFppfTorsor G q) (P : MorphismProperty Scheme.{u})
     [P.IsStableUnderBaseChange] [IsZariskiLocalAtTarget P]
     [P.DescendsAlong (@Surjective ⊓ @Flat ⊓ @QuasiCompact)] (hG : P G.hom) : P q.left := by
-  obtain ⟨hp, J, U, f, hf, hs, hl⟩ := h
-  choose s hl using hl
-  have hp' : IsPullback (γ[G, X] : G ⊗ X ⟶ X).left (snd G X).left q.left q.left := hp.map (Over.forget S)
-  have h1 : P (snd G X).left := MorphismProperty.pullback_snd (P := P) G.hom X.hom hG
-  have e : Sigma.desc s ≫ q.left = Sigma.desc f := by
-    ext i; simp [hl]
-  have hq := (IsPullback.of_hasPullback (snd G X).left (Sigma.desc s)).flip.paste_vert hp'.flip
-  rw [e] at hq
-  have := fun i => (hf i).1
-  have := fun i => (hf i).2
-  refine MorphismProperty.of_isPullback_of_descendsAlong (P := P)
-    (Q := @Surjective ⊓ @Flat ⊓ @LocallyOfFinitePresentation) hq ⟨⟨⟨fun y => ?_⟩, ?_⟩, ?_⟩
-    (MorphismProperty.pullback_snd _ _ h1)
-  · obtain ⟨i, z, rfl⟩ := hs y
-    exact ⟨Sigma.ι U i z, by rw [← Scheme.Hom.comp_apply, Sigma.ι_desc]⟩
-  · exact IsZariskiLocalAtSource.sigmaDesc fun i => inferInstance
-  · exact IsZariskiLocalAtSource.sigmaDesc fun i => inferInstance
+  set_option backward.isDefEq.respectTransparency.types false in
+    obtain ⟨hp, J, U, f, hf, hs, hl⟩ := h
+    choose s hl using hl
+    have hp' : IsPullback (γ[G, X] : G ⊗ X ⟶ X).left (snd G X).left q.left q.left := hp.map (Over.forget S)
+    have h1 : P (snd G X).left := MorphismProperty.pullback_snd (P := P) G.hom X.hom hG
+    have e : Sigma.desc s ≫ q.left = Sigma.desc f := by
+      ext i; simp [hl]
+    have hq := (IsPullback.of_hasPullback (snd G X).left (Sigma.desc s)).flip.paste_vert hp'.flip
+    rw [e] at hq
+    have := fun i => (hf i).1
+    have := fun i => (hf i).2
+    refine MorphismProperty.of_isPullback_of_descendsAlong (P := P)
+      (Q := @Surjective ⊓ @Flat ⊓ @LocallyOfFinitePresentation) hq ⟨⟨⟨fun y => ?_⟩, ?_⟩, ?_⟩
+      (MorphismProperty.pullback_snd _ _ h1)
+    · obtain ⟨i, z, rfl⟩ := hs y
+      exact ⟨Sigma.ι U i z, by rw [← Scheme.Hom.comp_apply, Sigma.ι_comp_desc]⟩
+    · exact IsZariskiLocalAtSource.sigmaDesc fun i => inferInstance
+    · exact IsZariskiLocalAtSource.sigmaDesc fun i => inferInstance
 
 theorem IsFppfTorsor.surjective (h : IsFppfTorsor G q) : Surjective q.left := by
   obtain ⟨-, J, U, f, -, hs, hl⟩ := h
@@ -130,20 +135,21 @@ theorem IsFppfTorsor.surjective (h : IsFppfTorsor G q) : Surjective q.left := by
   obtain ⟨s, e⟩ := hl i
   exact ⟨s z, by rw [← Scheme.Hom.comp_apply, e]⟩
 
-set_option backward.isDefEq.respectTransparency.types false in
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem IsFppfTorsor.isFiniteLocallyFree {S : Scheme.{0}} {G X Y : Over S} [GrpObj G] [ModObj G X] {q : X ⟶ Y}
     (h : IsFppfTorsor G q) (hG : IsFiniteLocallyFree G.hom) : IsFiniteLocallyFree q.left := by
-  obtain ⟨h1, h2, h3⟩ := hG
-  have := isAffineHom_descendsAlong_fpqc.{0}
-  have := flat_descendsAlong_fpqc
-  have a2 : IsAffineHom q.left := h.of_descendsAlong @IsAffineHom (inferInstanceAs (IsAffineHom G.hom))
-  have a3 : UniversallyClosed q.left :=
-    h.of_descendsAlong @UniversallyClosed (inferInstanceAs (UniversallyClosed G.hom))
-  have a4 : LocallyOfFinitePresentation q.left := h.of_descendsAlong @LocallyOfFinitePresentation h3
-  exact ⟨(IsFinite.iff_isIntegralHom_and_locallyOfFiniteType _).mpr
-    ⟨IsIntegralHom.iff_universallyClosed_and_isAffineHom.mpr ⟨a3, a2⟩, inferInstance⟩,
-    h.of_descendsAlong @Flat h2, a4⟩
+  set_option backward.isDefEq.respectTransparency.types false in
+    obtain ⟨h1, h2, h3⟩ := hG
+    have := isAffineHom_descendsAlong_fpqc.{0}
+    have := flat_descendsAlong_fpqc
+    have a2 : IsAffineHom q.left := h.of_descendsAlong @IsAffineHom (inferInstanceAs (IsAffineHom G.hom))
+    have a3 : UniversallyClosed q.left :=
+      h.of_descendsAlong @UniversallyClosed (inferInstanceAs (UniversallyClosed G.hom))
+    have a4 : LocallyOfFinitePresentation q.left := h.of_descendsAlong @LocallyOfFinitePresentation h3
+    exact ⟨(IsFinite.iff_isIntegralHom_and_locallyOfFiniteType _).mpr
+      ⟨IsIntegralHom.iff_universallyClosed_and_isAffineHom.mpr ⟨a3, a2⟩, inferInstance⟩,
+      h.of_descendsAlong @Flat h2, a4⟩
 
 theorem IsFppfTorsor.isFppfQuotient (h : IsFppfTorsor G q) : IsFppfQuotient G q := by
   refine ⟨h.1.w, ?_, ?_⟩

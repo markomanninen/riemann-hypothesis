@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodChi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodChi
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions GlobalTheory.Mem GlobalTheory.MemN NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial
@@ -84,7 +88,8 @@ theorem exists_primitive (G : Type) [Group G] [Finite G] :
     have h' := congrFun h i
     rw [Pi.single_eq_same] at h'
     exact one_ne_zero h'
-  · rw [← map_sum, Finset.univ_sum_single, ← map_one φ.symm]; rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← map_sum, Finset.univ_sum_single, ← map_one φ.symm]; rfl
   · have hc : ∀ y, φ z * y = y * φ z := by
       intro y
       obtain ⟨x, rfl⟩ := φ.surjective y
@@ -100,7 +105,8 @@ theorem exists_primitive (G : Type) [Group G] [Finite G] :
     choose c hc' using h1
     have h2 : z = ∑ i, c i • φ.symm (Pi.single i 1) := by
       apply φ.injective
-      simp only [map_sum, map_smul, AlgEquiv.apply_symm_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, AlgEquiv.apply_symm_apply]
       funext j
       rw [hc', Finset.sum_apply, Finset.sum_eq_single j]
       · simp
@@ -131,7 +137,7 @@ theorem exists_family {G S : Type} [Group G] [Finite G] (c : G → S) (hc : Func
     intro a ha s
     obtain ⟨x, rfl⟩ := hc s
     have := congrArg (fun w : MonoidAlgebra ℂ G => w.coeff x) ha
-    simpa [hz, Finsupp.finset_sum_apply] using this
+    simpa [hz, Finsupp.finsetSum_apply] using this
   have hcard : Fintype.card S ≤ Fintype.card (Fin n) := by
     have := linearIndependent_le_span_aux' z hli (Set.range p) (by rintro _ ⟨s, rfl⟩; exact h6 _ (hzc s))
     exact this.trans (Fintype.card_range_le p)

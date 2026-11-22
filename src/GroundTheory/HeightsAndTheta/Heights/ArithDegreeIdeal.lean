@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithDegreeExact
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithDegreeExact
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -21,9 +26,6 @@ instance submodule_projective {E : Type*} [AddCommGroup E] [Module (𝓞 K) E]
   have : Module.IsTorsionFree (𝓞 K) F := inferInstance
   exact projective_of_isTorsionFree F
 
-example (I : Ideal (𝓞 K)) : Module.Projective (𝓞 K) I := inferInstance
-example (I : Ideal (𝓞 K)) : Module.Finite (𝓞 K) I := inferInstance
-
 section Comap
 
 variable {E E' : Type*} [AddCommGroup E] [Module (𝓞 K) E] [Module.Finite (𝓞 K) E]
@@ -35,27 +37,24 @@ def fibreMap (σ : K →+* ℂ) (f : E' →ₗ[𝓞 K] E) : Fibre σ E' →ₗ[�
   map_add' := map_add _
   map_smul' := lTensor_complex_smul σ f
 
-omit [NumberField K] [Module.Finite (𝓞 K) E] [Module.Projective (𝓞 K) E]
-  [Module.Finite (𝓞 K) E'] [Module.Projective (𝓞 K) E'] in
-theorem fibreMap_tmul (σ : K →+* ℂ) (f : E' →ₗ[𝓞 K] E) (z : ComplexAt σ) (e : E') :
-    fibreMap σ f (z ⊗ₜ e) = z ⊗ₜ f e := rfl
+
 
 omit [Module.Finite (𝓞 K) E] [Module.Projective (𝓞 K) E] [Module.Finite (𝓞 K) E']
   [Module.Projective (𝓞 K) E'] in
-
 theorem fibreMap_injective (σ : K →+* ℂ) {f : E' →ₗ[𝓞 K] E} (hf : Function.Injective f) :
     Function.Injective (fibreMap σ f) :=
   Module.Flat.lTensor_preserves_injective_linearMap f hf
 
+
 omit [NumberField K] [Module.Finite (𝓞 K) E] [Module.Projective (𝓞 K) E]
   [Module.Finite (𝓞 K) E'] [Module.Projective (𝓞 K) E'] in
-
 theorem conjMap_fibreMap (σ : K →+* ℂ) (f : E' →ₗ[𝓞 K] E) (x : Fibre σ E') :
     conjMap σ E (fibreMap σ f x) = fibreMap (conjugate σ) f (conjMap σ E' x) := by
   induction x using TensorProduct.induction_on with
-  | zero => simp only [map_zero]
+  | zero => rw [(fibreMap σ f).map_zero, (conjMap σ E).map_zero,
+      (conjMap σ E').map_zero, (fibreMap (conjugate σ) f).map_zero]
   | tmul z e => rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 def HermitianMetric.comap (h : HermitianMetric K E) (f : E' →ₗ[𝓞 K] E)
     (hf : Function.Injective f) : HermitianMetric K E' where
@@ -133,9 +132,6 @@ theorem arithDegree_ideal {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) :
   · ring
   · exact_mod_cast Int.natAbs_ne_zero.mpr (Algebra.norm_ne_zero_iff.mpr ha)
   · exact hN.ne'
-
-example : (HermitianBundle.ideal (⊤ : Ideal (𝓞 K))).arithDegree = 0 := by
-  rw [arithDegree_ideal top_ne_bot, Ideal.absNorm_top, Nat.cast_one, Real.log_one, neg_zero]
 
 theorem HermitianBundle.degree_eq_arithDegree (E : HermitianBundle K)
     (F : Submodule (𝓞 K) E.carrier) :

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockEOfIsBlockSum
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockEOfIsBlockSum
+
+@[expose] public section
 
 noncomputable section
 

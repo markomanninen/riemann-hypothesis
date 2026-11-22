@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.StatementF
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
-import GroundTheory.LocalFields.FilteredSurj
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.StatementF
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
+public import GroundTheory.LocalFields.FilteredSurj
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,9 +22,6 @@ theorem mem_intL_of {σ : L →+* L} (hσ : ∀ x, Valued.v (σ x) = Valued.v x)
 
 def sigO (σ : L →+* L) (hσ : ∀ x, Valued.v (σ x) = Valued.v x) : intL L →+* intL L :=
   σ.restrict (intL L) (intL L) fun _ hx => mem_intL_of hσ hx
-
-@[simp] theorem coe_sigO (σ : L →+* L) (hσ : ∀ x, Valued.v (σ x) = Valued.v x) (x : intL L) :
-    ((sigO σ hσ x : intL L) : L) = σ x := rfl
 
 def piO {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) : intL L :=
   ⟨ϖ, by
@@ -45,27 +46,27 @@ def unitFil {R : Type} [CommRing R] (I : Ideal R) : Subgroup Rˣ where
 
 theorem mem_unitFil {R : Type} [CommRing R] {I : Ideal R} {u : Rˣ} : u ∈ unitFil I ↔ (u : R) - 1 ∈ I := Iff.rfl
 
-def piPow {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (sigO σ h.2.1)) (m : ℕ) :
-    Ideal (GlobalTheory.UTr.Alg P) :=
-  Ideal.span {algebraMap (intL L) (GlobalTheory.UTr.Alg P) (piO h) ^ m}
+def piPow {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) (m : ℕ) :
+    Ideal (AdjoinRoot P.1) :=
+  Ideal.span {algebraMap (intL L) (AdjoinRoot P.1) (piO h) ^ m}
 
-def filt {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (sigO σ h.2.1)) (m : ℕ) :
-    Subgroup (GlobalTheory.UTr.Alg P)ˣ :=
+def filt {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) (m : ℕ) :
+    Subgroup (AdjoinRoot P.1)ˣ :=
   unitFil (piPow h P m)
 
-theorem mem_filt {ϖ : L} {σ : L →+* L} {q : ℕ} {h : IsUnramInv ϖ σ q} {P : GlobalTheory.UTr.Csr (sigO σ h.2.1)} {m : ℕ}
-    {u : (GlobalTheory.UTr.Alg P)ˣ} : u ∈ filt h P m ↔ (u : GlobalTheory.UTr.Alg P) - 1 ∈ piPow h P m := Iff.rfl
+theorem mem_filt {ϖ : L} {σ : L →+* L} {q : ℕ} {h : IsUnramInv ϖ σ q} {P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)} {m : ℕ}
+    {u : (AdjoinRoot P.1)ˣ} : u ∈ filt h P m ↔ (u : AdjoinRoot P.1) - 1 ∈ piPow h P m := Iff.rfl
 
-theorem piPow_antitone {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (sigO σ h.2.1)) :
+theorem piPow_antitone {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) :
     Antitone (piPow h P) := fun a b hab => by
   unfold piPow
   rw [Ideal.span_singleton_le_span_singleton]
   exact pow_dvd_pow _ hab
 
-theorem filt_antitone {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (sigO σ h.2.1)) :
+theorem filt_antitone {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) :
     Antitone (filt h P) := fun a b hab _ hu => piPow_antitone h P hab hu
 
-theorem filt_zero {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (sigO σ h.2.1)) :
+theorem filt_zero {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) :
     filt h P 0 = ⊤ := by
   ext u; simp [filt, mem_unitFil, piPow]
 
@@ -102,21 +103,23 @@ theorem piO_mem_of_isMaximal {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv
   exact hM.ne_top (M.eq_top_of_isUnit_mem hi hu)
 
 theorem isUnit_one_add_piO_mul {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q)
-    (P : GlobalTheory.UTr.Csr (sigO σ h.2.1)) (a : GlobalTheory.UTr.Alg P) :
-    IsUnit (1 + algebraMap (intL L) (GlobalTheory.UTr.Alg P) (piO h) * a) := by
+    (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) (a : AdjoinRoot P.1) :
+    IsUnit (1 + algebraMap (intL L) (AdjoinRoot P.1) (piO h) * a) := by
   by_contra hn
-  obtain ⟨M, hM, hxM⟩ := Ideal.exists_le_maximal (Ideal.span {1 + algebraMap (intL L) (GlobalTheory.UTr.Alg P) (piO h) * a})
+  obtain ⟨M, hM, hxM⟩ := Ideal.exists_le_maximal (Ideal.span {1 + algebraMap (intL L) (AdjoinRoot P.1) (piO h) * a})
     (by rwa [Ne, Ideal.span_singleton_eq_top])
-  have hmax := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := intL L) M
-  have hϖ : algebraMap (intL L) (GlobalTheory.UTr.Alg P) (piO h) ∈ M := piO_mem_of_isMaximal h hmax
-  have h1 : 1 + algebraMap (intL L) (GlobalTheory.UTr.Alg P) (piO h) * a ∈ M := hxM (Ideal.mem_span_singleton_self _)
-  have : (1 : GlobalTheory.UTr.Alg P) ∈ M := by
+  letI : Module.Finite (intL L) (AdjoinRoot P.1) := .of_basis (AdjoinRoot.powerBasis' P.2.1).basis
+  have hmax := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap (intL L) (AdjoinRoot P.1))
+    (RingHom.IsIntegral.of_finite (RingHom.finite_algebraMap.mpr inferInstance)) M
+  have hϖ : algebraMap (intL L) (AdjoinRoot P.1) (piO h) ∈ M := piO_mem_of_isMaximal h hmax
+  have h1 : 1 + algebraMap (intL L) (AdjoinRoot P.1) (piO h) * a ∈ M := hxM (Ideal.mem_span_singleton_self _)
+  have : (1 : AdjoinRoot P.1) ∈ M := by
     have := M.sub_mem h1 (M.mul_mem_right a hϖ)
     simpa using this
   exact hM.ne_top ((Ideal.eq_top_iff_one M).2 this)
 
 theorem isUnit_of_sub_one_mem {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q)
-    (P : GlobalTheory.UTr.Csr (sigO σ h.2.1)) {m : ℕ} (hm : 1 ≤ m) {x : GlobalTheory.UTr.Alg P} (hx : x - 1 ∈ piPow h P m) :
+    (P : GlobalTheory.UTr.Csr (s := sigO σ h.2.1)) {m : ℕ} (hm : 1 ≤ m) {x : AdjoinRoot P.1} (hx : x - 1 ∈ piPow h P m) :
     IsUnit x := by
   have hx1 : x - 1 ∈ piPow h P 1 := piPow_antitone h P hm hx
   unfold piPow at hx1

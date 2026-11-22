@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.DecBoundJ
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormula
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.DecBoundJ
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormula
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,7 +17,9 @@ variable {n : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] 
 
 theorem wAct_append {M : Type*} [AddCommGroup M] [Module ℂ M] (E : Fin n → Fin n → Module.End ℂ M) :
     ∀ (w : List (Fin n × Fin n)) (p : Fin n × Fin n), wAct E (w ++ [p]) = wAct E w * E p.1 p.2
-  | [], p => by simp [wAct]
+  | [], p => by
+    change E p.1 p.2 * 1 = 1 * E p.1 p.2
+    rw [mul_one, one_mul]
   | q :: w, p => by
     show E q.1 q.2 * wAct E (w ++ [p]) = E q.1 q.2 * wAct E w * E p.1 p.2
     rw [wAct_append E w p, mul_assoc]
@@ -23,14 +29,16 @@ theorem NE_nonneg (E : Fin n → Fin n → Module.End ℂ D) (j : ℕ) (x : D) :
 
 theorem NE_add (E : Fin n → Fin n → Module.End ℂ D) (j : ℕ) (x y : D) :
     NE E j (x + y) ≤ NE E j x + NE E j y := by
-  simp only [NE, ← sum_add_distrib]
+  delta NE
+  simp only [← sum_add_distrib]
   refine sum_le_sum fun l _ => sum_le_sum fun w _ => ?_
-  rw [map_add, Submodule.coe_add]
+  rw [map_add (f := _), Submodule.coe_add]
   exact norm_add_le _ _
 
 theorem NE_smul (E : Fin n → Fin n → Module.End ℂ D) (j : ℕ) (c : ℂ) (x : D) :
     NE E j (c • x) = ‖c‖ * NE E j x := by
-  simp only [NE, mul_sum, map_smul, Submodule.coe_smul, norm_smul]
+  delta NE
+  simp only [mul_sum, map_smul, Submodule.coe_smul, norm_smul]
 
 theorem NE_zero (E : Fin n → Fin n → Module.End ℂ D) (j : ℕ) : NE E j 0 = 0 := by
   simpa using NE_smul E j 0 0
@@ -53,19 +61,17 @@ theorem NE_mono (E : Fin n → Fin n → Module.End ℂ D) {j j' : ℕ} (h : j �
     sum_nonneg fun _ _ => norm_nonneg _
 
 theorem NE_zero_eq (E : Fin n → Fin n → Module.End ℂ D) (x : D) : NE E 0 x = ‖((x : D) : H)‖ := by
-  simp [NE, wAct]
+  delta NE
+  have hw : wAct E [] = 1 := rfl
+  simp [hw]
 
 theorem NT_nonneg (E : Fin n → Fin n → Module.End ℂ D) (j : ℕ) (f : Fin n → D) : 0 ≤ NT E j f :=
   sum_nonneg fun _ _ => NE_nonneg E j _
 
-theorem NT_add (E : Fin n → Fin n → Module.End ℂ D) (j : ℕ) (f g : Fin n → D) :
-    NT E j (f + g) ≤ NT E j f + NT E j g := by
-  simp only [NT, ← sum_add_distrib]
-  exact sum_le_sum fun c _ => NE_add E j _ _
-
 theorem NT_smul (E : Fin n → Fin n → Module.End ℂ D) (j : ℕ) (c : ℂ) (f : Fin n → D) :
     NT E j (c • f) = ‖c‖ * NT E j f := by
-  simp only [NT, mul_sum, Pi.smul_apply, NE_smul]
+  delta NT
+  simp only [mul_sum, Pi.smul_apply, NE_smul]
 
 theorem NT_mono (E : Fin n → Fin n → Module.End ℂ D) {j j' : ℕ} (h : j ≤ j') (f : Fin n → D) :
     NT E j f ≤ NT E j' f :=
@@ -85,7 +91,7 @@ theorem NE_apply_le (E : Fin n → Fin n → Module.End ℂ D) (j : ℕ) (a b : 
     have e : ∀ w : Fin l → Fin n × Fin n, ‖((wAct E (List.ofFn w) (E a b x) : D) : H)‖ =
         ‖((wAct E (List.ofFn (Fin.snoc w (a, b) : Fin (l + 1) → Fin n × Fin n)) x : D) : H)‖ := by
       intro w
-      rw [e0, Module.End.mul_apply]
+      rw [e0, mul_apply_eq_comp]
     simp_rw [e]
     have hinj : Function.Injective (fun w : Fin l → Fin n × Fin n => (Fin.snoc w (a, b) : Fin (l + 1) → Fin n × Fin n)) :=
       fun w w' h => funext fun i => by simpa using congrFun h i.castSucc
@@ -124,7 +130,8 @@ theorem NT_eeF_le (dual : Bool) (E : Fin n → Fin n → Module.End ℂ D) (j : 
       rw [eeVd_coord, NE_neg]
       exact (NE_sum E j _ _).trans (sum_le_sum fun c _ => NE_apply_le E j _ _ _)
   calc ∑ d, NE E j (eeF dual E f d) ≤ ∑ _d : Fin n, NT E (j + 1) f := sum_le_sum fun d _ => e1 d
-    _ = (n : ℝ) * NT E (j + 1) f := by simp [NT]
+    _ = (n : ℝ) * NT E (j + 1) f := by
+        simp only [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul]
     _ ≤ _ := by
         refine mul_le_mul_of_nonneg_right ?_ (NT_nonneg E _ f)
         rcases Nat.eq_zero_or_pos n with h | h
@@ -139,14 +146,14 @@ theorem NT_poly_le (dual : Bool) (E : Fin n → Fin n → Module.End ℂ D) (p :
     | zero => intro j f; simp
     | succ i ih =>
       intro j f
-      rw [pow_succ', Module.End.mul_apply]
+      rw [pow_succ', mul_apply_eq_comp]
       refine (NT_eeF_le dual E j _).trans ?_
       calc (n : ℝ) ^ 2 * NT E (j + 1) (((eeF dual E) ^ i) f) ≤ (n : ℝ) ^ 2 * (((n : ℝ) ^ 2) ^ i * NT E (j + 1 + i) f) :=
             mul_le_mul_of_nonneg_left (ih _ f) (by positivity)
         _ = _ := by rw [show j + 1 + i = j + (i + 1) by omega]; ring
   refine ⟨∑ i ∈ range (p.natDegree + 1), ‖p.coeff i‖ * ((n : ℝ) ^ 2) ^ i, fun f => ?_⟩
   rw [Polynomial.aeval_eq_sum_range, LinearMap.sum_apply, sum_mul]
-  simp only [NT]
+  delta NT
   calc ∑ c, NE E j ((∑ i ∈ range (p.natDegree + 1), (p.coeff i • (eeF dual E) ^ i) f) c)
       ≤ ∑ c, ∑ i ∈ range (p.natDegree + 1), NE E j (((p.coeff i • (eeF dual E) ^ i) f) c) :=
         sum_le_sum fun c _ => by rw [Finset.sum_apply]; exact NE_sum E j _ _

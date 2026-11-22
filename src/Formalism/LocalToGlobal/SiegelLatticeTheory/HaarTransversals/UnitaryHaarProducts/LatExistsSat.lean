@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LatExistsDefs
-import Lemmata.MiscLemmasD.Imports
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LatExistsDefs
+public import Lemmata.MiscLemmasD.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ lemma sub_smul_mem_span_init {n : ℕ} (w : Fin (n + 1) → V) (f : V →ₗ[E] 
   rw [Fin.sum_univ_castSucc]
   have hfx : f (∑ i : Fin n, k i.castSucc • w i.castSucc + k (Fin.last n) • w (Fin.last n)) =
       k (Fin.last n) := by
-    simp [map_sum, hf0, hf1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hf0, hf1]
   rw [hfx, add_sub_cancel_right]
   exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
@@ -286,7 +291,16 @@ private lemma fi_exists_ne_lemma {R K : Type} [CommRing R] [Field K] [Algebra R 
   rw [FractionalIdeal.mem_zero_iff]
   exact ⟨h x, fun hx => hx ▸ FractionalIdeal.mem_coe.1 (Submodule.zero_mem _)⟩
 
-theorem satBasisV_holds : SatBasisV := by
+theorem satBasisV_holds :
+  ∀ (E V : Type) [Field E] [NumberField E] [AddCommGroup V] [Module E V] [Module (𝓞 E) V]
+    [IsScalarTower (𝓞 E) E V] [FiniteDimensional E V] (Λ : Submodule (𝓞 E) V),
+    Submodule.IsFullLattice E Λ →
+    ∀ (n : ℕ) (w : Fin (n + 1) → V), LinearIndependent E w →
+    ∀ a : Fin n → FractionalIdeal (nonZeroDivisors (𝓞 E)) E, (∀ i, a i ≠ 0) →
+    ∃ (e : Fin (n + 1) → V) (c : FractionalIdeal (nonZeroDivisors (𝓞 E)) E),
+      LinearIndependent E e ∧ Submodule.span E (Set.range e) = Submodule.span E (Set.range w) ∧ c ≠ 0 ∧
+      Λ ⊓ (Submodule.span E (Set.range w)).restrictScalars (𝓞 E) =
+        latSpanV (Fin.snoc (α := fun _ => FractionalIdeal (nonZeroDivisors (𝓞 E)) E) a c) e := by
   intro E V _ _ _ _ _ _ _ Λ hΛ n w hw a ha
   have hMfg : (Λ ⊓ (Submodule.span E (Set.range w)).restrictScalars (𝓞 E)).FG :=
     fg_of_le_lemma hΛ.fg inf_le_left

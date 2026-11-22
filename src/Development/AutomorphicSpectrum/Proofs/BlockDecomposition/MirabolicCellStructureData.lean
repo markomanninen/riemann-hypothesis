@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaOpenMirabolic
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaOpenMirabolic
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.BZPhiPG
 open scoped TensorProduct Pointwise
@@ -19,13 +23,13 @@ theorem mirProj_eq_one_of_mem {n : ℕ} (u : Mir k n) (hu : u ∈ MirUin k n) : 
   ext a b
   show ((u : GL (Fin (n + 1)) k) : Matrix _ _ k) (Fin.castSucc a) (Fin.castSucc b) = _
   rw [← hv]
-  simp [unip, colMat, one_apply, Fin.castSucc_ne_last]
+  simp [unip, colMat, Matrix.one_apply, Fin.castSucc_ne_last]
 
 theorem mem_of_mirProj_eq_one' {n : ℕ} (u : Mir k n) (hu : mirabolicProjection k n u = 1) : u ∈ MirUin k n := by
   have hb : ∀ a b : Fin n, ((u : GL (Fin (n + 1)) k) : Matrix _ _ k) (Fin.castSucc a) (Fin.castSucc b) = if a = b then 1 else 0 := by
     intro a b
     have := congrArg (fun g : GL (Fin n) k => (g : Matrix (Fin n) (Fin n) k) a b) hu
-    exact (this : ((u : GL (Fin (n + 1)) k) : Matrix _ _ k) (Fin.castSucc a) (Fin.castSucc b) = _).trans (by simp [one_apply])
+    exact (this : ((u : GL (Fin (n + 1)) k) : Matrix _ _ k) (Fin.castSucc a) (Fin.castSucc b) = _).trans (by simp [Matrix.one_apply])
   have hl := (mem_Mir_iff k (u : GL (Fin (n + 1)) k)).1 u.2
   refine Subgroup.mem_subgroupOf.2 ⟨Multiplicative.ofAdd fun a => ((u : GL (Fin (n + 1)) k) : Matrix _ _ k) (Fin.castSucc a) (Fin.last n), ?_⟩
   apply Units.ext
@@ -34,13 +38,13 @@ theorem mem_of_mirProj_eq_one' {n : ℕ} (u : Mir k n) (hu : mirabolicProjection
   induction a using Fin.lastCases with
   | last =>
     rw [hlb]
-    induction b using Fin.lastCases <;> simp [unip, colMat, one_apply, eLast, Fin.castSucc_ne_last, (Fin.castSucc_ne_last _).symm]
+    induction b using Fin.lastCases <;> simp [unip, colMat, Matrix.one_apply, eLast, Fin.castSucc_ne_last, (Fin.castSucc_ne_last _).symm]
   | cast a =>
     induction b using Fin.lastCases with
-    | last => simp [unip, colMat, one_apply, Fin.castSucc_ne_last]
+    | last => simp [unip, colMat, Matrix.one_apply, Fin.castSucc_ne_last]
     | cast b =>
       rw [hb]
-      simp [unip, colMat, one_apply, Fin.castSucc_ne_last]
+      simp [unip, colMat, Matrix.one_apply, Fin.castSucc_ne_last]
 
 theorem mirUin_normal (n : ℕ) : (MirUin k n).Normal := by
   refine ⟨fun u hu g => mem_of_mirProj_eq_one' _ ?_⟩

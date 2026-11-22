@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ExistsIsCGBases
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocTiesOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ExistsIsCGBases
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocTiesOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ variable {cmp : Type} [Fintype cmp] {em : cmp → Lv.compS i}
   {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))}
   (S : StepLevel D.host.F D.host.E (sigD D) (gramN D (i + 1) hi) T D.R.f bad)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem compInj_locJ (hU : SameUlocJ hi S Uloc) : CompInj S (locJ hi t B) := by
   intro c c' δ hδ hoff
   have hδ0 : (reGL (rankN D (i + 1) hi) D.host.E).symm δ ∈ UJ (D.sp.cm.sig : D.host.E →+* D.host.E) (D.sp.X (i + 1)).gram :=
@@ -53,7 +57,7 @@ theorem compInj_locJ (hU : SameUlocJ hi S Uloc) : CompInj S (locJ hi t B) := by
   apply t.yG_bij.1
   show (Quotient.mk'' (t.yG c) : compG D.sp.cm.sig (D.sp.X (i + 1)).gram Uloc (D.what₂.places.resChar w)) = Quotient.mk'' (t.yG c')
   have hz' := Subgroup.inv_mem _ hz
-  refine (DoubleCoset.eq _ _ _ _).2 ⟨⟨_, bc_mem hδ0⟩, Subgroup.mem_subgroupOf.2 ⟨δ0, hδ0, rfl⟩,
+  refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨⟨_, bc_mem hδ0⟩, Subgroup.mem_subgroupOf.2 ⟨δ0, hδ0, rfl⟩,
     ⟨_, ((mem_awayG _ _ _ _ _).1 hz').1⟩, Subgroup.mem_subgroupOf.2 hz', Subtype.ext ?_⟩
   show (t.yG c').1 = bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) δ0 * (t.yG c).1 *
     (((t.yG c').1)⁻¹ * bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) δ0 * (t.yG c).1)⁻¹
@@ -64,16 +68,18 @@ end One
 variable {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem chX_stepInOf (Fo : FormsIn M (i + 1) hi) (Lc : LocIn X u w hg Lv i Fo.Ch)
     (pos : (Σ v : Fin (Fl.Pj (i + 1)).nV, Fin ((Fl.Pj (i + 1)).n' v)) ≃ D.what₂.Tau)
     (hU : ∀ β, SameUlocJ hi (Fo.K β).lev (Lc.Uloc β)) (hB : ∀ β, FrRatJ (Lc.t β) Lc.B) (hTc : ∀ β, HypTJC (Lc.t β)) :
-    ChX (stepInOf hi Fo Lc pos) where
-  hypC := fun (β : Fo.Ch) => locHypC_locJ hi (Lc.t β) Lc.B (Fo.K β).lev (hU β) (hB β) (hTc β)
-  inj := fun (β : Fo.Ch) a => gamI_inj_locJ hi (Lc.t β) Lc.B a
-  onto := fun (β : Fo.Ch) a => gamOnto_locJ hi (Lc.t β) Lc.B (Fo.K β).lev (hU β) a
-  cinj := fun (β : Fo.Ch) => compInj_locJ hi (Lc.t β) Lc.B (Fo.K β).lev (hU β)
+    ChX (stepInOf hi Fo Lc pos) := by
+  exact {
+    hypC := fun (β : Fo.Ch) => locHypC_locJ hi (Lc.t β) Lc.B (Fo.K β).lev (hU β) (hB β) (hTc β)
+    inj := fun (β : Fo.Ch) a => gamI_inj_locJ hi (Lc.t β) Lc.B a
+    onto := fun (β : Fo.Ch) a => gamOnto_locJ hi (Lc.t β) Lc.B (Fo.K β).lev (hU β) a
+    cinj := fun (β : Fo.Ch) => compInj_locJ hi (Lc.t β) Lc.B (Fo.K β).lev (hU β)
+  }
 
 end Formalism.MainNotions.G.KAat
 

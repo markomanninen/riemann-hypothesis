@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.FixIffSpan
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.FixIffSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,8 @@ theorem thetaInf_inj {D : D7} (X : HidaSetting D) (y : Ainf X.B.I.F ⊗[X.B.I.F]
     funext v
     have hvr : v.IsReal := IsTotallyReal.isReal v
     have hv := h v
-    rw [hy, map_sum, Fin.sum_univ_two, thetaInf_tmul, thetaInf_tmul] at hv
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum, Fin.sum_univ_two, thetaInf_tmul, thetaInf_tmul] at hv
     have hev : ∀ c : Ainf X.B.I.F, PI.AprimeInfU.evInf X v c =
         ((InfinitePlace.Completion.extensionEmbeddingOfIsReal hvr
           ((c : (w : InfinitePlace X.B.I.F) → w.Completion) v) : ℝ) : ℂ) := by
@@ -121,7 +126,8 @@ theorem stabInfV_holds : StabInfV := by
   have hvec : ∀ v b i, PI.AprimeInfU.thetaInf X v ((Mm *ᵥ Y0 X u' b) i) =
       ((Mm.map (PI.AprimeInfU.thetaInf X v)) *ᵥ fun j => X.B.I.φ v (tupH (frameOf X u') b j)) i := by
     intro v b i
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [show Y0 X u' b j = inclR (Ainf X.B.I.F) (tupH (frameOf X u') b j) from rfl, thetaInf_inclR]
   have hY0 : ∀ v b i, PI.AprimeInfU.thetaInf X v (Y0 X u' b i) = X.B.I.φ v (tupH (frameOf X u') b i) := by

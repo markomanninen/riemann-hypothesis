@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GaCongG
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GaCongG
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,11 +61,11 @@ theorem gaPlusTh_of (hLO : LiftOrb) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp
   by_cases h1 : (∀ a b, Y a b ∈ (M p).R) ∧ IsUnit Y.det
   swap
   · exact absurd (dif_neg h1) hne
-  rw [dif_pos h1] at heq
+  rw [dite_eq_left h1] at heq
   by_cases h2 : (∀ a b, Y' a b ∈ (M p).R) ∧ IsUnit Y'.det
   swap
   · rw [dif_neg h2] at heq; exact absurd heq (by simp)
-  rw [dif_pos h2] at heq
+  rw [dite_eq_left h2] at heq
   set ZZ : (M p).Mat (D.R.rS + 1) := ⟨Matrix.of fun a b => ⟨Y a b, h1.1 a b⟩, h1.2⟩ with hZZ
   set ZZ' : (M p).Mat (D.R.rS + 1) := ⟨Matrix.of fun a b => ⟨Y' a b, h2.1 a b⟩, h2.2⟩ with hZZ'
   have hmap : ZZ.Z.map (M p).R.subtype = Y := rfl

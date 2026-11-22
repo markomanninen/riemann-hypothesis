@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -164,8 +168,10 @@ theorem ap_prod_blowup (d k : ℕ) (hd : 1 ≤ d) (hMVd : MVStatement d) (hMVk :
       (fun z : V d × V k => ENNReal.ofReal (‖u z‖ ^ 2 * (max (‖z.1‖ ^ 2) τ) ^ (-(d : ℝ))))
       ((volume.restrict (ball (0 : V d) ε)).prod (volume.restrict (ball (0 : V k) ε))) := by
     rw [Measure.prod_restrict, ← Measure.volume_eq_prod]
-    have hu' : AEMeasurable u (volume.restrict (ball (0 : V d) ε ×ˢ ball (0 : V k) ε)) :=
-      hu.continuousOn.aemeasurable (measurableSet_ball.prod measurableSet_ball)
+    have hu' : AEMeasurable u (volume.restrict (ball (0 : V d) ε ×ˢ ball (0 : V k) ε)) := by
+      letI : IsBoundedSMul ℂ (V d × V k) := NormedSpace.toIsBoundedSMul
+      letI : ContinuousSMul ℂ (V d × V k) := IsBoundedSMul.continuousSMul
+      exact hu.continuousOn.aemeasurable (measurableSet_ball.prod measurableSet_ball)
     exact ((hu'.norm.pow_const 2).mul (((measurable_fst.norm.pow_const 2).max
       measurable_const).pow_const _).aemeasurable).ennreal_ofReal
   have hfub : ∫⁻ z in ball (0 : V d) ε ×ˢ ball (0 : V k) ε,

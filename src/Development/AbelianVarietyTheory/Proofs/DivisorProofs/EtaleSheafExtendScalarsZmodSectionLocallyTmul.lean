@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtendScalarsUliftHomAdditive
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleToSheafifyLocallyBijectiveAndLiftStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtendScalarsUliftHomAdditive
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleToSheafifyLocallyBijectiveAndLiftStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 open scoped ChangeOfRings
 
@@ -20,13 +25,13 @@ theorem unit_surjective {R S : Type 1} [CommRing R] [CommRing S] (f : R →+* S)
       (congrArg (fun t : S => t ⊗ₜ[R,f] m) (mul_one _))
   | add x y hx hy =>
     obtain ⟨a, ha⟩ := hx; obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by rw [map_add, ha, hb]; rfl⟩
+    exact ⟨a + b, by rw [map_add (f := _), ha, hb]; rfl⟩
 
 theorem uliftHom_surjective {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (hφ : Function.Surjective φ) :
     Function.Surjective (uliftHom φ) := by
   intro s
   obtain ⟨r, hr⟩ := hφ s.down
-  exact ⟨⟨r⟩, ULift.ext _ _ hr⟩
+  exact ⟨⟨r⟩, ULift.ext hr⟩
 
 theorem ext_onto : ∀ (Q q : ℕ) [NeZero Q] (hq : q ∣ Q) (M : Shv (ZMod Q)) (U : Scheme.{0})
     (y : Sec ((extSh (ZMod.castHom hq (ZMod q))).obj M) U),

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.IsPolarisationOfRelAmple
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibAmpleD
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubeTrivialAndFiniteFlatSurjectiveMulAbelianScheStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianSchemeNsmulSurjectiveStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.IsPolarisationOfRelAmple
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibAmpleD
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubeTrivialAndFiniteFlatSurjectiveMulAbelianScheStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianSchemeNsmulSurjectiveStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,12 +24,16 @@ attribute [local instance] Over.cartesianMonoidalCategory
 namespace PositivityTheory.PrwZar.Z2
 
 theorem isAbelianScheme_pb {S S' : Scheme.{0}} (f : S' ⟶ S) (A : Over S) [GrpObj A]
-    (h : IsAbelianScheme A) : IsAbelianScheme ((Over.pullback f).obj A) where
-  comm := by have := h.comm; infer_instance
-  smooth := by have := h.smooth; show Smooth (pullback.snd A.hom f); infer_instance
-  proper := by have := h.proper; show IsProper (pullback.snd A.hom f); infer_instance
-  geomConnected := by
-    have := h.geomConnected; show GeometricallyConnected (pullback.snd A.hom f); infer_instance
+    (h : IsAbelianScheme A) : IsAbelianScheme ((Over.pullback f).obj A) := by
+  have := h.comm
+  have := h.smooth
+  have := h.proper
+  have := h.geomConnected
+  exact
+    { comm := inferInstance
+      smooth := (inferInstance : Smooth (pullback.snd A.hom f))
+      proper := (inferInstance : IsProper (pullback.snd A.hom f))
+      geomConnected := (inferInstance : GeometricallyConnected (pullback.snd A.hom f)) }
 
 theorem pb_map_id_pow {S S' : Scheme.{0}} (f : S' ⟶ S) (B : Over S) [GrpObj B] (m : ℕ) :
     (Over.pullback f).map (𝟙 B ^ m) = 𝟙 ((Over.pullback f).obj B) ^ m := by

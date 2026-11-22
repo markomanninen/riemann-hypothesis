@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifDefs
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifDefs
+
+@[expose] public section
 
 noncomputable section
 

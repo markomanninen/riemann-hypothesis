@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.CentralizerRepresentatives.CbExistsChainOfGen
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsChainsOfRange
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.CentralizerRepresentatives.CbExistsChainOfGen
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsChainsOfRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem cb_step (N : W →ₗ[E] W) (hN : IsNilpotent N) {ι : Type} [Fintype ι
   have hy0' : ∀ c, (N ^ l c) (y' c) = 0 := by
     intro c
     by_cases hca : c = a
-    · rw [hca, y'a, map_add, hy0, cb_pow_pow, cb_pow_zero_of_le N (hy0 a) (by omega), add_zero]
+    · rw [hca, y'a, map_add (f := _), hy0, cb_pow_pow, cb_pow_zero_of_le N (hy0 a) (by omega), add_zero]
     by_cases hcb : c = b
     · rw [hcb, y'b, map_sub, hy0, cb_pow_pow, cb_pow_zero_of_le N (hy0 a) (by omega), sub_zero]
     · rw [y'c c hca hcb, hy0]
@@ -70,7 +74,7 @@ theorem cb_step (N : W →ₗ[E] W) (hN : IsNilpotent N) {ι : Type} [Fintype ι
       ((if c = a then (N ^ (s b + i0)) (y a) else 0) - (if c = b then (N ^ (s b + i0)) (y a) else 0)) := by
     intro c
     by_cases hca : c = a
-    · rw [hca, s'a, y'a, if_pos rfl, if_neg hne, map_add, cb_pow_pow, show s b + i0 + d = s a by omega]
+    · rw [hca, s'a, y'a, if_pos rfl, if_neg hne, map_add (f := _), cb_pow_pow, show s b + i0 + d = s a by omega]
       abel
     by_cases hcb : c = b
     · rw [hcb, s'c b (fun h => hne h.symm), y'b, if_neg (fun h => hne h.symm), if_pos rfl, map_sub, cb_pow_pow]

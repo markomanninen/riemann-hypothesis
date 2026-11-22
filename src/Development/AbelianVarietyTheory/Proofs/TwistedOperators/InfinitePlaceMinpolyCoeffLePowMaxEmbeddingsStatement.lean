@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePlaceMinpolyCoeffLePowMaxEmbeddings
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneLeHtE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePlaceMinpolyCoeffLePowMaxEmbeddings
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneLeHtE
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdelicU
 open scoped TensorProduct NNReal

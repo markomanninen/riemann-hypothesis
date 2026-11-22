@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCVInCC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BXiAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCVInCC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BXiAsm
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 open Formalism.REAL Formalism.QuantumDeterminants

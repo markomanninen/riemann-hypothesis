@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.FixedOpen
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.FixedOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ private theorem key_abs (π : UnitaryRep G H) {V : Submodule ℂ H} (hcl : IsClo
   let M : Submodule ℂ H :=
     { carrier := {u | u ∈ V ∧ ∀ g, e (π (φ g) u) = 0}
       add_mem' := fun {a b} ha hb => ⟨V.add_mem ha.1 hb.1, fun g => by
-        rw [map_add, map_add, ha.2, hb.2, add_zero]⟩
+        rw [map_add (f := _), map_add (f := _), ha.2, hb.2, add_zero]⟩
       zero_mem' := ⟨V.zero_mem, fun g => by simp⟩
       smul_mem' := fun c a ha => ⟨V.smul_mem c ha.1, fun g => by
         rw [map_smul, map_smul, ha.2, smul_zero]⟩ }
@@ -167,7 +171,10 @@ private theorem exists_off_open (U : Subgroup (AdelicGLn.integralFiniteGL K n))
       IsOpen (GLnLocal.integralGL (v.adicCompletion K) n : Set (GL (Fin n) (v.adicCompletion K)))) :=
     ⟨hopen⟩
   have hV : Φ.symm ⁻¹' U' ∈ 𝓝 (1 : AdelicGLn.FiniteRestrictedGL K n) :=
-    Φ.symm.continuous.continuousAt.preimage_mem_nhds (by simpa using h1U)
+    Φ.symm.continuous.continuousAt.preimage_mem_nhds (by
+      change U' ∈ 𝓝 (Φ.symm 1)
+      rw [map_one]
+      exact h1U)
   have h1 : (1 : AdelicGLn.FiniteRestrictedGL K n) =
       RestrictedProduct.structureMap _ (fun v : Pl K => (GLnLocal.integralGL (v.adicCompletion K) n :
         Set (GL (Fin n) (v.adicCompletion K)))) cofinite 1 := rfl
@@ -203,11 +210,11 @@ private theorem exists_off_open (U : Subgroup (AdelicGLn.integralFiniteGL K n))
   obtain ⟨u, huU, hu⟩ := h2
   exact ⟨u, huU, hu⟩
 
-private abbrev phi (w : Pl K) : Gw n w →* normOneGL K n :=
+private abbrev phi (w : Pl K) : Gw n w →* normOneGL (K := K) (n := n) :=
   (MultiplicityOne.finProj K n).comp (AdelicGLn.localEmbedding w)
 
-private theorem dec_phi (b : Pl K) (x : normOneGL K n) :
-    ∃ (a c : normOneGL K n) (g : Gw n b), (∀ g', phi b g' * a = a * phi b g') ∧
+private theorem dec_phi (b : Pl K) (x : normOneGL (K := K) (n := n)) :
+    ∃ (a c : normOneGL (K := K) (n := n)) (g : Gw n b), (∀ g', phi b g' * a = a * phi b g') ∧
       (∀ g', phi b g' * c = c * phi b g') ∧ x = a * phi b g * c := by
   obtain ⟨A', h, rfl⟩ := MultiplicityOne.exists_archProj_mul_finProj x
   obtain ⟨-, h1, -, -, h5⟩ := UpperTheory.ConvolutionTheory.Tf.locEmb K n b
@@ -224,24 +231,24 @@ private theorem dec_phi (b : Pl K) (x : normOneGL K n) :
   · simp only [phi, MonoidHom.comp_apply]
     rw [mul_assoc, ← map_mul, ← hd]
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 private theorem mem_eigL' {w : Pl K} {J : Subgroup (Gw n w)} {χ : Gw n w → ℂ} {x : LL μ} :
     x ∈ eigL μ w J χ ↔ ∀ g ∈ J, rhoL μ w g x = χ g • x := by
   simp [eigL, Submodule.mem_iInf, LinearMap.mem_eqLocus]
 
-private lemma rhoL_eq (w : Pl K) (g : Gw n w) : rhoL μ w g = rightRegularRep (rationalGLOne K n) μ (phi w g) := rfl
+private lemma rhoL_eq (w : Pl K) (g : Gw n w) : rhoL μ w g = rightRegularRep (rationalGLOne (K := K) (n := n)) μ (phi w g) := rfl
 
 private theorem exists_off {V : Submodule ℂ (LL μ)} (hV : IsSummand μ V) :
     ∃ (I : Finset (Pl K)) (e : LL μ), e ∈ V ∧ e ≠ 0 ∧
       ∀ w ∉ I, ∀ x ∈ GLnLocal.integralGL (w.adicCompletion K) n, rhoL μ w x e = e := by
   obtain ⟨U, hU, e, heV, he0, hfix⟩ := exists_fixed_abs
-    ((rightRegularRep (rationalGLOne K n) μ).comapHom (finOne K n) continuous_finOne) hV.closed
+    ((rightRegularRep (rationalGLOne (K := K) (n := n)) μ).comapHom (finOne K n) continuous_finOne) hV.closed
     (fun g v hv => hV.inv _ v hv) hV.ne_bot
   obtain ⟨I, hI⟩ := exists_off_open U hU
   refine ⟨I, e, heV, he0, fun w hw x hx => ?_⟩
   obtain ⟨u, huU, hu⟩ := hI w hw x hx
-  have h1 : rightRegularRep (rationalGLOne K n) μ (finOne K n u) e = e := hfix u huU
+  have h1 : rightRegularRep (rationalGLOne (K := K) (n := n)) μ (finOne K n u) e = e := hfix u huU
   have h2 : phi w x = finOne K n u := by
     rw [← MultiplicityOne.finProj_eq_finOne, hu]
     rfl
@@ -257,9 +264,9 @@ private theorem step {V : Submodule ℂ (LL μ)} (hV : IsSummand μ V) (J : ∀ 
   have hmemN : ∀ u, u ∈ N ↔ u ∈ V ∧ ∀ w ∈ A, u ∈ eigL μ w (J w) (χ w) := fun u => by
     simp [hNdef, Submodule.mem_inf, Submodule.mem_iInf]
   have hcb := (eigBasic K n μ b (J b) (χ b) (hJχ b).1 (hJχ b).2).2.2.2
-  have hc : ∀ y : normOneGL K n, (∀ g, phi b g * y = y * phi b g) → ∀ v,
-      rightRegularRep (rationalGLOne K n) μ y (prj (eigL μ b (J b) (χ b)) v) =
-        prj (eigL μ b (J b) (χ b)) (rightRegularRep (rationalGLOne K n) μ y v) := fun y hy v =>
+  have hc : ∀ y : normOneGL (K := K) (n := n), (∀ g, phi b g * y = y * phi b g) → ∀ v,
+      rightRegularRep (rationalGLOne (K := K) (n := n)) μ y (prj (eigL μ b (J b) (χ b)) v) =
+        prj (eigL μ b (J b) (χ b)) (rightRegularRep (rationalGLOne (K := K) (n := n)) μ y v) := fun y hy v =>
     comm_apply (hcb _ fun x _ => comm_rep _ (hy x).symm) v
   have hphi : ∀ w, w ≠ b → ∀ (g : Gw n w) (g' : Gw n b), phi b g' * phi w g = phi w g * phi b g' := by
     intro w hw g g'
@@ -268,18 +275,18 @@ private theorem step {V : Submodule ℂ (LL μ)} (hV : IsSummand μ V) (J : ∀ 
     rw [← map_mul, ← map_mul, this]
   have hdec := dec_phi (K := K) (n := n) b
   obtain ⟨z, hz, hz0⟩ := (Submodule.ne_bot_iff _).1 (hne b)
-  have hst : ∀ g, ∀ u ∈ N, rightRegularRep (rationalGLOne K n) μ (phi b g) u ∈ N := by
+  have hst : ∀ g, ∀ u ∈ N, rightRegularRep (rationalGLOne (K := K) (n := n)) μ (phi b g) u ∈ N := by
     intro g u hu
     obtain ⟨h1, h2⟩ := (hmemN u).1 hu
     refine (hmemN _).2 ⟨hV.inv _ _ h1, fun w hw => (mem_eigL' μ).2 fun x hx => ?_⟩
     have hwb : w ≠ b := fun e => hb (e ▸ hw)
     have h3 : rhoL μ w x u = χ w x • u := (mem_eigL' μ).1 (h2 w hw) x hx
-    have h4 : rhoL μ w x (rightRegularRep (rationalGLOne K n) μ (phi b g) u) =
-        rightRegularRep (rationalGLOne K n) μ (phi b g) (rhoL μ w x u) := by
+    have h4 : rhoL μ w x (rightRegularRep (rationalGLOne (K := K) (n := n)) μ (phi b g) u) =
+        rightRegularRep (rationalGLOne (K := K) (n := n)) μ (phi b g) (rhoL μ w x u) := by
       rw [rhoL_eq μ w x]
       exact comm_apply (comm_rep _ (hphi w hwb x g).symm) u
     exact comm_eig_abs h4 h3
-  obtain ⟨u, hu, hu0⟩ := key_abs (rightRegularRep (rationalGLOne K n) μ) hV.closed hV.inv hV.irred (phi b)
+  obtain ⟨u, hu, hu0⟩ := key_abs (rightRegularRep (rationalGLOne (K := K) (n := n)) μ) hV.closed hV.inv hV.irred (phi b)
     (prj (eigL μ b (J b) (χ b))) hc hdec hz.1 hz0 (prj_self hz.2) N inf_le_left
     ((Submodule.ne_bot_iff _).2 ⟨u₀, (hmemN _).2 ⟨hu₀V, hu₀A⟩, hu₀⟩) hst
   obtain ⟨h1, h2⟩ := (hmemN u).1 hu

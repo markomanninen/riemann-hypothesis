@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.AvgData
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.AvgData
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem blkAt_val (n N : ℕ) (h : n ≤ N) (g : GL (Fin n) k) (i j : Fin N) :
   · simp [hi, hj]
   · have hne : i ≠ j := fun e => hi (e ▸ hj)
     simp [hi, hj, hne]
-  · simp only [hi, hj, dite_false, fromBlocks_apply₂₂, one_apply, Fin.ext_iff]
+  · simp only [hi, hj, dite_false, fromBlocks_apply₂₂, Matrix.one_apply, Fin.ext_iff]
     by_cases e : (i : ℕ) = j
     · simp [e]
     · rw [if_neg (by omega), if_neg (by omega)]
@@ -79,9 +83,9 @@ theorem lastCases_mk {n : ℕ} (x : Fin n → k) (r : ℕ) (hr : r < n + 1) :
     (Fin.lastCases (0 : k) x (⟨r, hr⟩ : Fin (n + 1)) : k) = if h : r < n then x ⟨r, h⟩ else 0 := by
   by_cases h : r < n
   · have e : (⟨r, hr⟩ : Fin (n + 1)) = Fin.castSucc ⟨r, h⟩ := rfl
-    rw [e, Fin.lastCases_castSucc, dif_pos h]
+    rw [e, Fin.lastCases_castSucc, dite_eq_left h]
   · have e : (⟨r, hr⟩ : Fin (n + 1)) = Fin.last n := by ext; simp; omega
-    rw [e, Fin.lastCases_last, dif_neg h]
+    rw [e, Fin.lastCases_last, dite_eq_right h]
 
 theorem colEl_val (m N : ℕ) (h : m + 2 ≤ N) (x : Fin (m + 1) → k) (r c : Fin N) :
     ((colEl k m N h x : GL (Fin N) k) : Matrix (Fin N) (Fin N) k) r c =
@@ -96,7 +100,7 @@ theorem colEl_val (m N : ℕ) (h : m + 2 ≤ N) (x : Fin (m + 1) → k) (r c : F
         if (c : ℕ) = m + 1 then (if h : (r : ℕ) < m + 1 then x ⟨r, h⟩ else 0) else 0 := by
       simp only [colMat, Fin.ext_iff, Fin.val_last, lastCases_mk]
     have e4 : (1 : Matrix (Fin (m + 2)) (Fin (m + 2)) k) ⟨r, hr⟩ ⟨c, hc⟩ = if r = c then 1 else 0 := by
-      simp only [one_apply, Fin.ext_iff]
+      simp only [Matrix.one_apply, Fin.ext_iff]
     rw [e3, e4]
     by_cases hr' : (r : ℕ) < m + 1 <;> by_cases hc' : (c : ℕ) = m + 1 <;> simp [hr', hc']
   · have hne : r ≠ c := fun e => hc (e ▸ hr)
@@ -183,7 +187,7 @@ theorem conj_mat (N a : ℕ) (B C U : Matrix (Fin N) (Fin N) k) (hBC : B * C = 1
       (∀ i j : Fin N, a ≤ (i : ℕ) → (B * U * C) i j = U i j) := by
   have hXcol : ∀ r c : Fin N, (c : ℕ) < a + 1 → (U - 1) r c = 0 := by
     intro r c hc
-    rw [Matrix.sub_apply, h3 r c hc, one_apply, sub_self]
+    rw [Matrix.sub_apply, h3 r c hc, Matrix.one_apply, sub_self]
   have hXlow : ∀ r c : Fin N, c ≤ r → (U - 1) r c = 0 := by
     intro r c hcr
     rcases hcr.lt_or_eq with hlt | heq
@@ -192,7 +196,7 @@ theorem conj_mat (N a : ℕ) (B C U : Matrix (Fin N) (Fin N) k) (hBC : B * C = 1
       rw [Matrix.sub_apply, h2, one_apply_eq, sub_self]
   have hXC : (U - 1) * C = U - 1 := by
     ext r c
-    rw [mul_apply, Finset.sum_eq_single c]
+    rw [Matrix.mul_apply, Finset.sum_eq_single c]
     · by_cases hc : (c : ℕ) < a + 1
       · rw [hXcol r c hc, zero_mul]
       · rw [hC c c (Or.inl (by omega)), if_pos rfl, mul_one]
@@ -207,11 +211,11 @@ theorem conj_mat (N a : ℕ) (B C U : Matrix (Fin N) (Fin N) k) (hBC : B * C = 1
       _ = 1 + B * (U - 1) := by rw [mul_add, mul_one, add_mul, hBC, mul_assoc, hXC]
   have hBXcol : ∀ r c : Fin N, (c : ℕ) < a + 1 → (B * (U - 1)) r c = 0 := by
     intro r c hc
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     exact Finset.sum_eq_zero fun l _ => by rw [hXcol l c hc, mul_zero]
   have hBXrow : ∀ r c : Fin N, a ≤ (r : ℕ) → (B * (U - 1)) r c = (U - 1) r c := by
     intro r c hr
-    rw [mul_apply, Finset.sum_eq_single r]
+    rw [Matrix.mul_apply, Finset.sum_eq_single r]
     · rw [hB r r (Or.inl hr), if_pos rfl, one_mul]
     · intro l _ hl
       rw [hB r l (Or.inl hr), if_neg (Ne.symm hl), zero_mul]
@@ -228,7 +232,7 @@ theorem conj_mat (N a : ℕ) (B C U : Matrix (Fin N) (Fin N) k) (hBC : B * C = 1
     by_cases hi : (i : ℕ) < a + 1
     · rw [hBXcol i i hi, add_zero]
     · rw [hBXrow i i (by omega), hXlow i i le_rfl, add_zero]
-  · rw [Matrix.add_apply, hBXcol i j hj, add_zero, one_apply]
+  · rw [Matrix.add_apply, hBXcol i j hj, add_zero, Matrix.one_apply]
   · rw [Matrix.add_apply, hBXrow i j hi, Matrix.sub_apply, add_sub_cancel]
 
 end Conj
@@ -265,16 +269,16 @@ theorem colEl_mem (m N : ℕ) (h : m + 2 ≤ N) (x : Fin (m + 1) → k) : colEl 
   · have hij' : (j : ℕ) < i := hij
     rw [colEl_val, if_neg (by rw [Fin.ext_iff]; omega)]
     by_cases e1 : (i : ℕ) < m + 1
-    · rw [dif_pos e1, if_neg (by omega), add_zero]
-    · rw [dif_neg e1, add_zero]
+    · rw [dite_eq_left e1, if_neg (by omega), add_zero]
+    · rw [dite_eq_right e1, add_zero]
   · rw [colEl_val, if_pos rfl]
     by_cases e1 : (i : ℕ) < m + 1
-    · rw [dif_pos e1, if_neg (by omega), add_zero]
-    · rw [dif_neg e1, add_zero]
+    · rw [dite_eq_left e1, if_neg (by omega), add_zero]
+    · rw [dite_eq_right e1, add_zero]
   · rw [colEl_val]
     by_cases e1 : (i : ℕ) < m + 1
-    · rw [dif_pos e1, if_neg (show ¬ (j : ℕ) = m + 1 by omega), add_zero]
-    · rw [dif_neg e1, add_zero]
+    · rw [dite_eq_left e1, if_neg (show ¬ (j : ℕ) = m + 1 by omega), add_zero]
+    · rw [dite_eq_right e1, add_zero]
 
 theorem lvlChar_apply (ψ : AddChar k Circle) (N n : ℕ) (u : derUnip k N n) :
     lvlChar k ψ N n u = Circle.toUnits (ψ (∑ p : Fin N × Fin N with (p.2 : ℕ) = p.1 + 1 ∧ n - 1 ≤ (p.1 : ℕ),
@@ -293,7 +297,7 @@ theorem lvlChar_colEl (ψ : AddChar k Circle) (m N : ℕ) (h : m + 2 ≤ N) (x :
   rw [lvlChar_apply]
   congr 2
   rw [Finset.sum_eq_single ((⟨m, by omega⟩ : Fin N), (⟨m + 1, by omega⟩ : Fin N))]
-  · rw [colEl_val, if_neg (by rw [Fin.ext_iff]; simp), dif_pos (by simp), if_pos rfl, zero_add]
+  · rw [colEl_val, if_neg (by rw [Fin.ext_iff]; simp), dite_eq_left (by simp), if_pos rfl, zero_add]
     rfl
   · intro p hp hne
     rw [Finset.mem_filter] at hp
@@ -303,7 +307,7 @@ theorem lvlChar_colEl (ψ : AddChar k Circle) (m N : ℕ) (h : m + 2 ≤ N) (x :
     · exfalso
       apply hne
       ext <;> simp <;> omega
-    · rw [dif_neg e1, add_zero]
+    · rw [dite_eq_right e1, add_zero]
   · intro hn
     exfalso
     apply hn
@@ -339,8 +343,8 @@ theorem blkAt_val_out (n N : ℕ) (h : n ≤ N) (g : GL (Fin n) k) (r l : Fin N)
   rw [blkAt_val]
   by_cases hr : (r : ℕ) < n
   · have hl : ¬ (l : ℕ) < n := by omega
-    rw [dif_pos hr, dif_neg hl, if_neg (by rw [Fin.ext_iff]; omega)]
-  · rw [dif_neg hr]
+    rw [dite_eq_left hr, dite_eq_right hl, if_neg (by rw [Fin.ext_iff]; omega)]
+  · rw [dite_eq_right hr]
 
 theorem conj_derUnip (m N : ℕ) (h' : m + 1 ≤ N) (g : GL (Fin (m + 1)) k) (u : GL (Fin N) k)
     (hu : u ∈ derUnip k N (m + 2)) :

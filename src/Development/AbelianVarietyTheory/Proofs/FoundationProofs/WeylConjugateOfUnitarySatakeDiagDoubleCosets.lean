@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiJFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricFunctionInverseInvariant
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiJFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricFunctionInverseInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ theorem coeff_coact {c : (Fin m → ℤ) →₀ ℂ} {w : Sgn m} (h : ∀ γ, ev
     rw [Finsupp.linearCombination_mapDomain]
     simpa [Finsupp.linearCombination_apply, Finsupp.sum, ev, mono_act] using h γ
   conv_lhs => rw [← e]
-  exact Finsupp.mapDomain_apply (coact_injective w) _ _
+  exact Finsupp.mapDomain_apply_of_injective (coact_injective w) _ _
 
 def chr (γ : Fin m → ℂˣ) : Multiplicative (Fin m → ℤ) →* ℂ where
   toFun a := mono a.toAdd γ
@@ -86,10 +90,11 @@ theorem weylConj_of_sym {α β : Fin m → ℂˣ} (h : ∀ a, sym a α = sym a �
   have hli := (linearIndependent_monoidHom (Multiplicative (Fin m → ℤ)) ℂ).comp _ chr_injective
   have e : ∑ w : Sgn m, Finsupp.single (act w α) (1 : ℂ) = ∑ w : Sgn m, Finsupp.single (act w β) (1 : ℂ) := by
     refine hli (funext fun a => ?_)
-    simpa [map_sum, sym] using (show ∑ w : Sgn m, chr (act w α) a = ∑ w : Sgn m, chr (act w β) a from h a.toAdd)
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, sym] using (show ∑ w : Sgn m, chr (act w α) a = ∑ w : Sgn m, chr (act w β) a from h a.toAdd)
   by_contra hn
   have h1 := DFunLike.congr_fun e β
-  rw [Finsupp.finset_sum_apply, Finsupp.finset_sum_apply, Finset.sum_eq_zero fun w _ =>
+  rw [Finsupp.finsetSum_apply, Finsupp.finsetSum_apply, Finset.sum_eq_zero fun w _ =>
     Finsupp.single_eq_of_ne (a := act w α) (a' := β) fun h0 => hn (by rw [h0]; exact weylConj_act w α)] at h1
   simp only [Finsupp.single_apply, Finset.sum_boole, eq_comm (a := (0 : ℂ)), Nat.cast_eq_zero,
     Finset.card_eq_zero, Finset.filter_eq_empty_iff] at h1

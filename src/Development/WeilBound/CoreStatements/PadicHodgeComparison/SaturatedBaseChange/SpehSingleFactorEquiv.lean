@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.SaturatedBaseChange.BcBackOffTOfSat
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitarisableOfIsSpehOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocCompSplit
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.SaturatedBaseChange.BcBackOffTOfSat
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitarisableOfIsSpehOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocCompSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ private theorem speh_single_factor_equiv {E : Type} [Field E] [NumberField E] [I
   obtain ⟨e₁⟩ := nonempty_equiv_multiProd_one τ.smooth (stdBlocks (fun _ : Fin 1 => m) h) fun a i => Fin.ext (by
     rw [stdBlocks_val, Subsingleton.elim a 0]; simp)
   obtain ⟨hd, hτ, p, hp, -⟩ := hs
-  have key : ∀ y : Fin 1 → IrrGL (w.adicCompletion E), y = (fun _ => IrrGL.of ρ.ρ ρ.smooth ρ.irred) →
+  have key : ∀ y : Fin 1 → IrrGL (k := w.adicCompletion E), y = (fun _ => IrrGL.of ρ.ρ ρ.smooth ρ.irred) →
       ∀ hd : ∑ i, (y i).1 = m, Nonempty ((IrrGL.of ρ.ρ ρ.smooth ρ.irred).rep.Equiv (prodIrr y hd)) := by
     rintro _ rfl hd
     exact nonempty_equiv_prodIrr_one _ hd

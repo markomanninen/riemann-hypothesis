@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
-import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsHeckeLOfCompleted
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsHeckeLOfCompleted
+
+@[expose] public section
 
 noncomputable section
 

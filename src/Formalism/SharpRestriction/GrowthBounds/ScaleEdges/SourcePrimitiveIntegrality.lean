@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RestCloudXOfY
-import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RestCloudXOfY
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
+
+@[expose] public section
 
 noncomputable section
 

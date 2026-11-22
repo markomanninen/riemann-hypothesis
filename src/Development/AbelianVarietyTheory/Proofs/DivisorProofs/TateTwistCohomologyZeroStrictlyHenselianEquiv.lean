@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentVarUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HZeroPullbackTwistBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentVarUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HZeroPullbackTwistBijective
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 namespace GlobalTheory.EtC.CyclotomicGlobalSections
@@ -37,15 +42,18 @@ theorem exists_cyclotomic_root (q : ℕ) [NeZero q] (A : Type) [CommRing A] (hA 
 
 end GlobalTheory.EtC.CyclotomicGlobalSections
 
-open GlobalTheory.EtC.ConnectedGlobalSections in
 
+open GlobalTheory.EtC.ConnectedGlobalSections in
 theorem GlobalTheory.EtC.tateTwistCohomology_zero_strictlyHenselian_equiv : ∀ (q : ℕ) [NeZero q] (A : Type) [CommRing A], SH A → IsUnit (q : A) →
     ∀ j : ℤ, Nonempty (Ht q (sp A) 0 j ≃+ ZMod q) := by
   intro q _ A _ hA hq j
   obtain ⟨ζ0, hζ0⟩ := GlobalTheory.EtC.CyclotomicGlobalSections.exists_cyclotomic_root q A hA hq
   obtain ⟨hH, -⟩ := hA
   haveI := hH
-  obtain ⟨-, e, -, -⟩ := GlobalTheory.T.etaleCohomology_negative_vanishing_degree_zero (ZMod q) (tw q j)
+  let e : Sec (tw q j) (Spec (CommRingCat.of A)) ≃+ Ht q (sp A) 0 j :=
+    AddEquiv.ofBijective (AddMonoidHom.mk' (secClass (tw q j))
+      (GlobalTheory.T.degreeZeroSectionClass_properties (ZMod q) (tw q j) _).2.2.1)
+      (GlobalTheory.T.degreeZeroSectionClass_properties (ZMod q) (tw q j) _).2.1
   haveI : Nonempty (Spec (CommRingCat.of A)) := inferInstance
   let ζ : Prim q Γ(Spec (CommRingCat.of A), ⊤) :=
     Prim.map (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ⟨ζ0, hq, hζ0⟩
@@ -68,4 +76,4 @@ theorem GlobalTheory.EtC.tateTwistCohomology_zero_strictlyHenselian_equiv : ∀ 
     · intro y
       obtain ⟨n, rfl⟩ := sec_eq_nsmul _ (clopen_of_idem A hidem) ζ y
       exact ⟨(n : ZMod q), by rw [hφ, nsmul_eq_up, nsmul_eq_up, ZMod.natCast_zmod_val]⟩
-  exact ⟨((AddEquiv.ofBijective φ hbij).trans (e _)).symm⟩
+  exact ⟨((AddEquiv.ofBijective φ hbij).trans e).symm⟩

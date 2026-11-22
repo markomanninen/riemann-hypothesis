@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenFns
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenFns
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,8 @@ theorem smInt_linear {X W W' : Type} [TopologicalSpace X] [MeasurableSpace X] [B
       measure_level_ne_top μ c fun h => hy (by rw [h, map_zero])
   have e₁ : smInt μ φ = ∑ y ∈ S, (((μ (φ ⁻¹' {y})).toReal : ℝ) : ℂ) • y :=
     smInt_comp μ φ id S hS hm fun y _ hy => measure_level_ne_top μ c hy
-  rw [e₀, e₁, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e₀, e₁, map_sum]
   exact Finset.sum_congr rfl fun y _ => (map_smul T _ y).symm
 
 theorem smInt_comp_measurePreserving {X W : Type} [TopologicalSpace X] [MeasurableSpace X]

@@ -1,7 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CxCutE
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
-import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.PartsOrth
+public import Formalism.LocalToGlobal.Divisibility.LiftLat
+public import Formalism.LocalToGlobal.Divisibility.DivisionHeightBoundStatement
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+public import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -105,9 +111,6 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] 
 section Proj
 
 variable (hc : Col.PairComm B.op) (hs : Col.SplitOver B.op) (C : (B.Pl × ℕ → K) → Prop)
-
-def pMat : Matrix (Fin B.S.dim) (Fin B.S.dim) K :=
-  LinearMap.toMatrix B.S.basis B.S.basis (Col.eigProj hc hs C)
 
 private theorem hform_eq_lemma {L : Type} [Field L] [StarRing L] {n : ℕ} (H : Matrix (Fin n) (Fin n) L)
     (x y : Fin n → L) : hform H x y = star x ⬝ᵥ H *ᵥ y := by
@@ -573,7 +576,8 @@ theorem HZ_unit (h : BlockHyp B ℓ v0 s) : IsUnit ((B.zE ℓ Z)ᴴ * B.HV ℓ *
     intro c h0
     have h1 : star (fun i => v0.embedding (c i)) ⬝ᵥ (B.S.H.map v0.embedding) *ᵥ (fun i => v0.embedding (c i)) =
         v0.embedding (star c ⬝ᵥ B.S.H *ᵥ c) := by
-      simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, Pi.star_apply, hv0', Matrix.map_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, Pi.star_apply, hv0', Matrix.map_apply]
     rw [h0, map_zero] at h1
     by_contra hc0
     have hne : (fun i => v0.embedding (c i)) ≠ 0 := by
@@ -660,34 +664,6 @@ variable (A : FamIn K G Pl0 T m) (X : CxData A.fam.amb)
 variable (P0 : Subgroup G) (ψ0 : P0 →* Kˣ) (P1 : Subgroup G) (ψ1 : P1 →* Kˣ)
   (Dc : ∀ Zs : DefSub A.fam.amb, DefCols (A.side P1 ψ1 Zs)) (Sp : ∀ Zs : DefSub A.fam.amb, SPer (Dc Zs))
   (Zsc : DefSub A.fam.amb → IndefScale A.fam.base)
-
-theorem proviso_at {s : ℕ} (hOk : A.fam.Ok s) (hH : HeckeRatL A) (P : Subgroup G) (ψ : P →* Kˣ)
-    {C : ∀ j : Fin m, ((A.fam.L j A.fam.μ0).Pl × ℕ → K) → Prop} (hC : LiftsEig A X P ψ C) :
-    (A.fam.side P ψ X.zs).Proviso :=
-  A.fam.side_Proviso hOk P ψ X.zs fun j => by
-    show SubHasRatBasis ((A.fam.L j A.fam.μ0).Z0 (A.fam.lvlA P ψ) (X.Zl j A.fam.μ0))
-    rw [hC j]
-    exact EigenprojectionMatrices.eig_rat (A.fam.blockHyp_lift hOk P ψ j A.fam.μ0) (hH j) (C j)
-
-theorem types_at {s : ℕ} (hOk : A.fam.Ok s) (hsep : A.fam.TypesSep) (hst : X.zs.Stable) (P : Subgroup G)
-    (ψ : P →* Kˣ) {C : ∀ j : Fin m, ((A.fam.L j A.fam.μ0).Pl × ℕ → K) → Prop} (hC : LiftsEig A X P ψ C)
-    (hT : LiftsTyp A C) : (A.fam.side P ψ X.zs).Types :=
-  A.fam.side_Types hOk P ψ X.zs hst hsep fun j => by
-    show (A.fam.L j A.fam.μ0).Z0 (A.fam.lvlA P ψ) (X.Zl j A.fam.μ0) ≤ _
-    rw [hC j]
-    exact (A.fam.L j A.fam.μ0).good_part_coordinates_mono _ (Col.eigSum_mono fun x hx => hT j x hx)
-
-theorem cutProviso : CutProviso A X P0 ψ0 P1 ψ1 Dc Sp Zsc := by
-  intro s C0 C1 hOk hH h0 h1 b
-  cases b
-  · exact proviso_at A X hOk hH P0 ψ0 h0
-  · exact proviso_at A X hOk hH P1 ψ1 h1
-
-theorem cutTypes : CutTypes A X P0 ψ0 P1 ψ1 Dc Sp Zsc := by
-  intro s C0 C1 hOk hsep hst h0 h1 t0 t1 b
-  cases b
-  · exact types_at A X hOk hsep hst P0 ψ0 h0 t0
-  · exact types_at A X hOk hsep hst P1 ψ1 h1 t1
 
 end Main
 

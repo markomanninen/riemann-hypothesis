@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.CohomologicalPurity.LeafAugInjPf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.CohomologicalPurity.LeafAugInjPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.CohomologicalPurity.TubeCut
@@ -42,12 +46,8 @@ variable {J : Type} [Preorder J] (Z : J ⥤ PSh)
 abbrev ch {n : ℕ} {T : Scheme.{0}ᵒᵖ} (x : Sx (hoc Z) n T) : Fin (n+1) ⥤ (Z.flip.obj T).Elements :=
   chn (n := op (SimplexCategory.mk n)) x
 
-theorem ch_δ_obj {n : ℕ} {T : Scheme.{0}ᵒᵖ} (x : Sx (hoc Z) (n+1) T) (i : Fin (n+2)) (k : Fin (n+1)) :
-    (ch Z (((hoc Z).δ i).app T x)).obj k = (ch Z x).obj (i.succAbove k) := rfl
-
-instance {T : Scheme.{0}ᵒᵖ} : Quiver.IsThin (Z.flip.obj T).Elements := fun a b => by
-  change Subsingleton {f : a.1 ⟶ b.1 // _}
-  infer_instance
+instance {T : Scheme.{0}ᵒᵖ} : Quiver.IsThin (Z.flip.obj T).Elements :=
+  fun _ _ => ⟨fun f g => Functor.Elements.hom_ext (Subsingleton.elim f.hom g.hom)⟩
 
 theorem sx_ext {n : ℕ} {T : Scheme.{0}ᵒᵖ} (x y : Sx (hoc Z) n T)
     (h : ∀ k, (ch Z x).obj k = (ch Z y).obj k) : x = y := by
@@ -97,8 +97,8 @@ abbrev rs {n : ℕ} (s : Sx (hoc Z) n T) : Sx (hoc Z) n W := ((hoc Z).obj (op (S
 
 def Good {n : ℕ} (s : Sx (hoc Z) n T) : Prop := Nonempty (e (π n s) ⟶ (ch Z (rs Z f s)).obj 0)
 
-open Classical in
 
+open Classical in
 def L (R : Type) [CommRing R] (n : ℕ) (s : Sx (hoc Z) n T) : (((chainsP R).obj (hoc Z)).X (n+1)).obj W :=
   if h : Good Z f π e s then gen (hoc Z) (n+1) W (cone Z (rs Z f s) (e (π n s)) h.some) else 0
 
@@ -110,7 +110,7 @@ theorem Lh_gen (R : Type) [CommRing R] (n : ℕ) (s : Sx (hoc Z) n T) : Lh Z f �
 
 theorem rs_δ {n : ℕ} (s : Sx (hoc Z) (n+1) T) (i : Fin (n+2)) :
     rs Z f (((hoc Z).δ i).app T s) = ((hoc Z).δ i).app W (rs Z f s) := by
-  exact (FunctorToTypes.naturality ((hoc Z).δ i) f s).symm
+  exact (((hoc Z).δ i).naturality_apply f s).symm
 
 theorem good_δ (hπ : ∀ n (s : Sx (hoc Z) (n+1) T) i, π n (((hoc Z).δ i).app T s) = π (n+1) s)
     {n : ℕ} {s : Sx (hoc Z) (n+1) T} (h : Good Z f π e s) (i : Fin (n+2)) : Good Z f π e (((hoc Z).δ i).app T s) := by
@@ -132,7 +132,7 @@ theorem cone_congr {n : ℕ} {x x' : Sx (hoc Z) n W} {a a' : (Z.flip.obj W).Elem
   rw [(ht _ _).elim φ φ']
 
 theorem L_good (R : Type) [CommRing R] {n : ℕ} {s : Sx (hoc Z) n T} (h : Good Z f π e s) :
-    L Z f π e R n s = gen (hoc Z) (n+1) W (cone Z (rs Z f s) (e (π n s)) h.some) := dif_pos h
+    L Z f π e R n s = gen (hoc Z) (n+1) W (cone Z (rs Z f s) (e (π n s)) h.some) := dite_eq_left h
 
 theorem key_succ (R : Type) [CommRing R]
     (hπ : ∀ n (s : Sx (hoc Z) (n+1) T) i, π n (((hoc Z).δ i).app T s) = π (n+1) s)
@@ -140,7 +140,8 @@ theorem key_succ (R : Type) [CommRing R]
     (((((chainsP R).obj (hoc Z)).d (n+2) (n+1)).app W).hom (L Z f π e R (n+1) s)) +
       Lh Z f π e R n (((((chainsP R).obj (hoc Z)).d (n+1) n).app T).hom (gen (hoc Z) (n+1) T s)) =
     gen (hoc Z) (n+1) W (rs Z f s) := by
-  rw [L_good Z f π e R h, d_gen, Fin.sum_univ_succ, d_gen, map_sum, cone_δ_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [L_good Z f π e R h, d_gen, Fin.sum_univ_succ, d_gen, map_sum, cone_δ_zero]
   simp only [Fin.val_zero, pow_zero, one_smul, map_zsmul, Lh_gen]
   rw [add_assoc, ← Finset.sum_add_distrib, Finset.sum_eq_zero, add_zero]
   intro j _
@@ -179,7 +180,8 @@ theorem eq_on_sup {E : Spc} {n : ℕ} {T : Scheme.{0}ᵒᵖ} {M : Type*} [AddCom
     refine Finset.sum_congr rfl fun u _ => ?_
     change Finsupp.single u (w u) = w u • Finsupp.single u (1 : ULift.{1} R)
     rw [Finsupp.smul_single_one]
-  rw [hw, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hw, map_sum, map_sum]
   refine Finset.sum_congr rfl fun u hu => ?_
   rw [map_smul, map_smul, h _ (hz u (Finsupp.mem_support_iff.mp hu))]
 
@@ -324,8 +326,9 @@ theorem main : EtaleAugInjAt := by
     exact ⟨0, map_zero _⟩
   let e : (T.unop ⟶ X) → (Z.flip.obj (op V)).Elements := fun g' =>
     if h : Set.range (V.ι ≫ g').base ⊆ Set.range (c (l g')).base then
-      ⟨l g', IsOpenImmersion.lift (c (l g')) (V.ι ≫ g') h⟩
-    else ⟨(v u0).1, V.ι ≫ (show T.unop ⟶ D.obj (v u0).1 from (v u0).2)⟩
+      (Z.flip.obj (op V)).elementsMk (l g') (IsOpenImmersion.lift (c (l g')) (V.ι ≫ g') h)
+    else (Z.flip.obj (op V)).elementsMk (v u0).1
+      (V.ι ≫ (show T.unop ⟶ D.obj (v u0).1 from (v u0).2))
   refine bdy_abs Z V.ι.op (aug _ hc) e x hx hb ?_
   intro u hu
   have hsu : u ∈ xs.support := Finsupp.mem_support_iff.mpr hu
@@ -337,8 +340,9 @@ theorem main : EtaleAugInjAt := by
     exact hVO _ hmem hw
   have hle : l (g u) ≤ (v u).1 :=
     hl2 _ _ (Finset.mem_image.mpr ⟨u, Finset.mem_filter.mpr ⟨hsu, rfl⟩, rfl⟩)
-  have he : e (g u) = ⟨l (g u), IsOpenImmersion.lift (c (l (g u))) (V.ι ≫ g u) hrange⟩ :=
-    dif_pos hrange
+  have he : e (g u) = (Z.flip.obj (op V)).elementsMk (l (g u))
+      (IsOpenImmersion.lift (c (l (g u))) (V.ι ≫ g u) hrange) :=
+    dite_eq_left hrange
   show Nonempty (e (g u) ⟶ _)
   rw [he]
   refine ⟨⟨homOfLE hle, ?_⟩⟩

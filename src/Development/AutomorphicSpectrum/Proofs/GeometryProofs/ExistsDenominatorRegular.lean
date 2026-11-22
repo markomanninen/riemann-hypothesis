@@ -1,11 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 noncomputable section
 
@@ -38,7 +41,8 @@ theorem exists_denom_of_injective {R K B S : Type} [CommRing R] [IsDomain R] [Fi
         have hx : (fun i => v i b) = ∑ i, (v i b) • (Pi.single i (1 : K) : S → K) := by
           funext j
           simp [Finset.sum_apply, Pi.single_apply]
-        rw [hx, map_sum] at hb
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hx, map_sum] at hb
         simp only [map_smul, smul_eq_mul] at hb
         simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
         rw [← hb]
@@ -59,7 +63,7 @@ theorem exists_denom_of_injective {R K B S : Type} [CommRing R] [IsDomain R] [Fi
       obtain ⟨d, hd, b, hb⟩ := hx
       obtain ⟨e, he, c, hc⟩ := hy
       refine ⟨d * e, mul_ne_zero hd he, ρ e * b + ρ d * c, fun i => ?_⟩
-      simp only [map_add, map_mul, hρ, hb, hc, Pi.add_apply]
+      simp only [map_add (f := _), map_mul, hρ, hb, hc, Pi.add_apply]
       ring
     | smul k x _ hx =>
       obtain ⟨d, hd, b, hb⟩ := hx

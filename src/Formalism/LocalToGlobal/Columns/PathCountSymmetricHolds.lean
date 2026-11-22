@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Columns.CardPathsEqSubmodulePairs
-import Formalism.LocalToGlobal.Columns.MemOfSmulMemOfAddEqOne
-import Formalism.LocalToGlobal.Columns.NeighbourConjOfTopNeighbour
+module
+
+public import Formalism.LocalToGlobal.Columns.CardPathsEqSubmodulePairs
+public import Formalism.LocalToGlobal.Columns.MemOfSmulMemOfAddEqOne
+public import Formalism.LocalToGlobal.Columns.NeighbourConjOfTopNeighbour
+
+@[expose] public section
 
 noncomputable section
 

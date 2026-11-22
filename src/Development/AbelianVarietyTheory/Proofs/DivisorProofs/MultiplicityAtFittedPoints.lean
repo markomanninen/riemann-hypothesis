@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SizeAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.GridTestLatticeLargestSlopeBound
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotLeafMMZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlopeEHolds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Development.AbelianVarietyTheory.Counterexamples.DegenerateExamples.TreeLeafParameterArithmeticOfBounds
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PtFieldMain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SlopeTestRemainingChoicesAlt
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GridTestLatticeLargestSlopeBound
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotLeafMMZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlopeEHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Development.AbelianVarietyTheory.Counterexamples.DegenerateExamples.TreeLeafParameterArithmeticOfBounds
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PtFieldMain
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,23 +34,32 @@ theorem weightX_zero_bounds {x : ℚ} (hx : x ∈ (num D C τ).weightX 0) :
     ((num D C τ).v D.R.k : ℚ) - 1 / 2 ≤ x ∧ x ≤ (num D C τ).a 0 := by
   have hk : 2 ≤ D.R.k := by have := D.R.m_add_three_le_k; omega
   have hg : (0 : ℚ) ≤ (num D C τ).ga := by positivity
-  have hvk := v_le_two D C τ hk le_rfl
+  have v_le_two {i : ℕ} (h1 : 2 ≤ i) (h2 : i ≤ D.R.k) :
+      ((num D C τ).v i : ℚ) ≤ (num D C τ).v 2 := by
+    rcases h1.eq_or_lt with rfl | h
+    · exact le_rfl
+    · exact_mod_cast ((num D C τ).v_anti 2 i le_rfl h h2).le
+  have a_le {i j : ℕ} (h : i ≤ j) : (num D C τ).a j ≤ (num D C τ).a i := by
+    rcases h.eq_or_lt with rfl | h
+    · exact le_rfl
+    · linarith [a_add_le (G := num D C τ) h]
+  have hvk := v_le_two hk le_rfl
   have ham : (num D C τ).a (num D C τ).m = (num D C τ).v 2 + (num D C τ).ga + 1 / 2 := (num D C τ).a_m
   have hlow : ∀ i, i ≤ D.R.m → ((num D C τ).v D.R.k : ℚ) - 1 / 2 ≤ (num D C τ).a i := fun i hi => by
-    have := a_le D C τ hi
+    have := a_le hi
     have e : (num D C τ).m = D.R.m := rfl
     rw [e] at ham
     linarith
   have h0 : ((num D C τ).v 2 : ℚ) + 1 / 2 ≤ (num D C τ).a 0 := by
-    have h1 := a_le D C τ (Nat.zero_le D.R.m)
+    have h1 := a_le (Nat.zero_le D.R.m)
     have e : (num D C τ).m = D.R.m := rfl
     rw [e] at ham
     linarith
   rcases GridData.mem_weightX.1 hx with h | h | ⟨i, h1, h2, h⟩ | ⟨l, h1, h2, -⟩
   · obtain ⟨i, hi, rfl⟩ := GridData.mem_tops.1 h
-    exact ⟨hlow i hi, a_le D C τ (Nat.zero_le i)⟩
+    exact ⟨hlow i hi, a_le (Nat.zero_le i)⟩
   · obtain ⟨i, h1, h2, rfl⟩ := GridData.mem_cloudHalf.1 h
-    have hi := v_le_two D C τ h1 h2
+    have hi := v_le_two h1 h2
     have hik : ((num D C τ).v D.R.k : ℚ) ≤ (num D C τ).v i := by
       rcases h2.eq_or_lt with e | e
       · rw [e]; exact le_rfl
@@ -54,7 +68,7 @@ theorem weightX_zero_bounds {x : ℚ} (hx : x ∈ (num D C τ).weightX 0) :
     constructor <;> linarith
   · have hb := blockC'_between (num_nearMid D C τ) (odd_sLen D).pos (sLen_lt_gap D C) h1 h2 h
     have hp := (num D C τ).a_pred h1
-    have hq := a_le D C τ (Nat.zero_le (i - 1))
+    have hq := a_le (Nat.zero_le (i - 1))
     exact ⟨(hlow i h2).trans hb.1.le, by linarith [hb.2]⟩
   · omega
 
@@ -138,10 +152,5 @@ theorem leafMM_of_test {p : PtAt ex Csz} {CF : ℝ} (d : FunIn p CF) (a : SlopeT
   rfl
 
 end Leaf
-
-theorem mm_tie : GlobalTheory.BigTop.Fun.SetAt → GlobalTheory.BigTop.Fun.MM @GlobalTheory.BigTop.Fun.Comparison₂ := fun h =>
-  ⟨0, fun _ _ => h.imp fun _ _ _ _ _ => ⟨1, fun _ hC => EvPt.of_forall fun _ _ _ _ _ d hd =>
-    let ⟨_, a, ha⟩ := hd
-    leafMM_of_test d a ha.test hC⟩⟩
 
 end GlobalTheory.BigTop.Fun.LeafMMTie

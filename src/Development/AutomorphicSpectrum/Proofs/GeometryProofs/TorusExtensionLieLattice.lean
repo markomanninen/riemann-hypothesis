@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSubFibreSubFib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFunctorialMap
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianHomLieExtendsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianTorusLieSubStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusExtensionTangentExactStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSubFibreSubFib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFunctorialMap
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianHomLieExtendsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianTorusLieSubStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusExtensionTangentExactStatement
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -88,23 +92,55 @@ theorem exists_fibre_model {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R
     (M : LieModel G (𝟙 _) V) :
     ∃ (T : Type) (_ : AddCommGroup T) (_ : Module R' T) (_ : Module R T) (_ : IsScalarTower R R' T)
       (M₁ : LieModel G₁ (𝟙 _) T) (j : V →ₗ[R] T),
-      (∀ e, M.Lifts (algebraMap R R') φ e (M₁.pt (j e))) ∧ IsBaseChange R' j := by
+      (∀ e, ((M₁.pt (j e)).left ≫ φ = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap R R')) ≫ (M.pt e).left)) ∧ IsBaseChange R' j := by
   obtain ⟨T, iT, mT, ⟨M'⟩⟩ := lieModel_exists _ G R' (spMap (algebraMap R R') ≫ 𝟙 _)
   letI mR : Module R T := Module.compHom T (algebraMap R R')
   have hsm : ∀ (a : R) (t : T), a • t = algebraMap R R' a • t := fun _ _ => rfl
   have tower : IsScalarTower R R' T :=
     ⟨fun a b t => by rw [Algebra.smul_def, hsm, mul_smul]⟩
-  have hφ : Spec.map (CommRingCat.ofHom (algebraMap R R')) ≫ 𝟙 (Sp R) = spMap (algebraMap R R') ≫ 𝟙 _ := rfl
-  have ex : ∀ e, ∃ t, M'.pt t = LieTangent.epsBase (algebraMap R R') hφ ≫ M.pt e :=
-    fun e => M'.onto _ (LieTangent.isTanAt_base _ hφ (M.tan e))
+  let c := algebraMap R R'
+  have halg : (dualMap c).comp (algebraMap R (DualNumber R)) =
+      (algebraMap R' (DualNumber R')).comp c := by
+    refine RingHom.ext fun r => TrivSqZeroExt.ext ?_ ?_
+    all_goals simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+  have hfst : (TrivSqZeroExt.fstHom R' R' R').toRingHom.comp (dualMap c) =
+      c.comp (TrivSqZeroExt.fstHom R R R).toRingHom := by
+    refine RingHom.ext fun a => ?_
+    simp [dualMap]
+  have hscale (r : R) : (dualMap c).comp (epsMul r) = (epsMul (c r)).comp (dualMap c) := by
+    refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_
+    all_goals simp [dualMap, epsMul, mul_comm]
+  let base : epsAt (spMap c ≫ 𝟙 (Sp R)) ⟶ epsAt (𝟙 (Sp R)) :=
+    Over.homMk (spMap (dualMap c)) (by
+      change spMap (dualMap c) ≫ Spec.map _ ≫ 𝟙 (Sp R) = Spec.map _ ≫ spMap c ≫ 𝟙 (Sp R)
+      simp only [spMap]
+      rw [← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp,
+        ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp, halg])
+  have htan (v : epsAt (𝟙 (Sp R)) ⟶ G) (hv : IsTanAt G (𝟙 _) v) :
+      IsTanAt G (spMap c ≫ 𝟙 _) (base ≫ v) := by
+    have h1 : (Over.homMk (spMap c) rfl : Over.mk (spMap c ≫ 𝟙 (Sp R)) ⟶ Over.mk (𝟙 (Sp R))) ≫ (1 : Over.mk (𝟙 (Sp R)) ⟶ G) = 1 := MonObj.comp_one _
+    have h2 : spMap c ≫ (1 : Over.mk (𝟙 (Sp R)) ⟶ G).left = (1 : Over.mk (spMap c ≫ 𝟙 (Sp R)) ⟶ G).left := by
+      rw [← h1]; rfl
+    unfold IsTanAt at hv ⊢
+    rw [← h2, ← hv]
+    change Spec.map _ ≫ spMap (dualMap c) ≫ v.left = spMap c ≫ Spec.map _ ≫ v.left
+    simp only [spMap]
+    rw [← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp,
+      ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp, hfst]
+  have ex : ∀ e, ∃ t, M'.pt t = base ≫ M.pt e :=
+    fun e => M'.onto _ (htan _ (M.tan e))
   choose f hf using ex
+  have hleft : ∀ e, (M'.pt (f e)).left = spMap (dualMap c) ≫ (M.pt e).left := fun e => by
+    rw [hf e]; rfl
   let j : V →ₗ[R] T :=
     { toFun := f
       map_add' := fun a b => M'.inj (by rw [M'.add, hf, hf, hf, M.add, comp_mul])
-      map_smul' := fun c e => M'.inj (by
-        rw [RingHom.id_apply, hsm, LieModel.pt_smul, hf, hf, LieModel.pt_smul, ← Category.assoc,
-          LieTangent.base_scale, Category.assoc]) }
-  have hl : ∀ e, M.Lifts (algebraMap R R') (𝟙 G.left) e (M'.pt (j e)) := fun e => by
+      map_smul' := fun r a => M'.inj (Over.OverMorphism.ext (by
+        rw [RingHom.id_apply, hsm, M'.smul, hleft, hleft, M.smul]
+        simp only [spMap]
+        rw [← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp,
+          ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp, hscale])) }
+  have hl : ∀ e, ((M'.pt (j e)).left ≫ (𝟙 G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap R R')) ≫ (M.pt e).left) := fun e => by
     change (M'.pt (f e)).left ≫ 𝟙 G.left = _
     rw [hf]
     exact Category.comp_id _
@@ -113,19 +149,18 @@ theorem exists_fibre_model {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R
   obtain ⟨M₁, h₁⟩ := (LiePull.lieModel_pullback _ _ G G₁ _ φ h R' (𝟙 _) T).1 M''
   refine ⟨T, iT, mT, mR, tower, M₁, j, fun e => ?_, GlobalTheory.T.lie_model_isBaseChange _ G R R' _ V T M M' j hl⟩
   have := hl e
-  unfold LieModel.Lifts at this ⊢
   rw [h₁, h'', ← this]
   exact (Category.comp_id _).symm
 
 theorem lifts_unique {R R' : Type} [CommRing R] [CommRing R'] {c : R →+* R'} {G : Over (Sp R)} [GrpObj G]
     {G₁ : Over (Sp R')} [GrpObj G₁] {φ : G₁.left ⟶ G.left} (h : IsGrpPullback G₁ G (spMap c) φ)
     {V : Type} [AddCommGroup V] [Module R V] {M : LieModel G (𝟙 _) V} {e : V} {v w : epsAt (𝟙 (Sp R')) ⟶ G₁}
-    (hv : M.Lifts c φ e v) (hw : M.Lifts c φ e w) : v = w := by
+    (hv : (v.left ≫ φ = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap c) ≫ (M.pt e).left)) (hw : (w.left ≫ φ = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap c) ≫ (M.pt e).left)) : v = w := by
   apply Over.OverMorphism.ext
   refine h.1.hom_ext (hv.trans hw.symm) ?_
   rw [Over.w v, Over.w w]
 
-theorem lie_quot_full : ∀ (O K : Type) [CommRing O] [IsDedekindDomain O] [Field K] [Algebra O K] [IsFractionRing O K] (G G' : Over (Sp O)) [GrpObj G] [GrpObj G'] (GK : Over (Sp K)) [GrpObj GK] (τ : TorusExtension GK) (φ : GK.left ⟶ G.left) (φ' : τ.B.left ⟶ G'.left), letI := τ.addCommGroup; letI := τ.grpB; IsSemiAbelian G → IsSemiAbelian G' → IsGrpPullback GK G (spMap (algebraMap O K)) φ → IsGrpPullback τ.B G' (spMap (algebraMap O K)) φ' → ∀ (MT : LieModel (splitTorus (Sp K) τ.X) (𝟙 _) (τ.X →+ K)), IsCocharLie MT → ∀ (E : Type) [AddCommGroup E] [Module O E] (E' : Type) [AddCommGroup E'] [Module O E'] (M : LieModel G (𝟙 _) E) (M' : LieModel G' (𝟙 _) E'), ∃ (io : (τ.X →+ O) →ₗ[O] E) (f : E →ₗ[O] E'), (∀ δ, M.Lifts (algebraMap O K) φ (io δ) (MT.pt ((algebraMap O K).toAddMonoidHom.comp δ) ≫ τ.i)) ∧ (∀ (e : E) (v : epsAt (𝟙 (Sp K)) ⟶ GK), M.Lifts (algebraMap O K) φ e v → M'.Lifts (algebraMap O K) φ' (f e) (v ≫ τ.q)) ∧ Function.Injective io ∧ LinearMap.ker f = LinearMap.range io ∧ ∀ e' : E', ∃ (a : O) (e : E), a ≠ 0 ∧ f e = a • e' := by
+theorem lie_quot_full : ∀ (O K : Type) [CommRing O] [IsDedekindDomain O] [Field K] [Algebra O K] [IsFractionRing O K] (G G' : Over (Sp O)) [GrpObj G] [GrpObj G'] (GK : Over (Sp K)) [GrpObj GK] (τ : TorusExtension GK) (φ : GK.left ⟶ G.left) (φ' : τ.B.left ⟶ G'.left), letI := τ.addCommGroup; letI := τ.grpB; IsSemiAbelian G → IsSemiAbelian G' → IsGrpPullback GK G (spMap (algebraMap O K)) φ → IsGrpPullback τ.B G' (spMap (algebraMap O K)) φ' → ∀ (MT : LieModel (splitTorus (Sp K) τ.X) (𝟙 _) (τ.X →+ K)), IsCocharLie MT → ∀ (E : Type) [AddCommGroup E] [Module O E] (E' : Type) [AddCommGroup E'] [Module O E'] (M : LieModel G (𝟙 _) E) (M' : LieModel G' (𝟙 _) E'), ∃ (io : (τ.X →+ O) →ₗ[O] E) (f : E →ₗ[O] E'), (∀ δ, ((MT.pt ((algebraMap O K).toAddMonoidHom.comp δ) ≫ τ.i).left ≫ φ = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap O K)) ≫ (M.pt (io δ)).left)) ∧ (∀ (e : E) (v : epsAt (𝟙 (Sp K)) ⟶ GK), (v.left ≫ φ = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap O K)) ≫ (M.pt e).left) → ((v ≫ τ.q).left ≫ φ' = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap O K)) ≫ (M'.pt (f e)).left)) ∧ Function.Injective io ∧ LinearMap.ker f = LinearMap.range io ∧ ∀ e' : E', ∃ (a : O) (e : E), a ≠ 0 ∧ f e = a • e' := by
   intro O K _ _ _ _ _ G G' _ _ GK _ τ φ φ'
   letI := τ.addCommGroup
   letI := τ.grpB

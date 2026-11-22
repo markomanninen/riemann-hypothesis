@@ -1,27 +1,32 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPushSectionsCanonicalModificationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefLineBundleOfPullbackSurjectiveProjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionsAdjointNefSeparateEtaleFibreStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneLeIntersectionNumberSubvarietyThroughPositiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeGenericNeZeroEquidimensionalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlobalSectionsDimPullbackLeGenericallyFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LineBundleGlobalSectionsDimNefPowTensorAmpleIsBiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GeometricallyConnectedStr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefLineBundleBaseChangeFieldExtension
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBigPull
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeSmoothProjectiveVarietyProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AmpleModuloEffectiveAwayFromPointPullAffine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBigLineBundleOfSmulClassEqAmpleAtAddNef
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeSectionsFiniteSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteFinrankLineBundleSectionsFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsResolvedModification
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SumNegOnePowFinrankEqZero
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAffineNeighbourhoodExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KawamataViehwegVanishingNumberFieldTwist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPushSectionsCanonicalModificationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefLineBundleOfPullbackSurjectiveProjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionsAdjointNefSeparateEtaleFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneLeIntersectionNumberSubvarietyThroughPositiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeGenericNeZeroEquidimensionalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlobalSectionsDimPullbackLeGenericallyFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LineBundleGlobalSectionsDimNefPowTensorAmpleIsBiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GeometricallyConnectedStr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefLineBundleBaseChangeFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBigPull
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeSmoothProjectiveVarietyProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AmpleModuloEffectiveAwayFromPointPullAffine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBigLineBundleOfSmulClassEqAmpleAtAddNef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeSectionsFiniteSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteFinrankLineBundleSectionsFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsResolvedModification
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SumNegOnePowFinrankEqZero
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAffineNeighbourhoodExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KawamataViehwegVanishingNumberFieldTwist
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -43,8 +48,8 @@ open Filter
 
 open GlobalTheory.ThickeningDetermines (secIdeal)
 
-theorem isProjOver_along {k : Type} [Field k] {X Z : Scheme.{0}} [Algebra k Γ(X, ⊤)] (hp : IsProjOver (strHom k X))
-    (i : Z ⟶ X) [IsClosedImmersion i] : letI := algebraΓAlong k i; IsProjOver (strHom k Z) := by
+theorem isProjOver_along {k : Type} [Field k] {X Z : Scheme.{0}} [Algebra k Γ(X, ⊤)] (hp : IsProjOver (strHom k (X := X)))
+    (i : Z ⟶ X) [IsClosedImmersion i] : letI := algebraΓAlong k i; IsProjOver (strHom k (X := Z)) := by
   letI := algebraΓAlong k i
   obtain ⟨n, e, he, hs⟩ := hp
   exact ⟨n, i ≫ e, inferInstance, by rw [Category.assoc, hs, comp_strHom (appTop_algebraMap_along k i)]⟩
@@ -61,7 +66,8 @@ theorem dim_zeroScheme_le [IsIntegral X] [IsLocallyNoetherian X] {L : LB X} (hL 
   exact (topologicalKrullDim_eq_of_isEmbedding (secIdeal hL t).subschemeι.isClosedEmbedding.isEmbedding
     (secIdeal hL t).range_subschemeι).symm
 
-theorem globalSections_dim_le_div_add_restriction [IsIntegral X] (hp : IsProjOver (strHom k X)) {L B : LB X} (hL : L.IsLB) (hB : B.IsLB) {t : L.Sec}
+set_option maxHeartbeats 16000000 in
+theorem globalSections_dim_le_div_add_restriction [IsIntegral X] (hp : IsProjOver (strHom k (X := X))) {L B : LB X} (hL : L.IsLB) (hB : B.IsLB) {t : L.Sec}
     (ht : t ≠ 0) : letI := algebraΓAlong k (secIdeal hL t).subschemeι
     lbH0 k B ≤ lbH0 k (LB.div B L) + lbH0 k (B.pull (secIdeal hL t).subschemeι) := by
   letI := algebraΓAlong k (secIdeal hL t).subschemeι
@@ -87,7 +93,7 @@ theorem nef_pull (hN : GlobalTheory.Published.NefNumerics) {F E : Type} [Field F
   letI := algebraΓOfHom pY
   obtain ⟨hpp, A, hA⟩ := (isProjOver_iff_isProper_and_exists_isAmpleLB pX).1 hX
   obtain ⟨B, hB⟩ := exists_isAmpleLB_of_isProjOver hY
-  have : IsProper (strHom F X) := by rw [strHom_eq (f := pX) fun _ => rfl]; exact hpp
+  have : IsProper (strHom F (X := X)) := by rw [strHom_eq (f := pX) fun _ => rfl]; exact hpp
   exact NefFieldExt.isNef_pull hN hL hA hB g
 
 theorem big_pull_modif {F : Type} [Field F] {X : Scheme.{0}} [IsIntegral X] (sX : X ⟶ Sp F) (n : ℕ)
@@ -102,7 +108,7 @@ theorem big_pull_modif {F : Type} [Field F] {X : Scheme.{0}} [IsIntegral X] (sX 
     exact ⟨y.1, (morphismRestrict_base_coe M.σ U y).symm.trans (congrArg Subtype.val hy)⟩
 
 theorem ampleAt_generic (hN : GlobalTheory.Published.NefNumerics) {F : Type} [Field F] {Y : Scheme.{0}} [IsIntegral Y]
-    [Algebra F Γ(Y, ⊤)] (hp : IsProjOver (strHom F Y)) {n : ℕ} (hd : topologicalKrullDim Y = (n + 1 : ℕ))
+    [Algebra F Γ(Y, ⊤)] (hp : IsProjOver (strHom F (X := Y))) {n : ℕ} (hd : topologicalKrullDim Y = (n + 1 : ℕ))
     {L A : LB Y} (hL : IsNef F L) (hA : IsAmpleLB A) {c : ℝ} (hc : 0 < c)
     (h : ∃ᶠ m : ℕ in atTop, c * (m : ℝ) ^ (n + 1) ≤ lbH0 F (tens (lbPow L m) A)) : AmpleAt L (genericPoint Y) := by
   have := isNoetherian_of_isProjOver hp
@@ -224,7 +230,8 @@ theorem sum_val_pull_eq_zero {F : Type} [Field F] [Algebra F ℂ] {Y : Scheme.{0
       (Scheme.Hom.appLE_comp_appLE (x j) π (T.U (k j)) _ ⊤ ((chartPullPull T π).le (pIdx T π (k j))) (hk' j))
   have hs : ∀ j, val (x j) (pIdx T π (k j)) le_top (hk' j) (ofSec q ⊤ t) =
       ∑ i, u i * val (x j ≫ π) (k j) le_top (hk j) (ofSec p ⊤ (b i)) := fun j => by
-    rw [ht, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ht, map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [ofSec_smul]
     exact (H0.val_smul (O := ⊤) (x j) (hx' j) _ le_top (hk' j) _ _).trans (congrArg (u i * ·) (hv j i))
@@ -342,7 +349,7 @@ theorem separate_numberField (hK : GlobalTheory.Published.NadelVanishingAndNonKl
   have hUC : Etale (fC ∣_ (πW ⁻¹ᵁ U)) := etale_restrict_of_isPullback Hf U hU
   have hcB : cls (B.pull πM) (LB.isLB_pull hB πM) =
       m • CechPic.pull fC (cls (N.pull πW) hNC) + cls (N'.pull πM) (LB.isLB_pull hN' πM) := by
-    rw [cls_pull hB, cls_pull hN, cls_pull hN', hBc, map_add, map_nsmul, ← pull_comp, ← pull_comp, hf₁]
+    rw [cls_pull hB, cls_pull hN, cls_pull hN', hBc, map_add (f := _), map_nsmul, ← pull_comp, ← pull_comp, hf₁]
   have hpt : ∀ (Y : Scheme.{0}) (y : Sp ℂ ⟶ Y) (O : Y.Opens), y s₀ ∈ O → ⊤ ≤ y ⁻¹ᵁ O := by
     intro Y y O hs t _
     rw [Subsingleton.elim t s₀]
@@ -449,7 +456,7 @@ theorem sections_separate_quotient_fibre : GlobalTheory.Published.NadelVanishing
       m • CechPic.pull f (cls NW hNW) + cls (N'.pull M.σ) (LB.isLB_pull hN' M.σ) := by
     rw [hcls]
     change CechPic.pull M.σ (cls B hB) = m • CechPic.pull M.σ (cls δ hδ) + CechPic.pull M.σ (cls N' hN')
-    rw [hBc, map_add, map_nsmul]
+    rw [hBc, map_add (f := _), map_nsmul]
   have hsep := separate_numberField' hK hNN F σ M.X W' M.str pW f n hfp M.proj hWp' hMgc hWgc hfs hn UW het K' NW hNW
     (N'.pull M.σ) (B.pull M.σ) (LB.isLB_pull hN' M.σ) (LB.isLB_pull hB M.σ) m hNWn hN'σn hm hBM
     J z hzinj hzp hzf (fun j s => by rw [hzgen j s]; exact ⟨hgUW, hamp⟩) k' hk' (fun j => a j * (lam j : ℂ)) (fun g => by

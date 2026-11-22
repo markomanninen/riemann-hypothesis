@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.TensorActionLieRelations
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.TensorActionLieRelations
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem highest_weight_graph_submodule {E : Fin n → Fin n → Module.End ℂ P
   refine ⟨Γ0 ⊔ Zᗮ.prod ⊥, ?_, ?_, ?_, ?_, Submodule.mem_sup_left (uq_mem_kSpan ε _ _)⟩
   · intro a b hab y hy
     obtain ⟨y1, hy1, y2, hy2, rfl⟩ := Submodule.mem_sup.1 hy
-    rw [map_add]
+    rw [map_add (f := _)]
     refine Submodule.add_mem_sup (hΓ0st a b hab y1 hy1) ?_
     rw [Submodule.mem_prod] at hy2 ⊢
     refine ⟨hZo a b hab _ hy2.1, ?_⟩

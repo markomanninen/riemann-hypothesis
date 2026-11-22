@@ -1,5 +1,14 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.ThirdJetIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.SigmaConstantAgrees
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.ThirdJetIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.ChordSecondLogDeriv
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormClosed
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.JetExpShape
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.UnitaryInverseIdentity
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Closure
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.IntPSDerivativeOfLG
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -24,18 +33,18 @@ theorem subst_zero {τ : Type} (g : PowerSeries K) :
   by_cases he : e = 0 <;> simp [he, MvPowerSeries.coeff_C, MvPowerSeries.coeff_one]
 
 theorem logDeriv {R : Subring K} {l linv : PowerSeries K} (h : IsLogPair l linv)
-    (hF : FGInt R l linv) : IsOneUnit R (PowerSeries.derivative K l) := by
+    (hF : FGInt R l linv) : IsOneUnit R (PowerSeries.derivative (R := K) l) := by
   have hX0 : MvPowerSeries.constantCoeff (MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) K) = 0 :=
     MvPowerSeries.constantCoeff_X _
   have hX1 : MvPowerSeries.constantCoeff (MvPowerSeries.X (1 : Fin 2) : MvPowerSeries (Fin 2) K) = 0 :=
     MvPowerSeries.constantCoeff_X _
   have hX : MvPowerSeries.constantCoeff (PowerSeries.X : MvPowerSeries Unit K) = 0 :=
     PowerSeries.constantCoeff_X
-  have h10 : MvPowerSeries.pderiv K (1 : Fin 2) (MvPowerSeries.X (0 : Fin 2)) = 0 :=
+  have h10 : MvPowerSeries.pderiv (R := K) (1 : Fin 2) (MvPowerSeries.X (0 : Fin 2)) = 0 :=
     MvPowerSeries.pderiv_X_of_ne (by decide)
   have hFc := Pts.constantCoeff_fadd h hX0 hX1
-  have e1 := congrArg (MvPowerSeries.pderiv K (1 : Fin 2)) (Pts.l_fadd h hX0 hX1)
-  rw [map_add, IntegralMvPolynomialLemmas.pderiv_subst _ hFc, IntegralMvPolynomialLemmas.pderiv_subst _ hX0, IntegralMvPolynomialLemmas.pderiv_subst _ hX1, h10,
+  have e1 := congrArg (MvPowerSeries.pderiv (R := K) (1 : Fin 2)) (Pts.l_fadd h hX0 hX1)
+  rw [map_add (f := _), IntegralMvPolynomialLemmas.pderiv_subst _ hFc, IntegralMvPolynomialLemmas.pderiv_subst _ hX0, IntegralMvPolynomialLemmas.pderiv_subst _ hX1, h10,
     MvPowerSeries.pderiv_X_self, mul_zero, zero_add, mul_one] at e1
   have ha : ∀ s : Fin 2, IsPt R ((![PowerSeries.X, 0] : Fin 2 → MvPowerSeries Unit K) s) := by
     intro s
@@ -49,19 +58,19 @@ theorem logDeriv {R : Subring K} {l linv : PowerSeries K} (h : IsLogPair l linv)
   rw [MvPowerSeries.subst_mul hs, Pts.substMv_subst hFc ha0, Pts.substMv_subst hX1 ha0,
     ← Pts.fadd_eq_substMv h hX (map_zero _), Pts.fadd_zero h hX, MvPowerSeries.subst_X hs] at e2
   have e3 : (![PowerSeries.X, 0] : Fin 2 → MvPowerSeries Unit K) 1 = 0 := rfl
-  have e4 : PowerSeries.subst (PowerSeries.X : MvPowerSeries Unit K) (PowerSeries.derivative K l) =
-      PowerSeries.derivative K l := PowerSeries.X_subst _
+  have e4 : PowerSeries.subst (PowerSeries.X : MvPowerSeries Unit K) (PowerSeries.derivative (R := K) l) =
+      PowerSeries.derivative (R := K) l := PowerSeries.X_subst _
   rw [e3, subst_zero, cc_derivative_log h, map_one, e4] at e2
   have hG : IntMv R (MvPowerSeries.subst (![PowerSeries.X, 0] : Fin 2 → MvPowerSeries Unit K)
-      (MvPowerSeries.pderiv K (1 : Fin 2)
+      (MvPowerSeries.pderiv (R := K) (1 : Fin 2)
         (fadd l linv (MvPowerSeries.X (0 : Fin 2)) (MvPowerSeries.X (1 : Fin 2))))) :=
     IntegralMvPolynomialLemmas.intMv_substMv (IntegralMvPolynomialLemmas.intMv_pderiv hF 1) ha
   have hG0 : MvPowerSeries.constantCoeff
       (MvPowerSeries.subst (![PowerSeries.X, 0] : Fin 2 → MvPowerSeries Unit K)
-      (MvPowerSeries.pderiv K (1 : Fin 2)
+      (MvPowerSeries.pderiv (R := K) (1 : Fin 2)
         (fadd l linv (MvPowerSeries.X (0 : Fin 2)) (MvPowerSeries.X (1 : Fin 2))))) = 1 := by
     have e5 := congrArg MvPowerSeries.constantCoeff e2
-    have e6 : MvPowerSeries.constantCoeff (PowerSeries.derivative K l : MvPowerSeries Unit K) = 1 :=
+    have e6 : MvPowerSeries.constantCoeff (PowerSeries.derivative (R := K) l : MvPowerSeries Unit K) = 1 :=
       cc_derivative_log h
     rwa [map_mul, e6, one_mul, map_one] at e5
   refine ⟨cc_derivative_log h, intPS_of_intMv (IntegralMvPolynomialLemmas.intMv_of_mul_eq_one hG hG0 ?_)⟩
@@ -87,13 +96,13 @@ theorem third {l linv ph : PowerSeries K} (hFr : Frame R l linv ph) (hF1 : F1 R 
         (PowerSeries.subst (MvPowerSeries.X (0 : Fin 3) : MvPowerSeries (Fin 3) K) l +
           PowerSeries.subst (MvPowerSeries.X (1 : Fin 3) : MvPowerSeries (Fin 3) K) l +
           PowerSeries.subst (MvPowerSeries.X (2 : Fin 3) : MvPowerSeries (Fin 3) K) l)
-        ((PowerSeries.derivative K)^[3] (PowerSeries.subst linv ph)) *
+        ((PowerSeries.derivative (R := K))^[3] (PowerSeries.subst linv ph)) *
       PowerSeries.subst (MvPowerSeries.X (0 : Fin 3) : MvPowerSeries (Fin 3) K)
-        (PowerSeries.derivative K l) *
+        (PowerSeries.derivative (R := K) l) *
       PowerSeries.subst (MvPowerSeries.X (1 : Fin 3) : MvPowerSeries (Fin 3) K)
-        (PowerSeries.derivative K l) *
+        (PowerSeries.derivative (R := K) l) *
       PowerSeries.subst (MvPowerSeries.X (2 : Fin 3) : MvPowerSeries (Fin 3) K)
-        (PowerSeries.derivative K l)) := by
+        (PowerSeries.derivative (R := K) l)) := by
   have h := hFr.1
   have hX : ∀ i : Fin 3,
       MvPowerSeries.constantCoeff (MvPowerSeries.X i : MvPowerSeries (Fin 3) K) = 0 :=
@@ -106,23 +115,23 @@ theorem third {l linv ph : PowerSeries K} (hFr : Frame R l linv ph) (hF1 : F1 R 
   have hzz : ∀ i j : Fin 3, MvPowerSeries.constantCoeff
       (PowerSeries.subst (MvPowerSeries.X i : MvPowerSeries (Fin 3) K) l +
         PowerSeries.subst (MvPowerSeries.X j : MvPowerSeries (Fin 3) K) l) = 0 :=
-    fun i j => by rw [map_add, hz, hz, add_zero]
+    fun i j => by rw [map_add (f := _), hz, hz, add_zero]
   have hzzz : MvPowerSeries.constantCoeff
       (PowerSeries.subst (MvPowerSeries.X (0 : Fin 3) : MvPowerSeries (Fin 3) K) l +
         PowerSeries.subst (MvPowerSeries.X (1 : Fin 3) : MvPowerSeries (Fin 3) K) l +
         PowerSeries.subst (MvPowerSeries.X (2 : Fin 3) : MvPowerSeries (Fin 3) K) l) = 0 := by
-    rw [map_add, hzz, hz, add_zero]
-  have h01 : MvPowerSeries.pderiv K (0 : Fin 3) (MvPowerSeries.X (1 : Fin 3)) = 0 :=
+    rw [map_add (f := _), hzz, hz, add_zero]
+  have h01 : MvPowerSeries.pderiv (R := K) (0 : Fin 3) (MvPowerSeries.X (1 : Fin 3)) = 0 :=
     MvPowerSeries.pderiv_X_of_ne (by decide)
-  have h02 : MvPowerSeries.pderiv K (0 : Fin 3) (MvPowerSeries.X (2 : Fin 3)) = 0 :=
+  have h02 : MvPowerSeries.pderiv (R := K) (0 : Fin 3) (MvPowerSeries.X (2 : Fin 3)) = 0 :=
     MvPowerSeries.pderiv_X_of_ne (by decide)
-  have h10 : MvPowerSeries.pderiv K (1 : Fin 3) (MvPowerSeries.X (0 : Fin 3)) = 0 :=
+  have h10 : MvPowerSeries.pderiv (R := K) (1 : Fin 3) (MvPowerSeries.X (0 : Fin 3)) = 0 :=
     MvPowerSeries.pderiv_X_of_ne (by decide)
-  have h12 : MvPowerSeries.pderiv K (1 : Fin 3) (MvPowerSeries.X (2 : Fin 3)) = 0 :=
+  have h12 : MvPowerSeries.pderiv (R := K) (1 : Fin 3) (MvPowerSeries.X (2 : Fin 3)) = 0 :=
     MvPowerSeries.pderiv_X_of_ne (by decide)
-  have h20 : MvPowerSeries.pderiv K (2 : Fin 3) (MvPowerSeries.X (0 : Fin 3)) = 0 :=
+  have h20 : MvPowerSeries.pderiv (R := K) (2 : Fin 3) (MvPowerSeries.X (0 : Fin 3)) = 0 :=
     MvPowerSeries.pderiv_X_of_ne (by decide)
-  have h21 : MvPowerSeries.pderiv K (2 : Fin 3) (MvPowerSeries.X (1 : Fin 3)) = 0 :=
+  have h21 : MvPowerSeries.pderiv (R := K) (2 : Fin 3) (MvPowerSeries.X (1 : Fin 3)) = 0 :=
     MvPowerSeries.pderiv_X_of_ne (by decide)
   have hT := hF1 (Fin 3) _ _ _ (hP 0) (hP 1) (hP 2)
   have hI := IntegralMvPolynomialLemmas.intMv_pderiv (IntegralMvPolynomialLemmas.intMv_pderiv (expIntegralDeriv' K R (Fin 3) _ hT 0) 1) 2
@@ -132,8 +141,8 @@ theorem third {l linv ph : PowerSeries K} (hFr : Frame R l linv ph) (hF1 : F1 R 
   simp only [IntegralMvPolynomialLemmas.pderiv_subst _ hzzz, IntegralMvPolynomialLemmas.pderiv_subst _ (hzz _ _), IntegralMvPolynomialLemmas.pderiv_subst _ (hX _),
     map_add, map_sub, Derivation.leibniz, MvPowerSeries.pderiv_X_self, h01, h02, h10, h12, h20, h21,
     smul_eq_mul, mul_zero, mul_one, add_zero, zero_add, sub_zero, sub_self] at hI
-  have e : (PowerSeries.derivative K)^[3] (PowerSeries.subst linv ph) =
-      PowerSeries.derivative K (PowerSeries.derivative K (PowerSeries.derivative K
+  have e : (PowerSeries.derivative (R := K))^[3] (PowerSeries.subst linv ph) =
+      PowerSeries.derivative (R := K) (PowerSeries.derivative (R := K) (PowerSeries.derivative (R := K)
         (PowerSeries.subst linv ph))) := rfl
   rw [e]
   convert hI using 1
@@ -153,7 +162,7 @@ theorem integral_third_invariant_derivative {l linv ph : PowerSeries K} (hFr : F
       (PowerSeries.subst (MvPowerSeries.X (0 : Fin 3) : MvPowerSeries (Fin 3) K) l +
         PowerSeries.subst (MvPowerSeries.X (1 : Fin 3) : MvPowerSeries (Fin 3) K) l +
         PowerSeries.subst (MvPowerSeries.X (2 : Fin 3) : MvPowerSeries (Fin 3) K) l) = 0 := by
-    rw [map_add, map_add, hz, hz, hz, add_zero, add_zero]
+    rw [map_add (f := _), map_add (f := _), hz, hz, hz, add_zero, add_zero]
   have ha : ∀ s : Fin 3, IsPt R ((![PowerSeries.X, 0, 0] : Fin 3 → MvPowerSeries Unit K) s) := by
     intro s
     fin_cases s
@@ -178,12 +187,12 @@ theorem integral_third_invariant_derivative {l linv ph : PowerSeries K} (hFr : F
     mul_one, mul_one, eX, eX, ← subst_Dinv_iterate h] at hI
   have hl0 : MvPowerSeries.constantCoeff (l : MvPowerSeries Unit K) = 0 := h.1
   rw [Pts.subst_subst h.2.2.1 hl0, h.2.2.2.1, eX] at hI
-  have hne : PowerSeries.constantCoeff (PowerSeries.derivative K l) ≠ 0 := by
+  have hne : PowerSeries.constantCoeff (PowerSeries.derivative (R := K) l) ≠ 0 := by
     rw [hl.1]; exact one_ne_zero
-  have hinv : IntPS R (PowerSeries.derivative K l)⁻¹ :=
+  have hinv : IntPS R (PowerSeries.derivative (R := K) l)⁻¹ :=
     intPS_of_mul_eq_one hl.2 hl.1 (PowerSeries.mul_inv_cancel _ hne)
   have e : (Dinv l)^[3] ph =
-      ((Dinv l)^[3] ph * PowerSeries.derivative K l) * (PowerSeries.derivative K l)⁻¹ := by
+      ((Dinv l)^[3] ph * PowerSeries.derivative (R := K) l) * (PowerSeries.derivative (R := K) l)⁻¹ := by
     rw [mul_assoc, PowerSeries.mul_inv_cancel _ hne, mul_one]
   rw [e]
   exact intPS_mul (intPS_of_intMv hI) hinv
@@ -234,11 +243,5 @@ theorem jets_shape : JetsShape := by
   rcases (by omega : i = 1 ∨ 3 ≤ i) with rfl | h3
   · exact jetOne' K R l linv ph hFr.1 hl hFr.2.2 hN h2
   · exact (third_jet_integral K R l linv ph hFr hF1).2 i h3
-
-theorem sum_two_units_product : SumTwoUnitsProd := by
-  intro A B _ _ hA hB x
-  obtain ⟨u1, v1, h1⟩ := hA x.1
-  obtain ⟨u2, v2, h2⟩ := hB x.2
-  exact ⟨MulEquiv.prodUnits.symm (u1, u2), MulEquiv.prodUnits.symm (v1, v2), Prod.ext h1 h2⟩
 
 end Formalism.L2.Th1.C

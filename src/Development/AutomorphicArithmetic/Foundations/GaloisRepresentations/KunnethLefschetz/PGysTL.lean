@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
-import Development.EtaleCohomology.EtaleTrace.LRingPf
-import Development.EtaleCohomology.EtaleTrace.LPdCut
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+public import Development.EtaleCohomology.EtaleTrace.LRingPf
+public import Development.EtaleCohomology.EtaleTrace.LPdCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace UpperTheory.Gal.KunnethLefschetz
@@ -15,7 +19,7 @@ private def castHom {q : ℕ} {E : Spc} {n i n' i' : ℤ} (hn : n = n') (hi : i 
 private def pairSP {k : Type} [Field k] {d e : ℕ} {Z X : Scheme.{0}} {p : X ⟶ S k} {ι : Z ⟶ X}
     (h : IsPair d e p ι) : LateralTheory.CohomologicalPurity.SP d :=
   { X := X, Z := Z, S := S k, p := p, ι := ι, e := e
-    U := ⟨(Set.range ι)ᶜ, (h.cl.base_closed.isClosed_range).isOpen_compl⟩
+    U := ⟨(Set.range ι)ᶜ, h.cl.isClosedEmbedding.isClosed_range.isOpen_compl⟩
     cl := h.cl, smX := h.big, smZ := h.small, hU := rfl }
 
 theorem UpperTheory.Gal.KunnethLefschetz.gysTL_holds :

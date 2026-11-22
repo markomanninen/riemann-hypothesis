@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrdGeOfForall
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CongruentTupleUnimodularImageOrLarge
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedLatticeQuadraticSumGeDiagonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrdGeOfForall
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CongruentTupleUnimodularImageOrLarge
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedLatticeQuadraticSumGeDiagonal
+
+@[expose] public section
 
 noncomputable section
 open AlgebraicGeometry CategoryTheory IsLocalRing ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.TorRef GlobalTheory.Poinc
@@ -29,7 +33,7 @@ theorem congMod_of_span {X ι : Type} [AddCommGroup X] (N : ℕ) (g : X →+ X) 
   | zero => exact ⟨0, by simp⟩
   | add y z _ _ hy hz =>
     obtain ⟨w, hw⟩ := hy; obtain ⟨w', hw'⟩ := hz
-    exact ⟨w + w', by rw [map_add, hw, hw', smul_add]; abel⟩
+    exact ⟨w + w', by rw [map_add (f := _), hw, hw', smul_add]; abel⟩
   | smul n y _ hy =>
     obtain ⟨w, hw⟩ := hy
     exact ⟨n • w, by rw [map_zsmul, hw, smul_add, smul_comm]⟩
@@ -44,7 +48,7 @@ theorem unimod_comp (O : Type) [CommRing O] {X₀ X : Type} [AddCommGroup X₀] 
     obtain ⟨w', hw'⟩ := hk1 c (g x)
     refine ⟨k w + w', ?_⟩
     simp only [LinearMap.comp_apply]
-    rw [hw, map_add, map_nsmul, hw', smul_add]; abel
+    rw [hw, map_add (f := _), map_nsmul, hw', smul_add]; abel
   · rw [← LinearMap.comp_assoc, LinearMap.det_comp]
     obtain ⟨u, hu⟩ := hε
     obtain ⟨v, hv⟩ := h2
@@ -112,8 +116,8 @@ theorem pow_le_span {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] [IsPrin
 
 end GlobalTheory.Poinc.leadingTermLemmas
 
-open GlobalTheory.Poinc.leadingTermLemmas in
 
+open GlobalTheory.Poinc.leadingTermLemmas in
 theorem GlobalTheory.Poinc.approx_of_vsys : ∀ (O : Type) [CommRing O] [Module.Finite ℤ O] (bar : O → O), BddAct bar → ∀ (q : ℕ) (φ : InvFun O), IsPolFan bar q φ → ∀ (s : ℕ) (W : Matrix (Fin s) (Fin s) ℤ), PosW W → ∀ (N₁ : ℕ) (A : Type) [CommRing A] [IsLocalRing A] (Φ : VSys bar q W N₁ A) (y₀ : Φ.Y) (γ : Fin (Φ.m y₀) → LinearMap.BilinForm ℤ (Φ.X y₀)) (M : ℕ), 1 ≤ M → (∀ i, Φ.δ y₀ i = (M : ℤ) • γ i) → ∀ (d l : ℕ) (a : Fin l × Fin s → Φ.X y₀), Dominant bar φ d N₁ W γ a → ∀ (c : Fin l → Φ.Q) (e : ℕ), ∃ f : A, Φ.OrdGe φ d e f ∧ Φ.Leads y₀ a c e f := by
   classical
   intro O _ _ bar hB q φ hφ s W hW N₁ A _ _ Φ y₀ γ M hM hδ d l a hD c e

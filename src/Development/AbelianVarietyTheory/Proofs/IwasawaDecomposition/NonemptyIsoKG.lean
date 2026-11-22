@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ImaginaryQuadraticFieldStructure
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ImaginaryQuadraticFieldStructure
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Ker Matrix
 open scoped BigOperators
 
@@ -13,7 +18,8 @@ theorem linearIndependent_of_orthogonal {K V J : Type} [Field K] [AddCommGroup V
   rw [linearIndependent_iff']
   intro s g hs j hj
   have := congrArg (h (v j)) hs
-  rw [map_sum, map_zero, Finset.sum_eq_single j] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero, Finset.sum_eq_single j] at this
   · rw [map_smul, smul_eq_mul] at this
     exact (mul_eq_zero.1 this).resolve_right (h0 j)
   · intro i _ hij
@@ -85,17 +91,21 @@ theorem nonempty_isoKG : ∀ (K E : Type) [Field K] [CharZero K] [Field E] [Alge
   have hco : ∀ x w, H (b w) x = B.equivFun x w := by
     intro x w
     conv_lhs => rw [← B.sum_equivFun x]
-    simp only [map_sum, map_smul, hB, hb, smul_eq_mul, mul_ite, mul_one, mul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hB, hb, smul_eq_mul, mul_ite, mul_one, mul_zero]
     simp
   refine ⟨⟨B.equivFun, fun x y => ?_⟩⟩
   have hy : ∀ k, cj (y k) = ∑ w, algebraMap K E (σ (B.equivFun y w)) * cj (b w k) := by
     intro k
     conv_lhs => rw [← B.sum_equivFun y]
-    simp only [Finset.sum_apply, Pi.smul_apply, map_sum, hB]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, Pi.smul_apply, map_sum, hB]
     simp only [Algebra.smul_def, map_mul, hσ]
-  simp only [hσ, ← map_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hσ, ← map_mul, ← map_sum]
   congr 1
-  simp only [hy, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hy, Finset.mul_sum, map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun w _ => ?_
   rw [← hco x w, hH, Finset.sum_mul]

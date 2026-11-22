@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GL3MeanSquares.LegendreCoefficient
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.IntegralSubstVector
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.LegendreCoefficient
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.IntegralSubstVector
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem expS_add (f g : MvPowerSeries σ K) (hf : MvPowerSeries.constantCoeff f 
     rfl
   have h0 : ∀ i : Fin 2, MvPowerSeries.constantCoeff (MvPowerSeries.X i : MvPowerSeries (Fin 2) K) = 0 :=
     fun i => MvPowerSeries.constantCoeff_X i
-  rw [← e1, ← subst_expS h hh _ (by rw [map_add, h0, h0, add_zero]), exp_biv,
+  rw [← e1, ← subst_expS h hh _ (by rw [map_add (f := _), h0, h0, add_zero]), exp_biv,
     MvPowerSeries.subst_mul hS, subst_expS h hh _ (h0 0), subst_expS h hh _ (h0 1), e2, e2]
   rfl
 
@@ -217,30 +221,6 @@ theorem integral_of_mul_eq_one [IsUltrametricDist K] {u v : MvPowerSeries σ K} 
           zero_le_one).trans (by norm_num)
   intro d
   exact key _ d rfl
-
-def CT (F : ℕ → MvPowerSeries σ K) (f : MvPowerSeries σ K) : Prop :=
-  ∀ n, Filter.Tendsto (fun k => MvPowerSeries.coeff n (F k)) Filter.atTop
-    (nhds (MvPowerSeries.coeff n f))
-
-theorem CT.mul {F G : ℕ → MvPowerSeries σ K} {f g : MvPowerSeries σ K} (hF : CT F f)
-    (hG : CT G g) : CT (fun k => F k * G k) (f * g) := by
-  classical
-  intro n
-  simp only [MvPowerSeries.coeff_mul]
-  apply tendsto_finset_sum
-  intro p _
-  exact (hF p.1).mul (hG p.2)
-
-theorem CT.pow {F : ℕ → MvPowerSeries σ K} {f : MvPowerSeries σ K} (hF : CT F f) (n : ℕ) :
-    CT (fun k => F k ^ n) (f ^ n) := by
-  induction n with
-  | zero =>
-    intro d
-    simp only [pow_zero]
-    exact tendsto_const_nhds
-  | succ n ih =>
-    simp only [pow_succ]
-    exact ih.mul hF
 
 theorem inLam_zero [IsUltrametricDist K] [Algebra ℚ K] : InLam (0 : MvPowerSeries σ K) := by
   refine ⟨map_zero _, ?_⟩

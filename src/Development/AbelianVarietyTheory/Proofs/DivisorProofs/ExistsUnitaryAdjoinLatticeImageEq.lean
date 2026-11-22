@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAevalEqAevalMapOfCoprimeCharpolyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralMatrixOfMapsToFullRankLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryMulIntegralOfNormMaximalOrderUnitStatement
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAevalEqAevalMapOfCoprimeCharpolyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralMatrixOfMapsToFullRankLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryMulIntegralOfNormMaximalOrderUnitStatement
+
+@[expose] public section
+
 open Polynomial Matrix GlobalTheory.LatOrb
 
 noncomputable section
@@ -17,7 +22,7 @@ theorem exists_mul_eq_one_mem {B : Type} [Ring B] [Algebra K B] (S : Subalgebra 
     ∃ b ∈ S, a * b = 1 := by
   let f : S →ₗ[K] S := LinearMap.mulLeft K (⟨a, ha⟩ : S)
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     apply Subtype.ext
     exact hc x.1 (by simpa [f] using congrArg Subtype.val hx)
@@ -57,7 +62,7 @@ theorem aeval_map_mulVec_mem {O : Type} [CommRing O] [Algebra O K] (M : Submodul
   induction r using Polynomial.induction_on' with
   | add p q hp hq =>
     intro v hv
-    rw [Polynomial.map_add, map_add, Matrix.add_mulVec]
+    rw [Polynomial.map_add (f := _), map_add (f := _), Matrix.add_mulVec]
     exact add_mem (hp v hv) (hq v hv)
   | monomial k a =>
     intro v hv
@@ -96,14 +101,12 @@ theorem exists_unitary_matLat_eq : ∀ {O K : Type} [CommRing O] [IsDomain O] [I
       matLat O t M = matLat O (aeval γ p) M := by
   intro O K _ _ _ _ _ _ _ n P₀ hcop γ hchar σ hσ hσO hγ M hML hMγ p hpu hpM
   set A := Algebra.adjoin K {γ} with hAdef
+  letI : IsMulCommutative A := Algebra.isMulCommutative_adjoin_singleton K γ
+  open scoped IsMulCommutative in
+  letI : CommRing A := inferInstance
   have hcomm : ∀ u ∈ A, ∀ v ∈ A, u * v = v * u := by
-    have hc : ∀ a ∈ ({γ} : Set (Matrix (Fin n) (Fin n) K)), ∀ b ∈ ({γ} : Set _), a * b = b * a := by
-      intro a ha b hb; rw [Set.mem_singleton_iff] at ha hb; rw [ha, hb]
-    letI : CommRing A := Algebra.adjoinCommRingOfComm K hc
     intro u hu v hv
-    exact congrArg Subtype.val (mul_comm (⟨u, hu⟩ : A) ⟨v, hv⟩)
-  letI : CommRing A := Algebra.adjoinCommRingOfComm K (by
-    intro a ha b hb; rw [Set.mem_singleton_iff] at ha hb; rw [ha, hb])
+    exact congrArg (fun z : A => z.1) (mul_comm (⟨u, hu⟩ : A) ⟨v, hv⟩)
   have hstar : ∀ a ∈ A, (a.map σ)ᵀ ∈ A := fun a ha => conjTranspose_mem_adjoin σ γ hγ ha
   let τ : A →+* A :=
     { toFun := fun a => ⟨(a.1.map σ)ᵀ, hstar a.1 a.2⟩
@@ -171,7 +174,9 @@ theorem exists_unitary_matLat_eq : ∀ {O K : Type} [CommRing O] [IsDomain O] [I
       (mem_matLat _ _ _).mpr ⟨v, hv, rfl⟩
     rwa [hpM] at this
   have hcinv : (τ ((x⁻¹ : Aˣ) : A) * ((x⁻¹ : Aˣ) : A)) * (τ x * x) = 1 := by
-    rw [mul_mul_mul_comm, ← map_mul, Units.inv_mul, map_one, one_mul]
+    calc
+      _ = (τ ((x⁻¹ : Aˣ) : A) * τ (x : A)) * (((x⁻¹ : Aˣ) : A) * (x : A)) := by ac_rfl
+      _ = 1 := by rw [← map_mul]; simp
   have hc'M : ∀ v ∈ M, (τ ((x⁻¹ : Aˣ) : A) * ((x⁻¹ : Aˣ) : A) : A).1 *ᵥ v ∈ M := by
     intro v hv
     rw [← hpM] at hv

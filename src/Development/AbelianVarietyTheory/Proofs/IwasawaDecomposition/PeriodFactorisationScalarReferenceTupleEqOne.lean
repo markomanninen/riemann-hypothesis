@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Formalism.LocalRingCardinality.SpanPowerMembership.NZRowE
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NZRowE
+public import Lean
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Cx Formalism.IndefR.RecTie
 open scoped TensorProduct InnerProductSpace ComplexOrder
@@ -46,8 +51,8 @@ theorem ZeFact.mu0 {D : Rows.Data R} {u : D.Word} {c : ℂ} (h : ZeFact D u D.mu
   have hb : D.perCol u D.mu0 φ ((D.Qsp D.mu0).starProjection F) ≠ 0 := fun h0 => hne (by rw [e1, h0, mul_zero])
   exact (mul_eq_right₀ hb).1 e2.symm
 
-open Classical in
 
+open Classical in
 def zeVal (u : D.Word) (μ : D.Tup) : D.LLˣ :=
   if μ = D.mu0 then 1 else if h : ∃ z : D.LLˣ, ZeFact D u μ (D.embLL (z : D.LL)) then h.choose else 1
 
@@ -75,7 +80,7 @@ def TjDualLat (μ : D.Tup) (j : ℕ) : Submodule (𝓞 D.LL) (D.MtL μ j) where
     refine ⟨(TjSpan D μ j).add_mem hx hy, fun a ha => ?_⟩
     obtain ⟨c, hc⟩ := h1 a ha
     obtain ⟨d, hd⟩ := h2 a ha
-    exact ⟨c + d, by rw [map_add, inner_add_right, hc, hd]; simp⟩
+    exact ⟨c + d, by rw [map_add (f := _), inner_add_right, hc, hd]; simp⟩
   zero_mem' := ⟨(TjSpan D μ j).zero_mem, fun a _ => ⟨0, by simp⟩⟩
   smul_mem' := by
     rintro s x ⟨hx, h1⟩
@@ -132,7 +137,7 @@ def thCan (μ : Dd.Tup) (j : ℕ) : Submodule (𝓞 Dd.LL) (Dd.Mj j) where
     · rw [← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun v _ => ?_
       simp [add_smul]
-    · rw [map_add, map_add, ← hxa, ← hyb]
+    · rw [map_add (f := _), map_add (f := _), ← hxa, ← hyb]
   zero_mem' := ⟨⟨0, by simp⟩, 0, (TjLat Dd μ j).zero_mem, by simp⟩
   smul_mem' := by
     rintro s a ⟨⟨c, rfl⟩, x, hx, hxa⟩
@@ -236,7 +241,7 @@ theorem jM_mem_rng (j : ℕ) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (y : (X.MjH j).V)
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
     refine ⟨a + b, ?_⟩
-    rw [map_add, ha, hb, ← Finset.sum_add_distrib]
+    rw [map_add (f := _), ha, hb, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun v _ => ?_
     simp [add_smul]
   | smul r x _ hx =>
@@ -302,7 +307,7 @@ theorem zeOf_eq {R : Ranks} (Dd : Rows.Data R) (u : Dd.Word) (μ : Dd.Tup) (c : 
     have hex : ∃ z : Dd.LLˣ, ZeFact Dd u μ (Dd.embLL (z : Dd.LL)) :=
       ⟨Units.mk0 z hz0, by simpa [hz'] using h⟩
     unfold zeVal
-    rw [if_neg hμ, dif_pos hex]
+    rw [if_neg hμ, dite_eq_left hex]
     exact hex.choose_spec.unique h
 
 end GlobalTheory.Mem.R3.Rw.NumDef
@@ -329,14 +334,14 @@ theorem periodAgainstColumnForm_referenceTuple_eq (p : PkB B C G) (e : PerD p) (
     perOf p e W₀ u C.mu0 φ F = (C.mem u).P.PtilCol ((W₀.eMu u φ : (C.mem u).A.Mram) :
       (C.mem u).C.cls 0 → (C.mem u).C.Y 0 → ℂ) ((e.e0 u).symm F) := by
   unfold perOf
-  rw [dif_pos rfl]
+  rw [dite_eq_left rfl]
   rfl
 
 theorem perOf_linL (p : PkB B C G) (e : PerD p) (W₀ : RowsRest B C) (u : B.Word) (F : (p.sA true C.mu0).A.T) :
     IsLinearMap ℂ (fun φ : W₀.Mu u => perOf p e W₀ u C.mu0 φ F) := by
   constructor
   · intro φ ψ
-    simp only [periodAgainstColumnForm_referenceTuple_eq, PeriodMap.PtilCol, PeriodMap.Ptil, map_add, Submodule.coe_add,
+    simp only [periodAgainstColumnForm_referenceTuple_eq, PeriodMap.PtilCol, PeriodMap.Ptil, map_add (f := _), Submodule.coe_add,
       Formalism.BasicNotions.Examples₂.NZ.col_add, LinearMap.add_apply]
   · intro s φ
     simp only [periodAgainstColumnForm_referenceTuple_eq, PeriodMap.PtilCol, PeriodMap.Ptil, map_smul, Submodule.coe_smul,
@@ -346,7 +351,7 @@ theorem perOf_linR (p : PkB B C G) (e : PerD p) (W₀ : RowsRest B C) (u : B.Wor
     IsLinearMap ℂ (fun F : (p.sA true C.mu0).A.T => perOf p e W₀ u C.mu0 φ F) := by
   constructor
   · intro F F'
-    simp only [periodAgainstColumnForm_referenceTuple_eq, PeriodMap.PtilCol, PeriodMap.Ptil, map_add]
+    simp only [periodAgainstColumnForm_referenceTuple_eq, PeriodMap.PtilCol, PeriodMap.Ptil, map_add (f := _)]
   · intro s F
     simp only [periodAgainstColumnForm_referenceTuple_eq, PeriodMap.PtilCol, PeriodMap.Ptil, map_smul]
 
@@ -367,17 +372,60 @@ end GlobalTheory.Mem.R3.Rw.NumDef
 
 namespace GlobalTheory.Mem.R3.Rw
 
-open NumDef in
 
+open NumDef in
 theorem exists_nums_numOK : ∀ (B : Base) (C : Cols B) (G : Type) [Group G] (p : PkB B C G) (e : PerD p) (W₀ : RowsRest B C),
     ∃ n : Nums p W₀, ∀ η hη V S N G', NumOK (assemble B C (p.what₂ e W₀ n η hη) V S N G') := by
   intro B C G _ p e W₀
   refine ⟨numsOf p e W₀, fun η hη V S N G' => ?_⟩
+  have hd : ∀ (μ : C.Tup) j,
+      (data0 p e W₀).downTo μ j = ((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).downTo μ j := by
+    intro μ j
+    induction j with
+    | zero => rfl
+    | succ j ih =>
+      simp only [Rows.Data.downTo, ih]
+  have hi : ∀ μ : C.Tup, (data0 p e W₀).iota μ = ((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).iota μ := by
+    intro μ
+    simp only [Rows.Data.iota, hd]
+  have hv : ∀ μ : C.Tup, (data0 p e W₀).V0 μ = ((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).V0 μ := by
+    intro μ
+    rfl
+  have hq : ∀ μ : C.Tup, (data0 p e W₀).Qsp μ = ((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).Qsp μ := by
+    intro μ
+    simp only [Rows.Data.Qsp, Rows.Data.Usp, hv, hi]
+  have hs : ∀ μ : C.Tup, (data0 p e W₀).sec μ = ((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).sec μ := by
+    intro μ
+    have helper (q₁ q₂ : Submodule ℂ ((p.sA true μ).A.T))
+        (f₁ f₂ : (p.sA true μ).A.T →ₗ[ℂ] (p.ch true).EE.T)
+        (hf₁ : Function.Injective (f₁.domRestrict q₁))
+        (hf₂ : Function.Injective (f₂.domRestrict q₂))
+        (hq' : q₁ = q₂) (hf' : f₁ = f₂) :
+        q₁.subtype ∘ₗ (LinearEquiv.ofInjective (f₁.domRestrict q₁) hf₁).symm.toLinearMap ∘ₗ
+            (LinearMap.range (f₁.domRestrict q₁)).orthogonalProjectionOnto.toLinearMap =
+        q₂.subtype ∘ₗ (LinearEquiv.ofInjective (f₂.domRestrict q₂) hf₂).symm.toLinearMap ∘ₗ
+            (LinearMap.range (f₂.domRestrict q₂)).orthogonalProjectionOnto.toLinearMap := by
+      subst q₂
+      subst f₂
+      rfl
+    exact helper _ _ _ _ ((data0 p e W₀).iotaQ_inj μ)
+      (((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).iotaQ_inj μ) (hq μ) (hi μ)
   exact
   { lam := fun μ j _ _ π _ => rfl
     bu := fun u φ x => by
-      kexactB (rfl : buSec (data0 p e W₀) u φ x = buSec (data0 p e W₀) u φ x)
-    ze := fun u μ c h1 h2 h3 => (by with_unfolding_all exact ((zeOf_eq (data0 p e W₀) u μ c ⟨by kexactB h1, by kexactB h2⟩ h3) :))
+      change buSec (data0 p e W₀) u φ x = perOf p e W₀ u C.mu0 φ (((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).sec C.mu0 x)
+      simp only [buSec, hs]
+    ze := fun u μ c h1 h2 h3 => by
+      apply zeOf_eq (data0 p e W₀) u μ c
+      · constructor
+        · intro φ F hF
+          have ht := h1 φ F (by change F ∈ ((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).V0 μ; rw [← hv μ]; exact hF)
+          change perOf p e W₀ u μ φ F = c * buSec (data0 p e W₀) u φ (((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).iota μ (((p.what₂ e W₀ (numsOf p e W₀) η hη).what₂).Qsp μ |>.starProjection F)) at ht
+          change perOf p e W₀ u μ φ F = c * buSec (data0 p e W₀) u φ ((data0 p e W₀).iota μ ((data0 p e W₀).Qsp μ |>.starProjection F))
+          rw [hi μ, hq μ]
+          exact ht
+        · exact h2
+      · exact h3
     idx := fun Y => ⟨fun μ j w h1 h2 => (ijIdx_eq_can _ Y μ j h1 h2 w).symm, fun μ j w _ _ => rfl⟩
     jw := fun μ j w _ _ => rfl }
 

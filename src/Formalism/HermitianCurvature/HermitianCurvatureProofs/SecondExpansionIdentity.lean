@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstExpansionIdentity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstExpansionIdentity
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -101,7 +105,7 @@ theorem second_expansion_identity : ExpansionDualColumn := by
       · have hx : ¬ (2 * r + k - p.val < i0) := by
           intro hlt; apply hp
           exact ⟨⟨2 * r + k - p.val, hlt⟩, by ext; simp [sR, esI]; omega⟩
-        unfold Zb; rw [dif_pos ha, dif_neg hx, star_zero]
+        unfold Zb; rw [dite_eq_left ha, dite_eq_right hx, star_zero]
       · rfl
     · intro a b
       have hb := b.isLt
@@ -111,7 +115,7 @@ theorem second_expansion_identity : ExpansionDualColumn := by
       have hav : (Fin.castLE (by omega : i0 ≤ r) a).val = a.val := by simp
       unfold Zb
       rw [hav, hsv]
-      rw [dif_pos a.isLt, dif_pos (by omega)]
+      rw [dite_eq_left a.isLt, dite_eq_left (by omega)]
       congr 2
       apply Fin.ext; simp only [Fin.val_mk]; omega
   have hP := third_peeling_identity A k r z' E hG (i0 + s') hm' ⟨i0, by omega⟩ ell

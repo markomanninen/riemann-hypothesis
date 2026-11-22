@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.UnitHecke
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.UnitHecke
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,19 +52,19 @@ private theorem null_cases (π : CuspSub E n) (w : Pl E) (K : Subgroup (GLw n w)
 private theorem step (π : CuspSub E n) (w : Pl E) (B : Multiset ℂˣ) (hB : HasSatGL w (π.locRep w) B)
     (U : Subgroup (GL (Fin n) (Af E))) (hU : ∀ k ∈ U, GeneralLinearGroup.map (pLoc E w) k = 1)
     (ψ : π.V) (h0 : ψ ≠ 0) (hψ : ψ ∈ fixed π.finPart U) :
-    ∃ y : π.V, y ≠ 0 ∧ y ∈ fixed π.finPart U ∧ y ∈ fixed (π.locRep w) (KGL w n) := by
+    ∃ y : π.V, y ≠ 0 ∧ y ∈ fixed π.finPart U ∧ y ∈ fixed (π.locRep w) (KGL w (n := n)) := by
   by_contra hno
   have hsm : IsSmooth (π.locRep w) := fun v =>
     (π.isSmooth_finPart v).preimage (GlobalTheory.CuspRep.CuspSub.continuous_locGL w)
-  have hc : IsCompact (KGL w n : Set (GLw n w)) := (Asm.unitHecke E n 0 0 w).2.2.2.1
-  have hbot : fixed π.finPart U ⊓ fixed (π.locRep w) (KGL w n) = ⊥ := by
+  have hc : IsCompact (KGL w (n := n) : Set (GLw n w)) := (Asm.unitHecke E n 0 0 w).2.2.2.1
+  have hbot : fixed π.finPart U ⊓ fixed (π.locRep w) (KGL w (n := n)) = ⊥ := by
     refine (Submodule.eq_bot_iff _).2 fun y hy => ?_
     by_contra hy0
     exact hno ⟨y, hy0, hy.1, hy.2⟩
   have hst : ∀ g, ∀ v ∈ fixed π.finPart U, π.locRep w g v ∈ fixed π.finPart U := fun g v hv =>
     mem_fix.2 fun k hk => by rw [fin_comm_loc π w (hU k hk), mem_fix.1 hv k hk]
   have hle := le_nullPart hsm hc _ hst hbot
-  rcases null_cases π w (KGL w n) with h | h
+  rcases null_cases π w (KGL w (n := n)) with h | h
   · exact h0 (by simpa [h] using hle hψ)
   · obtain ⟨x, hx0, hxK, -⟩ := hB.exists_vec
     exact hx0 (eq_zero_of_mem_nullPart hsm hc hxK (h ▸ Submodule.mem_top))
@@ -98,17 +102,17 @@ theorem jointFix_pf : SlotBasic → JointFix := by
     obtain ⟨y, hy0, hyU, hyK⟩ := step π w B hB U (fun k hk => hU k hk w (Finset.mem_insert_self _ _)) ⟨ψ, hψ⟩
       (fun e => h0 (congrArg Subtype.val e))
       (mem_fix.2 fun k hk => Subtype.ext ((finPart_val π k ⟨ψ, hψ⟩).trans (hfix k hk)))
-    have hU' : ∀ k ∈ U ⊔ (KGL w n).map (locGL E n w), ∀ v ∈ P, qw n v false k = 1 := by
+    have hU' : ∀ k ∈ U ⊔ (KGL w (n := n)).map (locGL E n w), ∀ v ∈ P, qw n v false k = 1 := by
       intro k hk v hv
       have hvw : v ≠ w := fun e => hw (e ▸ hv)
-      have hle : U ⊔ (KGL w n).map (locGL E n w) ≤ (qw (E := E) n v false).ker := by
+      have hle : U ⊔ (KGL w (n := n)).map (locGL E n w) ≤ (qw (E := E) n v false).ker := by
         refine sup_le (fun c hc => MonoidHom.mem_ker.2 (hU c hc v (Finset.mem_insert_of_mem hv))) ?_
         rintro _ ⟨a, -, rfl⟩
         exact MonoidHom.mem_ker.2 (pLoc_locGL_of_ne hvw a)
       exact MonoidHom.mem_ker.1 (hle hk)
-    have hy' : ∀ k ∈ U ⊔ (KGL w n).map (locGL E n w), finRep E n k y.1 = y.1 := by
+    have hy' : ∀ k ∈ U ⊔ (KGL w (n := n)).map (locGL E n w), finRep E n k y.1 = y.1 := by
       intro k hk
-      have hle : U ⊔ (KGL w n).map (locGL E n w) ≤ fixer y.1 := by
+      have hle : U ⊔ (KGL w (n := n)).map (locGL E n w) ≤ fixer y.1 := by
         refine sup_le (fun c hc => ?_) ?_
         · exact (finPart_val π c y).symm.trans (congrArg Subtype.val (mem_fix.1 hyU c hc))
         · rintro _ ⟨a, ha, rfl⟩

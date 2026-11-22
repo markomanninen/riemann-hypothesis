@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.AmpRoot
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.NegOnePowMulSelf
+module
+
+public import Formalism.PeriodIntegrals.AmpRoot
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.NegOnePowMulSelf
+
+@[expose] public section
 
 open Matrix
 
@@ -14,12 +18,12 @@ theorem ell_eq {k r : ℕ} (z : Fin (2 * r + k + 1) → ℂ) (g : Matrix (Fin (2
   unfold ell
   refine Finset.sum_congr rfl fun a _ => ?_
   unfold flagMat fvec
-  rw [dif_pos (show (Fin.castSucc a).val < r by simp)]
+  rw [dite_eq_left (show (Fin.castSucc a).val < r by simp)]
   by_cases h : a.val + 1 < r
-  · rw [dif_pos h, dif_pos (show (Fin.succ a).val < r by simpa using h), bvec, Matrix.mulVec_single_one,
+  · rw [dite_eq_left h, dite_eq_left (show (Fin.succ a).val < r by simpa using h), bvec, Matrix.mulVec_single_one,
       Matrix.col_apply]
     rfl
-  · rw [dif_neg h, dif_neg (show ¬ (Fin.succ a).val < r by simpa using h)]
+  · rw [dite_eq_right h, dite_eq_right (show ¬ (Fin.succ a).val < r by simpa using h)]
     rfl
 
 end PI.AmpRelAtPt

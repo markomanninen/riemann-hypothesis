@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SqSumEqSumSqAddTwoMulSumLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SqSumEqSumSqAddTwoMulSumLt
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -184,7 +188,7 @@ theorem finrank_fixed {M : Type} [AddCommGroup M] [Module ℂ M] [Module ℝ M] 
       rw [e]
       refine Submodule.add_mem_sup ((hP _).mpr ⟨S.smul_mem _ (S.add_mem hx' (hS _ hx')), ?_⟩)
         ⟨_, (hP _).mpr ⟨S.smul_mem _ (S.sub_mem hx' (hS _ hx')), ?_⟩, rfl⟩
-      · rw [hc, map_add, hσ, add_comm]; simp
+      · rw [hc, map_add (f := _), hσ, add_comm]; simp
       · rw [hc, map_sub, hσ]
         have : star (-Complex.I / 2) = Complex.I / 2 := by simp
         rw [this]
@@ -399,7 +403,7 @@ theorem exists_algebra_flagN : ∀ (n : ℕ) (ε : Fin n → Bool) (a : ℕ) (j 
     (LinearEquiv.finrank_map_eq t.symm _).trans (finrank_fullLowering h)
   let P : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ) :=
     { carrier := {X | X ∈ S ∧ negAdj ε X = X}
-      add_mem' := fun hX hY => ⟨S.add_mem hX.1 hY.1, by rw [map_add, hX.2, hY.2]⟩
+      add_mem' := fun hX hY => ⟨S.add_mem hX.1 hY.1, by rw [map_add (f := _), hX.2, hY.2]⟩
       zero_mem' := ⟨S.zero_mem, map_zero _⟩
       smul_mem' := fun c X hX => by
         have e : c • X = (c : ℂ) • X := rfl
@@ -428,7 +432,8 @@ theorem exists_algebra_flagN : ∀ (n : ℕ) (ε : Fin n → Bool) (a : ℕ) (j 
     rw [← hX]
     exact negAdj_mapsInto ε (((mem_lowering ε W).mp h1).1 i)
   · ext g
-    rw [Set.mem_setOf_eq, hA, mem_lowering]
+    change (flagN ε W).Mem g ↔ uMat g - 1 ∈ A
+    rw [hA, mem_lowering]
     simp only [flagN, Set.mem_setOf_eq, mem_mapsInto, mem_perp, Matrix.toLin'_apply, sub_mulVec, one_mulVec]
 
 end GlobalTheory.RadicalAlg

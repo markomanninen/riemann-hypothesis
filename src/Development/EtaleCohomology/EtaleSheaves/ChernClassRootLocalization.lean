@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.ChernClassSpecialization
-import Development.EtaleCohomology.TateTwists.EtaleLocallyExistsQthRootOfUnitWhenQInvertible
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassSpecialization
+public import Development.EtaleCohomology.TateTwists.EtaleLocallyExistsQthRootOfUnitWhenQInvertible
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -11,7 +15,7 @@ open LateralTheory.E.CupProductRingLaws LateralTheory.E.ChernCocycleExistenceAnd
 theorem sec_sep {R : Type} [CommRing R] (F : Shv R) (U : Scheme.{0}) (a b : Sec F U)
     (h : Loc U fun _ g => Sec.res g a = Sec.res g b) : a = b := by
   obtain ⟨S, hS, hab⟩ := h
-  have hF := ((sheafCompose Scheme.etaleTopology (forget (ModuleCat.{1} (ULift.{1} R)))).obj F).cond
+  have hF := ((sheafCompose Scheme.etaleTopology (forget (ModuleCat.{1} (ULift.{1} R)))).obj F).property
   rw [isSheaf_iff_isSheaf_of_type] at hF
   exact (hF S hS).isSeparatedFor.ext (fun V g hg => hab V g hg)
 

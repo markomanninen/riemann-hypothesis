@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FixedSubgroup
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FixedSubgroup
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+
+@[expose] public section
 
 private theorem UpperTheory.Reformulated.B.Gr28.exists_fun
     {G W : Type} [Group G] [AddCommGroup W] [_root_.Module ℂ W]

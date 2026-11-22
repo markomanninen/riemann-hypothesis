@@ -1,8 +1,12 @@
-import Formalism.GradedWeylDivisibility.StatementB
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFockqLemmas
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFocksLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockRowAdj
+module
+
+public import Formalism.GradedWeylDivisibility.StatementB
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFockqLemmas
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFocksLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockRowAdj
+
+@[expose] public section
 
 open MvPolynomial Formalism.REAL
 
@@ -28,7 +32,7 @@ lemma lfockq_eval_rowGen {r n : ℕ} (a b : Fin r) (t : ℂ) (f : MvPolynomial (
   | C c =>
     simp [rowGen, rowAct]
   | add p q hp hq =>
-    rw [map_add, Polynomial.eval_add, hp, hq, map_add]
+    rw [map_add (f := _), Polynomial.eval_add, hp, hq, map_add (f := _)]
   | mul_X p v hp =>
     rw [map_mul, Polynomial.eval_mul, hp, map_mul]
     congr 1
@@ -127,14 +131,14 @@ lemma lfockq_adjC {r n : ℕ} (a b : Fin r) (k : ℕ) (F G : MvPolynomial (Fin r
   have hpq : p = q := by
     apply Polynomial.funext
     intro t
-    simp only [p, q, Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C,
+    simp only [p, q, Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
       Polynomial.eval_pow, Polynomial.eval_X]
     calc _ = ∑ i ∈ Finset.range N, t ^ i * fockF ((rowGen ℂ a b F).coeff i) G :=
           Finset.sum_congr rfl fun i _ => mul_comm _ _
       _ = ∑ i ∈ Finset.range N, t ^ i * fockF F ((rowGen ℂ b a G).coeff i) := key t
       _ = _ := Finset.sum_congr rfl fun i _ => mul_comm _ _
   have hc := congrArg (fun s : Polynomial ℂ => s.coeff k) hpq
-  simp only [p, q, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow] at hc
+  simp only [p, q, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow] at hc
   rw [Finset.sum_ite_eq, Finset.sum_ite_eq] at hc
   simpa [rowDiv, Finset.mem_range.mpr hk] using hc
 

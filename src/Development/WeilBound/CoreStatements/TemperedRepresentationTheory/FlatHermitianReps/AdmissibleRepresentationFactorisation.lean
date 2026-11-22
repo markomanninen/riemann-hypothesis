@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePartActDiscreteSeriesHomFactorwise
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.FlatHermitianReps.IrredSt
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePartActDiscreteSeriesHomFactorwise
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.FlatHermitianReps.IrredSt
+
+@[expose] public section
 
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -43,20 +47,24 @@ theorem mem_fixed_imp {G X : Type} [Group G] [AddCommGroup X] [Module ℂ X] {ρ
   simpa using h ⟨g, hg⟩
 
 noncomputable def phiDS {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) (g : GA D V) : ℂ :=
-  ∏ τ, ⟪unitVec (M.H τ), dsRep M τ (projArch D.sp.cm.sig V.gram (placeOf D τ) g) (unitVec (M.H τ))⟫_ℂ
+  ∏ τ, ⟪unitVec (H := M.H τ), dsRep M τ (projArch D.sp.cm.sig V.gram (placeOf D τ) g) (unitVec (H := M.H τ))⟫_ℂ
 
 theorem continuous_phiDS {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) : Continuous (phiDS M) := by
   unfold phiDS
   refine continuous_finsetProd _ fun τ _ => continuous_const.inner ?_
-  exact ((isIrrUnitary_dsRep M τ).unitary.continuous_apply (unitVec (M.H τ))).comp
+  exact ((isIrrUnitary_dsRep M τ).unitary.continuous_apply (unitVec (H := M.H τ))).comp
     (continuous_projArch D.sp.cm.sig V.gram (placeOf D τ))
 
 theorem phiDS_one {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) : phiDS M 1 = 1 := by
   unfold phiDS
   refine Finset.prod_eq_one fun τ _ => ?_
   have : Nontrivial (M.H τ) := (isIrrUnitary_dsRep M τ).irred.1
+  have hunit : ‖unitVec (H := M.H τ)‖ = 1 := by
+    have h : ∃ x : M.H τ, ‖x‖ = 1 := exists_norm_eq (M.H τ) zero_le_one
+    rw [unitVec, dite_eq_left h]
+    exact h.choose_spec
   simp only [map_one, ContinuousLinearMap.one_apply]
-  rw [inner_self_eq_norm_sq_to_K, norm_unitVec]
+  rw [inner_self_eq_norm_sq_to_K, hunit]
   simp
 
 set_option maxHeartbeats 400000 in
@@ -64,11 +72,11 @@ theorem inner_apply_homDS {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} {M :
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] {π : GA D V →* (H →L[ℂ] H)}
     (hπ : IsUnitaryRep π) {K : Subgroup (GfC V)} {Φ : ContinuousMultilinearMap ℂ M.H H} (hΦ : Φ ∈ homDS M π ⊤)
     (hfix : ∀ k ∈ K, ∀ y, π (k : GA D V) (Φ y) = Φ y) (g : GA D V) (hg : toFin V g ∈ K) :
-    ⟪Φ (fun τ => unitVec (M.H τ)), π g (Φ (fun τ => unitVec (M.H τ)))⟫_ℂ =
-      ⟪Φ (fun τ => unitVec (M.H τ)), Φ (fun τ => unitVec (M.H τ))⟫_ℂ * phiDS M g := by
+    ⟪Φ (fun τ => unitVec (H := M.H τ)), π g (Φ (fun τ => unitVec (H := M.H τ)))⟫_ℂ =
+      ⟪Φ (fun τ => unitVec (H := M.H τ)), Φ (fun τ => unitVec (H := M.H τ))⟫_ℂ * phiDS M g := by
   classical
-  have e1 : π g (Φ (fun τ => unitVec (M.H τ))) =
-      π (toInf V g : GA D V) (π (toFin V g : GA D V) (Φ (fun τ => unitVec (M.H τ)))) := by
+  have e1 : π g (Φ (fun τ => unitVec (H := M.H τ))) =
+      π (toInf V g : GA D V) (π (toFin V g : GA D V) (Φ (fun τ => unitVec (H := M.H τ)))) := by
     conv_lhs => rw [← toInf_mul_toFin g]
     rw [map_mul]; rfl
   rw [e1, hfix _ hg, GlobalTheory.TrAct.toInf_apply_homDS D V S M H π ⊤ Φ hΦ g]
@@ -79,7 +87,7 @@ set_option maxHeartbeats 400000 in
 theorem eq_zero_of_apply_unitVec {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} {M : DSModel V S} {H : Type}
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] {π : GA D V →* (H →L[ℂ] H)}
     (hπ : IsUnitaryRep π) {Φ : ContinuousMultilinearMap ℂ M.H H} (hΦ : Φ ∈ homDS M π ⊤)
-    (h0 : Φ (fun τ => unitVec (M.H τ)) = 0) : Φ = 0 := by
+    (h0 : Φ (fun τ => unitVec (H := M.H τ)) = 0) : Φ = 0 := by
   classical
   by_contra hne
   have hpos := bePi_self_pos (fun τ => isIrrUnitary_dsRep M τ) hπ hΦ hne
@@ -87,8 +95,8 @@ theorem eq_zero_of_apply_unitVec {D : D7} {V : HSp D} {S : D.what₂.Tau → SPa
   rw [h0, inner_zero_left] at hpos
   simp at hpos
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem finiteDimensional_of_bump {G E : Type} [Group G] [TopologicalSpace G] [MeasurableSpace G]
     [OpensMeasurableSpace G] [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
     {π : G →* (E →L[ℂ] E)} (hπ : IsUnitaryRep π) (μ : Measure G) [IsFiniteMeasureOnCompacts μ] [μ.IsOpenPosMeasure]
@@ -151,11 +159,11 @@ theorem admissible_representation_factorisation : AdmSt := by
   classical
   refine ⟨isSmooth_smoothRep _, fun K hKo hKc => ?_⟩
   let ev : fixed (finPartDSSm M hU) K →ₗ[ℂ] H :=
-    (ContinuousMultilinearMap.apply ℂ M.H H (fun τ => unitVec (M.H τ))).toLinearMap ∘ₗ
+    (ContinuousMultilinearMap.apply ℂ M.H H (fun τ => unitVec (H := M.H τ))).toLinearMap ∘ₗ
       (homDS M π ⊤).subtype ∘ₗ (smoothPart (finPartDS M hU)).subtype ∘ₗ (fixed (finPartDSSm M hU) K).subtype
   have hev : ∀ Φ : fixed (finPartDSSm M hU) K,
       ev Φ = (((Φ : smoothPart (finPartDS M hU)) : homDS M π ⊤) : ContinuousMultilinearMap ℂ M.H H)
-        (fun τ => unitVec (M.H τ)) := fun Φ => rfl
+        (fun τ => unitVec (H := M.H τ)) := fun Φ => rfl
   have hfix : ∀ Φ : fixed (finPartDSSm M hU) K, ∀ k ∈ K, ∀ y,
       π (k : GA D V) ((((Φ : smoothPart (finPartDS M hU)) : homDS M π ⊤) : ContinuousMultilinearMap ℂ M.H H) y) =
         (((Φ : smoothPart (finPartDS M hU)) : homDS M π ⊤) : ContinuousMultilinearMap ℂ M.H H) y :=

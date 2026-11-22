@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LaurentDegreesSubstitutionSubset
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.LaurentDegreesSubstitutionSubset
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,13 +93,13 @@ variable {R : Type*} [CommRing R] {ι : Type*} [Fintype ι] {n : ℕ} (LL : Lett
 def diagonalMultiplier (a : Fin n) (f : ℤ → ℤ) (x : MvPolynomial (ι × Fin n) R) : MvPolynomial (ι × Fin n) R :=
   ∑ m ∈ x.support, monomial m (x.coeff m * ((f (wtS LL S m a) : ℤ) : R))
 
-open Classical in
 
+open Classical in
 def monomialRestriction (q : (ι × Fin n →₀ ℕ) → Prop) (x : MvPolynomial (ι × Fin n) R) : MvPolynomial (ι × Fin n) R :=
   ∑ m ∈ x.support.filter q, monomial m (x.coeff m)
 
 theorem coeff_diagonalMultiplier (a : Fin n) (f : ℤ → ℤ) (x : MvPolynomial (ι × Fin n) R) (m : ι × Fin n →₀ ℕ) :
-    coeff m (diagonalMultiplier LL S a f x) = x.coeff m * ((f (wtS LL S m a) : ℤ) : R) := by
+    AddMonoidAlgebra.coeff (diagonalMultiplier LL S a f x) m = x.coeff m * ((f (wtS LL S m a) : ℤ) : R) := by
   classical
   simp only [diagonalMultiplier, coeff_sum, coeff_monomial]
   rw [Finset.sum_ite_eq']
@@ -106,7 +110,7 @@ theorem coeff_diagonalMultiplier (a : Fin n) (f : ℤ → ℤ) (x : MvPolynomial
 
 open Classical in
 theorem coeff_monomialRestriction (q : (ι × Fin n →₀ ℕ) → Prop) (x : MvPolynomial (ι × Fin n) R) (m : ι × Fin n →₀ ℕ) :
-    coeff m (monomialRestriction q x) = if q m then x.coeff m else 0 := by
+    AddMonoidAlgebra.coeff (monomialRestriction q x) m = if q m then x.coeff m else 0 := by
   simp only [monomialRestriction, coeff_sum, coeff_monomial]
   rw [Finset.sum_ite_eq']
   simp only [Finset.mem_filter, MvPolynomial.mem_support_iff]
@@ -119,7 +123,8 @@ theorem diagonalMultiplier_mem (W : Submodule R (MvPolynomial (ι × Fin n) R))
       binomPol R LL S a k x = diagonalMultiplier LL S a (fun w => Ring.choose w k) x := by
     intro k x
     conv_lhs => rw [x.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [binomialOperator_monomial]
     rfl
   induction hf using AddSubgroup.closure_induction with

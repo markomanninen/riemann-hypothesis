@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.GaussGenericHeight.GaussGenericStatements.GaussGenericLemmas.TranslationDomainMaps.TranslSEquivApply
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.GaussGenericHeight.GaussGenericStatements.GaussGenericLemmas.TranslationDomainMaps.TranslSEquivApply
+
+@[expose] public section
 
 open NumberField
 
@@ -18,14 +22,14 @@ theorem HtGaussGen {K : Type} [Field K] [NumberField K] {ι : Type} [Fintype ι]
   swap
   · have h0 : d.gen p = 0 := by
       unfold ReciprocityTheory.ChartRestriction.G.T0.Data.gen
-      rw [dif_neg hpp]
+      rw [dite_eq_right hpp]
     rw [h0]
     unfold ReciprocityTheory.MultiplicativeHeights.IsMultiHomogeneous
     intro s hs
     simp at hs
   have hgen : d.gen p = Submodule.IsPrincipal.generator p := by
     unfold ReciprocityTheory.ChartRestriction.G.T0.Data.gen
-    rw [dif_pos hpp]
+    rw [dite_eq_left hpp]
 
   have key : ∀ σ : KTp K d.D d.N ≃ₐ[K] KTp K d.D d.N, p.comap σ = p →
       Submodule.IsPrincipal.generator p ∣ σ (Submodule.IsPrincipal.generator p) := by

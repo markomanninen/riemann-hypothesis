@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UnitsBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UnitsOneBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UnitsBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UnitsOneBlock
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.CA UpperTheory.V.Pa Polynomial
 open scoped TensorProduct

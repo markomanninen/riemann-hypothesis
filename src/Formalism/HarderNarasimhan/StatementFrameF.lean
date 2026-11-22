@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.CorankShare.StatementFR
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.CorankShare.StatementFR
+
+@[expose] public section
 
 open Module NumberField Formalism.CorankShareLayerCake.FR
 
@@ -24,7 +28,7 @@ def FrameLA1 : Prop :=
       ≤ (η + 4 * ε + 4 * Real.sqrt e) * (finrank ℂ H : ℝ)
 
 def TheoremF : Prop :=
-  ∀ (K W κ κ₁ I : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+  ∀ (K W κ κ₁ I : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
     [Fintype κ] [DecidableEq κ] [Fintype κ₁] [DecidableEq κ₁] [Fintype I] [Nonempty I]
     (V ι : I → Type) [∀ i, AddCommGroup (V i)] [∀ i, Module K (V i)] [∀ i, Module (𝓞 K) (V i)]
@@ -62,7 +66,7 @@ def TheoremF : Prop :=
         (1 - δ)⁻¹ * (4 * u * Real.log (1 + HH / u) + (η + 4 * Real.sqrt e) * HH) ≤ muDef b' X' cc
 
 def TheoremFSharp : Prop :=
-  ∀ (K W κ κ₁ I : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+  ∀ (K W κ κ₁ I : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
     [Fintype κ] [DecidableEq κ] [Fintype κ₁] [DecidableEq κ₁] [Fintype I] [Nonempty I]
     (V ι : I → Type) [∀ i, AddCommGroup (V i)] [∀ i, Module K (V i)] [∀ i, Module (𝓞 K) (V i)]

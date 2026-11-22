@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PFnRing
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HodgeTraceFromLefschetzAndGroupSide
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PFnRing
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HodgeTraceFromLefschetzAndGroupSide
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -81,7 +85,7 @@ private lemma decomp (hb : ∀ k ∈ K, ∀ g, f (k * g) = f g ∧ f (g * k) = f
       rw [ind_notMem fun hm => hne _ (e.symm i).2 (by rw [← val_of_mem hb hm]; exact hg), mul_zero]
     · have hp : f (DoubleCoset.mk K K g).out = f g :=
         val_of_mem hb (by
-          obtain ⟨a, b, ha, hb', e'⟩ := DoubleCoset.mk_out_eq_mul K K g
+          obtain ⟨a, ha, b, hb', e'⟩ := DoubleCoset.mk_out_eq_mul K K g
           exact DoubleCoset.mem_doubleCoset.2 ⟨a, ha, b, hb', e'⟩)
       have hpQ := hQ (DoubleCoset.mk K K g) (by rw [hp]; exact hg)
       rw [Finset.sum_eq_single (e ⟨_, hpQ⟩)]

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SHEqvPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SHEqvPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC Opposite
@@ -31,7 +35,6 @@ theorem mem_of_cov (hSec : SHSection) (A : CommRingCat.{0}) (hA : SH A) {V : Sch
 
 variable {R : Type} [CommRing R]
 
-@[simps]
 def sky (U : Scheme.{0}) (N : ModuleCat.{1} (ULift.{1} R)) : Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} (ULift.{1} R) where
   obj V := ModuleCat.of _ ((U ⟶ V.unop) → N)
   map g := ModuleCat.ofHom

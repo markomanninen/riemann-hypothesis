@@ -1,17 +1,21 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.GoodMap
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.JunkEx
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ExponentMulAbsPow
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParUniq
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NormEqProd
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParDual
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParOne
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TwTame
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameArt
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
-import Development.DiscreteGroups.GlobalIrreducibility.DzLDepth
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.GoodMap
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.JunkEx
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ExponentMulAbsPow
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParUniq
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NormEqProd
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParDual
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParOne
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TwTame
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameArt
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
+public import Development.DiscreteGroups.GlobalIrreducibility.DzLDepth
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,20 +38,20 @@ private theorem twist_congr (V : WD h) {ξ ξ' : Weil h →* ℂˣ} (hξ : Globa
     (hξ' : GlobalTheory.WeilDeligne.IsSmooth ξ') (e : ξ = ξ') : V.lpTwist ξ hξ = V.lpTwist ξ' hξ' := by
   subst e; rfl
 
-private theorem tw_congr (y : IrrGL (w.adicCompletion E)) {χ χ' : (w.adicCompletion E)ˣ →* ℂˣ} (hχ : IsSmoothChar χ)
+private theorem tw_congr (y : IrrGL (k := w.adicCompletion E)) {χ χ' : (w.adicCompletion E)ˣ →* ℂˣ} (hχ : IsSmoothChar χ)
     (hχ' : IsSmoothChar χ') (e : χ = χ') : y.tw χ hχ = y.tw χ' hχ' := by
   subst e; rfl
 
-private theorem good_cases {x : IrrGL (w.adicCompletion E)} (hc : x.IsCusp) (hg : GoodCusp x) :
+private theorem good_cases {x : IrrGL (k := w.adicCompletion E)} (hc : x.IsCusp) (hg : GoodCusp x) :
     x.1 = 1 ∨ ((∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i) ∧
-      ∃ (y : IrrGL (w.adicCompletion E)) (χ : (w.adicCompletion E)ˣ →* ℂˣ) (hχ : IsSmoothChar χ),
+      ∃ (y : IrrGL (k := w.adicCompletion E)) (χ : (w.adicCompletion E)ˣ →* ℂˣ) (hχ : IsSmoothChar χ),
         y.IsCusp ∧ DZ y ∧ x = y.tw χ hχ) := by
   haveI := charZero_compl (E := E) w
   rcases hg with h1 | ⟨hq, y, χ, hχ, hd, rfl⟩
   · exact Or.inl h1
   · exact Or.inr ⟨hq, y, χ, hχ, ((clBasic _ y).2.1 χ hχ).2.1.1 hc, hd, rfl⟩
 
-private theorem goodCusp_self {y : IrrGL (w.adicCompletion E)}
+private theorem goodCusp_self {y : IrrGL (k := w.adicCompletion E)}
     (hq : ∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i) (hd : DZ y) : GoodCusp y :=
   Or.inr ⟨hq, y, 1, isSmoothChar_one, hd, (IrrGL.tw_one y _).symm⟩
 
@@ -73,15 +77,15 @@ private theorem twist_one (ha : IsLocalArtin h a) (V : WD h) (h1 : IsSmoothChar 
   exact (c9 _ (ha.smooth h1)).2.2.2.2.1 (MonoidHom.one_comp a)
 
 private structure Gm (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (r : IrrGL (w.adicCompletion E) → WD h) : Prop where
+    (r : IrrGL (k := w.adicCompletion E) → WD h) : Prop where
   one : ∀ χ hχ, r (.ofChar χ hχ) = WD.lpOfChar h (χ.comp a) (ha.smooth hχ)
   tw : ∀ x, x.IsCusp → GoodCusp x → ∀ χ hχ, r (x.tw χ hχ) = (r x).lpTwist (χ.comp a) (ha.smooth hχ)
   par : (∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i) →
     ∀ y, y.IsCusp → DZ y → Par a y (r y)
 
-variable {r : IrrGL (w.adicCompletion E) → WD h}
+variable {r : IrrGL (k := w.adicCompletion E) → WD h}
 
-private theorem Gm.basic (H : Gm a ha r) {x : IrrGL (w.adicCompletion E)} (hc : x.IsCusp) (hg : GoodCusp x) :
+private theorem Gm.basic (H : Gm a ha r) {x : IrrGL (k := w.adicCompletion E)} (hc : x.IsCusp) (hg : GoodCusp x) :
     IsIrrWD (r x) ∧ (r x).lpDim = x.1 ∧
       ∀ ω, HasCentralChar x.rep ω → ∀ σ, ((r x).eig σ).prod = (ω (a σ) : ℂ) := by
   haveI := charZero_compl (E := E) w
@@ -104,7 +108,7 @@ private theorem Gm.basic (H : Gm a ha r) {x : IrrGL (w.adicCompletion E)} (hc : 
     rw [hu ω hω, ← hu _ h₁, t3 σ, P.central ω₀ h₀ σ, P.dim]
     simp
 
-private theorem Gm.dual (H : Gm a ha r) {x y : IrrGL (w.adicCompletion E)} (hc : x.IsCusp) (hg : GoodCusp x)
+private theorem Gm.dual (H : Gm a ha r) {x y : IrrGL (k := w.adicCompletion E)} (hc : x.IsCusp) (hg : GoodCusp x)
     (hd : DualCl x y) : r y = (r x).lpDual := by
   haveI := charZero_compl (E := E) w
   rcases good_cases hc hg with h1 | ⟨hq, u, χ, hχ, hu, hdz, rfl⟩
@@ -133,7 +137,7 @@ private theorem Gm.dual (H : Gm a ha r) {x y : IrrGL (w.adicCompletion E)} (hc :
     rw [(c9 _ (ha.smooth hχ)).2.2.2.2.2.1 hs]
     exact twist_congr _ _ _ hcomp
 
-private theorem Gm.tw_inj (H : Gm a ha r) {u v : IrrGL (w.adicCompletion E)}
+private theorem Gm.tw_inj (H : Gm a ha r) {u v : IrrGL (k := w.adicCompletion E)}
     (hq : ∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i)
     (hu : u.IsCusp) (hud : DZ u) (hv : v.IsCusp) (hvd : DZ v) {χ χ' : (w.adicCompletion E)ˣ →* ℂˣ}
     (hχ : IsSmoothChar χ) (hχ' : IsSmoothChar χ') (e : r (u.tw χ hχ) = r (v.tw χ' hχ')) :
@@ -172,12 +176,12 @@ theorem cuspEx : CuspEx := by
   obtain ⟨r₀, H1, H2, H3⟩ := goodMap E Ω A w h a ha
   have H : Gm a ha r₀ := ⟨H1, H2, H3⟩
   obtain ⟨e, he⟩ := expo E Ω A w h a ha
-  haveI : Nonempty (WD h) := ⟨WD.lpZero h⟩
+  haveI : Nonempty (WD h) := ⟨WD.lpZero (h := h)⟩
   choose! J hJ using junkEx E Ω A w h
-  let r : IrrGL (w.adicCompletion E) → WD h := fun x => if GoodCusp x then r₀ x else (J x.1).lpTw (e x)
+  let r : IrrGL (k := w.adicCompletion E) → WD h := fun x => if GoodCusp x then r₀ x else (J x.1).lpTw (e x)
   have rg : ∀ x, GoodCusp x → r x = r₀ x := fun x hx => if_pos hx
   have rb : ∀ x, ¬ GoodCusp x → r x = (J x.1).lpTw (e x) := fun x hx => if_neg hx
-  have two : ∀ x : IrrGL (w.adicCompletion E), x.IsCusp → ¬ GoodCusp x → 2 ≤ x.1 := by
+  have two : ∀ x : IrrGL (k := w.adicCompletion E), x.IsCusp → ¬ GoodCusp x → 2 ≤ x.1 := by
     intro x hx hb
     have h0 := hx.1
     have h1 : x.1 ≠ 1 := fun h1 => hb (Or.inl h1)
@@ -191,7 +195,7 @@ theorem cuspEx : CuspEx := by
       obtain ⟨j1, j2, -, -⟩ := hJ _ (two x hx hg)
       obtain ⟨-, -, -, -, -, -, -, -, c9⟩ := wDBasic E Ω A w h (J x.1)
       exact ⟨(c9 _ _).2.1 j1, ((c9 _ _).1).trans j2⟩
-  have hcen : ∀ x : IrrGL (w.adicCompletion E), x.IsCusp → GoodCusp x → ∀ ω, HasCentralChar x.rep ω →
+  have hcen : ∀ x : IrrGL (k := w.adicCompletion E), x.IsCusp → GoodCusp x → ∀ ω, HasCentralChar x.rep ω →
       ∀ σ, ((r x).eig σ).prod = (ω (a σ) : ℂ) := by
     intro x hx hg
     rw [rg x hg]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.StrongMultOneC
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.StrongMultOneC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -9,7 +13,7 @@ open GlobalTheory.CuspRep (Cinf Lie chart infGL pInf sInf toL lmul invSet)
 open scoped SchwartzMap FourierTransform RealInnerProductSpace ContDiff Topology
 open UpperTheory.V UpperTheory.V.Af.StrongMultiplicityOne
 
-private theorem conv_left {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} (f : GA E n → ℂ)
+private theorem conv_left {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} (f : GA E n → ℂ)
     (α : Lie E n → ℂ) (z : GA E n) (h : ∀ g, f (z * g) = f g) (g : GA E n) : Af.StrongMultiplicityOne.conv f α (z * g) = Af.StrongMultiplicityOne.conv f α g := by
   have e : chart f (z * g) = chart f g := by
     funext x
@@ -20,30 +24,34 @@ private theorem conv_left {E : Type} [Field E] [NumberField E] [IsTotallyComplex
   unfold Af.StrongMultiplicityOne.conv
   rw [e]
 
-private theorem zero_of_sq {E : Type} [Field E] [NumberField E] {n : ℕ} (μ : Measure (Reduction.normOneGL E n))
+private theorem zero_of_sq {E : Type} [Field E] [NumberField E] {n : ℕ} (μ : Measure (Reduction.normOneGL (K := E) (n := n)))
     [μ.IsHaarMeasure] (F : AdelicGLn.AdelicGL E n → ℂ) (hc : Continuous F) (C : ℝ) (hC : ∀ g, ‖F g‖ ≤ C)
     (h : IsLeftInvariant F)
     (h0 : ∫ q, starRingEnd ℂ (CuspidalSpectrum.cuspQuot h q) * CuspidalSpectrum.cuspQuot h q
-      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) = 0) :
-    ∀ y ∈ Reduction.normOneGL E n, F y = 0 := by
+      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) = 0) :
+    ∀ y ∈ Reduction.normOneGL (K := E) (n := n), F y = 0 := by
+  have : OpensMeasurableSpace (RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n))) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      infer_instance
   have := Reduction.isFiniteMeasure_quotientMeasure (K := E) (n := n) μ
   have hq := CuspidalSpectrum.continuous_cuspQuot h hc
   have hb : ∀ q, ‖CuspidalSpectrum.cuspQuot h q‖ ≤ C := fun q => by
     obtain ⟨y, rfl⟩ := RightCosetSpace.mk_surjective _ q
     exact hC _
   have h1 : ∫ q, ‖CuspidalSpectrum.cuspQuot h q‖ ^ 2
-      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) = 0 := by
+      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) = 0 := by
     rw [← Complex.ofReal_eq_zero, ← integral_complex_ofReal, ← h0]
     refine integral_congr_ae (Filter.Eventually.of_forall fun q => ?_)
     simp only [Complex.conj_mul', Complex.ofReal_pow]
   have hi : Integrable (fun q => ‖CuspidalSpectrum.cuspQuot h q‖ ^ 2)
-      (RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) :=
+      (RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) :=
     Integrable.of_bound (hq.norm.pow 2).aestronglyMeasurable (C ^ 2) (Filter.Eventually.of_forall fun q => by
       rw [norm_pow, norm_norm]
       exact pow_le_pow_left₀ (norm_nonneg _) (hb q) 2)
   have h2 := (integral_eq_zero_iff_of_nonneg (fun q => sq_nonneg _) hi).1 h1
-  have h3 := (RightCosetSpace.quasiMeasurePreserving_mk (Reduction.rationalGLOne E n) μ).ae_eq h2
-  have h4 := (Continuous.ae_eq_iff_eq μ (f := fun y : Reduction.normOneGL E n => ‖F y‖ ^ 2)
+  have h3 := MeasureTheory.QuasiMeasurePreserving.ae_eq_comp
+    (RightCosetSpace.quasiMeasurePreserving_mk (Reduction.rationalGLOne (K := E) (n := n)) μ) h2
+  have h4 := (Continuous.ae_eq_iff_eq μ (f := fun y : Reduction.normOneGL (K := E) (n := n) => ‖F y‖ ^ 2)
     ((hc.comp continuous_subtype_val).norm.pow 2) continuous_const).1 h3
   intro y hy
   exact norm_eq_zero.1 (pow_eq_zero_iff two_ne_zero |>.1 (congrFun h4 ⟨y, hy⟩))
@@ -57,7 +65,7 @@ theorem UpperTheory.V.Af.StrongMultiplicityOne.orthConv :
   have l' : IsLeftInvariant (Af.StrongMultiplicityOne.conv φ'.1 β') := fun γ g => conv_left _ _ _ (φ'.2.1.isLeftInvariant γ) g
   obtain ⟨hc, D, hD⟩ := hC E n φ'.1 φ'.2.1.continuous ⟨C', hb'⟩ β'
   have s1 : ∀ g, ∫ q, starRingEnd ℂ (quotTr φ g q) * CuspidalSpectrum.cuspQuot l' q
-      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) = 0 := fun g =>
+      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) = 0 := fun g =>
     hS E n μ φ'.1 φ'.2.1.continuous ⟨C', hb'⟩ φ'.2.1.isLeftInvariant (fun q => starRingEnd ℂ (quotTr φ g q))
       (Complex.continuous_conj.comp (continuous_quotTr φ g))
       ⟨C, fun q => by

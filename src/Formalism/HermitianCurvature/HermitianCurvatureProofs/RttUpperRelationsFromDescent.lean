@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CmHalfIntegralGeneratorMemAlgebraicClosure
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CmHalfIntegralGeneratorMemAlgebraicClosure
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+
+@[expose] public section
 
 open Matrix Formalism.YangianSpanCharacter.T
 
@@ -13,6 +17,10 @@ open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Form
 open scoped ContDiff
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+
+local macro "distrib_module" : tactic =>
+  `(tactic| (simp only [mul_sub, sub_mul, mul_add, add_mul, smul_mul_assoc, mul_smul_comm,
+    mul_assoc, smul_sub, smul_add, smul_smul]; module))
 
 section Qdet
 
@@ -26,10 +34,6 @@ theorem rtt_entry (QQ : ℂ → Matrix (Fin 2) (Fin 2) A) (h : Formalism.Fourier
     simp [E1, E2, Pf, Matrix.mul_apply, Matrix.sub_apply, Matrix.smul_apply, Matrix.one_apply,
       Fintype.sum_prod_type, Fin.sum_univ_two, sub_mul, mul_sub] at h0 ⊢ <;>
     (rw [smul_sub]; linear_combination (norm := abel) h0)
-
-macro "distrib_module" : tactic =>
-  `(tactic| (simp only [mul_sub, sub_mul, mul_add, add_mul, smul_mul_assoc, mul_smul_comm, mul_assoc, smul_sub, smul_add,
-      smul_smul]; module))
 
 theorem idempotent_mul_comm (r s t : Matrix (Fin 2) (Fin 2) A) (D : ℂ)
     (hst : ∀ a b c d, (1 : ℂ) • (s a b * t c d - t c d * s a b) = s c b * t a d - t c b * s a d)

@@ -1,5 +1,9 @@
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
-import Formalism.FrobeniusContraction.FrobeniusContractionProofs.LenBound
+module
+
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+public import Formalism.FrobeniusContraction.FrobeniusContractionProofs.LenBound
+
+@[expose] public section
 
 noncomputable section
 

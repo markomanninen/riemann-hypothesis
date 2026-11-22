@@ -1,8 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Commutant
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsEquiv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Arbitrary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrime
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.HarishChandraMultiplicityBound
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Commutant
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EquivSigLamOfIsDS
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,9 +48,7 @@ theorem identity_holds : Ident := by
     rw [hb, Submodule.mem_bot] at hw
     exact hw0 hw
   have hσU : IsURepOn (UJset ε) σ := hσ.2.2.1
-  have hcas : CasOnSmooth ε mu σ := by
-    have h2n : 2 * (n : ℝ) < h := by nlinarith [pow_nonneg h0 3]
-    exact (ReciprocityTheory.ChartRestriction.DS.G2.discrete_series_props_large_gap n ε mu hmu h ((mir_gapAtLeast_iff ε mu h).2 hgap) h2n H' σ hσ).1
+  have hcas : CasOnSmooth ε mu σ := casOnSmooth_of_isDS hσ hstd
   obtain ⟨V₂, hV₂, hV₂0, hVK₂, hc₂⟩ := arb_datum hσ hcas
   have hD₂ := isDerivedOn_smE hσU
   obtain ⟨Uq, hUq⟩ := data_unitary_equiv hstd hρ hD hV hc₁ hVK₁ hV₁0 hσU hD₂ hV₂ hc₂ hVK₂ hV₂0

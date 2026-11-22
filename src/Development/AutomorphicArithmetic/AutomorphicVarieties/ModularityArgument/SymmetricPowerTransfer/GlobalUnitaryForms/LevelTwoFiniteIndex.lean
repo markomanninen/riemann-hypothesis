@@ -1,22 +1,20 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.EvenVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.IsGenEig
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.EvenVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.IsGenEig
+
+@[expose] public section
 
 noncomputable section
 
 namespace UpperTheory.V.Z.Sym.Glob
 
-open NumberField IsDedekindDomain Matrix Polynomial Loc
+open NumberField IsDedekindDomain Matrix Polynomial UpperTheory.V.Z.Sym.Loc
+open scoped Classical
 
 section Field
 
 variable {K K' : Type} [Field K] [Field K']
-
-def qmap (f : K →+* K') (a b : K) : QuadraticAlgebra K a b →+* QuadraticAlgebra K' (f a) (f b) where
-  toFun x := ⟨f x.re, f x.im⟩
-  map_one' := by ext <;> simp [QuadraticAlgebra.re_one, QuadraticAlgebra.im_one]
-  map_mul' x y := by ext <;> simp
-  map_zero' := by ext <;> simp
-  map_add' x y := by ext <;> simp
 
 def lmap (f : K →+* K') (Δ : K) : Lsq K Δ →+* Lsq K' (f Δ) where
   toFun x := ⟨f x.re, f x.im⟩
@@ -48,9 +46,9 @@ abbrev mt (g : DX Δ) : Matrix (Fin 2) (Fin 2) (Lsq K Δ) := (g : GL (Fin 2) (Ls
 
 def IsScal (z : Kˣ) (g : DX Δ) : Prop := mt g = scalar (Fin 2) (algebraMap K (Lsq K Δ) z)
 
-variable (Δ) in
 
-def ZD : Subgroup (DX Δ) :=
+variable (Δ) in
+def ZD (Δ : K) : Subgroup (DX Δ) :=
   ((GeneralLinearGroup.scalar (Fin 2)).comp (Units.map (algebraMap K (Lsq K Δ) : K →* Lsq K Δ))).range.subgroupOf (DX Δ)
 
 def IsEmb (τ : K) (γ : DX Δ) (j : (Etau K τ)ˣ →* DX Δ) : Prop :=
@@ -63,19 +61,17 @@ def HasTr (γ : DX Δ) (τ : K) : Prop := (mt γ).det = 1 ∧ (mt γ).trace = al
 
 def Ind (H : Subgroup Kˣ) (τ : K) (t : Kˣ) : Prop := ∃ h ∈ H, τ = (t * h : Kˣ) + ((t * h)⁻¹ : Kˣ)
 
-open Classical in
 
+open Classical in
 def one (p : Prop) : ℂ := if p then 1 else 0
+
+variable (Δ) in
+def KD (Δ : K) (O : Type) [CommRing O] [Algebra O K] : Subgroup (DX Δ) :=
+  (GeneralLinearGroup.map ((integralClosure O (Lsq K Δ)).val : integralClosure O (Lsq K Δ) →+* Lsq K Δ)).range.subgroupOf (DX Δ)
 
 variable (O : Type) [CommRing O] [Algebra O K]
 
-variable (Δ) in
-
-def KD : Subgroup (DX Δ) :=
-  (GeneralLinearGroup.map ((integralClosure O (Lsq K Δ)).val : integralClosure O (Lsq K Δ) →+* Lsq K Δ)).range.subgroupOf (DX Δ)
-
 open Classical in
-
 def fZD (χ : Kˣ →* ℂˣ) (g : DX Δ) : ℂ :=
   if h : ∃ z : Kˣ, ∃ s : DX Δ, IsScal z s ∧ s⁻¹ * g ∈ KD Δ O then ((χ h.choose)⁻¹ : ℂˣ) else 0
 
@@ -83,9 +79,9 @@ def IsChi (Δ : K) [IsLocalRing O] (χ : Kˣ →* ℂˣ) : Prop :=
   Unr O χ ∧ ∀ (ϖ : O) (x : Kˣ), Irreducible ϖ → (x : K) = algebraMap O K ϖ →
     (χ x : ℂ) = hs Δ (x : K) / (Nat.card (IsLocalRing.ResidueField O) : ℂ)
 
-variable (Δ) in
 
-structure SigData where
+variable (Δ) in
+structure SigData (Δ : K) where
   P : Set Kˣ
   H : Subgroup Kˣ
   J : Subgroup (U3 Δ)
@@ -180,12 +176,12 @@ structure Dat.Ok : Prop where
 
 namespace Dat
 
-open Classical in
 
+open Classical in
 def Jv (v : Pl F) : Subgroup (U3 (cv v Δ)) := if v ∈ D.Sg then (D.S v).J else KU (Ov v) _
 
-open Classical in
 
+open Classical in
 def J2v (v : Pl F) : Subgroup (DX (cv v Δ)) := if v ∈ D.Sg then (D.S v).J2 else KD _ (Ov v)
 
 def UG : Subgroup (GA Δ) := (rpg _ _).box D.Jv
@@ -198,16 +194,16 @@ abbrev Par (F : Type) [Field F] [NumberField F] : Type := ∀ v : Pl F, (Kv v)ˣ
 
 def Cone (t : Par F) : Prop := ∀ v ∈ D.Sg, t v ∈ (D.S v).P
 
-open Classical in
 
+open Classical in
 def fGv (t : Par F) (v : Pl F) (g : U3 (cv v Δ)) : ℂ := if v ∈ D.Sg then (D.S v).fG (t v) g else one (g ∈ KU (Ov v) _)
 
-open Classical in
 
+open Classical in
 def fSv (t : Par F) (v : Pl F) (g : DX (cv v Δ)) : ℂ := if v ∈ D.Sg then (D.S v).fS (t v) g else one (g ∈ KD _ (Ov v))
 
-open Classical in
 
+open Classical in
 def fKv (t : Par F) (v : Pl F) (g : DX (cv v Δ)) : ℂ := if v ∈ D.Sg then (D.S v).fK (t v) g else fZD (Ov v) (D.χ v) g
 
 def FG (t : Par F) (g : GA Δ) : ℂ := ∏ᶠ v, D.fGv t v (g.1 v)
@@ -248,7 +244,5 @@ structure IsBK (ch : F → ℂ) (B : Base (DX Δ) (DA Δ) V) : Prop where
 end Dat
 
 end Global
-
-example : SigData (K := ℚ) (-1) := ⟨∅, ⊤, ⊤, ⊤, 0, 0, 0, 1, 1, 1⟩
 
 end UpperTheory.V.Z.Sym.Glob

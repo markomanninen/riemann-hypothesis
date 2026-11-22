@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.UnipotentCharacter
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.UnipotentCharacter
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ theorem finite_place_of_jump_windows : jumpWindows.S2 → jumpWindows.S9 → jum
   have inS : ∀ u, InS S (fl k v u : GA E k) := fun u w hw => i5 v w u (fun e => hw (e ▸ hv))
   have stab : ∀ u, ∀ z ∈ Y, repW k v u z ∈ Y := fun u z hz => hY.stable _ (inS u) z hz
   have hJx' : J (∑ t ∈ T, c t • ρ (fl k v t) x) = ∑ t ∈ T, c t • repW k v t (J x) := by
-    simp only [map_sum, map_smul, hW.inter, repW_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hW.inter, repW_apply]
   have hJY : J (∑ t ∈ T, c t • ρ (fl k v t) x) ∈ Y := by
     rw [hJx']
     exact Y.sum_mem fun t _ => Y.smul_mem _ (stab t _ hxY)

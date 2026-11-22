@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.Minkowski
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.Minkowski
+
+@[expose] public section
 
 namespace PI.Mk
 

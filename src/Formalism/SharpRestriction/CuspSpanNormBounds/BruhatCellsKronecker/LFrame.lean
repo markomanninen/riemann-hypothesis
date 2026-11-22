@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdLiftDef
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdLiftDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,8 @@ theorem l_frame : UnitriangularFrameIntegral := by
       rw [h3, map_sub, hφ, if_pos rfl, hφ0 _ (by rw [hXa]; exact he a), sub_zero]
     have key : algebraMap (𝓞 E) E t * c a = algebraMap (𝓞 E) E (o a) * c' a := by
       have h4 := congrArg φ ho
-      simp only [map_sum, LinearMap.map_smul_of_tower, map_smul, hφ, hea, smul_eq_mul, Algebra.smul_def, mul_ite,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.map_smul_of_tower, map_smul, hφ, hea, smul_eq_mul, Algebra.smul_def, mul_ite,
         mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h4
       exact h4.symm
     refine lframe_mem_locP.2 ⟨t, ht, ?_⟩
@@ -95,7 +100,8 @@ theorem l_frame : UnitriangularFrameIntegral := by
   obtain ⟨s, hs, h3⟩ := lframe_mem_locP.1 hx1
   obtain ⟨o, ho⟩ := (Submodule.mem_span_range_iff_exists_fun (𝓞 E)).1 h3
   have hU1 : s • U x ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (XLam Λ F') := by
-    rw [← LinearMap.map_smul_of_tower, ← ho, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.map_smul_of_tower, ← ho, map_sum]
     refine Submodule.sum_mem _ fun a _ => ?_
     rw [LinearMap.map_smul_of_tower, map_smul, hU]
     exact Submodule.smul_mem _ _ (hA a)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ra1.ab_eval :
     ∀ {k X : Type} [inst : Field k] [Inhabited X] (r : ℕ)

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ExistsPolFamilyOfMemGenOfVsDegLe
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.MultidegreeBoundLeA
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ExistsPolFamilyOfMemGenOfVsDegLe
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.MultidegreeBoundLeA
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,14 +78,14 @@ theorem symbol_realisable_general_rank (D : Formalism.BasicNotions.D7) (hW1 : Ge
     unfold G2d
     rw [hdT s]
     by_cases hs : s ∈ F.TT
-    · rw [if_pos hs, if_pos hs]
+    · rw [ite_eq_left hs, ite_eq_left hs]
       have := (hE1 s hs).2
       omega
-    · rw [if_neg hs, if_neg hs, hE0 s hs]
+    · rw [ite_eq_right hs, ite_eq_right hs, hE0 s hs]
   have hd0 : ∀ s, s ∉ F.TT → G2d F deg (eSP p n' F (r + K) c' (p ^ G')) s = 0 := by
     intro s hs
     unfold G2d
-    rw [if_neg hs]
+    rw [ite_eq_right hs]
   have hren : rename (castVK (n' := n') (rfl : r + K = r + K)) P = P := by
     have : (castVK (n' := n') (rfl : r + K = r + K)) = id := by
       funext v

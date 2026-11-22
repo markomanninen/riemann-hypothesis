@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CycleSplitFiltStepSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationExists
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.QuotGraded
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCycleSplit
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSectionCountDropFilt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CycleSplitFiltStepSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationExists
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.QuotGraded
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCycleSplit
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSectionCountDropFilt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -27,8 +32,8 @@ theorem CycleSplit.Filt.telescope : ∀ {n : ℕ} (a : Fin (n + 1) → ℤ) (b :
     simp only [Fin.castSucc_zero] at ih
     linarith
 
-open SectionCount.Drop.Filt in
 
+open SectionCount.Drop.Filt in
 theorem CycleSplit.Filt.proof (hS : CycleSplit.Filt.Step.Statement.{u, w}) :
     CycleSplit.Filt.Statement.{u, w} := by
   classical
@@ -87,7 +92,7 @@ theorem CycleSplit.Filt.proof (hS : CycleSplit.Filt.Step.Statement.{u, w}) :
     · intro hf
       obtain ⟨a, ha, y, hy, rfl⟩ := Submodule.mem_sup.mp hf
       obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp hy
-      rw [map_add, hmkQ]
+      rw [map_add (f := _), hmkQ]
       exact Submodule.add_mem_sup ha (Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self _))
   have hJkp : ∀ (l : Fin Fl.n) (f : Poly S N), f ∈ Fl.prime l ↔ f * g l ∈ Jk l.castSucc := by
     intro l f

@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem lie_scalar {k c} {ω : HChar F} (h : IsOfFinOrder ω)
 theorem cent0 {k c} {ω : HChar F} (h : IsOfFinOrder ω) {φ : Sm F 2} (hφ : UpperTheory.Esk.IsHolV k c ω φ) (v : InfinitePlace F) :
     Eop v 0 0 φ + Eop v 1 1 φ = 0 := by
   classical
-  rw [← lie_scalar h hφ (Pi.single v 1), TR.Eop, TR.Eop, ← LinearMap.add_apply, ← map_add]
+  rw [← lie_scalar h hφ (Pi.single v 1), TR.Eop, TR.Eop, ← LinearMap.add_apply, ← map_add (f := _)]
   congr 2
   ext i j
   fin_cases i <;> fin_cases j <;> simp
@@ -81,8 +85,8 @@ theorem lowering_operator_relation_holomorphic {k c} {ω : HChar F} (h : IsOfFin
     smul_eq_mul, Submodule.coe_zero, Pi.zero_apply] at h0 h1 h2
   linear_combination (1 / 2 : ℂ) * h0 + (1 / 2 : ℂ) * h2 - (Complex.I / 2) * h1 - ((k v : ℂ) / 2 * φ.1 g) * Complex.I_mul_I
 
-open Classical in
 
+open Classical in
 def E (v : InfinitePlace F) (i j : Fin 2) : TR.Lie F 2 := TR.toL (Matrix.single i j (Pi.single v (1 : ℝ) : TR.Rinf F))
 
 theorem Eop_val (v : InfinitePlace F) (i j : Fin 2) (φ : TR.Sm F 2) (g : GA F 2) :
@@ -92,8 +96,6 @@ theorem Eop_val (v : InfinitePlace F) (i j : Fin 2) (φ : TR.Sm F 2) (g : GA F 2
 
 def pP (t : ℂ) (ht : t.im ≠ 0) : P := ⟨t, ht⟩
 
-omit [NumberField F] [IsTotallyReal F] in
-@[simp] theorem pP_val (t : ℂ) (ht : t.im ≠ 0) : (pP t ht).1 = t := rfl
 
 def yU (z : X (InfinitePlace F)) : (TR.Rinf F)ˣ where
   val v := (z v).1.im
@@ -167,7 +169,7 @@ theorem cr {G : ℂ → ℂ} {L : ℂ →L[ℝ] ℂ} {t0 : ℂ} (h : HasFDerivAt
     simp only [ContinuousLinearMap.coe_restrictScalars', ContinuousLinearMap.smulRight_apply,
       ContinuousLinearMap.one_apply, smul_eq_mul]
     conv_rhs => rw [hw]
-    rw [map_add, map_smul, map_smul, hI, Complex.real_smul, Complex.real_smul]
+    rw [map_add (f := _), map_smul, map_smul, hI, Complex.real_smul, Complex.real_smul]
     conv_lhs => rw [← Complex.re_add_im w]
     ring
   exact (hasFDerivAt_of_restrictScalars ℝ h e).differentiableAt
@@ -200,7 +202,7 @@ theorem sepHol {k : InfinitePlace F → ℕ} {c : Pl F → ℕ} {ω : HChar F} {
     · exact continuous_iff_continuousAt.2 fun z =>
         ContinuousAt.comp (f := fun z => TR.toL (A z).val) (TR.contDiffAt_chart φ.2 g (TR.val_mem_invSet (A z))).continuousAt
           continuous_A.continuousAt
-    · exact continuous_finset_prod _ fun u _ => Complex.continuous_ofReal.comp
+    · exact continuous_finsetProd _ fun u _ => Complex.continuous_ofReal.comp
         ((continuous_abs.comp (Complex.continuous_im.comp (continuous_subtype_val.comp (continuous_apply u)))).rpow_const
           fun z => Or.inl (abs_ne_zero.2 (z u).2))
   · intro t0 ht0
@@ -215,7 +217,8 @@ theorem sepHol {k : InfinitePlace F → ℕ} {c : Pl F → ℕ} {ω : HChar F} {
       by_cases hu : u = v
       · subst hu
         fin_cases i <;> fin_cases j <;>
-          simp [B, L0, E, A_val, Matrix.vecHead, Matrix.vecTail, Pi.single_apply, Matrix.single_apply]
+          simp [B, L0, E, A_val, Matrix.vecHead, Matrix.vecTail, Pi.single_apply, Matrix.single_apply] <;>
+          simp only [Function.update_self, pP]
       · fin_cases i <;> fin_cases j <;>
           simp [B, L0, E, A_val, hu, Function.update_of_ne hu, Pi.single_apply, Matrix.vecHead, Matrix.vecTail, Matrix.single_apply]
     have hN : ∀ t (ht : t.im ≠ 0), ∏ u, ((|(Function.update z v (pP t ht) u).1.im| ^ (-(k u : ℝ) / 2) : ℝ) : ℂ) =
@@ -228,7 +231,7 @@ theorem sepHol {k : InfinitePlace F → ℕ} {c : Pl F → ℕ} {ω : HChar F} {
     have hEq : ext1 (fun t : P => f (Function.update z v t, x)) =ᶠ[𝓝 t0] G := by
       filter_upwards [(isOpen_ne_fun Complex.continuous_im continuous_const).mem_nhds ht0'] with t ht
       have ht' : t.im ≠ 0 := ht
-      rw [ext1, dif_pos ht']
+      rw [ext1, dite_eq_left ht']
       change f (Function.update z v (pP t ht'), x) = G t
       rw [hfe, hB t ht', hN t ht']
     refine (DifferentiableAt.congr_of_eventuallyEq ?_ hEq).differentiableWithinAt
@@ -243,9 +246,13 @@ theorem sepHol {k : InfinitePlace F → ℕ} {c : Pl F → ℕ} {ω : HChar F} {
     have hn1 := (hasDerivAt_rpow_abs q ht0').comp_hasFDerivAt t0 him
     have hn2 : HasFDerivAt (fun t : ℂ => ((|t.im| ^ q : ℝ) : ℂ)) _ t0 := Complex.ofRealCLM.hasFDerivAt.comp t0 hn1
     have hn3 := hn2.mul (hasFDerivAt_const C t0)
-    have hGd : HasFDerivAt G _ t0 := (hCd.comp t0 hM).mul hn3
-    have hA00 : A0 0 0 v = t0.im := by simp [hA0, A_val]
-    have hA10 : A0 1 0 = 0 := by simp [hA0, A_val]
+    have hGd := (hCd.comp t0 hM).mul hn3
+    simp only [Function.comp_def, Pi.mul_apply] at hGd
+    change HasFDerivAt G _ t0 at hGd
+    have hA00 : A0 0 0 v = t0.im := by
+      simp [hA0, A_val]
+      rfl
+    have hA10 : A0 1 0 = 0 := by simp [hA0, A_val, pP]
     have hp : TR.chart φ.1 g (B + L0 t0) = φ.1 (g * TR.infGL F 2 A0) := by rw [hx0e, TR.chart_val]
     have hDj : ∀ j : Fin 2, (t0.im : ℂ) * D (E v 0 j) = (TR.Eop v 0 j φ).1 (g * TR.infGL F 2 A0) := by
       intro j

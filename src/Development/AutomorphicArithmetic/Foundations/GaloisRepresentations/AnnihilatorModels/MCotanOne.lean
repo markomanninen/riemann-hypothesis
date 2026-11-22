@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.OrdReadOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.OrdReadOf
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
@@ -27,7 +31,7 @@ private theorem tangent_of_form {κ B : Type} [Field κ] [CommRing B] [Algebra �
         + ε x • y - (ε x * ε y) • (1 : B) := by
       simp only [Algebra.smul_def, map_mul, mul_one]
       ring
-    rw [e, map_sub, map_add, map_add, hz, map_smul, map_smul, map_smul, h1]
+    rw [e, map_sub, map_add (f := _), map_add (f := _), hz, map_smul, map_smul, map_smul, h1]
     simp only [smul_eq_mul]
     ring
   let f : B →ₗ[κ] DualNumber κ :=
@@ -73,7 +77,7 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.cotanOne_of :
       have hz' : z ∈ m ^ 2 := hz
       have hzm : z ∈ m := Ideal.pow_le_self two_ne_zero hz'
       have e1 : ε y = ε z + a * ε 1 := by
-        rw [← hzw, map_add, map_smul, smul_eq_mul]
+        rw [← hzw, map_add (f := _), map_smul, smul_eq_mul]
       have hεy : ε y = 0 := hy
       have hεz : ε z = 0 := hzm
       simp only [hεy, hεz, _root_.map_one, zero_add] at e1

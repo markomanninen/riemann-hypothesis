@@ -1,11 +1,16 @@
-import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
-import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
-import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RedBasicsPf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+public import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RedBasicsPf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField IsDedekindDomain
 open scoped InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -22,7 +27,7 @@ theorem tauF_gen (I : Formalism.MainNotions.S.AutInst) (z : TensorProduct I.F (F
   | zero => simp
   | tmul a e =>
     simp [Formalism.L2.SG.AdBridge.tauF, Algebra.TensorProduct.tmul_mul_tmul]
-  | add a b ha hb => rw [map_add, ha, hb, map_add, map_add]
+  | add a b ha hb => rw [map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
 
 theorem finE_iota_symm (D : D7) (k : (Formalism.L2.SG.InstExistsPf.instOf D).Gf) :
     (finE (D.sp.Y 0) ((Formalism.IndefR.RationalEmbedding.iota D).symm (1, k))).1 =
@@ -44,8 +49,8 @@ theorem Lv_eq (D : D7) : (Formalism.L2.SG.InstExistsPf.instOf D).L = Formalism.L
     show (VS D).frame.equivFun.symm ((VS D).frame.equivFun y) ∈ (VS D).L0
     exact (congrArg (· ∈ (VS D).L0) (LinearEquiv.symm_apply_apply (VS D).frame.equivFun y)).mpr hy
 
-open Formalism.L2.SG.Pf.RedBasicsPf PIW.AdelClassFin in
 
+open Formalism.L2.SG.Pf.RedBasicsPf PIW.AdelClassFin in
 theorem core (I : Formalism.MainNotions.S.AutInst) (w : HeightOneSpectrum (𝓞 I.E)) {p : ℕ} (hp : p.Prime)
     (hcard : Nat.card (𝓞 I.E ⧸ w.asIdeal) = p)
     (β : GL (Fin I.n) (I.E ⊗[I.F] Formalism.L2.Herm.Af I.F)) (hβ : IsFrame (F := I.F) β I.L)
@@ -170,7 +175,7 @@ theorem redFn_conj {F E : Type} [Field F] [NumberField F] [Field E] [NumberField
       refine ⟨y, ?_⟩
       rw [e, hy]; group
     unfold redFn ext1
-    rw [dif_neg h2, dif_neg hX]
+    rw [dite_eq_right h2, dite_eq_right hX]
 
 theorem upperLeftBlock_eq_submatrix_of_rank_eq {κ : Type} [CommRing κ] {n r : ℕ} (hr : r ≤ n) (hn : n ≤ r) (g : GL (Fin n) κ) :
     ((upperLeftBlock hr g : GL (Fin r) κ) : Matrix (Fin r) (Fin r) κ) =
@@ -224,8 +229,8 @@ theorem glue (D : D7) (I : Formalism.MainNotions.S.AutInst) (h : I = Formalism.L
   exact congrArg (fun g : GL (Fin (Yc D 0).rank) (kP w') =>
     iso.symm ((g : Matrix (Fin (Yc D 0).rank) (Fin (Yc D 0).rank) (kP w')) (Fin.castLE hr i) (Fin.castLE hr j))) hc.symm
 
-open Formalism.L2.SG.Pf.RowDictPf in
 
+open Formalism.L2.SG.Pf.RowDictPf in
 theorem goodAt_kap_red : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (h : X.B.I = Formalism.L2.SG.InstExistsPf.instOf D), R.toLevCh.Is A.μ0 → R.IsGrp F → R.IsModels → ∀ (cG : G0 R.Pg D.R.r ≃* G0g D.nd) (t : GA D (Yc D 0)), (∀ x : X.B.I.E, HEq (X.ιE x) x) → (∃ (plg : (Σ k : Fin 2, D.nd.PlG k) ≃ R.Pg) (iso : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), ZMod (D.host.g kv.1) ≃+* kP (plg kv).1), (∀ kv, ((plg kv : R.Pg) : Pl D.host.E) = D.naut.plGw kv.1 kv.2) ∧ (∀ g, D.what₂.embLL ((idemOf A.X).coeff g) = D.ntypes.e0.coeff ((R.eG.trans cG) g)) ∧ (∀ kv, R.C.P.Div kv.1 (plg kv).1) ∧ ∀ g kv, R.eG g (plg kv) = Formalism.UG.bc (iso kv : ZMod (D.host.g kv.1) →+* kP (plg kv).1) ((R.eG.trans cG) g kv)) → IdempotentRealFixed D → t ∈ GfC (Yc D 0) → ConjLevel (t)⁻¹ (levS (Yc D 0) (R.βY 0) (R.dat0 (R.levR F true))) (levChi (Yc D 0) (R.βY 0) (R.dat0 (R.levR F true))) ((iotaX X h).toMulEquiv ⁻¹' {x : X.B.I.GA | x.1 = 1 ∧ x.2 ∈ X.K2}) (fun k => star (X.chi2 ((iotaX X h).toMulEquiv k).2)) → IsFrame (finE (Yc D 0) t * R.βY 0) (Formalism.L2.Herm.crdLat (Yc D 0) (Yc D 0).L0) → ∀ k ∈ X.B.I.Kset, GoodAt X k (cG (rTup (R.βY 0) (R.dat0 R.triv) (finE (Yc D 0) (kap X h t k)))) := by
   intro D G _ _ Pl0 T A Ks _ _ _ R F X h _ _ _ cG t hιE hpin _ _ _ hFrame k hk kv
   obtain ⟨plg, iso, hplw, -, -, hpe⟩ := hpin

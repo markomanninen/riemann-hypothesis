@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -153,7 +157,7 @@ theorem dualLat_span {O Kf V : Type} [CommRing O] [Field Kf] [Algebra O Kf] [Add
     | add u v _ _ hu hv =>
       obtain ⟨a1, h1⟩ := hu
       obtain ⟨a2, h2⟩ := hv
-      exact ⟨a1 + a2, by rw [map_add, map_add, h1, h2]⟩
+      exact ⟨a1 + a2, by rw [map_add (f := _), map_add (f := _), h1, h2]⟩
     | smul c v _ hv =>
       obtain ⟨a1, h1⟩ := hv
       refine ⟨c * a1, ?_⟩

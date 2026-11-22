@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Projection
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Capelli
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Projection
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Capelli
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -42,12 +46,8 @@ theorem hcProjLin_mem_polyLE {d : ℕ} {u : U n} (hu : u ∈ filt d) : hcProjLin
     obtain ⟨m, -, -, hm, rfl⟩ := hx
     exact hcProjLin_canon_mem_polyLE hm
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul r x _ hx => rw [map_smul]; exact Submodule.smul_mem _ r hx
-
-theorem totalDegree_hcProjLin_le {d : ℕ} {u : U n} (hu : u ∈ filt d) :
-    (hcProjLin u).totalDegree ≤ d :=
-  mem_polyLE.1 (hcProjLin_mem_polyLE hu)
 
 noncomputable def diagMain (w : List (Fin n × Fin n)) : MvPolynomial (Fin n) ℂ := by
   classical
@@ -157,14 +157,11 @@ theorem sum_diagMain_capelliWord (k : ℕ) :
 
 theorem hcProjLin_capelli_sub_mem (k : ℕ) :
     hcProjLin (capelli (n := n) (k + 1)) - psum (Fin n) ℂ (k + 1) ∈ polyLE n k := by
-  rw [capelli_eq_sum_word, map_sum, ← sum_diagMain_capelliWord, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [capelli_eq_sum_word, map_sum, ← sum_diagMain_capelliWord, ← Finset.sum_sub_distrib]
   refine Submodule.sum_mem _ fun i _ => ?_
   have := hcProjLin_word_sub_mem (List.ofFn fun t : Fin (k + 1) => (i t, i (finRotate (k + 1) t)))
   rwa [List.length_ofFn, Nat.add_sub_cancel] at this
-
-theorem totalDegree_hcProjLin_capelli_sub (k : ℕ) :
-    (hcProjLin (capelli (n := n) (k + 1)) - psum (Fin n) ℂ (k + 1)).totalDegree < k + 1 :=
-  Nat.lt_succ_of_le (mem_polyLE.1 (hcProjLin_capelli_sub_mem k))
 
 theorem translate_X (c : Fin n → ℂ) (i : Fin n) : translate c (X i) = X i + C (c i) := by
   simp [translate]
@@ -193,7 +190,8 @@ theorem translate_sub_mem_polyLE (c : Fin n → ℂ) :
     exact Submodule.zero_mem _
   | succ d ih =>
     intro p hp
-    rw [p.as_sum, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [p.as_sum, map_sum, ← Finset.sum_sub_distrib]
     refine Submodule.sum_mem _ fun s hs => ?_
     have hsd : (s.sum fun _ e => e) ≤ d + 1 := by
       have := mem_polyLE.1 hp
@@ -215,10 +213,10 @@ theorem translate_sub_mem_polyLE (c : Fin n → ℂ) :
         rw [hss, Finsupp.sum_add_index' (fun _ => rfl) (fun _ _ _ => rfl),
           Finsupp.sum_single_index rfl]
       omega
-    have hmono : monomial s (coeff s p) = monomial (s' + Finsupp.single i 1) (coeff s p) := by
+    have hmono : monomial s (AddMonoidAlgebra.coeff p s) = monomial (s' + Finsupp.single i 1) (AddMonoidAlgebra.coeff p s) := by
       rw [← hss]
     rw [hmono, monomial_add_single, pow_one, map_mul, translate_X]
-    set m' := monomial s' (coeff s p)
+    set m' := monomial s' (AddMonoidAlgebra.coeff p s)
     have hm' : m' ∈ polyLE n d := mem_polyLE.2 ((totalDegree_monomial_le _ _).trans hs'd)
     have hT : translate c m' - m' ∈ polyLE n (d - 1) := ih m' hm'
     have hT' : translate c m' ∈ polyLE n d := by

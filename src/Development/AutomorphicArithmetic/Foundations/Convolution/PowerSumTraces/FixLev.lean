@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OfinProd
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OfinProd
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.GM UpperTheory.ConvolutionTheory.C
@@ -28,16 +32,16 @@ private theorem mem_of_finite_places {ι : Type*} {G : ι → Type*} [∀ v, Gro
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 
-private theorem rhoF_mul (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (a b : AdelicGLn.FiniteAdelicGL K n) (x : LL μ) :
+private theorem rhoF_mul (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (a b : AdelicGLn.FiniteAdelicGL K n) (x : LL μ) :
     rhoF μ (a * b) x = rhoF μ a (rhoF μ b x) := by
   simp only [rhoF, _root_.map_mul]
   exact UnitaryRep.map_mul_apply _ _ _ _
 
-private theorem rhoF_one (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (x : LL μ) : rhoF μ 1 x = x := by
+private theorem rhoF_one (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (x : LL μ) : rhoF μ 1 x = x := by
   simp only [rhoF, _root_.map_one]
   exact UnitaryRep.map_one_apply _ _
 
-private def stab (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (x : LL μ) : Subgroup (AdelicGLn.FiniteAdelicGL K n) where
+private def stab (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (x : LL μ) : Subgroup (AdelicGLn.FiniteAdelicGL K n) where
   carrier := {g | rhoF μ g x = x}
   one_mem' := rhoF_one μ x
   mul_mem' {a b} ha hb := by
@@ -48,16 +52,16 @@ private def stab (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (x : LL μ) :
     conv_lhs => rw [← ha]
     rw [← rhoF_mul, inv_mul_cancel, rhoF_one]
 
-private theorem isClosed_stab (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (x : LL μ) :
+private theorem isClosed_stab (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (x : LL μ) :
     IsClosed (stab μ x : Set (AdelicGLn.FiniteAdelicGL K n)) :=
-  isClosed_eq (((rightRegularRep (rationalGLOne K n) μ).continuous_orbit x).comp MultiplicityOne.continuous_finProj)
+  isClosed_eq (((rightRegularRep (rationalGLOne (K := K) (n := n)) μ).continuous_orbit x).comp MultiplicityOne.continuous_finProj)
     continuous_const
 
-private theorem mem_fixF (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (W : Subgroup (AdelicGLn.FiniteAdelicGL K n)) (x : LL μ) :
+private theorem mem_fixF (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (W : Subgroup (AdelicGLn.FiniteAdelicGL K n)) (x : LL μ) :
     x ∈ fixF μ W ↔ ∀ u ∈ W, rhoF μ u x = x := by
   simp [fixF, Submodule.mem_iInf, LinearMap.mem_eqLocus]
 
-private theorem mem_fixL (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (w : Pl K) (J : Subgroup (Gw n w)) (x : LL μ) :
+private theorem mem_fixL (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (w : Pl K) (J : Subgroup (Gw n w)) (x : LL μ) :
     x ∈ fixL μ w J ↔ ∀ g ∈ J, rhoF μ (AdelicGLn.localEmbedding w g) x = x := by
   simp [fixL, mem_fixF]
 

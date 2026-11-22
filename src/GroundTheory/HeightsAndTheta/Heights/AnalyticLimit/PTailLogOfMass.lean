@@ -1,7 +1,34 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLineFubiniStudyFacts
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StTailLogOfMass
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PTailLogOfMassCharts
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShift
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.SNCAtlas
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenSt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLCurveA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLLocalStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PushAFinsumInter
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Pullback
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Measure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AtlasIndep
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Degree
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffFubiniStudyRatioCompChart0
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLinePartitionContinuousCoe
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StTailLogOfMass
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PTailLogOfMassCharts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -116,7 +143,7 @@ theorem sum_lintegral_logTail_le [CompactSpace X] [T2Space X] (hYo : IsOpen Yo)
       (tail Yo r (2 ^ k * R)).indicator 1 ((A.chart i).symm z) * locDens A (fun i => potForm th (u i)) i z) =
       ENNReal.ofReal (mInt A (fun i => potForm th (u i)) ((tail Yo r (2 ^ k * R)).indicator 1)) := fun k =>
     sum_lintegral_eq_mInt hYo hth hu hnn _ (fun x => Set.indicator_nonneg (fun _ _ => zero_le_one) x)
-      (fun x hx => indicator_of_notMem (fun h => hx h.1) _) (hT _ (hk2 k)).1
+      (fun x hx => indicator_of_notMem (fun (h : x ∈ tail Yo r (2 ^ k * R)) => hx h.1) _) (hT _ (hk2 k)).1
   have hW : ∀ (k : ℕ) (i : Fin A.n), IntegrableOn (fun z => (ReciprocityTheory.AnForm.M.existsPartition A).some.χ i ((A.chart i).symm z) *
       (tail Yo r (2 ^ k * R)).indicator 1 ((A.chart i).symm z) * locDens A (fun i => potForm th (u i)) i z)
       (A.chart i).target := fun k i =>
@@ -215,18 +242,18 @@ theorem sum_lintegral_logTail_le [CompactSpace X] [T2Space X] (hYo : IsOpen Yo)
 
 end TailLogOfMass
 
-open TailLogOfMass in
 
+open TailLogOfMass in
 theorem TailLogOfMass.proof : TailLogOfMass.Statement := by
   intro X _ _ _ D A Yo r th u hYo hr hre hth hu hnn CE hT
   have he := Real.exp_pos 1
   have hoffT : ∀ R : ℝ, ∀ x, x ∉ Yo → (tail Yo r R).indicator (fun x => Real.log (r x)) x = 0 :=
-    fun R x hx => indicator_of_notMem (fun h => hx h.1) _
+    fun R x hx => indicator_of_notMem (fun (h : x ∈ tail Yo r R) => hx h.1) _
   have hCE : 0 ≤ CE := by
     have h1 := (hT _ le_rfl).2
     have h0 := mInt_nonneg_of hYo hth hu hnn ((tail Yo r (Real.exp 1)).indicator 1)
       (fun x => Set.indicator_nonneg (fun _ _ => zero_le_one) x)
-      (fun x hx => indicator_of_notMem (fun h => hx h.1) _)
+      (fun x hx => indicator_of_notMem (fun (h : x ∈ tail Yo r (Real.exp 1)) => hx h.1) _)
     rw [Real.log_exp, one_pow, mul_one] at h1
     by_contra hneg
     have : CE / Real.exp 1 < 0 := div_neg_of_neg_of_pos (lt_of_not_ge hneg) he

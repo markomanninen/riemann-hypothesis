@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.AnChartA
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.AnChartA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -44,7 +48,7 @@ theorem exists_holo_coords (K : Ideal (MvPolynomial (Fin n) ℂ)) (p : Fin n →
   have hstrict : HasStrictFDerivAt Ψ Lm p := by
     have := hΨan.hasStrictFDerivAt; rwa [hΨd.fderiv] at this
   have hinj : Function.Injective Lm := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     refine eq_zero_of_grad K p r hr F hFK hh hhp hcut v (fun i => ?_) (fun k => ?_)
     · have := congrFun (congrArg Prod.fst hv) i; simpa [Lm, Lr] using this

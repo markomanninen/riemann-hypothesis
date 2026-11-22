@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.TwistTensorRestriction
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.TwistTensorRestriction
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem flat_of_baer [IsPrincipalIdealRing R]
       obtain ⟨m1, rfl⟩ := hx
       obtain ⟨m2, rfl⟩ := hy
       exact ⟨m1 + m2, by rw [tmul_add]⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨m, rfl⟩ := pure x
   simp only [lift.tmul, LinearMap.coe_comp, Function.comp_apply, Submodule.coe_subtype,
@@ -115,6 +119,6 @@ theorem LateralTheory.E.ZModFlatnessFromBaerCriterion.LeafInjFlatZMod_of : LeafI
       (ULift.ringEquiv (R := ZMod q)).symm.surjective
   refine flat_of_baer (fun a => ?_) (Module.Baer.of_injective hinj)
   obtain ⟨b, hab, hb⟩ := zmod_ann q a.down
-  refine ⟨ULift.up b, ULift.ext _ _ hab, fun r hr => ?_⟩
+  refine ⟨ULift.up b, ULift.ext hab, fun r hr => ?_⟩
   obtain ⟨s, hs⟩ := hb r.down (congrArg ULift.down hr)
-  exact ⟨ULift.up s, ULift.ext _ _ hs⟩
+  exact ⟨ULift.up s, ULift.ext hs⟩

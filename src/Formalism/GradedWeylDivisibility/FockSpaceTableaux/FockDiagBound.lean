@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DomPow
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DomPow
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
+
+@[expose] public section
 
 open MvPolynomial Finset
 
@@ -42,7 +46,7 @@ lemma ldiag_aeval_monomial {r n : ℕ} (t : Fin r → ℂ) (u : Fin r × Fin n �
 
 lemma ldiag_coeff_rowAct_diag {r n : ℕ} (t : Fin r → ℂ) (f : MvPolynomial (Fin r × Fin n) ℂ)
     (m : Fin r × Fin n →₀ ℕ) :
-    coeff m (rowAct ℂ (Matrix.diagonal t) f) = coeff m f * ∏ a : Fin r, t a ^ rowDeg m a := by
+    AddMonoidAlgebra.coeff (rowAct ℂ (Matrix.diagonal t) f) m = AddMonoidAlgebra.coeff f m * ∏ a : Fin r, t a ^ rowDeg m a := by
   rw [ldiag_rowAct_diag_eq]
   induction f using MvPolynomial.induction_on'
   next u c =>
@@ -52,7 +56,7 @@ lemma ldiag_coeff_rowAct_diag {r n : ℕ} (t : Fin r → ℂ) (f : MvPolynomial 
       rfl
     · rw [zero_mul]
   next p q hp hq =>
-    rw [map_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, add_mul]
+    rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, add_mul]
 
 lemma ldiag_term (z : ℂ) (w : ℝ) (N : ℕ) :
     z * (w : ℂ) * star (z * (w : ℂ)) * (N : ℂ) = ((Complex.normSq z * w ^ 2 * N : ℝ) : ℂ) := by
@@ -87,8 +91,8 @@ theorem fockDiagBound_of (h : DomPow) : FockDiagBound := by
   unfold DomPow at h
   unfold FockDiagBound
   intro r n t lam ht0 ht f hdom hsum
-  have hcoeff : ∀ m, coeff m (rowAct ℂ (Matrix.diagonal fun a => (t a : ℂ)) f) =
-      coeff m f * ((∏ a : Fin r, t a ^ rowDeg m a : ℝ) : ℂ) := by
+  have hcoeff : ∀ m, AddMonoidAlgebra.coeff (rowAct ℂ (Matrix.diagonal fun a => (t a : ℂ)) f) m =
+      AddMonoidAlgebra.coeff f m * ((∏ a : Fin r, t a ^ rowDeg m a : ℝ) : ℂ) := by
     intro m
     simp only [ldiag_coeff_rowAct_diag, Complex.ofReal_prod, Complex.ofReal_pow]
   have hsupp : (rowAct ℂ (Matrix.diagonal fun a => (t a : ℂ)) f).support ⊆ f.support := by

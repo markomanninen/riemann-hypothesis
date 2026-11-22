@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.NullStableAlt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.NullStableAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,10 @@ theorem crAlg_comm (c : ℝ) : ∀ a ∈ Set.range (cr (m := m) (n := n) c), ∀
 
 abbrev CrAlg (m n : ℕ) (c : ℝ) : Subalgebra ℂ (Module.End ℂ (PX m n)) := Algebra.adjoin ℂ (Set.range (cr c))
 
-instance instCommRingCrAlg (c : ℝ) : CommRing (CrAlg m n c) := Algebra.adjoinCommRingOfComm ℂ (crAlg_comm c)
+instance instCommRingCrAlg (c : ℝ) : CommRing (CrAlg m n c) :=
+  letI : IsMulCommutative (CrAlg m n c) :=
+    Algebra.isMulCommutative_adjoin ℂ fun a ha b hb _ => crAlg_comm c a ha b hb
+  { (CrAlg m n c).toRing with mul_comm := mul_comm' }
 
 def gen (c : ℝ) (k : Ix m n) : CrAlg m n c := ⟨cr c k, Algebra.subset_adjoin ⟨k, rfl⟩⟩
 
@@ -82,14 +89,15 @@ theorem fockMono_eq (c : ℝ) (s : Ix m n →₀ ℕ) :
 
 theorem fock_eq (c : ℝ) (p : PX m n) : fock c p = ((phi c p : CrAlg m n c) : Module.End ℂ (PX m n)) 1 := by
   conv_rhs => rw [p.as_sum]
-  rw [map_sum, AddSubmonoidClass.coe_finsetSum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, AddSubmonoidClass.coe_finsetSum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun s _ => ?_
   have : monomial s (p.coeff s) = p.coeff s • (monomial s 1 : PX m n) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [this, map_smul, Subalgebra.coe_smul, LinearMap.smul_apply, fockMono_eq]
 
 theorem fock_add (c : ℝ) (p q : PX m n) : fock c (p + q) = fock c p + fock c q := by
-  simp only [fock_eq, map_add, Subalgebra.coe_add, LinearMap.add_apply]
+  simp only [fock_eq, map_add (f := _), Subalgebra.coe_add, LinearMap.add_apply]
 
 theorem fock_smul (c : ℝ) (a : ℂ) (p : PX m n) : fock c (a • p) = a • fock c p := by
   simp only [fock_eq, map_smul, Subalgebra.coe_smul, LinearMap.smul_apply]
@@ -122,7 +130,7 @@ theorem degree_mapDomain (t : Ix m n →₀ ℕ) : (Finsupp.mapDomain flp t).deg
   simp only [Finsupp.degree_eq_sum]
   rw [← Equiv.sum_comp flpEquiv]
   refine Finset.sum_congr rfl fun i _ => ?_
-  exact Finsupp.mapDomain_apply flp_injective t i
+  exact Finsupp.mapDomain_apply_of_injective flp_injective t i
 
 theorem mapDomain_flp_flp (t : Ix m n →₀ ℕ) : Finsupp.mapDomain flp (Finsupp.mapDomain flp t) = t := by
   rw [← Finsupp.mapDomain_comp]
@@ -172,7 +180,8 @@ theorem DegLT.X_mul {d : ℕ} {P : PX m n} (j : Ix m n) (hP : DegLT d P) : DegLT
 theorem DegLT.pderiv {d : ℕ} {P : PX m n} (k : Ix m n) (hP : DegLT d P) : DegLT d (pderiv k P) := by
   classical
   intro t ht
-  rw [P.as_sum, map_sum] at ht
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum] at ht
   obtain ⟨s, hs, hts⟩ := Finset.mem_biUnion.mp (MvPolynomial.support_sum ht)
   rw [pderiv_monomial] at hts
   have ht' := MvPolynomial.support_monomial_subset hts
@@ -252,10 +261,10 @@ theorem fock_injective (c : ℝ) (hc : 0 < c) : Function.Injective (fock (m := m
   by_contra hr
   have hne : r.support.Nonempty := MvPolynomial.support_nonempty.mpr hr
   obtain ⟨s0, hs0, hmax⟩ := Finset.exists_max_image r.support Finsupp.degree hne
-  have key := congrArg (MvPolynomial.coeff (Finsupp.mapDomain flp s0)) h0
+  have key := congrArg (AddMonoidAlgebra.coeff · (Finsupp.mapDomain flp s0)) h0
   rw [fock_decomp, MvPolynomial.coeff_zero, MvPolynomial.coeff_sum, Finset.sum_eq_single s0] at key
   · rw [MvPolynomial.coeff_smul, MvPolynomial.coeff_add, Sm, MvPolynomial.coeff_monomial, if_pos rfl] at key
-    have herr : MvPolynomial.coeff (Finsupp.mapDomain flp s0) (err c s0) = 0 := by
+    have herr : AddMonoidAlgebra.coeff (err c s0) (Finsupp.mapDomain flp s0) = 0 := by
       by_contra hne'
       have := err_deg c _ s0 rfl _ (MvPolynomial.mem_support_iff.mpr hne')
       rw [degree_mapDomain] at this
@@ -270,7 +279,7 @@ theorem fock_injective (c : ℝ) (hc : 0 < c) : Function.Injective (fock (m := m
     have h1 : Finsupp.mapDomain flp s ≠ Finsupp.mapDomain flp s0 :=
       fun h => hne' (Finsupp.mapDomain_injective flp_injective h)
     rw [if_neg h1]
-    have herr : MvPolynomial.coeff (Finsupp.mapDomain flp s0) (err c s) = 0 := by
+    have herr : AddMonoidAlgebra.coeff (err c s) (Finsupp.mapDomain flp s0) = 0 := by
       by_contra hne''
       have := err_deg c _ s rfl _ (MvPolynomial.mem_support_iff.mpr hne'')
       rw [degree_mapDomain] at this

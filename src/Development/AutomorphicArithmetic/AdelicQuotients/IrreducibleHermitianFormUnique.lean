@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AdelicQuotients.InvariantSesquilinearFormEqSmulOfIrreducible
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsOrthonormalBasisSesquilinear
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AdelicQuotients.InvariantSesquilinearFormEqSmulOfIrreducible
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsOrthonormalBasisSesquilinear
+
+@[expose] public section
+
 open MeasureTheory
 
 private lemma exists_orthonormal_basis_sesquilinear {V : Type} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
@@ -37,7 +42,7 @@ theorem UpperTheory.irreducible_hermitian_form_unique :
   let S : V → V → ℂ := fun y w => ∫ g, B (ρ g a) y * star (B (ρ g c) w) ∂μ
   have hS1 : ∀ w w' y, S y (w + w') = S y w + S y w' := by
     intro w w' y
-    simp only [S, map_add, star_add, mul_add]
+    simp only [S, map_add (f := _), star_add, mul_add]
     exact integral_add (hint _ _ _ _) (hint _ _ _ _)
   have hS2 : ∀ (r : ℂ) w y, S y (r • w) = r * S y w := by
     intro r w y
@@ -49,7 +54,7 @@ theorem UpperTheory.irreducible_hermitian_form_unique :
     exact integral_const_mul _ _
   have hS3 : ∀ w y y', S (y + y') w = S y w + S y' w := by
     intro w y y'
-    simp only [S, map_add, add_mul]
+    simp only [S, map_add (f := _), add_mul]
     exact integral_add (hint _ _ _ _) (hint _ _ _ _)
   have hS4 : ∀ (r : ℂ) w y, S (r • y) w = star r * S y w := by
     intro r w y
@@ -77,7 +82,7 @@ theorem UpperTheory.irreducible_hermitian_form_unique :
       simp [this, mul_comm]
     have h2 : ∑ i, S (e i) (e i) = ∫ _g : G, B a c ∂μ := by
       simp only [S]
-      rw [← integral_finset_sum _ (fun i _ => hint _ _ _ _)]
+      rw [← integral_finsetSum _ (fun i _ => hint _ _ _ _)]
       congr 1
       funext g
       rw [← hinv g a c, hpar (ρ g a) (ρ g c)]

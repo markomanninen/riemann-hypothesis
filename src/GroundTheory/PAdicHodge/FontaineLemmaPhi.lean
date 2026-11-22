@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.FontaineLemmaAInf
-import GroundTheory.PAdicHodge.ACrisFrobFixed
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.FontainePhiPowerSubgroups
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.FontaineLemmaAInf
+public import GroundTheory.PAdicHodge.ACrisFrobFixed
+public import GroundTheory.PowerSubgroups.CountableNeighbourhoods.FontainePhiPowerSubgroups
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.PAdicHodge
@@ -26,10 +31,10 @@ variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
 
 local notation "𝒪" => normInteger K
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "θ" => fontaineTheta (normInteger K) p
+local notation "𝒪♭" => PreTilt 𝒪 p
 local notation "𝔸" => Localization.Away (p : AInf K p)
-local notation "φ" => WittVector.frobeniusEquiv p (PreTilt (normInteger K) p)
+local notation "θ" => fontaineTheta 𝒪 p
+local notation "φ" => WittVector.frobeniusEquiv p 𝒪♭
 
 theorem exists_p_mul_eq_frobenius_sub {ξ : AInf K p} (hξ : ξ ∈ RingHom.ker θ) :
     ∃ X : ACrisZero K p, (p : 𝔸) * (X : 𝔸) = algebraMap (AInf K p) 𝔸 (φ ξ) - p := by
@@ -40,7 +45,7 @@ theorem exists_p_mul_eq_frobenius_sub {ξ : AInf K p} (hξ : ξ ∈ RingHom.ker 
   have h1 := factorial_mul_dpow (K := K) p ξ
   have h2 : algebraMap (AInf K p) 𝔸 (φ ξ) =
       algebraMap (AInf K p) 𝔸 ξ ^ p + (p : 𝔸) * algebraMap (AInf K p) 𝔸 c := by
-    rw [hc, map_add, map_pow, map_mul, map_natCast]
+    rw [hc, map_add (f := _), map_pow, map_mul, map_natCast]
   have h3 : (p : 𝔸) * ((p - 1).factorial : 𝔸) = (p.factorial : 𝔸) := by
     rw [← Nat.cast_mul, Nat.mul_factorial_pred hp.out.ne_zero]
   show (p : 𝔸) * (algebraMap (AInf K p) 𝔸 c + ((p - 1).factorial : 𝔸) * dpow p ξ - 1) = _
@@ -79,7 +84,7 @@ theorem exists_phiAway_eq_add_mul {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.
   | add y₁ y₂ _ _ h₁ h₂ =>
     obtain ⟨w₁, z₁, hz₁, e₁⟩ := h₁
     obtain ⟨w₂, z₂, hz₂, e₂⟩ := h₂
-    exact ⟨w₁ + w₂, z₁ + z₂, add_mem hz₁ hz₂, by rw [map_add, e₁, e₂, map_add]; ring⟩
+    exact ⟨w₁ + w₂, z₁ + z₂, add_mem hz₁ hz₂, by rw [map_add (f := _), e₁, e₂, map_add (f := _)]; ring⟩
   | mul y₁ y₂ _ _ h₁ h₂ =>
     obtain ⟨w₁, z₁, hz₁, e₁⟩ := h₁
     obtain ⟨w₂, z₂, hz₂, e₂⟩ := h₂
@@ -89,26 +94,28 @@ theorem exists_phiAway_eq_add_mul {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.
       (Subalgebra.mul_mem _ hz₁ (Subalgebra.algebraMap_mem _ _)))
       (Subalgebra.mul_mem _ (Subalgebra.mul_mem _ X.2 hz₁) hz₂)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_phi_eq_add_mul [CharZero K] {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span {ξ})
     {X : ACrisZero K p} (hX : (p : 𝔸) * (X : 𝔸) = algebraMap (AInf K p) 𝔸 (φ ξ) - p)
     (y : ACris K p) :
-    ∃ b : AInf K p, ∃ s : ACris K p, phi K p y =
+    ∃ b : AInf K p, ∃ s : ACris K p, phi (K := K) (p := p) y =
       algebraMap (AInf K p) (ACris K p) b + algebraMap (ACrisZero K p) (ACris K p) X * s := by
   refine exists_eq_add_mul_of_forall (a := (p : AInf K p)) (r := (p : ACris K p))
-    (algebraMap (AInf K p) (ACris K p)) (map_natCast _ p) _ (phi K p) (fun y => ?_) y
+    (algebraMap (AInf K p) (ACris K p)) (map_natCast _ p) _ (phi (K := K) (p := p)) (fun y => ?_) y
   obtain ⟨y₀, z₁, rfl⟩ := exists_eq_add_p_pow_mul 1 y
   obtain ⟨b, s, hs, e⟩ := exists_phiAway_eq_add_mul hξ hX y₀.2
   refine ⟨b, algebraMap (ACrisZero K p) (ACris K p) ⟨s, hs⟩, z₁, ?_⟩
-  have e' : phiZero K p y₀ = algebraMap (AInf K p) (ACrisZero K p) b + X * ⟨s, hs⟩ :=
+  have e' : phiZero (K := K) (p := p) y₀ =
+      algebraMap (AInf K p) (ACrisZero K p) b + X * ⟨s, hs⟩ :=
     Subtype.ext (by rw [coe_phiZero, e]; rfl)
-  have hof : phi K p (algebraMap (ACrisZero K p) (ACris K p) y₀) =
-      algebraMap (ACrisZero K p) (ACris K p) (phiZero K p y₀) := phi_of y₀
+  have hof : phi (K := K) (p := p) (algebraMap (ACrisZero K p) (ACris K p) y₀) =
+      algebraMap (ACrisZero K p) (ACris K p) (phiZero (K := K) (p := p) y₀) := phi_of y₀
   have hb : algebraMap (AInf K p) (ACris K p) b =
       algebraMap (ACrisZero K p) (ACris K p) (algebraMap (AInf K p) (ACrisZero K p) b) :=
     AdicCompletion.algebraMap_apply _ b
-  rw [map_add, map_mul, pow_one, map_natCast, hof, e', map_add, map_mul, hb]
+  rw [RingHom.map_add (phi (K := K) (p := p)), map_mul, pow_one, map_natCast, hof, e',
+    RingHom.map_add (algebraMap (ACrisZero K p) (ACris K p)), map_mul, hb]
 
 theorem frobenius_xi_sub_mem_span_mu {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)
     (hζ : PreTilt.untilt ((_root_.frobeniusEquiv 𝒪♭ p).symm ε) ≠ 1) :
@@ -122,15 +129,22 @@ section Theta
 variable [CharZero K]
 
 theorem theta_phi_iterate_algebraMap (n : ℕ) (w : AInf K p) :
-    theta K p ((phi K p)^[n] (algebraMap (AInf K p) (ACris K p) w)) = θ ((φ ^ n) w) := by
-  rw [phi_iterate_algebraMap, theta_algebraMap]
+    theta (K := K) (p := p) ((phi (K := K) (p := p))^[n] (algebraMap (AInf K p) (ACris K p) w)) =
+      θ ((φ ^ n) w) := by
+  have h : (phi (K := K) (p := p))^[n] (algebraMap (AInf K p) (ACris K p) w) =
+      algebraMap (AInf K p) (ACris K p) ((φ ^ n) w) := by
+    induction n with
+    | zero => rfl
+    | succ n ih =>
+      rw [Function.iterate_succ_apply', ih, phi_algebraMap, pow_succ', RingAut.mul_apply]
+  rw [h, theta_algebraMap]
+
 
 set_option maxHeartbeats 1600000 in
-
 theorem p_mul_phi_mem_span_mu {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)
     (hζ : PreTilt.untilt ((_root_.frobeniusEquiv 𝒪♭ p).symm ε) ≠ 1) {y : ACris K p}
-    (hy : ∀ n : ℕ, theta K p ((phi K p)^[n] y) = 0) :
-    (p : ACris K p) * phi K p y ∈
+    (hy : ∀ n : ℕ, theta (K := K) (p := p) ((phi (K := K) (p := p))^[n] y) = 0) :
+    (p : ACris K p) * phi (K := K) (p := p) y ∈
       Ideal.span {algebraMap (AInf K p) (ACris K p) (AInf.mu ε)} := by
   have hξ := AInf.ker_fontaineTheta_eq_span_xi hε hζ
   have hξk : AInf.xi ε ∈ RingHom.ker θ := by rw [hξ]; exact Ideal.mem_span_singleton_self _
@@ -153,23 +167,25 @@ theorem p_mul_phi_mem_span_mu {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)
     rw [hof, map_mul]
   have hp0 := AInf.natCast_ne_zero hε hζ
 
-  have e2 : (p : ACris K p) * phi K p y =
+  have e2 : (p : ACris K p) * phi (K := K) (p := p) y =
       algebraMap (AInf K p) (ACris K p) ((p : AInf K p) * b) +
         algebraMap (AInf K p) (ACris K p) (AInf.mu ε * d) * s := by
     rw [e, mul_add, ← mul_assoc, hXc, map_mul, map_mul, map_natCast]
   have hb : ∀ n : ℕ, θ ((φ ^ n) b) = 0 := by
     intro n
-    set Φ := phi K p ^ n with hΦ
-    have hΦa : ∀ w, theta K p (Φ (algebraMap (AInf K p) (ACris K p) w)) = θ ((φ ^ n) w) :=
+    set Φ := phi (K := K) (p := p) ^ n with hΦ
+    have hΦa : ∀ w, theta (K := K) (p := p) (Φ (algebraMap (AInf K p) (ACris K p) w)) =
+        θ ((φ ^ n) w) :=
       fun w => by rw [hΦ, RingHom.coe_pow, theta_phi_iterate_algebraMap]
-    have h : theta K p (Φ (phi K p y)) = 0 := by
+    have h : theta (K := K) (p := p) (Φ (phi (K := K) (p := p) y)) = 0 := by
       rw [hΦ, RingHom.coe_pow, ← Function.iterate_succ_apply]
       exact hy (n + 1)
-    have hl : theta K p (Φ ((p : ACris K p) * phi K p y)) = 0 := by
+    have hl : theta (K := K) (p := p) (Φ ((p : ACris K p) * phi (K := K) (p := p) y)) = 0 := by
       rw [map_mul, map_natCast, map_mul, map_natCast, h, mul_zero]
-    have hr : theta K p (Φ (algebraMap (AInf K p) (ACris K p) ((p : AInf K p) * b) +
+    have hr : theta (K := K) (p := p) (Φ (algebraMap (AInf K p) (ACris K p) ((p : AInf K p) * b) +
         algebraMap (AInf K p) (ACris K p) (AInf.mu ε * d) * s)) = (p : 𝒪) * θ ((φ ^ n) b) := by
-      rw [map_add, map_mul Φ, map_add, map_mul (theta K p), hΦa, hΦa,
+      rw [RingHom.map_add Φ, map_mul Φ, RingHom.map_add (theta (K := K) (p := p)),
+        map_mul (theta (K := K) (p := p)), hΦa, hΦa,
         AInf.fontaineTheta_frobenius_pow_mul_mu hε, zero_mul, add_zero, map_mul, map_natCast,
         map_mul, map_natCast]
     rw [e2, hr] at hl

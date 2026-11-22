@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.SumLPresHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PsiInv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayDensExHaar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.SumLPresHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PsiInv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayDensExHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem rA_mem_iff (M : Matrix (Fin n) (Fin n) ℂ) :
 theorem rA_skew_iff (M : Matrix (Fin n) (Fin n) ℂ) :
     (rA ε M)ᴴ * HcS.UG.Jpq (pP ε) (pQ ε) + HcS.UG.Jpq (pP ε) (pQ ε) * rA ε M = 0 ↔
       Mᴴ * Formalism.REAL.Jm ε + Formalism.REAL.Jm ε * M = 0 := by
-  rw [rA_conj, ← rA_Jm, ← map_mul, ← map_mul, ← map_add, ← map_zero (rA ε), (rA ε).injective.eq_iff]
+  rw [rA_conj, ← rA_Jm, ← map_mul, ← map_mul, ← map_add (f := _), ← map_zero (rA ε), (rA ε).injective.eq_iff]
 
 theorem continuous_rA : Continuous (rA ε) := by
   exact LinearMap.continuous_of_finiteDimensional (rA ε).toLinearMap
@@ -147,7 +151,7 @@ def psiL : gLie ε →ₗ[ℝ] HcS.BasicNotions.lieU (pP ε) (pQ ε) where
   map_add' x y := by
     apply Subtype.ext
     show rA ε (unrLin n ((x + y : gLie ε) : EuclideanSpace ℝ _)) = rA ε (unrLin n x) + rA ε (unrLin n y)
-    rw [Submodule.coe_add, map_add, map_add]
+    rw [Submodule.coe_add, map_add (f := _), map_add (f := _)]
   map_smul' c x := by
     apply Subtype.ext
     ext i j
@@ -194,7 +198,7 @@ theorem rel_iff (g : Formalism.REAL.UJ ε) (x : gLie ε) :
         2 + unrealify (x : EuclideanSpace ℝ (Fin n × Fin n × Bool)) := by
   have e1 : HcS.BasicNotions.UpqT.mat (phiC ε g) = rA ε (((g : (Matrix (Fin n) (Fin n) ℂ)ˣ)) : Matrix (Fin n) (Fin n) ℂ) :=
     phiF_mat ε g
-  rw [e1, psiC_val, one_add_one_eq_two, ← map_ofNat (rA ε) 2, ← map_sub, ← map_mul, ← map_add,
+  rw [e1, psiC_val, one_add_one_eq_two, ← map_ofNat (rA ε) 2, ← map_sub, ← map_mul, ← map_add (f := _),
     (rA ε).injective.eq_iff]
 
 theorem isUnit_of_mem_cayley_domain (x : gLie ε) (hx : psiC ε x ∈ HcInf.D0 (pP ε) (pQ ε)) :
@@ -216,7 +220,7 @@ theorem cayR_eq (x : EuclideanSpace ℝ (Fin n × Fin n × Bool)) (g : Formalism
       Formalism.REAL.inUJ ε ((2 + unrealify x) * (2 - unrealify x)⁻¹) := by
     rw [h]; exact ⟨(g : (Matrix (Fin n) (Fin n) ℂ)ˣ).isUnit, g.2⟩
   unfold cayR
-  rw [dif_pos hc]
+  rw [dite_eq_left hc]
   apply Subtype.ext; apply Units.ext
   rw [IsUnit.unit_spec]; exact h
 
@@ -229,8 +233,8 @@ end Perm
 
 end CDX
 
-open CDX in
 
+open CDX in
 theorem cayDensEx_holds : CayDensEx := by
   intro n ε
   classical
@@ -239,10 +243,11 @@ theorem cayDensEx_holds : CayDensEx := by
   set φM := φ.toHomeomorph.toMeasurableEquiv with hφM
   set ψM := ψ.toHomeomorph.toMeasurableEquiv with hψM
   set m : Measure (HcS.BasicNotions.UpqT (pP ε) (pQ ε)) := (Formalism.REAL.muG ε).map φM with hm
-  haveI : m.IsHaarMeasure := ContinuousMulEquiv.isHaarMeasure_map (Formalism.REAL.muG ε) φ
+  have hmHaar : m.IsHaarMeasure := ContinuousMulEquiv.isHaarMeasure_map (Formalism.REAL.muG ε) φ
   set lam : Measure (HcS.BasicNotions.lieU (pP ε) (pQ ε)) := (volume : Measure (gLie ε)).map ψM with hlam
-  haveI : lam.IsAddHaarMeasure := ψ.isAddHaarMeasure_map volume
-  obtain ⟨D, hD, hDm, f, hfm, hfc, -, hfT, hmap⟩ := HcHDC.cayDensU (pP ε) (pQ ε) m lam
+  have hlamHaar : lam.IsAddHaarMeasure := ψ.isAddHaarMeasure_map volume
+  have hDensity := @HcHDC.cayDensU (pP ε) (pQ ε) m hmHaar lam hlamHaar
+  obtain ⟨D, hD, -, f, hfm, hfc, -, hfT, hmap⟩ := hDensity
   have hψ0 : ψ 0 = 0 := map_zero ψ
   have hψc : ContinuousAt ψ 0 := ψ.continuous.continuousAt
   have hN1 : ψ ⁻¹' D ∈ 𝓝 (0 : gLie ε) := hψc.preimage_mem_nhds (by rw [hψ0]; exact hD)

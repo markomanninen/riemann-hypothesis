@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Classical Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker GlobalTheory.MomN
 
 noncomputable section
@@ -45,7 +50,8 @@ theorem coeff_foldr_pd (F : MvPowerSeries σ ℂ_[p]) : ∀ (l : List σ) (n : �
 theorem pd_sum_smul {ι : Type} (s : Finset ι) (a : ι → ℂ_[p]) (P : ι → MvPowerSeries σ ℂ_[p]) (k : σ) :
     pd k (∑ i ∈ s, a i • P i) = ∑ i ∈ s, a i • pd k (P i) := by
   ext n
-  simp only [coeff_pd, map_sum, map_smul, smul_eq_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coeff_pd, map_sum, map_smul, smul_eq_mul, Finset.mul_sum]
   exact Finset.sum_congr rfl fun i _ => by ring
 
 theorem foldr_expand {β : Type} (c : β → σ → ℂ_[p]) (F : MvPowerSeries σ ℂ_[p]) : ∀ (m : ℕ) (y : Fin m → β),
@@ -102,14 +108,15 @@ theorem cnt_toList (α : σ →₀ ℕ) (i : σ) :
 def cntF {m : ℕ} (f : Fin m → σ) : σ →₀ ℕ := ∑ j, Finsupp.single (f j) 1
 
 theorem cntF_apply {m : ℕ} (f : Fin m → σ) (i : σ) : cntF f i = cnt f i := by
-  rw [cntF, cnt, Finsupp.finset_sum_apply, Finset.card_filter]
+  rw [cntF, cnt, Finsupp.finsetSum_apply, Finset.card_filter]
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases h : f j = i
   · rw [h, if_pos rfl, Finsupp.single_eq_same]
   · rw [if_neg h, Finsupp.single_apply, if_neg h]
 
 theorem card_cntF {m : ℕ} (f : Fin m → σ) : Multiset.card (cntF f).toMultiset = m := by
-  rw [cntF, map_sum, Multiset.card_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cntF, map_sum, Multiset.card_sum]
   simp
 
 end Cplx
@@ -136,7 +143,8 @@ theorem mlin_expand {m : ℕ} (A : ContinuousMultilinearMap ℂ (fun _ : Fin m =
   have hv : v = fun j => ∑ k : D.what₂.Tau × Fin N' × Fin N, v j k.1 k.2.1 k.2.2 • coordV D k :=
     funext fun j => vec_eq (v j)
   conv_lhs => rw [hv]
-  rw [A.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [A.map_sum]
   refine Finset.sum_congr rfl fun f _ => ?_
   rw [A.map_smul_univ, smul_eq_mul]
 
@@ -165,7 +173,7 @@ theorem embT_mem (τ : D.what₂.Tau) (x : D.host.E) : embT D τ x ∈ Qbar :=
 
 theorem lam_mk {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) (a : ℂ) (h : a ∈ Qbar) :
     lam ⟨a, h⟩ = lamC lam a := by
-  unfold lamC; rw [dif_pos h]
+  unfold lamC; rw [dite_eq_left h]
 
 end Main
 
@@ -206,7 +214,8 @@ theorem jet_pSer : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (p : ℕ
     rw [IntermediateField.coe_mul, IntermediateField.coe_mul, IntermediateField.coe_prod, IntermediateField.coe_prod]
     simp
   have hl : lam z = jet D lam y (pSer D lam G) := by
-    rw [hP, hzdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, hzdef, map_sum]
     refine Finset.sum_congr rfl fun f _ => ?_
     simp only [map_mul, map_prod, map_natCast, lam_mk]
   refine ⟨hz ▸ z.2, ?_⟩

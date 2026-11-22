@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -46,8 +51,8 @@ theorem mul_mem_twistMod {J : Chart x} {f s : Poly S N} {e e' : ℕ} {d c : ℤ}
     rw [chartRing_smul_def, mul_left_comm, ← chartRing_smul_def]
     exact Submodule.smul_mem _ a hq
 
-omit [Module S E] [IsScalarTower S Ω E] in
 
+omit [Module S E] [IsScalarTower S Ω E] in
 theorem smul_mem_twist (F : SubSystem S x E) {J : Chart x} {f s : Poly S N} {e e' : ℕ} {d c : ℤ}
     (hs : s ∈ monos J.1) (hf : f.IsHomogeneous e') (hse : s.IsHomogeneous e) (hd : (e' : ℤ) = e + d)
     {m : E} (hm : m ∈ (F.twist (twistSys S x c)).sub J) :
@@ -78,8 +83,8 @@ theorem mem_chartRing_of_mem_twistMod_zero {J : Chart x} {q : Ω} (hq : q ∈ tw
     rw [chartRing_smul_def]
     exact Subalgebra.mul_mem _ a.2 hq
 
-omit [Module S E] [IsScalarTower S Ω E] in
 
+omit [Module S E] [IsScalarTower S Ω E] in
 theorem mem_of_mem_twist_zero (F : SubSystem S x E) {J : Chart x} {m : E}
     (hm : m ∈ (F.twist (twistSys S x 0)).sub J) : m ∈ F.sub J := by
   refine Submodule.span_induction (p := fun m _ => m ∈ F.sub J) ?_ ?_ ?_ ?_ hm
@@ -111,8 +116,8 @@ theorem smul_mem_gam (F : SubSystem S x E) {f : Poly S N} {d : ℕ} (hf : f.IsHo
     (isHomogeneous_one _ _) (by simp) (hm J)
   rwa [map_one, div_one] at h
 
-omit [Module S E] [IsScalarTower S Ω E] in
 
+omit [Module S E] [IsScalarTower S Ω E] in
 theorem eventually_pow_smul_mem (F : SubFamily S x E) {i : Fin (N + 1)} (hi : x i ≠ 0) {y : E}
     (hy : y ∈ F.sub (singleChart hi)) (J : Chart x) :
     ∀ᶠ n : ℕ in Filter.atTop, x i ^ n • y ∈ (F.twist (twistSys S x (n : ℤ))).sub J := by
@@ -200,8 +205,8 @@ theorem ofGens_piece_le {ι : Type} [Fintype ι] (deg : ι → ℤ) (gen : ι �
 
 end ExtensionProof
 
-open ExtensionProof in
 
+open ExtensionProof in
 theorem Extension.proof : Extension.Statement.{u, v, w} := by
   intro S _ _ Ω _ _ N x E _ _ _ _ F hF
   classical

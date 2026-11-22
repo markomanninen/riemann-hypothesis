@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MarkedFormIndicatorValueInvariantHostFixingAut
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MarkValEqZeroOrOne
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MarkedFormIndicatorValueInvariantHostFixingAut
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MarkValEqZeroOrOne
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,14 +20,16 @@ variable {O : Type} [CommRing O]
 def twPi (σ : O ≃+* O) (n : ℕ) : (Fin n → O) ≃+ (Fin n → O) :=
   AddEquiv.piCongrRight fun _ => σ.toAddEquiv
 
-@[simp] theorem twPi_apply (σ : O ≃+* O) (n : ℕ) (a : Fin n → O) : twPi σ n a = fun j => σ (a j) := rfl
-
 def twForm (σ : O ≃+* O) (n : ℕ) :
     LinearMap.BilinForm ℤ (Fin n → O) ≃+ LinearMap.BilinForm ℤ (Fin n → O) where
   toFun β := β.compl₁₂ (twPi σ n).toIntLinearEquiv.toLinearMap (twPi σ n).toIntLinearEquiv.toLinearMap
   invFun β := β.compl₁₂ (twPi σ.symm n).toIntLinearEquiv.toLinearMap (twPi σ.symm n).toIntLinearEquiv.toLinearMap
-  left_inv β := LinearMap.ext₂ fun a b => by simp
-  right_inv β := LinearMap.ext₂ fun a b => by simp
+  left_inv β := LinearMap.ext₂ fun a b => by
+    change β (fun j => σ (σ.symm (a j))) (fun j => σ (σ.symm (b j))) = β a b
+    simp only [RingEquiv.apply_symm_apply]
+  right_inv β := LinearMap.ext₂ fun a b => by
+    change β (fun j => σ.symm (σ (a j))) (fun j => σ.symm (σ (b j))) = β a b
+    simp only [RingEquiv.symm_apply_apply]
   map_add' _ _ := LinearMap.ext₂ fun a b => by simp
 
 @[simp] theorem twForm_apply (σ : O ≃+* O) (n : ℕ) (β : LinearMap.BilinForm ℤ (Fin n → O)) (a b : Fin n → O) :
@@ -64,7 +70,7 @@ theorem markVal_twist : ∀ (O : Type) [CommRing O] [IsDedekindDomain O] [CharZe
   by_cases h2 : ∃ β : LinearMap.BilinForm ℤ (Fin n → O), ∀ a b, B a b = β a b
   · have h1 : ∃ β : LinearMap.BilinForm ℤ (Fin n → O), ∀ a b, B (fun j => σ (a j)) (fun j => σ (b j)) = β a b :=
       ⟨twForm σ n h2.choose, fun a b => h2.choose_spec _ _⟩
-    rw [dif_pos h1, dif_pos h2]
+    rw [dite_eq_left h1, dite_eq_left h2]
     have e : h1.choose = twForm σ n h2.choose := LinearMap.ext₂ fun a b => by
       have := (h1.choose_spec a b).symm.trans (h2.choose_spec _ _)
       exact_mod_cast this
@@ -75,6 +81,6 @@ theorem markVal_twist : ∀ (O : Type) [CommRing O] [IsDedekindDomain O] [CharZe
       h2 ⟨twForm σ.symm n β, fun a b => by
         have := hβ (fun j => σ.symm (a j)) (fun j => σ.symm (b j))
         simpa using this⟩
-    rw [dif_neg h1, dif_neg h2]
+    rw [dite_eq_right h1, dite_eq_right h2]
 
 end GlobalTheory.CompanionTheory.Ar.Fan.TwistedForm

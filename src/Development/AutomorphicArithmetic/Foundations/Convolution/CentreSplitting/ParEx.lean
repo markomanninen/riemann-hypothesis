@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatUnit
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ASmooth
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatUnit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ASmooth
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace

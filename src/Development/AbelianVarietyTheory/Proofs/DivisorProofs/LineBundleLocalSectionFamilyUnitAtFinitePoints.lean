@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionFamilyZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionFamilyZero
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
@@ -34,14 +39,16 @@ theorem secFam_unit_at_finite : ∀ (X : Scheme.{0}) (L : LB X) (W : X.Opens) (J
       intro j z hz s
       exact TopCat.Presheaf.germ_res_apply X.presheaf (homOfLE (hDW j)) z hz s
     intro j j' z hz hz'
-    simp only [map_sum, map_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun x hx => ?_
     rw [hr, hr, hE x (hF.mem_toFinset.mp hx) j j' z hz hz']
     ring
   · intro y hy j hyj
     have hyW : y ∈ W := hDW j hyj
     have hyF : y ∈ hF.toFinset := hF.mem_toFinset.mpr hy
-    simp only [map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul]
     rw [← Finset.add_sum_erase _ _ hyF]
     have hr : ∀ s : Γ(X, W),
         (X.presheaf.germ (D j) y hyj).hom (r j s) = (X.presheaf.germ W y hyW).hom s :=

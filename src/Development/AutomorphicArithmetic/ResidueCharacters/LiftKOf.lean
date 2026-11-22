@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.LiftingConditionOfCrystallineLift
-import Development.AutomorphicArithmetic.ResidueCharacters.LocNum
-import Development.AutomorphicArithmetic.ResidueCharacters.LocRes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.LiftingConditionOfCrystallineLift
+public import Development.AutomorphicArithmetic.ResidueCharacters.LocNum
+public import Development.AutomorphicArithmetic.ResidueCharacters.LocRes
+
+@[expose] public section
 
 noncomputable section
 

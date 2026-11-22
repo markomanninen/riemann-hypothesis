@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpSeriesCoeffNormBoundedRingLaws
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpTransportedTaylorSeriesInChartRingHomLaws
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UwEllipticFlow
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RingHomPointBijective
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralWeierstrassChartXyUnitSeries
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ClosedBallValuationSubringToSubring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpSeriesCoeffNormBoundedRingLaws
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpTransportedTaylorSeriesInChartRingHomLaws
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UwEllipticFlow
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RingHomPointBijective
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralWeierstrassChartXyUnitSeries
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ClosedBallValuationSubringToSubring
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.MomOne
 open scoped ComplexConjugate BigOperators Topology
 
 namespace GlobalTheory.MomOne.Transl
 
-open WeierstrassCurve in
 
+open WeierstrassCurve in
 theorem chord {K : Type} [Field K] [DecidableEq K] (W : WeierstrassCurve K) {s t x y X Y : K}
     (h₁ : W.toAffine.Nonsingular s t) (h₂ : W.toAffine.Nonsingular x y) (h₃ : W.toAffine.Nonsingular X Y)
     (h : Affine.Point.some s t h₁ + Affine.Point.some x y h₂ = Affine.Point.some X Y h₃) :
@@ -48,8 +52,8 @@ theorem chord {K : Type} [Field K] [DecidableEq K] (W : WeierstrassCurve K) {s t
     · rw [← hY]
       linear_combination (X - s) * hl
 
-open WeierstrassCurve in
 
+open WeierstrassCurve in
 theorem disc_eq {K : Type} [CommRing K] (W : WeierstrassCurve K) {s t : K} (h : W.toAffine.Equation s t)
     (k p a b : K) (hk : k = W.a₄ - W.a₁ * t + 2 * W.a₂ * s + 3 * s ^ 2) (hp : p = 2 * t + W.a₁ * s + W.a₃)
     (ha : a = W.a₂ + 3 * s) (hb : b = W.a₁ ^ 2 + 4 * a) :
@@ -249,13 +253,13 @@ theorem translate_integral : ∀ (q : ℕ) [Fact q.Prime] (M : Mdl q) (ℓ : ℂ
     filter_upwards [hev, hev2] with z ⟨hz, _, hxu, hyw⟩ hzt
     obtain ⟨hz0, hφz⟩ := hφ z hz
     obtain ⟨hzt0, hφzt⟩ := hφ (z + t) hzt
-    have hsum : φ t + φ z = φ (z + t) := by rw [map_add, add_comm]
+    have hsum : φ t + φ z = φ (z + t) := by rw [map_add (f := _), add_comm]
     rw [hφt, hφz, hφzt] at hsum
     obtain ⟨c1, c2⟩ := chord M.W ht0 hz0 hzt0 (by convert hsum)
     rw [← hkd, ← hpd, ← hgd] at c1
     have c1' := congrArg M.ι.symm c1
     have c2' := congrArg M.ι.symm c2
-    simp only [map_add, map_sub, map_mul, map_pow, map_neg, RingEquiv.symm_apply_apply] at c1' c2'
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_neg, RingEquiv.symm_apply_apply] at c1' c2'
     rw [← hxu]
     constructor
     · linear_combination M.w z ^ 2 * c1' - M.ι.symm p * M.w z * hyw
@@ -271,7 +275,7 @@ theorem translate_integral : ∀ (q : ℕ) [Fact q.Prime] (M : Mdl q) (ℓ : ℂ
     ((1 + cst (M.ι.symm t₀) * w) * (F - cst (M.ι.symm s₀)) -
       (cst (M.ι.symm t₀) + cst (M.ι.symm M.W.a₁) * F + cst (M.ι.symm M.W.a₃)) * (u - cst (M.ι.symm s₀) * w))
     (key.mono fun z hz => hz.2)
-  simp only [map_add, map_sub, map_mul, map_pow, map_one, hatHom_cst] at E₁ E₂
+  simp only [map_add (f := _), map_sub, map_mul, map_pow, map_one, hatHom_cst] at E₁ E₂
   obtain ⟨r1, r2, r3⟩ := series (U := hatHom M.ι ℓ hℓ u) (V := hatHom M.ι ℓ hℓ w) hv hys hv0 hys0 hU hV
     hs ht h1 h3 hk hp hg E₁ E₂
   refine ⟨r1, r2, fun r hr => ?_⟩

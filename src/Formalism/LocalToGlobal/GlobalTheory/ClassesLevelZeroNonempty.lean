@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.ColValS
-import Formalism.LocalToGlobal.GlobalTheory.LevelZeroClassLatticeIntegral
-import Formalism.LocalToGlobal.HermitianForms.BothSym
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.ColValS
+public import Formalism.LocalToGlobal.GlobalTheory.LevelZeroClassLatticeIntegral
+public import Formalism.LocalToGlobal.HermitianForms.BothSym
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace
 
@@ -55,8 +59,8 @@ theorem isIntegral_of_schemeDominant (d : T' ⟶ T) [IsSchemeTheoreticallyDomina
   have : IrreducibleSpace T := (irreducibleSpace_def T).mpr h
   exact isIntegral_of_irreducibleSpace_of_isReduced T
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem eq_zero_of_mul_eq_zero_of_flat {S : Scheme.{u}} [IsAffine S] (s : T ⟶ S) [Flat s]
     (V : T.Opens) (r : Γ(S, ⊤)) (hr : r ∈ nonZeroDivisors Γ(S, ⊤)) (a : Γ(T, V))
     (h : s.appLE ⊤ V le_top r * a = 0) : a = 0 := by
@@ -65,15 +69,17 @@ theorem eq_zero_of_mul_eq_zero_of_flat {S : Scheme.{u}} [IsAffine S] (s : T ⟶ 
     T.isBasis_affineOpens.exists_subset_of_mem_open hx V.isOpen
   refine ⟨V', hVV, hxV, ?_⟩
   have hf : (s.appLE ⊤ V' le_top).hom.Flat := s.flat_appLE (isAffineOpen_top S) hV' le_top
-  letI := (s.appLE ⊤ V' le_top).hom.toAlgebra
+  let := (s.appLE ⊤ V' le_top).hom.toAlgebra
   have : Module.Flat Γ(S, ⊤) Γ(T, V') := hf
   apply Module.Flat.isSMulRegular_of_nonZeroDivisors (M := Γ(T, V')) hr
-  have h' := congrArg (T.presheaf.map (homOfLE hVV).op) h
+  have he : V ≤ s ⁻¹ᵁ ⊤ := by rw [s.preimage_top]; exact le_top
+  have h' := congrArg (T.presheaf.map (homOfLE hVV).op)
+    (show s.appLE ⊤ V he r * a = 0 from h)
   rw [map_mul, map_zero, ← CommRingCat.comp_apply, Scheme.Hom.appLE_map] at h'
   simpa [Algebra.smul_def, RingHom.algebraMap_toAlgebra] using h'
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem flat_of_schemeDominant_of_torsionFree_flat {O : CommRingCat.{u}}
     (hO : ∀ (M : Type u) [AddCommGroup M] [Module O M],
       Submodule.torsion O M = ⊥ → Module.Flat O M)
@@ -82,7 +88,7 @@ theorem flat_of_schemeDominant_of_torsionFree_flat {O : CommRingCat.{u}}
   refine HasRingHomProperty.of_iSup_eq_top (P := @Flat) (fun U : T.affineOpens ↦ U)
     (iSup_affineOpens_eq_top T) fun U ↦ ?_
   rw [← RingHom.Flat.respectsIso.cancel_left_isIso (Scheme.ΓSpecIso O).inv]
-  letI := ((s.appLE ⊤ U le_top).hom.comp (Scheme.ΓSpecIso O).inv.hom).toAlgebra
+  let := ((s.appLE ⊤ U le_top).hom.comp (Scheme.ΓSpecIso O).inv.hom).toAlgebra
   refine hO Γ(T, U) ?_
   rw [eq_bot_iff]
   rintro a ⟨⟨r, hr⟩, ha⟩
@@ -91,7 +97,8 @@ theorem flat_of_schemeDominant_of_torsionFree_flat {O : CommRingCat.{u}}
       (Scheme.ΓSpecIso O).symm.commRingCatIsoToRingEquiv)
     rw [← this]
     exact ⟨r, hr, rfl⟩
-  have ha' : s.appLE ⊤ U le_top ((Scheme.ΓSpecIso O).inv r) * a = 0 := ha
+  have he : (U : T.Opens) ≤ s ⁻¹ᵁ ⊤ := by rw [s.preimage_top]; exact le_top
+  have ha' : s.appLE ⊤ U he ((Scheme.ΓSpecIso O).inv r) * a = 0 := ha
   have h0 : d.app U a = 0 := by
     refine eq_zero_of_mul_eq_zero_of_flat (d ≫ s) (d ⁻¹ᵁ U) _ hr' _ ?_
     have := congrArg (d.app U) ha'
@@ -106,12 +113,6 @@ theorem flat_of_schemeDominant_of_isDedekindDomain {O : CommRingCat.{u}} [IsDede
     [Flat (d ≫ s)] : Flat s :=
   flat_of_schemeDominant_of_torsionFree_flat
     (fun _ _ _ ↦ IsDedekindDomain.flat_iff_torsion_eq_bot.mpr) d s
-
-theorem flat_of_schemeDominant_of_isBezout {O : CommRingCat.{u}} [IsDomain O] [IsBezout O]
-    (d : T' ⟶ T) (s : T ⟶ Spec O) [IsSchemeTheoreticallyDominant d] [QuasiCompact d]
-    [Flat (d ≫ s)] : Flat s :=
-  flat_of_schemeDominant_of_torsionFree_flat
-    (fun _ _ _ ↦ Module.Flat.flat_iff_torsion_eq_bot_of_isBezout.mpr) d s
 
 theorem flat_specMap_localization {O : Type u} [CommRing O] (M : Submonoid O) (K : Type u)
     [CommRing K] [Algebra O K] [IsLocalization M K] :
@@ -153,60 +154,22 @@ theorem closureLift_imageι (t : T ⟶ P) (d : T' ⟶ T) [IsSchemeTheoreticallyD
     (w : T' ⟶ W) (h : d ≫ t = w ≫ j) : closureLift j t d w h ≫ j.imageι = t :=
   IsClosedImmersion.lift_fac _ _ _
 
-@[reassoc (attr := simp)]
 theorem comp_closureLift (t : T ⟶ P) (d : T' ⟶ T) [IsSchemeTheoreticallyDominant d]
     (w : T' ⟶ W) (h : d ≫ t = w ≫ j) : d ≫ closureLift j t d w h = w ≫ j.toImage := by
   rw [← cancel_mono j.imageι]
   simp [h]
 
-theorem closure_hom_ext {a b : T ⟶ j.image} (h : a ≫ j.imageι = b ≫ j.imageι) : a = b :=
-  (cancel_mono j.imageι).mp h
-
-theorem existsUnique_closureLift (t : T ⟶ P) (d : T' ⟶ T) [IsSchemeTheoreticallyDominant d]
-    (w : T' ⟶ W) (h : d ≫ t = w ≫ j) : ∃! l : T ⟶ j.image, l ≫ j.imageι = t :=
-  ⟨closureLift j t d w h, closureLift_imageι j t d w h,
-    fun _ hl ↦ closure_hom_ext j (hl.trans (closureLift_imageι j t d w h).symm)⟩
-
-theorem existsUnique_closureLift_of_isReduced (t : T ⟶ P) (d : T' ⟶ T) [IsReduced T]
-    [IsDominant d] (w : T' ⟶ W) (h : d ≫ t = w ≫ j) :
-    ∃! l : T ⟶ j.image, l ≫ j.imageι = t :=
-  have := IsSchemeTheoreticallyDominant.of_isDominant d
-  existsUnique_closureLift j t d w h
-
-theorem existsUnique_closureLift_of_injective {R R' : CommRingCat.{u}} (φ : R ⟶ R')
-    (hφ : Function.Injective φ.hom) (t : Spec R ⟶ P) (w : Spec R' ⟶ W)
-    (h : Spec.map φ ≫ t = w ≫ j) : ∃! l : Spec R ⟶ j.image, l ≫ j.imageι = t :=
-  have := (schemeDominant_specMap_iff φ).mpr hφ
-  existsUnique_closureLift j t _ w h
-
-theorem exists_closure_fac_iff (t : T ⟶ P) :
-    (∃ l : T ⟶ j.image, l ≫ j.imageι = t) ↔ j.ker ≤ t.ker := by
-  constructor
-  · rintro ⟨l, rfl⟩
-    simpa using l.le_ker_comp j.imageι
-  · exact fun h ↦ ⟨IsClosedImmersion.lift j.imageι t (by simpa using h),
-      IsClosedImmersion.lift_fac _ _ _⟩
-
 def closureToClosed (g : W ⟶ Z) (i : Z ⟶ P) [IsClosedImmersion i] (h : g ≫ i = j) :
     j.image ⟶ Z :=
   IsClosedImmersion.lift i j.imageι (by simpa [← h] using g.le_ker_comp i)
 
-@[reassoc (attr := simp)]
 theorem closureToClosed_comp (g : W ⟶ Z) (i : Z ⟶ P) [IsClosedImmersion i] (h : g ≫ i = j) :
     closureToClosed j g i h ≫ i = j.imageι :=
   IsClosedImmersion.lift_fac _ _ _
 
-@[reassoc (attr := simp)]
 theorem toImage_closureToClosed (g : W ⟶ Z) (i : Z ⟶ P) [IsClosedImmersion i] (h : g ≫ i = j) :
     j.toImage ≫ closureToClosed j g i h = g := by
-  rw [← cancel_mono i]
-  simp [h]
-
-instance isClosedImmersion_closureToClosed (g : W ⟶ Z) (i : Z ⟶ P) [IsClosedImmersion i]
-    (h : g ≫ i = j) : IsClosedImmersion (closureToClosed j g i h) :=
-  have : IsClosedImmersion (closureToClosed j g i h ≫ i) := by
-    rw [closureToClosed_comp]; infer_instance
-  .of_comp _ i
+  rw [← cancel_mono i, Category.assoc, closureToClosed_comp, j.toImage_imageι, h]
 
 instance schemeDominant_toImage : IsSchemeTheoreticallyDominant j.toImage := by
   let c := closureToClosed j j.toImage.toImage (j.toImage.imageι ≫ j.imageι) (by simp)
@@ -228,9 +191,6 @@ theorem isIso_imageι_iff : IsIso j.imageι ↔ IsSchemeTheoreticallyDominant j 
 theorem isOpenImmersion_toImage [IsImmersion j] [QuasiCompact j] : IsOpenImmersion j.toImage :=
   inferInstance
 
-theorem range_imageι [QuasiCompact j] : Set.range j.imageι = closure (Set.range j) := by
-  rw [Scheme.IdealSheafData.range_subschemeι, Scheme.Hom.support_ker]
-
 instance isReduced_image [QuasiCompact j] [IsReduced W] : IsReduced j.image :=
   IsSchemeTheoreticallyDominant.isReduced j.toImage
 
@@ -242,55 +202,12 @@ theorem flat_image_of_isDedekindDomain {O : CommRingCat.{u}} [IsDedekindDomain O
   have : Flat (j.toImage ≫ j.imageι ≫ s) := by simpa
   flat_of_schemeDominant_of_isDedekindDomain j.toImage _
 
-theorem flat_image_of_isBezout {O : CommRingCat.{u}} [IsDomain O] [IsBezout O]
-    (s : P ⟶ Spec O) [QuasiCompact j] [Flat (j ≫ s)] : Flat (j.imageι ≫ s) :=
-  have : Flat (j.toImage ≫ j.imageι ≫ s) := by simpa
-  flat_of_schemeDominant_of_isBezout j.toImage _
-
-theorem flat_image_of_valuationRing {O : CommRingCat.{u}} [IsDomain O] [ValuationRing O]
-    (s : P ⟶ Spec O) [QuasiCompact j] [Flat (j ≫ s)] : Flat (j.imageι ≫ s) :=
-  flat_image_of_isBezout j s
-
 theorem flat_image_of_over_fractionField {O K : Type u} [CommRing O] [IsDedekindDomain O]
     [Field K] [Algebra O K] [IsFractionRing O K] (s : P ⟶ Spec (.of O)) (s' : W ⟶ Spec (.of K))
     (h : s' ≫ Spec.map (CommRingCat.ofHom (algebraMap O K)) = j ≫ s) [QuasiCompact j] :
     Flat (j.imageι ≫ s) :=
   have := flat_of_over_fractionField (j ≫ s) s' h
   flat_image_of_isDedekindDomain j s
-
-theorem flat_image_of_over_fractionField_of_valuationRing {O K : Type u} [CommRing O] [IsDomain O]
-    [ValuationRing O] [Field K] [Algebra O K] [IsFractionRing O K] (s : P ⟶ Spec (.of O))
-    (s' : W ⟶ Spec (.of K))
-    (h : s' ≫ Spec.map (CommRingCat.ofHom (algebraMap O K)) = j ≫ s) [QuasiCompact j] :
-    Flat (j.imageι ≫ s) :=
-  have := flat_of_over_fractionField (j ≫ s) s' h
-  flat_image_of_valuationRing j s
-
-def closureMap {W' P' : Scheme.{u}} (j' : W' ⟶ P') (w : W ⟶ W') (g : P ⟶ P')
-    (h : j ≫ g = w ≫ j') : j.image ⟶ j'.image :=
-  closureLift j' (j.imageι ≫ g) j.toImage w (by simpa using h)
-
-@[reassoc (attr := simp)]
-theorem closureMap_imageι {W' P' : Scheme.{u}} (j' : W' ⟶ P') (w : W ⟶ W') (g : P ⟶ P')
-    (h : j ≫ g = w ≫ j') : closureMap j j' w g h ≫ j'.imageι = j.imageι ≫ g :=
-  closureLift_imageι _ _ _ _ _
-
-@[reassoc (attr := simp)]
-theorem toImage_closureMap {W' P' : Scheme.{u}} (j' : W' ⟶ P') (w : W ⟶ W') (g : P ⟶ P')
-    (h : j ≫ g = w ≫ j') : j.toImage ≫ closureMap j j' w g h = w ≫ j'.toImage :=
-  comp_closureLift _ _ _ _ _
-
-@[simp]
-theorem closureMap_id : closureMap j j (𝟙 W) (𝟙 P) (by simp) = 𝟙 _ :=
-  closure_hom_ext j (by simp)
-
-@[reassoc (attr := simp)]
-theorem closureMap_comp {W' P' W'' P'' : Scheme.{u}} (j' : W' ⟶ P') (j'' : W'' ⟶ P'')
-    (w : W ⟶ W') (g : P ⟶ P') (h : j ≫ g = w ≫ j') (w' : W' ⟶ W'') (g' : P' ⟶ P'')
-    (h' : j' ≫ g' = w' ≫ j'') :
-    closureMap j j' w g h ≫ closureMap j' j'' w' g' h' =
-      closureMap j j'' (w ≫ w') (g ≫ g') (by rw [reassoc_of% h, h', Category.assoc]) :=
-  closure_hom_ext j'' (by simp)
 
 theorem ker_eq_comap_of_flat {W' P' : Scheme.{u}} {j' : W' ⟶ P'} {w : W' ⟶ W} {g : P' ⟶ P}
     (H : IsPullback j' w g j) [Flat g] [QuasiCompact j] : j'.ker = j.ker.comap g := by
@@ -303,11 +220,6 @@ theorem ker_eq_comap_of_flat {W' P' : Scheme.{u}} {j' : W' ⟶ P'} {w : W' ⟶ W
   have := IsSchemeTheoreticallyDominant.of_isPullback He
   rw [Scheme.IdealSheafData.comap, ← ker_comp_of_schemeDominant e, he]
 
-theorem isPullback_closureMap_of_flat {W' P' : Scheme.{u}} {j' : W' ⟶ P'} {w : W' ⟶ W}
-    {g : P' ⟶ P} (H : IsPullback j' w g j) [Flat g] [QuasiCompact j] :
-    IsPullback j'.imageι (closureMap j' j w g H.w) g j.imageι :=
-  isPullback_of_isClosedImmersion _ _ _ _ (by simp) (by simp [ker_eq_comap_of_flat j H])
-
 theorem isPullback_toImage_of_isClosedImmersion {P' : Scheme.{u}} (c : W ⟶ P') (u : P' ⟶ P)
     [IsClosedImmersion c] [Flat u] [Mono u] (h : c ≫ u = j) [QuasiCompact j] :
     IsPullback c j.toImage u j.imageι := by
@@ -318,50 +230,6 @@ theorem isPullback_toImage_of_isClosedImmersion {P' : Scheme.{u}} (c : W ⟶ P')
   exact isPullback_of_isClosedImmersion _ _ _ _ (by simpa using h)
     (by simp [ker_eq_comap_of_flat j H])
 
-theorem range_toImage_of_isClosedImmersion {P' : Scheme.{u}} (c : W ⟶ P') (u : P' ⟶ P)
-    [IsClosedImmersion c] [Flat u] [Mono u] (h : c ≫ u = j) [QuasiCompact j] :
-    Set.range j.toImage = j.imageι ⁻¹' Set.range u := by
-  have H := isPullback_toImage_of_isClosedImmersion j c u h
-  rw [← H.isoPullback_hom_snd, ← Scheme.Pullback.range_snd, Scheme.Hom.comp_base, TopCat.coe_comp,
-    Set.range_comp, H.isoPullback.hom.surjective.range_eq, Set.image_univ]
-
-def closureRestrictIso (P' : P.Opens) (c : W ⟶ P') [IsClosedImmersion c] (h : c ≫ P'.ι = j)
-    [QuasiCompact j] : W ≅ (j.imageι ⁻¹ᵁ P' : j.image.Opens) :=
-  (isPullback_toImage_of_isClosedImmersion j c P'.ι h).isoIsPullback _ _
-    (isPullback_morphismRestrict j.imageι P')
-
-@[reassoc (attr := simp)]
-theorem closureRestrictIso_hom_ι (P' : P.Opens) (c : W ⟶ P') [IsClosedImmersion c]
-    (h : c ≫ P'.ι = j) [QuasiCompact j] :
-    (closureRestrictIso j P' c h).hom ≫ (j.imageι ⁻¹ᵁ P').ι = j.toImage :=
-  IsPullback.isoIsPullback_hom_snd _ _ _ _
-
-@[reassoc (attr := simp)]
-theorem closureRestrictIso_hom_restrict (P' : P.Opens) (c : W ⟶ P') [IsClosedImmersion c]
-    (h : c ≫ P'.ι = j) [QuasiCompact j] :
-    (closureRestrictIso j P' c h).hom ≫ j.imageι ∣_ P' = c :=
-  IsPullback.isoIsPullback_hom_fst _ _ _ _
-
-def closureSpecIso {A B : CommRingCat.{u}} (φ : A ⟶ B) :
-    (Spec.map φ).image ≅ Spec (.of (A ⧸ RingHom.ker φ.hom)) :=
-  have := (schemeDominant_specMap_iff (CommRingCat.ofHom φ.hom.kerLift)).mpr
-    φ.hom.kerLift_injective
-  have := IsClosedImmersion.spec_of_surjective
-    (CommRingCat.ofHom (Ideal.Quotient.mk (RingHom.ker φ.hom))) Ideal.Quotient.mk_surjective
-  asIso (closureToClosed (Spec.map φ) (Spec.map (CommRingCat.ofHom φ.hom.kerLift))
-    (Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk (RingHom.ker φ.hom))))
-    (by rw [← Spec.map_comp]; rfl))
-
-@[reassoc (attr := simp)]
-theorem closureSpecIso_hom_comp {A B : CommRingCat.{u}} (φ : A ⟶ B) :
-    (closureSpecIso φ).hom ≫
-      Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk (RingHom.ker φ.hom))) =
-      (Spec.map φ).imageι :=
-  have := IsClosedImmersion.spec_of_surjective
-    (CommRingCat.ofHom (Ideal.Quotient.mk (RingHom.ker φ.hom))) Ideal.Quotient.mk_surjective
-  closureToClosed_comp (Spec.map φ) (Spec.map (CommRingCat.ofHom φ.hom.kerLift)) _
-    (by rw [← Spec.map_comp]; rfl)
-
 end Closure
 
 section Graph
@@ -371,19 +239,21 @@ variable {S Z₁ Z₂ U T T' : Scheme.{u}} (f₁ : Z₁ ⟶ S) (f₂ : Z₂ ⟶ 
 
 def graphMap : U ⟶ pullback f₁ f₂ := pullback.lift u φ h
 
-@[reassoc (attr := simp)]
 theorem graphMap_fst : graphMap f₁ f₂ u φ h ≫ pullback.fst f₁ f₂ = u := pullback.lift_fst _ _ _
 
-@[reassoc (attr := simp)]
 theorem graphMap_snd : graphMap f₁ f₂ u φ h ≫ pullback.snd f₁ f₂ = φ := pullback.lift_snd _ _ _
 
 instance isImmersion_graphMap [IsImmersion u] : IsImmersion (graphMap f₁ f₂ u φ h) :=
-  have : IsImmersion (graphMap f₁ f₂ u φ h ≫ pullback.fst f₁ f₂) := by simpa
+  have : IsImmersion (graphMap f₁ f₂ u φ h ≫ pullback.fst f₁ f₂) := by
+    rw [graphMap_fst]
+    infer_instance
   IsImmersion.of_comp _ (pullback.fst f₁ f₂)
 
 instance quasiCompact_graphMap [QuasiCompact u] [QuasiSeparated f₂] :
     QuasiCompact (graphMap f₁ f₂ u φ h) :=
-  have : QuasiCompact (graphMap f₁ f₂ u φ h ≫ pullback.fst f₁ f₂) := by simpa
+  have : QuasiCompact (graphMap f₁ f₂ u φ h ≫ pullback.fst f₁ f₂) := by
+    rw [graphMap_fst]
+    infer_instance
   QuasiCompact.of_comp _ (pullback.fst f₁ f₂)
 
 def graphClosure : Scheme.{u} := (graphMap f₁ f₂ u φ h).image
@@ -401,22 +271,18 @@ def snd : graphClosure f₁ f₂ u φ h ⟶ Z₂ := ι f₁ f₂ u φ h ≫ pull
 @[reassoc (attr := simp)]
 theorem ι_fst : ι f₁ f₂ u φ h ≫ pullback.fst f₁ f₂ = fst f₁ f₂ u φ h := rfl
 
-@[reassoc (attr := simp)]
 theorem ι_snd : ι f₁ f₂ u φ h ≫ pullback.snd f₁ f₂ = snd f₁ f₂ u φ h := rfl
 
 @[reassoc (attr := simp)]
 theorem incl_ι : incl f₁ f₂ u φ h ≫ ι f₁ f₂ u φ h = graphMap f₁ f₂ u φ h :=
   (graphMap f₁ f₂ u φ h).toImage_imageι
 
-@[reassoc (attr := simp)]
 theorem incl_fst : incl f₁ f₂ u φ h ≫ fst f₁ f₂ u φ h = u := by
   rw [← ι_fst, incl_ι_assoc, graphMap_fst]
 
-@[reassoc (attr := simp)]
 theorem incl_snd : incl f₁ f₂ u φ h ≫ snd f₁ f₂ u φ h = φ := by
   rw [← ι_snd, incl_ι_assoc, graphMap_snd]
 
-@[reassoc]
 theorem condition : fst f₁ f₂ u φ h ≫ f₁ = snd f₁ f₂ u φ h ≫ f₂ := by
   rw [← ι_fst, ← ι_snd, Category.assoc, Category.assoc, pullback.condition]
 
@@ -433,10 +299,6 @@ instance quasiCompact_incl [QuasiCompact u] [QuasiSeparated f₂] :
 instance isOpenImmersion_incl [IsImmersion u] [QuasiCompact u] [QuasiSeparated f₂] :
     IsOpenImmersion (incl f₁ f₂ u φ h) :=
   isOpenImmersion_toImage (graphMap f₁ f₂ u φ h)
-
-theorem range_ι [QuasiCompact u] [QuasiSeparated f₂] :
-    Set.range (ι f₁ f₂ u φ h) = closure (Set.range (graphMap f₁ f₂ u φ h)) :=
-  range_imageι (graphMap f₁ f₂ u φ h)
 
 instance isReduced [QuasiCompact u] [QuasiSeparated f₂] [IsReduced U] :
     IsReduced (graphClosure f₁ f₂ u φ h) :=
@@ -456,7 +318,9 @@ def lift (t₁ : T ⟶ Z₁) (t₂ : T ⟶ Z₂) (ht : t₁ ≫ f₁ = t₂ ≫ 
     [IsSchemeTheoreticallyDominant d] (w : T' ⟶ U) (h₁ : d ≫ t₁ = w ≫ u) (h₂ : d ≫ t₂ = w ≫ φ) :
     T ⟶ graphClosure f₁ f₂ u φ h :=
   closureLift (graphMap f₁ f₂ u φ h) (pullback.lift t₁ t₂ ht) d w (by
-    apply pullback.hom_ext <;> simp [pullback.lift_fst, pullback.lift_snd, h₁, h₂])
+    apply pullback.hom_ext
+    · rw [Category.assoc, pullback.lift_fst, Category.assoc, graphMap_fst, h₁]
+    · rw [Category.assoc, pullback.lift_snd, Category.assoc, graphMap_snd, h₂])
 
 section
 
@@ -467,38 +331,29 @@ variable (t₁ : T ⟶ Z₁) (t₂ : T ⟶ Z₂) (ht : t₁ ≫ f₁ = t₂ ≫ 
 theorem lift_ι : lift f₁ f₂ u φ h t₁ t₂ ht d w h₁ h₂ ≫ ι f₁ f₂ u φ h = pullback.lift t₁ t₂ ht :=
   closureLift_imageι _ _ _ _ _
 
-@[reassoc (attr := simp)]
 theorem lift_fst : lift f₁ f₂ u φ h t₁ t₂ ht d w h₁ h₂ ≫ fst f₁ f₂ u φ h = t₁ := by
   rw [← ι_fst, lift_ι_assoc, pullback.lift_fst]
 
-@[reassoc (attr := simp)]
 theorem lift_snd : lift f₁ f₂ u φ h t₁ t₂ ht d w h₁ h₂ ≫ snd f₁ f₂ u φ h = t₂ := by
   rw [← ι_snd, lift_ι_assoc, pullback.lift_snd]
 
-@[reassoc (attr := simp)]
-theorem comp_lift : d ≫ lift f₁ f₂ u φ h t₁ t₂ ht d w h₁ h₂ = w ≫ incl f₁ f₂ u φ h :=
-  comp_closureLift _ _ _ _ _
 
+include ht d w h₁ h₂ in
 include ht h₁ h₂ in
-
 theorem existsUnique_lift : ∃! l : T ⟶ graphClosure f₁ f₂ u φ h,
-    l ≫ fst f₁ f₂ u φ h = t₁ ∧ l ≫ snd f₁ f₂ u φ h = t₂ :=
-  ⟨lift f₁ f₂ u φ h t₁ t₂ ht d w h₁ h₂, by simp,
-    fun _ hl ↦ hom_ext f₁ f₂ u φ h (by simp [hl.1]) (by simp [hl.2])⟩
+    l ≫ fst f₁ f₂ u φ h = t₁ ∧ l ≫ snd f₁ f₂ u φ h = t₂ := by
+  have hf := lift_fst f₁ f₂ u φ h t₁ t₂ ht d w h₁ h₂
+  have hs := lift_snd f₁ f₂ u φ h t₁ t₂ ht d w h₁ h₂
+  exact ⟨lift f₁ f₂ u φ h t₁ t₂ ht d w h₁ h₂, ⟨hf, hs⟩,
+    fun _ hl ↦ hom_ext f₁ f₂ u φ h (hl.1.trans hf.symm) (hl.2.trans hs.symm)⟩
 
 end
 
 instance isProper_fst [IsProper f₂] : IsProper (fst f₁ f₂ u φ h) := by
   rw [← ι_fst]; infer_instance
 
-instance isProper_snd [IsProper f₁] : IsProper (snd f₁ f₂ u φ h) := by
-  rw [← ι_snd]; infer_instance
-
 instance isSeparated_fst [IsSeparated f₂] : IsSeparated (fst f₁ f₂ u φ h) := by
   rw [← ι_fst]; infer_instance
-
-instance isSeparated_snd [IsSeparated f₁] : IsSeparated (snd f₁ f₂ u φ h) := by
-  rw [← ι_snd]; infer_instance
 
 instance locallyOfFiniteType_fst [LocallyOfFiniteType f₂] :
     LocallyOfFiniteType (fst f₁ f₂ u φ h) := by
@@ -506,21 +361,6 @@ instance locallyOfFiniteType_fst [LocallyOfFiniteType f₂] :
 
 instance quasiCompact_fst [QuasiCompact f₂] : QuasiCompact (fst f₁ f₂ u φ h) := by
   rw [← ι_fst]; infer_instance
-
-theorem isProper_fst_comp [IsProper f₁] [IsProper f₂] : IsProper (fst f₁ f₂ u φ h ≫ f₁) :=
-  inferInstance
-
-instance schemeDominant_fst [IsSchemeTheoreticallyDominant u] :
-    IsSchemeTheoreticallyDominant (fst f₁ f₂ u φ h) :=
-  have : IsSchemeTheoreticallyDominant (incl f₁ f₂ u φ h ≫ fst f₁ f₂ u φ h) := by simpa
-  schemeDominant_of_comp (incl f₁ f₂ u φ h) _
-
-instance isDominant_fst [IsDominant u] : IsDominant (fst f₁ f₂ u φ h) :=
-  have : IsDominant (incl f₁ f₂ u φ h ≫ fst f₁ f₂ u φ h) := by simpa
-  IsDominant.of_comp (incl f₁ f₂ u φ h) _
-
-instance surjective_fst [IsDominant u] [IsProper f₂] : Surjective (fst f₁ f₂ u φ h) :=
-  surjective_of_isDominant_of_isClosed_range _ (fst f₁ f₂ u φ h).isClosedMap.isClosed_range
 
 theorem isPullback_incl [Flat u] [Mono u] [QuasiCompact u] [IsSeparated f₂] :
     IsPullback (𝟙 U) (incl f₁ f₂ u φ h) u (fst f₁ f₂ u φ h) := by
@@ -548,16 +388,6 @@ theorem isPullback_incl [Flat u] [Mono u] [QuasiCompact u] [IsSeparated f₂] :
   rw [hc₁] at H
   exact H
 
-theorem range_incl [Flat u] [Mono u] [QuasiCompact u] [IsSeparated f₂] :
-    Set.range (incl f₁ f₂ u φ h) = fst f₁ f₂ u φ h ⁻¹' Set.range u := by
-  have H := isPullback_incl f₁ f₂ u φ h
-  rw [← H.isoPullback_hom_snd, ← Scheme.Pullback.range_snd, Scheme.Hom.comp_base, TopCat.coe_comp,
-    Set.range_comp, H.isoPullback.hom.surjective.range_eq, Set.image_univ]
-
-theorem opensRange_incl [IsOpenImmersion u] [QuasiCompact u] [IsSeparated f₂] :
-    (incl f₁ f₂ u φ h).opensRange = fst f₁ f₂ u φ h ⁻¹ᵁ u.opensRange :=
-  Opens.ext (range_incl f₁ f₂ u φ h)
-
 theorem isIso_fst_restrict_of_le [IsOpenImmersion u] [QuasiCompact u] [IsSeparated f₂]
     (V : Z₁.Opens) (hV : V ≤ u.opensRange) : IsIso (fst f₁ f₂ u φ h ∣_ V) := by
   let l : (V : Scheme.{u}) ⟶ U := IsOpenImmersion.lift u V.ι (by rw [Scheme.Opens.range_ι]; exact hV)
@@ -568,140 +398,24 @@ theorem isIso_fst_restrict_of_le [IsOpenImmersion u] [QuasiCompact u] [IsSeparat
   rw [← e]
   infer_instance
 
-instance isIso_fst_restrict [IsOpenImmersion u] [QuasiCompact u] [IsSeparated f₂] :
-    IsIso (fst f₁ f₂ u φ h ∣_ u.opensRange) :=
-  isIso_fst_restrict_of_le f₁ f₂ u φ h _ le_rfl
-
 instance isIso_fst_restrict_opens (V : Z₁.Opens) (ψ : (V : Scheme.{u}) ⟶ Z₂)
     (hψ : V.ι ≫ f₁ = ψ ≫ f₂) [QuasiCompact V.ι] [IsSeparated f₂] :
     IsIso (fst f₁ f₂ V.ι ψ hψ ∣_ V) :=
   isIso_fst_restrict_of_le f₁ f₂ V.ι ψ hψ V (by simp)
 
-theorem isIso_fst_of_extension [IsSchemeTheoreticallyDominant u] [IsSeparated f₂]
-    (ψ : Z₁ ⟶ Z₂) (hψ : f₁ = ψ ≫ f₂) (hu : u ≫ ψ = φ) : IsIso (fst f₁ f₂ u φ h) := by
-  let c : Z₁ ⟶ pullback f₁ f₂ := pullback.lift (𝟙 Z₁) ψ (by simpa using hψ)
-  have hc₁ : c ≫ pullback.fst _ _ = 𝟙 Z₁ := pullback.lift_fst _ _ _
-  have hc₂ : c ≫ pullback.snd _ _ = ψ := pullback.lift_snd _ _ _
-  have : IsClosedImmersion (c ≫ pullback.fst _ _) := by rw [hc₁]; infer_instance
-  have : IsClosedImmersion c := .of_comp c (pullback.fst _ _)
-  have hc : u ≫ c = graphMap f₁ f₂ u φ h := by
-    apply pullback.hom_ext <;> simp [hc₁, hc₂, hu]
-  have e : fst f₁ f₂ u φ h = closureToClosed _ u c hc := by
-    rw [← Category.comp_id (closureToClosed _ u c hc), ← hc₁, closureToClosed_comp_assoc]
-    rfl
-  rw [e]
-  exact isIso_closureToClosed _ u c hc
-
 theorem exists_extension_of_isIso_fst [IsIso (fst f₁ f₂ u φ h)] :
     ∃ ψ : Z₁ ⟶ Z₂, f₁ = ψ ≫ f₂ ∧ u ≫ ψ = φ := by
   refine ⟨inv (fst f₁ f₂ u φ h) ≫ snd f₁ f₂ u φ h, by simp [← condition], ?_⟩
-  have : u ≫ inv (fst f₁ f₂ u φ h) = incl f₁ f₂ u φ h := by simp
+  have : u ≫ inv (fst f₁ f₂ u φ h) = incl f₁ f₂ u φ h := by simp [incl_fst]
   rw [reassoc_of% this, incl_snd]
 
 end graphClosure
-
-theorem graphClosure.flat_of_isDedekindDomain {O : CommRingCat.{u}} [IsDedekindDomain O]
-    (f₁ : Z₁ ⟶ Spec O) (f₂ : Z₂ ⟶ Spec O) (u : U ⟶ Z₁) (φ : U ⟶ Z₂) (h : u ≫ f₁ = φ ≫ f₂)
-    [QuasiCompact u] [QuasiSeparated f₂] [Flat (u ≫ f₁)] :
-    Flat (graphClosure.fst f₁ f₂ u φ h ≫ f₁) :=
-  have : Flat (graphClosure.incl f₁ f₂ u φ h ≫ graphClosure.fst f₁ f₂ u φ h ≫ f₁) := by simpa
-  flat_of_schemeDominant_of_isDedekindDomain (graphClosure.incl f₁ f₂ u φ h) _
-
-theorem graphClosure.flat_of_valuationRing {O : CommRingCat.{u}} [IsDomain O] [ValuationRing O]
-    (f₁ : Z₁ ⟶ Spec O) (f₂ : Z₂ ⟶ Spec O) (u : U ⟶ Z₁) (φ : U ⟶ Z₂) (h : u ≫ f₁ = φ ≫ f₂)
-    [QuasiCompact u] [QuasiSeparated f₂] [Flat (u ≫ f₁)] :
-    Flat (graphClosure.fst f₁ f₂ u φ h ≫ f₁) :=
-  have : Flat (graphClosure.incl f₁ f₂ u φ h ≫ graphClosure.fst f₁ f₂ u φ h ≫ f₁) := by simpa
-  flat_of_schemeDominant_of_isBezout (graphClosure.incl f₁ f₂ u φ h) _
 
 end Graph
 
 section Examples
 
-example : IsIso (Spec.map (CommRingCat.ofHom (algebraMap ℤ ℚ))).imageι :=
-  (isIso_imageι_iff _).mpr ((schemeDominant_specMap_iff _).mpr (algebraMap ℤ ℚ).injective_int)
-
-example :
-    let j := Spec.map (CommRingCat.ofHom (Polynomial.aeval (R := ℤ) (1 / 2 : ℚ)).toRingHom)
-    Flat (j.imageι ≫ Spec.map (CommRingCat.ofHom (algebraMap ℤ (Polynomial ℤ)))) ∧
-      IsIntegral j.image ∧ ¬ IsIso j.imageι := by
-  intro j
-  refine ⟨flat_image_of_over_fractionField (K := ℚ) j _ (𝟙 _)
-    (specZIsTerminal.hom_ext _ _), inferInstance, ?_⟩
-  rw [isIso_imageι_iff, schemeDominant_specMap_iff]
-  intro hinj
-  have h0 : (2 * Polynomial.X - 1 : Polynomial ℤ) = 0 := by
-    apply hinj
-    simp [map_ofNat]
-  simpa using congrArg (Polynomial.eval 0) h0
-
 namespace GraphClosureExample
-
-abbrev awayTwo : Type := Localization.Away (2 : ℤ√(-4))
-
-def halfRoot : ℤ√(-1) →+* awayTwo :=
-  Zsqrtd.lift ⟨algebraMap _ awayTwo (Zsqrtd.sqrtd : ℤ√(-4)) *
-      IsLocalization.Away.invSelf (2 : ℤ√(-4)), by
-    have h₁ := IsLocalization.Away.mul_invSelf (S := awayTwo) (2 : ℤ√(-4))
-    have h₂ : algebraMap _ awayTwo (Zsqrtd.sqrtd : ℤ√(-4)) *
-        algebraMap _ awayTwo (Zsqrtd.sqrtd : ℤ√(-4)) = -4 := by
-      rw [← map_mul, Zsqrtd.dmuld]; simp [map_ofNat]
-    rw [map_ofNat] at h₁
-    push_cast
-    linear_combination (IsLocalization.Away.invSelf (S := awayTwo) (2 : ℤ√(-4))) ^ 2 * h₂ -
-      (2 * IsLocalization.Away.invSelf (S := awayTwo) (2 : ℤ√(-4)) + 1) * h₁⟩
-
-abbrev str (d : ℤ) : Spec (.of (ℤ√d)) ⟶ Spec (.of ℤ) :=
-  Spec.map (CommRingCat.ofHom (algebraMap ℤ (ℤ√d)))
-
-abbrev openPart : Spec (.of awayTwo) ⟶ Spec (.of (ℤ√(-4))) :=
-  Spec.map (CommRingCat.ofHom (algebraMap (ℤ√(-4)) awayTwo))
-
-abbrev partialMap : Spec (.of awayTwo) ⟶ Spec (.of (ℤ√(-1))) :=
-  Spec.map (CommRingCat.ofHom halfRoot)
-
-theorem comm : openPart ≫ str (-4) = partialMap ≫ str (-1) := specZIsTerminal.hom_ext _ _
-
-theorem isFinite_str (d : ℤ) : IsFinite (str d) := by
-  rw [IsFinite.SpecMap_iff]
-  refine RingHom.finite_algebraMap.mpr ⟨⟨{1, Zsqrtd.sqrtd}, ?_⟩⟩
-  rw [eq_top_iff]
-  rintro ⟨a, b⟩ -
-  have : (⟨a, b⟩ : ℤ√d) = a • 1 + b • Zsqrtd.sqrtd := by ext <;> simp
-  rw [this]
-  exact add_mem (Submodule.smul_mem _ _ (Submodule.subset_span (by simp)))
-    (Submodule.smul_mem _ _ (Submodule.subset_span (by simp)))
-
-theorem isProper_and_not_isIso :
-    IsProper (graphClosure.fst (str (-4)) (str (-1)) openPart partialMap comm) ∧
-      IsIso (graphClosure.fst (str (-4)) (str (-1)) openPart partialMap comm ∣_
-        openPart.opensRange) ∧
-      ¬ IsIso (graphClosure.fst (str (-4)) (str (-1)) openPart partialMap comm) := by
-  have := isFinite_str (-1)
-  refine ⟨inferInstance, inferInstance, fun _ ↦ ?_⟩
-  obtain ⟨ψ, -, -⟩ :=
-    graphClosure.exists_extension_of_isIso_fst (str (-4)) (str (-1)) openPart partialMap comm
-  obtain ⟨g, rfl⟩ := Spec.map_surjective ψ
-  have h := congrArg g.hom (Zsqrtd.dmuld (d := -1))
-  rw [map_mul, map_intCast] at h
-  have h' := congrArg Zsqrtd.re h
-  generalize g.hom Zsqrtd.sqrtd = z at h'
-  simp only [Zsqrtd.re_mul, Zsqrtd.re_intCast] at h'
-  have h4 : z.re * z.re % 4 = 0 ∨ z.re * z.re % 4 = 1 := by
-    have : z.re % 4 = 0 ∨ z.re % 4 = 1 ∨ z.re % 4 = 2 ∨ z.re % 4 = 3 := by omega
-    rcases this with h | h | h | h <;> simp [Int.mul_emod, h]
-  rw [mul_assoc] at h'
-  omega
-
-example : Set.range (graphClosure.fst (𝟙 _) openPart openPart (𝟙 _) (by simp)) =
-    Set.range openPart := by
-  apply subset_antisymm
-  · rw [← Category.comp_id (graphClosure.fst _ _ _ _ _), graphClosure.condition,
-      Scheme.Hom.comp_base, TopCat.coe_comp]
-    exact Set.range_comp_subset_range _ _
-  · rintro _ ⟨x, rfl⟩
-    exact ⟨graphClosure.incl (𝟙 _) openPart openPart (𝟙 _) (by simp) x, by
-      rw [← Scheme.Hom.comp_apply, graphClosure.incl_fst]⟩
 
 end GraphClosureExample
 

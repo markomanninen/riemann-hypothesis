@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorFrame
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorExpansion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorFrame
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorExpansion
+
+@[expose] public section
 
 open Matrix Finset
 

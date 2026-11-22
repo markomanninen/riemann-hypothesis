@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,11 +29,13 @@ theorem isCommMonObj_of_isGrpPullback [GrpObj G] [GrpObj G'] [IsCommMonObj G]
     ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
 
 theorem isAbelianScheme_of_isGrpPullback [GrpObj G] [GrpObj G'] (hG : IsAbelianScheme G)
-    (h : IsGrpPullback G' G f φ) : IsAbelianScheme G' where
-  comm := have := hG.comm; isCommMonObj_of_isGrpPullback h
-  smooth := MorphismProperty.of_isPullback (P := @Smooth) h.1 hG.smooth
-  proper := MorphismProperty.of_isPullback (P := @IsProper) h.1 hG.proper
-  geomConnected := MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hG.geomConnected
+    (h : IsGrpPullback G' G f φ) : IsAbelianScheme G' := by
+  have := hG.comm
+  exact
+    { comm := isCommMonObj_of_isGrpPullback h
+      smooth := MorphismProperty.of_isPullback (P := @Smooth) h.1 hG.smooth
+      proper := MorphismProperty.of_isPullback (P := @IsProper) h.1 hG.proper
+      geomConnected := MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hG.geomConnected }
 
 theorem relAmple_restrict (h : IsPullback φ G'.hom G.hom f) (hL : L.IsLB) (hL' : L'.IsLB)
     (e : LBIso L' (L.pull φ)) (hA : Out.RelAmple G L) (V : S.Opens) (hV : IsAffineOpen V) :
@@ -39,7 +45,24 @@ theorem relAmple_restrict (h : IsPullback φ G'.hom G.hom f) (hL : L.IsLB) (hL' 
   obtain ⟨w, hw⟩ : LBIso (L'.pull (G'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι) (L.pull ((G'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι ≫ φ)) :=
     LBIso.chartPull (chartPullPull L' _ _ rfl)
       (chartPullSame L (fun _ : PUnit => (G'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι ≫ φ) (fun _ => φ) (fun _ => 1) _ fun _ => rfl) e
-  exact relAmple_pull (A' := Over.mk (G'.hom ∣_ (f ⁻¹ᵁ V))) H hL (pull_isLB hL' _)
+  let i := (G'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι
+  have hPull : (L'.pull i).IsLB := by
+    refine ⟨top_le_iff.1 ?_, ?_, ?_⟩
+    · intro y _
+      obtain ⟨j, hj⟩ := exists_chart hL' (i y)
+      exact TopologicalSpace.Opens.mem_iSup.2 ⟨fun _ => j, mem_pull.2 hj⟩
+    · intro J
+      refine unit_ext fun y hy => ?_
+      rw [gm_res (𝟙 _) y _ hy, map_one, gm_pull_g L' i (𝟙 _) y J J hy hy]
+      exact gm_self hL' i y (mem_pull.1 hy)
+    · intro I J K
+      refine unit_ext fun y hy => ?_
+      rw [map_mul, gm_res (𝟙 _) y _ hy, gm_res (𝟙 _) y _ hy, gm_res (𝟙 _) y _ hy,
+        gm_pull_g L' i (𝟙 _) y I J hy.1.1 hy.1.2,
+        gm_pull_g L' i (𝟙 _) y J K hy.1.2 hy.2,
+        gm_pull_g L' i (𝟙 _) y I K hy.1.1 hy.2]
+      exact gm_cocycle hL' i y (mem_pull.1 hy.1.1) (mem_pull.1 hy.1.2) (mem_pull.1 hy.2)
+  exact relAmple_pull (A' := Over.mk (G'.hom ∣_ (f ⁻¹ᵁ V))) H hL hPull
     ((isGen_iff w).1 hw) V hV (fun y => y.2) hA
 
 theorem pol_pull_of_relAmple_local

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
+module
+
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter Topology
 
@@ -71,7 +75,7 @@ lemma hurwitz_conj_real {a : ℝ} (ha : a ∈ Icc (0 : ℝ) 1) (s : ℂ) :
   rw [Complex.conj_conj] at h3
   have e : ∀ w, hurwitzZeta a w = reg a w + 1 / (w - 1) / Gammaℝ w := fun w => by
     rw [reg, sub_add_cancel]
-  rw [e ((starRingEnd ℂ) s), e s, map_add, ← h3, pole_conj]
+  rw [e ((starRingEnd ℂ) s), e s, map_add (f := _), ← h3, pole_conj]
 
 lemma hurwitz_conj (a : UnitAddCircle) (s : ℂ) :
     hurwitzZeta a ((starRingEnd ℂ) s) = (starRingEnd ℂ) (hurwitzZeta a s) := by
@@ -87,7 +91,8 @@ end LFunctionConjugation
 
 theorem LFunction_conj {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (s : ℂ) :
     DirichletCharacter.LFunction χ⁻¹ ((starRingEnd ℂ) s) = (starRingEnd ℂ) (DirichletCharacter.LFunction χ s) := by
-  simp only [DirichletCharacter.LFunction, ZMod.LFunction, map_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [DirichletCharacter.LFunction, ZMod.LFunction, map_mul, map_sum]
   congr 1
   · have h := LFunctionConjugation.ofReal_cpow_conj (Nat.cast_nonneg N : (0 : ℝ) ≤ N) (-s)
     simpa using h

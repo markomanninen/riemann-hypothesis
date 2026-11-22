@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.BoundedPowerSeriesDisc
 
@@ -32,12 +36,6 @@ theorem tsum_coeff_C (c t : K) : ∑' n, coeff n (C c : K⟦X⟧) * t ^ n = c :=
   · intro n hn
     simp [coeff_C, hn]
 
-theorem tsum_coeff_X (t : K) : ∑' n, coeff n (X : K⟦X⟧) * t ^ n = t := by
-  rw [tsum_eq_single 1]
-  · simp
-  · intro n hn
-    simp [coeff_X, hn]
-
 end General
 
 section Integral
@@ -61,23 +59,9 @@ noncomputable def evalDisc (i : O →+* K) (hi : ∀ a, ‖i a‖ ≤ 1) (t : K)
   map_add' f g := by
     rw [← (summable_norm_of_bounded (fun n => hi (coeff n f)) ht).of_norm.tsum_add
       (summable_norm_of_bounded (fun n => hi (coeff n g)) ht).of_norm]
-    simp only [map_add, add_mul]
+    simp only [map_add (f := _), add_mul]
 
 variable (i : O →+* K) (hi : ∀ a, ‖i a‖ ≤ 1) (t : K) (ht : ‖t‖ < 1)
-
-theorem evalDisc_apply (f : O⟦X⟧) : evalDisc i hi t ht f = ∑' n, i (coeff n f) * t ^ n := rfl
-
-@[simp] theorem evalDisc_C (a : O) : evalDisc i hi t ht (C a) = i a := by
-  rw [evalDisc_apply, tsum_eq_single 0]
-  · simp
-  · intro n hn
-    simp [coeff_C, hn]
-
-@[simp] theorem evalDisc_X : evalDisc i hi t ht X = t := by
-  rw [evalDisc_apply, tsum_eq_single 1]
-  · simp
-  · intro n hn
-    simp [coeff_X, hn]
 
 end Integral
 
@@ -99,7 +83,7 @@ def boundedSeries (F : Type*) [NormedField F] [IsUltrametricDist F] : Subring F�
   add_mem' := by
     rintro f g ⟨A, hA⟩ ⟨B, hB⟩
     refine ⟨A + B, fun n => ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (norm_add_le _ _).trans (add_le_add (hA n) (hB n))
   zero_mem' := ⟨0, fun n => by simp⟩
   neg_mem' := by
@@ -110,16 +94,6 @@ variable {F : Type*} [NormedField F] [IsUltrametricDist F]
 
 theorem mem_boundedSeries {f : F⟦X⟧} :
     f ∈ boundedSeries F ↔ ∃ B : ℝ, ∀ n, ‖coeff n f‖ ≤ B := by exact Iff.rfl
-
-theorem C_mem_boundedSeries (c : F) : (C c : F⟦X⟧) ∈ boundedSeries F := by
-  refine mem_boundedSeries.2 ⟨‖c‖, fun n => ?_⟩
-  rw [coeff_C]
-  split_ifs <;> simp
-
-theorem X_mem_boundedSeries : (X : F⟦X⟧) ∈ boundedSeries F := by
-  refine mem_boundedSeries.2 ⟨1, fun n => ?_⟩
-  rw [coeff_X]
-  split_ifs <;> simp
 
 theorem summable_norm_boundedSeries (f : boundedSeries F) {π : F} (hπ : ‖π‖ < 1) :
     Summable fun n => ‖coeff n (f : F⟦X⟧) * π ^ n‖ := by
@@ -137,21 +111,9 @@ noncomputable def evalBounded (π : F) (hπ : ‖π‖ < 1) : boundedSeries F �
   map_add' f g := by
     rw [← (summable_norm_boundedSeries f hπ).of_norm.tsum_add
       (summable_norm_boundedSeries g hπ).of_norm]
-    simp only [Subring.coe_add, map_add, add_mul]
+    simp only [Subring.coe_add, map_add (f := _), add_mul]
 
 variable (π : F) (hπ : ‖π‖ < 1)
-
-theorem evalBounded_apply (f : boundedSeries F) :
-    evalBounded π hπ f = ∑' n, coeff n (f : F⟦X⟧) * π ^ n := rfl
-
-@[simp] theorem evalBounded_C (c : F) :
-    evalBounded π hπ ⟨C c, C_mem_boundedSeries c⟩ = c := by
-  rw [evalBounded_apply]
-  exact tsum_coeff_C c π
-
-@[simp] theorem evalBounded_X : evalBounded π hπ ⟨X, X_mem_boundedSeries⟩ = π := by
-  rw [evalBounded_apply]
-  exact tsum_coeff_X π
 
 end Bounded
 

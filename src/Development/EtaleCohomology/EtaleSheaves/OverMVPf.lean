@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.InjStepPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.InjStepPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.ZLGPf LateralTheory.E.ZarIndPf LateralTheory.E.InjStepPf
@@ -12,7 +16,6 @@ theorem resO_fst (p : X ⟶ S) {V U : S.Opens} (h : V ≤ U) :
     resO p h ≫ pullback.fst p U.ι = pullback.fst p V.ι := by
   simp only [resO, pullback.map, pullback.lift_fst, Category.comp_id]
 
-@[reassoc]
 theorem resO_snd (p : X ⟶ S) {V U : S.Opens} (h : V ≤ U) :
     resO p h ≫ pullback.snd p U.ι ≫ U.ι = pullback.snd p V.ι ≫ V.ι := by
   simp only [resO, pullback.map, pullback.lift_snd_assoc, Category.assoc, Scheme.homOfLE_ι]

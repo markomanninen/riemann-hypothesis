@@ -1,7 +1,11 @@
-import CompanionTheory.AutomorphicTheory.ThetaDilations.ParAlg
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneVectorCcOfSiegelWeil
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountableStatement
+module
+
+public import CompanionTheory.AutomorphicTheory.ThetaDilations.ParAlg
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneVectorCcOfSiegelWeil
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountableStatement
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -51,7 +55,8 @@ theorem cT_JR {M : ℕ} {J : Matrix (Fin M) (Fin M) E} (hJ : IsHermND σ J) : cT
 theorem hform_conj {K : Type} [CommRing K] {M : ℕ} {s : K →+* K} {J : Matrix (Fin M) (Fin M) K} (hs : ∀ x, s (s x) = x)
     (hJ : cT s J = J) (x y : Fin M → K) : s (hform s J x y) = hform s J y x := by
   have : ∀ i j, s (J j i) = J i j := fun i j => congrFun (congrFun hJ i) j
-  simp only [hform, map_sum, map_mul, hs, this]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hs, this]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 
@@ -118,7 +123,7 @@ theorem par : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField 
   set z : (Fin 1 → Fin M → AF F ⊗[F] E) × AF F → AF F ⊗[F] E :=
     fun p => -(κ * hf (p.1 0) (p.1 0)) + algebraMap _ _ p.2 * dl with hz
   have hzu : ∀ p, z p + s (z p) + hf (p.1 0) (p.1 0) = 0 := fun p => by
-    simp only [hz, map_add, map_neg, map_mul, hκs, hfc, hsa, hdls]
+    simp only [hz, map_add (f := _), map_neg, map_mul, hκs, hfc, hsa, hdls]
     linear_combination (-hf (p.1 0) (p.1 0)) * hκ2
   have ext : ∀ g g' : HA (AF F) σ (hypJ J), g.1.val = g'.1.val → g = g' := fun g g' h =>
     Subtype.ext (Units.ext h)
@@ -168,7 +173,7 @@ theorem par : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField 
     obtain ⟨w, y, U, a, e1, e2, e3⟩ := par_dec hs (J := JR (AF F) J) (by rw [← hH]; exact h.2) h0
     have e4 : z (fun _ => w, sc (y + κ * hf w w)) = y := by
       simp only [hz]
-      rw [sc1 _ (by rw [map_add, map_mul, hκs, hfc]; linear_combination e1 + hf w w * hκ2)]; ring
+      rw [sc1 _ (by rw [map_add (f := _), map_mul, hκs, hfc]; linear_combination e1 + hf w w * hκ2)]; ring
     exact ⟨(fun _ => w, sc (y + κ * hf w w)), mkU s hJi U e2, a, ext _ _ (e3.trans (congrArg (fun y => nM s (JR (AF F) J) w y *
       pm 1 0 0 1 0 U * pm (a : AF F ⊗[F] E) 0 0 (s (a⁻¹ : (AF F ⊗[F] E)ˣ)) 0 1) e4.symm))⟩
   have act : ∀ (h : HA (AF F) σ (hypJ J)) i, actW (AF F) σ _ h (eOne _ (M + 1)) 0 i = h.1.val i 0 :=
@@ -246,7 +251,7 @@ theorem par : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField 
   · intro w t w' t'
     refine ext _ _ ((nM_mul _ _ _ _).trans (congrArg (nM s _ _) ?_))
     have := sc1 (-(κ * (hf (w 0) (w' 0) - hf (w' 0) (w 0)))) (by simp only [map_neg, map_mul, map_sub, hκs, hfc]; ring)
-    simp only [hz, map_add, add_mul, Pi.add_apply, hhf, hform_add] at this ⊢
+    simp only [hz, map_add (f := _), add_mul, Pi.add_apply, hhf, hform_add] at this ⊢
     linear_combination (hform s (JR (AF F) J) (w 0) (w' 0)) * hκ2 - this
   · intro w
     simp [hsc', hhf, hform]
@@ -277,15 +282,18 @@ theorem par : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField 
   · intro w t
     refine rat (nM (σ : E →+* E) J (w 0) (-(1 / 2 * hform (σ : E →+* E) J (w 0) (w 0)) + algebraMap F E t * δ)) _
       (nM_unit hss hJE ?_) ?_
-    · simp only [map_add, map_neg, map_mul, hform_conj hss hJE, RingHom.coe_coe, AlgHom.commutes, hδ, map_div₀, map_one,
+    · simp only [map_add (f := _), map_neg, map_mul, hform_conj hss hJE, RingHom.coe_coe, AlgHom.commutes, hδ, map_div₀, map_one,
         map_ofNat]
       ring
     · show nM s _ _ (z _) = _
       rw [nM, nM, pm_map, map_one, Matrix.map_one _ (map_zero _) (map_one _)]
       congr 1
-      · simp only [hz, hhf, hform, map_add, map_neg, map_mul, map_sum, ratTup, hsi, JR, Matrix.map_apply, hκ, hdl]
-        congr 2
-        exact ((Algebra.TensorProduct.includeRight : E →ₐ[F] AF F ⊗[F] E).commutes t).symm
+      have ht : (algebraMap F (AF F ⊗[F] E)) t = inclR (AF F) ((algebraMap F E) t) :=
+        ((Algebra.TensorProduct.includeRight : E →ₐ[F] AF F ⊗[F] E).commutes t).symm
+      set_option synthInstance.maxHeartbeats 100000 in
+        · simp only [hz, hhf, hform, map_add (f := _), map_neg, map_mul, map_sum, ratTup, hsi, JR, Matrix.map_apply, hκ, hdl]
+          rw [← IsScalarTower.algebraMap_apply F (AF F) (AF F ⊗[F] E) t, ht]
+          rfl
       · funext i
         simp [Matrix.vecMul, dotProduct, ratTup, hsi, JR]
   · rintro u ⟨g, hg, e⟩

@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.P
 
@@ -95,14 +99,14 @@ theorem cf_apply {α β : Type*} (n : ℕ) (P : Matrix α β ℂ[X]) (i : α) (j
 theorem cf_mul {α β γ : Type*} [Fintype β] (n : ℕ) (P : Matrix α β ℂ[X]) (Q : Matrix β γ ℂ[X]) :
     cf n (P * Q) = ∑ x ∈ Finset.HasAntidiagonal.antidiagonal n, cf x.1 P * cf x.2 Q := by
   ext i j
-  simp only [cf, Matrix.map_apply, Matrix.mul_apply, Polynomial.finset_sum_coeff, Polynomial.coeff_mul,
+  simp only [cf, Matrix.map_apply, Matrix.mul_apply, Polynomial.finsetSum_coeff, Polynomial.coeff_mul,
     Matrix.sum_apply]
   exact Finset.sum_comm
 
 theorem cf_mapC_mul {α β γ : Type*} [Fintype β] (n : ℕ) (A : Matrix α β ℂ)
     (P : Matrix β γ ℂ[X]) : cf n (A.map C * P) = A * cf n P := by
   ext i j
-  simp only [cf, Matrix.map_apply, Matrix.mul_apply, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul]
+  simp only [cf, Matrix.map_apply, Matrix.mul_apply, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul]
 
 theorem coeff_X_mul_C (a : ℂ) (n : ℕ) : (X * C a).coeff n = if n = 1 then a else 0 := by
   rw [mul_comm, Polynomial.coeff_C_mul_X]
@@ -184,7 +188,7 @@ theorem coeff2_det_of {n : Type*} [Fintype n] [DecidableEq n] (P : Matrix n n �
   simp only [show ¬ (4 ≤ 2) by norm_num, show (2 ≤ 2) by norm_num, if_false, if_true, Nat.sub_self,
     add_zero, Polynomial.coeff_one, show (2 : ℕ) ≠ 0 by norm_num, if_false, zero_add]
   congr 1
-  rw [Matrix.trace, Polynomial.finset_sum_coeff]
+  rw [Matrix.trace, Polynomial.finsetSum_coeff]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [Matrix.diag_apply, hK, Matrix.diagonal_mul, Polynomial.coeff_C_mul, hN]
   simp [Polynomial.coeff_divX, cf]

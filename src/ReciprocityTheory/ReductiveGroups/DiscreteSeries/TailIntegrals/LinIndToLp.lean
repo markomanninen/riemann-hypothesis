@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InductiveHeisenbergInputs
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InductiveHeisenbergInputs
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def gram (w : Fin m → EuclideanSpace ℂ (Fin n)) : Matrix (Fin m) (Fin m) ℂ
 theorem gram_comb (w : Fin m → EuclideanSpace ℂ (Fin n)) (τ : Matrix (Fin m) (Fin m) ℂ) :
     gram (fun a => ∑ b, τ b a • w b) = τᴴ * gram w * τ := by
   ext a b
-  simp only [gram, of_apply, mul_apply, conjTranspose_apply, sum_inner, inner_sum, inner_smul_left,
+  simp only [gram, of_apply, Matrix.mul_apply, conjTranspose_apply, sum_inner, inner_sum, inner_smul_left,
     inner_smul_right, Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
   simp only [starRingEnd_apply]; ring

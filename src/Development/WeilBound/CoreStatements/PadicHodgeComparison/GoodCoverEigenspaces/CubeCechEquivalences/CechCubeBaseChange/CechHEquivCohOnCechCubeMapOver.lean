@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CubeCechEquivalences.CechCubeBaseChange.BcSumSingle
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoverRestrictionBaseChangeStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CubeCechEquivalences.CechCubeBaseChange.BcSumSingle
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoverRestrictionBaseChangeStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

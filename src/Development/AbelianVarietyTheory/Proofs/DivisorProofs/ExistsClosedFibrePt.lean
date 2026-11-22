@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ISupNonzeroLocusEmbH
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToProjSecPullOfSval
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppTopBijectiveAndSurjectiveNormalDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ISupNonzeroLocusEmbH
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToProjSecPullOfSval
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppTopBijectiveAndSurjectiveNormalDomain
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -35,7 +40,7 @@ theorem exists_trait_pt : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing 
     exact (germ_injective_of_isIntegral M.S (U := ⊤) x trivial).comp
       (hπinj.comp (Scheme.ΓSpecIso (CommRingCat.of R)).commRingCatIsoToRingEquiv.symm.injective)
   have hψl : IsLocalHom ψc.hom := by
-    refine ((IsLocalRing.local_hom_TFAE ψc.hom).out 0 4).2 ?_
+    refine ((IsLocalRing.local_hom_tfae ψc.hom).out 1 5).2 ?_
     have e1 : (Spec.map ψc) (closedPoint A) = closedPoint R := by
       have h0 := congrArg M.π (Scheme.fromSpecStalk_closedPoint (x := x))
       rw [hx] at h0
@@ -66,7 +71,7 @@ theorem isLocalHom_of_finite {W W' : Type} [CommRing W] [IsLocalRing W] [CommRin
   letI := io.toAlgebra
   haveI : Module.Finite W W' := hf
   have hmax : (maximalIdeal W').comap (algebraMap W W') = maximalIdeal W :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal W'))
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal W'))
   refine ⟨fun a ha => ?_⟩
   by_contra h
   have : a ∈ (maximalIdeal W').comap (algebraMap W W') := hmax ▸ (IsLocalRing.mem_maximalIdeal a).2 h

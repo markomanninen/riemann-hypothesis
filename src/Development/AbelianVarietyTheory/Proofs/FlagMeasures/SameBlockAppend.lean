@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.RowRawRange
-open ValuativeRel MeasureTheory ComplexConjugate Formalism.MainNotions.S.Loc GlobalTheory.SgLoc
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+
+@[expose] public section
+
+open ValuativeRel MeasureTheory ComplexConjugate Formalism.MainNotions.S.Loc
 open scoped ComplexOrder
 
 namespace GlobalTheory.SgLoc.PtAlg
@@ -49,15 +53,16 @@ theorem det_snoc_eq {m : ℕ} (h : Pt E m) (t : Eˣ) (s : ℕ+) :
         Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁,
         Matrix.fromBlocks_apply₂₂, Matrix.smul_apply, Matrix.zero_apply, smul_eq_mul] <;>
       have hi := i.isLt <;> have hj := j.isLt
-    · rw [dif_pos ⟨hi, hj⟩]
-    · rw [dif_neg (by omega), if_neg (by omega)]
-    · rw [dif_neg (by omega), if_neg (by omega)]
-    · rw [dif_neg (by omega)]
+    · rw [dite_eq_left ⟨hi, hj⟩]
+    · rw [dite_eq_right (by omega), ite_eq_right (by omega)]
+    · rw [dite_eq_right (by omega), ite_eq_right (by omega)]
+    · rw [dite_eq_right (by omega)]
       simp only [Equiv.Perm.permMatrix, PEquiv.toMatrix_apply, Equiv.toPEquiv_apply,
         Option.mem_def, Option.some.injEq, Fin.revPerm_apply]
       by_cases hij : Fin.rev i = j
-      · rw [if_pos (by rw [← hij, Fin.val_rev]; omega), if_pos hij, mul_one]
-      · rw [if_neg (fun hc => hij (Fin.ext (by rw [Fin.val_rev]; omega))), if_neg hij, mul_zero]
+      · rw [ite_eq_left (by rw [← hij, Fin.val_rev]; omega), ite_eq_left hij, mul_one]
+      · rw [ite_eq_right (fun hc => hij (Fin.ext (by rw [Fin.val_rev]; omega))),
+          ite_eq_right hij, mul_zero]
   have hdet := congrArg Matrix.det key
   rw [Matrix.det_reindex_self, Matrix.det_fromBlocks_zero₂₁, Matrix.det_smul,
     Matrix.det_permutation, Fintype.card_fin] at hdet

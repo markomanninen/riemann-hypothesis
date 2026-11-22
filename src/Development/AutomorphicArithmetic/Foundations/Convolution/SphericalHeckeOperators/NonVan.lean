@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -37,7 +41,7 @@ private lemma phi_anti (b : Fin n → ℕ) {i j : Fin n} (hij : i ≤ j) : phi b
 private def chi (w : Fin n → ℂˣ) : Multiplicative (Fin n → ℕ) →* ℂ where
   toFun b := monomialChar (phi (Multiplicative.toAdd b)) w
   map_one' := by simp
-  map_mul' b c := by simp [map_add, monomialChar_add]
+  map_mul' b c := by simp [map_add (f := _), monomialChar_add]
 
 private lemma chi_apply (w : Fin n → ℂˣ) (b : Fin n → ℕ) :
     chi w (Multiplicative.ofAdd b) = monomialChar (phi b) w := rfl
@@ -105,7 +109,8 @@ private lemma evalAt_dPol_ne {t : ℂ} (ht : ‖t‖ < 1) (w : Fin n → ℂˣ)
 private lemma evalAt_term (z : Fin n → ℂˣ) (a : Fin n → ℤ) (t : ℂ) :
     evalAt z (symSum (monomial a * dPol n t)) =
       ∑ σ : Equiv.Perm (Fin n), monomialChar a (z ∘ σ) * evalAt (z ∘ σ) (dPol n t) := by
-  rw [symSum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [symSum, map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [evalAt_permAct, map_mul, evalAt_single, one_mul]
 

@@ -1,12 +1,29 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocalSeparation.PCtSatDefs
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DetCoverMatrixValuationOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockLevelsEqIntegralGLOfUnramified
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpParabEqLevOpCt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockLevelsTwistedConstantTermSplitPlace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumSatEqOfIsCT
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocalSeparation.PCtSatDefs
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DetCoverMatrixValuationOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockLevelsEqIntegralGLOfUnramified
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UNInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportTwistedConstantTermSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumParabolicQuotientFubini
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulusHalfLeviAbsDet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedOpenCompactEqFiniteLevelSuStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviProjectionMaximalCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsHalfBlockDetIntegralGLInvariant
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsCompactIsOpen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOpenCompactIntegralMatrixAddSubgroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedIntegralMatricesTwoSidedMu
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockLevelsTwistedConstantTermSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumSatEqOfIsCT
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +58,7 @@ theorem b_val_det_of_Tj {m : ℕ} {w : Pl E} {ϖ : w.adicCompletion E} {g : GLw 
     GlobalTheory.SphGal.det_diagJ ϖ hi, map_pow, one_mul, mul_one]
 
 theorem b_Tj_conj {m : ℕ} {w : Pl E} {ϖ : w.adicCompletion E} (hϖ : IsUnifV E w ϖ) (j : ℕ) {κ : GLw m w}
-    (hκ : κ ∈ KGL w m) (g : GLw m w) : Tj ℂ m (Ov E w) ϖ j (κ⁻¹ * g * κ) = Tj ℂ m (Ov E w) ϖ j g :=
+    (hκ : κ ∈ KGL w (n := m)) (g : GLw m w) : Tj ℂ m (Ov E w) ϖ j (κ⁻¹ * g * κ) = Tj ℂ m (Ov E w) ϖ j g :=
   (Tj_mem_hecke hϖ j).1 ⟨_, inv_mem hκ⟩ ⟨_, hκ⟩ g
 
 theorem b_exists_of_avg_ne_zero {H : Type} [Group H] (u : H → ℂ) (h : avg u ≠ 0) : ∃ x, u x ≠ 0 := by
@@ -90,7 +107,7 @@ theorem b_int_blocks {n a b : ℕ} (h : a + b = n) (w : Pl E) {ϖ : w.adicComple
     simpa [Matrix.reindex_apply] using this
 
 theorem b_Tj_self {p : ℕ} {w : Pl E} {ϖ : w.adicCompletion E} {g : GLw p w} {i : ℕ}
-    (hd : dosetInd ℂ (KGL w p) g = Tj ℂ p (Ov E w) ϖ i) : Tj ℂ p (Ov E w) ϖ i g ≠ 0 := by
+    (hd : dosetInd ℂ (KGL w (n := p)) g = Tj ℂ p (Ov E w) ϖ i) : Tj ℂ p (Ov E w) ϖ i g ≠ 0 := by
   rw [← hd]
   unfold dosetInd
   rw [Set.indicator_of_mem (GlobalTheory.WeylGL.mem_doset.2 ⟨1, one_mem _, 1, one_mem _, by group⟩)]
@@ -126,8 +143,8 @@ theorem ctT_supp {n a b : ℕ} (h : a + b = n) (w : Pl E) (hw : IsSplitAt w) (ν
   simp only [pairsK, Finset.mem_filter, Finset.mem_product, Finset.mem_range]
   omega
 
-theorem b_dgM_mem {n a b : ℕ} (h : a + b = n) (w : Pl E) (κ : GLw a w × GLw b w) (h1 : κ.1 ∈ KGL w a)
-    (h2 : κ.2 ∈ KGL w b) : CtLevel.dgM h w κ ∈ KGL w n := by
+theorem b_dgM_mem {n a b : ℕ} (h : a + b = n) (w : Pl E) (κ : GLw a w × GLw b w) (h1 : κ.1 ∈ KGL w (n := a))
+    (h2 : κ.2 ∈ KGL w (n := b)) : CtLevel.dgM h w κ ∈ KGL w (n := n) := by
   obtain ⟨a1, a2⟩ := GlobalTheory.AdelicU.mem_GLint_iff.1 h1
   obtain ⟨b1, b2⟩ := GlobalTheory.AdelicU.mem_GLint_iff.1 h2
   refine GlobalTheory.AdelicU.mem_GLint_iff.2 ⟨fun i j => ?_, fun i j => ?_⟩

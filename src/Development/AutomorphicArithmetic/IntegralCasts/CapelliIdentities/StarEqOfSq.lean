@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ra8.star_eq_of_sq :
     ∀ {z : ℂ} {r : ℝ},

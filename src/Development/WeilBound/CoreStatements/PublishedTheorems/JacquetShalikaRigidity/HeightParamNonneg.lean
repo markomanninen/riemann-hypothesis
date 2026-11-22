@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import GroundTheory.AutomorphicForms.ReductionMahler
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import GroundTheory.AutomorphicForms.ReductionMahler
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 namespace PositivityTheory.AdelicQuotientData
 namespace height_param_nonneg
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
 theorem height_pos' (g : GA E k) {ξ : Fin k → E} (hξ : ξ ≠ 0) : 0 < height g ξ := by
   obtain ⟨ε, hε, h⟩ := exists_pos_le_height (isCompact_singleton (x := g))
@@ -28,13 +32,11 @@ theorem invT_invT (g : GA E k) : invT (invT g) = g := by
   ext i j
   rfl
 
-theorem dt_pos_of (hD : D0) (g : GA E k) : 0 < Dt g := (hD E k).1 g
-
 end height_param_nonneg
 
 namespace height_param_nonneg
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
 theorem dt_mul (hD : D0) (g h : GA E k) : Dt (g * h) = Dt g * Dt h := (hD E k).2.1 g h
 
@@ -110,9 +112,9 @@ theorem c4 (hD : D0) (C : Set (GA E k)) (hC : IsCompact C) :
 end height_param_nonneg
 namespace height_param_nonneg
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem isOpen_vecInt (S : Finset (HeightOneSpectrum (𝓞 E))) :
     IsOpen {y : Fin k → Ad E | ∀ v, v ∉ S → ∀ i, (y i).2 v ∈ v.adicCompletionIntegers E} := by
   have h := RestrictedProduct.isOpen_forall_imp_mem
@@ -126,7 +128,7 @@ theorem isOpen_vecInt (S : Finset (HeightOneSpectrum (𝓞 E))) :
   rw [e]
   exact isOpen_iInter_of_finite fun i => h.preimage (continuous_snd.comp (continuous_apply i))
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem exists_finite_vecInt {C : Set (Fin k → Ad E)} (hC : IsCompact C) :
     ∃ S : Finset (HeightOneSpectrum (𝓞 E)), ∀ y ∈ C, ∀ v, v ∉ S → ∀ i, (y i).2 v ∈ v.adicCompletionIntegers E := by
   classical
@@ -143,12 +145,12 @@ theorem exists_finite_vecInt {C : Set (Fin k → Ad E)} (hC : IsCompact C) :
   obtain ⟨S, hS, hyS⟩ := Set.mem_iUnion₂.1 (hT hy)
   exact hyS v fun h => hv (Finset.mem_sup.2 ⟨S, hS, h⟩)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem norm_finComp_le_one {y : Fin k → Ad E} {v : HeightOneSpectrum (𝓞 E)}
     (h : ∀ i, (y i).2 v ∈ v.adicCompletionIntegers E) : ‖finComp v y‖ ≤ 1 :=
   (pi_norm_le_iff_of_nonneg zero_le_one).2 fun i => norm_le_one_of_mem v (h i)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem c5 (C : Set (Fin k → Ad E)) (hC : IsCompact C) : ∃ B : ℝ, ∀ (g : GA E k) (ξ : Fin k → E), ξ ≠ 0 →
     (fun i => algebraMap E (Ad E) (ξ i)) ᵥ* g.val ∈ C → height g ξ ≤ B := by
   classical
@@ -181,7 +183,7 @@ theorem c5 (C : Set (Fin k → Ad E)) (hC : IsCompact C) : ∃ B : ℝ, ∀ (g :
       · exact norm_finComp_le_one (hS y hy v hv)
     · rw [finprod_eq_prod_of_mulSupport_subset b' hsub]
       exact Finset.prod_congr rfl fun v hv => by simp only [hb', if_pos hv]
-  refine mul_le_mul (Finset.prod_le_prod (fun w _ => pow_nonneg (euclidNorm_nonneg _) _)
+  refine mul_le_mul (Finset.prod_le_prod₀ (fun w _ => pow_nonneg (euclidNorm_nonneg _) _)
     fun w _ => pow_le_pow_left₀ (euclidNorm_nonneg _) (ha w y hy) _) hfp
     (finprod_nonneg fun _ => norm_nonneg _)
     (Finset.prod_nonneg fun w _ => pow_nonneg (zero_le_one.trans (ha1 w)) _)
@@ -189,7 +191,7 @@ theorem c5 (C : Set (Fin k → Ad E)) (hC : IsCompact C) : ∃ B : ℝ, ∀ (g :
 end height_param_nonneg
 namespace height_param_nonneg
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
 theorem norm_pInf_eq (a : Ad E) (w : InfinitePlace E) : ‖pInf E a w‖ = ‖a.1 w‖ :=
   (InfinitePlace.Completion.isometry_extensionEmbedding w).norm_map_of_map_zero (map_zero _) _
@@ -241,10 +243,10 @@ theorem dt_infGL_prod (x : GL (Fin k) (Cinf E)) :
   set u := GeneralLinearGroup.det x
   have hI : pInf E ((infId E u : (Ad E)ˣ) : Ad E) = u := by
     change pInf E (1 - sInf E 1 + sInf E u) = u
-    rw [map_add, map_sub, map_one, h1, h1]; simp
+    rw [map_add (f := _), map_sub, map_one, h1, h1]; simp
   have hF : pFin E ((infId E u : (Ad E)ˣ) : Ad E) = 1 := by
     change pFin E (1 - sInf E 1 + sInf E u) = 1
-    rw [map_add, map_sub, map_one, h2, h2]; simp
+    rw [map_add (f := _), map_sub, map_one, h2, h2]; simp
   have e2 : ∀ v : HeightOneSpectrum (𝓞 E), ‖((infId E u : (Ad E)ˣ) : Ad E).2 v‖ = 1 := fun v => by
     change ‖(pFin E ((infId E u : (Ad E)ˣ) : Ad E)) v‖ = 1
     rw [hF]; simp
@@ -269,7 +271,7 @@ theorem det_norm_le_factorial (x : GL (Fin k) (Cinf E)) (w : InfinitePlace E) :
     exact (norm_le_pi_norm ((Matrix.of.symm x.val) i j) w).trans
       ((norm_le_pi_norm ((Matrix.of.symm x.val) i) j).trans (norm_le_pi_norm (Matrix.of.symm x.val) i))
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem rpow_inv_le_one_add (y : ℝ) (hy : 0 ≤ y) (k : ℕ) : y ^ ((k : ℝ)⁻¹) ≤ 1 + y := by
   rcases le_total y 1 with h | h
   · have := Real.rpow_le_one hy h (by positivity : (0 : ℝ) ≤ (k : ℝ)⁻¹); linarith
@@ -301,7 +303,7 @@ theorem dt_infGL_le (x : GL (Fin k) (Cinf E)) (T : ℝ) (hT : ‖(Matrix.of.symm
     rw [Finset.prod_const, Finset.card_univ]
   have h1 : (∏ w : InfinitePlace E, ‖((GeneralLinearGroup.det x : (Cinf E)ˣ) : Cinf E) w‖ ^ w.mult) ≤
       ∏ _w : InfinitePlace E, ((k.factorial : ℝ) * T ^ k) ^ 2 := by
-    refine Finset.prod_le_prod (fun w _ => by positivity) fun w _ => ?_
+    refine Finset.prod_le_prod₀ (fun w _ => by positivity) fun w _ => ?_
     rw [IsTotallyComplex.mult_eq]
     refine pow_le_pow_left₀ (norm_nonneg _) ((det_norm_le_factorial x w).trans ?_) 2
     gcongr
@@ -310,7 +312,7 @@ theorem dt_infGL_le (x : GL (Fin k) (Cinf E)) (T : ℝ) (hT : ‖(Matrix.of.symm
   generalize Fintype.card (InfinitePlace E) = d
   rw [← pow_mul, mul_pow, ← pow_mul]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem height_product_arith {H H' P Dx Dxr A F Ta Tb : ℝ} (hH : H ≤ P * H') (hP : P ≤ A * Ta) (hH0 : 0 ≤ H')
     (hDxr0 : 0 ≤ Dxr) (hDxr : Dxr ≤ 1 + Dx) (hDx : Dx ≤ F * Tb) (hA : 0 ≤ A) (hTa : 0 ≤ Ta) (hF : 0 ≤ F)
     (hTb : 1 ≤ Tb) : H * Dxr ≤ A * (1 + F) * (Ta * Tb) * H' := by

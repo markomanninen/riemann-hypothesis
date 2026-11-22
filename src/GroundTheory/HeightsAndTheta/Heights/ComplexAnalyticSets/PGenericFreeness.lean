@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFreeness
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericNoetherNormalisation
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGenericFreenessLoc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFreeness
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericNoetherNormalisation
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGenericFreenessLoc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -53,6 +58,7 @@ theorem isGenericallyFree_quotient_bot {A : Type u} [CommRing A] [IsDomain A] (�
 theorem isGenericallyFree_quotient (hNN : GenericNoetherNormalisation.Statement.{u}) (n : ℕ) :
     ∀ (A : Type u) [CommRing A] [IsDomain A] [IsNoetherianRing A] (q : Ideal (MvPolynomial (Fin n) A)),
       q.IsPrime → IsGenericallyFree A (MvPolynomial (Fin n) A ⧸ q) := by
+  set_option synthInstance.maxHeartbeats 400000 in
   induction n with
   | zero =>
     intro A _ _ _ q _
@@ -60,8 +66,8 @@ theorem isGenericallyFree_quotient (hNN : GenericNoetherNormalisation.Statement.
     · have hq : q = ⊥ := by
         rw [eq_bot_iff]
         intro x hx
-        have hx' : C (coeff 0 x) ∈ q := by rwa [← eq_C_of_isEmpty x]
-        have : coeff 0 x ∈ q.comap (C : A →+* MvPolynomial (Fin 0) A) := hx'
+        have hx' : C (AddMonoidAlgebra.coeff x 0) ∈ q := by rwa [← eq_C_of_isEmpty x]
+        have : AddMonoidAlgebra.coeff x 0 ∈ q.comap (C : A →+* MvPolynomial (Fin 0) A) := hx'
         rw [hc, Ideal.mem_bot] at this
         rw [Ideal.mem_bot, eq_C_of_isEmpty x, this, map_zero]
       subst hq
@@ -77,7 +83,8 @@ theorem isGenericallyFree_quotient (hNN : GenericNoetherNormalisation.Statement.
       let D := MvPolynomial (Fin (n + 1)) A ⧸ q
       let Rn := MvPolynomial (Fin n) A
       letI : Algebra Rn D := (aeval z : Rn →ₐ[A] D).toRingHom.toAlgebra
-      have : IsScalarTower A Rn D := IsScalarTower.of_algebraMap_eq fun x ↦ ((aeval z).commutes x).symm
+      have : IsScalarTower A Rn D := IsScalarTower.of_algebraMap_eq (R := A) (S := Rn) (A := D)
+        fun x ↦ ((aeval z : Rn →ₐ[A] D).commutes x).symm
       let N : Submodule Rn D := Submodule.span Rn (s : Set D)
       have hN : IsGenericallyFree A N :=
         isGenericallyFree_of_primes (R := Rn) (fun p ↦ ih A p.asIdeal p.isPrime) N

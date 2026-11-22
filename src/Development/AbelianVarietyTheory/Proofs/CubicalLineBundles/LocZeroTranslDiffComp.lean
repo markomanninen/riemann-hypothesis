@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
-import Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.KTrivExternalTensorPowerLineBundle
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
+public import Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.KTrivExternalTensorPowerLineBundle
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -101,7 +105,7 @@ theorem locZero_translDiff_comp {N : LB A.left} {L : LB G.left} (hN : N.IsLB) (h
     rw [whiskerLeft_snd_assoc, hq, MonObj.comp_one, MonObj.comp_one]
   convert H₂ using 1
   rw [cls_translDiff hL, cls_translDiff hN, e]
-  simp only [map_sub, map_add, map_neg, ← pull_comp, ← Over.comp_left, e₁, e₂, e₃, e₄]
+  simp only [map_sub, map_add (f := _), map_neg, ← pull_comp, ← Over.comp_left, e₁, e₂, e₃, e₄]
   abel
 
 theorem kTriv_prod {N : LB (G ⊗ H).left} {L : LB G.left} {L' : LB H.left} (hN : N.IsLB) (hL : L.IsLB)
@@ -132,13 +136,10 @@ theorem cls_cubeLB {T : Over S} (x : Fin n → (T ⟶ G)) {L : LB G.left} (hL : 
     cls (cubeLB G x L) (LB.isLB_linComb hL _ _) = cubeCls x (cls L hL) :=
   cls_linComb hL _ _ _
 
-theorem cubeCls_add {T : Over S} (x : Fin n → (T ⟶ G)) (c d : Pic G.left) :
-    cubeCls x (c + d) = cubeCls x c + cubeCls x d := by
-  simp only [cubeCls, map_add, smul_add, Finset.sum_add_distrib]
-
 theorem pull_cubeCls {T T' : Over S} (ρ : T' ⟶ T) (x : Fin n → (T ⟶ G)) (c : Pic G.left)
     (y : Fin n → (T' ⟶ G)) (h : ∀ i, y i = ρ ≫ x i) : cubeCls y c = pull ρ.left (cubeCls x c) := by
-  rw [cubeCls, cubeCls, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cubeCls, cubeCls, map_sum]
   refine Finset.sum_congr rfl fun I _ => ?_
   rw [map_zsmul, ← pull_comp, PrimNorm.psum_pre ρ x y h]
 
@@ -147,8 +148,6 @@ end Cube
 section Triple
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {S : Scheme.{0}} (t : SAB H S) {T : Over S}
-
-abbrev ppCls : Pic t.G.left := cls t.PP.L t.PP.isLB
 
 end Triple
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.MetricStatements.ExistsFlagModelBaseMetric
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.ExistsFlagModelBaseMetric
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,16 +37,15 @@ instance {K₀ : Type} (J₀ : K₀ → Type) [∀ k, Fintype (J₀ k)] (n : Ψ 
   · exact inferInstanceAs (Fintype (J₀ k))
   · exact inferInstanceAs (Fintype (Fin ((t.2 : ℕ) + 1) → Fin (n t.1)))
 
-variable (Ψ p q) in
-open Classical in
 
-def blkF (K₀ : Type) (r : Ψ × Fin (p + q)) : Option (K₀ ⊕ StepIx Ψ p q) :=
+open Classical in
+def blkF (Ψ : Type) (p q : ℕ) (K₀ : Type) (r : Ψ × Fin (p + q)) : Option (K₀ ⊕ StepIx Ψ p q) :=
   if IsProperStep (p + q) p r.2 then some (.inr (stepOf Ψ p q r)) else none
 
 variable (Ω : Type) [Field Ω]
 
-variable (p q) in
 
+variable (p q) in
 def gMat (τ : Ψ) : Matrix (Fin (p + q)) (Fin (p + q)) (GenField Ω (rk Ψ p q)) :=
   (Matrix.fromBlocks (genU Ω (rk Ψ p q) (.inr τ)) 0 0 (genU Ω (rk Ψ p q) (.inl τ))).submatrix
     (blockEquiv p q).symm (blockEquiv p q).symm
@@ -68,14 +71,14 @@ variable [Fintype Ψ] [Fintype K₀] [∀ k, Fintype (J₀ k)]
 def xb : (Σ k : NonPluckerBlocks (blkF Ψ p q K₀), baseIdx (idx (p := p) (q := q) J₀ n) (blkF Ψ p q K₀) k) → Ω :=
   fun r => xv A x₀ ⟨r.1.1, r.2⟩
 
-variable (p q) in
 
+variable (p q) in
 def posOf : ∀ s : Ψ ⊕ Ψ, Fin (rk Ψ p q s) → Fin (p + q)
   | .inl _ => wEmb p q
   | .inr _ => omEmb p q
 
-open Classical in
 
+open Classical in
 def aExt (s : Ψ ⊕ Ψ) : Matrix (Fin (n s)) (Fin (p + q)) Ω :=
   fun j a => ∑ l, if posOf p q s l = a then A s j l else 0
 
@@ -87,8 +90,8 @@ def rkW (i : Fin (p + q)) : ℕ := min ((i : ℕ) + 1) p
 
 def rkO (i : Fin (p + q)) : ℕ := (i : ℕ) + 1 - min ((i : ℕ) + 1) p
 
-open Classical in
 
+open Classical in
 def twist (m : Ψ ⊕ Ψ → ℕ) (r : Ψ × Fin (p + q)) : K₀ ⊕ StepIx Ψ p q → ℤ
   | .inl _ => (rkW r.2 * m (.inl r.1) + rkO r.2 * m (.inr r.1) : ℕ)
   | .inr t =>
@@ -107,8 +110,8 @@ abbrev EE (A : HodgeCpt Y S x) : Type := A.Li × ∀ τ : CMType H, Module.Dual 
 
 def inW (A : HodgeCpt Y S x) : A.Li →ₗ[Ω] EE A := LinearMap.inl Ω _ _
 
-open Classical in
 
+open Classical in
 def inO (A : HodgeCpt Y S x) (τ : CMType H) : Module.Dual Ω (A.Vgen (.inr τ)) →ₗ[Ω] EE A :=
   (LinearMap.inr Ω _ _).comp (LinearMap.single Ω (fun τ : CMType H => Module.Dual Ω (A.Vgen (.inr τ))) τ)
 

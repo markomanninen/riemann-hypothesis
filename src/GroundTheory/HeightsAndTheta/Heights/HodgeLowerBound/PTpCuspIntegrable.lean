@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsTpCuspIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsModelLogIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsBoundaryNull
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsTpCuspIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsModelLogIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsBoundaryNull
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,8 +21,8 @@ namespace CuspWeightIntegrable
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem isOpen_blocks : IsOpen {z : (Σ k, ι k) → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := by
   simp only [Set.ofPred_forall, Set.ofPred_exists]
   exact isOpen_iInter_of_finite fun k => isOpen_iUnion fun i =>
@@ -31,8 +36,8 @@ theorem continuousAt_logRatio {A A' : HermLine ι} (hA : IsSmoothHerm A) (hA' : 
   exact ((hA.continuousOn.continuousAt hn).log (A.pos z hz).ne').sub
     ((hA'.continuousOn.continuousAt hn).log (A'.pos z hz).ne')
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem logRatio_torusSmul {A A' : HermLine ι} (ha : A.a = A'.a) (c : K → ℂ) (hc : ∀ k, c k ≠ 0)
     {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) :
     logRatio A A' (torusSmul c z) = logRatio A A' z := by
@@ -49,8 +54,8 @@ variable {P : Ideal (MRing ι)} {d : ℕ}
 
 def descend (M : CxModel P d) (v : ((Σ k, ι k) → ℂ) → ℝ) (x : M.Xc) : ℝ := v (M.surj x).choose
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem descend_proj (M : CxModel P d) {v : ((Σ k, ι k) → ℂ) → ℝ}
     (hv : ∀ c : K → ℂ, (∀ k, c k ≠ 0) → ∀ z ∈ mcPts P, v (torusSmul c z) = v z)
     {z : (Σ k, ι k) → ℂ} (hz : z ∈ mcPts P) : descend M v (M.proj z) = v z := by
@@ -126,16 +131,16 @@ variable {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {Ω : Type} [Field �
   {E : Ψ → Type} [∀ τ, AddCommGroup (E τ)] [∀ τ, Module Ω (E τ)]
   {D : ComponentData II Ψ K ι Ω E} {O Lt : Type} [CommRing O] [AddCommGroup Lt] [Module O Lt]
 
-open Classical in
 
+open Classical in
 def uFn (X : ComponentSetting D O Lt) (x : X.M.Xc) : ℝ :=
   X.S'.B.ph x + descend X.M (logRatio X.S'.ref X.S.ref) x - X.S.R.Yo.piecewise X.S.R.ph (fun _ => 0) x
 
 theorem ref_deg_eq (X : ComponentSetting D O Lt) : X.S'.ref.a = X.S.ref.a :=
   X.S'.ref_deg.trans X.S.ref_deg.symm
 
-open Classical in
 
+open Classical in
 theorem measurable_uFn (X : ComponentSetting D O Lt) : @Measurable X.M.Xc ℝ (borel X.M.Xc) _ (uFn X) := by
   let _ : MeasurableSpace X.M.Xc := borel X.M.Xc
   have _ : BorelSpace X.M.Xc := ⟨rfl⟩
@@ -144,8 +149,8 @@ theorem measurable_uFn (X : ComponentSetting D O Lt) : @Measurable X.M.Xc ℝ (b
   exact ContinuousOn.measurable_piecewise (continuousOn_ph X.S.R) continuousOn_const
     X.S.R.isOpen_Yo.measurableSet
 
-open Classical in
 
+open Classical in
 theorem uFn_bound (X : ComponentSetting D O Lt) :
     ∃ C C' : ℝ, ∀ x ∈ X.S.R.Yo, |uFn X x| ≤ C + C' * Real.log (X.S.R.r x) := by
   obtain ⟨CB, hCB⟩ := X.S'.B.bdd
@@ -171,8 +176,8 @@ theorem uFn_bound (X : ComponentSetting D O Lt) :
   rw [abs_le] at h1 h2 ⊢
   constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
 
-open Classical in
 
+open Classical in
 theorem cuspWeight_eq (X : ComponentSetting D O Lt) {z : (Σ k, ι k) → ℂ} (hz : z ∈ mcPts (mCoordIdeal D.y))
     (hzb : z ∉ D.Bd) (hY : X.M.proj z ∈ X.S.R.Yo) : X.Cd.cuspWeight z / 2 = uFn X (X.M.proj z) := by
   have hXo : z ∈ D.Xo ∩ mcPts (mCoordIdeal D.y) := ⟨⟨hz, hzb⟩, hz⟩

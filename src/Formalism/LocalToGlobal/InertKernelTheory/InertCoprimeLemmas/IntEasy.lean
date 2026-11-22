@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsInt
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem ie_atLog_hasSubst (lam : Qbar →+* ℂ_[p]) (Λ : AddSubgroup ℂ)
       PowerSeries.subst (MvPowerSeries.X i) (flog (C • wModel lam Λ) wq)) := by
   apply MvPowerSeries.hasSubst_of_constantCoeff_zero
   intro k
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [map_mul, PowerSeries.constantCoeff_subst_eq_zero (MvPowerSeries.constantCoeff_X i) _ (ie_flog_const _ _),
     mul_zero]
@@ -39,7 +44,8 @@ theorem ie_atLog_comb (lam : Qbar →+* ℂ_[p]) (Λ : AddSubgroup ℂ)
   rw [e]
   unfold atLog
   dsimp only
-  rw [← MvPowerSeries.substAlgHom_apply ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.substAlgHom_apply ha, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, MvPowerSeries.substAlgHom_apply]
 
@@ -48,7 +54,8 @@ end Comb
 theorem combination_fact : CombFact := by
   intro D T p _ lam N N' L L' m r F hr hF C wq rr b hC hW hb ho n
   rw [ie_atLog_comb, Finset.sum_mul]
-  simp only [smul_mul_assoc, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [smul_mul_assoc, map_sum, map_smul, smul_eq_mul]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun k _ => ?_
   rw [norm_mul]
   exact mul_le_one₀ (hr k) (norm_nonneg _) (hF k C wq rr b hC hW hb ho n)
@@ -84,7 +91,8 @@ theorem ie_lamC_sum (lam : Qbar →+* ℂ_[p]) {m : ℕ} (f : Fin m → ℂ) (h 
     lamC lam (∑ k, f k) = ∑ k, lamC lam (f k) := by
   rw [ie_lamC_of_mem lam (sum_mem fun k _ => h k)]
   simp only [ie_lamC_of_mem lam (h _)]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   ext
   simp
@@ -95,7 +103,8 @@ theorem power_series_linearity : PSerLin := by
   intro D p _ lam N N' m c G hc hG
   have hsm : ∀ k (n : ℕ), ContDiff ℂ n (G k) := fun k n => ie_smooth (hG k).1 n
   ext α
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [← Algebra.smul_def, map_smul, smul_eq_mul]
   show lamC lam (taylor D (fun z => ∑ k, c k * G k z) α) = ∑ k, lamC lam (c k) * lamC lam (taylor D (G k) α)
   rw [ie_taylor_lin c G hsm α, ie_lamC_sum lam _ fun k => mul_mem (hc k) ((hG k).2 α)]
@@ -255,11 +264,11 @@ theorem ie_La_scale (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {M₁ M₂ : Submodu
     {M₁' M₂' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)} (s s' : ℕ)
     (h1 : ∀ x ∈ M₂, (s : D.host.E) • x ∈ M₁) (h2 : ∀ y ∈ M₁', (s' : D.host.E) • y ∈ M₂') :
     La D (tor0 D cc δ) M₁ M₁' ≤
-      (La D (tor0 D cc δ) M₂ M₂').comap (DistribMulAction.toAddMonoidHom (VC D N N') (s * s')) := by
+      (La D (tor0 D cc δ) M₂ M₂').comap (DistribSMul.toAddMonoidHom (VC D N N') (s * s')) := by
   unfold La
   rw [AddSubgroup.closure_le]
   rintro z ⟨w, hw, A, hA, rfl⟩
-  simp only [SetLike.mem_coe, AddSubgroup.mem_comap, DistribMulAction.toAddMonoidHom_apply]
+  simp only [SetLike.mem_coe, AddSubgroup.mem_comap, DistribSMul.toAddMonoidHom_apply]
   rw [smul_comm, ie_embV_nsmul]
   exact AddSubgroup.subset_closure ⟨w, hw, _, ie_yy_scale s s' h1 h2 hA, rfl⟩
 
@@ -267,22 +276,22 @@ end Pair
 
 theorem pairing_fact : PairFact := by
   intro D cc δ p _ N N' L L₁ L' L₁' ⟨s, hs, hs1, hs2⟩ ⟨s', hs', hs1', hs2'⟩
-  have hss : Nat.Coprime (s * s') p := Nat.Coprime.mul hs hs'
+  have hss : Nat.Coprime (s * s') p := Nat.Coprime.mul_left hs hs'
   refine ⟨fun r b ⟨hli, hb1, hb2⟩ => ⟨hli, fun i => ?_, fun y hy => ?_⟩, fun t ⟨n, hn, hc, hm⟩ => ?_⟩
   · obtain ⟨s0, hc0, hm0⟩ := hb1 i
-    refine ⟨(s * s') * s0, Nat.Coprime.mul hss hc0, ?_⟩
+    refine ⟨(s * s') * s0, Nat.Coprime.mul_left hss hc0, ?_⟩
     rw [Nat.cast_mul, mul_smul]
     exact ie_yy_scale s s' hs2 hs1' hm0
   · obtain ⟨s1, hc1, c, hcs⟩ := hb2 _ (ie_yy_scale s s' hs1 hs2' hy)
-    refine ⟨s1 * (s * s'), Nat.Coprime.mul hc1 hss, c, ?_⟩
+    refine ⟨s1 * (s * s'), Nat.Coprime.mul_left hc1 hss, c, ?_⟩
     rw [Nat.cast_mul, mul_smul]
     exact hcs
   · have hp : p ≠ 1 := (Fact.out : p.Prime).one_lt.ne'
     have hs0 : 0 < s := Nat.pos_of_ne_zero fun h => hp (Nat.coprime_zero_left p |>.1 (h ▸ hs))
     have hs0' : 0 < s' := Nat.pos_of_ne_zero fun h => hp (Nat.coprime_zero_left p |>.1 (h ▸ hs'))
-    refine ⟨(s * s') * n, Nat.mul_pos (Nat.mul_pos hs0 hs0') hn, Nat.Coprime.mul hss hc, ?_⟩
+    refine ⟨(s * s') * n, Nat.mul_pos (Nat.mul_pos hs0 hs0') hn, Nat.Coprime.mul_left hss hc, ?_⟩
     have h := ie_La_scale cc δ s s' hs2 hs1' hm
-    rw [AddSubgroup.mem_comap, DistribMulAction.toAddMonoidHom_apply, ← mul_smul] at h
+    rw [AddSubgroup.mem_comap, DistribSMul.toAddMonoidHom_apply, ← mul_smul] at h
     exact h
 
 end Formalism.L2.KerInert

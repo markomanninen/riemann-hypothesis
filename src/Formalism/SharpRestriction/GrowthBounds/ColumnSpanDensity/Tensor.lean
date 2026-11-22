@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FactorsLEOfIndex
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankTensor
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.InvariantSectionsTransportGL
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FactorsLEOfIndex
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankTensor
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.InvariantSectionsTransportGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ namespace Formalism.MainNotions.flipOneThree.Pf
 open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree Formalism.MainNotions.G.LatticeSystems Formalism.GradedWeylDivisibility MvPolynomial
 
 theorem tn_const {A : Type} [CommRing A] (r n : ℕ) (f : MvPolynomial (Fin r × Fin n) A)
-    (hf : f ∈ dualWeyl A r n 0) : f = C (coeff 0 f) := by
+    (hf : f ∈ dualWeyl A r n 0) : f = C (AddMonoidAlgebra.coeff f 0) := by
   have hf' := (Submodule.mem_inf.mp hf).1
   rw [mem_weightedHomogeneousSubmodule] at hf'
   have hw : ∀ v : Fin r × Fin n, colW r n v ≠ 0 := by
@@ -47,7 +51,8 @@ private theorem rowAct_invariant_zero_weight_iff {K : Type} [CommRing K] {r n : 
   have e : (rowAct K (n := n) g).comp (rowAct K h) = rowAct K (h * g) := by
     apply MvPolynomial.algHom_ext
     intro v
-    simp only [rowAct, AlgHom.comp_apply, aeval_X, map_sum, map_mul, aeval_C, Matrix.mul_apply, C_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [rowAct, AlgHom.comp_apply, aeval_X, map_sum, map_mul, aeval_C, Matrix.mul_apply, C_mul,
       Finset.mul_sum, Finset.sum_mul, algebraMap_eq, mul_assoc]
     exact Finset.sum_comm
   exact AlgHom.congr_fun e F
@@ -66,7 +71,7 @@ theorem invariant_sections_zero_weight_iff {O Kf : Type} [CommRing O] [Field Kf]
     obtain ⟨g, hg, hΛg⟩ := hΛ
     obtain ⟨y, hy, hyF⟩ := h g hg.ne_zero hΛg
     rw [tn_const (m + 1) (m + 1) y hy, map_C] at hyF
-    refine ⟨coeff 0 y, ?_⟩
+    refine ⟨AddMonoidAlgebra.coeff y 0, ?_⟩
     have h1 : F = rowAct Kf g⁻¹ (rowAct Kf g F) := by
       rw [rowAct_invariant_zero_weight_iff, Matrix.mul_nonsing_inv g hg, tn_rowAct_one]
     rw [h1, ← hyF, tn_rowAct_C]
@@ -236,8 +241,8 @@ open TensorProduct
 
 variable {Kf : Type} [Field Kf] {n' m : ℕ} (TT : Finset (Fin n'))
 
-open Classical in
 
+open Classical in
 def tnDelta : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf →ₐ[Kf]
     MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf ⊗[Kf] MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf :=
   aeval fun v => if v.1 ∈ TT then (X v) ⊗ₜ 1 else 1 ⊗ₜ (X v)
@@ -289,7 +294,7 @@ theorem tnDelta_on (lam1 : Fin n' → Fin (m + 1) → ℤ) (hDom : IsDominant la
       rw [tn_const _ _ _ hFs, tn_blockEmb_C, AlgHom.commutes, AlgHom.commutes]
     · exact h1 _
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | smul a x _ hx => rw [map_smul, map_smul, hx]
 
 end Nu
@@ -304,7 +309,7 @@ theorem tn_finrank_zero (Kf : Type) [Field Kf] (k n : ℕ) : Module.finrank Kf (
     rw [Submodule.mem_span_singleton]
     constructor
     · intro hf
-      refine ⟨coeff 0 f, ?_⟩
+      refine ⟨AddMonoidAlgebra.coeff f 0, ?_⟩
       conv_rhs => rw [tn_const k n f hf]
       rw [smul_eq_C_mul, mul_one]
     · rintro ⟨a, rfl⟩

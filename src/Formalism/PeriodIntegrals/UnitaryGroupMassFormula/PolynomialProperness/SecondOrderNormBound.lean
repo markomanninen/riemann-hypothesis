@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.NsqMulVecLe
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.NsqMulVecLe
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt.C2
 
@@ -35,7 +39,7 @@ theorem ut_entry_eq_det {m : ℕ} {L U : Matrix (Fin m) (Fin m) ℂ} (hL : L ∈
   have hfac : (L * U).submatrix (rws i) (cls i j) =
       L.submatrix (rws i) (rws i) * U.submatrix (rws i) (cls i j) := by
     ext a b
-    simp only [submatrix_apply, mul_apply]
+    simp only [submatrix_apply, Matrix.mul_apply]
     refine sum_castLE (Nat.succ_le_of_lt i.isLt) _ fun l hl => ?_
     have h0 : L (rws i a) l = 0 := hL.1 _ _ (by rw [Fin.lt_def, rws_val]; omega)
     rw [h0, zero_mul]
@@ -122,7 +126,7 @@ theorem isUnit_det_monomialMatrix' {m : ℕ} (w : Equiv.Perm (Fin m)) (d : Fin m
     IsUnit (monoP w d).det := by
   have hQ : monoP w d * monoP w.symm (fun j => (d (w.symm j))⁻¹) = 1 := by
     ext i j
-    simp only [monoP, mul_apply, of_apply, one_apply]
+    simp only [Matrix.mul_apply, monoP, of_apply, Matrix.one_apply]
     rw [Finset.sum_eq_single (w.symm j)]
     · simp only [if_true, Equiv.apply_symm_apply]
       split_ifs with h
@@ -214,9 +218,9 @@ end PI.PolynomialProperness.CB
 
 namespace PI.PolynomialProperness
 
-open CB in
 
-theorem second_order_norm_bound : MonomialFactorizationBound := by
+open CB in
+theorem second_order_norm_bound : MonomialFactorizationBound := open CB in by
   intro m P hP
   obtain ⟨w, d, hd, hPeq⟩ := hP
   have hPu : IsUnit P.det := by rw [hPeq]; exact isUnit_det_monomialMatrix' w d hd

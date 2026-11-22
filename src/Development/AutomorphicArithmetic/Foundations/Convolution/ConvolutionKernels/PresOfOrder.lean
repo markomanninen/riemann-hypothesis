@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -15,7 +19,8 @@ theorem UpperTheory.ConvolutionTheory.K.presOfOrder :
     induction k with
     | zero => simp
     | succ k ih =>
-      rw [Function.iterate_succ', ← Measure.map_map hme (hme.iterate k), ih, Measure.map_smul, hc, smul_smul, pow_succ]
+      rw [Function.iterate_succ', ← Measure.map_map hme (hme.iterate k), ih,
+        Measure.map_smul _ hme.aemeasurable, hc, smul_smul, pow_succ]
   have h1 : μ = c ^ m • μ := by
     rw [← hit m, show (⇑e)^[m] = id from funext he, Measure.map_id]
   obtain ⟨K⟩ : Nonempty (TopologicalSpace.PositiveCompacts G) := inferInstance

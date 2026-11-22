@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.RestrictedHopfOrderApproximationStatement
-import ReciprocityTheory.DualLattices.MemAugIdeal
-import ReciprocityTheory.DualLattices.ExistsMatOfEquiv
+module
+
+public import ReciprocityTheory.DualLattices.RestrictedHopfOrderApproximationStatement
+public import ReciprocityTheory.DualLattices.MemAugIdeal
+public import ReciprocityTheory.DualLattices.ExistsMatOfEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ private theorem red_surj {p : ℕ} [Fact p.Prime] {g : ℕ} (n : Nb p g) : ∃ t
 private theorem red_mulVec {p : ℕ} [Fact p.Prime] {g : ℕ} (M : Matrix (Ix g) (Ix g) ℤ_[p])
     (t : TT p g) : red p g (M *ᵥ t) = M.map PadicInt.toZMod *ᵥ red p g t := by
   funext i
-  simp [red, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [red, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem restrict_hopfOrder_length : RestrictedHopfOrderStatement := by
   intro p _ g C _ _ _ v R _ _ _ O _ _ σ cp hS H a ha r Bw hrange hkerB d hd

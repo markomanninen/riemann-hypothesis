@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -30,8 +35,8 @@ theorem exists_one_tmul_add_smul (l : ℕ) [Fact l.Prime] (H : Type) [AddCommGro
 
 end GlobalTheory.LatticeModL
 
-open GlobalTheory.LatticeModL in
 
+open GlobalTheory.LatticeModL in
 theorem GlobalTheory.latticeMap_liftBaseChange_injective_saturated :
     ∀ (l : ℕ) [Fact l.Prime] (H T : Type) [AddCommGroup H] [Module.Finite ℤ H] [Module.Free ℤ H]
       [AddCommGroup T] [Module ℤ_[l] T], (∀ t : T, (l : ℤ_[l]) • t = 0 → t = 0) →
@@ -47,7 +52,7 @@ theorem GlobalTheory.latticeMap_liftBaseChange_injective_saturated :
       ∃ x', x = (l : ℤ_[l]) • x' := by
     intro x t hx
     obtain ⟨h, y, rfl⟩ := exists_one_tmul_add_smul l H x
-    rw [map_add, map_smul, hF] at hx
+    rw [map_add (f := _), map_smul, hF] at hx
     have h1 : φ h = (l : ℤ_[l]) • (t - F y) := by rw [smul_sub, ← hx]; abel
     obtain ⟨h', rfl⟩ := hsat h _ h1
     refine ⟨(1 : ℤ_[l]) ⊗ₜ h' + y, ?_⟩

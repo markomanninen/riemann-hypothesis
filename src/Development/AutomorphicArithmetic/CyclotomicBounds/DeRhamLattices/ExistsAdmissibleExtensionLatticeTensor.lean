@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActExtLApply
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsAdmissibleLatticeMatrixOfPeriodData
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TmulSurjectiveRankOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActExtLApply
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsAdmissibleLatticeMatrixOfPeriodData
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TmulSurjectiveRankOne
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations TensorProduct UpperTheory.KN
 
 private theorem twisted_matrix_mulVec_base_change {G O LL : Type} [Group G] [CommRing O] [Field LL] [Algebra O LL] {n : ℕ}
@@ -76,7 +81,7 @@ theorem _root_.UpperTheory.KN.exists_admissible_extension_latticeTensor :
   have hq0a : ∀ g u, q0 (actA g u) = tableLineDegreeTwo.actExt L X χ z g (q0 u) := by
     intro g u
     rw [hq0, hq0]
-    simp only [actA, tableLineDegreeTwo.actExt, map_add, map_smul, hφ, ← hz, tableLineDegreeTwo.actTw, LinearMap.smul_apply, smul_smul,
+    simp only [actA, tableLineDegreeTwo.actExt, map_add (f := _), map_smul, hφ, ← hz, tableLineDegreeTwo.actTw, LinearMap.smul_apply, smul_smul,
       Units.mul_inv, one_smul, LinearMap.rTensor_tmul]
     refine Prod.ext ?_ rfl
     simp only

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrreducibleComponentsClopenPartition
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsThetaCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrreducibleComponentsClopenPartition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsThetaCompact
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.SiegelTor
 set_option maxHeartbeats 1000000 in

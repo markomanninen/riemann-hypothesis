@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidCoords
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExtId
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToUnitTKLeft
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidCoords
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExtId
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToUnitTKLeft
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -135,7 +139,7 @@ theorem main : ∀ {o W : Type} [CommRing o] [CommRing W] [IsDomain W] [IsLocalR
       ktriv := D.P.ktriv
       r := Module.finrank ℤ D.X
       c₀ := fun a => D.c (ib.symm a)
-      c₀_add := fun a a' => by rw [map_add]; exact D.c_add _ _
+      c₀_add := fun a a' => by rw [map_add (f := _)]; exact D.c_add _ _
       τ₀ := fun a a' => τ (ib.symm a) (ib.symm a')
       τ₀_gen := fun a a' => hg _ _
       τ₀_symm := fun a a' => hs _ _

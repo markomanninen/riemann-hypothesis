@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg
 
@@ -10,7 +14,7 @@ theorem UpperTheory.not_prime_dvd_relIndex_ker_inducedUnitaryRep :
   have hp : l.Prime := Fact.out
   obtain ⟨n, -, hcard⟩ := FiniteField.card k l
   let φ : Γ →* kˣ × ℤˣ := Ψ.prod η
-  let ψ : kˣ × ℤˣ →* GG 3 k := r0 (MonoidHom.snd kˣ ℤˣ) (MonoidHom.fst kˣ ℤˣ)
+  let ψ : kˣ × ℤˣ →* GG (m := 3) (R := k) := r0 (MonoidHom.snd kˣ ℤˣ) (MonoidHom.fst kˣ ℤˣ)
   have hle : (φ.domRestrict I).ker ≤ ((r0 η Ψ).domRestrict I).ker := by
     intro g hg
     rw [MonoidHom.mem_ker] at hg ⊢

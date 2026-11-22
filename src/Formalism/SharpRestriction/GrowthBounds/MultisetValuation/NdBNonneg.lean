@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NdLszLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NdLszLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -240,7 +244,7 @@ theorem nd_fill_le (X : Formalism.MainNotions.G.Inst D L) (hS : Formalism.MainNo
     have ho := (X.off_top j (false, t) htop).2
     have hbl : ((Formalism.MainNotions.G.bL L t : ℤ) : ℝ) ≤ 5 / 4 * L.sc.a := by
       unfold Formalism.MainNotions.G.bL
-      rw [dif_pos ht]
+      rw [dite_eq_left ht]
       exact nd_bT_le hS ⟨t, ht⟩
     have hbx : L.sc.b' / L.sc.x ≤ L.sc.b' := div_le_self hb'0 hx
     linarith
@@ -271,7 +275,7 @@ theorem nd_size : nd_NeedSize := by
       push_cast at h3
       have h4 : (Formalism.MainNotions.G.aL L (t0 + s.val • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w)) : ℝ) ≤ 2 * L.sc.a := by
         unfold Formalism.MainNotions.G.aL
-        rw [dif_pos (hTT.1 hsT)]
+        rw [dite_eq_left (hTT.1 hsT)]
         exact nd_aT_le _
       nlinarith
     · unfold al

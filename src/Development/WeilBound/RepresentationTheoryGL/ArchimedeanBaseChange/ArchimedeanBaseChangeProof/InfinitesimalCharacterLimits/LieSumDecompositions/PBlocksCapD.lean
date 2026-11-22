@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksCapC
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksCapC
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.
 
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.BlockCapelli
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ}
 
 theorem decomp_G (G : Sm E (r + s))
     (hu : ∀ (x : BlockIx (r + s) r → Ad E) (g : GA E (r + s)), G.1 (unip x * g) = G.1 g)
@@ -110,7 +114,8 @@ theorem decomp_G (G : Sm E (r + s))
     refine Subtype.ext (funext fun y => ?_)
     have k2 := congrFun key (y, m₂)
     simp only [Pi.smul_apply, smul_eq_mul] at k2
-    simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     rw [Finset.mul_sum]
     simp only [mul_comm ((ψ₂ _).1 m₂)] at k2 ⊢
     rw [k2, Finset.mul_sum]
@@ -125,7 +130,8 @@ theorem decomp_G (G : Sm E (r + s))
     refine Subtype.ext (funext fun y => ?_)
     have k2 := congrFun key (m₁, y)
     simp only [Pi.smul_apply, smul_eq_mul] at k2
-    simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     rw [k2, Finset.mul_sum]
 
 end PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.BlockCapelli

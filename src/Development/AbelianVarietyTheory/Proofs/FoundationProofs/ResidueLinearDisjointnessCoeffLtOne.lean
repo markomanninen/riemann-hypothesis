@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGaloisInvariantValuationIntegersEqIntegral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LaurentSeriesPadicExistsPthPowerCombination
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGaloisInvariantValuationIntegersEqIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LaurentSeriesPadicExistsPthPowerCombination
+
+@[expose] public section
+
 open scoped MatrixGroups NNReal
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois
 
@@ -116,7 +121,6 @@ theorem exists_pow_eq {k : Type} [Field k] [Algebra (ZMod p) k] {ι : Type} [Fin
   exact congrArg Subtype.val this
 
 open Polynomial in
-
 theorem exists_prim (P : ℤ_[p][X]) (hP : P ≠ 0) :
     ∃ (c : ℤ_[p]) (Q : ℤ_[p][X]), c ≠ 0 ∧ P = C c * Q ∧ Q.map (PadicInt.toZMod (p := p)) ≠ 0 := by
   classical
@@ -131,7 +135,13 @@ theorem exists_prim (P : ℤ_[p][X]) (hP : P ≠ 0) :
       Ideal.mem_span_singleton] at this
   exact PadicInt.prime_p.not_unit (isPrimitive_primPart P (p : ℤ_[p]) ((C_dvd_iff_dvd_coeff _ _).2 hd))
 
-theorem coeff_lt_one : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω → ∀ (v : Valuation Ω ℝ≥0), (∀ x : Ω, v x ≤ 1 ↔ IsInt p x) → v (p : Ω) < 1 → ∀ (T : GlobalTheory.K5.Tower p Ω) (n : ℕ) (ψ : O0 p →+* Ω), IsReb T n ψ → ∀ (d : ℕ) (e : Fin d → Ω) (a : Fin d → Lau p), (∀ t, IsInt p (e t) ∧ IsAlgZp p (e t)) → v (∑ t, e t * ψ (algebraMap (Lau p) (O0 p) (a t))) < 1 → ∀ r : ℤ, v (∑ t, e t * zp Ω ((a t).coeff r)) < 1 := by
+theorem coeff_lt_one : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω],
+    IsClo p Ω → ∀ (v : Valuation Ω ℝ≥0), (∀ x : Ω, v x ≤ 1 ↔ IsInt (p := p) x) →
+    v (p : Ω) < 1 → ∀ (T : GlobalTheory.K5.Tower p Ω) (n : ℕ) (ψ : O0 p →+* Ω), IsReb T n ψ →
+    ∀ (d : ℕ) (e : Fin d → Ω) (a : Fin d → Lau p),
+    (∀ t, IsInt (p := p) (e t) ∧ IsAlgZp (p := p) (e t)) →
+    v (∑ t, e t * ψ (algebraMap (Lau p) (O0 p) (a t))) < 1 →
+    ∀ r : ℤ, v (∑ t, e t * zp Ω ((a t).coeff r)) < 1 := by
   intro p hp Ω _ _ hC v hv hvp T n ψ hψ d e a he hsum r
   have hq : p ^ n ≠ 0 := pow_ne_zero _ hp.out.ne_zero
   have hqq : IsIntegral (O0 p) (T.qq n) :=
@@ -214,12 +224,14 @@ theorem coeff_lt_one : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Alge
     exact (hCz z).symm
   obtain ⟨f, hf, hfix⟩ := exists_pow_eq _ halg
   have hrel : ∑ t, ρ (E t) * φ (LauZ.red p (a t)) = 0 := by
-    simp only [hφ, ← map_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hφ, ← map_mul, ← map_sum]
     rw [hρ]
     convert hsum using 2
     exact map_sum A.subtype _ _
   have hres := coeff_rel_of_pow φ hf _ hfix Finset.univ _ (fun t ht => absurd (Finset.mem_univ t) ht) hrel r
-  simp only [LauZ.red_coeff, ← hCz, ← map_mul, ← map_sum] at hres
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LauZ.red_coeff, ← hCz, ← map_mul, ← map_sum] at hres
   rw [hρ] at hres
   convert hres using 2
   refine Eq.trans ?_ (map_sum A.subtype _ _).symm

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -164,8 +168,6 @@ def succMin (L : Submodule ℤ E) (i : ℕ) : ℝ := succMinOf ℝ (fun x : E =>
 
 def minNorm (L : Submodule ℤ E) : ℝ := succMin L 1
 
-def lastMin (L : Submodule ℤ E) : ℝ := succMin L (finrank ℝ (span ℝ (L : Set E)))
-
 variable {L L' : Submodule ℤ E} {i j : ℕ} {r : ℝ}
 
 theorem finrank_span_eq_finrank_int [FiniteDimensional ℝ E] (L : Submodule ℤ E)
@@ -177,10 +179,6 @@ theorem finrank_span_eq_finrank_int [FiniteDimensional ℝ E] (L : Submodule ℤ
 theorem finrank_span_of_isZLattice (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice ℝ L] :
     finrank ℝ (span ℝ (L : Set E)) = finrank ℝ E := by
   rw [IsZLattice.span_top, finrank_top]
-
-theorem lastMin_eq_succMin_finrank_int [FiniteDimensional ℝ E] (L : Submodule ℤ E)
-    [DiscreteTopology L] : lastMin L = succMin L (finrank ℤ L) := by
-  rw [lastMin, finrank_span_eq_finrank_int]
 
 theorem natCast_le_rank_of_le_finrank {K W : Type*} [DivisionRing K] [AddCommGroup W] [Module K W]
     (h : i ≤ finrank K W) : (i : Cardinal) ≤ Module.rank K W :=
@@ -201,8 +199,6 @@ theorem finite_mem_and_norm_le [FiniteDimensional ℝ E] (L : Submodule ℤ E) [
   exact h.subset fun x hx => ⟨mem_closedBall_zero_iff.2 hx.2, hx.1⟩
 
 theorem succMin_nonneg (L : Submodule ℤ E) (i : ℕ) : 0 ≤ succMin L i := succMinOf_nonneg
-
-@[simp] theorem succMin_zero (L : Submodule ℤ E) : succMin L 0 = 0 := succMinOf_zero
 
 theorem exists_linearIndependent_norm_le_succMin [FiniteDimensional ℝ E] [DiscreteTopology L]
     (hi : i ≤ finrank ℝ (span ℝ (L : Set E))) :
@@ -247,8 +243,6 @@ theorem succMin_comap_linearIsometry (f : F →ₗᵢ[ℝ] E) (h : (L : Set E) �
 def inSpan (L : Submodule ℤ E) : Submodule ℤ (span ℝ (L : Set E)) :=
   ZLattice.comap ℝ L (span ℝ (L : Set E)).subtype
 
-@[simp] theorem mem_inSpan {x : span ℝ (L : Set E)} : x ∈ inSpan L ↔ (x : E) ∈ L := Iff.rfl
-
 instance instDiscreteTopologyInSpan [DiscreteTopology L] : DiscreteTopology (inSpan L) :=
   ZLattice.comap_discreteTopology ℝ L continuous_subtype_val (injective_subtype _)
 
@@ -258,10 +252,6 @@ instance instIsZLatticeInSpan [DiscreteTopology L] : IsZLattice ℝ (inSpan L) :
 theorem succMin_inSpan (L : Submodule ℤ E) (i : ℕ) : succMin (inSpan L) i = succMin L i :=
   succMin_comap_linearIsometry (span ℝ (L : Set E)).subtypeₗᵢ
     (fun x hx => ⟨⟨x, subset_span hx⟩, rfl⟩) i
-
-theorem lastMin_inSpan (L : Submodule ℤ E) : lastMin (inSpan L) = lastMin L := by
-  have h : span ℝ (inSpan L : Set (span ℝ (L : Set E))) = ⊤ := span_span_coe_preimage
-  rw [lastMin, succMin_inSpan, h, finrank_top, lastMin]
 
 theorem smul_eq_map (c : ℝ) (L : Submodule ℤ E) :
     c • L = L.map ((c • LinearMap.id : E →ₗ[ℝ] E).restrictScalars ℤ) := rfl
@@ -280,20 +270,6 @@ theorem succMin_smul {c : ℝ} (hc : c ≠ 0) (L : Submodule ℤ E) (i : ℕ) :
 
 theorem minNorm_smul {c : ℝ} (hc : c ≠ 0) (L : Submodule ℤ E) :
     minNorm (c • L) = |c| * minNorm L := succMin_smul hc L 1
-
-def coveringRadius (L : Submodule ℤ E) : ℝ := ⨆ x : E, Metric.infDist x (L : Set E)
-
-theorem exists_norm_sub_eq_infDist [FiniteDimensional ℝ E] (L : Submodule ℤ E)
-    [DiscreteTopology L] (x : E) : ∃ w ∈ L, ‖x - w‖ = Metric.infDist x (L : Set E) := by
-  have : DiscreteTopology L.toAddSubgroup := (inferInstance : DiscreteTopology L)
-  have hc : IsClosed (L.toAddSubgroup : Set E) := inferInstance
-  obtain ⟨w, hw, h⟩ := hc.exists_infDist_eq_dist ⟨0, L.zero_mem⟩ x
-  exact ⟨w, hw, by rw [← dist_eq_norm]; exact h.symm⟩
-
-theorem coveringRadius_le (h : ∀ x : E, ∃ w ∈ L, ‖x - w‖ ≤ r) : coveringRadius L ≤ r :=
-  ciSup_le fun x => by
-    obtain ⟨w, hw, h⟩ := h x
-    exact (Metric.infDist_le_dist_of_mem hw).trans (by rwa [dist_eq_norm])
 
 end Normed
 
@@ -350,18 +326,6 @@ instance instDiscreteTopologyDualLattice : DiscreteTopology (dualLattice L) := b
   rw [dualLattice_eq_span L (Free.chooseBasis ℤ L)]
   infer_instance
 
-instance instIsZLatticeDualLattice : IsZLattice ℝ (dualLattice L) where
-  span_top := by
-    classical
-    rw [dualLattice_eq_span L (Free.chooseBasis ℤ L)]
-    exact ZSpan.span_top _
-
-@[simp] theorem dualLattice_dualLattice : dualLattice (dualLattice L) = L := by
-  have := LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_basis (R := ℤ) (innerₗ E)
-    (innerₗ_nondegenerate E) ⟨fun x y => real_inner_comm y x⟩
-    ((Free.chooseBasis ℤ L).ofZLatticeBasis ℝ L)
-  rwa [Basis.ofZLatticeBasis_span] at this
-
 theorem det_mul_det_innerDualBasis {ι : Type*} [Fintype ι] [DecidableEq ι]
     (o : OrthonormalBasis ι ℝ E) (b : Basis ι ℝ E) :
     o.toBasis.det b * o.toBasis.det (innerDualBasis b) = 1 := by
@@ -411,98 +375,16 @@ variable {V : Type*} [AddCommGroup V] [Module ℝ V]
 def succMinQuad (Q : QuadraticForm ℝ V) (L : Submodule ℤ V) (i : ℕ) : ℝ :=
   succMinOf ℝ (fun x => √(Q x)) (L : Set V) i
 
-def minNormQuad (Q : QuadraticForm ℝ V) (L : Submodule ℤ V) : ℝ := succMinQuad Q L 1
-
-def lastMinQuad (Q : QuadraticForm ℝ V) (L : Submodule ℤ V) : ℝ :=
-  succMinQuad Q L (finrank ℝ (span ℝ (L : Set V)))
-
 def QuadSpace (Q : QuadraticForm ℝ V) (_hQ : Q.PosDef) : Type _ := V
 
 namespace QuadSpace
 
 variable (Q : QuadraticForm ℝ V) (hQ : Q.PosDef)
 
-instance instAddCommGroup : AddCommGroup (QuadSpace Q hQ) := inferInstanceAs (AddCommGroup V)
-
-instance instModule : Module ℝ (QuadSpace Q hQ) := inferInstanceAs (Module ℝ V)
-
-@[reducible] def core : InnerProductSpace.Core ℝ (QuadSpace Q hQ) where
-  inner x y := QuadraticMap.associated (R := ℝ) Q (show V from x) (show V from y)
-  conj_inner_symm x y := (QuadraticMap.associated_isSymm ℝ Q _ _)
-  re_inner_nonneg x := by
-    have := QuadraticMap.associated_eq_self_apply ℝ Q (show V from x)
-    exact (hQ.nonneg _).trans_eq this.symm
-  add_left x y z := LinearMap.map_add₂ _ _ _ _
-  smul_left x y r := LinearMap.map_smul₂ _ _ _ _
-  definite x h := by
-    have := QuadraticMap.associated_eq_self_apply ℝ Q (show V from x)
-    exact hQ.anisotropic _ (this.symm.trans h)
-
-instance instNormedAddCommGroup : NormedAddCommGroup (QuadSpace Q hQ) :=
-  InnerProductSpace.Core.toNormedAddCommGroup (cd := core Q hQ)
-
-instance instInnerProductSpace : InnerProductSpace ℝ (QuadSpace Q hQ) :=
-  InnerProductSpace.ofCore (core Q hQ).toCore
-
-def equiv : V ≃ₗ[ℝ] QuadSpace Q hQ := LinearEquiv.refl ℝ V
-
-instance instFiniteDimensional [FiniteDimensional ℝ V] : FiniteDimensional ℝ (QuadSpace Q hQ) :=
-  inferInstanceAs (FiniteDimensional ℝ V)
-
-instance instMeasurableSpace : MeasurableSpace (QuadSpace Q hQ) := borel _
-
-instance instBorelSpace : BorelSpace (QuadSpace Q hQ) := ⟨rfl⟩
-
-@[simp] theorem finrank_eq : finrank ℝ (QuadSpace Q hQ) = finrank ℝ V := rfl
-
-@[simp] theorem inner_equiv (x y : V) :
-    ⟪equiv Q hQ x, equiv Q hQ y⟫_ℝ = QuadraticMap.associated (R := ℝ) Q x y := rfl
-
-@[simp] theorem norm_equiv_sq (x : V) : ‖equiv Q hQ x‖ ^ 2 = Q x := by
-  rw [← real_inner_self_eq_norm_sq, inner_equiv]
-  exact QuadraticMap.associated_eq_self_apply ℝ Q x
-
-def lattice (L : Submodule ℤ V) : Submodule ℤ (QuadSpace Q hQ) :=
-  L.map ((equiv Q hQ).toLinearMap.restrictScalars ℤ)
-
-@[simp] theorem equiv_mem_lattice {L : Submodule ℤ V} {x : V} :
-    equiv Q hQ x ∈ lattice Q hQ L ↔ x ∈ L :=
-  ⟨fun ⟨_, hy, h⟩ => (equiv Q hQ).injective h ▸ hy, fun h => ⟨x, h, rfl⟩⟩
-
-theorem lattice_span_basis {ι : Type*} (b : Basis ι ℝ V) :
-    lattice Q hQ (span ℤ (Set.range b)) = span ℤ (Set.range (b.map (equiv Q hQ))) := by
-  rw [lattice, Submodule.map_span, ← Set.range_comp]; rfl
-
-instance instDiscreteTopologySpan {ι : Type*} [Finite ι] (b : Basis ι ℝ V) :
-    DiscreteTopology (lattice Q hQ (span ℤ (Set.range b))) := by
-  rw [lattice_span_basis]; infer_instance
-
-theorem isZLattice_lattice {L : Submodule ℤ V} [DiscreteTopology (lattice Q hQ L)]
-    (h : span ℝ (L : Set V) = ⊤) : IsZLattice ℝ (lattice Q hQ L) where
-  span_top := by
-    rw [lattice, Submodule.map_coe, LinearMap.coe_restrictScalars, ← Submodule.map_span, h,
-      Submodule.map_top, LinearEquiv.range]
-
-instance instIsZLatticeSpan {ι : Type*} [Finite ι] (b : Basis ι ℝ V) :
-    IsZLattice ℝ (lattice Q hQ (span ℤ (Set.range b))) :=
-  isZLattice_lattice Q hQ (by rw [span_span_of_tower]; exact b.span_eq)
-
 section Normed
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
   (Q : QuadraticForm ℝ E) (hQ : Q.PosDef) (L : Submodule ℤ E) [DiscreteTopology L]
-
-instance instDiscreteTopologyLattice : DiscreteTopology (lattice Q hQ L) := by
-  have : lattice Q hQ L = ZLattice.comap ℝ L (equiv Q hQ).symm.toLinearMap := by
-    ext y
-    obtain ⟨y, rfl⟩ := (equiv Q hQ).surjective y
-    rw [equiv_mem_lattice]; rfl
-  rw [this]
-  exact ZLattice.comap_discreteTopology ℝ L (LinearMap.continuous_of_finiteDimensional _)
-    (equiv Q hQ).symm.injective
-
-instance instIsZLatticeLattice [IsZLattice ℝ L] : IsZLattice ℝ (lattice Q hQ L) :=
-  isZLattice_lattice Q hQ IsZLattice.span_top
 
 end Normed
 
@@ -535,54 +417,6 @@ theorem dualLattice_one_real : dualLattice (1 : Submodule ℤ ℝ) = 1 := by
   · rintro ⟨m, rfl⟩ x hx
     obtain ⟨k, rfl⟩ := mem_one_real_iff.1 hx
     exact ⟨m * k, by simp⟩
-
-example : minNorm ((-3 : ℝ) • (1 : Submodule ℤ ℝ)) = 3 ∧
-    minNorm (dualLattice ((-3 : ℝ) • (1 : Submodule ℤ ℝ))) = 1 / 3 := by
-  rw [dualLattice_smul (by norm_num), dualLattice_one_real, minNorm_smul (by norm_num),
-    minNorm_smul (by norm_num), minNorm_one_real]
-  norm_num [abs_of_neg]
-
-example : succMinQuad ((QuadraticMap.sq : QuadraticForm ℝ ℝ).prod ((4 : ℝ) • QuadraticMap.sq))
-    ((1 : Submodule ℤ ℝ).prod 1) 2 = 2 := by
-  have h1 : (1 : ℝ) ∈ (1 : Submodule ℤ ℝ) := mem_one_real_iff.2 ⟨1, by simp⟩
-  have hli : LinearIndependent ℝ ![((1 : ℝ), (0 : ℝ)), (0, 1)] := by
-    rw [LinearIndependent.pair_iff]
-    intro s t h
-    simpa using h
-  have hmem : ∀ k, ![((1 : ℝ), (0 : ℝ)), (0, 1)] k ∈
-      (((1 : Submodule ℤ ℝ).prod (1 : Submodule ℤ ℝ) : Submodule ℤ (ℝ × ℝ)) : Set (ℝ × ℝ)) := by
-    intro k
-    fin_cases k
-    · exact ⟨h1, Submodule.zero_mem _⟩
-    · exact ⟨Submodule.zero_mem _, h1⟩
-  refine le_antisymm (succMinOf_le_of_linearIndependent hli (by simp) (by norm_num) hmem ?_)
-    (le_succMinOf (natCast_le_rank_span_iff.2 ⟨_, hli, hmem⟩) ?_)
-  · intro k
-    fin_cases k <;> simp [Real.sqrt_le_left] <;> norm_num
-  · intro r hr
-    obtain ⟨h0, v, hv, h⟩ := mem_succMinRadii_iff.1 hr
-    by_contra! hr2
-    have hz : ∀ k, (v k).2 = 0 := by
-      intro k
-      obtain ⟨m, hm⟩ := mem_one_real_iff.1 (h k).1.2
-      have h2 := (Real.sqrt_le_left h0).1 (h k).2
-      simp only [QuadraticMap.prod_apply, QuadraticMap.smul_apply, QuadraticMap.sq_apply,
-        smul_eq_mul, ← hm] at h2
-      have h3 : (m : ℝ) * m < 1 := by nlinarith [mul_self_nonneg (v k).1]
-      have h4 : m * m < 1 := by exact_mod_cast h3
-      have h5 : m = 0 := by nlinarith
-      rw [← hm, h5, Int.cast_zero]
-    have := Fintype.linearIndependent_iff.1 hv ![(v 1).1, -(v 0).1] (by
-      ext <;> simp [Fin.sum_univ_two, hz]
-      ring) 1
-    exact hv.ne_zero 0 (Prod.ext (by simpa using this) (hz 0))
-
-example (n : ℕ) :
-    let L := span ℤ (Set.range (EuclideanSpace.basisFun (Fin n) ℝ).toBasis)
-    IsZLattice ℝ (dualLattice L) ∧ ZLattice.covolume (dualLattice L) = 1 := by
-  refine ⟨inferInstance, ?_⟩
-  rw [covolume_dualLattice, covolume_span_basis (EuclideanSpace.basisFun (Fin n) ℝ),
-    Basis.det_self, abs_one, inv_one]
 
 end Examples
 

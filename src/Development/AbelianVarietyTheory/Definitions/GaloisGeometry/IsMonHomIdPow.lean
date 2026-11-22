@@ -1,7 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsHeckeMapLevRefl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ForgetIsHeckeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelPosOfCoprime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Subsingleton
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToRepFam
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToBaseChangePtsBijective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ForgetIsHeckeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtModelForgetFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelPosOfCoprime
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,32 +52,5 @@ theorem isMonHom_id_pow {S : Scheme.{0}} (A : Over S) [GrpObj A] [IsCommMonObj A
     exact inferInstanceAs (IsMonHom (lift (𝟙 A ^ n) (𝟙 A) ≫ μ[A]))
 
 variable {G : HTGroup p} (L : Link D G)
-
-theorem isIsogWit_mul {S : Scheme.{0}} {s : S ⟶ Sp R} {N : ℕ} (o : Obj b N s) (c : ℕ) (hc : c.Coprime p) :
-    IsIsogWit L 1 o o (𝟙 o.A ^ c) (𝟙 o.A ^ c) c (c * c) := by
-  haveI := isMonHom_id_pow o.A c
-  refine ⟨inferInstance, inferInstance, fun a => ?_, fun a => ?_, ?_, ?_, hc, Nat.Coprime.mul hc hc,
-    fun k _ _ t β ht => ?_⟩
-  · haveI := o.act.hom a
-    rw [comp_pow', pow_comp', Category.comp_id, Category.id_comp]
-  · haveI := o.act.hom a
-    rw [comp_pow', pow_comp', Category.comp_id, Category.id_comp]
-  · rw [comp_pow', Category.comp_id, ← pow_mul]
-  · rw [comp_pow', Category.comp_id, ← pow_mul]
-  obtain ⟨I, hI⟩ := o.geom k t β ht
-  refine ⟨I, I, hI, hI, fun n hn hnp x y => ?_⟩
-  have e1 : ((c : ℕ) : ℤ) • L.actG 1 (inAf D x) = ((1 : ℕ) : ℤ) • L.actG 1 (inAf D (c • x)) := by
-    simp only [map_one, Module.End.one_apply, Nat.cast_one, one_smul, natCast_zsmul]
-    change c • ForgetHecke.inAfHom D x = ForgetHecke.inAfHom D (c • x)
-    rw [map_nsmul]
-  show I.ev n x ≫ 𝟙 o.A ^ c = I.ev n y ↔ ∃ v ∈ LaHat D, ((c : ℕ) : ℤ) • L.actG 1 (inAf D x) = inAf D y + n • v
-  rw [e1, ForgetHecke.acts_one_iff L n hn hnp (c • x) y, comp_pow', Category.comp_id, ← TateIsoO.ev_nsmul,
-    ← I.ker n hn hnp (c • x - y)]
-  have hx : I.ev n (c • x) = I.ev n (c • x - y) * I.ev n y := by rw [← I.add, sub_add_cancel]
-  rw [hx, mul_eq_right]
-
-theorem isHeckeWit_mul {N : ℕ} (M : Model b N) (c : ℕ) (hc : c.Coprime p) :
-    IsHeckeWit L 1 M M (𝟙 M.X) M.univ (𝟙 _ ^ c) (𝟙 _ ^ c) c (c * c) (GlobalTheory.UPel.HT.EtLev.LevForget.idMap M.univ) :=
-  ⟨Category.id_comp _, isIsogWit_mul L M.univ c hc⟩
 
 end GlobalTheory.DrinLev.HT.MulModel

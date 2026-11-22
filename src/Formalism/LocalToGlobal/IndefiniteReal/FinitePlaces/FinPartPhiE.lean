@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemElt
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemElt
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ theorem tmul_eq (a : AF D.host.F) (w : D.host.E) :
   unfold inclR
   simp [Algebra.TensorProduct.tmul_mul_tmul]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem mul_e_of (v : HeightOneSpectrum (𝓞 D.host.F)) (e : AE D) (ι : D.host.E →ₐ[D.host.F] v.adicCompletion D.host.F)
     (hid : ∀ w : D.host.E, e * incA D w = e * phiE v (ι w)) (heps : e * phiE v 1 = e) :
     ∀ z : AE D, z * e = e * phiE v (compV v ι (finPart D z)) := by
@@ -60,10 +64,10 @@ theorem mul_e_of (v : HeightOneSpectrum (𝓞 D.host.F)) (e : AE D) (ι : D.host
   | add x y hx hy =>
     rw [add_mul, hx, hy, ← mul_add]
     congr 1
-    simp only [phiE, map_add]
+    simp only [phiE, map_add (f := _)]
+
 
 set_option maxHeartbeats 1000000 in
-
 theorem idem_data (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjPl (D := D) P P)
     (v : HeightOneSpectrum (𝓞 D.host.F))
     (hv : P.asIdeal.comap (algebraMap (𝓞 D.host.F) (𝓞 D.host.E)) = v.asIdeal) :
@@ -141,7 +145,7 @@ theorem idem_data (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjPl 
     linear_combination (phiE v y₀ * phiE v y₀) * hu + m x₀ x₀ + (2 * u) * m x₀ y₀ + (Tt * u - Nn) * m y₀ y₀ +
       u * sT (y₀ * y₀) - sN (y₀ * y₀) + g1 + u * g2
   have hce : cA D e = phiE v x₀ + phiE v y₀ * (Tt - u) := by
-    rw [he, map_add, map_mul, cA_phiE, cA_phiE, hcu]
+    rw [he, map_add (f := _), map_mul, cA_phiE, cA_phiE, hcu]
   have hec : e * cA D e = 0 := by
     rw [hce, he]
     linear_combination (-(phiE v y₀ * phiE v y₀)) * hu + m x₀ x₀ + Tt * m x₀ y₀ + Nn * m y₀ y₀ + sT (x₀ * y₀) +
@@ -153,7 +157,7 @@ theorem idem_data (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjPl 
   have hplace : IsPlaceIdem D v (sA v 1) := ⟨sglV v 1, rfl, sglV_same v 1, fun w hw => sglV_ne v 1 hw⟩
 
   have hcompe : compV v ι (finPart D e) = 1 := by
-    rw [he, map_add, map_mul, map_add, map_mul, compV_phiE, compV_phiE, hu0, compV_incA, hι]
+    rw [he, map_add (f := _), map_mul, map_add (f := _), map_mul, compV_phiE, compV_phiE, hu0, compV_incA, hι]
     exact f5
   have hιF : ∀ f : 𝓞 D.host.F, ι (algebraMap D.host.F D.host.E (f : D.host.F)) =
       ((f : D.host.F) : v.adicCompletion D.host.F) := fun f => ι.commutes _
@@ -216,7 +220,7 @@ theorem idem_data (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjPl 
     by_contra hxP
     obtain ⟨y, i, hi, hyi⟩ := P.isMaximal.exists_inv hxP
     have h1 : ι ((y : D.host.E) * x) + ι (i : D.host.E) = 1 := by
-      rw [← map_add]
+      rw [← map_add (f := _)]
       have : ((y : D.host.E) * x + i) = 1 := by exact_mod_cast congrArg (fun w : 𝓞 D.host.E => (w : D.host.E)) hyi
       rw [this, map_one]
     have h2 : Valued.v (ι ((y : D.host.E) * x)) < 1 := by
@@ -247,7 +251,7 @@ theorem idem_data (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjPl 
           phiE v (algebraMap D.host.F (v.adicCompletion D.host.F) f * y₀) := by rw [mul_comm _ y₀, phiE_mul]
       linear_combination s1 + u * s2 - m1 - u * m2
     | add x y _ _ hx hy =>
-      rw [map_add, mul_add, hx, hy, map_add, phiE_add, mul_add]
+      rw [map_add (f := _), mul_add, hx, hy, map_add (f := _), phiE_add, mul_add]
     | mul x y _ _ hx hy =>
       calc e * incA D (x * y) = (e * incA D x) * incA D y := by rw [map_mul, mul_assoc]
         _ = (e * phiE v (ι x)) * incA D y := by rw [hx]
@@ -287,7 +291,7 @@ theorem idem_data (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjPl 
       le_antisymm (val_emb_le v ι x) (not_lt.1 fun h => hxP ((hιP x).2 h))
     obtain ⟨c, hc⟩ : ∃ c, c = ι ((x : D.host.E)⁻¹) := ⟨_, rfl⟩
     have hc1 : Valued.v c = 1 := by rw [hc, map_inv₀, map_inv₀, hv1, inv_one]
-    rw [hid, ← hc, he, add_mul, mul_assoc, mul_comm u, ← mul_assoc, ← phiE_mul, ← phiE_mul, map_add, map_mul,
+    rw [hid, ← hc, he, add_mul, mul_assoc, mul_comm u, ← mul_assoc, ← phiE_mul, ← phiE_mul, map_add (f := _), map_mul,
       finPart_phiE, finPart_phiE, hu0, finPart_incA, Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
     refine add_mem (AddSubgroup.subset_closure ⟨sglV v (x₀ * c), sglV_int v ?_, 1, by simp⟩)
       (AddSubgroup.subset_closure ⟨sglV v (y₀ * c), sglV_int v ?_, b, rfl⟩)

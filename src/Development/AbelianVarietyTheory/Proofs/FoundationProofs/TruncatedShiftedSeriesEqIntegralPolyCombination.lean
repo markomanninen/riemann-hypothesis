@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ChSumSubCMul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSubOnePowThreeLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ChSumSubCMul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSubOnePowThreeLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ PowerSeries GlobalTheory.KZ.Cmp
 
@@ -24,7 +28,8 @@ theorem tval_eq_sum_pow_of_integral : ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) 
   rcases hdeg with hd | rfl
   · have h1 := Polynomial.aeval_eq_sum_range' (R := c.O) (x := z) hd
     have h2 : Polynomial.aeval z Q = tval F N z := by
-      simp [Q, tval, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Q, tval, map_sum]
     rw [← h2, h1]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Algebra.smul_def]

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalDarbouxHermitianTensorAdeles
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalDarbouxHermitianTensorAdeles
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -13,11 +18,11 @@ def pairBil {R S : Type} [CommRing R] [CommRing S] [Algebra R S] (c : S →ₐ[R
     (K : Matrix (Fin d) (Fin d) S) : LinearMap.BilinForm R (Fin d → S) :=
   LinearMap.mk₂ R (fun b a => Algebra.trace R S (-∑ j, ∑ l, b j * K j l * c (a l)))
     (fun b b' a => by
-      simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, neg_add, map_add])
+      simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, neg_add, map_add (f := _)])
     (fun r b a => by
       simp only [Pi.smul_apply, smul_mul_assoc, ← Finset.smul_sum, ← smul_neg, map_smul, smul_eq_mul])
     (fun b a a' => by
-      simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib, neg_add])
+      simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, neg_add])
     (fun r b a => by
       simp only [Pi.smul_apply, map_smul, mul_smul_comm, ← Finset.smul_sum, ← smul_neg, smul_eq_mul])
 
@@ -73,13 +78,14 @@ theorem pairBil_incV (σ : E →ₐ[F] E) {d : ℕ} (K : Matrix (Fin d) (Fin d) 
     pairBil (cA σ) (incM F K) (incV F v) (incV F w) = algebraMap F (AF F) (pairBil σ K v w) := by
   have hc : ∀ e : E, cA σ (inclR (F := F) (AF F) e) = inclR (F := F) (AF F) (σ e) := fun e => rfl
   rw [pairBil_apply, pairBil_apply, ← trace_inclR]
-  simp only [incV, incM, Matrix.map_apply, hc, map_mul, map_sum, map_neg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [incV, incM, Matrix.map_apply, hc, map_mul, map_sum, map_neg]
 
 theorem cA_cA (σ : E →ₐ[F] E) (hσ : ∀ a, σ (σ a) = a) (x : AE F E) : cA σ (cA σ x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => simp [cA, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 end GlobalTheory.PairCoords
 
@@ -118,7 +124,8 @@ theorem GlobalTheory.PairCoords.exists_pair_coords : ∀ {F E : Type} [Field F] 
     intro a b
     rw [← GlobalTheory.PairCoords.pairBil_apply]
     conv_rhs => rw [← B₂.sum_equivFun b, ← B₁.sum_equivFun a]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hk, smul_eq_mul, mul_ite, mul_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hk, smul_eq_mul, mul_ite, mul_one,
       mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, dotProduct]
     exact Finset.sum_congr rfl fun i _ => mul_comm _ _
   have hcc := GlobalTheory.PairCoords.cA_cA σ hσ
@@ -132,7 +139,8 @@ theorem GlobalTheory.PairCoords.exists_pair_coords : ∀ {F E : Type} [Field F] 
     rw [← Algebra.trace_eq_of_algEquiv eA (∑ j, ∑ l, a j * incM F K j l * cA σ (b l))]
     congr 1
     show _ = cA σ _
-    simp only [map_sum, map_mul, hcc, hK', ← Finset.sum_neg_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hcc, hK', ← Finset.sum_neg_distrib]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun l _ => ?_
     ring

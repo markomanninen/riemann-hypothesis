@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ProdPsUnitE
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ProdPsUnitE
+
+@[expose] public section
 
 noncomputable section
 

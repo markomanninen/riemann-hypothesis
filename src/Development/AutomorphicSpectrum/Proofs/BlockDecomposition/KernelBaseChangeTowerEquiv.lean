@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory.CompanionTheory.PerfectFirstCohomology
@@ -13,11 +18,11 @@ theorem ker_baseChange_tower (R A K Q P : Type) [CommRing R] [CommRing A] [CommR
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul k y =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [tmul_add, map_add, hx, hy]
+      | add x y hx hy => simp only [tmul_add, map_add (f := _), hx, hy]
       | tmul a q =>
         simp [e₁, e₂, LinearMap.baseChange_tmul, TensorProduct.smul_tmul']
   refine ⟨LinearEquiv.ofSubmodules e₁ _ _ ?_⟩

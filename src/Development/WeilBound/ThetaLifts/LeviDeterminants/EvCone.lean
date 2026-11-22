@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EvAdel
-import Development.WeilBound.ThetaLifts.LeviDeterminants.SchwartzDq
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.AdelicEstimatesHolds
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EvAdel
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.SchwartzDq
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.AdelicEstimatesHolds
+
+@[expose] public section
 
 theorem PositivityTheory.ThKF0.evCone : GlobalTheory.ThK.EvCone := PositivityTheory.ThKF0.evCone_of_adel PositivityTheory.Mix.adelic_estimates_holds
 

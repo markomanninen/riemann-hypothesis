@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPlace
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPlace
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -112,7 +117,7 @@ theorem algebraMap_pointLocalRing_eq_zero_iff (hw : w ∈ IndefiniteRowSideFullH
 
 theorem curveToPoint_injective (hw : w ∈ IndefiniteRowSideFullHecke.ComplexSets.zeroSetIn M.ideal) :
     Function.Injective (curveToPoint M w) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective x
   obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective
@@ -171,28 +176,20 @@ end NormalModelPlace
 
 end
 
-set_option hygiene false in
-local notation "𝒜" => MvPolynomial (Fin n) ℂ
-set_option hygiene false in
-local notation "ℬ" => MvPolynomial (Fin n ⊕ Fin M.m) ℂ
-set_option hygiene false in
-local notation "𝒪" => curveLocalRing J (IndefiniteRowSideFullHecke.ComplexSets.firstCoords w)
-set_option hygiene false in
-local notation "𝒪̄" => curveNormalisation J (IndefiniteRowSideFullHecke.ComplexSets.firstCoords w)
-set_option hygiene false in
-local notation "𝒯" => pointLocalRing M.ideal w
-set_option hygiene false in
-local notation "𝒦" => FractionRing (curveLocalRing J (IndefiniteRowSideFullHecke.ComplexSets.firstCoords w))
-set_option hygiene false in
-local notation "ℱ" => FractionRing (pointLocalRing M.ideal w)
-set_option hygiene false in
-local notation "𝔏" => Localization.AtPrime (RingHom.ker (eval w : MvPolynomial (Fin n ⊕ Fin M.m) ℂ →+* ℂ))
 
 noncomputable section
 
 theorem NormalModelPlace.proof : NormalModelPlace.Statement := by
   intro n J q M w hJ hw hwq
   subst hwq
+  let 𝒜 := MvPolynomial (Fin n) ℂ
+  let ℬ := MvPolynomial (Fin n ⊕ Fin M.m) ℂ
+  let 𝒪 := curveLocalRing J (IndefiniteRowSideFullHecke.ComplexSets.firstCoords w)
+  let 𝒯 := pointLocalRing M.ideal w
+  let 𝒦 := FractionRing 𝒪
+  let ℱ := FractionRing 𝒯
+  let Obar := curveNormalisation J (IndefiniteRowSideFullHecke.ComplexSets.firstCoords w)
+  let 𝔏 := Localization.AtPrime (RingHom.ker (eval w : ℬ →+* ℂ))
   have := isPrime_map_curve M w hJ hw
   have := isPrime_map_normalModel M w hw
   have : IsDomain 𝒪 := Ideal.Quotient.isDomain _
@@ -200,7 +197,7 @@ theorem NormalModelPlace.proof : NormalModelPlace.Statement := by
   have : IsLocalRing 𝒪 := IsLocalRing.of_surjective' (Ideal.Quotient.mk _) Ideal.Quotient.mk_surjective
   have : IsLocalRing 𝒯 := IsLocalRing.of_surjective' (Ideal.Quotient.mk _) Ideal.Quotient.mk_surjective
   have := isIntegrallyClosed_pointLocalRing M w hw
-  have hg_alg := curveToPoint_algebraMap M w
+  have hg_alg : ∀ f : 𝒜, curveToPoint M w (algebraMap 𝒜 𝒪 f) = algebraMap ℬ 𝒯 (rename Sum.inl f) := curveToPoint_algebraMap M w
   have hg_inj := curveToPoint_injective M w hw
 
   have hg_loc : (IsLocalRing.maximalIdeal 𝒯).comap (curveToPoint M w) = IsLocalRing.maximalIdeal 𝒪 := by
@@ -217,9 +214,9 @@ theorem NormalModelPlace.proof : NormalModelPlace.Statement := by
   have hψinj : Function.Injective ψ := ψ.injective
   have hcomp : (algebraMap 𝒯 ℱ).comp (curveToPoint M w) = ψ.comp (algebraMap 𝒪 𝒦) :=
     RingHom.ext fun x => (hψ x).symm
-  obtain ⟨val, hval_inj, hval_alg, hval_int, hval_surj⟩ : ∃ val : 𝒪̄ →+* 𝒦, Function.Injective val ∧
-      (∀ x, val (algebraMap 𝒪 𝒪̄ x) = algebraMap 𝒪 𝒦 x) ∧ (∀ x, IsIntegral 𝒪 (val x)) ∧
-      (∀ k, IsIntegral 𝒪 k → ∃ x, val x = k) :=
+  obtain ⟨v, hval_inj, hval_alg, hval_int, hval_surj⟩ : ∃ v : Obar →+* 𝒦, Function.Injective v ∧
+      (∀ x, v (algebraMap 𝒪 Obar x) = algebraMap 𝒪 𝒦 x) ∧ (∀ x, IsIntegral 𝒪 (v x)) ∧
+      (∀ k, IsIntegral 𝒪 k → ∃ x, v x = k) :=
     ⟨(integralClosure 𝒪 𝒦).val.toRingHom, Subtype.val_injective, fun _ => rfl,
       fun x => (mem_integralClosure_iff _ _).1 (Subtype.prop x),
       fun k hk => ⟨(⟨k, (mem_integralClosure_iff _ _).2 hk⟩ : integralClosure 𝒪 𝒦), rfl⟩⟩
@@ -228,29 +225,30 @@ theorem NormalModelPlace.proof : NormalModelPlace.Statement := by
     rintro k ⟨p, hpm, hp⟩
     refine (IsIntegrallyClosed.isIntegral_iff (R := 𝒯) (K := ℱ)).1 ⟨p.map (curveToPoint M w), hpm.map _, ?_⟩
     rw [Polynomial.eval₂_map, hcomp, ← Polynomial.hom_eval₂, hp, map_zero]
-  obtain ⟨φ, hφ⟩ : ∃ φ : 𝒪̄ →+* 𝒯, ∀ x, algebraMap 𝒯 ℱ (φ x) = ψ (val x) := by
-    have hr : ∀ x, (ψ.comp val) x ∈ (algebraMap 𝒯 ℱ).range := fun x => hint _ (hval_int x)
+  obtain ⟨φ, hφ⟩ : ∃ φ : Obar →+* 𝒯, ∀ x, algebraMap 𝒯 ℱ (φ x) = ψ (v x) := by
+    have hr : ∀ x, (ψ.comp v) x ∈ (algebraMap 𝒯 ℱ).range := fun x => hint _ (hval_int x)
     let e := RingEquiv.ofBijective (algebraMap 𝒯 ℱ).rangeRestrict
       ⟨fun a b h => hι (congrArg Subtype.val h), RingHom.rangeRestrict_surjective _⟩
-    refine ⟨e.symm.toRingHom.comp ((ψ.comp val).codRestrict _ hr), fun x => ?_⟩
-    exact congrArg Subtype.val (e.apply_symm_apply ((ψ.comp val).codRestrict _ hr x))
+    refine ⟨e.symm.toRingHom.comp ((ψ.comp v).codRestrict _ hr), fun x => ?_⟩
+    exact congrArg Subtype.val (e.apply_symm_apply ((ψ.comp v).codRestrict _ hr x))
   have hφinj : Function.Injective φ := fun a b h => hval_inj (hψinj (by rw [← hφ, ← hφ, h]))
-  have hφg : ∀ x, φ (algebraMap 𝒪 𝒪̄ x) = curveToPoint M w x := fun x => hι (by rw [hφ, hval_alg, hψ])
-  have : IsDomain 𝒪̄ := hφinj.isDomain φ
-  have : Algebra.IsIntegral 𝒪 𝒪̄ := inferInstanceAs (Algebra.IsIntegral 𝒪 (integralClosure 𝒪 𝒦))
+  have hφg : ∀ x, φ (algebraMap 𝒪 Obar x) = curveToPoint M w x := fun x => hι (by rw [hφ, hval_alg, hψ])
+  have : IsDomain Obar := hφinj.isDomain φ
+  have : Algebra.IsIntegral 𝒪 Obar := inferInstanceAs (Algebra.IsIntegral 𝒪 (integralClosure 𝒪 𝒦))
 
-  obtain ⟨P, hP⟩ : ∃ P : Ideal 𝒪̄, P = (IsLocalRing.maximalIdeal 𝒯).comap φ := ⟨_, rfl⟩
+  obtain ⟨P, hP⟩ : ∃ P : Ideal Obar, P = (IsLocalRing.maximalIdeal 𝒯).comap φ := ⟨_, rfl⟩
   have : P.IsPrime := by rw [hP]; exact Ideal.comap_isPrime _ _
   have hPmem : ∀ x, x ∈ P ↔ φ x ∈ IsLocalRing.maximalIdeal 𝒯 := fun x => by rw [hP, Ideal.mem_comap]
   have hPmax : P.IsMaximal := by
-    refine Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := 𝒪) P ?_
-    rw [hP, Ideal.comap_comap, show φ.comp (algebraMap 𝒪 𝒪̄) = curveToPoint M w from RingHom.ext hφg, hg_loc]
+    refine Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := 𝒪) P ?_
+    change (P.comap (algebraMap 𝒪 Obar)).IsMaximal
+    rw [hP, Ideal.comap_comap, show φ.comp (algebraMap 𝒪 Obar) = curveToPoint M w from RingHom.ext hφg, hg_loc]
     exact IsLocalRing.maximalIdeal.isMaximal _
   have hunits : ∀ y : P.primeCompl, IsUnit (φ y) := fun y => by
     by_contra h
     exact y.2 ((hPmem _).2 ((IsLocalRing.mem_maximalIdeal _).2 h))
 
-  have hY : ∀ i, ∃ y : 𝒪̄, φ y = algebraMap ℬ 𝒯 (X (Sum.inr i)) := by
+  have hY : ∀ i, ∃ y : Obar, φ y = algebraMap ℬ 𝒯 (X (Sum.inr i)) := by
     intro i
     obtain ⟨a, b, hb, hab⟩ := M.birational i
     obtain ⟨p, hpm, hp⟩ := M.integral i
@@ -281,20 +279,22 @@ theorem NormalModelPlace.proof : NormalModelPlace.Statement := by
     obtain ⟨y, hy⟩ := hval_surj _ hkint
     exact ⟨y, hι (by rw [hφ, hy, hk])⟩
 
-  obtain ⟨χ, hχ⟩ : ∃ χ : ℬ →+* 𝒪̄, ∀ b, φ (χ b) = algebraMap ℬ 𝒯 b := by
+  obtain ⟨χ, hχ⟩ : ∃ χ : ℬ →+* Obar, ∀ b, φ (χ b) = algebraMap ℬ 𝒯 b := by
     choose y hy using hY
-    refine ⟨eval₂Hom ((algebraMap 𝒪 𝒪̄).comp ((algebraMap 𝒜 𝒪).comp C))
-      (Sum.elim (fun j => algebraMap 𝒪 𝒪̄ (algebraMap 𝒜 𝒪 (X j))) y), fun b => ?_⟩
-    have h : φ.comp (eval₂Hom ((algebraMap 𝒪 𝒪̄).comp ((algebraMap 𝒜 𝒪).comp C))
-        (Sum.elim (fun j => algebraMap 𝒪 𝒪̄ (algebraMap 𝒜 𝒪 (X j))) y)) = algebraMap ℬ 𝒯 := by
+    refine ⟨eval₂Hom ((algebraMap 𝒪 Obar).comp ((algebraMap 𝒜 𝒪).comp C))
+      (Sum.elim (fun j => algebraMap 𝒪 Obar (algebraMap 𝒜 𝒪 (X j))) y), fun b => ?_⟩
+    have h : φ.comp (eval₂Hom ((algebraMap 𝒪 Obar).comp ((algebraMap 𝒜 𝒪).comp C))
+        (Sum.elim (fun j => algebraMap 𝒪 Obar (algebraMap 𝒜 𝒪 (X j))) y)) = algebraMap ℬ 𝒯 := by
       refine MvPolynomial.ringHom_ext (fun c => ?_) (fun v => ?_)
-      · simp only [RingHom.comp_apply, eval₂Hom_C, hφg, hg_alg, rename_C]
+      · simp only [RingHom.comp_apply, eval₂Hom_C, hφg, hg_alg]
+        congr 1
+        exact rename_C _ _
       · rcases v with j | i
         · simp only [RingHom.comp_apply, eval₂Hom_X', Sum.elim_inl, hφg, hg_alg, rename_X]
         · simp only [RingHom.comp_apply, eval₂Hom_X', Sum.elim_inr, hy]
     exact RingHom.congr_fun h b
 
-  have hΦ : ∀ x, IsLocalization.lift hunits (algebraMap 𝒪̄ (Localization.AtPrime P) x) = φ x :=
+  have hΦ : ∀ x, IsLocalization.lift hunits (algebraMap Obar (Localization.AtPrime P) x) = φ x :=
     IsLocalization.lift_eq hunits
   have hΦinj : Function.Injective (IsLocalization.lift (S := Localization.AtPrime P) hunits) := by
     refine (IsLocalization.lift_injective_iff (M := P.primeCompl) (S := Localization.AtPrime P) (hg := hunits)).2
@@ -319,7 +319,7 @@ theorem NormalModelPlace.proof : NormalModelPlace.Statement := by
   refine ⟨⟨P, hPmax⟩, fun f => ?_⟩
   refine (ord_eq_of_ringEquiv (RingEquiv.ofBijective _ ⟨hΦinj, hΦsurj⟩) _).trans ?_
   congr 1
-  change IsLocalization.lift hunits (algebraMap 𝒪̄ (Localization.AtPrime P) (algebraMap 𝒪 𝒪̄ (algebraMap 𝒜 𝒪 f))) = _
+  change IsLocalization.lift hunits (algebraMap Obar (Localization.AtPrime P) (algebraMap 𝒪 Obar (algebraMap 𝒜 𝒪 f))) = _
   rw [hΦ, hφg, hg_alg]
 
 end

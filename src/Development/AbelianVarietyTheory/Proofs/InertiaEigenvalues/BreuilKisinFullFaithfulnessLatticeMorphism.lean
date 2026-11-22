@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIterateDerivative
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIterateDerivative
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,23 +22,23 @@ section Lat
 
 variable {G : Type} [Group G] [TopologicalSpace G] {T T' : LocLat G ℚ_[l] K O}
 
-omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 
+omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 theorem latW_smul (f : LatHom T.L T'.L) (r : OW l O) (y : TW (OW l O) T) :
     latW f (r • y) = r • latW f y := by
   induction y using TensorProduct.induction_on with
   | zero => simp only [smul_zero, map_zero]
   | tmul w x => rfl
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
+
 
 omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
-
 theorem latW_frob (f : LatHom T.L T'.L) (y : TW (OW l O) T) :
     latW f (TWmap (frobOW l O) T y) = TWmap (frobOW l O) T' (latW f y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul w x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def latZ (f : LatHom T.L T'.L) :
     letI := zlLat T
@@ -46,8 +50,8 @@ def latZ (f : LatHom T.L T'.L) :
     map_add' := map_add _
     map_smul' := fun z x => ((f.f.restrictScalars O).restrict f.T_le).map_smul (algebraMap ℤ_[l] O z) x }
 
-omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 
+omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 theorem kappa_latZ (f : LatHom T.L T'.L) :
     letI := zlLat T
     letI := zlLat T'
@@ -58,7 +62,7 @@ theorem kappa_latZ (f : LatHom T.L T'.L) :
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul w x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 variable {P : PhiMod O K l e a ι} {Q : PhiMod O K l e a κ}
 
@@ -89,8 +93,10 @@ theorem exists_isMapOf (I : Ident t ϖ P T) (I' : Ident t ϖ Q T') (f : LatHom T
       ext1 i
       rw [Finset.sum_apply]
       exact Finset.sum_congr rfl fun j _ => mul_comm _ _
-    conv_rhs => rw [pi_eq_sum_univ' v, map_sum, map_sum]
-    rw [h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [pi_eq_sum_univ' v, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul I.j, latW_smul, hmj, hY, map_smul I'.j]
   have hmat : Y * frobMat t ϖ P = frobMat t ϖ Q * Y.map (frobOW l O) := by
@@ -110,7 +116,8 @@ theorem exists_isMapOf (I : Ident t ϖ P T) (I' : Ident t ϖ Q T') (f : LatHom T
     ∑ k, ϖ.iW t K _ * frobOW l O (inclO l O (ϖ.iTot t K _)) at h1
   simp only [frobOW_inclO, ← PiSys.iTot_frob] at h1
   simp only [← ϖ.iW_of_mem t K, ← map_mul] at h1
-  rw [← map_sum, ← map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← map_sum] at h1
   have h2 := congrArg Subtype.val (congrFun (ϖ.iW_injective t K h1) τ)
   rw [Finset.sum_apply, Finset.sum_apply, AddSubmonoidClass.coe_finsetSum,
     AddSubmonoidClass.coe_finsetSum] at h2

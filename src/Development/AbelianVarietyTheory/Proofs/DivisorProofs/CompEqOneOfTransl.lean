@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ def heckeSub {b : Base D R} {M : ℕ} {s : S ⟶ Sp R} (o : Obj b M s) (g : D.La
   one_mem' := ⟨0, by rw [map_zero, smul_zero, eta_zero]⟩
   mul_mem' := by
     rintro _ _ ⟨x, rfl⟩ ⟨y, rfl⟩
-    exact ⟨x + y, by rw [map_add, smul_add, o.eta_add]⟩
+    exact ⟨x + y, by rw [map_add (f := _), smul_add, o.eta_add]⟩
   inv_mem' := by
     rintro _ ⟨x, rfl⟩
     exact ⟨-x, by rw [map_neg, smul_neg, eta_neg]⟩

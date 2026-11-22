@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MorphismsSpreadOutToFgSubalgebra
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MorphismsSpreadOutToFgSubalgebra
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -36,13 +41,17 @@ theorem lbIso_of_refinement {X : Scheme.{0}} (L N : LB X) (hL : L.IsLB) (e : N.�
 
 theorem isLB_of_germs {X : Scheme.{0}} (L : LB X) (hc : ∀ y : X, ∃ a, y ∈ L.U a)
     (hg : ∀ a b c (y : X), y ∈ L.U a → y ∈ L.U b → y ∈ L.U c →
-      gm (𝟙 X) y _ (L.g a b) * gm (𝟙 X) y _ (L.g b c) = gm (𝟙 X) y _ (L.g a c)) : L.IsLB where
-  cover := top_le_iff.1 fun y _ => Opens.mem_iSup.2 (hc y)
-  g_self a := unit_ext fun y hy => by
+      gm (𝟙 X) y _ (L.g a b) * gm (𝟙 X) y _ (L.g b c) = gm (𝟙 X) y _ (L.g a c)) : L.IsLB := by
+  refine ⟨top_le_iff.1 (fun y _ => Opens.mem_iSup.2 (hc y)), ?_, ?_⟩
+  · intro a
+    apply unit_ext
+    intro y hy
     refine (gm_res (𝟙 X) y _ hy _).trans ?_
     rw [map_one]
     exact mul_eq_left.1 (hg a a a y hy hy hy)
-  cocycle a b c := unit_ext fun y hy => by
+  · intro a b c
+    apply unit_ext
+    intro y hy
     refine ((map_mul _ _ _).trans (congrArg₂ (· * ·) (gm_res (𝟙 X) y _ hy _)
       (gm_res (𝟙 X) y _ hy _))).trans (Eq.trans ?_ (gm_res (𝟙 X) y _ hy _).symm)
     exact hg a b c y hy.1.1 hy.1.2 hy.2
@@ -54,9 +63,9 @@ variable {I : Type} [SmallCategory I] [IsCofiltered I]
   (w : ∀ {i j} (f : i ⟶ j), π i ≫ D.map f = π j) (hc : IsLimit (schemeConeOfFamily D π w))
   [∀ {i j} (f : i ⟶ j), IsAffineHom (D.map f)] [∀ i, QuasiSeparatedSpace (D.obj i)]
 
+
 set_option backward.isDefEq.respectTransparency false in
 include hc in
-
 theorem exists_appLE_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (D.obj i)))
     (s : Γ(X, π i ⁻¹ᵁ U)) :
     ∃ (j : I) (f : j ⟶ i) (t : Γ(D.obj j, D.map f ⁻¹ᵁ U)),
@@ -77,8 +86,8 @@ theorem exists_appLE_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (
       Iso.inv_hom_id_apply]
   exact (e _ _ _ _ t).trans h
 
-include hc in
 
+include hc in
 theorem exists_unit_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (D.obj i)))
     (s : Γ(X, π i ⁻¹ᵁ U)ˣ) :
     ∃ (j : I) (f : j ⟶ i) (t : Γ(D.obj j, D.map f ⁻¹ᵁ U)ˣ), ∀ y : X, y ∈ π i ⁻¹ᵁ U →
@@ -108,8 +117,8 @@ theorem exists_unit_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (D
   exact (TopCat.Presheaf.germ_res_apply X.presheaf
     (homOfLE (cone_preimage_le D π w (g ≫ f) U)) y hy _).symm
 
-include hc in
 
+include hc in
 theorem exists_refinement_of_isLimit [∀ i, CompactSpace (D.obj i)] (L : LB X) (hL : L.IsLB) :
     ∃ (j : I) (M : LB (D.obj j)) (e : M.ι → L.ι), M.IsLB ∧ (∀ a, π j ⁻¹ᵁ M.U a ≤ L.U (e a)) ∧
       ∀ a b (y : X), π j y ∈ M.U a → π j y ∈ M.U b →
@@ -197,8 +206,8 @@ theorem exists_refinement_of_isLimit [∀ i, CompactSpace (D.obj i)] (L : LB X) 
   · rw [val _ y a b ha hb, w g]
     exact ht (a, b) y ⟨pre a ha, pre b hb⟩
 
-include hc in
 
+include hc in
 theorem exists_lb_of_isLimit [∀ i, CompactSpace (D.obj i)] (L : LB X) (hL : L.IsLB) :
     ∃ (j : I) (M : LB (D.obj j)), M.IsLB ∧ LBIso L (M.pull (π j)) ∧
       ∀ (Y : Scheme.{0}) (r : X ⟶ Y) (q : Y ⟶ D.obj j), r ≫ q = π j → LBIso L ((M.pull q).pull r) := by
@@ -243,7 +252,18 @@ theorem lb_descends_to_fg_subring : ∀ (R : Type) [CommRing R] (R₀ : Subring 
     pullback.lift π₁ (f₁ ≫ spMap φ) (by
       rw [H₁.w, Category.assoc, spMap_comp_ring]
       rfl)
-  refine ⟨M.pull q, pull_isLB hM _, h X₁ j q ?_⟩
+  have hMq : (M.pull q).IsLB := by
+    apply isLB_of_germs
+    · intro y
+      obtain ⟨a, ha⟩ := exists_chart hM (q y)
+      exact ⟨fun _ => a, mem_pull.2 ha⟩
+    · intro a b c y ha hb hc
+      change PUnit → M.ι at a b c
+      rw [gm_pull_g M q (𝟙 X₁) y a b ha hb, gm_pull_g M q (𝟙 X₁) y b c hb hc,
+        gm_pull_g M q (𝟙 X₁) y a c ha hc]
+      erw [Category.id_comp]
+      exact gm_cocycle hM q y (mem_pull.1 ha) (mem_pull.1 hb) (mem_pull.1 hc)
+  refine ⟨M.pull q, hMq, h X₁ j q ?_⟩
   show j ≫ q = H'.isoPullback.hom ≫ Spread.bcMap f₀ (Algebra.adjoin R₀ (s.unop : Set R)).val
   apply pullback.hom_ext
   · rw [Category.assoc, pullback.lift_fst, hj₁, Category.assoc, Spread.bcMap_fst,

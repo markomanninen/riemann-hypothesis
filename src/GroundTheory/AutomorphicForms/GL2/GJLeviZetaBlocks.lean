@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJZetaDefs
-import GroundTheory.AutomorphicForms.GL2.ExistsEqPowMulOfValuationLe
-import GroundTheory.AutomorphicForms.GL2.GJLeviSupport
-import GroundTheory.AutomorphicForms.LeviStagesProduct
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJZetaDefs
+public import GroundTheory.AutomorphicForms.GL2.ExistsEqPowMulOfValuationLe
+public import GroundTheory.AutomorphicForms.GL2.GJLeviSupport
+public import GroundTheory.AutomorphicForms.LeviStagesProduct
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -102,18 +107,14 @@ theorem blockIndicator_const (b : Set.range β) {i j : Fin n} (h : β i = β j) 
   have : blockOf β i = blockOf β j := Subtype.ext h
   simp only [blockIndicator, this]
 
-variable (F) in
 
+variable (F) in
 def blockUnif (b : Set.range β) : levi F n β :=
   ⟨Cartan.diagPow F n (blockIndicator b), diagPow_mem_levi _⟩
 
 theorem blockUnif_mem_center (b : Set.range β) :
     blockUnif F b ∈ Submonoid.center (levi F n β) :=
   diagPow_mem_center (c := blockIndicator b) fun _ _ h => blockIndicator_const b h
-
-theorem blockUnif_commute (b : Set.range β) (m : levi F n β) :
-    blockUnif F b * m = m * blockUnif F b :=
-  ((Submonoid.mem_center_iff.1 (blockUnif_mem_center b)) m).symm
 
 theorem ordDet_blockUnif (b : Set.range β) :
     ordDet ((blockUnif F b : levi F n β) : GL (Fin n) F) = blockSize β b := by
@@ -124,8 +125,8 @@ theorem ordDet_blockUnif (b : Set.range β) :
   rw [← Fintype.card_coe]
   exact Fintype.card_congr (Equiv.subtypeEquivRight fun i => by simp)
 
-variable (F) in
 
+variable (F) in
 def blockOrd (b : Set.range β) (m : levi F n β) : ℤ :=
   LocalField.ord ((leviBlock F m b : GL (Fiber β b) F) : Matrix (Fiber β b) (Fiber β b) F).det
 
@@ -221,8 +222,8 @@ end Blocks
 
 section LocallyConstant
 
-variable (F n β) in
 
+variable (F n β) in
 def leviIntegral : Subgroup (levi F n β) := (integralGL F n).subgroupOf (levi F n β)
 
 theorem isOpen_leviIntegral : IsOpen (leviIntegral F n β : Set (levi F n β)) :=
@@ -244,10 +245,6 @@ theorem isLocallyConstant_of_forall_mul {X : Type*} {f : levi F n β → X}
     exact V.one_mem
   · have := hV _ hx
     rwa [mul_inv_cancel_left] at this
-
-theorem isLocallyConstant_blockOrd (b : Set.range β) : IsLocallyConstant (blockOrd F b) :=
-  isLocallyConstant_of_forall_mul fun m => ⟨leviIntegral F n β, isOpen_leviIntegral, fun k hk => by
-    rw [blockOrd_mul, blockOrd_of_mem_integralGL b (Subgroup.mem_subgroupOf.1 hk), add_zero]⟩
 
 theorem isLocallyConstant_ordDet :
     IsLocallyConstant fun m : levi F n β => ordDet (m : GL (Fin n) F) :=

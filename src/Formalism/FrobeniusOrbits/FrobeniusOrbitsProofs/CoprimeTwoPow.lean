@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.TameInertiaTowers.TowerFieldFoundations
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.TameInertiaTowers.TowerFieldFoundations
+
+@[expose] public section
 
 noncomputable section
 
@@ -269,7 +273,7 @@ theorem hostGroup : HostGroup := by
         map_mul' := fun x y => by
           first
             | simp
-            | (rw [toAdd_mul, map_add, toMul_add]) }
+            | (rw [toAdd_mul, map_add (f := _), toMul_add]) }
     have hf1 : f (Multiplicative.ofAdd 1) = hcl e (u5 (e + 2)) := by
       show Additive.toMul (f1 1) = hcl e (u5 (e + 2))
       have h1 : (1 : ZMod (2 ^ e)) = ((1 : ℤ) : ZMod (2 ^ e)) := by simp

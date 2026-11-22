@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FamilyLeCoords
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FamilyLeCoords
+
+@[expose] public section
 
 namespace GlobalTheory.OTY
 
@@ -65,9 +69,6 @@ def wT (T x : ℝ) : ℝ := 1 / (1 + min (x ^ 2) ((T + 1) ^ 2))
 def IsCut (T : ℝ) (θ : ℝ → ℝ) : Prop :=
   ContDiff ℝ (⊤ : ℕ∞) θ ∧ (∀ x, x ≤ -T - 1 → θ x = 1) ∧ (∀ x, -T + 1 ≤ x → θ x = 0) ∧
     (∀ x, 0 ≤ θ x ∧ θ x ≤ 1) ∧ ∀ x, |deriv θ x| ≤ 3 / 4
-
-theorem etale_empty (A : WeightedAtlas n Y ι La) (z : Y → V n) : Etale A ∅ z :=
-  ⟨isOpen_empty, fun _ => by simp [differentiableOn_empty], fun _ _ h => h.elim⟩
 
 end
 

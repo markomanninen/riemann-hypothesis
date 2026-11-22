@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj
 open scoped TensorProduct
 
@@ -7,8 +12,8 @@ namespace GlobalTheory.OrdVal
 
 variable {O A : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CommRing A] [Algebra O A]
 
-omit [IsDomain O] [IsDiscreteValuationRing O] in
 
+omit [IsDomain O] [IsDiscreteValuationRing O] in
 theorem nonneg_of_isIntegral (u : AddValuation A (WithTop ℤ))
     (hu : ∀ r : O, 0 ≤ u (algebraMap O A r)) {x : A} (hx : IsIntegral O x) : 0 ≤ u x := by
   let v : Valuation A (Multiplicative (WithTop ℤ)ᵒᵈ) := u
@@ -50,11 +55,12 @@ theorem centre_isMaximal (u : AddValuation A (WithTop ℤ)) (hu : ∀ a : ↥(As
     {ϖ : O} (hϖ : Irreducible ϖ) (hpos : 0 < u (algebraMap O A ϖ)) :
     (centre u hu).IsMaximal := by
   haveI := centre_isPrime u hu
-  refine Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := O) _ ?_
+  refine Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := O) _ ?_
   have hle : IsLocalRing.maximalIdeal O ≤ (centre u hu).comap (algebraMap O ↥(As O A)) := by
     rw [hϖ.maximalIdeal_eq, Ideal.span_singleton_le_iff_mem]
     exact hpos
   have := (IsLocalRing.maximalIdeal.isMaximal O).eq_of_le (Ideal.IsPrime.ne_top inferInstance) hle
+  change ((centre u hu).comap (algebraMap O ↥(As O A))).IsMaximal
   rw [← this]
   infer_instance
 

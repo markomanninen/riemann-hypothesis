@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CcSymmAlgebraMapHost
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CcSymmAlgebraMapHost
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,11 +36,11 @@ def conjHom : Formalism.ConjugateSelfDual.G E Ω →* Formalism.ConjugateSelfDua
 
 theorem conjHom_apply (g : Formalism.ConjugateSelfDual.G E Ω) (x : Ω) : conjHom cc hc g x = cc (g (cc.symm x)) := rfl
 
+
 open NumberField IsDedekindDomain in
 open scoped Pointwise in
 variable {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω] (cc : Ω ≃+* Ω)
   (hc : ∀ x : E, ∃ y : E, cc.symm (algebraMap E Ω x) = algebraMap E Ω y) in
-
 theorem _root_.GlobalTheory.AntiLAdic.isFrob_conjHom [NumberField E] {B : ValuationSubring Ω} {q : ℕ} {σ : _root_.Formalism.ConjugateSelfDual.G E Ω} (hσ : _root_.Formalism.ConjugateSelfDual.IsFrob (F := E) B q σ) :
     _root_.Formalism.ConjugateSelfDual.IsFrob (F := E) (_root_.GlobalTheory.AntiRamConj.moveVal cc B) q (_root_.GlobalTheory.AntiLAdic.conjHom cc hc σ) := by
   obtain ⟨hdec, hval⟩ := hσ
@@ -54,11 +58,11 @@ theorem _root_.GlobalTheory.AntiLAdic.isFrob_conjHom [NumberField E] {B : Valuat
       _root_.GlobalTheory.AntiLAdic.conjHom_apply, RingEquiv.symm_apply_apply]
     exact hval _ ((ValuationSubring.valuation_le_one_iff _ _).mpr hx)
 
+
 open NumberField IsDedekindDomain in
 open scoped Pointwise in
 variable {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω] (cc : Ω ≃+* Ω)
   (hc : ∀ x : E, ∃ y : E, cc.symm (algebraMap E Ω x) = algebraMap E Ω y) in
-
 theorem _root_.GlobalTheory.AntiLAdic.continuous_conjHom [Algebra.IsAlgebraic E Ω] : Continuous (_root_.GlobalTheory.AntiLAdic.conjHom cc hc) := by
   apply continuous_of_continuousAt_one
   rw [ContinuousAt, map_one, Filter.tendsto_def]
@@ -83,7 +87,8 @@ theorem _root_.GlobalTheory.AntiLAdic.continuous_conjHom [Algebra.IsAlgebraic E 
       have h := congrArg Subtype.val (b.sum_repr ⟨x, hx⟩)
       simp only [IntermediateField.coe_sum, IntermediateField.coe_smul, Algebra.smul_def] at h
       exact h.symm
-    rw [hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_sum]
     refine sum_mem (fun i _ => ?_)
     rw [map_mul]
     obtain ⟨y, hy⟩ := hc (b.repr ⟨x, hx⟩ i)
@@ -105,10 +110,10 @@ theorem _root_.GlobalTheory.AntiLAdic.conjPl_symm {c : E ≃+* E} (hcc : ∀ x, 
   intro x
   rw [← h (c x), hcc]
 
+
 open NumberField IsDedekindDomain in
 open scoped Pointwise in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.AntiLAdic.normV_conjPl {c : E ≃+* E} {v v' : HeightOneSpectrum (𝓞 E)} (h : _root_.GlobalTheory.Mem.Chr.ConjPl c v v') : _root_.Formalism.ConjugateSelfDual.normV v' = _root_.Formalism.ConjugateSelfDual.normV v := by
   rw [_root_.GlobalTheory.Mem.Chr.conjPl_iff_comap] at h
   have hmap : v'.asIdeal = v.asIdeal.map (NumberField.RingOfIntegers.mapRingEquiv c) := by
@@ -117,10 +122,10 @@ theorem _root_.GlobalTheory.AntiLAdic.normV_conjPl {c : E ≃+* E} {v v' : Heigh
   exact (Nat.card_congr
     (Ideal.quotientEquiv v.asIdeal v'.asIdeal (NumberField.RingOfIntegers.mapRingEquiv c) hmap).toEquiv).symm
 
+
 open NumberField IsDedekindDomain in
 open scoped Pointwise in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.AntiLAdic.isPlaceOver_moveVal_conjPl {Ω : Type} [Field Ω] [Algebra E Ω] {c : E ≃+* E} {cc : Ω ≃+* Ω}
     (hcc : ∀ x : E, cc (algebraMap E Ω x) = algebraMap E Ω (c x)) {v v' : HeightOneSpectrum (𝓞 E)}
     (h : _root_.GlobalTheory.Mem.Chr.ConjPl c v v') {B : ValuationSubring Ω} (hB : _root_.Formalism.ConjugateSelfDual.IsPlaceOver B v) : _root_.Formalism.ConjugateSelfDual.IsPlaceOver (_root_.GlobalTheory.AntiRamConj.moveVal cc B) v' := by
@@ -135,10 +140,10 @@ theorem _root_.GlobalTheory.AntiLAdic.isPlaceOver_moveVal_conjPl {Ω : Type} [Fi
     (by rw [hy, RingEquiv.apply_symm_apply])
   rw [← key, ← hB y, hy]
 
+
 open NumberField IsDedekindDomain in
 open scoped Pointwise in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.AntiLAdic.val_mul_val_conj {F : Type} [Field F] [NumberField F] [Algebra F E] (c : E ≃ₐ[F] E)
     (h2 : Module.finrank F E = 2) (hne : c ≠ 1)
     (hr : ∀ (P : HeightOneSpectrum (𝓞 E)) (k : Fˣ), _root_.Formalism.L2.Host.ordF P (_root_.Formalism.L2.Host.upF F k) = _root_.Formalism.L2.Host.ordF (P.under (𝓞 F)) k)
@@ -182,9 +187,9 @@ theorem _root_.GlobalTheory.AntiLAdic.val_mul_val_conj {F : Type} [Field F] [Num
 
 end Places
 
+
 open NumberField IsDedekindDomain in
 open scoped Pointwise in
-
 theorem _root_.GlobalTheory.AntiLAdic.antiHom_of_trivOn : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (c : E ≃ₐ[F] E), Module.finrank F E = 2 → c ≠ 1 → (∀ x, c (c x) = x) → (∀ (P : HeightOneSpectrum (𝓞 E)) (k : Fˣ), _root_.Formalism.L2.Host.ordF P (_root_.Formalism.L2.Host.upF F k) = _root_.Formalism.L2.Host.ordF (P.under (𝓞 F)) k) → ∀ (Ω : Type) [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (cc : Ω ≃+* Ω), (∀ x : E, cc (algebraMap E Ω x) = algebraMap E Ω (c x)) → ∀ (art : _root_.Neutral.B1.Ideles E →* _root_.GlobalTheory.HeckeGal.Gab E Ω), _root_.GlobalTheory.HeckeGal.IsGlobalArtin art → ∀ (l : ℕ) [Fact l.Prime] (ι : _root_.Formalism.ConjugateSelfDual.Qbar l ≃+* ℂ) (χ : _root_.Formalism.L2.Host.HChar E) (n : (E →+* ℂ) → ℤ) (r : _root_.Formalism.ConjugateSelfDual.G E Ω →* (_root_.Formalism.ConjugateSelfDual.Qbar l)ˣ), Continuous r → _root_.GlobalTheory.HeckeGal.IsLAdicOf art ι χ n r → χ.TrivOn F → _root_.Formalism.BasicNotions.AntiHom cc r := by
   intro F E _ _ _ _ _ c h2 hne hinv hr Ω _ _ _ cc hcc art hart l _ ι χ n r hrc hlad ht
   classical

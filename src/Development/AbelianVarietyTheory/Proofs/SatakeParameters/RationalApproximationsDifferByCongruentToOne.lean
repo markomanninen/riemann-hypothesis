@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
-import Formalism.LocalToGlobal.Columns.QthExistsBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
+public import Formalism.LocalToGlobal.Columns.QthExistsBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem val_cong_of_mul_eq {K Γ : Type} [Field K] [LinearOrderedCommGroupWithZe
     have hπc : π cS = 0 := Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _)
     have hπ : π.mapMatrix AS = 1 := by
       ext k l
-      simp only [AS, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, hπc,
+      simp only [AS, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, hπc,
         zero_mul, add_zero]
       rw [Matrix.one_apply, Matrix.one_apply]
       split_ifs <;> simp
@@ -90,7 +94,7 @@ theorem intAt_inv_mul_of_nearAt {F E : Type} [Field F] [NumberField F] [Field E]
       map_one' := by rw [map_one]; rfl
       map_mul' := fun x y => by rw [map_mul]; rfl
       map_zero' := by rw [map_zero]; rfl
-      map_add' := fun x y => by rw [map_add]; rfl }
+      map_add' := fun x y => by rw [map_add (f := _)]; rfl }
   have hφ : ∀ e : E, φ (iA F E e) = algebraMap E (P.adicCompletion E) e := fun e => by
     show ι (iA F E e) P = _
     rw [show ι (iA F E e) = algebraMap E _ e from hι.1 e]; rfl

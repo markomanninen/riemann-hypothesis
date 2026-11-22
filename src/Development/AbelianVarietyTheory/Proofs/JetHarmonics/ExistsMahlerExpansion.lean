@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.JetMomTA
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PThIndep
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ParabolicPointMembership
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsTraceNorm
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsMeasureOfBoundedMoments
-open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.ParabolicPointMembership
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.JetMomTA
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PThIndep
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsTraceNorm
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsMeasureOfBoundedMoments
+
+@[expose] public section
+
+open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
 
 namespace GlobalTheory.MonomialDense
 open GlobalTheory.MultiMahler

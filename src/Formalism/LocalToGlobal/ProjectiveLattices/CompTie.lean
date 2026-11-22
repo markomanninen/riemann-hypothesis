@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
-import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
-import Formalism.LocalToGlobal.ProjectiveLattices.RegularityR2Quotient
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
+public import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegularityR2Quotient
+
+@[expose] public section
 
 noncomputable section
 

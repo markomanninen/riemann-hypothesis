@@ -1,9 +1,13 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOneOfIsOfFinOrderOfCharpoly
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IsTripleAtOfConj
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SGalRead
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AlIsTripleWithcharpolyFrob
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.GalRead
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOneOfIsOfFinOrderOfCharpoly
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.IsTripleAtOfConj
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SGalRead
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AlIsTripleWithcharpolyFrob
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.GalRead
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -62,7 +66,7 @@ theorem IsGaloisTripleWithReduction.hkFrob {ρ : Reading X i (X.side i s)} (ha :
     (h : _root_.GlobalTheory.Triple.IsGaloisTripleWithReduction C art ρ s σ π r ν w red) : HkFrob i s := by
   intro P hS hP g hF k hk
   obtain ⟨x, h1, h2⟩ := h.hecke k P hk hP hS
-  have e := congrArg (fun p => coeff p k) (h.charpolyRev_matW ha hC hS (D.nd.plOm.2 P) hF)
+  have e := congrArg (fun (p : ℂ[X]) => p.coeff k) (h.charpolyRev_matW ha hC hS (D.nd.plOm.2 P) hF)
   simp only [coeff_map, GlobalTheory.coeff_prod_one_sub_C_mul_X] at e
   have e2 : ((normV P : ℕ) : ℂ) ^ (k * (k - 1) / 2) * heckeVal (muBase C (X.l i) (jIdx s)) π k P =
       (((normV P : ℕ) : ℂ) ^ ((D.R.r - 1) / 2)) ^ k * (satake (muBase C (X.l i) (jIdx s)) π P).esymm k :=
@@ -101,7 +105,8 @@ theorem IsGaloisTripleOfExpansion.adm8 (h : _root_.GlobalTheory.Triple.IsGaloisT
     · refine Or.inr fun g hI => (matW_of_mem_Ine hu hl hg hA hI).trans ?_
       rw [chiS, X.twistCharacterFamily_at_auxiliaryPlaces i _ _ v hv A hA g hI, hb, if_pos rfl]
   · change _ = algebraMap (X.O0 i) (X.O i) (1 - matW s g).det
-    rw [← sum_coeff_charpolyRev, map_sum, matW_eq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_coeff_charpolyRev, map_sum, matW_eq]
     exact Finset.sum_congr rfl fun k hk => h.hkFrob hi s P hS hP g hF k (Nat.lt_succ_iff.1 (Finset.mem_range.1 hk))
 theorem adm8_allGood_sig_of_isTriple (D : D7) (h : _root_.GlobalTheory.Triple.IsGaloisTriple D) :
     Formalism.MainNotions.BlochKatoReduction.Gen.adm8 D.ntw D.nexp ∧ GlobalTheory.TwSys.AllGood D.nexp ∧ D.nexp.sig_all :=

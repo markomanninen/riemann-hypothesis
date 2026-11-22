@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StokesOffDiscriminantWindow
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StokesOffDiscriminantWindow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,7 +18,7 @@ theorem StokesOffDiscriminant.proof : StokesOffDiscriminant.Statement := by
   intro n d J A P _ _ _ _ hsheet F G φ hF hG hφ hFc ⟨U, hUo, hPU, hFU⟩
   set K := closure {x | x ∈ zeroSet J ∧ F x ≠ 0} with hKdef
   have hKZ : K ⊆ zeroSet J :=
-    closure_minimal (fun x hx => hx.1) (SheetSumMeasurable.isClosed_zeroSet J)
+    closure_minimal (by exact fun x hx => hx.1) (SheetSumMeasurable.isClosed_zeroSet J)
   have hKU : K ⊆ Uᶜ :=
     closure_minimal (fun x hx hxU => hx.2 (hFU x ⟨hxU, hx.1⟩)) hUo.isClosed_compl
   have hKc : IsCompact K := hFc.of_isClosed_subset isClosed_closure (closure_mono fun x hx => hx.2)
@@ -50,20 +55,20 @@ theorem StokesOffDiscriminant.proof : StokesOffDiscriminant.Statement := by
     intro y
     unfold chartDens
     refine sheetSum_finset_sum Finset.univ _
-      (fun i x s' => f i x * ReciprocityTheory.AnForm.maDens (fun k => vecCons G φ k ∘ s') y) ?_
+      (fun i x s' => f i x * ReciprocityTheory.AnForm.maDens (fun k => vecCons G φ k ∘ s') y) (by
+        intro x hx s' _
+        rw [hsum x hx.1, Finset.sum_mul])
       fun i _ => finite_support_sheetTerm_window
         (sheetTerm_weight_window (hsec i.1) (hWs i.1) (f i) (hfW i) _ y)
-    intro x hx s' _
-    rw [hsum x hx.1, Finset.sum_mul]
   have hR : ∀ y, chartDens J A G (vecCons F φ) y = ∑ i, chartDens J A G (vecCons (f i) φ) y := by
     intro y
     unfold chartDens
     refine sheetSum_finset_sum Finset.univ _
-      (fun i x s' => G x * ReciprocityTheory.AnForm.maDens (fun k => vecCons (f i) φ k ∘ s') y) ?_
+      (fun i x s' => G x * ReciprocityTheory.AnForm.maDens (fun k => vecCons (f i) φ k ∘ s') y) (by
+        rintro x ⟨-, rfl⟩ s' hs'
+        rw [maDens_sheet_finset_sum Finset.univ F f φ hs' hsum fun i _ => hfs i, Finset.mul_sum])
       fun i _ => finite_support_sheetTerm_window
         (sheetTerm_cons_window (hVo i.1) (hsd i.1) (hsec i.1) (hWs i.1) (f i) G (hfW i) φ y)
-    rintro x ⟨-, rfl⟩ s' hs'
-    rw [maDens_sheet_finset_sum Finset.univ F f φ hs' hsum fun i _ => hfs i, Finset.mul_sum]
   unfold chartInt
   simp only [hL, hR]
   rw [integral_finsetSum _ fun i _ => (hpiece i).2.1, integral_finsetSum _ fun i _ => (hpiece i).2.2]

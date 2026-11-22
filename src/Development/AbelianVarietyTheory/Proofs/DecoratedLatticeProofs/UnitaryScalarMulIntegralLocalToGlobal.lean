@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+
+@[expose] public section
 
 open Matrix Formalism.UG Formalism.L2.DIV GlobalTheory.LevNorm
 
@@ -199,10 +203,10 @@ theorem gU_step (hσ : ∀ a, σ (σ a) = a) (hS : ∀ a ∈ S, σ a ∈ S) {n :
   obtain ⟨α, hα1, hα2⟩ := Z.exists_single a ((c : Z.K a) - 1)
   obtain ⟨β, hβ1, hβ2⟩ := Z.exists_single a' ((s c)⁻¹ - 1)
   set z : A := 1 + α + β with hz
-  have pa : Z.p a z = c := by rw [hz, map_add, map_add, map_one, hα1, hβ2 a hne]; ring
-  have pa' : Z.p a' z = (s c)⁻¹ := by rw [hz, map_add, map_add, map_one, hα2 a' (Ne.symm hne), hβ1]; ring
+  have pa : Z.p a z = c := by rw [hz, map_add (f := _), map_add (f := _), map_one, hα1, hβ2 a hne]; ring
+  have pa' : Z.p a' z = (s c)⁻¹ := by rw [hz, map_add (f := _), map_add (f := _), map_one, hα2 a' (Ne.symm hne), hβ1]; ring
   have po : ∀ Q, Q ≠ a → Q ≠ a' → Z.p Q z = 1 := fun Q h1 h2 => by
-    rw [hz, map_add, map_add, map_one, hα2 Q h1, hβ2 Q h2]; ring
+    rw [hz, map_add (f := _), map_add (f := _), map_one, hα2 Q h1, hβ2 Q h2]; ring
   have σinj : ∀ u v, σ u = σ v → u = v := fun u v h => by rw [← hσ u, h, hσ]
   have einj := Z.e_injective
   have hzz : z * σ z = 1 := by

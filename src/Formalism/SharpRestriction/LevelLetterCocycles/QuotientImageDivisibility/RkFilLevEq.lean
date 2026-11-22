@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
-import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 

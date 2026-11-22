@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStB
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open scoped ComplexOrder Matrix
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] {κ : Type} [Fintype κ] {D : ℕ}
 
-theorem bNormSq_nonneg' (μ : Measure (Ix κ → ℂ)) (m : ConeMetric ℂ (Ix κ)) {r n : ℕ}
+theorem bNormSq_nonneg' (μ : Measure (Ix κ → ℂ)) (m : ConeMetric (C := ℂ) (ι := Ix κ)) {r n : ℕ}
     (s : Fin r → (Ix κ → ℂ) → ℂ) (c : Fin r → ℂ) : 0 ≤ bNormSq μ s (wgt m n) c := by
   unfold bNormSq
   refine MeasureTheory.integral_nonneg fun z => mul_nonneg (sq_nonneg _) ?_
@@ -18,7 +22,7 @@ theorem bNormSq_nonneg' (μ : Measure (Ix κ → ℂ)) (m : ConeMetric ℂ (Ix �
   rw [pow_mul]
   exact pow_nonneg (sq_nonneg _) _
 
-theorem norm_le_of_sq_wgt_le {m : ConeMetric ℂ (Ix κ)} {n : ℕ} {z : Ix κ → ℂ} (hz : z ≠ 0)
+theorem norm_le_of_sq_wgt_le {m : ConeMetric (C := ℂ) (ι := Ix κ)} {n : ℕ} {z : Ix κ → ℂ} (hz : z ≠ 0)
     {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (h : a ^ 2 * wgt m n z ≤ b) :
     a ≤ Real.sqrt b * m.ρ z ^ n := by
   have hρ : 0 < m.ρ z := m.pos z hz

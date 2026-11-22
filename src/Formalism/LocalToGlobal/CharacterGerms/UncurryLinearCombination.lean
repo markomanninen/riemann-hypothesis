@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.FirstVanishingAt
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.FirstVanishingAt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,7 +50,7 @@ theorem hom_of_lgLin (Y : FBChart C V O dd) {γ : Fin dd → PowerSeries C} {U :
   have hX : ∀ k : Fin 2, MvPowerSeries.constantCoeff (MvPowerSeries.X k : MvPowerSeries (Fin 2) C) = 0 :=
     fun k => MvPowerSeries.constantCoeff_X k
   have hS : MvPowerSeries.constantCoeff (MvPowerSeries.X 0 + MvPowerSeries.X 1 : MvPowerSeries (Fin 2) C) = 0 := by
-    rw [map_add, hX 0, hX 1, add_zero]
+    rw [map_add (f := _), hX 0, hX 1, add_zero]
   have hP0 : ∀ (k : Fin 2) (j : Fin dd), MvPowerSeries.constantCoeff (cvAt (MvPowerSeries.X k) (γ j)) = 0 :=
     fun k j => const_cvAt (hX k) (hγ0 j)
   have hQ0 : ∀ j, MvPowerSeries.constantCoeff (cvAt (MvPowerSeries.X 0 + MvPowerSeries.X 1) (γ j)) = 0 :=
@@ -83,7 +87,7 @@ theorem hom_of_lgLin (Y : FBChart C V O dd) {γ : Fin dd → PowerSeries C} {U :
       (MvPowerSeries.subst (fun j' => cvAt (MvPowerSeries.X 0) (γ j')) (un1 (Y.lg j)) +
         MvPowerSeries.subst (fun j' => cvAt (MvPowerSeries.X 1) (γ j')) (un1 (Y.lg j))) = 0 := by
     intro j
-    rw [map_add, MvPowerSeries.constantCoeff_subst_eq_zero
+    rw [map_add (f := _), MvPowerSeries.constantCoeff_subst_eq_zero
         (MvPowerSeries.hasSubst_of_constantCoeff_zero fun j' => hP0 0 j') (fun j' => hP0 0 j') (Y.uncurry_log_constantCoeff_chart j),
       MvPowerSeries.constantCoeff_subst_eq_zero
         (MvPowerSeries.hasSubst_of_constantCoeff_zero fun j' => hP0 1 j') (fun j' => hP0 1 j') (Y.uncurry_log_constantCoeff_chart j),
@@ -121,7 +125,8 @@ theorem agr_of_ty {I : Fin 2 → Type} [∀ g, Fintype (I g)] {g : Fin 2} {w : I
   obtain ⟨n, rfl⟩ : ∃ n, e = Finsupp.single () n := ⟨e (), Finsupp.unique_single e⟩
   rw [Finsupp.degree_single] at he
   change PowerSeries.coeff n _ = PowerSeries.coeff n _
-  rw [map_sum, map_smul, coeffX']
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_smul, coeffX']
   simp only [map_smul, smul_eq_mul, tyS_good_coeff h0 h1 hl _ n he]
   by_cases hn1 : n = 1
   · simp [hn1]

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -12,8 +16,8 @@ namespace ReciprocityTheory.ChartRestriction.G.DVR.TWM
 
 open ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor IsLocalRing TWO SectionScalarValuation QForm
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem tw_of (hG : GlobalFnsSt) (hTW : TwistBCSpanStatement) (hVR : VRatioGtStatement) : TWStatement := by
   intro V _ _ _ ϖ hϖ D Q hQ F _ _ v hv k hk p w hw ζ hζ
   have hL : D.toPre.P.L.IsLB := D.toPre.P.isLB

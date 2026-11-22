@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.SigmaMemIntOE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.Cayley
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.SigmaMemIntOE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.Cayley
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.Development
+
+@[expose] public section
 
 noncomputable section
 

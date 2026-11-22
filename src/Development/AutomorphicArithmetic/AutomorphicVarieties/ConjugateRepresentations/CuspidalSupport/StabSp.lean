@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.LFun Formalism.UG Formalism.UG.P Formalism.L2.Host UpperTheory.V.Cj.S
 open GroundTheory.Automorphic.AutomorphicForm (UPos unipGL constantTerm archCompact infEmb isExpLieAlgebra)
@@ -14,7 +18,7 @@ theorem UpperTheory.V.Cj.S.stabSp :
   obtain ⟨L', hL'o, hle, T, hT, hsp⟩ := hL E a L hLo
   obtain ⟨h1, h2, h3⟩ := hO E a S
   have hb := hB E a S hS L' hL'o
-  have hK : ∀ w ∉ T, fixed (finRep E a) L' ≤ fixed (fL a w) (KGL w a) := fun w hw φ hφ =>
+  have hK : ∀ w ∉ T, fixed (finRep E a) L' ≤ fixed (fL a w) (KGL w (n := a)) := fun w hw φ hφ =>
     GlobalTheory.LGrp.mem_fixed.2 fun k hk => GlobalTheory.LGrp.mem_fixed.1 hφ _ ((hsp w hw).1 k hk)
   refine ⟨T, hT, hull S ⊓ fixed (finRep E a) L', le_inf h1 fun φ hφ => ?_, ?_, fun φ hφ => ?_,
     fun w hw => inf_le_right.trans (hK w hw), ?_⟩
@@ -33,10 +37,10 @@ theorem UpperTheory.V.Cj.S.stabSp :
       exact e.symm
     · have hc := Final.GLintComm E w a
       refine ⟨?_, GlobalTheory.LGrp.mem_fixed.2 fun u hu => ?_⟩
-      · change heckeVec (fL a w) (KGL w a) h φ ∈ hull S
-        rw [heckeVec, finsum_eq_sum (fun c : _ ⧸ KGL w a => h c.out • fL a w c.out φ) (finite_heckeVec hc hh (fL a w) φ)]
+      · change heckeVec (fL a w) (KGL w (n := a)) h φ ∈ hull S
+        rw [heckeVec, finsum_eq_sum (fun c : _ ⧸ KGL w (n := a) => h c.out • fL a w c.out φ) (finite_heckeVec hc hh (fL a w) φ)]
         exact Submodule.sum_mem _ fun c _ => Submodule.smul_mem _ _ (h3 _ φ hφ)
-      · change finRep E a u (heckeVec (fL a w) (KGL w a) h φ) = heckeVec (fL a w) (KGL w a) h φ
+      · change finRep E a u (heckeVec (fL a w) (KGL w (n := a)) h φ) = heckeVec (fL a w) (KGL w (n := a)) h φ
         obtain ⟨k, hk, u', hu', e1, rfl⟩ := (hsp w hw).2 u hu
         have e2 := map_heckeVec hc hh (ρ := fL a w) (ρ' := fL a w) (finRep E a u') (fun g y => by
           change finRep E a u' (finRep E a (locGL E a w g) y) = finRep E a (locGL E a w g) (finRep E a u' y)

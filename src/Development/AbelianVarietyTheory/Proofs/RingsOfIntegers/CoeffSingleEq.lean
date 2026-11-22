@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.FormalGroupCoeffSecondLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.FormalGroupCoeffSecondLinear
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -30,7 +34,7 @@ theorem exists_decomp [Fintype σ] (g : MvPowerSeries σ V) :
   exact ⟨k, by rw [← hk]; ring⟩
 
 theorem coeff_single_eq (q : τ) (f : MvPowerSeries τ V) :
-    coeff (Finsupp.single q 1) f = constantCoeff (pderiv V q f) := by
+    coeff (Finsupp.single q 1) f = constantCoeff (pderiv (R := V) q f) := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]
   simp
 
@@ -67,11 +71,13 @@ theorem coeff_hom [Fintype σ] (ψ : MvPowerSeries σ V →ₐ[V] MvPowerSeries 
   have h1 : ∀ j, coeff (Finsupp.single j 1) f = constantCoeff (k j) := by
     intro j
     conv_lhs => rw [hk]
-    rw [map_add, coeff_single_C, zero_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), coeff_single_C, zero_add, map_sum]
     rw [Finset.sum_congr rfl fun i _ => coeff_single_mul j (X i) (k i) (by simp)]
     simp [coeff_single_X]
   conv_lhs => rw [hk]
-  rw [map_add, hC, map_add, coeff_single_C, zero_add, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), hC, map_add (f := _), coeff_single_C, zero_add, map_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, coeff_single_mul _ _ _ (h j), const_hom ψ h, h1, _root_.mul_comm]
 
@@ -80,7 +86,7 @@ theorem evC_hom [Fintype σ] (a : σ → MvPowerSeries τ V) (ha : ∀ j, consta
   have hs : HasSubst a := hasSubst_of_constantCoeff_zero ha
   have h : ∃ ψ : MvPowerSeries σ V →ₐ[V] MvPowerSeries τ V, ∀ j, ψ (MvPowerSeries.X j) = a j :=
     ⟨substAlgHom hs, fun j => substAlgHom_X hs j⟩
-  exact ⟨h.choose, h.choose_spec, fun f => by unfold evC; rw [dif_pos h]⟩
+  exact ⟨h.choose, h.choose_spec, fun f => by unfold evC; rw [dite_eq_left h]⟩
 
 theorem const_evC [Fintype σ] (a : σ → MvPowerSeries τ V) (ha : ∀ j, constantCoeff (a j) = 0)
     (f : MvPowerSeries σ V) : constantCoeff (evC a f) = constantCoeff f := by

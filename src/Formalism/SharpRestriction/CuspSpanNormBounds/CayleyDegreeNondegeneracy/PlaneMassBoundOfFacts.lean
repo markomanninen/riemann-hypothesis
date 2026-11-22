@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.MinkowskiDividesFactorialOfBound
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.GenusOrthonormalIntegralUnimodular
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.MassPowLeExpRpow
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.MinkowskiDividesFactorialOfBound
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.GenusOrthonormalIntegralUnimodular
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.MassPowLeExpRpow
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,9 +38,10 @@ theorem card_class_reps_plane_le (K : Type) [Field K] [NumberField K] [StarRing 
   refine hC V h L hs hL s hreps B₁ (B₁ * rootDiscriminant K)
     (fun M hM => (genus_orthonormal_integral_unimodular h hs L hL M (hreps.1 M hM)).1) fun M hM => ?_
   have hg := hreps.1 M hM
+  have hMlat : Submodule.IsLattice K M := hg.1.toIsLattice
   obtain ⟨hint, huni⟩ := genus_orthonormal_integral_unimodular h hs L hL M hg
   obtain ⟨x, hx, hx0, hxB⟩ := hA V h L hs hL M hg
-  obtain ⟨y, hy, hy0, hxy, hyB⟩ := hB V h L hs hL M hg.1 hint huni x hx hx0
+  obtain ⟨y, hy, hy0, hxy, hyB⟩ := hB V h L hs hL M hMlat hint huni x hx hx0
   exact ⟨x, hx, y, hy, hx0, hy0, hxy, fun φ =>
     ⟨hxB φ, (hyB φ).trans (mul_le_mul_of_nonneg_right (hxB φ) hrd)⟩⟩
 

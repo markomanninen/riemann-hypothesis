@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockVeronese
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockVeronese
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -12,8 +17,8 @@ namespace PowerBlockVeronese
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem chartLat_mul {y : (Σ k, ι k) → Ω} {a : K → ℤ} {n m : ℕ} {s t : Ω} (hs : s ∈ chartLat y a n)
     (ht : t ∈ chartLat y a m) : s * t ∈ chartLat y a (n + m) := by
   intro c hc
@@ -32,14 +37,14 @@ theorem chartLat_mul {y : (Σ k, ι k) → Ω} {a : K → ℤ} {n m : ℕ} {s t 
   rw [key]
   exact mul_mem (hs c hc) (ht c hc)
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem one_mem_chartLat (y : (Σ k, ι k) → Ω) (a : K → ℤ) : (1 : Ω) ∈ chartLat y a 0 := by
   intro c _
   simp
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem pow_mem_chartLat {y : (Σ k, ι k) → Ω} {a : K → ℤ} {m : ℕ} {x : Ω} (hx : x ∈ chartLat y a m) (k : ℕ) :
     x ^ k ∈ chartLat y a (m * k) := by
   induction k with
@@ -95,8 +100,8 @@ theorem exists_split {q : ℕ} (μ : Fin q → ℕ) :
 
 variable [DecidableEq K]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem blockDeg_add (n n' : ℕ) :
     (blockDeg (none : Option K) n + blockDeg (none : Option K) n' : Option K → ℕ) = blockDeg none (n + n') := by
   funext k
@@ -195,8 +200,8 @@ def fam {Ω : Type} [Field Ω] {q r : ℕ} (w : Fin q → Ω) (d : Fin r → ℕ
 
 end PowerBlockVeronese
 
-open PowerBlockVeronese in
 
+open PowerBlockVeronese in
 theorem PowerBlockVeronese.proof (hFin : SectionRingFinite.Statement) : PowerBlockVeronese.Statement := by
   intro K _ _ ι _ Ω _ y a q w hy hw hgen
   obtain ⟨r, d, e, he, hspan⟩ := hFin K ι Ω y a q w hy hw hgen

@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzRestrictFinitePlaceMemSchwartzBruh
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzSpaceTranslateMemOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensFormBox
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSchwartzBruhatConvolutionLocalFieldPower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzRestrictFinitePlaceMemSchwartzBruh
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzSpaceTranslateMemOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensFormBox
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSchwartzBruhatConvolutionLocalFieldPower
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.LatVac
 open scoped Matrix GlobalTheory.VacAny
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -18,25 +23,25 @@ namespace GlobalTheory.MixedForm
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type}
 
-def finRepl (v : Pl F) (z : κ → Af F) (x : κ → Fv F v) : κ → Af F :=
+def finRepl (v : Pl (F := F)) (z : κ → Af F) (x : κ → Fv F v) : κ → Af F :=
   fun i => z i - GlobalTheory.AdelicU.singleFin v (evalV F v (z i)) + GlobalTheory.AdelicU.singleFin v (x i)
 
-def finProj (v : Pl F) (φ₀ : (κ → Fv F v) → ℂ) (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) (g : (κ → Af F) → ℂ) :
+def finProj (v : Pl (F := F)) (φ₀ : (κ → Fv F v) → ℂ) (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) (g : (κ → Af F) → ℂ) :
     (κ → Af F) → ℂ :=
   fun z => φ₀ (fun i => evalV F v (z i)) * l fun x => g (finRepl v z x)
 
-theorem evalV_finRepl (v : Pl F) (z : κ → Af F) (x : κ → Fv F v) (i : κ) :
+theorem evalV_finRepl (v : Pl (F := F)) (z : κ → Af F) (x : κ → Fv F v) (i : κ) :
     evalV F v (finRepl v z x i) = x i := by
   simp [finRepl, GlobalTheory.AdelicU.evalV_singleFin_self]
 
-theorem finRepl_finRepl (v : Pl F) (z : κ → Af F) (x : κ → Fv F v) :
+theorem finRepl_finRepl (v : Pl (F := F)) (z : κ → Af F) (x : κ → Fv F v) :
     finRepl v (finRepl v z x) (fun i => evalV F v (z i)) = z := by
   funext i
   have := evalV_finRepl v z x i
   simp only [finRepl] at this ⊢
   rw [this]; abel
 
-theorem continuous_finRepl (v : Pl F) :
+theorem continuous_finRepl (v : Pl (F := F)) :
     Continuous fun p : (κ → Af F) × (κ → Fv F v) => finRepl v p.1 p.2 := by
   refine continuous_pi fun i => ?_
   have h1 : Continuous fun p : (κ → Af F) × (κ → Fv F v) => p.1 i := (continuous_apply i).comp continuous_fst
@@ -44,10 +49,10 @@ theorem continuous_finRepl (v : Pl F) :
   exact (h1.sub ((GlobalTheory.AdelicU.continuous_singleFin v).comp ((RestrictedProduct.continuous_eval v).comp h1))).add
     ((GlobalTheory.AdelicU.continuous_singleFin v).comp h2)
 
-theorem finProj_mem_SB [Fintype κ] (v : Pl F) {φ₀ : (κ → Fv F v) → ℂ} (hφ₀ : φ₀ ∈ SB (κ → Fv F v))
+theorem finProj_mem_SB [Fintype κ] (v : Pl (F := F)) {φ₀ : (κ → Fv F v) → ℂ} (hφ₀ : φ₀ ∈ SB (κ → Fv F v))
     (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) {g : (κ → Af F) → ℂ} (hg : g ∈ SB (κ → Af F)) :
     finProj v φ₀ l g ∈ SB (κ → Af F) := by
-  haveI : T2Space (Af F) := GlobalTheory.AdelicUnitaryTop.t2Space_finiteAdeleRing_of_numberField F
+  have : T2Space (Af F) := GlobalTheory.AdelicUnitaryTop.t2Space_finiteAdeleRing_of_numberField F
   have he : Continuous fun z : κ → Af F => fun i => evalV F v (z i) :=
     continuous_pi fun i => (RestrictedProduct.continuous_eval v).comp (continuous_apply i)
   have hs : Continuous fun z : κ → Af F => fun i => GlobalTheory.AdelicU.singleFin v (evalV F v (z i)) :=
@@ -81,14 +86,14 @@ theorem finProj_mem_SB [Fintype κ] (v : Pl F) {φ₀ : (κ → Fv F v) → ℂ}
     have h2 := right_ne_zero_of_mul h
     obtain ⟨x, hx⟩ : ∃ x, g (finRepl v z x) ≠ 0 := by
       by_contra hc
-      push_neg at hc
+      push Not at hc
       apply h2
       have : (fun x => g (finRepl v z x)) = 0 := funext hc
       rw [this, map_zero]
     refine ⟨(finRepl v z x, fun i => evalV F v (z i)), ⟨subset_tsupport _ hx, subset_tsupport _ h1⟩, ?_⟩
     exact finRepl_finRepl v z x
 
-theorem proj_pureA [Fintype κ] (v : Pl F) (φ₀ : (κ → Fv F v) → ℂ) (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ)
+theorem proj_pureA [Fintype κ] (v : Pl (F := F)) (φ₀ : (κ → Fv F v) → ℂ) (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ)
     (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (g : (κ → Af F) → ℂ) :
     proj v φ₀ l (pureA F f g) = pureA F f (finProj v φ₀ l g) := by
   funext y
@@ -106,7 +111,7 @@ theorem proj_pureA [Fintype κ] (v : Pl F) (φ₀ : (κ → Fv F v) → ℂ) (l 
   change φ₀ (fun i => evalV F v (y i).2) * _ = _
   ring
 
-theorem proj_schA_adm : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ] (v : Pl F) (φ₀ : (κ → Fv F v) → ℂ), φ₀ ∈ SB (κ → Fv F v) → ∀ l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ,
+theorem proj_schA_adm : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ] (v : Pl (F := F)) (φ₀ : (κ → Fv F v) → ℂ), φ₀ ∈ SB (κ → Fv F v) → ∀ l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ,
     (∀ Φ ∈ schA F κ, GlobalTheory.MixedForm.proj v φ₀ l Φ ∈ schA F κ) ∧
       ∀ L ∈ (adeleClass F).adm κ, L ∘ₗ GlobalTheory.MixedForm.proj v φ₀ l ∈ (adeleClass F).adm κ := by
   intro F _ _ κ _ v φ₀ hφ₀ l

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -25,23 +29,30 @@ private theorem prime_maximal_or_kernel (O : Type) [CommRing O] [IsDomain O] [Is
     have hbot : (⊥ : Ideal (B ⧸ P)).comap (algebraMap O (B ⧸ P)) = P.comap (algebraMap O B) := by
       ext a
       rw [Ideal.mem_comap, Ideal.mem_bot, Ideal.mem_comap, hcomap]
-    haveI : (⊥ : Ideal (B ⧸ P)).IsPrime := Ideal.bot_prime
-    have hmax := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := O) (⊥ : Ideal (B ⧸ P)) (hbot ▸ hQ)
+    haveI : (⊥ : Ideal (B ⧸ P)).IsPrime := Ideal.isPrime_bot
+    have hmax := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := O) (⊥ : Ideal (B ⧸ P)) (by
+      change ((⊥ : Ideal (B ⧸ P)).comap (algebraMap O (B ⧸ P))).IsMaximal
+      rw [hbot]
+      exact hQ)
     rw [Ideal.Quotient.maximal_ideal_iff_isField_quotient]
     exact Ring.isField_iff_maximal_bot.2 hmax
   · push_neg at hc
     right
     refine ⟨hc, ?_⟩
     have hinj : Function.Injective (algebraMap O (B ⧸ P)) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro a ha
       by_contra h0
       exact hc a h0 ((hcomap a).1 ha)
-    haveI : Module.IsTorsionFree O (B ⧸ P) := NoZeroSMulDivisors.iff_algebraMap_injective.2 hinj
+    haveI : Module.IsTorsionFree O (B ⧸ P) := Module.isTorsionFree_iff_algebraMap_injective.2 hinj
     haveI : Module.IsTorsionFree O K :=
-      NoZeroSMulDivisors.iff_algebraMap_injective.2 (FaithfulSMul.algebraMap_injective O K)
+      Module.isTorsionFree_iff_algebraMap_injective.2 (FaithfulSMul.algebraMap_injective O K)
     haveI : Algebra.IsAlgebraic O (B ⧸ P) := Algebra.IsIntegral.isAlgebraic
-    let τ : (B ⧸ P) →ₐ[O] K := IsAlgClosed.lift
+    let τ : (B ⧸ P) →ₐ[O] K := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     refine ⟨τ.comp (Ideal.Quotient.mkₐ O P), ?_⟩
     have hτ : RingHom.ker (τ : (B ⧸ P) →+* K) = ⊥ := by
       apply Ideal.eq_bot_of_comap_eq_bot (R := O)

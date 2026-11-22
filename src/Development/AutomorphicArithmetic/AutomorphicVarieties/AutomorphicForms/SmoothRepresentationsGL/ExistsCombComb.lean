@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FoundBridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
-import GroundTheory.AutomorphicForms.FourierWhittaker
-import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FoundBridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+public import GroundTheory.AutomorphicForms.FourierWhittaker
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,8 +120,8 @@ def psiA : AddChar (Ad E) ℂ := Circle.coeHom.compAddChar (GroundTheory.Global.
 
 def psiF : AddChar (Af E) ℂ := (psiA E).compAddMonoidHom (sFin E : Af E →+ Ad E)
 
-variable {E} in
 
+variable {E} in
 def psiL (w : HeightOneSpectrum (𝓞 E)) : AddChar (w.adicCompletion E) ℂ :=
   (psiF E).compAddMonoidHom (sLoc E w : w.adicCompletion E →+ Af E)
 
@@ -200,7 +204,7 @@ def SuppIn (S : Finset (HeightOneSpectrum (𝓞 E))) (k : GL (Fin n) (Af E)) : P
 def Away (S : Finset (HeightOneSpectrum (𝓞 E))) (k : GL (Fin n) (Af E)) : Prop := ∀ w ∈ S, cmp w k = 1
 
 def InKS (S : Finset (HeightOneSpectrum (𝓞 E))) (k : GL (Fin n) (Af E)) : Prop :=
-  Away S k ∧ ∀ w, cmp w k ∈ GlobalTheory.LFun.KGL w n
+  Away S k ∧ ∀ w, cmp w k ∈ GlobalTheory.LFun.KGL w (n := n)
 
 theorem cmp_ext {k k' : GL (Fin n) (Af E)} (h : ∀ w, cmp w k = cmp w k') : k = k' := by
   refine Units.ext (Matrix.ext fun i j => ?_)
@@ -212,9 +216,9 @@ def GoodAt (w : HeightOneSpectrum (𝓞 E)) (ψ : AddChar (w.adicCompletion E) �
 
 structure Eig (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ) (W : GL (Fin n) (w.adicCompletion E) → ℂ) : Prop where
   card : B.card = n
-  inv : ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w n, W (g * k) = W g
+  inv : ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), W (g * k) = W g
   eig : ∀ ϖ, Formalism.UG.IsUnifV E w ϖ → ∀ j ≤ n, ∀ g,
-    ∑ᶠ c : GL (Fin n) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w n,
+    ∑ᶠ c : GL (Fin n) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := n),
       Formalism.UG.Tj ℂ n (Formalism.UG.Ov E w) ϖ j c.out * W (g * c.out) = GlobalTheory.LFun.satEig (Formalism.UG.qV E w) n B j * W g
 
 def EigAt (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ) (f : GA E n → ℂ) : Prop :=
@@ -229,9 +233,9 @@ structure Nice (f : GA E n → ℂ) : Prop where
 
 def fop (c : GL (Fin n) (Af E) →₀ ℂ) (f : GA E n → ℂ) (g : GA E n) : ℂ := c.sum fun x z => z * f (g * finGL E n x)
 
-def Orth (μ : Measure (Reduction.normOneGL E n)) [μ.IsHaarMeasure] (φ φ' : cuspForms E n) : Prop :=
+def Orth (μ : Measure (Reduction.normOneGL (K := E) (n := n))) [μ.IsHaarMeasure] (φ φ' : cuspForms E n) : Prop :=
   ∀ g g', ∫ q, starRingEnd ℂ (quotTr φ g q) * quotTr φ' g' q
-    ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) = 0
+    ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) = 0
 
 variable [IsTotallyReal E]
 
@@ -328,7 +332,7 @@ def InjP : Prop :=
 def EigOfSat : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (n : ℕ) (π : CuspSub E n) (w : HeightOneSpectrum (𝓞 E))
     (B : Multiset ℂˣ), π.HasSat w B → ∀ φ ∈ π.V,
-    (∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w n, φ.1 (g * finGL E n (locGL E n w k)) = φ.1 g) → EigAt w B φ.1
+    (∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), φ.1 (g * finGL E n (locGL E n w k)) = φ.1 g) → EigAt w B φ.1
 
 def EigMap : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (n : ℕ) (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ)
@@ -370,27 +374,27 @@ def Pair : Prop :=
     SameSat π π' → ∃ φ ∈ π.V, ∃ φ' ∈ π'.V, ∃ β β' : 𝓢(Lie E n, ℂ), conv φ.1 β = conv φ'.1 β' ∧ conv φ.1 β ≠ 0
 
 def InnerZero : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (n : ℕ) (μ : Measure (Reduction.normOneGL E n)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (n : ℕ) (μ : Measure (Reduction.normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (π π' : CuspSub E n), Cen π → Cen π' → ¬ π.Iso π' → ∀ φ ∈ Fb.carrier π, ∀ φ' ∈ Fb.carrier π',
     inner ℂ (CuspidalSpectrum.cuspToL2 μ φ) (CuspidalSpectrum.cuspToL2 μ φ') = 0
 
 def OrthTr : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (μ : Measure (Reduction.normOneGL E n)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (μ : Measure (Reduction.normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (U U' : Submodule ℂ (cuspForms E n)), U ≤ centralCuspForms E n → U' ≤ centralCuspForms E n → Fb.Stab U → Fb.Stab U' →
     (∀ φ ∈ U, ∀ φ' ∈ U', inner ℂ (CuspidalSpectrum.cuspToL2 μ φ) (CuspidalSpectrum.cuspToL2 μ φ') = 0) →
     ∀ φ ∈ U, ∀ φ' ∈ U', Orth μ φ φ'
 
 def OrthStep : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (n : ℕ) (μ : Measure (Reduction.normOneGL E n)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (n : ℕ) (μ : Measure (Reduction.normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (f : GA E n → ℂ), Continuous f → (∃ C : ℝ, ∀ g, ‖f g‖ ≤ C) → IsLeftInvariant f →
-    ∀ a : RightCosetSpace (Reduction.rationalGLOne E n) → ℂ, Continuous a → (∃ C : ℝ, ∀ q, ‖a q‖ ≤ C) →
+    ∀ a : RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n)) → ℂ, Continuous a → (∃ C : ℝ, ∀ q, ‖a q‖ ≤ C) →
     (∀ g (h : IsLeftInvariant fun x => f (x * g)), ∫ q, a q * CuspidalSpectrum.cuspQuot h q
-      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) = 0) →
+      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) = 0) →
     ∀ (β : 𝓢(Lie E n, ℂ)) (h : IsLeftInvariant (conv f β)), ∫ q, a q * CuspidalSpectrum.cuspQuot h q
-      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) = 0
+      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) = 0
 
 def OrthConv : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (n : ℕ) (μ : Measure (Reduction.normOneGL E n)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (n : ℕ) (μ : Measure (Reduction.normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (φ φ' : cuspForms E n), φ ∈ centralCuspForms E n → φ' ∈ centralCuspForms E n → Orth μ φ φ' →
     ∀ β β' : 𝓢(Lie E n, ℂ), conv φ.1 β = conv φ'.1 β' → conv φ.1 β = 0
 
@@ -427,7 +431,7 @@ theorem smo_of (h0 : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyReal E] 
   have hc' := h2 E n π π' hs' hc
   by_contra hi
   obtain ⟨φ, hφ, φ', hφ', β, β', e, h⟩ := h3 E n hn π π' hc hc' hs'
-  let μ : Measure (Reduction.normOneGL E n) := Measure.haar
+  let μ : Measure (Reduction.normOneGL (K := E) (n := n)) := Measure.haar
   rw [← Fb.map_carrier] at hφ hφ'
   obtain ⟨ψ, hψ, rfl⟩ := hφ
   obtain ⟨ψ', hψ', rfl⟩ := hφ'

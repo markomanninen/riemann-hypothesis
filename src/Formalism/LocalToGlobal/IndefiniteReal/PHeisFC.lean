@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.PHeisFCA
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.PHeisFCA
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ def Phi (V W : HSp D) (x : WA V W) : Fin V.rank → Fin W.rank → Fin (nE D) �
   fun i j => cE D.host.F D.host.E (x i j)
 
 theorem Phi_add (V W : HSp D) (x y : WA V W) (i j k) : Phi V W (x + y) i j k = Phi V W x i j k + Phi V W y i j k := by
-  simp only [Phi, Matrix.add_apply, map_add, Pi.add_apply]
+  simp only [Phi, Matrix.add_apply, map_add (f := _), Pi.add_apply]
 
 theorem Phi_rat (V W : HSp D) (e : Matrix (Fin V.rank) (Fin W.rank) D.host.E) (i j k) :
     Phi V W (e.map (incA D)) i j k = algebraMap D.host.F (AF D.host.F) ((Module.finBasis D.host.F D.host.E).repr (e i j) k) := by
@@ -112,7 +116,7 @@ theorem meas_FD (V W : HSp D) : MeasurableSet (FD V W) := by
       ((fun x => eM D.host.F (Phi V W x i j k).1) ⁻¹' ZSpan.fundamentalDomain (mixedEmbedding.latticeBasis D.host.F) ∩
         (fun x => (Phi V W x i j k).2) ⁻¹' Ohat D.host.F) := by
     ext x
-    simp [FD, F0, Pinf, Set.mem_iInter, Set.mem_preimage, Set.mem_inter_iff]
+    simp only [FD, F0, Pinf, Set.mem_setOf_eq, Set.mem_iInter, Set.mem_preimage, Set.mem_inter_iff]
   rw [hset]
   refine MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => MeasurableSet.iInter fun k => ?_
   refine MeasurableSet.inter ?_ ?_
@@ -163,7 +167,8 @@ theorem finCovol {D : D7} (V W : HSp D) : Formalism.IndefR.Heis.FinCovol V W := 
   have hfd : ∀ μ : Measure (WA V W), IsAddFundamentalDomain (ratL V W) (FD V W) μ :=
     fun μ => IsAddFundamentalDomain.mk' (meas_FD V W).nullMeasurableSet (exU V W)
   refine ⟨⟨Measure.addHaar, FD V W, inferInstance, hfd _⟩, fun μ 𝓕 hμ h𝓕 => ?_⟩
-  rw [h𝓕.measure_eq (hfd μ)]
+  set_option synthInstance.maxHeartbeats 200000 in
+    rw [h𝓕.measure_eq (hfd μ)]
   exact (measure_mono hFK).trans_lt hK.measure_lt_top
 
 end D7

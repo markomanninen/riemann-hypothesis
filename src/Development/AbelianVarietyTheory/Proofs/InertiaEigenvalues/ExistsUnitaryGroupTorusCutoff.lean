@@ -1,8 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MulMatMemUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLocallyConstantCutoffClosedEmbedding
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugatesSeparableMatrixCompactModCentralizerStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyEtaleGeneratorMulMatrixSeparable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MulMatMemUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLocallyConstantCutoffClosedEmbedding
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugatesSeparableMatrixCompactModCentralizerStatement
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -38,7 +41,7 @@ private lemma charpoly_separable_of_isGen {F E : Type} [NontriviallyNormedField 
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul c k => simp [e, f, IsBaseChange.equiv_tmul, mul_smul_comm]
-    | add w₁ w₂ h₁ h₂ => simp only [map_add, h₁, h₂]
+    | add w₁ w₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
   have h3 : e.conj ((LinearMap.mul F A.K τ).baseChange E) = f := by
     apply LinearMap.ext
     intro y
@@ -74,7 +77,7 @@ private lemma map_mul_of_commute_generator {F E : Type} [NontriviallyNormedField
       intro w
       rw [← IsScalarTower.algebraMap_apply, ← Algebra.smul_def, ← Algebra.smul_def,
         ← algebraMap_smul E c w, ← algebraMap_smul E c (φ w), map_smul]
-    | add k₁ k₂ _ _ h₁ h₂ => intro w; rw [map_add, add_mul, map_add, h₁, h₂, add_mul]
+    | add k₁ k₂ _ _ h₁ h₂ => intro w; rw [map_add (f := _), add_mul, map_add (f := _), h₁, h₂, add_mul]
     | mul k₁ k₂ _ _ h₁ h₂ => intro w; rw [RingHom.map_mul, mul_assoc, h₁, h₂, ← mul_assoc]
   intro y
   obtain ⟨u, rfl⟩ := (A.push).out.equiv.surjective y
@@ -85,7 +88,7 @@ private lemma map_mul_of_commute_generator {F E : Type} [NontriviallyNormedField
     rw [IsBaseChange.equiv_tmul, smul_mul_assoc, map_smul, smul_mul_assoc]
     simp only [AlgHom.toLinearMap_apply, IsScalarTower.coe_toAlgHom']
     rw [hK]
-  | add u₁ u₂ h₁ h₂ => intro w; rw [map_add, add_mul, map_add, h₁, h₂, add_mul]
+  | add u₁ u₂ h₁ h₂ => intro w; rw [map_add (f := _), add_mul, map_add (f := _), h₁, h₂, add_mul]
 
 open Matrix MeasureTheory Filter Topology in
 private lemma adjoin_eq_whole_of_isGen {F E : Type} [NontriviallyNormedField F]
@@ -213,8 +216,8 @@ private lemma isClosedEmbedding_uHom {F E : Type} [NontriviallyNormedField F]
     (isClosed_unitary (R := Matrix (Fin r) (Fin r) E)).isClosedEmbedding_subtypeVal
   exact (IsClosedEmbedding.of_comp_iff hval).1 ⟨hemb, hclosed⟩
 
-open Matrix MeasureTheory Filter Topology in
 
+open Matrix MeasureTheory Filter Topology in
 theorem _root_.GlobalTheory.JR.TorusCutOff.exists_unitary_cutoff : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E] [_root_.GlobalTheory.JR.Unram F E] (A : _root_.GlobalTheory.JR.Et F E) (r : ℕ) (τ : A.K) (p : Fin r → F), A.IsGen τ p → ∀ (x : A.K) (j : A.L ≃ₗ[E] (Fin r → E)) (hx : A.IsIsom x j) (Ax : selfAdjoint (Matrix (Fin r) (Fin r) E)), (∀ z, j (algebraMap A.K A.L τ * z) = Ax.1 *ᵥ j z) → ∀ (ν : Measure (unitary A.L)), ν.IsHaarMeasure → ∀ Z : Set (Matrix (Fin r) (Fin r) E), IsCompact Z → ∃ α : Matrix.unitaryGroup (Fin r) E → ℝ, IsLocallyConstant α ∧ HasCompactSupport α ∧ (∀ g, 0 ≤ α g) ∧ ∀ g : Matrix.unitaryGroup (Fin r) E, g.1 * Ax.1 * star g.1 ∈ Z → ∫ t, α (g * (A.uHom hx t)⁻¹) ∂ν = 1 := by
   intro F E _ _ _ _ _ A r τ p hτ x j hx Ax hAx ν _ Z hZ
   haveI : LocallyCompactSpace E :=

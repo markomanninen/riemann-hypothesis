@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValHalfInf
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValHalfInf
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.UG GlobalTheory.Doubling GlobalTheory.Eis.Conv
 
@@ -36,7 +41,7 @@ theorem exists_delta (F E : Type) [Field F] [NumberField F] [Field E] [NumberFie
     intro s t hst
     have h1 := congrArg σ hst
     have hsm : ∀ (a : F) (z : E), σ (a • z) = a • σ z := fun a z => σ.toLinearMap.map_smul a z
-    rw [map_add, hsm, hsm, map_one, hδ, map_zero, smul_neg] at h1
+    rw [map_add (f := _), hsm, hsm, map_one, hδ, map_zero, smul_neg] at h1
     have hs : (2 * s) • (1 : E) = 0 := by
       rw [two_mul, add_smul]; linear_combination hst + h1
     have hs0 : s = 0 := by simpa using hs
@@ -57,7 +62,6 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E] {R : Type} [CommRing R] 
 theorem exists_coords (δ : E) (h : ∀ z : E, ∃ a b : F, z = a • (1 : E) + b • δ) (z : R ⊗[F] E) :
     ∃ u v : R, z = u ⊗ₜ[F] (1 : E) + v ⊗ₜ[F] δ := by
   induction z with
-  | zero => exact ⟨0, 0, by simp⟩
   | tmul r e =>
     obtain ⟨a, b, rfl⟩ := h e
     exact ⟨a • r, b • r, by
@@ -87,7 +91,7 @@ theorem exists_psi [CharZero F] (σ : E →ₐ[F] E) (δ : E) (hδ : σ δ = -δ
     rw [hUV]; simp [Algebra.TensorProduct.one_def, TensorProduct.smul_tmul']
   have e2 : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ (S j i)
       = U j i • (1 : R ⊗[F] E) - V j i • ((1 : R) ⊗ₜ[F] δ) := by
-    rw [hUV, map_add]
+    rw [hUV, map_add (f := _)]
     change U j i ⊗ₜ[F] σ 1 + V j i ⊗ₜ[F] σ δ = _
     simp [hδ, Algebra.TensorProduct.one_def, TensorProduct.smul_tmul', TensorProduct.tmul_neg,
       sub_eq_add_neg]
@@ -96,7 +100,7 @@ theorem exists_psi [CharZero F] (σ : E →ₐ[F] E) (δ : E) (hδ : σ δ = -δ
   have h2' : 2 * algebraMap R (R ⊗[F] E) c = 1 := by
     rw [← map_ofNat (algebraMap R (R ⊗[F] E)) 2, ← map_mul, h2, map_one]
   unfold psi
-  simp only [Algebra.smul_def, map_add, map_sub, map_mul] at h1 e3 ⊢
+  simp only [Algebra.smul_def, map_add (f := _), map_sub, map_mul] at h1 e3 ⊢
   generalize algebraMap R (R ⊗[F] E) = f at *
   generalize ((1 : R) ⊗ₜ[F] δ) = d at *
   linear_combination (f c) * e3 + (f c) * h1 - S i j * h2'
@@ -108,13 +112,13 @@ theorem psi_split (δ : E) (x x' : F) (y y' t w w' : R) :
         + algebraMap R (R ⊗[F] E) t * psi δ w w' := by
   have : inclR (F := F) R ((x - x') • (1 : E) + (x + x') • δ)
       = psi δ (algebraMap F R x) (algebraMap F R x') := by
-    rw [psi_eq, ← map_sub, ← map_add, Algebra.algebraMap_eq_smul_one,
+    rw [psi_eq, ← map_sub, ← map_add (f := _), Algebra.algebraMap_eq_smul_one,
       Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul, TensorProduct.smul_tmul,
       ← TensorProduct.tmul_add]
     rfl
   rw [this]
   unfold psi
-  simp only [Algebra.smul_def, map_add, map_sub, map_mul]
+  simp only [Algebra.smul_def, map_add (f := _), map_sub, map_mul]
   ring
 
 end
@@ -134,7 +138,7 @@ theorem cover_skew : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
     (fun y => Matrix.of fun i j => psi δ (y (i, j)) (y (j, i))), ?_, fun S hS => ?_⟩
   · refine (Nat.cast_le.mpr Finset.card_image_le).trans ?_
     rw [Fintype.card_piFinset, Nat.cast_prod]
-    refine (Finset.prod_le_prod (fun _ _ => Nat.cast_nonneg _) (fun p _ => hY _)).trans (le_of_eq ?_)
+    refine (Finset.prod_le_prod₀ (fun _ _ => Nat.cast_nonneg _) (fun p _ => hY _)).trans (le_of_eq ?_)
     rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_prod,
       Fintype.card_fin, Finset.prod_pow_eq_pow_sum]
     congr 1

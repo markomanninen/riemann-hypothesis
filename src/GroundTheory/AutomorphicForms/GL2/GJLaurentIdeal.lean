@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -27,7 +32,7 @@ theorem algebraMap_mem_laurentSubalgebra (P : ℂ[X]) :
   refine Polynomial.induction_on P (fun a => ?_) (fun p q hp hq => ?_) (fun k a h => ?_)
   · rw [RatFunc.algebraMap_C]
     exact C_mem_laurentSubalgebra a
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact add_mem hp hq
   · rw [pow_succ, ← mul_assoc, map_mul, RatFunc.algebraMap_X]
     exact mul_mem h X_mem_laurentSubalgebra
@@ -50,7 +55,7 @@ theorem mem_laurentSubalgebra_iff {R : RatFunc ℂ} :
       obtain ⟨P, k, rfl⟩ := hx
       obtain ⟨Q, l, rfl⟩ := hy
       refine ⟨P * Polynomial.X ^ l + Q * Polynomial.X ^ k, k + l, ?_⟩
-      rw [map_add, map_mul, map_mul, map_pow, map_pow, RatFunc.algebraMap_X]
+      rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, RatFunc.algebraMap_X]
       field_simp
       ring
     | mul x y _ _ hx hy =>
@@ -153,7 +158,7 @@ theorem algebraMap_mul_mem (hX : ∀ R ∈ I, RatFunc.X * R ∈ I) (P : ℂ[X]) 
     rw [RatFunc.algebraMap_C, ← RatFunc.smul_eq_C_mul]
     exact I.smul_mem a hR
   · intro R hR
-    rw [map_add, add_mul]
+    rw [map_add (f := _), add_mul]
     exact I.add_mem (hp R hR) (hq R hR)
   · intro R hR
     have : algebraMap ℂ[X] (RatFunc ℂ) (Polynomial.C a * Polynomial.X ^ (k + 1)) * R =
@@ -240,7 +245,7 @@ theorem existsUnique_eq_laurent_div (I : Submodule ℂ (RatFunc ℂ))
   let J : Ideal ℂ[X] :=
     { carrier := {Q | algebraMap ℂ[X] (RatFunc ℂ) Q / algebraMap ℂ[X] (RatFunc ℂ) D ∈ I}
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_ofPred_eq, map_add, add_div] at ha hb ⊢
+        simp only [Set.mem_ofPred_eq, map_add (f := _), add_div] at ha hb ⊢
         exact I.add_mem ha hb
       zero_mem' := by
         simp only [Set.mem_ofPred_eq, map_zero, zero_div]

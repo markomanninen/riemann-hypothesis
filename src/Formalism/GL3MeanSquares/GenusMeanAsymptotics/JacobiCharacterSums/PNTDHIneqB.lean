@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDHIneqA
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDHIneqA
+
+@[expose] public section
 
 open Finset Complex
 
@@ -102,7 +106,7 @@ theorem dhAssemble {β : Type*} [AddCommGroup β] (F1 F2 F3 F4 : Multiset ℂ) (
     intro F b hb
     rw [← Multiset.sum_map_erase hb]
     abel
-  simp only [Multiset.map_add, Multiset.sum_add, e _ _ h2]
+  simp only [Multiset.map_add (f := _), Multiset.sum_add, e _ _ h2]
   by_cases hc3 : c3 <;> by_cases hc4 : c4
   · simp only [if_pos hc3, if_pos hc4, e _ _ (h3 hc3), e _ _ (h4 hc4)]
     abel

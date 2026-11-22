@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherExtra
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PReindexDim
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TrdegEqOfLeOfIsAlgebraic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherExtra
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PReindexDim
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TrdegEqOfLeOfIsAlgebraic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

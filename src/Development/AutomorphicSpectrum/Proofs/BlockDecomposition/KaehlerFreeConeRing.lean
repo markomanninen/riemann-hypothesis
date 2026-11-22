@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMulPowEqIncl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PolyEqPolyEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ToConeSurjective
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMulPowEqIncl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PolyEqPolyEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ToConeSurjective
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

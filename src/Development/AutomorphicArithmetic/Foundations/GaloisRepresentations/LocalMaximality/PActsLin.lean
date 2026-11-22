@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+
+@[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
@@ -28,7 +32,7 @@ private lemma key1 (τ : DR ℂ K →ₗ[K] K) (a b : K) (m : DR ℂ K ⊗[ℂ] 
   | tmul w' w'' =>
     rw [actZ_tmul, muP_tmul, muP_tmul, mulP_tmul, mulP_tmul, smul_mul_assoc, mul_smul_comm]
     exact smul_comm _ _ _
-  | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy, smul_add]
 
 private lemma key2 (τ : DR ℂ K →ₗ[K] K) (f : F) (m : DR ℂ K ⊗[ℂ] DR ℂ K) (w : DR ℂ K) :
     mulP F K (muP F K τ m (algebraMap F K f • w)) = algebraMap F K f • mulP F K (muP F K τ m w) := by
@@ -37,7 +41,7 @@ private lemma key2 (τ : DR ℂ K →ₗ[K] K) (f : F) (m : DR ℂ K ⊗[ℂ] DR
   | tmul w' w'' =>
     rw [muP_tmul, muP_tmul, mulP_tmul, mulP_tmul, mul_smul_comm, map_smul, smul_eq_mul, ← Algebra.smul_def,
       map_smul, smul_eq_mul, map_mul, mul_smul]
-  | add p q hp hq => simp only [map_add, LinearMap.add_apply, smul_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), LinearMap.add_apply, smul_add, hp, hq]
 
 private lemma key3 (τ : DR ℂ K →ₗ[K] K) (f g : F) (m : DR ℂ K ⊗[ℂ] DR ℂ K) (w : DR ℂ K) :
     mulP F K (muP F K τ (actZ K (algebraMap F K f ⊗ₜ algebraMap F K g) m) w) =
@@ -68,7 +72,7 @@ theorem UpperTheory.Gal.productCup_of_system.actsLin_of :
     intro m m' c c' hm hm'
     unfold Acts at hm hm' ⊢
     refine ⟨fun w hw => ?_, fun w hw => ?_⟩
-    · rw [map_add, LinearMap.add_apply, map_add, hm w hw, hm' w hw, add_smul]
+    · rw [map_add (f := _), LinearMap.add_apply, map_add (f := _), hm w hw, hm' w hw, add_smul]
     · rw [map_sub, LinearMap.sub_apply, map_sub, hm w hw, hm' w hw, sub_smul]
   have hr : ∀ (i j : Fin (d + 1)) (l : Mi d) (m : DR ℂ K ⊗[ℂ] DR ℂ K),
       Acts (F := F) K τ a (actZ K ((sysZ K x a).r n11 (sysZ K x a).mu i j l) m) 0 := by
@@ -116,7 +120,7 @@ theorem UpperTheory.Gal.productCup_of_system.actsLin_of :
       congr 1
       ring
     | add s s' hs hs' =>
-      simpa only [map_add, LinearMap.add_apply, add_mul] using (hadd _ _ _ _ hs hs').1
+      simpa only [map_add (f := _), LinearMap.add_apply, add_mul] using (hadd _ _ _ _ hs hs').1
   · intro u M m i j hm
     apply hsm i j (M.map (actZ K u))
     have hle : sm (actZ K) M (Set.range ((sysZ K x a).r n11 (sysZ K x a).mu i j)) ≤
@@ -141,8 +145,8 @@ theorem UpperTheory.Gal.productCup_of_system.actsLin_of :
         rw [← algebraMap_smul K f' w, smul_smul]
         congr 1
         ring
-      | add y z hy hz => simp only [map_add, smul_add, hy, hz]
-    | add y z hy hz => simp only [map_add, LinearMap.add_apply, add_smul, hy, hz]
+      | add y z hy hz => simp only [map_add (f := _), smul_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), LinearMap.add_apply, add_smul, hy, hz]
   · intro s m w
     induction s using TensorProduct.induction_on with
     | zero => simp
@@ -154,5 +158,5 @@ theorem UpperTheory.Gal.productCup_of_system.actsLin_of :
         simp only [IsScalarTower.coe_toAlgHom', AlgHom.coe_id, id_eq, smul_mul_assoc, map_smul,
           smul_eq_mul]
         rw [← Algebra.smul_def, map_smul, smul_eq_mul]
-      | add y z hy hz => simp only [map_add, LinearMap.add_apply, hy, hz]
-    | add y z hy hz => simp only [map_add, LinearMap.add_apply, hy, hz]
+      | add y z hy hz => simp only [map_add (f := _), LinearMap.add_apply, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), LinearMap.add_apply, hy, hz]

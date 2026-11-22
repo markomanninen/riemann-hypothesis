@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl
-import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormsSupLatticeSplitOverComponents
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecZEqZeroOfGenVal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.OneMemSecAndSecInfEqBot
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HostGeneratorPowFourTraceNormModEight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormsSupLatticeSplitOverComponents
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecZEqZeroOfGenVal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.OneMemSecAndSecInfEqBot
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HostGeneratorPowFourTraceNormModEight
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -15,8 +19,8 @@ namespace GlobalTheory.ShortDet
 
 section Generic
 
-open Polynomial in
 
+open Polynomial in
 theorem card_le_of_det_eq_zero {Ω S : Type} [Field Ω] [CharZero Ω] [Fintype S] [DecidableEq S] (A B : Matrix S S Ω) {a : Ω}
     (ha : (A + a • B).det ≠ 0) (T : Finset ℕ) (hT : ∀ n ∈ T, (A + (n : Ω) • B).det = 0) : T.card ≤ Fintype.card S := by
   classical
@@ -75,7 +79,8 @@ theorem eq_zero_of_torusChar {K V ι : Type} [Field K] [CharZero K] [AddCommGrou
   have hl := (linearIndependent_monoidHom (ι → Kˣ) K).comp _ (torusChar_injective K)
   refine linearIndependent_iff'.1 hl s (fun e => φ (v e)) (funext fun t => ?_) e he
   have := congrArg φ (h t)
-  simpa [map_sum, mul_comm] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, mul_comm] using this
 
 end Generic
 
@@ -186,7 +191,7 @@ theorem exists_nat_step (S : Subgroup (LevelAut Dw l)) (v w : Rul Xo c) {W : Com
     rw [levDet, AlgHom.map_det]
     congr 1
     ext g g'
-    simp only [Matrix.map_apply, AlgHom.mapMatrix_apply, levMat_apply, map_add, map_smul, Matrix.add_apply,
+    simp only [Matrix.map_apply, AlgHom.mapMatrix_apply, levMat_apply, map_add (f := _), map_smul, Matrix.add_apply,
       Matrix.smul_apply, smul_eq_mul]
     rw [Algebra.smul_def]
   let B : Finset (Comp Xo c) := Finset.univ.biUnion fun γ : S =>
@@ -237,7 +242,8 @@ variable {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (x : ℝ)
 
 theorem homN_sum_le {ι : Type} (s : Finset ι) (G : WTZ D.host.E) (n : ι → ℕ) (w : ι → Rul Xo c)
     (z : Σ k, Frame (U.X k).Ψ r) : homN U x G (∑ i ∈ s, n i • w i) z ≤ ∑ i ∈ s, n i * homN U x G (w i) z := by
-  simp only [homN, ptN, Data.pnorm, map_sum, map_nsmul, Finset.sum_apply, Pi.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [homN, ptN, Data.pnorm, map_sum, map_nsmul, Finset.sum_apply, Pi.smul_apply]
   have h := (norm_sum_le s fun i => n i • rdU U (w i) z.1 z.2).trans
     (Finset.sum_le_sum fun i _ => norm_nsmul_le (n := n i) (a := rdU U (w i) z.1 z.2))
   refine (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right h (by positivity)) (lieFacZ_pos x G).le).trans (le_of_eq ?_)
@@ -258,18 +264,24 @@ theorem petAt_mul_le (V : HSp D) (dict : GA D V → Σ k, Frame (U.X k).Ψ r) (h
     {G G₀ : WTZ D.host.E} (hG : Even G.2) (hG₀ : Even G₀.2) {f u : Rul Xo c} (hf : rdU U f ∈ holSub U.X (modelWt U G))
     {B : ℝ} (hB : 0 ≤ B) (hu : ∀ z, homN U x G₀ u z ≤ B) :
     petAt U x V dict (muQ1 V) (G + G₀) (f * u) ≤ B * petAt U x V dict (muQ1 V) G f := by
-  have hfin : eLpNorm (fun q : AutQ V => homN U x G f (dict q.out)) 2 (muQ1 V) ≠ ⊤ := by
+  have hfin : eLpNorm' (fun q : AutQ V => homN U x G f (dict q.out)) 2 (muQ1 V) ≠ ⊤ := by
     have : (fun q : AutQ V => homN U x G f (dict q.out)) =
       lieFacZ Dw x G • fun q : AutQ V => ptN (modelWt U G) (rdU U f) (dict q.out) := rfl
-    rw [this, eLpNorm_const_smul]
+    rw [this, eLpNorm'_const_smul _ (by norm_num)]
     exact ENNReal.mul_ne_top enorm_ne_top
       (petE_ne_top V dict _ (muPart_univ V dict ▸ muPart_univ_le V dict Set.univ) hd hf)
   rw [petAt_eq, petAt_eq, ← ENNReal.toReal_ofReal hB, ← ENNReal.toReal_mul]
-  refine ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hfin)
-    (eLpNorm_le_mul_eLpNorm_of_ae_le_mul (Filter.Eventually.of_forall fun q => ?_) 2)
-  rw [Real.norm_of_nonneg (homN_nonneg _ _ _ _ _), Real.norm_of_nonneg (homN_nonneg _ _ _ _ _),
-    homN_mul U x hG hG₀ _ _ _ (hd _), mul_comm]
-  exact mul_le_mul_of_nonneg_right (hu _) (homN_nonneg _ _ _ _ _)
+  apply ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hfin)
+  have hle : ∀ q : AutQ V, ‖homN U x (G + G₀) (f * u) (dict q.out)‖ ≤ B * ‖homN U x G f (dict q.out)‖ := by
+    intro q
+    rw [Real.norm_of_nonneg (homN_nonneg _ _ _ _ _), Real.norm_of_nonneg (homN_nonneg _ _ _ _ _),
+      homN_mul U x hG hG₀ _ _ _ (hd _), mul_comm]
+    exact mul_le_mul_of_nonneg_right (hu _) (homN_nonneg _ _ _ _ _)
+  have hh := eLpNorm'_le_nnreal_smul_eLpNorm'_of_ae_le_mul
+      (μ := muQ1 V) (c := ⟨B, hB⟩) (Filter.Eventually.of_forall fun q => by exact_mod_cast hle q) (p := 2) (by norm_num)
+  set_option backward.isDefEq.respectTransparency false in
+    rw [ENNReal.smul_def, smul_eq_mul, ENNReal.coe_nnreal_eq] at hh
+  exact hh
 
 end One
 

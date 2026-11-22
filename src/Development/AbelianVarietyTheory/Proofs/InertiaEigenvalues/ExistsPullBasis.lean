@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.OnePlusPowerAssembly
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfAssembleMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.OnePlusPowerAssembly
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfAssembleMem
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.PsiShiftProof
@@ -34,7 +38,7 @@ theorem exists_psi : ∃ ψ : k⸨X⸩ →ₗ[k] k⸨X⸩, ∀ x, ι (ψ x) = ps
   choose ψ hψ using this
   refine ⟨⟨⟨ψ, fun x y => ι.injective ?_⟩, fun c x => ι.injective ?_⟩, hψ⟩
   · change ι _ = ι _
-    simp only [map_add, hψ]
+    simp only [map_add (f := _), hψ]
   · change lin ι (ψ (c • x)) = lin ι (c • ψ x)
     rw [map_smul, lin_apply, lin_apply, hψ, hψ, ← map_smul, ← lin_apply ι, map_smul, lin_apply]
 
@@ -121,7 +125,8 @@ theorem map_sub_one (i m : Fin n) : (G.map ι - 1) i m ∈ Dp k 2 := by
 omit hψ h5 hG in
 theorem iota_op (x : Fin n → k⸨X⸩) (i : Fin n) : ι (∑ m, R.φ (G i m) * R.γ (x m) - x i) =
     ∑ m, phiPi k l (G.map ι i m) * gamPi k l (ι (x m)) - ι (x i) := by
-  simp only [map_sub, map_sum, map_mul, hι.2.2.2.1, iota_gam hι, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_mul, hι.2.2.2.1, iota_gam hι, Matrix.map_apply]
 
 theorem coord_maps {a : ℤ} (h1 : 2 - (l : ℤ) ≤ a) (h2 : a ≤ 0) (x : Fin n → k⸨X⸩) (hx : ∀ i, ψ (x i) = 0)
     (hs : ∀ i, x i ∈ Dp k a) (i : Fin n) : ∑ m, R.φ (G i m) * R.γ (x m) - x i ∈ Dp k (a + 1) := by
@@ -143,7 +148,8 @@ theorem coord_surj {a : ℤ} (h1 : 2 - (l : ℤ) ≤ a) (h2 : a ≤ 0) (z : Fin 
       (fun i => by rw [map_sub, psi_del, y1, map_zero, sub_zero]) (fun i => by
         have h3 := congrArg (delPi k t) (y3 i)
         have h4 := y3 i
-        simp only [map_sub, map_sum, map_mul, del_phi, del_gam, Matrix.map_apply, hd, mul_sub,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sub, map_sum, map_mul, del_phi, del_gam, Matrix.map_apply, hd, mul_sub,
           Finset.sum_sub_distrib] at h3 h4 ⊢
         linear_combination h3 - h4)
     exact sub_eq_zero.1 (congrFun this i)
@@ -168,7 +174,8 @@ theorem exists_pull_basis {σ : k⸨X⸩ →ₐ[k] k⸨X⸩} {f : V →ₗ[k] V}
     rw [← ht]
     refine Submodule.span_le.2 ?_
     rintro _ ⟨x, rfl⟩
-    rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [hf]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -182,13 +189,14 @@ theorem exists_Psi [FiniteDimensional k⸨X⸩ V] {σ : k⸨X⸩ →ₐ[k] k⸨X
   let b := Module.finBasis k⸨X⸩ V
   obtain ⟨c, hc⟩ := exists_pull_basis hf ht b
   refine ⟨⟨⟨fun x => ∑ i, ψ (c.repr x i) • b i, fun x y => ?_⟩, fun r x => ?_⟩, fun a x => ?_⟩
-  · simp only [map_add, Finsupp.add_apply, add_smul, Finset.sum_add_distrib]
+  · simp only [map_add (f := _), Finsupp.add_apply, add_smul, Finset.sum_add_distrib]
   · simp only [RingHom.id_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← smul_one_smul k⸨X⸩ r x, map_smul, Finsupp.smul_apply, smul_assoc, one_smul, map_smul, smul_assoc]
   · change ∑ i, ψ (c.repr (a • f x) i) • b i = _
     have h1 : a • f x = ∑ i, (σ (b.repr x i) * a) • c i := by
-      conv_lhs => rw [← b.sum_repr x, map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← b.sum_repr x, map_sum, Finset.smul_sum]
       exact Finset.sum_congr rfl fun i _ => by rw [hf, hc, smul_smul, mul_comm]
     conv_rhs => rw [← b.sum_repr x, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -205,14 +213,17 @@ theorem mem_sh_span {n : ℕ} (b : Module.Basis (Fin n) k⸨X⸩ V) (s : ℤ) (x
 omit [Module k V] [IsScalarTower k k⸨X⸩ V] in
 theorem exists_lat_basis {M : Submodule k⟦X⟧ V} (hM : IsLat M) :
     ∃ (n : ℕ) (b : Module.Basis (Fin n) k⸨X⸩ V), M = Submodule.span k⟦X⟧ (Set.range b) := by
-  have : Submodule.IsLattice k⸨X⸩ M := ⟨hM.1, hM.2⟩
+  have : Submodule.IsLattice k⸨X⸩ M := Submodule.IsLattice.of_fg k⸨X⸩ hM.1
+  have : Submodule.IsFullLattice k⸨X⸩ M := ⟨hM.2⟩
+  have := Submodule.IsLattice.free k⸨X⸩ M
+  have := Submodule.IsLattice.finite k⸨X⸩ M
   let e := Module.finBasis k⟦X⟧ M
-  refine ⟨_, e.extendOfIsLattice k⸨X⸩, ?_⟩
+  refine ⟨_, e.extendOfIsFullLattice k⸨X⸩, ?_⟩
   have h := congrArg (Submodule.map M.subtype) e.span_eq
   rw [Submodule.map_span, Submodule.map_subtype_top, ← Set.range_comp] at h
   refine h.symm.trans ?_
   congr 2
-  funext i
+  ext i
   simp
 
 omit [IsScalarTower k k⸨X⸩ V] in
@@ -225,7 +236,7 @@ theorem pull_span {σ : k⸨X⸩ →ₐ[k] k⸨X⸩} (hσ : ∀ a : k⟦X⟧, �
     induction hx using Submodule.span_induction with
     | mem y hy => obtain ⟨j, rfl⟩ := hy; exact Submodule.subset_span ⟨j, hc j⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul a y _ hy =>
       obtain ⟨e, he⟩ := hσ a
       rw [← algebraMap_smul k⸨X⸩ a y, hf]
@@ -247,7 +258,8 @@ theorem lemmaPsi : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacter
     intro x
     obtain ⟨c, hc'⟩ := exists_pull_basis hf ht (Module.finBasis k⸨X⸩ V)
     rw [← c.sum_repr x]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hc', hg, ← hc, hΨ, hΨ, hg₀, hR.2.2.1]
   refine ⟨Ψ, (psiMod_iff R ψ ((psiRing_iff R ψ).1 hR) f g₀ g Ψ).2 ⟨hΨ, hcomm, ?_⟩⟩
@@ -263,7 +275,8 @@ theorem lemmaPsi : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacter
   have hker : ∀ x, Ψ x = 0 ↔ ∀ i, ψ (c.repr x i) = 0 := by
     intro x
     have : Ψ x = ∑ i, ψ (c.repr x i) • b i := by
-      conv_lhs => rw [← c.sum_repr x, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← c.sum_repr x, map_sum]
       simp only [hcb, hΨ]
     rw [this]
     exact ⟨Fintype.linearIndependent_iff.1 b.linearIndependent _, fun h => by simp [h]⟩
@@ -271,13 +284,15 @@ theorem lemmaPsi : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacter
     intro x i
     have h3 : ∀ m, c.repr (g (c m)) i = R.φ (G i m) := by
       intro m
-      rw [hcb, ← hc, ← b.sum_repr (g₀ (b m)), map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hcb, ← hc, ← b.sum_repr (g₀ (b m)), map_sum]
       simp only [hf _, ← hcb]
       rw [c.repr_sum_self]
       rfl
     rw [map_sub, Finsupp.sub_apply]
     congr 1
-    conv_lhs => rw [← c.sum_repr x, map_sum, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← c.sum_repr x, map_sum, map_sum, Finsupp.finsetSum_apply]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [hg, map_smul, Finsupp.smul_apply, h3, smul_eq_mul, mul_comm]
   ext z

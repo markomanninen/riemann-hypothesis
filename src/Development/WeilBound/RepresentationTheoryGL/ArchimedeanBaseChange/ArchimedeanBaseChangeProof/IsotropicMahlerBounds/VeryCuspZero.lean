@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.InvTransposeGLInvTransposeGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.InvTransposeGLInvTransposeGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ def nilrad {K : Type} [Field K] {n : ℕ} (W₁ W₂ : Submodule K (Fin n → K)
 
 section Degree
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n k : ℕ}
 
 def cV (v : InfinitePlace E) : Ad E →+* ℂ := (Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) v).comp (pInf E)
 
@@ -85,7 +89,7 @@ theorem degM_zero (x : GA E n) (M : Matrix (Fin n) (Fin 0) E) : degM x M = 0 := 
 
 def prof (n : ℕ) (τ : ℝ) (k : ℕ) : ℝ := τ * k * (2 * n + 1 - k)
 
-def cutSet (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (τ : ℝ) : Set (GA E n) :=
+def cutSet (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (τ : ℝ) : Set (GA E n) :=
   {x | (∀ W : Submodule E (Fin n → E), deg x W ≤ prof n τ (Module.finrank E W)) ∧ -τ ≤ deg x ⊤}
 
 def chiT (τ : ℝ) (x : GA E n) : ℂ := (cutSet E n τ).indicator 1 x
@@ -144,17 +148,7 @@ def cutTr2 [MeasurableSpace (GA E a)] [MeasurableSpace (GA E b)] (μ₁ : Measur
 
 def ratCent (d : GL (Fin n) E) : Subgroup (GA E n) := (twCent (thetaE E n) d).map (ratGL E n)
 
-def orbTerm [MeasurableSpace (GA E n)] (μ : Measure (GA E n)) (φ : GA E n → ℂ) (d : GL (Fin n) E) : ℂ :=
-  quotIntegral μ (ratCent d) Measure.count fun x => φ (twConj (thetaA E n) x (ratGL E n d))
-
 def TwClass (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) : Type := Quot (TwConjugate (thetaE E n))
-
-def ellSum [MeasurableSpace (GA E n)] (μ : Measure (GA E n)) (φ : GA E n → ℂ) : ℂ :=
-  ∑ᶠ (c : TwClass E n) (_ : IsRegEll (Quot.out c)), orbTerm μ φ (Quot.out c)
-
-def toInf [MeasurableSpace (GL (Fin n) ℂ)] (μ : Measure (GL (Fin n) ℂ)) (d : GL (Fin n) ℂ)
-    (μd : Measure (twCent (thetaR (starRingEnd ℂ) n) d)) (f : GL (Fin n) ℂ → ℂ) : ℂ :=
-  twOrbIntegralC (thetaR (starRingEnd ℂ) n) μ d μd f
 
 def VeryCusp (f : GL (Fin n) ℂ → ℂ) : Prop :=
   (∀ k d, thetaR (starRingEnd ℂ) n k = k → f (twConj (thetaR (starRingEnd ℂ) n) k d) = f d) ∧

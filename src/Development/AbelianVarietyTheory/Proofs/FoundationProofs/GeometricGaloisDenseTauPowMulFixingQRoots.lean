@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ theorem exists_finset_orbit (h : IsClo p Ω) (x : Ω) : ∃ R : Finset Ω, ∀ �
   simp only [AlgEquiv.coe_algHom] at e
   rw [e, hPx, map_zero]
 
-theorem isAlgZp_zeta (T : Tower p Ω) (n : ℕ) : IsAlgZp p (T.ζ n) := by
+theorem isAlgZp_zeta (T : Tower p Ω) (n : ℕ) : IsAlgZp (p := p) (T.ζ n) := by
   refine ⟨X ^ (p ^ n) - C 1, X_pow_sub_C_ne_zero (pow_pos hp.out.pos n) 1, ?_⟩
   simp [(T.prim n).pow_eq_one]
 
@@ -86,22 +90,22 @@ theorem qq_pow_sub (T : Tower p Ω) {n m : ℕ} (h : n ≤ m) : T.qq m ^ p ^ (m 
   | zero => simp
   | succ k ih => rw [← add_assoc, pow_succ', pow_mul, T.qpow, ih]
 
-theorem ggeo_apply {g : Gal p Ω} (hg : g ∈ Ggeo p Ω) {x : Ω} (hx : IsAlgZp p x) : g x = x := hg x hx
+theorem ggeo_apply {g : Gal p Ω} (hg : g ∈ Ggeo (p := p) Ω) {x : Ω} (hx : IsAlgZp (p := p) x) : g x = x := hg x hx
 
-theorem tau_pow_qq (T : Tower p Ω) {τ : Gal p Ω} (hτ : τ ∈ Ggeo p Ω)
+theorem tau_pow_qq (T : Tower p Ω) {τ : Gal p Ω} (hτ : τ ∈ Ggeo (p := p) Ω)
     (hτq : ∀ n, τ (T.qq n) = T.ζ n * T.qq n) (n s : ℕ) :
     (τ ^ s) (T.qq n) = T.ζ n ^ s * T.qq n := by
   induction s with
   | zero => simp
   | succ s ih =>
     rw [pow_succ, AlgEquiv.mul_apply, hτq, map_mul, ih,
-      ggeo_apply ((Ggeo p Ω).pow_mem hτ s) (isAlgZp_zeta T n), pow_succ]
+      ggeo_apply ((Ggeo (p := p) Ω).pow_mem hτ s) (isAlgZp_zeta T n), pow_succ]
     ring
 
 theorem dense_tau_pow_mul (p : ℕ) [Fact p.Prime] (_hp2 : p ≠ 2) (Ω : Type) [Field Ω]
-    [Algebra (O0 p) Ω] (hΩ : IsClo p Ω) (T : Tower p Ω) (τ : Gal p Ω) (hτ : τ ∈ Ggeo p Ω)
+    [Algebra (O0 p) Ω] (hΩ : IsClo p Ω) (T : Tower p Ω) (τ : Gal p Ω) (hτ : τ ∈ Ggeo (p := p) Ω)
     (hτq : ∀ n, τ (T.qq n) = T.ζ n * T.qq n) :
-    ∀ g ∈ Ggeo p Ω, ∀ S : Finset Ω, ∃ s : ℕ, ∃ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n,
+    ∀ g ∈ Ggeo (p := p) Ω, ∀ S : Finset Ω, ∃ s : ℕ, ∃ h ∈ Ggeo (p := p) Ω ⊓ ⨅ n, Gn T n,
       ∀ x ∈ S, (τ ^ s * h) x = g x := by
   classical
   intro g hg S
@@ -115,8 +119,8 @@ theorem dense_tau_pow_mul (p : ℕ) [Fact p.Prime] (_hp2 : p ≠ 2) (Ω : Type) 
     exact ⟨i, by rw [tau_pow_qq T hτ hτq, hi, div_mul_cancel₀ _ hq0]⟩
   choose s hs using hs
   let σ : ℕ → Gal p Ω := fun n => (τ ^ s n)⁻¹ * g
-  have hσG : ∀ n, σ n ∈ Ggeo p Ω := fun n =>
-    (Ggeo p Ω).mul_mem ((Ggeo p Ω).inv_mem ((Ggeo p Ω).pow_mem hτ _)) hg
+  have hσG : ∀ n, σ n ∈ Ggeo (p := p) Ω := fun n =>
+    (Ggeo (p := p) Ω).mul_mem ((Ggeo (p := p) Ω).inv_mem ((Ggeo (p := p) Ω).pow_mem hτ _)) hg
   have hσq : ∀ n, σ n (T.qq n) = T.qq n := by
     intro n
     show ((τ ^ s n)⁻¹ * g) (T.qq n) = T.qq n
@@ -131,7 +135,7 @@ theorem dense_tau_pow_mul (p : ℕ) [Fact p.Prime] (_hp2 : p ≠ 2) (Ω : Type) 
     have e : F m = F n₁ := (Set.mem_preimage.1 hm).trans (Set.mem_preimage.1 hn₁).symm
     exact congrArg Subtype.val (congrFun e ⟨x, hx⟩)
   let P : ℕ → Ω → Set Ω := fun n x =>
-    {z | (IsAlgZp p x → z = x) ∧ (x ∈ S → z = σ n₁ x) ∧ (x = T.qq n → z = x)}
+    {z | (IsAlgZp (p := p) x → z = x) ∧ (x ∈ S → z = σ n₁ x) ∧ (x = T.qq n → z = x)}
   have hP : ∀ n, ∃ ρ : Gal p Ω, ∀ m ≤ n, ∀ x, ρ x ∈ P m x := by
     intro n
     obtain ⟨m, hm, hnm⟩ := hinf.exists_gt n

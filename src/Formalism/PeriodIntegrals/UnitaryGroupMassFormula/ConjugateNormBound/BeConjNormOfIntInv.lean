@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BeConjNorm
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ConjugateNormBound.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BeConjNorm
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ConjugateNormBound.Development
+
+@[expose] public section
 
 noncomputable section
 

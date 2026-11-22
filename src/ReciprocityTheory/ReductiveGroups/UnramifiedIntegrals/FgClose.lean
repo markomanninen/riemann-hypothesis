@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KmuInclDenseRange
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TchOfIntegral
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.SemilinNormPowSubPow
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormSqrtNegPowPrimeSqSub
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonH
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgMulN
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgFinA
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ShortWIntModel
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.EndIntegral
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgLevel
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KmuInclDenseRange
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TchOfIntegral
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.SemilinNormPowSubPow
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormSqrtNegPowPrimeSqSub
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonH
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgMulN
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgFinA
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ShortWIntModel
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.EndIntegral
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem cm3 : CM3 := by
     have := norm_natCast_of_coprime (K := MaximalUnramifiedExtension l) hσ.prime hσ.norm_l 2
       (by intro h; have := Nat.le_of_dvd (by norm_num) h; omega)
     simpa using this
-  have hlaw := curve_law (⟨g2, hg2⟩ : MaximalUnramifiedExtension l) ⟨g3, hg3⟩ hn2 hn3 h2
+  have hlaw := ReciprocityTheory.ChartRestriction.L1.curve_law
+    (⟨g2, hg2⟩ : MaximalUnramifiedExtension l) ⟨g3, hg3⟩ hn2 hn3 h2
   have hD : HD σ (lgS (⟨g2, hg2⟩ : MaximalUnramifiedExtension l) ⟨g3, hg3⟩) _
       ((uSer (⟨g2, hg2⟩ : MaximalUnramifiedExtension l) ⟨g3, hg3⟩).subst
         (C (⟨ι (omegaK d), ha'⟩ : MaximalUnramifiedExtension l) * lgS (⟨g2, hg2⟩ : MaximalUnramifiedExtension l) ⟨g3, hg3⟩))

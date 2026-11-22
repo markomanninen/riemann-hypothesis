@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp
 open scoped InnerProductSpace ENNReal
@@ -56,8 +60,8 @@ theorem rankOne_integral {X : Type} [MeasurableSpace X] (ν : Measure X)
               | exact Finset.aemeasurable_sum' _ fun i _ => hterm j i
               | exact (Finset.aemeasurable_sum _ fun i _ => hterm j i).congr
                   (Filter.Eventually.of_forall fun x => by simp [Finset.sum_apply])
-          rw [lintegral_finset_sum' _ fun j _ => hsum j]
-          exact Finset.sum_congr rfl fun j _ => lintegral_finset_sum' _ fun i _ => hterm j i
+          rw [MeasureTheory.lintegral_finsetSum' _ fun j _ => hsum j]
+          exact Finset.sum_congr rfl fun j _ => MeasureTheory.lintegral_finsetSum' _ fun i _ => hterm j i
       _ ≤ ∑ j, ∑ i, ENNReal.ofReal K :=
           Finset.sum_le_sum fun j _ => Finset.sum_le_sum fun i _ =>
             h (e j) (b i) (e.orthonormal.1 j) (b.orthonormal.1 i)

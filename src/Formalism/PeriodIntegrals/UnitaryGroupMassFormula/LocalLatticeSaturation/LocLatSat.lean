@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocLatSat
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeSaturation.BcGSmulR
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocLatSat
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeSaturation.BcGSmulR
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem sat (Λ : Submodule R (Fin n → K)) (hΛ : Λ.FG) (W : Submodule K (Fin
   apply Set.Subset.antisymm
   · intro x hx
     refine ⟨?_, ?_⟩
-    · exact Submodule.span_mono (Set.image_mono (fun v hv => hv.1)) hx
+    · have hle : Λ ⊓ W.restrictScalars R ≤ Λ := inf_le_left
+      exact Submodule.span_mono (Set.image_mono hle) hx
     · have hle : Submodule.span O (bcG φ '' ((Λ ⊓ W.restrictScalars R : Submodule R _) : Set (Fin n → K))) ≤
           (Submodule.span S (bcG φ '' (W : Set (Fin n → K)))).restrictScalars O := by
         rw [Submodule.span_le]

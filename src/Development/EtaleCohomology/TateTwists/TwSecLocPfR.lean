@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.TwLocPfR
+module
+
+public import Development.EtaleCohomology.TateTwists.TwLocPfR
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite TensorProduct GlobalTheory.EtC GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec
@@ -102,7 +106,13 @@ theorem TwSecLoc_of (hZ : ZarPow) : LateralTheory.EtaleFoundations.TwLocPf.TwSec
     rfl
   rw [e]
   refine (congrArg (fun z => ((tw q i).obj.map h.op).hom z) hx).trans ?_
-  refine (LateralTheory.EtaleFoundations.TwLocPf.ofRings_sec_res (twF q i) h x).trans ?_
+  have hres : Sec.res h (ofRings.sec (twF q i) V x) =
+      ofRings.sec (twF q i) W (((twF q i).map h.appTop).hom x) := by
+    have hn := congrArg (fun f => f.hom x)
+      ((toSheafify Scheme.etaleTopology (Scheme.Γ ⋙ twF q i)).naturality h.op)
+    simp only [ModuleCat.hom_comp] at hn
+    exact hn.symm
+  refine hres.trans ?_
   rw [hc, ← hp]
   unfold twGen ofRings.sec
   exact map_nsmul _ _ _

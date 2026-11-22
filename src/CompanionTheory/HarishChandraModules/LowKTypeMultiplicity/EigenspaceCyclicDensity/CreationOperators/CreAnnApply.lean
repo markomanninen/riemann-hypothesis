@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialBoundedSupport
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.MemFiltOfWords
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialBoundedSupport
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.MemFiltOfWords
+
+@[expose] public section
 
 open Finset
 
@@ -147,7 +151,7 @@ theorem acycAbs_of (hS : BdSq) : AcycAbs := by
               rw [hw]
               obtain ⟨u, hu, g, hg, e⟩ := Submodule.mem_sup.1 (hy2 A)
               refine Submodule.add_mem _ ?_ (Submodule.mem_sup_right (hL A))
-              rw [← e, map_add, smul_add, add_sub_add_comm]
+              rw [← e, map_add (f := _), smul_add, add_sub_add_comm]
               exact Submodule.add_mem_sup (euler_filt (fun i : I => a i.1) _ (fun i j => hF.d_comm _ _) hda m u hu)
                 (Submodule.sub_mem _ (hNG _ _ hg) (Submodule.smul_mem _ _ hg)))
             (fun A hA => by

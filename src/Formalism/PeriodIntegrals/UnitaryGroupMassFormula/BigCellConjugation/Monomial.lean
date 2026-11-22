@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LongWeylElementSquare
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LongWeylElementSquare
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,13 +21,13 @@ theorem bigCell_one_apply (k r : ℕ) (c : Fin r → ℂ) (i j : Fin (2 * r + k 
   unfold bigCell rhoB tv esI
   rcases lt_or_ge j.val r with h1 | h1
   · have ho : j.val < r ∨ r + k < j.val := Or.inl h1
-    rw [dif_pos h1, if_pos ho, dif_pos h1]
+    rw [dite_eq_left h1, if_pos ho, dite_eq_left h1]
   · rcases le_or_gt j.val (r + k) with h2 | h2
     · have ho : ¬ (j.val < r ∨ r + k < j.val) := by omega
-      rw [dif_neg (show ¬ (j.val < r) by omega), dif_pos h2, if_neg ho, dif_neg (show ¬ (j.val < r) by omega), dif_pos h2]
+      rw [dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_left h2, if_neg ho, dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_left h2]
       by_cases hij : i = j
       · subst hij
-        rw [dif_pos ⟨h1, h2⟩, if_pos rfl, Matrix.one_apply, if_pos rfl]
+        rw [dite_eq_left ⟨h1, h2⟩, if_pos rfl, Matrix.one_apply, if_pos rfl]
       · rw [if_neg hij]
         split_ifs with hi
         · rw [Matrix.one_apply, if_neg]
@@ -35,8 +39,8 @@ theorem bigCell_one_apply (k r : ℕ) (c : Fin r → ℂ) (i j : Fin (2 * r + k 
           omega
         · rfl
     · have ho : j.val < r ∨ r + k < j.val := Or.inr h2
-      rw [dif_neg (show ¬ (j.val < r) by omega), dif_neg (show ¬ (j.val ≤ r + k) by omega), if_pos ho,
-        dif_neg (show ¬ (j.val < r) by omega), dif_neg (show ¬ (j.val ≤ r + k) by omega)]
+      rw [dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_right (show ¬ (j.val ≤ r + k) by omega), if_pos ho,
+        dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_right (show ¬ (j.val ≤ r + k) by omega)]
       by_cases hi : i.val = 2 * r + k - j.val
       · rw [if_pos hi, if_pos (Fin.ext hi)]
       · rw [if_neg hi, if_neg (fun h => hi (congrArg Fin.val h))]
@@ -64,23 +68,23 @@ theorem tv_Hpk_tv (k r : ℕ) (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (i j :
     split_ifs at hz <;> first | tauto | simp at hz
   rcases key with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2, rfl⟩
   · have hH : Hpk k r i j = 1 := by unfold Hpk; rw [if_pos ⟨h1, h2⟩]
-    have hti : tv k r c i = c ⟨i.val, h1⟩ := by unfold tv; rw [dif_pos h1]
+    have hti : tv k r c i = c ⟨i.val, h1⟩ := by unfold tv; rw [dite_eq_left h1]
     have htj : tv k r c j = (star (c ⟨i.val, h1⟩))⁻¹ := by
       have e : (⟨2 * r + k - j.val, by omega⟩ : Fin r) = ⟨i.val, h1⟩ :=
         Fin.ext (show 2 * r + k - j.val = i.val by omega)
       unfold tv
-      rw [dif_neg (show ¬ (j.val < r) by omega), dif_neg (show ¬ (j.val ≤ r + k) by omega), e]
+      rw [dite_eq_right (show ¬ (j.val < r) by omega), dite_eq_right (show ¬ (j.val ≤ r + k) by omega), e]
     rw [hti, htj, hH, mul_one, mul_inv_cancel₀ (star_ne_zero.mpr (hc _))]
   · have hH : Hpk k r i j = 1 := by unfold Hpk; rw [if_neg (by omega), if_pos ⟨h1, h2⟩]
-    have htj : tv k r c j = c ⟨j.val, h1⟩ := by unfold tv; rw [dif_pos h1]
+    have htj : tv k r c j = c ⟨j.val, h1⟩ := by unfold tv; rw [dite_eq_left h1]
     have hti : tv k r c i = (star (c ⟨j.val, h1⟩))⁻¹ := by
       have e : (⟨2 * r + k - i.val, by omega⟩ : Fin r) = ⟨j.val, h1⟩ :=
         Fin.ext (show 2 * r + k - i.val = j.val by omega)
       unfold tv
-      rw [dif_neg (show ¬ (i.val < r) by omega), dif_neg (show ¬ (i.val ≤ r + k) by omega), e]
+      rw [dite_eq_right (show ¬ (i.val < r) by omega), dite_eq_right (show ¬ (i.val ≤ r + k) by omega), e]
     rw [hti, htj, hH]
     simp [hc]
-  · have hti : tv k r c i = 1 := by unfold tv; rw [dif_neg (by omega), dif_pos h2]
+  · have hti : tv k r c i = 1 := by unfold tv; rw [dite_eq_right (by omega), dite_eq_left h2]
     rw [hti]
     simp
 

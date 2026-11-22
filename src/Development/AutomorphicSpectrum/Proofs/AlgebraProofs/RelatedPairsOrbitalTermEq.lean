@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem trace_dualInt_mul (k : Module.Free.ChooseBasisIndex ℤ (𝓞 E)) (x : E
     unfold dualInt
     convert this
   conv_lhs => rw [← (integralBasis E).sum_repr x]
-  simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_smul, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_smul, h]
   simp
 
 theorem mul_dualInt_eq (a : 𝓞 E) (l : Module.Free.ChooseBasisIndex ℤ (𝓞 E)) :
@@ -46,7 +51,8 @@ theorem sum_dualInt_mul :
   classical
   rw [← sub_eq_zero]
   refine (traceForm_nondegenerate ℚ E).1 _ fun y => ?_
-  rw [Algebra.traceForm_apply, sub_mul, map_sub, one_mul, Finset.sum_mul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Algebra.traceForm_apply, sub_mul, map_sub, one_mul, Finset.sum_mul, map_sum,
     Algebra.trace_eq_matrix_trace (integralBasis E) y, sub_eq_zero, Matrix.trace]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [mul_assoc, trace_dualInt_mul, Matrix.diag_apply, Algebra.leftMulMatrix_eq_repr_mul,
@@ -70,13 +76,15 @@ theorem rho_mul_eigProj (ρ : 𝓞 E →+* Module.End K V) (σ : E →+* K) (a :
     intro k
     rw [mul_smul_comm, ← map_mul]
     conv_lhs => rw [← (RingOfIntegers.basis E).sum_repr (a * RingOfIntegers.basis E k)]
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_zsmul, mul_smul, Int.cast_smul_eq_zsmul]
   simp_rw [h1]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun l _ => ?_
-  rw [smul_smul, ← map_mul, mul_dualInt_eq, map_sum, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [smul_smul, ← map_mul, mul_dualInt_eq, map_sum, Finset.sum_smul]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul σ, map_intCast, mul_comm]
 
@@ -103,7 +111,8 @@ theorem eigProj_spec : ∀ (K : Type) [Field K] [CharZero K] (V : Type) [AddComm
     unfold eigProj
     rw [LinearMap.sum_apply]
     simp_rw [LinearMap.smul_apply, hx, smul_smul, ← map_mul]
-    rw [← Finset.sum_smul, ← map_sum, sum_dualInt_mul, map_one, one_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_smul, ← map_sum, sum_dualInt_mul, map_one, one_smul]
   · rw [mem_eigSp_iff_apply] at hx
     obtain ⟨a, ha⟩ : ∃ a : 𝓞 E, σ' (a : E) ≠ σ (a : E) := by
       by_contra hcon

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.InfPartOfSplitIdem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.InfPartOfSplitIdem
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
@@ -28,7 +32,8 @@ theorem sum_rank_one {R : Type} [CommRing R] (σ : R →+* R) (hσ : ∀ x, σ (
     intro k
     ext a
     generalize Gi * (M.map σ)ᵀ * Gt = A
-    simp only [Pi.smul_apply, smul_eq_mul, map_mul, mulVec, vecMul, dotProduct, map_sum, transpose_apply, map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Pi.smul_apply, smul_eq_mul, map_mul, mulVec, vecMul, dotProduct, map_sum, transpose_apply, map_apply]
     congr 1
     exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
   have h2 : ∀ k, w • vecMulVec (g k) (vecMul (fun a => σ ((z • ((Gi * (M.map σ)ᵀ * Gt) *ᵥ s k)) a)) Gs) =
@@ -70,13 +75,73 @@ lemma uniform_nat {ι : Type*} [Fintype ι] (P : ι → ℕ → Prop) (hP : ∀ 
   rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ i)]
   exact hP i _ _ (hPk i)
 
+lemma selfDual_isFullLattice (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E))
+    (hΛ : IsSelfDualC V Λ) : Submodule.IsFullLattice D.host.E Λ := by
+  haveI : Submodule.IsLattice D.host.E Λ := hΛ.1
+  refine ⟨?_⟩
+  obtain ⟨s, hs⟩ := hΛ.1.fg
+  apply eq_top_iff.mpr
+  intro y _
+  let f : (Fin V.rank → D.host.E) → D.host.E := fun x =>
+    ∑ i, ∑ j, star (x i) * V.gram i j * y j
+  obtain ⟨a, ha⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s f
+  have ha0 : (algebraMap (𝓞 D.host.E) D.host.E a) ≠ 0 := by
+    exact (FaithfulSMul.algebraMap_injective _ _).ne (mem_nonZeroDivisors_iff_ne_zero.mp a.2)
+  let P : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) := {
+    carrier := {x | ∃ b : 𝓞 D.host.E, (b : D.host.E) = (algebraMap (𝓞 D.host.E) D.host.E a) * f x}
+    zero_mem' := by refine ⟨0, ?_⟩; simp [f]
+    add_mem' := by
+      rintro x z ⟨b, hb⟩ ⟨c, hc⟩
+      refine ⟨b + c, ?_⟩
+      change (b : D.host.E) + c = _
+      rw [hb, hc]
+      simp [f, map_add, add_mul, Finset.sum_add_distrib, mul_add]
+    smul_mem' := by
+      rintro c x ⟨b, hb⟩
+      refine ⟨RingOfIntegers.mapRingHom (starRingEnd D.host.E) c * b, ?_⟩
+      simp only [map_mul, hb, f, Pi.smul_apply, Algebra.smul_def, map_mul, RingOfIntegers.mapRingHom_apply, star_mul]
+      simp only [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      change star (c : D.host.E) * _ = _
+      ring }
+  have hsP : (s : Set (Fin V.rank → D.host.E)) ⊆ P := by
+    intro x hx
+    obtain ⟨b, hb⟩ := ha x hx
+    exact ⟨b, by simpa [Algebra.smul_def] using hb⟩
+  have hy : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Λ := by
+    apply (hΛ.2 _).2
+    intro x hx
+    have hxP : x ∈ P := (hs ▸ Submodule.span_le.mpr hsP) hx
+    obtain ⟨b, hb⟩ := hxP
+    refine ⟨b, ?_⟩
+    rw [hb]
+    dsimp only [f, Pi.smul_apply]
+    simp only [smul_eq_mul, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro i _
+    apply Finset.sum_congr rfl
+    intro j _
+    ring
+  have hy' : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) :=
+    Submodule.subset_span hy
+  have := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
+    (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ hy' 
+  change (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ •
+    ((algebraMap (𝓞 D.host.E) D.host.E a) • y) ∈ _ at this
+  rw [← smul_assoc, smul_eq_mul, inv_mul_cancel₀ ha0, one_smul] at this
+  exact this
+
 lemma exists_nat_smul_mem {n : ℕ} {Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)}
-    (hΛ : Submodule.IsLattice D.host.E Λ) (x : Fin n → D.host.E) :
+    (hΛ : Submodule.IsFullLattice D.host.E Λ) (x : Fin n → D.host.E) :
     ∃ N : ℕ, 0 < N ∧ (N : D.host.E) • x ∈ Λ := by
   have hnat : ∀ (m : ℕ) {y : Fin n → D.host.E}, y ∈ Λ → (m : D.host.E) • y ∈ Λ := fun m y hy => by
     rw [Nat.cast_smul_eq_nsmul]; exact Λ.nsmul_mem hy m
   have hx : x ∈ Submodule.span D.host.E (Λ : Set (Fin n → D.host.E)) := by
-    rw [hΛ.span_eq_top]; trivial
+    letI := hΛ
+    rw [Submodule.IsFullLattice.span_eq_top]; trivial
   induction hx using Submodule.span_induction with
   | mem y hy => exact ⟨1, one_pos, by simpa using hy⟩
   | zero => exact ⟨1, one_pos, by simp⟩
@@ -101,7 +166,7 @@ lemma exists_nat_smul_mem {n : ℕ} {Λ : Submodule (𝓞 D.host.E) (Fin n → D
     exact Λ.smul_mem _ h
 
 lemma exists_nat_smul_single {n : ℕ} {Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)}
-    (hΛ : Submodule.IsLattice D.host.E Λ) :
+    (hΛ : Submodule.IsFullLattice D.host.E Λ) :
     ∃ m : ℕ, 0 < m ∧ ∀ j, (m : D.host.E) • (Pi.single j 1 : Fin n → D.host.E) ∈ Λ := by
   refine uniform_nat (fun j m => (m : D.host.E) • (Pi.single j 1 : Fin n → D.host.E) ∈ Λ) (fun j k m h => ?_)
     (fun j => exists_nat_smul_mem hΛ _)
@@ -152,8 +217,8 @@ theorem halfDifferent_ne_bot : D.host.𝔟 ≠ ⊥ := by
   simp only [Submodule.bot_mul] at h1
   exact differentIdeal_ne_bot h1
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_dual_families (S : HSp D) {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} (hS : IsSelfDualC S ΛS) :
     ∃ (N : ℕ) (g s' : Fin N → Fin S.rank → D.host.E), (∀ i, g i ∈ ΛS) ∧ (∀ i, s' i ∈ ΛS) ∧
       ∀ v : Fin S.rank → D.host.E, ∑ i, ((fun a => star (s' i a)) ⬝ᵥ (S.gram *ᵥ v)) • g i = v := by
@@ -168,11 +233,12 @@ theorem exists_dual_families (S : HSp D) {ΛS : Submodule (𝓞 D.host.E) (Fin S
     have h1 : f (σ x) = x := LinearMap.congr_fun hσ x
     have h2 : f (σ x) = ∑ i, σ x i • gg i := by
       conv_lhs => rw [pi_eq_sum_univ (σ x)]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul, gg]
     rw [← h2, h1]
   let A := algebraMap (𝓞 D.host.E) D.host.E
-  obtain ⟨m, hm, hmS⟩ := exists_nat_smul_single hS.1
+  obtain ⟨m, hm, hmS⟩ := exists_nat_smul_single (selfDual_isFullLattice S ΛS hS)
   have hm0 : (m : D.host.E) ≠ 0 := Nat.cast_ne_zero.2 hm.ne'
   let em : Fin S.rank → ΛS := fun j => ⟨(m : D.host.E) • (Pi.single j 1 : Fin S.rank → D.host.E), hmS j⟩
   let w : Fin N → Fin S.rank → D.host.E := fun i j => A (σ (em j) i) / m
@@ -196,7 +262,8 @@ theorem exists_dual_families (S : HSp D) {ΛS : Submodule (𝓞 D.host.E) (Fin S
       rw [map_natCast, this]
       push_cast; ring
     have h3 := congrArg (fun y => A (σ y i)) hx
-    simp only [map_smul, map_sum, Pi.smul_apply, Finset.sum_apply, smul_eq_mul, map_mul, map_natCast] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, Pi.smul_apply, Finset.sum_apply, smul_eq_mul, map_mul, map_natCast] at h3
     apply mul_left_cancel₀ (mul_ne_zero hc0 hm0)
     rw [dotProduct, Finset.mul_sum]
     have e1 : ((c * m : ℕ) : D.host.E) = (c : D.host.E) * m := by push_cast; ring
@@ -268,7 +335,8 @@ theorem natCast_mem_AA (k : ℕ) : ((k * Ideal.absNorm D.host.ccK : ℕ) : D.hos
 theorem idem_div_int {P : Finset (Formalism.L2.DIV.Pl D.host.E)} {e : AE D} (he : IsIdemSum e P) {n : ℕ}
     (hn : ∀ PP ∈ P, (n : 𝓞 D.host.E) ∉ PP.asIdeal) : finPart D (e * incA D (n : D.host.E)⁻¹) ∈ intAE D := by
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := he
-  rw [Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum]
   refine AddSubgroup.sum_mem _ fun PP hPP => ?_
   have h0 : (n : 𝓞 D.host.E) ≠ 0 := fun h => hn PP hPP (h ▸ zero_mem _)
   have h1 := (hes PP hPP).2 n h0
@@ -335,7 +403,8 @@ theorem mem_latO_of_adj_int : ∀ (D : D7) (S T : HSp D) (ΛS : Submodule (𝓞 
       (vecMul (fun a => sR D (eToEAf D (s k a))) (T.gram.map (eToEAf D))) = 1 := by
     ext i j
     have h1 := congrArg (eToEAf D) (congrFun (hb (Pi.single j 1)) i)
-    rw [Finset.sum_apply, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_apply, map_sum] at h1
     rw [Matrix.sum_apply]
     have h2 : eToEAf D ((Pi.single j 1 : Fin T.rank → D.host.E) i) = (1 : Matrix (Fin T.rank) (Fin T.rank) (EAf D)) i j := by
       rw [Pi.single_apply, Matrix.one_apply]
@@ -343,7 +412,8 @@ theorem mem_latO_of_adj_int : ∀ (D : D7) (S T : HSp D) (ΛS : Submodule (𝓞 
     rw [← h2, ← h1]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [mulVec_single_one]
-    simp only [vecMulVec_apply, vecMul, dotProduct, map_apply, sR_eTo, Pi.smul_apply, smul_eq_mul, map_mul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [vecMulVec_apply, vecMul, dotProduct, map_apply, sR_eTo, Pi.smul_apply, smul_eq_mul, map_mul, map_sum,
       Matrix.col, transpose_apply]
     exact mul_comm _ _
   have hM : ((eToEAf D (n : D.host.E) * ((1 : D.host.E) ⊗ₜ[D.host.F] (1 : Af D.host.F))) * sR D (toEAf D z)) • M = M := by

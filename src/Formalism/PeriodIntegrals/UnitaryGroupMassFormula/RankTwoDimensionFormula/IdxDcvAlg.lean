@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 open Matrix
 
@@ -32,7 +36,7 @@ theorem h_sum_right {ι : Type} (s : Finset ι) (x : n → A) (v : ι → n → 
 
 theorem h_add_left (x x' y : n → A) :
     Formalism.UG.hform σ J (x + x') y = Formalism.UG.hform σ J x y + Formalism.UG.hform σ J x' y := by
-  simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem h_smul_left (x y : n → A) (a : A) :
     Formalism.UG.hform σ J (a • x) y = σ a * Formalism.UG.hform σ J x y := by
@@ -55,7 +59,8 @@ theorem h_symm (hJ : Formalism.UG.cT σ J = J) (hσ : ∀ a, σ (σ a) = a) (x y
     have h := congrFun (congrFun hJ i) j
     simp only [Formalism.UG.cT, Matrix.transpose_apply, Matrix.map_apply] at h
     exact h.symm
-  simp only [Formalism.UG.hform, map_sum, map_mul, hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul, hσ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJ' j i]
@@ -66,13 +71,6 @@ variable {r : ℕ}
 def Q (e f : Fin r → n → A) (z y : n → A) : n → A :=
   (-Formalism.UG.hform σ J z z) • (y - ∑ a, (Formalism.UG.hform σ J (f a) y • e a + Formalism.UG.hform σ J (e a) y • f a)) +
     Formalism.UG.hform σ J z y • z
-
-structure Hyp (e f : Fin r → n → A) (z : n → A) : Prop where
-  ee : ∀ a b, Formalism.UG.hform σ J (e a) (e b) = 0
-  ff : ∀ a b, Formalism.UG.hform σ J (f a) (f b) = 0
-  ef : ∀ a b, Formalism.UG.hform σ J (e a) (f b) = if a = b then 1 else 0
-  ez : ∀ a, Formalism.UG.hform σ J (e a) z = 0
-  fz : ∀ a, Formalism.UG.hform σ J (f a) z = 0
 
 private theorem Q_eq_hform_expansion (e f : Fin r → n → A) (z y w : n → A) :
     Formalism.UG.hform σ J w (Q σ J e f z y) =

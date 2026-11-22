@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Matrix Topology
 

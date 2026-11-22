@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup
 
 namespace GlobalTheory
@@ -12,7 +17,7 @@ theorem constantCoeff_subst_of_constantCoeff_zero :
   have ha : HasSubst a := hasSubst_of_constantCoeff_zero h
   have e : g = MvPowerSeries.C (constantCoeff g) + (g - MvPowerSeries.C (constantCoeff g)) := by ring
   conv_lhs => rw [e]
-  rw [subst_add ha, map_add, subst_C,
+  rw [subst_add ha, map_add (f := _), subst_C,
     constantCoeff_subst_eq_zero ha h (f := g - MvPowerSeries.C (constantCoeff g)) (by simp)]
   simp
 

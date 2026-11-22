@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Columns.WmLemmas
-import Formalism.FlagUnipotentLattices.IdealCountLeWAsm
-import Lemmata.GeneralBFactRightMore.Imports
+module
+
+public import Formalism.LocalToGlobal.Columns.WmLemmas
+public import Formalism.FlagUnipotentLattices.IdealCountLeWAsm
+public import Lemmata.GeneralBFactRightMore.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,10 +48,46 @@ theorem wmp_card_quot (B N : Submodule (𝓞 E) (Sp E n)) :
   rw [AddSubgroup.relIndex, AddSubgroup.index_eq_card]
   rfl
 
+private theorem isFullLattice_of_unimodular {L : Submodule (𝓞 E) (Sp E n)}
+    (hL : Submodule.IsLattice E L) (hu : IsUnimodular (hStd E n) L) :
+    Submodule.IsFullLattice E L := by
+  let := hL
+  refine { span_eq_top := ?_ }
+  let W := Submodule.span E (L : Set (Sp E n))
+  change W = ⊤
+  by_contra h
+  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+  let g : Sp E n →ₗ[E] Module.Dual E W :=
+    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+  have hdim : finrank E (Module.Dual E W) < finrank E (Sp E n) := by
+    rw [Subspace.dual_finrank_eq]
+    exact Submodule.finrank_lt h
+  obtain ⟨x, hx, hx₀⟩ :=
+    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+  -- Every multiple of the orthogonal vector lies in the self-dual lattice.
+  have hsmul (a : E) : a • e x ∈ L := by
+    rw [← hu, dualBasic_mem_dual]
+    intro y hy
+    apply hStd_mem_one_symm
+    have hxy : hStd E n (e x) y = 0 :=
+      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+  let i : E →ₗ[𝓞 E] L :=
+    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+
 theorem wmp_relIndex_inf_eq {N N₁ : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsLattice E N)
     (hN₁ : Submodule.IsLattice E N₁) (hu : IsUnimodular (hStd E n) N) (hu₁ : IsUnimodular (hStd E n) N₁)
     (hB : Submodule.IsLattice E (N ⊓ N₁)) :
     (N ⊓ N₁).toAddSubgroup.relIndex N.toAddSubgroup = (N ⊓ N₁).toAddSubgroup.relIndex N₁.toAddSubgroup := by
+  let := isFullLattice_of_unimodular hN hu
+  let := isFullLattice_of_unimodular hN₁ hu₁
+  let := hB
+  have hBspan := Submodule.IsFullLattice.span_eq_top (A := E) (M := N ⊓ N₁)
   have key : ∀ M : Submodule (𝓞 E) (Sp E n), Submodule.IsLattice E M → IsUnimodular (hStd E n) M → N ⊓ N₁ ≤ M →
       (N ⊓ N₁).toAddSubgroup.relIndex (dual (hStd E n) (N ⊓ N₁)).toAddSubgroup =
         ((N ⊓ N₁).toAddSubgroup.relIndex M.toAddSubgroup) ^ 2 := by
@@ -57,7 +97,7 @@ theorem wmp_relIndex_inf_eq {N N₁ : Submodule (𝓞 E) (Sp E n)} (hN : Submodu
       rwa [huM] at this
     rw [← AddSubgroup.relIndex_mul_relIndex _ M.toAddSubgroup _ hBM hMD, sq]
     congr 1
-    have e := wmp_relIndex_dual hBM hM.fg hB.span_eq_top
+    have e := wmp_relIndex_dual hBM hM.fg hBspan
     rw [huM] at e
     exact e
   have e1 := key N hN hu inf_le_left
@@ -105,9 +145,6 @@ theorem wmp_isHeckeNbr_symm {P : HeightOneSpectrum (𝓞 E)} {i : ℕ} {N N₁ :
   · rw [wmp_card_quot, ← wmp_relIndex_inf_eq hN hN₁ hu hu₁ hB, ← wmp_card_quot, inf_comm,
       Nat.card_congr e.toEquiv, Nat.card_fun, Nat.card_eq_fintype_card (α := Fin i), Fintype.card_fin, card_quot_conjP]
 
-def WmpInt (Q : HeightOneSpectrum (𝓞 E)) (y : E) : Prop :=
-  ∃ s : 𝓞 E, s ∉ Q.asIdeal ∧ ∃ r : 𝓞 E, algebraMap (𝓞 E) E s * y = algebraMap (𝓞 E) E r
-
 theorem wmp_hStd_osmul_right (u z : Sp E n) (s : 𝓞 E) :
     hStd E n u (s • z) = algebraMap (𝓞 E) E s * hStd E n u z := by
   rw [← algebraMap_smul E s z, map_smul, smul_eq_mul]
@@ -116,13 +153,6 @@ theorem wmp_hStd_osmul_left (u z : Sp E n) (s : 𝓞 E) :
     hStd E n (s • u) z = algebraMap (𝓞 E) E (cO E s) * hStd E n u z := by
   rw [← algebraMap_smul E s u, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, algebraMap_cO]
   rfl
-
-theorem localization_le_of_le_localization₃ {Q : HeightOneSpectrum (𝓞 E)} {M L : Submodule (𝓞 E) (Sp E n)} (h : M ≤ localization₂ Q.asIdeal L) :
-    localization₂ Q.asIdeal M ≤ localization₂ Q.asIdeal L := by
-  intro x hx
-  obtain ⟨s, hs, hsx⟩ := (mem_locP Q M x).1 hx
-  obtain ⟨t, ht, htx⟩ := (mem_locP Q L _).1 (h hsx)
-  exact (mem_locP Q L x).2 ⟨t * s, fun hm => (Q.isPrime.mem_or_mem hm).elim ht hs, by rw [mul_smul]; exact htx⟩
 
 theorem wmp_exists_unif (P : HeightOneSpectrum (𝓞 E)) :
     ∃ a ∈ P.asIdeal, ∃ c : 𝓞 E, c ∉ P.asIdeal ∧ ∀ p ∈ P.asIdeal, ∃ t : 𝓞 E, c * p = a * t := by
@@ -134,9 +164,6 @@ open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Module Point
 
 section WmPUp
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {SG : Finset (HeightOneSpectrum (𝓞 E))}
-
-def wmpC (P : HeightOneSpectrum (𝓞 E)) (a : 𝓞 E) (N N₁ : Submodule (𝓞 E) (Sp E n)) : Submodule (𝓞 E) (Sp E n) :=
-  Ideal.span {a} • N₁ ⊔ P.asIdeal • N
 
 end WmPUp
 
@@ -192,14 +219,6 @@ open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Module
 section LemU
 
 variable {κ K : Type} [CommRing κ] [Field K]
-
-def wmpkTop {r n : ℕ} (h : r ≤ n) (bl : List ℕ) (g : GL (Fin n) κ) (hg : g ∈ blockUT n κ r bl) : GL (Fin r) κ where
-  val := restr h g
-  inv := restr h (g⁻¹ : GL (Fin n) κ)
-  val_inv := by
-    rw [← restr_mul h bl _ (Subgroup.inv_mem _ hg), ← Units.val_mul, mul_inv_cancel, Units.val_one, restr_one]
-  inv_val := by
-    rw [← restr_mul h bl _ hg, ← Units.val_mul, inv_mul_cancel, Units.val_one, restr_one]
 
 end LemU
 

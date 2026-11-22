@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleUnif
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleUnfoldingStepAtGluedFinitePlace
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GluedPlaceSourceConstantProofStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleUnif
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleUnfoldingStepAtGluedFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GluedPlaceSourceConstantProofStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,8 +44,8 @@ theorem card_withLat_eq (Q Q₀ : Pair k n) : (withLat Q.lat).card = (withLat Q�
 theorem card_withLat_pos (Q : Pair k n) : 0 < (withLat Q.lat).card :=
   Finset.card_pos.2 ⟨Q, mem_withLat.2 rfl⟩
 
-open Classical in
 
+open Classical in
 def pairCount (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (n : Type) [Fintype n] [DecidableEq n] : ℕ :=
   if h : Nonempty (Pair k n) then (withLat h.some.lat).card else 1
@@ -54,7 +58,7 @@ theorem pairCount_pos : 0 < pairCount k n := by
 
 theorem card_withLat_eq_pairCount (Q : Pair k n) : (withLat Q.lat).card = pairCount k n := by
   unfold pairCount
-  rw [dif_pos ⟨Q⟩]
+  rw [dite_eq_left ⟨Q⟩]
   exact card_withLat_eq _ _
 
 end Count
@@ -63,8 +67,8 @@ end GlobalTheory.FinPl.VertexExactCount
 
 namespace GlobalTheory.FinPl.VertexExactCount
 
-open Classical in
 
+open Classical in
 theorem vertexExact (D : D7) : VertexExact D := by
   intro k _ _ _ _ p q ψ χ hχ hIs
   letI : MeasurableSpace k := borel k
@@ -262,7 +266,6 @@ theorem vertexExact (D : D7) : VertexExact D := by
             rw [one_smul] at this
             exact this) z]
       congr 1
-      funext w
       simp
     have e3 := Comm.doubleThetaUnfolding_equivariant_unitaryGroups s₁ s₂ l vL (hFF A) (t₁ (xv A' Q)) (t₂ (yd Q)) (α.gl g) 1 1
     rw [one_emb, Comm.emb_gl hα g, hid] at e3
@@ -295,9 +298,11 @@ theorem vertexExact (D : D7) : VertexExact D := by
       (U₂ (y₀ + ∑ Q'' ∈ withLat Q.lat, y Q'')) =
       ∑ Q' ∈ withLat Q.lat, ((Θ v' (x Q') y₀).1 + ∑ Q'' ∈ withLat Q.lat, (Θ v' (x Q') (y Q'')).1) := by
     refine (hΘ v' _ _).symm.trans ?_
-    rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
     refine Finset.sum_congr rfl fun Q' _ => ?_
-    rw [map_add, map_sum, Submodule.coe_add, Submodule.coe_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, Submodule.coe_add, Submodule.coe_sum]
   rw [h2, hΞ₂, hexp, Finset.sum_congr rfl fun Q' hQ' => by rw [t0 Q' hQ', zero_add, t1 Q' hQ', hall Q' hQ'],
     Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, hfin, card_withLat_eq_pairCount Q]
   congr 1

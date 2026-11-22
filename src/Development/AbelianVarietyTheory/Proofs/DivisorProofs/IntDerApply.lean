@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -34,9 +39,6 @@ def intDer {S A : Type} [CommRing S] [CommRing A] [Algebra S A] (δ : Derivation
   map_smul' m x := by simpa using map_zsmul δ m x
   map_one_eq_zero' := δ.map_one_eq_zero
   leibniz' := δ.leibniz
-
-@[simp] theorem intDer_apply {S A : Type} [CommRing S] [CommRing A] [Algebra S A] (δ : Derivation S A A) (a : A) :
-    intDer δ a = δ a := rfl
 
 theorem iterOp_zero {A : Type} {n : ℕ} (ds : Fin n → A → A) (f : A) : iterOp ds 0 f = f := by
   unfold iterOp

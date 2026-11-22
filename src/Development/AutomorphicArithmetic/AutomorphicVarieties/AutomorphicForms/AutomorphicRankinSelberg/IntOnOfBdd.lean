@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+
+@[expose] public section
 
 open MeasureTheory Set UpperHalfPlane
 
@@ -33,11 +37,11 @@ theorem UpperTheory.V.Af.Rs.tTop :
   have hden : ∀ z : ℍ, 0 < 2 * N * (‖(z : ℂ)‖ + 1) ^ 4 := fun z => by positivity
   have hφC : Continuous φ := by
     rw [hφ]
-    exact (continuous_finset_sum _ (fun v _ => hreC v)).div
+    exact (continuous_finsetSum _ (fun v _ => hreC v)).div
       (continuous_const.mul ((hnC.add continuous_const).pow 4)) (fun z => (hden z).ne')
   have hψC : Continuous ψ := by
     rw [hψ]
-    exact continuous_finset_sum _ (fun v _ => (hreC v).mul (himC.pow 3))
+    exact continuous_finsetSum _ (fun v _ => (hreC v).mul (himC.pow 3))
   have hGb : ∀ v, ∀ z ∈ ModularGroup.fd,
       0 ≤ (G v z).re * z.im ^ 3 ∧ (G v z).re * z.im ^ 3 ≤ C' := by
     intro v z hz
@@ -116,7 +120,7 @@ theorem UpperTheory.V.Af.Rs.tTop :
         = (G v z).re * (Wsum s / (2 * N * (‖(z : ℂ)‖ + 1) ^ 4) - |C| * z.im ^ 3) := by ring
       _ ≤ (G v z).re * Zc L v s z := h6
   have hfI : IntegrableOn (fun z => ∑ v, G v z * (Zc L v s z : ℂ)) ModularGroup.fd :=
-    integrable_finset_sum _ (fun v _ => hzi L G ⟨hGc, C', hC'⟩ s hs v v)
+    integrable_finsetSum _ (fun v _ => hzi L G ⟨hGc, C', hC'⟩ s hs v v)
   have hre_eq : (∫ z in ModularGroup.fd, ∑ v, G v z * (Zc L v s z : ℂ)).re =
       ∫ z in ModularGroup.fd, (∑ v, G v z * (Zc L v s z : ℂ)).re := (integral_re hfI).symm
   unfold TT

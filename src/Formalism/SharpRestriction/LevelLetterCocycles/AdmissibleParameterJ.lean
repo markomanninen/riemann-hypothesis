@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
-import Formalism.LocalRingCardinality.DataParams₂
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+public import Formalism.LocalRingCardinality.DataParams₂
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,8 +93,8 @@ def rQ (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i)
 def rankOneCharacterQbar (i : D.nd.Loc) : GE D.nd →* GL (Fin 1) (Qbar (D.nd.l i)) :=
   mapRep (iotaOQ D.nd D.naut i) (PairedCharacterCondition.chiGL i)
 
-open Classical in
 
+open Classical in
 def hodgeTateJumpsAtModulesForSign (ep : Bool) : Prop :=
   ∀ (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))), GoodR D.nd i r →
     ∀ (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i))
@@ -136,8 +140,8 @@ def jcCondition : Prop :=
     (∀ q ∈ cloudJ D j ρ, (D.R.t : ℚ) + 1 < q) ∧
     (0 : ℚ) ∉ cloudJ D j ρ ∪ lowJ D j ρ
 
-variable (D) in
 
+variable (D) in
 def JumpLowsSignCount : Prop :=
   ∀ j, 1 ≤ j → j ≤ D.R.m → ∀ ρ : D.what₂.Tau,
     {q ∈ lowJ D j ρ | q < 0}.ncard = D.R.m - j ∧ {q ∈ lowJ D j ρ | 0 < q}.ncard = j ∧
@@ -177,14 +181,6 @@ end Stmt
 section admitted
 
 variable (D)
-
-def DeRhamFamilyAway : Prop := ∀ i r, GoodR D.nd i r → SumRepresentations.At.G2 D.nd D.naut i r
-
-def DeRhamFamilyTypePrimes : Prop :=
-  ∀ i r, GoodR D.nd i r → (D.nd.l i = D.host.g 0 ∨ D.nd.l i = D.host.g 1) →
-    ∀ w ∈ placesOver D.host.E (D.nd.l i), ∀ x,
-      D.naut.IsdRW i (rQ D i r x) w ∧
-      ∀ τ₀, InducesW D.nd i τ₀ w → D.naut.jumpsW i (rQ D i r x) τ₀ = D.naut.locAutHodgeTateWeightsLevelZero i τ₀
 
 def AdmDict : Prop :=
   ∃ ep : Bool, ∀ (i : D.nd.Loc) (τ₀ : D.host.E →+* Qbar (D.nd.l i)) g ρ, ReadAt D i τ₀ g ρ →
@@ -230,12 +226,6 @@ def AdmPar : Prop :=
   L.etaSz + D.R.t + L.Sc < L.sc.w'' D.R.n ∧ 3 * L.sc.w'' D.R.n ≤ L.sc.b ∧
     (∀ tt, (L.bT tt : ℝ) + L.sc.b' / L.sc.x ≤ L.sc.b) ∧ (D.R.t : ℝ) ≤ L.etaSz
 
-def AdmJ : Prop :=
-  DeRhamFamilyAway D ∧ CrysIffWD D.nd D.naut ∧ DeRhamFamilyTypePrimes D ∧ AdmDict D ∧ AdmRead D ∧ AdmPar L
-
-variable (D) in
-
-def JumpBoundClosedForm : Prop := ∀ L : SizeData₂ D, AdmJ L → JumpConditions L
 
 end admitted
 

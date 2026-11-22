@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NotKept
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WdimUp
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NotKept
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WdimUp
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,11 +28,11 @@ theorem wb_vstep (hP : IsPair A Ai Ci mu lam) (a : ℕ) (ha : a < 2 * s + 1) (hv
   refine ⟨fun t ht => ?_, fun t ht => ?_⟩
   · have := h1 ⟨t + 1, by omega⟩
     unfold wbK
-    rw [dif_pos (⟨by omega, by omega⟩ : _ ∧ _), dif_pos (⟨by omega, by omega⟩ : _ ∧ _)]
+    rw [dite_eq_left (⟨by omega, by omega⟩ : _ ∧ _), dite_eq_left (⟨by omega, by omega⟩ : _ ∧ _)]
     exact this
   · have := h2 ⟨t + 1, by omega⟩ ⟨t + 2, by omega⟩ rfl
     unfold wbK
-    rw [dif_pos (⟨by omega, by omega⟩ : _ ∧ _), dif_pos (⟨by omega, by omega⟩ : _ ∧ _)]
+    rw [dite_eq_left (⟨by omega, by omega⟩ : _ ∧ _), dite_eq_left (⟨by omega, by omega⟩ : _ ∧ _)]
     exact this
 
 theorem wb_cstep (hP : IsPair A Ai Ci mu lam) (a : ℕ) (ha : a < 2 * s + 1) (hc : ¬ (a = 0 ∨ a % 2 = 1)) :
@@ -41,11 +45,11 @@ theorem wb_cstep (hP : IsPair A Ai Ci mu lam) (a : ℕ) (ha : a < 2 * s + 1) (hc
   refine ⟨fun t ht => ?_, fun t ht => ?_⟩
   · have := h1 ⟨t + 1, by omega⟩
     unfold wbK
-    rw [dif_pos (⟨by omega, by omega⟩ : _ ∧ _), dif_pos (⟨by omega, by omega⟩ : _ ∧ _)]
+    rw [dite_eq_left (⟨by omega, by omega⟩ : _ ∧ _), dite_eq_left (⟨by omega, by omega⟩ : _ ∧ _)]
     exact this
   · have := h2 ⟨t + 1, by omega⟩ ⟨t + 2, by omega⟩ rfl
     unfold wbK
-    rw [dif_pos (⟨by omega, by omega⟩ : _ ∧ _), dif_pos (⟨by omega, by omega⟩ : _ ∧ _)]
+    rw [dite_eq_left (⟨by omega, by omega⟩ : _ ∧ _), dite_eq_left (⟨by omega, by omega⟩ : _ ∧ _)]
     exact this
 
 theorem wb_one (hP : IsPair A Ai Ci mu lam) (t : ℕ) : wbK mu 1 t = 0 := by
@@ -98,7 +102,7 @@ theorem wb_shape (hP : IsPair A Ai Ci mu lam) (hr : 2 * s + 1 ≤ r) (i : ℕ) (
         by_cases h3 : r ≤ t' + i
         · exact p3 t' h3
         · exact le_of_eq (p2 t' (by omega) (by omega))
-      · unfold wbK; rw [dif_neg (by omega)]
+      · unfold wbK; rw [dite_eq_right (by omega)]
     refine ⟨fun t ht => ?_, fun t h1 h2 => ?_, fun t h1 => ?_⟩
     · rcases Nat.lt_or_ge (t + 1) (i + 1) with h | h
       · exact le_trans (v1 (t + 1) (by omega)) (hc.2 t (by omega))
@@ -113,7 +117,7 @@ theorem wb_shape (hP : IsPair A Ai Ci mu lam) (hr : 2 * s + 1 ≤ r) (i : ℕ) (
         by_cases h3 : r ≤ t + i
         · exact v3 t h3
         · exact le_of_eq (v2 t (by omega) (by omega))
-      · unfold wbK; rw [dif_neg (by omega)]
+      · unfold wbK; rw [dite_eq_right (by omega)]
 
 theorem wb_follow (hP : IsPair A Ai Ci mu lam) (i0 : ℕ) (i : ℕ) (h0 : i0 ≤ i) (hi : i < s) (hr : s ≤ r) :
     wbK mu (2 * i + 3) (i - i0) ≤ wbK mu (2 * i0 + 2) 0 := by
@@ -139,7 +143,7 @@ theorem wb_follow (hP : IsPair A Ai Ci mu lam) (i0 : ℕ) (i : ℕ) (h0 : i0 ≤
       exact (wb_cstep hP (2 * (i + 1) + 2) (by omega) (by omega)).1 0 (by omega)
 
 theorem wb_last (t : ℕ) (ht : t < r) : wbK mu (2 * s + 1) t = mu (Fin.last _) ⟨t + 1, by omega⟩ := by
-  unfold wbK; rw [dif_pos ⟨by omega, ht⟩]; rfl
+  unfold wbK; rw [dite_eq_left ⟨by omega, ht⟩]; rfl
 
 end Shape
 
@@ -193,7 +197,7 @@ theorem wtBound_of (hCD : ChainDimAt) : WtBoundAt := by
       have hl := le_trans (hi t' ht) hf
       have hrho : pairRho mu (s - (t' + 1)) = wbK mu (2 * (s - (t' + 1)) + 2) 0 := by
         unfold pairRho wbK finPos
-        rw [dif_pos ⟨by omega, by omega⟩]
+        rw [dite_eq_left ⟨by omega, by omega⟩]
         congr 1
         · apply Fin.ext; simp only; omega
       rw [hrho]
@@ -217,13 +221,13 @@ theorem wtBound_of (hCD : ChainDimAt) : WtBoundAt := by
           · exact le_of_eq (q2 t' (by omega) (by omega))
         have hN : pairN (s := s) lam (t - (r - s)) = -lam ⟨t, ht⟩ := by
           unfold pairN
-          rw [dif_pos (by omega)]
+          rw [dite_eq_left (by omega)]
           congr 2
           apply Fin.ext; simp only; omega
         rw [hN]
         apply le_of_eq; congr 2; omega
   have hprod : ∏ t : Fin r, (sdXi r (lam t).natAbs : ℚ) ≤ ∏ t : Fin r, g t :=
-    Finset.prod_le_prod (fun t _ => wb_sdXi_nonneg _ _) (fun t _ => hle t)
+    Finset.prod_le_prod₀ (fun t _ => wb_sdXi_nonneg _ _) (fun t _ => hle t)
   refine le_trans hprod (le_of_eq ?_)
   rw [Fin.prod_univ_eq_prod_range (fun t => g t) r]
   have hsplit1 : Finset.range r = Finset.range 1 ∪ Finset.Ico 1 r := by

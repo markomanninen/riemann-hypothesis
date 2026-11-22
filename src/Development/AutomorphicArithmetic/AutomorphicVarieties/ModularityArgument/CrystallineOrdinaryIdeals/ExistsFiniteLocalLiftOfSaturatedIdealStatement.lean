@@ -1,6 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.ExistsFiniteLocalLiftOfSaturatedIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial Topology
 set_option maxHeartbeats 1000000 in
@@ -86,7 +89,7 @@ theorem _root_.GlobalTheory.T.exists_finite_local_lift_of_saturated_ideal : ∀ 
     obtain ⟨j, hj, y, hy, hjy⟩ := Submodule.mem_sup.1 hc
     have hx1 : Ideal.Quotient.mk J' (algebraMap R RM d * c) ∈
         (IsLocalRing.maximalIdeal RM ^ (N0 + k)) • (⊤ : Submodule RM (RM ⧸ J')) := by
-      rw [Ideal.smul_top_eq_map, Submodule.restrictScalars_mem, ← hjy, map_add,
+      rw [Ideal.smul_top_eq_map, Submodule.restrictScalars_mem, ← hjy, map_add (f := _),
         Ideal.Quotient.eq_zero_iff_mem.2 hj, zero_add]
       exact Ideal.mem_map_of_mem _ hy
     have hx2 : Ideal.Quotient.mk J' (algebraMap R RM d * c) ∈
@@ -112,12 +115,12 @@ theorem _root_.GlobalTheory.T.exists_finite_local_lift_of_saturated_ideal : ∀ 
         Ideal.Quotient.algebraMap_eq, ← map_mul, mul_comm a, sub_self]
     have hca : c - a ∈ J' := hreg' _ hdiff
     have hc : c = (c - a) + a := by ring
-    rw [hc, map_add, hJg _ hca, hmaxg _ ha, add_zero]
+    rw [hc, map_add (f := _), hJg _ hca, hmaxg _ ha, add_zero]
   let I : Ideal RM := J' ⊔ IsLocalRing.maximalIdeal RM ^ (N0 + k)
   have hIg : ∀ x ∈ I, g x = 0 := by
     intro x hx
     obtain ⟨j, hj, y, hy, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add, hJg _ hj, hmaxg _ (Ideal.pow_le_pow_right (by omega) hy), add_zero]
+    rw [map_add (f := _), hJg _ hj, hmaxg _ (Ideal.pow_le_pow_right (by omega) hy), add_zero]
   have hIne : I ≠ ⊤ := by
     intro h
     have h1 : (1 : RM) ∈ I := by rw [h]; exact Submodule.mem_top

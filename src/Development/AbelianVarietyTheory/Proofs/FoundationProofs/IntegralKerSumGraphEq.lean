@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsPosHermFormV
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PhDetMulIntegral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergReproducingKernelSumSpec
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralUnfoldFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralGaussianUnitaryPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsPosHermFormV
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PhDetMulIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergReproducingKernelSumSpec
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralUnfoldFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralGaussianUnitaryPos
+
+@[expose] public section
+
 open Complex MeasureTheory GlobalTheory.UnitaryTheta
 open scoped BigOperators ComplexConjugate Real Classical
 
@@ -49,7 +54,7 @@ theorem integral_kerSum_graph_eq : ∀ (V : Type) [NormedAddCommGroup V] [Normed
     exact term_shift H hH a ha Λ α hα (s m) y z (hs m) (hle y.2) (haΛ _ y.2) (hαa _ y.2)
   have hu := fun m => GlobalTheory.integral_unfold_fundamentalDomain V μ Λ' Fd hFd _ (hint (s m))
   simp only [hsum]
-  rw [integral_finset_sum _ (fun m _ => (hu m).1)]
+  rw [integral_finsetSum _ (fun m _ => (hu m).1)]
   simp only [fun m => (hu m).2, hval]
   rw [← Finset.mul_sum]
 

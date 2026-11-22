@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
-import GroundTheory.HeightsAndTheta.Heights.KernelsRest
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
+public import GroundTheory.HeightsAndTheta.Heights.KernelsRest
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms

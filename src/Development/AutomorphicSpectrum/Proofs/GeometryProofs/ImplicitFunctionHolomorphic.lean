@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChainA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChainA
+
+@[expose] public section
 
 open Filter Topology Metric
 
@@ -32,7 +36,7 @@ theorem holomorphic_inverse_with_parameters :
     have h1 : D (0, v) = L v := by
       have := congrArg (fun A : (I → ℂ) →L[ℂ] (J → ℂ) => A v) hDL
       simpa using this
-    rw [← h1, ← map_add]; simp
+    rw [← h1, ← map_add (f := _)]; simp
   let F₀ : ((Fin n → ℂ) × (I → ℂ)) →L[ℂ] ((Fin n → ℂ) × (J → ℂ)) :=
     (ContinuousLinearMap.fst ℂ (Fin n → ℂ) (I → ℂ)).prod D
   let G₀ : ((Fin n → ℂ) × (J → ℂ)) →L[ℂ] ((Fin n → ℂ) × (I → ℂ)) :=

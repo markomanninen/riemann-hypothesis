@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.LocLocGLInvVal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.LocLocGLInvVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,8 +52,8 @@ theorem LocB_eOf_mem (a : Af I.F) (ha : a ∈ Formalism.UG.intAd I.F) : eOf I a 
   show eOf I a ∈ Formalism.UG.tensInt (F := I.F) (Af I.F) (Formalism.UG.intOE I.E) (Formalism.UG.intAd I.F)
   exact Subring.subset_closure (Or.inr ⟨⟨a, ha⟩, rfl⟩)
 
-open scoped Classical in
 
+open scoped Classical in
 def locG (a : Af I.F) (x : I.Gf) : I.Gf :=
   if h : a * a = a then
     ⟨locGL (eOf I a) (LocB_eOf_idem I a h) (x : GL (Fin I.n) (I.E ⊗[I.F] Af I.F)), by
@@ -59,7 +63,7 @@ def locG (a : Af I.F) (x : I.Gf) : I.Gf :=
 
 theorem LocB_fmat (a : Af I.F) (ha : a * a = a) (x : I.Gf) :
     I.fmat (locG I a x) = locM (eOf I a) (I.fmat x) := by
-  rw [locG, dif_pos ha]
+  rw [locG, dite_eq_left ha]
   exact Loc_locGL_val _ _ _
 
 theorem LocB_ext (x y : I.Gf) (h : I.fmat x = I.fmat y) : x = y := Subtype.ext (Units.ext h)

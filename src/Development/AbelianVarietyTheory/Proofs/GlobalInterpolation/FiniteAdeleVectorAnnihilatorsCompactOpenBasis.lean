@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalComponentsNontrivialAdelicCharacter
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPosNatMemOpenAdeleSubgroup
-import Formalism.LocalToGlobal.Columns.RecLevelTop
-import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalComponentsNontrivialAdelicCharacter
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPosNatMemOpenAdeleSubgroup
+public import Formalism.LocalToGlobal.Columns.RecLevelTop
+public import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx GlobalTheory.SWQ
 open scoped TensorProduct NNReal ENNReal
 
@@ -227,12 +232,12 @@ variable {F : Type} [Field F] [NumberField F]
 
 theorem continuous_Bd {N : ℕ} (a : Fin N → F) (y : Fin N → Af F) : Continuous fun u => Bd (Af F) a u y := by
   unfold Bd
-  exact continuous_finset_sum _ fun l _ => (continuous_const.mul (continuous_apply l)).mul continuous_const
+  exact continuous_finsetSum _ fun l _ => (continuous_const.mul (continuous_apply l)).mul continuous_const
 
 theorem continuous_Bd_swap {N : ℕ} (a : Fin N → F) :
     Continuous fun p : (Fin N → Af F) × (Fin N → Af F) => Bd (Af F) a p.2 p.1 := by
   unfold Bd
-  exact continuous_finset_sum _ fun l _ =>
+  exact continuous_finsetSum _ fun l _ =>
     (continuous_const.mul ((continuous_apply l).comp continuous_snd)).mul ((continuous_apply l).comp continuous_fst)
 
 theorem Bd_zero_right {N : ℕ} (a : Fin N → F) (u : Fin N → Af F) : Bd (Af F) a u 0 = 0 := by

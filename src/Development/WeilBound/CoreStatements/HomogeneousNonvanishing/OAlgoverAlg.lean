@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cmp
 open ReciprocityTheory.ChartRestriction.G.AI.I4 (imageZ)
 open scoped TensorProduct
@@ -97,9 +102,9 @@ theorem chart_rel {y : (Σ k, ι k) → Ω} {z : (Σ k, ι k) → ℂ} (hz : z �
       obtain ⟨n, h, h1, h2⟩ := hp
       obtain ⟨n', h', h1', h2'⟩ := hq
       refine ⟨n + n', h * (∏ k, X ⟨k, c k⟩) ^ n' + h' * (∏ k, X ⟨k, c k⟩) ^ n, ?_, ?_⟩
-      · simp only [map_add, map_mul, map_pow, s1, h1, h1']
+      · simp only [map_add (f := _), map_mul, map_pow, s1, h1, h1']
         ring
-      · simp only [map_add, map_mul, map_pow, s2, h2, h2']
+      · simp only [map_add (f := _), map_mul, map_pow, s2, h2, h2']
         ring
     | mul_X g p hp =>
       obtain ⟨n, h, h1, h2⟩ := hp
@@ -148,7 +153,7 @@ theorem imageZ_blk (y : (Σ k, ι k) → Ω) :
     unfold mConeMap
     induction f using MvPolynomial.induction_on with
     | C n => simp
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p i hp => simp only [map_mul, hp, aeval_X, rename_X, rename_C]; rfl
   ext f
   show mConeMap y (rename (blk k₀ ix) f) = 0 ↔ mConeMap _ f = 0
@@ -234,7 +239,7 @@ theorem homogenise (i₀ : I) (r : MRing (fun _ : Unit => I)) : ∃ (n : ℕ) (s
     obtain ⟨n', s', h1', h2'⟩ := hq
     refine ⟨n + n', s * X ⟨(), i₀⟩ ^ n' + X ⟨(), i₀⟩ ^ n * s',
       (h1.mul (isHomogeneous_X_pow _ _)).add ((isHomogeneous_X_pow _ _).mul h1'), fun F _ x hx => ?_⟩
-    simp only [map_add, map_mul, map_pow, aeval_X, h2 F x hx, h2' F x hx]
+    simp only [map_add (f := _), map_mul, map_pow, aeval_X, h2 F x hx, h2' F x hx]
     ring
   | mul_X g p hp =>
     obtain ⟨n, s, h1, h2⟩ := hp

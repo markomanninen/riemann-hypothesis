@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Anisotropic
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Anisotropic
+
+@[expose] public section
 
 namespace PI.Witt
 
@@ -67,11 +71,11 @@ theorem nondeg_extend (h1 : OneVector) (h2 : Anisotropic) [FiniteDimensional K V
       have hxU : x = c • (⟨u, hu⟩ : U) + Submodule.inclusion hle x' := Subtype.ext (by simp [x'])
       calc (g₂.trans g₁) (x : V) = g₁ (g₂ (c • u + (x' : V))) := by rw [← hxv]; rfl
         _ = c • g₁ u + g₁ (f' x') := by
-            rw [map_add, map_smul, hg₂u, hg₂f x', map_add, map_smul]
+            rw [map_add (f := _), map_smul, hg₂u, hg₂f x', map_add (f := _), map_smul]
         _ = f x := by
             rw [hg₁u, hf'x, LinearEquiv.apply_symm_apply]
             conv_rhs => rw [hxU]
-            rw [map_add, map_smul]
+            rw [map_add (f := _), map_smul]
     · have hg₁z : g₁ z = z := hg₁fix z (hz₁ ⟨u, hu⟩) (hz₂ ⟨u, hu⟩)
       have hg₂z : g₂ z = z := by
         refine hg₂fix z (fun w => hz₁ (Submodule.inclusion hle w)) fun w => ?_

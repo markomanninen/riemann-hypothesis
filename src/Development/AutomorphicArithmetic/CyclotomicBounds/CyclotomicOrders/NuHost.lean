@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.NuRecord
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.NuRecord
+
+@[expose] public section
 
 noncomputable section
 

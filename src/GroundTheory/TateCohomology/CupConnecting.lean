@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.CupProduct
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.CupProduct
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -44,10 +49,11 @@ theorem comp_d_apply {A A' : Rep k G} (φ : A ⟶ A') (i : ℕ) (y : (Fin i → 
     (v : Fin (i + 1) → G) :
     φ.hom ((inhomogeneousCochains.d A i).hom y v) =
       (inhomogeneousCochains.d A' i).hom (fun u => φ.hom (y u)) v := by
-  simp only [inhomogeneousCochains.d_hom_apply, map_add, map_sum, map_smul, Rep.hom_comm_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [inhomogeneousCochains.d_hom_apply, map_add (f := _), map_sum, map_smul, Rep.hom_comm_apply]
+
 
 include hX in
-
 theorem δ_π_eq {p : ℕ} (z : cocycles X.X₃ p) (y : (Fin p → G) → X.X₂)
     (hy : ∀ v, X.g.hom (y v) = iCocycles X.X₃ p z v) (x : cocycles X.X₁ (p + 1))
     (hx : ∀ v, X.f.hom (iCocycles X.X₁ (p + 1) x v) = (inhomogeneousCochains.d X.X₂ p).hom y v) :
@@ -60,10 +66,10 @@ theorem δ_π_eq {p : ℕ} (z : cocycles X.X₃ p) (y : (Fin p → G) → X.X₂
   congr 1
   exact cocycles_ext (iCocycles_mk _ _)
 
+
 include hX in
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
-
 theorem exists_f_eq_of_g_eq_zero (e : X.X₂) (he : X.g.hom e = 0) : ∃ a : X.X₁, X.f.hom a = e := by
   have : LinearMap.range X.f.hom.toLinearMap = LinearMap.ker X.g.hom.toLinearMap :=
     (hX.exact.map (forget₂ (Rep k G) (ModuleCat k))).moduleCat_range_eq_ker
@@ -71,8 +77,8 @@ theorem exists_f_eq_of_g_eq_zero (e : X.X₂) (he : X.g.hom e = 0) : ∃ a : X.X
   obtain ⟨a, ha⟩ := hmem
   exact ⟨a, ha⟩
 
-include hX in
 
+include hX in
 theorem exists_lift_of_cocycle {p : ℕ} (z : cocycles X.X₃ p) :
     ∃ (y : (Fin p → G) → X.X₂) (x : cocycles X.X₁ (p + 1)),
       (∀ v, X.g.hom (y v) = iCocycles X.X₃ p z v) ∧

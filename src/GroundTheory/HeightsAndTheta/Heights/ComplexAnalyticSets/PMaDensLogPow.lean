@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsPiola
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsAlg
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StMaDensLogPow
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMaDensChain
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsPiola
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsAlg
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StMaDensLogPow
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMaDensChain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -113,7 +118,7 @@ theorem mdisc_update_eq {n : ℕ} (G A₀ H : Matrix (Fin (n + 1 + 1)) (Fin (n +
     ((Equiv.swap 1 i).trans (Equiv.swap 0 1))]
   congr 1
   funext k
-  simp only [Function.comp_apply, cons_cons_const_apply, Function.update_apply, cons_const_apply,
+  simp only [Function.comp_apply, cons_const_apply, cons_cons_const_apply, Function.update_apply,
     Equiv.trans_apply, Equiv.swap_apply_def]
   have h01 : (0 : Fin (n + 1 + 1)) ≠ 1 := by
     rw [← Fin.succ_zero_eq_one]; exact (Fin.succ_ne_zero 0).symm

@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanCoefficientNonzero.Development
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanCoefficientNonzero.Development
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped InnerProductSpace ENNReal
@@ -27,7 +31,7 @@ def aDilT (t : ℝ) : Mt k r := aDil k r t
 theorem lim_measurable_inv : Measurable (invT (k := k) (r := r)) := by
   have hid : Continuous (fun x : Mt k r => (Matrix.of x : Mat k r)) := continuous_id
   have hd : Measurable (fun x : Mt k r => (Matrix.of x).det) := (Continuous.matrix_det hid).measurable
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   have e : ∀ x : Mt k r, invT x i j = ((Matrix.of x).det)⁻¹ * (Matrix.of x).adjugate i j := by
     intro x
     show ((Matrix.of x)⁻¹ : Mat k r) i j = _
@@ -46,7 +50,7 @@ theorem measurable_triple_product : Measurable (mul3 (k := k) (r := r)) := by
   exact h.measurable
 
 theorem lim_measurable_aDil : Measurable (aDilT (k := k) (r := r)) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   by_cases hij : i = j
   · subst hij
     by_cases h1 : i.val < r

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.AestronglyMeasurableQuotMeasureIffLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AestronglyMeasurableQuotMeasureIffLift
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.AutomorphicL2Unitary
 

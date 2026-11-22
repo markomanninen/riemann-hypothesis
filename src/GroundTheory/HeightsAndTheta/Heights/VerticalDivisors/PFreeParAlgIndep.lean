@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsFreeParAlgIndep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsFreeParAlgIndep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -99,7 +104,7 @@ theorem proof : FreeParAlgIndep.Statement := by
           ← IsScalarTower.algebraMap_apply k (GenParField k e n) L]
         exact hkB c
       | add a b ha hb =>
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
         exact Subalgebra.add_mem _ ha hb
       | mul_X a p ha =>
         rw [map_mul, map_mul]
@@ -119,7 +124,7 @@ theorem proof : FreeParAlgIndep.Statement := by
       rw [MvPolynomial.aeval_C]
       exact hK c
     | add a b ha hb =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact ha.add hb
     | mul_X a j ha =>
       rw [map_mul, MvPolynomial.aeval_X]

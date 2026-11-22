@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAvgClosure
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerKAvgNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompactAverageKFiniteFiniteRankStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAvgClosure
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerKAvgNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompactAverageKFiniteFiniteRankStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.LowTypeDetermined GlobalTheory.TypeSum
 open scoped InnerProductSpace Topology
@@ -19,7 +23,7 @@ theorem eq_zero_of_sum_coef {n : ℕ} {ε : Fin n → Bool} {H : Type} [NormedAd
       simp only [coefOn]
       rw [this, zero_mul]
     simp only [this, integral_zero]
-  rw [integral_finset_sum _ fun j _ => (hd.2 _ _ _ _).1] at h1
+  rw [integral_finsetSum _ fun j _ => (hd.2 _ _ _ _).1] at h1
   simp only [fun j => (hd.2 (a j) (y j) (a k) (y k)).2, orthonormal_iff_ite.1 ha, ite_mul, ite_div, one_mul, zero_mul,
     zero_div, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h1
   have hd' : (d : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 hd.1.ne'
@@ -47,7 +51,8 @@ theorem exists_rank_one_isAvg : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [
     | mem M hM =>
       obtain ⟨g, hg, rfl⟩ := hM
       have := (A2 _ _ hQavg (A2 _ _ (A1 g hg) hQavg).2).2
-      simp only [hQ, map_sum, map_smul, inner_sum, inner_smul_right, Finset.sum_smul] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hQ, map_sum, map_smul, inner_sum, inner_smul_right, Finset.sum_smul] at this
       simpa only [mul_comm] using this
     | zero => simpa using A5
     | add M N _ _ hM hN =>

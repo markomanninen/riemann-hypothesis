@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInjectiveNormLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInjectiveNormLeOne
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.PadicEmb

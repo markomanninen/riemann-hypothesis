@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,7 +18,8 @@ theorem FlagRestrictPowerSum.proof : FlagRestrictPowerSum.Statement := by
   intro f N k τ σ hk
   have hk0 : k ≠ 0 := by omega
   unfold blockPowerSum restrictToBlock
-  simp only [map_sum, map_pow, aeval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_pow, aeval_X]
   split_ifs with h
   · subst h
     simp [psum]

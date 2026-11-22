@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Topology
 
 namespace GlobalTheory.KernelCovolume
@@ -49,8 +54,8 @@ def splitHomeo {H : Subgroup G} {s : G → ℝ} {c : ℝ → G} (hs : Continuous
 end GlobalTheory.KernelCovolume
 
 open scoped Pointwise
-open GlobalTheory.KernelCovolume in
 
+open GlobalTheory.KernelCovolume in
 theorem GlobalTheory.finiteCovolume_kernel : ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G] [SecondCountableTopology G] [T2Space G] [MeasurableSpace G] [BorelSpace G] (H Γ Λ : Subgroup G) (s : G → ℝ) (c : ℝ → G), Continuous s → (∀ g h, s (g * h) = s g + s h) → Continuous c → (∀ x y, c (x + y) = c x * c y) → (∀ t g, c t * g = g * c t) → (∀ t, s (c t) = t) → (∀ g, g ∈ H ↔ s g = 0) → Γ ≤ H → Λ = Γ ⊔ Subgroup.zpowers (c 1) → DiscreteTopology Λ → (∀ (ν : Measure G) (D : Set G), ν.IsHaarMeasure → IsFundamentalDomain Λ D ν → ν D ≠ ⊤) → ∀ (π : Measure H) (D : Set H), π.IsHaarMeasure → IsFundamentalDomain (Γ.subgroupOf H) D π → π D ≠ ⊤ := by
   intro G _ _ _ _ _ _ _ _ H Γ Λ s c hs hsa hc hca hcc hsc hH hΓ hΛ _hdisc hfin π D hπ hD
   have hcl : IsClosed (H : Set G) := by
@@ -59,7 +64,7 @@ theorem GlobalTheory.finiteCovolume_kernel : ∀ (G : Type) [Group G] [Topologic
   haveI : LocallyCompactSpace H := hcl.locallyCompactSpace
   haveI : SigmaCompactSpace H := hcl.sigmaCompactSpace
   haveI : SigmaFinite π := inferInstance
-  set φ : H × ℝ ≃ₜ G := splitHomeo hs hsa hc hca hsc hH with hφdef
+  set φ : H × ℝ ≃ₜ G := GlobalTheory.KernelCovolume.splitHomeo hs hsa hc hca hsc hH with hφdef
   have hφ : ∀ p : H × ℝ, φ p = (p.1 : G) * c p.2 := fun p => rfl
   set μ0 : Measure (H × ℝ) := π.prod volume with hμ0
   set ν : Measure G := μ0.map φ with hνdef
@@ -79,10 +84,10 @@ theorem GlobalTheory.finiteCovolume_kernel : ∀ (G : Type) [Group G] [Topologic
     rw [hΛ] at hl
     obtain ⟨y, hy, z, hz, rfl⟩ := Subgroup.mem_sup_of_normal_right.1 hl
     obtain ⟨n, rfl⟩ := Subgroup.mem_zpowers_iff.1 hz
-    exact ⟨y, hy, n, by rw [c_int hca]⟩
+    exact ⟨y, hy, n, by rw [GlobalTheory.KernelCovolume.c_int hca]⟩
   have hmemΛ : ∀ γ ∈ Γ, ∀ n : ℤ, γ * c n ∈ Λ := by
     intro γ hγ n
-    rw [hΛ, c_int hca]
+    rw [hΛ, GlobalTheory.KernelCovolume.c_int hca]
     exact Subgroup.mul_mem _ (Subgroup.mem_sup_left hγ)
       (Subgroup.mem_sup_right (Subgroup.zpow_mem_zpowers _ _))
 
@@ -115,7 +120,7 @@ theorem GlobalTheory.finiteCovolume_kernel : ∀ (G : Type) [Group G] [Topologic
     have hx : l⁻¹ • φ p = φ ((⟨γ, hΓ hγ⟩ : H)⁻¹ * p.1, ((-n : ℤ) : ℝ) + p.2) := by
       rw [← hmulφ, Subgroup.smul_def, smul_eq_mul]
       congr 1
-      simp only [Subgroup.coe_inv, e, mul_inv_rev, c_neg hca, Int.cast_neg]
+      simp only [Subgroup.coe_inv, e, mul_inv_rev, GlobalTheory.KernelCovolume.c_neg hca, Int.cast_neg]
       exact hcc _ _
     rw [hx] at hp
     simpa [hD', hS] using hp

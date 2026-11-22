@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar Filter Topology Metric
 
@@ -18,8 +23,8 @@ theorem spMap_comp' {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (c : A
   simp only [spMap, ← Spec.map_comp]
   rfl
 
-omit [GrpObj G] in
 
+omit [GrpObj G] in
 theorem ringHom_ext_of_mono {R A : Type} [CommRing R] [CommRing A] (x : Sp R ⟶ X) [Mono x] {a b : R →+* A}
     (h : spMap a ≫ x = spMap b ≫ x) : a = b :=
   congrArg (fun g => g.hom) (Spec.map_injective ((cancel_mono x).1 h))
@@ -31,8 +36,19 @@ theorem extends_of_tr {Ω : Type} [Field Ω] {ξ : Sp Ω ⟶ X} {E : Type} [AddC
     (v : epsAt (R := X.presheaf.stalk q.1) (X.fromSpecStalk q.1) ⟶ G)
     (hv : v.left = spMap (dualMap ψ) ≫ (MR.pt e).left) : M.Extends q (j e) v := by
   refine ⟨?_, ?_⟩
-  · rw [(left_eq_iff ψ hψ v (MR.pt e)).1 hv]
-    exact isTanAt_base ψ hψ (MR.tan e)
+  · change Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom _ _ _).toRingHom) ≫ v.left = _
+    rw [hv, ← Category.assoc]
+    have h : Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom (X.presheaf.stalk q.1) (X.presheaf.stalk q.1) (X.presheaf.stalk q.1)).toRingHom) ≫
+        spMap (GlobalTheory.CompanionTheory.Ar.dualMap ψ) =
+        spMap ψ ≫ Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R R).toRingHom) := by
+      rw [← spMap_comp', ← spMap_comp']
+      congr 1
+      apply RingHom.ext
+      intro a
+      simp [GlobalTheory.CompanionTheory.Ar.dualMap]
+    rw [h, Category.assoc, MR.tan e]
+    exact congrArg (·.left) (comp_one (M := G)
+      (Over.homMk (spMap ψ) hψ : Over.mk (X.fromSpecStalk q.1) ⟶ Over.mk x))
   · rw [hj, ← spMap_dual_comp, Category.assoc, ← hv]
 
 variable [Smooth G.hom] [IsCommMonObj G]
@@ -68,13 +84,14 @@ theorem exists_germs {R : Type} [CommRing R] {x : Sp R ⟶ X} {F : Type} [AddCom
   obtain ⟨β, Bq, hBq, hβ⟩ := basis_tr (A := X.presheaf.stalk p.1) ψ x (X.fromSpecStalk p.1) hψ MR Mq b
   obtain ⟨jq, hjq⟩ := exists_tr (A := X.presheaf.stalk p.1) (X.fromSpecStalk p.1) ξ (genMap ξ p)
     (spec_genMap ξ p) Mq M
-  have hcomp : ∀ e, jq (β e) = j e := fun e => pt_left_inj M (by
+  have hcomp : ∀ e, jq (β e) = j e := fun e => LieVB.pt_left_inj M (by
     rw [hjq, hβ, ← Category.assoc, spMap_dual_comp, hg, hj])
   obtain ⟨y, rfl⟩ := Mq.onto v hv.1
   have hy : c = jq y := pt_left_inj M (hv.2.trans (hjq y).symm)
   refine ⟨fun k => Bq.repr y k, ?_⟩
   rw [hy]
-  conv_lhs => rw [← Bq.sum_repr y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← Bq.sum_repr y, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [jq.map_smulₛₗ, hBq, hcomp]
 
@@ -102,27 +119,27 @@ end GlobalTheory.CompanionTheory.Ar.LieSections
 
 namespace GlobalTheory.CompanionTheory.Ar
 
-open GlobalTheory.CompanionTheory.Ar.LieTangent GlobalTheory.CompanionTheory.Ar.LieVB GlobalTheory.CompanionTheory.Ar.LieSections in
 
+open GlobalTheory.CompanionTheory.Ar.LieTangent GlobalTheory.CompanionTheory.Ar.LieVB GlobalTheory.CompanionTheory.Ar.LieSections in
 theorem lieLat_germs_eq_sections : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] [IsCommMonObj G] [Smooth G.hom] (Ω : Type) [Field Ω] (ξ : Sp Ω ⟶ X) (E : Type) [AddCommGroup E] [Module Ω E] (M : LieModel G ξ E) (p : Cpt ξ) (N : X.Opens) (J : Type) [Finite J] (c : J → E), p.1 ∈ N → (∀ i, c i ∈ M.lat p) → ∃ (R : Type) (_ : CommRing R) (x : Sp R ⟶ X) (_ : IsOpenImmersion x) (F : Type) (_ : AddCommGroup F) (_ : Module R F) (MR : LieModel G x F) (e : J → F), p.1 ∈ x.opensRange ∧ x.opensRange ≤ N ∧ ∀ (q : Cpt ξ) (ψ : R →+* X.presheaf.stalk q.1), spMap ψ ≫ x = X.fromSpecStalk q.1 → ∀ (i : J) (v : epsAt (R := X.presheaf.stalk q.1) (X.fromSpecStalk q.1) ⟶ G), v.left = spMap (dualMap ψ) ≫ (MR.pt (e i)).left → M.Extends q (c i) v := by
   intro X G _ _ _ Ω _ ξ E _ _ M p N J _ c hN hc
-  obtain ⟨U, hU, F₀, _, _, M₀, n, b₀, hpU⟩ := exists_affine_chart G p.1
+  obtain ⟨U, hU, F₀, _, _, M₀, n, b₀, hpU⟩ := LieSections.exists_affine_chart G p.1
   let R₀ : Type := Γ(X, U)
   let x₀ : Sp R₀ ⟶ X := hU.fromSpec
   have hx₀ : IsOpenImmersion x₀ := inferInstanceAs (IsOpenImmersion hU.fromSpec)
   have hrange : x₀.opensRange = U := hU.opensRange_fromSpec
   have hgen : genPt ξ ∈ x₀.opensRange := p.2.mem_open x₀.opensRange.isOpen (by rw [hrange]; exact hpU)
-  obtain ⟨φ₀, hφ₀⟩ := exists_lift x₀ ξ hgen
+  obtain ⟨φ₀, hφ₀⟩ := LieVB.exists_lift x₀ ξ hgen
   let ψ₀ : R₀ →+* X.presheaf.stalk p.1 := (X.presheaf.germ U p.1 hpU).hom
   have hψ₀ : spMap ψ₀ ≫ x₀ = X.fromSpecStalk p.1 := by
     rw [← hU.fromSpecStalk_eq_fromSpecStalk hpU]
     rfl
-  have hg : (genMap ξ p).comp ψ₀ = φ₀ := ringHom_ext_of_mono x₀ (by
-    rw [spMap_comp', Category.assoc, hψ₀, hφ₀]
-    exact spec_genMap ξ p)
-  obtain ⟨j₀, hj₀⟩ := exists_tr x₀ ξ φ₀ hφ₀ M₀ M
-  choose s hs using fun i => exists_germs M₀ b₀ M φ₀ j₀ hj₀ p ψ₀ hψ₀ hg (hc i)
-  obtain ⟨f, r, hpf, hr⟩ := exists_common_denom hU p.1 hpU (fun ik : J × Fin n => s ik.1 ik.2)
+  have hg : (genMap ξ p).comp ψ₀ = φ₀ := LieSections.ringHom_ext_of_mono x₀ (by
+    rw [LieSections.spMap_comp', Category.assoc, hψ₀, hφ₀]
+    exact LieTangent.spec_genMap ξ p)
+  obtain ⟨j₀, hj₀⟩ := LieVB.exists_tr x₀ ξ φ₀ hφ₀ M₀ M
+  choose s hs using fun i => LieSections.exists_germs M₀ b₀ M φ₀ j₀ hj₀ p ψ₀ hψ₀ hg (hc i)
+  obtain ⟨f, r, hpf, hr⟩ := LieSections.exists_common_denom hU p.1 hpU (fun ik : J × Fin n => s ik.1 ik.2)
   obtain ⟨g, hgN, hpg⟩ := hU.exists_basicOpen_le (V := N) ⟨p.1, hN⟩ hpU
   let D : X.Opens := X.basicOpen (f * g)
   have hD : IsAffineOpen D := hU.basicOpen (f * g)
@@ -138,7 +155,7 @@ theorem lieLat_germs_eq_sections : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] 
   let ρ : R₀ →+* R := (X.presheaf.map (homOfLE hDU).op).hom
   have hρ : spMap ρ ≫ x₀ = x := hU.map_fromSpec hD (homOfLE hDU).op
   obtain ⟨F, _, _, ⟨MF⟩⟩ := lieModel_exists X G R x
-  obtain ⟨β, hβ⟩ := exists_tr x₀ x ρ hρ M₀ MF
+  obtain ⟨β, hβ⟩ := LieVB.exists_tr x₀ x ρ hρ M₀ MF
   have hu : IsUnit (ρ (f * g)) := RingedSpace.isUnit_res_basicOpen X.toRingedSpace (f * g)
   obtain ⟨w, hw⟩ : ∃ w : R, ρ f * w = 1 := by
     rw [map_mul] at hu
@@ -151,15 +168,16 @@ theorem lieLat_germs_eq_sections : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] 
     exact (hDg.le.trans inf_le_right).trans hgN
   let φ : R →+* Ω := (genMap ξ q).comp ψ
   have hφ : spMap φ ≫ x = ξ := by
-    rw [spMap_comp', Category.assoc, hψ]
-    exact spec_genMap ξ q
-  have hφρ : φ.comp ρ = φ₀ := ringHom_ext_of_mono x₀ (by
-    rw [spMap_comp', Category.assoc, hρ, hφ, hφ₀])
-  obtain ⟨j, hj⟩ := exists_tr x ξ φ hφ MF M
-  have hjβ : ∀ u, j (β u) = j₀ u := fun u => pt_left_inj M (by
-    rw [hj, hβ, ← Category.assoc, spMap_dual_comp, hφρ, hj₀])
+    rw [LieSections.spMap_comp', Category.assoc, hψ]
+    exact LieTangent.spec_genMap ξ q
+  have hφρ : φ.comp ρ = φ₀ := LieSections.ringHom_ext_of_mono x₀ (by
+    rw [LieSections.spMap_comp', Category.assoc, hρ, hφ, hφ₀])
+  obtain ⟨j, hj⟩ := LieVB.exists_tr x ξ φ hφ MF M
+  have hjβ : ∀ u, j (β u) = j₀ u := fun u => LieVB.pt_left_inj M (by
+    rw [hj, hβ, ← Category.assoc, LieVB.spMap_dual_comp, hφρ, hj₀])
   have hjc : j (∑ k, (ρ (r (i, k)) * w) • β (b₀ k)) = c i := by
-    rw [hs i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs i, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [j.map_smulₛₗ, hjβ]
     congr 1
@@ -175,6 +193,6 @@ theorem lieLat_germs_eq_sections : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] 
       exact this
     rw [map_mul, h2, ← h4, ← h3, mul_comm (φ (ρ f)), _root_.mul_assoc, h1, _root_.mul_one]
   rw [← hjc]
-  exact extends_of_tr M MF q ψ hψ j hj _ v hv
+  exact LieSections.extends_of_tr M MF q ψ hψ j hj _ v hv
 
 end GlobalTheory.CompanionTheory.Ar

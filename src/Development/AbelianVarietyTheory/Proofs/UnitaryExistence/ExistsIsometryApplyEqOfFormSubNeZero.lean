@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Topology Matrix
 open scoped ENNReal
 
@@ -50,20 +55,20 @@ theorem form_eq_smul_of_const_on_orbit (A B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ
     set w := y + (-(B y y) / (2 * B x₀ y)) • x₀ with hw
     have hww : B w w = 0 := by
       have h2 : (starRingEnd ℂ) 2 = 2 := map_ofNat _ 2
-      simp only [hw, map_add, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
+      simp only [hw, map_add (f := _), map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
         smul_eq_mul, ha, hB x₀ y, map_div₀, map_neg, map_mul, ← hB y y, h2, RingHom.id_apply]
       field_simp
       ring
     have hxw : B x₀ w = B x₀ y := by
-      simp only [hw, map_add, map_smulₛₗ, ha, smul_eq_mul, mul_zero, add_zero]
+      simp only [hw, map_add (f := _), map_smulₛₗ, ha, smul_eq_mul, mul_zero, add_zero]
     have h1 : A w w = e := reach w (by rw [hww, ha]) (by simpa [ha, hxw] using hy)
     have h2 : A (w + w) (w + w) = e := reach (w + w) (by simp [hww, ha])
       (by
-        simp only [map_sub, map_add, ha, hxw]
+        simp only [map_sub, map_add (f := _), ha, hxw]
         intro hh
         apply hy
         linear_combination (-1 / 2 : ℂ) * hh)
-    simp only [map_add, LinearMap.add_apply, h1] at h2
+    simp only [map_add (f := _), LinearMap.add_apply, h1] at h2
     apply he
     linear_combination (1 / 3 : ℂ) * h2
   · have reach2 : ∀ v, B v v = B x₀ x₀ → A v v = e := by
@@ -103,7 +108,7 @@ theorem form_eq_smul_of_const_on_orbit (A B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ
     have diag : ∀ y, (a : ℂ) * A y y = e * B y y := by
       intro y
       have hcont : Continuous fun t : ℝ => a * (B (x₀ + (t : ℂ) • y) (x₀ + (t : ℂ) • y)).re := by
-        simp only [map_add, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
+        simp only [map_add (f := _), map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
           smul_eq_mul, Complex.conj_ofReal, RingHom.id_apply]
         fun_prop
       have hpos : 0 < (fun t : ℝ => a * (B (x₀ + (t : ℂ) • y) (x₀ + (t : ℂ) • y)).re) 0 := by
@@ -118,7 +123,7 @@ theorem form_eq_smul_of_const_on_orbit (A B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ
       have hεC : ((ε / 2 : ℝ) : ℂ) ≠ 0 := by
         exact_mod_cast (by positivity : (ε / 2 : ℝ) ≠ 0)
       generalize (ε / 2 : ℝ) = t at h1 h2 hεC
-      simp only [map_add, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
+      simp only [map_add (f := _), map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
           smul_eq_mul, Complex.conj_ofReal, RingHom.id_apply, h0, haC] at h1 h2
       push_cast at h1 h2
       have : (t : ℂ) ^ 2 * ((a : ℂ) * A y y - e * B y y) = 0 := by
@@ -133,7 +138,7 @@ theorem form_eq_smul_of_const_on_orbit (A B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ
     have h2 := diag (x + Complex.I • y)
     have h3 := diag x
     have h4 := diag y
-    simp only [map_add, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
+    simp only [map_add (f := _), map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
           smul_eq_mul, Complex.conj_I, RingHom.id_apply] at h1 h2
     push_cast
     rw [← heC]
@@ -164,7 +169,8 @@ private theorem matForm_single {r : ℕ} (M : Matrix (Fin r) (Fin r) ℂ) (i j :
 
 private theorem matForm_symm {r : ℕ} {M : Matrix (Fin r) (Fin r) ℂ} (hM : M.IsHermitian)
     (x y : Fin r → ℂ) : matForm M y x = (starRingEnd ℂ) (matForm M x y) := by
-  simp only [matForm_apply, map_sum, map_mul, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [matForm_apply, map_sum, map_mul, Complex.conj_conj]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
   have : (starRingEnd ℂ) (M k l) = M l k := hM.apply l k

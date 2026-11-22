@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOfMemGfC
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
-import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsKHwMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ScalarWeightSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOfMemGfC
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsKHwMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ScalarWeightSum
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -143,7 +148,7 @@ theorem gder_monomial (p : D.what₂.Tau → ℕ) (τ : D.what₂.Tau) (c : Fin 
     obtain ⟨k', rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk
     simp only [smul_eq_mul, nsmul_eq_mul, MvPolynomial.smul_eq_C_mul, Nat.succ_sub_one]
     push_cast
-    simp only [map_add, map_mul, map_intCast, map_natCast, map_one, pow_succ]
+    simp only [map_add (f := _), map_mul, map_intCast, map_natCast, map_one, pow_succ]
     ring
 
 end
@@ -266,15 +271,17 @@ theorem transp_of_pairs {ψ : W →ₗ[ℂ] PolF D m n} (hinj : Function.Injecti
 end Frame
 
 theorem expand_tor (p : D.what₂.Tau → ℕ) (τ : D.what₂.Tau) (c : Fin n) (z : ℂˣ) (P : PolF D m n) :
-    GlobalTheory.ExportSeries.fockSubst p (tor τ c z) P = ∑ s ∈ P.support, ((z : ℂ) ^ wt p τ c s) • monomial s (coeff s P) := by
+    GlobalTheory.ExportSeries.fockSubst p (tor τ c z) P = ∑ s ∈ P.support, ((z : ℂ) ^ wt p τ c s) • monomial s (AddMonoidAlgebra.coeff P s) := by
   conv_lhs => rw [P.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun s _ => tor_monomial p τ c z s _
 
 theorem expand_gder (p : D.what₂.Tau → ℕ) (τ : D.what₂.Tau) (c : Fin n) (P : PolF D m n) :
-    gder p τ (Matrix.single c c 1) P = ∑ s ∈ P.support, (wt p τ c s : ℂ) • monomial s (coeff s P) := by
+    gder p τ (Matrix.single c c 1) P = ∑ s ∈ P.support, (wt p τ c s : ℂ) • monomial s (AddMonoidAlgebra.coeff P s) := by
   conv_lhs => rw [P.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun s _ => gder_monomial p τ c s _
 
 end
@@ -367,17 +374,20 @@ theorem subst_comp_gder (p : D.what₂.Tau → ℕ) (τ : D.what₂.Tau) (g : Gl
   have dsum : ∀ (A : Fin n → ℂ) (B : Fin n → Fin n → ℂ) (Y : Fin n → PolF D m n),
       ∑ d, C (A d) * ∑ b, C (B d b) * Y b = ∑ b, C (∑ d, A d * B d b) * Y b := by
     intro A B Y
-    simp only [Finset.mul_sum, map_sum, Finset.sum_mul, map_mul, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.mul_sum, map_sum, Finset.sum_mul, map_mul, mul_assoc]
     exact Finset.sum_comm
   have lin : ∀ (E : Derivation ℂ (PolF D m n) (PolF D m n)) (k : Fin n → ℂ) (Y : Fin n → PolF D m n),
       E (∑ b, C (k b) * Y b) = ∑ b, C (k b) * E (Y b) := by
     intro E k Y
-    simp only [← smul_eq_C_mul, map_sum, E.map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← smul_eq_C_mul, map_sum, E.map_smul]
   have linS : ∀ (k : Fin n → ℂ) (Y : Fin n → PolF D m n),
       GlobalTheory.ExportSeries.fockSubst (m := m) p g (∑ b, C (k b) * Y b) =
         ∑ b, C (k b) * GlobalTheory.ExportSeries.fockSubst (m := m) p g (Y b) := by
     intro k Y
-    simp only [map_sum, map_mul, algHom_C, algebraMap_eq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, algHom_C, algebraMap_eq]
   have hS : ∀ (σ : D.what₂.Tau) (i : Fin m) (c : Fin n), GlobalTheory.ExportSeries.fockSubst (m := m) p g (X (σ, i, c)) =
       if (i : ℕ) < p σ then
       ∑ b, C ((((g σ)⁻¹ : GL (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ) c b) * X (σ, i, b)
@@ -433,9 +443,9 @@ theorem subst_comp_gder (p : D.what₂.Tau → ℕ) (τ : D.what₂.Tau) (g : Gl
   change GlobalTheory.ExportSeries.fockSubst (m := m) p g (gder p τ Z P) = gder p τ Z' (GlobalTheory.ExportSeries.fockSubst (m := m) p g P)
   induction P using MvPolynomial.induction_on with
   | C a => simp [MvPolynomial.derivation_C]
-  | add P Q hP hQ => simp only [map_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ]
   | mul_X P v hP =>
-    rw [Derivation.leibniz, map_mul, Derivation.leibniz, map_add, smul_eq_mul, smul_eq_mul, smul_eq_mul, smul_eq_mul,
+    rw [Derivation.leibniz, map_mul, Derivation.leibniz, map_add (f := _), smul_eq_mul, smul_eq_mul, smul_eq_mul, smul_eq_mul,
       map_mul, map_mul, hP, hX]
 
 theorem givens (a b : Fin n) (hab : a ≠ b) : ∃ G : GL (Fin n) ℂ,
@@ -541,7 +551,7 @@ theorem transp_torus
     Transp w BS r ρ (gder (m := m) w.p τ (Matrix.single c c 1)).toLinearMap := by
   refine transp_of_pairs hinj hψ fun φ hφ x => ?_
   let f : (Formalism.IndefR.Datum.FVar D m n →₀ ℕ) ⊕ (Formalism.IndefR.Datum.FVar D m n →₀ ℕ) → PolF D m n × PolF D m n :=
-    Sum.elim (fun s => (monomial s (coeff s (ψ x)), 0)) (fun s => (0, monomial s (coeff s (φ x))))
+    Sum.elim (fun s => (monomial s (AddMonoidAlgebra.coeff (ψ x) s), 0)) (fun s => (0, monomial s (AddMonoidAlgebra.coeff (φ x) s)))
   let wf : (Formalism.IndefR.Datum.FVar D m n →₀ ℕ) ⊕ (Formalism.IndefR.Datum.FVar D m n →₀ ℕ) → ℤ :=
     Sum.elim (wt w.p τ c) (wt w.p τ c)
   have hmem : ∑ i ∈ (ψ x).support.disjSum (φ x).support, (wf i : ℂ) • f i ∈ LinearMap.range (ψ.prod φ) := by

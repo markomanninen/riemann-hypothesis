@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LineDerivListEqIteratedFDeriv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LineDerivListEqIteratedFDeriv
+
+@[expose] public section
 
 open Complex Matrix Filter Topology
 open scoped Real
@@ -78,21 +82,9 @@ theorem differentiableOn_riemannTheta_comp (a b : ι → ℝ) {Ω : E → Matrix
 
 end Families
 
-def symmSingle {ι : Type*} [DecidableEq ι] (i j : ι) : Matrix ι ι ℂ :=
-  of fun k l => if k = i ∧ l = j ∨ k = j ∧ l = i then 1 else 0
-
 section Upper
 
 variable {ι : Type*} [LinearOrder ι]
-
-def symmOfUpper (x : {p : ι × ι // p.1 ≤ p.2} → ℂ) : Matrix ι ι ℂ :=
-  of fun i j => x ⟨(min i j, max i j), min_le_max⟩
-
-def siegelUpperCoords (ι : Type*) [LinearOrder ι] : Set ({p : ι × ι // p.1 ≤ p.2} → ℂ) :=
-  symmOfUpper ⁻¹' siegelUpperHalfSpace ι
-
-@[simp] theorem mem_siegelUpperCoords {x : {p : ι × ι // p.1 ≤ p.2} → ℂ} :
-    x ∈ siegelUpperCoords ι ↔ IsSiegel (symmOfUpper x) := Iff.rfl
 
 variable [Fintype ι]
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ChainWideTwistTransport
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ChainWideTwistTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,8 +67,8 @@ section Lat
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem mem_dual {V : Type} [AddCommGroup V] [Module E V] [Module (𝓞 E) V] [IsScalarTower (𝓞 E) E V]
     (h : V →ₗ⋆[E] V →ₗ[E] E) (L : Submodule (𝓞 E) V) (x : V) :
     x ∈ Formalism.HermitianLatticesTheory.dual h L ↔ ∀ y ∈ L, h y x ∈ (1 : Submodule (𝓞 E) E) := by
@@ -77,13 +81,43 @@ theorem exists_lower (hst : ∀ x : E, IsIntegral ℤ x → IsIntegral ℤ (star
   have hs := V.herm
   have hnd := V.nondeg
   have hfg : V.L0.FG := V.standardTuple_isLattice.fg
-  have hsp : Submodule.span E (V.L0 : Set V.V) = ⊤ := V.standardTuple_isLattice.span_eq_top
   have hst1 : ∀ x : E, x ∈ (1 : Submodule (𝓞 E) E) → star x ∈ (1 : Submodule (𝓞 E) E) := by
     intro x hx
     obtain ⟨r, rfl⟩ := Submodule.mem_one.1 hx
     exact Submodule.mem_one.2 ⟨⟨_, hst _ r.2⟩, rfl⟩
   have hL : ∀ x, x ∈ V.L0 ↔ ∀ y ∈ V.L0, V.hT y x ∈ (1 : Submodule (𝓞 E) E) := fun x => by
     rw [← mem_dual, V.baseLattice_isUnimodular]
+  have hsp : Submodule.span E (V.L0 : Set V.V) = ⊤ := by
+    by_contra hn
+    obtain ⟨v, hv⟩ : ∃ v : V.V, v ∉ Submodule.span E (V.L0 : Set V.V) := by
+      by_contra h
+      apply hn
+      apply eq_top_iff.mpr
+      intro x _
+      exact not_not.mp (fun hx => h ⟨x, hx⟩)
+    obtain ⟨f, hf, hfL⟩ := Submodule.exists_dual_map_eq_bot_of_notMem hv inferInstance
+    obtain ⟨w, hw⟩ := exists_repr hnd f
+    have hw0 : w ≠ 0 := by
+      intro h
+      apply hf
+      rw [← hw, h, map_zero]
+      rfl
+    have hsmul (a : E) : a • w ∈ V.L0 := by
+      rw [hL]
+      intro y hy
+      have hy0 : f y = 0 := by
+        have : f y ∈ (Submodule.span E (V.L0 : Set V.V)).map f :=
+          ⟨y, Submodule.subset_span hy, rfl⟩
+        simpa [hfL] using this
+      rw [map_smul, ← hs.eq w y, hw, hy0, map_zero, smul_zero]
+      exact Submodule.zero_mem _
+    let j : E →ₗ[𝓞 E] V.L0 :=
+      ((LinearMap.toSpanSingleton E V.V w).restrictScalars (𝓞 E)).codRestrict V.L0 hsmul
+    letI : Module.Finite (𝓞 E) V.L0 := Module.Finite.iff_fg.mpr hfg
+    letI : Module.Finite (𝓞 E) E := Module.Finite.of_injective j fun a b hab =>
+      smul_left_injective E hw0 (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
   set I : Submodule E V.V := Submodule.span E (Set.range e) with hI
   set P : Submodule E V.V := LinearMap.ker (LinearMap.pi fun j => V.hT (e j)) with hPdef
   have hP : ∀ x, x ∈ P ↔ ∀ y ∈ I, V.hT y x = 0 := by
@@ -149,19 +183,9 @@ theorem exists_lower (hst : ∀ x : E, IsIntegral ℤ x → IsIntegral ℤ (star
   let L' : Submodule (𝓞 E) W := V.L0.comap j
   have hL' : ∀ x : W, x ∈ L' ↔ (x : V.V) ∈ V.L0 := fun _ => Iff.rfl
   have hlat : Submodule.IsLattice E L' := by
-    constructor
-    · refine Submodule.fg_of_fg_map_injective j Subtype.val_injective ?_
-      have : IsNoetherian (𝓞 E) V.L0 := isNoetherian_of_fg_of_noetherian _ hfg
-      have : IsNoetherian (𝓞 E) (L'.map j) := isNoetherian_of_le (Submodule.map_comap_le _ _)
-      exact Module.Finite.iff_fg.mp inferInstance
-    · rw [eq_top_iff]
-      intro v _
-      obtain ⟨d, hd, hv⟩ := hden v
-      have hd' : algebraMap (𝓞 E) E d ≠ 0 := by simpa using hd
-      have : v = (algebraMap (𝓞 E) E d)⁻¹ • (d • v) := by
-        rw [← IsScalarTower.algebraMap_smul E d v, smul_smul, inv_mul_cancel₀ hd', one_smul]
-      rw [this]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span hv)
+    apply Submodule.IsLattice.of_fg E
+    refine Submodule.fg_of_fg_map_injective j Subtype.val_injective ?_
+    exact hfg.of_le (Submodule.map_comap_le _ _)
   have hun : Formalism.HermitianLatticesTheory.IsUnimodular h' L' := by
     ext v
     rw [mem_dual]

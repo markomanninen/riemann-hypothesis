@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel GlobalTheory.PsType
 
 namespace GlobalTheory.PsType

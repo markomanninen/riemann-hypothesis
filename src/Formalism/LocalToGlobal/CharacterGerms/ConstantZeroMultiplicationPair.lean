@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.FirstVanishingCore
-import Formalism.LocalToGlobal.CharacterGerms.PderivDoubleMultiplicationJacobian
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.FirstVanishingCore
+public import Formalism.LocalToGlobal.CharacterGerms.PderivDoubleMultiplicationJacobian
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -110,9 +114,10 @@ theorem zero_axis_embedding_second (μ : Fin 1 × Fin dd →₀ ℕ) (j : Fin dd
 
 theorem Sv_eq_sum (Y : FBChart C V O dd) (v : Fin dd → C) :
     Sv Y v = ∑ j, MvPowerSeries.C (v j) *
-      ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv C ((1 : Fin 2), j) Y.u1) := by
+      ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) Y.u1) := by
   ext μ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   show ∑ j, v j * MvPowerSeries.coeff (io0 μ + Finsupp.single ((1 : Fin 2), j) 1) Y.u1 = _
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [MvPowerSeries.coeff_C_mul, coeff_E, MvPowerSeries.coeff_pderiv, zero_axis_embedding_second, Nat.cast_zero, zero_add, mul_one]
@@ -124,11 +129,11 @@ theorem constant_zero_multiplication_pair (Y : FBChart C V O dd) : Z0 (![M2 Y, p
   · exact FirstUnitSeriesIntegrality.double_multiplication_constantCoeff Y.B.G V.l j
   · exact z0_pt 1 j
 
-theorem pderiv_second_multiplication_pair (Y : FBChart C V O dd) (k j : Fin dd) : MvPowerSeries.pderiv C ((1 : Fin 2), j) (M2 Y k) = 0 := by
-  show MvPowerSeries.pderiv C ((1 : Fin 2), j) (ev (n := 2) ![pt C dd 0] (mulL Y.B.G.F V.l k)) = 0
+theorem pderiv_second_multiplication_pair (Y : FBChart C V O dd) (k j : Fin dd) : MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (M2 Y k) = 0 := by
+  show MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (ev (n := 2) ![pt C dd 0] (mulL Y.B.G.F V.l k)) = 0
   rw [ZeroPointGroupLaw.pderiv_eval_single (pt C dd 0) (z0_pt 0)]
   refine Finset.sum_eq_zero fun r _ => ?_
-  rw [show MvPowerSeries.pderiv C ((1 : Fin 2), j) (pt C (n := 2) dd 0 r) = 0 from
+  rw [show MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (pt C (n := 2) dd 0 r) = 0 from
     MvPowerSeries.pderiv_X_of_ne (fun h' => by simp at h'), mul_zero]
 
 theorem eval_multiplication_pair_zero (Y : FBChart C V O dd) (g : PS C 2 dd) :
@@ -159,9 +164,9 @@ theorem eval_point_zero_factor (M : Pt C 1 dd) (hM : ∀ j, MvPowerSeries.consta
   · exact (ev_zero (z0_1 M hM)).symm
 
 theorem eval_pderiv_first_unit_series (Y : FBChart C V O dd) (j : Fin dd) :
-    ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv C ((1 : Fin 2), j) Y.u1) =
-      ev (n := 1) ![mulL Y.B.G.F V.l, 0] (MvPowerSeries.pderiv C ((1 : Fin 2), j) Y.h) -
-        (V.l : C) • ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv C ((1 : Fin 2), j) Y.h) := by
+    ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) Y.u1) =
+      ev (n := 1) ![mulL Y.B.G.F V.l, 0] (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) Y.h) -
+        (V.l : C) • ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) Y.h) := by
   have hZ2 := constant_zero_multiplication_pair Y
   have hH0 : MvPowerSeries.constantCoeff (ev (n := 2) ![M2 Y, pt C dd 1] Y.h - (V.l : C) • Y.h) = 0 := by
     rw [map_sub, const_ev hZ2 (h_const Y), MvPowerSeries.smul_eq_C_mul, map_mul, h_const Y, mul_zero, sub_zero]
@@ -170,28 +175,53 @@ theorem eval_pderiv_first_unit_series (Y : FBChart C V O dd) (j : Fin dd) :
   have hEH : ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (ev (n := 2) ![M2 Y, pt C dd 1] Y.h - (V.l : C) • Y.h) = 0 := by
     rw [ev_sub ZeroPointGroupLaw.constant_zero_first_then_zero, eval_multiplication_pair_zero, eval_point_zero_factor _ (FirstUnitSeriesIntegrality.multiplication_constantCoeff_zero Y.B.G V.l), hEh, ev_zero (z0_1 _ (FirstUnitSeriesIntegrality.multiplication_constantCoeff_zero Y.B.G V.l)),
       MvPowerSeries.smul_eq_C_mul, ev_mul ZeroPointGroupLaw.constant_zero_first_then_zero, ev_C, hEh, mul_zero, sub_zero]
-  have hD : MvPowerSeries.pderiv C ((1 : Fin 2), j) (ev (n := 2) ![M2 Y, pt C dd 1] Y.h) =
-      ev (n := 2) ![M2 Y, pt C dd 1] (MvPowerSeries.pderiv C ((1 : Fin 2), j) Y.h) := by
+  have hD : MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (ev (n := 2) ![M2 Y, pt C dd 1] Y.h) =
+      ev (n := 2) ![M2 Y, pt C dd 1] (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) Y.h) := by
+    have pderiv_eval_pair {n : ℕ} {a : Fin 2 → Pt C n dd} (ha : Z0 a) (f : PS C 2 dd) (q : Fin n × Fin dd) :
+        MvPowerSeries.pderiv (R := C) q (ev a f) =
+          ∑ j, ev a (MvPowerSeries.pderiv (R := C) ((0 : Fin 2), j) f) * MvPowerSeries.pderiv (R := C) q (a 0 j) +
+          ∑ j, ev a (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) f) * MvPowerSeries.pderiv (R := C) q (a 1 j) := by
+      unfold ev
+      rw [Formalism.G.LogCR.pderiv_subst (a := fun p : Fin 2 × Fin dd => a p.1 p.2) (fun p => ha p.1 p.2) f q,
+        Fintype.sum_prod_type, Fin.sum_univ_two]
     rw [pderiv_eval_pair hZ2]
-    have e0 : ∀ k, MvPowerSeries.pderiv C ((1 : Fin 2), j) ((![M2 Y, pt C dd 1] : Fin 2 → Pt C 2 dd) 0 k) = 0 :=
+    have e0 : ∀ k, MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) ((![M2 Y, pt C dd 1] : Fin 2 → Pt C 2 dd) 0 k) = 0 :=
       fun k => pderiv_second_multiplication_pair Y k j
-    have e1 : ∀ k, MvPowerSeries.pderiv C ((1 : Fin 2), j) ((![M2 Y, pt C dd 1] : Fin 2 → Pt C 2 dd) 1 k) =
+    have e1 : ∀ k, MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) ((![M2 Y, pt C dd 1] : Fin 2 → Pt C 2 dd) 1 k) =
         if k = j then 1 else 0 := fun k => by
-      show MvPowerSeries.pderiv C ((1 : Fin 2), j) (MvPowerSeries.X ((1 : Fin 2), k)) = _
+      show MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (MvPowerSeries.X ((1 : Fin 2), k)) = _
       split_ifs with hk
       · subst hk
         exact MvPowerSeries.pderiv_X_self
       · exact MvPowerSeries.pderiv_X_of_ne (fun h' => hk (Prod.ext_iff.1 h').2)
     simp only [e0, e1, mul_zero, Finset.sum_const_zero, zero_add, mul_ite, mul_one, Finset.sum_ite_eq',
       Finset.mem_univ, if_true]
+  have pderiv_expS {g : PS C 2 dd} (hg : MvPowerSeries.constantCoeff g = 0) (q : Fin 2 × Fin dd) :
+      MvPowerSeries.pderiv (R := C) q (FB.expS C g) = FB.expS C g * MvPowerSeries.pderiv (R := C) q g := by
+    unfold FB.expS
+    rw [Formalism.G.LogCR.pderiv_psubst hg, PowerSeries.derivative_exp]
   rw [hu, pderiv_expS hH0, ev_mul ZeroPointGroupLaw.constant_zero_first_then_zero, FirstUnitSeriesIntegrality.expS_eq, FirstUnitSeriesIntegrality.ev_ex ZeroPointGroupLaw.constant_zero_first_then_zero _ hH0, hEH, FirstUnitSeriesIntegrality.ex_zero,
     one_mul, map_sub, hD, Derivation.map_smul, ev_sub ZeroPointGroupLaw.constant_zero_first_then_zero, eval_multiplication_pair_zero, MvPowerSeries.smul_eq_C_mul, ev_mul ZeroPointGroupLaw.constant_zero_first_then_zero, ev_C,
     ← MvPowerSeries.smul_eq_C_mul]
 
 theorem Sv_eq (Y : FBChart C V O dd) (v : Fin dd → C) :
     Sv Y v = (V.l : C) • Y.sgP v - ev (n := 1) ![mulL Y.B.G.F V.l] (Y.sgP v) := by
-  have h1 := ev_sgP Y v (mulL Y.B.G.F V.l) (FirstUnitSeriesIntegrality.multiplication_constantCoeff_zero Y.B.G V.l)
-  have h2 := ev_sgP Y v (n := 1) (pt C dd 0) (z0_pt 0)
+  have ev_sgP {n : ℕ} (P : Pt C n dd) (hP : ∀ j, MvPowerSeries.constantCoeff (P j) = 0) :
+      ev (n := n) ![P] (Y.sgP v) = -∑ i, MvPowerSeries.C (v i) * ev (n := n) ![P, 0] (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), i) Y.h) := by
+    have hZ := z0_1 P hP
+    have hZ' := ZeroPointGroupLaw.constant_zero_first_then_zero (C := C) (dd := dd)
+    unfold FBChart.sgP
+    rw [ev_neg hZ, ev_sum hZ]
+    congr 1
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [ev_mul hZ, ev_C, ev_ev hZ' hZ]
+    congr 2
+    funext k j
+    fin_cases k
+    · exact ev_X hZ 0 j
+    · exact ev_zero hZ
+  have h1 := ev_sgP (mulL Y.B.G.F V.l) (FirstUnitSeriesIntegrality.multiplication_constantCoeff_zero Y.B.G V.l)
+  have h2 := ev_sgP (n := 1) (pt C dd 0) (z0_pt 0)
   rw [ZeroPointGroupLaw.eval_identity_point] at h2
   rw [Sv_eq_sum, h1, h2]
   simp only [eval_pderiv_first_unit_series, mul_sub, Finset.sum_sub_distrib, MvPowerSeries.smul_eq_C_mul]
@@ -224,7 +254,8 @@ theorem coeff_l_frob0 (P : PS C 1 dd) (hP : IntS V P) (hPz : MvPowerSeries.const
   have hsq : ∀ (s : Fin 1 × Fin dd), s = ((0 : Fin 1), s.2) := fun s => Prod.ext (Subsingleton.elim _ _) rfl
   have hD2 : Agr (2 * V.l) (P - D1 - D3) 0 := by
     intro μ hμ
-    rw [map_sub, map_sub, map_zero, hD1def, hD3def, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sub, map_zero, hD1def, hD3def, map_sum]
     simp only [MvPowerSeries.coeff_monomial]
     by_cases hex : ∃ i, ¬ V.l ∣ μ ((0 : Fin 1), i)
     · rw [if_pos hex, sub_self, zero_sub, neg_eq_zero]
@@ -274,7 +305,8 @@ theorem coeff_l_frob0 (P : PS C 1 dd) (hP : IntS V P) (hPz : MvPowerSeries.const
     hB1' (Finsupp.single () V.l)
   have hD3 : MvPowerSeries.subst (fun q : Fin 1 × Fin dd => γ q.2) D3 =
       ∑ i, MvPowerSeries.C (MvPowerSeries.coeff (Finsupp.single ((0 : Fin 1), i) V.l) P) * γ i ^ V.l := by
-    rw [hD3def, ← MvPowerSeries.coe_substAlgHom hG, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hD3def, ← MvPowerSeries.coe_substAlgHom hG, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [MvPowerSeries.coe_substAlgHom hG, MvPowerSeries.subst_monomial hG, Finsupp.prod_single_index (by simp)]
     rfl
@@ -292,7 +324,8 @@ theorem coeff_l_frob0 (P : PS C 1 dd) (hP : IntS V P) (hPz : MvPowerSeries.const
           MvPowerSeries.subst (fun q : Fin 1 × Fin dd => γ q.2) D3 := by
     conv_lhs => rw [hsplit]
     rw [MvPowerSeries.subst_add hG, MvPowerSeries.subst_add hG]
-  rw [eP, map_add, map_add, hA2', add_zero, hD3, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eP, map_add (f := _), map_add (f := _), hA2', add_zero, hD3, map_sum]
   have e : ∀ (a : C) (s t : Fin dd → C),
       a + ∑ i, s i - ∑ i, t i = a + ∑ i, (s i - t i) := fun a s t => by
     rw [Finset.sum_sub_distrib]
@@ -380,7 +413,7 @@ theorem curve_coefficient_linear_term (Y : FBChart C V O dd) {γ : Fin dd → Po
     rw [Finsupp.add_apply, Finsupp.single_apply, if_neg (by simp), add_zero]
     unfold io0
     rw [show ((0 : Fin 2), i) = (fun q : Fin 1 × Fin dd => ((0 : Fin 2), q.2)) ((0 : Fin 1), i) from rfl,
-      Finsupp.mapDomain_apply zero_axis_embedding_injective]
+      Finsupp.mapDomain_apply_of_injective zero_axis_embedding_injective]
     exact hi
 
   have hA := coeff_l_frob (Sv Y v) hSI hSF hγ

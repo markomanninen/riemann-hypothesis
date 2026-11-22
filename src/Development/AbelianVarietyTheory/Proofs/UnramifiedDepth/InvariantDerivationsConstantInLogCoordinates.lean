@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntSOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsIntegralGaugedFormalGroupLawSelfConjugateSquar
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntSOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsIntegralGaugedFormalGroupLawSelfConjugateSquar
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,17 +24,41 @@ open MvPowerSeries GlobalTheory.RowLawSquare ReciprocityTheory.ChartRestriction.
 
 variable {C : Type} [Field C] {dd : ℕ} {τ : Type}
 
+open scoped MvPowerSeries.WithPiTopology in
+private theorem pderiv_subst_of_zero_constantCoeff {σ : Type} [Fintype σ]
+    {a : σ → MvPowerSeries τ C} (ha : ∀ s, constantCoeff (a s) = 0)
+    (f : MvPowerSeries σ C) (t : τ) :
+    pderiv t (subst a f) = ∑ s, subst a (pderiv s f) * pderiv t (a s) := by
+  let : UniformSpace C := ⊥
+  let : DiscreteUniformity C := ⟨rfl⟩
+  have hsubst : Continuous (subst a : MvPowerSeries σ C → MvPowerSeries τ C) :=
+    continuous_subst (hasSubst_of_constantCoeff_zero ha)
+  have hderiv {ι : Type} (i : ι) :
+      Continuous (pderiv (R := C) i : MvPowerSeries ι C → MvPowerSeries ι C) := by
+    apply continuous_pi
+    intro d
+    change Continuous (fun g : MvPowerSeries ι C => coeff d (pderiv i g))
+    simp only [coeff_pderiv]
+    exact (WithPiTopology.continuous_coeff C _).mul continuous_const
+  refine WithPiTopology.denseRange_toMvPowerSeries.induction_on f
+    (isClosed_eq ((hderiv t).comp hsubst) (continuous_finsetSum _ fun s _ =>
+      (hsubst.comp (hderiv s)).mul continuous_const)) ?_
+  intro p
+  simpa only [pderiv_coe, subst_coe] using Formalism.G.LogCR.pderiv_aeval p a t
+
 theorem pderiv_substPointsPowerSeries_one {a : Fin dd → MvPowerSeries τ C} (ha : Zc a) (f : PS C 1 dd) (t : τ) :
-    pderiv C t (sb ![a] f) = ∑ l, sb ![a] (pderiv C ((0 : Fin 1), l) f) * pderiv C t (a l) := by
+    pderiv (R := C) t (sb ![a] f) = ∑ l, sb ![a] (pderiv (R := C) ((0 : Fin 1), l) f) * pderiv (R := C) t (a l) := by
   unfold sb
-  rw [pderiv_subst (fun p : Fin 1 × Fin dd => zc1 ha p.1 p.2), Fintype.sum_prod_type, Fin.sum_univ_one]
+  rw [pderiv_subst_of_zero_constantCoeff (fun p : Fin 1 × Fin dd => zc1 ha p.1 p.2),
+    Fintype.sum_prod_type, Fin.sum_univ_one]
   rfl
 
 theorem pderiv_substPointsPowerSeries_two {a b : Fin dd → MvPowerSeries τ C} (ha : Zc a) (hb : Zc b) (f : PS C 2 dd) (t : τ) :
-    pderiv C t (sb ![a, b] f) = ∑ l, sb ![a, b] (pderiv C ((0 : Fin 2), l) f) * pderiv C t (a l) +
-      ∑ l, sb ![a, b] (pderiv C ((1 : Fin 2), l) f) * pderiv C t (b l) := by
+    pderiv (R := C) t (sb ![a, b] f) = ∑ l, sb ![a, b] (pderiv (R := C) ((0 : Fin 2), l) f) * pderiv (R := C) t (a l) +
+      ∑ l, sb ![a, b] (pderiv (R := C) ((1 : Fin 2), l) f) * pderiv (R := C) t (b l) := by
   unfold sb
-  rw [pderiv_subst (fun p : Fin 2 × Fin dd => zc2 ha hb p.1 p.2), Fintype.sum_prod_type, Fin.sum_univ_two]
+  rw [pderiv_subst_of_zero_constantCoeff (fun p : Fin 2 × Fin dd => zc2 ha hb p.1 p.2),
+    Fintype.sum_prod_type, Fin.sum_univ_two]
   rfl
 
 theorem sb_mul {n : ℕ} {a : Fin n → Fin dd → MvPowerSeries τ C} (ha : ∀ j, Zc (a j)) (f g : PS C n dd) :
@@ -39,7 +67,8 @@ theorem sb_mul {n : ℕ} {a : Fin n → Fin dd → MvPowerSeries τ C} (ha : ∀
 theorem sb_sum {n : ℕ} {a : Fin n → Fin dd → MvPowerSeries τ C} (ha : ∀ j, Zc (a j)) {α : Type} (s : Finset α)
     (f : α → PS C n dd) : sb a (∑ x ∈ s, f x) = ∑ x ∈ s, sb a (f x) := by
   unfold sb
-  simp only [← coe_substAlgHom (hasSubst_sb ha), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← coe_substAlgHom (hasSubst_sb ha), map_sum]
 
 theorem sb_zero {n : ℕ} {a : Fin n → Fin dd → MvPowerSeries τ C} (ha : ∀ j, Zc (a j)) :
     sb a (0 : PS C n dd) = 0 := by
@@ -81,51 +110,52 @@ theorem law_ex {a b : Fin dd → MvPowerSeries τ C} (ha : Zc a) (hb : Zc b) (j 
   exact h1.symm
 
 theorem cc_pderiv_lg (i l : Fin dd) :
-    constantCoeff (pderiv C ((0 : Fin 1), i) (Y.lg l)) = if l = i then 1 else 0 := by
+    constantCoeff (pderiv (R := C) ((0 : Fin 1), i) (Y.lg l)) = if l = i then 1 else 0 := by
   classical
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, Y.lg_lin l _ (by simp), coeff_X]
   by_cases h : l = i
   · subst h; simp
-  · rw [if_neg h, if_neg, zero_mul]
+  · rw [ite_eq_right h, ite_eq_right, zero_mul]
     intro h2
     rw [zero_add, Finsupp.single_left_inj one_ne_zero] at h2
     exact h (Prod.ext_iff.1 h2).2.symm
 
 theorem cc_pderiv_ex (i l : Fin dd) :
-    constantCoeff (pderiv C ((0 : Fin 1), i) (Y.ex l)) = if l = i then 1 else 0 := by
+    constantCoeff (pderiv (R := C) ((0 : Fin 1), i) (Y.ex l)) = if l = i then 1 else 0 := by
   classical
   have e : sb ![Y.ex] (Y.lg l) = X ((0 : Fin 1), l) := congrFun Y.lg_ex l
-  have e2 := congrArg (fun f => constantCoeff (pderiv C ((0 : Fin 1), i) f)) e
+  have e2 := congrArg (fun f => constantCoeff (pderiv (R := C) ((0 : Fin 1), i) f)) e
   have hz : Zc Y.ex := Y.ex_const
-  simp only [pderiv_substPointsPowerSeries_one hz, map_sum, map_mul] at e2
-  have h3 : ∀ x, constantCoeff (sb ![Y.ex] (pderiv C ((0 : Fin 1), x) (Y.lg l))) = if l = x then 1 else 0 :=
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pderiv_substPointsPowerSeries_one hz, map_sum, map_mul] at e2
+  have h3 : ∀ x, constantCoeff (sb ![Y.ex] (pderiv (R := C) ((0 : Fin 1), x) (Y.lg l))) = if l = x then 1 else 0 :=
     fun x => by
       unfold sb
       rw [cc_subst (fun p : Fin 1 × Fin dd => zc1 hz p.1 p.2), cc_pderiv_lg]
-  simp only [h3, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true] at e2
+  simp only [h3, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at e2
   rw [e2]
   by_cases h : l = i
   · subst h; simp
-  · rw [if_neg h, pderiv_X_of_ne (by simpa using h), map_zero]
+  · rw [ite_eq_right h, pderiv_X_of_ne (by simpa using h), map_zero]
 
 theorem inv_field_ex {a : Fin dd → MvPowerSeries τ C} (ha : Zc a) (i j : Fin dd) :
-    sb ![fun x => sb ![a] (Y.ex x), 0] (pderiv C ((1 : Fin 2), i) (Y.B.G.F j)) =
-      sb ![a] (pderiv C ((0 : Fin 1), i) (Y.ex j)) := by
+    sb ![fun x => sb ![a] (Y.ex x), 0] (pderiv (R := C) ((1 : Fin 2), i) (Y.B.G.F j)) =
+      sb ![a] (pderiv (R := C) ((0 : Fin 1), i) (Y.ex j)) := by
   classical
   have z0 : Zc (pt C (n := 2) dd 0) := zc_pt 0
   have z1 : Zc (pt C (n := 2) dd 1) := zc_pt 1
   have zs : Zc (pt C (n := 2) dd 0 + pt C (n := 2) dd 1) := fun x => by
-    rw [Pi.add_apply, map_add, z0 x, z1 x, add_zero]
-  have d0 : ∀ l, pderiv C ((1 : Fin 2), i) (pt C (n := 2) dd 0 l) = 0 := fun l =>
+    rw [Pi.add_apply, map_add (f := _), z0 x, z1 x, add_zero]
+  have d0 : ∀ l, pderiv (R := C) ((1 : Fin 2), i) (pt C (n := 2) dd 0 l) = 0 := fun l =>
     pderiv_X_of_ne (by simp)
-  have d1 : ∀ l, pderiv C ((1 : Fin 2), i) (pt C (n := 2) dd 1 l) = if l = i then 1 else 0 := fun l => by
+  have d1 : ∀ l, pderiv (R := C) ((1 : Fin 2), i) (pt C (n := 2) dd 1 l) = if l = i then 1 else 0 := fun l => by
     by_cases h : l = i
-    · subst h; rw [if_pos rfl]; exact pderiv_X_self
-    · rw [if_neg h]; exact pderiv_X_of_ne (by simpa using h)
-  have e := congrArg (pderiv C ((1 : Fin 2), i)) (law_ex Y z0 z1 j)
+    · subst h; rw [ite_eq_left rfl]; exact pderiv_X_self
+    · rw [ite_eq_right h]; exact pderiv_X_of_ne (by simpa using h)
+  have e := congrArg (pderiv (R := C) ((1 : Fin 2), i)) (law_ex Y z0 z1 j)
   rw [pderiv_substPointsPowerSeries_two (zc_ex Y z0) (zc_ex Y z1), pderiv_substPointsPowerSeries_one zs] at e
-  simp only [pderiv_substPointsPowerSeries_one z0, pderiv_substPointsPowerSeries_one z1, Pi.add_apply, map_add, d0, d1, mul_zero, Finset.sum_const_zero,
-    zero_add, mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, if_true] at e
+  simp only [pderiv_substPointsPowerSeries_one z0, pderiv_substPointsPowerSeries_one z1, Pi.add_apply, map_add (f := _), d0, d1, mul_zero, Finset.sum_const_zero,
+    zero_add, mul_ite, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at e
   have h2 := zc2 ha (zc_zero (C := C) (dd := dd) (τ := τ))
   have s1 : ∀ {b : Pt C 2 dd} (_ : Zc b) (f : PS C 1 dd),
       sb ![a, 0] (sb ![b] f) = sb ![fun i => sb ![a, 0] (b i)] f := fun hb f => substPointsPowerSeries_eval_one h2 hb f
@@ -144,10 +174,10 @@ theorem inv_field_ex {a : Fin dd → MvPowerSeries τ C} (ha : Zc a) (i j : Fin 
   rw [sb_sum h2, s1 zs, ps] at e2
   simp only [sb_mul h2, s2 (zc_ex Y z0) (zc_ex Y z1), s1 z0, s1 z1, p0, p1, sb_zeroPt, c0, cc_pderiv_ex,
     apply_ite MvPowerSeries.C, map_one, map_zero, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true] at e2
+    Finset.mem_univ, ite_true] at e2
   exact e2
 
-theorem subst_ex_DofN : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (O : Type) [CommRing O] [StarRing O] (dd : ℕ) (Y : FBChart C V O dd) (n : ℕ) (W : Type) [Fintype W] (Z : Fin n × Fin dd → MvPowerSeries W C), (∀ s, MvPowerSeries.constantCoeff (Z s) = 0) → ∀ (b : Fin n) (u : Fin dd → C) (co : W → C), (∀ (b' : Fin n) (j : Fin dd), ∑ w, co w • MvPowerSeries.pderiv C w (Z (b', j)) = if b' = b then MvPowerSeries.C (u j) else 0) → ∀ G : PS C n dd, MvPowerSeries.subst (fun s : Fin n × Fin dd => MvPowerSeries.subst (fun j : Fin dd => Z (s.1, j)) (un1 (Y.ex s.2))) (DofN (Y.B.FK C) b u G) = ∑ w, co w • MvPowerSeries.pderiv C w (MvPowerSeries.subst (fun s : Fin n × Fin dd => MvPowerSeries.subst (fun j : Fin dd => Z (s.1, j)) (un1 (Y.ex s.2))) G) := by
+theorem subst_ex_DofN : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (O : Type) [CommRing O] [StarRing O] (dd : ℕ) (Y : FBChart C V O dd) (n : ℕ) (W : Type) [Fintype W] (Z : Fin n × Fin dd → MvPowerSeries W C), (∀ s, MvPowerSeries.constantCoeff (Z s) = 0) → ∀ (b : Fin n) (u : Fin dd → C) (co : W → C), (∀ (b' : Fin n) (j : Fin dd), ∑ w, co w • MvPowerSeries.pderiv (R := C) w (Z (b', j)) = if b' = b then MvPowerSeries.C (u j) else 0) → ∀ G : PS C n dd, MvPowerSeries.subst (fun s : Fin n × Fin dd => MvPowerSeries.subst (fun j : Fin dd => Z (s.1, j)) (un1 (Y.ex s.2))) (DofN (Y.B.FK C) b u G) = ∑ w, co w • MvPowerSeries.pderiv (R := C) w (MvPowerSeries.subst (fun s : Fin n × Fin dd => MvPowerSeries.subst (fun j : Fin dd => Z (s.1, j)) (un1 (Y.ex s.2))) G) := by
   classical
   intro C _ _ V O _ _ dd Y n W _ Z hZ b u co hco G
   have hz : ∀ b' : Fin n, Zc (fun j => Z (b', j)) := fun b' j => hZ _
@@ -164,9 +194,9 @@ theorem subst_ex_DofN : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (O : Ty
     fin_cases j
     rfl
   rw [eE]
-  show sb E _ = ∑ w, co w • pderiv C w (sb E G)
-  have hD : ∀ (b' : Fin n) (j : Fin dd), ∑ w, co w • pderiv C w (E b' j) = if b' = b then
-      ∑ i, MvPowerSeries.C (u i) * sb ![fun j => Z (b, j)] (pderiv C ((0 : Fin 1), i) (Y.ex j)) else 0 := by
+  show sb E _ = ∑ w, co w • pderiv (R := C) w (sb E G)
+  have hD : ∀ (b' : Fin n) (j : Fin dd), ∑ w, co w • pderiv (R := C) w (E b' j) = if b' = b then
+      ∑ i, MvPowerSeries.C (u i) * sb ![fun j => Z (b, j)] (pderiv (R := C) ((0 : Fin 1), i) (Y.ex j)) else 0 := by
     intro b' j
     simp only [E, pderiv_substPointsPowerSeries_one (hz b'), Finset.smul_sum, ← mul_smul_comm]
     rw [Finset.sum_comm]
@@ -175,17 +205,17 @@ theorem subst_ex_DofN : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (O : Ty
     · subst h
       exact Finset.sum_congr rfl fun i _ => mul_comm _ _
     · simp
-  have hR : ∑ w, co w • pderiv C w (sb E G) =
-      ∑ p : Fin n × Fin dd, sb E (pderiv C p G) * ∑ w, co w • pderiv C w (E p.1 p.2) := by
+  have hR : ∑ w, co w • pderiv (R := C) w (sb E G) =
+      ∑ p : Fin n × Fin dd, sb E (pderiv (R := C) p G) * ∑ w, co w • pderiv (R := C) w (E p.1 p.2) := by
     unfold sb
-    simp only [pderiv_subst (a := fun p : Fin n × Fin dd => E p.1 p.2) (fun p => hE p.1 p.2), Finset.smul_sum,
-      ← mul_smul_comm, Finset.mul_sum]
+    simp only [pderiv_subst_of_zero_constantCoeff (a := fun p : Fin n × Fin dd => E p.1 p.2)
+      (fun p => hE p.1 p.2), Finset.smul_sum, ← mul_smul_comm, Finset.mul_sum]
     exact Finset.sum_comm
   rw [hR, Fintype.sum_prod_type, Finset.sum_eq_single b]
   · unfold DofN
     rw [sb_sum hE]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [hD, if_pos rfl, sb_mul hE, mul_comm, sb_sum hE]
+    rw [hD, ite_eq_left rfl, sb_mul hE, mul_comm, sb_sum hE]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [sb_mul hE, sb_C, substPointsPowerSeries_eval_two hE (zc_pt b) zc_zero, sb_pt' hE, FK_self, ← inv_field_ex Y (hz b)]

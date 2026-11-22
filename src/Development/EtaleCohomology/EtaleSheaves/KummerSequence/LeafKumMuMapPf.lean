@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuUnitsPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuUnitsPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -15,10 +19,8 @@ variable (q : ℕ) [NeZero q]
 def unitOf {A : Type} [CommRing A] (ζ : Prim q A) : Aˣ :=
   (IsUnit.of_pow_eq_one (prim_pow q ζ) (NeZero.ne q)).unit
 
-@[simp] theorem unitOf_val {A : Type} [CommRing A] (ζ : Prim q A) : ((unitOf q ζ : Aˣ) : A) = ζ.1 := rfl
-
 theorem unitOf_pow {A : Type} [CommRing A] (ζ : Prim q A) : unitOf q ζ ^ q = 1 :=
-  Units.ext (by simp [prim_pow])
+  Units.ext (by simpa [unitOf] using prim_pow q ζ)
 
 def gOf {A : Type} [CommRing A] (ζ : Prim q A) : ZMod q →+ Additive Aˣ :=
   ZMod.lift q ⟨zmultiplesHom _ (Additive.ofMul (unitOf q ζ)), by
@@ -44,7 +46,7 @@ theorem nuA_smul (A : Type) [CommRing A] (n : ℤ) (x : Prim q A →₀ ULift.{1
     nuA q A ((ULift.up (n : ZMod q) : ULift.{1} (ZMod q)) • x) = n • nuA q A x := by
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
   | single ζ b =>
     rw [Finsupp.smul_single, nuA_single, nuA_single, ← map_zsmul]
     congr 1
@@ -61,9 +63,9 @@ theorem nuA_rel (A : Type) [CommRing A] : ∀ x ∈ twRel q 1 A, nuA q A x = 0 :
     have ha : ((a : ZMod q)) = (((a : ZMod q).val : ℤ) : ZMod q) := by simp
     rw [ha, gOf_int, gOf_one, sub_eq_zero, natCast_zsmul, ← ofMul_pow]
     congr 1
-    exact Units.ext (by simp [h])
+    exact Units.ext (by simpa [unitOf] using h)
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | smul c x _ hx =>
     have hc : c = ULift.up (((c.down.cast : ℤ)) : ZMod q) := by
       ext; simp
@@ -87,7 +89,7 @@ theorem nuQ_nat {A B : CommRingCat.{0}} (f : A ⟶ B) (x : (twF q 1).obj A) :
     change nuA q B (Finsupp.mapDomain (Prim.map f.hom) x) = MonoidHom.toAdditive (Units.map f.hom.toMonoidHom) (nuA q A x)
     induction x using Finsupp.induction_linear with
     | zero => simp
-    | add x y hx hy => rw [Finsupp.mapDomain_add, map_add, map_add, map_add, hx, hy]
+    | add x y hx hy => rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
     | single ζ b =>
       rw [Finsupp.mapDomain_single, nuA_single, nuA_single]
       have hb : b.down = ((b.down.cast : ℤ) : ZMod q) := by simp
@@ -116,7 +118,7 @@ theorem nuQ_q (A : CommRingCat.{0}) (x : (twF q 1).obj A) : q • nuQ q A x = 0 
     change q • nuA q A x = 0
     induction x using Finsupp.induction_linear with
     | zero => simp
-    | add x y hx hy => rw [map_add, smul_add, hx, hy, add_zero]
+    | add x y hx hy => rw [map_add (f := _), smul_add, hx, hy, add_zero]
     | single ζ b =>
       rw [nuA_single, ← map_nsmul, nsmul_eq_mul, ZMod.natCast_self, zero_mul, map_zero]
 

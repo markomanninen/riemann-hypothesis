@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Formalism.LocalToGlobal.Columns.RecLevelLocF
-import Formalism.LocalToGlobal.Columns.RecLevelLocP
-import Formalism.LocalToGlobal.Columns.BtExistsSmulLeOfFg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelFunctionalLevelVectorLaws
-import Formalism.LocalToGlobal.Columns.AdelicLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Formalism.LocalToGlobal.Columns.RecLevelLocF
+public import Formalism.LocalToGlobal.Columns.RecLevelLocP
+public import Formalism.LocalToGlobal.Columns.BtExistsSmulLeOfFg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelFunctionalLevelVectorLaws
+public import Formalism.LocalToGlobal.Columns.AdelicLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 open scoped TensorProduct
@@ -98,6 +102,7 @@ theorem exists_equiv (h : BasePi ST π) (hP : P ∈ ST) (hov : IsOver v P) {T : 
   subst hΛ
   have hker : ∀ t, rll_psi hc n v h P t = 0 → f t = 0 := by
     intro t ht
+    change rll_rho v P ⟨_, rll_last_mem hc n v h t⟩ = 0 at ht
     obtain ⟨w, hw, e⟩ := rll_rho_eq_zero v h (h.over_unique hc hP hov) _ ht
     replace e : inclE (F := F) (v.adicCompletion F) (star (π : E)) * t.1 (lastIdx n) =
       inclE (F := F) (v.adicCompletion F) (π : E) * w := e
@@ -162,7 +167,8 @@ theorem f_eq_rho (h : BasePi ST π) (hP : P ∈ ST) (hov : IsOver v P) {SG Q : F
   have ew : ∀ j, (((bc (prV (E := E) v) y)⁻¹).1 *ᵥ (fun a => inclE (F := F) (v.adicCompletion F) (z a))) j =
       prV (E := E) v (Col2.pullV y z j) := fun j => by
     rw [← map_inv]
-    simp only [Col2.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Col2.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul]
     rfl
   rw [rll_dualV_eq hc n v h, rll_mem_loc_dLat n v _ h.star_ne_zero] at hz
   have hint : ∀ j, prV (E := E) v (inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (star (π : E)) * Col2.pullV y z j) ∈ intV E v := fun j => by
@@ -199,7 +205,8 @@ theorem f_eq_rho (h : BasePi ST π) (hP : P ∈ ST) (hov : IsOver v P) {SG Q : F
       (fun hh => absurd (Finset.mem_univ _) hh), if_pos rfl]
     rfl
   show Valued.v (adAt F P _ - _) < 1
-  rw [e3, e4, map_mul, adAt_inclE, ← mul_sub, map_sum, ← Finset.sum_sub_distrib, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e3, e4, map_mul, adAt_inclE, ← mul_sub, map_sum, ← Finset.sum_sub_distrib, map_mul]
   refine lt_of_le_of_lt (mul_le_of_le_one_left' (valued_int_le s)) (Valuation.map_sum_lt _ one_ne_zero fun j _ => ?_)
   rw [map_mul, ← _root_.sub_mul, map_mul]
   refine lt_of_le_of_lt (mul_le_of_le_one_right' (hle j)) (hasRes_sub_lt ?_)
@@ -246,7 +253,7 @@ theorem exists_equiv_level {T f₀ : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F)
     have hm : inclE (F := F) (v.adicCompletion F) (algebraMap (𝓞 E) E r) * ((1 : intV E v) : E ⊗[F] v.adicCompletion F) ∈
         intV E v := mul_mem (rll_incl_int _ r) (one_mem _)
     refine (he t (e1 ▸ hm)).trans ?_
-    refine (congrArg (rll_rho v P) (Subtype.ext e1 : _ = ⟨_, hm⟩)).trans ?_
+    refine (congrArg (rll_rho v P) (Subtype.ext e1 : (⟨_, e1 ▸ hm⟩ : intV E v) = ⟨_, hm⟩)).trans ?_
     rw [rll_rho_incl_mul, rll_rho_one _ hov, mul_one]
 
 end Loc
@@ -279,7 +286,7 @@ theorem mem_baseL {B : Base} {n : ℕ} [NeZero n] {ST : Finset (HeightOneSpectru
     exact ⟨r j, (hr j).symm, fun hj => by rw [(hl j).1 hj]; exact (h.dvd _).1 hP⟩
 
 theorem exists_smul_mem {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
-    (d : DecoSet E n ST SG) {a : 𝓞 E} (ha : SepElt ST a) (P : ST) (z : Fin n → E) (hz : z ∈ d.1.Lsh) :
+    (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) {a : 𝓞 E} (ha : SepElt ST a) (P : ST) (z : Fin n → E) (hz : z ∈ d.1.Lsh) :
     ∃ s : 𝓞 E, Ideal.Quotient.mk P.1.asIdeal s ≠ 0 ∧ s • z ∈ d.1.N := by
   obtain ⟨s, hs, hsz⟩ := (mem_locP _ _ _).1 (d.2.Lsh_le_at ha P hz)
   exact ⟨s, fun h0 => hs (Ideal.Quotient.eq_zero_iff_mem.1 h0), hsz⟩
@@ -294,9 +301,9 @@ theorem fv_of_smul {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.
   rw [h1, map_smul, smul_eq_mul] at h
   exact mul_left_cancel₀ hs h
 
-set_option maxHeartbeats 4000000 in
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option maxHeartbeats 12000000 in
+set_option synthInstance.maxHeartbeats 400000 in
 theorem fvTieG : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m) (bad : Set (HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F))) (Ch : Type) (chOf : (I.stp u a i).Cl → Ch) (K : ∀ β : Ch, LevelChart (I.rec7 l Z) (B.T u) bad i hi (fun c : {c // chOf c = β} => (I.chain l u a).stab i c.1) (fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c.1))) (eV : (I.atT l u a).vT ≃ {v : HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F) // (B.T u : 𝓞 (I.rec7 l Z).host.F) ∈ v.asIdeal}) (L : LevelCompatibleLattices (D := (I.rec7 l Z)) (I.fm l u a) (B.T u) (I.resT l u a) i hi fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c)), I.ReadsK l Z u a i hi chOf K → I.IdV l u a eV → I.IdL l Z u a i hi L → (∀ (β : Ch) (v : HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F)) (h : ((B.T u : ℕ) : 𝓞 (I.rec7 l Z).host.F) ∈ v.asIdeal) (t t' : latS (F := (I.rec7 l Z).host.F) (v.adicCompletion (I.rec7 l Z).host.F) (intV (I.rec7 l Z).host.E v) (Submodule.span (𝓞 (I.rec7 l Z).host.E) (dualSet (sigD (I.rec7 l Z) : (I.rec7 l Z).host.E →+* (I.rec7 l Z).host.E) (gramN (I.rec7 l Z) i hi) (K β).lev.Lb))), t'.1 = (fun a => inclE (F := (I.rec7 l Z).host.F) (v.adicCompletion (I.rec7 l Z).host.F) (show (I.rec7 l Z).host.E from ((X.piT u : 𝓞 B.host.E) : B.host.E)) * t.1 a) → (K β).lev.fT v h t' = 0) → ∃ fMe, FvTieG L eV K fMe ∧ ∀ β v (x : Fin (B.R.N i) → (I.rec7 l Z).host.E) (j : Fin (B.R.N i)) (r : 𝓞 B.host.E) (t : latS (F := (I.rec7 l Z).host.F) ((eV v).1.adicCompletion (I.rec7 l Z).host.F) (intV (I.rec7 l Z).host.E (eV v).1) (Submodule.span (𝓞 (I.rec7 l Z).host.E) (dualSet (sigD (I.rec7 l Z) : (I.rec7 l Z).host.E →+* (I.rec7 l Z).host.E) (gramN (I.rec7 l Z) i hi) (K β).lev.Lb))), j.1 + 1 = B.R.N i → t.1 = (fun s => inclE (F := (I.rec7 l Z).host.F) ((eV v).1.adicCompletion (I.rec7 l Z).host.F) (x s)) → (r : B.host.E) = B.host.conj (X.piT u : B.host.E) * (show B.host.E from x j) → fMe β v ((K β).lev.fT (eV v).1 (eV v).2 t) = I.resT l u a v r := by
   intro B X I hI hP l Z u a i hi bad Ch chOf K eV L hK hV hL hS
   obtain ⟨k, hR⟩ := hK
@@ -310,7 +317,7 @@ theorem fvTieG : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pin
   have hW := @exists_equiv_level (I.rec7 l Z).host.F (I.rec7 l Z).host.E _ _ _ _ _ _
   have hE := fun β (v : (I.atT l u a).vT) => hW
     (I.rec7 l Z).sp.cm (n := B.R.N i) (ST := (B.primes X).vT u) (π := X.piT u) (P := v.1)
-    (K β).lev hJ (hLb β) hB v.2 (eV v).2 (congrArg HeightOneSpectrum.asIdeal (hV v)) (l.pr.T_prime u) (l.pr.vT_norm u v.1 v.2)
+    (K β).lev hJ (hLb β) hB v.2 (eV v).2 (congrArg HeightOneSpectrum.asIdeal (hV v)) (l.pr.T_prime u) (by rw [← Ideal.absNorm_eq_natCard]; exact l.pr.vT_norm u v.1 v.2)
     (hS β _ _)
   choose e he1 he2 using hE
   refine ⟨e, ?_, ?_⟩

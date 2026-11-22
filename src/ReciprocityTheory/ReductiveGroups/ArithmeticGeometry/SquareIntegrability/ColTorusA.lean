@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PolyDerivMonomialOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PolyDerivMonomialOne
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -9,12 +13,14 @@ theorem ct_iter_cauchy {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     (F : V → ℂ) (hF : ∀ m : ℕ, ContDiff ℂ m F) (ρ M : ℝ) (hρ : 0 < ρ) :
     ∀ (k : ℕ) (x : Fin k → V) (x₀ : V), (∀ j, ‖x j‖ ≤ 1) →
     (∀ y, ‖y - x₀‖ ≤ k * ρ → ‖F y‖ ≤ M) →
-    ‖iteratedFDeriv ℂ k F x₀ x‖ ≤ M / ρ ^ k
-  | 0, x, x₀, _, hM => by
-    have := hM x₀ (by simp)
-    have hx : x = 0 := Subsingleton.elim _ _
-    simpa [iteratedFDeriv_zero_apply] using this
-  | k + 1, x, x₀, hx, hM => by
+    ‖iteratedFDeriv ℂ k F x₀ x‖ ≤ M / ρ ^ k := by
+  intro k
+  induction k with
+  | zero =>
+    intro x x₀ _ hM
+    simpa only [iteratedFDeriv_zero_apply, pow_zero, div_one] using hM x₀ (by simp)
+  | succ k ih =>
+    intro x x₀ hx hM
     set e : V := x 0 with he
     set v : Fin k → V := Fin.tail x with hv
     set A := iteratedFDeriv ℂ k F with hA
@@ -39,10 +45,11 @@ theorem ct_iter_cauchy {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
       have hw' : ‖w‖ = ρ := by simpa using hw
       have hwe : ‖w • e‖ ≤ ρ := by
         rw [norm_smul, hw']; simpa using mul_le_mul_of_nonneg_left (hx 0) hρ.le
-      have := ct_iter_cauchy F hF ρ M hρ k v (x₀ + w • e) (fun j => hx _) (by
+      have := ih v (x₀ + w • e) (fun j => hx j.succ) (by
         intro y hy
         apply hM y
-        calc ‖y - x₀‖ = ‖(y - (x₀ + w • e)) + w • e‖ := by congr 1; abel
+        calc
+          ‖y - x₀‖ = ‖(y - (x₀ + w • e)) + w • e‖ := by congr 1; abel
           _ ≤ ‖y - (x₀ + w • e)‖ + ‖w • e‖ := norm_add_le _ _
           _ ≤ k * ρ + ρ := add_le_add hy hwe
           _ = ((k + 1 : ℕ) : ℝ) * ρ := by push_cast; ring)
@@ -223,8 +230,8 @@ theorem ct_degree_toFinsupp_ofFn {ι : Type} [DecidableEq ι] (j : ℕ) (v : Fin
     | simp [Finsupp.degree, Finsupp.sum]
     | simp [Finsupp.degree_eq_sum, Finsupp.sum]
 
+open scoped Classical in
 open Classical in
-
 theorem ct_jet_one_iter {ι : Type} [Fintype ι] (β : EuclideanSpace ℂ ι → ℂ)
     (hβ : ContDiff ℂ (⊤ : ℕ∞) β) (c : ℕ)
     (hjet : ∀ α : ι →₀ ℕ, α.degree ≤ c →

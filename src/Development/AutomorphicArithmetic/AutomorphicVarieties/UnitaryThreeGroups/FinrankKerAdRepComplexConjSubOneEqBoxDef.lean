@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+
+@[expose] public section
+
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg
 
 namespace UpperTheory.V.U3.FixDim

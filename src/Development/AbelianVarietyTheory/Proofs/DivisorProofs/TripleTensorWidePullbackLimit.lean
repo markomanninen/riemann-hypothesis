@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlternatingSumThreeTerms
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecWidePushoutIsLimitWidePullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlternatingSumThreeTerms
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecWidePushoutIsLimitWidePullback
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct GlobalTheory.EtC GlobalTheory.CechOne
 
 noncomputable section
@@ -42,11 +47,11 @@ theorem triple_tensor_ring_hom_ext {T : Type} [CommRing T] (v w : B âŠ—[A] (B âŠ
   refine RingHom.ext fun t => ?_
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
   | tmul x s =>
     induction s using TensorProduct.induction_on with
     | zero => simp
-    | add p q hp hq => rw [TensorProduct.tmul_add, map_add, map_add, hp, hq]
+    | add p q hp hq => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), hp, hq]
     | tmul y z =>
       rw [tmul_tmul_eq, map_mul, map_mul, map_mul, map_mul]
       have h0 := RingHom.congr_fun (h 0) x

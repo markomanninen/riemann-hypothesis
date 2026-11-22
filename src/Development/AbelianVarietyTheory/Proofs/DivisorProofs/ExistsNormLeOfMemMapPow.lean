@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtendCompletion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IzumiBoundModPrincipalIdealStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonUnitAtOfNotIsUnit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtendCompletion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IzumiBoundModPrincipalIdealStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonUnitAtOfNotIsUnit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
@@ -41,7 +46,7 @@ theorem dvd_of_forall_mem_sup_pow : ∀ (O R : Type) [CommRing O] [IsLocalRing O
     obtain ⟨u, hu, v, hv, huv⟩ := Submodule.mem_sup.1 (hs i)
     rw [Ideal.map_pow] at hv
     have : (Ideal.Quotient.mk (Ideal.span {c}) s : R ⧸ Ideal.span {c}) = v • (Ideal.Quotient.mk (Ideal.span {c}) 1) := by
-      rw [← huv, Algebra.smul_def, map_one, _root_.mul_one, map_add, Ideal.Quotient.eq_zero_iff_mem.2 hu, _root_.zero_add]
+      rw [← huv, Algebra.smul_def, map_one, _root_.mul_one, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 hu, _root_.zero_add]
       rfl
     rw [this]
     exact Submodule.smul_mem_smul hv trivial
@@ -70,7 +75,7 @@ theorem exists_norm_le_of_mem_map_pow : ∀ (O R : Type) [CommRing O] [IsLocalRi
   have hadd : ∀ (x y : R) (B : ℝ), ‖(ev x : PadicAlgCl p)‖ ≤ B → ‖(ev y : PadicAlgCl p)‖ ≤ B →
       ‖(ev (x + y) : PadicAlgCl p)‖ ≤ B := by
     intro x y B hx hy
-    rw [map_add, AddMemClass.coe_add]
+    rw [map_add (f := _), AddMemClass.coe_add]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
   have hmul : ∀ (x y : R) (B : ℝ), ‖(ev y : PadicAlgCl p)‖ ≤ B → ‖(ev (x * y) : PadicAlgCl p)‖ ≤ B := by
     intro x y B hy
@@ -94,7 +99,7 @@ theorem exists_norm_le_of_mem_map_pow : ∀ (O R : Type) [CommRing O] [IsLocalRi
     | zero => exact hgmax 0 (Finset.mem_insert_self _ _)
     | add x y _ _ hx hy =>
       show ‖(ev (j (x + y)) : PadicAlgCl p)‖ ≤ N g
-      rw [map_add]; exact hadd _ _ _ hx hy
+      rw [map_add (f := _)]; exact hadd _ _ _ hx hy
     | smul r x _ hx =>
       show ‖(ev (j (r • x)) : PadicAlgCl p)‖ ≤ N g
       rw [smul_eq_mul, map_mul]; exact hmul _ _ _ hx
@@ -112,7 +117,7 @@ theorem exists_norm_le_of_mem_map_pow : ∀ (O R : Type) [CommRing O] [IsLocalRi
         exact mul_le_mul (ih x hx) (c1 y hy) (norm_nonneg _) (pow_nonneg (norm_nonneg _) _)
       · intro x y hx hy
         show ‖(ev (j (x + y)) : PadicAlgCl p)‖ ≤ N g ^ (k + 1)
-        rw [map_add]; exact hadd _ _ _ hx hy
+        rw [map_add (f := _)]; exact hadd _ _ _ hx hy
   unfold Ideal.map at ht
   induction ht using Submodule.span_induction with
   | mem x hx =>
@@ -194,7 +199,7 @@ theorem dvd_of_norm_le_at_classical : ∀ (o' Ω : Type) [CommRing o'] [Field Ω
   have ht' : t = (M.stalkEquiv x).symm a * b + (M.stalkEquiv x).symm c := by
     apply (M.stalkEquiv x).injective
     apply Subtype.ext
-    rw [map_add, map_mul, RingEquiv.apply_symm_apply, RingEquiv.apply_symm_apply]
+    rw [map_add (f := _), map_mul, RingEquiv.apply_symm_apply, RingEquiv.apply_symm_apply]
     exact hac
   have hle : (maximalIdeal (M.Z.presheaf.stalk x) ^ max e (C e)).map j ≤ (maximalIdeal (M.Z.presheaf.stalk x) ^ e).map j :=
     Ideal.map_mono (Ideal.pow_le_pow_right (le_max_left _ _))
@@ -202,7 +207,7 @@ theorem dvd_of_norm_le_at_classical : ∀ (o' Ω : Type) [CommRing o'] [Field Ω
   have hd := hle ht
   rw [hs']
   refine Ideal.add_mem _ ?_ (Ideal.mem_sup_right hd)
-  rw [ht', map_add, map_mul]
+  rw [ht', map_add (f := _), map_mul]
   exact Ideal.add_mem _ (Ideal.mem_sup_left (Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self _)))
     (Ideal.mem_sup_right (Ideal.mem_map_of_mem _ hc'))
 

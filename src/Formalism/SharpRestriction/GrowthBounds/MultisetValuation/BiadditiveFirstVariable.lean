@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntegralExpParamOfEquivZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntegralExpParamOfEquivZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,13 +15,6 @@ open Formalism.InvariantFactorPaths.G7 (lgF Gser IsLawOfLog cob at1 in3 d1 swap2
 attribute [local instance] Formalism.InvariantFactorPaths.G7.WModel.nf sx_charZero
 
 variable (p : ℕ) [hp : Fact p.Prime]
-
-theorem sx_lX_const {σ : Type} (i : σ) : MvPowerSeries.constantCoeff (sx_lX p i) = 0 := by
-  have hs : PowerSeries.HasSubst (MvPowerSeries.X i : MvPowerSeries σ (K0 p)) :=
-    PowerSeries.HasSubst.of_constantCoeff_zero (MvPowerSeries.constantCoeff_X i)
-  obtain ⟨g, hg⟩ := PowerSeries.X_dvd_iff.2 (sx_logF_const p)
-  unfold sx_lX
-  rw [hg, PowerSeries.subst_mul hs, PowerSeries.subst_X hs, map_mul, MvPowerSeries.constantCoeff_X, zero_mul]
 
 theorem sx_X_dvd_lX {σ : Type} (i : σ) : (MvPowerSeries.X i : MvPowerSeries σ (K0 p)) ∣ sx_lX p i := by
   have hs : PowerSeries.HasSubst (MvPowerSeries.X i : MvPowerSeries σ (K0 p)) :=
@@ -115,7 +112,7 @@ theorem biadditive_first_variable {F be : MvPowerSeries (Fin 2) (K0 p)} (hF : Is
   have hin3 : MvPowerSeries.constantCoeff (in3 F) = 0 := sx_law_const hF _ _ (hX 0) (hX 1)
   have h01 : MvPowerSeries.constantCoeff
       (MvPowerSeries.X 0 + MvPowerSeries.X 1 : MvPowerSeries (Fin 3) (K0 p)) = 0 := by
-    rw [map_add, hX 0, hX 1, add_zero]
+    rw [map_add (f := _), hX 0, hX 1, add_zero]
   have ex : PowerSeries.subst (in3 F) (logF p) =
       inParam p (MvPowerSeries.X 0 + MvPowerSeries.X 1 : MvPowerSeries (Fin 3) (K0 p)) := by
     rw [in3, sx_log_law hF _ _ (hX 0) (hX 1), sx_inParam_add, ← sx_eX, ← sx_eX]

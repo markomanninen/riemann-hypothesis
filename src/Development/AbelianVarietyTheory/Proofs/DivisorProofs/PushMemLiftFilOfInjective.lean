@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj DividedPowers
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.Published GlobalTheory.Published.GrothendieckMessing
@@ -56,7 +60,8 @@ theorem push_mem_liftFil_of_injective : AbelianDeRham →
   have hsurj := (HR S AS g hASab hASg J (divided₂ hJ) (isDPNilpotent_squareZero hJ) S₀ πS hπS hJk AS₀ iS hAS).2
   have hm : mA.Corr d d' := fun c ↦ by
     obtain ⟨c0, rfl⟩ := hsurj c
-    have k := (liftMor (divided₂ hJ) hAS).comp mA
+    have k : GrpMor (dp0 S) (𝟙 (Sp S)) AS (divided₂ h) (spMap π) A₀ σ
+        (spMap ι₀ ≫ spMap πS) (ψA ≫ iS) := GrpMor.of_isGrpPullback (IsDPMorphism.comp _ mA.dp (liftMor (divided₂ hJ) hAS).dp) (by simpa using hbase) (IsGrpPullback.comp hψA hAS)
     rw [GrpMor.pull_pull (liftMor (divided₂ hJ) hAS) mA k (fun _ ↦ rfl) rfl c0,
       ← GrpMor.pull_pull nA (liftMor (divided₂ h) hA) k (fun _ ↦ rfl) hiA c0]
     exact (crysToDR_apply _ hA d' _).symm.trans ((hy c0).trans (congrArg σ (crysToDR_apply _ hAS d c0)))

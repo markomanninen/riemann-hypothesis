@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitMain
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.ExistsRatUnitFactorizationFiniteAdelesAwayP
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.DenCoprimeIffOfMulPrimeToPRatio
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntAfIntCast
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemUQptsStarCIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelEqKN
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitMain
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.ExistsRatUnitFactorizationFiniteAdelesAwayP
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.DenCoprimeIffOfMulPrimeToPRatio
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntAfIntCast
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemUQptsStarCIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelEqKN
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -15,7 +20,7 @@ private theorem actOn_comm {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup p
     actOn L.rep (AfP p) y * (actQ D c).baseChange (AfP p) = (actQ D c).baseChange (AfP p) * actOn L.rep (AfP p) y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add u v hu hv => rw [map_add, add_mul, mul_add, hu, hv]
+  | add u v hu hv => rw [map_add (f := _), add_mul, mul_add, hu, hv]
   | tmul a d =>
     have h : L.rep d * actQ D c = actQ D c * L.rep d := (L.rep_range _).1 ⟨d, rfl⟩ c
     have h2 := congrArg (Module.End.baseChangeHom ℚ (AfP p) (VQ D)) h
@@ -27,11 +32,11 @@ private theorem EFQ_adj {p : ℕ} [Fact p.Prime] (D : Datum p) (c : D.O) (u w : 
     D.EF.baseChange ℚ (actQ D c u) w = D.EF.baseChange ℚ u (actQ D (D.inv c) w) := by
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add x x' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+  | add x x' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
   | tmul q x =>
     induction w using TensorProduct.induction_on with
     | zero => simp
-    | add y y' h h' => simp only [map_add, h, h']
+    | add y y' h h' => simp only [map_add (f := _), h, h']
     | tmul q' y =>
       rw [UpperTheory.Gal.W2.Wit.actQ_tmul, UpperTheory.Gal.W2.Wit.actQ_tmul]
       have e := D.EFQ_tmul q q' (c • x) y

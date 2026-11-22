@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceFormTwistIsoOfPullback
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsCommonField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceFormTwistIsoOfPullback
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsCommonField
+
+@[expose] public section
 
 noncomputable section
 
@@ -208,8 +212,8 @@ theorem equiv_pullQk (p q : QkPt D F k) :
     QkPt.Equiv D' F (pullQk hD hG hF hB hB' p) (pullQk hD hG hF hB hB' q) ↔ QkPt.Equiv D F p q := by
   rw [equiv_iff hB, equiv_iff hB', hD.xe.surjective.exists]
   refine exists_congr fun z => and_congr ?_ ?_
-  · rw [pullQk_y, pullQk_y, ← hD.xe.symm.injective.eq_iff, map_add, map_nsmul, AddEquiv.symm_apply_apply]
-  · rw [pullQk_g, pullQk_g, ← pullGt_iota hD hG hF hB hB', ← map_add, (pullGt_injective hD hG hF).eq_iff]
+  · rw [pullQk_y, pullQk_y, ← hD.xe.symm.injective.eq_iff, map_add (f := _), map_nsmul, AddEquiv.symm_apply_apply]
+  · rw [pullQk_g, pullQk_g, ← pullGt_iota hD hG hF hB hB', ← map_add (f := _), (pullGt_injective hD hG hF).eq_iff]
 
 theorem qkAdd_pullQk {p q r : QkPt D F k} (h : QkAdd p q r) :
     QkAdd (pullQk hD hG hF hB hB' p) (pullQk hD hG hF hB hB' q) (pullQk hD hG hF hB hB' r) := by

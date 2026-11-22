@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.HolValueAtFinsum
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilSchrodingerRealParameter
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.HolValueAtFinsum
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilSchrodingerRealParameter
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem phiS_val {m : ℕ} {θ : InfFam D} {τ : D.what₂.Tau} {fr : Matrix (Fi
     {Ψ : Mx D m n → ℂ} {Q : PX m n} (h : tens θ τ fr (fP c Q) Ψ ∈ schwartzA θ m n) :
     (phiS θ τ fr c Ψ Q).1 = tens θ τ fr (fP c Q) Ψ := by
   unfold phiS
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem perPsi (hA : AbsThm) (hTM : TensMem) (hLo : LocOpEx) (hLi : LocInst) (hLS : LinSec) (hGS : GSplit)
     (hIa : GIauto) (hIk : GIk) (hIi : GIinv) (hId : GIdil) (hEis : EisStrong) (hLB : GLamBd) (hLsg : GLsing)
@@ -135,7 +139,8 @@ theorem main : MainSt := by
   have hsect : ∀ z, sect ω H (∑ i, Φi i) z = fun x => ∑ i, sect ω H (Φi i) z x := by
     intro z
     funext x
-    simp only [sect, map_sum, Submodule.coe_sum, Finset.sum_apply, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [sect, map_sum, Submodule.coe_sum, Finset.sum_apply, Finset.mul_sum]
   have heq : EqRight (fun z => ∑ i, PositivityTheory.PfSWUS.eis ω H (Φi i) g z) (PositivityTheory.PfSWUS.eis ω H Φ g) := by
     refine ⟨∑ i, |σi i|, fun z hz => ?_⟩
     have hz' : ∀ i, σi i < z.re := fun i =>

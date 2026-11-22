@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.IsPrecompleteOfBasis
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.IsPrecompleteOfBasis
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 
@@ -24,7 +28,7 @@ theorem isLocalRing : IsLocalRing (AdjoinRoot M) := by
   have : Module.Finite A (AdjoinRoot M) := .of_basis (AdjoinRoot.powerBasis' hM).basis
   refine IsLocalRing.of_unique_max_ideal ⟨_, map_maximalIdeal_isMaximal M hM hirr, fun P hP => ?_⟩
   have hc : (P.comap (algebraMap A (AdjoinRoot M))).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal P
   have h1 : P.comap (algebraMap A (AdjoinRoot M)) = maximalIdeal A := IsLocalRing.eq_maximalIdeal hc
   have hle : (maximalIdeal A).map (algebraMap A (AdjoinRoot M)) ≤ P :=
     Ideal.map_le_iff_le_comap.2 h1.ge

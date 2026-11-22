@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicWeilRepSchrodingerModelUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaSumDoubledWeilFixedDiagonalStabilizerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicWeilRepSchrodingerModelUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaSumDoubledWeilFixedDiagonalStabilizerStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix TensorProduct
 
@@ -12,26 +17,23 @@ variable {κ : Type}
 
 def negSnd {M : Type} [Neg M] (x : κ ⊕ κ → M) : κ ⊕ κ → M := Sum.elim (fun i => x (Sum.inl i)) (fun i => -x (Sum.inr i))
 
-@[simp] theorem negSnd_inl {M : Type} [Neg M] (x : κ ⊕ κ → M) (i : κ) : negSnd x (Sum.inl i) = x (Sum.inl i) := rfl
-@[simp] theorem negSnd_inr {M : Type} [Neg M] (x : κ ⊕ κ → M) (i : κ) : negSnd x (Sum.inr i) = -x (Sum.inr i) := rfl
-
 theorem negSnd_negSnd {M : Type} [InvolutiveNeg M] (x : κ ⊕ κ → M) : negSnd (negSnd x) = x :=
-  funext fun i => by cases i <;> simp
+  funext fun i => by cases i <;> simp [negSnd]
 
 theorem negSnd_add {M : Type} [AddCommGroup M] (x y : κ ⊕ κ → M) : negSnd (x + y) = negSnd x + negSnd y :=
-  funext fun i => by cases i <;> simp [add_comm]
+  funext fun i => by cases i <;> simp [negSnd, add_comm]
 
 theorem negSnd_dot {R : Type} [CommRing R] [Fintype κ] (x y : κ ⊕ κ → R) : negSnd x ⬝ᵥ y = x ⬝ᵥ negSnd y := by
-  simp [dotProduct, Fintype.sum_sum_type]
+  simp [negSnd, dotProduct, Fintype.sum_sum_type]
 
 theorem negSnd_dot_negSnd {R : Type} [CommRing R] [Fintype κ] (x y : κ ⊕ κ → R) : negSnd x ⬝ᵥ negSnd y = x ⬝ᵥ y := by
-  simp [dotProduct, Fintype.sum_sum_type]
+  simp [negSnd, dotProduct, Fintype.sum_sum_type]
 
 def negSndL (R M : Type) [Semiring R] [AddCommGroup M] [Module R M] : (κ ⊕ κ → M) ≃ₗ[R] (κ ⊕ κ → M) where
   toFun := negSnd
   invFun := negSnd
   map_add' := negSnd_add
-  map_smul' c x := funext fun i => by cases i <;> simp
+  map_smul' c x := funext fun i => by cases i <;> simp [negSnd, Pi.smul_apply, smul_neg]
   left_inv := negSnd_negSnd
   right_inv := negSnd_negSnd
 
@@ -66,7 +68,7 @@ theorem negOp_negOp (φ : (κ ⊕ κ → AF F) → ℂ) : negOp F (negOp F φ) =
 theorem negOp_schr [Fintype κ] (ψ : AddChar (AF F) ℂ) (w : (κ ⊕ κ → AF F) × (κ ⊕ κ → AF F)) (φ : (κ ⊕ κ → AF F) → ℂ) :
     negOp F (schr ψ w φ) = schr ψ (negSnd w.1, negSnd w.2) (negOp F φ) := by
   funext x
-  simp only [negOp_apply, schr, negSnd_dot, negSnd_dot_negSnd, negSnd_add, negSnd_negSnd]
+  simp only [negOp_apply, schr, negSnd_dot, negSnd_add, negSnd_negSnd]
 
 theorem pureA_negSnd [Fintype κ] (f : (κ ⊕ κ → mixedEmbedding.mixedSpace F) → ℂ)
     (g : (κ ⊕ κ → FiniteAdeleRing (𝓞 F) F) → ℂ) :
@@ -101,10 +103,10 @@ theorem thetaSum_negOp [Fintype κ] (φ : (κ ⊕ κ → AF F) → ℂ) : thetaS
   show φ (negSnd _) = φ (fun i => algebraMap F (AF F) (negSnd ξ i))
   congr 1
   funext i
-  cases i <;> simp
+  cases i <;> simp [negSnd]
+
 
 open scoped Classical in
-
 theorem thetaSum_omd_antidiag : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (ψ : AddChar (AF F) ℂ), IsStd ψ → ∀ (a b : ℕ) (JA : Matrix (Fin a) (Fin a) E) (JB : Matrix (Fin b) (Fin b) E) (κ : Type) [Fintype κ], Fintype.card κ = a * b → ∀ (d : Darboux (symp (R := AF F) (cA σ) (-1) (incM F JA) (incM F JB)) κ), (∀ x : Matrix (Fin a) (Fin b) E, ∃ y z : κ → F, d.e (incM F x) = (fun i => algebraMap F (AF F) (y i), fun i => algebraMap F (AF F) (z i))) → ∀ (dd : Darboux (symp (R := AF F) (cA σ) (-1) (incM F JA) (dbl (incM F JB))) (κ ⊕ κ)), IsDblCoord (cA σ) (-1) (incM F JA) (incM F JB) d dd → ∀ (χ : Chr F E), IsHecke F E χ → ∀ (omd : UG (cA σ) (dbl (incM F JB)) →* Module.End ℂ ((κ ⊕ κ → AF F) → ℂ)), IsSplitting (adeleClass F) ψ dd (actB (cA σ)) omd → SiegelRule (cA σ) (adeleClass F) ψ (-1) (incM F JA) (dbl (incM F JB)) dd χ (diagCols (Fin b)) omd → ∀ (q : UG (cA σ) (dbl (incM F JB))) (q₀ : Matrix (Fin b ⊕ Fin b) (Fin b ⊕ Fin b) E), ((q : GL (Fin b ⊕ Fin b) (AE F E)) : Matrix (Fin b ⊕ Fin b) (Fin b ⊕ Fin b) (AE F E)) = incM F q₀ → ∀ (s : GL (Fin b) (AE F E)), ((q : GL (Fin b ⊕ Fin b) (AE F E)) : Matrix (Fin b ⊕ Fin b) (Fin b ⊕ Fin b) (AE F E)) * Matrix.fromRows (1 : Matrix (Fin b) (Fin b) (AE F E)) (-1) = Matrix.fromRows (1 : Matrix (Fin b) (Fin b) (AE F E)) (-1) * (s : Matrix (Fin b) (Fin b) (AE F E)) → ∀ φ ∈ schA F (κ ⊕ κ), thetaSum F (omd q φ) = thetaSum F φ := by
   intro F E _ _ _ _ _ σ hσ ψ hψ a b JA JB κ _ hcard d hd dd hdd χ hχ omd hS hR q q₀ hq s hqs φ hφ
   let M₀' : Matrix (Fin b ⊕ Fin b) (Fin b ⊕ Fin b) E := Matrix.fromBlocks 1 0 0 (-1)
@@ -157,7 +159,7 @@ theorem thetaSum_omd_antidiag : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
       simp
     conv_rhs => rw [← Matrix.fromCols_toCols v]
     rw [hv, hdd, hdd, map_neg]
-    refine Prod.ext (funext fun i => ?_) (funext fun i => ?_) <;> cases i <;> simp
+    refine Prod.ext (funext fun i => ?_) (funext fun i => ?_) <;> cases i <;> simp [negSnd]
   obtain ⟨c, hc⟩ := GlobalTheory.WeilSchUnique.scalar_of_commute ψ hψ (negOp F * omd w₀)
     (fun l hl => by
       rw [Module.End.mul_eq_comp, ← LinearMap.comp_assoc]
@@ -165,7 +167,7 @@ theorem thetaSum_omd_antidiag : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
     (fun w φ hφ => by
       obtain ⟨v, rfl⟩ := dd.e.surjective w
       have e1 : schr ψ (dd.e v) = dd.rho ψ v := rfl
-      rw [e1, Module.End.mul_apply, Module.End.mul_apply, hS.impl w₀ v φ hφ, Darboux.rho, hrel, negOp_schr]
+      rw [e1, mul_apply_eq_comp, mul_apply_eq_comp, hS.impl w₀ v φ hφ, Darboux.rho, hrel, negOp_schr]
       simp only [negSnd_negSnd]
       rfl)
   have hsm : ∀ (c : ℂ) (f : (κ ⊕ κ → AF F) → ℂ), thetaSum F (c • f) = c * thetaSum F f := fun c f => by
@@ -173,7 +175,7 @@ theorem thetaSum_omd_antidiag : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
     exact tsum_mul_left
   have hΘw : ∀ X ∈ schA F (κ ⊕ κ), thetaSum F (omd w₀ X) = c * thetaSum F X := fun X hX => by
     have h1 := congrArg (negOp F) (hc X hX)
-    rw [Module.End.mul_apply, negOp_negOp, map_smul] at h1
+    rw [mul_apply_eq_comp, negOp_negOp, map_smul] at h1
     rw [h1, hsm, thetaSum_negOp]
   have hq' : q = w₀ * p * w₀ := by
     show q = w₀ * (w₀ * q * w₀) * w₀
@@ -181,8 +183,9 @@ theorem thetaSum_omd_antidiag : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
   calc thetaSum F (omd q φ) = thetaSum F (omd w₀ (omd p (omd w₀ φ))) := by
         rw [hq', map_mul, map_mul]; rfl
     _ = c * thetaSum F (omd p (omd w₀ φ)) := hΘw _ (hS.pres _ _ (hS.pres _ _ hφ))
-    _ = c * thetaSum F (omd w₀ φ) := by rw [hsieg _ (hS.pres _ _ hφ)]
+    _ = c * thetaSum F (omd w₀ φ) :=
+      congrArg (fun z => c * z) (hsieg (omd w₀ φ) (hS.pres w₀ φ hφ))
     _ = thetaSum F (omd w₀ (omd w₀ φ)) := (hΘw _ (hS.pres _ _ hφ)).symm
-    _ = thetaSum F φ := by rw [← Module.End.mul_apply, ← map_mul, hw₀w₀, map_one, Module.End.one_apply]
+    _ = thetaSum F φ := by rw [← mul_apply_eq_comp, ← map_mul, hw₀w₀, map_one, one_apply_eq_self]
 
 end GlobalTheory.ThetaOppParab

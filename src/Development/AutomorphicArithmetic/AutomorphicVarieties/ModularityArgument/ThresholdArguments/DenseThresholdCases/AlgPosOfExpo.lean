@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.AlgPosOfExpo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.SdAdAutQ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgOfCyc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.AlgPosOfExpo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.SdAdAutQ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgOfCyc
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -14,20 +18,35 @@ noncomputable section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep GlobalTheory.HeckeGal
 open GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Af.Bc UpperTheory.V.Ws UpperTheory.V.Cu UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 open scoped Matrix
-open private charEig_cyc_inv algSat_eq from Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.SymmetricAdjointFrobenius.AdAutQ
-open private diagR infDiag_eqR diagR_mk ev_notMem from Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.DenseRangeUnitsR
+
 private theorem algPos_of_expo (ω : HChar ℚ) (h : ∀ v, ∃ n : ℤ, TR.expo ω v = n) : ∃ a, IsAlgPos ω a := by
   obtain ⟨n, hn⟩ := h default
   refine ⟨fun _ => n, fun k hk => ?_⟩
   letI : Unique (ℚ →+* ℂ) := ⟨⟨Rat.castHom ℂ⟩, fun _ => Subsingleton.elim _ _⟩
   have hk0 : (0 : ℝ) < ((k : ℚ) : ℝ) := hk (Rat.castHom ℝ)
-  have hv : ∀ v, diagR ℚ (k : ℚ) v = ((k : ℚ) : ℝ) := fun v =>
-    eq_ratCast ((Pi.evalRingHom (fun _ : InfinitePlace ℚ => ℝ) v).comp (diagR ℚ)) (k : ℚ)
-  have e : Units.map (diagR ℚ).toMonoidHom k = TR.expU fun _ => Real.log ((k : ℚ) : ℝ) :=
+  let diagR : ℚ →+* TR.Rinf ℚ := (TR.pInf ℚ).comp (algebraMap ℚ (Ad ℚ))
+  have hv : ∀ v, diagR (k : ℚ) v = ((k : ℚ) : ℝ) := fun v =>
+    eq_ratCast ((Pi.evalRingHom (fun _ : InfinitePlace ℚ => ℝ) v).comp diagR) (k : ℚ)
+  have e : Units.map diagR.toMonoidHom k = TR.expU fun _ => Real.log ((k : ℚ) : ℝ) :=
     Units.ext (funext fun v => (hv v).trans (Real.exp_log hk0).symm)
+  have hdiag : infDiag k = TR.infId ℚ (Units.map diagR.toMonoidHom k) := by
+    have h : ((infDiag k : Ideles ℚ) : AdeleRing (𝓞 ℚ) ℚ) = (algebraMap ℚ (InfiniteAdeleRing ℚ) k, 1) := by
+      unfold infDiag
+      rw [MonoidHom.finsetProd_apply, Fintype.prod_unique, MonoidHom.comp_apply]
+      refine Prod.ext (funext fun w => ?_) rfl
+      have hw : w = default := Subsingleton.elim _ _
+      subst w
+      exact ReciprocityTheory.Neutral.Bridge.HCFR.infIdele_fst_self ℚ default (atInf default k)
+    apply Units.ext
+    rw [h]
+    refine Prod.ext ?_ ?_
+    · change _ = 1 - TR.infEq ℚ 1 + TR.infEq ℚ ((TR.infEq ℚ).symm (algebraMap ℚ (InfiniteAdeleRing ℚ) k))
+      simp
+    · change (1 : Af ℚ) = 1 - 0 + 0
+      simp
   have e2 := TR.chiInf_expU_eq ω fun _ => Real.log ((k : ℚ) : ℝ)
   rw [← e, Fintype.sum_unique, hn, Complex.exp_int_mul, ← Complex.ofReal_exp, Real.exp_log hk0] at e2
-  rw [HChar.inf, MonoidHom.comp_apply, infDiag_eqR, Fintype.prod_unique, eq_ratCast, ← Complex.ofReal_ratCast]
+  rw [HChar.inf, MonoidHom.comp_apply, hdiag, Fintype.prod_unique, eq_ratCast, ← Complex.ofReal_ratCast]
   exact e2
 private theorem det_sat (M : Matrix (Fin 2) (Fin 2) ℂ) (q : ℕ) (x y : ℂˣ)
     (h : M.charpoly = ((algSat 2 q {x, y}).map fun b => X - C b).prod) : M.det = ((x * y : ℂˣ) : ℂ) * q := by
@@ -36,7 +55,9 @@ private theorem det_sat (M : Matrix (Fin 2) (Fin 2) ℂ) (q : ℕ) (x y : ℂˣ)
     norm_num
   have hq' := congrArg (fun x : ℝ => (x : ℂ)) hq
   simp only [Complex.ofReal_mul, Complex.ofReal_natCast] at hq'
-  rw [Matrix.det_eq_prod_roots_charpoly, h, roots_multiset_prod_X_sub_C, algSat_eq, Multiset.insert_eq_cons, Multiset.map_cons,
+  rw [Matrix.det_eq_prod_roots_charpoly, h, roots_multiset_prod_X_sub_C]
+  simp only [algSat, Multiset.bind_def, Multiset.pure_def, Multiset.bind_singleton, Multiset.map_map, Function.comp_apply]
+  rw [Multiset.insert_eq_cons, Multiset.map_cons,
     Multiset.map_singleton, Multiset.prod_cons, Multiset.prod_singleton, mul_mul_mul_comm, hq', Units.val_mul, mul_comm]
 private theorem det_alg (P : _root_.UpperTheory.V.Af.HypothesesH') {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime]
     (ι : Qbar l ≃+* ℂ) (ρ : G ℚ Ω →* GL (Fin 2) (Qbar l)) (hc : Continuous ρ) (ha : IsAutR ι ρ) :
@@ -52,10 +73,17 @@ private theorem det_alg (P : _root_.UpperTheory.V.Af.HypothesesH') {Ω : Type} [
   have H := (_root_.UpperTheory.V.Af.algOfCyc_s P ℚ Ω l ι).2.1
   have h1 : Af.IsAlgChar ι (cycBar ℚ Ω l) := ⟨χ, hcc, art', a', h'⟩
   have h2 := (H μ _ ⟨ω, hch⟩ (H _ _ h1 h1).2).1
+  have hl : ∀ᶠ v : HeightOneSpectrum (𝓞 ℚ) in Filter.cofinite, ((l : ℕ) : 𝓞 ℚ) ∉ v.asIdeal := by
+    have hp : l.Prime := Fact.out
+    have h0 : Ideal.span {((l : ℕ) : 𝓞 ℚ)} ≠ 0 := by
+      rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
+      exact_mod_cast hp.ne_zero
+    refine Filter.eventually_cofinite.2 ((Ideal.finite_factors h0).subset fun v hv => ?_)
+    exact Ideal.dvd_span_singleton.mpr (not_not.1 hv)
   have key : (fun s : G ℚ Ω => (ρ s⁻¹ : Matrix (Fin 2) (Fin 2) (Qbar l)).det) =
       fun s => (((μ * (cycBar ℚ Ω l)⁻¹) s⁻¹ : (Qbar l)ˣ) : Qbar l) := by
     refine GlobalTheory.Published.ChebotarevDegreeOne.eq_of_frob GlobalTheory.Published.chebotarevDegreeOne'
-      (Filter.eventually_cofinite.1 ((hatt.2.and (UpperTheory.galois_character_frobenius_compatibility ℚ Ω l ι ω μ hch)).and (ev_notMem (K := ℚ) l)))
+      (Filter.eventually_cofinite.1 ((hatt.2.and (UpperTheory.galois_character_frobenius_compatibility ℚ Ω l ι ω μ hch)).and hl))
       (Units.continuous_val.comp (hc.comp continuous_inv)).matrix_det
       (Units.continuous_val.comp ((hμ.mul hcc.inv).comp continuous_inv)) ?_
     intro v hv _ A hA σ hσ
@@ -63,8 +91,13 @@ private theorem det_alg (P : _root_.UpperTheory.V.Af.HypothesesH') {Ω : Type} [
     obtain ⟨x, y, rfl⟩ := Multiset.card_eq_two.1 hB.card
     have e2 := (hF A hA).2 σ hσ
     rw [← Matrix.charpoly_map] at e2
+    have hcyc : ι (((cycBar ℚ Ω l)⁻¹ σ⁻¹ : (Qbar l)ˣ) : Qbar l) = (normV v : ℂ) := by
+      have hval : ((cycBar ℚ Ω l σ : (Qbar l)ˣ) : Qbar l) = (normV v : ℕ) := by
+        change algebraMap ℚ_[l] (Qbar l) (PadicInt.Coe.ringHom ((cycZ ℚ Ω l σ : ℤ_[l]ˣ) : ℤ_[l])) = _
+        rw [cycZ_of_isFrob h4 hA hσ, map_natCast, map_natCast]
+      rw [MonoidHom.inv_apply, map_inv, inv_inv, hval, map_natCast]
     apply ι.injective
-    rw [MonoidHom.mul_apply, Units.val_mul, map_mul, (h3 A hA).2 σ hσ, (charEig_cyc_inv ι v h4 A hA).2 σ hσ,
+    rw [MonoidHom.mul_apply, Units.val_mul, map_mul, (h3 A hA).2 σ hσ, hcyc,
       ← hω v x y hB, ← det_sat _ _ _ _ e2]
     exact ι.toRingHom.map_det _
   have e : Matrix.GeneralLinearGroup.det.comp ρ = μ * (cycBar ℚ Ω l)⁻¹ := MonoidHom.ext fun s => Units.ext (by
@@ -76,7 +109,11 @@ private theorem det_alg (P : _root_.UpperTheory.V.Af.HypothesesH') {Ω : Type} [
 private theorem conj_ex (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] : ∃ c : G ℚ Ω, IsConjEl c := by
   haveI : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
   haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
-  let j : Ω →ₐ[ℚ] ℂ := IsAlgClosed.lift
+  let j : Ω →ₐ[ℚ] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   letI : Algebra Ω ℂ := j.toRingHom.toAlgebra
   haveI : IsScalarTower ℚ Ω ℂ := IsScalarTower.of_algebraMap_eq fun x => (j.commutes x).symm
   haveI : Normal ℚ Ω := IsAlgClosure.normal ℚ Ω

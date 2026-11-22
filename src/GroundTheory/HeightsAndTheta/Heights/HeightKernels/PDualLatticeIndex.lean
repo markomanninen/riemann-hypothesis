@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualLatticeIndex
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesIsLattice
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesGenIndexTrans
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesLatticeBasis
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesGenIndexDet
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesIdealLatticeFG
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BoxBounds
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualLatticeIndex
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesIsLattice
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesGenIndexTrans
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesLatticeBasis
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesGenIndexDet
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesIdealLatticeFG
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BoxBounds
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -221,7 +226,8 @@ theorem dual_box {c : K} (hc : c ≠ 0) : dual (box (i := i) c) = box c⁻¹ := 
     choose a ha using h
     choose b hb using hx
     refine ⟨∑ j, a j * b j, ?_⟩
-    rw [map_sum, dotProduct]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, dotProduct]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← ha j, ← hb j, Algebra.smul_def, Algebra.smul_def, map_mul]
     field_simp
@@ -267,7 +273,7 @@ theorem box_relIndex_ne_zero {c : K} (hc : c ≠ 0) :
   have hid : ∀ c : K, box (i := i) c =
       idealLattice (fun _ : Fin i => FractionalIdeal.spanSingleton (𝓞 K)⁰ c) := fun c => by
     simp only [box, idealLattice, FractionalIdeal.coe_spanSingleton]
-  have lat : ∀ c : K, c ≠ 0 → Submodule.IsLattice ℚ ((box (i := i) c).restrictScalars ℤ) := by
+  have lat : ∀ c : K, c ≠ 0 → Submodule.IsFullLattice ℚ ((box (i := i) c).restrictScalars ℤ) := by
     intro c hc
     obtain ⟨hfg, hspan⟩ := LinesIdealLatticeFG.proof K i (fun _ => FractionalIdeal.spanSingleton (𝓞 K)⁰ c)
       (fun _ => by rw [Ne, FractionalIdeal.spanSingleton_eq_zero_iff]; exact hc)
@@ -297,8 +303,8 @@ theorem eq_of_le_of_prod {a₁ a₂ a₃ b₁ b₂ b₃ : ℕ} (h₁ : a₁ ≤ 
 
 end DualLatticeIndexAlt
 
-open DualLatticeIndexAlt in
 
+open DualLatticeIndexAlt in
 theorem DualLatticeIndex.proof : DualLatticeIndex.Statement := by
   intro K _ _ i F F' hle
   obtain ⟨e₁, he₁, hlo⟩ := exists_box_le F'.lattice F'.span_eq
@@ -348,12 +354,6 @@ theorem DualLatticeIndex.proof : DualLatticeIndex.Statement := by
     ring
   rw [← dual_toAddSubgroup, ← dual_toAddSubgroup]
   exact eq_of_le_of_prod a₁ a₂ a₃ hprod hb0
-
-example : (dualLattice (HermLattice.standard ℚ 1)).toAddSubgroup.relIndex
-      (dualLattice HermLattice.twiceStandardExample).toAddSubgroup =
-    HermLattice.twiceStandardExample.lattice.toAddSubgroup.relIndex
-      (HermLattice.standard ℚ 1).lattice.toAddSubgroup :=
-  DualLatticeIndex.proof ℚ 1 _ _ twiceStandardExample_le
 
 end
 

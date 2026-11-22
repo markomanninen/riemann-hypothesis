@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Bl
 
@@ -9,7 +13,7 @@ variable {k D M : Type} [CommRing k] [Group D] [AddCommGroup M] [Module k M]
 private def NI (ρ : Representation k D M) (I : Subgroup D) : Submodule k M where
   carrier := {m | ∀ s ∈ I, ρ s m = m}
   zero_mem' := fun s _ => map_zero _
-  add_mem' := fun {a b} ha hb s hs => by rw [map_add, ha s hs, hb s hs]
+  add_mem' := fun {a b} ha hb s hs => by rw [map_add (f := _), ha s hs, hb s hs]
   smul_mem' c a ha s hs := by rw [map_smul, ha s hs]
 
 private theorem NI_stable (ρ : Representation k D M) (I : Subgroup D) [hI : I.Normal] (g : D) {m : M}

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaFunctionZeroOfInvariantFunctionalsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceAnnihilatorRelativelyCompact
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StandardAdelicCharacterLocalComponentNeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicTransvectionSubgroupEqAdelesClosed
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.NotMemSpanOfCommute
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaFunctionZeroOfInvariantFunctionalsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceAnnihilatorRelativelyCompact
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StandardAdelicCharacterLocalComponentNeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicTransvectionSubgroupEqAdelesClosed
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.NotMemSpanOfCommute
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,8 +93,8 @@ theorem exists_compact_annihilator_ultrametric_field {K R : Type} [NormedField K
   rw [e1, dotProduct_single, hx] at h
   exact hy _ (norm_pos_iff.1 hxpos) h
 
-open GlobalTheory.IdemModTwo GlobalTheory.SplitAnnihilator in
 
+open GlobalTheory.IdemModTwo GlobalTheory.SplitAnnihilator in
 theorem exists_compact_dual {D : D7} {ψ : AddChar (AF D.host.F) ℂ} (hψ : ∀ v, ∃ y, psiV D.host.F ψ v y ≠ 1)
     {e : AE D} (hε : IsSplitIdem D e) {n : ℕ} {V : Set (Fin n → AE D)} (hV : V ∈ nhds (0 : Fin n → AE D)) :
     ∃ L : AddSubgroup (Fin n → AE D), IsCompact (L : Set (Fin n → AE D)) ∧ (∀ s ∈ L, e • s = s) ∧
@@ -152,7 +156,8 @@ theorem hO_along (ξ : Fin T.rank → D.host.E) (t : WO S T) (s : Fin S.rank →
     hO S T t (along S T ξ fun b => cA D (s b)) = (rowOf S T ξ t ᵥ* (S.gram⁻¹).map (incA D)) ⬝ᵥ s := by
   have e : ∀ x, incA D ((D.sp.cm.sig : D.host.E →+* D.host.E) x) = cA D (incA D x) :=
     fun x => (GlobalTheory.DualPairCheck.cA_incA x).symm
-  simp only [hO, along, rowOf, vecMulVec_apply, vecMul, dotProduct, Matrix.map_apply, RingHom.map_mul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hO, along, rowOf, vecMulVec_apply, vecMul, dotProduct, Matrix.map_apply, RingHom.map_mul, map_sum,
     GlobalTheory.DualPairCheck.cA_cA, e, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun a _ => ?_
@@ -174,14 +179,15 @@ theorem det_eq_one {ξ : Fin T.rank → D.host.E} (h : IsoVec T ξ) {z : GA D T}
     simp only [Matrix.map_apply, vecMulVec_apply, RingHom.map_mul, Matrix.smul_apply, Pi.smul_apply, smul_eq_mul,
       mul_assoc]
   have h2 := congrArg (incA D) h.2
-  rw [Matrix.dotProduct_mulVec, dotProduct, map_sum, RingHom.map_zero] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.dotProduct_mulVec, dotProduct, map_sum, RingHom.map_zero] at h2
   simp only [RingHom.map_mul] at h2
   rw [Formalism.L2.Theta.mt, ha, e, vecMulVec_eq Unit, det_one_add_replicateCol_mul_replicateRow, dotProduct_smul,
     dotProduct, h2, smul_zero, add_zero]
 
+
 set_option maxHeartbeats 800000 in
 open GlobalTheory.SplitScalar in
-
 theorem eq_zero_of_small (hψ : IsStdChar D ψ (-1)) {ξ : Fin T.rank → D.host.E} {e : AE D} (he : IsSplitIdem D e)
     {g : WO S T → ℂ} (hg : IsThetaFunO ψ S T g) {V : Set (Fin S.rank → AE D)} (hV : V ∈ nhds (0 : Fin S.rank → AE D))
     (H : ∀ m : (WO S T → ℂ) →ₗ[ℂ] ℂ,
@@ -219,8 +225,27 @@ theorem eq_zero_of_small (hψ : IsStdChar D ψ (-1)) {ξ : Fin T.rank → D.host
   obtain ⟨ι, _, _, σ, hσ⟩ := exists_invariant_sum (fun s => heisO ψ S T (α s) g) (α ⁻¹' U)
     (hαc.continuousAt.preimage_mem_nhds (by rw [hα0]; exact hUo.mem_nhds U.zero_mem))
     fun u hu a => by rw [hαa, hU _ hu (half_fin he' (hαh u))]
+  have theta_zero : IsThetaFunO ψ S T 0 := {
+    quasi γ w := by simp only [Pi.zero_apply, mul_zero]
+    level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp only [heisO, Pi.zero_apply, mul_zero]⟩
+    cont := continuous_const
+    smooth k L _ _ w := contDiff_const }
+  have theta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
+      IsThetaFunO ψ S T (f + g) := {
+    quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      obtain ⟨U', hU', h2⟩ := hg.level
+      refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu.1 h0) w
+      have e2 := congrFun (h2 u hu.2 h0) w
+      unfold heisO at e1 e2 ⊢
+      rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+    cont := hf.cont.add hg.cont
+    smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w) }
   have hth : IsThetaFunO ψ S T (∑ i, heisO ψ S T (α (σ i)) g) :=
-    Finset.sum_induction _ _ (fun _ _ => GlobalTheory.OrientedHeis.theta_add) GlobalTheory.OrientedHeis.theta_zero
+    Finset.sum_induction _ _ (fun _ _ => theta_add) theta_zero
       fun i _ => hcl g hg _
   have h0 : ∑ i, heisO ψ S T (α (σ i)) g = 0 := by
     refine GlobalTheory.T.theta_function_zero_of_invariant_functionals D ψ hψ S T e he _ hth fun m hm t ht => ?_
@@ -233,7 +258,8 @@ theorem eq_zero_of_small (hψ : IsStdChar D ψ (-1)) {ξ : Fin T.rank → D.host
           (smul_dual _ _ _ ((rowOf_smul ξ e t).symm.trans (congrArg _ ((isHalf_iff _ _).1 ht))))
           fun s hs => (congrArg ψ (symplO_along ξ t s)).trans (hb ⟨s, hs⟩)
         rwa [Set.mem_preimage, undo_dual (incA D) (GlobalTheory.IndefiniteRowSideFullHecke.BesselData.embedding_xi_zero_ne_zero D) (gram_det_ne S)] at h1
-      rw [heisO_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [heisO_sum, map_sum]
       exact Finset.sum_eq_zero fun i _ => by rw [key _ _ hg, H m hm t ht hrow, mul_zero]
     · obtain ⟨s, hs⟩ := not_forall.1 hb
       have h1 := key s _ hth
@@ -243,11 +269,12 @@ theorem eq_zero_of_small (hψ : IsStdChar D ψ (-1)) {ξ : Fin T.rank → D.host
       rw [h2] at h1
       exact (mul_left_eq_self₀.1 h1.symm).resolve_left hs
   have h1 := congrArg ℓ h0
-  rw [map_sum, map_zero, Finset.sum_congr rfl fun i _ => hℓ _ g hg, Finset.sum_const, nsmul_eq_mul] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero, Finset.sum_congr rfl fun i _ => hℓ _ g hg, Finset.sum_const, nsmul_eq_mul] at h1
   exact (mul_eq_zero.1 h1).resolve_left (Nat.cast_ne_zero.2 Fintype.card_ne_zero)
 
-open GlobalTheory.SplitScalar in
 
+open GlobalTheory.SplitScalar in
 theorem transvection_pos : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)), IsWeilDatumO ψ S T χS χT om → ∀ ξ, IsoVec T ξ → ∀ e, IsSplitIdem D e → ∀ z ∈ ZI T ξ, Formalism.L2.Theta.SuppAt e T z → ∃ r : ℝ, 0 < r ∧ ∀ ℓ : (WO S T → ℂ) →ₗ[ℂ] ℂ, (∀ a f, IsThetaFunO ψ S T f → ℓ (heisO ψ S T (along S T ξ a) f) = ℓ f) → ∀ f, IsThetaFunO ψ S T f → ℓ (om (1, z) f) = (r : ℂ) * ℓ f := by
   intro D ψ S T χS χT om hW ξ hξ e he z hz hsupp
   have : IsModuleTopology (AF D.host.F) (AE D) := ⟨rfl⟩
@@ -265,8 +292,20 @@ theorem transvection_pos : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : 
     ext i k
     show a * (_ * 0) = 0
     rw [mul_zero, mul_zero]
+  have theta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ S T (c • f) := {
+    quasi γ w := by
+      rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    cont := hf.cont.const_smul c
+    smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
   have := eq_zero_of_small (ξ := ξ) hW.std he
-    (GlobalTheory.OrientedHeis.theta_sub (hW.om_pres (1, z) f hf) (GlobalTheory.OrientedHeis.theta_smul r hf))
+    (GlobalTheory.OrientedHeis.theta_sub (hW.om_pres (1, z) f hf) (theta_smul r hf))
     (hc.continuousAt.preimage_mem_nhds (x := 0) (t := U) (by rw [h0]; exact hUo.mem_nhds U.zero_mem))
     (fun m hm' t ht hrow => ?_) ℓ hℓ
   · rwa [map_sub, map_smul, sub_eq_zero] at this

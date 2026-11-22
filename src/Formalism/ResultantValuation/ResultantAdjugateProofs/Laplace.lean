@@ -1,4 +1,8 @@
-import Formalism.ResultantValuation.ResultantConjugate
+module
+
+public import Formalism.ResultantValuation.ResultantConjugate
+
+@[expose] public section
 
 open Finset Equiv
 

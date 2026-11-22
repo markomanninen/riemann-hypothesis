@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMulStarEqOfNormOneUnramifiedQuadraticStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticIntegralTraceFormPerfectStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormOneAddEqOne
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMulStarEqOfNormOneUnramifiedQuadraticStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticIntegralTraceFormPerfectStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormOneAddEqOne
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -27,7 +32,7 @@ theorem nsum_le [IsUltrametricDist E] {ι : Type} (s : Finset ι) (f : ι → E)
 theorem intg_mul [IsUltrametricDist E] {l n m : Type} [Fintype n] {A : Matrix l n E} {B : Matrix n m E} (hA : Intg A)
     (hB : Intg B) : Intg (A * B) := by
   intro i j
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   refine nsum_le _ _ zero_le_one fun k _ => ?_
   rw [norm_mul]
   exact mul_le_one₀ (hA i k) (norm_nonneg _) (hB k j)
@@ -40,7 +45,7 @@ theorem intg_conjT [StarRing E] (hs : ∀ y : E, ‖star y‖ = ‖y‖) {n m : 
 
 theorem intg_one {n : Type} [DecidableEq n] : Intg (1 : Matrix n n E) := by
   intro i j
-  rw [one_apply]
+  rw [Matrix.one_apply]
   split_ifs <;> simp
 
 theorem norm_det_conjT [StarRing E] (hs : ∀ y : E, ‖star y‖ = ‖y‖) {n : Type} [Fintype n] [DecidableEq n]
@@ -73,7 +78,8 @@ theorem intg_sub {n m : Type} {A B : Matrix n m E} (hA : Intg A) (hB : Intg B) :
 
 theorem intg_neg {n m : Type} {A : Matrix n m E} (hA : Intg A) : Intg (-A) := by
   intro i j
-  rw [neg_apply, norm_neg]
+  change ‖-(A i j)‖ ≤ 1
+  rw [norm_neg]
   exact hA i j
 
 theorem intg_zero {n m : Type} : Intg (0 : Matrix n m E) := by
@@ -231,7 +237,7 @@ theorem fixed_mem (a : E) (ha : star a = a) : ∃ u : F, algebraMap F E u = a :=
 
 theorem quad_col {n : Type} [Fintype n] (G P : Matrix n n E) (k : n) :
     (Pᴴ * G * P) k k = star (fun a => P a k) ⬝ᵥ (G *ᵥ fun a => P a k) := by
-  simp only [mul_apply, dotProduct, mulVec, conjTranspose_apply, Pi.star_apply, Finset.mul_sum,
+  simp only [Matrix.mul_apply, dotProduct, mulVec, conjTranspose_apply, Pi.star_apply, Finset.mul_sum,
     Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_

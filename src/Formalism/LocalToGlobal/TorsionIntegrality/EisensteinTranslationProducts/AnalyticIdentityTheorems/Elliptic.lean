@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaLine
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaLine
+
+@[expose] public section
 
 noncomputable section
 open Filter Topology
@@ -48,7 +52,7 @@ lemma eq_of_eventuallyEq_nhdsNE {g₁ g₂ : ℂ → ℂ} {z : ℂ} (h₁ : Cont
 
 lemma tendsto_add_nhdsNE (z ω : ℂ) : Tendsto (fun w : ℂ => w + ω) (𝓝[≠] z) (𝓝[≠] (z + ω)) := by
   rw [tendsto_nhdsWithin_iff]
-  refine ⟨((continuous_add_right ω).tendsto z).mono_left nhdsWithin_le_nhds, ?_⟩
+  refine ⟨((continuous_add_const ω).tendsto z).mono_left nhdsWithin_le_nhds, ?_⟩
   filter_upwards [self_mem_nhdsWithin] with w hw
   exact fun h => hw (add_right_cancel h)
 
@@ -70,7 +74,7 @@ theorem elliptic_no_pole_const : EllipticNoPole := by
     intro ω hω z
     have hc1 : ContinuousAt (fun w => g (w + ω)) z :=
       show ContinuousAt (g ∘ fun w => w + ω) z from
-        (hcont (z + ω)).comp_of_eq (continuous_add_right ω).continuousAt rfl
+        (hcont (z + ω)).comp_of_eq (continuous_add_const ω).continuousAt rfl
     have h1 : ∀ᶠ w in 𝓝[≠] z, g (w + ω) = f (w + ω) :=
       (Elliptic.tendsto_add_nhdsNE z ω).eventually (heq (z + ω))
     have h2 : (fun w => g (w + ω)) =ᶠ[𝓝[≠] z] g := by

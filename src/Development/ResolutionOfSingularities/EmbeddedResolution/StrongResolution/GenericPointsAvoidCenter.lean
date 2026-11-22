@@ -1,18 +1,23 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupIsoOffCenter
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.GenericPointImage
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DetachedLocus
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DiscardedLocus
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupIsoOffCenter
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.GenericPointImage
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DetachedLocus
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DiscardedLocus
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
@@ -126,10 +131,6 @@ theorem isIso_blowdown_restrict_ambientCenterSupportCompl (i : ℕ) (hi : i < S.
 
 def strictTransformOffCenter (i : ℕ) : (S.strictTransform i).Opens :=
   (TopologicalSpace.Opens.map (S.strictTransformι i).base).obj (S.ambientCenterSupportCompl i)
-
-@[simp] theorem mem_strictTransformOffCenter (i : ℕ) (x : ↥(S.strictTransform i)) :
-    x ∈ S.strictTransformOffCenter i ↔
-      (S.strictTransformι i).base x ∉ ((S.ambientCenter i).support : Set ↥(S.schemeAt i)) := Iff.rfl
 
 abbrev strictTransformMapPreimageOffCenter (i : ℕ) : (S.strictTransform (i + 1)).Opens :=
   (TopologicalSpace.Opens.map (S.strictTransformMap i).base).obj (S.strictTransformOffCenter i)
@@ -245,8 +246,8 @@ theorem exists_irreducibleComponent_isGenericPoint_strictTransformMap [Algebraic
     obtain ⟨w, hw⟩ := he''
     have hsp2 : (Scheme.Opens.ι (S.ambientCenterSupportCompl i)).base
           ((S.blowdown i ∣_ S.ambientCenterSupportCompl i).base w)
-        ∈ closure ({(Scheme.Opens.ι (S.ambientCenterSupportCompl i)).base
-          ((S.blowdown i ∣_ S.ambientCenterSupportCompl i).base x)} : Set ↥(S.schemeAt i)) := by
+        ∈ closure ({((Scheme.Opens.ι (S.ambientCenterSupportCompl i)).base
+          ((S.blowdown i ∣_ S.ambientCenterSupportCompl i).base x))} : Set ↥(S.schemeAt i)) := by
       rw [hgcomm w, hgcomm x, hx, hw]
       exact hsp
     have hsp3 := IsOpenMap.mem_closure_singleton_of_apply hιopen hιinj hsp2
@@ -366,24 +367,6 @@ theorem exists_irreducibleComponent_isGenericPoint_strictTransformMap [Algebraic
     have h2 := ((S.mem_detachedComponents i _).mp hfr).2
     exact hηZ (h2 ⟨(S.strictTransformMap i).base η, subset_closure rfl, rfl⟩)
   exact ⟨closure ({(S.strictTransformMap i).base η} : Set ↥(S.strictTransform i)), hmemComp, rfl, hnotfr⟩
-
-def blowdownIterate (j : ℕ) : (n : ℕ) → (S.schemeAt (j + n) ⟶ S.schemeAt j)
-  | 0 => 𝟙 _
-  | (n + 1) => S.blowdown (j + n) ≫ blowdownIterate j n
-
-@[simp] theorem blowdownIterate_zero (j : ℕ) : S.blowdownIterate j 0 = 𝟙 _ := rfl
-
-@[simp] theorem blowdownIterate_succ (j n : ℕ) :
-    S.blowdownIterate j (n + 1) = S.blowdown (j + n) ≫ S.blowdownIterate j n := rfl
-
-def strictTransformMapIterate (j : ℕ) : (n : ℕ) → (S.strictTransform (j + n + 1) ⟶ S.strictTransform j)
-  | 0 => S.strictTransformMap j
-  | (n + 1) => S.strictTransformMap (j + n + 1) ≫ strictTransformMapIterate j n
-
-@[simp] theorem strictTransformMapIterate_zero (j : ℕ) : S.strictTransformMapIterate j 0 = S.strictTransformMap j := rfl
-
-@[simp] theorem strictTransformMapIterate_succ (j n : ℕ) :
-    S.strictTransformMapIterate j (n + 1) = S.strictTransformMap (j + n + 1) ≫ S.strictTransformMapIterate j n := rfl
 
 end EmbeddedBlowupSequence
 

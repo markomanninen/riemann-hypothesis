@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFVert
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFVert
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -59,12 +64,13 @@ theorem geoNum_mixed_eq_zero
     rw [hD, Nat.sub_add_cancel hKD]
   obtain ⟨I, hI, -⟩ := hR4 (ZMod p) K' ι'
   rw [hGeo K' ι' p I hI W (d + r) _ hWm hpW hWp]
+  unfold ContractMixedFieldStatement at hCMF
   exact hCMF (ZMod p) K ι K' ι' I hI κ v _ (D - Fintype.card K) d r L N hv hWp hVi (by omega)
 
 end ProjectionFormulaVertical
 
-open ProjectionFormulaVertical in
 
+open ProjectionFormulaVertical in
 theorem PFVert.proof
     (hGeo : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)], GeoNumStatement ι)
     (hR4 : ∀ (F : Type) [Field F] (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)],
@@ -74,8 +80,8 @@ theorem PFVert.proof
   intro K _ ι _ K' _ ι' _ κ v P' d r L L' N s a W hv hP' hP hL hs hsP hW hh
   classical
   have hsec : IsSectionOn P' (HermLine.sqMetric (ι := ι') a) s := ⟨a, fun _ => rfl, hs, hsP⟩
-  obtain ⟨-, hvert⟩ := divSuppArith K' ι' P' (d + r) _ _ W hP' hsec hW
-  obtain ⟨hWm, hpr, hWd⟩ := hvert hh
+  obtain ⟨hWm, hpr, hWd⟩ :=
+    (divSuppArith K' ι' P' (d + r) (HermLine.sqMetric (ι := ι') a) s W hP' hsec hW).2 hh
   have hPW : P' ≤ W := le_sup_left.trans hW.1.1.2
   have e : (fun j => (Fin.append L' N j).a) =
       Fin.append (fun j => pullDeg κ (L j).a) (fun j => (N j).a) := by

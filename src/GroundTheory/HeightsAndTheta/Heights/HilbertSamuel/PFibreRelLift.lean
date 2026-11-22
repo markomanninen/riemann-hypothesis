@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreRelLift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreRelLift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -113,7 +118,8 @@ def dehomLoc (T : Submonoid (MRingOver (ZMod ℓ) ι)) (hT : ∀ t ∈ T, dehomM
   map_add' x x' := by
     induction x, x' using LocalizedModule.induction_on₂ with
     | h m m' s s' =>
-      rw [LocalizedModule.mk_add_mk, dehomLocFun_mk, dehomLocFun_mk, dehomLocFun_mk, map_add,
+      rw [LocalizedModule.mk_add_mk, dehomLocFun_mk, dehomLocFun_mk, dehomLocFun_mk,
+        (dehomQuot y c ℓ).map_add,
         Submonoid.smul_def, Submonoid.smul_def, dehomQuot_smul, dehomQuot_smul, hT _ s.2, hT _ s'.2,
         one_mul, one_mul]
 
@@ -124,8 +130,8 @@ theorem dehomLoc_mk (T : Submonoid (MRingOver (ZMod ℓ) ι)) (hT : ∀ t ∈ T,
 
 end FibreRelLift
 
-open FibreRelLift in
 
+open FibreRelLift in
 theorem FibreRelLift.proof : FibreRelLift.Statement := by
   intro K _ _ ι _ _ Ω _ y ℓ a r s J u hs hc _ hrel
   set c := GenOnFibres.cellChart J with hcdef
@@ -152,10 +158,12 @@ theorem FibreRelLift.proof : FibreRelLift.Statement := by
     have := hd k
     omega
   have h1 := congrArg (dehomLoc _ hT) hrel
-  rw [map_sum, map_one] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_one] at h1
   simp only [map_mul, hz] at h1
   choose b hb using fun j => Ideal.Quotient.mk_surjective (dehomLoc _ hT (u j))
-  simp only [← hb, ← map_mul, ← map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← hb, ← map_mul, ← map_sum] at h1
   rw [← map_one (Ideal.Quotient.mk (Ideal.span {((ℓ : ℕ) : chartRingZ y c)})), Ideal.Quotient.eq,
     Ideal.mem_span_singleton'] at h1
   obtain ⟨q, hq⟩ := h1

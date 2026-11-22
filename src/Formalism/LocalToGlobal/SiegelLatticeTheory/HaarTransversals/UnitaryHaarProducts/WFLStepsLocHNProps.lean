@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselLevi
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SCompact
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselLevi
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -184,8 +188,8 @@ private theorem eq_zero_of_hJ_frame_eq_zero_of_isFrameJ {ε : Fin (2 * r + k + 1
           simp only [Qm, hJ, Matrix.mulVec, dotProduct, Matrix.conjTranspose_apply, Matrix.of_apply,
             Pi.star_apply]
       _ = 0 := hcol j
-  have h1 : Qm e f wf z0 * Qi ε e f wf z0 = 1 := Qm_mul_Qi hF
-  unfold Qi at h1
+  have h1 : Qm e f wf z0 * Formalism.L2.SG.Pf.WFL.Qi ε e f wf z0 = 1 := Qm_mul_Qi hF
+  unfold Formalism.L2.SG.Pf.WFL.Qi at h1
   calc y = (Qm e f wf z0 * (Formalism.QuantumDeterminants.Hpk k r * (Qm e f wf z0)ᴴ * Formalism.REAL.Jm ε)) *ᵥ y := by
         rw [h1, Matrix.one_mulVec]
     _ = 0 := by

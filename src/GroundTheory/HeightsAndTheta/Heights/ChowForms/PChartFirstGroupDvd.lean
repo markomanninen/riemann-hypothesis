@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartFirstGroupDvd
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartIncDomain
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncidenceGeneric
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartFirstGroupDvd
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartIncDomain
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncidenceGeneric
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -53,7 +58,8 @@ theorem exists_injective (I : Ideal (MvPolynomial (Fin n) F)) [I.IsPrime] (t : F
     have h1 : q (linForm t) = 1 := by
       rw [← sub_eq_zero, ← map_one q, ← map_sub, hq, Ideal.Quotient.eq_zero_iff_mem, hJeq]
       exact Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)
-    rw [← h1, linForm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1, linForm, map_sum]
     simp only [map_mul, hζ, hc']
 
   set γ : MvPolynomial (Fin n ⊕ Fin e × Fin n) F →+* MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) :=
@@ -75,9 +81,11 @@ theorem exists_injective (I : Ideal (MvPolynomial (Fin n) F)) [I.IsPrime] (t : F
       rintro _ ⟨i, rfl⟩
       rw [SetLike.mem_coe, RingHom.mem_ker]
       have hC : ∑ l, C (c l) * C (ζ l) = (1 : MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J)) := by
-        rw [← C_1, ← hc, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← C_1, ← hc, map_sum]
         simp only [C_mul]
-      simp only [map_sum, map_mul, hγ, coe_eval₂Hom, eval₂_X, Sum.elim_inl, Sum.elim_inr]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, hγ, coe_eval₂Hom, eval₂_X, Sum.elim_inl, Sum.elim_inr]
       simp only [genSubst, sub_mul, Finset.sum_sub_distrib, mul_assoc, ← Finset.mul_sum, hC, mul_one,
         sub_self]
   set γbar : MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e →+* MvPolynomial (Fin e × Fin n) (MvPolynomial (Fin n) F ⧸ J) :=
@@ -104,7 +112,8 @@ theorem exists_injective (I : Ideal (MvPolynomial (Fin n) F)) [I.IsPrime] (t : F
             (∑ l, X (Sum.inr (im.1, l)) * X (Sum.inl l)) = 0 := by
           rw [Ideal.Quotient.eq_zero_iff_mem]
           exact Ideal.mem_sup_right (Ideal.subset_span ⟨im.1, rfl⟩)
-        simp only [map_sum, map_mul] at h0
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul] at h0
         simp [hβ, hγ, hζ, hc', hq, hχ, genSubst]
         rw [h0, zero_mul]
   have hleft : ∀ x : MvPolynomial (Fin n ⊕ Fin e × Fin n) F ⧸ chartIncIdeal I t e, β (γbar x) = x := by

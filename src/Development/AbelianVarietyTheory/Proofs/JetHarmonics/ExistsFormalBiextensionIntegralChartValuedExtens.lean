@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartFormalBiext
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartFormalBiext
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -9,8 +13,8 @@ noncomputable section
 
 namespace GlobalTheory.CharDepth
 
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ in
 
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ in
 theorem isCanonGauge_mapFB_tower {R : Type} [CommRing R] {d : ℕ} {O : Type} [CommRing O] [StarRing O] {k : Type}
     [CommRing k] [Algebra ℚ k] [Algebra R k] (B : FB R d O) {h : PS k 2 d} {R' : Type} [CommRing R'] [Algebra R' k]
     (φ : R →+* R') (hφ : ∀ x, algebraMap R' k (φ x) = algebraMap R k x) (hh : B.IsCanonGauge k h) :

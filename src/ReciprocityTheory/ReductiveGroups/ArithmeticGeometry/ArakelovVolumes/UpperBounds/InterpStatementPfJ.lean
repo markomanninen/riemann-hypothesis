@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfG
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfG
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.HE
 
@@ -56,7 +60,7 @@ theorem levi_unif (hU : IsOpen U) {g : V n → ℝ} (hg : ContDiffOn ℝ ∞ g U
       (f := fun p : V n × (Fin n → ℂ) => leviV n (fun w => (g w : ℂ)) p.1 p.2) ?_
     show ContinuousOn (fun p : V n × (Fin n → ℂ) => ∑ j, ∑ k,
       wd n j (wdb n k (fun w => (g w : ℂ))) p.1 * p.2 j * (starRingEnd ℂ) (p.2 k)) _
-    refine continuousOn_finset_sum _ fun j _ => continuousOn_finset_sum _ fun k _ => ?_
+    refine continuousOn_finsetSum _ fun j _ => continuousOn_finsetSum _ fun k _ => ?_
     have hw : ContinuousOn
         (fun p : V n × (Fin n → ℂ) => wd n j (wdb n k (fun w => (g w : ℂ))) p.1)
         (K ×ˢ sphere (0 : Fin n → ℂ) 1) :=

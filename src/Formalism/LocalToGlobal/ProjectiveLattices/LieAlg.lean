@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -186,7 +190,7 @@ theorem eig_basis {n m : ℕ} {ι : Type} (L : ι → (Fin n → V) →ₗ[V] (F
     { carrier := {c | ∀ a, L a c = χ a • c}
       add_mem' := fun {c c'} hc hc' a => by
         simp only [Set.mem_setOf_eq] at hc hc' ⊢
-        rw [map_add, hc a, hc' a, smul_add]
+        rw [map_add (f := _), hc a, hc' a, smul_add]
       zero_mem' := fun a => by simp
       smul_mem' := fun r c hc a => by
         simp only [Set.mem_setOf_eq] at hc ⊢

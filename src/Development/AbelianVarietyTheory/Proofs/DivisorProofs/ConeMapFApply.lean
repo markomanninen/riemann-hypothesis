@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex TensorProduct GlobalTheory.EtC
 
 noncomputable section
@@ -15,7 +20,7 @@ def coneD (U : T) (n : ℤ) :
         (φ.app U).f (n + 1) x.1 + (D.obj U).d n (n + 1) x.2)
       map_zero' := by simp
       map_add' := fun x y => by
-        refine Prod.ext ?_ ?_ <;> simp only [Prod.fst_add, Prod.snd_add, map_add, neg_add] <;> abel }
+        refine Prod.ext ?_ ?_ <;> simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), neg_add] <;> abel }
 
 lemma coneD_apply (U : T) (n : ℤ) (x : (C.obj U).X (n + 1) × (D.obj U).X n) :
     coneD φ U n x = (-(C.obj U).d (n + 1) (n + 1 + 1) x.1,
@@ -57,9 +62,6 @@ def coneMap {U V : T} (g : U ⟶ V) : coneObj φ U ⟶ coneObj φ V :=
       · simp [comm_apply]
       · simp [comm_apply, nat_apply])
 
-@[simp] lemma coneMap_f_apply {U V : T} (g : U ⟶ V) (n : ℤ) (x : (coneObj φ U).X n) :
-    (coneMap φ g).f n x = ((C.map g).f (n + 1) x.1, (D.map g).f n x.2) := rfl
-
 def cone : T ⥤ AbCx where
   obj := coneObj φ
   map := coneMap φ
@@ -88,8 +90,8 @@ def coneSnd (n : ℤ) : term (cone φ) n ⟶ term D n where
 
 end GlobalTheory.EtC.ConeEl
 
-open GlobalTheory.EtC.ConeEl in
 
+open GlobalTheory.EtC.ConeEl in
 theorem GlobalTheory.EtC.coneEl_exists : ∀ (T : Type 1) [Category.{0} T] (C D : T ⥤ AbCx) (φ : C ⟶ D), ∃ (K : T ⥤ AbCx) (p : ∀ n : ℤ, term K n ⟶ term C (n + 1)) (q : ∀ n : ℤ, term K n ⟶ term D n), (∀ n U, Function.Bijective (fun x : (K.obj U).X n => ((p n).app U x, (q n).app U x))) ∧ ∀ n U (x : (K.obj U).X n), (p (n + 1)).app U ((K.obj U).d n (n + 1) x) = - (C.obj U).d (n + 1) (n + 1 + 1) ((p n).app U x) ∧ (q (n + 1)).app U ((K.obj U).d n (n + 1) x) = (φ.app U).f (n + 1) ((p n).app U x) + (D.obj U).d n (n + 1) ((q n).app U x) := by
   intro T _ C D φ
   refine ⟨cone φ, coneFst φ, coneSnd φ, fun n U => ?_, fun n U x => ?_⟩

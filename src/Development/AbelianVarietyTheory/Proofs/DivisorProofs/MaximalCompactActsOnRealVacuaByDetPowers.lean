@@ -1,23 +1,27 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ApplyAddInfRat
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.DifferentiableOfChar
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeFinitelyGeneratedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeMultipleMemOpenLevelStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSpanHeisenbergTranslatesOfVacuumStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolutionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryPQContinuousCharacterEqDetPowProdStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ApplyAddInfRat
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddNsmulResidueAssoc
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.DifferentiableOfChar
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeFinitelyGeneratedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeMultipleMemOpenLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSpanHeisenbergTranslatesOfVacuumStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolutionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryPQContinuousCharacterEqDetPowProdStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,11 +43,6 @@ theorem inK_one (θ : InfFam D) (V : HSp D) (s : D.what₂.Tau → Matrix (Fin V
 theorem compAt_mt_mul (θ : InfFam D) (V : HSp D) (τ : D.what₂.Tau) (g g' : GA D V) :
     compAt θ τ (mt V (g * g')) = compAt θ τ (mt V g) * compAt θ τ (mt V g') := by
   rw [GlobalTheory.WeilVacMove.mt_mul, GlobalTheory.WeilVacMove.compAt_mul]
-
-theorem InK.mul {θ : InfFam D} {V : HSp D} {s : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ} {g g' : GA D V}
-    (h : InK θ V s g) (h' : InK θ V s g') : InK θ V s (g * g') :=
-  ⟨mul_mem h.1 h'.1, fun τ => by
-    rw [compAt_mt_mul, ← Matrix.mul_assoc, h.2, Matrix.mul_assoc, h'.2, Matrix.mul_assoc]⟩
 
 theorem real_char {θ : InfFam D} (hθ : IsInfFam θ) (V : HSp D) (s : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ)
     (hs : ∀ τ, IsCartanInv (gramAt D V τ) (s τ)) (c : GA D V → ℂ)
@@ -211,8 +210,8 @@ theorem vac_line (kS : S.SigOK) (kT : T.SigOK) (hS : ∀ τ, IsCartanInv (gramAt
   have c0 : c ≠ 0 := fun e => vac_ne_zero h1 (by rw [e, zero_smul])
   exact ⟨c⁻¹ * u, by rw [mul_smul, ← hu, inv_smul_smul₀ c0]⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem mem_span (kS : S.SigOK) (kT : T.SigOK) (hS : ∀ τ, IsCartanInv (gramAt D S τ) (sS τ))
     (hT : ∀ τ, IsCartanInv (gramAt D T τ) (sT τ)) (dS : IsSelfDualC S ΛS) (dT : IsSelfDualC T ΛT) {f₀ f : WO S T → ℂ}
     (h₀ : IsVacO ψ θ S T sS sT ΛS ΛT f₀) (hf : f ∈ realVac h₀.1 h₀.2.inf fun τ => cplxO (sS τ) (sT τ)) :
@@ -333,7 +332,7 @@ theorem vacuum_char : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam
       rw [hW.om_heis g h _ _ h₀.2.theta, actO_fin hg hh x.2, (hc g h ⟨hg, cS⟩ ⟨hh, cT⟩).2,
         GlobalTheory.SplitScalar.heisO_smul]
     | zero => rw [map_zero, smul_zero]
-    | add a b _ _ ha hb => rw [map_add, ha, hb, smul_add]
+    | add a b _ _ ha hb => rw [map_add (f := _), ha, hb, smul_add]
     | smul r a _ ha => rw [map_smul, ha, smul_comm]
   have e2 := hm 1 h g 1 oS ⟨hh, cT⟩ ⟨hg, cS⟩ oT
   rw [one_mul, mul_one] at e2

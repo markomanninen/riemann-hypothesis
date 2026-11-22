@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+module
+
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -103,7 +107,7 @@ theorem core (hESM : ExistsSingMax) (hCS : CapSing) (hSR : SubRel) (hTW : TopWei
   have hTstab : Stab (subA E) (S' ⊔ O) := by
     intro a b v hv
     obtain ⟨s', hs', t, ht, rfl⟩ := Submodule.mem_sup.1 hv
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hS' a b _ hs') (hO a b _ ht)
 
   have hAnn : (S' ⊔ O).dualAnnihilator ≠ ⊥ := by
@@ -133,7 +137,7 @@ theorem core (hESM : ExistsSingMax) (hCS : CapSing) (hSR : SubRel) (hTW : TopWei
     ext v
     have hv : v ∈ CapSp (subA E) m ⊔ O := by rw [htop]; trivial
     obtain ⟨s, hs, t, ht, rfl⟩ := Submodule.mem_sup.1 hv
-    simp only [LinearMap.dualMap_apply, LinearMap.smul_apply, map_add]
+    simp only [LinearMap.dualMap_apply, LinearMap.smul_apply, map_add (f := _)]
     rw [mem_CapSp.1 hs w, hξA _ (Submodule.mem_sup_right (hOq w t ht)), hξA t (Submodule.mem_sup_right ht)]
     simp
   have hμ : ∀ j, μd j = m j + ((j : ℕ) : ℂ) :=
@@ -160,12 +164,12 @@ theorem core (hESM : ExistsSingMax) (hCS : CapSing) (hSR : SubRel) (hTW : TopWei
 
   obtain ⟨s, hs, t, ht, hst⟩ := Submodule.mem_sup.1 (show x ∈ CapSp (subA E) m ⊔ O by rw [htop]; trivial)
   have hξs : ξ s ≠ 0 := by
-    rw [← hst, map_add, hξA t (Submodule.mem_sup_right ht), add_zero] at ha
+    rw [← hst, map_add (f := _), hξA t (Submodule.mem_sup_right ht), add_zero] at ha
     exact ha
   have hsμ : ∀ c, subA E c c s = (m c + ((c : ℕ) : ℂ)) • s := by
     intro c
     have h1 := hxμ c
-    rw [← hst, map_add, smul_add] at h1
+    rw [← hst, map_add (f := _), smul_add] at h1
     have h2 : subA E c c s - (m c + ((c : ℕ) : ℂ)) • s = -(subA E c c t - (m c + ((c : ℕ) : ℂ)) • t) := by
       rw [eq_neg_iff_add_eq_zero, ← sub_eq_zero.2 h1]
       abel

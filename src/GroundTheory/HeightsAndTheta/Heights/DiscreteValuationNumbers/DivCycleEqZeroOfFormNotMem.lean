@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -22,7 +27,7 @@ theorem divCycle_nonneg (P : Ideal (MRing ι R)) (x : MRing ι R) (W : Ideal (MR
 theorem divCycle_eq_zero_of_form_not_mem (P : Ideal (MRing ι R)) {x : MRing ι R} {W : Ideal (MRing ι R)}
     (hx : x ∉ W) : divCycle P x W = 0 := by
   unfold divCycle
-  rw [dif_neg]
+  rw [dite_eq_right]
   exact fun h => hx (h.1.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self x)))
 
 end
@@ -32,7 +37,7 @@ theorem ExcessPositive.proof : ExcessPositive.Statement.{u} := by
   have hPp : P.IsPrime := hP.multiProj.isPrime
   have hGdef : G ∈ (P ⊔ Ideal.span {s}).minimalPrimes ∧ IsRelevant G := by
     by_contra h
-    exact hsG (by unfold divCycle; rw [dif_neg h])
+    exact hsG (by unfold divCycle; rw [dite_eq_right h])
   have hGp : G.IsPrime := hGdef.1.1.1
   have hPG : P ≤ G := le_sup_left.trans hGdef.1.1.2
   obtain ⟨u, v, huG, huv⟩ := hD.2 G hGp hPG hGdef.2

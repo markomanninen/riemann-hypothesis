@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.Forms Formalism.UG Matrix NumberField IsDedekindDomain
 open scoped InnerProductSpace TensorProduct
@@ -33,11 +37,11 @@ theorem conj_rowAct {n : ℕ} (g : Matrix (Fin n) (Fin n) ℂ) (p : MvPolynomial
         MvPolynomial (Fin n × Fin n) ℂ) = MvPolynomial.C b := fun h b =>
       (Formalism.GradedWeylDivisibility.rowAct ℂ h).commutes b
     rw [h, MvPolynomial.map_C, h]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp, MvPolynomial.map_X]
     congr 1
-    simp [Formalism.GradedWeylDivisibility.rowAct, MvPolynomial.aeval_X]
+    simp [Formalism.GradedWeylDivisibility.rowAct]
 
 theorem fockF_conj {σ : Type} (p q : MvPolynomial σ ℂ) :
     Formalism.REAL.fockF (MvPolynomial.map (starRingEnd ℂ) p) (MvPolynomial.map (starRingEnd ℂ) q) =
@@ -47,26 +51,26 @@ theorem fockF_conj {σ : Type} (p q : MvPolynomial σ ℂ) :
     MvPolynomial.support_map_of_injective _ (starRingEnd ℂ).injective
   unfold Formalism.REAL.fockF
   rw [hs]
-  have h1 : ∑ m ∈ p.support, MvPolynomial.coeff m (MvPolynomial.map (starRingEnd ℂ) p) *
-        star (MvPolynomial.coeff m (MvPolynomial.map (starRingEnd ℂ) q)) *
+  have h1 : ∑ m ∈ p.support, AddMonoidAlgebra.coeff (MvPolynomial.map (starRingEnd ℂ) p) m *
+        star (AddMonoidAlgebra.coeff (MvPolynomial.map (starRingEnd ℂ) q) m) *
         ((∏ k ∈ m.support, (m k).factorial : ℕ) : ℂ) =
-      ∑ m ∈ p.support ∪ q.support, MvPolynomial.coeff m q * star (MvPolynomial.coeff m p) *
+      ∑ m ∈ p.support ∪ q.support, AddMonoidAlgebra.coeff q m * star (AddMonoidAlgebra.coeff p m) *
         ((∏ k ∈ m.support, (m k).factorial : ℕ) : ℂ) := by
     refine Finset.sum_subset_zero_on_sdiff Finset.subset_union_left ?_ ?_
     · intro m hm
-      have : MvPolynomial.coeff m p = 0 := by
+      have : AddMonoidAlgebra.coeff p m = 0 := by
         simpa using (Finset.mem_sdiff.1 hm).2
       simp [this]
     · intro m _
       simp only [MvPolynomial.coeff_map]
       simp [mul_comm]
-  have h2 : ∑ m ∈ q.support, MvPolynomial.coeff m q * star (MvPolynomial.coeff m p) *
+  have h2 : ∑ m ∈ q.support, AddMonoidAlgebra.coeff q m * star (AddMonoidAlgebra.coeff p m) *
         ((∏ k ∈ m.support, (m k).factorial : ℕ) : ℂ) =
-      ∑ m ∈ p.support ∪ q.support, MvPolynomial.coeff m q * star (MvPolynomial.coeff m p) *
+      ∑ m ∈ p.support ∪ q.support, AddMonoidAlgebra.coeff q m * star (AddMonoidAlgebra.coeff p m) *
         ((∏ k ∈ m.support, (m k).factorial : ℕ) : ℂ) := by
     refine Finset.sum_subset_zero_on_sdiff Finset.subset_union_right ?_ (fun _ _ => rfl)
     intro m hm
-    have : MvPolynomial.coeff m q = 0 := by
+    have : AddMonoidAlgebra.coeff q m = 0 := by
       simpa using (Finset.mem_sdiff.1 hm).2
     simp [this]
   rw [h1, h2]

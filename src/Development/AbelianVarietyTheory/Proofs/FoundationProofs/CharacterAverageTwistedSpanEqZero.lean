@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel GlobalTheory.PsType
 
 namespace GlobalTheory.PsType
@@ -115,7 +120,8 @@ theorem aug_avg_zero : ∀ (G V : Type) [Group G] [TopologicalSpace G] [IsTopolo
       rw [this, Finset.smul_sum, sub_eq_zero]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [smul_comm]
-    simp only [map_sum, map_smul, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.smul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_eq_zero fun i _ => ?_
     have hc : ∀ q, (θ (s q : G))⁻¹ • c i • π (s q : G) (g i : V) =

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.WRWeyl
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.WRPres
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AlgebraSmulCommClassComplex
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.WRWeyl
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.WRPres
+public import Mathlib
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff Topology

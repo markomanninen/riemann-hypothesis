@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.QuadraticRingOfIntegersMulMemSpanOneGen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.QuadraticRingOfIntegersMulMemSpanOneGen
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -67,7 +72,7 @@ private theorem exists_integral_generator_common_denom_of_finrank_two
     { carrier := {z | ∃ u v : 𝓞 F, z = algebraMap (𝓞 F) (𝓞 E) u + algebraMap (𝓞 F) (𝓞 E) v * θ}
       add_mem' := by
         rintro _ _ ⟨u, v, rfl⟩ ⟨u', v', rfl⟩
-        exact ⟨u + u', v + v', by simp only [map_add]; ring⟩
+        exact ⟨u + u', v + v', by simp only [map_add (f := _)]; ring⟩
       zero_mem' := ⟨0, 0, by simp⟩
       smul_mem' := by
         rintro c _ ⟨u, v, rfl⟩
@@ -94,8 +99,8 @@ private theorem exists_integral_generator_common_denom_of_finrank_two
   obtain ⟨u, v, huv⟩ := hall y
   exact ⟨u, v, huv⟩
 
-open NumberField in
 
+open NumberField in
 theorem _root_.GlobalTheory.quadratic_exists_integral_generator_common_denominator :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
       [Algebra.IsQuadraticExtension F E], ∃ θ : 𝓞 E, (θ : E) ∉ Set.range (algebraMap F E) ∧

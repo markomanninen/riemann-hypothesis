@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegrableMulInner
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegrableMulInner
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.CompanionTheory.UnitaryFramesMetricPeriods GlobalTheory.CompanionTheory.RgHeA
 open scoped InnerProductSpace ComplexConjugate
 
@@ -17,7 +22,7 @@ theorem isInvInvariant_of_right_haar {G : Type} [Group G] [TopologicalSpace G]
   have hsq : μ = (c * c) • μ := by
     calc μ = μ.inv.inv := (Measure.inv_inv μ).symm
       _ = (c • μ).inv := by rw [hc]
-      _ = c • μ.inv := by rw [Measure.inv_def, Measure.inv_def, Measure.map_smul]
+      _ = c • μ.inv := by rw [Measure.inv_def, Measure.inv_def, Measure.map_smul c measurable_inv.aemeasurable]
       _ = (c * c) • μ := by rw [hc, smul_smul]
   let K := Classical.arbitrary (TopologicalSpace.PositiveCompacts G)
   have hpos : μ K ≠ 0 := (Measure.measure_pos_of_nonempty_interior μ K.interior_nonempty).ne'

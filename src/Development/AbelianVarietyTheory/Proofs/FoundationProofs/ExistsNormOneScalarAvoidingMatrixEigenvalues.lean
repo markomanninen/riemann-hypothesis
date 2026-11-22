@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -43,7 +48,7 @@ theorem exists_of_anti {E : Type} [Field E] [CharZero E] (c : E →+* E) (s : E)
   refine ⟨f k, ?_, ?_, ?_⟩
   · have h1 := hm k
     have h2 := hp k
-    simp only [f, map_div₀, map_add, map_sub, map_natCast, map_one, hc, sub_neg_eq_add, ← sub_eq_add_neg]
+    simp only [f, map_div₀, map_add (f := _), map_sub, map_natCast, map_one, hc, sub_neg_eq_add, ← sub_eq_add_neg]
     field_simp
   · intro h
     have h' := (div_eq_one_iff_eq (hm k)).1 h

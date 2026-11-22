@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
+module
+
+public import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,12 +29,12 @@ def wtOf (D : D7) (V : HSp D) (τ : D.what₂.Tau) : Fin (V.sig (tauE D τ)).1 �
 private theorem lamAt_eq_v_of_lt {R : Ranks} (h : HCParam R) {n : ℕ} (hn : n < R.k - 1) :
     lamAt h n = h.v ⟨n, hn⟩ := by
   unfold lamAt
-  rw [dif_pos hn]
+  rw [dite_eq_left hn]
 
 private theorem lamAt_eq_neg_b_of_not_lt {R : Ranks} (h : HCParam R) {n : ℕ} (hn : ¬ n < R.k - 1)
     (hm : n - (R.k - 1) < R.m) : lamAt h n = -h.b ⟨n - (R.k - 1), hm⟩ := by
   unfold lamAt
-  rw [dif_neg hn, dif_pos hm]
+  rw [dite_eq_right hn, dite_eq_left hm]
 
 theorem lamAt_int {R : Ranks} (h : HCParam R) (n : ℕ) : ∃ z : ℤ, lamAt h n = z := by
   by_cases hn : n < R.k - 1
@@ -42,7 +46,7 @@ theorem lamAt_int {R : Ranks} (h : HCParam R) (n : ℕ) : ∃ z : ℤ, lamAt h n
       exact ⟨-z, by rw [hz, Int.cast_neg]⟩
     · refine ⟨0, ?_⟩
       unfold lamAt
-      rw [dif_neg hn, dif_neg hm, Int.cast_zero]
+      rw [dite_eq_right hn, dite_eq_right hm, Int.cast_zero]
 
 private theorem b_congr {R : Ranks} (h : HCParam R) {i j : ℕ} (hi : i < R.m) (hj : j < R.m) (e : i = j) :
     h.b ⟨i, hi⟩ = h.b ⟨j, hj⟩ := by

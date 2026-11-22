@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.LocalRingCardinality.DataDIV
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.LocalRingCardinality.DataDIV
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,8 +121,8 @@ def JumpsAt (T : Lat K LL) (a : ZMod (Module.finrank ℚ_[l] ↥(K0 K))) (S : Se
 def JumpsLet (T : Lat K LL) (Mi hi : ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → ℕ) : Prop :=
   ∀ a, JumpsAt W T a (Set.Icc (-(Mi a : ℤ)) (hi a))
 
-open Classical in
 
+open Classical in
 def lowCount [Fintype (↥K.1 →ₐ[ℚ_[l]] ↥LL.1)] (T : Lat K LL) (a : ZMod (Module.finrank ℚ_[l] ↥(K0 K)))
     (η : ℕ) : ℤ :=
   ∑ τ ∈ Finset.univ.filter (fun τ => Over W τ a), ∑ u ∈ Finset.Icc (-(η : ℤ)) η, multV (P.PD K) T.ρ τ u
@@ -172,15 +176,8 @@ def Enl.loc {k : ℕ} (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i)) :
     Br.G D.nbr i w hw →* Matrix (Fin k) (Fin k) ↥C.LL.1 :=
   mapM C.inc (Br.loc D.nbr i w hw M)
 
-def Enl.base : D.host.E →+* ↥C.LL.1 :=
-  C.inc.comp ((Br.toLLK (D.nbr i w hw)).comp ((D.nd.embK i).comp D.embE))
-
 variable (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i)))
   (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) (π : D.nd.X i)
-
-def Enl.Input (ε : ℤˣ) : Prop :=
-  JumpIn (D.loc (D.nd.l i)) (K := (D.nbr i w hw).Kw) D (liftIdx D i) ε (Br.cEw D.nbr i w hw) C.base
-    (fun x => C.loc (rDuO D.nd i r x)) (C.loc (T2O D.nd i ρ π))
 
 def Enl.WordBase (L : SizeData₂ D) (HW : HWOf D.loc) (hG : Good (D.nbr i w hw).Kw 1 C.LL)
     (Wd : NWord (Module.finrank ℚ_[D.nd.l i] ↥(K0 (D.nbr i w hw).Kw))) : Prop :=
@@ -223,20 +220,5 @@ def IsRowB {D : D7} (L : SizeData₂ D) (p : ℕ) : Prop :=
 theorem IsRowB.lt_orderOf {D : D7} {L : SizeData₂ D} {p : ℕ} (h : IsRowB L p) :
     4 * D.host.Lw < orderOf (DV.frobG D p).2 :=
   h.2.trans_le (Nat.le_of_dvd (orderOf_pos _) (orderOf_map_dvd _ _))
-
-def HalfB {D : D7} (L : SizeData₂ D) (HW : HWOf D.loc) (C₂ : ℝ) : Prop :=
-  ∀ (i : D.nd.Loc), InertUnr D (D.nd.l i) → IsRowB L (D.nd.l i) →
-  ∀ (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i)),
-    (D.nbr i w hw).Kw.1 ≤ MaximalUnramifiedExtension (D.nd.l i) ∧
-    ∀ (C : Enl D i w hw) (hG : Good (D.nbr i w hw).Kw 1 C.LL) r ρ π (ε : ℤˣ), C.Input r ρ π ε →
-      ∃ Wd, C.WordBase r ρ π L HW hG Wd ∧ WordsB L (D.nd.l i) C₂ Wd
-
-def HalfCD {D : D7} (L : SizeData₂ D) (HW : HWOf D.loc) : Prop :=
-  ∀ (i : D.nd.Loc), InertUnr D (D.nd.l i) →
-  ∀ (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i)),
-    (D.nbr i w hw).Kw.1 ≤ MaximalUnramifiedExtension (D.nd.l i) ∧
-    ∀ (C : Enl D i w hw) (hG : Good (D.nbr i w hw).Kw 1 C.LL) r ρ π (ε : ℤˣ), C.Input r ρ π ε →
-      ∃ Wd, C.WordBase r ρ π L HW hG Wd ∧ WordBox L Wd ∧
-        11 ≤ D.nd.l i ∧ (WordsNT Wd ∨ ∃ d, WordsAT (D.nd.l i) Wd d)
 
 end GlobalTheory.HTW.Rec

@@ -1,17 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.LocalRingCardinality.Params
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralImagQuadraticHalfInt
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.LocalRingCardinality.Params
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralImagQuadraticHalfInt
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.IntegralClosureCriterionSecond.be :
     Formalism.BasicNotions.D7 → ℂ :=
     fun (D : Formalism.BasicNotions.D7) ↦ Complex.I * (↑√(↑D.host.d : ℝ) : ℂ)
-
-theorem UpperTheory.Reformulated.B.IntegralClosureCriterionSecond.aux2 :
-    ((1 : ℕ) + (1 : ℕ)).AtLeastTwo := by
-  exact ⟨le_rfl⟩
 
 noncomputable def UpperTheory.Reformulated.B.IntegralClosureCriterionSecond.OKc :
     Formalism.BasicNotions.D7 → ℂ → Prop :=
@@ -29,4 +29,4 @@ theorem UpperTheory.Reformulated.B.IntegralClosureCriterionSecond.okc_of :
     D.host.sqd_sq _ (u : D.host.K).2 hint
   have hs : D.host.φ₀ D.host.sqd = UpperTheory.Reformulated.B.IntegralClosureCriterionSecond.be D := D.host.φ₀_mem
   refine ⟨x, y, hxy, ?_⟩
-  rw [hz, map_div₀, map_add, map_mul, map_intCast, map_intCast, hs, map_ofNat]
+  rw [hz, map_div₀, map_add (f := _), map_mul, map_intCast, map_intCast, hs, map_ofNat]

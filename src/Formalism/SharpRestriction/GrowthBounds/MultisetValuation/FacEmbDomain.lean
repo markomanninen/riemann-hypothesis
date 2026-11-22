@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EnGePProdRat
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EnGePProdRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,6 +76,7 @@ theorem en_mapP_PIvS (j : ℕ) (I : X.ColCh j) (i0 : X.Pl → ℕ) (v : X.Pl) :
   refine Finset.prod_congr rfl fun s _ => Finset.prod_congr rfl fun c _ => ?_
   congr 2
   ext i i'
-  simp [Matrix.of_apply, map_sum, RingHom.mapMatrix_apply, AlgHom.mapMatrix_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.of_apply, map_sum, RingHom.mapMatrix_apply, AlgHom.mapMatrix_apply]
 
 end Formalism.MainNotions.FormalGroupSystem.Pf

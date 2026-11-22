@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CoveringRadiusStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Transference
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.BabaiCovering
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ConjugateConjugate
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CoveringRadiusStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Transference
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.BabaiCovering
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ConjugateConjugate
+
+@[expose] public section
 
 namespace GlobalTheory.CMTransference
 
@@ -32,7 +36,8 @@ theorem exists_short_family {V : Type*} [NormedAddCommGroup V] [InnerProductSpac
     intro x hx hx0
     obtain ⟨c, rfl⟩ := (mem_span_range_iff_exists_fun ℤ).1 hx
     have hw : (∑ i, c i • B' i) = φ (∑ i, c i • bd (e.symm i)) := by
-      simp [hB', map_sum, map_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [hB', map_sum, map_zsmul]
     have hwmem : (∑ i, c i • bd (e.symm i)) ∈ span ℤ (Set.range bd) :=
       sum_mem fun i _ => zsmul_mem (subset_span (Set.mem_range_self _)) _
     rw [hw, LinearIsometryEquiv.norm_map]
@@ -73,8 +78,8 @@ section CMType
 
 variable {K : Type} [Field K] [NumberField K] {ι : Type} [Fintype ι] {σ : ι → K →+* ℂ}
 
-omit [NumberField K] [Fintype ι] in
 
+omit [NumberField K] [Fintype ι] in
 theorem sumElim_bijective (hσ : Function.Injective σ)
     (hcm : ∀ τ : K →+* ℂ, (∃ i, σ i = τ) ↔ ¬ ∃ i, σ i = ComplexEmbedding.conjugate τ) :
     Function.Bijective (Sum.elim σ fun i => ComplexEmbedding.conjugate (σ i)) := by
@@ -193,10 +198,10 @@ theorem h_smul_right (S : HermForm K r) (a : K) (x y : Fin r → K) :
 
 noncomputable def traceForm (S : HermForm K r) : LinearMap.BilinForm ℚ (Fin r → K) :=
   LinearMap.mk₂ ℚ (fun x y => Algebra.trace ℚ K (S.h x y))
-    (fun x x' y => by rw [h_add_left, map_add])
+    (fun x x' y => by rw [h_add_left, map_add (f := _)])
     (fun q x y => by
       rw [← algebraMap_smul K q x, h_smul_left, ← map_smul, Algebra.smul_def]; simp)
-    (fun x y y' => by rw [h_add_right, map_add])
+    (fun x y y' => by rw [h_add_right, map_add (f := _)])
     (fun q x y => by
       rw [← algebraMap_smul K q y, h_smul_right, ← map_smul, Algebra.smul_def])
 
@@ -347,14 +352,16 @@ theorem cmApproximation_transference : ReciprocityTheory.ChartRestriction.G.FD.C
     obtain ⟨c, rfl⟩ := (mem_span_range_iff_exists_fun ℤ).1 hx
     refine ⟨∑ i, c i • b i, (hb _).2
       (sum_mem fun i _ => zsmul_mem (subset_span (Set.mem_range_self i)) _), ?_⟩
-    simp only [map_sum, map_zsmul, hB]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, hB]
   have hlam : 0 < 2 * la / d := by positivity
   have hmin' : ∀ x ∈ span ℤ (Set.range fun j => embDual p σ Q (b' j)), x ≠ 0 →
       2 * la / d ≤ ‖x‖ := by
     intro x hx hx0
     obtain ⟨c, rfl⟩ := (mem_span_range_iff_exists_fun ℤ).1 hx
     have hw : ∑ i, c i • embDual p σ Q (b' i) = embDual p σ Q (∑ i, c i • b' i) := by
-      simp only [map_sum, map_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul]
     rw [hw] at hx0 ⊢
     have h1 := hdual (∑ i, c i • b' i) (fun h => hx0 (by rw [h, map_zero])) (by
       intro y hy
@@ -362,7 +369,8 @@ theorem cmApproximation_transference : ReciprocityTheory.ChartRestriction.G.FD.C
       refine ⟨∑ i, c i * e i, ?_⟩
       have hbb : ∀ i j, traceForm S (b' i) (b j) = if j = i then 1 else 0 :=
         LinearMap.BilinForm.apply_dualBasis_left hnd b
-      simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, hbb]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, hbb]
       simp [mul_comm])
     refine (pow_le_pow_iff_left₀ hlam.le (norm_nonneg _) two_ne_zero).1 ?_
     rw [norm_embDual_sq, div_pow, div_le_iff₀ (by positivity)]

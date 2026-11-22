@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLengthEqAndCardEqPowOfIsFiniteLength
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumSublatticeIndexRpowLeSolomonStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLengthEqAndCardEqPowOfIsFiniteLength
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumSublatticeIndexRpowLeSolomonStatement
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace BigOperators
@@ -87,10 +91,10 @@ variable (O K : Type) [CommRing O] [IsDomain O] [Field K] [Algebra O K] [IsFract
 noncomputable def incl (r : ℕ) : (Fin r → O) →ₗ[O] (Fin r → K) :=
   LinearMap.compLeft (Algebra.linearMap O K) (Fin r)
 
-abbrev stdLat (r : ℕ) : Submodule O (Fin r → K) :=
+noncomputable abbrev stdLat (r : ℕ) : Submodule O (Fin r → K) :=
   Submodule.span O (Set.range (Pi.basisFun K (Fin r)))
 
-abbrev lat (X : Matrix (Fin r) (Fin r) K) : Submodule O (Fin r → K) :=
+noncomputable abbrev lat (X : Matrix (Fin r) (Fin r) K) : Submodule O (Fin r → K) :=
   (stdLat O K r).map ((X.mulVecLin).restrictScalars O)
 
 variable {O K}
@@ -259,8 +263,8 @@ section Final
 variable {O K : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
   [Field K] [Algebra O K] [IsFractionRing O K] {r : ℕ}
 
-omit [IsDiscreteValuationRing O] in
 
+omit [IsDiscreteValuationRing O] in
 theorem lat_le_of_range_transpose_le (B : Matrix (Fin r) (Fin r) O) (hB : B.det ≠ 0)
     (g₀ g₁ : GL (Fin r) K) (A₀ A₁ : Matrix (Fin r) (Fin r) O)
     (h₀ : A₀.map (algebraMap O K) =

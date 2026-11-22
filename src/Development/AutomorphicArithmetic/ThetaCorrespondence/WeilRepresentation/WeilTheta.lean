@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilThetaConvergenceOfSiegelSet
-import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.SiegelSetUnitaryHolds
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilThetaConvergenceOfSiegelSet
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.SiegelSetUnitaryHolds
+
+@[expose] public section
 
 namespace UpperTheory.Lit
 

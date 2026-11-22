@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClFin
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.CA ReciprocityTheory.CA
 
@@ -15,7 +19,7 @@ private theorem base_change_residue_surjective (O' R T : Type) [CommRing O'] [Is
     rw [Ideal.mem_comap, Ideal.jacobson, Submodule.mem_sInf]
     rintro P ⟨-, hP⟩
     have h1 : Ideal.comap (algebraMap R T) P = maximalIdeal R :=
-      IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := R) P)
+      IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := R) P)
     rw [← Ideal.mem_comap, h1]
     exact hr
   haveI : Nontrivial T := by
@@ -115,7 +119,7 @@ theorem UpperTheory.V.CA.cl_bc :
       refine ⟨a + b, ?_⟩
       have e3 : x + y - algebraMap O' (TensorProduct O O' R) (a + b) =
           (x - algebraMap O' (TensorProduct O O' R) a) + (y - algebraMap O' (TensorProduct O O' R) b) := by
-        rw [map_add]
+        rw [map_add (f := _)]
         ring
       rw [e3]
       exact add_mem ha hb

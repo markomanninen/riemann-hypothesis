@@ -1,21 +1,31 @@
-import Formalism.SharpRestriction.SmoothDesignExistence.ProvedFamilyStatementClosed
-import Formalism.SharpRestriction.GrowthBounds.AdmissibleIntegers
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSab
-import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.OrbitAdmissibleOfSplitBound
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.SharpRestriction.GrowthBounds.JointsTw
-import Formalism.SharpRestriction.Divisibility.ChainOperators.GenericFramesLetters
-import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.UniformBoundAllData
-import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.LogbAddOneNonneg
-import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.LocalBoundElevenComparison
-import Formalism.SharpRestriction.Divisibility.ChainOperators.OrbitEntryBounds
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SzConstantTerm
-import Formalism.PeriodIntegrals.SzCt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SzEatI
-import Formalism.PeriodIntegrals.SzEatI
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PrimeLogOverP
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.SixteenLeMulOfStdOfHypOfHyp0
-import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLm
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.AdmissibleFamilyNoKernel
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PrvAndKernelCommutationUpToUnitsOfRests
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.StmtNumFEx
+public import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
+public import Formalism.SharpRestriction.GrowthBounds.JointsLit
+public import Formalism.SharpRestriction.SmoothDesignExistence.AdmissibleTopsMertens
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.DivisionRationalLattice
+public import Formalism.SharpRestriction.GrowthBounds.AdmissibleIntegers
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSab
+public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.OrbitAdmissibleOfSplitBound
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.SharpRestriction.GrowthBounds.JointsTw
+public import Formalism.SharpRestriction.Divisibility.ChainOperators.GenericFramesLetters
+public import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.UniformBoundAllData
+public import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
+public import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.LocalBoundElevenComparison
+public import Formalism.SharpRestriction.Divisibility.ChainOperators.OrbitEntryBounds
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SzConstantTerm
+public import Formalism.PeriodIntegrals.SzCt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SzEatI
+public import Formalism.PeriodIntegrals.SzEatI
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PrimeLogOverP
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.SixteenLeMulOfStdOfHypOfHyp0
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLm
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,8 +121,8 @@ theorem num_re {D : D7} {L : SizeData₂ D} {X : Inst D L} {Y : LatInst D} {K : 
 
 end Re
 
-open Classical in
 
+open Classical in
 def SysTw (D : D7) (L : SizeData₂ D) (X : G.Inst D L) (K : G.Consts) (Dx : DivX D) {Y : G.LatInst D} (W : WeilJacquetShalikaLaw.TwLoc D Y)
     (lev : LevelData D) (Xe : ErrX D) (ce : ErrC) (sp : ℝ) : Prop :=
   ErrDefs D L Xe lev K ce → ∀ μ, DV.Used D μ → ∀ (hT : GatTies D), G.LatTied hT X (W.Yt μ) →

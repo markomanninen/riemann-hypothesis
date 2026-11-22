@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 open TensorProduct
 
@@ -12,8 +17,8 @@ namespace GlobalTheory.SurjTens
 
 variable {O σ ι : Type} [CommRing O]
 
-open Classical in
 
+open Classical in
 def pushVars (j : σ → ι) (f : MvPowerSeries σ O) : MvPowerSeries ι O :=
   fun β => if h : ∃ α : σ →₀ ℕ, Finsupp.mapDomain j α = β then coeff h.choose f else 0
 
@@ -22,21 +27,21 @@ theorem coeff_pushVars_mapDomain {j : σ → ι} (hj : Function.Injective j) (f 
   have h : ∃ α' : σ →₀ ℕ, Finsupp.mapDomain j α' = Finsupp.mapDomain j α := ⟨α, rfl⟩
   rw [coeff_apply]
   unfold pushVars
-  rw [dif_pos h, Finsupp.mapDomain_injective hj h.choose_spec]
+  rw [dite_eq_left h, Finsupp.mapDomain_injective hj h.choose_spec]
 
 theorem coeff_pushVars_of_not {j : σ → ι} (f : MvPowerSeries σ O) (β : ι →₀ ℕ)
     (h : ¬∃ α : σ →₀ ℕ, Finsupp.mapDomain j α = β) : coeff β (pushVars j f) = 0 := by
   rw [coeff_apply]
   unfold pushVars
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 theorem pushVars_add {j : σ → ι} (hj : Function.Injective j) (f g : MvPowerSeries σ O) :
     pushVars j (f + g) = pushVars j f + pushVars j g := by
   ext β
   by_cases h : ∃ α : σ →₀ ℕ, Finsupp.mapDomain j α = β
   · obtain ⟨α, rfl⟩ := h
-    simp only [map_add, coeff_pushVars_mapDomain hj]
-  · simp only [map_add, coeff_pushVars_of_not _ _ h, add_zero]
+    simp only [map_add (f := _), coeff_pushVars_mapDomain hj]
+  · simp only [map_add (f := _), coeff_pushVars_of_not _ _ h, add_zero]
 
 theorem pushVars_monomial {j : σ → ι} (hj : Function.Injective j) (α : σ →₀ ℕ) (c : O) :
     pushVars j (monomial α c) = monomial (Finsupp.mapDomain j α) c := by
@@ -57,7 +62,7 @@ theorem pushVars_coe {j : σ → ι} (hj : Function.Injective j) (P : MvPolynomi
     rw [MvPolynomial.coe_monomial, MvPolynomial.rename_monomial, MvPolynomial.coe_monomial,
       pushVars_monomial hj]
   | add P Q hP hQ =>
-    rw [MvPolynomial.coe_add, pushVars_add hj, hP, hQ, map_add, MvPolynomial.coe_add]
+    rw [MvPolynomial.coe_add, pushVars_add hj, hP, hQ, map_add (f := _), MvPolynomial.coe_add]
 
 theorem eval_coe {R A κ : Type} [CommRing R] [CommRing A] [Algebra R A] (z : κ → A)
     (E : MvPowerSeries κ R →ₐ[R] A) (hE : ∀ i, E (X i) = z i) (P : MvPolynomial κ R) :
@@ -118,7 +123,7 @@ theorem exists_eval_pushVars (p : ℕ) {A C : Type} [CommRing A] [CommRing C] [A
     simpa only [map_pow, map_natCast] using this
   have hf : f = g + (P : MvPowerSeries σ O) := by simp [g]
   have key : E (pushVars j f) - φ (evA f) = E (pushVars j g) - φ (evA g) := by
-    rw [hf, pushVars_add hj, map_add, map_add, map_add, hpoly P]
+    rw [hf, pushVars_add hj, map_add (f := _), map_add (f := _), map_add (f := _), hpoly P]
     ring
   rw [key]
   exact dvd_sub hgE hgφ

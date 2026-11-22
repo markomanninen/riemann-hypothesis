@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -122,7 +126,8 @@ theorem stPull : StPull := by
       rw [hker J hJ]
       exact iInf₂_le (J PUnit.unit) ((GlobalTheory.LB.pull_U i J).le hJ)
   · intro u su hc J
-    rw [hf, hc (J PUnit.unit), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf, hc (J PUnit.unit), map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, ← algX_comp, hf]
 

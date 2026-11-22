@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
-import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Development.AutomorphicArithmetic.ResidueCharacters.NumParameters
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Development.AutomorphicArithmetic.ResidueCharacters.NumParameters
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem placesOver_finite (E : Type) [Field E] [NumberField E] {l : ℕ} (hl : l
 theorem nLam_pos (D : D7) (lam : HeightOneSpectrum (𝓞 D.host.E)) : 1 ≤ locDeg D.host.E lam := by
   unfold Formalism.MainNotions.N.locDeg
   have := lam.isPrime
-  have h1 := Ideal.ramificationIdx_pos lam.asIdeal ℤ
+  have h1 := Ideal.ramificationIdx_pos (R := ℤ) lam.asIdeal
   have h2 := Ideal.inertiaDeg_pos lam.asIdeal ℤ
   exact Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero h1.ne' h2.ne')
 
@@ -112,6 +116,7 @@ theorem vdel_le (i : D.nd.Loc) {Λ : ℝ} (h : (D.nd.s0 i : ℝ) + 1 ≤ Λ) : (
   have := D.nd.lPrime i
   have h1 := LargeLevelLemmas.vdel_le i
   have hv : (padicValNat (D.nd.l i) D.R.t.factorial : ℚ) ≤ D.R.t := by
+    rw [Nat.padicValNat_def]
     exact_mod_cast padicValNat_factorial_le (D.nd.l i) D.R.t
   have h2 : D.nd.vdel i ≤ (D.R.t : ℚ) * ((D.nd.s0 i : ℚ) + 1) := by linarith
   have h3 : (D.nd.vdel i : ℝ) ≤ (D.R.t : ℝ) * ((D.nd.s0 i : ℝ) + 1) := by exact_mod_cast h2

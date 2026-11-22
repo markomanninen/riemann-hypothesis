@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DifferentiableAtOfSmooth
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DifferentiableAtOfSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -164,7 +168,7 @@ theorem D_single (hs : ∀ (r : ℝ) X, D ((r : ℂ) • X) = (r : ℂ) • D X)
     rw [Matrix.smul_single, Matrix.smul_single, Matrix.smul_single, ← Matrix.single_add]
     congr 1
     apply Complex.ext <;> simp
-  rw [e, map_add, hs, hs]
+  rw [e, map_add (f := _), hs, hs]
   simp only [Tc, TX, eps, if_true, Bool.false_eq_true, if_false]
   have hz : z = (z.re : ℂ) + (z.im : ℂ) * Complex.I := (Complex.re_add_im z).symm
   have hc : conj z = (z.re : ℂ) - (z.im : ℂ) * Complex.I := by
@@ -181,7 +185,8 @@ theorem D_single (hs : ∀ (r : ℝ) X, D ((r : ℂ) • X) = (r : ℂ) • D X)
 theorem D_expand (hs : ∀ (r : ℝ) X, D ((r : ℂ) • X) = (r : ℂ) • D X) (X : Mat n) :
     D X = ∑ a, ∑ b, (X a b • Tc D true a b + conj (X a b) • Tc D false a b) := by
   conv_lhs => rw [Matrix.matrix_eq_sum_single X]
-  simp only [map_sum, D_single hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, D_single hs]
 
 theorem TX_expand (hs : ∀ (r : ℝ) X, D ((r : ℂ) • X) = (r : ℂ) • D X) (s : Bool) (X : Mat n) :
     TX D s X = ∑ a, ∑ b, cs s (X a b) • Tc D s a b := by

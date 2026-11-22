@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -43,8 +48,8 @@ theorem integral_hasSum_eq_integral_indicator_hasSum :
     · funext x; simp [Set.indicator_of_mem hp, hp]
     · funext x; simp [Set.indicator_of_notMem hp, hp]
   rw [integral_congr_ae hKae, integral_congr_ae hKpae,
-    integral_finset_sum s (fun i _ => hk i),
-    integral_finset_sum s (fun i _ => by
+    MeasureTheory.integral_finsetSum s (fun i _ => hk i),
+    MeasureTheory.integral_finsetSum s (fun i _ => by
       rw [hind i]; split_ifs
       · exact hk i
       · exact integrable_zero _ _ _)]

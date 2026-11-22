@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestBlockForm
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.BlockFG
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.MapFloorMono
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DegSplit
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestBlockForm
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.BlockFG
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.MapFloorMono
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DegSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ def letterOf (X : Loc) (j : Fin (numSeg X.TT)) (a : Fin (2 * segS X.TT j + 1 + 1
   if h : (a : ℕ) < 2 * segS X.TT j then (topOdd X j ⟨(a : ℕ) / 2, by omega⟩, decide ((a : ℕ) % 2 = 0))
   else (topEnd X j, decide ((a : ℕ) = 2 * segS X.TT j))
 
-open Classical in
 
+open Classical in
 def lamW (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (x : X.TT × Bool) : BV C0 CE1 CE2 X j → ℕ :=
   fun v => if (symVar C0 CE1 CE2 X j v).1 = x then 1 else 0
 

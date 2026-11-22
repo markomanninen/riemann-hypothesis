@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtProps
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.BocksteinSheafHomotopy.SheafSumLemmas
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtProps
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.BocksteinSheafHomotopy.SheafSumLemmas
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -40,8 +44,8 @@ theorem ev_pull_sch {X Y : Scheme.{0}} {I : GlobalTheory.EtC.Cx R} {n : ℤ} (f 
 
 end WeightedPowerFormIntegrability
 
-open WeightedPowerFormIntegrability in
 
+open WeightedPowerFormIntegrability in
 theorem sum : SumInputFromFormal := by
   intro hF R _ F X r Y j hj n
   have hS := hF.et.sch

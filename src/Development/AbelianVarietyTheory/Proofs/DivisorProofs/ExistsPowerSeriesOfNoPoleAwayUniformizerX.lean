@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped LaurentSeries
 
@@ -33,9 +37,9 @@ private lemma prime_C_powerSeries {A : Type} [CommRing A] [IsDomain A] {ϖ : A} 
     rw [C_dvd_iff_map_mk_eq_zero, map_mul] at h
     exact mul_eq_zero.mp h
 
+
 open scoped LaurentSeries in
 open PowerSeries in
-
 theorem _root_.GlobalTheory.PowerSeriesNoPole.exists_eq_algebraMap (A : Type) [CommRing A] [IsDomain A]
     [IsDiscreteValuationRing A]
     (ϖ : A) (hϖ : Irreducible ϖ) (k : A →+* ℂ) (hk : Function.Injective k)

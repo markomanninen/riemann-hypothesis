@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.ASSmall
 
@@ -24,7 +28,8 @@ theorem coord_pow_eq_zero (f : Perfection R p) {K : ℕ}
 
 theorem neg_sum_pow_p (s : Finset ℕ) (g : ℕ → R) :
     (-∑ n ∈ s, g n) ^ p = -∑ n ∈ s, g n ^ p := by
-  rw [← frobenius_def, map_neg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← frobenius_def, map_neg, map_sum]
   simp only [frobenius_def]
 
 theorem sum_stable (f : Perfection R p) {K : ℕ}

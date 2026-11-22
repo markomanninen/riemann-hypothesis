@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.ContrEqOfSubset
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.IntegrableRpowGauss
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.ContrEqOfSubset
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.IntegrableRpowGauss
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,9 +41,9 @@ theorem pderiv_fock (c : ℝ) (hc : 0 < c) (k : Fin m × Fin n × Bool) (p : PX 
   obtain ⟨hL, -, hX⟩ := hB m n c hc
   induction p using MvPolynomial.induction_on with
   | C r => rw [fock_C, pderiv_C, pderiv_C, hL.map_zero, smul_zero]
-  | add p q hp hq => rw [hL.map_add, map_add, hp, hq, map_add, hL.map_add, smul_add]
+  | add p q hp hq => rw [hL.map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), hL.map_add (f := _), smul_add]
   | mul_X p j hp =>
-    rw [mul_comm, hX, pderiv_cr, hp, map_smul, pderiv_mul, pderiv_X, hL.map_add, hX, Pi.single_apply]
+    rw [mul_comm, hX, pderiv_cr, hp, map_smul, pderiv_mul, pderiv_X, hL.map_add (f := _), hX, Pi.single_apply]
     by_cases h : k = flip j
     · have h' : j = flip k := by rw [h, flip_flip]
       rw [if_pos h, if_pos h', one_mul, smul_add, add_comm]
@@ -71,7 +75,7 @@ theorem fockMom_of : FockMom := by
   refine ⟨h1, ?_⟩
   let D : PX m n → ℂ := fun p => mom c (fock c p) - mom c (1 : PX m n) * contr c p
   have hDadd : ∀ p q, D (p + q) = D p + D q := by
-    intro p q; simp only [D]; rw [hL.map_add, mom_add hM c hc, contr_add]; ring
+    intro p q; simp only [D]; rw [hL.map_add (f := _), mom_add hM c hc, contr_add]; ring
   have hDC : ∀ r, D (C r) = 0 := by
     intro r; simp only [D]
     rw [fock_C, contr_C, C_eq_smul_one, mom_smul]; ring

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem fourier_column_of : N0 → P0 → P1 → CornerEmbedding → FourierSeri
       intro i c hic
       rw [hιE (gam ρ)]
       simp only [PositivityTheory.AdelicQuotientData.embM, Matrix.of_apply]
-      rw [dif_neg (by omega)]
+      rw [dite_eq_right (by omega)]
     obtain ⟨⟨ξ'', p⟩, ⟨hp, hγ⟩, -⟩ := huniqM _ hBlk
     have hξ : ξ'' = lift ρ := by
       apply Subtype.ext
@@ -74,9 +78,9 @@ theorem fourier_column_of : N0 → P0 → P1 → CornerEmbedding → FourierSeri
       rw [← hrow, hlift ρ c]
       simp only [PositivityTheory.AdelicQuotientData.embM, Matrix.of_apply]
       by_cases hc : (c : ℕ) < k
-      · rw [dif_pos ⟨by show k - 1 < k; omega, hc⟩, dif_pos hc]
+      · rw [dite_eq_left ⟨by show k - 1 < k; omega, hc⟩, dite_eq_left hc]
         exact (hgamK ρ).2 _ _ (by show k - 1 + 1 = k; omega)
-      · rw [dif_neg (fun h => hc h.2), dif_neg hc, Matrix.one_apply, if_neg]
+      · rw [dite_eq_right (fun h => hc h.2), dite_eq_right hc, Matrix.one_apply, if_neg]
         intro h
         apply hc
         rw [← h]
@@ -94,7 +98,7 @@ theorem fourier_column_of : N0 → P0 → P1 → CornerEmbedding → FourierSeri
     have h1 := congrFun h (Subtype.mk ((⟨j, lt_trans j.isLt hkm⟩ : Fin m), (⟨k, hkm⟩ : Fin m))
       ⟨j.isLt, le_rfl, le_rfl⟩ : UnipotentBlockColumnIndex m k k)
     beta_reduce at h1
-    rw [hlift, hlift, dif_pos j.isLt, dif_pos j.isLt] at h1
+    rw [hlift, hlift, dite_eq_left j.isLt, dite_eq_left j.isLt] at h1
     exact h1
   have hkey : ∀ t : UnipotentBlockColumnIndex m k k, t = (Subtype.mk ((⟨((Subtype.val t).1 : ℕ), ((Subtype.val t).1).isLt⟩ : Fin m),
       (⟨k, hkm⟩ : Fin m)) ⟨(Subtype.property t).1, le_rfl, le_rfl⟩ : UnipotentBlockColumnIndex m k k) := by
@@ -123,7 +127,7 @@ theorem fourier_column_of : N0 → P0 → P1 → CornerEmbedding → FourierSeri
     refine ⟨ρ, ?_⟩
     funext t
     show Subtype.val (lift ρ) (Subtype.val t).1 = c t
-    rw [hlift, dif_pos (Subtype.property t).1, hρ]
+    rw [hlift, dite_eq_left (Subtype.property t).1, hρ]
     exact congrArg c (hkey t).symm
   have hoff : ∀ c : UnipotentBlockColumnIndex m k k → E,
       c ∉ Set.range (fun ρ : RowT E k k => fun t : UnipotentBlockColumnIndex m k k => Subtype.val (lift ρ) (Subtype.val t).1) →

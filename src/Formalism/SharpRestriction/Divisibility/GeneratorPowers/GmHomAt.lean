@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartActionPoint
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartActionPoint
+
+@[expose] public section
 
 set_option autoImplicit false
 

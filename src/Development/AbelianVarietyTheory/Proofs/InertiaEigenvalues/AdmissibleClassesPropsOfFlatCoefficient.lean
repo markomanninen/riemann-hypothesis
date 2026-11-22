@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,19 +30,19 @@ structure ClosedClass (Ad : ∀ (M : Type) [AddCommGroup M] [Module O M], Repres
   prod : ∀ {M M' : Type} [AddCommGroup M] [Module O M] [AddCommGroup M'] [Module O M']
     {π : Representation O G M} {π' : Representation O G M'}, Ad M π → Ad M' π' → Ad (M × M') (π.prod π')
 
-theorem closedClass_finite : ClosedClass (O := O) (G := G) (fun M _ _ _ => Finite M) where
-  sub f _ hf _ := Finite.of_injective f hf
-  quot f _ hf _ := Finite.of_surjective f hf
-  prod _ _ := inferInstance
-
 variable {Ad : ∀ (M : Type) [AddCommGroup M] [Module O M], Representation O G M → Prop}
 
 theorem ClosedClass.twist (h : ClosedClass Ad) (χ : G →* Oˣ) :
-    ClosedClass (fun M _ _ π => Ad M (twistRep π χ)) where
-  sub f hf hi ha := h.sub f (fun σ x => by rw [twistRep_apply, twistRep_apply, map_smul, hf]) hi ha
-  quot f hf hs ha := h.quot f (fun σ x => by rw [twistRep_apply, twistRep_apply, map_smul, hf]) hs ha
-  prod ha hb := h.sub LinearMap.id
-    (fun σ x => Prod.ext (by simp [twistRep_apply]) (by simp [twistRep_apply])) Function.injective_id (h.prod ha hb)
+    ClosedClass (fun M _ _ π => Ad M (twistRep π χ)) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro M M' _ _ _ _ π π' f hf hi ha
+    exact h.sub f (fun σ x => by rw [twistRep_apply, twistRep_apply, map_smul, hf]) hi ha
+  · intro M M' _ _ _ _ π π' f hf hs ha
+    exact h.quot f (fun σ x => by rw [twistRep_apply, twistRep_apply, map_smul, hf]) hs ha
+  · intro M M' _ _ _ _ π π' ha hb
+    exact h.sub LinearMap.id
+      (fun σ x => Prod.ext (by simp [twistRep_apply]) (by simp [twistRep_apply]))
+      Function.injective_id (h.prod ha hb)
 
 variable [TopologicalSpace G]
 variable {M M' : Type} [AddCommGroup M] [Module O M] [AddCommGroup M'] [Module O M']
@@ -174,15 +178,15 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {Γ : GalData G Qp LL O} {t : ℕ} {Ut : ZMod n → Multiset ℤ}
     {M : Type} [AddCommGroup M] [Module O M] {W : Representation O G M}
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem lTensor_twCoef (χ : G →* Oˣ) {X X' : Type} [AddCommGroup X] [Module O X] [AddCommGroup X'] [Module O X']
     (f : X →ₗ[O] X') (g : G) (m : M ⊗[O] X) :
     f.lTensor M (twCoef W χ X g m) = twCoef W χ X' g (f.lTensor M m) := by
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul m x => simp only [twCoef, coefRep_tmul, LinearMap.lTensor_tmul]
-  | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
 
 theorem exists_coefH1_mk (χ : G →* Oˣ) {X X' : Type} [AddCommGroup X] [Module O X] [AddCommGroup X']
     [Module O X'] (f : X →ₗ[O] X') (z : ↥(Z1 (twCoef W χ X) ⊤)) :
@@ -278,20 +282,9 @@ theorem admissible_of_twist_trivial_tensor {X : Type} [AddCommGroup X] [Module O
   | tmul a x =>
     simp only [GalData.Wchi, coefRep_tmul, TensorProduct.lid_tmul, Formalism.GaloisCohomology.scalRep_apply, GalData.chi_one,
       twistRep_apply, Representation.trivial_apply, smul_eq_mul, mul_smul]
-  | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
 
 end Classes
-
-theorem not_isUnit_prime (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [CharZero O] [Algebra ℤ_[l] O]
-    [Algebra.IsIntegral ℤ_[l] O] (hi : Function.Injective (algebraMap ℤ_[l] O)) : ¬ IsUnit ((l : ℕ) : O) := by
-  intro hu
-  obtain ⟨Q, hQ, hQc⟩ := Ideal.exists_ideal_over_maximal_of_isIntegral (S := O)
-    (IsLocalRing.maximalIdeal ℤ_[l]) (by rw [(RingHom.injective_iff_ker_eq_bot _).mp hi]; exact bot_le)
-  have hmem : ((l : ℕ) : ℤ_[l]) ∈ Q.comap (algebraMap ℤ_[l] O) := by
-    rw [hQc]
-    exact (IsLocalRing.mem_maximalIdeal _).mpr PadicInt.p_nonunit
-  rw [Ideal.mem_comap, map_natCast] at hmem
-  exact hQ.ne_top (Ideal.eq_top_of_isUnit_mem _ hmem hu)
 
 open GlobalTheory.PhiGam GlobalTheory.Models GlobalTheory.TopSteps Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 

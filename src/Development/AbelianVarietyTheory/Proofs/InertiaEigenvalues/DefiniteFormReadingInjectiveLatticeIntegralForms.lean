@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockOfApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmT4OfRootsInField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaSeriesIntegralFormsEqSpanDedekindCoefRingStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentComplexOfSubfieldCoeffLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockOfApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmT4OfRootsInField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaSeriesIntegralFormsEqSpanDedekindCoefRingStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentComplexOfSubfieldCoeffLatticeStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.FWT IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.ConjTwist GlobalTheory.ChoiceRead
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ)
 open Formalism.L2.Host (embLL0)
@@ -44,8 +49,7 @@ theorem span_one_tmul (hE : Function.Injective (algebraMap R E)) {I : Type} (v :
         mul_div_cancel₀ _ hqK, algebraMap_smul, TensorProduct.tmul_smul, ← algebraMap_smul E p]
       exact Submodule.smul_mem _ _ hx
   refine Submodule.eq_top_iff'.2 fun y => ?_
-  induction y using TensorProduct.induction_on with
-  | zero => exact zero_mem _
+  induction y using TensorProduct.inductionOn with
   | add x y hx hy => exact add_mem hx hy
   | tmul a f =>
     have : (a ⊗ₜ[R] f : E ⊗[R] V) = a • ((1 : E) ⊗ₜ[R] f) := by rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -57,7 +61,8 @@ theorem injective_of_indep {W : Type} [AddCommGroup W] [Module E W] {ε : E →+
   refine (injective_iff_map_eq_zero φ).2 fun y hy => ?_
   have hy' : y ∈ Submodule.span E (Set.range u) := hu ▸ Submodule.mem_top
   obtain ⟨l, rfl⟩ := Finsupp.mem_span_range_iff_exists_finsupp.1 hy'
-  rw [Finsupp.sum, map_sum] at hy
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.sum, map_sum] at hy
   simp only [map_smulₛₗ] at hy
   have h := linearIndependent_iff'.1 hi _ _ hy
   refine Finset.sum_eq_zero fun i hi' => ?_
@@ -69,7 +74,8 @@ theorem indep_fieldRange {e : K →+* ℂ} (g : V →ₛₗ[e] A) (hg : Function
   refine linearIndependent_iff'.2 fun t c h i hi => ?_
   choose d hd using fun i => RingHom.mem_fieldRange.1 (c i).2
   have h1 : g (∑ i ∈ t, d i • v i) = 0 := by
-    rw [map_sum, ← h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← h]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smulₛₗ, hd]
     rfl

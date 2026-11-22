@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RosLevel
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ToUnitCompLeft
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RosLevel
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ToUnitCompLeft
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -147,7 +152,8 @@ theorem exists_adic_expansion : ∀ (R : Type) [CommRing R] [IsDomain R] (I : Id
       have gsub : ∀ x y : Γ(Sp W, ⊤), gs (adicLevelι J (e + 1)) z ⊤ (x - y) =
           gs (adicLevelι J (e + 1)) z ⊤ x - gs (adicLevelι J (e + 1)) z ⊤ y := fun x y => by
         simp only [gs_eq _ z ⊤ trivial, map_sub]
-      rw [map_sub, map_sum, toΓ_hom, gsub, DVR.gs_fsum _ z ⊤ trivial, hfin, sub_eq_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, toΓ_hom, gsub, DVR.gs_fsum _ z ⊤ trivial, hfin, sub_eq_zero]
       exact Finset.sum_congr rfl fun α _ => by rw [toΓ_hom]
 
 end GlobalTheory.RayEv.Transport

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SigmaFiniteOfRealSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SigmaFiniteOfRealSmul
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase GlobalTheory.LeviIso
 open Formalism.REAL (Jm UJ inUJ isClosedEmbeddingMatrix)
@@ -15,7 +19,7 @@ theorem measurable_matInv (m : ℕ) :
     (continuous_id (X := Matrix (Fin m) (Fin m) ℂ)).matrix_det
   have hadj : Continuous fun x : Fin m → Fin m → ℂ => (Matrix.of x).adjugate :=
     (continuous_id (X := Matrix (Fin m) (Fin m) ℂ)).matrix_adjugate
-  refine measurable_pi_lambda _ fun r => measurable_pi_lambda _ fun s => ?_
+  refine Measurable.of_eval fun r => Measurable.of_eval fun s => ?_
   have key : (fun x : Fin m → Fin m → ℂ => (Matrix.of x)⁻¹ r s) =
       fun x => ((Matrix.of x).det)⁻¹ * (Matrix.of x).adjugate r s := by
     funext x
@@ -61,7 +65,7 @@ theorem measurable_lev {n n₀ a : ℕ} {j : Fin a → ℕ} (ε : Fin n → Bool
         continuous_const
   have hinv : Measurable fun z : (∀ i, Fin (j i) → Fin (j i) → ℂ) × UJ ε₀ =>
       (fun i r s => (Matrix.of (z.1 i))⁻¹ r s : ∀ i, Fin (j i) → Fin (j i) → ℂ) :=
-    measurable_pi_lambda _ fun i =>
+    Measurable.of_eval fun i =>
       (measurable_matInv (j i)).comp ((measurable_pi_apply i).comp measurable_fst)
   have hg : Measurable fun z : (∀ i, Fin (j i) → Fin (j i) → ℂ) × UJ ε₀ =>
       (fun r s => uMat z.2 r s : Fin n₀ → Fin n₀ → ℂ) :=

@@ -1,28 +1,34 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStable
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SameSat
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CoreLift
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.FormsFiniteGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStable
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SameSat
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CoreLift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.FormsFiniteGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction
 open UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.T GlobalTheory.CuspRep Formalism.L2.Host Formalism.ConjugateSelfDual UpperTheory.V.Published UpperTheory.CBC
 
 private theorem weak_same {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E]
-    [IsTotallyComplex F] [IsTotallyComplex E] {n : ℕ} (hp : (Module.finrank F E).Prime) (π : CuspSub F n)
+    [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} (hp : (Module.finrank F E).Prime) (π : CuspSub F n)
     {sat sat' : Pl E → Multiset ℂˣ → Prop} (H : WeakBC (CG.mk π).HasSat sat) (H' : WeakBC (CG.mk π).HasSat sat') :
     ∀ᶠ w : Pl E in cofinite, ∃ B, sat w B ∧ sat' w B := by
   have hN := (places F E hp).2.2.2.2.1
   filter_upwards [H, H'] with w a b
-  obtain ⟨B, hB, hB'⟩ := a _ (hN w)
-  obtain ⟨C, hC, hC'⟩ := b _ (hN w)
+  have hw : normV w = normV (w.under (𝓞 F)) ^ resDeg F w := by
+    simpa [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using hN w
+  obtain ⟨B, hB, hB'⟩ := a _ hw
+  obtain ⟨C, hC, hC'⟩ := b _ hw
   obtain rfl := hB.unique hC
   exact ⟨_, hB', hC'⟩
 
@@ -34,9 +40,9 @@ theorem UpperTheory.ConvolutionTheory.Sph.weakStable :
     haveI : FiniteDimensional K M := Module.finite_of_finrank_pos hp.pos
     haveI : IsCyclic (M ≃ₐ[K] M) := isCyclic_of_prime_card (IsGalois.card_aut_eq_finrank K M)
     obtain ⟨σ, hσ⟩ := IsCyclic.exists_generator (α := M ≃ₐ[K] M)
-    let μE : Measure (normOneGL M n) := Measure.haar
-    let μF : Measure (normOneGL K n) := Measure.haar
-    obtain ⟨s, χ, χ', V, -, -, hχ, hχ', hV, -, -, -, hW', hOff, -⟩ :=
+    let μE : Measure (normOneGL (K := M) (n := n)) := Measure.haar
+    let μF : Measure (normOneGL (K := K) (n := n)) := Measure.haar
+    obtain ⟨s, χ, χ', V, V', θ', hχ, hχ', hV, hV', hθ', hst', hW', hOff, hOff'⟩ :=
       UpperTheory.ConvolutionTheory.Sph.norm K M σ hσ hp n hn μE μF π P hW
     obtain ⟨-, htw⟩ := powTwist K M
     obtain ⟨hi, hi', h1⟩ := htw s χ χ' hχ hχ'

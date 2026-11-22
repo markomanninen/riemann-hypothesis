@@ -1,4 +1,9 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.DecayAssembly.Imports
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.AbsoluteL2Bound
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.RightRule
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,9 +37,7 @@ theorem line_deriv (hR : N.RightRule) {n : ℕ} {ε : Fin n → Bool} {H : Type}
     funext s
     unfold aT
     rw [Matrix.mul_assoc, ← Matrix.exp_add_of_commute]
-    · rw [← add_smul]
-      push_cast
-      ring
+    · rw [← add_smul, ← Complex.ofReal_add, add_comm t (s - t), sub_add_cancel]
     · exact ((Commute.refl A).smul_left _).smul_right _
   have hval : (∑ a, ∑ b, A a b • (path ⟨D, E, hK.gl⟩ χ ss).E a b u) = actM (path ⟨D, E, hK.gl⟩ χ ss) A u := by
     simp [actM, LinearMap.sum_apply, LinearMap.smul_apply]
@@ -49,8 +52,8 @@ theorem wv_succ {n : ℕ} (X : GMod n) (A : Matrix (Fin n) (Fin n) ℂ) (zs : Li
     actM X A (wv X A zs u (k + 1)) = zs[k] • wv X A zs u (k + 1) + wv X A zs u k := by
   have h : wv X A zs u k = actM X A (wv X A zs u (k + 1)) - zs[k] • wv X A zs u (k + 1) := by
     simp only [wv]
-    rw [List.drop_eq_getElem_cons hk, List.map_cons, List.prod_cons, Module.End.mul_apply, LinearMap.sub_apply,
-      LinearMap.smul_apply, Module.End.one_apply]
+    rw [List.drop_eq_getElem_cons hk, List.map_cons, List.prod_cons, mul_apply_eq_comp, LinearMap.sub_apply,
+      LinearMap.smul_apply, one_apply_eq_self]
   rw [h]
   abel
 

@@ -1,10 +1,15 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -37,16 +42,21 @@ theorem petE_rdU_ne_top (hμ : μ Set.univ ≤ 1) {la : ∀ k, FD.Wt (U.X k).Ψ 
   have hb : ∀ᵐ q ∂μ, ‖AllWt.ptN la (rdU U f) (dict (Quotient.out q))‖ ≤ (supE U.X la (rdU U f)).toReal :=
     Filter.Eventually.of_forall fun q => by
       rw [Real.norm_of_nonneg (AllWt.ptN_nonneg _ _ _)]; exact ptN_rdU_le U hf _
-  refine ne_top_of_le_ne_top ?_ (eLpNorm_le_of_ae_bound hb)
-  refine ENNReal.mul_ne_top ?_ ENNReal.ofReal_ne_top
-  exact ENNReal.rpow_ne_top_of_nonneg (by positivity) (ne_top_of_le_ne_top ENNReal.one_ne_top hμ)
+  have hle : AllWt.petE V dict μ la (rdU U f) ≤
+      eLpNorm' (fun _ : AutQ V => (supE U.X la (rdU U f)).toReal) 2 μ := by
+    apply eLpNorm'_mono_ae (by norm_num)
+    filter_upwards [hb] with q hq
+    simpa [Real.norm_of_nonneg ENNReal.toReal_nonneg] using hq
+  rw [eLpNorm'_const _ (by norm_num), Real.enorm_eq_ofReal ENNReal.toReal_nonneg] at hle
+  exact ne_top_of_le_ne_top (ENNReal.mul_ne_top ENNReal.ofReal_ne_top
+    (ENNReal.rpow_ne_top_of_nonneg (by positivity) (ne_top_of_le_ne_top ENNReal.one_ne_top hμ))) hle
 
 theorem eLpNorm_homN_ne_top (hμ : μ Set.univ ≤ 1) {G : WTZ E} {f : Rul Xo c}
     (hf : rdU U f ∈ holSub U.X (AllWt.modelWt U G)) :
-    eLpNorm (fun q : AutQ V => AllWt.homN U x G f (dict (Quotient.out q))) 2 μ ≠ ⊤ := by
+    eLpNorm' (fun q : AutQ V => AllWt.homN U x G f (dict (Quotient.out q))) 2 μ ≠ ⊤ := by
   have : (fun q : AutQ V => AllWt.homN U x G f (dict (Quotient.out q))) =
       AllWt.lieFacZ Dw x G • fun q : AutQ V => AllWt.ptN (AllWt.modelWt U G) (rdU U f) (dict (Quotient.out q)) := rfl
-  rw [this, eLpNorm_const_smul]
+  rw [this, eLpNorm'_const_smul _ (by norm_num)]
   exact ENNReal.mul_ne_top enorm_ne_top (petE_rdU_ne_top U V dict μ hμ hf)
 
 theorem homN_le_of_berg (hμ : μ Set.univ ≤ 1) (y : FPt U.X) {B : ℝ} (hB0 : 0 ≤ B) {G : WTZ E}
@@ -74,8 +84,8 @@ end GlobalTheory.HSApp.NormProd
 
 namespace GlobalTheory.HSApp
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem petOn_mul_le : ∀ (D : D7) (T : Core D) (j : ℕ) (Y : Deep T j) (e : ℕ) (o : ℝ), Y.Good e o → 2 < Module.finrank ℚ D.host.E / 2 → ∀ (Z : Comp Y.d.Xo₂ Y.d.c₂) (a b : AllWt.Weight (T.Q.Dw j)) (w : Cusp Z Y.U a) (f : Cusp Z Y.U b) (β : ℝ), 0 ≤ β → BergLe Z Y.U (fun _ => D.sp.W j) Y.dict a β → ∀ σ, petOn Y.U (xiR D) (fun _ => D.sp.W j) Y.dict Z (wtOf _ (a + b) 0) σ (w.1 * f.1) ≤ Real.sqrt β * petOn Y.U (xiR D) (fun _ => D.sp.W j) Y.dict Z (wtOf _ a 0) σ w.1 * petOn Y.U (xiR D) (fun _ => D.sp.W j) Y.dict Z (wtOf _ b 0) σ f.1 := by
   intro D T j Y e o _ _ Z a b w f β hβ hB σ
   set σ' := goodOf Y.d.c₂ σ with hσ'
@@ -103,15 +113,27 @@ theorem petOn_mul_le : ∀ (D : D7) (T : Core D) (j : ℕ) (Y : Deep T j) (e : �
         simp only [AllWt.homN, AllWt.ptN, FD.Data.pnorm, AllWt.rdU_mul, Pi.mul_apply, h0, zero_mul, norm_zero, mul_zero]
       rw [h1]
       exact mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hPa0) (AllWt.homN_nonneg _ _ _ _ _)
-  have key : eLpNorm (fun q : AutQ (D.sp.W j) => AllWt.homN (Y.U σ') (xiR D) (AllWt.wtOf (T.Q.Dw j) (a + b) 0)
+  have key : eLpNorm' (fun q : AutQ (D.sp.W j) => AllWt.homN (Y.U σ') (xiR D) (AllWt.wtOf (T.Q.Dw j) (a + b) 0)
       (w.1 * f.1) (Y.dict σ' (Quotient.out q))) 2 μ ≤
-      ENNReal.ofReal (Real.sqrt β * Pa) * eLpNorm (fun q : AutQ (D.sp.W j) => AllWt.homN (Y.U σ') (xiR D)
+      ENNReal.ofReal (Real.sqrt β * Pa) * eLpNorm' (fun q : AutQ (D.sp.W j) => AllWt.homN (Y.U σ') (xiR D)
         (AllWt.wtOf (T.Q.Dw j) b 0) f.1 (Y.dict σ' (Quotient.out q))) 2 μ := by
-    rw [← Real.enorm_eq_ofReal (mul_nonneg (Real.sqrt_nonneg _) hPa0), ← eLpNorm_const_smul]
-    refine eLpNorm_mono_real fun q => ?_
-    rw [Real.norm_of_nonneg (AllWt.homN_nonneg _ _ _ _ _)]
+    rw [← Real.enorm_eq_ofReal (mul_nonneg (Real.sqrt_nonneg _) hPa0), ← eLpNorm'_const_smul _ (by norm_num)]
+    apply eLpNorm'_mono_ae (by norm_num)
+    filter_upwards [] with q
+    simp only [Pi.smul_apply, smul_eq_mul]
+    rw [Real.norm_of_nonneg (AllWt.homN_nonneg _ _ _ _ _),
+      Real.norm_of_nonneg (mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hPa0)
+        (AllWt.homN_nonneg _ _ _ _ _))]
     exact hpt _
-  have hfin := NormProd.eLpNorm_homN_ne_top (Y.U σ') (xiR D) (D.sp.W j) (Y.dict σ') μ hμ hfH
+  have hfin : eLpNorm' (fun q : AutQ (D.sp.W j) => AllWt.homN (Y.U σ') (xiR D)
+      (AllWt.wtOf (T.Q.Dw j) b 0) f.1 (Y.dict σ' (Quotient.out q))) 2 μ ≠ ⊤ := by
+    have heq : (fun q : AutQ (D.sp.W j) => AllWt.homN (Y.U σ') (xiR D)
+        (AllWt.wtOf (T.Q.Dw j) b 0) f.1 (Y.dict σ' (Quotient.out q))) =
+        AllWt.lieFacZ (T.Q.Dw j) (xiR D) (AllWt.wtOf (T.Q.Dw j) b 0) •
+          fun q : AutQ (D.sp.W j) => AllWt.ptN (AllWt.modelWt (Y.U σ') (AllWt.wtOf (T.Q.Dw j) b 0))
+            (rdU (Y.U σ') f.1) (Y.dict σ' (Quotient.out q)) := rfl
+    rw [heq, eLpNorm'_const_smul _ (by norm_num)]
+    exact ENNReal.mul_ne_top enorm_ne_top (NormProd.petE_rdU_ne_top (Y.U σ') (D.sp.W j) (Y.dict σ') μ hμ hfH)
   have k2 := ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hfin) key
   rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (mul_nonneg (Real.sqrt_nonneg _) hPa0)] at k2
   show AllWt.petAt (Y.U σ') (xiR D) (D.sp.W j) (Y.dict σ') μ _ (w.1 * f.1) ≤

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLbHermitian
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubicalSymmetryTransport
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.BoxSymIsSymmetry
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RestrictLineBundleSymmetryUnitsEquivIsoApply
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsSemiAbelianOfRetract
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.NonemptyTorusExtensionOfIsPowGrp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLbHermitian
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubicalSymmetryTransport
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.BoxSymIsSymmetry
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RestrictLineBundleSymmetryUnitsEquivIsoApply
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsSemiAbelianOfRetract
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.NonemptyTorusExtensionOfIsPowGrp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,11 +79,15 @@ theorem val_combGen {F : J → (X' ⟶ X)} {δ : J → ℤ} {φ : K → (Y ⟶ X
 end Generators
 
 theorem isCub_prod {B U J : Type} [CommGroup B] [CommGroup U] [Fintype J] (θ : J → B → B → B → U)
-    (h : ∀ i, IsCub (θ i)) (δ : J → ℤ) : IsCub fun x y z => ∏ i, θ i x y z ^ δ i where
-  face x y := Finset.prod_eq_one fun i _ => by rw [(h i).face, one_zpow]
-  s01 x y z := Finset.prod_congr rfl fun i _ => by rw [(h i).s01]
-  s12 x y z := Finset.prod_congr rfl fun i _ => by rw [(h i).s12]
-  coc x x' x'' y := by
+    (h : ∀ i, IsCub (θ i)) (δ : J → ℤ) : IsCub (fun x y z => ∏ i, θ i x y z ^ δ i) := by
+  constructor
+  · intro x y
+    exact Finset.prod_eq_one fun i _ => by rw [(h i).face, one_zpow]
+  · intro x y z
+    exact Finset.prod_congr rfl fun i _ => by rw [(h i).s01]
+  · intro x y z
+    exact Finset.prod_congr rfl fun i _ => by rw [(h i).s12]
+  · intro x x' x'' y
     simp only [← Finset.prod_mul_distrib, ← mul_zpow]
     exact Finset.prod_congr rfl fun i _ => by rw [(h i).coc]
 
@@ -111,7 +119,39 @@ def combCub {L : RigLB G} (c : CubicalStr G L) : CubicalStr A (combRig u δ L) :
   CubTransport.cubicalOfVal (L := combRig u δ L)
     (combGen L.L (fun i => (u i).left) δ (thφ A (x3 A)) thε fun i => (pullCub c (u i)).t)
     (isGen_combGen _ _ _ _ _ _ fun i => (pullCub c (u i)).isGen) fun T z I hI => by
-      have h := isCub_prod _ (fun i => isCub_cubV (pullCub c (u i)) (T := T) (good_factor hI i)) δ
+      have hCub (i : J) : IsCub (cubV (pullCub c (u i)) (T := T) z (fun χ _ => I χ i)) := by
+        let ci := pullCub c (u i)
+        have hi := good_factor hI i
+        constructor
+        · intro x y
+          have hface := val_corr hi (ci.face 0) (lift x y).left
+          refine Eq.trans ?_ (hface.trans (val_one _))
+          refine Eq.trans ?_ (val_cub ci (lift x y) hi (pzero A _) (x2 A 0) (x2 A 1)).symm
+          congr 1 <;> simp [x2, pzero, Hom.one_def]
+        · intro x y w
+          refine ((val_corr hi ci.cubeSymmetric_swap_first (lift x (lift y w)).left).trans
+            (val_cub ci (lift x (lift y w)) hi _ _ _)).trans ?_
+          congr 1 <;> simp [x3]
+        · intro x y w
+          refine ((val_corr hi ci.cubeSymmetric_swap_last (lift x (lift y w)).left).trans
+            (val_cub ci (lift x (lift y w)) hi _ _ _)).trans ?_
+          congr 1 <;> simp [x3]
+        · intro x x' x'' y
+          let r := lift x (lift x' (lift x'' y))
+          have e := ((val_mul hi _ _ r.left).trans
+            (congrArg₂ (· * ·) (val_cub ci r hi _ _ _) (val_cub ci r hi _ _ _))).symm.trans
+            ((val_corr hi ci.cocycle r.left).trans ((val_mul hi _ _ r.left).trans
+              (congrArg₂ (· * ·) (val_cub ci r hi _ _ _) (val_cub ci r hi _ _ _))))
+          have a₀ : r ≫ x4 A 0 = x := by simp [r, x4]
+          have a₁ : r ≫ x4 A 1 = x' := by simp [r, x4]
+          have a₂ : r ≫ x4 A 2 = x'' := by simp [r, x4]
+          have a₃ : r ≫ x4 A 3 = y := by simp [r, x4]
+          have b₀ : r ≫ padd A (x4 A 0) (x4 A 1) = x * x' :=
+            (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+          have b₁ : r ≫ padd A (x4 A 1) (x4 A 2) = x' * x'' :=
+            (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+          rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e
+      have h := isCub_prod _ hCub δ
       convert h using 4 with x y w
       exact val_combGen (fun i => (pullCub c (u i)).t) _ hI
 

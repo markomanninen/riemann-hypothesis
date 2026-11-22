@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.Statement
+module
+
+public import Formalism.GaussJetBounds.Statement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -8,16 +12,6 @@ universe u
 namespace Formalism.DworkPowerSeriesWeights
 
 open Formalism.IncomingBounds
-
-def SpecialRankSpan : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (T : Type) [Fintype T] [DecidableEq T] (J : T → ℕ)
-    (j : ∀ t, Fin (J t) → ℕ), (∀ t, Function.Injective (j t)) → ∀ N0 n : ℕ,
-    (∑ t, J t) ≤ N0 → (∑ t, J t) ≤ n →
-    ∃ f : (Σ t, Fin (J t)) → Fin n, Function.Injective f ∧
-      (Matrix.of fun (r c : Σ t, Fin (J t)) =>
-        ∑ a : Fin N0, (MvPolynomial.X (Sum.inl (r.1, a)) :
-            MvPolynomial ((T × Fin N0) ⊕ (Fin n × Fin N0)) (ZMod l)) ^ (l ^ j r.1 r.2) *
-          MvPolynomial.X (Sum.inr (f c, a))).det ≠ 0
 
 def frameM {K : Type u} [Field K] {d N0 N1 : ℕ} (x : ZMod d × Fin N0 × Fin N0 → K) :
     ZV d N0 N1 → ZV d N0 N1 → K :=

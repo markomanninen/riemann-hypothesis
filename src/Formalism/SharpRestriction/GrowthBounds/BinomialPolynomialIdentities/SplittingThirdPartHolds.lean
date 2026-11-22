@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissiblePolynomialBasisProv
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissibleWordBasis
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmFourteen
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissibleExternalProduct
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissiblePolynomialBasisProv
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissibleWordBasis
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmFourteen
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissibleExternalProduct
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+
+@[expose] public section
 
 namespace Formalism.MainNotions.G.ColumnFamilies
 

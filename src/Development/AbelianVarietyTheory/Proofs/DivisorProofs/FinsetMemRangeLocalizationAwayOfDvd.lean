@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -15,7 +19,7 @@ theorem finset_mem_range_of_away_dvd (R : Type) [CommRing R] (𝔭 : Ideal R) [�
   intro c hc κ hκ x hx
   have hdvd : ((sx x : 𝔭.primeCompl) : R) ∣ c := by
     refine dvd_trans ?_ hc
-    rw [Submonoid.coe_finset_prod]
+    rw [Submonoid.coe_finsetProd]
     exact Finset.dvd_prod_of_mem (fun y => ((sx y : 𝔭.primeCompl) : R)) hx
   obtain ⟨m, hm⟩ := hdvd
   have hκa : ∀ r : R, κ (algebraMap R (Localization.Away c) r) =

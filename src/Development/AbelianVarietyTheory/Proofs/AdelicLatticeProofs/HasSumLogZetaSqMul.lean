@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical
 open scoped ContDiff nonZeroDivisors
@@ -68,7 +72,6 @@ theorem hasSum_log_zeta_sq_mul : ∀ (ι : Type) (N : ι → ℕ) (c : ι → �
     (hsum _ hs)
   have h := ((h1.mul_left 2).add h2).add h3
   convert h using 1
-  · rfl
   funext p
   revert p
   rintro ⟨i, k⟩

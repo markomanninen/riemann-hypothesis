@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSYReal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSCoordAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSSection
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDOpFF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDResRad
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSIpInt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSFund
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSYReal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSCoordAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSSection
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDOpFF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDResRad
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSIpInt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSFund
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutSE
 

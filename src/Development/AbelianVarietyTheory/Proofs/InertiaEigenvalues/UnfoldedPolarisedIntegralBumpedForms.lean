@@ -1,34 +1,40 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RsTermZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CellLintegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOfMemSmoothSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurDir
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LintegralUnipotentCellPosLtTopContinuous
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.Definitions.Divisors.NAInterSupSSubset
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspFormRapidKernelSmoothSpanSmoothCuspidalBound
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivariantProj
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSumRankinSelbergSchurTermFinsuppEulerProductStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WhitMulLocGLDiagPowOfFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousGlobalWhittakerCoefficientGLAdelesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnfoldedIntegrandMeasurableInvariantBoundedStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLevelNatBumpRankinSelbergCellStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ShintaniUnfoldedIntegrandEvalTorusCellStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCellPartUnfoldedIntegralPositiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinsuppVanishingOnEquivComplProdStatement
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RsTermZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CellLintegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOfMemSmoothSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurDir
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LintegralUnipotentCellPosLtTopContinuous
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NAInterSupSSubset
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspFormRapidKernelSmoothSpanSmoothCuspidalBound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivariantProj
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSumRankinSelbergSchurTermFinsuppEulerProductStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WhitMulLocGLDiagPowOfFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousGlobalWhittakerCoefficientGLAdelesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnfoldedIntegrandMeasurableInvariantBoundedStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLevelNatBumpRankinSelbergCellStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ShintaniUnfoldedIntegrandEvalTorusCellStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCellPartUnfoldedIntegralPositiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinsuppVanishingOnEquivComplProdStatement
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory GlobalTheory.CuspRep Formalism.L2.Host Formalism.UG GlobalTheory.LFun
 open scoped ENNReal ComplexConjugate nonZeroDivisors
 
 namespace GlobalTheory.ZEul
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem unfolded_bump_eq :
-∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))),
+∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))),
   (∀ w ∈ S, ∀ w' : HeightOneSpectrum (𝓞 E), Ideal.comap (algebraMap ℤ (𝓞 E)) w'.asIdeal = Ideal.comap (algebraMap ℤ (𝓞 E)) w.asIdeal → w' ∈ S) →
-  (∀ w ∉ S, ∀ x : w.adicCompletion E, (∀ y ∈ Ov E w, GlobalTheory.JSW.psiLoc w (x * y) = 1) ↔ x ∈ Ov E w) →
-  ∀ b : GA E (m + 1) → ℂ, b 1 = 1 → (∀ u ∈ GlobalTheory.JSW.NA E (m + 1), ∀ g, b (u * g) = GlobalTheory.JSW.psiN u * b g) →
-  (∃ C : Set (GA E (m + 1)), IsCompact C ∧ ∀ p ∈ GlobalTheory.JSW.mirS E S m, b p ≠ 0 → ∃ u ∈ GlobalTheory.JSW.NA E (m + 1), u⁻¹ * p ∈ C) →
+  (∀ w ∉ S, ∀ x : w.adicCompletion E, (∀ y ∈ Ov E w, (GroundTheory.Global.adelicChar _ (GlobalTheory.CuspRep.sFin _ (GlobalTheory.CuspRep.sLoc _ w (x * y))) : ℂ) = 1) ↔ x ∈ Ov E w) →
+  ∀ b : GA E (m + 1) → ℂ, b 1 = 1 → (∀ u ∈ GlobalTheory.JSW.NA (E := E) (a := (m + 1)), ∀ g, b (u * g) = GlobalTheory.JSW.psiN u * b g) →
+  (∃ C : Set (GA E (m + 1)), IsCompact C ∧ ∀ p ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m), b p ≠ 0 → ∃ u ∈ GlobalTheory.JSW.NA (E := E) (a := (m + 1)), u⁻¹ * p ∈ C) →
   ∀ (π π' : CuspSub E (m + 1)) (ω ω' : HChar E), ω.IsUnitary → ω'.IsUnitary → π.HasCentChar ω → π'.HasCentChar ω' →
   ∀ (α α' : HeightOneSpectrum (𝓞 E) → Fin (m + 1) → ℂˣ),
   (∀ w ∉ S, HasSatGL w (π.locRep w) (Finset.univ.val.map (α w))) →
@@ -36,14 +42,14 @@ theorem unfolded_bump_eq :
   ∀ φ φ' : GA E (m + 1) → ℂ, φ ∈ GlobalTheory.JSW.mspanR π → φ' ∈ GlobalTheory.JSW.mspanR π' →
   (∃ U : Subgroup (GL (Fin (m + 1)) (Af E)), IsOpen (U : Set (GL (Fin (m + 1)) (Af E))) ∧
       ∀ u ∈ U, ∀ g, φ (g * finGL E (m + 1) u) = φ g) →
-  (∀ w ∉ S, ∀ k ∈ KGL w (m + 1), ∀ g, φ (g * finGL E (m + 1) (locGL E (m + 1) w k)) = φ g) → (∃ U : Subgroup (GL (Fin (m + 1)) (Af E)), IsOpen (U : Set (GL (Fin (m + 1)) (Af E))) ∧
+  (∀ w ∉ S, ∀ k ∈ KGL w (n := (m + 1)), ∀ g, φ (g * finGL E (m + 1) (locGL E (m + 1) w k)) = φ g) → (∃ U : Subgroup (GL (Fin (m + 1)) (Af E)), IsOpen (U : Set (GL (Fin (m + 1)) (Af E))) ∧
       ∀ u ∈ U, ∀ g, φ' (g * finGL E (m + 1) u) = φ' g) →
-  (∀ w ∉ S, ∀ k ∈ KGL w (m + 1), ∀ g, φ' (g * finGL E (m + 1) (locGL E (m + 1) w k)) = φ' g) →
+  (∀ w ∉ S, ∀ k ∈ KGL w (n := (m + 1)), ∀ g, φ' (g * finGL E (m + 1) (locGL E (m + 1) w k)) = φ' g) →
   (∀ (ϖ : ∀ w : HeightOneSpectrum (𝓞 E), (w.adicCompletion E)ˣ), (∀ w, IsUnifV E w (ϖ w : w.adicCompletion E)) →
-    ∀ l : HeightOneSpectrum (𝓞 E) →₀ (Fin (m + 1) → ℕ), (∀ w ∈ l.support, w ∉ S) → ∀ p ∈ GlobalTheory.JSW.mirS E S m,
+    ∀ l : HeightOneSpectrum (𝓞 E) →₀ (Fin (m + 1) → ℕ), (∀ w ∈ l.support, w ∉ S) → ∀ p ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m),
       GlobalTheory.JSW.whit φ (p * GlobalTheory.JSW.tl ϖ l) = b p * ∏ w ∈ l.support, GlobalTheory.JSW.sphW (qV E w) (fun i => (α w i : ℂ)) (l w)) →
   (∀ (ϖ : ∀ w : HeightOneSpectrum (𝓞 E), (w.adicCompletion E)ˣ), (∀ w, IsUnifV E w (ϖ w : w.adicCompletion E)) →
-    ∀ l : HeightOneSpectrum (𝓞 E) →₀ (Fin (m + 1) → ℕ), (∀ w ∈ l.support, w ∉ S) → ∀ p ∈ GlobalTheory.JSW.mirS E S m,
+    ∀ l : HeightOneSpectrum (𝓞 E) →₀ (Fin (m + 1) → ℕ), (∀ w ∈ l.support, w ∉ S) → ∀ p ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m),
       GlobalTheory.JSW.whit φ' (p * GlobalTheory.JSW.tl ϖ l) = b p * ∏ w ∈ l.support, GlobalTheory.JSW.sphW (qV E w) (fun i => (α' w i : ℂ)) (l w)) →
   φ ≠ 0 ∧ φ' ≠ 0 ∧ ∃ (N : ℕ) (Φ : (Fin (m + 1) → Cinf E) → ℂ), 0 < N ∧ ContDiff ℝ (⊤ : ℕ∞) Φ ∧ HasCompactSupport Φ ∧
     tsupport Φ ⊆ GlobalTheory.RSTheta.rowSet E (Fin.last m) ∧ (∀ u, 0 ≤ (Φ u).re ∧ (Φ u).im = 0) ∧
@@ -75,9 +81,9 @@ theorem unfolded_bump_eq :
     rwa [GlobalTheory.JSW.word_nil] at h0
   have hc := hreg hω hπ φ hφ
   have hc' := hreg hω' hπ' φ' hφ'
-  have hW : ∀ u ∈ GlobalTheory.JSW.NA E (m + 1), ∀ g, GlobalTheory.JSW.whit φ (u * g) = GlobalTheory.JSW.psiN u * GlobalTheory.JSW.whit φ g :=
+  have hW : ∀ u ∈ GlobalTheory.JSW.NA (E := E) (a := (m + 1)), ∀ g, GlobalTheory.JSW.whit φ (u * g) = GlobalTheory.JSW.psiN u * GlobalTheory.JSW.whit φ g :=
     fun u hu g => GlobalTheory.JSW.WhitModel.whit_mul hc.cont (fun γ g => hc.left γ g) hu g
-  have hW' : ∀ u ∈ GlobalTheory.JSW.NA E (m + 1), ∀ g, GlobalTheory.JSW.whit φ' (u * g) = GlobalTheory.JSW.psiN u * GlobalTheory.JSW.whit φ' g :=
+  have hW' : ∀ u ∈ GlobalTheory.JSW.NA (E := E) (a := (m + 1)), ∀ g, GlobalTheory.JSW.whit φ' (u * g) = GlobalTheory.JSW.psiN u * GlobalTheory.JSW.whit φ' g :=
     fun u hu g => GlobalTheory.JSW.WhitModel.whit_mul hc'.cont (fun γ g => hc'.left γ g) hu g
   have hWc := GlobalTheory.T.continuous_globalWhittakerCoefficientGLAdeles E (m + 1) φ hc.cont hc.bdd
   have hWc' := GlobalTheory.T.continuous_globalWhittakerCoefficientGLAdeles E (m + 1) φ' hc'.cont hc'.bdd
@@ -90,9 +96,9 @@ theorem unfolded_bump_eq :
       inv_mem' := fun {a} ha g => by
         rw [← ha (g * finGL E (m + 1) a⁻¹), mul_assoc, ← map_mul, inv_mul_cancel, map_one, mul_one] }
   let V : Subgroup (GL (Fin (m + 1)) (Af E)) := (U ⊓ U') ⊔ Subgroup.closure
-    {k | ∃ w ∉ S, ∃ k' ∈ KGL w (m + 1), locGL E (m + 1) w k' = k}
+    {k | ∃ w ∉ S, ∃ k' ∈ KGL w (n := (m + 1)), locGL E (m + 1) w k' = k}
   have hVle : ∀ F : GA E (m + 1) → ℂ, (∀ u ∈ U ⊓ U', ∀ g, F (g * finGL E (m + 1) u) = F g) →
-      (∀ w ∉ S, ∀ k ∈ KGL w (m + 1), ∀ g, F (g * finGL E (m + 1) (locGL E (m + 1) w k)) = F g) → V ≤ stab F := by
+      (∀ w ∉ S, ∀ k ∈ KGL w (n := (m + 1)), ∀ g, F (g * finGL E (m + 1) (locGL E (m + 1) w k)) = F g) → V ≤ stab F := by
     intro F h1 h2
     refine sup_le (fun k hk => h1 k hk) (Subgroup.closure_le _ |>.2 ?_)
     rintro _ ⟨w, hw, k, hk, rfl⟩
@@ -101,7 +107,7 @@ theorem unfolded_bump_eq :
   have hVφ' := hVle φ' (fun u hu => hUi' u hu.2) hK'
   have hVo : IsOpen (V : Set (GL (Fin (m + 1)) (Af E))) :=
     Subgroup.isOpen_mono (le_sup_left : U ⊓ U' ≤ V) (by rw [Subgroup.coe_inf]; exact hUo.inter hUo')
-  have hVK : ∀ w ∉ S, ∀ k ∈ KGL w (m + 1), locGL E (m + 1) w k ∈ V := fun w hw k hk =>
+  have hVK : ∀ w ∉ S, ∀ k ∈ KGL w (n := (m + 1)), locGL E (m + 1) w k ∈ V := fun w hw k hk =>
     (le_sup_right : Subgroup.closure _ ≤ V) (Subgroup.subset_closure ⟨w, hw, k, hk, rfl⟩)
   obtain ⟨N, J, Φ, hN, hΦs, hΦc, hΦt, hΦr, hΦe, hJ, hJV, hn1, hn2, hn3⟩ := GlobalTheory.T.exists_level_nat_bump_rankinSelbergCell E m S hsat V hVo hVK
   have hWJ : ∀ κ ∈ GlobalTheory.RSLocalPart.levelAt (m + 1) S J, ∀ g,
@@ -114,28 +120,117 @@ theorem unfolded_bump_eq :
     intro κ hκ g
     have e : (fun z => φ' (z * finGL E (m + 1) κ)) = φ' := funext fun z => hVφ' (hJV hκ) z
     rw [GlobalTheory.JSW.whit_mul_right, e]
-  have hb0 : ∀ p ∈ GlobalTheory.JSW.mirS E S m, GlobalTheory.JSW.whit φ p = b p := by
+  have hb0 : ∀ p ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m), GlobalTheory.JSW.whit φ p = b p := by
     intro p hp
     simpa [GlobalTheory.JSW.tl] using hsh ϖ hϖ 0 (by simp) p hp
-  have hb0' : ∀ p ∈ GlobalTheory.JSW.mirS E S m, GlobalTheory.JSW.whit φ' p = b p := by
+  have hb0' : ∀ p ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m), GlobalTheory.JSW.whit φ' p = b p := by
     intro p hp
     simpa [GlobalTheory.JSW.tl] using hsh' ϖ hϖ 0 (by simp) p hp
-  have h1mem : (1 : GA E (m + 1)) ∈ GlobalTheory.JSW.mirS E S m :=
+  have h1mem : (1 : GA E (m + 1)) ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m) :=
     ⟨fun w _ => map_one _, fun j => by simp [Matrix.one_apply, eq_comm]⟩
   have hne : ∀ F : GA E (m + 1) → ℂ, GlobalTheory.JSW.whit F 1 = 1 → F ≠ 0 := by
     rintro F h rfl
     simp [GlobalTheory.JSW.whit, GroundTheory.Automorphic.FourierWhittaker.whittaker] at h
   refine ⟨hne φ (by rw [hb0 1 h1mem, hb1]), hne φ' (by rw [hb0' 1 h1mem, hb1]), N, Φ, hN, hΦs, hΦc, hΦt, hΦr, ?_⟩
   intro μ _ 𝓕₀ h𝓕
-  obtain ⟨f, t, hfm, htm, hf0, hfi, hfpos, hR, hfC, hfu, hdet⟩ := GlobalTheory.T.exists_cellPart_unfoldedIntegral_positive E m S b φ N J Φ hN hJ hn2
-    hΦs.continuous hΦc hΦt hΦr hΦe hWc hW hWJ hb1 hbC hb0 μ 𝓕₀ h𝓕
+  have hC0 : MeasurableSet (GlobalTheory.CellDec.C0 E (m + 1) S) :=
+    (GlobalTheory.T.isOpen_C0 E (m + 1) S).measurableSet
+  have hcell : ∃ f t : GA E (m + 1) → ℝ,
+      Measurable f ∧ Measurable t ∧ (∀ g, 0 ≤ f g) ∧ IntegrableOn f 𝓕₀ μ ∧
+      0 < ∫ g in 𝓕₀, f g ∂μ ∧ (∃ R : ℝ, ∀ g, f g ≠ 0 → |t g| ≤ R) ∧
+      (∀ g ∉ GlobalTheory.CellDec.C0 E (m + 1) S, f g = 0) ∧
+      (∀ g ∈ GlobalTheory.CellDec.C0 E (m + 1) S, GlobalTheory.ZEul.uInt φ φ Φ N 0 g = (f g : ℂ)) ∧
+      ∀ (x : ℝ) (g : GA E (m + 1)), (GlobalTheory.RSJ.detPow E (m + 1) x g : ℂ) = Complex.exp (x * t g) := by
+    let B : GA E (m + 1) → ℝ := fun g => (GlobalTheory.ZEul.uInt φ φ Φ N 0 g).re
+    have hre := GlobalTheory.CellBump.uInt_self_zero hΦr φ N
+    have hBc : Continuous B := Complex.continuous_re.comp
+      (GlobalTheory.CellBump.continuous_uInt hN hWc hWc hΦs.continuous hΦt 0)
+    obtain ⟨K, hKc, hKs⟩ := GlobalTheory.CellBump.exists_compact_support hJ hn2 hΦc hΦt hW hWJ hbC hb0
+    have hBK : ∀ g ∈ GlobalTheory.CellDec.C0 E (m + 1) S, B g ≠ 0 →
+        ∃ u ∈ GlobalTheory.CellDec.NA E (m + 1), u * g ∈ K := by
+      intro g hg hB
+      apply hKs g hg
+      intro hu
+      apply hB
+      simp [B, hu]
+    have hy1 : (fun i => pInf E (GlobalTheory.ZEul.lastRow (1 : GA E (m + 1)) i)) =
+        Pi.single (Fin.last m) 1 := by
+      funext i
+      by_cases h : i = Fin.last m
+      · subst i; simp [GlobalTheory.ZEul.lastRow]
+      · simp [GlobalTheory.ZEul.lastRow, Matrix.one_apply_ne (Ne.symm h), h]
+    have hyl : (Pi.single (Fin.last m) 1 : Fin (m + 1) → Cinf E) =
+        GlobalTheory.RSJ.Model.eLast (Cinf E) (m + 1) := by
+      funext i
+      rw [GlobalTheory.CellBump.single_last_eq]
+      rfl
+    have hf1 : GlobalTheory.RSJ.indN N
+        (fun i => GlobalTheory.RSJ.pFin E (GlobalTheory.ZEul.lastRow (1 : GA E (m + 1)) i)) = 1 := by
+      unfold GlobalTheory.RSJ.indN
+      refine ite_eq_left fun i => ?_
+      have hi : GlobalTheory.RSJ.pFin E (GlobalTheory.ZEul.lastRow (1 : GA E (m + 1)) i) =
+          if (i : ℕ) + 1 = m + 1 then 1 else 0 := by
+        rw [← GlobalTheory.CellBump.single_last_eq (R := Af E)]
+        by_cases h : i = Fin.last m
+        · subst i; simp [GlobalTheory.ZEul.lastRow]
+        · simp [GlobalTheory.ZEul.lastRow, Matrix.one_apply_ne (Ne.symm h), h]
+      change GlobalTheory.RSJ.pFin E (GlobalTheory.ZEul.lastRow (1 : GA E (m + 1)) i) - _ ∈ _
+      rw [hi, sub_self]
+      exact ⟨0, fun v => zero_mem _, by simp⟩
+    have hB1 : 0 < B 1 := by
+      have heq : GlobalTheory.ZEul.uInt φ φ Φ N 0 1 = Φ (Pi.single (Fin.last m) 1) := by
+        unfold GlobalTheory.ZEul.uInt
+        rw [hf1, hy1, hyl, GlobalTheory.RSJ.Model.secInv_eLast, map_one, one_mul,
+          hb0 1 h1mem, hb1, GlobalTheory.CellBump.detPow_eq, ← hyl]
+        simp
+      change 0 < (GlobalTheory.ZEul.uInt φ φ Φ N 0 1).re
+      rw [heq]
+      exact lt_of_le_of_ne (hΦr _).1 fun h => hΦe (Complex.ext h.symm (hΦr _).2)
+    obtain ⟨hpos, -⟩ := GlobalTheory.RSLocalPart.lintegral_cell_pos_lt_top_continuous E (m + 1) μ S 𝓕₀ h𝓕
+      (fun _ g => B g) (hBc.comp continuous_snd) (fun _ g => (hre g).2) (fun _ => hB1)
+      (fun _ u hu g => by simp only [B, GlobalTheory.CellBump.uInt_unip_mul hW Φ N 0 hu g])
+      ⟨K, hKc, fun _ => hBK⟩
+    obtain ⟨hlpos, hltop⟩ := hpos 0
+    have hIB : IntegrableOn B (𝓕₀ ∩ GlobalTheory.CellDec.C0 E (m + 1) S) μ :=
+      ⟨hBc.aestronglyMeasurable, (hasFiniteIntegral_iff_ofReal (ae_of_all _ fun g => (hre g).2)).2 hltop⟩
+    let t : GA E (m + 1) → ℝ := fun g =>
+      GlobalTheory.Mem.Chr.CharModel.logNorm E (Matrix.GeneralLinearGroup.det g)
+    have htc : Continuous t :=
+      (GlobalTheory.Mem.Chr.CharModel.continuous_logNorm E).comp Matrix.GeneralLinearGroup.continuous_det
+    have htu : ∀ u ∈ GlobalTheory.CellDec.NA E (m + 1), ∀ g, t (u * g) = t g := fun u hu g => by
+      simp only [t, map_mul, show Matrix.GeneralLinearGroup.det u = 1 from
+        Units.ext (GlobalTheory.RSLocalPart.det_eq_one hu), one_mul]
+    obtain ⟨R, hRK⟩ := hKc.exists_bound_of_continuousOn htc.continuousOn
+    refine ⟨(GlobalTheory.CellDec.C0 E (m + 1) S).indicator B, t,
+      hBc.measurable.indicator hC0, htc.measurable, fun g => Set.indicator_nonneg (fun g _ => (hre g).2) g,
+      ?_, ?_, ⟨R, fun g hg => ?_⟩, fun g hg => Set.indicator_of_notMem hg _, fun g hg => ?_, fun x g => ?_⟩
+    · unfold IntegrableOn
+      rw [integrable_indicator_iff hC0]
+      unfold IntegrableOn
+      rw [Measure.restrict_restrict hC0, Set.inter_comm]
+      exact hIB
+    · rw [integral_indicator hC0, Measure.restrict_restrict hC0, Set.inter_comm,
+        integral_eq_lintegral_of_nonneg_ae (ae_of_all _ fun g => (hre g).2) hBc.aestronglyMeasurable]
+      exact ENNReal.toReal_pos hlpos.ne' hltop.ne
+    · have hgC : g ∈ GlobalTheory.CellDec.C0 E (m + 1) S := by
+        by_contra h
+        exact hg (Set.indicator_of_notMem h _)
+      rw [Set.indicator_of_mem hgC] at hg
+      obtain ⟨u, hu, hk⟩ := hBK g hgC hg
+      have huR := hRK _ hk
+      rwa [htu u hu, Real.norm_eq_abs] at huR
+    · rw [Set.indicator_of_mem hg]
+      exact (hre g).1
+    · rw [GlobalTheory.CellBump.detPow_eq, Complex.ofReal_exp]
+      push_cast
+      rfl
+  obtain ⟨f, t, hfm, htm, hf0, hfi, hfpos, hR, hfC, hfu, hdet⟩ := hcell
   refine ⟨f, t, hfm, htm, hf0, hfi, hfpos, hR, ?_⟩
   intro x hx hd hd'
   have ev := GlobalTheory.T.shintani_unfoldedIntegrand_eval_torusCell E m S hψ ϖ hϖ b α α' φ φ' N J Φ hJ hn1 hn2 hn3 hΦt hW hW' hWJ hWJ' (hsh ϖ hϖ) (hsh' ϖ hϖ) x
   have ev1 := GlobalTheory.T.shintani_unfoldedIntegrand_eval_torusCell E m S hψ ϖ hϖ b α α φ φ N J Φ hJ hn1 hn2 hn3 hΦt hW hW hWJ hWJ (hsh ϖ hϖ) (hsh ϖ hϖ) x
   have ev2 := GlobalTheory.T.shintani_unfoldedIntegrand_eval_torusCell E m S hψ ϖ hϖ b α' α' φ' φ' N J Φ hJ hn1 hn2 hn3 hΦt hW' hW' hWJ' hWJ' (hsh' ϖ hϖ)
     (hsh' ϖ hϖ) x
-  have hC0 : MeasurableSet (GlobalTheory.CellDec.C0 E (m + 1) S) := (GlobalTheory.T.isOpen_C0 E (m + 1) S).measurableSet
   set I : ℂ := ∫ g in 𝓕₀, (f g : ℂ) * Complex.exp (x * t g) ∂μ with hI
   have hIC : ∫ g in 𝓕₀ ∩ GlobalTheory.CellDec.C0 E (m + 1) S, (f g : ℂ) * Complex.exp (x * t g) ∂μ = I := by
     rw [hI, Set.inter_comm, ← Measure.restrict_restrict hC0, ← integral_indicator hC0]
@@ -178,11 +273,11 @@ theorem unfolded_bump_eq :
     · have hpos : 0 < GlobalTheory.CellDec.dinv (m + 1) l.1 :=
         Finset.prod_pos fun v _ => zpow_pos (by exact_mod_cast (GlobalTheory.LFun.qV_ne_zero v).bot_lt) _
       have hd : ‖(GlobalTheory.CellDec.dinv (m + 1) l.1 : ℂ)‖ₑ = ENNReal.ofReal (GlobalTheory.CellDec.dinv (m + 1) l.1) := by
-        rw [← ofReal_norm_eq_enorm, Complex.norm_real, Real.norm_of_nonneg hpos.le]
-      rw [← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top, ← lintegral_const_mul' _ _ enorm_ne_top]
+        rw [← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg hpos.le]
+      rw [← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top, ← lintegral_const_mul' _ _ eNorm_ne_top]
       refine lintegral_congr_ae ((hae l).mono fun g hg => ?_)
       dsimp only
-      rw [← hd, ← enorm_mul, hg, enorm_mul]
+      rw [← hd, ← eNorm_mul, hg, eNorm_mul]
   have k12 := key (GlobalTheory.ZEul.uInt φ φ' Φ N x) (fun l => l.1.prod fun w v => GlobalTheory.ZEul.rsTerm (Ideal.absNorm w.asIdeal)
       (fun i => (α w i : ℂ)) (fun i => (α' w i : ℂ)) x v) (fun g hg l => by
     rw [(ev g hg).2.2 l, hfu g hg, hdet, mul_assoc])
@@ -220,7 +315,7 @@ theorem unfolded_bump_eq :
     have h5 : Summable fun l : GlobalTheory.CellDec.abelian₂ E (m + 1) S => ‖l.1.prod fun w v => GlobalTheory.ZEul.rsTerm
         (Ideal.absNorm w.asIdeal) (fun i => (a w i : ℂ)) (fun i => (a w i : ℂ)) x v‖₊ :=
       NNReal.summable_coe.1 (by simpa using h4)
-    simpa [enorm_eq_nnnorm] using ENNReal.tsum_coe_ne_top_iff_summable.2 h5
+    simpa [eNorm_eq_nnNorm] using ENNReal.tsum_coe_ne_top_iff_summable.2 h5
   have hlin : ∀ (B : GA E (m + 1) → ℂ) (P : GlobalTheory.CellDec.abelian₂ E (m + 1) S → ℂ), Measurable B →
       (∀ u ∈ GlobalTheory.CellDec.NA E (m + 1), ∀ g, B (u * g) = B g) →
       (∀ l, ENNReal.ofReal (GlobalTheory.CellDec.dinv (m + 1) l.1) *
@@ -228,7 +323,7 @@ theorem unfolded_bump_eq :
         ‖P l‖ₑ * ∫⁻ g in 𝓕₀ ∩ GlobalTheory.CellDec.C0 E (m + 1) S, ‖(f g : ℂ) * Complex.exp (x * t g)‖ₑ ∂μ) →
       (∑' l, ‖P l‖ₑ) ≠ ⊤ → ∫⁻ g in 𝓕₀, ‖B g‖ₑ ∂μ ≠ ⊤ := by
     intro B P hBm hBi hl hP
-    rw [GlobalTheory.CellDec.cell_lintegral μ S ϖ hϖ 𝓕₀ h𝓕 (fun g => ‖B g‖ₑ) hBm.enorm
+    rw [GlobalTheory.CellDec.cell_lintegral μ S ϖ hϖ 𝓕₀ h𝓕 (fun g => ‖B g‖ₑ) hBm.eNorm
       (fun u hu g => by simp only [hBi u hu g])]
     simp_rw [hl, ENNReal.tsum_mul_right]
     exact ENNReal.mul_ne_top hP hA

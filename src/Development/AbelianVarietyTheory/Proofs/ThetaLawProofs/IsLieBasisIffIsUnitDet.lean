@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AwayToAwayRightEqOfComp
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AwayToAwayRightEqOfComp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -42,7 +46,8 @@ def combHom (hv : ∀ i, IsTangent (v i)) :
 theorem tanExp_tanExp (hv : ∀ i, IsTangent (v i)) {m : ℕ} (M : Fin m → Fin n → R)
     (c : Fin m → R) : tanExp (fun i => tanExp v (M i)) c = tanExp v (∑ i, c i • M i) := by
   change _ = (combHom hv (∑ i, c i • M i)).toMul
-  rw [map_sum, toMul_sum, tanExp, lieExp]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, toMul_sum, tanExp, lieExp]
   refine Finset.prod_congr rfl fun i _ => ?_
   refine (comp_lieExp v _ _ _).trans ?_
   exact lieExp_congr _ (fun j => by
@@ -67,14 +72,21 @@ theorem isLieBasis_iff_isUnit_det (hv : IsLieBasis v) (M : Matrix (Fin n) (Fin n
       tanExp (fun i => tanExp v (M i)) c = tanExp v (Matrix.vecMul c M) := fun c => by
     rw [Matrix.vecMul_eq_sum]
     exact tanExp_tanExp hv.1 (fun i => M i) c
-  obtain ⟨hinj, -⟩ := isLieBasisOver_self hv
+  have hinj : Function.Injective (fun c : Fin n → R => tanExp v c) := by
+    intro a b hab
+    obtain ⟨c, hc, hu⟩ := hv.2 (tanExp v b) (isTangent_tanExp hv.1 b)
+    have ha : IsLieComb a v (tanExp v b) :=
+      (isLieComb_iff_tanExp _ _).2 hab.symm
+    have hb : IsLieComb b v (tanExp v b) :=
+      (isLieComb_iff_tanExp _ _).2 rfl
+    exact (hu a ha).trans (hu b hb).symm
   rw [← Matrix.isUnit_iff_isUnit_det]
   constructor
   · intro h
     refine Matrix.vecMul_surjective_iff_isUnit.1 fun d => ?_
     obtain ⟨c, hc, -⟩ := h.2 _ (isTangent_tanExp hv.1 d)
     rw [isLieComb_iff_tanExp, key] at hc
-    exact ⟨c, (hinj _ _ hc).symm⟩
+    exact ⟨c, (hinj hc).symm⟩
   · intro h
     refine ⟨fun i => isTangent_tanExp hv.1 _, fun w hw => ?_⟩
     obtain ⟨d, hd, -⟩ := hv.2 w hw
@@ -86,7 +98,7 @@ theorem isLieBasis_iff_isUnit_det (hv : IsLieBasis v) (M : Matrix (Fin n) (Fin n
       rw [isLieComb_iff_tanExp, key, hc', hd]
     · change IsLieComb _ _ _ at h'
       rw [isLieComb_iff_tanExp, key, hd, ← hc'] at h'
-      exact Matrix.vecMul_injective_of_isUnit h (hinj _ _ h').symm
+      exact Matrix.vecMul_injective_of_isUnit h (hinj h').symm
 
 theorem lieComb_algebra (R : Type) [CommRing R] (G : Over (Sp R)) [GrpObj G] [IsCommMonObj G]
     (n : ℕ) (v : Fin n → (epsR R ⟶ G)) (hv : ∀ i, IsTangent (v i)) :

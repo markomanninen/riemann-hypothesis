@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.Uniformised
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagFormTwoSmulAndKerStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilPairingComplexValueUniqueStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Uniformised
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagFormTwoSmulAndKerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilPairingComplexValueUniqueStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PELU
 open scoped Matrix
@@ -45,7 +50,7 @@ theorem unifCls_unit_iff (hker : ∀ z, e z = 1 ↔ z ∈ P.range) (hinj : Funct
 
 theorem unifCls_mul (hadd : ∀ z w, e (z + w) = e z * e w) (n : ℕ) (v v' : L) :
     e ((n : ℂ)⁻¹ • P (v + v')) = e ((n : ℂ)⁻¹ • P v) * e ((n : ℂ)⁻¹ • P v') := by
-  rw [map_add, smul_add, hadd]
+  rw [map_add (f := _), smul_add, hadd]
 
 theorem unifCls_eq_iff (hadd : ∀ z w, e (z + w) = e z * e w) (hker : ∀ z, e z = 1 ↔ z ∈ P.range)
     (hinj : Function.Injective P) {n : ℕ} (hn : 0 < n) (v v' : L) :
@@ -102,7 +107,7 @@ theorem unifCls_lift {Λ : Type} [AddCommGroup Λ] [Module.Free ℤ Λ] (hadd : 
       map_zero' := by simp [unifCls_exp_zero e hadd],
       map_add' := fun x y => by
         show Additive.ofMul (e _) = Additive.ofMul (e _) + Additive.ofMul (e _)
-        rw [map_add, map_add, smul_add, hadd]; rfl }
+        rw [map_add (f := _), map_add (f := _), smul_add, hadd]; rfl }
   have hψχ : ψ.toIntLinearMap = χ.toIntLinearMap := b.ext fun i => by
     simp [ψ, χ, hv, Module.Basis.constr_basis]
   intro a
@@ -156,7 +161,8 @@ theorem unifCls_bilin {L : Type} [AddCommGroup L] [Module.Free ℤ L] [Module.Fi
     Matrix.of fun i j => E (b i) (b j)
   have hsum : ∀ (c : Module.Free.ChooseBasisIndex ℤ L → ℤ) j, E (b.equivFun.symm c) (b j) = (c ᵥ* M) j := by
     intro c j
-    simp [Module.Basis.equivFun_symm_apply, map_sum, Matrix.vecMul, dotProduct, M]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Module.Basis.equivFun_symm_apply, map_sum, Matrix.vecMul, dotProduct, M]
   have hdet : M.det ≠ 0 := by
     intro h0
     obtain ⟨v, hv, hvM⟩ := Matrix.exists_vecMul_eq_zero_iff.2 h0

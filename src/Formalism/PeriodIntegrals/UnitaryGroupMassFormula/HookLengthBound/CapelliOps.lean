@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliMain
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliMain
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,8 @@ theorem capelli_square : CapSquare := by
   have hdet : ∀ s : Fin N → Fin N, ∑ σ : Equiv.Perm (Fin N), ((Equiv.Perm.sign σ : ℤˣ) : ℤ) •
       xw (xo N) (fun j => σ j) s = Algebra.lmul ℚ P (M.submatrix id s).det := by
     intro s
-    rw [Matrix.det_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.det_apply, map_sum]
     refine Finset.sum_congr rfl fun σ _ => ?_
     rw [xw_xo, Units.smul_def, map_zsmul]
     rfl

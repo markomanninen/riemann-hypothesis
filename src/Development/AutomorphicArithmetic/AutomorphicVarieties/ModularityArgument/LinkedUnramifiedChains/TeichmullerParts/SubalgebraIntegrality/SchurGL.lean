@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Lbc
-import GroundTheory.AutomorphicForms.SmoothRepSchur
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Lbc
+public import GroundTheory.AutomorphicForms.SmoothRepSchur
+
+@[expose] public section
+
 open UpperTheory.V.Z.J.D
 
 theorem UpperTheory.V.Z.J.D.schurGL :

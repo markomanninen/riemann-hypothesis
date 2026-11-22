@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenKoszulStep
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKoszulCech
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKoszulCechExact
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDoubleComplexVanish
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenKoszulStep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKoszulCech
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKoszulCechExact
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDoubleComplexVanish
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

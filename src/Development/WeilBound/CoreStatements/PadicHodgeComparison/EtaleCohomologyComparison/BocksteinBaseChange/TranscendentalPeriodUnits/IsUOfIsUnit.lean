@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.BcrisRegularPeriodRing
-import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.FixedBaseSurjectivity.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.BcrisRegularPeriodRing
+public import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.FixedBaseSurjectivity.Imports
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -11,8 +15,6 @@ open Formalism.Per6 GroundTheory.PAdicHodge DeRhamPotentiallySemistable.DRPst
 namespace CrystallineSemistableComparison
 
 variable {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
-
-theorem σ_per (g : K.fixingSubgroup) (x : BdR l) : (per l K).σ g x = σD g.1 x := rfl
 
 theorem isU_of_isUnit {A B : Type*} [CommRing A] [CommRing B] (f : A →+* B) {a : A} (ha : IsUnit a) :
     f a ∈ f.range ∧ ∃ y ∈ f.range, f a * y = 1 :=
@@ -29,7 +31,7 @@ theorem loc_abs {A B : Type*} [CommRing A] [IsLocalRing A] [CommRing B] (f : A �
     (x ∈ f.range ∧ ∃ z ∈ f.range, x * z = 1) ∨ (y ∈ f.range ∧ ∃ z ∈ f.range, y * z = 1) := by
   obtain ⟨a, rfl⟩ := hx
   obtain ⟨b, rfl⟩ := hy
-  rw [← map_add] at h
+  rw [← map_add (f := _)] at h
   rcases IsLocalRing.isUnit_or_isUnit_of_isUnit_add (isUnit_of_isU f hf h.2) with ha | hb
   · exact Or.inl (isU_of_isUnit f ha)
   · exact Or.inr (isU_of_isUnit f hb)
@@ -53,7 +55,7 @@ theorem facts : PeriodRingFacts := fun l _ K =>
     thetaSetup_structureMap_comp := fun z => by
       show algebraMap (BdRp l) (BdR l) (ACris.iota ℂ_[l] l (algebraMap (AInf ℂ_[l] l) (ACris.ACris ℂ_[l] l)
         (IsPerfectoidField.padicIntToWitt l z))) = algebraMap (BdRp l) (BdR l) (algebraMap ℚ_[l] (BdRp l) (z : ℚ_[l]))
-      rw [ACris.iota_padicInt]
+      exact congrArg _ (ACris.iota_padicInt z)
     frobenius_period := ACris.phi_periodT_eq_mul (untilt_epsilon (p := l))
     t_ne := DeRhamTwist.Twist.tQ_ne
     t_mem := ⟨ACris.iota ℂ_[l] l (tA l), rfl⟩

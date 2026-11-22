@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.NeZeroOfHasVal
-import Development.WeilBound.CoreStatements.FlagImmersions.ExistsInverse
-import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.NeZeroOfHasVal
+public import Development.WeilBound.CoreStatements.FlagImmersions.ExistsInverse
+public import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
+
+@[expose] public section
 
 noncomputable section
 

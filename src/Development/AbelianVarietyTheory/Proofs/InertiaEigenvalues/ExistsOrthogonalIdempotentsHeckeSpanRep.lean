@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRepMatrixCombinationKillingCharactersStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIdempotentSubMemOfPowSubMemStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRepMatrixCombinationKillingCharactersStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIdempotentSubMemOfPowSubMemStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ theorem exists_corner (T : Subalgebra A (X → A)) (rep : X → (Γ →* GL (Fin
   obtain ⟨m, f, h, hP, hχ⟩ := GlobalTheory.T.exists_repMatrix_combination_killing_characters ρ χ hr hs P
   refine ⟨∑ k, f k • fun x => mat (rep x) (h k),
     inRing_sum _ fun k _ => inRing_smul _ (inRing_mat _), fun u => ?_⟩
-  rw [Finset.sum_apply, map_sum_mulVec, map_sum, ← hP, map_sum_mulVec]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, map_sum_mulVec, map_sum, ← hP, map_sum_mulVec]
   have key : ∀ k, e ((((f k • fun x => mat (rep x) (h k)) π).map (toFr A)).mulVec u) =
       (((f k • mat ρ (h k)).map (toFr A)).mulVec (e u).1,
         fun c : Fin t => toFr A (f k * ((χ ((c : ℕ) + 1) (h k) : Aˣ) : A)) * (e u).2 c) := by
@@ -74,7 +79,8 @@ theorem exists_corner (T : Subalgebra A (X → A)) (rep : X → (Γ →* GL (Fin
   · rw [Prod.snd_sum]
     funext c
     rw [Finset.sum_apply]
-    simp only [← Finset.sum_mul, ← map_sum, hχ, map_zero, zero_mul, Pi.zero_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← Finset.sum_mul, ← map_sum, hχ, map_zero, zero_mul, Pi.zero_apply]
 
 theorem pow_succ_eval {b : X → Matrix (Fin n) (Fin n) A} {π : X} (h : b π * b π = b π) (k : ℕ) :
     (b ^ (k + 1)) π = b π := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,24 +74,6 @@ def HkFrob (i : X.Tw) (s : X.Sig i) : Prop :=
       algebraMap (X.O0 i) (X.O i)
         ((((((eps0 X i σ : (X.O0 i)ˣ) : X.O0 i) ^ D.R.t) • Tmat i s σ).charpolyRev).coeff k)
 
-open Classical in
-
-structure Att (A : NAut N) (bkP : BKPh X) (i : X.Tw) (ι : FractionRing (X.O0 i) →+* ℂ)
-    (ρ : GE N →* GL (Fin D.R.r) (X.O0 i)) (π : A.CG D.R.r) (sh : ℝ) : Prop where
-  unr : ∀ w, w ∉ placesOver D.host.E (X.l i) → A.unr (A.locG π w) → ∀ σ ∈ Ine (F := D.host.E) (N.plOm.1 w), ρ σ = 1
-  frob : ∀ w, w ∉ placesOver D.host.E (X.l i) → A.unr (A.locG π w) → ∀ (B : ValuationSubring N.Om) (σ : GE N),
-    IsPlaceOver (F := D.host.E) B w → IsFrob (F := D.host.E) B (normV w) σ →
-    ((ρ σ : GL _ _) : Matrix (Fin D.R.r) (Fin D.R.r) (X.O0 i)).charpoly.map (rd i ι) =
-      ((A.frobEig (A.lpTw (A.locG π w) sh)).map fun α => Polynomial.X - C α).prod
-  temp : ∀ w, w ∉ placesOver D.host.E (X.l i) → A.tempered (A.locG π w)
-  hodge : ∀ v (hv : v ∈ placesOver D.host.E (X.l i)),
-    (bkP.br i v hv).IsdRW (D.loc (X.l i)) (ρ.comp (DecV N v).subtype) ∧
-    (A.unr (A.locG π v) → (bkP.br i v hv).IsCrysW (D.loc (X.l i)) (ρ.comp (DecV N v).subtype)) ∧
-    (A.mono0 (A.locG π v) → (bkP.br i v hv).IsPotCrysW (D.loc (X.l i)) (ρ.comp (DecV N v).subtype))
-  jumps : ∀ v (hv : v ∈ placesOver D.host.E (X.l i)) (τ : EmbV bkP i v hv) (τc : D.host.E →+* ℂ),
-    ReadEmb bkP i ι v hv τ τc → ∀ a : ℤ,
-    Formalism.WeaklyAdmissibleFiltrations.multV (PDv bkP i v hv) (repV bkP i v hv ρ) τ a =
-      ((((A.infG π τc).map fun z => -z - (sh : ℂ)).count (a : ℂ) : ℕ) : ℤ)
 
 def HkSat (A : NAut N) (i : X.Tw) (s : X.Sig i) (ι : FractionRing (X.O0 i) →+* ℂ) (π : A.CG D.R.r) : Prop :=
   ∀ P, P ∉ X.S0 i → Formalism.BasicNotions.IsSplitPl D.host P → ∀ k, k ≤ D.R.r → ∃ h : X.O0 i,
@@ -104,11 +90,6 @@ structure RowFacts (A : NAut N) (i : X.Tw) (π₁ π : A.CG D.R.r) : Prop where
   ralg : A.ralg π
   anti : ∀ τc, A.infG π (τc.comp (cj D)) = (A.infG π τc).map fun z => -z
   window : ∀ τc, ∀ z ∈ A.infG π τc, ∀ a : ℤ, (a : ℂ) = -z + ((D.R.t : ℂ) - 1) / 2 → a < -1 ∨ (D.R.t : ℤ) < a
-
-def TripleAtt (A : NAut N) (bkP : BKPh X) (i : X.Tw) (s : X.Sig i) : Prop :=
-  ∃ (ι : FractionRing (X.O0 i) →+* ℂ) (π₁ π : A.CG D.R.r),
-    Att A bkP i ι (X.rhoS i s) π₁ ((1 - ((D.R.r : ℝ) + D.R.t)) / 2) ∧
-    Att A bkP i ι (Tgl i s) π ((1 - (D.R.t : ℝ)) / 2) ∧ RowFacts A i π₁ π ∧ HkSat A i s ι π
 
 end GlobalTheory.TripleGal
 

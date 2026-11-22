@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.CubicExponentialFactor
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.CoeffSingleLg
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CubicExponentialFactor.NormAddLeOne
+module
+
+public import Formalism.PeriodIntegrals.CubicExponentialFactor
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.CoeffSingleLg
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CubicExponentialFactor.NormAddLeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,6 @@ theorem expMv_eq {σ : Type} (F : MvPowerSeries σ ℂ_[p]) : expMv F = PI.FglPh
 theorem expMv_addC {σ : Type} {f g : MvPowerSeries σ ℂ_[p]} (hf : constantCoeff f = 0)
     (hg : constantCoeff g = 0) : expMv (f + g) = expMv f * expMv g := by
   exact PI.FglShared.expMv_add' hf hg
-
-def uS (E : PowerSeries ℂ_[p]) (x : MvPowerSeries (Fin 3) ℂ_[p]) : MvPowerSeries (Fin 3) ℂ_[p] :=
-  PowerSeries.subst x (logMv E)
 
 theorem main : Lemma := by
   intro p _ W wq l ex E T ha1 ha2 ha3 ha4 ha6 hW hex0 hinv hE0 hT ⟨n, hnI, hn1, hTn⟩
@@ -43,7 +44,7 @@ theorem main : Lemma := by
       constantCoeff (add l ex a b) = 0 := by
     intro a b ha hb
     unfold add
-    exact hpt0 _ (by rw [map_add, hlg0 a ha, hlg0 b hb, add_zero])
+    exact hpt0 _ (by rw [map_add (f := _), hlg0 a ha, hlg0 b hb, add_zero])
   have hsub0 : ∀ a b : MvPowerSeries (Fin 3) ℂ_[p], constantCoeff a = 0 → constantCoeff b = 0 →
       constantCoeff (sub l ex a b) = 0 := by
     intro a b ha hb
@@ -78,28 +79,28 @@ theorem main : Lemma := by
   set A := ψ s + ψ d1 + ψ d2 + ψ d3 with hA
   set B := ψ x0 + ψ x1 + ψ x2 with hB
   have cA : constantCoeff A = 0 := by
-    simp only [hA, map_add, hψ0 _ cs, hψ0 _ cd1, hψ0 _ cd2, hψ0 _ cd3, add_zero]
+    simp only [hA, map_add (f := _), hψ0 _ cs, hψ0 _ cd1, hψ0 _ cd2, hψ0 _ cd3, add_zero]
   have cB : constantCoeff B = 0 := by
-    simp only [hB, map_add, hψ0 _ c0, hψ0 _ c1, hψ0 _ c2, add_zero]
+    simp only [hB, map_add (f := _), hψ0 _ c0, hψ0 _ c1, hψ0 _ c2, add_zero]
   have hFG : (phAt E s + phAt E d1 + phAt E d2 + phAt E d3) - 3 * (phAt E x0 + phAt E x1 + phAt E x2) =
       -A + (B + B + B) := by
     rw [hφ _ cs, hφ _ cd1, hφ _ cd2, hφ _ cd3, hφ _ c0, hφ _ c1, hφ _ c2]
     simp only [hA, hB]
     ring
   have cFG : constantCoeff (-A + (B + B + B)) = 0 := by
-    simp only [map_add, map_neg, cA, cB, neg_zero, add_zero]
+    simp only [map_add (f := _), map_neg, cA, cB, neg_zero, add_zero]
   set Z := expMv (-A + (B + B + B)) with hZdef
   have hexpA : expMv A = eAt E s * eAt E d1 * eAt E d2 * eAt E d3 := by
-    have h1 : constantCoeff (ψ s + ψ d1) = 0 := by rw [map_add, hψ0 _ cs, hψ0 _ cd1, add_zero]
-    have h2 : constantCoeff (ψ s + ψ d1 + ψ d2) = 0 := by rw [map_add, h1, hψ0 _ cd2, add_zero]
+    have h1 : constantCoeff (ψ s + ψ d1) = 0 := by rw [map_add (f := _), hψ0 _ cs, hψ0 _ cd1, add_zero]
+    have h2 : constantCoeff (ψ s + ψ d1 + ψ d2) = 0 := by rw [map_add (f := _), h1, hψ0 _ cd2, add_zero]
     rw [hA, expMv_addC h2 (hψ0 _ cd3), expMv_addC h1 (hψ0 _ cd2), expMv_addC (hψ0 _ cs) (hψ0 _ cd1),
       hexpψ _ cs, hexpψ _ cd1, hexpψ _ cd2, hexpψ _ cd3]
   have hexpB : expMv B = eAt E x0 * eAt E x1 * eAt E x2 := by
-    have h1 : constantCoeff (ψ x0 + ψ x1) = 0 := by rw [map_add, hψ0 _ c0, hψ0 _ c1, add_zero]
+    have h1 : constantCoeff (ψ x0 + ψ x1) = 0 := by rw [map_add (f := _), hψ0 _ c0, hψ0 _ c1, add_zero]
     rw [hB, expMv_addC h1 (hψ0 _ c2), expMv_addC (hψ0 _ c0) (hψ0 _ c1), hexpψ _ c0, hexpψ _ c1,
       hexpψ _ c2]
   have hexp3B : expMv (B + B + B) = (eAt E x0 * eAt E x1 * eAt E x2) ^ 3 := by
-    have h1 : constantCoeff (B + B) = 0 := by rw [map_add, cB, add_zero]
+    have h1 : constantCoeff (B + B) = 0 := by rw [map_add (f := _), cB, add_zero]
     rw [expMv_addC h1 cB, expMv_addC cB cB, hexpB]
     ring
   have hZA : Z * (eAt E s * eAt E d1 * eAt E d2 * eAt E d3) = (eAt E x0 * eAt E x1 * eAt E x2) ^ 3 := by
@@ -126,7 +127,7 @@ theorem main : Lemma := by
   have hlgadd : ∀ a b : MvPowerSeries (Fin 3) ℂ_[p], constantCoeff a = 0 → constantCoeff b = 0 →
       lg l (add l ex a b) = lg l a + lg l b := by
     intro a b ha hb
-    have hy : constantCoeff (lg l a + lg l b) = 0 := by rw [map_add, hlg0 a ha, hlg0 b hb, add_zero]
+    have hy : constantCoeff (lg l a + lg l b) = 0 := by rw [map_add (f := _), hlg0 a ha, hlg0 b hb, add_zero]
     unfold add pt lg
     exact PI.FglShared.subst_subst_eq hex0 hinv hy
   have hptne : ∀ y : MvPowerSeries (Fin 3) ℂ_[p], constantCoeff y = 0 → y ≠ 0 → pt ex y ≠ 0 := by
@@ -166,8 +167,8 @@ theorem main : Lemma := by
       show pt ex (lg l (add l ex x0 x1) + lg l x2) = _
       rw [hlgadd x0 x1 c0 c1]
     rw [hs']
-    refine hptne _ (by rw [map_add, map_add, hlg0 _ c0, hlg0 _ c1, hlg0 _ c2]; simp) (hne _ 0 ?_)
-    rw [map_add, map_add, e0, e1, e2]
+    refine hptne _ (by rw [map_add (f := _), map_add (f := _), hlg0 _ c0, hlg0 _ c1, hlg0 _ c2]; simp) (hne _ 0 ?_)
+    rw [map_add (f := _), map_add (f := _), e0, e1, e2]
     simp
   have hd10 : d1 ≠ 0 := by
     refine hptne _ (by rw [map_sub, hlg0 _ c0, hlg0 _ c1, sub_zero]) (hne _ 0 ?_)

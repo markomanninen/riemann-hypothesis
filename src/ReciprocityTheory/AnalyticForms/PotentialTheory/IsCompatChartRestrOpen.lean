@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MIntSumCont
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MIntSumCont
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M.PLAux
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GradedChartDegrees.GDSpec
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.PolynomialSiteTraces.AdmissibleMap
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GradedChartDegrees.GDSpec
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.PolynomialSiteTraces.AdmissibleMap
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -70,7 +74,7 @@ def gφ {T T' : Thick (smFun X q)} (φ : T ⟶ T') (m : ℕ) : GB (l := l) T m �
 theorem GI_map {T T' : Thick (smFun X q)} (φ : T ⟶ T') : ∀ x ∈ GI (l := l) T, φ.φ x ∈ GI (l := l) T' := by
   intro x hx
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add]
+  rw [map_add (f := _)]
   refine add_mem (Ideal.mem_sup_left (φ.hle hy)) (Ideal.mem_sup_right ?_)
   obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1 hz
   rw [map_mul, map_natCast]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaTW
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaTW
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ theorem isThB_iff (X : Tower Ω ε) (A : ValuationSubring Ω) (N l n : ℕ) [Fac
 instance topMu.neZero (l n m N : ℕ) [Fact l.Prime] [NeZero N] : NeZero (topMu l n m N) :=
   ⟨Nat.mul_ne_zero (pow_ne_zero _ (Fact.out : l.Prime).ne_zero) (Nat.mul_ne_zero (NeZero.ne N) (NeZero.ne N))⟩
 
-open Classical in
 
+open Classical in
 def Gs (N l M : ℕ) [NeZero M] : Finset SL(2, ZMod M) :=
   Finset.univ.filter fun γ => γ ∈ (Gam N l).map (Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod M)))
 
@@ -59,14 +63,14 @@ def bTop (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n m N : ℕ) (bB : (Ω ≃�
 instance topM.neZero (l n m N : ℕ) [Fact l.Prime] [NeZero N] : NeZero (topM l n m (N * N)) :=
   ⟨Nat.mul_ne_zero (pow_ne_zero _ (Fact.out : l.Prime).ne_zero) (Nat.mul_ne_zero (NeZero.ne N) (NeZero.ne N))⟩
 
-open Classical in
 
+open Classical in
 def bMid (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n m N : ℕ) [NeZero N] (bB : (Ω ≃ₐ[ℚ] Ω) → X.Fn l) (s : Ω ≃ₐ[ℚ] Ω)
     (z : (ZMod (l ^ (m + n)))ˣ) : X.Fn l :=
   ∑ y ∈ Finset.univ.filter (fun y => redTop l n m N y = z), bTop X l n m N bB s y
 
-open Classical in
 
+open Classical in
 def Fsum [CharZero Ω] (ε : Ω →+* ℂ) (l : ℕ) [Fact l.Prime] (n m N : ℕ) [NeZero N] (x : ZMod N) (c d w : ℕ)
     (gm : (ZMod l)ˣ → SL(2, ℤ)) (R : Finset SL(2, ZMod (topMu l n m N))) (z : (ZMod (l ^ (m + n)))ˣ) (r : ℚ) : Ω :=
   if r.den = 1 then

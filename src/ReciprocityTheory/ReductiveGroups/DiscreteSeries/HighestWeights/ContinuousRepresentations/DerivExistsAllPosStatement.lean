@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
-import Formalism.RealPlaceAnalysis.StatementKT
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
+public import Formalism.RealPlaceAnalysis.StatementKT
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,13 +60,6 @@ abbrev KRep.op {ε : Fin n → Bool} (R : KRep ε) (k : KG ε) : R.V →L[ℂ] R
 
 def KRep.units {ε : Fin n → Bool} (R : KRep ε) : Fin n → Fin n → Module.End ℂ R.V :=
   fun a b => ((R.dτ (Matrix.single a b 1) : R.V →L[ℂ] R.V) : Module.End ℂ R.V)
-
-def KType.toKRep {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) : KRep ε where
-  V := T.V
-  τ := T.τ
-  cont := T.cont
-  dτ := T.dτ
-  hasDeriv := T.hasDeriv
 
 def KRepRelStatement : Prop :=
   ∀ (n : ℕ) (ε : Fin n → Bool) (R : KRep ε),

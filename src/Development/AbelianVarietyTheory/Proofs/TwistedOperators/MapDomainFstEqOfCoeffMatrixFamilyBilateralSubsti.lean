@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem substF_X_isWeightedHomogeneous {ι : Type} {N n : ℕ} (h : ι → Matri
 
 theorem mapDomain_fst_eq_of_coeff_substF_ne_zero {ι : Type} {N n : ℕ} (h : ι → Matrix (Fin N) (Fin N) ℂ)
     (g : ι → Matrix (Fin n) (Fin n) ℂ) (k k' : ι × Fin N × Fin n →₀ ℕ)
-    (hk : MvPolynomial.coeff k' (substF h g (MvPolynomial.monomial k 1)) ≠ 0) :
+    (hk : AddMonoidAlgebra.coeff (substF h g (MvPolynomial.monomial k 1)) k' ≠ 0) :
     Finsupp.mapDomain Prod.fst k' = Finsupp.mapDomain Prod.fst k := by
   have key : IsWeightedHomogeneous (fun p : ι × Fin N × Fin n => (Finsupp.single p.1 1 : ι →₀ ℕ))
       (substF h g (MvPolynomial.monomial k 1)) (Finsupp.mapDomain Prod.fst k) := by

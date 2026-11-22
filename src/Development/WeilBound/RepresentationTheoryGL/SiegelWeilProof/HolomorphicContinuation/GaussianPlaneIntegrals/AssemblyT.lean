@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyTB
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyTB
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open AsmA
 
 variable {ι A B : Type} [Fintype ι] [DecidableEq ι] [Fintype A] [Fintype B]
 
-variable (ι A B) in
 
+variable (ι A B) in
 abbrev NN : ℕ := Fintype.card ι + (Fintype.card A + Fintype.card B)
 
 def emb (i : ι) : Fin (NN ι A B) := Fin.castAdd _ (Fintype.equivFin ι i)
@@ -20,8 +24,8 @@ def emb (i : ι) : Fin (NN ι A B) := Fin.castAdd _ (Fintype.equivFin ι i)
 theorem emb_injective : Function.Injective (emb (ι := ι) (A := A) (B := B)) := fun i i' h => by
   simpa [emb] using h
 
-variable (A B) in
 
+variable (A B) in
 def invE (j : Fin (NN ι A B)) : Option ι :=
   if h : (j : ℕ) < Fintype.card ι then some ((Fintype.equivFin ι).symm ⟨j, h⟩) else none
 
@@ -42,8 +46,8 @@ theorem sum_invE (f : Fin (NN ι A B) → ℂ) (g : ι → ℂ) :
   exact (Equiv.sum_comp (Fintype.equivFin ι).symm (fun i => f (emb i) * g i)).symm.trans
     (Finset.sum_congr rfl fun j _ => by simp [emb]) |>.symm
 
-variable (ι) in
 
+variable (ι) in
 def resφ : (Fin (NN ι A B) × A) ⊕ (Fin (NN ι A B) × B) → PV ι A B :=
   Sum.elim (fun x => (invE A B x.1).elim 0 fun i => X (Sum.inl (i, x.2)))
     (fun y => (invE A B y.1).elim 0 fun i => X (Sum.inr (i, y.2)))
@@ -99,7 +103,8 @@ theorem Tf_mem (hS : Stable) (hA : Avg) (q : PV ι A B) : Tf hA q ∈ pairAlg ι
     refine Algebra.subset_adjoin ⟨(a, b), ?_⟩
     apply MvPolynomial.funext
     intro z
-    simp only [res, map_sum, map_mul, aeval_X, eval_resφ, Sum.elim_inl, Sum.elim_inr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [res, map_sum, map_mul, aeval_X, eval_resφ, Sum.elim_inl, Sum.elim_inr]
     rw [sum_invE (fun j => (invE A B j).elim 0 fun i => z (Sum.inl (i, a))) (fun i => z (Sum.inr (i, b)))]
     refine Finset.sum_congr rfl fun i _ => ?_
     have : invE A B (emb (A := A) (B := B) i) = some i := by simp [invE, emb]

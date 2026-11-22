@@ -1,4 +1,8 @@
-import Formalism.SuccessiveMinima.DefsMink
+module
+
+public import Formalism.SuccessiveMinima.DefsMink
+
+@[expose] public section
 
 open Module Submodule
 
@@ -18,7 +22,7 @@ theorem exists_nsmul_mem_span {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ
     exact hB i
   have hdisc : IsDiscrete (L : Set E) := IsDiscrete.mk (inferInstance : DiscreteTopology L)
   haveI : DiscreteTopology L.toAddSubgroup := inferInstanceAs (DiscreteTopology L)
-  have hclosed : IsClosed (L : Set E) := AddSubgroup.isClosed_of_discrete (H := L.toAddSubgroup)
+  have hclosed : IsClosed (L : Set E) := (L.toAddSubgroup).isClosed_of_discreteTopology
   have hfin : (ZSpan.fundamentalDomain B ∩ (L : Set E)).Finite :=
     Metric.finite_isBounded_inter_isClosed hdisc (ZSpan.fundamentalDomain_isBounded B) hclosed
   obtain ⟨S, hS⟩ : ∃ S : Finset E, ∀ y, y ∈ S ↔ y ∈ ZSpan.fundamentalDomain B ∩ (L : Set E) :=
@@ -63,8 +67,8 @@ end Formalism.FN.AdaptedBasisExistence
 
 namespace Formalism.FN.AdaptedBasisExistence
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem adapted_basis_exists : AdaptedBasis := by
   delta Formalism.FN.AdaptedBasis
   intro E _ _ _ L _ _ v hv hvL

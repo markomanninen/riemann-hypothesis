@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntFOneMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntFOneMul
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -33,7 +38,7 @@ theorem nat_le_four_of_dvd_of_embeddings_le_four :
       simp
     rw [← h1, hprod, norm_prod]
     calc ∏ σ : F →ₐ[ℚ] ℂ, ‖σ y‖ ≤ ∏ _σ : F →ₐ[ℚ] ℂ, (4 : ℝ) :=
-          Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun σ _ => hφ σ.toRingHom)
+          Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun σ _ => hφ σ.toRingHom)
       _ = 4 ^ d := by rw [Finset.prod_const, Finset.card_univ, AlgHom.card]
   have hd0 : d ≠ 0 := Module.finrank_pos.ne'
   have : (m : ℝ) ≤ 4 := (pow_le_pow_iff_left₀ (Nat.cast_nonneg m) (by norm_num) hd0).1 (hlow.trans hup)

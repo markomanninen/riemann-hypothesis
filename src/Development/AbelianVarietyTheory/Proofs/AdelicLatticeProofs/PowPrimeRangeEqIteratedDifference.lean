@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial GlobalTheory.QNorm GlobalTheory.CNorm
 open scoped WithZero TensorProduct
 
@@ -45,7 +50,8 @@ private lemma cyclotomic_comp_X_add_one_eq (p : ℕ) [Fact p.Prime] :
     have hpz : (p : ℤ) ≠ 0 := by exact_mod_cast hp.ne_zero
     exact (mul_right_eq_self₀.1 h.symm).resolve_right hpz
   obtain ⟨H, hH⟩ : X ∣ G - 1 := by
-    rw [X_dvd_iff, coeff_sub, coeff_one_zero, h0, sub_self]
+    rw [X_dvd_iff, coeff_sub]
+    simp [h0]
   refine ⟨H, ?_⟩
   rw [← hH, ← C_eq_natCast]
   linear_combination hG
@@ -84,9 +90,9 @@ private lemma exists_pow_factor_of_aeval_cyclotomic {S : Type*} [Ring S] (p : �
   · have h := congrArg (aeval y) e4
     rwa [map_add, map_mul, map_mul, map_natCast, hy, mul_zero, add_zero, map_pow, aeval_X] at h
 
+
 open NumberField IsDedekindDomain Polynomial in
 open scoped WithZero TensorProduct in
-
 theorem _root_.GlobalTheory.CNorm.pows_eq_range_dif_pow : ∀ (p : ℕ) (M : Type) [CommGroup M] (τ : M →* M)
     (lam : Monoid.End M), p.Prime → (∀ a, lam a = τ a / a) →
     (∀ a, _root_.GlobalTheory.CNorm.nrm τ p a = 1) →
@@ -102,7 +108,8 @@ theorem _root_.GlobalTheory.CNorm.pows_eq_range_dif_pow : ∀ (p : ℕ) (M : Typ
     show Additive.ofMul (lam a) + Additive.ofMul a = Additive.ofMul (τ a)
     rw [hlam, ← ofMul_mul, div_mul_cancel]
   have hT : aeval T (cyclotomic p ℤ) = 0 := by
-    rw [cyclotomic_prime, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [cyclotomic_prime, map_sum]
     simp only [map_pow, aeval_X]
     refine DFunLike.ext _ _ fun x => ?_
     obtain ⟨a, rfl⟩ : ∃ a, Additive.ofMul a = x := ⟨_, ofMul_toMul x⟩
@@ -114,7 +121,7 @@ theorem _root_.GlobalTheory.CNorm.pows_eq_range_dif_pow : ∀ (p : ℕ) (M : Typ
     rw [← ofMul_prod, ← _root_.GlobalTheory.CNorm.nrm_apply, hN, ofMul_one]
     rfl
   have hy : aeval Y ((cyclotomic p ℤ).comp (X + 1)) = 0 := by
-    rw [aeval_comp, map_add, aeval_X, map_one, hYT, hT]
+    rw [aeval_comp, map_add (f := _), aeval_X, map_one, hYT, hT]
   obtain ⟨W, V, h1, h2, h3, h4⟩ := exists_pow_factor_of_aeval_cyclotomic p Y hy
   have hL : ∀ a, Additive.ofMul ((lam ^ (p - 1) : Monoid.End M) a) =
       (Y ^ (p - 1)) (Additive.ofMul a) := fun a => by

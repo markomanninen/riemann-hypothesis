@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsPartnerLift
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IdxNOneMulAbsNorm
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountTermsGramClassOverSublatticeStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsPartnerLift
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IdxNOneMulAbsNorm
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountTermsGramClassOverSublatticeStatement
+
+@[expose] public section
 
 open NumberField Module IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 open scoped Classical
@@ -81,12 +85,12 @@ theorem prod_Gz_le {b C B T T' : ℝ} (hb : 1 ≤ b) (hC : 0 ≤ C) (hr : 1 ≤ 
         max 1 (absDl D Z D.R.rS τ / b ^ (C * (D.R.m : ℝ) ^ 2))) ^ 2) :=
     calc ∏ τ, Gz D T T' Z τ ≤ |∏ τ, Gz D T T' Z τ| := le_abs_self _
       _ = ∏ τ, |Gz D T T' Z τ| := Finset.abs_prod _ _
-      _ ≤ _ := Finset.prod_le_prod (fun τ _ => abs_nonneg _) (fun τ _ => hpt τ)
+      _ ≤ _ := Finset.prod_le_prod₀ (fun τ _ => abs_nonneg _) (fun τ _ => hpt τ)
   rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, hcard, Finset.prod_pow] at hprod
   have hsz : ∏ τ, (max 1 (absDl D Z (D.R.rS + 1) τ / b ^ (C * (D.R.m : ℝ) ^ 2)) *
       max 1 (absDl D Z D.R.rS τ / b ^ (C * (D.R.m : ℝ) ^ 2))) ≤ sizeZ D b C Z := by
     unfold sizeZ
-    refine Finset.prod_le_prod (fun τ _ => mul_nonneg (zero_le_one.trans (hM1 _ _)) (zero_le_one.trans (hM1 _ _))) ?_
+    refine Finset.prod_le_prod₀ (fun τ _ => mul_nonneg (zero_le_one.trans (hM1 _ _)) (zero_le_one.trans (hM1 _ _))) ?_
     intro τ _
     have hmem1 : D.R.rS + 1 ∈ Finset.Icc 1 (D.R.rS + 1) := Finset.mem_Icc.2 ⟨by omega, le_rfl⟩
     have hmem2 : D.R.rS ∈ (Finset.Icc 1 (D.R.rS + 1)).erase (D.R.rS + 1) :=
@@ -302,9 +306,13 @@ theorem partners_le : ∀ Cg cb Cu cT CT C0 A : ℝ, ∃ C : ℝ, ∀ (D : D7) (
     rwa [sub_add_sub_cancel] at this
   have hPL0 : seen D (lf D F0) (Thp Λ (lf D F0) F') ≤ L0X D Λ (lf D F0) :=
     seen_le_L0X (lf D F0) (Hp Λ (lf D F0) F') hHle
+  have hfull : Submodule.IsFullLattice D.host.E Λ :=
+    { toIsLattice := hlat
+      span_eq_top := GlobalTheory.LoopC.Base.span_eq_top_of_unimodular
+        (hS D).hT (hS D).herm (hS D).nondeg hlat huni }
   have hrk : rkW D (seen D (lf D F0) (Thp Λ (lf D F0) F')) = D.R.k - 1 := by
     rw [← hrank]
-    exact rk_seen (lf D F0) hlat hW (Hp Λ (lf D F0) F') hHle hHX
+    exact rk_seen (lf D F0) hfull hW (Hp Λ (lf D F0) F') hHle hHX
   have hXle : Xplus (lf D F0) ≤ spanE (hS D) (UU Λ (lf D F0) F') := by
     show Xplus (lf D F0) ≤ UUE Λ (lf D F0) F'
     rw [hUUE]

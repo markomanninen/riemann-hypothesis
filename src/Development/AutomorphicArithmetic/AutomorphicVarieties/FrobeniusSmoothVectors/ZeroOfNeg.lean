@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -118,7 +122,7 @@ theorem UpperTheory.V.Fr.ep_ev :
     have e : σ x = sg R 1 * x := hx
     rw [sg_one, neg_one_mul] at e
     apply zero_of_neg h2
-    have hm := res_map σ x
+    have hm := UpperTheory.V.Alg.res_map (O := O) σ x
     rw [e, map_neg] at hm
     exact hm.symm
   have hr : ∀ s, ((B.bar O).r s).mat ∈ adp (ResidueField O) 0 := by

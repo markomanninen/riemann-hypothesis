@@ -1,6 +1,10 @@
-import Formalism.WachLatticeTwists.ShapeRowIsomorphisms.StatClause5Row
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.ImportsAlt
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatReal
+module
+
+public import Formalism.WachLatticeTwists.ShapeRowIsomorphisms.StatClause5Row
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.ImportsAlt
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatReal
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -26,7 +30,7 @@ theorem kRow_rel {O Γ VT VT' : Type} [CommRing O] [IsDomain O] [IsDiscreteValua
     rw [LinearEquiv.symm_apply_eq, hu, LinearEquiv.apply_symm_apply]
   let b' : coZ1s ρM := ⟨fun g => u.symm (x.1 g), fun g h => by
     show u.symm (x.1 (g * h)) = u.symm (x.1 g) + ρM g (u.symm (x.1 h))
-    rw [((mem_Z1_iff_cocycle _ _).1 x.2).2 g h, map_add, hsym]⟩
+    rw [((mem_Z1_iff_cocycle _ _).1 x.2).2 g h, map_add (f := _), hsym]⟩
   have hk0 : kRow D ρM u hu (Submodule.Quotient.mk x) = Submodule.mkQ _ b' := rfl
   have hy' : Submodule.mkQ _ b' = Submodule.mkQ _ b := hk0.symm.trans hy
   rw [Submodule.mkQ_apply, Submodule.mkQ_apply, Submodule.Quotient.eq, Submodule.mem_comap,
@@ -65,7 +69,7 @@ theorem clause5Gen {O Γ VT VT' : Type} [CommRing O] [IsDomain O] [IsDiscreteVal
       have : (fun g => u ((b : Γ → M) g)) = fun g => x.1 g - (D.ρA g m' - m') := funext hbg
       rw [this]
       exact hxc.sub (hc2.sub continuous_const)
-    · rw [b.2 g h, map_add, hu]
+    · rw [b.2 g h, map_add (f := _), hu]
   have hxx : (Submodule.Quotient.mk x : ReciprocityTheory.Gal.H1 D.ρA) = Submodule.Quotient.mk ⟨_, hx'⟩ := by
     refine (Submodule.Quotient.eq _).2 ((mem_coboundaries1 _ _).2 ⟨m', fun g => ?_⟩)
     change x.1 g - u ((b : Γ → M) g) = _
@@ -83,7 +87,7 @@ theorem clause5Row : StatClause5Row := by
   have ht : (fun g => v (π (a g))) ∈ Z1 D.ρTl' := by
     refine (mem_Z1_iff_cocycle _ _).2 ⟨hC a hCa, fun g h => ?_⟩
     have e1 : a (g * h) = a g + ρ₁ (g : G) (a h) := ha g h
-    rw [e1, map_add, map_add, hπ, hv]
+    rw [e1, map_add (f := _), map_add (f := _), hπ, hv]
   have e2 : clsRow D v (fun g => π (a g)) = Submodule.Quotient.mk ⟨_, ht⟩ := by
     unfold clsRow
     exact dif_pos ht

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsLocalCoeffRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsLocalCoeffRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -53,8 +58,8 @@ theorem LocCycleLocalQuot.proof (h₂ : LocalQuotPrimes.Statement.{u}) : LocCycl
   unfold locCycle
   by_cases h : W ∈ J.minimalPrimes
   swap
-  · rw [dif_neg h, dif_neg (mt hmin.2 h)]
-  rw [dif_pos h, dif_pos (hmin.1 h)]
+  · rw [dite_eq_right h, dite_eq_right (mt hmin.2 h)]
+  rw [dite_eq_left h, dite_eq_left (hmin.1 h)]
   have := hW
   have := hpW
   set φ := localQuotMap P U with hφ

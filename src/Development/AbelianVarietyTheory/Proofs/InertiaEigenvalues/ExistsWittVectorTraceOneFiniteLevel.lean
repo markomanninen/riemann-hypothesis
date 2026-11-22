@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
+
+@[expose] public section
 
 namespace GlobalTheory.UnramifiedCrys
 
@@ -56,12 +60,14 @@ theorem exists_witt_trace_one : ∀ (p : ℕ) [Fact p.Prime] (G : Type) [Group G
   set T := ∑ x : G ⧸ N, WittVector.map (ρ x.out).toRingHom (WittVector.teichmuller p (θ : R))
     with hT
   have hTg : ∀ g, WittVector.map (ρ g).toRingHom T = T := fun g => by
-    rw [hT, map_sum, ← hsum (fun g => WittVector.map (ρ g).toRingHom
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT, map_sum, ← hsum (fun g => WittVector.map (ρ g).toRingHom
       (WittVector.teichmuller p (θ : R))) (fun g n hn => by
         simp only [wittMap_mul, hθN n hn]) g]
     simp only [wittMap_mul]
   have hT0 : WittVector.constantCoeff T = t := by
-    rw [hT, map_sum, ht]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT, map_sum, ht]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [WittVector.map_teichmuller, WittVector.constantCoeff_apply,
       WittVector.teichmuller_coeff_zero]

@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
 
@@ -176,7 +181,7 @@ theorem generic_points_dense : (∀ (K : Type) [Field K] [Countable K] (sg : K �
   obtain ⟨η, hη, hball⟩ := Metric.eventually_nhds_iff.1 hev
   obtain ⟨z, hz, hzg⟩ := hgen K sg D z₀ η hη
   have hτ : Function.Injective (MvPolynomial.eval₂Hom sg z) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro p hp
     by_contra h
     exact hzg p h hp
@@ -204,6 +209,7 @@ theorem generic_points_dense : (∀ (K : Type) [Field K] [Countable K] (sg : K �
   obtain ⟨σ, hσ, rfl⟩ := hroot _ r hr
   refine absurd hrε (not_lt.2 ?_)
   have hc' := hc σ hσ
-  simpa only [b, map_sum, map_mul, map_natCast, mul_sub, Finset.sum_sub_distrib] using hc'
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [b, map_sum, map_mul, map_natCast, mul_sub, Finset.sum_sub_distrib] using hc'
 
 end GlobalTheory

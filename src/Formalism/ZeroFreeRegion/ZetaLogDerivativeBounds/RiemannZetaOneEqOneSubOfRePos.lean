@@ -1,4 +1,8 @@
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.DzDifferentiableOn
+module
+
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.DzDifferentiableOn
+
+@[expose] public section
 
 open Complex Filter Topology
 

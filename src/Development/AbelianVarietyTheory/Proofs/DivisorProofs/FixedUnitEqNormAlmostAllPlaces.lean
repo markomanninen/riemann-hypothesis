@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSmallB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyAdicIntegralSpanClosedMulStar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdicIntegralTensorBasisHenselExistsUniqueSqrtStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwistedNormModMaxIdealAdicTensorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSmallB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyAdicIntegralSpanClosedMulStar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdicIntegralTensorBasisHenselExistsUniqueSqrtStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwistedNormModMaxIdealAdicTensorStatement
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount IsDedekindDomain GlobalTheory.AdicSpan
 open scoped TensorProduct Classical
 noncomputable section
@@ -56,27 +61,33 @@ theorem good_eventually : ∀ (L : Type) [Field L] [NumberField L] (c : L →ₐ
       _ = _ := mul_one _
   · rw [Algebra.TensorProduct.one_def]; exact hint 1 (fun k => hlv (0, k))
   · intro y z hy hz k
-    rw [eq_sum_tmul bL v y, eq_sum_tmul bL v z, Finset.sum_mul_sum, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eq_sum_tmul bL v y, eq_sum_tmul bL v z, Finset.sum_mul_sum, map_sum, Finsupp.finsetSum_apply]
     refine sum_mem fun i _ => ?_
-    rw [map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finsupp.finsetSum_apply]
     refine sum_mem fun j _ => ?_
     rw [Algebra.TensorProduct.tmul_mul_tmul, repr_tmul_apply]
     exact mul_mem (mul_mem (hy i) (hz j)) (hcv (i, j, k))
   · intro y z hy hz k
-    rw [eq_sum_tmul bL v y, eq_sum_tmul bL v z, Finset.sum_mul_sum, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eq_sum_tmul bL v y, eq_sum_tmul bL v z, Finset.sum_mul_sum, map_sum, Finsupp.finsetSum_apply]
     refine Valuation.map_sum_lt _ one_ne_zero fun i _ => ?_
-    rw [map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finsupp.finsetSum_apply]
     refine Valuation.map_sum_lt _ one_ne_zero fun j _ => ?_
     rw [Algebra.TensorProduct.tmul_mul_tmul, repr_tmul_apply, map_mul, map_mul]
     exact lt_of_le_of_lt (mul_le_mul' (mul_le_mul' ((hmem _).1 (hy i)) le_rfl) ((hmem _).1 (hcv (i, j, k))))
       (by simpa using hz j)
   · intro y hy k
-    rw [eq_sum_tmul bL v y, map_sum, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eq_sum_tmul bL v y, map_sum, map_sum, Finsupp.finsetSum_apply]
     refine sum_mem fun i _ => ?_
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, repr_tmul_apply]
     exact mul_mem (hy i) (hsv (i, k))
   · intro y hy k
-    rw [eq_sum_tmul bL v y, map_sum, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eq_sum_tmul bL v y, map_sum, map_sum, Finsupp.finsetSum_apply]
     refine Valuation.map_sum_lt _ one_ne_zero fun i _ => ?_
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, repr_tmul_apply, map_mul]
     exact lt_of_le_of_lt (mul_le_mul' le_rfl ((hmem _).1 (hsv (i, k)))) (by simpa using hy i)
@@ -101,7 +112,7 @@ theorem unit_fixed_is_norm : ∀ (L : Type) [Field L] [NumberField L] (c : L →
     induction a using TensorProduct.induction_on with
     | zero => simp
     | tmul r l => simp [σ, hc]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hσinv : ∀ g : (v.adicCompletion ℚ ⊗[ℚ] L)ˣ, σ ↑g = ↑g → σ ↑g⁻¹ = ↑g⁻¹ := by
     intro g hg
     calc σ ↑g⁻¹ = σ ↑g⁻¹ * (↑g * ↑g⁻¹) := by simp

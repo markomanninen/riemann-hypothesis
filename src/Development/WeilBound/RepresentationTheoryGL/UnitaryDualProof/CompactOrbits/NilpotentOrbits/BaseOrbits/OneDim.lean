@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseP
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseP
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,8 +85,8 @@ private theorem prim_lemma_2 (f g : Matrix (Fin n) (Fin n) k) (hf : f * f = f) (
       _ = 0 := by rw [Matrix.mulVec_mulVec, hgf, Matrix.zero_mulVec]
   exact Submodule.finrank_lt_finrank_of_lt (lt_of_le_of_ne hle hne)
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem prim (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hc : ∀ a ∈ Z, ∀ b ∈ Z, a * b = b * a)
     (hr : IsReduced Z) (v : Fin n → k) (hv : v ≠ 0) :
     ∃ e ∈ Z, e * e = e ∧ e *ᵥ v ≠ 0 ∧

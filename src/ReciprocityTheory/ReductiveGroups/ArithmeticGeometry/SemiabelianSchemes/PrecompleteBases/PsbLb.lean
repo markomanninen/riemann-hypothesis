@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.Imports
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.CubicalExtendsSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.Imports
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.CubicalExtendsSt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Semi
 
@@ -78,10 +82,10 @@ abbrev triv (X : Scheme.{u}) : LB X where
   U := fun _ => ⊤
   g := fun _ _ => 1
 
-theorem isLB_triv (X : Scheme.{u}) : (triv X).IsLB where
-  cover := iSup_const
-  g_self := fun _ => map_one _
-  cocycle := fun _ _ _ => by simp only [map_one, mul_one]
+theorem isLB_triv (X : Scheme.{u}) : (triv X).IsLB := by
+  refine ⟨iSup_const, fun _ => map_one _, ?_⟩
+  intro i j k
+  simp only [triv, map_one, mul_one]
 
 def dg (M L : LB X) (p q : M.ι × L.ι) : Γ(X, M.U p.1 ⊓ L.U p.2 ⊓ (M.U q.1 ⊓ L.U q.2))ˣ :=
   res (le_inf (inf_le_left.trans inf_le_left) (inf_le_right.trans inf_le_left) :
@@ -115,14 +119,12 @@ lemma dg_cocycle {M L : LB X} (hM : M.IsLB) (hL : L.IsLB) (p q r : M.ι × L.ι)
   rw [res_dg, res_dg, res_dg, mul_mul_mul_comm, ← mul_inv]
   exact congrArg₂ (fun a b => a * b⁻¹) (res_cocycle hM _ _ _ _ _ _) (res_cocycle hL _ _ _ _ _ _)
 
-theorem isLB_div {M L : LB X} (hM : M.IsLB) (hL : L.IsLB) : (div M L).IsLB where
-  cover := by
-    refine eq_top_iff.2 fun x _ => ?_
-    obtain ⟨i, hi⟩ := mem_of_cover hM x
-    obtain ⟨j, hj⟩ := mem_of_cover hL x
-    exact TopologicalSpace.Opens.mem_iSup.2 ⟨(i, j), ⟨hi, hj⟩⟩
-  g_self := dg_self hM hL
-  cocycle := dg_cocycle hM hL
+theorem isLB_div {M L : LB X} (hM : M.IsLB) (hL : L.IsLB) : (div M L).IsLB := by
+  refine ⟨?_, dg_self hM hL, dg_cocycle hM hL⟩
+  refine eq_top_iff.2 fun x _ => ?_
+  obtain ⟨i, hi⟩ := mem_of_cover hM x
+  obtain ⟨j, hj⟩ := mem_of_cover hL x
+  exact TopologicalSpace.Opens.mem_iSup.2 ⟨(i, j), ⟨hi, hj⟩⟩
 
 variable (L : LB X) {K K' : Type u} [Fintype K] [Fintype K']
 
@@ -174,13 +176,11 @@ lemma lcg_cocycle {L : LB X} (hL : L.IsLB) (φ : K → (Y ⟶ X)) (ε : K → �
   exact congrArg (· ^ ε k) (pull_cocycle hL (φ k) _ _ _ _ _ _)
 
 theorem isLB_linComb {L : LB X} (hL : L.IsLB) (φ : K → (Y ⟶ X)) (ε : K → ℤ) :
-    (LinComb L φ ε).IsLB where
-  cover := by
-    refine eq_top_iff.2 fun y _ => ?_
-    choose j hj using fun k => mem_of_cover hL ((φ k).base y)
-    exact TopologicalSpace.Opens.mem_iSup.2 ⟨j, Set.mem_iInter.2 hj⟩
-  g_self := lcg_self hL φ ε
-  cocycle := lcg_cocycle hL φ ε
+    (LinComb L φ ε).IsLB := by
+  refine ⟨?_, lcg_self hL φ ε, lcg_cocycle hL φ ε⟩
+  refine eq_top_iff.2 fun y _ => ?_
+  choose j hj using fun k => mem_of_cover hL ((φ k).base y)
+  exact TopologicalSpace.Opens.mem_iSup.2 ⟨j, Set.mem_iInter.2 hj⟩
 
 theorem isLB_pull {L : LB X} (hL : L.IsLB) (f : Y ⟶ X) : (L.pull f).IsLB :=
   isLB_linComb hL _ _
@@ -188,34 +188,6 @@ theorem isLB_pull {L : LB X} (hL : L.IsLB) (f : Y ⟶ X) : (L.pull f).IsLB :=
 lemma lcg_empty (i j : PEmpty.{u+1} → L.ι) :
     lcg L (Y := Y) (K := PEmpty) PEmpty.elim PEmpty.elim i j = 1 :=
   Finset.prod_eq_one fun k _ => k.elim
-
-lemma lcg_empty_self (j : PEmpty.{u+1} → L.ι) :
-    res (le_inf le_rfl le_rfl : wchart L (Y := Y) PEmpty.elim j ≤
-        wchart L (Y := Y) PEmpty.elim j ⊓ wchart L (Y := Y) PEmpty.elim j)
-      (lcg L (Y := Y) (K := PEmpty) PEmpty.elim PEmpty.elim j j) = 1 := by
-  rw [lcg_empty, map_one]
-
-lemma lcg_empty_cocycle (a b c : PEmpty.{u+1} → L.ι) :
-    res (inf_le_left : wchart L (Y := Y) PEmpty.elim a ⊓ wchart L PEmpty.elim b ⊓
-        wchart L PEmpty.elim c ≤ wchart L PEmpty.elim a ⊓ wchart L PEmpty.elim b)
-        (lcg L (Y := Y) (K := PEmpty) PEmpty.elim PEmpty.elim a b) *
-      res (le_inf (inf_le_left.trans inf_le_right) inf_le_right :
-        wchart L (Y := Y) PEmpty.elim a ⊓ wchart L PEmpty.elim b ⊓ wchart L PEmpty.elim c ≤
-          wchart L PEmpty.elim b ⊓ wchart L PEmpty.elim c)
-        (lcg L (Y := Y) (K := PEmpty) PEmpty.elim PEmpty.elim b c) =
-      res (le_inf (inf_le_left.trans inf_le_left) inf_le_right :
-        wchart L (Y := Y) PEmpty.elim a ⊓ wchart L PEmpty.elim b ⊓ wchart L PEmpty.elim c ≤
-          wchart L PEmpty.elim a ⊓ wchart L PEmpty.elim c)
-        (lcg L (Y := Y) (K := PEmpty) PEmpty.elim PEmpty.elim a c) := by
-  rw [lcg_empty, lcg_empty, lcg_empty, map_one, map_one, map_one, mul_one]
-
-theorem isLB_linComb_empty :
-    (LinComb L (Y := Y) (K := PEmpty) PEmpty.elim PEmpty.elim).IsLB where
-  cover := by
-    refine eq_top_iff.2 fun y _ => ?_
-    exact TopologicalSpace.Opens.mem_iSup.2 ⟨PEmpty.elim, Set.mem_iInter.2 fun k => k.elim⟩
-  g_self := lcg_empty_self L
-  cocycle := lcg_empty_cocycle L
 
 lemma wchart_comp_le (h : Z ⟶ Y) (φ : K → (Y ⟶ X)) (j : K → L.ι) :
     wchart L (fun k => h ≫ φ k) j ≤ h ⁻¹ᵁ wchart L φ j :=

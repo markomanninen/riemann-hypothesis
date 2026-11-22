@@ -1,6 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ExistsDenOfLeOne
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.PeriodIntegrals.UnitaryApprox
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ExistsSubDivMemSP
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,12 +106,12 @@ theorem iE_mem_O_iff (x : E) :
   constructor
   · intro hx
 
-    obtain ⟨t, ht⟩ := hfix (x + sig x) (by rw [map_add, hσ, add_comm])
+    obtain ⟨t, ht⟩ := hfix (x + sig x) (by rw [map_add (f := _), hσ, add_comm])
     obtain ⟨n, hn⟩ := hfix (x * sig x) (by rw [map_mul, hσ, mul_comm])
     have hxs := iE_sig_mem A hσ hfix hx
     have htO : A.ιF t ∈ 𝒪[A.Fp] := by
       apply mem_of_alg_mem_O A
-      rw [← iE_alg, ht, map_add]; exact A.O.add_mem hx hxs
+      rw [← iE_alg, ht, map_add (f := _)]; exact A.O.add_mem hx hxs
     have hnO : A.ιF n ∈ 𝒪[A.Fp] := by
       apply mem_of_alg_mem_O A
       rw [← iE_alg, hn, map_mul]; exact A.O.mul_mem hx hxs

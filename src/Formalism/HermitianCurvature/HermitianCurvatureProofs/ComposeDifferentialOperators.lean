@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ListMapSumApply
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ListMapSumApply
+
+@[expose] public section
 
 open Matrix MvPolynomial Set
 open scoped ComplexConjugate ContDiff Topology

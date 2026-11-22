@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.W2.Seed
 open scoped TensorProduct
 
@@ -25,7 +30,7 @@ theorem UpperTheory.Gal.W2.Seed.pPosGen :
     refine ⟨a + M * N * b, ?_⟩
     have hs : (t + (M : E) * (N : E)) * (x : E) = t * x + ((M : ℚ) * (N : ℚ)) • (1 * (x : E)) := by
       rw [Algebra.smul_def]; simp; ring
-    rw [hs, map_add, map_smul, ha, hb]
+    rw [hs, map_add (f := _), map_smul, ha, hb]
     simp
   obtain ⟨x, hx⟩ := hz 1 h1
   have hgen : GenCodiff M (t + (M : E) * (N : E)) := by

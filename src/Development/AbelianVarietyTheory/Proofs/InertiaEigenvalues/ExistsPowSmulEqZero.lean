@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteResidueField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodCoefficientRingPadicIntegersFinExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardH1LocalEulerFormulaStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LatticePowSmulNhdsZeroBasisStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdicallyCompleteLatticeReductionActionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LatticeTwistExactSequenceCohomologyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteResidueField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodCoefficientRingPadicIntegersFinExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardH1LocalEulerFormulaStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LatticePowSmulNhdsZeroBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdicallyCompleteLatticeReductionActionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LatticeTwistExactSequenceCohomologyStatement
+
+@[expose] public section
 
 open GlobalTheory.AdmLoc Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Filter Topology
 open scoped TensorProduct
@@ -126,7 +130,7 @@ theorem inv_ext {G T S X Y : Type} [Group G] [AddCommGroup T] [Module O T] [Modu
     induction m using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => simp [coefRep_tmul]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   rw [Submodule.eq_bot_iff] at hS hY ⊢
   intro m hm
   have h1 : p.lTensor T m = 0 := hY _ fun g => by rw [← nat, hm g]
@@ -148,8 +152,8 @@ def AdicBasis : Prop :=
 
 abbrev act : Representation O G ↥L.T := twistRep (latRep L) χ⁻¹
 
-omit [TopologicalSpace G] [TopologicalSpace V] [IsTopologicalAddGroup V] [ContinuousConstSMul LL V] in
 
+omit [TopologicalSpace G] [TopologicalSpace V] [IsTopologicalAddGroup V] [ContinuousConstSMul LL V] in
 theorem act_coe (g : G) (t : ↥L.T) : (act L χ g t : V) = twistRep ρ (chiLL LL χ⁻¹) g t :=
   (algebraMap_smul LL (χ⁻¹ g : O) (ρ g t)).symm
 
@@ -190,7 +194,7 @@ theorem lc_act (hB : AdicBasis L lam) (hc : ∀ v, Continuous fun g => twistRep 
     IsLocallyConstant fun g => twCoef (latRep L) χ X g m := by
   induction m using TensorProduct.induction_on with
   | zero => simp only [map_zero]; exact IsLocallyConstant.const _
-  | add a b ha hb => simp only [map_add]; exact ha.add hb
+  | add a b ha hb => simp only [map_add (f := _)]; exact ha.add hb
   | tmul t x =>
     obtain ⟨a, ha⟩ := hX x
     exact lc_tmul hB x a ha (fun g => act L χ g t) (by simpa only [act_coe] using hc t)
@@ -241,8 +245,8 @@ theorem mk_cobZ (hc : ∀ v, Continuous fun g => twistRep ρ (chiLL LL χ⁻¹) 
     (Submodule.Quotient.mk (cobZ χ hc t) : H1tw L χ) = 0 :=
   (Submodule.Quotient.mk_eq_zero _).mpr ⟨t, t.2, rfl⟩
 
-omit [IsTopologicalAddGroup V] [ContinuousConstSMul LL V] [TopologicalSpace V] [TopologicalSpace G] in
 
+omit [IsTopologicalAddGroup V] [ContinuousConstSMul LL V] [TopologicalSpace V] [TopologicalSpace G] in
 theorem eq_zero_of_smul (hl : algebraMap O LL lam ≠ 0) (t : ↥L.T) (h : lam • t = 0) : t = 0 := by
   have h1 : lam • (t : V) = 0 := congrArg Subtype.val h
   rw [← algebraMap_smul LL lam] at h1
@@ -356,7 +360,23 @@ theorem free_and_tensIso [ContinuousMul G] [IsDomain O] [IsDiscreteValuationRing
     ∀ (X : Type) [AddCommGroup X] [Module O X] [Finite X], TensIso L χ X := by
   have := L.free
   have : Module.Finite O ↥L.T := Module.Finite.iff_fg.mpr L.fg
-  have := isAdicComplete_of_finite (Ideal.span {lam}) ↥L.T
+  have : IsAdicComplete (Ideal.span {lam}) ↥L.T := by
+    rw [isAdicComplete_iff]
+    refine ⟨IsHausdorff.of_le_jacobson _ _ (IsAdicComplete.le_jacobson _), ?_⟩
+    rw [← AdicCompletion.of_surjective_iff]
+    intro y
+    obtain ⟨t, rfl⟩ := AdicCompletion.ofTensorProduct_surjective_of_finite (Ideal.span {lam}) ↥L.T y
+    induction t with
+    | tmul a m =>
+      obtain ⟨r, rfl⟩ := AdicCompletion.of_surjective (Ideal.span {lam}) O a
+      refine ⟨r • m, ?_⟩
+      rw [AdicCompletion.ofTensorProduct_tmul, show AdicCompletion.of (Ideal.span {lam}) O r =
+        algebraMap O (AdicCompletion (Ideal.span {lam}) O) r by simp [AdicCompletion.algebraMap_apply],
+        algebraMap_smul, map_smul]
+    | add x y hx hy =>
+      obtain ⟨u, hu⟩ := hx
+      obtain ⟨v, hv⟩ := hy
+      exact ⟨u + v, by simp [hu, hv]⟩
   have hk := tensIso_res χ hB hc hl h2
   have : Nontrivial (O ⧸ Ideal.span {lam}) :=
     Ideal.Quotient.nontrivial_iff.mpr (by rw [Ne, Ideal.span_singleton_eq_top]; exact hi.not_isUnit)
@@ -427,8 +447,9 @@ theorem free_and_tensIso_gal {G Qp LL O : Type} [Group G] [TopologicalSpace G] [
   have hl0 : algebraMap O LL Γ.lam ≠ 0 := fun h =>
     hi.ne_zero (IsFractionRing.injective O LL (h.trans (map_zero _).symm))
   have hr : Module.finrank O ↥Γ.T₀.L.T = Module.finrank LL Γ.T₀.V := by
-    have : Submodule.IsLattice LL Γ.T₀.L.T := ⟨Γ.T₀.L.fg, Γ.T₀.L.span⟩
-    rw [Module.finrank, Module.finrank, Submodule.IsLattice.rank' LL]
+    have : Submodule.IsLattice LL Γ.T₀.L.T := Submodule.IsLattice.of_fg LL Γ.T₀.L.fg
+    have : Submodule.IsFullLattice LL Γ.T₀.L.T := ⟨Γ.T₀.L.span⟩
+    rw [Module.finrank, Module.finrank, Submodule.IsFullLattice.rank_eq LL]
   have hm := hi.maximalIdeal_eq
   have hF' : Finite (O ⧸ IsLocalRing.maximalIdeal O) := hF
   have hd : Γ.lam ∣ (l : O) := by
@@ -448,16 +469,5 @@ theorem free_and_tensIso_gal {G Qp LL O : Type} [Group G] [TopologicalSpace G] [
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective x
     exact Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton.mpr hd))
 
-open GlobalTheory.TopSteps in
-
-theorem freeH_of_vanish : Formalism.GaloisCohomology.LocalFinitenessK → Formalism.GaloisCohomology.LocalEulerCharK →
-    ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} (S : TopSit P), S.Vanish → S.FreeH := by
-  intro _ hE l _ P S hV
-  obtain ⟨hS, hT, -⟩ := S.hyp
-  obtain ⟨_, -, -, hA, hF, hfr⟩ := GlobalTheory.CoefInt.integers_laws l S.LL
-  obtain ⟨-, -, -, hR, hO⟩ := GlobalTheory.LocalIntegers.goodO_integers l S.LL
-  obtain ⟨_, -, hl⟩ := GlobalTheory.FinExtIntegers.dvr_complete S.LL
-  exact free_and_tensIso_gal S.Γ hS.2.2.2.2.2 hA hF hO (pow_mul_mem_nhds S.LL _ hS.2.2.2.2.2) hT.2.2.1.1 hl
-    hV.1 hV.2 hT.1 hS.2.2.1 (fun M _ _ _ π => GlobalTheory.T.card_H1_local_euler_formula hE l S.K _ M π)
 
 end GlobalTheory.FreeCoh

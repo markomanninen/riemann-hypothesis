@@ -1,6 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -131,11 +136,11 @@ theorem size_neg_pow_integrable : ∀ (F E : Type) [Field F] [NumberField F] [Fi
   have hcontI : Continuous (sizeInf b : Ainf F ⊗[F] E → ℝ) := by
     have : (sizeInf b : Ainf F ⊗[F] E → ℝ) = fun y => ∑ k, ∑ v, ‖coordEquiv hF b y k v‖ := funext hnorm
     rw [this]
-    refine continuous_finset_sum _ fun k _ => continuous_finset_sum _ fun v _ => ?_
+    refine continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun v _ => ?_
     exact ((continuous_apply v).comp ((continuous_apply k).comp hce)).norm
   have hcontT : Continuous (sizeTup b : (Fin n → Fin M → Ainf F ⊗[F] E) → ℝ) := by
     unfold sizeTup
-    refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun i _ => ?_
+    refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun i _ => ?_
     exact hcontI.comp ((continuous_apply i).comp (continuous_apply a))
   have hI0 : ∀ y : Ainf F ⊗[F] E, 0 ≤ sizeInf b y := fun y =>
     Finset.sum_nonneg fun k _ => Finset.sum_nonneg fun v _ => norm_nonneg _

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqBasicOpen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqBasicOpen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.UU
@@ -44,7 +48,8 @@ theorem exists_comb_ker {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R'] 
   have key : ∀ (n : ℕ) (c : Fin n → R') (v : Fin n → ∀ a, A a), t = ∑ i, c i ⊗ₜ v i →
       ∀ a, x a = ∑ i, e a (c i ⊗ₜ v i a) := fun n c v h a => by
     have := congrFun ht a
-    rw [h, map_sum, Finset.sum_apply, AddEquiv.eq_symm_apply, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h, map_sum, Finset.sum_apply, AddEquiv.eq_symm_apply, map_sum] at this
     rw [← this]
     rfl
   have h0 : d.lTensor R' t = 0 := by
@@ -52,12 +57,14 @@ theorem exists_comb_ker {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R'] 
     apply (TensorProduct.piRight R R R' B).injective
     funext b
     apply (e' b).injective
-    rw [map_zero, Pi.zero_apply, map_zero, ← hx n c v (key n c v h) b, h, map_sum, map_sum, Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, Pi.zero_apply, map_zero, ← hx n c v (key n c v h) b, h, map_sum, map_sum, Finset.sum_apply, map_sum]
     rfl
   obtain ⟨w, hw⟩ := (Module.Flat.lTensor_exact R' (LinearMap.exact_subtype_ker_map d) t).1 h0
   obtain ⟨n, c, v, rfl⟩ := TensorProduct.exists_sum_tmul_eq w
   refine ⟨n, c, fun i => (v i).1, key n c _ ?_, fun i => (v i).2⟩
-  rw [← hw, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hw, map_sum]
   rfl
 
 variable {R R' : Type} [CommRing R] [CommRing R'] {X X' Z : Scheme.{0}}
@@ -133,7 +140,7 @@ theorem exists_comb_of_flat : ∀ (R R' : Type) [CommRing R] [CommRing R'] (g : 
     { toFun := fun v p => rs X inf_le_left (v p.1) -
         rs X (inf_le_inf (hW p.1) (hW p.2)) (M.g (j p.1) (j p.2)).val * rs X inf_le_right (v p.2)
       map_add' := fun v w => funext fun p => by
-        simp only [Pi.add_apply, map_add]; ring
+        simp only [Pi.add_apply, map_add (f := _)]; ring
       map_smul' := fun r v => funext fun p => by
         simp only [Pi.smul_apply, Algebra.smul_def, map_mul, RingHom.algebraMap_toAlgebra, rs_cst,
           RingHom.id_apply]; ring }

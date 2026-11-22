@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafRingUnitPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafRingUnitPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

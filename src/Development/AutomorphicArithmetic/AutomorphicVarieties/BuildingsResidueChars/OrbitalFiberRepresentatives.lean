@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.FibAbs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.FibAbs
+
+@[expose] public section
 
 private theorem reps_setoid {G : Type} (r : Setoid G) (Y : Finset G) (x₀ : G)
     (hY : ∀ g, ∃ y ∈ Y, r y g) :

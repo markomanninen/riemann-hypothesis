@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocAbs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocChar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocAbs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocChar
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Hi
 
 private theorem restr_pow {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] {Y : Submodule A M}
@@ -27,7 +32,7 @@ private theorem mem_locPart_iff {A M ι : Type} [CommRing A] [IsLocalRing A] [Ad
       rw [← hu i ⟨z, hz⟩]
       exact (u i ⟨z, hz⟩).2
     · intro b c hb hc
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hb hc
   unfold locPart
   rw [Submodule.mem_inf, and_iff_right y.2]
@@ -82,7 +87,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.heckeRestr :
       exact Submodule.smul_mem_smul hc Submodule.mem_top
     · intro y; simp
     · intro b c _ _ hb hc y
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact Submodule.add_mem _ (hb y) (hc y)
     · intro b c _ hc y
       rw [smul_eq_mul, mul_comm, map_mul, Module.End.mul_apply]
@@ -109,7 +114,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.heckeRestr :
       map_one' := by ext y; rw [hρ0, map_one]; rfl
       map_mul' := fun s s' => by ext y; rw [hρ0, map_mul]; rfl
       map_zero' := by ext y; rw [hρ0, map_zero]; rfl
-      map_add' := fun s s' => by ext y; rw [hρ0, map_add]; rfl
+      map_add' := fun s s' => by ext y; rw [hρ0, map_add (f := _)]; rfl
       commutes' := fun c => by ext y; rw [hρ0, AlgHom.commutes]; rfl }
   have hρ : ∀ s y, (ρ s y : M) = j s ⟨y, y.2.1⟩ := fun _ _ => rfl
   have hrange : ρ.range = j'.range := by

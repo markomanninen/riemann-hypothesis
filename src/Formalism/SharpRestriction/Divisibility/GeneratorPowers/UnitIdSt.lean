@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
+
+@[expose] public section
 
 set_option autoImplicit false
 

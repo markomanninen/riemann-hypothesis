@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResAlgSplitTwo
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResAlgSplitTwo
+
+@[expose] public section
 
 open PositivityTheory.PfSWUS.Loc GlobalTheory.CompanionTheory.UnrDens
 
@@ -28,7 +32,7 @@ theorem card_fixed (h : ResAlg E τ q ε) : Nat.card {x : E // τ x = x} = q := 
     · rintro ⟨⟨x, hx⟩, ⟨y, hy⟩⟩ ⟨⟨x', hx'⟩, ⟨y', hy'⟩⟩ hxy
       simp only at hxy
       have h2 := congrArg τ hxy
-      simp only [map_add, map_mul, hx, hy, hx', hy'] at h2
+      simp only [map_add (f := _), map_mul, hx, hy, hx', hy'] at h2
       have hyy : y = y' := by
         have h3 : (y - y') * (u - τ u) = 0 := by linear_combination hxy - h2
         rw [hu.mul_left_eq_zero, sub_eq_zero] at h3
@@ -92,7 +96,7 @@ theorem exists_idem (h : ResAlg E τ q ε) (hnf : ¬ IsField E) :
       linear_combination h2 - τ u * h1
     exact hu.mul_left_eq_zero.1 h3
   obtain ⟨w, hw⟩ := hw
-  have hTfix : τ (a * w + τ (a * w)) = a * w + τ (a * w) := by rw [map_add, h.inv, add_comm]
+  have hTfix : τ (a * w + τ (a * w)) = a * w + τ (a * w) := by rw [map_add (f := _), h.inv, add_comm]
   obtain ⟨s, hs⟩ := (h.fixedUnit _ hTfix hw).exists_right_inv
   have hsf : τ s = s := fixed_inv hTfix hs
   refine ⟨a * w * s, ?_, ?_⟩
@@ -116,7 +120,7 @@ theorem card_fibre_split (h : ResAlg E τ q ε) (hnf : ¬ IsField E) {t : E} (ht
   choose s hs using hiso
   have hfixA : ∀ a : E, τ (a * e + τ a * τ e) = a * e + τ a * τ e := by
     intro a
-    simp only [map_add, map_mul, h.inv]
+    simp only [map_add (f := _), map_mul, h.inv]
     ring
   have hneA : ∀ a : E, a * τ a = t → a * e + τ a * τ e ≠ 0 := by
     intro a ha hα
@@ -129,7 +133,7 @@ theorem card_fibre_split (h : ResAlg E τ q ε) (hnf : ¬ IsField E) {t : E} (ht
     { toFun := fun a => ⟨a.1 * e + τ a.1 * τ e, hfixA a.1, hneA a.1 a.2⟩
       invFun := fun x => ⟨x.1 * e + t * s x.1 * τ e, by
         obtain ⟨hs1, hs2⟩ := hs x.1 x.2.1 x.2.2
-        simp only [map_add, map_mul, x.2.1, ht, hs2, hτe]
+        simp only [map_add (f := _), map_mul, x.2.1, ht, hs2, hτe]
         linear_combination (x.1 ^ 2 + t ^ 2 * s x.1 ^ 2) * he0 + x.1 * t * s x.1 * hee +
           x.1 * t * s x.1 * hff + x.1 * t * s x.1 * he1 + t * hs1⟩
       left_inv := fun a => by
@@ -144,7 +148,7 @@ theorem card_fibre_split (h : ResAlg E τ q ε) (hnf : ¬ IsField E) {t : E} (ht
         obtain ⟨-, hs2⟩ := hs x.1 x.2.1 x.2.2
         apply Subtype.ext
         dsimp only
-        simp only [map_add, map_mul, x.2.1, ht, hs2, hτe]
+        simp only [map_add (f := _), map_mul, x.2.1, ht, hs2, hτe]
         linear_combination x.1 * hee + 2 * t * s x.1 * he0 + x.1 * hff + x.1 * he1 }
 
 theorem isUnit_of_ne (hf : IsField E) {a : E} (ha : a ≠ 0) : IsUnit a := by
@@ -212,7 +216,7 @@ theorem range_ratioU (h : ResAlg E τ q ε) (hf : IsField E) :
     obtain ⟨u, hu, -⟩ := h.basis
     have key : ∀ x : E, x + k * τ x = k * τ (x + k * τ x) := by
       intro x
-      rw [map_add, map_mul, h.inv]
+      rw [map_add (f := _), map_mul, h.inv]
       linear_combination (-x) * hk
     have hx : ∃ x : E, x + k * τ x ≠ 0 := by
       by_contra hc

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.NApply
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.NApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -39,33 +43,31 @@ private lemma cell_val (b b' : A F) (a : (A F)ˣ) :
   simp
   ring_nf
 
-private lemma rel_part : Rel (nU (F := F)) mD (wW F) where
-  N_zero := by
-    apply sl_ext
+private lemma rel_part : Rel (nU (F := F)) mD (wW F) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, Group.isUnit _⟩
+  · apply sl_ext
     simp [nU_val, Matrix.one_fin_two]
-  N_add b c := by
+  · intro b c
     apply sl_ext
     rw [Matrix.SpecialLinearGroup.coe_mul, nU_val, nU_val, nU_val, Matrix.mul_fin_two]
     simp [add_comm]
-  M_one := by
-    apply sl_ext
+  · apply sl_ext
     simp [mD_val, Matrix.one_fin_two]
-  M_mul a a' := by
+  · intro a a'
     apply sl_ext
     rw [Matrix.SpecialLinearGroup.coe_mul, mD_val, mD_val, mD_val, Matrix.mul_fin_two]
     simp [mul_comm]
-  MN a b := by
+  · intro a b
     apply sl_ext
     have he : (a : A F) * ((a⁻¹ : (A F)ˣ) : A F) = 1 := a.mul_inv
     rw [Matrix.SpecialLinearGroup.coe_mul, nm_val, mD_val, nU_val, Matrix.mul_fin_two]
     have hq : (a : A F) ^ 2 * b * ((a⁻¹ : (A F)ˣ) : A F) = (a : A F) * b := by
       linear_combination ((a : A F) * b) * he
     simp [hq]
-  WM a := by
+  · intro a
     apply sl_ext
     rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_mul, wW_val, mD_val, mD_val, Matrix.mul_fin_two, Matrix.mul_fin_two]
     simp
-  W_unit := Group.isUnit _
 
 private lemma gauss_part : Gauss (nU (F := F)) mD (wW F) := by
   intro t

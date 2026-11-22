@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.StrictHenselColimits.ColimOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.StrictHenselColimits.ColimOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits LateralTheory.E.t_E3Cut

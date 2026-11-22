@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TheoremA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TheoremA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -25,7 +29,7 @@ theorem nonneg_of_isIntegral {R L : Type*} [CommRing R] [Field L] [Algebra R L]
   have hm0 : m < 0 := by rw [← hm] at hneg; exact_mod_cast hneg
   obtain ⟨p, hpm, hp⟩ := hx
   rw [hpm.as_sum] at hp
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finset_sum,
+  simp only [Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finsetSum,
     Polynomial.eval₂_mul, Polynomial.eval₂_C] at hp
   have hsum := eq_neg_of_add_eq_zero_left hp
   have hlow : ((((p.natDegree : ℤ) - 1) * m : ℤ) : WithTop ℤ) ≤

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsFieldAdicCompletionTensorOfInert
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotIsFieldAdicCompletionTensorOfSplit
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuadraticUnramifiedIffInertOrSplit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootDiscrGeThreeHalvesOfIsTotallyComplex
-import Formalism.GL3MeanSquares.HookFormulaTorsion.SumWeightsOverPrimeLeHalfDegree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsFieldAdicCompletionTensorOfInert
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotIsFieldAdicCompletionTensorOfSplit
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuadraticUnramifiedIffInertOrSplit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootDiscrGeThreeHalvesOfIsTotallyComplex
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.SumWeightsOverPrimeLeHalfDegree
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ open NumberField IsDedekindDomain
 open scoped TensorProduct
 
 namespace GlobalTheory.DensityEuler
-
-open private euler_factor_log_bound partial_sums_log_euler_factor_le from Formalism.GL3MeanSquares.HookFormulaTorsion.SumWeightsOverPrimeLeHalfDegree
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 
@@ -202,11 +204,120 @@ def fibreEquiv (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] 
 theorem hasProd_eulerFac (hE : Formalism.HermitianLatticesTheory.IsCMUnram E) (M : ℕ) (hM : 2 ≤ M) :
     HasProd (fun P : {P : Ideal (𝓞 E) // P.IsMaximal} => Formalism.HermitianLatticesTheory.eulerFac E M P.1)
       (Formalism.HermitianLatticesTheory.lValEta E M) ∧ 0 < Formalism.HermitianLatticesTheory.lValEta E M := by
-  have hpos : ∀ P : {P : Ideal (𝓞 E) // P.IsMaximal}, 0 < Formalism.HermitianLatticesTheory.eulerFac E M P.1 :=
-    fun P => (euler_factor_log_bound E hE M (by omega) P.1 P.2).1
-  have hsum : Summable (fun P : {P : Ideal (𝓞 E) // P.IsMaximal} =>
-      Real.log (Formalism.HermitianLatticesTheory.eulerFac E M P.1)) :=
-    (summable_of_sum_le (fun P => abs_nonneg _) (partial_sums_log_euler_factor_le E hE M hM)).of_abs
+  classical
+  let MaxIdeal := {P : Ideal (𝓞 E) // P.IsMaximal}
+  let p (P : MaxIdeal) := Ideal.absNorm (P.1.under ℤ)
+  have hp (P : MaxIdeal) : (p P).Prime := by
+    have : P.1.IsPrime := P.2.isPrime
+    have : NeZero P.1 := ⟨Ring.ne_bot_of_isMaximal_of_not_isField P.2 (RingOfIntegers.not_isField E)⟩
+    exact Nat.absNorm_under_prime P.1
+  have hspan (P : MaxIdeal) : Ideal.span {(p P : ℤ)} = P.1.under ℤ :=
+    Int.ideal_span_absNorm_eq_self _
+  -- Each rational prime has at most [E : ℚ] prime ideals above it.
+  have hcard (s : Finset MaxIdeal) (n : ℕ) :
+      (s.filter (fun P => p P = n)).card ≤ Module.finrank ℚ E := by
+    rcases (s.filter (fun P => p P = n)).eq_empty_or_nonempty with h | ⟨P, hP⟩
+    · simp [h]
+    have hn : n.Prime := (Finset.mem_filter.mp hP).2 ▸ hp P
+    let I : Ideal ℤ := Ideal.span {(n : ℤ)}
+    have hI : I ≠ ⊥ := by simpa [I] using hn.ne_zero
+    have : I.IsMaximal :=
+      ((Ideal.span_singleton_prime (Int.natCast_ne_zero.mpr hn.ne_zero)).mpr
+        (Nat.prime_iff_prime_int.mp hn)).isMaximal hI
+    let lift (Q : ↥(s.filter (fun Q => p Q = n))) : I.primesOver (𝓞 E) :=
+      ⟨Q.1.1, Q.1.2.isPrime, ⟨by
+        have hQ := (Finset.mem_filter.mp Q.2).2
+        exact (congrArg (fun k : ℕ => Ideal.span {(k : ℤ)}) hQ.symm).trans (hspan Q.1)⟩⟩
+    calc
+      _ = Fintype.card ↥(s.filter (fun Q => p Q = n)) := (Fintype.card_coe _).symm
+      _ ≤ Fintype.card (I.primesOver (𝓞 E)) := by
+        refine Fintype.card_le_of_injective lift (fun _ _ h => Subtype.ext (Subtype.ext ?_))
+        exact congrArg (fun J : I.primesOver (𝓞 E) => J.1) h
+      _ ≤ Module.finrank ℚ E := by
+        rw [IsFractionRing.finrank_eq ℤ ℚ (𝓞 E) E, ← Ideal.sum_ramification_inertia_eq_finrank I,
+          ← Finset.card_univ, Finset.card_eq_sum_ones]
+        exact Finset.sum_le_sum fun Q _ => Nat.mul_pos (Ideal.ramificationIdx_pos _ _) (Ideal.inertiaDeg_pos _ _)
+  let weight (n : ℕ) : ℝ := ((n : ℝ) ^ 2)⁻¹
+  have hw : Summable weight := Real.summable_nat_pow_inv.mpr (by norm_num)
+  have hweights : Summable (fun P : MaxIdeal => weight (p P)) := by
+    refine summable_of_sum_le (c := (Module.finrank ℚ E : ℝ) * ∑' n, weight n)
+      (fun P => by positivity) (fun s => ?_)
+    calc
+      ∑ P ∈ s, weight (p P) = ∑ n ∈ s.image p, ∑ P ∈ s.filter (fun P => p P = n), weight (p P) :=
+        (Finset.sum_fiberwise_of_maps_to (fun P hP => Finset.mem_image_of_mem p hP) _).symm
+      _ ≤ ∑ n ∈ s.image p, (Module.finrank ℚ E : ℝ) * weight n := by
+        refine Finset.sum_le_sum fun n _ => ?_
+        rw [Finset.sum_congr rfl (fun P hP => congrArg weight (Finset.mem_filter.mp hP).2),
+          Finset.sum_const, nsmul_eq_mul]
+        exact mul_le_mul_of_nonneg_right (by exact_mod_cast hcard s n) (by positivity)
+      _ ≤ _ := by
+        rw [← Finset.mul_sum]
+        exact mul_le_mul_of_nonneg_left (hw.sum_le_tsum _ (fun _ _ => by positivity)) (by positivity)
+  let term (P : MaxIdeal) : ℝ :=
+    if Formalism.HermitianLatticesTheory.conjIdeal (K := E) P.1 = P.1 then
+      -((-1 : ℝ) ^ M * (Real.sqrt (Ideal.absNorm P.1 : ℝ)) ^ (-(M : ℤ)))
+    else -((Ideal.absNorm P.1 : ℝ) ^ (-(M : ℤ)))
+  have hterm (P : MaxIdeal) : |term P| ≤ weight (p P) := by
+    have : P.1.IsMaximal := P.2
+    have hp2 : (2 : ℝ) ≤ p P := by exact_mod_cast (hp P).two_le
+    have hnorm := Ideal.pow_inertiaDeg (p P) P.1
+    have hpow {x : ℝ} (hx : (p P : ℝ) ≤ x) : x ^ (-(M : ℤ)) ≤ weight (p P) := by
+      rw [zpow_neg, zpow_natCast]
+      apply inv_anti₀ (by positivity : 0 < (p P : ℝ) ^ 2)
+      exact (pow_le_pow_left₀ (by linarith) hx 2).trans (pow_le_pow_right₀ (by linarith) hM)
+    dsimp only [term]
+    split_ifs with hc
+    · have hf : 2 ≤ P.1.inertiaDeg ℤ := by
+        have hfpos := Ideal.inertiaDeg_pos P.1 ℤ
+        by_contra! h
+        have hf : P.1.inertiaDeg ℤ = 1 := by omega
+        have : (P.1.under ℤ).IsMaximal := Ideal.IsMaximal.under ℤ P.1
+        rw [Ideal.inertiaDeg_eq_of_isMaximal (P.1.under ℤ) P.1] at hf
+        let : Field (ℤ ⧸ P.1.under ℤ) := Ideal.Quotient.field _
+        let : Field (𝓞 E ⧸ P.1) := Ideal.Quotient.field _
+        obtain ⟨θ, t, ht, hne⟩ := hE.2.2 P.1 P.2
+        obtain ⟨a, ha⟩ := (Algebra.finrank_eq_one_iff_bijective_algebraMap.1 hf).2
+          (Ideal.Quotient.mk P.1 θ)
+        obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
+        have hθ : θ - (a : 𝓞 E) ∈ P.1 := by
+          rw [← Ideal.Quotient.eq, ← ha]
+          simp
+        have ht' : t - (a : 𝓞 E) ∈ P.1 := by
+          rw [← hc]
+          apply Ideal.subset_span
+          exact ⟨θ - a, hθ, by rw [map_sub, map_sub, ht, star_sub, map_intCast, star_intCast]⟩
+        exact hne (by simpa using P.1.sub_mem hθ ht')
+      have hs : (p P : ℝ) ≤ Real.sqrt (Ideal.absNorm P.1 : ℝ) := by
+        apply (Real.le_sqrt (by positivity) (by positivity)).2
+        exact_mod_cast hnorm ▸ Nat.pow_le_pow_right (hp P).pos hf
+      rw [abs_neg, abs_mul, abs_pow, abs_neg, abs_one, one_pow, one_mul,
+        abs_of_nonneg (zpow_nonneg (Real.sqrt_nonneg _) _)]
+      exact hpow hs
+    · rw [abs_neg, abs_of_nonneg (zpow_nonneg (Nat.cast_nonneg _) _)]
+      apply hpow
+      exact_mod_cast hnorm ▸ Nat.le_self_pow (Ideal.inertiaDeg_pos P.1 ℤ).ne' (p P)
+  have hbase (P : MaxIdeal) : 0 < 1 + term P := by
+    have hp2 : (2 : ℝ) ≤ p P := by exact_mod_cast (hp P).two_le
+    have hwlt : weight (p P) < 1 := inv_lt_one_of_one_lt₀ (one_lt_pow₀ (by linarith) (by decide))
+    linarith [(abs_le.mp (hterm P)).1]
+  have hfac (P : MaxIdeal) : Formalism.HermitianLatticesTheory.eulerFac E M P.1 =
+      if Formalism.HermitianLatticesTheory.conjIdeal (K := E) P.1 = P.1 then (1 + term P)⁻¹
+      else (1 + term P) ^ (-(1 : ℝ) / 2) := by
+    unfold Formalism.HermitianLatticesTheory.eulerFac term
+    split_ifs <;> simp only [sub_eq_add_neg]
+  have hpos (P : MaxIdeal) : 0 < Formalism.HermitianLatticesTheory.eulerFac E M P.1 := by
+    rw [hfac]
+    split_ifs
+    · exact inv_pos.mpr (hbase P)
+    · exact Real.rpow_pos_of_pos (hbase P) _
+  have hsum : Summable (fun P : MaxIdeal => Real.log (Formalism.HermitianLatticesTheory.eulerFac E M P.1)) := by
+    have ht : Summable term := Summable.of_norm_bounded hweights (fun P => by simpa only [Real.norm_eq_abs] using hterm P)
+    refine Summable.of_norm_bounded (Real.summable_log_one_add_of_summable ht).abs (fun P => ?_)
+    rw [Real.norm_eq_abs, hfac]
+    split_ifs
+    · rw [Real.log_inv, abs_neg]
+    · rw [Real.log_rpow (hbase P), abs_mul, show |(-(1 : ℝ) / 2)| = 1 / 2 by norm_num]
+      nlinarith [abs_nonneg (Real.log (1 + term P))]
   refine ⟨(Real.multipliable_of_summable_log hpos hsum).hasProd, ?_⟩
   rw [Formalism.HermitianLatticesTheory.lValEta, ← Real.rexp_tsum_eq_tprod hpos hsum]
   exact Real.exp_pos _

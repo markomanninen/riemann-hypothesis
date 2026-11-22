@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,9 @@ theorem kappa_one_tmul (F : FinIso L n) (a : AFplus L) :
     F.κ (1 ⊗ₜ a) = GlobalTheory.AdeleBaseChange.adMap (maximalRealSubfield L) L a := by
   refine FiniteAdeleRing.ext _ fun w ↦ ?_
   obtain ⟨i, hi, hia⟩ := F.right w (w.under (𝓞 (maximalRealSubfield L))) rfl
-  rw [hia, GlobalTheory.DefU.ClassFin.adMap_eq_complMap rfl]
+  rw [hia]
+  change i (a (w.under (𝓞 (maximalRealSubfield L)))) =
+    GlobalTheory.LFun.complMap rfl (a (w.under (𝓞 (maximalRealSubfield L))))
   refine congrFun ((HeightOneSpectrum.denseRange_algebraMap (maximalRealSubfield L)
     (w.under (𝓞 (maximalRealSubfield L)))).equalizer hi
     (GlobalTheory.LFun.InertChart.continuous_complMap rfl) (funext fun k ↦ ?_)) _
@@ -52,7 +58,7 @@ theorem mem_ALint_of_kappa (F : FinIso L n) {y : AL L} (hy : F.κ y ∈ Formalis
 end Lemmas
 
 theorem exists_open_cong : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (F : FinIso L n) (N : ℕ),
-    0 < N → ∃ O : Set (finU L n), IsOpen O ∧ (1 : finU L n) ∈ O ∧
+    0 < N → ∃ O : Set (finU (E := L) (n := n)), IsOpen O ∧ (1 : finU (E := L) (n := n)) ∈ O ∧
       ∀ k ∈ O, ∀ x : GAf L n, F.j x = (k : UA L n) → NG.Cong L n N x := by
   intro L _ _ _ n F N hN
   set c : Af L := algebraMap L (Af L) (N : L)⁻¹ with hc
@@ -60,10 +66,10 @@ theorem exists_open_cong : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L
   have hI : IsOpen ((Formalism.UG.intAd L : Subring (Af L)) : Set (Af L)) :=
     RestrictedProduct.isOpen_forall_mem (fun v ↦ Valued.isOpen_valuationSubring _)
   have hS : IsOpen S := hI.preimage (continuous_id.mul continuous_const)
-  let f : Fin n → Fin n → finU L n → Af L := fun s t k ↦
+  let f : Fin n → Fin n → finU (E := L) (n := n) → Af L := fun s t k ↦
     pFin L ((((k : UA L n) : GlobalTheory.CuspRep.GA L n) : Matrix (Fin n) (Fin n) (Ad L)) s t) -
       pFin L ((1 : Matrix (Fin n) (Fin n) (Ad L)) s t)
-  have hm : Continuous (fun k : finU L n ↦ (((k : UA L n) : GlobalTheory.CuspRep.GA L n) : Matrix (Fin n) (Fin n) (Ad L))) :=
+  have hm : Continuous (fun k : finU (E := L) (n := n) ↦ (((k : UA L n) : GlobalTheory.CuspRep.GA L n) : Matrix (Fin n) (Fin n) (Ad L))) :=
     Units.continuous_val.comp (continuous_subtype_val.comp continuous_subtype_val)
   have hp : Continuous (pFin L) := continuous_snd
   have hf : ∀ s t, Continuous (f s t) := fun s t ↦

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftTheta
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompAtMtOfMemGfC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftTheta
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompAtMtOfMemGfC
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem rowMapV_update_last : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Cons
   refine congrArg (fun q => LinearMap.comp (chainTo (V := fun i => VV ℂ (wt G (.grid i D.R.m))) q D.R.m) _) ?_
   funext j
   by_cases hjm : j < D.R.m
-  · rw [dif_pos hjm, dif_pos hjm]
+  · rw [dite_eq_left hjm, dite_eq_left hjm]
     by_cases hj1 : j + 1 < D.R.m
     · have h1 : j ≠ D.R.m := by omega
       have h2 : j + 1 ≠ D.R.m := by omega
@@ -81,6 +85,6 @@ theorem rowMapV_update_last : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Cons
         show Function.update gs (lastIx D) (rowShift S k (gs (lastIx D))) ⟨(lastIx D : ℕ), hjm⟩ =
           rowShift S k (gs (lastIx D)) from Function.update_self _ _ _]
       rfl
-  · rw [dif_neg hjm, dif_neg hjm]
+  · rw [dite_eq_right hjm, dite_eq_right hjm]
 
 end GlobalTheory.LastRowMove

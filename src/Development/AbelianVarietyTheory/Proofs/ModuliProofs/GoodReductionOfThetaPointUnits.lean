@@ -1,38 +1,43 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenCalc
-import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GtOntoDivisibleKernel
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaConstantValuationsUnitsEveryCosetStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPrimGenerator
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueThetaConst
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValueAtOrigin
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AdicBaseEmbedsValuationAlgebraicClosure
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsoUniformisationsOfIsoDegenerationDataStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SelfTorusExtensionCoordValuesEqOne
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsDegDataIsPullDeg
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UniformizationLawsAndExpansionStatementsStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaLevelEndomorphismsSpreadOverBasicOpen
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AbelianSchemeHomExtendsDedekindOfIsGrpPullbackAl
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SemiAbelianHomExtensionOfLawsStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaLevelAbelianSchemePullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsIffOfThetaLevelPullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsRingBaseChange
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaConstantsLocallyOnBase
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaConstantsUniqueUpToUnitStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCosetNonvanishingOfHasThStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaLevelShapePrimitivityPullbackDescent
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsVVGenOfIsThetaFamily
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SmoothOfRelativeDimensionOfFibre
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjectiveModel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenCalc
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GtOntoDivisibleKernel
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaConstantValuationsUnitsEveryCosetStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPrimGenerator
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueThetaConst
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValueAtOrigin
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AdicBaseEmbedsValuationAlgebraicClosure
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsoUniformisationsOfIsoDegenerationDataStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SelfTorusExtensionCoordValuesEqOne
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsDegDataIsPullDeg
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UniformizationLawsAndExpansionStatementsStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaLevelEndomorphismsSpreadOverBasicOpen
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AbelianSchemeHomExtendsDedekindOfIsGrpPullbackAl
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SemiAbelianHomExtensionOfLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaLevelAbelianSchemePullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsIffOfThetaLevelPullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsRingBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaConstantsLocallyOnBase
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaConstantsUniqueUpToUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCosetNonvanishingOfHasThStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaLevelShapePrimitivityPullbackDescent
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsVVGenOfIsThetaFamily
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SmoothOfRelativeDimensionOfFibre
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjectiveModel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -136,8 +141,8 @@ theorem subsingleton_of_divisible {X : Type} [AddCommGroup X] [Module.Free ℤ X
     omega⟩
   exact b.repr.injective.subsingleton
 
-attribute [local instance] TorusExt.gtGroup in
 
+attribute [local instance] TorusExt.gtGroup in
 theorem subsingleton_characters (h₁ : Out.Laws) (h₂ : Out.Laws2) (hT : GlobalTheory.ZH.UTorsSt) {o : Type} [CommRing o]
     {g n j : ℕ} {J : Type} {b : TBase o ((n ^ j) ^ 2)} (W : Type) [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
     [CharZero W] (hc : IsAdicComplete (IsLocalRing.maximalIdeal W) W) {s : Sp (FractionRing W) ⟶ Sp o}
@@ -194,9 +199,30 @@ theorem subsingleton_characters (h₁ : Out.Laws) (h₂ : Out.Laws2) (hT : Globa
       (((by_contra hc₀ : IsUnit _).map (algebraMap W (FractionRing W))).map (algebraMap (FractionRing W) F)))
   have tors : ∀ p, f p ^ ((n ^ (i + 1)) ^ 2) = 1 := fun p => ((f₁ p _).2 rfl w₀ hw.1).1
   have hB := D.tau_bimult
+  let iotaLocal : D.toPre.X →+ Out.GtPtF D.toPre F :=
+    AddMonoidHom.mk' (fun x => (TorusExt.exists_iota (F := F) hB x).choose) (by
+      intro x x'
+      obtain ⟨bb, vv⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB x).choose_spec
+      obtain ⟨bb', vv'⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB x').choose_spec
+      obtain ⟨bb'', vv''⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB (x + x')).choose_spec
+      refine (TorusExt.isAdd_iff_eq _ _ _).1 ((TorusExt.isAdd_iff_val _ _ _).2 ⟨by rw [bb, bb', bb'', DVR.cPoint_add], fun χ y J hJ => ?_⟩)
+      have C : IsCub (DVR.th D.toPre (T := Out.TF (R := W) F) y J) := isCub_cubV D.toPre.cub hJ
+      rw [vv χ y J hJ, vv' χ y J hJ, vv'' χ y J hJ, bb, bb', C.s01, C.s12]
+      exact DVR.tau_mul (𝟙 (Out.TF (R := W) F)) hJ hB x x' χ)
+  have hi (y : D.toPre.X) : Out.GtPtF.IsIota y (iotaLocal y) := (TorusExt.exists_iota (F := F) hB y).choose_spec
+  let mk (y : D.toPre.X) (g : Out.GtPtF D.toPre F) (h : ((n ^ (i + 1)) ^ 2) • g = iotaLocal y) : Out.QkPt D.toPre F ((n ^ (i + 1)) ^ 2) :=
+    ⟨y, g, _, (TorusExt.isNsmul_iff_eq _ _ _).2 rfl, h ▸ hi y⟩
+  have mk_eq (p : Out.QkPt D.toPre F ((n ^ (i + 1)) ^ 2)) : ((n ^ (i + 1)) ^ 2) • p.g = iotaLocal p.y := by
+    obtain ⟨g, hg, hg'⟩ := p.eq
+    exact ((TorusExt.isNsmul_iff_eq _ _ _).1 hg).symm.trans (TorusExt.isIota_unique hg' (hi p.y))
+  let zero : Out.QkPt D.toPre F ((n ^ (i + 1)) ^ 2) := mk 0 0 (by rw [nsmul_zero, map_zero])
+  let add (p p' : Out.QkPt D.toPre F ((n ^ (i + 1)) ^ 2)) : Out.QkPt D.toPre F ((n ^ (i + 1)) ^ 2) :=
+    mk (p.y + p'.y) (p.g + p'.g) (by rw [nsmul_add, mk_eq, mk_eq, map_add])
+  have hadd (p p' : Out.QkPt D.toPre F ((n ^ (i + 1)) ^ 2)) : QkAdd p p' (add p p') :=
+    ⟨add p p', rfl, (TorusExt.isAdd_iff_eq _ _ _).2 rfl, qk_equiv_refl hB _⟩
   have u₀ : ν u = 0 := by
     refine le_antisymm ?_ ?_
-    · obtain ⟨p', x', σ, c, -, hp', -, hx', h0⟩ := ua₂ n hn (dvd_pow_self n (by omega)) (TorusExt.qkZero hB F _) _ rfl
+    · obtain ⟨p', x', σ, c, -, hp', -, hx', h0⟩ := ua₂ n hn (dvd_pow_self n (by omega)) zero _ rfl
         ((f₁ _ _).2 rfl)
       obtain ⟨a, rfl⟩ := onto x' (hp' w₀ hw.1).1
       have e : c = (q a).2 := congrArg Prod.snd (hq' a (σ, c) hx')
@@ -214,13 +240,13 @@ theorem subsingleton_characters (h₁ : Out.Laws) (h₂ : Out.Laws2) (hT : Globa
     | zero => exact ⟨p, by rw [pow_zero, _root_.mul_one], by rw [zero_smul, add_zero]⟩
     | succ d ih =>
       obtain ⟨r, r₁, r₂⟩ := ih
-      refine ⟨TorusExt.qkAdd hB r p', ?_, ?_⟩
-      · rw [f₄ _ _ _ (TorusExt.qkAdd_qkAdd hB r p'), r₁, pow_succ (f p'), _root_.mul_assoc]
+      refine ⟨add r p', ?_, ?_⟩
+      · rw [f₄ _ _ _ (hadd r p'), r₁, pow_succ (f p'), _root_.mul_assoc]
       · show r.y + p'.y = _
         rw [r₂, succ_nsmul, add_assoc]
   refine subsingleton_of_divisible (d := n ^ i) (hn.trans (Nat.le_self_pow (by omega) n)) fun χ => ?_
-  obtain ⟨g₀, hg₀⟩ := (GlobalTheory.UT.gt_onto_divisible_kernel hL W _ hA D F).2.1 _ hM (TorusExt.iota hB F χ)
-  let p := TorusExt.qkMk hB χ g₀ ((TorusExt.isNsmul_iff_eq _ _ _).1 hg₀).symm
+  obtain ⟨g₀, hg₀⟩ := (GlobalTheory.UT.gt_onto_divisible_kernel hL W _ hA D F).2.1 _ hM (iotaLocal χ)
+  let p := mk χ g₀ ((TorusExt.isNsmul_iff_eq _ _ _).1 hg₀).symm
   obtain ⟨a, ha⟩ := onto _ (tors p)
   obtain ⟨c, hc'⟩ := hC a
   obtain ⟨p', hp'⟩ := f₂ _ (ThetaCoord.lab_pow hpt c)

@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
+module
+
+public import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.QuantumDeterminants CompanionTheory.D.Upq.Sm
 open scoped ContDiff InnerProductSpace ComplexConjugate
@@ -17,7 +21,7 @@ theorem LieWd.lieW {W : List (Mat n)} (h : LieWd Hm W) : LieW (UH Hm) W := fun X
 theorem CWLin.comp_sigma (hAd : DsAd) (hU : URep Hm σ) {B : H → V} (hB : CWLin Hm σ B) {y : Mat n}
     (hy : y ∈ UH Hm) : CWLin Hm σ (fun v => B (σ y v)) := by
   refine ⟨fun x hx x' hx' => ?_, fun a x hx => ?_, ?_⟩
-  · rw [map_add, hB.add _ (hx.apply hU.rep hy) _ (hx'.apply hU.rep hy)]
+  · rw [map_add (f := _), hB.add _ (hx.apply hU.rep hy) _ (hx'.apply hU.rep hy)]
   · rw [map_smul, hB.smul _ _ (hx.apply hU.rep hy)]
   · obtain ⟨C, Ws, hWs, hb⟩ := hB.bd
     refine ⟨C, Ws.map fun W => W.map fun X => y⁻¹ * X * y, fun W hW => ?_, fun v hv => ?_⟩
@@ -73,8 +77,8 @@ theorem CWLin.sum_orbit (hU : URep Hm σ) {B : H → V} (hB : CWLin Hm σ B) {w 
     rw [Finset.sum_insert ha]
     exact ⟨(h1.smul _).add ih.1, by rw [hB.add _ (h1.smul _) _ ih.1, hB.smul _ _ h1, h0 _ (hg a), ih.2]; simp⟩
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem CWLin.eq_zero (hU : URep Hm σ) {B : H → V} (hB : CWLin Hm σ B) {w : H} (hw : IsSm (UH Hm) σ w)
     (h0 : ∀ g ∈ UH Hm, B (σ g w) = 0) {x : H} (hx : IsSm (UH Hm) σ x)
     (happ : ∀ Ws : List (List (Mat n)), (∀ W ∈ Ws, LieWd Hm W) → ∀ δ : ℝ, 0 < δ →
@@ -100,7 +104,7 @@ theorem CWLin.eq_zero (hU : URep Hm σ) {B : H → V} (hB : CWLin Hm σ B) {w : 
 theorem CWLin.continuousOn_orbit [FiniteDimensional ℂ V] (hF : Factor) (hU : URep Hm σ) {B : H → V}
     (hB : CWLin Hm σ B) {w : H} (hw : IsSm (UH Hm) σ w) : ContinuousOn (fun g => B (σ g w)) (UH Hm) := by
   obtain ⟨N, W, β, hW, hβ⟩ := hF n Hm H σ hU V B hB
-  refine (continuousOn_finset_sum Finset.univ fun i _ =>
+  refine (continuousOn_finsetSum Finset.univ fun i _ =>
     (β i).continuous.comp_continuousOn (continuousOn_dsW_orbit hU.rep hw (hW i).lieW)).congr fun g hg => ?_
   exact hβ _ (hw.apply hU.rep hg)
 

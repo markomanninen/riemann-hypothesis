@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.FormulaF
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HidaSetting
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.ContinuousUnitaryMatrix
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.FormulaF
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HidaSetting
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.ContinuousUnitaryMatrix
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem onb_sum_inner_independent {E V : Type*} [NormedAddCommGroup E] [InnerPro
         refine Finset.sum_congr rfl fun j _ => ?_
         have e : G (b j) = ∑ i, inner ℂ (c i) (b j) • G (c i) := by
           conv_lhs => rw [← c.sum_repr' (b j)]
-          simp only [map_sum, map_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, map_smul]
         rw [e, inner_sum]
         simp only [inner_smul_right]
     _ = ∑ i, ∑ j, inner ℂ (c i) (b j) * inner ℂ (F (b j)) (G (c i)) := Finset.sum_comm
@@ -40,7 +45,8 @@ theorem onb_sum_inner_independent {E V : Type*} [NormedAddCommGroup E] [InnerPro
         refine Finset.sum_congr rfl fun i _ => ?_
         have e : F (c i) = ∑ j, inner ℂ (b j) (c i) • F (b j) := by
           conv_lhs => rw [← b.sum_repr' (c i)]
-          simp only [map_sum, map_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, map_smul]
         rw [e, sum_inner]
         simp only [inner_smul_left, inner_conj_symm]
 
@@ -59,7 +65,8 @@ theorem onb_expand_vector_inner {E V : Type*} [NormedAddCommGroup E] [InnerProdu
     (b : OrthonormalBasis ι ℂ E) (ι₀ : E →ₗ[ℂ] (Fin n → V)) (z : Fin n → V) (y : E) :
     ∑ i, starRingEnd ℂ (ob2SI (ι₀ (b i)) z) * inner ℂ (b i) y = ob2SI z (ι₀ y) := by
   conv_rhs => rw [← b.sum_repr' y]
-  simp only [ob2SI, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, inner_sum, inner_smul_right,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ob2SI, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, inner_sum, inner_smul_right,
     inner_conj_symm, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun i _ => by ring
@@ -132,7 +139,8 @@ theorem psi_twist_k_mul (dual : Bool) {ε : Fin n → Bool} {Λ : Fin n → ℝ}
     (hΨ : Ψ (S7.toMK k * E) = T.op k * Ψ E) (ζ : Fin n → T.V) :
     ob2B dual Ψ (S7.toMK k * E) ζ = ob2TauF dual T k (ob2B dual Ψ E ζ) := by
   funext c
-  simp only [ob2B, LinearMap.coe_mk, AddHom.coe_mk, ob2TauF, hΨ, tensor_phi_k_mul, ContinuousLinearMap.mul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ob2B, LinearMap.coe_mk, AddHom.coe_mk, ob2TauF, hΨ, tensor_phi_k_mul, ContinuousLinearMap.mul_apply,
     map_sum, map_smul, Finset.smul_sum, Finset.sum_smul, smul_smul]
   rw [Finset.sum_comm]
 
@@ -143,7 +151,8 @@ theorem posSemidef_weighted_inner_nonneg {V : Type*} [NormedAddCommGroup V] [Inn
   obtain ⟨S, rfl⟩ := CStarAlgebra.nonneg_iff_eq_star_mul_self.mp hM.nonneg
   have e : ∑ c, ∑ d, (star S * S) c d * inner ℂ (u c) (R (u d)) =
       ∑ e, inner ℂ (∑ c, S e c • u c) (R (∑ d, S e d • u d)) := by
-    simp only [Matrix.mul_apply, Matrix.star_apply, map_sum, map_smul, sum_inner, inner_sum, inner_smul_left,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.star_apply, map_sum, map_smul, sum_inner, inner_sum, inner_smul_left,
       inner_smul_right, Finset.sum_mul, Finset.mul_sum]
     conv_lhs => rw [Finset.sum_comm]
     conv_rhs => rw [Finset.sum_comm]

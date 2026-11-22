@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem lvFil_tensor_injective {N₁ N₂ : Type} [AddCommGroup N₁] [Module Qp
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   rw [e]
   exact Module.Flat.lTensor_preserves_injective_linearMap g hg
 
@@ -68,7 +72,7 @@ theorem lvFil_φ_act (ρ : Representation LL G V) (g : G) (x : V ⊗[Qp] B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [φVB, actVB, PD.φ_comm]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem lvFil_φ_Dcris (ρ : Representation LL G V) {x : V ⊗[Qp] B} (hx : x ∈ Dcris PD ρ) :
     φVB PD (LL := LL) (V := V) x ∈ Dcris PD ρ := by
@@ -82,7 +86,7 @@ theorem lvFil_φ_mul (c : K₀) (x : V ⊗[Qp] B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [φVB, mulVB, PD.φ_K₀]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem lvFil_FilV_exh (y : V ⊗[Qp] BdR) : ∃ a, y ∈ FilV PD (LL := LL) (V := V) a := by
   induction y using TensorProduct.induction_on with
@@ -110,7 +114,7 @@ theorem lvFil_FilV_sep (y : V ⊗[Qp] BdR) (hy : ∀ a, y ∈ FilV PD (LL := LL)
         TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
       exact (PD.Fil a).smul_of_tower_mem _ f.2
     | add x y hx hy =>
-      rw [map_add, map_add, Finsupp.add_apply]
+      rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]
       exact add_mem hx hy
   have h0 : e y = 0 := by
     ext i

@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerQqPowLevelEqQ
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerQqPowLevelEqQ
+
+@[expose] public section
+
 open GlobalTheory.K5 GlobalTheory.KumDlog
 
 namespace GlobalTheory.K5.PDiv
@@ -24,7 +29,9 @@ theorem prod_one_sub_pow_dvd {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Al
       have g := geom_sum_mul ζ i
       linear_combination ((ζ - 1) ^ S.card * c) * g
 
-theorem pdiv : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], ∀ (T : Tower p Ω) (j s : ℕ), 1 ≤ j → s ≤ Nat.totient (p ^ j) → IsInt p ((p : Ω) / (T.ζ j - 1) ^ s) := by
+theorem pdiv : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω],
+    ∀ (T : Tower p Ω) (j s : ℕ), 1 ≤ j → s ≤ Nat.totient (p ^ j) →
+      IsInt (p := p) ((p : Ω) / (T.ζ j - 1) ^ s) := by
   intro p _ Ω _ _ T j s hj hs
   classical
   have hprim := T.prim j

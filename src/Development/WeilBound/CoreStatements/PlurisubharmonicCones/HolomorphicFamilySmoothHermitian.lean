@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.IsPshOfTangent
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.IsPshOfTangent
+
+@[expose] public section
+
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular
 open scoped ComplexOrder
 
@@ -52,7 +57,8 @@ theorem frm_det {f : Λ →ₗ[ℤ] Λ →ₗ[ℤ] ℤ} (hf : Function.Injective
   have h1 : f (∑ k, v k • e k) = 0 := by
     refine e.ext fun l => ?_
     have := congrFun h0 l
-    simpa [Matrix.vecMul, dotProduct, map_sum, LinearMap.sum_apply] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Matrix.vecMul, dotProduct, map_sum, LinearMap.sum_apply] using this
   have h2 : ∑ k, v k • e k = 0 := hf (by rw [h1, map_zero])
   exact hv (funext (Fintype.linearIndependent_iff.1 e.linearIndependent v h2))
 
@@ -93,7 +99,8 @@ theorem LevelTowerAlt.holomorphic_family_smooth_hermitian : ∀ (E : Type) [Fiel
       refine congrFun (f := (R t).B a x) ?_ j
       refine Eq.trans ?_ (hrow ((Matrix.of fun _ : Unit => x) * (G t * C)) fun k => a • e k).symm
       conv_lhs => rw [h1]
-      simp only [map_sum, map_smul, (R t).act]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, (R t).act]
     exact (hD.differentiableAt (hVo.mem_nhds htV)).differentiableWithinAt
   · have h := logdet_psh (H := fun t => (R t).Hm) (u := fun t => Matrix.of fun i => u i t) hU (hper e) hK
       (fun t _ => posDef_Hm (R t)) he (MS.of_diff hU fun i j => differentiableOn_pi.1 (hu i) j) hli

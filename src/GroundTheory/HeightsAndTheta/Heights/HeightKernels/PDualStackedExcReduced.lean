@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcChart
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedExcCycle
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcChart
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedExcCycle
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.InhDivCycleOfSuppEmpty
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -47,8 +52,8 @@ theorem graphSecond_not_mem {k : Type} [Field k] {m : ℕ} {α : T → k} {M : T
 
 end StackedExceptionalReduced
 
-open StackedExceptionalCycle StackedGraphHorizontal StackedExceptionalReduced in
 
+open StackedExceptionalCycle StackedGraphHorizontal StackedExceptionalReduced in
 theorem DualStackedExcReduced.proof (hC : DualStackedExcCoords.Statement) (hB : DualStackedExcBase.Statement)
     (hX : DualStackedExcChart.Statement) : DualStackedExcReduced.Statement := by
   intro K _ _ i F F' T _ _ b b' a hi hlt hcov hab

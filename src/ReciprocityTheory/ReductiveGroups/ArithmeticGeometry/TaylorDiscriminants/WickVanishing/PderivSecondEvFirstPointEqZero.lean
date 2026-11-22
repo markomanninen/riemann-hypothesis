@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogPoinc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogPoinc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,8 +17,8 @@ namespace ReciprocityTheory.ChartRestriction.G.TB.LogPf
 variable {k : Type} [CommRing k] {d : ℕ} (G : FGLaw k d)
 
 theorem om_closed (i a c : Fin d) :
-    pderiv k ((0 : Fin 1), c) (Om G i a) = pderiv k ((0 : Fin 1), a) (Om G i c) := by
-  set M : Fin d → PS k 1 d := fun e => pderiv k ((0 : Fin 1), e) (Om G i a) - pderiv k ((0 : Fin 1), a) (Om G i e)
+    pderiv (R := k) ((0 : Fin 1), c) (Om G i a) = pderiv (R := k) ((0 : Fin 1), a) (Om G i c) := by
+  set M : Fin d → PS k 1 d := fun e => pderiv (R := k) ((0 : Fin 1), e) (Om G i a) - pderiv (R := k) ((0 : Fin 1), a) (Om G i e)
     with hMdef
   have hM : ∀ b, ∑ e, M e * Jac G e b = 0 := by
     intro b
@@ -36,8 +40,8 @@ theorem om_closed (i a c : Fin d) :
   exact sub_eq_zero.1 h3
 
 theorem d_evY (h : PS k 1 d) (b : Fin d) :
-    pderiv k ((1 : Fin 2), b) (ev (n := 2) ![pt k d 1] h) = ev (n := 2) ![pt k d 1] (pderiv k ((0 : Fin 1), b) h) := by
-  have hXd : ∀ v w : Fin 2 × Fin d, pderiv k v (X w : PS k 2 d) = if v = w then 1 else 0 := by
+    pderiv (R := k) ((1 : Fin 2), b) (ev (n := 2) ![pt k d 1] h) = ev (n := 2) ![pt k d 1] (pderiv (R := k) ((0 : Fin 1), b) h) := by
+  have hXd : ∀ v w : Fin 2 × Fin d, pderiv (R := k) v (X w : PS k 2 d) = if v = w then 1 else 0 := by
     intro v w
     first
     | (simp [MvPowerSeries.pderiv_X, Pi.single_apply]; done)
@@ -56,20 +60,20 @@ theorem d_evY (h : PS k 1 d) (b : Fin d) :
     | exact MvPowerSeries.constantCoeff_X _
     | simp
   rw [pderiv_ev hcz, Fintype.sum_eq_single ((0 : Fin 1), b)]
-  · show ev _ (pderiv k ((0 : Fin 1), b) h) * pderiv k ((1 : Fin 2), b) (X ((1 : Fin 2), b)) = _
+  · show ev _ (pderiv (R := k) ((0 : Fin 1), b) h) * pderiv (R := k) ((1 : Fin 2), b) (X ((1 : Fin 2), b)) = _
     rw [hXd, if_pos rfl, mul_one]
   · rintro ⟨j, i⟩ hne
     have hj : j = 0 := Subsingleton.elim _ _
     subst hj
-    show ev _ _ * pderiv k ((1 : Fin 2), b) (X ((1 : Fin 2), i)) = 0
+    show ev _ _ * pderiv (R := k) ((1 : Fin 2), b) (X ((1 : Fin 2), i)) = 0
     rw [hXd, if_neg, mul_zero]
     intro heq
     apply hne
     rw [(Prod.mk.inj heq).2]
 
 theorem d_evX (h : PS k 1 d) (a : Fin d) :
-    pderiv k ((0 : Fin 2), a) (ev (n := 2) ![pt k d 0] h) = ev (n := 2) ![pt k d 0] (pderiv k ((0 : Fin 1), a) h) := by
-  have hXd : ∀ v w : Fin 2 × Fin d, pderiv k v (X w : PS k 2 d) = if v = w then 1 else 0 := by
+    pderiv (R := k) ((0 : Fin 2), a) (ev (n := 2) ![pt k d 0] h) = ev (n := 2) ![pt k d 0] (pderiv (R := k) ((0 : Fin 1), a) h) := by
+  have hXd : ∀ v w : Fin 2 × Fin d, pderiv (R := k) v (X w : PS k 2 d) = if v = w then 1 else 0 := by
     intro v w
     first
     | (simp [MvPowerSeries.pderiv_X, Pi.single_apply]; done)
@@ -88,19 +92,19 @@ theorem d_evX (h : PS k 1 d) (a : Fin d) :
     | exact MvPowerSeries.constantCoeff_X _
     | simp
   rw [pderiv_ev hcz, Fintype.sum_eq_single ((0 : Fin 1), a)]
-  · show ev _ (pderiv k ((0 : Fin 1), a) h) * pderiv k ((0 : Fin 2), a) (X ((0 : Fin 2), a)) = _
+  · show ev _ (pderiv (R := k) ((0 : Fin 1), a) h) * pderiv (R := k) ((0 : Fin 2), a) (X ((0 : Fin 2), a)) = _
     rw [hXd, if_pos rfl, mul_one]
   · rintro ⟨j, i⟩ hne
     have hj : j = 0 := Subsingleton.elim _ _
     subst hj
-    show ev _ _ * pderiv k ((0 : Fin 2), a) (X ((0 : Fin 2), i)) = 0
+    show ev _ _ * pderiv (R := k) ((0 : Fin 2), a) (X ((0 : Fin 2), i)) = 0
     rw [hXd, if_neg, mul_zero]
     intro heq
     apply hne
     rw [(Prod.mk.inj heq).2]
 
-theorem pderiv_first_ev_second_point_eq_zero (h : PS k 1 d) (a : Fin d) : pderiv k ((0 : Fin 2), a) (ev (n := 2) ![pt k d 1] h) = 0 := by
-  have hXd : ∀ v w : Fin 2 × Fin d, pderiv k v (X w : PS k 2 d) = if v = w then 1 else 0 := by
+theorem pderiv_first_ev_second_point_eq_zero (h : PS k 1 d) (a : Fin d) : pderiv (R := k) ((0 : Fin 2), a) (ev (n := 2) ![pt k d 1] h) = 0 := by
+  have hXd : ∀ v w : Fin 2 × Fin d, pderiv (R := k) v (X w : PS k 2 d) = if v = w then 1 else 0 := by
     intro v w
     first
     | (simp [MvPowerSeries.pderiv_X, Pi.single_apply]; done)
@@ -123,13 +127,13 @@ theorem pderiv_first_ev_second_point_eq_zero (h : PS k 1 d) (a : Fin d) : pderiv
   obtain ⟨j, i⟩ := p
   have hj : j = 0 := Subsingleton.elim _ _
   subst hj
-  show ev _ _ * pderiv k ((0 : Fin 2), a) (X ((1 : Fin 2), i)) = 0
+  show ev _ _ * pderiv (R := k) ((0 : Fin 2), a) (X ((1 : Fin 2), i)) = 0
   rw [hXd, if_neg, mul_zero]
   intro heq
   exact absurd (Prod.mk.inj heq).1 (by decide)
 
-theorem pderiv_second_ev_first_point_eq_zero (h : PS k 1 d) (b : Fin d) : pderiv k ((1 : Fin 2), b) (ev (n := 2) ![pt k d 0] h) = 0 := by
-  have hXd : ∀ v w : Fin 2 × Fin d, pderiv k v (X w : PS k 2 d) = if v = w then 1 else 0 := by
+theorem pderiv_second_ev_first_point_eq_zero (h : PS k 1 d) (b : Fin d) : pderiv (R := k) ((1 : Fin 2), b) (ev (n := 2) ![pt k d 0] h) = 0 := by
+  have hXd : ∀ v w : Fin 2 × Fin d, pderiv (R := k) v (X w : PS k 2 d) = if v = w then 1 else 0 := by
     intro v w
     first
     | (simp [MvPowerSeries.pderiv_X, Pi.single_apply]; done)
@@ -152,7 +156,7 @@ theorem pderiv_second_ev_first_point_eq_zero (h : PS k 1 d) (b : Fin d) : pderiv
   obtain ⟨j, i⟩ := p
   have hj : j = 0 := Subsingleton.elim _ _
   subst hj
-  show ev _ _ * pderiv k ((1 : Fin 2), b) (X ((0 : Fin 2), i)) = 0
+  show ev _ _ * pderiv (R := k) ((1 : Fin 2), b) (X ((0 : Fin 2), i)) = 0
   rw [hXd, if_neg, mul_zero]
   intro heq
   exact absurd (Prod.mk.inj heq).1 (by decide)
@@ -161,7 +165,7 @@ variable [Algebra ℚ k]
 
 def logOf (i : Fin d) : PS k 1 d := prim (fun v : Fin 1 × Fin d => Om G i v.2)
 
-theorem pderiv_logOf (i a : Fin d) : pderiv k ((0 : Fin 1), a) (logOf G i) = Om G i a := by
+theorem pderiv_logOf (i a : Fin d) : pderiv (R := k) ((0 : Fin 1), a) (logOf G i) = Om G i a := by
   unfold logOf
   refine pderiv_prim _ ?_ _
   rintro ⟨a0, a'⟩ ⟨c0, c'⟩
@@ -174,19 +178,21 @@ theorem logOf_add (i : Fin d) :
     ev (n := 2) ![G.F] (logOf G i) = ev (n := 2) ![pt k d 0] (logOf G i) + ev (n := 2) ![pt k d 1] (logOf G i) := by
   rw [← sub_eq_zero]
   set g := ev (n := 2) ![G.F] (logOf G i) - (ev (n := 2) ![pt k d 0] (logOf G i) + ev (n := 2) ![pt k d 1] (logOf G i))
-  have hd : ∀ v, pderiv k v g = 0 := by
+  have hd : ∀ v, pderiv (R := k) v g = 0 := by
     rintro ⟨j, c⟩
     fin_cases j
     · simp only [Fin.zero_eta]
-      simp only [g, map_sub, map_add, d_evF, pderiv_logOf, pderiv_first_ev_second_point_eq_zero, d_evX]
+      simp only [g, map_sub, map_add (f := _), d_evF, pderiv_logOf, pderiv_first_ev_second_point_eq_zero, d_evX]
       rw [om_P G i c]; ring
     · simp only [Fin.mk_one]
-      simp only [g, map_sub, map_add, d_evF, pderiv_logOf, pderiv_second_ev_first_point_eq_zero, d_evY]
+      simp only [g, map_sub, map_add (f := _), pderiv_second_ev_first_point_eq_zero, d_evY]
+      rw [d_evF G]
+      simp only [pderiv_logOf G]
       have := om_Q G i c
       simp only [Ar] at this
       rw [this]; ring
   have hc : constantCoeff g = 0 := by
-    simp only [g, map_sub, map_add, cc_ev (czFF G), cc_ev czX, cc_ev czY, logOf, constantCoeff_prim]
+    simp only [g, map_sub, map_add (f := _), cc_ev (czFF G), cc_ev czX, cc_ev czY, logOf, constantCoeff_prim]
     ring
   rw [eq_C_of_pderiv_zero hd, hc, map_zero]
 
@@ -274,58 +280,5 @@ theorem ez_y (h : PS k 1 d) : ev (n := 1) ![pt k d 0, 0] (ev (n := 2) ![pt k d 1
     | rw [MvPowerSeries.coeff_zero_C, MvPowerSeries.coeff_zero_eq_constantCoeff_apply]
   rw [ev_ev ha hb, hfam, ← ev_ev hc hz, hconst (ev (fun (_ : Fin 1) (_ : Fin d) => (0 : PS k 0 d)) h),
     cc_ev hz, ev_C hc]
-
-theorem logDerivSt : LogDerivSt := by
-  intro k _ _ d G ℓ h0 h1 hadd u g
-  have hℓ : CZ (![ℓ] : Fin 1 → Pt k 1 d) := CZ.cons h0 CZ.nil
-  have hadd' : ∀ c, ev (n := 2) ![G.F] (ℓ c) = ev (n := 2) ![pt k d 0] (ℓ c) + ev (n := 2) ![pt k d 1] (ℓ c) := by
-    intro c
-    have := congrFun hadd c
-    change ev (n := 2) ![G.add (pt k d 0) (pt k d 1)] (ℓ c) = _ at this
-    rwa [addPt] at this
-  have DJ : ∀ c b, ∑ j, pderiv k ((0 : Fin 1), j) (ℓ c) * Jac G j b = C (if c = b then 1 else 0) := by
-    intro c b
-    have h := congrArg (fun x => ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), b) x)) (hadd' c)
-    beta_reduce at h
-    simp only [d_evF, map_add, pderiv_second_ev_first_point_eq_zero, d_evY, zero_add, ev_sum cz1, ev_mul cz1, ez_F, ez_dy, ez_y] at h
-    rw [h]
-    congr 1
-    have hc := congrFun (congrFun h1 c) b
-    rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, zero_add]
-    simp only [dLin] at hc
-    simp [hc, Matrix.one_apply]
-  have hch : ∀ j, pderiv k ((0 : Fin 1), j) (ev (n := 1) ![ℓ] g) =
-      ∑ c, ev (n := 1) ![ℓ] (pderiv k ((0 : Fin 1), c) g) * pderiv k ((0 : Fin 1), j) (ℓ c) := by
-    intro j
-    rw [pderiv_ev hℓ, Fintype.sum_prod_type, Fin.sum_univ_one]
-    rfl
-  have step : ∀ c, ∑ i, C (u i) * ∑ j, pderiv k ((0 : Fin 1), j) (ℓ c) * Jac G j i = (C (u c) : PS k 1 d) := by
-    intro c
-    simp only [DJ, ← map_mul, mul_ite, mul_one, mul_zero]
-    rw [← map_sum]
-    simp [Finset.sum_ite_eq]
-  show ∑ j : Fin d, (∑ i : Fin d, C (u i) * Jac G j i) * pderiv k ((0 : Fin 1), j) (ev (n := 1) ![ℓ] g) = _
-  simp only [hch]
-  rw [ev_sum hℓ]
-  calc ∑ j, (∑ i, C (u i) * Jac G j i) *
-        ∑ c, ev (n := 1) ![ℓ] (pderiv k ((0 : Fin 1), c) g) * pderiv k ((0 : Fin 1), j) (ℓ c)
-      = ∑ j, ∑ c, ∑ i, C (u i) * Jac G j i *
-          (ev (n := 1) ![ℓ] (pderiv k ((0 : Fin 1), c) g) * pderiv k ((0 : Fin 1), j) (ℓ c)) := by
-        refine Finset.sum_congr rfl fun j _ => ?_
-        rw [Finset.sum_mul_sum, Finset.sum_comm]
-    _ = ∑ c, ∑ j, ∑ i, C (u i) * Jac G j i *
-          (ev (n := 1) ![ℓ] (pderiv k ((0 : Fin 1), c) g) * pderiv k ((0 : Fin 1), j) (ℓ c)) := Finset.sum_comm
-    _ = ∑ c, ∑ i, ∑ j, C (u i) * Jac G j i *
-          (ev (n := 1) ![ℓ] (pderiv k ((0 : Fin 1), c) g) * pderiv k ((0 : Fin 1), j) (ℓ c)) :=
-        Finset.sum_congr rfl fun c _ => Finset.sum_comm
-    _ = ∑ c, ev (n := 1) ![ℓ] (pderiv k ((0 : Fin 1), c) g) *
-          ∑ i, C (u i) * ∑ j, pderiv k ((0 : Fin 1), j) (ℓ c) * Jac G j i := by
-        refine Finset.sum_congr rfl fun c _ => ?_
-        simp only [Finset.mul_sum]
-        refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-        ring
-    _ = _ := by
-        refine Finset.sum_congr rfl fun c _ => ?_
-        rw [step, ev_mul hℓ, ev_C hℓ, mul_comm]
 
 end ReciprocityTheory.ChartRestriction.G.TB.LogPf

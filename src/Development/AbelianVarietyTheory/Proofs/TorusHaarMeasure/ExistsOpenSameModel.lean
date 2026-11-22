@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveAsm
-import Formalism.LocalToGlobal.ProjectiveLattices.TieUpC
-import Formalism.LocalToGlobal.ProjectiveLattices.SupNDataOfNonneg
-import Formalism.LocalToGlobal.ProjectiveLattices.AxHInst
-import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
-import Development.AbelianVarietyTheory.Definitions.UpperBounds.PhRec
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SupCLeISupGeneric
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameNormsContinuousOnHolomorphicFramedFamily
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsHolomorphicFamily
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIdempotentWeightZeroSectionOfComponent
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IdemMulMemCusp
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FnFGFnTrdeg
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ContinuousRmulPair
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveAsm
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieUpC
+public import Formalism.LocalToGlobal.ProjectiveLattices.SupNDataOfNonneg
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
+public import Development.AbelianVarietyTheory.Definitions.UpperBounds.PhRec
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SupCLeISupGeneric
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameNormsContinuousOnHolomorphicFramedFamily
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsHolomorphicFamily
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIdempotentWeightZeroSectionOfComponent
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IdemMulMemCusp
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FnFGFnTrdeg
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ContinuousRmulPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,6 +69,7 @@ theorem exists_model (U : Formalism.L2.PjFree.Unf Xo c σ r) (hU : Formalism.L2.
   obtain ⟨k, x, t, ht⟩ := hU.2.2.1 w
   exact ⟨k, algOf P hP, w, x, t, hw, ht⟩
 
+attribute [local instance 100] IntermediateField.instAlgebraSubtypeMem in
 theorem exists_comp (U : Formalism.L2.PjFree.Unf Xo c σ r) (hσ : Formalism.L2.PjFree.GoodEmb c σ)
     (hU : Formalism.L2.PjFree.IsUnf U) (h : GenFrEx Xo c) (k : U.Comp) : ∃ Z, CarriesGeneric U h k Z := by
   classical
@@ -188,9 +193,9 @@ end Free
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.BigRec
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem comp_read_on_model : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c) (σ : T.Q.c.F →+* ℂ), GoodEmb T.Q.c σ → (∀ Z : Comp (T.Q.Xo j) T.Q.c, ∃ k : (T.U j σ).Comp, ∀ (u : WeightFamilies.Wt D j) (F : (recB h.toLawsCore).Cusp j u), evC hG Z F.1 = 0 ↔ ∀ x ∈ ((T.U j σ).X k).dom, rdU (T.U j σ) F.1 k x = 0) ∧ ∀ k : (T.U j σ).Comp, ∃ Z : Comp (T.Q.Xo j) T.Q.c, ∀ (u : WeightFamilies.Wt D j) (F : (recB h.toLawsCore).Cusp j u), evC hG Z F.1 = 0 ↔ ∀ x ∈ ((T.U j σ).X k).dom, rdU (T.U j σ) F.1 k x = 0 := by
   intro D T h j hj hG σ hσ
   have hU : Formalism.L2.PjFree.IsUnf (Formalism.L2.PjFree.Unf.ofPj (T.U j σ)) := h.unf j hj σ hσ

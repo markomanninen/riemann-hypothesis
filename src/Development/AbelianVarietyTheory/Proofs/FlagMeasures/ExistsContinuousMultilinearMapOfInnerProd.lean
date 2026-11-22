@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+
+@[expose] public section
 
 open Formalism.MainNotions.S NumberField
 open scoped InnerProductSpace
@@ -43,7 +47,7 @@ theorem exists_continuousMultilinearMap_of_inner_prod {ι : Type*} [Fintype ι] 
     congr 1
     refine Finset.prod_congr rfl fun j hj => ?_
     rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]
-  let m : MultilinearMap ℂ H E :=
+  let m : MultilinearMap (RingHom.id ℂ) H E :=
     { toFun := t
       map_update_add' := by
         intro _ x i a b
@@ -54,7 +58,7 @@ theorem exists_continuousMultilinearMap_of_inner_prod {ι : Type*} [Fintype ι] 
         intro _ x i c a
         refine eq_of_inner_eq_on_dense_span hd ?_
         rintro _ ⟨y, rfl⟩
-        rw [inner_smul_right, hu, hu, inner_smul_right, mul_assoc] }
+        rw [RingHom.id_apply, inner_smul_right, hu, hu, inner_smul_right, mul_assoc] }
   refine ⟨m.mkContinuous 1 fun x => ?_, fun x => rfl, hn⟩
   rw [one_mul]
   exact (hn x).le

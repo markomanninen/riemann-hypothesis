@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.Pa UpperTheory.V.Th UpperTheory.V.Th.Coc
 
@@ -31,8 +35,8 @@ private theorem tri_aeval {O : Type} [CommRing O] {n : ℕ} (u : Matrix (Fin n) 
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
     refine ⟨fun a b hab => ?_, fun i => ?_⟩
-    · rw [map_add, Matrix.add_apply, hp.1 a b hab, hq.1 a b hab, add_zero]
-    · rw [map_add, Matrix.add_apply, hp.2, hq.2, Polynomial.eval_add]
+    · rw [map_add (f := _), Matrix.add_apply, hp.1 a b hab, hq.1 a b hab, add_zero]
+    · rw [map_add (f := _), Matrix.add_apply, hp.2, hq.2, Polynomial.eval_add]
   | monomial k c =>
     have hk := tri_pow u α h hd k
     rw [Polynomial.aeval_monomial, ← Algebra.smul_def]

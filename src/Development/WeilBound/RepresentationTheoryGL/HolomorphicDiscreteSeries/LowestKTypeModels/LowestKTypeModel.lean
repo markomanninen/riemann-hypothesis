@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.LowestKTypeModels.ApplyNeZero
-import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.KFiniteWordBoundIndefUnitary
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.LowestKTypeModels.ApplyNeZero
+public import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.KFiniteWordBoundIndefUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem lowestKTypeModel : Seed := by
     { toFun := fun a => ∫ h, φ h * ⟪b0, ρ h a⟫_ℂ ∂ν
       map_add' := fun a a' => by
         rw [← integral_add (hint _ a) (hint _ a')]
-        simp only [map_add, inner_add_right, mul_add]
+        simp only [map_add (f := _), inner_add_right, mul_add]
       map_smul' := fun c a => by
         rw [RingHom.id_apply, smul_eq_mul, ← integral_const_mul]
         simp only [map_smul, inner_smul_right]
@@ -75,7 +79,7 @@ theorem lowestKTypeModel : Seed := by
       · rintro _ ⟨g', rfl⟩
         exact Submodule.subset_span ⟨g * g', u_mul hπ.2.2.1 g g' v0⟩
       · simp
-      · intro x y _ _ hx hy; rw [map_add]; exact D.add_mem hx hy
+      · intro x y _ _ hx hy; rw [map_add (f := _)]; exact D.add_mem hx hy
       · intro c x _ hx; rw [map_smul]; exact D.smul_mem c hx
     have hv0D : v0 ∈ D := Submodule.subset_span ⟨1, by
       show π (um (1 : UJ ε)) v0 = v0

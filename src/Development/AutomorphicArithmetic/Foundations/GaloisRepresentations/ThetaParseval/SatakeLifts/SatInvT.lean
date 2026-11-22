@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SatakeLifts.PairOfLiftAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RInv2
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SatakeLifts.PairOfLiftAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RInv2
+
+@[expose] public section
 
 noncomputable section
 

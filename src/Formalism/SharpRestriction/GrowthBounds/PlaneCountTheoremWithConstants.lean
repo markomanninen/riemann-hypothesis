@@ -1,33 +1,37 @@
-import Formalism.SharpRestriction.GlobalTheoremInputs
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments
-import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
-import Formalism.SharpRestriction.GrowthBounds.PathWeight
-import Formalism.SharpRestriction.GrowthBounds.PolBridge
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.CMFieldLemmas
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
-import Formalism.SharpRestriction.GrowthBounds.Joints
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.Lemmas
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
-import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
-import Formalism.SharpRestriction.GrowthBounds.CornerGLContinuity
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
-import Formalism.SharpRestriction.GrowthBounds.ProofLW
-import Formalism.SharpRestriction.GrowthBounds.SelectionLemmas
-import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSk
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
-import Formalism.LocalRingCardinality.HostCls
-import Development.AutomorphicArithmetic.OrbitLabellings.EvenAddOrderOfHPOfPowLe
-import Development.AutomorphicArithmetic.OrbitLabellings.GalEArithFrobEqIotaHP
-import Development.AutomorphicArithmetic.PrimeDiscriminants.SplitLow
-import Lemmata.GeneralBFactUpperBis.Imports
+module
+
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments
+public import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight
+public import Formalism.SharpRestriction.GrowthBounds.PolBridge
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.CMFieldLemmas
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+public import Formalism.SharpRestriction.GrowthBounds.Joints
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.Lemmas
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+public import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
+public import Formalism.SharpRestriction.GrowthBounds.CornerGLContinuity
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+public import Formalism.SharpRestriction.GrowthBounds.ProofLW
+public import Formalism.SharpRestriction.GrowthBounds.SelectionLemmas
+public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSk
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
+public import Formalism.LocalRingCardinality.HostCls
+public import Development.AutomorphicArithmetic.OrbitLabellings.EvenAddOrderOfHPOfPowLe
+public import Development.AutomorphicArithmetic.OrbitLabellings.GalEArithFrobEqIotaHP
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.SplitLow
+public import Lemmata.GeneralBFactUpperBis.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -218,7 +222,7 @@ theorem fl_le_flG (L : SizeData₂ D) (C : ℝ) (p : ℕ) (hp : p.Prime) :
 
 theorem aL_top (L : SizeData₂ D) (t : D.host.TT) : aL L (t : HH D) = L.aT t := by
   unfold aL
-  rw [dif_pos t.2]
+  rw [dite_eq_left t.2]
 
 theorem ask_eq_askP (X : Inst D L) (p : ℕ) (hp : p.Prime)
     (hw : ∀ j (t : D.host.TT) e, L.wPart j t p e = fill X (bL L) j (partner D p t e)) (j : ℕ) (t : D.host.TT) :
@@ -379,7 +383,7 @@ theorem fill_nonneg (X : Inst D L) (j : ℕ) (z : Bool × HH D) : 0 ≤ fill X (
     have h1 := (X.off_top j z ht).1
     have h2 : L.sc.b' ≤ (bL L z.2 : ℝ) := by
       unfold bL
-      rw [dif_pos ht.2]
+      rw [dite_eq_left ht.2]
       exact L.bT_ge _
     have h3 : 0 ≤ L.sc.b' / L.sc.x := div_nonneg hb hx.le
     linarith
@@ -433,7 +437,7 @@ theorem svBound_of (X : Inst D L) (K : Consts) (hK : K.Nonneg) (P : ParameterCho
 
   have hal : ∀ s ∈ topsOn X p t0, 0 ≤ al L (aL L) s ∧ al L (aL L) s ≤ 6 / 5 * L.sc.a := by
     intro s hs
-    have h1 : aL L s = L.aT ⟨s, hTT s hs⟩ := by unfold aL; rw [dif_pos (hTT s hs)]
+    have h1 : aL L s = L.aT ⟨s, hTT s hs⟩ := by unfold aL; rw [dite_eq_left (hTT s hs)]
     obtain ⟨h2, h3⟩ := L.aT_win ⟨s, hTT s hs⟩
     have h4 : L.sc.a / ((D.R.k : ℝ) * L.sc.x ^ (Scale.A / 2)) ≤ L.sc.a / 5 := by
       apply div_le_div_of_nonneg_left (by linarith) (by norm_num)
@@ -562,47 +566,17 @@ variable {A K : Type} [CommRing A] [IsDedekindDomain A] [Field K] [Algebra A K] 
 
 abbrev locW : Subalgebra A K := Localization.subalgebra.ofField K _ w.asIdeal.primeCompl_le_nonZeroDivisors
 
-theorem exists_smul_mem_of_mem_span (Lat : Submodule A V) (v : V)
-    (hv : v ∈ Submodule.span (locW (K := K) w) (Lat : Set V)) : ∃ s : A, s ∉ w.asIdeal ∧ s • v ∈ Lat := by
-  induction hv using Submodule.span_induction with
-  | mem x hx => exact ⟨1, (Ideal.ne_top_iff_one _).1 w.isPrime.ne_top, by rwa [one_smul]⟩
-  | zero => exact ⟨1, (Ideal.ne_top_iff_one _).1 w.isPrime.ne_top, by rw [smul_zero]; exact Lat.zero_mem⟩
-  | add x y _ _ hx hy =>
-    obtain ⟨s, hs, hsx⟩ := hx
-    obtain ⟨t, ht, hty⟩ := hy
-    refine ⟨s * t, fun h => (w.isPrime.mem_or_mem h).elim hs ht, ?_⟩
-    rw [smul_add]
-    refine Lat.add_mem ?_ ?_
-    · rw [mul_comm, mul_smul]; exact Lat.smul_mem t hsx
-    · rw [mul_smul]; exact Lat.smul_mem s hty
-  | smul r x _ hx =>
-    obtain ⟨s, hs, hsx⟩ := hx
-    obtain ⟨r, a, t, ht, rfl⟩ := r
-    have ht0 : algebraMap A K t ≠ 0 := by
-      intro h0
-      have : (t : A) = 0 := (IsFractionRing.injective A K) (by rw [h0, map_zero])
-      exact ht (by rw [this]; exact w.asIdeal.zero_mem)
-    refine ⟨t * s, fun h => (w.isPrime.mem_or_mem h).elim ht hs, ?_⟩
-    have : (t * s) • ((⟨algebraMap A K a * (algebraMap A K t)⁻¹, a, t, ht, rfl⟩ : locW (K := K) w) • x) =
-        a • (s • x) := by
-      rw [Subalgebra.smul_def]
-      simp only
-      rw [← algebraMap_smul K (t * s), ← algebraMap_smul K a, ← algebraMap_smul K s, smul_smul, smul_smul, map_mul]
-      congr 1
-      field_simp
-    rw [this]
-    exact Lat.smul_mem a hsx
-
 include b in
 theorem cmp_expand (hs : ∀ a x, cmp (a • x) = φ a • cmp x) (x : V) :
     cmp x = ∑ a, φ (b.repr x a) • cmp (b a) := by
   conv_lhs => rw [← b.sum_repr x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun a _ => hs _ _
 
 theorem cmp_inj (hs : ∀ a x, cmp (a • x) = φ a • cmp x) (hli : LinearIndependent Kf (fun a => cmp (b a))) :
     Function.Injective cmp := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   rw [cmp_expand b φ cmp hs x] at hx
   have h := Fintype.linearIndependent_iff.1 hli _ hx
@@ -732,7 +706,7 @@ theorem linkG_at_core (X : Inst D L) (Y : LatInst D) (K : Consts) (hK : K.Nonneg
     · have ht0 : L.tau w = 0 := by rw [htau]; unfold tauP; rw [if_pos hV]
       have hi0 : L.io w = 0 := by
         rw [hio]; unfold ioP
-        rw [dif_neg (by rw [hV]; exact Finset.not_nonempty_empty)]
+        rw [dite_eq_right (by rw [hV]; exact Finset.not_nonempty_empty)]
       have hl0 := hlat0 w u hV hw
       refine ⟨?_, ?_, fun _ => ⟨ht0, hi0, hl0⟩⟩
       · rw [ht0]
@@ -781,7 +755,7 @@ theorem linkG_at_core (X : Inst D L) (Y : LatInst D) (K : Consts) (hK : K.Nonneg
       rw [ask_eq_askP X _ hp hwp j t]
       have haw : ∀ s ∈ D.host.TT, (aL L s : ℝ) ≤ 2 * L.sc.a := by
         intro s hs
-        have h1 : aL L s = L.aT ⟨s, hs⟩ := by unfold aL; rw [dif_pos hs]
+        have h1 : aL L s = L.aT ⟨s, hs⟩ := by unfold aL; rw [dite_eq_left hs]
         obtain ⟨_, h2⟩ := L.aT_win ⟨s, hs⟩
         have h3 : L.sc.a / ((D.R.k : ℝ) * L.sc.x ^ (Scale.A / 2)) ≤ L.sc.a := by
           have ha := sc_one_lt_a L.sc
@@ -796,7 +770,7 @@ theorem linkG_at_core (X : Inst D L) (Y : LatInst D) (K : Consts) (hK : K.Nonneg
         linarith
       have hbw : ∀ s ∈ D.host.TT, (0 : ℝ) ≤ (bL L s : ℝ) := by
         intro s hs
-        have h1 : bL L s = L.bT ⟨s, hs⟩ := by unfold bL; rw [dif_pos hs]
+        have h1 : bL L s = L.bT ⟨s, hs⟩ := by unfold bL; rw [dite_eq_left hs]
         rw [h1]
         exact le_trans (sc_b'_nonneg L.sc) (L.bT_ge ⟨s, hs⟩)
       have hPG := (h0 (aL L) (bL L) haw hbw _ hp hin' j hj t.1 t.2).1
@@ -831,9 +805,6 @@ theorem Ev.and {eps : ℝ} {Fm : FamP eps} {P Q : ∀ x, Fm.Ix x → Prop} (hP :
 theorem Ev.x1 {eps : ℝ} (Fm : FamP eps) : Ev Fm (fun x _ => Fm.x1 < x) :=
   ⟨Fm.x1 + 1, fun x hx _ => by linarith⟩
 
-def FamilyFirstGrowthBound {eps : ℝ} (Fm : FamP eps) : Prop :=
-  Ev Fm fun x i => AuxBlock8.admG1 (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) Fm.GK
-
 theorem servedGIdx_ev {eps : ℝ} (Fm : FamP eps) : Ev Fm fun x i => ServedGIdx (Fm.Gx x i) Fm.GK := by
   obtain ⟨x0, h⟩ := Ev.x1 Fm
   refine ⟨max x0 (((4 : ℕ) : ℝ) ^ (5 / Fm.ez)), fun x hx i => ?_⟩
@@ -863,17 +834,6 @@ theorem sizeDataLat_ev {eps : ℝ} (Fm : FamP eps) (hd : NPDescF Fm) :
   obtain ⟨hdd, hx1⟩ := h x hx i
   exact LatCmp.sizeDataLat_of_latDefs (Fm.ex x hx1 i).cmp (Fm.gatT x i) _ _ _ (Fm.nuDef x hx1 i) (Fm.ex x hx1 i).lat
     (Fm.ex x hx1 i).nu_unserved (hdd hx1) w
-
-theorem link_of_family_theorem {eps : ℝ} (Fm : FamP eps) (hP : AuxBlock8.ConclusionOnFamily Fm Fm.GK Fm.Gx) (hG1 : FamilyFirstGrowthBound Fm)
-    (hFl : NPDescF Fm) : LinkG Fm := by
-  obtain ⟨C, δ, hδ, hP'⟩ := hP
-  have hP'' : Ev Fm fun x i => AuxBlock8.Conclusion₂ (Fm.D x i) (Fm.L x i) (Fm.Gx x i) Fm.GK C ((Fm.L x i).sc.b ^ δ x) := hP'
-  obtain ⟨x0, h⟩ := (((((hP''.and hG1).and (servedGIdx_ev Fm)).and (svBound_ev Fm)).and (nuServed_ev Fm)).and
-    (sizeDataLat_ev Fm hFl)).and (Ev.x1 Fm)
-  refine ⟨4 * |C| + 1, x0, δ, hδ, fun x hx i => ?_⟩
-  obtain ⟨⟨⟨⟨⟨⟨hp, hg⟩, hs⟩, hv⟩, hi⟩, hf⟩, hx1⟩ := h x hx i
-  exact linkG_at_of (Fm.Gx x i) (Fm.Gy x i) Fm.GK Fm.GK_nonneg C _ (Fm.gatT x i) (Fm.fills x hx1 i)
-    hf (Fm.supp_sat x hx1 i) (Fm.latTied x hx1 i) (Fm.nuDef x hx1 i) hp.1 hp.2.1 hp.2.2.2.2.1 hg hs hv hi
 
 theorem exists_place (D : D7) : Nonempty D.what₂.places.Pl := by
   obtain ⟨M, hM⟩ := Ideal.exists_maximal (𝓞 D.what₂.LL)
@@ -921,23 +881,6 @@ def Adm8F {eps : ℝ} (Fm : FamP eps) : Prop :=
 def Adm9F {eps : ℝ} (Fm : FamP eps) : Prop :=
   ∃ C : ℝ, 0 ≤ C ∧ Ev Fm fun x i => AuxBlock8.adm9 (Fm.D x i) (Fm.L x i) (Fm.Gx x i) C
 
-def AdmUF {eps : ℝ} (Fm : FamP eps) : Prop :=
-  Ev Fm fun x i => AuxBlock8.unitBoundAtTwistedPlaces (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) Fm.GK
-
-theorem family_admitted_of_parts {eps : ℝ} (Fm : FamP eps) (h1 : Adm1F Fm) (h2 : Adm2F Fm) (h3 : Adm3F Fm) (h4 : Adm4F Fm)
-    (h5 : Adm5F Fm) (h6 : Adm6F Fm) (h7 : Adm7F Fm) (h8 : Adm8F Fm) (h9 : Adm9F Fm) (hU : AdmUF Fm)
-    (hG1 : FamilyFirstGrowthBound Fm) : AuxBlock8.AdmF Fm Fm.GK Fm.Gx Fm.Gy := by
-  obtain ⟨C31, hC31, h1⟩ := h1
-  obtain ⟨Cm, hCm, h8⟩ := h8
-  obtain ⟨Ce, hCe, h9⟩ := h9
-  refine ⟨C31, Ce, Cm, hC31, hCe, hCm, fun δ hδ => ?_⟩
-  obtain ⟨x0, h⟩ := (((((((((((h1.and h2).and h3).and h4).and (h5 δ hδ)).and h6).and h7).and h8).and h9).and
-    hU).and hG1).and (eventually_sizes_admitted Fm))
-  refine ⟨max x0 2, lt_of_lt_of_le one_lt_two (le_max_right _ _), fun x hx i => ?_⟩
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨a1, a2⟩, a3⟩, a4⟩, a5⟩, a6⟩, a7⟩, a8⟩, a9⟩, aU⟩, aG⟩, aS⟩ :=
-    h x (le_trans (le_max_left _ _) hx) i
-  exact ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, aU, aG, aS⟩
-
 theorem family_second_bound_of_theorem {eps : ℝ} (Fm : FamP eps) (C : ℝ) (hC0 : 0 ≤ C) (hCk : C ≤ Fm.GK.kII) (hCt : C ≤ Fm.GK.tII)
     (hCL : C ≤ Fm.GK.La) (hCD : C ≤ Fm.GK.DII) (hCs : C ≤ Fm.GK.szII) (hCk' : C ≤ Fm.GK.kII')
     (h14 : tableLineDegreeFive.OrbitValuationBound Fm C) : Adm6F Fm := by
@@ -980,24 +923,6 @@ def FirstTheoremAtFamily {eps : ℝ} (Fm : FamP eps) : Prop :=
   ∃ CH C : ℝ, 0 ≤ CH ∧ CH ≤ Fm.GK.kI ∧ CH ≤ Fm.GK.DI ∧ 2 * CH ≤ Fm.GK.rho ∧ 0 ≤ C ∧ 2 * C ≤ Fm.GK.kappaThresholdOne ∧
     C ≤ Fm.GK.kappaThresholdTwo ∧ flipOneThree.Conclusion2Family Fm Fm.GK.La CH C
 
-def FamilyStatementAtOwnConstants {eps : ℝ} (Fm : FamP eps) : Prop :=
-  AuxBlock8.AdmF Fm Fm.GK Fm.Gx Fm.Gy → AuxBlock8.ConclusionOnFamily Fm Fm.GK Fm.Gx
-
-theorem family_statement_of_general {eps : ℝ} (Fm : FamP eps) (h : AuxBlock8.KudlaFamilyStatement Fm) : FamilyStatementAtOwnConstants Fm :=
-  h Fm.GK Fm.GK_nonneg Fm.Gx Fm.Gy
-
-def LinkHyps {eps : ℝ} (Fm : FamP eps) : Prop :=
-  Adm1F Fm ∧ Adm2F Fm ∧ Adm3F Fm ∧ Adm4F Fm ∧ Adm5F Fm ∧ Adm6F Fm ∧ Adm7F Fm ∧ Adm8F Fm ∧ Adm9F Fm ∧ AdmUF Fm ∧
-    FamilyFirstGrowthBound Fm ∧ NPDescF Fm
-
-theorem linkG_of {eps : ℝ} (Fm : FamP eps) (hStmt : FamilyStatementAtOwnConstants Fm) (h : LinkHyps Fm) : LinkG Fm := by
-  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, hU, hG1, hFl⟩ := h
-  exact link_of_family_theorem Fm (hStmt (family_admitted_of_parts Fm h1 h2 h3 h4 h5 h6 h7 h8 h9 hU hG1)) hG1 hFl
-
-theorem linkG_closed (𝒞 : FamClass) (h69 : Closed 𝒞 fun Fm _ => AuxBlock8.KudlaFamilyStatement Fm)
-    (hA : Closed 𝒞 fun Fm _ => LinkHyps Fm) : Closed 𝒞 fun Fm _ => LinkG Fm :=
-  (h69.and hA).imp fun Fm _ _ h => linkG_of Fm (family_statement_of_general Fm h.1) h.2
-
 section Tools
 
 open Formalism.BasicNotions
@@ -1037,15 +962,10 @@ theorem gauss_binomial_ge (q : ℕ) : ∀ n k : ℕ, k ≤ n → q ^ (k * (n - k
       have h1 := gauss_binomial_ge q k k le_rfl
       simp only [Nat.sub_self, Nat.mul_zero, pow_zero] at h1 ⊢
       omega
-    · have h1 := gauss_binomial_ge q n (k + 1) (by omega)
-      obtain ⟨d, rfl⟩ : ∃ d, n = k + 1 + d := ⟨n - (k + 1), by omega⟩
-      have e1 : k + 1 + d + 1 - (k + 1) = d + 1 := by omega
-      have e2 : k + 1 + d - (k + 1) = d := by omega
-      rw [e2] at h1
-      rw [e1]
-      calc q ^ ((k + 1) * (d + 1)) = q ^ (k + 1) * q ^ ((k + 1) * d) := by rw [← pow_add]; congr 1; ring
-        _ ≤ q ^ (k + 1) * Formalism.G0.gaussBinom q (k + 1 + d) (k + 1) := Nat.mul_le_mul_left _ h1
-        _ ≤ _ := Nat.le_add_left _ _
+    · have hkn : k + 1 ≤ n := by omega
+      have h1 := gauss_binomial_ge q n (k + 1) hkn
+      rw [Nat.sub_add_comm hkn, Nat.mul_add, Nat.mul_one, pow_add, mul_comm]
+      exact (Nat.mul_le_mul_left _ h1).trans (Nat.le_add_left _ _)
 
 theorem rational_planes_count (D : D7) : SelectionLemmas.ColumnFamilyClosure D := by
   intro FF _ _ k r hr
@@ -1313,31 +1233,33 @@ structure Loc8 : Prop where
 
   tRES : ∀ D : D7, flipOneThree.adm7 D
 
-theorem loc8All_of (h70 : ExtremalProjectorTools) (h6 : Loc6) (h : Loc8) : Loc8All where
-  p13B := h.p13B
-  p13A := h.p13A
-  p15 := h.p15
-  windowClauseTwo := h.windowClauseTwo
-  windowClauseThree := h.windowClauseThree
-  lWeylV := h.lWeylV
-  lWitt := h6.wittIdent
-  tFlatTop := h6.flatTop
-  tFlatHH := h.tFlatHH
-  hyperLatticeBasis := h6.dualHeightBasis
-  hyperDualInclusion := h6.dualInclusionLattices
-  tBePerfect := h6.bePerfect
-  tHLSpans := h6.hlSpans
-  tTestSide := h6.testSide
-  tLPOneEvery := h6.lpOneEvery
-  tCartanDomain := h.tCartanDomain
-  tCartanOnto := h.tCartanOnto
-  tKP1 := CountingStatementReduction.key_positivity_condition
-  tKP2 := h.tKP2
-  tKP3 := h.tKP3
-  tRES := h.tRES
-  thresholdClauseOne := CountingStatementReduction.positivity_condition_eventually
-  thresholdClauseThree := CountingStatementReduction.exponent_bound_eventually
-  instanceClauseEight := fun D X => PolBridge.combined_weight_of_nested_sets D X (GLWeightTheory.weight_condition_from_integral_form D) (ColumnFamilies.Top.b15 D)
+theorem loc8All_of (h70 : ExtremalProjectorTools) (h6 : Loc6) (h : Loc8) : Loc8All := by
+  exact {
+    p13B := h.p13B
+    p13A := h.p13A
+    p15 := h.p15
+    windowClauseTwo := h.windowClauseTwo
+    windowClauseThree := h.windowClauseThree
+    lWeylV := h.lWeylV
+    lWitt := h6.wittIdent
+    tFlatTop := h6.flatTop
+    tFlatHH := h.tFlatHH
+    hyperLatticeBasis := h6.dualHeightBasis
+    hyperDualInclusion := h6.dualInclusionLattices
+    tBePerfect := h6.bePerfect
+    tHLSpans := h6.hlSpans
+    tTestSide := h6.testSide
+    tLPOneEvery := h6.lpOneEvery
+    tCartanDomain := h.tCartanDomain
+    tCartanOnto := h.tCartanOnto
+    tKP1 := CountingStatementReduction.key_positivity_condition
+    tKP2 := h.tKP2
+    tKP3 := h.tKP3
+    tRES := h.tRES
+    thresholdClauseOne := CountingStatementReduction.positivity_condition_eventually
+    thresholdClauseThree := CountingStatementReduction.exponent_bound_eventually
+    instanceClauseEight := fun D X => PolBridge.combined_weight_of_nested_sets D X
+      (GLWeightTheory.weight_condition_from_integral_form D) (ColumnFamilies.Top.b15 D) }
 
 end TheoremI
 
@@ -1569,92 +1491,13 @@ theorem eventually_large_scale_bound {eps : ℝ} (Fm : FamP eps) : Ev Fm fun x i
   rw [Real.rpow_neg hx0.le, one_div]
   exact inv_anti₀ (by norm_num) h4
 
-structure Fam0 {eps : ℝ} (Fm : FamP eps) : Prop where
-
-  p33i : ∀ C₄ : ℝ, CornerGLContinuity.FamilyOrdersSmallPrimeBound Fm C₄
-
-  lemmaOrdersPartTwo : CornerGLContinuity.FamilyOrdersLargePrimeBound Fm
-
-  p6G : Ev Fm fun x i => FormalGroupSystem.RamifiedSublatticeVolumeOfAdmissible (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) Fm.GK
-
-  orders : ∃ C₄ : ℝ, CornerGLContinuity.FamilyGlobalOrderEstimate Fm C₄
-
-  gatE : Ev Fm fun x i => TrivialStabiliserFiniteClasses (Fm.D x i)
-
-  gatY : Ev Fm fun x i => OperatorsPreserveLattices (Fm.D x i)
-
-  lpVV : Adm6F Fm → Adm7F Fm →
-    Ev Fm fun x i => CornerGLContinuity.OrbitLatticeBounds (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) Fm.GK
-
-  weyl : Ev Fm fun x i => Joints.WeylSandwichG (Fm.D x i)
-
-  expB : Ev Fm fun x i => Joints.ExpBoundG (Fm.D x i) (Fm.Gx x i)
-
-  unitBoundAtTwistedPlaces : AdmUF Fm
-
-  svc1 : Ev Fm fun x i => CornerGLContinuity.ServiceLowerValuation (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) Fm.GK
-
-theorem family_sixth_bound_of_nonneg {eps : ℝ} (Fm : FamP eps) (hCe : 0 ≤ Fm.cX.Ce) (hf : Fam0 Fm) : Adm9F Fm := by
-  obtain ⟨x0, h⟩ := (hf.weyl.and hf.expB).and (Ev.x1 Fm)
-  exact ⟨Fm.cX.Ce, hCe, x0, fun x hx i => Joints.weyl_sandwich_of_factors _ _ _ Fm.cX.Ce hCe (Fm.ex x (h x hx i).2 i).ep_def
-    (h x hx i).1.1 (h x hx i).1.2⟩
-
-theorem family_growth_bound_of_sizes {eps : ℝ} (Fm : FamP eps) (hCe : 0 ≤ Fm.cX.Ce) (hf : Fam0 Fm) (h6 : Adm6F Fm) (h7 : Adm7F Fm) :
-    FamilyFirstGrowthBound Fm := by
-  obtain ⟨Ce, _, h9⟩ := family_sixth_bound_of_nonneg Fm hCe hf
-  obtain ⟨x0, h⟩ := ((((((((hf.unitBoundAtTwistedPlaces.and hf.gatE).and hf.p6G).and hf.gatY).and (hf.lpVV h6 h7)).and h9).and
-    (eventually_large_scale_bound Fm)).and (Ev.x1 Fm)).and hf.svc1)
-  refine ⟨x0, fun x hx i => ?_⟩
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨hU, hE⟩, hS⟩, hY⟩, hLP⟩, h9⟩, hB⟩, hx1⟩, hS1⟩ := h x hx i
-  exact TopChoiceBounds.gluing_statement_of_proof _ _ _ (TopChoiceBounds.gluing_statement_holds Fm.GK (Fm.Gx x i) (Fm.Gy x i)
-    ⟨hU, stability_of_trivial_stabilisers hE, service_statement_of_stability _ _ _ hS hE hY, hLP, TopChoiceBounds.sandwich_of_exponent_clause _ Ce (Fm.gatT x i) h9,
-      saturated_ramified_lattice _ (Fm.ex x hx1 i).cmp (Fm.ex x hx1 i).lat.vram, hB, hS1⟩).1
-
-theorem family_admitted_bounds {eps : ℝ} (Fm : FamP eps) (hCe : 0 ≤ Fm.cX.Ce) (hCN : CornerGLContinuity.FamilyWindowLogBound Fm) (hf : Fam0 Fm) (h6 : Adm6F Fm)
-    (h7 : Adm7F Fm) :
-    Adm1F Fm ∧ Adm3F Fm ∧ Adm4F Fm ∧ Adm9F Fm ∧ AdmUF Fm ∧ FamilyFirstGrowthBound Fm := by
-  obtain ⟨C₄, hO⟩ := hf.orders
-  exact ⟨family_first_lemma Fm, family_orders_first_part Fm C₄ (hf.p33i C₄) hO, family_orders_bound_of_lemma Fm hf.lemmaOrdersPartTwo hCN, family_sixth_bound_of_nonneg Fm hCe hf, hf.unitBoundAtTwistedPlaces,
-    family_growth_bound_of_sizes Fm hCe hf h6 h7⟩
-
-def LocalSystemCompletion (X : Inst D L) (Y : LatInst D) (low : D.what₂.Word → D.what₂.places.Pl → ℝ) : Prop :=
-  ∀ hT : GatTies D, LatTied hT X Y → ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl)
-    (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
-    ∃ (_ : Fact (D.what₂.places.resChar w).Prime) (std : _) (vp : _) (unif : _) (eO : _) (eO_spec : _) (dG : _)
-      (dG_spec : _) (om : _) (Y5 : FormalGroupSystem.Pend (FormalGroupSystem.Sys.mk (D.gat u w hg) (Y.Fl u w hg) (Y.Lv u w hg)
-        (Y.Ch u w hg) std vp unif eO eO_spec dG dG_spec om)),
-      FormalGroupSystem.admitted D _ Y5 ∧
-      ∃ Fn : Fin (D.gat u w hg).P.nV → ℕ → ℝ,
-        (∀ v, v ∉ (reps X (D.what₂.places.resChar w)).image (Y.vOf u w hg) → ∀ j < D.R.m, Y5.LowAt j v (Fn v (j + 1))) ∧
-        low u w ≤ (∑ j ∈ Finset.Icc 1 D.R.m,
-          ∑ v ∈ Finset.univ \ (reps X (D.what₂.places.resChar w)).image (Y.vOf u w hg), Fn v j) -
-            ∑ j ∈ Finset.range D.R.m, (dG j : ℝ)
-
-def LargePrimeUnitNumbers (X : Inst D L) (K : Consts) : Prop :=
-  ∀ w : D.what₂.places.Pl, Real.logb (D.what₂.places.resChar w) (2 * L.sc.a) < 1 →
-    ∀ t0 ∈ reps X (D.what₂.places.resChar w), ∀ j ∈ SizeData₂.lifts D,
-      gU X K (aL L) (bL L) (D.what₂.places.resChar w) j t0 - Pr X K (bL L) (D.what₂.places.resChar w) j t0 ≤ 0 ∧
-        g0 X K (aL L) (bL L) (D.what₂.places.resChar w) j t0 ≤ 0
-
-open Classical in
-
-theorem unit_bound_low_of_local_system (X : Inst D L) (Y : LatInst D) (K : Consts) (low : D.what₂.Word → D.what₂.places.Pl → ℝ)
-    (hS : FormalGroupSystem.Stmt D) (h5 : LocalSystemCompletion X Y low)
-    (hNum : FormalGroupSystem.SmallResidueCharComparison D L X Y K) (hBig : LargePrimeUnitNumbers X K) : AuxBlock8.UnitBoundLowTerm D L X Y K low := by
-  refine Joints.lower_bound_of_large_residue D L X Y K low (fun hT hLT u w hg => ?_) hNum hBig
-  obtain ⟨hF, std, vp, unif, eO, eO_spec, dG, dG_spec, om, Y5, hA, Fn, h1, h2⟩ := h5 hT hLT u w hg
-  have hP := hS.1 _ _ Y5 hA
-  have hfr : IsFractionRing (D.gat u w hg).O (D.gat u w hg).Kf :=
-    ((D.gat u w hg).P.setting (Y.vOf u w hg 0)).frac_O
-  exact ⟨hF, std, vp, unif, eO, eO_spec, dG, dG_spec, om, Y5, hP.2.2.2.2.2.1, hA.2.2.2.2.2.2.2.2.2.2.2.2,
-    hP.2.2.2.2.2.2.2.2.2.2, IsFractionRing.injective _ _, Fn, h1, h2⟩
 
 theorem windows_of (K : Consts) (P : ParameterChoice' D L) (hLa : La K L.sc = L.LaG) (p : ℕ) (t0 : HH D) :
     ∀ s ∈ topsPos D p t0, wPos D p t0 (aL L) s ∈ winA D L.sc ∧ wPos D p t0 (bL L) s ∈ winB D K L.sc := by
   intro s hs
   have hT : t0 + (s : ℕ) • hP D p ∈ D.host.TT := (Finset.mem_filter.1 hs).2
-  have ha : wPos D p t0 (aL L) s = L.aT ⟨_, hT⟩ := by unfold wPos aL; rw [dif_pos hT]
-  have hb : wPos D p t0 (bL L) s = L.bT ⟨_, hT⟩ := by unfold wPos bL; rw [dif_pos hT]
+  have ha : wPos D p t0 (aL L) s = L.aT ⟨_, hT⟩ := by unfold wPos aL; rw [dite_eq_left hT]
+  have hb : wPos D p t0 (bL L) s = L.bT ⟨_, hT⟩ := by unfold wPos bL; rw [dite_eq_left hT]
   rw [ha, hb]
   obtain ⟨a1, a2⟩ := L.aT_win ⟨_, hT⟩
   have b1 := L.bT_ge ⟨_, hT⟩
@@ -1667,75 +1510,10 @@ theorem La_nonneg {K : Consts} (h : 0 ≤ K.La) (s : Scale) : 0 ≤ La K s := by
   unfold La
   exact mul_nonneg (mul_nonneg h (by positivity)) (Real.log_nonneg (sc_one_lt_a s).le)
 
-structure Fam1 {eps : ℝ} (Fm : FamP eps) : Prop where
-
-  p6G : Ev Fm fun x i => FormalGroupSystem.RamifiedSublatticeVolumeOfAdmissible (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) Fm.GK
-
-  p05 : FormalGroupSystem.KudlaFamilyStatement Fm
-
-  gatE : Ev Fm fun x i => TrivialStabiliserFiniteClasses (Fm.D x i)
-
-  gatY : Ev Fm fun x i => OperatorsPreserveLattices (Fm.D x i)
-
-  stdSub : Ev Fm fun x i => Joints.StdSubAt (Fm.D x i)
-
-  lpBC : LPBaseChange
-
-  hypI : Ev Fm fun x i => Joints.HypIAt (Fm.D x i) (Fm.L x i) (Fm.Gx x i) Fm.GK
-
-  hypII : Ev Fm fun x i => Joints.HypIIAt (Fm.D x i) (Fm.L x i) (Fm.Gx x i) Fm.GK
-
-  model : Ev Fm fun x i => Joints.ModelSandwichG (Fm.D x i)
-
-  localSystemLowTerm : Ev Fm fun x i => LocalSystemCompletion (Fm.Gx x i) (Fm.Gy x i) (AuxBlock8.lowU (Fm.D x i))
-
-  localSystemSizeLowTerm : Ev Fm fun x i => LocalSystemCompletion (Fm.Gx x i) (Fm.Gy x i) (lowFE (Fm.L x i))
-
 def NumCmpF {eps : ℝ} (Fm : FamP eps) : Prop :=
   Ev Fm fun x i => FormalGroupSystem.SmallResidueCharComparison (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) Fm.GK
 
-theorem family_unit_bound_of_comparison {eps : ℝ} (Fm : FamP eps) (hf : Fam1 Fm) (hNum : NumCmpF Fm) (h1 : 1 ≤ Fm.GK.Pr1)
-    (h2 : 1 ≤ Fm.GK.CN) : AdmUF Fm := by
-  obtain ⟨x0, h⟩ := (hf.localSystemLowTerm.and hNum).and (Ev.x1 Fm)
-  exact ⟨x0, fun x hx i => unit_bound_low_of_local_system _ _ _ _ (hf.p05 x i) (h x hx i).1.1 (h x hx i).1.2
-    (TopChoiceBounds.hLarge_proved _ _ Fm.GK_nonneg h1 (Fm.params x (h x hx i).2 i))⟩
-
-theorem family_lattice_bound_low_term {eps : ℝ} (Fm : FamP eps) (hf : Fam1 Fm) (hNum : NumCmpF Fm) (h1 : 1 ≤ Fm.GK.Pr1) :
-    Ev Fm fun x i => CornerGLContinuity.ServiceLowerValuation (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) Fm.GK := by
-  obtain ⟨x0, h⟩ := (hf.localSystemSizeLowTerm.and hNum).and (Ev.x1 Fm)
-  exact ⟨x0, fun x hx i => TopChoiceBounds.bg_NP_of_Ulow _ _ _ _ (unit_bound_low_of_local_system _ _ _ _ (hf.p05 x i) (h x hx i).1.1 (h x hx i).1.2
-    (TopChoiceBounds.hLarge_proved _ _ Fm.GK_nonneg h1 (Fm.params x (h x hx i).2 i)))⟩
-
-theorem family_bounds_of_local_systems {eps : ℝ} (Fm : FamP eps) (hf : Fam1 Fm) (hNum : NumCmpF Fm) (h1 : 1 ≤ Fm.GK.Pr1)
-    (h2 : 1 ≤ Fm.GK.CN) (hCe : 1 ≤ Fm.cX.Ce) (hLa : 0 < Fm.GK.La) (hCb : Ev Fm fun x i => CbLarge Fm.GK (Fm.L x i).sc) :
-    Fam0 Fm := by
-  obtain ⟨C₅, h59⟩ := UnusedSlot33.field_lemmas_except_seven
-  obtain ⟨xm, hm⟩ := hf.model
-  obtain ⟨x1, hx1⟩ := Ev.x1 Fm
-  exact ⟨TopChoiceBounds.family_order_bound_holds Fm, TopChoiceBounds.family_band_ratio_holds Fm, hf.p6G,
-    ⟨100, fun x i => (h59 (Fm.D x i) (Fm.L x i).sc).2.2.2.1⟩, hf.gatE, hf.gatY,
-    fun h6 h7 => by
-      obtain ⟨x0, h⟩ := ((((h6.and h7).and hf.stdSub).and hf.hypI).and hf.hypII).and hCb
-      exact ⟨x0, fun x hx i => Joints.linear_programming_input_of_hypotheses _ _ _ _ _ (h x hx i).1.1.1.1.1 (h x hx i).1.1.1.1.2
-        (h x hx i).1.1.1.2 hf.lpBC (h x hx i).1.1.2 (h x hx i).1.2
-        (rho_le_rhoB _ _ _ Fm.GK_nonneg.2.1 (La_nonneg Fm.GK_nonneg.1 _) (h x hx i).2)⟩,
-    ⟨xm, fun x hx i => Joints.weylSandwich_of_model _ (hm x hx i)⟩,
-    ⟨x1, fun x hx i => Joints.expBound_of _ _ _ Fm.cX.Ce hCe (Fm.ex x (hx1 x hx i) i).ep_def (Fm.params x (hx1 x hx i) i)
-      (Fm.gatT x i)⟩,
-    family_unit_bound_of_comparison Fm hf hNum h1 h2, family_lattice_bound_low_term Fm hf hNum h1⟩
-
 end Rest
-
-theorem linkG_fam {eps : ℝ} (Fm : FamP eps) (hStmt : AuxBlock8.KudlaFamilyStatement Fm) (h14 : SecondTheoremAtFamily Fm) (h13 : FirstTheoremAtFamily Fm)
-    (hLa : 0 < Fm.GK.La) (hCe : 0 ≤ Fm.cX.Ce) (hf : Fam0 Fm) (h2 : Adm2F Fm) (hd : NPDescF Fm) (hCN : CornerGLContinuity.FamilyWindowLogBound Fm) :
-    LinkG Fm := by
-  obtain ⟨C, hC0, a1, a2, a3, a4, a5, a6, hp14⟩ := h14
-  obtain ⟨CH, C', b0, b1, b2, b3, b4, b5, b6, hp13⟩ := h13
-  have h6 := family_second_bound_of_theorem Fm C hC0 a1 a2 a3 a4 a5 a6 hp14
-  have h7 := family_kappa_bound Fm (kapIDefF Fm)
-  have h8 := family_first_bound_of_theorem Fm CH C' (kapIDefF Fm) b0 b1 b2 b3 b4 b5 b6 hp13
-  obtain ⟨h1, h3, h4, h9, hU, hG1⟩ := family_admitted_bounds Fm hCe hCN hf h6 h7
-  exact linkG_of Fm (family_statement_of_general Fm hStmt) ⟨h1, h2, h3, h4, family_sizes_bound Fm hLa, h6, h7, h8, h9, hU, hG1, hd⟩
 
 theorem second_theorem_closed_form (𝒞 : FamClass) (h14 : ∃ C₀ : ℝ, 0 ≤ C₀ ∧ ∀ D : D7, tableLineDegreeFive.aux₃ D C₀) :
     Closed 𝒞 fun Fm _ => SecondTheoremAtFamily Fm := by
@@ -1786,14 +1564,6 @@ theorem signs_closed (𝒞 : FamClass) : Closed 𝒞 fun Fm _ => 0 < Fm.GK.La �
   have h1 := hmid Fm.GK.La (by simp [FamP.cMid])
   have h2 : Fm.cX.Ce = 1 := Fm.fixed.2.2.2.1
   exact ⟨by linarith, by linarith⟩
-
-theorem linkG_top (𝒞 : FamClass) (h70 : ExtremalProjectorTools) (h6 : Loc6) (h8 : Loc8)
-    (h69 : Closed 𝒞 fun Fm _ => AuxBlock8.KudlaFamilyStatement Fm) (hf : Closed 𝒞 fun Fm _ => Fam0 Fm)
-    (h2 : Closed 𝒞 fun Fm _ => Adm2F Fm) (hd : Closed 𝒞 fun Fm _ => NPDescF Fm) :
-    Closed 𝒞 fun Fm _ => LinkG Fm :=
-  (((((((h69.and (second_theorem_closed_form 𝒞 (second_theorem_absolute_constant h70 h6))).and (first_theorem_closed_form 𝒞 (first_theorem_threshold_functions h70 (loc8All_of h70 h6 h8)))).and (signs_closed 𝒞)).and
-    hf).and h2).and hd).and (TopChoiceBounds.family_log_bound_closed 𝒞)).imp fun Fm _ _ h =>
-    linkG_fam Fm h.1.1.1.1.1.1.1 h.1.1.1.1.1.1.2 h.1.1.1.1.1.2 h.1.1.1.1.2.1 h.1.1.1.1.2.2 h.1.1.1.2 h.1.1.2 h.1.2 h.2
 
 theorem rG_lt_k {eps : ℝ} (Fm : FamP eps) : Ev Fm fun x i => rG (Fm.L x i).sc < (Fm.D x i).R.k := by
   obtain ⟨x1, hx1⟩ := Ev.x1 Fm
@@ -1868,13 +1638,6 @@ theorem cb_closed (𝒞 : FamClass) : Closed 𝒞 fun Fm _ => Ev Fm fun x i => C
 theorem ones_closed (𝒞 : FamClass) : Closed 𝒞 fun Fm _ => 1 ≤ Fm.GK.Pr1 ∧ 1 ≤ Fm.GK.CN ∧ 1 ≤ Fm.cX.Ce := by
   refine ⟨1, one_pos, fun eps _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 1⟩, fun Fm CH _ hL => ?_⟩⟩
   exact ⟨Fm.fixed.1.ge, hL.2.2.2 _ (by simp [FamP.cLast]), Fm.fixed.2.2.2.1.ge⟩
-
-theorem link_of_closed_families (𝒞 : FamClass) (h70 : ExtremalProjectorTools) (h6 : Loc6) (h8 : Loc8) (hN : FormalGroupSystem.NumericalComparisonUniform)
-    (h69 : Closed 𝒞 fun Fm _ => AuxBlock8.KudlaFamilyStatement Fm) (hf : Closed 𝒞 fun Fm _ => Fam1 Fm)
-    (h2 : Closed 𝒞 fun Fm _ => Adm2F Fm) (hd : Closed 𝒞 fun Fm _ => NPDescF Fm) :
-    Closed 𝒞 fun Fm _ => LinkG Fm :=
-  linkG_top 𝒞 h70 h6 h8 h69 (((((hf.and (num_closed 𝒞 hN)).and (ones_closed 𝒞)).and (signs_closed 𝒞)).and (cb_closed 𝒞)).imp
-    fun Fm _ _ h => family_bounds_of_local_systems Fm h.1.1.1.1 h.1.1.1.2 h.1.1.2.1 h.1.1.2.2.1 h.1.1.2.2.2 h.1.2.1 h.2) h2 hd
 
 end Formalism.MainNotions.G
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSmulOfCommute
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSmulOfCommute
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -32,8 +36,8 @@ theorem eqv_eq_smul : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero R] (I :
   let mkE : ∀ G : Fam D.toPre F N → SecK A.L (snd (TFK (R := R) F) A.A).left N, Eqv D.toPre A F N lab G →
       (Fam D.toPre F N →ₗ[F] EA A p N) := fun G hG =>
     { toFun := fun s => SecMod.mk _ (G s)
-      map_add' := fun s t => SecMod.ext_coord fun j => hG.add s t (s + t) (fun _ _ => rfl) j
-      map_smul' := fun c s => SecMod.ext_coord fun j =>
+      map_add' := fun s t => DVR.SecOps.sec_ext fun j => hG.add s t (s + t) (fun _ _ => rfl) j
+      map_smul' := fun c s => DVR.SecOps.sec_ext fun j =>
         hG.smul c s (c • s) ((ReciprocityTheory.ChartRestriction.G.DVR.isSmul_iff c s _).2 rfl) j }
   have hbij : ∀ G hG, Function.Bijective (mkE G hG) := fun G hG => hG.bij
   let e := LinearEquiv.ofBijective (mkE E hE) (hbij E hE)
@@ -45,8 +49,7 @@ theorem eqv_eq_smul : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero R] (I :
   have huniq : ∀ (θ : ThetaGrp A.A A.L (N : ℤ) (TFK (R := R) F)) (a : EA A p N) (b b' : SecK A.L (snd (TFK (R := R) F) A.A).left N),
       IsActOf A.A A.L (N : ℤ) θ a.sec b → IsActOf A.A A.L (N : ℤ) θ a.sec b' → b = b' := fun θ a b b' h h' => by
     have := ((hact θ _ _).1 h).symm.trans ((hact θ _ _).1 h')
-    exact SecMod.ext_coord (p := (fst (Over.mk p) A.A).left) (s := SecMod.mk _ b) (t := SecMod.mk _ b')
-      fun j => congrFun (congrArg Subtype.val this) j
+    exact DVR.SecOps.sec_ext fun j => congrFun (congrArg Subtype.val this) j
   have hT : ∀ x : Over.mk p ⟶ A.A, x ^ N = 1 → ∃ θ : ThetaGrp A.A A.L (N : ℤ) (Over.mk p), θ.pt = x ∧
       ∀ v v' : EA A p N, IsActOf A.A A.L (N : ℤ) θ v.sec v'.sec →
         IsActOf A.A A.L (N : ℤ) θ (T v).sec (T v').sec := by
@@ -66,7 +69,7 @@ theorem eqv_eq_smul : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero R] (I :
   obtain ⟨c, hc⟩ := GlobalTheory.ThetaCommutant.eq_smul_of_commute A F p N hNF T hT
   have hpos : 0 < Module.finrank F (EA A p N) := by
     rw [GlobalTheory.ThetaCommutant.finrank_eq A F p N hNF]; positivity
-  haveI : Nontrivial (EA A p N) := Module.nontrivial_of_finrank_pos hpos
+  have : Nontrivial (EA A p N) := Module.nontrivial_of_finrank_pos hpos
   have hc0 : c ≠ 0 := by
     rintro rfl
     obtain ⟨v, hv⟩ := exists_ne (0 : EA A p N)

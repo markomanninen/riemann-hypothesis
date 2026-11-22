@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.HorTrUnique
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.HorTrUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,14 +46,16 @@ theorem horTr_mem (T : LocLat G Qp LL O) (c' : ZMod n) {d : ℕ} (b : Fin d → 
     (R κ e : ℕ) (k : Fin d) {H : W.DD T} (h : IsHorTr W T b sol R κ k H) :
     ((W.φD T) ^ e) H ∈ Pp W T c' e := by
   obtain ⟨y, -, rfl⟩ := h
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine AddSubgroup.sum_mem _ fun r _ => ?_
   rw [Formalism.MainNotions.UnusedSlot80.Relay2.φpow_smul]
   refine Formalism.MainNotions.UnusedSlot80.Relay2.Pp_gen W T c' e (Formalism.MainNotions.UnusedSlot80.PhiPowers.φA_pow_mem_AΔ W (W.AΔ.pow_mem hπ r) e) ?_
   unfold Formalism.MainNotions.LiftingTheory.vecB
   refine ⟨?_, ?_⟩
   · refine ⟨(W.N T).sum_mem fun m _ => (W.N T).smul_of_tower_mem _ ((hb.1 m).1.1), fun δ hδ => ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun m _ => by rw [map_smul, (hb.1 m).1.2 δ hδ]
   · refine ⟨∑ m, y r m • b m, (W.N T).sum_mem fun m _ => (W.N T).smul_of_tower_mem _ ((hb.1 m).1.1), ?_⟩
     simp only [LinearMap.smul_apply, LinearMap.id_apply, Finset.smul_sum]

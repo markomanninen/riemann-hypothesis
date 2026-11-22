@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistFactor
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistFactor
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 def nsS (T : Ty σ n q w₀) : Finset (Pl F) := T.S.filter fun v => ¬ GM.Split E v
 
-def offN (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure] (T : Ty σ n q w₀) : Submodule ℂ (LL μ) :=
+def offN (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure] (T : Ty σ n q w₀) : Submodule ℂ (LL μ) :=
   ⨅ (w : Pl E) (_ : w.under (𝓞 F) ∉ (nsS T : Set (Pl F))), eigL μ w (T.J w) (T.χ w)
 
 def lvN (T : Ty σ n q w₀) (L : GM.Loc σ n q w₀) (v : Pl F) : Subgroup (Gw n (T.mk' v).1) :=

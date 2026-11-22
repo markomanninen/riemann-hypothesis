@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadCorrespondenceOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadCorrespondenceOfParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBI
 
@@ -110,15 +114,15 @@ theorem base_point_block_eq (p : KB.Pl P Wp Wq) :
   simp only [D.castM, Matrix.reindex_apply, Matrix.submatrix_apply]
   unfold ιLev
   by_cases hi : P.r ≤ i.val ∧ i.val ≤ P.r + P.k <;> by_cases hj : P.r ≤ j.val ∧ j.val ≤ P.r + P.k
-  · rw [dif_pos (by simp; omega), dif_pos (by simp; omega)]
+  · rw [dite_eq_left (by simp; omega), dite_eq_left (by simp; omega)]
     simp only [m0R]
     congr 1 <;> ext <;> simp <;> omega
-  · rw [dif_pos (by simp; omega), dif_neg (by simp; omega), hcol i j (by omega)]
+  · rw [dite_eq_left (by simp; omega), dite_eq_right (by simp; omega), hcol i j (by omega)]
     rw [if_neg]; intro h; rw [h] at hi; exact hj hi
-  · rw [dif_neg (by simp; omega)]
+  · rw [dite_eq_right (by simp; omega)]
     rw [hrow i j (by omega) hj, if_neg]
     · intro h; apply hi; have := congrArg Fin.val h; simp at this; omega
-  · rw [dif_neg (by simp; omega), hcol i j (by omega)]
+  · rw [dite_eq_right (by simp; omega), hcol i j (by omega)]
     congr 1
     apply propext; constructor
     · intro h; ext; have := congrArg Fin.val h; simpa using this

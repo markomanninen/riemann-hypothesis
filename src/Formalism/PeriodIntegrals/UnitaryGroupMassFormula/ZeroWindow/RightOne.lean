@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ZeroWindow.RightChi
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ZeroWindow.RightChi
+
+@[expose] public section
 
 noncomputable section
 

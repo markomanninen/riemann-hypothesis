@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
-import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-import Mathlib.Topology.ContinuousMap.StoneWeierstrass
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
+public import Mathlib.Topology.ContinuousMap.StoneWeierstrass
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C
@@ -36,7 +40,7 @@ theorem UpperTheory.cfc_apply_of_eigenvector :
     | star_id =>
       rw [star_trivial, cfcHom_id hA, hv]; rfl
     | add f g hf hg =>
-      rw [map_add, ContinuousLinearMap.add_apply, hf, hg]
+      rw [map_add (f := _), ContinuousLinearMap.add_apply, hf, hg]
       simp [add_smul]
     | mul f g hf hg =>
       rw [map_mul, ContinuousLinearMap.mul_apply, hg, map_smul, hf, smul_smul]

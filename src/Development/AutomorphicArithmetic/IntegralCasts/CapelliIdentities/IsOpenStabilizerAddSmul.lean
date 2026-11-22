@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.isOpen_stabilizer_add_smul :
     ∀ {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V] [Module ℂ V]
@@ -17,7 +21,7 @@ theorem UpperTheory.isOpen_stabilizer_add_smul :
     have h1 : ρ (g⁻¹ * x) a = a := hx.1
     have h2 : ρ (g⁻¹ * x) b = b := hx.2
     have h3 : ρ (g⁻¹ * x) (a + z • b) = a + z • b := by
-      rw [map_add, map_smul, h1, h2]
+      rw [map_add (f := _), map_smul, h1, h2]
     have h4 : x = g * (g⁻¹ * x) := by group
     show ρ x (a + z • b) = a + z • b
     rw [h4, map_mul, Module.End.mul_apply, h3, hg']

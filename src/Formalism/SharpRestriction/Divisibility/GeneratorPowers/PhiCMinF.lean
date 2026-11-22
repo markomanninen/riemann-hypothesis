@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinSt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinSt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem shortDual_holds : ShortDualStatement := by
     by_cases hij : i = j
     · subst hij
       simp
-    · simp [Pi.single_apply, hij]
+    · simp [hij]
 
   obtain ⟨g, hg⟩ : ∃ g : (Fin d → ℤ) →ₗ[ℤ] EuclideanSpace ℝ (Fin d),
       ∀ t, g t = e (R *ᵥ fun i => (t i : ℝ)) :=
@@ -40,7 +44,7 @@ theorem shortDual_holds : ShortDualStatement := by
         have h1 : (fun i => ((a + b) i : ℝ)) = (fun i => (a i : ℝ)) + fun i => (b i : ℝ) := by
           funext i
           simp
-        rw [h1, Matrix.mulVec_add, map_add])).toIntLinearMap, fun t => rfl⟩
+        rw [h1, Matrix.mulVec_add, map_add (f := _)])).toIntLinearMap, fun t => rfl⟩
 
   obtain ⟨hZ, hh⟩ : ∃ hZ : (Fin d → ℤ) →ₗ[ℤ] EuclideanSpace ℝ (Fin d),
       ∀ u, hZ u = e ((fun i => (u i : ℝ)) ᵥ* R⁻¹) :=
@@ -51,7 +55,7 @@ theorem shortDual_holds : ShortDualStatement := by
         have h1 : (fun i => ((a + b) i : ℝ)) = (fun i => (a i : ℝ)) + fun i => (b i : ℝ) := by
           funext i
           simp
-        rw [h1, Matrix.add_vecMul, map_add])).toIntLinearMap, fun u => rfl⟩
+        rw [h1, Matrix.add_vecMul, map_add (f := _)])).toIntLinearMap, fun u => rfl⟩
   have hquad : ∀ t : Fin d → ℝ, ‖e (R *ᵥ t)‖ ^ 2 = t ⬝ᵥ (L *ᵥ t) := by
     intro t
     rw [hnorm, hL, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec t, Matrix.vecMul_transpose]

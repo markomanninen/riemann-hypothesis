@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem cD_cons (hP : IsPsiFor ε lam T Ψ) (p : Fin n × Fin n) (w : List (Fin 
 theorem cD_add (hP : IsPsiFor ε lam T Ψ) (u v : T.V) :
     ∀ w : List (Fin n × Fin n), cD hP w (u + v) = cD hP w u + cD hP w v
   | [] => Subtype.ext (datumEmbedding_add hP T.w u v)
-  | p :: w => by rw [cD_cons, cD_cons, cD_cons, cD_add hP u v w, map_add]
+  | p :: w => by rw [cD_cons, cD_cons, cD_cons, cD_add hP u v w, map_add (f := _)]
 
 theorem cD_smul (hP : IsPsiFor ε lam T Ψ) (c : ℂ) (v : T.V) :
     ∀ w : List (Fin n × Fin n), cD hP w (c • v) = c • cD hP w v
@@ -58,8 +62,8 @@ theorem ofW_inj {m : ℕ} {x y : Wd n m} (h : ofW x = ofW y) : x = y := by
   subst this
   rfl
 
-open Classical in
 
+open Classical in
 def sgl (m : ℕ) (w : List (Fin n × Fin n)) (v : T.V) : AS T m := fun y => if ofW y = w then v else 0
 
 theorem actL_sgl (hP : IsPsiFor ε lam T Ψ) {m : ℕ} {w : List (Fin n × Fin n)} (h : w.length ≤ m) (v : T.V) :
@@ -86,7 +90,8 @@ theorem actLin_apply (hP : IsPsiFor ε lam T Ψ) {m : ℕ} (a : AS T m) : actLin
 theorem pad (hP : IsPsiFor ε lam T Ψ) {m m' : ℕ} (h : m ≤ m') (a : AS T m) :
     ∃ a' : AS T m', actL T Ψ a' = actL T Ψ a := by
   refine ⟨∑ x : Wd n m, sgl m' (ofW x) (a x), ?_⟩
-  rw [← actLin_apply hP, map_sum, actL_eq hP a]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← actLin_apply hP, map_sum, actL_eq hP a]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [actLin_apply, actL_sgl hP]
   have : (ofW x).length = x.1 := by simp [ofW]
@@ -124,7 +129,8 @@ theorem genSub_le_exS (hP : IsPsiFor ε lam T Ψ) :
     rw [this]
     exact cD_mem_exS hP [] v
   · obtain ⟨m, f, hf⟩ := hx
-    rw [eq_sum hP hf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eq_sum hP hf, map_sum]
     refine Submodule.sum_mem _ fun y _ => ?_
     have := cD_cons hP (a, b) (ofW y) (f y)
     simp only at this

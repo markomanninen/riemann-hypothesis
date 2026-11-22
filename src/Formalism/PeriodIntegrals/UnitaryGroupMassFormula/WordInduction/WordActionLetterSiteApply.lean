@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroKernel
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroKernel
+
+@[expose] public section
 
 open scoped ContDiff ComplexConjugate
 
@@ -72,7 +76,8 @@ theorem word_action_mul (M N : Wd.SlopeTestRemainingChoices S (Q.Pr (V1 E))) (x 
     rw [Finset.sum_insert hj, Finset.sum_insert hj, ← ih]
     rfl
   have hm : ∀ p q : Q.Pr (V1 E), (p * q).1 = p.1 * q.1 := fun p q => rfl
-  simp only [act1, Matrix.mul_apply, hs, hm, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [act1, Matrix.mul_apply, hs, hm, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
   rw [Finset.sum_comm]
 
 section pr

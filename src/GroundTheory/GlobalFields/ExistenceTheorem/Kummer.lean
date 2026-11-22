@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ExistenceTheorem.KummerNorm
-import GroundTheory.GlobalFields.ClassFieldConsequences.OpenSubgroup
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ExistenceTheorem.KummerNorm
+public import GroundTheory.GlobalFields.ClassFieldConsequences.OpenSubgroup
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

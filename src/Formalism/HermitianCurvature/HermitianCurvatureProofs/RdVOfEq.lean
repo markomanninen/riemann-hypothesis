@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RuleOfEq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RuleOfEq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
+
+@[expose] public section
 
 open Matrix
 
@@ -11,8 +15,8 @@ open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Form
 
 variable {k r : ℕ}
 
-open Formalism.FourierDecayAlt.Q.QRR in
 
+open Formalism.FourierDecayAlt.Q.QRR in
 theorem rdV_of_eq {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] (z' : Fin (2 * r + k + 1) → ℂ)
     (hz : inWb k r z') (Φ : Q.Mx k r → E) (g : Q.Mx k r)
     (hΦ : ∀ n ∈ QuantumDeterminants.Nset k r, Φ (g * n) = psi k r z' cStd n • Φ g)

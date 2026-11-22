@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbDegTopOfPolyTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RaisingLoweringRelations
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbDegTopOfPolyTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RaisingLoweringRelations
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RankTwoPatching.GaloisRepExistsTotallyRealGL2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.PlainRec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PAdicTorsionHoms.SplitTr
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PlaceOverTransportRingIsoSymm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalArtinMapUniqueTransportPlaceIsoStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RankTwoPatching.GaloisRepExistsTotallyRealGL2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.PlainRec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PAdicTorsionHoms.SplitTr
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PlaceOverTransportRingIsoSymm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalArtinMapUniqueTransportPlaceIsoStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,52 +16,129 @@ open UpperTheory.Zero.LLC UpperTheory.V.Z.Win
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
-open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
-open private UpperTheory.V.Z.Win.MonodromyFreeReciprocity.isL_chars UpperTheory.V.Z.Win.MonodromyFreeReciprocity.monodromy_free_sum_list UpperTheory.V.Z.Win.MonodromyFreeReciprocity.monodromy_free_of_character
-  UpperTheory.V.Z.Win.MonodromyFreeReciprocity.tor_sum from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.PlainRec
-open private UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.link_iff from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.PlainIff
+open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter ValuativeRel
 
 namespace UpperTheory.Gal.SV
 
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
 
-theorem psForm {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {rc : IrrGL (w.adicCompletion E) → WD h}
+theorem psForm {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {rc : IrrGL (k := w.adicCompletion E) → WD h}
     (L : LawsT a ha rc) {n : ℕ} (σ : SmIrr (GL (Fin n) (w.adicCompletion E))) (ξ : Fin n → (w.adicCompletion E)ˣ →* ℂˣ)
     (hξ : ∀ i, IsSmoothChar (ξ i)) (hs' : HasSupport σ.ρ (GlobalTheory.RoadU.chars ξ hξ)) (hu : GlobalTheory.RoadU.Unlinked (GlobalTheory.RoadU.chars ξ hξ)) :
     rc (algNorm σ) = (sumList (List.ofFn fun i => WD.lpOfChar h ((ξ i).comp a) (ha.smooth (hξ i)))).lpTw ((1 - (n : ℝ)) / 2) := by
-  haveI : CharZero (w.adicCompletion E) := charZero_of_injective_algebraMap (algebraMap E _).injective
-  have hl : Unl (GroundTheory.LocalField.residueCard (w.adicCompletion E)) (GlobalTheory.RoadU.chars ξ hξ) :=
-    fun χ ⟨c, hc⟩ χ' ⟨b, hb⟩ h1 e => hu _ hb _ hc ((UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.link_iff b c).2 ⟨h1, e⟩)
+  have : CharZero (w.adicCompletion E) := charZero_of_injective_algebraMap (algebraMap E _).injective
+  let k := w.adicCompletion E
+  have hl : Unl (GroundTheory.LocalField.residueCard k) (GlobalTheory.RoadU.chars ξ hξ) := by
+    intro χ ⟨c, hc⟩ χ' ⟨b, hb⟩ h1 hv
+    apply hu _ hb _ hc
+    rw [IrrGL.nu, IrrGL.tw_ofChar, IrrGL.ofChar_inj]
+    obtain ⟨⟨h₁, h₂⟩, eq_of_unram, -⟩ := polFacts k
+    have hval : valuation k (unif k : k) = uniformizer k := by
+      obtain ⟨y, hy⟩ := valuation_surjective (uniformizer k : ValueGroupWithZero k)
+      exact le_antisymm (le_uniformizer_iff.2 h₁) (hy ▸ h₂ y (hy ▸ uniformizer_lt_one))
+    have hA : ((absPow k 1 (unif k) : ℂˣ) : ℂ) * (resCard k : ℂ) = 1 := by
+      have hq : (resCard k : ℂ) ≠ 0 := by
+        have := Nat.card_pos (α := IsLocalRing.ResidueField 𝒪[k])
+        exact_mod_cast this.ne'
+      rw [val_absPow, Complex.cpow_one, GlobalTheory.GLDoubling.nabs_unif hval]
+      push_cast
+      exact inv_mul_cancel₀ hq
+    refine eq_of_unram χ' (χ * absPow k 1) ?_ ?_
+    · have he : χ' * (χ * absPow k 1)⁻¹ = (χ * χ'⁻¹)⁻¹ * (absPow k 1)⁻¹ := by
+        simp only [mul_inv, inv_inv]
+        rw [← mul_assoc, mul_comm χ' χ⁻¹]
+      rw [he]
+      exact isUnram_mul (isUnram_inv h1) (isUnram_inv (isUnram_absPow k 1))
+    · refine Units.ext ?_
+      change _ = (resCard k : ℂ) at hv
+      rw [MonoidHom.mul_apply, MonoidHom.inv_apply, Units.val_mul, Units.val_inv_eq_inv_val] at hv
+      rw [← hv] at hA
+      rw [MonoidHom.mul_apply, Units.val_mul]
+      have h0 : ((χ' (unif k) : ℂˣ) : ℂ) ≠ 0 := Units.ne_zero _
+      field_simp at hA
+      rw [mul_comm, hA]
   obtain ⟨e⟩ := unlFull (w.adicCompletion E) n σ.V σ.ρ ξ hξ hs' hl
-  have hL := (UpperTheory.V.Z.Win.MonodromyFreeReciprocity.isL_chars σ.ρ σ.irred ξ hξ hu e).of_equiv (IrrGL.equivOf σ.ρ σ.smooth σ.irred)
+  let y : Fin n → IrrGL (k := k) := fun i => IrrGL.ofChar (ξ i) (hξ i)
+  have hy : ∀ i, (y i).IsCusp := fun i => IrrGL.isCusp_ofChar _ _
+  have hL : IsL ((List.ofFn fun i => Segment.single (y i) (hy i) : List (Segment k)) :
+      Multiset (Segment k)) σ.ρ := by
+    have hd : ∑ i, (y i).1 = n := by simp [y, IrrGL.ofChar]
+    have hmem : ∀ i, y i ∈ GlobalTheory.RoadU.chars ξ hξ := fun i =>
+      Multiset.mem_map_of_mem _ (Finset.mem_univ i)
+    have hnl : ∀ i j, ¬ (Segment.single (y i) (hy i)).Linked (Segment.single (y j) (hy j)) := fun i j =>
+      GlobalTheory.CompanionTheory.BZPair.not_linked_single (hy i) (hy j)
+        (hu _ (hmem j) _ (hmem i)) (hu _ (hmem i) _ (hmem j))
+    have hP : (prodIrr y hd).IsIrreducible :=
+      GlobalTheory.RgGu.Holds.lUnlinkedIrr_holds k n n (fun i => Segment.single (y i) (hy i)) y hd hnl
+        (fun i => (single_spec (hy i)).2.1)
+    obtain ⟨p⟩ := (Placing.parInd_jac_placing k _ _ _ (Equiv.sigmaUnique (Fin n) fun _ => Fin 1)
+      (stdBlocks (fun i => (y i).1) hd) _).1 (piTensor fun i => detRep (Fin 1) (ξ i))
+    let q := multiProdEquiv (stdBlocks (fun i => (y i).1) hd) fun i =>
+      equivRep (IrrRep.det (Fin 1) (ξ i) (hξ i))
+    have hM : (multiProd (Equiv.sigmaUnique (Fin n) fun _ => Fin 1)
+        fun i => detRep (Fin 1) (ξ i)).IsIrreducible :=
+      GlobalTheory.Parabolic.isIrreducible_of_equiv (p.trans q).symm hP
+    have hprin : (prinSeries ξ).IsIrreducible := GlobalTheory.Parabolic.isIrreducible_of_equiv e σ.irred
+    obtain ⟨e₁⟩ := (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries
+      (Equiv.sigmaUnique (Fin n) fun _ => Fin 1) ξ).nonempty_equiv hM hprin
+    have φ : σ.ρ.Equiv (prodIrr y hd) := (e.trans e₁).trans (p.trans q)
+    exact ⟨n, y, hd, ⟨fun i => Segment.single (y i) (hy i), ⟨Fin.univ_val_map _, fun i j _ hp => hnl i j hp.1⟩,
+      fun i => (single_spec (hy i)).2.1⟩, (isCosocle_self σ.irred).of_equiv (.refl _) φ⟩
+  have hL' := hL.of_equiv (IrrGL.equivOf σ.ρ σ.smooth σ.irred)
   have hr : rc (IrrGL.of σ.ρ σ.smooth σ.irred) =
       sumList (List.ofFn fun i => WD.lpOfChar h ((ξ i).comp a) (ha.smooth (hξ i))) := by
-    rw [L.langlands _ _ hL, segSum, List.map_ofFn]
+    rw [L.langlands _ _ hL', segSum, List.map_ofFn]
     congr 1
     refine List.ofFn_inj.mpr (funext fun i => ?_)
-    simp only [Function.comp_apply, Segment.single, Segment.first_ofFirst, Segment.len_ofFirst, Nat.cast_one, sub_self,
+    simp only [Function.comp_apply, y, Segment.single, Segment.first_ofFirst, Segment.len_ofFirst, Nat.cast_one, sub_self,
       zero_div, WD.lpTw_zero, GlobalTheory.LocLanglands.Test.lpChar_lpSp_one, L.one]
   rw [algNorm, L.nu, hr]
 
+open scoped commutatorElement in
 theorem gdOf : GdOf := by
   intro E Ω _ _ _ _ _ A w h rc ⟨a, ha, L⟩ n σ hP
   obtain ⟨ξ, hξ, hs, hu⟩ := GlobalTheory.RoadU.plainTor_exists_chars _ _ hP
   have hA := psForm L σ ξ hξ (hs.of_equiv (IrrGL.equivOf σ.ρ σ.smooth σ.irred).symm) hu
   refine ⟨?_, ?_⟩
-  · rw [hA]
-    exact UpperTheory.V.Z.Win.MonodromyFreeReciprocity.tor_sum _ _ _ (by rw [← hA, L.dim]; rfl)
+  · have hd : (rc (algNorm σ)).lpDim = n := by
+      rw [L.dim]
+      rfl
+    intro s t
+    have comm_one {G H : Type} [Group G] [CommGroup H] (f : G →* H) (s t : G) :
+        f ⁅s, t⁆ = 1 := by
+      rw [map_commutatorElement]
+      exact (Commute.all _ _).commutator_eq
+    show WD.charPol _ _ = _
+    rw [hd, hA, GlobalTheory.GalCut.AwayMono.charPol_lpTw, comm_one,
+      GlobalTheory.LocLanglands.CuspExt.charPol_sumList, List.map_ofFn]
+    have hchar (i : Fin n) :
+        (WD.lpOfChar h ((ξ i).comp a) (ha.smooth (hξ i))).charPol ⁅s, t⁆ = X - 1 := by
+      rw [WD.lpOfChar, WD.charPol_mk, WDRep.ofChars_ρ, charpoly_diagEnd]
+      simp only [comm_one]
+      simp
+    simp [hchar, List.prod_ofFn]
   · rw [hA, WD.monomial_twist_iff]
-    exact UpperTheory.V.Z.Win.MonodromyFreeReciprocity.monodromy_free_sum_list _ fun z hz => by
-      obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hz
-      exact UpperTheory.V.Z.Win.MonodromyFreeReciprocity.monodromy_free_of_character _ _
+    have sum_mono0 (l : List (WD h)) (hl : ∀ z ∈ l, z.mono0) : (sumList l).mono0 := by
+      induction l with
+      | nil =>
+        show (WD.lpZero (h := h)).mono0
+        rw [WD.lpZero, WD.monodromyZero_ofWeilDeligneRepClass_iff]
+        rfl
+      | cons b l ih =>
+        show (WD.lpSum b (sumList l)).mono0
+        exact (WD.monomial_sum_iff _ _).2 ⟨hl b (by simp), ih fun z hz => hl z (by simp [hz])⟩
+    refine sum_mono0 _ fun z hz => ?_
+    obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hz
+    rw [WD.lpOfChar, WD.monodromyZero_ofWeilDeligneRepClass_iff]
+    rfl
 
 theorem recTr (hG : GlobalTheory.Published.GlobalArtinReciprocity) {K : Type} [Field K] [NumberField K] [Algebra K Ω] [IsAlgClosure K Ω]
     {u : HeightOneSpectrum (𝓞 K)} {h' : IsPlaceOver A u} {j : E →+* K} {i : w.adicCompletion E ≃+* u.adicCompletion K}
     (P : PlaceIso A w A u (RingEquiv.refl Ω) j i) {n : ℕ} (σ : SmIrr (GL (Fin n) (w.adicCompletion E)))
     (σ' : SmIrr (GL (Fin n) (u.adicCompletion K))) (e : σ.V ≃ₗ[ℂ] σ'.V)
     (he : ∀ g x, e (σ.ρ g x) = σ'.ρ (Matrix.GeneralLinearGroup.map i.toRingHom g) (e x))
-    {rc : IrrGL (w.adicCompletion E) → WD h} {rc' : IrrGL (u.adicCompletion K) → WD h'} (hrc : IsRecT h rc) (hrc' : IsRecT h' rc')
+    {rc : IrrGL (k := w.adicCompletion E) → WD h} {rc' : IrrGL (k := u.adicCompletion K) → WD h'} (hrc : IsRecT h rc) (hrc' : IsRecT h' rc')
     (hP : GlobalTheory.RoadU.PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred)) :
     WDRel (RingEquiv.refl Ω) (rc (algNorm σ)) (rc' (algNorm σ')) := by
   obtain ⟨a, ha, L⟩ := hrc
@@ -109,8 +190,8 @@ theorem recTr (hG : GlobalTheory.Published.GlobalArtinReciprocity) {K : Type} [F
   exact (congrArg (ξ k) (h5 _)).symm
 
 def RatioT : Prop :=
-  ∀ (K Ω : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field Ω] [Algebra K Ω] [IsAlgClosure K Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 K)) (h : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion K) → WD h), IsRecT h rc →
+  ∀ (K Ω : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field Ω] [Algebra K Ω] [IsAlgClosure K Ω] (A : ValuationSubring Ω)
+    (w : HeightOneSpectrum (𝓞 K)) (h : IsPlaceOver A w) (rc : IrrGL (k := w.adicCompletion K) → WD h), IsRecT h rc →
     ∀ (a : ℕ) (π : CuspSub K a) (t : ℝ), WinAt π t w → ∀ σ, π.IsLocComp w σ → UpperTheory.GalN.V.RatioW (rc (algNorm σ))
 
 end UpperTheory.Gal.SV

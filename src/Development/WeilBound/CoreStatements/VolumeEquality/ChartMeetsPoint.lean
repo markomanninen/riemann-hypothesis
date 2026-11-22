@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsForm
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ private theorem valAt_add_volume_equality {R : Type} [CommRing R] [IsLocalRing R
   obtain ⟨h, s₁, h₁, h₂⟩ := ha
   obtain ⟨h', s₂, h₃, h₄⟩ := hb
   refine ⟨h, s₁ + s₂, ?_, ?_⟩
-  · rw [map_add, h₁]
+  · rw [map_add (f := _), h₁]
     exact congrArg (a + ·) h₃
   · exact ((Scheme.stalkClosedPointTo z).hom.map_add s₁ s₂).trans (by rw [h₂, h₄])
 
@@ -104,7 +108,7 @@ theorem exists_point_hom {κ : Type} {x : κ → Ω} (T : CoordTie ℤ ξ x) (c 
     simpa using valAt_intCast' hz n
   | add a b ha hb iha ihb =>
     show ValAt ξ z (a + b) (ψ (⟨a, ha⟩ + ⟨b, hb⟩))
-    rw [map_add]
+    rw [ψ.map_add]
     exact valAt_add_volume_equality iha ihb
   | mul a b ha hb iha ihb =>
     show ValAt ξ z (a * b) (ψ (⟨a, ha⟩ * ⟨b, hb⟩))

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.GenWh
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.GenWh
+
+@[expose] public section
 
 noncomputable section
 

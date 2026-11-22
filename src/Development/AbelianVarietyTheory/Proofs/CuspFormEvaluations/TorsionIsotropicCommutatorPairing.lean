@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.UniversalWeilPairingPullbackExistsUniqueStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SqDvdSumAlternatingFormsOfKilledLatticeStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.UniversalWeilPairingPullbackExistsUniqueStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SqDvdSumAlternatingFormsOfKilledLatticeStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -37,7 +41,7 @@ theorem dvd_EF_of_killed (m j : ℕ) (a b : Dw.La) (ha : ∀ c ∈ l.Mb ^ j, Dw.
   obtain ⟨a', ha'⟩ := ha r hr
   obtain ⟨b', hb'⟩ := hb p hp
   have e₁ : Dw.EF a b = Dw.EF a (p • b) + Dw.EF (r • a) b := by
-    rw [Dw.adj, ← map_add, ← add_smul]
+    rw [Dw.adj, ← map_add (f := _), ← add_smul]
     have : p + H.bar r = 1 := hpq
     rw [this, one_smul]
   rw [e₁, ha', hb', map_nsmul, map_nsmul, LinearMap.smul_apply, nsmul_eq_mul, nsmul_eq_mul]
@@ -104,52 +108,52 @@ theorem comp_prod {S : Scheme.{0}} {G T T' : Over S} [GrpObj G] [IsCommMonObj G]
 
 end ThetaIsotropy
 
-open ThetaIsotropy in
 
+open ThetaIsotropy in
 theorem zh_isotropic_and_half_isotropic : Laws → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (B : Type) [CommRing B] (x0 : Sp B ⟶ Xo.X) (n : ℕ) (Λ : GenLat E n) (N : ℕ), Λ.Unimod → 0 < N → Ideal.span {(N : 𝓞 E)} • stdLat E n ≤ Λ.La → (∀ (a a' : Fin n → (ptO Xo x0 ⟶ Xo.univ.t.G)) (e : Fin n → Γ((ptO Xo x0).left, ⊤)ˣ), InZh Xo Λ N a → InZh Xo Λ N a' → (∀ b, WeilIs Xo.univ.t.G Xo.univ.t.PP.L ((N : ℤ) ^ 2) (a b) (a' b) (e b)) → ∏ b, e b = 1) ∧ ∀ (x y : ptO Xo x0 ⟶ Xo.univ.t.G) (j : ℕ), x ^ (N ^ 2) = 1 → y ^ (N ^ 2) = 1 → KilledBy Xo (l.Mb ^ j) x → KilledBy Xo (l.Mb ^ j) y → WeilIs Xo.univ.t.G Xo.univ.t.PP.L ((N : ℤ) ^ 2) x y 1 := by
   intro hL E _ _ _ H Dw l Xo B _ x0 n Λ N hΛ hN hle
   have hN2 : 0 < N ^ 2 := pow_pos hN 2
   obtain ⟨-, W₂, -⟩ := T.universal_weilPairing_pullback_exists_unique hL E H Dw l Xo N hN
   have tors : ∀ {K : Type} [CommRing K] (χ : B →+* K) {x : ptO Xo x0 ⟶ Xo.univ.t.G}, x ^ (N ^ 2) = 1 →
-      (bc Xo x0 χ ≫ x) ^ (N ^ 2) = 1 := fun χ x hx => by rw [← MonObj.comp_pow, hx, MonObj.comp_one]
+      (ThetaIsotropy.bc Xo x0 χ ≫ x) ^ (N ^ 2) = 1 := fun χ x hx => by rw [← MonObj.comp_pow, hx, MonObj.comp_one]
   refine ⟨fun a a' e ha ha' he => ?_, fun x y j hx hy kx ky => ?_⟩
-  · refine unit_eq_one Xo x0 hL N hN _ ?_ fun K _ _ χ => ?_
+  · refine ThetaIsotropy.unit_eq_one Xo x0 hL N hN _ ?_ fun K _ _ χ => ?_
     · rw [← Finset.prod_pow]
       refine Finset.prod_eq_one fun b _ => ?_
       obtain ⟨e₀, -, h₀, hu⟩ := W₂ _ (a b) (a' b) (ha.1 b) (ha'.1 b)
       rw [hu _ (he b), h₀]
-    · obtain ⟨I, hI⟩ := exists_tate Xo x0 hL N hN K χ
+    · obtain ⟨I, hI⟩ := ThetaIsotropy.exists_tate Xo x0 hL N hN K χ
       choose v hv using fun b => (I.onto _ hN2 _).1 (tors χ (ha.1 b))
       choose v' hv' using fun b => (I.onto _ hN2 _).1 (tors χ (ha'.1 b))
       have lat : ∀ {a : Fin n → (ptO Xo x0 ⟶ Xo.univ.t.G)} {v : Fin n → Dw.La}, InZh Xo Λ N a →
-          (∀ b, I.ev (N ^ 2) (v b) = bc Xo x0 χ ≫ a b) →
+          (∀ b, I.ev (N ^ 2) (v b) = ThetaIsotropy.bc Xo x0 χ ≫ a b) →
           ∀ (mu : Matrix (Fin n) (Fin n) E), (∀ v ∈ Λ.La, mu.mulVec v ∈ stdLat E n) →
             ∀ cm : Fin n → Fin n → 𝓞 E, (∀ i j, (cm i j : E) = (N : E) * mu i j) →
               ∀ i, Dw.ModN (N ^ 2) (∑ j, cm i j • v j) := fun {a v} ha hv mu hmu cm hcm i => by
         refine (I.ker _ hN2 _).1 ?_
-        have h₁ := congrArg (bc Xo x0 χ ≫ ·) (ha.2 mu hmu cm hcm i)
+        have h₁ := congrArg (ThetaIsotropy.bc Xo x0 χ ≫ ·) (ha.2 mu hmu cm hcm i)
         simp only [MonObj.comp_one] at h₁
-        rw [comp_prod] at h₁
-        rw [ev_sum I _ hN2, ← h₁]
+        rw [ThetaIsotropy.comp_prod] at h₁
+        rw [ThetaIsotropy.ev_sum I _ hN2, ← h₁]
         refine Finset.prod_congr rfl fun j _ => ?_
         rw [I.lin, hv, Category.assoc]
       have hd := T.sq_dvd_sum_alternating_forms_of_killed_lattice E H Dw n Λ N hΛ hN hle v v' (lat ha hv) (lat ha' hv')
       rw [map_prod, Finset.prod_congr rfl fun b _ => hI _ _ _ (ha.1 b) (ha'.1 b) (he b) _ _ (hv b) (hv' b)]
-      refine (unitOn_prod _).trans ?_
-      rw [prod_zpow_eq,
-        ((I.ζ_prim _ hN2).zpow_eq_one_iff_dvd _).2 (by rwa [Nat.cast_pow]), unitOn_one]
+      refine (ThetaIsotropy.unitOn_prod _).trans ?_
+      rw [ThetaIsotropy.prod_zpow_eq,
+        ((I.ζ_prim _ hN2).zpow_eq_one_iff_dvd _).2 (by rwa [Nat.cast_pow]), ThetaIsotropy.unitOn_one]
   · obtain ⟨e, he, h₀, -⟩ := W₂ _ x y hx hy
     suffices e = 1 by rwa [this] at he
-    refine unit_eq_one Xo x0 hL N hN _ h₀ fun K _ _ χ => ?_
-    obtain ⟨I, hI⟩ := exists_tate Xo x0 hL N hN K χ
+    refine ThetaIsotropy.unit_eq_one Xo x0 hL N hN _ h₀ fun K _ _ χ => ?_
+    obtain ⟨I, hI⟩ := ThetaIsotropy.exists_tate Xo x0 hL N hN K χ
     obtain ⟨v, hv⟩ := (I.onto _ hN2 _).1 (tors χ hx)
     obtain ⟨v', hv'⟩ := (I.onto _ hN2 _).1 (tors χ hy)
     have lat : ∀ {x : ptO Xo x0 ⟶ Xo.univ.t.G} {v : Dw.La}, KilledBy Xo (l.Mb ^ j) x →
-        I.ev (N ^ 2) v = bc Xo x0 χ ≫ x → ∀ c ∈ l.Mb ^ j, Dw.ModN (N ^ 2) (c • v) := fun {x v} kx hv c hc => by
+        I.ev (N ^ 2) v = ThetaIsotropy.bc Xo x0 χ ≫ x → ∀ c ∈ l.Mb ^ j, Dw.ModN (N ^ 2) (c • v) := fun {x v} kx hv c hc => by
       refine (I.ker _ hN2 _).1 ?_
       rw [I.lin, hv, Category.assoc, kx c hc, MonObj.comp_one]
-    have hd := dvd_EF_of_killed (N ^ 2) j v v' (lat kx hv) (lat ky hv')
+    have hd := ThetaIsotropy.dvd_EF_of_killed (N ^ 2) j v v' (lat kx hv) (lat ky hv')
     rw [hI _ _ _ hx hy he _ _ hv hv', ((I.ζ_prim _ hN2).zpow_eq_one_iff_dvd _).2 hd]
-    exact unitOn_one
+    exact ThetaIsotropy.unitOn_one
 
 end GlobalTheory

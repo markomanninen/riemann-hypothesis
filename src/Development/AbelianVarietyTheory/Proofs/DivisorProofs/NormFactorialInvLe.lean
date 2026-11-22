@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,11 +44,7 @@ theorem norm_factorial_inv_le (n : ℕ) : ‖((n.factorial : ℂ_[l]))‖⁻¹ �
   have e1 : ((n.factorial : ℂ_[l])) = (((n.factorial : ℚ) : ℚ_[l]) : ℂ_[l]) := by simp
   rw [e1, PadicComplex.norm_extends', Padic.eq_padicNorm,
     padicNorm.eq_zpow_of_nonzero (by exact_mod_cast Nat.factorial_ne_zero n), padicValRat.of_nat]
-  have hv : padicValNat l n.factorial ≤ n := by
-    have := sub_one_mul_padicValNat_factorial (p := l) n
-    have h1 : 1 ≤ l - 1 := by have := hp.two_le; omega
-    calc padicValNat l n.factorial ≤ (l - 1) * padicValNat l n.factorial := Nat.le_mul_of_pos_left _ h1
-      _ ≤ n := by rw [this]; exact Nat.sub_le _ _
+  have hv : multiplicity l n.factorial ≤ n := multiplicity_factorial_le l n
   have hl1 : (1 : ℝ) ≤ l := by exact_mod_cast hp.one_lt.le
   rw [Rat.cast_zpow, Rat.cast_natCast, zpow_neg, inv_inv, zpow_natCast, Real.rpow_natCast]
   exact pow_le_pow_right₀ hl1 hv

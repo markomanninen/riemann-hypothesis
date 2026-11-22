@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.KerEqOfFactor
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.ExistsSigma
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.KerEqOfFactor
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.ExistsSigma
+
+@[expose] public section
 
 open Finset Classical
 
@@ -27,11 +31,6 @@ def bcHom (D : RingData O X d G t bl) (D' : RingData O' X d G t bl) (σ : D'.X' 
     (Pi.evalRingHom (fun _ : D.X' => Matrix d d (FractionRing O)) (σ y'))).comp D.R'.val.toRingHom) D'.R'
     (fun a => h a.1 a.2)
 
-theorem bcHom_apply (D : RingData O X d G t bl) (D' : RingData O' X d G t bl) (σ : D'.X' → D.X')
-    (κ : FractionRing O →+* FractionRing O')
-    (h : ∀ a ∈ D.R', (fun y' => (a (σ y')).map κ) ∈ D'.R') (a : D.R') (y' : D'.X') :
-    (bcHom D D' σ κ h a).1 y' = (a.1 (σ y')).map κ := rfl
-
 end
 
 theorem relMap_ev {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {X' d : Type} [Fintype d]
@@ -42,7 +41,8 @@ theorem relMap_ev {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing 
   let evA : EvalSp O d R' x' →+ FractionRing O :=
     { toFun := fun w => w a, map_zero' := rfl, map_add' := fun _ _ => rfl }
   show evA (∑ q, P i q • v q) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   rfl
 
 theorem span_single {R : Type*} [Ring R] {m g : Type} [Fintype m] [Fintype g] [DecidableEq g]
@@ -53,7 +53,8 @@ theorem span_single {R : Type*} [Ring R] {m g : Type} [Fintype m] [Fintype g] [D
   have h : w = ∑ j, w j • (Pi.single j (1 : R) : g → R) := by
     ext k
     simp [Finset.sum_apply, Pi.single_apply]
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [map_smul]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -116,10 +117,12 @@ theorem moduleBc : StatModuleBc := by
       rw [relMap_ev]
       show _ = (0 : FractionRing O')
       have h3 := congrArg κ h2
-      rw [map_zero, map_sum] at h3
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_zero, map_sum] at h3
       rw [← h3]
       refine Finset.sum_congr rfl fun q _ => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [map_mul]
       rfl

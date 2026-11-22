@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.infinite_norm_one_elements :
     ∀ {F E : Type} [CommSemiring F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E),
@@ -41,4 +45,4 @@ theorem UpperTheory.infinite_norm_one_elements :
     · exact absurd (sub_eq_zero.mp h) ha
   · intro n
     show _ * σ _ = 1
-    rw [map_div₀, map_add, map_add, map_natCast, hinv, div_mul_div_cancel₀ (h2 n), div_self (h1 n)]
+    rw [map_div₀, map_add (f := _), map_add (f := _), map_natCast, hinv, div_mul_div_cancel₀ (h2 n), div_self (h1 n)]

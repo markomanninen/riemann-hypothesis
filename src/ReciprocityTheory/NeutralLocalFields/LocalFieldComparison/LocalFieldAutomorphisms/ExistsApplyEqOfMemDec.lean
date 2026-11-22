@@ -1,4 +1,8 @@
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ContinuousGK
+module
+
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ContinuousGK
+
+@[expose] public section
 
 noncomputable section
 
@@ -169,9 +173,11 @@ theorem minpoly_aeval_of_mem_dec {A : ValuationSubring Ω} {ι : Ω →+* PadicA
   have hu : ∀ i, ‖u i‖ ≤ δ := fun i => by rw [hu_def]; exact (hf i).le
   obtain ⟨w, hw⟩ : ∃ w : Ω, w = ∑ i ∈ Finset.range N, algebraMap F Ω (f i) * x ^ i := ⟨_, rfl⟩
   have hιw : ι w = ∑ i ∈ Finset.range N, ι (algebraMap F Ω (f i)) * ι x ^ i := by
-    rw [hw]; simp only [map_sum, map_mul, map_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hw]; simp only [map_sum, map_mul, map_pow]
   have hιτw : ι (τ w) = ∑ i ∈ Finset.range N, ι (algebraMap F Ω (f i)) * ι (τ x) ^ i := by
-    rw [hw]; simp only [map_sum, map_mul, map_pow, AlgEquiv.commutes]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hw]; simp only [map_sum, map_mul, map_pow, AlgEquiv.commutes]
   have h1 : ι w = -∑ i ∈ Finset.range N, u i * ι x ^ i := by
     rw [hιw, eq_neg_iff_add_eq_zero, ← Finset.sum_add_distrib, ← hy0]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -326,8 +332,5 @@ def equiv {A : ValuationSubring Ω} {ι : Ω →+* PadicAlgCl p} (h : Compat p A
     continuous_toFun := continuous_resDec h
     continuous_invFun := Continuous.continuous_symm_of_equiv_compact_to_t2
       (f := (MulEquiv.ofBijective (resDec h) (bijective_resDec h)).toEquiv) (continuous_resDec h) }
-
-theorem equiv_apply {A : ValuationSubring Ω} {ι : Ω →+* PadicAlgCl p} (h : Compat p A ι) (σ : GK F ι) :
-    (equiv h σ : Ω ≃ₐ[F] Ω) = res ι σ := rfl
 
 end ReciprocityTheory.Neutral.Cmp

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SegStartSpec
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.OddTops
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SegStartSpec
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.OddTops
+
+@[expose] public section
 
 noncomputable section
 

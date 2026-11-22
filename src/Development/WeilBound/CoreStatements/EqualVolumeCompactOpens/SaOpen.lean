@@ -1,4 +1,8 @@
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Assembly
+module
+
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Assembly
+
+@[expose] public section
 
 namespace PositivityTheory.EqVol
 

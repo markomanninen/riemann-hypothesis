@@ -1,4 +1,8 @@
-import Formalism.FrobeniusContraction.Statement
+module
+
+public import Formalism.FrobeniusContraction.Statement
+
+@[expose] public section
 
 namespace Formalism.WachCohomologyFacts.PContractBij
 
@@ -31,7 +35,8 @@ theorem telescope (f : P →+ P) (y : P) (n : ℕ) :
   have key := Finset.sum_range_sub (fun r => f^[r] y) n
   rw [Finset.sum_sub_distrib] at key
   simp only [Function.iterate_succ_apply', Function.iterate_zero, id_eq] at key
-  rw [map_neg, map_sum, neg_sub_neg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_neg, map_sum, neg_sub_neg]
   exact (neg_sub _ _).symm.trans (by rw [key, neg_sub])
 
 end Formalism.WachCohomologyFacts.PContractBij

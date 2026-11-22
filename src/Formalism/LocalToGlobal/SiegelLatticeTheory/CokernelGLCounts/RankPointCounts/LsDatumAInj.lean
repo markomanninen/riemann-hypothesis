@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GlueBackOf
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocGlue
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GlueBackOf
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocGlue
+
+@[expose] public section
 
 noncomputable section
 

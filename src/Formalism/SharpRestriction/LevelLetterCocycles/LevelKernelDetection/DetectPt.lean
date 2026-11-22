@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.KerEqOfSpan
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.KerEqOfSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,8 @@ theorem detect_pt {LL D : Type} [Field LL] [AddCommGroup D] [Module LL D] [Finit
             (Submodule.Quotient.mk ⟨g j, fun k _ => hg j k⟩ : GrQ F) =
             (Submodule.mkQ _) (∑ j, PowerSeries.coeff m (a j) •
               (⟨g j, fun k _ => hg j k⟩ : ↥(Submodule.pi Set.univ fun k : ℤ => F (-k)))) := by
-          simp [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [map_sum]
         rw [hmk, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, Submodule.mem_comap,
           Submodule.mem_pi]
         intro k _

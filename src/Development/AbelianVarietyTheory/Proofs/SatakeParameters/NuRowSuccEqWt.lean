@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
-import Formalism.LocalToGlobal.Columns.BaseLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
+public import Formalism.LocalToGlobal.Columns.BaseLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,13 +18,13 @@ theorem nuRow_succ_eq_wt (D : D7) (u : D.what₂.Word) (j : ℕ) (hj : j < D.R.m
       ((Examples₂.wtN (D.hcW u τ) n + wG D.R ((D.hcW u τ).e ⟨j, hj⟩) (j + 1) : ℚ) : ℝ) := by
   have hw : DV.wSz D (j + 1) τ = (((D.hcW u τ).e ⟨j, hj⟩ : ℚ) : ℝ) := by
     unfold DV.wSz
-    rw [dif_pos ⟨by omega, by omega⟩, D.hcW_e]
+    rw [dite_eq_left ⟨by omega, by omega⟩, D.hcW_e]
     rfl
   unfold DV.nuRow
   rw [hw]
   unfold DV.srcPar Examples₂.wtN Examples₂.blkN
   by_cases hk : n < D.R.k
-  · rw [dif_pos hk, dif_pos hk]
+  · rw [dite_eq_left hk, dite_eq_left hk]
     unfold hcToWeightQ rhoVec wG Ranks.N
     push_cast
     ring
@@ -29,7 +33,7 @@ theorem nuRow_succ_eq_wt (D : D7) (u : D.what₂.Word) (j : ℕ) (hj : j < D.R.m
       have h2 : n - D.R.k < j * (D.R.t + 1) := Nat.sub_lt_left_of_lt_add (by omega) hN
       have h3 : (n - D.R.k) / (D.R.t + 1) < j := Nat.div_lt_of_lt_mul (by rw [mul_comm]; exact h2)
       omega
-    rw [dif_neg hk, dif_neg hk, dif_pos hb, dif_pos hb]
+    rw [dite_eq_right hk, dite_eq_right hk, dite_eq_left hb, dite_eq_left hb]
     have hnat : n = D.R.k + (n - D.R.k) / (D.R.t + 1) * (D.R.t + 1) + (n - D.R.k) % (D.R.t + 1) := by
       have := Nat.div_add_mod (n - D.R.k) (D.R.t + 1)
       rw [mul_comm] at this

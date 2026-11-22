@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionSupBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionSupBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -62,8 +67,8 @@ theorem exists_lower (A : HermLine ι) (hA : ContinuousOn A.h {z | ∀ k, ∃ i,
 
 end SectionSupBound
 
-open SectionBounded SectionSupBound in
 
+open SectionBounded SectionSupBound in
 theorem SectionSupBound.proof : SectionSupBound.Statement := by
   intro K _ ι _ Ω _ y A τ e hA he
   classical

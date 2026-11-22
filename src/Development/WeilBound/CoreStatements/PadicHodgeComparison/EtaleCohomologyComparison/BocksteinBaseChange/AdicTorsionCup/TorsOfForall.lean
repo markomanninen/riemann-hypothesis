@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AdicTorsionCup.PowNsmulEqZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AdicTorsionCup.PowNsmulEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem tors_of_forall [Module.Finite ℤ_[l] M] (x : M)
     have ht : T.mkQ t = 0 := by
       rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, Submodule.mem_torsion'_iff]
       exact ⟨⟨_, n, rfl⟩, hn⟩
-    rw [map_add, ht, add_zero, map_smul]
+    rw [map_add (f := _), ht, add_zero, map_smul]
     refine Submodule.smul_mem_smul ?_ Submodule.mem_top
     rw [Ideal.span_singleton_pow]
     exact Ideal.mem_span_singleton_self _

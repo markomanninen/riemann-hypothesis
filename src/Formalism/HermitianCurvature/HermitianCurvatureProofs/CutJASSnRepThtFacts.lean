@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsFrameTwo
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_TypeNormMeas_TC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsFrameTwo
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_TypeNormMeas_TC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix
@@ -461,12 +465,14 @@ theorem trace_move (U V : Wq →L[ℂ] Wp) (B₁ B₂ : Wq →L[ℂ] Wq) (hB : �
       = ∑ i, ∑ j, inner ℂ (b j) (B₁ (b i)) * inner ℂ (U (b i)) (V (b j)) := by
         refine Finset.sum_congr rfl fun i _ => ?_
         conv_lhs => rw [hexp (B₁ (b i))]
-        simp only [map_sum, map_smul, inner_sum, inner_smul_right]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, inner_sum, inner_smul_right]
     _ = ∑ j, ∑ i, inner ℂ (b j) (B₁ (b i)) * inner ℂ (U (b i)) (V (b j)) := Finset.sum_comm
     _ = ∑ j, inner ℂ (U (B₂ (b j))) (V (b j)) := by
         refine Finset.sum_congr rfl fun j _ => ?_
         conv_rhs => rw [hexp (B₂ (b j))]
-        simp only [map_sum, map_smul, sum_inner, inner_smul_left]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, sum_inner, inner_smul_left]
         refine Finset.sum_congr rfl fun i _ => ?_
         congr 1
         rw [← inner_conj_symm, hB, inner_conj_symm]
@@ -608,9 +614,11 @@ theorem tht_eqv (hz : inWb k r z) (hT : 0 < Tz k r z) (hR : Qr.IsRepW k r z π)
   rw [tht_indep hz hT hR hz' hT' hR' hF (frame_uw hh hF) hF' (frame_uw hh' hF')]
   conv_rhs => rw [← sandw_apply (π h) (π' h'⁻¹)]
   unfold tht
-  rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.smul_apply, map_smul]
   congr 1
@@ -630,9 +638,11 @@ theorem thtA_eqv (hz : inWb k r z) (hT : 0 < Tz k r z) (hR : Qr.IsRepW k r z π)
   rw [thtA_indep hz hT hR hz' hT' hR' hF (frame_uw hh hF) hF' (frame_uw hh' hF')]
   conv_rhs => rw [← sandw_apply (π h) (π' h'⁻¹)]
   unfold thtA
-  rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ContinuousLinearMap.sum_apply, ContinuousLinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.smul_apply, map_smul]
   congr 1

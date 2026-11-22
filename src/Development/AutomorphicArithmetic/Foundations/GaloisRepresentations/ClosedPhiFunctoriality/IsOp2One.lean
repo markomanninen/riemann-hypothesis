@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JointApproxOfMem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JointApproxOfMem
+
+@[expose] public section
 
 noncomputable section
 

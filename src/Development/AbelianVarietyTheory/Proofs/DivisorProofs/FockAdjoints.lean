@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LineMatrixKroneckerLeftFactorEqZeroOfIsPC
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LineMatrixKroneckerLeftFactorEqZeroOfIsPC
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.FockAdj
@@ -46,7 +50,7 @@ theorem inner_omE {ι : Pol p q r s →ₗ[ℂ] H} (hι : IsFockIP ι) (l l' : L
     congr 1
     cases linePos l <;> cases linePos l' <;> simp
   unfold omE
-  simp only [LinearMap.add_apply, Module.End.mul_apply, map_add, inner_add_left, inner_add_right,
+  simp only [LinearMap.add_apply, Module.End.mul_apply, map_add (f := _), inner_add_left, inner_add_right,
     mul_add, h1]
   congr 1
   by_cases h : l = l'
@@ -59,7 +63,8 @@ theorem inner_omAct {ι : Pol p q r s →ₗ[ℂ] H} (hι : IsFockIP ι)
     (h : ∀ l l', N l' l = (if linePos l = linePos l' then 1 else -1) * star (M l l'))
     (P Q : Pol p q r s) :
     inner ℂ (ι (omAct p q r s M P)) (ι Q) = inner ℂ (ι P) (ι (omAct p q r s N Q)) := by
-  simp only [omAct_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, sum_inner,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [omAct_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, sum_inner,
     inner_sum, inner_smul_left, inner_smul_right]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun l' _ => ?_

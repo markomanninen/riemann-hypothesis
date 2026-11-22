@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JumpsLetOfWin
-import Formalism.SharpRestriction.LevelLetterCocycles.WachFrobeniusLatticeUnramifiedFunctor
-import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationSaturationKiller
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JumpsLetOfWin
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachFrobeniusLatticeUnramifiedFunctor
+public import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationSaturationKiller
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,7 @@ theorem Pp_Δ (T : LocLat G Qp LL O) (c : ZMod n) (e : ℕ) {y : W.DD T}
   let S : AddSubgroup (W.DD T) :=
     { carrier := {y | W.γD T δ y = y}
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_ofPred_eq] at ha hb ⊢; rw [map_add, ha, hb]
+        simp only [Set.mem_ofPred_eq] at ha hb ⊢; rw [map_add (f := _), ha, hb]
       zero_mem' := by simp only [Set.mem_ofPred_eq, map_zero]
       neg_mem' := fun {a} ha => by simp only [Set.mem_ofPred_eq] at ha ⊢; rw [map_neg, ha] }
   have hgen : {z | ∃ a ∈ W.AΔ, ∃ x, Formalism.MainNotions.LiftingTheory.InNΔi W T c x ∧ z = a • ((W.φD T) ^ e) x} ⊆
@@ -165,7 +169,7 @@ theorem clK_sum (T : LocLat G Qp LL O) {ι : Type} (s : Finset ι) (u zz : ι �
     simp only [Finset.sum_insert hb]
     refine ⟨(W.wachCocyclesDelta T).add_mem hmb hm1, ?_⟩
     show W.clK T (⟨(u b, zz b), hmb⟩ + ⟨(∑ i ∈ s, u i, ∑ i ∈ s, zz i), hm1⟩) = _
-    rw [map_add, hb', h1]
+    rw [map_add (f := _), hb', h1]
 
 theorem clK_smul (T : LocLat G Qp LL O) (r : O) (y z : W.DD T) (hm : (y, z) ∈ W.wachCocyclesDelta T)
     (hm' : (r • y, r • z) ∈ W.wachCocyclesDelta T) :
@@ -531,7 +535,7 @@ theorem Pp_φpow (T : LocLat G Qp LL O) (c : ZMod n) (e m : ℕ) {y : W.DD T}
     rw [map_zero]
     exact zero_mem _
   | add a b _ _ ha hb =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem ha hb
   | neg a _ ha =>
     rw [map_neg]
@@ -553,7 +557,8 @@ theorem InFN_φpow (T : LocLat G Qp LL O) (M : ℕ) (hq : qA W ∈ W.AΔ)
 theorem tele (T : LocLat G Qp LL O) (L : ℕ) (v : W.DD T) :
     W.φD T (∑ k ∈ Finset.range L, ((W.φD T) ^ k) v) - ∑ k ∈ Finset.range L, ((W.φD T) ^ k) v =
       ((W.φD T) ^ L) v - v := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   rw [Finset.sum_congr rfl fun k _ => (PhiPowers.pow_apply_succ W T k v).symm]
   rw [← Finset.sum_sub_distrib, Finset.sum_range_sub (fun k => ((W.φD T) ^ k) v), pow_zero]
   rfl
@@ -608,7 +613,8 @@ theorem splitLift_of [NeZero n] (h9 : Formalism.MainNotions.DeltaInvariantLattic
   have hxtπ : W.map π xt = cb • e := by
     calc W.map π xt = ∑ c ∈ A.cuts, ∑ k ∈ Finset.range (A.len c),
           cb • ((letE (c - ((A.len c : ℕ) : ZMod n) + (k : ZMod n) + (A.j : ZMod n)) : LetA O n) • e) := by
-          rw [hxt, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [hxt, map_sum]
           exact Finset.sum_congr rfl fun c hc =>
             (map_sum _ _ _).trans (Finset.sum_congr rfl fun k _ => hterm c hc k)
       _ = ∑ i, cb • ((letE (i + (A.j : ZMod n)) : LetA O n) • e) :=
@@ -626,17 +632,21 @@ theorem splitLift_of [NeZero n] (h9 : Formalism.MainNotions.DeltaInvariantLattic
   have hz' : W.map ι z = W.γD Y W.gam xt - xt := hz
   have hxtΔ : ∀ δ ∈ W.DelF, W.γD Y δ xt = xt := by
     intro δ hδ
-    rw [hxt, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxt, map_sum]
     refine Finset.sum_congr rfl fun c hc => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     exact PhiPowers.φD_pow_Δ W Y (hcut _ (hpv c hc)).2.2.2.1 k δ hδ
   set Z : W.DD T₂ := ∑ c ∈ A.cuts, ∑ k ∈ Finset.range (A.len c),
     ((W.φD T₂) ^ k) (W.π₀ ^ A.M PD.p • m (c - ((A.len c : ℕ) : ZMod n))) with hZ
   have hιZ : W.map ι Z = W.γD Y W.gam xt - xt := by
-    rw [hZ, hxt, map_sum, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hZ, hxt, map_sum, map_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun c hc => ?_
-    rw [map_sum, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_φpow, ← (hcut _ (hpv c hc)).2.2.2.2.2.1, map_sub]
     have := γ_φpow W Y k (X (c - ((A.len c : ℕ) : ZMod n)))
@@ -668,7 +678,8 @@ theorem splitLift_of [NeZero n] (h9 : Formalism.MainNotions.DeltaInvariantLattic
       exact sub_eq_zero.1 (hinj _ h0)
   have hφxt : W.φD Y xt - xt = ∑ c ∈ A.cuts, (((W.φD Y) ^ A.len c) (X (c - ((A.len c : ℕ) : ZMod n))) -
       X (c - ((A.len c : ℕ) : ZMod n))) := by
-    rw [hxt, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxt, map_sum, ← Finset.sum_sub_distrib]
     exact Finset.sum_congr rfl fun c _ => tele W Y _ _
   have hR : ∑ c ∈ A.cuts, (((W.φD Y) ^ A.len c) (X (c - ((A.len c : ℕ) : ZMod n))) -
       X (c - ((A.len c : ℕ) : ZMod n))) =
@@ -684,7 +695,8 @@ theorem splitLift_of [NeZero n] (h9 : Formalism.MainNotions.DeltaInvariantLattic
   · beta_reduce
     have key : W.map ι (∑ c ∈ A.cuts, (lA W ^ σ • ((W.φD T₂) ^ A.j) (w c) - -(lA W ^ σ • τ₂ c))) =
         W.map ι (lA W ^ σ • y) := by
-      rw [Formalism.MainNotions.WachCoordinates.Br.map_smulA, hy, hφxt, hR, Finset.smul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Formalism.MainNotions.WachCoordinates.Br.map_smulA, hy, hφxt, hR, Finset.smul_sum, map_sum]
       refine Finset.sum_congr rfl fun c hc => ?_
       rw [map_sub, map_neg, Formalism.MainNotions.WachCoordinates.Br.map_smulA, Formalism.MainNotions.WachCoordinates.Br.map_smulA, map_φpow, hwι c hc,
         map_sub, φpow_smulA, φA_pow_lA, φpow_add, Nat.sub_add_cancel (hA.2.2.2.1 c hc)]

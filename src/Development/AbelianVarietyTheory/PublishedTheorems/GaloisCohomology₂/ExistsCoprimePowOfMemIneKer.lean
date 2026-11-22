@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WeilDeligneParamMonodromyEqZeroIff
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TeichmullerInertiaLabelCondition
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationPowApplyDivSubOneLt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowCardEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WeilDeligneParamMonodromyEqZeroIff
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TeichmullerInertiaLabelCondition
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationPowApplyDivSubOneLt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowCardEq
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.TameQuot
 
@@ -157,8 +161,9 @@ theorem exists_pow_cong {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Alge
   set Q := primeBelow (F := F) A with hQ
   have : v.asIdeal.IsMaximal := v.isMaximal
   have : Q.LiesOver v.asIdeal := ⟨(under_primeBelow hA).symm⟩
-  have : Q.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := 𝓞 F) Q
-    (by rw [show Ideal.comap (algebraMap (𝓞 F) (IntCl F Ω)) Q = v.asIdeal from
+  have : Q.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := 𝓞 F) Q
+    (by change (Ideal.comap (algebraMap (𝓞 F) (IntCl F Ω)) Q).IsMaximal
+        rw [show Ideal.comap (algebraMap (𝓞 F) (IntCl F Ω)) Q = v.asIdeal from
       under_primeBelow hA]; exact v.isMaximal)
   let : Field (IntCl F Ω ⧸ Q) := Ideal.Quotient.field Q
   let : Field (𝓞 F ⧸ v.asIdeal) := Ideal.Quotient.field v.asIdeal
@@ -526,7 +531,7 @@ theorem exists_hom {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F
   have hχ : ∀ g, (χ g : ZMod (l ^ k)) = PadicInt.toZModPow k (cycZ F Ω l g.1 : ℤ_[l]ˣ) :=
     fun _ => rfl
   have hκ : ∀ g h, κ (g * h) = κ g + (χ g : ZMod (l ^ k)) * κ h := fun g h => by
-    simp only [κ, hχ, Subgroup.coe_mul, kummer_mul, ← map_mul, ← map_add]
+    simp only [κ, hχ, Subgroup.coe_mul, kummer_mul, ← map_mul, ← map_add (f := _)]
     congr 1; ring
   have ho : IsOpen {g : Dec (F := F) A | κ g = 0} := by
     have e : {g : Dec (F := F) A | κ g = 0} = Subtype.val ⁻¹'
@@ -723,8 +728,8 @@ theorem cycMod_eq_one (hA : IsPlaceOver A v) (hl : ((l : ℕ) : 𝓞 F) ∉ v.as
       exact isClosed_eq ((continuous_cycMod l n).comp continuous_subtype_val) continuous_const
   exact h4 (Subgroup.mem_top g)
 
-omit [IsAlgClosure F Ω] [Fact l.Prime] in
 
+omit [IsAlgClosure F Ω] [Fact l.Prime] in
 def homOf (z : Z1 (trivDec F A l n)) : Dec (F := F) A →* Multiplicative (ZMod (l ^ n)) :=
   MonoidHom.mk' (fun g => Multiplicative.ofAdd (z.1 g)) fun g h => congrArg _ (z.2.2 g h)
 
@@ -922,8 +927,8 @@ omit [IsAlgClosure F Ω] in
 theorem muDec_apply (g : Dec (F := F) A) (s : ZMod (l ^ n)) : muDec F A l n g s = s := by
   simp [hμ g]
 
-omit [IsAlgClosure F Ω] in
 
+omit [IsAlgClosure F Ω] in
 def toMu : Z1 (trivDec F A l n) ≃ₗ[ZMod (l ^ n)] Z1 (muDec F A l n) :=
   LinearEquiv.ofEq _ _ (Submodule.ext fun f => by
     simp only [mem_Z1_iff_cocycle, muDec_apply hμ, Representation.trivial_apply])

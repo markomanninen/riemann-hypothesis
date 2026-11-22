@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PushLettersIntCastOfIsHomogeneous
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PointwiseNormCanonicalThetaEqSqThetaConstant
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsSymplecticCoordinatesAdapted
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PushLettersIntCastOfIsHomogeneous
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PointwiseNormCanonicalThetaEqSqThetaConstant
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsSymplecticCoordinatesAdapted
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -32,7 +36,8 @@ theorem rename_place_mem {R : Type} [CommRing R] {T T' κ : Type} [Fintype κ] {
   refine Harm.mem_rowHighest_iff_rowAdd.2 ⟨fun t a b => ?_, fun t ρ => ?_, fun t ρ ρ' hρ s => ?_⟩ <;>
     obtain ⟨t, rfl⟩ := f.surjective t
   · have := congrArg (MvPolynomial.rename F) (h₁ t a b)
-    rw [map_zero, Harm.laplacian_apply, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, Harm.laplacian_apply, map_sum] at this
     rw [Harm.laplacian_apply, ← this]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Harm.xVar, Harm.yVar, ← hFa, ← hFa, MvPolynomial.pderiv_rename F.injective,
@@ -102,8 +107,8 @@ theorem exists_isSympl (X : Data E r) (hL : SelfD X X.Λ) (idx : Fin g ≃ X.Ψ 
 
 end GlobalTheory.Dict.Letters
 
-open GlobalTheory.Dict.Letters GlobalTheory.Harm in
 
+open GlobalTheory.Dict.Letters GlobalTheory.Harm in
 theorem GlobalTheory.Dict.exists_dic : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (c : Coeff l) (σ : c.F →+* ℂ) (r g n : ℕ) (X : Data E r) (a : (E →+* ℂ) × ℕ → ℕ) (e : Fin g ≃ Lt1 Dw), GoodEmb c σ → r = Dw.p + Dw.q → X.p0 = Dw.q → (∀ τ : E →+* ℂ, τ ∈ X.Ψ ↔ τ (H.rt : E) = H.rt0) → SelfD X X.Λ → Dom a n → ∃ Dc : Dic Dw c σ X g Dw.p n a, Dc.e = e ∧ (LastPos Dw a → 0 < Dw.p → ∃ τ, ∃ i : Fin Dw.p, i.val + 1 = Dw.p ∧ 1 ≤ Dc.k τ i) := by
   intro E _ _ _ H Dw l c σ r g n X a e hσ hr hp0 hΨ hL hD
   obtain ⟨hbij, hrt, hcj, -⟩ := GlobalTheory.Relab.relab_good E H l c σ hσ
@@ -151,7 +156,7 @@ theorem GlobalTheory.Dict.exists_dic : ∀ (E : Type) [Field E] [NumberField E] 
   · rcases hidx j with ⟨t, i, h1, h2, h3⟩ | ⟨t, i, h1, h2, h3⟩
     · have hi := i.isLt
       rw [pv, Function.comp_apply, h3, h2, h1, per_of_le _ _ _ _ (by simp), perFr,
-        dif_pos (show relab c σ t.1 ∈ X.Ψ from (f t).2), dif_pos (by omega)]
+        dite_eq_left (show relab c σ t.1 ∈ X.Ψ from (f t).2), dite_eq_left (by omega)]
       rfl
     · have hi := i.isLt
       have h4 : relab c σ (ComplexEmbedding.conjugate t.1) = ComplexEmbedding.conjugate (f t).1 := hcj t.1
@@ -162,7 +167,7 @@ theorem GlobalTheory.Dict.exists_dic : ∀ (E : Type) [Field E] [NumberField E] 
       obtain ⟨τ, hτ⟩ := u
       obtain ⟨τ, rfl⟩ := i1.surjective τ
       rw [show ComplexEmbedding.conjugate (ComplexEmbedding.conjugate τ) = τ from i1 τ, perFr,
-        dif_neg (fun h => (X.cmType τ).1 h hτ), dif_pos (show conjEmb τ ∈ X.Ψ from hτ), dif_pos (by omega)]
+        dite_eq_right (fun h => (X.cmType τ).1 h hτ), dite_eq_left (show conjEmb τ ∈ X.Ψ from hτ), dite_eq_left (by omega)]
       rfl
   · rcases hidx j with ⟨t, i, h1, h2, h3⟩ | ⟨t, i, h1, h2, h3⟩
     · rw [h3, h1]
@@ -201,5 +206,5 @@ theorem GlobalTheory.Dict.exists_dic : ∀ (E : Type) [Field E] [NumberField E] 
     have := hpos t.1 t.2 (by rw [i3 _ t.2]; exact hp)
     rw [i3 _ t.2] at this
     simp only [Function.comp_apply, Equiv.symm_apply_apply, k₀, diffOf]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
     exact this

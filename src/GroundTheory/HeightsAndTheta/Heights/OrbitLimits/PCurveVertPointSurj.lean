@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.MemMCoordIdealIff
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveClosedPointChart
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveRingFinite
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveSectionQuotLocal
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveVertPointResidue
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.MemMCoordIdealIff
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveClosedPointChart
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveRingFinite
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveSectionQuotLocal
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveVertPointResidue
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -13,8 +18,8 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo HilbertSamuel.Section
 
 noncomputable section
 
-open CurveVerticalPointSurjective in
 
+open CurveVerticalPointSurjective in
 theorem CurveVertPointSurj.proof (hFin : CurveRingFinite.Statement) (hC : CurveClosedPointChart.Statement) :
     CurveVertPointSurj.Statement := by
   classical

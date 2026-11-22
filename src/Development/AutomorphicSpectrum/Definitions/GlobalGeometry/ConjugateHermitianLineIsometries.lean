@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,9 +67,5 @@ def joinVec {Ω : Type} (y₁ : (Σ k, ι₁ k) → Ω) (y₂ : (Σ k, ι₂ k) 
   | ⟨Sum.inr k, i⟩ => y₂ ⟨k, i⟩
 
 end Join
-
-def numOn (II : IntersectionSystem) {Ω : Type} [Field Ω] [CharZero Ω] (y : (Σ k, ι k) → Ω) (d : ℕ)
-    (L : Fin d → HermLine ι) : ℝ :=
-  (Module.finrank (blockFnField y) Ω : ℝ) * II K ι (mCoordIdeal y) d L
 
 end GlobalTheory.CompanionTheory.Ar.Cmp

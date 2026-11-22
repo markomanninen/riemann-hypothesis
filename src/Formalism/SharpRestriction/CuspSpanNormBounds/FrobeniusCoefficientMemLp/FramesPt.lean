@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.BigCellConjI
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.BigCellConjI
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+
+@[expose] public section
 
 noncomputable section
 

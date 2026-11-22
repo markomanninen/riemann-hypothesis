@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.DataKap
+module
+
+public import Formalism.LocalRingCardinality.DataKap
+
+@[expose] public section
 
 noncomputable section
 

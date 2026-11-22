@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MultiplicativeLargeSieve
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MultiplicativeLargeSieve
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology
 
 namespace GlobalTheory
@@ -10,7 +15,7 @@ private lemma squarefree_prod_of_prime (s : Finset ℕ) (h : ∀ p ∈ s, p.Prim
   intro x hx hxx
   have hmem : ∀ t ⊆ s, x ∣ ∏ p ∈ t, p → x ∈ t := by
     intro t ht hdvd
-    obtain ⟨p, hp, hxp⟩ := (Prime.dvd_finset_prod_iff hx.prime _).1 hdvd
+    obtain ⟨p, hp, hxp⟩ := (Prime.dvd_finsetProd_iff hx.prime _).1 hdvd
     rw [(Nat.prime_dvd_prime_iff_eq hx (h p (ht hp))).1 hxp]; exact hp
   have hxs : x ∈ s := hmem s subset_rfl (dvd_trans (dvd_mul_right x x) hxx)
   rw [← Finset.mul_prod_erase s (fun p => p) hxs] at hxx
@@ -172,7 +177,7 @@ private lemma sum_coprime_range_mul_eq_sum_sum (d p : ℕ) (hd : 0 < d) (hp : p.
       (x.1 * p + x.2 * d) % (d * p) ∈ (Finset.range (d * p)).filter (d * p).Coprime := by
     intro x hx
     simp only [Finset.mem_product, Finset.mem_filter, Finset.mem_range] at hx ⊢
-    refine ⟨Nat.mod_lt _ (Nat.mul_pos hd hp0), Nat.Coprime.mul ?_ ?_⟩
+    refine ⟨Nat.mod_lt _ (Nat.mul_pos hd hp0), Nat.Coprime.mul_left ?_ ?_⟩
     · rw [coprime_mod_mul_iff, coprime_mul_add_mul_iff _ _ _ _ hcop]; exact hx.1.2
     · rw [mul_comm d p, coprime_mod_mul_iff, add_comm, coprime_mul_add_mul_iff _ _ _ _ hcop.symm]
       exact hx.2.2
@@ -297,7 +302,8 @@ private lemma sum_norm_sq_exp_sum_eq_mul_sum_residues (d : ℕ) (hd : 0 < d) (S 
   apply Complex.ofReal_injective
   push_cast
   rw [Finset.mul_sum]
-  simp_rw [hgroup, hsq, map_sum, map_mul, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [hgroup, hsq, map_sum, map_mul, Finset.sum_mul_sum]
   have horth : ∀ r ∈ Finset.range d, ∀ s ∈ Finset.range d,
       ∑ a ∈ Finset.range d, B r * cexp (2 * ↑Real.pi * I * r * a / d) *
         ((starRingEnd ℂ) (B s) * (starRingEnd ℂ) (cexp (2 * ↑Real.pi * I * s * a / d)))
@@ -333,7 +339,8 @@ private lemma sum_norm_sq_exp_sum_eq_mul_sum_residues (d : ℕ) (hd : 0 < d) (S 
   rw [Finset.sum_comm, Finset.sum_congr rfl fun s hs => horth r hr s hs, Finset.sum_ite_eq]
   simp only [hr, if_true]
   rw [hB]
-  simp [map_sum, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, Finset.sum_mul_sum]
 
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 private lemma norm_sum_sq_le_pred_mul_of_avoids_class (p : ℕ) (hp : p.Prime) (c : ℕ) (S : Finset ℕ) (b : ℕ → ℂ)
@@ -422,8 +429,8 @@ private lemma norm_sum_sq_le_totient_mul_of_avoids_classes (S : Finset ℕ) :
     _ = _ := by
         rw [← Finset.mul_sum]; push_cast [Nat.cast_sub hp.one_le]; ring
 
-open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 
+open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 theorem _root_.GlobalTheory.arithmetic_large_sieve_one_class : ∀ (M N Q q : ℕ) (S : Finset ℕ), 1 ≤ Q → 1 ≤ q →
     S ⊆ Finset.Ioc M (M + N) →
     (∀ p : ℕ, p.Prime → p ≤ Q → ¬ p ∣ q → ∃ c : ℕ, ∀ n ∈ S, ¬ n ≡ c [MOD p]) →

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -19,7 +23,8 @@ theorem det_traceGram_blockMatrix {E E' : Type} [Field E] [Field E'] [Algebra E 
     calc Algebra.trace E E' (w k * y) = Algebra.trace E E' (w k * ∑ m, w.repr y m • w m) := by
           rw [w.sum_repr y]
       _ = ∑ m, D k m * w.repr y m := by
-          simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_smul, smul_eq_mul, hD, of_apply]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_smul, smul_eq_mul, hD, of_apply]
           exact Finset.sum_congr rfl fun m _ => mul_comm _ _
   have hrep : ∀ (x y : E') m, w.repr (x * y) m = ∑ s, Algebra.leftMulMatrix w x m s * w.repr y s := by
     intro x y m

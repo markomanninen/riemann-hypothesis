@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL ValuativeRel PositivityTheory.Lbc Topology Filter Matrix
 
@@ -105,12 +109,29 @@ theorem exists_pow_conj_mem_KN : ∀ (k : Type) [Field k] [ValuativeRel k] [Topo
     simpa using h1O
   obtain ⟨j, hj⟩ := ht.2 U hU h1U
   refine ⟨j, ?_⟩
+  have hconjAll : ∀ r : ℕ, leviEmb k (stdBlocks d hd) t ^ r * v *
+      (leviEmb k (stdBlocks d hd) t ^ r)⁻¹ ∈ KN k N J d hd := by
+    intro r
+    induction r with
+    | zero => simpa only [pow_zero, one_mul, inv_one, mul_one] using
+        (show v ∈ KN k N J d hd from Subgroup.mem_inf.2 ⟨hvJ, hvN⟩)
+    | succ r ih =>
+      simpa only [pow_succ', _root_.mul_inv_rev, mul_assoc] using ht.1.1 _ ih
   set G := leviEmb k (stdBlocks d hd) t ^ j with hG
-  have hGn : G ∈ Subgroup.normalizer (unipRad k (stdBlocks d hd) : Set (GL (Fin N) k)) :=
-    pow_mem (leviEmb_mem_normalizer k (stdBlocks d hd) t) j
+  have hconj : G * v * G⁻¹ ∈ KN k N J d hd := hconjAll j
   have hmem := hj v (Subgroup.mem_inf.2 ⟨hvJ, hvN⟩)
   have hval := val_conj_one_add_smul G n v c hv
-  refine Subgroup.mem_inf.2 ⟨(memJ _).2 ?_, (Subgroup.mem_normalizer_iff.1 hGn n).1 hn⟩
+  have hscaled : (1 : Matrix (Fin N) (Fin N) k) +
+      c⁻¹ • (((G * v * G⁻¹ : GL (Fin N) k) : Matrix (Fin N) (Fin N) k) - 1) =
+      ((G * n * G⁻¹ : GL (Fin N) k) : Matrix (Fin N) (Fin N) k) := by
+    rw [hval]
+    simp [smul_smul, inv_mul_cancel₀ hc0']
+  obtain ⟨w, hw, hwN⟩ := exists_one_add_smul_mem_unipRad (stdBlocks d hd)
+    (Subgroup.mem_inf.1 hconj).2 c⁻¹
+  have hw_eq : w = G * n * G⁻¹ := by
+    apply Units.ext
+    exact hw.trans hscaled
+  refine Subgroup.mem_inf.2 ⟨(memJ _).2 ?_, hw_eq ▸ hwN⟩
   have hmem' : (1 : Matrix (Fin N) (Fin N) k) +
       c⁻¹ • (((G * v * G⁻¹ : GL (Fin N) k) : Matrix (Fin N) (Fin N) k) - 1) ∈ O := hmem
   rw [hval] at hmem'

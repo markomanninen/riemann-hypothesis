@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 private theorem hkNorm_mem {G : Type} [Group G] (I : Subgroup G) (x y : G) :
@@ -83,7 +88,8 @@ private theorem hkNorm_mul {A G M : Type} [CommRing A] [Group G] [AddCommGroup M
   simp only [one_mul, mul_one] at h0 hl hr
   constructor
   · ext v
-    rw [hl, Module.End.mul_apply, hkNorm_one ρ I hI u hu, h0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hl, Module.End.mul_apply, hkNorm_one ρ I hI u hu, h0, map_sum]
     simp only [map_mul, Module.End.mul_apply]
   · ext v
     rw [hr, Module.End.mul_apply, h0, hkNorm_one ρ I hI u hu]

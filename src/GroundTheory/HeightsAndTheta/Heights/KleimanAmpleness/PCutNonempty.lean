@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutOneGeneratorSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutOneGeneratorSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -21,7 +26,8 @@ theorem coe_aeval_ratio_mem_idealMod {pp : Ideal (Poly k N)}
     ((aeval (ratio (S := k) hj) p : chartRing k x (singleChart hj)) : Ω) ∈
       idealMod (x := x) pp (singleChart hj) := by
   rw [← sum_homogeneousComponent p]
-  rw [map_sum, AddSubmonoidClass.coe_finsetSum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, AddSubmonoidClass.coe_finsetSum]
   refine Submodule.sum_mem _ fun d _ => Submodule.subset_span ?_
   exact ⟨homogeneousComponent d p, X j ^ d, d, hh p hp d,
     pow_mem (X_mem_monos (Finset.mem_singleton_self j)) d, homogeneousComponent_isHomogeneous d p,
@@ -44,7 +50,7 @@ theorem coe_aeval_ratio_mul_mem_span {L : SubSystem k x Ω} {s : Ω} {j : Fin (N
     field_simp
   | zero => simp
   | add a b _ _ ha hb =>
-    rw [map_add, Subalgebra.coe_add, add_mul]
+    rw [map_add (f := _), Subalgebra.coe_add, add_mul]
     exact Submodule.add_mem _ ha hb
   | smul g z _ hz =>
     rw [smul_eq_mul, map_mul, Subalgebra.coe_mul, mul_assoc]
@@ -68,7 +74,7 @@ theorem sub_le_twist_sup_span {pp : Ideal (Poly k N)}
     rw [div_self hj, one_pow]
   have hsplit : ℓ = ((aeval (ratio (S := k) hj) p : chartRing k x (singleChart hj)) : Ω) * ℓ +
       ((aeval (ratio (S := k) hj) z : chartRing k x (singleChart hj)) : Ω) * ℓ := by
-    rw [← add_mul, ← Subalgebra.coe_add, ← map_add, hpz, h1, one_mul]
+    rw [← add_mul, ← Subalgebra.coe_add, ← map_add (f := _), hpz, h1, one_mul]
   rw [hsplit]
   refine Submodule.add_mem_sup (Submodule.subset_span ?_) (coe_aeval_ratio_mul_mem_span hj hz hℓ)
   exact ⟨_, coe_aeval_ratio_mem_idealMod hh hj hp, ℓ, hℓ, rfl⟩

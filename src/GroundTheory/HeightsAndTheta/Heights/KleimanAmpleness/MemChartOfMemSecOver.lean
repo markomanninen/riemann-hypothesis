@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.OneMemSecOverZero
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraMore
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockComp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.OneMemSecOverZero
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraMore
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockComp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -168,8 +173,8 @@ theorem gen_of_gen {N : ℕ} {K : Type} [Fintype K] [DecidableEq K] {ι : K → 
 
 end ModelChangeGen
 
-open ModelChangeGen in
 
+open ModelChangeGen in
 theorem ModelChangeGen.proof (hT : ModelTwistGenerated.Statement) : ModelChangeGen.Statement := by
   intro F _ Ω _ _ N K _ _ ι _ y k₀ e K' _ _ ι' _ y' k₀' e' hy hy' hx β β' hs n h hh
   have hpts := modelPts_eq_of_base F y k₀ e y' k₀' e' hy hy' hx

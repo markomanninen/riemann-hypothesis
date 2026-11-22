@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.CompanionTheory.KillSum
@@ -27,7 +32,7 @@ theorem add_killed {R : Type*} [CommRing R] [Algebra ℂ R] (x y : R) (P Q : Mul
     congr 1
     apply Multiset.map_congr rfl
     intro a _
-    simp only [map_add]
+    simp only [map_add (f := _)]
     ring
   choose q hq using key
   rw [Multiset.map_bind, Multiset.prod_bind]

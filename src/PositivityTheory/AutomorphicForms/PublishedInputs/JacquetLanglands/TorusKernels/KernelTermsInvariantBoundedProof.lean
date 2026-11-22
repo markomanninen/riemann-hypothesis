@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,21 +84,21 @@ theorem ee_mul_left (h : D.H) (u : Gf) : D.ee (h * u) = D.χ h * D.ee u := by
   unfold Dat.ee
   by_cases hu : u ∈ D.H
   · have hhu : (h : Gf) * u ∈ D.H := D.H.mul_mem h.2 hu
-    rw [dif_pos hhu, dif_pos hu]
+    rw [dite_eq_left hhu, dite_eq_left hu]
     have e : (⟨(h : Gf) * u, hhu⟩ : D.H) = h * ⟨u, hu⟩ := rfl
     rw [e, map_mul, Units.val_mul]
   · have hhu : (h : Gf) * u ∉ D.H := fun hm => hu (by simpa using D.H.mul_mem (D.H.inv_mem h.2) hm)
-    rw [dif_neg hhu, dif_neg hu, mul_zero]
+    rw [dite_eq_right hhu, dite_eq_right hu, mul_zero]
 
 theorem ee_mul_right (u : Gf) (h : D.H) : D.ee (u * h) = D.ee u * D.χ h := by
   unfold Dat.ee
   by_cases hu : u ∈ D.H
   · have hhu : u * (h : Gf) ∈ D.H := D.H.mul_mem hu h.2
-    rw [dif_pos hhu, dif_pos hu]
+    rw [dite_eq_left hhu, dite_eq_left hu]
     have e : (⟨u * (h : Gf), hhu⟩ : D.H) = ⟨u, hu⟩ * h := rfl
     rw [e, map_mul, Units.val_mul]
   · have hhu : u * (h : Gf) ∉ D.H := fun hm => hu (by simpa using D.H.mul_mem hm (D.H.inv_mem h.2))
-    rw [dif_neg hhu, dif_neg hu, zero_mul]
+    rw [dite_eq_right hhu, dite_eq_right hu, zero_mul]
 
 theorem ee_inv_mul (h : D.H) (u : Gf) : D.ee ((h : Gf)⁻¹ * u) = (D.χ h : ℂ)⁻¹ * D.ee u := by
   have e := ee_mul_left D h⁻¹ u

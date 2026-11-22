@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+
+@[expose] public section
 
 open GroundTheory.Heights₂.Heights.LowerBoundFree
 
@@ -71,7 +75,7 @@ theorem commGroup_mul_mul_eq_mul_inv_mul_mul_mul (hb : Function.Bijective form) 
   have anti : ∀ x y, form x y = -form y x := by
     intro x y
     have h := halt (x + y)
-    simp only [map_add, LinearMap.add_apply, halt x, halt y, zero_add, add_zero] at h
+    simp only [map_add (f := _), LinearMap.add_apply, halt x, halt y, zero_add, add_zero] at h
     omega
   obtain ⟨k, i, φ, hiI, hsum, hφ⟩ := exists_retraction (R := ℤ) (M := Λ) (I.restrictScalars ℤ)
     (fun x n hn hx => hsat x n hn hx)
@@ -115,12 +119,12 @@ theorem commGroup_mul_mul_eq_mul_inv_mul_mul_mul (hb : Function.Bijective form) 
   have hr_f : ∀ x a, form (r x) (f a) = 0 := by
     intro x a
     have h2 := hsumI_f (fun b => form x (f b)) a
-    rw [hr_apply, map_add, LinearMap.add_apply, h2]
+    rw [hr_apply, map_add (f := _), LinearMap.add_apply, h2]
     omega
   have hr_perp : ∀ x, (∀ y ∈ I, form x y = 0) → ∀ y ∈ I, form (r x) y = 0 := by
     intro x hx y hy
     have e : r x = x + (r x - x) := by abel
-    rw [e, map_add, LinearMap.add_apply, hx y hy, hiso _ (hrI x) y hy, add_zero]
+    rw [e, map_add (f := _), LinearMap.add_apply, hx y hy, hiso _ (hrI x) y hy, add_zero]
   let ιZ : M →ₗ[ℤ] Λ := ι.restrictScalars ℤ
   let πZ : M →ₗ[ℤ] Λ' := π.restrictScalars ℤ
   have hπZ : Function.Surjective πZ := hπ
@@ -152,7 +156,7 @@ theorem commGroup_mul_mul_eq_mul_inv_mul_mul_mul (hb : Function.Bijective form) 
     obtain ⟨m, hm⟩ := (hr x).1 hx
     exact ⟨π m, by rw [hs_apply, hm]; exact hrI x⟩
   have hs_inj : Function.Injective s := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     obtain ⟨m, rfl⟩ := hπ z
     rw [hs_apply] at hz
@@ -202,13 +206,13 @@ theorem commGroup_mul_mul_eq_mul_inv_mul_mul_mul (hb : Function.Bijective form) 
     let H : Λ →ₗ[ℤ] (Fin k → ℤ) := LinearMap.pi fun b => form.flip (i b)
     have hH : ∀ x b, H x b = form x (i b) := fun x b => rfl
     have hFinj : Function.Injective F := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       rintro ⟨z, c⟩ h0
       rw [hF] at h0
       have hc : c = 0 := by
         funext a
         have h5 := congrArg (fun x => form x (f a)) h0
-        simp only [map_add, LinearMap.add_apply, hs_f, hsumI_f, map_zero, LinearMap.zero_apply] at h5
+        simp only [map_add (f := _), LinearMap.add_apply, hs_f, hsumI_f, map_zero, LinearMap.zero_apply] at h5
         simpa using h5
       subst hc
       simp at h0
@@ -225,7 +229,7 @@ theorem commGroup_mul_mul_eq_mul_inv_mul_mul_mul (hb : Function.Bijective form) 
       constructor
       · rintro ⟨⟨z, c⟩, rfl⟩
         funext b
-        rw [hH, hF, map_add, LinearMap.add_apply, hs_perp z _ (hiI' b), hiso _ (hImem c) _ (hiI' b)]
+        rw [hH, hF, map_add (f := _), LinearMap.add_apply, hs_perp z _ (hiI' b), hiso _ (hImem c) _ (hiI' b)]
         simp
       · intro hx
         have hx' : ∀ y ∈ I, form x y = 0 := hperp x (fun b => by
@@ -241,7 +245,7 @@ theorem commGroup_mul_mul_eq_mul_inv_mul_mul_mul (hb : Function.Bijective form) 
     have h6 := rank_exact F H hFinj hHsurj hex
     rw [Module.finrank_prod, Module.finrank_fin_fun] at h6
     omega
-  · rw [injective_iff_map_eq_zero]
+  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     apply hs_inj
     rw [map_zero]
@@ -251,7 +255,7 @@ theorem commGroup_mul_mul_eq_mul_inv_mul_mul_mul (hb : Function.Bijective form) 
     obtain ⟨w, y, hy, c, rfl⟩ := hdecomp x
     have hw := LinearMap.congr_fun hz w
     simp only [LinearMap.compl₁₂_apply, LinearMap.zero_apply] at hw
-    simp [map_add, hw, hs_perp z y hy, hs_f]
+    simp [map_add (f := _), hw, hs_perp z y hy, hs_f]
   · intro ψ
     let P : Λ →ₗ[ℤ] Λ := LinearMap.id - ∑ a, LinearMap.toSpanSingleton ℤ Λ (f a) ∘ₗ form.flip (i a)
     have hP : ∀ x, P x = x - ∑ a, form x (i a) • f a := by
@@ -314,7 +318,7 @@ theorem exists_quot (hb : Function.Bijective form) (halt : ∀ x, form x x = 0) 
     { carrier := {x | ∀ y ∈ I, form x y = 0}
       add_mem' := by
         intro x z hx hz y hy
-        simp only [Set.mem_setOf_eq, map_add, LinearMap.add_apply, hx y hy, hz y hy, add_zero]
+        simp only [Set.mem_setOf_eq, map_add (f := _), LinearMap.add_apply, hx y hy, hz y hy, add_zero]
       zero_mem' := by
         intro y _
         simp

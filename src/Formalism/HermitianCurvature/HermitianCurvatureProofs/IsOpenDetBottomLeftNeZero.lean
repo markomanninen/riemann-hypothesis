@@ -1,14 +1,16 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffAtSecondCoordinate
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffAtSecondCoordinate
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBI
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U Formalism.FourierDecayAlt.P.Ux3 Formalism.FourierDecayAlt.P.PBI.Sm
-open scoped ComplexConjugate
+open scoped ComplexConjugate ContDiff
 
 noncomputable section
-
-local notation "∞'" => ((⊤ : ℕ∞) : WithTop ℕ∞)
 
 section msgen
 
@@ -67,7 +69,7 @@ theorem measurable_block_three {E : Type*} [NormedAddCommGroup E] [NormedSpace �
   simpa [blk3, Matrix.reindex_apply, Matrix.submatrix_apply] using h
 
 theorem ms_ofMt (y₀ : Mt k j) : MS (fun y : Mt k j => Matrix.of y) y₀ := fun i l => by
-  have h := contDiffAt_pi.1 (contDiffAt_pi.1 (contDiffAt_id (𝕜 := ℝ) (n := ∞') (x := y₀)) i) l
+  have h := contDiffAt_pi.1 (contDiffAt_pi.1 (contDiffAt_id (𝕜 := ℝ) (n := ∞) (x := y₀)) i) l
   simpa using h
 
 def bk11 (M : B.Mat k (j + ρ)) : Matrix (Fin j) (Fin j) ℂ :=
@@ -135,7 +137,7 @@ theorem ms_skewOfCoords {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {
     · exact cd_conj (hS b a)
     · exact contDiffAt_const
   · split_ifs
-    · exact contDiffAt_const.mul (cd_ofReal ((Complex.imCLM.contDiff (n := ∞')).contDiffAt.comp _ (hS a a)))
+    · exact contDiffAt_const.mul (cd_ofReal ((Complex.imCLM.contDiff (n := ∞)).contDiffAt.comp _ (hS a a)))
     · exact contDiffAt_const
 
 theorem ms_rn {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E}
@@ -158,7 +160,7 @@ theorem ms_rn_inv {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E}
     (ms_const _) (ms_const _) (ms_const _)
 
 theorem chart_contDiffAt (y₀ : Mt k (j + ρ)) (h₀ : (bk31 (Matrix.of y₀)).det ≠ 0) :
-    ContDiffAt ℝ ∞' (chart (k := k) (j := j) (ρ := ρ)) y₀ := by
+    ContDiffAt ℝ ∞ (chart (k := k) (j := j) (ρ := ρ)) y₀ := by
   have hM := ms_ofMt (k := k) (j := j + ρ) y₀
   have h11 : MS (fun y : Mt k (j + ρ) => bk11 (Matrix.of y)) y₀ := ms_submatrix hM _ _
   have h21 : MS (fun y : Mt k (j + ρ) => bk21 (Matrix.of y)) y₀ := ms_submatrix hM _ _
@@ -179,13 +181,13 @@ theorem chart_contDiffAt (y₀ : Mt k (j + ρ)) (h₀ : (bk31 (Matrix.of y₀)).
     ms_submatrix (ms_mul (ms_mul (ms_rn hC hS) hM) (ms_rn_inv hC' hS')) _ _
   have hX : ∀ {Cf : Mt k (j + ρ) → Matrix (Fin (2 * ρ + k + 1)) (Fin j) ℂ}
       {Sf : Mt k (j + ρ) → Matrix (Fin j) (Fin j) ℂ}, MS Cf y₀ → MS Sf y₀ →
-      ContDiffAt ℝ ∞' (fun y => ((Matrix.of.symm (Cf y), skewCoords (Sf y)) : RC k j ρ)) y₀ := by
+      ContDiffAt ℝ ∞ (fun y => ((Matrix.of.symm (Cf y), skewCoords (Sf y)) : RC k j ρ)) y₀ := by
     intro Cf Sf hCf hSf
     refine ContDiffAt.prodMk ?_ (ContDiffAt.prodMk ?_ ?_)
     · exact contDiffAt_pi.2 fun i => contDiffAt_pi.2 fun a => by simpa using hCf i a
     · exact contDiffAt_pi.2 fun q => by simpa [skewCoords] using hSf q.1.1 q.1.2
     · exact contDiffAt_pi.2 fun i => by
-        have h := (Complex.imCLM.contDiff (n := ∞')).contDiffAt.comp _ (hSf i i)
+        have h := (Complex.imCLM.contDiff (n := ∞)).contDiffAt.comp _ (hSf i i)
         simp only [Function.comp_def, Complex.imCLM_apply] at h
         simpa [skewCoords] using h
   refine ContDiffAt.prodMk (ContDiffAt.prodMk (hX hC hS) (hX hC' hS')) (ContDiffAt.prodMk ?_ ?_)
@@ -193,7 +195,7 @@ theorem chart_contDiffAt (y₀ : Mt k (j + ρ)) (h₀ : (bk31 (Matrix.of y₀)).
   · exact contDiffAt_pi.2 fun i => contDiffAt_pi.2 fun a => by simpa using hMu i a
 
 theorem chart_contDiffOn :
-    ContDiffOn ℝ ∞' (chart (k := k) (j := j) (ρ := ρ)) {y | (bk31 (Matrix.of y)).det ≠ 0} :=
+    ContDiffOn ℝ ∞ (chart (k := k) (j := j) (ρ := ρ)) {y | (bk31 (Matrix.of y)).det ≠ 0} :=
   fun y hy => (chart_contDiffAt y hy).contDiffWithinAt
 
 theorem isOpen_det_bottom_left_ne_zero : IsOpen {y : Mt k (j + ρ) | (bk31 (Matrix.of y)).det ≠ 0} := by
@@ -329,21 +331,5 @@ end Formalism.FourierDecayAlt.P.PBI
 namespace Formalism.FourierDecayAlt.P
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
-
-theorem pb_chartSmooth (k j ρ : ℕ) :
-    ∃ φ : Mt k (j + ρ) → (RC k j ρ × RC k j ρ) × ((Fin j → Fin j → ℂ) × Mt k ρ),
-      IsOpen {y : Mt k (j + ρ) | DjU k j ρ (Matrix.of y) ≠ 0} ∧
-      ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) φ {y | DjU k j ρ (Matrix.of y) ≠ 0} ∧
-      ∀ g ∈ B.GV k (j + ρ), DjU k j ρ g ≠ 0 →
-        (Matrix.of (φ (Matrix.of.symm g)).2.1).det ≠ 0 ∧ Matrix.of (φ (Matrix.of.symm g)).2.2 ∈ B.GV k ρ ∧
-        g = (Rn k j ρ (φ (Matrix.of.symm g)).1.1)⁻¹ *
-          mMap k j ρ (Matrix.of (φ (Matrix.of.symm g)).2.1) (Matrix.of (φ (Matrix.of.symm g)).2.2) *
-          Rn k j ρ (φ (Matrix.of.symm g)).1.2 := by
-  have hset : {y : Mt k (j + ρ) | DjU k j ρ (Matrix.of y) ≠ 0} = {y | (PBI.bk31 (Matrix.of y)).det ≠ 0} := by
-    ext y; exact PBI.djU_ne_iff _
-  refine ⟨PBI.chart, by rw [hset]; exact PBI.isOpen_det_bottom_left_ne_zero, by rw [hset]; exact PBI.chart_contDiffOn, ?_⟩
-  intro g hg hD
-  have h := PBI.chart_spec g hg hD
-  simpa [PBI.chart] using h
 
 end Formalism.FourierDecayAlt.P

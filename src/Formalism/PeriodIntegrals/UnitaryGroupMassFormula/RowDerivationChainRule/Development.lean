@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RowLetter
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RowLetter
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -35,7 +39,8 @@ theorem euler_theta (hH : HdHom) (K : Type) [Field K] (m : ℕ) (vec : Bool) (d 
     ∑ c, theta K m vec (pderiv c P) * Nv K m vec c = (d : K) • theta K m vec P := by
   have h1 := (hH K (m + 1) d P hP).sum_X_mul_pderiv
   have h2 := congrArg (theta K m vec) h1
-  simp only [map_sum, map_mul, theta_X, map_nsmul] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, theta_X, map_nsmul] at h2
   rw [← Nat.cast_smul_eq_nsmul K] at h2
   rw [← h2]
   exact Finset.sum_congr rfl (fun c _ => mul_comm _ _)

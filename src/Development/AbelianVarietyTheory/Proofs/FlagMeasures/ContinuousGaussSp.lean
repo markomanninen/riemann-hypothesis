@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousMatrixEntryAbsSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CdScaleIsTrueScale
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousMatrixEntryAbsSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CdScaleIsTrueScale
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,9 +46,7 @@ variable {P Q P' Q' : ℕ} in
 theorem _root_.GlobalTheory.GaugeQuot.continuous_hsDist : Continuous (_root_.GlobalTheory.GaugeQuot.hsDist : _root_.Formalism.BasicNotions.UpqT P Q → ℝ) := by
   have hmat : Continuous (_root_.Formalism.BasicNotions.UpqT.mat : _root_.Formalism.BasicNotions.UpqT P Q → _) := _root_.GlobalTheory.UpqTopology.continuous_mat
   unfold _root_.GlobalTheory.GaugeQuot.hsDist
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
-  exact (((continuous_apply j).comp ((continuous_apply i).comp
-    (hmat.sub continuous_const))).norm).pow 2
+  fun_prop
 
 open MeasureTheory Matrix Filter Topology in
 open scoped ENNReal in

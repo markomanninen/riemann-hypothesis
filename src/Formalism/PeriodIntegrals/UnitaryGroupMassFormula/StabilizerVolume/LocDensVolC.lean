@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolB
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHC
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolB
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHC
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,11 +28,13 @@ theorem crd_sigR (σ : E →ₐ[F] E) (z : Fv F v ⊗[F] E) (l : Fin d) :
     intro k
     simp [sigR]
   conv_lhs => rw [← B.sum_repr z]
-  rw [map_sum]
-  simp only [sigR_smul, hB, hs, crd, map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sigR_smul, hB, hs, crd, map_sum, map_smul, Finset.sum_apply,
     Finsupp.smul_apply, smul_eq_mul, Algebra.TensorProduct.basis_repr_tmul,
     Finsupp.mapRange_apply, one_smul]
-  rfl
+  simp [Finsupp.smul_apply, Finsupp.mapRange_apply, hBdef]
 
 theorem ev_sig (σ : E →ₐ[F] E) :
     ∀ᶠ v in cofinite, ∀ z ∈ latA v b, sigR (Fv F v) σ z ∈ latA v b := by
@@ -79,7 +85,7 @@ theorem ev_dualH [Algebra.IsSeparable F E] (σ : E →ₐ[F] E) (hσ : ∀ x, σ
       rw [this]
       exact mul_mem hh (hS q p k)
     have hcc : c + c = 1 := by
-      rw [hc, ← map_add]
+      rw [hc, ← map_add (f := _)]
       norm_num
     have hSX : S = ⟨iota v σ X, iota_mem v σ hσ X⟩ := by
       apply Subtype.ext

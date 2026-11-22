@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Choice
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.AmpTensorDSdNonemptyOfSubsingleton
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Choice
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.AmpTensorDSdNonemptyOfSubsingleton
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,7 +149,7 @@ private theorem conj_mem_lemma (C : Choice X θ) (τ : D.what₂.Tau) (γ : Form
 theorem wT_off (C : Choice X θ) (u : D.what₂.Word) (τ : D.what₂.Tau) (m : Formalism.FourierDecayAlt.B.Mat D.R.k D.R.rS)
     (hm : m ∉ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk D.R.k D.R.rS)) : wT C u τ m = 0 := by
   unfold wT
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨γ, hγ⟩
   apply hm
   obtain ⟨h1, h2, -, -⟩ := C.isT τ
@@ -166,7 +170,7 @@ theorem wT_at (C : Choice X θ) (u : D.what₂.Word) (τ : D.what₂.Tau) (γ : 
   have hex : ∃ γ' : Formalism.REAL.UJ (X.B.I.ε (vOf X τ)), uMat γ' = C.Q τ * (C.Qi τ * uMat γ * C.Q τ) * C.Qi τ :=
     ⟨γ, by simp only [Matrix.mul_assoc, h2, Matrix.mul_one, hB]⟩
   unfold wT
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have heq : uMat hex.choose = uMat γ := by
     rw [hex.choose_spec]
     simp only [Matrix.mul_assoc, h2, Matrix.mul_one, hB]

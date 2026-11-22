@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ThetaMove
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ThetaMove
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -131,7 +135,7 @@ theorem eq_weilUnit_of_comm (c : CubicalStr G L) (N : ℕ) {T : Over S} [Subsing
     (congrArg (val _ · z J) (tr _))).trans (vy _)))).symm.trans (e.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·)
       ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (vy 1) (((val_pull hJ _ _ _).trans
         (congrArg (val _ · z J) (tr _))).trans (vx _)))) vc)))
-  rw [(isCub_cubV c hJ).N_one, (isCub_cubV c hJ).N_one] at e'
+  simp only [(isCub_cubV c hJ).N_one] at e'
   rw [gm_id_weilUnit c N hx hy z hJ, wq]
   apply Additive.ofMul.injective
   have b := congrArg Additive.ofMul e'

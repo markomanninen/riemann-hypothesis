@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 private lemma rk (g : ℕ) (Λ : Submodule ℤ (Fin g → ℂ)) [h : DiscreteTopology Λ] : Module.finrank ℤ Λ ≤ 2 * g := by
@@ -27,7 +32,7 @@ theorem UpperTheory.exists_injective_lattice_hom_ringOfIntegers_of_finrank_ge :
   let ψ : 𝓞 E →ₗ[ℤ] Λ := ψ'.toIntLinearMap
   have hψ : ∀ s, (ψ s : Fin g → ℂ) = α s x0 := fun s => rfl
   have hinj : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro s hs0
     by_contra hne
     have hz : α s x0 = 0 := by rw [← hψ, hs0]; rfl
@@ -55,7 +60,7 @@ theorem UpperTheory.exists_injective_lattice_hom_ringOfIntegers_of_finrank_ge :
     exact this
   choose f hf using hmem
   refine ⟨AddMonoidHom.mk' f (fun a b => hinj ?_), fun a b hab => ?_, fun s x => hinj ?_⟩
-  · rw [map_add, hf, hf, hf, smul_add]
+  · rw [map_add (f := _), hf, hf, hf, smul_add]
   · have h1 : f a = f b := hab
     have h2 : d • a = d • b := by rw [← hf, ← hf, h1]
     have h3 : (d : ℂ) • (a : Fin g → ℂ) = (d : ℂ) • (b : Fin g → ℂ) := by

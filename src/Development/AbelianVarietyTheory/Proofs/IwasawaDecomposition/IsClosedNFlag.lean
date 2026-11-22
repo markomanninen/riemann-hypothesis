@@ -1,25 +1,29 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueInfFam
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenKer
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionStarStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAutomorphicFormRightTranslateFiniteAdelicStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterInfinityExponentGroupLawsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCuspFunctionClosedUnderOperationsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousAdelicUnitaryEmbeddingStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryUnimodularExistsFundamentalDomainStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLatticeStabiliserSubgroupOutsidePlacesStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeterssonNormSqPosAutomorphicFunctionUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteBesselPeriodSesquilinearStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueNormalizedHaarMeasureAdelicUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLawsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsotropicUnipotentRadicalsRationalCocompactStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueInfFam
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenKer
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionStarStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAutomorphicFormRightTranslateFiniteAdelicStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterInfinityExponentGroupLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCuspFunctionClosedUnderOperationsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousAdelicUnitaryEmbeddingStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryUnimodularExistsFundamentalDomainStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLatticeStabiliserSubgroupOutsidePlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeterssonNormSqPosAutomorphicFunctionUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteBesselPeriodSesquilinearStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueNormalizedHaarMeasureAdelicUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsotropicUnipotentRadicalsRationalCocompactStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,41 +104,6 @@ theorem exists_top (hT : TopInt D) (hθ : IsInfFam θ) (A B : HSp D) (ι : B.V �
     rw [map_mul, (aut hθ φ).left _ (hq γ hγ), (cuspF hθ F).1.left γ hγ]
   · exact ⟨0, fun _ h => absurd h hι⟩
 
-theorem exists_lift (hL : LiftAut D) (hθ : IsInfFam θ) {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1))
-    (Wf : WeilFun D ψ) (V W : HSp D) (χ χ' : IdC D) :
-    ∃ t : ThS ψ V W →ₗ[ℂ] CuspS θ V →ₗ[ℂ] AFs θ W, (¬ (admitted V W χ χ' ∧ V.SigOK) → t = 0) ∧
-      (admitted V W χ χ' → V.SigOK → ∀ μ 𝓕, IsVolPair D V μ 𝓕 → ∀ Φ F h,
-        (t Φ F).1 h = ∫ g in 𝓕, Wf.ker V W χ χ' Φ g h * F.1 g ∂μ) := by
-  by_cases h : admitted V W χ χ' ∧ V.SigOK
-  · have k := fun Φ (F : CuspS θ V) => hL θ hθ ψ hψ Wf V W χ χ' h.1 _ _ (quot_mu V) Φ F.1 (cuspF hθ F)
-    refine ⟨LinearMap.mk₂ ℂ (fun Φ F => ⟨_, Submodule.subset_span (k Φ F).2⟩) ?_ ?_ ?_ ?_, fun h' => absurd h h', ?_⟩
-    · intro Φ Φ' F
-      ext x
-      simp only [Submodule.coe_add, Pi.add_apply]
-      rw [← integral_add ((k Φ F).1 x) ((k Φ' F).1 x)]
-      simp [WeilFun.ker, add_mul]
-    · intro c Φ F
-      ext x
-      simp only [Submodule.coe_smul, Pi.smul_apply]
-      rw [← integral_smul]
-      simp [WeilFun.ker, mul_assoc]
-    · intro Φ F F'
-      ext x
-      simp only [Submodule.coe_add, Pi.add_apply]
-      rw [← integral_add ((k Φ F).1 x) ((k Φ F').1 x)]
-      simp [mul_add]
-    · intro c Φ F
-      ext x
-      simp only [Submodule.coe_smul, Pi.smul_apply]
-      rw [← integral_smul]
-      simp [mul_left_comm]
-    · intro ha hV μ 𝓕 hμ Φ F x
-      refine integral_mu hV hμ (fun g => Wf.ker V W χ χ' Φ g x * F.1 g) fun γ hγ g => ?_
-      have := Wf.ker_left ha Φ hγ (one_mem (GQ W)) g x
-      rw [one_mul] at this
-      rw [this, (cuspF hθ F).1.left γ hγ]
-  · exact ⟨0, fun _ => rfl, fun h1 h2 => absurd ⟨h1, h2⟩ h⟩
-
 theorem integral_unit {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G]
     [LocallyCompactSpace G] [SecondCountableTopology G] (Γ : Subgroup G) [Countable Γ] {μ μ' : Measure G} {𝓕 𝓕' : Set G}
     (h1 : μ.IsHaarMeasure) (h2 : IsFundamentalDomain Γ 𝓕 μ) (h3 : μ 𝓕 = 1)
@@ -158,7 +127,7 @@ theorem integral_aut {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGro
   let m : G ≃ᵐ G := c.toHomeomorph.toMeasurableEquiv
   have k1 : (μ.map m).IsHaarMeasure := ContinuousMulEquiv.isHaarMeasure_map μ c
   have hq : Measure.QuasiMeasurePreserving m.symm (μ.map m) μ :=
-    ⟨m.symm.measurable, by rw [MeasurableEquiv.map_symm_map]⟩
+    ⟨m.symm.measurable.aemeasurable, by rw [MeasurableEquiv.map_symm_map]⟩
   let e : Γ → Γ := fun γ => ⟨c.symm γ, (hc _).1 (by simpa using γ.2)⟩
   have he : Function.Bijective e := ⟨fun a b h => Subtype.ext (c.symm.injective (congrArg Subtype.val h)),
     fun b => ⟨⟨c b, (hc _).2 b.2⟩, Subtype.ext (by simp [e])⟩⟩

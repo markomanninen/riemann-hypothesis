@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
@@ -13,8 +17,6 @@ namespace GlobalTheory.TowerForm
 
 variable {D : D7}
 
-local infixl:70 " ⬝ " => HMul.hMul
-
 def ad {m n : ℕ} (A : Mx D m n) : Mx D n m := Formalism.UG.cT (cA D) A
 
 theorem ad_mul {l m n : ℕ} (A : Mx D l m) (B : Mx D m n) :
@@ -24,7 +26,7 @@ theorem ad_mul {l m n : ℕ} (A : Mx D l m) (B : Mx D m n) :
 
 theorem cA_incA_sig (e : D.host.E) : cA D (incA D e) = incA D (D.sp.cm.sig e) := by
   simp only [cA, sigR, incA, inclR, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
-    Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one]
+    Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.map_tmul, map_one]
 
 theorem ad_map {m n : ℕ} (A : Matrix (Fin m) (Fin n) D.host.E) :
     ad (A.map (incA D) : Mx D m n) = (adj D A).map (incA D) := by
@@ -74,12 +76,12 @@ theorem hO_add_left (S T : HSp D) (x x' y : WO S T) : hO S T (x + x') y = hO S T
 
 theorem hO_add_right (S T : HSp D) (x y y' : WO S T) : hO S T x (y + y') = hO S T x y + hO S T x y' := by
   unfold hO
-  simp only [Matrix.add_apply, map_add, mul_add, add_mul, Finset.sum_add_distrib]
+  simp only [Matrix.add_apply, map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib]
 
 theorem hO_mul_mul (V W : HSp D) {m n : ℕ} (y₁ : Mx D W.rank m) (y₂ : Mx D W.rank n)
     (P₁ : Matrix (Fin m) (Fin V.rank) D.host.E) (P₂ : Matrix (Fin n) (Fin V.rank) D.host.E) :
     hO V W (HMul.hMul y₁ (P₁.map (incA D))) (HMul.hMul y₂ (P₂.map (incA D))) =
-      Matrix.trace (ad y₂ ⬝ W.gram.map (incA D) ⬝ y₁ ⬝ (P₁ * V.gram⁻¹ * adj D P₂).map (incA D)) := by
+      Matrix.trace (ad y₂ * W.gram.map (incA D) * y₁ * (P₁ * V.gram⁻¹ * adj D P₂).map (incA D)) := by
   rw [hO_eq_trace, ad_mul, ad_map, Matrix.map_mul, Matrix.map_mul]
   have key := Matrix.trace_mul_comm (V.gram⁻¹.map (incA D) * (adj D P₂).map (incA D))
     (ad y₂ * W.gram.map (incA D) * y₁ * P₁.map (incA D))
@@ -88,10 +90,6 @@ theorem hO_mul_mul (V W : HSp D) {m n : ℕ} (y₁ : Mx D W.rank m) (y₂ : Mx D
 theorem adj_zero {m n : ℕ} : adj D (0 : Matrix (Fin m) (Fin n) D.host.E) = 0 := by
   unfold adj Formalism.UG.cT
   simp
-
-theorem gram_sandwich (V : HSp D) {m n : ℕ} (A : Matrix (Fin m) (Fin V.rank) D.host.E)
-    (B' : Matrix (Fin V.rank) (Fin n) D.host.E) : A * V.gram * V.gram⁻¹ * (V.gram * B') = A * V.gram * B' := by
-  rw [Matrix.mul_nonsing_inv_cancel_right (h := GlobalTheory.LatVac.gram_det_isUnit V), Matrix.mul_assoc]
 
 section Split
 
@@ -128,7 +126,7 @@ theorem coef_mid_mid (hs : IsIsoSplit V V' C B) :
     Matrix.mul_nonsing_inv (h := GlobalTheory.LatVac.gram_det_isUnit V'), Matrix.mul_one]
 
 theorem trace_swap {m n : ℕ} (Z : Mx D m m) (A : Mx D m n) (Y : Mx D n n) (X : Mx D n m) :
-    Matrix.trace (Z ⬝ A ⬝ Y ⬝ X) = Matrix.trace (A ⬝ Y ⬝ X ⬝ Z) := by
+    Matrix.trace (Z * A * Y * X) = Matrix.trace (A * Y * X * Z) := by
   have key := Matrix.trace_mul_comm Z (A * Y * X)
   simpa only [Matrix.mul_assoc] using key
 

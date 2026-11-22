@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CorankRelation
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CorankRelation
+
+@[expose] public section
+
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.SnFam
 open scoped Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -15,8 +20,8 @@ theorem scal_symm : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what
   have hdim := Formalism.L2.SG.Corank.finrank_VS D
   have hGv : ∀ t : TauC Y u u', t.G ≠ 0 → Gval (lf D (X.Fu u)) t.frame ≠ 0 := fun t h =>
     (Formalism.L2.SG.Pf.SatGram.gterm_G Y t) ▸ h
-  have hlat : ∀ t : TauC Y u u', Submodule.IsLattice D.host.E t.lam := fun t =>
-    ((Y.rowsOK u).1 t.lam t.mem).2.1.1
+  have hlat : ∀ t : TauC Y u u', Submodule.IsFullLattice D.host.E t.lam := fun t =>
+    ((Y.rowsOK u).1 t.lam t.mem).1.1
   have hLF : ∀ t : TauC Y u u', IsLift t.lam (lf D (X.Fu u)) := fun t =>
     ((Y.rowsOK u).1 t.lam t.mem).2.1.2.2.1
   have hLt : ∀ t : TauC Y u u', IsLift t.lam t.frame := fun t => t.rep.2.2.2.2.1

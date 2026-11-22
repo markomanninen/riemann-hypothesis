@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StAPrimeChartLeviLocal
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StProjHoloLocal
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PAPrimeLeviCharts
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StAPrimeChartLeviLocal
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StProjHoloLocal
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PAPrimeLeviCharts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

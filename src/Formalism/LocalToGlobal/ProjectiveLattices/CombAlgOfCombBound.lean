@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.NumericalH1Condition
-import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
-import Formalism.LocalToGlobal.ProjectiveLattices.IntegralExtensionOfRegR1
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.NumericalH1Condition
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntegralExtensionOfRegR1
+
+@[expose] public section
 
 noncomputable section
 

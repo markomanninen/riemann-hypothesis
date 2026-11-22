@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LFunctionPositiveConductorFourEight
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NumberFieldPrimeZetaSumAddLogIsBigO
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SummableInvAbsNormPrimesOfNotPrimeNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LFunctionPositiveConductorFourEight
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NumberFieldPrimeZetaSumAddLogIsBigO
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SummableInvAbsNormPrimesOfNotPrimeNorm
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial GlobalTheory.FieldSize
 open scoped IntermediateField
 open Filter Topology Asymptotics
@@ -54,10 +59,10 @@ theorem not_forall_two_liesOver (K M : Type) [Field K] [NumberField K] [Field M]
     have hg := ((GlobalTheory.countable_ideal_and_summable_absNorm_rpow M).2 s hs).2
     have h0 := hf.tsum_subtype_add_tsum_subtype_compl S
     have h1 : ∑' v : S, ((Ideal.absNorm v.1.asIdeal : ℕ) : ℝ) ^ (-s) ≤ c := by
-      refine (hf.subtype S).tsum_le_tsum (fun v => ?_) hS
+      refine (hf.subtype (fun v => v ∈ S)).tsum_le_tsum (fun v => ?_) hS
       rw [← Real.rpow_neg_one]
       exact Real.rpow_le_rpow_of_exponent_le (one_le_absNorm _) (by linarith)
-    have hT := (hf.subtype (Sᶜ : Set _)).hasSum
+    have hT := (hf.subtype (fun v => v ∈ Sᶜ)).hasSum
     have hsum : HasSum ((fun Q : HeightOneSpectrum (𝓞 M) =>
         ((Ideal.absNorm Q.asIdeal : ℕ) : ℝ) ^ (-s)) ∘ i)
         ((∑' v : (Sᶜ : Set _), ((Ideal.absNorm v.1.asIdeal : ℕ) : ℝ) ^ (-s)) +
@@ -182,7 +187,7 @@ theorem ncard_eq_finrank_iff (K M : Type) [Field K] [NumberField K] [Field M] [N
   · simp only [Finset.mem_univ, forall_true_left, Subtype.forall]
     exact forall₂_congr fun _ _ => eq_comm
   · rintro ⟨Q, hQ, _⟩ -
-    exact Nat.mul_pos (Ideal.ramificationIdx_pos Q _) (Ideal.inertiaDeg_pos Q _)
+    exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := _) Q) (Ideal.inertiaDeg_pos Q _)
 
 theorem ef_eq_one_of_generate (K R M T : Type) [Field K] [NumberField K] [Field R] [NumberField R]
     [Field M] [NumberField M] [Field T] [NumberField T] [Algebra K R] [Algebra K M] [Algebra K T]

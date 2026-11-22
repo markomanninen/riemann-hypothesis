@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsLast
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsTail
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsRest
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ContractMixedField
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsLast
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsTail
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsRest
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ContractMixedField
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

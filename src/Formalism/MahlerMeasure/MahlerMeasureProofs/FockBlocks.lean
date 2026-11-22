@@ -1,6 +1,10 @@
-import Formalism.MahlerMeasure.LevelLattice
-import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
-import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelDecomp
+module
+
+public import Formalism.MahlerMeasure.LevelLattice
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelDecomp
+
+@[expose] public section
 
 namespace Formalism.GM.FockB
 
@@ -166,8 +170,9 @@ theorem free_of_pderiv [CharZero k] {v : σ} {y : MvPolynomial σ k} (h : pderiv
   intro m hm
   by_contra hne
   have hle : Finsupp.single v 1 ≤ m := Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr hne)
-  have hc := congrArg (coeff (m - Finsupp.single v 1)) h
-  rw [coeff_pderiv, tsub_add_cancel_of_le hle, coeff_zero] at hc
+  have hc := congrArg (AddMonoidAlgebra.coeff · (m - Finsupp.single v 1)) h
+  rw [coeff_pderiv, tsub_add_cancel_of_le hle] at hc
+  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hc
   have h1 : ((((m - Finsupp.single v 1 : σ →₀ ℕ)) v : ℕ) : k) + 1 ≠ 0 := Nat.cast_add_one_ne_zero _
   exact (mem_support_iff.mp hm) ((mul_eq_zero.mp hc).resolve_right h1)
 
@@ -454,6 +459,7 @@ theorem letterAt_val {k : ℕ} (h : k ≤ N - 1) : (D.letterAt k : ℕ) = k := b
 theorem degU (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) :
     (D.lettersAt j jp).deg D.uPos = D.LL.deg D.uPos - jp := by
   simp only [BlockData.lettersAt]
+  rw [← Fin.sum_univ_def]
   rw [Finset.sum_eq_zero (fun i _ => if_neg (by have := hB.2.1 i; omega))]
   simp
 
@@ -463,6 +469,7 @@ theorem deg_fst (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i : Fin D.T
   have h2 := hB.2.2.2
   have hv : (D.letterAt (D.T.pos i) : ℕ) = D.T.pos i := letterAt_val (by omega)
   simp only [BlockData.lettersAt]
+  rw [← Fin.sum_univ_def]
   rw [Finset.sum_eq_single i (fun i' _ hi' => if_neg (by
       rw [hv]; have := pos_ne hB (Ne.symm hi'); have := pos_ne_succ hB i i'; omega)) (by simp),
     if_pos (Or.inl hv), if_neg (by intro h; rw [h] at hv; omega)]
@@ -474,6 +481,7 @@ theorem deg_snd (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i : Fin D.T
   have h2 := hB.2.2.2
   have hv : (D.letterAt (D.T.pos i + 1) : ℕ) = D.T.pos i + 1 := letterAt_val (by omega)
   simp only [BlockData.lettersAt]
+  rw [← Fin.sum_univ_def]
   rw [Finset.sum_eq_single i (fun i' _ hi' => if_neg (by
       rw [hv]; have := pos_ne hB (Ne.symm hi'); have := pos_ne_succ hB i' i; omega)) (by simp),
     if_pos (Or.inr hv), if_neg (by intro h; rw [h] at hv; omega)]
@@ -617,7 +625,7 @@ theorem goodA [NeZero r] (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (y 
       exact hv c hc
     refine ⟨m1, hm1, m2, hm2, ?_, ?_, ?_⟩
     · intro b c
-      rw [Finsupp.add_apply, Finsupp.mapDomain_apply (chainEmb_inj _),
+      rw [Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective (chainEmb_inj _),
         hm2z (chainEmb N r D.T.t (b, c)) (fun c' h => (Fin.castSucc_lt_last b).ne
           (congrArg Prod.fst (Sum.inl_injective h : (Fin.castSucc b, c) = (Fin.last N, c')))), add_zero]
     · intro c

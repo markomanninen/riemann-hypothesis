@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,11 +54,11 @@ theorem p1_eq_add_D0_of_joined_of_cocycle (m m' : CxMap K K') (θ : m.G ⟶ m'.G
     have k2 := e1 _ _ _ (θ.app T) (m'.G.map φ)
     rw [θ.naturality φ] at k1
     have k := congrArg (m'.a0 T') (k1.symm.trans k2)
-    rw [map_add, map_add, hj.e0, m'.compDegreeZero_natural] at k
+    rw [map_add (f := _), map_add (f := _), hj.e0, m'.compDegreeZero_natural] at k
     linear_combination (norm := abel1) -k
   · funext T
     change m'.a1 T (c.2 _) = m.a1 T (c.2 _) + K'.d0 T (m'.a0 T (c.1 _ _ (θ.app T)))
-    rw [e2 _ _ (θ.app T), map_add, hj.e1, m'.comp_commutes_diffZero]
+    rw [e2 _ _ (θ.app T), map_add (f := _), hj.e1, m'.comp_commutes_diffZero]
 
 theorem h1_eq_of_joined (m m' : CxMap K K') (θ : m.G ⟶ m'.G) (hj : m.Joined m' θ) (c : K.H1) :
     m.h1 c = m'.h1 c := by

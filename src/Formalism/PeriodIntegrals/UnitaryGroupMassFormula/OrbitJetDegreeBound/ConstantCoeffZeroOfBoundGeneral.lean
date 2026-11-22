@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetDegreeBound.UnivEqBiUnion
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetDegreeBound.UnivEqBiUnion
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem applyAt0_add_left (T T' : MvPowerSeries (Lt × Fin N0 × Fin N1) ℂ_[l]
   unfold OJ.applyAt0
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun μ _ => ?_
-  rw [map_add, mul_add, map_add]
+  rw [map_add (f := _), mul_add, map_add (f := _)]
 
 theorem applyAt0_smul_left (c : ℂ_[l]) (T : MvPowerSeries (Lt × Fin N0 × Fin N1) ℂ_[l])
     (P : MvPolynomial (XZ Lt N0 N1) ℤ) :
@@ -114,7 +118,8 @@ theorem orbAddUp_main : ∀ (D : Formalism.BasicNotions.D7) (E : PI.OrbJet.Ent D
     with hEall
   have hsub : subst (fun v : Pl D × Fin (D.R.N i) × Fin (D.R.N (i + 1)) => C ep * logPl D p v) (Th - Th') =
       (U - ∑ m ∈ S, monomial m (coeff m U)) * Eall := by
-    rw [subst_sub hTG.hasSubst, hEq, hTh', ← coe_substAlgHom hTG.hasSubst, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [subst_sub hTG.hasSubst, hEq, hTh', ← coe_substAlgHom hTG.hasSubst, map_sum]
     simp_rw [map_smul, coe_substAlgHom, subst_Pm D p ep hep0 hR sg be hcc]
     rw [sub_mul, Finset.sum_mul]
     congr 1
@@ -128,12 +133,13 @@ theorem orbAddUp_main : ∀ (D : Formalism.BasicNotions.D7) (E : PI.OrbJet.Ent D
       refine Finset.sum_eq_zero fun ab hab => ?_
       rw [Finset.HasAntidiagonal.mem_antidiagonal] at hab
       have hdeg : ab.1.degree < n := by
-        have : κ.degree = ab.1.degree + ab.2.degree := by rw [← hab, map_add]
+        have : κ.degree = ab.1.degree + ab.2.degree := by rw [← hab, map_add (f := _)]
         omega
       have hmem : ab.1 ∈ S := by
         rw [hS, Set.Finite.mem_toFinset]
         exact hdeg
-      rw [map_sub, map_sum, Finset.sum_eq_single ab.1]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, Finset.sum_eq_single ab.1]
       · rw [coeff_monomial, if_pos rfl, sub_self, zero_mul]
       · intro b _ hb
         rw [coeff_monomial, if_neg (Ne.symm hb)]
@@ -150,7 +156,7 @@ theorem orbAddUp_main : ∀ (D : Formalism.BasicNotions.D7) (E : PI.OrbJet.Ent D
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (Real.rpow_nonneg hpos.le _) fun m _ => ?_
   rw [MvPolynomial.coeff_smul, smul_eq_mul]
   refine (norm_mul_le _ _).trans ?_
-  calc ‖coeff m U‖ * ‖MvPolynomial.coeff mx (applyAt0 (D.R.N i) (D.R.N (i + 1)) p (Pm D p _ _ ep R sg be m) G)‖
+  calc ‖coeff m U‖ * ‖AddMonoidAlgebra.coeff (applyAt0 (D.R.N i) (D.R.N (i + 1)) p (Pm D p _ _ ep R sg be m) G) mx‖
       ≤ 1 * (p : ℝ) ^ (-∑ r ∈ R, β r) :=
         mul_le_mul (hU m) (hPk m I mx) (norm_nonneg _) zero_le_one
     _ = (p : ℝ) ^ (-∑ r ∈ R, β r) := one_mul _

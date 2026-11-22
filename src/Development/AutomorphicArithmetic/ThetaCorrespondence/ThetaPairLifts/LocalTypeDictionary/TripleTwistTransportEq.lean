@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawWeilZetaResidue
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ThetaImageEqSpanDarboux
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawWeilZetaResidueStatement
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawWeilZetaResidue
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ThetaImageEqSpanDarboux
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRtensOp
+
+@[expose] public section
 
 section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
@@ -67,7 +72,7 @@ theorem GlobalTheory.TripleAssembly.triple_twist_transport_eq : GlobalTheory.Pub
       obtain ⟨q, hq⟩ := ex1
       exact ⟨q, fun Ψ hΨ => by rw [← hT₁ Ψ (hle hΨ)]; exact hq Ψ hΨ⟩
     unfold GlobalTheory.TripleAssembly.mapA GlobalTheory.TripleAssembly.thetaLift
-    rw [dif_pos H]
+    rw [dite_eq_left H]
     exact H.choose_spec Ψ hΨ
   · rw [← hI T₁ hT₁] at hΦ
     obtain ⟨Ψ, hΨ, rfl⟩ := Submodule.mem_map.1 hΦ
@@ -78,7 +83,7 @@ theorem GlobalTheory.TripleAssembly.triple_twist_transport_eq : GlobalTheory.Pub
       obtain ⟨q, hq⟩ := ex2
       exact ⟨q, fun Ψ hΨ => by rw [← hT₂ Ψ (hle' hΨ)]; exact hq Ψ hΨ⟩
     unfold GlobalTheory.TripleAssembly.mapB GlobalTheory.TripleAssembly.thetaLift
-    rw [dif_pos H]
+    rw [dite_eq_left H]
     exact H.choose_spec Ψ hΨ
   · rw [← hI' T₂ hT₂] at hΦ
     obtain ⟨Ψ, hΨ, rfl⟩ := Submodule.mem_map.1 hΦ

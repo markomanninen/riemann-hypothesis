@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeMeas
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeMeas
+
+@[expose] public section
+
 open MeasureTheory Matrix Topology Filter
 open scoped ContDiff ENNReal ComplexOrder Pointwise
 open PositivityTheory.RgTw (Mat G hb)
@@ -137,24 +142,24 @@ lemma step_mul {σ : Mat n → Mat n} {P : Mat (n + 1)} (hP : P.PosDef)
     exact_mod_cast Real.mul_self_sqrt (lead_pos hP).le
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j
-  · simp only [mul_apply, conjTranspose_apply, Fin.sum_univ_succ, step_zero_zero, step_zero_succ]
+  · simp only [Matrix.mul_apply, conjTranspose_apply, Fin.sum_univ_succ, step_zero_zero, step_zero_succ]
     simp [hrr]
-  · simp only [mul_apply, conjTranspose_apply, Fin.sum_univ_succ, step_zero_zero, step_zero_succ,
+  · simp only [Matrix.mul_apply, conjTranspose_apply, Fin.sum_univ_succ, step_zero_zero, step_zero_succ,
       step_succ_zero]
     simp only [col, star_mul', hH]
     simp
     linear_combination (P 0 j.succ) * hr
-  · simp only [mul_apply, conjTranspose_apply, Fin.sum_univ_succ, step_zero_zero, step_zero_succ,
+  · simp only [Matrix.mul_apply, conjTranspose_apply, Fin.sum_univ_succ, step_zero_zero, step_zero_succ,
       step_succ_zero, step_succ_succ]
     simp [col]
     linear_combination (P i.succ 0) * hr
   · have h := congrFun (congrFun hσ i) j
-    simp only [mul_apply, conjTranspose_apply] at h
-    simp only [mul_apply, conjTranspose_apply, Fin.sum_univ_succ, step_succ_zero, step_succ_succ, h]
+    simp only [Matrix.mul_apply, conjTranspose_apply] at h
+    simp only [Matrix.mul_apply, conjTranspose_apply, Fin.sum_univ_succ, step_succ_zero, step_succ_succ, h]
     simp [schur]
 
 lemma contDiff_entry (i j : Fin m) : ContDiff ℝ ∞ (fun P : Mat m => P i j) :=
-  contDiff_apply_apply ℝ ℂ i j
+  contDiff_apply_apply ℝ i j
 
 lemma contDiffOn_mat {s : Set (Mat k)} {f : Mat k → Mat m}
     (h : ∀ i j, ContDiffOn ℝ ∞ (fun P => f P i j) s) : ContDiffOn ℝ ∞ f s :=

@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomFrame
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomFrame
+
+@[expose] public section
 
 open Module
 
@@ -23,7 +27,7 @@ theorem exists_next_unit (hS : IsHermSemilocal S)
   have hquad : ∀ (p q : V) (m : K), h (p + m • q) (p + m • q) =
       h p p + m * h p q + star m * h q p + star m * m * h q q := by
     intro p q m
-    simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, map_smul, RingHom.id_apply]
     ring
   obtain ⟨hstar, -, hunram, hprinc, -⟩ := hS
@@ -83,7 +87,8 @@ theorem exists_next_unit (hS : IsHermSemilocal S)
     exact hsm _ (hcS i hi) _ (hxM i hi)
   have hyo : ∀ j ∈ s, h (x j) y = 0 := by
     intro j hj
-    rw [hy, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sub, map_sum]
     simp only [map_smul, smul_eq_mul]
     rw [Finset.sum_eq_single j]
     · have hne : h (x j) (x j) ≠ 0 := ((hunit _).mp (hxu j hj)).1
@@ -94,7 +99,8 @@ theorem exists_next_unit (hS : IsHermSemilocal S)
     · intro hjs
       exact absurd hj hjs
   have hyw : h y w = 1 := by
-    rw [hy, map_sub, map_sum, LinearMap.sub_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sub, map_sum, LinearMap.sub_apply]
     first
       | rw [LinearMap.sum_apply]
       | rw [LinearMap.coe_fn_sum, Finset.sum_apply]
@@ -144,7 +150,7 @@ theorem exists_next_unit (hS : IsHermSemilocal S)
       rw [this]
       exact S.mul_mem (S.mul_mem (hstar _ hμS) hμS) hbi
   · intro i hi
-    rw [map_add, map_smul, hyo i hi, hwo i hi, smul_zero, add_zero]
+    rw [map_add (f := _), map_smul, hyo i hi, hwo i hi, smul_zero, add_zero]
 
 theorem exists_orth_unit_frame [FiniteDimensional K V] (hS : IsHermSemilocal S)
     (hloc : ∀ a ∈ S, ∀ b ∈ S, star a = a → star b = b → ¬ IsUnitIn S a → ¬ IsUnitIn S b →
@@ -188,7 +194,8 @@ theorem exists_orth_unit_frame [FiniteDimensional K V] (hS : IsHermSemilocal S)
         (fun h0 => hu (by rw [sub_eq_zero.mp h0]; exact hsW))
         (by
           intro j hj
-          rw [map_sub, map_sum, Finset.sum_eq_single j]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sub, map_sum, Finset.sum_eq_single j]
           · rw [map_smul, smul_eq_mul,
               inv_mul_cancel_right₀ (hxu j (Finset.mem_range.mp hj)).1, sub_self]
           · intro i hi hij

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,11 +45,6 @@ theorem parM_annM : parM * annM + annM * parM = 0 := by
 
 theorem annM_vacM : annM * vacM = 0 := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [annM, vacM, Matrix.mul_apply, Fin.sum_univ_two]
-
-theorem vacM_ne : vacM ≠ 0 := by
-  intro h
-  have := congrFun (congrFun h 0) 0
-  simp [vacM] at this
 
 theorem exists_fock (m : ℕ) : ∃ (ι : Type) (_ : Fintype ι) (_ : DecidableEq ι)
     (A : Fin m → Matrix ι ι ℂ) (G Q : Matrix ι ι ℂ),

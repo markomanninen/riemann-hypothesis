@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NormOneAtOne
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NormOneAtOne
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.Core.Rk GlobalTheory.Core.Mi
 open scoped TensorProduct InnerProductSpace Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -12,9 +17,9 @@ noncomputable section
 
 namespace GlobalTheory.Core.Mi.LatMatch
 
+
 set_option maxHeartbeats 2000000 in
 open GlobalTheory.FinPl.FrameLat in
-
 theorem exists_normOneAt_pr (D : D7) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] (p : SplitPt D k) (c₀ : k) (hc₀ : c₀ ≠ 0) :
     ∃ c : AE D, NormOneAt p.v c ∧ p.pr c = c₀ := by
@@ -49,10 +54,10 @@ theorem exists_normOneAt_pr (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topo
   have hucs : ∀ x : k, u * cA D (p.sec x) = 0 := by intro x; rw [← hcf' x, ← mul_assoc, huf, zero_mul]
   have huu : u * u = u := by nth_rewrite 2 [hu]; rw [mul_sub, mul_one, huf, sub_zero]
   have hcu : cA D u = u := by
-    rw [hu, hfdef, map_sub, map_one, map_add, hcc, add_comm]
+    rw [hu, hfdef, map_sub, map_one, map_add (f := _), hcc, add_comm]
   refine ⟨u + p.sec c₀ + cA D (p.sec c₀⁻¹), ⟨?_, ?_⟩, ?_⟩
   · have hconj : cA D (u + p.sec c₀ + cA D (p.sec c₀⁻¹)) = u + cA D (p.sec c₀) + p.sec c₀⁻¹ := by
-      rw [map_add, map_add, hcu, hcc]
+      rw [map_add (f := _), map_add (f := _), hcu, hcc]
     show _ * cA D _ = 1
     rw [hconj]
     have e1 : p.sec c₀ * p.sec c₀⁻¹ = p.e := by rw [← sec_mul p, mul_inv_cancel₀ hc₀, he1]
@@ -71,7 +76,7 @@ theorem exists_normOneAt_pr (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topo
   · have : u + p.sec c₀ + cA D (p.sec c₀⁻¹) - 1 = -f + p.sec c₀ + cA D (p.sec c₀⁻¹) := by rw [hu]; ring
     rw [this]
     refine add_mem (add_mem (neg_mem hfm) (sec_mem_idAt p _)) (csec_mem_idAt (p := p) _)
-  · rw [map_add, map_add, hprc, add_zero, hu, hfdef, map_sub, map_one, map_add, ← he1, hprc, p.pr_sec, p.pr_sec]
+  · rw [map_add (f := _), map_add (f := _), hprc, add_zero, hu, hfdef, map_sub, map_one, map_add (f := _), ← he1, hprc, p.pr_sec, p.pr_sec]
     ring
 
 end GlobalTheory.Core.Mi.LatMatch

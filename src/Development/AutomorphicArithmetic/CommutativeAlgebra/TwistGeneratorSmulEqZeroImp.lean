@@ -1,6 +1,11 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.DerivUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistModuleFreeAndGeneratorSummandStatement
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.DerivUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistModuleFreeAndGeneratorSummandStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry GlobalTheory.EtC
 
 theorem UpperTheory.twist_generator_smul_eq_zero_imp :

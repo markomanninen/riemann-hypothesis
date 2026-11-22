@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresDefs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresDefs
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -34,7 +38,7 @@ private theorem der_zero {O : Type} [CommRing O] [IsLocalRing O] {R : Type} [Com
     rw [Algebra.algebraMap_eq_smul_one, sub_add_cancel]
   have h2 := (hs _ (mem_span_X (f - algebraMap O _ (MvPowerSeries.constantCoeff f))
     (by simp [MvPowerSeries.algebraMap_apply]))).2
-  rw [e, map_add, map_add, h2, map_smul, map_smul, map_one, h1]
+  rw [e, map_add (f := _), map_add (f := _), h2, map_smul, map_smul, map_one, h1]
   simp
 
 private theorem der_off {O : Type} [CommRing O] [IsLocalRing O] (h2 : IsUnit (2 : O)) {R : Type} [CommRing R]

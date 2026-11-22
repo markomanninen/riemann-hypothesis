@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ProdFactorialSupportSubSingle
+
+@[expose] public section
 
 open MvPolynomial Formalism.REAL
 
@@ -46,7 +50,7 @@ lemma LFocks_constantCoeff_sub (U : Matrix σ σ ℂ) (g : MvPolynomial σ ℂ) 
     constantCoeff (sub U g) = constantCoeff g := by
   induction g using MvPolynomial.induction_on
   next a => rw [LFocks_sub_C]
-  next p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  next p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   next p i hp =>
     rw [map_mul, map_mul, map_mul, LFocks_sub_X]
     simp
@@ -54,8 +58,10 @@ lemma LFocks_constantCoeff_sub (U : Matrix σ σ ℂ) (g : MvPolynomial σ ℂ) 
 lemma LFocks_sub_comp (A B : Matrix σ σ ℂ) :
     (sub A).comp (sub B) = sub (B * A) := by
   refine MvPolynomial.algHom_ext fun i => ?_
-  rw [AlgHom.comp_apply, LFocks_sub_X, LFocks_sub_X, map_sum]
-  simp only [map_mul, LFocks_sub_C, LFocks_sub_X, Finset.mul_sum, Matrix.mul_apply, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AlgHom.comp_apply, LFocks_sub_X, LFocks_sub_X, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, LFocks_sub_C, LFocks_sub_X, Finset.mul_sum, Matrix.mul_apply, map_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -69,10 +75,11 @@ lemma LFocks_pderiv_sub (V : Matrix σ σ ℂ) (i : σ) (g : MvPolynomial σ ℂ
     pderiv i (sub V g) = ∑ j, C (V j i) * sub V (pderiv j g) := by
   induction g using MvPolynomial.induction_on
   next a => simp
-  next p q hp hq => simp only [map_add, mul_add, Finset.sum_add_distrib, hp, hq]
+  next p q hp hq => simp only [map_add (f := _), mul_add, Finset.sum_add_distrib, hp, hq]
   next p k hp =>
     have hS : pderiv i (sub V (X k)) = C (V k i) := by
-      rw [LFocks_sub_X, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LFocks_sub_X, map_sum]
       simp [pderiv_X, Pi.single_apply]
     have hT : ∀ j, sub V (pderiv j (X k : MvPolynomial σ ℂ)) = if j = k then 1 else 0 := by
       intro j
@@ -82,7 +89,7 @@ lemma LFocks_pderiv_sub (V : Matrix σ σ ℂ) (i : σ) (g : MvPolynomial σ ℂ
         simp
       · simp [h, Ne.symm h]
     rw [map_mul, pderiv_mul, hp, hS]
-    simp only [pderiv_mul, map_add, map_mul, hT, mul_add, Finset.sum_add_distrib, Finset.sum_mul]
+    simp only [pderiv_mul, map_add (f := _), map_mul, hT, mul_add, Finset.sum_add_distrib, Finset.sum_mul]
     congr 1
     · exact Finset.sum_congr rfl fun j _ => by ring
     · simp [mul_comm]

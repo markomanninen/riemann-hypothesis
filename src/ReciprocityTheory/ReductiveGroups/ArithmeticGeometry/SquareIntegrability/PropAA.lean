@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GaussianTailBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.CardSupportLeAndSumTwoPowLe
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.IntegrableNormPowMulExpNegMulNormSq
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GaussianTailBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.CardSupportLeAndSumTwoPowLe
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.IntegrableNormPowMulExpNegMulNormSq
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -60,7 +64,8 @@ theorem sum_eq_degree (s : ι →₀ ℕ) : (s.sum fun _ e => e) = s.degree := b
 theorem paPF_eq_sum (p : MvPolynomial ι ℂ) :
     paPF p = ∑ m ∈ p.support, p.coeff m • paMono m := by
   funext v
-  conv_lhs => rw [paPF, p.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [paPF, p.as_sum, map_sum]
   simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, paMono, paPF, MvPolynomial.eval_monomial]
   refine Finset.sum_congr rfl fun m _ => by ring
 
@@ -119,7 +124,7 @@ theorem paPoly_continuous {c : ℕ} {F : EuclideanSpace ℂ ι → ℂ} (hF : F 
 theorem paMono_norm_le (α : ι →₀ ℕ) (v : EuclideanSpace ℂ ι) : ‖paMono α v‖ ≤ ‖v‖ ^ α.degree := by
   simp only [paMono, paPF, MvPolynomial.eval_monomial, one_mul, Finsupp.prod, norm_prod, norm_pow]
   rw [Finsupp.degree_apply, ← Finset.prod_pow_eq_pow_sum]
-  exact Finset.prod_le_prod (fun i _ => by positivity)
+  exact Finset.prod_le_prod₀ (fun i _ => by positivity)
     (fun i _ => pow_le_pow_left₀ (norm_nonneg _) (PiLp.norm_apply_le v i) _)
 
 theorem paPoly_growth {c : ℕ} {F : EuclideanSpace ℂ ι → ℂ} (hF : F ∈ paPoly c) :
@@ -354,7 +359,7 @@ theorem paPF_diff (p : MvPolynomial ι ℂ) : Differentiable ℂ (paPF p) ∧
   | add p r hp hr =>
     rw [paPF_add]
     refine ⟨hp.1.add hr.1, fun j y => ?_⟩
-    rw [fderiv_add (hp.1 y) (hr.1 y), ContinuousLinearMap.add_apply, hp.2, hr.2, map_add, paPF_add]
+    rw [fderiv_add (hp.1 y) (hr.1 y), ContinuousLinearMap.add_apply, hp.2, hr.2, map_add (f := _), paPF_add]
     rfl
   | mul_X p k hp =>
     have hd : Differentiable ℂ (fun v : EuclideanSpace ℂ ι => v k) :=
@@ -367,7 +372,7 @@ theorem paPF_diff (p : MvPolynomial ι ℂ) : Differentiable ℂ (paPF p) ∧
       (EuclideanSpace.proj k : EuclideanSpace ℂ ι →L[ℂ] ℂ).fderiv
     rw [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, ContinuousLinearMap.smul_apply,
       e1, hp.2, Derivation.leibniz, MvPolynomial.pderiv_X]
-    simp only [EuclideanSpace.coe_proj, EuclideanSpace.single_apply, smul_eq_mul, paPF, map_add,
+    simp only [EuclideanSpace.coe_proj, PiLp.single_apply, smul_eq_mul, paPF, map_add (f := _),
       map_mul, MvPolynomial.eval_X, Pi.single_apply]
     by_cases h : j = k
     · subst h; simp <;> ring
@@ -444,7 +449,7 @@ theorem paPD_monomial (n : ℕ) : ∀ (m : Fin n → ι) (β : ι →₀ ℕ) (a
       have hle : Finsupp.single i 1 ≤ β := Finsupp.single_le_iff.mpr hb1
       have hsplit : Finsupp.toMultiset β = Finsupp.toMultiset (β - Finsupp.single i 1) + {i} := by
         conv_lhs => rw [← tsub_add_cancel_of_le hle]
-        rw [map_add, Finsupp.toMultiset_single, one_nsmul]
+        rw [map_add (f := _), Finsupp.toMultiset_single, one_nsmul]
       rw [hsplit]
       by_cases hc : Finsupp.toMultiset (β - Finsupp.single i 1) = (List.ofFn (Fin.init m) : Multiset ι)
       · rw [if_pos hc, if_pos (by rw [hc]), paFact_succ β i hb1]; ring

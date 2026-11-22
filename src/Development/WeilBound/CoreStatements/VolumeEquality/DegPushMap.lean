@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PBirationalRatioClosure
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalNef
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PBirationalRatioClosure
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalNef
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem pointIdeal_rat {Ω : Type} [Field Ω] [inst : Algebra ℚ Ω] (y : (Σ b
       obtain ⟨n, hn, F, hF⟩ := hp
       obtain ⟨n', hn', F', hF'⟩ := hq
       refine ⟨n * n', Nat.mul_pos hn hn', C (n' : ℤ) * F + C (n : ℤ) * F', ?_⟩
-      rw [map_add, map_mul, map_mul, hF, hF', map_C, map_C]
+      rw [map_add (f := _), map_mul, map_mul, hF, hF', map_C, map_C]
       simp only [eq_intCast, Int.cast_natCast, map_natCast, Nat.cast_mul]
       ring
     | mul_X p j hp =>

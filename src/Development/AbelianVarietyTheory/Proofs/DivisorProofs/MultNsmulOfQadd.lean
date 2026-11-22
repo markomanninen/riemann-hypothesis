@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentreAtOfIsAt
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PointSeparationPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentreAtOfIsAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PointSeparationPair
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -45,11 +50,18 @@ theorem qNum_add : ∀ (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoetherian X] (
     push_cast
     field_simp
   · intro C hC
-    have e := hC.interNumRed_of_cls_eq_add hH (isLB_toLB (m' • D₀ + m • B₀))
-      (isLB_lbPow (isLB_toLB D₀) m') (isLB_lbPow (isLB_toLB B₀) m)
-      (by rw [cls_lbPow (isLB_toLB D₀), cls_lbPow (isLB_toLB B₀), ← toPic_apply, ← toPic_apply,
-        ← toPic_apply, map_add, map_nsmul, map_nsmul])
-    rw [hC.interNumRed_lbPow hH (isLB_toLB D₀), hC.interNumRed_lbPow hH (isLB_toLB B₀)] at e
+    let hLB (D : CartierDiv X) : (toLB D).IsLB := (presents_toLB D).isLB
+    let f : CartierDiv X →+ Pic X := AddMonoidHom.mk' (fun D => cls _ (hLB D)) fun D E =>
+      (cls_eq_iff _ (isLB_tens (hLB D) (hLB E))).2
+        ((presents_toLB _).lbIso ((presents_toLB D).tens (presents_toLB E)))
+    have e := hC.interNumRed_of_cls_eq_add (N := toLB (m' • D₀ + m • B₀))
+      (A := lbPow (toLB D₀) m') (B := lbPow (toLB B₀) m) hH (hLB (m' • D₀ + m • B₀))
+      (isLB_lbPow (hLB D₀) m') (isLB_lbPow (hLB B₀) m)
+      (by
+        rw [cls_lbPow (hLB D₀), cls_lbPow (hLB B₀)]
+        change f (m' • D₀ + m • B₀) = m' • f D₀ + m • f B₀
+        rw [map_add, map_nsmul, map_nsmul])
+    rw [hC.interNumRed_lbPow hH (hLB D₀), hC.interNumRed_lbPow hH (hLB B₀)] at e
     have h1 : (m : ℚ) ≠ 0 := Nat.cast_ne_zero.2 hm.ne'
     have h2 : (m' : ℚ) ≠ 0 := Nat.cast_ne_zero.2 hm'.ne'
     have hD' := hDn C hC

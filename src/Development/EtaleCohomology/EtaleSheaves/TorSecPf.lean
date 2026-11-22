@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LCSplitPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LCSplitPf
+
+@[expose] public section
 
 noncomputable section
 open LateralTheory.E.t_E1Cut LateralTheory.E.LCSplitPf
@@ -299,7 +303,8 @@ lemma sheetF (s : Tor f g hε →+* S) (hs : ∀ a, s (torMap f g hε a) = a) :
         show ((∑ k, t k : Tor f g hε) : Amb f g q).1 - (fun _ => algebraMap S _ (f ^ N)) = 0
         rw [coe_sum_tor, Prod.fst_sum]; simp only [ht]; funext i
         simp [Finset.sum_apply, Pi.single_apply])
-      rw [map_sub, hs, map_sub, map_sum, map_sum, map_pow, sub_eq_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, hs, map_sub, map_sum, map_sum, map_pow, sub_eq_zero] at this
       exact this)
   exact ⟨N, t, δ, hδ, ht, hσ⟩
 
@@ -330,7 +335,8 @@ lemma sheetG (s : Tor f g hε →+* S) (hs : ∀ a, s (torMap f g hε a) = a) :
         show ((∑ k, t k : Tor f g hε) : Amb f g q).2 - (fun _ => algebraMap S _ (g ^ N)) = 0
         rw [coe_sum_tor, Prod.snd_sum]; simp only [ht]; funext i
         simp [Finset.sum_apply, Pi.single_apply])
-      rw [map_sub, hs, map_sub, map_sum, map_sum, map_pow, sub_eq_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, hs, map_sub, map_sum, map_sum, map_pow, sub_eq_zero] at this
       exact this)
   refine ⟨δ, hδ, fun x m => ?_⟩
   obtain ⟨j, b, hb⟩ := IsLocalization.Away.surj g ((x : Amb f g q).2 m)

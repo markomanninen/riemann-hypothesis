@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem rr_rep_spec (h : rr_FD μ Γ D) (y : G) :
   have hex : ∃ γ ∈ (Γ : Set G), γ * y ∈ D := h.cov y
   refine ⟨hex.choose, hex.choose_spec.1, ?_, hex.choose_spec.2⟩
   unfold rr_rep
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
 
 theorem rr_rep_eq (h : rr_FD μ Γ D) {y : G} (hy : y ∉ rr_N Γ D) {γ : G} (hγ : γ ∈ Γ) (hD : γ * y ∈ D) :
     rr_rep (Γ : Set G) D y = γ * y := by
@@ -98,12 +102,12 @@ theorem rr_exists_meas_rep [Countable Γ] (h : rr_FD μ Γ D) :
   exact Measurable.find (f := fun n y => ((e n : Γ) : G) * y) (p := fun n y => ((e n : Γ) : G) * y ∈ D)
     (fun n => measurable_const_mul _) (fun n => measurable_const_mul _ h.meas) hex
 
-theorem rr_FD_right [μ.IsMulRightInvariant] (h : rr_FD μ Γ D) (g : G) : rr_FD μ Γ ((fun x => x * g) ⁻¹' D) where
-  meas := (measurable_mul_const g) h.meas
-  cov := fun y => by
+theorem rr_FD_right [μ.IsMulRightInvariant] (h : rr_FD μ Γ D) (g : G) : rr_FD μ Γ ((fun x => x * g) ⁻¹' D) := by
+  refine ⟨(measurable_mul_const g) h.meas, ?_, ?_⟩
+  · intro y
     obtain ⟨γ, hγ, hD⟩ := h.cov (y * g)
     exact ⟨γ, hγ, by simpa [mul_assoc] using hD⟩
-  disj := fun γ hγ h1 => by
+  · intro γ hγ h1
     have : (fun y => γ * y) '' ((fun x => x * g) ⁻¹' D) ∩ (fun x => x * g) ⁻¹' D ⊆
         (fun x => x * g) ⁻¹' ((fun y => γ * y) '' D ∩ D) := by
       rintro _ ⟨⟨y, hy, rfl⟩, h2⟩
@@ -193,14 +197,14 @@ theorem rr_meas_pre [μ.IsMulLeftInvariant] [μ.IsMulRightInvariant] [Countable 
     (rr_isFD ((rr_FD_right h) g))
   have key := hfd.measure_set_eq hfd' (A := ((fun x => x * g) ⁻¹' ((rr_N Γ D)ᶜ ∩ r₀ ⁻¹' A))) hSmeas hinv
   have e1 : μ ((fun x => r (x * g)) ⁻¹' A ∩ D) = μ (((fun x => x * g) ⁻¹' ((rr_N Γ D)ᶜ ∩ r₀ ⁻¹' A)) ∩ D) := by
-    refine measure_congr (hN.mono fun x hx => propext ?_)
+    refine measure_congr (hN.mono fun x hx => ?_)
     have e : r (x * g) = r₀ (x * g) := by
       rw [eq_rr_rep_of_not_mem_rr_N h hr hx, eq_rr_rep_of_not_mem_rr_N h hr₀rep hx]
     show r (x * g) ∈ A ∧ x ∈ D ↔ (x * g ∉ rr_N Γ D ∧ r₀ (x * g) ∈ A) ∧ x ∈ D
     rw [e]
     exact ⟨fun ⟨h1, h2⟩ => ⟨⟨hx, h1⟩, h2⟩, fun ⟨⟨_, h1⟩, h2⟩ => ⟨h1, h2⟩⟩
   have e2 : μ (((fun x => x * g) ⁻¹' ((rr_N Γ D)ᶜ ∩ r₀ ⁻¹' A)) ∩ (fun x => x * g) ⁻¹' D) = μ ((fun x => x * g) ⁻¹' (A ∩ D)) := by
-    refine measure_congr (hN.mono fun x hx => propext ?_)
+    refine measure_congr (hN.mono fun x hx => ?_)
     show (x * g ∉ rr_N Γ D ∧ r₀ (x * g) ∈ A) ∧ x * g ∈ D ↔ x * g ∈ A ∧ x * g ∈ D
     constructor
     · rintro ⟨⟨_, h1⟩, h2⟩
@@ -240,7 +244,7 @@ theorem rr_rep_self [μ.IsMulLeftInvariant] [Countable Γ] (h : rr_FD μ Γ D) :
   rw [ae_restrict_iff' h.meas, ae_iff]
   refine measure_mono_null (fun x hx => ?_) (rr_N_null h)
   by_contra hxM
-  simp only [Set.mem_setOf_eq, _root_.not_imp] at hx
+  simp only [Set.mem_setOf_eq, Classical.not_imp] at hx
   obtain ⟨hxD, hne⟩ := hx
   apply hne
   rw [mul_one]

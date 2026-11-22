@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds
 
@@ -137,8 +141,8 @@ theorem binomial_differences : F5 := by
 
 end RadiiIdentities
 
-open RadiiIdentities in
 
+open RadiiIdentities in
 theorem radii_valuation_differences :
     Formalism.L2.FormalSeriesBounds.EInt ∧ I1 ∧ I2 ∧ ValOther ∧ WeightConditionIff ∧ F5 :=
   ⟨exponent_integral, radii_sum, slope_identity, val_other_prime, weight_forms_agree,

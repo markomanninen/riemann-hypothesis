@@ -1,8 +1,12 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RankinSelbergTestFunction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.BlockTriangularLevi
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RankinSelbergTestFunction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.BlockTriangularLevi
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -18,8 +22,8 @@ variable {k : Type} [Field k]
 
 theorem longElt_mul_self (n : ℕ) : longElt n k * longElt n k = 1 := Units.ext (antidiag_mul_self n k)
 
-variable (k) in
 
+variable (k) in
 def theta (n : ℕ) : GL (Fin n) k →* GL (Fin n) k :=
   (MulAut.conj (longElt n k)).toMonoidHom.comp (GlobalTheory.CuspRep.invT n k)
 

@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.StageLift
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrincipalSeriesAppendEquivParabolicProduct
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsGenericOfInjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.StageLift
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrincipalSeriesAppendEquivParabolicProduct
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsGenericOfInjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem coordL_lTensor {ι : Type} [DecidableEq ι] (b : Module.Basis ι ℂ U) 
     ext i
     simp
   | add v w hv hw =>
-    rw [map_add, map_add, hv, hw, map_add, Finsupp.mapRange_add (map_add g)]
+    rw [map_add (f := _), map_add (f := _), hv, hw, map_add (f := _), Finsupp.mapRange_add (map_add g)]
 
 theorem coordR_rTensor {ι : Type} [DecidableEq ι] (b : Module.Basis ι ℂ U) (g : X →ₗ[ℂ] Y) (v : X ⊗[ℂ] U) :
     TensorProduct.equivFinsuppOfBasisRight b (LinearMap.rTensor U g v) =
@@ -39,7 +43,7 @@ theorem coordR_rTensor {ι : Type} [DecidableEq ι] (b : Module.Basis ι ℂ U) 
     ext i
     simp
   | add v w hv hw =>
-    rw [map_add, map_add, hv, hw, map_add, Finsupp.mapRange_add (map_add g)]
+    rw [map_add (f := _), map_add (f := _), hv, hw, map_add (f := _), Finsupp.mapRange_add (map_add g)]
 
 theorem eq_zero_of_lTensor {G : Type} [Group G] (π : G →* (X →ₗ[ℂ] X)) (S : Set G) (f : X →ₗ[ℂ] Y)
     (hf : ∀ x, (∀ h ∈ S, π h x = x) → f x = 0 → x = 0) (v : U ⊗[ℂ] X)

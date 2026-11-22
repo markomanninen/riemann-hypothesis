@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KerDatTuple
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionLiftPairStepVectorInvLevelChar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelCharactersRamificationLevelPlaces
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeCharSplitSupportedEqProdResidueStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeCharTrivialOnIdempotentIntegralUnitsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KerDatTuple
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionLiftPairStepVectorInvLevelChar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelCharactersRamificationLevelPlaces
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeCharSplitSupportedEqProdResidueStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeCharTrivialOnIdempotentIntegralUnitsStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,19 +28,19 @@ variable {D : D7}
 
 theorem ramif_ker {T0 : Type} {L : LevCh D T0} {μ0 : T0} (hL : L.Is μ0) {ξ : Formalism.L2.Host.HChar D.host.E}
     {Q : Finset (Pl D.host.E)} (hpl : IsTwistPlaces D.host.g Q)
-    (hram : ∀ PP, ¬ ξ.UnrAt PP ↔ PP ∈ Q ∨ ∃ PP' ∈ Q, IsConjPl PP' PP) (j : Fin D.R.m) :
+    (hram : ∀ PP, ¬ ξ.UnrAt PP ↔ PP ∈ Q ∨ ∃ PP' ∈ Q, Lev.IsConjPl PP' PP) (j : Fin D.R.m) :
     Disjoint L.Pg Q ∧ (∀ PP ∈ Q, (L.C.mu0 j).UnrAt PP) ∧ (∀ PP ∈ L.Pg, ξ.UnrAt PP) ∧
-      ∀ PP', PP' ∉ L.Pg → (∀ PP ∈ L.Pg, ¬ IsConjPl PP PP') → (L.C.mu0 j).UnrAt PP' := by
+      ∀ PP', PP' ∉ L.Pg → (∀ PP ∈ L.Pg, ¬ Lev.IsConjPl PP PP') → (L.C.mu0 j).UnrAt PP' := by
   classical
   have hoff : ∀ (k : Fin 2) (PP : Pl D.host.E), ((D.host.g k : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal →
-      PP ∉ Q ∧ ¬ ∃ PP' ∈ Q, IsConjPl PP' PP := by
+      PP ∉ Q ∧ ¬ ∃ PP' ∈ Q, Lev.IsConjPl PP' PP := by
     intro k PP hk
     refine ⟨fun hQ => ?_, fun ⟨PP', hQ, hc⟩ => ?_⟩
     · obtain ⟨q, hq, hm, hne⟩ := GlobalTheory.LevelRamif.exists_prime_mem hpl hQ
       exact GlobalTheory.LevelRamif.not_two_primes PP hq (D.host.g_prime k) (hne k) hm hk
     · obtain ⟨q, hq, hm, hne⟩ := GlobalTheory.LevelRamif.exists_prime_mem hpl hQ
       exact GlobalTheory.LevelRamif.not_two_primes PP hq (D.host.g_prime k) (hne k) (GlobalTheory.LevelRamif.natCast_mem_conj hc hm) hk
-  have hPg : ∀ PP ∈ L.Pg, PP ∉ Q ∧ ¬ ∃ PP' ∈ Q, IsConjPl PP' PP := by
+  have hPg : ∀ PP ∈ L.Pg, PP ∉ Q ∧ ¬ ∃ PP' ∈ Q, Lev.IsConjPl PP' PP := by
     intro PP h
     obtain ⟨k, hk⟩ := (hL.Pg PP).1 h
     exact hoff k PP (GlobalTheory.LevelRamif.typePrime_mem hk)
@@ -54,7 +58,7 @@ theorem ramif_ker {T0 : Type} {L : LevCh D T0} {μ0 : T0} (hL : L.Is μ0) {ξ : 
 
 theorem unrOff_ker {T0 : Type} {L : LevCh D T0} {μ0 : T0} (hL : L.Is μ0) {ξ : Formalism.L2.Host.HChar D.host.E}
     {χ : (AE D)ˣ →* Circle} {Q : Finset (Pl D.host.E)} (hchr : ChrEq χ ξ) (hpl : IsTwistPlaces D.host.g Q)
-    (hram : ∀ PP, ¬ ξ.UnrAt PP ↔ PP ∈ Q ∨ ∃ PP' ∈ Q, IsConjPl PP' PP) (j : Fin D.R.m)
+    (hram : ∀ PP, ¬ ξ.UnrAt PP ↔ PP ∈ Q ∨ ∃ PP' ∈ Q, Lev.IsConjPl PP' PP) (j : Fin D.R.m)
     {P : Finset (Pl D.host.E)} {e : AE D} (hP : ∀ PP, PP ∈ P ↔ PP ∈ L.Pg ∨ PP ∈ Q) (he : IsIdemSum e P) :
     GlobalTheory.VecInv.UnrOff (e + cA D e) (L.mu0 ((j : ℕ) + 1) * χ) ∧ GlobalTheory.VecInv.UnrOff (e + cA D e) L.eta := by
   obtain ⟨-, -, -, h4⟩ := ramif_ker hL hpl hram j
@@ -69,7 +73,7 @@ theorem unrOff_ker {T0 : Type} {L : LevCh D T0} {μ0 : T0} (hL : L.Is μ0) {ξ :
 theorem val_ker {T0 : Type} {L : LevCh D T0} {μ0 : T0} (hL : L.Is μ0) {ξ : Formalism.L2.Host.HChar D.host.E}
     {χ : (AE D)ˣ →* Circle} {ξR : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ} {Q : Finset (Pl D.host.E)} (hchr : ChrEq χ ξ)
     (htame : ∀ v, ξ.TameAt v) (hres : ∀ PP ∈ Q, IsRes ξ PP (ξR PP)) (hpl : IsTwistPlaces D.host.g Q)
-    (hram : ∀ PP, ¬ ξ.UnrAt PP ↔ PP ∈ Q ∨ ∃ PP' ∈ Q, IsConjPl PP' PP) (j : Fin D.R.m)
+    (hram : ∀ PP, ¬ ξ.UnrAt PP ↔ PP ∈ Q ∨ ∃ PP' ∈ Q, Lev.IsConjPl PP' PP) (j : Fin D.R.m)
     {P : Finset (Pl D.host.E)} {e : AE D} (hP : ∀ PP, PP ∈ P ↔ PP ∈ L.Pg ∨ PP ∈ Q) (he : IsIdemSum e P)
     (x : (AE D)ˣ) (a : AE D) (a' : Formalism.L2.Herm.intAf D.host.F D.host.E) (u : ∀ PP : Pl D.host.E, (kP PP)ˣ)
     (hx : (x : AE D) = e * a + (1 - e)) (ha : (a' : Lev.EAf D) = toEAf D a)

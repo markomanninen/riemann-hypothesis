@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.DimClosureAddOneLe
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartResidueDegreeAlgClosedClosed
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.DimClosureAddOneLe
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartResidueDegreeAlgClosedClosed
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option linter.style.haveILetI false
@@ -32,7 +36,8 @@ theorem algX_strHom {κ : Type} [Field κ] {Z : Scheme.{0}} [Algebra κ Γ(Z, �
     algX (strHom κ Z) ⊤ = algebraMap κ Γ(Z, ⊤) := by
   ext r
   rw [algebraMap_eq_strHom]
-  simp [algX, Scheme.Hom.appLE, Scheme.Hom.appTop]
+  simp only [algX, RingHom.comp_apply, CommRingCat.hom_comp]
+  rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
   rfl
 
 section Base
@@ -49,7 +54,8 @@ private theorem eq_of_algX_top_eq {R : Type} [CommRing R] {Z : Scheme.{0}} {f g 
       algX φ ⊤ = ((Scheme.ΓSpecIso (CommRingCat.of R)).inv ≫ φ.appTop).hom := by
     intro φ
     ext r
-    simp [algX, Scheme.Hom.appLE, Scheme.Hom.appTop]
+    simp only [algX, RingHom.comp_apply, CommRingCat.hom_comp]
+    rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
     rfl
   rw [hf, hf] at h
   have e : f.appTop = g.appTop := by
@@ -169,7 +175,7 @@ theorem stVert (h1 : StPts) (h2 : StPull) (h3 : StDiv) : StVert := by
   have hsurj : Function.Surjective (algebraMap (𝓞 K) κ) :=
     v.asIdeal.algebraMap_residueField_surjective
   have hEκ : Emb (strHom κ Z) s := V.emb_base hπ hE
-  have hPκ : IsProjOver (strHom κ Z) := isProjOver_of_surjective_base hsurj (V.eq_comp_spMap hπ) hP
+  have hPκ : IsProjOver (strHom κ (X := Z)) := isProjOver_of_surjective_base hsurj (V.eq_comp_spMap hπ) hP
   have hred : reduceMod v (ptIdeal p s (genericPoint Z)) = ptIdeal (strHom κ Z) s (genericPoint Z) := by
     rw [V.ptIdeal_base hπ]
     exact Ideal.map_comap_of_surjective _ (MvPolynomial.map_surjective _ hsurj) _

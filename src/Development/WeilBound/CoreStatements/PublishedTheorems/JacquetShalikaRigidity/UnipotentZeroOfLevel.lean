@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ namespace PositivityTheory.AdelicQuotientData
 
 namespace PKLt1
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {m k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {m k : ℕ}
 
 theorem lastRow_mir {p : GA E k} (g : GA E k) (hp : Mir (k - 1) p) : lastRow (p * g) = lastRow g := by
   funext c
@@ -32,11 +36,11 @@ theorem pw_eq (hK5a : TransformsEmbedding) (hk : 1 ≤ k) (hkm : k < m) {ψ : Ad
   unfold PW Wh
   rw [(hK5a E m k hk hkm ψ hψ ι hι φ hφ).2.2.2.1 g]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem unipotent_zero_of_level {j : ℕ} {u : GA E m} (h : UU j u) : UU 0 u :=
   ⟨h.1, h.2.1, fun _ _ hc => absurd hc (Nat.not_lt_zero _)⟩
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem unipotent_zero_mul {u v : GA E m} (hu : UU 0 u) (hv : UU 0 v) : UU 0 (u * v) := by
   refine ⟨fun i c hci => ?_, fun i => ?_, fun _ _ hc => absurd hc (Nat.not_lt_zero _)⟩
   · rw [Units.val_mul, Matrix.mul_apply]
@@ -52,7 +56,7 @@ theorem unipotent_zero_mul {u v : GA E m} (hu : UU 0 u) (hv : UU 0 v) : UU 0 (u 
       · rw [hv.1 j i h, mul_zero]
     · intro h; exact absurd (Finset.mem_univ i) h
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem blkU_unipotent_zero (x : UnipotentBlockColumnIndex m k k → Ad E) : UU 0 (blkU x : GA E m) := by
   have hp : ∀ i c : Fin m, (c : ℕ) ≤ i → posM (Subtype.val : UnipotentBlockColumnIndex m k k → Fin m × Fin m) x i c = 0 := by
     intro i c hci
@@ -119,7 +123,7 @@ theorem sq (hK1 : K1) (hK5a : TransformsEmbedding) (hK5b : FourierSeriesColumn) 
   refine h.trans (ENNReal.ofReal_le_ofReal (le_of_eq ?_))
   exact sq_real (hD g) M m (by omega)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem law_superdiag {F : Type} [Field F] (A : Matrix (Fin k) (Fin k) F) (hkm : k ≤ m) :
     Whittaker.superdiagSum (embM m A) = Whittaker.superdiagSum A := by
   classical
@@ -129,8 +133,8 @@ theorem law_superdiag {F : Type} [Field F] (A : Matrix (Fin k) (Fin k) F) (hkm :
     intro i j
     simp only [hG, embM, Matrix.of_apply]
     by_cases h : (i : ℕ) < k ∧ (j : ℕ) < k
-    · rw [dif_pos h, dif_pos h]
-    · rw [dif_neg h, dif_neg h]
+    · rw [dite_eq_left h, dite_eq_left h]
+    · rw [dite_eq_right h, dite_eq_right h]
       split_ifs with h1
       · rw [Matrix.one_apply_ne]
         intro e; rw [e] at h1; omega
@@ -138,7 +142,7 @@ theorem law_superdiag {F : Type} [Field F] (A : Matrix (Fin k) (Fin k) F) (hkm :
   have e2 : ∀ i j : Fin k, (if (j : ℕ) = i + 1 then A i j else 0) = G i j := by
     intro i j
     simp only [hG]
-    rw [dif_pos ⟨i.2, j.2⟩]
+    rw [dite_eq_left ⟨i.2, j.2⟩]
   unfold Whittaker.superdiagSum
   simp_rw [e1, e2]
   have h3 : ∀ n, (∑ i : Fin n, ∑ j : Fin n, G i j) = ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, G i j := by
@@ -152,13 +156,13 @@ theorem law_superdiag {F : Type} [Field F] (A : Matrix (Fin k) (Fin k) F) (hkm :
     refine (Finset.sum_subset (Finset.range_mono hkm) fun j _ hj => ?_).symm
     simp only [Finset.mem_range] at hj
     simp only [hG]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
   simp_rw [h4]
   refine (Finset.sum_subset (Finset.range_mono hkm) fun i _ hi => ?_).symm
   simp only [Finset.mem_range] at hi
   refine Finset.sum_eq_zero fun j _ => ?_
   simp only [hG]
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
 
 theorem law (hG0 : jumpWindows.G0) (hK5e : CornerEmbedding) (hK5a : TransformsEmbedding) (hK7 : K7) (hK8a : LocalHeckeAlgebra) (hk : 1 ≤ k) (hkm : k < m)
     {ψ : AddChar (Ad E) ℂ} (hψ : StdPsi ψ) {S : Finset (Pl E)} (hS : ∀ w, w ∉ S → Cond ψ w)

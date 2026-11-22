@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MembershipCriterionOfLevelZero
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemOfExp
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MembershipCriterionOfLevelZero
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemOfExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem smulS_map {V V' : Type} [AddCommGroup V] [Module LL V] [AddCommGroup V']
     show L (f k) = 0
     rw [hf0 k hk, map_zero]
   funext k
-  rw [smulS_eq_sum hf' g k ((k - m).toNat + 1) (by omega), smulS_eq_sum hf g k ((k - m).toNat + 1) (by omega),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [smulS_eq_sum hf' g k ((k - m).toNat + 1) (by omega), smulS_eq_sum hf g k ((k - m).toNat + 1) (by omega),
     map_sum]
   simp only [map_smul]
 
@@ -80,7 +85,7 @@ theorem level_one_uniformizer_coeff_vanish (hR : Formalism.MainNotions.UnusedSlo
   obtain ⟨E, hE0, -, hE⟩ := W.lev_π c 1 ⟨0, by simp⟩
   have hπ : PowerSeries.constantCoeff (W.lev c 1 letπ) = 0 := by
     have := congrArg PowerSeries.constantCoeff hE
-    rw [map_add, map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
+    rw [map_add (f := _), map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
     linear_combination this
   obtain ⟨q₁, hq₁⟩ := PowerSeries.X_dvd_iff.2 hπ
   obtain ⟨w, hw⟩ := (Formalism.MainNotions.UnusedSlot80.SatW.ring_clauses W hR).1
@@ -148,7 +153,8 @@ theorem hor_exp [IsDomain O] (Ti : Comparison₂ W levB) (hR : Formalism.MainNot
     have hcc : ∀ m, PowerSeries.constantCoeff ((∑ r ∈ Finset.range M, W.π₀ ^ r *
         algebraMap O (LetA O n) (y r m)) c') = y 0 m := by
       intro m
-      rw [Finset.sum_apply, map_sum, Finset.sum_eq_single 0]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_apply, map_sum, Finset.sum_eq_single 0]
       · simp [Pi.mul_apply]
       · intro r _ hr
         simp only [Pi.mul_apply, Pi.pow_apply, map_mul, map_pow, show W.π₀ c' = W.π₀₁ from rfl,
@@ -175,7 +181,7 @@ theorem hor_exp [IsDomain O] (Ti : Comparison₂ W levB) (hR : Formalism.MainNot
     have hLB : LB 0 (levB T c' 1 ⟨x', hx'N⟩) := fun k hk => by
       rw [← hx'l]; exact Ti.hneg T hTc c' _ k hk
     have hvan := smulS_vanish hLB (level_one_uniformizer_coeff_vanish hR c' M) k hk
-    simp only [e1, map_add, Pi.add_apply, levB_smul W levB Ti.hEq Ti.hsupp, hvan, add_zero] at h1
+    simp only [e1, map_add (f := _), Pi.add_apply, levB_smul W levB Ti.hEq Ti.hsupp, hvan, add_zero] at h1
     have h2 : ((algebraMap O LL (W.χΓ W.gam : O)) ^ k - 1) • levB T c' 1 ⟨Hh, hHN⟩ k = 0 := by
       rw [sub_smul, ← h1, one_smul, sub_self]
     exact (smul_eq_zero.1 h2).resolve_left (sub_ne_zero.2 (chi_pow_ne hH hCA T hTc c' k hpos))
@@ -306,9 +312,7 @@ theorem levB_lam_phi (Ti : Comparison₂ W levB) (hs : W.s = 1) (hR : Formalism.
       ring
     rw [hLam]
     congr 1
-    funext k
-    simp only [resc, hFdef, hφ1]
-    rw [pow_succ' (Formalism.WeaklyAdmissibleFiltrations.φVB PD (LL := LL) (V := T.V)) e, Module.End.mul_apply]
+    simp only [pow_succ', Module.End.mul_apply, hFdef, hφ1]
 
 omit [IsDomain O] in
 theorem smulS_congr_lt {V : Type} [AddCommGroup V] [Module LL V] {m : ℤ} {F F' : ℤ → V} (hF : LB m F)
@@ -327,11 +331,13 @@ theorem hor_mem (T : LocLat G Qp LL O) (c' : ZMod n) {d : ℕ} (b : Fin d → W.
     intro yy
     refine ⟨(W.N T).sum_mem fun m _ => (W.N T).smul_of_tower_mem _ ((hb.1 m).1.1), fun δ hδ => ?_⟩
     unfold Formalism.MainNotions.LiftingTheory.vecB
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun m _ => by rw [map_smul, (hb.1 m).1.2 δ hδ]
   refine ⟨?_, ?_⟩
   · refine ⟨(W.N T).sum_mem fun r _ => (W.N T).smul_mem _ (hvec (y r)).1, fun δ hδ => ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun r _ =>
       (Formalism.MainNotions.UnusedSlot80.PhiPowers.smul_mem_NΔ W T (W.AΔ.pow_mem hπ r) (hvec (y r))).2 δ hδ
   · refine ⟨∑ r ∈ Finset.range M, W.π₀ ^ r • Formalism.MainNotions.LiftingTheory.vecB W T b (y r),
@@ -376,9 +382,7 @@ theorem levB_frame (Ti : Comparison₂ W levB) (hs : W.s = 1) (hR : Formalism.Ma
     rw [map_mul, Ti.hlevφ _ ζ ⟨1, by simpa using hζ⟩, hζ.pow_eq_one, hi1]
   rw [show (⟨_, hZ⟩ : ↥(W.N T)) = ⟨W.q ^ m • W.φD T ((⟨_, hzN⟩ : ↥(W.N T)) : W.DD T), hZ⟩ from rfl, hB, hlev]
   congr 1
-  funext k
-  simp only [resc, hFdef, hφ1]
-  rw [pow_succ' (Formalism.WeaklyAdmissibleFiltrations.φVB PD (LL := LL) (V := T.V)) e, Module.End.mul_apply]
+  simp only [pow_succ', Module.End.mul_apply, hFdef, hφ1]
 
 theorem coeff_lev_q_pow (Ti : Comparison₂ W levB) (a : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) (m : ℕ)
     (g : PowerSeries LL) : ∀ i < m, PowerSeries.coeff i (W.lev a ζ (W.q ^ m) * g) = 0 := by
@@ -400,8 +404,8 @@ theorem smulS_congr_shift {V : Type} [AddCommGroup V] [Module LL V] {m₁ : ℤ}
   · rw [hg j hj, zero_smul, zero_smul]
   · rw [h (r - j) (by omega)]
 
-variable (W levB) in
 
+variable (W levB) in
 def ExpFrame0 : Prop :=
   ∀ (A : ArcP n), A.OK → ∀ c' ∈ A.cuts, ∀ (T : LocLat G Qp LL O), Win W A T →
     ∀ {d : ℕ} (b : Fin d → W.DD T) (sol : Fin d → ℕ → Fin d → LL), IsHor W T c' b sol →
@@ -414,8 +418,8 @@ def ExpFrame0 : Prop :=
           (fun k => if k = 0 then ((PD.p : LL) ^ κ) •
             ((Formalism.WeaklyAdmissibleFiltrations.φVB PD (LL := LL) (V := T.V)) ^ (e + 1)) (cmpD W T (b j)) else 0) r
 
-variable (W levB) in
 
+variable (W levB) in
 def ExpNoNeg0 : Prop :=
   ∀ (A : ArcP n), A.OK → ∀ c' ∈ A.cuts, ∀ (T : LocLat G Qp LL O), Win W A T →
     ∀ (e : ℕ) (ζ : LL), IsPrimitiveRoot ζ PD.p → ∀ y : W.DD T, Formalism.MainNotions.LiftingTheory.InNΔi W T c' y → ∀ (m : ℕ)
@@ -461,8 +465,8 @@ theorem expNoNeg0_of (Ti : Comparison₂ W levB) (hs : W.s = 1) (hR : Formalism.
     LB_resc (LB_map _ (fun k hk => by rw [← hyl]; exact Ti.hneg T hT.1 c' _ k hk)) _
   exact smulS_vanish hLB (fun i hi => by rw [map_mul]; exact coeff_lev_q_pow Ti _ ζ hζ m _ i hi) r hr
 
-omit [IsDomain O] in
 
+omit [IsDomain O] in
 theorem hneg_of (hs : W.s = 1) {Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop} (h4 : Formalism.MainNotions.DeltaInvariantLattices.P4W W Pt)
     (hEq : ∀ (T : LocLat G Qp LL O) (i : ZMod n) (ζ : LL) (x : ↥(W.N T)) (k : ℤ),
       W.levN T i ζ x k = ιV PD (LL := LL) (V := T.V) (levB T i ζ x k))
@@ -472,7 +476,7 @@ theorem hneg_of (hs : W.s = 1) {Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Pro
     have hX1 : W.X = letπ := by simp [LocWach.X, hs]
     obtain ⟨E, hE0, -, hE⟩ := W.lev_π i 1 ⟨0, by simp⟩
     have := congrArg PowerSeries.constantCoeff hE
-    rw [map_add, map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
+    rw [map_add (f := _), map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
     rw [hX1]
     linear_combination this
   have hcl := ((h4 T hT).1 i 1 ⟨0, by simp⟩ hX).1 ((letE i : LetA O n) • x) k

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -108,7 +113,7 @@ theorem tensor_decomp {A : Type} [CommRing A] [Algebra F A] (δ : E)
   | add x y hx hy =>
     obtain ⟨a, b, rfl⟩ := hx
     obtain ⟨a', b', rfl⟩ := hy
-    exact ⟨a + a', b + b', by rw [map_add, map_add]; ring⟩
+    exact ⟨a + a', b + b', by rw [map_add (f := _), map_add (f := _)]; ring⟩
 
 theorem tensor_inj {A : Type} [CommRing A] [Algebra F A] : Function.Injective (algebraMap A (A ⊗[F] E)) :=
   Algebra.TensorProduct.includeLeft_injective (R := F) (S := F) (A := A) (B := E) (algebraMap F E).injective
@@ -205,7 +210,7 @@ theorem tensor_prod_ext {R A B : Type} [CommRing R] [CommRing A] [CommRing B]
     | zero => simp
     | tmul m x => simp [← TensorProduct.add_tmul, h]
     | add a b ha hb =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [add_add_add_comm, ← ha, ← hb]
   rw [key a, h1, h2]; simp
 
@@ -246,8 +251,8 @@ theorem char_eq_of_mul_conj (hc : IsCMExt F E σ) {χ : (AEF F E)ˣ →* Circle}
   rw [map_mul, map_one, ← hcx] at h2
   exact mul_right_cancel h2
 
-variable (σ J) in
 
+variable (σ J) in
 def cutDet (ε : AEF F E) (h : ε * ε = ε) : GAF σ J →* (AEF F E)ˣ :=
   (Units.map (cut ε h)).comp ((Matrix.GeneralLinearGroup.det (n := Fin n) (R := AEF F E)).comp (matHomF σ J))
 
@@ -307,7 +312,7 @@ theorem cutDet_conj (hJ : IsHermND σ J) (ε : AEF F E) (h1 : ε * ε = ε) {e :
   have hx' : (x : AEF F E) = e * (mtF σ J g).det + (1 - e) := hx
   have e2 : cAF σ e * cAF σ e = cAF σ e := by rw [← RingHom.map_mul, he]
   have e5 : cAF σ x = cAF σ e * cAF σ (mtF σ J g).det + (1 - cAF σ e) := by
-    rw [hx', RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
+    rw [hx', RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
   rw [cutDet_val, e5]
   exact cut_mul e2 a1 a2 (det_supp hg) (det_mul_conj hJ g)
 

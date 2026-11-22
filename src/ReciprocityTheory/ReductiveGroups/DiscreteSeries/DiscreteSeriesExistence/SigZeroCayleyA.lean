@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleySignature
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleySignature
+
+@[expose] public section
 
 noncomputable section
 

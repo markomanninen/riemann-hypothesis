@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.SumGramInr
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.SumGramInr
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,8 @@ theorem cvec_gram (hcj : ∀ x, cj (cj x) = x) (Z : Matrix (Fin (r + 1)) (Fin (r
       intro k
       have := congrFun (congrFun hZ' k) j
       rw [Matrix.mul_apply, Matrix.one_apply] at this
-      rw [← map_one cj, ← map_zero cj, ← apply_ite cj, ← this, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_one cj, ← map_zero cj, ← apply_ite cj, ← this, map_sum]
       exact Finset.sum_congr rfl (fun a _ => by rw [map_mul, mul_comm])
     have e1 : ∑ a, cj (Z a j) * cvec O cj Z T T' Y (Sum.inl a) =
         (Y (Sum.inr j) : E) + T' * lamC Z (fun k => (Y (Sum.inl k) : E)) *
@@ -102,7 +107,8 @@ theorem formC_eq (hcj : ∀ x, cj (cj x) = x) (Z : Matrix (Fin (r + 1)) (Fin (r 
   simp only [cvec, Sum.elim_inl, Sum.elim_inr, add_mul, Finset.sum_add_distrib]
   have s1 : ∑ a, (∑ k, cj ((Z.map O.subtype)⁻¹ k a) * (Y (Sum.inr k) : E)) * cj (W (Sum.inl a) : E) =
       cj (bRaw O cj Z (fun j => W (Sum.inl j)) (fun j => Y (Sum.inr j))) := by
-    simp only [bRaw, map_sum, map_mul, hcj, Matrix.mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bRaw, map_sum, map_mul, hcj, Matrix.mulVec, dotProduct, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl (fun k _ => Finset.sum_congr rfl (fun a _ => by ring))
   have s3 : ∑ b, (Z.map O.subtype)⁻¹.mulVec (fun j => (Y (Sum.inl j) : E)) b * cj (W (Sum.inr b) : E) =
@@ -115,7 +121,8 @@ theorem formC_eq (hcj : ∀ x, cj (cj x) = x) (Z : Matrix (Fin (r + 1)) (Fin (r 
         cj (lamC (Z.map O.subtype) (fun j => (W (Sum.inl j) : E))) := by
     have e : cj (lamC (Z.map O.subtype) (fun j => (W (Sum.inl j) : E))) =
         ∑ a, cj ((Z.map O.subtype)⁻¹ (Fin.last r) a) * cj (W (Sum.inl a) : E) := by
-      simp only [lamC, Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [lamC, Matrix.mulVec, dotProduct, map_sum, map_mul]
     rw [e, Finset.mul_sum]
     exact Finset.sum_congr rfl (fun a _ => by ring)
   have s4 : ∑ b, T * lamStarC cj (Z.map O.subtype) (fun j => (Y (Sum.inr j) : E)) *
@@ -124,7 +131,8 @@ theorem formC_eq (hcj : ∀ x, cj (cj x) = x) (Z : Matrix (Fin (r + 1)) (Fin (r 
         cj (lamStarC cj (Z.map O.subtype) (fun j => (W (Sum.inr j) : E))) := by
     have e : cj (lamStarC cj (Z.map O.subtype) (fun j => (W (Sum.inr j) : E))) =
         ∑ b, (Z.map O.subtype)⁻¹ b (Fin.last r) * cj (W (Sum.inr b) : E) := by
-      simp only [lamStarC, map_sum, map_mul, hcj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [lamStarC, map_sum, map_mul, hcj]
     rw [e, Finset.mul_sum]
     exact Finset.sum_congr rfl (fun b _ => by ring)
   linear_combination s1 + s2 + s3 + s4

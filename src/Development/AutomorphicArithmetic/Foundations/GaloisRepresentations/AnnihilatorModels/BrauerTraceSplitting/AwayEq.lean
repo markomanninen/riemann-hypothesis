@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.LocFacts
-import GroundTheory.PAdicHodge.BdRAlg
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.LocFacts
+public import GroundTheory.PAdicHodge.BdRAlg
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

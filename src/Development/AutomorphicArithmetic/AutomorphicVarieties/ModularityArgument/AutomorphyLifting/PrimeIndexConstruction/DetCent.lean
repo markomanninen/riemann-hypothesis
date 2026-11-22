@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.LocTrans
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.FiniteInfinitePlaceProduct
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.SameSatTwist
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.LocTrans
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.FiniteInfinitePlaceProduct
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.SameSatTwist
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ private theorem scalar_eq_prod {E V : Type} [Field E] [NumberField E] {a : ℕ} 
   have hu : IsUnifV E w (u : w.adicCompletion E) := unif_spec w
   have h0 : (u : w.adicCompletion E) ≠ 0 := u.ne_zero
   have hTn : Tj ℂ a (Ov E w) (u : w.adicCompletion E) a =
-      dosetInd ℂ (KGL w a) (GlobalTheory.WeylGL.tor h0 fun _ => 1) := by
+      dosetInd ℂ (KGL w (n := a)) (GlobalTheory.WeylGL.tor h0 fun _ => 1) := by
     rw [GlobalTheory.WeylGL.Tj_eq h0]; simp
   have h1 := hx.2.2.2 _ hu a le_rfl
   rw [hTn, heckeVec_dosetInd (R := {GlobalTheory.WeylGL.tor h0 fun _ => 1}) hx.2.1, Finset.sum_singleton] at h1
@@ -123,7 +127,8 @@ theorem detCent : DetCent := by
     Filter.eventually_cofinite.2 (by simpa using hfl)
   have hqne : ∀ v : HeightOneSpectrum (𝓞 F), (normV v : ℂ) ≠ 0 := fun v => by
     have h1 : 1 < Ideal.absNorm v.asIdeal := NumberField.HeightOneSpectrum.one_lt_absNorm v
-    have h2 : 0 < normV v := zero_lt_one.trans h1
+    have h2 : 0 < normV v := by
+      simpa [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using (zero_lt_one.trans h1)
     exact_mod_cast h2.ne'
   have hν : ω * χ⁻¹ * P⁻¹ = 1 := by
     refine PositivityTheory.jumpWindows.FiniteInfinitePlaceProduct.eq_one _ ?_
@@ -177,7 +182,9 @@ theorem detCent : DetCent := by
       mul_one, h2]
   · have hu : χ.UnrAt w := fun x hx => by
       have h1 := hU x hx
-      rw [hωe, HChar.loc_mul, (GlobalTheory.HeckeGal.Model.absPow_isAbsPow F _).1 w x hx, mul_one] at h1
+      rw [hωe] at h1
+      change (χ.loc w) x * (P.loc w) x = 1 at h1
+      rw [hP, (GlobalTheory.HeckeGal.Model.absPow_isAbsPow F _).1 w x hx, mul_one] at h1
       exact h1
     exact fun σ hσ => (hχ.unr_iff ha (Or.inr rfl) hA).2 hu σ hσ
 

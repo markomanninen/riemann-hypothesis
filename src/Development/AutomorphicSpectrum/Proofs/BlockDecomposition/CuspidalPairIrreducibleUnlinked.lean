@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspLinesIrr
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspLinesIrr
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ namespace GlobalTheory.CompanionTheory.BZPair
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem terms_eq_first (Γ : Segment k) {u v : IrrGL k} (hu : Γ.first = u)
+theorem terms_eq_first (Γ : Segment k) {u v : IrrGL (k := k)} (hu : Γ.first = u)
     (hΓ : Γ.carrier ⊆ {u} ∪ {v}) (hv : v ≠ u.nu 1) :
     ∀ a : ℕ, a < Γ.len → Γ.first.nu a = u := by
   intro a
@@ -26,12 +30,12 @@ theorem terms_eq_first (Γ : Segment k) {u v : IrrGL k} (hu : Γ.first = u)
     · exact Set.mem_singleton_iff.1 h
     · exact absurd ((Set.mem_singleton_iff.1 h).symm.trans h1) hv
 
-theorem not_linked_single {x y : IrrGL k} (hx : x.IsCusp) (hy : y.IsCusp) (h1 : y ≠ x.nu 1) (h2 : x ≠ y.nu 1) :
+theorem not_linked_single {x y : IrrGL (k := k)} (hx : x.IsCusp) (hy : y.IsCusp) (h1 : y ≠ x.nu 1) (h2 : x ≠ y.nu 1) :
     ¬ (Segment.single x hx).Linked (Segment.single y hy) := by
   rintro ⟨⟨Γ, hΓ⟩, hxy, -⟩
   simp only [Segment.carrier_single] at hΓ hxy
   have hne : x ≠ y := fun h => hxy (by subst h; exact subset_rfl)
-  have key : ∀ u v : IrrGL k, Γ.first = u → Γ.carrier ⊆ {u} ∪ {v} → v ≠ u.nu 1 → v ∈ Γ.carrier → v = u := by
+  have key : ∀ u v : IrrGL (k := k), Γ.first = u → Γ.carrier ⊆ {u} ∪ {v} → v ≠ u.nu 1 → v ∈ Γ.carrier → v = u := by
     intro u v hu hsub hv hvmem
     obtain ⟨a, ha, hav⟩ := Segment.mem_carrier.1 hvmem
     rw [← hav]

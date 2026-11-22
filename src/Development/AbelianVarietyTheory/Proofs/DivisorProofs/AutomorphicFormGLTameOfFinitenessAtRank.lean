@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrowthOfTame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieGrowthOfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraFinitenessAutomorphicGLOfEigen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrowthOfTame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieGrowthOfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraFinitenessAutomorphicGLOfEigen
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ namespace GlobalTheory.AutGrowth.RankLocal
 
 open GlobalTheory.AutGrowth.KilledFin GlobalTheory.AutGrowth.SmoothFinite
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem finite_forms (h : ∀ (L' : Subgroup (GL (Fin a) (Af E))), IsOpen (L' : Set (GL (Fin a) (Af E))) →
       ∀ W' : Submodule ℂ (Kinf E a → ℂ), FiniteDimensional ℂ W' →
@@ -161,7 +165,7 @@ theorem exists_finite_space_rank (h : ∀ (L' : Subgroup (GL (Fin a) (Af E))), I
   rintro _ ⟨T, hT, rfl⟩
   exact (hT.1.2 w0).1
 
-theorem tame_of_autForm_rank : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ),
+theorem tame_of_autForm_rank : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ),
     (∀ (L' : Subgroup (GL (Fin n) (Af E))), IsOpen (L' : Set (GL (Fin n) (Af E))) →
       ∀ W' : Submodule ℂ (Kinf E n → ℂ), FiniteDimensional ℂ W' →
       ∀ X' : Set (Module.End ℂ (Sm E n) → ℂ), X'.Finite → ∀ N' : ℕ,

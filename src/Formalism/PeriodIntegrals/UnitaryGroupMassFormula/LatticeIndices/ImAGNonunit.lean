@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ImASubKpp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LatOpenCompact
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SplitTransport
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ImASubKpp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LatOpenCompact
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SplitTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,25 @@ theorem imA_lat_fg (p : TypX X) : (latLoc (E := X.B.I.E) p.1 (X.B.I.L : Set (Fin
 
 theorem imA_g_nonunit (p : TypX X) : ¬ IsUnit ((X.B.g : ℕ) : p.1.adicCompletionIntegers X.B.I.F) := by
   intro hu
-  obtain ⟨π, -, -⟩ := stResZ_holds X p
+  have hr : ResArith X p := by
+    have hgp : Fact (gOf p).Prime := ⟨gOf_prime X p⟩
+    have hmem : ((gOf p : ℕ) : 𝓞 X.B.I.F) ∈ p.1.asIdeal := by
+      have hty := (mem_typSet X.B.I.F (D.host.g 0) (D.host.g 1) (D.host.g_prime 0).ne_zero
+        (D.host.g_prime 1).ne_zero p.1).1 p.2
+      unfold gOf
+      split_ifs with h
+      · exact h
+      · exact hty.resolve_left h
+    have hsplit : {w : IsDedekindDomain.HeightOneSpectrum (𝓞 X.B.I.E) |
+        ((gOf p : ℕ) : 𝓞 X.B.I.E) ∈ w.asIdeal}.ncard = Module.finrank ℚ X.B.I.E := by
+      unfold gOf
+      split_ifs
+      · exact MassDataIdxRes.split_transport X.ιE _ (D.nd.g_split 0)
+      · exact MassDataIdxRes.split_transport X.ιE _ (D.nd.g_split 1)
+    obtain ⟨he, hf⟩ := MassDataIdxRes.locDeg_one_below (F := X.B.I.F) (E := X.B.I.E) (gOf p) hsplit p.1 hmem
+    obtain ⟨hc, hn⟩ := MassDataIdxRes.arith_of_loc (gOf p) p.1 hmem he hf
+    exact ⟨hc, hmem, hn⟩
+  obtain ⟨π, -, -⟩ : StResZ X p := stResZ_of X p hr
   have hd : gOf p ∣ X.B.g := by
     rw [X.g_eq]; unfold gOf; split_ifs
     · exact dvd_mul_right _ _

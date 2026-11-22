@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountUp
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountUp
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem fstOf_even {s : ℕ} (A : Fin s → ℕ) (cp : ℕ → ℤ) (LLv : Chain
   unfold fstOf
   rw [if_neg (by omega)]
   have hk : (2 * i.val + 2 - 2) / 2 = i.val := by omega
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   simp only [hk]
 
 def muOf {s r : ℕ} (fst : ℕ → ℤ) (ka : Fin (2 * s + 1 + 1) → Fin r → ℤ) : Fin (2 * s + 1 + 1) → Fin (r + 1) → ℤ :=
@@ -76,7 +80,7 @@ theorem kLetters_deg_odd {s : ℕ} (A0 : ℕ) (A C : Fin s → ℕ) (i : Fin s) 
   have h1 : (2 * i.val + 1 - 1) / 2 < s := by omega
   have h2 : (2 * i.val + 1) % 2 = 1 := by omega
   simp only [kLetters, Fin.val_mk]
-  rw [if_neg h0, dif_pos h1, if_pos h2]
+  rw [if_neg h0, dite_eq_left h1, if_pos h2]
   congr 1
   ext
   simp only
@@ -89,7 +93,7 @@ theorem kLetters_deg_even {s : ℕ} (A0 : ℕ) (A C : Fin s → ℕ) (i : Fin s)
   have h1 : (2 * i.val + 2 - 1) / 2 < s := by omega
   have h2 : ¬ ((2 * i.val + 2) % 2 = 1) := by omega
   simp only [kLetters, Fin.val_mk]
-  rw [if_neg h0, dif_pos h1, if_neg h2]
+  rw [if_neg h0, dite_eq_left h1, if_neg h2]
   congr 1
   ext
   simp only

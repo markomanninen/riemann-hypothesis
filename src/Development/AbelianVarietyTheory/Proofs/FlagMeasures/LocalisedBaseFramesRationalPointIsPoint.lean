@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalDiscriminantIsUnit
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalSplitTypeMixedSecond
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDualVectorsLocalHermitianFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalDiscriminantIsUnit
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalSplitTypeMixedSecond
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDualVectorsLocalHermitianFrame
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc Formalism.L2.SG.TermDef GlobalTheory.LocOver
 open scoped Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -27,15 +32,21 @@ theorem ptEntryL_eq' {S : Type} [CommRing S] (L : List (Sˣ × ℕ+)) : ∀ i j 
 
 theorem modBlocks_map' {A S : Type} [CommRing S] (f : ℕ → ℕ → A → S) :
     ∀ (l : List (A × ℕ)) (a : ℕ) (L : List (Sˣ × ℕ+)),
-    modBlocks f a l = some L → L.map (fun b => ((b.1 : S), (b.2 : ℕ))) = mapBlocks f a l
-  | [], a, L, h => by
+    modBlocks f a l = some L → L.map (fun b => ((b.1 : S), (b.2 : ℕ))) = mapBlocks f a l := by
+  intro l
+  induction l with
+  | nil =>
+    intro a L h
     simp only [modBlocks, Option.some.injEq] at h
-    subst h; rfl
-  | (t, s) :: l, a, L, h => by
+    subst L
+    rfl
+  | cons b l ih =>
+    obtain ⟨t, s⟩ := b
+    intro a L h
     simp only [modBlocks] at h
     split_ifs at h with hu
-    obtain ⟨L1, hL1, rfl⟩ := Option.map_eq_some_iff.1 h
-    simp only [List.map_cons, mapBlocks, modBlocks_map' f l (a + s) L1 hL1]
+    obtain ⟨L1, hL1, rfl⟩ := Option.map_eq_some_iff.mp h
+    simp only [List.map_cons, mapBlocks, ih (a + s) L1 hL1]
     rfl
 
 theorem mapBlocks_snd' {A B : Type} (f : ℕ → ℕ → A → B) : ∀ (l : List (A × ℕ)) (a : ℕ),
@@ -45,13 +56,19 @@ theorem mapBlocks_snd' {A B : Type} (f : ℕ → ℕ → A → B) : ∀ (l : Lis
 
 theorem modBlocks_some {A S : Type} [CommRing S] (f : ℕ → ℕ → A → S) :
     ∀ (l : List (A × ℕ)) (a : ℕ), (∀ b ∈ l, 0 < b.2) → (∀ b ∈ l, ∀ a' s, IsUnit (f a' s b.1)) →
-      ∃ L, modBlocks f a l = some L
-  | [], a, _, _ => ⟨[], rfl⟩
-  | (t, s) :: l, a, h1, h2 => by
-    obtain ⟨L1, hL1⟩ := modBlocks_some f l (a + s) (fun b hb => h1 b (List.mem_cons_of_mem _ hb))
-      (fun b hb => h2 b (List.mem_cons_of_mem _ hb))
+      ∃ L, modBlocks f a l = some L := by
+  intro l
+  induction l with
+  | nil =>
+    intro a _ _
+    exact ⟨[], rfl⟩
+  | cons b l ih =>
+    obtain ⟨t, s⟩ := b
+    intro a h1 h2
+    obtain ⟨L1, hL1⟩ := ih (a + s) (fun b hb => h1 b (List.mem_cons_of_mem _ hb))
+        (fun b hb => h2 b (List.mem_cons_of_mem _ hb))
     have hu : IsUnit (f a s t) ∧ 0 < s := ⟨h2 (t, s) List.mem_cons_self a s, h1 (t, s) List.mem_cons_self⟩
-    rw [modBlocks, dif_pos hu, hL1]
+    rw [modBlocks, dite_eq_left hu, hL1]
     exact ⟨_, rfl⟩
 
 end GlobalTheory.LocalBlockEntries
@@ -59,7 +76,7 @@ end GlobalTheory.LocalBlockEntries
 end
 
 open Formalism.L2.SG.Pf.AtPt in
-theorem GlobalTheory.LocOver.isPoint_of_scaled : ∀ (D : D7) (Z : LocDat D) (p : PlF D) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (w : Point D.host.E (D.R.rS + 1)) (P : Formalism.MainNotions.S.LocNG.FPair (locH Z p) D.R.rS), ZhatOM (ZhatL F F') = ptMat w → P.A.f = scaled Z p (frame F) → P.B.f = scaled Z p (frame F') → P.IsPoint := by
+theorem GlobalTheory.LocOver.isPoint_of_scaled : ∀ (D : D7) (Z : LocDat D) (p : PlF D) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (w : Point D.host.E (D.R.rS + 1)) (P : Formalism.MainNotions.S.LocNG.FPair (locH Z p) D.R.rS), ZhatOM (ZhatL F F') = ptMat w → P.A.f = scaled Z p (frame F) → P.B.f = scaled Z p (frame F') → P.IsPoint := by
   intro D Z p T T' F F' w P hZ hA hB
   let fB : ℕ → ℕ → D.host.E → (D.s.atP p).Ep := fun a s t =>
     algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((yP Z p)⁻¹ ^ nu D.R.rS a (a + s - 1)) * (D.s.atP p).ιE t

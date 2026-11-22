@@ -1,6 +1,13 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
-import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.HilbertLemmas
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.CvxOfConvex
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.MinimalSolution
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.HormanderLemma
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.OntoWithBoundTop
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -81,8 +88,7 @@ theorem splitT_inner {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E
   rw [integral_withDensity_eq_integral_smul hd]
   congr 1
   funext x
-  simp only [NNReal.smul_def, Real.coe_toNNReal _ (Real.exp_nonneg _), Complex.real_smul]
-  ring
+  rw [NNReal.smul_def, Real.coe_toNNReal _ (Real.exp_nonneg _), Complex.real_smul, mul_comm]
 
 theorem splitT_inner2 {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (ph : M → ℝ) (hph : Continuous ph) (F G : M → E) (hF : MemLp F 2 (wvol n z ph))
@@ -115,14 +121,6 @@ theorem splitT_weakS (F G : M → V n) (hFG : F =ᵐ[vol n z] G) (σ : M → Fin
   rw [hx]
 
 end SplitHelpers
-
-def splitTestSub {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) :
-    Submodule ℂ (M → ℂ) where
-  carrier := {g | IsTest n z g}
-  add_mem' := fun {a b} ha hb => ⟨Smooth.add n z a b ha.1 hb.1, ha.2.add hb.2⟩
-  zero_mem' := ⟨Smooth.const n z 0, HasCompactSupport.zero⟩
-  smul_mem' := fun c g hg => ⟨Smooth.mul n z (fun _ => c) g (Smooth.const n z c) hg.1,
-    hg.2.mul_left (f := fun _ => c)⟩
 
 private theorem d_db_eq_zero_of_not_mem_compact_support {M : Type*} [TopologicalSpace M] [T2Space M] (n : ℕ) (z : M → V n)
     (K0 : Set M) (hK0 : IsCompact K0) (u : M → ℂ) (hu : ∀ x, x ∉ K0 → u x = 0) (x : M)
@@ -209,7 +207,7 @@ theorem splitTest (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
     Ck.continuous n z hz 1 _ (Ck.d n z 1 j _ (hprod j))
   have htc : Continuous (tstar n z ph₁ ph₂ f) := by
     unfold tstar
-    exact ((Smooth.continuous n z hz _ hE1).mul (continuous_finset_sum _ fun j _ => hdj j)).neg
+    exact ((Smooth.continuous n z hz _ hE1).mul (continuous_finsetSum _ fun j _ => hdj j)).neg
   have hoff : ∀ j x, x ∉ tsupport (fun y => (Real.exp (-ph₂ y) : ℂ) * f y j) →
       d n z j (fun y => (Real.exp (-ph₂ y) : ℂ) * f y j) x = 0 := fun j x hx =>
     (d_db_eq_zero_of_not_mem_compact_support n z (tsupport fun y => (Real.exp (-ph₂ y) : ℂ) * f y j)
@@ -271,7 +269,8 @@ theorem splitTest (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
       _ = ∫ x, conj ((∑ j, db n z j g x * conj (f x j)) * (Real.exp (-ph₂ x) : ℂ)) ∂vol n z := by
           congr 1
           funext x
-          rw [map_mul, Complex.conj_ofReal, map_sum, PiLp.inner_apply]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_mul, Complex.conj_ofReal, map_sum, PiLp.inner_apply]
           congr 1
           refine Finset.sum_congr rfl fun j _ => ?_
           rw [map_mul, Complex.conj_conj]

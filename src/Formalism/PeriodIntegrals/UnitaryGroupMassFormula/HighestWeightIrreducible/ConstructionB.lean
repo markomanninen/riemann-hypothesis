@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ClosedEqNablaC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.BCRowGenMonomial
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ClosedEqNablaC
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.BCRowGenMonomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ private theorem homogeneousSubmodule_le_span_bounded_monomials (σ : Type) [Fint
     · have h0 : d v = 0 := by simpa [Finsupp.mem_support_iff] using hv
       rw [h0]
       exact Nat.zero_le _
-  rw [show monomial d (coeff d f) = coeff d f • monomial d (1 : ℂ) by
+  rw [show monomial d (AddMonoidAlgebra.coeff f d) = AddMonoidAlgebra.coeff f d • monomial d (1 : ℂ) by
     rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]]
   refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨d, ⟨fun v => ⟨d v, Nat.lt_succ_of_le (hle v)⟩, ?_⟩, rfl⟩)
   ext v

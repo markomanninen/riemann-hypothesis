@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
-import ReciprocityTheory.SemistableReduction.LogNormCoeffSubLeBlockSphereLogMean
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
+public import ReciprocityTheory.SemistableReduction.LogNormCoeffSubLeBlockSphereLogMean
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -35,7 +39,7 @@ theorem ae_evT_ne_zero (sg : K →+* ℂ) (q : KTp K d.D d.N) (hq : q ≠ 0) (m 
     rcases v with ⟨i, j⟩
     rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨k, rfl⟩
     · exfalso
-      obtain ⟨s, hs, hsv⟩ := (MvPolynomial.mem_vars _).1 (Finset.mem_coe.1 hv)
+      obtain ⟨s, hs, hsv⟩ := (MvPolynomial.mem_vars_iff_mem_support _).1 (Finset.mem_coe.1 hv)
       have h0 := hqm' s hs 0
       rw [hm] at h0
       have hz : s ((0 : Fin (d.D + 1)), j) = 0 :=
@@ -56,7 +60,7 @@ theorem ae_evT_ne_zero (sg : K →+* ℂ) (q : KTp K d.D d.N) (hq : q ≠ 0) (m 
   have hg : ReciprocityTheory.MultiplicativeHeights.IsMultiHomogeneous (fun b : Fin d.D => m b.succ) g := by
     unfold ReciprocityTheory.MultiplicativeHeights.IsMultiHomogeneous
     intro s hs b
-    have hs' : MvPolynomial.coeff s q' ≠ 0 := by
+    have hs' : AddMonoidAlgebra.coeff q' s ≠ 0 := by
       rw [hgdef, MvPolynomial.mem_support_iff, MvPolynomial.coeff_map] at hs
       intro h0
       rw [h0, map_zero] at hs
@@ -64,7 +68,7 @@ theorem ae_evT_ne_zero (sg : K →+* ℂ) (q : KTp K d.D d.N) (hq : q ≠ 0) (m 
     have hmem : Finsupp.mapDomain ψ s ∈ q.support := by
       rw [MvPolynomial.mem_support_iff, ← hq', MvPolynomial.coeff_rename_mapDomain ψ hψ]
       exact hs'
-    exact (Finset.sum_congr rfl fun j _ => (Finsupp.mapDomain_apply hψ s (b, j)).symm).trans
+    exact (Finset.sum_congr rfl fun j _ => (Finsupp.mapDomain_apply_of_injective hψ s (b, j)).symm).trans
       (hqm' _ hmem b.succ)
 
   have hg0 : g ≠ 0 := by

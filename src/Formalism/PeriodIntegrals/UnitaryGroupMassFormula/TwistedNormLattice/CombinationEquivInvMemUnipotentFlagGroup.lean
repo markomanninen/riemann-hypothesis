@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.TwNormLat
+module
+
+public import Formalism.PeriodIntegrals.TwNormLat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

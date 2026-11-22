@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLengthTransverseSlice
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLocalDimDomain
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLengthParameters
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLocalizeQuotientStages
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLengthTransverseSlice
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLocalDimDomain
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLengthParameters
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLocalizeQuotientStages
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -115,7 +120,7 @@ theorem LengthTransverseSlice.proof (hCM : CMLengthParameters.Statement.{0})
       obtain ⟨s, hs, hsg⟩ := hT g (RingHom.mem_ker.1 hg)
       exact ⟨s, fun h => hs (RingHom.mem_ker.1 h), hsg⟩)
   unfold localMult
-  rw [dif_pos hWp, dif_pos (inferInstance : (RingHom.ker (eval q : MvPolynomial (Fin n) ℂ →+* ℂ)).IsPrime), h]
+  rw [dite_eq_left hWp, dite_eq_left (inferInstance : (RingHom.ker (eval q : MvPolynomial (Fin n) ℂ →+* ℂ)).IsPrime), h]
   rfl
 
 end GroundTheory.Heights₂.Heights

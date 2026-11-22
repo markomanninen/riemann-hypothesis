@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qj19.lin_bound.{u_1} :
     ∀ {ι : Type u_1} [Fintype ι] [DecidableEq ι] (L : Matrix ι ι ℂ →ₗ[ℂ] ℂ),
@@ -8,7 +12,8 @@ theorem UpperTheory.Reformulated.B.Qj19.lin_bound.{u_1} :
   refine ⟨∑ i, ∑ j, ‖L (Matrix.single i j 1)‖, by positivity, fun B C hB => ?_⟩
   have h : L B = ∑ i, ∑ j, B i j * L (Matrix.single i j 1) := by
     conv_lhs => rw [Matrix.matrix_eq_sum_single B]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [← smul_eq_mul, ← map_smul, Matrix.smul_single, smul_eq_mul, mul_one]
   rw [h, Finset.sum_mul]

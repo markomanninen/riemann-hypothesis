@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.HeckeFixedPointCMCycleClass
-import Development.AbelianVarietyTheory.Definitions.Divisors.NontrivialOfArtinQE
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.HeckeFixedPointCMCycleClass
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NontrivialOfArtinQE
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
@@ -29,7 +33,7 @@ private theorem matEnd_diagonal_pr {S : Scheme.{0}} {O : Type} [Ring O] {A : Ove
     (d : Fin m → O) (i : Fin m) :
     GlobalTheory.KS.matEnd act (Matrix.diagonal d) ≫ GlobalTheory.KS.pr A i = GlobalTheory.KS.pr A i ≫ act.act (d i) := by
   unfold GlobalTheory.KS.matEnd GlobalTheory.KS.pr
-  rw [Pi.lift_π]
+  rw [Pi.lift_comp_π]
   rw [list_prod_ofFn_eq_of_eq_one_of_ne' _ i]
   · simp
   · intro j hj

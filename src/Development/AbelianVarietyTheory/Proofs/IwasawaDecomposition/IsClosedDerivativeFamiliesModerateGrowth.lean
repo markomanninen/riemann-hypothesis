@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.LowTypeDetermined GlobalTheory.TypeSum
 open scoped InnerProductSpace Topology
@@ -53,8 +57,8 @@ theorem hasDerivAt_of_bound {f : ℝ → E} {b : E} {K : ℝ}
 
 end GlobalTheory.TypeSum.FamClosed
 
-open GlobalTheory.TypeSum.FamClosed in
 
+open GlobalTheory.TypeSum.FamClosed in
 theorem GlobalTheory.TypeSum.isClosed_fam (n : ℕ) (ε : Fin n → Bool) (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (ρ : Mx n → (E →L[ℂ] E)) (hρ : ModRep ε ρ) : IsClosed (Fam ε ρ : Set (List (lie (Jm ε)) → E)) := by
   obtain ⟨h1, hmul, C, N, hC⟩ := hρ
@@ -74,13 +78,13 @@ theorem GlobalTheory.TypeSum.isClosed_fam (n : ℕ) (ε : Fin n → Bool) (E : T
     have hcl : IsClosed {w : List (lie (Jm ε)) → E |
         ‖ρ (NormedSpace.exp (t • (X : Mx n))) (w l) - w l - t • w (X :: l)‖ ≤ M * ‖w (X :: X :: l)‖ * |t| * |t|} :=
       isClosed_le (by fun_prop) (by fun_prop)
-    exact closure_minimal (fun w hw => taylor_bound (R := fun s : ℝ => ρ (NormedSpace.exp (s • (X : Mx n))))
+    exact closure_minimal (fun w (hw : w ∈ (Fam ε ρ : Set (List (lie (Jm ε)) → E))) => taylor_bound (R := fun s : ℝ => ρ (NormedSpace.exp (s • (X : Mx n))))
       h0 hR hM' (hw.1 l X) (hw.1 (X :: l) X) ht) hcl hv
   · have hcl : IsClosed {w : List (lie (Jm ε)) → E |
         w (l₁ ++ (a • X + Y) :: l₂) = (a : ℂ) • w (l₁ ++ X :: l₂) + w (l₁ ++ Y :: l₂)} :=
       isClosed_eq (by fun_prop) (by fun_prop)
-    exact closure_minimal (fun w hw => hw.2.1 l₁ l₂ a X Y) hcl hv
+    exact closure_minimal (fun w (hw : w ∈ (Fam ε ρ : Set (List (lie (Jm ε)) → E))) => hw.2.1 l₁ l₂ a X Y) hcl hv
   · have hcl : IsClosed {w : List (lie (Jm ε)) → E |
         w (l₁ ++ X :: Y :: l₂) - w (l₁ ++ Y :: X :: l₂) = w (l₁ ++ Z :: l₂)} :=
       isClosed_eq (by fun_prop) (by fun_prop)
-    exact closure_minimal (fun w hw => hw.2.2 l₁ l₂ X Y Z hZ) hcl hv
+    exact closure_minimal (fun w (hw : w ∈ (Fam ε ρ : Set (List (lie (Jm ε)) → E))) => hw.2.2 l₁ l₂ X Y Z hZ) hcl hv

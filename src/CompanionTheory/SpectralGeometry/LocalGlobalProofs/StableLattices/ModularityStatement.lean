@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+
+@[expose] public section
 
 open CompanionTheory.Rg.Fl
 open scoped InnerProductSpace ComplexConjugate
@@ -149,7 +153,7 @@ theorem lam_single (g : G) (x : G ⧸ K) (c : ℂ) :
   simp [lam, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
 
 theorem lam_apply_smul (g : G) (f : (G ⧸ K) →₀ ℂ) (x : G ⧸ K) : lam K g f (g • x) = f x :=
-  Finsupp.mapDomain_apply (MulAction.injective g) f x
+  Finsupp.mapDomain_apply_of_injective (MulAction.injective g) f x
 
 theorem comm_lam (h : Hk K) (g : G) (u : (G ⧸ K) →₀ ℂ) : h.1 (lam K g u) = lam K g (h.1 u) := by
   have := (Subalgebra.mem_centralizer_iff ℂ).1 h.2 (lam K g) ⟨g, rfl⟩
@@ -225,7 +229,7 @@ theorem inner_phi {N : ℕ} (Γ : Subgroup G) (φ : ((G ⧸ K) →₀ ℂ) →�
   induction f using Finsupp.induction_linear with
   | zero => simp
   | add a b ha hb =>
-    rw [map_add, inner_add_right, ha, hb, Finsupp.sum_add_index' (by simp) (by intros; ring)]
+    rw [map_add (f := _), inner_add_right, ha, hb, Finsupp.sum_add_index' (by simp) (by intros; ring)]
   | single z c =>
     have hs : Finsupp.single z c = c • Finsupp.single z (1 : ℂ) := by simp
     rw [Finsupp.sum_single_index (by simp), hs, map_smul, inner_smul_right, hφ]
@@ -263,7 +267,7 @@ theorem adj {N : ℕ} (Γ : Subgroup G) [∀ x : G ⧸ K, Finite (MulAction.stab
     ⟪φ u, φ (h.1 v)⟫_ℂ = ⟪φ ((starH hp h).1 u), φ v⟫_ℂ := by
   induction v using Finsupp.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, inner_add_right, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), inner_add_right, ha, hb]
   | single y c =>
     have hs : Finsupp.single y c = c • Finsupp.single y (1 : ℂ) := by simp
     rw [hs]
@@ -271,7 +275,7 @@ theorem adj {N : ℕ} (Γ : Subgroup G) [∀ x : G ⧸ K, Finite (MulAction.stab
     congr 1
     induction u using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, inner_add_left, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), inner_add_left, ha, hb]
     | single x d =>
       have hs' : Finsupp.single x d = d • Finsupp.single x (1 : ℂ) := by simp
       rw [hs']

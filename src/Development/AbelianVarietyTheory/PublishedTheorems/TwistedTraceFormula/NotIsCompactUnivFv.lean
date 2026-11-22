@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,13 +138,15 @@ theorem exists_isPlacesIdem (S₁ : Finset (InfinitePlace F)) (S₂ : Finset (He
     exact if_neg hw
   · intro v hv
     change evalV F v (∑ v ∈ S₂, singleV F v 1) = 1
-    rw [map_sum, Finset.sum_eq_single v, evalV_single_same]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single v, evalV_single_same]
     · intro u _ hu
       exact evalV_single_ne hu.symm _
     · intro h; exact absurd hv h
   · intro v hv
     change evalV F v (∑ v ∈ S₂, singleV F v 1) = 0
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun u hu => evalV_single_ne (fun h : v = u => hv (h ▸ hu)) _
 
 theorem not_isCompact_univ_Fv (v : HeightOneSpectrum (𝓞 F)) : ¬ IsCompact (Set.univ : Set (Fv F v)) := by
@@ -167,7 +173,7 @@ theorem not_isCompact_split (σ : E →ₐ[F] E) {M : ℕ} {J : Matrix (Fin M) (
   have hcι : ∀ t, c (ι t) = ι t := sigR_algebraMap σ
   have hcc : c (c e) = e := by
     have h := congrArg c hsum
-    rw [map_add, hcι, ← hsum, add_comm] at h
+    rw [map_add (f := _), hcι, ← hsum, add_comm] at h
     exact add_right_cancel h
   have hce : c e * c e = c e := by rw [← map_mul, he]
   obtain ⟨i, j, hij⟩ : ∃ i j : Fin M, i ≠ j := ⟨⟨0, by omega⟩, ⟨1, by omega⟩, by simp⟩

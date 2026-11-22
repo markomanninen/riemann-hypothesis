@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.PrimitiveRootFifteenSubOneUnit
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.PrimitiveRootFifteenSubOneUnit
+
+@[expose] public section
 
 open Polynomial
 
@@ -58,7 +62,7 @@ theorem charpolyFactorAnnihilator : CharpolyFactorAnnihilator := by
   rw [Module.End.mul_apply, LinearMap.zero_apply, LinearMap.sub_apply,
     Module.algebraMap_end_apply]
   have h3 : γ (a + b) - cγ • (a + b) = γ a - cγ • a := by
-    rw [map_add, hB b hb, smul_add]
+    rw [map_add (f := _), hB b hb, smul_add]
     abel
   rw [h3]
   exact hkill _ (A.sub_mem (hA a ha) (A.smul_mem cγ ha))

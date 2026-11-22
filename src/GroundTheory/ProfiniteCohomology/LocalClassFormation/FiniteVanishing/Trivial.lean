@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.KummerOpen
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Devissage
-import GroundTheory.ProfiniteCohomology.CartierDual
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.KummerOpen
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Devissage
+public import GroundTheory.ProfiniteCohomology.CartierDual
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -13,7 +18,7 @@ open CategoryTheory Limits
 theorem zmod_lift_zmultiplesHom_injective {X : Type*} [AddCommGroup X] {p : ℕ} [Fact p.Prime] {c : X}
     (hc : c ≠ 0) (hpc : p • c = 0) :
     Function.Injective (ZMod.lift p ⟨zmultiplesHom X c, by simp [hpc]⟩) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have hord : addOrderOf c = p := addOrderOf_eq_prime hpc hc
   rw [← ZMod.intCast_zmod_cast x, ZMod.lift_coe, zmultiplesHom_apply] at hx
@@ -56,8 +61,8 @@ attribute [local instance 2000] Rep.hV2
 variable (K Ksep : Type) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
   [Field Ksep] [Algebra K Ksep] [IsSepClosure K Ksep]
 
-omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem natCard_rootsOfUnity_of_ne_zero {p : ℕ} (hp : (p : K) ≠ 0) :
     Nat.card (rootsOfUnity p Ksep) = p := by
   have : NeZero (p : Ksep) := ⟨by
@@ -69,8 +74,8 @@ theorem natCard_rootsOfUnity_of_ne_zero {p : ℕ} (hp : (p : K) ≠ 0) :
 
 variable {n : ℕ} (hn : (n : K) ≠ 0)
 
-include hn in
 
+include hn in
 theorem finite_cohomology_of_trivial (V : OpenSubgroup Gal(Ksep/K))
     (hV : ∀ σ ∈ V, ∀ ζ : Ksep, ζ ^ n = 1 → σ ζ = ζ) :
     ∀ (A : Rep (ULift.{0} ℤ) (V : Subgroup Gal(Ksep/K))) [IsDiscreteRep A] [Finite A],
@@ -138,7 +143,7 @@ theorem finite_cohomology_of_trivial (V : OpenSubgroup Gal(Ksep/K))
       rw [← Units.val_pow_eq_pow_val, (mem_rootsOfUnity p _).1 (Additive.toMul x).2, Units.val_one]
     rw [hc, pow_mul, hxp, one_pow]
   let ι : Rep.res (V : Subgroup Gal(Ksep/K)).subtype (galRootsOfUnity.{0} K Ksep p) ⟶ A :=
-    Rep.ofHom ⟨(uliftIntLinearEquivAddHom (Rep.res (V : Subgroup Gal(Ksep/K)).subtype
+    Rep.ofHom ⟨(GroundTheory.ProfCoh.uliftIntLinearEquivAddHom (Rep.res (V : Subgroup Gal(Ksep/K)).subtype
       (galRootsOfUnity.{0} K Ksep p)) A).symm (i.comp e.symm.toAddMonoidHom), fun σ => LinearMap.ext fun x => by
       change i (e.symm ((Rep.res (V : Subgroup Gal(Ksep/K)).subtype
         (galRootsOfUnity.{0} K Ksep p)).ρ σ x)) = A.ρ σ (i (e.symm x))

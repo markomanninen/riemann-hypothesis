@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ValuationRingOfFlatOfFormallyUnramified
-import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ValuationRingOfFlatOfFormallyUnramified
+public import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,8 +22,8 @@ namespace GlobalTheory.SemiPosBir
 variable {k : Type} [CommRing k] {X Z : Scheme.{0}} {p : X ⟶ Sp k} {q : Z ⟶ Sp k} {σ : k →+* ℂ}
   {D : ℕ}
 
-open ReciprocityTheory.L2DbarEstimates in
 
+open ReciprocityTheory.L2DbarEstimates in
 theorem continuousAt_levi {g : V D → ℂ} {x : V D} (hg : ContDiffAt ℝ 2 g x) (ξ : Fin D → ℂ) :
     ContinuousAt (fun v => leviV D g v ξ) x := by
   have h1 : ContDiffAt ℝ 1 (fderiv ℝ g) x := hg.fderiv_right (by norm_num)
@@ -32,7 +36,7 @@ theorem continuousAt_levi {g : V D → ℂ} {x : V D} (hg : ContDiffAt ℝ 2 g x
     exact ((h4.clm_apply continuousAt_const).sub
       (continuousAt_const.mul (h4.clm_apply continuousAt_const))).div_const 2
   unfold leviV
-  exact tendsto_finset_sum _ fun j _ => tendsto_finset_sum _ fun l _ =>
+  exact tendsto_finsetSum _ fun j _ => tendsto_finsetSum _ fun l _ =>
     ((h3 j l).mul continuousAt_const).mul continuousAt_const
 
 theorem ae_mem [IsDomain k] [IsIntegral X] (hσ : Function.Injective σ) (c : AlgChart p σ D)
@@ -72,8 +76,8 @@ theorem ae_mem [IsDomain k] [IsIntegral X] (hσ : Function.Injective σ) (c : Al
   refine (RingHom.congr_fun e₁ r).symm.trans ?_
   rw [RingHom.comp_apply, e₂, ← ev_eq, ev_mul, e, zero_mul]
 
-variable (D) in
 
+variable (D) in
 def PosOn (f : CxPts p σ → ℝ) (S : Set (CxPts p σ)) : Prop :=
   ∀ c : AlgChart p σ D, ∀ y ∈ c.e.source ∩ S, ∀ ξ : Fin D → ℂ,
     0 ≤ (leviV D (fun v => (f (c.e.symm v) : ℂ)) (c.e y) ξ).re
@@ -194,7 +198,7 @@ theorem semiPos_iff_pull : ∀ (k : Type) [CommRing k] (X X' : Scheme.{0}) (p : 
   have hσ : Function.Injective σ := by
     rw [RingHom.injective_iff_ker_eq_bot]
     refine Ideal.eq_bot_of_comap_eq_bot (R := ℤ) ?_
-    rw [RingHom.comap_ker, ← RingHom.injective_iff_ker_eq_bot]
+    rw [Ideal.under_def, RingHom.comap_ker, ← RingHom.injective_iff_ker_eq_bot]
     exact RingHom.injective_int _
   have : Nonempty U.toScheme := hU.to_subtype
   have : Nonempty (π ⁻¹ᵁ U).toScheme := (π ∣_ U).surjective.nonempty

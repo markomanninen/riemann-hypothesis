@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex Matrix Filter Topology
 open scoped BigOperators Real
@@ -7,10 +11,10 @@ namespace GlobalTheory.ThetaPositivity
 
 variable {g : ℕ}
 
+
 open Complex Matrix Filter Topology in
 open scoped BigOperators Real in
 variable {g : ℕ} in
-
 lemma _root_.GlobalTheory.ThetaPositivity.form_conj {Hm : Matrix (Fin g) (Fin g) ℂ} (hH : Hm.IsHermitian) (z w : Fin g → ℂ) :
     w ⬝ᵥ Hm.mulVec (star z) = star (z ⬝ᵥ Hm.mulVec (star w)) := by
   rw [← star_dotProduct_star, Matrix.star_mulVec, star_star, hH.eq, ← Matrix.dotProduct_mulVec]
@@ -34,10 +38,10 @@ private lemma continuous_re_dotProduct_mulVec_star (Hm : Matrix (Fin g) (Fin g) 
     Continuous (fun z : Fin g → ℂ => (z ⬝ᵥ Hm.mulVec (star z)).re) :=
   Complex.continuous_re.comp (continuous_id.dotProduct (continuous_const.matrix_mulVec continuous_star))
 
+
 open Complex Matrix Filter Topology in
 open scoped BigOperators Real in
 variable {g : ℕ} in
-
 lemma _root_.GlobalTheory.ThetaPositivity.exists_norm_le (Λ : Submodule ℤ (Fin g → ℂ)) [DiscreteTopology Λ] [IsZLattice ℝ Λ]
     {Hm : Matrix (Fin g) (Fin g) ℂ} (hH : Hm.IsHermitian) (χ : Λ → ℂ) (hχ : ∀ l, ‖χ l‖ = 1)
     {θ : (Fin g → ℂ) → ℂ} (hθ : Continuous θ)
@@ -99,10 +103,10 @@ private lemma re_form_add_smul_of_isHermitian {Hm : Matrix (Fin g) (Fin g) ℂ} 
       ← mul_assoc, mul_comm (star t), Complex.star_def, Complex.mul_conj]
   rw [h1, h2, Complex.re_ofReal_mul]
 
+
 open Complex Matrix Filter Topology in
 open scoped BigOperators Real in
 variable {g : ℕ} in
-
 lemma _root_.GlobalTheory.ThetaPositivity.eq_zero_of_neg {Hm : Matrix (Fin g) (Fin g) ℂ} (hH : Hm.IsHermitian)
     {θ : (Fin g → ℂ) → ℂ} (hθ : Differentiable ℂ θ) {C : ℝ}
     (hC : ∀ z, ‖θ z‖ ≤ C * Real.exp (Real.pi / 2 * (z ⬝ᵥ Hm.mulVec (star z)).re))
@@ -147,48 +151,10 @@ lemma _root_.GlobalTheory.ThetaPositivity.eq_zero_of_neg {Hm : Matrix (Fin g) (F
   have := hf.apply_eq_of_tendsto_cocompact 0 hf0
   simpa [hfdef] using this
 
-lemma eq_zero_of_mulVec_eq_zero (Λ : Submodule ℤ (Fin g → ℂ)) [DiscreteTopology Λ]
-    [IsZLattice ℝ Λ] {Hm : Matrix (Fin g) (Fin g) ℂ} (Ef : LinearMap.BilinForm ℤ Λ)
-    (hE : ∀ l m : Λ, (Ef l m : ℝ) =
-      ((l : Fin g → ℂ) ⬝ᵥ Hm.mulVec (star (m : Fin g → ℂ))).im)
-    (hinj : Function.Injective Ef) {w : Fin g → ℂ} (hw : Hm.mulVec (star w) = 0) : w = 0 := by
-  classical
-  have := ZLattice.module_free ℝ Λ
-  have := ZLattice.module_finite ℝ Λ
-  let b := Module.Free.chooseBasis ℤ Λ
-  let B := b.ofZLatticeBasis ℝ Λ
-  have hdet : (LinearMap.toMatrix₂ b b Ef).det ≠ 0 :=
-    (LinearMap.separatingLeft_iff_det_ne_zero b).mp
-      (LinearMap.separatingLeft_iff_ker_eq_bot.mpr (LinearMap.ker_eq_bot.mpr hinj))
-  let M := (LinearMap.toMatrix₂ b b Ef).map (Int.castRingHom ℝ)
-  have hM : M.det ≠ 0 := by
-    have h := (Int.castRingHom ℝ).map_det (LinearMap.toMatrix₂ b b Ef)
-    rw [RingHom.mapMatrix_apply] at h
-    rw [← h]
-    simpa using hdet
-  have hsum : ∑ j, B.repr w j • (b j : Fin g → ℂ) = w := by
-    conv_rhs => rw [← B.sum_repr w]
-    simp [B]
-  have hv : M.mulVec (B.repr w) = 0 := by
-    funext i
-    have h : ((b i : Fin g → ℂ) ⬝ᵥ Hm.mulVec (star w)).im = 0 := by simp [hw]
-    rw [← hsum, star_sum, mulVec_sum, dotProduct_sum, im_sum] at h
-    rw [Pi.zero_apply, ← h]
-    simp only [mulVec, M]
-    change ∑ j, _ = _
-    refine Finset.sum_congr rfl fun j _ => ?_
-    rw [star_smul, star_trivial]
-    change _ = ((b i : Fin g → ℂ) ⬝ᵥ Hm.mulVec (B.repr w j • star (b j : Fin g → ℂ))).im
-    rw [mulVec_smul, dotProduct_smul, smul_im, ← hE]
-    simp [mul_comm]
-  have h0 := Matrix.eq_zero_of_mulVec_eq_zero hM hv
-  rw [← hsum, h0]
-  simp
 
 open Complex Matrix Filter Topology in
 open scoped BigOperators Real in
 variable {g : ℕ} in
-
 theorem _root_.GlobalTheory.ThetaPositivity.re_form_pos_of_theta_ne_zero :
     ∀ (g : ℕ) (Λ : Submodule ℤ (Fin g → ℂ)), DiscreteTopology Λ →
       Submodule.span ℝ (Λ : Set (Fin g → ℂ)) = ⊤ →
@@ -244,7 +210,8 @@ theorem _root_.GlobalTheory.ThetaPositivity.re_form_pos_of_theta_ne_zero :
     have hl : Ef (b.equivFun.symm c) = 0 := by
       refine b.ext fun j => ?_
       have := congrFun hc j
-      simpa [Module.Basis.equivFun_symm_apply, map_sum, Matrix.vecMul, dotProduct, M] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [Module.Basis.equivFun_symm_apply, map_sum, Matrix.vecMul, dotProduct, M] using this
     have := hinj (hl.trans (map_zero Ef).symm)
     have h2 := congrArg b.equivFun this
     rwa [LinearEquiv.apply_symm_apply, map_zero] at h2

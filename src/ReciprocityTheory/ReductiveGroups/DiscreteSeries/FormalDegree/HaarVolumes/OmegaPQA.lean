@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.DensOn
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.DensOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -249,7 +253,8 @@ theorem map_pairMap (ε : Fin n → Bool) :
       (volume : Measure (Qp ε → Fin 2 → ℂ))
   rw [pairMap_eq, ← Measure.map_map hA.measurable (hGm.comp hF.measurable),
     ← Measure.map_map hGm hF.measurable, hF.map_eq,
-    Measure.map_linearMap_addHaar_eq_smul_addHaar _ hdet, Measure.map_smul, hA.map_eq, det_Gl]
+    Measure.map_linearMap_addHaar_eq_smul_addHaar _ hdet,
+    Measure.map_smul _ hA.measurable.aemeasurable, hA.map_eq, det_Gl]
   congr 2
   exact abs_of_pos (by positivity)
 

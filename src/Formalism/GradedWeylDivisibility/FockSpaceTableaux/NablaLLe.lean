@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.StatementD
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.RowActMul
+module
+
+public import Formalism.GradedWeylDivisibility.StatementD
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.RowActMul
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -36,7 +40,7 @@ theorem nabla_weight_le : NablaLLe := by
         · rename_i a
           simp [colAddGen]
         · rename_i p q hp hq
-          simp only [map_add, hp, hq]
+          simp only [map_add (f := _), hp, hq]
         · rename_i p v hp
           simp only [map_mul, hp]
           congr 1
@@ -62,15 +66,16 @@ theorem nabla_weight_le : NablaLLe := by
         have h := (isWeightedHomogeneous_C (colW k n) (A v.1 b)).mul
           (isWeightedHomogeneous_X K (colW k n) (b, v.2))
         simpa [colW] using h
-      rw [P.as_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [P.as_sum, map_sum]
       apply IsWeightedHomogeneous.sum
       intro d hd
       rw [← hP1 (mem_support_iff.mp hd), monomial_eq, map_mul, map_finsuppProd, Finsupp.weight_apply]
       simp only [map_pow]
-      have hC : rowAct K A (C (coeff d P) : MvPolynomial (Fin k × Fin n) K) = C (coeff d P) := by
+      have hC : rowAct K A (C (AddMonoidAlgebra.coeff P d) : MvPolynomial (Fin k × Fin n) K) = C (AddMonoidAlgebra.coeff P d) := by
         simp [rowAct]
       rw [hC]
-      have h := (isWeightedHomogeneous_C (colW k n) (coeff d P)).mul
+      have h := (isWeightedHomogeneous_C (colW k n) (AddMonoidAlgebra.coeff P d)).mul
         (IsWeightedHomogeneous.prod d.support _ _ fun v _ => (hXw v).pow (d v))
       simpa [Finsupp.prod, Finsupp.sum] using h
     · simp only [Submodule.mem_iInf, LinearMap.mem_ker] at hP2 ⊢

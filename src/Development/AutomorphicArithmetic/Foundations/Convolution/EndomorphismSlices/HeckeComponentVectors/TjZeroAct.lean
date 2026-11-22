@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.FmTools
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocalSeparation.PPairSat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.SatOfEig
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.FmTools
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocalSeparation.PPairSat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.SatOfEig
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
@@ -38,19 +42,19 @@ private theorem tj_indep (w : Pl E) (n j : ℕ) {ϖ ϖ' : w.adicCompletion E} (h
 
 private theorem tj_zero_act (w : Pl E) (n : ℕ) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GLw n w) V) {ϖ : w.adicCompletion E} (hu : IsUnifV E w ϖ) {x : V}
-    (hx : x ∈ fixed π (KGL w n)) : heckeVec π (KGL w n) (Tj ℂ n (Ov E w) ϖ 0) x = x := by
+    (hx : x ∈ fixed π (KGL w (n := n))) : heckeVec π (KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ 0) x = x := by
   have h0 := ne_zero_of_isUnifV hu
-  have e : Tj ℂ n (Ov E w) ϖ 0 = dosetInd ℂ (KGL w n) 1 := by
+  have e : Tj ℂ n (Ov E w) ϖ 0 = dosetInd ℂ (KGL w (n := n)) 1 := by
     rw [Tj_eq h0]
     congr 1
   rw [e, heckeVec_one (Final.GLintComm E w n) hx]
 
 private theorem tj_top_ne (w : Pl E) (n : ℕ) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GLw n w) V) {ϖ : w.adicCompletion E} (hu : IsUnifV E w ϖ) {x : V} (hx0 : x ≠ 0)
-    (hx : x ∈ fixed π (KGL w n)) {c : ℂ} (h1 : heckeVec π (KGL w n) (Tj ℂ n (Ov E w) ϖ n) x = c • x) : c ≠ 0 := by
+    (hx : x ∈ fixed π (KGL w (n := n))) {c : ℂ} (h1 : heckeVec π (KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ n) x = c • x) : c ≠ 0 := by
   intro e
   have h0 := ne_zero_of_isUnifV hu
-  have hTn : Tj ℂ n (Ov E w) ϖ n = dosetInd ℂ (KGL w n) (tor h0 fun _ => 1) := by
+  have hTn : Tj ℂ n (Ov E w) ϖ n = dosetInd ℂ (KGL w (n := n)) (tor h0 fun _ => 1) := by
     rw [Tj_eq h0]; simp
   rw [e, zero_smul, hTn, heckeVec_dosetInd (R := {tor h0 fun _ => 1}) hx, Finset.sum_singleton] at h1
   · exact hx0 (by simpa [← Module.End.mul_apply, ← map_mul] using congrArg (π (tor h0 fun _ => 1)⁻¹) h1)
@@ -76,14 +80,14 @@ theorem UpperTheory.Zero.ConvolutionTheory.EB.sat2Ex :
   have hTa := fun i : ℕ => Tj_mem_hecke (n := a) hu i
   have hTb := fun j : ℕ => Tj_mem_hecke (n := b) hu j
   obtain ⟨k₀, hk₀⟩ : ∃ k, x k ≠ 0 := Function.ne_iff.1 hx0
-  have fA : ∀ k, x k ∈ fixed (ρ.comp (MonoidHom.inl _ _)) (KGL w a) := fun k =>
+  have fA : ∀ k, x k ∈ fixed (ρ.comp (MonoidHom.inl _ _)) (KGL w (n := a)) := fun k =>
     GlobalTheory.LGrp.mem_fixed.2 fun g hg =>
       GlobalTheory.LGrp.mem_fixed.1 (hfix k) (g, 1) (Subgroup.mem_prod.2 ⟨hg, one_mem _⟩)
-  have fB : ∀ k, x k ∈ fixed (ρ.comp (MonoidHom.inr _ _)) (KGL w b) := fun k =>
+  have fB : ∀ k, x k ∈ fixed (ρ.comp (MonoidHom.inr _ _)) (KGL w (n := b)) := fun k =>
     GlobalTheory.LGrp.mem_fixed.2 fun g hg =>
       GlobalTheory.LGrp.mem_fixed.1 (hfix k) (1, g) (Subgroup.mem_prod.2 ⟨one_mem _, hg⟩)
-  have fAB : ∀ k (j : ℕ), heckeVec (ρ.comp (MonoidHom.inr _ _)) (KGL w b)
-      (Tj ℂ b (Ov E w) (UpperTheory.V.Z.Tf.GlobalTraceComparison.unif w) j) (x k) ∈ fixed (ρ.comp (MonoidHom.inl _ _)) (KGL w a) := by
+  have fAB : ∀ k (j : ℕ), heckeVec (ρ.comp (MonoidHom.inr _ _)) (KGL w (n := b))
+      (Tj ℂ b (Ov E w) (UpperTheory.V.Z.Tf.GlobalTraceComparison.unif w) j) (x k) ∈ fixed (ρ.comp (MonoidHom.inl _ _)) (KGL w (n := a)) := by
     intro k j
     refine GlobalTheory.LGrp.mem_fixed.2 fun g hg => ?_
     have key := map_heckeVec hKb (hTb j) (ρ := ρ.comp (MonoidHom.inr _ _)) (ρ' := ρ.comp (MonoidHom.inr _ _))
@@ -92,17 +96,17 @@ theorem UpperTheory.Zero.ConvolutionTheory.EB.sat2Ex :
         rw [← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul]
         simp) (x k)
     rw [key, GlobalTheory.LGrp.mem_fixed.1 (fA k) g hg]
-  have pp : ∀ (p : Fin (a + 1) × Fin (b + 1)) k, heckeVec (ρ.comp (MonoidHom.inl _ _)) (KGL w a)
-      (Tj ℂ a (Ov E w) (UpperTheory.V.Z.Tf.GlobalTraceComparison.unif w) p.1) (heckeVec (ρ.comp (MonoidHom.inr _ _)) (KGL w b)
+  have pp : ∀ (p : Fin (a + 1) × Fin (b + 1)) k, heckeVec (ρ.comp (MonoidHom.inl _ _)) (KGL w (n := a))
+      (Tj ℂ a (Ov E w) (UpperTheory.V.Z.Tf.GlobalTraceComparison.unif w) p.1) (heckeVec (ρ.comp (MonoidHom.inr _ _)) (KGL w (n := b))
         (Tj ℂ b (Ov E w) (UpperTheory.V.Z.Tf.GlobalTraceComparison.unif w) p.2) (x k)) = t p • x k := fun p k => by
     rw [← heckeVec_pairProd ρ hKa hKb (hTa _) (hTb _) (hfix k)]
     exact ht p k
-  have eA : ∀ (i : Fin (a + 1)) k, heckeVec (ρ.comp (MonoidHom.inl _ _)) (KGL w a)
+  have eA : ∀ (i : Fin (a + 1)) k, heckeVec (ρ.comp (MonoidHom.inl _ _)) (KGL w (n := a))
       (Tj ℂ a (Ov E w) (UpperTheory.V.Z.Tf.GlobalTraceComparison.unif w) i) (x k) = t (i, 0) • x k := fun i k => by
     have := pp (i, 0) k
     simp only [Fin.val_zero] at this
     rwa [tj_zero_act w b _ hu (fB k)] at this
-  have eB : ∀ (j : Fin (b + 1)) k, heckeVec (ρ.comp (MonoidHom.inr _ _)) (KGL w b)
+  have eB : ∀ (j : Fin (b + 1)) k, heckeVec (ρ.comp (MonoidHom.inr _ _)) (KGL w (n := b))
       (Tj ℂ b (Ov E w) (UpperTheory.V.Z.Tf.GlobalTraceComparison.unif w) j) (x k) = t (0, j) • x k := fun j k => by
     have := pp (0, j) k
     simp only [Fin.val_zero] at this
@@ -127,9 +131,9 @@ theorem UpperTheory.Zero.ConvolutionTheory.EB.sat2Ex :
     (fun j => if h : j < b + 1 then t (0, ⟨j, h⟩) else 0) (by simpa using t00)
     (by simpa [Fin.last] using htb)
   have s₁ : ∀ i : Fin (a + 1), satEig (qV E w) a B₁ i = t (i, 0) := fun i => by
-    rw [h₁ i (Nat.lt_succ_iff.1 i.2), dif_pos i.2]
+    rw [h₁ i (Nat.lt_succ_iff.1 i.2), dite_eq_left i.2]
   have s₂ : ∀ j : Fin (b + 1), satEig (qV E w) b B₂ j = t (0, j) := fun j => by
-    rw [h₂ j (Nat.lt_succ_iff.1 j.2), dif_pos j.2]
+    rw [h₂ j (Nat.lt_succ_iff.1 j.2), dite_eq_left j.2]
   have tp : ∀ p : Fin (a + 1) × Fin (b + 1), t p = satEig (qV E w) a B₁ p.1 * satEig (qV E w) b B₂ p.2 := fun p => by
     rw [s₁, s₂]
     exact mul p

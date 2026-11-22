@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ToNatAddValMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ToNatAddValMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem mem_span_of_vanish_roots {O O' : Type} [CommRing O] [CommRing O'] [IsDom
         (Polynomial.X_pow_sub_one_eq_prod hn hζ)
       simp only [Sum.elim_inl]
       rw [Finset.prod_image (fun _ _ _ _ h => sub_left_injective h)]
-      simp only [map_sub, map_pow, map_add, map_one, map_X, Polynomial.aeval_X, map_prod, Polynomial.aeval_C,
+      simp only [map_sub, map_pow, map_add (f := _), map_one, map_X, Polynomial.aeval_X, map_prod, Polynomial.aeval_C,
         algebraMap_eq] at h1 ⊢
       rw [h1]
       exact Finset.prod_congr rfl fun y _ => by ring
@@ -289,7 +293,7 @@ theorem exists_char {i : X.Tw} {M : ℕ} {ι : Type} [Fintype ι] {P : ι → Pl
       rfl
     · exact ⟨1, fun g => by simp [hT q hq]⟩
   choose f hf using key
-  exact ⟨∏ q, f q, fun g => by simp [MonoidHom.finset_prod_apply, hf]⟩
+  exact ⟨∏ q, f q, fun g => by simp [MonoidHom.finsetProd_apply, hf]⟩
 
 theorem kMap_algebraMap (i : X.Tw) (k : ℕ) (y : X.O i) :
     kMap X i k (algebraMap (X.O i) (FractionRing (X.O i)) y) =
@@ -308,7 +312,8 @@ theorem exists_lift {N0 : X.Tw → ℕ} (h9 : adm9 X N0) {i : X.Tw} (hi : X.Nonz
   choose g hg using X.art_surj i Q
   refine ⟨∑ δ, MvPolynomial.C (y δ) * ∏ q, (1 + MvPolynomial.X q) ^ (Multiplicative.toAdd (d q (g δ))).val,
     fun k u ψ' h => ?_⟩
-  rw [thEval, Finset.mul_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [thEval, Finset.mul_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun δ _ => ?_
   have e := congrArg (kMap X i k) (hy δ)
   rw [kMap_algebraMap, map_mul, map_pow, map_natCast] at e
@@ -415,8 +420,8 @@ theorem exists_w (i : X.Tw) {M : ℕ} (hM : 1 ≤ M) {q : ℕ} (hq : q % (2 * X.
   have := congrArg (IsLocalRing.residue (X.O i)) hw
   simpa [h1] using this
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem propE (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D.what₂) (X : NTw D.R D.host D.what₂ D.LL0 N) (N0 : X.Tw → ℕ)
     (h9 : adm9 X N0) (h10 : adm10 X) : PropE X N0 := by
   classical
@@ -427,7 +432,8 @@ theorem propE (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D.what₂) (
   choose y hy using h9 i hi ∅ hQe lam s hs
   have hY : algebraMap (X.O i) (FractionRing (X.O i)) (∑ δ, y δ) =
       ((X.l i : ℕ) : FractionRing (X.O i)) ^ N0 i * ∑ δ, X.th i ∅ lam δ := by
-    rw [map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum]
     exact Finset.sum_congr rfl fun δ _ => hy δ
   have hY0 : (∑ δ, y δ) ≠ 0 := by
     intro h

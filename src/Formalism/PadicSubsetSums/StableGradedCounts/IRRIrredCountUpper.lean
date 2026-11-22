@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+
+@[expose] public section
 
 open Polynomial
 
@@ -20,7 +24,7 @@ theorem monicOf_natDegree (c : Fin N → K) : (monicOf c).natDegree = N := by
 
 theorem monicOf_coeff (c : Fin N → K) (i : Fin N) : (monicOf c).coeff i = c i := by
   rw [monicOf, coeff_add, coeff_X_pow, if_neg (Nat.ne_of_lt i.isLt), zero_add,
-    finset_sum_coeff]
+    Polynomial.finsetSum_coeff]
   simp only [coeff_C_mul_X_pow]
   rw [Finset.sum_eq_single i]
   · simp

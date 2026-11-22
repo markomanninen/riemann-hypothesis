@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.GeoDefs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.GeoDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -9,8 +13,8 @@ attribute [local instance] MvPolynomial.gradedAlgebra
 
 namespace GlobalTheory.CompanionTheory.Geo
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem exists_monic_relation {K σ : Type} [Field K] {m : ℕ} (I : Ideal (MvPolynomial σ K))
     (y : Fin m → MvPolynomial σ K)
     (hfin : Module.Finite (Algebra.adjoin K (Set.range fun k => Ideal.Quotient.mk I (y k)))
@@ -48,7 +52,8 @@ theorem exists_monic_relation {K σ : Type} [Field K] {m : ℕ} (I : Ideal (MvPo
     simpa using this
   choose C hC using hlift
   refine ⟨q.natDegree, C, hdeg, ?_⟩
-  rw [← Ideal.Quotient.eq_zero_iff_mem, ← hroot', Polynomial.eval₂_eq_sum_range,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Ideal.Quotient.eq_zero_iff_mem, ← hroot', Polynomial.eval₂_eq_sum_range,
     Finset.sum_range_succ, map_add, map_sum, add_comm]
   congr 1
   · refine Finset.sum_congr rfl fun l _ => ?_
@@ -56,8 +61,8 @@ theorem exists_monic_relation {K σ : Type} [Field K] {m : ℕ} (I : Ideal (MvPo
     rfl
   · simp [hq.coeff_natDegree]
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem homogeneousComponent_aeval_mul {K σ : Type} [Field K] {m e : ℕ} (he : 0 < e)
     (y : Fin m → MvPolynomial σ K) (hy : ∀ k, (y k).IsHomogeneous e)
     (C : MvPolynomial (Fin m) K) (r t : ℕ) (b : MvPolynomial σ K) (hb : b.IsHomogeneous t) :
@@ -75,7 +80,8 @@ theorem homogeneousComponent_aeval_mul {K σ : Type} [Field K] {m e : ℕ} (he :
         hr (Nat.eq_of_mul_eq_mul_left he (Nat.add_right_cancel h'))
       rw [if_neg hne.symm, if_neg hr]
   conv_lhs => rw [← sum_homogeneousComponent C]
-  rw [map_sum, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul, map_sum]
   simp_rw [key]
   rw [Finset.sum_ite_eq']
   split_ifs with hmem
@@ -83,8 +89,8 @@ theorem homogeneousComponent_aeval_mul {K σ : Type} [Field K] {m e : ℕ} (he :
   · rw [homogeneousComponent_eq_zero _ _ (by simpa [Nat.lt_succ_iff] using hmem)]
     simp
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem exists_hom_relation {K σ : Type} [Field K] {m : ℕ} (I : Ideal (MvPolynomial σ K))
     (hI : ∀ f ∈ I, ∀ n : ℕ, homogeneousComponent n f ∈ I) (e : ℕ) (he : 0 < e)
     (y : Fin m → MvPolynomial σ K) (hy : ∀ k, (y k).IsHomogeneous e)
@@ -97,7 +103,8 @@ theorem exists_hom_relation {K σ : Type} [Field K] {m : ℕ} (I : Ideal (MvPoly
   refine ⟨s, fun l => homogeneousComponent ((s - l) * w) (C l), hs,
     fun l => homogeneousComponent_isHomogeneous _ _, ?_⟩
   have hcomp := hI _ hmem (e * w * s)
-  rw [map_add, map_sum] at hcomp
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum] at hcomp
   convert hcomp using 2
   · have h := ha.pow s
     rw [homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).2 h)]

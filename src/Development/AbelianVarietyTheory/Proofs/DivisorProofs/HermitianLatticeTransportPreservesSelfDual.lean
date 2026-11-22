@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapMemSpanField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapMemSpanField
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.PlaceLogThetaBounds GlobalTheory.ColNorms
 open scoped ComplexOrder
@@ -85,7 +89,44 @@ end Transport
 theorem isSDLat_of_isSdLat {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
     (L : Submodule (𝓞 E) (Sp E n)) (hL : IsSdLat L) : IsSDLat E n L := by
   obtain ⟨h1, h2⟩ := hL
-  refine ⟨h1.fg, h1.span_eq_top, fun y => ?_⟩
+  have hspan : Submodule.span E (L : Set (Sp E n)) = ⊤ := by
+    open Formalism.HermitianLatticesTheory in
+    apply Submodule.dualAnnihilator_eq_bot_iff.mp
+    apply le_antisymm ?_ bot_le
+    intro f hf
+    let v : Sp E n := fun i => star (f (Pi.single i 1))
+    have hpair : hStd E n v = f := by
+      apply (Pi.basisFun E (Fin n)).ext
+      intro i
+      rw [Pi.basisFun_apply, hStd_apply, Finset.sum_eq_single i]
+      · simp [v]
+      · intro j _ hj
+        simp [hj]
+      · simp
+    have hline (r : E) : r • v ∈ L := by
+      rw [← show dual (hStd E n) L = L from h2, dualBasic_mem_dual]
+      intro y hy
+      have hy0 : hStd E n v y = 0 := by
+        rw [hpair]
+        exact (Submodule.mem_dualAnnihilator f).mp hf y (Submodule.subset_span hy)
+      have hz : hStd E n y v = 0 := by
+        simpa [hy0] using ((hStd_isSymm (E := E) (n := n)).eq v y).symm
+      simp [hz]
+    have hv : v = 0 := by
+      funext i
+      change v i = 0
+      by_contra hi
+      let coord := (LinearMap.proj i : Sp E n →ₗ[E] E).restrictScalars (𝓞 E)
+      have htop : L.map coord = ⊤ := by
+        rw [eq_top_iff]
+        intro x _
+        exact ⟨(x / v i) • v, hline _, div_mul_cancel₀ _ hi⟩
+      have : Module.Finite (𝓞 E) E := Module.finite_def.mpr (htop ▸ h1.fg.map coord)
+      exact RingOfIntegers.not_isField E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+    rw [Submodule.mem_bot]
+    simpa [hv] using hpair.symm
+  refine ⟨h1.fg, hspan, fun y => ?_⟩
   have h3 : y ∈ L ↔ y ∈ Formalism.HermitianLatticesTheory.dual (hStd E n) L := by
     rw [show Formalism.HermitianLatticesTheory.dual (hStd E n) L = L from h2]
   rw [h3]

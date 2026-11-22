@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.XiTopTilRefHolds
-import Formalism.LocalToGlobal.Columns.ChainTwFrA
+module
+
+public import Formalism.LocalToGlobal.Columns.XiTopTilRefHolds
+public import Formalism.LocalToGlobal.Columns.ChainTwFrA
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 
@@ -25,7 +29,7 @@ theorem tq_tfaZ_symm {N n : ℕ} (hN : N = n + 1) (f : Sp E n ≃ₗ[E] Sp E n) 
     show initL E n ((extE f).symm v) j = _
     rw [initL_extE_symm]
     rfl
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     obtain rfl : i = Fin.last n := Fin.ext (by have := i.2; simp; omega)
     rw [if_pos rfl, extE_symm_last]
 
@@ -37,9 +41,9 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks}
 variable (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
 
+
 open Classical in
 set_option maxHeartbeats 1600000 in
-
 theorem xiTopTilQ_holds (hX : X.Ok) (hPr : Pr.Ok) (hc : cst.Ok) {m2 : ℕ} (hm : R.m = m2 + 2) (u : Pr.Word)
     (hpi : ∀ w : rowSG Pr sel mu, Pr.piT u ∉ w.1.asIdeal)
     (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1)))) (d : RowPt Pr R sel mu)
@@ -123,7 +127,7 @@ theorem xiTopTilQ_holds (hX : X.Ok) (hPr : Pr.Ok) (hc : cst.Ok) {m2 : ℕ} (hm :
     have eF : frsG sel mu p' P = Sc.Fr.tfaExtZ (N_m_succ R) (d.1.liftFr ⟨P.1, Finset.mem_union_right _ hPQ⟩)
         (algebraMap (𝓞 X.E) X.E (Pr.piT u)) hz := by
       unfold frsG
-      rw [dif_neg hP, hfr P.1 hPQ]
+      rw [dite_eq_right hP, hfr P.1 hPQ]
       unfold Sc.Fr.topFrA
       simp only [dif_pos hOk]
     have hA : prXpG X.E (R.N R.m) ∘ₗ inFr (frsF sel mu p P) (frsG sel mu p' P) x =
@@ -142,7 +146,7 @@ theorem xiTopTilQ_holds (hX : X.Ok) (hPr : Pr.Ok) (hc : cst.Ok) {m2 : ℕ} (hm :
       unfold atNL
       simp only [dif_pos hlast]
       show (Sc.Fr.tfaExtZ (N_m_succ R) _ _ hz).symm (x (frsF sel mu p P v)) ⟨R.N R.m - 1, hlast⟩ = _
-      rw [tq_tfaZ_symm, dif_neg (show ¬ (R.N R.m - 1 < R.N R.m - 1) from lt_irrefl _)]
+      rw [tq_tfaZ_symm, dite_eq_right (show ¬ (R.N R.m - 1 < R.N R.m - 1) from lt_irrefl _)]
       rfl
     rw [show (prXpG X.E (R.N R.m) ∘ₗ inFr (frsF sel mu p P) (frsG sel mu p' P) x ∘ₗ
         LinearMap.funLeft X.E X.E (Fin.castAdd (cOf R (m2 + 1)))) =

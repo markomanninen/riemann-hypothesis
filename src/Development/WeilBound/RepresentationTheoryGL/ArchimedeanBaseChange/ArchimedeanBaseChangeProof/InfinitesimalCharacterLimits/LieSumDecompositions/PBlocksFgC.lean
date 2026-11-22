@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksFgB
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMapB
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.DiagonalInfinityValues.InfGLValDiag
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksFgB
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMapB
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.DiagonalInfinityValues.InfGLValDiag
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem par_low (X : Lie E (r + s)) (i : Fin s) (j : Fin r) :
 
 theorem lie_split (X : Lie E (r + s)) (F : Sm E (r + s)) :
     lie E (r + s) X F = lie E (r + s) (X - toL (skw X)) F + lie E (r + s) (toL (skw X)) F := by
-  rw [← LinearMap.add_apply, ← map_add, sub_add_cancel]
+  rw [← LinearMap.add_apply, ← map_add (f := _), sub_add_cancel]
 
 theorem yp_mul {a : ℕ} (k k' : Kinf E a) (g g' : GL (Fin a) (Af E)) :
     BlockDerivatives.yp k g * BlockDerivatives.yp k' g' = BlockDerivatives.yp (k * k') (g * g') :=

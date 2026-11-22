@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.GenericPrincipalSeries.GenericPrincipalSeries
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.GenericPrincipalSeries.GenericPrincipalSeries
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem exists_functional_of_commuting_nilpotent {ι V : Type} [AddCommGroup V] 
     have hstable : ∀ j, ∀ x ∈ K ⊔ LinearMap.range (A i), A j x ∈ K ⊔ LinearMap.range (A i) := by
       intro j x hx
       obtain ⟨k, hk, y, ⟨z, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hx
-      rw [map_add]
+      rw [map_add (f := _)]
       refine Submodule.add_mem _ (Submodule.mem_sup_left (hKs j k hk))
         (Submodule.mem_sup_right ⟨A j z, ?_⟩)
       have := LinearMap.congr_fun (hc i j) z
@@ -52,7 +56,7 @@ theorem exists_functional_of_commuting_nilpotent {ι V : Type} [AddCommGroup V] 
           obtain ⟨k, hk, y, ⟨z, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hx
           have hz : z ∈ K ⊔ LinearMap.range (A i) := by rw [htop]; trivial
           obtain ⟨k', hk', y', ⟨a, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hz
-          rw [map_add, ← add_assoc]
+          rw [map_add (f := _), ← add_assoc]
           refine Submodule.add_mem _
             (Submodule.mem_sup_left (K.add_mem hk (hpow n _ hk')))
             (Submodule.mem_sup_right ⟨a, ?_⟩)
@@ -85,7 +89,7 @@ theorem fixed_of_pow_fixed_of_gen {V : Type} [AddCommGroup V] [Module ℂ V] (T 
     have hroot : IsRoot g 1 := by
       have : (X - C 1 : ℂ[X]) ∣ g := by simpa using hd
       exact dvd_iff_isRoot.1 this
-    have hev : g.eval 1 = (K : ℂ) := by simp [g, eval_finset_sum]
+    have hev : g.eval 1 = (K : ℂ) := by simp [g, eval_finsetSum]
     rw [IsRoot.def, hev] at hroot
     exact (Nat.cast_ne_zero.2 hK.ne') hroot
   obtain ⟨a, b, hab⟩ := ((hirr.coprime_iff_not_dvd).2 hnd).pow_left (m := r)
@@ -93,7 +97,7 @@ theorem fixed_of_pow_fixed_of_gen {V : Type} [AddCommGroup V] [Module ℂ V] (T 
     rw [← hg]
     linear_combination (X - 1 : ℂ[X]) * hab
   have hkey := congrArg (aeval T) hpoly
-  simp only [map_add, map_mul, map_pow, map_sub, aeval_X, map_one] at hkey
+  simp only [map_add (f := _), map_mul, map_pow, map_sub, aeval_X, map_one] at hkey
   have happ := LinearMap.congr_fun hkey w
   simp only [LinearMap.add_apply, Module.End.mul_apply, LinearMap.sub_apply,
     Module.End.one_apply, h1, h2, map_zero, sub_self, zero_add] at happ
@@ -270,7 +274,7 @@ theorem exists_quotient_character : ∀ (Λ : Type) [Group Λ] (M : Type) [AddCo
       exact h0
     have h1 : P (ρ l n) = T l ⟨n, hn⟩ := hPN ⟨ρ l n, hNS l n hn⟩
     have h2 : P n = ⟨n, hn⟩ := hPN ⟨n, hn⟩
-    simp only [LinearMap.comp_apply, map_add, hPC c hc', hPC _ (hCS l c hc'), h1, h2, add_zero,
+    simp only [LinearMap.comp_apply, map_add (f := _), hPC c hc', hPC _ (hCS l c hc'), h1, h2, add_zero,
       map_zero, hφT]
 
 end GlobalTheory.CompanionTheory.TorusQuot

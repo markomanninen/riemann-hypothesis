@@ -1,9 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.HlamStable
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.RhoNSubNab
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarMirror
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ToMKMulInv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.HlamStable
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.RhoNSubNab
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ToMKMulInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,8 +58,8 @@ theorem nd_hsOp_op {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) 
     have hU := (T.τ k).2
     have h1 : star (T.op k) * T.op k = 1 := hU.1
     have h2 : ⟪T.op k v, T.op k v⟫_ℂ = ⟪v, v⟫_ℂ := by
-      rw [← ContinuousLinearMap.adjoint_inner_right, ← ContinuousLinearMap.mul_apply,
-        ← ContinuousLinearMap.star_eq_adjoint, h1, ContinuousLinearMap.one_apply]
+      rw [← ContinuousLinearMap.adjoint_inner_right, ← mul_apply_eq_comp,
+        ← ContinuousLinearMap.star_eq_adjoint, h1, one_apply_eq_self]
     rw [inner_self_eq_norm_sq_to_K, inner_self_eq_norm_sq_to_K] at h2
     have h3 : ‖T.op k v‖ ^ 2 = ‖v‖ ^ 2 := by exact_mod_cast h2
     exact (pow_left_inj₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).1 h3
@@ -108,15 +111,11 @@ theorem nd_cPQ {ε : Fin n → Bool} (hq : q0 ε = 0) : cPQ ε = 1 := by
 
 theorem nd_muCD_univ {ε : Fin n → Bool} (hq : q0 ε = 0) : muCD ε Set.univ = 1 := by
   obtain ⟨s, hs⟩ := nd_const_sign hq
-  have := nd_isEmpty hs
-  have h := lintegral_muCD ε (fun _ => 1) measurable_const
-  rw [lintegral_one] at h
-  rw [h, nd_cPQ hq, ENNReal.ofReal_one, one_mul]
-  have hz : ∫⁻ z : PCoord ε → ℂ, ENNReal.ofReal (Jac z) = 1 := by
-    simp only [nd_jac_one hs, ENNReal.ofReal_one, lintegral_one]
-    rw [MeasureTheory.volume_pi, Measure.pi_of_empty]
-    simp
-  simp only [one_mul, hz, lintegral_one, measure_univ]
+  have : IsEmpty (PCoord ε) := nd_isEmpty hs
+  have hvol : (volume : Measure (PCoord ε → ℂ)) Set.univ = 1 := by
+    rw [MeasureTheory.volume_pi, Measure.pi_empty_univ]
+  simpa only [nd_cPQ hq, nd_jac_one hs, ENNReal.ofReal_one, lintegral_const, hvol,
+    measure_univ, one_mul, mul_one] using lintegral_muCD ε (fun _ => 1) measurable_const
 
 theorem nd_finrank {ε : Fin n → Bool} (hq : q0 ε = 0) {lam : Fin n → ℝ} (hl : StrictAnti lam)
     (T : KType ε (lowK ε lam)) : (Module.finrank ℂ T.V : ℝ) = dimVlam lam := by

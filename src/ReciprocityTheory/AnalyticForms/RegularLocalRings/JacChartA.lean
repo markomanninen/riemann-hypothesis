@@ -1,5 +1,9 @@
-import Mathlib
-import Lemmata.GeneralBFactLeftMore.Imports
+module
+
+public import Mathlib
+public import Lemmata.GeneralBFactLeftMore.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R.JacobianCriterionAlt
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsQuotPartGraded
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsQuotPartGraded
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

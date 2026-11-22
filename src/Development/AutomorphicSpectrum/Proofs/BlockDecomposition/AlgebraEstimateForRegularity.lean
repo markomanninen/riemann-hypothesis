@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,6 @@ theorem norm_le_bsum {m : ℕ} (w : List ι) (hw : w.length = m) (u : V) : ‖wd
     (fun _ _ => norm_nonneg _) (mem_univ v)
 
 theorem bsum_nonneg (m : ℕ) (u : V) : 0 ≤ bsum X m u := sum_nonneg fun _ _ => norm_nonneg _
-
-theorem qsum_nonneg (m : ℕ) (u : V) : 0 ≤ qsum X m u := sum_nonneg fun _ _ => norm_nonneg _
 
 theorem qsum_le_succ (m : ℕ) (u : V) : qsum X m u ≤ qsum X (m + 1) u := by
   unfold qsum

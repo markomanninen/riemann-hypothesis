@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -18,7 +23,6 @@ theorem exists_one_tmul_eq_of_isIntegral_smooth_fractionField
       (TensorProduct.toIntegralClosure R B K y : B ⊗[R] K) = b ⊗ₜ[R] (1 : K) := by
     intro y
     induction y with
-    | zero => exact ⟨0, by simp⟩
     | tmul b c =>
       obtain ⟨r, hr⟩ := IsIntegrallyClosed.isIntegral_iff.1 c.2
       refine ⟨r • b, ?_⟩
@@ -27,7 +31,7 @@ theorem exists_one_tmul_eq_of_isIntegral_smooth_fractionField
     | add u v hu hv =>
       obtain ⟨a, ha⟩ := hu
       obtain ⟨b, hb⟩ := hv
-      exact ⟨a + b, by rw [map_add, Subalgebra.coe_add, ha, hb, TensorProduct.add_tmul]⟩
+      exact ⟨a + b, by rw [map_add (f := _), Subalgebra.coe_add, ha, hb, TensorProduct.add_tmul]⟩
   obtain ⟨b, hb⟩ := key y
   refine ⟨b, e.injective ?_⟩
   rw [← hy', hb]

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.PrVTensInt
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FiniteAdeleRingNontrivial
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.AdelicLocalLattice
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.PrVTensInt
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FiniteAdeleRingNontrivial
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.AdelicLocalLattice
+
+@[expose] public section
 
 noncomputable section
 

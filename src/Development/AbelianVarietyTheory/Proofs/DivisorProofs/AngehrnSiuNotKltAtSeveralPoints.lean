@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDomainTensorComplex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormaliseAtSmoothPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CountKernelNonzero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonDominatingVarietyPointNoTrBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFractionRingOfIsLocModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFractionRingOfInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTrBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPlaceWeightedOverPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDomainTensorComplex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormaliseAtSmoothPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CountKernelNonzero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonDominatingVarietyPointNoTrBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFractionRingOfIsLocModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFractionRingOfInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTrBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPlaceWeightedOverPlace
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy GlobalTheory.FieldPair
@@ -105,7 +110,8 @@ theorem not_klt_at_points : GlobalTheory.Published.Principalisation →
   have hψσ : ψ σ = s := by
     apply Subtype.ext
     rw [hs]
-    simp only [σ, map_add, map_sum, map_mul, hT.retr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [σ, map_add (f := _), map_sum, map_mul, hT.retr]
     push_cast
     simp_rw [hψβ, mul_comm]
 
@@ -144,6 +150,7 @@ theorem not_klt_at_points : GlobalTheory.Published.Principalisation →
         rw [h3 _ (fun h => hφ g hg (Subtype.ext h))]; simp)]
       have h6' := (Int.cast_le (R := ℚ)).2 h6
       push_cast at h6'
+      unfold Place.formOrd
       have : (k : ℚ) ≤ t * M := htM
       linarith
     · obtain ⟨V, h1, h2, h3, h4, h5, h6⟩ := GlobalTheory.FieldPair.exists_place_weighted_over_place (L := FractionRing (K ⊗[ℂ] κ')) n k r
@@ -160,7 +167,9 @@ theorem not_klt_at_points : GlobalTheory.Published.Principalisation →
       rw [hq]
       have h6' := (Int.cast_le (R := ℚ)).2 h6
       push_cast at h6'
+      unfold Place.formOrd
       rw [Place.disc] at hEd
+      unfold Place.formOrd at hEd
       linarith
 
   obtain ⟨V, h1, h2, h4, h5, h6⟩ := hV
@@ -196,7 +205,8 @@ theorem not_klt_at_points : GlobalTheory.Published.Principalisation →
       fun q => Subtype.ext (hψj _ _ (hcc q))
     obtain ⟨v, hv⟩ := hux
     have hyv : π i (ψ (∑ q, ι (a' q) * jB (b' q))) = ∑ q, π i (a' q) * algebraMap ℂ κ (cc q) := by
-      simp only [map_sum, map_mul, hT.retr, hψb, hπc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, hT.retr, hψb, hπc]
     have hρB : ∀ f ∈ (π i).range, ρ i f ∈ B := fun f hf => (hBO _ ((hdom i) f hf).1).1
     have hu1 : IsUnit (⟨ρ i (π i v), hρB _ ⟨_, rfl⟩⟩ : B) := by
       refine IsUnit.of_mul_eq_one (⟨ρ i (π i ↑v⁻¹), hρB _ ⟨_, rfl⟩⟩ : B) (Subtype.ext ?_)
@@ -217,7 +227,8 @@ theorem not_klt_at_points : GlobalTheory.Published.Principalisation →
         simp_rw [mul_sub]
       rw [Subring.coe_neg, hmc, hD, zero_sub, neg_neg]
       show ρ i (π i v) = _
-      rw [hv, hyv, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hv, hyv, map_sum]
       simp only [map_mul, AlgHom.commutes]
     have hm' : -m ∈ IsLocalRing.maximalIdeal B := neg_mem hm
     rw [← he] at hm'
@@ -253,7 +264,7 @@ theorem not_klt_at_points : GlobalTheory.Published.Principalisation →
     rw [e1, e2, e3]
     exact h
   have hlt := hKT'.lt_disc hVT
-  rw [Place.disc, map_add, Place.ordQ_single] at hlt
+  rw [Place.disc, map_add (f := _), Place.ordQ_single] at hlt
   have hσL : ((σ : T) : FractionRing (K ⊗[ℂ] κ')) = ∑ q : Fin (l + 1),
       algebraMap (K ⊗[ℂ] κ') (FractionRing (K ⊗[ℂ] κ'))
         ((((Fin.cons u (w i) : Fin (l + 1) → R i) q : R i) : K) ⊗ₜ

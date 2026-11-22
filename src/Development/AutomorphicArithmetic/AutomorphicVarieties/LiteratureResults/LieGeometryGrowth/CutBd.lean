@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.DegreeHermitianFormula
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.DegreeHermitianFormula
+
+@[expose] public section
+
 open UpperTheory.V.Lit.Geo
 
 private theorem aux {F : Type} [NormedAddCommGroup F] [NormedSpace ℂ F] {q : ℕ} (A : F) (u : ℂ) (l : Fin (q + 1) → ℂ)

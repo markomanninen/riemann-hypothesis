@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IsolatedTheoremFour
 
@@ -15,6 +19,7 @@ theorem main : ∀ {K : Type} [inst : Field K] [NumberField K] {l : ℕ}, Nat.Pr
   obtain ⟨Q, hQ, hQc⟩ := Ideal.exists_ideal_over_maximal_of_isIntegral (Ideal.span {(l : ℤ)}) hker
   have hlQ : ((l : ℕ) : NumberField.RingOfIntegers K) ∈ Q := by
     have h1 : (l : ℤ) ∈ Q.comap (algebraMap ℤ (NumberField.RingOfIntegers K)) := by
+      change (l : ℤ) ∈ Ideal.under ℤ Q
       rw [hQc]
       exact Ideal.subset_span rfl
     simpa using h1

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteMinimiserSystemsSmoothConeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothConeInteriorDefiniteBalancedForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteMinimiserSystemsSmoothConeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothConeInteriorDefiniteBalancedForm
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.Poinc
 
@@ -33,7 +37,7 @@ theorem linearMap_eq_of_eq_on_residues : ∀ (N : ℕ), 2 ≤ N → ∀ (r : ℕ
     choose z hz using this
     refine ⟨z, ?_⟩
     have hx : x = v + (N : ℤ) • z := funext fun i => by simp [← hz i]
-    rw [hx, map_add, map_smul]
+    rw [hx, map_add (f := _), map_smul]
     simp [δ, he v hv]
   have h2 : ∀ k : ℕ, ∀ x, ∃ w, δ x = ((N : ℤ) ^ k) • w := by
     intro k
@@ -61,7 +65,7 @@ theorem cong_map {N r : ℕ} (f : (Fin r → ℤ) →ₗ[ℤ] (Fin r → ℤ)) {
   have : ∀ i, (N : ℤ) ∣ y i - x i := fun i => (ZMod.intCast_eq_intCast_iff_dvd_sub _ _ _).1 (h i)
   choose z hz using this
   have hy : y = x + (N : ℤ) • z := funext fun i => by simp [← hz i]
-  rw [hy, map_add, map_smul]
+  rw [hy, map_add (f := _), map_smul]
   simp
 
 theorem exists_transport : ∀ (W : Matrix (Fin 8) (Fin 8) ℤ) (N : ℕ) [NeZero N] (r : ℕ)
@@ -100,8 +104,9 @@ theorem exists_nat_comb_of_infinite : ∀ (φ : InvFun ℤ) (r m : ℕ) (γ : Fi
     obtain ⟨k, cf, hk0, he⟩ := hk n hn
     have hE : k • (n • B' + B₀) = ∑ j, cf j • bb (Sum.inl j) := Subtype.ext (by simpa [hbb, B', B₀] using he)
     have := congrArg (fun x => bb.repr x o) hE
-    simp only [map_nsmul, map_add, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.add_apply,
-      Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.single_apply, nsmul_eq_mul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_nsmul, map_add (f := _), map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.add_apply,
+      Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.single_apply, nsmul_eq_mul] at this
     rw [Finset.sum_eq_zero fun j _ => by rw [if_neg (ho j).symm]; simp] at this
     have hk' : (k : ℤ) ≠ 0 := by exact_mod_cast hk0.ne'
     push_cast at this
@@ -111,8 +116,9 @@ theorem exists_nat_comb_of_infinite : ∀ (φ : InvFun ℤ) (r m : ℕ) (γ : Fi
     obtain ⟨k, cf, hk0, he⟩ := hk n hn
     have hE : k • (n • B' + B₀) = ∑ j, cf j • bb (Sum.inl j) := Subtype.ext (by simpa [hbb, B', B₀] using he)
     have := congrArg (fun x => bb.repr x (Sum.inl j)) hE
-    simp only [map_nsmul, map_add, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.add_apply,
-      Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.single_apply, nsmul_eq_mul, Sum.inl.injEq] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_nsmul, map_add (f := _), map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.add_apply,
+      Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.single_apply, nsmul_eq_mul, Sum.inl.injEq] at this
     simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
     have hk' : (0 : ℤ) < k := by exact_mod_cast hk0
     have h2 : (0 : ℤ) ≤ k * ((n : ℤ) * bb.repr B' (Sum.inl j) + bb.repr B₀ (Sum.inl j)) := by
@@ -206,7 +212,7 @@ theorem exists_finite_cones : ∀ (g : ℕ) (φ : InvFun ℤ), IsPolFan id g φ 
     · refine Set.mem_biUnion (x := μ') ⟨Set.mem_biUnion hx' ?_, hμ'1⟩ fun c u => ?_
       · show μ' ∈ Fμ ⟨m, fun j => pull e.toLinearMap (γ j)⟩
         simp only [Fμ]
-        rw [dif_pos (show IsCone id φ (fun j => pull e.toLinearMap (γ j)) ∧ _ from ⟨hc', hd'⟩)]
+        rw [dite_eq_left (show IsCone id φ (fun j => pull e.toLinearMap (γ j)) ∧ _ from ⟨hc', hd'⟩)]
         exact (hdick ⟨m, fun j => pull e.toLinearMap (γ j)⟩ ⟨hc', hd'⟩).choose_spec (pull e.toLinearMap b) k cf hk hcf hkb' μ' hμ'1 hμ'2
       · obtain ⟨d, hd⟩ := hμ'3 c u
         exact ⟨(d, u), hd.symm⟩

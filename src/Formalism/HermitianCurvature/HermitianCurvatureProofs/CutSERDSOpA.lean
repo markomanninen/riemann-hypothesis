@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAAll
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatPolyOK
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDCCLower
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAAll
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatPolyOK
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDCCLower
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Matrix

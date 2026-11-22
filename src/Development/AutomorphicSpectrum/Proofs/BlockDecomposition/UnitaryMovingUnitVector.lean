@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FreeCell
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FreeCell
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 open GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.WeilSiegel.Free GlobalTheory.CompanionTheory.WeilSiegel.HypStep GlobalTheory.CompanionTheory.WeilSiegel.HypStage
@@ -34,7 +39,7 @@ theorem hform_add_right (x y y' : Fin M → K) :
 
 theorem hform_add_left (x x' y : Fin M → K) :
     hform s A (x + x') y = hform s A x y + hform s A x' y := by
-  simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_smul_right (c : K) (x y : Fin M → K) :
     hform s A x (c • y) = c * hform s A x y := by
@@ -48,7 +53,8 @@ theorem hform_smul_left (c : K) (x y : Fin M → K) :
 
 theorem hform_conj (hs : ∀ e, s (s e) = e) (hA : ∀ i j, s (A j i) = A i j) (x y : Fin M → K) :
     s (hform s A x y) = hform s A y x := by
-  simp only [hform, map_sum, map_mul, hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hs]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by rw [hA]; ring
 
@@ -108,7 +114,7 @@ theorem hform_cvK (hs : ∀ e, s (s e) = e) (hA : ∀ i j, s (A j i) = A i j) (c
   have e1 : ∀ w : Fin (M + 2) → K, cvK s A c x w 1 = w 0 * x 1 + Ring.inverse (s (x 0)) *
       (w 1 - c * w 0 - hform s A (tailH x) (tailH w)) := fun _ => rfl
   rw [e0, e0, e1, e1]
-  simp only [map_add, map_sub, map_mul, hconj]
+  simp only [map_add (f := _), map_sub, map_mul, hconj]
   linear_combination (s (u 0) * (v 1 - c * v 0 - hform s A (tailH x) (tailH v))) * hab +
     (v 0 * (s (u 1) - s c * s (u 0) - hform s A (tailH u) (tailH x))) * hba -
     (s (u 0) * v 0) * hc
@@ -210,12 +216,12 @@ theorem cvec_unitary : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
     rw [hR, JR_hypOne]
   have htc : sigR R σ (hR R σ (hypOne J) x x) = hR R σ (hypOne J) x x := by
     rw [ht, hform_hypOne]
-    simp only [map_add, map_mul, hs, hform_conj (sigR R σ) (JR (F := F) R J) hs hA]
+    simp only [map_add (f := _), map_mul, hs, hform_conj (sigR R σ) (JR (F := F) R J) hs hA]
     ring
   have hhalf : sigR R σ (halfR (F := F) (E := E) R) = halfR (F := F) (E := E) R := by
     rw [halfR, sigR_inclR_apply, AlgHom.commutes]
   have h2 : halfR (F := F) (E := E) R + halfR (F := F) (E := E) R = 1 := by
-    rw [halfR, ← map_add, ← map_add]
+    rw [halfR, ← map_add (f := _), ← map_add (f := _)]
     norm_num
   have hc : tHalf R σ J x + sigR R σ (tHalf R σ J x) =
       hform (sigR R σ) (hypOne (JR (F := F) R J)) x x := by

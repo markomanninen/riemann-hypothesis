@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsAlgChar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsAlgChar
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af
 
@@ -22,7 +26,7 @@ theorem UpperTheory.V.Z.Bc.exists_quad (L Ω : Type) [Field L] [NumberField L] [
       · exact ⟨p c, (hθ c).trans hη⟩]
     simp
   have h2 : Module.finrank ℚ (IntermediateField.fixedField θ.ker) = 2 := by
-    have h := Module.finrank_mul_finrank ℚ (IntermediateField.fixedField θ.ker) L
+    have h := (letI : Module.Free (IntermediateField.fixedField θ.ker) L := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (IntermediateField.fixedField θ.ker) L)
     rw [IntermediateField.finrank_fixedField_eq_card, ← IsGalois.card_aut_eq_finrank ℚ L, ← θ.ker.index_mul_card, hidx] at h
     exact Nat.eq_of_mul_eq_mul_right Nat.card_pos h
   refine ⟨_, h2, ?_⟩

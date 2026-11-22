@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HgtArch
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HgtArch
+
+@[expose] public section
 
 noncomputable section
 

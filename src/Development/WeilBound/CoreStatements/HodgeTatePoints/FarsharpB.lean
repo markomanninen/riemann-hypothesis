@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeTateCokerSharp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeTateCokerSharp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,50 +42,50 @@ theorem mem_of_forall_dvd {O A : Type} [CommRing O] [IsDomain O] [ValuationRing 
   have hxz : x = (z : A) := by
     have h1 : q • x = q • (z : A) := by
       rw [← hψ, hz]; rfl
-    exact Module.IsTorsionFree.isSMulRegular (isRegular_of_ne_zero hq) h1
+    exact Module.IsTorsionFree.isSMulRegular (IsRegular.of_ne_zero hq) h1
   rw [hxz]
   exact z.2
 
 variable {p : ℕ} {O : Type} [CommRing O]
 
 theorem dUnit_mulBy {A : Type} [CommRing A] [Bialgebra O A] [IsCocomm O A] (k : ℕ) (a : A) :
-    dUnit O (mulBy O A k a) = (k : O) • dUnit O a := by
+    dUnit (R := O) (mulBy O A k a) = (k : O) • dUnit (R := O) a := by
   rw [← cotMap_d]
-  show cotMap ((toConv (BialgHom.id O A) ^ k).ofConv) (dUnit O a) = _
+  show cotMap ((toConv (BialgHom.id O A) ^ k).ofConv) (dUnit (R := O) a) = _
   rw [cotMap_pow, LinearMap.smul_apply, Nat.cast_smul_eq_nsmul]
   simp [cotMap_id]
 
 theorem dUnit_of_mem_torsionIdeal {A : Type} [CommRing A] [Bialgebra O A] [IsCocomm O A] (k : ℕ)
-    {t : A} (ht : t ∈ torsionIdeal O A k) : ∃ y, dUnit O t = (k : O) • y := by
-  suffices H : counitAlgHom O A t = 0 ∧ ∃ y, dUnit O t = (k : O) • y from H.2
+    {t : A} (ht : t ∈ torsionIdeal (R := O) (A := A) k) : ∃ y, dUnit (R := O) t = (k : O) • y := by
+  suffices H : counitAlgHom O A t = 0 ∧ ∃ y, dUnit (R := O) t = (k : O) • y from H.2
   change t ∈ Ideal.span _ at ht
   induction ht using Submodule.span_induction with
   | mem x hx =>
     obtain ⟨a, ha, rfl⟩ := hx
-    refine ⟨?_, dUnit O a, dUnit_mulBy k a⟩
+    refine ⟨?_, dUnit (R := O) a, dUnit_mulBy k a⟩
     have ha' : counitAlgHom O A a = 0 := ha
     simpa using ha'
   | zero => exact ⟨by simp, 0, by simp⟩
   | add x y _ _ hx hy =>
     obtain ⟨hx0, u, hu⟩ := hx
     obtain ⟨hy0, v, hv⟩ := hy
-    exact ⟨by rw [map_add, hx0, hy0, add_zero], u + v, by simp [hu, hv, smul_add]⟩
+    exact ⟨by rw [map_add (f := _), hx0, hy0, add_zero], u + v, by simp [hu, hv, smul_add]⟩
   | smul c x _ hx =>
     obtain ⟨hx0, u, hu⟩ := hx
     refine ⟨by rw [smul_eq_mul, map_mul, hx0, mul_zero], counitAlgHom O A c • u, ?_⟩
     show AugCot.d _ (c * x) = _
     rw [AugCot.d_mul, hx0, zero_smul, add_zero]
-    change _ • dUnit O x = _
+    change _ • dUnit (R := O) x = _
     rw [hu, smul_comm]
 
 theorem exists_of_cotMap_res_eq_zero (G : PDivGroup p O) (n : ℕ) (y : Cot O (G.A (n + 1)))
     (hy : cotMap (G.res n) y = 0) : ∃ y', y = (p : O) ^ n • y' := by
   unfold cotMap at hy
   obtain ⟨x, hx⟩ := (AugCot.exact_kerMap_map _ _ (G.res_surjective n) y).1 hy
-  have hx' : dUnit O (x : G.A (n + 1)) = y := by
+  have hx' : dUnit (R := O) (x : G.A (n + 1)) = y := by
     rw [← hx]
     exact (AugCot.kerMap_apply _ _ x).symm
-  have hxmem : (x : G.A (n + 1)) ∈ torsionIdeal O (G.A (n + 1)) (p ^ n) := by
+  have hxmem : (x : G.A (n + 1)) ∈ torsionIdeal (R := O) (A := G.A (n + 1)) (p ^ n) := by
     rw [← G.ker_res n]
     exact x.2
   obtain ⟨y', hy'⟩ := dUnit_of_mem_torsionIdeal (p ^ n) hxmem
@@ -111,7 +115,7 @@ private theorem prime_pow_smul_cot_eq_zero (G : PDivGroup p O) (n : ℕ) (y : Co
     simp only [map_sub, AlgHomClass.commutes, sub_eq_zero] at this
     exact this
   rw [← Nat.cast_pow]
-  change ((p ^ n : ℕ) : O) • dUnit O (G.res n a) = 0
+  change ((p ^ n : ℕ) : O) • dUnit (R := O) (G.res n a) = 0
   rw [← dUnit_mulBy, ← map_mulBy, h2]
   exact AugCot.d_algebraMap _ _
 
@@ -154,7 +158,7 @@ theorem smul_mem_of_levels [IsAdicComplete (Ideal.span {(p : O)}) O] (G : PDivGr
     have key : Φ (n + 2) (d - c.1) = Φ (n + 2) ((p : O) ^ n • f) := by
       rw [hy', map_smul, hf, smul_smul, ← pow_succ]
     have : c.1 + (p : O) ^ n • f = d - (d - c.1) + (p : O) ^ n • f := by abel
-    rw [this, map_add, map_sub, key, hd]
+    rw [this, map_add (f := _), map_sub, key, hd]
     abel
   choose nxt hnxt using step
   obtain ⟨c0, hc0⟩ := lift 1 _ (hκ 1 (W 1))
@@ -197,7 +201,7 @@ theorem smul_mem_of_levels [IsAdicComplete (Ideal.span {(p : O)}) O] (G : PDivGr
     obtain ⟨t, ht⟩ := close (n + 1)
     have h1 : Φ (n + 1) (seq (n + 1)).1 = κ • W (n + 1) := by
       rw [← compatΦ, (seq (n + 1)).2, hWc]
-    rw [ht, map_add, h1, map_smul, prime_pow_smul_cot_eq_zero, add_zero]
+    rw [ht, map_add (f := _), h1, map_smul, prime_pow_smul_cot_eq_zero, add_zero]
   have good' : ∀ n, Φ n l = κ • W n := by
     intro n
     cases n with

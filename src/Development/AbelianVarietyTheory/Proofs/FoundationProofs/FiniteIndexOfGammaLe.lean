@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -163,16 +167,6 @@ def IsCF.toCF {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex] {k : ℤ} {f : ℍ →
 
 @[simp] theorem IsCF.coe_toCF {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex] {k : ℤ} {f : ℍ → ℂ} (h : IsCF Γ k f) :
     ⇑h.toCF = f := rfl
-
-def IsMF.toLevelOne {k : ℤ} {f : ℍ → ℂ} (h : IsMF ⊤ k f) : ModularForm 𝒮ℒ k where
-  toFun := f
-  slash_action_eq' := by rintro _ ⟨γ, rfl⟩; exact h.slash_top γ
-  holo' := h.2.1
-  bdd_at_cusps' {c} hc := by
-    rw [OnePoint.isBoundedAt_iff_forall_SL2Z hc]
-    exact fun γ _ => h.2.2 γ
-
-@[simp] theorem IsMF.coe_toLevelOne {k : ℤ} {f : ℍ → ℂ} (h : IsMF ⊤ k f) : ⇑h.toLevelOne = f := rfl
 
 theorem finiteIndex_of_Gamma_le {M : ℕ} {Γ : Subgroup SL(2, ℤ)} (hM : 0 < M)
     (h : CongruenceSubgroup.Gamma M ≤ Γ) : Γ.FiniteIndex := by

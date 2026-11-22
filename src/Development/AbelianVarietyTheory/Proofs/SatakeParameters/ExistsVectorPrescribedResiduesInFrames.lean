@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.Ker Formalism.L2.DIV GlobalTheory.TwU GlobalTheory.TwV Formalism.UG
 
 namespace GlobalTheory.CRTFrame
@@ -101,7 +106,8 @@ theorem approx_frames (E : Type) [Field E] [NumberField E] (n : ℕ) (SB : Finse
     have hv : v = ∑ j, v j • (Pi.single j 1 : Sp E n) := by
       ext i; simp [Finset.sum_apply, Pi.single_apply]
     conv_lhs => rw [hv]
-    simp [map_sum, map_smul, Finset.sum_apply, c]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, Finset.sum_apply, c]
   have hmem : (∑ j, (z j - wr P j) * cr P j l) ∈ P.1.asIdeal ^ k P := by
     refine Ideal.sum_mem _ fun j _ => Ideal.mul_mem_right _ _ ?_
     have := hz j P.1 P.2
@@ -111,7 +117,8 @@ theorem approx_frames (E : Type) [Field E] [NumberField E] (n : ℕ) (SB : Finse
   have h1 : (f P).symm (fun j => (algebraMap (𝓞 E) E D)⁻¹ * algebraMap (𝓞 E) E (z j)) - y0 P
       = (f P).symm ((fun j => (algebraMap (𝓞 E) E D)⁻¹ * algebraMap (𝓞 E) E (z j)) - w P) := by
     rw [map_sub]; simp [w]
-  rw [h1, hexp, Finset.mul_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, hexp, Finset.mul_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   have e1 := hcr P j l
   have e2 := hwr P j

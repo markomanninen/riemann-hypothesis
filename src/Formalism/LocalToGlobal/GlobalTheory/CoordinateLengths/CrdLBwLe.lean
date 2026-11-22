@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.IsCrdExists
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.IsCrdExists
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
+
+@[expose] public section
 
 noncomputable section
 

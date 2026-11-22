@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.NadelVanishingPairsOfPrincipalisation
-import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationClosed
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.NadelVanishingPairsOfPrincipalisation
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationClosed
+
+@[expose] public section
 
 namespace NadelVanishingSeparation.NSI
 

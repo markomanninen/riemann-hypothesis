@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantDerivationFormalGroupLawIsLinearStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIteratePInvariantDerivationMulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantDerivationFormalGroupLawIsLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIteratePInvariantDerivationMulStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,7 +53,8 @@ theorem eq_const_add_sum (F : MvPowerSeries (Fin d) R) :
     F = C (constantCoeff F) + ∑ j, X j * part F j := by
   classical
   ext β
-  rw [map_add, map_sum, coeff_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum, coeff_C]
   simp only [coeff_X_mul_part]
   by_cases hβ : β = 0
   · subst hβ
@@ -87,7 +92,8 @@ theorem iterate_linear_part : ∀ (p : ℕ) [Fact (Nat.Prime p)] (R : Type) [ins
   refine ⟨∑ j, r j, ?_⟩
   have hF : constantCoeff ((D ^ p) F) = ∑ j, constantCoeff ((D ^ p) (X j * part F j)) := by
     conv_lhs => rw [eq_const_add_sum F]
-    rw [map_add, hDC, zero_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), hDC, zero_add, map_sum, map_sum]
   simp only [hD]
   rw [hF, Finset.mul_sum, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_

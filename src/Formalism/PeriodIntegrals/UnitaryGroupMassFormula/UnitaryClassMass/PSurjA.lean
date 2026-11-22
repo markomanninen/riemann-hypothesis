@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjH
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.IsIntegralOfIntOE
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjH
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.IsIntegralOfIntOE
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UJClassMass Formalism.HermitianLatticesTheory Matrix
 open scoped TensorProduct
@@ -28,7 +32,8 @@ theorem fam_one (e : ι → R) (hs : ∑ i, e i = 1) (X : Matrix n n R) : ∑ i,
 theorem cT_fam (s : R →+* R) (e : ι → R) (A : ι → Matrix n n R) :
     cT s (∑ i, e i • A i) = ∑ i, s (e i) • cT s (A i) := by
   ext a c
-  simp [cT, Matrix.sum_apply, map_sum, Matrix.smul_apply, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [cT, Matrix.sum_apply, map_sum, Matrix.smul_apply, map_mul]
 
 end Fam
 
@@ -38,8 +43,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 variable (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin M) (Fin M) E)
 variable {ι : Type} [Fintype ι] [DecidableEq ι]
 
-variable (F E) in
 
+variable (F E) in
 abbrev finE : AF F ⊗[F] E →ₐ[F] Af F ⊗[F] E := Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)
 
 def incM (U : GL (Fin M) E) : Matrix (Fin M) (Fin M) (AF F ⊗[F] E) :=
@@ -103,7 +108,8 @@ theorem finMat_patch_inv (e : ι → AF F ⊗[F] E) (he : ∀ i j, e i * e j = i
       (∑ i, e i • incM (F := F) (γ i)⁻¹).map (finE F E) := rfl
   rw [h0]
   ext a c
-  simp [Matrix.map_apply, Matrix.sum_apply, incM, map_sum, map_mul, finE_inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.map_apply, Matrix.sum_apply, incM, map_sum, map_mul, finE_inclR]
 
 theorem patch_mulVec (e : ι → AF F ⊗[F] E) (he : ∀ i j, e i * e j = if i = j then e i else 0)
     (hs : ∑ i, e i = 1) (hσe : ∀ i, sigR (AF F) σ (e i) = e i) (γ : ι → GL (Fin M) E)

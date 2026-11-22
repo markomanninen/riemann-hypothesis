@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -33,8 +37,8 @@ private lemma finite_right_of_finite_tensor_of_nontrivial {V W : Type} [AddCommG
     Module.Finite.equiv (TensorProduct.comm ℂ V W)
   exact finite_left_of_finite_tensor_of_nontrivial (W := V)
 
-open scoped TensorProduct in
 
+open scoped TensorProduct in
 theorem _root_.GlobalTheory.trace_tensorProduct_map_complex {U U' : Type} [AddCommGroup U] [Module ℂ U]
     [AddCommGroup U'] [Module ℂ U'] (T : U →ₗ[ℂ] U) (T' : U' →ₗ[ℂ] U') :
     LinearMap.trace ℂ (U ⊗[ℂ] U') (TensorProduct.map T T') =

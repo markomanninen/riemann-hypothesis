@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitDegreeRatioLemmas
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitDegreeRatioLemmas
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -123,8 +128,6 @@ theorem OrbitDegreeRatio.proof : OrbitDegreeRatio.Statement := by
     ring
   rw [← Nat.card_congr (Equiv.ofBijective Φ ⟨hinj, hΦ⟩), Nat.card_eq_fintype_card,
     NumberField.Embeddings.card]
-
-example : BlockNonzero samplePoint := samplePoint_blockNonzero
 
 end
 

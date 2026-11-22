@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPointsClassicalModelRealVectorSpaceStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompactStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaFunctionSpaceHeisenbergLawsStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPointsClassicalModelRealVectorSpaceStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompactStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaFunctionSpaceHeisenbergLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.L2.Pj MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker
@@ -33,8 +37,8 @@ theorem mem_tube (w : G) : w ∈ tube p R U ↔ w - R (p w) ∈ U := Iff.rfl
 
 variable {p R U}
 
-omit [IsTopologicalAddGroup V] in
 
+omit [IsTopologicalAddGroup V] in
 theorem exists_compact (hR : Continuous R) (hU : IsCompact (U : Set G)) {K : Set V} (hK : IsCompact K) :
     ∃ K' : Set G, IsCompact K' ∧ p ⁻¹' K ∩ tube p R U ⊆ K' := by
   refine ⟨(fun x : G × V => x.1 + R x.2) '' ((U : Set G) ×ˢ K),
@@ -92,7 +96,7 @@ theorem exists_map_eq_smul [LocallyCompactSpace V] [SecondCountableTopology V] [
   have : ν'.IsAddLeftInvariant := ⟨fun v => by
     have hpre : (fun w => R v + w) ⁻¹' (tube p R U : Set G) = tube p R U := by
       ext w
-      simp only [Set.mem_preimage, SetLike.mem_coe, mem_tube, map_add, hpR]
+      simp only [Set.mem_preimage, SetLike.mem_coe, mem_tube, map_add (f := _), hpR]
       rw [show R v + w - (R v + R (p w)) = w - R (p w) by abel]
     have hpres : MeasurePreserving (fun w => R v + w) (μ.restrict (tube p R U))
         (μ.restrict (tube p R U)) := by
@@ -173,7 +177,7 @@ theorem integral_eq_mean [LocallyCompactSpace V] [SecondCountableTopology V] [T2
         rw [add_assoc]
         exact (tube p R U).add_mem hγ't hγw
       · show p (γ' + γ + w) ∈ Fd
-        rw [add_assoc, map_add, hpl]
+        rw [add_assoc, map_add (f := _), hpl]
         exact hl
     · intro γ₁ γ₂ hne
       show μ ((γ₁ +ᵥ ((tube p R U : Set G) ∩ p ⁻¹' Fd)) ∩ (γ₂ +ᵥ ((tube p R U : Set G) ∩ p ⁻¹' Fd))) = 0
@@ -205,7 +209,7 @@ theorem integral_eq_mean [LocallyCompactSpace V] [SecondCountableTopology V] [T2
         rw [hy]
         refine ⟨hy₂T, hy₂F, p y₁, hy₁F, ?_⟩
         show p ((γ₁ : G) - γ₂) + p y₁ = p y₂
-        rw [← map_add, e, sub_add_cancel]
+        rw [← map_add (f := _), e, sub_add_cancel]
       · refine measure_mono_null ?_ measure_empty
         rintro x ⟨hx1, hx2⟩
         obtain ⟨y₁, ⟨hy₁T, -⟩, rfl⟩ := hx1
@@ -470,8 +474,8 @@ theorem ipO_eq_mean : ∀ (D : D7) (S T : HSp D) (C : Ctx S T), ∀ (μ : Measur
     rw [hmemT]
     refine ⟨u', hu', ?_⟩
     have e3 : C.realPt (-(ratW T S (y + y')ᵀ) + w) = -embR C.X (y + y') + C.realPt w := by
-      rw [← hpapp, map_add, map_neg, hpapp, hpapp, realPt_ratW]
-    rw [e3, map_add, map_neg, hRemb, finW_add]
+      rw [← hpapp, map_add (f := _), map_neg, hpapp, hpapp, realPt_ratW]
+    rw [e3, map_add (f := _), map_neg, hRemb, finW_add]
     rw [show N • u' = w - R (C.realPt w) - finW S T y - finW S T y' by rw [e]; abel]
     abel
   have hinj : ∀ γ ∈ ratL T S, γ ∈ U → γ = 0 := by

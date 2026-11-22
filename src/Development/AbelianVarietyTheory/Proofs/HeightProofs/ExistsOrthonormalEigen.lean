@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IterateOnePlusCasOfEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IterateOnePlusCasOfEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem exists_kStable {p : ℕ} {x : Fin p → H} (hx : ∀ j, IsKFin ε σ (x 
   refine Submodule.iSup_induction S (motive := fun v => σ g v ∈ ⨆ j, S j) hv
     (fun j v hv => Submodule.mem_iSup_of_mem j (hSst j g hg v hv)) ?_ ?_
   · rw [map_zero]; exact Submodule.zero_mem _
-  · intro a b ha hb; rw [map_add]; exact Submodule.add_mem _ ha hb
+  · intro a b ha hb; rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
 
 theorem inner_onePlusCas_self (hσ : IsURepOn (UJset ε) σ) {d : ℕ} {X : Fin d → Mx n} (hX : ∀ i, X i ∈ lieSet ε)
     {v : H} (hv : Sm ε σ v) :

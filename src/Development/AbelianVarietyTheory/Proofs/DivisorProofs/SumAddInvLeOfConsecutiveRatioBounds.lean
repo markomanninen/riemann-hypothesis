@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
-import GroundTheory.AutomorphicForms.ReductionSiegel
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology GroundTheory.Automorphic.Reduction
 open scoped ContDiff
 
@@ -89,7 +94,7 @@ theorem sum_add_inv_le_of_ratio_bounds :
     have hx : ∀ k, r i / (max 1 t⁻¹ * ρ) ^ a ≤ r k := fun k => by
       rw [div_le_iff₀ hBa, mul_comm]; exact pb i k
     have hprod : (r i / (max 1 t⁻¹ * ρ) ^ a) ^ a ≤ ∏ k, r k := by
-      have := Finset.prod_le_prod (s := Finset.univ)
+      have := Finset.prod_le_prod₀ (s := Finset.univ)
         (f := fun _ : Fin a => r i / (max 1 t⁻¹ * ρ) ^ a) (g := r)
         (fun _ _ => (div_pos (hr i) hBa).le) (fun k _ => hx k)
       rwa [Finset.prod_const, Finset.card_univ, Fintype.card_fin] at this
@@ -100,7 +105,7 @@ theorem sum_add_inv_le_of_ratio_bounds :
     have ha : a ≠ 0 := by have := i.isLt; omega
     have hy : 0 < (max 1 t⁻¹ * ρ) ^ a * r i := mul_pos hBa (hr i)
     have hprod : ∏ k, r k ≤ ((max 1 t⁻¹ * ρ) ^ a * r i) ^ a := by
-      have := Finset.prod_le_prod (s := Finset.univ) (f := r)
+      have := Finset.prod_le_prod₀ (s := Finset.univ) (f := r)
         (g := fun _ : Fin a => (max 1 t⁻¹ * ρ) ^ a * r i)
         (fun k _ => (hr k).le) (fun k _ => pb k i)
       simpa [Finset.prod_const, Finset.card_univ, Fintype.card_fin] using this

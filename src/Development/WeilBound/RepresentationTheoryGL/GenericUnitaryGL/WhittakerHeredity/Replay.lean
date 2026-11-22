@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerHeredity
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerHeredity
+
+@[expose] public section
+
 open GlobalTheory.BZMir.Leib
 
 namespace PositivityTheory.rg.gu.hered2

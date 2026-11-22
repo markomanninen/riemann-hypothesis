@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGBasic
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocA
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocB
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocC
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocD
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGBasic
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocA
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocB
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocC
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocD
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane

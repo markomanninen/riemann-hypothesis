@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.UntwistedChoice
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjugateWeightLatticeOfGeneral
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.UntwistedChoice
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjugateWeightLatticeOfGeneral
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder

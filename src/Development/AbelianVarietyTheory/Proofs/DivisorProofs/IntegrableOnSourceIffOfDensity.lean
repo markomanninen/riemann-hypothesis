@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
-import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticOnNhdFinChartIff
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegrableMonomialMulConjComplexGaussian
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticOnNhdFinChartIff
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegrableMonomialMulConjComplexGaussian
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -222,7 +226,7 @@ theorem IsCInf.chernInt_eq_mInt_of_isAlgAtlas (h : φ.IsCInf) (hA : IsAlgAtlas A
     fun hi => ?_⟩
   have hm := fwd hi
   rw [chernInt, Measure.restrict_univ, Measure.restrict_univ, (pieces hm 1).2, (pieces hm (-1)).2,
-    mInt_eq_integralWith A _ hne, integralWith, ← Finset.sum_sub_distrib]
+    mInt, dif_pos hne, integralWith, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← integral_sub (back hm 1 j) (back hm (-1) j)]
   simp only [← mul_sub, hsub, hd, P]

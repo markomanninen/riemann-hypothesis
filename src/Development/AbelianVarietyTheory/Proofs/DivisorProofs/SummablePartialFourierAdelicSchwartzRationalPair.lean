@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSummableMajorantAdelicSchwartzLocallyUnifo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzRestrictTranslatedDiagonalMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFourierSecondVariableRapidDecayStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSummableMajorantAdelicSchwartzLocallyUnifo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzRestrictTranslatedDiagonalMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFourierSecondVariableRapidDecayStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix TensorProduct FourierTransform
 open MeasureTheory GroundTheory.Automorphic.GJMatrix
@@ -78,8 +83,8 @@ def shear : ((κ → mixedSpace F) × EuclidPi F κ) ≃L[ℝ] (κ ⊕ κ → mi
       map_add' := fun p q => by
         funext i
         rcases i with i | i
-        · simp only [Prod.fst_add, Prod.snd_add, map_add, Sum.elim_inl, Pi.add_apply]; abel
-        · simp only [Prod.snd_add, map_add, Sum.elim_inr, Pi.add_apply]
+        · simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), Sum.elim_inl, Pi.add_apply]; abel
+        · simp only [Prod.snd_add, map_add (f := _), Sum.elim_inr, Pi.add_apply]
       map_smul' := fun a p => by
         funext i
         rcases i with i | i

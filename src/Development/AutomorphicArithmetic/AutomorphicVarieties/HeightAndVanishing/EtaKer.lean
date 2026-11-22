@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,8 @@ variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [F
 
 def Congr (a b : G ℚ Ω →* c.Oˣ) : Prop := ∀ σ, ((a σ : c.Oˣ) : c.O) - ((b σ : c.Oˣ) : c.O) ∈ IsLocalRing.maximalIdeal c.O
 
-def IsOmT (w : G ℚ Ω →* c.Oˣ) : Prop := w ^ (l - 1) = 1 ∧ Congr c w (chiO ℚ Ω l c.O)
+def IsOmT (w : G ℚ Ω →* c.Oˣ) : Prop :=
+  w ^ (l - 1) = 1 ∧ Congr c w (UpperTheory.V.Base.chiO (k := ℚ) (Ω := Ω) l c.O)
 
 structure GDlit (K : Type) [Field K] [NumberField K] [Algebra K Ω] (e : ℕ) {N : ℕ} [NeZero N] (ψ : DirichletCharacter c.O N)
     (w η : G ℚ Ω →* c.Oˣ) (a : ℕ) : Prop where
@@ -23,7 +28,7 @@ structure GDlit (K : Type) [Field K] [NumberField K] [Algebra K Ω] (e : ℕ) {N
   ine : ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 → ∀ σ ∈ Ine (F := ℚ) A, Chr.dirG ℚ Ω ψ σ = w σ ^ a
   a_lt : a < l - 1
   two_a : l - 1 ∣ 2 * a
-  par : ∀ σ : G ℚ Ω, IsCC σ → Chr.Psi l e (Chr.dirG ℚ Ω ψ) σ = 1
+  par : ∀ σ : G ℚ Ω, IsCC σ → UpperTheory.V.Chr.Psi l e (Chr.dirG ℚ Ω ψ) σ = 1
   quad : Module.finrank ℚ K = 2
   imag : IsTotallyComplex K
   l_cop : ¬ l ∣ (discr K).natAbs * classNumber K

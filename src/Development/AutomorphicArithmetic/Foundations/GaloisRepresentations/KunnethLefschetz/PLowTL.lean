@@ -1,16 +1,20 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
-import Development.EtaleCohomology.EtaleTrace.TorsionH0PointOfTwistCoverCocycle
-import Development.EtaleCohomology.EtaleTrace.PtCoverPf
-import Development.EtaleCohomology.EtaleTrace.TwZeroPfSplit
-import Development.EtaleCohomology.EtaleTrace.PrimSplitPf
-import Development.EtaleCohomology.EtaleTrace.CocEqPf
-import Development.EtaleCohomology.EtaleTrace.EtaleTateTwistSectionConstantOnPointsOfConnected
-import Development.EtaleCohomology.EtaleTrace.PtCovPf
-import Development.EtaleCohomology.EtaleTrace.TateTwistSectionConstantOnPointsOfTwLocPtCov
-import Development.EtaleCohomology.TateTwists.TwLocPfR
-import Development.EtaleCohomology.TateTwists.TwSecLocPfZarR
-import Development.EtaleCohomology.TateTwists.AlgPowPfR
-import Development.EtaleCohomology.TateTwists.TwTorsPfR
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+public import Development.EtaleCohomology.EtaleTrace.TorsionH0PointOfTwistCoverCocycle
+public import Development.EtaleCohomology.EtaleTrace.PtCoverPf
+public import Development.EtaleCohomology.EtaleTrace.TwZeroPfSplit
+public import Development.EtaleCohomology.EtaleTrace.PrimSplitPf
+public import Development.EtaleCohomology.EtaleTrace.CocEqPf
+public import Development.EtaleCohomology.EtaleTrace.EtaleTateTwistSectionConstantOnPointsOfConnected
+public import Development.EtaleCohomology.EtaleTrace.PtCovPf
+public import Development.EtaleCohomology.EtaleTrace.TateTwistSectionConstantOnPointsOfTwLocPtCov
+public import Development.EtaleCohomology.TateTwists.TwLocPfR
+public import Development.EtaleCohomology.TateTwists.TwSecLocPfZarR
+public import Development.EtaleCohomology.TateTwists.AlgPowPfR
+public import Development.EtaleCohomology.TateTwists.TwTorsPfR
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace CochainComplex.HomComplex
@@ -67,7 +71,7 @@ private theorem exists_nsmul_eq_of_single_one_eq {q : ℕ} [NeZero q] {P N : Typ
       apply ULift.ext
       rw [ULift.down_natCast, ZMod.natCast_zmod_val]
     calc φ (Finsupp.single ξ c + g) = c • g0 + n • g0 := by
-          rw [map_add, ← Finsupp.smul_single_one, map_smul, h, hn]
+          rw [map_add (f := _), ← Finsupp.smul_single_one, map_smul, h, hn]
       _ = (c.down.val + n) • g0 := by
           rw [add_nsmul, ← Nat.cast_smul_eq_nsmul (ULift.{1, 0} (ZMod q)) c.down.val, ← hc]
 

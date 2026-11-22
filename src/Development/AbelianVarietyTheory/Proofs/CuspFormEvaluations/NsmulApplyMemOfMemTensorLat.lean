@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsLocalizedModuleSubtype
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.FlatMemLatIffStdLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsLocalizedModuleSubtype
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.FlatMemLatIffStdLat
+
+@[expose] public section
 
 namespace GlobalTheory.TensorLat
 
@@ -85,7 +89,8 @@ theorem exists_im_HC_eq (hfg : Λ'.FG)
     exact eq_sum_tens_contr hexp _
   rw [HC_sum_left, Complex.im_sum]
   conv_lhs => rw [hsplit]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   push_cast
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [HC_tens_left]
@@ -207,12 +212,5 @@ theorem tensorLat_span_integral_perfect (X : PT E) (Λ' : Submodule (𝓞 E) (Fi
     exists_nsmul_commensurable hfg hint hdual⟩
   obtain ⟨-, m, v, w, hv, hw, hexp⟩ := GlobalTheory.exists_dual_family Λ' hfg hint hdual
   exact ⟨m, v, w, hv, hw, hexp, fun γ => eq_sum_tens_contr hexp γ⟩
-
-example (X : PT E) (φ : tensorLat X (stdLat E n) →+ ℤ) :
-    ∃ γ : Fin n → Vsp X.dim, (∀ k, γ k ∈ X.L) ∧ ∀ γ' : tensorLat X (stdLat E n),
-      (φ γ' : ℝ) = (HC γ (γ' : Fin n → Vsp X.dim)).im := by
-  obtain ⟨γ, hγ, h⟩ := exists_im_HC_eq stdLat_fg (fun _ hx => mem_stdLat_iff_herm.1 hx)
-    (fun _ hx => mem_stdLat_iff_herm.2 hx) φ
-  exact ⟨γ, mem_tensorLat_stdLat.1 hγ, h⟩
 
 end GlobalTheory.TensorLat

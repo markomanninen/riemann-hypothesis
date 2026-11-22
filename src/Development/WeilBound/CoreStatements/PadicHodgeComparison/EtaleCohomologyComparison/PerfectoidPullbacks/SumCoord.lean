@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FirstChernCompatibleL
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.BocksteinBaseChangeP
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.CrystallineDeRhamFirstChernExists
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Pull
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.IsProperOfProj
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.IsFirstChernDeRhamUnique
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.RSubOneMem
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LogarithmicDerivatives.CrystallineFirstChernExistsUnique
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FirstChernCompatibleL
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.BocksteinBaseChangeP
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.CrystallineDeRhamFirstChernExists
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Pull
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.IsProperOfProj
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.IsFirstChernDeRhamUnique
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.RSubOneMem
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LogarithmicDerivatives.CrystallineFirstChernExistsUnique
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -27,7 +31,8 @@ theorem sum_coord {K B V : Type _} [Field K] [CommRing B] [AddCommGroup V] [Modu
     (μ : V →ₗ[K] V' →ₗ[K] V'') (φ : Module.Dual K V'') (x : V) (y : V') :
     ∑ s, ∑ s', o (b.coord s x) * o (b'.coord s' y) * o (φ (μ (b s) (b' s'))) = o (φ (μ x y)) := by
   conv_rhs => rw [← b.sum_repr x, ← b'.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, smul_eq_mul, map_mul, Module.Basis.coord_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, smul_eq_mul, map_mul, Module.Basis.coord_apply,
     Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun s' _ => by ring
@@ -46,10 +51,13 @@ theorem kap_pow (L : KapL (l := l) (K := K) Amp) {M : Model l K} (a : (dat Amp).
     exact (sum_coord _ _ _ (cupR M (2 * k) 2) φ _ _).trans (congrArg (fun t => (per l K).o (φ t)) (cupR_eq M _ _ _ _))
 
 theorem pow_ex {M : Model l K} (a : (dat Amp).Ch M) (x : ((dat Amp).H a).N 2) :
-    ∀ k : ℕ, ∃ z : ((dat Amp).H a).N (2 * k), IsPow (N := ((dat Amp).H a).N) ((dat Amp).H a).one ((dat Amp).H a).cup x k z
-  | 0 => ⟨(⟨fun n => CH.oneH _, fun n => (B.compatH l).one _ _ false n.le_succ⟩ : (M.HS false 0).lim), fun _ => rfl⟩
-  | k + 1 => by
-    obtain ⟨y, hy⟩ := pow_ex a x k
+    ∀ k : ℕ, ∃ z : ((dat Amp).H a).N (2 * k), IsPow (N := ((dat Amp).H a).N) ((dat Amp).H a).one ((dat Amp).H a).cup x k z := by
+  intro k
+  induction k with
+  | zero =>
+    exact ⟨(⟨fun n => CH.oneH _, fun n => (B.compatH l).one _ _ false n.le_succ⟩ : (M.HS false 0).lim), fun _ => rfl⟩
+  | succ k ih =>
+    obtain ⟨y, hy⟩ := ih
     refine ⟨(⟨fun n => (CH.mulP (B.OcA (B.schFn M.p) (okToOC l K) false n)).cup rfl ((show (M.HS false (2 * k)).lim from y).1 n)
       ((show (M.HS false 2).lim from x).1 n), fun n => ?_⟩ : (M.HS false (2 * k + 2)).lim), y, hy, fun _ => rfl⟩
     refine ((B.compatH l).cup _ _ false n.le_succ rfl _ _).trans ?_

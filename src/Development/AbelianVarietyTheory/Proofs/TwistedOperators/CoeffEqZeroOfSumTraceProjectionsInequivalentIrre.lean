@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentSeparation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EndoApplyEq
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentSeparation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EndoApplyEq
+
+@[expose] public section
+
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -60,7 +65,7 @@ theorem coeff_eq_zero_of_sum_trace_eq_zero : ∀ (G : Type) [Group G] (n : ℕ) 
       have := hasFinTrace_compress (P i) (hP i) (σ i g)
       simpa [Q, Representation.asAlgebraHom_of] using this
     | add x y hx hy =>
-      simp only [Q, map_add, LinearMap.add_comp, LinearMap.comp_add, mul_add,
+      simp only [Q, map_add (f := _), LinearMap.add_comp, LinearMap.comp_add, mul_add,
         Finset.sum_add_distrib] at hx hy ⊢
       rw [hx, hy, add_zero]
     | smul c x hx =>

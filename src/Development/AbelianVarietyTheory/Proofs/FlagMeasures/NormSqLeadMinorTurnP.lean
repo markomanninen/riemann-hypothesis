@@ -1,14 +1,19 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
-import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
-import Formalism.SharpRestriction.CuspSpanNormBounds.AmplitudeAndVolumeBounds
-import Formalism.SharpRestriction.CuspSpanNormBounds.BranchingAndRankConstants
-import Formalism.SharpRestriction.CuspSpanNormBounds.MassAndBranchingHypotheses
-import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FormalDegreeCompactDualIff
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AmplitudeAndVolumeBounds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BranchingAndRankConstants
+public import Formalism.SharpRestriction.CuspSpanNormBounds.MassAndBranchingHypotheses
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FormalDegreeCompactDualIff
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S
 open Formalism.QuantumDeterminants Formalism.MainNotions.S.ThB MeasureTheory Matrix
 
@@ -171,7 +176,7 @@ end Conj
 theorem haarLie_map_cj {k r : ℕ} {d : Fin (2 * r + k + 1) → ℂ} (h : Uni d) {S : Set (Mx k r)}
     (hS : ∀ g ∈ S, cj d g ∈ S) (κ : ENNReal) : (haarLie S κ).map (cjE h) = haarLie S κ := by
   unfold haarLie
-  rw [Measure.map_smul]
+  rw [Measure.map_smul _ (cjE h).measurable.aemeasurable]
   congr 1
   set E : lieE S → Mt k r := fun x => fun i j => NormedSpace.exp (unrealify (x : EuclideanSpace ℝ _)) i j with hE
   by_cases hm : AEMeasurable E volume
@@ -184,7 +189,21 @@ theorem haarLie_map_cj {k r : ℕ} {d : Fin (2 * r + k + 1) → ℂ} (h : Uni d)
       rw [unrealify_cjR, cj_exp h]
     rw [AEMeasurable.map_map_of_aemeasurable (cjE h).measurable.aemeasurable hm, e,
       ← AEMeasurable.map_map_of_aemeasurable (by rwa [hΦ.map_eq]) hΦ.measurable.aemeasurable, hΦ.map_eq]
-  · rw [Measure.map_of_not_aemeasurable hm, Measure.map_zero]
+  · exfalso
+    apply hm
+    have hu : Continuous (unrealify : EuclideanSpace ℝ (Fin (2 * r + k + 1) × Fin (2 * r + k + 1) × Bool) → Mx k r) := by
+      refine continuous_pi fun i => continuous_pi fun j => ?_
+      have he : (fun x : EuclideanSpace ℝ (Fin (2 * r + k + 1) × Fin (2 * r + k + 1) × Bool) => unrealify x i j) =
+          fun x => ((x (i, j, false) : ℝ) : ℂ) + ((x (i, j, true) : ℝ) : ℂ) * Complex.I := by
+        funext x
+        apply Complex.ext <;> simp [unrealify]
+      rw [he]
+      fun_prop
+    have hexp : Continuous (fun X : Mx k r => NormedSpace.exp X) := by
+      open scoped Matrix.Norms.Operator in
+        exact NormedSpace.exp_continuous
+    have : Continuous E := hexp.comp (hu.comp continuous_subtype_val)
+    exact this.measurable.aemeasurable
 
 section Tor
 
@@ -320,7 +339,7 @@ theorem isKFin_cj (h : Tor k r d) {H : Type*} [NormedAddCommGroup H] [InnerProdu
   exact ⟨S, h1, h2, fun g hg x hx => h3 _ ⟨cj_mem_UH h.st hg.1, cj_mem_unitary h.uni.st hg.2⟩ x hx⟩
 
 theorem measurable_lmulM (s : Mx k r) : Measurable (lmulM (k := k) (r := r) s) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   show Measurable fun x : Mt k r => (s * Matrix.of x) i j
   simp only [Matrix.mul_apply, Matrix.of_apply]
   fun_prop
@@ -332,7 +351,7 @@ theorem isHaarOn_cj (h : Uni d) {S : Set (Mx k r)} (hS : ∀ g ∈ S, cj d g ∈
   have hu : (μ.map (cjE h)) Set.univ = 1 := by rw [MeasurableEquiv.map_apply, Set.preimage_univ, h5]
   refine ⟨⟨(cjE h).sigmaFinite_map, fun e => by simp [e] at hu, ?_, fun s hs => ?_⟩, hu⟩
   · rw [MeasurableEquiv.map_apply]
-    exact measure_mono_null (fun x hx hx' => hx (hS _ hx')) h3
+    exact measure_mono_null (t := {x | Matrix.of x ∉ S}) (fun x hx hx' => hx (hS _ hx')) h3
   · have e : lmulM s ∘ cjE h = cjE h ∘ lmulM (cj (star d) s) := by
       funext x
       show s * cj d (Matrix.of x) = cj d (cj (star d) s * Matrix.of x)
@@ -609,7 +628,7 @@ theorem isRelStab_turn (L : LocBessel k r) {g : Mx k r} (hg : IsRelStab L g) :
 
 theorem measurable_flag (z : Fin (2 * r + k + 1) → ℂ) (S : Finset (Fin (r + 1) × Fin (r + 1))) :
     Measurable (fun x : Mt k r => fun q : S => flagMat k r z (Matrix.of x) q.1.1 q.1.2) := by
-  refine measurable_pi_lambda _ fun q => ?_
+  refine Measurable.of_eval fun q => ?_
   unfold flagMat
   split_ifs
   · simp only [Matrix.mulVec, dotProduct, Matrix.of_apply]
@@ -634,14 +653,14 @@ theorem root_map_turn {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (S : F
     funext x q
     exact flagMat_cj hz (Matrix.of x) _ _
   rw [Measure.map_map (measurable_flag z S) (cjE _).measurable, e,
-    ← Measure.map_map hp.measurable (measurable_flag z S), hμ, Measure.map_smul, hp.map_eq]
+    ← Measure.map_map hp.measurable (measurable_flag z S), hμ, Measure.map_smul _ hp.measurable.aemeasurable, hp.map_eq]
 
 theorem isRootMeas_turn (L : LocBessel k r) {p : Point ℂ (r + 1)} {g : Mx k r} {μ : Measure (Mt k r)}
     (hμ : IsRootMeas L p g μ) :
     IsRootMeas (turnL L) (turnP p) (cj (dT k r) g) (μ.map (cjE (tor_dT k r).uni)) := by
   refine ⟨?_, ?_⟩
   · rw [MeasurableEquiv.map_apply]
-    exact measure_mono_null (fun x hx hx' => hx (cj_mem_RStab (tor_dT k r) hx')) hμ.1
+    exact measure_mono_null (t := {x | Matrix.of x ∉ RStab k r g}) (fun x hx hx' => hx (cj_mem_RStab (tor_dT k r) hx')) hμ.1
   · have hc : ‖(turnL L).c‖ = ‖L.c‖ := by
       show ‖-Complex.I * L.c‖ = _
       simp

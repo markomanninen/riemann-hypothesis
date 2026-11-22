@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -50,12 +55,12 @@ private lemma thR_act (L : Link D G) (th : VQ D →+ Arch G)
   induction a using TensorProduct.induction_on with
   | zero => simp
   | add a b ha hb =>
-    simp only [map_add, LinearMap.add_apply, Pi.add_apply, ha, hb, Matrix.add_mulVec]
+    simp only [map_add (f := _), LinearMap.add_apply, Pi.add_apply, ha, hb, Matrix.add_mulVec]
   | tmul r c =>
     induction x using TensorProduct.induction_on with
     | zero => simp
     | add x y hx hy =>
-      simp only [map_add, Pi.add_apply, hx, hy, Matrix.mulVec_add]
+      simp only [map_add (f := _), Pi.add_apply, hx, hy, Matrix.mulVec_add]
     | tmul s w =>
       have h : actOn L.rep ℝ (r ⊗ₜ c) (s ⊗ₜ w) = (r * s) ⊗ₜ (L.rep c w) := by
         simp [actOn, Algebra.TensorProduct.lift_tmul, Module.End.baseChangeHom, Algebra.ofId_apply,
@@ -73,13 +78,13 @@ private lemma form_ext (th : VQ D →+ Arch G) (lam : InfinitePlace G.F → ℂ)
   induction x using TensorProduct.induction_on with
   | zero => simp [hv]
   | add x x' hx hx' =>
-    simp only [map_add, LinearMap.add_apply, hx, hx', Pi.add_apply, hvAddL, mul_add, Complex.add_re,
+    simp only [map_add (f := _), LinearMap.add_apply, hx, hx', Pi.add_apply, hvAddL, mul_add, Complex.add_re,
       Finset.sum_add_distrib]
   | tmul a u =>
     induction y using TensorProduct.induction_on with
     | zero => simp [hv]
     | add y y' hy hy' =>
-      simp only [map_add, hy, hy', Pi.add_apply, hvAddR, mul_add, Complex.add_re, Finset.sum_add_distrib]
+      simp only [map_add (f := _), hy, hy', Pi.add_apply, hvAddR, mul_add, Complex.add_re, Finset.sum_add_distrib]
     | tmul b w =>
       rw [LinearMap.BilinForm.baseChange_tmul, thR_tmul, thR_tmul]
       have hterm : ∀ v, 2 * (lam v * hv (G.gram v) ((a • th u) v) ((b • th w) v)).re

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex Filter Topology Set
 
@@ -84,10 +88,11 @@ lemma dslopeIter_congr {p : ℂ} {g₁ g₂ : ℂ → ℂ} (h : g₁ =ᶠ[𝓝 p
     · rw [dslope_same, dslope_same, ih.deriv_eq]
     · rw [dslope_of_ne _ hzp, dslope_of_ne _ hzp, slope_def_field, slope_def_field, hz, hp]
 
-open Classical in
 
-def meromorphicShift (f : ℂ → ℂ) (p : ℂ) : ℕ :=
-  if h : MeromorphicAt f p then Nat.find h else 0
+open Classical in
+def meromorphicShift (f : ℂ → ℂ) (p : ℂ) : ℕ := by
+  classical
+  exact if h : MeromorphicAt f p then Nat.find h else 0
 
 lemma analyticAt_pow_meromorphicShift_mul {f : ℂ → ℂ} {p : ℂ} (hf : MeromorphicAt f p) :
     AnalyticAt ℂ (fun z ↦ (z - p) ^ meromorphicShift f p * f z) p := by
@@ -95,7 +100,7 @@ lemma analyticAt_pow_meromorphicShift_mul {f : ℂ → ℂ} {p : ℂ} (hf : Mero
   have := Nat.find_spec hf
   simp only [smul_eq_mul] at this
   unfold meromorphicShift
-  rw [dif_pos hf]
+  rw [dite_eq_left hf]
   convert this
 
 lemma meromorphicShift_le {f : ℂ → ℂ} {p : ℂ} {n : ℕ}
@@ -103,7 +108,7 @@ lemma meromorphicShift_le {f : ℂ → ℂ} {p : ℂ} {n : ℕ}
   classical
   have hf : MeromorphicAt f p := ⟨n, by simpa [smul_eq_mul] using h⟩
   unfold meromorphicShift
-  rw [dif_pos hf]
+  rw [dite_eq_left hf]
   convert Nat.find_min' hf (by simpa [smul_eq_mul] using h)
 
 lemma analyticAt_pow_mul_of_meromorphicShift_le {f : ℂ → ℂ} {p : ℂ} (hf : MeromorphicAt f p)

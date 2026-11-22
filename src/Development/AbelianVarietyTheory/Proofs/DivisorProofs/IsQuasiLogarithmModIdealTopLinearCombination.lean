@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,10 +28,10 @@ theorem ql_comb_top : ∀ (B O Q : Type) [CommRing B] [CommRing Q] [CommRing O] 
     refine ⟨by simp [hf0, hg0], fun i => ?_, fun α => ?_⟩
     · obtain ⟨a, -, ha⟩ := hf1 i
       obtain ⟨b, -, hb⟩ := hg1 i
-      exact ⟨a + b, Submodule.mem_top, by simp only [lin, map_add] at ha hb ⊢; rw [ha, hb]⟩
+      exact ⟨a + b, Submodule.mem_top, by simp only [lin, map_add (f := _)] at ha hb ⊢; rw [ha, hb]⟩
     · obtain ⟨a, -, ha⟩ := hf2 α
       obtain ⟨b, -, hb⟩ := hg2 α
-      exact ⟨a + b, Submodule.mem_top, by rw [formalCoboundary_add hc, map_add, ha, hb, map_add]⟩
+      exact ⟨a + b, Submodule.mem_top, by rw [formalCoboundary_add hc, map_add (f := _), ha, hb, map_add (f := _)]⟩
   have hsmul : ∀ (c : B) (f : MvPowerSeries (Fin d) Q), QL μ ⊤ f → QL μ ⊤ (algebraMap B Q c • f) := by
     rintro c f ⟨hf0, hf1, hf2⟩
     refine ⟨by simp [hf0], fun i => ?_, fun α => ?_⟩

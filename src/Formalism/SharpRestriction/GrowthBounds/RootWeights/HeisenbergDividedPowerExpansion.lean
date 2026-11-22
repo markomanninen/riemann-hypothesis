@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.RestAOfHighestVectorIntegrality
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.RestAOfHighestVectorIntegrality
+
+@[expose] public section
 
 noncomputable section
 

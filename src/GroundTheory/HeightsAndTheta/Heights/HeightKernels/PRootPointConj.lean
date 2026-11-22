@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeightNE
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeightNE
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -32,7 +37,7 @@ theorem homog_vanish {f j m : ℕ} (ζ : Fin f → Matrix (Fin j) (Fin m) ℂ)
   have hS : ∀ μ ∈ Q.support, (μ.sum fun _ e => e) ≤ Q.totalDegree := fun μ hμ => le_totalDegree hμ
   set H : MRing (plBlocks f j m) := ∑ μ ∈ Q.support,
     X ⟨τ, plAnchor j m⟩ ^ (Q.totalDegree - μ.sum fun _ e => e) *
-      rename (Sigma.mk τ) (monomial μ (coeff μ Q)) with hH
+      rename (Sigma.mk τ) (monomial μ (AddMonoidAlgebra.coeff Q μ)) with hH
   have hmem : H ∈ rootPointIdeal ζ := by
     show mConeMap (rootCoord ζ) H = 0
     have hC : ∀ P : MvPolynomial (PlIdx j m) ℤ,
@@ -48,13 +53,16 @@ theorem homog_vanish {f j m : ℕ} (ζ : Fin f → Matrix (Fin j) (Fin m) ℂ)
         aeval (fun I => X τ * (C (rootCoord ζ ⟨τ, I⟩) : MvPolynomial (Fin f) ℂ)) (monomial μ c) =
           X τ ^ (μ.sum fun _ e => e) * aeval (fun I => C (rootCoord ζ ⟨τ, I⟩)) (monomial μ c) :=
       fun μ c => aeval_mul_monomial _ _ μ c
-    simp only [hH, mConeMap, map_sum, map_mul, map_pow, aeval_X, aeval_rename, hcomp,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hH, mConeMap, map_sum, map_mul, map_pow, aeval_X, aeval_rename, hcomp,
       hsc, hC, ha, map_one, one_mul]
-    rw [sum_homog _ _ hS, ← map_sum, ← map_sum, ← as_sum, hQ, map_zero, mul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sum_homog _ _ hS, ← map_sum, ← map_sum, ← as_sum, hQ, map_zero, mul_zero]
   have hE := hz.2 H hmem
   rw [eval_map, ← algebraMap_int_eq, ← aeval_def] at hE
   have hcomp2 : z ∘ Sigma.mk τ = fun I => z ⟨τ, plAnchor j m⟩ * u I := funext hu
-  simp only [hH, map_sum, map_mul, map_pow, aeval_X, aeval_rename, hcomp2, aeval_mul_monomial] at hE
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hH, map_sum, map_mul, map_pow, aeval_X, aeval_rename, hcomp2, aeval_mul_monomial] at hE
   rwa [sum_homog _ _ hS, ← map_sum, ← as_sum] at hE
 
 def colAB {j m : ℕ} (a : Fin j) (b : Fin m) (c : Fin j) : Fin (j + m) :=
@@ -99,13 +107,13 @@ theorem map_minor {R S : Type*} [CommRing R] [CommRing S] (φ : R →+* S) {j m 
   simp only [RingHom.mapMatrix_apply, map_apply, colsOf, submatrix_apply, onePipe, of_apply, id]
   generalize I.1.orderEmbOfFin I.2 c = x
   refine Fin.addCases (fun c' => ?_) (fun b => ?_) x
-  · simp only [Fin.append_left, one_apply]; split_ifs <;> simp
+  · simp [Fin.append_left, Matrix.one_apply]
   · simp [Fin.append_right]
 
 end RootPointConjugation
 
-open RootPointConjugation in
 
+open RootPointConjugation in
 theorem RootPointConj.proof (h : RootAnchorNonzero.Statement) : RootPointConj.Statement := by
   intro f j m ζ hζ z hz τ
   classical

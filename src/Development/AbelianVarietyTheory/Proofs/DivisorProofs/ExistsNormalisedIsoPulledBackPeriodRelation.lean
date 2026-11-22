@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodRel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodRel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.SiegJoin GlobalTheory.TChart
@@ -64,8 +69,8 @@ theorem lift_sq {β : B'.left ⟶ B.left} {β₂ : (G2 B').left ⟶ (G2 B).left}
   · exact (Category.assoc _ _ _).trans ((congrArg (_ ≫ ·) hs.2).trans ((Category.assoc _ _ _).symm.trans
       ((congrArg (· ≫ β) e₂).trans (hy.symm.trans e₄.symm))))
 
-omit [GrpObj B'] in
 
+omit [GrpObj B'] in
 theorem val_trans {M : LB B.left} {β : B'.left ⟶ B.left} {β₂ : (G2 B').left ⟶ (G2 B).left} (hs : IsSquare β β₂)
     {T : Over S'} (x y : T ⟶ B') {T₀ : Over S} {x₁ y₁ : T₀ ⟶ B} {t : LB.Gen (LB.LinComb M (lamPts x₁ y₁) negε)}
     (ht : t.IsGen) (r : T.left ⟶ T₀.left) (hx : x.left ≫ β = r ≫ x₁.left) (hy : y.left ≫ β = r ≫ y₁.left)

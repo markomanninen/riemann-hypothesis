@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RegPolOfRepOf
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.ArthurClozel
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsCMFieldOfForallIsConj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RegPolOfRepOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CyclicBaseChangeC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsAlgChar
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsCMFieldOfForallIsConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +23,7 @@ section Crit
 
 open ComplexEmbedding InfinitePlace IntermediateField
 
-theorem isCMField_of_forall_isConj (K : Type) [Field K] [NumberField K] [IsTotallyComplex K]
+theorem isCMField_of_forall_isConj (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
     {σ : K ≃ₐ[ℚ] K} (hσ : ∀ φ : K →+* ℂ, IsConj φ σ) : IsCMField K := by
   first
   | exact @_root_.GlobalTheory.CMFieldCriterion.isCMField_of_forall_isConj
@@ -61,7 +66,11 @@ theorem exists_extend (M : IntermediateField E Ω) (ψ : M →+* ℂ) :
   letI : Algebra M ℂ := ψ.toAlgebra
   haveI : Algebra.IsAlgebraic E Ω := IsAlgClosure.isAlgebraic
   haveI : Algebra.IsAlgebraic M Ω := Algebra.IsAlgebraic.tower_top (K := E) M
-  let f : Ω →ₐ[M] ℂ := IsAlgClosed.lift
+  let f : Ω →ₐ[M] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   exact ⟨f.toRingHom, fun x => f.commutes x⟩
 
 theorem mem_of_conj {L : IntermediateField E Ω} {x y : Ω} (hx : x ∈ L)

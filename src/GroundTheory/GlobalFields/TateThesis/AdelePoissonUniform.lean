@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.AdelePoisson
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.AdelePoisson
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -66,7 +70,8 @@ theorem summable_ite_mem_of_summable_idealLattice (J : (FractionalIdeal (𝓞 K)
   rw [← hinj.summable_iff hsupp]
   convert hh using 1
   funext α
-  simp only [Function.comp_apply, g]
+  change (if ((e.symm α : _) : K) ∈ (J : FractionalIdeal (𝓞 K)⁰ K) then
+    h (mixedEmbedding K ((e.symm α : _) : K)) else 0) = h α
   rw [if_pos (show ((e.symm α : _) : K) ∈ (J : FractionalIdeal (𝓞 K)⁰ K) from (e.symm α).2)]
   have he := coe_idealLatticeEquiv J (e.symm α)
   rw [Equiv.apply_symm_apply] at he
@@ -192,29 +197,6 @@ theorem exists_summable_bound_smul_algebraMap {F : 𝔸[K] → ℂ} (hF : F ∈ 
     refine ⟨fun ξ ↦ ‖r‖ * u ξ, hu.mul_left _, fun a ha ξ ↦ ?_⟩
     rw [Pi.smul_apply, smul_eq_mul, norm_mul]
     exact mul_le_mul_of_nonneg_left (hGu a ha ξ) (norm_nonneg r)
-
-theorem tendstoUniformlyOn_tsum_smul_algebraMap {F : 𝔸[K] → ℂ} (hF : F ∈ schwartzBruhat K)
-    {C : Set (IdeleGroup K)} (hC : IsCompact C) :
-    TendstoUniformlyOn (fun (s : Finset K) (a : IdeleGroup K) ↦ ∑ ξ ∈ s, F (a • algebraMap K 𝔸[K] ξ))
-      (fun a ↦ ∑' ξ : K, F (a • algebraMap K 𝔸[K] ξ)) atTop C := by
-  obtain ⟨u, hu, hFu⟩ := exists_summable_bound_smul_algebraMap hF hC
-  exact tendstoUniformlyOn_tsum hu fun ξ a ha ↦ hFu a ha ξ
-
-theorem exists_summable_bound_adelicFourier_inv_smul_algebraMap {F : 𝔸[K] → ℂ}
-    (hF : F ∈ schwartzBruhat K) {C : Set (IdeleGroup K)} (hC : IsCompact C) :
-    ∃ u : K → ℝ, Summable u ∧ ∀ a ∈ C, ∀ ξ : K,
-      ‖adelicFourier K F (a⁻¹ • algebraMap K 𝔸[K] ξ)‖ ≤ u ξ := by
-  obtain ⟨u, hu, hFu⟩ := exists_summable_bound_smul_algebraMap
-    (adelicFourier_mem_schwartzBruhat hF) hC.inv
-  exact ⟨u, hu, fun a ha ξ ↦ hFu a⁻¹ (Set.inv_mem_inv.mpr ha) ξ⟩
-
-theorem tendstoUniformlyOn_tsum_adelicFourier_inv_smul_algebraMap {F : 𝔸[K] → ℂ}
-    (hF : F ∈ schwartzBruhat K) {C : Set (IdeleGroup K)} (hC : IsCompact C) :
-    TendstoUniformlyOn (fun (s : Finset K) (a : IdeleGroup K) ↦
-        ∑ ξ ∈ s, adelicFourier K F (a⁻¹ • algebraMap K 𝔸[K] ξ))
-      (fun a ↦ ∑' ξ : K, adelicFourier K F (a⁻¹ • algebraMap K 𝔸[K] ξ)) atTop C := by
-  obtain ⟨u, hu, hFu⟩ := exists_summable_bound_adelicFourier_inv_smul_algebraMap hF hC
-  exact tendstoUniformlyOn_tsum hu fun ξ a ha ↦ hFu a ha ξ
 
 end
 

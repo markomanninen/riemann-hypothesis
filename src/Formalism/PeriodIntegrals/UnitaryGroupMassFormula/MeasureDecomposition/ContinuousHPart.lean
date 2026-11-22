@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScMuExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.ContinuousUMatApply
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.HJMulVecGen
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScMuExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.ContinuousUMatApply
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.HJMulVecGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -176,7 +180,7 @@ theorem hPart_mul (hF : RFrame ε e f z) {nm h : Matrix (Fin n) (Fin n) ℂ} (hn
     rw [← Matrix.mulVec_mulVec, Matrix.sub_mulVec, Matrix.one_mulVec]; abel
   have hx : h *ᵥ x = (x - piW ε e f z x) + h *ᵥ piW ε e f z x := by
     rw [← fix_sub_piW he hf hz x, ← Matrix.mulVec_add, sub_add_cancel]
-  rw [hsplit, map_add, hpy, h0, add_zero, hx]
+  rw [hsplit, map_add (f := _), hpy, h0, add_zero, hx]
 
 end Real
 

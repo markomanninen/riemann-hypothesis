@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+
+@[expose] public section
+
 open Filter Topology MeasureTheory Metric ReciprocityTheory.L2DbarEstimates
 open scoped ComplexOrder
 
@@ -14,8 +19,8 @@ lemma det_toEuclideanLin {n : ℕ} (C : Matrix (Fin n) (Fin n) ℂ) :
   have : Matrix.toEuclideanLin C = Matrix.toLin (EuclideanSpace.basisFun (Fin n) ℂ).toBasis
       (EuclideanSpace.basisFun (Fin n) ℂ).toBasis C := by
     ext v i : 2
-    simp [Matrix.toLin_apply, Matrix.toEuclideanLin_apply, Matrix.mulVec, dotProduct,
-      EuclideanSpace.single_apply, Pi.single_apply]
+    simp [Matrix.toLin_apply, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct,
+      PiLp.single_apply, Pi.single_apply]
   rw [this, LinearMap.det_toLin]
 
 lemma quad_eq {n : ℕ} (H C : Matrix (Fin n) (Fin n) ℂ) (hC : H.transpose = C.conjTranspose * C)
@@ -27,14 +32,15 @@ lemma quad_eq {n : ℕ} (H C : Matrix (Fin n) (Fin n) ℂ) (hC : H.transpose = C
     simpa [Matrix.mul_apply] using this
   have hc : (∑ j, ∑ l, H j l * w j * (starRingEnd ℂ) (w l)) =
       ∑ k, (∑ j, C k j * w j) * (starRingEnd ℂ) (∑ l, C k l * w l) := by
-    simp only [hH, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hH, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
     exact (Finset.sum_congr rfl fun j _ => Finset.sum_comm).trans (Finset.sum_comm.trans
       (Finset.sum_congr rfl fun k _ => Finset.sum_comm.trans (Finset.sum_congr rfl fun l _ =>
         Finset.sum_congr rfl fun j _ => by ring)))
   rw [hc, EuclideanSpace.norm_sq_eq, Complex.re_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Complex.mul_conj, Complex.normSq_eq_norm_sq, Complex.ofReal_re]
-  simp [Matrix.toEuclideanLin_apply, Matrix.mulVec, dotProduct]
+  simp [Matrix.toLpLin_apply, Matrix.mulVec, dotProduct]
 
 theorem exists_eq_conjTranspose_mul_self {n : ℕ} {T : Matrix (Fin n) (Fin n) ℂ}
     (hT : T.PosSemidef) : ∃ B : Matrix (Fin n) (Fin n) ℂ, T = B.conjTranspose * B := by

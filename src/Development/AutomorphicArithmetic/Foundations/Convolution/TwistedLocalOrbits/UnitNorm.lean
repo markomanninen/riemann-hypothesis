@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Matrix GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets UpperTheory.ConvolutionTheory.Loc
 
@@ -84,7 +88,8 @@ private theorem unramified_norm_trace_surjective {E : Type} [Field E] [Valuative
   · obtain ⟨x, rfl⟩ := IsLocalRing.residue_surjective z
     refine ⟨x, x.2, ?_⟩
     simp only [hτi] at hz
-    rw [← map_sum, ← map_one (IsLocalRing.residue 𝒪[E]), key] at hz
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← map_one (IsLocalRing.residue 𝒪[E]), key] at hz
     simpa only [AddSubmonoidClass.coe_finsetSum, hsi, OneMemClass.coe_one] using hz
 
 private theorem prod_expand {E : Type} [Field E] [ValuativeRel E] (d : E) (hd : valuation E d ≤ 1) (x : ℕ → E)
@@ -133,7 +138,8 @@ theorem UpperTheory.ConvolutionTheory.Loc.unitNorm :
     have e1 := Finset.sum_range_succ (fun i => σ^[i] x) q
     rw [Finset.sum_range_succ', h.ord] at e1
     simp only [Function.iterate_succ_apply', Function.iterate_zero_apply] at e1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact add_right_cancel e1
   have near : ∀ x y : E, valuation E y = 1 → valuation E (x - y) < 1 → valuation E x = 1 := by
     intro x y hy hxy
@@ -201,7 +207,7 @@ theorem UpperTheory.ConvolutionTheory.Loc.unitNorm :
   have hle : valuation E (N - u) ≤ valuation E (∏ i ∈ Finset.range q, σ^[i] (w * (1 + d * b)) - u) := hmin hw'
   have e1 : ∀ i : ℕ, σ^[i] (w * (1 + d * b)) = σ^[i] w * (1 + d * σ^[i] b) := by
     intro i
-    rw [hit, map_mul, map_add, map_one, map_mul, ← hit, ← hit, ← hit, hfix i d hdσ]
+    rw [hit, map_mul, map_add (f := _), map_one, map_mul, ← hit, ← hit, ← hit, hfix i d hdσ]
   simp only [e1] at hle
   rw [Finset.prod_mul_distrib, he, hTb, ← hN, ← hdv] at hle
   have e2 : N * (1 + d * 1 + d ^ 2 * c) - u = N * (d * (d * c)) := by

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsInertTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeIsometrySignSecond
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneSubIdempotentSmulMemLattice
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsInertTop
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeIsometrySignSecond
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneSubIdempotentSmulMemLattice
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
+
+@[expose] public section
+
 open NumberField Matrix Complex IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
@@ -64,7 +69,7 @@ theorem pow_sep {H : Geo.Tor.Host D.host.E} {Dw : Datum H} (l : Geo.Tor.Level H)
     obtain ⟨x, hx, y, hy, hxy⟩ := Submodule.mem_sup.1 this
     exact ⟨y, hy, by rw [← hxy, sub_add_cancel_right]; exact neg_mem hx⟩
   have hc : cSep l ∈ Mfr l := by
-    unfold cSep; rw [dif_pos hex]; exact hex.choose_spec.1
+    unfold cSep; rw [dite_eq_left hex]; exact hex.choose_spec.1
   have hm : s ^ j * cSep l ∈ Ideal.span {(l.M : 𝓞 D.host.E)} := by
     rw [← l.prod]; exact Ideal.mul_mem_mul hj hc
   obtain ⟨t, ht⟩ := Ideal.mem_span_singleton'.1 hm
@@ -314,7 +319,7 @@ theorem moved_transSum : ∀ (D : D7) (H : Geo.Tor.Host D.host.E) (Dw : Datum H)
   letI : Fintype (Fin V.rank → LevQ Dw l) := Fintype.ofFinite _
   refine ⟨?_, ?_⟩
   · unfold transSum
-    refine GlobalTheory.OrientedHeis.theta_smul _ ?_
+    apply GlobalTheory.OrientedHeis.theta_smul
     rw [finsum_eq_sum_of_fintype]
     exact Finset.sum_induction _ (IsThetaFunO ψ V W) (fun _ _ => GlobalTheory.OrientedHeis.theta_add) GlobalTheory.OrientedHeis.theta_zero
       fun q _ => GlobalTheory.OrientedHeis.theta_smul _ (GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ hvac.theta _)

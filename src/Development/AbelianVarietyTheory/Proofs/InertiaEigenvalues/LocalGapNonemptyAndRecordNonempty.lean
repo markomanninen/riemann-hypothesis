@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.SpanPowerMembership
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLocTheoryTied
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.SpanPowerMembership
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLocTheoryTied
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions
 namespace GlobalTheory.MemLoc

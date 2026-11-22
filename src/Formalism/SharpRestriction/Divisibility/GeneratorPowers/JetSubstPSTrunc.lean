@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ScaleGenIsGen
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPrim
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ScaleGenIsGen
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPrim
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -90,7 +94,8 @@ private theorem psTrunc_succ_sub_lemma (n : ℕ) (f : MvPowerSeries κ S) :
 private theorem cc_psTrunc_lemma (n : ℕ) (f : MvPowerSeries κ S) :
     MvPolynomial.constantCoeff (psTrunc n f) = MvPowerSeries.constantCoeff f := by
   unfold psTrunc
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [MvPolynomial.constantCoeff_monomial]
   rw [Finset.sum_ite_eq', if_pos ((mem_degLE_lemma n 0).2 (by simp))]
   rfl

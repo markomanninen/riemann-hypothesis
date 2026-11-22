@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.PointsPropertyOfD7
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.LemmaOneEightOfPolarisation
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.PointsPropertyOfD7
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.LemmaOneEightOfPolarisation
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,9 +81,7 @@ theorem mem_quot_smul (σ : D.host.E ≃ₐ[ℚ] D.host.E) (A Bd : Ideal (𝓞 D
   have hB1 : ((σ • Bd : Ideal (𝓞 D.host.E)) : FI) ≠ 0 :=
     FractionalIdeal.coeIdeal_ne_zero.mpr (smul_ne_bot' D σ Bd hB)
   rw [← div_eq_mul_inv, ← div_eq_mul_inv]
-  first
-    | rw [FractionalIdeal.mem_div_iff_of_ne_zero hB0, FractionalIdeal.mem_div_iff_of_ne_zero hB1]
-    | rw [FractionalIdeal.mem_div_iff_of_nonzero hB0, FractionalIdeal.mem_div_iff_of_nonzero hB1]
+  rw [FractionalIdeal.mem_div_iff_of_ne_zero hB0, FractionalIdeal.mem_div_iff_of_ne_zero hB1]
   constructor
   · intro h y hy
     have k := h (σ y) ((mem_coe_smul D σ Bd y).2 hy)

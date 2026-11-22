@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnBetaFrame
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BXiAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnBetaFrame
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BXiAsm
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 open Formalism.REAL Formalism.QuantumDeterminants

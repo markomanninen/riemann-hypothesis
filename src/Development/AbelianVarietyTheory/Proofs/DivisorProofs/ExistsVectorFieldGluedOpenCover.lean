@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -29,8 +34,8 @@ variable {J : Type} (V : J → Z.Opens) (e : J → ∀ O : Z.Opens, Γ(Z, O) →
 def loc (O : Z.Opens) (f : Γ(Z, O)) (i : J) : Γ(Z, O ⊓ V i) :=
   e i (O ⊓ V i) (resG Z inf_le_left f)
 
-open Classical in
 
+open Classical in
 def glue (O : Z.Opens) (f : Γ(Z, O)) : Γ(Z, O) :=
   if h : ∃ s : Γ(Z, O), ∀ i, resG Z (inf_le_left : O ⊓ V i ≤ O) s = loc V e O f i then h.choose else 0
 
@@ -60,7 +65,7 @@ theorem glue_eq (he : ∀ i, IsField (V i) (e i))
     (hs : ∀ i, resG Z (inf_le_left : O ⊓ V i ≤ O) s = loc V e O f i) : glue V e O f = s := by
   obtain ⟨t, -, hu⟩ := glue_ex he hc hO f
   have h : ∃ s : Γ(Z, O), ∀ i, resG Z (inf_le_left : O ⊓ V i ≤ O) s = loc V e O f i := ⟨s, hs⟩
-  rw [glue, dif_pos h]
+  rw [glue, dite_eq_left h]
   exact (hu _ h.choose_spec).trans (hu _ hs).symm
 
 theorem res_glue (he : ∀ i, IsField (V i) (e i))
@@ -79,12 +84,12 @@ theorem GlobalTheory.LogKS.isField_glue : ∀ (Z : Scheme.{0}) (J : Type) (V : J
   refine ⟨glue V e, ⟨?_, ?_, ?_⟩, ?_⟩
   · intro W hW f f'
     refine glue_eq he hc hW _ _ fun i => ?_
-    rw [map_add, res_glue he hc hW f, res_glue he hc hW f']
-    simp only [loc, map_add]
+    rw [map_add (f := _), res_glue he hc hW f, res_glue he hc hW f']
+    simp only [loc, map_add (f := _)]
     exact ((he i).1 _ inf_le_right _ _).symm
   · intro W hW f f'
     refine glue_eq he hc hW _ _ fun i => ?_
-    rw [map_add, map_mul, map_mul, res_glue he hc hW f, res_glue he hc hW f']
+    rw [map_add (f := _), map_mul, map_mul, res_glue he hc hW f, res_glue he hc hW f']
     simp only [loc, map_mul]
     exact ((he i).2.1 _ inf_le_right _ _).symm
   · intro W W' h hW f

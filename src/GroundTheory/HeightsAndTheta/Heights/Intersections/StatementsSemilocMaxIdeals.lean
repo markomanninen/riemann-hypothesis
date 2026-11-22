@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreIncomp
-import GroundTheory.HeightsAndTheta.Heights.Intersections.OneNotMemOfIsPrime
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreIncomp
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.OneNotMemOfIsPrime
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

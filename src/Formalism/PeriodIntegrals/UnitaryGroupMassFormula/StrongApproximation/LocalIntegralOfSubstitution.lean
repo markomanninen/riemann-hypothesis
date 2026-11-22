@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.StrongApproxE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StrongApproximation.LocSmall
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StrongApproximation.LocSmall
+
+@[expose] public section
 
 noncomputable section
 

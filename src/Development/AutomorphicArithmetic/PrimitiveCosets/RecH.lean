@@ -1,5 +1,9 @@
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 noncomputable section
 

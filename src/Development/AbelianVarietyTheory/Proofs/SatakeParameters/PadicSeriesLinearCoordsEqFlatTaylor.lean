@@ -1,8 +1,13 @@
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KerJet
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FieldIsoLatticesFormTaylorCorrespond
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KerJet
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FieldIsoLatticesFormTaylorCorrespond
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Col Classical
 open Formalism.L2.Th1.H (cmL CmOK matH IsIsom taylorMv)
 open Formalism.L2.Th1.GD (LocNorm InMul frameM thetaLin)
@@ -73,14 +78,15 @@ theorem bridge : ∀ (D : D7) (X : Fields) (s : Seam D X) (N N' : ℕ) (p : ℕ)
     rw [coeff_map, coeff_taylorMv_flatV D X s N N' G hG m]
     change TaylorLogMetric.lamC lm (TaylorLogMetric.taylor D G _) = _
     unfold TaylorLogMetric.lamC
-    rw [dif_pos (hC _)]
+    rw [dite_eq_left (hC _)]
     exact (hι ⟨_, hC _⟩).symm
   rw [hP]
   unfold TaylorLogMetric.atLin Formalism.L2.Th1.G.linSub
   rw [subst_rename_lin]
   · congr 1
   · intro t
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun j _ => ?_
     rw [map_mul, constantCoeff_X, mul_zero]
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsLinearIndependentSqrtEqSuccMinQuad
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LinearIndependentRealOfIntOfDiscrete
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DiscreteTopologySpanOfLinearIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsLinearIndependentSqrtEqSuccMinQuad
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LinearIndependentRealOfIntOfDiscrete
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DiscreteTopologySpanOfLinearIndependent
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,8 +106,8 @@ variable [MeasurableSpace E] [BorelSpace E]
 theorem volume_real_unitBall_pos : 0 < volume.real (Metric.ball (0 : E) 1) :=
   ENNReal.toReal_pos (Metric.measure_ball_pos _ _ one_pos).ne' measure_ball_lt_top.ne
 
-variable (E) in
 
+variable (E) in
 theorem two_div_sqrt_pow_le_volume_unitBall :
     (2 / √(finrank ℝ E : ℝ)) ^ finrank ℝ E ≤ volume.real (Metric.ball (0 : E) 1) := by
   let o := stdOrthonormalBasis ℝ E
@@ -130,8 +134,8 @@ theorem two_div_sqrt_pow_le_volume_unitBall :
     ENNReal.ofReal_le_iff_le_toReal measure_ball_lt_top.ne] at h
   rwa [div_eq_mul_inv]
 
-variable (E) in
 
+variable (E) in
 theorem two_pow_div_volume_unitBall_le :
     2 ^ finrank ℝ E / volume.real (Metric.ball (0 : E) 1) ≤
       (finrank ℝ E : ℝ) ^ ((finrank ℝ E : ℝ) / 2) := by
@@ -184,7 +188,7 @@ theorem succMin_mul_minNorm_pow_le {k : ℕ} (h1 : 1 ≤ k) (hk : k ≤ finrank 
   rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ j), show (j : ℕ) + 1 = k by simp [j]; omega]
   refine mul_le_mul_of_nonneg_left ?_ (succMin_nonneg L k)
   calc minNorm L ^ (finrank ℝ E - 1) = ∏ _i ∈ Finset.univ.erase j, minNorm L := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ ↦ succMin_nonneg L 1) fun i _ ↦
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ ↦ succMin_nonneg L 1) fun i _ ↦
         succMin_mono_of_isZLattice (by omega) i.2
 
 end Euclidean

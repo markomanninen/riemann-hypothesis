@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigZe
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifRiem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigZe
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifRiem
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume
 open scoped ENNReal InnerProductSpace
@@ -43,7 +47,8 @@ theorem exists_realExt {E : Type} [Field E] [NumberField E] [IsCMField E] {g : �
   let v : Fin (2 * g) → Fin g → ℂ := fun k => R.P (b k)
   have hsum : ∀ (Q : Λ →+ (Fin g → ℂ)) (x : Λ), Q x = ∑ k, (b.repr x k : ℝ) • Q (b k) := by
     intro Q x
-    conv_lhs => rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← b.sum_repr x, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul, Int.cast_smul_eq_zsmul]
   have hv : (⊤ : Submodule ℝ (Fin g → ℂ)) ≤ Submodule.span ℝ (Set.range v) := by
@@ -63,7 +68,8 @@ theorem exists_realExt {E : Type} [Field E] [NumberField E] [IsCMField E] {g : �
     exact c.constr_basis ℝ _ k
   have hL : ∀ x, L (R.P x) = R'.P x := by
     intro x
-    rw [hsum R.P x, hsum R'.P x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum R.P x, hsum R'.P x, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, hLb]
   have hall : ∀ z : Fin g → ℂ, z ∈ Submodule.span ℝ (Set.range R.P) := fun z => hspan ▸ Submodule.mem_top
@@ -76,7 +82,7 @@ theorem exists_realExt {E : Type} [Field E] [NumberField E] [IsCMField E] {g : �
         obtain ⟨y, rfl⟩ := hw
         rw [hL, hL, R'.im, R.im, hf]
       | zero => simp
-      | add w w' _ _ h h' => rw [map_add, imH_add_right, imH_add_right, h, h']
+      | add w w' _ _ h h' => rw [map_add (f := _), imH_add_right, imH_add_right, h, h']
       | smul r w _ h => rw [map_smul, imH_smul_right, imH_smul_right, h]
     intro z w
     induction hall z using Submodule.span_induction with
@@ -84,7 +90,7 @@ theorem exists_realExt {E : Type} [Field E] [NumberField E] [IsCMField E] {g : �
       obtain ⟨x, rfl⟩ := hz
       exact h1 x w
     | zero => simp
-    | add z z' _ _ h h' => rw [map_add, imH_add_left, imH_add_left, h, h']
+    | add z z' _ _ h h' => rw [map_add (f := _), imH_add_left, imH_add_left, h, h']
     | smul r z _ h => rw [map_smul, imH_smul_left, imH_smul_left, h]
   · intro a z
     induction hall z using Submodule.span_induction with
@@ -92,7 +98,7 @@ theorem exists_realExt {E : Type} [Field E] [NumberField E] [IsCMField E] {g : �
       obtain ⟨x, rfl⟩ := hz
       rw [← R.act, hL, hL, R'.act]
     | zero => simp
-    | add z z' _ _ h h' => simp only [map_add, h, h']
+    | add z z' _ _ h h' => simp only [map_add (f := _), h, h']
     | smul r z _ h =>
       rw [LinearMap.map_smul_of_tower, map_smul, h, map_smul, LinearMap.map_smul_of_tower]
 

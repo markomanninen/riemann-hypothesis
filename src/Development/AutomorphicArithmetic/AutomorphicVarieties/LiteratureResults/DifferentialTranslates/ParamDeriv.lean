@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
-import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+public import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ExistsLocalZeroExpansionOfBound
+module
+
+public import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ExistsLocalZeroExpansionOfBound
+
+@[expose] public section
 
 noncomputable section
 

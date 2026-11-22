@@ -1,44 +1,48 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FromNAdd
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.FinitePartExtensionCore
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderBaseChangeGenericStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.StightBad
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusPointOverFractionFieldStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderEmbeddingIsoFiniteStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderIsHopfOrderStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsBaseChangeGroupStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionAlongOrderDividesStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionAlongBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionPullbackCorrespondenceStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExtensionOrderEqSpanStatement
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualTopTwoNeTop
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteOpenHopfOrder
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGrpObjOfFlatClosed
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MhQuot
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MhTorusA
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfSub
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderContainsCharactersStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsDenOfOpen
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ExtTensor
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MiTors
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderContainsCharacters
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MjBase
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ResFiniteOpenBtOrder
-import Development.WeilBound.CoreStatements.HodgeTatePoints.BtOrderOfPoints
-import Development.WeilBound.CoreStatements.HodgeTatePoints.EqOfPowMul
-import Development.WeilBound.CoreStatements.HodgeTatePoints.IsAbFactorTens
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfMain
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfFin
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherianStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralClosureFiniteLocalCompleteMixedCharStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsFiniteExtensionSplitSpecialFibrePoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaNZOfPolAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCRing
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsIntegrallyClosedOfDenom
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HcptgenGen
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FromNAdd
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.FinitePartExtensionCore
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderBaseChangeGenericStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.StightBad
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusPointOverFractionFieldStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderEmbeddingIsoFiniteStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderIsHopfOrderStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsBaseChangeGroupStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionAlongOrderDividesStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionAlongBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionPullbackCorrespondenceStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExtensionOrderEqSpanStatement
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteOpenHopfOrder
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGrpObjOfFlatClosed
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MhQuot
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MhTorusA
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfSub
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderContainsCharactersStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsDenOfOpen
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ExtTensor
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MiTors
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderContainsCharacters
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MjBase
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ResFiniteOpenBtOrder
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.BtOrderOfPoints
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.EqOfPowMul
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.IsAbFactorTens
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfMain
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfFin
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherianStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralClosureFiniteLocalCompleteMixedCharStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsFiniteExtensionSplitSpecialFibrePoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaNZOfPolAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCRing
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsIntegrallyClosedOfDenom
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HcptgenGen
+
+@[expose] public section
 
 namespace PositivityTheory.Xgn.TightHopfOrder
 
@@ -314,7 +318,7 @@ theorem mu_torus : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed 
       | add a b ha hb =>
         obtain ⟨f₁, h₁, h₁'⟩ := ha
         obtain ⟨f₂, h₂, h₂'⟩ := hb
-        exact ⟨f₁ + f₂, add_mem h₁ h₂, fun t => by rw [map_add, map_add, h₁', h₂', Pi.add_apply, map_add]⟩
+        exact ⟨f₁ + f₂, add_mem h₁ h₂, fun t => by rw [map_add (f := _), map_add (f := _), h₁', h₂', Pi.add_apply, map_add (f := _)]⟩
       | smul r a ha =>
         obtain ⟨f₁, h₁, h₁'⟩ := ha
         refine ⟨r • f₁, Subalgebra.smul_mem _ h₁ r, fun t => ?_⟩
@@ -368,7 +372,7 @@ theorem exists_complete_normal (V : Type) [CommRing V] [IsDomain V] [IsLocalRing
   have hm₂ : (maximalIdeal R₂).map f₂ ≤ maximalIdeal V := by
     rw [← Localization.AtPrime.map_eq_maximalIdeal, Ideal.map_map, hf₂]
     exact Ideal.map_comap_le
-  haveI l₂ : IsLocalHom f₂ := ((IsLocalRing.local_hom_TFAE f₂).out 2 0).1 hm₂
+  haveI l₂ : IsLocalHom f₂ := ((IsLocalRing.local_hom_tfae f₂).out 3 1).1 hm₂
   have hfg : (maximalIdeal R₂).FG := IsNoetherian.noetherian _
   obtain ⟨k, hk⟩ := Ideal.exists_pow_le_of_le_radical_of_fg (hm₂.trans hnil) (hfg.map f₂)
   let R₃ := AdicCompletion (maximalIdeal R₂) R₂
@@ -541,7 +545,8 @@ theorem mem_iff_span {R A B H K T : Type} [CommRing R] [AddCommGroup A] [Module 
     induction x using TensorProduct.induction_on with
     | zero => rw [map_zero]; exact zero_mem _
     | tmul a b => exact Submodule.subset_span ⟨a, b, funext fun z => he a b z.1 z.2⟩
-    | add x y hx hy => rw [map_add]; exact add_mem hx hy
+    | add x y hx hy =>
+      convert add_mem hx hy using 1 <;> ext z <;> simp
   · intro hf
     have key : ∀ F ∈ Submodule.span R {F : H × K → R | ∃ a b, F = fun z => φ a z.1 * ψ b z.2},
         ∃ g ∈ X, F = fun z => g (u z) := by

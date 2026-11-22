@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniformisationOfPoint
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniformisationOfPoint
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -12,8 +16,8 @@ open GlobalTheory GlobalTheory.Ex GlobalTheory.Ex.Arch
 noncomputable section
 namespace GlobalTheory.Ex.Arch
 
-open GlobalTheory.PointUnif GlobalTheory.EigenSplit in
 
+open GlobalTheory.PointUnif GlobalTheory.EigenSplit in
 theorem fibLie_of_laws : Laws → FibLieSt := by
   intro _ R _ _ _ D J g Λ Hm χ ex fr hfib O _ act F hF τ n hn
   obtain ⟨-, P', φ, w, u, -, hφ, -, -, h1, h2, -, hex, -⟩ := hfib

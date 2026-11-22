@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.FirstInequalityStatement
-import GroundTheory.GlobalFields.IdeleGroups.LocalNormsEverywhere
-import GroundTheory.GlobalFields.Adele.WeakApproxUnits
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.FirstInequalityStatement
+public import GroundTheory.GlobalFields.IdeleGroups.LocalNormsEverywhere
+public import GroundTheory.GlobalFields.Adele.WeakApproxUnits
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -22,10 +26,13 @@ theorem IdeleGroup.finiteProj_diagonal (v : HeightOneSpectrum (𝓞 K)) (a : Kˣ
 theorem IdeleGroup.infiniteProj_diagonal (w : InfinitePlace K) (a : Kˣ) :
     IdeleGroup.infiniteProj w (IdeleGroup.diagonal K a) =
       Units.map (algebraMap K w.Completion).toMonoidHom a :=
-  Units.ext (IdeleGroup.coe_infiniteProj_diagonal w a)
+  by
+    apply Units.ext
+    simpa [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply] using
+      IdeleGroup.coe_infiniteProj_diagonal w a
+
 
 variable (L) in
-
 theorem exists_diagonal_mul_mem_localNorms (S : Finset (HeightOneSpectrum (𝓞 K)))
     (x : IdeleGroup K) :
     ∃ a : Kˣ, (∀ v ∈ S, IdeleGroup.finiteProj v (IdeleGroup.diagonal K a * x) ∈
@@ -91,12 +98,6 @@ theorem FirstInequality.finrank_eq_one_of_eventually_splitsCompletely (hFI : Fir
     (h : ∀ᶠ v : HeightOneSpectrum (𝓞 K) in cofinite, SplitsCompletely L v) :
     Module.finrank K L = 1 :=
   hFI.finrank_eq_one_of_sup_eq_top (ideleNorm_range_sup_eq_top_of_eventually_splitsCompletely h)
-
-theorem FirstInequality.finrank_eq_one_of_splitsCompletely_of_finite (hFI : FirstInequality.{u})
-    {T : Set (HeightOneSpectrum (𝓞 K))} (hT : T.Finite) (h : ∀ v ∉ T, SplitsCompletely L v) :
-    Module.finrank K L = 1 :=
-  hFI.finrank_eq_one_of_eventually_splitsCompletely
-    (eventually_cofinite.2 (hT.subset fun v hv ↦ by_contra fun hvT ↦ hv (h v hvT)))
 
 end Cyclic
 

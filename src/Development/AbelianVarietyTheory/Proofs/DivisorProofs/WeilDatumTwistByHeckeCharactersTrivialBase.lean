@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Formalism.LocalToGlobal.IndefiniteReal.DatumF
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FinitePartPreservesFormDetNormOne
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRootNear
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Hilbert90AdeleRingTensorQuadratic
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnitaryAdelicCharOfHeckeChar
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralHilbert90FiniteIdelesTrivialWhereTrivial
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsConjStabilizersSelfDualLatticesUnramified
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumF
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FinitePartPreservesFormDetNormOne
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRootNear
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Hilbert90AdeleRingTensorQuadratic
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnitaryAdelicCharOfHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralHilbert90FiniteIdelesTrivialWhereTrivial
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsConjStabilizersSelfDualLatticesUnramified
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+
+@[expose] public section
+
 open scoped TensorProduct Matrix Topology
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -39,7 +44,7 @@ theorem exists_trace (hcm : IsCMExt F E σ) (x : E) : ∃ t : F, algebraMap F E 
     · rw [h]; rfl
     · rw [h]
       change σ (x + σ x) = x + σ x
-      rw [map_add, InertChart.conj_conj hcm, add_comm]
+      rw [map_add (f := _), InertChart.conj_conj hcm, add_comm]
   obtain ⟨t, ht⟩ := (IsGalois.mem_range_algebraMap_iff_fixed _).2 hfix
   exact ⟨t, ht⟩
 
@@ -193,7 +198,7 @@ theorem heisOF_smul (ξ₀ : E) (ψ : AddChar (AF F) ℂ) (u : WOF F E nS nT) (c
   ring
 
 theorem thetaOF_smul {ξ₀ : E} {ψ : AddChar (AF F) ℂ} (c : ℂ) {f : WOF F E nS nT → ℂ}
-    (hf : IsThetaFunOF σ JS JT ξ₀ ψ f) : IsThetaFunOF σ JS JT ξ₀ ψ (c • f) where
+    (hf : IsThetaFunOF σ JS JT ξ₀ ψ f) : IsThetaFunOF σ JS JT ξ₀ ψ (c • f) := {
   quasi γ w := by
     simp only [Pi.smul_apply, smul_eq_mul]
     rw [hf.quasi]
@@ -202,7 +207,7 @@ theorem thetaOF_smul {ξ₀ : E} {ψ : AddChar (AF F) ℂ} (c : ℂ) {f : WOF F 
     obtain ⟨U, hU, h⟩ := hf.level
     exact ⟨U, hU, fun u hu h0 => by rw [heisOF_smul, h u hu h0]⟩
   cont := hf.cont.const_smul c
-  smooth k L hL h0 w := (hf.smooth k L hL h0 w).const_smul c
+  smooth k L hL h0 w := (hf.smooth k L hL h0 w).const_smul c }
 
 theorem heckeF_mul {χ ν : (AEF F E)ˣ →* Circle} (hχ : IsHeckeCharF χ) (hν : IsHeckeCharF ν) :
     IsHeckeCharF (χ * ν) :=

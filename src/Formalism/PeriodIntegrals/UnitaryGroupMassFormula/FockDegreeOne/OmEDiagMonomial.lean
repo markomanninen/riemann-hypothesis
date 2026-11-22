@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.FockDegreeTwoParts
+module
+
+public import Formalism.PeriodIntegrals.FockDegreeTwoParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem fockAct1_monomial (p q r s : ℕ) (a : Ix p q) (β : Ln p q r s →₀ �
 theorem coeff_of_diag {σ : Type*} (T : Module.End ℂ (MvPolynomial σ ℂ)) (f : (σ →₀ ℕ) → ℂ)
     (hT : ∀ β, T (MvPolynomial.monomial β 1) = f β • MvPolynomial.monomial β 1)
     (P : MvPolynomial σ ℂ) (α : σ →₀ ℕ) :
-    MvPolynomial.coeff α (T P) = f α * MvPolynomial.coeff α P := by
+    AddMonoidAlgebra.coeff (T P) α = f α * AddMonoidAlgebra.coeff P α := by
   classical
   induction P using MvPolynomial.induction_on' with
   | monomial u a =>
@@ -110,7 +114,7 @@ theorem coeff_of_diag {σ : Type*} (T : Module.End ℂ (MvPolynomial σ ℂ)) (f
       ring
     · simp only [h, if_false, smul_eq_mul, mul_zero]
   | add p₁ p₂ h₁ h₂ =>
-    rw [map_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, h₁, h₂, mul_add]
+    rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, h₁, h₂, mul_add]
 
 theorem wt_of_isHW {p q : ℕ} {V : Type*} [AddCommGroup V] [Module ℂ V]
     (act : Mat p q →ₗ[ℂ] Module.End ℂ V) (μ : Ix p q → ℚ) (v : V) (h : IsHW act μ v) :

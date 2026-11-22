@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryRationalPointsCountableDiscreteFundDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryRationalPointsCountableDiscreteFundDomain
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct ENNReal
@@ -14,7 +18,6 @@ variable {K : Type} [Group K] [TopologicalSpace K] [IsTopologicalGroup K] [Measu
 theorem measure_eq [Countable Γ] [μ.IsMulLeftInvariant] {s t : Set K}
     (hs : IsFundamentalDomain Γ s μ) (ht : IsFundamentalDomain Γ t μ) : μ s = μ t := hs.measure_eq ht
 
-omit [IsTopologicalGroup K] [BorelSpace K] in
 
 theorem measure_ne_zero [Countable Γ] [μ.IsHaarMeasure] {s : Set K}
     (hs : IsFundamentalDomain Γ s μ) : μ s ≠ 0 :=
@@ -33,19 +36,19 @@ theorem measure_le_of_cover [Countable Γ] [μ.IsMulLeftInvariant] {s : Set K}
       _ = μ (toMeasurable μ C) := (hs.measure_eq_tsum _).symm
       _ = μ C := measure_toMeasurable C
 
-omit [TopologicalSpace K] [IsTopologicalGroup K] [BorelSpace K] in
 
+omit [TopologicalSpace K] [IsTopologicalGroup K] [BorelSpace K] in
 theorem isFundamentalDomain_smul_iff {c : NNReal} (hc : c ≠ 0) (s : Set K) :
     IsFundamentalDomain Γ s (c • μ) ↔ IsFundamentalDomain Γ s μ := by
   have hc' : (c : ENNReal) ≠ 0 := by exact_mod_cast hc
   constructor
   · intro h
     refine h.mono fun t ht => ?_
-    rw [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul, mul_eq_zero] at ht
+    rw [smul_apply, ENNReal.smul_def, smul_eq_mul, mul_eq_zero] at ht
     exact ht.resolve_left hc'
   · intro h
     refine h.mono fun t ht => ?_
-    rw [Measure.smul_apply, ht, smul_zero]
+    rw [smul_apply, ht, smul_zero]
 
 private theorem exists_measurableSet_unique_smul_mem_of_discrete {G : Type} [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [SecondCountableTopology G] [MeasurableSpace G]
@@ -160,7 +163,7 @@ theorem countable_and_exists_domain (F E : Type) [Field F] [NumberField F] [Fiel
   obtain ⟨m, φ, hφ⟩ := Module.Finite.exists_fin' (AF F) (AF F ⊗[F] E)
   have hq := IsModuleTopology.isOpenQuotientMap_of_surjective hφ
   have : SecondCountableTopology (AF F ⊗[F] E) :=
-    hq.isQuotientMap.secondCountableTopology hq.isOpenMap
+    Topology.IsOpenQuotientMap.secondCountableTopology hq
   have : SecondCountableTopology (Matrix (Fin n) (Fin n) (AF F ⊗[F] E)) :=
     inferInstanceAs (SecondCountableTopology (Fin n → Fin n → AF F ⊗[F] E))
   have : SecondCountableTopology (Matrix (Fin n) (Fin n) (AF F ⊗[F] E))ᵐᵒᵖ :=
@@ -199,14 +202,14 @@ theorem domains_and_covolume (F E : Type) [Field F] [NumberField F] [Field E]
   have := hμ
   refine ⟨hex μ, fun 𝓕 h𝓕 => ?_, fun c hc => ?_⟩
   · obtain ⟨𝓕', h𝓕', hcv⟩ := hcov μ ⟨𝓕, h𝓕⟩
-    refine ⟨?_, @GlobalTheory.ClosedSubgroupCovol.measure_ne_zero _ _ _ _ Γ μ hcnt _ _ h𝓕,
+    refine ⟨?_, @GlobalTheory.ClosedSubgroupCovol.measure_ne_zero _ _ _ hTG _ hB Γ μ hcnt _ _ h𝓕,
       fun C _ hC => @GlobalTheory.ClosedSubgroupCovol.measure_le_of_cover _ _ _ hTG _ hB Γ μ hcnt _ _ h𝓕 _ hC⟩
     rw [hcv, @GlobalTheory.ClosedSubgroupCovol.measure_eq _ _ _ hTG _ hB Γ μ hcnt _ _ _ h𝓕' h𝓕]
   · obtain ⟨𝓕, h𝓕⟩ := hex μ
     obtain ⟨𝓕', h𝓕', hcv⟩ := hcov μ ⟨𝓕, h𝓕⟩
     obtain ⟨𝓖, h𝓖, hcv'⟩ := hcov (c • μ) ⟨𝓕, (isFundamentalDomain_smul_iff Γ μ hc 𝓕).2 h𝓕⟩
     have h𝓖μ := (isFundamentalDomain_smul_iff Γ μ hc 𝓖).1 h𝓖
-    rw [hcv', hcv, Measure.smul_apply,
+    rw [hcv', hcv, smul_apply,
       @GlobalTheory.ClosedSubgroupCovol.measure_eq _ _ _ hTG _ hB Γ μ hcnt _ _ _ h𝓖μ h𝓕', ENNReal.smul_def,
       smul_eq_mul, ENNReal.toReal_mul, ENNReal.coe_toReal]
 

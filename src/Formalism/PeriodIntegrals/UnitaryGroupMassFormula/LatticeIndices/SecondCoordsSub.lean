@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondCoordsMulVec
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.Imports
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondCoordsMulVec
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.Imports
+
+@[expose] public section
 
 noncomputable section
 

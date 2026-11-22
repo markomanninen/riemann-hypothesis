@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUMOfMem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerIffAverage
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipotentTopMemParabolicStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviBlockMemParabolicStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ParabolicUnipotentLeviDecompStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulVecMidBlockDecompStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousLeviUnipotentProjStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothIntegralLinearChangeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwasawaDecompParabolicMaximalCompactStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumOverCompactCosetsJacquetKernelStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInducedSectionSupportedOpenStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FibreFunctionLocallyConstantCompactStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FibreIntegralIntertwinesUnipotentStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UMLeviMulUMLevi
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirProjEqOneOfMem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUMOfMem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerIffAverage
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipotentTopMemParabolicStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviBlockMemParabolicStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ParabolicUnipotentLeviDecompStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulVecMidBlockDecompStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousLeviUnipotentProjStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothIntegralLinearChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwasawaDecompParabolicMaximalCompactStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumOverCompactCosetsJacquetKernelStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInducedSectionSupportedOpenStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FibreFunctionLocallyConstantCompactStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FibreIntegralIntertwinesUnipotentStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UMLeviMulUMLevi
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirProjEqOneOfMem
+
+@[expose] public section
+
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.Rodier GlobalTheory.CompanionTheory.BZPsiPG
 open scoped TensorProduct
 
@@ -41,11 +46,40 @@ theorem colv_uM_mul_levi (n : ℕ) (y : Fin n → k) (b : GL (Fin n) k) :
 
 theorem eq_uM_colv_mul_levi (n : ℕ) (p : Mir k n) :
     p = uM k n (GlobalTheory.CompanionTheory.MirLevi.colv p) * levi k n (mirabolicProjection k n p) := by
+  have hl (g : GL (Fin n) k) : mirabolicProjection k n (levi k n g) = g := by
+    apply Units.ext
+    ext i j
+    change GlobalTheory.BZMir.blockMat k n (GlobalTheory.BZMir.glEmbMat k n (g : Matrix (Fin n) (Fin n) k)) i j = (g : Matrix (Fin n) (Fin n) k) i j
+    simp [GlobalTheory.BZMir.blockMat, GlobalTheory.BZMir.glEmbMat]
   have h1 : GlobalTheory.BZMir.mirabolicProjection k n
       (p * (GlobalTheory.BZMir.levi k n (GlobalTheory.BZMir.mirabolicProjection k n p))⁻¹) = 1 := by
-    rw [map_mul, map_inv, GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.mirProj_levi_eq, mul_inv_cancel]
-  obtain ⟨y, hy⟩ := GlobalTheory.CompanionTheory.BZPsiPG.exists_uM_of_mem k n
-    (GlobalTheory.CompanionTheory.BZMirAdj.mem_of_mirProj_eq_one k n _ h1)
+    rw [map_mul, map_inv, hl, mul_inv_cancel]
+  have hm : p * (levi k n (mirabolicProjection k n p))⁻¹ ∈ MirUin k n := by
+    let q := p * (levi k n (mirabolicProjection k n p))⁻¹
+    have hrow : ∀ j, ((q : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.last n) j =
+        GlobalTheory.BZMir.eLast k n j :=
+      fun j => congrFun ((GlobalTheory.BZMir.mem_Mir_iff k (q : GL (Fin (n + 1)) k)).1 q.2) j
+    have hblock : ∀ i j : Fin n,
+        ((q : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.castSucc i) (Fin.castSucc j) =
+          (1 : Matrix (Fin n) (Fin n) k) i j :=
+      fun i j => congrArg (fun g : GL (Fin n) k => (g : Matrix (Fin n) (Fin n) k) i j) h1
+    change q ∈ MirUin k n
+    rw [GlobalTheory.BZMir.MirUin, Subgroup.mem_subgroupOf, GlobalTheory.BZMir.MirU, MonoidHom.mem_range]
+    refine ⟨Multiplicative.ofAdd fun i =>
+      ((q : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.castSucc i) (Fin.last n), ?_⟩
+    apply Units.ext
+    ext i j
+    change ((1 : Matrix (Fin (n + 1)) (Fin (n + 1)) k) + GlobalTheory.BZMir.colMat k n (fun i =>
+      ((q : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.castSucc i) (Fin.last n))) i j =
+      ((q : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) i j
+    rw [Matrix.add_apply, GlobalTheory.BZMir.colMat]
+    rcases Fin.eq_castSucc_or_eq_last i with ⟨i, rfl⟩ | rfl <;>
+      rcases Fin.eq_castSucc_or_eq_last j with ⟨j, rfl⟩ | rfl
+    · simp [Matrix.one_apply, Fin.castSucc_ne_last, hblock]
+    · simp [Matrix.one_apply, Fin.castSucc_ne_last]
+    · simp [Matrix.one_apply, Fin.castSucc_ne_last, (Fin.castSucc_ne_last _).symm, hrow, GlobalTheory.BZMir.eLast]
+    · simp [hrow, GlobalTheory.BZMir.eLast]
+  obtain ⟨y, hy⟩ := GlobalTheory.CompanionTheory.BZPsiPG.exists_uM_of_mem k n hm
   have hp : p = GlobalTheory.CompanionTheory.BZPsiPG.uM k n y *
       GlobalTheory.BZMir.levi k n (GlobalTheory.BZMir.mirabolicProjection k n p) := by
     rw [← hy, inv_mul_cancel_right]
@@ -70,6 +104,16 @@ theorem continuous_colv (n : ℕ) : Continuous (GlobalTheory.CompanionTheory.Mir
 theorem coe_Bgrp_eq (n : ℕ) (c : kˣ) (K₁ : Subgroup (GL (Fin n) k)) (h : K₁ ≤ KO k (Fin n)) :
     (Bgrp n c K₁ h : Set (Mir k n)) =
       GlobalTheory.CompanionTheory.MirLevi.colv ⁻¹' (latt n c : Set (Fin n → k)) ∩ mirabolicProjection k n ⁻¹' (K₁ : Set (GL (Fin n) k)) := by
+  have hl (g : GL (Fin n) k) : mirabolicProjection k n (levi k n g) = g := by
+    apply Units.ext
+    ext i j
+    change GlobalTheory.BZMir.blockMat k n (GlobalTheory.BZMir.glEmbMat k n (g : Matrix (Fin n) (Fin n) k)) i j = (g : Matrix (Fin n) (Fin n) k) i j
+    simp [GlobalTheory.BZMir.blockMat, GlobalTheory.BZMir.glEmbMat]
+  have hu (y : Fin n → k) : mirabolicProjection k n (uM k n y) = 1 := by
+    apply Units.ext
+    ext i j
+    change GlobalTheory.BZMir.blockMat k n (1 + GlobalTheory.BZMir.colMat k n y) i j = (1 : Matrix (Fin n) (Fin n) k) i j
+    simp [GlobalTheory.BZMir.blockMat, GlobalTheory.BZMir.colMat, Matrix.one_apply, Fin.castSucc_ne_last]
   ext p
   change (∃ y ∈ GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.latt n c, ∃ b ∈ K₁,
       p = GlobalTheory.CompanionTheory.BZPsiPG.uM k n y * GlobalTheory.BZMir.levi k n b) ↔
@@ -78,7 +122,7 @@ theorem coe_Bgrp_eq (n : ℕ) (c : kˣ) (K₁ : Subgroup (GL (Fin n) k)) (h : K�
   · rintro ⟨y, hy, b, hb, rfl⟩
     refine ⟨?_, ?_⟩
     · rwa [GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.colv_uM_mul_levi]
-    · rwa [map_mul, GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.mirProj_uM, GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.mirProj_levi_eq, one_mul]
+    · rwa [map_mul, hu, hl, one_mul]
   · rintro ⟨hy, hb⟩
     exact ⟨_, hy, _, hb, GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.eq_uM_colv_mul_levi n p⟩
 
@@ -101,7 +145,23 @@ theorem isOpen_isCompact_Bgrp : ∀ (k : Type) [Field k] [ValuativeRel k] [Topol
     IsOpen (GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.Bgrp n c K₁ h : Set (Mir k n)) ∧
       IsCompact (GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.Bgrp n c K₁ h : Set (Mir k n)) := by
   intro k _ _ _ _ n c K₁ h hK
-  have hc := GlobalTheory.CompanionTheory.BZPsiPG.continuous_levi_uM_mirProj k n
+  have hc : Continuous (levi k n) ∧ Continuous (uM k n) ∧ Continuous (mirabolicProjection k n) := by
+    refine ⟨GlobalTheory.CompanionTheory.BZMirFun.continuous_levi k n, GlobalTheory.CompanionTheory.BZPsiPG.Cont.continuous_uM k n, ?_⟩
+    have hval : Continuous fun g : Mir k n =>
+        ((g : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) :=
+      Units.continuous_val.comp continuous_subtype_val
+    have hblock : Continuous fun g : Mir k n =>
+        ((mirabolicProjection k n g : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) := by
+      refine continuous_pi fun i => continuous_pi fun j => ?_
+      exact (continuous_apply (Fin.castSucc j)).comp ((continuous_apply (Fin.castSucc i)).comp hval)
+    refine Units.continuous_iff.2 ⟨hblock, ?_⟩
+    have heq : (fun g : Mir k n => (((mirabolicProjection k n g)⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k)) =
+        fun g => ((mirabolicProjection k n g⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) := by
+      funext g
+      rw [map_inv]
+    show Continuous (fun g : Mir k n => (((mirabolicProjection k n g)⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k))
+    rw [heq]
+    exact hblock.comp continuous_inv
   refine ⟨?_, ?_⟩
   · rw [GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.coe_Bgrp_eq]
     exact ((GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.isOpen_latt n c).preimage (GlobalTheory.CompanionTheory.BZPsiPG.FibOnto.continuous_colv n)).inter

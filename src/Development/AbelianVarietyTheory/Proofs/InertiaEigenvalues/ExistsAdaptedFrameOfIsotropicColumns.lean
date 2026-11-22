@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -100,7 +104,7 @@ theorem exists_adapted_frame_of_isotropic_columns :
       rw [this]
       exact b.equivFun.apply_symm_apply y
     rw [this, LinearMap.toMatrix'_id]
-  · rw [hJ, ← LinearMap.toMatrix'_comp, ← LinearMap.toMatrix'_comp, ← map_add,
+  · rw [hJ, ← LinearMap.toMatrix'_comp, ← LinearMap.toMatrix'_comp, ← map_add (f := _),
       ← LinearMap.toMatrix'_id]
     congr 1
     refine LinearMap.ext fun x => ?_

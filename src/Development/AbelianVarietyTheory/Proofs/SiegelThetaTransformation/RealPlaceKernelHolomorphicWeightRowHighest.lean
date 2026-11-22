@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PolyDerivVanishesOfTranslationInvariance
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FirstMinimumPrincipalTorusAtOrthonormalFrame
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PolyDerivVanishesOfTranslationInvariance
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FirstMinimumPrincipalTorusAtOrthonormalFrame
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -206,14 +210,14 @@ theorem anti_frames {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂ : x
       split_ifs <;> simp
     · ext a c
       simp only [P, diagonal_mul, aAnti, of_apply]
-      split_ifs <;> simp [mul_apply, mat]
+      split_ifs <;> simp [mat, Matrix.mul_apply]
     · rw [inv_eq_right_inv hy]
       ext a c
       simp only [Q, diagonal_mul, aAnti, of_apply]
       split_ifs <;> simp
     · ext a c
       simp only [P, diagonal_mul, aLin, of_apply]
-      split_ifs <;> simp [mul_apply, mat, mul_comm]
+      split_ifs <;> simp [mat, Matrix.mul_apply, mul_comm]
   · have h := emb_neg_half X τ
     rw [map_neg, map_div₀, map_ofNat] at h
     have h' : τ.1 X.κ0 / 4 = -(I * (X.c τ / 4 : ℝ)) := by
@@ -427,6 +431,7 @@ theorem aAnti_rmul (x₁ x₂ : Frame X.Ψ r) :
   simp only [aAnti, of_apply]
   split_ifs
   · simp only [rmul, mul_apply, mat, of_apply, Finset.sum_mul, Finset.mul_sum]
+    simp only [Matrix.mul_apply, of_apply, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
   · rfl
@@ -437,7 +442,7 @@ theorem aLin_rmul (x₁ x₂ : Frame X.Ψ r) :
   refine Eq.trans ?_ (congrFun (lowMat_mulVec hb τ (fun a => ∑ d, τ.1 (X.Gm c d) * conj (x₂ τ d a))
     fun a => (mat x₁ τ)⁻¹ a c) a).symm
   have hm : mat (rmul x₁ b) τ = mat x₁ τ * mat b τ := rfl
-  simp only [aLin, of_apply, hm, Matrix.mul_inv_rev, mul_apply]
+  simp only [aLin, of_apply, hm, Matrix.mul_inv_rev, Matrix.mul_apply]
 
 theorem det_moves : (lowMat X b τ).det * (upMat X b τ).det =
     ∏ a, rowFac X (fun τ a => b τ a a) (τ, a) := by
@@ -461,8 +466,8 @@ theorem det_moves : (lowMat X b τ).det * (upMat X b τ).det =
     · exact one_apply_ne h'.ne'
     · exact PerMove.bor_inv_tri hb τ h'
 
-omit hb in
 
+omit hb in
 theorem borMat_mulVec (v : Fin g → ℂ) (a : Fin r) :
     ((borMat X b).submatrix idx idx *ᵥ v) (idx.symm (τ, a)) =
       ∑ c, borMat X b (τ, a) (τ, c) * v (idx.symm (τ, c)) := by
@@ -474,8 +479,8 @@ theorem borMat_mulVec (v : Fin g → ℂ) (a : Fin r) :
       zero_mul]
   · simp
 
-omit τ in
 
+omit τ in
 theorem kRed_rmul (x₁ x₂ : Frame X.Ψ r) (z w : Fin n → Fin g → ℂ) :
     kRed X idx (rmul x₁ b) x₂ (fun k => (borMat X b).submatrix idx idx *ᵥ z k) w =
       (∏ p, (rowFac X (fun τ a => b τ a a) p)⁻¹) ^ (n / 2) * kRed X idx x₁ x₂ z w := by

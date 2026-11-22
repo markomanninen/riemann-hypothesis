@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdealCharacterLContinuationNeZeroOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InfinitelyManyPrimesInRayClass
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMixedSpaceNormSignCharacterStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdealCharacterLContinuationNeZeroOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InfinitelyManyPrimesInRayClass
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMixedSpaceNormSignCharacterStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding Filter Topology Asymptotics Polynomial
 open scoped ContDiff Classical
@@ -15,7 +19,7 @@ theorem norm_cast_eq_one (K : Type) [Field K] [NumberField K] (m : ℕ) (β : �
   have hβ : β = 1 + (m : 𝓞 K) * γ := by rw [mul_comm, hγ]; ring
   let b := Module.Free.chooseBasis ℤ (𝓞 K)
   have key : (Int.castRingHom (ZMod m)).mapMatrix (Algebra.leftMulMatrix b β) = 1 := by
-    rw [hβ, map_add, map_one, map_mul, map_natCast, map_add, map_one, map_mul, map_natCast]
+    rw [hβ, map_add (f := _), map_one, map_mul, map_natCast, map_add (f := _), map_one, map_mul, map_natCast]
     ext i j
     simp [Matrix.one_apply]
   have h2 := (Int.castRingHom (ZMod m)).map_det (Algebra.leftMulMatrix b β)

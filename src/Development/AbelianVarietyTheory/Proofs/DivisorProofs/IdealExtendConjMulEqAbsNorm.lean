@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLsB
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLsB
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+
+@[expose] public section
 
 open NumberField
 
@@ -108,7 +112,7 @@ theorem conj_mul_cE_absNorm (D : Formalism.BasicNotions.D7) (cc : Ideal (𝓞 D.
         exact hgen c₁ h₁ c₂ h₂
       exact hle hβ
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, add_mul]; exact M.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), add_mul]; exact M.add_mem hx hy
     | smul o x _ hx =>
       have : D.host.conj (o • x) * β = (RingOfIntegers.mapRingHom (D.host.conj : D.host.E →+* D.host.E) o) • (D.host.conj x * β) := by
         rw [Algebra.smul_def, Algebra.smul_def, map_mul, mul_assoc]

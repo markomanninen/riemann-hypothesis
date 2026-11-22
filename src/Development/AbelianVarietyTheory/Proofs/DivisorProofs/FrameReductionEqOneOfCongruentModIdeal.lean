@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DefGroup
-import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+public import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2 Formalism.L2.DIV
 open scoped TensorProduct Matrix
 
@@ -41,7 +46,7 @@ theorem coord_mem_idS {F E : Type} [Field F] [NumberField F] [Field E] [NumberFi
       have : (fun k => Formalism.UG.inclE (F := F) (Formalism.L2.Herm.Af F) ((m1 + m2) k)) =
           (fun k => Formalism.UG.inclE (F := F) (Formalism.L2.Herm.Af F) (m1 k)) +
             (fun k => Formalism.UG.inclE (F := F) (Formalism.L2.Herm.Af F) (m2 k)) := by
-        funext k; simp [map_add]
+        funext k; simp [map_add (f := _)]
       rw [this, Matrix.mulVec_add, Pi.add_apply, e1, e2]
       rfl
   · intro i

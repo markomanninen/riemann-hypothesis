@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HomExtNormalSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HomExtNormalSt
+
+@[expose] public section
 
 open Polynomial
 
@@ -28,7 +32,11 @@ theorem exists_extension {A B Ω : Type} [CommRing A] [CommRing B] [Algebra A B]
   haveI : Module.IsTorsionFree (A ⧸ RingHom.ker e) Ω :=
     Module.isTorsionFree_iff_algebraMap_injective.2 (RingHom.kerLift_injective e)
   haveI : Algebra.IsAlgebraic (A ⧸ RingHom.ker e) (B ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let l : (B ⧸ Q) →ₐ[A ⧸ RingHom.ker e] Ω := IsAlgClosed.lift
+  let l : (B ⧸ Q) →ₐ[A ⧸ RingHom.ker e] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨(l : (B ⧸ Q) →+* Ω).comp (Ideal.Quotient.mk Q), ?_⟩
   ext a
   have h := l.commutes (Ideal.Quotient.mk _ a)
@@ -60,7 +68,7 @@ theorem exists_smul_of_comp_eq {A B Ω : Type} [CommRing A] [CommRing B] [Algebr
       add_mem' := by
         intro a b ha hb
         simp only [Set.mem_setOf_eq] at ha hb ⊢
-        rw [map_add, smul_add, map_add, ha, hb]
+        rw [map_add (f := _), smul_add, map_add (f := _), ha, hb]
       neg_mem' := by
         intro a ha
         simp only [Set.mem_setOf_eq] at ha ⊢
@@ -123,7 +131,7 @@ theorem exists_finite_extension_finrank_dvd :
       obtain ⟨b, rfl⟩ := hx'
       simpa using hx b
     | algebraMap c => exact σ.commutes c
-    | add x y _ _ h1 h2 => rw [map_add, h1, h2]
+    | add x y _ _ h1 h2 => rw [map_add (f := _), h1, h2]
     | inv x _ h1 => rw [map_inv₀, h1]
     | mul x y _ _ h1 h2 => rw [map_mul, h1, h2]
   have hdvd : Module.finrank k K ∣ Nat.card G := by

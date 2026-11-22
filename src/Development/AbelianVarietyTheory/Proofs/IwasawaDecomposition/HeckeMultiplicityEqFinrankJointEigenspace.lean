@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem heckeEig_mem_iff_gens (N : NData R H what₂) (i : N.Loc) (x : N.X i)
       have m1 : g ∈ N.T i := N.T_gen i ▸ hg1
       have m2 : g' ∈ N.T i := N.T_gen i ▸ hg2
       have e : (⟨g + g', hg⟩ : N.T i) = ⟨g, m1⟩ + ⟨g', m2⟩ := rfl
-      rw [e, map_add, LinearMap.baseChange_add, LinearMap.add_apply, ih1 m1, ih2 m2, Pi.add_apply, map_add,
+      rw [e, map_add (f := _), LinearMap.baseChange_add, LinearMap.add_apply, ih1 m1, ih2 m2, Pi.add_apply, map_add (f := _),
         add_smul]
     | mul g g' hg1 hg2 ih1 ih2 =>
       intro hg

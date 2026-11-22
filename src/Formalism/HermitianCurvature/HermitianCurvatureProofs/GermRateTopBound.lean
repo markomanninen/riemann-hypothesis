@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopCore
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VecVNonloc
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSumLeOfGram
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopCore
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VecVNonloc
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSumLeOfGram
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.GermRateSplit
 
@@ -76,7 +80,8 @@ theorem germ_rate_top_bound : Formalism.FourierDecayAlt.P.GermRateSplit.GermRate
         ((omN S a.length (ptJ s h x D j) : ℂ) • L i ((p v).V (Fi i) (PBL.stdS S (ptJ s h x D j)))) =
       L i (∑ j ∈ Finset.insertNone (G.rootSet s D), (conj (coJ S b s x j) * (omN S a.length (ptJ s h x D j) : ℂ)) •
         (p v).V (Fi i) (PBL.stdS S (ptJ s h x D j))) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_smul]
   rw [e]

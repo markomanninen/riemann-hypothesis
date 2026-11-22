@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CharacterDetermines
 
@@ -57,7 +61,7 @@ theorem nonempty_equiv_range {ρ : Representation ℂ G V} {σ : Representation 
     (f.toLinearMap.comp q.toSubmodule.subtype).codRestrict f.range.toSubmodule
       (fun v => LinearMap.mem_range_self _ _)
   have hinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     have ha' : f.toLinearMap (a : V) = 0 := congrArg Subtype.val ha
     have hk : (a : V) ∈ f.ker.toSubmodule := ha'
@@ -70,7 +74,7 @@ theorem nonempty_equiv_range {ρ : Representation ℂ G V} {σ : Representation 
     refine ⟨⟨u, hu⟩, Subtype.ext ?_⟩
     have hk' : f.toLinearMap k = 0 := hk
     change f.toLinearMap u = f.toLinearMap v
-    rw [← hku, map_add, hk', zero_add]
+    rw [← hku, map_add (f := _), hk', zero_add]
   let ψ : IntertwiningMap q.toRepresentation f.range.toRepresentation :=
     φ.intertwiningMap_of_isIntertwiningMap _ _ (by
       intro g v

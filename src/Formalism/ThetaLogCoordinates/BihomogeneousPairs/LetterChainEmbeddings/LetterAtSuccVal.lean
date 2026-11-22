@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.SmulMemOfNorm
+module
+
+public import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.SmulMemOfNorm
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.KP.LL
 
@@ -61,6 +65,7 @@ theorem pos_lt_u (hB : D.BlockOK) (i : Fin D.T.t) : D.T.pos i + 1 < (D.uPos : �
 theorem deg_lettersAt_pos (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i : Fin D.T.t) :
     (D.lettersAt j jp).deg (D.letterAt (D.T.pos i)) = D.LL.deg (D.letterAt (D.T.pos i)) - j i := by
   simp only [BlockData.lettersAt]
+  simp only [← List.sum_toFinset _ (List.nodup_finRange _), List.toFinset_finRange]
   have hs : (∑ i', if ((D.letterAt (D.T.pos i) : Fin N) : ℕ) = D.T.pos i' ∨
       ((D.letterAt (D.T.pos i) : Fin N) : ℕ) = D.T.pos i' + 1 then j i' else 0) = j i := by
     rw [Finset.sum_eq_single i]
@@ -84,6 +89,7 @@ theorem deg_lettersAt_pos (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i
 theorem deg_lettersAt_pos_succ (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) (i : Fin D.T.t) :
     (D.lettersAt j jp).deg (D.letterAt (D.T.pos i + 1)) = D.LL.deg (D.letterAt (D.T.pos i + 1)) - j i := by
   simp only [BlockData.lettersAt]
+  simp only [← List.sum_toFinset _ (List.nodup_finRange _), List.toFinset_finRange]
   have hs : (∑ i', if ((D.letterAt (D.T.pos i + 1) : Fin N) : ℕ) = D.T.pos i' ∨
       ((D.letterAt (D.T.pos i + 1) : Fin N) : ℕ) = D.T.pos i' + 1 then j i' else 0) = j i := by
     rw [Finset.sum_eq_single i]
@@ -107,6 +113,7 @@ theorem deg_lettersAt_pos_succ (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : �
 theorem deg_U (hB : D.BlockOK) (j : Fin D.T.t → ℕ) (jp : ℕ) :
     (D.lettersAt j jp).deg D.uPos = D.LL.deg D.uPos - jp := by
   simp only [BlockData.lettersAt]
+  simp only [← List.sum_toFinset _ (List.nodup_finRange _), List.toFinset_finRange]
   rw [Finset.sum_eq_zero (fun b _ => by
       rw [if_neg]
       have := pos_lt_u hB b

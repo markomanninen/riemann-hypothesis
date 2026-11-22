@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHodgeFlagRatioFieldEq
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PBirationalRatioClosure
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHodgeFlagRatioFieldEq
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PBirationalRatioClosure
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

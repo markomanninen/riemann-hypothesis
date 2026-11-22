@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 

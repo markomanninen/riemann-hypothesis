@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InclLSmulCoord
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InclLSmulCoord
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -17,8 +22,8 @@ variable {l : ℕ} [Fact l.Prime]
 scoped instance algZlBdR : Algebra ℤ_[l] (Per.BdR l) :=
   ((algebraMap (Per.BdRp l) (Per.BdR l)).comp ((GlobalTheory.MemLoc.aDp l).comp (algebraMap ℤ_[l] (Ainf l)))).toAlgebra
 
-variable (l) in
 
+variable (l) in
 def bdRpToBdR : Per.BdRp l →ₐ[ℤ_[l]] Per.BdR l where
   toRingHom := algebraMap (Per.BdRp l) (Per.BdR l)
   commutes' _ := rfl
@@ -32,18 +37,18 @@ def iotaZ (C : GlobalTheory.MemLoc.Core l) : Per.Bcris l →ₐ[ℤ_[l]] Per.BdR
   toRingHom := C.ι
   commutes' z := core_ι_aB C (algebraMap ℤ_[l] (Ainf l) z)
 
-variable (l) in
 
+variable (l) in
 abbrev OdR (O : Type) [CommRing O] [Algebra ℤ_[l] O] : Type := O ⊗[ℤ_[l]] Per.BdR l
 
 variable {O : Type} [CommRing O] [Algebra ℤ_[l] O]
 
-variable (l O) in
 
+variable (l O) in
 def dRO : OD l O →ₐ[O] OdR l O := Algebra.TensorProduct.map (AlgHom.id _ _) (bdRpToBdR l)
 
-variable (O) in
 
+variable (O) in
 def iotaO (C : GlobalTheory.MemLoc.Core l) : OB l O →ₐ[O] OdR l O := Algebra.TensorProduct.map (AlgHom.id _ _) (iotaZ C)
 
 theorem iotaO_toB (C : GlobalTheory.MemLoc.Core l) (x : OA l O) : iotaO O C (toB l O x) = dRO l O (toOD l O x) := by
@@ -52,6 +57,6 @@ theorem iotaO_toB (C : GlobalTheory.MemLoc.Core l) (x : OA l O) : iotaO O C (toB
   | tmul o w =>
     exact congrArg (fun y : Per.BdR l => o ⊗ₜ[ℤ_[l]] y)
       ((congrArg C.ι (GlobalTheory.RingIface.aB_eq_alg l w).symm).trans (core_ι_aB C w))
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end GlobalTheory.BKGal.HatVal

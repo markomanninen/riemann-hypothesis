@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsThetaMeanSquareNorm
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ZhangDimensionPushDownGrassmannianHeightBounds
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsThetaMeanSquareNorm
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ZhangDimensionPushDownGrassmannianHeightBounds
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights TensorProduct
@@ -306,7 +311,7 @@ theorem jet_mul_of_vanish {B K : Type} [CommRing B] [CommRing K] (D : B →+ B)
       rwa [Function.iterate_succ_apply] at this)
     have h2 := ih (D u) a (fun k hk => h k (Nat.lt_succ_of_lt hk))
     have h3 : D^[i] (a * D u) = D^[i] (D u * a) := by rw [mul_comm]
-    rw [Function.iterate_succ_apply, hD, iterate_map_add, map_add, h1, h3, h2, h i (Nat.lt_succ_self i), mul_zero, add_zero,
+    rw [Function.iterate_succ_apply, hD, iterate_map_add, map_add (f := _), h1, h3, h2, h i (Nat.lt_succ_self i), mul_zero, add_zero,
       Function.iterate_succ_apply]
 
 theorem jet_vanish_of_mul {B K : Type} [CommRing B] [CommRing K] [IsDomain K] (D : B →+ B)

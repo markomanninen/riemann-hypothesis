@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry DirectSum TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -39,7 +43,7 @@ theorem exists_tensor_addEquiv {R A B C P Q N N' : Type*} [CommRing R] [CommRing
   refine ⟨E, hE, fun r z => ?_⟩
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   | tmul x y =>
     rw [TensorProduct.smul_tmul', hE, hE, TensorProduct.smul_tmul', ← algebraMap_smul A r x,
       j.map_smul (algebraMap R A r) x, IsScalarTower.algebraMap_apply R A C, algebraMap_smul C]
@@ -70,16 +74,16 @@ theorem restrict_mul (h : W ≤ V) (s : SecOn M V) (t : SecOn H V) :
   tw_ext fun p k => by
     simp only [twCoord_mul, twCoord_restrict, coord_restrict, map_mul, rs_rs]
 
-variable (M H V) in
 
+variable (M H V) in
 def secMulHom : SecOn M V ⊗[Γ(X, V)] SecOn H V →ₗ[Γ(X, V)] SecOn (tw M H 1) V :=
   TensorProduct.lift <| LinearMap.mk₂ Γ(X, V) mul
     (fun s s' t => tw_ext fun p k => by
-      simp only [twCoord_mul, twCoord_add, coord_add, map_add, add_mul])
+      simp only [twCoord_mul, twCoord_add, coord_add, map_add (f := _), add_mul])
     (fun a s t => tw_ext fun p k => by
       simp only [twCoord_mul, twCoord_smul, coord_smul, map_mul, rs_rs, _root_.mul_assoc])
     (fun s t t' => tw_ext fun p k => by
-      simp only [twCoord_mul, twCoord_add, coord_add, map_add, mul_add])
+      simp only [twCoord_mul, twCoord_add, coord_add, map_add (f := _), mul_add])
     (fun a s t => tw_ext fun p k => by
       simp only [twCoord_mul, twCoord_smul, coord_smul, map_mul, rs_rs]
       exact mul_left_comm _ _ _)
@@ -164,8 +168,8 @@ end GlobalTheory.AbLaw.ExtProd
 
 namespace GlobalTheory.AbLaw
 
-open ExtProd in
 
+open ExtProd in
 theorem exists_secOnR_tensor_equiv : ∀ (R : Type) [CommRing R] (Y Y' Z : Scheme.{0}) (f : Y ⟶ Spec (CommRingCat.of R)) (f' : Y' ⟶ Spec (CommRingCat.of R)) (p₁ : Z ⟶ Y) (p₂ : Z ⟶ Y') (M : LB Y) (M' : LB Y'), IsPullback p₁ p₂ f f' → M.IsLB → M'.IsLB → ∀ (U : Y.Opens) (W : Y'.Opens) (O : Z.Opens) (e₁ : O ≤ p₁ ⁻¹ᵁ U) (e₂ : O ≤ p₂ ⁻¹ᵁ W), IsAffineOpen U → IsAffineOpen W → O = p₁ ⁻¹ᵁ U ⊓ p₂ ⁻¹ᵁ W → ∃ E : SecOnR f M U ⊗[R] SecOnR f' M' W ≃ₗ[R] SecOnR (p₁ ≫ f) (tw (M.pull p₁) (M'.pull p₂) 1) O, ∀ (a : SecOn M U) (b : SecOn M' W) (p : (M.pull p₁).ι) (l : (M'.pull p₂).ι), SecOn.twCoord ((SecOnR.of _ _ O).symm (E (SecOnR.of f M U a ⊗ₜ SecOnR.of f' M' W b))) p l = rs Z (inf_le_inf_left O inf_le_left) (GlobalTheory.LB.coord (SecOn.pullLE M p₁ U O e₁ a) p) * rs Z (inf_le_inf_left O inf_le_right) (GlobalTheory.LB.coord (SecOn.pullLE M' p₂ W O e₂ b) l) := by
   intro R _ Y Y' Z f f' p₁ p₂ M M' H hM hM' U W O e₁ e₂ hU hW e
   have hO : IsAffineOpen O := e ▸ isAffineOpen_inf H hU hW

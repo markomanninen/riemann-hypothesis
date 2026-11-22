@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRestrictedProdFinAwayIffIsProdMeasureFinAway
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HilbertSchurUnitaryIrreducibleScalar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotForallNonemptyLocP
-import Development.AbelianVarietyTheory.Definitions.Foundations.ToContinuousLinearMapMemHomIn
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRestrictedProdFinAwayIffIsProdMeasureFinAway
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HilbertSchurUnitaryIrreducibleScalar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotForallNonemptyLocP
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ToContinuousLinearMapMemHomIn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ def kFinVec (ρ : Representation ℂ G X) (K : Subgroup G) : Submodule ℂ X whe
   carrier := {x | ∃ W : Submodule ℂ X, FiniteDimensional ℂ W ∧ ∀ k ∈ K, ρ k x ∈ W}
   zero_mem' := ⟨⊥, inferInstance, fun k _ => by simp⟩
   add_mem' := fun ⟨W, _, h⟩ ⟨W', _, h'⟩ =>
-    ⟨W ⊔ W', inferInstance, fun k hk => by rw [map_add]; exact Submodule.add_mem_sup (h k hk) (h' k hk)⟩
+    ⟨W ⊔ W', inferInstance, fun k hk => by rw [map_add (f := _)]; exact Submodule.add_mem_sup (h k hk) (h' k hk)⟩
   smul_mem' := fun c _ ⟨W, hW, h⟩ => ⟨W, hW, fun k hk => by rw [map_smul]; exact W.smul_mem c (h k hk)⟩
 
 variable [TopologicalSpace G] [IsTopologicalGroup G]
@@ -83,7 +87,7 @@ theorem projPl_embPl_ne : ∀ {u v}, u ≠ v → ∀ x, projPl σ J u (embPl σ 
   | .inr u, .inl v, _, x => proj_embArch σ J u v x
   | .inr _, .inr _, h, x => proj_emb_ne σ J (fun e => h (congrArg _ e)) x
 
-theorem forall_eventually_proj_iff (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsLattice E L]
+theorem forall_eventually_proj_iff (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsFullLattice E L]
     (a : ∀ v, GLoc σ J v → Prop) : (∀ g : GFin σ J, ∀ᶠ v in cofinite, a v (projFinLoc σ J v g)) ↔
       ∀ᶠ v in cofinite, ∀ k ∈ stabLoc σ J L v, a v k := by
   refine ⟨fun h => ?_, fun h g => (h.and (eventually_projFinLoc_mem_stabLoc σ J L g)).mono fun v hv => hv.1 _ hv.2⟩
@@ -93,7 +97,9 @@ theorem forall_eventually_proj_iff (L : Submodule (𝓞 E) (Fin n → E)) [Submo
     · push Not at e
       exact e.imp fun k hk => ⟨hk.1, fun h => absurd h hk.2⟩
   choose k hk hk' using this
-  obtain ⟨g, hg, -⟩ := existsUnique_projFinLoc_eq σ J L k (.of_forall hk)
+  have hex : ∃! g : GFin σ J, ∀ v, projFinLoc σ J v g = k v :=
+    existsUnique_projFinLoc_eq σ J L k (Filter.Eventually.of_forall fun v => hk v)
+  obtain ⟨g, hg, -⟩ := hex
   exact (h g).mono fun v hv => hk' v (hg v ▸ hv)
 
 variable {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -110,7 +116,7 @@ variable {σ J} {δ : ∀ v, GPl σ J v →* (Hs v →L[ℂ] Hs v)} {ξ : ∀ v,
   {B : (∀ v, Hs v) → H}
 
 theorem IsFactorisation.eventually_fixed (h : IsFactorisation σ J δ ξ π B) (L : Submodule (𝓞 E) (Fin n → E))
-    [Submodule.IsLattice E L] : ∀ᶠ v in cofinite, ∀ k ∈ stabLoc σ J L v, δ (.inr v) k (ξ (.inr v)) = ξ (.inr v) :=
+    [Submodule.IsFullLattice E L] : ∀ᶠ v in cofinite, ∀ k ∈ stabLoc σ J L v, δ (.inr v) k (ξ (.inr v)) = ξ (.inr v) :=
   (forall_eventually_proj_iff σ J L fun v k => δ (.inr v) k (ξ (.inr v)) = ξ (.inr v)).1 fun g =>
     (Sum.inr_injective.tendsto_cofinite.eventually (h.fixed (ofFin σ J g))).mono fun v hv =>
       (congrArg (δ (.inr v) · _) (proj_ofFin σ J v g)).symm.trans hv
@@ -190,12 +196,7 @@ def KOff (S : Finset (HeightOneSpectrum (𝓞 D.host.F))) : Subgroup (GfC V) :=
 
 variable {V}
 
-theorem mem_KOff {S : Finset (HeightOneSpectrum (𝓞 D.host.F))} {g : GfC V} : g ∈ KOff V S ↔ (g : GA D V) ∈ KsphC V S := by
-  rw [KsphC_eq]; rfl
-
 @[simp] theorem coe_locFin (v : HeightOneSpectrum (𝓞 D.host.F)) (x : Gv V v) : (locFin V v x : GA D V) = embV V v x := rfl
-
-@[simp] theorem coe_archInf (w : InfinitePlace D.host.F) (x : Gw V w) : (archInf V w x : GA D V) = embW V w x := rfl
 
 theorem toInf_mul_toFin (g : GA D V) : (toInf V g : GA D V) * toFin V g = g := ofInf_projInf_mul_ofFin_projFin _ _ g
 
@@ -226,22 +227,8 @@ variable {H X W : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Normed
 
 section Components
 
-def HasLocComp (v : HeightOneSpectrum (𝓞 D.host.F)) (δ : Gv V v →* (X →L[ℂ] X)) (π : GA D V →* (H →L[ℂ] H)) : Prop :=
-  IsIsotypic δ (π.comp (embV V v))
-
 def HasArchComp (w : InfinitePlace D.host.F) (δ : Gw V w →* (X →L[ℂ] X)) (π : GA D V →* (H →L[ℂ] H)) : Prop :=
   IsIsotypic δ (π.comp (embW V w))
-
-def HasFinComp (δ : GfC V →* (X →L[ℂ] X)) (π : GA D V →* (H →L[ℂ] H)) : Prop := IsIsotypic δ (π.comp (GfC V).subtype)
-
-def HasInfComp (δ : GinfC V →* (X →L[ℂ] X)) (π : GA D V →* (H →L[ℂ] H)) : Prop :=
-  IsIsotypic δ (π.comp (GinfC V).subtype)
-
-def HasLocCompSm (v : HeightOneSpectrum (𝓞 D.host.F)) (σ : Representation ℂ (Gv V v) W)
-    (π : GA D V →* (H →L[ℂ] H)) : Prop := IsIsotypicDense σ (π.comp (embV V v))
-
-def HasFinCompSm (σ : Representation ℂ (GfC V) W) (π : GA D V →* (H →L[ℂ] H)) : Prop :=
-  IsIsotypicDense σ (π.comp (GfC V).subtype)
 
 def FinHasLocComp {Y : Type} [AddCommGroup Y] [Module ℂ Y] (v : HeightOneSpectrum (𝓞 D.host.F))
     (σv : Representation ℂ (Gv V v) Y) (σ : Representation ℂ (GfC V) W) : Prop := IsIsotypicAlg σv (σ.comp (locFin V v))
@@ -249,19 +236,6 @@ def FinHasLocComp {Y : Type} [AddCommGroup Y] [Module ℂ Y] (v : HeightOneSpect
 abbrev IsFinFactorisation {N : HeightOneSpectrum (𝓞 D.host.F) → Type} [∀ v, AddCommGroup (N v)] [∀ v, Module ℂ (N v)]
     (σs : ∀ v, Representation ℂ (Gv V v) (N v)) (s : ∀ v, N v) (σ : Representation ℂ (GfC V) W) : Prop :=
   IsRestrTensorAlg (finLoc V) σs s σ
-
-def IsFinInf {Y : Type} [NormedAddCommGroup Y] [InnerProductSpace ℂ Y] (πf : GfC V →* (Y →L[ℂ] Y))
-    (πi : GinfC V →* (X →L[ℂ] X)) (π : GA D V →* (H →L[ℂ] H)) : Prop := ∃ J, IsTensorMap (toFin V) (toInf V) πf πi π J
-
-abbrev finInf {Y : Type} [NormedAddCommGroup Y] [InnerProductSpace ℂ Y] (πf : GfC V →* (Y →L[ℂ] Y))
-    (πi : GinfC V →* (X →L[ℂ] X)) : GA D V →* (HTensor Y X →L[ℂ] HTensor Y X) := hTensor (toFin V) (toInf V) πf πi
-
-def IsInfTensor {Hs : InfinitePlace D.host.F → Type} [∀ w, NormedAddCommGroup (Hs w)] [∀ w, InnerProductSpace ℂ (Hs w)]
-    (δs : ∀ w, Gw V w →* (Hs w →L[ℂ] Hs w)) (δ : GinfC V →* (X →L[ℂ] X)) : Prop :=
-  ∃ B, IsRestrTensor (infArch V) δs 0 δ B
-
-abbrev IsCopyFinInf (σ : Representation ℂ (GfC V) W) (δ : GinfC V →* (X →L[ℂ] X)) (ρ : GA D V →* (H →L[ℂ] H))
-    (U : Submodule ℂ H) : Prop := IsTensorCopy (GfC V).subtype (GinfC V).subtype σ δ ρ U
 
 variable {V}
 
@@ -273,24 +247,24 @@ def HasDSComp (M : DSModel V S) (π : GA D V →* (H →L[ℂ] H)) : Prop := ∀
 def IsDSTensor (M : DSModel V S) (δ : GinfC V →* (X →L[ℂ] X)) : Prop :=
   ∃ B, IsRestrTensor (fun τ => infArch V (placeOf D τ)) (dsRep M) 0 δ B
 
-open Classical in
 
+open Classical in
 def homDS (M : DSModel V S) (ρ : GA D V →* (H →L[ℂ] H)) (U : Submodule ℂ H) :
     Submodule ℂ (ContinuousMultilinearMap ℂ M.H H) := homPi (fun τ => embW V (placeOf D τ)) (dsRep M) ρ U
 
-open Classical in
 
+open Classical in
 def homFinDS (σ : Representation ℂ (GfC V) W) (M : DSModel V S) (ρ : GA D V →* (H →L[ℂ] H)) (U : Submodule ℂ H) :
     Submodule ℂ (W →ₗ[ℂ] ContinuousMultilinearMap ℂ M.H H) :=
   homTensorPi (GfC V).subtype (fun τ => embW V (placeOf D τ)) σ (dsRep M) ρ U
 
-open Classical in
 
+open Classical in
 def IsCopyFinDS (σ : Representation ℂ (GfC V) W) (M : DSModel V S) (ρ : GA D V →* (H →L[ℂ] H)) (U : Submodule ℂ H) :
     Prop := IsTensorCopyPi (GfC V).subtype (fun τ => embW V (placeOf D τ)) σ (dsRep M) ρ U
 
-open Classical in
 
+open Classical in
 theorem mem_homDS {θ : InfF D} (hθ : IsInfFam θ) {M : DSModel V S} {ρ : GA D V →* (H →L[ℂ] H)} {U : Submodule ℂ H}
     {Φ : ContinuousMultilinearMap ℂ M.H H} : Φ ∈ homDS M ρ U ↔ (∀ y, Φ y ∈ U) ∧ ∀ τ,
       ∀ g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ), ∀ y, Φ (Function.update y τ (M.rep τ g (y τ))) = ρ (atTau θ V τ g) (Φ y) := by
@@ -302,12 +276,6 @@ theorem mem_homDS {θ : InfF D} (hθ : IsInfFam θ) {M : DSModel V S} {ρ : GA D
 
 variable {Y : Type} [NormedAddCommGroup Y] [InnerProductSpace ℂ Y] {πf : GfC V →* (Y →L[ℂ] Y)}
   {πi : GinfC V →* (X →L[ℂ] X)} {π ρ : GA D V →* (H →L[ℂ] H)} {U : Submodule ℂ H}
-
-theorem IsFinInf.isUnitaryRep (h : IsFinInf V πf πi π) (hf : IsUnitaryRep πf) (hi : IsUnitaryRep πi) : IsUnitaryRep π :=
-  let ⟨_, h⟩ := h
-  h.isUnitaryRep (continuous_toFin V) (continuous_toInf V) hf hi
-
-theorem IsFinInf.uEquiv [CompleteSpace H] (h : IsFinInf V πf πi π) : UEquiv (finInf V πf πi) π := h.choose_spec.uEquiv
 
 def finPart (δ : GinfC V →* (X →L[ℂ] X)) (hU : IsSubrep ρ U) :
     Representation ℂ (GfC V) (homIn δ (ρ.comp (GinfC V).subtype) U) :=

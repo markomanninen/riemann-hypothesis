@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PosExact
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrysOfInertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmRes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiltByRestrictScalarsOfResidualCharacters
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PosExact
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrysOfInertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiltByRestrictScalarsOfResidualCharacters
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module Topology UpperTheory.V.Loc UpperTheory.V.U3
 
 theorem UpperTheory.torsionDatum_finiteCocycles_compare :
@@ -21,8 +26,13 @@ theorem UpperTheory.torsionDatum_finiteCocycles_compare :
   have hI : ∀ g ∈ H, g ∈ Iq l →
       T.χ2 g = Units.map (algebraMap E B : E →* B) (cycA l l E g ^ ((2 * e : ℕ) : ℤ)) := by
     intro g hg hgI
-    have h := (hT.chars hD).ine ⟨g, hg⟩ hgI
-    simp only [Tor.ch_apply, Subgroup.coe_subtype] at h
+    have h : ∀ i, T.t g i = cycA l l B g ^ ((e : ℤ) * wt1 i) := by
+      intro i
+      apply Units.ext
+      rw [hT.ine g hgI, hD.ΨH g hg hgI, ← algebraMap_cycA (E := E) (B := B),
+        zpow_mul, zpow_natCast, ← map_pow (Units.map _),
+        ← map_zpow (Units.map (algebraMap E B : E →* B))]
+      rfl
     change Units.map _ (η g) * (T.t g 0 / T.t g 2) = _
     rw [hD.ηH g hg, map_one, one_mul, h 0, h 2, map_zpow, algebraMap_cycA, div_eq_mul_inv, ← zpow_sub]
     congr 1

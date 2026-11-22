@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CardPow
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CardPow
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -55,7 +59,7 @@ private theorem res_surj :
   refine ⟨a * c, ?_⟩
   rw [RingHom.comp_apply, ← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff]
   have hc' : iota w c * iota w (s : 𝓞 E) + iota w i = 1 := by
-    rw [← map_mul, ← map_add, hc, map_one]
+    rw [← map_mul, ← map_add (f := _), hc, map_one]
   have e1 : iota w (a * c) - x = -(x * iota w i) := by
     rw [map_mul, ← hxs]
     linear_combination x * hc'
@@ -110,7 +114,7 @@ theorem baseExtension_holds : Gal.Int.Geo.BaseEx := by
       ρ := t D.ω
       ρ_root := by
         have h := congrArg t hroot
-        simpa only [map_add, map_sub, map_mul, map_pow, map_intCast, map_zero] using h
+        simpa only [map_add (f := _), map_sub, map_mul, map_pow, map_intCast, map_zero] using h
       t := fun _ => t
       t_ω := fun _ => rfl
       comax := fun i j h => absurd (Subsingleton.elim i j) h

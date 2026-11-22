@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+
+@[expose] public section
+
 open scoped TensorProduct Matrix Classical GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift
 
@@ -10,10 +15,13 @@ namespace GlobalTheory.CCRFock
 
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
+open scoped IsMulCommutative in
 def polEval {ι : Type} (m : ι → Module.End ℂ V) (hm : ∀ i j, m i * m j = m j * m i) (f₀ : V) :
     MvPolynomial ι ℂ →ₗ[ℂ] V :=
-  letI : CommRing (Algebra.adjoin ℂ (Set.range m)) :=
-    Algebra.adjoinCommRingOfComm ℂ (by rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩; exact hm i j)
+  letI : IsMulCommutative (Algebra.adjoin ℂ (Set.range m)) :=
+    Algebra.isMulCommutative_adjoin ℂ (by
+      rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ _
+      exact hm i j)
   (LinearMap.applyₗ f₀ ∘ₗ (Algebra.adjoin ℂ (Set.range m)).val.toLinearMap) ∘ₗ
     (MvPolynomial.aeval (fun i => (⟨m i, Algebra.subset_adjoin ⟨i, rfl⟩⟩ : Algebra.adjoin ℂ (Set.range m)))).toLinearMap
 

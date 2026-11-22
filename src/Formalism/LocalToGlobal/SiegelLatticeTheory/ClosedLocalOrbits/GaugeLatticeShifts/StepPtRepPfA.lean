@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,11 +57,13 @@ theorem formB_apply (x y : Fin n → ℂ) : formB ε x y = hJ ε x y := rfl
 
 theorem hJ_sum_right {ι : Type*} (s : Finset ι) (x : Fin n → ℂ) (y : ι → Fin n → ℂ) :
     hJ ε x (∑ i ∈ s, y i) = ∑ i ∈ s, hJ ε x (y i) := by
-  simp only [← formB_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← formB_apply, map_sum]
 
 theorem hJ_sum_left {ι : Type*} (s : Finset ι) (x : ι → Fin n → ℂ) (y : Fin n → ℂ) :
     hJ ε (∑ i ∈ s, x i) y = ∑ i ∈ s, hJ ε (x i) y := by
-  simp only [← formB_apply, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← formB_apply, map_sum, LinearMap.sum_apply]
 
 theorem hJ_mulVec (A : Matrix (Fin n) (Fin n) ℂ) (x y : Fin n → ℂ) :
     hJ ε (A *ᵥ x) (A *ᵥ y) = star x ⬝ᵥ ((Aᴴ * Formalism.REAL.Jm ε * A) *ᵥ y) := by
@@ -109,7 +115,8 @@ theorem expand_of_dual {ι : Type*} [Fintype ι] [DecidableEq ι] (φ d : ι →
     (hcard : Fintype.card ι = n) (hd : ∀ j i, hJ ε (d j) (φ i) = if j = i then 1 else 0)
     (v : Fin n → ℂ) : v = ∑ i, hJ ε (d i) v • φ i := by
   have hli : LinearIndependent ℂ d := li_of_pair ε d φ 1 (by simp) (fun j i => by
-    rw [← hJ_conj, hd, one_apply]
+    rw [← hJ_conj, hd]
+    change star (if i = j then (1 : ℂ) else 0) = if j = i then 1 else 0
     by_cases hij : i = j
     · subst hij; simp
     · simp [hij, Ne.symm hij])
@@ -152,7 +159,8 @@ theorem wittFam {ι : Type*} [Fintype ι] (s t : ι → Fin n → ℂ) (hs : Lin
   have hfsum : ∀ x : U, f x = ∑ i, bs.repr x i • t i := by
     intro x
     have := congrArg f (bs.sum_repr x)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_smul, hf] at this
     exact this.symm
   have e1 : ∀ x : U, Finsupp.linearCombination ℂ t (bs.repr x) = f x := fun x => by

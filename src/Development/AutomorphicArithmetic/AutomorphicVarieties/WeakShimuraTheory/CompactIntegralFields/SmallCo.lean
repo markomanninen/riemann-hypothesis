@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.SmallExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CoefSup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.SmallExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CoefSup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -79,7 +83,7 @@ private theorem exists_map_eq_algebraMap_padicInt_of_isDvr {l : ℕ} [Fact l.Pri
     have e1 : f μ = f ((t.appr k : ℕ) : A) + f (w * π ^ k) := by rw [hw]; simp
     have e2 : 𝔞.a c (algebraMap ℤ_[l] c.O t) = 𝔞.a c (algebraMap ℤ_[l] c.O ((t.appr k : ℕ) : ℤ_[l]))
         + 𝔞.a c (algebraMap ℤ_[l] c.O (w' * (l : ℤ_[l]) ^ k)) := by
-      rw [hw', ← map_add, ← map_add]; simp
+      rw [hw', ← map_add (f := _), ← map_add (f := _)]; simp
     rw [hd_def, e1, e2]
     simp only [map_natCast, map_mul, map_pow]
     rw [hl]
@@ -170,7 +174,7 @@ private theorem exists_finset_coef_mem_subfield_closure_of_isDvr {l : ℕ} [Fact
     exact Subfield.subset_closure
       (Or.inr (Finset.mem_coe.mpr (Finset.mem_image_of_mem _ (Finset.mem_univ i))))
   | zero => rw [map_zero, map_zero]; exact Subfield.zero_mem _
-  | add x z _ _ hx hz => rw [map_add, map_add]; exact Subfield.add_mem _ hx hz
+  | add x z _ _ hx hz => rw [map_add (f := _), map_add (f := _)]; exact Subfield.add_mem _ hx hz
   | smul t x _ hx =>
     rw [Algebra.smul_def, map_mul, map_mul]
     refine Subfield.mul_mem _ ?_ hx
@@ -207,6 +211,7 @@ theorem UpperTheory.V.Ws.smallCo :
     exact isUnit_of_map_unit (𝔞.a c') y this⟩
   have hcl' : UpperTheory.V.CA.IsCL c'.O A' := ⟨inferInstance, hf'.complete, hloc, Module.Finite.of_finite⟩
   obtain ⟨S, hSmem, -, hco, hpow⟩ := UpperTheory.V.CA.cl_sub c'.O A' hcl'
+  letI : Algebra c'.O S := SubalgebraClass.toAlgebra (R := c'.O) (A := A') S
   haveI := hco
   have hmV : ∀ u : A', u ∈ maximalIdeal A' → f' u ∈ maximalIdeal 𝔞.V := fun u hu => map_nonunit f' u hu
   have hmS : ∀ u : S, u ∈ maximalIdeal S → f' u ∈ maximalIdeal 𝔞.V := by

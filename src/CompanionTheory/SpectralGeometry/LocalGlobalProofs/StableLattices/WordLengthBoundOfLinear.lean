@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaCore
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaCore
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants CompanionTheory.D.Upq.Sm CompanionTheory.Bmu
 
@@ -100,7 +104,8 @@ theorem wordBd_of_dsLin : DsLin → WordBd := by
     obtain ⟨Λ, hΛ⟩ := hD n Hm H σ hU v hv
     obtain ⟨c, hXc, hcb⟩ := hc X hX
     refine ⟨c, hcb, ?_⟩
-    rw [hΛ X hX, hXc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hΛ X hX, hXc, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, ← hΛ (b i) (hb i), Complex.coe_smul]
   have hlb : ∀ i, LieWd Hm [b i] := by

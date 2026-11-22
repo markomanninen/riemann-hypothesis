@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocDualGen
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocDualGen
+
+@[expose] public section
 
 noncomputable section
 open ValuativeRel IsDedekindDomain NumberField Formalism.MainNotions.S.Loc

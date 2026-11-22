@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 
@@ -29,13 +34,13 @@ theorem heckeSub_finite_free : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UP
       simp only [LinearMap.smul_apply, LinearMap.id_apply, natCast_zsmul] at hz
       rw [hz]; abel
     show o.eta (N • g (σ (Submodule.Quotient.mk x))) = o.eta (N • g x)
-    rw [hz', map_add, map_nsmul, smul_add, smul_smul, o.eta_add, o.eta_ker, _root_.mul_one]
+    rw [hz', map_add (f := _), map_nsmul, smul_add, smul_smul, o.eta_add, o.eta_ker, _root_.mul_one]
   · intro κ _ _ x h hh h1
     obtain ⟨x0, rfl⟩ := hh
     have hβ : x ≫ s = spMap (Spec.preimage (x ≫ s)).hom := (Spec.map_preimage _).symm
     obtain ⟨I, hI⟩ := o.geom κ x _ hβ
     have h2 : I.ev (N * k) (N • g x0) = 1 := by rw [← hI]; exact h1
-    obtain ⟨y, hy⟩ := (I.ker (N * k) (Nat.mul_pos hN hk) (Nat.Coprime.mul hNp hkp) _).1 h2
+    obtain ⟨y, hy⟩ := (I.ker (N * k) (Nat.mul_pos hN hk) (Nat.Coprime.mul_left hNp hkp) _).1 h2
     rw [hy, o.eta_ker]
 
 end GlobalTheory.UPel.HT.Hecke

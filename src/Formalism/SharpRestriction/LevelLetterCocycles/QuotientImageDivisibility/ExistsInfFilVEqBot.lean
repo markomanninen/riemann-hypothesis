@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -29,7 +33,7 @@ private theorem range_tensor_map_subtype_mono {S T : Submodule Qp BdR} (h : S �
   | zero => simp
   | tmul x y => exact LinearMap.mem_range.mpr ⟨x ⊗ₜ[Qp] ⟨(y : BdR), h y.2⟩, by simp⟩
   | add w₁ w₂ h₁ h₂ =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem h₁ h₂
 
 theorem filVB_anti : Antitone (FilV PD (LL := LL) (V := V)) := by
@@ -71,7 +75,7 @@ theorem coord_mem {ι : Type} (b : Basis ι Qp V) (a : ℤ) (z : V ⊗[Qp] BdR)
       TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
     exact Submodule.smul_of_tower_mem (PD.Fil a) _ y.2
   | add w₁ w₂ h₁ h₂ =>
-    rw [map_add, map_add, Finsupp.add_apply]
+    rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]
     exact add_mem h₁ h₂
 
 theorem filV_sep (z : V ⊗[Qp] BdR) (hz : ∀ a : ℤ, z ∈ FilV PD (LL := LL) (V := V) a) : z = 0 := by

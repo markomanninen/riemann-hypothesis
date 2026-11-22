@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEqAddOfRedVEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEqAddOfRedVEq
+
+@[expose] public section
 
 noncomputable section
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan Matrix Polynomial
@@ -216,9 +220,11 @@ theorem exists_real_ext {n : ℕ} (L : Matrix (Fin n) (Fin n) ℤ →ₗ[ℤ] �
             map_smul' := fun c X => by simp [Finset.mul_sum, mul_assoc] }, fun Y => ?_⟩
   simp only [LinearMap.coe_mk, AddHom.coe_mk, Matrix.map_apply]
   conv_rhs => rw [Matrix.matrix_eq_sum_single Y]
-  rw [map_sum]; push_cast
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]; push_cast
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]; push_cast
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]; push_cast
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [hsingle i j (Y i j)]; push_cast; ring
 
@@ -259,7 +265,8 @@ theorem main_matrix {n : ℕ} (G : Matrix (Fin n) (Fin n) ℤ) (hGs : Gᵀ = G)
     have := hL _ hY hY0
     rw [hexp] at this
     refine lt_of_lt_of_eq this ?_
-    simp only [map_sum, map_zsmul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, smul_eq_mul]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by simp only [Pm]
   obtain ⟨c, hc0, hc⟩ := quad_pos_real Pm hPpos
   obtain ⟨Λ, hΛ⟩ := exists_real_ext L
@@ -296,7 +303,8 @@ theorem main_matrix {n : ℕ} (G : Matrix (Fin n) (Fin n) ℤ) (hGs : Gᵀ = G)
       rw [Submodule.coe_sum] at h
       simp only [Submodule.coe_smul] at h
       exact h.symm
-    rw [hY', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hY', map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     have : cR (b.repr ⟨Y, hY⟩ i • e i) = ((b.repr ⟨Y, hY⟩ i : ℤ) : ℝ) • cR (e i) := by
       rw [map_zsmul, Int.cast_smul_eq_zsmul]
@@ -326,10 +334,12 @@ theorem main_matrix {n : ℕ} (G : Matrix (Fin n) (Fin n) ℤ) (hGs : Gᵀ = G)
     rw [hT, Matrix.transpose_smul, smul_mul_assoc, smul_mul_assoc, mul_smul_comm, smul_smul]
   have hLB : (L B : ℝ) = ∑ i, ∑ j, s i * s j * (Pm i j : ℝ) := by
     rw [← hΛ B, ← hcR, hBexp]
-    simp only [map_sum, map_smul, smul_eq_mul, hcR, hΛ, Pm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, hcR, hΛ, Pm]
   have hMB : (M B : ℝ) = ∑ i, ∑ j, s i * s j * (Qm i j : ℝ) := by
     rw [← hΜ B, ← hcR, hBexp]
-    simp only [map_sum, map_smul, smul_eq_mul, hcR, hΜ, Qm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, hcR, hΜ, Qm]
   have hs_le : ∀ i, |s i| ≤ ‖s‖ := fun i => by
     simpa [Real.norm_eq_abs] using norm_le_pi_norm s i
   have hbound : (M B : ℝ) ≤ ‖s‖ ^ 2 * K := by
@@ -439,7 +449,8 @@ theorem exists_pos_form {E : Type} [Field E] [NumberField E] [IsCMField E] (H : 
 
 theorem sum_toMatrix {X : Type} [AddCommGroup X] {n : ℕ} (b : Module.Basis (Fin n) ℤ X) (β : LinearMap.BilinForm ℤ X)
     (z : Fin n → ℤ) : ∑ j, ∑ k, z j * z k * LinearMap.BilinForm.toMatrix b β j k = β (∑ j, z j • b j) (∑ j, z j • b j) := by
-  simp only [LinearMap.BilinForm.toMatrix_apply, map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.BilinForm.toMatrix_apply, map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply,
     smul_eq_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => by ring

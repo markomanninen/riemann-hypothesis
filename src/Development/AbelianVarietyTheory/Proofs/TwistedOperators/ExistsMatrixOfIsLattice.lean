@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSplitPointFrameCharacter
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousSingleAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsGAtAllPlacesMul
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqUniformizerAndUnitAtPrime
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceCharacterConductorIntegers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColumnMemLatticeIffIdeal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitIdealCompletionAtPlaceEqIntegralAdelesAtPlac
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSplitPointFrameCharacter
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousSingleAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsGAtAllPlacesMul
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqUniformizerAndUnitAtPrime
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceCharacterConductorIntegers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColumnMemLatticeIffIdeal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitIdealCompletionAtPlaceEqIntegralAdelesAtPlac
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -28,12 +33,13 @@ open GlobalTheory.FinPl (SplitPt Frame)
 open GlobalTheory.SeeSaw (idV FI)
 
 theorem exists_matrix_of_isLattice {O K : Type} [CommRing O] [IsDomain O] [IsPrincipalIdealRing O] [Field K] [Algebra O K]
-    [IsFractionRing O K] {n : ℕ} (Λ : Submodule O (Fin n → K)) (hΛ : Λ.IsLattice K) :
+    [IsFractionRing O K] {n : ℕ} (Λ : Submodule O (Fin n → K)) (hΛ : Λ.IsFullLattice K) :
     ∃ b : Matrix (Fin n) (Fin n) K, Function.Injective b.mulVec ∧
       ∀ x : Fin n → K, (∀ i, x i ∈ (1 : Submodule O K)) ↔ b *ᵥ x ∈ Λ := by
+  letI : Λ.IsFullLattice K := hΛ
   haveI : Module.Free O Λ := Submodule.IsLattice.free K Λ
   haveI : Module.Finite O Λ := Module.Finite.iff_fg.2 hΛ.fg
-  let B := Module.finBasisOfFinrankEq O Λ ((Submodule.IsLattice.finrank_of_pi K Λ).trans (Fintype.card_fin n))
+  let B := Module.finBasisOfFinrankEq O Λ ((((Submodule.IsFullLattice.finrank_eq K Λ).trans (Module.finrank_fintype_fun_eq_card K))).trans (Fintype.card_fin n))
   let B' := B.extendOfIsLattice K
   have hB' : ∀ j, B' j = (B j : Fin n → K) := fun j => Module.Basis.extendOfIsLattice_apply K B j
   let b : Matrix (Fin n) (Fin n) K := Matrix.of fun i j => (B j : Fin n → K) i
@@ -95,7 +101,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 theorem dot_sec {n : Type} [Fintype n] (π : n → D.host.E) (y : n → k) :
     (fun i => incA D (π i)) ⬝ᵥ (fun i => p.sec (y i)) = p.sec ((fun i => p.pr (incA D (π i))) ⬝ᵥ y) := by
-  simp only [dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [mul_comm, GlobalTheory.FinPl.FrameLat.sec_mul_right, mul_comm]
 
@@ -169,7 +176,21 @@ theorem exists_matrix_lat {S : HSp D} {L : Lat S} (hL : IsSelfDualC S L) :
       ∀ x : Fin S.rank → k, (∀ i, x i ∈ (1 : Submodule 𝒪[k] k)) ↔ (fun i => p.sec ((b *ᵥ x) i)) ∈ latV S L (· = p.v) := by
   obtain ⟨β, hβ⟩ := ((GlobalTheory.InhPt.exists_splitPt_frame_char D).2 k p).1 S (Fin S.rank) 1 1 (mul_one _) (mul_one _)
   obtain ⟨Λ, h1, h2, -⟩ := GlobalTheory.FinPl.FrameLat.exists_lat D k p S _ β L hL
-  obtain ⟨b, hb, hx⟩ := exists_matrix_of_isLattice Λ h1
+  have hfull : Λ.IsFullLattice k := by
+    letI : Λ.IsLattice k := h1
+    refine { span_eq_top := ?_ }
+    apply top_unique
+    intro x _
+    obtain ⟨m, s, c, hs, hc, _⟩ := GlobalTheory.FinPl.FrameLat.exists_gen (p := p) hL
+    rw [hc x]
+    apply Submodule.sum_mem
+    intro l _
+    apply Submodule.smul_mem
+    apply Submodule.subset_span
+    apply (h2 _).2
+    rw [hβ, one_mulVec]
+    exact GlobalTheory.FinPl.FrameLat.sec_inc_mem (hs l)
+  obtain ⟨b, hb, hx⟩ := exists_matrix_of_isLattice Λ hfull
   refine ⟨b, hb, fun x => (hx x).trans ((h2 _).trans ?_)⟩
   rw [hβ, one_mulVec]
 
@@ -277,8 +298,8 @@ theorem pr_mem_of_valuation_le {w : HeightOneSpectrum (𝓞 D.host.E)} (hw : For
   rw [← h3, Valuation.map_mul, hs, mul_one] at hn
   exact hn
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem sec_mem_idV_iff {w : HeightOneSpectrum (𝓞 D.host.E)} (hw : Formalism.L2.NTheta.IsIdemAt p.e w) {ϖ : 𝒪[k]}
     (hϖ : Irreducible ϖ) {I : FI D} (hI : I ≠ 0) {n : ℕ} (hn : FractionalIdeal.count D.host.E w I = n) (t : k) :
     p.sec t ∈ idV I p.v ↔ ∃ z : 𝒪[k], t = (ϖ : k) ^ n * z := by
@@ -402,8 +423,8 @@ theorem count_stairIdeal_at_S0 (hq : OffQ D) {μ₀ : T} (hL : L.Is μ₀) (G : 
   push_cast
   ring
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 
+attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 theorem exists_splitPoint_at_S0 (P : Places L) {v : GlobalTheory.FinPl.Pl D} (hv : v ∈ P.S0) :
     ∃ (k : Type) (_ : Field k) (_ : ValuativeRel k) (_ : TopologicalSpace k) (_ : IsNonarchimedeanLocalField k)
       (p : SplitPt D k), p.v = v ∧ Formalism.L2.NTheta.IsIdemAt p.e (P.w v) := by

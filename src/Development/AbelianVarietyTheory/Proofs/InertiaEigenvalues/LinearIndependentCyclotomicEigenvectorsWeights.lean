@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.Foundations.PowLtFirstRadius
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateInvariantsTwist
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PowLtFirstRadius
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateInvariantsTwist
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Pst GlobalTheory.PMon TensorProduct
 open scoped Formalism.Per
@@ -56,7 +60,8 @@ theorem linIndep_of_eigen_weights : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l
       funext i
       have hi := congrFun hbrel i
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at hi ⊢
-      rw [← map_zero (Formalism.Per.σC (g : GQ l)), ← hi, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_zero (Formalism.Per.σC (g : GQ l)), ← hi, map_sum]
       simp only [map_mul]
     have h2 : ∑ j, (Formalism.Per.σC (g : GQ l) (b j) * e g (w j)) • v j = 0 := by
       have := congrArg (fun u => (A g).mulVec u) h1

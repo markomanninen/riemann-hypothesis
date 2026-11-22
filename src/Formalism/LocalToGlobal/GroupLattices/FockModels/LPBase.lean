@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.NablaLTwEqMap
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.NablaLTwEqMap
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -20,8 +24,6 @@ def muV : Vs →ₛₗ[φK] Vs' where
   toFun := fun x => ⟨μ x.1, hV _ x.2⟩
   map_add' := by intro x y; exact Subtype.ext (map_add μ x.1 y.1)
   map_smul' := by intro c x; exact Subtype.ext (map_smulₛₗ μ c x.1)
-
-theorem muV_coe (x : Vs) : ((muV μ Vs Vs' hV x : Vs') : X') = μ x.1 := rfl
 
 theorem bc_comap (A : Submodule R X) (A' : Submodule R' X') (hA : ∀ z ∈ A, z ∈ Vs) (h : BC μ A A') :
     BC (muV μ Vs Vs' hV) (A.comap (Vs.subtype.restrictScalars R)) (A'.comap (Vs'.subtype.restrictScalars R')) := by
@@ -98,13 +100,16 @@ include hx in
 theorem deltaS_apply (G : Module.Dual K V) (F : V) : deltaS φK x x' G (ν F) = φK (G F) := by
   have h1 : ν F = ∑ i, φK (x.repr F i) • x' i := by
     conv_lhs => rw [← x.sum_repr F]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smulₛₗ, hx]
   have h2 : G F = ∑ i, x.repr F i * G (x i) := by
     conv_lhs => rw [← x.sum_repr F]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul, smul_eq_mul]
-  rw [h1, h2, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, h2, map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, smul_eq_mul, map_mul]
   congr 1
@@ -124,7 +129,7 @@ theorem dual_mem (A : Submodule R V) (A' : Submodule R' V') (h : BC ν A A') (G 
   | add y z _ _ hy hz =>
     obtain ⟨a, ha⟩ := hy
     obtain ⟨b, hb⟩ := hz
-    exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
   | smul c y _ hy =>
     obtain ⟨a, ha⟩ := hy
     exact ⟨c * a, by rw [LinearMap.map_smul_of_tower, map_mul, ha, Algebra.smul_def]⟩
@@ -169,8 +174,11 @@ theorem bc_Hten (hinj : Function.Injective (algebraMap O Kf)) (hinj' : Function.
     (Λ : Fin n' → Submodule O (Fin (m + 1) → Kf)) (Λ' : Fin n' → Submodule O' (Fin (m + 1) → Kf'))
     (hΛ : ∀ s, IsLattice O (Λ s)) (hb : ∀ s, BC (vecS φ φK hφ (m + 1)) (Λ s) (Λ' s)) :
     BC (MvPolynomial.map φK) (Hten O lam0 Λ) (Hten O' lam0 Λ') :=
-  bc_tensorLat φ φK hφ _ _ fun s =>
-    base_change_H0 φ φK hφ hinj hinj' m _ (kp_lamAt_antitone lam0 hd s) _ _ (hΛ s) (hb s)
+  bc_tensorLat φ φK hφ
+    (fun s => H0 O m (lamAt lam0 s) (Λ s))
+    (fun s => H0 O' m (lamAt lam0 s) (Λ' s)) fun s =>
+      base_change_H0 φ φK hφ hinj hinj' m (lamAt lam0 s) (kp_lamAt_antitone lam0 hd s)
+        (Λ s) (Λ' s) (hΛ s) (hb s)
 
 theorem Hten_le_V {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1) → ℤ) (hd : IsDominant lam0)
     (Λ : Fin n' → Submodule O (Fin (m + 1) → Kf)) (hΛ : ∀ s, IsLattice O (Λ s)) :
@@ -194,7 +202,8 @@ theorem Hten_le_V {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1) → ℤ) (hd : IsD
 theorem bc_Vsp {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1) → ℤ) (hd : IsDominant lam0) :
     BC (MvPolynomial.map φK) (Vsp Kf lam0) (Vsp Kf' lam0) := by
   unfold Vsp
-  refine bc_tensorLat φK φK (fun _ => rfl) _ _ fun s => ?_
+  refine bc_tensorLat φK φK (fun _ => rfl) (S := Fin n') (k := m + 1) (n := m + 1) _ _ ?_
+  intro s
   have hanti := kp_lamAt_antitone lam0 hd s
   beta_reduce
   rw [if_pos hanti, if_pos hanti]
@@ -362,7 +371,8 @@ theorem lpAt_dom (hφ : ∀ x : O, φK (algebraMap O Kf x) = algebraMap O' Kf' (
     have e2 : ∀ l : Fin n, ∑ i, algebraMap O' Kf' (φ (Mat jj i)) * φK (be p r lam0 (F i) (u (Pi.single l 1)).1) =
         algebraMap O' Kf' (φ ((p : O) ^ D * (Pi.single l (1 : O) : Fin n → O) jj)) := by
       intro l
-      rw [← hφ, ← hu (Pi.single l 1) jj, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hφ, ← hu (Pi.single l 1) jj, map_sum]
       exact Finset.sum_congr rfl fun i _ => by rw [map_mul, hφ]
     simp only [e1, Matrix.map_apply]
     calc ∑ i, algebraMap O' Kf' (φ (Mat jj i)) *

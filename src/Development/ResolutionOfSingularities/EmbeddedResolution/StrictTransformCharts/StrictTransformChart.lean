@@ -1,23 +1,28 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChartComputations
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateDivisorBlowup
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateSubstitution
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateBlowupChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChartComputations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateDivisorBlowup
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateSubstitution
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateBlowupChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory Opposite AlgebraicGeometry TopologicalSpace
@@ -45,7 +50,7 @@ variable {X X₁ : Scheme.{u}} {k : Type u} [Field k]
   {p : X ⟶ Spec (CommRingCat.of k)} {π : X₁ ⟶ X} {U : X.Opens} {m : ℕ}
   {c : EtaleChart p U m} {S : Finset (Fin m)} {s : Fin m}
 
-private theorem blowupChart_restrict_map_comp_coordBlowupSubstMap (B : BlowupChart π c S s) (V : X₁.Opens)
+theorem blowupChart_restrict_map_comp_coordBlowupSubstMap (B : BlowupChart π c S s) (V : X₁.Opens)
     (hV : V ≤ B.domain) :
     (B.chart.restrict hV).map ≫ coordBlowupSubstMap k m S s =
       π.resLE U V (hV.trans B.domain_le) ≫ c.map := by
@@ -65,9 +70,6 @@ def BlowupChart.restrict (B : BlowupChart π c S s) (V : X₁.Opens) (hV : V ≤
 
 @[simp] theorem BlowupChart.restrict_domain (B : BlowupChart π c S s) (V : X₁.Opens)
     (hV : V ≤ B.domain) : (B.restrict V hV).domain = V := rfl
-
-theorem BlowupChart.restrict_chart (B : BlowupChart π c S s) (V : X₁.Opens)
-    (hV : V ≤ B.domain) : (B.restrict V hV).chart = B.chart.restrict hV := rfl
 
 theorem BlowupChart.exists_isAffineOpen_mem_le_domain (B : BlowupChart π c S s) (x : X₁)
     (hx : x ∈ B.domain) :
@@ -172,7 +174,7 @@ theorem restrictIdeal_comap_subschemeι_eq_coordIdeal (c : EtaleChart p U m)
   exact (Scheme.IdealSheafData.equivOfIsAffine
     (X := (H.subschemeι ⁻¹ᵁ U).toScheme)).injective hideal
 
-private theorem strictTransform_preimage_domain_le_preimage (B : BlowupChart π c S s)
+theorem strictTransform_preimage_domain_le_preimage (B : BlowupChart π c S s)
     (Z H : X.IdealSheafData)
     (q : (Blowup.strictTransform π Z H).subscheme ⟶ H.subscheme)
     (hq : q ≫ H.subschemeι = (Blowup.strictTransform π Z H).subschemeι ≫ π) :
@@ -182,7 +184,7 @@ private theorem strictTransform_preimage_domain_le_preimage (B : BlowupChart π 
   rw [← hq] at h2
   exact h2
 
-private theorem restrictToSubscheme_map_comp_affineSpaceFinToSpec (B : BlowupChart π c S s)
+theorem restrictToSubscheme_map_comp_affineSpaceFinToSpec (B : BlowupChart π c S s)
     (hB : IsAffineOpen B.domain) (Z H : X.IdealSheafData)
     [QuasiCompact (strictTransformι π Z H)]
     (hs : s ∈ S) (hZ : restrictIdeal Z U = c.coordIdeal S)
@@ -197,7 +199,7 @@ private theorem restrictToSubscheme_map_comp_affineSpaceFinToSpec (B : BlowupCha
     (B.restrictIdeal_strictTransform_of_mem_of_ne Z H hs hZ a ha has hH)).comp_struct
   rw [h, ← Category.assoc (Blowup.strictTransform π Z H).subschemeι π p, ← hq, Category.assoc]
 
-private theorem restrictToSubscheme_map_comp_coordBlowupSubstMap (B : BlowupChart π c S s)
+theorem restrictToSubscheme_map_comp_coordBlowupSubstMap (B : BlowupChart π c S s)
     (hU : IsAffineOpen U) (hB : IsAffineOpen B.domain) (Z H : X.IdealSheafData)
     [QuasiCompact (strictTransformι π Z H)]
     (hs : s ∈ S) (hZ : restrictIdeal Z U = c.coordIdeal S)
@@ -337,17 +339,6 @@ def BlowupChart.restrictToStrictTransform (B : BlowupChart π c S s)
         (B.restrictIdeal_strictTransform_of_mem_of_ne Z H hs hZ a ha has hH)).isEtale }
   comm :=
     restrictToSubscheme_map_comp_coordBlowupSubstMap B hU hB Z H hs hZ a ha has hH s' hs' q hq
-
-@[simp] theorem BlowupChart.restrictToStrictTransform_domain (B : BlowupChart π c S s)
-    (hU : IsAffineOpen U) (hB : IsAffineOpen B.domain) (Z H : X.IdealSheafData)
-    [QuasiCompact (strictTransformι π Z H)]
-    (hs : s ∈ S) (hZ : restrictIdeal Z U = c.coordIdeal S)
-    (a : Fin m) (ha : a ∈ S) (has : a ≠ s) (hH : restrictIdeal H U = c.coordIdeal {a})
-    (s' : Fin (m - ({a} : Finset (Fin m)).card)) (hs' : complOrderEmb m {a} s' = s)
-    (q : (Blowup.strictTransform π Z H).subscheme ⟶ H.subscheme)
-    (hq : q ≫ H.subschemeι = (Blowup.strictTransform π Z H).subschemeι ≫ π) :
-    (B.restrictToStrictTransform hU hB Z H hs hZ a ha has hH s' hs' q hq).domain =
-      (Blowup.strictTransform π Z H).subschemeι ⁻¹ᵁ B.domain := rfl
 
 theorem BlowupChart.restrictToStrictTransform_chart_map (B : BlowupChart π c S s)
     (hU : IsAffineOpen U) (hB : IsAffineOpen B.domain) (Z H : X.IdealSheafData)

@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.MinorsOnOfDD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StCut1p
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.MinorsOnOfDD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StCut1p
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,15 +18,22 @@ open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.Fourier
 variable {k r : ℕ} {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
 
 theorem isHaarOn_smul {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ) {c : ℝ≥0} (hc : 0 < c) :
-    IsHaarOn U ((c : ℝ≥0∞) • μ) where
-  conc := by simp [h.conc]
-  left a ha := by rw [Measure.map_smul, h.left a ha]
-  right a ha := by rw [Measure.map_smul, h.right a ha]
-  finite_compact K hK := ENNReal.mul_lt_top ENNReal.coe_lt_top (h.finite_compact K hK)
-  ne_zero := by
-    intro h0
+    IsHaarOn U ((c : ℝ≥0∞) • μ) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.conc]
+  · intro a ha
+    have hcont : Continuous (lmulM a : Mt k r → Mt k r) :=
+      continuous_const.matrix_mul continuous_id
+    rw [Measure.map_smul (c : ℝ≥0∞) hcont.measurable.aemeasurable, h.left a ha]
+  · intro a ha
+    have hcont : Continuous (rmulF a : Mt k r → Mt k r) :=
+      continuous_id.matrix_mul continuous_const
+    rw [Measure.map_smul (c : ℝ≥0∞) hcont.measurable.aemeasurable, h.right a ha]
+  · intro K hK
+    exact ENNReal.mul_lt_top ENNReal.coe_lt_top (h.finite_compact K hK)
+  · intro h0
     have h1 : (c : ℝ≥0∞) * μ Set.univ = 0 := by
-      rw [← smul_eq_mul, ← Measure.smul_apply, h0]; rfl
+      rw [← smul_eq_mul, ← smul_apply, h0]; rfl
     rcases mul_eq_zero.1 h1 with h2 | h2
     · exact absurd h2 (by exact_mod_cast hc.ne')
     · exact h.ne_zero (Measure.measure_univ_eq_zero.1 h2)

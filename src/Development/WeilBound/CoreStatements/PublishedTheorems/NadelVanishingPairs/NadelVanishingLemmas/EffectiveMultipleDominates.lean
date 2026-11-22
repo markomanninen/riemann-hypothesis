@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CartierDivisorMultCharacterize
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CartierDivisorMultCharacterize
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Filter
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -13,31 +17,6 @@ open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.CechPic
 namespace GlobalTheory.Domin
 
 variable {X : Scheme.{0}} [IsIntegral X] [IsLocallyNoetherian X]
-
-theorem mult_zero' (z : X) : (0 : CartierDiv X).mult z = 0 := by
-  have h₀ := CartierDiv.mult_add (0 : CartierDiv X) 0 z
-  rw [add_zero] at h₀
-  omega
-
-theorem mult_nsmul'' (E : CartierDiv X) (n : ℕ) (z : X) : (n • E).mult z = n * E.mult z := by
-  induction n with
-  | zero => rw [zero_nsmul, mult_zero']; simp
-  | succ n ih => rw [succ_nsmul, CartierDiv.mult_add, ih]; push_cast; ring
-
-theorem mult_sub' (D E : CartierDiv X) (z : X) : (D - E).mult z = D.mult z - E.mult z := by
-  have h := CartierDiv.mult_add (D - E) E z
-  rw [sub_add_cancel] at h
-  omega
-
-theorem eq_of_specializes_of_coheight (z z' : X) (h : z' ⤳ z) (hz : Order.coheight z = 1)
-    (hz' : Order.coheight z' = 1) : z' = z := by
-  by_cases h' : z' ≤ z
-  · exact (h.antisymm h').eq
-  · exfalso
-    have hlt : z < z' := lt_of_le_not_ge h h'
-    have h2 := Order.coheight_strictAnti hlt (by simp [hz'])
-    rw [hz, hz'] at h2
-    exact lt_irrefl _ h2
 
 end GlobalTheory.Domin
 
@@ -153,8 +132,8 @@ private theorem finite_coheight_one_inter_supp {X : Scheme.{0}} [IsIntegral X] [
   have hteq := eq_of_mem_supp_specializes_coheight_one D _ z (hkD ht.mem) (ht.specializes hzk) hz
   exact Set.mem_biUnion hkS (show IsGenericPoint z (k : Set X) from hteq ▸ ht)
 
-open GlobalTheory.Domin in
 
+open GlobalTheory.Domin in
 theorem GlobalTheory.effDominates : ∀ (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoetherian X] [GlobalTheory.IsNormalScheme X] [CompactSpace X] (D E : CartierDiv X), E.Eff → D.supp ≤ E.supp → ∃ c : ℕ, (c • E - D).Eff := by
   intro X _ _ _ _ D E hE hsupp
   classical

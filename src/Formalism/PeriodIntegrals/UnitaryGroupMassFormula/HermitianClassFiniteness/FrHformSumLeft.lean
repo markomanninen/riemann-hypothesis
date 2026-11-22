@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.HformSumRight
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.HformSumRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ section FrameEx
 
 variable {I : Formalism.MainNotions.S.AutInst} {S : Set (Fin I.n → I.E)}
 
-variable (I S) in
 
+variable (I S) in
 def frW : Submodule I.E (Fin I.n → I.E) where
   carrier := {y | ∀ s ∈ S, hform (starRingEnd I.E) I.J s y = 0}
   add_mem' := fun {x y} hx hy s hs => by rw [hform_add_right, hx s hs, hy s hs, add_zero]

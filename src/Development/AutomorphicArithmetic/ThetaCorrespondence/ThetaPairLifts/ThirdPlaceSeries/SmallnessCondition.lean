@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.LiftFrameEmbeddingBase
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExportSt
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LiftFrameEmbeddingBase
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExportSt
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -11,7 +15,6 @@ namespace GlobalTheory.ExpFrame
 open Formalism.CohomologicalDescent.DepthNonnegative
 section Tests
 variable (O : Type) [CommRing O] (N : ℕ) {ι : Type} [DecidableEq ι] (lam : ι → ℕ → ℕ) (ϖ : O)
-local instance  : Ring (alg O N lam) := Subalgebra.toRing _
 end Tests
 end GlobalTheory.ExpFrame
 end

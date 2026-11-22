@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.UniqueA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.UniqueA
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,13 +44,16 @@ theorem kType_unique {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T T' : KType ε
     have hs : ∀ i j, Matrix.single i j (X i j) = X i j • Matrix.single i j (1 : ℂ) := fun i j => by
       rw [Matrix.smul_single, smul_eq_mul, mul_one]
     conv_lhs => rw [Matrix.matrix_eq_sum_single X]
-    simp only [hs, map_sum, map_smul, ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hs, map_sum, map_smul, ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply]
   have hdτ : ∀ X : Matrix (Fin n) (Fin n) ℂ, X * Jm ε = Jm ε * X → ∀ v : T.V,
       φ (T.dτ X v) = T'.dτ X (φ v) := by
     intro X hX v
-    rw [expand T X v, expand T' X (φ v), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [expand T X v, expand T' X (φ v), map_sum]
     refine Finset.sum_congr rfl (fun a _ => ?_)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun b _ => ?_)
     by_cases h : ε a = ε b
     · rw [map_smul]

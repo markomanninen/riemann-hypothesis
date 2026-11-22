@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 namespace GlobalTheory.IndependentInfimum
 
@@ -63,7 +67,7 @@ theorem main {E I C : Type} [AddCommGroup E] [Module ℂ E] [FiniteDimensional �
       | mem c w hw =>
         rw [hA c w hw j, hA c w hw i, map_smul, map_smul, hA c w hw j, hA c w hw i, smul_comm]
       | zero => simp
-      | add a b _ _ ha hb => simp only [map_add, ha, hb]
+      | add a b _ _ ha hb => simp only [map_add (f := _), ha, hb]
     ext v
     have hv : e v ∈ ⨆ c, Ec c := by rw [hE]; exact ⟨v, rfl⟩
     have := key _ hv

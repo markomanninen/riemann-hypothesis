@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ProdFormulaE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ResCharIff
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.BasisEApply
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.DenEqOneOfForallPadicNormLeOne
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ProdFormulaE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ResCharIff
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.BasisEApply
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.DenEqOneOfForallPadicNormLeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,7 +116,14 @@ theorem clause2 (hT : Tr.TrSum) (hI : St.TrInt) (hR : St.ResCharIff) (h2 : Modul
         Complex.exp (2 * Real.pi * Complex.I * (((Algebra.trace ℚ E x : ℚ) : ℂ))) := by
   classical
   set z := Algebra.trace F E x with hzdef
-  choose a ha hn he using fun p => Base.psiE_ιE (L p) h2 x
+  have hex (p : HeightOneSpectrum (𝓞 F)) :
+      ∃ a : ℚ, (∃ n : ℕ, a.den = (resChar p) ^ n) ∧
+        (haveI := (L p).ellPrime
+         ‖Algebra.trace ℚ_[resChar p] (L p).Fp ((L p).ιF z) - (a : ℚ_[resChar p])‖ ≤ 1) ∧
+        (L p).psiE ((L p).ιE x) = Complex.exp (2 * Real.pi * Complex.I * (a : ℂ)) := by
+    obtain ⟨a, ha, hn, he⟩ := (L p).psiE_def ((L p).ιE x)
+    exact ⟨a, ha, by rwa [Base.trace_ιE_ql (L p) h2] at hn, he⟩
+  choose a ha hn he using hex
   have hfun : (fun p => (L p).psiE ((L p).ιE x)) =
       fun p => Complex.exp (2 * Real.pi * Complex.I * ((a p : ℚ) : ℂ)) := funext he
   rw [hfun]

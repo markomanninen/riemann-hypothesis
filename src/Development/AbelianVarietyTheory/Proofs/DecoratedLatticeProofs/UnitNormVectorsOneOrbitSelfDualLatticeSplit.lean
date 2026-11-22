@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittCoreEmbeddingPreservesSupportedUnitarySubgro
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticesSingleOrbitTamePlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatSmulMatrixMulVecCompletedSelfDual
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.LatticeAndConstantUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittCoreEmbeddingPreservesSupportedUnitarySubgro
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticesSingleOrbitTamePlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatSmulMatrixMulVecCompletedSelfDual
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.LatticeAndConstantUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem hermAt_mulVec (S : HSp D) {k : ℕ} (a : Mx D S.rank k) (x : Fin S.rank 
     hermAt S x (a *ᵥ y) = (fun i => cA D (y i)) ⬝ᵥ ((adj a ⬝ gA S) *ᵥ x) := by
   have h : (fun i => cA D ((a *ᵥ y) i)) = (fun i => cA D (y i)) ᵥ* adj a := by
     funext i
-    simp only [Matrix.mulVec, Matrix.vecMul, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, Matrix.vecMul, dotProduct, map_sum, map_mul]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   rw [hermAt_eq, h, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec _ (adj a)]
 
@@ -39,7 +44,7 @@ theorem hermAt_jB {S A B : HSp D} (o : OrthDec S A B) (y : Fin S.rank → AE D) 
 
 theorem hermAt_jA {S A B : HSp D} (o : OrthDec S A B) (x : Fin A.rank → AE D) (y : Fin S.rank → AE D) :
     hermAt S (o.jA *ᵥ x) y = hermAt A x (o.pA *ᵥ y) := by
-  have h : gA S ⬝ o.jA = adj o.pA ⬝ gA A := by
+  have h : gA S * o.jA = adj o.pA * gA A := by
     rw [o.gA_eq]
     simp only [Matrix.add_mul, Matrix.mul_assoc, o.pA_jA, o.pB_jA, Matrix.mul_one, Matrix.mul_zero, add_zero]
   rw [hermAt_mulVec, hermAt_eq, Matrix.mulVec_mulVec, h]
@@ -49,7 +54,8 @@ theorem exists_den {P : Pl D → Prop} {m n : ℕ} (X : Matrix (Fin m) (Fin n) (
   choose k hk hX using fun p : Fin m × Fin n => GlobalTheory.LatMatch.exists_nat_smul_intAE (finPart D (X p.1 p.2))
   refine ⟨∏ p, k p, Finset.prod_pos fun p _ => hk p, fun y hy i => ⟨?_, ?_⟩⟩
   · exact Ideal.mul_mem_left _ _ (mulVec_mem_idAt X (fun j => (hy j).1) i)
-  · simp only [Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct, Finset.mul_sum, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct, Finset.mul_sum, map_sum]
     refine sum_mem fun j _ => ?_
     rw [← mul_assoc, map_mul]
     refine GlobalTheory.LatMatch.mul_mem_intAE' D ?_ (hy j).2
@@ -147,7 +153,7 @@ theorem mem_latV_of_forall {S : HSp D} {L : Lat S} {P : Pl D → Prop} {y : Fin 
     refine Submodule.mul_induction_on hc (fun a ha b hb => ?_) fun c c' h1 h2 => ?_
     · rw [mul_comm, map_mul, mul_smul]
       exact smul_mem_latV hb (h a ha)
-    · rw [map_add, add_smul]; exact add_mem h1 h2
+    · rw [map_add (f := _), add_smul]; exact add_mem h1 h2
   have := key 1 (by
     rw [← FractionalIdeal.coe_mul, mul_inv_cancel₀ (GlobalTheory.ModelLatticeCheck.AA_ne_zero D)]
     exact FractionalIdeal.one_mem_one _)
@@ -173,7 +179,7 @@ theorem emb_mem_grpAt {S A B : HSp D} (o : OrthDec S A B) {P : Pl D → Prop} {a
     o.emb (a, 1) ∈ grpAt S P := by
   have ha' := (mem_congGrp_iff A (idAt D P) a).1 ha
   refine (mem_congGrp_iff S (idAt D P) _).2 fun i j => ?_
-  have e : mt S (o.emb (a, 1)) - 1 = o.jA ⬝ (mt A a - 1) ⬝ o.pA := by
+  have e : mt S (o.emb (a, 1)) - 1 = o.jA * (mt A a - 1) * o.pA := by
     rw [o.mt_emb, ← o.sum_eq_one, Matrix.mul_sub, Matrix.sub_mul, mt_one, Matrix.mul_one, Matrix.mul_one]
     abel
   rw [← Matrix.sub_apply, e, Matrix.mul_apply]

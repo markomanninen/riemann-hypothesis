@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.W (Plc Lp)
@@ -21,8 +25,8 @@ private theorem ua_ext {g h : UA E n} (h1 : cInf g = cInf h) (h2 : ∀ u, cLoc u
   refine Units.ext (matAf_ext fun u => ?_)
   exact congrArg Units.val (h2 u)
 
-open Classical in
 
+open Classical in
 private def idem (P : HeightOneSpectrum (𝓞 E) → Prop) : Af E :=
   ⟨fun u => if P u then 1 else 0, Filter.Eventually.of_forall fun u => by
     dsimp only
@@ -50,7 +54,7 @@ private theorem map_cutM_neg {P : HeightOneSpectrum (𝓞 E) → Prop} (A : Matr
   refine Matrix.ext fun i j => ?_
   change pLoc E u (idem P * A i j + (1 - idem P) * (1 : Matrix (Fin n) (Fin n) (Af E)) i j) =
     (1 : Matrix (Fin n) (Fin n) (u.adicCompletion E)) i j
-  rw [map_add, map_mul, map_mul, map_sub, map_one, h0, Matrix.one_apply, Matrix.one_apply]
+  rw [map_add (f := _), map_mul, map_mul, map_sub, map_one, h0, Matrix.one_apply, Matrix.one_apply]
   split_ifs <;> simp
 
 private theorem cutM_mul (P : HeightOneSpectrum (𝓞 E) → Prop) {A B : Matrix (Fin n) (Fin n) (Af E)}
@@ -108,8 +112,8 @@ theorem UpperTheory.V.Z.Sym.Al.factor :
         (∀ x ∈ locU n w, ∀ y ∈ away n w, x * y = y * x) ∧
         (∀ g : UA L n, ∃ x ∈ locU n w, ∃ y ∈ away n w, g = x * y) ∧
         (∀ w' : Plc L, w'.under (𝓞 (Lp L)) ≠ w.under (𝓞 (Lp L)) → locU n w' ≤ away n w) ∧ infU L n ≤ away n w ∧
-        (∀ x ∈ locU n w, x ∈ Kall L n ↔ cLoc w x ∈ GlobalTheory.LFun.KGL w n) ∧
-        ∀ x ∈ locU n w, ∀ y ∈ away n w, (x * y ∈ Kall L n ↔ x ∈ Kall L n ∧ y ∈ Kall L n) := by
+        (∀ x ∈ locU n w, x ∈ Kall (L := L) n ↔ cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n)) ∧
+        ∀ x ∈ locU n w, ∀ y ∈ away n w, (x * y ∈ Kall (L := L) n ↔ x ∈ Kall (L := L) n ∧ y ∈ Kall (L := L) n) := by
   intro L _ _ _ n w
   have hfin : ∀ {x : UA L n}, x ∈ locU n w → cInf x = 1 := fun hx => (Subgroup.mem_inf.1 hx).1
   have hout : ∀ {x : UA L n}, x ∈ locU n w → ∀ u : Plc L, u.under (𝓞 (Lp L)) ≠ w.under (𝓞 (Lp L)) →
@@ -121,11 +125,11 @@ theorem UpperTheory.V.Z.Sym.Al.factor :
   have haway : ∀ {y : UA L n}, (∀ u : Plc L, u.under (𝓞 (Lp L)) = w.under (𝓞 (Lp L)) → cLoc u y = 1) →
       y ∈ away n w := fun h =>
     Subgroup.mem_iInf.2 fun u => Subgroup.mem_iInf.2 fun hu => MonoidHom.mem_ker.2 (h u hu)
-  have hK : ∀ {x : UA L n}, x ∈ Kall L n → ∀ u : Plc L, cLoc u x ∈ GlobalTheory.LFun.KGL u n := fun hx u =>
+  have hK : ∀ {x : UA L n}, x ∈ Kall (L := L) n → ∀ u : Plc L, cLoc u x ∈ GlobalTheory.LFun.KGL u (n := n) := fun hx u =>
     Subgroup.mem_comap.1 (Subgroup.mem_iInf.1 (Subgroup.mem_inf.1 hx).2 u)
-  have hKmk : ∀ {x : UA L n}, x ∈ finU L n → (∀ u : Plc L, cLoc u x ∈ GlobalTheory.LFun.KGL u n) → x ∈ Kall L n :=
+  have hKmk : ∀ {x : UA L n}, x ∈ finU (E := L) (n := n) → (∀ u : Plc L, cLoc u x ∈ GlobalTheory.LFun.KGL u (n := n)) → x ∈ Kall (L := L) n :=
     fun h1 h2 => Subgroup.mem_inf.2 ⟨h1, Subgroup.mem_iInf.2 fun u => Subgroup.mem_comap.2 (h2 u)⟩
-  have hKf : ∀ {x : UA L n}, x ∈ Kall L n → x ∈ finU L n := fun hx => (Subgroup.mem_inf.1 hx).1
+  have hKf : ∀ {x : UA L n}, x ∈ Kall (L := L) n → x ∈ finU (E := L) (n := n) := fun hx => (Subgroup.mem_inf.1 hx).1
   refine ⟨fun x hx y hy => ?_, fun g => ?_, fun w' hw' x hx => ?_, fun x hx => ?_, fun x hx => ⟨fun h => hK h w, fun h => ?_⟩,
     fun x hx y hy => ⟨fun h => ?_, fun h => mul_mem h.1 h.2⟩⟩
   · refine FactorizationTer.ua_ext ?_ fun u => ?_

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsLinearIndependentNormLeSuccMin
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsLinearIndependentSqrtEqSuccMinQuad
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsLinearIndependentNormLeSuccMin
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsLinearIndependentSqrtEqSuccMinQuad
+
+@[expose] public section
 
 noncomputable section
 
@@ -165,8 +169,8 @@ theorem exists_short_basis_adapted_of_subset_span (L : Submodule ℤ E) [Discret
   · simpa only [hc] using hflag
   · simpa only [hc] using hn
 
-omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] in
 
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] in
 theorem norm_sq_add_sum_Iio_le {n : ℕ} {v : Fin n → E} {i : Fin n} {r : ℝ}
     (h : ∀ j ≤ i, ‖v j‖ ≤ r) :
     ‖v i‖ ^ 2 + (1 / 4) * ∑ j ∈ Finset.Iio i, ‖v j‖ ^ 2 ≤ (((i : ℕ) + 1 + 3 : ℝ) / 4) * r ^ 2 := by

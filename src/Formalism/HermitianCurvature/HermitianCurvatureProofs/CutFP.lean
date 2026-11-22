@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothGConst
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMemOfKappa
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothGConst
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMemOfKappa
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -19,10 +23,6 @@ def GoodTLeaf : Prop :=
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] (π : Q.Mx k ρ → (Wp →L[ℂ] Wp)) (π' : Q.Mx k ρ → (Wq →L[ℂ] Wq)),
     (∀ c : Fin ρ → ℂ, c ∈ OmX ρ) → (∀ c c' : Fin ρ → ℂ, c = c') →
     ∀ (X : Q.ActualOps k ρ z z' π π') (Y : ℂ) (a b : Fin 2), ParameterFamilyAlgebra.Good z z' π π' (X.t Y a b)
-
-def RdVLeaf : Prop :=
-  ∀ (k ρ : ℕ) (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] (X : Q.Mx k ρ),
-    Formalism.FourierDecayAlt.P.Qx3.LieLev (Fin.last ρ) X → ParameterFamilyAlgebra.ParOK k ρ (E := E) (RdV X)
 
 section Asm
 

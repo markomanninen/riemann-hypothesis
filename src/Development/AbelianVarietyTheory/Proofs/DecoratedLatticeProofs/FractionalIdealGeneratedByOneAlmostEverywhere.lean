@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+
+@[expose] public section
+
 open Formalism.BasicNotions IsDedekindDomain NumberField
 
 namespace GlobalTheory.IdeleGen

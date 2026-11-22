@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.RhGradStatementPfA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.RhGradStatementPfA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.RgC
 
@@ -140,7 +144,8 @@ theorem block (hm : 0 < min p q) {v0 : V (nD f p q)} (hv0 : v0 ∈ Dset f p q) (
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
       rw [← Complex.normSq_conj]
       congr 1
-      simp [Matrix.mul_apply, conjTranspose_apply, map_sum, Complex.star_def, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.mul_apply, conjTranspose_apply, map_sum, Complex.star_def, mul_comm]
     refine ⟨Q, ?_, ?_, ?_, ?_⟩
     · rw [hQ]; exact quad_contDiff _ _ hℓ
     · intro ξ; rw [hQ]; exact levi_quad_nonpos _ _ hℓ v0 ξ

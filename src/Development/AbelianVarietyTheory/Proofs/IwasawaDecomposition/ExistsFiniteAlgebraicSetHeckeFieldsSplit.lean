@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
-import Formalism.LocalToGlobal.Columns.PathCountSymmetricHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SameCfgRefl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowsLiftsHeckeOperatorsCommute
-import Formalism.LocalToGlobal.Columns.ColumnsProofs.HeckeFieldSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
+public import Formalism.LocalToGlobal.Columns.PathCountSymmetricHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SameCfgRefl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowsLiftsHeckeOperatorsCommute
+public import Formalism.LocalToGlobal.Columns.ColumnsProofs.HeckeFieldSplit
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -17,11 +22,11 @@ theorem chiC_apply {B : Base} {px : PreX B.toPre} (I : Col2.ColIn B px) (j : Fin
     (w : {w // w ∈ (B.primes px).vGs}) (y : 𝓞 B.host.E) (hu : IsUnit (Ideal.Quotient.mk w.1.asIdeal y)) :
     chiC I j w.1 y = B.embLL ((I.Ch.chi j w hu.unit : B.LLˣ) : B.LL) := by
   unfold chiC
-  rw [dif_pos w.2, dif_pos hu]
+  rw [dite_eq_left w.2, dite_eq_left hu]
 
 theorem qC_xi {B : Base} {px : PreX B.toPre} {I : Col2.ColIn B px} (hI : I.Ok) (a : I.ι) : qC I (I.xi a) = I.Q a := by
   unfold qC
-  rw [dif_pos ⟨a, rfl⟩]
+  rw [dite_eq_left ⟨a, rfl⟩]
   congr 1
   exact hI.xi_inj (Exists.choose_spec (⟨a, rfl⟩ : ∃ a', I.xi a' = I.xi a))
 
@@ -202,7 +207,8 @@ theorem transp : ∀ (B0 : Base) (px0 : PreX B0.toPre) (I0 : Col2.ColIn B0 px0),
       have hb : ∀ i, B0.embLL (bas i) ∈ B.LLC := fun i =>
         hs _ (Finset.mem_union_left _ (Finset.mem_image_of_mem _ (Finset.mem_univ i)))
       have hx : B0.embLL x ∈ B.LLC := by
-        rw [← bas.sum_repr x, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← bas.sum_repr x, map_sum]
         refine sum_mem fun i _ => ?_
         rw [map_rat_smul]
         exact SMulMemClass.smul_mem _ (hb i)
@@ -213,7 +219,7 @@ theorem transp : ∀ (B0 : Base) (px0 : PreX B0.toPre) (I0 : Col2.ColIn B0 px0),
         map_one' := B.embLL.injective (by rw [hf, map_one, map_one])
         map_mul' := fun x y => B.embLL.injective (by rw [hf, map_mul, map_mul, hf, hf])
         map_zero' := B.embLL.injective (by rw [hf, map_zero, map_zero])
-        map_add' := fun x y => B.embLL.injective (by rw [hf, map_add, map_add, hf, hf]) }
+        map_add' := fun x y => B.embLL.injective (by rw [hf, map_add (f := _), map_add (f := _), hf, hf]) }
     have hι : B.embLL.comp ι = B0.embLL := RingHom.ext hf
     have hsp : ∀ p : B0.LL[X], (∀ z ∈ rts p, z ∈ s) → (p.map ι).Splits := fun p hp =>
       splits_of_roots_mem B0.embLL B.embLL ι hι p fun z hz => hs z (hp z (Multiset.mem_toFinset.2 hz))

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.GaloisBoundSecond
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.GaloisBoundSecond
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,9 +13,6 @@ open NumberField
 namespace GlobalTheory.CompanionTheory.MassCount
 
 variable {F : Type} [Field F] [NumberField F]
-
-def emb [IsTotallyReal F] (w : InfinitePlace F) : F →+* ℝ :=
-  InfinitePlace.embedding_of_isReal (IsTotallyReal.isReal w)
 
 theorem count_box [IsTotallyReal F] (N : ℕ) (hN : 0 < N) (I : Ideal (𝓞 F)) (hI : I ≠ ⊥) (B : ℝ) (hB : 0 ≤ B) :
     {x : F | x ≠ 0 ∧ (∃ y ∈ I, (y : F) = N * x) ∧ ∀ w : InfinitePlace F, w x ≤ B}.Finite ∧

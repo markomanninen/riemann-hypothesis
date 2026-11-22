@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem OL_dvr (P : LocPrime l) (LL : FinExt l) : IsDiscreteValuationRing ↥(OL
     have hm := l_mem_max P LL
     rw [isField_iff_maximalIdeal_eq.mp hf, Ideal.mem_bot] at hm
     exact l_ne_zero LL hm
-  exact ((IsDiscreteValuationRing.TFAE _ hnf).out 0 2).mpr hded
+  exact ((IsDiscreteValuationRing.TFAE _ hnf).out 1 3).mpr hded
 
 theorem OL_complete_max (P : LocPrime l) (LL : FinExt l) :
     letI := Formalism.MainNotions.LiftingTheory.lkd_local P LL

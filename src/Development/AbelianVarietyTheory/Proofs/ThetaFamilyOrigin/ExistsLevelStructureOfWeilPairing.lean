@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -107,8 +111,8 @@ end GlobalTheory.LevelOfPairing
 
 namespace GlobalTheory
 
-open LevelOfPairing in
 
+open LevelOfPairing in
 theorem exists_level_of_pairing : GlobalFnsSt → WeilSt → MulNSt → ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (P : PolAV S) (M : ℕ) (ze : Γ(S, ⊤)ˣ), IsPrimitiveRoot ze M → (∀ (K : Type) [Field K] (s : Spec (CommRingCat.of K) ⟶ S), (M : K) ≠ 0 ∧ IsPrimitiveRoot (Units.map s.appTop.hom.toMonoidHom ze) M) → ∀ x : Fin (2 * P.g) → (baseOver S ⟶ P.A), (∀ i, x i ^ M = 1) → (∀ i j, WeilIs P.A P.L M (x i) (x j) (ze ^ stdSymp P.g i j)) → ∃ lev : Level P M ze, lev.pt = x := by
   intro hG hW hN S _ P M ze hze hK x hx hp
   have := P.isAb.comm
@@ -121,14 +125,14 @@ theorem exists_level_of_pairing : GlobalFnsSt → WeilSt → MulNSt → ∀ (S :
       c = c' := by
     intro K _ s c c' e
     obtain ⟨hu, hm, -⟩ := hW S P M (Over.mk s)
-    refine injective_comb (R := fun a b u => WeilIs P.A P.L M a b u) (cm _) hu hm (hK K s).2 _
+    refine LevelOfPairing.injective_comb (R := fun a b u => WeilIs P.A P.L M a b u) (cm _) hu hm (hK K s).2 _
       (tor _ _) (fun i j => ?_) c c' e
     have h := CommPairing.weilIs_pull hG P.isAb P.isLB
       (Over.homMk s (by simp) : Over.mk s ⟶ baseOver S) (hp i j)
     exact (map_zpow (Units.map s.appTop.hom.toMonoidHom) ze _) ▸ h
   refine ⟨⟨x, hze, hx, fun K _ _ s => ind K s, fun K _ _ s z hz => ?_, hp⟩, rfl⟩
   have hM : M ≠ 0 := fun e => (hK K s).1 (by rw [e, Nat.cast_zero])
-  exact surjective_comb (cm _) hM _ (tor _ _)
+  exact LevelOfPairing.surjective_comb (cm _) hM _ (tor _ _)
     ((hN S P M (Nat.one_le_iff_ne_zero.2 hM)).2.2.2.2 K s (hK K s).1) (ind K s) z hz
 
 end GlobalTheory

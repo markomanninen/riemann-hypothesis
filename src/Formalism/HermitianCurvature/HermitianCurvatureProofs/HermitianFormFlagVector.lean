@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerAntidiagonalExact
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 open scoped ComplexConjugate
@@ -29,7 +33,7 @@ lemma herm_f_es {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (c : Fin (r 
     herm (Hpk k r) (fvec k r z c) (bvec (esI k r a)) = if c.val = a.val then 1 else 0 := by
   rw [bvec, ggHerm_bvec_right]
   have hlt : r + k < (esI k r a).val := by simp [esI]; omega
-  rw [gn_Hpk_mulVec, dif_pos (Or.inr hlt)]
+  rw [gn_Hpk_mulVec, dite_eq_left (Or.inr hlt)]
   have e : (⟨2 * r + k - (esI k r a).val, by omega⟩ : Fin (2 * r + k + 1)) = ⟨a.val, by omega⟩ := by
     apply Fin.ext; simp [esI]; omega
   rw [e, fvec_apply_lt z hz c _ (by simp)]

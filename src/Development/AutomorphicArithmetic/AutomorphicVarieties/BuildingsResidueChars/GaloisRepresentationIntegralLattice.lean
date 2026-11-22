@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIsCrysAndJumpEqZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIsCrysAndJumpEqZero
+
+@[expose] public section
 
 open Module Topology
 
@@ -37,15 +41,16 @@ private theorem span_padicInt_fg_of_bounded {l : ℕ} [Fact (Nat.Prime l)] {n : 
   simp
 
 private theorem extendOfIsLattice_repr_eq_repr {l : ℕ} [Fact (Nat.Prime l)] {n m : ℕ}
-    (L : Submodule ℤ_[l] (Fin n → ℚ_[l])) [Submodule.IsLattice ℚ_[l] L]
+    (L : Submodule ℤ_[l] (Fin n → ℚ_[l])) [Submodule.IsFullLattice ℚ_[l] L]
     (b : Module.Basis (Fin m) ℤ_[l] L) (y : L) (i : Fin m) :
-    (b.extendOfIsLattice ℚ_[l]).repr (y : Fin n → ℚ_[l]) i = (b.repr y i : ℚ_[l]) := by
+    (b.extendOfIsFullLattice ℚ_[l]).repr (y : Fin n → ℚ_[l]) i = (b.repr y i : ℚ_[l]) := by
   conv_lhs => rw [← b.sum_repr y]
-  rw [Submodule.coe_sum, map_sum, Finset.sum_apply']
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Submodule.coe_sum, map_sum, Finset.sum_apply']
   simp_rw [Submodule.coe_smul_of_tower]
-  have h : ∀ j, (b.repr y j • (b j : Fin n → ℚ_[l])) = ((b.repr y j : ℚ_[l]) • b.extendOfIsLattice ℚ_[l] j) := by
+  have h : ∀ j, (b.repr y j • (b j : Fin n → ℚ_[l])) = ((b.repr y j : ℚ_[l]) • b.extendOfIsFullLattice ℚ_[l] j) := by
     intro j
-    rw [Module.Basis.extendOfIsLattice_apply, algebra_compatible_smul ℚ_[l]]
+    rw [Module.Basis.extendOfIsFullLattice_apply, algebra_compatible_smul ℚ_[l]]
     rfl
   simp_rw [h, map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul]
   simp
@@ -63,7 +68,7 @@ theorem UpperTheory.galois_representation_integral_lattice :
     simp [A]
   have hAmul : ∀ g h x, A (g * h) x = A g (A h x) := by
     intro g h x
-    simp [A, map_mul, Module.End.mul_apply]
+    simp [A, map_mul]
   have hEc : Continuous E := IsModuleTopology.continuous_of_linearMap E.toLinearMap
   let f : Γ → Fin n → (Fin n → ℚ_[l]) := fun g j => A g (Pi.single j 1)
   have hf : Continuous f := by
@@ -88,7 +93,8 @@ theorem UpperTheory.galois_representation_integral_lattice :
     refine Submodule.span_mono ?_
     rintro v ⟨j, rfl⟩
     simpa using hsingle j
-  haveI hlat : Submodule.IsLattice ℚ_[l] L := ⟨hfg, hspan⟩
+  have : Submodule.IsLattice ℚ_[l] L := Submodule.IsLattice.of_fg ℚ_[l] hfg
+  have : Submodule.IsFullLattice ℚ_[l] L := ⟨hspan⟩
   have hstab : ∀ g, ∀ x ∈ L, (A g).restrictScalars ℤ_[l] x ∈ L := by
     intro g
     have : L ≤ L.comap ((A g).restrictScalars ℤ_[l]) := by
@@ -98,12 +104,12 @@ theorem UpperTheory.galois_representation_integral_lattice :
       rw [← hAmul]
       exact Submodule.subset_span ⟨(g * h, j), rfl⟩
     exact fun x hx => this hx
-  haveI : Module.Free ℤ_[l] L := Submodule.IsLattice.free ℚ_[l] L
-  haveI : Module.Finite ℤ_[l] L := Submodule.IsLattice.finite ℚ_[l] L
+  have : Module.Free ℤ_[l] L := Submodule.IsLattice.free ℚ_[l] L
+  have : Module.Finite ℤ_[l] L := Submodule.IsLattice.finite ℚ_[l] L
   let b0 := Module.Free.chooseBasis ℤ_[l] L
   let b : Module.Basis (Fin (Fintype.card (Module.Free.ChooseBasisIndex ℤ_[l] L))) ℤ_[l] L :=
     b0.reindex (Fintype.equivFin _)
-  let e' := b.extendOfIsLattice ℚ_[l]
+  let e' := b.extendOfIsFullLattice ℚ_[l]
   let e := e'.map E.symm
   let R : Γ →* Module.End ℤ_[l] L :=
     { toFun := fun g => ((A g).restrictScalars ℤ_[l]).restrict (hstab g)
@@ -113,7 +119,7 @@ theorem UpperTheory.galois_representation_integral_lattice :
       map_mul' := by
         intro g h
         ext x
-        simp [LinearMap.restrict_apply, hAmul, Module.End.mul_apply] }
+        simp [LinearMap.restrict_apply, hAmul] }
   let M : Γ →* Matrix _ _ ℤ_[l] := (LinearMap.toMatrixAlgEquiv b).toMonoidHom.comp R
   have key : ∀ (g : Γ) (i j), ((M g i j : ℤ_[l]) : ℚ_[l]) = (e.repr ((ρ g) (e j))) i := by
     intro g i j

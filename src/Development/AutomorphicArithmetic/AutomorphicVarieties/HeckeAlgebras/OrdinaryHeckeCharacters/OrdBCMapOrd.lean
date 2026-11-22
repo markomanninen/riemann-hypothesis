@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.OrdFree
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.OrdFree
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Hi
 
 open TensorProduct in
@@ -23,7 +28,7 @@ private theorem ordBC_abs {A B O O' P : Type} [CommRing A] [CommRing B] [IsLocal
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul b f =>
       have : E f = ∑ p, ev p f • w p := hψ f
       simp only [L, R, LinearMap.liftBaseChange_tmul, map_smul, LinearMap.sum_apply, LinearMap.smulRight_apply, hev,
@@ -105,7 +110,8 @@ private theorem ordBC_mapSp (hτ : ∀ u i j, (τ' u : Matrix (Fin m) (Fin m) B)
   · funext g i
     have := congrArg (algebraMap A B) (congrFun (congrFun (h5 u hu) g) i)
     rw [Frame.ra_apply] at this ⊢
-    simp only [mulVec, dotProduct, map_sum, map_mul] at this ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [mulVec, dotProduct, map_sum, map_mul] at this ⊢
     simp only [hτ]
     exact this
 
@@ -167,7 +173,8 @@ private theorem ordBC_key (hτ : ∀ u i j, (τ' u : Matrix (Fin m) (Fin m) B) i
     · have c1 : X.rp B m y ((X.U B m X.I.z ^ n.factorial) f - f) ∈ X.valIn B m 1 :=
         (ordBC_val X 1 _).2 fun g i => (ordBC_val X 1 _).1 a1 _ i
       have c2 : X.rp B m y h - h ∈ X.valIn B m 1 := by
-        simp only [h, map_sum, map_smul, ← Finset.sum_sub_distrib, ← smul_sub]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [h, map_sum, map_smul, ← Finset.sum_sub_distrib, ← smul_sub]
         refine Submodule.sum_mem _ fun p _ => Submodule.smul_mem _ _ ?_
         have := ordBC_mapval (B := B) X 1 _ (hs3 p y hy)
         rwa [map_sub] at this
@@ -184,7 +191,8 @@ private theorem ordBC_key (hτ : ∀ u i j, (τ' u : Matrix (Fin m) (Fin m) B) i
       rw [Pi.sub_apply, Pi.sub_apply, this, sub_self]
       exact zero_mem _
   have b2 : (X.U B m X.I.z ^ n.factorial) h - g ∈ X.valIn B m 1 := by
-    simp only [h, hg, map_sum, map_smul, ← Finset.sum_sub_distrib, ← smul_sub, ← ordBC_mapU, ← map_sub]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [h, hg, map_sum, map_smul, ← Finset.sum_sub_distrib, ← smul_sub, ← ordBC_mapU, ← map_sub]
     exact Submodule.sum_mem _ fun p _ => Submodule.smul_mem _ _ (ordBC_mapval X 1 _ (a3 p))
   have b3 := add_mem (sub_mem (ordBC_valU X 1 n.factorial _ b1) a1) b2
   have b4 := h4 1 (f - g) (by

@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.ResidueClassEstimates.StatementT
+module
+
+public import Formalism.ThetaLogCoordinates.ResidueClassEstimates.StatementT
+
+@[expose] public section
 
 noncomputable section
 
@@ -177,8 +181,8 @@ lemma W_extW {n : ℕ} (la : Fin n → ℤ) :
 
 end Branch
 
-open Branch in
 
+open Branch in
 theorem branchingDimensionFormula : BranchDim := by
   intro n mu hmu
   have h : ∀ i : Fin n, mu i.succ ≤ mu i.castSucc := by

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProdUnif
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationProductOfUniformisedGroupsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CubeClsPullHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GAdjSndOfIsProdUnif
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOneOfTorusHomOfZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinHomLiftOneId
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProdUnif
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationProductOfUniformisedGroupsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CubeClsPullHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GAdjSndOfIsProdUnif
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOneOfTorusHomOfZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinHomLiftOneId
+
+@[expose] public section
 
 noncomputable section
 

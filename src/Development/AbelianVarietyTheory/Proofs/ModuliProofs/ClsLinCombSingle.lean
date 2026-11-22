@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem gm_div' (A B : LB X) (r : Z ⟶ X) (z : Z) (p q : A.ι × B.ι)
       gm r z _ (A.g p.1 q.1) * (gm r z _ (B.g p.2 q.2))⁻¹ :=
   gm_div B A r z p q ⟨hp, hq⟩
 
-theorem isLB_dual {A : LB X} (hA : A.IsLB) : (dual A).IsLB where
+theorem isLB_dual {A : LB X} (hA : A.IsLB) : (dual A).IsLB := {
   cover := hA.cover
   g_self i := by
     have h := congrArg (·⁻¹) (hA.g_self i)
@@ -50,7 +54,7 @@ theorem isLB_dual {A : LB X} (hA : A.IsLB) : (dual A).IsLB where
   cocycle i j k := by
     have h := congrArg (·⁻¹) (hA.cocycle i j k)
     simp only [mul_inv, ← map_inv] at h
-    exact h
+    exact h }
 
 theorem tens_eq_div (A B : LB X) : tens A B = LB.div A (dual B) := by
   unfold tens LB.div dual
@@ -271,7 +275,8 @@ theorem cls_linComb {L : LB X} (hL : L.IsLB) {K : Type} [Fintype K] (φ : K → 
     ext i
     simp [Finset.sum_apply, Pi.single_apply]
   show F ε = _
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul, ← e]
   exact congrArg _ (cls_linComb_single hL φ k)

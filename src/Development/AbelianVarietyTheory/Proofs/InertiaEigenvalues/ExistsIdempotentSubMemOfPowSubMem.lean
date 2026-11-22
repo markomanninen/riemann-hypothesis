@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -37,7 +41,7 @@ theorem exists_idempotent_sub_mem_of_pow_sub_mem (l : ℕ) [Fact l.Prime] {R : T
     obtain ⟨n, π, hπ⟩ := Module.Finite.exists_fin' ℤ_[l] R
     have hc : Continuous π := IsModuleTopology.continuous_of_linearMap π
     exact ⟨by simpa [hπ.range_eq] using isCompact_range hc⟩
-  obtain ⟨E, hES, hE⟩ := exists_idempotent_in_compact_subsemigroup (fun r => continuous_mul_right r)
+  obtain ⟨E, hES, hE⟩ := exists_idempotent_in_compact_subsemigroup (fun r => continuous_mul_const r)
     (closure (Set.range fun n : ℕ => b ^ (n + 1))) ⟨b ^ (0 + 1), subset_closure ⟨0, rfl⟩⟩
     isClosed_closure.isCompact (by
       intro x hx y hy

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.CxForm GlobalTheory.GoodMetric
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ContDiff ComplexConjugate Topology
@@ -14,7 +19,7 @@ theorem coefwise_add_of {T : (V n → ℂ) → ℂ} {F G : V n → Alt n}
     (h : ∀ S, T (fun x => (bas n).repr (F x) S + (bas n).repr (G x) S) =
       T (fun x => (bas n).repr (F x) S) + T (fun x => (bas n).repr (G x) S)) :
     coefwise T (fun x => F x + G x) = coefwise T F + coefwise T G := by
-  simp only [coefwise, map_add, Finsupp.add_apply, h, add_smul, Finset.sum_add_distrib]
+  simp only [coefwise, map_add (f := _), Finsupp.add_apply, h, add_smul, Finset.sum_add_distrib]
 
 theorem coefwise_const_smul_of {T : (V n → ℂ) → ℂ} {F : V n → Alt n} (c : ℂ)
     (h : ∀ S, T (fun x => c • (bas n).repr (F x) S) = c • T (fun x => (bas n).repr (F x) S)) :
@@ -24,7 +29,8 @@ theorem coefwise_const_smul_of {T : (V n → ℂ) → ℂ} {F : V n → Alt n} (
 theorem coefwise_sum_of {T : (V n → ℂ) → ℂ} {ι : Type} (t : Finset ι) {F : ι → V n → Alt n}
     (h : ∀ S, T (fun x => ∑ i ∈ t, (bas n).repr (F i x) S) = ∑ i ∈ t, T (fun x => (bas n).repr (F i x) S)) :
     coefwise T (fun x => ∑ i ∈ t, F i x) = ∑ i ∈ t, coefwise T (F i) := by
-  simp only [coefwise, map_sum, Finsupp.finset_sum_apply, h, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coefwise, map_sum, Finsupp.finsetSum_apply, h, Finset.sum_smul]
   exact Finset.sum_comm
 
 theorem delAt_dbarAt_linear_local : ∀ (n : ℕ) (v : V n),

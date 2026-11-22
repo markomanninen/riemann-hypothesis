@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailMass
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreSumAeSheet
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreFinite
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.LintegralFibSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeI
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDensityNonnegOffNullSet
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensDivJacN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailMass
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreSumAeSheet
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreFinite
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.LintegralFibSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeI
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDensityNonnegOffNullSet
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensDivJacN
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv.Push
@@ -96,7 +101,7 @@ theorem aestronglyMeasurable_fibreSum_pushDens : ∀ {e : ℕ} {X : Type} [Topol
     exact this
   have hjm : ∀ j, AEStronglyMeasurable (hj j) (volume.restrict (goodT A q j)) := fun j =>
     (((hχc j).aestronglyMeasurable (A.chart j).open_target.measurableSet).mul (hG j)).mono_measure
-      (Measure.restrict_mono (fun u hu => hu.1) le_rfl)
+      (Measure.restrict_mono (by exact fun u hu => hu.1) le_rfl)
   have hsum := sum_fibSum_ae A q S hN hq hfin Pt hj (fun x => G x * pushDens A Φ q x) (by
     intro j x hx hxS
     have hd := locDens_div_jacN A Φ q S hq hsm j hx hxS

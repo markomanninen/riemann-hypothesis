@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CompInv
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementF
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CompInv
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementF
+
+@[expose] public section
 
 open PowerSeries
 
@@ -42,7 +46,7 @@ def FlowU : Prop :=
   ∀ (R : Type u) [CommRing R] (W : WeierstrassCurve R),
     IsDer (D W) ∧ ConstCurve (D W) (curveS W) ∧ IsFlowUW (curveS W) (D W) X (wSer W) ∧
     fwAt (curveS W) X (wSer W) = fw W ∧ fuAt (curveS W) X (wSer W) = fu W ∧
-    ∀ f : R⟦X⟧, om W * D W f = derivative R f
+    ∀ f : R⟦X⟧, om W * D W f = derivative f
 
 def DLSpec : Prop :=
   ∀ (R : Type u) [CommRing R] (W : WeierstrassCurve R),
@@ -54,12 +58,6 @@ def FlowL : Prop :=
     IsFlow (curveL W) (DL W) (xL W) (yL W) ∧
     toL X * yL W = -xL W ∧ toL (wSer W) * yL W = -1 ∧ toL (wSer W) * xL W = toL X
 
-def XLSq : Prop :=
-  ∀ (R : Type u) [CommRing R] (W : WeierstrassCurve R),
-    DL W (xL W) ^ 2 = 4 * xL W ^ 3 + HahnSeries.C W.b₂ * xL W ^ 2 + 2 * HahnSeries.C W.b₄ * xL W
-      + HahnSeries.C W.b₆ ∧
-    DL W (DL W (xL W)) = 6 * xL W ^ 2 + HahnSeries.C W.b₂ * xL W + HahnSeries.C W.b₄
-
 def ISerSpec : Prop :=
   ∀ (R : Type u) [CommRing R] (W : WeierstrassCurve R),
     constantCoeff (iSer W) = 0 ∧ coeff 1 (iSer W) = -1 ∧ (iSer W).subst (iSer W) = X ∧
@@ -68,6 +66,6 @@ def ISerSpec : Prop :=
     (yS W).subst (iSer W) = invOfUnit (iDen W) (-1) ^ 3 *
       (-yS W - C W.a₁ * X * xS W - C W.a₃ * X ^ 3) ∧
     D W (iSer W) = -(fw W).subst (iSer W) ∧
-    (om W).subst (iSer W) * derivative R (iSer W) = -om W
+    (om W).subst (iSer W) * derivative (iSer W) = -om W
 
 end Formalism.L2.Th1.A

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ def AbDat (A : AnArc (𝓞 E)) (DB : Datum H) (tyB : Fin A.gB → (E →+* ℂ))
 def PrimAn (A : AnArc (𝓞 E)) : Prop :=
   (∀ l, A.chi l = (-1) ^ A.Ef (A.FLam H.w0 l) l) ∧ ∀ x, (A.psi x : ℂ) = eTwoPi (A.T x (H.w0 • x))
 
-omit [IsCMField E] [NumberField E] in
 
+omit [IsCMField E] [NumberField E] in
 def NormAn (A : AnArc (𝓞 E)) (n : ℕ) : Prop :=
   (∀ y, n • A.ct y ∈ A.abelian₂) ∧
     ∀ y y', eTwoPi (A.T (n • y) (n • y')) * Complex.exp (Real.pi * A.H (n • A.ct y) (n • A.ct y')) = 1

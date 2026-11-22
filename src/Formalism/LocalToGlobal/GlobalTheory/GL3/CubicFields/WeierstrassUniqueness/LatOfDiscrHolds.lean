@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.ComplexMultiplication.UniqInvOfLat
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.EpsteinZeta.Jacobi
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.ComplexMultiplication.UniqInvOfLat
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.EpsteinZeta.Jacobi
+
+@[expose] public section
 
 noncomputable section
 
@@ -183,7 +187,10 @@ theorem dg_span (Λ : AddSubgroup ℂ) (h : Formalism.MainNotions.TaylorLogMetri
     rcases mul_eq_zero.mp this with h1 | h1
     · exact hto.1.ne' (by exact_mod_cast h1)
     · exact hw0ne h1
-  obtain ⟨b, hbA⟩ := AddSubgroup.cyclic_of_isolated_zero (div_pos hr hn0) hdis
+  have hcyc := AddSubgroup.isAddCyclic_of_disjoint_Ioo_zero (div_pos hr hn0) hdis
+  obtain ⟨b, hb⟩ := A.isAddCyclic_iff_exists_zmultiples_eq.mp hcyc
+  have hbA : A = AddSubgroup.closure {b} := by
+    rw [← AddSubgroup.zmultiples_eq_closure, hb]
   apply h
   have hbmem : (b : ℂ) * w0 ∈ Λ := by
     have : b ∈ A := by rw [hbA]; exact AddSubgroup.subset_closure rfl

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcIotaInj
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcIotaInj
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,14 +25,11 @@ theorem nc_capU (j : ℕ) (s : Fin ((D.gat u w hg).P.n' (Y.vOf u w hg t0))) (k :
   have hn := nc_n_eq X Y hT hL u w hg t0 ht0
   unfold Formalism.MainNotions.G.capU nc_zc
   rw [nc_partner hg]
-  congr 3
-  show t0 + s.val • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w) + k • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w) =
-    t0 + ((s.val + k) % (D.gat u w hg).P.n' (Y.vOf u w hg t0)) • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w)
   have key : ∀ a : ℕ, t0 + a • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w) + k • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w) =
       t0 + ((a + k) % (D.gat u w hg).P.n' (Y.vOf u w hg t0)) • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w) := by
     intro a
     rw [hn, mod_addOrderOf_nsmul, add_nsmul, add_assoc]
-  exact key s.val
+  exact congrArg (fun t => Formalism.MainNotions.G.fillG X (Formalism.MainNotions.G.bL L) j (false, t) + Formalism.MainNotions.G.cG L) (key s.val)
 
 open Classical in
 include hL ht0 in

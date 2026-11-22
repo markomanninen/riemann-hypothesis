@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.CentralCharts.TopLeIffCentre
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.TopLeIffCentre
+
+@[expose] public section
 
 noncomputable section
 

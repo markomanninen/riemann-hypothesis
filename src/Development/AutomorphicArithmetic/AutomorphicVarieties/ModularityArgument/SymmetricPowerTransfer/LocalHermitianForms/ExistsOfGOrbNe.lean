@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.FzkLaw
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.FzkLaw
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Sym.Loc
 
@@ -8,10 +12,10 @@ variable {O K : Type} [CommRing O] [Field K] [Algebra O K] {τ : K}
 
 theorem j_apply (j : Etau K τ →ₐ[K] Matrix (Fin 2) (Fin 2) K) (x : Etau K τ) : j x = x.re • (1 : Matrix (Fin 2) (Fin 2) K) + x.im • j ω := by
   conv_lhs => rw [show x = algebraMap K (Etau K τ) x.re + x.im • ω by ext <;> simp]
-  rw [map_add, map_smul, AlgHom.commutes, Algebra.algebraMap_eq_smul_one]
+  rw [map_add (f := _), map_smul, AlgHom.commutes, Algebra.algebraMap_eq_smul_one]
 
 theorem j_sq (j : Etau K τ →ₐ[K] Matrix (Fin 2) (Fin 2) K) : j ω * j ω = τ • j ω - 1 := by
-  rw [← map_mul, QuadraticAlgebra.omega_mul_omega_eq_add, map_add, map_smul, map_smul, map_one,
+  rw [← map_mul, QuadraticAlgebra.omega_mul_omega_eq_add, map_add (f := _), map_smul, map_smul, map_one,
     neg_smul, one_smul]
   abel
 
@@ -80,7 +84,7 @@ theorem exists_of_gOrb_ne {j : Etau K τ →ₐ[K] Matrix (Fin 2) (Fin 2) K} (hj
   apply mul_eq_zero_of_right
   unfold fZK
   dsimp only
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨w, hw⟩
   exact hcon (core _ w hw)
 

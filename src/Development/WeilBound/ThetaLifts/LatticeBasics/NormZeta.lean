@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
-import Development.WeilBound.ThetaLifts.LatticeBasics.SWFull
-import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
-import Development.WeilBound.ThetaLifts.LatticeBasics.BoxSecX
-import Development.WeilBound.ThetaLifts.LatticeBasics.SchToPol
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SWFull
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BoxSecX
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SchToPol
+
+@[expose] public section
 
 noncomputable section
 

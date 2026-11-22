@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThConst
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThConstSplit
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThConst
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThConstSplit
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
+
+@[expose] public section
 
 noncomputable section
 

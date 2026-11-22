@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial Filter Topology
 
@@ -41,7 +45,8 @@ private theorem gt_gen {σ ρ : Type} [DecidableEq σ] (f : σ → MvPolynomial 
   · ext m
     by_cases hm : m.degree ≤ k
     · conv_rhs => rw [G.as_sum]
-      rw [map_sum, map_sum, coeff_sum, coeff_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum, coeff_sum, coeff_sum]
       refine Finset.sum_subset (Finset.filter_subset _ _) (fun α hα hα' => ?_)
       refine (gt_mono_hom f w hf α _).coeff_eq_zero ?_
       intro h
@@ -52,7 +57,8 @@ private theorem gt_gen {σ ρ : Type} [DecidableEq σ] (f : σ → MvPolynomial 
         apply coeff_eq_zero_of_totalDegree_lt
         have : m.degree = ∑ i ∈ m.support, m i := rfl
         omega
-      rw [h1, map_sum, coeff_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1, map_sum, coeff_sum]
       refine Finset.sum_eq_zero (fun α hα => ?_)
       refine (gt_mono_hom f w hf α _).coeff_eq_zero ?_
       intro h

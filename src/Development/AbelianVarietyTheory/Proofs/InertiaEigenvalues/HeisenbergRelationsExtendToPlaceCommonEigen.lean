@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankWeightComponentEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JointEigenvectorsEqZeroOfSumEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankWeightComponentEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JointEigenvectorsEqZeroOfSumEqZero
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
@@ -44,7 +48,8 @@ theorem comb_eq_linearCombination (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D)
 theorem comb_sum_single (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) {ι : Type} (s : Finset ι) (r : ι → WO S T)
     (z : ι → ℂ) (X : WO S T → ℂ) :
     comb ψ S T (∑ i ∈ s, Finsupp.single (r i) (z i)) X = ∑ i ∈ s, z i • heisO ψ S T (r i) X := by
-  rw [comb_eq_linearCombination, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [comb_eq_linearCombination, map_sum]
   simp only [Finsupp.linearCombination_single]
 
 theorem comb_fun_zero (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (c : WO S T →₀ ℂ) :
@@ -70,8 +75,10 @@ theorem relOff_factor {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {Sb : Finse
     rw [hX u hu, GlobalTheory.SplitScalar.heisO_smul, smul_smul]
   have hsupp : ∀ u ∈ c'.support, OffPl Sb u := by
     intro u hu
-    obtain ⟨x, hx, hx'⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hu)
-    rw [Finset.mem_singleton.1 (Finsupp.support_single_subset hx')]
+    rw [hc'] at hu
+    obtain ⟨x, hx, hx'⟩ := Finsupp.mem_support_finsetSum u hu
+    have heq : u = r x := Finset.mem_singleton.1 (Finsupp.support_single_subset hx')
+    rw [heq]
     exact hr x hx
   have hp0 : comb ψ S T c' p = 0 := by
     apply heisO_injective ψ S T w

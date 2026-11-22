@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.NormAevalSubBound
 
@@ -21,7 +25,7 @@ theorem norm_aeval_sub_le {k : Type} [inst : NormedField k] [NormOneClass k] [Is
   | add p q hp hq =>
     obtain ⟨p1, p2, p3⟩ := hp
     obtain ⟨q1, q2, q3⟩ := hq
-    simp only [map_add]
+    simp only [map_add (f := _)]
     refine ⟨hadd _ _ _ p1 q1, hadd _ _ _ p2 q2, ?_⟩
     rw [add_sub_add_comm]
     exact hadd _ _ _ p3 q3

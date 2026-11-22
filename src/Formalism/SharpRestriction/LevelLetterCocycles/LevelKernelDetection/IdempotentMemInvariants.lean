@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CoordStepsOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoordStepsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ} [NeZero n] {W : LocWach PD LL O v n}
     [Fintype (K →ₐ[Qp] LL)]
 
-variable (W) in
 
+variable (W) in
 def k17e (i : ZMod n) : W.EE := algebraMap (LetA O n) W.EE (letE i)
 
 theorem idempotent_mul_self_bis (i : ZMod n) : k17e W i * k17e W i = k17e W i := by
@@ -57,7 +61,8 @@ theorem isUnit_of_unit_coefficient (hOloc : IsLocalRing O)
     PowerSeries.C (PowerSeries.coeff j (a i)) * PowerSeries.X ^ j := ⟨_, rfl⟩
   have hcL : ∀ d, PowerSeries.coeff d Lp = if d < k₀ then PowerSeries.coeff d (a i) else 0 := by
     intro d
-    simp only [hLp, map_sum, PowerSeries.coeff_C_mul_X_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hLp, map_sum, PowerSeries.coeff_C_mul_X_pow]
     rw [Finset.sum_ite_eq]
     simp only [Finset.mem_range]
   have hdvd : (PowerSeries.X : PowerSeries O) ^ k₀ ∣ a i - Lp := by
@@ -128,14 +133,15 @@ theorem isUnit_of_unit_coefficient (hOloc : IsLocalRing O)
     have h1 : x * algebraMap (LetA O n) W.EE (letπ ^ m) + (1 - k17e W i) -
         algebraMap (LetA O n) W.EE ((letE i : LetA O n) * a + (1 - letE i)) =
         k17e W i * (x * algebraMap (LetA O n) W.EE (letπ ^ m) - algebraMap (LetA O n) W.EE a) := by
-      rw [map_add, map_mul, map_sub, map_one]
+      rw [map_add (f := _), map_mul, map_sub, map_one]
       simp only [k17e] at hx ⊢
       linear_combination (-(algebraMap (LetA O n) W.EE (letπ ^ m))) * hx
     rw [h1, hI, ← pow_one ((PD.p : ℕ) : W.EE)]
     exact Ideal.mul_mem_left _ _ ha
   have hunit : IsUnit (x * algebraMap (LetA O n) W.EE (letπ ^ m) + (1 - k17e W i)) := by
     apply isUnit_of_isUnit_mod_l
-    rw [hq, hdec, map_add, map_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hq, hdec, map_add (f := _), map_add (f := _), map_sum, map_sum]
     exact (isNilpotent_sum hnil).isUnit_add_right_of_commute (hγ.map _) (Commute.all _ _)
   have hprod : (x + (1 - k17e W i)) * (k17e W i * algebraMap (LetA O n) W.EE (letπ ^ m) +
       (1 - k17e W i)) = x * algebraMap (LetA O n) W.EE (letπ ^ m) + (1 - k17e W i) := by
@@ -171,24 +177,24 @@ theorem local_corner_unit_dichotomy (hOloc : IsLocalRing O)
       have := hOloc
       exact IsLocalRing.isUnit_one_sub_self_of_mem_nonunits _ (mem_nonunits_iff.2 (hk m))
 
-variable (W) in
 
+variable (W) in
 def k17S : Subring W.EE where
   carrier := {ε | ∀ δ ∈ W.DelF, W.γE δ ε = ε}
   mul_mem' {a b} ha hb δ hδ := by rw [map_mul, ha δ hδ, hb δ hδ]
   one_mem' δ _ := map_one _
-  add_mem' {a b} ha hb δ hδ := by rw [map_add, ha δ hδ, hb δ hδ]
+  add_mem' {a b} ha hb δ hδ := by rw [map_add (f := _), ha δ hδ, hb δ hδ]
   zero_mem' δ _ := map_zero _
   neg_mem' {a} ha δ hδ := by rw [map_neg, ha δ hδ]
 
 theorem k17e_mem_k17S (i : ZMod n) : k17e W i ∈ k17S W := fun δ _ => idempotent_gamma_invariant i δ
 
-variable (W) in
 
+variable (W) in
 def idempotentInvariant (i : ZMod n) : k17S W := ⟨k17e W i, k17e_mem_k17S i⟩
 
-variable (W) in
 
+variable (W) in
 abbrev k17R (i : ZMod n) : Type := k17S W ⧸ Ideal.span {1 - idempotentInvariant W i}
 
 theorem letterRing_mk_eq (i : ZMod n) {s s' : k17S W}
@@ -214,7 +220,7 @@ theorem letterRing_isUnit_of (i : ZMod n) (t : k17S W)
   obtain ⟨u, hu⟩ := h
   have hz : ∀ δ ∈ W.DelF, W.γE δ (u : W.EE) = u := by
     intro δ hδ
-    rw [hu, map_add, map_mul, map_sub, map_one, idempotent_gamma_invariant, t.2 δ hδ]
+    rw [hu, map_add (f := _), map_mul, map_sub, map_one, idempotent_gamma_invariant, t.2 δ hδ]
   have hw : ∀ δ ∈ W.DelF, W.γE δ (↑u⁻¹ : W.EE) = ↑u⁻¹ := by
     intro δ hδ
     have h1 : W.γE δ (↑u⁻¹ : W.EE) * u = 1 := by
@@ -266,8 +272,8 @@ theorem letterRingValueFun_mk (i : ZMod n) (s : k17S W) :
     letterRingValueFun i (Ideal.Quotient.mk (Ideal.span {1 - idempotentInvariant W i}) s) = k17e W i * s :=
   letterRing_mk_eq i (Ideal.Quotient.mk_surjective _).choose_spec
 
-variable (W) in
 
+variable (W) in
 def letterRingVal (i : ZMod n) : k17R W i →+ W.EE where
   toFun := letterRingValueFun i
   map_zero' := by
@@ -276,7 +282,7 @@ def letterRingVal (i : ZMod n) : k17R W i →+ W.EE where
   map_add' r r' := by
     obtain ⟨s, rfl⟩ := Ideal.Quotient.mk_surjective r
     obtain ⟨s', rfl⟩ := Ideal.Quotient.mk_surjective r'
-    rw [← map_add, letterRingValueFun_mk, letterRingValueFun_mk, letterRingValueFun_mk, AddMemClass.coe_add, mul_add]
+    rw [← map_add (f := _), letterRingValueFun_mk, letterRingValueFun_mk, letterRingValueFun_mk, AddMemClass.coe_add, mul_add]
 
 theorem letterRing_val_mk (i : ZMod n) (s : k17S W) :
     letterRingVal W i (Ideal.Quotient.mk (Ideal.span {1 - idempotentInvariant W i}) s) = k17e W i * s :=

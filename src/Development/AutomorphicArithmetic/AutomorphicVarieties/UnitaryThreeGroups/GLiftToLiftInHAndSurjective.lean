@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg
 
@@ -6,7 +10,7 @@ private theorem hh_emb {O R : Type} [CommRing O] [CommRing R] [Algebra O R]
     (h : Matrix (Fin 3 ⊕ Fin 3) (Fin 3 ⊕ Fin 3) R)
     (h1 : hᵀ * (form6 O).JR R * h = (form6 O).JR R)
     (h2 : ∀ a b, (form6 O).blk a ≠ (form6 O).blk b → h a b = 0) :
-    ∃ x : GG 3 R, x.right = 1 ∧ emb x = h := by
+    ∃ x : GG (m := 3) (R := R), x.right = 1 ∧ emb x = h := by
   have hB : h.toBlocks₁₂ = 0 := by
     ext i j
     exact h2 (Sum.inl i) (Sum.inr j) (by simp [form6])
@@ -29,7 +33,7 @@ private theorem hh_emb {O R : Type} [CommRing O] [CommRing R] [Algebra O R]
   have hr' : h.toBlocks₁₁ * (Jmat R 3 * h.toBlocks₂₂ * Jmat R 3)ᵀ = 1 := mul_eq_one_comm.mp hl
   let u : GL (Fin 3) R := ⟨h.toBlocks₁₁, (Jmat R 3 * h.toBlocks₂₂ * Jmat R 3)ᵀ, hr', hl⟩
   refine ⟨⟨u, 1⟩, rfl, ?_⟩
-  rw [emb_apply, if_pos rfl]
+  rw [emb_apply, ite_eq_left rfl]
   conv_rhs => rw [← fromBlocks_toBlocks h, hB, hC]
   refine Matrix.fromBlocks_inj.mpr ⟨rfl, rfl, rfl, ?_⟩
   rw [theta_val]
@@ -61,7 +65,7 @@ theorem UpperTheory.gLift_toLift_inH_and_surjective :
     refine ⟨emb_form O x, fun a b hab => ?_, ?_⟩
     · by_contra hne
       have hb := emb_blk x a b hne
-      rw [if_pos hx] at hb
+      rw [ite_eq_left hx] at hb
       exact hab hb
     · rw [show (emb x).map ⇑(res O R) = emb (GG.map (res O R : R →+* ResidueField O) x) from
         (emb_map' _ x).symm]
@@ -75,15 +79,13 @@ theorem UpperTheory.gLift_toLift_inH_and_surjective :
     have hR : ∀ s, (x s * GG.map (algebraMap O R) (r0 η Ψ s)).right = η s := by
       intro s
       rw [SemidirectProduct.mul_right, hx1, GG.map_right, unitaryThreeReflection_right, one_mul]
-    let hom : Γ →* GG 3 R :=
+    let hom : Γ →* GG (m := 3) (R := R) :=
       { toFun := fun s => x s * GG.map (algebraMap O R) (r0 η Ψ s)
         map_one' := by
-          beta_reduce
           refine eq_of_emb ?_ ?_
           · rw [hR, map_one, SemidirectProduct.one_right]
           · rw [hF, map_one, map_one]
         map_mul' := fun s t => by
-          beta_reduce
           refine eq_of_emb ?_ ?_
           · rw [hR, SemidirectProduct.mul_right, hR, hR, map_mul]
           · rw [hF, map_mul emb, hF, hF, map_mul] }
@@ -100,7 +102,7 @@ theorem UpperTheory.gLift_toLift_inH_and_surjective :
       have h2 := r'.cont (Sum.inl a) (Sum.inr b) N
       convert h1.add h2 using 1
       funext g
-      simp only [Pi.add_apply, map_add]
+      exact map_add (Ideal.Quotient.mk (maximalIdeal R ^ N)) _ _
     · refine eq_of_emb ?_ ?_
       · rw [GG.map_right, ← baseLift_map_residue, GG.map_right, unitaryThreeReflection_right]
         exact hR g

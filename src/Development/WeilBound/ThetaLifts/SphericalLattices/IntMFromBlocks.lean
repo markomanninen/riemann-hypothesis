@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.IndexComapOfCover
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.IndexComapOfCover
+
+@[expose] public section
 
 noncomputable section
 

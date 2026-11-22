@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.InstAddCommMonoidFibreFst
-import ReciprocityTheory.DualLattices.NilSurjOfSqZero
+module
+
+public import ReciprocityTheory.DualLattices.InstAddCommMonoidFibreFst
+public import ReciprocityTheory.DualLattices.NilSurjOfSqZero
+
+@[expose] public section
 
 noncomputable section
 

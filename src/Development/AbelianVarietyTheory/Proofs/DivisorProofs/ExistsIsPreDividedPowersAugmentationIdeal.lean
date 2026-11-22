@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,8 +25,8 @@ def PDPoly.expTerm (Q : PDPoly B) (k : ℕ) (b : B) : PowerSeries Q.P :=
 
 def PDPoly.augExp (Q : PDPoly B) (p : Q.P) : PowerSeries Q.P := (Q.e.repr p).prod Q.expTerm
 
-open Classical in
 
+open Classical in
 def PDPoly.augDP (Q : PDPoly B) (n : ℕ) (p : Q.P) : Q.P :=
   if p ∈ Q.aug then PowerSeries.coeff n (Q.augExp p) else 0
 
@@ -147,7 +151,7 @@ theorem PDPoly.expTerm_add (Q : PDPoly B) (k : ℕ) (a b : B) :
     Q.expTerm k (a + b) = Q.expTerm k a * Q.expTerm k b := by
   rcases eq_or_ne k 0 with rfl | hk
   · simp [PDPoly.expTerm]
-  · rw [Q.expTerm_of_ne hk, Q.expTerm_of_ne hk, Q.expTerm_of_ne hk, map_add]
+  · rw [Q.expTerm_of_ne hk, Q.expTerm_of_ne hk, Q.expTerm_of_ne hk, map_add (f := _)]
     exact mk_exp_add _ (fun m n ↦ Q.expSeq_mul hk m n) _ _
 
 theorem PDPoly.isExpSer_expTerm (Q : PDPoly B) (k : ℕ) (b : B) : IsExpSer (Q.expTerm k b) := by
@@ -167,7 +171,7 @@ theorem PDPoly.isExpSer_prod (Q : PDPoly B) (c : ℕ →₀ B) : IsExpSer (c.pro
 theorem PDPoly.isExpSer_augExp (Q : PDPoly B) (p : Q.P) : IsExpSer (Q.augExp p) := Q.isExpSer_prod _
 
 theorem PDPoly.augExp_add (Q : PDPoly B) (p q : Q.P) : Q.augExp (p + q) = Q.augExp p * Q.augExp q := by
-  rw [PDPoly.augExp, map_add, Finsupp.prod_add_index' Q.expTerm_zero Q.expTerm_add]; rfl
+  rw [PDPoly.augExp, map_add (f := _), Finsupp.prod_add_index' Q.expTerm_zero Q.expTerm_add]; rfl
 
 theorem PDPoly.augExp_zero (Q : PDPoly B) : Q.augExp 0 = 1 := by
   simp [PDPoly.augExp]
@@ -191,7 +195,7 @@ theorem PDPoly.mem_aug_iff (Q : PDPoly B) (p : Q.P) : p ∈ Q.aug ↔ Q.e.repr p
       refine Submodule.span_induction (p := fun a _ ↦ ∀ q, Q.e.repr (q * a) 0 = 0) ?_ ?_ ?_ ?_ h
       · rintro _ ⟨j, rfl⟩ q; exact hms q j
       · simp
-      · intro x y _ _ hx hy q; rw [mul_add, map_add, Finsupp.add_apply, hx, hy, add_zero]
+      · intro x y _ _ hx hy q; rw [mul_add, map_add (f := _), Finsupp.add_apply, hx, hy, add_zero]
       · intro r x _ hx q; rw [smul_eq_mul, ← mul_assoc]; exact hx _
     simpa using h2 1
   · intro h

@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.LatSemiSt
-import ReciprocityTheory.SemistableReduction.SemiContractA
+module
+
+public import ReciprocityTheory.SemistableReduction.LatSemiSt
+public import ReciprocityTheory.SemistableReduction.SemiContractA
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -32,7 +36,8 @@ theorem sc_col_mul {K : Type} [Field K] [NumberField K] {r : ℕ} {ι : Type} [F
     (σ : K →+* ℂ) (N : Matrix (Fin r) (Fin r) K) (c : ι → Fin r → K) :
     embCols σ (fun j => N *ᵥ c j) = N.map σ * embCols σ c := by
   ext a j
-  simp [embCols, Matrix.mul_apply, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [embCols, Matrix.mul_apply, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem sc_col_inj {K : Type} [Field K] [NumberField K] {r : ℕ} {ι : Type} [Fintype ι]
     [DecidableEq ι] (σ : K →+* ℂ) {v : ι → Fin r → K} (hv : LinearIndependent K v) :
@@ -84,8 +89,8 @@ theorem sc_gram_lt {K : Type} [Field K] [NumberField K] {r k m : ℕ} (hm : 0 < 
       rw [hDhdef, Matrix.diagonal_conjTranspose, Matrix.diagonal_mul_diagonal]
       congr 1
       funext i
-      simp only [Pi.star_apply, Function.comp_apply]
-      rw [Complex.star_def, Complex.conj_ofReal, ← Complex.ofReal_mul, Real.mul_self_sqrt (hP.eigenvalues_pos i).le]
+      simp only [Pi.star_apply, Complex.star_def, Complex.conj_ofReal, ← Complex.ofReal_mul,
+        Real.mul_self_sqrt (hP.eigenvalues_pos i).le, Function.comp_apply]
       rfl
     set T := U * Dh with hTdef
     have hTT : T * Tᴴ = P := by
@@ -142,7 +147,7 @@ theorem sc_gram_lt {K : Type} [Field K] [NumberField K] {r k m : ℕ} (hm : 0 < 
         _ = _ := by rw [hdV, mul_one, Complex.ofReal_prod]
     have hμ : ∀ i, 0 < hFh.eigenvalues i := hF.eigenvalues_pos
     have hprod : 1 < ∏ i, (1 + hFh.eigenvalues i) := by
-      have h := Finset.prod_lt_prod_of_nonempty (s := Finset.univ) (f := fun _ => (1 : ℝ))
+      have h := Finset.prod_lt_prod_of_nonempty₀ (s := Finset.univ) (f := fun _ => (1 : ℝ))
         (g := fun i => 1 + hFh.eigenvalues i) (fun i _ => one_pos) (fun i _ => by linarith [hμ i])
         ⟨⟨0, hm⟩, Finset.mem_univ _⟩
       simpa using h

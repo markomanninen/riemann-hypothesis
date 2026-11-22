@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.DimensionQuotientBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.PrimeAvoidanceFibre
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.DimensionQuotientBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.PrimeAvoidanceFibre
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0.DiscreteValuationPoint
 
@@ -123,7 +127,7 @@ private theorem exists_dvr_embedding_of_dedekind {O C : Type} [CommRing O] [IsDo
   haveI := hNmax
   have hϖN : algebraMap O C ϖ ∈ N := by
     have hc : (N.comap (algebraMap O C)).IsMaximal := by
-      exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal N
+      exact Ideal.isMaximal_under_of_isIntegral_of_isMaximal N
     rw [← Ideal.mem_comap, IsLocalRing.eq_maximalIdeal hc]
     exact hϖm
   have hch : ∀ P : Ideal C, P.IsPrime → ⊥ ≤ P → P ≤ N → algebraMap O C ϖ ∈ P → P = N := by
@@ -153,7 +157,7 @@ private theorem exists_dvr_embedding_of_dedekind {O C : Type} [CommRing O] [IsDo
         rw [Ideal.mem_comap] at h
         exact hP.ne_top (Ideal.eq_top_of_isUnit_mem _ h (IsLocalization.Away.algebraMap_isUnit s))
     rw [← hQ]
-    rw [IsLocalization.map_comap (Submonoid.powers s)]
+    rw [IsLocalization.map_under (Submonoid.powers s)]
   have hdisj : Disjoint (Submonoid.powers s : Set C) (N : Set C) := by
     rw [Set.disjoint_left]
     rintro x ⟨n, rfl⟩ hx
@@ -247,7 +251,7 @@ private theorem exists_finite_domain_quotient_ne_zero {O B : Type} [CommRing O] 
         rw [Ideal.mem_comap, Ideal.mem_comap] at h
         exact hP.ne_top (Ideal.eq_top_of_isUnit_mem _ h (IsLocalization.Away.algebraMap_isUnit _))
     rw [← hQ, Ideal.map_comap_of_surjective _ Ideal.Quotient.mk_surjective]
-    rw [IsLocalization.map_comap (Submonoid.powers (Ideal.Quotient.mk q s))]
+    rw [IsLocalization.map_under (Submonoid.powers (Ideal.Quotient.mk q s))]
   have hdisj : Disjoint (Submonoid.powers (Ideal.Quotient.mk q s) : Set (B ⧸ q))
       (Ideal.map (Ideal.Quotient.mk q) M : Set (B ⧸ q)) := by
     rw [Set.disjoint_left]

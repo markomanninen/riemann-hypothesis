@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MopBase
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MopBase
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.U3.Mop
 
@@ -47,7 +51,8 @@ private theorem der_inv {O R Q : Type} [CommRing O] [CommRing R] [Algebra O R] [
     · exact map_zero D
   have key := congrArg (fun M : Matrix (Fin 3) (Fin 3) R => D (M p q))
     (congrArg (fun h : GL (Fin 3) R => (h : Matrix (Fin 3) (Fin 3) R)) (mul_inv_cancel g))
-  simp only [Units.val_mul, Units.val_one, h1, Matrix.mul_apply, map_sum, hDm, hx, hxi, htor, htori,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Units.val_mul, Units.val_one, h1, Matrix.mul_apply, map_sum, hDm, hx, hxi, htor, htori,
     Finset.sum_add_distrib, diagonal_apply, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.sum_ite_eq',
     Finset.mem_univ, if_true] at key
   have e : ((t ^ wt1 p : Oˣ) : O) • D (((g⁻¹ : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) p q) =
@@ -61,7 +66,8 @@ private theorem der_inv {O R Q : Type} [CommRing O] [CommRing R] [Algebra O R] [
         rw [e, smul_neg, smul_smul, neg_smul, mul_comm (((t ^ wt1 q)⁻¹ : Oˣ) : O)]
 
 private theorem map_left_eq_tor_and_right_eq_of_map_eq {O R : Type} [CommRing O] [CommRing R] [Algebra O R]
-    (s : ℤˣ) (t : Oˣ) (x : R →ₐ[O] O) (y : GG 3 R) (hy : GG.map (x : R →+* O) y = ⟨tor O t, s⟩) :
+    (s : ℤˣ) (t : Oˣ) (x : R →ₐ[O] O) (y : GG (m := 3) (R := R))
+    (hy : GG.map (x : R →+* O) y = ⟨tor O t, s⟩) :
     GeneralLinearGroup.map (x : R →+* O) y.left = tor O t ∧ y.right = s := by
   constructor
   · have h := congrArg SemidirectProduct.left hy
@@ -74,7 +80,8 @@ private theorem wt_rev_rev_eq_wt1_sub_wt1 (i j : Fin 3) : wt j.rev i.rev = wt1 i
 
 theorem UpperTheory.exists_pointDerivation_emb_entry_eq_smul_mat_entry :
     ∀ {O : Type} [CommRing O] (s : ℤˣ) (t : Oˣ) (a b : Fin 3 ⊕ Fin 3), ∃ (u : O) (a' b' : Fin 3), wt a' b' = wt6 a - wt6 b ∧
-          ∀ {R Q : Type} [CommRing R] [Algebra O R] [AddCommGroup Q] [Module O Q] (x : R →ₐ[O] O), ∀ D ∈ PtDer x Q, ∀ y : GG 3 R,
+          ∀ {R Q : Type} [CommRing R] [Algebra O R] [AddCommGroup Q] [Module O Q] (x : R →ₐ[O] O),
+            ∀ D ∈ PtDer x Q, ∀ y : GG (m := 3) (R := R),
             GG.map (x : R →+* O) y = ⟨tor O t, s⟩ → D (emb y a b) = u • D (y.mat a' b') := by
   intro O _ s t a b
   by_cases hs : s = 1

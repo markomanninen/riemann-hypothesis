@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurDir
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemMspan
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqColGenMulBlkU
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurDir
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqColGenMulBlkU
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,6 +23,13 @@ theorem exists_isFundamentalDomain_NE : ∀ (E : Type) [Field E] [NumberField E]
   intro E _ _ a μ
   haveI : DiscreteTopology (GlobalTheory.CellDec.NE E a) :=
     GlobalTheory.MirTower.discrete_of_le_range (Subgroup.map_le_range _ _)
+  haveI := GlobalTheory.AdelicUnitaryTop.secondCountable_adele E
+  haveI : SecondCountableTopology (Matrix (Fin a) (Fin a) (Ad E)) :=
+    inferInstanceAs (SecondCountableTopology (Fin a → Fin a → Ad E))
+  haveI : SecondCountableTopology (Matrix (Fin a) (Fin a) (Ad E))ᵐᵒᵖ :=
+    MulOpposite.opHomeomorph.symm.isEmbedding.secondCountableTopology
+  haveI : SecondCountableTopology (GA E a) :=
+    Units.isEmbedding_embedProduct.secondCountableTopology
   exact GlobalTheory.FundDomDiscrete.exists_isFundamentalDomain _ μ
 
 end GlobalTheory.CellDec

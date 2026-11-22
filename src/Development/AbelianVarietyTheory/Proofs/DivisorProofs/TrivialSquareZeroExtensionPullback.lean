@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ZM GlobalTheory.SiegLev GlobalTheory.SiegelTor
@@ -25,7 +30,7 @@ def liftHom {K : Type} [Field K] {V W₁ W₂ : Type} [AddCommGroup V] [Module K
     · simp only [map_mul, TrivSqZeroExt.snd_mul, TrivSqZeroExt.fst_mul, TrivSqZeroExt.snd_add,
         TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_inl, TrivSqZeroExt.snd_inr, TrivSqZeroExt.fst_inl,
         TrivSqZeroExt.fst_inr, add_zero, zero_add, smul_eq_mul, op_smul_eq_smul, smul_zero]
-      rw [← map_smul, ← map_smul, ← map_add]
+      rw [← map_smul, ← map_smul, ← map_add (f := _)]
       congr 1
       ext <;> simp [h]
   map_zero' := by
@@ -35,7 +40,7 @@ def liftHom {K : Type} [Field K] {V W₁ W₂ : Type} [AddCommGroup V] [Module K
   map_add' x y := by
     refine TrivSqZeroExt.ext ?_ ?_
     · simp
-    · simp only [map_add, TrivSqZeroExt.snd_add, TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_inl,
+    · simp only [map_add (f := _), TrivSqZeroExt.snd_add, TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_inl,
         TrivSqZeroExt.snd_inr, zero_add]
       rw [show ((a x).snd + (a y).snd, (b x).snd + (b y).snd)
           = ((a x).snd, (b x).snd) + ((a y).snd, (b y).snd) from rfl, map_add]

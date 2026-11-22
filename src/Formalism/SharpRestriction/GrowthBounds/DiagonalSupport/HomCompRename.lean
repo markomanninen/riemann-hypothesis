@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembAlgF
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembLabF
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Proposition5OfThreeParts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembAlgF
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembLabF
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Proposition5OfThreeParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem homComp_rename (f : κ × Fin n → ι × Fin n) (δ : ι → ℕ) (G : 
   · ext a
     rw [coeff_homComp]
     conv_rhs => rw [G.as_sum]
-    simp only [map_sum, coeff_sum, rename_monomial, coeff_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, coeff_sum, rename_monomial, coeff_monomial]
     rw [Finset.sum_filter]
     split_ifs with h
     · apply Finset.sum_congr rfl
@@ -90,7 +95,8 @@ theorem asm_support (rho : TL J nL r × Fin (r + K) → ℕ) (A : MvPolynomial (
   have e : asm Fr p O hk nL rho A N = ∑ bp ∈ A.support, ∑ bn ∈ N.support,
       monomial (bigM Fr p hk nL rho bp bn) (A.coeff bp * N.coeff bn) := by
     conv_lhs => rw [asm, A.as_sum, N.as_sum]
-    simp only [map_sum, upPl_monomial_eq_monomial_mPl, upNo_monomial_eq_monomial_mNo, Finset.mul_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, upPl_monomial_eq_monomial_mPl, upNo_monomial_eq_monomial_mNo, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     apply Finset.sum_congr rfl
     intro bp _

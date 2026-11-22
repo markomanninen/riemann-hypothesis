@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.NotIsTemperedGLDetRepTwo
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Reps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.NotIsTemperedGLDetRepTwo
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Reps
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ section
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {k' : Type} [Field k'] [ValuativeRel k'] [TopologicalSpace k'] [IsNonarchimedeanLocalField k']
 
-private theorem sum_right (N : k'ˣ →* kˣ) (T : Finset (kˣ →* ℂˣ)) (s : Multiset (IrrGL k'))
+private theorem sum_right (N : k'ˣ →* kˣ) (T : Finset (kˣ →* ℂˣ)) (s : Multiset (IrrGL (k := k')))
     (h2 : ∀ t ∈ T, ∀ t' ∈ T, IsUnram ((t * t'⁻¹).comp N) → t = t')
     (h3 : ∀ y ∈ s, ∃ ζ hζ, y = IrrGL.ofChar ζ hζ ∧ ∃ t ∈ T, IsUnram (ζ * t.comp N)) :
     ∑ t ∈ T, cnt s (t.comp N) = s.card := by
@@ -73,7 +77,7 @@ private theorem left_le (N : k'ˣ →* kˣ) (T : Finset (kˣ →* ℂˣ)) (J : F
     (h2 : ∀ t ∈ T, ∀ t' ∈ T, IsUnram ((t * t'⁻¹).comp N) → t = t')
     (hup : ∀ θ : kˣ →* ℂˣ, IsSmoothChar θ → IsUnram θ → IsUnram (θ.comp N))
     (hF : ∀ θ : kˣ →* ℂˣ, IsSmoothChar θ → IsUnram (θ.comp N) → (J.filter fun j => IsUnram (θ * e j)).card = F)
-    (y : IrrGL k) :
+    (y : IrrGL (k := k)) :
     ((T ×ˢ J).filter fun p => ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * (p.1 * e p.2))).card ≤ F := by
   rcases Finset.eq_empty_or_nonempty
     ((T ×ˢ J).filter fun p => ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * (p.1 * e p.2))) with h | ⟨p, hp⟩
@@ -128,7 +132,7 @@ theorem UpperTheory.V.Z.Gam.indTorOf :
     have := ((hS M 2 (by norm_num) π w.1).2.2.1 _ (hs' w)).2.1
     rw [Multiset.map_congr rfl (g := fun _ => 1) (hone w)] at this
     simpa using this
-  have hχ : ∀ (w : PlacesOver M v) (y : IrrGL (w.1.adicCompletion M)), ∃ χ : (v.adicCompletion K)ˣ →* ℂˣ,
+  have hχ : ∀ (w : PlacesOver M v) (y : IrrGL (k := w.1.adicCompletion M)), ∃ χ : (v.adicCompletion K)ˣ →* ℂˣ,
       IsSmoothChar χ ∧ (y ∈ s' w → ∃ ζ hζ, y = IrrGL.ofChar ζ hζ ∧ IsUnram (ζ * χ.comp (nm w))) := fun w y => by
     by_cases hy : y ∈ s' w
     · obtain ⟨ζ, hζ, rfl⟩ := TemperedTests.exists_eq_ofChar y (hone w y hy)

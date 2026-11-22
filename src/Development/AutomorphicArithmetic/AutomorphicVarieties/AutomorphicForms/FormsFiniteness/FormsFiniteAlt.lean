@@ -1,4 +1,8 @@
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+module
+
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,15 +40,15 @@ theorem AlgMod.mono {M : Type} [AddCommGroup M] [Module ℂ M] {S S' N : Submodu
   obtain ⟨p, hp, hx⟩ := h
   exact ⟨p, hp, fun x hxS => hx x (hS hxS)⟩
 
-theorem Bdd.mono {S S' : Submodule ℂ (archSmooth K n)} (h : Bdd S) (hS : S' ≤ S) : Bdd S' where
-  left φ hφ := h.left φ (hS hφ)
-  growth φ hφ := h.growth φ (hS hφ)
-  level := h.level.imp fun _ hL => ⟨hL.1, fun φ hφ => hL.2 φ (hS hφ)⟩
-  types := h.types.imp fun _ hV => ⟨hV.1, hV.2.1, fun φ hφ => hV.2.2 φ (hS hφ)⟩
-  centre z hz := (h.centre z hz).mono hS
+theorem Bdd.mono {S S' : Submodule ℂ (archSmooth K n)} (h : Bdd S) (hS : S' ≤ S) : Bdd S' :=
+  { left := fun φ hφ => h.left φ (hS hφ)
+    growth := fun φ hφ => h.growth φ (hS hφ)
+    level := h.level.imp fun _ hL => ⟨hL.1, fun φ hφ => hL.2 φ (hS hφ)⟩
+    types := h.types.imp fun _ hV => ⟨hV.1, hV.2.1, fun φ hφ => hV.2.2 φ (hS hφ)⟩
+    centre := fun z hz => (h.centre z hz).mono hS }
+
 
 variable (K n) in
-
 def FinAt : Prop := ∀ S : Submodule ℂ (archSmooth K n), Bdd S → FiniteDimensional ℂ S
 
 def FormsFinite : Prop := ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), FinAt K n

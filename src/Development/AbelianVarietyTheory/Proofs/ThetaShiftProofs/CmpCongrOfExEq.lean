@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IdealPart
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FibreComparison
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FamilyUnifComponentConst
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpEqOfIsometryMatchingMarkingsStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IdealPart
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FibreComparison
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FamilyUnifComponentConst
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpEqOfIsometryMatchingMarkingsStatement
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.ArcPts
@@ -24,7 +28,7 @@ theorem cmp_congr_of_ex_eq {E : Type} [Field E] [NumberField E] [IsCMField E] {H
   obtain ⟨e, he⟩ := (Fu.ex_ker i P hP _).1 h1
   refine ⟨e, hP.2.1 ?_⟩
   have hk' : (k : ℂ) ≠ 0 := by exact_mod_cast hk.ne'
-  rw [map_add, map_nsmul, he, ← Nat.cast_smul_eq_nsmul ℂ, smul_sub, smul_inv_smul₀ hk', smul_inv_smul₀ hk']
+  rw [map_add (f := _), map_nsmul, he, ← Nat.cast_smul_eq_nsmul ℂ, smul_sub, smul_inv_smul₀ hk', smul_inv_smul₀ hk']
   abel
 
 theorem cmp_level {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} [StarRing (𝓞 E)] {D : Datum H}
@@ -40,7 +44,7 @@ theorem cmp_level {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E
   have h3 : ∀ v, Fu.ex i P (h v) = π v := fun v => Over.OverMorphism.ext (hex v)
   obtain ⟨e, he⟩ := cmp_congr_of_ex_eq Fu i P hP k hk a (gam.symm la) (by
     rw [← h1, h2, ← h3, map_smul, hPg (gam.symm la), gam.apply_symm_apply])
-  exact ⟨gam e, by rw [he, map_add, map_nsmul, gam.apply_symm_apply]⟩
+  exact ⟨gam e, by rw [he, map_add (f := _), map_nsmul, gam.apply_symm_apply]⟩
 
 theorem exists_cmp : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) [StarRing (𝓞 E)] (D : Datum H) (l : Level H) (Xo : Moduli D l) (σ : KA l →+* ℂ) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (Fu : FamilyUnif Xo σ ty) (A : AnArc (𝓞 E)) (lin : ℂ → A.La → A.V →ₗ[ℂ] ℂ) (cst : ℂ → A.La → ℂ) (T : ℝ) (yw : ℂ → (Sp ℂ ⟶ Xo.X)) (π : ∀ w, A.V → (Over.mk (yw w) ⟶ Xo.univ.t.G)) (fr : ℂ → Xo.univ.t.PP.L.ι → A.V → ℂ) (laA laM : D.La → A.La), (inferInstance : StarRing (𝓞 E)) = H.starRing → (∀ w la la', lin w la (A.Pw w la') - lin w la' (A.Pw w la) = -(2 * Real.pi * Complex.I) * A.EF la la') → Module.finrank ℂ A.V = g → IsHolTo {w : ℂ | T < w.im} yw → (∀ w : ℂ, T < w.im → yw w ≫ Xo.s = spMap σ ∧ IsFibAt A Xo.univ.t lin cst w (yw w) (π w) (fr w) ∧ (Function.Surjective (π w) → (∀ v, toUnit _ ≫ Xo.univ.etaA v = π w ((l.A : ℂ)⁻¹ • A.Pw w (laA v))) ∧ ∀ v ∈ idealPart D l, toUnit _ ≫ Xo.univ.eta v = π w ((l.M : ℂ)⁻¹ • A.Pw w (laM v)))) → ∃ K : Cmp Fu A yw π laA laM, T ≤ K.T := by
   intro hL hL2 E _ _ _ H _ D l Xo σ g ty Fu A lin cst T yw π fr laA laM hstar hlin hrk hhol hw
@@ -78,7 +82,7 @@ theorem exists_cmp : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [Number
       (∃ e, gam a = la + k • e) → (∃ e, gam₁ a = la + k • e) → ∃ e, (gam.trans gam₁.symm) a = a + k • e := by
     rintro gam k a la ⟨e, he⟩ ⟨e₁, he₁⟩
     refine ⟨gam₁.symm (e - e₁), gam₁.injective ?_⟩
-    rw [LinearEquiv.trans_apply, gam₁.apply_symm_apply, map_add, map_nsmul, gam₁.apply_symm_apply, he, he₁, smul_sub]
+    rw [LinearEquiv.trans_apply, gam₁.apply_symm_apply, map_add (f := _), map_nsmul, gam₁.apply_symm_apply, he, he₁, smul_sub]
     abel
   have hrig : ∀ w : ℂ, max T (max T₀ T₁) < w.im →
       Fu.u i (Pw w) = yw w ∧ ∀ v, (Fu.ex i (Pw w) (h₁ v)).left = (π w v).left := by

@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.RightHolPowerDetDiag
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.SACommSES
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.LowestKTypeLink
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.LowestKTypeVectorExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.RightHolPowerDetDiag
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.SACommSES
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.LowestKTypeLink
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.LowestKTypeVectorExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,9 @@ theorem k2V (n : ℕ) : EigenspaceWeightConeStandard n := by
   have hℓ : ∀ (a : Fin n) (v w : V), (w : D) = E a a v →
       submoduleEvaluationFunctional V (ι.symm T.w) w = ((lowK ε lam a : ℝ) : ℂ) * submoduleEvaluationFunctional V (ι.symm T.w) v := by
     intro a v w hw
-    have e1 : submoduleEvaluationFunctional V (ι.symm T.w) w = ⟪((ι.symm T.w : V) : D), (w : D)⟫_ℂ := rfl
-    have e2 : submoduleEvaluationFunctional V (ι.symm T.w) v = ⟪((ι.symm T.w : V) : D), (v : D)⟫_ℂ := rfl
-    rw [e1, e2, hw, ← hU' a a rfl, hw0.1 a, inner_smul_left, Complex.conj_ofReal]
+    change ⟪((ι.symm T.w : V) : D), (w : D)⟫_ℂ =
+      ((lowK ε lam a : ℝ) : ℂ) * ⟪((ι.symm T.w : V) : D), (v : D)⟫_ℂ
+    rw [hw, ← hU' a a rfl, hw0.1 a, inner_smul_left, Complex.conj_ofReal]
   refine lowestKType_tensor_lift ε lam s hanti E (genSub E V) (eMM μ) (phiMM μ) hEM hlow hwt hgen (sT E V)
     (sθ V (eMM μ) (phiMM μ) (submoduleEvaluationFunctional V (ι.symm T.w))) (sES V) (sA ε E V hVst)
     (sA_isKRel ε E V hVst hD.glRep) (sT_sES E V) (sθ_sES V _ _ _)

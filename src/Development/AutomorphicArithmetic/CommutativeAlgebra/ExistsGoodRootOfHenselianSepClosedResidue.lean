@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
+
+@[expose] public section
 
 noncomputable section
 open IsLocalRing UpperTheory.Et
@@ -23,7 +27,7 @@ private lemma split_of_units {A : Type} [CommRing A] [Nontrivial A] (q : ℕ) (�
   refine eq_of_monic_of_dvd_of_natDegree_le (monic_prod_of_monic _ _ hmon) hm1 hdvd ?_
   rw [natDegree_prod_of_monic _ _ hmon]
   simp only [natDegree_X_sub_C, Finset.sum_const, Finset.card_range, smul_eq_mul, mul_one]
-  rw [← map_one C, natDegree_X_pow_sub_C]
+  rw [← map_one C, natDegree_X_pow_sub_C _]
 
 theorem UpperTheory.exists_goodRoot_of_henselian_sepClosed_residue :
     ∀ (A : Type) [CommRing A] [HenselianLocalRing A] [IsSepClosed (ResidueField A)] (q : ℕ), IsUnit (q : A) → ∃ ζ : A, GoodRoot q ζ := by
@@ -70,6 +74,6 @@ theorem UpperTheory.exists_goodRoot_of_henselian_sepClosed_residue :
     have key := split_of_units q ζ hq0 hζq
       (fun i hi j hj hij => hunits i (Finset.mem_range.1 hi) j (Finset.mem_range.1 hj) hij)
     have h := congrArg (Polynomial.eval₂ φ x) key
-    simpa [Polynomial.eval₂_finset_prod, Polynomial.eval₂_pow, Polynomial.eval₂_C] using h
+    simpa [Polynomial.eval₂_finsetProd, Polynomial.eval₂_pow, Polynomial.eval₂_C] using h
 
 end

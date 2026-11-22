@@ -1,20 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.GroupDeterminantExistsUniqueDescentOfInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsAlgebraicPointOfGroupDeterminant
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGext
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepCont
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.ChiApi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.FormRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.PolarIffLam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.StarApi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.OElRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompactGroupRepDefinedOverFiniteExtension
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.QuotientBasisFiniteModule
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.QuotientBasisFiniteDimensional
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MonicNormLtOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.GroupDeterminantExistsUniqueDescentOfInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsAlgebraicPointOfGroupDeterminant
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGext
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepCont
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.ChiApi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.FormRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.PolarIffLam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.StarApi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.OElRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompactGroupRepDefinedOverFiniteExtension
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.QuotientBasisFiniteModule
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.QuotientBasisFiniteDimensional
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MonicNormLtOne
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W
 
@@ -84,7 +88,7 @@ private def qbRing (K : IntermediateField ℚ_[l] (PadicAlgCl l)) (hK : ∀ c, a
     rintro x y ⟨hx, a, ha⟩ ⟨hy, b, hb⟩
     refine ⟨add_mem hx hy, a + b, ?_⟩
     have : x + y - algebraMap O _ (a + b) = (x - algebraMap O _ a) + (y - algebraMap O _ b) := by
-      rw [map_add]; ring
+      rw [map_add (f := _)]; ring
     rw [this]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha hb)
   algebraMap_mem' c := ⟨hK c, c, by simp⟩
@@ -209,12 +213,12 @@ private theorem qb_field {l : ℕ} [Fact l.Prime] (F : GFrame l) {n : ℕ} (ρ :
   obtain ⟨K₃, h₃, hK₃⟩ := qb_fd fun x : F.Vl × Fin n × Fin n => (P x.1).inv x.2.1 x.2.2
   refine ⟨fun v i => ?_, K₁ ⊔ (K₂ ⊔ K₃), inferInstance, fun i g => ?_, fun v i g => ?_⟩
   · simp only [hψ]
-    exact continuous_finset_sum _ fun b _ => (continuous_finset_sum _ fun a _ =>
+    exact continuous_finsetSum _ fun b _ => (continuous_finsetSum _ fun a _ =>
       continuous_const.mul ((hρ a b).comp (F.φ_cont v))).mul continuous_const
   · refine (le_sup_left : K₁ ≤ _) ?_
     let M : Matrix (Fin n) (Fin n) K₁ := Matrix.of fun a b => ⟨_, hK₁ g a b⟩
     have hM : mat ρ g = M.map (algebraMap K₁ (PadicAlgCl l)) := rfl
-    rw [GDet.lam, (UpperTheory.V.AlgebraTools.Det.repApi (mat ρ)).2.1, hM, Matrix.charpoly_map, Polynomial.coeff_map]
+    rw [GDet.lam, (UpperTheory.V.AlgebraTools.Det.repApi (mat ρ)).2.1 g, hM, Matrix.charpoly_map, Polynomial.coeff_map]
     exact mul_mem (pow_mem (neg_mem (one_mem _)) _) (SetLike.coe_mem _)
   · rw [hψ]
     exact sum_mem fun b _ => mul_mem (sum_mem fun a _ => mul_mem
@@ -225,7 +229,7 @@ private theorem qb_tr {n : ℕ} {A L G : Type} [CommRing A] [CommRing L] [Group 
     (hj : Function.Injective j) (D : GDet n A G) (ρ : G →* Matrix (Fin n) (Fin n) L) (hD : D.map j = GDet.ofRep ρ)
     (x y : MonoidAlgebra A G) (hy : GDet.repAlg ρ L (MonoidAlgebra.mapRingHom G j y) = 0) : D.tr (x * y) = 0 := by
   apply hj
-  rw [GDet.tr, ← ((UpperTheory.V.CA.d_gmap D).2.2.1 j _).2, hD, map_zero, ← GDet.tr,
+  rw [GDet.tr, ← ((UpperTheory.V.CA.d_gmap D).2.2.1 j _).2 1, hD, map_zero, ← GDet.tr,
     (UpperTheory.V.AlgebraTools.Det.repApi ρ).2.2.1 hn, map_mul, map_mul, hy, mul_zero, Matrix.trace_zero]
 
 private theorem qb_pair {l : ℕ} [Fact l.Prime] {F : GFrame l} {O : Type} [CommRing O] [IsLocalRing O] [Algebra ℤ_[l] O]
@@ -292,8 +296,7 @@ private theorem qb_pair {l : ℕ} [Fact l.Prime] {F : GFrame l} {O : Type} [Comm
     simp only [GFrame.oEl, map_list_prod, List.map_ofFn]
     congr 2
     funext i
-    simp only [Function.comp_apply, map_sub, MonoidAlgebra.mapRingHom_single, map_one]
-    rfl
+    simp [MonoidAlgebra.mapRingHom_single, hψ']
   · refine qb_tr (hn _ (B.u.I u g hg h)) _ hj D _ hD _ _ ?_
     rw [map_sub, map_sub, map_one, map_one, MonoidAlgebra.mapRingHom_single, map_one, sub_eq_zero]
     simp [GDet.repAlg, mat, h2 u g hg]

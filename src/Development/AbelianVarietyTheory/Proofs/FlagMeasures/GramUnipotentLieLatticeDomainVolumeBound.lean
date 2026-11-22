@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRoot
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TranslatedLatticeAtInfinityFullCovolumeDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRoot
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TranslatedLatticeAtInfinityFullCovolumeDual
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.MainNotions.S GlobalTheory.LoopV MeasureTheory
 open scoped ENNReal Classical
@@ -137,7 +141,7 @@ private theorem mem_span_ratB_iff_forall_mem_range (K : Type) [Field K] [NumberF
     rintro _ ⟨_, ⟨i, rfl⟩, rfl⟩
     exact ⟨⟨a, i⟩, by simp [GlobalTheory.LatFacts.ratB, Pi.basis_apply]⟩
 
-private theorem mem_span_intB_iff_exists_emb (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (j : ℕ)
+private theorem mem_span_intB_iff_exists_emb (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (j : ℕ)
     (y : GlobalTheory.FlagBase.VecInf K j) :
     y ∈ Submodule.span ℤ (Set.range (GlobalTheory.LatFacts.intB K j)) ↔
       ∃ x : Fin j → 𝓞 K, GlobalTheory.LatFacts.emb K j (fun a => (x a : K)) = y := by
@@ -160,7 +164,7 @@ private theorem mem_span_intB_iff_exists_emb (K : Type) [Field K] [NumberField K
   · rintro ⟨x, rfl⟩
     exact ⟨fun a => (x a : K), (mem_span_ratB_iff_forall_mem_range K j _).2 fun a => ⟨x a, rfl⟩, rfl⟩
 
-theorem exists_domain (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ι : Type) [Fintype ι]
+theorem exists_domain (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ι : Type) [Fintype ι]
     (τ : ι → (K →+* ℂ)) (hτ : ∀ w : InfinitePlace K, ∃! v, InfinitePlace.mk (τ v) = w) (R : Type) [Fintype R] [DecidableEq R]
     (H : AddSubgroup (R → 𝓞 K)) (hH : H.index ≠ 0) (M : ι → Matrix R R ℂ) (hM : ∀ v, (M v).det = 1)
     (Λ : Submodule ℤ (ι → R → ℂ))
@@ -501,21 +505,21 @@ theorem eqMat_injective (hU : IsUpUni U) (hR : ∀ q ∈ R, q.1 < q.2)
   have hxs : StrUp x := by
     intro i j hji
     simp only [x]
-    rw [dif_neg]
+    rw [dite_eq_right]
     intro hm
     simp only [coRoots, Finset.mem_filter] at hm
     exact absurd hm.2.1 (not_lt.2 hji)
   have hxR : (fun q : R => x q.1.1 q.1.2) = 0 := by
     funext q
     simp only [x, Pi.zero_apply]
-    rw [dif_neg]
+    rw [dite_eq_right]
     intro hm
     simp only [coRoots, Finset.mem_filter] at hm
     exact hm.2.2 q.2
   have hxC : (fun q : coRoots R => x q.1.1 q.1.2) = u := by
     funext q
     simp only [x]
-    rw [dif_pos q.2]
+    rw [dite_eq_left q.2]
   have hmem : x ∈ lieU Z := by
     rw [mem_lieU_iff hR hxs, hxR, hxC, Matrix.mulVec_zero, zero_add]
     exact h0
@@ -697,7 +701,7 @@ theorem domain_of_cell [NumberField K] (ι : Type) [Fintype ι] (τ : ι → (K 
         rw [e3] at e1
         rw [e4] at e2
         have : algebraMap (𝓞 K) K ((Ao *ᵥ fun q : R => xo q.1.1 q.1.2) s + (Do *ᵥ fun q : S => xo q.1.1 q.1.2) s) = 0 := by
-          rw [map_add, e1, e2]; exact key
+          rw [map_add (f := _), e1, e2]; exact key
         simpa using this
       · intro v
         rw [show c v = fun q : R => τ v ((U * x * U⁻¹) q.1.1 q.1.2) from funext (hcx v), hMx x hsx v]
@@ -717,7 +721,7 @@ theorem domain_of_cell [NumberField K] (ι : Type) [Fintype ι] (τ : ι → (K 
           rw [hAo] at e1
           rw [hDo] at e2
           have := congrArg (algebraMap (𝓞 K) K) (congrFun hz s)
-          rw [Pi.add_apply, map_add, e1, e2] at this
+          rw [Pi.add_apply, map_add (f := _), e1, e2] at this
           exact this
         have hxR : (fun q : R => x q.1.1 q.1.2) = fun q : R => (y q : K) := funext hxy
         rw [hxR] at k1
@@ -757,7 +761,7 @@ theorem domain_of_cell [NumberField K] (ι : Type) [Fintype ι] (τ : ι → (K 
     rw [hp]
     calc ∏ v, ‖τ v (((eqMat Z S).submatrix e id).det)‖ ^ 2
         ≤ ∏ v, (4 * (N : ℝ) ^ 2 * max 1 (Bv v) ^ 4) ^ N ^ 2 :=
-          Finset.prod_le_prod (fun v _ => by positivity)
+          Finset.prod_le_prod₀ (fun v _ => by positivity)
             (fun v _ => norm_det_eqMat_le (τ v) Z (Bv v) (fun t I J => hBv t I J v) S hSup e)
       _ = ((4 * (N : ℝ) ^ 2) ^ Fintype.card ι * (∏ v, max 1 (Bv v)) ^ 4) ^ N ^ 2 := by
           rw [Finset.prod_pow, Finset.prod_mul_distrib, Finset.prod_const, Finset.prod_pow, Finset.card_univ]

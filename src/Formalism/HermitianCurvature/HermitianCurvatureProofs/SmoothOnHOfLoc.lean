@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterStabilizerEqOne
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterStabilizerEqOne
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

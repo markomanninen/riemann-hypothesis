@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct LinearMap Function
 
@@ -22,12 +26,10 @@ theorem rTensor_injective_of_flat_baseChange {A C M N' N : Type} [CommRing A] [C
   have key : ∀ z, (ι.restrictScalars A).rTensor M (e' z) = e (ι.rTensor (C ⊗[A] M) z) := by
     intro z
     induction z with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul n t =>
       induction t with
-      | zero => simp
-      | add a b ha hb => simp only [tmul_add, map_add, ha, hb]
+      | add a b ha hb => simp only [tmul_add, map_add (f := _), ha, hb]
       | tmul c b => simp [e, e']
   intro x y h
   obtain ⟨x, rfl⟩ := e'.surjective x
@@ -47,12 +49,10 @@ theorem lTensor_injective_of_flat {A C F N' N : Type} [CommRing A] [CommRing C] 
   have key : ∀ z, ι.lTensor F (e' z) = e ((ι.baseChange C).lTensor F z) := by
     intro z
     induction z with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul n t =>
       induction t with
-      | zero => simp
-      | add a b ha hb => simp only [tmul_add, map_add, ha, hb]
+      | add a b ha hb => simp only [tmul_add, map_add (f := _), ha, hb]
       | tmul c b => simp [e, e']
   intro x y h
   obtain ⟨x, rfl⟩ := e'.surjective x
@@ -69,7 +69,7 @@ theorem rTensor_injective_of_extension {K L : Type} [AddCommGroup K] [Module B K
     (hg : Exact g₁ g₂) (hg₁ : Injective g₁) (hg₂ : Surjective g₂)
     (h₁ : Injective (i.rTensor N₁)) (h₃ : Injective (i.rTensor N₃)) :
     Injective (i.rTensor N₂) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have h2 : g₂.lTensor K x = 0 := by
     apply (injective_iff_map_eq_zero _).mp h₃
@@ -121,7 +121,6 @@ theorem rTensor_injective_of_pow_smul_eq_bot (I : Ideal B) {K L : Type} [AddComm
       simpa using hx
     have hz : ∀ z : K ⊗[B] N, z = 0 := fun z => by
       induction z with
-      | zero => rfl
       | tmul k x => rw [h0 x, tmul_zero]
       | add a b ha hb => rw [ha, hb, add_zero]
     intro a b _

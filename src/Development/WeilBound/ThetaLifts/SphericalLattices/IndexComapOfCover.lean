@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.LocCommSt
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.LocCommSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,7 @@ def NA (c : L →+* L) (m : ℕ) : AddSubgroup (Matrix (Fin m) (Fin m) L) where
   carrier := {X | (∀ i j, X i j ∈ intL L) ∧ ∀ i j, c (X i j) = -X j i}
   zero_mem' := ⟨fun _ _ => (intL L).zero_mem, fun _ _ => by simp⟩
   add_mem' := fun {X Y} hX hY => ⟨fun i j => (intL L).add_mem (hX.1 i j) (hY.1 i j), fun i j => by
-    simp only [Matrix.add_apply, map_add, hX.2, hY.2, neg_add]⟩
+    simp only [Matrix.add_apply, map_add (f := _), hX.2, hY.2, neg_add]⟩
   neg_mem' := fun {X} hX => ⟨fun i j => (intL L).neg_mem (hX.1 i j), fun i j => by
     simp only [Matrix.neg_apply, map_neg, hX.2]⟩
 
@@ -154,11 +158,11 @@ theorem relIndex_NA_sq (h : IsUnramInv ϖ c q) (m : ℕ) (r : L) (hr : c r = r) 
       refine ⟨(⟨Matrix.of fun i j => X i j - x * -((c x - x)⁻¹ * (X i j + c (X j i))), fun i j =>
           (intL L).sub_mem (hX i j) ((intL L).mul_mem hx (hb i j)), fun i j => ?_⟩,
         ⟨Matrix.of fun i j => -((c x - x)⁻¹ * (X i j + c (X j i))), hb, fun i j => ?_⟩), ?_⟩
-      · simp only [Matrix.of_apply, map_sub, map_mul, map_neg, map_inv₀, map_add, h.1]
+      · simp only [Matrix.of_apply, map_sub, map_mul, map_neg, map_inv₀, map_add (f := _), h.1]
         rw [← neg_sub (c x) x, inv_neg]
         field_simp
         ring
-      · simp only [Matrix.of_apply, map_sub, map_mul, map_neg, map_inv₀, map_add, h.1]
+      · simp only [Matrix.of_apply, map_sub, map_mul, map_neg, map_inv₀, map_add (f := _), h.1]
         rw [← neg_sub (c x) x, inv_neg]
         ring
       · ext i j
@@ -174,7 +178,7 @@ theorem relIndex_NA_sq (h : IsUnramInv ϖ c q) (m : ℕ) (r : L) (hr : c r = r) 
     · intro hp
       have hb : ∀ i j, r * (p.2 : Matrix (Fin m) (Fin m) L) i j ∈ intL L := fun i j => by
         have h1 := (intL L).neg_mem ((intL L).mul_mem hdi ((intL L).add_mem (hp i j) (c_int h (hp j i))))
-        simp only [map_mul, map_add, hr, p.1.2.2, p.2.2.2] at h1
+        simp only [map_mul, map_add (f := _), hr, p.1.2.2, p.2.2.2] at h1
         convert h1 using 1
         field_simp
         ring

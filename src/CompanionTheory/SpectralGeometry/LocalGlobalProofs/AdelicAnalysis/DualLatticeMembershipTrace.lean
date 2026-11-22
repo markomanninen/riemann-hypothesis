@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SumRhoEqTrace
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardAdelicCharacterStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SumRhoEqTrace
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardAdelicCharacterStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,9 +25,11 @@ theorem trace_int_of_basis {F : Type} [Field F] [NumberField F]
   choose m hm using h
   have hr : (r : F) = ∑ v, ((b.repr r v : ℤ) : F) * (b v : F) := by
     conv_lhs => rw [← b.sum_repr r]
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   refine ⟨∑ v, b.repr r v * m v, ?_⟩
-  rw [hr, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hr, Finset.mul_sum, map_sum]
   push_cast
   refine Finset.sum_congr rfl fun v _ => ?_
   have e : (N : F) * c * (((b.repr r v : ℤ) : F) * (b v : F)) =

@@ -1,5 +1,9 @@
-import Mathlib
-import Lemmata.GeneralBFact.Imports
+module
+
+public import Mathlib
+public import Lemmata.GeneralBFact.Imports
+
+@[expose] public section
 
 noncomputable section
 

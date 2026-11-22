@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NegOneNotSqSqrtTwo
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NegOneNotSqSqrtTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,11 @@ theorem not_sq_of_real (E : Type) [Field E] [NumberField E] [IsCMField E] (s : E
     t ^ 2 ≠ τ (algebraMap (maximalRealSubfield E) K d) := by
   intro h
   let _ := (τ.comp (algebraMap (maximalRealSubfield E) K)).toAlgebra
-  let φ : E →ₐ[maximalRealSubfield E] ℂ := IsAlgClosed.lift
+  let φ : E →ₐ[maximalRealSubfield E] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have h1 : (φ s) ^ 2 = τ (algebraMap (maximalRealSubfield E) K d) := by
     rw [← map_pow, ← hd, φ.commutes]; rfl
   have hu : starRingEnd ℂ (φ s) = - φ s := by
@@ -50,7 +58,7 @@ theorem quadField_pf : QuadField := by
   · rw [InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces, IsTotallyReal.nrComplexPlaces_eq_zero, add_zero,
       ← IsTotallyReal.finrank, ← IsCMField.card_infinitePlace_eq_card_infinitePlace E,
       InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces, IsTotallyReal.nrComplexPlaces_eq_zero, add_zero,
-      ← IsTotallyReal.finrank, ← Module.finrank_mul_finrank ℚ (maximalRealSubfield E) K, mul_comm]
+      ← IsTotallyReal.finrank, ← (letI : Module.Free (maximalRealSubfield E) K := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield E) K), mul_comm]
   generalize hδ : algebraMap (maximalRealSubfield E) K d = δ
   have hkey : ∀ (τ : K →+* ℂ) (t : ℂ), starRingEnd ℂ t = t → t ^ 2 ≠ τ δ := by
     intro τ t ht

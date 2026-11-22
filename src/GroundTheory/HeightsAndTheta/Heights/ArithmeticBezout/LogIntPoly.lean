@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogIntCircle
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogIntCircle
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -39,7 +44,7 @@ theorem eval_scaleP (p : ι → Prop) [DecidablePred p] (a : ℂ) (u : ι → �
       ∑ d ∈ Finset.range (D + 1), eval u (weightedHomogeneousComponent (indW p) d g) * a ^ d := by
   classical
   have hc : ∀ d, eval u (weightedHomogeneousComponent (indW p) d g) =
-      ∑ m ∈ g.support, (if Finsupp.weight (indW p) m = d then coeff m g else 0) *
+      ∑ m ∈ g.support, (if Finsupp.weight (indW p) m = d then AddMonoidAlgebra.coeff g m else 0) *
         ∏ i ∈ m.support, u i ^ m i := by
     intro d
     rw [eval_eq]
@@ -56,7 +61,7 @@ theorem eval_scaleP (p : ι → Prop) [DecidablePred p] (a : ℂ) (u : ι → �
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [prod_scaleP]
   rw [Finset.sum_eq_single (Finsupp.weight (indW p) m)]
-  · simp only [if_true]; ring
+  · simp only [ite_true]; ring
   · intro d _ hd; simp [Ne.symm hd]
   · intro h; exact absurd (Finset.mem_range.mpr (Nat.lt_succ_of_le (hD m hm))) h
 
@@ -75,8 +80,8 @@ theorem measurePreserving_scaleP [Fintype ι] (p : ι → Prop) [DecidablePred p
     (f := fun x => if p x then (fun z : ℂ => circleMap 0 1 θ * z) else id)
     (fun x => by
       by_cases h : p x
-      · simp only [h, if_true]; exact measurePreserving_mul_circleMap θ
-      · simp only [h, if_false]; exact MeasurePreserving.id _)
+      · simp only [h, ite_true]; exact measurePreserving_mul_circleMap θ
+      · simp only [h, ite_false]; exact MeasurePreserving.id _)
   have e : scaleP p (circleMap 0 1 θ) =
       fun a x => (if p x then (fun z : ℂ => circleMap 0 1 θ * z) else id) (a x) := by
     funext u x
@@ -89,9 +94,9 @@ theorem measurable_scaleP [Fintype ι] (p : ι → Prop) [DecidablePred p] :
   apply Continuous.measurable
   refine continuous_pi fun x => ?_
   by_cases h : p x
-  · simp only [Function.uncurry, scaleP, h, if_true]
+  · simp only [Function.uncurry, scaleP, h, ite_true]
     exact ((continuous_circleMap 0 1).comp continuous_fst).mul ((continuous_apply x).comp continuous_snd)
-  · simp only [Function.uncurry, scaleP, h, if_false]
+  · simp only [Function.uncurry, scaleP, h, ite_false]
     exact (continuous_apply x).comp continuous_snd
 
 theorem norm_scaleP_circleMap (p : ι → Prop) [DecidablePred p] (θ : ℝ) (u : ι → ℂ) (x : ι) :
@@ -174,7 +179,7 @@ theorem weight_indW_le (p : ι → Prop) [DecidablePred p] (m : ι →₀ ℕ) :
 
 theorem eq_monomial_of_homog [DecidableEq ι] (g : MvPolynomial ι ℂ) (hg : g ≠ 0)
     (h : ∀ x, ∃ d, IsWeightedHomogeneous (indW (· = x)) g d) :
-    ∃ m, g = monomial m (coeff m g) ∧ coeff m g ≠ 0 := by
+    ∃ m, g = monomial m (AddMonoidAlgebra.coeff g m) ∧ AddMonoidAlgebra.coeff g m ≠ 0 := by
   choose d hd using h
   have key : ∀ m ∈ g.support, ∀ x, m x = d x := by
     intro m hm x
@@ -214,10 +219,10 @@ theorem logPoly [Fintype ι] [DecidableEq ι] (r : ℝ) :
   ·
     obtain ⟨m, hgm, hc⟩ := eq_monomial_of_homog g hg h0
     rw [hgm]
-    have hmeas : Measurable fun u : ι → ℂ => Real.log ‖eval u (monomial m (coeff m g))‖ :=
+    have hmeas : Measurable fun u : ι → ℂ => Real.log ‖eval u (monomial m (AddMonoidAlgebra.coeff g m))‖ :=
       Real.measurable_log.comp (continuous_eval _).measurable.norm
     refine ⟨?_, ?_⟩
-    · refine Integrable.mono' (g := fun u => |Real.log ‖coeff m g‖| +
+    · refine Integrable.mono' (g := fun u => |Real.log ‖AddMonoidAlgebra.coeff g m‖| +
           ∑ i ∈ m.support, (m i : ℝ) * |Real.log ‖u i‖|) ?_ hmeas.aestronglyMeasurable
           (Filter.Eventually.of_forall fun u => ?_)
       · have : IsFiniteMeasure (volume.restrict (polydisc ι r)) :=
@@ -248,8 +253,8 @@ theorem logPoly [Fintype ι] [DecidableEq ι] (r : ℝ) :
     set g' := weightedHomogeneousComponent w d0 g with hg'
     have hg'0 : g' ≠ 0 := by
       intro h
-      have := congrArg (coeff m0) h
-      rw [hg', coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at this
+      have := congrArg (AddMonoidAlgebra.coeff · m0) h
+      rw [hg', coeff_weightedHomogeneousComponent, ite_eq_left rfl, AddMonoidAlgebra.coeff_zero] at this
       exact mem_support_iff.mp hm0 this
     have hsub : nonHomog g' ⊆ (nonHomog g).erase x := by
       intro y hy

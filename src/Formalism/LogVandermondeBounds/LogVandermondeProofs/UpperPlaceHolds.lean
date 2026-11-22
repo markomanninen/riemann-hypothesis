@@ -1,4 +1,8 @@
-import Formalism.LogVandermondeBounds.UpperPlace
+module
+
+public import Formalism.LogVandermondeBounds.UpperPlace
+
+@[expose] public section
 
 namespace Formalism.LogVandermondeBounds.StandardLattice
 
@@ -42,7 +46,7 @@ lemma up_vand_le (K : ℕ) (u v : ℕ → ℝ) (hint : ∀ i, i < K → v i < u 
     (hv : ∀ i j, i < j → j < K → v j < v i) : vandN v K ≤ vandN u (K + 1) := by
   have h1 : vandN v K ≤ ∏ i ∈ range K, ∏ j ∈ Ico (i + 1) K, (u i - u (j + 1)) := by
     unfold vandN
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro i hi
       apply Finset.prod_nonneg
       intro j hj
@@ -50,7 +54,7 @@ lemma up_vand_le (K : ℕ) (u v : ℕ → ℝ) (hint : ∀ i, i < K → v i < u 
       have := hv i j (by omega) hj.2
       linarith
     · intro i hi
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro j hj
         simp only [mem_Ico, mem_range] at hi hj
         have := hv i j (by omega) hj.2
@@ -64,7 +68,7 @@ lemma up_vand_le (K : ℕ) (u v : ℕ → ℝ) (hint : ∀ i, i < K → v i < u 
   unfold vandN
   rw [Finset.prod_range_succ]
   simp only [Finset.Ico_self, Finset.prod_empty, mul_one]
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro i hi
     apply Finset.prod_nonneg
     intro j hj
@@ -109,7 +113,7 @@ lemma up_nB_le (k a c : ℕ) : (nBetween k a c : ℝ) ≤ (c : ℝ) := by
 private theorem prod_le_pow_of_card_le_of_le (s : Finset ℕ) (G : ℕ → ℝ) (Bd : ℝ) (e : ℕ) (he : s.card ≤ e)
     (hBd : 1 ≤ Bd) (h : ∀ c ∈ s, 0 ≤ G c ∧ G c ≤ Bd) : ∏ c ∈ s, G c ≤ Bd ^ e := by
   calc ∏ c ∈ s, G c ≤ ∏ _c ∈ s, Bd :=
-        Finset.prod_le_prod (fun c hc => (h c hc).1) (fun c hc => (h c hc).2)
+        Finset.prod_le_prod₀ (fun c hc => (h c hc).1) (fun c hc => (h c hc).2)
     _ = Bd ^ s.card := Finset.prod_const Bd
     _ ≤ Bd ^ e := pow_le_pow_right₀ hBd he
 
@@ -188,10 +192,10 @@ lemma up_num_le (n m : ℕ) (lam v : ℕ → ℝ) (Bd : ℝ) (hBd : 1 ≤ Bd)
   calc _ ≤ (∏ a ∈ range (n + 1), ((∏ c ∈ Ico (a + 1) (n + 1), (v a - v c)) * Bd ^ m)) *
           ∏ _x ∈ range m, Bd ^ m := by
         apply mul_le_mul
-        · apply Finset.prod_le_prod
+        · apply Finset.prod_le_prod₀
           · intro a _; exact rownonneg a
           · intro a ha; exact hrow1 a (Finset.mem_range.mp ha)
-        · apply Finset.prod_le_prod
+        · apply Finset.prod_le_prod₀
           · intro x _; exact rownonneg (n + 1 + x)
           · intro x _; exact hrow2 (n + 1 + x) (by omega)
         · exact Finset.prod_nonneg (fun x _ => rownonneg (n + 1 + x))
@@ -285,8 +289,8 @@ private theorem linear_log_bound_le_K_mul_M (K M L lC l4 lB lQ lK E1 E : ℝ) (h
   have h4 : 0 ≤ K * M * L := mul_nonneg hKM0 hL
   nlinarith
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem UpperPlace_holds : UpperPlace := by
   unfold UpperPlace
   intro ε x hε hx k m Δ C₃ u v b w hm2 hmeven hk2 hmk hΔ hC₃ hI hu

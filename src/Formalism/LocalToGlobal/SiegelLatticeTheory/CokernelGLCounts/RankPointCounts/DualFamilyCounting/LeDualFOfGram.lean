@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NondegOnOfCompl
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NondegOnOfCompl
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -14,9 +18,10 @@ variable {K F V : Type} [Field K] [NumberField K] [StarRing K] [Field F] [Number
 
 theorem isLattice_span {ι' : Type} [Finite ι'] (β : ι' → V)
     (hβ : Submodule.span K (Set.range β) = ⊤) :
-    Submodule.IsLattice K (Submodule.span (𝓞 K) (Set.range β)) where
-  fg := Submodule.fg_span (Set.finite_range β)
-  span_eq_top := by rw [Submodule.span_span_of_tower]; exact hβ
+    Submodule.IsFullLattice K (Submodule.span (𝓞 K) (Set.range β)) := by
+  let : Submodule.IsLattice K (Submodule.span (𝓞 K) (Set.range β)) :=
+    Submodule.IsLattice.of_fg K (Submodule.fg_span (Set.finite_range β))
+  exact { span_eq_top := (Submodule.span_span_of_tower (𝓞 K) K (Set.range β)).trans hβ }
 
 def rdualF (h : V →ₗ⋆[K] V →ₗ[K] K) (𝔭 : Ideal (𝓞 F)) (y : V) : Submodule (𝓞 K) V :=
   (locF 𝔭 (1 : Submodule (𝓞 K) K)).comap ((h y).restrictScalars (𝓞 K))
@@ -26,7 +31,7 @@ def ldualF (h : V →ₗ⋆[K] V →ₗ[K] K) (𝔭 : Ideal (𝓞 F)) (x : V) : 
   zero_mem' := by simp
   add_mem' := by
     intro a b ha hb
-    simp only [Set.mem_ofPred_eq, map_add, LinearMap.add_apply] at *
+    simp only [Set.mem_ofPred_eq, map_add (f := _), LinearMap.add_apply] at *
     exact Submodule.add_mem _ ha hb
   smul_mem' := by
     intro c z hz

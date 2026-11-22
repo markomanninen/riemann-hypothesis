@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVZPrimHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVZPrimHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ def Pm (v : PlX X) (c : Fv X.B.I.F v) (w : (VS D).V) : Submodule (𝓞 D.host.E)
     simp only [Set.mem_ofPred_eq, map_zero, mul_zero]; exact Submodule.zero_mem _
   add_mem' := by
     intro y y' hy hy'
-    simp only [Set.mem_ofPred_eq, map_add, mul_add] at *
+    simp only [Set.mem_ofPred_eq, map_add (f := _), mul_add] at *
     exact Submodule.add_mem _ hy hy'
   smul_mem' := by
     intro o y hy
@@ -83,7 +87,8 @@ theorem crd_of_L (l : Fin X.B.I.n → X.B.I.E) (hl : l ∈ X.B.I.L) :
   refine ⟨∑ i, X.ιE (l i) • X.bas i, (X.L_eq l).1 hl, ?_⟩
   funext j
   have h : X.bas.repr (∑ i, X.ιE (l i) • X.bas i) j = X.ιE (l j) := by
-    simp [map_sum, Module.Basis.repr_self, Finsupp.single_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Module.Basis.repr_self, Finsupp.single_apply]
   simp only [crdOf]
   rw [h, RingEquiv.symm_apply_apply]
 

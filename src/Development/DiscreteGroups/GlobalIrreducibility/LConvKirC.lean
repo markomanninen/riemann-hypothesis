@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.ContinuousKinv2
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.ContinuousKinv2
+
+@[expose] public section
 
 noncomputable section
 set_option linter.unusedSimpArgs false

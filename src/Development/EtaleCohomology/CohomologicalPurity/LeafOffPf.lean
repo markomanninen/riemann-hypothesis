@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry
 

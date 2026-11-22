@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSq
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Joints
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PadicNormTwoHundredSixteenEqOneOfFiveLe
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSq
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Joints
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PadicNormTwoHundredSixteenEqOneOfFiveLe
+
+@[expose] public section
 
 noncomputable section
 

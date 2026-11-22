@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PFGNullstellensatz
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormMultiHomog
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PFGNullstellensatz
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormMultiHomog
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -69,12 +74,14 @@ theorem linePoly_natDegree_coeff {δ : ℕ} {f : MvPolynomial (Fin (e + 1) × Fi
     rw [hw d hd] at h1 h2
     exact ⟨h1, h2.trans (Finset.prod_congr rfl fun ij _ => by rw [(lineVar_natDegree_coeff t m ij).2])⟩
   have hs : linePoly f t m = ∑ d ∈ f.support,
-      Polynomial.C (C (coeff d f)) * ∏ ij ∈ d.support, lineVar t m ij ^ d ij := by
-    conv_lhs => rw [linePoly, f.as_sum, map_sum]
+      Polynomial.C (C (AddMonoidAlgebra.coeff f d)) * ∏ ij ∈ d.support, lineVar t m ij ^ d ij := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [linePoly, f.as_sum, map_sum]
     refine Finset.sum_congr rfl fun d _ => ?_
     simp [aeval_monomial, Polynomial.algebraMap_apply, Finsupp.prod]
-  have hs' : specFirst f t = ∑ d ∈ f.support, C (coeff d f) * ∏ ij ∈ d.support, specFirstVar t ij ^ d ij := by
-    conv_lhs => rw [specFirst, f.as_sum, map_sum]
+  have hs' : specFirst f t = ∑ d ∈ f.support, C (AddMonoidAlgebra.coeff f d) * ∏ ij ∈ d.support, specFirstVar t ij ^ d ij := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [specFirst, f.as_sum, map_sum]
     exact Finset.sum_congr rfl fun d _ => bind₁_monomial _ _ _
   rw [hs, hs']
   refine ⟨Polynomial.natDegree_sum_le_of_forall_le _ _ fun d hd =>
@@ -141,7 +148,8 @@ theorem exists_pow_mem (I : Ideal (MvPolynomial (Fin n) F)) (f : MvPolynomial (F
   have hk1 : ((aeval pt).toRingHom.comp ψ).comp
       (algebraMap F (Polynomial (MvPolynomial (Fin e × Fin n) F))) = algebraMap F (AlgebraicClosure F) := by
     ext a
-    simp [ψ, Polynomial.algebraMap_apply]
+    change (aeval pt) (ψ (Polynomial.C (C a))) = algebraMap F _ a
+    simp [ψ]
   have hk2 : ((aeval pt).toRingHom.comp ψ) ∘ lineVar t m = V := by
     funext ⟨i, j⟩
     cases i using Fin.cases with
@@ -154,8 +162,8 @@ theorem exists_pow_mem (I : Ideal (MvPolynomial (Fin n) F)) (f : MvPolynomial (F
 
 end ChartFinite
 
-open ChartFinite in
 
+open ChartFinite in
 theorem ChartFinite.proof : ChartFinite.Statement := by
   intro F _ n e I f t p _ hI hf hp
   classical
@@ -218,7 +226,7 @@ theorem ChartFinite.proof : ChartFinite.Statement := by
       rw [h3]
       exact hS (C a)
     | add g h hg hh =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hg hh
     | mul_X g v hg =>
       rw [map_mul]

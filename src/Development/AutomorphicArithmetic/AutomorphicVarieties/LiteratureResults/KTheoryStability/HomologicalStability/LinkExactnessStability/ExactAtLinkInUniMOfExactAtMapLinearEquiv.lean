@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.LinkExactnessStability.SeqChainExactAtMapIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.LinkExactnessStability.SeqChainExactAtMapIff
+
+@[expose] public section
 
 open GlobalTheory.SeqCx Matrix
 
@@ -45,7 +49,7 @@ private theorem bd_mapDomain_listMap_comm {V : Type} (g : V → V) (c : List V �
   | add a b ha hb => simp [Finsupp.mapDomain_add, ha, hb]
   | single l n =>
     simp [bd, Finsupp.mapDomain_single, Finsupp.linearCombination_single,
-      Finsupp.mapDomain_finset_sum, Finsupp.mapDomain_smul, List.eraseIdx_map]
+      Finsupp.mapDomain_finsetSum, Finsupp.mapDomain_smul, List.eraseIdx_map]
 
 private theorem mapDomain_listMap_mem_chains_of_map_mem {V : Type} (g : V → V) (F G : Set (List V))
     (hFG : ∀ l ∈ F, l.map g ∈ G) (p : ℕ) (c : List V →₀ ℤ) (hc : c ∈ chains F p) :

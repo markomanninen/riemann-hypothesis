@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicValNatFactorialBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicValNatFactorialBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,9 +27,9 @@ theorem approx_add {F G : P} {r : ℕ} {y z : R} (hF : Approx l ι f F r y) (hG 
   obtain ⟨n, b, p, h, hn, hp, hF, hy⟩ := hF
   obtain ⟨m, c, q, k, hm, hq, hG, hz⟩ := hG
   refine ⟨n * m, (m : B) * b + (n : B) * c, p + q, h + k, mul_ne_zero hn hm, ?_, ?_, ?_⟩
-  · rw [map_add, map_mul, map_mul, map_natCast, map_natCast, ← hp, ← hq]; push_cast; ring
+  · rw [map_add (f := _), map_mul, map_mul, map_natCast, map_natCast, ← hp, ← hq]; push_cast; ring
   · rw [hF, hG]; ring
-  · rw [map_add, map_mul, map_mul, map_natCast, map_natCast, ← hy, ← hz]; push_cast; ring
+  · rw [map_add (f := _), map_mul, map_mul, map_natCast, map_natCast, ← hy, ← hz]; push_cast; ring
 
 theorem approx_mul {F G : P} {r : ℕ} {y z : R} (hF : Approx l ι f F r y) (hG : Approx l ι f G r z) :
     Approx l ι f (F * G) r (y * z) := by
@@ -75,9 +79,9 @@ theorem exists_approx (F : P) (r : ℕ) : ∃ y, Approx l ι f F r y := by
   obtain ⟨y, hy⟩ := hK n b p hn hp
   exact ⟨y, n, b, p, h, hn, hp, hF, hy⟩
 
+
 omit htf hK hl0 in
 variable (l) in
-
 theorem sep_l (x : R) (h : ∀ r : ℕ, (l : R) ^ r ∣ x) : x = 0 :=
   IsHausdorff.haus' (I := Ideal.span {(l : R)}) x fun n => by
     simp only [SModEq.zero, smul_eq_mul, Ideal.mul_top]
@@ -100,8 +104,8 @@ theorem exists_lim (F : P) : ∃ L : R, ∀ r y, Approx l ι f F r y → (l : R)
   rw [e]
   exact dvd_sub h2 h1
 
-include hD in
 
+include hD in
 theorem exists_ringHom : ∃ E : P →+* R, ∀ F r y, Approx l ι f F r y → (l : R) ^ r ∣ E F - y := by
   choose L hL using exists_lim htf hK hl0 hD
   have key : ∀ F z, (∀ r, ∃ y, Approx l ι f F r y ∧ (l : R) ^ r ∣ z - y) → L F = z := fun F z hz =>
@@ -131,9 +135,9 @@ theorem exists_ringHom : ∃ E : P →+* R, ∀ F r y, Approx l ι f F r y → (
     exact ⟨y + z, approx_add hy hz, c + d, by linear_combination hc + hd⟩
   exact ⟨{ toFun := L, map_one' := h1, map_zero' := h0, map_mul' := hm, map_add' := ha }, hL⟩
 
+
 omit hK in
 include hD in
-
 theorem ringHom_ext_dense (G₁ G₂ : P →+* R) (h : ∀ b, G₁ (ι b) = G₂ (ι b)) : G₁ = G₂ := by
   ext F
   refine sub_eq_zero.1 (sep_l l _ fun r => ?_)
@@ -141,7 +145,7 @@ theorem ringHom_ext_dense (G₁ G₂ : P →+* R) (h : ∀ b, G₁ (ι b) = G₂
   have e1 : (n : R) * (G₁ p - G₂ p) = G₁ ((n : P) * p) - G₂ ((n : P) * p) := by
     rw [map_mul, map_mul, map_natCast, map_natCast]; ring
   have h1 : G₁ p = G₂ p := sub_eq_zero.1 (htf n _ hn (by rw [e1, hp, h, sub_self]))
-  exact ⟨G₁ k - G₂ k, by rw [hF, map_add, map_add, map_mul, map_mul, map_pow, map_pow, map_natCast, map_natCast, h1]; ring⟩
+  exact ⟨G₁ k - G₂ k, by rw [hF, map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, map_natCast, map_natCast, h1]; ring⟩
 
 end Abstract
 
@@ -150,21 +154,21 @@ section Concrete
 variable {l : ℕ} [hl : Fact l.Prime] {a : ℕ} [NeZero a] {O K : Type} [CommRing O] [Algebra ℤ_[l] O]
   [NormedField K] [Algebra O K] (t : Wq l a →ₐ[ℤ_[l]] O)
 
-variable (K) in
 
+variable (K) in
 def embK (τ : ZMod a) : Wq l a →+* K := (algebraMap O K).comp (emb t τ).toRingHom
 
-variable (l a) in
 
+variable (l a) in
 abbrev Bp : Type := Polynomial (Polynomial (Wq l a))
 
-variable (K) in
 
+variable (K) in
 def rhoK (τ : ZMod a) : Polynomial (Wq l a) →+* K⟦X⟧ :=
   (PowerSeries.map (embK K t τ)).comp Polynomial.coeToPowerSeries.ringHom
 
-variable (K) in
 
+variable (K) in
 def iotaP : Bp l a →+* (ZMod a → K⟦X⟧⟦X⟧) :=
   Pi.ringHom fun τ => (PowerSeries.map (rhoK K t τ)).comp Polynomial.coeToPowerSeries.ringHom
 
@@ -192,8 +196,8 @@ theorem embK_injective [NormedAlgebra ℚ_[l] K] (τ : ZMod a) : Function.Inject
   rw [map_mul, map_pow, map_natCast] at hw
   exact mul_ne_zero (pow_ne_zero _ (Nat.cast_ne_zero.2 hl.out.ne_zero)) (hu.map _).ne_zero hw
 
-include t in
 
+include t in
 theorem wq_nat_cancel [NormedAlgebra ℚ_[l] K] {n : ℕ} (hn : n ≠ 0) {x : Wq l a}
     (h : (n : Wq l a) * x = 0) : x = 0 := by
   have := charZero_K (l := l) (K := K)
@@ -211,13 +215,13 @@ theorem ev_coe (q : Polynomial (Wq l a)) :
     (g := Polynomial.eval₂RingHom (wA l a).toRingHom ϖ.teich) (fun w => by simp) (by simp)
   exact RingHom.congr_fun h q
 
-variable (a) in
 
+variable (a) in
 def evC : Polynomial (Wq l a) →+* Per.Acris l :=
   ((ainfToAcris l).toRingHom.comp (ϖ.ev a)).comp Polynomial.coeToPowerSeries.ringHom
 
-variable (a) in
 
+variable (a) in
 def fP (g : GQ l) : Bp l a →+* Per.Acris l :=
   Polynomial.eval₂RingHom (evC a ϖ) (ainfToAcris l (ϖ.mu g * ϖ.teich))
 

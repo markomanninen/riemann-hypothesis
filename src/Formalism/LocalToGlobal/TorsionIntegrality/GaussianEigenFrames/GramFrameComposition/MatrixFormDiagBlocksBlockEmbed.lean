@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementB
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.NeZeroOfNorm
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.QuadraticSemicharactersOfProductThetaMem
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.QuasiPeriodConstUniqueOf
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementB
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.NeZeroOfNorm
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.QuadraticSemicharactersOfProductThetaMem
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.QuasiPeriodConstUniqueOf
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -20,7 +24,7 @@ lemma sqrt_sq_c (d : ℕ) : (Complex.I * ((Real.sqrt d : ℝ) : ℂ)) ^ 2 = -(d 
   ring
 
 lemma conj_omega (d : ℕ) : conj (omegaK d) = 1 - omegaK d := by
-  rw [omegaK, map_div₀, map_add, map_one, map_mul, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
+  rw [omegaK, map_div₀, map_add (f := _), map_one, map_mul, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
   ring
 
 def emb {n : Type} (b : Fin 4) (v : n → ℂ) : Fin 4 × n → ℂ := fun w => if w.1 = b then v w.2 else 0
@@ -133,13 +137,13 @@ theorem IotaOK_proof : IotaOK := by
   · rw [← hns, ← Real.sqrt_eq_rpow, Real.sqrt_sq (norm_nonneg _)]
   · intro m n
     refine ⟨?_, ?_⟩
-    · rw [map_add, map_mul, map_intCast, map_intCast]
+    · rw [map_add (f := _), map_mul, map_intCast, map_intCast]
       refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hint m) ?_)
       rw [norm_mul]
       exact mul_le_one₀ (hint n) (norm_nonneg _) hx
     · rw [← map_sub]
       have h1 : ((m : ℂ) + (n : ℂ) * omegaK d) - conj ((m : ℂ) + (n : ℂ) * omegaK d) = s * (n : ℂ) := by
-        rw [map_add, map_mul, conj_omega, map_intCast, map_intCast, hω]
+        rw [map_add (f := _), map_mul, conj_omega, map_intCast, map_intCast, hω]
         ring
       rw [h1, map_mul, map_intCast]
 
@@ -238,7 +242,8 @@ theorem GramTransfer_of (hM : MulRing) (hI : IotaOK) : GramTransfer := by
       ∑ w, g.symm (Pi.single w 1) q * z w = g.symm z q := by
     intro z q
     conv_rhs => rw [eq_sum_single z]
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
   refine ⟨fun w x => ι (Y x w),
@@ -252,7 +257,8 @@ theorem GramTransfer_of (hM : MulRing) (hI : IotaOK) : GramTransfer := by
   · intro a' i b' j
     show ∑ w, ι (g.symm (Pi.single w 1) (a', i)) * ι (Y (b', j) w) = _
     simp_rw [← map_mul]
-    rw [← map_sum, hsum, hY, LinearEquiv.symm_apply_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hsum, hY, LinearEquiv.symm_apply_apply]
     by_cases hab : a' = b' <;> simp [emb, hab]
   · intro x y
     show ∑ w, ι (Y x w) * ι (Y y w) = _
@@ -262,7 +268,8 @@ theorem GramTransfer_of (hM : MulRing) (hI : IotaOK) : GramTransfer := by
       refine Finset.sum_congr rfl fun w _ => ?_
       rw [hconj y w, map_mul ι (Y x w)]
       ring
-    rw [e1, ← map_sum, hgram x y]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, ← map_sum, hgram x y]
     by_cases hxy : x.1 = y.1 <;> simp [hxy]
 
 end Formalism.L2.Th1.GD

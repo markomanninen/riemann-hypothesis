@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatPairIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatPairIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField MeasureTheory
@@ -47,7 +51,8 @@ theorem thetaSum_schr_rat (F : Type) [Field F] [NumberField F] [Invertible (2 : 
         ⅟(2 : AdeleRing (𝓞 F) F) * ((fun i => algebraMap F (AdeleRing (𝓞 F) F) (y i)) ⬝ᵥ
           (fun i => algebraMap F (AdeleRing (𝓞 F) F) (z i))) =
         algebraMap F (AdeleRing (𝓞 F) F) (ξ ⬝ᵥ z + 1 / 2 * (y ⬝ᵥ z)) := by
-      simp only [dotProduct, map_add, map_mul, map_sum, h2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, map_add (f := _), map_mul, map_sum, h2]
     rw [e]
     exact hψ _
   unfold GlobalTheory.WeilM.thetaSum GlobalTheory.WeilM.schr
@@ -57,7 +62,7 @@ theorem thetaSum_schr_rat (F : Type) [Field F] [NumberField F] [Invertible (2 : 
   funext ξ
   congr 1
   funext i
-  simp
+  exact (map_add (algebraMap F (AdeleRing (𝓞 F) F)) (ξ i) (y i)).symm
 
 end GlobalTheory.ThetaQuasiRat
 
@@ -68,7 +73,7 @@ theorem cA_apply (D : D7) (a : AF D.host.F ⊗[D.host.F] D.host.E) :
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => rfl
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 theorem symp_eq_symplO (D : D7) (S T : HSp D) (JA : Matrix (Fin T.rank) (Fin T.rank) D.host.E)
     (JB : Matrix (Fin S.rank) (Fin S.rank) D.host.E) (ξ : AF D.host.F ⊗[D.host.F] D.host.E) (hA : JA = T.gramᵀ)
@@ -121,7 +126,7 @@ theorem thetaTr_ratW_add : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdC
   have hform := co.form (incM D.host.F γ) w
   rw [symp_eq_symplO D S T JA JB ξ hA hB, hyz] at hform
   unfold GlobalTheory.WeilSchrodinger.thetaTr GlobalTheory.WeilM.Darboux.rho
-  rw [map_add, hγ, hyz]
+  rw [map_add (f := _), hγ, hyz]
   set u : (κ → AF D.host.F) × (κ → AF D.host.F) :=
     (fun i => algebraMap D.host.F (AF D.host.F) (y i), fun i => algebraMap D.host.F (AF D.host.F) (z i)) with hu
   set v := co.e w

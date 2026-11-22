@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.CoefSumB
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariant
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.CoefSumB
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariant
+
+@[expose] public section
 
 noncomputable section
 

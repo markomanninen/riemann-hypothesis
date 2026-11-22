@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.PPAssemble
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.PPAssemble
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,13 +61,6 @@ private theorem mem_Ap_lemma (p : ℕ) (x : I.E) :
 
 theorem int_mem_Ap (p : ℕ) (a : 𝓞 I.E) : (a : I.E) ∈ Ap I p := (mem_Ap_lemma I p _).mpr ⟨1, Nat.coprime_one_left p, a, by simp⟩
 
-theorem inv_mem_Ap (p s : ℕ) (hs : Nat.Coprime s p) : (s : I.E)⁻¹ ∈ Ap I p := by
-  by_cases h0 : s = 0
-  · subst h0
-    simp
-  · have hs0 : (s : I.E) ≠ 0 := Nat.cast_ne_zero.mpr h0
-    exact (mem_Ap_lemma I p _).mpr ⟨s, hs, 1, by rw [mul_inv_cancel₀ hs0]; simp⟩
-
 theorem natCast_smul_mem_L (s : ℕ) {x : Fin I.n → I.E} (hx : x ∈ I.L) : (s : I.E) • x ∈ I.L := by
   rw [Nat.cast_smul_eq_nsmul]
   exact nsmul_mem hx s
@@ -89,7 +86,7 @@ theorem LA_clear (p : ℕ) {v : Fin I.n → I.E} (hv : v ∈ LA I p) :
   | add x y _ _ hx hy =>
     obtain ⟨s, hs, hsx⟩ := hx
     obtain ⟨t, ht, hty⟩ := hy
-    refine ⟨s * t, Nat.Coprime.mul hs ht, ?_⟩
+    refine ⟨s * t, Nat.Coprime.mul_left hs ht, ?_⟩
     have e : ((s * t : ℕ) : I.E) • (x + y) = (t : I.E) • ((s : I.E) • x) + (s : I.E) • ((t : I.E) • y) := by
       simp only [Nat.cast_mul, smul_add, smul_smul, mul_comm (t : I.E) (s : I.E)]
     rw [e]
@@ -97,7 +94,7 @@ theorem LA_clear (p : ℕ) {v : Fin I.n → I.E} (hv : v ∈ LA I p) :
   | smul c x _ hx =>
     obtain ⟨s, hs, hsx⟩ := hx
     obtain ⟨s0, hs0, a, ha⟩ := (mem_Ap_lemma I p (c : I.E)).mp c.2
-    refine ⟨s0 * s, Nat.Coprime.mul hs0 hs, ?_⟩
+    refine ⟨s0 * s, Nat.Coprime.mul_left hs0 hs, ?_⟩
     have hc : c • x = (c : I.E) • x := rfl
     have e : ((s0 * s : ℕ) : I.E) • (c • x) = (a : I.E) • ((s : I.E) • x) := by
       rw [hc, smul_smul, smul_smul, ← ha]
@@ -115,7 +112,7 @@ theorem hG_mem_Ap (p : ℕ) {v v' : Fin I.n → I.E} (hv : v ∈ LA I p) (hv' : 
   have e : hG I ((s : I.E) • v) ((t : I.E) • v') = (s : I.E) * t * hG I v v' := by
     rw [hG_smul_left, hG_smul_right, star_natCast]
     ring
-  refine (mem_Ap_lemma I p _).mpr ⟨s * t, Nat.Coprime.mul hs ht, a, ?_⟩
+  refine (mem_Ap_lemma I p _).mpr ⟨s * t, Nat.Coprime.mul_left hs ht, a, ?_⟩
   rw [Nat.cast_mul, ← e]
   exact ha.symm
 
@@ -136,7 +133,7 @@ theorem span_clear (p : ℕ) (S : Set (Fin I.n → I.E)) {y : Fin I.n → I.E}
   | add x y _ _ hx hy =>
     obtain ⟨s, hs, hsx⟩ := hx
     obtain ⟨t, ht, hty⟩ := hy
-    refine ⟨s * t, Nat.Coprime.mul hs ht, ?_⟩
+    refine ⟨s * t, Nat.Coprime.mul_left hs ht, ?_⟩
     have e : ((s * t : ℕ) : I.E) • (x + y) = (t : I.E) • ((s : I.E) • x) + (s : I.E) • ((t : I.E) • y) := by
       simp only [Nat.cast_mul, smul_add, smul_smul, mul_comm (t : I.E) (s : I.E)]
     rw [e]
@@ -144,7 +141,7 @@ theorem span_clear (p : ℕ) (S : Set (Fin I.n → I.E)) {y : Fin I.n → I.E}
   | smul c x _ hx =>
     obtain ⟨s, hs, hsx⟩ := hx
     obtain ⟨s0, hs0, a, ha⟩ := (mem_Ap_lemma I p (c : I.E)).mp c.2
-    refine ⟨s0 * s, Nat.Coprime.mul hs0 hs, ?_⟩
+    refine ⟨s0 * s, Nat.Coprime.mul_left hs0 hs, ?_⟩
     have hc : c • x = (c : I.E) • x := rfl
     have e : ((s0 * s : ℕ) : I.E) • (c • x) = (a : I.E) • ((s : I.E) • x) := by
       rw [hc, smul_smul, smul_smul, ← ha]
@@ -163,7 +160,7 @@ theorem QA_of_GE (p q : ℕ) {x : I.E} (h : GE I q x) : QA I p q x := by
 theorem QA_add (p q : ℕ) {x y : I.E} (hx : QA I p q x) (hy : QA I p q y) : QA I p q (x + y) := by
   obtain ⟨s, hs, a, ha⟩ := hx
   obtain ⟨t, ht, b, hb⟩ := hy
-  refine ⟨s * t, Nat.Coprime.mul hs ht, (t : 𝓞 I.E) * a + (s : 𝓞 I.E) * b, ?_⟩
+  refine ⟨s * t, Nat.Coprime.mul_left hs ht, (t : 𝓞 I.E) * a + (s : 𝓞 I.E) * b, ?_⟩
   push_cast at ha hb ⊢
   linear_combination (t : I.E) * ha + (s : I.E) * hb
 
@@ -180,11 +177,9 @@ theorem QA_sub (p q : ℕ) {x y : I.E} (hx : QA I p q x) (hy : QA I p q y) : QA 
 theorem QA_mul (p q : ℕ) {c x : I.E} (hc : c ∈ Ap I p) (hx : QA I p q x) : QA I p q (c * x) := by
   obtain ⟨s, hs, a, ha⟩ := hx
   obtain ⟨s0, hs0, a0, ha0⟩ := (mem_Ap_lemma I p c).mp hc
-  refine ⟨s0 * s, Nat.Coprime.mul hs0 hs, a0 * a, ?_⟩
+  refine ⟨s0 * s, Nat.Coprime.mul_left hs0 hs, a0 * a, ?_⟩
   push_cast
   linear_combination ((s : I.E) * x) * ha0 + (a0 : I.E) * ha
-
-theorem QA_zero (p q : ℕ) : QA I p q 0 := ⟨1, Nat.coprime_one_left p, 0, by simp⟩
 
 theorem GE_of_QA (p m : ℕ) {x : I.E} (hint : ∃ a : 𝓞 I.E, (a : I.E) = x) (h : QA I p (p ^ m) x) :
     GE I (p ^ m) x := by

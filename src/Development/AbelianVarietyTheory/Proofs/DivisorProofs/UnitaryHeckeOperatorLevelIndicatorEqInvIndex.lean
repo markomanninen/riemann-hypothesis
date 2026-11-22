@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAdelicUnitaryPointLocalComponentMemLocalUn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicUnitaryPointOfLocalFamily
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyFiniteAdelicUnitaryComponentMemIntegra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAdelicUnitaryPointLocalComponentMemLocalUn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicUnitaryPointOfLocalFamily
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyFiniteAdelicUnitaryComponentMemIntegra
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -16,14 +21,14 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 theorem toSub_of_mem {G : Type} [Group G] (H : Subgroup G) {g : G} (h : g ∈ H) : toSub H g = ⟨g, h⟩ := by
   unfold toSub; rw [dif_pos h]
 
-def comp (hU : Unr E) (n : ℕ) (w : Pl E) : finU E n →* UL n w :=
-  ((cLoc w).comp (finU E n).subtype).codRestrict (UL n w) (fun x => cLoc_mem_UL E hU n w x)
+def comp (hU : Unr E) (n : ℕ) (w : Pl E) : finU (E := E) (n := n) →* UL n w :=
+  ((cLoc w).comp (finU (E := E) (n := n)).subtype).codRestrict (UL n w) (fun x => cLoc_mem_UL E hU n w x)
 
-theorem comp_eq (hU : Unr E) (w : Pl E) (x : finU E n) :
+theorem comp_eq (hU : Unr E) (w : Pl E) (x : finU (E := E) (n := n)) :
     comp hU n w x = toSub (UL n w) (cLoc w (x : UA E n)) :=
   (toSub_of_mem _ (cLoc_mem_UL E hU n w x)).symm
 
-theorem mem_globLev (hU : Unr E) (S : Set (Pl E)) (L : ∀ w : Pl E, Subgroup (UL n w)) (x : finU E n) :
+theorem mem_globLev (hU : Unr E) (S : Set (Pl E)) (L : ∀ w : Pl E, Subgroup (UL n w)) (x : finU (E := E) (n := n)) :
     x ∈ globLev S L ↔ ∀ w ∈ S, comp hU n w x ∈ L w := by
   unfold globLev
   simp only [Subgroup.mem_iInf, Subgroup.mem_comap, Subgroup.mem_map, MonoidHom.coe_comp, Function.comp_apply,
@@ -33,7 +38,7 @@ theorem mem_globLev (hU : Unr E) (S : Set (Pl E)) (L : ∀ w : Pl E, Subgroup (U
   rwa [← this]
 
 theorem globFn_indicator (hU : Unr E) (S : Set (Pl E)) (K' : ∀ w : Pl E, Subgroup (UL n w))
-    (hK : ∀ᶠ w in cofinite, K' w = KL n w) (x : finU E n) :
+    (hK : ∀ᶠ w in cofinite, K' w = KL n w) (x : finU (E := E) (n := n)) :
     globFn S (fun w => (K' w : Set (UL n w)).indicator 1) x = if x ∈ globLev S K' then 1 else 0 := by
   unfold globFn
   simp_rw [← comp_eq hU]
@@ -141,8 +146,8 @@ theorem relIndex_globLev (hU : Unr E) (S : Set (Pl E)) (hS : IsSection S) (K' : 
 
 end GlobalTheory.BCT.HopLev2
 
-open GlobalTheory.BCT.HopLev GlobalTheory.BCT.HopLev2 in
 
+open GlobalTheory.BCT.HopLev GlobalTheory.BCT.HopLev2 in
 theorem GlobalTheory.BCT.hop_indicator_level : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, 1 ≤ n →
     ∀ S : Set (Pl E), IsSection S → ∀ K' : ∀ w : Pl E, Subgroup (UL n w),
     IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' → ∀ φ ∈ fixed (RF E n) (globLev S K'),
@@ -153,16 +158,16 @@ theorem GlobalTheory.BCT.hop_indicator_level : ∀ (E : Type) [Field E] [NumberF
   rw [LinearMap.smul_apply]
   congr 1
   set H := globLev S K'
-  have hq : ∀ q : finU E n ⧸ H, q ≠ ((1 : finU E n) : finU E n ⧸ H) → Quotient.out q ∉ H := by
+  have hq : ∀ q : finU (E := E) (n := n) ⧸ H, q ≠ ((1 : finU (E := E) (n := n)) : finU (E := E) (n := n) ⧸ H) → Quotient.out q ∉ H := by
     intro q hq hm
     apply hq
     rw [← QuotientGroup.out_eq' q, QuotientGroup.eq]
     simpa using hm
-  have h1 : Quotient.out ((1 : finU E n) : finU E n ⧸ H) ∈ H := by
-    have := QuotientGroup.out_eq' ((1 : finU E n) : finU E n ⧸ H)
+  have h1 : Quotient.out ((1 : finU (E := E) (n := n)) : finU (E := E) (n := n) ⧸ H) ∈ H := by
+    have := QuotientGroup.out_eq' ((1 : finU (E := E) (n := n)) : finU (E := E) (n := n) ⧸ H)
     rw [QuotientGroup.eq] at this
     simpa using this
-  rw [finsum_eq_single _ ((1 : finU E n) : finU E n ⧸ H)]
+  rw [finsum_eq_single _ ((1 : finU (E := E) (n := n)) : finU (E := E) (n := n) ⧸ H)]
   · rw [globFn_indicator hU S K' hK.2, if_pos h1, one_smul, LinearMap.comp_id]
     have := hφ ⟨_, h1⟩
     simpa using this

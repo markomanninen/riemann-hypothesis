@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsInCharacterIsotypicPartSelfStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsInCharacterIsotypicPartSelfStatement
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
 
@@ -73,7 +78,8 @@ theorem kills_iff_conv : ∀ (G : Type) [Group G] [Finite G] (φ Y : G → ℂ),
     have hK' := hK K (regKer Y) (by
       rw [finsum_eq_sum_of_fintype]
       have := congrArg (LinearMap.trace ℂ K) hT
-      simpa [map_sum, smul_eq_mul] using this)
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, smul_eq_mul] using this)
     rw [finsum_eq_sum_of_fintype] at hK'
 
     let ℓ : Module.Dual ℂ (G → ℂ) := ∑ x, star (φ x) • (LinearMap.proj x : (G → ℂ) →ₗ[ℂ] ℂ)
@@ -101,7 +107,8 @@ theorem kills_iff_conv : ∀ (G : Type) [Group G] [Finite G] (φ Y : G → ℂ),
       congr 1
       simp only [Pi.single_apply, eq_inv_mul_iff_mul_eq]
     have h1 := LinearMap.congr_fun hμ (Pi.single x 1)
-    rw [LinearMap.dualMap_apply, hδ, map_sum, hℓ] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.dualMap_apply, hδ, map_sum, hℓ] at h1
     simp only [map_smul, smul_eq_mul, Pi.single_apply, mul_ite, mul_one, mul_zero,
       Finset.sum_ite_eq', Finset.mem_univ, if_true] at h1
     rw [finsum_eq_sum_of_fintype]

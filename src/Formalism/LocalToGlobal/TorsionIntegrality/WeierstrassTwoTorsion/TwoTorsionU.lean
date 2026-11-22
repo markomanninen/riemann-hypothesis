@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CubeThreeR
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.TwoTorsionIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.BridgeJ
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CubeThreeR
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.TwoTorsionIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.BridgeJ
+
+@[expose] public section
 
 universe u v
 
@@ -14,6 +18,5 @@ theorem tInZ : TInZ.{u} := tInZ_of wpShape
 theorem bridgeWp : BridgeWp := bridgeWp_of wpCleared
 theorem bridgeLaw : BridgeLaw := bridgeLaw_of coeffMem fglLog halfSpec halfLog
 theorem bridgeCurve : BridgeCurve := bridgeCurve_of coeffMem wpInU cubeTwoR
-theorem bridgeTwo : BridgeTwo := bridgeTwo_of coeffMem tInZ twoTorsionZ
 
 end Formalism.L2.Th1.A

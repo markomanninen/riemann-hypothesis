@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanHeisenbergTranslatesVacuumEqTop
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanHeisenbergTranslatesVacuumEqTop
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+
+@[expose] public section
+
 open Classical GlobalTheory.FinWeil
 open scoped BigOperators
 set_option maxHeartbeats 1000000 in

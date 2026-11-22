@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsScalarTowerCenAlgebra
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CycleListPermInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsScalarTowerCenAlgebra
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CycleListPermInvariant
+
+@[expose] public section
 
 noncomputable section
 open scoped TensorProduct
@@ -81,7 +85,7 @@ theorem exists_den {F B : Type} [Field F] [NumberField F] [Ring B] [Algebra F B]
     { carrier := {y | ∀ i, IsIntegral ℤ ((D : F) * v.repr (y : B) i)}
       add_mem' := by
         intro y z hy hz i
-        simp only [Set.mem_setOf_eq, Subring.coe_add, map_add, Finsupp.add_apply, mul_add] at hy hz ⊢
+        simp only [Set.mem_setOf_eq, Subring.coe_add, map_add (f := _), Finsupp.add_apply, mul_add] at hy hz ⊢
         exact (hy i).add (hz i)
       zero_mem' := by
         intro i
@@ -153,7 +157,7 @@ theorem locOrder_free : ∀ (F B : Type) [Field F] [NumberField F] [Ring B] [Alg
     (hΛ : ∀ a : NumberField.RingOfIntegers F, algebraMap F B (a : F) ∈ Λ),
     Module.Finite ℤ Λ → (∀ b : B, ∃ m : ℕ, 0 < m ∧ (m : B) * b ∈ Λ) →
     ∃ N : ℕ, 0 < N ∧ ∀ (ℓ : ℕ) [Fact ℓ.Prime], ¬ ℓ ∣ N →
-      letI := GlobalTheory.LocMatrix.cenAlgebra ℓ F B Λ hΛ
+      letI := GlobalTheory.LocMatrix.cenAlgebra ℓ F B Λ hΛ;
       Module.Free (cenOrder ℓ F) (locOrder ℓ Λ) ∧
         Module.finrank (cenOrder ℓ F) (locOrder ℓ Λ) = Module.finrank F B := by
   intro F B _ _ _ _ _ _ _ Λ hΛ hfin hspan
@@ -169,7 +173,7 @@ theorem locOrder_free : ∀ (F B : Type) [Field F] [NumberField F] [Ring B] [Alg
       ((∑ i, c i • w i : locOrder ℓ Λ) : ℚ_[ℓ] ⊗[ℚ] B) =
         combMap (F := F) ℓ v (fun i => (c i : ℚ_[ℓ] ⊗[ℚ] F)) := by
     intro c
-    rw [AddSubmonoidClass.coe_finset_sum, combMap_apply]
+    rw [AddSubmonoidClass.coe_finsetSum, combMap_apply]
     exact Finset.sum_congr rfl fun i _ => hsmul _ _
   have hli : LinearIndependent (cenOrder ℓ F) w := by
     rw [Fintype.linearIndependent_iff]

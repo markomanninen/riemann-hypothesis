@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsEmbeddingOfRingTie
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocIdOfCompletions
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AddCharIsIntegral
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharZeroOfSetting
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmbientBaseHeq
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CompanionOfBaseTied
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.RecursiveTieLevelZeroEq
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieTrF
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.GTiedFOfIsRecCEv
-import Formalism.LocalToGlobal.HermitianColumns.FullSym
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdentificationPlaceEqInducedRealPlaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsEmbeddingOfRingTie
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocIdOfCompletions
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AddCharIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharZeroOfSetting
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmbientBaseHeq
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CompanionOfBaseTied
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieTrF
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.FullTiedCBase
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.GTiedFOfIsRecCEv
+public import Formalism.LocalToGlobal.HermitianColumns.FullSym
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdentificationPlaceEqInducedRealPlaceStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,8 +71,7 @@ def gatOf (I : ∀ u (w : D.what₂.places.Pl), GIdx D.host (D.mem u).A.T (D.wha
 set_option maxHeartbeats 4000000 in
 theorem gatOf_d (T : ∀ u : D.what₂.Word, Forms0 D u) (hJ : ∀ u, Joint0 L0 u (T u)) (I) (ψ) (sc : Scale) (u : D.what₂.Word)
     (w : D.what₂.places.Pl) (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
-    (gatOf D L0 I ψ sc u w h).d = Module.finrank ℂ (D.mem u).A.Mu0 :=
-by
+    (gatOf D L0 I ψ sc u w h).d = Module.finrank ℂ (D.mem u).A.Mu0 := by
   have e := GlobalTheory.ClassRank.pack_d_eq D L0 T hJ u w h (I u w h) (ψ u w h) (rSc sc D.R.k (D.what₂.places.resChar w))
     (epSc D.R sc 1 (D.what₂.places.resChar w))
   rw [pack_eq] at e

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementNF
+module
+
+public import Formalism.HermitianCurvature.StatementNF
+
+@[expose] public section
 
 open Complex MeasureTheory
 
@@ -43,7 +47,7 @@ theorem im_conj_dZ_mul {TT : ℝ} {u : ℂ → ℂ} (hu : ContDiffOn ℝ ((⊤ :
     apply Complex.ext <;> simp
   have hlin : fderiv ℝ u ζ h = h.re • fderiv ℝ u ζ 1 + h.im • fderiv ℝ u ζ Complex.I := by
     conv_lhs => rw [hh]
-    rw [map_add, map_smul, map_smul]
+    rw [map_add (f := _), map_smul, map_smul]
   rw [hlin]
   simp only [NF.dZ]
   simp [Complex.mul_re, Complex.mul_im, Complex.star_def] at hr1 hrI ⊢
@@ -197,7 +201,7 @@ theorem curv_unit {TT : ℝ} {u : ℂ → ℂ} (hu : ContDiffOn ℝ ((⊤ : ℕ�
     have := hDd.hasFDerivAt.clm_apply (hasFDerivAt_const v ζ)
     simpa using this
   have hsym : S 1 Complex.I = S Complex.I 1 :=
-    ((hu.contDiffAt hn).isSymmSndFDerivAt (by (try simp); exact (show ((2 : ℕ∞) : WithTop ℕ∞) ≤ ((⊤ : ℕ∞) : WithTop ℕ∞) from WithTop.coe_le_coe.2 le_top))) 1 Complex.I
+    ((hu.contDiffAt hn).isSymmSndFDerivAt (by simp)) 1 Complex.I
 
   have h2 : ∀ k : ℂ, (star (fderiv ℝ u ζ k) * fderiv ℝ u ζ k + star (u ζ) * S k k).re = 0 := by
     intro k

@@ -1,22 +1,26 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardCocyclesMulInvariantsDiscrete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLengthEqAndCardEqPowOfIsFiniteLength
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthTorsionByQuotientDivisibleLe
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenOfFgOfSpanEqTop
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGenerator
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDRAndDdRLeFilZeroOfTwist
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IotaTmulOneMem
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTopologicalClosureZpowersSupInertia
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnramifiedCharacter
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMemGKChiPowNeOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfLocallyConstant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsNeZeroSmulMemOfSpanEqTop
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardCocyclesMulInvariantsDiscrete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLengthEqAndCardEqPowOfIsFiniteLength
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthTorsionByQuotientDivisibleLe
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenOfFgOfSpanEqTop
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGenerator
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDRAndDdRLeFilZeroOfTwist
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IotaTmulOneMem
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTopologicalClosureZpowersSupInertia
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnramifiedCharacter
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMemGKChiPowNeOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfLocallyConstant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsNeZeroSmulMemOfSpanEqTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ omit [TopologicalSpace Qp] in
 theorem actD_mk (T : LocLat G Qp LL O) (g : G) (x : T.V) :
     actD T.L g (Submodule.Quotient.mk x) = Submodule.Quotient.mk (T.ρ g x) := rfl
 
-omit [TopologicalSpace Qp] in
 
+omit [TopologicalSpace Qp] in
 theorem lc_mk (T : LocLat G Qp LL O) (hT : IsOpen (T.L.T : Set T.V)) {f : G → T.V}
     (hf : Continuous f) :
     IsLocallyConstant fun g => (Submodule.Quotient.mk (f g) : T.V ⧸ T.L.T) := by
@@ -86,7 +90,7 @@ theorem HfD_le (T : LocLat G Qp LL O) (hT : IsOpen (T.L.T : Set T.V)) :
   · simp only [sub_eq_add_neg]
     exact (T.cont x).add continuous_const
   · beta_reduce
-    rw [actD_mk, ← Submodule.Quotient.mk_add, hz.1.2, map_mul, map_add, map_sub,
+    rw [actD_mk, ← Submodule.Quotient.mk_add, hz.1.2, map_mul, map_add (f := _), map_sub,
       Module.End.mul_apply]
     congr 1
     abel
@@ -145,8 +149,8 @@ theorem length_le_of_card (O : Type) [CommRing O] [IsLocalRing O] (M N : Type) [
   rw [hM, hN, ← pow_mul, mul_comm] at h
   exact (Nat.pow_le_pow_iff_right hq).1 h
 
-omit [TopologicalSpace Qp] in
 
+omit [TopologicalSpace Qp] in
 def actTors (T : LocLat G Qp LL O) (a : O) (g : G) :
     ↥(Submodule.torsionBy O (T.V ⧸ T.L.T) a) →+ ↥(Submodule.torsionBy O (T.V ⧸ T.L.T) a) where
   toFun m := ⟨actD T.L g m.1, by
@@ -158,8 +162,8 @@ theorem lc_sub {X Y : Type} [TopologicalSpace X] {p : Y → Prop} {f : X → Sub
     (hf : IsLocallyConstant fun x => (f x).1) : IsLocallyConstant f :=
   IsLocallyConstant.desc f Subtype.val hf Subtype.val_injective
 
-omit [TopologicalSpace Qp] in
 
+omit [TopologicalSpace Qp] in
 def toCoc (T : LocLat G Qp LL O) (a : O) (c : ↥(Submodule.torsionBy O ↥(divisibleCocycles T.L) a)) :
     ↥{c : G → ↥(Submodule.torsionBy O (T.V ⧸ T.L.T) a) |
       IsLocallyConstant c ∧ ∀ g h, c (g * h) = c g + actTors T a g (c h)} :=
@@ -234,8 +238,8 @@ def toG (T : LocLat G Qp LL O) : GRep G Qp LL O where
   ρ := T.ρ
   cont := T.cont
 
-omit [TopologicalSpace Qp] in
 
+omit [TopologicalSpace Qp] in
 theorem fixed_points_trivial_of_scalar_action_ne_one (T : LocLat G Qp LL O) (g : G) (u : LL) (hu : u ≠ 1)
     (hg : ∀ x, T.ρ g x = u • x) : H0V T.ρ = ⊥ := by
   rw [eq_bot_iff]
@@ -341,7 +345,7 @@ theorem exists_unr (D : Formalism.BasicNotions.D7) (l : ℕ) [Fact l.Prime] (K L
   refine ⟨fun g => algebraMap ℚ_[l] ↥LL.1 (δ g), GlobalTheory.UnramifiedCrys.unramified_mem_Z1f D l K LL _ ?_, ?_, ?_⟩
   · refine ⟨⟨hcont.comp hδc, fun g h => ?_⟩, 0, fun g hg => ?_⟩
     · beta_reduce
-      rw [hδm, map_add]; rfl
+      rw [hδm, map_add (f := _)]; rfl
     · beta_reduce
       rw [hδI g hg, map_zero, map_zero, sub_zero]
   · intro g hg

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.JR.HermInv
@@ -69,7 +74,7 @@ theorem mulBm_eq (Y : Gl r K) (k : ℕ) : Y.2.2.1 ᵥ* (Y.1 ^ k * Bm Y) = fun j 
   funext j
   have : (Y.1 ^ k * Bm Y) = Matrix.of fun i (j : Fin r) => ((Y.1 ^ (k + (j : ℕ))) *ᵥ Y.2.1) i := by
     ext i j
-    simp only [mul_apply, Bm, of_apply, pow_add, ← mulVec_mulVec]
+    simp only [Matrix.mul_apply, Bm, of_apply, pow_add, ← mulVec_mulVec]
     rfl
   rw [this]
   simp only [vecMul, mom, dotProduct, of_apply]
@@ -129,7 +134,7 @@ theorem Bm_sec (a : Inv r K) : Bm (sec a) = 1 := by
   ext i j
   simp only [Bm, of_apply, sec_snd]
   rw [show (sec a).1 = companion a.1 from rfl, comp_pow_ev a.1 j j.2]
-  simp [ev, one_apply, Fin.ext_iff, eq_comm]
+  simp [ev, Matrix.one_apply, Fin.ext_iff, eq_comm]
 
 theorem sec_rec (a : Inv r K) (k : ℕ) :
     mom (sec a) (k + r) = -((fun j : Fin r => mom (sec a) (k + j)) ⬝ᵥ a.1) :=
@@ -233,12 +238,12 @@ theorem mul_Bm (Y : Gl r K) (q : Fin r → K) (hq : Y.1 ^ r *ᵥ Y.2.1 = -(Bm Y 
   ext i j
   have hL : (Y.1 * Bm Y) i j = (Y.1 ^ ((j : ℕ) + 1) *ᵥ Y.2.1) i := by
     rw [pow_succ', ← mulVec_mulVec]
-    simp [mul_apply, Bm, mulVec, dotProduct]
+    simp [Matrix.mul_apply, Bm, mulVec, dotProduct]
   rw [hL]
   by_cases hj : (j : ℕ) + 1 = r
   · rw [hj, hq]
-    simp [mul_apply, companion, hj, mulVec, dotProduct]
-  · rw [mul_apply, Finset.sum_eq_single ⟨(j : ℕ) + 1, by omega⟩]
+    simp [Matrix.mul_apply, companion, hj, mulVec, dotProduct]
+  · rw [Matrix.mul_apply, Finset.sum_eq_single ⟨(j : ℕ) + 1, by omega⟩]
     · simp [companion, hj, Bm]
     · intro l _ hl
       have : ¬ ((l : ℕ) = (j : ℕ) + 1) := fun h => hl (Fin.ext h)
@@ -268,7 +273,8 @@ theorem mom_map (X : Hn r F E) (a : Inv r F) (h : HasInv X a) (n : ℕ) :
       -((fun j : Fin r => algebraMap F E (mom (sec a) (k + j))) ⬝ᵥ fun i => algebraMap F E (a.1 i)) := by
     intro k
     rw [sec_rec]
-    simp [dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dotProduct, map_sum, map_mul]
   have := seq_eq (u := fun n => mom X.toGl n) (v := fun n => algebraMap F E (mom (sec a) n)) _
     (mom_add_r X.toGl _ hq) hS (fun k hk => by
       have e1 := h2 ⟨k, hk⟩
@@ -280,7 +286,7 @@ theorem mom_map (X : Hn r F E) (a : Inv r F) (h : HasInv X a) (n : ℕ) :
 theorem gram (X : Hn r F E) : (Bm X.toGl)ᴴ * Bm X.toGl = Matrix.of fun i j : Fin r => mom X.toGl ((i : ℕ) + j) := by
   ext i j
   have : ((Bm X.toGl)ᴴ * Bm X.toGl) i j = star (X.1.1 ^ (i : ℕ) *ᵥ X.2.1) ⬝ᵥ (X.1.1 ^ (j : ℕ) *ᵥ X.2.1) := by
-    simp only [mul_apply, conjTranspose_apply, Bm, of_apply, dotProduct, Pi.star_apply]
+    simp only [Matrix.mul_apply, conjTranspose_apply, Bm, of_apply, dotProduct, Pi.star_apply]
     rfl
   rw [this, form_pow X.1.1 X.1.2, mulVec_mulVec, ← pow_add]
   rfl
@@ -322,7 +328,7 @@ theorem g_Bm (g : Matrix.unitaryGroup (Fin r) E) (X₁ X₂ : Hn r F E) (hact : 
   have hp : ∀ k : ℕ, g.1 * X₁.1.1 ^ k = X₂.1.1 ^ k * g.1 := fun k => SemiconjBy.pow_right hs k
   ext i j
   have : (g.1 * Bm X₁.toGl) i j = (g.1 *ᵥ (X₁.1.1 ^ (j : ℕ) *ᵥ X₁.2.1)) i := by
-    simp only [mul_apply, Bm, of_apply, mulVec, dotProduct]
+    simp only [Matrix.mul_apply, Bm, of_apply, mulVec, dotProduct]
     rfl
   rw [this, mulVec_mulVec, hp, ← mulVec_mulVec, e2]
   rfl
@@ -388,8 +394,8 @@ theorem HC_apply {K : Type} [CommRing K] (a : Inv r K) (i j : Fin r) :
     (hankel a * companion a.1) i j = mom (sec a) ((i : ℕ) + j + 1) := by
   by_cases hj : (j : ℕ) + 1 = r
   · rw [add_assoc, hj, sec_rec]
-    simp [mul_apply, companion, hj, hankel, dotProduct]
-  · rw [mul_apply, Finset.sum_eq_single ⟨(j : ℕ) + 1, by omega⟩]
+    simp [Matrix.mul_apply, companion, hj, hankel, dotProduct]
+  · rw [Matrix.mul_apply, Finset.sum_eq_single ⟨(j : ℕ) + 1, by omega⟩]
     · simp [companion, hj, hankel, add_assoc]
     · intro l _ hl
       have : ¬ ((l : ℕ) = (j : ℕ) + 1) := fun h => hl (Fin.ext h)

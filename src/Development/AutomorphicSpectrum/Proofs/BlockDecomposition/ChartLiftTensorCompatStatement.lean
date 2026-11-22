@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartLiftTensorCompat
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulMPull
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartLiftTensorCompat
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulMPull
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb CrystallineSemistableComparison.Pb.Diso GlobalTheory.CompanionTheory.DisoHm
 set_option maxHeartbeats 1000000 in

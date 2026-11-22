@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TraceDualDifferent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RepNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TraceDualDifferent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RepNeZero
+
+@[expose] public section
+
 open NumberField
 open scoped nonZeroDivisors
 

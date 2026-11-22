@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.HaarPolar
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiDecayCore
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrableOfDecayVG
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
-import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.HaarPolar
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiDecayCore
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrableOfDecayVG
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
+public import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ lemma pOfB_inP (ε : Fin n → Bool) (B : Pt ε → Qt ε → ℂ) : inP ε (pOf
 
 lemma toM_toUJ {m : Matrix (Fin n) (Fin n) ℂ} (h : inUJ ε m) : toM (toUJ ε m) = m := by
   unfold toUJ
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 lemma norm_le_sqrt_hs_pOfB (B : Pt ε → Qt ε → ℂ) : ‖B‖ ≤ Real.sqrt (hs (pOfB ε B)) := by
   refine (pi_norm_le_iff_of_nonneg (Real.sqrt_nonneg _)).2 fun a =>

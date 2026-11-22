@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.Columns.BaseLemmas
-import Formalism.LocalToGlobal.Columns.RowFormsLemmas
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPDivOfUnit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSmulOfDecoEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.Columns.BaseLemmas
+public import Formalism.LocalToGlobal.Columns.RowFormsLemmas
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPDivOfUnit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSmulOfDecoEq
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker
@@ -18,8 +22,8 @@ section Index
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {P : HeightOneSpectrum (𝓞 E)}
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem exists_int_approx (c : ℕ) {a : E} (ha : IntAt P a) :
     ∃ r : 𝓞 E, IntAt P (((qOf P : E) ^ c)⁻¹ * (a - algebraMap (𝓞 E) E r)) := by
   obtain ⟨r, s, hs, h⟩ := ha
@@ -42,7 +46,7 @@ theorem exists_int_approx (c : ℕ) {a : E} (ha : IntAt P a) :
   refine ⟨r * t, r * z, s * s', fun hm => (P.isPrime.mem_or_mem hm).elim hs hs', ?_⟩
   have e1 := congrArg (algebraMap (𝓞 E) E) hxy
   have e2 := congrArg (algebraMap (𝓞 E) E) hz
-  simp only [map_mul, map_add, map_one, map_pow, map_natCast] at e1 e2 ⊢
+  simp only [map_mul, map_add (f := _), map_one, map_pow, map_natCast] at e1 e2 ⊢
   field_simp
   linear_combination (algebraMap (𝓞 E) E s') * h - (algebraMap (𝓞 E) E r) * e2 -
     (algebraMap (𝓞 E) E r) * (algebraMap (𝓞 E) E s') * e1
@@ -164,15 +168,15 @@ section Top
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
 
-variable (R) in
 
+variable (R) in
 abbrev TopPt (u : Pr.Word) : Type := ChPt (R := R) sel mu u R.m
 
 def topLevG (P : LevFam X.E X.K R.r Pr.vGs) : LevFam X.E X.K (R.N R.m) Pr.vGs := fun w =>
   levExt (Nat.sub_le _ 1) (rowTyG Ch P w)
 
-variable (R) in
 
+variable (R) in
 def topLevQ {c : ℕ} (hc : 0 < c) : LevQFam X.E X.K (R.N R.m) (QE sel (mu : Chr X.F X.E X.K)) := fun P =>
   levelParahoricTimesPrincipalCongruence (N_m_succ R) (rowTyQ R (mu : Chr X.F X.E X.K) (QE sel (mu : Chr X.F X.E X.K)) P) hc
 
@@ -189,17 +193,17 @@ theorem topGSD_ok (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) (u : Pr.Word) {M :
   exact Finset.prod_induction _ IsOfFinOrder (fun a b => IsOfFinOrder.mul) IsOfFinOrder.one fun w _ =>
     levelGroup_character_isOfFinOrder _ _ c.pos _
 
-open Classical in
 
+open Classical in
 abbrev inG (w : Pr.vGs) : rowSG Pr sel mu := ⟨w.1, Finset.mem_union_left _ w.2⟩
 
+
 open Classical in
 variable (Pr) in
-
 abbrev inQ (w : QE sel (mu : Chr X.F X.E X.K)) : rowSG Pr sel mu := ⟨w.1, Finset.mem_union_right _ w.2⟩
 
-variable (Pr) in
 
+variable (Pr) in
 def TilOk (u : Pr.Word) : Prop :=
   (∀ P : Pr.vT u, cO X.E (Pr.piT u) ∉ P.1.asIdeal) ∧ (∀ w : rowSG Pr sel mu, Pr.piT u ∉ w.1.asIdeal) ∧
     Disjoint Pr.vGs (QE sel (mu : Chr X.F X.E X.K))
@@ -260,10 +264,23 @@ theorem tilFr_isLiftFr (H : TilOk Pr sel mu u) (d : RowPt Pr R sel mu) (P : rowS
     IsLiftFr (tilQ sel mu u d).1 P (tilFr H d P) :=
   isLiftFr_tilH (N_m_succ R) d H.1 H.2.1 P (liftFr_spec d.2 P) _ rfl
 
-open Classical in
 
-def tilTop (H : TilOk Pr sel mu u) (d : RowPt Pr R sel mu) : TopPt R sel mu u :=
-  ⟨((tilQ sel mu u d).res Finset.subset_union_left, fun P => tilFr H d (inQ Pr sel mu P)),
+open Classical in
+def tilTop (H : TilOk Pr sel mu u) (d : RowPt Pr R sel mu) : TopPt R sel mu u := by
+  let q := tilQ sel mu u d
+  have hq : (Deco.res Finset.subset_union_left q.1 : Deco X.E (R.N R.m) (Pr.vT u) Pr.vGs).Ok :=
+    { lat := q.2.lat
+      uni := q.2.uni
+      f_add := q.2.f_add
+      f_smul := q.2.f_smul
+      f_off := q.2.f_off
+      f_ne := q.2.f_ne
+      be_add := fun w => q.2.be_add (inG sel mu w)
+      be_smul := fun w => q.2.be_smul (inG sel mu w)
+      be_off := fun w => q.2.be_off (inG sel mu w)
+      be_surj := fun w => q.2.be_surj (inG sel mu w)
+      be_ker := fun w => q.2.be_ker (inG sel mu w) }
+  exact ⟨(⟨_, hq⟩, fun P => tilFr H d (inQ Pr sel mu P)),
     fun P => (tilFr_isLiftFr H d (inQ Pr sel mu P)).1⟩
 
 theorem frsF_tilTop_g (H : TilOk Pr sel mu u) (d : RowPt Pr R sel mu) (P : rowSG Pr sel mu) (h : P.1 ∈ Pr.vGs) :
@@ -369,8 +386,8 @@ theorem tilEl_rho (H : TilOk Pr sel mu u) {M : ℕ} (c : TopDepth R M) (g : Form
   exact congrArg (fun z : X.Kˣ => (z : X.K) • (colVal W u R.m (Pr.vT u) (rowSG Pr sel mu)).rho (extUH (N_m_succ R) g.1))
     (tilEl_chr H c.pos g d)
 
-variable (Ch P) in
 
+variable (Ch P) in
 def evTop (H : TilOk Pr sel mu u) {M : ℕ} (c : TopDepth R M) :
     (topGSD W Ch sel mu P u c).EqFun →ₗ[X.K] (evGSD W Ch sel mu P u).EqFun where
   toFun φ := ⟨fun d => φ.1 (tilTop H d), fun g d => by
@@ -400,8 +417,8 @@ def XiTop {u : Pr.Word} (m2 : ℕ) (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Se
 
 variable {u : Pr.Word} {m2 : ℕ} (T : ChTh W sel mu u m2)
 
-open Classical in
 
+open Classical in
 def topDegreeKTwo (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1)))) (p' : TopPt R sel mu u) :
     (colValF W sel mu u (m2 + 1)).V →ₗ[X.K] (colValF W sel mu u R.m).V :=
   if Y ∈ ybSet sel mu cst p.deco.1.N then
@@ -574,8 +591,8 @@ theorem XiTop_tilTop (hX : X.Ok) (hPr : Pr.Ok) (hm : R.m = m2 + 2) (hc : cst.Ok)
     rfl
   · rw [frsF_tilTop_Q H d P hP]
 
-variable {W} in
 
+variable {W} in
 theorem k2top_tilTop (hX : X.Ok) (hPr : Pr.Ok) (hm : R.m = m2 + 2) (hc : cst.Ok) (H : TilOk Pr sel mu u) {T : ChTh W sel mu u m2}
     (hT : TameFr T.top) (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1)))) (d : RowPt Pr R sel mu) :
     topDegreeKTwo W Ch sel mu cst T p Y (tilTop H d) = cp2K W Ch sel mu cst T p Y d := by
@@ -638,8 +655,8 @@ def topCpl (h1 : Cp1Equiv W Ch sel mu cst L T b hY) (h2 : TopEquiv W Ch sel mu c
     CplKer ((chF W sel mu L u m2).mem al) (midGSD W sel mu L u m2 b) (topGSD W Ch sel mu P u c) (ybCpl W sel mu cst L u m2 b hY) :=
   CplKer.mk (cp1K W Ch sel mu cst L T al) (topDegreeKTwo W Ch sel mu cst T) (h1 al) h2
 
-open Classical in
 
+open Classical in
 def matFam (hM : MatEquiv W Ch sel mu cst L T) : KerFam (chF W sel mu L u) := fun i al be =>
   if h : i < m2 then ClsKer.mk (matK W Ch sel mu cst L T i al be) (hM i h al be) else zeroKer _ _
 
@@ -654,36 +671,6 @@ section Checks
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
-
-instance (u : Pr.Word) : Nonempty (TopPt R sel mu u) :=
-  haveI : NeZero (R.N R.m) := ⟨(R.N_pos _).ne'⟩
-  ⟨DecoF.base _ _ _ _ _⟩
-
-example (hPr : Pr.Ok) (u : Pr.Word) : TilOk Pr sel (mu0 X.F X.E X.K S) u :=
-  tilOk_of hPr u fun P hP => by
-    rw [twistPrimes_trivialTuple_empty] at hP
-    simp at hP
-
-theorem levelGroup_lastColumn_congruence {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {n N : ℕ} (hN : N = n + 1) {P : HeightOneSpectrum (𝓞 E)}
-    (l : Lev (𝓞 E ⧸ P.asIdeal) K n) (c : ℕ) {k : GLint E N P} (hk : k ∈ K1 hN l c) :
-    ((qOf P : E) ^ c)⁻¹ • (k.1 (Pi.single (Br.iL hN) 1) - Pi.single (Br.iL hN) 1) ∈ stdAt E N P := by
-  obtain ⟨j, -, κ, hκ, rfl⟩ := (mem_parahoricTimesPrincipalCongruence_iff hN l c).1 hk
-  have h1 := glint_mem (extI hN P j) (hκ _ (single_mem_stdAt (Br.iL hN)))
-  have h0 : prH E hN (Pi.single (Br.iL hN) 1) = 0 := by
-    funext i
-    rw [prH_apply, Pi.single_eq_of_ne fun e => i.2.ne (congrArg Fin.val e)]
-    rfl
-  have h2 : (extI hN P j).1 (Pi.single (Br.iL hN) 1) = Pi.single (Br.iL hN) 1 :=
-    ext_prH hN (by rw [extI_val, prH_sumE, h0, map_zero]) (by rw [extI_val, sumE_last, Units.val_one, one_mul])
-  rw [map_smul, map_sub, h2] at h1
-  exact h1
-
-example (R : Ranks) (h : R.m = 2) : (default : TopDepth R 1).1 = 9 ∧ (default : TopDepth R 5).1 = 14 := by
-  constructor
-  · show max (4 * R.m + 1) (2 * R.m + 2 * 1) = 9
-    rw [h]; rfl
-  · show max (4 * R.m + 1) (2 * R.m + 2 * 5) = 14
-    rw [h]; rfl
 
 end Checks
 

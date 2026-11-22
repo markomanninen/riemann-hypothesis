@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,10 +36,10 @@ private theorem exists_mulBy_pow_eq_comp_resOne' {p : ℕ} {R : Type} [CommRing 
     rw [pow_succ, ← _root_.GlobalTheory.PDiv.mulBy_mulBy, ← _root_.GlobalTheory.PDivGroup.mulP_res,
       ← _root_.GlobalTheory.PDiv.map_mulBy, hM, _root_.GlobalTheory.PDivGroup.resOne_succ, BialgHom.comp_apply]
 
+
 set_option autoImplicit false in
 open TensorProduct Coalgebra Bialgebra CategoryTheory WithConv in
 variable {p : ℕ} {R : Type} [CommRing R] (G : _root_.GlobalTheory.PDivGroup p R) in
-
 theorem _root_.GlobalTheory.PDivGroup.exists_mulP_eq_of_transl_eq {p : ℕ} {R : Type} [CommRing R] (G : _root_.GlobalTheory.PDivGroup p R)
     (n : ℕ) (a : G.A (n + 1))
     (ha : G.transl n a = a ⊗ₜ[R] 1) :
@@ -78,21 +82,17 @@ theorem _root_.GlobalTheory.PDivGroup.exists_mulP_eq_of_transl_eq {p : ℕ} {R :
         simp only [Set.mem_setOf_eq, smul_eq_mul] at hx ⊢
         rw [← mul_assoc]
         exact hx _ }
-  have hK : _root_.GlobalTheory.PDiv.torsionIdeal R (_root_.GlobalTheory.CartierDual R (G.A (n + 1))) (p ^ n) ≤
+  have hK : _root_.GlobalTheory.PDiv.torsionIdeal (R := R) (A := _root_.GlobalTheory.CartierDual R (G.A (n + 1))) (p ^ n) ≤
       RingHom.ker (Ideal.Quotient.mkₐ R K) := by
-    rw [_root_.GlobalTheory.PDiv.torsionIdeal_le_ker_iff,
-      ← toConv_ofConv (toConv (Ideal.Quotient.mkₐ R K) ^ p ^ n),
-      ← _root_.GlobalTheory.PDiv.comp_mulBy_pts]
-    apply WithConv.ext
-    rw [ofConv_toConv]
-    ext φ
-    show Ideal.Quotient.mkₐ R K (_root_.GlobalTheory.PDiv.mulBy R _ (p ^ n) φ) =
-      algebraMap R _ (CoalgebraStruct.counit φ)
-    rw [← _root_.GlobalTheory.PDiv.dual_mulBy, ← (Ideal.Quotient.mkₐ R K).commutes,
-      Ideal.Quotient.mkₐ_eq_mk, Ideal.Quotient.eq]
+    change _root_.GlobalTheory.PDiv.kerIdeal (_root_.GlobalTheory.PDiv.mulBy R _ (p ^ n)) ≤ _
+    rw [Ideal.map_le_iff_le_comap]
+    intro φ hφ
+    have hφ₀ : CoalgebraStruct.counit (R := R) φ = 0 := hφ
+    rw [Ideal.mem_comap, RingHom.mem_ker]
+    change Ideal.Quotient.mkₐ R K (_root_.GlobalTheory.PDiv.mulBy R _ (p ^ n) φ) = 0
+    rw [← _root_.GlobalTheory.PDiv.dual_mulBy, Ideal.Quotient.mkₐ_eq_mk, Ideal.Quotient.eq_zero_iff_mem]
     intro χ
-    rw [mul_sub, ofConv_sub, LinearMap.sub_apply, key, Algebra.algebraMap_eq_smul_one, mul_smul_one,
-      ofConv_smul, LinearMap.smul_apply, _root_.GlobalTheory.CartierDual.counit_apply, smul_eq_mul, mul_comm, sub_self]
+    rw [key, ← _root_.GlobalTheory.CartierDual.counit_apply, hφ₀, mul_zero]
   have hker : ∀ ψ, _root_.GlobalTheory.CartierDual.map (G.mulP n) ψ = 0 →
       ψ.ofConv a = 0 := by
     intro ψ hψ

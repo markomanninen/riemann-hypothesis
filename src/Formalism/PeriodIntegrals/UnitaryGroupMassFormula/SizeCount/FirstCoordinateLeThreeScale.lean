@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeCount.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeCount.BlockRowLe
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeCount.Development
+public import Formalism.PeriodIntegrals.SzCt
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,8 +11,6 @@ open Formalism.BasicNotions Formalism.MainNotions.G
 open scoped BigOperators
 
 namespace PI.SzCt.UnitaryGroupMassFormula
-
-open PI.SzCt.W
 
 theorem five_le_k (D : D7) : 5 ≤ D.R.k := by
   have h1 := D.R.m_add_three_le_k
@@ -38,7 +40,7 @@ theorem cloudU_le (D : D7) (L : SizeData₂ D) (u : D.what₂.Word) (τ : D.what
 private lemma wSz_eq_wj' (D : D7) (j : ℕ) (τ : D.what₂.Tau) (hj1 : 1 ≤ j) (hj2 : j ≤ D.R.m) :
     DV.wSz D j τ = wj D j τ := by
   unfold DV.wSz wj
-  rw [dif_pos ⟨hj1, hj2⟩, dif_pos (by omega : j - 1 < D.R.m)]
+  rw [dite_eq_left ⟨hj1, hj2⟩, dite_eq_left (by omega : j - 1 < D.R.m)]
 
 private lemma exists_wj_mem_Icc_add_etaSz (D : D7) (L : SizeData₂ D) (τ : D.what₂.Tau) :
     ∃ lo : ℝ, ∀ j, 1 ≤ j → j ≤ D.R.m → lo ≤ wj D j τ ∧ wj D j τ ≤ lo + L.etaSz + 1 := by
@@ -62,7 +64,7 @@ private lemma exists_wj_mem_Icc_add_etaSz (D : D7) (L : SizeData₂ D) (τ : D.w
 private lemma hcW_e_cast_eq_wj_succ (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) (q : ℕ) (hq : q < D.R.m) :
     (((D.hcW u τ).e ⟨q, hq⟩ : ℚ) : ℝ) = wj D (q + 1) τ := by
   unfold wj
-  rw [dif_pos (by omega : q + 1 - 1 < D.R.m), D.hcW_e u τ]
+  rw [dite_eq_left (by omega : q + 1 - 1 < D.R.m), D.hcW_e u τ]
   have e : (⟨q + 1 - 1, by omega⟩ : Fin D.R.m) = ⟨q, hq⟩ := Fin.ext (show q + 1 - 1 = q by omega)
   rw [e]
 
@@ -110,7 +112,7 @@ theorem blocks_le (D : D7) (L : SizeData₂ D) (u : D.what₂.Word) (j : ℕ) (�
     have hprod : 0 ≤ ((D.R.t : ℝ) + 1) * ((j : ℝ) - (((i - D.R.k) / (D.R.t + 1) : ℕ) : ℝ) - 2) :=
       mul_nonneg (by linarith) (by linarith)
     unfold DV.nuRow DV.srcPar
-    rw [dif_neg hnk, dif_pos hqm, hw, hN1R, hN2R, hiR]
+    rw [dite_eq_right hnk, dite_eq_left hqm, hw, hN1R, hN2R, hiR]
     push_cast
     nlinarith
   calc ∑ i ∈ Finset.Ico D.R.k (D.R.N (j - 1)), DV.nuRow D u j τ i
@@ -155,7 +157,7 @@ private lemma nuRow_le_Sc_add_wSz (D : D7) (L : SizeData₂ D) (u : D.what₂.Wo
     exact_mod_cast Nat.le_add_right _ _
   have hik : (i : ℝ) + 1 ≤ (D.R.k : ℝ) := by exact_mod_cast hi
   unfold DV.nuRow DV.srcPar
-  rw [dif_pos hi]
+  rw [dite_eq_left hi]
   linarith
 
 theorem cloudRows_le (D : D7) (L : SizeData₂ D) (u : D.what₂.Word) (j : ℕ) (τ : D.what₂.Tau) :
@@ -215,7 +217,7 @@ theorem rowC : RowC := by
     exact_mod_cast Nat.le_add_right _ _
   have hk5 : (5 : ℝ) ≤ (D.R.k : ℝ) := by exact_mod_cast hk
   unfold DV.nuRow DV.srcPar
-  rw [dif_pos (by omega : 0 < D.R.k), hw]
+  rw [dite_eq_left (by omega : 0 < D.R.k), hw]
   push_cast
   linarith
 

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
-import GroundTheory.ProfiniteCohomology.InflationRestriction.CohomologyResMemCohomologyConjInvariants
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.CohomologyResMemCohomologyConjInvariants
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -36,15 +41,9 @@ noncomputable def innerConjMor (A : Rep.{u} k Γ) (g : Γ) : Rep.res (innerConjH
     congr 2
     group⟩
 
-omit [TopologicalSpace Γ] [IsTopologicalGroup Γ] in
-@[simp]
-theorem innerConjMor_hom_apply (A : Rep.{u} k Γ) (g : Γ) (a : A) :
-    (innerConjMor A g).hom a = A.ρ g a :=
-  rfl
+
 
 omit [TopologicalSpace Γ] [IsTopologicalGroup Γ] in
-
-@[reassoc]
 theorem innerConjMor_naturality {A B : Rep.{u} k Γ} (f : A ⟶ B) (g : Γ) :
     (Rep.resFunctor (innerConjHom g)).map f ≫ innerConjMor B g = innerConjMor A g ≫ f := by
   ext a
@@ -62,7 +61,6 @@ noncomputable def innerConjShortComplexMor (S : ShortComplex (Rep.{u} k Γ)) (g 
   comm₁₂ := (innerConjMor_naturality S.f g).symm
   comm₂₃ := (innerConjMor_naturality S.g g).symm
 
-@[reassoc]
 theorem δ_comp_cohomologyInnerConj {S : ShortComplex (Rep.{u} k Γ)} [IsDiscreteRep S.X₁]
     [IsDiscreteRep S.X₂] [IsDiscreteRep S.X₃] (hS : S.ShortExact) (i j : ℕ) (hij : i + 1 = j)
     (g : Γ) :
@@ -77,7 +75,15 @@ theorem cohomologyInnerConj_zero (A : Rep.{u} k Γ) [IsDiscreteRep A] (g : Γ) :
   intro x
   obtain ⟨z, rfl⟩ := homologyπ_surjective (cochainsComplex A) 0 x
   change (cohomologyInnerConj A 0 g).hom ((cohomologyπ A 0).hom z) = (cohomologyπ A 0).hom z
-  rw [cohomologyInnerConj, cohomologyπ_cohomologyMapAlong_apply]
+  rw [cohomologyInnerConj]
+  have h := ConcreteCategory.congr_hom
+    (cohomologyπ_cohomologyMapAlong (innerConjHom g) (continuous_innerConjHom g)
+      (innerConjMor A g) 0) z
+  change (cohomologyMapAlong (innerConjHom g) (continuous_innerConjHom g)
+    (innerConjMor A g) 0).hom ((cohomologyπ A 0).hom z) =
+    (cohomologyπ A 0).hom ((cocyclesMapAlong (innerConjHom g)
+      (continuous_innerConjHom g) (innerConjMor A g) 0).hom z) at h
+  rw [h]
   congr 1
   apply iCycles_injective (cochainsComplex A) 0
   rw [iCycles_cyclesMap_apply]

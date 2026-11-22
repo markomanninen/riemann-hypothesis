@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.GJMatrix
@@ -20,7 +24,7 @@ theorem UpperTheory.ConvolutionTheory.R2.M.wtEx :
     { carrier := Set.range fun ξ : F => (nU (rt ξ : A F) : G1 F)
       mul_mem' := by
         rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩
-        exact ⟨a + b, by simp only [rt, map_add, M.nU_add]⟩
+        exact ⟨a + b, by simp only [rt, map_add (f := _), M.nU_add]⟩
       one_mem' := ⟨0, by simp only [rt, map_zero, M.nU_zero]⟩
       inv_mem' := by
         rintro _ ⟨a, rfl⟩

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TorusExtensionPairCorrectionEqValueQuotient
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TorusExtensionPairCorrectionEqValueQuotient
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT
 
@@ -13,8 +17,8 @@ variable {C : Type} [Field C] {v : Valuation C NNReal} {O : Type} [CommRing O] [
   {V : Type} [AddCommGroup V] [Module C V] [Module O V] [IsScalarTower O C V]
   {Ω : Type} [AddCommGroup Ω] [Module C Ω] [Module O Ω] [IsScalarTower O C Ω]
 
-omit [IsAlgClosed C] [CharZero C] in
 
+omit [IsAlgClosed C] [CharZero C] in
 theorem proj_ht_mem (P : HTPoint C O c κ N V Ω) (τ : E →+* C) {y : V} (hy : y ∈ P.T) :
     eigProj P.ρΩ τ (P.ht y) ∈ P.omHT τ := by
   exact ⟨P.ht y, ⟨y, hy, rfl⟩, rfl⟩
@@ -22,7 +26,7 @@ theorem proj_ht_mem (P : HTPoint C O c κ N V Ω) (τ : E →+* C) {y : V} (hy :
 omit [IsAlgClosed C] [CharZero C] in
 private theorem htPoint_e_antisymm (P : HTPoint C O c κ N V Ω) (x y : V) : P.e x y = - P.e y x := by
   have h := P.alt (x + y)
-  simp only [map_add, LinearMap.add_apply, P.alt, zero_add, add_zero] at h
+  simp only [map_add (f := _), LinearMap.add_apply, P.alt, zero_add, add_zero] at h
   linear_combination h
 
 omit [IsAlgClosed C] [CharZero C] in
@@ -76,7 +80,7 @@ private theorem htPoint_exists_linearMap_ext_of_T (P : HTPoint C O c κ N V Ω) 
     have hxT : x ∈ P.T := hT ▸ hx
     have hzT : z ∈ P.T := hT ▸ hz
     have : (⟨x + z, hy⟩ : P.T) = ⟨x, hxT⟩ + ⟨z, hzT⟩ := rfl
-    rw [map_add, this, map_add, map_add, ihx hxT, ihz hzT]
+    rw [map_add (f := _), this, map_add (f := _), map_add (f := _), ihx hxT, ihz hzT]
   | smul a x hx ihx =>
     intro hy
     have hxT : x ∈ P.T := hT ▸ hx
@@ -98,13 +102,6 @@ private theorem htPoint_exists_e_left_eq_linearMap (P : HTPoint C O c κ N V Ω)
   obtain ⟨w, hw⟩ := hsurj ℓ
   exact ⟨w, fun y => by rw [hw]⟩
 
-omit [IsAlgClosed C] [CharZero C] in
-
-theorem exists_vec (P : HTPoint C O c κ N V Ω) (g : P.T →ₗ[O] O) :
-    ∃ w : V, ∀ y : P.T, P.e w y = algebraMap O C (g y) := by
-  obtain ⟨ℓ, hℓ⟩ := htPoint_exists_linearMap_ext_of_T P g
-  obtain ⟨w, hw⟩ := htPoint_exists_e_left_eq_linearMap P ℓ
-  exact ⟨w, fun y => by rw [hw]; exact hℓ y y.2⟩
 
 omit [IsAlgClosed C] [CharZero C] in
 private theorem htPoint_exists_smul_mem_T (hv : v.Integers O) (P : HTPoint C O c κ N V Ω) (y : V) :
@@ -167,7 +164,7 @@ private theorem htPoint_rho_mem_T (P : HTPoint C O c κ N V Ω) (a : 𝓞 E) {z 
       rw [map_zero, LinearMap.zero_apply]
       exact S.zero_mem
     | add x z _ _ hx hz =>
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact S.add_mem hx hz
     | smul n x _ hx =>
       simp only [map_zsmul, LinearMap.smul_apply]
@@ -182,7 +179,7 @@ private theorem htPoint_rho_mem_T (P : HTPoint C O c κ N V Ω) (a : 𝓞 E) {z 
     rw [map_zero]
     exact S.zero_mem
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact S.add_mem hx hy
   | smul o x _ hx =>
     rw [LinearMap.map_smul_of_tower]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDetInt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDetInt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem tendsto_sum_placeIdem {F : Type} [Field F] [NumberField F]
   have hv : ∀ (s : Finset (HeightOneSpectrum (𝓞 F))) (w : HeightOneSpectrum (𝓞 F)),
       evalV F w (1 - ∑ v ∈ s, α v) = if w ∈ s then 0 else 1 := by
     intro s w
-    rw [map_sub, map_one, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_one, map_sum]
     split_ifs with hw
     · rw [Finset.sum_eq_single_of_mem w hw (fun v _ hvw => h0 v w (Ne.symm hvw)), h1, sub_self]
     · rw [Finset.sum_eq_zero (fun v hvs => h0 v w (by rintro rfl; exact hw hvs)), sub_zero]
@@ -54,6 +59,7 @@ theorem tendsto_sum_placeIdem {F : Type} [Field F] [NumberField F]
 
 theorem tendsto_truncation : ∀ (D : D7) (ε : HeightOneSpectrum (𝓞 D.host.F) → AF D.host.F), (∀ v, IsPlaceIdem D v (ε v)) → ∀ a : AE D, infPart D a = 0 → Filter.Tendsto (fun s : Finset (HeightOneSpectrum (𝓞 D.host.F)) => algebraMap (AF D.host.F) (AE D) (∑ v ∈ s, ε v) * a) Filter.atTop (nhds a) := by
   intro D ε hε a ha
+  simp only [IsPlaceIdem] at hε
   choose α hαε hα1 hα0 using hε
   have hsum : ∀ s : Finset (HeightOneSpectrum (𝓞 D.host.F)),
       ∑ v ∈ s, ε v = pairA D.host.F 0 (∑ v ∈ s, α v) := by

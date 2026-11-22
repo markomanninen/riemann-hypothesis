@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,8 +89,7 @@ lemma coaction_counit [IsMonHom i] [Mono v] (b : B) :
   refine Eq.trans ?_ h1
   generalize ρ b = z
   induction z with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul x y => simp [φ, Algebra.smul_def, _root_.mul_comm]
 
 lemma coaction_assoc [IsCommMonObj A] [IsMonHom i] [Mono v] (b : B) :
@@ -111,27 +114,23 @@ lemma coaction_assoc [IsCommMonObj A] [IsMonHom i] [Mono v] (b : B) :
   have e₁ (z : B ⊗[R] Λ) :
       TensorProduct.assoc R B Λ Λ (ρ.toLinearMap.rTensor Λ z) = φ₁ z := by
     induction z with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x y =>
       simp only [LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply, φ₁,
         Algebra.TensorProduct.lift_tmul, AlgHom.comp_apply]
       generalize ρ x = w
       induction w with
-      | zero => simp
-      | add x y hx hy => simp only [map_add, add_tmul, add_mul, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), add_tmul, add_mul, hx, hy]
       | tmul x y => simp [φ₀, l, r₁, r₂]
   have e₂ (z : B ⊗[R] Λ) : (Coalgebra.comul (R := R) (A := Λ)).lTensor B z = φ₂ z := by
     induction z with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x y =>
       simp only [LinearMap.lTensor_tmul, φ₂, Algebra.TensorProduct.lift_tmul, AlgHom.comp_apply,
         Bialgebra.comulAlgHom_apply]
       generalize Coalgebra.comul (R := R) y = w
       induction w with
-      | zero => simp
-      | add x y hx hy => simp only [map_add, tmul_add, mul_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), tmul_add, mul_add, hx, hy]
       | tmul x y => simp [l, r₁, r₂]
   rw [e₁, e₂, h]
 
@@ -173,8 +172,8 @@ lemma coaction_free [Mono i] [Module.Finite R Λ] :
   rw [this, RingHom.finite_algebraMap]
   infer_instance
 
-omit hρ in
 
+omit hρ in
 lemma isPushout_equalizer {T : Type} [CommRing T] [Algebra R T] (α β : B →ₐ[R] T)
     (h₁ : Function.Surjective (productMap β α))
     (h₂ : RingHom.ker (productMap β α) = Ideal.span {z | ∃ b ∈ AlgHom.equalizer α β,
@@ -211,8 +210,7 @@ lemma isPushout_equalizer {T : Type} [CommRing T] [Algebra R T] (α β : B →�
     have e₁ (b) : m.hom (α b) = φ b := congr($hm₁ b)
     have e₂ (b) : m.hom (β b) = ψ b := congr($hm₂ b)
     induction z with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x y =>
       rw [productMap_apply_tmul, productMap_apply_tmul, ← e₁, ← e₂]
       exact map_mul m.hom _ _

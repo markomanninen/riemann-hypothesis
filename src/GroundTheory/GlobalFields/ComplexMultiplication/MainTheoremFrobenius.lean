@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimes
-import GroundTheory.GlobalFields.ComplexMultiplication.DegreeOneAutomorphismPoints
-import GroundTheory.GlobalFields.ComplexMultiplication.DegreeOneAutomorphismLift
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremPointHom
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremReduction
-import GroundTheory.GlobalFields.ComplexMultiplication.TorsionReduction
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimes
+public import GroundTheory.GlobalFields.ComplexMultiplication.DegreeOneAutomorphismPoints
+public import GroundTheory.GlobalFields.ComplexMultiplication.DegreeOneAutomorphismLift
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremPointHom
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremReduction
+public import GroundTheory.GlobalFields.ComplexMultiplication.TorsionReduction
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -97,10 +102,10 @@ end Scaling
 section Main
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K] {L : IntermediateField K ℂ} [NumberField L]
+  [_root_.NumberField.IsTotallyComplex K] {L : IntermediateField K ℂ} [NumberField L]
 
-omit [NumberField K] [IsTotallyComplex K] in
 
+omit [NumberField K] [_root_.NumberField.IsTotallyComplex K] in
 theorem isPrimitiveRoot_localizationAt (𝔓 : HeightOneSpectrum (𝓞 L)) {ζ : L}
     (hζ : IsPrimitiveRoot ζ 12) :
     IsPrimitiveRoot (algebraMap (𝓞 L) (localizationAt L 𝔓) hζ.toInteger) 12 :=
@@ -109,9 +114,9 @@ theorem isPrimitiveRoot_localizationAt (𝔓 : HeightOneSpectrum (𝓞 L)) {ζ :
     rw [← IsScalarTower.algebraMap_apply, ← IsScalarTower.algebraMap_apply] at this
     exact RingOfIntegers.ext this)
 
+
 set_option maxHeartbeats 1000000 in
 include hK in
-
 theorem exists_vcPoint_pointHomOver_eq (𝔭 : HeightOneSpectrum (𝓞 K))
     (hv : (Ideal.absNorm 𝔭.asIdeal).Prime) (h5 : 5 ≤ Ideal.absNorm 𝔭.asIdeal)
     (𝔓 : HeightOneSpectrum (𝓞 L)) [𝔓.asIdeal.LiesOver 𝔭.asIdeal]

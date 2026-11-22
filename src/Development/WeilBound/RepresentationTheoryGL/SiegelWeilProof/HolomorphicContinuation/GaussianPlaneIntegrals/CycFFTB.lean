@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.CycFFTA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.CycFFTA
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,10 @@ theorem act_emb_same (β : Bool) (v : Matrix (Rw ε β) (Rw ε β) ℂ) :
     (act (n := n) (blk ε β v)).comp (emb ε β) = (emb ε β).comp (sub v (v.map star)) := by
   refine MvPolynomial.algHom_ext fun x => ?_
   rcases x with ⟨i, a⟩ | ⟨i, a⟩
-  · simp [act, emb, sub, jv, sum_blk, map_sum]
-  · simpa [act, emb, sub, jv, map_sum] using sum_blk_star (n := n) β v i a true
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp [act, emb, sub, jv, sum_blk, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simpa [act, emb, sub, jv, map_sum] using sum_blk_star (n := n) β v i a true
 
 theorem act_emb_other (β β' : Bool) (hne : β' ≠ β) (v : Matrix (Rw ε β) (Rw ε β) ℂ) :
     (act (n := n) (blk ε β v)).comp (emb ε β') = emb ε β' := by
@@ -50,7 +56,8 @@ theorem act_emb_other (β β' : Bool) (hne : β' ≠ β) (v : Matrix (Rw ε β) 
 
 theorem emb_pair (β : Bool) (a b : Fin n) :
     emb ε β (∑ i : Rw ε β, (X (Sum.inl (i, a)) : PV (Rw ε β) (Fin n) (Fin n)) * X (Sum.inr (i, b))) = Qb ε β b a := by
-  simp only [map_sum, map_mul, emb, rename_X, jv, Sum.elim_inl, Sum.elim_inr, Qb]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, emb, rename_X, jv, Sum.elim_inl, Sum.elim_inr, Qb]
   rw [Finset.sum_subtype (Finset.univ.filter (fun x : Fin m => ε x = β)) (p := fun x => ε x = β) (by simp)]
   exact Finset.sum_congr rfl (fun i _ => mul_comm _ _)
 

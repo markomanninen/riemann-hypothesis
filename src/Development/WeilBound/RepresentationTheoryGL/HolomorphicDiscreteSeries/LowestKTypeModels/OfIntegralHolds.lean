@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WeightOccurrence.OccSome
-import Development.WeilBound.CoreStatements.BranchingTraces.ExistsIntertwiner
-import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.LipschitzEstimate
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.HarishChandraMultiplicityBound
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WeightOccurrence.OccSome
+public import Development.WeilBound.CoreStatements.BranchingTraces.ExistsIntertwiner
+public import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.LipschitzEstimate
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.HarishChandraMultiplicityBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem coef_int {ε' : Fin n → Bool} {mu : Fin n → ℝ} {K : Type} [NormedA
 
 theorem inv_inv_of_haar {m : ℕ} {ε : Fin m → Bool} (ν : Measure (UJ ε)) [ν.IsHaarMeasure] : ν.IsInvInvariant := by
   rw [Measure.isMulLeftInvariant_eq_smul ν (muG ε)]
-  exact ⟨by rw [Measure.inv, Measure.map_smul]; exact congrArg _ (Measure.inv_eq_self (muG ε))⟩
+  exact ⟨by rw [Measure.inv, Measure.map_smul _ (by fun_prop)]; exact congrArg _ (Measure.inv_eq_self (muG ε))⟩
 
 theorem of_integral_holds : OfInt := by
   intro n ε lam ε' mu e hG H H' _ _ _ _ _ _ π σ ν hν hπ hσ w hw hw1 a b hI

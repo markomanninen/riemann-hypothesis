@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FiniteLengthJacquet
-import GroundTheory.AutomorphicForms.FiniteLengthPieces
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FiniteLengthJacquet
+public import GroundTheory.AutomorphicForms.FiniteLengthPieces
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -149,11 +154,6 @@ def parabolicIndMap (f : Representation.IntertwiningMap σ σ') :
       map_add' := fun _ _ => Subtype.ext (funext fun _ => map_add f _ _)
       map_smul' := fun _ _ => Subtype.ext (funext fun _ => map_smul f _ _) }
   isIntertwining' _ := LinearMap.ext fun _ => rfl
-
-theorem coe_parabolicIndMap_apply (f : Representation.IntertwiningMap σ σ')
-    (φ : parabolicIndSpace F n β σ) (x : GL (Fin n) F) :
-    ((parabolicIndMap f φ : parabolicIndSpace F n β σ') : GL (Fin n) F → W') x =
-      f ((φ : GL (Fin n) F → W) x) := rfl
 
 theorem parabolicIndMap_injective (f : Representation.IntertwiningMap σ σ') (hf : Injective f) :
     Injective (parabolicIndMap f) := fun _ _ h =>

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DecompPhaseCOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DecompPhaseCOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ def RealDecompC : Prop :=
 theorem isPtRep_gamW {w : Point D.host.E (D.R.rS + 1)} (h : ∃ γ, Formalism.L2.SG.RealObj.IsPtRep X u u' w γ) :
     Formalism.L2.SG.RealObj.IsPtRep X u u' w (Formalism.L2.SG.RealObj.gamW X u u' w) := by
   unfold Formalism.L2.SG.RealObj.gamW
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem realDecompC_gamW (h : RealDecompC X Y u u')
@@ -45,10 +49,5 @@ theorem realDecomp_G_ne (s : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu 
 theorem liftDecompC_of_real (h : RealDecompC X Y u u') : LiftDecompC X Y u u' κ := by
   intro R ρ s hrel
   exact realDecompC_gamW X Y u u' h s.1 hrel (realDecomp_G_ne X Y u u' s.1 s.2.1)
-
-theorem decompPhaseC_of_real (h : RealDecompC X Y u u') (h6 : PhaseTieC X Y u u' κ) : DecompPhaseC X Y u u' κ := by
-  intro R ρ s hrel
-  obtain ⟨hex, g, hg, g', hg', heq⟩ := liftDecompC_of_real X Y u u' κ h R ρ s hrel
-  exact ⟨hex, g, hg, g', hg', heq, h6 R ρ s hrel g hg g' hg' heq⟩
 
 end Formalism.L2.SG.Pf.RowForm

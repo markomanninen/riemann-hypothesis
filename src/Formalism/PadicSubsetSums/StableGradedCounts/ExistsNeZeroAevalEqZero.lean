@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.SchurOrthogonalityCompact
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.SchurOrthogonalityCompact
+
+@[expose] public section
 
 open Polynomial
 open scoped TensorProduct
@@ -68,7 +72,7 @@ theorem exists_annihilator_eq {K V : Type} [Field K] [AddCommGroup V] [Module K 
     have hcop : IsCoprime i a := hcopOf a fun hia =>
       hi.1 (hsq i (dvd_trans (mul_dvd_mul_left i hia) hdvd))
     refine ⟨ea + w, ?_, fun q hq => ?_⟩
-    · rw [map_add, hkill a i ea hea0, mul_comm, hkill i a w hw, add_zero]
+    · rw [map_add (f := _), hkill a i ea hea0, mul_comm, hkill i a w hw, add_zero]
     · have hw' : aeval g (i * q) w = 0 := by
         rw [mul_comm]
         exact hkill i q w hw
@@ -91,7 +95,7 @@ theorem exists_annihilator_eq {K V : Type} [Field K] [AddCommGroup V] [Module K 
         obtain ⟨u, t, hut⟩ := hcopOf _ hn
         apply hw0
         have h2 : aeval g (u * i + t * (a * q)) w = 0 := by
-          rw [map_add, hadd, hkill i u w hw, hkill (a * q) t w hwq, add_zero]
+          rw [map_add (f := _), hadd, hkill i u w hw, hkill (a * q) t w hwq, add_zero]
         rwa [hut, map_one, hone] at h2
       have hiq : i ∣ q := by
         first

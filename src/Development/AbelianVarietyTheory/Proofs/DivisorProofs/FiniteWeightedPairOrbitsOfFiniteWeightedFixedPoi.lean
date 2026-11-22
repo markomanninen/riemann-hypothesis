@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinpolyIrreducibleNatDegreeOfRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToVInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteOrbitsCxFNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkedSumIrr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToVInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteOrbitsCxFNeZero
+
+@[expose] public section
 
 noncomputable section
 

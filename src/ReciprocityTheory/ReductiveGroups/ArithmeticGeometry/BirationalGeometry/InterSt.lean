@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,23 +105,9 @@ section Tests
 abbrev PBlk (n : ℕ) : Unit → Type := fun _ => Fin n
 
 def fsLine (n : ℕ) : HermLine (PBlk n) :=
-  HermLine.ofMetrics (fun _ => fsMetric (Fin n)) 1
+  HermLine.ofMetrics (fun _ => fsMetric (ι := Fin n)) 1
 
 abbrev Xc (n : ℕ) (i : Fin n) : MRing (PBlk n) := X ⟨(), i⟩
-
-def ArithVarTestStatement : Prop :=
-  IsArithVar (⊥ : Ideal (MRing (PBlk 2))) 2 ∧
-    IsArithVar (Ideal.span {Xc 2 1 - 2 * Xc 2 0}) 1 ∧
-    IsArithVar (Ideal.span {Xc 3 2}) 2
-
-def ProjectiveLineHeightIntegral : Prop :=
-  arInt (⊥ : Ideal (MRing (PBlk 2))) (Xc 2 0) (fsLine 2) ![fsLine 2] = -1 / 2
-
-def PointTestStatement : Prop :=
-  arInt (Ideal.span {Xc 2 1 - 2 * Xc 2 0}) (Xc 2 0) (fsLine 2) ![] = -Real.log 5 / 2
-
-def LineTestStatement : Prop :=
-  ptsIntegral (Ideal.span {Xc 3 2}) (pot ![fsLine 3]) (fun _ => 1) = 1
 
 end Tests
 

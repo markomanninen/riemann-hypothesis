@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAmpleLBOfFiniteFibres
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ImmersedByOfLocalCoords
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PluckerNonzeroIffIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAmpleLBOfFiniteFibres
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ImmersedByOfLocalCoords
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PluckerNonzeroIffIndependent
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Reg
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -91,7 +96,7 @@ theorem valF_plkLoc (F : Frames Y π) (Mc : MChart Y) {T : Scheme.{0}} (g : T �
       (((plkU F Mc k σ).map (ev (a ≫ g) _ hU)).submatrix r (Fin.castLE m.2)).det := by
   have e : plkIdx Mc m (Fin.succ (Fintype.equivFin _ r)) = some r := by simp [plkIdx]
   simp only [plkLoc, e]
-  rw [valF, dif_pos hj]
+  rw [valF, dite_eq_left hj]
   show ev a _ hj ((g.appLE _ _ _).hom _) = _
   rw [ev_appLE a g _ hj hU, plkMinor, RingHom.map_det]
   rfl

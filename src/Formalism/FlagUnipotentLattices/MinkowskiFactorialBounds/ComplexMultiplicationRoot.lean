@@ -1,5 +1,9 @@
-import Formalism.FlagUnipotentLattices.DetIndexProductHyperbolicInequality
-import Formalism.HyperbolicPlaceProducts.ArithmeticCountRevised
+module
+
+public import Formalism.FlagUnipotentLattices.DetIndexProductHyperbolicInequality
+public import Formalism.HyperbolicPlaceProducts.ArithmeticCountRevised
+
+@[expose] public section
 
 open Module NumberField Formalism.HermitianLatticeCounting.LocalIntegralStructure
 
@@ -334,7 +338,7 @@ theorem theorem_B_statement : Formalism.HermitianLatticeCounting.LocalIntegralSt
       rw [hnw]
       nlinarith [mul_nonneg e3 (sub_nonneg.mpr e4)]
     have hprod : ∏ w : InfinitePlace E, (w (β : E)) ^ 2 ≤ ∏ _w : InfinitePlace E, (4 / 9 : ℝ) :=
-      Finset.prod_le_prod (fun w _ => sq_nonneg _) (fun w _ => hb w)
+      Finset.prod_le_prod₀ (fun w _ => sq_nonneg _) (fun w _ => hb w)
     rw [Finset.prod_const, Finset.card_univ] at hprod
     have h49 : (4 / 9 : ℝ) ^ Fintype.card (InfinitePlace E) ≤ 4 / 9 :=
       pow_le_of_le_one (by norm_num) (by norm_num) (by omega)
@@ -427,7 +431,7 @@ theorem theorem_B_statement : Formalism.HermitianLatticeCounting.LocalIntegralSt
     rw [hn, pow_mul]
     have hprod : ∏ w : InfinitePlace E, q ^ 2 * (w (β : E)) ^ 2 ≤
         ∏ w : InfinitePlace E, (x w ^ 2) ^ 2 :=
-      Finset.prod_le_prod (fun w _ => by positivity) (fun w _ => key w)
+      Finset.prod_le_prod₀ (fun w _ => by positivity) (fun w _ => key w)
     rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ] at hprod
     have hqn : 0 ≤ (q ^ 2) ^ Fintype.card (InfinitePlace E) := by positivity
     have h3 := mul_le_mul_of_nonneg_left (normge β hβ0) hqn

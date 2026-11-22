@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieDerivativeL2InnerProduct
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFiniteMeasureQuotMeasure
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieDerivativeRealLieSmoothingEqDensity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealLieSmoothingMemSmoothAdelicFunctions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieDerivativeL2InnerProduct
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFiniteMeasureQuotMeasure
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieDerivativeRealLieSmoothingEqDensity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealLieSmoothingMemSmoothAdelicFunctions
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix GlobalTheory.AutomorphicL2Unitary GlobalTheory.UnitaryBC GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.L2.Host Filter Topology
 open scoped ComplexConjugate
@@ -12,10 +16,10 @@ noncomputable section
 
 namespace GlobalTheory.Petersson
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+
 
 variable (E a) in
-
 def bddForms (ω : HChar E) : Submodule ℂ (GA E a → ℂ) where
   carrier := {φ | Continuous φ ∧ (∀ γ g, φ (ratGL E a γ * g) = φ g) ∧
     (∀ (z : Ideles E) g, φ (GeneralLinearGroup.scalar (Fin a) z * g) = ((ω.1 z : ℂˣ) : ℂ) * φ g) ∧ ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C}
@@ -76,8 +80,8 @@ theorem integrable_mul_conj (hω : ω.IsUnitary) (h : φ ∈ bddForms E a ω) (h
   rw [norm_mul, Complex.norm_conj]
   exact mul_le_mul (hC _) (hD _) (norm_nonneg _) ((norm_nonneg _).trans (hC 1))
 
-variable {μ} in
 
+variable {μ} in
 theorem pet_eq_setIntegral (hω : ω.IsUnitary) (h : φ ∈ bddForms E a ω) (h' : ψ ∈ bddForms E a ω) {𝓕 : Set (GA E a)}
     (h𝓕 : IsFundamentalDomain (latticeGL E a) 𝓕 μ) :
     IntegrableOn (fun g => φ g * conj (ψ g)) 𝓕 μ ∧ pet (latticeGL E a) μ φ ψ = ∫ g in 𝓕, φ g * conj (ψ g) ∂μ := by
@@ -222,16 +226,14 @@ theorem pet_smoothing_left (hω : ω.IsUnitary) (hα : IsTest (invSet E a) α) (
   refine integral_congr_ae (.of_forall fun x => ?_)
   simp only [(pet_eq_setIntegral hω (chart_mem_bddForms h x) h' hD).2, ← integral_const_mul, mul_assoc]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def invL (x : Lie E a) : Lie E a := toL (Matrix.of x)⁻¹
 
-def starTest (α : Lie E a → ℂ) (y : Lie E a) : ℂ := conj (α (invL y)) * (|(fderiv ℝ invL y).det| : ℝ)
-
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem invL_val (u : GL (Fin a) (Cinf E)) : invL (toL u.val) = toL (u⁻¹).val := (Matrix.coe_units_inv u).symm
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem contDiffAt_invL {x : Lie E a} (h : x ∈ invSet E a) : ContDiffAt ℝ (⊤ : ℕ∞) invL x := by
   letI : NormedRing (Matrix (Fin a) (Fin a) (Cinf E)) := Matrix.linftyOpNormedRing
   letI : NormedAlgebra ℝ (Matrix (Fin a) (Fin a) (Cinf E)) := Matrix.linftyOpNormedAlgebra
@@ -252,9 +254,6 @@ theorem contDiffAt_invL {x : Lie E a} (h : x ∈ invSet E a) : ContDiffAt ℝ (�
 def withSmoothings (π : CuspSub E a) : Submodule ℂ (Sm E a) :=
   π.V ⊔ Submodule.span ℂ {F | ∃ (f : Lie E a → ℂ) (φ : Sm E a), IsTest (invSet E a) f ∧ φ ∈ π.V ∧
     F.1 = GlobalTheory.JSW.smoothInf f φ.1}
-
-theorem isTest_of_isTestInf (h : GlobalTheory.JSW.IsTestInf α) : IsTest (invSet E a) α :=
-  ⟨h.1.of_le (by first | exact le_rfl | exact le_top), h.2⟩
 
 theorem le_withSmoothings (π : CuspSub E a) : π.V ≤ withSmoothings π := le_sup_left
 

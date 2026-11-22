@@ -1,6 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EmbeddingMemCoefficientField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOfFinOrderFbar
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.WittCoreInclusionMulVecMemLatticeCompletionAtPla
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteTwistFrameExtraExcludedOverSmallPrimes
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOfFinOrderFbar
+
+@[expose] public section
+
 open Polynomial
 
 noncomputable section
@@ -42,7 +48,7 @@ theorem exists_teich_reindex : ∀ (g : ℕ) [Fact g.Prime] (A : ValuationSubrin
   have hs : ∀ x, s x = redThrough A κ (t x) := fun x => rfl
   have ht0 : t 0 = 0 := map_zero_of_inj t ht
   have hs0 : s 0 = 0 := by
-    rw [hs, ht0]; unfold redThrough; rw [dif_pos (zero_mem A)]
+    rw [hs, ht0]; unfold redThrough; rw [dite_eq_left (zero_mem A)]
     have : (⟨0, zero_mem A⟩ : A) = 0 := rfl
     rw [this, map_zero, map_zero]
   have hsne : ∀ x, x ≠ 0 → s x ≠ 0 := by
@@ -81,7 +87,7 @@ theorem exists_teich_reindex : ∀ (g : ℕ) [Fact g.Prime] (A : ValuationSubrin
     have h1 : s (e.symm x) = x := by rw [← he, MulEquiv.apply_symm_apply]
     have h2 := hs (e.symm x)
     unfold redThrough at h2
-    rw [dif_pos (mem_of_monoidHom A t _)] at h2
+    rw [dite_eq_left (mem_of_monoidHom A t _)] at h2
     exact h2.symm.trans h1
   · intro x y hx hy h
     have hx' : e.symm x ≠ 0 := fun h0 => hx (by rw [← e.apply_symm_apply x, h0, he, hs0])

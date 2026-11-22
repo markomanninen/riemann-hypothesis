@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StandardDeterminantUnit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StandardDeterminantUnit
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -84,7 +88,7 @@ theorem mem_at_conj {N : Submodule (𝓞 E) (Sp E n)} (hl : N.FG) (hu : IsUnimod
       exact Submodule.smul_mem _ _ (hsm z hzS)
     | zero => simp
     | add y₁ y₂ _ _ h₁ h₂ =>
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact Submodule.add_mem _ h₁ h₂
     | smul a y _ h =>
       rw [hStd_osmul_left, LinearMap.map_smul_of_tower]

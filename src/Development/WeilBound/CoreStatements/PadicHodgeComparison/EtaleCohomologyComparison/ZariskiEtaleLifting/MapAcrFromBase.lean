@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.TwistAcrisZeroPreservesFiltration
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.TwistAcrisZeroPreservesFiltration
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -59,8 +63,8 @@ theorem uJ_map (k : Bool) {A A' : PAlg l} (f : A ⟶ A') (n : ℕ) :
     obtain ⟨w, rfl⟩ := Ideal.Quotient.mk_surjective x
     exact congrArg (Ideal.Quotient.mk _) (mapAcr_toAcr f n w)
 
-variable (l) in
 
+variable (l) in
 abbrev bs (k : Bool) (n : ℕ) : Base where
   R := (base l).Acr n
   I := JJ k (base l) n
@@ -87,8 +91,6 @@ def Fn.pt : PAlg l ⥤ Type where
     change F.Pt.map (CommRingCat.ofHom (mapU (f ≫ g))) y.1 =
       F.Pt.map (CommRingCat.ofHom (mapU g)) (F.Pt.map (CommRingCat.ofHom (mapU f)) y.1)
     rw [mapU_comp, CommRingCat.ofHom_comp, F.Pt.map_comp]; rfl
-
-theorem schFn_pt {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of O)) : (schFn q).pt κ = PX q κ := rfl
 
 abbrev Lc (k : Bool) (n : ℕ) : (bs l k n).Fun := F.cr (bs l k n) rfl (κb κ k n)
 
@@ -148,16 +150,16 @@ def gE (k : Bool) (n : ℕ) : (F.pt κ).Elements ⥤ Thick (Lc F κ k n) where
   map_id T := Thick.Hom.ext (RingHom.ext (mapAcr_id n)) (funext fun j => j.elim)
   map_comp f g := Thick.Hom.ext (RingHom.ext (mapAcr_comp f.1 g.1 n)) (funext fun j => j.elim)
 
-def jE (P : PAlg l ⥤ Type) : El P ⥤ P.Elements where
-  obj T := ⟨T.1.obj, T.2⟩
-  map f := ⟨f.1.hom, f.2⟩
-  map_id _ := rfl
-  map_comp _ _ := rfl
+def jE (P : PAlg l ⥤ Type) : El P ⥤ P.Elements :=
+  Functor.Elements.precomp (testι l) P
 
-instance (P : PAlg l ⥤ Type) : (jE P).Full := ⟨fun f => ⟨⟨ObjectProperty.homMk f.1, f.2⟩, rfl⟩⟩
+instance (P : PAlg l ⥤ Type) : (jE P).Full where
+  map_surjective f := ⟨Functor.Elements.homMk (ObjectProperty.homMk f.hom) (by
+    exact f.map_val), rfl⟩
 
-instance (P : PAlg l ⥤ Type) : (jE P).Faithful :=
-  ⟨fun h => Subtype.ext (ObjectProperty.hom_ext _ (congrArg Subtype.val h))⟩
+instance (P : PAlg l ⥤ Type) : (jE P).Faithful where
+  map_injective h :=
+    Functor.Elements.hom_ext (ObjectProperty.hom_ext _ (congrArg Functor.Elements.Hom.hom h))
 
 abbrev gT (k : Bool) (n : ℕ) : El (F.pt κ) ⥤ Thick (Lc F κ k n) := jE (F.pt κ) ⋙ gE F κ k n
 
@@ -165,8 +167,6 @@ def idLin {Λ B : Type} [CommRing Λ] [CommRing B] (f g : Λ →+* B) (h : ∀ a
     @LinearMap Λ Λ _ _ (RingHom.id Λ) B B _ _ (@Algebra.toModule _ _ _ _ f.toAlgebra) (@Algebra.toModule _ _ _ _ g.toAlgebra) :=
   @LinearMap.mk Λ Λ _ _ (RingHom.id Λ) B B _ _ (@Algebra.toModule _ _ _ _ f.toAlgebra) (@Algebra.toModule _ _ _ _ g.toAlgebra)
     ⟨fun z => z, fun _ _ => rfl⟩ fun a z => congrArg (· * z) (h a)
-
-theorem idLin_apply {Λ B : Type} [CommRing Λ] [CommRing B] (f g : Λ →+* B) (h : ∀ a, f a = g a) (z : B) : idLin f g h z = z := rfl
 
 def βMor (k : Bool) (n : ℕ) : CH.Mor (Oc F κ k n) (CH.modF (AcrEl (F.pt κ) n)) (RingHom.id _) where
   G := gT F κ k n
@@ -204,8 +204,5 @@ def Fn.Map.pt (u : Fn.Map F F') : F.pt κ ⟶ F'.pt κ where
     ext y
     have h := ConcreteCategory.congr_hom (u.u.naturality (CommRingCat.ofHom (mapU f))) y.1
     exact Subtype.ext h
-
-theorem schMap_pt {X Y : Scheme.{0}} {p : X ⟶ Spec (CommRingCat.of O)} {q : Y ⟶ Spec (CommRingCat.of O)} (u : X ⟶ Y)
-    (hu : u ≫ q = p) : (schMap u hu).pt κ = pxMap κ u hu := rfl
 
 end CrystallineSemistableComparison.B

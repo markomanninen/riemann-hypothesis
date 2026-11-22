@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumFixedCongruentFrameChangeTwistPrime
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiTopEqProd
-import Formalism.LocalToGlobal.Columns.XtPhiTopGCongr
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumFixedCongruentFrameChangeTwistPrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiTopEqProd
+public import Formalism.LocalToGlobal.Columns.XtPhiTopGCongr
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Col Formalism.MainNotions Formalism.L2.Ker GlobalTheory.TwU GlobalTheory.TwV GlobalTheory.TwTop
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -22,4 +26,5 @@ theorem _root_.GlobalTheory.T.lastStepDatum_fixed_congruentFrameChange_twistPrim
   (∀ l, IntAt P.1 ((qOf P.1 : X.E) ^ cst.M * y'' l)) →
   topDat Ch sel mu cst (m2 + 1) P (κ'.symm.toLinearMap ∘ₗ y ∘ₗ κ.toLinearMap) (κ.symm y'') =
     topDat Ch sel mu cst (m2 + 1) P y y'' := by
-  first | exact @GlobalTheory.TopFrameQM.topDat_frames_qM | exact GlobalTheory.TopFrameQM.topDat_frames_qM | (intros; apply GlobalTheory.TopFrameQM.topDat_frames_qM <;> assumption)
+  intro X Pr R Ch sel S mu cst m2 hm hc P hP hD κ κ' hκ hκc hκ' hκ'c y y'' hy''
+  exact GlobalTheory.TopFrameQM.topDat_frames_qM Ch sel mu cst hm hc P hP hD κ κ' hκ hκc hκ' hκ'c y y'' hy''

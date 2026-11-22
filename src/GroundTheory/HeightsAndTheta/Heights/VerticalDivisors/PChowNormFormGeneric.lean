@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -32,7 +37,8 @@ theorem secCoord_chart {E : Type*} [Field E] {n e : ℕ} (Q : Ideal (MvPolynomia
   have h : Ideal.Quotient.mk (secIdeal Q y) (chartForm y) = 1 := by
     rw [← map_one (Ideal.Quotient.mk _), Ideal.Quotient.eq]
     exact Ideal.mem_sup_right (Ideal.subset_span rfl)
-  rw [← h, chartForm, linForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h, chartForm, linForm, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul]
   rfl

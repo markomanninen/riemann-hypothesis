@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValNorm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValUFD
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HNormA
-import ReciprocityTheory.SemistableReduction.AlgAll
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValNorm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValUFD
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HNormA
+public import ReciprocityTheory.SemistableReduction.AlgAll
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -12,14 +16,14 @@ open IsDedekindDomain IsLocalRing
 variable {R F L : Type} [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R] [Field F]
   [Algebra R F] [IsFractionRing R F] [Field L] [Algebra F L]
 
-variable (R F L) in
 
+variable (R F L) in
 def OverR (p : Ideal R) : Set (AddValuation L (WithTop ℤ)) :=
   {w | IsNormDiscrete w ∧ ∀ x : R, 0 ≤ w (algebraMap F L (algebraMap R F x)) ∧
     (0 < w (algebraMap F L (algebraMap R F x)) ↔ x ∈ p)}
 
-variable (F) in
 
+variable (F) in
 noncomputable def fz (w : AddValuation L (WithTop ℤ)) : ℕ :=
   letI := resAlg (F := F) w
   Module.finrank (ResidueField ((vRing w).comap (algebraMap F L))) (ResidueField (vRing w))
@@ -27,10 +31,10 @@ noncomputable def fz (w : AddValuation L (WithTop ℤ)) : ℕ :=
 theorem local_norm [FiniteDimensional F L] [Algebra.IsSeparable F L]
     (p : Ideal R) [p.IsPrime] (hp : p.height = 1) (g : R) (hg : p = Ideal.span {g})
     (y : L) (hy : y ≠ 0) :
-    (OverR R F L p).Finite ∧ ∃ a s : R, a ∉ p ∧ s ∉ p ∧
+    (OverR (R := R) (F := F) (L := L) p).Finite ∧ ∃ a s : R, a ∉ p ∧ s ∉ p ∧
       Algebra.norm F y * algebraMap R F s = algebraMap R F g ^
-        (∑ᶠ (w : AddValuation L (WithTop ℤ)) (_ : w ∈ OverR R F L p),
-          (fz F w : ℤ) * WithTop.untopD 0 (w y)) * algebraMap R F a := by
+        (∑ᶠ (w : AddValuation L (WithTop ℤ)) (_ : w ∈ OverR (R := R) (F := F) (L := L) p),
+          (fz (F := F) w : ℤ) * WithTop.untopD 0 (w y)) * algebraMap R F a := by
   classical
   obtain ⟨hdvr, hirr⟩ := ValUFD.loc_dvr p hp g hg
   haveI := hdvr
@@ -50,9 +54,9 @@ theorem local_norm [FiniteDimensional F L] [Algebra.IsSeparable F L]
   haveI : IsScalarTower R (Localization.AtPrime p) L := IsScalarTower.of_algebraMap_eq
     (fun x => congrArg (algebraMap F L)
       (IsLocalization.lift_eq (M := p.primeCompl) (S := Localization.AtPrime p) hunit x).symm)
-  have hset : OverR R F L p = ValPl.PlacesOver (Localization.AtPrime p) L := by
+  have hset : OverR (R := R) (F := F) (L := L) p = ValPl.PlacesOver (Localization.AtPrime p) L := by
     ext w
-    simp only [OverR, ValPl.PlacesOver, Set.mem_setOf_eq]
+    simp only [OverR, ValPl.PlacesOver, Set.mem_ofPred_eq]
     exact and_congr_right fun _ => ValPl.placesOver_iff_loc (R := R) (O := Localization.AtPrime p) (L := L) p w
   haveI : IsDedekindDomain (integralClosure (Localization.AtPrime p) L) :=
     integralClosure.isDedekindDomain (Localization.AtPrime p) F L
@@ -75,12 +79,17 @@ theorem local_norm [FiniteDimensional F L] [Algebra.IsSeparable F L]
   have e2 : algebraMap (Localization.AtPrime p) F u * algebraMap R F (s : R) = algebraMap R F a := by
     rw [IsScalarTower.algebraMap_apply R (Localization.AtPrime p) F (s : R),
       IsScalarTower.algebraMap_apply R (Localization.AtPrime p) F a, ← map_mul, hspec]
-  refine ⟨by rw [hset]; exact ValPl.placesOver_finite (Localization.AtPrime p) (F := F) L, a, s, ha, hs, ?_⟩
-  rw [hset, hN, e1, mul_assoc, e2]
-  all_goals rfl
+  refine ⟨?_, a, s, ha, hs, ?_⟩
+  · rw [hset]
+    first
+    | exact ValPl.placesOver_finite (O := Localization.AtPrime p) (F := F) (L := L)
+    | exact ValPl.placesOver_finite (O := Localization.AtPrime p) (L := L)
+  · rw [hset, hN, e1, mul_assoc, e2]
+    rfl
 
 theorem fin_support [FiniteDimensional F L] (y : L) (hy : y ≠ 0) :
-    {p : Ideal R | p.IsPrime ∧ p.height = 1 ∧ ∃ w ∈ OverR R F L p, w y ≠ 0}.Finite := by
+    {p : Ideal R | p.IsPrime ∧ p.height = 1 ∧
+      ∃ w ∈ OverR (R := R) (F := F) (L := L) p, w y ≠ 0}.Finite := by
   classical
   letI : Algebra R L := ((algebraMap F L).comp (algebraMap R F)).toAlgebra
   haveI : IsScalarTower R F L := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
@@ -90,9 +99,10 @@ theorem fin_support [FiniteDimensional F L] (y : L) (hy : y ≠ 0) :
   obtain ⟨e, he0, he⟩ := (halg y⁻¹).exists_integral_multiple
   have hD0 : d * e ≠ 0 := mul_ne_zero hd0 he0
 
-  have key : ∀ p : Ideal R, (∃ w ∈ OverR R F L p, w y ≠ 0) → d * e ∈ p := by
+  have key : ∀ p : Ideal R, (∃ w ∈ OverR (R := R) (F := F) (L := L) p, w y ≠ 0) →
+      d * e ∈ p := by
     rintro p ⟨w, hw, hwy⟩
-    simp only [OverR, Set.mem_setOf_eq] at hw
+    simp only [OverR, Set.mem_ofPred_eq] at hw
     by_contra hde
     have hdp : d ∉ p := fun h => hde (p.mul_mem_right e h)
     have hep : e ∉ p := fun h => hde (p.mul_mem_left d h)
@@ -108,7 +118,8 @@ theorem fin_support [FiniteDimensional F L] (y : L) (hy : y ≠ 0) :
     have h3 : w y + w y⁻¹ = 0 := by
       rw [← AddValuation.map_mul w y y⁻¹, mul_inv_cancel₀ hy, AddValuation.map_one]
     exact hwy (wt_add_eq_zero h1 h2 h3)
-  have hsub : {p : Ideal R | p.IsPrime ∧ p.height = 1 ∧ ∃ w ∈ OverR R F L p, w y ≠ 0} ⊆
+  have hsub : {p : Ideal R | p.IsPrime ∧ p.height = 1 ∧
+      ∃ w ∈ OverR (R := R) (F := F) (L := L) p, w y ≠ 0} ⊆
       (fun q : R => Ideal.span {q}) '' {q | q ∈ UniqueFactorizationMonoid.factors (d * e)} := by
     rintro p ⟨hp, hh, hw⟩
     haveI := hp

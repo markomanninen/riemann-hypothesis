@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PnPosOfGeneratesAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PnPosOfGeneratesAt
+
+@[expose] public section
 
 namespace MongeAmpereTransport
 section

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsGrpPullbackDescentAlongGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsGrpPullbackDescentAlongGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -22,9 +27,6 @@ theorem dualMap_apply (g : A →+* B) (x : DualNumber A) :
   ext <;> simp [Algebra.ofId_apply, TrivSqZeroExt.algebraMap_eq_inl', RingHom.algebraMap_toAlgebra]
 
 @[simp] theorem dualMap_fst (g : A →+* B) (x : DualNumber A) : (dualMap g x).fst = g x.fst := by
-  simp [dualMap_apply]
-
-@[simp] theorem dualMap_snd (g : A →+* B) (x : DualNumber A) : (dualMap g x).snd = g x.snd := by
   simp [dualMap_apply]
 
 end GlobalTheory.DualCover
@@ -52,7 +54,7 @@ theorem isPushout_dualMap (g : A →+* B) :
     abel
   have hgh : ∀ x, G (h x) = x := by
     intro x
-    simp only [h, G, map_add, Algebra.TensorProduct.lift_tmul, map_one, _root_.one_mul]
+    simp only [h, G, map_add (f := _), Algebra.TensorProduct.lift_tmul, map_one, _root_.one_mul]
     ext <;> simp [j, hψ₀, dualMap_apply]
   have hhg : ∀ x, h (G x) = x := by
     intro x
@@ -68,7 +70,7 @@ theorem isPushout_dualMap (g : A →+* B) :
       show (1 : DualNumber A) ⊗ₜ[A] TrivSqZeroExt.fst (ψ₀ a * j b) +
         (DualNumber.eps : DualNumber A) ⊗ₜ[A] TrivSqZeroExt.snd (ψ₀ a * j b) = a ⊗ₜ[A] b
       rw [f1, f2, ← TensorProduct.smul_tmul, ← TensorProduct.smul_tmul, ← TensorProduct.add_tmul, ← e1]
-    | add x y hx hy => rw [map_add, hadd, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), hadd, hx, hy]
   have hbij : Function.Bijective G := Function.bijective_iff_has_inverse.2 ⟨h, hhg, hgh⟩
   let eR : TensorProduct A (DualNumber A) B ≃+* DualNumber B := (AlgEquiv.ofBijective G hbij).toRingEquiv
   refine (CommRingCat.isPushout_tensorProduct A (DualNumber A) B).of_iso (Iso.refl _) (Iso.refl _) (Iso.refl _)

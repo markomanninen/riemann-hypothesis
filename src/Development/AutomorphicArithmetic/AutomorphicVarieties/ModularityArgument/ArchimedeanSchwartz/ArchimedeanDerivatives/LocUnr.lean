@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.HodgeTateFromSandwich
-import GroundTheory.AutomorphicForms.GL2.GJStandardLDual
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.HodgeTateFromSandwich
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLDual
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
+
+@[expose] public section
 
 attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 open scoped Classical
@@ -39,8 +43,8 @@ private theorem anti_sq :
   ext i j
   simp [Matrix.one_apply]
 
-variable (F n) in
 
+variable (F n) in
 private def wl : GL (Fin n) F :=
   ⟨(1 : Matrix (Fin n) (Fin n) F).submatrix Fin.rev id, (1 : Matrix (Fin n) (Fin n) F).submatrix Fin.rev id, anti_sq, anti_sq⟩
 
@@ -145,7 +149,7 @@ private theorem evalAt_flip (z : Fin n → ℂˣ) (h : SphericalHecke μ (F := F
   rw [← integral_mul_left_eq_self φ (wl F n), ← integral_comp_transposeInv μ fun g => φ (wl F n * g)]
   congr 1
   funext g
-  simp only [hφ]
+  dsimp only [φ]
   rw [exponent_conj, monomial_conj, flip_apply, (HeckeAlgebraLevel.val_mem _ _ h _ wl_mem _).1]
 
 private theorem exists_pair {V : Type} [AddCommGroup V] [Module ℂ V] {π : Representation ℂ (GL (Fin n) F) V}

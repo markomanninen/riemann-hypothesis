@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitting
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitting
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -32,7 +37,7 @@ theorem weilAt_of_subsingleton (F E : Type) [NontriviallyNormedField F] [Nontriv
         rw [if_pos ⟨1, by simp⟩]
       have ha : A.absK (s : A.K) = 1 := by
         unfold Et.absK
-        rw [dif_pos s.isUnit]
+        rw [dite_eq_left s.isUnit]
         rw [Subsingleton.elim (s.isUnit.unit) 1, map_one]
         rfl
       rw [he, ha, Subsingleton.elim ((s : A.K) • y) y]

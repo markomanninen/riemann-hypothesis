@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DegFactNeZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DegFactNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem gB_blockOK (aTop : Fin X.s → ℕ) (aPlus : ℕ) (b : SegBlock X.s X.r)
     refine ⟨(⟨(i : ℕ), Nat.lt_succ_of_lt hi⟩ : Fin ((X.S C0 CE1 CE2).t + 1)), ?_⟩
     show (if h : (i : ℕ) < (X.S C0 CE1 CE2).t then 2 * (uTop (X.S C0 CE1 CE2) ⟨(i : ℕ), h⟩ : ℕ) + 1 else 2 * X.s + 1) =
       2 * ((X.S C0 CE1 CE2).sigma + (i : ℕ)) + 1
-    rw [dif_pos hi]
+    rw [dite_eq_left hi]
     rfl
   · intro i
     have hi : (X.S C0 CE1 CE2).sigma + (i : ℕ) < X.s := (uTop (X.S C0 CE1 CE2) i).2

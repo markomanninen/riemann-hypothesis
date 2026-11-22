@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockParOpp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocPartMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockParOpp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocPartMul
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped Classical
@@ -79,7 +83,8 @@ theorem continuous_of_linear (f : (Fin a → Fin b → K) →ₗ[K] (Fin a → F
       ext k l
       simp [Finset.sum_apply, Pi.single_apply, ite_apply]
     conv_lhs => rw [hX]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   rw [show (f : _ → _) = fun X => ∑ i, ∑ j, X i j • f (Pi.single i (Pi.single j 1)) from funext h]
   fun_prop
 
@@ -115,7 +120,7 @@ variable {K : Type} [AddCommGroup K] [TopologicalSpace K] [IsTopologicalAddGroup
 
 theorem measurable_of_continuous {W : Type} [TopologicalSpace W] [MeasurableSpace W] [BorelSpace W]
     (g : W → Fin a → Fin b → K) (hg : Continuous g) : Measurable g :=
-  measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j =>
+  Measurable.of_eval fun i => Measurable.of_eval fun j =>
     Continuous.measurable (by fun_prop)
 
 theorem exists_haar [LocallyCompactSpace K] : ∃ μ : Measure (Fin a → Fin b → K), μ.IsAddHaarMeasure := by
@@ -166,7 +171,7 @@ theorem integral_step {V : Type} [AddGroup V] [MeasurableSpace V] [MeasurableAdd
     intro q; ext X; simp [Set.indicator_apply]
   have hmeas : ∀ q, MeasurableSet ((fun X => -x q + X) ⁻¹' M) := fun q => measurable_const_add _ hM
   have hvol : ∀ q, μ ((fun X => -x q + X) ⁻¹' M) = μ M := fun q => measure_preimage_add μ _ M
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [hind q, integral_indicator_const _ (hmeas q), Measure.real, hvol q, Complex.real_smul]
@@ -197,7 +202,7 @@ theorem sylvester (A : Matrix (Fin a) (Fin a) K) (B : Matrix (Fin b) (Fin b) K)
         Matrix.smul_mul, Matrix.mul_smul, hpow]
   obtain ⟨u, v, huv⟩ := h
   have h1 : Polynomial.aeval B (A.charpoly * u + v * B.charpoly) = 1 := by rw [mul_comm _ u, huv, map_one]
-  rw [map_add, map_mul, map_mul, Matrix.aeval_self_charpoly B, mul_zero, add_zero] at h1
+  rw [map_add (f := _), map_mul, map_mul, Matrix.aeval_self_charpoly B, mul_zero, add_zero] at h1
   have h2 : X * Polynomial.aeval B A.charpoly = 0 := by
     rw [← hp, Matrix.aeval_self_charpoly, Matrix.zero_mul]
   rw [← Matrix.mul_one X, ← h1, ← Matrix.mul_assoc, h2, Matrix.zero_mul]
@@ -229,7 +234,7 @@ theorem exists_conj (e : ι ≃ Fin a ⊕ Fin b) (γ : GL ι K) (hγ : γ ∈ bl
     change A * (X - A⁻¹ * X * B) = _
     rw [Matrix.mul_sub, ← Matrix.mul_assoc, ← Matrix.mul_assoc, mul_nonsing_inv A hA, Matrix.one_mul]
   have hinj : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro X hX
     have := hL X
     rw [hX, Matrix.mul_zero] at this
@@ -296,7 +301,7 @@ theorem finsum_conj_eq_zero : ∀ (K : Type) [Field K] [TopologicalSpace K] [IsT
         exact (hfin.mem_toFinset.1 hq) (if_neg hn)
       have e1 : (Quotient.out q)⁻¹ * uGL e X = uGL e (-coord e (Quotient.out q) + X) := by
         rw [uGL_add, uGL_neg, ← eq_uGL_coord e hq']
-      rw [hM, ← map_neg, ← map_add, Φ.symm_apply_apply]
+      rw [hM, ← map_neg, ← map_add (f := _), Φ.symm_apply_apply]
       conv_rhs => rw [← QuotientGroup.out_eq' q, QuotientGroup.eq, e1]
       exact ⟨fun h => ⟨uGL_mem e _, uGL_mem_blockPar e _, h⟩, fun h => h.2.2⟩
     rw [Finset.sum_congr rfl fun q hq => if_congr (h1 q hq) rfl rfl, Finset.sum_ite_eq', ← h0]

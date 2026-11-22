@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField UniqueFactorizationMonoid
 
@@ -36,7 +40,7 @@ theorem isRadical_span_of_ncard_primesOver : ∀ (E : Type) [Field E] [NumberFie
       1 ≤ q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
     intro q _
     haveI : q.1.IsPrime := q.2.1
-    exact Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (Ideal.ramificationIdx_pos q.1 ℤ).ne'
+    exact Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (Ideal.ramificationIdx_pos (R := ℤ) q.1).ne'
       (Ideal.inertiaDeg_pos q.1 ℤ).ne')
   have hone : ∀ q : P.primesOver (𝓞 E), q.1.ramificationIdx ℤ = 1 := by
     intro q

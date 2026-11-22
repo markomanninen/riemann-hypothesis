@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionPointsIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SubstFirstCoboundaryThree
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.EqZeroOfPowEqOne
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionPointsIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SubstFirstCoboundaryThree
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.EqZeroOfPowEqOne
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -119,7 +123,8 @@ lemma linEL_sum (σ : K →+* K) {ι : Type} [Fintype ι] (a y : ι → K)
   refine Finset.sum_congr rfl fun s _ => ?_
   by_cases hs : s.val % 2 = 0
   · simp only [if_pos hs]
-    rw [← RingHom.coe_pow, map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← RingHom.coe_pow, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, RingHom.coe_pow, iter_even (ha i) hs, map_mul]
     ring
@@ -137,7 +142,8 @@ lemma linOL_sum (σ : K →+* K) {ι : Type} [Fintype ι] (a y : ι → K)
   · simp only [if_pos hs]
     simp
   · simp only [if_neg hs]
-    rw [← RingHom.coe_pow, map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← RingHom.coe_pow, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, RingHom.coe_pow, iter_odd (ha i) hs, map_mul]
     ring
@@ -178,7 +184,8 @@ theorem dual_expansion : DualExpand := by
   refine ⟨fun r r' => ?_, fun r => ?_, fun r' => ?_⟩
   · have hc : σ^[d] (x * oms r * om r') = x * oms r * om r' := by
       rw [iterate_map_mul, iterate_map_mul, hx, (hfix r).2, (hfix r').1]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     rw [← (Equiv.subRight (2 : ZMod d)).sum_comp
       (fun s : ZMod d => σ (σ (if s.val % 2 = 0 then σ^[s.val] (x * oms r * om r') else 0)))]
     refine Finset.sum_congr rfl fun s _ => ?_
@@ -336,10 +343,5 @@ theorem MeanSimeqL_of : TilInvariantL → MeanSimeqL := by
   unfold Simeq
   rw [e]
   exact hlam
-
-theorem TilInvariant_of : TilInvariantL → LetterShift → TilInvariant := by
-  intro hTI hLS K _ _ _ l d _ σ hU hd2 hd F hF be0 hF1 hF2 ι _ _ om oms hOw hT u hu
-  exact hTI K l d σ hU hd2 hd F hF be0 hF1 hF2 ι om oms hOw hT u hu (ZMod d) (letLog l)
-    (hLS K l d σ hU.1).2.1
 
 end Formalism.L2.Th1.D

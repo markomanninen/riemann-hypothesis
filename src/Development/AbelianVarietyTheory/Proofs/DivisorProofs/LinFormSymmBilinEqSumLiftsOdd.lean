@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinFormBilinFormsEqSumMinimiserValues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinFormBilinFormsEqSumMinimiserValues
+
+@[expose] public section
+
 open GlobalTheory.PolFan GlobalTheory.LocM
 
 namespace GlobalTheory.Poinc
@@ -21,7 +26,7 @@ theorem symm_bilin_pow_dvd_of_lifts {Y : Type} [AddCommGroup Y] (n N : ℕ) (hod
     refine ⟨eb.symm z, ?_⟩
     apply eb.injective
     funext i
-    rw [map_add, map_smul, LinearEquiv.apply_symm_apply]
+    rw [map_add (f := _), map_smul, LinearEquiv.apply_symm_apply]
     simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     linarith [hz i]
   have hdiag : ∀ k, (∀ x y, (N : ℤ) ^ k ∣ B x y) → ∀ x, (N : ℤ) ^ (k + 1) ∣ B x x := by
@@ -30,7 +35,7 @@ theorem symm_bilin_pow_dvd_of_lifts {Y : Type} [AddCommGroup Y] (n N : ℕ) (hod
     have hm := h0 (fun i => (eb x i : ZMod N))
     generalize μ (fun i => (eb x i : ZMod N)) = m at hy hm
     subst hy
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hm]
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hm]
     rw [hB y m]
     obtain ⟨a, ha⟩ := hk m y
     obtain ⟨b, hb⟩ := hk y y
@@ -49,7 +54,7 @@ theorem symm_bilin_pow_dvd_of_lifts {Y : Type} [AddCommGroup Y] (n N : ℕ) (hod
       have hx := hdiag k ih x
       have hy := hdiag k ih y
       have e : 2 * B x y = B (x + y) (x + y) - B x x - B y y := by
-        simp only [map_add, LinearMap.add_apply]
+        simp only [map_add (f := _), LinearMap.add_apply]
         rw [hB y x]
         ring
       rw [e]

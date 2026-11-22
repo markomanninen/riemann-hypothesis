@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousOfDense
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousOfDense
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem exists_rep : ∀ (G S H : Type) [Group G] [TopologicalSpace G] [NormedAd
     induction hx using Submodule.span_induction with
     | mem x hx => obtain ⟨p, rfl⟩ := hx; exact hp p
     | zero => simpa using continuous_const
-    | add x y _ _ hx hy => simp only [map_add]; exact hx.add hy
+    | add x y _ _ hx hy => simp only [map_add (f := _)]; exact hx.add hy
     | smul a x _ hx => simp only [map_smul]; exact hx.const_smul a
 
 end GlobalTheory.TotalFamilyRep

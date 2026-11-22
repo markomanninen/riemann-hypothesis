@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechMapDeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechMapDeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -164,7 +169,7 @@ theorem locPart_exact (h𝓜' : KH.IsMGraded S ι 𝓜') (h𝓜 : KH.IsMGraded S
     convert hm'deg using 2
     funext k
     simp only [Pi.add_apply, Nat.cast_add]
-    ring
+    ac_rfl
   · rw [KHTheoremS.lmap_mk, hm', ← Submonoid.smul_def, LocalizedModule.mk_cancel_common_left]
 
 theorem cechMap_exact (h𝓜' : KH.IsMGraded S ι 𝓜') (h𝓜 : KH.IsMGraded S ι 𝓜)
@@ -180,12 +185,16 @@ theorem cechMap_exact (h𝓜' : KH.IsMGraded S ι 𝓜') (h𝓜 : KH.IsMGraded S
 theorem cechBc_lift (h𝓜 : KH.IsMGraded S ι 𝓜) (h𝓜'' : KH.IsMGraded S ι 𝓜'')
     (hh : KH.IsMGradedMap S ι 𝓜 𝓜'' h) (hsurj : Function.Surjective h) {c : K → ℤ} :
     ∀ {n : ℕ} {x : KH.CechC S ι M'' n}, x ∈ KH.cechBc ι 𝓜'' c n →
-      ∃ b ∈ KH.cechBc ι 𝓜 c n, KH.cechMap S ι h n b = x
-  | 0, x, hx => by
+      ∃ b ∈ KH.cechBc ι 𝓜 c n, KH.cechMap S ι h n b = x := by
+  intro n x hx
+  cases n with
+  | zero =>
     have hx0 : x = 0 := (Submodule.mem_bot S).mp hx
     exact ⟨0, zero_mem _, by rw [hx0, map_zero]⟩
-  | n + 1, _, ⟨y, hy, rfl⟩ => by
-    obtain ⟨z, hz, rfl⟩ := cechMap_lift h𝓜 h𝓜'' hh hsurj hy
+  | succ n =>
+    change x ∈ (KH.cechCc ι 𝓜'' c n).map ((KH.cechD S ι M'' n).restrictScalars S) at hx
+    obtain ⟨y, hy, rfl⟩ := Submodule.mem_map.mp hx
+    obtain ⟨z, hz, rfl⟩ := cechMap_lift h𝓜 h𝓜'' hh hsurj (c := c) (n := n) hy
     exact ⟨KH.cechD S ι M n z, ⟨z, hz, rfl⟩, (KHTheoremS.cechD_cechMap h n z).symm⟩
 
 theorem exists_sub_mem_cechBc (hSq : KH.CechDSqStatement) (hDeg : KH.CechDDegStatement)
@@ -282,7 +291,7 @@ def pairs (g : M' →ₗ[MRingOver S ι] M) (𝓜 : (K → ℤ) → Submodule S 
   carrier := {p | p.1 ∈ KH.cechCc ι 𝓜 c n ∧ p.2 ∈ KH.cechZc ι 𝓜' c (n + 1) ∧
     KH.cechD S ι M n p.1 = KH.cechMap S ι g (n + 1) p.2}
   add_mem' := fun {p q} hp hq => ⟨add_mem hp.1 hq.1, add_mem hp.2.1 hq.2.1, by
-    rw [Prod.fst_add, Prod.snd_add, map_add, map_add, hp.2.2, hq.2.2]⟩
+    rw [Prod.fst_add, Prod.snd_add, map_add (f := _), map_add (f := _), hp.2.2, hq.2.2]⟩
   zero_mem' := ⟨zero_mem _, zero_mem _, by rw [Prod.fst_zero, Prod.snd_zero, map_zero, map_zero]⟩
   smul_mem' := fun s p hp => ⟨Submodule.smul_mem _ s hp.1, Submodule.smul_mem _ s hp.2.1, by
     rw [Prod.smul_fst, Prod.smul_snd, LinearMap.map_smul_of_tower, LinearMap.map_smul_of_tower, hp.2.2]⟩

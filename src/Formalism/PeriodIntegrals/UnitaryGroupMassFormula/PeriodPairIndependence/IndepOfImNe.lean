@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.KerLat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.KerLat
+
+@[expose] public section
 
 noncomputable section
 open NumberField ComplexConjugate
@@ -27,13 +31,6 @@ theorem indep_of_im_ne {a b : ℂ} (h : (conj a * b).im ≠ 0) : LinearIndepende
   rw [ht, Complex.ofReal_zero, zero_mul, add_zero] at hst
   exact (mul_eq_zero.1 hst).resolve_right ha |> Complex.ofReal_eq_zero.1
 
-def imMul {K : Type} [Field K] [CharZero K] (φ : K →+* ℂ) (a : ℂ) : K →ₗ[ℚ] ℝ where
-  toFun k := (conj a * φ k).im
-  map_add' x y := by simp [mul_add]
-  map_smul' q x := by
-    simp only [Rat.smul_def, map_mul, map_ratCast, RingHom.id_apply]
-    rw [mul_left_comm, ← Complex.ofReal_ratCast, Complex.im_ofReal_mul]
-
 theorem im_ne {K : Type} [Field K] [CharZero K] (φ : K →+* ℂ) (hφ : ∃ k : K, (φ k).im ≠ 0)
     (B : Module.Basis (Fin 2) ℚ K) : (conj (φ (B 0)) * φ (B 1)).im ≠ 0 := by
   intro h0
@@ -48,7 +45,8 @@ theorem im_ne {K : Type} [Field K] [CharZero K] (φ : K →+* ℂ) (hφ : ∃ k 
     rw [mul_comm, Complex.mul_conj, Complex.ofReal_im]
   have key : ∀ x : K, (conj (φ (B 0)) * φ x).im = 0 := by
     intro x
-    rw [← B.sum_repr x, map_sum, Finset.mul_sum, Complex.im_sum, Fin.sum_univ_two, hs, hs, e0, h0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← B.sum_repr x, map_sum, Finset.mul_sum, Complex.im_sum, Fin.sum_univ_two, hs, hs, e0, h0]
     simp
   have h1 := key 1
   rw [map_one, mul_one, Complex.conj_im, neg_eq_zero] at h1
@@ -108,7 +106,8 @@ theorem perPair : PI.KerLat.PerPair := by
   · rw [AddSubgroup.closure_le]
     rintro w ⟨c, hc, rfl⟩
     have hfc : δ * φ (c : K) = f ⟨c, hc⟩ := rfl
-    rw [hfc, ← bI.sum_repr ⟨c, hc⟩, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hfc, ← bI.sum_repr ⟨c, hc⟩, map_sum]
     refine AddSubgroup.sum_mem _ fun i _ => ?_
     rw [map_zsmul]
     refine AddSubgroup.zsmul_mem _ (AddSubgroup.subset_closure ?_) _

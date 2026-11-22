@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import GroundTheory.GlobalFields.GlobalArtinMap.Kernel
-import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassFieldLocal
-import GroundTheory.GlobalFields.GlobalReciprocity.Frobenius
-import GroundTheory.GlobalFields.GlobalReciprocity.LocalSurjective
-import Development.WeilBound.CoreStatements.PlaceConnectedComponents.ArtinA
-import Development.WeilBound.CoreStatements.PlaceConnectedComponents.ArtinKer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import GroundTheory.GlobalFields.GlobalArtinMap.Kernel
+public import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassFieldLocal
+public import GroundTheory.GlobalFields.GlobalReciprocity.Frobenius
+public import GroundTheory.GlobalFields.GlobalReciprocity.LocalSurjective
+public import Development.WeilBound.CoreStatements.PlaceConnectedComponents.ArtinA
+public import Development.WeilBound.CoreStatements.PlaceConnectedComponents.ArtinKer
+
+@[expose] public section
 
 noncomputable section
 
@@ -207,20 +211,20 @@ theorem art0_unif_iff (hA : IsPlaceOver A v) (g : Gab E Ω) :
     · rw [map_mul, map_mul, map_inv, map_inv, e]
       group
 
-theorem isGlobalArtin_inv : IsGlobalArtin (art0 E Ω)⁻¹ where
-  quot := (Homeomorph.inv (Gab E Ω)).isOpenQuotientMap.comp (isOpenQuotientMap_art0 E Ω)
-  ker := by
-    rw [← ker_art0 E Ω]
+theorem isGlobalArtin_inv : IsGlobalArtin (art0 E Ω)⁻¹ := by
+  refine ⟨(Homeomorph.inv (Gab E Ω)).isOpenQuotientMap.comp (isOpenQuotientMap_art0 E Ω),
+    ?_, ?_, ?_, ?_⟩
+  · rw [← ker_art0 E Ω]
     ext x
     simp only [MonoidHom.mem_ker, MonoidHom.inv_apply, inv_eq_one]
-  ine v A hA g := by
+  · intro v A hA g
     simp only [MonoidHom.inv_apply, inv_eq_iff_eq_inv]
     rw [art0_unit_iff hA, Subgroup.inv_mem_iff]
     rfl
-  frob v A hA g := by
+  · intro v A hA g
     simp only [MonoidHom.inv_apply, map_inv, inv_eq_iff_eq_inv]
     exact art0_unif_iff hA _
-  dec v A hA := by
+  · intro v A hA
     rw [← closure_range_eq hA]
     congr 1
     ext g
@@ -229,9 +233,6 @@ theorem isGlobalArtin_inv : IsGlobalArtin (art0 E Ω)⁻¹ where
       exact ⟨x⁻¹, by simp⟩
     · rintro ⟨x, rfl⟩
       exact ⟨x⁻¹, by simp⟩
-
-theorem globalArtin : GlobalTheory.Published.GlobalArtinReciprocity := fun E Ω _ _ _ _ _ =>
-  ⟨(art0 E Ω)⁻¹, isGlobalArtin_inv⟩
 
 end PositivityTheory.FamInh
 

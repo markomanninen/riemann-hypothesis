@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AuxUOfFirstTheoremPlaceBound
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.JpSubstExpand
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ValuationBoundAdd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.AuxUOfFirstTheoremPlaceBound
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.JpSubstExpand
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ValuationBoundAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,7 @@ theorem en_geC_sum {α : Type} (s : Finset α) (f : α → Y.Kc) (g : ℝ) (h : 
     Y.geC (∑ i ∈ s, f i) g := by
   exact Finset.sum_induction f (fun x => Y.geC x g) (fun _ _ ha hb => geC_add Y ha hb) (geC_zero Y g) h
 
-def geP {τ : Type} (a : MvPolynomial τ Y.Kc) (g : ℝ) : Prop := ∀ n, Y.geC (MvPolynomial.coeff n a) g
+def geP {τ : Type} (a : MvPolynomial τ Y.Kc) (g : ℝ) : Prop := ∀ n, Y.geC (AddMonoidAlgebra.coeff a n) g
 
 theorem valuation_coeff_one_nonneg {τ : Type} : geP Y (1 : MvPolynomial τ Y.Kc) 0 := by
   classical

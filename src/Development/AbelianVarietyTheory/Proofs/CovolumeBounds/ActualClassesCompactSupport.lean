@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopFinal
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopFinal
+
+@[expose] public section
 
 namespace GlobalTheory
 

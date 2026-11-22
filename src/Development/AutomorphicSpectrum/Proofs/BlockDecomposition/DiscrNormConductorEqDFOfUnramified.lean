@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
-import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+public import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+
+@[expose] public section
+
 open NumberField GroundTheory.Global GroundTheory.Global.IdeleGroup
 open scoped nonZeroDivisors
 

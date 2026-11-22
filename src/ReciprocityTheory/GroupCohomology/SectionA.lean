@@ -1,5 +1,9 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import Mathlib.Topology.Algebra.ClopenNhdofOne
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import Mathlib.Topology.Algebra.ClopenNhdofOne
+
+@[expose] public section
 
 open Pointwise Set
 

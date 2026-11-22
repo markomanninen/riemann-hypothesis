@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,33 +26,32 @@ variable {R R' : Type} [CommRing R] [CommRing R'] {σ : R →+* R'} {X : Over (S
 theorem ptVia_spOver (w : q ≫ X.hom = X'.hom ≫ spMap σ) {E E' : Type} [CommRing E] [Algebra R' E]
     [CommRing E'] [Algebra R' E'] (φ : E →ₐ[R'] E') (y : Pt X' E) :
     ptVia w (spOver φ ≫ y) =
-      @CategoryStruct.comp _ _ _ _ _ (@spOver R _ E E' _ (algVia σ E) _ (algVia σ E') (homVia σ φ)) (ptVia w y) := by
-  letI := algVia σ E
-  letI := algVia σ E'
+      @spOver R _ E E' _ (algVia σ E) _ (algVia σ E') (homVia σ φ) ≫ ptVia w y := by
   apply Over.OverMorphism.ext
   change (spMap (φ : E →+* E') ≫ y.left) ≫ q = spMap (φ : E →+* E') ≫ (y.left ≫ q)
-  rw [Category.assoc]
+  exact Category.assoc _ _ _
 
 theorem bcPull_coc_cob (w : q ≫ X.hom = X'.hom ≫ spMap σ) (u : Fn1 X) :
     (IsCoc (whole X) u → IsCoc (whole X') (bcPull w u)) ∧
       ((∃ k, IsCob (whole X) u k) → ∃ k, IsCob (whole X') (bcPull w u) k) := by
   constructor
-  · intro h E _ _ E' _ _ E'' _ _ φ ψ y _
-    letI := algVia σ E
-    letI := algVia σ E'
-    letI := algVia σ E''
-    have e := h E E' E'' (homVia σ φ) (homVia σ ψ) (ptVia w y) (sm_whole _)
+  · intro h
+    unfold IsCoc at h ⊢
+    intro E _ _ E' _ _ E'' _ _ φ ψ y _
+    let _ : Algebra R E := algVia σ E
+    let _ : Algebra R E' := algVia σ E'
+    let _ : Algebra R E'' := algVia σ E''
     have hc : (homVia σ ψ).comp (homVia σ φ) = homVia σ (ψ.comp φ) := AlgHom.ext fun _ ↦ rfl
-    rw [hc, ← ptVia_spOver] at e
-    exact e
+    simp only [bcPull, ptVia_spOver, ← hc]
+    exact h E E' E'' (homVia σ φ) (homVia σ ψ) (ptVia w y) (sm_whole _)
   · rintro ⟨k, hk⟩
     refine ⟨fun E _ _ y ↦ @k E _ (algVia σ E) (ptVia w y), ?_⟩
+    unfold IsCob at hk ⊢
     intro E _ _ E' _ _ φ y _
-    letI := algVia σ E
-    letI := algVia σ E'
-    have e := hk E E' (homVia σ φ) (ptVia w y) (sm_whole _)
-    rw [← ptVia_spOver] at e
-    exact e
+    let _ : Algebra R E := algVia σ E
+    let _ : Algebra R E' := algVia σ E'
+    simp only [bcPull, ptVia_spOver]
+    exact hk E E' (homVia σ φ) (ptVia w y) (sm_whole _)
 
 theorem bcPull_keeps : ∀ (R R' : Type) [CommRing R] [CommRing R'] (σ : R →+* R') (X : Over (Sp R)) (X' : Over (Sp R')) (q : X'.left ⟶ X.left) (w : q ≫ X.hom = X'.hom ≫ spMap σ) (u : Fn1 X), (IsCoc (whole X) u → IsCoc (whole X') (bcPull w u)) ∧ ((∃ k, IsCob (whole X) u k) → ∃ k, IsCob (whole X') (bcPull w u) k) :=
   fun _ _ _ _ _ _ _ _ w u ↦ bcPull_coc_cob w u

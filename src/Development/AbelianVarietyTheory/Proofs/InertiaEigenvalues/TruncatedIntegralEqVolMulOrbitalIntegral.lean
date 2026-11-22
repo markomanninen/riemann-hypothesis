@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSelfDualMeasuresAndAbsKScale
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyMeasAndReps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSelfDualMeasuresAndAbsKScale
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyMeasAndReps
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -28,8 +33,8 @@ theorem isLocallyConstant_indicator {X : Type} [TopologicalSpace X] {W : Set X} 
 
 end GlobalTheory.JR.TruncInt
 
-open GlobalTheory.JR.TruncInt in
 
+open GlobalTheory.JR.TruncInt in
 theorem GlobalTheory.JR.truncated_integral_eq_vol_mul_orbL : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E] [Unram F E] (A : Et F E), ((∀ s : A.K, A.NL (algebraMap A.K A.L s) = s ^ 2) ∧ (∀ y y' : A.L, A.NL (y * y') = A.NL y * A.NL y') ∧ (∀ t : unitary A.L, A.NL (t : A.L) = 1) ∧ (∀ y : A.L, IsUnit (A.NL y) → IsUnit y) ∧ (∀ y : A.L, IsUnit y → IsUnit (A.NL y))) → ((∀ s t : A.K, A.absK (s * t) = A.absK s * A.absK t) ∧ (∀ s s' : A.K, s ∈ A.OK → s' ∈ A.OK → s * s' = 1 → A.absK s = 1) ∧ (∀ (μ : Measure A.K), μ.IsAddHaarMeasure → ∀ (x : A.Kˣ) (a : A.K) (S : Set A.K), MeasurableSet S → μ {a' : A.K | (x : A.K) * a' - a ∈ S} = ENNReal.ofReal (A.absK (x : A.K))⁻¹ * μ S)) → ∀ (ψ : AddChar F ℂ), IsStdChar ψ → ∀ (m : A.Meas ψ) (x : A.Kˣ) (y₀ : A.L), IsUnit y₀ → ∀ (D : AddSubgroup A.K), IsOpen (D : Set A.K) → IsCompact (D : Set A.K) → ∀ φ : A.L → ℂ, IsTest φ → (∀ b ∈ D, ∃ s s' : A.K, s ∈ A.OK ∧ s' ∈ A.OK ∧ s * s' = 1 ∧ s ^ 2 = 1 + Ring.inverse ((x : A.K) * A.NL y₀) * b ∧ ∀ y : A.L, φ (y * algebraMap A.K A.L s) = φ y) → ∫ y, φ y * Set.indicator (D : Set A.K) (fun _ => (1 : ℂ)) ((x : A.K) * A.NL y - (x : A.K) * A.NL y₀) ∂(m.μL x) = ((m.μK D).toReal : ℂ) * A.orbL m.ν φ y₀ := by
   intro F E _ _ _ _ _ A hN hK ψ hψ m x y₀ hy₀ D hDo hDc φ hφ hsq
   classical
@@ -62,7 +67,7 @@ theorem GlobalTheory.JR.truncated_integral_eq_vol_mul_orbL : ∀ (F E : Type) [N
     refine ⟨?_, hu⟩
     have h3 := congrArg A.absK h2
     rw [habs (x : A.K) a', habs a (s ^ 2), pow_two, habs s s, habs1 s s' hs hs' hss, mul_one, mul_one] at h3
-    rw [eq_div_iff (absK_ne_zero A hx), ← h3]; ring
+    rw [eq_div_iff (TruncInt.absK_ne_zero A hx), ← h3]; ring
   set f : A.L → A.K := fun y => (x : A.K) * A.NL y - a with hf
   have hfc : Continuous f := (continuous_const.mul (EtMeas.continuous_NL A)).sub continuous_const
   have hSu : ∀ y, f y ∈ (D : Set A.K) → IsUnit y := fun y hy => hNu1 y (habsT _ hy).2
@@ -70,7 +75,7 @@ theorem GlobalTheory.JR.truncated_integral_eq_vol_mul_orbL : ∀ (F E : Type) [N
   show ∫ y, h y ∂(m.μL x) = _
   have hDcl : IsClosed (D : Set A.K) := AddSubgroup.isClosed_of_isOpen D hDo
   have hTest : IsTest h := by
-    refine ⟨hφ.1.mul ((isLocallyConstant_indicator ⟨hDcl, hDo⟩ (1 : ℂ)).comp_continuous hfc), ?_⟩
+    refine ⟨hφ.1.mul ((TruncInt.isLocallyConstant_indicator ⟨hDcl, hDo⟩ (1 : ℂ)).comp_continuous hfc), ?_⟩
     exact hφ.2.mul_right
   have hsupp : tsupport h ⊆ {y | IsUnit y} := by
     refine (closure_minimal ?_ (hDcl.preimage hfc)).trans ?_
@@ -80,8 +85,9 @@ theorem GlobalTheory.JR.truncated_integral_eq_vol_mul_orbL : ∀ (F E : Type) [N
     · intro y hy
       exact hSu y hy
   have hμ := (GlobalTheory.JR.exists_meas_and_scale F E A ψ hψ).2 m x
-  rw [hμ, integral_smul_measure, ENNReal.toReal_ofReal (absK_nonneg A _)]
-  have hxa : A.absK a / A.absK x ≠ 0 := div_ne_zero (absK_ne_zero A ha) (absK_ne_zero A hx)
+  rw [hμ, integral_smul_measure, ENNReal.toReal_ofReal (TruncInt.absK_nonneg A _)]
+  have hxa : A.absK a / A.absK x ≠ 0 :=
+    div_ne_zero (TruncInt.absK_ne_zero A ha) (TruncInt.absK_ne_zero A hx)
   have hxaC : ((A.absK a / A.absK x : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hxa
   have hpt : ∀ y, h y = ((A.absK a / A.absK x : ℝ) : ℂ) * (h y * ((A.absK (A.NL y) : ℂ))⁻¹) := by
     intro y
@@ -163,9 +169,9 @@ theorem GlobalTheory.JR.truncated_integral_eq_vol_mul_orbL : ∀ (F E : Type) [N
       ∫ a' in T, A.orbL m.ν φ y₀ * (((A.absK a / A.absK x : ℝ) : ℂ))⁻¹ ∂m.μK :=
     setIntegral_congr_fun hTm (fun a' hb => by simp only [(habsT a' hb).1])
   rw [hI3, setIntegral_const, Measure.real, hT, hvol m.μK m.sdK.1 x a _ hDo.measurableSet, ENNReal.toReal_mul,
-    ENNReal.toReal_ofReal (inv_nonneg.2 (absK_nonneg A _))]
-  have hx0 : A.absK x ≠ 0 := absK_ne_zero A hx
-  have ha0 : A.absK a ≠ 0 := absK_ne_zero A ha
+    ENNReal.toReal_ofReal (inv_nonneg.2 (TruncInt.absK_nonneg A _))]
+  have hx0 : A.absK x ≠ 0 := TruncInt.absK_ne_zero A hx
+  have ha0 : A.absK a ≠ 0 := TruncInt.absK_ne_zero A ha
   simp only [Complex.real_smul]
   have hx0C : ((A.absK x : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hx0
   have ha0C : ((A.absK a : ℝ) : ℂ) ≠ 0 := by exact_mod_cast ha0

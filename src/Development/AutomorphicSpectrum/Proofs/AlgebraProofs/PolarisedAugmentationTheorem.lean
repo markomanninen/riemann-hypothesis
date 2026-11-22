@@ -1,17 +1,22 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedAFStatement
-import ReciprocityTheory.DualLattices.HasLenCokerDet
-import ReciprocityTheory.DualLattices.ProdDvdOfIso
-import ReciprocityTheory.DualLattices.PowMemCarrier
-import ReciprocityTheory.DualLattices.MemAugIdeal
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AugmentationQuotientEquivLatticeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AugmentationLengthColengthBoundStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SymplecticPeriodMatrixIntegralityStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeLengthMonoStrictStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AugmentationLengthsExistStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedAFStatement
+public import ReciprocityTheory.DualLattices.HasLenCokerDet
+public import ReciprocityTheory.DualLattices.ProdDvdOfIso
+public import ReciprocityTheory.DualLattices.PowMemCarrier
+public import ReciprocityTheory.DualLattices.MemAugIdeal
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AugmentationQuotientEquivLatticeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AugmentationLengthColengthBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SymplecticPeriodMatrixIntegralityStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeLengthMonoStrictStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AugmentationLengthsExistStatement
+
+@[expose] public section
+
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
 
@@ -79,7 +84,7 @@ theorem span_rows_integral {g : ℕ} (v : Valuation C NNReal) (hv : v.Integers R
       · simpa [Matrix.mulVec, dotProduct] using h2 k
     | zero => simp
     | add a b _ _ ha hb =>
-      simp only [Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+      simp only [Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
       exact (v.map_add _ _).trans (max_le ha hb)
     | smul r a _ ha =>
       simp only [Pi.smul_apply, smul_eq_mul, map_mul, mul_assoc, ← Finset.mul_sum]

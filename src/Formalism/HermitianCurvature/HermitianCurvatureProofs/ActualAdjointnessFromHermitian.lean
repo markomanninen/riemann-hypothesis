@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
+
+@[expose] public section
 
 open Matrix Finset MeasureTheory
 open scoped ContDiff InnerProductSpace
@@ -106,8 +110,8 @@ theorem slice_diff {Φ : Fn k r (Wq →L[ℂ] Wp)} (hΦ : Φ ∈ RadSp k r z z' 
   · rw [slice_zero hΦ hg]
     exact differentiableAt_const _
 
-open Classical in
 
+open Classical in
 def dirD {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (v : Fin r → ℂ) (Φ : Fn k r E) : Fn k r E :=
   fun c g => if c ∈ OmX r then fderiv ℝ (fun c' => Φ c' g) c v else 0
 
@@ -242,7 +246,7 @@ theorem crd_pb (l : Fin r) (Φ : Fn k r (Wq →L[ℂ] Wp)) :
   split_ifs <;> simp
 
 theorem coord_contDiff (l : Fin r) : ContDiff ℝ ∞ (fun x : (Fin r → ℂ) × Mx k r => x.1 l) :=
-  (contDiff_apply ℝ ℂ l).comp contDiff_fst
+  (contDiff_apply ℝ (fun _ => ℂ) l).comp contDiff_fst
 
 theorem star_contDiff {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] {f : X → ℂ} {s : Set X}
     (hf : ContDiffOn ℝ ∞ f s) : ContDiffOn ℝ ∞ (fun x => star (f x)) s :=
@@ -567,7 +571,7 @@ theorem ntw_eh (φ : E →L[ℂ] E') (a b : Fin (mdim k r i)) :
     ntw_rd φ (hpart_lev i a b).1 f hf x hx
   have e2 : RdV (hpart2 (Hpk k r) (Matrix.single (posL k r i a) (posL k r i b) 1)) (fun y => φ (f y)) x = φ (RdV _ f x) :=
     ntw_rd φ (hpart_lev i a b).2 f hf x hx
-  rw [e1, e2, map_add, map_smul]
+  rw [e1, e2, map_add (f := _), map_smul]
 
 theorem ntw_top (φ : E →L[ℂ] E') (u : ℂ) (a b : Fin (mdim k r i)) :
     Ntw k r i D φ (fun f => QuantumDeterminants.Top (EH k r) u (posL k r i a) (posL k r i b) f)
@@ -576,7 +580,7 @@ theorem ntw_top (φ : E →L[ℂ] E') (u : ℂ) (a b : Fin (mdim k r i)) :
   simp only [QuantumDeterminants.Top]
   have e1 : EH k r (posL k r i a) (posL k r i b) (fun y => φ (f y)) x = φ (EH k r (posL k r i a) (posL k r i b) f x) :=
     ntw_eh φ a b f hf x hx
-  rw [e1, map_add]
+  rw [e1, map_add (f := _)]
   split_ifs <;> simp
 
 theorem Ntw.comp {φ : E →L[ℂ] E'} {T S : (Mx k r → E) → Mx k r → E} {T' S' : (Mx k r → E') → Mx k r → E'}
@@ -604,7 +608,8 @@ theorem ntw_qminor (hD : IsOpen D) (φ : E →L[ℂ] E') {t : ℕ} (a b : Fin t 
     Ntw k r i D φ (fun f => qminorOp (EH k r) (posL k r i ∘ a) (posL k r i ∘ b) u f)
       (fun f => qminorOp (EH k r) (posL k r i ∘ a) (posL k r i ∘ b) u f) := by
   intro f hf x hx
-  simp only [qminorOp, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qminorOp, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 1
   have h := ntw_foldr hD φ (List.ofFn fun l : Fin t => ((u - ((l : ℕ) : ℂ), a (σ l), b l) :
@@ -618,17 +623,20 @@ theorem ntw_tL (hD : IsOpen D) (φ : E →L[ℂ] E') (z z' : Fin (2 * r + k + 1)
   fin_cases p <;> fin_cases q
   · exact ntw_qminor hD φ id id _ f hf x hx
   · show -(chatL _ _ _ _ _ _ x) = φ (-(chatL _ _ _ _ _ f x))
-    simp only [chatL, map_neg, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [chatL, map_neg, map_sum, map_smul]
     congr 1
     refine Finset.sum_congr rfl fun i₁ _ => Finset.sum_congr rfl fun j₁ _ => ?_
     exact congrArg _ (ntw_qminor hD φ (skip1 i₁) (skip1 j₁) _ f hf x hx)
   · show -(chatL _ _ _ _ _ _ x) = φ (-(chatL _ _ _ _ _ f x))
-    simp only [chatL, map_neg, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [chatL, map_neg, map_sum, map_smul]
     congr 1
     refine Finset.sum_congr rfl fun i₁ _ => Finset.sum_congr rfl fun j₁ _ => ?_
     exact congrArg _ (ntw_qminor hD φ (skip1 i₁) (skip1 j₁) _ f hf x hx)
   · show -(chat2L _ _ _ _ _ _ _ _ x) = φ (-(chat2L _ _ _ _ _ _ _ f x))
-    simp only [chat2L, map_neg, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [chat2L, map_neg, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun i₁ _ => Finset.sum_congr rfl fun i₂ _ => Finset.sum_congr rfl fun j₁ _ =>
       Finset.sum_congr rfl fun j₂ _ => ?_
@@ -1430,7 +1438,7 @@ theorem rd_linear (L : Mx k r →ₗ[ℂ] ℂ) (g X : Mx k r) : RdV X (fun y => 
 theorem eh_linear (L : Mx k r →ₗ[ℂ] ℂ) (g : Mx k r) (p q : Fin (2 * r + k + 1)) :
     EH k r p q (fun y => L y) g = L (g * Matrix.single p q 1) := by
   show RdV _ _ g + Complex.I • RdV _ _ g = _
-  rw [rd_linear, rd_linear, ← map_smul, ← map_add, ← Matrix.mul_smul, ← Matrix.mul_add, hpart_sum]
+  rw [rd_linear, rd_linear, ← map_smul, ← map_add (f := _), ← Matrix.mul_smul, ← Matrix.mul_add, hpart_sum]
 
 theorem smooth_linear (L : Mx k r →ₗ[ℂ] ℂ) : SmoothLev k r i D (fun y => L y) := fun _ _ =>
   ⟨Set.univ, fun y => L y, isOpen_univ, trivial,
@@ -1438,7 +1446,7 @@ theorem smooth_linear (L : Mx k r →ₗ[ℂ] ℂ) : SmoothLev k r i D (fun y =>
 
 def actL (Λ : (Fin (2 * r + k + 1) → ℂ) →ₗ[ℂ] ℂ) (u : Fin (2 * r + k + 1) → ℂ) : Mx k r →ₗ[ℂ] ℂ where
   toFun M := Λ (M *ᵥ u)
-  map_add' a b := by rw [Matrix.add_mulVec, map_add]
+  map_add' a b := by rw [Matrix.add_mulVec, map_add (f := _)]
   map_smul' a b := by rw [Matrix.smul_mulVec, map_smul]; rfl
 
 theorem exp_inv (X : Mx k r) (t : ℝ) : (NormedSpace.exp ((t : ℂ) • X))⁻¹ = NormedSpace.exp ((t : ℂ) • (-X)) := by
@@ -1463,7 +1471,7 @@ theorem eh_inv (Λ : (Fin (2 * r + k + 1) → ℂ) →ₗ[ℂ] ℂ) (v : Fin (2 
     (p q : Fin (2 * r + k + 1)) :
     EH k r p q (fun y => Λ (y⁻¹ *ᵥ v)) g = -Λ ((Matrix.single p q 1 : Mx k r) *ᵥ (g⁻¹ *ᵥ v)) := by
   show RdV _ _ g + Complex.I • RdV _ _ g = _
-  rw [rd_inv, rd_inv, smul_neg, ← neg_add, ← map_smul, ← map_add, ← Matrix.smul_mulVec, ← Matrix.add_mulVec,
+  rw [rd_inv, rd_inv, smul_neg, ← neg_add, ← map_smul, ← map_add (f := _), ← Matrix.smul_mulVec, ← Matrix.add_mulVec,
     hpart_sum]
 
 theorem uh_inv_eq {g : Mx k r} (hg : g ∈ UH (Hpk k r)) : g⁻¹ = Hpk k r * gᴴ * Hpk k r := by

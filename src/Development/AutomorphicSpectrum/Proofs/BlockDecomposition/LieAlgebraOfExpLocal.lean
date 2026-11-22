@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAdmOnOfFiniteDimensional
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsClosedMatrixGroupImage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAdmOnOfFiniteDimensional
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsClosedMatrixGroupImage
+
+@[expose] public section
+
 open Matrix Topology Filter
 
 noncomputable section
@@ -24,8 +29,8 @@ theorem isClosed_unitsOf (hG : GlobalTheory.LinRed.IsLinRed G) :
   refine hG.closed _ u.isUnit ?_
   exact closure_mono (fun v hv => hv) (map_mem_closure Units.continuous_val hu (fun v hv => hv))
 
-open scoped Matrix.Norms.L2Operator in
 
+open scoped Matrix.Norms.L2Operator in
 theorem exists_subspace (hG : GlobalTheory.LinRed.IsLinRed G) :
     ∃ 𝔤 : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ), (∀ X ∈ 𝔤, NormedSpace.exp X ∈ G) ∧
       ∃ U : Set (Matrix (Fin n) (Fin n) ℂ), IsOpen U ∧ (0 : Matrix (Fin n) (Fin n) ℂ) ∈ U ∧

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PjRows
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PjRows
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,8 +128,8 @@ private theorem of_reimE_reim {p q : ℕ} (Z : Matrix (Fin p) (Fin q) ℂ) :
 private theorem continuous_reim {p q : ℕ} : Continuous (fun Y : Matrix (Fin p) (Fin q) ℂ => reim Y) :=
   (reimL (n := p) (m := q)).continuous_of_finiteDimensional.congr fun Y => reimL_apply Y
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 private theorem key_lemma_12 {n m : ℕ} {ι η : Type} [Fintype ι] [Fintype η] (ε : Fin n → Bool)
     (S : Finset (Fin n)) (eS : Fin S.card ≃ ↥S) (eU : Fin m ≃ {i // i ∉ S})
     (w : Matrix (Fin n) (Fin m) ℂ) (hw : ∀ i ∈ S, ∀ b, w i b = 0)
@@ -150,8 +154,8 @@ private theorem key_lemma_12 {n m : ℕ} {ι η : Type} [Fintype ι] [Fintype η
   · rw [Matrix.zero_mul, smul_zero, add_zero]
   · exact dg_smul_mul_add_half_eq_half_mul_add W0 Dg (H z2) (H t) hW0 hDD
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 private theorem map_volume_reim_block_eq_of_det_ne_zero {m : ℕ} {η : Type} [Fintype η]
     (H : EuclideanSpace ℝ η →ₗ[ℝ] Matrix (Fin m) (Fin m) ℂ) (hH : ∀ t, (H t)ᴴ = H t)
     (hnH : ∀ t, ∑ i, ∑ j, ‖H t i j‖ ^ 2 = ‖t‖ ^ 2) (hsH : ∀ M : Matrix (Fin m) (Fin m) ℂ, Mᴴ = M → ∃ t, H t = M)
@@ -183,6 +187,7 @@ private theorem map_volume_reim_block_eq_of_det_ne_zero {m : ℕ} {η : Type} [F
         (Prod.map (congH H hH hnH hsH B) id) := rfl
   rw [e, ← Measure.map_map hmulLm (hpsim.comp hPm), ← Measure.map_map hpsim hPm, hcg,
     Measure.map_smul, (psi_mp H hH hnH hsH).map_eq, Measure.map_smul, map_mulL A2 hA, smul_smul]
+  all_goals first | exact hmulLm.aemeasurable | exact hpsim.aemeasurable
 
 private theorem inv_pow_mul_inv_pow_eq_two_pow_div_pow (N : ℝ) (m k : ℕ) (hN : N ≠ 0) :
     ((1 / (2 : ℝ) ^ m * N) ^ k)⁻¹ * ((((2 : ℝ) ^ m * N) ^ m)⁻¹ * (((1 / 4 : ℝ) ^ m * N⁻¹) ^ m)⁻¹) =
@@ -195,8 +200,8 @@ private theorem inv_pow_mul_inv_pow_eq_two_pow_div_pow (N : ℝ) (m k : ℕ) (hN
   congr 1
   ring
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem placeJac_holds : PlaceJac := by
   intro n m ε S w ι η _ _ L H hn hw hG hL hnL hLs hH hnH hsH
   classical
@@ -216,7 +221,7 @@ theorem placeJac_holds : PlaceJac := by
   have hDD : Dg * Dg = 1 := by
     rw [hDgdef, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
-    funext a
+    funext i
     simp only [sgn]
     split_ifs <;> norm_num
   have hDnorm : ‖Dg.det‖ = 1 := by
@@ -286,7 +291,9 @@ theorem placeJac_holds : PlaceJac := by
   have hFm : Measurable fun z : EuclideanSpace ℝ ι × EuclideanSpace ℝ η =>
       reim (L z.1 * w + (1 / 2 : ℂ) • (w * (wᴴ * Formalism.REAL.Jm ε * w)⁻¹ * H z.2)) :=
     (continuous_reim.comp hFc).measurable
-  have hrsm : Measurable (rsL S eS eU) := (rsL S eS eU).continuous_of_finiteDimensional.measurable
+  have hrsm : Measurable (rsL S eS eU) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact (rsL S eS eU).continuous_of_finiteDimensional.measurable
   have hΦm := Measurable.prodMap hΦ1m hΦ2m
 
   have hPre : MeasurePreserving (Prod.map Λ (id : EuclideanSpace ℝ η → EuclideanSpace ℝ η))
@@ -320,6 +327,7 @@ theorem placeJac_holds : PlaceJac := by
     Measure.prod_smul_left, Measure.prod_smul_right, smul_smul, Measure.map_smul,
     ← Measure.volume_eq_prod (EuclideanSpace ℝ (Fin S.card × Fin m × Bool))
       (EuclideanSpace ℝ (Fin m × Fin m × Bool)), (rs_mp S eS eU).map_eq]
+  all_goals try exact hrsm.aemeasurable
 
   congr 1
   have hN : Complex.normSq W0.det ≠ 0 := (Complex.normSq_pos.mpr hW0).ne'

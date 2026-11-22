@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.FixedPointCriteria.Cond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsFixPOrderPowIffLeAndAssocPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsUnitSmulOrderOfMemGs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.OrderLevelInjectiveOfSmulEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.NcardUnitTranslatesOrderEqRelIndex
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.FixedPointCriteria.Cond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsFixPOrderPowIffLeAndAssocPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsUnitSmulOrderOfMemGs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.OrderLevelInjectiveOfSmulEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.NcardUnitTranslatesOrderEqRelIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -180,7 +184,9 @@ theorem gs_count (L : IsLoc O Δ) (hτ : τ ^ 2 - 4 ≠ 0) {π : O} {n : ℕ} {e
       · rintro ⟨u, hu, hS⟩
         exact ⟨hS ▸ ml_sc_mul_mem_gs_of_val_eq L hτ C t r hu m hm ⟨w, hrw⟩, _, hS⟩
     · rw [if_neg hev]
-      rw [Set.ncard_eq_zero (Set.Finite.subset hfin (fun S hS => hS.1))]
+      have hfinite : {S | S ∈ PS.Gs O τ (t : K) 1 ∧ ∃ w : (Etau K τ)ˣ, S = PS.ml w (Ord O (yy π m x))}.Finite :=
+        hfin.subset (fun S hS => hS.1)
+      rw [Set.ncard_eq_zero hfinite]
       ext S
       simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
       rintro ⟨hG, w0, hw0⟩

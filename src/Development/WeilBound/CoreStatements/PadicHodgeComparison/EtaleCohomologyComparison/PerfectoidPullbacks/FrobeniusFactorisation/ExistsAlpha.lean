@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.TwistedRepresentations.Tens
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.CapOComp
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatBaseChangeLimitSystemStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.TwistedRepresentations.Tens
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.CapOComp
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatBaseChangeLimitSystemStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -17,7 +21,7 @@ variable {W A : Type} [CommRing W] [CommRing A] [Algebra W A]
 
 def ev {L T : Type 1} [AddCommGroup L] [Module W L] [AddCommGroup T] [Module A T] (g : L →+ T)
     (hg : ∀ (w : W) y, g (w • y) = algebraMap W A w • g y) : A ⊗[W] L →+ T :=
-  TensorProduct.liftAddHom (AddMonoidHom.mk' (fun a => AddMonoidHom.mk' (fun y => a • g y) fun y y' => by rw [map_add, smul_add])
+  TensorProduct.liftAddHom (AddMonoidHom.mk' (fun a => AddMonoidHom.mk' (fun y => a • g y) fun y y' => by rw [map_add (f := _), smul_add])
     fun a a' => AddMonoidHom.ext fun y => add_smul a a' (g y)) fun w a y => by
       change (w • a) • g y = a • g (w • y)
       rw [hg, Algebra.smul_def, mul_comm, mul_smul]
@@ -30,14 +34,14 @@ theorem ev_smul {L T : Type 1} [AddCommGroup L] [Module W L] [AddCommGroup T] [M
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b y => rw [TensorProduct.smul_tmul', ev_tmul, ev_tmul, smul_eq_mul, mul_smul]
-  | add z z' h h' => rw [smul_add, map_add, map_add, h, h', smul_add]
+  | add z z' h h' => rw [smul_add, map_add (f := _), map_add (f := _), h, h', smul_add]
 
 theorem add_ext {L : Type 1} [AddCommGroup L] [Module W L] {T : Type 1} [AddCommGroup T] {f f' : A ⊗[W] L →+ T}
     (h : ∀ a y, f (a ⊗ₜ y) = f' (a ⊗ₜ y)) (z : A ⊗[W] L) : f z = f' z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b y => exact h b y
-  | add z z' h h' => rw [map_add, map_add, h, h']
+  | add z z' h h' => rw [map_add (f := _), map_add (f := _), h, h']
 
 theorem ev_bij {L T : Type 1} [AddCommGroup L] [Module W L] [AddCommGroup T] [Module A T] (g : L →+ T)
     (hg : ∀ (w : W) y, g (w • y) = algebraMap W A w • g y)
@@ -79,7 +83,7 @@ theorem exists_alpha {P H : Type 1} [AddCommGroup P] [AddCommGroup H] {T : ℕ �
     ∃ α : H →+ P, ∀ n x, E n (α x) = k • ν n x := by
   choose a ha using hx
   exact ⟨AddMonoidHom.mk' a fun x y => sub_eq_zero.1 (hs _ fun n => by
-    rw [map_sub, map_add, ha, ha, ha, map_add, nsmul_add, sub_self]), fun n x => ha x n⟩
+    rw [map_sub, map_add (f := _), ha, ha, ha, map_add (f := _), nsmul_add, sub_self]), fun n x => ha x n⟩
 
 theorem alpha_op {P H P' H' : Type 1} [AddCommGroup P] [AddCommGroup H] [AddCommGroup P'] [AddCommGroup H'] {T T' : ℕ → Type 1}
     [∀ n, AddCommGroup (T n)] [∀ n, AddCommGroup (T' n)] {E : ∀ n, P →+ T n} {ν : ∀ n, H →+ T n} {k : ℕ} {α : H →+ P}
@@ -114,7 +118,7 @@ def beta (g : Sys.Hom S T (algebraMap W A)) (μ : Sys.Hom T H (RingHom.id A)) : 
   toFun w := ⟨fun n => μ.f n (E g n w), fun n => by rw [μ.comm, E_r]⟩
   map_add' w w' := Subtype.ext (funext fun n => by
     change μ.f n (E g n (w + w')) = μ.f n (E g n w) + μ.f n (E g n w')
-    rw [map_add, map_add])
+    rw [map_add (f := _), map_add (f := _)])
   map_smul' a w := Subtype.ext (funext fun n => by
     change μ.f n (E g n (a • w)) = a • μ.f n (E g n w)
     rw [E_smul, map_smul])
@@ -161,10 +165,10 @@ theorem Pin.op (h : Pin l g ν e α) (h' : Pin l g' ν' e' α') {τ : A →+* A}
 
 def tmap {L L' : Type 1} [AddCommGroup L] [Module W L] [AddCommGroup L'] [Module W L'] (τ : A →+* A) {τW : W →+* W} (o : L →ₛₗ[τW] L')
     (hτ : ∀ w, τ (algebraMap W A w) = algebraMap W A (τW w)) : A ⊗[W] L →+ A ⊗[W] L' :=
-  TensorProduct.liftAddHom (AddMonoidHom.mk' (fun a => AddMonoidHom.mk' (fun y => τ a ⊗ₜ[W] o y) fun y y' => by rw [map_add, tmul_add])
+  TensorProduct.liftAddHom (AddMonoidHom.mk' (fun a => AddMonoidHom.mk' (fun y => τ a ⊗ₜ[W] o y) fun y y' => by rw [map_add (f := _), tmul_add])
     fun a a' => AddMonoidHom.ext fun y => by
       change τ (a + a') ⊗ₜ[W] o y = τ a ⊗ₜ[W] o y + τ a' ⊗ₜ[W] o y
-      rw [map_add, add_tmul]) fun w a y => by
+      rw [map_add (f := _), add_tmul]) fun w a y => by
       change τ (w • a) ⊗ₜ[W] o y = τ a ⊗ₜ[W] o (w • y)
       rw [LinearMap.map_smulₛₗ, Algebra.smul_def, map_mul, hτ, ← Algebra.smul_def, smul_tmul]
 

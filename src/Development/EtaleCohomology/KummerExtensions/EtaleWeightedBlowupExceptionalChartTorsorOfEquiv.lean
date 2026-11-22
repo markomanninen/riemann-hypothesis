@@ -1,6 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.CohomologicalPurity.LeafWEqvLPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafWCechRec
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.CohomologicalPurity.LeafWEqvLPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafWCechRec
+
+@[expose] public section
 
 section
 noncomputable section

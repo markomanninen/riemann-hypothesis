@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsTemperedCoeff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPrincipalCongruence
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenIsCompactPrincipal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ValZpowIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsTemperedCoeff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPrincipalCongruence
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenIsCompactPrincipal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ValZpowIff
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.LocGL
 

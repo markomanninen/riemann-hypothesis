@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.NormGroups
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.NormGroups
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 
@@ -13,8 +17,8 @@ instance compactSpace_openSubgroup [CompactSpace G] (K : OpenSubgroup G) :
 
 variable {K L : OpenSubgroup G}
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem isOpen_subgroupOf (K L : OpenSubgroup G) :
     IsOpen (((L : Subgroup G).subgroupOf K : Subgroup (K : Subgroup G)) : Set (K : Subgroup G)) :=
   L.isOpen.preimage continuous_subtype_val

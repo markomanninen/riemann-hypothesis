@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EqCHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EquivFramesSameSecondLatticeFiberProofStatement
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.FibreCountOfPositions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EqCHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EquivFramesSameSecondLatticeFiberProofStatement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.FibreCountOfPositions
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical ENNReal Pointwise
@@ -30,7 +34,7 @@ theorem fix_X {F : FlagD H r} (a : V →ₗ[K] V) (ha : ∀ c, a (F.e c) = F.e c
   induction hx using Submodule.span_induction with
   | mem y hy => obtain ⟨b, -, rfl⟩ := hy; exact ha _
   | zero => simp
-  | add y z _ _ h1 h2 => rw [map_add, h1, h2]
+  | add y z _ _ h1 h2 => rw [map_add (f := _), h1, h2]
   | smul c y _ h1 => rw [map_smul, h1]
 
 theorem B_sw {x y : V} (h : H.B x y = 0) : H.B y x = 0 := by
@@ -92,10 +96,10 @@ theorem core (F G₁ G₂ : FlagD H r) (γ n n' a : V ≃ₗ[K] V)
         · change n (G₁.z) ∈ V0 F G₂
           have hx0 : n' F.z - F.z ∈ F.X := hn'P _ hzP
           have hz2 : G₂.z = n (γ F.z) + n (γ (n' F.z - F.z)) := by
-            rw [FlagD.z, hG₂, ← map_add, ← map_add]
+            rw [FlagD.z, hG₂, ← map_add (f := _), ← map_add (f := _)]
             congr 2
             have : n' (F.e (Fin.last r)) = F.z + (n' F.z - F.z) := by rw [FlagD.z]; abel
-            rw [this, map_add, hafX _ hx0]
+            rw [this, map_add (f := _), hafX _ hx0]
             have : a F.z = F.z := ha (Fin.last r)
             rw [this]
           have h1 : G₁.z = γ F.z := hG₁ (Fin.last r)
@@ -113,14 +117,14 @@ theorem core (F G₁ G₂ : FlagD H r) (γ n n' a : V ≃ₗ[K] V)
   have hx'' : n' v - v + n' x₂ ∈ F.X := Submodule.add_mem _ (hn'P v hvP) (hn'X x₂ hx₂)
   have hy₂' : n.symm y₂ = γ (a v + (n' v - v + n' x₂)) := by
     have e1 : y₂ = g₂ (v + x₂) := by
-      rw [map_add]; change y₂ = n (γ (a (n' v))) + g₂ x₂
+      rw [map_add (f := _)]; change y₂ = n (γ (a (n' v))) + g₂ x₂
       rw [show g₂ x₂ = (g₂ : V →ₗ[K] V) x₂ from rfl, hx₂e]; abel
     rw [e1, hg₂a, LinearEquiv.symm_apply_apply]
     congr 1
-    have e2 : n' (v + x₂) = v + (n' v - v + n' x₂) := by rw [map_add]; abel
-    rw [e2, map_add, hafX _ hx'']
+    have e2 : n' (v + x₂) = v + (n' v - v + n' x₂) := by rw [map_add (f := _)]; abel
+    rw [e2, map_add (f := _), hafX _ hx'']
   have hy₁' : y₁ = γ (v + x₁) := by
-    rw [map_add]; change y₁ = γ v + (γ : V →ₗ[K] V) x₁
+    rw [map_add (f := _)]; change y₁ = γ v + (γ : V →ₗ[K] V) x₁
     rw [hx₁e]; abel
 
   set d := y₁ - n.symm y₂ with hd
@@ -186,7 +190,7 @@ theorem orth_of (u : D.what₂.Word) {x : (VS D).V} (h : ∀ b : Fin D.R.rS, (HV
   induction hv using Submodule.span_induction with
   | mem y hy => obtain ⟨b, -, rfl⟩ := hy; exact p_symm_zero (VS D) (h b)
   | zero => simp
-  | add y z _ _ h1 h2 => simp [map_add, h1, h2]
+  | add y z _ _ h1 h2 => simp [map_add (f := _), h1, h2]
   | smul c y _ h1 => simp [h1]
 
 theorem of_orth (u : D.what₂.Word) {x : (VS D).V} (h : x ∈ orth (VS D) (Xsp (lf D (X.Fu u)))) :
@@ -275,7 +279,7 @@ theorem injC : InjC := by
       have hz : a F.z = F.z := ha_fix (Fin.last _)
       have ex : x = W.subtype w + x0 + c • F.z := by rw [hyx]; simp [x']
       have : a x - x = a (W.subtype w) - W.subtype w := by
-        rw [ex, map_add, map_add, map_smul, hz, hafX x0 hx0]; abel
+        rw [ex, map_add (f := _), map_add (f := _), map_smul, hz, hafX x0 hx0]; abel
       rw [this, ← hXF]
       exact hkey w
   refine GlobalTheory.TypeAsm.eqC_holds D X Y u t₁ t₂ hlam hEq' ⟨n, hnL, n'.trans a,

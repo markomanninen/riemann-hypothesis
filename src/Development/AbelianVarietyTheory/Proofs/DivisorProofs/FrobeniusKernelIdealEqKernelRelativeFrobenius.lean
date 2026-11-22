@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowFinrankCotangentLeFinrankFrobeniusKernelQuoti
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelativeFrobeniusKernelIdealLeFrobeniusKernelIde
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobTwistBaseChangeHomApp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowFinrankCotangentLeFinrankFrobeniusKernelQuoti
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelativeFrobeniusKernelIdealLeFrobeniusKernelIde
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,10 +25,11 @@ theorem frobKerIdeal_le_kerIdeal_relFrob (p : ℕ) [Fact p.Prime] (R : Type) [Co
   have ha' : counit (R := R) a = 0 := ha
   have hb : (frobProj h G).app n a ∈ augIdeal R ((frobTwist h G).A n) := by
     change counit (R := R) ((frobProj h G).app n a) = 0
-    rw [SemiBialgHom.counit_map, ha', map_zero]
-  show a ^ p ∈ _
+    exact (SemiBialgHom.counit_map ((frobProj h G).app n) a).trans
+      ((congrArg (frobRing h) ha').trans (map_zero (frobRing h)))
+  change a ^ p ∈ kerIdeal ((relFrob h G).app n)
   rw [← relFrob_app_frobProj h n a]
-  exact Ideal.mem_map_of_mem _ hb
+  exact Ideal.mem_map_of_mem ((relFrob h G).app n).toAlgHom hb
 
 theorem frobKerIdeal_eq_kerIdeal_relFrob (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R]
     (h : (p : R) = 0) (G : PDivGroup p R) (n : ℕ) :

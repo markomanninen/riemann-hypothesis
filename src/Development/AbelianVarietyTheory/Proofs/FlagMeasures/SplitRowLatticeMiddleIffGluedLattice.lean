@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsometryOfUnimodularLatticesAtPlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
-import Formalism.HermitianLattices.FinalNeighbourConstruct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsometryOfUnimodularLatticesAtPlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FixedFramesPerpendicularVectors
+public import Formalism.HermitianLattices.FinalNeighbourConstruct
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,8 +110,8 @@ structure IsHypFrame (h : V →ₗ⋆[K] V →ₗ[K] K) (e f : Fin r → V) : Pr
   ff : ∀ a b, h (f a) (f b) = 0
   ef : ∀ a b, h (e a) (f b) = if a = b then 1 else 0
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 
+attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem hypFrame (D : D7) : IsHypFrame (hS D).hT D.sp.hypE D.sp.hypF :=
   ⟨(hS D).herm, D.sp.hyp_ee, D.sp.hyp_ff, D.sp.hyp_ef⟩
 
@@ -191,7 +196,8 @@ theorem forall_sumS (h : V →ₗ⋆[K] V →ₗ[K] K) (e : Fin r → V) (v : V)
     exact H _ (Submodule.subset_span ⟨a, x, hx, rfl⟩)
   · intro H y hy
     obtain ⟨c, hc, rfl⟩ := (mem_sumS _ _ _).1 hy
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     exact Submodule.sum_mem _ fun a _ => by rw [e1]; exact H a _ (hc a)
 
 theorem IsHypFrame.mem_dual_glue (H : IsHypFrame h e f) (hL : ∀ w ∈ L, Mid h e f w) (h0 : ∀ a, B a ≠ 0)
@@ -225,13 +231,7 @@ theorem IsHypFrame.unimodular_iff (H : IsHypFrame h e f) (hL : ∀ w ∈ L, Mid 
 theorem IsHypFrame.isLattice (H : IsHypFrame h e f) (hA : ∀ a, A a ≠ 0) (hB : ∀ a, B a ≠ 0) (hfg : L.FG)
     (hsp : ∀ w, Mid h e f w → w ∈ Submodule.span K (L : Set V)) :
     Submodule.IsLattice K (sumS A e ⊔ L ⊔ sumS B f) := by
-  refine ⟨((sumS_fg A e).sup hfg).sup (sumS_fg B f), eq_top_iff.2 fun v _ => ?_⟩
-  rw [decomp h e f v]
-  refine Submodule.add_mem _ (Submodule.add_mem _ (Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ ?_) ?_)
-    (Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ ?_)
-  · exact Submodule.span_mono (le_sup_of_le_left le_sup_left : sumS A e ≤ _) (mem_span_sumS hA e a)
-  · exact Submodule.span_mono (le_sup_of_le_left le_sup_right : L ≤ _) (hsp _ (H.mid_mid v))
-  · exact Submodule.span_mono (le_sup_right : sumS B f ≤ _) (mem_span_sumS hB f a)
+  exact Submodule.IsLattice.of_fg K (((sumS_fg A e).sup hfg).sup (sumS_fg B f))
 
 end Space
 
@@ -258,7 +258,7 @@ theorem ddS_stable : StarStable (ddS D) := by
     exact FractionalIdeal.mem_coeIdeal_of_mem _ (Ideal.mem_map_of_mem _ ht)
   · simpa using (ddS D).zero_mem
   · intro x y _ _ hx hy
-    rw [map_add, star_add]
+    rw [map_add (f := _), star_add]
     exact (ddS D).coeToSubmodule.add_mem hx hy
   · intro a x _ hx
     obtain ⟨t, ht⟩ := star_algebraMap_ringOfIntegers_mem_range a
@@ -386,24 +386,34 @@ theorem iXY_mem_Wb (w : (D.sp.X 0).V) : D.sp.iXY 0 w ∈ Wb D :=
 
 theorem mem_genus_of_unimodular {Λ : LatV D} (h1 : Submodule.IsLattice D.host.E Λ) (h2 : IsUnimodular (hS D).hT Λ) :
     Λ ∈ genus (hS D).hT (hS D).L0 := by
-  refine ⟨h1, fun P hP => ?_⟩
+  have hfull : Submodule.IsFullLattice D.host.E Λ :=
+    { toIsLattice := h1
+      span_eq_top := GlobalTheory.LoopC.WMem.span_eq_top_of_unimodular Λ h1 h2 }
+  have hfull0 : Submodule.IsFullLattice D.host.E (hS D).L0 :=
+    { toIsLattice := (hS D).standardTuple_isLattice
+      span_eq_top := GlobalTheory.LoopC.WMem.span_eq_top_of_unimodular
+        (hS D).L0 (hS D).standardTuple_isLattice (hS D).baseLattice_isUnimodular }
+  refine ⟨hfull, fun P hP => ?_⟩
   have k := fun (M : LatV D) (hM : M.FG) =>
     (locDual (𝓞 D.host.E) D.host.E (hS D).V (hS D).hT (hS D).herm star_algebraMap_ringOfIntegers_mem_range M hM).2.1
   exact GlobalTheory.Mass.UnimodLoc.exists_isom_of_isUnimodularAt _ _ _ D.sp.cm.cmUnram (hS D).herm (hS D).nondeg _ _
-    (hS D).standardTuple_isLattice h1 P hP (k _ (hS D).standardTuple_isLattice.fg (hS D).baseLattice_isUnimodular P hP) (k _ h1.fg h2 P hP)
+    hfull0 hfull P hP (k _ (hS D).standardTuple_isLattice.fg (hS D).baseLattice_isUnimodular P hP) (k _ h1.fg h2 P hP)
+
 
 open Matrix in
 open scoped ENNReal in
-
 theorem main : ∀ (D : D7) (u : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D), 1 ≤ Tu D u → IsBase D u F0 → IsRowLat D F0 Λ → (IsSplit D F0 Λ → Λ ⊓ toO (hS D) (Wb D) ∈ glueSet D u (L0X D Λ (lf D F0)) ∧ Lsub Λ (lf D F0) = (Λ ⊓ toO (hS D) (Wb D)) ⊔ toO (hS D) F0.X) ∧ (∀ L' : LatW D, ∀ L ∈ glueSet D u L', IsRowLat D F0 (XS D F0 ⊔ L ⊔ YS D) ∧ IsSplit D F0 (XS D F0 ⊔ L ⊔ YS D) ∧ (XS D F0 ⊔ L ⊔ YS D) ⊓ toO (hS D) (Wb D) = L) := by
   rintro D u F0 Λ - ⟨he, hz⟩ ⟨-, ⟨hlat, huni, hlift, hconv, hprim⟩, hX⟩
+  have hfull : Submodule.IsFullLattice D.host.E Λ :=
+    { toIsLattice := hlat
+      span_eq_top := GlobalTheory.LoopC.WMem.span_eq_top_of_unimodular Λ hlat huni }
   refine ⟨fun hsp => ?_, ?_⟩
   · have hL : ∀ w ∈ Λ ⊓ toO (hS D) (Wb D), w ∈ Wb D := fun w hw => hw.2
     have hsub : Lsub Λ (lf D F0) = (Λ ⊓ toO (hS D) (Wb D)) ⊔ toO (hS D) F0.X := by
       rw [← glue_Lsub he hL, ← show Λ = _ from hsp]
     have hspan : spanE (hS D) (Λ ⊓ toO (hS D) (Wb D)) = Wb D := by
       refine le_antisymm (Submodule.span_le.2 hL) fun w hw => ?_
-      obtain ⟨d, hd0, hd⟩ := GlobalTheory.Mass.RowPerp.exists_smul_mem hlat w
+      obtain ⟨d, hd0, hd⟩ := GlobalTheory.Mass.RowPerp.exists_smul_mem hfull w
       have h1 : d • w ∈ Λ ⊓ toO (hS D) (Wb D) := ⟨hd, (toO (hS D) (Wb D)).smul_mem d hw⟩
       have h2 := Submodule.smul_mem _ (algebraMap (𝓞 D.host.E) D.host.E d)⁻¹ (Submodule.subset_span (R := D.host.E) h1)
       rwa [← algebraMap_smul D.host.E d w,

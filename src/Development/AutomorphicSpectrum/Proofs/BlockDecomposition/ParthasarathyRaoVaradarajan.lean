@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestWeightAntitoneOfFiniteDimensionalStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCliffordLowestVectorStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CliffordVectorSpinWeightStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinGlRelationsAdjointStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsHighestWeightModuleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Sl2SquareKillsVectorStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinTensorHighestWeightStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PieriRules.KTypeIntDomStatement
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestWeightAntitoneOfFiniteDimensionalStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCliffordLowestVectorStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CliffordVectorSpinWeightStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinGlRelationsAdjointStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsHighestWeightModuleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Sl2SquareKillsVectorStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpinTensorHighestWeightStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PieriRules.KTypeIntDomStatement
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -19,8 +23,8 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.SpinPRV
 
-open ReciprocityTheory.ChartRestriction.DS.HW in
 
+open ReciprocityTheory.ChartRestriction.DS.HW in
 lemma tens_single {n : ℕ} {Z : Type} [NormedAddCommGroup Z] [InnerProductSpace ℂ Z] {ι : Type} [Fintype ι] [DecidableEq ι]
     (A : Fin n → Fin n → Module.End ℂ Z) (G : Fin n → Fin n → Matrix ι ι ℂ) (a b : Fin n) (z : Z) (i : ι) :
     tensAct A (matrixFamilyDual G) a b (WithLp.toLp 2 (Pi.single i z) : PiLp 2 (fun _ : ι => Z)) =
@@ -51,7 +55,8 @@ private theorem tensAct_tensAct_apply {n : ℕ} {Z : Type} [NormedAddCommGroup Z
       A a b (A c d (x i)) + ∑ k, D c d i k • A a b (x k) + ∑ k, D a b i k • A c d (x k) +
         ∑ k, (D a b * D c d) i k • x k := by
   rw [tens_apply, tens_apply]
-  simp only [tens_apply, map_add, map_sum, map_smul, smul_add, Finset.sum_add_distrib, Finset.smul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tens_apply, map_add (f := _), map_sum, map_smul, smul_add, Finset.sum_add_distrib, Finset.smul_sum,
     smul_smul, Matrix.mul_apply, Finset.sum_smul]
   rw [Finset.sum_comm (f := fun k j => (D a b i j * D c d j k) • x k)]
   abel
@@ -147,7 +152,8 @@ theorem assemble {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι] (c : Fin n 
     intro f
     conv_lhs => rw [show f = ∑ j, f j • (Pi.single j 1 : ι → ℂ) by
       ext k; simp [Finset.sum_apply, Pi.single_apply]]
-    simp [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul]
   have hcol : ∀ (M : Matrix ι ι ℂ) (i : ι), ∑ j, M j i • φ (Pi.single j 1) = φ (M *ᵥ Pi.single i 1) := by
     intro M i
     rw [hφsum (M *ᵥ Pi.single i 1)]
@@ -191,7 +197,8 @@ theorem assemble {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι] (c : Fin n 
       Kf a b (ψ (WithLp.toLp 2 (Pi.single i z))) + ∑ j, spinM c a b i j • ψ (WithLp.toLp 2 (Pi.single j z)) := by
     intro a b z i
     have h1 := hψeq a b rfl (WithLp.toLp 2 (Pi.single i z))
-    rw [tens_single, map_sub, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [tens_single, map_sub, map_sum] at h1
     simp only [map_smul] at h1
     rw [← h1]
     abel
@@ -208,7 +215,7 @@ theorem assemble {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι] (c : Fin n 
         add_mem' := by
           intro z1 z2 h1 h2 i
           simp only [Set.mem_setOf_eq] at h1 h2 ⊢
-          rw [Pi.single_add, WithLp.toLp_add, map_add, h1 i, h2 i, add_zero]
+          rw [Pi.single_add, WithLp.toLp_add, map_add (f := _), h1 i, h2 i, add_zero]
         zero_mem' := by
           intro i
           simp
@@ -228,7 +235,8 @@ theorem assemble {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι] (c : Fin n 
     apply hv0
     rw [← hψt]
     show ψ (WithLp.toLp 2 (fun i => φ (Pi.single i 1))) = 0
-    rw [toLp_eq_sum_single, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [toLp_eq_sum_single, map_sum]
     refine Finset.sum_eq_zero (fun i _ => ?_)
     have hmem : φ (Pi.single i 1) ∈ W := by rw [hWtop]; trivial
     exact hmem i

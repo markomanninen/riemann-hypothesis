@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.OneSTr
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.OneSTr
+
+@[expose] public section
 
 open CrystallineSemistableComparison.Pb.Kap
 
@@ -16,7 +20,8 @@ private theorem dual_expand {K B : Type} {V : Type*} [Field K] [CommRing B] [Add
     refine bs.ext fun t => ?_
     simp [LinearMap.sum_apply, Finsupp.single_apply]
   conv_lhs => rw [hφ]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [hf, mul_comm]
 
@@ -37,13 +42,15 @@ theorem rho_hom :
     haveI := hC.fin j
     have bs := Module.finBasis K (C.V j)
     have hE := congrArg (h.fW j) (hW bs)
-    rw [hh.b, map_smulₛₗ, map_sum, map_pow, map_natCast] at hE
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hh.b, map_smulₛₗ, map_sum, map_pow, map_natCast] at hE
     rw [← hE, hh.ℓ]
     congr 1
     have hexp : ∀ t, h.tr j f (bs'.coord t) =
         ∑ s, h.sB (f (bs.coord s)) * C'.o (bs'.coord t (h.fV j (bs s))) := by
       intro t
-      rw [htr, dual_expand C.o f hs bs, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [htr, dual_expand C.o f hs bs, map_sum]
       refine Finset.sum_congr rfl fun s _ => ?_
       rw [map_mul, hh.o]
       rfl
@@ -51,7 +58,8 @@ theorem rho_hom :
         ∑ t, C'.o (bs'.coord t (h.fV j (bs s))) • C'.μ j (bs' t) := by
       intro s
       conv_lhs => rw [← bs'.sum_repr (h.fV j (bs s))]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun t _ => ?_
       rw [map_smulₛₗ]
       rfl

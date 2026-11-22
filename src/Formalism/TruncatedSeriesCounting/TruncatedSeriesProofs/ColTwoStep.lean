@@ -1,5 +1,9 @@
-import Formalism.TruncatedSeriesCounting.PowMemSpanOfMemSpanLinearDistinguished
-import Formalism.FrobeniusContraction.FrobeniusContractionProofs.LenBound
+module
+
+public import Formalism.TruncatedSeriesCounting.PowMemSpanOfMemSpanLinearDistinguished
+public import Formalism.FrobeniusContraction.FrobeniusContractionProofs.LenBound
+
+@[expose] public section
 
 noncomputable section
 

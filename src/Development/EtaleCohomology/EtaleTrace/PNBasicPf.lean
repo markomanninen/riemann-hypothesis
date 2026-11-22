@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LCoverCut
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LCoverCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MvPolynomial
@@ -12,12 +16,12 @@ theorem pn_sep (k : Type) [Field k] (d : ℕ) : IsSeparated (PNto k d) := by
 theorem algebraMap_field_homogeneousDegreeZero_surjective (k : Type) [Field k] (d : ℕ) :
     Function.Surjective (algebraMap k (MvPolynomial.homogeneousSubmodule (Fin (d + 1)) k 0)) := by
   rintro ⟨x, hx⟩
-  refine ⟨MvPolynomial.coeff 0 x, ?_⟩
+  refine ⟨AddMonoidAlgebra.coeff x 0, ?_⟩
   apply Subtype.ext
   have h0 := (MvPolynomial.mem_homogeneousSubmodule 0 x).1 hx
-  have h : x = C (coeff 0 x) :=
+  have h : x = C (AddMonoidAlgebra.coeff x 0) :=
     MvPolynomial.totalDegree_eq_zero_iff_eq_C.1 ((MvPolynomial.totalDegree_zero_iff_isHomogeneous _).2 h0)
-  show (algebraMap k (MvPolynomial (Fin (d + 1)) k)) (coeff 0 x) = x
+  show (algebraMap k (MvPolynomial (Fin (d + 1)) k)) (AddMonoidAlgebra.coeff x 0) = x
   conv_rhs => rw [h]
   rfl
 

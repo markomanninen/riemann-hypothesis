@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SSAscent
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.TraceNilStep
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.IsSemisimpleOfIsSSRep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SSAscent
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.TraceNilStep
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.IsSemisimpleOfIsSSRep
+
+@[expose] public section
 
 namespace PI.SSAscent.UnitaryGroupMassFormula
 

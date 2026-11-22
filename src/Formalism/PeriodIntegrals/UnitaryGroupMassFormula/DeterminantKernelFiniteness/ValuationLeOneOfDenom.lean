@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.KerIso
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DeterminantKernelFiniteness.ExistsNatMulMemFracFam
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.KerIso
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DeterminantKernelFiniteness.ExistsNatMulMemFracFam
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -74,7 +78,7 @@ lemma comp_denom {K E : Type} [Field K] [NumberField K] [Field E] [Algebra K E] 
     rw [Pi.smul_apply, Algebra.smul_def, map_natCast]
     exact hsM a
   obtain ⟨t, ht, htM⟩ := hg'.1 ((s : K) • g.symm v) hx
-  refine ⟨t * s, Nat.Coprime.mul ht hs, fun w => ?_⟩
+  refine ⟨t * s, Nat.Coprime.mul_left ht hs, fun w => ?_⟩
   have h := htM w
   rw [map_smul, Pi.smul_apply, smul_eq_mul, ← mul_assoc] at h
   rw [LinearEquiv.trans_apply, Nat.cast_mul]

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.PartialTrace
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.GelfandHW
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.PartialTrace
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.GelfandHW
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,22 +71,6 @@ theorem dualPole_eq_neg_shift (μ : Fin n → ℝ) : poleVd μ = -icShift μ := 
   simp only [poleVd, icShift, Pi.neg_apply]
   push_cast
   ring
-
-theorem infinitesimalShift_reversed (ν : Fin n → ℝ) :
-    icShift ((fun r => -ν (Fin.rev r)) + rho n) = icShift (-(ν + rho n)) ∘ Fin.revPerm := by
-  funext r
-  have hr : (r : ℕ) + 1 ≤ n := r.2
-  simp only [icShift, Function.comp_apply, Pi.add_apply, Pi.neg_apply, rho, Fin.revPerm_apply, Fin.val_rev]
-  push_cast [Nat.cast_sub hr]
-  ring
-
-theorem hasGelfandChar_span_hw {E : Fin n → Fin n → Module.End ℂ M} (hE : IsGlRep E) {ν : Fin n → ℝ} {v : M}
-    (hv : IsHWVec E ν v) : HasGelfandChar E (ν + rho n) (Submodule.span ℂ {v}) := by
-  intro k x hx
-  obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hx
-  refine ⟨?_, ?_⟩
-  · rw [map_smul, gelfand_hw hE hv k, smul_comm]
-  · rw [map_smul, gelfand_hw (antiE_isGlRep hE) (antiE_hw hv) k, infinitesimalShift_reversed, gval_perm, smul_comm]
 
 theorem ptr_eeV_pow_char {E : Fin n → Fin n → Module.End ℂ M} {μ : Fin n → ℝ} {S : Submodule ℂ M}
     (hS : HasGelfandChar E μ S) (k : ℕ) (x : M) (hx : x ∈ S) :

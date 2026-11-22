@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUpperUnitriangularEntriesHomeomorphStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMapEntriesHaarUnitriangularEqSmulPiStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AddHaarMapMulFiniteIdeleOfUniformizerPowersStatement
-import GroundTheory.AutomorphicForms.ReductionMeasure
-import GroundTheory.GlobalFields.Adele.Topology
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUpperUnitriangularEntriesHomeomorphStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMapEntriesHaarUnitriangularEqSmulPiStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AddHaarMapMulFiniteIdeleOfUniformizerPowersStatement
+public import GroundTheory.AutomorphicForms.ReductionMeasure
+public import GroundTheory.GlobalFields.Adele.Topology
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,7 @@ theorem modulus_conj : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) [Measu
     GlobalTheory.T.addHaar_map_mul_finiteIdeleOfUniformizerPowers E ϖ hϖ (mm p) l.support (fun v hv => by simp [mm, Finsupp.notMem_support_iff.1 hv]) μR
   haveI : ∀ p, SigmaFinite (k p • μR) := fun p => (inferInstance : SigmaFinite ((Real.toNNReal _) • μR))
   have hSm : Measurable S := by
-    refine measurable_pi_lambda _ fun p => ?_
+    refine Measurable.of_eval fun p => ?_
     exact (measurable_const_mul (a p)).comp (measurable_pi_apply p)
   have hS : Measure.map S (Measure.pi fun _ : {p : Fin n × Fin n // p.1 < p.2} => μR) =
       (∏ p, k p) • Measure.pi fun _ : {p : Fin n × Fin n // p.1 < p.2} => μR := by
@@ -131,6 +135,7 @@ theorem modulus_conj : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) [Measu
         rw [hco]; exact hc
       rw [Measure.map_map hem hφc.measurable, hco, hSco, ← Measure.map_map hSm (hco ▸ hem), ← hco, hc',
         Measure.map_smul, Measure.map_smul, hS, hc', ← hK, smul_comm]
+      all_goals first | exact hem.aemeasurable | exact hSm.aemeasurable
     have h4 := congrArg (Measure.map e.toMeasurableEquiv.symm) h3
     rwa [show (⇑e : GlobalTheory.CellDec.NA E n → _) = ⇑e.toMeasurableEquiv from rfl, MeasurableEquiv.map_symm_map,
       MeasurableEquiv.map_symm_map] at h4

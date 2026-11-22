@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafHsRelPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafHsRelPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Opposite GlobalTheory.EtC CochainComplex CochainComplex.HomComplex Pretriangulated
@@ -14,7 +18,6 @@ theorem toHom_pull (R : Type) [CommRing R] {K L : Cx R} (f : K ⟶ L) (F : Shv R
   congr 1
   ext p : 1
   simp [zcomp, Cocycle.equivHomShift_symm_apply, Cochain.rightShift_v _ n 0 (zero_add n) p p (add_zero p) (p + n) rfl]
-  rfl
 
 theorem leafConeSplit : LeafConeSplit := by
   intro R _ K L g r hgr F n

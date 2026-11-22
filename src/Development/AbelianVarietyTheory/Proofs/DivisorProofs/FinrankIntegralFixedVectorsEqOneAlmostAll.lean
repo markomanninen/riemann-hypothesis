@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GelfandPairSphericalVectorUnique
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckecomm
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyLocalIntegralPointsMemOpenSubgroupDefiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedVectorGivesLocalComponentSphericalVectStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GelfandPairSphericalVectorUnique
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckecomm
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyLocalIntegralPointsMemOpenSubgroupDefiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedVectorGivesLocalComponentSphericalVectStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -28,11 +33,10 @@ theorem finiteDimensional_fixed_of_equiv {G V W : Type} [Group G] [AddCommGroup 
     have h2 := LinearMap.congr_fun (T.isIntertwining' k) (T.toLinearEquiv.symm y)
     simp only [LinearMap.comp_apply] at h2
     rw [LinearEquiv.apply_symm_apply]
-    convert h2.trans ?_ using 1
-    · rfl
-    · change τ k (T.toLinearEquiv (T.toLinearEquiv.symm y)) = y
-      rw [LinearEquiv.apply_symm_apply]
-      exact hy k hk
+    apply h2.trans
+    change τ k (T.toLinearEquiv (T.toLinearEquiv.symm y)) = y
+    rw [LinearEquiv.apply_symm_apply]
+    exact hy k hk
   exact Submodule.finiteDimensional_of_le hle
 
 theorem exists_gelfand_anti : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ (n : ℕ) (w : Pl E), ∃ θ : UL n w → UL n w, (∀ x y, θ (x * y) = θ y * θ x) ∧ (∀ x, θ (θ x) = x) ∧ ∀ g, ∃ a ∈ KL n w, ∃ b ∈ KL n w, θ g = a * g * b := by
@@ -67,7 +71,7 @@ theorem finrank_fixed_KL_eq_one : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     ∀ᶠ w in cofinite, Module.finrank ℂ (fixed (σ w).ρ (KL n w)) = 1 := by
   intro E _ _ _ hU n hn π hπ σ hσ
   obtain ⟨φ, hφ, hφ0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hπ.ne_bot
-  let L : Subgroup (finU E n) :=
+  let L : Subgroup (finU (E := E) (n := n)) :=
     { carrier := {k | RU E n k φ = φ}
       one_mem' := by simp
       mul_mem' := by
@@ -79,7 +83,7 @@ theorem finrank_fixed_KL_eq_one : ∀ (E : Type) [Field E] [NumberField E] [IsCM
         simp only [Set.mem_setOf_eq] at *
         conv_lhs => rw [← ha]
         rw [← Module.End.mul_apply, ← map_mul, Subgroup.coe_inv, inv_mul_cancel, map_one, Module.End.one_apply] }
-  have hLo : IsOpen (L : Set (finU E n)) := (hπ.aut φ hφ).level
+  have hLo : IsOpen (L : Set (finU (E := E) (n := n))) := (hπ.aut φ hφ).level
   have hunr : ∀ᶠ w in cofinite, IsUnramU π w := by
     filter_upwards [GlobalTheory.T.eventually_localIntegralPoints_mem_openSubgroup_definiteUnitary E n L hLo] with w hw
     exact ⟨φ, hφ, hφ0, fun x hx hxK => hw x hx hxK hx.1⟩

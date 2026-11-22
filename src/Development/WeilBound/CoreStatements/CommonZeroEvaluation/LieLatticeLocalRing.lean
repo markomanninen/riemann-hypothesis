@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.GenMapEqOfFactor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.GenMapEqOfFactor
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory MonObj
 open GlobalTheory.CompanionTheory.Ar

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SecondCountableLocal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralCompBlocks
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationGdetKapAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SecondCountableLocal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralCompBlocks
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -17,8 +22,8 @@ section Alg
 
 variable {k : Type} [Field k] {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] {c : ℕ}
 
-open Classical in
 
+open Classical in
 def varPart (e : StepVar n c n' → k) : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k :=
   Matrix.of fun r s => if h : Free (c / 2 + 1) (r, s) ∨ Kept (r, s) then e ⟨(r, s), h⟩ else 0
 
@@ -34,15 +39,15 @@ theorem varPart_nonvar (e : StepVar n c n' → k) {r : n ⊕ Fin c} {s : n' ⊕ 
     (h : ¬ (Free (c / 2 + 1) (r, s) ∨ Kept (r, s))) : varPart e r s = 0 := by
   simp [varPart, h]
 
-omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 
+omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 theorem basePt_var (x₀ : Matrix n n' k) {r : n ⊕ Fin c} {s : n' ⊕ Fin (c + 1)}
     (h : Free (c / 2 + 1) (r, s) ∨ Kept (r, s)) : basePt c x₀ r s = 0 := by
   rcases r with r | r <;> rcases s with s | s <;> simp [Free, Kept, basePt] at h ⊢
   all_goals omega
 
-omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 
+omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 theorem eq_stepPt_of (x₀ : Matrix n n' k) (Y : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k)
     (h : ∀ r s, ¬ (Free (c / 2 + 1) (r, s) ∨ Kept (r, s)) → Y r s = basePt c x₀ r s) :
     Y = stepPt x₀ (fun a => Y a.1.1 a.1.2) := by
@@ -71,8 +76,8 @@ theorem varPart_mul_apply (e : StepVar n c n' → k) (g : Matrix (n' ⊕ Fin (c 
     simp [hr]
   · simp
 
-open Classical in
 
+open Classical in
 theorem det_linV {q : ℕ} {g : GL (n' ⊕ Fin (c + 1)) k} (hg : InN q g) : (linV (n := n) g.val).det = 1 := by
   rw [← det_transpose]
   refine GlobalTheory.RootExSource.det_eq_one_of_unip (fun a => lev q a.1.2) _ fun a b hab => ?_
@@ -82,8 +87,8 @@ theorem det_linV {q : ℕ} {g : GL (n' ⊕ Fin (c + 1)) k} (hg : InN q g) : (lin
   rw [hg _ _ hab]
   by_cases h1 : r = r' <;> by_cases h2 : s = s' <;> simp [Matrix.one_apply, h1, h2]
 
-omit [Fintype n] [DecidableEq n] in
 
+omit [Fintype n] [DecidableEq n] in
 theorem mul_gen_nonvar {q : ℕ} (hq : q = c / 2 + 1 ∨ (c % 2 = 1 ∧ q = c / 2 + 2)) {g : GL (n' ⊕ Fin (c + 1)) k}
     (hg : InN q g) (x₀ : Matrix n n' k) (e : StepVar n c n' → k) (r : n ⊕ Fin c) (s : n' ⊕ Fin (c + 1))
     (hv : ¬ (Free (c / 2 + 1) (r, s) ∨ Kept (r, s))) : (stepPt x₀ e * g.val) r s = basePt c x₀ r s := by
@@ -204,8 +209,8 @@ theorem symN_le_movers : symN k n' (c + 1) ≤ movers ν n c n' := by
   · omega
   · omega
 
-open Classical in
 
+open Classical in
 theorem exists_embX_mp (κ : GL n' k) (hκ : valuation k (gdet κ : k) = 1) (x₀ : Matrix n n' k) :
     ∃ φ : (StepVar n c n' → k) ≃ᵐ (StepVar n c n' → k), MeasurePreserving φ (stepVol ν n c n') (stepVol ν n c n') ∧
       ∀ e, stepPt x₀ e * (embX (c + 1) κ).val = stepPt (x₀ * κ.val) (φ e) := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulMulEqOfTraceEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulMulEqOfTraceEq
+
+@[expose] public section
 
 open Matrix
 
@@ -84,7 +88,8 @@ theorem conj_of_trace_central_idem_eq :
       have e2 : piMatUnit m τ z z = piMatUnit m τ z i * piMatUnit m τ i z := by
         rw [piMatUnit_mul]; simp
       rw [e1, e2, map_mul, map_mul, Matrix.trace_mul_comm]
-    rw [← sum_piMatUnit_diag, map_sum, Matrix.trace_sum, Finset.sum_congr rfl (fun i _ => hi i),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_piMatUnit_diag, map_sum, Matrix.trace_sum, Finset.sum_congr rfl (fun i _ => hi i),
       Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   have hidem : ∀ (ρ : (I → Matrix (Fin m) (Fin m) ℂ) →ₐ[ℂ] Matrix (Fin g) (Fin g) ℂ) (τ : I),
       IsIdempotentElem (ρ (piMatUnit m τ z z)) := by
@@ -126,7 +131,8 @@ theorem conj_of_trace_central_idem_eq :
   have hint : ∀ x, σ' x * h = h * σ x := by
     intro x
     rw [piMatUnit_decomp m x]
-    simp only [map_sum, map_smul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm, hE]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm, hE]
 
   have hprod : ∀ τ i τ' j, σ (piMatUnit m τ i z) * Y τ * σ' (piMatUnit m τ z i) *
       (σ' (piMatUnit m τ' j z) * X τ' * σ (piMatUnit m τ' z j))
@@ -154,9 +160,11 @@ theorem conj_of_trace_central_idem_eq :
   have hinv : h' * h = 1 := by
     rw [hh', Finset.sum_mul]
     simp only [Finset.sum_mul, hrow]
-    rw [← map_one σ, ← Finset.univ_sum_single (1 : I → Matrix (Fin m) (Fin m) ℂ), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_one σ, ← Finset.univ_sum_single (1 : I → Matrix (Fin m) (Fin m) ℂ), map_sum]
     refine Finset.sum_congr rfl fun τ _ => ?_
-    rw [Pi.one_apply, ← sum_piMatUnit_diag, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Pi.one_apply, ← sum_piMatUnit_diag, map_sum]
   exact ⟨h, (Matrix.isUnit_iff_isUnit_det h).mpr (Matrix.isUnit_det_of_left_inverse hinv), hint⟩
 
 end GlobalTheory

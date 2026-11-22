@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockBaseChange
-import Formalism.LocalToGlobal.IndefiniteReal.PartsOrth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockBaseChange
+public import Formalism.LocalToGlobal.IndefiniteReal.PartsOrth
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,8 @@ theorem tC_cpt (cr : Crd A fc) (b : Bool) (j : Bs.J) (t : Bs.Tup) (x : Fin ((lv 
   have hx : x = ∑ k, x k • Pi.single k 1 := by
     funext i; simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hx]
-  simp only [map_sum, map_smul, map_smulₛₗ, CxData.tC, lin, Fintype.linearCombination_apply, cpt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_smulₛₗ, CxData.tC, lin, Fintype.linearCombination_apply, cpt]
 
 end Cx
 

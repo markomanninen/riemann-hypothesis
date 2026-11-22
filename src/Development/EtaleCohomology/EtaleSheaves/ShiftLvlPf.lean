@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CechFiltPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CechFiltPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex CochainComplex.HomComplex

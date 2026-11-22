@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SplitA
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SplitA
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem split_reduction : SplitR := by
       have hid : ∀ x, sigR (Fv F v) σ x = x := by
         intro x
         conv_lhs => rw [hdec x]
-        rw [map_add, sigR_smul, sigR_smul, map_sub, map_one, ← hf, hfe]
+        rw [map_add (f := _), sigR_smul, sigR_smul, map_sub, map_one, ← hf, hfe]
         exact (hdec x).symm
       apply hy
       apply inclR_injective (E := E) v
@@ -92,7 +96,7 @@ theorem split_reduction : SplitR := by
     · rintro ⟨a, b⟩
       refine ⟨sc (E := E) v a * e + sc (E := E) v b * (1 - e), ?_⟩
       show (π₁ _, π₂ _) = (a, b)
-      rw [map_add, map_add, map_mul, map_mul, map_mul, map_mul, (hsc a).1, (hsc b).1, (hsc a).2,
+      rw [map_add (f := _), map_add (f := _), map_mul, map_mul, map_mul, map_mul, (hsc a).1, (hsc b).1, (hsc a).2,
         (hsc b).2, he1, he2, hce1, hce2]
       simp
   let spl : E ⊗[F] Fv F v ≃+* Fv F v × Fv F v :=

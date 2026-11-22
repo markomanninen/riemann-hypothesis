@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -40,16 +44,6 @@ structure PartsRec (R : RealDat D A Ks) (F : Face D A) (tupT : D.what₂.Tup →
 
   prtW : ∀ i π, prtWf i π ≤ (hPart (R.MW i (sg0 D A)) (levG _ (R.βW i) (R.datWp i R.triv)) (A.ok A.μ0) R.pl A.q
     (RealDat.polW (A := A) (labPi (E.cOf π)).1)).map (PiTensorProduct.lift : Mult.MMap (R.MW i (sg0 D A)) ≃ₗ[ℂ] _).toLinearMap
-
-def PartsRow (R : RealDat D A Ks) (F : Face D A) (tupT : D.what₂.Tup → T) (hm : 0 < D.R.m) {n : ℕ}
-    (PY : principalLevelFrame.RowPsi (Yc D 0) n) (PW : ∀ i, principalLevelFrame.RowPsi (Wc D i) n)
-    (eFT : D.what₂.FT ≃ principalLevelFrame.FTR R.θ PY (R.MY 0) (fun b => levS _ (R.βY 0) (R.dat0 (R.levR F b)))
-      (fun b => levChi _ (R.βY 0) (R.dat0 (R.levR F b))) (fun _ => R.e0))
-    (prtE : D.what₂.FT → Submodule ℂ (AmbT (R.MY 0)))
-    (prtWf : ∀ i : Fin D.R.m, D.what₂.FT → Submodule ℂ (AmbT (R.MW i (sg0 D A)))) : Prop :=
-  ∃ (Xd : DivX D) (E : EigIdx D Xd) (labPi : E.Pi → A.fam.base.Ix)
-    (piOf : E.Pi → HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ),
-    PartsRec R F tupT hm PY PW eFT E labPi piOf prtE prtWf
 
 end FromLinks
 

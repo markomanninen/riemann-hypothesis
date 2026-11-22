@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -69,8 +73,9 @@ theorem card_ker_int_matrix_four (G : Type) [CommGroup G] (m r : ℕ)
     have hmem : (m : ℤ) • b i ∈ N := ⟨al.transpose.mulVec (b i), by
       simp [hf, Matrix.mulVec_mulVec, hal', Matrix.smul_mulVec]⟩
     have h1 := congrArg (fun x : N => b.repr (x : Fin 4 → ℤ) i) (c.sum_repr ⟨_, hmem⟩)
-    simp only [Submodule.coe_sum, Submodule.coe_smul, hc, map_sum, map_smul, Basis.repr_self,
-      Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply, Finsupp.single_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Submodule.coe_sum, Submodule.coe_smul, hc, map_sum, map_smul, Basis.repr_self,
+      Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, Finsupp.single_apply,
       smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h1
     exact Int.natAbs_dvd_natAbs.mpr (Dvd.intro_left _ h1)
   have key := card_hom_vanishing_of_diag_basis (A := Additive G) N b c a hc

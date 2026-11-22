@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.XPderivMono
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.XPderivMono
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,11 +86,16 @@ theorem representing_monomial_mem_first_family (ε : Fin m → Bool) (c : ℝ) (
   · exact Submodule.zero_mem _
 
 theorem representing_operator_mem_first_family (ε : Fin m → Bool) (c : ℝ) (Λ : PX m n →ₗ[ℂ] ℂ) (p : PX m n) : Bop ε c Λ p ∈ F1 ε := by
-  rw [as_sum' p, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [as_sum' p, map_sum]
   exact Submodule.sum_mem _ fun s _ => by rw [map_smul, Bop_mono]; exact Submodule.smul_mem _ _ (representing_monomial_mem_first_family ε c Λ s)
 
 theorem mapDomain_pE_pE (u : Fin m × Fin n × Bool →₀ ℕ) : (u.mapDomain pE).mapDomain pE = u := by
-  ext k; simp [Finsupp.mapDomain_equiv_apply, pE_symm]
+  rw [← Finsupp.mapDomain_comp]
+  have h : (pE : Fin m × Fin n × Bool → Fin m × Fin n × Bool) ∘ pE = id := by
+    funext k
+    exact pE_pE k
+  rw [h, Finsupp.mapDomain_id]
 
 theorem partner_support_first_family (ε : Fin m → Bool) {u : Fin m × Fin n × Bool →₀ ℕ} (hu : ∀ k ∈ u.support, ¬ inF1 ε k) :
     ∀ k ∈ (u.mapDomain pE).support, inF1 ε k := by
@@ -122,10 +131,13 @@ theorem key_mono (ε : Fin m → Bool) {c : ℝ} (hc : 0 < c) (Λ : PX m n →�
 
 theorem functional_representation_by_contraction (ε : Fin m → Bool) {c : ℝ} (hc : 0 < c) (Λ : PX m n →ₗ[ℂ] ℂ) (hΛ : ∀ a b p, Λ (Dop ε c a b p) = 0)
     {f g : PX m n} (hf : f ∈ F1 ε) (hg : g ∈ F2 ε) : Λ (f * g) = contr c (Bop ε c Λ f * g) := by
-  conv_lhs => rw [as_sum' f, as_sum' g, Finset.sum_mul_sum, map_sum]
-  conv_rhs => rw [as_sum' f, map_sum, as_sum' g, Finset.sum_mul_sum, contr_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [as_sum' f, as_sum' g, Finset.sum_mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [as_sum' f, map_sum, as_sum' g, Finset.sum_mul_sum, contr_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
-  rw [map_sum, contr_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, contr_sum]
   refine Finset.sum_congr rfl fun u hu => ?_
   rw [map_smul, Bop_mono, smul_mul_smul_comm, map_smul, smul_mul_smul_comm, contr_smul,
     key_mono ε hc Λ hΛ ((mem_first_family_iff ε f).mp hf s hs) ((mem_second_family_iff ε g).mp hg u hu), smul_eq_mul]

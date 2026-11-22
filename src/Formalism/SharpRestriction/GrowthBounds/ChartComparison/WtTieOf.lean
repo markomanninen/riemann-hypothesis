@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.StepIn
-import Formalism.LocalRingCardinality.DataGatTies
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.StepIn
+public import Formalism.LocalRingCardinality.DataGatTies
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,15 +43,15 @@ theorem wtTie_of (Gt : GatTies D) (w : D.what₂.places.Pl) (hg : GIdx D.host (D
     rw [dif_pos h1, dif_pos h2, Gt.gat_lam u w hg v s ⟨i.val, h1⟩, (D.fm u).lam_eq 0 (Nat.zero_le _) _ _]
     exact dif_pos h2
   · have h2 : ¬ ((finCongr rk i : Fin (D.R.N (j + 1))) : ℕ) < D.R.k := by rw [hi, ← hk]; exact h1
-    rw [dif_neg h1, dif_neg h2, Int.cast_neg]
+    rw [dite_eq_right h1, dite_eq_right h2, Int.cast_neg]
     congr 1
     have e1 : (i.val - ((D.gat u w hg).P.m + 1)) / (Fl.t + 1) =
         (((finCongr rk i : Fin (D.R.N (j + 1))) : ℕ) - D.R.k) / (D.R.t + 1) := by rw [hk, ht, hi]
     rw [e1]
     exact hF v s _ (D.R.blk_lt hj (finCongr rk i) h2)
 
-variable {M} in
 
+variable {M} in
 theorem StepIn.wt_of (Gt : GatTies D) (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
     {Fl : Fills (D.gat u w hg)} (Lv : Levels Fl) (ht : Fl.t = D.R.t) (hF : FillTie Gt u w hg Fl) (j : ℕ) (hj : j + 1 ≤ D.R.m)
     (S : StepIn M (j + 1) hj (gatJ Lv (j + 1))) (hpos : S.pos = Gt.gat_pos u w hg) (β : S.Ch) :

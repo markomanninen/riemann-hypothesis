@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.RootsOfUnityInjective
 
@@ -13,7 +17,8 @@ theorem eq_of_map_eq_of_pow_eq_one {R k : Type} [CommRing R] [IsDomain R] [CommR
   rcases mul_eq_zero.mp hgeom with h0 | h0
   · exfalso
     have h1 := congrArg π h0
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [map_mul, map_pow, h] at h1
     have hpow : (π w) ^ N = 1 := by rw [← map_pow, hw, map_one]
     have hterm : ∀ i ∈ Finset.range N, π w ^ i * π w ^ (N - 1 - i) = π w ^ (N - 1) := by

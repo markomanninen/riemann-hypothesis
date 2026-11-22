@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.QSA GlobalTheory.Published
 open Matrix
 open scoped Quaternion Topology TensorProduct
@@ -23,6 +28,8 @@ theorem exists_completion_hom_of_real {K : Type} [Field K] (σ : K →+* ℝ) :
   refine ⟨_, InfinitePlace.Completion.extensionEmbeddingOfIsReal hw, fun x => ?_⟩
   have he := InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw
     ((WithAbs.equiv _).symm x)
+  rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+    Algebra.algebraMap_self_apply]
   refine Eq.trans he ?_
   apply Complex.ofReal_injective
   rw [InfinitePlace.embedding_of_isReal_apply, InfinitePlace.embedding_mk_eq_of_isReal hφ]
@@ -39,7 +46,7 @@ theorem isotropic_of_ringHom {a b c : F} (q : DA F a b) (hq0 : q.re = 0)
   have h1 := congrArg QuaternionAlgebra.re hqq
   simp only [QuaternionAlgebra.algebraMap_eq, QuaternionAlgebra.re_coe] at h1
   have h2 := congrArg φ h1
-  simp only [map_add, map_sub, map_mul, map_pow, hφ] at h2
+  simp only [map_add (f := _), map_sub, map_mul, map_pow, hφ] at h2
   refine ⟨![φ q.imI, φ q.imJ, φ q.imK, 1], fun h => by simpa using congrFun h 3, ?_⟩
   simp [Fin.sum_univ_four]
   linear_combination h2

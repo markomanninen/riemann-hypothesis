@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+
+@[expose] public section
 
 open Formalism.UG GlobalTheory.LKDef.HeckeTraceForms UpperTheory.Gal.W2.Seed
 open scoped Classical

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ForPrimeFlagLattice
-import Formalism.HermitianLattices.FinalMass
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ForPrimeFlagLattice
+public import Formalism.HermitianLattices.FinalMass
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,35 +16,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 section Orbit
 
 open MulAction
-
-theorem sum_orbits_inv_card_stabilizer (A G : Type) [Group A] [MulAction A G] [Finite A] [Finite G] :
-    ∑ᶠ ω : Quotient (orbitRel A G), ((Nat.card (stabilizer A ω.out) : ℕ) : ℝ)⁻¹ =
-      (Nat.card G : ℝ) / (Nat.card A : ℝ) := by
-  classical
-  have := Fintype.ofFinite A
-  have := Fintype.ofFinite G
-  have := Fintype.ofFinite (Quotient (orbitRel A G))
-  rw [finsum_eq_sum_of_fintype]
-  have hA : (0 : ℝ) < (Nat.card A : ℝ) := by exact_mod_cast Nat.card_pos
-  have h1 : ∀ ω : Quotient (orbitRel A G),
-      ((Nat.card (stabilizer A ω.out) : ℕ) : ℝ)⁻¹ = (Nat.card (orbit A ω.out) : ℝ) / (Nat.card A : ℝ) := by
-    intro ω
-    have h := MulAction.card_orbit_mul_card_stabilizer_eq_card_group A ω.out
-    have h' : (Nat.card (orbit A ω.out) : ℝ) * (Nat.card (stabilizer A ω.out) : ℝ) = (Nat.card A : ℝ) := by
-      rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]
-      exact_mod_cast h
-    have hs : (0 : ℝ) < (Nat.card (stabilizer A ω.out) : ℝ) := by exact_mod_cast Nat.card_pos
-    haveI : Nonempty (orbit A ω.out) := ⟨⟨_, mem_orbit_self _⟩⟩
-    have ho : (0 : ℝ) < (Nat.card (orbit A ω.out) : ℝ) := by exact_mod_cast Nat.card_pos
-    rw [← h']
-    field_simp
-  rw [Finset.sum_congr rfl fun ω _ => h1 ω, ← Finset.sum_div]
-  congr 1
-  have h2 : Nat.card G = ∑ ω : Quotient (orbitRel A G), Nat.card (orbit A ω.out) := by
-    rw [Nat.card_congr (MulAction.selfEquivSigmaOrbits A G), Nat.card_sigma]
-  rw [h2]
-  push_cast
-  rfl
 
 end Orbit
 
@@ -55,7 +30,11 @@ theorem trace_inner_self_pos {K V : Type} [Field K] [NumberField K] [StarRing K]
     rw [← this]
     simp
   have hpos : 0 < ∑ σ : K →ₐ[ℚ] ℂ, (σ (h x x)).re := by
-    let σ0 : K →ₐ[ℚ] ℂ := IsAlgClosed.lift
+    let σ0 : K →ₐ[ℚ] ℂ := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     exact Finset.sum_pos (fun σ _ => hp σ.toRingHom x hx) ⟨σ0, Finset.mem_univ _⟩
   exact_mod_cast key' ▸ hpos
 
@@ -98,11 +77,15 @@ theorem gluing_mass_of_fibre_structure (D : D7) (u : D.what₂.Word) (hpos : IsP
     (hR : FibresOrthLatticeOneGenus D u) : WordRowsGluing D u := by
   intro hT h3 hsp F0 he hz Λ hΛ s hs
   obtain ⟨hgen, hfib⟩ := hR hT h3 hsp F0 he hz Λ hΛ s hs
-  obtain ⟨⟨reps, hreps⟩, hmass, _⟩ := Formalism.HermitianLatticesTheory.final_massBasic D.host.E (D.sp.X 0).V (D.sp.X 0).hT (D.sp.X 0).herm
-    (trace_inner_self_pos _ hpos) (L0X D Λ (lf D F0)) (hlat hT h3 hsp F0 he hz Λ hΛ)
-  rw [hmass reps hreps]
+  let h := (D.sp.X 0).hT
+  let L := L0X D Λ (lf D F0)
+  have hex : ∃ reps, Formalism.ThetaLiftIndependence.IsClassReps h L reps :=
+    (Formalism.ThetaLiftIndependence.classRepsDefinite D.host.E (D.sp.X 0).V
+      h (D.sp.X 0).herm (trace_inner_self_pos h hpos) L (hlat hT h3 hsp F0 he hz Λ hΛ)).1
+  have hreps := hex.choose_spec
+  rw [Formalism.HermitianLatticesTheory.massBasic_mass_eq h L hex]
   unfold massRows
-  rw [sum_eq_sum_over_class_reps (D.sp.X 0).hT _ reps hreps s (fun Λ' => L0X D Λ' (lf D F0)) hgen,
+  rw [sum_eq_sum_over_class_reps h L hex.choose hreps s (fun Λ' => L0X D Λ' (lf D F0)) hgen,
     Finset.sum_congr rfl fun M hM => hfib M (hreps.1 M hM), ← Finset.mul_sum, mul_comm]
 
 end Rows

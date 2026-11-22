@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
-import GroundTheory.AutomorphicForms.TensorProductTheorem.CentralCuspSplit
-import GroundTheory.AutomorphicForms.UnitaryAdmissible.CuspFinite
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.CentralCuspSplit
+public import GroundTheory.AutomorphicForms.UnitaryAdmissible.CuspFinite
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 
@@ -17,9 +21,9 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-local notation "Γ₁" => Reduction.rationalGLOne K n
+local notation "Γ₁" => Reduction.rationalGLOne (K := K) (n := n)
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 def cuspVecL : cuspForms K n →ₗ[ℂ] CuspL2 μ := cuspToL2 μ
 
@@ -34,12 +38,13 @@ theorem isContRep_cuspToL2 (φ : cuspForms K n) :
     change (φ : AdelicGLn.AdelicGL K n → ℂ) ((γ : AdelicGLn.AdelicGL K n) * y) = _
     rw [← hγ']
     exact φ.2.1.isLeftInvariant γ' _
-  · filter_upwards [(quasiMeasurePreserving_mk Γ₁ μ).ae_eq (coeFn_cuspToL2 μ φ)] with y hy
+  · filter_upwards [QuasiMeasurePreserving.ae_eq_comp (quasiMeasurePreserving_mk Γ₁ μ)
+      (coeFn_cuspToL2 μ φ)] with y hy
     exact hy.trans (cuspQuot_mk _ y)
 
-variable {μ} in
 
-theorem eq_of_isContRep {v w : CuspL2 μ} {F : normOneGL K n → ℂ} (hv : IsContRep μ (toLp μ v) F)
+variable {μ} in
+theorem eq_of_isContRep {v w : CuspL2 μ} {F : normOneGL (K := K) (n := n) → ℂ} (hv : IsContRep μ (toLp μ v) F)
     (hw : IsContRep μ (toLp μ w) F) : v = w :=
   toLp_injective μ (Lp.ext (hv.ae_eq_quotFun.trans hw.ae_eq_quotFun.symm))
 
@@ -78,9 +83,9 @@ theorem integrated_cuspToL2 {φ : cuspForms K n} (hφ : φ ∈ centralCuspForms 
   obtain ⟨C, hC⟩ := exists_norm_le_of_mem_centralCuspForms hφ
   have h1 := isContRep_integrated_archRepT μ ν (isContRep_cuspToL2 μ φ) (C := C) (fun y => hC _)
     (hκ.continuous _) hκ.2
-  have hf : (fun y : normOneGL K n => ∫ a, κ a * (fun y : normOneGL K n =>
+  have hf : (fun y : normOneGL (K := K) (n := n) => ∫ a, κ a * (fun y : normOneGL (K := K) (n := n) =>
       (φ : AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n)) (y * archP K n a) ∂ν) =
-      fun y : normOneGL K n => (φ : AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n) := by
+      fun y : normOneGL (K := K) (n := n) => (φ : AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n) := by
     funext y
     rw [hconv (y : AdelicGLn.AdelicGL K n)]
     refine integral_congr_ae (Eventually.of_forall fun a => ?_)
@@ -95,8 +100,8 @@ theorem isSmoothVector_cuspToL2 {φ : cuspForms K n} (hφ : φ ∈ centralCuspFo
   rw [← integrated_cuspToL2 μ hφ Measure.haar hκ hconv]
   exact (isExpLieAlgebra K n).isSmoothVector_integrated (archRepT μ) Measure.haar hκ _
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem uAction_cuspToL2 {φ : cuspForms K n} (hφ : φ ∈ centralCuspForms K n) (u : UEnv K n) :
     ((isExpLieAlgebra K n).uAction (archRepT μ) u
         ⟨cuspVecL μ φ, isSmoothVector_cuspToL2 μ hφ⟩ : CuspL2 μ) =
@@ -115,9 +120,9 @@ theorem uAction_cuspToL2 {φ : cuspForms K n} (hφ : φ ∈ centralCuspForms K n
     (hγ.continuous _) hγ.2
   refine eq_of_isContRep h1 ?_
   have h2 := isContRep_cuspToL2 μ (uActionCusp K n u φ)
-  have hf : (fun y : normOneGL K n => ((uActionCusp K n u φ : cuspForms K n) :
+  have hf : (fun y : normOneGL (K := K) (n := n) => ((uActionCusp K n u φ : cuspForms K n) :
       AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n)) =
-      fun y : normOneGL K n => ∫ a, γ a * (fun y : normOneGL K n =>
+      fun y : normOneGL (K := K) (n := n) => ∫ a, γ a * (fun y : normOneGL (K := K) (n := n) =>
         (φ : AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n)) (y * archP K n a) ∂ν := by
     funext y
     set Ψ : archGroup K n → ℂ := fun x => (φ : AdelicGLn.AdelicGL K n → ℂ)
@@ -150,8 +155,8 @@ theorem toOne_eq_retractOne (g : AdelicGLn.AdelicGL K n) : toOne g = retractOne 
   ext1
   rw [coe_toOne, coe_retractOne]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem cuspToL2_sigma (k : archCompact K n) {φ : cuspForms K n} (hφ : φ ∈ centralCuspForms K n) :
     cuspVecL μ ((gkModuleCusp K n).σ k φ) =
       archRepT μ (k : archGroup K n) (cuspVecL μ φ) := by
@@ -164,8 +169,8 @@ theorem cuspToL2_sigma (k : archCompact K n) {φ : cuspForms K n} (hφ : φ ∈ 
   rw [coe_cuspRep_apply] at h2
   exact h2
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem cuspToL2_finRepCusp (h : AdelicGLn.FiniteAdelicGL K n) {φ : cuspForms K n}
     (hφ : φ ∈ centralCuspForms K n) :
     cuspVecL μ (finRepCusp K n h φ) =

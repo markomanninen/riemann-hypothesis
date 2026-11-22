@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -7,7 +11,8 @@ namespace GlobalTheory.NilpotentOfTracePowers
 theorem trace_mul_aeval {K : Type} [Field K] {V : Type} [AddCommGroup V] [Module K V]
     (f : Module.End K V) (h : ∀ k : ℕ, 1 ≤ k → LinearMap.trace K V (f ^ k) = 0) (p : K[X]) :
     LinearMap.trace K V (f * aeval f p) = 0 := by
-  rw [Polynomial.aeval_eq_sum_range, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.aeval_eq_sum_range, Finset.mul_sum, map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [mul_smul_comm, map_smul, ← pow_succ', h (i + 1) (by omega), smul_zero]
 
@@ -33,7 +38,7 @@ theorem exists_pow_eq {K : Type} [Field K] {V : Type} [AddCommGroup V] [Module K
     linear_combination (-C (q.coeff 0)⁻¹) * hq + (C (q.coeff 0)⁻¹ * X ^ m) * h1 - X ^ m * h2
   refine ⟨m, C (-(q.coeff 0)⁻¹) * q.divX, ?_⟩
   have := congrArg (aeval f) hpoly
-  rw [map_add, map_mul (aeval f) _ f.charpoly, h0, mul_zero, add_zero, map_mul, map_pow,
+  rw [map_add (f := _), map_mul (aeval f) _ f.charpoly, h0, mul_zero, add_zero, map_mul, map_pow,
     aeval_X] at this
   exact this
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.HodgeTateFromSandwich
-import GroundTheory.AutomorphicForms.GL2.GJStandardLBump
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.HodgeTateFromSandwich
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLBump
+
+@[expose] public section
 
 noncomputable section
 

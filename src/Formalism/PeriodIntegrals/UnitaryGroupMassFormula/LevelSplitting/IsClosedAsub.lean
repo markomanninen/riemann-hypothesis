@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.LeviInfUnipotentEqOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.NCIface
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.UnitaryGroupSecondCountableT2
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ModTop
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.LeviInfUnipotentEqOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.NCIface
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.UnitaryGroupSecondCountableT2
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ModTop
+
+@[expose] public section
 
 noncomputable section
 

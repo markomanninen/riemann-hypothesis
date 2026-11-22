@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.ThmBInHecke
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmExtensionAdelesStandardModelDictionaryStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPrimeIdempotentCMFieldStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PrimeIdempotentEqIndicatorPrimeStatement
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.ThmBInHecke
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CmExtensionAdelesStandardModelDictionaryStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPrimeIdempotentCMFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PrimeIdempotentEqIndicatorPrimeStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain NumberField.mixedEmbedding Complex Classical HeckeCharacterZeroLocus.ThmBIn
 open scoped TensorProduct ContDiff nonZeroDivisors
 
@@ -57,7 +62,7 @@ theorem unifIdele_exists_chiAt : ∀ (F E : Type) [Field F] [NumberField F] [Fie
     intro c hc
     rw [h2]
     intro Q
-    rw [hψ, map_add, map_sub, map_mul, map_one, ← hψ, ← hψ]
+    rw [hψ, map_add (f := _), map_sub, map_mul, map_one, ← hψ, ← hψ]
     by_cases hQ : Q = P
     · subst hQ
       rw [eb, h1, one_mul, sub_self, add_zero]
@@ -97,7 +102,7 @@ theorem unifIdele_exists_chiAt : ∀ (F E : Type) [Field F] [NumberField F] [Fie
   refine ⟨hex, ?_, ?_⟩
   · intro hun x hx
     have hc : IsUnramAt σ χ P ∧ ∃ x, IsUnifIdele σ P x := ⟨hun, hex⟩
-    rw [chiAt, dif_pos hc]
+    rw [chiAt, dite_eq_left hc]
     have hy := hc.2.choose_spec
     set y := hc.2.choose
     obtain ⟨e', f', p', hχ⟩ := hun

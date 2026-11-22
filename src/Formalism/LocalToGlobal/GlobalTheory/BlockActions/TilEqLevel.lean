@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.MulLatMulLat
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.MulLatMulLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +53,8 @@ end IsExtAlg
 
 variable {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem til_eq_level (Tf : FormsTiedSym D u Ch chOf) (hC : CrdFacts D)
     (hSD : ∀ c, dualSet (sigD D : D.host.E →+* D.host.E) (gramP D) (Tf.clsP.lat c) = (Tf.clsP.lat c : Set (Fin (D.R.N D.R.m - 1) → D.host.E)))
     (hdeg : Module.finrank ℚ D.host.E < (D.mem u).A.T - 1) (v : (D.mem u).A.vT)

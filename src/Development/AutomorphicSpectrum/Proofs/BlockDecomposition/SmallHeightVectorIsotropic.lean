@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CvecSurjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CvecSurjective
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 set_option maxSynthPendingDepth 1
@@ -21,7 +25,8 @@ theorem hermValue_inclR (v : Fin n → E) :
       inclR (F := F) F (hE (conj F E).toAlgHom J v v) := by
   have hc : ∀ e : E, conjBase F E F (inclR (F := F) F e) = inclR (F := F) F (conj F E e) := fun e => rfl
   have hb : baseMatrix F J F = J.map (inclR (F := F) F) := rfl
-  simp only [hermValue, hc, hb, hE, Formalism.UG.hform, dotProduct, mulVec, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermValue, hc, hb, hE, Formalism.UG.hform, dotProduct, mulVec, map_sum, map_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_

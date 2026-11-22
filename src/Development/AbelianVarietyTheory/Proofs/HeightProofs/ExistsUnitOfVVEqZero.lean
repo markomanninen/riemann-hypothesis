@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.NumericalH1Condition
-import Formalism.LocalToGlobal.ProjectiveLattices.HeightF1OfData
-import Formalism.LocalToGlobal.ProjectiveLattices.DivFinOfLawA3
-import Formalism.LocalToGlobal.ProjectiveLattices.CompTie
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
-import Formalism.LocalToGlobal.ProjectiveLattices.FnTrdegOf
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.NotOverAndTriv
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFrameShiftFrShFin
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.KapFgTrdeg
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.MemRangeOfIsAlgebraicRatFun
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.NumericalH1Condition
+public import Formalism.LocalToGlobal.ProjectiveLattices.HeightF1OfData
+public import Formalism.LocalToGlobal.ProjectiveLattices.DivFinOfLawA3
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompTie
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.LocalToGlobal.ProjectiveLattices.FnTrdegOf
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.NotOverAndTriv
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFrameShiftFrShFin
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.KapFgTrdeg
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.MemRangeOfIsAlgebraicRatFun
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj GlobalTheory.Reg
 

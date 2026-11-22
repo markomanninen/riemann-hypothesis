@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SameOffRefl
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
-import Formalism.LocalToGlobal.GlobalTheory.GL3.NormNatCoprime
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SameOffRefl
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.NormNatCoprime
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem coprime_absNorm (p : ℕ) [hp : Fact p.Prime] {I : Ideal (𝓞 K)} (hI :
     have e0 : y = i * y + t * (((p : ℕ) : 𝓞 K) * y) := by linear_combination (-(y)) * hir
     have e : Ideal.Quotient.mk I y = Ideal.Quotient.mk I i * Ideal.Quotient.mk I y +
         Ideal.Quotient.mk I t * ((p : ℕ) • Ideal.Quotient.mk I y) := by
-      rw [nsmul_eq_mul, ← map_natCast (Ideal.Quotient.mk I) p, ← map_mul, ← map_mul, ← map_mul, ← map_add, ← e0]
+      rw [nsmul_eq_mul, ← map_natCast (Ideal.Quotient.mk I) p, ← map_mul, ← map_mul, ← map_mul, ← map_add (f := _), ← e0]
     rw [e, hpx, mul_zero, add_zero, hq, zero_mul]
   rw [hx0, addOrderOf_zero] at hx
   exact hp.out.one_lt.ne hx
@@ -360,8 +364,8 @@ open scoped Pointwise
 
 variable {D : D7}
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem frobOut_of_inertK {p : ℕ} [hp : Fact p.Prime] (hp2 : p ≠ 2) (hI : Formalism.MainNotions.GL3Theta.InertK D p) : FrobOut D p := by
   classical
   let G := 𝓞 D.host.E ≃ₐ[ℤ] 𝓞 D.host.E
@@ -393,7 +397,9 @@ theorem frobOut_of_inertK {p : ℕ} [hp : Fact p.Prime] (hp2 : p ≠ 2) (hI : Fo
     · rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.under_def, Ideal.mem_comap]
       simpa using hpP
   have hpQ : ((p : ℕ) : 𝓞 D.host.E) ∈ Q₀ := by
-    have : (p : ℤ) ∈ Q₀.comap (algebraMap ℤ (𝓞 D.host.E)) := by rw [hQc]; exact Ideal.mem_span_singleton_self _
+    have : (p : ℤ) ∈ Q₀.comap (algebraMap ℤ (𝓞 D.host.E)) := by
+      change (p : ℤ) ∈ Q₀.under ℤ
+      rw [hQc]; exact Ideal.mem_span_singleton_self _
     rw [Ideal.mem_comap] at this
     simpa using this
   have hQ0 : Q₀ ≠ ⊥ := by
@@ -483,6 +489,7 @@ theorem frobOut_of_inertK {p : ℕ} [hp : Fact p.Prime] (hp2 : p ≠ 2) (hI : Fo
     have hdvd : (p : ℤ) ∣ -4 * (D.host.d : ℤ) := by
       have : (-4 * (D.host.d : ℤ)) ∈ Q₀.comap (algebraMap ℤ (𝓞 D.host.E)) := by
         rw [Ideal.mem_comap]; simpa using h4d
+      change (-4 * (D.host.d : ℤ)) ∈ Q₀.under ℤ at this
       rw [hQc, Ideal.mem_span_singleton] at this
       exact this
     rw [neg_mul, dvd_neg] at hdvd
@@ -523,8 +530,8 @@ end frob
 
 end GlobalTheory.NormUnitInert
 
-open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F GlobalTheory.TwU TensorProduct in
 
+open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F GlobalTheory.TwU TensorProduct in
 theorem GlobalTheory.normUnit_of_inert : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_[p]), p ≠ 2 → GL3Theta.InertK D p →
     ∀ z : D.host.E, z * D.host.conj z = 1 → ‖TaylorLogMetric.lamC lam (∏ τ : D.what₂.Tau, TaylorLogMetric.embT D τ z)‖ = 1 :=
   fun _ _ _ lam hp2 hI => GlobalTheory.NormUnitInert.normUnitK_of_inertK lam hp2 hI

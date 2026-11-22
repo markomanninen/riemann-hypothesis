@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.LinearSubstitutionDiagonal
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.LinearSubstitutionDiagonal
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate

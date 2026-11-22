@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor GlobalTheory.StepVec
 open scoped TensorProduct ComplexOrder
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -15,8 +20,8 @@ theorem phiQ_eq_viaRed_qLoc : ∀ (D : D7) (v : FinPl D) (φ : SplitProj D v) (P
   unfold phiQ viaRed
   by_cases hint : ∀ i j, Y i j ∈ v.adicCompletionIntegers D.host.F
   swap
-  · rw [dif_neg hint, dif_neg (fun h => hint h.2.2.1)]
-  rw [dif_pos hint]
+  · rw [dite_eq_right hint, dite_eq_right (fun h => hint h.2.2.1)]
+  rw [dite_eq_left hint]
 
   set Yo : Matrix (Fin b) (Fin a) (v.adicCompletionIntegers D.host.F) := fun i j => ⟨Y i j, hint i j⟩ with hYo
   have hy : (Matrix.of fun i j => r ⟨Y i j, hint i j⟩) = Yo.map r := rfl
@@ -62,7 +67,7 @@ theorem phiQ_eq_viaRed_qLoc : ∀ (D : D7) (v : FinPl D) (φ : SplitProj D v) (P
       intro h0; have := hc.1; rw [h0, map_zero] at this; exact zero_ne_one this
     have hB : LowZero k (Yo.map r) ∧ IsUnit (topL k (Yo.map r)).det :=
       ⟨hlow.mpr hc.2, by rw [hdety]; exact hunit.mpr hc.1⟩
-    rw [dif_pos hA, dif_pos hB]
+    rw [dite_eq_left hA, dite_eq_left hB]
     have hrel : RedRel φ PP ((hA.1.unit : Fv D.host.F v)) ((hB.2.unit : Formalism.L2.DIV.kP PP)) := by
       refine (hr.2.2.1 _ _).mpr ⟨by convert d.2 using 2; rw [IsUnit.unit_spec, hdetY], ?_⟩
       rw [IsUnit.unit_spec hB.2, hdety]
@@ -71,7 +76,7 @@ theorem phiQ_eq_viaRed_qLoc : ∀ (D : D7) (v : FinPl D) (φ : SplitProj D v) (P
       simp [IsUnit.unit_spec, hdetY]
     have hm := hmu _ _ hrel
     rw [hm, MonoidHom.inv_apply, Units.val_inv_eq_inv_val, inv_inv]
-  · rw [dif_neg (fun h => hc ⟨by rw [← hdetY]; exact h.2.1, h.2.2.2⟩),
-      dif_neg (fun h => hc ⟨hunit.mp (by rw [← hdety]; exact h.2), hlow.mp h.1⟩)]
+  · rw [dite_eq_right (fun h => hc ⟨by rw [← hdetY]; exact h.2.1, h.2.2.2⟩),
+      dite_eq_right (fun h => hc ⟨hunit.mp (by rw [← hdety]; exact h.2), hlow.mp h.1⟩)]
 
 end GlobalTheory.StepVec

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPlaceOverMoveValConjPl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRingClassHost
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPlaceOverMoveValConjPl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRingClassHost
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,7 +136,7 @@ theorem tameAt_of_orderDvd {l k : ℕ} (hl : l.Prime) (h : χ.OrderDvd (l ^ k)) 
     exact Subtype.ext_iff) x (hx.trans_lt (by simpa using exp_neg_one_lt_one))
   exact congrArg Subtype.val this
 
-theorem locInf_eq_one [IsTotallyComplex E] {m : ℕ} (hm : 0 < m) (h : χ.OrderDvd m) (w : InfinitePlace E)
+theorem locInf_eq_one [_root_.NumberField.IsTotallyComplex E] {m : ℕ} (hm : 0 < m) (h : χ.OrderDvd m) (w : InfinitePlace E)
     (y : (w.Completion)ˣ) : χ.locInf w y = 1 := by
   have h1 : ∀ y, χ.1 y ^ m = 1 := fun y => congrArg (fun ξ : HChar E => ξ.1 y) h
   let e := InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)
@@ -259,7 +263,8 @@ section Galois
 
 variable {F E Ω : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [Field Ω] [Algebra E Ω]
 
-theorem normV_eq (v : HeightOneSpectrum (𝓞 E)) : normV v = Ideal.absNorm v.asIdeal := rfl
+theorem normV_eq (v : HeightOneSpectrum (𝓞 E)) : normV v = Ideal.absNorm v.asIdeal := by
+  rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
 
 theorem normV_inert (h2 : Module.finrank F E = 2)
     (hr : ∀ (P : HeightOneSpectrum (𝓞 E)) (k : Fˣ), ordF P (upF F k) = ordF (P.under (𝓞 F)) k)
@@ -273,6 +278,7 @@ theorem normV_inert (h2 : Module.finrank F E = 2)
     obtain ⟨π, hπ⟩ := v.valuation_exists_uniformizer F
     have h := HeightOneSpectrum.valuation_liesOver E v P π
     rw [valuation_up hr, ← hv, hπ, ← WithZero.exp_nsmul, WithZero.exp_inj] at h
+    rw [Ideal.ramificationIdx'_eq_ramificationIdx v.asIdeal P.asIdeal v.ne_bot]
     simpa using h
   have hs := Ideal.sum_ramification_inertia (𝓞 E) F E v.ne_bot
   have hset : IsDedekindDomain.primesOverFinset v.asIdeal (𝓞 E) = {P.asIdeal} := by
@@ -303,9 +309,9 @@ theorem not_forall_pow_sub_mem {P : HeightOneSpectrum (𝓞 E)} {q : ℕ} (hq : 
   have h3 := Polynomial.card_le_degree_of_subset_roots
     (p := (Polynomial.X ^ q - Polynomial.X : Polynomial (𝓞 E ⧸ P.asIdeal))) (Z := Finset.univ) (fun z _ => by
       obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective z
-      rw [Polynomial.mem_roots (FiniteField.X_pow_card_sub_X_ne_zero _ h1)]
+      rw [Polynomial.mem_roots (FiniteField.X_pow_card_sub_X_ne_zero h1)]
       simpa using Ideal.Quotient.eq_zero_iff_mem.2 (h x))
-  rw [FiniteField.X_pow_card_sub_X_natDegree_eq _ h1, Finset.card_univ, hc] at h3
+  rw [Polynomial.natDegree_X_pow_sub_X h1, Finset.card_univ, hc] at h3
   nlinarith
 
 theorem valuation_pow_sub_pow_lt (A : ValuationSubring Ω) {a b : Ω} (ha : A.valuation a ≤ 1) (hb : A.valuation b ≤ 1)
@@ -382,7 +388,7 @@ theorem exists_frob_inert [IsAlgClosure E Ω] (c : E ≃ₐ[F] E) (h2 : Module.f
       exact Valuation.map_add_lt _ (hτ.2 _ hx')
         (valuation_pow_sub_pow_lt A hx' (by rw [map_pow]; exact pow_le_one' hx q) (hτ.2 x hx) q)
 
-theorem IsHeckeOf.trivOn [IsAlgClosure E Ω] [IsTotallyComplex E] (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hne : c ≠ 1)
+theorem IsHeckeOf.trivOn [IsAlgClosure E Ω] [_root_.NumberField.IsTotallyComplex E] (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hne : c ≠ 1)
     (hinv : ∀ x, c (c x) = x)
     (hr : ∀ (P : HeightOneSpectrum (𝓞 E)) (k : Fˣ), ordF P (upF F k) = ordF (P.under (𝓞 F)) k)
     (cc : Ω ≃+* Ω) (hcc : ∀ x : E, cc (algebraMap E Ω x) = algebraMap E Ω (c x)) (hcc2 : ∀ x, cc (cc x) = x)

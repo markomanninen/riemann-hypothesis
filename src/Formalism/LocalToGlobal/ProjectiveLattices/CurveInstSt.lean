@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftCurveSt
-import Formalism.LocalToGlobal.ProjectiveLattices.IntAtExtExtAll
-import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
-import Formalism.LocalToGlobal.ProjectiveLattices.EquivariantFiniteGroup
-import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftCurveSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntAtExtExtAll
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
+public import Formalism.LocalToGlobal.ProjectiveLattices.EquivariantFiniteGroup
+public import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.RightKTypes.CommuteOmTensRho
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.RightKTypes.CommuteOmTensRho
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem stepRho_bdd (A : KAct ε X) (z : ℂ) :
   obtain ⟨C, hC⟩ := A.bdd
   refine ⟨n * |C|, fun k x => ?_⟩
   refine pi_norm_le_iff_of_nonneg (by positivity) |>.mpr fun b => ?_
-  rw [stepEmb_apply, stepRho_coe, tensRho_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [stepEmb_apply, stepRho_coe, tensRho_apply, map_sum]
   calc ‖∑ i, A.emb (S7.toMK k b i • A.ρ k ((sv x) i))‖
       ≤ ∑ i, ‖A.emb (S7.toMK k b i • A.ρ k ((sv x) i))‖ := norm_sum_le _ _
     _ ≤ ∑ _i : Fin n, |C| * ‖stepEmb A z x‖ := by
@@ -77,7 +82,8 @@ theorem rightEq_step (A : KAct ε X) {I : Type} {c : CoefFam X I} (hc : RightEq 
   simp only [stepCoef_apply']
   show ∑ i, (S7.toM g * S7.toMK k) p.2 i * c p.1 ((sv u) i) (S7.toM g * S7.toMK k) =
     ∑ l, S7.toM g p.2 l * c p.1 (tensRho A k (sv u) l) (S7.toM g)
-  simp only [hc', Matrix.mul_apply, tensRho_apply, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hc', Matrix.mul_apply, tensRho_apply, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply,
     smul_eq_mul, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact sum_congr rfl fun l _ => sum_congr rfl fun i _ => by ring

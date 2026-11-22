@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj MvPowerSeries
@@ -82,13 +86,14 @@ theorem dLinSt (hR : RepSt) : DLinSt := by
   obtain ⟨ψ', hψ', e'⟩ := h'.2 1
   set c := tcoord hx w hw with hc
   let l : JetR R (Fin 1 × Fin d) 1 →ₐ[R] DualNumber R :=
-    jetLift R (RingHom.ker (fstD R)) kerD_sq (fun p => TrivSqZeroExt.inr (c p.2)) (fun _ => inr_mem_kerD _)
+    jetLift (R := R) (RingHom.ker (fstD R)) kerD_sq (fun p => TrivSqZeroExt.inr (c p.2)) (fun _ => inr_mem_kerD _)
   have hl : ∀ p, l (zR 1 p) = TrivSqZeroExt.inr (c p.2) := fun p => jetLift_zR _ _ _ _ p
   have e1 : l.comp ψ₀ = dualLift c := jet_ext fun j => by
     rw [AlgHom.comp_apply, hψ₀, dualLift_zR]
     exact (congrArg l (toJet_X 1 _)).trans (hl _)
   have e2 : l.comp ψ' = dualLift ((dLin φ).mulVec c) := jet_ext fun j => by
-    rw [AlgHom.comp_apply, hψ', dualLift_zR, toJet_one_eq_sum _ (hφ.1 j), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [AlgHom.comp_apply, hψ', dualLift_zR, toJet_one_eq_sum _ (hφ.1 j), map_sum]
     simp only [map_smul, hl, ← TrivSqZeroExt.inr_smul, smul_eq_mul]
     rw [← TrivSqZeroExt.inr_sum, Fintype.sum_prod_type, Fin.sum_univ_one]
     rfl

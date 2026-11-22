@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.PHeckeFormal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.PHeckeFormal
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,13 +99,13 @@ theorem mem_Gq_iff (N : ℕ) (π : 𝓞 L) (hπ : π ≠ 0) (γ : Gm L N) :
       ext i j
       simp only [Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply, M, Matrix.of_apply]
       by_cases hj : (j : ℕ) = 0 <;> by_cases hi : (i : ℕ) = 0
-      · rw [dif_neg (by tauto), if_neg (by tauto), if_pos hj, if_pos hi, mul_comm]
-      · rw [dif_pos ⟨hj, hi⟩, if_pos hj, if_neg hi, one_mul]
+      · rw [dite_eq_right (by tauto), if_neg (by tauto), if_pos hj, if_pos hi, mul_comm]
+      · rw [dite_eq_left ⟨hj, hi⟩, if_pos hj, if_neg hi, one_mul]
         have hs := Classical.choose_spec (hd i j ⟨hj, hi⟩)
         calc _ = algebraMap (𝓞 L) L (Classical.choose (hd i j ⟨hj, hi⟩) * π) := by rw [map_mul]
           _ = _ := by rw [hs]
-      · rw [dif_neg (by tauto), if_pos ⟨hi, hj⟩, if_neg hj, if_pos hi, mul_one, map_mul]
-      · rw [dif_neg (by tauto), if_neg (by tauto), if_neg hj, if_neg hi, mul_one, one_mul]
+      · rw [dite_eq_right (by tauto), if_pos ⟨hi, hj⟩, if_neg hj, if_pos hi, mul_one, map_mul]
+      · rw [dite_eq_right (by tauto), if_neg (by tauto), if_neg hj, if_neg hi, mul_one, one_mul]
     have hdet : M.det = (γ : Matrix (Fin N) (Fin N) (𝓞 L)).det := by
       apply algebraMap_inj
       have e := congrArg Matrix.det hM
@@ -229,7 +233,7 @@ theorem pGqStab : PGqStab := by
   constructor
   · intro h i j hj hi
     have := h (Fin.castAdd r i) (Fin.castAdd r j) hj hi
-    rwa [stab_apply, dif_pos ⟨i.2, j.2⟩] at this
+    rwa [stab_apply, dite_eq_left ⟨i.2, j.2⟩] at this
   · intro h i j hj hi
     rw [stab_apply]
     split_ifs with h1 h2
@@ -323,17 +327,17 @@ theorem pLow : PLow := by
         (Fin.castAdd r i') (Fin.natAdd n b) *
         ((c⁻¹ : Gm L (n + r)) : Matrix (Fin (n + r)) (Fin (n + r)) (𝓞 L)) (Fin.natAdd n b) z0 = 0 := by
       refine Finset.sum_eq_zero fun b _ => ?_
-      rw [stab_apply, dif_neg (by simp), if_neg (fun h => by have := congrArg Fin.val h; simp at this; omega),
+      rw [stab_apply, dite_eq_right (by simp), if_neg (fun h => by have := congrArg Fin.val h; simp at this; omega),
         zero_mul]
     rw [e, add_zero]
     have := hc' i' hi'
     simp only [Matrix.mulVec, dotProduct] at this
     convert this using 2 with b _
-    rw [stab_apply, dif_pos ⟨by simp, by simp⟩]
+    rw [stab_apply, dite_eq_left ⟨by simp, by simp⟩]
     rfl
   | right i' =>
     refine Ideal.add_mem _ (Ideal.sum_mem _ fun b _ => ?_) (Ideal.sum_mem _ fun b _ => ?_)
-    · rw [stab_apply, dif_neg (by simp), if_neg (fun h => by have := congrArg Fin.val h; simp at this; omega),
+    · rw [stab_apply, dite_eq_right (by simp), if_neg (fun h => by have := congrArg Fin.val h; simp at this; omega),
         zero_mul]
       exact Submodule.zero_mem _
     · exact Ideal.mul_mem_left _ _ (hc b)

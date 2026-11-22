@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockSumRight
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
-import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
-import Formalism.PolynomialDimension.MultinomialDepth.FockGaussComparisonHolds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockSumRight
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
+public import Formalism.PolynomialDimension.MultinomialDepth.FockGaussComparisonHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem Lin_X (N : S → Matrix (Fin k) (Fin k) R) (v : S × Fin k) :
   simp [Lin]
 
 theorem Lin_coeff_zero (N : S → Matrix (Fin k) (Fin k) R) (h : MvPolynomial (S × Fin k) R) :
-    coeff 0 (Lin N h) = coeff 0 h := by
+    AddMonoidAlgebra.coeff (Lin N h) 0 = AddMonoidAlgebra.coeff h 0 := by
   have h1 : (MvPolynomial.constantCoeff : MvPolynomial (S × Fin k) R →+* R).comp (Lin N).toRingHom =
       MvPolynomial.constantCoeff := by
     apply MvPolynomial.ringHom_ext
@@ -40,7 +44,8 @@ theorem Lin_chain (N : S → Matrix (Fin k) (Fin k) R) (s : S) (b : Fin k) (h : 
   have hX : ∀ v : S × Fin k, pderiv (s, b) (Lin N (X v)) = ∑ a : Fin k, N s a b • Lin N (pderiv (s, a) (X v)) := by
     rintro ⟨t, c⟩
     rw [Lin_X]
-    simp only [map_sum, Derivation.leibniz, MvPolynomial.pderiv_X, MvPolynomial.pderiv_C, smul_zero, add_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Derivation.leibniz, MvPolynomial.pderiv_X, MvPolynomial.pderiv_C, smul_zero, add_zero,
       Pi.single_apply, Prod.mk.injEq, smul_eq_mul]
     by_cases ht : t = s
     · subst ht
@@ -51,10 +56,10 @@ theorem Lin_chain (N : S → Matrix (Fin k) (Fin k) R) (s : S) (b : Fin k) (h : 
     have h1 : Lin N (C r) = C r := (Lin N).commutes r
     simp [h1]
   | add p q hp hq =>
-    simp only [map_add, hp, hq, smul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hp, hq, smul_add, Finset.sum_add_distrib]
   | mul_X p v hp =>
     rw [map_mul, Derivation.leibniz, hp, hX v]
-    simp only [Derivation.leibniz, map_add, map_mul, smul_add, Finset.sum_add_distrib, smul_eq_mul,
+    simp only [Derivation.leibniz, map_add (f := _), map_mul, smul_add, Finset.sum_add_distrib, smul_eq_mul,
       Finset.mul_sum, Finset.smul_sum]
     congr 1
     · refine Finset.sum_congr rfl fun a _ => ?_
@@ -73,7 +78,7 @@ theorem fockR_Lin (N : S → Matrix (Fin k) (Fin k) R) (P : MvPolynomial (S × F
     rw [h1, C_apply, tsact_monomial_left, tsact_monomial_left, Lin_coeff_zero]
   | add p q hp hq =>
     intro Q
-    rw [map_add, tsact_add_left, tsact_add_left, hp, hq]
+    rw [map_add (f := _), tsact_add_left, tsact_add_left, hp, hq]
   | mul_X p v hp =>
     intro Q
     rw [map_mul, Lin_X, Finset.mul_sum, tsact_sum_left, tsact_X_mul, Lin_chain, tsact_sum_right]
@@ -129,8 +134,10 @@ theorem multDiv_kapFl (O : Type) [CommRing O] [IsLocalRing O] (p : ℕ) [hp : Fa
     rw [e] at this
     exact this
 
-  have hdv : p ^ padicValNat p Mn ∣ Mn := pow_padicValNat_dvd
-  have hnd : ¬ p ^ (padicValNat p Mn + 1) ∣ Mn := pow_succ_padicValNat_not_dvd hMn0
+  have hdv : p ^ padicValNat p Mn ∣ Mn := (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
+  have hnd : ¬ p ^ (padicValNat p Mn + 1) ∣ Mn := by
+    rw [Nat.padicValNat_def]
+    exact pow_succ_multiplicity_not_dvd hMn0
   generalize padicValNat p Mn = v at h4 hdv hnd
   obtain ⟨u, hu⟩ := hdv
   have hpu : ¬ p ∣ u := by

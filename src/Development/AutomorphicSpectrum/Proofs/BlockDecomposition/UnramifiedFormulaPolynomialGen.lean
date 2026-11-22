@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardPreimageHom
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SeriesEqDens
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianCharacterOrthogonality
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianRepCountFourierExpansion
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardPreimageHom
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SeriesEqDens
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianCharacterOrthogonality
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianRepCountFourierExpansion
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,7 @@ theorem unrPoly : PositivityTheory.PfSWUS.Loc.UnrFormula → PositivityTheory.Si
       ψ k (Matrix.trace (red ϖ k T * B.1)) * x ^ Nat.log (q ^ 2) (nuAt ϖ B.1) := by
     intro x
     rw [tsum_fintype]
-    simp [P, Polynomial.eval_finset_sum]
+    simp [P, Polynomial.eval_finsetSum]
   have hQ : ∀ x : ℂ, Q.eval x = ∏ i : Fin n, (1 - x * ((ε : ℂ) * q) ^ (i : ℕ)) := by
     intro x
     simp [Q, Polynomial.eval_prod]

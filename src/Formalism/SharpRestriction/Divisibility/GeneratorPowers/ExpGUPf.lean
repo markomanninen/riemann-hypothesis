@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.UnitIdSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdAd
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.UnitIdSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdAd
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,13 +37,13 @@ theorem cocycle_first_face_exp (u v w : Q S d n) : E3 B.ph1 u v w = FB.expS S (E
   have e : B.ph1 = FB.expS S (E2 h (gen 0) (gen 2) + E2 h (gen 1) (gen 2) - E2 h (op (FQ B.G) (gen 0) (gen 1)) (gen 2)) := by
     simp only [formalSeriesValueAtTwoPoints_eq_ev, op_val]; exact (map_id_apply _).symm.trans (hg.ph1.trans (by rw [show B.FK S = B.G.F from funext fun _ => map_id_apply _]; rfl))
   rw [e, E3, sb_expS _ (by simp [const_coeff_pair_form_zero B hg])]
-  simp only [map_sub, map_add, formalPointSubstitutionSeries_valueAtTwoPoints, sq_op, sq_gen]; rfl
+  simp only [map_sub, map_add (f := _), formalPointSubstitutionSeries_valueAtTwoPoints, sq_op, sq_gen]; rfl
 
 theorem cocycle_second_face_exp (u v w : Q S d n) : E3 B.ph2 u v w = FB.expS S (E2 h u v + E2 h u w - E2 h u (op (FQ B.G) v w)) := by
   have e : B.ph2 = FB.expS S (E2 h (gen 0) (gen 1) + E2 h (gen 0) (gen 2) - E2 h (gen 0) (op (FQ B.G) (gen 1) (gen 2))) := by
     simp only [formalSeriesValueAtTwoPoints_eq_ev, op_val]; exact (map_id_apply _).symm.trans (hg.ph2.trans (by rw [show B.FK S = B.G.F from funext fun _ => map_id_apply _]; rfl))
   rw [e, E3, sb_expS _ (by simp [const_coeff_pair_form_zero B hg])]
-  simp only [map_sub, map_add, formalPointSubstitutionSeries_valueAtTwoPoints, sq_op, sq_gen]; rfl
+  simp only [map_sub, map_add (f := _), formalPointSubstitutionSeries_valueAtTwoPoints, sq_op, sq_gen]; rfl
 
 omit hg [Algebra ℚ S] in
 theorem actK_eq (a : 𝓞 E) : B.actK S a = B.A.act a := by

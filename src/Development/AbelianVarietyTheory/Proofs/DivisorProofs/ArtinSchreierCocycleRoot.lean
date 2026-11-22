@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsPrimitiveEndClassFunctionInvariantSubspaceMobi
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootPowerSumCharacterAdditiveAndXSubOnePow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveFunctionCharpolyGLHarishChandraRecursioStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedHarishChandraInductionGLIsTwistedClassFunStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsPrimitiveEndClassFunctionInvariantSubspaceMobi
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootPowerSumCharacterAdditiveAndXSubOnePow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveFunctionCharpolyGLHarishChandraRecursioStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedHarishChandraInductionGLIsTwistedClassFunStatement
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
@@ -114,12 +118,12 @@ theorem inParM_add_iff {a n : ℕ} (M H : Matrix (Fin n) (Fin n) F)
 
 theorem isUnit_add_iff {a n : ℕ} (M H : Matrix (Fin n) (Fin n) F)
     (hH : Matrix.toLin' H ∈ nilRad (headSub a n)) (hM : InParM a M) : IsUnit (M + H) ↔ IsUnit M := by
-  rw [isUnit_iff_injective, isUnit_iff_injective, map_add]
+  rw [isUnit_iff_injective, isUnit_iff_injective, map_add (f := _)]
   constructor
   · intro h
     have hM' : InParM a (M + H) := (inParM_add_iff M H hH).2 hM
     have := injective_add (headSub a n) (Matrix.toLin' M + Matrix.toLin' H) (-Matrix.toLin' H)
-      (by rw [← map_add]; exact mapsTo_headSub _ hM') (neg_mem_nilRad hH) h
+      (by rw [← map_add (f := _)]; exact mapsTo_headSub _ hM') (neg_mem_nilRad hH) h
     simpa using this
   · intro h
     exact injective_add (headSub a n) _ _ (mapsTo_headSub M hM) hH h
@@ -194,7 +198,7 @@ theorem sum_inPar_psiG {F : Type} [Field F] [Finite F] (R : F[X] → ℂ) (hR : 
       have e2 : ∑ h ∈ Nfin, β M * star (ψ (M + h)) = β M * star (∑ h ∈ Nfin, ψ (M + h)) := by
         rw [star_sum, Finset.mul_sum]
       rw [Finset.sum_congr rfl e1, e2]
-      simp only [ψ, map_add]
+      simp only [ψ, map_add (f := _)]
       rw [hprim, star_zero, mul_zero]
     · refine Finset.sum_eq_zero fun h hh => ?_
       have hh' : Matrix.toLin' h ∈ nilRad (headSub (F := F) a n) := (Finset.mem_filter.1 hh).2

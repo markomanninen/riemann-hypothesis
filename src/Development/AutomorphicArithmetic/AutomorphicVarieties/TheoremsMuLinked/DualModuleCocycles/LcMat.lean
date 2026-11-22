@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.Pa UpperTheory.V.Th UpperTheory.V.Th.Coc
 
@@ -33,7 +37,7 @@ theorem UpperTheory.V.Th.Coc.lc :
       rw [← hL.tr, hmulD, Matrix.trace_add, add_sub_cancel_right]
     rw [e]
     refine IsLocallyConstant.sub ?_ ?_
-    · exact (hτ.comp_continuous (continuous_mul_right h)).comp (fun y => c • y)
+    · exact (hτ.comp_continuous (continuous_mul_const h)).comp (fun y => c • y)
     · exact hρ.comp fun M => (M * d (MonoidAlgebra.single h 1)).trace
   have hspanLC : ∀ Z ∈ Submodule.span O (Set.range ρ),
       IsLocallyConstant fun g => (d (MonoidAlgebra.single g 1) * bar X Z).trace := by

@@ -1,6 +1,15 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfSt
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.OrbStPf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfSt
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.ParabSt
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FuncSt
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.BaseSt
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.MemSpanSmoothVec
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,18 +47,6 @@ theorem mul_mem_UH₂ (G : Matrix (Fin n) (Fin n) ℂ) :
   calc bᴴ * aᴴ * G * (a * b) = bᴴ * (aᴴ * G * a) * b := by simp only [Matrix.mul_assoc]
     _ = G := by rw [ha', hb']
 
-theorem smoothLin_holds : SmoothLin := by
-  intro n H _ _ G π hπ
-  exact ⟨OrbStPf.smoothVec_zero, fun c u v hu hv =>
-    OrbStPf.smoothVec_add (OrbStPf.smoothVec_smul c hu) hv⟩
-
-theorem foldLin_holds : FoldLin := by
-  intro n H _ _ G π hπ l hl c u v hu hv
-  have h := OrbStPf.word_lin (one_mem_UH G) (mul_mem_UH₂ G) hπ.2.1 (fun Y hY t => expS_mem_UH hY t) hπ.1 l hl
-    (zero_mem_lieG G) hv hu c
-  unfold dL
-  rw [add_comm (c • u), h, add_comm]
-
 theorem smooth_oneProd {G : Matrix (Fin n) (Fin n) ℂ} {π : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)}
     (hπ : IsGRep G π) {w : H} (hw : SmoothVec (lieG G) π w) :
     ∀ {d : ℕ} (Y : Fin d → Matrix (Fin n) (Fin n) ℂ), (∀ i, Y i ∈ lieG G) → ∀ t : Fin d → ℝ,
@@ -66,7 +63,7 @@ theorem smooth_oneProd {G : Matrix (Fin n) (Fin n) ℂ} {π : Matrix (Fin n) (Fi
       simp [oneProd, List.ofFn_succ]
     obtain ⟨h1, h2⟩ := ih (fun i => Y i.succ) (fun i => hY _) (fun i => t i.succ)
     rw [e, hπ.2.1 _ (expS_mem_UH (hY 0) _) _ h2]
-    exact ⟨OrbStPf.smoothVec_rep_exp (one_mem_UH G) (mul_mem_UH₂ G) hπ.2.1 (fun Y hY t => expS_mem_UH hY t) (hY 0) (t 0) h1,
+    exact ⟨OrbStPf.smoothVec_rep_exp (U := Formalism.QuantumDeterminants.UH G) (one_mem_UH G) (mul_mem_UH₂ G) hπ.2.1 (fun Y hY t => expS_mem_UH hY t) (hY 0) (t 0) h1,
       mul_mem_UH₂ G _ (expS_mem_UH (hY 0) _) _ h2⟩
 
 end Gen
@@ -89,7 +86,7 @@ theorem contDiff_append_left {N d : ℕ} (t : Fin d → ℝ) : ContDiff ℝ ∞ 
   refine contDiff_pi.2 fun j => ?_
   refine Fin.addCases (fun j => ?_) (fun j => ?_) j
   · simp only [Fin.append_left]
-    exact contDiff_apply ℝ ℝ j
+    exact contDiff_apply ℝ (fun _ => ℝ) j
   · simp only [Fin.append_right]
     exact contDiff_const
 
@@ -152,7 +149,7 @@ end Append
 theorem foldCont_holds : FoldCont := by
   intro n H _ _ G π hπ w hw l hl d Y hY
   have hexp : ∀ Y ∈ lieG G, ∀ t : ℝ, NormedSpace.exp (t • Y) ∈ Formalism.QuantumDeterminants.UH G := fun Y hY t => expS_mem_UH hY t
-  obtain ⟨Z, L, hZ, -, hval⟩ := OrbStPf.word_eval (one_mem_UH G) (mul_mem_UH₂ G) hπ.2.1 hexp l hl (zero_mem_lieG G)
+  obtain ⟨Z, L, hZ, -, hval⟩ := OrbStPf.word_eval (U := Formalism.QuantumDeterminants.UH G) (ρ := π) (Lie := lieG G) (one_mem_UH G) (mul_mem_UH₂ G) hπ.2.1 hexp l hl (zero_mem_lieG G)
   set W : Fin (l.length + 1 + d) → Matrix (Fin n) (Fin n) ℂ := Fin.append Z Y with hWdef
   have hW : ∀ i, W i ∈ lieG G := fun i =>
     Fin.addCases (fun a => by simpa [W, Fin.append_left] using hZ a) (fun b => by simpa [W, Fin.append_right] using hY b) i
@@ -184,19 +181,6 @@ theorem foldCont_holds : FoldCont := by
       fun t => OrbStPf.pds (L.map (Fin.castAdd d)) (OrbStPf.orb π W w 0) (Fin.append 0 t) from funext key]
   exact (OrbStPf.contDiff_pds _ hG).continuous.comp (continuous_append_right 0)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
-theorem sobRepM_holds (D : D7) : SobRepM D := by
-  intro S Ss M τ
-  have hds := M.ds τ
-  have hfr := M.fr_unit τ
-  have hconj : ∀ g ∈ Formalism.QuantumDeterminants.UH (gramAt D S τ),
-      M.fr τ * g * (M.fr τ)⁻¹ ∈ Formalism.MainNotions.S.UJset (M.ε τ) := fun g hg =>
-    OrbStPf.conj_mem _ _ _ _ hfr (M.fr_gram τ) hg
-  refine ⟨hds.1, OrbStPf.rep_one M τ, fun a ha b hb => OrbStPf.rep_mul M τ a b ha hb,
-    fun g hg v => hds.2.2.1.2.1 _ (hconj g hg) v, fun v => ?_⟩
-  have hc : Continuous fun g : Matrix (Fin S.rank) (Fin S.rank) ℂ => M.fr τ * g * (M.fr τ)⁻¹ :=
-    (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const
-  exact (hds.2.2.1.2.2 v).comp hc.continuousOn (fun g hg => hconj g hg)
 
 end Formalism.IndefR.Tow.SobPf
 

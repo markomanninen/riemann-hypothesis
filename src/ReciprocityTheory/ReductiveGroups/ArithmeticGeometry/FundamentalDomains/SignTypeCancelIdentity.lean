@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PosDefOfBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PosDefOfBound
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.OrthonormalChartBounds
 
@@ -21,7 +25,7 @@ lemma bound_castLE {n : ℕ} (h : n ≤ X.p0) (Z : X.Coord) (τ : X.Ψ) (y : Fin
   have hz0 : ∀ c ∉ Set.range (Fin.castLE h), z c = 0 := by
     intro c hc
     simp only [hz]
-    rw [dif_neg]
+    rw [dite_eq_right]
     intro hcn
     exact hc ⟨⟨c, hcn⟩, Fin.ext rfl⟩
   have hvec : ((Matrix.of fun (m : Fin (r - X.p0)) (b : Fin n) => Z τ m (Fin.castLE h b)).map (starRingEnd ℂ) *ᵥ y) =
@@ -47,7 +51,8 @@ lemma bound_castLE {n : ℕ} (h : n ≤ X.p0) (Z : X.Coord) (τ : X.Ψ) (y : Fin
     rw [← hconj (Matrix.of (Z τ) *ᵥ fun c => conj (w c))]
     congr 1
     funext m
-    simp [Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum]
   have hop0 : 0 ≤ Data.opN (Matrix.of (Z τ)) := by
     unfold Data.opN
     apply Real.sSup_nonneg
@@ -68,12 +73,12 @@ lemma det_lowBlock (Z : X.Coord) (τ : X.Ψ) : (X.lowBlock Z τ).det = 1 := by
   · apply Finset.prod_eq_one
     intro a _
     simp only [Data.lowBlock, Matrix.of_apply, if_true]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
     simp
   · intro a b hab
     have hab' : a < b := hab
     simp only [Data.lowBlock, Matrix.of_apply]
-    rw [if_neg (ne_of_lt hab'), dif_neg]
+    rw [if_neg (ne_of_lt hab'), dite_eq_right]
     · simp
     · intro hh
       have : (a : ℕ) < b := hab'

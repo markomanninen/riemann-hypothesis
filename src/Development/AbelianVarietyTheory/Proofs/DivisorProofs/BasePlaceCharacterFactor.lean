@@ -1,21 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFits
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GSEqZeroOfLt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMulPowIntegral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSplitChartSplitChart
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.CentralInvolutionRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EpsMulOfCondExp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussMulUnram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuedUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalGaussSumIntegerDvdResidueCardPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFactorNonzero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelCharactersUnramifiedOffLevelPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFits
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GSEqZeroOfLt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMulPowIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSplitChartSplitChart
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.CentralInvolutionRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EpsMulOfCondExp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussMulUnram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuedUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalGaussSumIntegerDvdResidueCardPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFactorNonzero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelCharactersUnramifiedOffLevelPlaces
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset
 open Formalism.DivisionValues (vw)
 open Formalism.L2.Host (HChar)
@@ -64,12 +69,14 @@ namespace GlobalTheory.SqStepArith
 open Formalism.L2.Host in
 theorem levelLe_mul {L : Type} [Field L] [NumberField L] {a b : HChar L} {w : HeightOneSpectrum (𝓞 L)} {n : ℕ}
     (ha : a.LevelLe w n) (hb : b.LevelLe w n) : (a * b).LevelLe w n := fun x hx h => by
-  rw [HChar.loc_mul, ha x hx h, hb x hx h, one_mul]
+  change a.loc w x * b.loc w x = 1
+  rw [ha x hx h, hb x hx h, one_mul]
 
 open Formalism.L2.Host in
 theorem levelLe_inv {L : Type} [Field L] [NumberField L] {a : HChar L} {w : HeightOneSpectrum (𝓞 L)} {n : ℕ}
     (ha : a.LevelLe w n) : (a⁻¹).LevelLe w n := fun x hx h => by
-  rw [HChar.loc_inv, ha x hx h, inv_one]
+  change (a.loc w x)⁻¹ = 1
+  rw [ha x hx h, inv_one]
 
 open Formalism.L2.Host in
 theorem levelLe_mono {L : Type} [Field L] [NumberField L] {a : HChar L} {w : HeightOneSpectrum (𝓞 L)} {m n : ℕ}
@@ -77,7 +84,7 @@ theorem levelLe_mono {L : Type} [Field L] [NumberField L] {a : HChar L} {w : Hei
   ha x hx (h.trans (WithZero.exp_le_exp.2 (by omega)))
 
 theorem nuH_levelLe_two {D : D7} {T : Type} {Lc : LevCh D T} {sc : Consts} (G : GridData Lc sc) {μ₀ : T} (hL : Lc.Is μ₀)
-    (i j : Fin D.R.m) (t : T) (PP : HeightOneSpectrum (𝓞 D.host.E)) (hPP : PP.under (𝓞 D.host.F) ∈ S1 D) :
+    (i j : Fin D.R.m) (t : T) (PP : HeightOneSpectrum (𝓞 D.host.E)) (hPP : (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) ∈ S1 D) :
     (nuH G t i j).LevelLe PP 2 ∧ ¬ (nuH G t i j).LevelLe PP 1 := by
   have hm : 1 ≤ D.R.m - (i : ℕ) ∧ D.R.m - (i : ℕ) ≤ D.R.m := ⟨by omega, by omega⟩
   have hchi := G.ch.lev1 _ hm.1 hm.2 PP hPP
@@ -91,8 +98,8 @@ theorem nuH_levelLe_two {D : D7} {T : Type} {Lc : LevCh D T} {sc : Consts} (G : 
     rw [e, div_eq_mul_inv]
     exact levelLe_mul (levelLe_mul hmu hxi) (levelLe_inv h)
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 
+attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 theorem condExp_comp_eq_two {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     {v : HeightOneSpectrum (𝓞 F)} (τ : E →ₐ[F] Fv F v) (χ : HChar E)
     (h2 : χ.LevelLe (GlobalTheory.AdelicU.splitPrime τ) 2) (h1 : ¬ χ.LevelLe (GlobalTheory.AdelicU.splitPrime τ) 1) :
@@ -134,8 +141,8 @@ theorem factor_unr {F : Type} [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ
   rw [he]
   field_simp
 
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels in
 theorem factor_ram {F : Type} [Field F] [NumberField F] {K : Type} [Field K] [NumberField K] (σ : K →+* ℂ)
     (ψ : AddChar (AF F) ℂ) {v : HeightOneSpectrum (𝓞 F)} (ν₀ ξ : (Fv F v)ˣ →* ℂˣ) (s : (Fv F v)ˣ) (z : ℤ) (c : ℕ)
     (hc0 : condExp ν₀ = c) (hc1 : condExp (ν₀ * ξ) = c) (h1 : 1 ≤ c) (hψ : PsiUnr ψ v)
@@ -164,8 +171,8 @@ end GlobalTheory.SqStepArith
 
 namespace GlobalTheory.SqStepArith
 
-open Formalism.L2.Host in
 
+open Formalism.L2.Host in
 theorem nuH_loc_mem {D : D7} {T : Type} {Lc : LevCh D T} {sc : Consts} {G : GridData Lc sc} {μ₀ : T} {W : G.Weil}
     {S : GridChoice W Set.univ} (hN : NumbersIn D.what₂.embLL S μ₀) (i j : Fin D.R.m) (t : T)
     (w : HeightOneSpectrum (𝓞 D.host.E)) (y : (w.adicCompletion D.host.E)ˣ) :
@@ -175,12 +182,13 @@ theorem nuH_loc_mem {D : D7} {T : Type} {Lc : LevCh D T} {sc : Consts} {G : Grid
   have h2 : _ ∈ D.what₂.embLL.fieldRange := RingHom.mem_fieldRange.2 (hN.chars.xi t w y)
   have h3 : _ ∈ D.what₂.embLL.fieldRange := RingHom.mem_fieldRange.2 (hN.chars.chi _ hm.1 hm.2 w y)
   refine RingHom.mem_fieldRange.1 ?_
-  rw [nuH, div_eq_mul_inv, HChar.loc_mul, HChar.loc_mul, HChar.loc_inv, Units.val_mul, Units.val_mul,
-    Units.val_inv_eq_inv_val]
+  change (((Lc.C.mu0 j).loc w y * (Lc.xiH t).loc w y *
+    ((G.ch.chiH (D.R.m - i)).loc w y)⁻¹ : ℂˣ) : ℂ) ∈ D.what₂.embLL.fieldRange
+  rw [Units.val_mul, Units.val_mul, Units.val_inv_eq_inv_val]
   exact mul_mem (mul_mem h1 h2) (inv_mem h3)
 
-open Formalism.L2.Host in
 
+open Formalism.L2.Host in
 theorem isUnitAt_complMap {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     {v : HeightOneSpectrum (𝓞 F)} (τ : E →ₐ[F] Fv F v) (x : (Fv F v)ˣ) (h1 : (x : Fv F v) ∈ v.adicCompletionIntegers F)
     (h2 : ((x⁻¹ : (Fv F v)ˣ) : Fv F v) ∈ v.adicCompletionIntegers F) :
@@ -200,9 +208,9 @@ namespace GlobalTheory.SqStepArith
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
+
 set_option maxHeartbeats 1000000 in
 open Formalism.L2.Host in
-
 theorem base_place_factor_zero : ∀ {D : D7} {T : Type} {Lc : LevCh D T} {sc : Consts} (G : GridData Lc sc) {μ₀ : T}, Lc.Is μ₀ →
     ∀ (W : G.Weil) (S : GridChoice W Set.univ), NumbersIn D.what₂.embLL S μ₀ → ∀ (i j : Fin D.R.m) (t : T)
     (Bs : Base D.host.F D.host.E), GlobalTheory.SqStep.BaseFits G W i j t Bs → ∀ (v : Bs.P), v.1 ∈ G.pl.S0 → ∀ (s : ℤˣ) (z : ℤ),

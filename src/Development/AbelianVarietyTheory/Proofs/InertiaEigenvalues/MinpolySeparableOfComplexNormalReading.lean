@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.OffRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.OffRange
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.IntegralHeckeForms Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain Polynomial GlobalTheory.LiftLeaf GlobalTheory.SupLaw
 open scoped TensorProduct
@@ -28,7 +32,7 @@ theorem aeval_adj (U : Submodule ℂ H) (S S' : Module.End ℂ H) (hS : ∀ u �
   · intro a u hu v hv
     simp [Module.algebraMap_end_apply, inner_smul_left, inner_smul_right, mul_comm]
   · intro p r hp hr u hu v hv
-    simp only [map_add, Polynomial.map_add, LinearMap.add_apply, inner_add_left, inner_add_right,
+    simp only [map_add (f := _), Polynomial.map_add (f := _), LinearMap.add_apply, inner_add_left, inner_add_right,
       hp u hu v hv, hr u hu v hv]
   · intro n a ih u hu v hv
     have e : (Polynomial.C a * Polynomial.X ^ (n + 1) : Polynomial ℂ)
@@ -48,7 +52,7 @@ theorem aeval_comm (U : Submodule ℂ H) (S B : Module.End ℂ H) (hS : ∀ u �
   · intro a u hu
     simp [Module.algebraMap_end_apply]
   · intro p r hp hr u hu
-    simp only [map_add, LinearMap.add_apply, hp u hu, hr u hu]
+    simp only [map_add (f := _), LinearMap.add_apply, hp u hu, hr u hu]
   · intro n a ih u hu
     rw [pow_succ, ← mul_assoc, map_mul, Polynomial.aeval_X]
     simp only [Module.End.mul_apply]
@@ -100,7 +104,7 @@ theorem minpoly_separable_of_normal : ∀ (K V H : Type) [Field K] [AddCommGroup
     · intro a x
       simp [Module.algebraMap_end_apply]
     · intro p r hp hr x
-      simp only [map_add, Polynomial.map_add, LinearMap.add_apply, hp, hr]
+      simp only [map_add (f := _), Polynomial.map_add (f := _), LinearMap.add_apply, hp, hr]
     · intro n a ih x
       have e : (Polynomial.C a * Polynomial.X ^ (n + 1) : Polynomial K)
           = Polynomial.C a * Polynomial.X ^ n * Polynomial.X := by ring

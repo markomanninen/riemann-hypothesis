@@ -1,21 +1,25 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsFinFlatSub
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.QuotientByFiniteFlatStatement
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.ZarhinStatement
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateDatumStatement
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.OrdinaryCurveStatement
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
-import ReciprocityTheory.DualLattices.CharTableIsUnit
-import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
-import ReciprocityTheory.DualLattices.FourierMapSmulLambdaWeight
-import ReciprocityTheory.DualLattices.VIntCastLtOneOfDvd
-import ReciprocityTheory.DualLattices.PrimeHopfOrderOfAddEquiv
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderContainsAddCharactersStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TensorProductHopfOrdersStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsFinFlatSub
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.QuotientByFiniteFlatStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.ZarhinStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateDatumStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.OrdinaryCurveStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+public import ReciprocityTheory.DualLattices.CharTableIsUnit
+public import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
+public import ReciprocityTheory.DualLattices.FourierMapSmulLambdaWeight
+public import ReciprocityTheory.DualLattices.VIntCastLtOneOfDvd
+public import ReciprocityTheory.DualLattices.PrimeHopfOrderOfAddEquiv
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderContainsAddCharactersStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TensorProductHopfOrdersStatement
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
@@ -375,7 +379,7 @@ theorem ord_split : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClos
     · rintro rfl
       simpa using hsm a k hkK
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨a, b⟩ h
     have hb : b = 0 := (hK2 (a, b)).1 (by rw [h]; exact K.zero_mem)
     subst hb
@@ -420,7 +424,7 @@ theorem ord_split : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClos
       refine ⟨_, hcoset (-(f (0, b))), ?_⟩
       funext z
       have h1 : e z + -(f (0, b)) = f (z.1, z.2 - b) := by
-        rw [he, ← map_neg, ← map_add]
+        rw [he, ← map_neg, ← map_add (f := _)]
         congr 1
         ext <;> simp [sub_eq_add_neg]
       simp only [LinearMap.funLeft_apply, h1]

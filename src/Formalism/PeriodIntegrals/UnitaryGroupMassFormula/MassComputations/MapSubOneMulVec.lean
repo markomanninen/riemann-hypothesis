@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.UnipotentFundamentalDomain
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.FrameStd
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.UnipotentFundamentalDomain
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.FrameStd
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem down_span (hψ : Function.Injective ψ) (e K : Fin r → Fin n → E)
       have h1 : ∀ b, (∑ j, ψ (K b j) * ψ (e c j)) = if b = c then 1 else 0 := by
         intro b
         have := congrArg ψ (hK b c)
-        simp only [map_sum, map_mul] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul] at this
         rw [this]; split_ifs <;> simp
       simp only [h1, ite_smul, one_smul, zero_smul]
       rw [Finset.sum_ite_eq' T c]
@@ -80,7 +85,8 @@ theorem down_span (hψ : Function.Injective ψ) (e K : Fin r → Fin n → E)
   have h2 : (fun i => ψ (w i)) = fun i => ψ ((∑ b ∈ T, (∑ j, K b j * w j) • e b) i) := by
     rw [h]
     funext i
-    simp [Finset.sum_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finset.sum_apply, map_sum, map_mul]
   have h3 : w = ∑ b ∈ T, (∑ j, K b j * w j) • e b := by
     funext i
     exact hψ (congrFun h2 i)
@@ -112,7 +118,8 @@ theorem perp_up (M : Matrix (Fin n) (Fin n) E) (e f K : Fin r → Fin n → E)
     rw [h1, h2, sub_self]
   have hy' : y = ∑ j, y j • (fun i => ψ (p j i)) := by
     funext i
-    simp only [hp, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.sub_apply, map_sub, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hp, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.sub_apply, map_sub, map_sum, map_mul,
       mul_sub, Finset.sum_sub_distrib, Finset.mul_sum]
     have h1 : ∑ j, y j * ψ ((Pi.single j (1 : E) : Fin n → E) i) = y i := by
       simp [Pi.single_apply]

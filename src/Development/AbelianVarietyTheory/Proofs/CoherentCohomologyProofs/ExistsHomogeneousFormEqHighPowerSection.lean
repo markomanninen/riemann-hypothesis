@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsDehomogenisationTwistedChartStatement
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsXPowSmulEqZeroOfEqXSubOneSmul
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsSmulOfTwCoord
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemSpanOfSaturatingOfLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsDehomogenisationTwistedChartStatement
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsXPowSmulEqZeroOfEqXSubOneSmul
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsSmulOfTwCoord
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemSpanOfSaturatingOfLe
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory AlgebraicGeometry DirectSum TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -51,7 +55,7 @@ theorem exists_X_pow_smul_mem_span_of_dehomogenisation {ι : Type} {R : Type} [C
     have h₂ := grSMul_mem 𝒢 hF' hg
     rw [zero_add] at h₂
     have hFF : π F = π F' := by
-      rw [e, map_add, smul_eq_mul, map_mul, map_sub, hi, map_one, sub_self, zero_mul, add_zero]
+      rw [e, map_add (f := _), smul_eq_mul, map_mul, map_sub, hi, map_one, sub_self, zero_mul, add_zero]
     obtain ⟨k, hk⟩ := hker _ _ (sub_mem h₁ h₂) (by
       rw [map_sub, map_smulₛₗ, map_smulₛₗ, map_pow, hi, one_pow, one_smul, hb, hFF, sub_self])
     refine ⟨k + (n₀ - n).toNat, ?_⟩

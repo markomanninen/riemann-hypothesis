@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyValExtOfOverLa
-import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyValExtOfOverLa
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfB
+
+@[expose] public section
 
 set_option autoImplicit false
 

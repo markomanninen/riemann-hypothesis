@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IopNorm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IopNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,9 +127,6 @@ theorem HfIntRec_of_gen (h : HfGenRec) : HfIntRec := by
   rintro x ⟨c, hc, A, hA', rfl⟩ y ⟨c', hc', B, hB', rfl⟩
   rw [Hf_smul]
   exact h D cc hcc δ hδ h0 N N' L L' hA c hc c' hc' A hA' B hB'
-
-theorem LinkThIndep_of_gen (hA : HfGenRec) (hB : SelfDualRec) : LinkThIndep :=
-  LinkThIndep_of_parts (HfIntRec_of_gen hA) hB
 
 end Formalism.L2.Ker.Cd.IntegralLatticeDensity
 

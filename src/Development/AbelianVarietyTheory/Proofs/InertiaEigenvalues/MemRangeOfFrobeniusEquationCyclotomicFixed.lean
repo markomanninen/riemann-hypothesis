@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffZeroEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RootEqOfNormLt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqTopOfSpanImage
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicLevelSubgroupMemWachSubgroups
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InclWFrobIter
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffZeroEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RootEqOfNormLt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqTopOfSpanImage
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicLevelSubgroupMemWachSubgroups
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InclWFrobIter
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Decompl
 open scoped TensorProduct
@@ -25,7 +29,7 @@ def modSub (io : E →+* R) (p : ℕ) : Subring R where
   one_mem' := ⟨1, 0, by simp⟩
   add_mem' := by
     rintro _ _ ⟨a, r, rfl⟩ ⟨b, s, rfl⟩
-    exact ⟨a + b, r + s, by rw [map_add]; ring⟩
+    exact ⟨a + b, r + s, by rw [map_add (f := _)]; ring⟩
   zero_mem' := ⟨0, 0, by simp⟩
   neg_mem' := by
     rintro _ ⟨a, r, rfl⟩
@@ -50,7 +54,7 @@ def perfSub (φ : R →+* R) (D : Subring R) (hD : ∀ x ∈ D, φ x ∈ D) : Su
   add_mem' := by
     rintro a b ⟨N, h⟩ ⟨N', h'⟩
     refine ⟨max N N', ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem (pow_mem_of_le hD (le_max_left _ _) h) (pow_mem_of_le hD (le_max_right _ _) h')
   zero_mem' := ⟨0, by rw [map_zero]; exact zero_mem _⟩
   neg_mem' := by
@@ -60,7 +64,7 @@ def perfSub (φ : R →+* R) (D : Subring R) (hD : ∀ x ∈ D, φ x ∈ D) : Su
 theorem modSub_stable {io : E →+* R} {φ : R →+* R} {φE : E → E} (p : ℕ)
     (hφ : ∀ e, io (φE e) = φ (io e)) : ∀ x ∈ modSub io p, φ x ∈ modSub io p := by
   rintro _ ⟨e, r, rfl⟩
-  exact ⟨φE e, φ r, by rw [map_add, map_mul, map_natCast, hφ]⟩
+  exact ⟨φE e, φ r, by rw [map_add (f := _), map_mul, map_natCast, hφ]⟩
 
 theorem approx_step {ι : A →+* R} {p : ℕ} {t : R} {τ : A} (hτ : ι τ = t) (ht : IsUnit t)
     (hp : 2 ≤ p) {φ : R →+* R} {D : Subring R} (hD : ∀ x ∈ D, φ x ∈ D)
@@ -83,10 +87,11 @@ theorem approx_step {ι : A →+* R} {p : ℕ} {t : R} {τ : A} (hτ : ι τ = t
     | succ N ih =>
       intro u h1 h2
       refine ih (fun i => ∑ j, M i j * φ (u j) + c i) (fun i => ?_) (fun i => ?_)
-      · rw [map_add, map_sum]
-        refine add_mem (sum_mem fun j _ => ?_) (pow_mem_of_le hD (Nat.zero_le N) (hc i))
-        rw [map_mul]
-        exact mul_mem (pow_mem_of_le hD (Nat.zero_le N) (hM i j)) (h1 j)
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [map_add (f := _), map_sum]
+          refine add_mem (sum_mem fun j _ => ?_) (pow_mem_of_le hD (Nat.zero_le N) (hc i))
+          rw [map_mul]
+          exact mul_mem (pow_mem_of_le hD (Nat.zero_le N) (hM i j)) (h1 j)
       · have e : w i - (∑ j, M i j * φ (u j) + c i) = ∑ j, M i j * φ (w j - u j) := by
           rw [hw i]
           simp only [map_sub, mul_sub, Finset.sum_sub_distrib]
@@ -127,8 +132,9 @@ theorem padic_step {io : E →+* R} {φ : R →+* R} {φE : E → E} {p : ℕ}
           (p : R) * (r i - ∑ j, io (M i j) * φ (r j)) := by
         intro i
         have := hc i
-        simp only [her, map_add, map_mul, map_natCast, mul_add, Finset.sum_add_distrib] at this
-        simp only [map_sub, map_add, map_sum, map_mul, hφ, mul_sub, Finset.mul_sum]
+        simp only [her, map_add (f := _), map_mul, map_natCast, mul_add, Finset.sum_add_distrib] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sub, map_add (f := _), map_sum, map_mul, hφ, mul_sub, Finset.mul_sum]
         have e2 : ∑ j, (p : R) * (io (M i j) * φ (r j)) = ∑ j, io (M i j) * (p * φ (r j)) :=
           Finset.sum_congr rfl fun j _ => by ring
         rw [e2]
@@ -143,7 +149,7 @@ theorem padic_step {io : E →+* R} {φ : R →+* R} {φE : E → E} {p : ℕ}
           rw [← sub_eq_zero]
           apply tf
           linear_combination -this) i
-      exact ⟨e i + p * e', r', by rw [her, h, map_add, map_mul, map_natCast]; ring⟩
+      exact ⟨e i + p * e', r', by rw [her, h, map_add (f := _), map_mul, map_natCast]; ring⟩
   have satk : ∀ (k : ℕ) e r, io e = (p : R) ^ k * r → ∃ e', e = (p : E) ^ k * e' := by
     intro k
     induction k with
@@ -215,7 +221,8 @@ theorem exists_series_sum (a : ℕ → LetA O n) :
       - ∑ j ∈ Finset.range m, X ^ j * a j i := fun i => by
     rw [X_pow_dvd_iff]
     intro k hk
-    rw [map_sub, coeff_mk, map_sum, map_sum, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, coeff_mk, map_sum, map_sum, sub_eq_zero]
     refine Finset.sum_subset (Finset.range_subset_range.2 hk) fun j _ hj => ?_
     rw [coeff_X_pow_mul', if_neg]
     simpa using hj
@@ -302,7 +309,7 @@ theorem coeff_dvd {σ₀ : LetA O n → A} (hσ₀ : ∀ f, σ f = ι (σ₀ f))
       rw [Pi.add_apply, add_comm, hg]
       exact eq_X_mul_shift_add_const (f i)
     have hb := congrArg σ ha
-    rw [map_add, map_mul, ht] at hb
+    rw [map_add (f := _), map_mul, ht] at hb
     have h1 : Near ι p t 1 (σ (cst fun i => constantCoeff (f i))) := by
       have := (hf.mono hτ (Nat.le_add_left 1 m)).sub (Near.pow_mul 1 (σ₀ g))
       rwa [← hσ₀, hb, pow_one, add_sub_cancel_right] at this
@@ -358,7 +365,7 @@ theorem eq_of_near {σ₀ : LetA O n → A} (hσ₀ : ∀ f, io (a f) = ι (σ�
     have := (h.mul (Near.pow_mul k 1)).sub (Near.of_mul _ (io e'))
     rwa [map_one, mul_one, ← h1, sub_sub_cancel] at this
   obtain ⟨b, b', rfl⟩ := eq_pow_mul_add f (m + k) (hc _ _ h2)
-  simp only [map_add, map_mul, map_natCast, map_pow, pow_add] at hf ⊢
+  simp only [map_add (f := _), map_mul, map_natCast, map_pow, pow_add] at hf ⊢
   obtain ⟨u, hu⟩ := (hπ.pow k).exists_right_inv
   exact ⟨b, (e' + a b') * u, by linear_combination u * hf - (e - a letπ ^ m * a b) * hu⟩
 
@@ -385,18 +392,18 @@ theorem mem_modSub_of_limit {σ₀ : LetA O n → A} (hσ₀ : ∀ f, io (a f) =
     induction m with
     | zero => simp
     | succ m ih =>
-      rw [Finset.sum_range_succ, Finset.sum_range_succ, map_add]
+      rw [Finset.sum_range_succ, Finset.sum_range_succ, map_add (f := _)]
       linear_combination ih + hb m
   obtain ⟨r, hr⟩ := meet (x - io (e 0 + a c)) fun m => by
     obtain ⟨d, hd⟩ := hc m
     have h3 := congrArg (fun y => io (a y)) hd
     have h4 := congrArg io (h2 m)
-    simp only [map_sub, map_add, map_mul, map_pow, map_natCast, ht] at h3 h4
+    simp only [map_sub, map_add (f := _), map_mul, map_pow, map_natCast, ht] at h3 h4
     have := ((he m).add (Near.of_mul m (io (∑ j ∈ Finset.range m, e' j)))).sub
       (Near.pow_mul m (σ₀ d))
     rw [← hσ₀] at this
     convert this using 1
-    rw [map_add]
+    rw [map_add (f := _)]
     linear_combination h4 - h3
   exact ⟨_, r, eq_add_of_sub_eq' hr⟩
 
@@ -724,8 +731,8 @@ theorem lift_closure {LL : FinExt l} (D : Subring (RW LL)) (T : Set (OCb l))
   obtain ⟨w, hw, e⟩ := this hy
   exact ⟨w, e, hw⟩
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem mem_range_of_fixed : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL) (W : LocWach (P.PD K) ↥LL.1 ↥(OL LL) (P.v LL) (Module.finrank ℚ_[l] ↥(K0 K))) (E : EtSit P AI K s LL h W) (ι : Type) [Fintype ι] (M : ι → ι → W.EE) (c : ι → W.EE) (w : ι → RW LL), (∀ g : ↥(GK K), W.resΓ g = 1 → ∀ i, AI.gRW LL (g : GQ l) (w i) = w i) → (∀ i, w i = ∑ j, E.tie.ioE (M i j) * φRW LL (w j) + E.tie.ioE (c i)) → ∀ i, ∃ e : W.EE, E.tie.ioE e = w i := by
   intro l _ P AI K s LL h W E I _ M c w hw hc i
   have hO : Function.Injective (algebraMap ↥(OL LL) ↥LL.1) := Subtype.val_injective

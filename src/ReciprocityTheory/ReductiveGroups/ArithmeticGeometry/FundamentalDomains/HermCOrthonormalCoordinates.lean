@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LowBlock
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LowBlock
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.OrthonormalChartBounds
 
@@ -62,7 +66,8 @@ private lemma hermC_fin_sum_smul_right_mul_conj {n : ℕ} {τ : E →+* ℂ} {G 
     (q : Fin n → ℂ) (f : Fin n → Fin r → ℂ) :
     hermC τ G u (∑ j, q j • f j) = ∑ j, hermC τ G u (f j) * conj (q j) := by
   unfold hermC
-  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.sum_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.sum_mul,
     Finset.mul_sum]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => ?_
@@ -134,7 +139,7 @@ lemma mjg_pb (Z : X.Coord) (τ : X.Ψ) (δ : Fin X.p0 → ℂ) :
     simp at this
     omega
   have hlt : X.p0 ≤ X.p0 + (m : ℕ) ∧ ((Fin.castLE X.p0_le c : Fin r) : ℕ) < X.p0 := ⟨by omega, by simp⟩
-  rw [if_neg hne, dif_pos hlt, zero_add, mul_comm]
+  rw [if_neg hne, dite_eq_left hlt, zero_add, mul_comm]
   congr 2 <;> ext <;> simp
 
 lemma mj_sum_colP (x : Frame X.Ψ r) (Z : X.Coord) (τ : X.Ψ) (δ : Fin X.p0 → ℂ) :
@@ -184,7 +189,8 @@ lemma mj_coord {x : Frame X.Ψ r} (ho : X.IsOrtho x) (Z : X.Coord) (hy : X.xZ x 
     congr 1
     simp only [← hβ]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [hγ a, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hγ a, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_mul, hconj]
     ring

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DvdTraceOfBalancedTensor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormEigenvalueLeOneOfIntegralMatrixUltrametricStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DvdTraceOfBalancedTensor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormEigenvalueLeOneOfIntegralMatrixUltrametricStatement
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -28,7 +32,7 @@ theorem iSupIndep_of_joint_eigen {K E I : Type} [Field K] [AddCommGroup E] [Modu
       obtain ⟨w, hw, u, hu, hsum⟩ := hv
       obtain ⟨i, hi⟩ := Function.ne_iff.mp hx.1
       have e : (x i - y i) • v = h i u - y i • u := by
-        rw [sub_smul, ← hV x v hvx i, ← hsum, map_add, hV y w hw i, smul_add]; abel
+        rw [sub_smul, ← hV x v hvx i, ← hsum, map_add (f := _), hV y w hw i, smul_add]; abel
       have h0 := ih hx.2 ((x i - y i) • v) (Submodule.smul_mem _ _ hvx)
         (e ▸ Submodule.sub_mem _ (stab s i u hu) (Submodule.smul_mem _ _ hu))
       exact (smul_eq_zero.mp h0).resolve_left (sub_ne_zero.mpr hi)
@@ -58,7 +62,7 @@ theorem finite_joint_eigen {K I : Type} [Field K] {n : ℕ} (T : I → Matrix (F
   have hfin : Finite {θ // V θ ≠ ⊥} := by
     haveI := hind.fintypeNeBotOfFiniteDimensional
     infer_instance
-  refine (Set.finite_coe_iff.mp hfin).subset ?_
+  refine (Set.finite_coe_iff (s := {θ | V θ ≠ ⊥})).mp hfin |>.subset ?_
   rintro θ ⟨c, hc0, hc⟩
   show V θ ≠ ⊥
   rw [Submodule.ne_bot_iff]
@@ -76,7 +80,7 @@ theorem mulVec_eval₂ {O K I : Type} [CommRing O] [Field K] (emb : O →+* K) {
     ext j
     simp [Matrix.mulVec_diagonal]
   | add p q hp hq =>
-    rw [map_add, Matrix.map_add _ (map_add emb), Matrix.add_mulVec, hp, hq, eval₂_add, add_smul]
+    rw [map_add (f := _), Matrix.map_add _ (map_add emb), Matrix.add_mulVec, hp, hq, eval₂_add, add_smul]
   | mul_X p i hp =>
     rw [map_mul, Matrix.map_mul, ← Matrix.mulVec_mulVec, hc, Matrix.mulVec_smul, hp, eval₂_mul,
       eval₂_X, smul_smul, mul_comm]

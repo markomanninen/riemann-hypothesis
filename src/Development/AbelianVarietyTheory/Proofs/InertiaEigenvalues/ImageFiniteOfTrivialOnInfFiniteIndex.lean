@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -13,7 +17,7 @@ theorem image_finite_of_trivial_on_inf_finiteIndex : ∀ (G Q : Type) [Group G] 
   refine ⟨(g : G ⧸ H), ?_⟩
   have hex : ∃ g' ∈ J, (g' : G ⧸ H) = g := ⟨g, hg, rfl⟩
   dsimp only
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨hJ, hq⟩ := hex.choose_spec
   have hmem : (hex.choose)⁻¹ * g ∈ H := QuotientGroup.eq.mp hq
   have h1 := hρ _ (J.mul_mem (J.inv_mem hJ) hg) hmem

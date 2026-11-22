@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowForm
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 
 namespace GlobalTheory
@@ -25,7 +30,7 @@ theorem norm_iteratedFDeriv_diag_multilinear_le (E : Type) [NormedAddCommGroup E
         ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _
     _ ≤ ‖iteratedFDeriv ℝ i (⇑f) (L y)‖ * 1 := by
         gcongr
-        exact Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun _ _ => hLn)
+        exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun _ _ => hLn)
     _ = ‖iteratedFDeriv ℝ i (⇑f) (L y)‖ := mul_one _
     _ ≤ (Fintype.card (Fin j)).descFactorial i * ‖f‖ * ‖L y‖ ^ (Fintype.card (Fin j) - i) :=
         f.norm_iteratedFDeriv_le i (L y)

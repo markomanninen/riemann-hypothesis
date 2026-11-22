@@ -1,7 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittExtensionSumMulMiddleCoordinate
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaSeriesSchwartzBruhatContinuousSchrodinger
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittExtensionSumMulMiddleCoordinate
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaSeriesSchwartzBruhatContinuousSchrodinger
+
+namespace I195MixedCoordinates_fba5a936e8e43b62cb67e97a
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+end I195MixedCoordinates_fba5a936e8e43b62cb67e97a
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,6 +41,8 @@ variable {D : D7}
 theorem finite_rat_mem {m n : ℕ} (K : Set (Mx D m n)) (hK : IsCompact K) :
     {γ : Matrix (Fin m) (Fin n) D.host.E | rat γ ∈ K}.Finite := by
   obtain ⟨hg, hlc, hsc, ht2, hdisc, -⟩ := lattice_Mx D m n
+  haveI : T2Space (Mx D m n) := ht2
+  haveI : T1Space (Mx D m n) := @T2Space.t1Space _ _ ht2
   have hcl : IsClosed (ratMx D m n : Set (Mx D m n)) := AddSubgroup.isClosed_of_discrete
   have hS : IsCompact ((Subtype.val : ratMx D m n → Mx D m n) ⁻¹' K) :=
     hcl.isClosedEmbedding_subtypeVal.isCompact_preimage hK
@@ -28,7 +50,7 @@ theorem finite_rat_mem {m n : ℕ} (K : Set (Mx D m n)) (hK : IsCompact K) :
   refine hfin.subset fun γ hγ => ?_
   exact ⟨⟨rat γ, γ, rfl⟩, hγ, rfl⟩
 
-theorem mixS_poinX : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (v : VolM D T.rank ρ) (β : Mx D T.rank ρ → ℂ), IsBump β → ∀ x, d.mixS T ψ v.μ v.𝓕 (poinX ψ d T β) x 0 = β x := by
+theorem mixS_poinX : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (v : VolM D T.rank ρ) (β : Mx D T.rank ρ → ℂ), IsBump β → ∀ x, (_root_.I195MixedCoordinates_fba5a936e8e43b62cb67e97a.source d) T ψ v.μ v.𝓕 (poinX ψ d T β) x 0 = β x := by
   intro D ψ hψ S S₀ T ρ d v β hβ x
   have h := v.covol
   have hψc : Continuous ψ := hψ.1.1
@@ -58,8 +80,10 @@ theorem mixS_poinX : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D 
   have hF := hasSum_integral_of_summable_integral_norm (μ := v.μ.restrict v.𝓕)
     (F := fun (ξ : Matrix (Fin T.rank) (Fin ρ) D.host.E) a =>
       ψ (symplO S T (d.extX T (rat ξ)) (d.extY T a)) * β (x + rat ξ)) (fun ξ => ?_) ?_
-  · rw [HypDec.mixS]
-    simp only [key]
+  · rw [_root_.I195MixedCoordinates_fba5a936e8e43b62cb67e97a.source]
+    change (∫ a in v.𝓕, heisO ψ S T (d.extY T a) (heisO ψ S T (d.extX T x)
+      (heisO ψ S T (d.ext0 T 0) (poinX ψ d T β))) 0 ∂v.μ) = β x
+    simp_rw [key]
     refine hF.unique ?_
     have h0 : ∫ a in v.𝓕, ψ (symplO S T (d.extX T (rat 0)) (d.extY T a)) * β (x + rat 0) ∂v.μ = β x := by
       simp only [rat_zero, map_zero, GlobalTheory.Core.Rk.ThetaOf.symplO_eq_add, symplOH_zero_left, add_zero,
@@ -71,7 +95,7 @@ theorem mixS_poinX : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D 
   · refine Integrable.mul_const (Integrable.of_bound ?_ 1 (Filter.Eventually.of_forall fun a => (hn _).le)) _
     exact (hψc.comp (GlobalTheory.Core.Rk.ThetaOf.continuous_symplO continuous_const hY)).measurable.aestronglyMeasurable
   · simp only [norm_mul, hn, one_mul, setIntegral_const, hone, one_smul]
-    refine summable_of_finite_support (hfin.subset fun ξ hξ => ?_)
+    refine summable_of_hasFiniteSupport (hfin.subset fun ξ hξ => ?_)
     exact fun h0 => (Function.mem_support.1 hξ) (by simp only [h0, norm_zero])
 
 end GlobalTheory.BumpMixSum

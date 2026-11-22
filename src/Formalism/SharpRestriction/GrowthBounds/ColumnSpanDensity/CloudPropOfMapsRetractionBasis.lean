@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.CloudCount
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LemmaSMat
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.CloudCount
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LemmaSMat
+
+@[expose] public section
 
 noncomputable section
 

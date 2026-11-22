@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,8 +23,8 @@ variable {l : ℕ} [Fact l.Prime] {ι : Type} [DecidableEq ι] {N : ℕ} (F : Fr
 theorem mem_forms {f : F.G → W} : f ∈ Forms F.O (A := alg F.O N lam) F.Γ jK W ↔
     ∀ (γ : F.Γ) (g : F.G) (κ : F.K), f ((γ : F.G) * g * κ) = jK κ⁻¹ • f g := Iff.rfl
 
-variable {F lam jK} in
 
+variable {F lam jK} in
 theorem jK_eq (hJ : F.IsJ lam jK) {κ κ' : F.K} (h1 : F.kap κ' = F.kap κ) (h2 : F.chi κ' = F.chi κ) : jK κ' = jK κ := by
   rw [hJ κ', hJ κ, h1, h2]
 
@@ -34,8 +38,8 @@ theorem jK_inv_congr {κ κ' : F.K} (h : jK κ' = jK κ) : jK κ'⁻¹ = jK κ�
 
 theorem grpA_one : grpA F.O N lam 1 = 1 := Subtype.ext (by simp [grpA, grp])
 
-variable {F lam jK} in
 
+variable {F lam jK} in
 theorem jK_inv_of_triv (hJ : F.IsJ lam jK) {κ : F.K} (h1 : F.kap κ = 1) (h2 : F.chi κ = 1) : jK κ⁻¹ = 1 := by
   have : jK κ = jK 1 := by rw [hJ κ, h1, h2, map_one, grpA_one]; simp
   rw [jK_inv_congr this, inv_one, map_one]
@@ -114,10 +118,12 @@ variable {l : ℕ} [Fact l.Prime] {ι : Type} [DecidableEq ι] {N : ℕ} {F : Fr
   {jK : F.K →* alg F.O N lam} {W : Type} [AddCommGroup W] [Module F.O W] [Module (alg F.O N lam) W]
   [IsScalarTower F.O (alg F.O N lam) W]
 
+open scoped IsMulCommutative in
 def heckeAlg (hOk : F.Ok) (hJ : F.IsJ lam jK) : F.T →ₐ[F.O] Module.End F.O (Forms F.O (A := alg F.O N lam) F.Γ jK W) :=
-  letI : CommRing (Algebra.adjoin F.O (Set.range (op (W := W) hOk hJ))) := Algebra.adjoinCommRingOfComm F.O (by
-    rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩
-    exact op_comm hOk hJ i j)
+  letI : IsMulCommutative (Algebra.adjoin F.O (Set.range (op (W := W) hOk hJ))) :=
+    Algebra.isMulCommutative_adjoin F.O (by
+      rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ _
+      exact op_comm hOk hJ i j)
   (Algebra.adjoin F.O (Set.range (op (W := W) hOk hJ))).val.comp
     (MvPolynomial.aeval fun i => ⟨op hOk hJ i, Algebra.subset_adjoin ⟨i, rfl⟩⟩)
 

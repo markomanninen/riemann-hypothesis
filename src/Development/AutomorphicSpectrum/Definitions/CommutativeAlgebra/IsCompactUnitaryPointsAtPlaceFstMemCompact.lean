@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.OmStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.OmStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ structure HTChart (A K : Type) [CommRing A] [Field K] [Algebra A K] {E : Type} [
     (Ω : Type) [AddCommGroup Ω] [Module K Ω] [Module A Ω] [IsScalarTower A K Ω] where
 
   om : Submodule A Ω
-  om_lat : om.IsLattice K
+  om_lat : om.IsFullLattice K
   om_proj : Module.Projective A om
 
   ρΩ : 𝓞 E →+* Module.End K Ω

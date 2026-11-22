@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
-import Formalism.WachLatticeTwists.CharacterSplitJumps.Statement
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
-import Formalism.GaloisCohomology.LocalTateDualityK
-import ReciprocityTheory.Hypotheses.GalCohDefs
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+public import Formalism.WachLatticeTwists.CharacterSplitJumps.Statement
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import ReciprocityTheory.Hypotheses.GalCohDefs
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,7 +118,7 @@ def transportCocycles (e : Γ ≃* Γ') (u : M ≃ₗ[O] M') (ρ : Representatio
     (hu : ∀ g m, u (ρ g m) = ρ' (e g) (u m)) : coZ1s ρ' →ₗ[O] coZ1s ρ where
   toFun c := ⟨fun g => u.symm (c.1 (e g)), fun g h => by
     show u.symm (c.1 (e (g * h))) = u.symm (c.1 (e g)) + ρ g (u.symm (c.1 (e h)))
-    rw [map_mul, c.2, map_add, trCompat_symm e u ρ ρ' hu]⟩
+    rw [map_mul, c.2, map_add (f := _), trCompat_symm e u ρ ρ' hu]⟩
   map_add' a b := Subtype.ext (funext fun g => map_add u.symm _ _)
   map_smul' r a := Subtype.ext (funext fun g => map_smul u.symm _ _)
 
@@ -391,36 +395,9 @@ theorem tate_rational_frac {p : ℕ} [Fact p.Prime] {K : IntermediateField ℚ_[
     ∃ a, ∀ b, fracBilinear ((cupFG D).compr₂ D.invF) a b = f b :=
   hT2Core.out.rat hK hO hF i hD hi (f.restrictScalars O)
 
-theorem j'_span_iso {p : ℕ} [Fact p.Prime] {K : IntermediateField ℚ_[p] (PadicAlgCl p)} {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-    [TopologicalSpace O] [TopologicalSpace (FractionRing O)]
-    [IsTopologicalAddGroup (FractionRing O)] [ContinuousSMul O (FractionRing O)]
-    {VT VT' : Type}
-    [AddCommGroup VT] [Module O VT] [TopologicalSpace VT] [IsTopologicalAddGroup VT]
-    [ContinuousSMul O VT] [Module (FractionRing O) VT] [IsScalarTower O (FractionRing O) VT]
-    [AddCommGroup VT'] [Module O VT'] [TopologicalSpace VT'] [IsTopologicalAddGroup VT']
-    [ContinuousSMul O VT'] [Module (FractionRing O) VT'] [IsScalarTower O (FractionRing O) VT'] {G : Type} [Group G] [TopologicalSpace G]
-    (hO : PadicCoeff p O) (hF : FracTop O) (i : G ≃ₜ* GK p K) {D : LatData O G VT VT'} (hD : RealLatG i D) (y : H1 D.ρT') :
-    ∃ c : O, c ≠ 0 ∧ c • y ∈ LinearMap.range D.j' := hT2Core.out.jspan hO hF i hD y
-
 theorem natInv_all_iso {p : ℕ} [Fact p.Prime] {K : IntermediateField ℚ_[p] (PadicAlgCl p)} {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [TopologicalSpace O] {G : Type} [Group G] [TopologicalSpace G]
     (hK : FiniteDimensional ℚ_[p] K) (hO : PadicCoeff p O) (i : G ≃ₜ* GK p K) {ε : G →* Oˣ} (hε : IsCyc p K (carry i ε)) :
     Nonempty (NatInv ε (fun M _ _ _ => IsFGTop O M)) := hT2Core.out.nat hK hO i hε
-
-theorem quotShape_G {p : ℕ} [Fact p.Prime] {K : IntermediateField ℚ_[p] (PadicAlgCl p)} {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-    [TopologicalSpace O] [TopologicalSpace (FractionRing O)]
-    [IsTopologicalAddGroup (FractionRing O)] [ContinuousSMul O (FractionRing O)] {G : Type} [Group G] [TopologicalSpace G]
-    (hK : FiniteDimensional ℚ_[p] K) (hO : PadicCoeff p O) (hF : FracTop O) (i : G ≃ₜ* GK p K) {ε : G →* Oˣ}
-    (hε : IsCyc p K (carry i ε)) (e : ℕ) (he : 0 < e) {M : Type} [AddCommGroup M] [Module O M] (u : M ≃ₗ[O] KO O)
-    (ρ : Representation O G M) (h : ∀ g m, ρ g m = ((((ε g) ^ e)⁻¹ : Oˣ) : O) • m) :
-    QuotShape (HcLC ρ) ⊥ (Module.finrank ℚ_[p] K) := hT2Core.out.shape hK hO hF i hε e he u ρ h
-
-theorem quotShape_G_unr {p : ℕ} [Fact p.Prime] {K : IntermediateField ℚ_[p] (PadicAlgCl p)} {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
-    [TopologicalSpace O] [TopologicalSpace (FractionRing O)]
-    [IsTopologicalAddGroup (FractionRing O)] [ContinuousSMul O (FractionRing O)] {G : Type} [Group G] [TopologicalSpace G]
-    (hK : FiniteDimensional ℚ_[p] K) (hO : PadicCoeff p O) (hF : FracTop O) (i : G ≃ₜ* GK p K)
-    {M : Type} [AddCommGroup M] [Module O M] (u : M ≃ₗ[O] KO O) (ρ : Representation O G M) (h : ∀ g m, ρ g m = m)
-    (I : Subgroup G) (hI : ∀ g, g ∈ I ↔ i g ∈ Formalism.GaloisCohomology.inertiaK p K) :
-    QuotShape (HcLC ρ) (unrH1 ρ I) (Module.finrank ℚ_[p] K) := hT2Core.out.shapeUnr hK hO hF i u ρ h I hI
 
 theorem padicCoeff_padicInt {p : ℕ} [Fact p.Prime] : PadicCoeff p ℤ_[p] := hT2Core.out.elem.padicInt
 
@@ -449,20 +426,10 @@ theorem quotShape_of_equiv {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValua
     (Hc F Hc' F' : Submodule O X) (d : ℕ) (e : (Hc ⧸ F.comap Hc.subtype) ≃ₗ[O] (Hc' ⧸ F'.comap Hc'.subtype))
     (h : QuotShape Hc F d) : QuotShape Hc' F' d := hT2Core.out.elem.shapeEquiv Hc F Hc' F' d e h
 
-theorem GlobAlg.mem_OL {l : ℕ} [Fact l.Prime] (LL : Formalism.BasicNotions.Loc.FinExt l) (x : ↥LL.1) :
-    x ∈ Formalism.BasicNotions.Loc.OL LL ↔ ‖(x : Formalism.BasicNotions.Loc.Om l)‖ ≤ 1 := hT2Core.out.elem.memOL LL x
-
 theorem GlobAlg.isOpen_range_OL {l : ℕ} [Fact l.Prime] (LL : Formalism.BasicNotions.Loc.FinExt l) :
     IsOpen (Set.range (algebraMap ↥(Formalism.BasicNotions.Loc.OL LL) ↥LL.1)) := hT2Core.out.elem.openOL LL
 
 end Wrap
-
-theorem quotShape_congr {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {X : Type} [AddCommGroup X] [Module O X]
-    (Hc F F' : Submodule O X) (d : ℕ) (h : ∀ x ∈ Hc, x ∈ F ↔ x ∈ F') (hs : QuotShape Hc F d) : QuotShape Hc F' d := by
-  have e : F.comap Hc.subtype = F'.comap Hc.subtype := Submodule.ext fun x => h x.1 x.2
-  unfold QuotShape at hs ⊢
-  rw [← e]
-  exact hs
 
 theorem tate_compat_iso {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     [TopologicalSpace O] [TopologicalSpace (FractionRing O)]

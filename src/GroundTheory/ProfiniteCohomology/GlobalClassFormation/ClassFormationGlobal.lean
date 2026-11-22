@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ExistsUnitsToIdelesEqOfIdelesSumInvEqZero
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.OpenSubgroups
-import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ExistsUnitsToIdelesEqOfIdelesSumInvEqZero
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.OpenSubgroups
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -9,8 +14,6 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory NumberField IntermediateField GroundTheory.Global FiniteSubfield IsDedekindDomain
 
 open scoped DirectSum
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -56,8 +59,8 @@ end Split
 
 variable (hR : SumInvRestriction)
 
-include hR in
 
+include hR in
 theorem idelesToClasses_surjective_of (K : FiniteSubfield) (ι : LocalEmbeddings K) :
     Function.Surjective (idelesToClasses K 2).hom := by
   classical

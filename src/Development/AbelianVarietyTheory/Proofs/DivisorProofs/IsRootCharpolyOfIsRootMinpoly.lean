@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -27,7 +31,7 @@ theorem eq_zero_of_sum_smul [Algebra.IsCentral F C] [IsSimpleRing C] {n : ℕ} (
       (by
         rintro x y ⟨d, rfl, hd, hds⟩ ⟨d', rfl, hd', hds'⟩
         refine ⟨d + d', rfl, fun i hi hc => by simp [hd i hi hc, hd' i hi hc], ?_⟩
-        simp only [Pi.add_apply, map_add, smul_add, Finset.sum_add_distrib, hds, hds', add_zero])
+        simp only [Pi.add_apply, map_add (f := _), smul_add, Finset.sum_add_distrib, hds, hds', add_zero])
       (by
         rintro x ⟨d, rfl, hd, hds⟩
         refine ⟨-d, rfl, fun i hi hc => by simp [hd i hi hc], ?_⟩
@@ -108,7 +112,7 @@ theorem exists_expansion {ι : Type} (b : Module.Basis ι F E) (p : E[X]) :
     · intro k
       simp
     · intro k r r'
-      rw [Polynomial.map_add, smul_add]
+      rw [Polynomial.map_add (f := _), smul_add]
   | monomial j a =>
     refine ⟨(b.repr a).mapRange (fun c => Polynomial.monomial j c) (by simp), ?_⟩
     rw [Finsupp.sum_mapRange_index (by simp)]
@@ -137,14 +141,15 @@ theorem isRoot_charpoly_of_isRoot_minpoly {F C E : Type} [Field F] [Ring C] [Alg
       Polynomial.aeval (ρ x) (r.map (algebraMap F E)) = ρ (Polynomial.aeval x r) := by
     intro r
     induction r using Polynomial.induction_on' with
-    | add p q hp hq => simp only [Polynomial.map_add, map_add, hp, hq]
+    | add p q hp hq => simp only [Polynomial.map_add (f := _), map_add (f := _), hp, hq]
     | monomial j a =>
       simp only [Polynomial.map_monomial, Polynomial.aeval_monomial, map_mul, map_pow, hρ']
       congr 1
 
   have h0 : ∑ k ∈ q.support, b k • ρ (Polynomial.aeval x (q k)) = 0 := by
     have h := Matrix.aeval_self_charpoly (ρ x)
-    rw [hq, Finsupp.sum, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hq, Finsupp.sum, map_sum] at h
     rw [← h]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, heval]

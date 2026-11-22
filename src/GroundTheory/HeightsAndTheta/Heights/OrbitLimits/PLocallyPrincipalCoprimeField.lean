@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsInvertibleIndexMulSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLocallyPrincipalCoprime
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsInvertibleIndexMulSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLocallyPrincipalCoprime
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

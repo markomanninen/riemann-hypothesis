@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.InvVolConjLevelOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaAtOfVac
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JetOpIdentityOfEntire
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsThetaFunOOfThetaAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseThetaKernelSeriesUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultilinearVanishOfProdVanishStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InvVolConjLevelOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaAtOfVac
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JetOpIdentityOfEntire
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsThetaFunOOfThetaAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseThetaKernelSeriesUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultilinearVanishOfProdVanishStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem fockComp_lin (W : G.Weil) (B : VertexFrames G) (p : Pair T) (x : FinPt G
     funext k
     simp only [jetTab, kerFin, fockIn, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     rw [GlobalTheory.FockFiniteHeis.pureTensorO_lin _ _ _ _ W.ψ_std W.θ_is _ _ _ _ c hf hg]
-    simp only [GridData.Weil.ker, thetaKO, map_add, map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+    simp only [GridData.Weil.ker, thetaKO, map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   have := (GlobalTheory.JetIdentity.jetOpL (K := ℂ) (wt G p.small) (wt G p.big) (nuEnd G p)).map_add
     (c • jetTab W B p f x y) (jetTab W B p g x y)
   rw [LinearMap.map_smul] at this
@@ -107,8 +111,8 @@ theorem vec_eq_tOp {W : G.Weil} {U : Set T} {N : Std G U} (Z : Normal W N) {t : 
     rfl
   exact ⟨h2.trans h1, h1 ▸ GlobalTheory.VecTheta.isThetaFunO_of_thetaAt W.ψ_std W.θ_is hf (Z.vac_is p hp).2.theta⟩
 
-variable (D) in
 
+variable (D) in
 def pr (t : T) : Fin D.R.m ⊕ Fin D.R.m → Pair T := Sum.elim (fun j => .top t j) (fun i => .chi i D.R.m)
 
 theorem pr_def (t : T) (k : Fin D.R.m ⊕ Fin D.R.m) : DefPair D.R.m (pr D t k) := by
@@ -186,7 +190,7 @@ theorem colOf_add (j₀ : Fin D.R.m) (a b : aSub S t e (.inl j₀)) (x : ∀ j, 
         hj (congrArg Fin.val (Sum.inl_injective h'))
       rw [Function.update_of_ne hne, Function.update_of_ne hne]
     · rfl
-  · rw [dif_pos hj₀, dif_pos hj₀, dif_pos hj₀, Function.update_self, Function.update_self, Function.update_self, map_add]
+  · rw [dite_eq_left hj₀, dite_eq_left hj₀, dite_eq_left hj₀, Function.update_self, Function.update_self, Function.update_self, map_add (f := _)]
 
 theorem colOf_smul (j₀ : Fin D.R.m) (c : ℂ) (a : aSub S t e (.inl j₀)) (x : ∀ j, FinPt G (.top j)) :
     colOf S t e (Function.update g (.inl j₀) (c • a)) x = c • colOf S t e (Function.update g (.inl j₀) a) x := by
@@ -200,7 +204,7 @@ theorem colOf_smul (j₀ : Fin D.R.m) (c : ℂ) (a : aSub S t e (.inl j₀)) (x 
         hj (congrArg Fin.val (Sum.inl_injective h'))
       rw [Function.update_of_ne hne, Function.update_of_ne hne]
     · rfl
-  · rw [dif_pos hj₀, dif_pos hj₀, Function.update_self, Function.update_self, map_smul]
+  · rw [dite_eq_left hj₀, dite_eq_left hj₀, Function.update_self, Function.update_self, map_smul]
 
 theorem rowOf_add (i₀ : Fin D.R.m) (a b : aSub S t e (.inr i₀)) (y : ∀ i, FinPt G (.grid i D.R.m)) :
     rowOf S t e (Function.update g (.inr i₀) (a + b)) y =
@@ -220,7 +224,7 @@ theorem rowOf_add (i₀ : Fin D.R.m) (a b : aSub S t e (.inr i₀)) (y : ∀ i, 
         hj (congrArg Fin.val (Sum.inr_injective h'))
       rw [Function.update_of_ne hne, Function.update_of_ne hne]
     · rfl
-  · rw [dif_pos hi₀, dif_pos hi₀, dif_pos hi₀, Function.update_self, Function.update_self, Function.update_self, map_add]
+  · rw [dite_eq_left hi₀, dite_eq_left hi₀, dite_eq_left hi₀, Function.update_self, Function.update_self, Function.update_self, map_add (f := _)]
 
 theorem rowOf_smul (i₀ : Fin D.R.m) (c : ℂ) (a : aSub S t e (.inr i₀)) (y : ∀ i, FinPt G (.grid i D.R.m)) :
     rowOf S t e (Function.update g (.inr i₀) (c • a)) y = c • rowOf S t e (Function.update g (.inr i₀) a) y := by
@@ -234,7 +238,7 @@ theorem rowOf_smul (i₀ : Fin D.R.m) (c : ℂ) (a : aSub S t e (.inr i₀)) (y 
         hj (congrArg Fin.val (Sum.inr_injective h'))
       rw [Function.update_of_ne hne, Function.update_of_ne hne]
     · rfl
-  · rw [dif_pos hi₀, dif_pos hi₀, Function.update_self, Function.update_self, map_smul]
+  · rw [dite_eq_left hi₀, dite_eq_left hi₀, Function.update_self, Function.update_self, map_smul]
 
 end Upd
 
@@ -261,7 +265,7 @@ theorem compl₁₂_smul_right (c : ℂ) (f : P →ₗ[ℂ] M) (g : Q →ₗ[ℂ
 end Compl
 
 def pairML (S : GridChoice W U) (t : T) (e : AE D) (x : ∀ j, FinPt G (.top j)) (y : ∀ i, FinPt G (.grid i D.R.m)) :
-    MultilinearMap ℂ (fun k => aSub S t e k)
+    (∀ k, aSub S t e k) →ₘₗ[ℂ]
       (VV ℂ (wt G (.top 0)) →ₗ[ℂ] VV ℂ (listedWt G (.grid 0 D.R.m)) →ₗ[ℂ] ℂ) where
   toFun g := (brPair (listedWt G (.grid D.R.m D.R.m)) G.sp.topDec.rank.symm (wt G (.top D.R.m))).compl₁₂
     (colOf S t e g x) (rowOf S t e g y)
@@ -278,14 +282,14 @@ def pairML (S : GridChoice W U) (t : T) (e : AE D) (x : ∀ j, FinPt G (.top j))
     · rw [rowOf_smul, colOf_inr, colOf_inr]
       exact compl₁₂_smul_right _ _ _ _
 
-open Classical in
 
+open Classical in
 def gd (S : GridChoice W U) (t : T) (e : AE D) (d : PureDat G t) (k : Fin D.R.m ⊕ Fin D.R.m) : aSub S t e k :=
   if h : (intersection_update_fsHerm_neg_one d k).fn ∈ aSub S t e k then ⟨(intersection_update_fsHerm_neg_one d k).fn, h⟩ else 0
 
 theorem gd_coe {S : GridChoice W U} {t : T} {e : AE D} {d : PureDat G t} {k : Fin D.R.m ⊕ Fin D.R.m}
     (h : (intersection_update_fsHerm_neg_one d k).fn ∈ aSub S t e k) : ((gd S t e d k : aSub S t e k) : _ → ℂ) = (intersection_update_fsHerm_neg_one d k).fn := by
-  rw [gd, dif_pos h]
+  rw [gd, dite_eq_left h]
 
 theorem rOp_coe (S : GridChoice W U) (t : T) (e : AE D) (k : Fin D.R.m ⊕ Fin D.R.m) (g : aSub S t e k) :
     ((rOp S t e k g : thSub W (pr D t k)) : _ → ℂ) = tOp W S.Z (pr D t k) e g := rfl
@@ -301,7 +305,7 @@ theorem colMap_eq (S : GridChoice W U) (t : T) (e : AE D) (d : PureDat G t)
     (x : ∀ j, FinPt G (.top j)) : S.colMap d x = colOf S t e (gd S t e d) x := by
   unfold GridChoice.colMap colOf
   refine congrArg (fun F => F ∘ₗ _) (chainTo_congr _ _ _ fun j hj => ?_)
-  rw [dif_pos hj, dif_pos hj]
+  rw [dite_eq_left hj, dite_eq_left hj]
   obtain ⟨h1, h2⟩ := h (.inl ⟨j, hj⟩)
   exact kkMap_eq_kLin S.Z (d.1 ⟨j, hj⟩) (x j) (x (j + 1)) (rOp S t e (.inl ⟨j, hj⟩) (gd S t e d (.inl ⟨j, hj⟩)))
     (by rw [rOp_coe, gd_coe h2]; exact h1.symm)
@@ -311,15 +315,15 @@ theorem rowMap_eq (S : GridChoice W U) (t : T) (e : AE D) (d : PureDat G t)
     (y : ∀ i, FinPt G (.grid i D.R.m)) : S.rowMap d y = rowOf S t e (gd S t e d) y := by
   unfold GridChoice.rowMap rowOf
   refine congrArg (fun F => F ∘ₗ _) (chainTo_congr _ _ _ fun j hj => ?_)
-  rw [dif_pos hj, dif_pos hj]
+  rw [dite_eq_left hj, dite_eq_left hj]
   obtain ⟨h1, h2⟩ := h (.inr ⟨j, hj⟩)
   exact kkMap_eq_kLin S.Z (d.2 ⟨j, hj⟩) (y j) (y (j + 1)) (rOp S t e (.inr ⟨j, hj⟩) (gd S t e d (.inr ⟨j, hj⟩)))
     (by rw [rOp_coe, gd_coe h2]; exact h1.symm)
 
 end GlobalTheory.FunObj.PairIndep
 
-open GlobalTheory.FunObj.PairIndep in
 
+open GlobalTheory.FunObj.PairIndep in
 theorem GlobalTheory.FunObj.sumOK_vec_indep : ∀ (D : D7) (T : Type) (L : LevCh D T) (sc : GlobalTheory.ChiGrid.Consts) (G : GridData L sc) (W : G.Weil) (U : Set T) (S : GridChoice W U) (μ₀ : T), L.Is μ₀ → ∀ t ∈ U, ∀ Φ : G.Datum, (∀ β τ, S.IsExpansion t Φ β τ → ∀ d ∈ τ.support, (∀ j, S.Z.HasVec (d.1 j)) ∧ ∀ i, S.Z.HasVec (d.2 i)) ∧ ∀ β τ τ', S.IsExpansion t Φ β τ → S.IsExpansion t Φ β τ' → ∀ c : S.Classes t Φ β, S.pairAt τ c = S.pairAt τ' c := by
   intro D T L sc G W U S μ₀ hL t ht Φ
   have hv : ∀ (k : Fin D.R.m ⊕ Fin D.R.m) (d : FinDatum G t (pr D t k)), S.Z.HasVec d := fun k d =>

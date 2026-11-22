@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -23,8 +27,8 @@ theorem tensor_component_ne_zero_iff (F : Type) [Field F] (X C : Type) [Finite C
     { toFun := p c
       map_add' := fun s t => hext _ _ fun x => by
         by_cases hx : cl x = c
-        · rw [map_add, (hp c _ x).1 hx, (hp c _ x).1 hx, (hp c _ x).1 hx, map_add]
-        · rw [map_add, (hp c _ x).2 hx, (hp c _ x).2 hx, (hp c _ x).2 hx, add_zero]
+        · rw [map_add (f := _), (hp c _ x).1 hx, (hp c _ x).1 hx, (hp c _ x).1 hx, map_add (f := _)]
+        · rw [map_add (f := _), (hp c _ x).2 hx, (hp c _ x).2 hx, (hp c _ x).2 hx, add_zero]
       map_smul' := fun r s => hext _ _ fun x => by
         by_cases hx : cl x = c
         · rw [RingHom.id_apply, map_smul, (hp c _ x).1 hx, (hp c _ x).1 hx, map_smul]
@@ -33,7 +37,8 @@ theorem tensor_component_ne_zero_iff (F : Type) [Field F] (X C : Type) [Finite C
   have h0 : ∀ c s x, cl x ≠ c → ex x (π c s) = 0 := fun c s x h => (hp c s x).2 h
   have hsum : ∑ c, π c = LinearMap.id := by
     refine LinearMap.ext fun s => hext _ _ fun x => ?_
-    rw [LinearMap.sum_apply, map_sum, Finset.sum_eq_single (cl x)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.sum_apply, map_sum, Finset.sum_eq_single (cl x)]
     · exact h1 _ s x rfl
     · intro c _ hc
       exact h0 c s x (Ne.symm hc)

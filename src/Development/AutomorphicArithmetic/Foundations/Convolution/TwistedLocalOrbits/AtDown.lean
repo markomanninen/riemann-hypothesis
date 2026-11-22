@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.MatchOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.PlaceDown
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.MatchOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.PlaceDown
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets PositivityTheory.Rg.Tf.Loc UpperTheory.ConvolutionTheory.Loc GroundTheory.Global GroundTheory.Global.SemiLocal
 open PositivityTheory.Rg.Tf.Geo (mapGL incFin galFin)

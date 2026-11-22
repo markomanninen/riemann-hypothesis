@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfLoZero
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.QaWeightRowInd
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDbasisLemmas
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfLoZero
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.QaWeightRowInd
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDbasisLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem qc_full_minor (A : Type) [CommRing A] (r s : ℕ) (hs : s ≤ r) (I : Fi
     (h : s = r) : initMinor A I hs = detY A r := by
   subst h
   have hid : I = id := by
-    exact (StrictMono.range_inj hI strictMono_id).1
+    exact (StrictMono.range_inj_of_wellFoundedLT hI strictMono_id).1
       (by rw [Set.range_id]; exact (Finite.injective_iff_surjective.1 hI.injective).range_eq)
   subst hid
   rfl
@@ -88,7 +92,7 @@ theorem qc_detDiv_bidet (A : Type) [CommRing A] (r : ℕ) : ∀ (K : ℕ) (sz : 
         rw [qc_shapeDeg_succ, Pi.add_apply, h1 t]
         have : qcOm r (sz 0) t = 1 := by
           unfold qcOm
-          rw [if_pos (by rw [hr]; exact t.isLt)]
+          rw [ite_eq_left (by rw [hr]; exact t.isLt)]
         omega
       · rw [qc_bidet_succ, h4, qc_full_minor A r _ (hsz 0) (I 0) (hI 0) hr]
         ring
@@ -100,7 +104,7 @@ theorem qc_detDiv_bidet (A : Type) [CommRing A] (r : ℕ) : ∀ (K : ℕ) (sz : 
       · intro t ht
         rw [Pi.add_apply, h2 t ht, add_zero]
         unfold qcOm
-        rw [if_neg]
+        rw [ite_eq_right]
         have := hsz 0
         omega
       · rw [qc_bidet_succ, h4]
@@ -130,7 +134,7 @@ theorem detDivP : DetDivP := by
       have e : (n - Q) • qcOm r r + γ = β := by
         funext t
         have := h1' t
-        simp only [Pi.add_apply, Pi.smul_apply, qcOm, t.isLt, if_true, smul_eq_mul, mul_one]
+        simp only [Pi.add_apply, Pi.smul_apply, qcOm, t.isLt, ite_true, smul_eq_mul, mul_one]
         omega
       rwa [e] at h5
     · rw [hbm, h4, ← mul_assoc, ← pow_add]

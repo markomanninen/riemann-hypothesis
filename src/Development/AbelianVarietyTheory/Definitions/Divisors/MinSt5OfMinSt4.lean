@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsMinAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsMinAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.SiegJoin
 
-open GlobalTheory.SiegMin GlobalTheory.Poinc GlobalTheory.PolDeg
+open GlobalTheory.Poinc GlobalTheory.PolDeg
 
 variable {g n : ℕ}
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualStdModelField
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualStdModelField
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -22,8 +27,8 @@ theorem nonempty_of_basis {K : Type} [Field K] [NumberField K] {i : ℕ} {F : He
 
 end StandardDualFibreRatios
 
-open StandardDualFibreRatios in
 
+open StandardDualFibreRatios in
 theorem DualStdFibreRatios.proof (hTr : GenFibreModelTransport.Statement) (hMod : DualStdGraphModel.Statement)
     (hRk : DualStdModelRank.Statement) (hTc : DualStdModelTransc.Statement) : DualStdFibreRatios.Statement := by
   intro K _ _ i T _ _ b G hi

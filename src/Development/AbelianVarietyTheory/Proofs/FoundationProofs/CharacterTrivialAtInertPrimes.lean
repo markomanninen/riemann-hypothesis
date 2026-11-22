@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjInvolutiveAndExistsHalfIdempotent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIdeleGenerator
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRealSpanEqConjFixedPrimeMulRelNormStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfIdem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPrimeNatCastMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjInvolutiveAndExistsHalfIdempotent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIdeleGenerator
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRealSpanEqConjFixedPrimeMulRelNormStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfIdem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPrimeNatCastMem
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators Pointwise
@@ -102,7 +106,7 @@ theorem exists_gen (B : Ideal (𝓞 D.host.E)) (hB : B ≠ ⊥) : ∃ y, Gen D B
   · rw [Ideal.span_singleton_le_iff_mem]
     have : (⟨y, hy⟩ : OhE D) = ∑ i, intInc D (b i) * ⟨w i, hw i⟩ := by
       apply Subtype.ext
-      rw [AddSubmonoidClass.coe_finset_sum]
+      rw [AddSubmonoidClass.coe_finsetSum]
       exact e
     rw [this]
     exact sum_mem fun i _ => Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ (hb i))
@@ -260,7 +264,7 @@ theorem character_trivial_at_inert : ∀ (D : D7) (N : ℕ), Even N → ∀ (χ 
     linear_combination h1 + h1' + 2 * h2
   have heO : 1 - (ε + sgA D ε) ∈ OhE D := sub_mem (one_mem _) (add_mem hε (VacMove.sgA_mem D hε))
   have hse : sgA D (1 - (ε + sgA D ε)) = 1 - (ε + sgA D ε) := by
-    rw [map_sub, map_add, map_one, hinv, add_comm]
+    rw [map_sub, map_add (f := _), map_one, hinv, add_comm]
   have hunr : ∀ y : (AE D)ˣ, (y : AE D) ∈ OhE D →
       (1 - (ε + sgA D ε)) * ((y⁻¹ : (AE D)ˣ) : AE D) ∈ OhE D → χ.f (proj _ he y) = 1 := by
     intro y hy hy'
@@ -283,7 +287,7 @@ theorem character_trivial_at_inert : ∀ (D : D7) (N : ℕ), Even N → ∀ (χ 
   · have : proj _ he (sgU D y) = sgU D (proj _ he y) := by
       ext
       change _ * sgA D y + _ = sgA D (_ * y + _)
-      rw [map_add, map_mul, hse, map_sub, map_one, hse]
+      rw [map_add (f := _), map_mul, hse, map_sub, map_one, hse]
     rw [MonoidHom.comp_apply, map_mul, this, χ.norm]
   · have h4 := eq_one_of_real hN χ a ha
     set t := Units.map (inc D).toMonoidHom a with ht
@@ -293,7 +297,7 @@ theorem character_trivial_at_inert : ∀ (D : D7) (N : ℕ), Even N → ∀ (χ 
     have : t = proj _ he t * (proj ε h1 t * sgU D (proj ε h1 t)) := by
       ext
       change (t : AE D) = (_ * t + _) * ((ε * t + _) * sgA D (ε * t + _))
-      rw [map_add, map_mul, map_sub, map_one, hst]
+      rw [map_add (f := _), map_mul, map_sub, map_one, hst]
       linear_combination ((t : AE D) - 1) ^ 2 * he -
         ((t : AE D) - 1) ^ 2 * (1 + (1 - (ε + sgA D ε)) * (t - 1)) * h2
     rw [this, map_mul, χ.norm, mul_one] at h4

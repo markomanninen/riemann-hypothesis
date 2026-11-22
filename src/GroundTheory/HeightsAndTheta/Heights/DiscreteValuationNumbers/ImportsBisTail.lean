@@ -1,14 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.JoinCoordMidVar
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSubAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.JoinCoordMidVar
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSubAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
 
 open MvPolynomial
 open ReciprocityTheory.ChartRestriction.G.Geo (ChartBundle)
-open IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg joinCoord IsPull FlagPair midDeg midVar ptCoord noCoord ptFlagModel
-  stdE cE unif unif_frac_ne isPull_frame_of_one ptCoord_eq)
+open IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg joinCoord IsPull FlagPair midDeg midVar)
 
 def FlagPairJoinRight.Statement : Prop :=
   ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (Ω : Type) [Field Ω]

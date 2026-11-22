@@ -1,5 +1,9 @@
-import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
-import Formalism.LFunctionBounds.LFunctionBoundsProofs.RectResidue
+module
+
+public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
+public import Formalism.LFunctionBounds.LFunctionBoundsProofs.RectResidue
+
+@[expose] public section
 
 open Complex
 
@@ -49,7 +53,7 @@ theorem rdp_horiz (a p : ℂ) (y x0 x1 : ℝ) (hy : y ≠ p.im) :
     have h2 := (rdp_hasDerivAt_prim a p ((x : ℂ) + y * I) (hne x)).comp x hh
     simpa [Function.comp_def] using h2
   have hcont : Continuous (fun x : ℝ => a / ((x : ℂ) + y * I - p) ^ 2) := by
-    refine Continuous.div continuous_const (by fun_prop) (fun x => ?_)
+    refine Continuous.div₀ continuous_const (by fun_prop) (fun x => ?_)
     exact pow_ne_zero _ (sub_ne_zero.2 (hne x))
   exact intervalIntegral.integral_eq_sub_of_hasDerivAt (fun x _ => hder x)
     (hcont.intervalIntegrable _ _)
@@ -71,7 +75,7 @@ theorem rdp_vert (a p : ℂ) (x y0 y1 : ℝ) (hx : x ≠ p.re) :
     simp only [Function.comp_def] at h2
     exact h2.congr_deriv (mul_comm _ _)
   have hcont : Continuous (fun y : ℝ => I * (a / ((x : ℂ) + y * I - p) ^ 2)) := by
-    refine continuous_const.mul (Continuous.div continuous_const (by fun_prop) (fun y => ?_))
+    refine continuous_const.mul (Continuous.div₀ continuous_const (by fun_prop) (fun y => ?_))
     exact pow_ne_zero _ (sub_ne_zero.2 (hne y))
   rw [← intervalIntegral.integral_const_mul]
   exact intervalIntegral.integral_eq_sub_of_hasDerivAt (fun y _ => hder y)
@@ -91,10 +95,10 @@ theorem rdp_seg (g G : ℂ → ℂ) (a b p : ℂ) (γ : ℝ → ℂ) (s t : ℝ)
     IntervalIntegrable (fun u => g (γ u) - a / (γ u - p) ^ 2) MeasureTheory.volume s t ∧
     IntervalIntegrable (fun u => a / (γ u - p) ^ 2) MeasureTheory.volume s t := by
   have hD : ContinuousOn (fun u => a / (γ u - p) ^ 2) (Set.uIcc s t) := by
-    refine ContinuousOn.div continuousOn_const (by fun_prop) (fun u hu => ?_)
+    refine ContinuousOn.div₀ continuousOn_const (by fun_prop) (fun u hu => ?_)
     exact pow_ne_zero _ (sub_ne_zero.2 (hP u hu))
   have hS : ContinuousOn (fun u => G (γ u) + b / (γ u - p)) (Set.uIcc s t) := by
-    refine hG.add (ContinuousOn.div continuousOn_const (by fun_prop) (fun u hu => ?_))
+    refine hG.add (ContinuousOn.div₀ continuousOn_const (by fun_prop) (fun u hu => ?_))
     exact sub_ne_zero.2 (hP u hu)
   refine ⟨(hS.congr fun u hu => ?_).intervalIntegrable, hD.intervalIntegrable⟩
   rw [hg _ (hP u hu)]

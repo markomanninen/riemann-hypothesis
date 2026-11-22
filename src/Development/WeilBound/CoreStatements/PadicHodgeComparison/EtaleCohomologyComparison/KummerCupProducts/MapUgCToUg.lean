@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsFirstChernClassOfLineBundle
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.FirstChernCompatibleSystem
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsFirstChernClassOfLineBundle
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.FirstChernCompatibleSystem
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -41,8 +45,8 @@ theorem mapUg_cToUg {A B : PAlg l} (f : A ⟶ B) (x : ℂ_[l]) : PAlg.mapUg f (A
 
 theorem mapUg_kb {A B : PAlg l} (f : A ⟶ B) : (PAlg.mapUg f).comp (kb A) = kb B := RingHom.ext fun x => mapUg_cToUg f _
 
-variable (l) in
 
+variable (l) in
 structure Roots where
   ρ : ∀ n, Prim (l ^ n) (PadicAlgCl l)
   hρ : ∀ n, clToC l (ρ n).1 = rootSeq l n

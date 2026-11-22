@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -80,7 +84,7 @@ theorem UpperTheory.Gal.W2.diagExists_of :
         rw [hent, map_zero, map_zero, Matrix.mul_zero, Matrix.zero_mul, Matrix.zero_apply]
       map_add' := fun c c' => by
         show d (some (c + c')) i = d (some c) i + d (some c') i
-        rw [hent, hent, hent, map_add, map_add, Matrix.mul_add, Matrix.add_mul, Matrix.add_apply] }
+        rw [hent, hent, hent, map_add (f := _), map_add (f := _), Matrix.mul_add, Matrix.add_mul, Matrix.add_apply] }
   have hτ := fun i => hExt F (φ i)
   choose ty hty using hτ
   refine ⟨Sb, ty, d none, ?_⟩

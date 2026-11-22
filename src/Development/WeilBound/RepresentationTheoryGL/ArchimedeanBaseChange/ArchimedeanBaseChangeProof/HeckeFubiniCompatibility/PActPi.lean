@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -196,12 +200,12 @@ theorem pi_iterated_integral_continuous (μ : Measure X) [SigmaFinite μ] [IsFin
           ∑ J' : (∀ v : {v // v ≠ w}, Idx v), (∏ v : {v // v ≠ w}, e v (z v) (I v) (J' v)) * u' J' z := by
       intro z
       simp only [splitM_symm, hsplit]
-      rw [integral_finset_sum _ fun j _ => integrable_finset_sum _ fun J' _ => (hint z j J').const_mul _]
+      rw [MeasureTheory.integral_finsetSum _ fun j _ => MeasureTheory.integrable_finsetSum _ fun J' _ => (hint z j J').const_mul _]
       have hj : ∀ j : Idx w, ∫ t, ∑ J' : (∀ v : {v // v ≠ w}, Idx v), (∏ v : {v // v ≠ w}, e v (z v) (I v) (J' v)) *
             (e w t (I w) j * u ((Equiv.piSplitAt w Idx).symm (j, J')) (splitY w t z)) ∂μ =
           ∑ J' : (∀ v : {v // v ≠ w}, Idx v), (∏ v : {v // v ≠ w}, e v (z v) (I v) (J' v)) *
             ∫ t, e w t (I w) j * u ((Equiv.piSplitAt w Idx).symm (j, J')) (splitY w t z) ∂μ := fun j => by
-        rw [integral_finset_sum _ fun J' _ => (hint z j J').const_mul _]
+        rw [MeasureTheory.integral_finsetSum _ fun J' _ => (hint z j J').const_mul _]
         simp only [integral_const_mul]
       rw [Finset.sum_congr rfl fun j _ => hj j]
       rw [Finset.sum_comm]

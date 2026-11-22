@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneSidedLemma4
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneSidedLemma4
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,7 +132,8 @@ theorem transStep : TransStep := by
       rw [flat_lam (vecE n') d (flW d) (isFlat_flW d) s]
     have way2 : (c ^ (Ar r lam0) * dt lam0) • blockAct Kf M (v : MvPolynomial _ Kf) =
         map (algebraMap O Kf) (∑ i, thAll O n' m (vecE n') (Q i) * sO i) := by
-      rw [hv, map_sum, map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hv, map_sum, map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       have t1 := tr_theta hS φ hφ m r (by omega) d hmat hh g hg (P i).1 (P i).2 (Q i) (hPQ i)
       rw [map_mul, map_mul, ← hy2 i]

@@ -1,6 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.SemiLocal GroundTheory.Global.AdeleBaseChange
 open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.Tf.Geo
@@ -60,7 +65,7 @@ theorem UpperTheory.one_le_heightOff_and_submultiplicative :
     have hf : ∏ᶠ w, f (g * h) w ≤ (∏ᶠ w, f g w) * ∏ᶠ w, f h w := by
       rw [hfin _ (Or.inr (Or.inr rfl)), hfin _ (Or.inl rfl), hfin _ (Or.inr (Or.inl rfl)),
         ← Finset.prod_mul_distrib]
-      refine Finset.prod_le_prod (fun v _ => le_trans zero_le_one (hone _ v)) fun v _ => ?_
+      refine Finset.prod_le_prod₀ (fun v _ => le_trans zero_le_one (hone _ v)) fun v _ => ?_
       simp only [f]
       split_ifs
       · rw [finAt_mul]
@@ -71,7 +76,7 @@ theorem UpperTheory.one_le_heightOff_and_submultiplicative :
           (∏ w : InfinitePlace E, AutomorphicForm.locHeight (infAt w g) ^ w.mult) *
           ∏ w : InfinitePlace E, AutomorphicForm.locHeight (infAt w h) ^ w.mult := by
       rw [AutomorphicForm.heightConst, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
-      refine Finset.prod_le_prod
+      refine Finset.prod_le_prod₀
         (fun w _ => by have := AutomorphicForm.locHeight_pos (infAt w (g * h)); positivity)
         fun w _ => ?_
       rw [← mul_pow, ← mul_pow, infAt_mul]

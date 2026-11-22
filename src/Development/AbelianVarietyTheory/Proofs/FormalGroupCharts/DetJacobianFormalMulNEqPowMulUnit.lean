@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.LawRightUnit
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupLawCompMulNZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.LawRightUnit
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupLawCompMulNZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,7 @@ theorem mulF_eq_mulN (G : FGLaw R d) (N : ℕ) : mulF G.F N = mulN G N := by
   | succ n ih => rw [mulF, mulN, ih]
 
 def invMat (G : FGLaw R d) : Matrix (Fin d) (Fin d) (PS R 1 d) :=
-  Matrix.of fun j i => ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) (G.F j))
+  Matrix.of fun j i => ev (n := 1) ![pt R d 0, 0] (pderiv ((1 : Fin 2), i) (G.F j))
 
 theorem const_invMat (G : FGLaw R d) (j i : Fin d) :
     constantCoeff (invMat G j i) = (1 : Matrix (Fin d) (Fin d) R) j i := by
@@ -38,7 +42,7 @@ theorem isUnit_det_of_const {σ : Type} (M : Matrix (Fin d) (Fin d) (MvPowerSeri
   exact isUnit_one
 
 theorem dof_single (G : FGLaw R d) (c : R) (l : Fin d) (f : PS R 1 d) :
-    Dof G.F (Pi.single l c) f = C c * ∑ j, pderiv R ((0 : Fin 1), j) f * invMat G j l := by
+    Dof G.F (Pi.single l c) f = C c * ∑ j, pderiv ((0 : Fin 1), j) f * invMat G j l := by
   unfold Dof
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -50,7 +54,7 @@ theorem dof_single (G : FGLaw R d) (c : R) (l : Fin d) (f : PS R 1 d) :
   · simp
 
 theorem jac_mul_invMat (G : FGLaw R d) (N : ℕ) :
-    (Matrix.of fun i j : Fin d => pderiv R ((0 : Fin 1), j) (mulN G N i)) * invMat G =
+    (Matrix.of fun i j : Fin d => pderiv ((0 : Fin 1), j) (mulN G N i)) * invMat G =
       (N : PS R 1 d) • Matrix.of fun i l => ev (n := 1) ![mulN G N] (invMat G i l) := by
   obtain ⟨h0, h1, h2⟩ := GlobalTheory.FormalMulN.mulN_hom R d G N
   have hφ : GP (mulN G N) := h0
@@ -60,7 +64,7 @@ theorem jac_mul_invMat (G : FGLaw R d) (N : ℕ) :
     rw [h2, Matrix.smul_mulVec, Matrix.one_mulVec, ← Pi.single_smul, smul_eq_mul, mul_one]
   have e2 : ev (n := 1) ![mulN G N] (pt R d 0 i) = mulN G N i :=
     GlobalTheory.GaugeAdjoint.ev_pt (single_point_zero_constant hφ) 0 i
-  have e3 : ∑ j, pderiv R ((0 : Fin 1), j) (pt R (n := 1) d 0 i) * invMat G j l = invMat G i l := by
+  have e3 : ∑ j, pderiv ((0 : Fin 1), j) (pt R (n := 1) d 0 i) * invMat G j l = invMat G i l := by
     rw [Finset.sum_eq_single i]
     · simp [pt]
     · intro j _ hj
@@ -73,7 +77,7 @@ theorem jac_mul_invMat (G : FGLaw R d) (N : ℕ) :
 
 theorem det_jac_mulF : ∀ (R : Type) [CommRing R] (d : ℕ) (F : FGLaw R d) (N : ℕ),
     ∃ U : (PS R 1 d)ˣ, Matrix.det (Matrix.of fun i j : Fin d =>
-      MvPowerSeries.pderiv R ((0 : Fin 1), j) (mulF F.F N i)) = (N : PS R 1 d) ^ d * U := by
+      MvPowerSeries.pderiv (R := R) ((0 : Fin 1), j) (mulF F.F N i)) = (N : PS R 1 d) ^ d * U := by
   intro R _ d G N
   have hφ : GP (mulN G N) := GlobalTheory.FormalMulN.const_mulN G N
   obtain ⟨a, ha⟩ := isUnit_det_of_const (invMat G) (const_invMat G)

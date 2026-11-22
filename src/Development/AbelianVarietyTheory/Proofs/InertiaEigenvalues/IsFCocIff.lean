@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem IsFCoc.cocycle {r : ℕ} {ρ : GE N →* GL (Fin r) (X.O0 i)} {y : ↥(D
   apply inj
   have e2 := congrFun e a
   simp only [← map_mul, MulEquiv.symm_apply_apply, Pi.add_apply] at e2
-  rw [e2, Pi.add_apply, map_add]
+  rw [e2, Pi.add_apply, map_add (f := _)]
   congr 1
   simp [LocBridge.rep, Matrix.mulVec, dotProduct, Matrix.toLinAlgEquiv'_apply]
 

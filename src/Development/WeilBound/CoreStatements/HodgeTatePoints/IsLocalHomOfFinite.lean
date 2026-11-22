@@ -1,17 +1,21 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RfTors
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FiniteAlgebraSplitLocal
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsFinFlatSub
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateDatumStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.GenericFiberCubeInclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RfTors
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FiniteAlgebraSplitLocal
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsFinFlatSub
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateDatumStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.GenericFiberCubeInclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
@@ -109,7 +113,7 @@ theorem isLocalHom_of_finite (O S : Type) [CommRing O] [IsLocalRing O] [CommRing
   intro a ha
   by_contra hna
   have hm : (IsLocalRing.maximalIdeal S).comap (algebraMap O S) = IsLocalRing.maximalIdeal O :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (IsLocalRing.maximalIdeal S))
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (IsLocalRing.maximalIdeal S))
   have hmem : a ∈ (IsLocalRing.maximalIdeal S).comap (algebraMap O S) := by
     rw [hm]
     exact hna
@@ -222,7 +226,8 @@ theorem htd_tie : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed
       have hc : (IsLocalRing.maximalIdeal S.carrier).comap (f : A.carrier →+* S.carrier) =
           IsLocalRing.maximalIdeal A.carrier := by
         apply IsLocalRing.eq_maximalIdeal
-        apply Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := (Tw.O : Type))
+        apply Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := (Tw.O : Type))
+        change ((IsLocalRing.maximalIdeal S.carrier).comap (f : A.carrier →+* S.carrier)).comap (algebraMap (Tw.O : Type) A.carrier) |>.IsMaximal
         rw [Ideal.comap_comap, AlgHom.comp_algebraMap, IsLocalRing.maximalIdeal_comap]
         exact IsLocalRing.maximalIdeal.isMaximal _
       constructor
@@ -304,7 +309,7 @@ theorem htd_tie : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed
       haveI hRl : IsLocalRing Rg := by
         refine { isUnit_or_isUnit_of_add_one := fun {a b} hab => ?_ }
         have hab' : algebraMap Rg (D.fin.AAx i).carrier a + algebraMap Rg (D.fin.AAx i).carrier b = 1 := by
-          rw [← map_add, hab, map_one]
+          rw [← map_add (f := _), hab, map_one]
         rcases IsLocalRing.isUnit_or_isUnit_of_add_one hab' with hu | hu
         · exact Or.inl (isUnit_of_map_unit _ _ hu)
         · exact Or.inr (isUnit_of_map_unit _ _ hu)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.ProfCoh
 
@@ -23,31 +27,14 @@ def intRep {V : Type u} [AddCommGroup V] (φ : G →* AddMonoid.End V) :
     ext x
     simp
 
-@[simp]
-theorem intRep_apply {V : Type u} [AddCommGroup V] (φ : G →* AddMonoid.End V) (g : G) (x : V) :
-    intRep.{w} φ g x = φ g x :=
-  rfl
-
 def intRepOfMonoidEnd {M : Type u} [CommGroup M] (φ : G →* Monoid.End M) :
     Representation (ULift.{w} ℤ) G (Additive M) :=
   intRep.{w} ((monoidEndToAdditive M : Monoid.End M →* AddMonoid.End (Additive M)).comp φ)
-
-@[simp]
-theorem intRepOfMonoidEnd_apply {M : Type u} [CommGroup M] (φ : G →* Monoid.End M) (g : G)
-    (x : Additive M) :
-    intRepOfMonoidEnd.{w} φ g x = Additive.ofMul (φ g x.toMul) :=
-  rfl
 
 def zRepOfMonoidEnd {M : Type u} [CommGroup M] (φ : G →* Monoid.End M) :
     Representation ℤ G (Additive M) :=
   (addMonoidEndRingEquivInt (Additive M) : AddMonoid.End (Additive M) →* _).comp
     ((monoidEndToAdditive M : Monoid.End M →* AddMonoid.End (Additive M)).comp φ)
-
-@[simp]
-theorem zRepOfMonoidEnd_apply {M : Type u} [CommGroup M] (φ : G →* Monoid.End M) (g : G)
-    (x : Additive M) :
-    zRepOfMonoidEnd φ g x = Additive.ofMul (φ g x.toMul) :=
-  rfl
 
 end IntRep
 
@@ -94,26 +81,9 @@ abbrev galUnits : Rep.{u} (ULift.{w} ℤ) Gal(L/K) :=
 abbrev galRootsOfUnity (n : ℕ) : Rep.{u} (ULift.{w} ℤ) Gal(L/K) :=
   Rep.of (intRepOfMonoidEnd.{w} (galRootsOfUnityHom K L n))
 
-abbrev galAddZ : Rep.{u} ℤ Gal(L/K) := Rep.ofDistribMulAction ℤ Gal(L/K) L
-
 abbrev galUnitsZ : Rep.{u} ℤ Gal(L/K) := Rep.of (zRepOfMonoidEnd (galUnitsHom K L))
 
-abbrev galRootsOfUnityZ (n : ℕ) : Rep.{u} ℤ Gal(L/K) :=
-  Rep.of (zRepOfMonoidEnd (galRootsOfUnityHom K L n))
-
 variable {K L}
-
-@[simp]
-theorem galAdd_ρ_apply (σ : Gal(L/K)) (x : L) : (galAdd K L).ρ σ x = σ x :=
-  rfl
-
-@[simp]
-theorem galAddInt_ρ_apply (σ : Gal(L/K)) (x : L) : (galAddInt.{w} K L).ρ σ x = σ x :=
-  rfl
-
-@[simp]
-theorem galAddZ_ρ_apply (σ : Gal(L/K)) (x : L) : (galAddZ K L).ρ σ x = σ x :=
-  rfl
 
 @[simp]
 theorem galUnits_ρ_apply (σ : Gal(L/K)) (x : Additive Lˣ) :
@@ -128,11 +98,6 @@ theorem galUnitsZ_ρ_apply (σ : Gal(L/K)) (x : Additive Lˣ) :
 @[simp]
 theorem galRootsOfUnity_ρ_apply (n : ℕ) (σ : Gal(L/K)) (x : Additive (rootsOfUnity n L)) :
     (galRootsOfUnity.{w} K L n).ρ σ x = Additive.ofMul (galRootsOfUnityHom K L n σ x.toMul) :=
-  rfl
-
-@[simp]
-theorem galRootsOfUnityZ_ρ_apply (n : ℕ) (σ : Gal(L/K)) (x : Additive (rootsOfUnity n L)) :
-    (galRootsOfUnityZ K L n).ρ σ x = Additive.ofMul (galRootsOfUnityHom K L n σ x.toMul) :=
   rfl
 
 end Galois

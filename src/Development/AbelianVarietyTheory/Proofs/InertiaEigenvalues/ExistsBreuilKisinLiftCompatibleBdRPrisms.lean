@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinPrismHomsAgreeWittAndModIdealStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsApproxRootEisensteinAwayPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalPeriodRingsSectionEqAinfToBdRPlusStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinApproxRootImageIndepStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ApproxRootSubUniformizerMemFilPStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinPrismHomsAgreeWittAndModIdealStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsApproxRootEisensteinAwayPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalPeriodRingsSectionEqAinfToBdRPlusStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinApproxRootImageIndepStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ApproxRootSubUniformizerMemFilPStatement
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc
 open scoped Formalism.Per NNReal
@@ -16,7 +20,7 @@ variable {l : ℕ} [Fact l.Prime] {K : FinExt l}
 
 theorem exists_poly (bk : BK K) (y : bk.S ⧸ Ideal.span {bk.E}) :
     ∃ P : Polynomial (Wq l bk.a), Ideal.Quotient.mk _ (P : bk.S) = y := by
-  haveI : IsAdicComplete (Ideal.span {(l : Wq l bk.a)}) (Wq l bk.a) := WittVector.isAdicCompleteIdealSpanP
+  have : IsAdicComplete (Ideal.span {(l : Wq l bk.a)}) (Wq l bk.a) := WittVector.isAdicCompleteIdealSpanP
   have H : bk.Ep.IsDistinguishedAt (Ideal.span {(l : Wq l bk.a)}) :=
     { mem := fun {i} hi => Ideal.mem_span_singleton.2 (bk.dvd_coeff i hi)
       monic := bk.monic }
@@ -37,7 +41,7 @@ theorem exists_dvd_pow_mul_ringHom_sub_natPowComb {S A : Type} [CommRing S] [Com
   obtain ⟨a, x, hx⟩ := hs
   obtain ⟨b, y, hy⟩ := ht
   refine ⟨a + b, p ^ b * (m : A) ^ i * x + p ^ a * (m : A) ^ j * y, ?_⟩
-  simp only [map_add, map_mul, map_pow, map_natCast]
+  simp only [map_add (f := _), map_mul, map_pow, map_natCast]
   linear_combination (p ^ b * (m : A) ^ i) * hx + (p ^ a * (m : A) ^ j) * hy
 
 theorem ringHom_lift_sub_mem_mul {S R A : Type} [CommRing S] [CommRing R] [CommRing A] (ψ : S →+* A) (φ : R →+* A) (I : Ideal A)
@@ -53,7 +57,7 @@ theorem ringHom_lift_sub_mem_natPowComb {S R A : Type} [CommRing S] [CommRing R]
     ψ ((m : S) ^ j * s + (m : S) ^ i * t) - (m : A) ^ (i + j) * φ (x + y) ∈ I := by
   have h := I.add_mem (I.mul_mem_left ((m : A) ^ j) hs) (I.mul_mem_left ((m : A) ^ i) ht)
   convert h using 1
-  simp only [map_add, map_mul, map_pow, map_natCast]
+  simp only [map_add (f := _), map_mul, map_pow, map_natCast]
   ring
 
 noncomputable def oK (K : FinExt l) (C : Core l) : ↥(OL K) →+* Per.BdRp l :=
@@ -62,7 +66,7 @@ noncomputable def oK (K : FinExt l) (C : Core l) : ↥(OL K) →+* Per.BdRp l :=
 def Good (bk : BK K) (C : Core l) (n : ℕ) (x : ↥(OL K)) : Prop :=
   ∃ (k : ℕ) (s : bk.S), ((aDp l).comp bk.ev) s - (l : Per.BdRp l) ^ k * oK K C x ∈ Per.FilP l n ∧
     ∀ (B : Obj l ↥(OL K)) (f g : Hom bk.prism B), ∃ k : ℕ,
-      BK.hf f bk.E ^ n ∣ (l : B.A) ^ k * (BK.hf f s - BK.hf g s)
+      BK.hf (bk := bk) f bk.E ^ n ∣ (l : B.A) ^ k * (BK.hf (bk := bk) f s - BK.hf (bk := bk) g s)
 
 variable {bk : BK K} {C : Core l} {n : ℕ}
 
@@ -95,18 +99,30 @@ theorem good_C (w : Wq l bk.a) :
 
 theorem good_X : Good bk C n (bk.str.symm (Ideal.Quotient.mk _ X)) := by
   obtain ⟨m, q, h1, h2⟩ := GlobalTheory.T.exists_approx_root_eisenstein_away_prime l K bk n
-  exact ⟨m, q, GlobalTheory.T.approxRoot_sub_uniformizer_mem_filP l K bk C n m q h1 h2, GlobalTheory.T.breuilKisin_approxRoot_image_indep l K bk n m q h1 h2⟩
+  have hIndep (B : Obj l ↥(OL K)) (f g : Hom bk.prism B) :
+      ∃ k : ℕ, BK.hf (bk := bk) f bk.E ^ n ∣
+        (l : B.A) ^ k * (BK.hf (bk := bk) f q - BK.hf (bk := bk) g q) := by
+    obtain ⟨hC, hX, hI⟩ := GlobalTheory.T.breuilKisinPrism_homs_agree_witt_and_mod_ideal l K bk B f g
+    obtain ⟨-, -, hI'⟩ := GlobalTheory.T.breuilKisinPrism_homs_agree_witt_and_mod_ideal l K bk B g f
+    obtain ⟨c, a, b, hab⟩ := GlobalTheory.T.bezout_eisenstein_derivative_prime_pow l K bk
+    exact approxRoot_image_indep_general_rings l n m c bk.Ep a b hab q h1 h2 B.I
+      (BK.hf (bk := bk) f) (BK.hf (bk := bk) g) hC hX hI hI'
+  exact ⟨m, q, GlobalTheory.T.approxRoot_sub_uniformizer_mem_filP l K bk C n m q h1 h2, hIndep⟩
 
 theorem good_poly (P : Polynomial (Wq l bk.a)) :
     Good bk C n (bk.str.symm (Ideal.Quotient.mk _ (P : bk.S))) := by
   induction P using Polynomial.induction_on with
   | C a => rw [Polynomial.coe_C]; exact good_C a
-  | add p q hp hq => rw [Polynomial.coe_add, map_add, map_add]; exact hp.add hq
+  | add p q hp hq => rw [Polynomial.coe_add, map_add (f := _), map_add (f := _)]; exact hp.add hq
   | monomial k a h =>
     rw [pow_succ, ← mul_assoc, Polynomial.coe_mul, Polynomial.coe_X, map_mul, map_mul]
     exact h.mul good_X
 
-theorem exists_lift : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (C : Core l) (n : ℕ) (x : ↥(OL K)), ∃ (k : ℕ) (s : bk.S), aDp l (bk.ev s) - (l : Per.BdRp l) ^ k * C.o ((x : ↥K.1) : Om l) ∈ Per.FilP l n ∧ (∀ (B : Obj l ↥(OL K)) (f g : Hom bk.prism B), ∃ k : ℕ, BK.hf f bk.E ^ n ∣ (l : B.A) ^ k * (BK.hf f s - BK.hf g s)) := by
+theorem exists_lift : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (C : Core l)
+    (n : ℕ) (x : ↥(OL K)), ∃ (k : ℕ) (s : bk.S),
+    aDp l (bk.ev s) - (l : Per.BdRp l) ^ k * C.o ((x : ↥K.1) : Om l) ∈ Per.FilP l n ∧
+    (∀ (B : Obj l ↥(OL K)) (f g : Hom bk.prism B), ∃ k : ℕ,
+      BK.hf (bk := bk) f bk.E ^ n ∣ (l : B.A) ^ k * (BK.hf (bk := bk) f s - BK.hf (bk := bk) g s)) := by
   intro l _ K bk C n x
   obtain ⟨P, hP⟩ := exists_poly bk (bk.str x)
   have h := good_poly (bk := bk) (C := C) (n := n) P

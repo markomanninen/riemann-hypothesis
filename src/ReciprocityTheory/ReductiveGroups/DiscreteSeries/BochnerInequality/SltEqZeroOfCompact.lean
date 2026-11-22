@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.NcVOneDecomp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.NcVOneDecomp
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,8 @@ theorem slt_crossOp_apply (k : ℕ) (i : Fin k) (F : Big n k M) (κ : Fin k → 
       ((if (κ i).1 = a then E b a (F (Function.update κ i (b, (κ i).2))) else 0) -
         (if (κ i).2 = b then E b a (F (Function.update κ i ((κ i).1, a))) else 0)) := by
   rw [← slt_coord_apply k κ (crossOp ε E k i F)]
-  simp only [crossOp, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [crossOp, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [slt_coord_apply]
   change factorAd k i a b (mAct E k b a F) κ = _

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StZariskiObjects
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolGermPointIdealSpan
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StZariskiObjects
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolGermPointIdealSpan
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -51,7 +56,8 @@ theorem hadamard_decomposition {σ : Type} [Fintype σ] {w : σ → ℂ} {f : (�
     have e2 : p.shift.sum y y = ∑ i, (z i - w i) * p.shift.sum y (Pi.single i 1) := by
       have hyy : p.shift.sum y y = p.shift.sum y (∑ i, Pi.single i (y i)) := by
         rw [Finset.univ_sum_single]
-      rw [hyy, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hyy, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [show (Pi.single i (y i) : σ → ℂ) = y i • Pi.single i 1 by
         ext j; by_cases h : j = i
@@ -70,12 +76,14 @@ theorem HolGermPointIdealSpan.proof : HolGermPointIdealSpan.Statement := by
         ∑ i, polyGerm w (X i - C (w i)) * ⟨(g i : Germ (𝓝 w) ℂ), g i, hg i, rfl⟩ := by
       apply Subtype.ext
       change (f : Germ (𝓝 w) ℂ) = (holGerms w).subtype (∑ i, _)
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_mul, Subring.coe_subtype]
       have hsum : ((fun z => ∑ i, (z i - w i) * g i z : (σ → ℂ) → ℂ) : Germ (𝓝 w) ℂ) =
           ∑ i, ((fun z : σ → ℂ => z i - w i : (σ → ℂ) → ℂ) : Germ (𝓝 w) ℂ) * (g i : Germ (𝓝 w) ℂ) := by
         change Germ.coeRingHom (𝓝 w) (fun z => ∑ i, (z i - w i) * g i z) = _
-        rw [show (fun z => ∑ i, (z i - w i) * g i z : (σ → ℂ) → ℂ) =
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [show (fun z => ∑ i, (z i - w i) * g i z : (σ → ℂ) → ℂ) =
             ∑ i, (fun z : σ → ℂ => z i - w i) * g i by
           funext z; simp [Finset.sum_apply], map_sum]
         rfl

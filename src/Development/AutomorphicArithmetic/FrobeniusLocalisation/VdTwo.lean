@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.RhoArt
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.DvdDiscrOfInertia
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.RhoArt
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.DvdDiscrOfInertia
+
+@[expose] public section
 
 open UpperTheory.HF
 

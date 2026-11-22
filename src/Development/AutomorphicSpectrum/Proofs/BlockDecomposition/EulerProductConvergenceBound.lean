@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TruncSum
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TruncSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem sum_prod_le {ι X : Type*} (D : Finset ι) (B : Finset X) (e : ι → X 
       ∑ t ∈ D.powerset, (if ∀ v ∈ t, P v x then ∏ v ∈ t, b v else 0) * ∏ v ∈ D \ t, a v := by
     intro x hxB
     calc ∏ v ∈ D, e v x ≤ ∏ v ∈ D, ((if P v x then b v else 0) + a v) := by
-          refine Finset.prod_le_prod (fun v hv => he0 v hv x hxB) (fun v hv => ?_)
+          refine Finset.prod_le_prod₀ (fun v hv => he0 v hv x hxB) (fun v hv => ?_)
           rw [add_comm]
           exact he v hv x hxB
       _ = ∑ t ∈ D.powerset, (∏ v ∈ t, (if P v x then b v else 0)) * ∏ v ∈ D \ t, a v :=

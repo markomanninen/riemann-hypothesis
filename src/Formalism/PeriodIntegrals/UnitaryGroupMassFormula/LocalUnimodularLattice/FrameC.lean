@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnimodularLattice.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SBasic
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnimodularLattice.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SBasic
+
+@[expose] public section
 
 open Matrix
 
@@ -99,18 +103,18 @@ lemma qm_mulVec_apply (y : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1)
 omit hF in
 lemma fcol_eI (a : Fin r) : fcol k r e f wf z0 (eI k r a) = e a := by
   unfold fcol
-  rw [dif_pos (by simp [eI])]
+  rw [dite_eq_left (by simp [eI])]
   rfl
 
 omit hF in
 lemma fcol_lt (j : Fin (2 * r + k + 1)) (hj : j.val < r) : fcol k r e f wf z0 j = e ⟨j.val, hj⟩ := by
   unfold fcol
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
 
 lemma fcol_mid_orth {j : Fin (2 * r + k + 1)} (hj1 : r ≤ j.val) (hj2 : j.val ≤ r + k) (a : Fin r) :
     hJ ε (e a) (fcol k r e f wf z0 j) = 0 := by
   unfold fcol
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
   split_ifs with h2 h3
   · exact hF.ew a _
   · exact hF.ez a

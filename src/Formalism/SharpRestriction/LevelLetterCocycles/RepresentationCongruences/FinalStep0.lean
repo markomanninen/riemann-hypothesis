@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TsumThree
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsSumPadicValIntWindowEq
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TsumThree
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsSumPadicValIntWindowEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,12 +148,5 @@ theorem step0 (l : ℕ) (hl : 11 ≤ l) (b w S η : ℕ) (hb : 1 ≤ b) (hηb : 
   have hdiv : 71 / 10 * ((b + η + S : ℕ) : ℝ) / l ≤ 71 / 10 * ((b + η + S : ℕ) : ℝ) / 11 := by
     gcongr
   linarith
-
-def bandBound (l h w S η : ℕ) (band : ℝ) : ℝ :=
-  (h : ℝ) / (l : ℝ) ^ 2 + ((w : ℝ) + η) / l + S + 1 + Real.logb l (2 * (h : ℝ)) + η * band
-
-def brOne (l h w S η R : ℕ) (band : ℝ) : ℝ :=
-  (h : ℝ) / (l : ℝ) ^ 2 + ((w : ℝ) + η) / l + (R : ℝ) ^ 2 * (S + 1 + Real.logb l (2 * (h : ℝ))) +
-    η * band
 
 end Formalism.MainNotions.N.FrobeniusPowerSeries

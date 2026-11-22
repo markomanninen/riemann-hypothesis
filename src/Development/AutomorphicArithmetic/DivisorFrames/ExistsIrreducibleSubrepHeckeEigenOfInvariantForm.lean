@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSubrepFixedOfUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSubrepFixedOfUnitary
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
@@ -44,7 +48,8 @@ theorem UpperTheory.exists_irreducible_subrep_hecke_eigen_of_invariant_form :
     refine ⟨∑ w ∈ hO.toFinset, w, ?_, ?_, hO.toFinset.card, ?_, ?_⟩
     · rw [memV]
       intro k hk
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       apply Finset.sum_nbij' (fun w => ρ k w) (fun w => ρ k⁻¹ w)
       · intro w hw
         simp only [Set.Finite.mem_toFinset, Set.mem_range] at hw ⊢
@@ -82,8 +87,10 @@ theorem UpperTheory.exists_irreducible_subrep_hecke_eigen_of_invariant_form :
         calc B y (ρ k' u) = B (ρ k' y) (ρ k' u) := by rw [hy k' k'.2]
           _ = B y u := hinv _ _ _
       constructor
-      · rw [map_sum, LinearMap.sum_apply, Finset.sum_congr rfl e1, Finset.sum_const, nsmul_eq_mul]
-      · rw [map_sum, Finset.sum_congr rfl e2, Finset.sum_const, nsmul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [map_sum, LinearMap.sum_apply, Finset.sum_congr rfl e1, Finset.sum_const, nsmul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [map_sum, Finset.sum_congr rfl e2, Finset.sum_const, nsmul_eq_mul]
   have proj : ∀ S1 : Submodule ℂ W, FiniteDimensional ℂ S1 → ∀ v, ∃ p ∈ S1, ∀ s ∈ S1, B s (v - p) = 0 := by
     intro S1 hS1 v
     let b := Module.finBasis ℂ S1

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIntZero
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIntZero
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT GlobalTheory.LFun Formalism.L2.Host
@@ -33,7 +37,7 @@ theorem coeff_prod_one_add (s : Multiset ℂ) (n : ℕ) :
 
 theorem esymm_add_antidiagonal (s t : Multiset ℂ) (k : ℕ) :
     (s + t).esymm k = ∑ p ∈ Finset.HasAntidiagonal.antidiagonal k, s.esymm p.1 * t.esymm p.2 := by
-  rw [← coeff_prod_one_add, Multiset.map_add, Multiset.prod_add, Polynomial.coeff_mul]
+  rw [← coeff_prod_one_add, Multiset.map_add (f := _), Multiset.prod_add, Polynomial.coeff_mul]
   simp only [coeff_prod_one_add]
 
 theorem esymm_map_mul_unit (B : Multiset ℂˣ) (z : ℂˣ) (j : ℕ) :
@@ -53,7 +57,7 @@ theorem satEig_join : ∀ (q n a b : ℕ) (c : ℂˣ) (Ba Bb : Multiset ℂˣ), 
   subst hab
   rw [pairs, Finset.sum_filter]
   simp only [satEig]
-  rw [Multiset.map_add, esymm_add_antidiagonal, Finset.mul_sum]
+  rw [Multiset.map_add (f := _), esymm_add_antidiagonal, Finset.mul_sum]
   refine Finset.sum_congr rfl ?_
   rintro ⟨i, j⟩ hp
   have hk : i + j = k := by simpa using hp

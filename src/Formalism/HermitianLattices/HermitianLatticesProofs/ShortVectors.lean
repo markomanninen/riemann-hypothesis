@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.DefsCS
-import Formalism.SuccessiveMinima.MinkowskiIIUpper
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.DefsCS
+public import Formalism.SuccessiveMinima.MinkowskiIIUpper
+
+@[expose] public section
 
 open MeasureTheory Module Metric Set
 open scoped Pointwise
@@ -24,7 +28,7 @@ private lemma shortVectors_prod_ge {n : ℕ} {c : ℝ} (hc : 0 < c) (lam : Fin n
     rw [Finset.card_erase_of_mem (Finset.mem_univ j), Finset.card_univ, Fintype.card_fin]
   have h1 : c ^ (n - 1) ≤ ∏ i ∈ Finset.univ.erase j, lam i := by
     rw [← hcard, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun i _ => hc.le) (fun i _ => hlow i)
+    exact Finset.prod_le_prod₀ (fun i _ => hc.le) (fun i _ => hlow i)
   have hj : 0 ≤ lam j := le_trans hc.le (hlow j)
   exact mul_le_mul_of_nonneg_left h1 hj
 

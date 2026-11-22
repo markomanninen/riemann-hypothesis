@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryFinitenessWindowLevelDimOnAdmissible
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestDecompProved
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryFinitenessWindowLevelDimOnAdmissible
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestDecompProved
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGenMovePow
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ProdSurjectiveGeometricPoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilCommutatorPairingTorsionGeometricPointStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPairingHeckeTranslateEqZetaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGenMovePow
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ProdSurjectiveGeometricPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilCommutatorPairingTorsionGeometricPointStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPairingHeckeTranslateEqZetaStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem exists_tateIsoO_transl : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.
     have := D.nondeg (h0.trans (map_zero D.EF).symm)
     exact sub_eq_zero.1 this
   have hlev : ∀ n, 0 < n → n.Coprime p → ∀ w, I.ev (n * k) (n • w) = I.ev k w := fun n hn hnp w =>
-    ev_mul_nsmul I n k hn kpos (Nat.Coprime.mul hkp hnp) w
+    ev_mul_nsmul I n k hn kpos (Nat.Coprime.mul_left hkp hnp) w
   have hker : ∀ t : Over.mk x ⟶ o.A, t ≫ ψ = 1 ↔ ∃ z, t = I.ev (N * k) (N • g z) := by
     intro t
     constructor
@@ -90,10 +94,10 @@ theorem exists_tateIsoO_transl : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.
     constructor
     · rintro ⟨z, hz⟩
       rw [hlev N Npos hNp, ← hlev n hn hnp] at hz
-      obtain ⟨w, hw⟩ := (ev_eq_iff I (n * k) (Nat.mul_pos hn kpos) (Nat.Coprime.mul hnp hkp) _ _).1 hz
+      obtain ⟨w, hw⟩ := (ev_eq_iff I (n * k) (Nat.mul_pos hn kpos) (Nat.Coprime.mul_left hnp hkp) _ _).1 hz
       obtain ⟨w', hw'⟩ := hg w
       refine ⟨z + w', ginj ?_⟩
-      rw [map_nsmul, map_add, hw', smul_add, smul_smul, ← sub_eq_iff_eq_add', hw]
+      rw [map_nsmul, map_add (f := _), hw', smul_add, smul_smul, ← sub_eq_iff_eq_add', hw]
     · rintro ⟨z, rfl⟩
       exact ⟨z, by rw [map_nsmul, hlev n hn hnp, hlev N Npos hNp]⟩
 
@@ -116,7 +120,7 @@ theorem exists_tateIsoO_transl : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.
       obtain ⟨z, hz⟩ := (hker _).1 han
       rw [hlev N Npos hNp, ← hlev n hn hnp] at hz
       have hnk : 0 < n * k := Nat.mul_pos hn kpos
-      have hnkp : (n * k).Coprime p := Nat.Coprime.mul hnp hkp
+      have hnkp : (n * k).Coprime p := Nat.Coprime.mul_left hnp hkp
       have hak : a ^ (n * k) = 1 := by
         rw [pow_mul, hz, ← ev_nsmul, I.ker _ hnk hnkp]
         exact ⟨g z, by rw [smul_smul, mul_comm]⟩
@@ -130,7 +134,7 @@ theorem exists_tateIsoO_transl : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.
       have e4 : w = g z + k • v := by rw [sub_sub, sub_eq_zero] at e2; exact e2
       obtain ⟨v', hv'⟩ := hg v
       refine ⟨z + v', ?_⟩
-      rw [map_add, hv', ← e4, hw, ha]
+      rw [map_add (f := _), hv', ← e4, hw, ha]
     · rintro ⟨y, rfl⟩
       exact htor n hn hnp y
 
@@ -153,14 +157,14 @@ theorem exists_tateIsoO_transl : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.
     simp only [sq2, ← Over.comp_left, comp_lift, Category.id_comp, lift_fst_assoc, lift_snd_assoc, Category.comp_id]
   refine ⟨⟨I.ζ, I.ζ_prim, I.ζ_pow, fun n y => I.ev (n * k) (g y) ≫ ψ, ?_, ?_, ?_, ?_, ?_, ?_⟩, fun y => ?_⟩
   · intro n y y'
-    rw [map_add, I.add, MonObj.mul_comp]
+    rw [map_add (f := _), I.add, MonObj.mul_comp]
   · intro n b' y
     rw [map_smul, I.lin, Category.assoc, hact, ← Category.assoc]
   · exact fun n hn hnp y => ker' n hn hnp y
   · exact fun n hn hnp q => onto' n hn hnp q
   · intro n m hn hm hnm y
     rw [← hΨ, ← map_pow, hΨ, Nat.mul_right_comm n m k, I.tower (n * k) m (Nat.mul_pos hn kpos) hm
-      (by rw [Nat.mul_right_comm]; exact Nat.Coprime.mul hnm hkp)]
+      (by rw [Nat.mul_right_comm]; exact Nat.Coprime.mul_left hnm hkp)]
   · intro n hn hnp u v
     obtain ⟨e, he⟩ := GlobalTheory.T.exists_weilCommutatorPairing_torsion_geometricPoint S A' (P'.pull (lift (𝟙 A') (𝟙 A')).left) hA' (pull_isLB hP' _) κ x n hn (hnκ n hnp) _ _
       (htor n hn hnp u) (htor n hn hnp v)

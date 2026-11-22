@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDD
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntNsg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LogHeightGeneratorLowerBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntegralLeOfAeLeAffine
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LogNormNonneg
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDD
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntNsg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LogHeightGeneratorLowerBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntegralLeOfAeLeAffine
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LogNormNonneg
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -234,21 +238,19 @@ theorem four_sg (hd : d.AxH 𝒜) (h : d.S1) (G : WT) (ta : ∀ c, A c)
     ((d.delc c : ℝ) * Real.log (d.supN sg G ta)) 0 (integrable_const 0) I2 I2 ?_
   · simp only [integral_zero, zero_mul, add_zero] at k
     linarith
-  filter_upwards [d.norm_at_sg hd h c sg] with z hz
-  obtain ⟨hfin0, hcard0, -, -⟩ := hz
-  have hfin : (d.ST c sg (fun i j => spherePoint (z i) j)).Finite := hfin0
-  have hcard : (d.ST c sg (fun i j => spherePoint (z i) j)).ncard = d.delc c := hcard0
-  rw [finsum_mem_eq_finite_toFinset_sum _ hfin]
-  rw [Set.ncard_eq_toFinset_card _ hfin] at hcard
+  refine (d.hint_fs hd h c sg).mono ?_
+  intro z hz
+  obtain ⟨s, hcard, hmem, hsum⟩ := hz
+  simp only [zero_mul, add_zero]
+  change 0 ≤ d.hintSm c sg (fun P => -Real.log (d.nrm c G (ta c) P)) z + _
   have e : (d.delc c : ℝ) * Real.log (d.supN sg G ta) =
-      ∑ P ∈ hfin.toFinset, Real.log (d.supN sg G ta) := by
+      ∑ P ∈ s, Real.log (d.supN sg G ta) := by
     rw [Finset.sum_const, nsmul_eq_mul, hcard]
-  rw [e, zero_mul, add_zero, ← Finset.sum_add_distrib]
+  rw [hsum, e, ← Finset.sum_add_distrib]
   refine Finset.sum_nonneg fun P hP => ?_
-  rw [Set.Finite.mem_toFinset] at hP
   have hn := hd.nrm_pos c P (hta c).1 (hta c).2
   have hle : d.nrm c G (ta c) P ≤ d.supN sg G ta :=
-    le_ciSup (f := fun p : (Σ c, PT (Ω := Ω c) sg) => d.nrm p.1 G (ta p.1) p.2) hbdd ⟨c, ⟨P, hP.1⟩⟩
+    le_ciSup (f := fun p : (Σ c, PT (Ω := Ω c) sg) => d.nrm p.1 G (ta p.1) p.2) hbdd ⟨c, ⟨P, hmem P hP⟩⟩
   have := Real.log_le_log hn hle
   linarith
 

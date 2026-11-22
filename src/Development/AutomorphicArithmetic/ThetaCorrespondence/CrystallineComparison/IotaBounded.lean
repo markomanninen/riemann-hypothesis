@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Comparison
-import GroundTheory.PAdicHodge.ACrisBdRGalois
+module
+
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Comparison
+public import GroundTheory.PAdicHodge.ACrisBdRGalois
+
+@[expose] public section
 
 noncomputable section
 

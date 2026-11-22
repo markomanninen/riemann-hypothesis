@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.UnitsPowers
-import GroundTheory.LocalFields.NormalLattice
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.UnitsPowers
+public import GroundTheory.LocalFields.NormalLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -16,7 +21,8 @@ theorem one_add_pow_prime_eq {p : ℕ} (hp : p.Prime) {z : 𝒪[K]} (hz : z ∈ 
   refine ⟨r - 1, ?_, by ring⟩
   rw [← residue_eq_zero_iff, map_sub, map_one, sub_eq_zero]
   have hz' : residue 𝒪[K] z = 0 := (residue_eq_zero_iff _).mpr hz
-  simp only [r, map_sum, map_mul, map_pow, hz', one_pow, map_natCast, mul_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [r, map_sum, map_mul, map_pow, hz', one_pow, map_natCast, mul_one]
   rw [Finset.sum_eq_single 1]
   · simp [Nat.div_self hp.pos]
   · intro k hk hk1

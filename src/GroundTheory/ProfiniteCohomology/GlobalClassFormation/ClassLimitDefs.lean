@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Sequence
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.NormalFixingSubgroupGaloisClosure
-import GroundTheory.ProfiniteCohomology.GaloisModules.Discrete
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Sequence
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.NormalFixingSubgroupGaloisClosure
+public import GroundTheory.ProfiniteCohomology.GaloisModules.Discrete
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -29,19 +34,9 @@ def diagMor : unitsRep ⟶ IdeleLimit.rep :=
   Rep.ofHom ⟨(MonoidHom.toAdditive IdeleLimit.diag).toIntLinearMap, fun σ => LinearMap.ext fun x =>
     congrArg Additive.ofMul (IdeleLimit.diag_map σ x.toMul)⟩
 
-@[simp]
-theorem diagMor_hom_apply (x : Additive ℚ̄ˣ) :
-    diagMor.hom x = Additive.ofMul (IdeleLimit.diag x.toMul) :=
-  rfl
-
 def toClassMor : IdeleLimit.rep ⟶ classRep :=
   Rep.ofHom ⟨(MonoidHom.toAdditive IdeleLimit.toClassLimit).toIntLinearMap, fun σ => LinearMap.ext
     fun x => congrArg Additive.ofMul (IdeleLimit.toClassLimit_smul σ x.toMul)⟩
-
-@[simp]
-theorem toClassMor_hom_apply (x : Additive IdeleLimit) :
-    toClassMor.hom x = Additive.ofMul (IdeleLimit.toClassLimit x.toMul) :=
-  rfl
 
 def idelesShortComplex : ShortComplex (Rep ℤ (ℚ̄ ≃ₐ[ℚ] ℚ̄)) :=
   ShortComplex.mk diagMor toClassMor (by
@@ -51,13 +46,12 @@ def idelesShortComplex : ShortComplex (Rep ℤ (ℚ̄ ≃ₐ[ℚ] ℚ̄)) :=
 theorem shortExact_of_injective_of_surjective {k G : Type u} [CommRing k] [Group G]
     (S : ShortComplex (Rep.{u} k G)) (hf : Function.Injective S.f.hom)
     (hex : ∀ b, S.g.hom b = 0 → ∃ a, S.f.hom a = b) (hg : Function.Surjective S.g.hom) :
-    S.ShortExact where
-  exact := by
-    rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k G) (ModuleCat.{u} k)),
-      ShortComplex.moduleCat_exact_iff]
-    exact hex
-  mono_f := (Rep.mono_iff_injective _).2 hf
-  epi_g := (Rep.epi_iff_surjective _).2 hg
+    S.ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ((Rep.mono_iff_injective S.f).2 hf)
+    ((Rep.epi_iff_surjective S.g).2 hg)
+  rw [← ShortComplex.exact_map_iff_of_faithful S (forget₂ (Rep.{u} k G) (ModuleCat.{u} k)),
+    ShortComplex.moduleCat_exact_iff]
+  exact hex
 
 theorem idelesShortComplex_shortExact : idelesShortComplex.ShortExact := by
   refine shortExact_of_injective_of_surjective _ (fun x y h =>

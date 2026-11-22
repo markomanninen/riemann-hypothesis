@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.SmoothVectorFixedByOpenSubgroup
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfKernel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.SmoothVectorFixedByOpenSubgroup
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfKernel
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -41,8 +45,11 @@ theorem UpperTheory.exists_locallyConstant_twistedCocycle_ne_zero_of_frameOk :
       have := x2 (g : F.Γ)⁻¹ g
       rw [inv_mul_cancel, x0, map_inv, hχ, inv_inv] at this
       exact this.symm
+    have hΨstar : F.Ψ (F.star g) = (F.Ψ g)⁻¹ := by
+      have : ((F.star g : F.G0) : F.Γ) = F.c * (g : F.Γ)⁻¹ * F.c⁻¹ := rfl
+      rw [this, map_mul, map_mul, map_inv, map_inv, mul_inv_cancel_comm]
     show x (F.star g) * (F.Ψ (F.star g) : k) = _
-    rw [(UpperTheory.V.Fr.star h).2.2.1, hs, x2, x2, x3, hc]
+    rw [hΨstar, hs, x2, x2, x3, hc]
     simp only [Units.val_neg, Units.val_one]
     linear_combination (-(((F.Ψ g)⁻¹ : kˣ) : k)) * h1
   · obtain ⟨Y, hY⟩ := x4 v

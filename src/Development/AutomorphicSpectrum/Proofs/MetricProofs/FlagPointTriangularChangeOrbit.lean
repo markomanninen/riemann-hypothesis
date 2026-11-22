@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BasePartFlagPt
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFifth
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BasePartFlagPt
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFifth
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq
@@ -25,13 +30,13 @@ private theorem minorIJ_mul_of_block {N : ℕ} (h B : Matrix (Fin N) (Fin N) ℂ
     minorIJ (h * B) I S = minorIJ h I S * minorIJ B S S := by
   unfold minorIJ
   by_cases e : I.card = S.card
-  · rw [dif_pos e, dif_pos e, dif_pos rfl, ← Matrix.det_mul]
+  · rw [dite_eq_left e, dite_eq_left e, dite_eq_left rfl, ← Matrix.det_mul]
     congr 1
     ext x y
     simp only [Matrix.submatrix_apply, Matrix.mul_apply]
     exact sum_eq_sum_orderEmbOfFin_of_zero_off S (fun a => h (I.orderEmbOfFin e x) a * B a (S.orderEmbOfFin rfl y))
       (fun a ha => by rw [hB a _ (Finset.orderEmbOfFin_mem S rfl y) ha, mul_zero])
-  · rw [dif_neg e, dif_neg e, zero_mul]
+  · rw [dite_eq_right e, dite_eq_right e, zero_mul]
 
 private theorem apply_eq_zero_of_mem_stepCols_not_mem {N j : ℕ} (B : Matrix (Fin N) (Fin N) ℂ) (i : Fin N)
     (hd : IsBlockDiag j B) (ht : B.BlockTriangular id) :
@@ -49,7 +54,7 @@ private theorem apply_eq_zero_of_mem_stepCols_not_mem {N j : ℕ} (B : Matrix (F
 private theorem minorIJ_ne_zero_of_blockTriangular {N : ℕ} (B : Matrix (Fin N) (Fin N) ℂ) (S : Finset (Fin N))
     (ht : B.BlockTriangular id) (hdet : B.det ≠ 0) : minorIJ B S S ≠ 0 := by
   unfold minorIJ
-  rw [dif_pos rfl]
+  rw [dite_eq_left rfl]
   have hdiag : ∀ a, B a a ≠ 0 := by
     rw [Matrix.det_of_isUpperTriangular ht] at hdet
     exact fun a => (Finset.prod_ne_zero_iff.mp hdet) a (Finset.mem_univ a)

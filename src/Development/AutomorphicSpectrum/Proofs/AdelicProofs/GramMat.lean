@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Slopes
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Slopes
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Lines
 

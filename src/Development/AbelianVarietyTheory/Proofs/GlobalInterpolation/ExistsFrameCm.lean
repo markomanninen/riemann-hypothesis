@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualStabiliserIndex
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValuedAlgebraMapLtOneIff
-import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualStabiliserIndex
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValuedAlgebraMapLtOneIff
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.UG Formalism.BasicNotions Formalism.MainNotions.StandardLattice
 open scoped TensorProduct
 
@@ -40,7 +45,9 @@ theorem mem_intV_iff (z : E ⊗[maximalRealSubfield E] v.adicCompletion (maximal
         obtain ⟨a, rfl⟩ := hx
         exact Subring.subset_closure (Or.inl ⟨⟨a, a, rfl⟩, rfl⟩)
       | algebraMap r => exact Subring.subset_closure (Or.inr ⟨⟨r.1, r.2⟩, rfl⟩)
-      | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+      | add x y _ _ hx hy =>
+        rw [map_add (sw v).symm]
+        exact add_mem hx hy
       | mul x y _ _ hx hy => rw [map_mul]; exact mul_mem hx hy
     simpa using key _ hz
 
@@ -59,7 +66,7 @@ theorem mem_latS_iff {r : ℕ} (N : Submodule (𝓞 E) (Fin r → E))
       have := add_mem hx hy
       convert this using 1
       funext i
-      simp
+      exact map_add (sw v) (x i) (y i)
     | smul c x _ hx =>
       have := smul_mem_locLattice v ((mem_intV_iff v _).1 c.2) hx
       convert this using 1
@@ -79,7 +86,7 @@ theorem mem_latS_iff {r : ℕ} (N : Submodule (𝓞 E) (Fin r → E))
         have := add_mem hx hy
         convert this using 1
         funext i
-        simp
+        exact map_add (sw v).symm (x i) (y i)
       | smul c x _ hx =>
         have hc : (sw v).symm (algebraMap _ (LocAlg v) c) ∈ intV E v :=
           (mem_intV_iff v _).2 (by simpa using (locOrder v).algebraMap_mem c)
@@ -93,9 +100,8 @@ theorem mem_latS_iff {r : ℕ} (N : Submodule (𝓞 E) (Fin r → E))
 theorem sw_sigR (hc : CMData (maximalRealSubfield E) E)
     (z : E ⊗[maximalRealSubfield E] v.adicCompletion (maximalRealSubfield E)) :
     sw v (Formalism.UG.sigR hc.sig (v.adicCompletion (maximalRealSubfield E)) z) = locConj v (sw v z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  induction z using TensorProduct.inductionOn with
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a e => rfl
 
 theorem unramified (hc : CMData (maximalRealSubfield E) E) :
@@ -166,7 +172,16 @@ theorem exists_frame_cm (hc : CMData (maximalRealSubfield E) E) {r : ℕ}
 
 end CM
 
-theorem exists_frame : ∀ (D : D7) (N : Submodule (𝓞 D.host.E) (Fin D.R.k → D.host.E)) (v : HeightOneSpectrum (𝓞 D.host.F)), letI := D.host.cmStar; GlobalTheory.IndefiniteRowSideFullHecke.SelfDualStabiliserIndex.IsSelfDualLat (D.sp.cm.sig : D.host.E →+* D.host.E) D.sp.gram0 N → ∃ b : GL (Fin D.R.k) (D.host.E ⊗[D.host.F] v.adicCompletion D.host.F), cT (Formalism.UG.sigR D.sp.cm.sig (v.adicCompletion D.host.F)) b.1 * D.sp.gram0.map (inclE (F := D.host.F) (v.adicCompletion D.host.F)) * b.1 = 1 ∧ ∀ x, x ∈ latS (F := D.host.F) (v.adicCompletion D.host.F) (intV D.host.E v) N ↔ ∀ i, ((b⁻¹).1 *ᵥ x) i ∈ intV D.host.E v := by
+theorem exists_frame : ∀ (D : D7) (N : Submodule (𝓞 D.host.E) (Fin D.R.k → D.host.E))
+    (v : HeightOneSpectrum (𝓞 D.host.F)),
+    letI := D.host.cmStar
+    GlobalTheory.IndefiniteRowSideFullHecke.SelfDualStabiliserIndex.IsSelfDualLat
+      (D.sp.cm.sig : D.host.E →+* D.host.E) D.sp.gram0 N →
+    ∃ b : GL (Fin D.R.k) (D.host.E ⊗[D.host.F] v.adicCompletion D.host.F),
+      cT (Formalism.UG.sigR D.sp.cm.sig (v.adicCompletion D.host.F)) b.1 *
+        D.sp.gram0.map (inclE (F := D.host.F) (v.adicCompletion D.host.F)) * b.1 = 1 ∧
+      ∀ x, x ∈ latS (F := D.host.F) (v.adicCompletion D.host.F) (intV D.host.E v) N ↔
+        ∀ i, ((b⁻¹).1 *ᵥ x) i ∈ intV D.host.E v := by
   intro D N v hN
   letI := D.host.cmStar
   haveI : IsCMField D.host.E := D.host.isCMField_hostE

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMixedKleimanTop
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsScaledFSHProps
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZCombExpand
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMixedSectionStep
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMixedTopAlgebra
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMixedKleimanTop
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsScaledFSHProps
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZCombExpand
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMixedSectionStep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMixedTopAlgebra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

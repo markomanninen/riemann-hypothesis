@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,10 +47,6 @@ def IsAdmOn (G : Set (Matrix (Fin n) (Fin n) ℂ)) (π : Matrix (Fin n) (Fin n) 
       (∀ S' : Submodule ℂ H, S' ≤ S → IsKStable G π S' → S' = ⊥ ∨ S' = S) →
       FiniteDimensional ℂ (sSup {S' | ∃ T : H →ₗ[ℂ] H, S' = S.map T ∧
         ∀ k ∈ maxCpt G, ∀ w ∈ S, T (π k w) = π k (T w)} : Submodule ℂ H)
-
-def AnalyticOnGroup (G : Set (Matrix (Fin n) (Fin n) ℂ)) (f : Matrix (Fin n) (Fin n) ℂ → ℂ) : Prop :=
-  ∀ g₀ ∈ G, ∃ (U : Set (Fin n → Fin n → ℂ)) (F : (Fin n → Fin n → ℂ) → ℂ),
-    IsOpen U ∧ Matrix.of.symm g₀ ∈ U ∧ AnalyticOnNhd ℝ F U ∧ ∀ z ∈ U, Matrix.of z ∈ G → f (Matrix.of z) = F z
 
 end GlobalTheory.LinRed
 

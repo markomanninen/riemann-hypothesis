@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexificationBaseChangeLinearOneTmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIInfKerEqOfIsBaseChangeFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexificationBaseChangeLinearOneTmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIInfKerEqOfIsBaseChangeFamily
+
+@[expose] public section
+
 open GlobalTheory.BadCount
 open scoped TensorProduct
 
@@ -23,7 +28,8 @@ theorem bcLin_sum_smul {K W G : Type} [Field K] [AddCommGroup W] [Module K W] [F
     bcLin σ (∑ g, a g • f g) = ∑ g, σ (a g) • bcLin σ (f g) := by
   letI : Algebra K ℂ := σ.toAlgebra
   show LinearMap.baseChangeHom K ℂ W W (∑ g, a g • f g) = ∑ g, σ (a g) • LinearMap.baseChange ℂ (f g)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun g _ => ?_
   show LinearMap.baseChange ℂ (a g • f g) = _
   rw [LinearMap.baseChange_smul]
@@ -62,7 +68,8 @@ theorem finrank_eig_twBC : ∀ (K W G : Type) [Field K] [AddCommGroup W] [Module
     iInf_congr hker
   have halg : Representation.asAlgebraHom (twBC σ ρ0 χ) (∑ g, MonoidAlgebra.single g (σ (c g))) =
       bcLin σ (∑ g, (c g * ((χ g)⁻¹ : Kˣ)) • ρ0 g) := by
-    rw [map_sum, bcLin_sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, bcLin_sum_smul]
     refine Finset.sum_congr rfl fun g _ => ?_
     rw [Representation.asAlgebraHom_single, twBC_apply, smul_smul, map_mul]
   have hbc := TensorProduct.isBaseChange K W ℂ

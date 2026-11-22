@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGDegW
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGInt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceCompactSupportCoefficient
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGDegW
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGInt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceCompactSupportCoefficient
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate

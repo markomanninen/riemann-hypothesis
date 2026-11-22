@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -13,14 +18,14 @@ open scoped Classical
 
 variable {F : Type} [Field F] [NumberField F]
 
-def atV (v : Pl F) (x : Fv F v) : AF F :=
+def atV (v : Pl (F := F)) (x : Fv F v) : AF F :=
   ((0 : InfiniteAdeleRing F), RestrictedProduct.single (fun w : Pl F => w.adicCompletionIntegers F) v x)
 
-theorem evFin_atV (v : Pl F) (x : Fv F v) : evFin F v (atV v x) = x := by
+theorem evFin_atV (v : Pl (F := F)) (x : Fv F v) : evFin F v (atV v x) = x := by
   show RestrictedProduct.single (fun w : Pl F => w.adicCompletionIntegers F) v x v = x
   exact RestrictedProduct.single_eq_same _ _ _
 
-theorem mul_atV (v : Pl F) (a : AF F) (x : Fv F v) : a * atV v x = atV v (evFin F v a * x) := by
+theorem mul_atV (v : Pl (F := F)) (a : AF F) (x : Fv F v) : a * atV v x = atV v (evFin F v a * x) := by
   refine Prod.ext (mul_zero _) ?_
   have key : ∀ f : RestrictedProduct (fun w : Pl F => w.adicCompletion F) (fun w => (w.adicCompletionIntegers F : Set (w.adicCompletion F))) Filter.cofinite,
       f * RestrictedProduct.single (fun w : Pl F => w.adicCompletionIntegers F) v x =
@@ -34,13 +39,13 @@ theorem mul_atV (v : Pl F) (a : AF F) (x : Fv F v) : a * atV v x = atV v (evFin 
     · simp [RestrictedProduct.single_eq_of_ne _ _ h]
   exact key a.2
 
-theorem atV_add (v : Pl F) (x y : Fv F v) : atV v (x + y) = atV v x + atV v y :=
+theorem atV_add (v : Pl (F := F)) (x y : Fv F v) : atV v (x + y) = atV v x + atV v y :=
   Prod.ext (add_zero _).symm (RestrictedProduct.single_add _ _ _ _)
 
-theorem atV_sub (v : Pl F) (x y : Fv F v) : atV v (x - y) = atV v x - atV v y :=
+theorem atV_sub (v : Pl (F := F)) (x y : Fv F v) : atV v (x - y) = atV v x - atV v y :=
   Prod.ext (sub_zero _).symm (RestrictedProduct.single_sub _ _ _ _)
 
-theorem atV_zero (v : Pl F) : atV v 0 = 0 :=
+theorem atV_zero (v : Pl (F := F)) : atV v 0 = 0 :=
   Prod.ext rfl (RestrictedProduct.single_zero _ _)
 
 end GlobalTheory.InertConjSq
@@ -63,10 +68,10 @@ theorem scalar_ids (σ : E →ₐ[F] E) (X Y e h bq cq : AF F) (A : AE F E)
   intro ι Z α β
   have cι : ∀ r, cA σ (ι r) = ι r := fun r => (cA σ).commutes r
   have hZ' : cA σ Z = ι X + ι Y * (-ι bq - A) := by
-    simp only [Z, map_add, map_mul, cι, hcA]; rfl
+    simp only [Z, map_add (f := _), map_mul, cι, hcA]; rfl
   set Z' := cA σ Z with hZ'def
   have hα : cA σ α = 1 - ι e + 3 * ι h * Z' := by
-    simp only [α, map_add, map_sub, map_mul, map_one, map_ofNat, cι, Z']
+    simp only [α, map_add (f := _), map_sub, map_mul, map_one, map_ofNat, cι, Z']
   have hβ : cA σ β = -(ι h * Z') := by
     simp only [β, map_neg, map_mul, cι, Z']
   have hE : ι e * ι e = ι e := by rw [← map_mul, he]
@@ -77,7 +82,7 @@ theorem scalar_ids (σ : E →ₐ[F] E) (X Y e h bq cq : AF F) (A : AE F E)
   have hN' : Z * Z' = ι h * ι e := by
     rw [hZ']
     have := congrArg ι hN
-    simp only [map_add, map_sub, map_mul] at this
+    simp only [map_add (f := _), map_sub, map_mul] at this
     simp only [Z]
     linear_combination this - ι Y * ι Y * hA
   have h2' : 2 * ι h = 1 := by
@@ -173,7 +178,7 @@ theorem cols_ext (d : ℕ) (X Y : Matrix (Fin d ⊕ Fin d) (Fin d ⊕ Fin d) (AE
     (h2 : X * (antiCols (F := F) (E := E) d : Matrix (Fin d ⊕ Fin d) (Fin d) (AE F E)) = Y * antiCols (F := F) (E := E) d) : X = Y := by
   set c : AE F E := algebraMap (AF F) (AE F E) (⅟(2 : AF F))
   have hc : c + c = 1 := by
-    simp only [c]; rw [← map_add, invOf_two_add_invOf_two, map_one]
+    simp only [c]; rw [← map_add (f := _), invOf_two_add_invOf_two, map_one]
   have hP : fromCols (diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) (AE F E)) (antiCols (F := F) (E := E) d) *
       (c • fromBlocks 1 1 1 (-1)) = 1 := by
     rw [diagCols, antiCols, fromCols_fromRows_eq_fromBlocks, Matrix.mul_smul, fromBlocks_multiply, fromBlocks_smul,
@@ -224,7 +229,7 @@ theorem antiCols_transpose_mul (d : ℕ) :
     (antiCols (F := F) (E := E) d : Matrix (Fin d ⊕ Fin d) (Fin d) (AE F E))ᵀ * antiCols (F := F) (E := E) d = (1 : Matrix (Fin d) (Fin d) (AE F E)) + 1 := by
   simp [antiCols, transpose_fromRows, fromCols_mul_fromRows]
 
-theorem at_b {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl F} (n : UD σ W) (hK : At (evFin F v) (matD n - 1))
+theorem at_b {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} (n : UD σ W) (hK : At (evFin F v) (matD n - 1))
     (b : Matrix (Fin d) (Fin d) (AE F E))
     (hb : matD n * (diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) (AE F E)) = diagCols (Fin d) + antiCols (F := F) (E := E) d * b) :
     At (evFin F v) b := by
@@ -238,12 +243,12 @@ theorem at_b {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl F} (n : UD �
     rw [e, ← Matrix.mul_smul, ← Matrix.smul_mul, h0, Matrix.zero_mul, Matrix.mul_zero]
   set c : AE F E := algebraMap (AF F) (AE F E) (⅟(2 : AF F))
   have hc : c + c = 1 := by
-    simp only [c]; rw [← map_add, invOf_two_add_invOf_two, map_one]
+    simp only [c]; rw [← map_add (f := _), invOf_two_add_invOf_two, map_one]
   calc u • b = (c + c) • (u • b) := by rw [hc, one_smul]
     _ = c • (u • (b + b)) := by rw [add_smul, ← smul_add, ← smul_add]
     _ = 0 := by rw [e2, smul_zero]
 
-theorem mkS_conj (σ : E →ₐ[F] E) {d : ℕ} (W : Spc F E d) (v : Pl F) (α β : AE F E)
+theorem mkS_conj (σ : E →ₐ[F] E) {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (α β : AE F E)
     (h1 : α * cA σ α - β * cA σ β = 1) (h2 : α * cA σ β = β * cA σ α) (n : UD σ W) (hn : n ∈ NabD σ W v)
     (hkey : ∀ b : Matrix (Fin d) (Fin d) (AE F E), At (evFin F v) b → (α - β) • b = (2 * (α + β)) • b) :
     mkS σ W α β h1 h2 * n * (mkS σ W α β h1 h2)⁻¹ = n * n := by
@@ -289,7 +294,7 @@ theorem blk_mulVec_inr (d : ℕ) (x y : AE F E) (z : Fin d ⊕ Fin d → AE F E)
     (fun i => (blk d x y *ᵥ z) (Sum.inr i)) = y • (fun i => z (Sum.inl i)) + x • (fun i => z (Sum.inr i)) := by
   funext i; simp [blk, fromBlocks_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, Function.comp_def]
 
-theorem blk_mulVec_mem {d : ℕ} {W : Spc F E d} {v : Pl F} (x y : AE F E)
+theorem blk_mulVec_mem {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} (x y : AE F E)
     (hx : ∀ z ∈ GlobalTheory.InertSph.latAt W v, x • z ∈ GlobalTheory.InertSph.latAt W v)
     (hy : ∀ z ∈ GlobalTheory.InertSph.latAt W v, y • z ∈ GlobalTheory.InertSph.latAt W v) :
     ∀ z ∈ latAtD W v, blk d x y *ᵥ z ∈ latAtD W v := by
@@ -305,7 +310,7 @@ theorem blk_sub_one (d : ℕ) (x y : AE F E) : blk d x y - 1 = blk d (x - 1) y :
 theorem smul_blk (d : ℕ) (u : AF F) (x y : AE F E) : u • blk d x y = blk d (u • x) (u • y) := by
   simp [blk, fromBlocks_smul, smul_assoc]
 
-theorem mkS_mem_ParD (σ : E →ₐ[F] E) {d : ℕ} (W : Spc F E d) (v : Pl F) (α β : AE F E)
+theorem mkS_mem_ParD (σ : E →ₐ[F] E) {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (α β : AE F E)
     (h1 : α * cA σ α - β * cA σ β = 1) (h2 : α * cA σ β = β * cA σ α)
     (hAt : ∀ u : AF F, evFin F v u = 0 → u • (α - 1) = 0 ∧ u • β = 0)
     (hL : ∀ r ∈ ({α, β, cA σ α, -cA σ β} : Set (AE F E)), ∀ z ∈ GlobalTheory.InertSph.latAt W v, r • z ∈ GlobalTheory.InertSph.latAt W v) :
@@ -335,7 +340,7 @@ open Matrix GlobalTheory.InertDbl
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem smul_latAt {d : ℕ} {W : Spc F E d} {v : Pl F} (p q : AF F)
+theorem smul_latAt {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} (p q : AF F)
     (hp : evFin F v p ∈ v.adicCompletionIntegers F) (hq : evFin F v q ∈ v.adicCompletionIntegers F) (a₀ : 𝓞 E) :
     ∀ z ∈ GlobalTheory.InertSph.latAt W v,
       (algebraMap (AF F) (AE F E) p + algebraMap (AF F) (AE F E) q * inclR (F := F) (AF F) (a₀ : E)) • z ∈
@@ -379,7 +384,7 @@ open Matrix GlobalTheory.InertDbl IsDedekindDomain.HeightOneSpectrum
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem valued_evFin_half (v : Pl F) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
+theorem valued_evFin_half (v : Pl (F := F)) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
     Valued.v (evFin F v (⅟(2 : AF F))) = 1 := by
   have e2 : ((algebraMap (𝓞 F) (v.adicCompletionIntegers F) 2 : v.adicCompletionIntegers F) : Fv F v) = 2 := by
     rw [GlobalTheory.InertUnitNorm.coe_algebraMap_adicCompletionIntegers]
@@ -406,7 +411,7 @@ open Matrix GlobalTheory.InertDbl IsDedekindDomain.HeightOneSpectrum
 attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
 
 theorem conj_sq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
-    (B : Base F E), B.IsGood σ → ∀ (d : ℕ) (W : Spc F E d) (v : Pl F) (w : HeightOneSpectrum (𝓞 E)),
+    (B : Base F E), B.IsGood σ → ∀ (d : ℕ) (W : Spc F E d) (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)),
     Formalism.UG.IsInertAt F E v w → ∀ n ∈ GlobalTheory.InertDbl.NabD σ W v, ∃ s ∈ GlobalTheory.InertDbl.ParD σ W v, s * n * s⁻¹ = n * n := by
   intro F E _ _ _ _ _ σ B hB d W v w hvw n hn
   have hp : (v.asIdeal.map (algebraMap (𝓞 F) (𝓞 E))).IsPrime := by
@@ -441,7 +446,7 @@ theorem conj_sq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
       algebraMap (AF F) (AE F E) (algebraMap F (AF F) (b : F)) * inclR (F := F) (AF F) (a : E) +
       algebraMap (AF F) (AE F E) (algebraMap F (AF F) (c : F)) = 0 := by
     have := congrArg (inclR (F := F) (AF F)) hq
-    simp only [map_add, map_mul, map_pow, map_zero, hιF] at this
+    simp only [map_add (f := _), map_mul, map_pow, map_zero, hιF] at this
     linear_combination this
   have hcA : cA σ (inclR (F := F) (AF F) (a : E)) =
       -algebraMap (AF F) (AE F E) (algebraMap F (AF F) (b : F)) - inclR (F := F) (AF F) (a : E) := by
@@ -480,31 +485,31 @@ theorem conj_sq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hr
     rcases hr with rfl | rfl | rfl | rfl
     · refine key (1 - atV v 1 + 3 * ⅟2 * atV v (x : Fv F v)) (3 * ⅟2 * atV v (y : Fv F v)) ?_ ?_ _ ?_
-      · simp only [map_add, map_sub, map_mul, map_one, map_ofNat, evFin_atV]
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_ofNat, evFin_atV]
         repeat (first | exact one_mem _ | assumption | apply add_mem | apply sub_mem | apply mul_mem | apply neg_mem)
-      · simp only [map_add, map_sub, map_mul, map_one, map_ofNat, evFin_atV]
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_ofNat, evFin_atV]
         repeat (first | exact one_mem _ | assumption | apply add_mem | apply sub_mem | apply mul_mem | apply neg_mem)
-      · simp only [map_add, map_sub, map_mul, map_one, map_ofNat]; ring
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_ofNat]; ring
     · refine key (-(⅟2 * atV v (x : Fv F v))) (-(⅟2 * atV v (y : Fv F v))) ?_ ?_ _ ?_
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV]
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV]
         repeat (first | exact one_mem _ | assumption | apply add_mem | apply sub_mem | apply mul_mem | apply neg_mem)
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV]
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV]
         repeat (first | exact one_mem _ | assumption | apply add_mem | apply sub_mem | apply mul_mem | apply neg_mem)
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat]; ring
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat]; ring
     · refine key (1 - atV v 1 + 3 * ⅟2 * (atV v (x : Fv F v) - atV v (y : Fv F v) * algebraMap F (AF F) (b : F)))
         (-(3 * ⅟2 * atV v (y : Fv F v))) ?_ ?_ _ ?_
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV, hev]
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV, hev]
         repeat (first | exact one_mem _ | assumption | apply add_mem | apply sub_mem | apply mul_mem | apply neg_mem)
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV, hev]
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV, hev]
         repeat (first | exact one_mem _ | assumption | apply add_mem | apply sub_mem | apply mul_mem | apply neg_mem)
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat, AlgHom.commutes, hcA]; ring
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat, AlgHom.commutes, hcA]; ring
     · refine key (⅟2 * (atV v (x : Fv F v) - atV v (y : Fv F v) * algebraMap F (AF F) (b : F)))
         (-(⅟2 * atV v (y : Fv F v))) ?_ ?_ _ ?_
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV, hev]
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV, hev]
         repeat (first | exact one_mem _ | assumption | apply add_mem | apply sub_mem | apply mul_mem | apply neg_mem)
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV, hev]
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat, evFin_atV, hev]
         repeat (first | exact one_mem _ | assumption | apply add_mem | apply sub_mem | apply mul_mem | apply neg_mem)
-      · simp only [map_add, map_sub, map_mul, map_one, map_neg, map_ofNat, AlgHom.commutes, hcA]; ring
+      · simp only [map_add (f := _), map_sub, map_mul, map_one, map_neg, map_ofNat, AlgHom.commutes, hcA]; ring
   · intro b' hb'
     rw [sub_eq_iff_eq_add.mp R3, add_smul]
     have : (algebraMap (AF F) (AE F E) (atV v 1) - 1) • b' = 0 := by

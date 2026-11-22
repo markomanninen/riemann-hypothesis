@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivCombIntAllOfLevT
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPCompactOfSquareDensity
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Matrix ComplexConjugate
@@ -15,7 +19,7 @@ theorem fsv_add (s s' t : ℂ) : fsv s t * fsv s' t = fsv (s + s') t := by
   unfold fsv
   rw [← Complex.exp_add]
   congr 1
-  simp only [map_add]
+  simp only [map_add (f := _)]
   ring
 
 theorem fsv_zero (t : ℂ) : fsv 0 t = 1 := by
@@ -51,7 +55,7 @@ theorem waveJ_wave {Wv : Module.End ℂ (RadSp P.k P.r z z' π π')} {s : ℂ} (
       exact ⟨U, hU, hcU, K, hKc, hKG, fun c' hc' g hg hgK => by rw [hW x c' g, hK0 c' hc' g hg hgK, smul_zero]⟩
     · rw [hW x y.1 y.2, hval y hy, smul_smul, fsv_add]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ a hx
 
 end WaveJ
@@ -110,6 +114,7 @@ theorem herKc0_le_waveJ (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π
       omega
   exact key 0 Φ hΦ rfl
 
+open Formalism.FourierDecayAlt.P.JCx2 (mnClosed BcGood mn_nice_zero mn_nice_add mn_nice_smul bc_JF_zero bc_JF_add bc_JF_smul) in
 theorem rr_pic (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
     (π' : Mx P.k P.r → (Wq →L[ℂ] Wq)) (X : ActualOps P.k P.r z z' π π') (μ : Measure (Mt P.k P.r))
     (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (Pr (RadSp P.k P.r z z' π π'))) (l0 : ℕ)
@@ -146,7 +151,29 @@ theorem rr_pic (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k
     rw [Finset.sum_eq_single b (fun b' _ hb' => by simp only [Φv, if_neg hb', map_zero])
       (fun h => absurd (Finset.mem_univ b) h)]
     simp only [Φv, if_pos rfl]
-  have hR := Formalism.FourierDecayAlt.P.JCx2.mn_rrop_closure Formalism.FourierDecayAlt.P.JCx2.bcGood_closed
+  have hClosed : mnClosed (BcGood D ε) := {
+    zero := ⟨fun _ _ => mn_nice_zero, fun _ _ h _ => bc_JF_zero h,
+      fun _ _ _ _ _ _ => rfl⟩
+    one := ⟨fun _ hF => hF, fun _ _ _ _ => rfl, fun _ _ hff x hx hxG => hff x hx hxG⟩
+    add := fun a b ha hb => ⟨fun F hF => mn_nice_add (ha.1 F hF) (hb.1 F hF),
+      fun F hF h hh => by
+        show B.JF D (fun g => a F g + b F g) h = a (B.JF D F) h + b (B.JF D F) h
+        rw [bc_JF_add (ha.1 F hF) (hb.1 F hF) hh, ha.2.1 F hF h hh, hb.2.1 F hF h hh],
+      fun f f' hff x hx hxG => by
+        show a f x + b f x = a f' x + b f' x
+        rw [ha.2.2 f f' hff x hx hxG, hb.2.2 f f' hff x hx hxG]⟩
+    mul := fun a b ha hb => ⟨fun F hF => ha.1 _ (hb.1 F hF),
+      fun F hF h hh => by
+        show B.JF D (a (b F)) h = a (b (B.JF D F)) h
+        rw [ha.2.1 _ (hb.1 F hF) h hh]
+        exact ha.2.2 _ _ (fun x hx hxG => hb.2.1 F hF x ⟨hxG, hx⟩) h hh.2 hh.1,
+      fun f f' hff x hx hxG =>
+        ha.2.2 (b f) (b f') (fun y hy hyG => hb.2.2 f f' hff y hy hyG) x hx hxG⟩
+    cop := fun c => ⟨fun _ hF => mn_nice_smul c hF, fun F _ h _ => bc_JF_smul c F h,
+      fun f f' hff x hx hxG => by
+        show c • f x = c • f' x
+        rw [hff x hx hxG]⟩ }
+  have hR := Formalism.FourierDecayAlt.P.JCx2.mn_rrop_closure hClosed
     (Formalism.FourierDecayAlt.P.JCx2.rma_Qop P.k P.r D.z D.z' (M.sgn P l0))
     (fun Y p q => Formalism.FourierDecayAlt.P.JCx2.bcGood_tL (Bs := D) (ε := ε) (M.sgn P l0) Y p q) w
   refine ⟨Formalism.FourierDecayAlt.D.actOp (Formalism.FourierDecayAlt.D.RRop (Formalism.FourierDecayAlt.P.JCx2.rma_Qop P.k P.r D.z D.z' (M.sgn P l0)) w) F' a, ?_, ?_⟩
@@ -221,7 +248,7 @@ theorem rr_waveJ (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P
     rw [hΨΦ, e]
     exact waveJ_wave P z z' π π' D l hWv _ hM
   | zero => rw [map_zero]; exact (waveJ P z z' π π' D l).zero_mem
-  | add x y _ _ hx hy => rw [map_add]; exact (waveJ P z z' π π' D l).add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact (waveJ P z z' π π' D l).add_mem hx hy
   | smul c x _ hx => rw [map_smul]; exact (waveJ P z z' π π' D l).smul_mem c hx
 
 theorem unwave (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
@@ -255,9 +282,6 @@ variable {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [Normed
 def fs (μ : Measure (Mt k r)) (l : Fin r) (Φ Ψ : RadSp k r z z' π π') (c : Fin r → ℂ) (t : ℂ) : ℂ :=
   ∫ c' : Cf r l.succ, wtI l.succ c' * pairAt μ Φ Ψ (glue l.succ (Function.update c l t) c')
 
-def GoodL (μ : Measure (Mt k r)) (l : Fin r) (c : Fin r → ℂ) (u : RadSp k r z z' π π') : Prop :=
-  u ∈ lcSub k r z z' π π' ∧ ∀ t : ℂ, t ≠ 0 → LevelSquareIntegrable μ l.succ u (Function.update c l t)
-
 variable (μ : Measure (Mt k r)) [SFinite μ] (hμ : B.IsHaarOn (Glev k r (Fin.last r)) μ) (l : Fin r) (c : Fin r → ℂ)
 
 include hμ in
@@ -273,296 +297,14 @@ theorem pairAt_add_left_lc {u1 u2 v : RadSp k r z z' π π'} (h1 : u1 ∈ lcSub 
   ext x
   simp only [Submodule.coe_add, Pi.add_apply, hadd]
 
-include hμ in
-theorem goodL_add {u v : RadSp k r z z' π π'} (hu : GoodL μ l c u) (hv : GoodL μ l c v) : GoodL μ l c (u + v) := by
-  obtain ⟨hu1, hu2⟩ := hu
-  obtain ⟨hv1, hv2⟩ := hv
-  refine ⟨Submodule.add_mem _ hu1 hv1, fun t ht => ?_⟩
-  have hw : Measurable (fun c' : Cf r l.succ => wtI l.succ c') := by
-    unfold wtI
-    first | fun_prop | measurability
-  have cross : ∀ a b : RadSp k r z z' π π', a ∈ lcSub k r z z' π π' → b ∈ lcSub k r z z' π π' →
-      LevelSquareIntegrable μ l.succ a (Function.update c l t) → LevelSquareIntegrable μ l.succ b (Function.update c l t) →
-      Integrable (fun c' : Cf r l.succ => wtI l.succ c' * pairAt μ a b (glue l.succ (Function.update c l t) c')) := by
-    intro a b ha hb ia ib
-    refine Integrable.mono' (Integrable.add (Integrable.norm ia) (Integrable.norm ib)) ?_ (ae_of_all _ fun c' => ?_)
-    · exact hw.aestronglyMeasurable.mul (pairAt_measI μ l.succ a b _).aestronglyMeasurable
-    · simp only [Pi.add_apply, norm_mul]
-      rw [← mul_add]
-      exact mul_le_mul_of_nonneg_left (norm_pairAt_leI μ hμ ha hb _) (norm_nonneg _)
-  unfold LevelSquareIntegrable
-  refine Integrable.congr (Integrable.add (Integrable.add (Integrable.add (hu2 t ht) (cross u v hu1 hv1 (hu2 t ht) (hv2 t ht)))
-    (cross v u hv1 hu1 (hv2 t ht) (hu2 t ht))) (hv2 t ht)) (ae_of_all _ fun c' => ?_)
-  simp only [Pi.add_apply]
-  rw [pairAt_add_add μ hμ hu1 hv1]
-  ring
 
-private theorem hsInner_smul_lemma (a : ℂ) (A C : Wq →L[ℂ] Wp) : B.hsInner (a • A) C = a * B.hsInner A C := by
-  simp [B.hsInner, B.hsVec, PiLp.inner_apply, inner_smul_right, Finset.mul_sum]
-
-private theorem hsInner_smul_lemma_2 (a : ℂ) (A C : Wq →L[ℂ] Wp) : B.hsInner A (a • C) = conj a * B.hsInner A C := by
-  simp [B.hsInner, B.hsVec, PiLp.inner_apply, inner_smul_left, Finset.mul_sum]
-
-private theorem pairAt_smul_lemma_3 (a : ℂ) (u v : RadSp k r z z' π π') (p : Fin r → ℂ) :
-    pairAt μ (a • u) v p = a * pairAt μ u v p := by
-  unfold pairAt
-  simp only [Submodule.coe_smul, Pi.smul_apply, hsInner_smul_lemma]
-  exact integral_const_mul a _
-
-private theorem pairAt_smul_lemma_4 (a : ℂ) (u v : RadSp k r z z' π π') (p : Fin r → ℂ) :
-    pairAt μ u (a • v) p = conj a * pairAt μ u v p := by
-  unfold pairAt
-  simp only [Submodule.coe_smul, Pi.smul_apply, hsInner_smul_lemma_2]
-  exact integral_const_mul _ _
-
-theorem goodL_smul {u : RadSp k r z z' π π'} (a : ℂ) (hu : GoodL μ l c u) : GoodL μ l c (a • u) := by
-  obtain ⟨hlc, hL2⟩ := hu
-  refine ⟨Submodule.smul_mem _ a hlc, fun t ht => ?_⟩
-  have h := Integrable.const_mul (hL2 t ht) (a * conj a)
-  unfold LevelSquareIntegrable
-  refine h.congr (ae_of_all _ fun c' => ?_)
-  simp only [pairAt_smul_lemma_3, pairAt_smul_lemma_4]
-  ring
-
-theorem goodL_zero : GoodL μ l c (0 : RadSp k r z z' π π') := by
-  refine ⟨Submodule.zero_mem _, fun t _ => ?_⟩
-  unfold LevelSquareIntegrable
-  refine (integrable_zero _ _ _).congr (ae_of_all _ fun c' => ?_)
-  have h := pairAt_smul_lemma_3 μ (0 : ℂ) (0 : RadSp k r z z' π π') 0 (glue l.succ (Function.update c l t) c')
-  rw [zero_smul, zero_mul] at h
-  simp [h]
-
-private theorem pairAt_mul_lemma_6 {W : Module.End ℂ (RadSp k r z z' π π')} {m : (Fin r → ℂ) → Mx k r → ℂ}
-    (hW : multiplicationOperator W m) (hm : ∀ c g, ‖m c g‖ = 1) (u : RadSp k r z z' π π') (p : Fin r → ℂ) :
-    pairAt μ (W u) (W u) p = pairAt μ u u p := by
-  unfold pairAt
-  congr 1
-  ext x
-  rw [hW u p, hsInner_smul_lemma, hsInner_smul_lemma_2, ← mul_assoc, Complex.mul_conj, Complex.normSq_eq_norm_sq, hm]
-  simp
-
-theorem goodL_mul {W : Module.End ℂ (RadSp k r z z' π π')} {m : (Fin r → ℂ) → Mx k r → ℂ} (hW : multiplicationOperator W m)
-    (hm : ∀ c g, ‖m c g‖ = 1) {u : RadSp k r z z' π π'} (hu : GoodL μ l c u) : GoodL μ l c (W u) := by
-  obtain ⟨hlc, hL2⟩ := hu
-  refine ⟨fun c0 hc0 => ?_, fun t ht => ?_⟩
-  · obtain ⟨U, hU, hcU, K, hKc, hKG, hK0⟩ := hlc c0 hc0
-    exact ⟨U, hU, hcU, K, hKc, hKG, fun c' hc' g hg hgK => by rw [hW u c' g, hK0 c' hc' g hg hgK, smul_zero]⟩
-  · have h := hL2 t ht
-    unfold LevelSquareIntegrable at h ⊢
-    simpa only [pairAt_mul_lemma_6 μ hW hm] using h
-
-include hμ in
-theorem fs_add_left {u1 u2 v : RadSp k r z z' π π'} (h1 : GoodL μ l c u1) (h2 : GoodL μ l c u2)
-    (hv : GoodL μ l c v) {t : ℂ} (ht : t ≠ 0) : fs μ l (u1 + u2) v c t = fs μ l u1 v c t + fs μ l u2 v c t := by
-  obtain ⟨h1l, h1L⟩ := h1
-  obtain ⟨h2l, h2L⟩ := h2
-  obtain ⟨hvl, hvL⟩ := hv
-  have hw : Measurable (fun c' : Cf r l.succ => wtI l.succ c') := by
-    unfold wtI
-    first | fun_prop | measurability
-  have cross : ∀ a b : RadSp k r z z' π π', a ∈ lcSub k r z z' π π' → b ∈ lcSub k r z z' π π' →
-      LevelSquareIntegrable μ l.succ a (Function.update c l t) → LevelSquareIntegrable μ l.succ b (Function.update c l t) →
-      Integrable (fun c' : Cf r l.succ => wtI l.succ c' * pairAt μ a b (glue l.succ (Function.update c l t) c')) := by
-    intro a b ha hb ia ib
-    refine Integrable.mono' (Integrable.add (Integrable.norm ia) (Integrable.norm ib)) ?_ (ae_of_all _ fun c' => ?_)
-    · exact hw.aestronglyMeasurable.mul (pairAt_measI μ l.succ a b _).aestronglyMeasurable
-    · simp only [Pi.add_apply, norm_mul]
-      rw [← mul_add]
-      exact mul_le_mul_of_nonneg_left (norm_pairAt_leI μ hμ ha hb _) (norm_nonneg _)
-  unfold fs
-  rw [← integral_add (cross u1 v h1l hvl (h1L t ht) (hvL t ht)) (cross u2 v h2l hvl (h2L t ht) (hvL t ht))]
-  congr 1
-  ext c'
-  rw [pairAt_add_left_lc μ hμ h1l h2l hvl, mul_add]
-
-theorem fs_smul_left (u v : RadSp k r z z' π π') (a : ℂ) (t : ℂ) : fs μ l (a • u) v c t = a * fs μ l u v c t := by
-  unfold fs
-  rw [← integral_const_mul]
-  congr 1
-  ext c'
-  rw [pairAt_smul_lemma_3]
-  ring
-
-private theorem pairAt_swap_lemma_5 (u v : RadSp k r z z' π π') (p : Fin r → ℂ) :
-    pairAt μ v u p = conj (pairAt μ u v p) := by
-  unfold pairAt
-  rw [← integral_conj]
-  congr 1
-  ext x
-  simp only [B.hsInner]
-  exact (inner_conj_symm _ _).symm
-
-theorem fs_swap (u v : RadSp k r z z' π π') (t : ℂ) : fs μ l v u c t = conj (fs μ l u v c t) := by
-  unfold fs
-  rw [← integral_conj]
-  congr 1
-  ext c'
-  rw [map_mul, pairAt_swap_lemma_5]
-  congr 1
-  simp [wtI]
-
-theorem fs_zero_left (v : RadSp k r z z' π π') (t : ℂ) : fs μ l 0 v c t = 0 := by
-  simpa using fs_smul_left μ l c 0 v 0 t
-
-private theorem pairAt_wave_lemma_7 {W1 W2 : Module.End ℂ (RadSp k r z z' π π')} {s1 s2 : ℂ}
-    (h1 : multiplicationOperator W1 (fun c _ => fsv s1 (c l))) (h2 : multiplicationOperator W2 (fun c _ => fsv s2 (c l)))
-    (Φ1 Φ2 : RadSp k r z z' π π') (p : Fin r → ℂ) :
-    pairAt μ (W1 Φ1) (W2 Φ2) p = fsv s1 (p l) * conj (fsv s2 (p l)) * pairAt μ Φ1 Φ2 p := by
-  unfold pairAt
-  rw [← integral_const_mul]
-  congr 1
-  ext x
-  simp only [h1 Φ1 p, h2 Φ2 p, hsInner_smul_lemma, hsInner_smul_lemma_2]
-  ring
-
-theorem fs_wave {W1 W2 : Module.End ℂ (RadSp k r z z' π π')} {s1 s2 : ℂ}
-    (h1 : multiplicationOperator W1 (fun c _ => fsv s1 (c l))) (h2 : multiplicationOperator W2 (fun c _ => fsv s2 (c l)))
-    (Φ1 Φ2 : RadSp k r z z' π π') (t : ℂ) :
-    fs μ l (W1 Φ1) (W2 Φ2) c t = fsv s1 t * conj (fsv s2 t) * fs μ l Φ1 Φ2 c t := by
-  unfold fs
-  rw [← integral_const_mul]
-  congr 1
-  ext c'
-  have hg : glue l.succ (Function.update c l t) c' l = t := by
-    simp [glue, Fin.val_succ]
-  rw [pairAt_wave_lemma_7 μ l h1 h2, hg]
-  ring
 
 end Fs
-
-def LevelOneSquareIntegrableGeneral : Prop :=
-  ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-    (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
-    (π' : Mx P.k P.r → (Wq →L[ℂ] Wq)) (X : ActualOps P.k P.r z z' π π') (μ : Measure (Mt P.k P.r))
-    (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (Pr (RadSp P.k P.r z z' π π'))) (l0 : ℕ)
-    (D : B.RealPlaceData P.k P.r Wp Wq),
-    IsData P z z' π π' X μ L st l0 → D.z = z → D.z' = z' → D.π = π → D.π' = π' →
-    ∀ (l : Fin P.r), l.castSucc = 0 → ∀ (ε : ℝ), 0 < ε → ∀ G : Mx P.k P.r → (Wq →L[ℂ] Wp), JC.NiceCoef D ε G →
-    ∀ Φ : RadSp P.k P.r z z' π π', Φ ∈ lcSub P.k P.r z z' π π' →
-    (∀ y ∈ DomR P.k P.r z z', (Φ : Fn P.k P.r (Wq →L[ℂ] Wp)) y.1 y.2 =
-      resG P.k P.r (Fin.last P.r) (B.JF D G) y.1 y.2) →
-    ∀ c ∈ OmX P.r, ∀ t : ℂ, t ≠ 0 → LevelSquareIntegrable μ l.succ Φ (Function.update c l t)
-
-def ContLev1Gen : Prop :=
-  ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-    (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
-    (π' : Mx P.k P.r → (Wq →L[ℂ] Wq)) (X : ActualOps P.k P.r z z' π π') (μ : Measure (Mt P.k P.r))
-    (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (Pr (RadSp P.k P.r z z' π π'))) (l0 : ℕ)
-    (D : B.RealPlaceData P.k P.r Wp Wq),
-    IsData P z z' π π' X μ L st l0 → D.z = z → D.z' = z' → D.π = π → D.π' = π' →
-    ∀ (l : Fin P.r), l.castSucc = 0 → ∀ (ε ε' : ℝ), 0 < ε → 0 < ε' → ∀ G H : Mx P.k P.r → (Wq →L[ℂ] Wp),
-    JC.NiceCoef D ε G → JC.NiceCoef D ε' H → ∀ Φ Ψ : RadSp P.k P.r z z' π π',
-    Φ ∈ lcSub P.k P.r z z' π π' → Ψ ∈ lcSub P.k P.r z z' π π' →
-    (∀ y ∈ DomR P.k P.r z z', (Φ : Fn P.k P.r (Wq →L[ℂ] Wp)) y.1 y.2 =
-      resG P.k P.r (Fin.last P.r) (B.JF D G) y.1 y.2) →
-    (∀ y ∈ DomR P.k P.r z z', (Ψ : Fn P.k P.r (Wq →L[ℂ] Wp)) y.1 y.2 =
-      resG P.k P.r (Fin.last P.r) (B.JF D H) y.1 y.2) →
-    ∀ c ∈ OmX P.r, ContinuousOn (fun t => fs μ l Φ Ψ c t) {0}ᶜ
-
-def ContDens0 : Prop :=
-  ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (S : Type) [Fintype S] [DecidableEq S]
-    (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
-    (π' : Mx P.k P.r → (Wq →L[ℂ] Wq)) (X : ActualOps P.k P.r z z' π π') (μ : Measure (Mt P.k P.r))
-    (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (Pr (RadSp P.k P.r z z' π π'))) (l0 : ℕ)
-    (D : B.RealPlaceData P.k P.r Wp Wq),
-    IsData P z z' π π' X μ L st l0 → 1 ≤ l0 → l0 ≤ P.k → D.z = z → D.z' = z' → D.π = π → D.π' = π' →
-    ∀ w : List (Letter ℂ S), WordOK P z z' π π' st l0 w → ∀ (l : Fin P.r), l.val = 0 →
-    ∀ (x v : Ix S → RadSp P.k P.r z z' π π'),
-      InK (herKc S P z z' π π' L st l0 D l.castSucc) x → InK (herKc S P z z' π π' L st l0 D l.castSucc) v →
-      ∀ c ∈ OmX P.r, ∀ n : ℕ, ∀ t, t ≠ 0 → ContinuousAt (Dens μ l (act (RRi L st l.castSucc w) x) v c) t
 
 section Red
 
 variable {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] {S : Type} [Fintype S] [DecidableEq S]
-
-theorem contDens0_of (hL2 : LevelOneSquareIntegrableGeneral) (hC : ContLev1Gen) : ContDens0 := by
-  intro Wp Wq _ _ _ _ _ _ S _ _ P z z' π π' X μ L st l0 D hD _ _ hz hz' hπ hπ' w hw l hl x v hx hv c hc _ t ht
-  have : SFinite μ := sfinite_of_isHaarOn _ μ hD.2.1
-  have hl0 : l.castSucc = 0 := Fin.ext (by simp [hl])
-  rw [hl0] at hx hv ⊢
-  have hle := herKc0_le_waveJ (S := S) P z z' π π' X μ L st l0 D hD hz hz' hπ hπ' l hl0
-
-  have hgood : ∀ u ∈ waveJ P z z' π π' D l, GoodL μ l c u := by
-    intro u hu
-    induction hu using Submodule.span_induction with
-    | mem u hu =>
-      obtain ⟨s, ε, G, Φ, Wv, hε, hN, hlc, hpic, hWv, rfl⟩ := unwave P z z' π π' D l u hu
-      exact goodL_mul μ l c hWv (fun _ _ => norm_fsv _ _)
-        ⟨hlc, fun t ht => hL2 Wp Wq P z z' π π' X μ L st l0 D hD hz hz' hπ hπ' l hl0 ε hε G hN Φ hlc hpic c hc t ht⟩
-    | zero => exact goodL_zero μ l c
-    | add u1 u2 _ _ h1 h2 => exact goodL_add μ hD.2.1 l c h1 h2
-    | smul a u _ h => exact goodL_smul μ l c a h
-
-  have hcont : ∀ u ∈ waveJ P z z' π π' D l, ∀ v' ∈ waveJ P z z' π π' D l,
-      ContinuousOn (fun t => fs μ l u v' c t) {0}ᶜ := by
-    intro u hu
-    induction hu using Submodule.span_induction with
-    | mem u hu =>
-      intro v' hv'
-      induction hv' using Submodule.span_induction with
-      | mem v' hv' =>
-        obtain ⟨s, ε, G, Φ, Wv, hε, hN, hlc, hpic, hWv, rfl⟩ := unwave P z z' π π' D l u hu
-        obtain ⟨s', ε', G', Φ', Wv', hε', hN', hlc', hpic', hWv', rfl⟩ := unwave P z z' π π' D l v' hv'
-        have e : (fun t => fs μ l (Wv Φ) (Wv' Φ') c t) = fun t => fsv s t * conj (fsv s' t) * fs μ l Φ Φ' c t :=
-          funext fun t => fs_wave μ l c hWv hWv' Φ Φ' t
-        rw [e]
-        refine (((contDiff_fsv s).continuous.mul (Complex.continuous_conj.comp (contDiff_fsv s').continuous))
-          ).continuousOn.mul ?_
-        exact hC Wp Wq P z z' π π' X μ L st l0 D hD hz hz' hπ hπ' l hl0 ε ε' hε hε' G G' hN hN' Φ Φ' hlc hlc'
-          hpic hpic' c hc
-      | zero =>
-        have e : (fun t => fs μ l u 0 c t) = fun _ => 0 := funext fun t => by
-          rw [fs_swap, fs_zero_left, map_zero]
-        rw [e]; exact continuousOn_const
-      | add v1 v2 hv1 hv2 h1 h2 =>
-        have hu' := hgood u (Submodule.subset_span hu)
-        refine ((h1.add h2)).congr fun t ht => ?_
-        show fs μ l u (v1 + v2) c t = fs μ l u v1 c t + fs μ l u v2 c t
-        rw [fs_swap, fs_add_left μ hD.2.1 l c (hgood v1 hv1) (hgood v2 hv2) hu' ht, map_add, ← fs_swap, ← fs_swap]
-      | smul a v' _ h =>
-        refine ((continuousOn_const (c := (starRingEnd ℂ) a)).mul h).congr fun t _ => ?_
-        show fs μ l u (a • v') c t = conj a * fs μ l u v' c t
-        rw [fs_swap, fs_smul_left, map_mul, ← fs_swap]
-    | zero =>
-      intro v' _
-      have e : (fun t => fs μ l 0 v' c t) = fun _ => 0 := funext fun t => fs_zero_left μ l c v' t
-      rw [e]; exact continuousOn_const
-    | add u1 u2 hu1 hu2 h1 h2 =>
-      intro v' hv'
-      refine ((h1 v' hv').add (h2 v' hv')).congr fun t ht => ?_
-      exact fs_add_left μ hD.2.1 l c (hgood u1 hu1) (hgood u2 hu2) (hgood v' hv') ht
-    | smul a u _ h =>
-      intro v' hv'
-      exact ((continuousOn_const (c := a)).mul (h v' hv')).congr fun t _ => fs_smul_left μ l c u v' a t
-
-  have hu : ∀ a, act (RRi L st 0 w) x a ∈ waveJ P z z' π π' D l := fun a => by
-    show ∑ b, ((RRi L st 0 w) a b).1 (x b) ∈ waveJ P z z' π π' D l
-    exact Submodule.sum_mem _ fun b _ =>
-      rr_waveJ P z z' π π' X μ L st l0 D hD hz hz' hπ hπ' l hl0 w hw a b (x b) (hle (hx b))
-  have hv' : ∀ a, v a ∈ waveJ P z z' π π' D l := fun a => hle (hv a)
-
-  have hD' : ∀ t', t' ≠ 0 → Dens μ l (act (RRi L st 0 w) x) v c t' =
-      ((‖t'‖ ^ (-2 : ℤ) : ℝ) : ℂ) * ∑ a, fs μ l (act (RRi L st 0 w) x a) (v a) c t' := by
-    intro t' ht'
-    unfold Dens form fs
-    congr 1
-    simp_rw [Finset.mul_sum]
-    exact integral_finsetSum _ fun a _ =>
-      int_crossI μ hD.2.1 l.succ (hgood _ (hu a)).1 (hgood _ (hv' a)).1 _ ((hgood _ (hu a)).2 t' ht')
-        ((hgood _ (hv' a)).2 t' ht')
-  have hon : ContinuousOn (fun t' => ((‖t'‖ ^ (-2 : ℤ) : ℝ) : ℂ) *
-      ∑ a, fs μ l (act (RRi L st 0 w) x a) (v a) c t') {0}ᶜ := by
-    refine ContinuousOn.mul ?_ (continuousOn_finset_sum _ fun a _ => hcont _ (hu a) _ (hv' a))
-    refine Complex.continuous_ofReal.comp_continuousOn ?_
-    exact (continuous_norm.continuousOn).zpow₀ (-2) fun t' ht' => Or.inl (norm_ne_zero_iff.mpr ht')
-  have hat := (hon.continuousAt (isOpen_compl_singleton.mem_nhds ht))
-  refine hat.congr ?_
-  filter_upwards [isOpen_compl_singleton.mem_nhds ht] with t' ht'
-  exact (hD' t' ht').symm
 
 end Red
 

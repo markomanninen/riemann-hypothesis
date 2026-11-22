@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
+
+@[expose] public section
 
 open UpperTheory.V.Alg
 
@@ -11,7 +15,7 @@ private theorem sameOrbit_trans {O A K : Type} [CommRing O] [CommRing A] [Algebr
   ext a
   induction a using DirectSum.Decomposition.inductionOn 𝒜 with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | homogeneous a =>
     rw [act_of_mem 𝒜 _ _ a.2, act_of_mem 𝒜 _ _ a.2, act_of_mem 𝒜 _ _ a.2]
     simp only [zpowersHom_apply, toAdd_ofAdd, mul_zpow, Units.val_mul, mul_assoc]

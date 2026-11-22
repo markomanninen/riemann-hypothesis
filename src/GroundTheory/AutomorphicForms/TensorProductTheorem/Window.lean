@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SmoothRep
-import GroundTheory.AutomorphicForms.TensorProductTheorem.Operators
-import GroundTheory.AutomorphicForms.TensorProductTheorem.MatrixCoeff
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SmoothRep
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.Operators
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.MatrixCoeff
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,9 +86,6 @@ theorem heckeOp_of_mem {g : G} (hg : g ∈ K) : heckeOp hρ hKc hKo g = 1 := by
   rw [heckeOp_apply, fixedProj_apply_act hρ hKc hKo hg, fixedProj_apply_of_mem hρ hKc hKo m.2,
     Module.End.one_apply]
 
-theorem heckeOp_one : heckeOp hρ hKc hKo 1 = 1 :=
-  heckeOp_of_mem hρ hKc hKo (one_mem K)
-
 theorem heckeOp_mul_apply {a b : G}
     (hab : ∀ h ∈ K, ∃ k ∈ K, k * a = a * k ∧ (k⁻¹ * h) * b = b * (k⁻¹ * h))
     (m : fixedVectors ρ K) :
@@ -111,7 +112,7 @@ theorem heckeOp_mul_apply {a b : G}
       rw [h1, map_sub, map_sub, ← Module.End.mul_apply, ← map_mul, ← hka, map_mul,
         Module.End.mul_apply, fixedProj_apply_act hρ hKc hKo hk, sub_self]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, map_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
     | smul c x _ hx => rw [map_smul, map_smul, hx, smul_zero]
   have := hkill _ hspan
   rw [map_sub, map_sub, sub_eq_zero] at this
@@ -145,8 +146,8 @@ theorem isSimpleUnder_heckeOps [ρ.IsIrreducible] (hK : fixedVectors ρ K ≠ �
     Subtype.ext (fixedProj_apply_of_mem hρ hKc hKo m'.2)
   rwa [he] at this
 
-omit hρ hKc hKo in
 
+omit hρ hKc hKo in
 theorem isIrreducible_of_forall (hρ : IsSmooth ρ) [Nontrivial V]
     (h : ∀ x y : V, x ≠ 0 → ∃ (K : Subgroup G) (hKc : IsCompact (K : Set G))
       (hKo : IsOpen (K : Set G)), x ∈ fixedVectors ρ K ∧ y ∈ fixedVectors ρ K ∧
@@ -186,8 +187,8 @@ theorem isIrreducible_of_forall (hρ : IsSmooth ρ) [Nontrivial V]
       rw [h0]; trivial
     exact this
 
-omit hρ hKc hKo in
 
+omit hρ hKc hKo in
 theorem fixedProj_comp_eq {L : Type*} [Group L] [TopologicalSpace L] [IsTopologicalGroup L]
     [LocallyCompactSpace L] [T2Space L] [TotallyDisconnectedSpace L] (ι : L →* G)
     (hρ : IsSmooth ρ) (hρι : IsSmooth (ρ.comp ι)) (hKc : IsCompact (K : Set G))

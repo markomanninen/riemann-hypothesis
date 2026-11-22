@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.AlgebraMapIntegralCoeffsRaw
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.AlgebraMapIntegralCoeffsRaw
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -23,7 +27,7 @@ theorem family_orthogonal_sum_injective (D : Datum H) {p : ℕ} (x' : Fin p → 
     (c : Fin p → 𝓞 E) (z : orthogonalFamilyAlt D x') (h : familyCombination D x' c + (z : D.La) = 0) : c = 0 ∧ z = 0 := by
   have hadd : ∀ u v w : D.La, sesq D u (v + w) = sesq D u v + sesq D u w := by
     intro u v w
-    simp only [sesq, map_add, Int.cast_add, add_mul, Finset.sum_add_distrib]
+    simp only [sesq, map_add (f := _), Int.cast_add, add_mul, Finset.sum_add_distrib]
   have hcomb : familyCombination D x' c = ∑ a, c a • x' a := rfl
   have hv : (gramE D x') *ᵥ (fun a => IsCMField.complexConj E ((c a : 𝓞 E) : E)) = 0 := by
     funext b
@@ -55,7 +59,7 @@ theorem finrank_orthogonal_family (D : Datum H) {p q : ℕ} (x' : Fin p → D.La
   set L2 := orthogonalFamilyAlt D x' with hL2
   let ψ : ((Fin p → 𝓞 E) × L2) →ₗ[𝓞 E] D.La := (familyCombination D x').coprod L2.subtype
   have hψ : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨c, z⟩ h
     obtain ⟨hc, hz⟩ := family_orthogonal_sum_injective D x' hdet c z h
     rw [hc, hz]
@@ -68,7 +72,7 @@ theorem finrank_orthogonal_family (D : Datum H) {p q : ℕ} (x' : Fin p → D.La
     (integralCoeffs D x' m hm).prod
       ((orthogonalComponent D x' m hm).codRestrict L2 (fun y => orthogonalComponent_mem D x' m hm hdet y))
   have hφ : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     have h1 : integralCoeffs D x' m hm y = 0 := congrArg Prod.fst hy
     have h2 : orthogonalComponent D x' m hm y = 0 := by

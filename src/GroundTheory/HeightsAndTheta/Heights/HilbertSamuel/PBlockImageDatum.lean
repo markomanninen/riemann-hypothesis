@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAnResNullForm
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageInverse
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageMetrics
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageChi
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAnResNullForm
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageInverse
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageMetrics
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageChi
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -30,7 +35,7 @@ theorem eval_blockSubst {J : Type} (k₀ : K) (M : Matrix J (ι k₀) ℤ) (f : 
       eval (blockMapC k₀ M z) (map (Int.castRingHom ℂ) f) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [blockSubst]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p j hp =>
     simp only [map_mul, hp]
     congr 1
@@ -43,7 +48,7 @@ theorem mConeMap_blockSubst (hB : IsBlockImage y k₀ M N x) (f : MvPolynomial (
     mConeMap y (blockSubst k₀ M f) = Polynomial.aeval (X k₀ : MvPolynomial K Ω) (coneMap ℤ x f) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [blockSubst, coneMap, mConeMap]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p j hp =>
     simp only [map_mul, hp]
     congr 1
@@ -137,8 +142,8 @@ theorem N_injective (hB : IsBlockImage y k₀ M N x) (hx : LinearIndependent ℤ
         exact Finset.sum_comm
     _ = 0 := by simp [h1]
 
-omit [DecidableEq K] [CharZero Ω] in
 
+omit [DecidableEq K] [CharZero Ω] in
 theorem exists_blockBasis [CharZero Ω] (y : (Σ k, ι k) → Ω) (k₀ : K) :
     ∃ (r : ℕ) (M : Matrix (Ix (Fin r)) (ι k₀) ℤ) (N : Matrix (ι k₀) (Ix (Fin r)) ℤ) (x : Ix (Fin r) → Ω),
       IsBlockImage y k₀ M N x ∧ LinearIndependent ℤ x := by
@@ -230,18 +235,19 @@ theorem BlockImageDatum.proof (hA : BlockImageArith.Statement) (hI : BlockImageI
         obtain ⟨p, hp⟩ := Function.ne_iff.mp hz
         exact ⟨p.2, by cases k; exact hp⟩
       conjInv := fun u => by
-        change (fsMetric (ι d.k₀)).ρ _ = (fsMetric (ι d.k₀)).ρ _
+        change (fsMetric (ι := ι d.k₀)).ρ _ = (fsMetric (ι := ι d.k₀)).ρ _
         rw [← ProjLine.isConjInvariant_fs (fun i => ∑ j, (N i j : ℂ) * u j)]
         congr 1
         funext i
-        simp [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [map_sum]
       normalForm_baseLattice_le_dualSpan_sup_line := bot_le
       semipos := hMet.1 (ι d.k₀) (Fin r) N hN _
       vol := d.vol }
   let d₀ : HSMBlockDatum D K ι Ω :=
     { y := d.y
       k₀ := d.k₀
-      A := HermLine.ofMetrics (fun k => fsMetric (ι k)) (unitDeg d.k₀)
+      A := HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (unitDeg d.k₀)
       P0 := ⊥
       J := d.J
       R := d.R
@@ -260,8 +266,8 @@ theorem BlockImageDatum.proof (hA : BlockImageArith.Statement) (hI : BlockImageI
       vol := d.vol }
   have hh : ∀ z ∈ mcPts (mCoordIdeal d.y), d₀.A.h z = d'.m.ρ (blockMapC d.k₀ M z) := by
     intro z hz
-    change ∏ k, (fsMetric (ι k)).ρ (fun i => z ⟨k, i⟩) ^ (unitDeg d.k₀ k) =
-      (fsMetric (ι d.k₀)).ρ (fun i => ∑ j, (N i j : ℂ) * blockMapC d.k₀ M z j)
+    change ∏ k, (fsMetric (ι := ι k)).ρ (fun i => z ⟨k, i⟩) ^ (unitDeg d.k₀ k) =
+      (fsMetric (ι := ι d.k₀)).ρ (fun i => ∑ j, (N i j : ℂ) * blockMapC d.k₀ M z j)
     rw [Finset.prod_eq_single d.k₀ (fun k _ hk => by simp [unitDeg, hk]) (by simp)]
     simp only [unitDeg, if_true, zpow_one]
     congr 1

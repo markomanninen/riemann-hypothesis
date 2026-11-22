@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.XgDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.WfCusp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CmBridge
-import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.XgDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.WfCusp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CmBridge
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -12,8 +16,8 @@ open UpperTheory.ConvolutionTheory.R2.G (FS2 Rw nE row)
 open UpperTheory.V.Af.Smo (EigAt)
 open scoped ComplexOrder
 
-open GroundTheory.Automorphic.FourierWhittaker in
 
+open GroundTheory.Automorphic.FourierWhittaker in
 private noncomputable def latQ {E : Type} [Field E] [NumberField E] (D : Dat ℚ E) :
     vecLattice ℚ (Fin 2) ≃ AdeleRing.principalSubgroup (𝓞 E) E where
   toFun g := ⟨D.coE.symm g.1, by
@@ -26,8 +30,8 @@ private noncomputable def latQ {E : Type} [Field E] [NumberField E] (D : Dat ℚ
   left_inv g := Subtype.ext (D.coE.apply_symm_apply g.1)
   right_inv y := Subtype.ext (D.coE.symm_apply_apply y.1)
 
-open GroundTheory.Automorphic.FourierWhittaker in
 
+open GroundTheory.Automorphic.FourierWhittaker in
 private theorem int_zero {E : Type} [Field E] [NumberField E] (D : Dat ℚ E) (H : A E → ℂ)
     (hper : ∀ (k : E) x, H (rt k + x) = H x)
     (h0 : ∫ u in FS2 ℚ, H (D.mkE (u 0) (u 1)) ∂(adeleMeasurePi ℚ) = 0) :
@@ -43,7 +47,7 @@ private theorem int_zero {E : Type} [Field E] [NumberField E] (D : Dat ℚ E) (H
       (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving (latQ D).symm
       fun y x => by
         change β (D.coE y.1 + x) = y.1 + β x
-        rw [map_add]
+        rw [map_add (f := _)]
         congr 1
         exact D.coE.symm_apply_apply y.1
   have hF' : IsAddFundamentalDomain (AdeleRing.principalSubgroup (𝓞 E) E) (m '' FS2 ℚ) (adeleMeasure E) :=
@@ -62,7 +66,7 @@ private theorem exists_mul {E : Type} [Field E] [NumberField E] (D : Dat ℚ E) 
     ∃ ξ : Eˣ, ∀ z : A E, ψ (rt (ξ : E) * z) = ψ (D.co z 1) := by
   let χ : AddChar (A E) Circle :=
     { toFun := fun z => adelicChar ℚ (D.co z 1)
-      map_zero_eq_one' := by rw [D.co_zero]; simp
+      map_zero_eq_one' := by rw [← D.mkE_zero, D.co_mkE]; simp
       map_add_eq_mul' := fun a b => by rw [D.co_add, Pi.add_apply, AddChar.map_add_eq_mul] }
   have h1 : Continuous fun z : A E => D.co z 1 := (continuous_apply 1).comp D.continuous_co
   have h2 : Continuous fun z : A E => adelicChar ℚ (D.co z 1) := (continuous_adelicChar (K := ℚ)).comp h1
@@ -86,7 +90,7 @@ private theorem exists_mul {E : Type} [Field E] [NumberField E] (D : Dat ℚ E) 
   rw [this]
 
 theorem UpperTheory.exists_whittakerCoeff_ne_zero_of_admissible :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E) (P : CuspSub E 2) (ω : HChar ℚ), (∀ φ ∈ Tr P, admitted D ω φ) → ∃ f ∈ P.V, ∃ h, Wo D f.1 h ≠ 0 := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E) (P : CuspSub E 2) (ω : HChar ℚ), (∀ φ ∈ Tr P, admitted D ω φ) → ∃ f ∈ P.V, ∃ h, Wo D f.1 h ≠ 0 := by
   intro E _ _ _ D P ω hA
   obtain ⟨f, hf, h0⟩ := (Submodule.ne_bot_iff _).1 P.ne_bot
   refine ⟨f, hf, ?_⟩

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EmbeddingTypes
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EmbeddingTypes
+
+@[expose] public section
 
 noncomputable section
 

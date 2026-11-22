@@ -1,7 +1,11 @@
-import Mathlib
-import Development.EtaleCohomology.CohomologicalPurity.LeafHtpyMVPf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeHomSections
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsSepGlueOfSurjectiveFamily
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.CohomologicalPurity.LeafHtpyMVPf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeHomSections
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsSepGlueOfSurjectiveFamily
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 

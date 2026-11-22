@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomCore
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomVMul
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomCore
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomVMul
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 
@@ -17,13 +21,14 @@ theorem nf_coef_unique {E : Type*} [AddCommGroup E] [Module ℂ E] (M : ℕ) (a 
     refine Set.Infinite.mono ?_ hS
     intro s hs
     have hfs := congrArg f (h s hs)
-    simp only [map_sum, map_smul, map_zero, smul_eq_mul] at hfs
-    simp only [Set.mem_setOf_eq, Polynomial.IsRoot.def, Polynomial.eval_finset_sum, Polynomial.eval_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_zero, smul_eq_mul] at hfs
+    simp only [Set.mem_setOf_eq, Polynomial.IsRoot.def, Polynomial.eval_finsetSum, Polynomial.eval_mul,
       Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
     rw [← hfs]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
-  have hc := congrArg (fun q => Polynomial.coeff q i) hp
-  simpa [Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow, Finset.mem_range.mpr hi] using hc
+  have hc := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q i) hp
+  simpa [Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow, Finset.mem_range.mpr hi] using hc
 
 section scoef
 
@@ -46,7 +51,7 @@ theorem nf_sum_pad {E : Type*} [AddCommGroup E] [Module ℂ E] {Q M : ℕ} (hQ :
     omega
   · intro i _ hi
     have hi' : ¬ i < Q + 1 := by simpa using hi
-    rw [dif_neg hi', smul_zero]
+    rw [dite_eq_right hi', smul_zero]
 
 theorem nf_scoef_unique (p : KB.Pl P Wp Wq) (w : List C.Letter) (e : Wd.Ix (Fin w.length)) {Q Q' : ℕ}
     {L : Fin (Q + 1) → B.DiffOp P.k P.r Wp Wq} {L' : Fin (Q' + 1) → B.DiffOp P.k P.r Wp Wq}
@@ -68,13 +73,13 @@ theorem nf_scoef_unique (p : KB.Pl P Wp Wq) (w : List C.Letter) (e : Wd.Ix (Fin 
     (Set.range (fun s : ℝ => (s : ℂ))) (Set.infinite_range_of_injective Complex.ofReal_injective) ?_ qq
     (lt_of_lt_of_le qq.isLt hq1)
   · simp only [sub_eq_zero] at hz
-    rw [dif_pos qq.isLt] at hz
+    rw [dite_eq_left qq.isLt] at hz
     by_cases hq : (qq : ℕ) ≤ Q'
-    · rw [dif_pos hq]
-      rw [dif_pos (by omega : (qq : ℕ) < Q' + 1)] at hz
+    · rw [dite_eq_left hq]
+      rw [dite_eq_left (by omega : (qq : ℕ) < Q' + 1)] at hz
       exact hz
-    · rw [dif_neg hq]
-      rw [dif_neg (by omega : ¬ (qq : ℕ) < Q' + 1)] at hz
+    · rw [dite_eq_right hq]
+      rw [dite_eq_right (by omega : ¬ (qq : ℕ) < Q' + 1)] at hz
       exact hz
   · rintro _ ⟨s, rfl⟩
     have e1 : ∑ i ∈ Finset.range (max Q Q' + 1),

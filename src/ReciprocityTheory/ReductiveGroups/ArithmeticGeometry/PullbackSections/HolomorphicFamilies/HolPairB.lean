@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolPairA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolPairA
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,7 +26,7 @@ private theorem valAt'_comp_lemma {Y Y' : Scheme.{0}} (x : Sp ℂ ⟶ Y) (φ : Y
       | (rw [Scheme.Hom.comp_appLE]) <;> rfl
       | simp [Scheme.comp_appLE]
   · have h' : ¬ ⊤ ≤ x ⁻¹ᵁ (φ ⁻¹ᵁ U) := h
-    rw [dif_neg h', dif_neg h]
+    rw [dite_eq_right h', dite_eq_right h]
 
 theorem valAt'_specMap {A C : CommRingCat.{0}} (φ : A ⟶ C) (x : Sp ℂ ⟶ Spec C) (a : A) :
     valAt' (x ≫ Spec.map φ) ⊤ ((Scheme.ΓSpecIso A).inv a) = valAt' x ⊤ ((Scheme.ΓSpecIso C).inv (φ a)) := by
@@ -55,7 +59,7 @@ private theorem valAt'_top_add_lemma_3 {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (f g 
       | exact le_top
       | simp
   first
-    | simp only [valAt', dif_pos h, valAt, map_add]
+    | simp only [valAt', dif_pos h, valAt, map_add (f := _)]
     | simp [valAt', valAt, h]
 
 theorem isHolTo_pullbackSpec {R S T : Type} [CommRing R] [CommRing S] [CommRing T] [Algebra R S] [Algebra R T]
@@ -111,7 +115,7 @@ theorem isHolTo_pullbackSpec {R S T : Type} [CommRing R] [CommRing S] [CommRing 
       simp only [hst, map_mul, valAt'_top_mul_lemma_2]
       exact (hS s).mul (hT t)
     | add x y hx hy =>
-      simp only [map_add, valAt'_top_add_lemma_3]
+      simp only [map_add (f := _), valAt'_top_add_lemma_3]
       exact hx.add hy
 
   have hr : ∀ b, valAt' (w b) ⊤ r = valAt' (w b ≫ (pullbackSpecIso R S T).hom) ⊤

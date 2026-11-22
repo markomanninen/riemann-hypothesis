@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.HodgeTateFromSandwich
+
+@[expose] public section
 
 noncomputable section
 
@@ -214,7 +218,7 @@ private theorem isIntegral_lf (hO : IsInts k O) (hs : s * s = Δ) (h2 : (2 : k) 
     rw [show p * p - (p + q) * p + p * q = 0 by ring, show q * q - (p + q) * q + p * q = 0 by ring, lf_self h2, map_zero]
   refine ⟨Polynomial.X ^ 2 - Polynomial.C a * Polynomial.X + Polynomial.C b, by monicity!, ?_⟩
   rw [← Polynomial.aeval_def]
-  simp only [map_add, map_sub, map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C]
+  simp only [map_add (f := _), map_sub, map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C]
   rw [alg_tower a, alg_tower b, ha, hb]
   exact e
 

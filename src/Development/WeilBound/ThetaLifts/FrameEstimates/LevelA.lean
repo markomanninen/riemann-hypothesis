@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.LatMeas
-import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowFin
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LatMeas
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ theorem int_zero : Int' (0 : Af F) := fun _ => zero_mem _
 theorem int_sum {ι : Type} (s : Finset ι) {a : ι → Af F} (ha : ∀ i, Int' (a i)) : Int' (∑ i ∈ s, a i) :=
   Finset.sum_induction _ _ (fun _ _ => int_add) int_zero fun i _ => ha i
 
-variable (E) in
 
+variable (E) in
 theorem exists_lattice (V : Set (AE F E)) (hV : V ∈ 𝓝 (0 : AE F E)) :
     ∃ Λ : AddSubgroup (AE F E), (∀ z ∈ Λ, ∀ z' ∈ Λ, z * z' ∈ Λ) ∧ (Λ : Set (AE F E)) ⊆ V ∧
       ∃ V' ∈ 𝓝 (0 : AE F E), ∀ z ∈ V', e0 F • z = z → z ∈ Λ := by
@@ -62,7 +66,7 @@ theorem exists_lattice (V : Set (AE F E)) (hV : V ∈ 𝓝 (0 : AE F E)) :
         refine ⟨by rw [smul_add, h, h'], a + a', fun i => int_add (ha i) (ha' i), ?_⟩
         rw [smul_add, ← e, ← e']
         funext i
-        simp only [c, map_add]
+        simp only [c, map_add (f := _)]
         rfl
       neg_mem' := fun {x} hx => by
         obtain ⟨h, a, ha, e⟩ := hx
@@ -82,9 +86,10 @@ theorem exists_lattice (V : Set (AE F E)) (hV : V ∈ 𝓝 (0 : AE F E)) :
         simp only [smul_mul_smul_comm]
       change (RingHom.snd (Ainf F) (Af F) : AF F →+* Af F) (b.repr (z * z') k) = _
       rw [e1]
-      simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul]
-      refine (map_sum (RingHom.snd (Ainf F) (Af F)) _ _).trans (Finset.sum_congr rfl fun i _ => ?_)
-      exact map_sum (RingHom.snd (Ainf F) (Af F)) _ _
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul]
+      simp only [map_mul, c]
+      rfl
     rw [e1, e, e', Pi.smul_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.smul_sum]

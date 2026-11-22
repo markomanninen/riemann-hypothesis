@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.ShiftLow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.ShiftLow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,7 +124,8 @@ theorem side_one {La : Ix r s → ℚ} {T : Type} [AddCommGroup T] [Module ℂ T
   set u := ∑ i, φ i (x i) with hu0
   have hcu : casK (units act') u = (c0 : ℂ) • u := by rw [hcc]; exact cas_hw (glK_of_lie hL') hu
   have e1 : (∏ j, p j).eval (c0 : ℂ) • u = ∑ i, φ i (aeval (casK (units act)) (∏ j, p j) (x i)) := by
-    rw [← Module.End.aeval_apply_of_mem_apply_eq_smul hcu, hu0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Module.End.aeval_apply_of_mem_apply_eq_smul hcu, hu0, map_sum]
     exact Finset.sum_congr rfl fun i _ =>
       (aeval_int (φ i) (casK_intertw (φ i) fun a b _ v => hφ i _ v) _ _).symm
   have hL1 : Lie (one act) := fun X Y => hL (X ()) (Y ())
@@ -142,7 +147,7 @@ theorem side_one {La : Ix r s → ℚ} {T : Type} [AddCommGroup T] [Module ℂ T
   set lam : ℂ := ∑ _w : Unit, ∑ a, hD a * (La a : ℂ)
   have e2 : (∏ j, p j).eval (c0 : ℂ) • u - ∑ i, c i • φ i (ι f) = ∑ i, φ i (z i) := by
     rw [e1, ← Finset.sum_sub_distrib]
-    exact Finset.sum_congr rfl fun i _ => by rw [← hyz i, ← hc i, map_add, map_smul, add_sub_cancel_left]
+    exact Finset.sum_congr rfl fun i _ => by rw [← hyz i, ← hc i, map_add (f := _), map_smul, add_sub_cancel_left]
   have e3 : ∑ i, φ i (z i) = 0 := by
     refine low_eig (T := one act' (dg Unit hD)) (lam := lam)
       (Submodule.sum_mem _ fun i _ => low_map (φ i) (fun v => hφ i _ v) (hz i)) ?_
@@ -232,7 +237,8 @@ theorem tens_hw {ι P M : Type} [Fintype ι] [DecidableEq ι] [AddCommGroup P] [
   have hL : Lie act := by
     intro X Y
     rw [← Finset.univ_sum_single X, ← Finset.univ_sum_single Y]
-    simp only [map_sum, Finset.sum_mul_sum, map_sub]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.sum_mul_sum, map_sub]
     rw [Finset.sum_comm (f := fun i j => act (Pi.single i (Y i)) * act (Pi.single j (X j))),
       Finset.sum_comm (f := fun i j => act ((Pi.single i (Y i) : ι → Mat r s) * (Pi.single j (X j) : ι → Mat r s))), ← Finset.sum_sub_distrib,
       ← Finset.sum_sub_distrib]

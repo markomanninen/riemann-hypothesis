@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ def IsRightTransversal {G : Type*} [Group G] (Γ S : Subgroup G) (D : Set G) : P
 def quotientLIntegral {G : Type*} [MeasurableSpace G] (μ : Measure G) (F : Set G) (Ph : G → ℂ) : ℝ≥0∞ :=
   ∫⁻ y in F, ‖Ph y‖ₑ ∂μ
 
-set_option linter.dupNamespace false in
 
+set_option linter.dupNamespace false in
 def FoldBound (G : Type*) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [LocallyCompactSpace G] [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G]
     (μ : Measure G) [μ.IsHaarMeasure] : Prop :=
@@ -101,7 +105,7 @@ theorem foldBound_holds (G : Type*) [Group G] [TopologicalSpace G] [IsTopologica
   have step3 : ∫⁻ y, ∑' δ : D, Fd ((δ : G) * x) y ∂μ =
       ∫⁻ y in F, ∑' s : S, ∑' δ : D, Fd ((δ : G) * x) ((s : G) * y) ∂μ := by
     refine (hF.lintegral_eq_tsum'' _).trans (lintegral_tsum fun s => ?_).symm
-    exact (Measurable.ennreal_tsum fun δ => (hFdm _).comp (measurable_const_mul _)).aemeasurable
+    exact (Measurable.tsum fun δ => (hFdm _).comp (measurable_const_mul _)).aemeasurable
 
   have step4 : ∀ y, ∑' s : S, ∑' δ : D, Fd ((δ : G) * x) ((s : G) * y) ≤
       mult Γ Ω x * ‖Ph y‖ₑ := by

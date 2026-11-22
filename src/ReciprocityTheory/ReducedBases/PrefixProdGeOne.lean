@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReducedBases.TBInjective
+module
+
+public import ReciprocityTheory.ReducedBases.TBInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,7 +116,7 @@ lemma hlow_of (A B : Matrix (Fin d) (Fin d) ℝ) (hA : A.PosDef) (hAB : A = Bᴴ
     _ = ∏ j ∈ S, m * ‖gs (fun i => fB 1 (e i)) j‖ ^ 2 := by
         rw [Finset.prod_mul_distrib, Finset.prod_const]
     _ ≤ ∏ j ∈ S, ‖gs (fun i => fB B (e i)) j‖ ^ 2 :=
-        Finset.prod_le_prod (fun j _ => by positivity) (fun j _ => hterm j)
+        Finset.prod_le_prod₀ (fun j _ => by positivity) (fun j _ => hterm j)
 
 end ReciprocityTheory.ReducedBases.T2
 

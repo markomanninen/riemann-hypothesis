@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalGenDefs
-import ReciprocityTheory.GaloisValuations.GlobalA
-import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
-import GroundTheory.LocalFields.UnramifiedGalois
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalGenDefs
+public import ReciprocityTheory.GaloisValuations.GlobalA
+public import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
+public import GroundTheory.LocalFields.UnramifiedGalois
+
+@[expose] public section
 
 noncomputable section
 

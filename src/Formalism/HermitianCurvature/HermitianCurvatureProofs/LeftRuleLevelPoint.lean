@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointCornerScaledSingleComm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HpkMulSingleEsI
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeKeepsCharacter
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointCornerScaledSingleComm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HpkMulSingleEsI
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeKeepsCharacter
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ComplexConjugate
@@ -63,7 +67,7 @@ theorem ell_nL (hj : j + 1 ≤ r) (hj1 : 1 ≤ j) (z : Fin (2 * r + k + 1) → �
     ell k r z (nL k r j hj a) = -conj (a ⟨j - 1, by omega⟩) := by
   unfold ell
   rw [Finset.sum_eq_single (⟨j - 1, by omega⟩ : Fin r)]
-  · rw [dif_pos (show j - 1 + 1 < r by omega), SingleEntryHermitianProducts.nL_apply, Matrix.one_apply_ne (by simp [eI, Fin.ext_iff]),
+  · rw [dite_eq_left (show j - 1 + 1 < r by omega), SingleEntryHermitianProducts.nL_apply, Matrix.one_apply_ne (by simp [eI, Fin.ext_iff]),
       zero_add, Finset.sum_eq_single (⟨j - 1, by omega⟩ : Fin j)]
     · have e2 : eI k r ⟨j - 1 + 1, by omega⟩ = eI k r ⟨j, by omega⟩ := by ext; simp [eI]; omega
       rw [Matrix.single_apply_of_row_ne (SingleEntryHermitianProducts.eI_ne_esI _ _).symm, mul_zero, zero_sub, e2]

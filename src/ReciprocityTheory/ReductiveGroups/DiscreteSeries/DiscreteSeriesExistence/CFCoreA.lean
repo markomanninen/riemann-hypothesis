@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -263,7 +267,7 @@ theorem kLowSpan_kIrrHW (hE : IsGlRep E) (hU : IsInfUnitary ε E) {μ : Fin n �
   have hy1w : ∀ a, E a a y1 = (μ a : ℂ) • y1 := by
     intro a
     have h := hy'.1 a
-    rw [hsum, map_add, smul_add] at h
+    rw [hsum, map_add (f := _), smul_add] at h
     have hm : E a a y1 - (μ a : ℂ) • y1 = (μ a : ℂ) • y2 - E a a y2 := by
       rw [sub_eq_sub_iff_add_eq_add, h, add_comm]
     have h0 := hzero _ (sub_mem (hS'st a a rfl y1 hy1) (Submodule.smul_mem _ _ hy1))

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.CuspLift
-import Development.WeilBound.ThetaLifts.LatticeBasics.ConvOfCpt
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.SigThConst
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CuspLift
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ConvOfCpt
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.SigThConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -236,7 +240,7 @@ theorem cusp_re (I : OrthIn) (p : IsPair B M χ χ' om r s r' s') (h0 : min r s 
       have hrest : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rest (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F) (⇑f)
           (fun x => ∏ᶠ v, φ v fun i => GlobalTheory.AdelicU.evFin F v (x i)) := by
         refine ⟨fun x z hz => ?_, hxs⟩
-        simp only [Pi.add_apply, map_add, evFin_eq_zero_of_At_evI z hz, add_zero]
+        simp only [Pi.add_apply, map_add (f := _), evFin_eq_zero_of_At_evI z hz, add_zero]
       have h2 : (om (g, h)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (T f) φ := hTa.2 f _ hrest
       rw [h2]
       exact Submodule.subset_span ⟨T f, by rw [← hmapT]; exact Submodule.mem_map_of_mem hf, φ, hφ, hv, rfl⟩
@@ -244,7 +248,7 @@ theorem cusp_re (I : OrthIn) (p : IsPair B M χ χ' om r s r' s') (h0 : min r s 
       rw [map_zero]
       exact zero_mem _
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hx hy
     | smul a x _ hx =>
       rw [map_smul]
@@ -289,8 +293,13 @@ theorem isCT_of_cusp (I : OrthIn) (hB : B.IsGood σ) (hW : W.IsSkew σ B r s) {d
       simp [map_mul]
     rw [hs, Matrix.mulVec_smul, dotProduct_smul, smul_dotProduct, h0]
     simp
-  unfold GlobalTheory.ThK.IsCT
+  let P (N : Subgroup (UA σ W.J)) : Prop :=
+    ∀ (μ : Measure N) (𝓕 : Set N), μ.IsHaarMeasure →
+      IsFundamentalDomain ((ratU σ W.J).subgroupOf N) 𝓕 μ → μ 𝓕 = 1 →
+        ∀ h, (0 : UA σ W.J → ℂ) h = ∫ u in 𝓕, f (u.1 * h) ∂μ
+  change P (unip σ W H)
   rw [hEq]
+  dsimp only [P]
   intro μ 𝓕 hμ h𝓕 _ h
   rw [Pi.zero_apply]
   exact (hf _ hU hiso μ 𝓕 hμ h𝓕 h).symm
@@ -325,8 +334,14 @@ private lemma exists_trace_zero_generator_of_isCMExt (I : OrthIn) (hB : B.IsGood
   have hP : PositivityTheory.ThKEnd.IsPlane σ H W W₁ := ⟨hH.rank, hH.xx, hH.yy, hH.xy, hH.orth, hH.gram, hW₁d⟩
   have hEq := I.line F E σ hB.cm d d₁ W W₁ H (Or.inr hW.skew) hP
   obtain ⟨μ, 𝓕, h1, h2, h3⟩ := (I.unip F E σ hB.cm d W (Or.inr hW.skew) hWd (E ∙ H.x)).1.ex
-  unfold GlobalTheory.ThK.IsCT at hc hc'
+  let P (N : Subgroup (UA σ W.J)) (g : UA σ W.J → ℂ) : Prop :=
+    ∀ (μ : Measure N) (𝓕 : Set N), μ.IsHaarMeasure →
+      IsFundamentalDomain ((ratU σ W.J).subgroupOf N) 𝓕 μ → μ 𝓕 = 1 →
+        ∀ h, g h = ∫ u in 𝓕, f (u.1 * h) ∂μ
+  change P (unip σ W H) c at hc
+  change P (unip σ W H) c' at hc'
   rw [hEq] at hc hc'
+  dsimp only [P] at hc hc'
   funext h
   rw [hc μ 𝓕 h1 h2 h3 h, hc' μ 𝓕 h1 h2 h3 h]
 

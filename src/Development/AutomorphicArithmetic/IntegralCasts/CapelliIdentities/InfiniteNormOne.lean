@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
-import Formalism.LocalToGlobal.IndefiniteReal.DatumF
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AbsoluteValueAltAlt
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumF
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AbsoluteValueAltAlt
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.InfiniteNormOne.infinite_norm_one :
     ∀ {F E : Type} [inst : Field F] [inst_1 : NumberField F] [inst_2 : Field E] [inst_3 : NumberField E]
@@ -25,6 +29,6 @@ theorem UpperTheory.Reformulated.B.InfiniteNormOne.infinite_norm_one :
   · have e := (div_eq_div_iff (hz n) (hz m)).mp hnm
     have e2 : ((n : E) - m) * ξ = 0 := by linear_combination (-1 / 2 : E) * e
     exact Int.cast_injective (sub_eq_zero.mp ((mul_eq_zero.mp e2).resolve_right h0))
-  · simp only [Set.mem_setOf_eq, map_div₀, map_add, map_sub, map_intCast, hσ, sub_neg_eq_add,
+  · simp only [Set.mem_setOf_eq, map_div₀, map_add (f := _), map_sub, map_intCast, hσ, sub_neg_eq_add,
       ← sub_eq_add_neg]
     rw [div_mul_div_comm, mul_comm, div_self (mul_ne_zero (hz n) (hp n))]

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
+
+@[expose] public section
 
 open NumberField UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK UpperTheory.V.ZK.Up CategoryTheory
 
@@ -8,12 +12,12 @@ theorem UpperTheory.V.ZK.Up.rqFacts : UpperTheory.V.ZK.Up.RqFacts := by
   · intro G _ m z
     induction z using Finsupp.induction_linear with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | single g a =>
       ext i
       simp only [bd, rq, Finsupp.mapRange.addMonoidHom_apply, Finsupp.mapRange_single,
         Finsupp.linearCombination_single, Finsupp.smul_apply, Finsupp.add_apply,
-        Finsupp.finset_sum_apply, Finsupp.mapRange_apply, smul_eq_mul]
+        Finsupp.finsetSum_apply, Finsupp.mapRange_apply, smul_eq_mul]
       push_cast
       unfold Finsupp.single
       split_ifs <;> simp [Pi.single_apply, apply_ite]

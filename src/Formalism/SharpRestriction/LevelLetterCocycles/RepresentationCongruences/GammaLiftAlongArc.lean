@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneralOfRestriction
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneralOfRestriction
+
+@[expose] public section
 
 noncomputable section
 

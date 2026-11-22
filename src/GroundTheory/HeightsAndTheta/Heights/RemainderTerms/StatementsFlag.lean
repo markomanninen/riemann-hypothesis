@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Inhabitants
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.FlagBasic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Inhabitants
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.FlagBasic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -29,12 +34,12 @@ theorem isBlockAlternating_antisymmetrize (f N : ℕ) (H : RootRing f N) :
 
 def FlagCoeffBlockPermute.Statement : Prop :=
   ∀ (f N : ℕ) (w : Fin f → Equiv.Perm (Fin N)) (P : RootRing f N) (α : Fin f × Fin N →₀ ℕ),
-    coeff α (blockPermute f N w P) =
-      coeff (Finsupp.equivFunOnFinite.symm fun p : Fin f × Fin N => α (p.1, w p.1 p.2)) P
+    AddMonoidAlgebra.coeff (blockPermute f N w P) α =
+      AddMonoidAlgebra.coeff P (Finsupp.equivFunOnFinite.symm fun p : Fin f × Fin N => α (p.1, w p.1 p.2))
 
 def FlagAltCoeffInjective.Statement : Prop :=
   ∀ (f N : ℕ) (P : RootRing f N) (α : Fin f × Fin N →₀ ℕ),
-    IsBlockAlternating f N P → coeff α P ≠ 0 → ∀ τ : Fin f, Function.Injective fun i : Fin N => α (τ, i)
+    IsBlockAlternating f N P → AddMonoidAlgebra.coeff P α ≠ 0 → ∀ τ : Fin f, Function.Injective fun i : Fin N => α (τ, i)
 
 def FlagInjSumBound.Statement : Prop :=
   ∀ (N : ℕ) (g : Fin N → ℕ), Function.Injective g →
@@ -151,7 +156,7 @@ def FlagPowerSumPreimage.Statement : Prop :=
     ∃ S : MvPolynomial (Fin N) ℚ,
       powerSumHom N S = ∑ l ∈ Finset.Icc 1 N, psum (Fin N) ℚ l * T l ∧
       ∀ (k : ℕ) (hk1 : 1 ≤ k) (hkN : k ≤ N),
-        coeff (Finsupp.single (⟨k - 1, by omega⟩ : Fin N) 1) S = constantCoeff (T k)
+        AddMonoidAlgebra.coeff S (Finsupp.single (⟨k - 1, by omega⟩ : Fin N) 1) = constantCoeff (T k)
 
 def FlagAntisymDecomposition.Statement : Prop :=
   ∀ (f N : ℕ) (F G : RootRing f N) (Q R : ℕ → Fin f → RootRing f N),

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IsOp2One
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IsOp2One
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc GlobalTheory.Pst GlobalTheory.BKLim GlobalTheory.Cong GlobalTheory.WeilDeligne Matrix
 open scoped Formalism.Per NNReal
 open UpperTheory.Gal.ClosedPhiFromClosedTrace
@@ -31,7 +36,8 @@ private lemma key_sum {P : LocPrime l} {AI : LocAinf l P} (T : LocTied l P AI) {
   simp only [Finset.mul_sum, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
-  simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, ← TensorProduct.tmul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, ← TensorProduct.tmul_sum]
   congr 1
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 
@@ -55,7 +61,8 @@ private lemma coord_sum {P : LocPrime l} {L : FinExt l} {a d : ℕ}
     {ψ₀ : (Fin a → ↥L.1) ⊗[ℚ_[l]] Bst P →+ (Fin a → OB P)} (h : IsCoord P L ψ₀)
     (v : Fin d → Fin a → ↥L.1) (y : Fin d → Bst P) (i' : Fin a) :
     ψ₀ (∑ i, v i ⊗ₜ[ℚ_[l]] y i) i' = ∑ i, ((v i i' : ↥L.1) : Om l) ⊗ₜ[↥(MaximalUnramifiedExtension l)] y i := by
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   exact Finset.sum_congr rfl fun i _ => h _ _ _
 
 end UpperTheory.Gal.ClosedPhiFromClosedTrace
@@ -104,7 +111,7 @@ theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.tieRep_holds :
       have h2 := congrFun (congrFun he i) i'
       rw [Matrix.sum_apply] at h2
       simp only [Matrix.smul_apply] at h2
-      rw [← AddSubmonoidClass.coe_finset_sum, h2, Matrix.one_apply]
+      rw [← AddSubmonoidClass.coe_finsetSum, h2, Matrix.one_apply]
       split_ifs <;> rfl
     rw [hs]
     split_ifs
@@ -124,6 +131,6 @@ theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.tieRep_holds :
   rw [← TensorProduct.sum_tmul]
   congr 1
   simp only [Matrix.trace, Matrix.diag_apply]
-  exact AddSubmonoidClass.coe_finset_sum _ _
+  exact AddSubmonoidClass.coe_finsetSum _ _
 
 end

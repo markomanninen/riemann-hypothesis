@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamPieceInt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.OsgoodSeparate
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamPieceInt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.OsgoodSeparate
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -33,8 +38,8 @@ theorem differentiable_mulVec (A : Matrix (Fin d) (Fin n) ℂ) :
     Differentiable ℂ (fun x : Fin n → ℂ => A *ᵥ x) := by
   have h := (Matrix.mulVecLin A).toContinuousLinearMap.differentiable
   convert h using 1
-  funext x
-  simp
+  ext x
+  simp only [LinearMap.coe_toContinuousLinearMap', Matrix.mulVecLin_apply]
 
 theorem exists_sheet {W : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin d) (Fin n) ℂ}
     {σ : (Fin d → ℂ) → Fin n → ℂ} {r r' : ℝ} {N : Set (Fin n → ℂ)}
@@ -133,8 +138,8 @@ theorem exists_sheet {W : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin d) 
 
 end ParamPieceInt
 
-open ParamPieceInt in
 
+open ParamPieceInt in
 theorem ParamPieceInt.proof : ParamPieceInt.Statement := by
   intro n d W A σ r r' N hσ hinj hN hrr hprop hcov f φ P hφ hPm hPb hPw hgP
   classical
@@ -154,7 +159,7 @@ theorem ParamPieceInt.proof : ParamPieceInt.Statement := by
     have hsum : chartDens W A ((σ '' P).indicator f) φ (g w) =
         f (σ w) * ReciprocityTheory.AnForm.maDens (fun k => φ k ∘ s) (g w) := by
       unfold chartDens sheetSum
-      rw [finsum_eq_single _ (σ w), finsum_eq_if, if_pos hfib, dif_pos hex]
+      rw [finsum_eq_single _ (σ w), finsum_eq_if, if_pos hfib, dite_eq_left hex]
       · beta_reduce
         rw [Set.indicator_of_mem (Set.mem_image_of_mem σ hw), IndefiniteRowSideFullHecke.ComplexSets.maDens_congr_of_eventuallyEq fun k =>
           (SheetSumMeasurable.sheet_eventuallyEq hs hex.choose_spec).fun_comp (φ k)]

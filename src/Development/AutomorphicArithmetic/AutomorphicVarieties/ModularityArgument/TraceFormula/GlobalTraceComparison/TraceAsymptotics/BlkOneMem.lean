@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintSph
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintSph
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ private theorem bm_isUnit (h : a + b = n) (w : Pl E) (m : GLw a w × GLw b w)
 private theorem blk_val (h : a + b = n) (w : Pl E) (m : GLw a w × GLw b w)
     (X : Matrix (Fin a) (Fin b) (w.adicCompletion E)) : (GlobalTheory.BCT.blk h w m X).val = bm h w m X := by
   show (if hM : IsUnit (bm h w m X) then hM.unit else 1).val = _
-  rw [dif_pos (bm_isUnit h w m X)]
+  rw [dite_eq_left (bm_isUnit h w m X)]
   rfl
 
 private theorem blk_add (h : a + b = n) (w : Pl E) (m : GLw a w × GLw b w)
@@ -42,7 +46,7 @@ private theorem blk_add (h : a + b = n) (w : Pl E) (m : GLw a w × GLw b w)
   simp [Matrix.reindex_apply, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply, Matrix.mul_add, add_comm]
 
 private theorem blk_one_mem (h : a + b = n) (w : Pl E) (Y : Matrix (Fin a) (Fin b) (w.adicCompletion E))
-    (hY : ∀ i j, Valued.v (Y i j) ≤ 1) : GlobalTheory.BCT.blk h w 1 Y ∈ GlobalTheory.LFun.KGL w n := by
+    (hY : ∀ i j, Valued.v (Y i j) ≤ 1) : GlobalTheory.BCT.blk h w 1 Y ∈ GlobalTheory.LFun.KGL w (n := n) := by
   let Y' : Matrix (Fin a) (Fin b) (Ov E w) := fun i j => ⟨Y i j, hY i j⟩
   let N : Matrix (Fin n) (Fin n) (Ov E w) := Matrix.reindex (eIdx h) (eIdx h) (Matrix.fromBlocks 1 Y' 0 1)
   have hN : IsUnit N := by
@@ -150,9 +154,9 @@ theorem ctSph : CtSph := by
   intro E _ _ _ w n a b h f hf m
   refine ⟨?_, supp_fin h w f hf.1 m⟩
   have hinv := hf.2
-  have havg : ∀ y : GLw n w, (avg fun k : GlobalTheory.LFun.KGL w n => f ((k : GLw n w)⁻¹ * y * k)) = f y := by
+  have havg : ∀ y : GLw n w, (avg fun k : GlobalTheory.LFun.KGL w (n := n) => f ((k : GLw n w)⁻¹ * y * k)) = f y := by
     intro y
-    have : (fun k : GlobalTheory.LFun.KGL w n => f ((k : GLw n w)⁻¹ * y * k)) = fun _ => f y := by
+    have : (fun k : GlobalTheory.LFun.KGL w (n := n) => f ((k : GLw n w)⁻¹ * y * k)) = fun _ => f y := by
       funext k
       rw [(hinv k k.2 _).2, (hinv _ (inv_mem k.2) y).1]
     rw [this, avg_const]

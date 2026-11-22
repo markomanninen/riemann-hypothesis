@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
-import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
-import Formalism.LocalToGlobal.ProjectiveLattices.LevelPb
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Principal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
+public import Formalism.LocalToGlobal.ProjectiveLattices.LevelPb
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Principal
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -50,7 +54,7 @@ theorem exists_coords {x : D.host.E} (hx : x ∈ D.host.K) :
 theorem conj_coords (a b : ℚ) :
     D.host.conj ((a : D.host.E) + (b : D.host.E) * D.host.sqrtMinusD) =
       (a : D.host.E) - (b : D.host.E) * D.host.sqrtMinusD := by
-  rw [map_add, map_mul, map_ratCast, map_ratCast, D.host.conj_sqrtMinusD]
+  rw [map_add (f := _), map_mul, map_ratCast, map_ratCast, D.host.conj_sqrtMinusD]
   ring
 
 theorem conj_mem {x : D.host.E} (hx : x ∈ D.host.K) : D.host.conj x ∈ D.host.K := by
@@ -85,7 +89,8 @@ theorem trace_conj (y : D.host.E) :
     Algebra.trace D.host.K D.host.E (D.host.conj y) =
       conjK D (Algebra.trace D.host.K D.host.E y) := by
   apply Subtype.ext
-  rw [coe_conjK, coe_trace, coe_trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coe_conjK, coe_trace, coe_trace, map_sum]
   exact Finset.sum_congr rfl fun τ _ => (conj_comm D τ y).symm
 
 theorem trace_pos (y : D.host.E) (hy : y ≠ 0) :
@@ -99,7 +104,8 @@ theorem trace_pos (y : D.host.E) (hy : y ≠ 0) :
   rw [hb, add_zero] at hab
   refine ⟨a, ?_, Subtype.ext (by rw [hab]; simp)⟩
   have h1 := congrArg D.host.φ₀ hab
-  rw [coe_trace, map_sum, map_ratCast] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coe_trace, map_sum, map_ratCast] at h1
   have h2 : ∀ τ : D.host.E ≃ₐ[D.host.K] D.host.E,
       D.host.φ₀ (τ (y * D.host.conj y)) = ((Complex.normSq (D.host.φ₀ (τ y)) : ℝ) : ℂ) := by
     intro τ

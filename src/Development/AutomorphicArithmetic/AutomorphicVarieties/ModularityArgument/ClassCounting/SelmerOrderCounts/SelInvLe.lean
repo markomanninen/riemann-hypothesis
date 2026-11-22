@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.ActU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.PowEqOneOfDvd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.ActU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.PowEqOneOfDvd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.ZK UpperTheory.V.ZK.Ct
 
@@ -124,7 +128,7 @@ private theorem selInvLe_lemma_5 (L F : Type) [Field L] [NumberField L] [Field F
     rw [← unram L F l c ν ζ γ hl hL x₀ P p hp hP]
     have hadd : ∀ b b' : Fˣ, ordP P (b * b') = ordP P b + ordP P b' := by
       intro b b'
-      rw [← hD.d_eq, ← hD.d_eq, ← hD.d_eq, ofMul_mul, map_add, Finsupp.add_apply]
+      rw [← hD.d_eq, ← hD.d_eq, ← hD.d_eq, ofMul_mul, map_add (f := _), Finsupp.add_apply]
     have hinv : ∀ b : Fˣ, ordP P b⁻¹ = - ordP P b := by
       intro b
       rw [← hD.d_eq, ← hD.d_eq, ofMul_inv, map_neg, Finsupp.neg_apply]

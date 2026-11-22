@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLocalFrame
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalNablaHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLRadT
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLocalFrame
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalNablaHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLRadT
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.Gauge.GC
 

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JumpsLetOfWin
-import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JumpsLetOfWin
+public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ theorem span_φ_pow (T : LocLat G Qp LL O) {r : ℕ} (b : Fin r → W.DD T)
         rw [ih]; trivial
       obtain ⟨g, hg⟩ := (Submodule.mem_span_range_iff_exists_fun W.EE).1 hbi
       show W.φD T (b i) ∈ _
-      rw [← hg, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hg, map_sum]
       refine Submodule.sum_mem _ fun m _ => ?_
       rw [W.φD_smul, ← pow_apply_succ]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨m, rfl⟩)
@@ -117,7 +122,8 @@ theorem linInd_φ_pow (T : LocLat G Qp LL O) (hT : IsCrys PD T.ρ) (hs : W.s = 1
       rw [Submodule.span_le]
       rintro _ ⟨y, hy, rfl⟩
       obtain ⟨a, ha, _⟩ := huniq y hy
-      rw [ha, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ha, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [φD_smulA, ← algebraMap_smul W.EE]
       rw [Submodule.restrictScalars_mem]
@@ -169,7 +175,8 @@ theorem Pp_coords (T : LocLat G Qp LL O) {r : ℕ} (b : Fin r → W.DD T)
       rw [← hyx, LinearMap.smul_apply, LinearMap.id_apply, smul_smul, letE_mul_self]
     obtain ⟨a0, ha0, hx0⟩ := hΔ x hxΔ
     refine ⟨fun j => a * (W.φA ^ e) (a0 j), fun j => W.AΔ.mul_mem ha (φA_pow_mem_AΔ W (ha0 j) e), ?_⟩
-    conv_lhs => rw [← hxc, hx0, Finset.smul_sum, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← hxc, hx0, Finset.smul_sum, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [smul_comm (letE c : LetA O n) (a0 j), φD_pow_smulA, smul_smul]
   exact (AddSubgroup.closure_le S).2 hgen hy

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.NeighbourhoodKilling
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.NeighbourhoodKilling
+
+@[expose] public section
 
 open CategoryTheory Limits
 

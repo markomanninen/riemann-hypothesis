@@ -1,20 +1,23 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.WeilCharpolySupport.SeedInW
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgOfCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TUpQuad
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BcUpSol
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TwistConjugateSelfDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BcUpCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWToCsd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.WeilCharpolySupport.SeedInW
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgOfCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TUpQuad
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BcUpSol
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TwistConjugateSelfDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BcUpCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWToCsd
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section
-open private UpperTheory.V.Z.Sym.W.adjoint_zero_twist from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.WeilCharpolySupport.SeedInW
 open UpperTheory.GalN.V
 noncomputable section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Sd
@@ -218,7 +221,24 @@ theorem UpperTheory.V.Z.Sym.W.seedInW_alt :
   have hwit : UpperTheory.V.Z.Win.WitA ι (tw (ρ.comp (galEmb ℚ L Ω)) κ) :=
     hW2.witA (potOrd L Ω l 2 _ _ _ κ (fun i j => by fin_cases i <;> fin_cases j <;> simp <;> omega) hab)
   have hunl : Unlinked (ad0 (tw (ρ.comp (galEmb ℚ L Ω)) κ)) := by
-    rw [UpperTheory.V.Z.Sym.W.adjoint_zero_twist]
+    have htwist {Γ k : Type} [Group Γ] [Field k] (r : Γ →* GL (Fin 2) k)
+        (δ : Γ →* kˣ) : ad0 (tw r δ) = ad0 r := by
+      refine MonoidHom.ext fun s => Units.ext ?_
+      have hδ : (δ s : k) ≠ 0 := (δ s).ne_zero
+      have hdet : (r s).val.det ≠ 0 := (Matrix.isUnits_det_units _).ne_zero
+      have had (r' : Γ →* GL (Fin 2) k) : (ad0 r' s).val =
+          (r' s).val.det⁻¹ • symSquareMatrixHom k (r' s).val := by
+        rw [ad0, tw_val]
+        simp
+      have hsym (a : k) (g : Matrix (Fin 2) (Fin 2) k) :
+          symSquareMatrixHom k (a • g) = a ^ 2 • symSquareMatrixHom k g := by
+        ext i j
+        fin_cases i <;> fin_cases j <;> simp [symSquareMatrixHom] <;> ring
+      rw [had, had, tw_val, hsym, Matrix.det_smul, smul_smul]
+      congr 1
+      simp only [Fintype.card_fin]
+      field_simp
+    rw [htwist]
     exact UpperTheory.GalN.V.L.wup ℚ Ω l 3 (ad0 ρ) L hun
   refine ⟨κ, ?_⟩
   have SF := shapeFacts l (G L Ω) 2 (ρ.comp (galEmb ℚ L Ω)) κ

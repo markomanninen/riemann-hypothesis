@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.Wcount
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.Wcount
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,8 +73,9 @@ structure IsTest (f : G → ℂ) : Prop where
 
 def opF (f : G → ℂ) (φ : G → V) (g : G) : V := ∑ᶠ x : G ⧸ B.U, f (s.θ x.out) • s.Θ (φ (s.θ.symm g * x.out))
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def R (f : G → ℂ) : Module.End ℂ B.Forms :=
   if h : ∃ L : Module.End ℂ B.Forms, ∀ φ, (L φ).1 = s.opF f φ.1 then h.choose else 0
 
@@ -124,9 +129,5 @@ def mass {H T : Type} [Group H] [Group T] (φ : H →* T) (H₀ : Subgroup H) (C
 
 def IsGenEig {Λ M : Type} [AddCommGroup M] [Module ℂ M] (u : Λ → Module.End ℂ M) (χ : Λ → ℂ) : Prop :=
   (⨅ a, (u a).maxGenEigenspace (χ a)) ≠ ⊥
-
-example : Base PUnit PUnit ℂ := ⟨1, ⊤, 1, 1, ⊥, bot_le, fun _ _ => Subgroup.mem_center_iff.2 fun _ => rfl, fun _ _ => trivial, fun _ _ _ => by simp⟩
-
-example : RPG (I := Unit) PUnit (fun _ => PUnit) fun _ => ⊤ := ⟨fun _ => 1, fun _ _ => rfl, fun _ => by simp, fun _ _ => ⟨1, fun _ => rfl⟩⟩
 
 end UpperTheory.V.Z.Sym

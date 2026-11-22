@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.QuotientFieldNonconstantLift
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.QuotientFieldNonconstantLift
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.E4
@@ -50,7 +54,7 @@ theorem key {k : Type} [Field k] {X : Scheme.{0}} [IsIntegral X] (p : X ⟶ Sp k
     ext a
     simpa [α, ψ] using congrArg (fun g => (CommRingCat.Hom.hom g) a) h2
   have hinj : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro s hs
     have hs' : (φ.appLE U ⊤ hle).hom s = 0 := by
       have := congrArg (Scheme.ΓSpecIso (CommRingCat.of Ω)).inv.hom hs

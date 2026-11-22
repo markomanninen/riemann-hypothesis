@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneParameterSubgroupExists
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneParameterSubgroupExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ theorem stab_orth (hadj : ∀ g, ∃ g', T g' = (T g)ᴴ) {S : Submodule ℂ (Eu
 theorem stab_inf {A B : Submodule ℂ (EuclideanSpace ℂ I)} (hA : Stab T A) (hB : Stab T B) : Stab T (A ⊓ B) :=
   fun g v hv => ⟨hA g v hv.1, hB g v hv.2⟩
 
-variable (T) in
 
+variable (T) in
 def Good (D : Submodule ℂ (I → ℂ)) (v₀ : I → ℂ) (S : Submodule ℂ (EuclideanSpace ℂ I)) : Prop :=
   Stab T S ∧ (∀ v ∈ S, v.ofLp ∈ D) ∧ ∃ w ∈ S, ⟪w, WithLp.toLp 2 v₀⟫_ℂ ≠ 0
 

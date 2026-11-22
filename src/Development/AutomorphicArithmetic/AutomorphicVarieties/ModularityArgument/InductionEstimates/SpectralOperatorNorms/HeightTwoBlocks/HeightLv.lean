@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.ContinuousLev
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.ContinuousLev
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -44,7 +48,7 @@ private theorem num2 {x y w B A p q C D : ℝ} {M : ℕ} (h : w ≤ B * (A * (p 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.ctBd :
     ∀ {K : Type} [Field K] [NumberField K] (Φ W : G1 K (2 + 2) → ℂ) (φ₁ φ₂ : G1 K 2 → ℂ), Continuous Φ →
       (∃ (N : ℕ) (C : ℝ), ∀ g : G1 K (2 + 2), ‖Φ g‖ ≤ C * AutomorphicForm.height (g : AdelicGLn.AdelicGL K (2 + 2)) ^ N) →
-      (∀ g, W g = ∫ X in unipFundamentalDomain K (2 + 2) 2, Φ (nn X * g) ∂unipMeasure K (2 + 2) 2) →
+      (∀ g, W g = ∫ X in unipFundamentalDomain K (2 + 2) 2, Φ (unipOne 2 X * g) ∂unipMeasure K (2 + 2) 2) →
       (∀ γ₁ ∈ Gam K 2, ∀ γ₂ ∈ Gam K 2, ∀ g, W (lv γ₁ γ₂ 0 * g) = W g) →
       (∀ N : ℕ, ∃ C : ℝ, ∀ m, ‖φ₁ m‖ * qht m ^ N ≤ C) → (∀ N : ℕ, ∃ C : ℝ, ∀ m, ‖φ₂ m‖ * qht m ^ N ≤ C) →
       Continuous W ∧ ∀ C : Set (G1 K (2 + 2)), IsCompact C → ∃ B : ℝ, ∀ m₁ m₂, ∀ g ∈ C, ‖φ₁ m₁‖ * ‖φ₂ m₂‖ * ‖W (lv m₁ m₂ 0 * g)‖ ≤ B := by
@@ -55,11 +59,11 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.ctBd :
       funext g
       rw [hW]
       refine integral_congr_ae (Eventually.of_forall fun X => ?_)
-      exact congrArg Φ (retractOne_coe (nn X * g)).symm
+      exact congrArg Φ (retractOne_coe (unipOne 2 X * g)).symm
     rw [e]
     exact (UpperTheory.continuous_constantTerm K _ 2 _ (hc.comp continuous_retractOne)).comp continuous_subtype_val
   · intro D hD
-    obtain ⟨B, M, hB⟩ := UpperTheory.hasModerateGrowth_constantTerm K (2 + 2) 2 (fun x => if h : x ∈ normOneGL K (2 + 2) then Φ ⟨x, h⟩ else 0)
+    obtain ⟨B, M, hB⟩ := UpperTheory.hasModerateGrowth_constantTerm K (2 + 2) 2 (fun x => if h : x ∈ normOneGL (K := K) (n := (2 + 2)) then Φ ⟨x, h⟩ else 0)
       ⟨|C|, N, fun g => by
         have hp := pow_nonneg (height_pos g).le N
         beta_reduce
@@ -72,9 +76,9 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.ctBd :
         (mul_le_mul_of_nonneg_right (le_abs_self B) (pow_nonneg (height_pos _).le M)))
       rw [hW]
       refine integral_congr_ae (Eventually.of_forall fun X => ?_)
-      have h : unipGL X * (g : AdelicGLn.AdelicGL K (2 + 2)) ∈ normOneGL K (2 + 2) := (nn X * g).2
+      have h : unipGL X * (g : AdelicGLn.AdelicGL K (2 + 2)) ∈ normOneGL (K := K) (n := (2 + 2)) := (unipOne 2 X * g).2
       beta_reduce
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       rfl
     obtain ⟨R, hR⟩ := exists_height_le_of_isCompact (hD.image continuous_subtype_val)
     obtain ⟨C₁, hC₁⟩ := h₁ M

@@ -1,10 +1,15 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsPowEqFractionRingOfPderivEqZero
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsLocalRingOfAug
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TjEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsPowEqFractionRingOfPderivEqZero
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsLocalRingOfAug
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TjEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj
 open scoped CategoryTheory.Obj
@@ -132,7 +137,7 @@ theorem taylor [PerfectField k] (p : ℕ) [Fact p.Prime] [CharP k p] [IsIntegral
     (ht : ∀ m, spMap ((jetTrunc : Jet k κ (m + 1) →ₐ[k] Jet k κ m) : Jet k κ (m + 1) →+* Jet k κ m) ≫ x (m + 1) = x m)
     (U : Z.Opens) (hU : ∀ m, ⊤ ≤ x m ⁻¹ᵁ U) [Nonempty U] (f : Γ(Z, U)) :
     ∃ F : MvPowerSeries κ k, (∀ m, ((x m).appLE U ⊤ (hU m)).hom f = toΓ _ (psJet m F)) ∧ (F = 0 → f = 0) ∧
-      ((∀ q, MvPowerSeries.pderiv k q F = 0) → ∃ r : Z.functionField, r ^ p = (Z.germToFunctionField U).hom f) := by
+      ((∀ q, MvPowerSeries.pderiv (R := k) q F = 0) → ∃ r : Z.functionField, r ^ p = (Z.germToFunctionField U).hom f) := by
   obtain ⟨b, hbdef⟩ : ∃ b, e (closedPoint k) = b := ⟨_, rfl⟩
   have hb : b ∈ U := by
     rw [← hbdef, ← hxa 0]
@@ -165,7 +170,7 @@ theorem taylor [PerfectField k] (p : ℕ) [Fact p.Prime] [CharP k p] [IsIntegral
       map_one' := GlobalTheory.JetExpansion.tj_ext fun m => by rw [hF', map_one, map_one]
       map_mul' := fun a b => GlobalTheory.JetExpansion.tj_ext fun m => by rw [map_mul, hF', hF', hF', map_mul]
       map_zero' := GlobalTheory.JetExpansion.tj_ext fun m => by rw [hF', map_zero, map_zero]
-      map_add' := fun a b => GlobalTheory.JetExpansion.tj_ext fun m => by rw [map_add, hF', hF', hF', map_add]
+      map_add' := fun a b => GlobalTheory.JetExpansion.tj_ext fun m => by rw [map_add (f := _), hF', hF', hF', map_add (f := _)]
       commutes' := fun r => GlobalTheory.JetExpansion.tj_ext fun m => by rw [hF', AlgHom.commutes, AlgHom.commutes] }
   have hj : ∀ m a, GlobalTheory.JetExpansion.tj m (j a) = σ m a := fun m a => hF a m
   have j1 : ∀ (m : ℕ) a, j a ∈ Ideal.span (Set.range (MvPowerSeries.X : κ → MvPowerSeries κ k)) ^ m ↔

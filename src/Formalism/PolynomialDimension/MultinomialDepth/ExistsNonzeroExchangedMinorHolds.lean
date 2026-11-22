@@ -1,4 +1,8 @@
-import Formalism.PolynomialDimension.FrameSum
+module
+
+public import Formalism.PolynomialDimension.FrameSum
+
+@[expose] public section
 
 open scoped BigOperators
 open Finset Matrix

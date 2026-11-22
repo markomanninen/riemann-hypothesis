@@ -1,4 +1,8 @@
-import Formalism.GrowthSums.StatementA
+module
+
+public import Formalism.GrowthSums.StatementA
+
+@[expose] public section
 
 open scoped BigOperators
 open Finset
@@ -31,7 +35,7 @@ theorem padicValNat_le_of_lt_pow {p t y : ℕ} [hp : Fact p.Prime] (hy : 1 ≤ y
   by_contra h
   push_neg at h
   have hdvd : p ^ (t + 1) ∣ y :=
-    (pow_dvd_pow p (Nat.succ_le_of_lt h)).trans pow_padicValNat_dvd
+    (pow_dvd_pow p (Nat.succ_le_of_lt h)).trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   exact absurd (Nat.le_of_dvd (by omega) hdvd) (not_le.2 hyP)
 
 theorem padicValHarmonicPowerSum : HarmonicVal := by
@@ -62,17 +66,18 @@ theorem padicValHarmonicPowerSum : HarmonicVal := by
     have hm : (s : ℤ) * (padicValNat p y : ℤ) ≤ (s : ℤ) * (t : ℤ) :=
       mul_le_mul_of_nonneg_left (by exact_mod_cast hvy) (by positivity)
     push_cast
-    nlinarith
+    rw [padicValRat.of_nat, ← Nat.padicValNat_def]
+    linarith only [hm]
 
 theorem powerSumPolynomial : PowerSumPoly := by
   intro s
   classical
   have hcoeff : (Polynomial.bernoulli (s + 1)).coeff (s + 1) = 1 := by
-    rw [Polynomial.bernoulli_def, Polynomial.finset_sum_coeff,
+    rw [Polynomial.bernoulli_def, Polynomial.finsetSum_coeff,
       Finset.sum_eq_single (s + 1)]
     · simp [Polynomial.coeff_monomial]
     · intro b _ hb
-      rw [Polynomial.coeff_monomial, if_neg hb]
+      simp [Polynomial.coeff_monomial, hb, Ne.symm hb]
     · intro h
       exact absurd (Finset.self_mem_range_succ (s + 1)) h
   have hle : (Polynomial.bernoulli (s + 1)).natDegree ≤ s + 1 := by

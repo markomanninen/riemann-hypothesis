@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsOpen
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsOpen
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -100,7 +105,7 @@ theorem isHecke_conj {K K' : Subgroup G} (hle : K' ≤ K) (hn : (K'.subgroupOf K
 theorem trace_of_not_finite {W : Type} [AddCommGroup W] [Module ℂ W] (hW : ¬ Module.Finite ℂ W)
     (L : W →ₗ[ℂ] W) : LinearMap.trace ℂ W L = 0 := by
   unfold LinearMap.trace
-  rw [dif_neg]
+  rw [dite_eq_right]
   · simp
   · rintro ⟨s, ⟨b⟩⟩
     exact hW (Module.Finite.of_basis b)
@@ -280,7 +285,7 @@ theorem conjAvg_gen (K : Subgroup G) (hKo : IsOpen (K : Set G)) (hKc : IsCompact
 
 end Main
 
-theorem conjAvg : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GLw n w) V) (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) → K' ≤ GlobalTheory.LFun.KGL w n → (K'.subgroupOf (GlobalTheory.LFun.KGL w n)).Normal → ∀ f, IsHecke K' f → IsHecke K' (fun g => avg fun k : GlobalTheory.LFun.KGL w n => f ((k : GLw n w)⁻¹ * g * k)) ∧ (∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ g, (fun g => avg fun k : GlobalTheory.LFun.KGL w n => f ((k : GLw n w)⁻¹ * g * k)) (k⁻¹ * g * k) = (fun g => avg fun k : GlobalTheory.LFun.KGL w n => f ((k : GLw n w)⁻¹ * g * k)) g) ∧ (∀ g, avg (fun k : GlobalTheory.LFun.KGL w n => (fun g => avg fun k : GlobalTheory.LFun.KGL w n => f ((k : GLw n w)⁻¹ * g * k)) ((k : GLw n w)⁻¹ * g * k)) = (fun g => avg fun k : GlobalTheory.LFun.KGL w n => f ((k : GLw n w)⁻¹ * g * k)) g) ∧ twTr ρ (GlobalTheory.LFun.KGL w n) K' (fun g => avg fun k : GlobalTheory.LFun.KGL w n => f ((k : GLw n w)⁻¹ * g * k)) LinearMap.id = twTr ρ (GlobalTheory.LFun.KGL w n) K' f LinearMap.id := by
+theorem conjAvg : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GLw n w) V) (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) → K' ≤ GlobalTheory.LFun.KGL w (n := n) → (K'.subgroupOf (GlobalTheory.LFun.KGL w (n := n))).Normal → ∀ f, IsHecke K' f → IsHecke K' (fun g => avg fun k : GlobalTheory.LFun.KGL w (n := n) => f ((k : GLw n w)⁻¹ * g * k)) ∧ (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ g, (fun g => avg fun k : GlobalTheory.LFun.KGL w (n := n) => f ((k : GLw n w)⁻¹ * g * k)) (k⁻¹ * g * k) = (fun g => avg fun k : GlobalTheory.LFun.KGL w (n := n) => f ((k : GLw n w)⁻¹ * g * k)) g) ∧ (∀ g, avg (fun k : GlobalTheory.LFun.KGL w (n := n) => (fun g => avg fun k : GlobalTheory.LFun.KGL w (n := n) => f ((k : GLw n w)⁻¹ * g * k)) ((k : GLw n w)⁻¹ * g * k)) = (fun g => avg fun k : GlobalTheory.LFun.KGL w (n := n) => f ((k : GLw n w)⁻¹ * g * k)) g) ∧ twTr ρ (GlobalTheory.LFun.KGL w (n := n)) K' (fun g => avg fun k : GlobalTheory.LFun.KGL w (n := n) => f ((k : GLw n w)⁻¹ * g * k)) LinearMap.id = twTr ρ (GlobalTheory.LFun.KGL w (n := n)) K' f LinearMap.id := by
   intro E _ _ _ n w V _ _ ρ K' hK'o hle hn f hf
   obtain ⟨hKo, hKc⟩ := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL (E := E) w n
   exact conjAvg_gen _ hKo hKc ρ K' hK'o hle hn f hf

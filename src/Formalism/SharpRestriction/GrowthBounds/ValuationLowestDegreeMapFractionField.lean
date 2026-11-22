@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeRename
-import Formalism.SharpRestriction.GrowthBounds.SourceCleaning
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeRename
+public import Formalism.SharpRestriction.GrowthBounds.SourceCleaning
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,7 +125,7 @@ theorem twistSub_map (f : R →+* R') {ι : Type} {n : ℕ} (LL : Letters ι) (S
     twistSub LL S j (MvPolynomial.map f A) = MvPolynomial.map (lMap f n) (twistSub LL S j A) := by
   induction A using MvPolynomial.induction_on with
   | C a => simp [twistSub, lMap_coefL]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp, map_X]
     congr 1
@@ -386,7 +390,7 @@ theorem valuation_transport_of_lemma (D : Formalism.BasicNotions.D7) (h : Formal
       exact ⟨h1.1.trans h2.1.symm, h1.2.trans h2.2.symm⟩
     obtain ⟨v1, v2, v3, v4, -, -⟩ := h (KK O) {x // x ∈ t} (⟨fun i : {x // x ∈ t} => LL.vec i⟩ : Letters {x // x ∈ t}) n
       ((fun i : {x // x ∈ t} => (i : ι)) ⁻¹' S)
-    rw [← map_mul, ← map_add, (T _).1, (T _).1, (T _).1, (T _).1, (T _).2, (T _).2, (T _).2, (T _).2, map_mul, map_add]
+    rw [← map_mul, ← map_add (f := _), (T _).1, (T _).1, (T _).1, (T _).1, (T _).2, (T _).2, (T _).2, (T _).2, map_mul, map_add (f := _)]
     exact ⟨v1 _ _, v2 _ _, v3 _ _, v4 _ _⟩
   · unfold valS
     rw [sDegs_det LL S _ y hinj hy]
@@ -394,8 +398,8 @@ theorem valuation_transport_of_lemma (D : Formalism.BasicNotions.D7) (h : Formal
 
 section Hom
 
-open Classical in
 
+open Classical in
 def suppProj (R : Type) [CommRing R] {σ : Type} (s : Set (σ →₀ ℕ)) : MvPolynomial σ R →ₗ[R] MvPolynomial σ R :=
   (basisMonomials σ R).constr R fun m => if m ∈ s then monomial m 1 else 0
 
@@ -411,7 +415,7 @@ theorem suppProj_monomial (R : Type) [CommRing R] {σ : Type} (s : Set (σ →�
 
 open Classical in
 theorem coeff_suppProj (R : Type) [CommRing R] {σ : Type} (s : Set (σ →₀ ℕ)) (A : MvPolynomial σ R) (m : σ →₀ ℕ) :
-    coeff m (suppProj R s A) = if m ∈ s then coeff m A else 0 := by
+    AddMonoidAlgebra.coeff (suppProj R s A) m = if m ∈ s then AddMonoidAlgebra.coeff A m else 0 := by
   induction A using MvPolynomial.induction_on' with
   | monomial u a =>
     rw [suppProj_monomial]
@@ -421,13 +425,14 @@ theorem coeff_suppProj (R : Type) [CommRing R] {σ : Type} (s : Set (σ →₀ �
       · rw [if_pos hm]
       · rw [if_neg hm, coeff_monomial, if_neg]
         rintro rfl; exact hm hu
-    · rw [if_neg hu, coeff_zero]
+    · rw [if_neg hu, AddMonoidAlgebra.coeff_zero]
       by_cases hm : m ∈ s
-      · rw [if_pos hm, coeff_monomial, if_neg]
-        rintro rfl; exact hu hm
+      · rw [if_pos hm, coeff_monomial, if_neg (show u ≠ m from fun h => hu (h ▸ hm))]
+        rfl
       · rw [if_neg hm]
+        rfl
   | add p q hp hq =>
-    rw [map_add, coeff_add, hp, hq, coeff_add]
+    rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq, MvPolynomial.coeff_add]
     split_ifs <;> simp
 
 theorem suppProj_support_subset (R : Type) [CommRing R] {σ : Type} (s : Set (σ →₀ ℕ)) (A : MvPolynomial σ R) :
@@ -471,15 +476,15 @@ theorem suppProj_of_disjoint (R : Type) [CommRing R] {σ : Type} (s t : Set (σ 
     rw [MvPolynomial.mem_restrictSupport_iff] at hA
     have hmt : m ∈ t := hA (by rw [Finset.mem_coe, MvPolynomial.mem_support_iff]; exact hc)
     exact Set.disjoint_left.mp hst h hmt
-  · rw [if_neg h]
+  · simp [h]
 
 theorem suppProj_mem_supported (R : Type) [CommRing R] {σ : Type} (s : Set (σ →₀ ℕ)) (A : MvPolynomial σ R)
     (v : Set σ) (hA : A ∈ supported R v) : suppProj R s A ∈ supported R v := by
   rw [MvPolynomial.mem_supported] at hA ⊢
   intro i hi
-  rw [Finset.mem_coe, MvPolynomial.mem_vars] at hi
+  rw [Finset.mem_coe, MvPolynomial.mem_vars_iff_mem_support] at hi
   obtain ⟨d, hd, hid⟩ := hi
-  exact hA (by rw [Finset.mem_coe, MvPolynomial.mem_vars]; exact ⟨d, suppProj_support_subset R s A hd, hid⟩)
+  exact hA (by rw [Finset.mem_coe, MvPolynomial.mem_vars_iff_mem_support]; exact ⟨d, suppProj_support_subset R s A hd, hid⟩)
 
 def polComp (R : Type) [CommRing R] {ι : Type} (n : ℕ) (d : ι → ℕ) :
     MvPolynomial (ι × Fin n) R →ₗ[R] MvPolynomial (ι × Fin n) R :=
@@ -529,7 +534,7 @@ theorem hom_Pol_C (R : Type) [CommRing R] {ι : Type} {n : ℕ} (a : R) :
   unfold Pol
   rw [mem_restrictSupport_iff]
   intro m hm
-  have hm' : coeff m (C a : MvPolynomial (ι × Fin n) R) ≠ 0 := mem_support_iff.mp (by simpa using hm)
+  have hm' : AddMonoidAlgebra.coeff (C a : MvPolynomial (ι × Fin n) R) m ≠ 0 := mem_support_iff.mp (by simpa using hm)
   rw [coeff_C] at hm'
   have h0 : (0 : ι × Fin n →₀ ℕ) = m := by
     by_contra h
@@ -544,7 +549,7 @@ theorem hom_Pol_CX (R : Type) [CommRing R] {ι : Type} {n : ℕ} (a : R) (l : ι
   unfold Pol
   rw [mem_restrictSupport_iff]
   intro m hm
-  have hm' : coeff m (C a * X (l, c) : MvPolynomial (ι × Fin n) R) ≠ 0 := mem_support_iff.mp (by simpa using hm)
+  have hm' : AddMonoidAlgebra.coeff (C a * X (l, c) : MvPolynomial (ι × Fin n) R) m ≠ 0 := mem_support_iff.mp (by simpa using hm)
   rw [coeff_C_mul, coeff_X] at hm'
   have h0 : Finsupp.single (l, c) 1 = m := by
     by_contra h
@@ -601,18 +606,6 @@ theorem hom_twistSub_monomial' {R : Type} [CommRing R] {ι : Type} {n : ℕ} (LL
       rwa [this]
     · exact absurd h1 ha
 
-theorem twistSub_mem_Pol {R : Type} [CommRing R] {ι : Type} {n : ℕ} (LL : Letters ι) (S : Set ι) (j : Fin n)
-    (d : ι → ℕ) (A : MvPolynomial (ι × Fin n) R) (hA : A ∈ Pol R n d) :
-    twistSub LL S j A ∈ Pol (GLLaurent R n) n d := by
-  rw [← support_sum_monomial_coeff A, map_sum]
-  refine Submodule.sum_mem _ fun m hm => ?_
-  have hd : (fun i => multideg m i) = d := by
-    unfold Pol at hA
-    rw [mem_restrictSupport_iff] at hA
-    exact funext (hA (by simpa using hm))
-  rw [← hd]
-  exact hom_twistSub_monomial' LL S j m _
-
 theorem twistSub_polComp {R : Type} [CommRing R] {ι : Type} {n : ℕ} (LL : Letters ι) (S : Set ι) (j : Fin n)
     (d : ι → ℕ) (A : MvPolynomial (ι × Fin n) R) :
     twistSub LL S j (polComp R n d A) = polComp (GLLaurent R n) n d (twistSub LL S j A) := by
@@ -626,7 +619,7 @@ theorem twistSub_polComp {R : Type} [CommRing R] {ι : Type} {n : ℕ} (LL : Let
     by_cases hd : d = fun i => multideg m i
     · rw [hd, polComp_of_mem R n _ _ hm, polComp_of_mem _ n _ _ (hom_twistSub_monomial' LL S j m a)]
     · rw [polComp_of_ne R n _ _ _ hm hd, polComp_of_ne _ n _ _ _ (hom_twistSub_monomial' LL S j m a) hd, map_zero]
-  | add p q hp hq => rw [map_add, map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
 
 theorem sDegs_polComp_subset {R : Type} [CommRing R] {ι : Type} {n : ℕ} (LL : Letters ι) (S : Set ι) (j : Fin n)
     (d : ι → ℕ) (A : MvPolynomial (ι × Fin n) R) : sDegs LL S j (polComp R n d A) ⊆ sDegs LL S j A := by
@@ -635,7 +628,7 @@ theorem sDegs_polComp_subset {R : Type} [CommRing R] {ι : Type} {n : ℕ} (LL :
   unfold sDegs at hk ⊢
   obtain ⟨m, hm, hmk⟩ := Finset.mem_biUnion.mp hk
   rw [twistSub_polComp] at hm hmk
-  have hc : coeff m (polComp (GLLaurent R n) n d (twistSub LL S j A)) = coeff m (twistSub LL S j A) := by
+  have hc : AddMonoidAlgebra.coeff (polComp (GLLaurent R n) n d (twistSub LL S j A)) m = AddMonoidAlgebra.coeff (twistSub LL S j A) m := by
     have h0 := mem_support_iff.mp hm
     unfold polComp at h0 ⊢
     rw [coeff_suppProj] at h0 ⊢
@@ -661,7 +654,7 @@ theorem exists_sum_polComp (R : Type) [CommRing R] {ι : Type} (n : ℕ) (A : Mv
   refine ⟨A.support.image fun m i => multideg m i, ?_⟩
   ext m
   rw [coeff_sum]
-  have h : ∀ d : ι → ℕ, coeff m (polComp R n d A) = if (fun i => multideg m i) = d then coeff m A else 0 := by
+  have h : ∀ d : ι → ℕ, AddMonoidAlgebra.coeff (polComp R n d A) m = if (fun i => multideg m i) = d then AddMonoidAlgebra.coeff A m else 0 := by
     intro d
     unfold polComp
     rw [coeff_suppProj]
@@ -751,7 +744,7 @@ theorem twistSub_empty {ι : Type} {n : ℕ} (LL : Letters ι) (j : Fin n) (A : 
     twistSub LL ∅ j A = MvPolynomial.map (coefL R n) A := by
   induction A using MvPolynomial.induction_on with
   | C a => simp [twistSub]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp, map_X]
     congr 1
@@ -761,8 +754,8 @@ theorem sDegs_empty_subset {ι : Type} {n : ℕ} (LL : Letters ι) (j : Fin n) (
     ∀ k ∈ sDegs LL ∅ j A, k ∈ ({0} : Set ℤ) := by
   refine sDegs_subset LL ∅ j A _ fun m => ?_
   rw [twistSub_empty, coeff_map]
-  have : coefL R n (coeff m A) = LaurentPolynomial.C (algebraMap (MvPolynomial (Fin n × Fin n) R) (GLCoord R n)
-      (C (coeff m A))) * LaurentPolynomial.T 0 := by
+  have : coefL R n (AddMonoidAlgebra.coeff A m) = LaurentPolynomial.C (algebraMap (MvPolynomial (Fin n × Fin n) R) (GLCoord R n)
+      (C (AddMonoidAlgebra.coeff A m))) * LaurentPolynomial.T 0 := by
     rw [LaurentPolynomial.T_zero, mul_one]; rfl
   rw [this]
   exact SuppIn.C_mul_T _ _ rfl
@@ -772,7 +765,7 @@ theorem sDegs_empty [IsDomain R] {ι : Type} {n : ℕ} (LL : Letters ι) (j : Fi
   rw [Finset.eq_singleton_iff_unique_mem]
   refine ⟨?_, fun k hk => sDegs_empty_subset LL j A k hk⟩
   obtain ⟨m0, hm0⟩ := MvPolynomial.ne_zero_iff.mp hA
-  have hne : coefL R n (coeff m0 A) ≠ 0 := fun h => hm0 (coefL_injective n (h.trans (map_zero _).symm))
+  have hne : coefL R n (AddMonoidAlgebra.coeff A m0) ≠ 0 := fun h => hm0 (coefL_injective n (h.trans (map_zero _).symm))
   unfold sDegs
   rw [twistSub_empty]
   refine Finset.mem_biUnion.mpr ⟨m0, ?_, ?_⟩
@@ -884,10 +877,10 @@ theorem span_mul_mem {R A B C : Type} [CommRing R] [CommRing A] [Algebra R A] [C
     induction hb using Submodule.span_induction with
     | mem y hy => exact h x hx y hy
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add, mul_add]; exact X.add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _), mul_add]; exact X.add_mem hy hz
     | smul c y _ hy => rw [map_smul, mul_smul_comm]; exact X.smul_mem c hy
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, add_mul]; exact X.add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), add_mul]; exact X.add_mem hx hy
   | smul c x _ hx => rw [map_smul, smul_mul_assoc]; exact X.smul_mem c hx
 
 theorem mem_vars_rename_inj {R σ τ : Type} [CommRing R] (f : σ → τ) (hf : Function.Injective f) (p : MvPolynomial σ R)
@@ -896,7 +889,7 @@ theorem mem_vars_rename_inj {R σ τ : Type} [CommRing R] (f : σ → τ) (hf : 
   obtain ⟨d, hd, hud⟩ := (mem_vars_iff_mem_support u).mp hu
   refine (mem_vars_iff_mem_support _).mpr ⟨Finsupp.mapDomain f d, ?_, ?_⟩
   · rw [support_rename_of_injective hf]; exact Finset.mem_image_of_mem _ hd
-  · rw [Finsupp.mem_support_iff, Finsupp.mapDomain_apply hf]; exact Finsupp.mem_support_iff.mp hud
+  · rw [Finsupp.mem_support_iff, Finsupp.mapDomain_apply_of_injective hf]; exact Finsupp.mem_support_iff.mp hud
 
 theorem mem_Pol_iff {R ι : Type} [CommRing R] {n : ℕ} {d : ι → ℕ} {g : MvPolynomial (ι × Fin n) R} :
     g ∈ Pol R n d ↔ ∀ m ∈ g.support, ∀ i, multideg m i = d i := by
@@ -965,7 +958,7 @@ theorem crit_alt [NeZero r] {K : ℕ} [NeZero K] (R : Type) [CommRing R] [IsDoma
       Submodule.map (segRen F j R (r + K)).toLinearMap (XXZ R (segPairs0 F j K m th)) := by
   classical
   obtain ⟨A₀, rfl⟩ := exists_segRen F j A hA
-  obtain ⟨G₀, rfl⟩ := exists_segRen F j G (supported_mono (fun v hv => hv.1) hG)
+  obtain ⟨G₀, rfl⟩ := exists_segRen F j G (supported_mono (show {v : ℤ × Fin K | v.1 ∈ F.letters j ∧ ¬ F.IsW j v.1} ⊆ {v : ℤ × Fin K | v.1 ∈ F.letters j} from fun v hv => hv.1) hG)
   have hG₀ : ∀ u ∈ G₀.vars, ¬ F.IsW j (segE F j u.1) := fun u hu =>
     ((mem_supported.mp hG) (Finset.mem_coe.mpr (mem_vars_rename_inj _ (segVar_injective F j K) G₀ hu))).2
   rw [← segRen_mul]
@@ -975,7 +968,8 @@ theorem crit_alt [NeZero r] {K : ℕ} [NeZero K] (R : Type) [CommRing R] [IsDoma
   have hsum : rename (plVar (K := K)) A₀ * rename (tanVar (r := r)) G₀ = ∑ d' ∈ T', ∑ d'' ∈ T'',
       rename (plVar (K := K)) (polComp R r d' A₀) * rename (tanVar (r := r)) (polComp R K d'' G₀) := by
     conv_lhs => rw [hT', hT'']
-    rw [map_sum, map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.sum_mul_sum]
   rw [SetLike.mem_coe, hsum]
   refine Submodule.sum_mem _ fun b' _ => Submodule.sum_mem _ fun b'' _ => ?_
   by_cases hg0 : polComp R K b'' G₀ = 0
@@ -1074,11 +1068,11 @@ theorem word_ord {R : Type} [CommRing R] {K : ℕ} (b' b'' : Fin (segN F j) → 
       simp only [Prod.mk.injEq] at hv
       exact hne _ _ hv.2
     have z2 : ∀ c : Fin K, Finsupp.mapDomain (fun v : Fin (segN F j) × Fin K => (segE F j v.1, Fin.natAdd r v.2)) u2
-        (segE F j i, Fin.natAdd r c) = u2 (i, c) := fun c => Finsupp.mapDomain_apply hf2 u2 (i, c)
+        (segE F j i, Fin.natAdd r c) = u2 (i, c) := fun c => Finsupp.mapDomain_apply_of_injective hf2 u2 (i, c)
     simp only [z1, z2, Finset.sum_const_zero, zero_add]
     exact d2
   · have z1 : ∀ c : Fin r, Finsupp.mapDomain (fun v : Fin (segN F j) × Fin r => (segE F j v.1, Fin.castAdd K v.2)) u1
-        (segE F j i, Fin.castAdd K c) = u1 (i, c) := fun c => Finsupp.mapDomain_apply hf1 u1 (i, c)
+        (segE F j i, Fin.castAdd K c) = u1 (i, c) := fun c => Finsupp.mapDomain_apply_of_injective hf1 u1 (i, c)
     have z2 : ∀ c : Fin r, Finsupp.mapDomain (fun v : Fin (segN F j) × Fin K => (segE F j v.1, Fin.natAdd r v.2)) u2
         (segE F j i, Fin.castAdd K c) = 0 := by
       intro c
@@ -1143,7 +1137,7 @@ theorem ord_proj [NeZero r] {K : ℕ} [NeZero K] (R : Type) [CommRing R]
           rw [← h2 i]
           exact h1 _ (segE_mem F j i) hW
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ c hy
   rw [← suppProj_of_mem R _ x hx2]
   exact key x hx
@@ -1244,8 +1238,8 @@ def biPol (R : Type) [CommRing R] {N r K : ℕ} (b' b'' : Fin N → ℕ) :
 
 variable {n' r : ℕ} [NeZero n'] (F : Frames n' r) (j : ℤ)
 
-open Classical in
 
+open Classical in
 def segL (m : ℤ → ℤ) (th : ℤ → ℝ) : List (PathInequality (segN F j)) :=
   (List.finRange (segN F j)).flatMap fun i =>
     if F.IsW j (segE F j i) then []
@@ -1264,7 +1258,7 @@ def ordOK (o : ℤ → ℝ) (b' b'' : Fin (segN F j) → ℕ) : Prop :=
 end Four0
 
 theorem li_coeff_zero {R σ : Type} [CommRing R] {T : Set (σ →₀ ℕ)} {p : MvPolynomial σ R}
-    (hp : p ∈ restrictSupport R T) {m : σ →₀ ℕ} (hm : m ∉ T) : coeff m p = 0 := by
+    (hp : p ∈ restrictSupport R T) {m : σ →₀ ℕ} (hm : m ∉ T) : AddMonoidAlgebra.coeff p m = 0 := by
   by_contra h
   exact hm (((MvPolynomial.mem_restrictSupport_iff (R := R)).mp hp) (Finset.mem_coe.mpr (mem_support_iff.mpr h)))
 
@@ -1277,10 +1271,10 @@ theorem li_graded {R : Type} [CommRing R] {σ ι κ : Type} (f : ι → MvPolyno
   intro s g hs x0 hx0
   have hfil : ∑ x ∈ s with d x = d x0, g x • f x = 0 := by
     ext m
-    rw [coeff_sum, coeff_zero]
+    rw [coeff_sum, AddMonoidAlgebra.coeff_zero]
     by_cases hm : m ∈ T (d x0)
-    · have h0 := congrArg (coeff m) hs
-      rw [coeff_sum, coeff_zero] at h0
+    · have h0 := congrArg (AddMonoidAlgebra.coeff · m) hs
+      rw [coeff_sum, AddMonoidAlgebra.coeff_zero] at h0
       rw [Finset.sum_filter]
       refine Eq.trans ?_ h0
       refine Finset.sum_congr rfl fun x _ => ?_
@@ -1345,18 +1339,18 @@ theorem li_sum_inl {R σ τ : Type} [CommRing R] (p : MvPolynomial σ R) :
     sumAlgEquiv R σ τ (rename Sum.inl p) = MvPolynomial.map C p := by
   induction p using MvPolynomial.induction_on with
   | C a => simp [sumAlgEquiv_C_inl]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp => simp only [map_mul, hp, rename_X, map_X, sumAlgEquiv_X_inl]
 
 theorem li_sum_inr {R σ τ : Type} [CommRing R] (q : MvPolynomial τ R) :
     sumAlgEquiv R σ τ (rename Sum.inr q) = C q := by
   induction q using MvPolynomial.induction_on with
   | C a => simp [sumAlgEquiv_C_inl]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp => simp only [map_mul, hp, rename_X, sumAlgEquiv_X_inr]
 
 theorem li_key {R σ τ : Type} [CommRing R] (p : MvPolynomial σ R) (q : MvPolynomial τ R) (m : σ →₀ ℕ) :
-    coeff m (sumAlgEquiv R σ τ (rename Sum.inl p * rename Sum.inr q)) = coeff m p • q := by
+    AddMonoidAlgebra.coeff (sumAlgEquiv R σ τ (rename Sum.inl p * rename Sum.inr q)) m = AddMonoidAlgebra.coeff p m • q := by
   rw [map_mul, li_sum_inl, li_sum_inr, mul_comm, coeff_C_mul, coeff_map, mul_comm, ← smul_eq_C_mul]
 
 theorem li_ext {R : Type} [CommRing R] {σ τ α β : Type} (u : α → MvPolynomial σ R) (v : β → MvPolynomial τ R)
@@ -1381,21 +1375,25 @@ theorem li_ext {R : Type} [CommRing R] {σ τ α β : Type} (u : α → MvPolyno
     · intro x hx
       have hx' : (x.1, x.2) ∈ s := hx
       simp only [g', if_pos hx']
-  have step : ∀ m : σ →₀ ℕ, ∑ b ∈ s.image Prod.snd, (∑ a ∈ s.image Prod.fst, g' a b * coeff m (u a)) • v b = 0 := by
+  have step : ∀ m : σ →₀ ℕ, ∑ b ∈ s.image Prod.snd, (∑ a ∈ s.image Prod.fst, g' a b * AddMonoidAlgebra.coeff (u a) m) • v b = 0 := by
     intro m
-    have h1 := congrArg (fun P => coeff m (sumAlgEquiv R σ τ P)) hs'
-    simp only [map_sum, map_smul, coeff_sum, coeff_smul, li_key, map_zero, coeff_zero] at h1
+    have h1 := congrArg (fun P => AddMonoidAlgebra.coeff (sumAlgEquiv R σ τ P) m) hs'
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, coeff_sum, coeff_smul, li_key, map_zero, AddMonoidAlgebra.coeff_zero] at h1
+    change _ = 0 at h1
     rw [Finset.sum_comm] at h1
     rw [← h1]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [Finset.sum_smul]
     exact Finset.sum_congr rfl fun a _ => by rw [mul_smul]
-  have hb : ∀ b ∈ s.image Prod.snd, ∀ m : σ →₀ ℕ, ∑ a ∈ s.image Prod.fst, g' a b * coeff m (u a) = 0 :=
+  have hb : ∀ b ∈ s.image Prod.snd, ∀ m : σ →₀ ℕ, ∑ a ∈ s.image Prod.fst, g' a b * AddMonoidAlgebra.coeff (u a) m = 0 :=
     fun b hb m => linearIndependent_iff'.mp hv _ _ (step m) b hb
   have ha : ∀ b ∈ s.image Prod.snd, ∑ a ∈ s.image Prod.fst, g' a b • u a = 0 := by
     intro b hb'
     ext m
-    rw [coeff_sum, coeff_zero, ← hb b hb' m]
+    rw [coeff_sum, AddMonoidAlgebra.coeff_zero]
+    change (∑ a ∈ s.image Prod.fst, AddMonoidAlgebra.coeff (g' a b • u a) m) = 0
+    rw [← hb b hb' m]
     exact Finset.sum_congr rfl fun a _ => by rw [coeff_smul, smul_eq_mul]
   have h2 := linearIndependent_iff'.mp hu _ (fun a => g' a x0.2) (ha x0.2 (Finset.mem_image_of_mem _ hx0)) x0.1
     (Finset.mem_image_of_mem _ hx0)
@@ -1406,8 +1404,8 @@ open Formalism.MainNotions.SelectionLemmas in
 theorem li_segE_injective {n' r : ℕ} [NeZero n'] (F : Frames n' r) (j : ℤ) : Function.Injective (segE F j) :=
   fun _ _ h => (OrderIso.injective _) (Subtype.ext h)
 
-open Formalism.MainNotions.SelectionLemmas in
 
+open Formalism.MainNotions.SelectionLemmas in
 theorem space_statement_linear_independent (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     (hA2 : ∀ (N n : ℕ) [NeZero n] (LL : Letters (Fin N)) (B : Fin N → ℕ),
       LinearIndependent O (fun x : {x : PPath n N LL B × (ℤ → Finset (Fin n)) // IsSt x.1.mu x.2} =>
@@ -1672,12 +1670,14 @@ theorem lift_extOne_map {n : ℕ} {P P' : Type} [CommRing P] [CommRing P'] (g : 
 theorem lift_wedgeR_map {n : ℕ} {P P' : Type} [CommRing P] [CommRing P'] (g : P →+* P') (x : Fin n → P)
     (K : Finset (Fin n) → P) (J : Finset (Fin n)) :
     g (wedgeR x K J) = wedgeR (fun m => g (x m)) (fun J => g (K J)) J := by
-  simp [wedgeR, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [wedgeR, map_sum]
 
 theorem lift_contrR_map {n : ℕ} {P P' : Type} [CommRing P] [CommRing P'] (g : P →+* P') (x : Fin n → P)
     (K : Finset (Fin n) → P) (J : Finset (Fin n)) :
     g (contrR x K J) = contrR (fun m => g (x m)) (fun J => g (K J)) J := by
-  simp [contrR, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [contrR, map_sum]
 
 theorem lift_colStep_map {n : ℕ} {P P' : Type} [CommRing P] [CommRing P'] (g : P →+* P') (c : ℤ) (hP hN : ℕ)
     (x : Fin n → P) (K : Finset (Fin n) → P) (J : Finset (Fin n)) :
@@ -1745,8 +1745,8 @@ theorem XXZ_lift (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O
     refine ⟨a' • x1, Submodule.smul_mem _ _ hx1, ?_⟩
     rw [smul_eq_C_mul, smul_eq_C_mul, map_mul, map_C]
 
-open Formalism.MainNotions.SelectionLemmas in
 
+open Formalism.MainNotions.SelectionLemmas in
 theorem space_statement_sixth_clause (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (n' r K : ℕ) [NeZero n']
     [NeZero r] [NeZero K] (F : Frames n' r) (j : ℤ) (m : ℤ → ℤ) (th o : ℤ → ℝ)
     (h1 : XX' O r K F j m th o =
@@ -2057,8 +2057,8 @@ open Formalism.MainNotions.CovariantDegrees
 
 variable {Fd : Type} [Field Fd] {N m k : ℕ}
 
-open Classical in
 
+open Classical in
 def jone_w (LL : Letters (Fin N)) (S : Set (Fin N)) (e : Fin m → Fin k) : Fin N × Fin k → ℤ :=
   fun v => if v.1 ∈ S ∧ v.2 ∈ Set.range e then (if LL.vec v.1 then 1 else -1) else 0
 
@@ -2127,7 +2127,7 @@ theorem jone_weight (LL : Letters (Fin N)) (S : Set (Fin N)) (e : Fin m → Fin 
   · simp [jone_w, hl]
 
 theorem jone_coeff_XD (i : Fin N × Fin k) (p : MvPolynomial (Fin N × Fin k) Fd) (mm : Fin N × Fin k →₀ ℕ) :
-    coeff mm (X i * pderiv i p) = (mm i : Fd) * coeff mm p := by
+    AddMonoidAlgebra.coeff (X i * pderiv i p) mm = (mm i : Fd) * AddMonoidAlgebra.coeff p mm := by
   classical
   induction p using MvPolynomial.induction_on' with
   | monomial u a =>
@@ -2135,14 +2135,14 @@ theorem jone_coeff_XD (i : Fin N × Fin k) (p : MvPolynomial (Fin N × Fin k) Fd
     by_cases h : u = mm
     · subst h; simp
     · simp [h]
-  | add p q hp hq => rw [map_add, mul_add, coeff_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => rw [map_add (f := _), mul_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 open Classical in
 theorem jone_coeff_Eaa (LL : Letters (Fin N)) (S : Set (Fin N)) (e : Fin m → Fin k) (a : Fin m)
     (v : MvPolynomial (Fin N × Fin k) Fd) (mm : Fin N × Fin k →₀ ℕ) :
-    coeff mm (glOpsE Fd LL S e a a v) =
+    AddMonoidAlgebra.coeff (glOpsE Fd LL S e a a v) mm =
       ((∑ l, if l ∈ S then (if LL.vec l then (mm (l, e a) : ℤ) else -(mm (l, e a) : ℤ)) else 0 : ℤ) : Fd) *
-        coeff mm v := by
+        AddMonoidAlgebra.coeff v mm := by
   simp only [glOpsE, LinearMap.sum_apply, coeff_sum]
   rw [Int.cast_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun l _ => ?_
@@ -2162,7 +2162,7 @@ theorem jone_wt [CharZero Fd] (LL : Letters (Fin N)) (S : Set (Fin N)) (e : Fin 
       have := (Submodule.mem_iInf _).mp hv a
       rw [LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, sub_eq_zero] at this
       exact this
-    have hc := congrArg (coeff mm) ha
+    have hc := congrArg (AddMonoidAlgebra.coeff · mm) ha
     rw [jone_coeff_Eaa, coeff_smul, smul_eq_mul] at hc
     exact Int.cast_injective (mul_right_cancel₀ hmm hc)
   rw [jone_weight LL S e he]
@@ -2196,7 +2196,7 @@ theorem jone_letter [CharZero Fd] (LL : Letters (Fin N)) (e : Fin m → Fin k) (
     ∀ mm ∈ x.support, ∀ i : Fin N, ∑ a, mm (i, e a) = b i := by
   classical
   intro mm hmm i
-  have hc : coeff mm x ≠ 0 := MvPolynomial.mem_support_iff.mp hmm
+  have hc : AddMonoidAlgebra.coeff x mm ≠ 0 := MvPolynomial.mem_support_iff.mp hmm
   have h1 := jone_iso LL _ e he _ x (hx i.succ) hc
   have h0 := jone_iso LL _ e he _ x (hx i.castSucc) hc
   rw [jone_weight LL _ e he] at h1 h0
@@ -2263,9 +2263,9 @@ theorem proj_exists_sum (R : Type) [CommRing R] {N r K : ℕ} (A : MvPolynomial 
     fun i => ∑ c : Fin K, mm (i, Fin.natAdd r c)), ?_⟩
   ext m
   rw [coeff_sum]
-  have h : ∀ d : (Fin N → ℕ) × (Fin N → ℕ), coeff m (suppProj R (biSet d.1 d.2) A) =
+  have h : ∀ d : (Fin N → ℕ) × (Fin N → ℕ), AddMonoidAlgebra.coeff (suppProj R (biSet d.1 d.2) A) m =
       if ((fun i => ∑ c : Fin r, m (i, Fin.castAdd K c), fun i => ∑ c : Fin K, m (i, Fin.natAdd r c)) :
-        (Fin N → ℕ) × (Fin N → ℕ)) = d then coeff m A else 0 := by
+        (Fin N → ℕ) × (Fin N → ℕ)) = d then AddMonoidAlgebra.coeff A m else 0 := by
     intro d
     rw [coeff_suppProj]
     refine if_congr ?_ rfl rfl
@@ -2317,9 +2317,9 @@ theorem proj_word_biPol {R : Type} [CommRing R] {N r K : ℕ} (b' b'' : Fin N �
     simp only [plVar, Prod.mk.injEq] at hv
     exact hne _ _ hv.2
   have z2 : ∀ c : Fin K, Finsupp.mapDomain (tanVar (N := N) (r := r) (K := K)) u2 (i, Fin.natAdd r c) = u2 (i, c) :=
-    fun c => Finsupp.mapDomain_apply hf2 u2 (i, c)
+    fun c => Finsupp.mapDomain_apply_of_injective hf2 u2 (i, c)
   have z3 : ∀ c : Fin r, Finsupp.mapDomain (plVar (N := N) (r := r) (K := K)) u1 (i, Fin.castAdd K c) = u1 (i, c) :=
-    fun c => Finsupp.mapDomain_apply hf1 u1 (i, c)
+    fun c => Finsupp.mapDomain_apply_of_injective hf1 u1 (i, c)
   have z4 : ∀ c : Fin r, Finsupp.mapDomain (tanVar (N := N) (r := r) (K := K)) u2 (i, Fin.castAdd K c) = 0 := by
     intro c
     refine Finsupp.mapDomain_of_notMem_range _ _ ?_
@@ -2388,7 +2388,7 @@ theorem proj_words {R : Type} [CommRing R] {N r K : ℕ} (LL : Letters (Fin N))
     · rw [suppProj_of_disjoint _ _ _ _ hw (proj_biSet_disjoint h)]
       exact Submodule.zero_mem _
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ c hy
 
 variable {n' r : ℕ} [NeZero n'] (F : Frames n' r) (j : ℤ)
@@ -2442,7 +2442,7 @@ theorem proj_claimA [NeZero r] {K : ℕ} [NeZero K] (O : Type) [CommRing O] [IsD
         (fun P1' P2' h => (hcomb b' b'' P1' P2').mpr ⟨h, hq'.2⟩) _ hmem
       rwa [proj_suppProj_map, suppProj_of_mem _ _ _ hw] at this
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul c y _ hy =>
       rw [MvPolynomial.smul_eq_C_mul, map_mul, map_C, ← MvPolynomial.smul_eq_C_mul]
       exact Submodule.smul_mem _ _ hy
@@ -2546,7 +2546,8 @@ theorem last_inequality_clause_of_lemma (D : Formalism.BasicNotions.D7) (h : Con
     have h3 : a.val < b.val := hab
     show N - b.val < N - a.val
     omega
-  exact (h p O S N r K LL B (fun i => N - i.val) hK hanti (fun i => Nat.sub_pos_of_lt i.2) _
+  exact (h p O S N r K LL B (fun i => N - i.val) hK hanti (fun i => Nat.sub_pos_of_lt i.2)
+    {q | (∃ P : PPath (r + K) N LL B, P.mu = joinPT q.1 q.2) ∧ ∀ e ∈ L, e.Sat q.1 q.2}
     (fun q hq => hq.1)).2.2 L rfl
 
 theorem fourth_clause_of_lemmas (D : Formalism.BasicNotions.D7) (hB1 : RotatedSumBound D) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]

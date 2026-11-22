@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.ContinuousCocyclesFgIntegralOfPhiCond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.CocField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IntModel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.ContinuousCocyclesFgIntegralOfPhiCond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.CocField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IntModel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.HV UpperTheory.V.Alg GlobalTheory.GalOfCusp
 
@@ -44,6 +48,7 @@ private theorem zc_split {l : ℕ} [hl : Fact l.Prime] (c c' : Coef l) (hcc : c.
   haveI : IsScalarTower ℤ_[l] c.O c'.O := IsScalarTower.of_algebraMap_eq fun _ => rfl
   haveI : Module.Finite c.O c'.O := Module.Finite.of_restrictScalars_finite ℤ_[l] _ _
   haveI : FaithfulSMul c.O c'.O := (faithfulSMul_iff_algebraMap_injective _ _).2 (Subalgebra.inclusion_injective hcc)
+  set_option synthInstance.maxHeartbeats 200000 in
   haveI : Module.Free c.O c'.O := Module.free_of_finite_type_torsion_free'
   let b := Module.finBasis c.O c'.O
   let f : G → Fin m → c'.O := fun g i => ⟨z g i, hm g i⟩
@@ -55,11 +60,12 @@ private theorem zc_split {l : ℕ} [hl : Fact l.Prime] (c c' : Coef l) (hcc : c.
     exact Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hlm N)
   · funext i
     have e : f (g * h) i = f g i + ∑ j, W.mat σ g i j • f h j := Subtype.ext (by
-      rw [Subalgebra.coe_add, AddSubmonoidClass.coe_finset_sum]
+      rw [Subalgebra.coe_add, AddSubmonoidClass.coe_finsetSum]
       exact congrFun (hc g h) i)
-    simp only [e, map_add, map_sum, map_smul, Pi.add_apply, Matrix.mulVec, dotProduct, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, map_add (f := _), map_sum, map_smul, Pi.add_apply, Matrix.mulVec, dotProduct, smul_eq_mul]
   · have e := congrArg Subtype.val (b.sum_repr (f g i))
-    rw [AddSubmonoidClass.coe_finset_sum] at e
+    rw [AddSubmonoidClass.coe_finsetSum] at e
     refine e.symm.trans (Finset.sum_congr rfl fun k _ => ?_)
     rw [ha, mul_comm]
     rfl
@@ -76,7 +82,7 @@ theorem UpperTheory.V.Th.Det.finite_cocycles_colRep_of_phiCond :
     { carrier := {z | (∀ i, AdicCont (maximalIdeal c.O) fun g => z g i) ∧
           ∀ g h, z (g * h) = z g + W.mat σ₀ g *ᵥ z h}
       add_mem' := fun {a b} ha hb => ⟨fun i N => by
-          simp only [Pi.add_apply, map_add]; exact (ha.1 i N).add (hb.1 i N),
+          simp only [Pi.add_apply, map_add (f := _)]; exact (ha.1 i N).add (hb.1 i N),
         fun g h => by simp only [Pi.add_apply, Matrix.mulVec_add, ha.2 g h, hb.2 g h]; abel⟩
       zero_mem' := ⟨fun i N => by
           simp only [Pi.zero_apply, map_zero]; exact IsLocallyConstant.const _, fun g h => by simp⟩

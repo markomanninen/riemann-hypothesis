@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
-import Development.AbelianVarietyTheory.Definitions.Divisors.AdjKltOfLtDisc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsProjectiveVarietyOfIsLocalRingOfVarietyPoiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RingEquivTransportsVarietyPairDataStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDvrPlaceEquivOfRingEquivOverConstantsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KltAlongPlaceNeighboursRingEquivStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOrdQEqOrdDivOfRationalCombinationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InversionOfAdjunctionProjStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProjOverLocallyOfFiniteType
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AdjKltOfLtDisc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsProjectiveVarietyOfIsLocalRingOfVarietyPoiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RingEquivTransportsVarietyPairDataStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDvrPlaceEquivOfRingEquivOverConstantsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KltAlongPlaceNeighboursRingEquivStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOrdQEqOrdDivOfRationalCombinationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InversionOfAdjunctionProjStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProjOverLocallyOfFiniteType
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -77,16 +81,17 @@ theorem klt_of_adjKlt_locModel : GlobalTheory.Published.Principalisation → ∀
     simp [hEff.apply_zero, Finsupp.single_apply, hf0]
   obtain ⟨m, g, hm, hg⟩ := GlobalTheory.T.exists_ordQ_eq_ord_div_of_rational_combination (Cartier.constFn p)
     (Finsupp.mapDomain e.symm (φ + Finsupp.single f 1)) (by
-      rw [← map_zero e.symm, Finsupp.mapDomain_apply e.symm.injective]
+      rw [← map_zero e.symm, Finsupp.mapDomain_apply_of_injective e.symm.injective]
       exact hψ0)
 
   have hkey : ∀ E : Place c, (Φ E).disc (dForm (Cartier.constFn p) (e.symm ∘ x))
       (Finsupp.mapDomain e.symm (φ + Finsupp.single f 1)) =
       E.disc (dForm c x) (φ + Finsupp.single f 1) := fun E => by
     rw [Place.disc, Place.disc, (hΦ E).2.2.1, (hΦ E).2.2.2 n x hx]
+    rfl
   have hψ : ∀ E : Place c, E.disc (dForm c x) (φ + Finsupp.single f 1) =
       E.disc (dForm c x) φ - E.ord f := fun E => by
-    simp only [Place.disc, map_add, Place.ordQ_single]
+    simp only [Place.disc, map_add (f := _), Place.ordQ_single]
     ring
   have hordQ : ∀ P : Place (Cartier.constFn p),
       P.ordQ (Finsupp.mapDomain e.symm (φ + Finsupp.single f 1)) =

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAffineOpenRingPolynomialEquivStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAffineOpenRingPolynomialEquivStatement
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 set_option autoImplicit false
@@ -22,7 +27,7 @@ theorem ker_aeval_zero (k : Type) [Field k] (d : ℕ) :
     have hm0 : m = 0 := by ext i; simpa using h i (Set.mem_univ i)
     subst hm0
     rw [RingHom.mem_ker] at hp
-    have : aeval (R := k) (fun _ : Fin d ↦ (0 : k)) p = coeff 0 p := by
+    have : aeval (R := k) (fun _ : Fin d ↦ (0 : k)) p = AddMonoidAlgebra.coeff p 0 := by
       rw [show (fun _ : Fin d ↦ (0 : k)) = 0 from rfl, MvPolynomial.aeval_zero]
       simp [MvPolynomial.constantCoeff_eq]
     exact (mem_support_iff.mp hm) (this ▸ hp)
@@ -59,7 +64,7 @@ theorem res_aeval (k : Type) [Field k] (F : Type) [Field F] [Algebra k F] (d : �
         rw [Finset.prod_congr rfl (fun j _ ↦ div_pow (x j.succ) (x 0) (n j)), Finset.prod_div_distrib,
           Finset.prod_pow_eq_pow_sum, ← Nat.cast_sum, zpow_natCast, div_eq_inv_mul]
       rw [hprod, hρ.2 m hsum hm, mul_zero]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
 
 end GlobalTheory.PD.ResEv
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ theorem exists_localHom_adicCompletion_extend :
   intro A R _ _ _ _ _ hR φ hφ
   let I : Ideal A := maximalIdeal A
   let J : Ideal R := maximalIdeal R
-  have hmap : I.map φ ≤ J := ((IsLocalRing.local_hom_TFAE φ).out 0 2).1 hφ
+  have hmap : I.map φ ≤ J := ((IsLocalRing.local_hom_tfae φ).out 1 3).1 hφ
   have hle : ∀ n : ℕ, I ^ n ≤ (J ^ n).comap φ := fun n => by
     rw [← Ideal.map_le_iff_le_comap, Ideal.map_pow]
     exact Ideal.pow_right_mono hmap n
@@ -42,7 +46,7 @@ theorem exists_localHom_adicCompletion_extend :
       AdicCompletion.algebraMap_apply, AdicCompletion.evalₐ_of]
     rfl
   refine ⟨ψ, ?_, hψ⟩
-  refine ((IsLocalRing.local_hom_TFAE ψ).out 0 2).2 ?_
+  refine ((IsLocalRing.local_hom_tfae ψ).out 1 3).2 ?_
   rw [AdicCompletion.maximalIdeal_eq_map, Ideal.map_map, hψ]
   exact hmap
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.LeibnizOrd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBijectiveOfIsSubquotient
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EventuallyInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousLeviProjTwo
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.LeibnizOrd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBijectiveOfIsSubquotient
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EventuallyInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousLeviProjTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,12 +55,6 @@ def resInd {Q P : Subgroup G} {x : G} (σ : Representation ℂ Q W₁) (H : Subg
   map_smul' c a := by
     refine Subtype.ext (Subtype.ext (funext fun p => ?_))
     exact map_smul E _ _
-
-@[simp] theorem resInd_apply {Q P : Subgroup G} {x : G} (σ : Representation ℂ Q W₁) (H : Subgroup P)
-    (hH : ∀ p : P, p ∈ H ↔ x * (p : G) * x⁻¹ ∈ Q) (τ : Representation ℂ H W₂) (E : W₁ ≃ₗ[ℂ] W₂)
-    (hE : ∀ (h : H) (hq : x * ((h : P) : G) * x⁻¹ ∈ Q) (v : W₁), τ h (E v) = E (σ ⟨_, hq⟩ v))
-    (f : smoothPart (ind Q σ)) (p : P) :
-    (resInd σ H hH τ E hE f).1.1 p = E (f.1.1 (x * (p : G))) := rfl
 
 end Abstract
 

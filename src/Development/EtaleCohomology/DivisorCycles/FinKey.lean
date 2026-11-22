@@ -1,19 +1,23 @@
-import Development.EtaleCohomology.DivisorCycles.MatUnitsOf
-import Development.EtaleCohomology.DivisorCycles.ConjugateIdempotents
-import Development.EtaleCohomology.DivisorCycles.UnitFactorizationTheorem
-import Development.EtaleCohomology.DivisorCycles.ChainPf
-import Development.EtaleCohomology.DivisorCycles.ZclMulPf
-import Development.EtaleCohomology.DivisorCycles.TangentIndexDvd
-import Development.EtaleCohomology.DivisorCycles.TangentFieldExtension
-import Development.EtaleCohomology.DivisorCycles.ExpVanPf
-import Development.EtaleCohomology.DivisorCycles.UnipotentPartTrivial
-import Development.EtaleCohomology.DivisorCycles.GenSpecProof
-import Development.EtaleCohomology.DivisorCycles.SpecPtPf
-import Development.EtaleCohomology.DivisorCycles.TorusPtPf
-import Development.EtaleCohomology.DivisorCycles.DegPoly2
-import Development.EtaleCohomology.DivisorCycles.TangentDegree
-import Development.EtaleCohomology.DivisorCycles.CycleCount2
-import Development.EtaleCohomology.DivisorCycles.SumMulSum
+module
+
+public import Development.EtaleCohomology.DivisorCycles.MatUnitsOf
+public import Development.EtaleCohomology.DivisorCycles.ConjugateIdempotents
+public import Development.EtaleCohomology.DivisorCycles.UnitFactorizationTheorem
+public import Development.EtaleCohomology.DivisorCycles.ChainPf
+public import Development.EtaleCohomology.DivisorCycles.ZclMulPf
+public import Development.EtaleCohomology.DivisorCycles.TangentIndexDvd
+public import Development.EtaleCohomology.DivisorCycles.TangentFieldExtension
+public import Development.EtaleCohomology.DivisorCycles.ExpVanPf
+public import Development.EtaleCohomology.DivisorCycles.UnipotentPartTrivial
+public import Development.EtaleCohomology.DivisorCycles.GenSpecProof
+public import Development.EtaleCohomology.DivisorCycles.SpecPtPf
+public import Development.EtaleCohomology.DivisorCycles.TorusPtPf
+public import Development.EtaleCohomology.DivisorCycles.DegPoly2
+public import Development.EtaleCohomology.DivisorCycles.TangentDegree
+public import Development.EtaleCohomology.DivisorCycles.CycleCount2
+public import Development.EtaleCohomology.DivisorCycles.SumMulSum
+
+@[expose] public section
 
 namespace LateralTheory.Fin.Key
 theorem etale_matrix_units_system_of_key : LateralTheory.DivDb.MatrixUnits₂ := by

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingTrRep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAdelicPureTensorEqProductLocalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzFinitePureTensors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralPointsIndicatorIsVacuum
-import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingTrRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAdelicPureTensorEqProductLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzFinitePureTensors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralPointsIndicatorIsVacuum
+public import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.WeilTr GlobalTheory.AdelicU MeasureTheory
 open scoped Matrix ENNReal ComplexConjugate
 
@@ -16,7 +21,7 @@ namespace GlobalTheory.TensorSquareIntegral
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-theorem mulSupport_finite (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (hφ : ∀ᶠ v in Filter.cofinite, φ v = GlobalTheory.RatWeilOp.ind κ v)
+theorem mulSupport_finite (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (hφ : ∀ᶠ v in Filter.cofinite, φ v = GlobalTheory.RatWeilOp.ind κ v)
     (x : κ → AF F) : (Function.mulSupport fun v : Pl F => φ v (fun i => evFin F v (x i))).Finite := by
   have hev : ∀ᶠ v in Filter.cofinite, φ v = GlobalTheory.RatWeilOp.ind κ v ∧ ∀ i, evFin F v (x i) ∈ v.adicCompletionIntegers F :=
     hφ.and (Filter.eventually_all.2 fun i => (x i).2.2.mono fun _ hv => hv)
@@ -26,7 +31,7 @@ theorem mulSupport_finite (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (hφ : �
   exact Set.indicator_of_mem (show (fun i => evFin F v (x i)) ∈ {z : κ → Fv F v | ∀ i, z i ∈ v.adicCompletionIntegers F}
     from hP.2) 1
 
-theorem pure_mul_conj (f f' : SInf F κ) (φ φ' : ∀ v : Pl F, (κ → Fv F v) → ℂ)
+theorem pure_mul_conj (f f' : SInf F κ) (φ φ' : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ)
     (hφ : ∀ᶠ v in Filter.cofinite, φ v = GlobalTheory.RatWeilOp.ind κ v) (hφ' : ∀ᶠ v in Filter.cofinite, φ' v = GlobalTheory.RatWeilOp.ind κ v)
     (x : κ → AF F) :
     GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ x * conj (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f' φ' x) = (f (fun i => evI F (x i)) * conj (f' (fun i => evI F (x i)))) *
@@ -46,7 +51,7 @@ theorem mul_conj_mem_SB {X : Type} [TopologicalSpace X] {φ φ' : X → ℂ} (h�
     (fun t => φ t * conj (φ' t)) ∈ SB X :=
   ⟨hφ.1.mul (hφ'.1.comp _), hφ.2.mul_right⟩
 
-theorem ind_mul_conj (v : Pl F) : (fun t => GlobalTheory.RatWeilOp.ind κ v t * conj (GlobalTheory.RatWeilOp.ind κ v t)) = GlobalTheory.RatWeilOp.ind κ v := by
+theorem ind_mul_conj (v : Pl (F := F)) : (fun t => GlobalTheory.RatWeilOp.ind κ v t * conj (GlobalTheory.RatWeilOp.ind κ v t)) = GlobalTheory.RatWeilOp.ind κ v := by
   funext t
   by_cases h : t ∈ {x : κ → Fv F v | ∀ i, x i ∈ v.adicCompletionIntegers F}
   · simp [GlobalTheory.RatWeilOp.ind, Set.indicator_of_mem h]
@@ -84,7 +89,7 @@ theorem integrable_mul_conj [MeasurableSpace (κ → mixedEmbedding.mixedSpace F
       rw [Complex.norm_conj]
       exact f'.norm_le_seminorm ℝ z)
 
-theorem integral_ind (v : Pl F) [MeasurableSpace (κ → Fv F v)] [BorelSpace (κ → Fv F v)] (ν : Measure (κ → Fv F v))
+theorem integral_ind (v : Pl (F := F)) [MeasurableSpace (κ → Fv F v)] [BorelSpace (κ → Fv F v)] (ν : Measure (κ → Fv F v))
     (h1 : ν {x | ∀ i, x i ∈ v.adicCompletionIntegers F} = 1) :
     ∫ t, GlobalTheory.RatWeilOp.ind κ v t * conj (GlobalTheory.RatWeilOp.ind κ v t) ∂ν = 1 := by
   rw [ind_mul_conj]
@@ -98,15 +103,15 @@ theorem integral_ind (v : Pl F) [MeasurableSpace (κ → Fv F v)] [BorelSpace (�
   simp
 
 theorem integral_pure_mul_conj [MeasurableSpace (κ → AF F)] [MeasurableSpace (κ → mixedEmbedding.mixedSpace F)]
-    [BorelSpace (κ → mixedEmbedding.mixedSpace F)] [∀ v : Pl F, MeasurableSpace (κ → Fv F v)]
+    [BorelSpace (κ → mixedEmbedding.mixedSpace F)] [∀ v : Pl (F := F), MeasurableSpace (κ → Fv F v)]
     (μ : Measure (κ → AF F)) (μi : Measure (κ → mixedEmbedding.mixedSpace F)) [μi.IsAddHaarMeasure]
-    (μv : ∀ v : Pl F, Measure (κ → Fv F v)) (c₀ : ℂ)
-    (hpure : ∀ (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ), Continuous f →
+    (μv : ∀ v : Pl (F := F), Measure (κ → Fv F v)) (c₀ : ℂ)
+    (hpure : ∀ (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ), Continuous f →
       Integrable f μi → GlobalTheory.RatWeilOp.IsFam φ →
         Integrable (fun x : κ → AF F => f (fun i => evI F (x i)) * ∏ᶠ v, φ v fun i => evFin F v (x i)) μ ∧
         ∫ x, f (fun i => evI F (x i)) * ∏ᶠ v, φ v (fun i => evFin F v (x i)) ∂μ =
           c₀ * (∫ x, f x ∂μi) * ∏ᶠ v, ∫ x, φ v x ∂(μv v))
-    (f f' : SInf F κ) (φ φ' : ∀ v : Pl F, (κ → Fv F v) → ℂ) (hφ : GlobalTheory.RatWeilOp.IsFam φ) (hφ' : GlobalTheory.RatWeilOp.IsFam φ') :
+    (f f' : SInf F κ) (φ φ' : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (hφ : GlobalTheory.RatWeilOp.IsFam φ) (hφ' : GlobalTheory.RatWeilOp.IsFam φ') :
     Integrable (fun x => GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ x * conj (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f' φ' x)) μ ∧
     ∫ x, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ x * conj (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f' φ' x) ∂μ =
       c₀ * (∫ z, f z * conj (f' z) ∂μi) * ∏ᶠ v, ∫ t, φ v t * conj (φ' v t) ∂(μv v) := by
@@ -131,8 +136,8 @@ namespace GlobalTheory.TensorSquareIntegral
 open scoped Classical
 
 theorem exists_const_tensor : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ]
-    (e : ((κ → AF F) → ℂ) →ₗ[ℂ] (κ → AF F) → ℂ) (vac vac₁ : ∀ v : Pl F, (κ → Fv F v) → ℂ)
-    (ei : SInf F κ →L[ℂ] SInf F κ) (ev : ∀ v : Pl F, ((κ → Fv F v) → ℂ) →ₗ[ℂ] (κ → Fv F v) → ℂ),
+    (e : ((κ → AF F) → ℂ) →ₗ[ℂ] (κ → AF F) → ℂ) (vac vac₁ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ)
+    (ei : SInf F κ →L[ℂ] SInf F κ) (ev : ∀ v : Pl (F := F), ((κ → Fv F v) → ℂ) →ₗ[ℂ] (κ → Fv F v) → ℂ),
     (∀ v, vac v ∈ SB (κ → Fv F v)) →
     (∀ᶠ v in Filter.cofinite, vac v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1) →
     (∀ᶠ v in Filter.cofinite, vac₁ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1) →
@@ -143,7 +148,7 @@ theorem exists_const_tensor : ∀ (F : Type) [Field F] [NumberField F] (κ : Typ
         @Measure.IsAddHaarMeasure _ _ _ (borel _) μ → ∀ f f' : SInf F κ,
           @integral _ ℂ _ _ (borel _) μ (fun x => ei f x * starRingEnd ℂ (ei f' x)) =
             (c : ℂ) * @integral _ ℂ _ _ (borel _) μ (fun x => f x * starRingEnd ℂ (f' x))) →
-    (∀ v : Pl F, ∃ c : ℝ, 0 ≤ c ∧ ∀ μ : @Measure (κ → Fv F v) (borel _), @Measure.IsAddHaarMeasure _ _ _ (borel _) μ →
+    (∀ v : Pl (F := F), ∃ c : ℝ, 0 ≤ c ∧ ∀ μ : @Measure (κ → Fv F v) (borel _), @Measure.IsAddHaarMeasure _ _ _ (borel _) μ →
         ∀ φ ∈ SB (κ → Fv F v), ∀ φ' ∈ SB (κ → Fv F v),
           @integral _ ℂ _ _ (borel _) μ (fun x => ev v φ x * starRingEnd ℂ (ev v φ' x)) =
             (c : ℂ) * @integral _ ℂ _ _ (borel _) μ (fun x => φ x * starRingEnd ℂ (φ' x))) →
@@ -154,14 +159,14 @@ theorem exists_const_tensor : ∀ (F : Type) [Field F] [NumberField F] (κ : Typ
   haveI : BorelSpace (κ → AF F) := ⟨rfl⟩
   letI mI : MeasurableSpace (κ → mixedEmbedding.mixedSpace F) := borel _
   haveI : BorelSpace (κ → mixedEmbedding.mixedSpace F) := ⟨rfl⟩
-  letI mV : ∀ v : Pl F, MeasurableSpace (κ → Fv F v) := fun _ => borel _
-  haveI bV : ∀ v : Pl F, BorelSpace (κ → Fv F v) := fun _ => ⟨rfl⟩
+  letI mV : ∀ v : Pl (F := F), MeasurableSpace (κ → Fv F v) := fun _ => borel _
+  haveI bV : ∀ v : Pl (F := F), BorelSpace (κ → Fv F v) := fun _ => ⟨rfl⟩
   haveI := hμ
   obtain ⟨μi, hμi⟩ : ∃ μ : Measure (κ → mixedEmbedding.mixedSpace F), μ.IsAddHaarMeasure :=
     ⟨Measure.addHaar, inferInstance⟩
-  obtain ⟨μv, hμv, hμv1⟩ : ∃ μv : ∀ v : Pl F, Measure (κ → Fv F v), (∀ v, (μv v).IsAddHaarMeasure) ∧
+  obtain ⟨μv, hμv, hμv1⟩ : ∃ μv : ∀ v : Pl (F := F), Measure (κ → Fv F v), (∀ v, (μv v).IsAddHaarMeasure) ∧
       ∀ v, μv v {x | ∀ i, x i ∈ v.adicCompletionIntegers F} = 1 := by
-    let K : ∀ v : Pl F, TopologicalSpace.PositiveCompacts (κ → Fv F v) := fun v =>
+    let K : ∀ v : Pl (F := F), TopologicalSpace.PositiveCompacts (κ → Fv F v) := fun v =>
       ⟨⟨Set.pi Set.univ fun _ => (v.adicCompletionIntegers F : Set (Fv F v)),
         isCompact_univ_pi fun _ => ReciprocityTheory.GeneralLinearIntegers.GeneralLinearIntegersOpenCompact.isCompact_integers v⟩, by
           show (interior (Set.pi Set.univ fun _ => (v.adicCompletionIntegers F : Set (Fv F v)))).Nonempty
@@ -192,15 +197,15 @@ theorem exists_const_tensor : ∀ (F : Type) [Field F] [NumberField F] (κ : Typ
     exact_mod_cast key.symm
   set K : ℝ := cI * ∏ v ∈ S₀, C v with hK
   have hK0 : 0 ≤ K := mul_nonneg hcI0 (Finset.prod_nonneg fun v _ => hC0 v)
-  have hsupC : Function.mulSupport (fun v => (C v : ℂ)) ⊆ (S₀ : Set (Pl F)) := by
+  have hsupC : Function.mulSupport (fun v => (C v : ℂ)) ⊆ (S₀ : Set (Pl (F := F))) := by
     intro v hv
     by_contra h
     exact hv (by simp [hC1 v h])
-  have hprodC : ∀ a : Pl F → ℂ, (Function.mulSupport a).Finite →
+  have hprodC : ∀ a : Pl (F := F) → ℂ, (Function.mulSupport a).Finite →
       ∏ᶠ v, ((C v : ℂ) * a v) = (∏ v ∈ S₀, (C v : ℂ)) * ∏ᶠ v, a v := by
     intro a ha
     rw [finprod_mul_distrib ((S₀.finite_toSet).subset hsupC) ha, finprod_eq_prod_of_mulSupport_subset _ hsupC]
-  have hfam : ∀ φ : ∀ v : Pl F, (κ → Fv F v) → ℂ, (∀ v, φ v ∈ SB (κ → Fv F v)) →
+  have hfam : ∀ φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ, (∀ v, φ v ∈ SB (κ → Fv F v)) →
       (∀ᶠ v in Filter.cofinite, φ v = vac v) →
       GlobalTheory.RatWeilOp.IsFam φ ∧ GlobalTheory.RatWeilOp.IsFam (fun v => ev v (φ v)) := by
     intro φ hSB hφ
@@ -209,7 +214,7 @@ theorem exists_const_tensor : ∀ (F : Type) [Field F] [NumberField F] (κ : Typ
       rw [h1, h2]; rfl
     · filter_upwards [hφ, hvac₁] with v h1 h2
       rw [h1, hevv, h2]; rfl
-  have hcross : ∀ (f f' : SInf F κ) (φ φ' : ∀ v : Pl F, (κ → Fv F v) → ℂ), (∀ v, φ v ∈ SB (κ → Fv F v)) →
+  have hcross : ∀ (f f' : SInf F κ) (φ φ' : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ), (∀ v, φ v ∈ SB (κ → Fv F v)) →
       (∀ᶠ v in Filter.cofinite, φ v = vac v) → (∀ v, φ' v ∈ SB (κ → Fv F v)) → (∀ᶠ v in Filter.cofinite, φ' v = vac v) →
       Integrable (fun x => GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ x * conj (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f' φ' x)) μ ∧
       Integrable (fun x => GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei f) (fun v => ev v (φ v)) x *
@@ -241,13 +246,15 @@ theorem exists_const_tensor : ∀ (F : Type) [Field F] [NumberField F] (κ : Typ
     rw [hT i v h2, h1]
   have heΦ : e (∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i)) =
       ∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei (f i)) (fun v => ev v (φ i v)) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => he _ _ (hSB i) (hvacφ i)
   rw [heΦ]
   have hexp : ∀ (g : Fin m → (κ → AF F) → ℂ) (x : κ → AF F),
       (∑ i, g i) x * conj ((∑ i, g i) x) = ∑ i, ∑ j, g i x * conj (g j x) := by
     intro g x
-    simp only [Finset.sum_apply, map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, map_sum, Finset.sum_mul_sum]
   have hint1 : ∀ i j, Integrable (fun x => GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i) x *
       conj (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f j) (φ j) x)) μ := fun i j =>
     (hcross (f i) (f j) (φ i) (φ j) (hSB i) (hvacφ i) (hSB j) (hvacφ j)).1
@@ -256,21 +263,21 @@ theorem exists_const_tensor : ∀ (F : Type) [Field F] [NumberField F] (κ : Typ
     (hcross (f i) (f j) (φ i) (φ j) (hSB i) (hvacφ i) (hSB j) (hvacφ j)).2.1
   have hI1 : Integrable (fun x => (∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i)) x *
       conj ((∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i)) x)) μ :=
-    (integrable_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => hint1 i j).congr
+    (integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hint1 i j).congr
       (Filter.Eventually.of_forall fun x => (hexp _ x).symm)
   have hI2 : Integrable (fun x => (∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei (f i)) (fun v => ev v (φ i v))) x *
       conj ((∑ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei (f i)) (fun v => ev v (φ i v))) x)) μ :=
-    (integrable_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => hint2 i j).congr
+    (integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hint2 i j).congr
       (Filter.Eventually.of_forall fun x => (hexp _ x).symm)
   rw [lintegral_sq_eq hI1, lintegral_sq_eq hI2, integral_congr_ae (Filter.Eventually.of_forall (hexp _)),
     integral_congr_ae (Filter.Eventually.of_forall (hexp _)),
-    integral_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => hint1 i j,
-    integral_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => hint2 i j]
+    integral_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hint1 i j,
+    integral_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hint2 i j]
   have hsum : ∀ i, ∫ x, ∑ j, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei (f i)) (fun v => ev v (φ i v)) x *
       conj (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei (f j)) (fun v => ev v (φ j v)) x) ∂μ =
       (K : ℂ) * ∫ x, ∑ j, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f i) (φ i) x * conj (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f j) (φ j) x) ∂μ := by
     intro i
-    rw [integral_finset_sum _ fun j _ => hint2 i j, integral_finset_sum _ fun j _ => hint1 i j, Finset.mul_sum]
+    rw [integral_finsetSum _ fun j _ => hint2 i j, integral_finsetSum _ fun j _ => hint1 i j, Finset.mul_sum]
     exact Finset.sum_congr rfl fun j _ =>
       (hcross (f i) (f j) (φ i) (φ j) (hSB i) (hvacφ i) (hSB j) (hvacφ j)).2.2
   rw [Finset.sum_congr rfl fun i _ => hsum i, ← Finset.mul_sum, Complex.re_ofReal_mul, ENNReal.ofReal_mul hK0]

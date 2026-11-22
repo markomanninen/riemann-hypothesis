@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegIndep
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MollLeClosedBall
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegGlue
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegIndep
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MollLeClosedBall
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegGlue
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 

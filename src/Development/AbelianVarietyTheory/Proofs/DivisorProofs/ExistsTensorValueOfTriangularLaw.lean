@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
-import Formalism.PolynomialDimension.WeylDim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+public import Formalism.PolynomialDimension.WeylDim
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Pj GlobalTheory.DualWeyl GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.DefPt MvPolynomial
 open scoped Matrix
@@ -126,7 +130,8 @@ theorem exists_good_points {n : ℕ} (la : Fin n → ℕ) (K : Type) [Field K] [
     (fun i w => bval la i w.1) fun c hc => by
       have hq : ∑ i, c i • map (Int.castRingHom K) (intVec la i) = 0 := by
         refine eq_zero_of_evalAt _ fun w hw => ?_
-        simpa [map_sum, bval] using hc ⟨w, hw⟩
+        set_option synthInstance.maxHeartbeats 100000 in
+          simpa [map_sum, bval] using hc ⟨w, hw⟩
       funext i
       exact Fintype.linearIndependent_iff.mp (intVec_spec la K).1 c hq i
   exact ⟨fun k => (p k).1, fun k => (p k).2, hp⟩
@@ -212,7 +217,8 @@ theorem exists_slice (G : MvPolynomial (FrVar N) K)
       exact ⟨_, h1.symm⟩
   refine ⟨c, fun w => ?_⟩
   rw [← hp, hc]
-  simp [map_sum, bval]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, bval]
 
 end Slice
 
@@ -225,7 +231,8 @@ theorem evalFr_map_tpoly {T : Type} [Fintype T] [DecidableEq T] {N : T → ℕ} 
     {K S : Type} [CommRing K] [CommRing S] (φ : K →+* S) (x : TIdx la → K) (y : ∀ t, Matrix (Fin (N t)) (Fin (N t)) S) :
     evalFr (map φ (tpoly la x)) y = tval la (fun I => φ (x I)) y := by
   rw [tval_eq]
-  simp only [tpoly, evalFr, map_sum, map_mul, map_prod, map_C, eval_C, map_rename, eval_rename, map_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tpoly, evalFr, map_sum, map_mul, map_prod, map_C, eval_C, map_rename, eval_rename, map_map]
   refine Finset.sum_congr rfl fun I _ => ?_
   congr 1
   refine Finset.prod_congr rfl fun t _ => ?_

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TraceDistributionsGL.PhiIndep
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TraceDistributionsGL.PhiIndep
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem secSpec : SecSpec k := by
   intro n w hw j
   have h := exists_last_row w hw
   unfold sec
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec j
 
 theorem cj_mul {n : ℕ} (a b : GL (Fin (n + 1)) k) (x : Mx k n) : cj (a * b) x = cj a (cj b x) := by
@@ -87,7 +91,7 @@ theorem phiIndep : PhiIndep k := by
   rw [← hΛ _ hp _ hf]
   congr 1
   funext x
-  simp only [Function.comp]
+  dsimp only [Function.comp_apply]
   rw [← cj_mul, inv_mul_cancel_left]
 
 theorem phiLin : PhiLin k := by
@@ -97,7 +101,7 @@ theorem phiLin : PhiLin k := by
   simp only [Pi.add_apply, Pi.smul_apply]
   split_ifs
   · simp
-  · rw [← map_smul, ← map_smul, ← map_add]
+  · rw [← map_smul, ← map_smul, ← map_add (f := _)]
     congr 1
 
 theorem phiEquiv : PhiEquiv k := by

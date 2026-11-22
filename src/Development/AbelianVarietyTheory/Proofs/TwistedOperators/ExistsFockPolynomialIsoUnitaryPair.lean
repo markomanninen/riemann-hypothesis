@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem pderiv_fwd (c : Ix r s) (x : Ix p q) (P : LPol b a) :
         · simp [Ne.symm hc]
       · simp [Ne.symm hx]
     rw [map_mul, Derivation.leibniz, Derivation.leibniz, h, hP]
-    simp only [smul_eq_mul, map_add, map_mul, smul_add, mul_smul_comm]
+    simp only [smul_eq_mul, map_add (f := _), map_mul, smul_add, mul_smul_comm]
 
 variable {ε ε' e e'}
 
@@ -89,37 +93,42 @@ theorem fwd_low (h : SignCompat ε e) (h' : SignCompat ε' e') (x : Ix p q) (c :
 theorem act_eq_sum {V : Type*} [AddCommGroup V] [Module ℂ V] (f : Mat p q →ₗ[ℂ] V) (Z : Mat p q) :
     f Z = ∑ x, ∑ y, Z x y • f (Eab x y) := by
   conv_lhs => rw [Matrix.matrix_eq_sum_single Z]
-  simp only [map_sum, ← map_smul, Eab, Matrix.smul_single, smul_eq_mul, mul_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, ← map_smul, Eab, Matrix.smul_single, smul_eq_mul, mul_one]
 
 theorem fwd_locS (h : SignCompat ε e) (h' : SignCompat ε' e') (Z : Mat p q) (P : LPol b a) :
     fwd ε e e' (locS ε ε' (Matrix.reindex e e Z) P) = fockAct1 p q r s Z (fwd ε e e' P) := by
   rw [act_eq_sum (fockAct1 p q r s) Z, locS, ← e.sum_comp]
-  simp only [LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [← e.sum_comp]
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [fockAct1_Eab, ← e'.sum_comp]
-  simp only [LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum, Matrix.reindex_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum, Matrix.reindex_apply,
     Matrix.submatrix_apply, Equiv.symm_apply_apply]
   congr 1
   refine Finset.sum_congr rfl fun c _ => ?_
-  simp only [omE, LinearMap.add_apply, map_add, Module.End.mul_apply, fwd_rai h h', fwd_low h h']
+  simp only [omE, LinearMap.add_apply, map_add (f := _), Module.End.mul_apply, fwd_rai h h', fwd_low h h']
   congr 1
   by_cases hxy : x = y <;> simp [hxy]
 
 theorem fwd_locT (h : SignCompat ε e) (h' : SignCompat ε' e') (Z : Mat r s) (P : LPol b a) :
     fwd ε e e' (locT ε ε' (Matrix.reindex e' e' Z) P) = fockAct2 p q r s Z (fwd ε e e' P) := by
   rw [act_eq_sum (fockAct2 p q r s) Z, locT, ← e'.sum_comp]
-  simp only [LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [← e'.sum_comp]
   refine Finset.sum_congr rfl fun d _ => ?_
   rw [fockAct2_Eab, ← e.sum_comp]
-  simp only [LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum, Matrix.reindex_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum, Matrix.reindex_apply,
     Matrix.submatrix_apply, Equiv.symm_apply_apply]
   congr 1
   refine Finset.sum_congr rfl fun x _ => ?_
-  simp only [omE, LinearMap.add_apply, map_add, Module.End.mul_apply, fwd_rai h h', fwd_low h h']
+  simp only [omE, LinearMap.add_apply, map_add (f := _), Module.End.mul_apply, fwd_rai h h', fwd_low h h']
   congr 1
   by_cases hcd : c = d <;> simp [hcd]
 

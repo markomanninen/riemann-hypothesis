@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistDataAgreeAcrossCoefficientsLocalized
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistDataAgreeAcrossCoefficientsLocalized
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.Mem.R3.Tr GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up GlobalTheory.HeightCounting.Fin3
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -50,12 +55,5 @@ theorem hkRow_of_ad (Rl : RealDat3 D A3 Ks) (cG : Formalism.L2.DIV.G0 Rl.Pg D.R.
 end Gen
 
 variable {hL : GlobalTheory.Published.LocalLanglandsGL} {K : Ctx} {B : Base} {f : Fr B.toPre} {T : TwDat B} {w : ColW B f T} {P : Pre2 K w}
-
-theorem hkRowX {x : St P} (l : LC hL x) : NExpHeckeRowX x.m.z.R x.m.z.cG _ l.b.YS (hkH l) fun _ => LinearMap.id :=
-  hkRow_of_ad x.m.z.R x.m.z.cG l.rat.kKs l.rat.hk l.b.YS (hkH l) l.rat.In.Sb l.b.fi l.b.Sb_le l.rat.rat.hecke
-
-theorem hkRowL {x : St P} (L : LocAll (lay0 (Dof x))) (l : LC hL x) :
-    NExpHeckeRowX (datL x L).R (datL x L).cG _ (ysL L l) (hkHL L l) fun _ => LinearMap.id :=
-  ⟨(by with_unfolding_all exact ((hkRowX l).tie :))⟩
 
 end GlobalTheory.HeightCounting.Fin3

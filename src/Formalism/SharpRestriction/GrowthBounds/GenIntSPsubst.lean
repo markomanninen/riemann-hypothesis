@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.PowerSeriesFrobeniusCongruence
-import Formalism.LocalToGlobal.CharacterGerms.SubstSubst
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PowerSeriesFrobeniusCongruence
+public import Formalism.LocalToGlobal.CharacterGerms.SubstSubst
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,7 +145,8 @@ theorem genL_alongCv {γ : κ → PowerSeries C} (hγ : ∀ i, PowerSeries.const
 theorem genL_sum {ι : Type} (s : Finset ι) (f : ι → PowerSeries C) :
     genL κ (∑ k ∈ s, f k) = ∑ k ∈ s, genL κ (f k) := by
   unfold genL
-  rw [← PowerSeries.coe_substAlgHom (PowerSeries.HasSubst.of_constantCoeff_zero genS_cc), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← PowerSeries.coe_substAlgHom (PowerSeries.HasSubst.of_constantCoeff_zero genS_cc), map_sum]
 
 theorem hAt_subst (X : RawChart C d I κ) {τ ρ : Type} [Finite τ] {c b : κ → MvPowerSeries τ C}
     (hc : ∀ i, MvPowerSeries.constantCoeff (c i) = 0) (hb : ∀ i, MvPowerSeries.constantCoeff (b i) = 0)
@@ -231,7 +236,8 @@ theorem generic_point_unit_congruence : GenericPointUnitCongruence := by
       hAt X (fun i => MvPowerSeries.X (Sum.inl i)) (fun i => genL κ (pw n ε i)) with hEdef
   have hEV : Van (Set.range (Sum.inl : κ → κ ⊕ Unit)) E := by
     intro ν hν
-    rw [hEdef, map_sub, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hEdef, map_sub, map_sum,
       Finset.sum_eq_zero fun k _ => gen_van_hAt X hB.axis0 (fun i => (hpt _ (hzk k i)).1) ν hν,
       gen_van_hAt X hB.axis0 (fun i => (hpt _ (hεn i)).1) ν hν, sub_zero]
   have hΦ0 : ∀ s, MvPowerSeries.constantCoeff (genPhi N δ s) = 0 := by
@@ -248,7 +254,8 @@ theorem generic_point_unit_congruence : GenericPointUnitCongruence := by
     fun i => by simp
   have hsE : MvPowerSeries.subst (genPhi N δ) E =
       ∑ k ∈ Finset.range V.l, HH X (pw N δ) (rc (ζ ^ k) z) - HH X (pw N δ) (pw n ε) := by
-    rw [hEdef, ← MvPowerSeries.substAlgHom_apply (VP.hs hΦ0), map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hEdef, ← MvPowerSeries.substAlgHom_apply (VP.hs hΦ0), map_sub, map_sum]
     simp only [MvPowerSeries.substAlgHom_apply]
     rw [hAt_subst X hXc (fun i => (hpt _ (hεn i)).1) hΦ0]
     refine congrArg₂ _ (Finset.sum_congr rfl fun k _ => ?_) ?_

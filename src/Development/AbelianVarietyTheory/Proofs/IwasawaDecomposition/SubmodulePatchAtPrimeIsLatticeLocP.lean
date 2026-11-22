@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.HeckeInertComm
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PatchAtSelf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.HeckeInertComm
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PatchAtSelf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Formalism.L2.Col GlobalTheory.InertExchange
 open Classical
 
@@ -9,8 +14,8 @@ namespace GlobalTheory.InertExchange
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
 
-theorem patchAt_commens (A B : Submodule (𝓞 E) (Sp E n)) (hA : Submodule.IsLattice E A)
-    (hB : Submodule.IsLattice E B) :
+theorem patchAt_commens (A B : Submodule (𝓞 E) (Sp E n)) (hA : Submodule.IsFullLattice E A)
+    (hB : Submodule.IsFullLattice E B) :
     ∃ d : 𝓞 E, d ≠ 0 ∧ (∀ x ∈ A, d • x ∈ B) ∧ (∀ x ∈ B, d • x ∈ A) := by
   obtain ⟨a, ha, hA1, hA2⟩ := Formalism.L2.DIV.lc_sandwich A hA
   obtain ⟨b, hb, hB1, hB2⟩ := Formalism.L2.DIV.lc_sandwich B hB
@@ -21,7 +26,7 @@ theorem patchAt_commens (A B : Submodule (𝓞 E) (Sp E n)) (hA : Submodule.IsLa
     exact hA2 _ (hB1 x hx)
 
 theorem patchAt_isLattice_locP (P : HeightOneSpectrum (𝓞 E)) (A B : Submodule (𝓞 E) (Sp E n)) :
-    Submodule.IsLattice E A → Submodule.IsLattice E B → Submodule.IsLattice E (patchAt P A B) ∧
+    Submodule.IsFullLattice E A → Submodule.IsFullLattice E B → Submodule.IsLattice E (patchAt P A B) ∧
       ∀ Q : HeightOneSpectrum (𝓞 E), localization₂ Q.asIdeal (patchAt P A B) = localization₂ Q.asIdeal (if Q = P then A else B) := by
   intro hA hB
   obtain ⟨d, hd, hAB, hBA⟩ := patchAt_commens A B hA hB
@@ -72,12 +77,8 @@ theorem patchAt_isLattice_locP (P : HeightOneSpectrum (𝓞 E)) (A B : Submodule
     · refine Submodule.fg_of_fg_map_injective f hf (Submodule.FG.of_le hB.fg ?_)
       rintro _ ⟨x, hx, rfl⟩
       exact hle x hx
-    · rw [eq_top_iff, ← hB.span_eq_top, Submodule.span_le]
-      intro y hy
-      have hy' : y = (algebraMap (𝓞 E) E d)⁻¹ • (d • y) := by
-        rw [← algebraMap_smul E d y, smul_smul, inv_mul_cancel₀ hdE, one_smul]
-      rw [hy']
-      exact Submodule.smul_mem _ _ (Submodule.subset_span (hmem y hy))
+    · intro s hs hli
+      exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · rw [hpat]
     exact Formalism.L2.DIV.localized_iInf Λ B d hd hcl h1 h2 Q
 

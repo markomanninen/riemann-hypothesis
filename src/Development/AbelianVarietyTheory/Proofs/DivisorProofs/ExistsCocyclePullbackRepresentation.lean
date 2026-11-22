@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
-import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LactMemDomOfIsom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
+public import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LactMemDomOfIsom
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem formula_span (M : TwoLevels E r U C) (ka : Wt M.Ψ r) (ρ : Representati
     simp
   | add y z hy hz ihy ihz =>
     show ((ρ h⁻¹ ((⟨y, hy⟩ : M.cusp ka) + ⟨z, hz⟩) : M.cusp ka) : C → M.dom → ℂ) c x = _
-    rw [map_add, Submodule.coe_add, Pi.add_apply, Pi.add_apply, ihy, ihz]
+    rw [map_add (f := _), Submodule.coe_add, Pi.add_apply, Pi.add_apply, ihy, ihz]
     simp [mul_add]
   | smul t y hy ih =>
     show ((ρ h⁻¹ (t • (⟨y, hy⟩ : M.cusp ka)) : M.cusp ka) : C → M.dom → ℂ) c x = _

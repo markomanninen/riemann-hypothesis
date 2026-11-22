@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -27,7 +31,8 @@ theorem exists_dual (φ : 𝓞 E →+ ℤ) :
     simp only [f₁, f₂, LinearMap.comp_apply, LinearMap.restrictScalars_apply,
       LinearMap.mulRight_apply, Algebra.linearMap_apply, AddMonoidHom.coe_toIntLinearMap,
       Int.coe_castAddHom]
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     have hb : (algebraMap (𝓞 E) E) (bZ j) = bQ j := (NumberField.integralBasis_apply E j).symm
     rw [hb]
     simp_rw [mul_smul_comm, map_smul]

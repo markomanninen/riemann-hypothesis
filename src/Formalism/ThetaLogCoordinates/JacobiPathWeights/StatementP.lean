@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.IndexWeightsDominance
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.IndexWeightsDominance
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,15 +19,21 @@ def dGT : (n : ℕ) → (Fin n → ℤ) → ℕ
   | 0, _ => 1
   | n + 1, μ => ∑ κ ∈ gtBox μ, dGT n κ
 
-open Classical in
-
-def stripsUp {n : ℕ} (μ : Fin n → ℤ) (b : ℕ) : Finset (Fin n → ℤ) :=
-  (Fintype.piFinset fun i => Finset.Icc (μ i) (μ i + b)).filter fun ν => HStrip ν μ b
 
 open Classical in
+def stripsUp {n : ℕ} (μ : Fin n → ℤ) (b : ℕ) : Finset (Fin n → ℤ) := by
+  letI : DecidablePred (fun ν => HStrip ν μ b) := fun ν => by
+    unfold HStrip
+    infer_instance
+  exact (Fintype.piFinset fun i => Finset.Icc (μ i) (μ i + b)).filter fun ν => HStrip ν μ b
 
-def stripsDown {n : ℕ} (μ : Fin n → ℤ) (b : ℕ) : Finset (Fin n → ℤ) :=
-  (Fintype.piFinset fun i => Finset.Icc (μ i - b) (μ i)).filter fun ν => HStrip μ ν b
+
+open Classical in
+def stripsDown {n : ℕ} (μ : Fin n → ℤ) (b : ℕ) : Finset (Fin n → ℤ) := by
+  letI : DecidablePred (fun ν => HStrip μ ν b) := fun ν => by
+    unfold HStrip
+    infer_instance
+  exact (Fintype.piFinset fun i => Finset.Icc (μ i - b) (μ i)).filter fun ν => HStrip μ ν b
 
 def StripsMem : Prop :=
   ∀ (n : ℕ) (μ ν : Fin n → ℤ) (b : ℕ),

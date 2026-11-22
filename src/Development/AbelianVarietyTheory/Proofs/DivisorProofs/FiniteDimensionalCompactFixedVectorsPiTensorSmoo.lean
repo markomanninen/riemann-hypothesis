@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsUnitarisableOfCharIff
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmoothContragredientIrreducibleAndReflexive
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsUnitarisableOfCharIff
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmoothContragredientIrreducibleAndReflexive
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL
 open scoped TensorProduct
@@ -73,7 +77,7 @@ theorem fixed_le_range (ρ : ∀ a, Representation ℂ (Γ a) (X a)) (hρ : ∀ 
     | add x y hx hy =>
       obtain ⟨r, hr, e⟩ := hx
       obtain ⟨s, hs, e'⟩ := hy
-      exact ⟨r + s, add_mem hr hs, by rw [map_add, map_add, e, e']⟩
+      exact ⟨r + s, add_mem hr hs, by rw [map_add (f := _), map_add (f := _), e, e']⟩
     | smul_tprod c x =>
       obtain ⟨u, hu, e⟩ := exists_fixed_tprod ρ hρ K hK x
       refine ⟨c • PiTensorProduct.tprod ℂ u, Submodule.smul_mem _ c

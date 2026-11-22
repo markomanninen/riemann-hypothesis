@@ -1,6 +1,10 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.HomogExistsStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.HomogExistsStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 
@@ -44,9 +48,6 @@ theorem hd_zero' (F : (Fin 1 → X) → V) (x : Fin 2 → X) :
 theorem hd_sub' (n : ℕ) (F G : (Fin (n + 1) → X) → V) (x : Fin (n + 2) → X) :
     hd n (fun y => F y - G y) x = hd n F x - hd n G x := by
   simp [hd, smul_sub, Finset.sum_sub_distrib]
-
-theorem hd_zero_fun (n : ℕ) (x : Fin (n + 2) → X) : hd n (fun _ : Fin (n + 1) → X => (0 : V)) x = 0 := by
-  simp [hd]
 
 theorem hd_comp' (n : ℕ) (F : (Fin (n + 1) → Y) → V) (c : X → Y) (x : Fin (n + 2) → X) :
     hd n (fun y => F fun i => c (y i)) x = hd n F (fun i => c (x i)) := rfl

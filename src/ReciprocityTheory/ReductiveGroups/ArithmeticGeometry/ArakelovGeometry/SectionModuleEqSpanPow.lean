@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjDefs
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjDefs
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.ArakelovGeometry
 
@@ -36,7 +40,7 @@ private theorem coneMap_monomial_one (y : κ → Ω) (s : κ →₀ ℕ) :
   induction s using Finsupp.induction with
   | zero => simp [coneMap]
   | single_add a b f _ _ ih =>
-    rw [MvPolynomial.monomial_single_add, map_mul, ih, map_add, Finsupp.degree_single]
+    rw [MvPolynomial.monomial_single_add, map_mul, ih, map_add (f := _), Finsupp.degree_single]
     simp only [coneMap, map_mul, map_pow, MvPolynomial.aeval_X, pow_add, mul_pow]
     ring
 
@@ -44,7 +48,8 @@ private theorem coneMap_of_isHomogeneous (y : κ → Ω) {p : MvPolynomial κ �
     (hp : p.IsHomogeneous n) : coneMap ℤ y p = C (MvPolynomial.aeval y p) * X ^ n := by
   conv_lhs => rw [p.as_sum]
   conv_rhs => rw [p.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hdeg : d.degree = n := by
     have := hp (MvPolynomial.mem_support_iff.mp hd)
@@ -56,7 +61,8 @@ private theorem coneMap_of_isHomogeneous (y : κ → Ω) {p : MvPolynomial κ �
 
 private theorem coeff_coneMap_mem (y : κ → Ω) (p : MvPolynomial κ ℤ) (N : ℕ) :
     (coneMap ℤ y p).coeff N ∈ sec ℤ y N := by
-  rw [← MvPolynomial.sum_homogeneousComponent p, map_sum, Polynomial.finsetSum_coeff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPolynomial.sum_homogeneousComponent p, map_sum, Polynomial.finsetSum_coeff]
   refine Submodule.sum_mem _ fun k _ => ?_
   rw [coneMap_of_isHomogeneous y (MvPolynomial.homogeneousComponent_isHomogeneous k p),
     Polynomial.coeff_C_mul_X_pow]
@@ -105,7 +111,8 @@ private theorem sec_le_of_monomial (x : κ → Ω) (n : ℕ) (P : Submodule ℤ 
     sec ℤ x n ≤ P := by
   rintro z ⟨p, hp, rfl⟩
   show MvPolynomial.aeval x p ∈ P
-  rw [p.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   have hdeg : d.degree = n := by
     rw [Finsupp.degree_eq_weight_one]; exact hp (MvPolynomial.mem_support_iff.mp hd)
@@ -150,7 +157,7 @@ private theorem sec_le_iSup (x : κ → Ω) (e : Fin (D + 1) → κ) (N : κ →
     set d' := d - Finsupp.single i (N i)
     have hdd : d = d' + Finsupp.single i (N i) :=
       (tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr hi)).symm
-    have hdeg' : d'.degree + N i = n := by rw [← hd, hdd, map_add, Finsupp.degree_single]
+    have hdeg' : d'.degree + N i = n := by rw [← hd, hdd, map_add (f := _), Finsupp.degree_single]
     have hm : MvPolynomial.monomial (d' + Finsupp.single i (N i)) (1 : ℤ) =
         MvPolynomial.monomial d' 1 * MvPolynomial.X i ^ N i := by
       rw [MvPolynomial.X_pow_eq_monomial, MvPolynomial.monomial_mul, mul_one]

@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorDefs
-import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorDefs
+public import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical
@@ -76,12 +80,6 @@ theorem formalGroup_param_norm_lt_one (W : WeierstrassCurve C) (hW : IntegralMod
     have : 1 ≤ ‖-x / y‖ ^ 2 := one_le_pow₀ hcon
     nlinarith
 
-theorem formalGroup_param_sq_norm (W : WeierstrassCurve C) (hW : IntegralModel W) (P : W.toAffine.Point) (hP : InFormalGroupPoints P)
-    (h0 : P ≠ 0) : ‖uOf P‖ ^ 2 * ‖px W P‖ = 1 := by
-  rcases P with _ | @⟨x, y, h⟩
-  · exact absurd rfl h0
-  · exact chord_norm_u_sq W hW h.1 hP
-
 theorem chord_adjoin_le (W : WeierstrassCurve C) (hW : IntegralModel W) {c : C}
     (hc : c ∈ Algebra.adjoin ℤ ({W.a₁, W.a₂, W.a₃, W.a₄, W.a₆} : Set C)) : ‖c‖ ≤ 1 := by
   obtain ⟨h1, h2, h3, h4, h6⟩ := hW
@@ -148,9 +146,13 @@ theorem formalGroup_add_estimate [CompleteSpace C] (W : WeierstrassCurve C) (hW 
     (P Q : W.toAffine.Point) (hP : InFormalGroupPoints P) (hQ : InFormalGroupPoints Q) :
     ‖uOf (P + Q) - uOf P - uOf Q‖ ≤ (max ‖uOf P‖ ‖uOf Q‖) ^ 2 := by
   obtain ⟨w, hw, -⟩ := wSeriesUnique.{0} C W
-  obtain ⟨F, hFc, h00, h10, h01, hch⟩ := wChordSeries.{0} C W w hw
-  have hF : Formalism.G.IntegralMv F := fun d => chord_adjoin_le W hW (hFc d)
-  rw [formal_group_points_hom.{0} C W w F hW hw hF h00 hch P Q hP hQ]
-  exact chord_eval_est hF h00 h10 h01 (formalGroup_param_norm_lt_one W hW P hP) (formalGroup_param_norm_lt_one W hW Q hQ)
+  obtain ⟨F, hFc, hch⟩ := wFormalGroup.{0} C W w hw
+  have hF : Formalism.G.IntegralMv F.toPowerSeries := fun d => chord_adjoin_le W hW (hFc d)
+  have hadd : uOf (P + Q) = evalMv2 F.toPowerSeries (uOf P) (uOf Q) :=
+    FormalGroupPointsHom.e1hom_main wSubstUnique wChordSubst formal_group_points_param
+      hW hw F hF hch P Q hP hQ
+  rw [hadd]
+  exact chord_eval_est hF F.zero_constantCoeff F.lin_coeff_X F.lin_coeff_Y
+    (formalGroup_param_norm_lt_one W hW P hP) (formalGroup_param_norm_lt_one W hW Q hQ)
 
 end ReciprocityTheory.ChartRestriction.L1

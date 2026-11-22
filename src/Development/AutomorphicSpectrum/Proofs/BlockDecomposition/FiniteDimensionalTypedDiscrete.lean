@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleDiscreteSpaces
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleDiscreteSpaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ namespace GlobalTheory.CompanionTheory.LimV.FdV
 
 open GlobalTheory.CompanionTheory.AdmDiscFin GlobalTheory.LevelTypeProj
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
 
 theorem continuous_sliceTC (φ : Sm E N) (g : GA E N) :
     Continuous fun k : Kinf E N => φ.1 (g * infGL E N (Unitary.toUnits k)) := by
@@ -31,7 +35,7 @@ theorem continuous_sliceTC (φ : Sm E N) (g : GA E N) :
       toL ((Unitary.toUnits k : GL (Fin N) (Cinf E)) : Matrix (Fin N) (Fin N) (Cinf E)) := h3'
   exact hc.comp_continuous h3 fun k => val_mem_invSet _
 
-theorem fd_typed {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ} (V : Submodule ℂ (Sm E N))
+theorem fd_typed {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ} (V : Submodule ℂ (Sm E N))
     (K : Subgroup (GL (Fin N) (Af E))) (W : Submodule ℂ (Kinf E N → ℂ)) (hV : IsDiscrete V)
     (hK : IsOpen (K : Set (GL (Fin N) (Af E)))) (hW : FiniteDimensional ℂ W) :
     FiniteDimensional ℂ (typed V K W) := by

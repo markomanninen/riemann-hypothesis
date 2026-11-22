@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ private theorem isAddHaarMeasure_map_restrict_slab {n m : ℕ} (μ : Measure (Fi
     exact isOpen_lt (by fun_prop) continuous_const
   have hAm : Measurable A := A.continuous.measurable
   have key : ∀ x t, x + R t - R (A (x + R t)) = x - R (A x) := by
-    intro x t; rw [map_add, hAR, map_add]; abel
+    intro x t; rw [map_add (f := _), hAR, map_add (f := _)]; abel
   have happ : ∀ S, MeasurableSet S →
       Measure.map A (μ.restrict {x | ‖x - R (A x) - (p - R (A p))‖ < r}) S
         = μ (A ⁻¹' S ∩ {x | ‖x - R (A x) - (p - R (A p))‖ < r}) := by
@@ -67,7 +71,7 @@ private theorem isAddHaarMeasure_map_restrict_slab {n m : ℕ} (μ : Measure (Fi
         = (fun x => x + R t) ⁻¹' (A ⁻¹' S ∩ {x | ‖x - R (A x) - (p - R (A p))‖ < r}) := by
       ext x
       simp only [Set.mem_preimage, Set.mem_inter_iff, Set.mem_setOf_eq]
-      rw [key x t, map_add, hAR, add_comm t (A x)]
+      rw [key x t, map_add (f := _), hAR, add_comm t (A x)]
     rw [hset, measure_preimage_add_right]
   · intro O hO hne
     rw [happ O hO.measurableSet]
@@ -75,7 +79,7 @@ private theorem isAddHaarMeasure_map_restrict_slab {n m : ℕ} (μ : Measure (Fi
     have hopen : IsOpen (A ⁻¹' O ∩ {x | ‖x - R (A x) - (p - R (A p))‖ < r}) :=
       (hO.preimage A.continuous).inter hZ
     have hA1 : A (R y + (p - R (A p))) = y := by
-      rw [map_add, map_sub, hAR, hAR, sub_self, add_zero]
+      rw [map_add (f := _), map_sub, hAR, hAR, sub_self, add_zero]
     have hmem : R y + (p - R (A p)) ∈ A ⁻¹' O ∩ {x | ‖x - R (A x) - (p - R (A p))‖ < r} := by
       refine ⟨?_, ?_⟩
       · show A (R y + (p - R (A p))) ∈ O
@@ -86,8 +90,8 @@ private theorem isAddHaarMeasure_map_restrict_slab {n m : ℕ} (μ : Measure (Fi
         rw [e, norm_zero]; exact hr
     exact hopen.measure_ne_zero μ ⟨_, hmem⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem submLB_holds : SubmLB := by
   intro n m μ ν hμ hν f hf x0 hsurj W hW hx0W
   have := hμ
@@ -96,11 +100,11 @@ theorem submLB_holds : SubmLB := by
   rw [← hAdef] at hsurj
   obtain ⟨R, hAR⟩ := exists_clm_rightInverse_of_surjective A hsurj
   have hfd : HasStrictFDerivAt f A x0 := by
-    rw [hAdef]; exact hf.contDiffAt.hasStrictFDerivAt (by norm_num)
+    rw [hAdef]; exact hf.hasStrictFDerivAt (by norm_num)
   obtain ⟨h, hhdef⟩ : ∃ h : (Fin n → ℝ) → (Fin n → ℝ),
       h = fun x => x + R (f x - A x) + (R (A x0) - R (f x0)) := ⟨_, rfl⟩
   have hfh : ∀ x, f x = A (h x) + (f x0 - A x0) := by
-    intro x; rw [hhdef]; simp only [map_add, map_sub, hAR]; abel
+    intro x; rw [hhdef]; simp only [map_add (f := _), map_sub, hAR]; abel
   have hhx0 : h x0 = x0 := by
     rw [hhdef]; simp only [map_sub]; abel
   have hC : ContDiff ℝ 1 h := by

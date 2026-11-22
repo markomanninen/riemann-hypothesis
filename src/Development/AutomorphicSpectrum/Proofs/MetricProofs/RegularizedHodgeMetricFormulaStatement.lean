@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedHodgeMetricFormula
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PStokesLimitTTop
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogRatio
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PMuRegSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorPos
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedHodgeMetricFormula
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PStokesLimitTTop
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogRatio
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PMuRegSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorPos
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar.Giv.Mix
 
 set_option maxHeartbeats 1000000 in

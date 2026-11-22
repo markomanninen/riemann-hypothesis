@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelGoodPointChart
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAnalyticImplicitChart
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GoodPointChartLemmas
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelGoodPointChart
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAnalyticImplicitChart
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GoodPointChartLemmas
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -125,7 +130,8 @@ theorem NormalModelGoodPointChart.proof : NormalModelGoodPointChart.Statement :=
       have hgt : eval (φ t) g = t 0 := by simpa [hq0] using hφl t (hrO ht) 0
       have hl : eval (φ t) (rename (Sum.inl : Fin n → Fin n ⊕ Fin M.m) (linForm u)) =
           linEval u (IndefiniteRowSideFullHecke.ComplexSets.firstCoords (φ t)) := by
-        simp [linForm, linEval, IndefiniteRowSideFullHecke.ComplexSets.firstCoords, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [linForm, linEval, IndefiniteRowSideFullHecke.ComplexSets.firstCoords, map_sum]
       simp only [map_sub, map_mul, map_pow, hl, hgt] at hz
       field_simp [hW'.2.2]
       linear_combination hz

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StdDecoratedLatticeRightTranslateLevelQ
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemParLevOfQ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StdDecoratedLatticeRightTranslateLevelQ
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemParLevOfQ
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -11,4 +15,4 @@ theorem _root_.GlobalTheory.T.stdDecoratedLattice_rightTranslate_levelQ : ∀ (X
     ∀ (κ : (levEnv (Vc X.toD7 i) (L.βV i) (L.datVt i t)).Q) (x : Bridge.Gf (Vc X.toD7 i)),
       LiftBrg.ActQ.ptS X I U i t A k (x * κ) =
         ((1 : Formalism.L2.Col.UF X.B.fields.E X.B.R.nV), (LiftBrg.ActQ.redZ X I U L i t A k κ)⁻¹) • LiftBrg.ActQ.ptS X I U i t A k x := by
-  first | exact @GlobalTheory.Mem.R3.LiftBrg.ActQ.ptS_mul_Q | exact GlobalTheory.Mem.R3.LiftBrg.ActQ.ptS_mul_Q | (intros; apply GlobalTheory.Mem.R3.LiftBrg.ActQ.ptS_mul_Q <;> assumption)
+  exact @GlobalTheory.Mem.R3.LiftBrg.ActQ.ptS_mul_Q

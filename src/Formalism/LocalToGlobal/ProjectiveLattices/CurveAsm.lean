@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveOpen
-import Formalism.LocalToGlobal.ProjectiveLattices.LocalUnitReduction.IsUnitMkOfForallPrime
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveOpen
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocalUnitReduction.IsUnitMkOfForallPrime
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions F
 variable {D : D7} {T : Top D} (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c)
   (hT : GenFromTest (T.Q.Xo j) T.Q.c hG)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 abbrev phiI (la : HeightOneSpectrum (𝓞 (recB h.toLawsCore).KO)) {ka wL wF : WeightFamilies.Wt D j}
     (G : GlobalFamilyData (recPlus h j hj) ka wL wF) (Z : Comp (T.Q.Xo j) T.Q.c) :=
   phiZ (recPlus h j hj) la G.N (Om Z) (formsEvR j hG hT Z) G.w
@@ -20,9 +24,9 @@ def CurveHyp (ka wL wF : WeightFamilies.Wt D j) (G : GlobalFamilyData (recPlus h
     (g0 : (recB h.toLawsCore).Cusp j wF) : Prop :=
   SpanW (recPlus h j hj) G.w S ∧ BigAt h j hj hG G ∧ ThAt h j hj hG G g0 ∧ (recPlus h j hj).NonZeroComp wF g0
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 1000000 in
-
 theorem curveInst_of [Fintype (Comp (T.Q.Xo j) T.Q.c)]
     (hinj : ∀ ka wL wF G S g0 la, CurveHyp h j hj hG ka wL wF G S g0 →
       ∀ f : ↥(Frac0 (recPlus h j hj) la G.w), (∀ Z, phiI h j hj hG hT la G Z f = 0) → f = 0)

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaEEnergy
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.EnergyStep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaEEnergy
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.EnergyStep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

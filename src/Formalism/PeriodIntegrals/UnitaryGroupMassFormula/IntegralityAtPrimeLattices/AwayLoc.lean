@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PClassE
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelv
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
-import Formalism.LocalToGlobal.GlobalTheory.EqGlobOfHat
+module
+
+public import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PClassE
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelv
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
+public import Formalism.LocalToGlobal.GlobalTheory.EqGlobOfHat
+
+@[expose] public section
 
 noncomputable section
 

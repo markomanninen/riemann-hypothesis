@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -53,8 +58,9 @@ def genFibPiece (P : Ideal (MRing ι O)) (m : K → ℕ) :
   map_smul' c x := Subtype.ext ((genFibQuot P).toLinearMap.map_smul c x.1)
 
 theorem isLocalizedModule_genFibPiece (P : Ideal (MRing ι O)) (m : K → ℕ) :
-    IsLocalizedModule (nonZeroDivisors O) (genFibPiece P m) where
-  map_units x := by
+    IsLocalizedModule (nonZeroDivisors O) (genFibPiece P m) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro x
     rw [Module.End.isUnit_iff]
     have hx : algebraMap O (FractionRing O) x ≠ 0 :=
       IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors x.2
@@ -67,7 +73,7 @@ theorem isLocalizedModule_genFibPiece (P : Ideal (MRing ι O)) (m : K → ℕ) :
       refine ⟨(algebraMap O (FractionRing O) x)⁻¹ • y, ?_⟩
       rw [Module.algebraMap_end_apply, ← algebraMap_smul (FractionRing O), smul_smul,
         mul_inv_cancel₀ hx, one_smul]
-  surj y := by
+  · intro y
     obtain ⟨q, hq⟩ := y
     obtain ⟨F, hF, rfl⟩ := Submodule.mem_map.mp hq
     let _ := MvPolynomial.algebraMvPolynomial (σ := Σ k, ι k) (R := O) (S := FractionRing O)
@@ -91,7 +97,7 @@ theorem isLocalizedModule_genFibPiece (P : Ideal (MRing ι O)) (m : K → ℕ) :
       genFibQuot P (Ideal.Quotient.mk P g)
     rw [genFibQuot_mk, ← hgc, ← algebraMap_smul (FractionRing O), ← map_smul, smul_eq_C_mul,
       mul_comm, Ideal.Quotient.mkₐ_eq_mk]
-  exists_of_eq {x₁ x₂} h := by
+  · intro x₁ x₂ h
     obtain ⟨q₁, hq₁⟩ := x₁
     obtain ⟨q₂, hq₂⟩ := x₂
     obtain ⟨g₁, rfl⟩ := Ideal.Quotient.mk_surjective q₁

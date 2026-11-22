@@ -1,6 +1,9 @@
-import Mathlib
-import Formalism.LogFactorialBounds.LogFactorialSandwich
-import Formalism.ThetaSupremumBounds.StatementA
+module
+
+public import Mathlib
+public import Formalism.ThetaSupremumBounds.StatementA
+
+@[expose] public section
 
 open Finset MeasureTheory
 open scoped ComplexConjugate Real
@@ -64,7 +67,7 @@ theorem placeBound (r : ℕ) (ν sv : Fin r → ℝ) (Q : ℝ) (hν : ∀ i, 0 �
   have hT : ∏ i, (sv i ^ ν i * Real.exp (-(a * sv i ^ 2) / 2)) ≤
       Real.exp ((∑ i, ph (ν i)) / 2) * Real.exp (-(N * Real.log a) / 2) := by
     calc _ ≤ ∏ i, (Real.exp (ph (ν i) / 2) * Real.exp (-(ν i * Real.log a) / 2)) :=
-          Finset.prod_le_prod (fun i _ => mul_nonneg (Real.rpow_nonneg (hs i) _) (Real.exp_pos _).le)
+          Finset.prod_le_prod₀ (fun i _ => mul_nonneg (Real.rpow_nonneg (hs i) _) (Real.exp_pos _).le)
             (fun i _ => hterm i)
       _ = _ := by
           rw [Finset.prod_mul_distrib, ← Real.exp_sum, ← Real.exp_sum, Finset.sum_div, hN,
@@ -140,7 +143,7 @@ theorem blockIntegral_of (hG : GaussCoord) : BlockIntegral := by
           rw [Finset.prod_mul_distrib, ← he]; ring
       _ ≤ S * ∏ τ, (Real.exp (1 / 2) * Real.exp ((∑ i, ph (ν τ i)) / 2) *
             Real.exp (-(1 / ((∑ i, ν τ i) + 1)) * (nsq fun x => u (τ, x)) / 2)) :=
-          mul_le_mul_of_nonneg_left (Finset.prod_le_prod (fun τ _ => mul_nonneg
+          mul_le_mul_of_nonneg_left (Finset.prod_le_prod₀ (fun τ _ => mul_nonneg
             (Finset.prod_nonneg fun i _ => Real.rpow_nonneg (hs τ _ i) _) (Real.exp_pos _).le)
             fun τ _ => hplace τ) hS
       _ = _ := by rw [hexp, Finset.prod_mul_distrib, hC, mul_assoc]

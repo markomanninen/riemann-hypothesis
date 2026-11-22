@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HilbertSchurOfAdjointClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HilbertSchurOfAdjointClosed
+
+@[expose] public section
+
 open Filter
 open scoped InnerProductSpace Topology
 
@@ -45,7 +50,7 @@ lemma abstract {ι K : Type} [CompleteSpace H] [NormedAddCommGroup K] [InnerProd
     ∃ c : ℝ, ∀ γ : K, ‖J γ‖ ^ 2 = c * ‖γ‖ ^ 2 := by
   classical
   have hadd : ∀ a b : D, s (a + b) = s a + s b := fun a b =>
-    hJ (by rw [map_add, hJs, hJs, hJs, Submodule.coe_add])
+    hJ (by rw [map_add (f := _), hJs, hJs, hJs, Submodule.coe_add])
   have hsmul : ∀ (c : ℂ) (a : D), s (c • a) = c • s a := fun c a =>
     hJ (by rw [map_smul, hJs, hJs, Submodule.coe_smul])
   let sl : D →ₗ[ℂ] K := { toFun := s, map_add' := hadd, map_smul' := hsmul }
@@ -167,7 +172,7 @@ theorem norm_sq_eq : ∀ (ι H E : Type) [NormedAddCommGroup H] [InnerProductSpa
     obtain ⟨w, rfl⟩ := LinearMap.mem_range.mp hb
     exact ⟨w, hd⟩
   have hJ : Function.Injective J := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro γ hγ
     have hmem : (γ : WithLp 2 (H × E)) ∈ closure (G : Set (WithLp 2 (H × E))) := by
       rw [← Submodule.topologicalClosure_coe]

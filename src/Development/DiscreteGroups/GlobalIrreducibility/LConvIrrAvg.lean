@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvIrrComm
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvIrrComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ variable {G : Type} [Group G] (ρ : Representation ℂ G M) (hinv : ∀ g x y, B
 
 def fixSub (K : Subgroup G) : Submodule ℂ M where
   carrier := {a | ∀ κ ∈ K, ρ κ a = a}
-  add_mem' {a b} ha hb κ hκ := by rw [map_add, ha κ hκ, hb κ hκ]
+  add_mem' {a b} ha hb κ hκ := by rw [map_add (f := _), ha κ hκ, hb κ hκ]
   zero_mem' κ _ := map_zero _
   smul_mem' c a ha κ hκ := by rw [map_smul, ha κ hκ]
 
@@ -27,7 +31,7 @@ theorem avg_exists [TopologicalSpace G] [IsTopologicalGroup G] (hsm : IsSmooth �
   have hf : Continuous fun g : G => ρ g z := by
     refine continuous_discrete_rng.2 fun b => isOpen_iff_forall_mem_open.2 fun g hg => ?_
     refine ⟨(fun h => g⁻¹ * h) ⁻¹' {h | ρ h z = z}, fun h hh => ?_,
-      (continuous_mul_left g⁻¹).isOpen_preimage _ (hsm z), ?_⟩
+      (continuous_const_mul g⁻¹).isOpen_preimage _ (hsm z), ?_⟩
     · simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_singleton_iff] at hh hg ⊢
       rw [← hg, show h = g * (g⁻¹ * h) by group, rho_mul, hh]
     · simp only [Set.mem_preimage, Set.mem_setOf_eq, inv_mul_cancel, rho_one]
@@ -41,15 +45,16 @@ theorem avg_exists [TopologicalSpace G] [IsTopologicalGroup G] (hsm : IsSmooth �
   refine ⟨(O.card : ℂ)⁻¹ • ∑ m ∈ O, m, Z.smul_mem _ (Z.sum_mem fun m hm => ?_), fun κ hκ => ?_, ?_⟩
   · obtain ⟨k, _, rfl⟩ := (hmem m).1 hm
     exact hZ k z hz
-  · rw [map_smul, map_sum]
-    congr 1
-    refine Finset.sum_nbij' (fun m => ρ κ m) (fun m => ρ κ⁻¹ m) (fun m hm => ?_) (fun m hm => ?_)
-      (fun m _ => rho_inv ρ κ m) (fun m _ => ?_) (fun _ _ => rfl)
-    · obtain ⟨k, hk, rfl⟩ := (hmem m).1 hm
-      exact (hmem _).2 ⟨κ * k, K.mul_mem hκ hk, rho_mul ρ κ k z⟩
-    · obtain ⟨k, hk, rfl⟩ := (hmem m).1 hm
-      exact (hmem _).2 ⟨κ⁻¹ * k, K.mul_mem (K.inv_mem hκ) hk, rho_mul ρ κ⁻¹ k z⟩
-    · simp
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
+      apply congrArg (fun v : M => (O.card : ℂ)⁻¹ • v)
+      refine Finset.sum_nbij' (fun m => ρ κ m) (fun m => ρ κ⁻¹ m) (fun m hm => ?_) (fun m hm => ?_)
+        (fun m _ => rho_inv ρ κ m) (fun m _ => ?_) (fun _ _ => rfl)
+      · obtain ⟨k, hk, rfl⟩ := (hmem m).1 hm
+        exact (hmem _).2 ⟨κ * k, K.mul_mem hκ hk, rho_mul ρ κ k z⟩
+      · obtain ⟨k, hk, rfl⟩ := (hmem m).1 hm
+        exact (hmem _).2 ⟨κ⁻¹ * k, K.mul_mem (K.inv_mem hκ) hk, rho_mul ρ κ⁻¹ k z⟩
+      · simp
   · have hdist : ∀ m ∈ O, ‖iota B hB x - iota B hB m‖ = ‖iota B hB x - iota B hB z‖ := by
       intro m hm
       obtain ⟨k, hk, rfl⟩ := (hmem m).1 hm
@@ -58,7 +63,8 @@ theorem avg_exists [TopologicalSpace G] [IsTopologicalGroup G] (hsm : IsSmooth �
       rw [e, norm_pi]
     have hsum : iota B hB x - iota B hB ((O.card : ℂ)⁻¹ • ∑ m ∈ O, m) =
         (O.card : ℂ)⁻¹ • ∑ m ∈ O, (iota B hB x - iota B hB m) := by
-      rw [Finset.sum_sub_distrib, Finset.sum_const, smul_sub, map_smul, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_sub_distrib, Finset.sum_const, smul_sub, map_smul, map_sum,
         ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hcardC, one_smul]
     rw [dist_eq_norm, dist_eq_norm, hsum, norm_smul]
     calc ‖((O.card : ℂ))⁻¹‖ * ‖∑ m ∈ O, (iota B hB x - iota B hB m)‖

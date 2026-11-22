@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPf
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory
 open scoped ENNReal
 
@@ -104,8 +109,8 @@ theorem sumBall (X : Data E r) (x0 : Frame X.Ψ r) (la : Wt X.Ψ r) (W : Frame X
       have hka := hcomp x' hx'o w hw1
       have hdens : cd ≤ densF X x' w := by
         unfold densF
-        refine Finset.prod_le_prod (fun _ _ => by positivity) fun τ _ =>
-          Finset.prod_le_prod (fun _ _ => by norm_num) fun i _ => ?_
+        refine Finset.prod_le_prod₀ (fun _ _ => by positivity) fun τ _ =>
+          Finset.prod_le_prod₀ (fun _ _ => by norm_num) fun i _ => ?_
         rw [dmin_cpt_orth X hx'o]
         have h0 : 0 < ‖lminor (Gw X w τ) i.castSucc‖ := by
           rw [← dmin_cpt_orth X hx'o]; exact norm_pos_iff.2 (dmin_ne X hyd τ _)
@@ -274,15 +279,16 @@ theorem locD (X : Data E r) (x0 : Frame X.Ψ r) (la : Wt X.Ψ r) (W : Frame X.Ψ
     rw [lact_rmul', hP.2 _ (lactDom X γ.2 hyd) b0 hb0]
   have hbn : 0 < ‖bchar la b0‖ := norm_pos_iff.2 (bchar_ne X la hb0)
   rw [le_div_iff₀ hbn, mul_comm, ← norm_mul, ← heq]
-  have hfin : K * I γ ^ (1 / 2 : ℝ) ≠ ⊤ := ne_top_of_le_ne_top hsumfin (ENNReal.le_tsum γ)
+  have hfin : K * I γ ^ (1 / 2 : ℝ) ≠ ⊤ :=
+    ne_top_of_le_ne_top hsumfin (le_tsum (fun γ : X.Γ => K * I γ ^ (1 / 2 : ℝ)) γ)
   exact (ENNReal.ofReal_le_iff_le_toReal hfin).1 (by rw [ofReal_norm]; exact hB)
 
 end
 
 end GlobalTheory.PoinSumBound
 
-open ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf in
 
+open ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf in
 theorem GlobalTheory.PoinSumBound.poin_conv_bdd : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : Data E r) (x0 : Frame X.Ψ r), IsOrth X x0 → PropDisc X → ∀ (la : Wt X.Ψ r) (W : Frame X.Ψ r → ℝ≥0∞) (bb : ℝ), IsMetricW X la W → WLower X la W → 0 < bb → (∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ x, IsOrth X x → ∑' γ : X.Γ, ENNReal.ofReal (Real.exp (-(bb / 2 * GlobalTheory.Up.rhX X x0 (lact γ.1 x)))) ≤ C) → ∀ (F : V (nd X) → ℂ) (P : Frame X.Ψ r → ℂ), DifferentiableOn ℂ F (OmF X x0) → InAt X x0 W bb F → IsBEq X la P → (∀ z ∈ OmF X x0, P (cpt X x0 z) = F z) → (∀ x ∈ X.dom, Summable fun γ : X.Γ => ‖(X.χ la γ.1)⁻¹ * P (lact γ.1 x)‖) ∧ X.IsBddSec la (poin X la P) := by
   intro E _ _ _ r X x0 hx0 hPD la W bb hW hWl hbb hSB F P hFd hA hP hPF
   have H : GlobalTheory.PoinSumBound.HypS X x0 la W bb F P := ⟨hx0, hPD, hW, hWl, ⟨hbb, hSB⟩, hFd, hA, hP, hPF⟩

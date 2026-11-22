@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.WeightCongruences.ProdNegOneZpow
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.WeightCongruences.ProdNegOneZpow
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -41,7 +45,7 @@ private theorem descend_mod {F Ω : Type*} [Field F] [CharZero F] [Field Ω] [Al
       rw [map_div₀, map_sub, map_one, map_natCast, h]
       field_simp
       ring
-    rw [← isIntegral_algebraMap_iff (algebraMap F Ω).injective, hmap]
+    rw [← isIntegral_algebraMap_iff (B := Ω), hmap]
     exact hz
 
 theorem UpperTheory.dvd_norm_sub_one_of_idempotent_interpolation_relNorm_one :
@@ -75,7 +79,7 @@ theorem UpperTheory.dvd_norm_sub_one_of_idempotent_interpolation_relNorm_one :
         algebraMap E Ω e * σ δ + (1 - algebraMap E Ω e) + n * σ y := by
       intro σ
       push_cast
-      rw [map_add, map_add, map_mul, map_sub, map_one, map_mul, map_natCast, hσe]
+      rw [map_add (f := _), map_add (f := _), map_mul, map_sub, map_one, map_mul, map_natCast, hσe]
     simp_rw [hσ]
     rw [hprod, hδΩ]
     ring
@@ -87,7 +91,7 @@ theorem UpperTheory.dvd_norm_sub_one_of_idempotent_interpolation_relNorm_one :
   simp only [one_mul, sub_self, add_zero, Finset.prod_const_one] at hprod₂
   have hQ : algebraMap ℚ Ω₂ (Algebra.norm ℚ (1 + n * w)) = 1 + n * z₂ := by
     rw [Algebra.norm_eq_prod_embeddings]
-    simp_rw [map_add, map_one, map_mul, map_natCast]
+    simp_rw [map_add (f := _), map_one, map_mul, map_natCast]
     exact hprod₂
   obtain ⟨w₂, hw₂, hw₂Q⟩ := descend_mod n _ z₂ hz₂ hQ
   obtain ⟨m, hm⟩ := IsIntegrallyClosed.isIntegral_iff.mp hw₂

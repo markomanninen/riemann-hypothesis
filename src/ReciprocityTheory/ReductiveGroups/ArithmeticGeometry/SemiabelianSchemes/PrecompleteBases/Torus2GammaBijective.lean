@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.SplitTori.SplitTorusIsCommMonObjSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsaRos
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.SplitTori.SplitTorusAff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsaRos
+
+@[expose] public section
 
 universe u
 
@@ -209,8 +213,6 @@ theorem chi_zero (X : Type u) [AddCommGroup X] : chi (S := S) X 0 = 1 := by
   | (simp only [chi]; rw [← AddMonoidAlgebra.one_def, map_one])
   | (simp [chi, AddMonoidAlgebra.one_def]; done)
 
-theorem isUnit_chi (X : Type u) [AddCommGroup X] (a : X) : IsUnit (chi (S := S) X a) := by
-  exact (isUnit_single_one (R := ULift.{u} ℤ) a).map (coord (𝟙 (splitTorus S X))).hom
 end
 
 section
@@ -515,14 +517,14 @@ theorem torus_hom_coord [TwoUniqueSums X] {Y : Type u} [AddCommGroup Y]
 end
 end Rosenlicht
 
-open Rosenlicht in
 
+open Rosenlicht in
 theorem splitTorus_rigidity (K : Type u) [Field K] (X : Type u) [AddCommGroup X] [TwoUniqueSums X]
     (Y : Type u) [AddCommGroup Y]
     (f : splitTorus (Spec (.of K)) X ⊗ splitTorus (Spec (.of K)) X ⟶ splitTorus (Spec (.of K)) Y)
     (h1 : lift (𝟙 _) (toUnit _ ≫ η) ≫ f = toUnit _ ≫ η)
     (h2 : lift (toUnit _ ≫ η) (𝟙 _) ≫ f = toUnit _ ≫ η) :
-    f = toUnit _ ≫ η := by
+    f = toUnit _ ≫ η := open Rosenlicht in by
   apply coord_injective
   apply CommRingCat.hom_ext
   apply ringHom_ext_ZU

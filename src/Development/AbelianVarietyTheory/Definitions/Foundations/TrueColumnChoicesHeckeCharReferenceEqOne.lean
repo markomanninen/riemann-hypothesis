@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsUnitaryOfOrder
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsUnitaryOfOrder
+
+@[expose] public section
 
 noncomputable section
 section
@@ -32,30 +36,6 @@ structure CharFrame (D : D7) where
   isDel : IsDelta D.host.pde del
   isDel' : IsDelta D.host.pde' del'
 
-def embLL0 (D : D7) : ↥D.LL0 →+* ℂ := D.what₂.embLL.comp D.LL0.val.toRingHom
-
-structure ValLL0 (D : D7) (C : CharFrame D) : Prop where
-  mu0 : ∀ j, (C.mu0 j).ValuesIn 0 (embLL0 D)
-  eta : C.eta.ValuesIn (1 / 2) (embLL0 D)
-  chiPsi : C.chiPsi.ValuesIn 0 (embLL0 D)
-  del : C.del.ValuesIn 0 (embLL0 D)
-  del' : C.del'.ValuesIn 0 (embLL0 D)
-
-structure ValLL (D : D7) (C : CharFrame D) : Prop where
-  mu0 : ∀ j, (C.mu0 j).ValuesIn 0 D.what₂.embLL
-  eta : C.eta.ValuesIn (1 / 2) D.what₂.embLL
-  chiPsi : C.chiPsi.ValuesIn 0 D.what₂.embLL
-  del : C.del.ValuesIn 0 D.what₂.embLL
-  del' : C.del'.ValuesIn 0 D.what₂.embLL
-
-theorem HChar.ValuesIn.ofLL0 {D : D7} {χ : HChar D.host.E} {s : ℝ} (h : χ.ValuesIn s (embLL0 D)) :
-    χ.ValuesIn s D.what₂.embLL := fun v hv => by
-  obtain ⟨y, hy⟩ := h v hv
-  exact ⟨(y : D.what₂.LL), hy⟩
-
-theorem ValLL0.toLL {D : D7} {C : CharFrame D} (h : ValLL0 D C) : ValLL D C :=
-  ⟨fun j => (h.mu0 j).ofLL0, h.eta.ofLL0, h.chiPsi.ofLL0, h.del.ofLL0, h.del'.ofLL0⟩
-
 def CharFrame.delAt {D : D7} (C : CharFrame D) (l : ℕ) : HChar D.host.E := if l = D.host.pde then C.del' else C.del
 
 structure TupTied (D : D7) (C : CharFrame D) (nch : NChoice D) where
@@ -78,15 +58,6 @@ structure TupTied (D : D7) (C : CharFrame D) (nch : NChoice D) where
   psi_is : ∀ w, D.what₂.muAt w ≠ D.what₂.mu0 → IsPsi (D.what₂.places.resChar w) (nch.Q w) (psi w)
 
   psi_un : ∀ w, D.what₂.muAt w = D.what₂.mu0 → psi w = 1
-
-theorem TupTied.psi_gen {D : D7} {C : CharFrame D} {nch : NChoice D} (Tp : TupTied D C nch) (w : D.what₂.places.Pl) :
-    ∃ Q, IsPsi (D.what₂.places.resChar w) Q (Tp.psi w) := by
-  by_cases h : D.what₂.muAt w = D.what₂.mu0
-  · exact ⟨∅, by rw [Tp.psi_un w h]; exact isPsi_one _⟩
-  · exact ⟨_, Tp.psi_is w h⟩
-
-def TupTied.tup {D : D7} {C : CharFrame D} {nch : NChoice D} (Tp : TupTied D C nch) (μ : D.what₂.Tup) (j : Fin D.R.m) :
-    HChar D.host.E := C.mu0 j * Tp.xi μ
 
 def IsFinIdele {L : Type} [Field L] [NumberField L] (a : Ideles L) : Prop :=
   ∀ w : InfinitePlace L, (a : AdeleRing (𝓞 L) L).1 w = 1
@@ -117,40 +88,6 @@ structure DtTied (D : D7) (C : CharFrame D) where
 def IsCSD {R : Ranks} (H : Formalism.BasicNotions.Host R) (χ : HChar H.E) : Prop :=
   (∀ w w', IsConjPl H w w' → ∀ k : H.Eˣ, χ.locK w' (Units.map (MonoidHomClass.toMonoidHom H.conj) k) = (χ.locK w k)⁻¹) ∧
     ∀ k : H.Eˣ, χ.inf (Units.map (MonoidHomClass.toMonoidHom H.conj) k) = (χ.inf k)⁻¹
-
-structure NCharTied (D : D7) (C : CharFrame D) (nch : NChoice D) (Tp : TupTied D C nch) where
-  e1 : D.naut.CG 1 ≃ {χ : HChar D.host.E // χ.IsUnitary}
-  unr_iff : ∀ π w, D.naut.unr (D.naut.locG π w) ↔ (e1 π).1.UnrAt w
-
-  frob : ∀ π w, (e1 π).1.UnrAt w → D.naut.frobEig (D.naut.locG π w) = {(((e1 π).1.val w)⁻¹ : ℂˣ).1}
-  tw : ∀ π χ : D.naut.CG 1, (e1 (D.naut.tw π χ)).1 = (e1 π).1 * (e1 χ).1
-
-  infG : ∀ π (a : D.R.Psi → ℚ), (e1 π).1.HasInfQ (embPsi D.host) a → ∀ g,
-    D.naut.infG π (embPsi D.host g) = {(a g : ℂ)} ∧
-      D.naut.infG π ((starRingEnd ℂ).comp (embPsi D.host g)) = {-(a g : ℂ)}
-  csd : ∀ π : D.naut.CG 1, D.naut.csd π ↔ IsCSD D.host (e1 π).1
-
-  muC : ∀ i (j : Fin D.R.m), j.1 + 1 = D.nd.j i → (e1 (D.naut.muC i)).1 = Tp.tup (D.nd.mu i) j
-  etaT : (e1 D.naut.etaT).1 = C.eta
-  etaTinv : (e1 D.naut.etaTinv).1 = C.eta⁻¹
-
-  plGw : ∀ k v, C.P.Div k (D.naut.plGw k v)
-
-structure ThetaChrTied (D : D7) (C : CharFrame D) (nch : NChoice D) (Tp : TupTied D C nch) (X : ThetaX D) where
-  eChr : X.Chr →* HChar D.host.E
-  inj : Function.Injective eChr
-  range : ∀ χ : HChar D.host.E, (∃ c, eChr c = χ) ↔ χ.IsUnitary ∧ ∃ a : D.what₂.Tau → ℚ, χ.HasInfQ (embTau D) a
-  infTy : ∀ c, (eChr c).HasInfQ (embTau D) (X.infTy c)
-  chrOf : ∀ μ (j : Fin D.R.m), eChr (X.chrOf μ (j.1 + 1)) = Tp.tup μ j
-  etaT : eChr X.etaT = C.eta
-
-theorem ThetaChrTied.carY {D : D7} {C : CharFrame D} {nch : NChoice D} {Tp : TupTied D C nch} {X : ThetaX D}
-    (T : ThetaChrTied D C nch Tp X) (μ : D.what₂.Tup) (j : Fin D.R.m) (i : ℕ) :
-    T.eChr (X.carY μ (j.1 + 1) i) = if Even i then Tp.tup μ j * C.eta⁻¹ else Tp.tup μ j := by
-  unfold ThetaX.carY
-  split_ifs
-  · rw [map_mul, map_inv, T.chrOf, T.etaT]
-  · exact T.chrOf μ j
 
 end GlobalTheory.Mem.Chr
 

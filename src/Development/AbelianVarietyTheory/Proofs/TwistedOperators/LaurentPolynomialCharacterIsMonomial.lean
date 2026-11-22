@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem characterMonomial : CharacterMonomial := by
   have hvanish : Finsupp.linearCombination Ω
       (fun φ : (Fin s → Fˣ) →* Ω => (φ : (Fin s → Fˣ) → Ω)) l = 0 := by
     funext t
-    simp only [l, map_sub, map_sum, Finsupp.linearCombination_single, one_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [l, map_sub, map_sum, Finsupp.linearCombination_single, one_smul,
       Pi.sub_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply, hf t]
     rw [sub_eq_zero]
     refine Finset.sum_congr rfl fun a _ => ?_

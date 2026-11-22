@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.FormBSelfLe
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.FormCc
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.ConsumerB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.FormBSelfLe
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.FormCc
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.ConsumerB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,12 +17,7 @@ namespace ReciprocityTheory.ChartRestriction.DS.DecInf
 variable {n : ℕ}
 
 theorem poles_injective {lam : Fin n → ℝ} (hlam : StrictAnti lam) : Function.Injective (poleF false lam) := by
-  intro s t h
-  have h' : lam s + (1 - (n : ℝ)) / 2 = lam t + (1 - (n : ℝ)) / 2 := by
-    have := h
-    simp only [poleF, cond_false, poleV] at this
-    exact_mod_cast this
-  exact hlam.injective (by linarith)
+  simpa only [poleF, Bool.cond_false] using poleV_injective hlam.injective
 
 theorem projection_square_integrable {ε : Fin n → Bool} {lam : Fin n → ℝ} (hlam : S7.IsHCParam lam) {T : S7.KType ε (lowK ε lam)}
     {Ψ : Matrix (Fin n) (Fin n) ℂ → (T.V →L[ℂ] T.V)} {v₀ : T.V}
@@ -49,7 +48,7 @@ theorem projection_square_integrable {ε : Fin n → Bool} {lam : Fin n → ℝ}
   obtain ⟨B, hdec, -⟩ := ee_decomp false hσ hD hgap hV hc hVK hW
   obtain ⟨hpole, -⟩ := pole_match false hσ hD hsm hgap hV hc hVK hW hG
   have hinj : Set.InjOn (poleF false lam) (Finset.univ : Finset (Fin n)) :=
-    (poles_injective hgap.1).injOn
+    (poles_injective hlam.1).injOn
   set a := poleF false lam with ha
   set EE := eeF false (smE ε (rreg ε)) with hEE
   set S := tensSub (genSub (smE ε (rreg ε)) (datumV ε Ψ v₀)) with hS
@@ -86,7 +85,7 @@ theorem projection_square_integrable {ε : Fin n → Bool} {lam : Fin n → ℝ}
   refine ⟨P, fun s => dc_isGKEndo_aeval (isGKEndo_eeF hσ hD _ false) _, ?_, ?_, ?_, ?_, ?_⟩
   · intro s f hf
     obtain ⟨fb, hfb, hfe⟩ := hdec f hf
-    rw [hfe, map_sum, map_sum, Finset.smul_sum]
+    rw [hfe, map_sum (P s), map_sum EE, Finset.smul_sum]
     exact Finset.sum_congr rfl fun b _ => hterm s _ (hfb b).1 _ (hfb b).2
   · intro s f _ hf
     rw [hPe s f _ hf, Lagrange.eval_basis_self hinj (Finset.mem_univ _), one_smul]
@@ -95,14 +94,16 @@ theorem projection_square_integrable {ε : Fin n → Bool} {lam : Fin n → ℝ}
     · subst h0; simp
     obtain ⟨t, rfl⟩ := hpole z' f hf h0 hfz
     have hts : s ≠ t := fun h => hz' (by rw [h])
-    rw [hPe s f _ hfz, hLval s t, if_neg hts, zero_smul]
+    rw [hPe s f _ hfz, hLval s t, ite_eq_right hts, zero_smul]
   · intro f hf
     obtain ⟨fb, hfb, hfe⟩ := hdec f hf
-    conv_lhs => rw [hfe]
-    rw [hfe]
-    simp only [map_sum]
-    rw [Finset.sum_comm]
-    exact (Finset.sum_congr rfl fun b _ => hsum1 _ (hfb b).1 _ (hfb b).2).symm
+    calc
+      f = ∑ b ∈ B, fb b := hfe
+      _ = ∑ b ∈ B, ∑ s, P s (fb b) :=
+        Finset.sum_congr rfl fun b _ => (hsum1 _ (hfb b).1 _ (hfb b).2).symm
+      _ = ∑ s, P s f := by
+        rw [Finset.sum_comm, hfe]
+        exact Finset.sum_congr rfl fun s _ => (map_sum (P s) fb B).symm
   · intro s j
     obtain ⟨C, hC⟩ := NT_poly_le false (smE ε (rreg ε)) (Lagrange.basis Finset.univ a s) j
     have hdeg : (Lagrange.basis Finset.univ a s).natDegree = n - 1 := by

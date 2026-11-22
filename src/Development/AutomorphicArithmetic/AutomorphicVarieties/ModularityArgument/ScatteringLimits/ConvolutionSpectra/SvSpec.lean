@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
-import GroundTheory.AutomorphicForms.TraceNormComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.CutLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
+public import GroundTheory.AutomorphicForms.TraceNormComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.CutLaws
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic PositivityTheory.Rg.Tf.IntegralApplyAeEq Set Filter Topology UpperTheory.V.Z.IntegralApplyAeEq
 open scoped InnerProductSpace FourierTransform ComplexConjugate
@@ -35,10 +39,10 @@ theorem UpperTheory.V.Z.IntegralApplyAeEq.svSpec :
     filter_upwards [h0 φ hφ e] with x h
     rw [h, norm_smul, mul_pow]
   · have h1 : ∀ᵐ x : ℝ, one V e x = (Ioc (0 : ℝ) 1).indicator (fun _ => e) x := by
-      filter_upwards [h0 _ (memLp_indicator_const 2 measurableSet_Ioc (1 : ℂ) (Or.inr (by simp : volume (Ioc (0 : ℝ) 1) ≠ ⊤))) e] with x h
+      filter_upwards [h0 _ (memLp_indicator_const (μ := volume) (s := Ioc (0 : ℝ) 1) 2 measurableSet_Ioc.nullMeasurableSet (1 : ℂ) (Or.inr (by simp : volume (Ioc (0 : ℝ) 1) ≠ ⊤))) e] with x h
       refine h.trans ?_
       by_cases b : x ∈ Ioc (0 : ℝ) 1 <;> simp [b]
     refine ⟨h1, ⟨1, ((cutLaws (V := V) _ univ measurableSet_Icc .univ).2.2.2.2.2.2.2.1 _).2 ?_⟩, ?_⟩
     · filter_upwards [h1] with x h hx
-      rw [h, indicator_of_notMem fun b => hx ⟨by linarith [b.1], b.2⟩]
+      rw [h, indicator_of_notMem fun (b : x ∈ Ioc (0 : ℝ) 1) => hx ⟨by linarith [b.1], b.2⟩]
     · rw [integral_congr_ae h1, integral_indicator measurableSet_Ioc]; simp

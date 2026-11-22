@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCptDefs
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCptDefs
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TBBx5
 

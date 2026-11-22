@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMulVBFilCris
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMulVBFilCris
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ private lemma iotaV_injective (T : LocLat G Qp LL O) : Function.Injective (ιV P
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => first | rfl | simp [ιV]
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   intro x y hxy
   rw [h, h] at hxy
   exact Module.Flat.lTensor_preserves_injective_linearMap _ (by exact PD.ι_inj) hxy
@@ -51,7 +55,7 @@ private lemma iotaV_mulVB_comm (T : LocLat G Qp LL O) (c : K₀) (x : T.V ⊗[Qp
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [ιV, mulVB, mulVdR, ← IsScalarTower.algebraMap_apply]
-  | add a b ha hb => rw [map_add, map_add, map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
 
 theorem rk_lift (hK : Function.Bijective (algebraMap K₀ K)) (σ : K₀ →ₐ[Qp] LL) :
     ∃ τ : K →ₐ[Qp] LL, τ.comp (IsScalarTower.toAlgHom Qp K₀ K) = σ := by

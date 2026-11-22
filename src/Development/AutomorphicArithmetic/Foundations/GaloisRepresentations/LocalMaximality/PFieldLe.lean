@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraClosurePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLaurentConstantTermFormFunctionFieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTopDegreeCoefficientFormAndEqOnTopFormsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraClosurePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLaurentConstantTermFormFunctionFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTopDegreeCoefficientFormAndEqOnTopFormsStatement
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 GlobalTheory.W1.Lef UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -128,7 +133,8 @@ private lemma alt_trace' (hTL : TrLin) {M : Type} [AddCommGroup M] [Module ℂ M
       | H α =>
         have e : ∑ k, φ' k (Submodule.Quotient.mk α) • v k =
             ((C.B q).submoduleOf (C.Z q)).mkQ (∑ k : {k // p k = q}, φ k.1 α.1 • (⟨f k.1, hfq k⟩ : C.Z q)) := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           refine Finset.sum_congr rfl fun k _ => ?_
           rw [map_smul]
           rfl
@@ -209,7 +215,8 @@ private lemma mapC_Z' {ι : Type} [LinearOrder ι] (B : Finset ι → Subalgebra
     have := congrFun hD' t
     simp only [GlobalTheory.DI.delta, Pi.zero_apply] at this ⊢
     have h2 := congrArg (mapL K L) this
-    simpa only [map_sum, map_zsmul, map_zero, mapL_apply] using h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_zsmul, map_zero, mapL_apply] using h2
 
 end Forms
 
@@ -307,7 +314,8 @@ theorem UpperTheory.Gal.productCup_of_system.fieldLe_of :
     have hP : (fun s => gY j2 ((top (resK inlE c) - ∑ k, join (TensorProduct.mk ℂ _ _) (e k) (f k)) s)) =
         (fun s => gY j2 (top c s)) - ∑ k, join μ (aa k) (fun J => bt k (uni ∅ J)) := by
       funext s
-      rw [htop, Pi.sub_apply, Pi.sub_apply, Finset.sum_apply, Finset.sum_apply, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [htop, Pi.sub_apply, Pi.sub_apply, Finset.sum_apply, Finset.sum_apply, map_sub, map_sum]
       congr 1
       exact Finset.sum_congr rfl fun k _ => congrFun (hgj k) s
     rw [hP] at hgm
@@ -324,13 +332,15 @@ theorem UpperTheory.Gal.productCup_of_system.fieldLe_of :
   have hterm : ∀ k, trF ℂ τ ρ (trDR ℂ K K' (cupE μ (aa k) (bb k) Finset.univ)) =
       pr K τ ρ (e k) (trC (k := ℂ) (K := K) (L := K') (bb k)) := by
     intro k
-    simp only [cupE, map_sum, cupPair, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [cupE, map_sum, cupPair, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
     simp only [μ, aa, LinearMap.mul_apply', hT1]
     simp [trC]
   rw [alt_trace' hTL (omCx (rB ℂ K (xv x)) a) u d M p f (fun k => trC (k := ℂ) (K := K) (L := K') (bb k))
     (fun k => pr K τ ρ (e k)) (fun k => (hpef k).1) (fun k => (hpef k).2.2) hbtC
     (fun k y hy => hPrB F K d x hcZ τ hτ ρ hρ a (p k) ha (hpef k).1 (e k) (hpef k).2.1 y hy) hid hbtu, ← hΛv]
-  simp only [Λ, Finset.sum_apply, Pi.smul_apply, map_sum, map_zsmul, hterm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Λ, Finset.sum_apply, Pi.smul_apply, map_sum, map_zsmul, hterm]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -150,13 +154,15 @@ theorem ne_bot_of_cop {M : ℕ} (hM : 2 ≤ M) {I : Ideal (𝓞 K)} (h : IsCopri
   · omega
   · exact (Module.finrank_pos (R := ℤ) (M := 𝓞 K)).ne' h2
 
-open Classical in
 
+open Classical in
 def rcl (M : ℕ) (I : Ideal (𝓞 K)) : (rayCon K M).Quotient :=
-  if h : I ∈ primeTo K M then (rayCon K M).mk' ⟨I, h⟩ else 1
+  by
+    classical
+    exact if h : I ∈ primeTo K M then (rayCon K M).mk' ⟨I, h⟩ else 1
 
 theorem rcl_of {M : ℕ} {I : Ideal (𝓞 K)} (h : I ∈ primeTo K M) : rcl M I = (rayCon K M).mk' ⟨I, h⟩ := by
-  rw [rcl, dif_pos h]
+  rw [rcl, dite_eq_left h]
 
 theorem rcl_mul {M : ℕ} {I J : Ideal (𝓞 K)} (h1 : I ∈ primeTo K M) (h2 : J ∈ primeTo K M) :
     rcl M (I * J) = rcl M I * rcl M J := by
@@ -169,9 +175,6 @@ def RayGroup (K : Type) [Field K] [NumberField K] (M : ℕ) : Type := (RayCl.ray
 
 instance (K : Type) [Field K] [NumberField K] (M : ℕ) : CommGroup (RayGroup K M) :=
   @commGroupOfIsUnit (RayCl.rayCon K M).Quotient _ RayCl.exists_inv
-
-instance (K : Type) [Field K] [NumberField K] (M : ℕ) [NeZero M] : Finite (RayGroup K M) :=
-  RayCl.finite_quot (NeZero.ne M)
 
 structure RayData (K : Type) [Field K] [NumberField K] (M : ℕ) where
 
@@ -210,21 +213,9 @@ def rayData (K : Type) [Field K] [NumberField K] (M : ℕ) (hM : M ≠ 0) : RayD
       RayCl.rcl_of (show J ∈ RayCl.primeTo K M from ⟨hJ, hJ'⟩)]
     exact Con.eq _
 
-theorem nonempty_rayData_of_ne_zero (K : Type) [Field K] [NumberField K] (M : ℕ) (hM : M ≠ 0) : Nonempty (RayData K M) := ⟨rayData K M hM⟩
-
 namespace RayData
 
 variable {K : Type} [Field K] [NumberField K] {M : ℕ} (D : RayData K M)
-
-def cnt (c : D.G) (n : ℕ) : ℂ :=
-  (Nat.card {I : Ideal (𝓞 K) // IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧ Ideal.absNorm I = n ∧ D.cls I = c} : ℕ)
-
-def coef (χ : D.G →* ℂˣ) (n : ℕ) : ℂ := ∑ c : D.G, (χ c : ℂ) * D.cnt c n
-
-def Pr (_D : RayData K M) : Type := {v : HeightOneSpectrum (𝓞 K) // IsCoprime v.asIdeal (Ideal.span {(M : 𝓞 K)})}
-
-theorem cls_mul_of_two_le (hM : 2 ≤ M) {I J : Ideal (𝓞 K)} (hI : IsCoprime I (Ideal.span {(M : 𝓞 K)}))
-    (hJ : IsCoprime J (Ideal.span {(M : 𝓞 K)})) : D.cls (I * J) = D.cls I * D.cls J := D.cls_mul I J hI hJ (RayCl.ne_bot_of_cop hM hI) (RayCl.ne_bot_of_cop hM hJ)
 
 theorem cls_one : D.cls 1 = 1 := by
   have h := D.cls_mul 1 1 isCoprime_one_left isCoprime_one_left one_ne_zero one_ne_zero
@@ -251,81 +242,6 @@ theorem cls_span {a : 𝓞 K} (ha : a ≠ 0) (h : a - 1 ∈ Ideal.span {(M : �
     ⟨1, a, one_ne_zero, ha, by simp, h, ?_⟩
   rw [Ideal.span_singleton_one, Ideal.top_mul]
 
-def clsHom : RayCl.primeTo K M →* D.G where
-  toFun I := D.cls I.1
-  map_one' := D.cls_one
-  map_mul' I J := D.cls_mul I.1 J.1 I.2.1 J.2.1 I.2.2 J.2.2
-
-theorem clsHom_surjective : Function.Surjective D.clsHom := by
-  intro c
-  obtain ⟨I, hI, hI', rfl⟩ := D.cls_surj c
-  exact ⟨⟨I, hI, hI'⟩, rfl⟩
-
-theorem ker_clsHom : Con.ker D.clsHom = RayCl.rayCon K M := by
-  ext I J
-  rw [Con.ker_rel]
-  exact D.cls_eq I.1 J.1 I.2.1 J.2.1 I.2.2 J.2.2
-
-def equivRayGroup : RayGroup K M ≃* D.G :=
-  MulEquiv.ofBijective ((RayCl.rayCon K M).lift D.clsHom D.ker_clsHom.ge)
-    ⟨fun x y h => by
-      obtain ⟨I, rfl⟩ := (RayCl.rayCon K M).mk'_surjective x
-      obtain ⟨J, rfl⟩ := (RayCl.rayCon K M).mk'_surjective y
-      exact (Con.eq _).2 (D.ker_clsHom.le (show Con.ker D.clsHom I J from h)),
-     Con.lift_surjective_of_surjective _ D.clsHom_surjective⟩
-
-theorem equivRayGroup_rcl {I : Ideal (𝓞 K)} (hI : IsCoprime I (Ideal.span {(M : 𝓞 K)})) (hI' : I ≠ ⊥) :
-    D.equivRayGroup (RayCl.rcl M I) = D.cls I := by
-  rw [RayCl.rcl_of (show I ∈ RayCl.primeTo K M from ⟨hI, hI'⟩)]
-  rfl
-
-theorem finite_cnt (c : D.G) (n : ℕ) :
-    Finite {I : Ideal (𝓞 K) // IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧ Ideal.absNorm I = n ∧ D.cls I = c} := by
-  have hs : {I : Ideal (𝓞 K) | IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧ Ideal.absNorm I = n ∧
-      D.cls I = c}.Finite :=
-    (Ideal.finite_setOfPred_absNorm_eq n).subset fun I hI => hI.2.1
-  exact hs.to_subtype
-
-theorem cnt_of_ne_zero (c : D.G) {n : ℕ} (hn : n ≠ 0) : D.cnt c n =
-    (Nat.card {I : Ideal (𝓞 K) // IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧ I ≠ ⊥ ∧ Ideal.absNorm I = n ∧ D.cls I = c} : ℕ) := by
-  rw [cnt]
-  congr 1
-  exact Nat.card_congr (Equiv.subtypeEquivRight fun I =>
-    ⟨fun h => ⟨h.1, fun h0 => hn (by rw [← h.2.1, h0, Ideal.absNorm_bot]), h.2.1, h.2.2⟩,
-      fun h => ⟨h.1, h.2.2.1, h.2.2.2⟩⟩)
-
-theorem cnt_zero (hM : 2 ≤ M) (c : D.G) : D.cnt c 0 = 0 := by
-  have : IsEmpty {I : Ideal (𝓞 K) // IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧ Ideal.absNorm I = 0 ∧
-      D.cls I = c} :=
-    ⟨fun I => RayCl.ne_bot_of_cop hM I.2.1 (Ideal.absNorm_eq_zero_iff.mp I.2.2.1)⟩
-  rw [cnt, Nat.card_of_isEmpty, Nat.cast_zero]
-
-open Classical in
-
-theorem cnt_one (c : D.G) : D.cnt c 1 = if c = 1 then 1 else 0 := by
-  have key : ∀ I : {I : Ideal (𝓞 K) // IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧
-      Ideal.absNorm I = 1 ∧ D.cls I = c}, I.1 = ⊤ :=
-    fun I => Ideal.absNorm_eq_one_iff.mp I.2.2.1
-  rw [cnt]
-  split_ifs with hc
-  · subst hc
-    have h1 : Nat.card {I : Ideal (𝓞 K) // IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧
-        Ideal.absNorm I = 1 ∧ D.cls I = 1} = 1 :=
-      Nat.card_eq_one_iff_unique.mpr ⟨⟨fun a b => Subtype.ext ((key a).trans (key b).symm)⟩,
-        ⟨⟨⊤, by rw [← Ideal.one_eq_top]; exact isCoprime_one_left, Ideal.absNorm_top, D.cls_top⟩⟩⟩
-    rw [h1, Nat.cast_one]
-  · have : IsEmpty {I : Ideal (𝓞 K) // IsCoprime I (Ideal.span {(M : 𝓞 K)}) ∧
-        Ideal.absNorm I = 1 ∧ D.cls I = c} :=
-      ⟨fun I => hc (by rw [← I.2.2.2, key I, D.cls_top])⟩
-    rw [Nat.card_of_isEmpty, Nat.cast_zero]
-
-theorem coef_one (χ : D.G →* ℂˣ) : D.coef χ 1 = 1 := by
-  rw [coef, Finset.sum_eq_single (1 : D.G)]
-  · rw [D.cnt_one, if_pos rfl, map_one, Units.val_one, mul_one]
-  · intro b _ hb
-    rw [D.cnt_one, if_neg hb, mul_zero]
-  · intro h
-    exact absurd (Finset.mem_univ _) h
 
 theorem card_eq_classNumber (D : RayData K 1) : Fintype.card D.G = classNumber K := by
   classical
@@ -388,14 +304,6 @@ theorem cls_two_ne_one (D : RayData ℚ 5) : D.cls (Ideal.span {2}) ≠ 1 := by
   rcases Int.associated_iff.mp hab' with h' | h' <;> omega
 
 end RayData
-
-example : Nontrivial (rayData ℚ 5 (by norm_num)).G := ⟨_, _, RayData.cls_two_ne_one _⟩
-
-example (K : Type) [Field K] [NumberField K] : Fintype.card (rayData K 1 one_ne_zero).G = classNumber K :=
-  RayData.card_eq_classNumber _
-
-example : (rayData ℚ 5 (by norm_num)).cls (Ideal.span {6}) = 1 :=
-  RayData.cls_span _ (by norm_num) (Ideal.mem_span_singleton.2 ⟨1, by push_cast; norm_num⟩)
 
 end GlobalTheory.Mem
 

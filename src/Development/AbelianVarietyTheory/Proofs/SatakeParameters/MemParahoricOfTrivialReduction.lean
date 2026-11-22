@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col
 
 noncomputable section
@@ -21,7 +26,7 @@ theorem inX_apply (x : Fin n → k) (l : Fin (n + c)) :
 theorem resX_inX (x : Fin n → k) : resX c (Loc.inX k n c x) = x := by
   funext i
   show Loc.inX k n c x (Fin.castAdd c i) = _
-  rw [inX_apply, dif_pos (by simp)]
+  rw [inX_apply, dite_eq_left (by simp)]
   rfl
 
 theorem resX_eN (i : ℕ) : resX c (Loc.eN k (n + c) (n + i)) = 0 := by
@@ -35,7 +40,7 @@ theorem resX_eN (i : ℕ) : resX c (Loc.eN k (n + c) (n + i)) = 0 := by
 
 theorem inX_mem_Ufl (i : ℕ) (x : Fin n → k) : Loc.inX k n c x ∈ Loc.Ufl k n c i := by
   intro l hl
-  rw [inX_apply, dif_neg]
+  rw [inX_apply, dite_eq_right]
   intro h
   exact hl (show l.1 < n + i by omega)
 
@@ -48,7 +53,7 @@ theorem extL_apply (a : (Fin n → k) →ₗ[k] (Fin n → k)) (v : Fin (n + c) 
 theorem extL_extL (a b : (Fin n → k) →ₗ[k] (Fin n → k)) (hab : ∀ x, a (b x) = x) (v : Fin (n + c) → k) :
     extL c a (extL c b v) = v := by
   have h : resX c (extL c b v) = b (resX c v) := by
-    rw [extL_apply, map_add, resX_inX]; abel
+    rw [extL_apply, map_add (f := _), resX_inX]; abel
   rw [extL_apply c a, h, hab, extL_apply, map_sub, map_sub]
   abel
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain Polynomial
 
 noncomputable section
@@ -62,7 +67,9 @@ theorem eq_plGw_or_isConjPl : ∀ (D : D7) (k : Fin 2), ∀ w ∈ placesOver D.h
     rintro _ ⟨v, -, rfl⟩ ⟨_, ⟨v', -, rfl⟩, h⟩
     exact D.naut.plGw_nconj k v' v (h ▸ isConjPl_conjPl _)
   have hS : S.ncard = 2 * D.R.f := by rw [hSdef, D.nd.g_split k, finrank_E]
-  have hSfin : S.Finite := Set.finite_of_ncard_pos (by rw [hS]; unfold Ranks.f Ranks.n; positivity)
+  have hSfin : S.Finite := Set.finite_of_ncard_pos (by
+    rw [hS, ← finrank_E D.host]
+    exact Module.finrank_pos)
   have hA : A.ncard = D.R.f := by
     rw [hAdef, Set.ncard_image_of_injective _ (D.naut.plGw_inj k), Set.ncard_univ, Nat.card_eq_fintype_card,
       D.nd.card_PlG k]

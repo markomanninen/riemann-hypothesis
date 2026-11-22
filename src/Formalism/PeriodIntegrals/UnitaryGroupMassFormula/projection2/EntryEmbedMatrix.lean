@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.KappaZero
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.KappaZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,9 +129,9 @@ theorem sum_eq_chArg {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (τ
     split_ifs <;> omega
   rw [e1, e2]
 
-open Classical in
 
-theorem prod_blocks {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (χ : ℕ → kˣ →* ℂˣ)
+open Classical in
+theorem prod_blocks [DecidableEq k] {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (χ : ℕ → kˣ →* ℂˣ)
     (τ : FC n' (c + 1) n c → k) :
     ∏ i ∈ Finset.range (j - 1), chiV (χ i) (Matrix.det (Matrix.of fun s s' : Fin t =>
       ent k₀ (c + 1) n' c n (xx1 (xj0 k₀ n' n) τ) (k₀ + m - 1 + i * t + s.1) (k₀ + m - 1 + i * t + s'.1))) = 1 := by
@@ -153,9 +157,9 @@ theorem prod_blocks {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (χ 
       exact h (Fin.ext (by omega))
   rw [hM, Matrix.det_one, chiV_one]
 
-open Classical in
 
-theorem top_block {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (χ : ℕ → kˣ →* ℂˣ)
+open Classical in
+theorem top_block [DecidableEq k] {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (χ : ℕ → kˣ →* ℂˣ)
     (τ : FC n' (c + 1) n c → k)
     (hC : (∀ p', p' < k₀ + m - 1 → ent k₀ (c + 1) n' c n (xx1 (xj0 k₀ n' n) τ) p' p' = 1) ∧
       (∀ p p', p < n + c → p' < k₀ + m - 1 + (j - 1) * t → p ≠ p' →
@@ -186,9 +190,11 @@ theorem top_block {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (χ : 
         split_ifs at hA <;> omega
   rw [hdet, chiV_one]
 
-open Classical in
 
-theorem term_eq {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (ψ₀ : AddChar k ℂ) (χ : ℕ → kˣ →* ℂˣ)
+local instance (p : Prop) : Decidable p := Classical.propDecidable p
+
+open Classical in
+theorem term_eq [DecidableEq k] {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (ψ₀ : AddChar k ℂ) (χ : ℕ → kˣ →* ℂˣ)
     (τ : FC n' (c + 1) n c → k) :
     PhiS ψ₀ χ k₀ m t j n' c n (xx1 (xj0 k₀ n' n) τ) *
         ψ₀ (-chArg (n' := n') (c' := c + 1) (n := n) (c := c) (xx1 (xj0 k₀ n' n) τ)) =
@@ -199,7 +205,8 @@ theorem term_eq {k₀ m t j n' c n : ℕ} (hN : Nums k₀ m t j n' c n) (ψ₀ :
   unfold PI.OneCosetSharp.PhiS
   dsimp only
   split_ifs with h
-  · rw [prod_blocks hN χ τ, top_block hN χ τ h, sum_eq_chArg hN τ]
+  · letI : DecidableEq k := fun a b => Classical.propDecidable (a = b)
+    rw [prod_blocks hN χ τ, top_block hN χ τ h, sum_eq_chArg hN τ]
     rw [inv_one, mul_one, mul_one, ← AddChar.map_add_eq_mul, add_neg_cancel, AddChar.map_zero_eq_one]
   · rw [zero_mul]
 

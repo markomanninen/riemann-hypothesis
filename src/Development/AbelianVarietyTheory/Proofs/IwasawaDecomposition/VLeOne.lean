@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicEmbeddingsConjugate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicEmbeddingsConjugate
+
+@[expose] public section
 
 namespace GlobalTheory.CommonReading
 
@@ -22,7 +26,11 @@ theorem exists_extend [Module.Finite A B] (hi : Function.Injective (algebraMap A
   have : Algebra.IsAlgebraic A B := Algebra.IsIntegral.isAlgebraic
   have : Algebra.IsAlgebraic A (FractionRing B) :=
     (IsFractionRing.isAlgebraic_iff' A B (FractionRing B)).1 inferInstance
-  let φ : FractionRing B →ₐ[A] ℂ_[l] := IsAlgClosed.lift
+  let φ : FractionRing B →ₐ[A] ℂ_[l] := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨φ.toRingHom, fun y => ?_⟩
   rw [← IsScalarTower.algebraMap_apply A B (FractionRing B) y]
   exact φ.commutes y

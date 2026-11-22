@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantHatPairReindex.SumSgnLProdCol
-import Formalism.PeriodIntegrals.ContractionsCovariantIff
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
-import Formalism.FormalDegreeBessel.FinalIO
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantHatPairReindex.SumSgnLProdCol
+public import Formalism.PeriodIntegrals.ContractionsCovariantIff
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+public import Formalism.FormalDegreeBessel.FinalIO
+
+@[expose] public section
 
 open Matrix Finset
 

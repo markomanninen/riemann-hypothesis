@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowProduct
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.AppLEFromOfGlobalSectionsChartHom
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowProduct
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.AppLEFromOfGlobalSectionsChartHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -37,7 +42,6 @@ def multiProjEmb (k : ℕ) (n : Fin (k + 1) → ℕ) :
     MP A k n ⟶ projectiveSpace A (multiProjDim k n) :=
   (multiProjEmbOverBase A k n).1
 
-@[reassoc (attr := simp)]
 lemma multiProjEmb_toSpecBase (k : ℕ) (n : Fin (k + 1) → ℕ) :
     multiProjEmb A k n ≫ toSpecBase A (multiProjDim k n) = mpStr A k n :=
   (multiProjEmbOverBase A k n).2

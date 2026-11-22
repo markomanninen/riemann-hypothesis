@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BdRAlg
-import GroundTheory.PAdicHodge.FactorizationFactorialLe
-import GroundTheory.PAdicHodge.PerfectoidField
-import GroundTheory.PAdicHodge.KerFontaineThetaCompFrobeniusEquivSymmPow
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BdRAlg
+public import GroundTheory.PAdicHodge.FactorizationFactorialLe
+public import GroundTheory.PAdicHodge.PerfectoidField
+public import GroundTheory.PAdicHodge.KerFontaineThetaCompFrobeniusEquivSymmPow
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qi53.Acris :
     (l : ℕ) → [Fact (Nat.Prime l)] → Type :=
@@ -34,5 +38,5 @@ theorem UpperTheory.Reformulated.B.Qi53.zA_smul.{u_1} :
   have hz' : z = (((PadicInt.toZModPow n z).val : ℕ) : ℤ_[l]) + (l : ℤ_[l]) ^ n * w := by
     rw [← hw]; ring
   generalize (PadicInt.toZModPow n z).val = m at hz' ⊢
-  rw [hz', map_add, map_mul, map_pow, map_natCast, map_natCast, add_smul, mul_smul, h, add_zero,
+  rw [hz', map_add (f := _), map_mul, map_pow, map_natCast, map_natCast, add_smul, mul_smul, h, add_zero,
     Nat.cast_smul_eq_nsmul]

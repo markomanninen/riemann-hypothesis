@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -9,26 +14,6 @@ open MvPolynomial
 noncomputable section
 
 universe u v w
-
-theorem PrimeFiltration.Irrelevant.proof : PrimeFiltration.Irrelevant.Statement.{u} := by
-  intro S _ _ N pp _ _ hX
-  refine ⟨1, fun c hc f hf => ?_⟩
-  have hle : Ideal.span ((X : Fin (N + 1) → Poly S N) '' Set.univ) ≤ pp := by
-    rw [Ideal.span_le]
-    rintro _ ⟨i, -, rfl⟩
-    exact hX i
-  apply hle
-  rw [mem_ideal_span_X_image]
-  intro m hm
-  by_contra h
-  push Not at h
-  have hm0 : m = 0 := by
-    ext i
-    exact h i (Set.mem_univ _)
-  have hdeg := hf (mem_support_iff.mp hm)
-  rw [hm0] at hdeg
-  simp at hdeg
-  omega
 
 section PointLemmas
 
@@ -83,8 +68,8 @@ theorem mem_of_div_eq (hj : x j ≠ 0) {pp : Ideal (Poly S N)} [hpp : pp.IsPrime
     rwa [sub_add_cancel] at this
   exact (hpp.mem_or_mem h3).resolve_left (notMem_of_mem_monos_single hX hs)
 
-variable (x) in
 
+variable (x) in
 def chartPrimeIdeal (hj : x j ≠ 0) (pp : Ideal (Poly S N)) :
     Ideal (chartRing S x (singleChart hj)) where
   carrier := {a | ∃ (f s : Poly S N) (e : ℕ), f ∈ pp ∧ s ∈ monos {j} ∧ f.IsHomogeneous e ∧
@@ -97,7 +82,7 @@ def chartPrimeIdeal (hj : x j ≠ 0) (pp : Ideal (Poly S N)) :
       mul_mem hs ht, (hfe.mul htd).add (hse.mul hgd), hse.mul htd, ?_⟩
     rw [Subalgebra.coe_add, ha, hb, div_add_div _ _ (eval_ne_zero_of_mem_monos (singleChart hj) hs)
       (eval_ne_zero_of_mem_monos (singleChart hj) ht)]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
   smul_mem' := by
     rintro c a ⟨g, t, d, hg, ht, hgd, htd, ha⟩
     obtain ⟨f, s, e, hs, hfe, hse, hc⟩ := c.2

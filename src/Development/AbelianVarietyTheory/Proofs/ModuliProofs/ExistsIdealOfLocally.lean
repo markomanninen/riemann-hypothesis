@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverMove
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsRingBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaConstantsLocallyOnBaseStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaConstantsUniqueUpToUnitStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCosetNonvanishingOfHasThStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverMove
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsRingBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaConstantsLocallyOnBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaConstantsUniqueUpToUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCosetNonvanishingOfHasThStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -46,7 +51,7 @@ theorem exists_ideal_of_locally {R : Type} [CommRing R]
   refine ⟨⟨⟨⟨{r | ∀ (R' : Type) [CommRing R'] (y : R →+* R'), Q R' y → y r = 0}, ?_⟩, ?_⟩, ?_⟩,
     fun R' _ y => ⟨fun hy r hr => hr R' y hy, fun hy => ?_⟩⟩
   · intro a b ha hb R' _ y hy
-    rw [map_add, ha R' y hy, hb R' y hy, add_zero]
+    rw [map_add (f := _), ha R' y hy, hb R' y hy, add_zero]
   · intro R' _ y _
     exact map_zero y
   · intro c a ha R' _ y hy
@@ -131,8 +136,8 @@ theorem span_map_eq_top {R R' I : Type} [CommRing R] [CommRing R'] (y : R →+* 
   have := congrArg (Ideal.map y) hv
   rwa [Ideal.map_span, Ideal.map_top, ← Set.range_comp] at this
 
-open ReciprocityTheory.ChartRestriction.G.Out in
 
+open ReciprocityTheory.ChartRestriction.G.Out in
 theorem isThetaPtOver_of_iso {S : Scheme.{0}} (P : PolAV S) {k : ℕ} {T T₀ : Over S} (β : T ⟶ T₀) [IsIso β.left]
     {I : Type} {x₀ : I → (T₀ ⟶ P.A)} (hk : ∀ i, x₀ i ^ (k ^ 2) = 1) {v₀ : I → Γ(T₀.left, ⊤)}
     (H : IsThetaPtOver P k x₀ v₀) : IsThetaPtOver P k (fun i => β ≫ x₀ i) (fun i => β.left.appTop.hom (v₀ i)) := by
@@ -145,8 +150,8 @@ theorem isThetaPtOver_of_iso {S : Scheme.{0}} (P : PolAV S) {k : ℕ} {T T₀ : 
   have e := VVRank.pullM_id P.A P.isLB 1 (SecM.ofSec P.A th)
   exact ⟨r, fun j => (hr j).trans (congrArg (_ * ·) (congrArg (fun q => q.1 j) e).symm)⟩
 
-open ReciprocityTheory.ChartRestriction.G.Out in
 
+open ReciprocityTheory.ChartRestriction.G.Out in
 theorem isThetaPt_of_local {S : Scheme.{0}} (P : PolAV S) {k : ℕ} {T : Over S} {I : Type} {x : I → (T ⟶ P.A)}
     {v : I → Γ(T.left, ⊤)} (ho : Odd k) (hu : IsUnit (k : Γ(T.left, ⊤))) (hk : ∀ i, x i ^ (k ^ 2) = 1)
     (H : ∀ p : T.left, ∃ (T' : Over S) (j : T' ⟶ T), IsOpenImmersion j.left ∧ p ∈ Set.range j.left ∧
@@ -253,7 +258,7 @@ theorem exists_ideal_hasTh_iff : Out.Laws → Out.Laws2 → ∀ (o : Type) [Comm
       ring)
     exact this hr
   · have hM : M ≤ RingHom.ker z := by
-      rw [← IsLocalization.map_comap (Submonoid.powers f) L M, Ideal.map_le_iff_le_comap]
+      rw [← IsLocalization.map_under (Submonoid.powers f) L M, Ideal.map_le_iff_le_comap]
       exact fun r hr => Hy r hr
     obtain ⟨u, hu⟩ := exists_unit_of_minors (span_map_eq_top (z.comp (algebraMap R L)) hv) (span_map_eq_top z hw)
       fun a c => by

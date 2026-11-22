@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+
+@[expose] public section
 
 open Formalism.ConjugateSelfDual UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ
 
@@ -47,7 +51,8 @@ private theorem exact_sum {K : Type*} [Field K] {M : ℕ} (hM : 0 < M) {ξ : K} 
       funext y
       rw [Finset.sum_apply, ← orth hM hξ hxM (ZMod.val_lt y)]
       simp [smul_eq_mul]
-    rw [hfun, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hfun, map_sum]
     simp [map_smul, smul_eq_mul]
   rw [Finset.sum_congr rfl (fun x hx => by rw [key x hx])]
   have hφ : (M : K) • (fun y : ZMod M => if l ∣ y.val then 0 else h y.val) =
@@ -60,7 +65,8 @@ private theorem exact_sum {K : Type*} [Field K] {M : ℕ} (hM : 0 < M) {ξ : K} 
     by_cases hly : l ∣ y.val
     · simp [hly]
     · simp [hly, hy, mul_comm]
-  rw [← smul_eq_mul (M : K), ← map_smul, hφ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← smul_eq_mul (M : K), ← map_smul, hφ, map_sum]
   simp [map_smul, smul_eq_mul]
 
 theorem UpperTheory.restriction_to_units_congr_of_measure :

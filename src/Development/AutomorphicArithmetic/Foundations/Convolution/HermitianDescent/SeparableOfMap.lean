@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NmPoly
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.RepNmSucc
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ExistsNotMem
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NmPoly
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.RepNmSucc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ExistsNotMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,7 @@ private theorem phi_sg (b : Module.Basis (Fin n) k A) (t : A ⊗[k] R) :
     rw [Algebra.TensorProduct.congr_apply, Algebra.TensorProduct.map_tmul, phi_tmul, phi_tmul]
     ext i j
     simp
-  | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, Matrix.map_add _ (map_add σ)]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), Matrix.map_add _ (map_add σ)]
 
 private theorem phi_pow (b : Module.Basis (Fin n) k A) (j : ℕ) (t : A ⊗[k] R) :
     phi b (((Algebra.TensorProduct.congr AlgEquiv.refl σ : A ⊗[k] R ≃ₐ[A] A ⊗[k] R) ^ j) t) =

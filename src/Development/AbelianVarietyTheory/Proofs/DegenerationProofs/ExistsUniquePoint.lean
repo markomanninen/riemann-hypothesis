@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliRepOfBase
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionPointsFieldExtension
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOneOfSurjectiveAppTopOfSection
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.RelAmpleOfLocallyOnBase
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LieMultIffFinrank
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliRepOfBase
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionPointsFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOneOfSurjectiveAppTopOfSection
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.RelAmpleOfLocallyOnBase
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LieMultIffFinrank
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -40,18 +44,31 @@ theorem lbIso_of_rosatiAdj {k : Type} [Field k] {A : Over (Sp k)} [GrpObj A] [Is
     (hL : L.IsLB) {f g : A ⟶ A} (h : RosatiAdj A L f g) :
     LBIso (cubeLB A ![fst A A ≫ f, snd A A] L) (cubeLB A ![fst A A, snd A A ≫ g] L) := by
   obtain ⟨U, hU, h⟩ := h (default : PrimeSpectrum k)
-  have e := (PrimNorm.hasGen_iff hL _ _).1 (hasGen_of_point (A ⊗ A).hom hU (fun _ => rfl) h)
-  refine (PrimNorm.lbIso_iff hL _ _ _ _).2 ((PrimNorm.prod_square_id _ _ (PrimNorm.cls L)).trans
-    (Eq.trans ?_ (PrimNorm.prod_square_id _ _ (PrimNorm.cls L)).symm))
-  rw [Fin.prod_univ_six] at e
-  let m : ((A ⊗ A) ⟶ A) → PrimNorm.PullClass L (A ⊗ A).left := fun q => PrimNorm.cls L q.left
-  have e' : m ((fst A A ≫ f) * snd A A) ^ (1 : ℤ) * m (fst A A ≫ f) ^ (-1 : ℤ) * m (snd A A) ^ (-1 : ℤ) *
-      m (fst A A * (snd A A ≫ g)) ^ (-1 : ℤ) * m (fst A A) ^ (1 : ℤ) * m (snd A A ≫ g) ^ (1 : ℤ) = 1 := e
-  show PrimNorm.diff₂ m _ _ = PrimNorm.diff₂ m _ _
-  rw [← mul_inv_eq_one, ← e', PrimNorm.diff₂, PrimNorm.diff₂]
-  apply Additive.ofMul.injective
-  simp only [ofMul_mul, ofMul_inv, zpow_neg, zpow_one]
-  abel
+  have hh := hasGen_of_point (A ⊗ A).hom hU (fun _ => rfl) h
+  let φ := fun I : ULift (Finset (Fin 2)) => (psum A ![fst A A ≫ f, snd A A] I.down).left
+  let ψ := fun I : ULift (Finset (Fin 2)) => (psum A ![fst A A, snd A A ≫ g] I.down).left
+  let ε := fun I : ULift (Finset (Fin 2)) => (-1 : ℤ) ^ (2 - I.down.card)
+  have hh' : MulPull.HasGen L (Sum.elim ψ φ) (Sum.elim ε fun i => -ε i) := by
+    refine hh.inv.of_formEq hL (fun U _ q => ?_)
+    rw [Fin.prod_univ_six, Fintype.prod_sum_type]
+    simp only [Sum.elim_inl, Sum.elim_inr, zpow_neg, Finset.prod_inv_distrib]
+    dsimp [φ, ψ, ε]
+    rw [PrimNorm.prod_square_id, PrimNorm.prod_square_id]
+    dsimp [rosatiφ, rosatiε, padd]
+    simp only [PrimNorm.diff₂, zpow_one, zpow_neg_one]
+    simp only [inv_inv]
+    change (q ((fst A A ≫ f) * snd A A).left)⁻¹ * q (fst A A ≫ f).left *
+      q (snd A A).left * q (fst A A * (snd A A ≫ g)).left *
+      (q (fst A A).left)⁻¹ * (q (snd A A ≫ g).left)⁻¹ =
+      q (fst A A * (snd A A ≫ g)).left * (q (fst A A).left)⁻¹ *
+      (q (snd A A ≫ g).left)⁻¹ * q (1 : (A ⊗ A) ⟶ A).left *
+      (q ((fst A A ≫ f) * snd A A).left * (q (fst A A ≫ f).left)⁻¹ *
+      (q (snd A A).left)⁻¹ * q (1 : (A ⊗ A) ⟶ A).left)⁻¹
+    apply Additive.ofMul.injective
+    simp only [ofMul_mul, ofMul_inv]
+    abel
+  obtain ⟨t, ht⟩ := hh'
+  exact gen_chartPull (PrimNorm.chartDivOut L φ ε ψ ε) t ht
 
 theorem exists_tateIso_up (laws : Laws) {S : Scheme.{0}} (P : PolAV S) (act : 𝓞 E → (P.A ⟶ P.A)) {K Ω : Type}
     [Field K] [Field Ω] [IsAlgClosed K] [IsAlgClosed Ω] [CharZero K] (i : K →+* Ω) {x : Sp K ⟶ S} {x' : Sp Ω ⟶ S}
@@ -136,8 +153,23 @@ theorem exists_obj (laws : Laws) (l : Geo.Tor.Level H) {K : Type} [Field K] [IsA
     have h1 : a = e • a + l.M • c := by rw [← hc, ← add_smul, add_comm, hfe, one_smul]
     conv_lhs => rw [h1]
     rw [o.I.add, (o.I.ker _ hM _).2 ⟨c, rfl⟩, _root_.mul_one]
+  have hsemi : IsSemiAbelian o.P.A := by
+    have hab := o.P.isAb
+    have := hab.proper
+    refine ⟨hab.comm, hab.smooth, inferInstance, inferInstance, hab.geomConnected, ?_⟩
+    intro Ω _ _ p
+    have hb : IsAbelianScheme ((Over.pullback p).obj o.P.A) := by
+      have := hab.comm
+      have := hab.smooth
+      have := hab.proper
+      have := hab.geomConnected
+      refine ⟨inferInstance, ?_, ?_, ?_⟩
+      · change Smooth (pullback.snd o.P.A.hom p); infer_instance
+      · change IsProper (pullback.snd o.P.A.hom p); infer_instance
+      · change GeometricallyConnected (pullback.snd o.P.A.hom p); infer_instance
+    exact ⟨torusExtensionOfAbelian _ hb⟩
   let t : SAB H (Sp K) :=
-    { G := o.P.A, semi := isSemiAbelian_of_isAbelianScheme _ o.P.isAb, act := ofRingAct o.oa.toRingAct
+    { G := o.P.A, semi := hsemi, act := ofRingAct o.oa.toRingAct
       PP := ⟨o.P.L, rig, hL, hrig⟩, cub := cub, sym := sym
       adj := fun a => lbIso_of_rosatiAdj o.P.isLB (o.oa.rosati a), prim := o.prim }
   refine ⟨{ t := t, proper := o.P.isAb.proper, ample := o.P.ample, ktriv := o.P.ktriv
@@ -203,6 +235,20 @@ theorem IsFibre.ext {l : Geo.Tor.Level H} {B : Type} [CommRing B] {b : Base l B}
     (g₃ : letI := H.starRing; ∀ x, (o'.oa.act x).left ≫ ψ = ψ ≫ (o.oa.act x).left)
     (g₄ : ∀ n v, 0 < n → (o'.I.ev n v).left ≫ ψ = spMap f ≫ (o.I.ev n v).left) : IsFibre ob (spMap f ≫ y) o' := by
   obtain ⟨φ, h₁, h₂, h₃, h₄, h₅⟩ := h
+  have pull_isLB {X Y : Scheme.{0}} {L : LB X} (hL : L.IsLB) (F : Y ⟶ X) : (L.pull F).IsLB := by
+    refine { cover := top_le_iff.1 ?_, g_self := ?_, cocycle := ?_ }
+    · intro y _
+      obtain ⟨i, hi⟩ := exists_chart hL (F y)
+      exact TopologicalSpace.Opens.mem_iSup.2 ⟨fun _ => i, mem_pull.2 hi⟩
+    · intro J
+      refine unit_ext fun y hy => ?_
+      rw [gm_res (𝟙 Y) y _ hy, map_one, gm_pull_g L F (𝟙 Y) y J J hy hy]
+      exact gm_self hL _ y (mem_pull.1 hy)
+    · intro I J K
+      refine unit_ext fun y hy => ?_
+      rw [map_mul, gm_res (𝟙 Y) y _ hy, gm_res (𝟙 Y) y _ hy, gm_res (𝟙 Y) y _ hy, gm_pull_g L F (𝟙 Y) y I J hy.1.1 hy.1.2,
+        gm_pull_g L F (𝟙 Y) y J K hy.1.2 hy.2, gm_pull_g L F (𝟙 Y) y I K hy.1.1 hy.2]
+      exact gm_cocycle hL _ y (mem_pull.1 hy.1.1) (mem_pull.1 hy.1.2) (mem_pull.1 hy.2)
   have hM : 0 < l.M := lt_of_lt_of_le (by norm_num) l.three_le
   refine ⟨ψ ≫ φ, g₁.comp h₁, LBIso.trans o'.P.isLB (pull_isLB o.P.isLB _) (pull_isLB ob.t.PP.isLB _) g₂
     (LBIso.chartPull (Geo.Tor.chartPullPull _ _ _ rfl)

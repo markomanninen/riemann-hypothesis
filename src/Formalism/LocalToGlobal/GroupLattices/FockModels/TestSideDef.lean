@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+
+@[expose] public section
 
 open MvPolynomial
 

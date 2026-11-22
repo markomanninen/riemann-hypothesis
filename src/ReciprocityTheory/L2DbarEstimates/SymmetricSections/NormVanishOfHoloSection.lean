@@ -1,11 +1,15 @@
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.NormVanishOfParts
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.RemovableFinset
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.EsymmZero
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.LineFinite
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.SymmGrowth
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.SymmVanish
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.SymmDiff
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.Section
+module
+
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.NormVanishOfParts
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.RemovableFinset
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.EsymmZero
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.LineFinite
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.SymmGrowth
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.SymmVanish
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.SymmDiff
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.Section
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Norm
 

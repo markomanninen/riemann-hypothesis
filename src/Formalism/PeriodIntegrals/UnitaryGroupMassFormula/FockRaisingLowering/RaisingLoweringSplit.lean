@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.JointBlockShapes.MinusPart
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.SameSign
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.JointBlockShapes.MinusPart
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.SameSign
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem plus_eq (R L : Module.End ℂ (MvPolynomial σ ℂ))
       R (homogeneousComponent d P) := by
     intro d
     have hmem := hR d _ (homogeneousComponent_mem d P)
-    rw [LinearMap.add_apply, map_add, hL, hc_hc,
+    rw [LinearMap.add_apply, map_add (f := _), hL, hc_hc,
       if_neg (show ¬ (d + 2 + 2 = d) by omega), map_zero, add_zero,
       homogeneousComponent_of_mem hmem, if_pos rfl]
   have hsupp : (Function.support fun d => R (homogeneousComponent d P)) ⊆
@@ -59,7 +63,8 @@ theorem plus_eq (R L : Module.End ℂ (MvPolynomial σ ℂ))
       apply homogeneousComponent_eq_zero
       omega
     rw [h0, map_zero]
-  rw [FockH1Action.plusPart, finsum_congr hterm, finsum_eq_sum_of_support_subset _ hsupp,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [FockH1Action.plusPart, finsum_congr hterm, finsum_eq_sum_of_support_subset _ hsupp,
     ← map_sum R, sum_homogeneousComponent]
 
 private theorem apply_homogeneousComponent_eq_zero_of_lt_two (L : Module.End ℂ (MvPolynomial σ ℂ))
@@ -80,7 +85,7 @@ theorem minus_eq (R L : Module.End ℂ (MvPolynomial σ ℂ))
       L (homogeneousComponent (d + 2) P) := by
     intro d
     have hmem := hR (d + 2) _ (homogeneousComponent_mem (d + 2) P)
-    rw [LinearMap.add_apply, map_add, hL, hc_hc, if_pos rfl,
+    rw [LinearMap.add_apply, map_add (f := _), hL, hc_hc, if_pos rfl,
       homogeneousComponent_of_mem hmem]
     split_ifs with hc
     · exact absurd hc (by omega)
@@ -105,7 +110,8 @@ theorem minus_eq (R L : Module.End ℂ (MvPolynomial σ ℂ))
         simp only [zero_add, apply_homogeneousComponent_eq_zero_of_lt_two L hL P 1 (by norm_num), add_zero]
         try rfl
     _ = L P := by
-        rw [← map_sum L, sum_hc_of_le P (P.totalDegree + 1 + 1 + 1) (by omega)]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum L, sum_hc_of_le P (P.totalDegree + 1 + 1 + 1) (by omega)]
 
 theorem raisingLoweringSplit : FockRL.PMSplit := by
   intro σ R L hR hL P

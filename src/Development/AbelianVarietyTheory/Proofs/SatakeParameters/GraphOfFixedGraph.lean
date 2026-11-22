@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem avgN_fixed (ρ : G →* Module.End ℂ V) (N : Subgroup G) [Fintype (G �
       conv_lhs => rw [← QuotientGroup.out_eq' q]
       rfl
     rw [e0, out_apply ρ N hx, map_mul, Module.End.mul_apply]
-  simp only [avgN_apply, map_smul, map_sum, key]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [avgN_apply, map_smul, map_sum, key]
   congr 1
   exact Equiv.sum_comp (MulAction.toPerm k) (fun q : G ⧸ N => ρ q.out x)
 
@@ -52,7 +57,8 @@ theorem avgN_translate (ρ : G →* Module.End ℂ V) (N : Subgroup G) [Fintype 
 theorem avgN_indep (ρ : G →* Module.End ℂ V) (N N' : Subgroup G) [Fintype (G ⧸ N)] [Fintype (G ⧸ N')] [N'.Normal]
     {x : V} (hx : ∀ s ∈ N, ρ s x = x) (hx' : ∀ s ∈ N', ρ s x = x) : avgN ρ N x = avgN ρ N' x := by
   have hc : (Fintype.card (G ⧸ N) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
-  rw [← avgN_of_fixed ρ N' (avgN_fixed ρ N hx), avgN_apply ρ N, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← avgN_of_fixed ρ N' (avgN_fixed ρ N hx), avgN_apply ρ N, map_smul, map_sum]
   simp only [avgN_translate ρ N' hx', Finset.sum_const, Finset.card_univ]
   rw [← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hc, one_smul]
 
@@ -81,8 +87,8 @@ theorem exists_avg_top (ρ : G →* Module.End ℂ V) (hfin : ∀ x, (Set.range 
   let P : Module.End ℂ V :=
     { toFun := p
       map_add' := fun x y => by
-        rw [hp, hp, hp, (h2 x y).1, (h2 x y).2, ← map_add]
-        exact avgN_indep ρ _ _ (hN3 _) (fun s hs => by rw [map_add, hN3 x s hs.1, hN3 y s hs.2])
+        rw [hp, hp, hp, (h2 x y).1, (h2 x y).2, ← map_add (f := _)]
+        exact avgN_indep ρ _ _ (hN3 _) (fun s hs => by rw [map_add (f := _), hN3 x s hs.1, hN3 y s hs.2])
       map_smul' := fun c x => by
         rw [hp, hp, RingHom.id_apply, ← map_smul]
         exact avgN_indep ρ _ _ (hN3 _) (fun s hs => by rw [map_smul, hN3 x s hs]) }
@@ -133,14 +139,16 @@ theorem IsAvg.mem (h : IsAvg ρ K P) (S : Submodule ℂ V) (hS : ∀ k ∈ K, �
 theorem IsAvg.comm (h : IsAvg ρ K P) (T : Module.End ℂ V) (hT : ∀ k ∈ K, ∀ x, T (ρ k x) = ρ k (T x)) (x : V) :
     P (T x) = T (P x) := by
   obtain ⟨ι, _, k, c, hk, e1, e2⟩ := h.pair x (T x)
-  rw [e1, e2, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, e2, map_smul, map_sum]
   simp only [hT _ (hk _)]
 
 theorem IsAvg.avg_avg (h : IsAvg ρ K P) {K' : Subgroup G} {P' : Module.End ℂ V} (h' : IsAvg ρ K' P')
     (hle : K' ≤ K) (x : V) : P (P' x) = P x := by
   have h0 : P' (P x) = P x := h'.self _ fun k hk => h.fix x k (hle hk)
   obtain ⟨ι, _, k, c, hk, e1, e2⟩ := h'.pair x (P x)
-  rw [e1, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, map_smul, map_sum]
   rw [h0] at e2
   simp only [h.tr _ _ (hle (hk _))]
   simp only [h.fix _ _ (hle (hk _))] at e2
@@ -163,15 +171,16 @@ structure IsGraph (ρ : G →* Module.End ℂ V) (H : Subgroup G) (S₁ S₂ : S
 variable {ρ : G →* Module.End ℂ V}
 
 theorem IsGraph.swap {H : Subgroup G} {S₁ S₂ : Submodule ℂ V} {X : Submodule ℂ (V × V)} (h : IsGraph ρ H S₁ S₂ X) :
-    IsGraph ρ H S₂ S₁ (X.comap (LinearEquiv.prodComm ℂ V V).toLinearMap) where
-  ne := by
-    obtain ⟨z, hz, hz0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h.ne
-    refine (Submodule.ne_bot_iff _).2 ⟨z.swap, hz, fun e => hz0 ?_⟩
-    simpa using congrArg Prod.swap e
-  mem := fun z hz => (h.mem _ hz).symm
-  stab := fun x hx z hz => h.stab x hx _ hz
-  inj₁ := fun u hu => h.inj₂ u hu
-  inj₂ := fun u hu => h.inj₁ u hu
+    IsGraph ρ H S₂ S₁ (X.comap (LinearEquiv.prodComm ℂ V V).toLinearMap) := by
+  refine
+    { ne := ?_
+      mem := fun z hz => (h.mem _ hz).symm
+      stab := fun x hx z hz => h.stab x hx _ hz
+      inj₁ := fun u hu => h.inj₂ u hu
+      inj₂ := fun u hu => h.inj₁ u hu }
+  obtain ⟨z, hz, hz0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h.ne
+  refine (Submodule.ne_bot_iff _).2 ⟨z.swap, hz, fun e => hz0 ?_⟩
+  simpa using congrArg Prod.swap e
 
 theorem rho_mul (g h : G) (x : V) : ρ (g * h) x = ρ g (ρ h x) := by rw [map_mul]; rfl
 
@@ -265,7 +274,7 @@ def fixAlg : Subalgebra ℂ (Module.End ℂ V) where
 
 def fixIn (S : Submodule ℂ V) : Submodule ℂ V where
   carrier := {x | x ∈ S ∧ ∀ k ∈ J, ρ k x = x}
-  add_mem' := fun {x y} hx hy => ⟨S.add_mem hx.1 hy.1, fun k hk => by rw [map_add, hx.2 k hk, hy.2 k hk]⟩
+  add_mem' := fun {x y} hx hy => ⟨S.add_mem hx.1 hy.1, fun k hk => by rw [map_add (f := _), hx.2 k hk, hy.2 k hk]⟩
   zero_mem' := ⟨S.zero_mem, fun k _ => map_zero _⟩
   smul_mem' := fun c x hx => ⟨S.smul_mem c hx.1, fun k hk => by rw [map_smul, hx.2 k hk]⟩
 
@@ -383,7 +392,7 @@ theorem fixIn_simple (H : PlaceSys Gv Gc J) (horb : ∀ x, ((fun k => ρ k x) ''
     { carrier := {s | s ∈ S ∧ ∀ g, P (ρ g s) ∈ Y}
       zero_mem' := ⟨S.zero_mem, fun x => by simp⟩
       add_mem' := fun ha hb => ⟨S.add_mem ha.1 hb.1, fun x => by
-        rw [map_add, map_add]; exact Y.add_mem (ha.2 x) (hb.2 x)⟩
+        rw [map_add (f := _), map_add (f := _)]; exact Y.add_mem (ha.2 x) (hb.2 x)⟩
       smul_mem' := fun c a ha => ⟨S.smul_mem c ha.1, fun x => by
         rw [map_smul, map_smul]; exact Y.smul_mem c (ha.2 x)⟩ }
   have hYZ : Y ≤ Z := fun y hy => ⟨(hY hy).1, fun g => (hall g (y, y) ⟨hy, hy⟩).1⟩
@@ -446,44 +455,46 @@ def res (ρ : G →* Module.End ℂ V) (C : Submodule ℂ V) (hC : ∀ h, ∀ x 
 
 variable {C : Submodule ℂ V} {hC : ∀ h, ∀ x ∈ C, ρ h x ∈ C}
 
-theorem Irr.res {S : Submodule ℂ V} (h : Irr ρ S) (hS : S ≤ C) : Irr (res ρ C hC) (S.comap C.subtype) where
-  stab := fun g x hx => h.stab g _ hx
-  simple := fun T hT hst => by
-    rcases h.simple (T.map C.subtype) (by rintro _ ⟨x, hx, rfl⟩; exact hT hx)
-      (by rintro g _ ⟨x, hx, rfl⟩; exact ⟨_, hst g x hx, rfl⟩) with e | e
-    · left
-      rw [← Submodule.comap_map_eq_of_injective C.injective_subtype T, e, Submodule.comap_bot, Submodule.ker_subtype]
-    · right
-      rw [← e, Submodule.comap_map_eq_of_injective C.injective_subtype]
+theorem Irr.res {S : Submodule ℂ V} (h : Irr ρ S) (hS : S ≤ C) : Irr (res ρ C hC) (S.comap C.subtype) := by
+  refine { stab := fun g x hx => h.stab g _ hx, simple := ?_ }
+  intro T hT hst
+  rcases h.simple (T.map C.subtype) (by rintro _ ⟨x, hx, rfl⟩; exact hT hx)
+    (by rintro g _ ⟨x, hx, rfl⟩; exact ⟨_, hst g x hx, rfl⟩) with e | e
+  · left
+    rw [← Submodule.comap_map_eq_of_injective C.injective_subtype T, e, Submodule.comap_bot, Submodule.ker_subtype]
+  · right
+    rw [← e, Submodule.comap_map_eq_of_injective C.injective_subtype]
 
 theorem IsGraph.res {H : Subgroup G} {S₁ S₂ : Submodule ℂ V} {X : Submodule ℂ (V × V)} (h : IsGraph ρ H S₁ S₂ X)
     (h₁ : S₁ ≤ C) (h₂ : S₂ ≤ C) :
-    IsGraph (res ρ C hC) H (S₁.comap C.subtype) (S₂.comap C.subtype) (X.comap (C.subtype.prodMap C.subtype)) where
-  ne := by
-    obtain ⟨z, hz, hz0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h.ne
-    refine (Submodule.ne_bot_iff _).2 ⟨(⟨z.1, h₁ (h.mem z hz).1⟩, ⟨z.2, h₂ (h.mem z hz).2⟩), hz, fun e => hz0 ?_⟩
-    exact Prod.ext (congrArg (fun p : C × C => (p.1 : V)) e) (congrArg (fun p : C × C => (p.2 : V)) e)
-  mem := fun z hz => h.mem _ hz
-  stab := fun x hx z hz => h.stab x hx _ hz
-  inj₁ := fun u hu => Subtype.ext (h.inj₁ _ hu)
-  inj₂ := fun u hu => Subtype.ext (h.inj₂ _ hu)
+    IsGraph (res ρ C hC) H (S₁.comap C.subtype) (S₂.comap C.subtype) (X.comap (C.subtype.prodMap C.subtype)) := by
+  refine
+    { ne := ?_
+      mem := fun z hz => h.mem _ hz
+      stab := fun x hx z hz => h.stab x hx _ hz
+      inj₁ := fun u hu => Subtype.ext (h.inj₁ _ hu)
+      inj₂ := fun u hu => Subtype.ext (h.inj₂ _ hu) }
+  obtain ⟨z, hz, hz0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h.ne
+  refine (Submodule.ne_bot_iff _).2 ⟨(⟨z.1, h₁ (h.mem z hz).1⟩, ⟨z.2, h₂ (h.mem z hz).2⟩), hz, fun e => hz0 ?_⟩
+  exact Prod.ext (congrArg (fun p : C × C => (p.1 : V)) e) (congrArg (fun p : C × C => (p.2 : V)) e)
 
 theorem IsGraph.of_res {H : Subgroup G} {S₁ S₂ : Submodule ℂ V} {X : Submodule ℂ (C × C)}
     (h : IsGraph (HeckeIso.res ρ C hC) H (S₁.comap C.subtype) (S₂.comap C.subtype) X) :
-    IsGraph ρ H S₁ S₂ (X.map (C.subtype.prodMap C.subtype)) where
-  ne := by
-    obtain ⟨z, hz, hz0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h.ne
+    IsGraph ρ H S₁ S₂ (X.map (C.subtype.prodMap C.subtype)) := by
+  refine
+    { ne := ?_
+      mem := by rintro _ ⟨z, hz, rfl⟩; exact h.mem z hz
+      stab := by rintro x hx _ ⟨z, hz, rfl⟩; exact ⟨_, h.stab x hx z hz, rfl⟩
+      inj₁ := ?_
+      inj₂ := ?_ }
+  · obtain ⟨z, hz, hz0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h.ne
     refine (Submodule.ne_bot_iff _).2 ⟨_, ⟨z, hz, rfl⟩, fun e => hz0 ?_⟩
     exact Prod.ext (Subtype.ext (congrArg Prod.fst e)) (Subtype.ext (congrArg Prod.snd e))
-  mem := by rintro _ ⟨z, hz, rfl⟩; exact h.mem z hz
-  stab := by rintro x hx _ ⟨z, hz, rfl⟩; exact ⟨_, h.stab x hx z hz, rfl⟩
-  inj₁ := by
-    rintro u ⟨z, hz, e⟩
+  · rintro u ⟨z, hz, e⟩
     have e1 : z.1 = 0 := Subtype.ext (congrArg Prod.fst e)
     have e2 : z.2 = 0 := h.inj₁ _ (by rw [← e1]; exact hz)
     rw [← show (z.2 : V) = u from congrArg Prod.snd e, e2]; rfl
-  inj₂ := by
-    rintro u ⟨z, hz, e⟩
+  · rintro u ⟨z, hz, e⟩
     have e1 : z.2 = 0 := Subtype.ext (congrArg Prod.snd e)
     have e2 : z.1 = 0 := h.inj₂ _ (by rw [← e1]; exact hz)
     rw [← show (z.1 : V) = u from congrArg Prod.fst e, e2]; rfl
@@ -491,7 +502,7 @@ theorem IsGraph.of_res {H : Subgroup G} {S₁ S₂ : Submodule ℂ V} {X : Submo
 theorem sup_stab {S₁ S₂ : Submodule ℂ V} (h₁ : Irr ρ S₁) (h₂ : Irr ρ S₂) : ∀ g, ∀ x ∈ S₁ ⊔ S₂, ρ g x ∈ S₁ ⊔ S₂ := by
   intro g x hx
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (h₁.stab g a ha) (h₂.stab g b hb)
 
 theorem orbit_res {K : Subgroup G} (horb : ∀ x ∈ C, ((fun k => ρ k x) '' (K : Set G)).Finite) (x : C) :
@@ -516,7 +527,8 @@ theorem graph_of_hecke {A B K : Subgroup G} (hc : ∀ x ∈ A, ∀ y ∈ B, x * 
     have e' : ∑ γ ∈ R, res ρ _ (sup_stab h₁ h₂) γ f = c • f := Subtype.ext (by
       rw [Submodule.coe_sum]; exact e)
     have e2 := congrArg P e'
-    rw [map_sum, map_smul, hP.self f hf', Finset.sum_congr rfl (g := fun _ => P (res ρ _ (sup_stab h₁ h₂) x f))
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_smul, hP.self f hf', Finset.sum_congr rfl (g := fun _ => P (res ρ _ (sup_stab h₁ h₂) x f))
       (fun γ hγ' => by
         obtain ⟨a, ha, b, hb, rfl⟩ := hγ γ hγ'
         rw [rho_mul, rho_mul, hf' b hb, hP.tr _ a ha]), Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ] at e2

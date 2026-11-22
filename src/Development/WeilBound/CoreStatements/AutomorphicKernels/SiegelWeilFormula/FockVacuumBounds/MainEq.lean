@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSchwartzSums.HolValueAtFinsum
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSchwartzSums.HolValueAtFinsum
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem perLiftC (c : ℂ) (hA : AbsThm) (hT : TAll) (hTC : ThetaCoef) (hAux : A
     rw [← Tl_apply, map_sub, Tl_apply, Tl_apply, h1, (hφ _).2, sub_self]
   let Il : PX d.m d.n →ₗ[ℂ] (d.G → ℂ) :=
     { toFun := fun P => c • d.I (φ P)
-      map_add' := fun P Q => by rw [map_add, I_add d hTT hTA (hφ P).1 (hφ Q).1, smul_add]
+      map_add' := fun P Q => by rw [map_add (f := _), I_add d hTT hTA (hφ P).1 (hφ Q).1, smul_add]
       map_smul' := fun a P => by rw [map_smul, I_smul d hTT a (hφ P).1, RingHom.id_apply, smul_comm] }
   let sl : PX d.m d.n →ₗ[ℂ] (d.G → ℂ) := (secl d).comp φ
   obtain ⟨-, ⟨ε, ww, hww, -⟩, hTG, hLC, hT2, hSC⟩ := hAux F E σ d
@@ -123,7 +127,8 @@ theorem mainC_of (c : ℂ) (hA : AbsThm) (hT : TAll) (hTC : ThetaCoef) (hRD : RD
   have hΦeq : Φ = ∑ i, φ i (P i) := by
     have hmem : Φ - ∑ i, φ i (P i) ∈ d.sch := d.sch.sub_mem hΦ.1 (d.sch.sum_mem fun i _ => hsch i)
     refine sub_eq_zero.mp ((hT.1 F E σ d).2.2 _ hmem ?_)
-    rw [← Tl_apply, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Tl_apply, map_sub, map_sum]
     simp only [Tl_apply, eT, hsum, sub_self]
   have key : ∀ i, HolValueAt (fun z => d.eis (d.sec0 (φ i (P i))) (s0 d.m d.n) z x) (s0 d.m d.n)
       (c * d.I (φ i (P i)) x) := fun i =>
@@ -142,7 +147,8 @@ theorem mainC_of (c : ℂ) (hA : AbsThm) (hT : TAll) (hTC : ThetaCoef) (hRD : RD
   choose tt htt using hconv
   have hsec : d.sec0 Φ = fun y => ∑ i, d.sec0 (φ i (P i)) y := by
     funext y
-    rw [hΦeq, ← secl_apply, map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hΦeq, ← secl_apply, map_sum, Finset.sum_apply]
     rfl
   have heq : EqRight (fun z => ∑ i, d.eis (d.sec0 (φ i (P i))) (s0 d.m d.n) z x)
       (fun z => d.eis (d.sec0 Φ) (s0 d.m d.n) z x) := by

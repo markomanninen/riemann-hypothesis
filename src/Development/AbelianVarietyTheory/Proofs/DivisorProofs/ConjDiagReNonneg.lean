@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,11 +22,6 @@ def bExt (ε : Fin n → Bool) (B : Mode ε → ℂ) (p : Fin n × Fin n) : ℂ 
   if h : ε p.1 = true ∧ ε p.2 = false then B ⟨p, h⟩ else 0
 
 theorem sum_mode (ε : Fin n → Bool) (g : Fin n × Fin n → ℂ) :
-    ∑ x : Mode ε, g x.1 = ∑ i, ∑ j, if ε i = true ∧ ε j = false then g (i, j) else 0 := by
-  rw [← Finset.sum_subtype (Finset.univ.filter fun p : Fin n × Fin n => ε p.1 = true ∧ ε p.2 = false)
-    (by simp) g, Finset.sum_filter, ← Finset.univ_product_univ, Finset.sum_product]
-
-theorem sum_mode_re (ε : Fin n → Bool) (g : Fin n × Fin n → ℝ) :
     ∑ x : Mode ε, g x.1 = ∑ i, ∑ j, if ε i = true ∧ ε j = false then g (i, j) else 0 := by
   rw [← Finset.sum_subtype (Finset.univ.filter fun p : Fin n × Fin n => ε p.1 = true ∧ ε p.2 = false)
     (by simp) g, Finset.sum_filter, ← Finset.univ_product_univ, Finset.sum_product]

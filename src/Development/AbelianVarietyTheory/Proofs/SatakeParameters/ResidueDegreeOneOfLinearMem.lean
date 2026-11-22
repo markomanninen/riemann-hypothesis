@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -10,7 +14,7 @@ theorem residue_degree_one_of_linear_mem : ∀ (A B : Type) [CommRing A] [CommRi
   obtain ⟨u, v, hy⟩ := hgen y
   have hbi' := congrArg (algebraMap A B) hbi
   have hDj' := congrArg (algebraMap A B) hDj
-  simp only [map_add, map_mul, map_one] at hbi' hDj'
+  simp only [map_add (f := _), map_mul, map_one] at hbi' hDj'
   refine ⟨D' * (u - v * a * b'), ?_⟩
   have key : y - algebraMap A B (D' * (u - v * a * b')) =
       algebraMap A B D' * algebraMap A B v * algebraMap A B b' * (algebraMap A B a + algebraMap A B b * θ)

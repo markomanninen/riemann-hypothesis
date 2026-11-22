@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HasQExpansionModularForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HasQExpansionModularForm
+
+@[expose] public section
 
 open UpperHalfPlane ModularForm Complex Function Filter PowerSeries
 open scoped Topology MatrixGroups Manifold Real ArithmeticFunction.sigma
@@ -8,7 +12,7 @@ noncomputable section
 
 namespace GlobalTheory
 
-local notation "𝕢" => Function.Periodic.qParam
+local notation "𝕢" => Periodic.qParam
 
 def modularJ (τ : ℍ) : ℂ := E₄ τ ^ 3 / discriminant τ
 
@@ -63,7 +67,7 @@ lemma qExpansion_E₄ : qExpansion 1 E₄ =
     PowerSeries.map (Int.castRingHom ℂ) (1 + 240 * PowerSeries.mk fun n ↦ (σ 3 n : ℤ)) := by
   ext m
   rw [EisensteinSeries.E_qExpansion_coeff _ ⟨2, rfl⟩, show bernoulli 4 = -1 / 30 by decide +kernel]
-  rw [coeff_map, show (240 : ℤ⟦X⟧) = C 240 from rfl, map_add, coeff_C_mul, coeff_one]
+  rw [coeff_map, show (240 : ℤ⟦X⟧) = C 240 from rfl, map_add (f := _), coeff_C_mul, coeff_one]
   split_ifs with hm
   · simp [hm]
   · simp; norm_num
@@ -187,21 +191,10 @@ theorem exists_polynomial_modularJ_of_hasQExpansion (A : AddSubgroup ℂ) {m : �
     · exact Polynomial.natDegree_add_le_of_degree_le (by omega)
         (Polynomial.natDegree_monomial_le _)
     · simp [Polynomial.coeff_eq_zero_of_natDegree_lt (Nat.lt_succ_of_le hP1)]
-    · rw [Polynomial.coeff_add, Polynomial.coeff_monomial]
+    · rw [Polynomial.coeff_add, Polynomial.coeff_monomial_apply]
       refine A.add_mem (hP3 i) ?_
       split_ifs
       exacts [hA 0, A.zero_mem]
     · simp [← hP4]
-
-theorem exists_polynomial_modularJ {m : ℕ} {f : ℍ → ℂ}
-    (hinv : ∀ (γ : SL(2, ℤ)) (τ : ℍ), f (γ • τ) = f τ) (hhol : MDiff f)
-    (hbdd : IsBoundedAtImInfty fun τ : ℍ ↦ 𝕢 1 τ ^ m * f τ) :
-    ∃ P : Polynomial ℂ, P.natDegree ≤ m ∧
-      P.coeff m = coeff 0 (qExpansion 1 fun τ ↦ 𝕢 1 τ ^ m * f τ) ∧
-      (∀ i, P.coeff i ∈ AddSubgroup.closure
-        (Set.range fun k ↦ coeff k (qExpansion 1 fun τ ↦ 𝕢 1 τ ^ m * f τ))) ∧
-      ∀ τ, f τ = P.eval (modularJ τ) :=
-  exists_polynomial_modularJ_of_hasQExpansion _ hinv (hasQExpansion_qParam_pow_mul hinv hhol hbdd)
-    fun k ↦ AddSubgroup.subset_closure ⟨k, rfl⟩
 
 end GlobalTheory

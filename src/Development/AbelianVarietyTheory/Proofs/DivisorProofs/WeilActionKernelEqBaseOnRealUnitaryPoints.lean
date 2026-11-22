@@ -1,12 +1,16 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.KerDatTuple
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilTwistBaseOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetCharIffExp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMkTauE
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGoodBase
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KerDatTuple
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilTwistBaseOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetCharIffExp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMkTauE
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGoodBase
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree
 open Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.IndefR.Datum Formalism.IndefR.Lev
@@ -25,10 +29,10 @@ theorem exists_idele_all {D : D7} {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.h
   let a : (D.what₂.Tau → ℂ) → AE D := fun w => 1 + σ (w - 1)
   have a1 : ∀ w, finPart D (a w) = 1 := fun w => by
     simp only [a]
-    rw [RingHom.map_add, hσ.fin, RingHom.map_one, add_zero]
+    rw [RingHom.map_add (f := _), hσ.fin, RingHom.map_one, add_zero]
   have a3 : ∀ w τ, θ τ (infPart D (a w)) = w τ := fun w τ => by
     simp only [a]
-    rw [RingHom.map_add, RingHom.map_add, hσ.comp, RingHom.map_one, RingHom.map_one, Pi.sub_apply, Pi.one_apply]
+    rw [RingHom.map_add (f := _), RingHom.map_add (f := _), hσ.comp, RingHom.map_one, RingHom.map_one, Pi.sub_apply, Pi.one_apply]
     ring
   have m : a z * a z⁻¹ = 1 := by
     refine sub_eq_zero.1 (hσ.ext _ ?_ fun τ => ?_)
@@ -37,8 +41,8 @@ theorem exists_idele_all {D : D7} {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.h
         a3, a3, Pi.inv_apply, mul_inv_cancel₀ (hz τ), sub_self]
   exact ⟨⟨a z, a z⁻¹, m, by rw [mul_comm, m]⟩, a1 z, a3 z⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_isDetRoot_pow {D : D7} (V : HSp D) {u : GA D V} (hu : u ∈ GinfC V) (n : ℕ) (hn : 0 < n) :
     ∃ y : (AE D)ˣ, IsDetRoot V u (y ^ n) := by
   obtain ⟨θ, hθ⟩ := GlobalTheory.AdelicU.exists_isInfFam D

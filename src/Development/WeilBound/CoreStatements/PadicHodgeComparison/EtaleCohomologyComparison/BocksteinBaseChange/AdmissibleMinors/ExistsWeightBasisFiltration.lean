@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace CrystallineSemistableComparison.Inj
 
@@ -62,7 +66,7 @@ theorem wt_basis {K H : Type*} [Field K] [AddCommGroup H] [Module K H] [FiniteDi
     rw [Subtype.range_coe]
     intro x _
     have := hspan 0 (by omega) (h0 ▸ Set.mem_univ x)
-    exact span_mono (fun v hv => hv.1) this
+    exact span_mono (show {v | v ∈ s ∧ 0 ≤ w v} ⊆ s from fun v hv => hv.1) this
   let b0 := Module.Basis.mk hli' htop
   have hb0 : ∀ v, b0 v = (v : H) := fun v => Module.Basis.mk_apply hli' htop v
   have : Finite s := Module.Finite.finite_basis b0

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -73,7 +77,8 @@ theorem eq_expand {n : ℕ} (w : Fin n → Ω[B⁄R]) (δ : Fin n → Module.Dua
     obtain ⟨v, rfl⟩ := hy
     have hL : wedge R B (v 0) (v 1) = ∑ i, ∑ j, (δ i (v 0) * δ j (v 1)) • wedge R B (w i) (w j) := by
       conv_lhs => rw [hs (v 0), hs (v 1)]
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Finset.smul_sum, smul_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Finset.smul_sum, smul_smul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun i _ ↦ Finset.sum_congr rfl fun j _ ↦ ?_
       rw [mul_comm]
@@ -85,7 +90,7 @@ theorem eq_expand {n : ℕ} (w : Fin n → Ω[B⁄R]) (δ : Fin n → Module.Dua
     · rw [coordPair_wedge, wedge_swap (w j) (w i), smul_neg, sub_smul]; abel
     · simp
   | zero => simp
-  | add y z _ _ hy hz => rw [map_add, ← hy, ← hz]
+  | add y z _ _ hy hz => rw [map_add (f := _), ← hy, ← hz]
   | smul c y _ hy => rw [map_smul, ← hy]
 
 end Alg
@@ -102,15 +107,15 @@ theorem coordPair_nat {n : ℕ} (Φ : Frame F n) (i j : Fin n) ⦃T T' : C⦄ (�
     rw [ιMulti_two, pOm_wedge, coordPair_wedge, coordPair_wedge, Φ.nat, Φ.nat, Φ.nat, Φ.nat]
     simp only [map_sub, map_mul]
   | zero => simp
-  | add y z _ _ hy hz => simp only [map_add, hy, hz]
+  | add y z _ _ hy hz => simp only [map_add (f := _), hy, hz]
   | smul c y _ hy => rw [pOm_smul, map_smul, map_smul, hy, smul_eq_mul, smul_eq_mul, map_mul]
 
 end GlobalTheory.AbCoh.TwoFormSum
 
 namespace GlobalTheory.AbCoh
 
-open TwoFormSum in
 
+open TwoFormSum in
 theorem twoForm_eq_wsum : ∀ (R : Type) [CommRing R] (C : Type) [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R),
     HasFrame F → CohomZeroIsConstants F → ∀ ζ : W0 F 2, (∀ ⦃T T' : C⦄ (φ : T ⟶ T'), ζ T' = pOm F 2 φ (ζ T)) →
       ∃ (n : ℕ) (u v : Fin n → Glob1 F), ζ = wsum F u v := by

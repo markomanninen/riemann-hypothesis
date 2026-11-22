@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DetCharacterMemPrincipalCongruenceFixedVectors
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemChainVecsDet
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LabelEqOfSuppAdds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DetCharacterMemPrincipalCongruenceFixedVectors
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemChainVecsDet
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LabelEqOfSuppAdds
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem blk_eq_par (x : Gn g a) (y : Gn g b) : blk a b (a + b) x y = par finSumF
   show toG _ = _
   rw [hM]
   unfold toG
-  rw [dif_pos (Units.isUnit _)]
+  rw [dite_eq_left (Units.isUnit _)]
   exact Units.ext (IsUnit.unit_spec _)
 
 theorem exists_eq_par (u : Gn g (a + b)) (h0 : InPar a (u : Mt g (a + b))) (h1 : tl a (u : Mt g (a + b)) = 1)
@@ -147,7 +151,8 @@ theorem has_of_eqv (S : Sys g) {n : ℕ} (π : Representation ℂ (GL (Fin n) �
     rw [← h, red_invFun]
   have key : ∀ w : fixK1 π, actK σ (S.e a f) (T w) = T ((repK π).asAlgebraHom E w) := by
     intro w
-    rw [hE, asAlgebraHom_mapDomain_apply_eq_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hE, asAlgebraHom_mapDomain_apply_eq_sum, map_sum]
     simp only [actK, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, hlift]
   refine ⟨T ((repK π).asAlgebraHom E u), ?_, ?_⟩
   · rw [mem_principalCongruenceFixedVectors_iff]
@@ -396,7 +401,8 @@ theorem series_of_mapsToProd (g : ℕ) [Fact g.Prime] (S : Sys g) (n a b : ℕ) 
     · rw [vanish S (repK π) F f₁ f₂ hF u1, map_zero]
   have hone : (1 : MonoidAlgebra ℂ (Gn g (a + b))) = ∑ f₁ ∈ Ta, ∑ f₂ ∈ Tb,
       mapDomainAlgHom ℂ ℂ (inA finSumFinEquiv) (S.e a f₁) * mapDomainAlgHom ℂ ℂ (inB finSumFinEquiv) (S.e b f₂) := by
-    rw [← Finset.sum_mul_sum, ← map_sum (mapDomainAlgHom ℂ ℂ (inA (g := g) (finSumFinEquiv : Fin a ⊕ Fin b ≃ Fin (a + b))))
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_mul_sum, ← map_sum (mapDomainAlgHom ℂ ℂ (inA (g := g) (finSumFinEquiv : Fin a ⊕ Fin b ≃ Fin (a + b))))
       (S.e a) Ta, ← map_sum (mapDomainAlgHom ℂ ℂ (inB (g := g) (finSumFinEquiv : Fin a ⊕ Fin b ≃ Fin (a + b))))
       (S.e b) Tb, hTa, hTb, map_one, map_one, one_mul]
   have hX : eN g finSumFinEquiv * 1 * S.e (a + b) F = ∑ f₁ ∈ Ta, ∑ f₂ ∈ Tb, eN g finSumFinEquiv *
@@ -412,9 +418,11 @@ theorem series_of_mapsToProd (g : ℕ) [Fact g.Prime] (S : Sys g) (n a b : ℕ) 
   have hsum : T0 u1 = ∑ f₁ ∈ Ta, ∑ f₂ ∈ Tb, T0 ((repK π).asAlgebraHom (eN g finSumFinEquiv *
       mapDomainAlgHom ℂ ℂ (inA finSumFinEquiv) (S.e a f₁) *
       mapDomainAlgHom ℂ ℂ (inB finSumFinEquiv) (S.e b f₂) * S.e (a + b) F) u1) := by
-    rw [e1, hX, map_sum, LinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, hX, map_sum, LinearMap.sum_apply, map_sum]
     refine Finset.sum_congr rfl fun f₁ _ => ?_
-    rw [map_sum, LinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply, map_sum]
   rw [hsum]
   exact Finset.sum_eq_zero fun f₁ _ => Finset.sum_eq_zero fun f₂ _ => hterm f₁ f₂
 

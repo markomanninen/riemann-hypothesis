@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
-import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
+public import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -21,14 +25,16 @@ theorem exists_separating_pairs {R S : Type} [CommRing R] [CommRing S] (φ : R �
   obtain ⟨t, ht, h1⟩ := (Algebra.FormallyUnramified.iff_exists_tensorProduct (R := R) (S := S)).1 inferInstance
   obtain ⟨s, rfl⟩ := TensorProduct.exists_finset t
   refine ⟨s, ?_, fun e e' hee hne => ?_⟩
-  · simpa [map_sum] using h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simpa [map_sum] using h1
   · letI : Algebra R ℂ := (e.comp φ).toAlgebra
     let a : S →ₐ[R] ℂ := { e with commutes' := fun _ => rfl }
     let a' : S →ₐ[R] ℂ := { e' with commutes' := fun r => (RingHom.congr_fun hee r).symm }
     let F := Algebra.TensorProduct.lift a a' (fun _ _ => Commute.all _ _)
     ext x
     have h2 := congrArg F (ht x)
-    simp only [F, map_mul, map_sub, map_sum, Algebra.TensorProduct.lift_tmul, map_one, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, map_mul, map_sub, map_sum, Algebra.TensorProduct.lift_tmul, map_one, map_zero] at h2
     rcases mul_eq_zero.1 h2 with h3 | h3
     · have h4 := (sub_eq_zero.1 h3).symm
       rw [_root_.one_mul, _root_.mul_one] at h4
@@ -60,7 +66,7 @@ theorem exists_open_injOn :
     (hy U f).2.continuousOn.continuousAt (hCo.mem_nhds hb₀C)
   let F : (Fin m → ℂ) × (Fin m → ℂ) → ℂ := fun q => ∑ p ∈ s, valAt' (y q.1) U p.1 * valAt' (y q.2) U p.2
   have hF : ContinuousAt F (b₀, b₀) := by
-    refine tendsto_finset_sum _ fun p _ => ?_
+    refine tendsto_finsetSum _ fun p _ => ?_
     exact ((hc p.1).comp_of_eq continuousAt_fst rfl).mul ((hc p.2).comp_of_eq continuousAt_snd rfl)
   have hF0 : F (b₀, b₀) ≠ 0 := by
     simp only [F, ← valAt'_mul, ← valAt'_sum, hs1, valAt'_one _ h₀]

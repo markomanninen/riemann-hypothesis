@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.OrbAllOfNorm
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.OrbAllOfNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem sigR_mem {z : Fv F v ⊗[F] E} (hz : z ∈ OEv (E := E) v) : sigR (Fv F 
       simpa using (b.isIntegral_coe).map (σ.toRingHom.toIntAlgHom)
     exact gen_mem v ⟨σ (b : E), hb⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul r x _ hx =>
     have h1 : r • x = algebraMap (Fv F v) (Fv F v ⊗[F] E) (r : Fv F v) * x := by
       rw [← Algebra.smul_def]; rfl
@@ -39,7 +43,7 @@ theorem sigR_mem {z : Fv F v ⊗[F] E} (hz : z ∈ OEv (E := E) v) : sigR (Fv F 
 
 theorem hR_add_left' (x y z : Fin n → Fv F v ⊗[F] E) :
     hR (Fv F v) σ J (x + y) z = hR (Fv F v) σ J x z + hR (Fv F v) σ J y z := by
-  simp only [hR, hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hR, hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hR_add_right' (x y z : Fin n → Fv F v ⊗[F] E) :
     hR (Fv F v) σ J x (y + z) = hR (Fv F v) σ J x y + hR (Fv F v) σ J x z := by

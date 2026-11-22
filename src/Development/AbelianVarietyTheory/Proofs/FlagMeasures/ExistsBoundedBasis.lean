@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
-import Formalism.HermitianLattices.HermitianLatticesProofs.MassTelescope
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianMassUpperBound
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPositiveAdd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
+public import Formalism.HermitianLattices.HermitianLatticesProofs.MassTelescope
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianMassUpperBound
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPositiveAdd
+
+@[expose] public section
 
 open NumberField Module Submodule
 open ReciprocityTheory.ChartRestriction.G.FD (herm cc fdeg rdE)
@@ -108,8 +112,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 theorem rdE_pos : 0 < rdE E := Real.rpow_pos_of_pos
     (abs_pos.mpr (by exact_mod_cast NumberField.discr_ne_zero E)) _
 
-open ShortVectors in
 
+open ShortVectors in
 theorem exists_bounded_basis {n : ℕ} (hn : 1 ≤ n) (Λ : Submodule (𝓞 E) (Fin n → E)) (hfg : Λ.FG)
     (hint : ∀ x ∈ Λ, ∀ y ∈ Λ, IsIntegral ℤ (herm 1 x y))
     (hdual : ∀ x, (∀ y ∈ Λ, IsIntegral ℤ (herm 1 x y)) → x ∈ Λ) :
@@ -128,7 +132,8 @@ theorem exists_bounded_basis {n : ℕ} (hn : 1 ≤ n) (Λ : Submodule (𝓞 E) (
       obtain ⟨c, rfl⟩ := (mem_span_range_iff_exists_fun ℤ).1 ((hb y).2 hy)
       choose k hk using hk
       refine ⟨∑ j, c j * k j, ?_⟩
-      rw [← traceHerm_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← traceHerm_apply, map_sum]
       simp only [map_zsmul, hk]
       simp)
   have hle' : ∀ i (τ : E →+* ℂ), ∑ k, ‖τ (v i k)‖ ^ 2 ≤ 2 * (fdeg E : ℝ) * n ^ 2 * rdE E ^ 2 := by
@@ -148,8 +153,8 @@ theorem exists_bounded_basis {n : ℕ} (hn : 1 ≤ n) (Λ : Submodule (𝓞 E) (
   exact ⟨fun i => v (e i), fun i => (hb _).1 (hv _), hs2.comp e e.injective, fun σ i k =>
     SelfDualClasses.norm_herm_le σ _ _ _ (hle' _ σ) (hle' _ σ)⟩
 
-open StdMassBound RootClassCount in
 
+open StdMassBound RootClassCount in
 theorem mass_le [StarRing E] (hs : ∀ x : E, star x = IsCMField.complexConj E x) {n : ℕ} (hn : 1 ≤ n) {B : ℝ}
     (hB : B = 2 * (fdeg E : ℝ) * n ^ 2 * rdE E ^ 2) :
     Formalism.HermitianLatticesTheory.mass (stdForm E n) (stdLat E n) ≤ (1 + 2 * B) ^ (2 * fdeg E * n ^ 2) * (n * B) ^ (2 * fdeg E * n ^ 2) := by
@@ -200,8 +205,8 @@ theorem mass_le [StarRing E] (hs : ∀ x : E, star x = IsCMField.complexConj E x
     _ = s.card := by simp
     _ ≤ R.card := by exact_mod_cast hcard
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem mass_small [StarRing E] (hK : Formalism.HermitianLatticesTheory.IsCMUnram E) (hv : 1 ≤ Formalism.HermitianLatticesTheory.vInv E) {n : ℕ} (h1 : 1 ≤ n)
     (h2 : n ≤ 2) :
     Formalism.HermitianLatticesTheory.mass (Formalism.HermitianLatticesTheory.massTelescope_form E n) (Formalism.HermitianLatticesTheory.massTelescope_lat E n) ≤
@@ -227,8 +232,7 @@ theorem mass_small [StarRing E] (hK : Formalism.HermitianLatticesTheory.IsCMUnra
   have e2 : stdLat E n = Formalism.HermitianLatticesTheory.massTelescope_lat E n := by
     unfold stdLat Formalism.HermitianLatticesTheory.massTelescope_lat
     congr 2
-    funext i
-    simp
+    exact funext fun i => (Pi.basisFun_apply E (Fin n) i).symm
   rw [e1, e2, hr, hf] at hm
   refine hm.trans ?_
   have f1 : (1 : ℝ) ≤ Formalism.HermitianLatticesTheory.fDeg E := by exact_mod_cast (Fintype.card_pos : 0 < Formalism.HermitianLatticesTheory.fDeg E)

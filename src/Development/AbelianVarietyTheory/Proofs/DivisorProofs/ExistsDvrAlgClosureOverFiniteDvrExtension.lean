@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDominatingDvrContainingFinsetStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RamificationLeCardOfSpanStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDominatingDvrContainingFinsetStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RamificationLeCardOfSpanStatement
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory
@@ -36,7 +41,7 @@ theorem exists_dvr_over_finite_ext : ∀ (V W : Type) [CommRing V] [IsDomain V] 
       obtain ⟨i, rfl⟩ := hx
       exact Submodule.subset_span (by simp [hs])
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul v x _ hx =>
       have : φW (v • x) = (f v) • φW x := by
         rw [Algebra.smul_def, map_mul, Subring.smul_def, smul_eq_mul, hf]

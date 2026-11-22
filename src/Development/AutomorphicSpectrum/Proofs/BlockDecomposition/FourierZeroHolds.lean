@@ -1,14 +1,20 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.CoefDataExists
-import Development.WeilBound.CoreStatements.PublishedTheorems.SiegelWeilSchrodinger.SiegelWeilUnitarySchrodingerLit
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaDecompositionUnitary
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelParabolicUnnMatrixBlockUpperTriangular
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.EisensteinMaximalParabolic
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RationalAdelicMatricesSelfAnnihilator
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FiniteAnnihilatorOpenSubgroupInBox
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousTraceMul
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionIsotropicRestrictionNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfCoefficientsSeparatingCharactersEqZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.CoefDataExists
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SiegelWeilSchrodinger.SiegelWeilUnitarySchrodingerLit
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaDecompositionUnitary
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelParabolicUnnMatrixBlockUpperTriangular
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EisensteinIsotropicLine
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AnalyticOnNhdTsumNpow
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RationalAdelicMatricesSelfAnnihilator
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FiniteAnnihilatorOpenSubgroupInBox
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousTraceMul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionIsotropicRestrictionNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfCoefficientsSeparatingCharactersEqZero
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
@@ -38,7 +44,7 @@ def pr (a : Matrix (Fin n) (Fin n) D.host.E) (x : Mx D n n) : AF D.host.F :=
   halfTr (Matrix.trace (HMul.hMul (a.map (incA D)) x : Mx D n n))
 
 theorem halfTr_add (z w : AE D) : halfTr (z + w) = halfTr z + halfTr w := by
-  simp only [halfTr, map_add, mul_add]
+  simp only [halfTr, map_add (f := _), mul_add]
 
 theorem halfTr_zero : halfTr (0 : AE D) = 0 := by
   simp only [halfTr, map_zero, mul_zero]
@@ -80,10 +86,10 @@ theorem trA_cA (z : AE D) : trA (cA D z) = trA z := by
   | tmul a e =>
     show Algebra.trace (AF D.host.F) (AE D) (a ⊗ₜ[D.host.F] (D.sp.cm.sig e)) = Algebra.trace (AF D.host.F) (AE D) (a ⊗ₜ[D.host.F] e)
     rw [GlobalTheory.LatVac.trace_tmul, GlobalTheory.LatVac.trace_tmul, ht]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem halfTr_add_cA (z : AE D) : halfTr (z + cA D z) = trA z := by
-  simp only [halfTr, map_add, trA_cA]
+  simp only [halfTr, map_add (f := _), trA_cA]
   rw [← two_mul, ← mul_assoc, ← map_ofNat (algebraMap D.host.F (AF D.host.F)) 2, ← map_mul]
   norm_num
 
@@ -95,7 +101,8 @@ theorem pr_sym (γ : Matrix (Fin n) (Fin n) D.host.E) {x : Mx D n n} (hx : adj x
     pr (γ + γᴴ) x = trA (Matrix.trace (HMul.hMul (rat γ) x : Mx D n n)) := by
   have e1 : Matrix.trace (HMul.hMul (adj (rat γ)) x : Mx D n n) =
       cA D (Matrix.trace (HMul.hMul (rat γ) x : Mx D n n)) := by
-    rw [← trace_adj, adj_mul, hx]
+    rw [← trace_adj, show adj (rat γ * x) = adj x * adj (rat γ) by
+      simp [adj, Matrix.map_mul, Matrix.transpose_mul], hx]
     exact Matrix.trace_mul_comm _ _
   have e2 : (γ + γᴴ).map (incA D) = rat γ + adj (rat γ) := by
     rw [Matrix.map_add _ (map_add _)]
@@ -106,7 +113,7 @@ theorem pr_sym (γ : Matrix (Fin n) (Fin n) D.host.E) {x : Mx D n n} (hx : adj x
 theorem mem_hermSub_sym (γ : Matrix (Fin n) (Fin n) D.host.E) : γ + γᴴ ∈ hermSub D n := by
   show ((γ + γᴴ).map (D.sp.cm.sig : D.host.E → D.host.E)).transpose = γ + γᴴ
   ext i j
-  simp only [Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.conjTranspose_apply, map_add]
+  simp only [Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.conjTranspose_apply, map_add (f := _)]
   have hs : ∀ e : D.host.E, D.sp.cm.sig e = star e := fun e => rfl
   simp only [hs, star_add, star_star]
   rw [add_comm]
@@ -142,7 +149,7 @@ theorem ker_of_rat {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ)
     (AddMonoidHom.map_trace (incA D) _).symm
   have e2 : -pr a x.1 = algebraMap D.host.F (AF D.host.F)
       (-((1 / 2) * Algebra.trace D.host.F D.host.E (Matrix.trace (a * η)))) := by
-    rw [pr, hη', show (HMul.hMul (a.map (incA D)) (rat η) : Mx D n n) = rat (a * η) from (rat_mul a η).symm, e,
+    rw [pr, hη', show (HMul.hMul (a.map (incA D)) (rat η) : Mx D n n) = rat (a * η) from Matrix.map_mul.symm, e,
       halfTr, trA, GlobalTheory.LatVac.trace_tmul, one_mul, map_neg, map_mul]
   rw [e2]
   exact hψ.2.2.1 _
@@ -173,7 +180,7 @@ theorem sym_add (x y : Mx D n n) : sym (x + y) = sym x + sym y := by
 
 theorem sym_herm {x : Mx D n n} (hx : adj x = x) : sym x = x := by
   have e : incA D (2⁻¹ : D.host.E) + incA D 2⁻¹ = 1 := by
-    rw [← map_add, show (2⁻¹ : D.host.E) + 2⁻¹ = 1 by norm_num, map_one]
+    rw [← map_add (f := _), show (2⁻¹ : D.host.E) + 2⁻¹ = 1 by norm_num, map_one]
   rw [sym, hx, smul_add, ← add_smul, e, one_smul]
 
 theorem sym_rat (η : Matrix (Fin n) (Fin n) D.host.E) : sym (rat η) ∈ ratMx D n n := by
@@ -265,11 +272,12 @@ theorem nb_rat {nb : hermA D n → G D n} (h : IsNMap nb) (γ : hermA D n) (hγ 
   apply rat_injective (D := D)
   have h2 : adj (mat (nb γ)) * JR (AF D.host.F) (Jst D n) * mat (nb γ) = JR (AF D.host.F) (Jst D n) := (nb γ).2
   rw [h γ, ← hm] at h2
-  erw [rat_mul, rat_mul]
+  change ((Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) x.1 * Jst D n * x.1).map (incA D)) = _
+  rw [Matrix.map_mul, Matrix.map_mul]
   exact h2
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem fourierZero : PositivityTheory.PfSWUS.FourierZero := by
   intro D n ψ hψ nb lam 𝓖 hC f hf hinv hco
   obtain ⟨hnb, hlam, hFD, -⟩ := hC

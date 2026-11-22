@@ -1,32 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Topology
 
 namespace GlobalTheory.CuspBack
 
 variable {G W V : Type} [Group G] [AddCommGroup W] [Module ℂ W] [AddCommGroup V] [Module ℂ V]
-
-def lineStab (π : Representation ℂ G W) (x : W) (hx : x ≠ 0) : Subgroup G where
-  carrier := {h | ∃ c : ℂ, π h x = c • x}
-  one_mem' := ⟨1, by simp⟩
-  mul_mem' := by
-    rintro a b ⟨c, hc⟩ ⟨d, hd⟩
-    exact ⟨d * c, by rw [map_mul, Module.End.mul_apply, hd, map_smul, hc, smul_smul]⟩
-  inv_mem' := by
-    rintro a ⟨c, hc⟩
-    have h1 : x = c • π a⁻¹ x := by
-      rw [← map_smul, ← hc, ← Module.End.mul_apply, ← map_mul]; simp
-    have hc0 : c ≠ 0 := by
-      rintro rfl
-      exact hx (by simpa using h1)
-    refine ⟨c⁻¹, ?_⟩
-    conv_rhs => rw [h1]
-    rw [smul_smul, inv_mul_cancel₀ hc0, one_smul]
 
 theorem form_inv (ρ : Representation ℂ G V) (B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ)
     (hi : ∀ g v w, B (ρ g v) (ρ g w) = B v w) (g : G) (v w : V) : B (ρ g⁻¹ v) w = B v (ρ g w) := by
@@ -139,7 +126,7 @@ theorem exists_back : ∀ (G W V : Type) [Group G] [TopologicalSpace G] [IsTopol
     rw [isOpen_iff_mem_nhds]
     intro g hg
     have hg' : ρ.dual g l = l := hg
-    have ho : IsOpen ((fun x => g⁻¹ * x) ⁻¹' (K : Set G)) := hKopen.preimage (continuous_mul_left g⁻¹)
+    have ho : IsOpen ((fun x => g⁻¹ * x) ⁻¹' (K : Set G)) := hKopen.preimage (continuous_const_mul g⁻¹)
     refine Filter.mem_of_superset (ho.mem_nhds ?_) ?_
     · show g⁻¹ * g ∈ K
       rw [inv_mul_cancel]
@@ -210,7 +197,7 @@ theorem exists_back : ∀ (G W V : Type) [Group G] [TopologicalSpace G] [IsTopol
     intro v
     obtain ⟨C, hC, hCs⟩ := hρc v l hl
     obtain ⟨t, ht⟩ := hC.elim_finite_subcover (fun c : G => (fun x => x * c⁻¹) ⁻¹' (K : Set G))
-      (fun c => hKopen.preimage (continuous_mul_right c⁻¹))
+      (fun c => hKopen.preimage (continuous_mul_const c⁻¹))
       (fun c _ => Set.mem_iUnion.2 ⟨c, by simp⟩)
     refine ⟨t.image (fun c => c⁻¹), fun g hg => ?_⟩
     have hne : l (ρ g⁻¹ v) ≠ 0 := by
@@ -234,7 +221,7 @@ theorem exists_back : ∀ (G W V : Type) [Group G] [TopologicalSpace G] [IsTopol
   have hadd : ∀ v v' g, F (v + v') g = F v g + F v' g := by
     intro v v' g
     show B (ρ g⁻¹ (v + v')) (p w) • π g w = B (ρ g⁻¹ v) (p w) • π g w + B (ρ g⁻¹ v') (p w) • π g w
-    rw [map_add, map_add, LinearMap.add_apply, add_smul]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, add_smul]
   have hsmul : ∀ (a : ℂ) v g, F (a • v) g = a • F v g := by
     intro a v g
     show B (ρ g⁻¹ (a • v)) (p w) • π g w = a • (B (ρ g⁻¹ v) (p w) • π g w)

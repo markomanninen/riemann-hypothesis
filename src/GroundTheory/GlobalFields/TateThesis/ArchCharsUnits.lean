@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.ArchChars
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.ArchChars
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

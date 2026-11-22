@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Polynomial GlobalTheory.Pst GlobalTheory.MemLoc GlobalTheory.Pst.StLat GlobalTheory.Pst.NoLog
 open scoped Formalism.Per
 
@@ -32,7 +37,7 @@ theorem exists_full_frac : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) [IsDoma
   let T : GQ l → FractionRing P.R.B := fun g => ι ((kummer P g : ℚ_[l]) • P.tB)
   have hT : ∀ s g, e s (T g) = T (s * g) - T s := by
     intro s g
-    simp only [T, he, map_smul, localPrime_galoisAction_periodT, kummer_mul, smul_smul, add_smul, map_add]
+    simp only [T, he, map_smul, localPrime_galoisAction_periodT, kummer_mul, smul_smul, add_smul, map_add (f := _)]
     rw [mul_comm]; abel
   let f : FractionRing P.R.B := ι b' / ι b
   have hb0 : ι b ≠ 0 := (map_ne_zero_iff ι hι).2 hb
@@ -72,7 +77,8 @@ theorem exists_full_frac : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) [IsDoma
     have h4 : ∑ q : GQ l ⧸ GK K, Fn (s * q.out) = ∑ q : GQ l ⧸ GK K, Fn q.out :=
       Fintype.sum_equiv (MulAction.toPerm s) _ _ fun q => by
         rw [MulAction.toPerm_apply, ← MulAction.Quotient.mk_smul_out, h3, smul_eq_mul]
-    simp only [fa, map_mul, map_inv₀, map_natCast, map_sum, h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [fa, map_mul, map_inv₀, map_natCast, map_sum, h1]
     rw [Finset.sum_add_distrib, h4, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     field_simp
     ring

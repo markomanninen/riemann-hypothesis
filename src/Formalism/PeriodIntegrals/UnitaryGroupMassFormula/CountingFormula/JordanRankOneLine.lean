@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.IsomFixIff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.IsomFixIff
+
+@[expose] public section
 
 open NumberField Module
 open Classical
@@ -31,7 +35,7 @@ theorem vF_eq_vT {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {t : ℕ} (ht 
   have hne : 𝔭 ≠ ⊥ := Formalism.HermitianLattices.Ext.L3.idealPowerSpanBounds.ne_bot h𝔭
   have hp : Prime 𝔭 := Ideal.prime_of_isPrime hne h𝔭.isPrime
   rw [Formalism.L2.SG.Pf.G1.vF_eq_multiplicity h𝔭 ht0, vT,
-    UniqueFactorizationMonoid.multiplicity_eq_count_normalizedFactors hp.irreducible hI, normalize_eq]
+    UniqueFactorizationMonoid.multiplicity_eq_count_normalizedFactors hp.irreducible, normalize_eq]
 
 theorem nondeg {h1 : V1 →ₗ⋆[K] V1 →ₗ[K] K} {z : V1} {t : ℕ} (hH : GlueHyp K F h1 z t) :
     Formalism.L2.SG.Pf.Cnt.Nondeg h1 := by
@@ -47,7 +51,7 @@ theorem nondeg {h1 : V1 →ₗ⋆[K] V1 →ₗ[K] K} {z : V1} {t : ℕ} (hH : Gl
     rw [this, map_zero]
   have e1 := hx z
   change h1 (c • z + w.1) z = 0 at e1
-  rw [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, hwz, add_zero,
+  rw [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, hwz, add_zero,
     smul_eq_mul] at e1
   have hc : c = 0 := by
     have h2 : (starRingEnd K) c = 0 := (mul_eq_zero.1 e1).resolve_right hz0

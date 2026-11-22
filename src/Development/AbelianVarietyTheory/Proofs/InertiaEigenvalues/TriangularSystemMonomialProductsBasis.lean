@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DeltaStructureOfWittLengthTwoSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DeltaStructureOfWittLengthTwoSection
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
@@ -17,7 +21,7 @@ theorem revLex_lt {β γ : ℕ →₀ ℕ} (i : ℕ) (h1 : ∀ j, i < j → β j
 variable {σ : Type} {R : Type} [CommRing R]
 
 def Led (m : MonomialOrder.{0, 0} σ) (p : MvPolynomial σ R) (γ : σ →₀ ℕ) : Prop :=
-  IsUnit (MvPolynomial.coeff γ p) ∧ m.toSyn (m.degree p) ≤ m.toSyn γ
+  IsUnit (AddMonoidAlgebra.coeff p γ) ∧ m.toSyn (m.degree p) ≤ m.toSyn γ
 
 theorem Led.mul {m : MonomialOrder.{0, 0} σ} {p q : MvPolynomial σ R} {γ δ : σ →₀ ℕ}
     (hp : Led m p γ) (hq : Led m q δ) : Led m (p * q) (γ + δ) := by
@@ -206,7 +210,7 @@ theorem tri_basis : ∀ (l : ℕ) [Fact l.Prime] (R : Type) [CommRing R] (t : �
     obtain ⟨x, hx, hxmax⟩ := Finset.exists_max_image _
       (fun x : Digits l × (ℕ →₀ ℕ) => revLex.toSyn (x.1.1 + l • x.2)) hs'
     rw [Finset.mem_filter] at hx
-    have hc := congrArg (MvPolynomial.coeff (x.1.1 + l • x.2)) hg
+    have hc := congrArg (AddMonoidAlgebra.coeff · (x.1.1 + l • x.2)) hg
     rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_zero, Finset.sum_eq_single x] at hc
     · rw [MvPolynomial.coeff_smul, smul_eq_mul] at hc
       obtain ⟨hu, _⟩ := hLed x

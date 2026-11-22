@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.HoloSectionStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.HoloSectionStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Norm
 

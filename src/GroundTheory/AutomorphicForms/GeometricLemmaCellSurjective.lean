@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemmaJacquetCell
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemmaJacquetCell
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -29,12 +34,13 @@ theorem exists_nonneg_avgOver (π : W →ₗ[ℂ] E) {K : Subgroup G} {f : G →
   have hidx : (0 : ℝ) < (S.index : ℝ) := Nat.cast_pos.2 (Nat.pos_of_ne_zero hf)
   refine ⟨(S.index : ℝ)⁻¹ * ∑ q, rr q, ?_, ?_, ?_⟩
   · exact mul_nonneg (inv_nonneg.2 hidx.le) (Finset.sum_nonneg fun q _ => (hrr q).1)
-  · rw [avgOver_eq_sum, map_smul, map_sum]
-    simp_rw [fun q : K ⧸ S => (hrr q).2]
-    rw [← Finset.sum_smul, smul_smul]
-    congr 1
-    push_cast
-    rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [avgOver_eq_sum, map_smul, map_sum]
+      simp_rw [fun q : K ⧸ S => (hrr q).2]
+      rw [← Finset.sum_smul, smul_smul]
+      congr 1
+      push_cast
+      rfl
   · intro r₀ hr₀ hfx hc₀
     set q₀ : K ⧸ S := QuotientGroup.mk 1
     have hq₀ : (Quotient.out q₀ : K) ∈ S := by
@@ -76,8 +82,8 @@ section Bump
 variable {β : Fin n → ℕ} {W : Type*} [AddCommGroup W] [Module ℂ W]
   (σ : Representation ℂ (levi F n β) W)
 
-open Classical in
 
+open Classical in
 def bumpFun (x : GL (Fin n) F) (K : Subgroup (GL (Fin n) F)) (v : W) : GL (Fin n) F → W :=
   fun g => if h : ∃ p : blockUpper F n β, ∃ k ∈ K, g = (p : GL (Fin n) F) * x * k then
     inflateTwist F n β σ h.choose v else 0
@@ -114,7 +120,7 @@ theorem bumpFun_eq_zero {x : GL (Fin n) F} {K : Subgroup (GL (Fin n) F)} {v : W}
     (hg : ¬ ∃ p : blockUpper F n β, ∃ k ∈ K, g = (p : GL (Fin n) F) * x * k) :
     bumpFun σ x K v g = 0 := by
   unfold bumpFun
-  rw [dif_neg hg]
+  rw [dite_eq_right hg]
 
 theorem exists_of_bumpFun_ne_zero {x : GL (Fin n) F} {K : Subgroup (GL (Fin n) F)} {v : W}
     {g : GL (Fin n) F} (hg : bumpFun σ x K v g ≠ 0) :
@@ -183,12 +189,6 @@ theorem permGL_conj_mem_congruenceSubgroup {J : ℕ} {k : GL (Fin n) F}
     (hk : k ∈ congruenceSubgroup F n J) :
     permGL F w * k * (permGL F w)⁻¹ ∈ congruenceSubgroup F n J :=
   conj_mem_congruenceSubgroup F n (permGL_mem_integralGL w) hk
-
-theorem permGL_inv_conj_mem_congruenceSubgroup {J : ℕ} {k : GL (Fin n) F}
-    (hk : k ∈ congruenceSubgroup F n J) :
-    (permGL F w)⁻¹ * k * permGL F w ∈ congruenceSubgroup F n J := by
-  have := conj_mem_congruenceSubgroup F n ((integralGL F n).inv_mem (permGL_mem_integralGL w)) hk
-  simpa using this
 
 variable {Y : Set (GL (Fin n) F)} (hYo : IsOpen Y)
   (hCY : closure (doubleCoset (permGL F w) (blockUpper F n β : Set (GL (Fin n) F))

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigLamEquivData
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigLamLeOfKTypes
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigLamEquivData
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigLamLeOfKTypes
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem hsOne_conj {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Matrix.unitaryGr
     Matrix.one_mul]
 
 theorem contDiff_entry (i j : Fin n) : ContDiff ℝ ∞ (fun g : Matrix (Fin n) (Fin n) ℂ => g i j) :=
-  (contDiff_apply ℝ ℂ j).comp (contDiff_apply ℝ (Fin n → ℂ) i)
+  (contDiff_apply ℝ (fun _ => ℂ) j).comp (contDiff_apply ℝ (fun _ => (Fin n → ℂ)) i)
 
 theorem contDiff_hsOne : ContDiff ℝ ∞ (hsOne (n := n)) := by
   unfold hsOne
@@ -135,7 +139,7 @@ theorem opConv_add (hσ : IsURepOn (UJset ε) σ) {α : Matrix (Fin n) (Fin n) �
   rw [← integral_add (arb_integrable hσ v hα hαc) (arb_integrable hσ w hα hαc)]
   congr 1
   funext y
-  rw [map_add, smul_add]
+  rw [map_add (f := _), smul_add]
 
 theorem opConv_smul {α : Matrix (Fin n) (Fin n) ℂ → ℂ} (c : ℂ) (v : H) :
     opConv ε σ α (c • v) = c • opConv ε σ α v := by
@@ -144,12 +148,6 @@ theorem opConv_smul {α : Matrix (Fin n) (Fin n) ℂ → ℂ} (c : ℂ) (v : H) 
   congr 1
   funext y
   rw [map_smul, smul_comm]
-
-def opConvL (hσ : IsURepOn (UJset ε) σ) {α : Matrix (Fin n) (Fin n) ℂ → ℂ} (hα : Continuous α)
-    (hαc : HasCompactSupport α) : H →ₗ[ℂ] H where
-  toFun := opConv ε σ α
-  map_add' := opConv_add hσ hα hαc
-  map_smul' := opConv_smul
 
 theorem opConv_comm_K (hσ : IsURepOn (UJset ε) σ) {α : Matrix (Fin n) (Fin n) ℂ → ℂ} (hα : Continuous α)
     (hαc : HasCompactSupport α) (hαK : IsAdKInv ε α) {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε)

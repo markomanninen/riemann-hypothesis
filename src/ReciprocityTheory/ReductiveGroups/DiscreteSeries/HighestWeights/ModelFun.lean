@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelDer
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InhabA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelDer
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InhabA
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ def blkMinor (ε : Fin n → Bool) (a : Fin n) (x : Matrix (Fin n) (Fin n) ℂ) 
   (x.submatrix (fun b : {b : Fin n // ε b = ε a ∧ b ≤ a} => (b : Fin n))
     (fun b : {b : Fin n // ε b = ε a ∧ b ≤ a} => (b : Fin n))).det
 
-open Classical in
 
+open Classical in
 def mexp (ε : Fin n → Bool) (m : Fin n → ℤ) (a : Fin n) : ℤ :=
   if h : (Finset.univ.filter fun b : Fin n => a < b ∧ ε b = ε a).Nonempty then
     m a - m ((Finset.univ.filter fun b : Fin n => a < b ∧ ε b = ε a).min' h)
@@ -26,13 +30,6 @@ def mexp (ε : Fin n → Bool) (m : Fin n → ℤ) (a : Fin n) : ℤ :=
 
 def NonnegDom (ε : Fin n → Bool) (m : Fin n → ℤ) : Prop :=
   (∀ a b, a < b → ε a = ε b → m b ≤ m a) ∧ ∀ a, 0 ≤ m a
-
-theorem nonnegDom_zero (ε : Fin n → Bool) : NonnegDom ε 0 := by
-  constructor
-  · intro a b _ _
-    simp
-  · intro a
-    simp
 
 def f0 (ε : Fin n → Bool) (m : Fin n → ℤ) (x : Matrix (Fin n) (Fin n) ℂ) : ℂ :=
   ∏ a, blkMinor ε a x ^ (mexp ε m a).toNat
@@ -79,15 +76,6 @@ theorem differentiable_highest_weight_fn (ε : Fin n → Bool) (m : Fin n → �
   show Differentiable ℂ (fun x : Matrix (Fin n) (Fin n) ℂ => f0 ε m x)
   simp only [f0]
   exact hwmf_diff_prod _ _ (fun a => (hwmf_diff_blkMinor ε a).pow _)
-
-theorem continuous_f0K (ε : Fin n → Bool) (m : Fin n → ℤ) : Continuous (f0K ε m) := by
-  have hc : Continuous (toMK (ε := ε)) := by
-    first
-      | exact continuous_toMK
-      | exact continuous_toMK ε
-      | (unfold toMK; fun_prop)
-      | (unfold toMK; exact Units.continuous_val.comp (continuous_subtype_val.comp continuous_subtype_val))
-  exact (differentiable_highest_weight_fn ε m).continuous.comp hc
 
 theorem highest_weight_fn_K_one (ε : Fin n → Bool) (m : Fin n → ℤ) : f0K ε m 1 = 1 := by
   have h1 : toMK (1 : KG ε) = 1 := by
@@ -172,7 +160,7 @@ lemma hwmf_rdc (ε : Fin n → Bool) (m : Fin n → ℤ) (Z : Matrix (Fin n) (Fi
   rw [show Complex.I * fderiv ℂ (f0 ε m) (toMK x) (toMK x * cpart2 ε (bdPart ε Z)) =
       fderiv ℂ (f0 ε m) (toMK x) (Complex.I • (toMK x * cpart2 ε (bdPart ε Z))) from
       ((fderiv ℂ (f0 ε m) (toMK x)).map_smul Complex.I _).symm]
-  rw [← map_add, ← Matrix.mul_smul, ← Matrix.mul_add, hwmf_cpart_sum]
+  rw [← map_add (f := _), ← Matrix.mul_smul, ← Matrix.mul_add, hwmf_cpart_sum]
 
 lemma hwmf_line (ε : Fin n → Bool) (m : Fin n → ℤ) (x W : Matrix (Fin n) (Fin n) ℂ) :
     HasDerivAt (fun s : ℂ => f0 ε m (x * (1 + s • W))) (fderiv ℂ (f0 ε m) x (x * W)) 0 := by
@@ -314,12 +302,12 @@ lemma hwmf_tele (ε : Fin n → Bool) (m : Fin n → ℤ) : ∀ k : ℕ, ∀ a :
       exact ⟨a', by simp [ha'mem.1, ha'mem.2], by simp⟩
     rw [hset, ih _ hcard a' rfl]
     unfold mexp
-    rw [dif_pos hne, ha'def]
+    rw [dite_eq_left hne, ha'def]
     ring
   · have hemp := Finset.not_nonempty_iff_eq_empty.1 hne
     rw [hemp, Finset.sum_empty, add_zero]
     unfold mexp
-    rw [dif_neg hne]
+    rw [dite_eq_right hne]
 
 lemma hwmf_bd_single (ε : Fin n → Bool) {a b : Fin n} (he : ε a = ε b) :
     bdPart ε (single a b (1 : ℂ)) = single a b 1 := by

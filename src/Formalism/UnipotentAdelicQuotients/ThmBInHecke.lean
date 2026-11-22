@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,8 +74,8 @@ def intAE : AddSubgroup (Af F ⊗[F] E) :=
 def idF : (AF F)ˣ →* (AE F E)ˣ :=
   Units.map (algebraMap (AF F) (AE F E)).toMonoidHom
 
-open HeckeCharacterZeroLocus.ThmBIn in
 
+open HeckeCharacterZeroLocus.ThmBIn in
 def IsHeckeChar (χ : (AE F E)ˣ →* Circle) : Prop :=
   Continuous χ ∧ ∀ x : Eˣ, χ (Units.map (incA F E).toMonoidHom x) = 1
 
@@ -103,8 +107,9 @@ def IsUnramAt (σ : E →ₐ[F] E) (χ : (AE F E)ˣ →* Circle) (P : HeightOneS
   ∃ e f : AE F E, IsPrimeIdem σ P e f ∧ ∀ x : (AE F E)ˣ, (x : AE F E) = e * (x : AE F E) + (1 - e) →
     finPart F E (x : AE F E) ∈ intAE F E → finPart F E ((x⁻¹ : (AE F E)ˣ) : AE F E) ∈ intAE F E → χ x = 1
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def chiAt (σ : E →ₐ[F] E) (χ : (AE F E)ˣ →* Circle) (P : HeightOneSpectrum (𝓞 E)) : ℂ :=
   if h : IsUnramAt σ χ P ∧ ∃ x, IsUnifIdele σ P x then ((χ h.2.choose : Circle) : ℂ) else 0
 
@@ -113,27 +118,7 @@ def normP (P : HeightOneSpectrum (𝓞 E)) : ℕ := Ideal.absNorm P.asIdeal
 def lfac (σ : E →ₐ[F] E) (χ : (AE F E)ˣ →* Circle) (P : HeightOneSpectrum (𝓞 E)) (s : ℂ) : ℂ :=
   (1 - chiAt σ χ P * (normP P : ℂ) ^ (-s))⁻¹
 
-def lEuler (σ : E →ₐ[F] E) (χ : (AE F E)ˣ →* Circle) (s : ℂ) : ℂ :=
-  ∏' P : HeightOneSpectrum (𝓞 E), lfac σ χ P s
-
 end Hecke
-
-def HeckeLNonvanish : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E),
-    IsCMExt F E σ →
-    ∀ χ : (AE F E)ˣ →* Circle, IsHeckeChar F E χ → (∀ a : (AF F)ˣ, χ (idF F E a) = 1) → χ ≠ 1 →
-      (∀ s : ℂ, 1 < s.re → Multipliable (fun P : HeightOneSpectrum (𝓞 E) => lfac σ χ P s)) ∧
-      ∃ (L : ℂ → ℂ) (ε : ℝ), 0 < ε ∧ DifferentiableOn ℂ L {s | 1 - ε < s.re} ∧
-        (∀ s : ℂ, 1 < s.re → L s = lEuler σ χ s) ∧ L 1 ≠ 0
-
-def LfinHol : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E),
-    IsCMExt F E σ →
-    ∀ χ : (AE F E)ˣ →* Circle, IsHeckeChar F E χ → (∀ a : (AF F)ˣ, χ (idF F E a) = 1) → χ ≠ 1 →
-      ∃ (L : ℂ → ℂ) (ε : ℝ), 0 < ε ∧ DifferentiableOn ℂ L {s | 1 - ε < s.re} ∧
-        (∀ s : ℂ, 1 < s.re → Multipliable (fun P : HeightOneSpectrum (𝓞 E) => lfac σ χ P s) ∧
-          L s = lEuler σ χ s) ∧
-        ∀ n : ℕ, 1 ≤ n → (L n).im = 0 ∧ 0 < (L n).re
 
 end HeckeCharacterZeroLocus.ThmBIn
 

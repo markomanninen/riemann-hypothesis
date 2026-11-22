@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCMFrame
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.HermitianMetricLogNormFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GramDetNeZeroLocalBasisCofiniteStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChowlaSelbergPeriodStatement
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.LogNormsExtDegreeAdelicStatement
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SumEmbeddingsBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmValueStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmHeightStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmNumberFieldStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCMFrame
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.HermitianMetricLogNormFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GramDetNeZeroLocalBasisCofiniteStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChowlaSelbergPeriodStatement
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.LogNormsExtDegreeAdelicStatement
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SumEmbeddingsBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmValueStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmHeightStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameFunctionCmNumberFieldStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem flatDegree_logOm_re (E : Type) [Field E] [NumberField E] {d : ℕ} [NeZe
       deriv χ.LFunction 1 / χ.LFunction 1) :
     (logOm E χ).re = x - Real.log (rootDiscr E) + Real.log (Real.sqrt d) := by
   have hrd : 0 < rootDiscr E := by
-    unfold NumberField.rootDiscr
+    rw [NumberField.rootDiscr_def]
     apply Real.rpow_pos_of_pos
     exact_mod_cast abs_pos.mpr (NumberField.discr_ne_zero E)
   have hd : 0 < √(d : ℝ) :=

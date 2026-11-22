@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsStrictDom
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPermWOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemIwUIff
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsStrictDom
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPermWOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemIwUIff
+
+@[expose] public section
+
 open GlobalTheory.PRep Formalism.UG GlobalTheory.LFun PositivityTheory.SphericalProduct GlobalTheory.CompanionTheory.SatPow
 
 noncomputable section
@@ -18,7 +23,7 @@ theorem val_le_of_ordL_lt {a b : L} (ha : a ≠ 0) (hb : b ≠ 0) (h : ordL a < 
   have ha' : Valued.v a ≠ 0 := (Valuation.ne_zero_iff _).2 ha
   have hb' : Valued.v b ≠ 0 := (Valuation.ne_zero_iff _).2 hb
   unfold ordL at h
-  rw [dif_neg ha', dif_neg hb'] at h
+  rw [dite_eq_right ha', dite_eq_right hb'] at h
   have hle : WithZero.unzero hb' ≤ WithZero.unzero ha' := by
     rw [← Multiplicative.toAdd_le]; omega
   have := WithZero.coe_le_coe.2 hle

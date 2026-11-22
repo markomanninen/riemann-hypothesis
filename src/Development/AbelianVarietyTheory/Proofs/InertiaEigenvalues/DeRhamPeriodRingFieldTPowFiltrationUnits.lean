@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFilPIffEvPt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFilPIffEvPt
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,9 +25,13 @@ theorem tz_eq (a : ℤ) : tz P a = ((tu P ^ a : P.R.BdRˣ) : P.R.BdR) := by
   rfl
 
 theorem fil_anti_le {a b : ℤ} (h : a ≤ b) (x : P.R.BdR) (hx : x ∈ Fil P b) : x ∈ Fil P a := by
-  induction b, h using Int.le_induction with
-  | base => exact hx
-  | succ b _ ih => exact ih ((P.PD (botExt l)).Fil_anti b hx)
+  obtain ⟨n, hn⟩ : ∃ n : ℕ, b = a + n := ⟨(b - a).toNat, by omega⟩
+  subst b
+  induction n with
+  | zero => simpa using hx
+  | succ n ih =>
+    change x ∈ (P.PD (botExt l)).Fil (a + ↑(n + 1)) at hx
+    exact ih (by omega) ((P.PD (botExt l)).Fil_anti (a + n) (by simpa [add_assoc] using hx))
 
 theorem ι_injective : Function.Injective P.ιB := fun a b h =>
   (P.PD (botExt l)).ι_inj (by rw [P.PD_ι, P.PD_ι]; exact h)

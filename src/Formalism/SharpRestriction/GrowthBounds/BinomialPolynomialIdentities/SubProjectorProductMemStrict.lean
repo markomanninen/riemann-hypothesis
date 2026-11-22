@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LowerSetTypesSpan
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LowerSetTypesSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -271,7 +275,7 @@ theorem restJointDim : RestJointDim := by
   have hkill : ∀ y ∈ strictJointLower J lam, projectorProduct J lam l y = 0 := by
     intro y hy
     refine Submodule.iSup_induction (fun j => strictLowerPart J lam j) (motive := fun z => projectorProduct J lam l z = 0) hy
-      (fun j z hz => ?_) (map_zero _) (fun a b ha hb => by rw [map_add, ha, hb, add_zero])
+      (fun j z hz => ?_) (map_zero _) (fun a b ha hb => by rw [map_add (f := _), ha, hb, add_zero])
     have hz' := (Submodule.mem_inf.mp hz).2
     rw [mem_component_sum_iff] at hz'
     exact projector_product_kill J lam l j (hl j) z (hz' (lam j) (fun h => h.2.2 rfl))

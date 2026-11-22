@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+
+@[expose] public section
+
 open GlobalTheory.SeqCx Matrix
 
 namespace GlobalTheory.UniModVec

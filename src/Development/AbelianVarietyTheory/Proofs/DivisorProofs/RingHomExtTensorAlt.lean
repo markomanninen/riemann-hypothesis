@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.TensorRingHomExtensionality
 
@@ -15,6 +19,6 @@ theorem ringHom_ext_tensor {R S B C : Type} [CommRing R] [CommRing S] [CommRing 
     have h : s ⊗ₜ[R] b = (s ⊗ₜ[R] (1 : B)) * ((1 : S) ⊗ₜ[R] b) := by
       rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
     rw [h, map_mul, map_mul, h₁, h₂]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 end GlobalTheory.TensorRingHomExtensionality

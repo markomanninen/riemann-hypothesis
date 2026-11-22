@@ -1,11 +1,15 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.TensorIrr
-import Mathlib.LinearAlgebra.PiTensorProduct.Basis
-import Mathlib.RingTheory.SimpleModule.Basic
-import Mathlib.RingTheory.Algebraic.LinearIndependent
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.Analysis.Complex.Polynomial.Basic
-import Mathlib.Analysis.Complex.Cardinality
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SpectrumNonemptyOfCountableRank
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.TensorIrr
+public import Mathlib.LinearAlgebra.PiTensorProduct.Basis
+public import Mathlib.RingTheory.SimpleModule.Basic
+public import Mathlib.RingTheory.Algebraic.LinearIndependent
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+public import Mathlib.Analysis.Complex.Polynomial.Basic
+public import Mathlib.Analysis.Complex.Cardinality
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SpectrumNonemptyOfCountableRank
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem schur_countable {B V : Type} [Ring B] [Algebra ℂ B] [AddCommGroup V] [
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
   have hev : Function.Injective ev := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro T hT
     by_contra h0
     exact hv ((LinearMap.injective_of_ne_zero h0) (by rw [map_zero]; exact hT))
@@ -101,7 +105,7 @@ theorem one_op_fin (i : ι) (x : PiTensorProduct ℂ M) :
     obtain ⟨s, hs⟩ := hy
     obtain ⟨t, ht⟩ := hz
     refine ⟨s ∪ t, fun f g h => ?_⟩
-    rw [map_add, map_add, hs f g fun m hm => h m (Finset.mem_union_left _ hm),
+    rw [map_add (f := _), map_add (f := _), hs f g fun m hm => h m (Finset.mem_union_left _ hm),
       ht f g fun m hm => h m (Finset.mem_union_right _ hm)]
 
 theorem map_mem_of_one_op [Fintype ι] (N : Submodule ℂ (PiTensorProduct ℂ M))

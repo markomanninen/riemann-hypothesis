@@ -1,7 +1,11 @@
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BigCellLocal
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Formalism.SatakeDualWeyl.StatementF
-import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+module
+
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BigCellLocal
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Formalism.SatakeDualWeyl.StatementF
+public import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TwoSumsCondition
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaRestSExpVOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TwoSumsCondition
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaRestSExpVOf
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLiftModelsOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLiftModelsOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ section Gen
 variable {N : Type} [AddCommGroup N] [Module ℂ N] {C : Submodule ℂ N} {ip : N → N → ℂ}
 
 theorem hp_add_right (h : PeterssonHilbertSpace.IsHermPos C ip) (x y y' : C) : ip x ((y : N) + y') = ip x y + ip x y' := by
-  rw [← Submodule.coe_add, ← h.herm (y + y') x, Submodule.coe_add, h.add y y' x, map_add, h.herm y x, h.herm y' x]
+  rw [← Submodule.coe_add, ← h.herm (y + y') x, Submodule.coe_add, h.add y y' x, map_add (f := _), h.herm y x, h.herm y' x]
 
 theorem hp_smul_right (h : PeterssonHilbertSpace.IsHermPos C ip) (s : ℂ) (x y : C) : ip x (s • (y : N)) = s * ip x y := by
   rw [← Submodule.coe_smul, ← h.herm (s • y) x, Submodule.coe_smul, h.smul s y x, map_mul, h.herm y x,
@@ -57,7 +61,7 @@ theorem hp_riesz {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Fi
       { toFun := fun x => ip w (j x)
         map_add' := fun a b => by
           have := hp_add_right h w ⟨j a, hj a⟩ ⟨j b, hj b⟩
-          simpa [map_add] using this
+          simpa [map_add (f := _)] using this
         map_smul' := fun s a => by
           have := hp_smul_right h s w ⟨j a, hj a⟩
           simpa [map_smul] using this }
@@ -161,7 +165,7 @@ theorem exists_chainHilb : ∀ (D : D7) (C : ChainReal D) (b : Bool) (U : D.what
     have hh : 1 ≤ j ∧ j ≤ D.R.m - 1 := ⟨h1, h2⟩
     obtain ⟨hi, hr, hip⟩ := hL μ j h2
     dsimp only [jM]
-    rw [dif_pos hh]
+    rw [dite_eq_left hh]
     refine ⟨?_, ?_, ?_⟩
     · rw [LinearMap.coe_comp]; exact hi.comp (LinearEquiv.injective _)
     · rw [LinearMap.range_comp_of_range_eq_top _ (LinearEquiv.range _), hr]
@@ -170,18 +174,18 @@ theorem exists_chainHilb : ∀ (D : D7) (C : ChainReal D) (b : Bool) (U : D.what
       exact (LinearIsometryEquiv.inner_map_map _ x x').symm
   · intro μ hU x v h
     dsimp only [io]
-    rw [dif_pos hU, dif_pos rfl]
+    rw [dite_eq_left hU, dite_eq_left rfl]
     simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearIsometryEquiv.coe_toLinearEquiv,
       LinearIsometryEquiv.apply_symm_apply]
     exact hr0 μ x _
   · intro μ hU j h1 h2 x v h
     dsimp only [io]
-    rw [dif_pos hU, dif_neg (by omega), dif_neg (by omega)]
+    rw [dite_eq_left hU, dite_eq_right (by omega), dite_eq_right (by omega)]
     rw [LinearMap.comp_apply, hR μ j (by omega)]
     rfl
   · intro μ hU x v v' hv h
     dsimp only [io]
-    rw [dif_pos hU, dif_neg (by omega), dif_pos (by omega)]
+    rw [dite_eq_left hU, dite_eq_right (by omega), dite_eq_left (by omega)]
     simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearIsometryEquiv.coe_toLinearEquiv]
     rw [heqv_self, hR μ _ le_rfl]
     refine congrArg (fun y => C.ipP b μ (D.R.m - 1) (jM μ (D.R.m - 1) x)
@@ -189,6 +193,6 @@ theorem exists_chainHilb : ∀ (D : D7) (C : ChainReal D) (b : Bool) (U : D.what
     exact congrArg (jX μ) (heqv_heq _ _ v' v hv)
   · intro μ hU j
     dsimp only [io]
-    rw [dif_neg hU]
+    rw [dite_eq_right hU]
 
 end GlobalTheory.ChainHilb

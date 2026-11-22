@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OmMul
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OmMul
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -41,15 +46,6 @@ end
 section
 variable {L : Type} [Field L] [Algebra ℂ L]
 
-private theorem iMulti_mul (p q : ℕ) (u : Fin p → L) (v : Fin q → L) :
-    (ExteriorAlgebra.ιMulti L p fun j => D ℂ L (u j)) * (ExteriorAlgebra.ιMulti L q fun j => D ℂ L (v j)) =
-      ExteriorAlgebra.ιMulti L (p + q) fun j => D ℂ L (Fin.append u v j) := by
-  simp only [ExteriorAlgebra.ιMulti_apply]
-  rw [← List.prod_append, ← List.ofFn_fin_append]
-  congr 2
-  funext j
-  refine Fin.addCases (fun i => ?_) (fun i => ?_) j <;> simp
-
 private theorem om_mul (B : Subalgebra ℂ L) {p q : ℕ} {u w : DR ℂ L} (hu : u ∈ omB ℂ L B p)
     (hw : w ∈ omB ℂ L B q) : u * w ∈ omB ℂ L B (p + q) :=
   _root_.UpperTheory.Reformulated.B.Qe48.om_mul B hu hw
@@ -75,7 +71,8 @@ private theorem wd_map {ι E E' : Type} [LinearOrder ι] [AddCommGroup E] [Modul
     (h : ∀ i m, f (w i m) = w' i (f m)) (c : Finset ι → E) :
     wd w' (fun s => f (c s)) = fun s => f (wd w c s) := by
   funext t
-  simp [wd, h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [wd, h, map_sum]
 
 section
 variable {F K K' : Type} [Field F] [Field K] [Field K'] [Algebra ℂ F] [Algebra ℂ K] [Algebra ℂ K'] [Algebra F K]
@@ -100,11 +97,11 @@ private theorem gY_act (s : K ⊗[ℂ] K) (m : DR ℂ K ⊗[ℂ] DR ℂ K) :
     gY j2 (actZ K s m) = gS j2 s • gY j2 m := by
   induction s using TensorProduct.induction_on with
   | zero => simp
-  | add s t hs ht => simp only [map_add, LinearMap.add_apply, add_smul, hs, ht]
+  | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, add_smul, hs, ht]
   | tmul p q =>
     induction m using TensorProduct.induction_on with
     | zero => simp
-    | add u v hu hv => simp only [map_add, smul_add, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), smul_add, hu, hv]
     | tmul w' w =>
       have e : actZ K (p ⊗ₜ q) (w' ⊗ₜ w) = (p • w') ⊗ₜ[ℂ] (q • w) := by
         simp [actZ, Module.endTensorEndAlgHom_apply]
@@ -161,7 +158,7 @@ theorem UpperTheory.Gal.productCup_of_system.gMap_of :
     induction t using TensorProduct.induction_on with
     | zero => simp
     | add u v hu hv =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem hu hv
     | tmul p q =>
       have e : gS j2 (Algebra.TensorProduct.map (rB ℂ K (xv x) I).val (rB ℂ K (xv x) J).val (p ⊗ₜ q)) =

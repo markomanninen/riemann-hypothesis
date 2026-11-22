@@ -1,11 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Real Filter Asymptotics
 
 namespace GlobalTheory
 
-open Real Filter Asymptotics in
 
+open Real Filter Asymptotics in
 theorem _root_.GlobalTheory.const_mul_rpow_mul_log_pow_le_rpow :
     ∀ a b C : ℝ, ∀ p : ℕ, a < b →
       ∃ x0 : ℝ, ∀ x ≥ x0, C * x ^ a * Real.log x ^ p ≤ x ^ b := by

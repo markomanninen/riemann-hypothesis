@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPair
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPair
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -21,7 +25,7 @@ theorem spectral_pairing_inner_swap : RDSPIpSwap := by
       (Equiv.subtypeUnivEquiv (p := fun l : Fin r => ((0 : Fin (r + 1)) : ℕ) ≤ l) (fun l => Nat.zero_le _)) c' l
   have hglue : ∀ c' : Cf r 0, glue 0 c c' = e c' := fun c' => funext fun l => by
     simp only [glue]
-    rw [dif_pos (show ((0 : Fin (r + 1)) : ℕ) ≤ (l : ℕ) from Nat.zero_le _)]
+    rw [dite_eq_left (show ((0 : Fin (r + 1)) : ℕ) ≤ (l : ℕ) from Nat.zero_le _)]
     exact (happ c' ⟨l, Nat.zero_le _⟩).symm
   have hprod : ∀ c' : Cf r 0,
       (∏ l : {l : Fin r // ((0 : Fin (r + 1)) : ℕ) ≤ l}, ‖c' l‖ ^ (-2 : ℤ)) = ∏ l : Fin r, (‖e c' l‖ ^ 2)⁻¹ := by

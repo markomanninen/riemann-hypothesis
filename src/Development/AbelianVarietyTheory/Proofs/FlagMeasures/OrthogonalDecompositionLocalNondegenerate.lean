@@ -1,6 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+
+@[expose] public section
+
 open scoped Classical ENNReal
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.Unfold
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -19,7 +24,8 @@ theorem mem_orth_of_basis {n : ℕ} (U : Submodule D.host.E (VS D).V)
     rw [Submodule.coe_sum] at this
     simp only [Submodule.coe_smul] at this
     exact this.symm
-  rw [hu', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hu', map_sum]
   simp [hy]
 
 theorem exists_decomp (U : Submodule D.host.E (VS D).V) (hU : U ⊓ orth (VS D) U = ⊥)
@@ -53,7 +59,8 @@ theorem gram_det_ne_zero {n : ℕ} (U : Submodule D.host.E (VS D).V) (hU : U ⊓
     intro i
     have := congrFun hα i
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply] at this
-    rw [Submodule.coe_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Submodule.coe_sum, map_sum]
     simpa [mul_comm] using this
   have hmem : ((∑ j, α j • b j : U) : (VS D).V) ∈ U ⊓ orth (VS D) U :=
     ⟨Subtype.prop _, mem_orth_of_basis U b _ hy⟩
@@ -90,7 +97,8 @@ theorem eq_zero_of_local_orth (U : Submodule D.host.E (VS D).V) (hU : U ⊓ orth
       rw [Submodule.coe_sum] at this
       simp only [Submodule.coe_smul] at this
       exact this.symm
-    rw [hu', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hu', map_sum]
     refine Submodule.sum_mem _ (fun i _ => ?_)
     rw [baseChange_smul₂]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -102,7 +110,8 @@ theorem eq_zero_of_local_orth (U : Submodule D.host.E (VS D).V) (hU : U ⊓ orth
     have h1 := horth (b i) (b i).2
     have h2 : LocFacts₂ Z.M p (∑ j, β j • baseChange₂ D p (b j : (VS D).V)) (baseChange₂ D p (b i : (VS D).V)) =
         formLeft Z p (baseChange₂ D p (b i : (VS D).V)) (∑ j, β j • baseChange₂ D p (b j : (VS D).V)) := rfl
-    rw [h2, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum] at h1
     simp only [map_smul, smul_eq_mul] at h1
     simp only [formLeft_apply, baseChangeAt_form Z.M p (Z.hcj p), brS] at h1
     simp only [Matrix.mulVec, dotProduct, hA, hGdef, Matrix.map_apply, Matrix.of_apply, Pi.zero_apply]

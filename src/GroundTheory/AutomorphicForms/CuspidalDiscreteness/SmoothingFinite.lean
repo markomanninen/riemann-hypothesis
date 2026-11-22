@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Smoothing
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Smoothing
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function
 open NumberField IsDedekindDomain
@@ -18,17 +22,17 @@ variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 instance compactSpace_integralFiniteGL : CompactSpace (AdelicGLn.integralFiniteGL K n) :=
   isCompact_iff_compactSpace.1 (AdelicGLn.isCompact_integralFiniteGL K n)
 
-theorem exists_forall_norm_sub_le (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) {ε : ℝ}
-    (hε : 0 < ε) : ∃ V ∈ 𝓝 (1 : normOneGL K n), ∀ a ∈ V, ∀ x, ‖g (a⁻¹ * x) - g x‖ ≤ ε := by
-  let := IsTopologicalGroup.rightUniformSpace (normOneGL K n)
-  have hu : UniformContinuous (g : normOneGL K n → ℂ) :=
+theorem exists_forall_norm_sub_le (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) {ε : ℝ}
+    (hε : 0 < ε) : ∃ V ∈ 𝓝 (1 : normOneGL (K := K) (n := n)), ∀ a ∈ V, ∀ x, ‖g (a⁻¹ * x) - g x‖ ≤ ε := by
+  let := IsTopologicalGroup.rightUniformSpace (normOneGL (K := K) (n := n))
+  have hu : UniformContinuous (g : normOneGL (K := K) (n := n) → ℂ) :=
     g.hasCompactSupport.uniformContinuous_of_continuous g.continuous
   have h := hu (Metric.dist_mem_uniformity hε)
   rw [uniformity_eq_comap_nhds_one'] at h
   obtain ⟨V, hV, hVsub⟩ := Filter.mem_comap.1 h
   refine ⟨V, hV, fun a ha x => ?_⟩
-  have hmem : ((a⁻¹ * x, x) : normOneGL K n × normOneGL K n) ∈
-      (fun p : normOneGL K n × normOneGL K n => p.2 * p.1⁻¹) ⁻¹' V := by
+  have hmem : ((a⁻¹ * x, x) : normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n)) ∈
+      (fun p : normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) => p.2 * p.1⁻¹) ⁻¹' V := by
     change x * (a⁻¹ * x)⁻¹ ∈ V
     rwa [mul_inv_rev, inv_inv, mul_inv_cancel_left]
   have := hVsub hmem
@@ -63,11 +67,11 @@ instance : IsProbabilityMeasure (haarProb H) := by
 
 end Prob
 
-def finAvgFun (g : normOneGL K n → ℂ) (x : normOneGL K n) : ℂ :=
+def finAvgFun (g : normOneGL (K := K) (n := n) → ℂ) (x : normOneGL (K := K) (n := n)) : ℂ :=
   have := compactSpace_of_isOpen U hU
   ∫ u : U, g ((finOne K n u)⁻¹ * x) ∂haarProb U
 
-theorem continuous_finAvgFun (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) :
+theorem continuous_finAvgFun (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) :
     Continuous (finAvgFun U hU g) := by
   have := compactSpace_of_isOpen U hU
   have : finAvgFun U hU g = fun x => ∫ u in (univ : Set U), g ((finOne K n u)⁻¹ * x) ∂haarProb U := by
@@ -75,17 +79,18 @@ theorem continuous_finAvgFun (g : CompactlySupportedContinuousMap (normOneGL K n
     rw [Measure.restrict_univ]
     rfl
   rw [this]
-  refine continuous_parametric_integral_of_continuous ?_ isCompact_univ
-  exact g.continuous.comp (((continuous_finOne.comp (continuous_subtype_val.comp
-    continuous_snd)).inv).mul continuous_fst)
+  set_option synthInstance.maxHeartbeats 100000 in
+    refine continuous_parametric_integral_of_continuous ?_ isCompact_univ
+    exact g.continuous.comp (((continuous_finOne.comp (continuous_subtype_val.comp
+      continuous_snd)).inv).mul continuous_fst)
 
-theorem finAvgFun_eq_zero_of_notMem (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ)
-    {x : normOneGL K n}
-    (hx : x ∉ (fun u : U => finOne K n u) '' univ * tsupport (g : normOneGL K n → ℂ)) :
+theorem finAvgFun_eq_zero_of_notMem (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ)
+    {x : normOneGL (K := K) (n := n)}
+    (hx : x ∉ (fun u : U => finOne K n u) '' univ * tsupport (g : normOneGL (K := K) (n := n) → ℂ)) :
     finAvgFun U hU g x = 0 := by
   have := compactSpace_of_isOpen U hU
   refine integral_eq_zero_of_ae (Eventually.of_forall fun u => ?_)
-  have : (finOne K n u)⁻¹ * x ∉ tsupport (g : normOneGL K n → ℂ) := fun h =>
+  have : (finOne K n u)⁻¹ * x ∉ tsupport (g : normOneGL (K := K) (n := n) → ℂ) := fun h =>
     hx ⟨finOne K n u, ⟨u, mem_univ _, rfl⟩, _, h, mul_inv_cancel_left _ _⟩
   exact image_eq_zero_of_notMem_tsupport this
 
@@ -94,16 +99,17 @@ theorem isCompact_finOne_image : IsCompact ((fun u : U => finOne K n (u : Adelic
   have := compactSpace_of_isOpen U hU
   isCompact_univ.image (continuous_finOne.comp continuous_subtype_val)
 
-def finAvg (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) :
-    CompactlySupportedContinuousMap (normOneGL K n) ℂ :=
+set_option synthInstance.maxHeartbeats 100000 in
+def finAvg (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) :
+    CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ :=
   ⟨⟨finAvgFun U hU g, continuous_finAvgFun U hU g⟩,
     HasCompactSupport.intro ((isCompact_finOne_image U hU).mul g.hasCompactSupport)
       fun _ hx => finAvgFun_eq_zero_of_notMem U hU g hx⟩
 
-@[simp] theorem finAvg_apply (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ)
-    (x : normOneGL K n) : finAvg U hU g x = finAvgFun U hU g x := rfl
+@[simp] theorem finAvg_apply (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ)
+    (x : normOneGL (K := K) (n := n)) : finAvg U hU g x = finAvgFun U hU g x := rfl
 
-theorem finAvgFun_finOne_mul (g : normOneGL K n → ℂ) (v : U) (x : normOneGL K n) :
+theorem finAvgFun_finOne_mul (g : normOneGL (K := K) (n := n) → ℂ) (v : U) (x : normOneGL (K := K) (n := n)) :
     finAvgFun U hU g (finOne K n v * x) = finAvgFun U hU g x := by
   have := compactSpace_of_isOpen U hU
   unfold finAvgFun
@@ -112,8 +118,8 @@ theorem finAvgFun_finOne_mul (g : normOneGL K n → ℂ) (v : U) (x : normOneGL 
   change g ((finOne K n ((v * u : U) : AdelicGLn.integralFiniteGL K n))⁻¹ * (finOne K n v * x)) = _
   rw [Subgroup.coe_mul, map_mul, mul_inv_rev, mul_assoc, inv_mul_cancel_left]
 
-theorem norm_finAvgFun_sub_le (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) {ε : ℝ}
-    (hg : ∀ u : U, ∀ x, ‖g ((finOne K n u)⁻¹ * x) - g x‖ ≤ ε) (x : normOneGL K n) :
+theorem norm_finAvgFun_sub_le (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) {ε : ℝ}
+    (hg : ∀ u : U, ∀ x, ‖g ((finOne K n u)⁻¹ * x) - g x‖ ≤ ε) (x : normOneGL (K := K) (n := n)) :
     ‖finAvgFun U hU g x - g x‖ ≤ ε := by
   have := compactSpace_of_isOpen U hU
   have hi1 : Integrable (fun u : U => g ((finOne K n u)⁻¹ * x)) (haarProb U) :=
@@ -128,9 +134,9 @@ theorem norm_finAvgFun_sub_le (g : CompactlySupportedContinuousMap (normOneGL K 
 
 end FinAvg
 
-theorem exists_smooth_approx (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+theorem exists_smooth_approx (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (ν : Measure (ArchUnits K n)) [ν.IsHaarMeasure]
-    (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) {ε : ℝ} (hε : 0 < ε) :
+    (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) {ε : ℝ} (hε : 0 < ε) :
     ∃ (U : Subgroup (AdelicGLn.integralFiniteGL K n))
       (hU : IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)))
       (β : ArchMatrix K n → ℝ) (hβ : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) β)
@@ -138,8 +144,8 @@ theorem exists_smooth_approx (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
       (hβu : tsupport β ⊆ range (Units.val : ArchUnits K n → ArchMatrix K n)),
       (∀ A, 0 ≤ β A) ∧
       ∫ x, ‖archConv ν hβ.continuous hβc hβu (finAvg U hU g) x - g x‖ ∂μ ≤ ε := by
-  obtain ⟨V₀, hV₀c, hV₀⟩ := exists_compact_mem_nhds (1 : normOneGL K n)
-  set Wc := V₀ * (V₀ * tsupport (g : normOneGL K n → ℂ))
+  obtain ⟨V₀, hV₀c, hV₀⟩ := exists_compact_mem_nhds (1 : normOneGL (K := K) (n := n))
+  set Wc := V₀ * (V₀ * tsupport (g : normOneGL (K := K) (n := n) → ℂ))
   have hWc : IsCompact Wc := hV₀c.mul (hV₀c.mul g.hasCompactSupport)
   set M := μ.real Wc
   have hM : 0 ≤ M := measureReal_nonneg
@@ -147,7 +153,7 @@ theorem exists_smooth_approx (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
   have hε₁ : 0 < ε₁ := div_pos hε (by positivity)
   obtain ⟨V₁, hV₁, hgV₁⟩ := exists_forall_norm_sub_le g hε₁
   set V := V₁ ∩ V₀
-  have hV : V ∈ 𝓝 (1 : normOneGL K n) := inter_mem hV₁ hV₀
+  have hV : V ∈ 𝓝 (1 : normOneGL (K := K) (n := n)) := inter_mem hV₁ hV₀
 
   have hUo : IsOpen ((finOne K n) ⁻¹' interior V) := isOpen_interior.preimage continuous_finOne
   have hU1 : (1 : AdelicGLn.integralFiniteGL K n) ∈ (finOne K n) ⁻¹' interior V := by
@@ -172,7 +178,7 @@ theorem exists_smooth_approx (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
     hbsupp.trans (image_subset_range _ _)
   set c := ∫ A : ArchUnits K n, b A ∂ν
   have hc : 0 < c := by
-    refine (hbsmooth.continuous.comp Units.continuous_val).integral_pos_of_hasCompactSupport_nonneg_nonzero
+    refine (hbsmooth.continuous.comp Units.continuous_val).integral_pos_of_hasCompactSupport_nonneg_ne_zero
       (x := 1) ?_ (fun A => hb0 _) (by simp [hb1])
     exact HasCompactSupport.intro (isCompact_unitsSupport hbc hbu) fun A hA =>
       image_eq_zero_of_notMem_tsupport (f := b) hA
@@ -209,9 +215,9 @@ theorem exists_smooth_approx (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
     have hg0 : g x = 0 := by
       refine image_eq_zero_of_notMem_tsupport fun hxg => hx ?_
       exact ⟨1, mem_of_mem_nhds hV₀, x, ⟨1, mem_of_mem_nhds hV₀, x, hxg, one_mul x⟩, one_mul x⟩
-    have htsupp : tsupport (h : normOneGL K n → ℂ) ⊆
+    have htsupp : tsupport (h : normOneGL (K := K) (n := n) → ℂ) ⊆
         (fun u : U => finOne K n (u : AdelicGLn.integralFiniteGL K n)) '' univ *
-          tsupport (g : normOneGL K n → ℂ) := by
+          tsupport (g : normOneGL (K := K) (n := n) → ℂ) := by
       refine closure_minimal (fun y hy => ?_)
         ((isCompact_finOne_image U hU).mul g.hasCompactSupport).isClosed
       by_contra hyC

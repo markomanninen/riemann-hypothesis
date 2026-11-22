@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GermSecRestrictGlobalAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GermSecRestrictGlobalAlgebraMap
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential GlobalTheory GlobalTheory.PD GlobalTheory.CechDR GlobalTheory.HodgeCoh ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 set_option autoImplicit false
@@ -55,7 +60,6 @@ theorem SemiHom.mDR_ιMulti_D {σ : R →+* R'} {α : B →+* B'} (h : SemiHom �
   congr 1
   congr 1
   funext i
-  simp only [Function.comp_apply]
   exact (SemiHom.mDR_ι h _).trans (congrArg ι1 (SemiHom.m1_D h _))
 
 theorem SemiHom.mDR_mDR {σ : R →+* R'} {α : B →+* B'} {τ : R' →+* R''} {β : B' →+* B''}
@@ -65,7 +69,7 @@ theorem SemiHom.mDR_mDR {σ : R →+* R'} {α : B →+* B'} {τ : R' →+* R''} 
   | h b => simp [e]
   | hd b => simp [e]
   | hm x y hx hy => simp only [map_mul, hx, hy]
-  | ha x y hx hy => simp only [map_add, hx, hy]
+  | ha x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem isDRMap_mDR {k K K' : Type} [Field k] [Field K] [Field K'] [Algebra k K] [Algebra k K']
     [Algebra k B] {g : B →+* K} {γ : B →+* K'} (hg : SemiHom (RingHom.id k) g)
@@ -78,7 +82,7 @@ theorem isDRMap_mDR {k K K' : Type} [Field k] [Field K] [Field K'] [Algebra k K]
       SemiHom.mDR_ιMulti_D]
     simp only [e]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy, map_add]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
   | neg x _ hx => rw [map_neg, map_neg, hx, map_neg]
 
 end Alg

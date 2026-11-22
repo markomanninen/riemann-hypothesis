@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem quad_four {M G : Type*} [AddCommGroup M] [AddCommGroup G] (β : M →+ M
       β (c • x + d • y + a • z - b • w) (c • x + d • y + a • z - b • w) +
       β (d • x - c • y + b • z + a • w) (d • x - c • y + b • z + a • w) =
     (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) • (β x x + β y y + β z z + β w w) := by
-  simp only [map_add, map_sub, map_zsmul, AddMonoidHom.add_apply,
+  simp only [map_add (f := _), map_sub, map_zsmul, AddMonoidHom.add_apply,
       AddMonoidHom.sub_apply, AddMonoidHom.zsmul_apply]
   module
 
@@ -239,7 +243,8 @@ theorem proj_triple (H : (∀ x y f, W x (W y f) = c x y • W (x + y) f) ∧
       (∑ y : B ⧸ A₀.addSubgroupOf B, W (rep y) f)) =
       ((A₀.relIndex A : ℂ) * ∑ z : C ⧸ A₀.addSubgroupOf C, ∑ y : B ⧸ A₀.addSubgroupOf B,
         if rep z + rep y ∈ A then c (rep z) (rep y) else 0) • f := by
-  simp only [map_sum, H.1 (rep _ : V) (rep _ : V) f, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, H.1 (rep _ : V) (rep _ : V) f, map_smul]
   rw [Finset.sum_comm, Finset.mul_sum, Finset.sum_smul]
   refine Finset.sum_congr rfl fun z _ => ?_
   rw [Finset.sum_comm, Finset.mul_sum, Finset.sum_smul]

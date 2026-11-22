@@ -1,14 +1,19 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsStepThreeOnWGen
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsRestrictGenerated
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrLenRestrictSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PNefRestrict
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistAlg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepDataJProper
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSubvarDrop
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationRestrict
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PGenerated
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PExtension
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsStepThreeOnWGen
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsRestrictGenerated
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrLenRestrictSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PNefRestrict
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistAlg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepDataJProper
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSubvarDrop
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationRestrict
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PGenerated
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PExtension
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -45,8 +50,8 @@ theorem primeOf_le_zeroIdeal (D : SubSystem S x Ω) (s : Ω) : primeOf (S := S) 
   rw [(mem_primeOf_of_isHomogeneous x (homogeneousComponent_isHomogeneous d f)).mp
     (homogeneousComponent_mem_primeOf x hf d), zero_mul, mul_zero]
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem homog_of_mem_minimalPrimes (D : SubSystem S x Ω) (s : Ω) {pp : Ideal (Poly S N)}
     (hpp : pp ∈ (zeroIdeal D s).minimalPrimes) :
     ∀ p ∈ pp, ∀ d : ℕ, homogeneousComponent d p ∈ pp := by
@@ -102,8 +107,8 @@ end Helpers
 
 end StepThree.OnW.Gen
 
-open StepThree.OnW.Gen in
 
+open StepThree.OnW.Gen in
 theorem StepThree.OnW.Gen.proof (hRL : RestrLenRestrict.Statement.{u, w})
     (hRG : RestrictGenerated.Statement.{u, w}) : StepThree.OnW.Gen.Statement.{u, w} := by
   intro k _ Ω _ _ N x T hK pp hpp

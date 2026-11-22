@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
-import GroundTheory.AutomorphicForms.Cartan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RegularTwistedOrbitLocalFiniteness
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
+public import GroundTheory.AutomorphicForms.Cartan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RegularTwistedOrbitLocalFiniteness
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ private theorem trG_trG {F : Type} [Field F] {n : ℕ} (x : GL (Fin n) F) : trG 
 variable {E : Type} [Field E] [NumberField E] {n : ℕ}
 
 private theorem trG_mem {w : HeightOneSpectrum (𝓞 E)} {k : GL (Fin n) (w.adicCompletion E)}
-    (hk : k ∈ KGL w n) : trG k ∈ KGL w n := by
+    (hk : k ∈ KGL w (n := n)) : trG k ∈ KGL w (n := n) := by
   have h := GlobalTheory.StabInt.mem_integralGL_of_mem_KGL hk
   rw [GLnLocal.mem_integralGL_iff] at h
   refine GlobalTheory.StabInt.mem_KGL_of_mem_integralGL ?_
@@ -41,12 +45,12 @@ private theorem trG_diagPow (w : HeightOneSpectrum (𝓞 E)) (μ : Fin n → ℤ
   Units.ext (by rw [trG_val, Cartan.coe_diagPow, Matrix.diagonal_transpose])
 
 private theorem trG_double (w : HeightOneSpectrum (𝓞 E)) (x : GL (Fin n) (w.adicCompletion E)) :
-    ∃ k ∈ KGL w n, ∃ k' ∈ KGL w n, trG x = k * x * k' := by
+    ∃ k ∈ KGL w (n := n), ∃ k' ∈ KGL w (n := n), trG x = k * x * k' := by
   obtain ⟨μ, -, k₁, h₁, k₂, h₂, rfl⟩ := Cartan.exists_eq_mul_diagPow_mul (w.adicCompletion E) n x
   have h₁' := GlobalTheory.StabInt.mem_KGL_of_mem_integralGL h₁
   have h₂' := GlobalTheory.StabInt.mem_KGL_of_mem_integralGL h₂
-  refine ⟨trG k₂ * k₁⁻¹, (KGL w n).mul_mem (trG_mem h₂') ((KGL w n).inv_mem h₁'),
-    k₂⁻¹ * trG k₁, (KGL w n).mul_mem ((KGL w n).inv_mem h₂') (trG_mem h₁'), ?_⟩
+  refine ⟨trG k₂ * k₁⁻¹, (KGL w (n := n)).mul_mem (trG_mem h₂') ((KGL w (n := n)).inv_mem h₁'),
+    k₂⁻¹ * trG k₁, (KGL w (n := n)).mul_mem ((KGL w (n := n)).inv_mem h₂') (trG_mem h₁'), ?_⟩
   rw [trG_mul, trG_mul, trG_diagPow]
   group
 

@@ -1,4 +1,9 @@
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -61,7 +66,7 @@ theorem map_diagonal (lam : Measure R) [lam.IsAddHaarMeasure] (d : ι → Rˣ) :
     simp [mulVec_diagonal]
   have hm : ∀ i, Measurable fun x : R => (d i : R) * x := fun i =>
     (continuous_const.mul continuous_id).measurable
-  rw [h1, Measure.pi_pi, map_prod, ENNReal.smul_def, smul_eq_mul, ENNReal.coe_finset_prod,
+  rw [h1, Measure.pi_pi, map_prod, ENNReal.smul_def, smul_eq_mul, ENNReal.ofNNReal_finsetProd,
     ← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun i _ => ?_
   have h2 := congrArg (fun m : Measure R => m (s i)) (char_smul_map lam (d i))
@@ -122,7 +127,8 @@ theorem smul_map_pi {F : Type} [Field F] {R : Type} [CommRing R] [Algebra F R]
       ext1 x
       simp [Matrix.map_mul, mulVec_mulVec]
     rw [e1, e2, map_mul, map_mul, mul_smul,
-      ← Measure.map_map (measurable_mulVec _) (measurable_mulVec _), ← Measure.map_smul, IHB hB]
+      ← Measure.map_map (measurable_mulVec _) (measurable_mulVec _),
+      ← Measure.map_smul _ (measurable_mulVec _).aemeasurable, IHB hB]
     exact IHA hA
 
 theorem map_mulVec_eq_smul : ∀ (F : Type) [Field F] (R : Type) [CommRing R] [Algebra F R]
@@ -153,6 +159,6 @@ theorem map_mulVec_eq_smul : ∀ (F : Type) [Field F] (R : Type) [CommRing R] [A
     rw [smul_smul, mul_comm c d, hdc, one_smul]
   obtain ⟨k, hk⟩ : ∃ k : ℝ≥0, μ = k • Measure.pi fun _ : ι => lam :=
     ⟨_, Measure.isAddLeftInvariant_eq_smul_of_regular μ (Measure.pi fun _ : ι => lam)⟩
-  rw [hk, Measure.map_smul, h4, smul_comm]
+  rw [hk, Measure.map_smul _ (measurable_mulVec _).aemeasurable, h4, smul_comm]
 
 end GlobalTheory.CompanionTheory.SW.DetScale

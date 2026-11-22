@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LintegralLintegralNormSqRiemannTheta
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LintegralLintegralNormSqRiemannTheta
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -123,7 +127,7 @@ variable {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} {g : ℕ} (u : HolUnif A
 
 def change : HolUnif A L g where
   ex z := u.ex (φ z)
-  ex_add z w := by rw [map_add, u.ex_add]
+  ex_add z w := by rw [map_add (f := _), u.ex_add]
   ex_onto := u.ex_onto.comp φ.surjective
   Λ := u.Λ.comap (φ.toLinearEquiv.toLinearMap.restrictScalars ℤ)
   ker z := u.ker _
@@ -311,7 +315,7 @@ theorem normal_form_of_parts
     (fun m n l z hl => by
       subst hl
       have := hθl ⟨_, (hΛ _).2 ⟨m, n, rfl⟩⟩ (φ z)
-      rw [pow_one, hH, hH, ← map_add] at this
+      rw [pow_one, hH, hH, ← map_add (f := _)] at this
       exact this)
   have hQ : Differentiable ℂ fun z : Fin x.P.g → ℂ =>
       (Real.pi : ℂ) / 2 * (z ⬝ᵥ (CanTh.imInv τ).mulVec z) := by

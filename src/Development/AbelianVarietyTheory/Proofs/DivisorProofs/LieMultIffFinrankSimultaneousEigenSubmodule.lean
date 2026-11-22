@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatActApply
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatActApply
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeA
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.LieLin
 
@@ -80,8 +85,12 @@ theorem prod_eq {m : ℕ} (x : Fin m → TanM t G) (c : Fin m → k) :
     (List.ofFn (fun i => smT t (c i) (tv (x i)))).prod = tv (∑ i, c i • x i) := by
   rw [List.prod_ofFn]
   show _ = ((Additive.toMul (∑ i, c i • x i) : tanSub t G) : overAt t (DualNumber k) ⟶ G)
-  rw [toMul_sum, SubmonoidClass.coe_finset_prod]
-  rfl
+  rw [toMul_sum]
+  change _ = (tanSub t G).subtype (∏ i, Additive.toMul (c i • x i))
+  rw [map_prod]
+  apply Finset.prod_congr rfl
+  intro i _
+  exact (tv_smul (c i) (x i)).symm
 
 end GlobalTheory.UPel.HT.LieLin.LieAlgebraMultiplication
 

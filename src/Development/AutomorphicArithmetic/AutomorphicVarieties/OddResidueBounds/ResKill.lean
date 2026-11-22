@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ResInfMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ResInfConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.XdualExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RestrMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.LiftEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ActFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.HomKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.FixLev
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ContinuousToTorsionBounded
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ResInfMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ResInfConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.XdualExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RestrMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.LiftEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ActFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.HomKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.FixLev
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ContinuousToTorsionBounded
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5 UpperTheory.V.Odd
 
@@ -27,8 +31,10 @@ theorem UpperTheory.V.Odd.resKill :
     simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, MonoidAlgebra.lift_single, MonoidHom.comp_apply, MonoidHom.inv_apply, inv_inv, MonoidAlgebra.of_apply, MonoidAlgebra.smul_single, map_zsmul]
     rw [Representation.asAlgebraHom_single, zsmul_eq_mul, mul_one]
     rfl
-  simp only [ytEl, sumEl, map_neg, map_sum, coefMap, key]
-  rw [LinearMap.neg_apply, map_neg, Pi.neg_apply, neg_eq_zero, LinearMap.sum_apply, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ytEl, sumEl, map_neg, map_sum, coefMap, key]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.neg_apply, map_neg, Pi.neg_apply, neg_eq_zero, LinearMap.sum_apply, map_sum, Finset.sum_apply]
   simp only [LinearMap.smul_apply, map_smul, Pi.smul_apply]
   have hm2 : 2 ≤ m := le_trans (Nat.le_add_left 2 _) hm
   have hnm : n ≤ m := le_trans (le_trans (le_max_left n r) (Nat.le_add_right _ 2)) hm
@@ -43,7 +49,7 @@ theorem UpperTheory.V.Odd.resKill :
     AlgEquiv.ofRingEquiv (f := ((σ b).trans (u.1 : Ω ≃ₐ[E] Ω).toRingEquiv).trans (σ b).symm) (by
       intro y
       have h1 := hlift b y
-      simp only [RingEquiv.trans_apply, AlgEquiv.toRingEquiv_eq_coe, AlgEquiv.coe_ringEquiv]
+      simp only [RingEquiv.trans_apply, AlgEquiv.coe_toRingEquiv, AlgEquiv.coe_ringEquiv]
       rw [h1, AlgEquiv.commutes, ← h1, RingEquiv.symm_apply_apply])
   have hw : ∀ b y, w b y = (σ b).symm (u.1 (σ b y)) := fun _ _ => rfl
   have wInf : ∀ b, w b ∈ Uinf E Ω l := by

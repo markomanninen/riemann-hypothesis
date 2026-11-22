@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ResidueCharacters.InvariantsKilledOverCyclotomicAlt
-import Development.AutomorphicArithmetic.ResidueCharacters.FiniteRoots
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ResidueCharacters.InvariantsKilledOverCyclotomicAlt
+public import Development.AutomorphicArithmetic.ResidueCharacters.FiniteRoots
+
+@[expose] public section
 
 open Formalism Formalism.MainNotions
 
@@ -85,8 +89,12 @@ theorem cTB_le (l N h n t e vd g : ℕ) (hl : l.Prime) (U : Finset ℤ) (U' : Se
   push_cast at h3
   have hs : 1 ≤ sN l N := le_max_left _ _
   have hL : lamN l N h = sN l N + Nat.log l (2 * h) + Nat.log l N + 1 := rfl
-  have hv1 : padicValNat l e ≤ e := (padicValNat_le_nat_log e).trans (Nat.log_le_self _ _)
-  have hv2 : padicValNat l (e + 1) ≤ e + 1 := (padicValNat_le_nat_log _).trans (Nat.log_le_self _ _)
+  have hv1 : padicValNat l e ≤ e := by
+    rw [Nat.padicValNat_def]
+    exact (multiplicity_le_nat_log e).trans (Nat.log_le_self _ _)
+  have hv2 : padicValNat l (e + 1) ≤ e + 1 := by
+    rw [Nat.padicValNat_def]
+    exact (multiplicity_le_nat_log _).trans (Nat.log_le_self _ _)
   have hd : e / (l - 1) ≤ e := Nat.div_le_self _ _
   unfold LocalSituation.cTB cBL
   set L := lamN l N h
@@ -116,8 +124,8 @@ theorem cTB_le (l N h n t e vd g : ℕ) (hl : l.Prime) (U : Finset ℤ) (U' : Se
   rw [hW]
   omega
 
-open Formalism.BasicNotions Formalism.BasicNotions.Loc in
 
+open Formalism.BasicNotions Formalism.BasicNotions.Loc in
 theorem exists_up {l : ℕ} [Fact l.Prime] {N : ℕ} {K LL : FinExt l} (hC : Cyc N K LL) :
     ∃ K' : FinExt l, K.1 ≤ K'.1 ∧ Good K' (sN l N) LL ∧ Ks K' (sN l N) = K'.1 ∧ (GK K').Normal ∧
       padicValNat l (Module.finrank ℚ_[l] ↥K'.1 / Module.finrank ℚ_[l] ↥K.1) ≤ Nat.log l N + 1 :=

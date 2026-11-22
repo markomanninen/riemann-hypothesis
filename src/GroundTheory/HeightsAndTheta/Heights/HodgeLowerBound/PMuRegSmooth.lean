@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsMuRegSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsVertFactorPos
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHermExtend
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsProjSmoothAlong
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsVertFactorSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PTopNPoly
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PGlueRegularised
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsMuRegSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsVertFactorPos
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHermExtend
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsProjSmoothAlong
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsVertFactorSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PTopNPoly
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PGlueRegularised
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -52,8 +57,8 @@ theorem smoothAlong_exp {S : Set ((Σ k, ι k) → ℂ)} {f : ((Σ k, ι k) → 
   exact ⟨U, hU, fun w => Real.exp (F w), Real.contDiff_exp.comp_contDiffOn hF,
     fun w hw => by show Real.exp (f w) = Real.exp (F w); rw [hfF w hw]⟩
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem isOpen_blocks : IsOpen {z : (Σ k, ι k) → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := by
   have : {z : (Σ k, ι k) → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} = ⋂ k, ⋃ i, {z | z ⟨k, i⟩ ≠ 0} := by
     ext z; simp
@@ -101,8 +106,8 @@ theorem prod_norm_zpow_add_sum {c : K → ℂ} (hc : ∀ k, c k ≠ 0) (a : K �
 
 end MuRegSmooth
 
-open MuRegSmooth TopNPoly in
 
+open MuRegSmooth TopNPoly in
 theorem MuRegSmooth.proof (hE : HermExtend.Statement) (hP : ProjSmoothAlong.Statement)
     (hVS : VertFactorSmooth.Statement) (hV : VertFactorPos.Statement) : MuRegSmooth.Statement := by
   intro II Ψ _ _ K _ ι _ Ω _ _ E _ _ D O Lt _ _ _ X B

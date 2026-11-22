@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSummableMajorantRationalVectorsLocallyUnif
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSummableMajorantRationalVectorsLocallyUnif
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.SWQ GlobalTheory.ThetaTransform
 open scoped Matrix Classical
@@ -24,8 +28,8 @@ theorem continuous_thV : ∀ (F : Type) [Field F] [NumberField F] (N : ℕ) [Inv
     intro ξ
     refine Continuous.mul (hψc.comp ?_) (hc.comp (continuous_const.add continuous_fst))
     refine Continuous.add ?_ (continuous_const.mul ?_)
-    · exact continuous_finset_sum _ fun i _ => continuous_const.mul ((continuous_apply i).comp continuous_snd)
-    · exact continuous_finset_sum _ fun i _ =>
+    · exact continuous_finsetSum _ fun i _ => continuous_const.mul ((continuous_apply i).comp continuous_snd)
+    · exact continuous_finsetSum _ fun i _ =>
         ((continuous_apply i).comp continuous_fst).mul ((continuous_apply i).comp continuous_snd)
   have heq : thV ψ Φ = fun w : VA F N => ∑' ξ : Fin N → F,
       ψ (rat ξ ⬝ᵥ w.2 + ⅟(2 : AF F) * (w.1 ⬝ᵥ w.2)) * Φ (rat ξ + w.1) := by

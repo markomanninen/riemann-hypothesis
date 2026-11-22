@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PIsolatedFibreOpenPoly
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PIsolatedFibreOpenFixed
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.ImportsAlt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PIsolatedFibreOpenPoly
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PIsolatedFibreOpenFixed
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.ImportsAlt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

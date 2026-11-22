@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
-import GroundTheory.AutomorphicForms.ReductionSiegel
-import GroundTheory.AutomorphicForms.Reduction
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+public import GroundTheory.AutomorphicForms.Reduction
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology GroundTheory.Automorphic.Reduction
 open scoped ContDiff
 

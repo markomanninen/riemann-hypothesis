@@ -1,7 +1,11 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Degree
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
-import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeIntB
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Degree
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeIntB
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -52,10 +56,10 @@ theorem integralWith_localize_support [CompactSpace X] [T2Space X] (A : FinHolAt
   change ∑ j, ∫ y in (A.chart j).target, P.χ j ((A.chart j).symm y) *
       g ((A.chart j).symm y) * locDens A Φ j y = _
   rw [Finset.sum_congr rfl (fun j _ => h2 j),
-    ← integral_finset_sum Finset.univ (fun j _ => hk j)]
+    ← MeasureTheory.integral_finsetSum Finset.univ (fun j _ => hk j)]
   congr 1
   funext y
-  simp only [← Finset.sum_mul, P.sum_eq_one, one_mul]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, P.sum_eq_one, one_mul]
 
 theorem exists_sheet_partition [CompactSpace Y] [T2Space Y] [CompactSpace X] [T2Space X]
     {A : FinHolAtlas e X} {B : FinHolAtlas e Y} {h : Y → X} (hh : HoloMap B A h) {d : ℕ}

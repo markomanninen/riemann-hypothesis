@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Formalism.LocalToGlobal.Columns.LocWLemmas
-import Lemmata.GeneralBFactSecondBisAlt.Imports
+module
+
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+public import Formalism.LocalToGlobal.Columns.LocWLemmas
+public import Lemmata.GeneralBFactSecondBisAlt.Imports
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -106,9 +110,13 @@ theorem lc_exists_basis (w : HeightOneSpectrum (𝓞 K)) {A : Submodule (𝓞 K)
 
 end Gen
 
-theorem latticeBasisExists_holds : BasisAtEx := by
+theorem latticeBasisExists_holds :
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ)
+      (M : Submodule (𝓞 K) (Fin n → K)), Submodule.IsFullLattice K M →
+      ∀ w : HeightOneSpectrum (𝓞 K), ∃ B : GL (Fin n) K, IsBasisAt w M B := by
   intro K _ _ n M hM w
-  obtain ⟨κ, hκ, bK, hb⟩ := lc_exists_basis w hM.fg hM.span_eq_top
+  letI : Submodule.IsFullLattice K M := hM
+  obtain ⟨κ, hκ, bK, hb⟩ := lc_exists_basis w hM.fg Submodule.IsFullLattice.span_eq_top
   have hcard : Fintype.card κ = n := by
     rw [← Module.finrank_eq_card_basis bK, Module.finrank_fin_fun]
   let e : κ ≃ Fin n := Fintype.equivFinOfCardEq hcard
@@ -227,7 +235,7 @@ theorem lc_exists_smul_mem (M : Submodule (𝓞 K) V) {x : V} (hx : x ∈ Submod
 
 end Gen
 
-theorem lc_sandwich (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
+theorem lc_sandwich (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
     ∃ d : 𝓞 K, d ≠ 0 ∧ (∀ x ∈ M, d • x ∈ colLat (1 : GL (Fin n) K)) ∧
       (∀ x ∈ colLat (1 : GL (Fin n) K), d • x ∈ M) := by
   classical

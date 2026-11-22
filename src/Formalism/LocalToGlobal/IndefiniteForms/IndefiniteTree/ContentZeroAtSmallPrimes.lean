@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthCondPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthCondPf
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 

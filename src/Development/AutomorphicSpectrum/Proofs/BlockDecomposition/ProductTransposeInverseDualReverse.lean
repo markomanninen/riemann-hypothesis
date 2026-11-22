@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.GKLocal
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormalisedParabolicInductionReindexEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TransposeInverseInvolutionApply
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandKazhdanContragredient
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassInvolutive
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.GKLocal
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormalisedParabolicInductionReindexEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TransposeInverseInvolutionApply
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandKazhdanContragredient
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassInvolutive
+
+@[expose] public section
 
 noncomputable section
 
@@ -190,32 +194,32 @@ section Main
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-@[irreducible] def dualClass (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : IrrGL k) : IrrCl (GL (Fin y.1) k) :=
+@[irreducible] def dualClass (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : IrrGL (k := k)) : IrrCl (GL (Fin y.1) k) :=
   (⟨_, contra y.rep, isSmooth_smoothRep _, GlobalTheory.CompanionTheory.Zcore.isIrreducible_contra_rep hA y⟩ : IrrRep _).cl
 
-abbrev dualOf (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : IrrGL k) : IrrGL k := ⟨y.1, dualClass hA y⟩
+abbrev dualOf (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : IrrGL (k := k)) : IrrGL (k := k) := ⟨y.1, dualClass hA y⟩
 
-theorem dualOf_eq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : IrrGL k) : dualOf hA y = dualCl y := by
+theorem dualOf_eq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : IrrGL (k := k)) : dualOf hA y = dualCl y := by
   rw [GlobalTheory.CompanionTheory.Zcore.dualCl_eq_of hA y, dualOf, dualClass]
   rfl
 
-def dualOfEquiv (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : IrrGL k) :
+def dualOfEquiv (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : IrrGL (k := k)) :
     (contra y.rep).Equiv (dualOf hA y).rep := by
   unfold dualOf dualClass
   exact IrrGL.equivOf _ _ _
 
-abbrev dualRev (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h : ℕ} (x : Fin h → IrrGL k) : Fin h → IrrGL k :=
+abbrev dualRev (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h : ℕ} (x : Fin h → IrrGL (k := k)) : Fin h → IrrGL (k := k) :=
   fun a => dualOf hA (x (Fin.rev a))
 
-theorem dualRev_eq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h : ℕ} (x : Fin h → IrrGL k) :
+theorem dualRev_eq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h : ℕ} (x : Fin h → IrrGL (k := k)) :
     dualRev hA x = fun a => dualCl (x (Fin.rev a)) :=
   funext fun _ => dualOf_eq hA _
 
-theorem sum_dualRev (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N : ℕ} (x : Fin h → IrrGL k)
+theorem sum_dualRev (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N : ℕ} (x : Fin h → IrrGL (k := k))
     (hd : ∑ a, (x a).1 = N) : ∑ a, (dualRev hA x a).1 = N :=
   (Equiv.sum_comp Fin.revPerm fun a => (x a).1).trans hd
 
-def blockEquiv (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hGK : GKLocal k) {h : ℕ} (x : Fin h → IrrGL k)
+def blockEquiv (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hGK : GKLocal k) {h : ℕ} (x : Fin h → IrrGL (k := k))
     (a : Fin h) : (x (Fin.rev a)).rep.Equiv ((dualRev hA x a).rep.comp (thetaW k (x (Fin.rev a)).1)) := by
   have e1 := (GlobalTheory.CompanionTheory.ThetaW.comp_thetaW_equiv_contra hGK _ (x (Fin.rev a)).rep (x (Fin.rev a)).2.rep.smooth
       (x (Fin.rev a)).2.rep.irr).some
@@ -264,7 +268,7 @@ def equivOfEq {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] {ρ σ : Re
   .mk (LinearEquiv.refl ℂ V) fun g => by rw [h]; rfl
 
 theorem product_compose_transpose_inverse (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hGK : GKLocal k) {h N : ℕ}
-    (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N) :
+    (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N) :
     Nonempty (Representation.Equiv ((prodIrr x hd).comp (thetaW k N))
       (prodIrr (dualRev hA x) (sum_dualRev hA x hd))) := by
   have hd' : ∑ a, (x (Fin.rev a)).1 = N := sum_dualRev hA x hd
@@ -277,14 +281,14 @@ theorem product_compose_transpose_inverse (hA : GlobalTheory.Published.Irreducib
   exact ⟨equivOfCompInv (GlobalTheory.CompanionTheory.ThetaInv.thetaW_thetaW N) (φ₁.trans φ₂)⟩
 
 theorem exists_equiv_prodIrr_of_eq {h N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
-    {R : Representation ℂ (GL (Fin N) k) V} {y z : Fin h → IrrGL k} (hyz : y = z) (hy : ∑ a, (y a).1 = N)
+    {R : Representation ℂ (GL (Fin N) k) V} {y z : Fin h → IrrGL (k := k)} (hyz : y = z) (hy : ∑ a, (y a).1 = N)
     (H : Nonempty (R.Equiv (prodIrr y hy))) : ∃ hz : ∑ a, (z a).1 = N, Nonempty (R.Equiv (prodIrr z hz)) := by
   subst hyz
   exact ⟨hy, H⟩
 
 theorem prodIrr_comp_thetaW : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k], GlobalTheory.Published.IrreducibleAdmissibleGL → GKLocal k →
-    ∀ {h N : ℕ} (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N),
+    ∀ {h N : ℕ} (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N),
       ∃ hd' : ∑ a, (dualCl (x (Fin.rev a))).1 = N,
         Nonempty (Representation.Equiv ((prodIrr x hd).comp (thetaW k N))
           (prodIrr (fun a => dualCl (x (Fin.rev a))) hd')) := by

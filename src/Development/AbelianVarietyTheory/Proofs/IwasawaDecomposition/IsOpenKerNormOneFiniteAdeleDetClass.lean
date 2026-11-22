@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormOneFiniteAdeleDetClassOfIsDetLift
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormOneFiniteAdeleDetClassOfIsDetLift
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem lift_mem_KDq (hl : LevOk H SG SQ) (x : Formalism.L2.Herm.unitaryOneFinit
       algebraMap H.E _ (algebraMap (𝓞 H.E) H.E c) := fun w => adAt_inclE H.F w _
   have hsv : ∀ w : HeightOneSpectrum (𝓞 H.E), Valued.v (adAt H.F w s) ≤ 1 := (mem_rInt_iff H.F H.E s).1 hs
   have hle : ∀ w : HeightOneSpectrum (𝓞 H.E), Valued.v (adAt H.F w d) ≤ 1 := fun w => by
-    rw [hd, map_add, map_one, map_mul, hci]
+    rw [hd, map_add (f := _), map_one, map_mul, hci]
     refine Valuation.map_add_le _ (by rw [map_one]) ?_
     rw [map_mul, valued_algebraMap]
     exact mul_le_one' (HeightOneSpectrum.valuation_le_one _ _) (hsv w)
@@ -50,7 +54,7 @@ theorem lift_mem_KDq (hl : LevOk H SG SQ) (x : Formalism.L2.Herm.unitaryOneFinit
       exact DetSpec.val_compAt_ne _ _
     rw [hcomp P, mul_div_cancel_right₀ _ h0]
     show Valued.v (adAt H.F P d - 1) < 1
-    rw [hd, map_add, map_one, add_sub_cancel_left, map_mul, hci, map_mul,
+    rw [hd, map_add (f := _), map_one, add_sub_cancel_left, map_mul, hci, map_mul,
       valued_algebraMap]
     have hlt : P.valuation H.E (algebraMap (𝓞 H.E) H.E c) < 1 :=
       (HeightOneSpectrum.valuation_lt_one_iff_mem P c).2 (hc P hP)
@@ -66,8 +70,8 @@ theorem isOpen_ker_u1Dt : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (S
   let W : Set (GL (Fin 1) (AfE H.F H.E)) :=
     {u | c * ((u : Matrix (Fin 1) (Fin 1) (AfE H.F H.E)) 0 0 - 1) ∈ Formalism.L2.Herm.intAf H.F H.E}
   have hWo : IsOpen W := by
-    refine rlt_isOpen_intAf.preimage ?_
-    exact continuous_const.mul ((Units.continuous_val.matrix_elem 0 0).sub continuous_const)
+    exact rlt_isOpen_intAf.preimage
+      (continuous_const.mul ((Units.continuous_val.matrix_elem 0 0).sub continuous_const))
   have hW1 : (1 : GL (Fin 1) (AfE H.F H.E)) ∈ W := by
     show c * (((1 : GL (Fin 1) (AfE H.F H.E)) : Matrix (Fin 1) (Fin 1) (AfE H.F H.E)) 0 0 - 1) ∈ Formalism.L2.Herm.intAf H.F H.E
     simp
@@ -78,8 +82,10 @@ theorem isOpen_ker_u1Dt : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (S
     refine (QuotientGroup.eq_one_iff b).2 (lift_mem_KDq hl x b hb a ha _ hx ?_)
     rw [← mul_assoc, hca, one_mul]
     ring
-  have hnh : (((u1Dt H SQ).ker : Subgroup _) : Set (Formalism.L2.Herm.unitaryOneFiniteAdeles (host_cmData R H))) ∈ 𝓝 (1 : Formalism.L2.Herm.unitaryOneFiniteAdeles (host_cmData R H)) :=
-    Filter.mem_of_superset ((hWo.preimage continuous_subtype_val).mem_nhds hW1) fun x hx => hsub x hx
+  have hnh : (((u1Dt H SQ).ker : Subgroup _) : Set (Formalism.L2.Herm.unitaryOneFiniteAdeles (host_cmData R H))) ∈ 𝓝 (1 : Formalism.L2.Herm.unitaryOneFiniteAdeles (host_cmData R H)) := by
+    have hpre : (fun x : Formalism.L2.Herm.unitaryOneFiniteAdeles (host_cmData R H) => x.1) ⁻¹' W ∈ 𝓝 (1 : Formalism.L2.Herm.unitaryOneFiniteAdeles (host_cmData R H)) :=
+      (hWo.preimage continuous_subtype_val).mem_nhds hW1
+    exact Filter.mem_of_superset hpre fun x hx => hsub x hx
   exact Subgroup.isOpen_of_mem_nhds _ hnh
 
 end GlobalTheory.Mem.Col2.FullDt

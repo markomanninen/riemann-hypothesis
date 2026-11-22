@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PSpecB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CauchyBinet
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PSpecB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CauchyBinet
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory Filter Topology Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.UnitaryBC UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible
 open UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Bor UpperTheory.V.Lit.Dr
@@ -67,7 +71,7 @@ theorem UpperTheory.V.Cj.H.absLim :
           - (Complex.I * (s k : ℂ)) • ((Complex.I * (s k : ℂ)) • T k (v : H)) := by
         intro k
         have h := hT k v
-        rw [map_add, map_smul] at h
+        rw [map_add (f := _), map_smul] at h
         rw [eq_sub_iff_add_eq, ← smul_add, h]
       apply squeeze_zero_norm (a := fun k => 2 * |s k| * ‖(v : H)‖)
       · intro k

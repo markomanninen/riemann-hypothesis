@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntRPsubst
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntRPsubst
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,14 +133,11 @@ theorem restSInt (p : ℕ) [Fact p.Prime] : RestSInt p := by
   have hLint : ∀ x, IntR R' (coordZ (r0 := r0) (r1 := r1) B K' 1 x) := by
     intro x n
     rcases x with ⟨r, a, b⟩ | ⟨r, a, b⟩ <;>
-    · simp only [coordZ, one_mul, map_sum]
-      refine R'.sum_mem fun s _ => ?_
-      rw [MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X]
-      split_ifs
-      · rw [mul_one]
-        exact hRp (Subring.subset_closure (Or.inl ⟨_, rfl⟩))
-      · rw [mul_zero]
-        exact R'.zero_mem
+      simp only [coordZ, one_mul, map_sum] <;>
+      refine R'.sum_mem fun s _ => ?_ <;>
+      rw [MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X] <;>
+      split_ifs <;> simp only [mul_one, mul_zero]
+    all_goals first | exact hRp (Subring.subset_closure (Or.inl ⟨_, rfl⟩)) | exact R'.zero_mem
   unfold ThZ
   rw [hc]
   exact genInt p K' R' vp hvp hRp (MvPowerSeries.map (algebraMap K1 K') U) (inParam_map p K' K1 R1 R' hR1 U hU)

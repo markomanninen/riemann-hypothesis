@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InductionFiniteLength
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviBlocksParabolicInductionFiniteLength
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProduct
-import GroundTheory.AutomorphicForms.FiniteLength
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InductionFiniteLength
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviBlocksParabolicInductionFiniteLength
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProduct
+public import GroundTheory.AutomorphicForms.FiniteLength
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open GlobalTheory.PRep GlobalTheory.SmGL Matrix
 
 namespace GlobalTheory.CompanionTheory.BZInd
 
-open GroundTheory.Automorphic.Parabolic (levi levi_le_blockUpper mem_levi sqrtModular invSqrtModular leviIncl
-  parabolicInd parabolicIndSpace)
+open GroundTheory.Automorphic.Parabolic (levi levi_le_blockUpper mem_levi sqrtModular invSqrtModular leviIncl)
+open GroundTheory.Automorphic.Parabolic (parabolicInd parabolicIndSpace)
 open GroundTheory.Automorphic.Iwasawa (blockUpper)
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -30,8 +34,8 @@ theorem blockUpper_le_parab : blockUpper k (∑ a, d a) (pos d) ≤ parab k (std
   intro g hg
   exact hg
 
-variable (k d) in
 
+variable (k d) in
 def leviTo : levi k (∑ a, d a) (pos d) →* Levi k (fun a => Fin (d a)) :=
   (leviProj k (stdE d)).comp (Subgroup.inclusion (levi_le_blockUpper.trans (blockUpper_le_parab k d)))
 
@@ -59,8 +63,8 @@ theorem leviTo_leviProj (p : blockUpper k (∑ a, d a) (pos d)) :
     ((p : GL (Fin (∑ a, d a)) k) : Matrix (Fin (∑ a, d a)) (Fin (∑ a, d a)) k) (stdE d ⟨a, i⟩) (stdE d ⟨a, j⟩)
   simp [GroundTheory.Automorphic.Parabolic.blockDiagPart, pos_stdE]
 
-variable (k d) in
 
+variable (k d) in
 def invHalf : levi k (∑ a, d a) (pos d) →* ℂˣ :=
   ((invSqrtModular k (∑ a, d a) (pos d)).comp leviIncl).toHomUnits
 
@@ -78,8 +82,8 @@ theorem isSmoothChar_invHalf : IsSmoothChar (invHalf k d) := by
   show (invSqrtModular k (∑ a, d a) (pos d)) (leviIncl m) = 1
   exact GroundTheory.Automorphic.Parabolic.invSqrtModular_leviIncl_of_mem m hm
 
-variable (k d) in
 
+variable (k d) in
 def adj : levi k (∑ a, d a) (pos d) →* ℂˣ :=
   invHalf k d * (deltaHalf k (fun a => Fin (d a))).comp (leviTo k d)
 
@@ -242,16 +246,16 @@ theorem hasFiniteLength_parInd_std (ρ : Representation ℂ (Levi k fun a => Fin
   have hφ : StrictMono φ := hmono.strictMono_of_injective hinj
   exact ⟨hφ.wellFoundedGT, hφ.wellFoundedLT⟩
 
-open GlobalTheory.BlockReorder in
 
+open GlobalTheory.BlockReorder in
 theorem inductionFiniteLength : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k], GlobalTheory.SmGL.InductionFiniteLength k := by
   intro k _ _ _ _ α n m _ _ _ _ _ _ e W _ _ ρ hρ hl
   apply GlobalTheory.BlockReorder.hasFiniteLength_parInd e ρ
-  refine hasFiniteLength_parInd_std (d := GlobalTheory.BlockReorder.blockSize m)
-    (ρ.comp (GlobalTheory.BlockReorder.leviMap k e)) ?_ ?_
-  · intro v
-    exact (hρ v).preimage (GlobalTheory.BlockReorder.continuous_leviMap e)
-  · exact (GlobalTheory.SmGL.hasFiniteLength_comp_iff ρ _ (GlobalTheory.BlockReorder.leviMap_surjective e)).2 hl
+  exact hasFiniteLength_parInd_std (d := GlobalTheory.BlockReorder.blockSize m)
+    (ρ.comp (GlobalTheory.BlockReorder.leviMap k e))
+    (fun v => (hρ v).preimage (GlobalTheory.BlockReorder.continuous_leviMap e))
+    ((GlobalTheory.SmGL.hasFiniteLength_comp_iff ρ _
+      (GlobalTheory.BlockReorder.leviMap_surjective e)).2 hl)
 
 end GlobalTheory.CompanionTheory.BZInd

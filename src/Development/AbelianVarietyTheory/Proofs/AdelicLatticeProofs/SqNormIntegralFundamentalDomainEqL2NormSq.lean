@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfAeFundamentalDomain
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfAeFundamentalDomain
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem isVacO_om : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D
         compAt_mt_mul_inv, Matrix.mul_one]
     have h0 := congrArg (om (g, h)) (hfock τ z₀)
     unfold annih at h0 ⊢
-    rw [map_add, map_smul, map_zero, om_dRho hW hθ g h τ _ hth, om_dRho hW hθ g h τ _ hth] at h0
+    rw [map_add (f := _), map_smul, map_zero, om_dRho hW hθ g h τ _ hth, om_dRho hW hθ g h τ _ hth] at h0
     rw [cplxO_move θ τ g h (hS τ) (hT τ)]
     exact h0
   · show nrm2 p.1 p.2 (om (g, h) f) = 1

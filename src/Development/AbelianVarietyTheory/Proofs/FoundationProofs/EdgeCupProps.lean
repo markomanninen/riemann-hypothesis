@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.CobOn
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CobOn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+
+@[expose] public section
+
 open GlobalTheory.KEdge GlobalTheory.NeedB Polynomial
 
 namespace GlobalTheory.KEdge

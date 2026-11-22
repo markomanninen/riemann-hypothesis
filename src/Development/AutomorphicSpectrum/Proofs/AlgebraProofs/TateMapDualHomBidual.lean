@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DvdMulOfGroupLikeVal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DvdMulOfGroupLikeVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,7 @@ theorem pairing_dual_bidual (G : PDivGroup p O) (t : G.Tate) (χ : G.dual.Tate) 
 
 theorem algebraMap_injective [IsDomain O] [Algebra ℤ_[p] O] (hp : (p : O) ≠ 0) :
     Function.Injective (algebraMap ℤ_[p] O) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra h
   have h2 := congrArg (algebraMap ℤ_[p] O) (PadicInt.unitCoeff_spec h)
@@ -162,7 +166,7 @@ theorem dlog_lagrangian : FarguesHodgeTate → ∀ (p : ℕ) [Fact p.Prime] (C :
   have hκ0 : κ ≠ 0 := fun h => hκ.1 (by rw [h, map_zero])
   have hskew : ∀ x y, B x y = - B y x := fun x y => by
     have h1 := halt (x + y)
-    simp only [map_add, LinearMap.add_apply, halt, zero_add, add_zero] at h1
+    simp only [map_add (f := _), LinearMap.add_apply, halt, zero_add, add_zero] at h1
     exact eq_neg_of_add_eq_zero_right h1
   let e : G.Tate ≃ₗ[ℤ_[p]] G.dual.Tate := LinearEquiv.ofBijective _ hbij
   let L : O ⊗[ℤ_[p]] G.Tate ≃ₗ[O] O ⊗[ℤ_[p]] G.dual.Tate := e.baseChange ℤ_[p] O _ _
@@ -211,7 +215,7 @@ theorem dlog_lagrangian : FarguesHodgeTate → ∀ (p : ℕ) [Fact p.Prime] (C :
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, neg_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), neg_add]
     | tmul c t =>
       have h1 : omegaMap G G.dual lam (hodgeTate G t) = - dlog G (tateMap G G.dual O lam t) := by
         rw [hodgeTate_apply, ← dlog_tateMap,

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.CmHostUnitAddConjEqOne
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HalvesFreeAndAdjoint
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeneralLinearGroupCharEqOneOfDetEqOne
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.CmHostUnitAddConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HalvesFreeAndAdjoint
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeneralLinearGroupCharEqOneOfDetEqOne
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -27,7 +31,8 @@ variable {R Q : Type} [CommRing R] [AddCommGroup Q] [Module R Q] {I : Ideal R} {
 
 theorem equiv_col (e : (Fin r → R ⧸ I) ≃ₗ[R] Q) (c : Fin r → R) :
     e (fun j => Ideal.Quotient.mk I (c j)) = ∑ j, c j • e (Pi.single j 1) := by
-  simp only [← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_smul, ← map_sum]
   congr 1
   funext i
   simp [Finset.sum_apply, Pi.single_apply, Algebra.smul_def]
@@ -45,8 +50,8 @@ theorem rho_apply (e : (Fin r → R ⧸ I) ≃ₗ[R] Q) (k : GL (Fin r) (R ⧸ I
   change e ((k : Matrix (Fin r) (Fin r) (R ⧸ I)) *ᵥ (e.symm (e (Pi.single i 1)))) = _
   rw [e.symm_apply_apply, ← ha]
   congr 1
-  funext j
-  simp
+  simp only [Matrix.mulVec_single_one]
+  rfl
 
 theorem cop_iff_isUnit {s : R} : IsCoprime (Ideal.span {s}) I ↔ IsUnit (Ideal.Quotient.mk I s) := by
   rw [cop_iff]
@@ -138,7 +143,8 @@ theorem exists_frame (X : Data E r) (I : Ideal (𝓞 E)) (hI : I ≠ ⊥) : ∃ 
   have : Submodule.Quotient.mk (⟨v, hv⟩ : X.Λ) = (Submodule.Quotient.mk (∑ i, c i • b i) :
       X.Λ ⧸ (I • ⊤ : Submodule (𝓞 E) X.Λ)) := by
     rw [← hc]
-    simp only [← hb, ← Submodule.mkQ_apply, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← hb, ← Submodule.mkQ_apply, map_sum, map_smul]
   have h2 := mem_smul_top.1 ((Submodule.Quotient.eq _).1 this)
   have h3 : v = ∑ i, c i • (b i : Fin r → E) + ((⟨v, hv⟩ - ∑ i, c i • b i : X.Λ) : Fin r → E) := by simp
   rw [h3]
@@ -217,7 +223,8 @@ theorem mem_of_cong {J : Ideal (𝓞 E)} (hJ : J ≠ ⊥)
 
 theorem mk_comb {K : Submodule (𝓞 E) La} (c : Fin r → 𝓞 E) (z : Fin r → La) :
     (Submodule.Quotient.mk (∑ j, c j • z j) : La ⧸ K) = ∑ j, c j • Submodule.Quotient.mk (z j) := by
-  simp only [← Submodule.mkQ_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Submodule.mkQ_apply, map_sum, map_smul]
 
 theorem tie_core (D : SW.Level X) {𝔐 J : Ideal (𝓞 E)} (hprod : D.𝔪 = 𝔐 * J) (hcop : IsCoprime 𝔐 J)
     (hgrp : ∀ k : GL (Fin r) (𝓞 E ⧸ D.𝔪), (∀ i j, ∃ a ∈ 𝔐,
@@ -255,7 +262,8 @@ theorem tie_core (D : SW.Level X) {𝔐 J : Ideal (𝓞 E)} (hprod : D.𝔪 = �
       (Submodule.smul_mem _ _ (Submodule.smul_mem_smul hm (D.β_mem i)))
   choose z hz using hz
   have hcomb : ∀ a : Fin r → 𝓞 E, Cong X J (δ (∑ j, a j • z j)) (∑ j, a j • D.β j) := fun a => by
-    simpa only [map_sum, map_smul] using cong_sum hz a
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_smul] using cong_sum hz a
   have hsp : Submodule.span (𝓞 E) (Set.range fun i =>
       (Submodule.Quotient.mk (z i) : La ⧸ (J • ⊤ : Submodule (𝓞 E) La))) = ⊤ := by
     refine eq_top_iff.2 fun q _ => ?_
@@ -320,7 +328,7 @@ theorem tie_core (D : SW.Level X) {𝔐 J : Ideal (𝓞 E)} (hprod : D.𝔪 = �
         rw [← map_sub]
         refine Submodule.smul_induction_on this (fun m hm x _ => ?_) fun x y hx hy => ?_
         · rw [map_smul, smul_comm]; exact Submodule.smul_mem_smul hm (h1 _ (hδ x))
-        · rw [map_add, smul_add]; exact add_mem hx hy
+        · rw [map_add (f := _), smul_add]; exact add_mem hx hy
 
 theorem image_lt_eq_range {Q : Type} {n : ℕ} (hn : r ≤ n) (x : Fin n → Q) :
     x '' {b | b.val < r} = Set.range fun i => x (Fin.castLE hn i) := by
@@ -471,7 +479,8 @@ theorem exists_levTie : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
           rw [← ha, Matrix.map_map]; rfl)
         simp only [he₀] at h1
         have h2 := hfg (g * rho e₀ (Matrix.GeneralLinearGroup.map (Ideal.Quotient.factor hle) k.1))
-        simp only [LinearEquiv.mul_apply, h1, map_sum, map_smul] at h2
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [LinearEquiv.mul_apply, h1, map_sum, map_smul] at h2
         rw [← funext hg, hfg]
         exact h2.trans (by rw [map_mul, Units.val_mul]; rfl)) hL δ hδ hLδ hn
     exact ⟨t, ht, fun xs y h1 h2 => (hf _).trans (H _ y h1 h2)⟩

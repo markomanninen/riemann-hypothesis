@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeCountPrimeMonoLevel
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeCountPrimeMonoLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,8 @@ theorem goodRank_core {O Kf X : Type*} [CommRing O] [Field Kf] [Algebra O Kf] [A
     rw [hsum]
     simp only [hsmul, hφ]
     simp only [Matrix.mulVec, dotProduct]
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [← map_mul]
     congr 1
@@ -112,7 +117,8 @@ theorem goodRank_core {O Kf X : Type*} [CommRing O] [Field Kf] [Algebra O Kf] [A
       rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hP, Matrix.one_mulVec]
     conv_lhs => rw [← h2]
     simp only [Matrix.mulVec, dotProduct]
-  rw [hx, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [LinearMap.codRestrict_apply, key x i, ← map_mul]
   congr 1

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc
 
@@ -113,7 +117,7 @@ theorem pow_sub_mem {m : ℕ} (hl : ¬ l ∣ m) {y : Om l} (hy : y ∈ rootRing 
     refine ⟨algebraMap ℤ_[l] (rootRing l m) c, ?_⟩
     show (algebraMap ℤ_[l] (rootRing l m) r) ^ (l ^ m.totient) =
       algebraMap ℤ_[l] (rootRing l m) r + (l : rootRing l m) * algebraMap ℤ_[l] (rootRing l m) c
-    rw [← map_pow, hc, map_add, map_mul, map_natCast]
+    rw [← map_pow, hc, map_add (f := _), map_mul, map_natCast]
   · rintro x y hx hy ⟨z1, h1⟩ ⟨z2, h2⟩
     obtain ⟨r, hr⟩ := exists_add_pow_prime_pow_eq hp (⟨x, hx⟩ : rootRing l m) ⟨y, hy⟩ m.totient
     refine ⟨z1 + z2 + ⟨x, hx⟩ * ⟨y, hy⟩ * r, ?_⟩

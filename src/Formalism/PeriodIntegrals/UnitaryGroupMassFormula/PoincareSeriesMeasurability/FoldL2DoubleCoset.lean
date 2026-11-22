@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.FoldBound
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareSeriesSquareIntegrable
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldUnfold
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldMult
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.FoldBound
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareSeriesSquareIntegrable
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldUnfold
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldMult
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,8 +100,10 @@ theorem fold_L2_double_coset (G : Type*) [Group G] [TopologicalSpace G] [IsTopol
   have hfin : (a : ℝ≥0∞) * quotientLIntegral μ F Ph * multiplicityLIntegral μ Γ Ω F Ph < ⊤ :=
     ENNReal.mul_lt_top (ENNReal.mul_lt_top ENNReal.coe_lt_top hq) hI
   have hPm : Measurable (poinc D Ph) := measurable_poinc D Ph hPh hTfin
-  refine ⟨⟨hPm.aestronglyMeasurable, ?_⟩, hbound, hlast⟩
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num)]
+  refine ⟨?_, hbound, hlast⟩
+  change eLpNorm (poinc D Ph) 2 (μ.restrict FΓ) < ∞
+  rw [eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num)
+    hPm.aestronglyMeasurable]
   have h2 : ∀ x, ‖poinc D Ph x‖ₑ ^ ((2 : ℝ≥0∞).toReal) = ‖poinc D Ph x‖ₑ ^ 2 := by
     intro x
     rw [ENNReal.toReal_ofNat, ← ENNReal.rpow_natCast]

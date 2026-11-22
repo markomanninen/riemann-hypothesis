@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocOpAdj
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocOpAdj
+
+@[expose] public section
 
 noncomputable section
 

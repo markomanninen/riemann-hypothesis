@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Lam1
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Lam1
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.GermRateSplit
 
@@ -46,19 +50,17 @@ theorem weight_product_append (k r : ℕ) (GG : ℝ) (fr : ℕ → ℕ → ℝ) 
   | b, (s, t) :: rest, Q => by
     simp only [List.cons_append, C.nAux]
     rw [weight_product_append k r GG fr (b + s) rest Q, ← mul_assoc]
-    have e : b + D.ptSize ((s, t) :: rest) = b + s + D.ptSize rest := by
-      simp only [D.ptSize, List.map_cons, List.sum_cons]; ring
-    rw [e]
+    simp only [D.ptSize, List.map_cons, List.sum_cons, Nat.add_assoc]
 
 theorem weight_product_germ_indep (k r : ℕ) (GG GG' : ℝ) (fr : ℕ → ℕ → ℝ) :
     ∀ (b : ℕ) (P : C.LPt), b + D.ptSize P ≤ r + 1 → C.nAux k r GG fr b P = C.nAux k r GG' fr b P
   | b, [], _ => by simp [C.nAux]
   | b, (s, t) :: rest, h => by
     simp only [C.nAux]
-    have hs : D.ptSize ((s, t) :: rest) = s + D.ptSize rest := by simp [D.ptSize]
-    rw [hs] at h
+    have hrest : b + s + D.ptSize rest ≤ r + 1 := by
+      simpa only [D.ptSize, List.map_cons, List.sum_cons, Nat.add_assoc] using h
     have hc : ¬ (b + s - 1 = r + 1 ∧ s = 1) := by omega
-    rw [if_neg hc, if_neg hc, weight_product_germ_indep k r GG GG' fr (b + s) rest (by omega)]
+    simp only [ite_eq_right hc, weight_product_germ_indep k r GG GG' fr (b + s) rest hrest]
 
 theorem bSt_append (κ : ℝ) (P Q : C.LPt) : D.bSt κ (P ++ Q) = D.bSt κ P * D.bSt κ Q := by
   simp [D.bSt, List.map_append, List.prod_append]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal Pointwise
@@ -13,7 +17,7 @@ noncomputable def hits (X : Ctx) (S : Set X.G) (x : X.G) : ℝ≥0∞ :=
 theorem measurable_hits (X : Ctx) {S : Set X.G} (hS : MeasurableSet S) :
     Measurable (hits X S) := by
   unfold hits
-  refine Measurable.ennreal_tsum fun γ => ?_
+  refine Measurable.tsum fun γ => ?_
   exact (measurable_one.indicator hS).comp (measurable_const_mul (γ : X.G))
 
 theorem lintegral_hits (X : Ctx) {S : Set X.G} (hS : MeasurableSet S) :
@@ -62,7 +66,7 @@ theorem cellSum_holds : CellSum := by
       exact hc i o ho
     calc w x * cnt X.Γ Ω x ≤ c i * hits X (a i • (Ω₀ * Ω)) x :=
           mul_le_mul' hwx (cnt_le_hits X hδ ho hx)
-      _ ≤ _ := ENNReal.le_tsum i
+      _ ≤ _ := le_tsum (fun j => c j * hits X (a j • (Ω₀ * Ω)) x) i
   calc ∫⁻ x, w x * cnt X.Γ Ω x ∂X.ν
       ≤ ∫⁻ x, ∑' i, c i * hits X (a i • (Ω₀ * Ω)) x ∂X.ν := lintegral_mono hpt
     _ = ∑' i, ∫⁻ x, c i * hits X (a i • (Ω₀ * Ω)) x ∂X.ν :=

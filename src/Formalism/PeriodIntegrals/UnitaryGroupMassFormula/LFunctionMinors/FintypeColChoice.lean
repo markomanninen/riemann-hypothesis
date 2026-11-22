@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WwMain
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WwMain
+
+@[expose] public section
 
 open MvPolynomial Finset
 
@@ -32,7 +36,7 @@ def Hpol {Lt : Type} (l : ℕ) [Fact l.Prime] (N0 N1 : ℕ)
     (ph : Module.Dual ℂ_[l] (MvPolynomial (Lt × ℕ × Fin N0) ℂ_[l]))
     (G : MvPolynomial (XZ Lt N0 N1) ℤ) : MvPolynomial (Lt × Fin N0 × Fin N1) ℂ_[l] :=
   ∑ μ ∈ G.support, monomial (Finsupp.sumFinsuppEquivProdFinsupp μ).2
-    (((coeff μ G : ℤ) : ℂ_[l]) * ph (monomial (Finsupp.sumFinsuppEquivProdFinsupp μ).1 1))
+    (((AddMonoidAlgebra.coeff G μ : ℤ) : ℂ_[l]) * ph (monomial (Finsupp.sumFinsuppEquivProdFinsupp μ).1 1))
 
 def wt {Lt : Type} (l : ℕ) [Fact l.Prime] (N0 N1 : ℕ) (Th : MvPowerSeries (Lt × Fin N0 × Fin N1) ℂ_[l])
     (α : (Lt × Fin N0 × Fin N1) →₀ ℕ) : ℂ_[l] :=
@@ -40,7 +44,7 @@ def wt {Lt : Type} (l : ℕ) [Fact l.Prime] (N0 N1 : ℕ) (Th : MvPowerSeries (L
 
 def Lfun {Lt : Type} (l : ℕ) [Fact l.Prime] (N0 N1 : ℕ) (Th : MvPowerSeries (Lt × Fin N0 × Fin N1) ℂ_[l])
     (P : MvPolynomial (Lt × Fin N0 × Fin N1) ℂ_[l]) : ℂ_[l] :=
-  ∑ α ∈ P.support, coeff α P * wt l N0 N1 Th α
+  ∑ α ∈ P.support, AddMonoidAlgebra.coeff P α * wt l N0 N1 Th α
 
 def EvalH : Prop :=
   ∀ (Lt : Type) [Fintype Lt] [DecidableEq Lt] (l : ℕ) [Fact l.Prime] (N0 N1 : ℕ)

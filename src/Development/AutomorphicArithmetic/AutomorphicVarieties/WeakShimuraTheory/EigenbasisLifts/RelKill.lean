@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.TrPlus
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.MapApi
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.TrPlus
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.MapApi
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Eb GlobalTheory.GalOfCusp
 
@@ -21,7 +25,25 @@ private theorem UpperTheory.V.Ws.Eb.relKill_push {R A G : Type} [CommRing R] [Co
     rw [map_mul]
     congr 1
     simp [MonoidAlgebra.mapRingHom]
-  rw [e, W.GDet.tr.eq_1, (AlgebraTools.Det.mapApi D f).2.1 1, ← W.GDet.tr.eq_1, hz g', map_zero]
+  have hchi : ∀ y, (D.map f).chi (MonoidAlgebra.mapRingHom G f y) = (D.chi y).map f := by
+    intro y
+    have he : MonoidAlgebra.single 1 X - MonoidAlgebra.mapRingHom G C (MonoidAlgebra.mapRingHom G f y) =
+        MonoidAlgebra.mapRingHom G (Polynomial.mapRingHom f) (MonoidAlgebra.single 1 X - MonoidAlgebra.mapRingHom G C y) := by
+      rw [map_sub, MonoidAlgebra.mapRingHom_single, Polynomial.coe_mapRingHom, Polynomial.map_X,
+        ← RingHom.comp_apply, ← RingHom.comp_apply, ← MonoidAlgebra.mapRingHom_comp,
+        ← MonoidAlgebra.mapRingHom_comp, Polynomial.mapRingHom_comp_C]
+    show (D.map f).D A[X] _ = _
+    rw [he]
+    let : Algebra R A[X] := ((algebraMap A A[X]).comp f).toAlgebra
+    have hc : ∀ a : R, Polynomial.mapRingHom f (algebraMap R R[X] a) = algebraMap R A[X] a := by
+      intro a
+      change Polynomial.map f (C a) = C (f a)
+      exact Polynomial.map_C f
+    exact D.nat R[X] A[X] { Polynomial.mapRingHom f with commutes' := hc } _
+  have hmap : ∀ i y, (D.map f).lam i (MonoidAlgebra.mapRingHom G f y) = f (D.lam i y) := by
+    intro i y
+    simp only [W.GDet.lam, hchi, Polynomial.coeff_map, map_mul, map_pow, map_neg, map_one]
+  rw [e, W.GDet.tr.eq_1, hmap 1, ← W.GDet.tr.eq_1, hz g', map_zero]
 
 theorem UpperTheory.V.Ws.Eb.relKill :
     ∀ {l : ℕ} [Fact l.Prime] {F : W.GFrame l} {c : Coef l} {n : ℕ} {r : W.Resid F c.O n} (B : W.UniversalOrdinaryDeterminantRing r) {A : Type} [CommRing A] [Algebra c.O A] (f : B.B →ₐ[c.O] A) (ρ : F.G₀ →* GL (Fin n) A), Full ρ → B.u.D.map (f : B.B →+* A) = W.GDet.ofRep (W.mat ρ) →

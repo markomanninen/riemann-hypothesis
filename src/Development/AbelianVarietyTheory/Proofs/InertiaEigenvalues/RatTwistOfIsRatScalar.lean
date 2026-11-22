@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaPrimeIsAuxiliarySplitSquarefreeLevel
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAuxiliarySquarefreeLevelTwistPlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChangeOfSplittingPair
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistingCharacterAdmissibleGaloisTwistGood
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastMemConj
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SeriesRatSOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.LevelOfOfSameBut
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaPrimeIsAuxiliarySplitSquarefreeLevel
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAuxiliarySquarefreeLevelTwistPlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChangeOfSplittingPair
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistingCharacterAdmissibleGaloisTwistGood
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastMemConj
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SeriesRatSOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LevelOfOfSameBut
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.IndefR.Links IsDedekindDomain NumberField GlobalTheory.ExportSeries Formalism.L2.Pj GlobalTheory.CoverRead GlobalTheory.IndefiniteRowSideFullHecke.RationalRayLevels GlobalTheory.ConjTwist
 open Formalism.L2.Host (embLL0)
@@ -24,8 +28,8 @@ noncomputable section
 
 namespace GlobalTheory.SeriesTie.TwistRat
 
-open Classical in
 
+open Classical in
 theorem exists_level : ∀ (D : D7) (ρ : Setup D.ntw), ρ.Good → (D.host.cls D.host.pde = .splitK ∧ D.host.cls D.host.pde' = .splitK) → ∀ (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool) (k : ℕ) (Q : Finset (Pl D.host.E)) (ψ : Formalism.ConjugateSelfDual.G D.host.E D.nd.Om →* (D.ntw.Ok i k)ˣ), TwOK i k Q ψ → ClsQ (D := D) Q → ∃ pd : ℕ, IsAuxiliarySplitSquarefreeLevel D (D.host.g 0 * D.host.g 1) pd ∧ pd.Coprime (D.ntw.l i) ∧ (∀ PP ∈ (ρ.B i j b).de.Q ∪ (ρ.tw i b k Q ψ).Q, ((pd : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal) ∧ (∀ PP ∈ (ρ.B i j b).de.Q ∪ (ρ.tw i b k Q ψ).Q, ((D.host.QS * D.host.q * Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∉ PP.asIdeal) := by
   intro D ρ hρ hde i j b k Q ψ htw hcls
   obtain ⟨N, -, hNl, haux, hNQ⟩ := UnivRat.exists_auxiliary_squarefree_level_twistPlaces hρ hde i Q hcls htw.2.1
@@ -44,15 +48,15 @@ theorem exists_level : ∀ (D : D7) (ρ : Setup D.ntw), ρ.Good → (D.host.cls 
   · exact (Nat.coprime_primes D.host.pde'_prime (D.ntw.lPrime i).out).2 fun e' => D.host.pde_ne (e.symm.trans e'.symm)
   · exact (Nat.coprime_primes D.host.pde_prime (D.ntw.lPrime i).out).2 fun e' => e e'.symm
 
-open Classical in
 
+open Classical in
 theorem exists_field_roots : ∀ (L : IntermediateField ℚ ℂ) (K : Subfield ℂ), FiniteDimensional ℚ L → IsGalois ℚ L → L.toSubfield ≤ K → ∀ n : ℕ, 0 < n → ∃ L' : IntermediateField ℚ ℂ, FiniteDimensional ℚ L' ∧ Normal ℚ L' ∧ L ≤ L' ∧ L'.toSubfield ≤ K ∧ ∀ z ∈ K, z ^ n = 1 → z ∈ L' := by
   intro L K h1 h2 h3 n hn
   haveI := h2.to_normal
   exact BaseRat.exists_normal_roots L h3 hn.ne'
 
-open Classical in
 
+open Classical in
 theorem exists_order : ∀ (D : D7) (ρ : Setup D.ntw), ρ.Good → ρ.LevelOf D.nexp → ∀ (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool) (k : ℕ) (Q : Finset (Pl D.host.E)) (ψ : Formalism.ConjugateSelfDual.G D.host.E D.nd.Om →* (D.ntw.Ok i k)ˣ), TwOK i k Q ψ → ∃ n : ℕ, 0 < n ∧ (∀ x, (ρ.B i j b).de.chi x ^ n = 1 ∧ (((ρ.B i j b).de.chi x : Circle) : ℂ) ∈ (ρ.ek i b k).fieldRange) ∧ (∀ x, (ρ.tw i b k Q ψ).chi x ^ n = 1 ∧ (((ρ.tw i b k Q ψ).chi x : Circle) : ℂ) ∈ (ρ.ek i b k).fieldRange) ∧ (∀ p, (ρ.B i j b).G.P.chi p ^ n = 1 ∧ (((ρ.B i j b).G.P.chi p : ℂˣ) : ℂ) ∈ (ρ.ek i b k).fieldRange) := by
   intro D ρ hρ hU i j b k Q ψ htw
   obtain ⟨n, hn, hde⟩ := BaseRat.de_values hρ i j b
@@ -76,15 +80,15 @@ theorem exists_order : ∀ (D : D7) (ρ : Setup D.ntw), ρ.Good → ρ.LevelOf D
     exact ⟨by rw [mul_comm n, mul_assoc, pow_mul, this, one_pow], e ▸ ⟨_, rfl⟩⟩
   · rw [pow_mul', ← map_pow, pow_card_eq_one', map_one, one_pow]
 
-open Classical in
 
+open Classical in
 theorem mu_mem_small : ∀ (D : D7) (Γ : Type) [Group Γ] [Fintype Γ] (Pl0 I0 T0 : Type) (A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (Rl : RealDat3 D A3 T.Q.c.F) (cG : G0 Rl.Pg D.R.r ≃* G0g D.nd) (S : NX.RatDat D.ntw) (YS : NX.NExpRealS Rl cG S) (F : Face D A3.A) (ρ : Setup D.ntw), ρ.Good → RealPin Rl cG ρ → LawsJ T → GlobalTheory.Hk3.Core Rl.toRealDat F → IsGalois ℚ D.LL0 → Formalism.L2.Host.ValLL0 D Rl.C → (∀ (k : Fin 2) (z : ℂ), z ^ (D.host.g k * (D.host.g k - 1)) = 1 → z ∈ (embLL0 D).fieldRange) → ∀ (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool), ∀ PP ∈ (ρ.B i j b).G.Pg, ∀ u, (((ρ.B i j b).G.mu PP u : Circle) : ℂ) ∈ (embLL0 D).fieldRange := by
   intro D Γ _ _ Pl0 I0 T0 A3 T _ Rl cG S YS F ρ hρ hpin hT hcore hgal hval hroots i j b PP hPP u
   obtain ⟨a, ha⟩ := hρ.Pg i j b PP hPP
   exact UnivRat.char_mem_of_over hroots ha ((ρ.B i j b).G.muC PP) u
 
-open Classical in
 
+open Classical in
 theorem isLevDatum_flat : ∀ (D : D7) (S T : HSp D) (B : Base S T), B.Good → ∀ (t : Twist D Circle), t.Good → B.admitted t.Q → ∀ (N : ℕ) (k : Subfield ℂ), (∀ PP, PP ∈ B.G.Pg ∨ PP ∈ B.de.Q ∪ t.Q → ((N : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal) → (∀ PP, PP ∈ B.G.Pg ∨ PP ∈ B.de.Q ∪ t.Q → ((D.host.QS * D.host.q * Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∉ PP.asIdeal) → (∀ p, ((B.G.P.chi p : ℂˣ) : ℂ) ∈ k) → (∀ PP ∈ B.G.Pg, ∀ u, ((B.G.mu PP u : Circle) : ℂ) ∈ k) → (∀ x, ((B.de.chi x : Circle) : ℂ) ∈ k) → (∀ x, ((t.chi x : Circle) : ℂ) ∈ k) → IsLevDatum B.F.ψ S T B.F.ΛS B.F.ΛT N k B.F.f₀ (B.vecFlat t) := by
   intro D S T B hB t ht hQ N k hN h2 hP hmu hde htk
   have key : ∀ {s : Twist D Circle}, s.Good → (∀ x, ((s.chi x : Circle) : ℂ) ∈ k) → ∀ PP ∈ s.Q, ∀ x,
@@ -100,9 +104,9 @@ theorem isLevDatum_flat : ∀ (D : D7) (S T : HSp D) (B : Base S T), B.Good → 
   · exact key ht htk PP.1 PP.2 _
   · exact zero_mem _
 
-open Classical in
 
-theorem exists_coef_sum : ∀ (D : D7) (Γ : Type) [Group Γ] [Fintype Γ] (Pl0 I0 T0 : Type) (A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (Rl : RealDat3 D A3 T.Q.c.F) (cG : G0 Rl.Pg D.R.r ≃* G0g D.nd) (F : Face D A3.A) (v₀ : ∀ (j : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (Rl.MW j σ).Vec) (ρ : Setup D.ntw), ρ.Good → RealPin Rl cG ρ → GlobalTheory.Hk3.Core Rl.toRealDat F → IoExt Rl.toRealDat → ∀ (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool), FWT.IsChosenExtremalVector Rl.toRealDat j (sg0 D A3.A) (v₀ j _) → ∀ (u : ∀ τ, lowT (Rl.MW j (sg0 D A3.A)) τ), (∀ τ, (u τ : (Rl.MW j (sg0 D A3.A)).sm τ) = v₀ j _ τ) → ∀ (c0 : VsV D j D.what₂.LL →ₛₗ[D.what₂.embLL] (Rl.cV j).W) (c : ℂ), c ≠ 0 → IsScaleAt Rl (ρ.B i j b) u c0 c → ∀ (h : GA D (Vc D j)) (P : PolF D (Wc D j).rank (Vc D j).rank), P ∈ ρ.lat i j b (ρ.eO i b).range h → ∃ (m : ℕ) (o : Fin m → ℂ) (v : Fin m → VsV D j D.what₂.LL), (∀ t, o t ∈ (ρ.eO i b).range) ∧ (∀ t mm, D.what₂.embLL (MvPolynomial.coeff mm (v t : Pol D.what₂.LL D.what₂.Tau (Vc D j).rank)) ∈ (embLL0 D).fieldRange) ∧ c • P = ∑ t, o t • Rl.ioP j (PiTensorProduct.tprod ℂ u) (c0 (v t)) := by
+open Classical in
+theorem exists_coef_sum : ∀ (D : D7) (Γ : Type) [Group Γ] [Fintype Γ] (Pl0 I0 T0 : Type) (A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (Rl : RealDat3 D A3 T.Q.c.F) (cG : G0 Rl.Pg D.R.r ≃* G0g D.nd) (F : Face D A3.A) (v₀ : ∀ (j : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (Rl.MW j σ).Vec) (ρ : Setup D.ntw), ρ.Good → RealPin Rl cG ρ → GlobalTheory.Hk3.Core Rl.toRealDat F → IoExt Rl.toRealDat → ∀ (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool), FWT.IsChosenExtremalVector Rl.toRealDat j (sg0 D A3.A) (v₀ j _) → ∀ (u : ∀ τ, lowT (Rl.MW j (sg0 D A3.A)) τ), (∀ τ, (u τ : (Rl.MW j (sg0 D A3.A)).sm τ) = v₀ j _ τ) → ∀ (c0 : VsV D j D.what₂.LL →ₛₗ[D.what₂.embLL] (Rl.cV j).W) (c : ℂ), c ≠ 0 → IsScaleAt Rl (ρ.B i j b) u c0 c → ∀ (h : GA D (Vc D j)) (P : PolF D (Wc D j).rank (Vc D j).rank), P ∈ ρ.lat i j b (ρ.eO i b).range h → ∃ (m : ℕ) (o : Fin m → ℂ) (v : Fin m → VsV D j D.what₂.LL), (∀ t, o t ∈ (ρ.eO i b).range) ∧ (∀ t mm, D.what₂.embLL (AddMonoidAlgebra.coeff (v t : Pol D.what₂.LL D.what₂.Tau (Vc D j).rank) mm) ∈ (embLL0 D).fieldRange) ∧ c • P = ∑ t, o t • Rl.ioP j (PiTensorProduct.tprod ℂ u) (c0 (v t)) := by
   intro D Γ _ _ Pl0 I0 T0 A3 T _ Rl cG F v₀ ρ hρ hpin hcore hio i j b hv u hu c0 c hc hs h P hP
   have hB := hρ.base i j b
   have hBo := BaseRat.baseOf_of_realPin hcore.lev hρ hpin i j b
@@ -117,13 +121,14 @@ theorem exists_coef_sum : ∀ (D : D7) (Γ : Type) [Group Γ] [Fintype Γ] (Pl0 
   refine ⟨m, fun t => o t, v, fun t => (o t).2, hv1, sub_eq_zero.1 (GlobalTheory.T.harmonic_polynomial_eq_zero_of_function D _ _ (ρ.B i j b).w (ρ.B i j b).F.BS hB.wt hm _
     (sub_mem (Submodule.smul_mem _ _ hP1) (sum_mem fun t _ => Submodule.smul_mem _ _
       (BaseRat.ioP_mem_valSpace hcore hio hv hB hBo hu _))) ?_)⟩
-  rw [map_sub, map_smul, map_sum, ← hsum, Finset.smul_sum, sub_eq_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_smul, map_sum, ← hsum, Finset.smul_sum, sub_eq_zero]
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [map_smul, hs (v t), ← hv2 t, ← hG t, smul_comm]
   rfl
 
-open Classical in
 
+open Classical in
 theorem exists_sum_read : ∀ (D : D7) (Γ : Type) [Group Γ] [Fintype Γ] (Pl0 I0 T0 : Type) (A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (Rl : RealDat3 D A3 T.Q.c.F) (cG : G0 Rl.Pg D.R.r ≃* G0g D.nd) (S : NX.RatDat D.ntw) (YS : NX.NExpRealS Rl cG S) (F : Face D A3.A) (κ : ∀ j : Fin D.R.m, WeightFamilies.Wt D ((j : ℕ) + 1)) (v₀ : ∀ (j : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (Rl.MW j σ).Vec) (O : ∀ j, OMDat T.toCore Rl.toRealDat j Unit (fun _ => A3.A.μ0)), 8 * D.R.f * D.R.r + 4 ≤ D.R.nV → LawsJ T → GlobalTheory.Hk3.Core Rl.toRealDat F → FWTie T Rl.toRealDat κ v₀ → TieIn T Rl.toRealDat κ v₀ → ∀ (j : Fin D.R.m) (hV : T.V ((j : ℕ) + 1) T.σ₀ = Wc D j), OMPins T Rl.toRealDat κ v₀ O j → ∀ (C : Cover T ((j : ℕ) + 1) T.σ₀), GoodCover T Rl.toRealDat j C (κ j).n → ∀ (φ : GA D (Wc D j) → ℂ), IsRat T j hV C (κ j) φ → (∀ k : GA D (Wc D j), Lev.IsLevelLift (Wc D j) (Rl.βW j) (Rl.datWp j Rl.triv) 1 k → ∀ g, φ (g * k) = φ g) → ∃ (m : ℕ) (a : Fin m → ℂ) (y : Fin m → NX.FmK S ((j : ℕ) + 1)), (∀ t, a t ∈ C.σ₂.fieldRange) ∧ φ = ∑ t, a t • evW YS v₀ j (y t).1 := by
   intro D Γ _ _ Pl0 I0 T0 A3 T _ Rl cG S YS F κ v₀ O hnV hT hcore hfw hti j hV hpins C hC φ hφ hinv
   have hpb : T.pb = Rl.toRealDat.C.P.pb :=
@@ -212,7 +217,8 @@ theorem inv_smul_mem_range_of_readable {ρ : Setup D.ntw} (hρ : ρ.Good) (i : D
     field_simp
   choose x hx using key
   refine ⟨∑ t, x t, ?_⟩
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   exact Finset.sum_congr rfl fun t _ => hx t
 
 end Range
@@ -238,8 +244,8 @@ end Inv
 
 section Lemmas
 
-open Classical in
 
+open Classical in
 theorem exists_cover (hRF : GlobalTheory.NT.RayField) {T : CoreJ D} [Algebra T.Q.c.F D.what₂.LL] {Rl : RealDat3 D A3 T.Q.c.F}
     {cG : G0 Rl.Pg D.R.r ≃* G0g D.nd} {S : NX.RatDat D.ntw} (YS : NX.NExpRealS Rl cG S) {F : Face D A3.A}
     (κ : ∀ j : Fin D.R.m, WeightFamilies.Wt D ((j : ℕ) + 1)) (v₀ : ∀ (j : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (Rl.MW j σ).Vec)
@@ -300,8 +306,8 @@ theorem exists_cover (hRF : GlobalTheory.NT.RayField) {T : CoreJ D} [Algebra T.Q
   · exact hrt _ (hP p).2 (by rw [← Units.val_pow_eq_pow_val, (hP p).1, Units.val_one])
   · exact hLL (hmu PP hPP u)
 
-open Classical in
 
+open Classical in
 theorem exists_isTwist (t t' : Twist D Circle) (ht : t.Good) (ht' : t'.Good) (hdisj : SplitSet (t.Q ∪ t'.Q))
     (hd : Disjoint t.Q t'.Q) (pd : ℕ) {k : Type} [Field k] (σ : k →+* ℂ)
     (hord : ∃ n : ℕ, 0 < n ∧ ∀ x, (t.chi * t'.chi) x ^ n = 1)
@@ -309,8 +315,8 @@ theorem exists_isTwist (t t' : Twist D Circle) (ht : t.Good) (ht' : t'.Good) (hd
     (hval : ∀ x, (((t.chi * t'.chi) x : Circle) : ℂ) ∈ σ.fieldRange) :
     ∃ δ : Formalism.L2.Host.HChar D.host.E, IsTwist pd σ δ (t.chi * t'.chi) := GlobalTheory.TwistProduct.isTwist_mul D t t' ht ht' hdisj hd pd k σ hord hpd hval
 
-open Classical in
 
+open Classical in
 theorem isLevDatum_vecFlat {S T : HSp D} (B : Base S T) (hB : B.Good) (t : Twist D Circle) (ht : t.Good)
     (hQ : B.admitted t.Q) (N : ℕ) (k : Subfield ℂ)
     (hN : ∀ PP, PP ∈ B.G.Pg ∨ PP ∈ B.de.Q ∪ t.Q → ((N : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal)
@@ -329,7 +335,7 @@ theorem exists_coef {T : CoreJ D} [Algebra T.Q.c.F D.what₂.LL] {Rl : RealDat3 
     {c0 : VsV D j D.what₂.LL →ₛₗ[D.what₂.embLL] (Rl.cV j).W} {c : ℂ} (hc : c ≠ 0) (hs : IsScaleAt Rl (ρ.B i j b) u c0 c)
     {h : GA D (Vc D j)} {P : PolF D (Wc D j).rank (Vc D j).rank} (hP : P ∈ ρ.lat i j b (ρ.eO i b).range h) :
     ∃ (m : ℕ) (o : Fin m → ℂ) (v : Fin m → VsV D j D.what₂.LL), (∀ t, o t ∈ (ρ.eO i b).range) ∧
-      (∀ t mm, D.what₂.embLL (MvPolynomial.coeff mm (v t : Pol D.what₂.LL D.what₂.Tau (Vc D j).rank)) ∈
+      (∀ t mm, D.what₂.embLL (AddMonoidAlgebra.coeff (v t : Pol D.what₂.LL D.what₂.Tau (Vc D j).rank) mm) ∈
         (embLL0 D).fieldRange) ∧
       c • P = ∑ t, o t • Rl.ioP j (PiTensorProduct.tprod ℂ u) (c0 (v t)) := exists_coef_sum D Γ Pl0 I0 T0 A3 T Rl cG F v₀ ρ hρ hpin hcore hio i j b hv u hu c0 c hc hs h P hP
 
@@ -366,8 +372,8 @@ end Main
 
 section Thm
 
-open Classical in
 
+open Classical in
 theorem ratTwist_of_isRatScalar (hRF : GlobalTheory.NT.RayField) {T : CoreJ D} [Algebra T.Q.c.F D.what₂.LL]
     {Rl : RealDat3 D A3 T.Q.c.F} {cG : G0 Rl.Pg D.R.r ≃* G0g D.nd} {S : NX.RatDat D.ntw} (YS : NX.NExpRealS Rl cG S)
     {F : Face D A3.A} (κ : ∀ j : Fin D.R.m, WeightFamilies.Wt D ((j : ℕ) + 1))
@@ -392,7 +398,7 @@ theorem ratTwist_of_isRatScalar (hRF : GlobalTheory.NT.RayField) {T : CoreJ D} [
   have hQG : hQ' ∈ GfC (Vc D j) := by
     refine GlobalTheory.WeilProduct.mem_GfC_of_supp ?_ hQs
     have hIS := ht.split.isIdemSum
-    rw [RingHom.map_add, GlobalTheory.PlaceDatum.infPart_idemSum hIS,
+    rw [RingHom.map_add (f := _), GlobalTheory.PlaceDatum.infPart_idemSum hIS,
       GlobalTheory.PlaceDatum.infPart_cA (GlobalTheory.PlaceDatum.infPart_idemSum hIS), add_zero]
   have hs : h * hQ' ∈ GfC (Vc D j) := mul_mem hd.fin hQG
 
@@ -498,7 +504,8 @@ theorem ratTwist_of_isRatScalar (hRF : GlobalTheory.NT.RayField) {T : CoreJ D} [
       (ρ.B i j b).gen (ρ.om i j b 1) (ρ.tw i b k Q ψ) (h * hQ') (Rl.ioP j (PiTensorProduct.tprod ℂ u) (c0L j (v t')))) := by
     have e : c • (ρ.B i j b).gen (ρ.om i j b 1) (ρ.tw i b k Q ψ) (h * hQ') P = ∑ t', o t' •
         (ρ.B i j b).gen (ρ.om i j b 1) (ρ.tw i b k Q ψ) (h * hQ') (Rl.ioP j (PiTensorProduct.tprod ℂ u) (c0L j (v t'))) := by
-      rw [← map_smul, hcP, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_smul, hcP, map_sum]
       exact Finset.sum_congr rfl fun t' _ => map_smul _ _ _
     have e2 : ∑ t', o t' • (ph • (ρ.B i j b).gen (ρ.om i j b 1) (ρ.tw i b k Q ψ) (h * hQ')
         (Rl.ioP j (PiTensorProduct.tprod ℂ u) (c0L j (v t')))) = ph • ∑ t', o t' •
@@ -511,8 +518,8 @@ theorem ratTwist_of_isRatScalar (hRF : GlobalTheory.NT.RayField) {T : CoreJ D} [
 
 end Thm
 
-open GlobalTheory.BigOn.Exp in
 
+open GlobalTheory.BigOn.Exp in
 theorem ratTwist : GlobalTheory.Published.GlobalArtinReciprocity → GlobalTheory.Published.RayClassFieldSt → GlobalTheory.SerStd.SeriesRatS → ∀ (D : D7) (Γ : Type) [Group Γ] [Fintype Γ] (Pl0 I0 T0 : Type) (A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (Rl : RealDat3 D A3 T.Q.c.F) (cG : G0 Rl.Pg D.R.r ≃* G0g D.nd) (S : NX.RatDat D.ntw) (YS : NX.NExpRealS Rl cG S) (F : Face D A3.A) (κ : ∀ j : Fin D.R.m, WeightFamilies.Wt D ((j : ℕ) + 1)) (v₀ : ∀ (j : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (Rl.MW j σ).Vec) (O : ∀ j, OMDat T.toCore Rl.toRealDat j Unit (fun _ => A3.A.μ0)) (ρ : Setup D.ntw) (hρ : ρ.Good) (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool) (hV : T.V ((j : ℕ) + 1) T.σ₀ = Wc D j), RealPin Rl cG ρ → ρ.LevelOf D.nexp → (D.host.cls D.host.pde = .splitK ∧ D.host.cls D.host.pde' = .splitK) → RatHyp T Rl F κ v₀ O i j hV → ∀ ν, IsRatScalar T Rl κ v₀ hV (ρ.B i j b) ν → RatTwist hρ (realRd YS v₀ hρ i j b ν) := by
   intro _ hRF _ D Γ _ _ Pl0 I0 T0 A3 T _ Rl cG S YS F κ v₀ O ρ hρ i j b hV hpin hU hde H ν hν
   obtain ⟨fw⟩ := H.fw

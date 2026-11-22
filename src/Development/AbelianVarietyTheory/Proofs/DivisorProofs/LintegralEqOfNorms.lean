@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergSmoothOfWeakDerivativeClosedSetStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionUnitaryGroupHermitianStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergSmoothOfWeakDerivativeClosedSetStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionUnitaryGroupHermitianStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,8 +87,8 @@ theorem ev_fderiv (hψ : IsStdChar D ψ (-1)) (F : BB ψ S T)
   have h3 := ((ev _ _ w).restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt (0 : ℝ) (h1.comp_hasDerivAt (0 : ℝ) h2)
   exact h3.deriv.symm
 
-open Classical in
 
+open Classical in
 theorem fderiv_vac (h : Chart θ σ) (hψ : IsStdChar D ψ (-1)) (F : BB ψ S T)
     (hF : GlobalTheory.RealWeil.Sm (rhoV hψ σ S T) F)
     (sS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ) (sT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ)
@@ -103,7 +107,8 @@ theorem fderiv_vac (h : Chart θ σ) (hψ : IsStdChar D ψ (-1)) (F : BB ψ S T)
     rfl
   have h2 : ∀ x : Ix S T → ℂ, x = ∑ τ, vecL (Pi.single τ (cpt x τ) : RW T S) := by
     intro x
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     exact (congrArg vecL (Finset.univ_sum_single (unvecL x))).symm
   have h3 : ∀ τ, cpt (Complex.I • blk sT sS *ᵥ z) τ = cplxO (sS τ) (sT τ) (cpt z τ) := fun τ => by
     unfold cplxO
@@ -113,7 +118,7 @@ theorem fderiv_vac (h : Chart θ σ) (hψ : IsStdChar D ψ (-1)) (F : BB ψ S T)
     fun x => (congrArg A (h2 x)).trans (map_sum A _ _)
   rw [h4 z, h4 (Complex.I • blk sT sS *ᵥ z), Finset.smul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_eq_zero fun τ _ => QB_ext fun w => ?_
-  rw [← ev_apply, map_add, map_smul, h1, h1, h3]
+  rw [← ev_apply, map_add (f := _), map_smul, h1, h1, h3]
   exact congrFun (hv τ (cpt z τ)) w
 
 theorem enorm_sq_inj {E : Type} [NormedAddCommGroup E] {a b : E} : ‖a‖ₑ ^ 2 = ‖b‖ₑ ^ 2 ↔ ‖a‖ = ‖b‖ := by
@@ -256,8 +261,8 @@ theorem detPlus_pairMatrix (sS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.ra
   rw [mM_apply]
   exact detPlus_blockDiagonal _ _ _ _
 
-open Classical in
 
+open Classical in
 theorem exists_isInfWeil : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ θ : InfFam D, IsInfFam θ →
     ∀ S T : HSp D, ∃ om, GlobalTheory.WeilParts.IsInfWeil ψ θ S T om := by
   intro D ψ hψ θ hθ S T

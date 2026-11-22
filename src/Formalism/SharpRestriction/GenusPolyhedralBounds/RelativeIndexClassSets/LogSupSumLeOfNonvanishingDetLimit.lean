@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataArith
-import Formalism.FilteredPoleLength.LocalDescentLevels.InvFromBlocksApplyZero
-import Formalism.PeriodIntegrals.Transference
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
-import Formalism.SharpRestriction.Divisibility.WeightAlgebra
-import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxBase
-import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxDet
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PairedCharacterCondition
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataArith
+public import Formalism.FilteredPoleLength.LocalDescentLevels.InvFromBlocksApplyZero
+public import Formalism.PeriodIntegrals.Transference
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
+public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+public import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxBase
+public import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxDet
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PairedCharacterCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,10 +107,6 @@ theorem log_norm_eq_neg_valuation (la : HeightOneSpectrum (𝓞 K)) {a : K} (ha 
     Real.log ‖NumberField.FinitePlace.embedding la a‖ = -((vAdd la a : ℝ) * lnN la) := by
   have h0 : la.valuation K a ≠ 0 := (map_ne_zero _).2 ha
   rw [NumberField.FinitePlace.norm_embedding', WithZeroMulInt.toNNReal_neg_apply _ h0]
-  have h1 : (WithZero.unzero h0).toAdd = WithZero.log (la.valuation K a) := by
-    conv_rhs => rw [← WithZero.coe_unzero h0]
-    rfl
-  rw [h1]
   push_cast
   rw [Real.log_zpow]
   unfold vAdd lnN
@@ -285,7 +285,7 @@ theorem had_onb {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E] (ρ 
     (hw : Orthonormal ℂ w) :
     ‖(Matrix.of fun l k => inner ℂ (w l) (x k)).det‖ ≤ ∏ k, ‖x k‖ := by
   refine (had_cols ρ _).trans ?_
-  refine Finset.prod_le_prod (fun _ _ => Real.sqrt_nonneg _) fun k _ => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => Real.sqrt_nonneg _) fun k _ => ?_
   rw [Real.sqrt_le_left (norm_nonneg _)]
   simpa using hw.sum_inner_products_le (x k) (s := Finset.univ)
 
@@ -363,7 +363,7 @@ theorem Herm.had {K : Type} [Field K] [NumberField K] {V : Type} [AddCommGroup V
   refine (had_inner dH ρ a fun k => Hm.e σ (v k)).trans ?_
   simp only [Hm.norm_e]
   refine mul_le_mul_of_nonneg_right ?_ (Finset.prod_nonneg fun k _ => ?_)
-  · exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => ha1 i
+  · exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => ha1 i
   · rw [← Hm.norm_e]; exact norm_nonneg _
 
 section Det
@@ -383,9 +383,6 @@ theorem coeff_polyOf (φ : V →ₗ[K] K) (z : (ι →₀ ℕ) →₀ V) (β : �
 
 theorem polyOf_eq_sum (φ : V →ₗ[K] K) (z : (ι →₀ ℕ) →₀ V) :
     polyOf φ z = ∑ β ∈ z.support, MvPolynomial.monomial β (φ (z β)) := rfl
-
-theorem polyOf_add (φ ψ : V →ₗ[K] K) (z : (ι →₀ ℕ) →₀ V) : polyOf (φ + ψ) z = polyOf φ z + polyOf ψ z := by
-  ext β; simp [coeff_polyOf]
 
 theorem polyOf_smul (a : K) (φ : V →ₗ[K] K) (z : (ι →₀ ℕ) →₀ V) :
     polyOf (a • φ) z = MvPolynomial.C a * polyOf φ z := by
@@ -579,7 +576,8 @@ theorem core_arch {N2 : (K →+* ℂ) → V → ℝ} {dH : ℕ} (Hm : Herm N2 dH
     obtain ⟨a, ha, _⟩ := h i
     exact (norm_nonneg a).trans ha
   have hN : ∀ f, 0 ≤ N2 σ f := fun f => by rw [← Hm.norm_e]; exact norm_nonneg _
-  rw [detPoly_expand, MvPolynomial.coeff_sum, map_sum, Finset.prod_univ_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [detPoly_expand, MvPolynomial.coeff_sum, map_sum, Finset.prod_univ_sum, Finset.mul_sum]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun b _ => ?_)
   rw [MvPolynomial.coeff_monomial]
   split_ifs
@@ -630,7 +628,7 @@ theorem deepCore (M : Submodule (𝓞 K) V) {ρ : ℕ} (z : Fin ρ → (ι →�
       refine hb.trans ?_
       rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, Real.exp_sum]
       refine mul_le_mul_of_nonneg_left ?_ (pow_pos hB _).le
-      refine Finset.prod_le_prod (fun k _ => Finset.sum_nonneg fun γ _ => ?_) fun k _ => hE σ k
+      refine Finset.prod_le_prod₀ (fun k _ => Finset.sum_nonneg fun γ _ => ?_) fun k _ => hE σ k
       rw [← Hm.norm_e]; exact norm_nonneg _
     calc Real.log ‖σ a‖ ≤ Real.log (Bop ^ ρ * Real.exp (∑ k, E σ k)) := Real.log_le_log hpos hb2
       _ = _ := by rw [Real.log_mul (pow_pos hB _).ne' (Real.exp_pos _).ne', Real.log_pow, Real.log_exp]
@@ -974,7 +972,7 @@ theorem tr_traceDual' (K : Type) [Field K] [NumberField K] (V : Type) [AddCommGr
   · intro f g
     apply tr_c_unique
     intro a
-    rw [hc, mul_add, map_add, hc, hc, smul_add, map_add]
+    rw [hc, mul_add, map_add (f := _), hc, hc, smul_add, map_add (f := _)]
   · intro b f
     apply tr_c_unique
     intro a
@@ -1135,13 +1133,15 @@ theorem tr_iota_mem_span [FiniteDimensional K V] (Hm : Herm N2 dH) (f : V) :
       tr_iota Hm ((Module.finBasis ℚ K p.2) • (Module.finBasis K V p.1))) := by
   set b := Module.finBasis K V
   set ω := Module.finBasis ℚ K
-  rw [← b.sum_repr f, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← b.sum_repr f, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   have hcc : b.repr f j = ∑ i, ((ω.repr (b.repr f j) i : ℚ) : K) * ω i := by
     conv_lhs => rw [← ω.sum_repr (b.repr f j)]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.smul_def, eq_ratCast]
-  rw [hcc, Finset.sum_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hcc, Finset.sum_smul, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [mul_smul, tr_iota_smul_rat]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨(j, i), rfl⟩)
@@ -1226,7 +1226,7 @@ theorem trans_of_stages (h1 : TrDualVec) (h2 : TrTraceDual) (h3 : TrScale) [Fini
       map_add' := fun f g => by
         have : ((lf j (f + g) : ℚ) : ℝ) = ((lf j f + lf j g : ℚ) : ℝ) := by
           push_cast
-          rw [hlf, hlf, hlf, map_add, inner_add_left]
+          rw [hlf, hlf, hlf, map_add (f := _), inner_add_left]
         exact_mod_cast this }
   choose cf hcf using fun j => h2 K V (ℓ j)
   have hcf' : ∀ j g, ((Algebra.trace ℚ K (cf j g) : ℚ) : ℝ) = inner ℝ (tr_iota Hm g) (y j : TrW K dH) := by
@@ -1343,7 +1343,7 @@ theorem bound_add (h0 : ∀ w, n w 0 = 0) (hadd : ∀ w x y, n w (x + y) ≤ n w
   classical
   obtain ⟨c, c1, c2⟩ := hp
   obtain ⟨c', c1', c2'⟩ := hq
-  refine ⟨c + c', fun β => by rw [Finsupp.add_apply, map_add, c1, c1', MvPolynomial.coeff_add], ?_⟩
+  refine ⟨c + c', fun β => by rw [Finsupp.add_apply, map_add (f := _), c1, c1', MvPolynomial.coeff_add], ?_⟩
   rw [sum_support_eq_sum_of_support_subset (h0 w) (c + c') _ Finsupp.support_add]
   rw [sum_support_eq_sum_of_support_subset (h0 w) c _ (Finset.subset_union_left (s₂ := c'.support))] at c2
   rw [sum_support_eq_sum_of_support_subset (h0 w) c' _ (Finset.subset_union_right (s₁ := c.support))] at c2'
@@ -1471,60 +1471,12 @@ section AuxConj
 variable {K : Type} [Field K] [NumberField K] {V : Type} [AddCommGroup V] [Module K V]
 variable {N2 : (K →+* ℂ) → V → ℝ} {dH : ℕ}
 
-theorem re_inner_conjugate_embedding_eq (Hm : Herm N2 dH) (hN : ∀ σ f, N2 (ComplexEmbedding.conjugate σ) f = N2 σ f) (σ : K →+* ℂ)
-    (f g : V) :
-    (inner ℂ (Hm.e (ComplexEmbedding.conjugate σ) f) (Hm.e (ComplexEmbedding.conjugate σ) g)).re =
-      (inner ℂ (Hm.e σ f) (Hm.e σ g)).re := by
-  have h1 := @norm_add_sq ℂ _ _ _ _ (Hm.e σ f) (Hm.e σ g)
-  have h2 := @norm_add_sq ℂ _ _ _ _ (Hm.e (ComplexEmbedding.conjugate σ) f) (Hm.e (ComplexEmbedding.conjugate σ) g)
-  rw [← map_add, Hm.norm_e, Hm.norm_e, Hm.norm_e] at h1 h2
-  rw [hN, hN, hN] at h2
-  simp only [RCLike.re_to_complex] at h1 h2
-  linarith
-
-theorem conj_of_norm (Hm : Herm N2 dH) (hN : ∀ σ f, N2 (ComplexEmbedding.conjugate σ) f = N2 σ f)
-    (hc : ∀ σ : K →+* ℂ, ¬ ComplexEmbedding.IsReal σ) : Hm.Conj := by
-  intro σ f g
-  obtain ⟨a, ha⟩ : ∃ a : K, (σ a).im ≠ 0 := by
-    by_contra hcon
-    push Not at hcon
-    apply hc σ
-    rw [ComplexEmbedding.isReal_iff]
-    ext x
-    rw [ComplexEmbedding.conjugate_coe_eq]
-    exact Complex.conj_eq_iff_im.mpr (hcon x)
-  have r1 := re_inner_conjugate_embedding_eq Hm hN σ f g
-  have r2 := re_inner_conjugate_embedding_eq Hm hN σ f (a • g)
-  rw [map_smulₛₗ, map_smulₛₗ, inner_smul_right, inner_smul_right, ComplexEmbedding.conjugate_coe_eq] at r2
-  simp only [Complex.mul_re, Complex.conj_re, Complex.conj_im] at r2
-  apply Complex.ext
-  · rw [Complex.star_def, Complex.conj_re]; exact r1
-  · have : (σ a).im * ((inner ℂ (Hm.e (ComplexEmbedding.conjugate σ) f) (Hm.e (ComplexEmbedding.conjugate σ) g)).im +
-        (inner ℂ (Hm.e σ f) (Hm.e σ g)).im) = 0 := by
-      rw [r1] at r2; linarith
-    have h3 := (mul_eq_zero.mp this).resolve_left ha
-    simp only [Complex.star_def, Complex.conj_im]
-    linarith
-
 end AuxConj
 
 section AuxMax
 
 variable {K : Type} [Field K] [NumberField K] {V : Type} [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] {ι : Type}
-
-theorem gaussC_max (M : Submodule (𝓞 K) V) {ρ : ℕ} (z : Fin ρ → (ι →₀ ℕ) →₀ V)
-    (c : HeightOneSpectrum (𝓞 K) → ℝ) (hG : GaussLe M z c) (la : HeightOneSpectrum (𝓞 K))
-    (hne : ∃ (n : ℕ) (φ : Fin ρ → V →ₗ[K] K) (β : ι →₀ ℕ), (∀ i, ∀ f ∈ M, la.valuation K (φ i f) ≤ 1) ∧
-      (detPoly φ z).coeff β ≠ 0 ∧ vAdd la ((detPoly φ z).coeff β) = (n : ℤ)) :
-    c la ≤ (gaussC M z la : ℝ) := by
-  have hmem := Nat.sInf_mem (s := {n : ℕ | ∃ (φ : Fin ρ → V →ₗ[K] K) (β : ι →₀ ℕ),
-    (∀ i, ∀ f ∈ M, la.valuation K (φ i f) ≤ 1) ∧
-    (detPoly φ z).coeff β ≠ 0 ∧ vAdd la ((detPoly φ z).coeff β) = (n : ℤ)}) hne
-  obtain ⟨φ, β, h1, h2, h3⟩ := hmem
-  have := hG la φ h1 β h2
-  rw [h3] at this
-  exact_mod_cast this
 
 end AuxMax
 
@@ -1576,78 +1528,6 @@ theorem polynomial_coefficient_l1_bound (X : PJ D B P j) (hSM : SubMul X) {wL w0
   have hw := Bd_word h0 hnn hadd hmul _ _ hs θ al
   exact Bd_bound _ (X.inc_inj _) _ _ hw z hz
 
-theorem deepPacket (large₂ : SizeData₂ D) (X : PJ D B P j) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m)
-    (ka wL w0 : WeightFamilies.Wt D j) (a0 : ℕ) (hwt : wtIter wadd wL w0 a0 = ka) {N ρ : ℕ}
-    (w : Fin N → B.Cusp j wL) (th : Fin ρ → B.Cusp j w0) (al : Fin ρ → Fin (WeightFamilies.dimY D j) → ℕ)
-    (hal : ∀ k, ∑ i, al k i = a0)
-    (z : Fin ρ → ((Fin (WeightFamilies.dimY D j + 1) × Fin N) →₀ ℕ) →₀ B.Cusp j ka)
-    (hz : ∀ k β, X.inc ka (z k β) = (zPoly X w (al k) (th k)).coeff β)
-    (c : HeightOneSpectrum (𝓞 B.KO) → ℝ) (hc0 : ∀ la, 0 ≤ c la) (hG : GaussLe (B.Mlat j ka) z c)
-    (hW : ∃ φ : Fin ρ → B.Cusp j ka →ₗ[B.KO] B.KO, detPoly φ z ≠ 0)
-    {dH : ℕ} (Hm : Herm (fun σ => B.l2NormAlt j ka σ) dH)
-    (hT : ∀ Ctr, ((finrank B.KO (B.Cusp j ka) * finrank ℚ B.KO : ℕ) : ℝ) < Ctr → Trans (B.Mlat j ka) Hm Ctr)
-    (hSM : SubMul X) (CL AL : ℝ) (hLAM : WeightFamilies.Conclusion1 large₂ B CL AL) (G Prw Pd : ℝ)
-    (hS2 : ∀ σ (F : B.Cusp j ka), B.supN j ka σ F ^ 2 ≤ Real.exp Pd * B.l2NormAlt j ka σ F ^ 2)
-    (hG0 : 0 ≤ G) (hPrw : 0 ≤ Prw)
-    (mx : (B.KO →+* ℂ) → ℝ) (hmx : ∀ σ k, B.supN j wL σ (w k) ≤ Real.exp (mx σ))
-    (hmxm : (∑ σ, mx σ) / (Fintype.card (B.KO →+* ℂ) : ℝ) ≤ G * wL.size)
-    (hth : ∀ k, WeightFamilies.meanLogSup B (th k) ≤ G * w0.size)
-    (ha : (a0 : ℝ) ≤ ka.size) (hrw : Real.log N ≤ Prw * (wL.size - 1))
-    (hd : Real.log (finrank B.KO (B.Cusp j ka) : ℝ) ≤ Pd) (hO : OPO large₂ B) :
-    Summable (fun la => c la * X.lN la) ∧
-      ∑' la, c la * X.lN la ≤
-        ρ * ((2 * G + Prw + WeightFamilies.PP0v D large₂ CL AL + (3 / 2) * (Pd + PO D large₂)) * ka.size) := by
-  subst hwt
-  set d : ℕ := finrank B.KO (B.Cusp j (wtIter wadd wL w0 a0)) with hddef
-  have hnK : 1 ≤ finrank ℚ B.KO := Module.finrank_pos (R := ℚ) (M := B.KO)
-  have hlognK : 0 ≤ Real.log (finrank ℚ B.KO : ℝ) := Real.log_natCast_nonneg _
-  have hPd0 : 0 ≤ Pd := (Real.log_natCast_nonneg _).trans hd
-  have hPO0 : 0 ≤ PO D large₂ := hlognK.trans hO.1
-  have hE : ∀ σ k, ∑ γ ∈ (z k).support, B.l2NormAlt j _ σ (z k γ) ≤
-      Real.exp ((a0 : ℝ) * (Real.log N + mx σ) + Real.log (B.supN j w0 σ (th k))) := by
-    intro σ k
-    have hk := hal k
-    have h3 : ∑ γ ∈ (z k).support, B.supN j _ σ (z k γ) ≤
-        (∑ i, B.supN j wL σ (w i)) ^ a0 * B.supN j w0 σ (th k) := by
-      have hzk := hz k
-      revert hzk
-      generalize z k = zk
-      revert zk
-      rw [← hk]
-      intro zk hzk
-      exact polynomial_coefficient_l1_bound X hSM w (al k) (th k) σ zk hzk
-    refine (Finset.sum_le_sum fun γ _ => B.l2Norm_le_supNorm_alt j _ σ (z k γ)).trans (h3.trans ?_)
-    have h4 : ∑ i, B.supN j wL σ (w i) ≤ Real.exp (Real.log N + mx σ) := by
-      calc ∑ i, B.supN j wL σ (w i) ≤ ∑ _i : Fin N, Real.exp (mx σ) := Finset.sum_le_sum fun i _ => hmx σ i
-        _ = N * Real.exp (mx σ) := by simp
-        _ ≤ Real.exp (Real.log N) * Real.exp (mx σ) :=
-            mul_le_mul_of_nonneg_right (Real.le_exp_log _) (Real.exp_pos _).le
-        _ = _ := (Real.exp_add _ _).symm
-    rw [Real.exp_add, Real.exp_nat_mul]
-    exact mul_le_mul (pow_le_pow_left₀ (Finset.sum_nonneg fun i _ => B.supN_nonneg j wL σ _) h4 _)
-      (Real.le_exp_log _) (B.supN_nonneg j w0 σ _) (pow_pos (Real.exp_pos _) _).le
-  have hC0 : Real.log (max ((d * finrank ℚ B.KO : ℕ) : ℝ) 1) ≤
-      1 * (Real.log (d : ℝ) + Real.log (finrank ℚ B.KO : ℝ)) := by
-    rw [one_mul]
-    rcases Nat.eq_zero_or_pos d with h | h
-    · rw [h]; simpa using hlognK
-    · have h5 : (1 : ℝ) ≤ ((d * finrank ℚ B.KO : ℕ) : ℝ) := by exact_mod_cast Nat.mul_pos h hnK
-      rw [max_eq_left h5, Nat.cast_mul, Real.log_mul (by positivity) (by positivity)]
-  have := deepSum (B.Mlat j _) z c hc0 hG hW Hm (max ((d * finrank ℚ B.KO : ℕ) : ℝ) 1)
-    (lt_of_lt_of_le one_pos (le_max_right _ _)) (fun Ctr h => hT Ctr (lt_of_le_of_lt (le_max_left _ _) h))
-    (fun σ => B.supN j _ σ)
-    (fun σ f hf => lt_of_le_of_ne (B.supN_nonneg j _ σ f) (fun h => hf ((B.supN_eq_zero j _ σ f).mp h.symm)))
-    (WeightFamilies.PP0v D large₂ CL AL) (wtIter wadd wL w0 a0).size Pd
-    (fun f hf hf0 => hLAM j h1 h2 _ f hf hf0)
-    hS2
-    (a0 : ℝ) (Real.log N) mx (fun σ k => Real.log (B.supN j w0 σ (th k))) hE (Nat.cast_nonneg _)
-    1 G Prw (PO D large₂) wL.size w0.size (Real.log (d : ℝ)) le_rfl hG0 hPrw hPd0 hPO0
-    (WeightFamilies.Wt.one_le_size _) (zero_le_one.trans (WeightFamilies.Wt.one_le_size _)) hmxm hth
-    (by rw [size_wtIter]; ring) ha hrw hd hC0 hO.1 hO.2
-  have e : (1 : ℝ) + 1 / 2 = 3 / 2 := by norm_num
-  rw [e] at this
-  exact this
-
 end Packet
 
 section GP
@@ -1667,7 +1547,7 @@ theorem gp_Cf_add (padd : ∀ w x y, Pr w x → Pr w y → Pr w (x + y)) {w : W}
     (hp : Cf inc Pr w p) (hq : Cf inc Pr w q) : Cf inc Pr w (p + q) := by
   obtain ⟨c, c1, c2⟩ := hp
   obtain ⟨c', c1', c2'⟩ := hq
-  exact ⟨c + c', fun β => by rw [Finsupp.add_apply, map_add, c1, c1', MvPolynomial.coeff_add],
+  exact ⟨c + c', fun β => by rw [Finsupp.add_apply, map_add (f := _), c1, c1', MvPolynomial.coeff_add],
     fun β => by rw [Finsupp.add_apply]; exact padd _ _ _ (c2 β) (c2' β)⟩
 
 theorem gp_Cf_sum (p0 : ∀ w, Pr w 0) (padd : ∀ w x y, Pr w x → Pr w y → Pr w (x + y)) {w : W} {α : Type}
@@ -1847,12 +1727,14 @@ theorem len_sat_le {R F : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRi
     rw [Matrix.mul_apply]
     have h1 : z k = ∑ l, w.repr (bz k) l • ((w l : U) : V1) := by
       have h := congrArg U.subtype (w.sum_repr (bz k))
-      rw [map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h
       rw [← hbz k]
       simpa using h.symm
     simp only [Matrix.of_apply]
     rw [h1]
-    simp only [map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul]
     refine Finset.sum_congr rfl fun l _ => ?_
     simp only [C, Wm, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply,
       LinearMap.toMatrix_apply, hW0]
@@ -1952,7 +1834,7 @@ theorem br_scale {M : Submodule (𝓞 K) V} (hfgM : M.FG) (la : HeightOneSpectru
       rw [LinearMap.smul_apply, smul_eq_mul, ← Algebra.smul_def, ← hy]
       exact la.valuation_le_one y
     | zero => rw [map_zero, map_zero]; exact zero_le_one
-    | add x y _ _ hx hy => rw [map_add]; exact (Valuation.map_add_le _ hx hy)
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact (Valuation.map_add_le _ hx hy)
     | smul o x _ hx =>
       rw [← IsScalarTower.algebraMap_smul K o x, map_smul, smul_eq_mul, map_mul]
       exact mul_le_one' (la.valuation_le_one o) hx
@@ -2009,7 +1891,7 @@ theorem len_le_gaussC {M : Submodule (𝓞 K) V} (hfgM : M.FG) {ρ : ℕ} {z : F
     | add x y _ _ hx hy =>
       obtain ⟨a, ha⟩ := hx
       obtain ⟨b, hb⟩ := hy
-      exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+      exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
     | smul r x _ hx =>
       obtain ⟨a, ha⟩ := hx
       exact ⟨r * a, by rw [← IsScalarTower.algebraMap_smul F r x, map_smul, smul_eq_mul, map_mul, ha]⟩
@@ -2023,7 +1905,8 @@ theorem len_le_gaussC {M : Submodule (𝓞 K) V} (hfgM : M.FG) {ρ : ℕ} {z : F
 
   have hent : ∀ i k, φ1 i (z1 k) = jF (polyOf (φ i) (z k)) := by
     intro i k
-    rw [hz1def, polyOf_eq_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz1def, polyOf_eq_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun γ _ => ?_
     rw [map_smul, smul_eq_mul, hφ1, ← map_mul, mul_comm, MvPolynomial.C_mul_monomial, mul_one]
   have hdet : (Matrix.of fun i k => φ1 i (z1 k)).det = jF (detPoly φ z) := by
@@ -2048,7 +1931,8 @@ theorem len_le_gaussC {M : Submodule (𝓞 K) V} (hfgM : M.FG) {ρ : ℕ} {z : F
     have hmv : (Matrix.of fun i k => φ1 i (z1 k)).mulVec g = 0 := by
       funext i
       have := congrArg (φ1 i) hg
-      rw [map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at this
       simp only [map_smul, smul_eq_mul] at this
       simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply]
       rw [← this]
@@ -2066,7 +1950,7 @@ theorem len_le_gaussC {M : Submodule (𝓞 K) V} (hfgM : M.FG) {ρ : ℕ} {z : F
         induction hm using Submodule.span_induction with
         | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
         | zero => rw [map_zero]; exact Submodule.zero_mem _
-        | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+        | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
         | smul o x _ hx =>
           obtain ⟨r', hr'⟩ := hint (algebraMap (𝓞 K) K o) (la.valuation_le_one o)
           rw [← IsScalarTower.algebraMap_smul K o x, hu, ← hr', SetLike.mem_coe, IsScalarTower.algebraMap_smul]
@@ -2099,35 +1983,6 @@ theorem exists_zFam (X : PJ D B P j) (ka wL w0 : WeightFamilies.Wt D j) (a0 : �
     rwa [hal k] at this
   choose z hz1 hz2 using h
   exact ⟨z, hz1, hz2⟩
-
-theorem deepFinal (large₂ : SizeData₂ D) (X : PJ D B P j) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m)
-    (ka wL w0 : WeightFamilies.Wt D j) (a0 : ℕ) (hwt : wtIter wadd wL w0 a0 = ka) {N ρ : ℕ}
-    (w : Fin N → B.Cusp j wL) (hw : ∀ k, w k ∈ B.Mlat j wL) (th : Fin ρ → B.Cusp j w0)
-    (hthM : ∀ k, th k ∈ B.Mlat j w0) (al : Fin ρ → Fin (WeightFamilies.dimY D j) → ℕ) (hal : ∀ k, ∑ i, al k i = a0)
-    (z : Fin ρ → ((Fin (WeightFamilies.dimY D j + 1) × Fin N) →₀ ℕ) →₀ B.Cusp j ka)
-    (hz : ∀ k β, X.inc ka (z k β) = (zPoly X w (al k) (th k)).coeff β)
-    (hW : ∃ φ : Fin ρ → B.Cusp j ka →ₗ[B.KO] B.KO, detPoly φ z ≠ 0)
-    (hlat : WeightAlgebra.adm1 B) {dH : ℕ} (Hm : Herm (fun σ => B.l2NormAlt j ka σ) dH) (hconj : Hm.Conj)
-    (hSM : SubMul X) (CL AL : ℝ) (hLAM : WeightAlgebra.adm5 large₂ B CL AL) (G Prw Pd : ℝ)
-    (hS2 : ∀ σ (F : B.Cusp j ka), B.supN j ka σ F ^ 2 ≤ Real.exp Pd * B.l2NormAlt j ka σ F ^ 2)
-    (hG0 : 0 ≤ G) (hPrw : 0 ≤ Prw)
-    (mx : (B.KO →+* ℂ) → ℝ) (hmx : ∀ σ k, B.supN j wL σ (w k) ≤ Real.exp (mx σ))
-    (hmxm : (∑ σ, mx σ) / (Fintype.card (B.KO →+* ℂ) : ℝ) ≤ G * wL.size)
-    (hth : ∀ k, WeightFamilies.meanLogSup B (th k) ≤ G * w0.size)
-    (ha : (a0 : ℝ) ≤ ka.size) (hrw : Real.log N ≤ Prw * (wL.size - 1))
-    (hd : Real.log (finrank B.KO (B.Cusp j ka) : ℝ) ≤ Pd) (hO : OPO large₂ B) :
-    Summable (fun la => (gaussC (B.Mlat j ka) z la : ℝ) * X.lN la) ∧
-      ∑' la, (gaussC (B.Mlat j ka) z la : ℝ) * X.lN la ≤
-        ρ * ((2 * G + Prw + WeightFamilies.PP0v D large₂ CL AL + (3 / 2) * (Pd + PO D large₂)) * ka.size) := by
-  obtain ⟨z', hz1, hz2⟩ := exists_zFam X ka wL w0 a0 hwt w hw th hthM al hal
-  have hzM : ∀ k β, z k β ∈ B.Mlat j ka := by
-    intro k β
-    have : z k β = z' k β := X.inc_inj ka ((hz k β).trans (hz1 k β).symm)
-    rw [this]; exact hz2 k β
-  exact deepPacket large₂ X h1 h2 ka wL w0 a0 hwt w th al hal z hz _ (fun la => gaussC_nonneg _ z la)
-    (gaussC_gaussLe hzM) hW Hm
-    (fun Ctr hC => trans_of_minima transference_successive_minima _ (hlat j h1 h2 ka).span_eq_top Hm hconj Ctr hC)
-    hSM CL AL hLAM G Prw Pd hS2 hG0 hPrw mx hmx hmxm hth ha hrw hd hO
 
 theorem weight_ext (a b : WeightFamilies.Wt D j) (h1 : a.aP = b.aP) (h2 : a.aM = b.aM) (h3 : a.n = b.n) : a = b := by
   cases a; cases b; simp only at h1 h2 h3; subst h1; subst h2; subst h3; rfl
@@ -2174,35 +2029,6 @@ theorem hwt_of (X : PJ D B P j) (ka wL wF : WeightFamilies.Wt D j) (T nP nW : �
   · rw [weight_iterate_n]
     simp only [PJ.wF0, wadd, wsmul]
     rw [h1, hn, hk]; ring
-
-theorem deepFinal_adm (large₂ : SizeData₂ D) (X : PJ D B P j) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m)
-    (ka wL w0 : WeightFamilies.Wt D j) (a0 : ℕ) (hwt : wtIter wadd wL w0 a0 = ka) {N ρ : ℕ}
-    (w : Fin N → B.Cusp j wL) (hw : ∀ k, w k ∈ B.Mlat j wL) (th : Fin ρ → B.Cusp j w0)
-    (hthM : ∀ k, th k ∈ B.Mlat j w0) (al : Fin ρ → Fin (WeightFamilies.dimY D j) → ℕ) (hal : ∀ k, ∑ i, al k i = a0)
-    (z : Fin ρ → ((Fin (WeightFamilies.dimY D j + 1) × Fin N) →₀ ℕ) →₀ B.Cusp j ka)
-    (hz : ∀ k β, X.inc ka (z k β) = (zPoly X w (al k) (th k)).coeff β)
-    (hW : ∃ φ : Fin ρ → B.Cusp j ka →ₗ[B.KO] B.KO, detPoly φ z ≠ 0)
-    (hlat : WeightAlgebra.adm1 B) {dH : ℕ} (Hm : Herm (fun σ => B.l2NormAlt j ka σ) dH) (hconj : Hm.Conj)
-    (hSM : SubMul X) (CL AL CG AG : ℝ) (hLAM : WeightAlgebra.adm5 large₂ B CL AL) (hS2 : WeightFamilies.adm2 large₂ B CG AG)
-    (G Prw Pd : ℝ) (hPrw : 0 ≤ Prw)
-    (mx : (B.KO →+* ℂ) → ℝ) (hmx : ∀ σ k, Real.log (B.supN j wL σ (w k)) ≤ mx σ)
-    (hmxm : (∑ σ, mx σ) / (Fintype.card (B.KO →+* ℂ) : ℝ) ≤ G * wL.size)
-    (hth : ∀ k, WeightFamilies.meanLogSup B (th k) ≤ G * w0.size)
-    (ha : (a0 : ℝ) ≤ ka.size) (hrw : Real.log N ≤ Prw * (wL.size - 1))
-    (hd : Real.log (finrank B.KO (B.Cusp j ka) : ℝ) ≤ Pd)
-    (hPd : WeightFamilies.PPv D large₂ CG AG * (1 + Real.log ka.size) ≤ Pd) (hO : OPO large₂ B) :
-    Summable (fun la => (gaussC (B.Mlat j ka) z la : ℝ) * X.lN la) ∧
-      ∑' la, (gaussC (B.Mlat j ka) z la : ℝ) * X.lN la ≤
-        ρ * ((2 * max G 0 + Prw + WeightFamilies.PP0v D large₂ CL AL + (3 / 2) * (Pd + PO D large₂)) * ka.size) := by
-  have hsz : ∀ w' : WeightFamilies.Wt D j, G * w'.size ≤ max G 0 * w'.size := fun w' =>
-    mul_le_mul_of_nonneg_right (le_max_left _ _) (zero_le_one.trans (WeightFamilies.Wt.one_le_size w'))
-  exact deepFinal large₂ X h1 h2 ka wL w0 a0 hwt w hw th hthM al hal z hz hW hlat Hm hconj hSM CL AL hLAM
-    (max G 0) Prw Pd
-    (fun σ F => (hS2 j h1 h2 ka F σ).trans
-      (mul_le_mul_of_nonneg_right (Real.exp_le_exp.mpr hPd) (sq_nonneg _)))
-    (le_max_right _ _) hPrw mx
-    (fun σ k => (Real.le_exp_log _).trans (Real.exp_le_exp.mpr (hmx σ k)))
-    (hmxm.trans (hsz wL)) (fun k => (hth k).trans (hsz w0)) ha hrw hd hO
 
 end Final
 

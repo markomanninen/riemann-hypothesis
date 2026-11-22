@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftSemiTmul
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftReductionZeroOfMaximalStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftSemiTmul
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftReductionZeroOfMaximalStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -135,7 +139,7 @@ theorem generalized_inverse_of_lift_rank [IsLocalRing A] : ∀ (n : ℕ) (Q N : 
       rw [restr_proj] at h1
       have h2 := congrArg (Subtype.val) h1
       rw [restr_coe, proj_coe] at h2
-      simp only [LinearMap.comp_apply, LinearMap.add_apply, LinearMap.smulRight_apply, map_add,
+      simp only [LinearMap.comp_apply, LinearMap.add_apply, LinearMap.smulRight_apply, map_add (f := _),
         map_smul, Submodule.subtype_apply]
       rw [h2]
       abel

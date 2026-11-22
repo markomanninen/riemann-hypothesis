@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegrees.Layers
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegrees.Decomposition
-import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
-import GroundTheory.GlobalFields.CompletionAtPlace.Galois
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegrees.Layers
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegrees.Decomposition
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
+public import GroundTheory.GlobalFields.CompletionAtPlace.Galois
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -12,33 +17,13 @@ open NumberField IntermediateField GroundTheory.Global GroundTheory.Global.Cyclo
 
 open scoped GroundTheory.LocalField.Abstract Pointwise GroundTheory.Global.SemiLocal
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 namespace CyclotomicLayer
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 section TotallyReal
-
-theorem isReal_zhatLayer (r : ℕ+) (φ : (zhatLayer r).1 →+* ℂ) : ComplexEmbedding.IsReal φ := by
-  let _ : Algebra (zhatLayer r).1 ℂ := φ.toAlgebra
-  have : Algebra.IsAlgebraic (zhatLayer r).1 ℚ̄ := Algebra.IsAlgebraic.tower_top (K := ℚ) (zhatLayer r).1
-  let ι : ℚ̄ →ₐ[(zhatLayer r).1] ℂ := IsAlgClosed.lift
-  obtain ⟨σ, hσ⟩ := exists_algEquiv_conj ι.toRingHom
-  have hdeg : σ ∈ (degreeMod r).ker := by
-    rw [MonoidHom.mem_ker, degreeMod, MonoidHom.comp_apply, degree_of_isComplexConjugation ⟨_, hσ⟩,
-      map_one]
-  rw [ComplexEmbedding.isReal_iff]
-  ext x
-  rw [ComplexEmbedding.conjugate_coe_eq]
-  have hx : σ (x : ℚ̄) = x := (mem_fixedField_iff _ _).1 x.2 σ hdeg
-  have h1 : ι (x : ℚ̄) = φ x := ι.commutes x
-  have h2 := hσ (x : ℚ̄)
-  simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, hx, h1] at h2
-  exact h2.symm
-
-instance isTotallyReal_zhatLayer (r : ℕ+) : IsTotallyReal (zhatLayer r).1 :=
-  ⟨fun _ => InfinitePlace.isReal_iff.2 (isReal_zhatLayer r _)⟩
 
 end TotallyReal
 
@@ -152,8 +137,9 @@ theorem exists_dvd_finrank_cyclotomicLayer (K : FiniteSubfield) (S : Finset (Hei
     {m : ℕ} (hm : m ≠ 0) :
     ∃ r : ℕ+, ∀ v ∈ S, ∀ w : SemiLocal.PlacesOver (cyclotomicLayer K r).1 v,
       m ∣ Module.finrank (v.adicCompletion K.1) (w.1.adicCompletion (cyclotomicLayer K r).1) := by
-  choose n hn using fun (v : HeightOneSpectrum (𝓞 K.1)) (q : Nat.Primes) =>
+  have h (v : HeightOneSpectrum (𝓞 K.1)) (q : Nat.Primes) :=
     exists_mem_stabilizer_toZModPow_degreeComponent_ne_zero (K := K) v q
+  choose n hn using h
   let N : ℕ := S.sup fun v =>
     m.primeFactors.attach.sup fun q => n v ⟨q.1, Nat.prime_of_mem_primeFactors q.2⟩
   obtain ⟨r, hr⟩ : ∃ r : ℕ+, (r : ℕ) = m ^ (N + 1) :=

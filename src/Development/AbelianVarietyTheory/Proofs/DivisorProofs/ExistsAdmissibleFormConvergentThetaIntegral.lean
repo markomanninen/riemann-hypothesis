@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsINeZeroKind
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzMapBarrelledSpaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedFormEqAdelicThetaDistributionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsINeZeroKind
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzMapBarrelledSpaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedFormEqAdelicThetaDistributionStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -29,7 +33,7 @@ theorem exists_clm_integral {S Ω : Type} [AddCommGroup S] [Module ℂ S] [Topol
       have hg := (hint g).norm
       have hfg := (hint (f + g)).norm
       rw [← integral_add hf hg]
-      exact integral_mono hfg (hf.add hg) fun x => by simp only [map_add]; exact norm_add_le _ _)
+      exact integral_mono hfg (hf.add hg) fun x => by simp only [map_add (f := _)]; exact norm_add_le _ _)
     (fun c f => by
       rw [← integral_const_mul]
       exact integral_congr_ae (Eventually.of_forall fun x => by simp [map_smul, norm_mul]))
@@ -58,7 +62,7 @@ theorem exists_clm_integral {S Ω : Type} [AddCommGroup S] [Module ℂ S] [Topol
   have hqc : Continuous q := Seminorm.continuous_of_lowerSemicontinuous _ hlsc
   let L : S →ₗ[ℂ] ℂ :=
     { toFun := fun f => ∫ x, T x f ∂μ
-      map_add' := fun f g => by simp only [map_add]; exact integral_add (hint f) (hint g)
+      map_add' := fun f g => by simp only [map_add (f := _)]; exact integral_add (hint f) (hint g)
       map_smul' := fun c f => by simp only [map_smul, smul_eq_mul, RingHom.id_apply]; exact integral_const_mul c _ }
   have hL0 : ContinuousAt L 0 := by
     rw [ContinuousAt, map_zero]
@@ -91,7 +95,7 @@ theorem GlobalTheory.ThetaIntAdm.exists_admissible_form_convergent_thetaIntegral
       map_add' := fun Φ Ψ => by
         have e : (fun g => theta om (Φ + Ψ).1 g 1) = fun g => theta om Φ.1 g 1 + theta om Ψ.1 g 1 := by
           funext g
-          rw [th _ (Φ + Ψ).2, th _ Φ.2, th _ Ψ.2, Submodule.coe_add, map_add, map_add]
+          rw [th _ (Φ + Ψ).2, th _ Φ.2, th _ Ψ.2, Submodule.coe_add, map_add (f := _), map_add (f := _)]
         show ∫ g in M.dom, theta om (Φ + Ψ).1 g 1 ∂M.μ = ∫ g in M.dom, theta om Φ.1 g 1 ∂M.μ + ∫ g in M.dom, theta om Ψ.1 g 1 ∂M.μ
         rw [e]
         exact integral_add (hC _ Φ.2 1) (hC _ Ψ.2 1)

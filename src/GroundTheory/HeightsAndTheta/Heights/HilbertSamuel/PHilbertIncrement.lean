@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ColonSpanSingletonEqOfNotMem
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbExactDivide
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ColonSpanSingletonEqOfNotMem
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbExactDivide
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -77,10 +82,11 @@ theorem component_intWeight_mem {J : Ideal (MRing ι F)} (hJ : IsMultiHomogIdeal
     obtain ⟨k, hk⟩ := hm
     have e : weightedHomogeneousComponent (intWeight (ι := ι)) m f = 0 := by
       ext e
-      rw [coeff_weightedHomogeneousComponent, weight_intWeight, coeff_zero, if_neg]
-      intro h
-      have e1 : ((Finsupp.weight (blockWeight ι) e k : ℕ) : ℤ) = m k := congrFun h k
-      omega
+      rw [coeff_weightedHomogeneousComponent, weight_intWeight]
+      split_ifs with h
+      · have e1 : ((Finsupp.weight (blockWeight ι) e k : ℕ) : ℤ) = m k := congrFun h k
+        omega
+      · rfl
     rw [e]
     exact J.zero_mem
 
@@ -92,7 +98,7 @@ theorem isMultiHomogIdeal_sup_X {q : Ideal (MRing ι F)} (hq : IsMultiHomogIdeal
   obtain ⟨t, rfl⟩ := Ideal.mem_span_singleton'.mp hy
   have hX : IsMultiHomog (X v : MRing ι F) (blockWeight ι v) :=
     isWeightedHomogeneous_X F (blockWeight ι) v
-  rw [map_add, GroundTheory.Heights₂.Heights.FieldNumbers.HilbExactDivide.component_mul_form hX t n]
+  rw [map_add (f := _), GroundTheory.Heights₂.Heights.FieldNumbers.HilbExactDivide.component_mul_form hX t n]
   refine Ideal.add_mem _ (Ideal.mem_sup_left (hq p hp n)) ?_
   split_ifs
   · exact Ideal.mem_sup_right (Ideal.mem_span_singleton'.mpr ⟨_, rfl⟩)
@@ -106,9 +112,9 @@ theorem quotPiece_natCast (J : Ideal (MRing ι F)) (a : K → ℕ) :
   rw [quotPiece, gradedPiece, ringPiece_natCast]
 
 theorem isMultigrading_quotPiece [Fintype K] {J : Ideal (MRing ι F)} (hJ : IsMultiHomogIdeal J) :
-    IsMultigrading ι (MRing ι F ⧸ J) (quotPiece J) where
-  internal := by
-    classical
+    IsMultigrading ι (MRing ι F ⧸ J) (quotPiece J) := by
+  refine ⟨?_, ?_⟩
+  · classical
     rw [DirectSum.isInternal_submodule_iff_iSupIndep_and_iSup_eq_top]
     constructor
     · rw [iSupIndep_iff_finsetSum_eq_zero_imp_eq_zero]
@@ -117,18 +123,20 @@ theorem isMultigrading_quotPiece [Fintype K] {J : Ideal (MRing ι F)} (hJ : IsMu
           (Ideal.Quotient.mkₐ F J).toLinearMap y = v i := fun i hi => Submodule.mem_map.mp (hv i hi)
       choose! x hx hxv using hex
       have hy : (∑ i ∈ s, x i) ∈ J := by
-        rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum]
         rw [← hsum]
         refine Finset.sum_congr rfl fun i hi => ?_
         rw [← hxv i hi]
         rfl
       have hc := component_intWeight_mem hJ hy m
-      rw [map_sum] at hc
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at hc
       have hcs : (∑ i ∈ s, weightedHomogeneousComponent (intWeight (ι := ι)) m (x i)) = x m := by
         rw [Finset.sum_eq_single m]
-        · rw [weightedHomogeneousComponent_of_mem (hx m hm), if_pos rfl]
+        · rw [weightedHomogeneousComponent_of_mem (hx m hm), ite_eq_left rfl]
         · intro j hj hjm
-          rw [weightedHomogeneousComponent_of_mem (hx j hj), if_neg (Ne.symm hjm)]
+          rw [weightedHomogeneousComponent_of_mem (hx j hj), ite_eq_right (Ne.symm hjm)]
         · intro h
           exact absurd hm h
       rw [hcs] at hc
@@ -140,12 +148,14 @@ theorem isMultigrading_quotPiece [Fintype K] {J : Ideal (MRing ι F)} (hJ : IsMu
       rw [(weightedDecomposition F (intWeight (ι := ι))).isInternal.submodule_iSup_eq_top,
         Submodule.map_top, LinearMap.range_eq_top]
       exact Ideal.Quotient.mkₐ_surjective F J
-  smul_mem := by
-    intro v m x hx
+  · intro v m x hx
     obtain ⟨y, hy, rfl⟩ := Submodule.mem_map.mp hx
-    refine Submodule.mem_map.mpr ⟨(X v : MRing ι F) • y, isMultigrading_ring.smul_mem v m y hy, ?_⟩
-    simp only [AlgHom.toLinearMap_apply, Ideal.Quotient.mkₐ_eq_mk, smul_eq_mul, map_mul]
-    rfl
+    have hmul : (X v : MRing ι F) * y ∈ ringPiece (m + unitDeg v.1) := by
+      change IsWeightedHomogeneous (intWeight (ι := ι)) y m at hy
+      change IsWeightedHomogeneous (intWeight (ι := ι)) (X v * y) (m + unitDeg v.1)
+      rw [add_comm m (unitDeg v.1)]
+      exact (isWeightedHomogeneous_X F (intWeight (ι := ι)) v).mul hy
+    exact Submodule.mem_map.mpr ⟨_, hmul, rfl⟩
 
 theorem proof (hrec : IntersectionRecursion.Statement.{u}) : HilbertIncrement.Statement.{u} := by
   intro d hmod F _ K _ _ ι _ q hq hdim b
@@ -164,7 +174,7 @@ theorem proof (hrec : IntersectionRecursion.Statement.{u}) : HilbertIncrement.St
       (Module.finrank F (quotPiece (q ⊔ Ideal.span {(X ⟨b, i⟩ : MRing ι F)})
         fun k => (a k : ℤ)) : ℤ) := by
     rw [show unitDeg b = Pi.single b 1 from rfl, hstep, hilbFn,
-      if_pos (fun k => Nat.cast_nonneg _), quotPiece_natCast]
+      ite_eq_left (fun k => Nat.cast_nonneg _), quotPiece_natCast]
     have ha' : (fun k => ((a k : ℤ)).toNat) = a := funext fun k => by omega
     rw [ha']
   have h2 : intNum F q (Matrix.vecCons (unitDeg b) fun _ : Fin d => fun k => (a k : ℤ)) =
@@ -178,9 +188,9 @@ theorem proof (hrec : IntersectionRecursion.Statement.{u}) : HilbertIncrement.St
         q ⊔ Ideal.span {(X ⟨b, i⟩ : MRing ι F)} := Ideal.annihilator_quotient
     by_cases hc : IsMultiProjPrime W ∧ q ⊔ Ideal.span {(X ⟨b, i⟩ : MRing ι F)} ≤ W ∧
         ringKrullDim (MRing ι F ⧸ W) = ((d + Fintype.card K : ℕ) : WithBot ℕ∞)
-    · rw [dif_pos hc, dif_pos (by rw [hann]; exact hc)]
+    · rw [dite_eq_left hc, dite_eq_left (by rw [hann]; exact hc)]
       rfl
-    · rw [dif_neg hc, dif_neg (by rw [hann]; exact hc)]
+    · rw [dite_eq_right hc, dite_eq_right (by rw [hann]; exact hc)]
   rw [h1, h2]
   simpa using hbd a ha
 

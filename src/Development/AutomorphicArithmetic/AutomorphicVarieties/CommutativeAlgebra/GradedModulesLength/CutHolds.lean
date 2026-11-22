@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.IftSubstLow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.IftSubstLow
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -14,7 +18,7 @@ private theorem lin_mul {E τ : Type} [CommRing E] (i : τ) (f g : MvPowerSeries
   · rw [h1, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hf, zero_mul]
   · have h2 : p.2 = 0 := by
       have hd := congrArg Finsupp.degree h
-      rw [map_add, Finsupp.degree_single] at hd
+      rw [map_add (f := _), Finsupp.degree_single] at hd
       have : Finsupp.degree p.1 ≠ 0 := fun h0 => h1 ((Finsupp.degree_eq_zero_iff _).1 h0)
       exact (Finsupp.degree_eq_zero_iff _).1 (by omega)
     rw [h2, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hg, mul_zero]
@@ -34,7 +38,7 @@ private theorem lin_sat {O A τ : Type} [CommRing O] [IsDomain O] [CommRing A] [
     refine Submodule.mul_induction_on hg (fun a ha b hb => ?_) (fun a b ha hb => ?_)
     · rw [map_mul]
       exact lin_mul i _ _ (by rw [hc, (RingHom.mem_ker).1 ha, map_zero]) (by rw [hc, (RingHom.mem_ker).1 hb, map_zero])
-    · rw [map_add, map_add, ha, hb, add_zero]
+    · rw [map_add (f := _), map_add (f := _), ha, hb, add_zero]
   have h2 := key _ (by rwa [sq] at h)
   rw [lin_smul] at h2
   exact (mul_eq_zero.1 h2).resolve_left fun h0 => hc0 (IsFractionRing.injective O (FractionRing O) (by rw [h0, map_zero]))
@@ -77,16 +81,19 @@ private theorem lin_span {O A τ : Type} [CommRing O] [IsDomain O] [CommRing A] 
   have hsat : (∑ k, a k • Z k) - c • g ∈ satSq x := by
     rw [← Submodule.Quotient.eq]
     show (satSq x).mkQ _ = (satSq x).mkQ _
-    rw [map_sum, map_smul, ← ha]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_smul, ← ha]
     simp only [map_smul]
   have hc' : algebraMap O (FractionRing O) c ≠ 0 := fun h0 =>
     hc (IsFractionRing.injective O (FractionRing O) (by rw [h0, map_zero]))
   refine ⟨fun k => (algebraMap O (FractionRing O) c * MvPowerSeries.coeff (Finsupp.single i 1) (φ f))⁻¹ *
     algebraMap O (FractionRing O) (a k), fun i' => ?_⟩
   have h1 := lin_sat x φ h.const i' _ hsat
-  rw [map_sub, map_sub, sub_eq_zero, lin_smul, map_sum, map_sum, hgl] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sub, sub_eq_zero, lin_smul, map_sum, map_sum, hgl] at h1
   simp only [lin_smul] at h1
-  simp only [map_sum, map_smul, smul_eq_mul, mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul, mul_assoc]
   rw [← Finset.mul_sum, h1, MvPowerSeries.coeff_X]
   by_cases hii : i' = i
   · subst hii

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CompData
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompData
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,8 +72,8 @@ def nrmC (fn : ∀ σ : c.F →+* ℂ, FrPt Xo c (CAt σ) → Ix Dw → ℝ)
     (yP : ∀ P : Om Z →+* ℂ, FrPt Xo c (CAt (sgOf P))) (G : WTZ E) (x : AC Z) (P : Om Z →+* ℂ) : ℝ :=
   ‖P (x.coeff G)‖ * ∏ i, |fn _ (yP P) i| ^ (-exZ Dw G i)
 
-variable (Xo c) in
 
+variable (Xo c) in
 def FnNe (fn : ∀ σ : c.F →+* ℂ, FrPt Xo c (CAt σ) → Ix Dw → ℝ) : Prop := ∀ σ y i, fn σ y i ≠ 0
 
 section nrm
@@ -111,8 +115,8 @@ theorem nrmC_smul {G : WTZ E} {f : AC Z} (P : Om Z →+* ℂ) (a : Om Z) (hf : f
 
 end nrm
 
-variable (Xo c) in
 
+variable (Xo c) in
 def FnConj (fn : ∀ σ : c.F →+* ℂ, FrPt Xo c (CAt σ) → Ix Dw → ℝ)
     (yP : ∀ Z : Comp Xo c, ∀ P : Om Z →+* ℂ, FrPt Xo c (CAt (sgOf P))) : Prop :=
   ∀ Z (G : WTZ E) (x : AC Z) (P : Om Z →+* ℂ),

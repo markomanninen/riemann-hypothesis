@@ -1,4 +1,10 @@
-import ReciprocityTheory.DualLattices.DiscriminantColengthStatementHolds
+module
+
+public import ReciprocityTheory.DualLattices.ColengthSqBlockVandermonde
+public import ReciprocityTheory.DualLattices.ValuationPairwiseDifferenceProductPowLeColengthS
+public import ReciprocityTheory.DualLattices.ColengthSqMulLe
+
+@[expose] public section
 
 noncomputable section
 

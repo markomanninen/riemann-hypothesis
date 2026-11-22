@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.LocalGeometry.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.LocalGeometry.Imports
+
+@[expose] public section
 
 namespace GlobalTheory
 

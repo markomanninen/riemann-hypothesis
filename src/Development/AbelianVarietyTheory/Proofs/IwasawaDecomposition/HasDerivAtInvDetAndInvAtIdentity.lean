@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.LogDetSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.LogDetSt
+
+@[expose] public section
 
 open Matrix
 

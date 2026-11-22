@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveSep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveCut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AcycUnion
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AcycCone
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveSep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveCut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AcycUnion
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AcycCone
+
+@[expose] public section
 
 open Set UpperTheory.V.ConeExtensionAcyclic
 

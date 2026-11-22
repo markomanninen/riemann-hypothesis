@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
-import GroundTheory.GlobalFields.TateThesis.LatticePoisson
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+public import GroundTheory.GlobalFields.TateThesis.LatticePoisson
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -19,8 +24,8 @@ theorem norm_toLp_sq {g : ℕ} (v : Fin g → ℝ) : ‖WithLp.toLp 2 v‖ ^ 2 =
 
 end PGaussPoissonBound
 
-open PGaussPoissonBound in
 
+open PGaussPoissonBound in
 theorem GaussPoissonBound.proof (hL : GaussLatticeIsLattice.Statement)
     (hV : GaussLatticeCovolume.Statement) (hK : GaussLatticeCoords.Statement)
     (hF : GaussFourierSelf.Statement) : GaussPoissonBound.Statement := by

@@ -1,11 +1,15 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicFormCongruences.ProjectedBlockUpperSum
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LiftedSchrodingerDatum
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKfourNA
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdRDIota
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicFormCongruences.ProjectedBlockUpperSum
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LiftedSchrodingerDatum
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKfourNA
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdRDIota
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -49,7 +53,7 @@ def Qa_k (ε : ℤˣ) : Matrix (Fin d.n ⊕ Fin d.n) (Fin d.n ⊕ Fin d.n) (AE F
   Matrix.fromBlocks 0 1 (inclR (F := F) (E := E) (AF F) ((ε : ℤ) : E) • 1) 0
 theorem uZ_unitary_k (ε : ℤˣ) (u : Fin L.n → AE F E) : (_root_.PositivityTheory.SiegelWeilFormula.Afc.uZ_k L u)ᵀ * _root_.PositivityTheory.SiegelWeilFormula.Afc.Qa_k (d := d) ε * (_root_.PositivityTheory.SiegelWeilFormula.Afc.uZ_k L u).map (cA σ) = _root_.PositivityTheory.SiegelWeilFormula.Afc.Qa_k ε := by
   have hσ := _root_.PositivityTheory.SiegelWeilFormula.kfour.sigma_sigma_of_good_k d.ok.good
-  have hcc := GlobalTheory.EisBL.DoubledUnipotentRadical.cA_cA σ hσ
+  have hcc := _root_.PositivityTheory.SiegelWeilFormula.kfour.cA_cA' σ hσ
   have hD : (_root_.PositivityTheory.SiegelWeilFormula.Afc.uD_k (σ := σ) L u).map (cA σ) = 1 - (_root_.PositivityTheory.SiegelWeilFormula.Afc.uN_k L u)ᵀ := by
     ext i j
     simp only [_root_.PositivityTheory.SiegelWeilFormula.Afc.uD_k, Matrix.map_apply, Matrix.sub_apply, Matrix.transpose_apply, map_sub, hcc, Matrix.one_apply]
@@ -149,7 +153,7 @@ theorem blockDiagonal_preserves_form_iff {ε : ℤˣ} (A D : Matrix (Fin d.n) (F
 theorem uM_eq_k {uM : (Fin L.n → AE F E) → d.G} {ν 𝓤} (h : L.UData uM ν 𝓤) : uM = _root_.PositivityTheory.SiegelWeilFormula.Afc.unipotentOfVector L := by
   obtain ⟨ε, hε⟩ := d.ok.frame.1
   have hσ := _root_.PositivityTheory.SiegelWeilFormula.kfour.sigma_sigma_of_good_k d.ok.good
-  have hcc := GlobalTheory.EisBL.DoubledUnipotentRadical.cA_cA σ hσ
+  have hcc := _root_.PositivityTheory.SiegelWeilFormula.kfour.cA_cA' σ hσ
   funext u
   obtain ⟨a', ha'⟩ := h.1 u
   refine kfour.inFrame_injective d.b ?_
@@ -178,7 +182,7 @@ theorem mem_ratV_k (v : Fin L.n → AE F E) : v ∈ L.ratV ↔ ∃ e, GlobalTheo
     | add x y _ _ hx hy =>
       obtain ⟨X, rfl⟩ := hx
       obtain ⟨Z, rfl⟩ := hy
-      exact ⟨X + Z, funext fun i => by simp [incV_apply, map_add]⟩
+      exact ⟨X + Z, funext fun i => by simp [incV_apply, map_add (f := _)]⟩
     | neg x _ hx =>
       obtain ⟨X, rfl⟩ := hx
       exact ⟨-X, funext fun i => by simp [incV_apply, map_neg]⟩
@@ -223,7 +227,8 @@ def Sw_k (w : InfinitePlace F) : Set (AE F E) := {z | (∀ w', w' ≠ w → piIn
 theorem sum_mem_Sw_k (w : InfinitePlace F) (s : Fin (Module.finrank F E) → AF F) (hs : ∀ k, (s k).2 = 0 ∧ ∀ w', w' ≠ w → (s k).1 w' = 0) :
     ∑ k, s k • kfour.bsA F E k ∈ _root_.PositivityTheory.SiegelWeilFormula.Afc.Sw_k d w := by
   refine ⟨fun w' hw' => ?_, ?_⟩
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun k _ => ?_
     rw [St.piInf_smul, (hs k).2 w' hw', map_zero, zero_mul]
   · rw [Finset.smul_sum]
@@ -243,7 +248,8 @@ theorem dense_Sw_k (w : InfinitePlace F) : Dense {z : AE F E | ∃ e : E, ∃ s 
   choose q hq using hx
   refine ⟨∑ k, q k • kfour.bsE F E k, ∑ k, s k • kfour.bsA F E k, _root_.PositivityTheory.SiegelWeilFormula.Afc.sum_mem_Sw_k d w s hs, ?_⟩
   have h1 : inclR (F := F) (AF F) (∑ k, q k • kfour.bsE F E k) = ∑ k, algebraMap F (AF F) (q k) • kfour.bsA F E k := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Algebra.TensorProduct.basis_apply, algebraMap_smul, kfour.inclR_eq, TensorProduct.tmul_smul]
   rw [h1, ← Finset.sum_add_distrib]
@@ -261,7 +267,8 @@ variable {d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ} (L : _root_.Pos
 theorem cw_uN_k (w' : InfinitePlace F) (u : Fin L.n → AE F E) :
     d.cw w' (_root_.PositivityTheory.SiegelWeilFormula.Afc.uN_k L u) = ∑ j, Matrix.single L.i₀ (L.em j) (piInf (d.B.emb w') (u j)) := by
   ext a b
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, _root_.PositivityTheory.SiegelWeilFormula.Afc.uN_k, Matrix.map_apply, Matrix.sum_apply, map_sum, Matrix.single_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, _root_.PositivityTheory.SiegelWeilFormula.Afc.uN_k, Matrix.map_apply, Matrix.sum_apply, map_sum, Matrix.single_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   split_ifs <;> simp
 theorem fin_uN_k (u : Fin L.n → AE F E) : finOne F • _root_.PositivityTheory.SiegelWeilFormula.Afc.uN_k L u = ∑ j, Matrix.single L.i₀ (L.em j) (finOne F • u j) := by

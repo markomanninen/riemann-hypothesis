@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFEDefs
-import GroundTheory.AutomorphicForms.GL2.GJLeviZetaBlocks
-import GroundTheory.AutomorphicForms.MeasuresGL
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFEDefs
+public import GroundTheory.AutomorphicForms.GL2.GJLeviZetaBlocks
+public import GroundTheory.AutomorphicForms.MeasuresGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,8 +57,8 @@ theorem norm_detPow (g : GL (Fin m) F) (s : ℂ) :
     ‖detPow g s‖ = ((LocalField.residueCard F : ℝ) ^ (-s.re)) ^ ordDet g := by
   rw [detPow_eq_qs_zpow, norm_zpow, norm_qs]
 
-variable (F m) in
 
+variable (F m) in
 def tile (j : ℤ) : Set (GL (Fin m) F) := {g | j * m ≤ ordDet g ∧ ordDet g < j * m + m}
 
 theorem isLocallyConstant_ordDet_GL : IsLocallyConstant (ordDet : GL (Fin m) F → ℤ) :=
@@ -328,9 +332,6 @@ theorem detModulusPow_eq_leftModulus (g : GL (Fin m) F) :
   rw [Measures.glChart_leftModulus, LocalField.distribHaarChar_eq_modulus,
     Matrix.GeneralLinearGroup.val_det_apply, detModulusPow]
 
-theorem detModulusPow_pos (g : GL (Fin m) F) : 0 < detModulusPow g := by
-  rw [detModulusPow_eq_leftModulus]; exact Measures.LinearChart.leftModulus_pos _ g
-
 theorem continuous_detModulusPow : Continuous (detModulusPow (F := F) (m := m)) := by
   have : (detModulusPow (F := F) (m := m)) = fun g => (Measures.glChart F m).leftModulus g :=
     funext detModulusPow_eq_leftModulus
@@ -365,13 +366,14 @@ theorem exists_map_val_withDensity [NeZero m] (μ : Measure (GL (Fin m) F)) [μ.
     conv_rhs => rw [← withDensity_one (μ := μ₀.comap C.toFun)]
     congr 1
     funext g
-    simp only [Pi.mul_apply, Pi.one_apply, detModulusPow_eq_leftModulus]
-    rw [← ENNReal.coe_mul, inv_mul_cancel₀ (C.leftModulus_pos g).ne', ENNReal.coe_one]
+    change (((C.leftModulus g)⁻¹ : ℝ≥0) : ℝ≥0∞) * (detModulusPow g : ℝ≥0∞) = 1
+    rw [detModulusPow_eq_leftModulus, ← ENNReal.coe_mul,
+      inv_mul_cancel₀ (C.leftModulus_pos g).ne', ENNReal.coe_one]
   refine ⟨c, hc, ?_⟩
-  rw [hwd, Measure.map_smul]
-  congr 1
   have hv : MeasurableEmbedding (Units.val : GL (Fin m) F → Matrix (Fin m) (Fin m) F) :=
     (Measures.isOpenEmbedding_val F m).measurableEmbedding
+  rw [hwd, Measure.map_smul c hv.measurable.aemeasurable]
+  congr 1
   have hE : MeasurableEmbedding C.toFun := C.measurableEmbedding
   ext S hS
   rw [Measure.map_apply hv.measurable hS, hE.comap_apply]
@@ -394,7 +396,7 @@ theorem exists_map_val_withDensity [NeZero m] (μ : Measure (GL (Fin m) F)) [μ.
     exact hX ⟨((Matrix.isUnit_iff_isUnit_det X).2 (isUnit_iff_ne_zero.2 hdet)).unit, rfl⟩
   have h3 : (S ∩ Set.range (Units.val : GL (Fin m) F → Matrix (Fin m) (Fin m) F) :
       Set (Matrix (Fin m) (Fin m) F)) =ᵐ[matrixMeasure (n := Fin m) μ₁] S := by
-    have := (ae_eq_refl S).inter (ae_eq_univ.2 hnull)
+    have := (Filter.EventuallyEqSet.rfl (s := S)).inter (ae_eq_univ.2 hnull)
     rwa [Set.inter_univ] at this
   exact h3
 

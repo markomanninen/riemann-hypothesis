@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+
+@[expose] public section
 
 open UpperTheory.HF
 
@@ -7,7 +11,7 @@ open scoped Pointwise
 
 private theorem UpperTheory.HF.log_prime_indep_fact (S : Finset ℕ) (u : ℕ → ℕ) (hS : ∀ l ∈ S, l.Prime)
     (p : ℕ) (hp : p ∈ S) : (∏ l ∈ S, l ^ u l).factorization p = u p := by
-  rw [Nat.factorization_prod (fun l hl => pow_ne_zero _ (hS l hl).ne_zero), Finsupp.finset_sum_apply,
+  rw [Nat.factorization_prod (fun l hl => pow_ne_zero _ (hS l hl).ne_zero), Finsupp.finsetSum_apply,
     Finset.sum_eq_single p]
   · rw [(hS p hp).factorization_pow]; simp
   · intro l hl hne

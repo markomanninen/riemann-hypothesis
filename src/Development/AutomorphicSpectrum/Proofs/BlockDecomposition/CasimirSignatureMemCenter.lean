@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirMemCenterEnveloping
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirMemCenterEnveloping
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem sum_squares_eq {A : Type} [Ring A] [Algebra ℂ A] {a : ℕ} (X Y : Fin 
   simp only [h1, Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.smul_sum, hX, hY]
   match_scalars <;> norm_num
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def sgl (i j : Fin a) : Cinf E →ₗ[ℝ] Lie E a :=
   (Matrix.singleLinearMap ℝ i j : Cinf E →ₗ[ℝ] Matrix (Fin a) (Fin a) (Cinf E))
@@ -46,14 +50,14 @@ def eW (w : InfinitePlace E) : Cinf E := atEmb w.embedding 1
 
 def fW (w : InfinitePlace E) : Cinf E := atEmb w.embedding Complex.I
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 open Classical in
 theorem atEmb_embedding_apply (w v : InfinitePlace E) (z : ℂ) :
     atEmb w.embedding z v = if v = w then z else 0 := by
   unfold atEmb
   rw [InfinitePlace.mk_embedding, if_pos rfl, Pi.single_apply]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem star_atEmb (w : InfinitePlace E) (z : ℂ) :
     star (atEmb w.embedding z) = atEmb w.embedding (starRingEnd ℂ z) := by
   classical
@@ -61,18 +65,18 @@ theorem star_atEmb (w : InfinitePlace E) (z : ℂ) :
   rw [Pi.star_apply, atEmb_embedding_apply, atEmb_embedding_apply]
   split_ifs <;> simp
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem star_eW (w : InfinitePlace E) : star (eW w) = eW w := by
   simp [eW, star_atEmb]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem star_fW (w : InfinitePlace E) : star (fW w) = -fW w := by
   classical
   funext v
   simp only [fW, star_atEmb, Pi.neg_apply, atEmb_embedding_apply]
   split_ifs <;> simp
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem sum_atEmb (x : Cinf E) : x = ∑ w, ((x w).re • eW w + (x w).im • fW w) := by
   classical
   have e : ∀ w, (x w).re • eW w + (x w).im • fW w = atEmb w.embedding (x w) := fun w =>
@@ -105,9 +109,10 @@ theorem span_famZ : Submodule.span ℝ (Set.range (famZ (E := E) (a := a))) = �
     rw [e]
     exact S.smul_mem _ (S.add_mem (hz _) (hz _))
   have hx : ∀ i j (x : Cinf E), sgl (a := a) i j x ∈ S := fun i j x => by
-    rw [sum_atEmb x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sum_atEmb x, map_sum]
     refine S.sum_mem fun w _ => ?_
-    rw [map_add, map_smul, map_smul]
+    rw [map_add (f := _), map_smul, map_smul]
     exact S.add_mem (S.smul_mem _ (hE w i j)) (S.smul_mem _ (hF w i j))
   refine eq_top_iff.2 fun L _ => ?_
   have e : L = ∑ i, ∑ j, sgl i j (L i j) := Matrix.matrix_eq_sum_single (Matrix.of L)
@@ -175,7 +180,7 @@ theorem sum_famZ [DecidableEq (InfinitePlace E)] :
   simp only [if_true, Bool.false_eq_true, if_false, f1, f2, f3, f4]
   abel
 
-theorem exists_family : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), ∃ (ι : Type) (_ : Fintype ι) (_ : DecidableEq ι) (Z : ι → GlobalTheory.CuspRep.Lie E a) (K : Finset ι), Submodule.span ℝ (Set.range Z) = ⊤ ∧ (∀ κ ∈ K, (Matrix.of (Z κ))ᴴ = -(Matrix.of (Z κ))) ∧ (∑ i ∈ Kᶜ, lie E a (Z i) * lie E a (Z i) - ∑ κ ∈ K, lie E a (Z κ) * lie E a (Z κ)) ∈ Zalg E a := by
+theorem exists_family : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), ∃ (ι : Type) (_ : Fintype ι) (_ : DecidableEq ι) (Z : ι → GlobalTheory.CuspRep.Lie E a) (K : Finset ι), Submodule.span ℝ (Set.range Z) = ⊤ ∧ (∀ κ ∈ K, (Matrix.of (Z κ))ᴴ = -(Matrix.of (Z κ))) ∧ (∑ i ∈ Kᶜ, lie E a (Z i) * lie E a (Z i) - ∑ κ ∈ K, lie E a (Z κ) * lie E a (Z κ)) ∈ Zalg E a := by
   intro E _ _ _ a
   have : DecidableEq (InfinitePlace E) := Classical.decEq _
   refine ⟨InfinitePlace E × Fin a × Fin a × Bool × Bool, inferInstance, inferInstance, famZ,

@@ -1,4 +1,8 @@
-import Formalism.ZeroFreeRegion.LogDerivRegion
+module
+
+public import Formalism.ZeroFreeRegion.LogDerivRegion
+
+@[expose] public section
 
 open Complex Filter Topology
 

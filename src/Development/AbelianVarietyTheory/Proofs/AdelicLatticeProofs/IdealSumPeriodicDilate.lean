@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LatticeSumDilateHaarAsymptoticStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LatticeSumDilateHaarAsymptoticStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical
 open scoped ContDiff nonZeroDivisors
 
@@ -26,7 +31,7 @@ theorem tsum_ideal_eq_sum_classes {R : Type} [CommRing R] (m b : Ideal R) [Finty
         Ideal.Quotient.eq_zero_iff_mem.2 (hr _ β.2)
       have hβ' : Ideal.Quotient.mk m (β' : R) = 0 :=
         Ideal.Quotient.eq_zero_iff_mem.2 (hr _ β'.2)
-      rw [map_add, map_add, hs, hs, hβ, hβ', zero_add, zero_add] at h2
+      rw [map_add (f := _), map_add (f := _), hs, hs, hβ, hβ', zero_add, zero_add] at h2
       subst h2
       rw [Subtype.ext (add_right_cancel h1)]
     · rintro ⟨a, ha⟩
@@ -61,7 +66,7 @@ theorem finite_support_dilate (K : Type) [Field K] [NumberField K] (f : mixedSpa
     Metric.finite_isBounded_inter_isClosed
       (isDiscrete_iff_discreteTopology.2 hd)
       Metric.isBounded_closedBall
-      (AddSubgroup.isClosed_of_discrete (H := (idealLattice K I).toAddSubgroup))
+      (((idealLattice K I).toAddSubgroup).isClosed_of_discreteTopology)
   have hinj : Function.Injective fun α : 𝓞 K => mixedEmbedding K (α : K) :=
     (mixedEmbedding_injective K).comp RingOfIntegers.coe_injective
   refine (hfin.preimage hinj.injOn).subset fun α hα => ⟨?_, ?_⟩
@@ -103,14 +108,14 @@ theorem ideal_sum_periodic_dilate : ∀ (K : Type) [Field K] [NumberField K] (m 
     intro r
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective r
     obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 (hbm ▸ Submodule.mem_top : a ∈ b ⊔ m)
-    exact ⟨x, hx, by rw [map_add, Ideal.Quotient.eq_zero_iff_mem.2 hy, add_zero]⟩
+    exact ⟨x, hx, by rw [map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 hy, add_zero]⟩
   choose s hsb hs using hrep
   let J : (Ideal (𝓞 K))⁰ := ⟨b * m, mem_nonZeroDivisors_iff_ne_zero.2 (mul_ne_zero hb hm)⟩
   obtain ⟨C, hC⟩ := GlobalTheory.T.lattice_sum_dilate_haar_asymptotic (mixedSpace K) volume
     (idealLattice K (FractionalIdeal.mk0 K J)) f hf hfc A
   refine ⟨(∑ r : 𝓞 K ⧸ m, ‖ψ (s r)‖) * C, fun t ht ht1 => ?_⟩
   have hsum : Summable fun α : b => ψ α * f (t • mixedEmbedding K ((α : 𝓞 K) : K)) := by
-    refine summable_of_finite_support ?_
+    refine summable_of_hasFiniteSupport ?_
     refine ((finite_support_dilate K f hfc t ht).preimage
       (Subtype.val_injective (p := fun x => x ∈ b)).injOn).subset fun α hα => ?_
     exact right_ne_zero_of_mul hα
@@ -143,7 +148,7 @@ theorem ideal_sum_periodic_dilate : ∀ (K : Type) [Field K] [NumberField K] (m 
   rw [tsum_idealLattice K J (fun l => f (t • (l + mixedEmbedding K (s r : K))))] at h
   have hβ : ∀ β : ↥(b * m), mixedEmbedding K (((β : 𝓞 K) + s r : 𝓞 K) : K) =
       mixedEmbedding K ((β : 𝓞 K) : K) + mixedEmbedding K (s r : K) := fun β => by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     rfl
   simp only [hβ]
   exact h

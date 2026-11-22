@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.GaussianMomentRecurrence
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.GaussianMomentRecurrence
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem contr_add (c : ℝ) (p q : PX m n) : contr c (p + q) = contr c p + contr
     contr_eq_of_subset c p (p.support ∪ q.support) Finset.subset_union_left,
     contr_eq_of_subset c q (p.support ∪ q.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun s _ => ?_
-  rw [coeff_add, add_mul]
+  rw [MvPolynomial.coeff_add, add_mul]
 
 theorem contr_monomial (c : ℝ) (s : Fin m × Fin n × Bool →₀ ℕ) (r : ℂ) : contr c (monomial s r) = r * wC c s := by
   classical
@@ -107,6 +111,6 @@ theorem contr_X_mul (c : ℝ) (k : Fin m × Fin n × Bool) (p : PX m n) :
       rw [X, monomial_mul, one_mul]
     rw [hX, pderiv_monomial, contr_monomial, contr_monomial, wC_rel]
     ring
-  | add P Q hP hQ => rw [mul_add, contr_add, hP, hQ, map_add, contr_add, mul_add]
+  | add P Q hP hQ => rw [mul_add, contr_add, hP, hQ, map_add (f := _), contr_add, mul_add]
 
 end PositivityTheory.Rg.Sw.LC

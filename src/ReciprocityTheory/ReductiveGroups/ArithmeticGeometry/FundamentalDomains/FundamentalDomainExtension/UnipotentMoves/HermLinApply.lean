@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.UnipotentMoves.KatoClassHeckeEulerFactorRelation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.UnipotentMoves.KatoClassHeckeEulerFactorRelation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+
+@[expose] public section
 
 namespace UnipMove
 
@@ -47,13 +51,6 @@ lemma maj_smul {r : ℕ} (X : Data E r) (x : Frame X.Ψ r) (τ : X.Ψ) (c : ℂ)
     rw [Complex.normSq_eq_conj_mul_self]
     ring
   rw [e, Complex.re_ofReal_mul]
-  ring
-
-lemma herm_smul_right {r : ℕ} (G : Matrix (Fin r) (Fin r) E) (x y : Fin r → E) (c : E) :
-    herm G x (c • y) = cc c * herm G x y := by
-  unfold herm cc
-  simp only [Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
 
 lemma O_smul {r : ℕ} (β : 𝓞 E) (v : Fin r → E) : β • v = (β : E) • v := rfl
@@ -140,10 +137,12 @@ theorem sDelta_of (hemb : SEmb E) (hext : SExt E) (hdual : SDual E)
         simp only [hermC_sub_left, hermC_sub_right, hermC_smul_left, hermC_smul_right, h1, h2, h3, h4]
         ring
       have hl1 : linF (fun a => τ.1 (cf a)) (Data.emb τ.1 μ) = τ.1 (F μ) := by
-        rw [linF_apply, hFc, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [linF_apply, hFc, map_sum]
         simp only [Data.emb, map_mul]
       have hl2 : linF (fun a => τ.1 (cf a)) (Data.emb τ.1 ξ) = 1 := by
-        rw [linF_apply, show (1 : ℂ) = τ.1 (F ξ) by rw [hFξ, map_one], hFc, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [linF_apply, show (1 : ℂ) = τ.1 (F ξ) by rw [hFξ, map_one], hFc, map_sum]
         simp only [Data.emb, map_mul]
       set co := X.Hf z1 τ (Data.emb τ.1 μ) (Data.emb τ.1 ξ) /
         X.Hf z1 τ (Data.emb τ.1 ξ) (Data.emb τ.1 ξ) with hco
@@ -168,7 +167,7 @@ theorem sDelta_of (hemb : SEmb E) (hext : SExt E) (hdual : SDual E)
         rfl
       rw [hL, hR]
       congr 1
-      rw [hδ', hF μ hμ, map_add, map_mul, map_natCast, hα, map_mul, map_natCast, map_mul, map_neg, hdE]
+      rw [hδ', hF μ hμ, map_add (f := _), map_mul, map_natCast, hα, map_mul, map_natCast, map_mul, map_neg, hdE]
       field_simp
       ring
 

@@ -1,12 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwUnitHk
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwThetaEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwBernRel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwSimpleQuad
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwPermMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwUnitHk
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwThetaEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwBernRel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwSimpleQuad
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwPermMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkNorm
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 namespace UpperTheory.V.AlgebraTools
@@ -17,7 +22,8 @@ private theorem exists_algHom_of_comm {σ A H : Type} [CommRing A] [Ring H] [Alg
   have hc : ∀ a ∈ Set.range y, ∀ b ∈ Set.range y, a * b = b * a := by
     rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩
     exact hy i j
-  have : IsMulCommutative (Algebra.adjoin A (Set.range y)) := Algebra.isMulCommutative_adjoin A hc
+  have : IsMulCommutative (Algebra.adjoin A (Set.range y)) :=
+    Algebra.isMulCommutative_adjoin A (fun a ha b hb _ => hc a ha b hb)
   letI : CommRing (Algebra.adjoin A (Set.range y)) :=
     { (inferInstance : Ring (Algebra.adjoin A (Set.range y))) with mul_comm := fun a b => this.is_comm.comm a b }
   refine ⟨(Algebra.adjoin A (Set.range y)).val.comp

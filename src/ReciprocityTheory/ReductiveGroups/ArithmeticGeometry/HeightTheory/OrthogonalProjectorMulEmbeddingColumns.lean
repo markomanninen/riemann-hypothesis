@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.LatSemiSt
+module
+
+public import ReciprocityTheory.SemistableReduction.LatSemiSt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -118,7 +122,8 @@ theorem normSqSum_add_of_orthogonal {r : ℕ} (a c : Fin r → ℂ) (h : star a 
   unfold hns
   have h' : ∑ i, (a i * (starRingEnd ℂ) (c i)).re = 0 := by
     have h1 : ∑ i, a i * (starRingEnd ℂ) (c i) = (starRingEnd ℂ) (star a ⬝ᵥ c) := by
-      simp only [dotProduct, map_sum, map_mul, Pi.star_apply, Complex.star_def, Complex.conj_conj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, map_sum, map_mul, Pi.star_apply, Complex.star_def, Complex.conj_conj]
     rw [← Complex.re_sum, h1, h, map_zero, Complex.zero_re]
   simp only [Pi.add_apply, ← Complex.normSq_eq_norm_sq, Complex.normSq_add, Finset.sum_add_distrib,
     ← Finset.mul_sum, h', mul_zero, add_zero]
@@ -127,12 +132,12 @@ theorem orthogonalProjector_mulVec_ne_zero (σ : K →+* ℂ) {b : Fin k → Fin
     {q : Fin r → K} (hq : q ∉ Submodule.span K (Set.range b)) :
     hPm σ b *ᵥ (fun i => σ (q i)) ≠ 0 := by
   intro h0
-  have hli := linearIndependent_map_embedding σ ((linearIndependent_fin_cons).mpr ⟨hb, hq⟩)
+  have hli := linearIndependent_map_embedding σ ((linearIndependent_finCons).mpr ⟨hb, hq⟩)
   have hcons : (fun i l => σ ((Fin.cons q b : Fin (k + 1) → Fin r → K) i l)) =
       (Fin.cons (fun l => σ (q l)) (fun j l => σ (b j l)) : Fin (k + 1) → Fin r → ℂ) := by
     funext i
     refine Fin.cases ?_ ?_ i <;> simp
-  rw [hcons, linearIndependent_fin_cons] at hli
+  rw [hcons, linearIndependent_finCons] at hli
   apply hli.2
   have hv : (fun i => σ (q i)) =
       (hBm σ b * ((hBm σ b)ᴴ * hBm σ b)⁻¹ * (hBm σ b)ᴴ) *ᵥ fun i => σ (q i) := by
@@ -153,7 +158,8 @@ theorem orthogonalProjector_mulVec_eq_zero (σ : K →+* ℂ) {b : Fin k → Fin
   have h1 : (fun i => σ ((∑ j, c j • b j) i)) = hBm σ b *ᵥ fun j => σ (c j) := by
     rw [embeddingColumns_mulVec]
     funext i
-    simp [Finset.sum_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finset.sum_apply, map_sum, map_mul]
   rw [h1, Matrix.mulVec_mulVec, orthogonalProjector_mul_embeddingColumns σ hb, Matrix.zero_mulVec]
 
 end Proj

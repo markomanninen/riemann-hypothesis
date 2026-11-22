@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped nonZeroDivisors
@@ -14,20 +18,8 @@ variable {E : Type} [Field E] [NumberField E]
 def IsRanks [IsCMField E] (r : ℕ) (rk : (E ≃ₐ[ℚ] E) → ℕ) : Prop :=
   ∀ σ : E ≃ₐ[ℚ] E, rk σ + rk ((IsCMField.complexConj E).restrictScalars ℚ * σ) = r
 
-def Psi (rk : (E ≃ₐ[ℚ] E) → ℕ) (γ : E) : E := ∏ σ : E ≃ₐ[ℚ] E, σ γ ^ rk σ
-
-theorem Psi_one (rk : (E ≃ₐ[ℚ] E) → ℕ) : Psi rk (1 : E) = 1 := by
-  simp [Psi]
-
-theorem Psi_mul (rk : (E ≃ₐ[ℚ] E) → ℕ) (x y : E) : Psi rk (x * y) = Psi rk x * Psi rk y := by
-  simp only [Psi, map_mul, mul_pow, Finset.prod_mul_distrib]
-
-theorem Psi_ne_zero (rk : (E ≃ₐ[ℚ] E) → ℕ) {x : E} (hx : x ≠ 0) : Psi rk x ≠ 0 := by
-  refine Finset.prod_ne_zero_iff.mpr fun σ _ => pow_ne_zero _ ?_
-  exact (map_ne_zero σ).mpr hx
 
 variable (E) in
-
 structure ClassBasis where
 
   k : ℕ
@@ -46,94 +38,9 @@ theorem ClassBasis.h_pos (B : ClassBasis E) (i : Fin B.k) : 0 < B.h i := by
   unfold ClassBasis.h
   exact orderOf_pos _
 
-structure Roots (rk : (E ≃ₐ[ℚ] E) → ℕ) (B : ClassBasis E) (Ω : Type) [Field Ω] [Algebra E Ω] where
-
-  ψ : Fin B.k → Ω
-  pow_eq : ∀ i, ψ i ^ B.h i = algebraMap E Ω (Psi rk (B.γ i : E))
-
 variable {rk : (E ≃ₐ[ℚ] E) → ℕ} {B : ClassBasis E} {Ω : Type} [Field Ω] [Algebra E Ω]
 
-theorem Roots.ψ_ne_zero (R : Roots rk B Ω) (i : Fin B.k) : R.ψ i ≠ 0 := by
-  intro h0
-  have h1 := R.pow_eq i
-  rw [h0, zero_pow (B.h_pos i).ne'] at h1
-  exact Psi_ne_zero rk (B.γ i).ne_zero ((map_eq_zero (algebraMap E Ω)).mp h1.symm)
-
-def Roots.field (R : Roots rk B Ω) : IntermediateField E Ω :=
-  IntermediateField.adjoin E (Set.range R.ψ)
-
-def Roots.IsValue (R : Roots rk B Ω) (𝔫 : (Ideal (𝓞 E))⁰) (b : Ω) : Prop :=
-  ∃ (γ : Eˣ) (a : Fin B.k → ℤ),
-    FractionalIdeal.mk0 E 𝔫 = toPrincipalIdeal (𝓞 E) E γ * ∏ i, B.c i ^ a i ∧
-      b = algebraMap E Ω (Psi rk (γ : E)) * ∏ i, R.ψ i ^ a i
-
-theorem Roots.IsValue.mem {R : Roots rk B Ω} {𝔫 : (Ideal (𝓞 E))⁰} {b : Ω}
-    (h : R.IsValue 𝔫 b) : b ∈ R.field := by
-  obtain ⟨γ, a, -, rfl⟩ := h
-  refine mul_mem (IntermediateField.algebraMap_mem _ _) (prod_mem fun i _ => zpow_mem ?_ _)
-  exact IntermediateField.subset_adjoin E _ (Set.mem_range_self i)
-
-theorem Roots.IsValue.ne_zero {R : Roots rk B Ω} {𝔫 : (Ideal (𝓞 E))⁰} {b : Ω}
-    (h : R.IsValue 𝔫 b) : b ≠ 0 := by
-  obtain ⟨γ, a, -, rfl⟩ := h
-  refine mul_ne_zero ((map_ne_zero _).mpr (Psi_ne_zero rk γ.ne_zero)) ?_
-  exact Finset.prod_ne_zero_iff.mpr fun i _ => zpow_ne_zero _ (R.ψ_ne_zero i)
-
-theorem Roots.isValue_one (R : Roots rk B Ω) : R.IsValue 1 1 := by
-  refine ⟨1, 0, ?_, ?_⟩ <;> simp [Psi_one]
-
-structure BetaChoice (R : Roots rk B Ω) where
-
-  β : (Ideal (𝓞 E))⁰ → R.field
-  isValue : ∀ 𝔫, R.IsValue 𝔫 (β 𝔫 : Ω)
-  β_one : β 1 = 1
-
-def DegreeBound (R : Roots rk B Ω) : Prop :=
-  FiniteDimensional E R.field ∧ Module.finrank E R.field ≤ classNumber E
-
-def AbsValue_sq (r : ℕ) {R : Roots rk B Ω} (C : BetaChoice R) : Prop :=
-  ∀ (𝔫 : (Ideal (𝓞 E))⁰) (s : R.field →+* ℂ),
-    ‖s (C.β 𝔫)‖ ^ 2 = (Ideal.absNorm (𝔫 : Ideal (𝓞 E)) : ℝ) ^ r
-
-def MulUpToUnit {R : Roots rk B Ω} (C : BetaChoice R) : Prop :=
-  ∀ 𝔫₁ 𝔫₂ : (Ideal (𝓞 E))⁰, ∃ u : (𝓞 R.field)ˣ,
-    C.β (𝔫₁ * 𝔫₂) = ((u : 𝓞 R.field) : R.field) * (C.β 𝔫₁ * C.β 𝔫₂) ∧
-      ∀ s : R.field →+* ℂ, ‖s ((u : 𝓞 R.field) : R.field)‖ = 1
-
-def conjIdeal (R : Roots rk B Ω) {K : Type} [Field K] (s : R.field →+* K) (σ : E ≃ₐ[ℚ] E)
-    (𝔫 : Ideal (𝓞 E)) : Ideal (𝓞 K) :=
-  𝔫.map (RingOfIntegers.mapRingHom
-    (s.comp ((algebraMap E R.field).comp (σ : E →+* E))))
-
-def ValuationAtPlace_vw {R : Roots rk B Ω} (C : BetaChoice R) : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (s : R.field →+* K) (w : HeightOneSpectrum (𝓞 K))
-    (𝔫 : (Ideal (𝓞 E))⁰),
-    FractionalIdeal.count K w (FractionalIdeal.spanSingleton (𝓞 K)⁰ (s (C.β 𝔫))) =
-      ∑ σ : E ≃ₐ[ℚ] E, (rk σ : ℤ) *
-        FractionalIdeal.count K w (conjIdeal R s σ (𝔫 : Ideal (𝓞 E)) : FractionalIdeal (𝓞 K)⁰ K)
-
-def ValuationAny {R : Roots rk B Ω} (C : BetaChoice R) : Prop :=
-  ∀ (Γ₀ : Type) [LinearOrderedCommGroupWithZero Γ₀] (v : Valuation R.field Γ₀)
-    (𝔫 : (Ideal (𝓞 E))⁰) (m : (E ≃ₐ[ℚ] E) → Γ₀),
-    (∀ σ : E ≃ₐ[ℚ] E, IsGreatest
-      {t | ∃ x ∈ (𝔫 : Ideal (𝓞 E)), t = v (algebraMap E R.field (σ (x : E)))} (m σ)) →
-    v (C.β 𝔫) = ∏ σ : E ≃ₐ[ℚ] E, m σ ^ rk σ
-
-def ChangeOfChoices (rk : (E ≃ₐ[ℚ] E) → ℕ) (B : ClassBasis E) (Ω : Type) [Field Ω]
-    [Algebra E Ω] : Prop :=
-  ∀ (R R' : Roots rk B Ω) (𝔫 : (Ideal (𝓞 E))⁰) (b b' : Ω), R.IsValue 𝔫 b → R'.IsValue 𝔫 b' →
-    ∃ (u : (𝓞 E)ˣ) (ζ : Ω), IsOfFinOrder ζ ∧
-      b' = algebraMap E Ω (Psi rk ((u : 𝓞 E) : E)) * ζ * b ∧ (R.ψ = R'.ψ → ζ = 1)
-
 end Defs
-
-def BetaProperties (E : Type) [Field E] [NumberField E] [IsGalois ℚ E] [IsCMField E] : Prop :=
-  ∀ (r : ℕ) (rk : (E ≃ₐ[ℚ] E) → ℕ), IsRanks r rk →
-    ∀ (B : ClassBasis E) (Ω : Type) [Field Ω] [Algebra E Ω],
-      ChangeOfChoices rk B Ω ∧
-      ∀ R : Roots rk B Ω, DegreeBound R ∧
-        ∀ C : BetaChoice R,
-          AbsValue_sq r C ∧ MulUpToUnit C ∧ ValuationAtPlace_vw C ∧ ValuationAny C
 
 section Exist
 
@@ -211,32 +118,7 @@ instance : Nonempty (ClassBasis E) := by
     (by rw [map_pow, pow_orderOf_eq_one])
   exact ⟨⟨k, c, γ, by simpa only [hc] using hs, by simpa only [hc] using hi, hγ⟩⟩
 
-instance (rk : (E ≃ₐ[ℚ] E) → ℕ) (B : ClassBasis E) (Ω : Type) [Field Ω] [Algebra E Ω]
-    [IsAlgClosed Ω] : Nonempty (Roots rk B Ω) := by
-  choose ψ hψ using fun i =>
-    IsAlgClosed.exists_pow_nat_eq (algebraMap E Ω (Psi rk (B.γ i : E))) (B.h_pos i)
-  exact ⟨⟨ψ, hψ⟩⟩
-
 variable {rk : (E ≃ₐ[ℚ] E) → ℕ} {B : ClassBasis E} {Ω : Type} [Field Ω] [Algebra E Ω]
-
-theorem Roots.exists_isValue (R : Roots rk B Ω) (𝔫 : (Ideal (𝓞 E))⁰) : ∃ b, R.IsValue 𝔫 b := by
-  obtain ⟨a, ha⟩ := B.span (ClassGroup.mk E (FractionalIdeal.mk0 E 𝔫))
-  obtain ⟨γ, hγ⟩ := exists_gen (I := FractionalIdeal.mk0 E 𝔫 * (∏ i, B.c i ^ a i)⁻¹) (by
-    rw [map_mul, map_inv, ha, map_prod]
-    simp only [map_zpow, mul_inv_cancel])
-  exact ⟨_, γ, a, by rw [← hγ, inv_mul_cancel_right], rfl⟩
-
-instance (R : Roots rk B Ω) : Nonempty (BetaChoice R) := by
-  classical
-  have : ∀ 𝔫, ∃ b, R.IsValue 𝔫 b ∧ (𝔫 = 1 → b = 1) := fun 𝔫 => by
-    by_cases h : 𝔫 = 1
-    · exact ⟨1, h ▸ R.isValue_one, fun _ => rfl⟩
-    · obtain ⟨b, hb⟩ := R.exists_isValue 𝔫
-      exact ⟨b, hb, fun h' => (h h').elim⟩
-  choose b hb h1 using this
-  exact ⟨⟨fun 𝔫 => ⟨b 𝔫, (hb 𝔫).mem⟩, hb, Subtype.ext (h1 1 rfl)⟩⟩
-
-example [IsCMField E] (n : ℕ) : IsRanks (E := E) (2 * n) (fun _ => n) := fun _ => by ring
 
 end Exist
 

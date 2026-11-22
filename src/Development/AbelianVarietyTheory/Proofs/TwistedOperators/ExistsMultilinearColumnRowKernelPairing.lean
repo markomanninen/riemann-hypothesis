@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftTheta
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftTheta
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,13 +28,13 @@ theorem chainTo_congr {k k' : ∀ j, V j →ₗ[ℂ] V (j + 1)} : ∀ n, (∀ j 
 
 theorem chain_multilinear : ∀ (m : ℕ) (A : Fin m → Type) [∀ j, AddCommGroup (A j)] [∀ j, Module ℂ (A j)]
     (k : ∀ j : Fin m, A j →ₗ[ℂ] (V j →ₗ[ℂ] V (j + 1))),
-    ∃ M : MultilinearMap ℂ A (V 0 →ₗ[ℂ] V m), ∀ fs,
+    ∃ M : (∀ j, A j) →ₘₗ[ℂ] (V 0 →ₗ[ℂ] V m), ∀ fs,
       M fs = chainTo (fun j => if h : j < m then k ⟨j, h⟩ (fs ⟨j, h⟩) else 0) m := by
   intro m
   induction m with
   | zero =>
     intro A _ _ k
-    exact ⟨MultilinearMap.constOfIsEmpty ℂ A LinearMap.id, fun _ => rfl⟩
+    exact ⟨MultilinearMap.constOfIsEmpty (RingHom.id ℂ) A LinearMap.id, fun _ => rfl⟩
   | succ m ih =>
     intro A _ _ k
     obtain ⟨M, hM⟩ := ih (fun j => A j.castSucc) (fun j => k j.castSucc)
@@ -40,17 +44,17 @@ theorem chain_multilinear : ∀ (m : ℕ) (A : Fin m → Type) [∀ j, AddCommGr
     show kl (fs (Fin.last m)) ∘ₗ M (Fin.init fs) = _ ∘ₗ chainTo _ m
     rw [hM]
     beta_reduce
-    rw [dif_pos (Nat.lt_succ_self m)]
+    rw [dite_eq_left (Nat.lt_succ_self m)]
     congr 1
     refine chainTo_congr m fun j hj => ?_
-    rw [dif_pos hj, dif_pos (Nat.lt_succ_of_lt hj)]
+    rw [dite_eq_left hj, dite_eq_left (Nat.lt_succ_of_lt hj)]
     rfl
 
 theorem pair_multilinear {ι κ X Y : Type} {A : ι → Type} {B : κ → Type} [∀ j, AddCommGroup (A j)] [∀ j, Module ℂ (A j)]
     [∀ j, AddCommGroup (B j)] [∀ j, Module ℂ (B j)] [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] [Module ℂ Y]
-    (β : X →ₗ[ℂ] Y →ₗ[ℂ] ℂ) (Ma : MultilinearMap ℂ A X) (Mb : MultilinearMap ℂ B Y) :
-    ∃ M : MultilinearMap ℂ A (MultilinearMap ℂ B ℂ), ∀ a b, M a b = β (Ma a) (Mb b) := by
-  let L : X →ₗ[ℂ] MultilinearMap ℂ B ℂ :=
+    (β : X →ₗ[ℂ] Y →ₗ[ℂ] ℂ) (Ma : (∀ j, A j) →ₘₗ[ℂ] X) (Mb : (∀ j, B j) →ₘₗ[ℂ] Y) :
+    ∃ M : (∀ j, A j) →ₘₗ[ℂ] ((∀ j, B j) →ₘₗ[ℂ] ℂ), ∀ a b, M a b = β (Ma a) (Mb b) := by
+  let L : X →ₗ[ℂ] ((∀ j, B j) →ₘₗ[ℂ] ℂ) :=
     { toFun := fun x => (β x).compMultilinearMap Mb
       map_add' := fun x x' => by ext b; simp
       map_smul' := fun c x => by ext b; simp }
@@ -60,8 +64,9 @@ theorem compl_multilinear {ι κ X Y P Q : Type} {A : ι → Type} {B : κ → T
     [∀ j, AddCommGroup (B j)] [∀ j, Module ℂ (B j)] [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] [Module ℂ Y]
     [AddCommGroup P] [Module ℂ P] [AddCommGroup Q] [Module ℂ Q]
     (β : X →ₗ[ℂ] Y →ₗ[ℂ] ℂ) (c : (∀ j, A j) → P →ₗ[ℂ] X) (r : (∀ j, B j) → Q →ₗ[ℂ] Y) (u : P) (v : Q)
-    (hc : ∃ M : MultilinearMap ℂ A X, ∀ a, M a = c a u) (hr : ∃ M : MultilinearMap ℂ B Y, ∀ b, M b = r b v) :
-    ∃ M : MultilinearMap ℂ A (MultilinearMap ℂ B ℂ), ∀ a b, M a b = β.compl₁₂ (c a) (r b) u v := by
+    (hc : ∃ M : (∀ j, A j) →ₘₗ[ℂ] X, ∀ a, M a = c a u)
+    (hr : ∃ M : (∀ j, B j) →ₘₗ[ℂ] Y, ∀ b, M b = r b v) :
+    ∃ M : (∀ j, A j) →ₘₗ[ℂ] ((∀ j, B j) →ₘₗ[ℂ] ℂ), ∀ a b, M a b = β.compl₁₂ (c a) (r b) u v := by
   obtain ⟨Ma, ha⟩ := hc
   obtain ⟨Mb, hb⟩ := hr
   obtain ⟨M, hM⟩ := pair_multilinear β Ma Mb
@@ -76,7 +81,7 @@ variable {ι : Type} [Fintype ι] {a b : ℕ}
 theorem jetLin_add (J J' : (Formalism.L2.Ker.DVar ι a b →₀ ℕ) → ℂ) :
     Formalism.L2.Ker.jetLin (J + J') = Formalism.L2.Ker.jetLin J + Formalism.L2.Ker.jetLin J' := by
   refine (MvPolynomial.basisMonomials _ ℂ).ext fun m => ?_
-  simp only [Formalism.L2.Ker.jetLin, LinearMap.add_apply, Module.Basis.constr_basis, Pi.add_apply, map_add]
+  simp only [Formalism.L2.Ker.jetLin, LinearMap.add_apply, Module.Basis.constr_basis, Pi.add_apply, map_add (f := _)]
 
 theorem jetLin_smul (c : ℂ) (J : (Formalism.L2.Ker.DVar ι a b →₀ ℕ) → ℂ) :
     Formalism.L2.Ker.jetLin (c • J) = c • Formalism.L2.Ker.jetLin J := by
@@ -92,7 +97,7 @@ theorem jetTab_add (W : G.Weil) (B : VertexFrames G) (p : Pair T) {f f' : WO (G.
     jetTab W B p (f + f') x y = jetTab W B p f x y + jetTab W B p f' x y := by
   funext k
   simp only [jetTab, kerFin, fockIn, GridData.Weil.ker, thetaKO, Pi.add_apply]
-  rw [GlobalTheory.SpecFac.pureTensorO_add W.ψ_std W.θ_is _ _ _ _ hf hf', map_add, Pi.add_apply]
+  rw [GlobalTheory.SpecFac.pureTensorO_add W.ψ_std W.θ_is _ _ _ _ hf hf', map_add (f := _), Pi.add_apply]
 
 theorem jetTab_smul (W : G.Weil) (B : VertexFrames G) (p : Pair T) (c : ℂ) (f : WO (G.pS p) (G.pT p) → ℂ)
     (x : FinPt G p.small) (y : FinPt G p.big) :
@@ -108,7 +113,7 @@ def fockLin (W : G.Weil) (B : VertexFrames G) (p : Pair T) (x : FinPt G p.small)
     ext1 v
     simp only [fockComp, Submodule.coe_add]
     rw [jetTab_add W B p f.2 f'.2]
-    simp only [Formalism.L2.Ker.jetOp, Formalism.L2.Ker.jetMap, jetLin_add, LinearMap.comp_apply, LinearMap.add_apply, map_add]
+    simp only [Formalism.L2.Ker.jetOp, Formalism.L2.Ker.jetMap, jetLin_add, LinearMap.comp_apply, LinearMap.add_apply, map_add (f := _)]
   map_smul' c f := by
     ext1 v
     simp only [fockComp, Submodule.coe_smul]
@@ -119,7 +124,7 @@ def fockLin (W : G.Weil) (B : VertexFrames G) (p : Pair T) (x : FinPt G p.small)
 variable {W : G.Weil} {U : Set T}
 
 theorem col_multilinear (S : GridChoice W U) (t : T) (x : ∀ j, FinPt G (.top j)) (Ψ₀ : VV ℂ (wt G (.top 0))) :
-    ∃ M : MultilinearMap ℂ (fun j : Fin D.R.m => thSub W (.top t j)) (VV ℂ (wt G (.top D.R.m))),
+    ∃ M : (∀ j : Fin D.R.m, thSub W (.top t j)) →ₘₗ[ℂ] VV ℂ (wt G (.top D.R.m)),
       ∀ fs, M fs = colMapV S (fun j => (fs j : WO (G.pS (.top t j)) (G.pT (.top t j)) → ℂ)) x Ψ₀ := by
   obtain ⟨Mc, hc⟩ := chain_multilinear (V := fun j => VV ℂ (wt G (.top j))) D.R.m
     (fun j : Fin D.R.m => thSub W (.top t j))
@@ -132,7 +137,7 @@ theorem col_multilinear (S : GridChoice W U) (t : T) (x : ∀ j, FinPt G (.top j
 
 theorem row_multilinear (S : GridChoice W U) (y : ∀ i, FinPt G (.grid i D.R.m))
     (F₀ : VV ℂ (listedWt G (.grid 0 D.R.m))) :
-    ∃ M : MultilinearMap ℂ (fun i : Fin D.R.m => thSub W (.chi i D.R.m : Pair T)) (VV ℂ (wt G (.grid D.R.m D.R.m))),
+    ∃ M : (∀ i : Fin D.R.m, thSub W (.chi i D.R.m : Pair T)) →ₘₗ[ℂ] VV ℂ (wt G (.grid D.R.m D.R.m)),
       ∀ gs, M gs =
         rowMapV S (fun i => (gs i : WO (G.pS (.chi i D.R.m : Pair T)) (G.pT (.chi i D.R.m : Pair T)) → ℂ)) y F₀ := by
   obtain ⟨Mr, hr⟩ := chain_multilinear (V := fun i => VV ℂ (wt G (.grid i D.R.m))) D.R.m
@@ -150,8 +155,8 @@ theorem row_multilinear (S : GridChoice W U) (y : ∀ i, FinPt G (.grid i D.R.m)
 theorem pairing_multilinear {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T}
     (S : GridChoice W U) (t : T) (x : ∀ j, FinPt G (.top j)) (y : ∀ i, FinPt G (.grid i D.R.m))
     (Ψ₀ : VV ℂ (wt G (.top 0))) (F₀ : VV ℂ (listedWt G (.grid 0 D.R.m))) :
-    ∃ M : MultilinearMap ℂ (fun j : Fin D.R.m => thSub W (.top t j))
-        (MultilinearMap ℂ (fun i : Fin D.R.m => thSub W (.chi i D.R.m : Pair T)) ℂ),
+    ∃ M : (∀ j : Fin D.R.m, thSub W (.top t j)) →ₘₗ[ℂ]
+        ((∀ i : Fin D.R.m, thSub W (.chi i D.R.m : Pair T)) →ₘₗ[ℂ] ℂ),
       ∀ fs gs, M fs gs = (brPair (listedWt G (.grid D.R.m D.R.m)) G.sp.topDec.rank.symm (wt G (.top D.R.m))).compl₁₂
         (colMapV S (fun j => (fs j : WO (G.pS (.top t j)) (G.pT (.top t j)) → ℂ)) x)
         (rowMapV S (fun i => (gs i : WO (G.pS (.chi i D.R.m : Pair T)) (G.pT (.chi i D.R.m : Pair T)) → ℂ)) y) Ψ₀ F₀ := by

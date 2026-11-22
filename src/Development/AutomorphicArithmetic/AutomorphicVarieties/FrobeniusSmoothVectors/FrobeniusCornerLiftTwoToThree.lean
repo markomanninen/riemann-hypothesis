@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.TrdegQuotLeOne
-import Mathlib.RingTheory.GradedAlgebra.Radical
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.TrdegQuotLeOne
+public import Mathlib.RingTheory.GradedAlgebra.Radical
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -27,7 +31,7 @@ private theorem ex_core {B A : Type} [CommRing B] [CommRing A] [Algebra B A] (�
     · intro x y hx hy
       obtain ⟨c, hc, hxc⟩ := hx
       obtain ⟨d, hd, hyd⟩ := hy
-      exact ⟨c + d, p.add_mem hc hd, by rw [map_add, hxc, hyd, map_add]⟩
+      exact ⟨c + d, p.add_mem hc hd, by rw [map_add (f := _), hxc, hyd, map_add (f := _)]⟩
   have hdisj : Disjoint ((Ideal.map (algebraMap B A) p : Ideal A) : Set A)
       (Algebra.algebraMapSubmonoid A p.primeCompl : Set A) := by
     rw [Set.disjoint_left]
@@ -63,7 +67,8 @@ private theorem one_le_td {B A : Type} [CommRing B] [CommRing A] [Algebra B A] (
         (∑ i ∈ Finset.range (Q.natDegree + k + 1), Q.coeff i • a ^ i) ∈ η := by
       rw [GradedAlgebra.proj_apply]
       exact (Ideal.IsHomogeneous.mem_iff 𝒜 hh).1 hQ _
-    rw [map_sum, Finset.sum_eq_single k] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single k] at h2
     · rw [GradedAlgebra.proj_apply, DirectSum.decompose_of_mem_same 𝒜 (hmem k), Algebra.smul_def] at h2
       rcases hη.mem_or_mem h2 with h | h
       · exact h

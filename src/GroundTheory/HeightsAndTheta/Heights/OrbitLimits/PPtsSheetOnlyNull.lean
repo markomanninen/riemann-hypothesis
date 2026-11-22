@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSheetOnlyNull
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StCriticalFibreInfinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetOnlyNull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSheetOnlyNull
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StCriticalFibreInfinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetOnlyNull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

@@ -1,11 +1,15 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TorusInvariance.QnTInvOf
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnMinorLeft
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabPres
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabGl
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovLin
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovDet
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovHat
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CovariantHatSqOfLin
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TorusInvariance.QnTInvOf
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnMinorLeft
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabPres
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabGl
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovLin
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovDet
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovHat
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CovariantHatSqOfLin
+
+@[expose] public section
 
 theorem qnTInv : Formalism.FourierDecayAlt.Q.TInvariant :=
   Formalism.FourierDecayAlt.Q.TInvW.qnTInv_of

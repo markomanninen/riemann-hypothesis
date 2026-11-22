@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobalBound
-import GroundTheory.AutomorphicForms.GL2.GJGlobalEntire
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalBound
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalEntire
+
+@[expose] public section
 
 open MeasureTheory Set Filter NumberField ComplexConjugate Asymptotics
 open scoped NumberField.AdeleRing
@@ -66,9 +70,9 @@ theorem continuous_tsum_inv {Φ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ}
   simp only [Equiv.inv_apply]
   rw [e]
 
-set_option maxHeartbeats 1600000 in
 
-theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normOneGL K n))
+set_option maxHeartbeats 1600000 in
+theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normOneGL (K := K) (n := n)))
     [μ.IsHaarMeasure] (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.IsHaarMeasure]
     {φ₁ φ₂ : AdelicGLn.AdelicGL K n → ℂ} (h₁ : φ₁ ∈ cuspForms K n) (h₂ : φ₂ ∈ cuspForms K n)
     (hA : ∀ (s : {r : ℝ // 0 < r}) (x : AdelicGLn.AdelicGL K n),
@@ -81,13 +85,42 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
           (fun g => matrixCoeff μ φ₁ φ₂ g⁻¹) s) ν ∧
         globalZeta ν (adelicMatrixFourier K Φ) (fun g => matrixCoeff μ φ₁ φ₂ g⁻¹) s = Λ' s) ∧
       ∀ s : ℂ, Λ s = Λ' (1 - s) := by
+  have norm_thetaPairing_le (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] {φ₁ φ₂ Ξ : AdelicGLn.AdelicGL K n → ℂ} (t : {r : ℝ // 0 < r}) {b : ℝ}
+      (hb : ∀ x y : normOneGL (K := K) (n := n),
+        Summable (fun γ : GL (Fin n) K => ‖Ξ (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
+          AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n))‖) ∧
+        ‖φ₂ (x : AdelicGLn.AdelicGL K n)‖ * ‖φ₁ (y : AdelicGLn.AdelicGL K n)‖ *
+          ∑' γ : GL (Fin n) K, ‖Ξ (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
+            AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n))‖ ≤ b) :
+      ‖thetaPairing μ φ₁ φ₂ Ξ t‖ ≤ (μ (fundamentalDomain (rationalGLOne (K := K) (n := n)))).toReal ^ 2 * b := by
+    have hF : μ (fundamentalDomain (rationalGLOne (K := K) (n := n))) < ⊤ := measure_fundamentalDomain_rationalGLOne_lt_top μ
+    have hT : ∀ x y : normOneGL (K := K) (n := n), ‖conj (φ₂ (x : AdelicGLn.AdelicGL K n)) *
+        φ₁ (y : AdelicGLn.AdelicGL K n) * ∑' γ : GL (Fin n) K,
+          Ξ (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
+            AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n))‖ ≤ b := by
+      intro x y
+      obtain ⟨hs, hle⟩ := hb x y
+      rw [norm_mul, norm_mul, Complex.norm_conj]
+      exact le_trans (mul_le_mul_of_nonneg_left (norm_tsum_le_tsum_norm hs)
+        (mul_nonneg (norm_nonneg _) (norm_nonneg _))) hle
+    unfold thetaPairing
+    have hin : ∀ x : normOneGL (K := K) (n := n), ‖∫ y in fundamentalDomain (rationalGLOne (K := K) (n := n)),
+        conj (φ₂ (x : AdelicGLn.AdelicGL K n)) * φ₁ (y : AdelicGLn.AdelicGL K n) *
+          ∑' γ : GL (Fin n) K, Ξ (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
+            AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n)) ∂μ‖ ≤
+          b * (μ (fundamentalDomain (rationalGLOne (K := K) (n := n)))).toReal := fun x =>
+      norm_setIntegral_le_of_norm_le_const hF fun y _ => hT x y
+    calc _ ≤ (b * (μ (fundamentalDomain (rationalGLOne (K := K) (n := n)))).toReal) * (μ (fundamentalDomain (rationalGLOne (K := K) (n := n)))).toReal :=
+          norm_setIntegral_le_of_norm_le_const hF fun x _ => hin x
+      _ = _ := by ring
+
   have hn0 : 0 < n := by omega
   have hΦh := adelicMatrixFourier_mem hΦ
   have hΦc : Continuous Φ := continuous_of_mem_matrixSchwartzBruhat hΦ
   have hΦhc : Continuous (adelicMatrixFourier K Φ) := continuous_of_mem_matrixSchwartzBruhat hΦh
   have h₁c : Continuous φ₁ := h₁.1.continuous
   have h₂c : Continuous φ₂ := h₂.1.continuous
-  set V : ℝ := (μ (fundamentalDomain (rationalGLOne K n))).toReal ^ 2 with hV
+  set V : ℝ := (μ (fundamentalDomain (rationalGLOne (K := K) (n := n)))).toReal ^ 2 with hV
 
   set Ξ₁ : AdelicGLn.AdelicGL K n → ℂ := fun g => Φ (g : Matrix (Fin n) (Fin n) 𝔸[K]) with hΞ₁
   set Ξ₂ : AdelicGLn.AdelicGL K n → ℂ := fun g => adelicMatrixFourier K Φ
@@ -101,7 +134,7 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
   obtain ⟨C₁, M₁, -, hC₁⟩ := exists_bound_tsum hΦ h₁ h₂
   obtain ⟨C₂, M₂, -, hC₂⟩ := exists_bound_tsum hΦh h₂ h₁
   obtain ⟨_, _, _, hsum₂⟩ := exists_bound_GL_inv hn0 hΦ h₁ h₂ 0
-  have hB₁ : ∀ (t : {r : ℝ // 0 < r}) (x y : normOneGL K n),
+  have hB₁ : ∀ (t : {r : ℝ // 0 < r}) (x y : normOneGL (K := K) (n := n)),
       ‖φ₂ (x : AdelicGLn.AdelicGL K n)‖ * ‖φ₁ (y : AdelicGLn.AdelicGL K n)‖ *
         ‖∑' γ : GL (Fin n) K, Ξ₁ (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
           AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n))‖ ≤
@@ -113,7 +146,7 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
     refine mul_le_mul_of_nonneg_left ?_ (mul_nonneg (norm_nonneg _) (norm_nonneg _))
     simp only [hΞ₁, coe_mul_diagonal_mul]
     exact (norm_tsum_le_tsum_norm hGL.1).trans hGL.2
-  have hB₂ : ∀ (t : {r : ℝ // 0 < r}) (x y : normOneGL K n),
+  have hB₂ : ∀ (t : {r : ℝ // 0 < r}) (x y : normOneGL (K := K) (n := n)),
       ‖φ₂ (x : AdelicGLn.AdelicGL K n)‖ * ‖φ₁ (y : AdelicGLn.AdelicGL K n)‖ *
         ‖∑' γ : GL (Fin n) K, Ξ₂ (centralSection K n t * (x : AdelicGLn.AdelicGL K n)⁻¹ *
           AdelicGLn.diagonal K n γ * (y : AdelicGLn.AdelicGL K n))‖ ≤
@@ -212,7 +245,7 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
     obtain ⟨C, M, D, hb⟩ := exists_bound_GL hn0 hΦ h₁ h₂ (σ + 1)
     set B : ℝ → ℝ := fun t => if t < 1 then C₁' * t ^ (-max M₁' 0) else D * t ^ (-(σ + 1))
       with hBdef
-    have hbB : ∀ (t : {r : ℝ // 0 < r}) (x y : normOneGL K n),
+    have hbB : ∀ (t : {r : ℝ // 0 < r}) (x y : normOneGL (K := K) (n := n)),
         Summable (fun γ : GL (Fin n) K => ‖Ξ₁ (centralSection K n t *
           (x : AdelicGLn.AdelicGL K n)⁻¹ * AdelicGLn.diagonal K n γ *
             (y : AdelicGLn.AdelicGL K n))‖) ∧
@@ -255,7 +288,7 @@ theorem globalZeta_entire_functionalEquation (hn : 2 ≤ n) (μ : Measure (normO
     obtain ⟨C, M, D, hb⟩ := exists_bound_GL_inv hn0 hΦ h₁ h₂ (σ + 1)
     set B : ℝ → ℝ := fun t => if t < 1 then D * t ^ (σ + 1) else C₂' * t ^ max M₂' 0
       with hBdef
-    have hbB : ∀ (t : {r : ℝ // 0 < r}) (x y : normOneGL K n),
+    have hbB : ∀ (t : {r : ℝ // 0 < r}) (x y : normOneGL (K := K) (n := n)),
         Summable (fun γ : GL (Fin n) K => ‖Ξ₂ (centralSection K n t *
           (x : AdelicGLn.AdelicGL K n)⁻¹ * AdelicGLn.diagonal K n γ *
             (y : AdelicGLn.AdelicGL K n))‖) ∧

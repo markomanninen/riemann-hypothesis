@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.QcohLocal
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.ModulesAbExact
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.QcohLocal
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.ModulesAbExact
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -69,7 +74,8 @@ theorem exists_generatingSections (F : X.Modules) [F.IsQuasicoherent] {ι : Type
       ((w⁻¹ : (Γ(X, X.basicOpen f))ˣ) : Γ(X, X.basicOpen f)) * resO (X.basicOpen_le f) (c k)
     have h₁ : resF F (X.basicOpen_le f) m' =
         ∑ k, resO (X.basicOpen_le f) (c k) • resF F (le_top : X.basicOpen f ≤ ⊤) (s k) := by
-      rw [← hc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [resF_smul, resF_comp]
     have h₂ : ((w : Γ(X, X.basicOpen f))) • resF F hDU m =
@@ -85,7 +91,8 @@ theorem exists_generatingSections (F : X.Modules) [F.IsQuasicoherent] {ι : Type
     have hsum : (π.val.app (op (X.basicOpen f)))
         (∑ k, (SheafOfModules.ιFree k).val.app (op (X.basicOpen f)) (a k)) =
           ∑ k, a k • resF F (le_top : X.basicOpen f ≤ ⊤) (s k) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [freeHomEquiv_symm_app_ιFree]
       rfl

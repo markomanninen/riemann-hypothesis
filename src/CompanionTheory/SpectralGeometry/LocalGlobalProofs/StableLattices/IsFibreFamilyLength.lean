@@ -1,7 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ContinuousHermScal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ContinuousHermScal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -17,7 +22,7 @@ theorem sigR_sigR {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) (y : R ⊗[F] E) :
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => simp [sigR, OneHerm.sigma_sigma hσ]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem hR_self_fixed {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) {M : ℕ}
     {J : Matrix (Fin M) (Fin M) E} (hJ : IsHermND σ J) (x : Fin M → R ⊗[F] E) :
@@ -28,9 +33,11 @@ theorem hR_self_fixed {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) {M : ℕ}
     simp only [JR, Matrix.map_apply, inclR, sigR]
     simp [h]
   unfold hR hform
-  rw [map_sum, Finset.sum_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, map_mul, sigR_sigR R hσ, hJR]
   ring
@@ -96,8 +103,8 @@ theorem exists_bump [TopologicalSpace R] [LocallyCompactSpace R] [T2Space R]
 
 end GlobalTheory.CompanionTheory.SW.LenFib
 
-open GlobalTheory.CompanionTheory.SW.LenFib in
 
+open GlobalTheory.CompanionTheory.SW.LenFib in
 theorem GlobalTheory.CompanionTheory.SW.isFibreFamily_length : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (M : ℕ) (J : Matrix (Fin M) (Fin M) E), IsHermND σ J → ∀ (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] [MeasurableSpace R] [BorelSpace R], IsLocR R → ∀ (μ : Measure (Fin 1 → Fin M → R ⊗[F] E)) (ν : Measure R), μ.IsAddHaarMeasure → ν.IsAddHaarMeasure → ν {c | ¬ IsUnit c} = 0 → μ {X | ¬ IsUnit ((fun X : Fin 1 → Fin M → R ⊗[F] E => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.qR (R) σ J (X 0)) X)} = 0 → ∀ m, IsGramFib R σ J 1 μ (ν.map (hermScal R σ)) m → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsFibreFamily μ (fun X : Fin 1 → Fin M → R ⊗[F] E => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.qR (R) σ J (X 0)) id Set.univ ν {c | IsUnit c} (fun c => m (hermScal R σ c)) := by
   intro F E _ _ _ _ _ σ hσ M J hJ R _ _ _ _ _ hLoc μ ν _ _ _ hμ0 m hm
   obtain ⟨hTR, hLC, hSC, hT2, -, -, hOE, -⟩ := hLoc
@@ -108,7 +115,7 @@ theorem GlobalTheory.CompanionTheory.SW.isFibreFamily_length : ∀ (F E : Type) 
   haveI : BorelSpace (HermR R σ 1) := ⟨rfl⟩
   obtain ⟨hfib, hint, hcont⟩ := hm
   set q : (Fin 1 → Fin M → R ⊗[F] E) → R := fun X => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.qR R σ J (X 0) with hq
-  have hqc : Continuous q := continuous_qR R hσ J
+  have hqc : Continuous q := LenFib.continuous_qR R hσ J
   have hUo : IsOpen {c : R | IsUnit c} := by
     have h := hOE.isOpen_range
     have he : Set.range (Units.val : Rˣ → R) = {c : R | IsUnit c} := by
@@ -117,7 +124,7 @@ theorem GlobalTheory.CompanionTheory.SW.isFibreFamily_length : ∀ (F E : Type) 
     rwa [he] at h
   have hemb : MeasurableEmbedding (hermScal R σ) := (OneHerm.hermHomeo R hσ).measurableEmbedding
   have hsub : ∀ X, IsUnit (q X) → IsUnit (gramR R σ J X).det := fun X h =>
-    isUnit_det_gramR R hσ hJ h
+    LenFib.isUnit_det_gramR R hσ hJ h
   have hres : μ.restrict {X | IsUnit (gramR R σ J X).det} = μ := by
     refine Measure.restrict_eq_self_of_ae_mem ?_
     refine measure_mono_null ?_ hμ0
@@ -127,7 +134,7 @@ theorem GlobalTheory.CompanionTheory.SW.isFibreFamily_length : ∀ (F E : Type) 
     intro c
     refine measure_mono_null ?_ (hfib (hermScal R σ c))
     intro X hX hXm
-    exact hX (qR_of_gram R hσ hJ hXm.1)
+    exact hX (LenFib.qR_of_gram R hσ hJ hXm.1)
   refine ⟨?_, ?_, ?_⟩
   · intro c
     refine measure_mono_null ?_ (hae c)
@@ -141,7 +148,7 @@ theorem GlobalTheory.CompanionTheory.SW.isFibreFamily_length : ∀ (F E : Type) 
     have key : ∀ c₀, IsUnit c₀ → Integrable φ (m (hermScal R σ c₀)) ∧
         ContinuousWithinAt (fun c => ∫ v, φ v ∂(m (hermScal R σ c))) {c | IsUnit c} c₀ := by
       intro c₀ hc₀
-      obtain ⟨χ, hχc, hχs, hχ1⟩ := exists_bump R hUo hc₀
+      obtain ⟨χ, hχc, hχs, hχ1⟩ := LenFib.exists_bump R hUo hc₀
       have hφ'c : Continuous fun X => φ X * χ (q X) := hφc.mul (hχc.comp hqc)
       have hφ's : HasCompactSupport fun X => φ X * χ (q X) := HasCompactSupport.mul_right hφs
       have hφ't : tsupport (fun X => φ X * χ (q X)) ⊆ {X | IsUnit (gramR R σ J X).det} := by
@@ -155,7 +162,7 @@ theorem GlobalTheory.CompanionTheory.SW.isFibreFamily_length : ∀ (F E : Type) 
         rw [hX, hc, mul_one]
       have hmaps : Set.MapsTo (hermScal R σ) {c : R | IsUnit c}
           {S : HermR R σ 1 | IsUnit (S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E)).det} :=
-        fun c hc => isUnit_det_hermScal R σ hc
+        fun c hc => LenFib.isUnit_det_hermScal R σ hc
       have hC' : ContinuousOn (fun c => ∫ v, φ v * χ (q v) ∂(m (hermScal R σ c))) {c | IsUnit c} :=
         hC.comp (OneHerm.continuous_hermScal R σ).continuousOn hmaps
       refine ⟨(hI _ (hmaps hc₀)).congr (heq c₀ hχ1.self_of_nhds), ?_⟩

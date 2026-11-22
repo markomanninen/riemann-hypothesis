@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelTestFunctionFiniteSumEquivariant
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProjProjOfGood
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelTestFunctionFiniteSumEquivariant
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProjProjOfGood
+
+@[expose] public section
 
 open Matrix Complex NumberField GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.Dict
 open scoped ComplexConjugate Real Classical
@@ -41,7 +45,7 @@ theorem tens_smul_le (h : ∀ b ∈ 𝔟, ∀ y ∈ tens Λ₁ N, (b : E) • y 
 omit [IsCMField E] in
 theorem smul_tens_left {b : E} (h : ∀ v ∈ Λ₁, b • v ∈ Λ₂) (hy : y ∈ tens Λ₁ N) :
     b • y ∈ tens Λ₂ N := by
-  refine tens_le (H := (tens Λ₂ N).comap (DistribMulAction.toAddMonoidHom _ b))
+  refine tens_le (H := (tens Λ₂ N).comap (DistribSMul.toAddMonoidHom _ b))
     (fun v hv u hu => ?_) hy
   change b • vecMulVec v u ∈ tens Λ₂ N
   rw [← smul_vecMulVec]
@@ -64,8 +68,8 @@ omit [IsCMField E] in
 theorem int_smul_tens (a : 𝓞 E) (hy : y ∈ tens Λ N) : (a : E) • y ∈ tens Λ N :=
   smul_tens_left (fun _ hv => Λ.smul_mem a hv) hy
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem glue {s : 𝓞 E} (hs : IsCoprime (Ideal.span {s}) 𝔪) (h1 : (s : E) • y ∈ tens Λ N)
     (h2 : ∀ m ∈ 𝔪, (m : E) • (m : E) • y ∈ tens Λ N) : y ∈ tens Λ N := by
   obtain ⟨a, m, hm, e⟩ := Lev.cop_iff.1 hs
@@ -259,8 +263,8 @@ variable (hM : (M : 𝓞 E) ∈ D.𝔪) (h𝔪 : D.𝔪 = 𝔐 * 𝔍) (hc : IsC
   (hm : Moves (lowD r n (cc (α : E) / (α : E))) Λ Λ'')
   (h1 : (𝔍 * conjI 𝔍) • Λ'' ≤ Λ') (h2 : (𝔍 * conjI 𝔍) • Λ' ≤ Λ'') (hL : L ∈ D.lats)
 
-include hM h𝔪 h0 hα h𝔞 hΛ hΛ' hΛ'' hm h1 hL in
 
+include hM h𝔪 h0 hα h𝔞 hΛ hΛ' hΛ'' hm h1 hL in
 theorem moved_mem (hy : y ∈ tens Λ ((Ideal.span {2} * conjI D.𝔪) • L))
     (hk : ∀ k : Fin n, r ≤ (k : ℕ) → Cong X D.𝔪 (y k) 0) :
     lowD r n (cc (α : E) / (α : E)) * y ∈ tens Λ' ((Ideal.span {2} * conjI D.𝔪) • L) ∧
@@ -288,8 +292,8 @@ theorem moved_mem (hy : y ∈ tens Λ ((Ideal.span {2} * conjI D.𝔪) • L))
   · obtain ⟨s, hs, h⟩ := low k hk'
     exact cong_zero.2 ⟨s, (h𝔪 ▸ hs).of_mul_right_left, h⟩
 
-include hM h𝔪 hc h0 hα h𝔞 hΛ hΛ' hΛ'' hm h2 hL in
 
+include hM h𝔪 hc h0 hα h𝔞 hΛ hΛ' hΛ'' hm h2 hL in
 theorem mem_moved (hy : y ∈ tens Λ' ((Ideal.span {2} * conjI D.𝔪) • L))
     (hu : ∀ k : Fin n, (k : ℕ) < r → Cong X D.𝔪 (y k) 0)
     (hk : ∀ k : Fin n, r ≤ (k : ℕ) → Cong X 𝔐 (y k) 0) : y ∈ tens Λ'' (D.sh L) := by
@@ -305,7 +309,7 @@ theorem mem_moved (hy : y ∈ tens Λ' ((Ideal.span {2} * conjI D.𝔪) • L))
       exact Ideal.isCoprime_iff_exists.2 ⟨_, 𝔞.mul_mem_left x ha, m, hm, e⟩
     obtain ⟨x, m, hm, e⟩ := Lev.cop_iff.1 h3
     exact Lev.cop_iff.2 ⟨Lev.bar x, Lev.bar m, Lev.mem_conjI.1 hm, by
-      rw [← map_mul, ← map_add, e, map_one]⟩
+      rw [← map_mul, ← map_add (f := _), e, map_one]⟩
   obtain ⟨s, hs, h⟩ := loc_tens (y := lowD r n ((α : E) / cc (α : E)) * y) (𝔟 := D.𝔪) hΛ hM
     (near_of_mem hL) fun k => by
       rw [lowD_row]
@@ -333,8 +337,8 @@ theorem mem_moved (hy : y ∈ tens Λ' ((Ideal.span {2} * conjI D.𝔪) • L))
     exact smul_tens hΛ' (hJ hm') (tens_mono _
       (Submodule.smul_mono_left (Ideal.mul_le_right.trans (conjI_mono hJ))) hy)
 
-include hM h𝔪 h0 hα h𝔞 hΛ hΛ' hΛ'' hm h1 in
 
+include hM h𝔪 h0 hα h𝔞 hΛ hΛ' hΛ'' hm h1 in
 theorem exists_low (hy : y ∈ tens Λ'' (D.sh L)) :
     ∃ δ ∈ tens Λ'' ((Ideal.span {2} * conjI D.𝔪 * D.𝔪) • L), y - δ ∈ tens Λ' (D.sh L) := by
   have hJ : D.𝔪 ≤ 𝔍 := h𝔪 ▸ Ideal.mul_le_right
@@ -376,7 +380,7 @@ variable {D : SW.Level X} {𝔐 : Ideal (𝓞 E)} {hn : r ≤ n} {y y' : Matrix 
 
 theorem datF_eq {κ : D.J} (h1 : D.Red (fun i => y (Fin.castLE hn i)) κ)
     (h2 : ∀ k : Fin n, r ≤ (k : ℕ) → Cong X 𝔐 (y k) 0) : datF D 𝔐 hn y = (D.lam κ : ℂˣ) := by
-  rw [datF, dif_pos ⟨⟨κ, h1⟩, h2⟩]
+  rw [datF, dite_eq_left ⟨⟨κ, h1⟩, h2⟩]
   congr 2
   exact Subtype.ext (Lev.red_unique (Exists.choose_spec (⟨κ, h1⟩ :
     ∃ k : D.J, D.Red (fun i => y (Fin.castLE hn i)) k)) h1)

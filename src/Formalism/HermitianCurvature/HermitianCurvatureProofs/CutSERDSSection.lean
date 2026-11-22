@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDResRad
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecFinal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDResRad
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecFinal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ContDiff
@@ -24,7 +28,7 @@ theorem secGauge_smooth : ContDiffOn ℝ ∞ (secGauge k r) (OmX r) := by
   intro a _ x hx
   apply ContDiffAt.contDiffWithinAt
   have h1 : ContDiffAt ℝ ∞ (fun c : Fin r → ℂ => ‖c a‖) x :=
-    (contDiffAt_norm ℝ (hx a)).comp x (contDiff_apply ℝ ℂ a).contDiffAt
+    (contDiffAt_norm ℝ (hx a)).comp x (contDiff_apply ℝ (fun _ => ℂ) a).contDiffAt
   exact (Complex.ofRealCLM.contDiff.contDiffAt).comp x (h1.pow _)
 
 theorem secGauge_ne {c : Fin r → ℂ} (hc : c ∈ OmX r) : secGauge k r c ≠ 0 := by

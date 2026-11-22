@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualOfCovolumeOne
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualOfCovolumeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ namespace PositivityTheory.AdelicQuotientData
 
 namespace PoissonCutoffAlgebra
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
 theorem exists_pl : Nonempty (Pl E) := by
   obtain ⟨M, hM⟩ := Ideal.exists_maximal (𝓞 E)
@@ -41,7 +45,7 @@ theorem eL_val (hi : Function.Injective (algebraMap E (Ad E))) (ξ : Fin k → E
 def B (ψ : AddChar (Ad E) ℂ) (x y : Fin k → Ad E) : ℂ := ψ (∑ i, x i * y i)
 
 theorem B_cont {ψ : AddChar (Ad E) ℂ} (hψ : StdPsi ψ) (y : Fin k → Ad E) : Continuous fun x => B ψ x y :=
-  hψ.cont.comp (continuous_finset_sum _ fun i _ => (continuous_apply i).mul continuous_const)
+  hψ.cont.comp (continuous_finsetSum _ fun i _ => (continuous_apply i).mul continuous_const)
 
 theorem B_symm (ψ : AddChar (Ad E) ℂ) (x y : Fin k → Ad E) : B ψ x y = B ψ y x := by
   simp only [B, mul_comm]

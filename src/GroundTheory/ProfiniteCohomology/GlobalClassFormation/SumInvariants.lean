@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupDecompositionGlobal
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.Splitting
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.UnitsLevels
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegrees
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupDecompositionGlobal
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.Splitting
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.UnitsLevels
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegrees
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -11,8 +16,6 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory NumberField IntermediateField GroundTheory.Global FiniteSubfield IsDedekindDomain
 
 open scoped DirectSum GroundTheory.Global.SemiLocal
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -52,7 +55,7 @@ theorem brauerSumInv_eq_zero (x : cohomology (unitsLimitRep K) 2) : brauerSumInv
     exact finsum_char_localSymbolAt_eq_zero E ι (hEle.trans (sup_le_sup_left Cyclotomic.zhatField_le_maxCyclotomic _))
       χ hχ b
   have hx : x = x' + globalCupClass (iChar K) a₀ := by rw [hx', sub_add_cancel]
-  rw [hx, map_add, h', brauerSumInv_globalCupClass_iChar, add_zero]
+  rw [hx, map_add (f := _), h', brauerSumInv_globalCupClass_iChar, add_zero]
 
 end
 

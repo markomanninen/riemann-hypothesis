@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.Mollifiers.MollEnormSqLe
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Mollifiers.MollEnormSqLe
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.B
 
@@ -45,8 +49,17 @@ theorem moll_tendsto_of_continuous (E : Type*) [NormedAddCommGroup E] [NormedSpa
           (fun y hy => by rw [hx0 y hy, dist_self])
       rw [Pi.sub_apply, hgx, sub_zero]
       exact dist_le_zero.1 h0
-    rw [← eLpNorm_restrict_eq_of_support_subset hsupp]
-    refine (eLpNorm_le_of_ae_bound (Filter.Eventually.of_forall hbound)).trans ?_
+    have hKcs : HasCompactSupport (K i).toFun :=
+      HasCompactSupport.intro (isCompact_closedBall (0 : E) (K i).r) (fun x hx => by
+        by_contra h
+        exact hx (ball_subset_closedBall ((K i).support_subset h)))
+    have hKc : Continuous (K i).toFun := (K i).smooth.continuous
+    have hgL : LocallyIntegrable g μ := hgc.locallyIntegrable
+    have hc : Continuous (moll (K i) g - g) :=
+      (hKcs.continuous_convolution_left _ hKc hgL).sub hgc
+    rw [← eLpNorm_restrict_eq_of_support_subset hc.aestronglyMeasurable hsupp]
+    refine (eLpNorm_le_of_ae_bound (μ := μ.restrict S) hc.aestronglyMeasurable
+      (Filter.Eventually.of_forall hbound)).trans ?_
     rw [Measure.restrict_apply_univ]
   rw [ENNReal.tendsto_nhds_zero]
   intro ε hε
@@ -91,12 +104,10 @@ theorem moll_l2Tendsto (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] [F
   rw [hdec]
   calc eLpNorm (moll (K i) (u - g) + (moll (K i) g - g) + (g - u)) 2 μ
       ≤ eLpNorm (moll (K i) (u - g) + (moll (K i) g - g)) 2 μ + eLpNorm (g - u) 2 μ :=
-        eLpNorm_add_le (hc1.aestronglyMeasurable.add (hc2.aestronglyMeasurable.sub hgc.aestronglyMeasurable))
-          (hgc.aestronglyMeasurable.sub hu.aestronglyMeasurable) (by norm_num)
+        eLpNorm_add_le (by norm_num : 1 ≤ (2 : ℝ≥0∞))
     _ ≤ eLpNorm (moll (K i) (u - g)) 2 μ + eLpNorm (moll (K i) g - g) 2 μ + eLpNorm (g - u) 2 μ := by
         gcongr
-        exact eLpNorm_add_le hc1.aestronglyMeasurable
-          (hc2.aestronglyMeasurable.sub hgc.aestronglyMeasurable) (by norm_num)
+        exact eLpNorm_add_le (by norm_num : 1 ≤ (2 : ℝ≥0∞))
     _ ≤ ε / 3 + ε / 3 + ε / 3 := by
         gcongr
         · exact hY.trans hug

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValLast
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ApplyAddInfRat
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsBiSmooth
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ApplyAddInfRat
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw
 open scoped TensorProduct
@@ -26,11 +31,13 @@ theorem mulVec_eq_smul (σ : R →+* R) (J : Matrix (Fin n) (Fin n) R) (hJ : ∀
     ∃ c : R, b *ᵥ v = c • v := by
   obtain ⟨u, hu⟩ := hq.exists_left_inv
   have hw : ∀ i, σ ((v ᵥ* J) i) = (J *ᵥ v) i := fun i => by
-    simp only [vecMul, mulVec, dotProduct, map_sum, map_mul, hv, hJ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [vecMul, mulVec, dotProduct, map_sum, map_mul, hv, hJ]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
   have hσq : σ ((v ᵥ* J) ⬝ᵥ v) = (v ᵥ* J) ⬝ᵥ v := by
     conv_rhs => rw [← dotProduct_mulVec, dotProduct_comm]
-    simp only [dotProduct, map_sum, map_mul, hv, hw]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum, map_mul, hv, hw]
   have hσu : σ u = u := by
     have h := congrArg σ hu
     rw [map_mul, hσq, map_one] at h
@@ -119,8 +126,8 @@ end Alg
 
 variable {D : D7}
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem norm_ne_zero {V : HSp D} {x : DefSp V} (hx : x.Is) (v : Fin V.rank → ℚ) (hv : v ≠ 0) :
     ((fun i => (v i : D.host.E)) ᵥ* V.gram) ⬝ᵥ (fun i => (v i : D.host.E)) ≠ 0 := by
   obtain ⟨τ⟩ : Nonempty D.what₂.Tau := ⟨D.eTau.symm (Classical.arbitrary _)⟩
@@ -141,7 +148,8 @@ theorem norm_unit {V : HSp D} {x : DefSp V} (hx : x.Is) (v : Fin V.rank → ℚ)
     IsUnit (((fun i => incA D (v i)) ᵥ* JR (AF D.host.F) V.gram) ⬝ᵥ fun i => incA D (v i)) := by
   have := (norm_ne_zero hx v hv).isUnit.map (incA D)
   convert this using 1
-  simp only [dotProduct, vecMul, map_sum, map_mul, JR, map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, vecMul, map_sum, map_mul, JR, map_apply]
 
 theorem sigR_inclR {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E)
     (e : E) : sigR R σ (inclR R e) = inclR R (σ e) := by
@@ -173,7 +181,7 @@ theorem mt_central {V : HSp D} {x : DefSp V} (hx : x.Is) {b : GA D V} (hb : b �
     have e : (fun k => incA D ((Pi.single i 1 + Pi.single j 1 : Fin V.rank → ℚ) k : ℚ)) =
         Pi.single i 1 + Pi.single j 1 := by
       funext k
-      simp only [Pi.add_apply, Rat.cast_add, map_add, Pi.single_apply, apply_ite (Rat.cast : ℚ → D.host.E), Rat.cast_one,
+      simp only [Pi.add_apply, Rat.cast_add, map_add (f := _), Pi.single_apply, apply_ite (Rat.cast : ℚ → D.host.E), Rat.cast_one,
         Rat.cast_zero, apply_ite (incA D), map_one, map_zero]
     rwa [e] at this
 

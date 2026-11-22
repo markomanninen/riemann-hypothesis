@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdEApply
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdEApply
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma GlobalTheory.StableLatCount Polynomial
 
 namespace GlobalTheory.StableGraph
@@ -54,7 +59,7 @@ def graph (φ : M₂ →ₗ[O] A₁ ⧸ M₁) : Submodule O (A₁ × A₂) where
     refine ⟨M₂.add_mem hx hy, ?_⟩
     have e : (⟨x + y, M₂.add_mem hx hy⟩ : M₂) = ⟨x, hx⟩ + ⟨y, hy⟩ := rfl
     simp only [Prod.fst_add, Prod.snd_add] at *
-    rw [e, map_add, Submodule.Quotient.mk_add, ha, hb]
+    rw [e, map_add (f := _), Submodule.Quotient.mk_add, ha, hb]
   zero_mem' := ⟨M₂.zero_mem, by
     have e : (⟨0, M₂.zero_mem⟩ : M₂) = 0 := rfl
     simp only [Prod.fst_zero, Prod.snd_zero]
@@ -145,8 +150,8 @@ noncomputable def stableEquiv (g₁ : A₁) (g₂ : A₂) (hM₂ : ∀ y ∈ M�
 
 end GlobalTheory.StableGraph
 
-open GlobalTheory.StableGraph in
 
+open GlobalTheory.StableGraph in
 theorem GlobalTheory.StableGraph.card_stable_eq_card_hom : ∀ (O : Type) [CommRing O] (A₁ A₂ : Type) [CommRing A₁] [CommRing A₂] [Algebra O A₁] [Algebra O A₂] (g₁ : A₁) (g₂ : A₂) (M₁ : Submodule O A₁) (M₂ : Submodule O A₂), (∀ y ∈ M₂, g₂ * y ∈ M₂) → Nat.card {M : Submodule O (A₁ × A₂) // (∀ y ∈ M, (g₁, g₂) * y ∈ M) ∧ M.comap (LinearMap.inl O A₁ A₂) = M₁ ∧ M.map (LinearMap.snd O A₁ A₂) = M₂} = Nat.card {φ : M₂ →ₗ[O] A₁ ⧸ M₁ // ∀ x y : M₂, (y : A₂) = g₂ * x → ∀ a : A₁, φ x = Submodule.Quotient.mk a → φ y = Submodule.Quotient.mk (g₁ * a)} := by
   intro O _ A₁ A₂ _ _ _ _ g₁ g₂ M₁ M₂ hM₂
   exact Nat.card_congr (stableEquiv g₁ g₂ hM₂)

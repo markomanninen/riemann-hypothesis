@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.FormMonomialUnitVector
-import ReciprocityTheory.DualLattices.FrobEqOfLe
+module
+
+public import ReciprocityTheory.DualLattices.FormMonomialUnitVector
+public import ReciprocityTheory.DualLattices.FrobEqOfLe
+
+@[expose] public section
 
 noncomputable section
 

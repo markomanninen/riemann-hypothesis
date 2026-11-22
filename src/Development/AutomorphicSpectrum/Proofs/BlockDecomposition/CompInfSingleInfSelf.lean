@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFieldIdemOne
-import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.EqOrConjOfPlaceOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFieldIdemOne
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.EqOrConjOfPlaceOf
+
+@[expose] public section
+
 open MeasureTheory Topology Filter GlobalTheory.CompanionTheory.NullFr
 open scoped NNReal ENNReal Matrix
 open PositivityTheory.Rg.Rsw PositivityTheory.Rg.Rsw.L
@@ -52,8 +57,9 @@ theorem exists_isFieldDec_one (R : Type) [CommRing R] [IsArtinianRing R] [IsRedu
       rw [hsing, ← map_mul, ← Pi.single_mul, hb]
   · intro m n hmn
     rw [hsing, AlgEquiv.apply_symm_apply, Pi.single_eq_of_ne hmn, Pi.single_zero, map_zero]
-  · rw [← map_sum, Finset.univ_sum_single]
-    exact map_one φ.symm
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← map_sum, Finset.univ_sum_single]
+      exact map_one φ.symm
 
 theorem isFieldDec_sigma {A : Type} [CommRing A] {P : Type} [Fintype P] {u : P → A}
     (horth : ∀ p q, p ≠ q → u p * u q = 0) {ι : P → Type} [∀ p, Fintype (ι p)] {f : ∀ p, ι p → A}
@@ -97,7 +103,8 @@ theorem isFieldDec_section (hcs : ∀ y, c (s y) = y) (hmul : ∀ y z, s y * z =
     rw [hmul, hss, hy]
   · intro i j hij
     rw [hss, hg.orth i j hij, map_zero]
-  · rw [← map_sum, hg.sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← map_sum, hg.sum]
 
 theorem nonDiscreteAt_section [TopologicalSpace A] [Field k] [TopologicalSpace k] [(𝓝[≠] (0 : k)).NeBot] [Algebra k R]
     [TopologicalSpace R] [ContinuousSMul k R] (hs : Continuous s) (hcs : ∀ y, c (s y) = y)
@@ -127,8 +134,8 @@ section Places
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E]
 
-open Classical in
 
+open Classical in
 def infJ (w : InfinitePlace F) : w.Completion →ₗ[F] AF F :=
   (LinearMap.inl F (Ainf F) (Af F)).comp (LinearMap.single F (fun u : InfinitePlace F => u.Completion) w)
 
@@ -152,8 +159,8 @@ theorem continuous_infJ (w : InfinitePlace F) : Continuous (infJ w) := by
   classical
   exact (continuous_single (A := fun u : InfinitePlace F => u.Completion) w).prodMk continuous_const
 
-variable (E) in
 
+variable (E) in
 def singleInf (w : InfinitePlace F) : w.Completion ⊗[F] E →ₙ+* AF F ⊗[F] E :=
   GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.tensNU (infJ w) (infJ_mul w)
 
@@ -241,7 +248,7 @@ theorem exists_dec_adeles (S : Finset (HeightOneSpectrum (𝓞 F))) {e : AF F �
   have hsum : ∑ p, u p = e := by
     refine GlobalTheory.AdelicU.Supp.adTens_ext (fun w => ?_) fun v => ?_
     · rw [h1, map_sum, Fintype.sum_sum_type, Finset.sum_eq_single w]
-      · simp [u, compInf_singleInf_self]
+      · simp [u, compInf_singleInf_self, GlobalTheory.AdelicU.Supp.compInf_singleTens]
       · intro b _ hb
         simp [u, compInf_singleInf_ne hb.symm]
       · exact fun h => absurd (Finset.mem_univ w) h

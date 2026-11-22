@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.HeckeInertComm
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.HeckeInertComm
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Formalism.L2
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
 
-open Classical in
 
+open Classical in
 def patchAt (P : HeightOneSpectrum (𝓞 E)) (A B : Submodule (𝓞 E) (Sp E n)) : Submodule (𝓞 E) (Sp E n) :=
   ⨅ Q : HeightOneSpectrum (𝓞 E), localization₂ Q.asIdeal (if Q = P then A else B)
 

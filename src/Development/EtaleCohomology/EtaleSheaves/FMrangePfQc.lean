@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.FMrangePf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.FMrangePf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.BuildCut LateralTheory.E.SysFMPf LateralTheory.E.FMrangePf

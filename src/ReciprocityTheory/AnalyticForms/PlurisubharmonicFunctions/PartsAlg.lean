@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsSt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.MaDensCompEqZeroOfRankLt
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsSt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.MaDensCompEqZeroOfRankLt
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A
 
@@ -58,7 +62,7 @@ variable {e : ℕ}
 
 theorem leviC_add_snd (H : (Fin e → ℂ) →L[ℝ] (Fin e → ℂ) →L[ℝ] ℝ) (a b b' : Fin e → ℂ) :
     leviC H a (b + b') = leviC H a b + leviC H a b' := by
-  simp only [leviC, smul_add, map_add]
+  simp only [leviC, smul_add, map_add (f := _)]
   push_cast
   ring
 
@@ -76,7 +80,7 @@ theorem leviC_smul_snd (H : (Fin e → ℂ) →L[ℝ] (Fin e → ℂ) →L[ℝ] 
     linear_combination ((c.im : ℂ) * b k) * Complex.I_sq
   unfold leviC
   rw [h2, h1]
-  simp only [map_add, map_sub, map_smul, smul_eq_mul]
+  simp only [map_add (f := _), map_sub, map_smul, smul_eq_mul]
   apply Complex.ext <;> simp <;> ring
 
 theorem sum_leviC_mul (H : (Fin e → ℂ) →L[ℝ] (Fin e → ℂ) →L[ℝ] ℝ) (a x : Fin e → ℂ) :
@@ -91,7 +95,8 @@ theorem sum_leviC_mul (H : (Fin e → ℂ) →L[ℝ] (Fin e → ℂ) →L[ℝ] �
   let ℓ : (Fin e → ℂ) →+ ℂ := AddMonoidHom.mk' (fun b => leviC H a b) (leviC_add_snd H a)
   rw [hx]
   show _ = ℓ _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   simp only [ℓ, AddMonoidHom.mk'_apply, leviC_smul_snd, star_star]
   ring

@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResATranslate
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResATranslate
+
+@[expose] public section
 
 noncomputable section
 

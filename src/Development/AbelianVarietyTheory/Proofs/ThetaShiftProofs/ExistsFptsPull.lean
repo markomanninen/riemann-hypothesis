@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermEqZeroOfThickenings
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LinearIndependentOfIsExtension
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermEqZeroOfThickenings
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LinearIndependentOfIsExtension
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
+
+@[expose] public section
 
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -32,7 +36,12 @@ theorem exists_chart_pt (hL : L.IsLB) (x : Sp A ⟶ X) : ∃ j, ⊤ ≤ x ⁻¹�
 omit [IsLocalRing A] in
 theorem toStkA_wv (w : LB.Iso L' (L.pull F)) (x : Sp A ⟶ X') {j : L.ι} {k : L'.ι} (hj : ⊤ ≤ (x ≫ F) ⁻¹ᵁ L.U j)
     (hk : ⊤ ≤ x ⁻¹ᵁ L'.U k) (z : Sp A) : toStkA z (wv w x j k) = (gw w x z j k).val :=
-  toStkA_valR x _ z ((le_div_iff x j k).2 ⟨hj, hk⟩) _
+  by
+    have toStkA_valR {B : Type} [CommRing B] {Z : Scheme.{0}} (f : Sp B ⟶ Z) (U : Z.Opens)
+        (z : Sp B) (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
+        toStkA z (valR f U a.val) = (gm f z U a).val := by
+      rw [FormalValue.toStkA_valR_eq_gs f U z ht, gm_val f z U (ht trivial), gs_eq f z U (ht trivial)]
+    exact toStkA_valR x _ z ((le_div_iff x j k).2 ⟨hj, hk⟩) _
 
 omit [IsLocalRing A] in
 theorem isUnit_wv (w : LB.Iso L' (L.pull F)) (x : Sp A ⟶ X') {j : L.ι} {k : L'.ι} (hj : ⊤ ≤ (x ≫ F) ⁻¹ᵁ L.U j)
@@ -43,17 +52,25 @@ theorem wv_trans {w : LB.Iso L' (L.pull F)} (hw : w.IsGen) (x : Sp A ⟶ X') {j 
     (hj : ⊤ ≤ (x ≫ F) ⁻¹ᵁ L.U j) (hj' : ⊤ ≤ (x ≫ F) ⁻¹ᵁ L.U j') (hk : ⊤ ≤ x ⁻¹ᵁ L'.U k) (hk' : ⊤ ≤ x ⁻¹ᵁ L'.U k') :
     wv w x j k * valR x (L'.U k ⊓ L'.U k') (L'.g k k').val =
       valR (x ≫ F) (L.U j ⊓ L.U j') (L.g j j').val * wv w x j' k' := by
+  have toStkA_valR {B : Type} [CommRing B] {Z : Scheme.{0}} (f : Sp B ⟶ Z) (U : Z.Opens)
+      (z : Sp B) (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
+      toStkA z (valR f U a.val) = (gm f z U a).val := by
+    rw [FormalValue.toStkA_valR_eq_gs f U z ht, gm_val f z U (ht trivial), gs_eq f z U (ht trivial)]
   apply toStkA_injective
   rw [map_mul, map_mul, toStkA_wv w x hj hk, toStkA_wv w x hj' hk',
-    toStkA_valR x (L'.U k ⊓ L'.U k') _ (fun _ hz => ⟨hk hz, hk' hz⟩),
-    toStkA_valR (x ≫ F) (L.U j ⊓ L.U j') _ (fun _ hz => ⟨hj hz, hj' hz⟩),
+    toStkA_valR x (L'.U k ⊓ L'.U k') _ (fun _ hz => ⟨hk hz, hk' hz⟩) (L'.g k k'),
+    toStkA_valR (x ≫ F) (L.U j ⊓ L.U j') _ (fun _ hz => ⟨hj hz, hj' hz⟩) (L.g j j'),
     (isGen_iff w).1 hw _ x (cpt A) j j' k k' (hj trivial) (hj' trivial) (hk trivial) (hk' trivial),
     ← Units.val_mul, ← Units.val_mul, mul_right_comm, inv_mul_cancel_right]
 
 theorem valR_g_self (hL : L.IsLB) (x : Sp A ⟶ X) {j : L.ι} (hj : ⊤ ≤ x ⁻¹ᵁ L.U j) :
     valR x (L.U j ⊓ L.U j) (L.g j j).val = 1 := by
+  have toStkA_valR {B : Type} [CommRing B] {Z : Scheme.{0}} (f : Sp B ⟶ Z) (U : Z.Opens)
+      (z : Sp B) (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
+      toStkA z (valR f U a.val) = (gm f z U a).val := by
+    rw [FormalValue.toStkA_valR_eq_gs f U z ht, gm_val f z U (ht trivial), gs_eq f z U (ht trivial)]
   apply toStkA_injective
-  rw [toStkA_valR x (L.U j ⊓ L.U j) _ (fun _ hz => ⟨hj hz, hj hz⟩), gm_self hL x _ (hj trivial), map_one, Units.val_one]
+  rw [toStkA_valR x (L.U j ⊓ L.U j) _ (fun _ hz => ⟨hj hz, hj hz⟩) (L.g j j), gm_self hL x _ (hj trivial), map_one, Units.val_one]
 
 theorem exists_frm {w : LB.Iso L' (L.pull F)} (hw : w.IsGen) (hL : L.IsLB) (hL' : L'.IsLB) (x : Sp A ⟶ X')
     (τ : L.ι → A) (hτ : IsFrm L (x ≫ F) τ) : ∃ τ' : L'.ι → A, IsFrm L' x τ' ∧
@@ -140,8 +157,8 @@ end Val
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} [StarRing (𝓞 E)]
 
-omit [StarRing (𝓞 E)] in
 
+omit [StarRing (𝓞 E)] in
 theorem exists_fpts {S S' : Scheme.{0}} {t : SAB H S} {t' : SAB H S'} {f : S' ⟶ S} (m : SABMap t' t f)
     (w : LB.Iso t'.PP.L (t.PP.L.pull m.φ)) (hw : IsRigIso m.cm t'.PP t.PP w) {F : Type} [Field F] {V : Type}
     [AddCommGroup V] {act : 𝓞 E → V → V} {I : ℕ → Type} {φ : ∀ j, I j → V → F} (y' : Sp F ⟶ S') (y : Sp F ⟶ S)
@@ -203,6 +220,10 @@ theorem exists_fpts {S S' : Scheme.{0}} {t : SAB H S} {t' : SAB H S'} {f : S' �
       have := m.cm.e_comm
       rw [m.base] at this
       rw [Category.assoc, ← this, ← Category.assoc]; exact hj
+    have toStkA_valR {B : Type} [CommRing B] {Z : Scheme.{0}} (f : Sp B ⟶ Z) (U : Z.Opens)
+        (z : Sp B) (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
+        toStkA z (valR f U a.val) = (gm f z U a).val := by
+      rw [FormalValue.toStkA_valR_eq_gs f U z ht, gm_val f z U (ht trivial), gs_eq f z U (ht trivial)]
     apply toStkA_injective
     rw [map_mul, toStkA_wv w _ hj hk]
     refine (toStkA_valR (y' ≫ f) _ _ (fun _ hz => mem_pull.2 (hj' hz)) _).trans ((congrArg Units.val e).trans ?_)

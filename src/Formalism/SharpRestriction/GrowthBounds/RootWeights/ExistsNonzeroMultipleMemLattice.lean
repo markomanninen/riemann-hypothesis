@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorFixedMem
-import Lemmata.GeneralBFactLeftVersion.Imports
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorFixedMem
+public import Lemmata.GeneralBFactLeftVersion.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ open Formalism.MainNotions.G Formalism.MainNotions.CovariantDegrees
 theorem finite_full_submodule_isLattice {O : Type} [CommRing O] [IsDomain O]
     {V : Type} [AddCommGroup V] [Module (KK O) V] [Module O V] [IsScalarTower O (KK O) V]
     (M : Submodule O V) (hfg : M.FG) (hM : MQ (K := KK O) M = ⊤) : Submodule.IsLattice (KK O) M :=
-  ⟨hfg, hM⟩
+  Submodule.IsLattice.of_fg (KK O) hfg
 
 theorem exists_nonzero_multiple_mem_lattice {O : Type} [CommRing O] [IsDomain O]
     {V : Type} [AddCommGroup V] [Module (KK O) V] [Module O V] [IsScalarTower O (KK O) V]
@@ -21,10 +25,15 @@ theorem exists_nonzero_multiple_mem_lattice {O : Type} [CommRing O] [IsDomain O]
 
 theorem dual_lattice_values_mem_scaled : DualLatticeDivisibility := by
   intro O _ _ _ V _ _ _ _ _ M hfg hM t z hz
-  have : Submodule.IsLattice (KK O) M := finite_full_submodule_isLattice M hfg hM
+  have : Submodule.IsFullLattice (KK O) M :=
+    { toIsLattice := finite_full_submodule_isLattice M hfg hM
+      span_eq_top := hM }
+  have : Module.Free O M := Submodule.IsLattice.free (KK O) M
+  have : Module.Finite O M := Submodule.IsLattice.finite (KK O) M
   let b := Module.finBasis O M
-  let B := b.extendOfIsLattice (KK O)
-  have hB : ∀ i, B i = ((b i : M) : V) := fun i => Module.Basis.extendOfIsLattice_apply (KK O) b i
+  let B := b.extendOfIsFullLattice (KK O)
+  have hB : ∀ i, B i = ((b i : M) : V) := fun i =>
+    Module.Basis.extendOfIsFullLattice_apply (KK O) b i
   have hcoord : ∀ i, ∀ x ∈ M, ∃ o : O, B.coord i x = algebraMap O (KK O) o := by
     intro i x hx
     refine ⟨b.repr ⟨x, hx⟩ i, ?_⟩
@@ -70,10 +79,14 @@ theorem lattice_inter_subspace_basis : LatticeSubspaceBasis := by
       rw [← algebraMap_smul (KK O) a x, smul_smul, inv_mul_cancel₀ ha1, one_smul]
     rw [hx]
     exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
-  have : Submodule.IsLattice (KK O) N := ⟨hNfg, hNspan⟩
+  have : Submodule.IsFullLattice (KK O) N :=
+    { toIsLattice := Submodule.IsLattice.of_fg (KK O) hNfg
+      span_eq_top := hNspan }
+  have : Module.Free O N := Submodule.IsLattice.free (KK O) N
   let b := Module.finBasis O N
-  let B := b.extendOfIsLattice (KK O)
-  have hB : ∀ i, B i = ((b i : N) : H) := fun i => Module.Basis.extendOfIsLattice_apply (KK O) b i
+  let B := b.extendOfIsFullLattice (KK O)
+  have hB : ∀ i, B i = ((b i : N) : H) := fun i =>
+    Module.Basis.extendOfIsFullLattice_apply (KK O) b i
   refine ⟨Module.finrank O N, fun j => (((b j : N) : H) : V), fun j => ⟨(hmemN _).1 (b j).2, (b j : H).2⟩, ?_, ?_, ?_⟩
   · have h1 := B.linearIndependent.map' H.subtype (Submodule.ker_subtype H)
     have h2 : (fun j => (((b j : N) : H) : V)) = (H.subtype ∘ B) := by

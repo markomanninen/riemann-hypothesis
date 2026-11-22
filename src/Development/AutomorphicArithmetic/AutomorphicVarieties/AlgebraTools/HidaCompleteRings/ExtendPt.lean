@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExtendPt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExtendPt
+
+@[expose] public section
+
 open IsLocalRing
 
 theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.extendPt :

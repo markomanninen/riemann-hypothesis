@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafExtendCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafExtendCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Topology

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ def skewLat (G : Matrix (Fin r) (Fin r) E) (Λ : Submodule (𝓞 E) (Fin r → E
     refine ⟨fun u w => ?_, (endLat Λ).add_mem hY.2 hZ.2⟩
     have h1 := hY.1 u w
     have h2 := hZ.1 u w
-    simp only [herm, cc, add_mulVec, Pi.add_apply, map_add, add_mul, mul_add, Finset.sum_add_distrib] at h1 h2 ⊢
+    simp only [herm, cc, add_mulVec, Pi.add_apply, map_add (f := _), add_mul, mul_add, Finset.sum_add_distrib] at h1 h2 ⊢
     linear_combination h1 + h2
   neg_mem' {Y} hY := by
     refine ⟨fun u w => ?_, (endLat Λ).neg_mem hY.2⟩
@@ -43,7 +47,7 @@ def hAdj (G Y : Matrix (Fin r) (Fin r) E) : Matrix (Fin r) (Fin r) E := (G⁻¹ 
 def imLat (E : Type) [Field E] [NumberField E] [IsCMField E] : AddSubgroup E where
   carrier := {a | IsIntegral ℤ a ∧ cc a = -a}
   zero_mem' := ⟨isIntegral_zero, by simp [cc]⟩
-  add_mem' {a b} ha hb := ⟨ha.1.add hb.1, by simp only [cc, map_add] at ha hb ⊢; rw [ha.2, hb.2, neg_add]⟩
+  add_mem' {a b} ha hb := ⟨ha.1.add hb.1, by simp only [cc, map_add (f := _)] at ha hb ⊢; rw [ha.2, hb.2, neg_add]⟩
   neg_mem' {a} ha := ⟨ha.1.neg, by simp only [cc, map_neg] at ha ⊢; rw [ha.2]⟩
 
 def trProj (Y : Matrix (Fin r) (Fin r) E) : Matrix (Fin r) (Fin r) E :=
@@ -58,7 +62,7 @@ def dualLie (G : Matrix (Fin r) (Fin r) E) (Λ : Submodule (𝓞 E) (Fin r → E
     refine ⟨by rw [trace_add, hY.1, hZ.1, add_zero], fun u w => ?_, fun X hX => ?_⟩
     · have h1 := hY.2.1 u w
       have h2 := hZ.2.1 u w
-      simp only [herm, cc, add_mulVec, Pi.add_apply, map_add, add_mul, mul_add, Finset.sum_add_distrib] at h1 h2 ⊢
+      simp only [herm, cc, add_mulVec, Pi.add_apply, map_add (f := _), add_mul, mul_add, Finset.sum_add_distrib] at h1 h2 ⊢
       linear_combination h1 + h2
     · rw [Matrix.mul_add, trace_add]; exact (hY.2.2 X hX).add (hZ.2.2 X hX)
   neg_mem' {Y} hY := by

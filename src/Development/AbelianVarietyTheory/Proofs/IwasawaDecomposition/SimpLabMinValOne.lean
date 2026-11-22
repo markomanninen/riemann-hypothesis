@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEqAddOfRedVEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEqAddOfRedVEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,10 +59,6 @@ def zeroFun (O : Type) [CommRing O] : InvFun O where
   obtain ⟨n, r, hr⟩ := Module.Finite.exists_fin' O X
   simp only [InvFun.evalZ, (zeroFun O).eval_eq hr]
   rfl
-
-example : LinOnCells id 1 (InvFun.minVal ℤ) (InvFun.minVal ℤ) := linOnCells_self _
-
-example : Subordinate id 1 (InvFun.minVal ℤ) (InvFun.minVal ℤ) := Subordinate.refl _
 
 end Inhab
 

@@ -1,13 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableAutomorphicSpace
-import Development.AbelianVarietyTheory.Definitions.Divisors.OfIsBaseChange
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.SquareIntegrableSegment
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormsFiniteGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableAutomorphicSpace
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.SquareIntegrableSegment
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormsFiniteGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +18,7 @@ open NumberField Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.PRep Global
 
 namespace GlobalTheory.CuspSchur
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def imgPart (π : CuspSub E a) (L : Subgroup (GL (Fin a) (Af E))) {W : Type} [AddCommGroup W] [Module ℂ W]
     (ρ : Representation ℂ (Kinf E a) W) (w : W) : Submodule ℂ π.V where
@@ -23,7 +26,7 @@ def imgPart (π : CuspSub E a) (L : Subgroup (GL (Fin a) (Af E))) {W : Type} [Ad
     ∃ T : W →ₗ[ℂ] π.V, (∀ k v, T (ρ k v) = π.op (.cpt k) (T v)) ∧ T w = ψ}
   add_mem' := by
     rintro x y ⟨h1, T, h2, rfl⟩ ⟨h3, T', h4, rfl⟩
-    exact ⟨fun k hk => by rw [map_add, h1 k hk, h3 k hk], T + T', fun k v => by simp [h2, h4], rfl⟩
+    exact ⟨fun k hk => by rw [map_add (f := _), h1 k hk, h3 k hk], T + T', fun k v => by simp [h2, h4], rfl⟩
   zero_mem' := ⟨fun _ _ => map_zero _, 0, fun _ _ => by simp, rfl⟩
   smul_mem' := by
     rintro c x ⟨h1, T, h2, rfl⟩
@@ -51,7 +54,7 @@ theorem finiteDimensional_imgPart (π : CuspSub E a) {L : Subgroup (GL (Fin a) (
   rw [LinearMap.comp_apply, e] at h
   exact h
 
-theorem schur : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (x : CuspSub E a)
+theorem schur : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (x : CuspSub E a)
     (f : x.V →ₗ[ℂ] x.V), (∀ o φ, f (x.op o φ) = x.op o (f φ)) → ∃ c : ℂ, ∀ φ, f φ = c • φ := by
   intro E _ _ _ a π f hf
   obtain ⟨φ, hφ, h0⟩ := (Submodule.ne_bot_iff _).1 π.ne_bot

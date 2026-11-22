@@ -1,22 +1,27 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsContraction
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SameCompOfIsHolTo
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LiftIdempotentEqOfSameComplexComponent
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsContraction
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SameCompOfIsHolTo
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LiftIdempotentEqOfSameComplexComponent
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat Filter Topology Metric
 
 namespace PositivityTheory.Xgn.GeometricOfPeriods
 
-open Polynomial in
 
+open Polynomial in
 theorem exists_point {F R : Type} [Field F] [Algebra F ℂ] [CommRing R] [IsDomain R] [Algebra F R]
     [Algebra.FiniteType F R] (f : R) (hf : IsIntegral F f) (r : ℂ) (hr : aeval r (minpoly F f) = 0) :
     ∃ p : R →ₐ[F] ℂ, p f = r := by
@@ -34,7 +39,11 @@ theorem exists_point {F R : Type} [Field F] [Algebra F ℂ] [CommRing R] [IsDoma
   obtain ⟨M, hM⟩ := Ideal.exists_maximal R
   letI : Field (R ⧸ M) := Ideal.Quotient.field M
   haveI : Module.Finite L (R ⧸ M) := finite_of_finite_type_of_isJacobsonRing L (R ⧸ M)
-  let q : (R ⧸ M) →ₐ[L] ℂ := IsAlgClosed.lift
+  let q : (R ⧸ M) →ₐ[L] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let p : R →ₐ[L] ℂ := q.comp (Ideal.Quotient.mkₐ L M)
   refine ⟨p.restrictScalars F, ?_⟩
   have := p.commutes (AdjoinRoot.root (minpoly F f))
@@ -42,8 +51,8 @@ theorem exists_point {F R : Type} [Field F] [Algebra F ℂ] [CommRing R] [IsDoma
   rw [ha, hb] at this
   exact this
 
-open Polynomial TensorProduct in
 
+open Polynomial TensorProduct in
 theorem mem_range_of_idem {F R : Type} [Field F] [CharZero F] [Algebra F ℂ] [CommRing R] [IsDomain R] [Algebra F R]
     [Algebra.FiniteType F R]
     (h : ∀ p q : R →ₐ[F] ℂ, ∀ e : ℂ ⊗[F] R, IsIdempotentElem e →
@@ -77,7 +86,7 @@ theorem mem_range_of_idem {F R : Type} [Field F] [CharZero F] [Algebra F ℂ] [C
         have e2 : C (g.eval r)⁻¹ * C (g.eval r) = 1 := by rw [← C_mul, inv_mul_cancel₀ hgr, C_1]
         linear_combination (C (g.eval r)⁻¹ * C (g.eval r)⁻¹ * g) * hk + (C (g.eval r)⁻¹ * g) * e2
       unfold IsIdempotentElem
-      rw [← map_mul, e1, map_add, map_mul _ _ ((X - C r) * g), ht, mul_zero, add_zero]
+      rw [← map_mul, e1, map_add (f := _), map_mul _ _ ((X - C r) * g), ht, mul_zero, add_zero]
     have h2 := h p q _ hidem
     rw [← aeval_algHom_apply, ← aeval_algHom_apply] at h2
     simp only [t, Algebra.TensorProduct.lift_tmul, map_one, _root_.one_mul, hp, hq, coe_aeval_eq_eval, eval_mul,

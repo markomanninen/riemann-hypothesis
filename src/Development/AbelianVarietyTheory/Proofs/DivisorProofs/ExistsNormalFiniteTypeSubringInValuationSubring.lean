@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.EssFiniteTypeOfFiniteDimensionalSubfieldClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.EssFiniteTypeOfFiniteDimensionalSubfieldClosure
+
+@[expose] public section
 
 open Polynomial
 
@@ -90,45 +94,47 @@ theorem exists_normal_finiteType_subring_of_valuationSubring : ∀ (K L : Type) 
     rw [htop]
     exact finiteDimensional_top_subfield L
   haveI : Algebra.EssFiniteType A L := .of_comp ℂ A L
-  haveI := finite_integralClosure_of_essFiniteType_field ℂ A L
+  haveI : Module.Finite A (integralClosure A L) :=
+    GlobalTheory.finite_integralClosure_of_essFiniteType_field ℂ A L
   let S := integralClosure A K
   let f : S →ₐ[A] integralClosure A L :=
     ((IsScalarTower.toAlgHom A K L).comp S.val).codRestrict _ fun z =>
       (z.2.map (IsScalarTower.toAlgHom A K L) : IsIntegral A _)
   haveI : Module.Finite A S := Module.Finite.of_injective f.toLinearMap fun z w h =>
     Subtype.ext (φ.injective (congrArg Subtype.val h : _))
-  haveI : Algebra.FiniteType ℂ S := Algebra.FiniteType.trans (S := A) inferInstance inferInstance
-  haveI : IsNoetherianRing S := Algebra.FiniteType.isNoetherianRing ℂ S
-  haveI : IsFractionRing S K := integralClosure.isFractionRing_of_algebraic fun x hx => Subtype.ext hx
-  haveI : IsIntegrallyClosed S := (isIntegrallyClosed_iff K).mpr fun {x} hx =>
-    ⟨⟨x, isIntegral_trans x hx⟩, rfl⟩
+  set_option synthInstance.maxHeartbeats 200000 in
+    haveI : Algebra.FiniteType ℂ S := Algebra.FiniteType.trans (S := A) inferInstance inferInstance
+    haveI : IsNoetherianRing S := Algebra.FiniteType.isNoetherianRing ℂ S
+    haveI : IsFractionRing S K := integralClosure.isFractionRing_of_algebraic fun x hx => Subtype.ext hx
+    haveI : IsIntegrallyClosed S := (isIntegrallyClosed_iff K).mpr fun {x} hx =>
+      ⟨⟨x, isIntegral_trans x hx⟩, rfl⟩
 
-  have hcR : ∀ a, c a ∈ S.toSubring := fun a => S.algebraMap_mem (⟨c a, A.algebraMap_mem a⟩ : A)
-  refine ⟨S.toSubring, hcR, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact RingHom.finiteType_algebraMap.mpr (inferInstance : Algebra.FiniteType ℂ S)
-  · intro x hx
-    obtain ⟨q, hqm, hq⟩ := (hx : IsIntegral A x)
-    let ι : A →+* V.comap φ :=
-      { toFun := fun a => ⟨a, hAE a a.2⟩
-        map_one' := rfl
-        map_mul' := fun _ _ => rfl
-        map_zero' := rfl
-        map_add' := fun _ _ => rfl }
-    have hE : IsIntegral (V.comap φ) x := by
-      refine ⟨q.map ι, hqm.map ι, ?_⟩
-      rw [eval₂_map]
-      exact hq
-    obtain ⟨y, rfl⟩ := IsIntegrallyClosed.isIntegral_iff.mp hE
-    exact y.2
-  · exact (inferInstance : IsNoetherianRing S)
-  · exact (inferInstance : IsIntegrallyClosed S)
-  · exact (inferInstance : IsFractionRing S K)
-  · intro x hx
-    obtain ⟨q, hq, -, hqm⟩ := lifts_and_natDegree_eq_and_monic (f := S.toSubring.subtype)
-      ((lifts_iff_coeff_lifts _).mpr fun n =>
-        ⟨⟨_, S.algebraMap_mem (⟨_, hcoefA ⟨x, hx⟩ n⟩ : A)⟩, rfl⟩) (hpm ⟨x, hx⟩)
-    refine ⟨q, hqm, ?_⟩
-    rw [← eval₂_map, hq]
-    exact hpx ⟨x, hx⟩
+    have hcR : ∀ a, c a ∈ S.toSubring := fun a => S.algebraMap_mem (⟨c a, A.algebraMap_mem a⟩ : A)
+    refine ⟨S.toSubring, hcR, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · exact RingHom.finiteType_algebraMap.mpr (inferInstance : Algebra.FiniteType ℂ S)
+    · intro x hx
+      obtain ⟨q, hqm, hq⟩ := (hx : IsIntegral A x)
+      let ι : A →+* V.comap φ :=
+        { toFun := fun a => ⟨a, hAE a a.2⟩
+          map_one' := rfl
+          map_mul' := fun _ _ => rfl
+          map_zero' := rfl
+          map_add' := fun _ _ => rfl }
+      have hE : IsIntegral (V.comap φ) x := by
+        refine ⟨q.map ι, hqm.map ι, ?_⟩
+        rw [eval₂_map]
+        exact hq
+      obtain ⟨y, rfl⟩ := IsIntegrallyClosed.isIntegral_iff.mp hE
+      exact y.2
+    · exact (inferInstance : IsNoetherianRing S)
+    · exact (inferInstance : IsIntegrallyClosed S)
+    · exact (inferInstance : IsFractionRing S K)
+    · intro x hx
+      obtain ⟨q, hq, -, hqm⟩ := lifts_and_natDegree_eq_and_monic (f := S.toSubring.subtype)
+        ((lifts_iff_coeff_lifts _).mpr fun n =>
+          ⟨⟨_, S.algebraMap_mem (⟨_, hcoefA ⟨x, hx⟩ n⟩ : A)⟩, rfl⟩) (hpm ⟨x, hx⟩)
+      refine ⟨q, hqm, ?_⟩
+      rw [← eval₂_map, hq]
+      exact hpx ⟨x, hx⟩
 
 end GlobalTheory

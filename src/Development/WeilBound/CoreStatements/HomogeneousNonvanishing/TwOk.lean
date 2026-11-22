@@ -1,9 +1,14 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwMb
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwSub
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwTate
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwDet
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwMb
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwSub
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwTate
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwDet
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
 

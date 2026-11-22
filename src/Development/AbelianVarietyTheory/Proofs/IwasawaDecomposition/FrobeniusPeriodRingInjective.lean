@@ -1,23 +1,27 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCompatibleRootsOfUnityAndTiltPadic
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AinfIsDomainAndAinfInvPInjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineXiPowSaturatedQuotientCompleteStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BdRPlusIsDomainBdRIsFieldStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCanonicalAcrisToBdRPlusStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CanonicalAcrisToBdRPlusUniqueEquivariantApproxStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisToBdRPlusInjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInjectiveBcrisToBdRStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisMembershipSpanIffStatement
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSpanPairPowSucc
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCompatibleRootsOfUnityAndTiltPadic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AinfIsDomainAndAinfInvPInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineXiPowSaturatedQuotientCompleteStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BdRPlusIsDomainBdRIsFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCanonicalAcrisToBdRPlusStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CanonicalAcrisToBdRPlusUniqueEquivariantApproxStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisToBdRPlusInjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInjectiveBcrisToBdRStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisMembershipSpanIffStatement
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSpanPairPowSucc
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -59,8 +63,8 @@ theorem sat (k : ℕ) (x : R) (hx : p * x ∈ Ideal.span {p, w} ^ (k + 1)) : x �
   rw [this]
   exact add_mem (Ideal.mul_mem_right _ _ (pow_mem p w k)) hG
 
-include hp hw in
 
+include hp hw in
 theorem coeff_mem (l r : ℕ) (a F : ℕ → R) (hF : ∀ N, F (N + 1) = a N * w ^ (l * N) + p * F N)
     (N : ℕ) (b : R) (h : b * w ^ (l * N) + F N ∈ Ideal.span {p, w} ^ (N + r)) :
     ∀ i < N, l * (i + 1) ≤ i + r + 1 → a i ∈ Ideal.span {p, w ^ l} := by
@@ -117,7 +121,7 @@ theorem clear_den (v : K) (hv : v ∈ Algebra.adjoin R {algebraMap R K w * q}) :
     refine ⟨N + N', c * p ^ N' + p ^ N * c', ?_, ?_⟩
     · rw [pow_add]
       exact add_mem (Ideal.mul_mem_mul hc (pow_mem' p w N')) (Ideal.mul_mem_mul (pow_mem' p w N) hc')
-    · simp only [map_add, map_mul, map_pow, ← e, ← e']; ring
+    · simp only [map_add (f := _), map_mul, map_pow, ← e, ← e']; ring
   | mul x y _ _ hx hy =>
     obtain ⟨N, c, hc, e⟩ := hx
     obtain ⟨N', c', hc', e'⟩ := hy
@@ -166,7 +170,7 @@ theorem coeff_mem_of_frob (h : Polynomial R) (i : ℕ) (v : K) (hv : v ∈ Algeb
   obtain ⟨α, β, h4⟩ := Ideal.mem_span_pair.1 h3
   obtain ⟨α, rfl⟩ := hφ.2 α
   obtain ⟨β, rfl⟩ := hφ.2 β
-  exact Ideal.mem_span_pair.2 ⟨α, β, hφ.1 (by rw [map_add, map_mul, map_mul, hφp, hφw, h4])⟩
+  exact Ideal.mem_span_pair.2 ⟨α, β, hφ.1 (by rw [map_add (f := _), map_mul, map_mul, hφp, hφw, h4])⟩
 
 include hq hp hw hinj hφ hφp hφw hψ in
 theorem dvd_of_frob (t : K) (ht : t ∈ Algebra.adjoin R {algebraMap R K w * q})
@@ -197,7 +201,7 @@ theorem dvd_of_frob (t : K) (ht : t ∈ Algebra.adjoin R {algebraMap R K w * q})
     refine ⟨(algebraMap R K α + algebraMap R K β * (algebraMap R K w * q)) * (algebraMap R K w * q) ^ i,
       mul_mem (add_mem (Subalgebra.algebraMap_mem _ _) (mul_mem (Subalgebra.algebraMap_mem _ _) hZ))
         (_root_.pow_mem hZ i), ?_⟩
-    rw [Algebra.smul_def, ← h4, map_add, map_mul, map_mul]
+    rw [Algebra.smul_def, ← h4, map_add (f := _), map_mul, map_mul]
     linear_combination -(algebraMap R K β * algebraMap R K w * (algebraMap R K w * q) ^ i) * hq
 
 include hq hp hw hinj hφ hφp hφw hψ in
@@ -216,12 +220,12 @@ theorem pow_dvd_of_frob (k : ℕ) (t : K) (ht : t ∈ Algebra.adjoin R {algebraM
       obtain ⟨u, hu, v, hv, e⟩ := H (k + r)
       refine ⟨u, hu, v, hv, ?_⟩
       have : algebraMap R K p ^ k * q ^ k = 1 := by rw [← mul_pow, hq, one_pow]
-      simp only [map_add, map_mul, map_pow, hψ, hφp] at e ⊢
+      simp only [map_add (f := _), map_mul, map_pow, hψ, hφp] at e ⊢
       linear_combination q ^ k * e - (ψ t' + algebraMap R K p * ψ u - algebraMap R K p ^ r * v) * this
     exact ⟨m, hm, by ring⟩
 
-include hq in
 
+include hq in
 theorem bounded_mod (x : R) (n : ℕ) (m : K) (hm : m ∈ Algebra.adjoin R {algebraMap R K x * q}) :
     ∃ (a : R) (z : K), algebraMap R K p ^ n * m = algebraMap R K a + algebraMap R K x ^ n * z := by
   induction n generalizing m with
@@ -235,7 +239,7 @@ theorem bounded_mod (x : R) (n : ℕ) (m : K) (hm : m ∈ Algebra.adjoin R {alge
     have h := congrArg (Polynomial.aeval (algebraMap R K x * q)) (Polynomial.divX_mul_X_add f)
     change _ * Polynomial.aeval _ f = _
     rw [← h]
-    simp only [map_add, map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C]
+    simp only [map_add (f := _), map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C]
     linear_combination algebraMap R K x * e + algebraMap R K x * algebraMap R K p ^ n *
       Polynomial.aeval (algebraMap R K x * q) f.divX * hq
 
@@ -371,7 +375,7 @@ theorem approx_mem {e : Per.Fl l} (he : IsEps e) {q : Per.AinfP l} (hq : (l : Pe
     exact ⟨d, mul_left_cancel₀ hx0 (by linear_combination hc + b * hw + (l : Per.Ainf l) * hd)⟩
   have hZ : algebraMap (Per.Ainf l) (Per.AinfP l) (xi e) * q =
       algebraMap (Per.Ainf l) (Per.AinfP l) w * q + algebraMap (Per.Ainf l) (Per.AinfP l) u := by
-    rw [hw, map_add, map_mul]
+    rw [hw, map_add (f := _), map_mul]
     linear_combination algebraMap (Per.Ainf l) (Per.AinfP l) u * hq'
   have hM : Algebra.adjoin (Per.Ainf l) {algebraMap (Per.Ainf l) (Per.AinfP l) (xi e) * q} =
       Algebra.adjoin (Per.Ainf l) {algebraMap (Per.Ainf l) (Per.AinfP l) w * q} := by
@@ -392,7 +396,8 @@ theorem approx_mem {e : Per.Fl l} (he : IsEps e) {q : Per.AinfP l} (hq : (l : Pe
         refine ⟨-((l : Per.Acris l) ^ k * phiA l z'), ?_⟩
         rw [hs] at hx
         rw [← phiA_of]
-        simp only [map_add, map_mul, map_pow, map_natCast] at hx ⊢
+        set_option synthInstance.maxHeartbeats 200000 in
+          simp only [map_add, map_mul, map_pow, map_natCast] at hx ⊢
         linear_combination hx
       obtain ⟨v, hv⟩ := (hdvd _ _).1 h1
       refine ⟨s', hle s', v, hle v, ?_⟩
@@ -407,7 +412,7 @@ theorem phiA_injective : Function.Injective (phiA l) := by
   obtain ⟨q, hq⟩ := (GlobalTheory.RingBasics.isUnit_l l).exists_right_inv
   have hq' : algebraMap (Per.Ainf l) (Per.AinfP l) (l : Per.Ainf l) * q = 1 := by rwa [map_natCast]
   obtain ⟨j, hj⟩ := GlobalTheory.T.exists_canonical_acris_to_bdRPlus l
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   apply GlobalTheory.T.acrisToBdRPlus_injective l j hj
   rw [map_zero]
@@ -439,7 +444,7 @@ theorem algebraMap_acris_bcris_injective : Function.Injective (algebraMap (Per.A
   rw [← hι, ← hι, h]
 
 theorem φB_inj : Function.Injective (Per.φB l) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro b hb
   obtain ⟨e, he, hne⟩ := GlobalTheory.CrisLoc.exists_root_ne_one l
   obtain ⟨n, x, h⟩ := GlobalTheory.CrisLoc.exists_mul_pow_eq l e he hne b

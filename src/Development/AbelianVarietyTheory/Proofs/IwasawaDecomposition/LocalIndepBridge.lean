@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain GlobalTheory.Pst Formalism.WeaklyAdmissibleFiltrations TensorProduct Module
@@ -140,13 +144,9 @@ variable {l : ℕ} [Fact l.Prime] (P : LocPrime l)
   {LL : Type} [Field LL] [Algebra ℚ_[l] LL]
   {V : Type} [AddCommGroup V] [Module LL V] [Module ℚ_[l] V] [IsScalarTower ℚ_[l] LL V]
 
-variable (LL V) in
 
-def conjB (g : GQ l) : V ⊗[ℚ_[l]] P.R.B ≃ₗ[LL] V ⊗[ℚ_[l]] P.R.B :=
-  AlgebraTensorModule.congr (LinearEquiv.refl LL V) (P.actQ g).toLinearEquiv
 
 variable (LL V) in
-
 def conjdR (g : GQ l) : V ⊗[ℚ_[l]] P.R.BdR ≃ₗ[LL] V ⊗[ℚ_[l]] P.R.BdR :=
   AlgebraTensorModule.congr (LinearEquiv.refl LL V) (P.actQdR g).toLinearEquiv
 
@@ -166,7 +166,7 @@ theorem conjdR_actVdR (h : ↥(GK K)) (h' : ↥(GK K')) (hh : (h' : GQ l) = g * 
     rw [hρ h h' hh, P.PD_actdR, P.PD_actdR, hh]
     congr 1
     rw [← AlgEquiv.mul_apply, ← AlgEquiv.mul_apply, ← map_mul, ← map_mul, inv_mul_cancel_right]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 variable (hK : ∀ x, x ∈ K.1 ↔ g x ∈ K'.1)
 include hρ hK
@@ -234,7 +234,7 @@ theorem conjdR_mem_filV (K : FinExt l) (σ : GQ l) (a : ℤ) {x : V ⊗[ℚ_[l]]
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem conjdR_inv (σ : GQ l) (x : V ⊗[ℚ_[l]] P.R.BdR) :
     conjdR P LL V σ⁻¹ (conjdR P LL V σ x) = x := by
@@ -244,7 +244,7 @@ theorem conjdR_inv (σ : GQ l) (x : V ⊗[ℚ_[l]] P.R.BdR) :
     simp only [conjdR, AlgebraTensorModule.congr_tmul, LinearEquiv.refl_apply, AlgEquiv.toLinearEquiv_apply]
     rw [← AlgEquiv.mul_apply, ← map_mul, inv_mul_cancel, map_one]
     rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem mem_filV_conj (K K' : FinExt l) (σ : GQ l) (a : ℤ) (x : V ⊗[ℚ_[l]] P.R.BdR) :
     x ∈ FilV (P.PD K) (LL := LL) (V := V) a ↔ conjdR P LL V σ x ∈ FilV (P.PD K') (LL := LL) (V := V) a := by
@@ -267,7 +267,7 @@ theorem conjdR_mulVdR {K K' : FinExt l} (g : GQ l) (c : ↥K.1) (c' : ↥K'.1) (
     congr 1
     show P.actQdR g (algebraMap (Om l) P.R.BdR (c : Om l)) = algebraMap (Om l) P.R.BdR (c' : Om l)
     rw [P.actQdR_Om, hc]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 variable {K K' : FinExt l} {g : GQ l} {ρ : Representation LL ↥(GK K) V} {ρ' : Representation LL ↥(GK K') V}
   (hρ : ∀ (h : ↥(GK K)) (h' : ↥(GK K')), (h' : GQ l) = g * h * g⁻¹ → ρ' h' = ρ h)
@@ -337,10 +337,6 @@ theorem repE_conj (L : FinExt l) {m : ℕ} (r : ↥Gw →* GL (Fin m) ↥L.1) (h
 end Bridges
 
 variable {l : ℕ} [Fact l.Prime]
-
-def pullExt {K K' : FinExt l} (g : GQ l) (hK : ∀ x, x ∈ K.1 ↔ g x ∈ K'.1) : ↥K'.1 →ₐ[ℚ_[l]] ↥K.1 :=
-  ((g⁻¹ : GQ l).toAlgHom.comp K'.1.val).codRestrict K.1.toSubalgebra fun c =>
-    (hK _).2 (by show g (g⁻¹ (c : Om l)) ∈ K'.1; rw [show g (g⁻¹ (c : Om l)) = c from g.apply_symm_apply _]; exact c.2)
 
 end BridgeInd
 

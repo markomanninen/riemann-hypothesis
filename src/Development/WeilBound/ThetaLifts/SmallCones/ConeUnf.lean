@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.SmallCones.ConeEx
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.SmallCones.ConeEx
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,15 +39,15 @@ theorem LineOK.fin [SFinite μ] [SFinite M₀.μ] (h : LineOK B M om M₀ om₀ 
       simp only [hd, h.val_sum _ hΨ, hJ, Finset.sum_mul, mul_assoc]
     simp only [e1]
     have hi : Integrable (fun x => ∑ i, c i k * J i x) (μ.prod (M₀.μ.restrict M₀.dom)) :=
-      integrable_finset_sum _ fun i _ => (hJi i).const_mul _
+      integrable_finsetSum _ fun i _ => (hJi i).const_mul _
     rw [← lintegral_prod (fun x => ‖∑ i, c i k * J i x‖ₑ) hi.1.enorm]
     calc _ ≤ ∫⁻ x, ∑ i, ‖c i k‖ₑ * ‖J i x‖ₑ ∂(μ.prod (M₀.μ.restrict M₀.dom)) :=
           lintegral_mono fun x => (enorm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => (enorm_mul _ _).le)
       _ = _ := by
-          rw [lintegral_finset_sum' _ fun i _ => (hJi i).1.enorm.const_mul _]
+          rw [lintegral_finsetSum' _ fun i _ => (hJi i).1.enorm.const_mul _]
           exact Finset.sum_congr rfl fun i _ => lintegral_const_mul'' _ (hJi i).1.enorm
   refine (lintegral_mono key).trans_lt ?_
-  rw [lintegral_finset_sum' _ fun i _ => (hc i).1.enorm.mul_const _]
+  rw [lintegral_finsetSum' _ fun i _ => (hc i).1.enorm.mul_const _]
   refine ENNReal.sum_lt_top.2 fun i _ => ?_
   rw [lintegral_mul_const'' _ (hc i).1.enorm]
   exact ENNReal.mul_lt_top (hc i).2 (hJi i).2
@@ -63,17 +67,21 @@ theorem LineOK.unf [SFinite μ] [SFinite M₀.μ] (h : LineOK B M om M₀ om₀ 
     rw [← hι]
     congr 1
     funext l
-    simp only [← hf, enorm_mul]
-    rw [lintegral_mul_const' _ _ (by simp)]
+    rw [← lintegral_mul_const' _ _ (by simp)]
     congr 1
-    rw [← ofReal_norm_eq_enorm, Complex.norm_real, Real.norm_of_nonneg (Real.rpow_nonneg (NNReal.coe_nonneg _) _)]
+    funext g
+    have he : ENNReal.ofReal ((absE F E (ι l) : ℝ) ^ (1 - (n : ℝ))) =
+        ‖(((absE F E (ι l) : ℝ) ^ (1 - (n : ℝ)) : ℝ) : ℂ)‖ₑ := by
+      rw [← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg (Real.rpow_nonneg (NNReal.coe_nonneg _) _)]
+    rw [he, ← eNorm_mul, hf]
   · unfold coneI
     congr 1
     funext k
     rw [← hι']
     congr 1
     funext l
-    simp only [Model.I, mul_assoc, ← integral_mul_const, hf]
+    rw [← integral_mul_const]
+    simp only [hf, Model.I, integral_mul_const, mul_assoc]
 
 end Core
 

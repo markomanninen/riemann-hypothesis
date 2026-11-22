@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.TateCohomology.DimensionShift
-import GroundTheory.TateCohomology.InducedNorm
-import GroundTheory.TateCohomology.CoindOne
-import GroundTheory.TateCohomology.UniquelyDivisible
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.DimensionShift
+public import GroundTheory.TateCohomology.InducedNorm
+public import GroundTheory.TateCohomology.CoindOne
+public import GroundTheory.TateCohomology.UniquelyDivisible
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -59,7 +64,8 @@ theorem exists_sum_eq_subgroup [Fintype G] (ρ : Representation k G V) (φ : V �
   rw [← Fintype.sum_equiv (Equiv.inv G) (fun h => ρ h⁻¹ (φ (ρ h v))) _ (fun h => by simp),
     sum_eq_sum_quotient_sum S, Finset.sum_comm]
   refine Fintype.sum_equiv (Equiv.inv S) _ _ fun s => ?_
-  simp [map_sum, LinearMap.sum_apply, map_mul, mul_inv_rev, Module.End.mul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, LinearMap.sum_apply, map_mul, mul_inv_rev, Module.End.mul_apply]
 
 theorem cohTrivial_of_sum_eq [Fintype G] (M : Rep.{u} k G) (φ : M.V →ₗ[k] M.V)
     (hφ : ∀ m : M, ∑ g : G, M.ρ g (φ (M.ρ g⁻¹ m)) = m) : CohTrivial M := fun S _ => by
@@ -86,7 +92,8 @@ theorem exists_sum_eq_of_basis (M : Rep.{u} k G) {ι : Type*}
   refine ⟨φ, fun m => ?_⟩
   apply M.ρ.asModuleEquiv.symm.injective
   apply b.repr.injective
-  simp only [map_sum, φ, LinearMap.comp_apply, LinearEquiv.coe_coe, LinearMap.coe_restrictScalars,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, φ, LinearMap.comp_apply, LinearEquiv.coe_coe, LinearMap.coe_restrictScalars,
     Representation.asModuleEquiv_symm_map_rho, map_smul, LinearEquiv.symm_apply_apply,
     LinearEquiv.apply_symm_apply]
   generalize b.repr (M.ρ.asModuleEquiv.symm m) = c

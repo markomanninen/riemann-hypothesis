@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.GeneratorsLeRestrictedSpan
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ExistsIrreducibleLocToCompl
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.IteratedWeightAtVanishingOrder
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ExistsCoeffOfMemSpan
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.IsLatticeOfAdmissible
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.VEtNonnegOfTied
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.GeneratorsLeRestrictedSpan
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ExistsIrreducibleLocToCompl
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.IteratedWeightAtVanishingOrder
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ExistsCoeffOfMemSpan
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.IsLatticeOfAdmissible
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.VEtNonnegOfTied
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,10 +124,18 @@ theorem localIdx (Q : LocalPointData G la) (S : Scal B) (CRm c : ℝ) (e : ℕ) 
     exact Submodule.subset_span ⟨X.inc (addL wF wL T) (G.th i),
       (show X.emb _ (X.Thc S.sK (addL wF wL T)) ≤ X.Theta S (addL wF wL T) wL wF T from le_sup_right)
         ⟨_, hthK i, rfl⟩, rfl⟩
+  have hThM : X.Thc S.sK (addL wF wL T) ≤ B.Mlat j (addL wF wL T) := by
+    intro f hf
+    have hf' : X.inc (addL wF wL T) f ∈ X.Msup (addL wF wL T) :=
+      hΘM ((show X.emb _ (X.Thc S.sK _) ≤ X.Theta S _ wL wF T from le_sup_right) ⟨f, hf, rfl⟩)
+    obtain ⟨g, hg, heq⟩ := hf'
+    exact (X.inc_inj _ heq) ▸ hg
+  have hMspan : Submodule.span B.KO (B.Mlat j (addL wF wL T) : Set (B.Cusp j (addL wF wL T))) = ⊤ :=
+    eq_top_iff.mpr (hspK ▸ Submodule.span_mono (SetLike.coe_subset_coe.mpr hThM))
   have key := levelsQDesc (PtsG G la) (ep (unifO X la G.N)) fdeg (Q.nu S) v νs cp T
     (Nat.choose (T - 1) (WeightFamilies.dimY D j)) Q.Ila.toNat (fun ζ => one_le_ep_of_curve Q hC ζ) hT1 hcp hv hν
     (X.Ol la) (Op X la G.N) (X.Kl la) (Kp X la G.N) ↥(T0.WL X (addL wF wL T) la) ↥(Vw X la G.N (addL wF wL T))
-    (WK X la G.w wF (a0 D j T)) (jW X la G.N (addL wF wL T)) (jW_isBaseChange X la G.N _ hM.span_eq_top)
+    (WK X la G.w wF (a0 D j T)) (jW X la G.N (addL wF wL T)) (jW_isBaseChange X la G.N _ hMspan)
     (unif X la) (unif_irreducible X la) (unifO_irreducible X la G.N)
     (T0.MW X (addL wF wL T) la) (T0.ThW X S (addL wF wL T) wL wF T la) (MggW X la (addL wF wL T) CRm T c)
     (N1 G la) (Zl G la) (Zm G la) (Np G la e) e G.rq

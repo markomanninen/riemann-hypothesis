@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisNewtonValue
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisNewtonValue
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -12,11 +17,8 @@ open _root_.WittVector Laurent Polynomial WittTilt
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
-local notation "𝔸" => Localization.Away (p : AInf ℂ_[p] p)
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
 
 set_option maxHeartbeats 4000000 in
-
 theorem exists_norm_eq_zpow_of_iota_eq {y : PadicAlgCl p} (hy : y ≠ 0) {a b : ACris ℂ_[p] p}
     (hb : b ≠ 0) (h : iota ℂ_[p] p a = algClToBdR p y * iota ℂ_[p] p b) :
     ∃ D : ℤ, ‖y‖ = ‖(p : PadicAlgCl p)‖ ^ D := by
@@ -59,11 +61,12 @@ theorem exists_norm_eq_zpow_of_iota_eq {y : PadicAlgCl p} (hy : y ≠ 0) {a b : 
   have hrel : ∑ i ∈ Finset.range (d + 1),
       algebraMap (AInf ℂ_[p] p) (ACris ℂ_[p] p) (x i) * a ^ i * b ^ (d - i) = 0 := by
     apply iota_injective (K := ℂ_[p]) (p := p)
-    rw [map_zero, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum]
     have e : ∀ i ∈ Finset.range (d + 1), iota ℂ_[p] p
         (algebraMap (AInf ℂ_[p] p) (ACris ℂ_[p] p) (x i) * a ^ i * b ^ (d - i)) =
-        algebraMap ℚ_[p] 𝔹 ((p : ℚ_[p]) ^ k) * iota ℂ_[p] p b ^ d *
-          (algebraMap ℚ_[p] 𝔹 (q.coeff i) * algClToBdR p y ^ i) := by
+        algebraMap ℚ_[p] (BDeRhamPlus (normInteger ℂ_[p]) p) ((p : ℚ_[p]) ^ k) * iota ℂ_[p] p b ^ d *
+          (algebraMap ℚ_[p] (BDeRhamPlus (normInteger ℂ_[p]) p) (q.coeff i) * algClToBdR p y ^ i) := by
       intro i hi
       have hid : i ≤ d := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
       rw [map_mul, map_mul, map_pow, map_pow, iota_padicInt, h, mul_pow]
@@ -71,10 +74,10 @@ theorem exists_norm_eq_zpow_of_iota_eq {y : PadicAlgCl p} (hy : y ≠ 0) {a b : 
       rw [hci, map_mul]
       have hb' : iota ℂ_[p] p b ^ i * iota ℂ_[p] p b ^ (d - i) = iota ℂ_[p] p b ^ d := by
         rw [← pow_add, Nat.add_sub_cancel' hid]
-      linear_combination (algebraMap ℚ_[p] 𝔹 ((p : ℚ_[p]) ^ k) * algebraMap ℚ_[p] 𝔹 (q.coeff i) *
+      linear_combination (algebraMap ℚ_[p] (BDeRhamPlus (normInteger ℂ_[p]) p) ((p : ℚ_[p]) ^ k) * algebraMap ℚ_[p] (BDeRhamPlus (normInteger ℂ_[p]) p) (q.coeff i) *
         algClToBdR p y ^ i) * hb'
     rw [Finset.sum_congr rfl e, ← Finset.mul_sum]
-    have haeval : ∑ i ∈ Finset.range (d + 1), algebraMap ℚ_[p] 𝔹 (q.coeff i) * algClToBdR p y ^ i = 0 := by
+    have haeval : ∑ i ∈ Finset.range (d + 1), algebraMap ℚ_[p] (BDeRhamPlus (normInteger ℂ_[p]) p) (q.coeff i) * algClToBdR p y ^ i = 0 := by
       have := Polynomial.aeval_eq_sum_range (p := q) (algClToBdR p y)
       rw [Polynomial.aeval_algHom_apply, minpoly.aeval, map_zero] at this
       simp only [Algebra.smul_def] at this
@@ -84,12 +87,12 @@ theorem exists_norm_eq_zpow_of_iota_eq {y : PadicAlgCl p} (hy : y ≠ 0) {a b : 
   obtain ⟨ρa, Na, ca0, hρa, hρa1, -, hgooda, hsta⟩ := exists_stable (K := ℂ_[p]) ha
   obtain ⟨ρb, Nb, cb0, hρb, hρb1, -, hgoodb, hstb⟩ := exists_stable (K := ℂ_[p]) hb
   rw [hnp] at hρa hρb hgooda hgoodb hsta hstb
-  have hca0 : (ca0 : 𝔸) ≠ 0 := by
+  have hca0 : (ca0 : (Localization.Away (p : AInf ℂ_[p] p))) ≠ 0 := by
     intro h0
     have := hgooda r₀ ⟨le_rfl, hρa.le⟩
     rw [h0, gn_zero] at this
     linarith [pow_pos hr0 Na]
-  have hcb0 : (cb0 : 𝔸) ≠ 0 := by
+  have hcb0 : (cb0 : (Localization.Away (p : AInf ℂ_[p] p))) ≠ 0 := by
     intro h0
     have := hgoodb r₀ ⟨le_rfl, hρb.le⟩
     rw [h0, gn_zero] at this
@@ -108,20 +111,20 @@ theorem exists_norm_eq_zpow_of_iota_eq {y : PadicAlgCl p} (hy : y ≠ 0) {a b : 
     · exact hρ.2.trans ((min_le_right _ _).trans (min_le_right _ _))
 
   have hid : ∀ ρ ∈ Set.Icc r₀ ρ₅,
-      gn ℂ_[p] p ρ (ca0 : 𝔸) = ‖y‖ ^ sig p ρ * gn ℂ_[p] p ρ (cb0 : 𝔸) := by
+      gn ℂ_[p] p ρ (ca0 : (Localization.Away (p : AInf ℂ_[p] p))) = ‖y‖ ^ sig p ρ * gn ℂ_[p] p ρ (cb0 : (Localization.Away (p : AInf ℂ_[p] p))) := by
     intro ρ hρ
     obtain ⟨hρA, hρB, -, -⟩ := hmem ρ hρ
     have hρ0 : 0 < ρ := hr0.trans_le hρ.1
     have hρ1 : ρ < 1 := hρA.2.trans_lt hρa1
     have hpρ : ‖(p : ℂ_[p])‖ ≤ ρ := hnp ▸ hρ.1
     have hσ := sig_pos (p := p) hρ0 hρ1
-    set Fa := gn ℂ_[p] p ρ (ca0 : 𝔸)
-    set Fb := gn ℂ_[p] p ρ (cb0 : 𝔸)
+    set Fa := gn ℂ_[p] p ρ (ca0 : (Localization.Away (p : AInf ℂ_[p] p)))
+    set Fb := gn ℂ_[p] p ρ (cb0 : (Localization.Away (p : AInf ℂ_[p] p)))
     have hFa : 0 < Fa := (pow_pos hρ0 Na).trans (hgooda ρ hρA)
     have hFb : 0 < Fb := (pow_pos hρ0 Nb).trans (hgoodb ρ hρB)
     set μ := ‖y‖ ^ sig p ρ
     have hμ : 0 < μ := Real.rpow_pos_of_pos (norm_pos_iff.2 hy) _
-    set G : ℕ → ℝ := fun i => gn ℂ_[p] p ρ (algebraMap (AInf ℂ_[p] p) 𝔸 (x i)) with hG_def
+    set G : ℕ → ℝ := fun i => gn ℂ_[p] p ρ (algebraMap (AInf ℂ_[p] p) (Localization.Away (p : AInf ℂ_[p] p)) (x i)) with hG_def
     have hGc : ∀ i, G i = ‖c i‖ ^ sig p ρ := fun i => gn_padicInt hρ0 hρ1 (c i)
     have hsig : ∀ t : ℝ, 0 ≤ t → ∀ n : ℕ, (r₀ ^ n * t) ^ sig p ρ = ρ ^ n * t ^ sig p ρ := by
       intro t ht n
@@ -141,10 +144,10 @@ theorem exists_norm_eq_zpow_of_iota_eq {y : PadicAlgCl p} (hy : y ≠ 0) {a b : 
         mul_one]
     have hsa : ∀ N ≥ Na, ∀ c' : ACrisZero ℂ_[p] p,
         a - algebraMap _ (ACris ℂ_[p] p) c' ∈ Ideal.span {(p : ACris ℂ_[p] p) ^ N} →
-          gn ℂ_[p] p ρ (c' : 𝔸) = Fa := fun N hN c' hc' => hsta N hN c' hc' ρ hρA
+          gn ℂ_[p] p ρ (c' : (Localization.Away (p : AInf ℂ_[p] p))) = Fa := fun N hN c' hc' => hsta N hN c' hc' ρ hρA
     have hsb : ∀ N ≥ Nb, ∀ c' : ACrisZero ℂ_[p] p,
         b - algebraMap _ (ACris ℂ_[p] p) c' ∈ Ideal.span {(p : ACris ℂ_[p] p) ^ N} →
-          gn ℂ_[p] p ρ (c' : 𝔸) = Fb := fun N hN c' hc' => hstb N hN c' hc' ρ hρB
+          gn ℂ_[p] p ρ (c' : (Localization.Away (p : AInf ℂ_[p] p))) = Fb := fun N hN c' hc' => hstb N hN c' hc' ρ hρB
     exact eq_of_no_dominant hd hFa hFb hμ (pow_pos hρ0 k) G hG hG0 hGd
       fun j hj hpos hdom => false_of_dominant hpρ hρ1 hsa hsb d x hrel hj hpos hdom
 

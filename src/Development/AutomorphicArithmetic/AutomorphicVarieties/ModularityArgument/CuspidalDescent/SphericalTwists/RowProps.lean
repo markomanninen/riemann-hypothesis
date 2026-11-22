@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AAcrossOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GuDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AAcrossOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GuDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,17 +29,12 @@ variable [IsAlgClosure E Ω] [IsCMField E]
 
 def RowProps (ι : Qbar l ≃+* ℂ) (r : G E Ω →* GL (Fin n) (Qbar l)) (π : CuspSub E n) (HT : (E →+* Qbar l) → Multiset ℤ) : Prop :=
   (∀ τ : E →+* Qbar l, (HT τ).map (fun k : ℤ => (k : ℂ)) = ((CG.mk π).infChar (ι.toRingHom.comp τ)).map fun z => ((n : ℂ) - 1) / 2 - z) ∧
-    ∀ (w : HeightOneSpectrum (𝓞 E)) (A : ValuationSubring Ω) (h : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion E) → WD h), IsRecT h rc →
+    ∀ (w : HeightOneSpectrum (𝓞 E)) (A : ValuationSubring Ω) (h : IsPlaceOver A w) (rc : IrrGL (k := w.adicCompletion E) → WD h), IsRecT h rc →
       ∀ σ, π.IsLocComp w σ → UpperTheory.GalStar.Tor (rc (algNorm σ)) → (rc (algNorm σ)).mono0 →
         (((l : ℕ) : 𝓞 E) ∉ w.asIdeal → IsWDOf ι r (rc (algNorm σ))) ∧
         Hi.DRat ι h (r.comp (Dec (F := E) A).subtype) HT fun s => (rc (algNorm σ)).charPol s
 
 end Defs
-
-def RowAt : Prop :=
-  Hypotheses₂ → RowT → ∀ (E Ω : Type) [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (l : ℕ) [Fact l.Prime]
-    (ι : Qbar l ≃+* ℂ) (n : ℕ), 1 ≤ n → ∀ (r : G E Ω →* GL (Fin n) (Qbar l)) (π : CuspSub E n), Continuous r → (CG.mk π).IsRegAlg →
-    GlobalTheory.ContraPair.DualIsConj π → AttC ι r π → ∃ HT, RowProps ι r π HT
 
 def GalAE : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (l : ℕ) [Fact l.Prime]
@@ -43,10 +42,8 @@ def GalAE : Prop :=
     ∃ r : G E Ω →* GL (Fin a) (Qbar l), Continuous r ∧ ∀ w : HeightOneSpectrum (𝓞 E), ((l : ℕ) : 𝓞 E) ∉ w.asIdeal →
       ∀ B, (CG.mk (P.twist (GlobalTheory.HeckeGal.Model.absPow E s))).HasSat w B → FrobPol ι r w (algSat a (normV w) B)
 
-def GalAEOf : Prop := Hypotheses₂ → RowT → GalAE
-
 def SatTw : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (P : CuspSub E a) (s : ℝ) (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (P : CuspSub E a) (s : ℝ) (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ),
     (CG.mk P).HasSat w B → (CG.mk (P.twist (GlobalTheory.HeckeGal.Model.absPow E s))).HasSat w (B.map (· * qPow w (-s)))
 
 def SumAE : Prop :=
@@ -67,7 +64,7 @@ def SplitSat : Prop :=
     ∀ τ : SmIrr (GL (Fin n) (w.adicCompletion E)), Nonempty (τ.ρ.Equiv (locProd hn w σ)) → ∀ B, GlobalTheory.LFun.HasSatGL w τ.ρ B → B = satTot w d S
 
 def OnePart : Prop :=
-  GlobalTheory.Published.JacquetShalikaRigidity → SatTw → ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n c : ℕ), 1 ≤ n →
+  GlobalTheory.Published.JacquetShalikaRigidity → SatTw → ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n c : ℕ), 1 ≤ n →
     ∀ (a d : Fin c → ℕ) (P : ∀ i, CuspSub E (a i)) (π : CuspSub E n), (∀ i, 1 ≤ a i ∧ 1 ≤ d i) →
     (∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite, ∃ S : Fin c → Multiset ℂˣ, (∀ i, (CG.mk (P i)).HasSat w (S i)) ∧
       (CG.mk π).HasSat w (satTot w d S)) → c = 1 ∧ ∀ i, d i = 1
@@ -83,14 +80,12 @@ def Same : Prop :=
     (∀ w, IsSplitAt w → ∀ τ, π.IsLocComp w τ → IsCompAlong U (locU n w) ((cLoc w).comp (locU n w).subtype) τ.ρ) ∧
       ∀ φ : E →+* ℂ, ∃ lam, HasWeightAt U φ lam ∧ π.HasInfChar φ (infOfWeight lam)
 
-def SameOf : Prop := Hypotheses₂ → GlobalTheory.BcSpeh.BcSpeh → SatTw → SumAE → SplitSat → OnePart → Same
-
 def SphT : Prop :=
   GlobalTheory.Mem.LiteralAutomorphy.LitN → ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime]
     (ι : Qbar l ≃+* ℂ) (n : ℕ) (r : G F Ω →* GL (Fin n) (Qbar l)), Continuous r → ∀ w : HeightOneSpectrum (𝓞 F), ((l : ℕ) : 𝓞 F) ∉ w.asIdeal →
     ∀ (A : ValuationSubring Ω) (h : IsPlaceOver A w), (∀ s ∈ Ine (F := F) A, r s = 1) → ∀ rc, IsRecT h rc →
     ∀ σ : SmIrr (GL (Fin n) (w.adicCompletion F)), GlobalTheory.RoadU.PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred) → IsWDOf ι r (rc (algNorm σ)) →
-      HasFixed σ.ρ (GlobalTheory.LFun.KGL w n)
+      HasFixed σ.ρ (GlobalTheory.LFun.KGL w (n := n))
 
 def PsT : Prop :=
   GlobalTheory.Mem.LiteralAutomorphy.LitN → ∀ (L Ω : Type) [Field L] [NumberField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] (n : ℕ) (w : HeightOneSpectrum (𝓞 L))

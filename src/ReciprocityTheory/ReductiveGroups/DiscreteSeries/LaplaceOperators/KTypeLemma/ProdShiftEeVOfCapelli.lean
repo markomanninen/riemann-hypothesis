@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.Expand
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.Expand
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,8 @@ theorem IsPolyN.map {F : ℂ → X} {N : ℕ} (hF : IsPolyN F N) (L : X →ₗ[�
   obtain ⟨c, hc⟩ := hF
   refine ⟨fun k => L (c k), fun x => ?_⟩
   beta_reduce
-  rw [hc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc, map_sum]
   exact Finset.sum_congr rfl fun k _ => map_smul L _ _
 
 theorem isPolyN_sum {ι : Type*} (s : Finset ι) {F : ι → ℂ → X} {N : ℕ}
@@ -121,13 +126,14 @@ theorem poly_coeff_eq_zero {N : ℕ} (v : ℕ → X) (h : ∀ x : ℂ, ∑ k ∈
     apply Polynomial.funext
     intro x
     have h1 := congrArg φ (h x)
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [map_smul, smul_eq_mul] at h1
-    rw [Polynomial.eval_zero, Polynomial.eval_finset_sum, ← h1]
+    rw [Polynomial.eval_zero, Polynomial.eval_finsetSum, ← h1]
     exact Finset.sum_congr rfl fun j _ => by
       rw [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X, mul_comm]
   have h2 := congrArg (fun q : Polynomial ℂ => q.coeff k) hp0
-  simpa [Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow, Finset.mem_range.2 hk] using h2
+  simpa [Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow, Finset.mem_range.2 hk] using h2
 
 end Poly
 
@@ -203,7 +209,8 @@ theorem adjVec_key (E : Fin (m + 1) → Fin (m + 1) → Module.End ℂ M) (hE : 
     · intro h
       exact absurd (mem_univ b) h
   rw [← hsum, ← Finset.sum_congr rfl (fun c _ => hx c)]
-  simp only [Pi.add_apply, Pi.smul_apply, eeV_apply', adjVec, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Pi.add_apply, Pi.smul_apply, eeV_apply', adjVec, LinearMap.sum_apply, LinearMap.smul_apply,
     capEntry_mul_apply, map_sum, map_smul, smul_add, sum_add_distrib, smul_sum]
   rw [Finset.sum_comm]
   congr 1
@@ -264,8 +271,10 @@ theorem shiftPoly_aeval (E : Fin (m + 1) → Fin (m + 1) → Module.End ℂ M) (
   rw [← key (m + 1) (fun t => eeV E - ((θ t : ℝ) : ℂ) • (1 : Module.End ℂ (Fin (m + 1) → M)))]
   congr 2
   funext t
-  simp only [Function.comp, map_add, Polynomial.aeval_X, Polynomial.aeval_C,
-    Algebra.algebraMap_eq_smul_one]
+  change Polynomial.aeval (-eeV E)
+    (Polynomial.X + Polynomial.C ((θ t : ℝ) : ℂ)) = -(eeV E - ((θ t : ℝ) : ℂ) • 1)
+  simp only [Polynomial.aeval_add, Polynomial.aeval_X, Polynomial.aeval_C]
+  rw [Algebra.algebraMap_eq_smul_one]
   abel
 
 theorem prodShift_eeV_of_capelli (E : Fin (m + 1) → Fin (m + 1) → Module.End ℂ M) (hE : IsGlRep E)
@@ -282,7 +291,8 @@ theorem prodShift_eeV_of_capelli (E : Fin (m + 1) → Fin (m + 1) → Module.End
       funext b
       rw [hC ω (f b) (hf b)]
       rfl
-    rw [h2, hg, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, hg, map_sum] at h1
     simp only [map_smul] at h1
     rw [sum_shift, shiftPoly_eval, Finset.sum_smul, ← sub_eq_zero, ← Finset.sum_sub_distrib] at h1
     refine Eq.trans (Finset.sum_congr rfl fun k _ => ?_) h1
@@ -310,7 +320,7 @@ theorem prodShift_eeV_of_capelli (E : Fin (m + 1) → Fin (m + 1) → Module.End
     intro k hk
     have e1 : ((shiftPoly θ).coeff k • (-eeV E) ^ k) f =
         ((-eeV E) ^ k) (eeV E (g k)) + ((-eeV E) ^ k) (if k = 0 then 0 else g (k - 1)) := by
-      rw [LinearMap.smul_apply, ← map_smul ((-eeV E) ^ k), ← hcoef k (Finset.mem_range.1 hk), map_add]
+      rw [LinearMap.smul_apply, ← map_smul ((-eeV E) ^ k), ← hcoef k (Finset.mem_range.1 hk), map_add (f := _)]
     have e2 : ((-eeV E) ^ k) (eeV E (g k)) = -(((-eeV E) ^ (k + 1)) (g k)) := by
       rw [pow_succ, Module.End.mul_apply, LinearMap.neg_apply, map_neg, neg_neg]
     rw [e1, e2]

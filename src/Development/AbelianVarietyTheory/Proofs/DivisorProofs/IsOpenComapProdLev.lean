@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocCO
-import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocCO
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem tendsto_inBasis_val (V : HSp D) {n' : ℕ} (h : n' = V.rank) (β : GL (F
     split_ifs <;> simp
   have hz1 : ‖cpt w (z (finCongr h i) (finCongr h j))‖ ≤ 1 :=
     Valued.toNormedField.norm_le_one_iff.2 ((mem_OA_iff _).1 (hz _ _) w)
-  rw [dist_eq_norm, inBasis_apply, e2, map_add, e3, add_sub_cancel_right, map_nsmul, nsmul_eq_mul, norm_mul,
+  rw [dist_eq_norm, inBasis_apply, e2, map_add (f := _), e3, add_sub_cancel_right, map_nsmul, nsmul_eq_mul, norm_mul,
     Nat.cast_pow, norm_pow]
   calc ‖((Formalism.MainNotions.S.Loc.resChar w : ℕ) : Kw w)‖ ^ k * ‖cpt w (z (finCongr h i) (finCongr h j))‖
       ≤ ‖((Formalism.MainNotions.S.Loc.resChar w : ℕ) : Kw w)‖ ^ k * 1 := by gcongr

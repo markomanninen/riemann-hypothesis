@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped BigOperators
 
 theorem UpperTheory.list_ofFn_prod_eq_mul_update_one_of_pairwise_commute :

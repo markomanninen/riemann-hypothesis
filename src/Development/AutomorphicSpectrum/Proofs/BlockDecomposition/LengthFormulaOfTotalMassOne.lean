@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
-import Development.WeilBound.CoreStatements.ThetaDilations.ThetaLint
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilFormulaRange
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SummableOneDivAbsNormSq
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.IntegralAlmostAllPlacesStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianOneByOneIsScalarStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VectorLengthFormulaOfParts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cocompactness
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
+public import Development.WeilBound.CoreStatements.ThetaDilations.ThetaLint
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilFormulaRange
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SummableOneDivAbsNormSq
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.IntegralAlmostAllPlacesStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianOneByOneIsScalarStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VectorLengthFormulaOfParts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cocompactness
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -192,7 +196,8 @@ theorem euler_scaled {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
     rw [hc φinf φ hφi hφ]
     have hprod : ∏ v ∈ S, ∫⁻ X, φ v X ∂(κ v • m v (hermOf (Fv F v) σ T hT)) =
         ((∏ v ∈ S, κ v : ℝ≥0) : ℝ≥0∞) * ∏ v ∈ S, ∫⁻ X, φ v X ∂(m v (hermOf (Fv F v) σ T hT)) := by
-      rw [ENNReal.coe_finset_prod, ← Finset.prod_mul_distrib]
+      push_cast
+      rw [← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun v _ => ?_
       rw [lintegral_smul_measure, ENNReal.smul_def, smul_eq_mul]
     have hne : (∏ v ∈ S, κ v : ℝ≥0) ≠ 0 := Finset.prod_ne_zero_iff.2 fun v _ => hκ v
@@ -241,7 +246,7 @@ theorem mass_formula_of_total_mass_one : MassOne → Prop1 := by
       have h3 := h1 (lam v) (hlam v) (m v) (hm v) _ h2
       rw [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul, hh, h3]
       simp
-    exact summable_of_finite_support (Filter.eventually_cofinite.1 hev)
+    exact summable_of_hasFiniteSupport (Filter.eventually_cofinite.1 hev)
   obtain ⟨c, hc⟩ := euler_scaled σ hcm 1 J hJ 1 T hT hd d b li lam hli hlam mi hmi m hm (cfac E) (cfac_ne_zero E)
     hfin hsum _ hlf t1 t2
   simp only [hh] at hc

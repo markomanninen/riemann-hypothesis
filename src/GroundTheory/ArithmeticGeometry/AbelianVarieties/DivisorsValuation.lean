@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsOrd
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.FunctionFieldPoint
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsOrd
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.FunctionFieldPoint
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -72,7 +76,7 @@ theorem algebraMap_smul_basis (p q : F[X]) :
       (p • (1 : W.toAffine.CoordinateRing) + q • AdjoinRoot.mk W.toAffine.polynomial X) =
       algebraMap F[X] W.toAffine.FunctionField p +
         algebraMap F[X] W.toAffine.FunctionField q * genY W := by
-  rw [map_add, Algebra.smul_def, Algebra.smul_def, mul_one, map_mul,
+  rw [map_add (f := _), Algebra.smul_def, Algebra.smul_def, mul_one, map_mul,
     ← IsScalarTower.algebraMap_apply, ← IsScalarTower.algebraMap_apply]
   rfl
 
@@ -87,7 +91,7 @@ theorem valuation_poly_le_one (w : Valuation W.toAffine.FunctionField ℤᵐ⁰)
     rcases eq_or_ne c 0 with rfl | hc
     · simp
     · exact (hF c hc).le
-  | add p q hp hq => rw [map_add]; exact w.map_add_le hp hq
+  | add p q hp hq => rw [map_add (f := _)]; exact w.map_add_le hp hq
   | monomial n c ih =>
     rw [pow_succ, ← mul_assoc, map_mul, map_mul, ← genX_eq]
     exact mul_le_one' ih hx
@@ -102,7 +106,7 @@ theorem valuation_poly_of_one_lt (w : Valuation W.toAffine.FunctionField ℤᵐ�
         (C p.leadingCoeff * X ^ p.natDegree)) = exp (d * k) := by
       rw [map_mul, map_pow, algebraMap_C_functionField, Valuation.map_mul, Valuation.map_pow,
         hF _ (leadingCoeff_ne_zero.mpr hp), ← genX_eq, hk, one_mul, ← exp_nsmul, h, nsmul_eq_mul]
-    rw [← eraseLead_add_C_mul_X_pow p, map_add]
+    rw [← eraseLead_add_C_mul_X_pow p, map_add (f := _)]
     rcases (eraseLead_natDegree_lt_or_eraseLead_eq_zero p) with hlt | he
     · by_cases he : p.eraseLead = 0
       · rw [he, map_zero, zero_add, hlead]
@@ -133,7 +137,7 @@ noncomputable def weierstrassRHS : F[X] := X ^ 3 + C W.a₂ * X ^ 2 + C W.a₄ *
 theorem genY_sq_add_weierstrassB :
     genY W ^ 2 + algebraMap F[X] W.toAffine.FunctionField (weierstrassB W) * genY W =
       algebraMap F[X] W.toAffine.FunctionField (weierstrassRHS W) := by
-  simp only [weierstrassB, weierstrassRHS, map_add, map_mul, map_pow,
+  simp only [weierstrassB, weierstrassRHS, map_add (f := _), map_mul, map_pow,
     algebraMap_C_functionField, ← genX_eq]
   linear_combination genY_sq_add W
 
@@ -232,57 +236,6 @@ theorem natDegree_norm_smul_basis_of_ne_zero {p q : F[X]} (hp : p ≠ 0) (hq : q
   rw [h]
   norm_cast
 
-theorem eq_valuationInfty_of_genX (w : Valuation W.toAffine.FunctionField ℤᵐ⁰)
-    (hF : ∀ c : F, c ≠ 0 → w (algebraMap F W.toAffine.FunctionField c) = 1)
-    (hx : w (genX W) = exp 2) : w = valuationInfty W := by
-  obtain ⟨m, hm, hm3⟩ := valuation_genY_of_one_lt w hF two_pos hx
-  have hm' : m = 3 := by linarith
-  subst hm'
-  have hA : ∀ a : W.toAffine.CoordinateRing,
-      w (algebraMap _ W.toAffine.FunctionField a) =
-        valuationInfty W (algebraMap _ W.toAffine.FunctionField a) := by
-    intro a
-    rcases eq_or_ne a 0 with rfl | ha
-    · simp
-    rw [valuationInfty_algebraMap, valuationInftyCoord_apply W ha]
-    obtain ⟨p, q, rfl⟩ := exists_smul_basis_eq a
-    rw [algebraMap_smul_basis]
-    rcases eq_or_ne q 0 with rfl | hq
-    · have hp : p ≠ 0 := by rintro rfl; simp at ha
-      rw [natDegree_norm_smul_basis_of_q_eq_zero, map_zero, zero_mul, add_zero,
-        valuation_poly_of_one_lt w hF two_pos hx hp]
-      push_cast; ring_nf
-    · have hwQy : w (algebraMap F[X] W.toAffine.FunctionField q * genY W) =
-          exp (2 * (q.natDegree : ℤ) + 3) := by
-        rw [Valuation.map_mul, valuation_poly_of_one_lt w hF two_pos hx hq, hm, ← exp_add]
-        ring_nf
-      rcases eq_or_ne p 0 with rfl | hp
-      · rw [natDegree_norm_smul_basis_of_p_eq_zero hq, map_zero, zero_add, hwQy]
-        push_cast; ring_nf
-      · rw [natDegree_norm_smul_basis_of_ne_zero hp hq]
-        have hwP := valuation_poly_of_one_lt w hF two_pos hx hp
-        rcases lt_or_gt_of_ne (show (2 * p.natDegree : ℤ) ≠ 2 * q.natDegree + 3 by omega) with
-          hlt | hlt
-        · rw [Valuation.map_add_eq_of_lt_right _ (by rw [hwP, hwQy, exp_lt_exp]; linarith), hwQy,
-            max_eq_right (by omega)]
-          push_cast; ring_nf
-        · rw [Valuation.map_add_eq_of_lt_left _ (by rw [hwP, hwQy, exp_lt_exp]; linarith), hwP,
-            max_eq_left (by omega)]
-          push_cast; ring_nf
-  refine Valuation.ext fun f => ?_
-  obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective W.toAffine.CoordinateRing⁰ f
-  dsimp only
-  have hs : (s : W.toAffine.CoordinateRing) ≠ 0 := nonZeroDivisors.ne_zero s.2
-  have hspec := IsLocalization.mk'_spec W.toAffine.FunctionField a s
-  have h1 := congrArg w hspec
-  have h2 := congrArg (valuationInfty W) hspec
-  rw [Valuation.map_mul, hA, hA] at h1
-  rw [Valuation.map_mul] at h2
-  have hvs : valuationInfty W (algebraMap _ W.toAffine.FunctionField
-      (s : W.toAffine.CoordinateRing)) ≠ 0 :=
-    (Valuation.ne_zero_iff _).mpr ((map_ne_zero_iff _ (IsFractionRing.injective _ _)).mpr hs)
-  exact mul_right_cancel₀ hvs (h1.trans h2.symm)
-
 theorem valuation_coordinateRing_le_one (w : Valuation W.toAffine.FunctionField ℤᵐ⁰)
     (hF : ∀ c : F, c ≠ 0 → w (algebraMap F W.toAffine.FunctionField c) = 1)
     (hx : w (genX W) ≤ 1) (a : W.toAffine.CoordinateRing) :
@@ -299,6 +252,12 @@ section CaseA
 
 variable {W} [IsAlgClosed F] [W.IsElliptic]
 
+local instance : IsDedekindDomain W.toAffine.CoordinateRing := by
+  refine isDedekindDomain_iff_isDiscreteValuationRing_atPrime.mpr ⟨inferInstance, ?_⟩
+  intro P hP0 hP
+  obtain ⟨x, y, h, rfl⟩ := exists_eq_XYIdeal W hP0
+  exact isDiscreteValuationRing_localization_XYIdeal W h
+
 theorem exists_eq_pow_valuation_of_le_one (w : Valuation W.toAffine.FunctionField ℤᵐ⁰)
     (hF : ∀ c : F, c ≠ 0 → w (algebraMap F W.toAffine.FunctionField c) = 1)
     (hx : w (genX W) ≤ 1) (hnt : ∃ f, f ≠ 0 ∧ w f ≠ 1) :
@@ -310,7 +269,7 @@ theorem exists_eq_pow_valuation_of_le_one (w : Valuation W.toAffine.FunctionFiel
     { carrier := {a | w (algebraMap _ W.toAffine.FunctionField a) < 1}
       zero_mem' := by simp
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_ofPred_eq, map_add] at ha hb ⊢
+        simp only [Set.mem_ofPred_eq, map_add (f := _)] at ha hb ⊢
         exact lt_of_le_of_lt (w.map_add _ _) (max_lt ha hb)
       smul_mem' := fun c a ha => by
         simp only [Set.mem_ofPred_eq, smul_eq_mul, map_mul] at ha ⊢

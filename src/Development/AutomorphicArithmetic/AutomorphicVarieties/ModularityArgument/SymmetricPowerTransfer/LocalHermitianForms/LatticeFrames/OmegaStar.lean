@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LatticeFrames.LatticeHomothetyOfEqUnimodular
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.Descent
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LatticeFrames.LatticeHomothetyOfEqUnimodular
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.Descent
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open QuadraticAlgebra
 
 variable {O K : Type} [CommRing O] [Field K] [Algebra O K] {Δ τ : K}
 
-variable (Δ) in
 
+variable (Δ) in
 def mkL (σ : K) : (K × Etau K τ) × (K × Etau K τ) →ₗ[K] Sp Δ τ where
   toFun p := (⟨p.1.1, σ * p.2.1⟩, ⟨⟨p.1.2.re, σ * p.2.2.re⟩, ⟨p.1.2.im, σ * p.2.2.im⟩⟩)
   map_add' a b := by ext <;> simp <;> ring
@@ -41,8 +45,8 @@ theorem mul_mkL (σ : K) (u : Etau K τ) (v w : K × Etau K τ) :
     (((mkL Δ σ (v, w)).1, ofE Δ u * (mkL Δ σ (v, w)).2) : Sp Δ τ) = mkL Δ σ (Mu u v, Mu u w) := by
   ext <;> simp [mkL_apply, Mu, ofE] <;> ring
 
-variable (Δ) in
 
+variable (Δ) in
 def up (σ : K) (S : Set (K × Etau K τ)) : Set (Sp Δ τ) := {x | ∃ v ∈ S, ∃ w ∈ S, x = mkL Δ σ (v, w)}
 
 theorem mem_up {σ : K} (hσ : σ ≠ 0) {S : Set (K × Etau K τ)} {v w : K × Etau K τ} : mkL Δ σ (v, w) ∈ up Δ σ S ↔ v ∈ S ∧ w ∈ S := by
@@ -73,7 +77,7 @@ theorem poly_mem {W : Type} [AddCommGroup W] [Module K W] [Module O W] [IsScalar
   obtain ⟨u2, hu2⟩ := h2
   have e1 : (algebraMap O K ↑u)⁻¹ = algebraMap O K ↑u⁻¹ := (map_units_inv (algebraMap O K) u).symm
   have e2 : (algebraMap O K ↑u * (2 + algebraMap O K ↑u))⁻¹ = algebraMap O K ↑(u * u2)⁻¹ := by
-    rw [map_units_inv, Units.val_mul, map_mul, hu2, map_add, map_ofNat]
+    rw [map_units_inv, Units.val_mul, map_mul, hu2, map_add (f := _), map_ofNat]
   have e3 : algebraMap O K ↑u ^ 2 - 2 = algebraMap O K (↑u ^ 2 - 2) := by
     rw [map_sub, map_pow, map_ofNat]
   rw [e1, e2, e3, algebraMap_smul, algebraMap_smul, algebraMap_smul]
@@ -293,7 +297,7 @@ theorem fix_down (L : IsLoc O Δ) (hσ : Δ * σ ^ 2 = algebraMap O K ε) (h1 : 
           algebraMap O K ↑h2u⁻¹ • ((Mu U a, Mu U b) + (Mu U a, -Mu U b)) := by
         rw [Prod.mk_add_mk, add_neg_cancel, ← two_smul K (Mu U a), Prod.smul_mk, smul_smul, hK, one_smul,
           smul_zero]
-      rw [e, map_smul, map_add, algebraMap_smul]
+      rw [e, map_smul, map_add (f := _), algebraMap_smul]
       exact M.smul_mem _ (M.add_mem hAx hφx)
     · have e : ((0, -Mu U b) : (K × Etau K τ) × (K × Etau K τ)) =
           algebraMap O K ↑h2u⁻¹ • ((Mu U a, -Mu U b) - (Mu U a, Mu U b)) := by
@@ -388,7 +392,7 @@ theorem fix_down (L : IsLoc O Δ) (hσ : Δ * σ ^ 2 = algebraMap O K ε) (h1 : 
       have hv' : mkL Δ σ (v, 0) ∈ M := hv
       have hw' : mkL Δ σ (w, 0) ∈ M := hw
       have key := M.add_mem hv' (hswap2 w hw')
-      rw [← map_add, Prod.mk_add_mk, add_zero, zero_add] at key
+      rw [← map_add (f := _), Prod.mk_add_mk, add_zero, zero_add] at key
       exact key
 
 end UpperTheory.V.Z.Sym.Loc.CP

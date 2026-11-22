@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
+
+@[expose] public section
 
 open MvPolynomial
 

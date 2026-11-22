@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.ConjMemEichSet
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.ConjMemEichSet
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.SA
 
@@ -8,10 +12,10 @@ open Matrix
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] {K : Type*} [CommRing K] {σ : K →+* K}
   {J : Matrix ι ι K}
 
-variable (σ J) in
 
+variable (σ J) in
 def Reach (e f : ι → K) {s : ℕ} (a : Fin s → ι → K) (b b' : ι → K) : Prop :=
-  ∃ p ∈ Good σ J e f, (∀ j, p *ᵥ a j = a j) ∧ p *ᵥ b = b'
+  ∃ p ∈ Good (σ := σ) (J := J) e f, (∀ j, p *ᵥ a j = a j) ∧ p *ᵥ b = b'
 
 section
 variable (hσ : ∀ x, σ (σ x) = x) (hJ : Jᵀ = J.map σ) {e f : ι → K} (he : hf σ J e e = 0)
@@ -20,22 +24,39 @@ variable (hσ : ∀ x, σ (σ x) = x) (hJ : Jᵀ = J.map σ) {e f : ι → K} (h
 include hσ hJ he hff hef
 
 theorem reach_refl (b : ι → K) : Reach σ J e f a b b := by
-  have h1 : (1 : Matrix ι ι K) ∈ Good σ J e f :=
-    ⟨1, Submonoid.one_mem _, 1, 1, by simp, by simp [tor]⟩
+  have h1 : (1 : Matrix ι ι K) ∈ Good (σ := σ) (J := J) e f :=
+    ⟨1, Submonoid.one_mem _, 1, 1, by simp, by rw [tor_one hσ hJ he hff hef, Matrix.mul_one]⟩
   exact ⟨1, h1, fun j => Matrix.one_mulVec _, Matrix.one_mulVec _⟩
 
 theorem reach_trans {b b' b'' : ι → K} (h1 : Reach σ J e f a b b') (h2 : Reach σ J e f a b' b'') :
     Reach σ J e f a b b'' := by
   obtain ⟨p1, hp1, ha1, hb1⟩ := h1
   obtain ⟨p2, hp2, ha2, hb2⟩ := h2
-  refine ⟨p2 * p1, (by apply good_mul <;> assumption), fun j => ?_, ?_⟩
+  have hp : p2 * p1 ∈ Good (σ := σ) (J := J) e f := by
+    obtain ⟨n1, hn1, l1, m1, hml1, rfl⟩ := hp1
+    obtain ⟨n2, hn2, l2, m2, hml2, rfl⟩ := hp2
+    obtain ⟨n', hn', h⟩ := conj_closure hσ hJ he hff hef hml2 hn1
+    refine ⟨n2 * n', Submonoid.mul_mem _ hn2 hn', l2 * l1, m2 * m1, ?_, ?_⟩
+    · rw [map_mul, mul_mul_mul_comm, hml2, hml1, mul_one]
+    · rw [← tor_mul hσ hJ he hff hef, Matrix.mul_assoc n2,
+        ← Matrix.mul_assoc (tor σ J e f l2 m2), h]
+      simp only [Matrix.mul_assoc]
+  refine ⟨p2 * p1, hp, fun j => ?_, ?_⟩
   · rw [← Matrix.mulVec_mulVec, ha1, ha2]
   · rw [← Matrix.mulVec_mulVec, hb1, hb2]
 
 theorem reach_symm {b b' : ι → K} (h : Reach σ J e f a b b') : Reach σ J e f a b' b := by
   obtain ⟨p, hp, ha, hb⟩ := h
-  obtain ⟨g', hg', hg'p, -⟩ : ∃ g' ∈ Good σ J e f, g' * p = 1 ∧ p * g' = 1 := by
-    apply good_inv <;> assumption
+  obtain ⟨g', hg', hg'p⟩ : ∃ g' ∈ Good (σ := σ) (J := J) e f, g' * p = 1 := by
+    obtain ⟨n, hn, l, m, hml, rfl⟩ := hp
+    obtain ⟨ni, hni, hnin, -⟩ := closure_inv hσ hJ he hff hn
+    have hlm : l * σ m = 1 := by rw [← hσ l, ← map_mul, mul_comm, hml, map_one]
+    have hml' : σ l * σ (σ m) = 1 := by rw [hσ, mul_comm, hml]
+    obtain ⟨n', hn', hconj⟩ := conj_closure hσ hJ he hff hef hml' hni
+    refine ⟨tor σ J e f (σ m) (σ l) * ni, ⟨n', hn', σ m, σ l, hml', hconj⟩, ?_⟩
+    rw [Matrix.mul_assoc, ← Matrix.mul_assoc ni, hnin, Matrix.one_mul,
+      tor_mul hσ hJ he hff hef, mul_comm (σ m), hlm, mul_comm (σ l) m, hml,
+      tor_one hσ hJ he hff hef]
   refine ⟨g', hg', fun j => ?_, ?_⟩
   · conv_lhs => rw [← ha j]
     rw [Matrix.mulVec_mulVec, hg'p, Matrix.one_mulVec]
@@ -60,10 +81,10 @@ theorem reach_eich_e {u : ι → K} {c : K} (hue : hf σ J u e = 0) (huf : hf σ
     intro g w v d
     simp only [eich, Matrix.add_mulVec, Matrix.sub_mulVec, Matrix.smul_mulVec,
       Matrix.one_mulVec, hvmv, hdot, smul_smul]
+  have hn : eich σ J e u c ∈ Submonoid.closure (eichSet σ J e f) :=
+    Submonoid.subset_closure (Or.inl ⟨u, c, hue, huf, hc, rfl⟩)
   refine ⟨eich σ J e u c,
-    (by apply good_of_closure <;> first
-      | exact Submonoid.subset_closure (Or.inl ⟨u, c, hue, huf, hc, rfl⟩) | assumption),
-    fun j => ?_, rfl⟩
+    ⟨_, hn, 1, 1, by simp, by rw [tor_one hσ hJ he hff hef, Matrix.mul_one]⟩, fun j => ?_, rfl⟩
   rw [hE, hae j, ← hf_symm hσ hJ u (a j), hua j, map_zero]
   simp
 
@@ -84,10 +105,10 @@ theorem reach_eich_f {u : ι → K} {c : K} (hue : hf σ J u e = 0) (huf : hf σ
     intro g w v d
     simp only [eich, Matrix.add_mulVec, Matrix.sub_mulVec, Matrix.smul_mulVec,
       Matrix.one_mulVec, hvmv, hdot, smul_smul]
+  have hn : eich σ J f u c ∈ Submonoid.closure (eichSet σ J e f) :=
+    Submonoid.subset_closure (Or.inr ⟨u, c, huf, hue, hc, rfl⟩)
   refine ⟨eich σ J f u c,
-    (by apply good_of_closure <;> first
-      | exact Submonoid.subset_closure (Or.inr ⟨u, c, huf, hue, hc, rfl⟩) | assumption),
-    fun j => ?_, rfl⟩
+    ⟨_, hn, 1, 1, by simp, by rw [tor_one hσ hJ he hff hef, Matrix.mul_one]⟩, fun j => ?_, rfl⟩
   rw [hE, haf j, ← hf_symm hσ hJ u (a j), hua j, map_zero]
   simp
 
@@ -107,7 +128,8 @@ theorem reach_tor {l m : K} (hml : m * σ l = 1) (b : ι → K) :
     intro g w v d
     simp only [eich, Matrix.add_mulVec, Matrix.sub_mulVec, Matrix.smul_mulVec,
       Matrix.one_mulVec, hvmv, hdot, smul_smul]
-  refine ⟨tor σ J e f l m, (by apply good_tor <;> assumption), fun j => ?_, rfl⟩
+  refine ⟨tor σ J e f l m, ⟨1, Submonoid.one_mem _, l, m, hml, by rw [Matrix.one_mul]⟩,
+    fun j => ?_, rfl⟩
   simp only [tor, Matrix.add_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, hvmv, hdot,
     haf j, hae j, zero_smul, smul_zero, add_zero]
 
@@ -159,7 +181,7 @@ theorem reachableFixing_add_smul_second {c : K} (hc : σ c = -c) (b : ι → K) 
   rw [hE, h0']
   simp
 
-theorem good_preserves {p : Matrix ι ι K} (hp : p ∈ Good σ J e f) (x y : ι → K) :
+theorem good_preserves {p : Matrix ι ι K} (hp : p ∈ Good (σ := σ) (J := J) e f) (x y : ι → K) :
     hf σ J (p *ᵥ x) (p *ᵥ y) = hf σ J x y := by
   obtain ⟨n, hn, l, m, hml, rfl⟩ := hp
   have key : ∀ g ∈ Submonoid.closure (eichSet σ J e f), ∀ x y : ι → K,

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ private theorem polBot_list (q Q : ℕ) (x : ℂ) (hQ : 2 ≤ Q) (hx : x ^ (Q - 
   induction L with
   | nil => simp
   | cons p L ih =>
-    rw [List.map_cons, List.sum_cons, Multiset.map_add, Multiset.prod_add, ih, List.map_cons, List.prod_cons,
+    rw [List.map_cons, List.sum_cons, Multiset.map_add (f := _), Multiset.prod_add, ih, List.map_cons, List.prod_cons,
       polBot_block Q x hQ hx (fun j => p.2 * q ^ j * ((Q - 1) / (q ^ p.1 - 1))) p.1]
 
 theorem polBot : PolBot := by

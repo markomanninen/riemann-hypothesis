@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleCechConerveImageIsoCechNerveOfPreservesWide
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleCechConerveImageIsoCechNerveOfPreservesWide
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite Simplicial GlobalTheory.EtC
 
@@ -15,12 +19,10 @@ noncomputable def phi (n : ℕ) :
       have h := WidePushout.arrow_ι (fun _ : Fin (n+1) => g) j
       rw [← unop_comp, ← Ψ.map_comp, h])
 
-@[reassoc (attr := simp)]
 lemma phi_π (n : ℕ) (j : Fin (n+1)) :
     phi Ψ g n ≫ WidePullback.π _ j = (Ψ.map (WidePushout.ι _ j)).unop := by
   unfold phi; erw [WidePullback.lift_π]
 
-@[reassoc (attr := simp)]
 lemma phi_base (n : ℕ) :
     phi Ψ g n ≫ WidePullback.base _ = (Ψ.map (WidePushout.head _)).unop := by
   unfold phi; erw [WidePullback.lift_base]

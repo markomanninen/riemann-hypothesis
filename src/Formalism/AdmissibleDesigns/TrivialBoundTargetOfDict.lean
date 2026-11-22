@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.RowTrivialBoundOfAdmitted
+module
+
+public import Formalism.AdmissibleDesigns.RowTrivialBoundOfAdmitted
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -114,8 +118,8 @@ def TBDict2 (cB : ℕ) : Prop :=
         YLoc (O := D.nd.O i) (Mc i Dd c) Dd.r Dd.χ Dd.E (Dw i dc (idx i dc w)) ∧
         LenMap (Br.PD D.loc D.nbr i w hw) (selfO i hw) (Qcore i dc Dd c (idx i dc w) cB) Cd.Ce cB
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 private theorem lenMap_Qcore (cB : ℕ) (hd : TBDict2 i dc r π Dd cB) {w : HeightOneSpectrum (𝓞 D.host.E)}
     (hw : w ∈ placesOver D.host.E (D.nd.l i)) (hwrow : w ∈ dc.row)
     (c : Fin (D.R.t + 1)) (hc : 1 ≤ (c : ℕ)) :
@@ -132,8 +136,8 @@ theorem tbDict_of (cB : ℕ) (h : TBDict2 i dc r π Dd cB) : TBDict i dc r π Dd
   obtain ⟨Y, Cd, h1, h2, h3, -⟩ := h w hw hrow c hc
   exact ⟨Y, Cd, h1, h2, h3⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem tbLen_w (cB : ℕ) (hTB : TrivialBoundAtRows i dc r π cB) (hTie : TruncatedSeriesCountingIdentities.LocalCoefficientCompatibility i)
     (hd : TBDict2 i dc r π Dd cB) {w : HeightOneSpectrum (𝓞 D.host.E)} (hwrow : w ∈ dc.row)
     (c : Fin (D.R.t + 1)) (hc : 1 ≤ (c : ℕ)) : TBLenAt i dc Dd cB (idx i dc w) c := by

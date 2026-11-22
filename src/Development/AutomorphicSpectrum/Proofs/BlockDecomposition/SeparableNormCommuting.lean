@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyEqPowOfIrreducible
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyEqPowOfIrreducible
+
+@[expose] public section
 
 open Polynomial
 
@@ -57,7 +61,7 @@ theorem exists_vec_ann (γ : Matrix (Fin n) (Fin n) K) (hs : γ.charpoly.Separab
       apply hu
       have h1 : (aeval γ (s * p + t * h)).mulVec w = w := by
         rw [hst]; simp
-      rw [map_add, Matrix.add_mulVec, act_mul, act_mul, hpw, hh] at h1
+      rw [map_add (f := _), Matrix.add_mulVec, act_mul, act_mul, hpw, hh] at h1
       simpa using h1.symm
     have hpa : ¬ p ∣ a := by
       rintro ⟨c, rfl⟩
@@ -86,11 +90,11 @@ theorem exists_cyclic_vec (γ : Matrix (Fin n) (Fin n) K) (hs : γ.charpoly.Sepa
   refine ⟨v, ?_⟩
   let L : K[X] →ₗ[K] (Fin n → K) :=
     { toFun := fun p => (aeval γ p).mulVec v
-      map_add' := fun a b => by rw [map_add, Matrix.add_mulVec]
+      map_add' := fun a b => by rw [map_add (f := _), Matrix.add_mulVec]
       map_smul' := fun c a => by rw [map_smul, Matrix.smul_mulVec]; rfl }
   let φ : degreeLT K n →ₗ[K] (Fin n → K) := L.domRestrict (degreeLT K n)
   have hinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨p, hp⟩ h0
     have hd : γ.charpoly ∣ p := hv p h0
     have hlt : p.degree < γ.charpoly.degree := by

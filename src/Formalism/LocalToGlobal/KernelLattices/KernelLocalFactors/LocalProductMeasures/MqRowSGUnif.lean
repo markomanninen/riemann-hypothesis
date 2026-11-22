@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.MuProd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Formalism.LocalToGlobal.Columns.RowFormsSel
-import Formalism.LocalToGlobal.Columns.ChainInst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.MuProd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Formalism.LocalToGlobal.Columns.RowFormsSel
+public import Formalism.LocalToGlobal.Columns.ChainInst
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

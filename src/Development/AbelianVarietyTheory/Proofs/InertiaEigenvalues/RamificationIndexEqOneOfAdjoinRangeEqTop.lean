@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.UnramifiedNormSurj
-import GroundTheory.LocalFields.UnramifiedGalois
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.UnramifiedNormSurj
+public import GroundTheory.LocalFields.UnramifiedGalois
+
+@[expose] public section
+
 open ValuativeRel
 
 namespace GlobalTheory
@@ -15,9 +20,9 @@ theorem ramificationIndex_eq_one_of_adjoin_range_eq_top (F E K L : Type) [Field 
     [Algebra K L] [Algebra E L] [IsScalarTower F K L] [IsScalarTower F E L]
     [ValuativeExtension F E] [ValuativeExtension F K] [ValuativeExtension K L]
     [FiniteDimensional F E] [FiniteDimensional K L] :
-    GroundTheory.LocalField.ramificationIndex F E = 1 →
+    (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation F))) = 1 →
       Algebra.adjoin K (Set.range (algebraMap E L)) = ⊤ →
-        GroundTheory.LocalField.ramificationIndex K L = 1 := by
+        (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1 := by
   intro he hadj
   obtain ⟨ζ, hζ, htop⟩ := exists_isPrimitiveRoot_adjoin_eq_top_of_unramified F E he
   set m := Nat.card 𝓀[E] - 1 with hm_def

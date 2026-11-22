@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.StatementModel
-import Formalism.LocalToGlobal.InertKernelTheory.GenusOneModelExistsLattice
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FormalExponentialAgree
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveEndoAll
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.AdditionIdentityOfSigmaFormulaUnit
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FormalGroupLawFirstHalfHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.ExpLog
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementModel
+public import Formalism.LocalToGlobal.InertKernelTheory.GenusOneModelExistsLattice
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FormalExponentialAgree
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveEndoAll
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.AdditionIdentityOfSigmaFormulaUnit
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FormalGroupLawFirstHalfHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.ExpLog
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+
+@[expose] public section
 
 open PowerSeries
 
@@ -113,7 +117,7 @@ theorem D_phi : D W (phi W C) = PowerSeries.C (C.u : R) * (fw (C • W)).subst (
     have h2 := den_mul_vv W C
     linear_combination (vv W C) * h1 - (D W (vv W C)) * h2
   have hdenD : D W (den W C) = PowerSeries.C C.s * D W X + PowerSeries.C (C.t - C.s * C.r) * D W (wSer W) := by
-    simp only [den, map_add, Derivation.leibniz, smul_eq_mul, D_C, Derivation.map_one_eq_zero]
+    simp only [den, map_add (f := _), Derivation.leibniz, smul_eq_mul, D_C, Derivation.map_one_eq_zero]
     ring
   have hphiD : D W (phi W C) = PowerSeries.C (C.u : R) * ((D W X - PowerSeries.C C.r * D W (wSer W)) * vv W C
       + (X - PowerSeries.C C.r * wSer W) * D W (vv W C)) := by
@@ -149,23 +153,23 @@ section Field
 variable {K : Type} [Field K] [CharZero K] (W : WeierstrassCurve K) (C : WeierstrassCurve.VariableChange K)
 
 theorem derivative_C_mul' (a : K) (f : K⟦X⟧) :
-    derivative K (PowerSeries.C a * f) = PowerSeries.C a * derivative K f := by
+    derivative (PowerSeries.C a * f) = PowerSeries.C a * derivative f := by
   rw [Derivation.leibniz, derivative_C, smul_eq_mul, smul_eq_mul, mul_zero, add_zero]
 
 theorem log_phi : (logSer (C • W)).subst (phi W C) = PowerSeries.C (C.u : K) * logSer W := by
   have hs : HasSubst (phi W C) := HasSubst.of_constantCoeff_zero' (phi_cc W C)
-  have h1 : derivative K (phi W C) * fw W = PowerSeries.C (C.u : K) * (fw (C • W)).subst (phi W C) := by
+  have h1 : derivative (phi W C) * fw W = PowerSeries.C (C.u : K) * (fw (C • W)).subst (phi W C) := by
     rw [← D_phi, CurveSer.D_apply, mul_comm]
   have h2 : (fw (C • W)).subst (phi W C) * (om (C • W)).subst (phi W C) = 1 := by
     rw [← subst_mul hs, CurveSer.fw_mul_om, ← coe_substAlgHom hs, map_one]
   have h3 := CurveSer.fw_mul_om W
-  have hd : derivative K ((logSer (C • W)).subst (phi W C)) = PowerSeries.C (C.u : K) * om W := by
+  have hd : derivative ((logSer (C • W)).subst (phi W C)) = PowerSeries.C (C.u : K) * om W := by
     rw [derivative_subst hs, (logSpec K (C • W)).2.2.1]
-    linear_combination (-((om (C • W)).subst (phi W C) * derivative K (phi W C))) * h3
+    linear_combination (-((om (C • W)).subst (phi W C) * derivative (phi W C))) * h3
       + ((om (C • W)).subst (phi W C) * om W) * h1 + (PowerSeries.C (C.u : K) * om W) * h2
   have hc : constantCoeff ((logSer (C • W)).subst (phi W C)) = 0 :=
     cc_subst0 (phi_cc W C) (logSpec K (C • W)).1
-  have hd2 : derivative K (PowerSeries.C (C.u : K) * logSer W) = PowerSeries.C (C.u : K) * om W := by
+  have hd2 : derivative (PowerSeries.C (C.u : K) * logSer W) = PowerSeries.C (C.u : K) * om W := by
     rw [derivative_C_mul', (logSpec K W).2.2.1]
   have hc2 : constantCoeff (PowerSeries.C (C.u : K) * logSer W) = 0 := by
     simp [(logSpec K W).1]
@@ -233,7 +237,7 @@ theorem intPS_X' : IntPS R' (X : K⟦X⟧) := by
   intro n; rw [coeff_X]; split_ifs; exacts [R'.one_mem, R'.zero_mem]
 
 theorem intPS_add' {f g : K⟦X⟧} (hf : IntPS R' f) (hg : IntPS R' g) : IntPS R' (f + g) := by
-  intro n; rw [map_add]; exact R'.add_mem (hf n) (hg n)
+  intro n; rw [map_add (f := _)]; exact R'.add_mem (hf n) (hg n)
 
 theorem intPS_sub' {f g : K⟦X⟧} (hf : IntPS R' f) (hg : IntPS R' g) : IntPS R' (f - g) := by
   intro n; rw [map_sub]; exact R'.sub_mem (hf n) (hg n)
@@ -483,7 +487,7 @@ theorem integral_psubst {σ : Type*} {y : MvPowerSeries σ ℂ_[p]} (hy0 : MvPow
 theorem cc_subst_keep {a f : PowerSeries ℂ_[p]} (ha : constantCoeff a = 0) :
     constantCoeff (PowerSeries.subst a f) = constantCoeff f := by
   conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const f]
-  rw [← ISer.subHom_apply _ ha, map_add, map_mul, ISer.subHom_X, ISer.subHom_C]
+  rw [← ISer.subHom_apply _ ha, map_add (f := _), map_mul, ISer.subHom_X, ISer.subHom_C]
   simp [ha]
 
 theorem X_mul_shift (F : PowerSeries ℂ_[p]) (ep : ℂ_[p]) :
@@ -599,7 +603,7 @@ theorem change (h5 : 5 ≤ p) (g g' : G1 p) (hOk : g.Ok) (hOk' : g'.Ok) (hl : g'
     ring
   · intro σ a b ha hb
     have hs : MvPowerSeries.constantCoeff (PowerSeries.subst a g.l + PowerSeries.subst b g.l) = 0 := by
-      rw [map_add, hlgcc σ a ha, hlgcc σ b hb, add_zero]
+      rw [map_add (f := _), hlgcc σ a ha, hlgcc σ b hb, add_zero]
     unfold G1.add G1.pt G1.lg
     rw [hpt σ _ hs, hlgs σ a ha, hlgs σ b hb]
     congr 1
@@ -737,7 +741,7 @@ theorem S_int {σ : Type} {H : MvPowerSeries σ ℂ_[p]} (hH : Simeq H 0) (n : �
   | zero => exact S_of_eq (by simp)
   | succ i ih =>
     have e : MvPowerSeries.C (((i : ℤ) + 1 : ℤ) : ℂ_[p]) * H = MvPowerSeries.C ((i : ℤ) : ℂ_[p]) * H + H := by
-      push_cast; rw [map_add, map_one]; ring
+      push_cast; rw [map_add (f := _), map_one]; ring
     rw [e]; exact simeq_zero_add ih hH
   | pred i ih =>
     have e : MvPowerSeries.C ((-(i : ℤ) - 1 : ℤ) : ℂ_[p]) * H = MvPowerSeries.C ((-(i : ℤ) : ℤ) : ℂ_[p]) * H + -H := by
@@ -777,7 +781,7 @@ theorem mulBy_cc (g : G1 p) (hOk : g.Ok) {σ : Type*} (c : ℂ_[p]) {y : MvPower
 theorem add_cc (g : G1 p) (hOk : g.Ok) {σ : Type*} {a b : MvPowerSeries σ ℂ_[p]}
     (ha : MvPowerSeries.constantCoeff a = 0) (hb : MvPowerSeries.constantCoeff b = 0) :
     MvPowerSeries.constantCoeff (g.add a b) = 0 :=
-  pt_cc g hOk (by rw [map_add, lg_cc g hOk ha, lg_cc g hOk hb, add_zero])
+  pt_cc g hOk (by rw [map_add (f := _), lg_cc g hOk ha, lg_cc g hOk hb, add_zero])
 
 theorem msubst_psubst {σ κ : Type} [Finite σ] (s : σ → MvPowerSeries κ ℂ_[p])
     (hs : ∀ i, MvPowerSeries.constantCoeff (s i) = 0) {A : MvPowerSeries σ ℂ_[p]}
@@ -805,7 +809,7 @@ theorem msubst_add (g : G1 p) (hOk : g.Ok) {a b : MvPowerSeries σ ℂ_[p]} (ha 
     MvPowerSeries.subst s (g.add a b) = g.add (MvPowerSeries.subst s a) (MvPowerSeries.subst s b) := by
   have hS : MvPowerSeries.HasSubst s := MvPowerSeries.hasSubst_of_constantCoeff_zero hs
   unfold G1.add
-  rw [msubst_pt s hs g hOk (by rw [map_add, lg_cc g hOk ha, lg_cc g hOk hb, add_zero]),
+  rw [msubst_pt s hs g hOk (by rw [map_add (f := _), lg_cc g hOk ha, lg_cc g hOk hb, add_zero]),
     ← MvPowerSeries.coe_substAlgHom hS, map_add, MvPowerSeries.coe_substAlgHom hS,
     msubst_lg s hs g hOk ha, msubst_lg s hs g hOk hb]
 
@@ -973,7 +977,7 @@ theorem biaddInertAll_of (hB : BiaddInert) (hG : GenusOneWittExists) : BiaddIner
   · have T := S_subst s hsc hsI hB1
     rw [msubst_be s hsc g' hOk' (add_cc g' hOk' (hX0 0) (hX0 1)) (hX0 2), msubst_add s hsc g' hOk' (hX0 0) (hX0 1),
       hsX, hsX, hsX, ← hadd (Fin 3) (Xv 0) (Xv 1) (hX0 0) (hX0 1), hbe _ _ a01c (hX0 2)] at T
-    rw [← MvPowerSeries.coe_substAlgHom hS, map_add, MvPowerSeries.coe_substAlgHom hS,
+    rw [← MvPowerSeries.coe_substAlgHom hS, map_add (f := _), MvPowerSeries.coe_substAlgHom hS,
       msubst_be s hsc g' hOk' (hX0 0) (hX0 2), msubst_be s hsc g' hOk' (hX0 1) (hX0 2), hsX, hsX, hsX,
       hbe _ _ (hX0 0) (hX0 2), hbe _ _ (hX0 1) (hX0 2)] at T
     have T' := S_trans T (S_of_eq (show g.be (Xv 0) (Xv 2) + (PowerSeries.subst (g.add (Xv 0) (Xv 2)) h -
@@ -989,7 +993,7 @@ theorem biaddInertAll_of (hB : BiaddInert) (hG : GenusOneWittExists) : BiaddIner
   · have T := S_subst s hsc hsI hB2
     rw [msubst_be s hsc g' hOk' (hX0 0) (add_cc g' hOk' (hX0 1) (hX0 2)), msubst_add s hsc g' hOk' (hX0 1) (hX0 2),
       hsX, hsX, hsX, ← hadd (Fin 3) (Xv 1) (Xv 2) (hX0 1) (hX0 2), hbe _ _ (hX0 0) a12c] at T
-    rw [← MvPowerSeries.coe_substAlgHom hS, map_add, MvPowerSeries.coe_substAlgHom hS,
+    rw [← MvPowerSeries.coe_substAlgHom hS, map_add (f := _), MvPowerSeries.coe_substAlgHom hS,
       msubst_be s hsc g' hOk' (hX0 0) (hX0 1), msubst_be s hsc g' hOk' (hX0 0) (hX0 2), hsX, hsX, hsX,
       hbe _ _ (hX0 0) (hX0 1), hbe _ _ (hX0 0) (hX0 2)] at T
     have T' := S_trans T (S_of_eq (show g.be (Xv 0) (Xv 1) + (PowerSeries.subst (g.add (Xv 0) (Xv 1)) h -

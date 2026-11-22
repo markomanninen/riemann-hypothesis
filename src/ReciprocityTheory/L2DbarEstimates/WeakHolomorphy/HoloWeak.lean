@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
-import Lemmata.MiscLemmasF.Imports
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
+public import Lemmata.MiscLemmasF.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 

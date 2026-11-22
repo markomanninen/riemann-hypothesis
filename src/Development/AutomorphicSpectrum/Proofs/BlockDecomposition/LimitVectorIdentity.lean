@@ -1,19 +1,23 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRescaledConvergentSubsequenceStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalPairTypedStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairSpaceCarriesFlatStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatAbsoluteCharacterStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TendstoAbsoluteCharacterOneStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CarriesTwistAbsoluteCharacterStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CarriesTwistStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStableTwistStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStableInducedSpanStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalTypedDiscreteStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalTypedExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalTypedNodeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatNodeFunctionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CarriesInducedNodeStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRescaledConvergentSubsequenceStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalPairTypedStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairSpaceCarriesFlatStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatAbsoluteCharacterStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TendstoAbsoluteCharacterOneStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CarriesTwistAbsoluteCharacterStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CarriesTwistStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStableTwistStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStableInducedSpanStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalTypedDiscreteStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalTypedExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalTypedNodeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatNodeFunctionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CarriesInducedNodeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,9 @@ theorem memInd2_of_indSpan {r s : ℕ} {U₁ : Submodule ℂ (Sm E r)} {U₂ : S
 
 theorem finVec_of_indFin {r s : ℕ} {U₁ : Submodule ℂ (Sm E r)} {U₂ : Submodule ℂ (Sm E s)} {φ : Sm E (r + s)}
     (h : φ ∈ indFin U₁ U₂) : φ ∈ finVec (cptRep E (r + s)) :=
-  (Submodule.span_le (p := finVec (cptRep E (r + s)))).2 (fun _ hx => hx.2) h
+  (Submodule.span_le (s := {x | MemInd2 U₁ U₂ x ∧ x ∈ finVec (cptRep E (r + s))})
+    (p := finVec (cptRep E (r + s)))).2
+    (fun x (hx : MemInd2 U₁ U₂ x ∧ x ∈ finVec (cptRep E (r + s))) => hx.2) h
 
 theorem mem_indFin {r s : ℕ} {U₁ : Submodule ℂ (Sm E r)} {U₂ : Submodule ℂ (Sm E s)} {φ : Sm E (r + s)}
     (h₁ : MemInd2 U₁ U₂ φ) (h₂ : φ ∈ finVec (cptRep E (r + s))) : φ ∈ indFin U₁ U₂ :=
@@ -324,7 +330,7 @@ theorem limVec : PositivityTheory.Rg.BcB.SpectralAccumulation.LimVec := by
   · funext i x
     have hA : Tendsto (fun k => heckeAct h (fun j y => c k * f (φ k) j y) i x) atTop (𝓝 (heckeAct h F i x)) := by
       simp only [heckeAct, Finsupp.sum]
-      exact tendsto_finset_sum _ fun j _ => tendsto_finset_sum _ fun g _ => (hft j _).const_mul _
+      exact tendsto_finsetSum _ fun j _ => tendsto_finsetSum _ fun g _ => (hft j _).const_mul _
     have hB : ∀ k, heckeAct h (fun j y => c k * f (φ k) j y) i x = lam (φ k) h * (c k * f (φ k) i x) := by
       intro k
       have h1 : heckeAct h (f (φ k)) i x = lam (φ k) h * f (φ k) i x :=

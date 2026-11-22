@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal Pointwise
@@ -40,7 +44,7 @@ theorem periodized_invariant {π : A →+ A'} (hπ : Measurable π) {s : A' →+
   have key : ∀ x : A, ∑' γ : Γ', f (c + ((γ : A') + π x)) = ∑' γ : Γ', f ((γ : A') + π (s c + x)) := by
     intro x
     refine tsum_congr fun γ => ?_
-    rw [map_add, hs]
+    rw [map_add (f := _), hs]
     congr 1
     abel
   simp_rw [key]
@@ -54,7 +58,7 @@ theorem periodized_invariant {π : A →+ A'} (hπ : Measurable π) {s : A' →+
   show ∑' γ : Γ', f ((γ : A') + π ((g : A) + x)) = ∑' γ : Γ', f ((γ : A') + π x)
   rw [← (Equiv.addRight (⟨π g, hΓ g g.2⟩ : Γ')).tsum_eq (fun γ : Γ' => f ((γ : A') + π x))]
   refine tsum_congr fun γ => ?_
-  simp only [Equiv.coe_addRight, AddSubgroup.coe_add, map_add, add_assoc]
+  simp only [Equiv.coe_addRight, AddSubgroup.coe_add, map_add (f := _), add_assoc]
 
 instance {π : A →+ A'} {Γ' : AddSubgroup A'} [Countable Γ'] {lam : Measure A} [SFinite lam]
     {𝓖 : Set A} : SFinite (periodized π Γ' lam 𝓖) := by
@@ -108,7 +112,7 @@ theorem measure_preimage_inter_eq {π : A →+ A'} (hπ : Measurable π) {s : A'
     have hae : (fun x => (γ : A') + x) ⁻¹' M =ᵐ[lam'] (fun x => (γ : A') + x) ⁻¹' 𝓖' :=
       (measurePreserving_add_left lam' (γ : A')).quasiMeasurePreserving.preimage_ae_eq hMae
     rw [hpre, ← hset]
-    exact measure_congr ((ae_eq_refl T).inter (hνac.ae_eq hae).symm)
+    exact measure_congr (.inter .rfl (hae.filter_mono hνac.ae_le).symm)
   have hPt : ∀ t, MeasurableSet t → P t = P M * lam' t := by
     intro t ht
     have h := measure_add_lintegral_eq lam' P hMm (t.indicator 1) (measurable_one.indicator ht)
@@ -124,7 +128,7 @@ theorem measure_preimage_inter_eq {π : A →+ A'} (hπ : Measurable π) {s : A'
   have hU := claim Set.univ MeasurableSet.univ (fun _ _ _ => by simp)
   rw [Set.preimage_univ, Set.univ_inter, h1, Set.univ_inter] at hU
   rw [claim S hS hinv, hPt _ (hS.inter hMm), ← hU, one_mul]
-  exact measure_congr ((ae_eq_refl S).inter hMae)
+  exact measure_congr (.inter .rfl hMae)
 
 theorem integral_comp_eq : ∀ {A A' : Type} [AddCommGroup A] [TopologicalSpace A] [IsTopologicalAddGroup A] [LocallyCompactSpace A] [T2Space A] [SecondCountableTopology A] [MeasurableSpace A] [BorelSpace A] [AddCommGroup A'] [TopologicalSpace A'] [IsTopologicalAddGroup A'] [LocallyCompactSpace A'] [T2Space A'] [SecondCountableTopology A'] [MeasurableSpace A'] [BorelSpace A'] (π : A →+ A') (s : A' →+ A), Continuous π → Continuous s → (∀ x, π (s x) = x) → ∀ (Γ : AddSubgroup A) (Γ' : AddSubgroup A'), Countable Γ → Countable Γ' → (∀ γ ∈ Γ, π γ ∈ Γ') → (∀ γ ∈ Γ', s γ ∈ Γ) → ∀ (lam : Measure A) (lam' : Measure A'), lam.IsAddHaarMeasure → lam'.IsAddHaarMeasure → ∀ (𝓖 : Set A) (𝓖' : Set A'), IsAddFundamentalDomain Γ 𝓖 lam → lam 𝓖 = 1 → IsAddFundamentalDomain Γ' 𝓖' lam' → lam' 𝓖' = 1 → ∀ G : A' → ℂ, Continuous G → (∀ γ ∈ Γ', ∀ x, G (γ + x) = G x) → ∫ x in 𝓖, G (π x) ∂lam = ∫ x in 𝓖', G x ∂lam' := by
   intro A A' _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ π s hπc _ hs Γ Γ' hΓc hΓ'c hΓ _ lam lam' hlam hlam' 𝓖 𝓖' hG h1 hG' h1' G hGc hGinv

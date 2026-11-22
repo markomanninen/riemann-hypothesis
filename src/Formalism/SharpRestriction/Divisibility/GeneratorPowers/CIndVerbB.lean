@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndVerb
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LinEigPf
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndVerb
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LinEigPf
+
+@[expose] public section
 
 set_option autoImplicit false
 

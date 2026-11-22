@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -39,7 +43,7 @@ theorem exists_functional {T M Ω : Type} [CommRing T] [IsLocalRing T] [AddCommG
     push Not at hcon
     exact hq ((Module.forall_dual_apply_eq_zero_iff (ResidueField T) _).mp hcon)
   refine ⟨LinearMap.mk (AddHom.mk (fun m => algebraMap (ResidueField T) Ω (f (Submodule.Quotient.mk m)))
-    (fun a b => by simp only [Submodule.Quotient.mk_add, map_add])) (fun a m => ?_), ?_⟩
+    (fun a b => by simp only [Submodule.Quotient.mk_add, map_add (f := _)])) (fun a m => ?_), ?_⟩
   · have hs : (Submodule.Quotient.mk (a • m) : M ⧸ N) = residue T a • Submodule.Quotient.mk m := rfl
     simp only [RingHom.id_apply]
     rw [hs, map_smul, smul_eq_mul, map_mul, Algebra.smul_def, IsScalarTower.algebraMap_apply T (ResidueField T) Ω a]
@@ -75,7 +79,11 @@ theorem compat {c₀ : O →+* F} {θ : F →+* F₁} (hc : θ.comp c₀ = (alge
     (h1 : lam ⟨1, W.one_mem⟩ ≠ 0) (o : O) :
     algebraMap (ResidueField O) Ω (residue O o) = algebraMap T Ω (algebraMap O T o) := by
   classical
-  let s : ResidueField T →ₐ[ResidueField O] Ω := IsAlgClosed.lift
+  let s : ResidueField T →ₐ[ResidueField O] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hco : ∀ x, θ (c₀ x) = algebraMap T F₁ (algebraMap O T x) := fun x => RingHom.congr_fun hc x
   have hmem : ∀ x, θ (c₀ x) ∈ Subalgebra.toSubmodule W := fun x => by
     rw [Subalgebra.mem_toSubmodule, hco]
@@ -130,14 +138,16 @@ theorem comp_div {c₀ : O →+* F} {θ : F →+* F₁} (hc : θ.comp c₀ = (al
     simp only [cc, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
-    conv_rhs => rw [← b.sum_repr (residue T (r i)), map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← b.sum_repr (residue T (r i)), map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun t' _ => ?_
     rw [map_smul, ← ho, Algebra.smul_def]
     ring
   have he : (⟨_, hsum⟩ : Subalgebra.toSubmodule W) = ∑ i, algebraMap O T (o t i) • ⟨θ (w i), hw i⟩ := by
     ext
     simp [Algebra.smul_def]
-  rw [he, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [he, map_sum]
   have hct : cc t = 0 := by rw [hcc]; rfl
   rw [← hct]
   simp only [cc, map_smul, Algebra.smul_def, hcompat]
@@ -162,7 +172,8 @@ theorem div_span (hinj : Function.Injective (algebraMap T F₁)) {c₀ : O →+*
   have hdiff : ∀ i, ∃ r' : T, r i = ∑ t, algebraMap O T (o t i) * β t + algebraMap O T π * r' := by
     intro i
     have hm : r i - ∑ t, algebraMap O T (o t i) * β t ∈ maximalIdeal T := by
-      rw [← IsLocalRing.residue_eq_zero_iff, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← IsLocalRing.residue_eq_zero_iff, map_sub, map_sum]
       simp only [map_mul, ← IsLocalRing.ResidueField.algebraMap_residue, ho, hβ]
       conv_lhs => enter [1]; rw [← b.sum_repr (residue T (r i))]
       simp [Algebra.smul_def]
@@ -175,14 +186,16 @@ theorem div_span (hinj : Function.Injective (algebraMap T F₁)) {c₀ : O →+*
     intro t
     have hne : θ (c₀ π) ≠ 0 := by rw [hco]; exact hϖ
     have hval : θ ((∑ i, c₀ (o t i) * w i) * (c₀ π)⁻¹) = y' t := by
-      rw [map_mul, map_inv₀, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_mul, map_inv₀, map_sum]
       simp only [map_mul, hco]
       rw [hyeq t, mul_comm, ← mul_assoc, inv_mul_cancel₀ hϖ, one_mul]
     exact ⟨_, by rw [Set.mem_preimage, hval]; exact hy' t, hval⟩
   have hyeq' : y = ∑ t, algebraMap T F₁ (β t) * y' t + ∑ i, algebraMap T F₁ (r' i) * θ (w i) := by
     apply mul_left_cancel₀ hϖ
     rw [← hr]
-    simp only [hr', map_add, map_sum, map_mul, add_mul, Finset.sum_add_distrib, Finset.sum_mul, mul_add, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hr', map_add (f := _), map_sum, map_mul, add_mul, Finset.sum_add_distrib, Finset.sum_mul, mul_add, Finset.mul_sum]
     congr 1
     · rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun t _ => ?_

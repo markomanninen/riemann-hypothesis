@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WwMain
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LFunctionMinors.FintypeColChoice
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WwMain
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LFunctionMinors.FintypeColChoice
+
+@[expose] public section
 
 open MvPolynomial Finset
 
@@ -54,7 +58,8 @@ theorem wwMain_of (hE : EvalH) (hL : LH) (hLin : LLin) (hD : DeXCB) : WwMain := 
       funext v
       simp [mul_comm]
     rw [hy, hQ (fun s a j => ∑ b : Fin N1, z (s, a, b) * y' s b j), hD Lt l N0 N1 nu z y']
-    simp only [map_sum, map_mul, eval_C, C_mul', map_smul, smul_eq_mul, MvPolynomial.smul_eval,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, eval_C, C_mul', map_smul, smul_eq_mul, MvPolynomial.smul_eval,
       hE Lt l N0 N1 ph]
   rw [hP, Lfun_sum hLin, finsum_eq_sum_of_fintype]
   refine Finset.sum_congr rfl fun I _ => ?_

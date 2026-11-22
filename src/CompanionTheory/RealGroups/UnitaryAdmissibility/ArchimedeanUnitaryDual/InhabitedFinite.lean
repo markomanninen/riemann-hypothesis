@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
+
+@[expose] public section
 
 noncomputable section
 

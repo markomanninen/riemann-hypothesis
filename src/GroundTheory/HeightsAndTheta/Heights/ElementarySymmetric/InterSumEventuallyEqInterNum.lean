@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumEventual
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumAdditive
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumCut
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumPointDeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumEventual
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumAdditive
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumCut
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumPointDeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

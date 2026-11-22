@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFStep
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFSecRed
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFStep
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFSecRed
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -14,8 +19,8 @@ section Fibre
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
   {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
 
-open Classical in
 
+open Classical in
 def baseSubst (κ : K → K') {v : (Σ k, ι k) → (Σ k', ι' k')} {P' : Ideal (MRing ι')} (G : GenFibre v P') :
     MRing ι' →+* MRingOver G.Φ (fibreIdx ι' κ) :=
   eval₂Hom (algebraMap ℤ _) fun q =>

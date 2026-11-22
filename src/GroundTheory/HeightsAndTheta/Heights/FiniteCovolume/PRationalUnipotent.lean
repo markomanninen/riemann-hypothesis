@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StRationalUnipotent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StRationalUnipotent
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -17,7 +21,7 @@ namespace RationalUnipotent
 def unipMap (h : HermitianForm F E W) (x₀ y : W) (c : E) : W →ₗ[E] W where
   toFun x := x + (h.toSesq x₀ x * c - h.toSesq y x) • x₀ + h.toSesq x₀ x • y
   map_add' a b := by
-    simp only [map_add]
+    simp only [map_add (f := _)]
     module
   map_smul' r a := by
     simp only [map_smul, smul_eq_mul, RingHom.id_apply]
@@ -27,14 +31,14 @@ omit [NumberField E] in
 theorem unipMap_apply (h : HermitianForm F E W) (x₀ y : W) (c : E) (x : W) :
     unipMap h x₀ y c x = x + (h.toSesq x₀ x * c - h.toSesq y x) • x₀ + h.toSesq x₀ x • y := rfl
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem sesq_swap (h : HermitianForm F E W) (u v : W) :
     h.toSesq u v = conj F E (h.toSesq v u) :=
   (h.isSymm.eq v u).symm
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem sesq_smul_left (h : HermitianForm F E W) (r : E) (u v : W) :
     h.toSesq (r • u) v = conj F E r * h.toSesq u v := by
   rw [LinearMap.map_smulₛₗ₂]
@@ -45,7 +49,7 @@ theorem unipMap_unipMap (h : HermitianForm F E W) {x₀ y : W} {c : E}
     (hc : c + conj F E c = -h.toSesq y y) (x : W) :
     unipMap h x₀ y c (unipMap h x₀ (-y) (conj F E c) x) = x := by
   have hy' : h.toSesq y x₀ = 0 := by rw [sesq_swap, hy, map_zero]
-  simp only [unipMap_apply, map_add, map_smul, map_neg, LinearMap.neg_apply, hx₀, hy, hy']
+  simp only [unipMap_apply, map_add (f := _), map_smul, map_neg, LinearMap.neg_apply, hx₀, hy, hy']
   have key : h.toSesq x₀ x * conj F E c - -h.toSesq y x +
       (h.toSesq x₀ x * c - (h.toSesq y x + -(h.toSesq x₀ x * h.toSesq y y))) = 0 := by
     linear_combination h.toSesq x₀ x * hc
@@ -56,7 +60,7 @@ theorem sesq_unipMap (h : HermitianForm F E W) {x₀ y : W} {c : E}
     (hc : c + conj F E c = -h.toSesq y y) (x x' : W) :
     h.toSesq (unipMap h x₀ y c x) (unipMap h x₀ y c x') = h.toSesq x x' := by
   have hy' : h.toSesq y x₀ = 0 := by rw [sesq_swap, hy, map_zero]
-  simp only [unipMap_apply, map_add, map_smul, smul_eq_mul, LinearMap.add_apply,
+  simp only [unipMap_apply, map_add (f := _), map_smul, smul_eq_mul, LinearMap.add_apply,
     sesq_smul_left, hx₀, hy, hy', map_sub, map_mul, mul_zero, add_zero]
   rw [sesq_swap h x x₀, sesq_swap h x y]
   linear_combination conj F E (h.toSesq x₀ x) * h.toSesq x₀ x' * hc
@@ -93,8 +97,8 @@ theorem unipMap_mem (h : HermitianForm F E W) {La : AddSubgroup W}
   refine add_mem (add_mem hx (smul_mem ?_ hx₀)) (smul_mem (hint x₀ hx₀ x hx) hy)
   exact sub_mem (mul_mem (hint x₀ hx₀ x hx) hc) (hint y hy x hx)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem conj_mem_integralClosure {c : E} (hc : c ∈ integralClosure ℤ E) :
     conj F E c ∈ integralClosure ℤ E :=
   (mem_integralClosure_iff ℤ E).2
@@ -102,8 +106,8 @@ theorem conj_mem_integralClosure {c : E} (hc : c ∈ integralClosure ℤ E) :
 
 end RationalUnipotent
 
-open RationalUnipotent in
 
+open RationalUnipotent in
 theorem RationalUnipotent.proof (h : HermitianForm F E W) : RationalUnipotent.Statement h := by
   intro D La x₀ w₀ hD hx₀ hp
   refine ⟨1, one_pos, ?_⟩

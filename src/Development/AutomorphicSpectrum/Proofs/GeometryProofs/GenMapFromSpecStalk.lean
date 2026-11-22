@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.Ar.LieCarrier
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
+open GlobalTheory.CompanionTheory.Ar (dualMap)
 
 variable {S : Scheme.{0}} {R R' : Type} [CommRing R] [CommRing R']
 

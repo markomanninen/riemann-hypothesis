@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.KAtCompact
-import Development.WeilBound.ThetaLifts.LocalTheory.AdmissiblePureTensorSchwartz
-import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
-import Development.WeilBound.ThetaLifts.SmallCones.SoDefs
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.FullOfSoLoc
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.KAtCompact
+public import Development.WeilBound.ThetaLifts.LocalTheory.AdmissiblePureTensorSchwartz
+public import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
+public import Development.WeilBound.ThetaLifts.SmallCones.SoDefs
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.FullOfSoLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ theorem tate' (hI : IdeleFub) (hJ : IdealId0) (hS : StabEx) {B : Base F E} {M : 
       congr 1
       have q : algebraMap (AF F) (AE F E) (idem F v) * algebraMap (AF F) (AE F E) (idem F v) =
           algebraMap (AF F) (AE F E) (idem F v) := by rw [← map_mul, idem_sq]
-      rw [Subgroup.coe_mul, Units.val_mul, map_mul, hl₀, map_add, map_smul, map_smul, map_natCast, map_one]
+      rw [Subgroup.coe_mul, Units.val_mul, map_mul, hl₀, map_add (f := _), map_smul, map_smul, map_natCast, map_one]
       simp only [Algebra.smul_def, smul_eq_mul, map_mul, map_sub, map_one, map_natCast, Algebra.algebraMap_self, RingHom.id_apply]
       linear_combination ((N : AE F E) * c l.1.1 - c l.1.1) * q
     have h0 : (0 : ℝ) < absE F E l₀.1 := by
@@ -103,8 +107,10 @@ theorem int_lin {α Y : Type} [MeasurableSpace α] (μ : Measure α) (G : α →
       by_cases h : ∃ g', Φ g' = g
       · obtain ⟨g', rfl⟩ := h
         simpa only [inj.eq_iff] using hm g'
-      · convert MeasurableSet.empty
-        exact Set.eq_empty_of_forall_notMem fun a ha => h ⟨_, ha⟩) D
+      · have he : {a | Φ (G a) = g} = ∅ :=
+          Set.eq_empty_of_forall_notMem fun a ha => h ⟨G a, ha⟩
+        rw [he]
+        exact MeasurableSet.empty) D
     (fun a ha => by rw [hD a ha]; funext o; cases o <;> simp [Φ]) hw
     (LinearMap.ker (LinearMap.proj none - l ∘ₗ LinearMap.funLeft ℂ ℂ some)) fun a => by
       rw [LinearMap.mem_ker, LinearMap.sub_apply, sub_eq_zero]; rfl).2
@@ -152,7 +158,8 @@ theorem loc_form {V : Type} [AddCommGroup V] [Module (AF F) V] {Bf : V → V →
     (v : Pl F) (x u : V) :
     (locCo co v x).1 ⬝ᵥ (locCo co v u).2 - (locCo co v u).1 ⬝ᵥ (locCo co v x).2 = evFin F v (Bf x u) := by
   rw [co.form]
-  simp [GlobalTheory.LatVac.locCo, dotProduct, map_sum, map_mul, map_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [GlobalTheory.LatVac.locCo, dotProduct, map_sum, map_mul, map_sub]
 
 theorem rv_add (B : Base F E) (M : Model σ X W) (v : Pl F) {x : Fin d → E} (hx : form σ W.J x x = 0) (p q : Fin n → AE F E)
     (φ : Fl F v n d) : rv B M v (Matrix.vecMulVec (p + q) (incV F x)) φ =
@@ -162,7 +169,8 @@ theorem rv_add (B : Base F E) (M : Model σ X W) (v : Pl F) {x : Fin d → E} (h
       have := congrArg (inclR (F := F) (AF F)) hx
       rw [map_zero] at this
       rw [← this]
-      simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, mul_assoc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, mul_assoc]
       rfl
     calc _ = ∑ i, ∑ k, p i * incM F X.J i k * cA σ (q k) * ∑ j, ∑ l, incV F x j * incM F W.J j l * cA σ (incV F x l) := by
           simp only [hTens, Matrix.vecMulVec_apply, map_mul, Finset.mul_sum]
@@ -170,13 +178,13 @@ theorem rv_add (B : Base F E) (M : Model σ X W) (v : Pl F) {x : Fin d → E} (h
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun l _ => by ring
       _ = 0 := by simp [e]
-  rw [rv, rv, rv, schr_mul, loc_form, symp, h0, Matrix.add_vecMulVec, map_add]
+  rw [rv, rv, rv, schr_mul, loc_form, symp, h0, Matrix.add_vecMulVec, map_add (f := _)]
   simp
 
 theorem span_soLoc (hL : LinEx) {B : Base F E} (hB : B.IsGood σ) {r s r' s'} (hX : X.IsHerm σ B r s) (hW : W.IsSkew σ B r' s')
     (M : Model σ X W) {v : Pl F} (t : E →ₐ[F] Fv F v) {φ} (h : φ ∈ Submodule.span ℂ (M.SoLoc B.ψ t)) : φ ∈ M.SoLoc B.ψ t := by
   obtain ⟨⟨ι, hι⟩, -⟩ := hL F E σ B n d X W M r s r' s' hB hX hW v t
-  refine ⟨(Submodule.span_le.2 fun _ h => h.1 : _ ≤ SB _) h, ι, hι, fun Y hY => ?_⟩
+  refine ⟨(Submodule.span_le.2 fun χ (hχ : χ ∈ M.SoLoc B.ψ t) => hχ.1 : _ ≤ SB _) h, ι, hι, fun Y hY => ?_⟩
   have : Submodule.span ℂ (M.SoLoc B.ψ t) ≤ LinearMap.ker (LinearMap.proj Y ∘ₗ ι) := Submodule.span_le.2 fun χ hχ =>
     PositivityTheory.KCo.full_of_soLoc M hB.cm hB.std (Fr.det_ne (.inl hX)) (Fr.det_ne (.inr hW)) hι hχ Y hY
   exact this h

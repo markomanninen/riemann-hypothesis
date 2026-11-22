@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory
@@ -38,7 +43,7 @@ theorem exists_lagrangian_containing_isotropic_rat : ∀ (g r : ℕ) (Mq : Matri
       have h2 := hvL a' ha'
       have h3 : B a v = 0 := by rw [hskewB, hvL a ha, neg_zero]
       have h4 := hBalt v
-      simp [map_add, map_smul, h1, h2, h3, h4]
+      simp [map_add (f := _), map_smul, h1, h2, h3, h4]
     have hP : P (finrank ℚ ↥(L ⊔ Submodule.span ℚ {v})) :=
       ⟨_, hIL.trans le_sup_left, hiso, rfl⟩
     have h5 := Nat.le_findGreatest (by simpa using Submodule.finrank_le (L ⊔ Submodule.span ℚ {v})) hP

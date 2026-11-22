@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+
+@[expose] public section
 
 open Topology Filter NumberField IsDedekindDomain WithZero Function
 open scoped NumberField.AdeleRing
@@ -57,26 +61,36 @@ namespace Modulus
 
 variable (𝔪 : Modulus K)
 
-def exponent (v : HeightOneSpectrum (𝓞 K)) : ℕ :=
-  multiplicity v.asIdeal 𝔪.ideal
+def exponent (v : HeightOneSpectrum (𝓞 K)) : ℕ := by
+  classical
+  exact if FiniteMultiplicity v.asIdeal 𝔪.ideal then multiplicity v.asIdeal 𝔪.ideal else 1
 
 omit [NumberField K] in
 theorem exponent_eq_zero_iff (v : HeightOneSpectrum (𝓞 K)) :
-    𝔪.exponent v = 0 ↔ ¬ v.asIdeal ∣ 𝔪.ideal :=
-  multiplicity_eq_zero
+    𝔪.exponent v = 0 ↔ ¬ v.asIdeal ∣ 𝔪.ideal := by
+  by_cases h : FiniteMultiplicity v.asIdeal 𝔪.ideal
+  · simpa [exponent, h] using (multiplicity_eq_zero h)
+  · have hd : v.asIdeal ∣ 𝔪.ideal := by
+      simpa using (FiniteMultiplicity.not_iff_forall.1 h 1)
+    simp [exponent, h, hd]
 
 omit [NumberField K] in
 theorem one_le_exponent_iff (v : HeightOneSpectrum (𝓞 K)) :
     1 ≤ 𝔪.exponent v ↔ v.asIdeal ∣ 𝔪.ideal := by
   rw [Nat.one_le_iff_ne_zero, Ne, exponent_eq_zero_iff, not_not]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem asIdeal_pow_exponent_dvd (v : HeightOneSpectrum (𝓞 K)) :
-    v.asIdeal ^ 𝔪.exponent v ∣ 𝔪.ideal :=
-  pow_multiplicity_dvd _ _
+    v.asIdeal ^ 𝔪.exponent v ∣ 𝔪.ideal := by
+  by_cases h : FiniteMultiplicity v.asIdeal 𝔪.ideal
+  · simpa [exponent, h] using (pow_multiplicity_dvd v.asIdeal 𝔪.ideal)
+  · exact FiniteMultiplicity.not_iff_forall.1 h _
 
 theorem finite_support_exponent : (support 𝔪.exponent).Finite := by
+  have he (v : HeightOneSpectrum (𝓞 K)) : 𝔪.exponent v = multiplicity v.asIdeal 𝔪.ideal := by
+    simp [exponent, FiniteMultiplicity.of_prime_left v.prime 𝔪.ideal_ne_bot]
+  simp_rw [funext he]
   have hm : HasFiniteMulSupport fun v : HeightOneSpectrum (𝓞 K) ↦
       v.asIdeal ^ multiplicity v.asIdeal 𝔪.ideal := by
     simpa only [HeightOneSpectrum.maxPowDividing_eq_pow_multiplicity 𝔪.ideal_ne_bot] using
@@ -95,32 +109,15 @@ theorem mem_congruenceSubgroup {x : IdeleGroup K} :
   rw [congruenceSubgroup, Subgroup.mem_inf, Subgroup.mem_comap, idealLevel, mem_finiteLevel,
     mem_positiveAt]
   simp only [finiteComponent_toFinite]
-  rfl
-
-theorem mem_congruenceSubgroup_iff {x : IdeleGroup K} :
-    x ∈ 𝔪.congruenceSubgroup ↔
-      (∀ v, v.asIdeal ∣ 𝔪.ideal →
-          Valued.v ((x : 𝔸[K]).2 v - 1) ≤ exp (-(𝔪.exponent v : ℤ))) ∧
-        (∀ v, ¬ v.asIdeal ∣ 𝔪.ideal → Valued.v ((x : 𝔸[K]).2 v) = 1) ∧
-        ∀ w ∈ 𝔪.real, 0 < InfinitePlace.Completion.extensionEmbeddingOfIsReal w.2
-          ((x : 𝔸[K]).1 w.1) := by
-  rw [mem_congruenceSubgroup]
-  constructor
-  · rintro ⟨hf, hi⟩
-    refine ⟨fun v hv ↦ (hf v).2, fun v hv ↦ (hf v).1, hi⟩
-  · rintro ⟨hd, hn, hi⟩
-    refine ⟨fun v ↦ ?_, hi⟩
-    by_cases hv : v.asIdeal ∣ 𝔪.ideal
-    · exact (mem_unitsLevel_of_one_le ((𝔪.one_le_exponent_iff v).2 hv)).2 (hd v hv)
-    · rw [(𝔪.exponent_eq_zero_iff v).2 hv, mem_unitsLevel]
-      refine ⟨hn v hv, ?_⟩
-      rw [Nat.cast_zero, neg_zero, exp_zero]
-      exact Valuation.map_sub_le _ (hn v hv).le (by simp)
+  simp [exponent, FiniteMultiplicity.of_prime_left _ 𝔪.ideal_ne_bot, HeightOneSpectrum.prime]
 
 theorem isOpen_congruenceSubgroup : IsOpen (𝔪.congruenceSubgroup : Set (IdeleGroup K)) := by
   rw [congruenceSubgroup, Subgroup.coe_inf, Subgroup.coe_comap]
   refine IsOpen.inter ?_ (isOpen_positiveAt _)
-  exact (isOpen_finiteLevel 𝔪.finite_support_exponent).preimage (continuous_toFinite K)
+  have he (v : HeightOneSpectrum (𝓞 K)) : 𝔪.exponent v = multiplicity v.asIdeal 𝔪.ideal := by
+    simp [exponent, FiniteMultiplicity.of_prime_left v.prime 𝔪.ideal_ne_bot]
+  simpa only [idealLevel, funext he] using
+    (isOpen_finiteLevel 𝔪.finite_support_exponent).preimage (continuous_toFinite K)
 
 theorem congruenceSubgroup_le_standardOpenSubgroup :
     𝔪.congruenceSubgroup ≤ standardOpenSubgroup K := fun x hx ↦ by
@@ -171,7 +168,7 @@ theorem mem_rayUnits {a : Kˣ} :
   · have hc : ∀ k : K, (k : v.adicCompletion K) = algebraMap K (v.adicCompletion K) k := fun k ↦ by
       rw [HeightOneSpectrum.algebraMap_adicCompletion]
       rfl
-    rw [mem_unitsLevel_of_one_le ((𝔪.one_le_exponent_iff v).2 hv), coe_finiteProj_diagonal,
+    rw [GroundTheory.Global.mem_unitsLevel_of_one_le ((𝔪.one_le_exponent_iff v).2 hv), coe_finiteProj_diagonal,
       ← HeightOneSpectrum.valuedAdicCompletion_eq_valuation', hc, hc,
       (algebraMap K (v.adicCompletion K)).map_sub, (algebraMap K (v.adicCompletion K)).map_one]
   · rw [coe_infiniteProj_diagonal]

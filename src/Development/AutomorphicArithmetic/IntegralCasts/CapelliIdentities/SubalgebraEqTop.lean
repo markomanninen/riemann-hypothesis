@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qe26.IsInv :
     {Γ : Type} →
@@ -116,7 +120,7 @@ theorem UpperTheory.Reformulated.B.Qe26.kerLe :
     rintro _ ⟨y, rfl⟩
     induction y using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => rw [map_add]; exact add_mem ha hb
+    | add a b ha hb => simp only [map_add]; exact add_mem ha hb
     | single g c =>
       have : Φ.toLinearMap (MonoidAlgebra.single g c) = c • φ g := by simp [hΦ]
       rw [this]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
-import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+public import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC GroundTheory.FunctionField UpperTheory.Et.Sel LateralTheory.E.E4
 open scoped TensorProduct
@@ -51,7 +55,8 @@ private theorem dom_fg {k R A ι : Type} [Field k] [IsAlgClosed k] [CommRing R] 
   have hψ : ∀ (c : ι → R) (u : Finset ι),
       ψ (∑ i ∈ u, c i ⊗ₜ[k] e i) = ∑ i ∈ u, φ (c i) • e i := by
     intro c u
-    simp [ψ, map_sum, Algebra.TensorProduct.lift_tmul, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [ψ, map_sum, Algebra.TensorProduct.lift_tmul, Algebra.smul_def]
   have h2 := congrArg ψ h
   rw [map_mul, hψ, hψ, map_zero] at h2
   rcases mul_eq_zero.mp h2 with h3 | h3
@@ -89,12 +94,14 @@ private theorem dom_tensor (k K L : Type) [Field k] [IsAlgClosed k] [Field K] [F
     have := Module.Flat.rTensor_preserves_injective_linearMap (M := K) R.val.toLinearMap Subtype.val_injective
     exact this
   have hja : j (∑ i ∈ (E x).support, a i ⊗ₜ[k] e i) = x := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [hrep x]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp [j, a]
   have hjb : j (∑ i ∈ (E y).support, b i ⊗ₜ[k] e i) = y := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [hrep y]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp [j, b]
@@ -158,6 +165,6 @@ theorem UpperTheory.isCurve_pullback_of_isCurve_baseChange :
       Set.eq_univ_of_forall fun q => specializes_iff_mem_closure.mp (hall q)
     rw [Set.top_eq_univ, ← hcl]
     exact isIrreducible_singleton.closure
-  haveI := isSmoothOfRelativeDimension_isStableUnderBaseChange 1
+  haveI := smoothOfRelativeDimension_isStableUnderBaseChange 1
   refine ⟨isIntegral_of_irreducibleSpace_of_isReduced _, inferInstance, ?_⟩
   exact MorphismProperty.of_isPullback (P := @SmoothOfRelativeDimension 1) (IsPullback.of_hasPullback c g) h3

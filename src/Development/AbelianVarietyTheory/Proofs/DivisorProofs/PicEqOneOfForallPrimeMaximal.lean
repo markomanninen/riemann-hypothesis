@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open PrimeSpectrum
 
@@ -101,7 +105,8 @@ theorem free_of_invertible_of_forall_isMaximal
   let x : M := ∑ k ∈ S, e' k • k.2
   let φ : Module.Dual R M := ∑ l ∈ S, (b l * e' l) • l.1
   have hφx : φ x = ∑ l ∈ S, e' l := by
-    simp only [φ, x, LinearMap.sum_apply, LinearMap.smul_apply, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [φ, x, LinearMap.sum_apply, LinearMap.smul_apply, map_sum,
       map_smul, smul_eq_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun l hl => ?_
     rw [Finset.sum_eq_single l]

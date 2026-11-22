@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SizeStepAlt
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SizeStepAlt
+
+@[expose] public section
 
 noncomputable section
 

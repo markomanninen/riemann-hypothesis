@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.OpenCoset
+module
+
+public import Development.EtaleCohomology.DivisorCycles.OpenCoset
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div
 namespace LateralTheory.DivDb.SpecLiePf
@@ -18,7 +22,8 @@ theorem SpecLie_of (hS : SpecPt) : SpecLie := by
       (by rintro g ⟨A, B, -, -, -, rfl⟩; exact ⟨(A, B), rfl⟩)
   have haG : ∀ g ∈ G, MvPolynomial.aeval x g ≠ 0 := by
     rintro g ⟨A, B, hA, hB, hAB, rfl⟩
-    simp only [gAB, map_sub, map_mul, map_sum, MvPolynomial.aeval_X, x, Sum.elim_inr, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [gAB, map_sub, map_mul, map_sum, MvPolynomial.aeval_X, x, Sum.elim_inr, map_natCast]
     exact sub_ne_zero.mpr (hL A B hA hB hAB)
   obtain ⟨y, hy, hyG⟩ := hS K K' _ x G hGf haG
   refine ⟨Matrix.of fun a b => y (Sum.inl (a, b)), fun i => y (Sum.inr i), ?_, ?_, ?_⟩
@@ -31,12 +36,15 @@ theorem SpecLie_of (hS : SpecPt) : SpecLie := by
       MvPolynomial.C (MvPolynomial.eval (fun q : Fin N × Fin N => (1 : Matrix (Fin N) (Fin N) K) q.1 q.2)
         (MvPolynomial.pderiv p f)) * MvPolynomial.X (Sum.inl p)
     have hxL : MvPolynomial.aeval x L = 0 := by
-      simpa only [L, map_sum, map_mul, MvPolynomial.aeval_C, MvPolynomial.aeval_X, x, Sum.elim_inl] using h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [L, map_sum, map_mul, MvPolynomial.aeval_C, MvPolynomial.aeval_X, x, Sum.elim_inl] using h0
     have h1 := hy L hxL
-    simpa only [L, dAt, ev, map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Matrix.of_apply] using h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [L, dAt, ev, map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Matrix.of_apply] using h1
   · intro A B hA hB hAB
     have h1 := hyG _ ⟨A, B, hA, hB, hAB, rfl⟩
-    simp only [gAB, map_sub, map_mul, map_sum, MvPolynomial.eval_C, MvPolynomial.eval_X] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [gAB, map_sub, map_mul, map_sum, MvPolynomial.eval_C, MvPolynomial.eval_X] at h1
     exact sub_ne_zero.mp h1
   · intro i
     let M : Matrix (Fin N) (Fin N) (MvPolynomial ((Fin N × Fin N) ⊕ Fin n) K) :=

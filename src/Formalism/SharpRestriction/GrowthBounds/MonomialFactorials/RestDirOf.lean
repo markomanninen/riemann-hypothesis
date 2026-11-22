@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.MemIntPolIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.MemIntPolIff
+
+@[expose] public section
 
 noncomputable section
 

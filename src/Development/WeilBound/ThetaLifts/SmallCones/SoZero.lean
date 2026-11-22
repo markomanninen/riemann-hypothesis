@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.FormSwapZero
-import Development.WeilBound.ThetaLifts.SmallCones.KerPol
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.FormSwapZero
+public import Development.WeilBound.ThetaLifts.SmallCones.KerPol
+
+@[expose] public section
 
 noncomputable section
 

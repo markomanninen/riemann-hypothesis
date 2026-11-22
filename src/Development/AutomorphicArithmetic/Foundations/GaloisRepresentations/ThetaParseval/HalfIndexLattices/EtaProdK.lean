@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaC
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBS
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaC
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBS
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,7 @@ private theorem infPart_lift (w : Af F ⊗[F] E) : infPartF F E (PositivityTheor
     simp only [infPartF, fstA, pairA, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
     erw [Algebra.TensorProduct.map_tmul]
     exact TensorProduct.zero_tmul _ _
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 private theorem finPart_lift (w : Af F ⊗[F] E) : finPartF F E (PositivityTheory.ThKW.LatB.liftF F E w) = w := by
   induction w using TensorProduct.induction_on with
@@ -114,7 +118,7 @@ private theorem finPart_lift (w : Af F ⊗[F] E) : finPartF F E (PositivityTheor
     simp only [finPartF, sndA, pairA, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
     erw [Algebra.TensorProduct.map_tmul]
     rfl
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 private theorem finPart_rI : finPartF F E (rI F E) = 0 := by
   simp only [finPartF, rI, sndA, pairA, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
@@ -137,7 +141,7 @@ private theorem exists_local (P : HeightOneSpectrum (𝓞 E)) :
     rw [hb1, hb2, ← map_mul, ha, map_one]
   have key : ∀ c : Af F ⊗[F] E, infPartF F E (rI F E + PositivityTheory.ThKW.LatB.liftF F E c) = 1 ∧
       finPartF F E (rI F E + PositivityTheory.ThKW.LatB.liftF F E c) = c := fun c =>
-    ⟨by rw [map_add, infPart_rI, infPart_lift, add_zero], by rw [map_add, finPart_rI, finPart_lift, zero_add]⟩
+    ⟨by rw [map_add (f := _), infPart_rI, infPart_lift, add_zero], by rw [map_add (f := _), finPart_rI, finPart_lift, zero_add]⟩
   have h12 : (rI F E + PositivityTheory.ThKW.LatB.liftF F E b1) * (rI F E + PositivityTheory.ThKW.LatB.liftF F E b2) = 1 := by
     apply sub_eq_zero.mp
     apply GlobalTheory.SplitDetCharF.adele_tensor_ext
@@ -239,8 +243,8 @@ private theorem exists_idele_eta_neg_one_at_place {σ : E →ₐ[F] E} (hcm : Is
     have hnm := not_mem_normGroup_of_inert hcm.2.2.1 hns hunr hπ
     simp [GlobalTheory.QuadSymbol.eta, hnm, GlobalTheory.IdeleNormChar.signToCircle]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 private theorem eta_prod_all {σ : E →ₐ[F] E} {B : Base F E} (hcm : IsCMExt F E σ)
     (hun : Algebra.Unramified (𝓞 F) (𝓞 E)) {η : (AEF F E)ˣ →* Circle}
     (h1 : IsHeckeCharF η) (h2 : ResEtaF η 1) (h3 : HasExp B.emb η (fun _ => 1)) (h4 : UnramInert σ η)
@@ -270,11 +274,11 @@ private theorem eta_prod_all {σ : E →ₐ[F] E} {B : Base F E} (hcm : IsCMExt 
   have hev_proj : ∀ (e : AEF F E) (he : e * e = e) (t : (AEF F E)ˣ) Q,
       ev F E Q ↑(GlobalTheory.InertTrivial.proj e he t) = ev F E Q e * ev F E Q t + (1 - ev F E Q e) := by
     intro e he t Q
-    rw [GlobalTheory.InertTrivial.proj_val, map_add, map_mul, map_sub, map_one]
+    rw [GlobalTheory.InertTrivial.proj_val, map_add (f := _), map_mul, map_sub, map_one]
   have hinf_proj : ∀ (e : AEF F E) (he : e * e = e) (t : (AEF F E)ˣ),
       infPartF F E ↑(GlobalTheory.InertTrivial.proj e he t) = infPartF F E e * infPartF F E t + (1 - infPartF F E e) := by
     intro e he t
-    rw [GlobalTheory.InertTrivial.proj_val, map_add, map_mul, map_sub, map_one]
+    rw [GlobalTheory.InertTrivial.proj_val, map_add (f := _), map_mul, map_sub, map_one]
   have evg : ∀ Q, ev F E Q (1 - rI F E - s) = if Fx σ Q then 1 else 0 := by
     intro Q
     rw [map_sub, map_sub, map_one, ev_rI, evs]
@@ -350,10 +354,10 @@ private theorem eta_prod_all {σ : E →ₐ[F] E} {B : Base F E} (hcm : IsCMExt 
           rw [GlobalTheory.InertTrivial.proj_val]
           apply sub_eq_zero.mp
           apply eq_zero_of_infPart_zero_of_ev_zero
-          · simp only [map_sub, map_add, map_mul, map_one, infPart_rI, infs, hzinf]
+          · simp only [map_sub, map_add (f := _), map_mul, map_one, infPart_rI, infs, hzinf]
             ring
           · intro Q
-            simp only [map_sub, map_add, map_mul, map_one, ev_rI, evs]
+            simp only [map_sub, map_add (f := _), map_mul, map_one, ev_rI, evs]
             by_cases hQP : Q = P
             · subst hQP
               rw [if_pos hP]

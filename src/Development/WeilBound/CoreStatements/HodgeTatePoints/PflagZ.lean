@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSymmetricSpanHsymm
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GenNumLinear
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CycleListPermInvariant
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GenNumProductExpansion
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GenNumLinearSubst
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HsymmDualRootsTrivNumZero
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HasExpansionOfMemSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSymmetricSpanHsymm
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GenNumLinear
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CycleListPermInvariant
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GenNumProductExpansion
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GenNumLinearSubst
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HsymmDualRootsTrivNumZero
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HasExpansionOfMemSpan
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num
 
@@ -36,7 +40,7 @@ theorem prod_map_X {σ : Type} [DecidableEq σ] (s : Multiset σ) :
   induction s using Multiset.induction_on with
   | empty => simp
   | cons a t ih =>
-    rw [Multiset.map_cons, Multiset.prod_cons, ih, ← Multiset.singleton_add, map_add,
+    rw [Multiset.map_cons, Multiset.prod_cons, ih, ← Multiset.singleton_add, map_add (f := _),
       Multiset.toFinsupp_singleton, X, monomial_mul, one_mul]
 
 theorem length_classList_of_hom {K σ : Type} (cls : σ → K → ℤ) {H : MvPolynomial σ ℝ} {m : ℕ}

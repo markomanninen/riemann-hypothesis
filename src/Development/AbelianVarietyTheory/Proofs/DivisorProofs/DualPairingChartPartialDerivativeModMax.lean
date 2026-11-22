@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstEqZeroOfDegreeLt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstRestrictSumVariables
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstEqZeroOfDegreeLt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstRestrictSumVariables
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat GlobalTheory.LawDer
 open TensorProduct
 
@@ -30,14 +35,14 @@ theorem mem_of_monomial_mem_of_tail_mem {σ R : Type} [CommRing R] [Fintype σ]
 
 theorem coeff_atZero_pderiv_inr {R : Type} [CommRing R] {d : ℕ}
     (H : MvPowerSeries (Fin d ⊕ Fin d) R) (i : Fin d) (α : Fin d →₀ ℕ) :
-    coeff α (atZero (pderiv R (Sum.inr i) H)) =
+    coeff α (atZero (pderiv (R := R) (Sum.inr i) H)) =
       coeff (α.mapDomain Sum.inl + Finsupp.single (Sum.inr i) 1) H := by
   rw [atZero, (coeff_subst_restrict_sum _).1, coeff_pderiv,
     Finsupp.mapDomain_of_notMem_range _ _ (by simp)]
   simp
 
 theorem atZero_pderiv_inr_monomial {R : Type} [CommRing R] {d : ℕ} (α β : Fin d →₀ ℕ) (i : Fin d) :
-    atZero (pderiv R (Sum.inr i) (monomial (α.sumElim β) (1 : R))) =
+    atZero (pderiv (R := R) (Sum.inr i) (monomial (α.sumElim β) (1 : R))) =
       lin (monomial β (1 : R)) i • monomial α (1 : R) := by
   classical
   ext γ
@@ -70,20 +75,20 @@ theorem chart_ev₂_monomial {p : ℕ} {O : Type} [CommRing O] {G : PDivGroup p 
     Algebra.TensorProduct.includeRight_apply] at e1 e2
   rw [← e1, ← e2, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
 
-theorem pairing_ev₂_sub_mem : ∀ (p : ℕ) (O : Type) [CommRing O] (G : PDivGroup p O) (d : ℕ) (c : QLog.Chart G d) (n : ℕ) (m : Ideal O), (p : O) ∈ m → ∀ (u : Fin d → O) (φ : G.dual.A n), (∀ F, φ (c.ev n F) - ∑ i, u i * lin F i ∈ m) → ∀ (ψ : G.A n →ₗ[O] O) (H : MvPowerSeries (Fin d ⊕ Fin d) O), LinearMap.mul' O O (TensorProduct.map ψ φ.ofConv (c.ev₂ n H)) - ψ (c.ev n (∑ i, u i • atZero (pderiv O (Sum.inr i) H))) ∈ m := by
+theorem pairing_ev₂_sub_mem : ∀ (p : ℕ) (O : Type) [CommRing O] (G : PDivGroup p O) (d : ℕ) (c : QLog.Chart G d) (n : ℕ) (m : Ideal O), (p : O) ∈ m → ∀ (u : Fin d → O) (φ : G.dual.A n), (∀ F, φ (c.ev n F) - ∑ i, u i * lin F i ∈ m) → ∀ (ψ : G.A n →ₗ[O] O) (H : MvPowerSeries (Fin d ⊕ Fin d) O), LinearMap.mul' O O (TensorProduct.map ψ φ.ofConv (c.ev₂ n H)) - ψ (c.ev n (∑ i, u i • atZero (pderiv (R := O) (Sum.inr i) H))) ∈ m := by
   intro p O _ G d c n m hp u φ hφ ψ H
   obtain ⟨N₁, h₁⟩ := (c.isEval n).2 1
   obtain ⟨N₂, h₂⟩ := (c.isEval₂ n).2 1
   have hs : HasSubst (Sum.elim (fun i => (X i : MvPowerSeries (Fin d) O)) (fun _ : Fin d => 0)) :=
     hasSubst_of_constantCoeff_zero (by rintro (j | j) <;> simp)
   let D : MvPowerSeries (Fin d ⊕ Fin d) O →ₗ[O] MvPowerSeries (Fin d) O :=
-    ∑ i, u i • ((substAlgHom hs).toLinearMap ∘ₗ (pderiv O (Sum.inr i)).toLinearMap)
-  have hD : ∀ H, D H = ∑ i, u i • atZero (pderiv O (Sum.inr i) H) := fun H => by
+    ∑ i, u i • ((substAlgHom hs).toLinearMap ∘ₗ (pderiv (R := O) (Sum.inr i)).toLinearMap)
+  have hD : ∀ H, D H = ∑ i, u i • atZero (pderiv (R := O) (Sum.inr i) H) := fun H => by
     simp [D, atZero, LinearMap.sum_apply, coe_substAlgHom]
   let P : G.A n ⊗[O] G.A n →ₗ[O] O := LinearMap.mul' O O ∘ₗ TensorProduct.map ψ φ.ofConv
   let L : MvPowerSeries (Fin d ⊕ Fin d) O →ₗ[O] O :=
     P ∘ₗ (c.ev₂ n).toLinearMap - ψ ∘ₗ (c.ev n).toLinearMap ∘ₗ D
-  have hL : ∀ H, L H = P (c.ev₂ n H) - ψ (c.ev n (∑ i, u i • atZero (pderiv O (Sum.inr i) H))) :=
+  have hL : ∀ H, L H = P (c.ev₂ n H) - ψ (c.ev n (∑ i, u i • atZero (pderiv (R := O) (Sum.inr i) H))) :=
     fun H => by rw [← hD]; rfl
   have key := mem_of_monomial_mem_of_tail_mem (Submodule.comap L m) (N₁ + N₂ + 1) ?_ ?_ H
   · rw [Submodule.mem_comap, hL] at key
@@ -103,11 +108,12 @@ theorem pairing_ev₂_sub_mem : ∀ (p : ℕ) (O : Type) [CommRing O] (G : PDivG
   · intro T hT
     rw [Submodule.mem_comap, hL]
     obtain ⟨a, ha⟩ := h₂ T fun α hα => hT α (by omega)
-    obtain ⟨b, hb⟩ := h₁ (∑ i, u i • atZero (pderiv O (Sum.inr i) T)) fun α hα => by
-      rw [map_sum]
+    obtain ⟨b, hb⟩ := h₁ (∑ i, u i • atZero (pderiv (R := O) (Sum.inr i) T)) fun α hα => by
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_eq_zero fun i _ => ?_
       rw [map_smul, coeff_atZero_pderiv_inr, hT, smul_zero]
-      rw [map_add, Finsupp.degree_mapDomain, Finsupp.degree_single]
+      rw [map_add (f := _), Finsupp.degree_mapDomain, Finsupp.degree_single]
       omega
     rw [ha, hb, pow_one, pow_one, ← nsmul_eq_mul, ← nsmul_eq_mul, map_nsmul, map_nsmul,
       nsmul_eq_mul, nsmul_eq_mul]

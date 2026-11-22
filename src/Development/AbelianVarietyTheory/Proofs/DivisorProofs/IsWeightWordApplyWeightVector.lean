@@ -1,7 +1,12 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
+
+@[expose] public section
+
 open Matrix GlobalTheory.HolDS
 open Formalism.REAL (GlRel IsUnitary IsWeight KHighest root Jm inG)
 open Formalism.QuantumDeterminants (lowK IsHCParam)
@@ -20,7 +25,7 @@ theorem step {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
   have h := hE c c a b
   have h2 : E c c (E a b v) = E a b (E c c v) +
       ((if c = a then E c b else 0) - (if b = c then E a c else 0)) v := by
-    rw [← h]; simp [Module.End.mul_apply]
+    rw [← h]; simp
   rw [h2, hv c, map_smul]
   simp only [root, Pi.add_apply, Pi.sub_apply, Pi.single_apply]
   by_cases hca : c = a <;> by_cases hbc : b = c
@@ -41,12 +46,13 @@ theorem word {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
     (E : Fin n → Fin n → Module.End ℂ V) (hE : GlRel E) :
     ∀ (l : List (Fin n × Fin n)) (μ : Fin n → ℝ) (w : V), IsWeight E μ w →
     IsWeight E (μ + (l.map fun p : Fin n × Fin n => root p.1 p.2).sum)
-      ((l.map fun p : Fin n × Fin n => E p.1 p.2).prod w)
-  | [], μ, w, hw => by simpa using hw
-  | p :: l, μ, w, hw => by
-    have ih := word E hE l μ w hw
+      ((l.map fun p : Fin n × Fin n => E p.1 p.2).prod w) := by
+  intro l μ w hw
+  induction l with
+  | nil => simpa using hw
+  | cons p l ih =>
     have := step E hE _ _ ih p.1 p.2
-    simp only [List.map_cons, List.sum_cons, List.prod_cons, Module.End.mul_apply]
+    simp only [List.map_cons, List.sum_cons, List.prod_cons, mul_apply_eq_comp]
     convert this using 1
     abel
 

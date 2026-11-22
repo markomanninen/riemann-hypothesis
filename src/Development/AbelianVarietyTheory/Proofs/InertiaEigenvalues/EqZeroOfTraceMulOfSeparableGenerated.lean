@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+
+@[expose] public section
 
 open GlobalTheory.UnitLemma Polynomial
 

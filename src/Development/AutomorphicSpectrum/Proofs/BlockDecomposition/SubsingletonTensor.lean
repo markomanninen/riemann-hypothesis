@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechVanishingFromCover
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BalancedLiftTmul
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechVanishingFromCover
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BalancedLiftTmul
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -37,7 +42,7 @@ theorem bal_mapH {K : ι → Cx.{w} R} {K' : Cx.{w'} R'} {φ : ∀ i, N i → Cx
     have c2 := cyc (φ i n') a ha
     beta_reduce
     rw [mapH_cls' _ a ha (cyc _ a ha), mapH_cls' _ a ha c1, mapH_cls' _ a ha c2,
-      ← cls_add _ _ c1 c2 (by rw [map_add, c1, c2, add_zero])]
+      ← cls_add _ _ c1 c2 (by rw [map_add (f := _), c1, c2, add_zero])]
     exact cls_congr (h.1 i n n' j a) _ _
   · obtain ⟨a, ha, rfl⟩ := clsSurj x
     have c1 := cyc (φ i n) a ha

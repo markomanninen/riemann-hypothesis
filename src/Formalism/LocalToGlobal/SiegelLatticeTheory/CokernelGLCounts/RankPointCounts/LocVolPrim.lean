@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocFramePrimJoint
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocFramePrimJoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem corr_mul {A B A' B'} (h : CorrFI ι A B) (h' : CorrFI ι A' B') : CorrFI
       exact FractionalIdeal.mul_mem_mul ((h a).1 ha) ((h' a').1 ha')
     · intro x x' hx hx'
       show ι (x + x') ∈ B * B'
-      rw [map_add]
+      rw [map_add (f := _)]
       exact FractionalIdeal.mem_coe.1 (add_mem (FractionalIdeal.mem_coe.2 hx) (FractionalIdeal.mem_coe.2 hx'))
   · intro hy
     have key : ι.symm (ι y) ∈ A * A' := by
@@ -61,7 +65,7 @@ theorem corr_mul {A B A' B'} (h : CorrFI ι A B) (h' : CorrFI ι A' B') : CorrFI
         exact FractionalIdeal.mul_mem_mul ((corr_symm ι h b).2 hb) ((corr_symm ι h' b').2 hb')
       · intro x x' hx hx'
         show ι.symm (x + x') ∈ A * A'
-        rw [map_add]
+        rw [map_add (f := _)]
         exact FractionalIdeal.mem_coe.1 (add_mem (FractionalIdeal.mem_coe.2 hx) (FractionalIdeal.mem_coe.2 hx'))
     rwa [RingEquiv.symm_apply_apply] at key
 
@@ -266,12 +270,11 @@ theorem cinv_crd (y : (VS D).V) : cinv X (crd X y) = y := by
 
 theorem crd_cinv (x : Fin X.B.I.n → X.B.I.E) : crd X (cinv X x) = x := by
   funext i
-  simp only [crd, crdOf, cinv, map_sum, map_smul, Module.Basis.repr_self, Finsupp.coe_finset_sum,
-    Finset.sum_apply, Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
-    Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true, RingEquiv.symm_apply_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [crd, crdOf, cinv, Finsupp.single_apply]
 
 theorem cinv_add (x y : Fin X.B.I.n → X.B.I.E) : cinv X (x + y) = cinv X x + cinv X y := by
-  simp only [cinv, Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib]
+  simp only [cinv, Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib]
 
 theorem cinv_zero : cinv X 0 = 0 := by
   simp [cinv]
@@ -290,7 +293,7 @@ theorem cinv_osmul (o : 𝓞 X.B.I.E) (x : Fin X.B.I.n → X.B.I.E) :
 
 theorem crd_add (x y : (VS D).V) : crd X (x + y) = crd X x + crd X y := by
   funext i
-  simp [crdOf, map_add]
+  simp [crdOf, map_add (f := _)]
 
 theorem crd_zero : crd X 0 = 0 := by
   funext i
@@ -400,7 +403,8 @@ variable {D : D7} (X : HidaSetting D)
 
 theorem cinv_sum {ι : Type} (s : Finset ι) (x : ι → Fin X.B.I.n → X.B.I.E) :
     cinv X (∑ j ∈ s, x j) = ∑ j ∈ s, cinv X (x j) := by
-  simp only [cinv, Finset.sum_apply, map_sum, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cinv, Finset.sum_apply, map_sum, Finset.sum_smul]
   exact Finset.sum_comm
 
 theorem fe (a b : Fin D.R.rS) : (VS D).hT (X.fY b) (X.eX a) = if a = b then 1 else 0 := by

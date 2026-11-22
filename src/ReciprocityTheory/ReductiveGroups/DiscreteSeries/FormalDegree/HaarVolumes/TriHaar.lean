@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriHaarA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriHaarA
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem upMat_triCoOf_mul (t t0 : TriCo N) :
     fun s a b => rfl
   have hz : ∀ (s : TriCo N) (a b : Fin N), b < a → upMat s a b = 0 := by
     intro s a b h
-    rw [hU s a b, if_neg (ne_of_gt h), dif_neg (not_lt.mpr h.le)]
+    rw [hU s a b, if_neg (ne_of_gt h), dite_eq_right (not_lt.mpr h.le)]
   have hlow : ∀ a b : Fin N, b < a → (upMat t * upMat t0) a b = 0 := by
     intro a b hba
     rw [Matrix.mul_apply]
@@ -39,13 +43,13 @@ theorem upMat_triCoOf_mul (t t0 : TriCo N) :
   refine ⟨?_, fun j => ?_⟩
   · ext a b
     rcases lt_trichotomy a b with h | h | h
-    · rw [hU _ a b, if_neg (ne_of_lt h), dif_pos h]
+    · rw [hU _ a b, if_neg (ne_of_lt h), dite_eq_left h]
       rfl
     · subst h
       rw [hU _ a a, if_pos rfl]
       show (((upMat t * upMat t0) a a).re : ℂ) = (upMat t * upMat t0) a a
       rw [hdiag, Complex.ofReal_re]
-    · rw [hU _ a b, if_neg (ne_of_gt h), dif_neg (not_lt.mpr h.le), hlow a b h]
+    · rw [hU _ a b, if_neg (ne_of_gt h), dite_eq_right (not_lt.mpr h.le), hlow a b h]
   · show ((upMat t * upMat t0) j j).re = t.1 j * t0.1 j
     rw [hdiag, Complex.ofReal_re]
 
@@ -114,7 +118,7 @@ theorem triMeas_compact_lt_top (K : Set (TriCo N)) (hK : IsCompact K) (hK0 : K �
   unfold triMeas
   rw [withDensity_apply _ hKm, Measure.restrict_restrict hKm, Set.inter_eq_left.mpr hK0]
   have hgc : ContinuousOn (fun t : TriCo N => ∏ j : Fin N, t.1 j ^ (-(2 * ((j : ℕ) : ℤ) + 1))) K := by
-    refine continuousOn_finset_prod _ (fun j _ => ?_)
+    refine continuousOn_finsetProd _ (fun j _ => ?_)
     exact ContinuousOn.zpow₀ (by fun_prop : Continuous fun t : TriCo N => t.1 j).continuousOn _
       (fun x hx => Or.inl (hK0 hx j).ne')
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hgc

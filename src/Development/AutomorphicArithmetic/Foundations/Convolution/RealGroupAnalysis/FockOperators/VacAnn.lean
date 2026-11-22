@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.AtLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.AtLaws
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -38,7 +42,7 @@ private theorem gauss_deriv {F : Type} [Field F] [NumberField F] [IsTotallyReal 
     have h2 : p (2 : A F) w' = 2 := by
       rw [map_ofNat]
       rfl
-    fin_cases i <;> simp [Q, Kf, bf, rf, hp, h2, map_add, map_mul, map_pow, map_sub, Pi.single_apply] <;> ring
+    fin_cases i <;> simp [Q, Kf, bf, rf, hp, h2, map_add (f := _), map_mul, map_pow, map_sub, Pi.single_apply] <;> ring
   have hK : kap δ w i = ((Kf w : ℝ) : ℂ) := by
     fin_cases i <;> simp [kap, Kf, cw, hpdef]
   have hfun : (fun t : ℝ => gauss δ (v + Pi.single i (at1 w t))) = fun t : ℝ => Complex.exp (-(Real.pi : ℂ) *
@@ -76,7 +80,9 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.vacAnn :
     funext j
     have hj := congrFun this j
     simp only [finPartPi] at hj ⊢
-    simp [hj]
+    change (v j).2 + ((Pi.single i (at1 w t) : V4 F) j).2 = (v j).2
+    rw [hj]
+    exact add_zero _
   have h1 : (fun t : ℝ => φ.1 (v + Pi.single i (at1 w t))) = fun t : ℝ => (φ.1 v / gauss δ v) * gauss δ (v + Pi.single i (at1 w t)) := by
     funext t
     have := hφ (v + Pi.single i (at1 w t)) v (hf t)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
@@ -30,7 +34,8 @@ theorem sum_emb [Fintype (E →+* K)] (h : Nat.card (E →+* K) = Module.finrank
     rw [AlgHom.card, ← h, Nat.card_eq_fintype_card]
   have hb : Function.Bijective f := (Fintype.bijective_iff_injective_and_card f).mpr ⟨hf, hcard⟩
   apply (algebraMap K (AlgebraicClosure K)).injective
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   calc ∑ s : E →+* K, algebraMap K (AlgebraicClosure K) (s x) = ∑ s, f s x := rfl
     _ = ∑ σ : E →ₐ[ℚ] AlgebraicClosure K, σ x := hb.sum_comp (fun σ => σ x)
     _ = algebraMap ℚ (AlgebraicClosure K) (Algebra.trace ℚ E x) :=
@@ -45,17 +50,20 @@ theorem sum_eigProj [Fintype (E →+* K)] (h : Nat.card (E →+* K) = Module.fin
   set b := RingOfIntegers.basis E with hb
   have h1 : (1 : E) = ∑ j, ((b.repr 1 j : ℤ) : E) * integralBasis E j := by
     have := congrArg (algebraMap (𝓞 E) E) (b.sum_repr 1)
-    simpa [integralBasis_apply, map_sum, zsmul_eq_mul] using this.symm
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [integralBasis_apply, map_sum, zsmul_eq_mul] using this.symm
   have hrep : ∀ k, Algebra.trace ℚ E (dualInt E k) = ((b.repr 1 k : ℤ) : ℚ) := by
     intro k
-    conv_lhs => rw [← mul_one (dualInt E k), h1, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← mul_one (dualInt E k), h1, Finset.mul_sum, map_sum]
     simp_rw [mul_left_comm (dualInt E _), ← zsmul_eq_mul, map_zsmul, trace_dualInt]
     simp
   simp only [eigProj]
   rw [Finset.sum_comm]
   simp_rw [← Finset.sum_smul, sum_emb h, hrep]
   calc ∑ k, algebraMap ℚ K ((b.repr 1 k : ℤ) : ℚ) • ρ (b k) = ρ (∑ k, b.repr 1 k • b k) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [map_zsmul, map_intCast, Int.cast_smul_eq_zsmul]
     _ = 1 := by rw [b.sum_repr, map_one]

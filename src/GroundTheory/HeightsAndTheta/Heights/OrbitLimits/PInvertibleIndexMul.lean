@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsInvertibleIndexMulSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PInvertibleIdealIndex
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.POrderIdealIndexExtension
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsInvertibleIndexMulSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PInvertibleIdealIndex
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.POrderIdealIndexExtension
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -82,8 +87,8 @@ theorem genIndex_rep [CharZero Ω] {B : Subring Ω} [Module.Finite ℤ B] {X : A
 
 end InvertibleIndexMultiplicative
 
-open InvertibleIndexMultiplicative in
 
+open InvertibleIndexMultiplicative in
 theorem InvertibleIndexMul.proof (h1 : LocalGenFamily.Statement) (h2 : LocallyPrincipalCoprimeField.Statement)
     (h3 : InvertibleProductRep.Statement) (h4 : InvertibleIndexCharP.Statement) :
     InvertibleIndexMul.Statement := by

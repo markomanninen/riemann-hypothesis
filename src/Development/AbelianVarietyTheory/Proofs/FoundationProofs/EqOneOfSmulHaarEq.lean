@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InstSecondCountable
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BlockOrdFinSumFinEquiv
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InstSecondCountable
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BlockOrdFinSumFinEquiv
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH GlobalTheory.HolDS Matrix MeasureTheory Filter Topology
 open scoped InnerProductSpace
@@ -36,11 +40,13 @@ theorem haar_unimodular : ∀ (p q : ℕ) (T : GrpData p q), T.haar.IsMulRightIn
       have h2 : (T.haar.map (· * g)).map f = (T.haar.map f).map (· * f g) := by
         rw [Measure.map_map hf (measurable_mul_const g), Measure.map_map (measurable_mul_const _) hf]
         congr 1
-        funext x
+        ext x
         simp
       rw [h2, hc, Measure.map_smul, Formalism.REAL.indefinite_unitary_unimodular _ ε (f g)]
+      exact (measurable_mul_const _).aemeasurable
     rw [hg, Measure.map_smul] at h1
-    rw [hg, eq_one_of_smul_haar_eq _ h1, one_smul]
+    · rw [hg, eq_one_of_smul_haar_eq _ h1, one_smul]
+    · exact hf.aemeasurable
   refine ⟨hR, ⟨?_⟩⟩
   haveI : T.haar.inv.IsHaarMeasure :=
     { toIsFiniteMeasureOnCompacts := inferInstance
@@ -51,10 +57,12 @@ theorem haar_unimodular : ∀ (p q : ℕ) (T : GrpData p q), T.haar.IsMulRightIn
     have h2 : T.haar.inv.map f = (T.haar.map f).map (fun x => x⁻¹) := by
       rw [Measure.inv_def, Measure.map_map hf measurable_inv, Measure.map_map measurable_inv hf]
       congr 1
-      funext x
+      ext x
       simp
     rw [h2, hc, Measure.map_smul, Formalism.REAL.invInvariant_of Formalism.REAL.indefinite_unitary_unimodular _ ε]
+    exact measurable_inv.aemeasurable
   rw [hd, Measure.map_smul] at h1
-  rw [hd, eq_one_of_smul_haar_eq _ h1, one_smul]
+  · rw [hd, eq_one_of_smul_haar_eq _ h1, one_smul]
+  · exact hf.aemeasurable
 
 end GlobalTheory.HolDS

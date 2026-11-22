@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.MatUnitsOf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.MatUnitsOf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.MatrixUnits₂
 theorem etale_matrix_units_system_of_key : LateralTheory.DivDb.MatrixUnits₂ := by

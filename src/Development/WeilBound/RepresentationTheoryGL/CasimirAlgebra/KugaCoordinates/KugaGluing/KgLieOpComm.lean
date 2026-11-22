@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaGluing.KgCoordAtEmbOfNe
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaGluing.KgCoordAtEmbOfNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,29 +12,31 @@ open scoped TensorProduct
 namespace PositivityTheory.Rg.Cz
 
 section
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+
+set_option synthInstance.maxHeartbeats 200000
 
 def kgA (π : CuspSub E a) (Ξ : AlgRep E a) (σ : ℝ) : Lie E a →ₗ[ℝ] Module.End ℂ (π.V ⊗[ℂ] (Fin Ξ.d → ℂ)) where
   toFun X := (lieOp π X).rTensor _ + (-(σ / 2 : ℂ) * kgT X) • 1
-  map_add' X Y := by rw [map_add, LinearMap.rTensor_add, map_add, mul_add, add_smul]; abel
+  map_add' X Y := by rw [map_add (f := _), LinearMap.rTensor_add, map_add (f := _), mul_add, add_smul]; abel
   map_smul' c X := by
     have e1 : lieOp π (c • X) = (c : ℂ) • lieOp π X := by rw [map_smul, ← algebraMap_smul ℂ c]; rfl
     have e2 : kgT (c • X) = (c : ℂ) * kgT X := by rw [map_smul, Complex.real_smul]
     simp only [RingHom.id_apply]
-    rw [e1, e2, LinearMap.rTensor_smul, ← algebraMap_smul ℂ c (_ + _ : Module.End ℂ (π.V ⊗[ℂ] (Fin Ξ.d → ℂ))),
-      show algebraMap ℝ ℂ c = (c : ℂ) from rfl]
-    module
+    rw [e1, e2, LinearMap.rTensor_smul, mul_left_comm (-(σ / 2 : ℂ)) (c : ℂ),
+      ← smul_smul, ← smul_add]
+    exact IsScalarTower.algebraMap_smul ℂ c _
 
 def kgR (π : CuspSub E a) (Ξ : AlgRep E a) (σ : ℝ) : Lie E a →ₗ[ℝ] Module.End ℂ (π.V ⊗[ℂ] (Fin Ξ.d → ℂ)) where
   toFun X := (Matrix.toLin' (Ξ.dmat X)).lTensor _ + ((σ / 2 : ℂ) * kgT X) • 1
-  map_add' X Y := by rw [map_add, map_add, LinearMap.lTensor_add, map_add, mul_add, add_smul]; abel
+  map_add' X Y := by rw [map_add (f := _), map_add (f := _), LinearMap.lTensor_add, map_add (f := _), mul_add, add_smul]; abel
   map_smul' c X := by
     have e1 : Ξ.dmat (c • X) = (c : ℂ) • Ξ.dmat X := by rw [map_smul, ← algebraMap_smul ℂ c]; rfl
     have e2 : kgT (c • X) = (c : ℂ) * kgT X := by rw [map_smul, Complex.real_smul]
     simp only [RingHom.id_apply]
-    rw [e1, e2, map_smul, LinearMap.lTensor_smul, ← algebraMap_smul ℂ c (_ + _ : Module.End ℂ (π.V ⊗[ℂ] (Fin Ξ.d → ℂ))),
-      show algebraMap ℝ ℂ c = (c : ℂ) from rfl]
-    module
+    rw [e1, e2, map_smul Matrix.toLin', LinearMap.lTensor_smul,
+      mul_left_comm (σ / 2 : ℂ) (c : ℂ), ← smul_smul, ← smul_add]
+    exact IsScalarTower.algebraMap_smul ℂ c _
 
 variable (π : CuspSub E a) (Ξ : AlgRep E a) (σ : ℝ)
 
@@ -39,7 +45,8 @@ theorem kgA_apply (X : Lie E a) : kgA π Ξ σ X = (lieOp π X).rTensor _ + (-(�
 theorem kgR_apply (X : Lie E a) :
     kgR π Ξ σ X = (Matrix.toLin' (Ξ.dmat X)).lTensor _ + ((σ / 2 : ℂ) * kgT X) • 1 := rfl
 
-theorem kgA_add_kgR (X : Lie E a) : kgA π Ξ σ X + kgR π Ξ σ X = tensorLie π Ξ X := by
+theorem kgA_add_kgR (X : Lie E a) :
+    kgA π Ξ σ X + kgR π Ξ σ X = GlobalTheory.GKCoh.tensorLie π Ξ X := by
   rw [kgA_apply, kgR_apply]
   show _ = (lieOp π X).rTensor _ + (Matrix.toLin' (Ξ.dmat X)).lTensor _
   rw [add_add_add_comm, ← add_smul, neg_mul, neg_add_cancel, zero_smul, add_zero]

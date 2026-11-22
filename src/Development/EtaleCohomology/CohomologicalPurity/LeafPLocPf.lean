@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafWCovPfB
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafWCovPfB
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -11,7 +15,7 @@ variable {C : Type*} [Category C] {S : Type*} [Ring S] {F G : Cᵒᵖ ⥤ Module
 theorem pl_imageSieve_add (s s' : G.obj (op X)) :
     Presheaf.imageSieve φ s ⊓ Presheaf.imageSieve φ s' ≤ Presheaf.imageSieve φ (s + s') := by
   rintro Y i ⟨⟨t, ht⟩, ⟨t', ht'⟩⟩
-  exact ⟨t + t', by rw [map_add, map_add, ht, ht']⟩
+  exact ⟨t + t', by rw [map_add (f := _), map_add (f := _), ht, ht']⟩
 
 theorem pl_imageSieve_smul (r : S) (s : G.obj (op X)) :
     Presheaf.imageSieve φ s ≤ Presheaf.imageSieve φ (r • s) := by

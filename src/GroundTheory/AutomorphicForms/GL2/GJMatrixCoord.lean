@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJMatrixInfinite
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixInfinite
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.GJMatrix
 
@@ -30,8 +34,8 @@ def matrixCoordT (x : Matrix n n X) : n × n → X :=
 omit [Fintype n] in
 theorem matrixCoord_neg [Neg X] (x : Matrix n n X) : matrixCoord (-x) = -matrixCoord x := rfl
 
-variable (n X) in
 
+variable (n X) in
 def matrixCoordHomeomorph [TopologicalSpace X] : Matrix n n X ≃ₜ (n × n → X) where
   toFun := matrixCoord
   invFun z := Matrix.of fun i j ↦ z (i, j)
@@ -40,8 +44,8 @@ def matrixCoordHomeomorph [TopologicalSpace X] : Matrix n n X ≃ₜ (n × n →
   continuous_toFun := continuous_pi fun p ↦ (continuous_apply p.2).comp (continuous_apply p.1)
   continuous_invFun := continuous_pi fun i ↦ continuous_pi fun j ↦ continuous_apply (i, j)
 
-variable (n X) in
 
+variable (n X) in
 def matrixCoordTHomeomorph [TopologicalSpace X] : Matrix n n X ≃ₜ (n × n → X) where
   toFun := matrixCoordT
   invFun z := Matrix.of fun i j ↦ z (j, i)
@@ -73,7 +77,7 @@ theorem measurePreserving_matrixCoordT [MeasurableSpace X] (μ : Measure X) [Sig
 theorem trace_mul_eq_sum {R : Type*} [CommRing R] (x y : Matrix n n R) :
     trace (x * y) = ∑ p, matrixCoord x p * matrixCoordT y p := by
   rw [trace, Fintype.sum_prod_type]
-  simp only [diag_apply, mul_apply, matrixCoord, matrixCoordT]
+  simp only [diag_apply, Matrix.mul_apply, matrixCoord, matrixCoordT]
 
 end
 

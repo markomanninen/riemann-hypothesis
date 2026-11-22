@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarSteps
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,24 +27,26 @@ variable {S}
 theorem gram_comb_left {l m n : Type*} [Fintype m] (u : m → S.V) (A : Matrix m n E) (v : l → S.V) :
     gram S (comb S u A) v = gram S u v * A := by
   ext i j
-  simp only [gram, comb, Matrix.mul_apply, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gram, comb, Matrix.mul_apply, map_sum, map_smul, smul_eq_mul]
   exact Finset.sum_congr rfl fun k _ => mul_comm _ _
 
 theorem gram_comb_right {l m n : Type*} [Fintype m] (u : l → S.V) (v : m → S.V) (B : Matrix m n E) :
     gram S u (comb S v B) = Bᴴ * gram S u v := by
   ext i j
-  simp only [gram, comb, Matrix.mul_apply, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gram, comb, Matrix.mul_apply, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
     LinearMap.smul_apply, smul_eq_mul, Matrix.conjTranspose_apply, starRingEnd_apply]
 
 theorem gram_add_left {m n : Type*} (u₁ u₂ : n → S.V) (v : m → S.V) :
     gram S (u₁ + u₂) v = gram S u₁ v + gram S u₂ v := by
   ext i j
-  simp [gram, map_add]
+  simp [gram, map_add (f := _)]
 
 theorem gram_add_right {m n : Type*} (u : n → S.V) (v₁ v₂ : m → S.V) :
     gram S u (v₁ + v₂) = gram S u v₁ + gram S u v₂ := by
   ext i j
-  simp [gram, map_add, LinearMap.add_apply]
+  simp [gram, map_add (f := _), LinearMap.add_apply]
 
 theorem gram_swap {m n : Type*} (u : n → S.V) (v : m → S.V) : gram S v u = (gram S u v)ᴴ := by
   ext i j
@@ -60,13 +66,13 @@ theorem adj_last {r : ℕ} (A : Matrix (Fin (r + 1)) (Fin (r + 1)) E) :
     A.adjugate (Fin.last r) (Fin.last r) = leadMinorE A r := by
   rw [Matrix.adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last]
   unfold leadMinorE
-  rw [dif_pos (Nat.le_succ r)]
+  rw [dite_eq_left (Nat.le_succ r)]
   have hc : (Fin.castLE (Nat.le_succ r) : Fin r → Fin (r + 1)) = Fin.castSucc := funext fun i => Fin.ext rfl
   rw [hc, Fin.val_last, ← two_mul, pow_mul, neg_one_sq, one_pow, one_mul]
 
 theorem leadMinorE_full {r : ℕ} (A : Matrix (Fin (r + 1)) (Fin (r + 1)) E) : leadMinorE A (r + 1) = A.det := by
   unfold leadMinorE
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   have hc : (Fin.castLE (le_refl (r + 1)) : Fin (r + 1) → Fin (r + 1)) = id := funext fun i => Fin.ext rfl
   rw [hc, Matrix.submatrix_id_id]
 
@@ -274,7 +280,8 @@ theorem frame_la {r : ℕ} {T T' : E} (F : FlagG S r T) (f₁ : Fin (r + 1) → 
     have hZc : Z *ᵥ c = 0 := by
       ext i
       have := congrArg (S.hT (f i)) hsum
-      rw [map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at this
       simp only [map_smul, smul_eq_mul] at this
       rw [← hZ2]
       simpa [Matrix.mulVec, dotProduct, gram, mul_comm] using this

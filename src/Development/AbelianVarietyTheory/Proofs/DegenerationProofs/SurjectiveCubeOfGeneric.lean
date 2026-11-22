@@ -1,15 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsValueEq
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsUniqueNormPrim
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CubicalStructureAndSymmetricOfCubeGen
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RangeSubsetAbLocusOfIsProper
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubTrivDeltaAndEvenUnique
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsValueEq
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsUniqueNormPrim
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CubicalStructureAndSymmetricOfCubeGen
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RangeSubsetAbLocusOfIsProper
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubTrivDeltaAndEvenUnique
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -112,19 +116,20 @@ theorem prod_u {Y T : Over S} (a b : Y ⟶ G) (x : T ⟶ Y) {U : Type} [CommGrou
 
 variable {L : LB G.left} {Y : Over S}
 
-omit [GrpObj G] [IsCommMonObj G] in
 
+omit [GrpObj G] [IsCommMonObj G] in
 theorem formEq_of_sum {K K' : Type} [Fintype K] [Fintype K'] {V W : Scheme.{0}} {φ : K → (V ⟶ W)} {ε : K → ℤ}
     {φ' : K' → (V ⟶ W)} {ε' : K' → ℤ}
     (h : ∑ k, ε k • FreeAbelianGroup.of (φ k) = ∑ k, ε' k • FreeAbelianGroup.of (φ' k)) : FormEq φ ε φ' ε' :=
   fun U _ g => by
     have := congrArg (FreeAbelianGroup.lift (fun q => Additive.ofMul (g q))) h
-    simp only [map_sum, map_zsmul, FreeAbelianGroup.lift_apply_of] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, FreeAbelianGroup.lift_apply_of] at this
     apply Additive.ofMul.injective
     simpa only [ofMul_prod, ofMul_zpow] using this
 
-omit [GrpObj G] [IsCommMonObj G] in
 
+omit [GrpObj G] [IsCommMonObj G] in
 theorem rep_pull {K : Type} [Fintype K] {V : Over S} {φ : K → (V.left ⟶ G.left)} {ε : K → ℤ}
     {t : LB.Gen (LB.LinComb L φ ε)} (ht : t.IsGen) (p : Y ⟶ V) {D : FreeAbelianGroup (Y.left ⟶ G.left)}
     (hD : ∏ k, Multiplicative.ofAdd (FreeAbelianGroup.of (p.left ≫ φ k)) ^ ε k = Multiplicative.ofAdd D) :
@@ -134,8 +139,8 @@ theorem rep_pull {K : Type} [Fintype K] {V : Over S} {φ : K → (V.left ⟶ G.l
   have := congrArg Multiplicative.toAdd hD
   simpa only [toAdd_prod, toAdd_zpow, toAdd_ofAdd] using this
 
-omit [GrpObj G] [IsCommMonObj G] in
 
+omit [GrpObj G] [IsCommMonObj G] in
 theorem rep_unique (hL : L.IsLB) (hp : Function.Surjective Y.hom.appTop.hom) (e : 𝟙_ (Over S) ⟶ Y)
     {D D' : FreeAbelianGroup (Y.left ⟶ G.left)} {f f' : ValFam L Y} (h : Rep L D f) (h' : Rep L D' f') (hD : D = D')
     (he : ∀ z J, Good L z J → f _ e z J = f' _ e z J) {Z : Over S} (r : Z ⟶ Y) {z : Z.left} {J} (hJ : Good L z J) :
@@ -205,6 +210,12 @@ theorem compat_of_surjective (h3 : Function.Surjective (G3 G).hom.appTop.hom) (P
         (C d (b ≫ w) (d ≫ w))).mul (Ru (a * b * d))).mul (Ru a)).mul (Ru b)).mul (Ru d))
       (by simp only [MonObj.mul_comp, ← _root_.mul_assoc]; abel)
       (fun y I hI => by
+        have face : cubV P.c y I 1 1 1 = 1 := by
+          have e := val_corr hI (P.c.face 0) (lift (1 : 𝟙_ (Over S) ⟶ G) 1).left
+          rw [val_one] at e
+          refine (Eq.trans ?_ e)
+          refine Eq.trans ?_ (val_cub P.c (lift (1 : 𝟙_ (Over S) ⟶ G) 1) hI (pzero G _) (x2 G 0) (x2 G 1)).symm
+          congr 1 <;> simp [x2, pzero, Hom.one_def]
         simp only [MonObj.comp_mul, ← Category.assoc, r₀, r₁, r₂, MonObj.one_comp, _root_.mul_one,
           (isCub_cubV P.c hI).face, h1 _ y I hI]) (lift x (lift y v)) hJ
     simpa only [MonObj.comp_mul, ← Category.assoc, r₀, r₁, r₂, id] using e
@@ -214,6 +225,12 @@ theorem compat_of_surjective (h3 : Function.Surjective (G3 G).hom.appTop.hom) (P
       (by
         simp only [GrpObj.inv_comp, mul_inv_cancel_right, mul_inv_cancel, _root_.one_mul]; abel)
       (fun y I hI => by
+        have face : cubV P.c y I 1 1 1 = 1 := by
+          have e := val_corr hI (P.c.face 0) (lift (1 : 𝟙_ (Over S) ⟶ G) 1).left
+          rw [val_one] at e
+          refine (Eq.trans ?_ e)
+          refine Eq.trans ?_ (val_cub P.c (lift (1 : 𝟙_ (Over S) ⟶ G) 1) hI (pzero G _) (x2 G 0) (x2 G 1)).symm
+          congr 1 <;> simp [x2, pzero, Hom.one_def]
         simp only [GrpObj.comp_inv, ← Category.assoc, r₀, MonObj.one_comp, _root_.mul_one, inv_one,
           (isCub_cubV P.c hI).face, h1 _ y I hI, P.val_sym_one hI]) (lift x (lift 1 1)) hJ
     simpa only [GrpObj.comp_inv, ← Category.assoc, r₀, id] using e

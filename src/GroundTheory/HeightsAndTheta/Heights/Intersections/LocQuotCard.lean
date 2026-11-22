@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -6,21 +11,21 @@ namespace GroundTheory.Heights₂.Heights.Inter
 theorem isLocalization_of_mem_iff {O F : Type*} [CommRing O] [Field F] (φ : O →+* F) (hφ : Function.Injective φ)
     (L : Subring F) [Algebra O L] (hL : ∀ x : O, ((algebraMap O L x : L) : F) = φ x) (m : Ideal O) [m.IsPrime]
     (h : ∀ y : F, y ∈ L ↔ ∃ x s : O, s ∉ m ∧ y * φ s = φ x) :
-    IsLocalization.AtPrime L m where
-  map_units := by
-    rintro ⟨s, hs⟩
+    IsLocalization.AtPrime L m := by
+  refine (isLocalization_iff m.primeCompl L).2 ⟨?_, ?_, ?_⟩
+  · rintro ⟨s, hs⟩
     have hs0 : φ s ≠ 0 := fun h0 => hs (by rw [(map_eq_zero_iff φ hφ).1 h0]; exact m.zero_mem)
     refine IsUnit.of_mul_eq_one ⟨(φ s)⁻¹, (h _).2 ⟨1, s, hs, by rw [map_one, inv_mul_cancel₀ hs0]⟩⟩ ?_
     apply Subtype.ext
     simp only [Subring.coe_mul, hL, Subring.coe_one]
     exact mul_inv_cancel₀ hs0
-  surj z := by
+  · intro z
     obtain ⟨x, s, hs, hxs⟩ := (h z).1 z.2
     exact ⟨⟨x, ⟨s, hs⟩⟩, Subtype.ext (by simp only [Subring.coe_mul, hL]; exact hxs)⟩
-  exists_of_eq {x y} hxy := ⟨1, by
+  · intro x y hxy
     have h1 := congrArg Subtype.val hxy
     rw [hL, hL] at h1
-    rw [hφ h1]⟩
+    exact ⟨1, by rw [hφ h1]⟩
 
 theorem card_quot_map_eq_card_localization {R S : Type*} [CommRing R] [CommRing S] [Algebra R S] (I : Ideal R)
     (p : Ideal (R ⧸ I)) [p.IsPrime] [IsLocalization.AtPrime S (p.comap (Ideal.Quotient.mk I))] :

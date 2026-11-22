@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.FinMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.FinCompl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.CofinalCompl
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.FinMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.FinCompl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.CofinalCompl
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Hi
 
 private theorem map_mem_smul {A M : Type} [CommRing A] [AddCommGroup M] [Module A M]
@@ -13,7 +18,7 @@ private theorem map_mem_smul {A M : Type} [CommRing A] [AddCommGroup M] [Module 
     rw [map_smul]
     exact Submodule.smul_mem_smul hr (hf y hy)
   · intro a b ha hb
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ ha hb
 
 private theorem mono_comap {A M : Type} [CommRing A] [AddCommGroup M] [Module A M]
@@ -42,7 +47,7 @@ private theorem pow_mem_map {A N T : Type} [CommRing A] [IsNoetherianRing A] [Ad
     rw [map_pow]
     exact h1
   obtain ⟨p, hp, -, hc, h0⟩ :=
-    LinearMap.exists_monic_and_coeff_mem_pow_and_aeval_eq_zero_of_range_le_smul A (j (u ^ n)) J hr
+    LinearMap.exists_monic_and_natDegree_eq_and_coeff_mem_pow_and_aeval_eq_zero A (j (u ^ n)) J hr
   rw [Polynomial.aeval_algHom_apply] at h0
   have h1 : Polynomial.aeval (u ^ n) p = 0 := hj (by rw [h0, map_zero])
   refine ⟨n * p.natDegree, ?_⟩
@@ -114,10 +119,10 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.heckeLocal :
         obtain ⟨y, hy⟩ : ψ ∈ j.range := hrange ▸ hψ
         obtain ⟨c, hc⟩ := ihφ x hx
         obtain ⟨d, hd⟩ := ihψ y hy
-        obtain rfl : s = x + y := hj (by rw [hs, map_add, ← hx, ← hy]; rfl)
+        obtain rfl : s = x + y := hj (by rw [hs, map_add (f := _), ← hx, ← hy]; rfl)
         refine ⟨c + d, fun P hP => ?_⟩
         convert P.add_mem (hc P hP) (hd P hP) using 1
-        rw [map_add]; ring
+        rw [map_add (f := _)]; ring
       | mul φ ψ hφ hψ ihφ ihψ =>
         intro s hs
         obtain ⟨x, hx⟩ : φ ∈ j.range := hrange ▸ hφ

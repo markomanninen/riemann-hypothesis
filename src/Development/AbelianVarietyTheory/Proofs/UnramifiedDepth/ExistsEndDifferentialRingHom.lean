@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DualPairInh
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DualPairInh
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+
+@[expose] public section
+
 open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2 ReciprocityTheory.ChartRestriction.G.Chart
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -63,7 +68,7 @@ private lemma endDiff_ηmap_surj {O : LAlg R₀} (Dp : DualPair O) :
 
 private lemma endDiff_ηmap_inj {O : LAlg R₀} (Dp : DualPair O) :
     Function.Injective Dp.ηmap := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   exact Dp.free r (congrArg Subtype.val hr)
 
@@ -119,7 +124,8 @@ private lemma endDiff_exists {g : ℕ} {B : BX R₀} {O : LAlg R₀} (gb : Modul
     exact Subtype.ext hη.symm
   have hB : ∑ k, gb k ⊗ₜ[R₀] m k = LinearMap.lTensor B.gg (φ.1.toLinearMap.restrict hf)
       (∑ k, gb k ⊗ₜ[R₀] Dp.ηmap (c l k)) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [LinearMap.lTensor_tmul]
     congr 1
@@ -160,7 +166,7 @@ theorem exists_endDifferential_ringHom :
   let Dp := DualNum.dualPair O
   have hadd : ∀ a b, d (a + b) = d a + d b := fun a b =>
     endDiff_unique (hd _) Dp _ fun l => by
-      rw [((hf _ _).2 a b).1, endDiff_spec (hd a), endDiff_spec (hd b), ← map_add,
+      rw [((hf _ _).2 a b).1, endDiff_spec (hd a), endDiff_spec (hd b), ← map_add (f := _),
         ← Finset.sum_add_distrib]
       simp [TensorProduct.tmul_add]
   have hone : d 1 = 1 :=
@@ -172,9 +178,11 @@ theorem exists_endDifferential_ringHom :
       · simp
   have hmul : ∀ a b, d (a * b) = d a * d b := fun a b =>
     endDiff_unique (hd _) Dp _ fun l => by
-      rw [((hf _ _).2 a b).2, endDiff_spec (hd b), map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [((hf _ _).2 a b).2, endDiff_spec (hd b), map_sum, map_sum]
       simp only [endDiff_spec (hd a)]
-      rw [← map_sum, Finset.sum_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, Finset.sum_comm]
       simp [Matrix.mul_apply, TensorProduct.tmul_sum]
   have hzero : d 0 = 0 := by
     have := hadd 0 0

@@ -1,15 +1,19 @@
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.Complementary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothIterPhi
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassInvolutive
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassTwistNeg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityOfEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LanglandsSocleOfOrderFree
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLanglandsOfIrreducibleAdmissibleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIrrRepInjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairingTwistedDeterminantSubquotientStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.Complementary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothIterPhi
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassInvolutive
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassTwistNeg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityOfEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LanglandsSocleOfOrderFree
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLanglandsOfIrreducibleAdmissibleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIrrRepInjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairingTwistedDeterminantSubquotientStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem continuous_inv_addChar (ψ : AddChar k Circle) (hc : Continuous ψ) : Co
   rw [this]
   exact hc.comp continuous_neg
 
-theorem dualCl_fst (x : IrrGL k) : (dualCl x).1 = x.1 := by
+theorem dualCl_fst (x : IrrGL (k := k)) : (dualCl x).1 = x.1 := by
   unfold dualCl
   split <;> rfl
 
@@ -110,9 +114,9 @@ theorem nuPair_of (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [Is
       (ω.comp (Zc.Cos.thetaW k (n + 1 + j + 1))) := by
     rw [GlobalTheory.CompanionTheory.JacquetCongr.jm_congr_of_equiv _ hd2 _ _ E]
     exact hj2
-  set α : IrrGL k := (IrrGL.of S.ρ S.smooth S.irr).nu (-(((j : ℂ) + 1) / 2)) with hα
-  set Q' : IrrGL k := (IrrGL.of Q.ρ Q.smooth Q.irr).nu (-(((j : ℂ) + 1) / 2)) with hQ'
-  have hsum2 : ∀ (x y : IrrGL k), ∑ a, (![x, y] a).1 = x.1 + y.1 := fun x y => by
+  set α : IrrGL (k := k) := (IrrGL.of S.ρ S.smooth S.irr).nu (-(((j : ℂ) + 1) / 2)) with hα
+  set Q' : IrrGL (k := k) := (IrrGL.of Q.ρ Q.smooth Q.irr).nu (-(((j : ℂ) + 1) / 2)) with hQ'
+  have hsum2 : ∀ (x y : IrrGL (k := k)), ∑ a, (![x, y] a).1 = x.1 + y.1 := fun x y => by
     simp [Fin.sum_univ_two]
   have hd3 : ∑ i, (![dualCl β'', dualCl Q'] i).1 = n + 1 + j + 1 := by
     rw [hsum2, dualCl_fst, dualCl_fst]
@@ -125,7 +129,7 @@ theorem nuPair_of (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [Is
     rw [hQ', hQcl, hα, IrrGL.nu_nu, IrrGL.nu_nu, GlobalTheory.CompanionTheory.ZcDual.dualCl_nu hA, GlobalTheory.CompanionTheory.Zcore.dualCl_dualCl hA]
     congr 1
     ring
-  have key : ∀ u : IrrGL k, u = α.nu 1 → ∀ hdu : ∑ i, (![dualCl β'', u] i).1 = n + 1 + j + 1,
+  have key : ∀ u : IrrGL (k := k), u = α.nu 1 → ∀ hdu : ∑ i, (![dualCl β'', u] i).1 = n + 1 + j + 1,
       1 ≤ jm ![dualCl β'', u] hdu ω → ∃ hd' : ∑ a, (![dualCl β'', α.nu 1] a).1 = n + 1 + j + 1,
         1 ≤ jm ![dualCl β'', α.nu 1] hd' ω := by
     rintro u rfl hdu h

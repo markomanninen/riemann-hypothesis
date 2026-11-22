@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,9 +26,7 @@ theorem fr_eq (x : InfinitePlace E × Fin a × Fin a) :
   show frU x + star (frU x) = _
   rw [frU, Matrix.star_eq_conjTranspose, conjTranspose_single]
   congr 2
-  funext w
-  simp only [Pi.star_apply, Pi.single_apply, c0]
-  split_ifs <;> simp
+  exact (Pi.single_star (f := fun _ : InfinitePlace E => ℂ) x.1 c0).symm
 
 theorem fr_apply (x : InfinitePlace E × Fin a × Fin a) (p q : Fin a) (w : InfinitePlace E) :
     (fr x).1 p q w = (if x = (w, p, q) then c0 else 0) + (if x = (w, q, p) then star c0 else 0) := by
@@ -74,8 +76,6 @@ theorem span_fr : Submodule.span ℝ (Set.range (fr : _ → Herm E a)) = ⊤ := 
 theorem iM_conjT (X : Matrix (Fin a) (Fin a) (Cinf E)) : (iM X)ᴴ = -iM Xᴴ := by
   ext p q w
   simp [iM, conjTranspose_apply]
-
-theorem iM_sub (X Y : Matrix (Fin a) (Fin a) (Cinf E)) : iM (X - Y) = iM X - iM Y := smul_sub _ _ _
 
 theorem iM_neg (X : Matrix (Fin a) (Fin a) (Cinf E)) : iM (-X) = -iM X := smul_neg _ _
 

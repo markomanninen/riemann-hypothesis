@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensSAChar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensSAChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,8 @@ private theorem addHom_eq_zero_of_integralBasis_mul {F : Type} [Field F] [Number
     {y : F} (hy : y ≠ 0) (h0 : ∀ i, g (integralBasis F i * y) = 0) (w : F) : g w = 0 := by
   have hw : w = (∑ i, (integralBasis F).repr (w * y⁻¹) i • integralBasis F i) * y := by
     rw [(integralBasis F).sum_repr, mul_assoc, inv_mul_cancel₀ hy, mul_one]
-  rw [hw, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hw, Finset.sum_mul, map_sum]
   refine Finset.sum_eq_zero (fun i _ => ?_)
   rw [smul_mul_assoc, map_rat_smul, h0 i, smul_zero]
 
@@ -27,7 +32,7 @@ private theorem exists_mul_integers_of_fg {F : Type} [Field F] [NumberField F]
     { carrier := {a | ∃ r : 𝓞 F, algebraMap (𝓞 F) F b * a = algebraMap (𝓞 F) F r}
       add_mem' := by
         rintro a a' ⟨r, hr⟩ ⟨r', hr'⟩
-        exact ⟨r + r', by rw [mul_add, hr, hr', map_add]⟩
+        exact ⟨r + r', by rw [mul_add, hr, hr', map_add (f := _)]⟩
       zero_mem' := ⟨0, by rw [mul_zero, map_zero]⟩
       smul_mem' := by
         rintro n a ⟨r, hr⟩
@@ -51,7 +56,7 @@ private theorem fg_of_addHom_intValued {F : Type} [Field F] [NumberField F] (Λ 
   classical
   let φ : F →ₗ[ℤ] (Module.Free.ChooseBasisIndex ℤ (𝓞 F) → ℂ) :=
     { toFun := fun y i => g (integralBasis F i * y)
-      map_add' := fun y y' => by funext i; simp only [mul_add, map_add, Pi.add_apply]
+      map_add' := fun y y' => by funext i; simp only [mul_add, map_add (f := _), Pi.add_apply]
       map_smul' := fun n y => by
         funext i; simp only [mul_smul_comm, map_zsmul, RingHom.id_apply, Pi.smul_apply] }
   let ψ : (Module.Free.ChooseBasisIndex ℤ (𝓞 F) → ℤ) →ₗ[ℤ]
@@ -62,7 +67,7 @@ private theorem fg_of_addHom_intValued {F : Type} [Field F] [NumberField F] (Λ 
         funext i
         simp only [Pi.smul_apply, smul_eq_mul, Int.cast_mul, RingHom.id_apply, zsmul_eq_mul] }
   have hφ : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     by_contra hy0
     obtain ⟨w, hw⟩ := hne

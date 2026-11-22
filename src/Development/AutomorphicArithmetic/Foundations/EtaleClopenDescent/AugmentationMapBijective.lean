@@ -1,6 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.AugBijPf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPrimitiveRootAndRootsOfUnity
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.AugBijPf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPrimitiveRootAndRootsOfUnity
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Polynomial GlobalTheory.EtC GlobalTheory.EtC.PrimLoc
 

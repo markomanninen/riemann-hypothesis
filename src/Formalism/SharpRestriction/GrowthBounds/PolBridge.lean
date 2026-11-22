@@ -1,10 +1,14 @@
-import Formalism.SharpRestriction.GrowthBounds.ObjSeg
-import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
-import Formalism.SharpRestriction.GrowthBounds.FlipOneThree
-import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ObjSeg
+public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
+public import Formalism.SharpRestriction.GrowthBounds.FlipOneThree
+public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -196,8 +200,8 @@ theorem lowest_degree_le_iff_types (D : Formalism.BasicNotions.D7) (h2 : Formali
     lam1S Lt S G ≤ (M : WithBot ℤ) ↔ ∀ mu, e mu G ≠ 0 → mu 0 ≤ M :=
   (generated_weight_lemma_of_reducibility D h2 (valuationsAdditive_D7 D) K (Fin N) Lt r S e he).2 G M
 
-open Classical in
 
+open Classical in
 theorem combined_weight_of_nested_sets (D : Formalism.BasicNotions.D7) (X : Formalism.MainNotions.flipOneThree.Inst) (h2 : Formalism.MainNotions.CovariantDegrees.adm2 D)
     (h15 : Formalism.MainNotions.CovariantDegrees.SaturatedLowerSetSpan D) : Formalism.MainNotions.flipOneThree.adm8 D X := by
   intro N LL q J M hJ
@@ -233,18 +237,21 @@ theorem combined_weight_of_nested_sets (D : Formalism.BasicNotions.D7) (X : Form
     intro i G
     obtain ⟨e, he, hd⟩ := hdec i
     rw [mem_iSup_iso_iff Lt _ e he hd]
-    constructor
-    · intro h k hk
-      cases hM : M k with
-      | top => rw [ycond_top]; exact Submodule.mem_top
+    have hthreshold : ∀ k, J k = i.val →
+        (G ∈ YCond (KK X.O) (r := X.r) LL (J k) (M k) ↔
+          ∀ mu, e mu G ≠ 0 → ((mu ⟨0, Nat.pos_of_ne_zero X.hm⟩ : ℤ) : WithTop ℤ) ≤ M k) := by
+      intro k hk
+      cases M k with
+      | top => simp [ycond_top]
       | coe Mk =>
         rw [mem_ycond_iff D LL (J k) Mk G]
         have hS : {l : Fin N | (l : ℕ) < J k} = {l : Fin N | l.val < i.val} := by rw [hk]
         rw [hS, lowest_degree_le_iff_types D h2 Lt _ e he G Mk]
-        intro mu hmu
-        have := (h mu hmu).2 k hk
-        rw [hM] at this
-        exact_mod_cast this
+        have hzero : (0 : Fin X.r) = ⟨0, Nat.pos_of_ne_zero X.hm⟩ := Fin.ext (by simp)
+        simp only [WithTop.coe_le_coe, ← hzero]
+    constructor
+    · intro h k hk
+      exact (hthreshold k hk).2 fun mu hmu => (h mu hmu).2 k hk
     · intro h mu hmu
       refine ⟨?_, fun k hk => ?_⟩
       · by_contra hdom
@@ -253,14 +260,7 @@ theorem combined_weight_of_nested_sets (D : Formalism.BasicNotions.D7) (X : Form
         have : e mu G ∈ isoSub (glOps (KK X.O) X.r Lt {l : Fin N | l.val < i.val}) mu := hmem mu
         rw [isoSub_eq_bot D h2 Lt _ mu hdom] at this
         exact (Submodule.mem_bot _).1 this
-      · have hY := h k hk
-        cases hM : M k with
-        | top => exact le_top
-        | coe Mk =>
-          rw [hM, mem_ycond_iff D LL (J k) Mk G] at hY
-          have hS : {l : Fin N | (l : ℕ) < J k} = {l : Fin N | l.val < i.val} := by rw [hk]
-          rw [hS, lowest_degree_le_iff_types D h2 Lt _ e he G Mk] at hY
-          exact_mod_cast hY mu hmu
+      · exact (hthreshold k hk).1 (h k hk) mu hmu
   have hmemL : ∀ G : MvPolynomial (Fin N × Fin X.r) X.O,
       G ∈ Formalism.MainNotions.CovariantDegrees.nestLat X.O N X.r Lt LL.deg pi Ix ↔
         G ∈ Pol X.O X.r LL.deg ∧ ∀ k, MvPolynomial.map (algebraMap X.O (KK X.O)) G ∈ YCond (KK X.O) (r := X.r) LL (J k) (M k) := by

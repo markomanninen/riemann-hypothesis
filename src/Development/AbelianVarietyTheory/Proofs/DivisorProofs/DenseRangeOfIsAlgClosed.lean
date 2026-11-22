@@ -1,5 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.TwoClassFrameHasLevelSetting
-import Development.AbelianVarietyTheory.Definitions.Divisors.BlockPairCycPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelMapExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JKInvOfTriv
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -166,7 +175,7 @@ theorem mem_fix (τ : E →+* PadicAlgCl l) (σ : PadicAlgCl l ≃ₐ[ℚ_[l]] P
   induction hy using IntermediateField.adjoin_induction with
   | mem y hy => obtain ⟨x, rfl⟩ := hy; exact h x
   | algebraMap q => exact σ.commutes q
-  | add a b _ _ ha hb => rw [map_add, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), ha, hb]
   | inv a _ ha => rw [map_inv₀, ha]
   | mul a b _ _ ha hb => rw [map_mul, ha, hb]
 
@@ -248,7 +257,11 @@ theorem exists_bridge {E : Type} (Ω : Type) [Field E] [NumberField E] [Field Ω
   obtain ⟨j, hj⟩ : ∃ j : Ω →+* PadicAlgCl l, j.comp (algebraMap E Ω) = τ := by
     letI : Algebra E (PadicAlgCl l) := τ.toAlgebra
     haveI : Algebra.IsAlgebraic E Ω := IsAlgClosure.isAlgebraic
-    let j : Ω →ₐ[E] PadicAlgCl l := IsAlgClosed.lift
+    let j : Ω →ₐ[E] PadicAlgCl l := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     exact ⟨j, RingHom.ext fun x => j.commutes x⟩
   subst hj
   obtain ⟨e, h1, h2, h3⟩ := exists_equiv (E := E) j

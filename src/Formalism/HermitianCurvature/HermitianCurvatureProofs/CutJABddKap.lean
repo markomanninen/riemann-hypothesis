@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCont
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCont
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 
@@ -24,14 +28,14 @@ theorem kap_toSm_smul (c : ℂ) (u : MA.Qp P.r P.TT → ℂ) :
       have := Subalgebra.smul_mem (MA.smSub P.r P.TT) hu c
       exact this
     unfold MA.toSm
-    rw [dif_pos hcu, dif_pos hu]
+    rw [dite_eq_left hcu, dite_eq_left hu]
     rfl
   · by_cases hc : c = 0
     · subst hc
       have h0 : (fun q : MA.Qp P.r P.TT => (0 : ℂ) * u q) = 0 := by funext q; simp
       rw [h0, zero_smul]
       unfold MA.toSm
-      rw [dif_pos (Subalgebra.zero_mem _)]
+      rw [dite_eq_left (Subalgebra.zero_mem _)]
       rfl
     · have hcu : (fun q => c * u q) ∉ MA.smSub P.r P.TT := by
         intro h
@@ -42,7 +46,7 @@ theorem kap_toSm_smul (c : ℂ) (u : MA.Qp P.r P.TT → ℂ) :
         show u q = c⁻¹ * (c * u q)
         rw [← mul_assoc, inv_mul_cancel₀ hc, one_mul]
       unfold MA.toSm
-      rw [dif_neg hcu, dif_neg hu, smul_zero]
+      rw [dite_eq_right hcu, dite_eq_right hu, smul_zero]
 
 theorem actA_kap (κ : M.Ty P → ℂ) (f : M.Ty P → MA.SmQ P.r P.TT) :
     MA.actA P (MA.kap P (MA.DQ P) κ) f = fun ρ => κ ρ • f ρ := by
@@ -207,8 +211,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Wp Wq : InfinitePla
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
-open Classical in
 
+open Classical in
 def datumCoef (S : C.HidaSetting E Wp Wq) (T : ∀ v : Fin S.f, D.LevTower S.G.k S.G.r (Wp (S.pl v)) (Wq (S.pl v)))
     (v : Fin S.f) (Φ : FMap S v) (a a' : B.Mat S.G.k S.G.r → (Fin (2 * S.G.r + S.G.k + 1) → ℂ))
     (ι : B.Mat S.G.k S.G.r → B.Mat S.G.k S.G.r) : SSn.Coef S v :=
@@ -277,7 +281,8 @@ theorem datumCoef_ckOn {Bg : ℝ} (hD : SSn.IsDatum S T v Bg a a' ι) (Ψ : FMap
     ⟨⟨⟨h1, h2⟩, h3⟩, hg₀.2⟩, ?_, ?_⟩
   · have hp : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun g => (f1 g, f2 g, f3 g))
         (U1 ∩ U2 ∩ U3 ∩ {g | 0 < Formalism.QuantumDeterminants.Gf S.G.k S.G.r (T v).base.z (T v).base.z' g}) :=
-      (hf1.mono fun g hg => hg.1.1.1).prodMk ((hf2.mono fun g hg => hg.1.1.2).prodMk (hf3.mono fun g hg => hg.1.2))
+      (hf1.mono (show U1 ∩ U2 ∩ U3 ∩ {g | 0 < Formalism.QuantumDeterminants.Gf S.G.k S.G.r (T v).base.z (T v).base.z' g} ⊆ U1 from fun _ hg => hg.1.1.1)).prodMk
+        ((hf2.mono (show U1 ∩ U2 ∩ U3 ∩ {g | 0 < Formalism.QuantumDeterminants.Gf S.G.k S.G.r (T v).base.z (T v).base.z' g} ⊆ U2 from fun _ hg => hg.1.1.2)).prodMk (hf3.mono fun g hg => hg.1.2))
     exact hΨ.comp_contDiffOn hp
   · intro g hg hgv
     rw [datumCoef_pos S T v a a' ι Ψ ⟨hgv, hg.2⟩, e1 g hg.1.1.1 hgv, e2 g hg.1.1.2 hgv, e3 g hg.1.2 hgv]
@@ -391,10 +396,12 @@ theorem kapRep_of_typeProj (h : TypeProj) : KapRep := by
     constructor
     · simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, heq _ h hh h' hh']
       ext w
-      simp [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_smul]
     · simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, heq _ h hh h' hh']
       ext w
-      simp [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_smul]
   · intro x hx ρ A
     simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply]
     rw [kap_hsVec_sum, inner_sum, Finset.sum_eq_single ρ]

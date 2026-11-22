@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassSplit
-import GroundTheory.ProfiniteCohomology.ClassFormationDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassSplit
+public import GroundTheory.ProfiniteCohomology.ClassFormationDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -21,11 +26,6 @@ def openSubgroupMap (U : OpenSubgroup K.1.fixingSubgroup) : OpenSubgroup (ℚ̄ 
     ext x
     simp⟩
 
-theorem coe_openSubgroupMap (U : OpenSubgroup K.1.fixingSubgroup) :
-    (openSubgroupMap U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) =
-      (U : Subgroup K.1.fixingSubgroup).map K.1.fixingSubgroup.subtype :=
-  rfl
-
 def fieldOf (U : OpenSubgroup K.1.fixingSubgroup) : FiniteSubfield :=
   ofOpenSubgroup (openSubgroupMap U)
 
@@ -38,11 +38,6 @@ theorem fixingSubgroup_fieldOf_le (U : OpenSubgroup K.1.fixingSubgroup) :
   rw [fixingSubgroup_fieldOf]
   rintro _ ⟨g, _, rfl⟩
   exact g.2
-
-instance fact_le_fieldOf (U : OpenSubgroup K.1.fixingSubgroup) : Fact (K ≤ fieldOf U) :=
-  ⟨by
-    have h := IntermediateField.fixedField_antitone (fixingSubgroup_fieldOf_le U)
-    rwa [InfiniteGalois.fixedField_fixingSubgroup, InfiniteGalois.fixedField_fixingSubgroup] at h⟩
 
 theorem subgroupOf_fieldOf (U : OpenSubgroup K.1.fixingSubgroup) :
     (fieldOf U).1.fixingSubgroup.subgroupOf K.1.fixingSubgroup = U := by
@@ -59,11 +54,6 @@ theorem fieldOf_le_fieldOf {U V : OpenSubgroup K.1.fixingSubgroup} (h : V ≤ U)
 def openEquiv (U : OpenSubgroup K.1.fixingSubgroup) : (U : Subgroup K.1.fixingSubgroup) ≃* (fieldOf U).1.fixingSubgroup :=
   (MulEquiv.subgroupCongr (subgroupOf_fieldOf U).symm).trans
     (Subgroup.subgroupOfEquivOfLe (fixingSubgroup_fieldOf_le U))
-
-@[simp]
-theorem coe_openEquiv_apply (U : OpenSubgroup K.1.fixingSubgroup) (g : (U : Subgroup K.1.fixingSubgroup)) :
-    ((openEquiv U g : (fieldOf U).1.fixingSubgroup) : ℚ̄ ≃ₐ[ℚ] ℚ̄) = ((g : K.1.fixingSubgroup) : ℚ̄ ≃ₐ[ℚ] ℚ̄) :=
-  rfl
 
 theorem continuous_openEquiv (U : OpenSubgroup K.1.fixingSubgroup) : Continuous (openEquiv U).toMonoidHom :=
   (continuous_subtype_val.comp continuous_subtype_val).subtype_mk _

@@ -1,47 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
+
 open NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory
 
 namespace SplitLevel
-
-theorem exists_root {p d m : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) (hm : 4 * m = d + 1)
-    (hj : jacobiSym (-(d : ℤ)) p = 1) :
-    ∃ c : ℤ, (p : ℤ) ∣ c ^ 2 - c + m ∧ IsCoprime (1 - 2 * c) (p : ℤ) := by
-  have := Fact.mk hp
-  obtain ⟨r, hr⟩ := ZMod.isSquare_of_jacobiSym_eq_one hj
-  have h2 : (2 : ZMod p) ≠ 0 := by
-    intro h
-    have h' : ((2 : ℕ) : ZMod p) = 0 := by exact_mod_cast h
-    rw [ZMod.natCast_eq_zero_iff] at h'
-    exact hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).1 h')
-  set h := (2 : ZMod p)⁻¹
-  have hh : 2 * h = 1 := mul_inv_cancel₀ h2
-  have e4 : (4 : ZMod p) * (m : ZMod p) = (d : ZMod p) + 1 := by
-    exact_mod_cast congrArg (Nat.cast : ℕ → ZMod p) hm
-  push_cast at hr
-  obtain ⟨c, hc⟩ := ZMod.intCast_surjective ((1 + r) * h)
-  have hdv : (p : ℤ) ∣ c ^ 2 - c + m := by
-    refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).1 ?_
-    push_cast [hc]
-    linear_combination (-h ^ 2) * hr + h ^ 2 * e4 + ((1 + r) * h - (m : ZMod p) * (2 * h + 1)) * hh
-  refine ⟨c, hdv, ?_⟩
-  apply IsCoprime.symm
-  rw [Prime.coprime_iff_not_dvd (Nat.prime_iff_prime_int.mp hp)]
-  intro hdiv
-  have e : (4 : ℤ) * (m : ℤ) = (d : ℤ) + 1 := by exact_mod_cast hm
-  have hd : -(d : ℤ) = (1 - 2 * c) ^ 2 - 4 * (c ^ 2 - c + m) := by
-    linear_combination e
-  have hpd : (p : ℤ) ∣ -(d : ℤ) := by
-    rw [hd]; exact dvd_sub (dvd_pow hdiv two_ne_zero) (Dvd.dvd.mul_left hdv 4)
-  have h0 : jacobiSym (-(d : ℤ)) p = 0 := by
-    rw [← jacobiSym.legendreSym.to_jacobiSym, legendreSym.eq_zero_iff]
-    exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).2 hpd
-  rw [h0] at hj
-  exact absurd hj (by decide)
 
 end SplitLevel
 
@@ -108,13 +78,13 @@ open NumberField Pointwise in
 private theorem host_bar_w0_of_isCMField {E : Type} [Field E] [NumberField E] [IsCMField E] (H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) :
     H.bar H.w0 = 1 - H.w0 := by
   have h := congrArg H.bar H.two_weight_eq_one_add_root
-  simp only [map_mul, map_add, map_one, map_ofNat, host_bar_rt_of_isCMField] at h
+  simp only [map_mul, map_add (f := _), map_one, map_ofNat, host_bar_rt_of_isCMField] at h
   have h2 : (2 : 𝓞 E) * H.bar H.w0 = 2 * (1 - H.w0) := by
     linear_combination h + H.two_weight_eq_one_add_root
   exact mul_left_cancel₀ two_ne_zero h2
 
-open NumberField Pointwise in
 
+open NumberField Pointwise in
 theorem _root_.GlobalTheory.exists_level_mul_split : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (l : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H), (∀ (pd : ℕ) (I : Ideal (𝓞 E)), Odd pd → pd.Coprime l.M → I = Ideal.span {a | a ∈ I ∧ a ∈ Algebra.adjoin ℤ {H.w0}} → I * I.map (H.bar : 𝓞 E →+* 𝓞 E) = Ideal.span {(pd : 𝓞 E)} → I ⊔ I.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤ → ∃ l₂ : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H, l.Dvd l₂ ∧ l₂.M = l.M * pd ∧ l₂.Mb = l.Mb * I ∧ l₂.A = l.A) ∧ ∀ pd : ℕ, pd.Prime → pd ≠ 2 → jacobiSym (-(H.d : ℤ)) pd = 1 → ∃ I : Ideal (𝓞 E), I = Ideal.span {a | a ∈ I ∧ a ∈ Algebra.adjoin ℤ {H.w0}} ∧ I * I.map (H.bar : 𝓞 E →+* 𝓞 E) = Ideal.span {(pd : 𝓞 E)} ∧ I ⊔ I.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤ := by
   intro E _ _ _ H l
   refine ⟨fun pd I hodd hcop hI hprod hsup => ?_, fun pd hp hp2 hJ => ?_⟩

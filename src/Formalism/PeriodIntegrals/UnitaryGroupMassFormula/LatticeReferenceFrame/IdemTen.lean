@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.IdemLiftOfSteps
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.IdemLiftOfSteps
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,7 @@ theorem tenStep : TenStep := by
   have hi' := congrArg (iA I) hi
   have hii' := congrArg (iA I) hii
   have hiii' := congrArg (iA I) hiii
-  simp only [map_mul, map_add, map_sub, map_pow, map_neg, map_ofNat, map_zero] at hi' hii' hiii'
+  simp only [map_mul, map_add (f := _), map_sub, map_pow, map_neg, map_ofNat, map_zero] at hi' hii' hiii'
   have hA : iA I A0 = iE I (θ : I.E) + iE I (star (θ : I.E)) := by
     have e1 : A0 = algebraMap I.F (Af I.F) (1 - (g : I.F) * (a3 : I.F)) := by
       rw [hA0d, map_sub, map_one, map_mul, map_natCast]
@@ -108,7 +112,7 @@ theorem tenStep : TenStep := by
     have e2 : algebraMap I.F I.E (1 - (g : I.F) * (a3 : I.F)) = (θ : I.E) + star (θ : I.E) := by
       rw [map_sub, map_one, map_mul, map_natCast, ha3]
       linear_combination ht3
-    rw [e1, ← iE_alg, e2, map_add]
+    rw [e1, ← iE_alg, e2, map_add (f := _)]
   have hB : iA I B0 = iE I (θ : I.E) * iE I (star (θ : I.E)) := by
     have e1 : B0 = algebraMap I.F (Af I.F) ((g : I.F) * (a2 : I.F)) := by
       rw [hB0d, map_mul, map_natCast]
@@ -131,7 +135,7 @@ theorem tenStep : TenStep := by
   · refine ⟨iE I (θ : I.E) * iA I C₁ - iA I C₂,
       sub_mem (mul_mem (iE_mem I θ) (iA_mem I hC₁)) (iA_mem I hC₂), ?_⟩
     have hW' : iA I W = 1 + (g : I.E ⊗[I.F] Af I.F) * iA I C₁ := by
-      rw [hWd, map_add, map_one, map_mul, map_natCast]
+      rw [hWd, map_add (f := _), map_one, map_mul, map_natCast]
     have hQ' : iA I Q = (g : I.E ⊗[I.F] Af I.F) * iA I C₂ := by
       rw [hQd, map_mul, map_natCast]
     show iE I (θ : I.E) * iA I W - iA I Q - iE I (θ : I.E) = _

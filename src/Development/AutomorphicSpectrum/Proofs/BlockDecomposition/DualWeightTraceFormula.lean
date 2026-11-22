@@ -1,15 +1,19 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HighestVectorsRegularLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumMemOfStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryEuclideanModelStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCompactLieActionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestWeightAntitoneOfFiniteDimensionalStableStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualOperatorCommutesLieStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsHighestWeightInInvariantSubmoduleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestWeightOfUnitaryDerivativeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntertwinerEqZeroOfVanishOnHighestStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestWeightIntegralOfUnitaryStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HighestVectorsRegularLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumMemOfStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryEuclideanModelStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCompactLieActionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestWeightAntitoneOfFiniteDimensionalStableStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualOperatorCommutesLieStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsHighestWeightInInvariantSubmoduleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestWeightOfUnitaryDerivativeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntertwinerEqZeroOfVanishOnHighestStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestWeightIntegralOfUnitaryStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ theorem core (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Finite
       intro s g hs i hi
       have hia : Antitone (i : Fin n → ℤ) := ((hFs i).1 i.2).1
       have h1 := congrArg (p i) hs
-      rw [map_sum, map_zero, Finset.sum_eq_single i] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero, Finset.sum_eq_single i] at h1
       · rw [map_smul, hpid i hia (v i) (hvmem i i.2)] at h1
         exact (smul_eq_zero.mp h1).resolve_right (hvne i i.2)
       · intro j _ hji
@@ -65,7 +70,8 @@ theorem core (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Finite
   have hcomm : ∀ a b w, (LinearMap.id - ∑ ν ∈ hfin.toFinset, p ν : H →ₗ[ℂ] H) (G a b w) =
       G a b ((LinearMap.id - ∑ ν ∈ hfin.toFinset, p ν : H →ₗ[ℂ] H) w) := by
     intro a b w
-    simp only [LinearMap.sub_apply, LinearMap.id_apply, LinearMap.sum_apply, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.sub_apply, LinearMap.id_apply, LinearMap.sum_apply, map_sub, map_sum]
     congr 1
     exact Finset.sum_congr rfl fun ν hν => hpG ν ((hF ν).1 hν).1 a b w
   have hhigh : ∀ (μ : Fin n → ℝ) (v : H), Formalism.REAL.KHighest (fun _ => true) G μ v →
@@ -101,19 +107,21 @@ theorem core (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Finite
         = LinearMap.trace ℂ H ((ρ k : H →ₗ[ℂ] H) ∘ₗ S ∘ₗ ∑ ν ∈ hfin.toFinset, p ν) := by
           rw [hsum, LinearMap.comp_id]
       _ = ∑ ν ∈ hfin.toFinset, LinearMap.trace ℂ H ((ρ k : H →ₗ[ℂ] H) ∘ₗ S ∘ₗ p ν) := by
-          rw [← map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [← map_sum]
           congr 1
           ext w
-          simp [LinearMap.sum_apply, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [LinearMap.sum_apply, map_sum]
       _ = _ := Finset.sum_congr rfl fun ν hν => hptr ν ((hF ν).1 hν).1 S hS k z hk hz
 
 theorem sum_single' {M : Type*} [AddCommGroup M] [Module ℂ M] (x : Fin n → Fin n → M) (a b : Fin n) (c : ℂ) :
     ∑ i, ∑ j, (Matrix.single a b c : Matrix (Fin n) (Fin n) ℂ) i j • x i j = c • x a b := by
   classical
   rw [Finset.sum_eq_single a (fun i _ hi => Finset.sum_eq_zero fun j _ => by
-        simp [Matrix.single_apply, Ne.symm hi]) (by simp),
-      Finset.sum_eq_single b (fun j _ hj => by simp [Matrix.single_apply, Ne.symm hj]) (by simp)]
-  simp [Matrix.single_apply]
+        simp [Ne.symm hi]) (by simp),
+      Finset.sum_eq_single b (fun j _ hj => by simp [Ne.symm hj]) (by simp)]
+  simp
 
 theorem eq_zero_of_skew {M : Type*} [AddCommGroup M] [Module ℂ M] (x : Fin n → Fin n → M)
     (h : ∀ X : Matrix (Fin n) (Fin n) ℂ, Xᴴ = -X → ∑ i, ∑ j, X i j • x i j = 0) (a b : Fin n) : x a b = 0 := by
@@ -145,8 +153,8 @@ theorem trOn_transport {M N : Type*} [AddCommGroup M] [Module ℂ M] [AddCommGro
       exact (hD x).1 hx
     · intro hy
       exact ⟨e.symm y, (hD _).2 (by simpa using hy), by simp⟩
-  unfold trOn
-  rw [dif_pos hf, dif_pos hg, ← LinearMap.trace_conj' (f.restrict hf) (e.ofSubmodules D D' hmap)]
+  delta trOn
+  rw [dite_eq_left hf, dite_eq_left hg, ← LinearMap.trace_conj' (f.restrict hf) (e.ofSubmodules D D' hmap)]
   congr 1
   ext y
   simp [LinearEquiv.conj_apply, hfg]
@@ -161,7 +169,7 @@ theorem main : ∀ {n : ℕ} (E : KMod n) (T : E.V →L[ℂ] E.V), (∀ k, T * E
   obtain ⟨e, ρ', hρc, hρn, he⟩ := GlobalTheory.T.unitary_euclidean_model E
   obtain ⟨G', hg', hh', hd'⟩ :=
     GlobalTheory.T.exists_compact_lie_action (EuclideanSpace ℂ (Fin (Module.finrank ℂ E.V))) ρ' hρc hρn
-  haveI : FiniteDimensional ℂ (E.V →L[ℂ] ℂ) := LinearEquiv.finiteDimensional e.symm
+  have : FiniteDimensional ℂ (E.V →L[ℂ] ℂ) := LinearEquiv.finiteDimensional e.symm
   have hint : ∀ a b ξ, e (G a b ξ) = G' a b (e ξ) := by
     intro a b ξ
     have hx : ∀ X : Matrix (Fin n) (Fin n) ℂ, Xᴴ = -X →
@@ -173,13 +181,13 @@ theorem main : ∀ {n : ℕ} (E : KMod n) (T : E.V →L[ℂ] E.V), (∀ k, T * E
       have h1 := hG.2 X γ hX hγ ξ
       have h2 := hd' X γ hX hγ (e ξ)
       have h3 : HasDerivAt (fun t : ℝ => e (ξ ∘L E.ρ (γ t)⁻¹)) (e (∑ a, ∑ b, X a b • G a b ξ)) 0 := by
-        have := (e.toContinuousLinearEquiv.toContinuousLinearMap.restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt
+        exact (e.toContinuousLinearEquiv.toContinuousLinearMap.restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt
           (0 : ℝ) h1
-        simpa [Function.comp_def] using this
       have h4 : (fun t : ℝ => e (ξ ∘L E.ρ (γ t)⁻¹)) = fun t => ρ' (γ t) (e ξ) := funext fun t => he (γ t) ξ
       rw [h4] at h3
       have h5 := h3.unique h2
-      simp only [map_sum, map_smul] at h5
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul] at h5
       simp only [smul_sub, Finset.sum_sub_distrib]
       rw [h5, sub_self]
     exact sub_eq_zero.mp (eq_zero_of_skew (fun i j => e (G i j ξ) - G' i j (e ξ)) hx a b)

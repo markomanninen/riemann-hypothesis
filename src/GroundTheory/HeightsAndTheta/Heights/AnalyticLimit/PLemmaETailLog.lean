@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailLog
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailMass
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StTailLogOfMass
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailLog
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailMass
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StTailLogOfMass
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

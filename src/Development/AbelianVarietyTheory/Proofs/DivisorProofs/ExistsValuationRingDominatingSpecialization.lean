@@ -1,12 +1,16 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj TopologicalSpace TensorProduct
 open scoped CategoryTheory.Obj
 
 namespace GlobalTheory
 
-set_option backward.isDefEq.respectTransparency.types false in
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem exists_valuationRing_of_specializes (X : Scheme.{0}) (x' x : X) (h : x' ⤳ x) :
     ∃ (V : Type) (_ : CommRing V) (_ : IsDomain V) (_ : ValuationRing V)
       (g : Spec (CommRingCat.of V) ⟶ X),

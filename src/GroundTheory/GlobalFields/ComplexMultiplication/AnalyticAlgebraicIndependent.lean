@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticAlgebraicPoints
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticAlgebraicPoints
+
+@[expose] public section
 
 open Filter Topology Set Polynomial
 open scoped PeriodPair

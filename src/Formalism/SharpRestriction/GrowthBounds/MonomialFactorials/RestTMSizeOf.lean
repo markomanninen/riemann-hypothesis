@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.WindowEntryLeTwoMulA
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.WindowEntryLeTwoMulA
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ open MvPolynomial Finset Formalism.MainNotions.G Formalism.MainNotions.flipOneTh
 
 variable {C0 CE1 CE2 : ℝ} {X : flipOneThree.Inst}
 
-variable (C0 CE1 CE2 X) in
 
+variable (C0 CE1 CE2 X) in
 def aTopPt (dl : DCl X) (a : Fin X.s → ℕ) : Fin X.s → ℕ :=
   ovr (uTop (X.S C0 CE1 CE2)) a (fun i => topA C0 CE1 CE2 X dl (uTop (X.S C0 CE1 CE2) i))
 
@@ -68,7 +72,9 @@ theorem restTMSize_of (hS : SegFacts C0 CE1 CE2 X) (hFree : RestFree C0 CE1 CE2 
   have hx' : x ∈ idx C0 CE1 CE2 X dl (aTopPt C0 CE1 CE2 X dl a) := by
     rw [← hFree dl hdl a ha _ ha']; exact hx
   obtain ⟨hK', -, -⟩ := digits_of_idx hx'
-  have hT' := (mem_cbox' ha').1
+  classical
+  have hT' : aTopPt C0 CE1 CE2 X dl a ∈ Fintype.piFinset (fun _ : Fin X.s => X.winA) := by
+    exact (Finset.mem_filter.mp ha').1
   have e := setTies_top ha hx
   refine ⟨hSI dl hdl a ha x hx, ?_, ?_, ?_, ?_⟩
   · intro y

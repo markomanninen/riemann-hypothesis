@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormalisedLocalInvariantExistsStatement
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormalisedLocalInvariantExistsStatement
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 noncomputable section
 

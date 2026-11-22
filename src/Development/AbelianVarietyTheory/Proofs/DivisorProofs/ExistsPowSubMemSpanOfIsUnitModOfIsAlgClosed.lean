@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+
+@[expose] public section
+
 open Polynomial GlobalTheory.EtC
 
 namespace GlobalTheory
@@ -8,7 +13,11 @@ theorem exists_algebraMap_sub_mem_of_isMaximal_of_isAlgClosed (k B : Type) [Fiel
     ∃ c : k, b - algebraMap k B c ∈ P := by
   letI := Ideal.Quotient.field P
   haveI : Module.Finite k (B ⧸ P) := finite_of_finite_type_of_isJacobsonRing k (B ⧸ P)
-  let φ : (B ⧸ P) →ₐ[k] k := IsAlgClosed.lift
+  let φ : (B ⧸ P) →ₐ[k] k := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨φ (Ideal.Quotient.mk P b), ?_⟩
   have h : algebraMap k (B ⧸ P) (φ (Ideal.Quotient.mk P b)) = Ideal.Quotient.mk P b := by
     apply φ.toRingHom.injective

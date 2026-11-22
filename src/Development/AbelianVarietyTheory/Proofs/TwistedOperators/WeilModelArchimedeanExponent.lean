@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpDiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsPairReading
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRationalDarbouxOrientedPairTransport
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumTransportAdelicSchwartzThetaTrans
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasDerivAtThetaTransformHeisenbergRealLine
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ArchimedeanLineEqRealScalarSmulSupported
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchActionReadingsCompatible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchHeisenbergDerivativesExistStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPairApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanTracePairingBilinearNondegenerateStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzComplexStructureVacuumSolutionEqSmulStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDarbouxComplexStructureTwoInvolutionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasArchimedeanCharExponentsConjOfHasInfExp
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieActionFockOperatorsScalarsTrace
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockCreationPreservesFockVectorsTwoFrames
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialOperatorHeisenbergDerivative
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LowVanishFockOfLowVanish
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpDiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsPairReading
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRationalDarbouxOrientedPairTransport
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumTransportAdelicSchwartzThetaTrans
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasDerivAtThetaTransformHeisenbergRealLine
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ArchimedeanLineEqRealScalarSmulSupported
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchActionReadingsCompatible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchHeisenbergDerivativesExistStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPairApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanTracePairingBilinearNondegenerateStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzComplexStructureVacuumSolutionEqSmulStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDarbouxComplexStructureTwoInvolutionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasArchimedeanCharExponentsConjOfHasInfExp
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieActionFockOperatorsScalarsTrace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockCreationPreservesFockVectorsTwoFrames
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialOperatorHeisenbergDerivative
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LowVanishFockOfLowVanish
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -49,7 +53,7 @@ theorem gauss_line : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
   obtain ⟨D, hDu⟩ := GlobalTheory.T.archHeisenbergDerivatives_exist F E σ (Fin n) (Fin d) (Fin n × Fin d) ψ _ _ M.co hStd
   obtain ⟨J, e, e', hJ, he, hJe, he1, he2, hy⟩ := GlobalTheory.T.exists_darboux_complex_structure_two_involutions F E σ (Fin n) (Fin d) (Fin n × Fin d) τ _ _ M.co X.θ W.θ
     ε ε' hCM hX hW
-  have hz : ∀ (u : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)) (t : ℝ), M.co.rho ψ (realAd F t • u) 0 = 0 := by
+  have hz : ∀ (u : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (t : ℝ), M.co.rho ψ (realAd F t • u) 0 = 0 := by
     intro u t; funext x; simp [Darboux.rho, schr]
   have hA : ∀ u, At (evI F) u → ∀ h : SInf F (Fin n × Fin d), ActsD (evI F) (M.heisLine ψ u) h (D u h) := fun u hu h =>
     (GlobalTheory.RealLift.actsLaws F _ h (D u h) h).1 _ (hz u) (hDu u hu h).1
@@ -68,13 +72,13 @@ theorem gauss_line : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
 
 theorem exists_der {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n d : ℕ}
     {X : Spc F E n} {W : Spc F E d} (M : Model σ X W) {ψ : AddChar (AF F) ℂ} (hStd : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsStd ψ) :
-    ∃ Dr : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) → (SInf F (Fin n × Fin d) →L[ℂ] SInf F (Fin n × Fin d)),
+    ∃ Dr : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → (SInf F (Fin n × Fin d) →L[ℂ] SInf F (Fin n × Fin d)),
       (∀ u, At (evI F) u → ∀ f : SInf F (Fin n × Fin d), ActsD (evI F) (M.heisLine ψ u) f (Dr u f)) ∧
       (∀ u, At (evI F) u → ∀ f f₁ : SInf F (Fin n × Fin d), ActsD (evI F) (M.heisLine ψ u) f f₁ → f₁ = Dr u f) ∧
-      ∀ (ι : Type) (s : Finset ι) (u : ι → Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)), (∀ i, At (evI F) (u i)) →
+      ∀ (ι : Type) (s : Finset ι) (u : ι → Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))), (∀ i, At (evI F) (u i)) →
         ∀ f, Dr (∑ i ∈ s, u i) f = ∑ i ∈ s, Dr (u i) f := by
   obtain ⟨D, hDu⟩ := GlobalTheory.T.archHeisenbergDerivatives_exist F E σ (Fin n) (Fin d) (Fin n × Fin d) ψ _ _ M.co hStd
-  have hz : ∀ (u : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)) (t : ℝ), M.co.rho ψ (realAd F t • u) 0 = 0 := by
+  have hz : ∀ (u : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (t : ℝ), M.co.rho ψ (realAd F t • u) 0 = 0 := by
     intro u t; funext x; simp [Darboux.rho, schr]
   have hA : ∀ u, At (evI F) u → ∀ h : SInf F (Fin n × Fin d), ActsD (evI F) (M.heisLine ψ u) h (D u h) := fun u hu h =>
     (GlobalTheory.RealLift.actsLaws F _ h (D u h) h).1 _ (hz u) (hDu u hu h).1
@@ -89,10 +93,12 @@ theorem exists_der {F E : Type} [Field F] [NumberField F] [Field E] [NumberField
   have hev : ∀ a, evI F a = ev a := fun _ => rfl
   have hc : coord M.co (∑ i ∈ s, u i) = ∑ i ∈ s, coord M.co (u i) := by
     refine Prod.ext (funext fun k => ?_) (funext fun k => ?_) <;>
-      simp only [coord, hev, map_sum, Prod.fst_sum, Prod.snd_sum, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [coord, hev, map_sum, Prod.fst_sum, Prod.snd_sum, Finset.sum_apply]
   ext x
   rw [hDx _ hs, hc, SchwartzMap.sum_apply, Finset.sum_congr rfl fun i _ => hDx _ (hu i) f x]
-  simp only [Prod.fst_sum, Prod.snd_sum, map_sum, Finset.sum_sub_distrib, Complex.ofReal_sum, Finset.mul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Prod.fst_sum, Prod.snd_sum, map_sum, Finset.sum_sub_distrib, Complex.ofReal_sum, Finset.mul_sum,
     Finset.sum_mul]
 
 end Gauss
@@ -132,7 +138,7 @@ theorem dRho_ptF {V W : HSp D} (A : Fr V) (B : Fr W) {θ : InfFam D} {ψ : AddCh
   refine ⟨(1 / 2 : ℂ) • (Q₁ + Q₂), ?_⟩
   have e : ptF ψ θ A B f ((1 / 2 : ℂ) • (Q₁ + Q₂)) = (1 / 2 : ℂ) • (ptF ψ θ A B f Q₁ + ptF ψ θ A B f Q₂) := by
     unfold ptF
-    rw [map_smul, map_add]
+    rw [map_smul, map_add (f := _)]
   rw [e, ← h1, ← h2, crea, annih]
   module
 
@@ -162,7 +168,7 @@ theorem ptO_smul {m k : ℕ} (G : Matrix (Fin m) (Fin m) D.host.E) (a : AF D.hos
 
 theorem gram_sgn (ε : Bool) (M : HSp D) : (sgn ε M).gram = -(sgE (D := D) ε • M.gram) := by
   cases ε
-  · simp [sgn, sgE]
+  · ext i j; simp [sgn, HSpace.gram, sgE]
   · ext i j; simp [HSpace.gram, sgE]
 
 variable {ψ : AddChar (AF D.host.F) ℂ} {ε : Bool} {M X : HSp D} {Xs : Spc D.host.F D.host.E M.rank}
@@ -196,7 +202,7 @@ theorem exists_co (hX : Xs.J = sgE (D := D) ε • M.gram)
 theorem thetaSum_rho_rho {F : Type} [Field F] [NumberField F] {U : Type} [AddCommGroup U] [Module (AF F) U]
     {B : U → U → AF F} {κ : Type} [Fintype κ] (co : Darboux B κ) (ψ : AddChar (AF F) ℂ) (Φ : (κ → AF F) → ℂ) (x y : U) :
     thetaSum F (co.rho ψ x (co.rho ψ y Φ)) = ψ (⅟(2 : AF F) * B x y) * thetaSum F (co.rho ψ (x + y) Φ) := by
-  simp only [Darboux.rho, schr_schr, thetaSum, map_add, Pi.smul_apply, smul_eq_mul, tsum_mul_left, co.form]
+  simp only [Darboux.rho, schr_schr, thetaSum, map_add (f := _), Pi.smul_apply, smul_eq_mul, tsum_mul_left, co.form]
 
 theorem heisO_thetaTr {S T : HSp D} {JA : Matrix (Fin T.rank) (Fin T.rank) D.host.E}
     {JB : Matrix (Fin S.rank) (Fin S.rank) D.host.E} {ξ : AE D} {κ : Type} [Fintype κ]
@@ -208,13 +214,13 @@ theorem heisO_thetaTr {S T : HSp D} {JA : Matrix (Fin T.rank) (Fin T.rank) D.hos
   rw [thetaSum_rho_rho, ← GlobalTheory.ThetaTransform.symplO_eq_symp hA hB, GlobalTheory.ThetaTransform.invOf_two_eq]
   rfl
 
-variable (ψ ε) in
 
+variable (ψ ε) in
 abbrev th (Φ : (Fin M.rank × Fin X.rank → AF D.host.F) → ℂ) : WO (sgn ε M) X → ℂ :=
   GlobalTheory.TripleRead.thO Mo ψ (sgn ε M).gram (Equiv.refl (Fin X.rank)) Φ
 
-variable (ε M X) in
 
+variable (ε M X) in
 abbrev dir (θ : InfFam D) (τ : D.what₂.Tau) (z : Matrix (Fin X.rank) (Fin M.rank) ℂ) :
     Matrix (Fin M.rank) (Fin X.rank) (AE D) :=
   GlobalTheory.TripleRead.ptO (sgn ε M).gram (Equiv.refl (Fin X.rank)) (lineAt θ τ z 1)
@@ -277,10 +283,12 @@ theorem eq_sum_lineAt {θ : InfFam D} (hθ : IsInfFam θ) {m n : ℕ} {x : Mx D 
   rw [Matrix.sum_apply]
   refine sub_eq_zero.1 (hσ.ext _ ?_ fun t' => ?_)
   · have h2 : ∀ t, finPart D (lineAt θ t (compAt θ t x) 1 i j) = 0 := fun t => congrFun (congrFun ((hL t).2.1 1) i) j
-    rw [RingHom.map_sub, map_sum, h1, Finset.sum_eq_zero fun t _ => h2 t, sub_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [RingHom.map_sub, map_sum, h1, Finset.sum_eq_zero fun t _ => h2 t, sub_zero]
   · have h2 : ∀ t, θ t' (infPart D (lineAt θ t (compAt θ t x) 1 i j)) =
         (if t' = t then ((1 : ℝ) : ℂ) • compAt θ t x else 0) i j := fun t => congrFun (congrFun ((hL t).2.2 1 t') i) j
-    rw [RingHom.map_sub, RingHom.map_sub, map_sum, map_sum, Finset.sum_congr rfl fun t _ => h2 t, ← Matrix.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [RingHom.map_sub, RingHom.map_sub, map_sum, map_sum, Finset.sum_congr rfl fun t _ => h2 t, ← Matrix.sum_apply,
       Finset.sum_ite_eq, if_pos (Finset.mem_univ _), Complex.ofReal_one, one_smul]
     exact sub_self _
 
@@ -380,8 +388,8 @@ theorem dRho_thL {g : (Fin M.rank × Fin X.rank → Formalism.MainNotions.Global
       thL Mo hψ hθ hX hW hM hg (Dr (dir ε M X θ t z) f) :=
   (th_laws Mo hψ hθ hX hW hM).2.2.2.2 t z _ (pureA_mem f hg) _ (pureA_mem _ hg) (hD _ (dir_at hθ t z) f _ (rest_fin f hg))
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_vacuum (A : Fr (sgn ε M)) (B : Fr X) : ∃ g₀ : SInf D.host.F (Fin M.rank × Fin X.rank), g₀ ≠ 0 ∧
     ∀ t z, Dr (dir ε M X θ t z) g₀ + Complex.I • Dr (dir ε M X θ t (cplxO (A.cart t) (B.cart t) z)) g₀ = 0 := by
   obtain ⟨tadd, tsm, tinj, tth, -⟩ := th_laws Mo hψ hθ hX hW hM
@@ -403,7 +411,7 @@ theorem exists_vacuum (A : Fr (sgn ε M)) (B : Fr X) : ∃ g₀ : SInf D.host.F 
       · rw [GlobalTheory.RealLift.pureA_ptAt, mul_comm]; rfl
       · rw [GlobalTheory.RealLift.pureA_ptAt, mul_comm, map_smul]; rfl
       · change annih _ θ t _ z (thL Mo hψ hθ hX hW hM hg f) = thL Mo hψ hθ hX hW hM hg (An t z f)
-        rw [annih, dRho_thL Mo hψ hθ hX hW hM hD, dRho_thL Mo hψ hθ hX hW hM hD, hAn, map_add, map_smul]
+        rw [annih, dRho_thL Mo hψ hθ hX hW hM hD, dRho_thL Mo hψ hθ hX hW hM hD, hAn, map_add (f := _), map_smul]
     | zero =>
       refine ⟨0, fun _ _ => rfl, fun t z => ⟨0, zero_mem _, fun a y => by rw [Pi.zero_apply y, map_zero]; rfl, ?_⟩⟩
       rw [t0]
@@ -415,7 +423,7 @@ theorem exists_vacuum (A : Fr (sgn ε M)) (B : Fr X) : ∃ g₀ : SInf D.host.F 
       refine ⟨s₁ + s₂, fun a y => by rw [Pi.add_apply, a1, a2]; rfl, fun t z => ?_⟩
       obtain ⟨Ψ₁', n1, c1, d1⟩ := b1 t z
       obtain ⟨Ψ₂', n2, c2, d2⟩ := b2 t z
-      refine ⟨Ψ₁' + Ψ₂', add_mem n1 n2, fun a y => by rw [Pi.add_apply, c1, c2, Pi.add_apply, map_add]; rfl, ?_⟩
+      refine ⟨Ψ₁' + Ψ₂', add_mem n1 n2, fun a y => by rw [Pi.add_apply, c1, c2, Pi.add_apply, map_add (f := _)]; rfl, ?_⟩
       rw [tadd _ m1 _ m2, tadd _ n1 _ n2, ← d1, ← d2]
       exact GlobalTheory.FockIndep.annih_add hψ hθ _ _ _ ((tth _).2 ⟨_, m1, rfl⟩) ((tth _).2 ⟨_, m2, rfl⟩)
     | smul c Ψ₁ m1 h1 =>
@@ -443,8 +451,8 @@ theorem exists_vacuum (A : Fr (sgn ε M)) (B : Fr X) : ∃ g₀ : SInf D.host.F 
 
 end Main
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_fockMap_of (hψ : IsStdChar D ψ (-1)) {θ : InfFam D} (hθ : IsInfFam θ) (A : Fr M) (B : Fr X)
     {τ : ∀ w : InfinitePlace D.host.F, EmbOver D.host.E w} (hCM : IsCMExt D.host.F D.host.E D.sp.cm.sig)
     (hStd : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsStd ψ) (hX : Xs.J = sgE (D := D) ε • M.gram)
@@ -468,7 +476,7 @@ theorem exists_fockMap_of (hψ : IsStdChar D ψ (-1)) {θ : InfFam D} (hθ : IsI
     rwa [GlobalTheory.RealLift.pureA_ptAt, GlobalTheory.RealLift.pureA_ptAt, Set.indicator_of_mem GlobalTheory.RealLift.zero_mem_intPts,
       Pi.one_apply, mul_one, mul_one] at e2
   have hv : IsVacF ψ θ (frSgn ε A) B (Θ g₀) := ⟨(tth _).2 ⟨_, pureA_mem g₀ hg, by rw [hΘ]; rfl⟩, fun t z => by
-    rw [annih, hd, hd, ← map_smul, ← map_add, hg₀, map_zero]⟩
+    rw [annih, hd, hd, ← map_smul, ← map_add (f := _), hg₀, map_zero]⟩
   have hv0 : Θ g₀ ≠ 0 := fun h => g0 (hi (h.trans (map_zero Θ).symm))
   let um : FVar D X.rank M.rank → Matrix (Fin X.rank) (Fin M.rank) ℂ := fun k =>
     Formalism.IndefR.Datum.unitMap ((frSgn ε A).onb k.1) (B.onb k.1) k.2.1 k.2.2
@@ -516,22 +524,6 @@ theorem exists_fockMap_of (hψ : IsStdChar D ψ (-1)) {θ : InfFam D} (hθ : IsI
     exact ⟨Q, hi (by rw [← hd, hΦ', hΦ', hQ])⟩
   · rw [← hΦ', hΘ]
     rfl
-
-theorem exists_fockMap : GlobalTheory.FunPr.Hypotheses₂ →
-  ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D), IsStdChar D ψ (-1) → IsInfFam θ →
-  ∀ (ε : Bool) (M X : HSp D) (A : Fr M) (B : Fr X) (χS χT : (AE D)ˣ →* Circle) (ω : WRep M X) (eS eT : D.what₂.Tau → ℚ),
-  IsWeil ψ ε M X χS χT ω → (∀ τ, HasInfExp D χS τ (eS τ) ∧ HasInfExp D χT τ (eT τ)) →
-  ∀ (Xs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc D.host.F D.host.E M.rank) (Ws : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc D.host.F D.host.E X.rank)
-    (Mo : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Model D.sp.cm.sig Xs Ws) (ψ' : AddChar (AF D.host.F) ℂ)
-    (χX χW : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chr D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Xs Ws)
-    (τ : ∀ w : InfinitePlace D.host.F, GlobalTheory.AdelicU.EmbOver D.host.E w),
-    GlobalTheory.RealDict.PublishedHyps D Xs Ws Mo ψ' χX χW om τ → GlobalTheory.RealDict.IsPairReading ψ ε A B ω Xs Ws Mo ψ' om τ →
-    ∃ Φ : PolF D X.rank M.rank →ₗ[ℂ] GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.SInf D.host.F (Fin M.rank × Fin X.rank),
-      Function.Injective Φ ∧ LinearMap.range Φ = Mo.Pol ψ' τ ∧ GlobalTheory.RealDict.IsFockMap ψ θ ε A B Mo Φ := by
-  intro _ D ψ θ hψ hθ ε M X A B χS χT ω eS eT _ _ Xs Ws Mo ψ' χX χW om τ hP hR
-  obtain ⟨hCM, hStd, -, -, -, -, -, -, -, -, -, hcX, hcW⟩ := hP
-  obtain rfl := hR.psi
-  exact exists_fockMap_of Mo hψ hθ A B hCM hStd hR.JX hR.JW hR.good (fun w => (hcX w).1) (fun w => (hcW w).1) hR.cart
 
 end GlobalTheory.RealDict.FockMap
 

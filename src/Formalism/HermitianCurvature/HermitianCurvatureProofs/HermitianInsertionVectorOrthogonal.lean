@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneAddProjectionMemIsotropicSet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneAddProjectionMemIsotropicSet
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -35,11 +39,11 @@ def ViF (m : ℕ) (i : Fin (m + 1)) (Vc : Fin m → Fin (2 * (m + 1) + k + 1) �
 variable (m : ℕ) (i : Fin (m + 1)) (Vc : Fin m → Fin (2 * (m + 1) + k + 1) → ℂ)
 
 theorem insertion_vector_zero_off_index (p : Fin (2 * (m + 1) + k + 1)) (hp : m + 1 ≤ p.val) (hne : p ≠ esI k (m + 1) i) : ViF m i Vc p = 0 := by
-  unfold ViF; rw [if_neg hne, dif_neg (by omega)]
+  unfold ViF; rw [if_neg hne, dite_eq_right (by omega)]
 
 theorem ViF_eI : ViF m i Vc (eI k (m + 1) i) = 0 := by
   unfold ViF
-  rw [if_neg, dif_neg]
+  rw [if_neg, dite_eq_right]
   · simp [eI]
   · intro h; have := congrArg Fin.val h; simp [eI, esI] at this; omega
 
@@ -107,7 +111,7 @@ theorem ViF_Vc (hVs : ∀ (b : Fin m) (q : Fin (2 * (m + 1) + k + 1)), m + 1 + k
     have e2 : ViF m i Vc (eI k (m + 1) (i.succAbove c')) = -star (Vc c' (eI k (m + 1) i)) := by
       unfold ViF
       rw [if_neg (by intro h; have := congrArg Fin.val h; simp [eI, esI] at this; omega),
-        dif_pos ⟨by simp only [eI]; omega, by simpa [eI] using hsi⟩]
+        dite_eq_left ⟨by simp only [eI]; omega, by simpa [eI] using hsi⟩]
       congr 3
       have := pidx_succAbove m i c' ⟨hs, hsi⟩
       simpa [eI] using this

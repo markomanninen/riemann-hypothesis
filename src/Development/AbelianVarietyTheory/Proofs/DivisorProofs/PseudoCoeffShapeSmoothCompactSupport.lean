@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CutoffMulPolyMemCcMat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsLastSide
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBiFiniteSubspace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CutoffMulPolyMemCcMat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsLastSide
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBiFiniteSubspace
+
+@[expose] public section
 
 open GlobalTheory.Orb GlobalTheory.PsCo.Pc1
 open Formalism.REAL (UJ KG toM)

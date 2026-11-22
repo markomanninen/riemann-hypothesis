@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicColimitOfFactor
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicColimitOfFactor
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 open GlobalTheory.AdicColimit
@@ -19,12 +23,13 @@ theorem smodEq_smul_top_map {A M N : Type*} [CommRing A] [AddCommGroup M] [Modul
 
 theorem isAdicComplete_of_retract {A M N : Type*} [CommRing A] [AddCommGroup M] [Module A M] [AddCommGroup N]
     [Module A N] (J : Ideal A) (s : N →ₗ[A] M) (p : M →ₗ[A] N) (hps : ∀ x, p (s x) = x)
-    (h : IsAdicComplete J M) : IsAdicComplete J N where
-  haus' x hx := by
+    (h : IsAdicComplete J M) : IsAdicComplete J N := by
+  refine { toIsHausdorff := ⟨?_⟩, toIsPrecomplete := ⟨?_⟩ }
+  · intro x hx
     have : s x = 0 := IsHausdorff.haus h.toIsHausdorff (s x) fun n => by
       simpa using smodEq_smul_top_map _ s (hx n)
     rw [← hps x, this, map_zero]
-  prec' f hf := by
+  · intro f hf
     obtain ⟨L, hL⟩ := IsPrecomplete.prec h.toIsPrecomplete (f := fun n => s (f n)) fun {m n} hmn =>
       smodEq_smul_top_map _ s (hf hmn)
     exact ⟨p L, fun n => by simpa [hps] using smodEq_smul_top_map _ p (hL n)⟩
@@ -36,7 +41,7 @@ theorem isAdicComplete_map_eval {A ι : Type} [CommRing A] (T : ι → Type) [�
   letI : Algebra A (T i) := ((Pi.evalRingHom T i).comp e.toRingHom).toAlgebra
   let s : T i →ₗ[A] A :=
     { toFun t := e.symm (Pi.single i t)
-      map_add' x y := by rw [Pi.single_add, map_add]
+      map_add' x y := by rw [Pi.single_add, map_add (f := _)]
       map_smul' a t := by
         apply e.injective
         rw [RingHom.id_apply, smul_eq_mul, map_mul, e.apply_symm_apply, e.apply_symm_apply,

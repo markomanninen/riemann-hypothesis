@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.CapelliCentralStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.CapelliCentralStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -166,7 +170,8 @@ theorem cminor_intertwine {M R' : Type*} [AddCommGroup M] [Module ℂ M] [AddCom
     exact hc _ _ _
   unfold cminor
   ext v
-  simp only [LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   have h1 := LinearMap.congr_fun (key σ) v
   simp only [LinearMap.comp_apply] at h1

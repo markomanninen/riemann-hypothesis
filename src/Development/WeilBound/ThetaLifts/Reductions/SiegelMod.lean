@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.Reductions.SiegelHaar
-import Formalism.SatakeDualWeyl.Statement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddEquivAddHaarCharEqOfIsOpenEmbeddingRestrictStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddEquivAddHaarCharProdCongrStatement
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelHaar
+public import Formalism.SatakeDualWeyl.Statement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddEquivAddHaarCharEqOfIsOpenEmbeddingRestrictStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddEquivAddHaarCharProdCongrStatement
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -28,8 +32,8 @@ theorem cT_zero {a b : Type} : cT s (0 : Matrix a b R) = 0 := Matrix.ext fun _ _
 theorem cT_smul {a b : Type} (c : R) (P : Matrix a b R) : cT s (c • P) = s c • cT s P :=
   Matrix.ext fun _ _ => map_mul s _ _
 
-variable (s J X Y) in
 
+variable (s J X Y) in
 structure Fr : Prop where
   ss : ∀ x, s (s x) = x
   herm : cT s J = J
@@ -89,8 +93,8 @@ theorem Fr.comm (h : Fr s J X Y) {l b : Matrix (Fin n) (Fin n) R} (hl : cT s l *
     · rw [← Matrix.mul_assoc, (h.par hl hB).2.2.2, Matrix.mul_assoc, h1, Matrix.mul_zero]
     · rw [← Matrix.mul_assoc, (h.symm.par hl hD).2.2.2, Matrix.mul_assoc, h2, Matrix.mul_zero]
 
-variable (s J X) in
 
+variable (s J X) in
 def eich (Z : Matrix (Fin n) (Fin k) R) (c : Matrix (Fin k) (Fin k) R) : Matrix (Fin n) (Fin n) R :=
   1 + Z * (cT s X * J) - X * (cT s Z * J) + X * c * (cT s X * J)
 
@@ -129,16 +133,16 @@ theorem Fr.eich_unitary (h : Fr s J X Y) {Z : Matrix (Fin n) (Fin k) R} (hZ : cT
   rw [e, Matrix.mul_assoc, h.eich_mul (by rw [Matrix.mul_neg, hZ, neg_zero]) hZ, cT_neg, Matrix.neg_mul, Matrix.neg_mul,
     sub_neg_eq_add, hc, neg_add_cancel, eich_zero, Matrix.mul_one]
 
-variable (s J X Y) in
 
+variable (s J X Y) in
 def W1 : AddSubgroup (Matrix (Fin n) (Fin k) R) where
   carrier := {Z | cT s X * J * Z = 0 ∧ cT s Y * J * Z = 0}
   zero_mem' := by simp
   add_mem' ha hb := ⟨by rw [Matrix.mul_add, ha.1, hb.1, add_zero], by rw [Matrix.mul_add, ha.2, hb.2, add_zero]⟩
   neg_mem' ha := ⟨by rw [Matrix.mul_neg, ha.1, neg_zero], by rw [Matrix.mul_neg, ha.2, neg_zero]⟩
 
-variable (s k) in
 
+variable (s k) in
 def W2 : AddSubgroup (Matrix (Fin k) (Fin k) R) where
   carrier := {c | cT s c = -c}
   zero_mem' := by simp [cT_zero]
@@ -376,7 +380,21 @@ theorem char_conj [Invertible (2 : R)] (h : Fr s J X Y) (hs : Continuous s) (ω 
     (((((continuous_cT hs (c1.comp continuous_snd)).matrix_mul continuous_const).matrix_mul (c1.comp continuous_fst)).sub
       (((continuous_cT hs (c1.comp continuous_fst)).matrix_mul continuous_const).matrix_mul
         (c1.comp continuous_snd))).const_smul (⅟2 : R)).subtype_mk fun p => (h.β p.1 p.2).2
-  have := Heis.isTopologicalGroup h.β hβ
+  have hg (A B : Type) [AddCommGroup A] [AddCommGroup B] [TopologicalSpace A] [TopologicalSpace B]
+      [IsTopologicalAddGroup A] [IsTopologicalAddGroup B] (β : A →+ A →+ B)
+      (cβ : Continuous fun p : A × A => β p.1 p.2) : IsTopologicalGroup (Heis β) := by
+    as_aux_lemma =>
+      refine { toContinuousMul := ⟨?_⟩, toContinuousInv := ⟨?_⟩ }
+      · change Continuous fun p : (A × B) × (A × B) =>
+          ((p.1.1 + p.2.1, p.1.2 + p.2.2 + β p.1.1 p.2.1) : A × B)
+        exact (continuous_fst.fst.add continuous_snd.fst).prodMk
+          ((continuous_fst.snd.add continuous_snd.snd).add
+            (cβ.comp (continuous_fst.fst.prodMk continuous_snd.fst)))
+      · change Continuous fun p : A × B =>
+          ((-p.1, -p.2 + β p.1 p.1) : A × B)
+        exact continuous_fst.neg.prodMk
+          (continuous_snd.neg.add (cβ.comp (continuous_fst.prodMk continuous_fst)))
+  have : IsTopologicalGroup (Heis h.β) := hg _ _ h.β hβ
   have hu2 : s (u * u).1 = (u * u).1 := by rw [Units.val_mul, map_mul, hu]
   let θ₁ := scal (W1 s J X Y) u (smul_mem_frame_annihilator _) (smul_mem_frame_annihilator _)
   let θ := scal (W2 s k) u (smul_mem_skew_hermitian hu) (smul_mem_skew_hermitian (s_inv hu))

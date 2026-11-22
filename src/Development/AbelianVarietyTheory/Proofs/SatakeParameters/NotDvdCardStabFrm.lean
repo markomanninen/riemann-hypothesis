@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfMemZmu
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastTwoStepsGuarded
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfMemZmu
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastTwoStepsGuarded
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,7 +131,7 @@ theorem not_dvd_card_stab_frm {X : Fields} {n : ℕ} {ST SG Q : Finset (HeightOn
 
 theorem stdOver_tilH {E : Type} [Field E] [NumberField E] [StarRing E] {N n : ℕ} (hN : N = n + 1)
     {ST SG : Finset (HeightOneSpectrum (𝓞 E))} {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ v : SG, pi ∉ v.1.asIdeal)
-    (d : DecoSet E n ∅ SG) {p : ℕ} (h : StdOver p d.1.N) : StdOver p (DecoSet.tilH (ST := ST) hN pi d).1.N := by
+    (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG)) {p : ℕ} (h : StdOver p d.1.N) : StdOver p (DecoSet.tilH (ST := ST) hN pi d).1.N := by
   subst hN
   change StdOver p (DecoSet.til (ST := ST) pi d).1.N
   rw [DecoSet.til_val d hT hG]
@@ -152,7 +156,7 @@ theorem evGSD_del_smul (hPr : Pr.Ok) (hsel : IsSel X sel) (u : Pr.Word) (hS : Pr
     (γ : UF X.E (R.N R.m - 1)) (d : (evGSD W Ch sel mu P u).D) :
     (evGSD W Ch sel mu P u).Del (((γ, 1) : (evGSD W Ch sel mu P u).G) • d) =
       ((evGSD W Ch sel mu P u).Del d).map (((evGSD W Ch sel mu P u).ρ (γ, 1)).restrictScalars (𝓞 X.K)) := by
-  have h1 := DecoSet.tilH_smul (ST := Pr.vT u) (N_m_succ R) (γ, (1 : GLG X.E _ (rowSG Pr sel mu))) d (conj_piT_notMem hPr u)
+  have h1 := DecoSet.tilH_smul (ST := Pr.vT u) (N_m_succ R) (γ, (1 : GLG (E := X.E) (n := _) (SG := rowSG Pr sel mu))) d (conj_piT_notMem hPr u)
     (piT_notMem_rowSG sel mu hPr hsel u hS)
   have h2 : (evGSD W Ch sel mu P u).ρ (γ, 1) = (colVal W u R.m (Pr.vT u) (rowSG Pr sel mu)).rho (extUH (N_m_succ R) γ) := by
     change ((((rowTy Ch sel mu P).inv.chr 1)⁻¹ : X.Kˣ) : X.K) •

@@ -1,6 +1,10 @@
-import Mathlib
-import Lemmata.FirstBlockLemmaH.Imports
-import Lemmata.GeneralBFactThirdVariant.Imports
+module
+
+public import Mathlib
+public import Lemmata.FirstBlockLemmaH.Imports
+public import Lemmata.GeneralBFactThirdVariant.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,8 @@ theorem phi1_bijective (hΨ : ∀ σ : E →+* ℂ, σ ∈ Ψ ↔ ComplexEmbeddi
     let B := Algebra.TensorProduct.basis ℝ (RingOfIntegers.basis E)
     have hx := li1 hΨ (fun k => B.repr t k) (fun τ hτ => by
       have h1 := congrFun ht ⟨τ, hτ⟩
-      rw [← B.sum_repr t, map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← B.sum_repr t, map_sum] at h1
       simpa [B, Algebra.TensorProduct.basis_apply, phi1_tmul, Finset.sum_apply, Complex.real_smul]
         using h1)
     have : B.repr t = 0 := by
@@ -123,7 +128,7 @@ theorem phiI_eq (t : ℝ ⊗[ℤ] (ι → 𝓞 E)) (τ : Ψ) (i : ι) :
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul x n => simp [phiI_tmul, phi1_tmul, TensorProduct.piRightHom_tmul]
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy]
 
 variable {Ψ}
 
@@ -174,7 +179,7 @@ def kap (s : 𝓞 E) (hs : ∀ v ∈ M, ∀ i,
   map_add' x y := by
     funext i
     apply IsFractionRing.injective (𝓞 E) E
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
     rw [kapF_spec, kapF_spec, kapF_spec]
     simp [mul_add]
 
@@ -232,7 +237,7 @@ theorem theta_bijective (hΨ : ∀ σ : E →+* ℂ, σ ∈ Ψ ↔ ComplexEmbedd
         rw [show ((kap b M s hsI v i : 𝓞 E) : E) = algebraMap (𝓞 E) E (kap b M s hsI v i) from rfl,
           kap_spec, map_mul]
         ring
-      | add x y hx hy => intro τ i; simp only [map_add, Pi.add_apply, hx, hy, mul_add]
+      | add x y hx hy => intro τ i; simp only [map_add (f := _), Pi.add_apply, hx, hy, mul_add]
     intro t t' h
     apply hκR
     apply (phiI_bijective hΨ).1
@@ -261,7 +266,7 @@ theorem theta_bijective (hΨ : ∀ σ : E →+* ℂ, σ ∈ Ψ ↔ ComplexEmbedd
         rw [iota1_repr, map_mul]
         rw [show ((n i : 𝓞 E) : E) = algebraMap (𝓞 E) E (n i) from rfl]
         ring
-      | add x y hx hy => intro τ i; simp only [map_add, Pi.add_apply, hx, hy, mul_add]
+      | add x y hx hy => intro τ i; simp only [map_add (f := _), Pi.add_apply, hx, hy, mul_add]
     intro u
     obtain ⟨t, ht⟩ := (phiI_bijective (ι := ι) hΨ).2
       (fun τ i => ((τ : E →+* ℂ) (algebraMap (𝓞 E) E s'))⁻¹ * u τ i)

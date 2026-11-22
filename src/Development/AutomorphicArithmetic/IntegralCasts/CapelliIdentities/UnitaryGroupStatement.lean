@@ -1,9 +1,8 @@
-import Mathlib
+module
 
-theorem UpperTheory.Reformulated.B.EndomorphismFiltrationMulMem.aux1 :
-    ∀ {V : Type} [inst : AddCommGroup V] [inst_1 : _root_.Module ℂ V], SMulCommClass ℂ ℂ V := by
-  intro V _ _
-  infer_instance
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.EndomorphismFiltrationMulMem.U :
     {n : ℕ} →

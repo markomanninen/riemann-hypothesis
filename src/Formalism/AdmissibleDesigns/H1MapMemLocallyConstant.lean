@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.BlockTwistedCyclotomic
+module
+
+public import Formalism.AdmissibleDesigns.BlockTwistedCyclotomic
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -20,7 +24,7 @@ variable {R S G M M' : Type} [CommRing R] [CommRing S] [Algebra S R] [Group G]
 def cocycleMap : coZ1s ρ →ₗ[S] coZ1s ρ' where
   toFun c := ⟨fun g => φ ((c : G → M) g), fun g h => by
     show φ ((c : G → M) (g * h)) = φ ((c : G → M) g) + ρ' g (φ ((c : G → M) h))
-    rw [c.2 g h, map_add, hφ]⟩
+    rw [c.2 g h, map_add (f := _), hφ]⟩
   map_add' a b := Subtype.ext <| funext fun g => map_add φ ((a : G → M) g) ((b : G → M) g)
   map_smul' r a := Subtype.ext <| funext fun g => map_smul φ r ((a : G → M) g)
 
@@ -226,7 +230,7 @@ variable {ι : Type} [Fintype ι] (b : Module.Basis ι ℤ_[l] O)
 
 def psiQ (j : ι) : ℚ_[l] →ₗ[ℤ_[l]] KO O where
   toFun x := Submodule.Quotient.mk (iotaK l O x * algebraMap O (FractionRing O) (b j))
-  map_add' x y := by rw [map_add, add_mul, Submodule.Quotient.mk_add]
+  map_add' x y := by rw [map_add (f := _), add_mul, Submodule.Quotient.mk_add]
   map_smul' a x := by
     rw [RingHom.id_apply, ← Submodule.Quotient.mk_smul, smulK, Algebra.smul_def a x, map_mul, iotaK_alg,
       mul_assoc]
@@ -256,14 +260,16 @@ theorem Psi_inj : Function.Injective (Psi l O b) := by
   have hs' : ∀ j, ∃ cj : ℤ_[l], algebraMap ℤ_[l] ℚ_[l] cj = (s : ℤ_[l]) • x j := fun j => hs j
   choose c hc using hs'
   have h1 : (∑ j, iotaK l O (x j) * algebraMap O (FractionRing O) (b j)) ∈ (1 : Submodule O (FractionRing O)) := by
-    rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sum, ← hv, Psi_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sum, ← hv, Psi_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← hx j]
     rfl
   obtain ⟨o, ho⟩ := Submodule.mem_one.mp h1
   have h2 : algebraMap O (FractionRing O) ((s : ℤ_[l]) • o) =
       algebraMap O (FractionRing O) (∑ j, c j • b j) := by
-    rw [Algebra.smul_def, map_mul, ho, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Algebra.smul_def, map_mul, ho, Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Algebra.smul_def, map_mul, ← mul_assoc]
     congr 1
@@ -292,7 +298,8 @@ theorem Psi_surj [IsLocalHom (algebraMap ℤ_[l] O)] : Function.Surjective (Psi 
   refine ⟨fun j => QZ.mk l (algebraMap ℤ_[l] ℚ_[l] (b.equivFun (a * w) j) / ((l : ℕ) : ℚ_[l]) ^ m), ?_⟩
   rw [Psi_apply]
   simp only [PsiJ_mk, ← Submodule.mkQ_apply]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   have hl0 : ((l : ℕ) : O) ≠ 0 := by
     rw [← map_natCast (algebraMap ℤ_[l] O)]
@@ -308,7 +315,8 @@ theorem Psi_surj [IsLocalHom (algebraMap ℤ_[l] O)] : Function.Surjective (Psi 
     rw [← map_mul, ← hw, map_pow, map_natCast]
   have hsum : ∑ j, algebraMap O (FractionRing O) (algebraMap ℤ_[l] O (b.equivFun (a * w) j)) *
       algebraMap O (FractionRing O) (b j) = algebraMap O (FractionRing O) (a * w) := by
-    conv_rhs => rw [← b.sum_equivFun (a * w), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← b.sum_equivFun (a * w), map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Algebra.smul_def, map_mul (algebraMap O (FractionRing O))]
   calc ∑ j, iotaK l O (algebraMap ℤ_[l] ℚ_[l] (b.equivFun (a * w) j) / ((l : ℕ) : ℚ_[l]) ^ m) *

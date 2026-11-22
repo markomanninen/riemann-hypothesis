@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.AssemblyStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.UnipotentExpHaarSqrtBound
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiDecayCore
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HWExists
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.AssemblyStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.UnipotentExpHaarSqrtBound
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiDecayCore
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HWExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +53,8 @@ theorem cay_mem {ε : Fin (2 * r + k + 1) → Bool} {P : Mat k r} (hP : Formalis
     _ = Jm ε := by
         rw [hPJP, hg', ← hR, Matrix.mul_assoc, h1, Matrix.mul_one]
 
-open scoped Matrix.Norms.Operator in
 
+open scoped Matrix.Norms.Operator in
 theorem cay_inG {ε : Fin (2 * r + k + 1) → Bool} {P : Mat k r} (hP : Formalism.MainNotions.S.IsCayley k r ε P)
     {Y : Mat k r} (hY : Y ∈ Formalism.MainNotions.S.lieOf (Formalism.QuantumDeterminants.Nset k r)) : inG ε (P * Y * P⁻¹) := by
   have hL := cay_left hP
@@ -83,7 +87,8 @@ theorem cay_inG {ε : Fin (2 * r + k + 1) → Bool} {P : Mat k r} (hP : Formalis
 
 theorem conj_sum_sub {ι : Type*} (s : Finset ι) (a : ι → ℂ) :
     starRingEnd ℂ (∑ i ∈ s, (a i - starRingEnd ℂ (a i))) = -∑ i ∈ s, (a i - starRingEnd ℂ (a i)) := by
-  rw [map_sum, ← Finset.sum_neg_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_sub, Complex.conj_conj, neg_sub]
 
@@ -202,7 +207,7 @@ def bracketB {n : ℕ} (ε : Fin n → Bool) (d : Fin n → ℝ) :
       simp only [Matrix.smul_mul, Matrix.mul_smul, Matrix.mul_sub, Matrix.trace_sub, Matrix.trace_smul,
         Complex.real_smul]; ring)
     (fun X Y Y' => by
-      simp only [map_add, Matrix.add_mul, Matrix.mul_add, Matrix.mul_sub, Matrix.trace_add,
+      simp only [map_add (f := _), Matrix.add_mul, Matrix.mul_add, Matrix.mul_sub, Matrix.trace_add,
         Matrix.trace_sub]; ring)
     (fun c X Y => by
       simp only [map_smul, Matrix.smul_mul, Matrix.mul_smul, Matrix.mul_sub, Matrix.trace_sub,

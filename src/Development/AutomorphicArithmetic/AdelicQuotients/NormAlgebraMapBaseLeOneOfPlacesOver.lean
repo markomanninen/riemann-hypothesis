@@ -1,6 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.SemiLocal GroundTheory.Global.AdeleBaseChange
 open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.Tf.Geo
@@ -17,5 +22,5 @@ theorem UpperTheory.norm_algebraMap_base_le_one_of_placesOver :
     rw [Valued.toNormedField.norm_le_one_iff,
       ← IsScalarTower.algebraMap_apply F E (u.1.adicCompletion E),
       ← completionMap_algebraMap q u.1, valued_completionMap]
-    exact pow_le_one_iff (Ideal.ramificationIdx_pos u.1.asIdeal (𝓞 F)).ne'
+    exact pow_le_one_iff (Ideal.ramificationIdx_pos (R := 𝓞 F) u.1.asIdeal).ne'
   exact fun h => (key w').2 ((key w).1 h)

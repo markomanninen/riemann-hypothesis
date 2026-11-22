@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InstBorelGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOfValILeOne
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InstBorelGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOfValILeOne
+
+@[expose] public section
+
 open MeasureTheory Matrix GlobalTheory.CompanionTheory.QL
 open scoped ComplexConjugate ValuativeRel
 

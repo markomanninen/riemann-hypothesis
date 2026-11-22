@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SimplicialPieceRelations
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SimplicialPieceRelations
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.SimplicialPieceRelations SimplicialObject SimplicialObject.Augmented

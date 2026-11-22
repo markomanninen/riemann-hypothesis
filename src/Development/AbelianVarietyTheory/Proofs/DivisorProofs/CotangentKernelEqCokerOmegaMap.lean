@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaLevelBijectiveOfPowEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaLevelBijectiveOfPowEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Dieu
 
 noncomputable section
@@ -18,7 +23,7 @@ theorem cotMap_comp_eq_zero_of_kerIdeal_le {k A B C : Type} [Field k] [CommRing 
   obtain ⟨b, rfl⟩ := AugCot.d_surjective _ x
   rw [cotMap_d]
   have h' := (kerIdeal_le_ker_iff g (π : A →ₐ[k] C)).1 h b
-  change dUnit k ((π : A →ₐ[k] C) (g b)) = 0
+  change dUnit (R := k) ((π : A →ₐ[k] C) (g b)) = 0
   rw [h']
   exact AugCot.d_algebraMap _ _
 
@@ -43,11 +48,11 @@ theorem cot_kernel_eq_coker_omegaMap : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [
           hw
         obtain ⟨x, hx⟩ := (AugCot.exact_kerMap_map (π : G.A 1 →ₐ[k] C)
           (BialgHomClass.counitAlgHom_comp π) hπ (w.1 1)).1 hw'
-        have hx2 : dUnit k (x : G.A 1) = w.1 1 := by
+        have hx2 : dUnit (R := k) (x : G.A 1) = w.1 1 := by
           rw [← hx]; exact (AugCot.kerMap_apply _ _ x).symm
         have hxm : (x : G.A 1) ∈ kerIdeal (q.app 1) ⊔ augIdeal k (G.A 1) ^ 2 := h1 x.2
         obtain ⟨y, hy, z, hz, hyz⟩ := Submodule.mem_sup.1 hxm
-        have hz0 : dUnit k z = 0 := by
+        have hz0 : dUnit (R := k) z = 0 := by
           have hzI : z ∈ augIdeal k (G.A 1) := Ideal.pow_le_self two_ne_zero hz
           have hεz : counitAlgHom k (G.A 1) z = 0 := hzI
           rw [dUnit, AugCot.d_eq_zero_iff, hεz, map_zero, sub_zero]
@@ -57,8 +62,8 @@ theorem cot_kernel_eq_coker_omegaMap : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [
         refine ⟨v, (G.omegaLevel_one_bijective hp).1 ?_⟩
         change cotMap (q.app 1) (H.omegaLevel 1 v) = w.1 1
         rw [hu, ← hx2, ← hyz]
-        change dUnit k y = dUnit k (y + z)
-        rw [show dUnit k (y + z) = dUnit k y + dUnit k z from map_add _ y z, hz0, add_zero]
+        change dUnit (R := k) y = dUnit (R := k) (y + z)
+        rw [show dUnit (R := k) (y + z) = dUnit (R := k) y + dUnit (R := k) z from map_add _ y z, hz0, add_zero]
       · intro hw
         exact part1 h2 w hw
     rw [← hker]

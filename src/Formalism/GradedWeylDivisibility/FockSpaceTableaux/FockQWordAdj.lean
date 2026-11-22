@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementE
+module
+
+public import Formalism.GradedWeylDivisibility.StatementE
+
+@[expose] public section
 
 open MvPolynomial
 

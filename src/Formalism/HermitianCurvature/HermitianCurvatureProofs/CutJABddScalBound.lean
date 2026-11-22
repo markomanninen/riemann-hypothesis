@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddScal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatPolyOK
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddScal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatPolyOK
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

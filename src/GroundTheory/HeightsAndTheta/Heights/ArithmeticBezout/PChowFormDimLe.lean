@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowFormDim
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowFormDim
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -12,14 +17,14 @@ noncomputable section
 namespace ChowFormDimLe
 
 theorem coeff_zero_eq_zero_of_mem {F : Type} [Field F] {n : ℕ} {I : Ideal (MvPolynomial (Fin n) F)}
-    (hI : IsProjPrime I) {g : MvPolynomial (Fin n) F} (hg : g ∈ I) : coeff 0 g = 0 := by
+    (hI : IsProjPrime I) {g : MvPolynomial (Fin n) F} (hg : g ∈ I) : AddMonoidAlgebra.coeff g 0 = 0 := by
   by_contra h
   have h0 := hI.isHomog g hg 0
   rw [homogeneousComponent_zero] at h0
   exact hI.isPrime.ne_top (Ideal.eq_top_of_isUnit_mem _ h0 ((Ne.isUnit h).map C))
 
 theorem exists_prime_liesOver {F : Type} [Field F] (K : Type) [Field K] [Algebra F K] {n : ℕ}
-    (I : Ideal (MvPolynomial (Fin n) F)) [I.IsPrime] (hI : ∀ g ∈ I, coeff 0 g = 0) :
+    (I : Ideal (MvPolynomial (Fin n) F)) [I.IsPrime] (hI : ∀ g ∈ I, AddMonoidAlgebra.coeff g 0 = 0) :
     ∃ P : Ideal (MvPolynomial (Fin n) K), P.IsPrime ∧
       P ≤ RingHom.ker (eval (0 : Fin n → K)) ∧
       P.comap (MvPolynomial.map (algebraMap F K)) = I := by
@@ -77,7 +82,7 @@ theorem exists_ne_zero_common_zero {K : Type} [Field K] [IsAlgClosed K] {n k : �
     refine (Ideal.height_le_card_of_mem_minimalPrimes_span_finset hqmin).trans ?_
     exact_mod_cast Finset.card_image_le.trans (by simp)
   have hMht : (Mb.height : WithBot ℕ∞) = ringKrullDim (MvPolynomial (Fin n) K ⧸ P) := by
-    have h := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient K Mb
+    have h := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient (k := K) Mb
     have hF : IsField ((MvPolynomial (Fin n) K ⧸ P) ⧸ Mb) :=
       (Ideal.Quotient.maximal_ideal_iff_isField_quotient Mb).mp inferInstance
     have h0 : ringKrullDim ((MvPolynomial (Fin n) K ⧸ P) ⧸ Mb) = 0 := by

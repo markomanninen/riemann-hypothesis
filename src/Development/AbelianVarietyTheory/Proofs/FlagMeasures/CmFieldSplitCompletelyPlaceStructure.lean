@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapLoc
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapLoc
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
@@ -48,11 +52,12 @@ private theorem ncard_places_dvd_eq_ncard_primesOver (K : Type) [Field K] [Numbe
     simpa [Ideal.mem_comap] using h2
 
 private theorem sum_ramificationIdx_mul_inertiaDeg_primesOver (K : Type) [Field K] [NumberField K] (p : ℕ) (hp : p.Prime) :
-    haveI := span_natPrime_isMaximal p hp
-    ∑ q : (Ideal.span {(p : ℤ)}).primesOver (𝓞 K), q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ =
-      Module.finrank ℚ K := by
+    (fun (_ : (Ideal.span {(p : ℤ)}).IsMaximal) =>
+      ∑ q : (Ideal.span {(p : ℤ)}).primesOver (𝓞 K), q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ =
+        Module.finrank ℚ K) (span_natPrime_isMaximal p hp) := by
   have := span_natPrime_isMaximal p hp
-  rw [Ideal.sum_ramification_inertia_eq_finrank, RingOfIntegers.rank]
+  simpa only [RingOfIntegers.rank] using
+    Ideal.sum_ramification_inertia_eq_finrank (Ideal.span {(p : ℤ)}) (𝓞 K)
 
 private theorem eq_one_of_pos_of_sum_eq_card {ι : Type} [Fintype ι] (f : ι → ℕ) (hpos : ∀ i, 0 < f i)
     (hs : ∑ i, f i = Fintype.card ι) (i : ι) : f i = 1 := by

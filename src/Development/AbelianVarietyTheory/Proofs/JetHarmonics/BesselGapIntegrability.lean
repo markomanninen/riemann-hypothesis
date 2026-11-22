@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapVanishingStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapPairingStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapGrowthBoundStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapVanishingStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapPairingStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapGrowthBoundStatement
+
+@[expose] public section
+
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 

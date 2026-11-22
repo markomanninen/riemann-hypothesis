@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedFormsMulClosed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DelAtEqSumDOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicDelOperatorAtSumSmulLeibnizStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicDifferentialOneFormCompHolomorphicStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableAtReprPullbackHolomorphicFderivStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicDelPullbackFderivFormEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DelLocReprContDiffOnTargetStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedFormsMulClosed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DelAtEqSumDOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicDelOperatorAtSumSmulLeibnizStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicDifferentialOneFormCompHolomorphicStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableAtReprPullbackHolomorphicFderivStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicDelPullbackFderivFormEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DelLocReprContDiffOnTargetStatement
+
+@[expose] public section
 
 open Set Matrix MeasureTheory Filter Topology
 open GlobalTheory.HermFrame
@@ -31,11 +35,13 @@ theorem delAt_pull_comp {φ : V n → V n} {v : V n} (hφ : ContDiffAt ℂ 2 φ 
   have e : (fun w => pull (fderiv ℂ φ w) (β (φ w))) =
       fun w => ∑ T, (bas n).repr (β (φ w)) T • pull (fderiv ℂ φ w) (bas n T) := funext fun w => by
     conv_lhs => rw [← (bas n).sum_repr (β (φ w))]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   rw [e, GlobalTheory.T.holomorphicDelOperatorAt_sum_smul_leibniz (fun T w => (bas n).repr (β (φ w)) T) (fun T w => pull (fderiv ℂ φ w) (bas n T))
     (fun T => (hβ T).comp v (hφ1.restrictScalars ℝ)) (fun T S => GlobalTheory.T.differentiableAt_repr_pullback_holomorphic_fderiv hφ (bas n T) S)]
   simp only [GlobalTheory.T.holomorphicDel_pullback_fderiv_form_eq_zero hφ, smul_zero, add_zero]
-  rw [delAt_eq_sum_dOne β (φ v), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [delAt_eq_sum_dOne β (φ v), map_sum]
   refine Finset.sum_congr rfl fun T _ => ?_
   rw [map_mul, GlobalTheory.T.holomorphicDifferentialOneForm_comp_holomorphic (c := fun u => (bas n).repr (β u) T) (hβ T) hφ1]
 
@@ -54,14 +60,17 @@ theorem del_compat {α : A.Fld} (hα : A.IsForm α) (x x' : A.Pt) (h : x.pt = x'
       ReciprocityTheory.L2DbarEstimates.contDiffOn_of_differentiableOn n _ _ hW
         ((EuclideanSpace.proj c : V n →L[ℂ] ℂ).differentiable.comp_differentiableOn hd)
     exact (hs.contDiffAt (hW.mem_nhds hv)).of_le (WithTop.coe_le_coe.2 le_top)
-  have hφv : φ x.crd = x'.crd := by simp only [hφdef, Function.comp_apply, x.ch.left_inv x.2, h]
+  have hφv : φ x.crd = x'.crd := by
+    change x'.ch (x.ch.symm (x.ch x.pt)) = x'.ch x'.pt
+    rw [x.ch.left_inv x.2]
+    exact congrArg x'.ch h
   have hloc : A.loc α x.1.1 =ᶠ[𝓝 x.crd] fun w => pull (fderiv ℂ φ w) (A.loc α x'.1.1 (φ w)) := by
     filter_upwards [hW.mem_nhds hv] with w hw
     let p : A.Pt := ⟨(x.1.1, x.ch.symm w), x.ch.map_target hw.1⟩
     let p' : A.Pt := ⟨(x'.1.1, x.ch.symm w), hw.2⟩
     have hc := hα.compat p p' rfl
     have hp : p.crd = w := x.ch.right_inv hw.1
-    rw [HolAtlas.loc, dif_pos hw.1]
+    rw [HolAtlas.loc, dite_eq_left hw.1]
     refine hc.trans ?_
     rw [hp, ← A.loc_crd α p']
     rfl

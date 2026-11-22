@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.ColKerChiOne
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.ColKerChiOne
+
+@[expose] public section
 
 open Finset
 
@@ -83,7 +87,8 @@ theorem rel : StatRel := by
           · simp [Prod.snd_sum]
         · simp [colGenJ, Prod.snd_sum, Finset.sum_apply, Pi.single_eq_of_ne hk]
     rw [key] at hz
-    simp only [← Submodule.mkQ_apply, map_add, map_smul, map_sum] at hz
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← Submodule.mkQ_apply, map_add (f := _), map_smul, map_sum] at hz
     have hz' : φ (yGen r χ E e₁ δ D j Kc k0 g) + ((uElt r χ g - 1) • φ (nuGen r χ E e₁ δ D j Kc k0 l) +
         (∑ a, (-(algebraMap T' A δ * Kc l a g)) • φ (sigGen r χ E e₁ δ D j Kc k0 l a) +
         (-(algebraMap T' A δ * k0 l g)) • φ (sigmaZeroColumnGenerator r χ E e₁ δ D j Kc k0 l))) = 0 := hz

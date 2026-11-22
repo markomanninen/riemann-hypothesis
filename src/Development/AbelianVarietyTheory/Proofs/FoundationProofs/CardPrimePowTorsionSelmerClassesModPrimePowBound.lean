@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductDualTwistIsTwoCocycleUnramified
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductCoboundaryMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemIntegersOfNormLeOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLevFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductDualTwistIsTwoCocycleUnramified
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductCoboundaryMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemIntegersOfNormLeOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLevFacts
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2
 open scoped Matrix
 
@@ -161,9 +166,9 @@ theorem cob_of_lift (hVO : ∀ s i j, mat V s i j ∈ c.O) (z' : G ℚ Ω → Fi
     rw [hd', smul_sub]; abel
   have e2 := smul_lift V m k z x s
   have e3 := smul_lift V m k z' x' s
-  rw [e1, map_add] at e2
+  rw [e1, map_add (f := _)] at e2
   simp only [Pi.sub_apply, smul_sub]
-  rw [e2, e3, ← cobd_apply V s (d + _), map_add, cobd_apply V s (_ • v), Matrix.mulVec_smul]
+  rw [e2, e3, ← cobd_apply V s (d + _), map_add (f := _), cobd_apply V s (_ • v), Matrix.mulVec_smul]
   abel
 
 end GlobalTheory.Ord2.TorsBound

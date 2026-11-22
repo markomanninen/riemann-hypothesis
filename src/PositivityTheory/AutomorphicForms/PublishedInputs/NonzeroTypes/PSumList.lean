@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.ScalarOnInertiaProp
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.ScalarOnInertiaProp
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,10 +43,10 @@ theorem charPol_lpSum (x y : WD h) (σ : Weil h) :
       rw [WD.lpSum_mk, WD.charPol_mk, WD.charPol_mk, WD.charPol_mk, WDRep.sum_ρ,
         LinearMap.charpoly_prodMap]
 
-theorem monomial_zero_alt : (WD.lpZero h).mono0 := by
+theorem monomial_zero_alt : (WD.lpZero (h := h)).mono0 := by
   rw [WD.lpZero, WD.monodromyZero_ofWeilDeligneRepClass_iff, WDRep.diag_N]
 
-theorem charPol_lpZero (σ : Weil h) : (WD.lpZero h).charPol σ = 1 := by
+theorem charPol_lpZero (σ : Weil h) : (WD.lpZero (h := h)).charPol σ = 1 := by
   refine Polynomial.eq_one_of_monic_natDegree_zero (WD.charPol_monic _ σ) ?_
   rw [WD.charPol_natDegree, WD.lpZero, WD.lpDim_mk]
   simp

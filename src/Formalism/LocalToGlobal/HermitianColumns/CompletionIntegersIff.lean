@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
-import Formalism.SharpRestriction.GrowthBounds.DataG
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+
+@[expose] public section
 
 noncomputable section
 

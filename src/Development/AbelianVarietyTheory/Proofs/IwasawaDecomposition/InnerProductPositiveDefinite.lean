@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.LocalRingCardinality.Lemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalRingCardinality.Lemmas
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain GlobalTheory.Mem
 
 namespace GlobalTheory.Mem
 
-theorem re_pos_of_majAt {K V ι M : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+theorem re_pos_of_majAt {K V ι M : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup V] [Module K V] [Fintype ι] [DecidableEq ι] [AddCommGroup M] [Module ℂ M]
     (σ : K →+* ℂ) (b : Module.Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (hX : IsUnit (X (InfinitePlace.mk σ)).det) (e : V →ₛₗ[σ] M) (Q : M →ₗ⋆[ℂ] M →ₗ[ℂ] ℂ)
@@ -30,9 +34,11 @@ theorem re_pos_of_majAt {K V ι M : Type} [Field K] [NumberField K] [StarRing K]
     induction w using hd0.induction_on with
     | hp =>
       apply isClosed_eq
-      · simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
-          RingHom.id_apply]
-        have := Complex.continuous_conj
+      · set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+            RingHom.id_apply]
+        have hρ : ∀ i : ι, Continuous (fun y : ι → ℂ => ρ (y i)) :=
+          fun i => hρc.comp (continuous_apply i)
         fun_prop
       · have : Continuous fun w : ι → ℂ => (X v)⁻¹.mulVec w :=
           Continuous.matrix_mulVec continuous_const continuous_id
@@ -41,7 +47,8 @@ theorem re_pos_of_majAt {K V ι M : Type} [Field K] [NumberField K] [StarRing K]
       have h1 := h (b.equivFun.symm y)
       have h2 : e (b.equivFun.symm y) =
           ∑ a, ρ (Pi.map (fun _ : ι => (v.embedding : K → ℂ)) y a) • e (b a) := by
-        rw [b.equivFun_symm_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [b.equivFun_symm_apply, map_sum]
         refine Finset.sum_congr rfl fun a _ => ?_
         rw [LinearMap.map_smulₛₗ, Pi.map_apply, hρσ]
       have h3 : Formalism.HermitianLatticesTheory.vecAt b v (b.equivFun.symm y) = Pi.map (fun _ : ι => (v.embedding : K → ℂ)) y := by

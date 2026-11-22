@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohDefs
+module
+
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohDefs
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 
@@ -59,9 +63,9 @@ theorem core_hom {Z : Type} [AddCommGroup Z] (n : ℕ) (φ : Z →+ ((Fin n → 
       ∀ z x, cochainOf A (cocycleι A n x) = φ z → f z = cohomologyπ A n x := by
   choose ψ hψ using hex
   have hadd : ∀ z z', ψ (z + z') = ψ z + ψ z' := fun z z' => coc_inj A n (by
-    rw [map_add, cochainOf_add, hψ, hψ, hψ, map_add])
+    rw [map_add (f := _), cochainOf_add, hψ, hψ, hψ, map_add (f := _)])
   let f : Z →+ cohomology A n := AddMonoidHom.mk' (fun z => cohomologyπ A n (ψ z))
-    (fun z z' => by rw [hadd, map_add])
+    (fun z z' => by rw [hadd, map_add (f := _)])
   have hf : ∀ z x, cochainOf A (cocycleι A n x) = φ z → f z = cohomologyπ A n x := fun z x h => by
     have : ψ z = x := coc_inj A n ((hψ z).trans h.symm)
     change cohomologyπ A n (ψ z) = _
@@ -118,7 +122,8 @@ include he in
 theorem d_comp (n : ℕ) (f : (Fin n → G) → M) :
     (inhomogeneousCochains.d A n).hom (fun s => e (f s)) = fun s => e (dn rho n f s) := by
   funext s
-  rw [inhomogeneousCochains.d_hom_apply, dn_app, map_add, map_sum, he]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [inhomogeneousCochains.d_hom_apply, dn_app, map_add (f := _), map_sum, he]
   congr 1
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [neg_one_pow_smul' (S := k), neg_one_pow_smul' (S := R), map_zsmul]

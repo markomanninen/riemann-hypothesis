@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.LevelWithoutExtraPlaces
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.LevelWithoutExtraPlaces
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,8 @@ theorem gram_det_unit (hc : CMData F E) (S : HSpace E) : IsUnit S.gram.det := by
     have h1 : ∑ j, S.gram i j * v j = 0 := by
       have := congrFun hv i
       simpa [Matrix.mulVec, dotProduct] using this
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine (Finset.sum_congr rfl (fun j _ => ?_)).trans h1
     rw [map_smul, smul_eq_mul]
     exact mul_comm _ _
@@ -52,7 +57,11 @@ theorem exists_above (hc : CMData F E) (ι : F →+* ℝ) :
   letI : Algebra F ℂ := ((algebraMap ℝ ℂ).comp ι).toAlgebra
   haveI : Module.Finite F E := Module.finite_of_finrank_pos (by rw [hc.deg2]; norm_num)
   haveI : Algebra.IsAlgebraic F E := Algebra.IsAlgebraic.of_finite F E
-  let φ : E →ₐ[F] ℂ := IsAlgClosed.lift
+  let φ : E →ₐ[F] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨φ.toRingHom, ?_⟩
   ext a
   exact φ.commutes a
@@ -84,7 +93,8 @@ theorem gram_totDef (hc : CMData F E) (S : HSpace E) (hs : S.SigOK) (hd : S.IsDe
   have hτform : ∀ x : Fin S.rank → E, τ (hform (hc.sig : E →+* E) S.gram x x) =
       star (fun i => τ (x i)) ⬝ᵥ ((S.gram.map τ) *ᵥ (fun i => τ (x i))) := by
     intro x
-    simp only [hform, map_sum, map_mul, hσ, dotProduct, Matrix.mulVec, Matrix.map_apply, Pi.star_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hform, map_sum, map_mul, hσ, dotProduct, Matrix.mulVec, Matrix.map_apply, Pi.star_apply,
       Finset.mul_sum]
     exact Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => mul_assoc _ _ _))
   have hre : ∀ (p q : ℕ) (e : Fin S.rank ≃ Fin p ⊕ Fin q) (y : Fin S.rank → ℂ),
@@ -195,58 +205,5 @@ theorem gram_totDef (hc : CMData F E) (S : HSpace E) (hs : S.SigOK) (hd : S.IsDe
       simp
     have h4 := Complex.ofReal_injective h3
     linarith
-
-theorem finite_classSet_of_finiteIndex {G : Type} [Group G] (Γ K K' : Subgroup G) (_h : K' ≤ K) [Finite (ClassSet Γ K)]
-    [Finite (K ⧸ K'.subgroupOf K)] : Finite (ClassSet Γ K') := by
-  classical
-  let f : ClassSet Γ K × (K ⧸ K'.subgroupOf K) → ClassSet Γ K' :=
-    fun p => DoubleCoset.mk Γ K' (Quotient.out p.1 * ((Quotient.out p.2 : K) : G))
-  refine Finite.of_surjective f ?_
-  intro q
-  obtain ⟨g, rfl⟩ := Quotient.mk''_surjective q
-  obtain ⟨γ, k, hγ, hk, hout⟩ := DoubleCoset.mk_out_eq_mul Γ K g
-  let kinv : K := ⟨k⁻¹, K.inv_mem hk⟩
-  obtain ⟨h, hh⟩ := QuotientGroup.mk_out_eq_mul (K'.subgroupOf K) kinv
-  refine ⟨(DoubleCoset.mk Γ K g, (QuotientGroup.mk kinv : K ⧸ K'.subgroupOf K)), ?_⟩
-  have e1 : (Quotient.out (DoubleCoset.mk Γ K g) : G) = γ * g * k := hout
-  have e2 : ((Quotient.out (QuotientGroup.mk kinv : K ⧸ K'.subgroupOf K) : K) : G) = k⁻¹ * ((h : K) : G) :=
-    (congrArg (fun x : K => (x : G)) hh).trans rfl
-  show DoubleCoset.mk Γ K' (Quotient.out (DoubleCoset.mk Γ K g) *
-      ((Quotient.out (QuotientGroup.mk kinv : K ⧸ K'.subgroupOf K) : K) : G)) = DoubleCoset.mk Γ K' g
-  rw [e1, e2, DoubleCoset.eq]
-  refine ⟨γ⁻¹, Γ.inv_mem hγ, ((h : K) : G)⁻¹, K'.inv_mem (Subgroup.mem_subgroupOf.mp h.2), ?_⟩
-  group
-
-def LevFinIdx (hc : CMData F E) (S : HSpace E) (Lb : Submodule (𝓞 E) (Fin S.rank → E))
-    (U : Subgroup (GL (Fin S.rank) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))) : Prop :=
-  U ≤ levelAfL hc.sig S.gram Lb ∧ U.relIndex (levelAfL hc.sig S.gram Lb) ≠ 0
-
-theorem finite_classSet_lev (hc : CMData F E) (S : HSpace E) (hs : S.SigOK) (hd : S.IsDefinite)
-    (Lb : Submodule (𝓞 E) (Fin S.rank → E)) (hfin : Module.Finite (𝓞 E) Lb)
-    (hspan : Submodule.span E (Lb : Set (Fin S.rank → E)) = ⊤)
-    (U : Subgroup (GL (Fin S.rank) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))) (hU : LevFinIdx hc S Lb U) :
-    Finite (ClassSet (Formalism.L2.Herm.UFin hc S) (U.subgroupOf (Formalism.L2.Herm.UAf hc S))) := by
-  have hL : Finite (ClassSet (Formalism.L2.Herm.UFin hc S) ((levelAfL hc.sig S.gram Lb).subgroupOf (Formalism.L2.Herm.UAf hc S))) :=
-    Formalism.UG.Final.ClassSetFiniteL F E (Fin S.rank) hc.sig S.gram (sig_conj hc) (gram_herm hc S) (gram_det_unit hc S)
-      (gram_totDef hc S hs hd) Lb hfin hspan
-  have hle : U.subgroupOf (Formalism.L2.Herm.UAf hc S) ≤ (levelAfL hc.sig S.gram Lb).subgroupOf (Formalism.L2.Herm.UAf hc S) :=
-    fun x hx => Subgroup.mem_subgroupOf.2 (hU.1 (Subgroup.mem_subgroupOf.1 hx))
-  have hq : Finite (((levelAfL hc.sig S.gram Lb).subgroupOf (Formalism.L2.Herm.UAf hc S)) ⧸
-      (U.subgroupOf (Formalism.L2.Herm.UAf hc S)).subgroupOf ((levelAfL hc.sig S.gram Lb).subgroupOf (Formalism.L2.Herm.UAf hc S))) := by
-    have h0 : (U.subgroupOf (Formalism.L2.Herm.UAf hc S)).relIndex
-        ((levelAfL hc.sig S.gram Lb).subgroupOf (Formalism.L2.Herm.UAf hc S)) ≠ 0 := by
-      rw [Subgroup.relIndex_subgroupOf (show levelAfL hc.sig S.gram Lb ≤ Formalism.L2.Herm.UAf hc S from inf_le_left)]
-      exact hU.2
-    have : ((U.subgroupOf (Formalism.L2.Herm.UAf hc S)).subgroupOf
-        ((levelAfL hc.sig S.gram Lb).subgroupOf (Formalism.L2.Herm.UAf hc S))).FiniteIndex := ⟨h0⟩
-    exact Subgroup.finite_quotient_of_finiteIndex
-  exact @finite_classSet_of_finiteIndex _ _ (Formalism.L2.Herm.UFin hc S)
-    ((levelAfL hc.sig S.gram Lb).subgroupOf (Formalism.L2.Herm.UAf hc S)) (U.subgroupOf (Formalism.L2.Herm.UAf hc S)) hle hL hq
-
-theorem finite_classSet_step {R : Ranks} (sp : Spaces R F E) {gp : Fin 2 → ℕ} {T f i : ℕ} (hi : i ≤ R.m)
-    {Q : Finset (HeightOneSpectrum (𝓞 F))} (lev : Formalism.L2.Herm.StepLevelQ sp.cm (sp.X i) gp T f Q)
-    (hU : LevFinIdx sp.cm (sp.X i) lev.Lb lev.U) :
-    Finite (ClassSet (Formalism.L2.Herm.UFin sp.cm (sp.X i)) (lev.U.subgroupOf (Formalism.L2.Herm.UAf sp.cm (sp.X i)))) := finite_classSet_lev sp.cm (sp.X i) (sp.X_sig i) (sp.X_def i hi) lev.Lb lev.Lb_fin lev.Lb_span
-    lev.U hU
 
 end Formalism.L2.G

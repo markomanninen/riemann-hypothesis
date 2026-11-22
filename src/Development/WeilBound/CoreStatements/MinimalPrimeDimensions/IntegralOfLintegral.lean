@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.MemMinimalPrimesOfMemSupport
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.DifferentiableOnSheet
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFsLogSmul
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqGenericPoint
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.MemMinimalPrimesOfMemSupport
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.DifferentiableOnSheet
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFsLogSmul
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqGenericPoint
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,7 +63,7 @@ theorem map_notMem {K : Type} [Field K] [NumberField K] {m : ℕ} {P : Ideal (Mv
     exact Ideal.eq_top_of_isUnit_mem _ hmem ((Ne.isUnit ha0).map C)
   intro hmem
   apply hq
-  have hc := IsLocalization.comap_map_of_isPrime_disjoint (M := (nonZeroDivisors (𝓞 K)).map (C (σ := Fin m)))
+  have hc := IsLocalization.under_map_of_isPrime_disjoint (M := (nonZeroDivisors (𝓞 K)).map (C (σ := Fin m)))
     (S := MvPolynomial (Fin m) K) hP hdisj
   rw [← hc, Ideal.mem_comap]
   exact hmem
@@ -170,7 +174,7 @@ theorem stArch (h1 : StPts) (h2 : StCharts) : StArch := by
   have hℓm : Measurable fun y : EuclideanSpace ℂ (Fin m) => fsLog h (fun k => σ (u k)) (h.pointOf y) := by
     simp only [GroundTheory.Heights₂.Heights.ConeFsLog.fsLog_pointOf]
     have hc : Continuous fun y : EuclideanSpace ℂ (Fin m) => ∑ j : Fin m, σ (u j) * h.pointOf y j :=
-      continuous_finset_sum _ fun j _ => continuous_const.mul ((continuous_apply j).comp hpc)
+      continuous_finsetSum _ fun j _ => continuous_const.mul ((continuous_apply j).comp hpc)
     exact Real.measurable_log.comp (hc.norm.measurable.div measurable_norm)
   have hgm : Measurable fun y : CxPts p (σ.comp (algebraMap (𝓞 K) K)) =>
       fsLog h (fun k => σ (u k)) (coords p (σ.comp (algebraMap (𝓞 K) K)) hE.isLB s y) := by

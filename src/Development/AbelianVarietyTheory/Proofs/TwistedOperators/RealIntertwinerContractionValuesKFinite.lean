@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqMulProdOfPartial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjModelExt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqMulProdOfPartial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjModelExt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem exists_riesz {H P : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ 
   refine ⟨{ toFun := v, map_add' := ?_, map_smul' := ?_ }, hv⟩
   · intro φ ψ
     refine eq_of_inner_eq_on_dense hE fun y => ?_
-    rw [← hv, inner_add_left, ← hv, ← hv, map_add, LinearMap.add_apply]
+    rw [← hv, inner_add_left, ← hv, ← hv, map_add (f := _), LinearMap.add_apply]
   · intro c φ
     refine eq_of_inner_eq_on_dense hE fun y => ?_
     rw [← hv, inner_smul_left, ← hv, map_smul, LinearMap.smul_apply, smul_eq_mul]

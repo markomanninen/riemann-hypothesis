@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.AlgebraicIntegralClosure
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EqClosedPointOfNotMemRange
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AlgebraicIntegralClosure
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EqClosedPointOfNotMemRange
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Topology

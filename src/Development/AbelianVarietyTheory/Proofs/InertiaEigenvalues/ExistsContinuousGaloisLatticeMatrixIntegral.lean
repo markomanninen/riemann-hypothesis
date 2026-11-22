@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem exists_form_extending_coord {R F T V ι : Type} [CommRing R] [IsDomain R
   refine ⟨g, fun x => ?_⟩
   have hx : f x = ∑ j ∈ (b.repr x).support, algebraMap R F (b.repr x j) • v j := by
     conv_lhs => rw [← b.linearCombination_repr x]
-    rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, algebraMap_smul]
   have hy : f x = ((∑ j ∈ (b.repr x).support,
@@ -34,7 +39,8 @@ theorem exists_form_extending_coord {R F T V ι : Type} [CommRing R] [IsDomain R
   have h2 := LinearMap.congr_fun hg
     (∑ j ∈ (b.repr x).support, algebraMap R F (b.repr x j) • Module.Basis.span hF j)
   rw [LinearMap.comp_apply, Submodule.subtype_apply] at h2
-  rw [hy, h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy, h2, map_sum]
   simp only [map_smul, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply, smul_eq_mul,
     mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq']

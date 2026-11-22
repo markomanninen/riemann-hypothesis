@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.TorusIndex
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.TorusIndex
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -23,8 +28,5 @@ def EigenLatDifferent.Statement : Prop :=
     (∀ σ : Em →+* ℂ, ∃ t : Em →+* K, ι.comp t = σ) →
     ∀ (N : ℕ) (I : Submodule (𝓞 Em) (Fin N → Em)), I.FG → ∀ s : Em →+* K,
       eigenLat I s = diffLat s I
-
-example : (∀ σ : Gauss.Em →+* ℂ, ∃ t : Gauss.Em →+* Gauss.Em, Gauss.φ₀.comp t = σ) ∧ Gauss.isoLine.FG :=
-  ⟨Gauss.split Gauss.φ₀, Submodule.fg_span_singleton _⟩
 
 end GroundTheory.Heights₂.Heights.NineStatements

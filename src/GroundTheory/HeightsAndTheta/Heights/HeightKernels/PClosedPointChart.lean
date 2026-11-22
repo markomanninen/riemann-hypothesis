@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCurveCharts
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsClosedPointUnitSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCurveCharts
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsClosedPointUnitSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,19 +18,19 @@ namespace ClosedPointAffineChart
 
 variable {T : Type} [Fintype T] {K' : Type} [Field K'] (y : (Σ _ : Unit, T) → K')
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem ratio_mem (t u : T) : y ⟨(), u⟩ / y ⟨(), t⟩ ∈ chartRingZ y (fun _ => t) :=
   Algebra.subset_adjoin ⟨⟨(), u⟩, rfl⟩
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem mem_chart_of_mem_curveRing {b : K'} (hb : b ∈ curveRing y) (t : T) (ht : y ⟨(), t⟩ ≠ 0) :
     b ∈ chartRingZ y (fun _ => t) :=
   mem_curveRing.mp hb (fun _ => t) (fun _ => ht)
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem mem_curveRing_of_forall {b : K'}
     (h : ∀ t : T, y ⟨(), t⟩ ≠ 0 → b ∈ chartRingZ y (fun _ => t)) : b ∈ curveRing y := by
   rw [mem_curveRing]
@@ -34,16 +39,16 @@ theorem mem_curveRing_of_forall {b : K'}
   have h1 := h (c ()) (hc ())
   rwa [← hc'] at h1
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem div_pow_mem_of_mem_chartLat {e : ℕ} {g : K'} (hg : g ∈ chartLat y 1 e) (t : T)
     (ht : y ⟨(), t⟩ ≠ 0) : g / y ⟨(), t⟩ ^ e ∈ chartRingZ y (fun _ => t) := by
   have h : g * ∏ k : Unit, y ⟨k, t⟩ ^ (-((e : ℤ) * (1 : Unit → ℤ) k)) ∈ chartRingZ y (fun _ => t) :=
     hg (fun _ => t) (fun _ => ht)
   simpa [zpow_neg, zpow_natCast, div_eq_mul_inv] using h
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem exists_mul_inv_mem {m : Ideal (curveRing y)} [m.IsPrime] {e : ℕ} {g : K'} (hg0 : g ≠ 0)
     (hgL : g ∈ chartLat y 1 e)
     (hW : ∀ W : ValuationSubring K', (∀ b : curveRing y, (b : K') ∈ W) →

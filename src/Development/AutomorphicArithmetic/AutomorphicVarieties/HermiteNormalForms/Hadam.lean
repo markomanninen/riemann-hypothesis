@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexOrder
@@ -25,7 +29,7 @@ theorem UpperTheory.V.KT.hadam :
   have hp0 : 0 ≤ ∏ i, hH.eigenvalues i := Finset.prod_nonneg fun i _ => hnn i
   have hp1 : ∏ i, hH.eigenvalues i ≤ 1 := by
     calc ∏ i, hH.eigenvalues i ≤ ∏ i, Real.exp (hH.eigenvalues i - 1) :=
-          Finset.prod_le_prod (fun i _ => hnn i) fun i _ => by
+          Finset.prod_le_prod₀ (fun i _ => hnn i) fun i _ => by
             linarith [Real.add_one_le_exp (hH.eigenvalues i - 1)]
       _ = Real.exp (∑ i, (hH.eigenvalues i - 1)) := (Real.exp_sum _ _).symm
       _ ≤ 1 := by

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -37,12 +42,24 @@ theorem transcendental_of_subfield {E : Type*} [Field E] {S : Type*} [CommRing S
   rw [aeval_def, eval₂_map]
   exact hp
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem linearIndependent_adjoin_of_transcendental {K E : Type*} [Field K] [Field E] [Algebra K E]
     (A : IntermediateField K E) {t : E} (ht : Transcendental A t) {κ : Type*} {b : κ → A}
     (hb : LinearIndependent K b) :
-    LinearIndependent (IntermediateField.adjoin K {t}) (A.val ∘ b) := by
+    LinearIndependent (IntermediateField.adjoin K {t}) (A.val ∘ b) :=
+  open scoped IntermediateField.algebraAdjoinAdjoin in by
+  letI : Algebra (Algebra.adjoin K {t}) (IntermediateField.adjoin K {t}) :=
+    (Subalgebra.inclusion (IntermediateField.algebra_adjoin_le_adjoin K {t})).toAlgebra
+  letI : FaithfulSMul (Algebra.adjoin K {t}) (IntermediateField.adjoin K {t}) :=
+    (faithfulSMul_iff_algebraMap_injective _ _).2 fun a b h =>
+      Subtype.ext (by simpa using congrArg (fun x : IntermediateField.adjoin K {t} => (x : E)) h)
+  letI : IsFractionRing (Algebra.adjoin K {t}) (IntermediateField.adjoin K {t}) :=
+    IsFractionRing.of_field _ _ fun ⟨_, h⟩ =>
+      have ⟨x, hx, y, hy, eq⟩ := IntermediateField.mem_adjoin_iff_div.mp h
+      ⟨⟨x, hx⟩, ⟨y, hy⟩, Subtype.ext eq⟩
+  letI : IsScalarTower (Algebra.adjoin K {t}) (IntermediateField.adjoin K {t}) E :=
+    IsScalarTower.of_algebraMap_eq fun _ => rfl
   refine (LinearIndependent.iff_fractionRing (Algebra.adjoin K {t})
     (IntermediateField.adjoin K {t})).1 ?_
   rw [linearIndependent_iff']
@@ -58,7 +75,8 @@ theorem linearIndependent_adjoin_of_transcendental {K E : Type*} [Field K] [Fiel
     simpa [hp, Subalgebra.smul_def] using hg
   let P : A[X] := ∑ j ∈ s, C (b j) * (p j).map (algebraMap K A)
   have hP : aeval t P = 0 := by
-    simp only [P, map_sum, map_mul, aeval_C, aeval_map_algebraMap]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, map_sum, map_mul, aeval_C, aeval_map_algebraMap]
     rw [← hsum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_comm]
@@ -93,10 +111,11 @@ theorem finrank_adjoin_eq_of_transcendental {K E : Type*} [Field K] [Field E] [A
     have hr := H.adjoin_rank_eq_rank_left_of_isAlgebraic_left
     exact congrArg Cardinal.toNat hr
   · rw [Module.finrank_of_not_finite hfin]
-    apply Module.finrank_of_not_finite
+    set M := IntermediateField.adjoin L (A : Set E)
+    letI : Module.Free L M := Module.Free.of_divisionRing L M
+    refine Module.finrank_of_not_finite (M := M) ?_
     intro hfin'
     apply hfin
-    set M := IntermediateField.adjoin L (A : Set E)
     let f : Module.Free.ChooseBasisIndex K A → M :=
       fun k => ⟨A.val (a k), IntermediateField.subset_adjoin L _ (a k).2⟩
     have hf : LinearIndependent L f := LinearIndependent.of_comp M.val.toLinearMap hind

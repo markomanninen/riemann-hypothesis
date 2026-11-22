@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeOrbVecAt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeOrbVecAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem orbJ_smul (D : Formalism.FourierDecayAlt.B.RealPlaceData k r Wp Wq) (γ 
       simp only [mul_smul]; exact h1.choose_spec.2.smul c
     have h2 : ∃ θ, Formalism.FourierDecayAlt.D.IsNormCut D γ μ θ ∧
         Integrable (fun p => θ p • Formalism.FourierDecayAlt.D.orbIntegrand D γ F p) D.μSS := ⟨_, hc1, hi1⟩
-    rw [dif_pos h1, dif_pos h2]
+    rw [dite_eq_left h1, dite_eq_left h2]
     have hind := Formalism.FourierDecayAlt.P.orbital_integral_indep_choice k r Wp Wq D γ μ hrel hH F h2.choose (fun p => c * h1.choose p)
       h2.choose_spec.1 hc1 h2.choose_spec.2 hi1
     rw [hind]
@@ -56,7 +60,7 @@ theorem orbJ_smul (D : Formalism.FourierDecayAlt.B.RealPlaceData k r Wp Wq) (γ 
       · have : (fun p => c * (c⁻¹ * θ p)) = θ := by funext p; field_simp
         rw [this]; exact hθ
       · simp only [mul_smul]; exact hi.smul c⁻¹
-    rw [dif_neg h1, dif_neg h2, smul_zero]
+    rw [dite_eq_right h1, dite_eq_right h2, smul_zero]
 
 end Scale
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -21,7 +26,7 @@ theorem injective_of_surjective_endo {R : Type*} [CommRing R] [IsNoetherianRing 
   have hsurj : ∀ n, Function.Surjective (φ^[n]) := fun n => hφ.iterate n
   obtain ⟨n, hn⟩ := (monotone_stabilizes_iff_noetherian (R := R) (M := R)).mpr
     (isNoetherianRing_iff.mp inferInstance) K
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨y, rfl⟩ := hsurj n x
   have hy : y ∈ K (n + 1) := by
@@ -116,7 +121,7 @@ theorem constantCoeff_powerSumHom (N : ℕ) (S : MvPolynomial (Fin N) ℚ) :
     constantCoeff (powerSumHom N S) = constantCoeff S := by
   induction S using MvPolynomial.induction_on with
   | C a => simp [powerSumHom]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp =>
     simp only [map_mul, powerSumHom, aeval_X, constantCoeff_X, mul_zero]
     simp [psum, constantCoeff_X]

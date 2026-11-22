@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExpF
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionOfIsPushout
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExpF
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionOfIsPushout
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,6 @@ variable {R R' : Type} [CommRing R] [CommRing R'] {X Y Y' Z : Scheme.{0}}
 def constHom (π : Y ⟶ Spec (CommRingCat.of R)) (U : Y.Opens) : R →+* Γ(Y, U) :=
   ((Y.presheaf.map (homOfLE le_top).op).hom.comp π.appTop.hom).comp
     (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
-
-theorem constHom_apply (π : Y ⟶ Spec (CommRingCat.of R)) (U : Y.Opens) (c : R) :
-    constHom π U c = resTop U (scal π c) := rfl
 
 def constVal (π : Z ⟶ Spec (CommRingCat.of R)) (z : Z) (c : R) : Z.presheaf.stalk z :=
   gs π z ⊤ ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom c)
@@ -167,8 +168,8 @@ theorem trF_comp {φ' : K → (Y' ⟶ X)} {p : Y' ⟶ Y} (hφ : ∀ k, φ' k = p
 variable {π' : Y' ⟶ Spec (CommRingCat.of R')} {f : R →+* R'} {p : Y' ⟶ Y}
   (hp : p ≫ π = π' ≫ Spec.map (CommRingCat.ofHom f)) {φ' : K → (Y' ⟶ X)} (hφ : ∀ k, φ' k = p ≫ φ k)
 
-variable (L ε) in
 
+variable (L ε) in
 def pullOver : SecOver π (LB.LinComb L φ ε) →ₛₗ[f] SecOver π' (LB.LinComb L φ' ε) where
   toFun s :=
     { f := fun j => pullFn hp (wchart_eq hφ j).le (chartFun π (LB.LinComb L φ ε) j s)
@@ -317,8 +318,8 @@ theorem isExtension_pullFn {U : Y.Opens} {U' : Y'.Opens} (h : U' = p ⁻¹ᵁ U)
 variable {L : LB X} (hL : L.IsLB) {I : Type} [Fintype I] {φ : I → (Y ⟶ X)} (ε : I → ℤ) {φ' : I → (Y' ⟶ X)}
   (hφ : ∀ k, φ' k = p ≫ φ k)
 
-include hL in
 
+include hL in
 theorem isExtension_pullOver : IsExtension (pullOver L ε H.w hφ) := by
   obtain ⟨T, hT⟩ := (NoetherianSpace.isCompact (Set.univ : Set Y)).elim_finite_subcover
     (fun j : I → L.ι => (LB.wchart L φ j : Set Y)) (fun j => (LB.wchart L φ j).isOpen) (fun y _ => by

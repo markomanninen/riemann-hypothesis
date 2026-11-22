@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SymplecticIwahori.AdjMulSelf
-import Mathlib.LinearAlgebra.Matrix.Charpoly.LinearMap
-import Mathlib.Algebra.Polynomial.Expand
-import Mathlib.RingTheory.Ideal.GoingUp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SymplecticIwahori.AdjMulSelf
+public import Mathlib.LinearAlgebra.Matrix.Charpoly.LinearMap
+public import Mathlib.Algebra.Polynomial.Expand
+public import Mathlib.RingTheory.Ideal.GoingUp
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Pp
 
@@ -20,7 +24,7 @@ theorem UpperTheory.V.Ws.Pp.nilPoly :
     have hcm : (Ideal.comap (algebraMap B S) J).IsMaximal := by
       rw [hc]
       exact IsLocalRing.maximalIdeal.isMaximal B
-    have hJm : J.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap J hcm
+    have hJm : J.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := B) J hcm
     rw [IsLocalRing.eq_maximalIdeal hJm]
     exact hv
   obtain ⟨n, hn⟩ := hrad

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittEndomorphism.FlogConstantCoeff
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WfRing
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WfSubst
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittEndomorphism.FlogConstantCoeff
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WfRing
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WfSubst
+
+@[expose] public section
 
 namespace PI.WfEndProof
 

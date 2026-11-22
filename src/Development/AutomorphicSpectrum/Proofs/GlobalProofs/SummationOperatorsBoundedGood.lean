@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialSum
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurther
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialSum
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurther
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -120,8 +124,8 @@ end GlobalTheory.CompanionTheory.Hypotheses₂.Shintani.Abel.AopProps
 
 namespace GlobalTheory.CompanionTheory.Hypotheses₂.Shintani.Abel
 
-open AopProps in
 
+open AopProps in
 theorem aop_props : ∀ (r l : ℕ) (i : Fin r) (v : (Fin r → ℕ) → ℚ), 0 < l → GoodAt l i v → BddW v →
     BddW (Aop l i v) ∧ BddW (Bop l i v) ∧ GoodAt l i (Aop l i v) := by
   intro r l i v hl hv ⟨C, hC⟩

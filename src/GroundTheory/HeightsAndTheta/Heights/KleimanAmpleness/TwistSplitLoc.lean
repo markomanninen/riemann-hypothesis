@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistSplitChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistSplitChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -166,7 +171,7 @@ theorem locGood_yHom_mul {c : ℤ} {I : Finset (Fin (N + 1))} (c' : MvPolynomial
     rwa [Algebra.smul_def] at this
   | add p q hp hq =>
     intro b
-    rw [map_add, add_mul, AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
+    rw [map_add (f := _), add_mul, AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
     exact add_mem (hp hW b) (hq hW b)
   | mul_X p j hp =>
     rw [map_mul, mul_assoc]
@@ -198,7 +203,7 @@ theorem locGood_locEmb (I : StdCell N) (hI : I.1 ⊆ support x) {c : ℤ}
       by ring, rfl⟩
   · intro b; rw [map_zero]; exact Submodule.zero_mem _
   · intro u v _ _ hu hv b
-    rw [map_add]
+    rw [map_add (f := _)]
     change (UT.toL _ + UT.toL _).coeff _ ∈ _
     rw [AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
     exact add_mem (hu b) (hv b)
@@ -226,7 +231,7 @@ theorem exists_locEmb_eq (I : StdCell N) (hI : I.1 ⊆ support x) {b c : ℤ} {y
   · exact ⟨0, Submodule.zero_mem _, by rw [map_zero, single_zero]; rfl⟩
   · rintro u v _ _ ⟨w, hw, hwu⟩ ⟨w', hw', hwv⟩
     refine ⟨w + w', Submodule.add_mem _ hw hw', ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     change UT.toL _ + UT.toL _ = _
     rw [hwu, hwv, single_add]
     rfl

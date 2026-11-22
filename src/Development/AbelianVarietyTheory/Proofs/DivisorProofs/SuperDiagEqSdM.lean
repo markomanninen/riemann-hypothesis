@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import GroundTheory.AutomorphicForms.AdelicGLn
-import GroundTheory.GlobalFields.TateThesis.AdelicChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import GroundTheory.AutomorphicForms.AdelicGLn
+public import GroundTheory.GlobalFields.TateThesis.AdelicChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ def nuGL (t : Vp E n) : GL (Fin n) (Cinf E) :=
 theorem nuGL_mem (t : Vp E n) : nuGL t ∈ GlobalTheory.SmGL.unipB (Cinf E) (Fin n) :=
   (GlobalTheory.SmGL.mem_unipB (Cinf E)).2 ⟨fun _ _ h => nu_lower t h, nu_diag t⟩
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def psiInf (z : Cinf E) : ℂ := (GroundTheory.Global.adelicChar E (sInf E z) : ℂ)
 
@@ -53,8 +57,8 @@ def psiFin (a : Af E) : ℂ := (GroundTheory.Global.adelicChar E (sFin E a) : �
 def bumpInf (f : Lie E n → ℝ) (x : Lie E n) : ℂ :=
   ∫ t : Vp E n, (f (toL (nu t * Matrix.of x)) : ℂ) * psiInf (-sdM (nu t))
 
-open Classical in
 
+open Classical in
 def bumpFin (g : GL (Fin n) (Af E)) : ℂ :=
   if h : ∃ u ∈ GlobalTheory.SmGL.unipB (Af E) (Fin n), u⁻¹ * g ∈ GroundTheory.Automorphic.AdelicGLn.integralFiniteGL E n then
     psiFin (GlobalTheory.Whittaker.superDiag h.choose) else 0

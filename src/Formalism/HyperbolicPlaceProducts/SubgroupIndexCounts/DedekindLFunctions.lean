@@ -1,4 +1,8 @@
-import Formalism.HyperbolicPlaceProducts.Statement
+module
+
+public import Formalism.HyperbolicPlaceProducts.Statement
+
+@[expose] public section
 
 open Module
 
@@ -73,7 +77,7 @@ theorem exists_family_span_eq_of_le {R M : Type} [CommRing R] [IsDedekindDomain 
       rw [hv, Submodule.mem_sup] at h
       obtain ⟨a, ha, b, hb, rfl⟩ := h
       obtain ⟨r, rfl⟩ := Submodule.mem_span_singleton.1 ha
-      rw [Submodule.mem_comap, map_add, map_smul]
+      rw [Submodule.mem_comap, map_add (f := _), map_smul]
       have hb0 : S'.mkQ b = 0 := (Submodule.Quotient.mk_eq_zero S').2 hb
       rw [hb0, add_zero]
       exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self _)

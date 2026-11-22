@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,7 +40,8 @@ theorem exp_sum (T : Thick κ s) {K : Type} [Fintype K] (ε : K → ℤ) (a : K 
     change _ = dpExp T.δ (Subtype.val _)
     congr 1
     simp
-  rw [e2, map_sum, toMul_sum, ← Units.val_mul, ← Finset.prod_mul_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e2, map_sum, toMul_sum, ← Units.val_mul, ← Finset.prod_mul_distrib]
   congr 1
   refine Finset.prod_congr rfl fun k _ ↦ ?_
   rw [e1, mul_zpow, map_zsmul, toMul_zsmul]
@@ -86,7 +91,8 @@ theorem isChern_linComb {L : LB X} {z : Cris.H2 κ s} (hz : IsChern κ s L z) {K
     · refine Eq.trans ?_ (Units.val_mul (Units.map (χ.hom.φ : T'.obj.B →* T''.obj.B) (∏ k, U k T T' ψ ^ ε k)) _)
       rw [map_prod, ← Finset.prod_mul_distrib]
       simp only [mul_zpow, map_zpow]
-  · rw [map_sum, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun k _ ↦ ?_
     rw [map_zsmul, map_zsmul, ← (n k).pullCohomologyTwo_class, ← h3]
     obtain ⟨z, rfl⟩ := CatCoh.H2.mk_surjective _ z
@@ -130,7 +136,8 @@ theorem isChern_cube {L : LB A.left} {n : ℕ} {a b : Fin n → prim κ t A}
   have e : ∀ J : ULift.{0} (Finset (Fin 2)), (isMor_psum ![u, v] J).pull2 (∑ k, cup _ (a k).1 (b k).1) =
       ∑ k, cup _ (∑ i ∈ J.down, pullOver κ t (![u, v] i) (a k).1)
         (∑ i ∈ J.down, pullOver κ t (![u, v] i) (b k).1) := fun J ↦ by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ ↦ ?_
     rw [IsMor.pullCohomologyTwo_cup, ← pullOver_psum, ← pullOver_psum]
     rfl
@@ -227,7 +234,8 @@ theorem adjoint_of_lbIso (P : GlobalTheory.Published.AbelianDeRham.Free) {R : Ty
       E.symm (pullOver (dp0 R) (𝟙 _) ρ c.1) = primPull (dp0 R) (𝟙 _) ρ c := fun _ _ _ ↦ Subtype.ext rfl
   have v₁ : ∀ c : primDR A, primPull (dp0 R) (𝟙 _) (𝟙 A) c = c := fun c ↦
     Subtype.ext (IsMor.pullCohomologyOne_id _ _)
-  simp only [map_sum, map_add, hΛ, LinearMap.comp_apply, LinearEquiv.coe_coe, pullOver_pullOver,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_add (f := _), hΛ, LinearMap.comp_apply, LinearEquiv.coe_coe, pullOver_pullOver,
     lift_fst_assoc, lift_snd_assoc, lift_fst, lift_snd, Category.id_comp, MonObj.one_comp, pullOver_one,
     map_zero, v, v₁, mul_zero, zero_mul, sub_zero, zero_sub] at e
   simp only [wedgeForm_apply, push_apply, sub_eq_add_neg]
@@ -235,7 +243,18 @@ theorem adjoint_of_lbIso (P : GlobalTheory.Published.AbelianDeRham.Free) {R : Ty
 
 theorem polForm_adjoint : GlobalTheory.Published.AbelianDeRham → ∀ {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H} (Xo : Moduli Dw l) {K : Type} [Field K] {x : Sp K ⟶ Xo.X} {A : Over (Sp K)} [GrpObj A] {π : A.left ⟶ Xo.univ.t.G.left}, IsGrpPullback A Xo.univ.t.G x π → ∀ (a : OAct (𝓞 E) A), (∀ z, (a.act z).left ≫ π = π ≫ (Xo.univ.t.act.act z).left) → ∀ {ψ : LinearMap.BilinForm K (HdR A)}, IsPolForm (dp0 K) (𝟙 _) A (Xo.univ.t.PP.L.pull π) ψ → IsAdjointFor a (fun z => H.bar z) ψ := by
   intro P E _ _ _ H Dw l Xo K _ x A _ π hπ a ha ψ hψ z u v
-  have hA := PolPull.isAbelianScheme_of_isGrpPullback (ObjDim.isAbelianScheme Xo.univ) hπ
+  have hA : IsAbelianScheme A := by
+    have hG := ObjDim.isAbelianScheme Xo.univ
+    have := hG.comm
+    have hc : IsCommMonObj A := by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (hπ.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← hπ.2 T x y (pushPt hπ.1.w x) (pushPt hπ.1.w y) rfl rfl,
+        ← hπ.2 T y x (pushPt hπ.1.w y) (pushPt hπ.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨hc, MorphismProperty.of_isPullback (P := @Smooth) hπ.1 hG.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) hπ.1 hG.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) hπ.1 hG.geomConnected⟩
   have gA := (smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback hπ.1
     (ObjDim.smoothOfRelativeDimension Xo.univ)
   have := hA.comm

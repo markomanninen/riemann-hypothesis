@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.StepsR
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
-import Formalism.SharpRestriction.CuspSpanNormBounds.RowsOneGenusOfLocalDiscriminant
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SplitPrimeCounts.LsSetresInt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.GoodRDet
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.StepsR
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RowsOneGenusOfLocalDiscriminant
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SplitPrimeCounts.LsSetresInt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.GoodRDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -249,7 +253,7 @@ variable (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.
 
 theorem totPos_ne {x : D.host.E} (hx : Formalism.MainNotions.S.LocalSplitGroups.TotPos x) : x ≠ 0 := by
   have : Nonempty D.what₂.Tau := Fintype.card_pos_iff.1 (by
-    rw [D.what₂.card_Tau]; unfold Formalism.BasicNotions.Ranks.f Formalism.BasicNotions.Ranks.n; positivity)
+    rw [D.what₂.card_Tau]; have := D.R.two_le_m; have := D.R.m_le_f; unfold Formalism.BasicNotions.Ranks.f Formalism.BasicNotions.Ranks.n; omega)
   obtain ⟨τ⟩ := this
   intro h
   have := hx τ
@@ -259,12 +263,36 @@ theorem totPos_ne {x : D.host.E} (hx : Formalism.MainNotions.S.LocalSplitGroups.
 theorem indep (hG : GZ T T' (Zhat F0 F1) ≠ 0) : LinearIndependent D.host.E (Sum.elim F0.fvec F1.fvec) := by
   rw [Fintype.linearIndependent_iff]
   intro c hc
-  have hdet := PI.UnitaryGroupMassFormula.CntFormula.gram_determinant_ne_zero D T T' (Zhat F0 F1) hG
+  have hdet : (Ga T T' (Zhat F0 F1)).det ≠ 0 := by
+    have heq : Ga T T' (Zhat F0 F1) = (Matrix.fromBlocks (Zhat F0 F1)
+        (PI.UnitaryGroupMassFormula.CntFormula.DetGa.cornerM D.R.rS (-T))
+        (PI.UnitaryGroupMassFormula.CntFormula.DetGa.cornerM D.R.rS (-T'))
+        (Zhat F0 F1).conjTranspose).submatrix id (Equiv.sumComm _ _) := by
+      ext (a | a) (b | b) <;> simp [Ga, PI.UnitaryGroupMassFormula.CntFormula.DetGa.cornerM, Matrix.fromBlocks]
+    have hfull : leadMinorE (Zhat F0 F1) (D.R.rS + 1) = (Zhat F0 F1).det := by
+      unfold leadMinorE
+      rw [dite_eq_left le_rfl]
+      congr 1
+    have hprev : leadMinorE (Zhat F0 F1) D.R.rS = ((Zhat F0 F1).submatrix Fin.castSucc Fin.castSucc).det := by
+      unfold leadMinorE
+      rw [dite_eq_left (Nat.le_succ _)]
+      congr 1
+    have hformula : (Ga T T' (Zhat F0 F1)).det =
+        ((Equiv.Perm.sign (Equiv.sumComm (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1))) : ℤ) : D.host.E) * GZ T T' (Zhat F0 F1) := by
+      rw [heq, Matrix.det_permute', PI.UnitaryGroupMassFormula.CntFormula.DetGa.det_N, GZ, hfull, hprev,
+        Matrix.det_conjTranspose, ← Matrix.conjTranspose_submatrix, Matrix.det_conjTranspose]
+      push_cast
+      ring
+    rw [hformula]
+    refine mul_ne_zero ?_ hG
+    rcases Int.units_eq_one_or (Equiv.Perm.sign (Equiv.sumComm (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)))) with h | h <;>
+      rw [h] <;> simp
   have hmv : (Ga T T' (Zhat F0 F1)).mulVec c = 0 := by
     funext a
     have h1 : (VS D).hT (Sum.elim F0.fvec F1.fvec a) (∑ i, c i • Sum.elim F0.fvec F1.fvec i) = 0 := by
       rw [hc, map_zero]
-    rw [map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h1
     simp only [map_smul, smul_eq_mul] at h1
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply]
     rw [← h1]

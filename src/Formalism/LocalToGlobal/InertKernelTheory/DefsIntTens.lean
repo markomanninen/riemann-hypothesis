@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+
+@[expose] public section
 
 noncomputable section
 

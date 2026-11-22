@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.XiEqXiOffMul
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ReferenceTupleOffPrimesEmpty
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatEqOfCarries
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PsiAtTransport
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FrsFBaseEqSelf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CouplingCosetInFramesPreimageUnderLift
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMemberStepCharts
-import Formalism.LocalToGlobal.Columns.FixEColLevSym
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerEquivFr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.XiEqXiOffMul
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ReferenceTupleOffPrimesEmpty
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatEqOfCarries
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PsiAtTransport
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FrsFBaseEqSelf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CouplingCosetInFramesPreimageUnderLift
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMemberStepCharts
+public import Formalism.LocalToGlobal.Columns.FixEColLevSym
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerEquivFr
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem normal_rep {G D A : Type} [Group G] [MulAction G D] (f : D → A) (pref 
       rw [h1]
       exact hg.symm
     unfold GlobalTheory.Mem.Col2.prefRep
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     obtain ⟨g, hg⟩ : ∃ g : G, g • q = hex.choose := Quotient.exact hex.choose_spec.1
     have h3 := (h _).1 hex.choose_spec.2
     rw [h3, ← hg, h1]
@@ -146,7 +150,7 @@ theorem mem_cosetIn_smul (g : FrmG Λ Θ) (p p' : PtAt R sel mu cst u j)
   have hf : ∀ y, (frsF sel mu p'.1.1 P).symm (g.1.1 y) = κ.1 ((frsF sel mu p.1.1 P).symm y) := fun y => by
     rw [LinearEquiv.symm_apply_eq, e1]
     unfold frsF
-    rw [dif_neg hP, dif_neg hP]
+    rw [dite_eq_right hP, dite_eq_right hP]
     show _ = g.1.1 (p.1.1.fr ⟨P.1, hQ⟩ (κ.1.symm (κ.1 ((p.1.1.fr ⟨P.1, hQ⟩).symm y))))
     rw [LinearEquiv.symm_apply_apply, LinearEquiv.apply_symm_apply]
   simp only [cosetIn, Set.mem_setOf_eq, e2]
@@ -215,7 +219,7 @@ theorem idx_eq (hI : I.Ok) (hj : j + 1 = B.R.m) (b b' : Idx I.sel (I.tup a) (I.i
 abbrev levQ (I : TC B X) (a : I.ι) (j : ℕ) (b : Idx I.sel (I.tup a) (I.idx a) j) :=
   levQAt I.sel (I.tup a) (I.idx a) (I.Tp a) j b
 
-theorem good_act (hI : I.Ok) (ht : I.IsTw) (hj : j + 1 = B.R.m) (b : (I.stp u a j).β) (g : (I.stp u a j).G b) (p : (I.stp u a j).D b)
+theorem good_act (hI : I.Ok) (ht : TC.IsTw I) (hj : j + 1 = B.R.m) (b : (I.stp u a j).β) (g : (I.stp u a j).G b) (p : (I.stp u a j).D b)
     (hp : Good p) : Good ((I.stp u a j).act b g p) := by
   have hΛ : levGAt I.sel (I.tup a) (I.idx a) (I.Tp a) j b = colLevSym I.Ch j := by
     have e : ∀ al, (I.idx a).levG j al = colLevSym I.Ch j := by
@@ -234,7 +238,7 @@ theorem mem_act (b : (I.stp u a j).β) (g : (I.stp u a j).G b) (p : (I.stp u a j
     (g.2.2.1 ⟨P.1, hQ⟩).1 z ∈ cosetIn ((I.stp u a j).act b g p) P ↔ z ∈ cosetIn p P :=
   mem_cosetIn_smul (levGAt I.sel (I.tup a) (I.idx a) (I.Tp a) j b) (levQ I a j b) g p _ rfl rfl P hP hQ z
 
-theorem rep_congr (hI : I.Ok) (ht : I.IsTw) (hj : j + 1 = B.R.m) (b : (I.stp u a j).β) (d d' : (I.stp u a j).D b) (hd : Good d)
+theorem rep_congr (hI : I.Ok) (ht : TC.IsTw I) (hj : j + 1 = B.R.m) (b : (I.stp u a j).β) (d d' : (I.stp u a j).D b) (hd : Good d)
     (hd' : Good d') (h : cosetIn d = cosetIn d') :
     cosetIn ((I.stp u a j).rep ((I.stp u a j).cl b d')) = cosetIn ((I.stp u a j).rep ((I.stp u a j).cl b d)) := by
   refine @normal_rep ((I.stp0 u a j).G b) ((I.stp0 u a j).D b) _ _ ((I.stp0 u a j).actD b) (fun q => cosetIn q) (I.pref u a j b)
@@ -248,7 +252,7 @@ theorem rep_congr (hI : I.Ok) (ht : I.IsTw) (hj : j + 1 = B.R.m) (b : (I.stp u a
 
 variable {l : I.Laws} {Z : TC.Later B (I.cols l)} {Ch : ℕ → Type} {A : TwDat I l Z u a Ch}
 
-theorem chart_ext (hI : I.Ok) (ht : I.IsTw) (hA : A.Is) (hj : j + 1 = B.R.m) (b : Idx I.sel (I.tup a) (I.idx a) j) (β β' : Ch j)
+theorem chart_ext (hI : I.Ok) (ht : TC.IsTw I) (hA : A.Is) (hj : j + 1 = B.R.m) (b : Idx I.sel (I.tup a) (I.idx a) j) (β β' : Ch j)
     (hβ : Good (A.p0 j β)) (hβ' : Good (A.p0 j β'))
     (h : ∀ (P : rowSG (B.primes X) I.sel (I.tup a)) (hQ : P.1 ∈ I.Q a), ∃ κ ∈ (levQ I a j b ⟨P.1, hQ⟩).H,
       ∃ z ∈ cosetIn (A.p0 j β) P, κ.1 z ∈ cosetIn (A.p0 j β') P) : β = β' := by
@@ -276,7 +280,7 @@ theorem chart_ext (hI : I.Ok) (ht : I.IsTw) (hA : A.Is) (hj : j + 1 = B.R.m) (b 
   rw [e1, e2] at e
   exact ((hA.reads j hi).key _ _).2 ⟨rfl, e.symm⟩
 
-theorem exists_chart (hI : I.Ok) (ht : I.IsTw) (hA : A.Is) (hj : j + 1 = B.R.m) (b : Idx I.sel (I.tup a) (I.idx a) j)
+theorem exists_chart (hI : I.Ok) (ht : TC.IsTw I) (hA : A.Is) (hj : j + 1 = B.R.m) (b : Idx I.sel (I.tup a) (I.idx a) j)
     (z : rowSG (B.primes X) I.sel (I.tup a) → Sp B.fields.E (B.R.N j))
     (hz : ∀ P, P.1 ∉ (B.primes X).vGs → (qOf P.1 : B.fields.E) ^ (I.cst a).M • z P ∈ stdAt B.fields.E (B.R.N j) P.1) :
     ∃ β : Ch j, Good (A.p0 j β) ∧ ∀ (P : rowSG (B.primes X) I.sel (I.tup a)) (hQ : P.1 ∈ I.Q a),
@@ -296,7 +300,7 @@ theorem exists_chart (hI : I.Ok) (ht : I.IsTw) (hA : A.Is) (hj : j + 1 = B.R.m) 
     rw [← h1]
     exact ⟨g.2.2.1 ⟨P.1, hQ⟩, g.2.2.2 _ (Set.mem_univ _), (mem_act b g p P hP hQ _).2 (hp' P hP)⟩
 
-theorem good_of_xi (hI : I.Ok) (ht : I.IsTw) {i : ℕ} (hi : i + 1 + 1 = B.R.m) (h : i + 1 ≤ B.R.m) (α : Ch i) (γ : Ch (i + 1)) (z)
+theorem good_of_xi (hI : I.Ok) (ht : TC.IsTw I) {i : ℕ} (hi : i + 1 + 1 = B.R.m) (h : i + 1 ≤ B.R.m) (α : Ch i) (γ : Ch (i + 1)) (z)
     (hz : A.xi i h α γ z ≠ 0) : Good (A.p0 (i + 1) γ) := by
   have hh : ∀ (al : (I.idx a).β i) P, P.1 ∈ (B.primes X).vGs → (I.idx a).h i al P = 1 := by
     rw [(ht a).2]
@@ -305,8 +309,8 @@ theorem good_of_xi (hI : I.Ok) (ht : I.IsTw) {i : ℕ} (hi : i + 1 + 1 = B.R.m) 
     hz (by unfold TwDat.xi; rw [e]; exact map_zero _)
   exact fun P hP => mem_cosetIn_of_res hi _ hP (degOne_of_ok hI a P).2 (Keep.res_of_xiAt hi (hI.sharp _) hh hx P hP)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem repY_mem (hI : I.Ok) (hA : A.Is) (hj : j + 1 = B.R.m) (β : Ch j) (hk : A.kb j β = TC.kStd X u (B.R.N j))
     (P : rowSG (B.primes X) I.sel (I.tup a)) : repY (A.p0 j β).1.2 ∈ cosetIn (A.p0 j β) P := by
   have hi : j ≤ B.R.m := by omega
@@ -329,7 +333,7 @@ theorem repY_mem (hI : I.Ok) (hA : A.Is) (hj : j + 1 = B.R.m) (β : Ch j) (hk : 
   have hl : TopStep.IsLiftFr (A.p0 j β).1.1.deco.1 ⟨P.1, hP⟩ f := by
     rw [hf]
     unfold frsF
-    rw [dif_pos hP]
+    rw [dite_eq_left hP]
     exact TopStep.liftFr_spec (A.p0 j β).1.1.deco.2 _
   have hs : ∀ z, f z ∈ stdAt B.fields.E (B.R.N j) P.1 ↔ z ∈ stdAt B.fields.E (B.R.N j) P.1 := fun z => by
     have := hl.1 z; rwa [Deco.at, hN] at this

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.WhiskerLeftEqLift
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WhiskerLeftEqLift
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon GlobalTheory.PicGlue Opposite
 open scoped CategoryTheory.Obj
@@ -22,8 +27,8 @@ theorem isSheaf_of_local_glue : ∀ (F : Scheme.{0}ᵒᵖ ⥤ Type), (∀ (T : S
     obtain ⟨w, hw, -⟩ := Scheme.Pullback.exists_preimage_pullback (f := 𝒰.f i)
       (g := 𝒰.f (jj (𝒰.f i r))) r (q (𝒰.f i r)) (hq _).symm
     refine ⟨_, pullback.fst (𝒰.f i) (𝒰.f (jj (𝒰.f i r))), inferInstance, ⟨w, hw⟩, ?_⟩
-    rw [← FunctorToTypes.map_comp_apply, ← op_comp, pullback.condition, op_comp,
-      FunctorToTypes.map_comp_apply, hy₀]
+    rw [← Functor.map_comp_apply, ← op_comp, pullback.condition, op_comp,
+      Functor.map_comp_apply, hy₀]
     exact (hx _ _ _ _ _ pullback.condition).symm
   · intro y y' h h'
     refine hext Y y y' fun p => ?_

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
-import Mathlib.GroupTheory.CosetCover
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+public import Mathlib.GroupTheory.CosetCover
+
+@[expose] public section
 
 open scoped Pointwise in
 theorem UpperTheory.V.Pr.commonFree :

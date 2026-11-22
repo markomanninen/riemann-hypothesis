@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.ContCut
+module
+
+public import Development.EtaleCohomology.KummerTheory.ContCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.TauLatticeLatticeHolds
+module
+
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.TauLatticeLatticeHolds
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -123,11 +127,11 @@ theorem pb_dual_gen (lam : ι → DomWeight n) (T T' : Submodule (𝓞 K) (Pol K
     (hInd : ∀ (w : HeightOneSpectrum (𝓞 K)) (M : ι → Submodule (𝓞 K) (Fin n → K)) (B B' : ι → GL (Fin n) K),
       (∀ τ, IsBasisAt w (M τ) (B τ)) → (∀ τ, IsBasisAt w (M τ) (B' τ)) → ∀ F : Pol K ι n,
       (actP lam B⁻¹ F ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal T ↔ actP lam B'⁻¹ F ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal T))
-    (hLoc : ∀ (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsLattice K (M τ)) →
+    (hLoc : ∀ (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsFullLattice K (M τ)) →
       ∀ (w : HeightOneSpectrum (𝓞 K)) (B : ι → GL (Fin n) K), (∀ τ, IsBasisAt w (M τ) (B τ)) →
       Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (transLat lam T' M) =
         (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal T').map ((actP lam B).restrictScalars (𝓞 K)))
-    (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) (x : Pol K ι n)
+    (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) (x : Pol K ι n)
     (hx : x ∈ VV K lam) :
     x ∈ transLat lam T (fun τ => dualFr (M τ)) ↔
       ∀ y ∈ transLat lam T' M, y ∈ VV K lam → pairB lam x y ∈ (1 : Submodule (𝓞 K) K) := by
@@ -171,7 +175,7 @@ theorem pb_dual_gen (lam : ι → DomWeight n) (T T' : Submodule (𝓞 K) (Pol K
     induction hy using Submodule.span_induction with
     | mem y hy => exact hsS y hy
     | zero => rw [map_zero, smul_zero]; exact zero_mem _
-    | add a b _ _ ha hb => rw [map_add, smul_add]; exact add_mem ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _), smul_add]; exact add_mem ha hb
     | smul c a _ ha =>
       show s • pairB lam (actP lam (invTrK B)⁻¹ x) (c • a) ∈ (1 : Submodule (𝓞 K) K)
       rw [pb_pairB_osmul_right, smul_comm]

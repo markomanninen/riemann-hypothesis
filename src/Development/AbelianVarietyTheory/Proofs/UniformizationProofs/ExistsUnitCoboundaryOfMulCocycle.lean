@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsUnitAddMonoidAlgebraIffOfTwoUniqueSums
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsUnitAddMonoidAlgebraIffOfTwoUniqueSums
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +27,7 @@ theorem finsupp_homotopy {X : Type*} [Zero X] {N : Type*} [AddCommGroup N] (f : 
   induction f using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    simp only [map_add, Finsupp.mapDomain_add, Finsupp.add_apply, Finsupp.sub_apply] at hf hg ⊢
+    simp only [map_add (f := _), Finsupp.mapDomain_add, Finsupp.add_apply, Finsupp.sub_apply] at hf hg ⊢
     rw [← sub_eq_zero] at hf hg ⊢
     rw [← add_zero (0 : N)]
     nth_rewrite 1 [← hf]
@@ -96,7 +100,7 @@ theorem exists_unit_of_faces {R₁ R₂ R₃ : Type*} [CommRing R₁] [CommRing 
     obtain ⟨φ, rfl⟩ : ∃ φ, f = 1 + φ := ⟨f - 1, by ring⟩
     rw [add_sub_cancel_left] at hf
     have hc' := hc
-    simp only [map_add, map_one] at hc'
+    simp only [map_add (f := _), map_one] at hc'
     obtain ⟨ψ, hψ, e⟩ := H K (K ^ 2) φ hf (by
       have : d₀ φ - d₁ φ + d₂ φ - d₃ φ = d₁ φ * d₃ φ - d₂ φ * d₀ φ := by
         linear_combination -hc'
@@ -119,7 +123,7 @@ theorem exists_unit_of_faces {R₁ R₂ R₃ : Type*} [CommRing R₁] [CommRing 
           have k₀ := k e₀
           have k₂ := k e₂
           rw [hu] at k₀ k₂ ⊢
-          simp only [map_add, map_one] at k₀ k₂ ⊢
+          simp only [map_add (f := _), map_one] at k₀ k₂ ⊢
           linear_combination ((1 + e₀ ψ) * e₀ v) * k₂ + k₀
         rw [this]
         exact Ideal.mul_mem_right _ _ (sub_mem (add_mem e
@@ -170,7 +174,7 @@ theorem exists_unit_coboundary_of_mul_cocycle (B : Type) [CommRing B] (I : Ideal
     intro a a' b b' h w
     induction w using AddMonoidAlgebra.induction_linear with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | single x r => simp [h]
   obtain ⟨g, hg, hg'⟩ := exists_unit_of_faces (B := B)
     (mapDomainAlgHom B B (AddMonoidHom.inr X X))

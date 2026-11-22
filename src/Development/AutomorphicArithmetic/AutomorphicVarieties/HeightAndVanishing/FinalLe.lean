@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.RedAll
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LossLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Cases
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostOdd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CardLeLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostIndex
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.BchiFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.SumBack
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.RedAll
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LossLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Cases
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostOdd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CardLeLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostIndex
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.BchiFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.SumBack
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.Top UpperTheory.V.HV
 
@@ -90,8 +94,6 @@ theorem UpperTheory.V.HV.sumIn :
   haveI : Fact (l : ℕ).Prime := ⟨l.2⟩
   haveI : IsAlgClosure ℚ (AlgebraicClosure ℚ) := by
     convert (AlgebraicClosure.instIsAlgClosure (k := ℚ))
-    · rfl
-    · exact Subsingleton.elim _ _
   obtain ⟨C2, hC2⟩ := hII χ
   obtain ⟨C5, hC5⟩ := hV χ
   obtain ⟨C6, hC6⟩ := hVs χ

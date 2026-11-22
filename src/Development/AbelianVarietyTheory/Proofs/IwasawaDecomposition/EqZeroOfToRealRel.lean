@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan
 
@@ -61,7 +65,8 @@ theorem eq_zero_of_toReal_rel {a b : ℕ} {u : Fin a → LinearMap.BilinForm ℤ
   have hq : ∀ x y : X, ∑ j, ((u j x y : ℤ) : ℚ) * f (r j) = ∑ k, ((v k x y : ℤ) : ℚ) * f (s k) := by
     intro x y
     have hxy := congrArg f (hpt x y)
-    rw [map_sum, map_sum] at hxy
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum] at hxy
     simpa only [e] using hxy
 
   let N : ℕ := (∏ j, (f (r j)).den) * ∏ k, (f (s k)).den
@@ -127,12 +132,5 @@ theorem IsCell.reindex {m m' : ℕ} {γ : Fin m → LinearMap.BilinForm ℤ X} (
     exact (Fintype.sum_equiv e _ _ (fun _ => rfl)).symm
 
 end CellFacts
-
-example : InRCone (fun i : Fin 2 => (![mulForm, mulForm] : Fin 2 → LinearMap.BilinForm ℤ ℤ) (Equiv.swap 0 1 i))
-    ((2 : ℤ) • mulForm) :=
-  inRCone_trans (δ := ![mulForm]) (fun j => by
-    fin_cases j
-    exact ⟨![1, 0], fun i => by fin_cases i <;> norm_num, LinearMap.ext₂ fun a b => by simp [Fin.sum_univ_two]⟩)
-    ⟨![2], fun i => by fin_cases i; norm_num, LinearMap.ext₂ fun a b => by simp⟩
 
 end GlobalTheory.PolFan

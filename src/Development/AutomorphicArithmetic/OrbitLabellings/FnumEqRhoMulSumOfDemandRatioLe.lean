@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.IncomingBounds.IncomingBound
+module
+
+public import Mathlib
+public import Formalism.IncomingBounds.IncomingBound
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.IncomingBounds

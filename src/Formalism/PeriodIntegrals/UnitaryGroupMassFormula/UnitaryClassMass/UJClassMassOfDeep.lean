@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.CardStepOf
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.CardStepOf
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UJClassMass
 
@@ -29,7 +33,7 @@ theorem crd_upper {M : ℕ} (b : Module.Basis (Fin M) E V) (L0 : Submodule (𝓞
       intro i
       exact hint _ (Finset.mem_image.mpr ⟨(v, i), Finset.mem_product.mpr ⟨hv, Finset.mem_univ _⟩, rfl⟩)
     | zero => intro i; simp [isIntegral_zero]
-    | add v w _ _ hv hw => intro i; rw [map_add, Pi.add_apply, smul_add]; exact (hv i).add (hw i)
+    | add v w _ _ hv hw => intro i; rw [map_add (f := _), Pi.add_apply, smul_add]; exact (hv i).add (hw i)
     | smul a v _ hv =>
       intro i
       rw [← algebraMap_smul E a v, map_smul, Pi.smul_apply, smul_eq_mul, ← mul_smul_comm]
@@ -68,8 +72,9 @@ end
 
 theorem crdBounds : CrdBounds := by
   intro F E _ _ _ _ _ V _ _ _ _ _ M b L0 hL
-  obtain ⟨y1, hy1, h1⟩ := crd_upper b L0 hL.fg
-  obtain ⟨y2, hy2, h2⟩ := crd_lower b L0 hL.span_eq_top
+  let hFull : Submodule.IsFullLattice E L0 := hL
+  obtain ⟨y1, hy1, h1⟩ := crd_upper b L0 hFull.toIsLattice.fg
+  obtain ⟨y2, hy2, h2⟩ := crd_lower b L0 (Submodule.IsFullLattice.span_eq_top (A := E) (M := L0))
   refine ⟨⟨(y1 : 𝓞 F), intCast_ne_zero_OF y1 hy1, fun x hx i => ?_⟩,
     ⟨(y2 : 𝓞 F), intCast_ne_zero_OF y2 hy2, fun i e he => ?_⟩⟩
   · rw [intF_smul]

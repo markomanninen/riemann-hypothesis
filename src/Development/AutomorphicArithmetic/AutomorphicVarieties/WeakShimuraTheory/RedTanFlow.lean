@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedTanDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedTanDefs
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -31,16 +35,17 @@ theorem rank_le_of_lowest : ∀ {k V : Type} [Field k] [AddCommGroup V] [Module 
     exact (Submodule.equivMapOfInjective _ (W ⊓ K p).subtype_injective _).rank_eq
   have main : ∀ p ≤ max hi lo, Module.rank k ↥(T ⊓ K p) ≤ Module.rank k ↥(U ⊓ K p) := by
     intro p hp
-    induction p, hp using Int.le_induction_down with
-    | base =>
+    induction p using Int.inductionOn' (b := max hi lo) with
+    | zero =>
       have : T ⊓ K (max hi lo) = ⊥ := by
         rw [eq_bot_iff]
         intro x hx
         exact hhi x fun q hq => (hK _ _).1 hx.2 q (lt_max_of_lt_left hq)
       rw [this]; simp
+    | succ n hn ih => omega
     | pred n hn ih =>
       rw [step T, step U, sub_add_cancel]
-      refine add_le_add (Submodule.rank_mono ?_) ih
+      refine add_le_add (Submodule.rank_mono ?_) (ih hn)
       rintro _ ⟨x, ⟨h1, h2⟩, rfl⟩
       refine ⟨π (n - 1) x, ⟨H _ x h1 ((hK _ _).1 h2), (hK _ _).2 fun q hq => ?_⟩, ?_⟩
       · rw [h, if_neg hq.ne]
@@ -77,7 +82,7 @@ theorem tan_lowest : ∀ {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace
   refine ⟨a1.comp (cmp m p), fun g => csp (a2 g), fun g h => ?_, fun g h => ?_, fun i j h => cz (a5 h),
     fun g i j h1 h2 => ?_, fun v => ⟨csp (a7 v).1, fun i j h => ?_⟩, fun v s hs i j h => ?_⟩
   · simp only [Fr.cmpT_fst]
-    rw [a3, map_add, (c3 (hr g).1 (hr g⁻¹).1 (hX h)).2, ← (hr g).2, ← (hr g⁻¹).2]
+    rw [a3, map_add (f := _), (c3 (hr g).1 (hr g⁻¹).1 (hX h)).2, ← (hr g).2, ← (hr g⁻¹).2]
   · rw [Fr.cmpT_fst, a4 g h, map_zero]
   · have := cmp_mul (hX g) (hr g).1
     rw [add_zero, ← (hr g).2] at this
@@ -87,7 +92,7 @@ theorem tan_lowest : ∀ {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace
     exact cz ((a7 v).2 i j h)
   · have h3 := c3 (hr s).1 (hr s⁻¹).1 (hY v)
     rw [← (hr s).2, ← (hr s⁻¹).2] at h3
-    rw [Fr.cmpT_snd, Fr.cmpT_fst, ← h3.2, ← map_add, ← map_sub, cn v (((hX s).add h3.1).sub (hY v))]
+    rw [Fr.cmpT_snd, Fr.cmpT_fst, ← h3.2, ← map_add (f := _), ← map_sub, cn v (((hX s).add h3.1).sub (hY v))]
     exact cz (a8 v s hs i j h)
 
 theorem tan_flow {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace Γ] (Φ : Fr O Γ) {k : Type} [Field k]

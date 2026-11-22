@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits
 
 namespace GlobalTheory.FlatFibreProduct
@@ -116,7 +121,7 @@ theorem exists_unique_of_flat_of_isPushout : ∀ {A B C D A' B' C' D' : CommRing
     change u'.hom (eB.hom b) + -v'.hom (eC.hom c) = eD.hom (u.hom b + -v.hom c)
     have e₁ : u'.hom (eB.hom b) = eD.hom (u.hom b) := congrArg (fun φ => φ.hom b) h1
     have e₂ : v'.hom (eC.hom c) = eD.hom (v.hom c) := congrArg (fun φ => φ.hom c) h2
-    rw [map_add, map_neg, e₁, e₂]
+    rw [map_add (f := _), map_neg, e₁, e₂]
   have hinj : Function.Injective f := by
     intro a₁ a₂ h
     have hb : fB.hom a₁ = fB.hom a₂ := congrArg Prod.fst h

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU GlobalTheory.PRep Formalism.L2.Host GlobalTheory.HeckeGal UpperTheory.Gal.CertificateRingHomMap
 open scoped Classical
 
@@ -14,7 +19,7 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pLevCompact_of :
   have hJ := hS.cpt w₀ hS.mem
   have hKo := (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w₀ n).1
   obtain ⟨F, -, hF⟩ := hJ.elim_nhds_subcover
-    (fun a => {y : GLw n w₀ | a⁻¹ * y ∈ GlobalTheory.LFun.KGL w₀ n}) (fun a _ => by
+    (fun a => {y : GLw n w₀ | a⁻¹ * y ∈ GlobalTheory.LFun.KGL w₀ (n := n)}) (fun a _ => by
       refine IsOpen.mem_nhds (hKo.preimage (continuous_const.mul continuous_id)) ?_
       simp [Subgroup.one_mem])
   have hcov : IsCompact (⋃ a ∈ F, (fun x : GUf E n => loc hw₀ a * x) ''
@@ -23,10 +28,10 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pLevCompact_of :
   refine hcov.of_isClosed_subset hclosed fun k hk => ?_
   obtain ⟨hsim, hmem, hoff⟩ := mem_lev.1 hk
   obtain ⟨a, haF, ha⟩ := Set.mem_iUnion₂.1 (hF (hmem w₀ hS.mem))
-  have ha' : a⁻¹ * comp w₀ k ∈ GlobalTheory.LFun.KGL w₀ n := ha
+  have ha' : a⁻¹ * comp w₀ k ∈ GlobalTheory.LFun.KGL w₀ (n := n) := ha
   have hsim' : sim ((loc hw₀ a)⁻¹ * k) ∈ ZU := by simpa using hsim
-  have hw : comp w₀ ((loc hw₀ a)⁻¹ * k) ∈ GlobalTheory.LFun.KGL w₀ n := by simpa using ha'
-  have hint : ∀ u : Plc E, u ≠ w₀ → u ≠ cj w₀ → comp u k ∈ GlobalTheory.LFun.KGL u n := by
+  have hw : comp w₀ ((loc hw₀ a)⁻¹ * k) ∈ GlobalTheory.LFun.KGL w₀ (n := n) := by simpa using ha'
+  have hint : ∀ u : Plc E, u ≠ w₀ → u ≠ cj w₀ → comp u k ∈ GlobalTheory.LFun.KGL u (n := n) := by
     intro u h1 h2
     have hcc : cj (cj u) = u := GlobalTheory.SplitPts.conjSrc_conjSrc_cm u
     by_cases hu : u ∈ S

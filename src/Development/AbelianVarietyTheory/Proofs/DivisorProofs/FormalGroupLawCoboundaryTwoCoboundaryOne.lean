@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -56,14 +60,6 @@ theorem _root_.GlobalTheory.Katz.CobCob.constantCoeff_threeGroupsThirdVariables 
     constantCoeff (_root_.GlobalTheory.Katz.x3 (R := R) i) = 0 := by
   unfold _root_.GlobalTheory.Katz.x3
   exact constantCoeff_X _
-
-theorem powerSeriesEvalTwoGroups_sub {u v : Fin d → MvPowerSeries τ R} (hu : ∀ i, constantCoeff (u i) = 0)
-    (hv : ∀ i, constantCoeff (v i) = 0) (c c' : MvPowerSeries (Fin d ⊕ Fin d) R) :
-    at2 (c - c') u v = at2 c u v - at2 c' u v := subst_sub (elim_has hu hv) _ _
-
-theorem powerSeriesEvalTwoGroups_smul {u v : Fin d → MvPowerSeries τ R} (hu : ∀ i, constantCoeff (u i) = 0)
-    (hv : ∀ i, constantCoeff (v i) = 0) (r : R) (c : MvPowerSeries (Fin d ⊕ Fin d) R) :
-    at2 (r • c) u v = r • at2 c u v := subst_smul (elim_has hu hv) _ _
 
 end CobCob
 
@@ -144,9 +140,9 @@ private theorem op_addLaw_eq_add_of_hasSubst {u v : Fin d → MvPowerSeries τ R
     at2_X_of_hasSubst h]
   rfl
 
+
 set_option autoImplicit false in
 open CategoryTheory TensorProduct MvPowerSeries in
-
 theorem _root_.GlobalTheory.Katz.formalGroupLawCoboundaryTwo_coboundaryOne_alt : ∀ (R : Type) [CommRing R] (d : ℕ)
     (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R), (∀ i, constantCoeff (μ i) = 0) →
     ∀ f : MvPowerSeries (Fin d) R,

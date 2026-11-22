@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.StrictHenselColimits
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.StrictHenselColimits
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E3Cut TensorProduct
@@ -26,7 +30,7 @@ theorem etale_lift_to_strict_local_ring_unique_on_residue_field : LateralTheory.
       simp only [w, Algebra.TensorProduct.productMap_apply_tmul, Algebra.TensorProduct.lmul'_apply_tmul, map_mul]
       change ψ (u.hom x) * ψ (v.hom y) = ψ (u.hom x) * ψ (u.hom y)
       rw [hψu]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have he0 : e ∈ KaehlerDifferential.ideal A B := by rw [hsp]; exact Submodule.mem_span_singleton_self e
   have hwe : ψ (w e) = 0 := by
     rw [hpt]

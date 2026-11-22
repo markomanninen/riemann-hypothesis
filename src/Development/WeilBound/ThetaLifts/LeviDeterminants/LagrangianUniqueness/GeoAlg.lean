@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,8 +68,8 @@ section Abs
 
 variable {F : Type} [Field F] {A : Type} [CommRing A] [Algebra F A]
 
-variable (A) in
 
+variable (A) in
 def emb (κ : Type) : ((κ → F) × (κ → F)) →ₗ[F] ((κ → A) × (κ → A)) :=
   ((Algebra.linearMap F A).compLeft κ).prodMap ((Algebra.linearMap F A).compLeft κ)
 
@@ -92,7 +96,7 @@ theorem exists_coord (hA : Function.Injective (algebraMap F A)) (co : Darboux BA
   refine ⟨{ toFun := f, map_add' := ?_, map_smul' := ?_ }, hf⟩
   · intro x y
     apply emb_inj hA
-    rw [map_add, ← hf, ← hf, ← hf, map_add, map_add]
+    rw [map_add (f := _), ← hf, ← hf, ← hf, map_add (f := _), map_add (f := _)]
   · intro c x
     apply emb_inj hA
     rw [RingHom.id_apply, map_smul, ← hf, ← hf, map_smul]
@@ -209,7 +213,7 @@ theorem exists_lag [Invertible (2 : A)] [FiniteDimensional F V₁] [FiniteDimens
     obtain ⟨u', rfl⟩ := LinearMap.mem_range.mp hp'
     obtain ⟨z, hz, rfl⟩ := Submodule.mem_map.mp hq
     obtain ⟨z', hz', rfl⟩ := Submodule.mem_map.mp hq'
-    simp only [map_add, LinearMap.add_apply, T1, T2, T3, T4 z z' hz hz', add_zero]
+    simp only [map_add (f := _), LinearMap.add_apply, T1, T2, T3, T4 z z' hz hz', add_zero]
   refine ⟨L'.map r, ?_, ?_, ?_⟩
   · intro a ha b hb
     obtain ⟨x, hx, rfl⟩ := Submodule.mem_map.mp ha
@@ -228,7 +232,7 @@ theorem exists_lag [Invertible (2 : A)] [FiniteDimensional F V₁] [FiniteDimens
       funext i
       simp [(hL₁ z₀).mp hz₀]
     · have hsum : t • emb A κ (r (s u + j z₀)) = co.e (t • inc (s u)) + co.e (jA (t • inc₁ z₀)) := by
-        rw [← hr', map_add, map_add, hj, smul_add, map_smul, map_smul, map_smul]
+        rw [← hr', map_add (f := _), map_add (f := _), hj, smul_add, map_smul, map_smul, map_smul]
       have hω : (co.e (t • inc (s u))).1 ⬝ᵥ (co.e (jA (t • inc₁ z₀))).2 -
           (co.e (jA (t • inc₁ z₀))).1 ⬝ᵥ (co.e (t • inc (s u))).2 = 0 := by
         have hf := co.form (jA (inc₁ z₀)) (inc (s u))
@@ -261,7 +265,8 @@ theorem hTens_mul (JA : Matrix α α E) (JB : Matrix β β E) (a : Matrix α α'
   rw [hTens_eq, hTens_eq]
   have hm : (a * y * bᵀ).map c = a.map c * y.map c * (b.map c)ᵀ := by
     ext i j
-    simp [Matrix.mul_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mul_apply, map_sum, map_mul]
   rw [hm]
   simp only [Matrix.transpose_mul, Matrix.transpose_transpose, Matrix.mul_assoc]
   rw [Matrix.trace_mul_comm b]

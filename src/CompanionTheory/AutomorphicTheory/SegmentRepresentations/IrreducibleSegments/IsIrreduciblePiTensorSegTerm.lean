@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.SegmentRepresentations.IrreducibleSegments.SegmentRepresentationLit
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.JacquetMultiplicityPosOfSocle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.JacquetMultiplicityPosOfSocle
+
+@[expose] public section
 
 noncomputable section
 

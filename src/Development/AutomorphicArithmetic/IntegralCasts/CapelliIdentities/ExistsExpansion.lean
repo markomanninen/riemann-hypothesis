@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private lemma UpperTheory.Reformulated.B.Qn12.step {R ι : Type*} [CommRing R] [Fintype ι] [DecidableEq ι]
     (y c : ι → R) (p e x a : R) (j : ι) (hy : y j = x - a) (hc : p = e + ∑ i, c i * y i) :
@@ -29,7 +33,7 @@ theorem UpperTheory.Reformulated.B.Qn12.exists_expansion :
     obtain ⟨c, hc⟩ := hp
     obtain ⟨d, hd⟩ := hr
     refine ⟨fun i => c i + d i, ?_⟩
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact UpperTheory.Reformulated.B.Qn12.step_add _ c d p r _ _ hc hd
   | mul_X p j hp =>
     obtain ⟨c, hc⟩ := hp

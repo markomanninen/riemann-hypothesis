@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,8 +45,8 @@ lemma continuous_torepK (ε : Fin n → Bool) :
   refine Units.continuous_iff.2 ⟨continuous_subtype_val, ?_⟩
   exact continuous_star.comp continuous_subtype_val
 
-open Classical in
 
+open Classical in
 def torepSig {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (g : Matrix (Fin n) (Fin n) ℂ) :
     T.V →L[ℂ] T.V :=
   if h : g ∈ Kset ε then T.op (torepK ε h) else 1
@@ -50,7 +54,7 @@ def torepSig {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (g : M
 lemma torepSig_of_mem {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) {g : Matrix (Fin n) (Fin n) ℂ}
     (hg : g ∈ Kset ε) : torepSig T g = T.op (torepK ε hg) := by
   unfold torepSig
-  rw [dif_pos hg]
+  rw [dite_eq_left hg]
 
 lemma torepSig_toMK {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (k : KG ε) :
     torepSig T (toMK k) = T.op k := by
@@ -122,8 +126,7 @@ lemma torep_exp_eigen {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V] [Co
   refine h1.unique ?_
   convert h2 using 1
   funext m
-  simp only [Function.comp_apply, ContinuousLinearMap.apply_apply, ContinuousLinearMap.smul_apply, hpow,
-    smul_smul, smul_eq_mul]
+  simp [hpow, smul_smul, smul_eq_mul]
 
 lemma torep_diag_sum (d : Fin n → ℂ) :
     Matrix.diagonal d = ∑ a, d a • Matrix.single a a (1 : ℂ) := by
@@ -143,7 +146,7 @@ lemma torep_inK_diag (ε : Fin n → Bool) (d : Fin n → ℂ) (hd : ∀ a, star
     rw [show (0 : Matrix (Fin n) (Fin n) ℂ) = Matrix.diagonal (fun _ => 0) from Matrix.diagonal_zero.symm]
     congr 1
     funext a
-    simp only [Pi.star_apply]
+    change star (d a) * _ + _ * d a = 0
     rw [hd a]
     ring
   · simp only [Jm, Matrix.diagonal_mul_diagonal]
@@ -309,7 +312,8 @@ lemma torep_wt_w {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) :
   have hD1 : F 1 = NormedSpace.exp (T.dτ (Matrix.diagonal d)) := by
     rw [oneParam_lemma_5 F _ hadd h0 hF 1, one_smul]
   have hDw : T.dτ (Matrix.diagonal d) T.w = (((∑ a, Λ a * θ a : ℝ) : ℂ) * Complex.I) • T.w := by
-    rw [torep_diag_sum d, map_sum, ContinuousLinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [torep_diag_sum d, map_sum, ContinuousLinearMap.sum_apply]
     simp only [map_smul, ContinuousLinearMap.smul_apply, T.w_wt, smul_smul, hd]
     rw [← Finset.sum_smul]
     congr 1

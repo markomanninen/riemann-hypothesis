@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GpHerm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GpHerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem mem_cl_row (b : Fin D.R.rS) (x : InfinitePlace X.B.I.F → Fin (D.R.k + 
 def imSub (a : Fin D.R.rS) : AddSubgroup D.host.E where
   carrier := {t | t ∈ ((aaD D a * aaD D a : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) : Set D.host.E) ∧
     D.host.conj t = -t}
-  add_mem' := fun {s t} hs ht => ⟨Submodule.add_mem _ hs.1 ht.1, by rw [map_add, hs.2, ht.2, neg_add]⟩
+  add_mem' := fun {s t} hs ht => ⟨Submodule.add_mem _ hs.1 ht.1, by rw [map_add (f := _), hs.2, ht.2, neg_add]⟩
   zero_mem' := ⟨Submodule.zero_mem _, by rw [map_zero, neg_zero]⟩
   neg_mem' := fun {t} ht => ⟨Submodule.neg_mem _ ht.1, by rw [map_neg, ht.2]⟩
 
@@ -83,7 +87,7 @@ theorem aaLb_inW {b : Fin D.R.rS} {y : (VS D).V} (hy : y ∈ aaLb X b) : InW X y
   | zero => intro d; exact ⟨map_zero _, map_zero _⟩
   | add x z _ _ hx hz =>
     intro d
-    exact ⟨by rw [map_add, (hx d).1, (hz d).1, add_zero], by rw [map_add, (hx d).2, (hz d).2, add_zero]⟩
+    exact ⟨by rw [map_add (f := _), (hx d).1, (hz d).1, add_zero], by rw [map_add (f := _), (hx d).2, (hz d).2, add_zero]⟩
   | smul o x _ hx =>
     intro d
     refine ⟨?_, ?_⟩

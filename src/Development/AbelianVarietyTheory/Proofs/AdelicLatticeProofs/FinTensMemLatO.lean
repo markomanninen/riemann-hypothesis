@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,8 @@ theorem gram_det_isUnit (S : HSp D) : IsUnit S.gram.det := by
     have : (S.hT.flip (∑ j, v j • S.frame j)) = 0 := by
       refine S.frame.ext fun i => ?_
       have := congrFun hv0 i
-      simpa [Matrix.mulVec, dotProduct, HSpace.gram, map_sum, mul_comm] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [Matrix.mulVec, dotProduct, HSpace.gram, map_sum, mul_comm] using this
     exact LinearMap.congr_fun this x
   exact funext (Fintype.linearIndependent_iff.1 S.frame.linearIndependent v h1)
 
@@ -151,15 +156,15 @@ theorem hO_add_left (S T : HSp D) (x x' y : WO S T) : hO S T (x + x') y = hO S T
   simp only [hO, Matrix.add_apply, mul_add, Finset.sum_add_distrib]
 
 theorem hO_add_right (S T : HSp D) (x y y' : WO S T) : hO S T x (y + y') = hO S T x y + hO S T x y' := by
-  simp only [hO, Matrix.add_apply, RingHom.map_add, mul_add, add_mul, Finset.sum_add_distrib]
+  simp only [hO, Matrix.add_apply, RingHom.map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib]
 
 theorem symplO_add_left (S T : HSp D) (x x' y : WO S T) :
     symplO S T (x + x') y = symplO S T x y + symplO S T x' y := by
-  rw [symplO, hO_add_left, mul_add, map_add]; rfl
+  rw [symplO, hO_add_left, mul_add, map_add (f := _)]; rfl
 
 theorem symplO_add_right (S T : HSp D) (x y y' : WO S T) :
     symplO S T x (y + y') = symplO S T x y + symplO S T x y' := by
-  rw [symplO, hO_add_right, mul_add, map_add]; rfl
+  rw [symplO, hO_add_right, mul_add, map_add (f := _)]; rfl
 
 def symplHom (S T : HSp D) : WO S T →+ WO S T →+ AF D.host.F :=
   AddMonoidHom.mk' (fun x => AddMonoidHom.mk' (symplO S T x) (symplO_add_right S T x))

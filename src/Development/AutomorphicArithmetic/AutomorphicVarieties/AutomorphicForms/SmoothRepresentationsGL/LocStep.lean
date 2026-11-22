@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ private theorem img_nhds (U : OpenSubgroup (GL (Fin n) K)) :
   have hcs : @CompleteSpace (Matrix (Fin n) (Fin n) K) I.toMetricSpace.toPseudoMetricSpace.toUniformSpace :=
     inferInstanceAs (CompleteSpace (Fin n → Fin n → K))
   have h := (@Units.isOpenMap_val (Matrix (Fin n) (Fin n) K) I
-    (@instHasSummableGeomSeriesOfCompleteSpace _ I hcs)) _ U.isOpen
+    (@instHasSummableGeomSeriesOfCompleteSpace _ (@NormedRing.toNonUnitalNormedRing _ I) hcs)) _ U.isOpen
   exact h.mem_nhds ⟨1, U.one_mem, rfl⟩
 
 private theorem col_nhds (m : Fin n) (U : OpenSubgroup (GL (Fin n) K)) :
@@ -153,8 +157,9 @@ private theorem step_gen (hA : AvgChar) (ψ : AddChar K ℂ) (hψ : ∀ᶠ x in 
   have hLc : IsCompact (L : Set (Fin n → K)) := isCompact_univ_pi fun _ => hc
   let N : Set (Fin n → K) := {u | u ∈ L ∧ (∃ s ∈ U, s.val = colM m u) ∧ ψ (u m) = 1}
   have hN : N ∈ 𝓝 (0 : Fin n → K) := by
-    refine Filter.inter_mem (hLo.mem_nhds L.zero_mem) (Filter.inter_mem (col_nhds m U) ?_)
-    exact (continuous_apply m).continuousAt (x := (0 : Fin n → K)) hψ
+    have hψm : ∀ᶠ u in 𝓝 (0 : Fin n → K), ψ (u m) = 1 :=
+      (continuous_apply m).continuousAt (x := (0 : Fin n → K)) hψ
+    exact Filter.inter_mem (hLo.mem_nhds L.zero_mem) (Filter.inter_mem (col_nhds m U) hψm)
   let L₀ := AddSubgroup.closure N
   have hle : L₀ ≤ L := (AddSubgroup.closure_le _).2 fun u hu => hu.1
   have hL₀ : IsOpen (L₀ : Set (Fin n → K)) :=

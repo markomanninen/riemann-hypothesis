@@ -1,6 +1,11 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.AnForm.M GlobalTheory.CompanionTheory.Ar.Cmp Filter Topology
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
 
@@ -56,7 +61,7 @@ theorem ialg_rename {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι
         obtain rfl := hv.1 hk
         exact ⟨i, sigma_mk_injective (β := ι') ((he i).symm.trans hq)⟩
     refine (Fintype.sum_bijective e hb _ _ fun i => ?_).symm
-    rw [← he, Finsupp.mapDomain_apply hv.2.1]
+    rw [← he, Finsupp.mapDomain_apply_of_injective hv.2.1]
   · rw [Function.extend_apply' _ _ _ hk]
     refine Finset.sum_eq_zero fun i _ => Finsupp.mapDomain_notin_range _ _ ?_
     rintro ⟨p, hp⟩

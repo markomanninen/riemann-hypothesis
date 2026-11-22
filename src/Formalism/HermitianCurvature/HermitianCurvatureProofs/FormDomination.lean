@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTB
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTB
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.FormDomination
 

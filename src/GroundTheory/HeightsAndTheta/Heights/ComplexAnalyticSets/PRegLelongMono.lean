@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegLelongAnnulus
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegLelongAnnulus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -30,8 +35,8 @@ theorem chartDens_annulus_nonneg (hL : RegLogDensNonneg.Statement) (u : Fin n �
 
 end RegLelongMono
 
-open RegLelongMono in
 
+open RegLelongMono in
 theorem RegLelongMono.proof (hA : RegLelongAnnulus.Statement) (hL : RegLogDensNonneg.Statement) :
     RegLelongMono.Statement := by
   intro n d J A u ε x r s hJ hdim hAf hε hr hrs

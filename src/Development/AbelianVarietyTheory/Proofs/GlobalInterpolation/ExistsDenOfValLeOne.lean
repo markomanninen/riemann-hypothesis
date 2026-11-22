@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SubstitutionAdjoint
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TransportedLatticeLocalizationFreeLeCoefficientS
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualLatticeIsLatticeAndHermitianDual
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMapEqOfMemNabStd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSmulMemOfLeLocP
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemNabStdOfDetMulIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SubstitutionAdjoint
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TransportedLatticeLocalizationFreeLeCoefficientS
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualLatticeIsLatticeAndHermitianDual
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMapEqOfMemNabStd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSmulMemOfLeLocP
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemNabStdOfDetMulIntegral
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.SubstitutionAdjoint
 open scoped Matrix
@@ -13,14 +17,16 @@ namespace GlobalTheory.HAtBasis
 
 variable {K : Type} [Field K] [NumberField K]
 
+
 open NumberField IsDedekindDomain MvPolynomial in
 open scoped Matrix in
 variable {K : Type} [Field K] [NumberField K] in
-
 theorem _root_.GlobalTheory.HAtBasis.isLattice_of_basisAt {n : ℕ} (w : HeightOneSpectrum (𝓞 K))
     {M : Submodule (𝓞 K) (Fin n → K)} (hM : M.FG)
-    {B : GL (Fin n) K} (hB : _root_.Formalism.L2.DIV.IsBasisAt w M B) : Submodule.IsLattice K M := by
-  refine ⟨hM, ?_⟩
+    {B : GL (Fin n) K} (hB : _root_.Formalism.L2.DIV.IsBasisAt w M B) : Submodule.IsFullLattice K M := by
+  haveI : Submodule.IsLattice K M := ⟨hM, fun s hs hli =>
+    (LinearIndependent.iff_fractionRing _ _).mp hli⟩
+  refine ⟨?_⟩
   have hcol : ∀ j, (fun i => (B : Matrix (Fin n) (Fin n) K) i j) ∈
       Submodule.span K (M : Set (Fin n → K)) := by
     intro j
@@ -41,28 +47,24 @@ theorem _root_.GlobalTheory.HAtBasis.isLattice_of_basisAt {n : ℕ} (w : HeightO
     convert h2 using 1
     funext i
     simp [Algebra.smul_def, hs0]
-  rw [eq_top_iff]
-  intro x _
-  have hx : x = ∑ j, ((B⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K).mulVec x j •
-      (fun i => (B : Matrix (Fin n) (Fin n) K) i j) := by
-    have hBx : (B : Matrix (Fin n) (Fin n) K).mulVec
-        (((B⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K).mulVec x) = x := by
-      rw [Matrix.mulVec_mulVec]
-      simp
-    conv_lhs => rw [← hBx]
-    funext i
-    simp [Matrix.mulVec, dotProduct, Finset.sum_apply, mul_comm]
-  rw [hx]
-  exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (hcol j)
-
+  apply top_unique
+  intro x hx
+  have hrange : LinearMap.range (B : Matrix (Fin n) (Fin n) K).mulVecLin ≤
+      Submodule.span K (M : Set (Fin n → K)) := by
+    rw [Matrix.range_mulVecLin]
+    exact Submodule.span_le.mpr (by rintro _ ⟨j, rfl⟩; exact hcol j)
+  apply hrange
+  refine ⟨(B⁻¹ : GL (Fin n) K).val *ᵥ x, ?_⟩
+  change B.val *ᵥ ((B⁻¹).val *ᵥ x) = x
+  rw [Matrix.mulVec_mulVec, show B.val * (B⁻¹).val = 1 from B.mul_inv, Matrix.one_mulVec]
 variable {ι : Type} [Fintype ι] {a : ℕ}
+
 
 open NumberField IsDedekindDomain MvPolynomial in
 open scoped Matrix in
 variable {K : Type} [Field K] [NumberField K] in
 variable {ι : Type} [Fintype ι] {a : ℕ} in
 omit [NumberField K] in
-
 theorem _root_.GlobalTheory.HAtBasis.polyAction_invTranspose_inv (lam : ι → _root_.Formalism.BasicNotions.DomWeight a)
     (B : ι → GL (Fin a) K) (F : _root_.Formalism.L2.DIV.Pol K ι a) :
     _root_.Formalism.L2.DIV.actP lam (fun τ => _root_.Formalism.BasicNotions.inside₂ K a (B τ))⁻¹ F =
@@ -103,11 +105,11 @@ private theorem exists_notMem_mul_eq_integer_of_valuation_le_one {K : Type} [Fie
     algebraMap (𝓞 K) K c
   field_simp
 
+
 open NumberField IsDedekindDomain MvPolynomial in
 open scoped Matrix in
 variable {K : Type} [Field K] [NumberField K] in
 variable {ι : Type} [Fintype ι] {a : ℕ} in
-
 theorem _root_.GlobalTheory.HAtBasis.mem_HAt_iff : ∀ (K : Type) [Field K]
     [NumberField K] (w : HeightOneSpectrum (𝓞 K)) (ι : Type) [Fintype ι] (a : ℕ)
     (lam : ι → _root_.Formalism.BasicNotions.DomWeight a) (M : ι → Submodule (𝓞 K) (Fin a → K)) (B : ι → GL (Fin a) K),
@@ -118,7 +120,7 @@ theorem _root_.GlobalTheory.HAtBasis.mem_HAt_iff : ∀ (K : Type) [Field K]
   intro K _ _ w ι _ a lam M B hMB F
   have hB' : ∀ τ, _root_.Formalism.L2.DIV.IsBasisAt w (_root_.Formalism.L2.DIV.dualFr (M τ)) (_root_.Formalism.BasicNotions.inside₂ K a (B τ)) :=
     fun τ => _root_.GlobalTheory.DualWeylDual.isBasisAt_dualFr w (hMB τ).1 (hMB τ).2
-  have hlat : ∀ τ, Submodule.IsLattice K (_root_.Formalism.L2.DIV.dualFr (M τ)) := fun τ =>
+  have hlat : ∀ τ, Submodule.IsFullLattice K (_root_.Formalism.L2.DIV.dualFr (M τ)) := fun τ =>
     _root_.GlobalTheory.DualLat.isLattice_dualFr _ (_root_.GlobalTheory.HAtBasis.isLattice_of_basisAt w (hMB τ).1 (hMB τ).2)
   have hloc := (_root_.GlobalTheory.TransLoc.nabDelLoc_free_leVV.1 K ι a lam
     (fun τ => _root_.Formalism.L2.DIV.dualFr (M τ)) hlat w (fun τ => _root_.Formalism.BasicNotions.inside₂ K a (B τ)) hB').1
@@ -130,20 +132,20 @@ theorem _root_.GlobalTheory.HAtBasis.mem_HAt_iff : ∀ (K : Type) [Field K]
   rw [step1, hloc, _root_.GlobalTheory.TransLoc.mem_map_actP, _root_.GlobalTheory.HAtBasis.polyAction_invTranspose_inv]
   set G : _root_.Formalism.L2.DIV.Pol K ι a := (∏ τ, (B τ : Matrix (Fin a) (Fin a) K).det ^ (lam τ).detShift) •
     _root_.Formalism.GradedWeylDivisibility.blockAct K (fun τ => (B τ : Matrix (Fin a) (Fin a) K)) (F : _root_.Formalism.L2.DIV.Pol K ι a) with hG
-  have hcoeff : ∀ (s : 𝓞 K) m, coeff m (s • G) = (s : K) * coeff m G := by
+  have hcoeff : ∀ (s : 𝓞 K) m, AddMonoidAlgebra.coeff (s • G) m = (s : K) * AddMonoidAlgebra.coeff G m := by
     intro s m
     erw [Algebra.smul_def, MvPolynomial.algebraMap_apply, coeff_C_mul]
   constructor
   · intro hGm m
     obtain ⟨s, hs, hsG⟩ := (_root_.PI.LocGlobInclWork.mem_localization_iff _ _ _).1 hGm
     obtain ⟨P, hP⟩ := _root_.GlobalTheory.LocInt.exists_map_eq_of_mem_nabStd lam hsG
-    have hc : coeff m (s • G) = ((coeff m P : 𝓞 K) : K) := by
-      have h' : coeff m (_root_.Formalism.L2.DIV.toK K _ P) = coeff m (s • G) := congrArg (coeff m) hP
+    have hc : AddMonoidAlgebra.coeff (s • G) m = ((AddMonoidAlgebra.coeff P m : 𝓞 K) : K) := by
+      have h' : AddMonoidAlgebra.coeff (_root_.Formalism.L2.DIV.toK K _ P) m = AddMonoidAlgebra.coeff (s • G) m := congrArg (AddMonoidAlgebra.coeff · m) hP
       rw [← h']
       simp [_root_.Formalism.L2.DIV.toK, coeff_map]
     rw [hcoeff] at hc
     have hs0 : (s : K) ≠ 0 := _root_.GlobalTheory.LatBasisAt.algebraMap_ne_zero w hs
-    have e : coeff m G = (s : K)⁻¹ * ((coeff m P : 𝓞 K) : K) := by
+    have e : AddMonoidAlgebra.coeff G m = (s : K)⁻¹ * ((AddMonoidAlgebra.coeff P m : 𝓞 K) : K) := by
       rw [← hc, ← mul_assoc, inv_mul_cancel₀ hs0, one_mul]
     rw [e, map_mul, map_inv₀, valuation_coe_eq_one_of_notMem w hs, inv_one, one_mul]
     exact HeightOneSpectrum.valuation_le_one w _
@@ -158,7 +160,7 @@ theorem _root_.GlobalTheory.HAtBasis.mem_HAt_iff : ∀ (K : Type) [Field K]
       refine _root_.GlobalTheory.DetSat.mem_nabStd_of_det_mul_integral K ι a lam (fun _ => 0) _
         (Submodule.smul_of_tower_mem _ _ hGV) fun m => ?_
       simp only [pow_zero, Finset.prod_const_one, one_mul]
-      change IsIntegral ℤ (coeff m ((∏ m ∈ G.support, sf m) • G))
+      change IsIntegral ℤ (AddMonoidAlgebra.coeff ((∏ m ∈ G.support, sf m) • G) m)
       rw [hcoeff]
       by_cases hm : m ∈ G.support
       · rw [← Finset.mul_prod_erase _ _ hm]

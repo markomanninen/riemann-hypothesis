@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.NonemptyGtAnOfToric
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SectionsEquivAnArcTheta
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceFormTwistIsoOfPullback
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPhiEqShift
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRingHomLift
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusExtensionComplexPointsEqCharacters
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.NonemptyGtAnOfToric
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SectionsEquivAnArcTheta
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceFormTwistIsoOfPullback
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPhiEqShift
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRingHomLift
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusExtensionComplexPointsEqCharacters
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,13 +54,13 @@ variable {O : Type} [CommRing O] [StarRing O] {A : AnArc O} {D : Out.DegPre ℂ}
   (hxs : ∀ v x, genVal u D.P.isLB ((ex0 v).s (ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
     ![A.ct x + v.2, A.ct x, v.2, 0] = eTwoPi (v.1 x))
 
-include hxb in
 
+include hxb in
 theorem analyticTorusPoint_base_eq_holUnif_ex (v : A.V) : (ex0 v).b = toUnit _ ≫ u.ex v.2 := by
   exact Over.OverMorphism.ext ((hxb v).trans (toUnit_TF_comp_left _).symm)
 
-include hct hxb in
 
+include hct hxb in
 theorem is_lift_exponential_zero (v : A.V) (x : A.X) :
     IsLift u (Out.DegPre.gtφ D ℂ (ex0 v).b (ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
       ![A.ct x + v.2, A.ct x, v.2, 0] := fun k => by
@@ -69,8 +73,8 @@ theorem is_lift_exponential_zero (v : A.V) (x : A.X) :
   · exact hxb v
   · exact (toUnit_TF_comp_left _).trans (congrArg (·.left) (ex_zero u).symm)
 
-include lam ah hct hxb hxs in
 
+include lam ah hct hxb hxs in
 theorem genVal_shift (v : A.V) (z : Fin A.gB → ℂ) (m : A.abelian₂) (hv : v.2 = z + m) (x : A.X) :
     IsLift u (Out.DegPre.gtφ D ℂ (ex0 v).b (ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ))
       ![A.ct x + z, A.ct x, z, 0] ∧
@@ -103,8 +107,8 @@ theorem genVal_shift (v : A.V) (z : Fin A.gB → ℂ) (m : A.abelian₂) (hv : v
   field_simp
   rfl
 
-include lam ah hct hxb hxs in
 
+include lam ah hct hxb hxs in
 theorem isZero_iff (v : A.V) : (ex0 v).IsZero ↔ ∃ la : A.La, la.y = 0 ∧ v = A.P0 la := by
   constructor
   · rintro ⟨hb, hs⟩
@@ -134,8 +138,8 @@ theorem isZero_iff (v : A.V) : (ex0 v).IsZero ↔ ∃ la : A.La, la.y = 0 ∧ v 
     · simp [Fin.prod_univ_four, Out.DegPre.gtε]
     · exact h.trans (Eq.trans (by simp [hy]) (genVal_one (u := u) _ _ _).symm)
 
-include lam ah rig hct hψ hxb hxs in
 
+include lam ah rig hct hψ hxb hxs in
 theorem isIota (la : A.La) : Out.GtPtF.IsIota (ε la.y) (ex0 (A.P0 la)) := by
   refine ⟨by rw [analyticTorusPoint_base_eq_holUnif_ex hxb, AnArc.degeneratingTori_basePeriodMap_snd, u.ex_add, (u.ker _).2 (lam.ge la.l.2), _root_.mul_one, hct], fun x => ?_⟩
   obtain ⟨x, rfl⟩ := ε.surjective x
@@ -152,7 +156,7 @@ theorem isIota (la : A.La) : Out.GtPtF.IsIota (ε la.y) (ex0 (A.P0 la)) := by
       (DVR.invGen_isGen _ _ _ _ (D.psi_gen _)))
       (DVR.invGen_isGen _ _ _ _ (DVR.pullGen_isGen _ _ _ _ D.rig_gen _))) _
   · rintro (((k | k) | k) | k)
-    · exact (by rw [map_add]; rfl : _ = 𝟙 (Sp ℂ) ≫ Out.jFK (R := ℂ) ℂ ≫ D.xK (ε (la.y + x))).trans (hc _)
+    · exact (by rw [map_add (f := _)]; rfl : _ = 𝟙 (Sp ℂ) ≫ Out.jFK (R := ℂ) ℂ ≫ D.xK (ε (la.y + x))).trans (hc _)
     · exact hc _
     · exact hc _
     · change 𝟙 (Sp ℂ) ≫ Out.jFK (R := ℂ) ℂ ≫ Out.jK ℂ ≫ eSec D.P.A = (u.ex 0).left
@@ -173,8 +177,8 @@ theorem isIota (la : A.La) : Out.GtPtF.IsIota (ε la.y) (ex0 (A.P0 la)) := by
 
     field_simp
 
-include ah hct hxb hxs in
 
+include ah hct hxb hxs in
 theorem isAdd (v v' : A.V) : (ex0 v).IsAdd (ex0 v') (ex0 (v + v')) := by
   refine ⟨by rw [analyticTorusPoint_base_eq_holUnif_ex hxb, analyticTorusPoint_base_eq_holUnif_ex hxb, analyticTorusPoint_base_eq_holUnif_ex hxb, Prod.snd_add, u.ex_add, MonObj.comp_mul]; rfl, fun x => ?_⟩
   obtain ⟨x, rfl⟩ := ε.surjective x
@@ -208,8 +212,8 @@ theorem isAdd (v v' : A.V) : (ex0 v).IsAdd (ex0 v') (ex0 (v + v')) := by
     refine h1.trans (Eq.trans ?_ h2.symm)
     simp [AnArc.e_add]
 
-include ah hct hxb hxs in
 
+include ah hct hxb hxs in
 theorem analyticTorusPoint_surjective : Function.Surjective ex0 := by
   intro g
   obtain ⟨z, hz⟩ := u.ex_onto (Over.homMk (show Sp ℂ ⟶ _ from g.b.left) ((Over.w g.b).trans jFK_comp_jK_complex))
@@ -261,8 +265,8 @@ theorem analyticTorusPoint_surjective : Function.Surjective ex0 := by
   exact TorusExtChar.corr_of_genVal (u := u) D.P.isLB ((ex0 _).isGen _) (g.isGen _) (is_lift_exponential_zero hct hxb (w, z) x) (hl x)
     (fun _ => rfl) ((hxs _ x).trans (congrArg Units.val (DFunLike.congr_fun hw (Multiplicative.ofAdd x))))
 
-include ah hct hxb hxs in
 
+include ah hct hxb hxs in
 theorem gtAct {oa : D.OAct O} (hact : ∀ (a : O) z, u.ex (A.F a z) = u.ex z ≫ oa.onB.act a) (r : O) (v : A.V) :
     GtAct oa r (ex0 v) (ex0 (A.actV r v)) := by
   refine ⟨by rw [analyticTorusPoint_base_eq_holUnif_ex hxb, analyticTorusPoint_base_eq_holUnif_ex hxb, AnArc.actV_snd, hact, Category.assoc], fun w hw h₀ x => ?_⟩
@@ -321,8 +325,8 @@ variable {O : Type} [CommRing O] [StarRing O] {A : AnArc O} {D : Out.DegPre ℂ}
   (rig : u.IsRig D.rig) (hct : ∀ x, u.ex (A.ct x) = D.c (ε x))
   (hψ : ∀ x, genVal u D.P.isLB (D.psi (ε x)) (Out.jFK (R := ℂ) ℂ) (fun _ => A.ct x) = A.psi x)
 
-include hct in
 
+include hct in
 theorem jFK_xK (x : A.X) : Out.jFK (R := ℂ) ℂ ≫ D.xK (ε x) = (u.ex (A.ct x)).left := by
   rw [hct]; exact ArcModel.jFK_comp_point _
 
@@ -330,38 +334,38 @@ theorem jFK_eSec : Out.jFK (R := ℂ) ℂ ≫ (toUnit (Out.TK ℂ)).left ≫ eSe
   rw [← Category.assoc, ArcModel.jFK_comp_toUnit, ex_zero, Category.id_comp]
   rfl
 
-variable (A) in
 
+variable (A) in
 def tauLift (x y : A.X) : ((PUnit ⊕ PUnit) ⊕ PUnit) ⊕ PUnit → Fin A.gB → ℂ :=
   Sum.elim (Sum.elim (Sum.elim (fun _ => A.ct (x + y)) (fun _ => A.ct x)) (fun _ => A.ct y)) (fun _ => 0)
 
-include hct in
 
+include hct in
 theorem isLift_tau (x y : A.X) :
     IsLift u (Sum.elim (Sum.elim (Sum.elim (fun _ : PUnit => D.xK (ε x + ε y)) (fun _ : PUnit => D.xK (ε x)))
       (fun _ : PUnit => D.xK (ε y))) (fun _ : PUnit => (toUnit (Out.TK ℂ)).left ≫ eSec D.P.A))
       (Out.jFK (R := ℂ) ℂ) (tauLift A x y) := by
   rintro (((_ | _) | _) | _)
-  · exact (by rw [map_add]; rfl : _ = Out.jFK (R := ℂ) ℂ ≫ D.xK (ε (x + y))).trans (jFK_xK hct _)
+  · exact (by rw [map_add (f := _)]; rfl : _ = Out.jFK (R := ℂ) ℂ ≫ D.xK (ε (x + y))).trans (jFK_xK hct _)
   · exact jFK_xK hct _
   · exact jFK_xK hct _
   · exact jFK_eSec
 
-omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 
+omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 theorem tau_isGen (D : Out.DegPre ℂ) (a b : D.X) : (D.tau a b).IsGen :=
   DVR.mulGen_isGen _ _ _ _ _ _ _ (DVR.mulGen_isGen _ _ _ _ _ _ _
     (DVR.mulGen_isGen _ _ _ _ _ _ _ (D.psi_gen _) (DVR.invGen_isGen _ _ _ _ (D.psi_gen _)))
     (DVR.invGen_isGen _ _ _ _ (D.psi_gen _))) (DVR.invGen_isGen _ _ _ _ (DVR.pullGen_isGen _ _ _ _ D.rig_gen _))
 
-include rig in
 
+include rig in
 theorem genVal_rigK : genVal u D.P.isLB D.rigK (Out.jFK (R := ℂ) ℂ) (fun _ => 0) = 1 :=
   genVal_pull_of (f := (toUnit (Out.TK ℂ)).left) (y := Out.jFK (R := ℂ) ℂ) jFK_comp_jK_complex
     (genVal_rig D.P.isLB rig)
 
-include rig hψ in
 
+include rig hψ in
 theorem genVal_tau (x y : A.X) :
     genVal u D.P.isLB (D.tau (ε x) (ε y)) (Out.jFK (R := ℂ) ℂ) (tauLift A x y) = eTwoPi (A.T x y) := by
   have h1 := hψ (x + y)
@@ -373,8 +377,8 @@ theorem genVal_tau (x y : A.X) :
   rw [A.psi_add]
   field_simp
 
-include lam ah hct hψ in
 
+include lam ah hct hψ in
 theorem psiEven : D.PsiEven := by
   intro x
   obtain ⟨x, rfl⟩ := ε.surjective x
@@ -390,8 +394,8 @@ theorem psiEven : D.PsiEven := by
       ((genVal_sym D.P.isLB ah D.sym D.sym_gen D.sym_rig).1 _))).trans (Eq.trans ?_ (hψ x).symm)
     rw [A.psi_neg, _root_.mul_one]
 
-include lam ah rig hct hψ in
 
+include lam ah rig hct hψ in
 theorem tauBal (a : O) {f f' : D.P.A ⟶ D.P.A} (hf : ∀ z, u.ex (A.F a z) = u.ex z ≫ f)
     (hf' : ∀ z, u.ex (A.F (star a) z) = u.ex z ≫ f') : D.TauBal f f' (fun y => a • y) (fun y => star a • y) := by
   intro r hr h₀ x y
@@ -417,8 +421,8 @@ theorem tauBal (a : O) {f f' : D.P.A ⟶ D.P.A} (hf : ∀ z, u.ex (A.F a z) = u.
       ((genVal_rosati D.P.isLB ah hf hf' r hr h₀).2 _ _))).trans (Eq.trans ?_ (genVal_tau rig hψ _ _).symm)
     rw [A.T_adj, _root_.mul_one]
 
-include hct hψ in
 
+include hct hψ in
 theorem psiUnitOn (y : D.X) : PsiUnitOn D y Set.univ := by
   obtain ⟨x, rfl⟩ := ε.surjective y
   obtain ⟨t, ht, hv⟩ := TorusExtChar.exists_genVal (u := u) D.P.isLB (φ := fun _ : PUnit => (D.c (ε x)).left)
@@ -438,8 +442,8 @@ variable {O : Type} [CommRing O] [StarRing O] {A : AnArc O} {B : Over (Sp ℂ)} 
 
 omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ]
 
-include hf in
 
+include hf in
 theorem isLift_prim (z : Fin A.gB → ℂ) :
     IsLift u (K := Fin 4) ![(padd B (𝟙 _) f).left, 𝟙 B.left, f.left, (toUnit B ≫ η[B]).left] (u.ex z).left
       ![z + A.F w z, z, A.F w z, 0] := fun k => by
@@ -451,8 +455,8 @@ theorem isLift_prim (z : Fin A.gB → ℂ) :
   · change (u.ex z ≫ toUnit _ ≫ η[B]).left = (u.ex 0).left
     rw [AnPairing.comp_toUnit_comp, ex_zero]
 
-include ah hf in
 
+include ah hf in
 theorem genVal_prim (hw : w + star w = 1)
     (t : LB.Gen (LB.LinComb L (K := Fin 4) ![(padd B (𝟙 _) f).left, 𝟙 B.left, f.left, (toUnit B ≫ η[B]).left]
       ![1, -2, -1, 2])) (ht : t.IsGen) (h₀ : LB.Gen.Corr L _ _ _ _ (LB.pullGen L _ _ t (eSec B)) (LB.oneGen L))
@@ -463,7 +467,7 @@ theorem genVal_prim (hw : w + star w = 1)
       (fun k => by fin_cases k <;> simp <;> fun_prop) (fun z => by rw [id, Category.comp_id]; exact isLift_prim hf z)
     simpa only [id, Category.comp_id] using this
   have key : ∀ z m, A.H (A.F w z) m = A.H z m - A.H z (A.F w m) := fun z m => by
-    rw [A.H_F, eq_sub_iff_add_eq, ← A.H_add_right, ← LinearMap.add_apply, ← map_add, add_comm, hw, map_one]
+    rw [A.H_F, eq_sub_iff_add_eq, ← A.H_add_right, ← LinearMap.add_apply, ← map_add (f := _), add_comm, hw, map_one]
     rfl
   have hc := const_of_norm_periodic u hd (fun l z => by
     let m : A.abelian₂ := ⟨l, lam.le l.2⟩
@@ -504,8 +508,8 @@ variable {O : Type} [CommRing O] [StarRing O] {A : AnArc O} {D : Out.DegPre ℂ}
   (rig : u.IsRig D.rig) (hct : ∀ x, u.ex (A.ct x) = D.c (ε x))
   (hψ : ∀ x, genVal u D.P.isLB (D.psi (ε x)) (Out.jFK (R := ℂ) ℂ) (fun _ => A.ct x) = A.psi x)
 
-include ah rig hct hψ in
 
+include ah rig hct hψ in
 theorem psi_weight_zero_linear_combination (oa : D.OAct O) {w : O} (hw : w + star w = 1) (hf : ∀ z, u.ex (A.F w z) = u.ex z ≫ oa.onB.act w)
     (hT : ∀ x, (A.psi x : ℂ) = eTwoPi (A.T x (w • x)))
     (t : LB.Gen (LB.LinComb D.P.L (K := Fin 4) ![(padd D.P.A (𝟙 _) (oa.onB.act w)).left, 𝟙 D.P.A.left,
@@ -534,8 +538,8 @@ theorem psi_weight_zero_linear_combination (oa : D.OAct O) {w : O} (hw : w + sta
       (Eq.trans ?_ (genVal_mul_of (hψ x) (genVal_rigK rig)).symm)
     rw [hT]
 
-include ah rig hct in
 
+include ah rig hct in
 theorem exists_torus_extension_point (v : A.V) : ∃ p : Out.GtPtF D ℂ, (show Sp ℂ ⟶ _ from p.b.left) = (u.ex v.2).left ∧
     ∀ x, genVal u D.P.isLB (p.s (ε x)) (show Sp ℂ ⟶ _ from 𝟙 (Sp ℂ)) ![A.ct x + v.2, A.ct x, v.2, 0] =
       eTwoPi (v.1 x) := by
@@ -593,8 +597,8 @@ variable {O : Type} [CommRing O] [StarRing O] (A : AnArc O) (P : Out.PolAV (Sp �
   (sym_rig : LB.Gen.Corr P.L _ _ _ _ (LB.pullGen P.L _ _ sym (eSec P.A)) (LB.oneGen P.L))
   (u : HolUnif P.A P.L A.gB)
 
-omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 
+omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 theorem exists_psiGen (y : A.X) :
     ∃ t : LB.Gen (LB.LinComb P.L (K := PUnit) (Y := Sp ℂ) (fun _ => (u.ex (A.ct y)).left) fun _ => -1),
       t.IsGen ∧ genVal u P.isLB t (𝟙 _) (fun _ => A.ct y) = A.psi y :=
@@ -610,7 +614,7 @@ def degPre : Out.DegPre ℂ where
   sym_rig := sym_rig
   X := A.X
   c y := u.ex (A.ct y)
-  c_add a b := by rw [map_add, u.ex_add]; rfl
+  c_add a b := by rw [map_add (f := _), u.ex_add]; rfl
   psi y := LB.pullGen P.L _ _ (exists_psiGen A P u y).choose (Out.jK ℂ)
   psi_gen y := DVR.pullGen_isGen _ _ _ _ (exists_psiGen A P u y).choose_spec.1 _
 

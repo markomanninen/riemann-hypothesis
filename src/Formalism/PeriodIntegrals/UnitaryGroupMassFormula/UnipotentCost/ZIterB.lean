@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.ZIterA
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.ZIterA
+
+@[expose] public section
 
 open scoped ContDiff
 
@@ -37,7 +41,7 @@ def invF (Z : Fin s → Fin s → ℂ) : Fin s → Fin s → ℂ := Matrix.of.sy
 theorem eA_mul_inv {Z : Fin s → Fin s → ℂ} (h : (Matrix.of Z).det ≠ 0) :
     eA s Z * eA s (invF s Z) = 1 ∧ eA s (invF s Z) * eA s Z = 1 := by
   have hu : IsUnit (Matrix.of Z).det := isUnit_iff_ne_zero.mpr h
-  have hinv : Matrix.of (invF s Z) = (Matrix.of Z)⁻¹ := by simp [invF]
+  have hinv : Matrix.of (invF s Z) = (Matrix.of Z)⁻¹ := Matrix.of.apply_symm_apply _
   constructor <;> ext1 v <;>
     simp only [ContinuousLinearMap.mul_apply, eA_apply, ContinuousLinearMap.one_apply,
       Matrix.mulVec_mulVec, hinv, Matrix.mul_nonsing_inv _ hu, Matrix.nonsing_inv_mul _ hu,
@@ -55,7 +59,7 @@ def lamL (a b : Fin s) (ε : Bool) (T : En s) : (Fin s → Fin s → ℂ) →L[�
     { toFun := fun W => if ε then (T (fun c => W c b) a).re else (T (fun c => W c b) a).im
       map_add' := fun W W' => by
         have : (fun c => (W + W') c b) = (fun c => W c b) + (fun c => W' c b) := rfl
-        rw [this, map_add]
+        rw [this, map_add (f := _)]
         cases ε <;> simp
       map_smul' := fun r W => by
         have : (fun c => (r • W) c b) = r • (fun c => W c b) := rfl
@@ -82,7 +86,7 @@ theorem cF_apply (i : Fin s × Fin s × Bool) {Z : Fin s → Fin s → ℂ} (h :
     (W : Fin s → Fin s → ℂ) :
     cF s i Z W = if i.2.2 then (((Matrix.of Z)⁻¹ * Matrix.of W) i.1 i.2.1).re
       else (((Matrix.of Z)⁻¹ * Matrix.of W) i.1 i.2.1).im := by
-  have hinv : Matrix.of (invF s Z) = (Matrix.of Z)⁻¹ := by simp [invF]
+  have hinv : Matrix.of (invF s Z) = (Matrix.of Z)⁻¹ := Matrix.of.apply_symm_apply _
   rw [cF, inverse_eA s h]
   show lamL s i.1 i.2.1 i.2.2 (eA s (invF s Z)) W = _
   rw [lamL_apply, eA_apply, hinv]
@@ -135,7 +139,9 @@ theorem cF_bound (n : ℕ) : ∃ K : ℝ, 0 ≤ K ∧ ∀ Z : Fin s → Fin s �
       rw [← hu, Ring.inverse_unit u]
     rw [show φ = Ring.inverse ∘ (eA s) from rfl, h1.fderiv, hinv]
     ext W : 1
-    simp [Bi, P, φ]
+    simp only [Bi, P, φ, ContinuousLinearMap.comp_apply, ContinuousLinearMap.compL_apply,
+      ContinuousLinearMap.flip_apply, neg_apply, ContinuousLinearMap.mulLeftRight_apply,
+      Function.comp_apply]
   obtain ⟨K0, hK0, hb⟩ := quad_bound Bi hUo hφ hd n
   refine ⟨(∑ j, ‖lamF s j‖) * K0,
     mul_nonneg (Finset.sum_nonneg fun _ _ => norm_nonneg _) hK0, ?_⟩

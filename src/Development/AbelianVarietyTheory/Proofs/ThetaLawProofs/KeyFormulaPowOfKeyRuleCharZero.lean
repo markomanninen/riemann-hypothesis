@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.KeyFormulaPowOfKeyFormula
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.KeyRuleOneOfKeyFormula
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyInNormalFormAndArchimedeanConstant
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ValueAtNormalForm
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyRuleCharHalfOfCharZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.KeyFormulaPowOfKeyFormula
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.KeyRuleOneOfKeyFormula
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyInNormalFormAndArchimedeanConstant
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ValueAtNormalForm
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyRuleCharHalfOfCharZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,14 +32,5 @@ theorem keyFormulaPow_of_keyRule :
     (fun y h τ' hy => hK y τ' _ _ y.g_pos ⟨fun i => ha _, fun i => hb _⟩ hy) x rfl τ M c hc hM
     ⟨u', k₁, k₂, k₃, k₄, k₅, k₆⟩
   rw [hv, norm_pow, pow_mul nth, pow_mul nη, ← mul_pow, ← mul_pow, hn, ← pow_mul]
-
-theorem keyFormulaPow_of_keyRule_double (hT : ThetaUnifAV) (N : ℕ → ℕ) (hN : ∀ g, 1 ≤ N g)
-    (h : KeyRule (fun g => 2 * N (2 * g)) 1 charHalf) : GlobalTheory.KeyFormulaPow :=
-  keyFormulaPow_of_keyRule hT _ (fun g => by have := hN (2 * g); omega) h
-
-theorem keyFormulaPow_of_keyRule_charZero :
-    ThetaUnifAV → ReciprocityTheory.ChartRestriction.G.Key.Chi.InversionStatement →
-      ∀ N : ℕ → ℕ, (∀ g, 1 ≤ N g) → GlobalTheory.KeyPow.KeyRule N 2 GlobalTheory.KeyPow.charZero' → GlobalTheory.KeyFormulaPow :=
-  fun hT hI N hN h => keyFormulaPow_of_keyRule_double hT N hN (keyRule_charHalf_of_charZero hI N h)
 
 end GlobalTheory.KeyPow

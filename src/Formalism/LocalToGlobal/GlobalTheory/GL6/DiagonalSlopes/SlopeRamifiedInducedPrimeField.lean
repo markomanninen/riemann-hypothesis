@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.SliceIntegralDeltaNeBot
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
-import Formalism.LocalToGlobal.GlobalTheory.GL6.RamifiedLatticePropsOfModel
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.GroupActionMulSingleEqDilation
+module
+
+public import Formalism.LocalToGlobal.Columns.SliceIntegralDeltaNeBot
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.RamifiedLatticePropsOfModel
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.GroupActionMulSingleEqDilation
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ open Formalism.BasicNotions Formalism.HN Formalism.HermitianLatticesTheory Forma
 
 section Generic
 
-variable {K : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+variable {K : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
   {ι : Type} [Fintype ι] [DecidableEq ι] (G : ι → Type) [∀ i, CommGroup (G i)] [∀ i, Fintype (G i)]
   [∀ i, DecidableEq (G i)]
 
@@ -130,7 +134,8 @@ theorem norm_slice_map_sum (B : HLat K) (ρ : (∀ i, G i) →* Module.End K B.V
     t2sNm B ρ i (t2sPsi B ρ W F) =
       t2sPsi B ρ W (fun h => ∑ a : G i, F ((Pi.mulSingle i a)⁻¹ * h)) := by
   rw [t2sPsi_apply, t2sPsi_apply, t2sNm, LinearMap.sum_apply]
-  simp only [Submodule.coe_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Submodule.coe_sum, map_sum]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ =>
     Fintype.sum_equiv (Equiv.mulLeft (Pi.mulSingle i a)) _ _ fun g => ?_
@@ -144,7 +149,7 @@ theorem sum_inv_mulSingle_zero_iff (i : ι) {M : Type} [AddCommGroup M] (F : (�
     funext fun h => Fintype.sum_equiv (Equiv.inv (G i)) _ _ fun a => by simp [Pi.mulSingle_inv]
   rw [h]
 
-variable [IsTotallyComplex K]
+variable [_root_.NumberField.IsTotallyComplex K]
 
 theorem induced_of_slice (B : HLat K) (hB : B.Good) (hB0 : B.L ≠ ⊥)
     (ρ : (∀ i, G i) →* Module.End K B.V) (W : Submodule K B.V)
@@ -317,7 +322,8 @@ open Classical
 theorem embedding_mem_forms_level_zero (x : ((D.fm u).lat 0).V) : (D.fm u).emb 0 x ∈ (D.mem u).A.Mu0 := by
   rw [← (D.fm u).Fi_zero, ← ((D.fm u).emb_basis 0).2]
   have hx := ((D.fm u).lat 0).b.sum_repr x
-  rw [← hx, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hx, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [map_smulₛₗ]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -327,7 +333,8 @@ theorem ramified_sub_eq_inf_norm_ker (ρ : (∀ v, t2sG D u v) →* Module.End D
     (D.fm u).ramSub = ⨅ v, LinearMap.ker (t2sNm ((D.fm u).lat 0) ρ v) := by
   have key : ∀ v x, (D.fm u).emb 0 (t2sNm ((D.fm u).lat 0) ρ v x) = (D.mem u).A.Nm v ((D.fm u).emb 0 x) := by
     intro v x
-    simp only [t2sNm, ColumnsAtT.Nm, LinearMap.sum_apply, map_sum, hρ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [t2sNm, ColumnsAtT.Nm, LinearMap.sum_apply, map_sum, hρ]
   ext x
   simp only [MemberForms.ramSub, Submodule.mem_comap, ColumnsAtT.Mram, Submodule.mem_inf, Submodule.mem_iInf,
     LinearMap.mem_ker]
@@ -393,7 +400,7 @@ theorem rho_preserves_rational_forms (v : (D.mem u).A.vT) (a : ((D.mem u).A.Fv v
   | add x x' _ _ hx hx' =>
     obtain ⟨y, hy⟩ := hx
     obtain ⟨y', hy'⟩ := hx'
-    exact ⟨y + y', by rw [map_add, hy, hy', map_add, map_add]⟩
+    exact ⟨y + y', by rw [map_add (f := _), hy, hy', map_add (f := _), map_add (f := _)]⟩
   | smul c x _ hx =>
     obtain ⟨y, hy⟩ := hx
     exact ⟨c • y, by rw [map_smulₛₗ, hy, map_smulₛₗ, map_smul]⟩
@@ -624,7 +631,7 @@ theorem class_rep_group_elem_unique (hS : Formalism.MainNotions.product_first_ze
 
 def t2sW : Submodule D.what₂.LL ((D.fm u).lat 0).V where
   carrier := {x | ∀ c, t2sRep Tf hE c ≠ c → (D.fm u).emb 0 x c = 0}
-  add_mem' {x y} hx hy c hc := by rw [map_add, Pi.add_apply, hx c hc, hy c hc, add_zero]
+  add_mem' {x y} hx hy c hc := by rw [map_add (f := _), Pi.add_apply, hx c hc, hy c hc, add_zero]
   zero_mem' c _ := by rw [map_zero]; rfl
   smul_mem' r x hx c hc := by rw [map_smulₛₗ, Pi.smul_apply, hx c hc, smul_zero]
 
@@ -644,7 +651,8 @@ theorem slice_value_off_summand (hS : Formalism.MainNotions.product_first_zeroth
 theorem slice_map_value_at_class (hS : Formalism.MainNotions.product_first_zeroth_parts.admS D u) (F : (∀ v, t2sG D u v) → t2sW Tf hE) (c : (D.mem u).C.cls 0) :
     (D.fm u).emb 0 (t2sPsi ((D.fm u).lat 0) (t2sRho Tf hE) (t2sW Tf hE) F) c =
       (D.fm u).emb 0 (t2sRho Tf hE (t2sH Tf hE c) (F (t2sH Tf hE c) : ((D.fm u).lat 0).V)) c := by
-  rw [t2sPsi_apply, map_sum, Finset.sum_apply, Finset.sum_eq_single (t2sH Tf hE c)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [t2sPsi_apply, map_sum, Finset.sum_apply, Finset.sum_eq_single (t2sH Tf hE c)]
   · intro g _ hg
     exact slice_value_off_summand Tf hE hS F g c hg
   · intro h

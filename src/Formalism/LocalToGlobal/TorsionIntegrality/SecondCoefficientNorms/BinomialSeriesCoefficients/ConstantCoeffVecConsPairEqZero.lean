@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversal
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SecondCoeffConsistency
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.LogSigmaOnePullbackSpec
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversal
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SecondCoeffConsistency
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.LogSigmaOnePullbackSpec
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem substMv_fadd [Finite σ] (h : IsLogPair l linv) {u v : MvPowerSeries σ 
   have hv' : MvPowerSeries.constantCoeff (PowerSeries.subst v l) = 0 :=
     PowerSeries.constantCoeff_subst_eq_zero hv l h.1
   unfold fadd
-  rw [psub _ (by rw [map_add, hu', hv', add_zero]), ← MvPowerSeries.coe_substAlgHom hsa, map_add,
+  rw [psub _ (by rw [map_add (f := _), hu', hv', add_zero]), ← MvPowerSeries.coe_substAlgHom hsa, map_add (f := _),
     MvPowerSeries.coe_substAlgHom hsa, psub u hu, psub v hv]
 
 theorem subst_biextension_form [Finite σ] (h : IsLogPair l linv) (ph : PowerSeries K) {u v : MvPowerSeries σ K}
@@ -50,7 +54,7 @@ theorem subst_biextension_form [Finite σ] (h : IsLogPair l linv) (ph : PowerSer
   have hv' : MvPowerSeries.constantCoeff (PowerSeries.subst v l) = 0 :=
     PowerSeries.constantCoeff_subst_eq_zero hv l h.1
   have hf : MvPowerSeries.constantCoeff (fadd l linv u v) = 0 :=
-    PowerSeries.constantCoeff_subst_eq_zero (by rw [map_add, hu', hv', add_zero]) linv h.2.2.1
+    PowerSeries.constantCoeff_subst_eq_zero (by rw [map_add (f := _), hu', hv', add_zero]) linv h.2.2.1
   unfold be0
   rw [← MvPowerSeries.coe_substAlgHom hsa, map_sub, map_sub, MvPowerSeries.coe_substAlgHom hsa,
     psub _ hf, psub u hu, psub v hv, substMv_fadd h hu hv ha]

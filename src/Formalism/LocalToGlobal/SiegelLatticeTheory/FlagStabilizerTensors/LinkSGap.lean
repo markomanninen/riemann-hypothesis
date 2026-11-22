@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LinkSFinalP
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LoopRowSF
-import Formalism.SharpRestriction.SmoothDesignExistence.FirstSectionHypothesesAtFamilyConstants
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LinkSFinalP
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LoopRowSF
+public import Formalism.SharpRestriction.SmoothDesignExistence.FirstSectionHypothesesAtFamilyConstants
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S
 namespace Formalism.L2.SG.ThmSOwn
 
 def CT (𝒞 : FamClass) : FamClass := fun Fm => 𝒞 Fm ∧ TuSize Fm
-
-def selT {𝒞 : FamClass} (sel : SSel 𝒞) : SSel (CT 𝒞) := fun Fm h => sel Fm h.1
 
 theorem gapRowT {𝒞 : FamClass} (hRes : Closed 𝒞 fun Fm _ => ResidEv Fm) :
     Closed (CT 𝒞) fun Fm _ => CT 𝒞 Fm → Formalism.L2.SG.LoopsTies.GapEv Fm := by

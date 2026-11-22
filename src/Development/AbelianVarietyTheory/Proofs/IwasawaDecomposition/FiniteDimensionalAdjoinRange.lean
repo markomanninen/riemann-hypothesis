@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodChi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodChi
+
+@[expose] public section
+
 open Formalism.BasicNotions GlobalTheory.Mem GlobalTheory.MemN NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial
 
 noncomputable section
@@ -40,7 +45,11 @@ theorem exists_embedding (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Alg
   have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed E
   have : Algebra.IsAlgebraic ℚ Ω := Algebra.IsAlgebraic.trans ℚ E Ω
   have : IsAlgClosure ℚ Ω := ⟨inferInstance, inferInstance⟩
-  let j0 : Ω →ₐ[ℚ] PadicAlgCl l := IsAlgClosed.lift
+  let j0 : Ω →ₐ[ℚ] PadicAlgCl l := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let A0 : ValuationSubring Ω := (Valued.v (R := PadicAlgCl l)).valuationSubring.comap j0.toRingHom
   have hA0 : ∀ x, x ∈ A0 ↔ ‖j0 x‖ ≤ 1 := fun x => by
     change Valued.v (j0 x) ≤ 1 ↔ _
@@ -176,7 +185,8 @@ theorem finiteDimensional_adjoin_range :
     apply le_antisymm
     · rw [IntermediateField.adjoin_le_iff]
       rintro _ ⟨x, rfl⟩
-      rw [← b.sum_repr x, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← b.sum_repr x, map_sum]
       refine sum_mem fun i _ => ?_
       rw [Rat.smul_def, map_mul, map_ratCast]
       exact mul_mem (SubfieldClass.ratCast_mem _ _) (IntermediateField.subset_adjoin _ _ ⟨i, rfl⟩)
@@ -221,7 +231,7 @@ theorem mem_GK_iff (K : Loc.FinExt l)
     induction hy using IntermediateField.adjoin_induction with
     | mem y hy => obtain ⟨x, rfl⟩ := hy; exact h x
     | algebraMap y => exact τ.commutes y
-    | add a b _ _ ha hb => rw [map_add, ha, hb]
+    | add a b _ _ ha hb => rw [map_add (f := _), ha, hb]
     | inv a _ ha => rw [map_inv₀, ha]
     | mul a b _ _ ha hb => rw [map_mul, ha, hb]
 

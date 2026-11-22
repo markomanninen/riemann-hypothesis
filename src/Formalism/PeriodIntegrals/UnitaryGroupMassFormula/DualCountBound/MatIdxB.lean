@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SmithMat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SmithMat
+
+@[expose] public section
 
 noncomputable section
 

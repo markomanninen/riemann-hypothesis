@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOverChart
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreRest
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreSide
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsOrbitCompNonvanish
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NormSegreSameOrbit
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOverChart
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreRest
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreSide
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsOrbitCompNonvanish
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NormSegreSameOrbit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -18,9 +23,8 @@ namespace GenericPointsInAffineChart
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
   {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
 
-omit [∀ k, Fintype (ι k)] in
-open Classical in
 
+open Classical in
 theorem exists_normalise {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     {P' : Ideal (MRing ι')} (hP' : IsMultiHomogIdeal P') {j : ∀ k : FibreBlock κ, ι' k.1}
     {z : (Σ k, ι k) → ℂ} {c : K → ℂ} (hc : ∀ k, c k ≠ 0) {z' : (Σ k', ι' k') → ℂ} (hz' : z' ∈ mcPts P')
@@ -51,8 +55,8 @@ theorem exists_normalise {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} 
     simp only [d, dif_neg h]
     exact inv_mul_cancel₀ (hj k)
 
-omit [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem eq_of_normalised {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     {j : ∀ k : FibreBlock κ, ι' k.1} {w : (Σ k, ι k) → ℂ} (hw : ∀ k, ∃ i, w ⟨k, i⟩ ≠ 0)
     {z₁ z₂ : (Σ k', ι' k') → ℂ} (h₁v : ∀ p, z₁ (v p) = w p) (h₁j : ∀ k : FibreBlock κ, z₁ ⟨k.1, j k⟩ = 1)
@@ -79,8 +83,8 @@ theorem eq_of_normalised {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} 
 
 end GenericPointsInAffineChart
 
-open GenericPointsInAffineChart PullbackDegreeCount in
 
+open GenericPointsInAffineChart PullbackDegreeCount in
 theorem GenericPointsInAffineChart.proof (hFin : ArithmeticIntersectionChartFinite.Statement) (hNorm : ChartNormCount.Statement)
     (hOrb : OrbitCompNonvanish.Statement) : GenericPointsInAffineChart.Statement := by
   intro K _ ι _ K' _ ι' _ κ v P' n G j hv hP' hP hj

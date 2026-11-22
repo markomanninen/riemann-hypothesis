@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatMod
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.CharDual
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TermTiesEmptyOfLargeIndex
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatMod
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.CharDual
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TermTiesEmptyOfLargeIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,8 +115,8 @@ theorem conj_inv_eq : D.host.conj⁻¹ = D.host.conj := by
 theorem conj_inv_smul (x : 𝓞 D.host.E) : D.host.conj⁻¹ • x = D.host.conj • x := by
   rw [conj_inv_eq]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem star_mem_AAbar {c : D.host.E} (hc : c ∈ D.host.AA) : star c ∈ D.host.AAbar := by
   have hJ : ((D.host.𝔟 : Ideal (𝓞 D.host.E)) : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) ≠ 0 :=
     FractionalIdeal.coeIdeal_ne_zero.2 bb_ne_bot
@@ -156,8 +160,8 @@ theorem star_mem_AAbar {c : D.host.E} (hc : c ∈ D.host.AA) : star c ∈ D.host
       _ ≤ _ := by gcongr
   exact h3 (FractionalIdeal.mem_spanSingleton_self _ _)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem xi_dual {c c' : D.host.E} (hc : c ∈ D.host.AA) (hc' : c' ∈ D.host.AA) (o : 𝓞 D.host.E) :
     ∃ z : ℤ, Algebra.trace ℚ D.host.E (D.host.xi0 * c * star c' * o) = z := by
   have hfp := factPrincipalDatum D.R D.host

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.VanishOfXU
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.VanishOfXU
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem fil_of_rep (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (Ti : For
       refine ⟨by rw [smul_add]; exact (W.N T).add_mem h1 h2, fun r hr => ?_⟩
       have : (⟨μ • (x1 + y1), by rw [smul_add]; exact (W.N T).add_mem h1 h2⟩ : ↥(W.N T)) =
           ⟨μ • x1, h1⟩ + ⟨μ • y1, h2⟩ := Subtype.ext (by simp [smul_add])
-      rw [this, map_add, Pi.add_apply, v1 r hr, v2 r hr, add_zero]
+      rw [this, map_add (f := _), Pi.add_apply, v1 r hr, v2 r hr, add_zero]
     · rintro x1 ⟨h1, v1⟩
       refine ⟨by rw [smul_neg]; exact (W.N T).neg_mem h1, fun r hr => ?_⟩
       have : (⟨μ • (-x1), by rw [smul_neg]; exact (W.N T).neg_mem h1⟩ : ↥(W.N T)) =
@@ -143,7 +147,8 @@ theorem fil_of_rep (C : Formalism.MainNotions.UnusedSlot80.LevC.Ctx W) (Ti : For
     congr 1
     ring
   have hL := congrArg (levB T a ζ) key
-  rw [map_add, map_sum] at hL
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum] at hL
   simp only [Formalism.MainNotions.UnusedSlot80.LevE.levB_smul W levB Ti.hEq Ti.hsupp] at hL
   obtain ⟨mx, hmx⟩ := Ti.hsupp T a ζ ⟨x, hxN⟩
   let F' : Fin d → ℤ → T.V ⊗[Qp] B := fun m r => if r = 0 then ((PD.p : LL) ^ κ) •

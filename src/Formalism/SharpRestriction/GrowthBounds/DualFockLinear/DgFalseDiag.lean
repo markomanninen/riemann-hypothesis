@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.IsMultiHom
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.IsMultiHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem fam_deg (F : Type) [Field F] (m : ℕ) (vec : Bool) (α : Fin (m + 1) �
 
 theorem dg_false_diag (m : ℕ) (c t : Fin (m + 1)) (ht : t.val < m) :
     dg m false c (t, t) = if t < c then 1 else 0 := by
-  simp only [dg, Bool.false_eq_true, if_false, Finsupp.finset_sum_apply, Finsupp.single_apply]
+  simp only [dg, Bool.false_eq_true, if_false, Finsupp.finsetSum_apply, Finsupp.single_apply]
   rw [Finset.sum_eq_single (⟨t.val, ht⟩ : Fin m)]
   · by_cases htc : t < c
     · rw [if_pos htc, if_pos]
@@ -195,7 +199,7 @@ theorem key_inj (m : ℕ) (top vec : Bool) (d : ℕ) (ν : Fin (m + 1) → ℕ) 
         · by_cases hnm : n ≤ m
           · have ht : n - 1 < m + 1 := by omega
             have he := congrArg (fun f => f ((⟨n - 1, ht⟩ : Fin (m + 1)), (⟨n - 1, ht⟩ : Fin (m + 1)))) h
-            simp only [Finsupp.add_apply, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul] at he
+            simp only [Finsupp.add_apply, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul] at he
             rw [hz x, hz x', add_zero, add_zero,
               sum_mul_dg_diag_eq_sum_filter m n α _ (by show n - 1 < m; omega) (by show n - 1 + 1 = n; omega),
               sum_mul_dg_diag_eq_sum_filter m n α' _ (by show n - 1 < m; omega) (by show n - 1 + 1 = n; omega)] at he
@@ -222,7 +226,7 @@ theorem key_inj (m : ℕ) (top vec : Bool) (d : ℕ) (ν : Fin (m + 1) → ℕ) 
           exact h00
         · exact Finset.sum_eq_zero_iff.mp hrest a (Finset.mem_erase.mpr ⟨ha, Finset.mem_univ a⟩)
       have he := congrArg (fun f => f (c, (0 : Fin (m + 1)))) h
-      simp only [Finsupp.add_apply, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul] at he
+      simp only [Finsupp.add_apply, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul] at he
       rw [hcol x, hcol x'] at he
       have hs1 : ∀ β : Fin (m + 1) →₀ ℕ, ∑ c', β c' * dg m true c' (c, 0) = β c := by
         intro β
@@ -245,11 +249,11 @@ private theorem linearIndependent_of_degree_injective {σ ι F : Type} [Field F]
   obtain ⟨i0, hi0, hmax⟩ := Finset.exists_max_image (s.filter fun j => g j ≠ 0)
     (fun j => M.toSyn (M.degree (v j))) hne'
   rw [Finset.mem_filter] at hi0
-  have hc := congrArg (MvPolynomial.coeff (M.degree (v i0))) hg
+  have hc := congrArg (AddMonoidAlgebra.coeff · (M.degree (v i0))) hg
   rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_zero] at hc
   rw [Finset.sum_eq_single i0] at hc
   · rw [MvPolynomial.coeff_smul, smul_eq_mul] at hc
-    have hlc : MvPolynomial.coeff (M.degree (v i0)) (v i0) ≠ 0 := M.leadingCoeff_ne_zero_iff.mpr (hv i0)
+    have hlc : AddMonoidAlgebra.coeff (v i0) (M.degree (v i0)) ≠ 0 := M.leadingCoeff_ne_zero_iff.mpr (hv i0)
     exact mul_ne_zero hi0.2 hlc hc
   · intro j hj hji0
     rw [MvPolynomial.coeff_smul, smul_eq_mul]
@@ -289,7 +293,7 @@ theorem posInd : PosInd := by
       exact zero_ne_one h2
     rw [he, smul_mul_assoc]
     refine ⟨?_, smul_ne_zero hu hne⟩
-    rw [MonomialOrder.degree_smul_of_isRegular (isRegular_of_ne_zero hu), h1]
+    rw [MonomialOrder.degree_smul_of_isRegular (IsRegular.of_ne_zero hu), h1]
   apply linearIndependent_of_degree_injective (colLex (m + 1) (m + 1))
   · intro y
     exact (hdeg y).2

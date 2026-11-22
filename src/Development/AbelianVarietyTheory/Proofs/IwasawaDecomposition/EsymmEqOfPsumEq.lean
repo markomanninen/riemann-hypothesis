@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.EsymmOfPowerSums
 
@@ -19,7 +23,8 @@ theorem esymm_eq_of_psum_eq {d : ℕ} (a b : Fin d → ℂ)
     have key := MvPolynomial.mul_esymm_eq_sum (Fin d) ℂ k
     have ha := congrArg (MvPolynomial.aeval a) key
     have hb := congrArg (MvPolynomial.aeval b) key
-    simp only [map_mul, map_natCast, map_pow, map_neg, map_one, map_sum] at ha hb
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_natCast, map_pow, map_neg, map_one, map_sum] at ha hb
     rw [ha, hb]
     congr 1
     refine Finset.sum_congr rfl ?_

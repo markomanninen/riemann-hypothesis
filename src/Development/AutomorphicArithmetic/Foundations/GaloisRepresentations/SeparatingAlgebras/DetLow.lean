@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ private lemma det_norm_le_one {k : Type} [NormedField k] [IsUltrametricDist k] {
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun σ _ => ?_
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with hs | hs <;>
     simp only [hs, one_smul, Units.neg_smul, norm_neg, norm_prod] <;>
-    exact Finset.prod_le_one (fun i _ => norm_nonneg _) (fun i _ => h _ _)
+    exact Finset.prod_le_one₀ (fun i _ => norm_nonneg _) (fun i _ => h _ _)
 
 private lemma det_zero_of_card {k : Type} [Field k] {N ρ : ℕ}
     (A M : Matrix (Fin N) (Fin N) k) (s : Finset (Fin N)) (hr : A.rank ≤ ρ) (hs : ρ < s.card)

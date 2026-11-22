@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementA
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementA
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ def LeadAt (w : σ → M) (γ : M) (f t : MvPolynomial σ R) : Prop :=
 private theorem weight_eq_of_le_of_add_eq_lemma {w : σ → M} {γ δ : M} {a b : σ →₀ ℕ}
     (ha : Finsupp.weight w a ≤ γ) (hb : Finsupp.weight w b ≤ δ) (h : Finsupp.weight w (a + b) = γ + δ) :
     Finsupp.weight w a = γ ∧ Finsupp.weight w b = δ := by
-  rw [map_add] at h
+  rw [map_add (f := _)] at h
   have h1 : Finsupp.weight w a = γ := by
     by_contra hne
     have := add_lt_add_of_lt_of_le (lt_of_le_of_ne ha hne) hb
@@ -44,7 +48,7 @@ theorem LeadAt.mul {w : σ → M} {γ δ : M} {f g tf tg : MvPolynomial σ R}
       | exact Finset.HasAntidiagonal.mem_antidiagonal.mp hp
       | exact Finset.mem_antidiagonal.mp hp
       | simpa using hp
-    rw [← hp', map_add]
+    rw [← hp', map_add (f := _)]
     exact add_le_add (hf1 _ (mem_support_iff.mpr (left_ne_zero_of_mul hne)))
       (hg1 _ (mem_support_iff.mpr (right_ne_zero_of_mul hne)))
   · ext e
@@ -63,11 +67,11 @@ theorem LeadAt.mul {w : σ → M} {γ δ : M} {f g tf tg : MvPolynomial σ R}
         | exact Finset.mem_antidiagonal.mp hp
         | simpa using hp
       rw [coeff_weightedHomogeneousComponent, coeff_weightedHomogeneousComponent]
-      by_cases hab : coeff p.1 f ≠ 0 ∧ coeff p.2 g ≠ 0
+      by_cases hab : AddMonoidAlgebra.coeff f p.1 ≠ 0 ∧ AddMonoidAlgebra.coeff g p.2 ≠ 0
       · obtain ⟨ha1, ha2⟩ := _root_.Formalism.InvariantFactorPaths.GelfandTsetlinBases.A1.weight_eq_of_le_of_add_eq_lemma (hf1 _ (mem_support_iff.mpr hab.1))
           (hg1 _ (mem_support_iff.mpr hab.2)) (by rw [hp']; exact he)
         rw [if_pos ha1, if_pos ha2]
-      · have h0 : coeff p.1 f * coeff p.2 g = 0 := by
+      · have h0 : AddMonoidAlgebra.coeff f p.1 * AddMonoidAlgebra.coeff g p.2 = 0 := by
           rcases not_and_or.mp hab with h | h
           · rw [not_not.mp h, zero_mul]
           · rw [not_not.mp h, mul_zero]
@@ -103,7 +107,8 @@ theorem LeadAt.prod {ι : Type*} {w : σ → M} (s : Finset ι) (γ : ι → M) 
 theorem LeadAt.comp_eq_zero {w : σ → M} {γ γ' : M} {f t : MvPolynomial σ R} (hf : LeadAt w γ f t)
     (h : γ < γ') : weightedHomogeneousComponent w γ' f = 0 := by
   ext e
-  rw [coeff_weightedHomogeneousComponent, coeff_zero]
+  rw [coeff_weightedHomogeneousComponent, AddMonoidAlgebra.coeff_zero]
+  change (if Finsupp.weight w e = γ' then f.coeff e else 0) = 0
   split_ifs with he
   · by_contra hne
     have := hf.1 e (mem_support_iff.mpr hne)
@@ -122,12 +127,13 @@ theorem LeadAt.sum {ι : Type*} {w : σ → M} (T : Finset ι) (v : ι → M) (t
     by_cases hmt : m = top
     · rw [hmt]
     · exact (hlt m hm hmt).le
-  · rw [map_sum, Finset.sum_eq_single top]
-    · exact (Formalism.InvariantFactorPaths.GelfandTsetlinBases.A1.LeadAt.of_hom (ht top htop)).2
-    · intro m hm hmt
-      exact (Formalism.InvariantFactorPaths.GelfandTsetlinBases.A1.LeadAt.of_hom (ht m hm)).comp_eq_zero (hlt m hm hmt)
-    · intro h
-      exact absurd htop h
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, Finset.sum_eq_single top]
+      · exact (Formalism.InvariantFactorPaths.GelfandTsetlinBases.A1.LeadAt.of_hom (ht top htop)).2
+      · intro m hm hmt
+        exact (Formalism.InvariantFactorPaths.GelfandTsetlinBases.A1.LeadAt.of_hom (ht m hm)).comp_eq_zero (hlt m hm hmt)
+      · intro h
+        exact absurd htop h
 
 end Top
 
@@ -271,11 +277,6 @@ end Col
 theorem sg_pm {n : ℕ} (I : Finset (Fin n)) (m : Fin n) : sg I m = 1 ∨ sg I m = -1 := by
   unfold Formalism.InvariantFactorPaths.GelfandTsetlinBases.sg
   exact neg_one_pow_eq_or ℤ _
-
-theorem mem_canIdx {n : ℕ} (μN : Fin n → ℤ) (c : ℤ) (m : Fin n) :
-    m ∈ canIdx μN c ↔ if 1 ≤ c then m.val < colHeight μN c else colHeight μN c ≤ m.val := by
-  unfold Formalism.InvariantFactorPaths.GelfandTsetlinBases.canIdx
-  split_ifs <;> simp
 
 def Dc {n : ℕ} (μ : ℕ → Fin n → ℤ) (N : ℕ) (c : ℤ) : ℕ × Fin n →₀ ℕ :=
   ∑ m : Fin n, if colHeight (μ (N + 1)) c ≠ colHeight (μ N) c ∧
@@ -619,7 +620,8 @@ theorem psi_lead (R : Type) [CommRing R] {n N : ℕ} {isVec : ℕ → Bool} {B :
   have hsum : ∑ c ∈ S, Dc μ N c = DD μ N := sum_Dc hp S hSc
   have hlev : ∑ c ∈ S, Finsupp.weight (wt n N (isVec N)) (Dc μ N c) =
       rho n N (isVec N) (DD μ N) := by
-    rw [← map_sum, hsum, weight_wt]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hsum, weight_wt]
   have hterm : ∏ c ∈ S, ((a c : MvPolynomial (ℕ × Fin n) R) *
       Formalism.InvariantFactorPaths.GelfandTsetlinBases.pathWord isVec μ c (XR R n) N (Formalism.InvariantFactorPaths.GelfandTsetlinBases.canIdx (μ N) c) * monomial (Dc μ N c) 1) =
       ((∏ c ∈ S, a c : ℤ) : MvPolynomial (ℕ × Fin n) R) * Formalism.InvariantFactorPaths.GelfandTsetlinBases.psiPath R isVec μ N (Formalism.InvariantFactorPaths.GelfandTsetlinBases.canIdx (μ N)) *
@@ -653,7 +655,8 @@ theorem li_of_lead {k V V' ι O : Type*} [Field k] [AddCommGroup V] [Module k V]
   obtain ⟨j, hj, hjmax⟩ := (s.filter fun j => g j ≠ 0).exists_max_image Γ hne
   have hsum : ∑ k ∈ s, g k • π (Γ j) (v k) = 0 := by
     have := congrArg (π (Γ j)) hg
-    simpa only [map_sum, map_smul, map_zero] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_smul, map_zero] using this
   have hsum2 : ∑ k ∈ s.filter (fun k => Γ k = Γ j), g k • π (Γ j) (v k) = 0 := by
     rw [Finset.sum_filter]
     refine Eq.trans (Finset.sum_congr rfl fun k hk => ?_) hsum

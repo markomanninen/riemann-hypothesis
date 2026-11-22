@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadWeightAtOfExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTypesAtOfWeight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadWeightAtOfExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTypesAtOfWeight
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.IsLawOfLog
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.IsLawOfLog
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ def Hser (p : ℕ) (σ : K →+* K) (G : MvPowerSeries (Fin 2) K) (γ γ' : K) :
 
 def DerivIs {K : Type} [NormedField K] (p : ℕ) (G : MvPowerSeries (Fin 2) K) (c : K) : Prop :=
   Integral (MvPowerSeries.pderiv (R := K) 0 G -
-    MvPowerSeries.C c * (at1 0 (PowerSeries.derivative K (lgF K p)) * at1 1 (g0F K p)))
+    MvPowerSeries.C c * (at1 0 (PowerSeries.derivative (R := K) (lgF K p)) * at1 1 (g0F K p)))
 
 end Defs
 
@@ -69,7 +73,7 @@ def FirstDeriv : Prop :=
     ∀ F : MvPowerSeries (Fin 2) K, IsLawOfLog p F →
     ∀ G : MvPowerSeries (Fin 2) K, DivAB G → Simeq (d1 F G) 0 →
       Integral (MvPowerSeries.pderiv (R := K) 0 G -
-        at1 0 (PowerSeries.derivative K (lgF K p)) * at1 1 (fLin G))
+        at1 0 (PowerSeries.derivative (R := K) (lgF K p)) * at1 1 (fLin G))
 
 def CobLin : Prop :=
   ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (p : ℕ), p.Prime →

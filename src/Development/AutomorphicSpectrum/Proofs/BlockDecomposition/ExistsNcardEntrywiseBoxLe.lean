@@ -1,12 +1,16 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Counting
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Counting
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory.CompanionTheory.Counting
 
-open GroundTheory.Automorphic.CuspidalSpectrum in
 
+open GroundTheory.Automorphic.CuspidalSpectrum in
 theorem exists_ncard_entrywiseBox_le (K : Type) [Field K] [NumberField K] (n : ℕ)
     (𝒦 : Set (FiniteAdeleRing (𝓞 K) K)) (h𝒦 : IsCompact 𝒦) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ T : Fin n → Fin n → ℝ, (∀ i j, 0 ≤ T i j) →
@@ -55,9 +59,9 @@ theorem exists_ncard_entrywiseBox_le (K : Type) [Field K] [NumberField K] (n : �
   · refine le_trans (Nat.cast_le.mpr (Set.ncard_le_ncard_of_injOn F (fun γ hγ => key γ hγ)
       (fun γ _ γ' _ h => inj γ γ' h) t.finite_toSet)) ?_
     rw [Set.ncard_coe_finset, ht, Fintype.card_piFinset, Nat.cast_prod, Fintype.prod_prod_type]
-    apply Finset.prod_le_prod (fun _ _ => Finset.prod_nonneg fun _ _ => by positivity)
+    apply Finset.prod_le_prod₀ (fun _ _ => Finset.prod_nonneg fun _ _ => by positivity)
     intro i _
-    apply Finset.prod_le_prod (fun _ _ => by positivity)
+    apply Finset.prod_le_prod₀ (fun _ _ => by positivity)
     intro j _
     rw [← Set.ncard_eq_toFinset_card _ (hA (i, j)).1]
     refine le_trans (hA (i, j)).2 ?_

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.KottwitzDimSignatureOneOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KottwitzDimSignatureOneOne
+
+@[expose] public section
 
 open Module GlobalTheory.HTRho
 
@@ -60,9 +64,9 @@ theorem mSub_rAct (σ : O →+* Module.End k H) (χ : C →+* k) (G : Submodule 
   ext z
   constructor
   · rintro ⟨w, ⟨c, x, _, rfl⟩, rfl⟩
-    exact ⟨c, x, x.2, by simp⟩
+    exact ⟨c, x, x.2, by simp [rAct]⟩
   · rintro ⟨c, x, hx, rfl⟩
-    exact ⟨_, ⟨c, ⟨x, hx⟩, trivial, rfl⟩, by simp⟩
+    exact ⟨_, ⟨c, ⟨x, hx⟩, trivial, rfl⟩, by simp [rAct]⟩
 
 theorem mSub_qAct {V : Type*} [AddCommGroup V] [Module k V] (τ : O →+* Module.End k V) (χ : C →+* k)
     (X : Submodule k V) (h : ∀ a, ∀ x ∈ X, τ a x ∈ X) :

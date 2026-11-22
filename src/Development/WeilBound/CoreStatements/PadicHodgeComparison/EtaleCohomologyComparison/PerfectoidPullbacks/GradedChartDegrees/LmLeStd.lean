@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GradedChartDegrees.ThickeningIdealNilpotent
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GradedChartDegrees.ThickeningIdealNilpotent
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -15,35 +19,6 @@ variable {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {X : Scheme.{0}}
 
 abbrev OMm (h : OL l O) (q : X ⟶ Spec (CommRingCat.of O)) (m : ℕ) : Thick (Lm h q m) ⥤ ModuleCat.{0} O :=
   B.OM (Lm h q m) (Ideal.Quotient.mk _)
-
-def redO (m : ℕ) : Om l O (m + 1) →+* Om l O m :=
-  Ideal.Quotient.factor (Ideal.span_singleton_le_span_singleton.2 (pow_dvd_pow _ m.le_succ))
-
-theorem dp_redO (h : OL l O) (m : ℕ) : IsDPMorphism (pdm h (m + 1)) (pdm h m) (redO m) :=
-  RL.pd_mor _ _ _ _ _ _ (RingHom.id O) _ Ideal.Quotient.mk_surjective (pdI_l l h.unit) (isPdm h _) (isPdm h _)
-    (fun _ hx => hx) fun _ => rfl
-
-def redN (h : OL l O) (q : X ⟶ Spec (CommRingCat.of O)) (m : ℕ) :
-    NMor (pdm h (m + 1)) q (κm l O (m + 1)) (pdm h m) q (κm l O m) (redO m) where
-  hI := dp_redO h m
-  u := 𝟙 X
-  g := RingHom.id O
-  hu := by simp
-  hκ a r hr := by
-    change Ideal.Quotient.mk _ (Ideal.Quotient.mk _ a) = Ideal.Quotient.mk _ r at hr
-    change Ideal.Quotient.mk _ (Ideal.Quotient.mk _ a) = Ideal.Quotient.mk _ (redO m r)
-    rw [Ideal.Quotient.eq] at hr ⊢
-    have := (dp_redO h m).1 (Ideal.mem_map_of_mem (redO m) hr)
-    rw [map_sub] at this
-    exact this
-
-def redMorO (h : OL l O) (q : X ⟶ Spec (CommRingCat.of O)) (m : ℕ) :
-    CH.Mor (OMm h q (m + 1)) (OMm h q m) (RingHom.id O) :=
-  B.omMor ((redN h q m).mor l) (RingHom.id O) (fun _ => rfl)
-
-def HSO (h : OL l O) (q : X ⟶ Spec (CommRingCat.of O)) (j : ℕ) : Sys.{1} O where
-  M m := CH.H (OMm h q m) j
-  r m := (redMorO h q m).pull j
 
 variable {q : X ⟶ Spec (CommRingCat.of O)}
 

@@ -1,10 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DualRestrictSurjectiveOfIsTorsionFreeQuotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DualRestrictSurjectiveOfIsTorsionFreeQuotient
+
+@[expose] public section
 
 open Matrix Module Function
-
-open private exists_symmetric_X_invertible_add_mul_of_ker_inter_eq_bot from
-  Mathlib.LinearAlgebra.SymplecticGroup
 
 namespace GlobalTheory
 
@@ -92,7 +93,7 @@ theorem transvection (hf : Surjective f) {i j : n} (hij : i ≠ j) (c : R) :
     LiftsToDetOne f (Matrix.transvection i j c) := by
   obtain ⟨c, rfl⟩ := hf c
   refine ⟨Matrix.transvection i j c, det_transvection_of_ne _ _ hij _, ?_⟩
-  simp [Matrix.transvection, Matrix.map_add, Matrix.map_single]
+  simp [Matrix.transvection, Matrix.map_add (f := _), Matrix.map_single]
 
 end LiftsToDetOne
 
@@ -277,6 +278,78 @@ end LiftsToSymplectic
 theorem exists_isSymm_isUnit_add_mul [Finite (MaximalSpectrum R)] {A B C D : Matrix l l R}
     (h : fromBlocks A B C D ∈ symplecticGroup l R) :
     ∃ X : Matrix l l R, X.IsSymm ∧ IsUnit (A + X * C).det := by
+  -- Inline the field argument from Mathlib.LinearAlgebra.SymplecticGroup.
+  have overField : ∀ {K : Type _} [Field K] {A C : Matrix l l K},
+      (∀ x : l → K, A *ᵥ x = 0 → C *ᵥ x = 0 → x = 0) →
+      Aᵀ * C = Cᵀ * A → ∃ X : Matrix l l K, X.IsSymm ∧ IsUnit (A + X * C) := by
+    intro K _ A C hker hsymm
+    -- `C` is transformed into `P = fromBlocks 1 0 0 0` by invertible matrices `V` and `U`.
+    rcases exists_rank_normal_form C with ⟨V, U, s, hV, hU, heq⟩
+    set P := V * C * U with P_def
+    set Q := Vᵀ⁻¹ * A * U with Q_def
+    set f := fun (x : Matrix l l K) ↦ x.submatrix s.symm s.symm
+    have hf (x) : f x = x.submatrix s.symm s.symm := rfl
+    have f_unit {x} : IsUnit x → IsUnit (f x) := (isUnit_submatrix_equiv ..).2
+    have f_mul (x y) : f (x * y) = f x * f y := submatrix_mul _ _ _ _ _ s.symm.bijective
+    have _ : Invertible V := hV.invertible
+    have _ : Invertible U := hU.invertible
+    have _ : Invertible (f Vᵀ) := (f_unit (V.isUnit_transpose.2 hV)).invertible
+    -- The hypothesis that the only vector annihilated by both matrices is 0, holds for `P` and `Q`.
+    have normalFormKer (x : Fin C.rank ⊕ Fin (Fintype.card l - C.rank) → K)
+        (hQ : f Q *ᵥ x = 0) (hP : f P *ᵥ x = 0) : x = 0 := by
+      have cancel {T E : Matrix l l K} (hT : IsUnit T) (hz : f (T * E * U) *ᵥ x = 0) :
+          E *ᵥ ((f U *ᵥ x) ∘ s) = 0 := by
+        rw [f_mul, f_mul, ← mulVec_mulVec, ← mulVec_mulVec] at hz
+        have hz' : f E *ᵥ (f U *ᵥ x) = 0 :=
+          mulVec_injective_of_isUnit (f_unit hT) (by rw [hz, mulVec_zero])
+        rwa [hf, submatrix_mulVec_equiv, Equiv.symm_symm, Equiv.comp_symm_eq, Pi.zero_comp] at hz'
+      refine mulVec_injective_of_isUnit (f_unit hU) ?_
+      rw [mulVec_zero]
+      refine s.surjective.injective_comp_right ?_
+      change (f U *ᵥ x) ∘ s = 0
+      exact hker _ (cancel (E := A) (isUnit_nonsing_inv_iff.2 (V.isUnit_transpose.2 hV)) hQ)
+        (cancel (E := C) hV hP)
+    -- The symmetry relation also holds for `P` and `Q`.
+    have hPQ : Qᵀ * P = Pᵀ * Q := by
+      simp only [P_def, mul_assoc, transpose_mul, transpose_nonsing_inv, transpose_transpose, Q_def,
+        inv_mul_cancel_left_of_invertible, mul_inv_cancel_left_of_invertible]
+      rw [← mul_assoc Aᵀ, hsymm, mul_assoc]
+    have hBlocks : (f Q).toBlocks₁₁ᵀ = (f Q).toBlocks₁₁ ∧ (f Q).toBlocks₁₂ = 0 := by
+      apply_fun reindex s s at hPQ
+      rw [reindex_apply, reindex_apply, ← hf, ← hf, f_mul, f_mul Pᵀ, heq, hf,
+        ← transpose_submatrix, ← hf Q, ← (f Q).fromBlocks_toBlocks, hf (_)ᵀ, hf
+        ((fromBlocks 1 0 0 0).submatrix _ _)] at hPQ
+      simp [fromBlocks_transpose, fromBlocks_multiply] at hPQ
+      tauto
+    -- The lower-right block of `Q` is invertible.
+    have hUnit₂₂ : IsUnit (f Q).toBlocks₂₂ := by
+      refine mulVec_injective_iff_isUnit.1 ?_
+      rw [← coe_mulVecLin, ← LinearMap.ker_eq_bot]
+      refine ker_mulVecLin_eq_bot_iff.2 fun x hx ↦ Sum.elim_injective' <|
+        (normalFormKer _ ?_ ?_).trans Sum.elim_zero_zero.symm
+      · rw [← (f Q).fromBlocks_toBlocks]
+        simp [hx, hBlocks.2, fromBlocks_mulVec]
+      · simp [hf, heq, fromBlocks_mulVec]
+    set Y : Matrix (Fin C.rank ⊕ Fin (Fintype.card l - C.rank)) (Fin C.rank ⊕
+      Fin (Fintype.card l - C.rank)) K := fromBlocks (1 - (f Q).toBlocks₁₁) 0 0 0 with Y_def
+    have hY_symm : Y.IsSymm := by
+      rw [Y_def, isSymm_fromBlocks_iff]
+      exact ⟨IsSymm.sub isSymm_one hBlocks.1, by simp⟩
+    -- We now take `X = Vᵀ * Y * V` and this gives the desired matrix `X.submatrix s s`.
+    set X := (f Vᵀ) * Y * (f V) with X_def
+    refine ⟨X.submatrix s s, IsSymm.submatrix ?_ s, (isUnit_submatrix_equiv s.symm s.symm).1 ?_⟩
+    · simp_rw [X_def, Matrix.IsSymm, transpose_mul, hY_symm.eq, hf, transpose_submatrix,
+        transpose_transpose, mul_assoc]
+    · have heq' : f (A + X.submatrix s s * C) = (f Vᵀ) * (f Q + Y * (f P)) * f (U⁻¹) := by
+        simp_rw [hf, submatrix_add, Pi.add_apply, Q_def, P_def, ← hf, f_mul, hf, mul_add, ← mul_assoc,
+          ← inv_submatrix_equiv, add_mul, mul_assoc _ (U.submatrix _ _), mul_inv_of_invertible]
+        simp [X_def]
+        rfl
+      rw [← hf, heq', IsUnit.mul_iff, IsUnit.mul_iff]
+      refine ⟨⟨isUnit_of_invertible _, ?_⟩, ?_⟩
+      · nth_rw 1 [Y_def, heq, ← (f Q).fromBlocks_toBlocks, hBlocks.2]
+        simpa [hf, fromBlocks_multiply, fromBlocks_add] using hUnit₂₂
+      · exact f_unit <| isUnit_nonsing_inv_iff.2 hU
   have key : ∀ p : MaximalSpectrum R, ∃ Y : Matrix l l (R ⧸ p.asIdeal), Y.IsSymm ∧
       IsUnit (A.map (Ideal.Quotient.mk p.asIdeal) + Y * C.map (Ideal.Quotient.mk p.asIdeal)) := by
     intro p
@@ -284,11 +357,10 @@ theorem exists_isSymm_isUnit_add_mul [Finite (MaximalSpectrum R)] {A B C D : Mat
     let _ := Ideal.Quotient.field p.asIdeal
     have h' := SymplecticGroup.map_mem h (Ideal.Quotient.mk p.asIdeal)
     rw [fromBlocks_map] at h'
-    refine exists_symmetric_X_invertible_add_mul_of_ker_inter_eq_bot (fun x h₁ h₂ => ?_)
+    refine overField (fun x h₁ h₂ => ?_)
       (SymplecticGroup.fromBlocks_mem_iff.1 h').1
     have hu := (isUnit_iff_isUnit_det _).2 (SymplecticGroup.symplectic_det h')
     have := mulVec_injective_iff_isUnit.2 hu (a₁ := Sum.elim x 0) (a₂ := Sum.elim 0 0) (by
-      rw [smul_eq_mulVec] at h₁ h₂
       simp [fromBlocks_mulVec, h₁, h₂])
     exact (Sum.elim_eq_iff.1 this).1
   choose Y hY hu using key
@@ -301,7 +373,7 @@ theorem exists_isSymm_isUnit_add_mul [Finite (MaximalSpectrum R)] {A B C D : Mat
   · have := p.isMaximal
     have hX : (Matrix.of fun i j => s fun p => Y p i j).map (Ideal.Quotient.mk p.asIdeal) = Y p :=
       Matrix.ext fun i j => by simp [hs]
-    rw [RingHom.map_det, map_add, map_mul, RingHom.mapMatrix_apply, RingHom.mapMatrix_apply,
+    rw [RingHom.map_det, map_add (f := _), map_mul, RingHom.mapMatrix_apply, RingHom.mapMatrix_apply,
       RingHom.mapMatrix_apply, hX]
     exact ((isUnit_iff_isUnit_det _).1 (hu p)).ne_zero
 
@@ -436,7 +508,8 @@ theorem IsSymplecticBasis.isSymplecticFamily_iff_toMatrix_mem {b : Basis (l ⊕ 
     ext i j
     rw [← hb.toMatrix_eq hB, of_apply]
     conv_lhs => rw [← b.sum_toMatrix_smul_self v i, ← b.sum_toMatrix_smul_self v j]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
       Matrix.mul_apply, transpose_apply, LinearMap.BilinForm.toMatrix_apply]
     exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
   rw [isSymplecticFamily_iff_gram hB, h, SymplecticGroup.mem_iff', Matrix.mul_neg, Matrix.neg_mul,
@@ -456,7 +529,6 @@ theorem IsSymplecticBasis.exists_basis_of_toMatrix_mem {b : Basis (l ⊕ l) R M}
     (hb.isSymplecticFamily_iff_toMatrix_mem hB v).2 hv
 
 omit [DecidableEq l] in
-
 theorem IsSymplecticBasis.mem_iff_repr_inr {b : Basis (l ⊕ l) R M} (hb : IsSymplecticBasis B b)
     {P : Submodule R M} (hP : ∀ x ∈ P, ∀ y ∈ P, B x y = 0) (h : ∀ i, b (.inl i) ∈ P) (x : M) :
     x ∈ P ↔ ∀ i, b.repr x (.inr i) = 0 := by
@@ -491,7 +563,6 @@ theorem IsSymplecticBasis.span_inr_eq {b : Basis (l ⊕ l) R M} (hb : IsSymplect
     Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span (Set.mem_range_self i))
 
 omit [DecidableEq l] in
-
 theorem IsSymplecticBasis.exists_adapted [Finite (MaximalSpectrum R)] {b : Basis (l ⊕ l) R M}
     (hb : IsSymplecticBasis B b) (hB : B.IsAlt) {P Q : Submodule R M}
     (hP : ∀ x ∈ P, ∀ y ∈ P, B x y = 0) (hQ : ∀ x ∈ Q, ∀ y ∈ Q, B x y = 0) (hPQ : P ⊔ Q = ⊤) :
@@ -516,7 +587,8 @@ theorem IsSymplecticBasis.exists_adapted [Finite (MaximalSpectrum R)] {b : Basis
   have hy : ∀ i, y i ∈ Q := fun i => Q.sum_mem fun k _ => Q.smul_mem _ (hq k)
   have hxy : ∀ i j, B (x i) (y j) = (1 : Matrix l l R) i j := fun i j => by
     rw [← hUV]
-    simp only [x, y, G, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [x, y, G, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
       Matrix.mul_apply, of_apply]
     exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
   obtain ⟨c, hc, hcv⟩ := hb.exists_basis_of_toMatrix_mem hB
@@ -538,7 +610,8 @@ theorem repr_semilinear_of_map_basis {ι : Type*} [Fintype ι] (φ : Λ →ₛ�
     {c : Basis ι R M} (h : ∀ i, φ (b i) = c i) (x : Λ) (i : ι) :
     c.repr (φ x) i = f (b.repr x i) := by
   conv_lhs => rw [← b.sum_repr x]
-  simp only [map_sum φ, φ.map_smulₛₗ, h, c.repr_sum_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum φ, φ.map_smulₛₗ, h, c.repr_sum_self]
 
 theorem IsSymplecticBasis.exists_lift (hf : Surjective f) (hB : B.IsAlt) (hB' : B'.IsAlt)
     (φ : Λ →ₛₗ[f] M) {b : Basis (l ⊕ l) S Λ} {b' : Basis (l ⊕ l) R M}
@@ -553,7 +626,8 @@ theorem IsSymplecticBasis.exists_lift (hf : Surjective f) (hB : B.IsAlt) (hB' : 
   obtain ⟨c, hc, hcv⟩ := hb.exists_basis_of_toMatrix_mem hB (hv.symm ▸ hT)
   refine ⟨c, hc, fun j => ?_⟩
   rw [hcv, ← b'.sum_toMatrix_smul_self c' j, ← hT']
-  simp only [map_sum φ, φ.map_smulₛₗ, h, map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum φ, φ.map_smulₛₗ, h, map_apply]
 
 theorem IsSymplecticBasis.exists_lift_adapted (hf : Surjective f) (hB : B.IsAlt) (hB' : B'.IsAlt)
     (φ : Λ →ₛₗ[f] M) {b : Basis (l ⊕ l) S Λ} {b' : Basis (l ⊕ l) R M}
@@ -582,15 +656,6 @@ open TensorProduct
 variable {S R Λ l : Type*} [CommRing S] [CommRing R] [AddCommGroup Λ] [Module S Λ] [Fintype l]
   {B : LinearMap.BilinForm S Λ}
 
-omit [Fintype l] in
-
-theorem IsSymplecticBasis.baseChange [Algebra S R] {b : Basis (l ⊕ l) S Λ}
-    (hb : IsSymplecticBasis B b) : IsSymplecticBasis (B.baseChange R) (b.baseChange R) := by
-  refine ⟨fun i j => ?_, fun i j => ?_, fun i => ?_, fun i j hij => ?_⟩
-  · simp [hb.left_left]
-  · simp [hb.right_right]
-  · simp [IsSymplecticFamily.left_right_self hb i]
-  · simp [IsSymplecticFamily.left_right_ne hb i j hij]
 
 theorem IsSymplecticBasis.exists_adapted_mod [Finite (MaximalSpectrum R)] {f : S →+* R}
     (hf : Surjective f) (hB : B.IsAlt) {b : Basis (l ⊕ l) S Λ} (hb : IsSymplecticBasis B b)

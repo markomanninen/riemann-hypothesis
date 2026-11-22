@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem avgSt : AvgSt := by
         have hs := V.add_mem hφ hψ
         have h0 := Subgroup.index_inf_ne_zero (hN0 _ hφ) (hN0 _ hψ)
         change lamF (φ.1 + ψ.1) = lamF φ.1 + lamF ψ.1
-        have e : f (φ.1 + ψ.1) = fun x => f φ.1 x + f ψ.1 x := funext fun x => by rw [hfe, hfe, hfe, map_add, map_add]
+        have e : f (φ.1 + ψ.1) = fun x => f φ.1 x + f ψ.1 x := funext fun x => by rw [hfe, hfe, hfe, map_add (f := _), map_add (f := _)]
         rw [hlamF _ hs, hlamF _ hφ, hlamF _ hψ, ← key _ hs _ h0 (fun x h hh => by
             rw [e]; exact congrArg₂ (· + ·) (hNinv _ hφ x h hh.1) (hNinv _ hψ x h hh.2)),
           ← key _ hφ _ h0 (fun x h hh => hNinv _ hφ x h hh.1), ← key _ hψ _ h0 (fun x h hh => hNinv _ hψ x h hh.2), e,

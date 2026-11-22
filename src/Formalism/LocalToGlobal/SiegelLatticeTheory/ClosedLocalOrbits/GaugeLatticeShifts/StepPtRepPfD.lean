@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepPtRepPfC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepPtRepPfC
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
     funext a
     have h2 : lam a * (Z *ᵥ ν) a = Zs.det * (if a = L then 1 else 0) := by
       have h := congrFun (congrFun (mul_adjugate Zs) a) L
-      rw [Matrix.mul_apply, Matrix.smul_apply, one_apply, smul_eq_mul] at h
+      rw [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply] at h
       rw [← h]
       simp only [mulVec, dotProduct, hνdef, Finset.mul_sum, hZs]
       exact Finset.sum_congr rfl fun b _ => by ring
@@ -116,7 +120,7 @@ theorem dframe (A B : Fr ε r k) (he : B.e = A.e) (i0 : Fin k) (Z : Matrix (Fin 
     funext b
     have h2 : lam b * (ρ ᵥ* Z) b = Zs.det * (if L = b then 1 else 0) := by
       have h := congrFun (congrFun (adjugate_mul Zs) L) b
-      rw [Matrix.mul_apply, Matrix.smul_apply, one_apply, smul_eq_mul] at h
+      rw [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply] at h
       rw [← h]
       simp only [vecMul, dotProduct, hρdef, Finset.mul_sum, hZs]
       exact Finset.sum_congr rfl fun a _ => by ring

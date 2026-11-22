@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenScaledInt
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenScaledInt
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix TensorProduct Classical
 
@@ -94,7 +99,7 @@ theorem indicator_scaledInt_eq_sum : ∀ (F : Type) [Field F] [NumberField F] (�
       have := sub_mem h h'
       convert this using 1
       funext i
-      simp only [ι, map_sub, Pi.sub_apply]
+      simp only [ι, Pi.sub_apply, map_sub]
       abel
     funext i
     obtain ⟨z, hz⟩ := rat_mem ham _ hd i
@@ -138,7 +143,7 @@ theorem indicator_scaledInt_eq_sum : ∀ (F : Type) [Field F] [NumberField F] (�
     have e : y - ι (rep (fun i => Ideal.Quotient.mk I (x i))) = (y - ι ξ) - ι (fun i => a * m * (t i : F)) := by
       funext i
       simp only [ι, Pi.sub_apply]
-      rw [hF i, map_add]
+      rw [hF i, map_add (f := _)]
       abel
     rw [e]
     exact sub_mem hξ' hw

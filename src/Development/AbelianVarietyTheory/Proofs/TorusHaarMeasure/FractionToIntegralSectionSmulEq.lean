@@ -1,19 +1,24 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveAsm
-import Formalism.LocalToGlobal.ProjectiveLattices.TieUpC
-import Formalism.LocalToGlobal.ProjectiveLattices.SupNDataOfNonneg
-import Formalism.LocalToGlobal.ProjectiveLattices.AxHInst
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveSec
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveInj
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
-import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
-import Development.AbelianVarietyTheory.Definitions.UpperBounds.PhRec
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.BirationalOfFormRatiosFullTrdegStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CompSplitRecord
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CuspEqZeroOfGenericValues
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CurveLocOfCountQAt
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CountQAtStGenericSectionPrimesStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CurveModelExistsAllPrimesAllPointsStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveAsm
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieUpC
+public import Formalism.LocalToGlobal.ProjectiveLattices.SupNDataOfNonneg
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveInj
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+public import Development.AbelianVarietyTheory.Definitions.UpperBounds.PhRec
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.BirationalOfFormRatiosFullTrdegStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CompSplitRecord
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CuspEqZeroOfGenericValues
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CurveLocOfCountQAt
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CountQAtStGenericSectionPrimesStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CurveModelExistsAllPrimesAllPointsStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.BigRec
 
 namespace GlobalTheory.SectionProduct
@@ -25,7 +30,7 @@ variable {K Fr : Type} [Field K] [CommRing Fr] [Algebra K Fr] (J : Ideal Fr)
 
 theorem map_mem_of_mem_sup {c : ι} {f : Fr} (hf : f ∈ J ⊔ RingHom.ker (φ c)) : φ c f ∈ Ideal.map (φ c) J := by
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hf
-  rw [map_add, (RingHom.mem_ker).1 hb, add_zero]
+  rw [map_add (f := _), (RingHom.mem_ker).1 hb, add_zero]
   exact Ideal.mem_map_of_mem _ ha
 
 theorem exists_sub_mem {c : ι}
@@ -130,9 +135,9 @@ variable {D : D7} {B : WeightFamilies.Prov D} {P : ModuliIntegralCharts.Prov D} 
 theorem fractionToIntegralSection_smul_eq (b : ↥(Frac0 X la G.w)) (m : SectionSheafQuotient X la G.w wF) : toOsK X la G.w b • m = b • m :=
   algebraMap_smul (OsK X la G.w) b m
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem lwZ_mem (Ω : Type) [CommRing Ω] [Algebra B.KO Ω] (gF : X.Forms →ₐ[B.KO] Ω) (z : ↥(HK X la G.w wF))
     (hz : z ∈ Jid X la G.w • (⊤ : Submodule ↥(Frac0 X la G.w) ↥(HK X la G.w wF))) :
     lwZ X la G.N Ω gF G.w (z : Lw X la G.w) ∈ Ideal.map (phiZ X la G.N Ω gF G.w) (Jid X la G.w) := by
@@ -140,12 +145,12 @@ theorem lwZ_mem (Ω : Type) [CommRing Ω] [Algebra B.KO Ω] (gF : X.Forms →ₐ
   · have e : ((r • n : ↥(HK X la G.w wF)) : Lw X la G.w) = (r : Lw X la G.w) * (n : Lw X la G.w) := rfl
     rw [e, map_mul]
     exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem (phiZ X la G.N Ω gF G.w) hr)
-  · rw [Submodule.coe_add, map_add]
+  · rw [Submodule.coe_add, map_add (f := _)]
     exact Ideal.add_mem _ hx hy
+
 
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem ratio_eq (Ω : Type) [CommRing Ω] [Algebra B.KO Ω] (gF : X.Forms →ₐ[B.KO] Ω) (g0 F : B.Cusp j wF)
     (b : ↥(Frac0 X la G.w)) (hb : b • resF G la g0 = resF G la F) :
     Ideal.Quotient.mk (Ideal.map (phiZ X la G.N Ω gF G.w) (Jid X la G.w)) (phiZ X la G.N Ω gF G.w b) *
@@ -168,9 +173,9 @@ theorem ratio_eq (Ω : Type) [CommRing Ω] [Algebra B.KO Ω] (gF : X.Forms →�
   rw [← map_mul]
   exact Ideal.Quotient.eq.2 h1
 
+
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem tie_of {ι : Type} [Finite ι] (Ω : ι → Type) [∀ Z, CommRing (Ω Z)] [∀ Z, Algebra B.KO (Ω Z)]
     (gF : ∀ Z, X.Forms →ₐ[B.KO] Ω Z) (g0 : B.Cusp j wF)
     (hinj : ∀ f : ↥(Frac0 X la G.w), (∀ Z, phiZ X la G.N (Ω Z) (gF Z) G.w f = 0) → f = 0)
@@ -213,9 +218,9 @@ theorem tie_of {ι : Type} [Finite ι] (Ω : ι → Type) [∀ Z, CommRing (Ω Z
 
 end Record
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem tieS : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c) (ka wL wF : WeightFamilies.Wt D j) (G : GlobalFamilyData (recPlus h j hj) ka wL wF) (hT : GenFromTest (T.Q.Xo j) T.Q.c hG) (S : Scal (recB h.toLawsCore)) (g0 : (recB h.toLawsCore).Cusp j wF) (la : HeightOneSpectrum (𝓞 (recB h.toLawsCore).KO)), CurveHyp h j hj hG ka wL wF G S g0 → InBasis G la → TieSSt h j hj hG hT G la g0 := by
   intro D T h j hj hG ka wL wF G hT S g0 la hH hB
   haveI : Finite (Comp (T.Q.Xo j) T.Q.c) := CompFin.finite_comp _ _

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,10 +26,12 @@ private theorem coneMap_monomial' (x : ι → Ω) (e : ι →₀ ℕ) (a : o) :
 private theorem coeff_coneMap_eq_aeval_homogeneousComponent (x : ι → Ω) (f : MvPolynomial ι o) (d : ℕ) :
     (coneMap o x f).coeff d = aeval x (homogeneousComponent d f) := by
   classical
-  conv_lhs => rw [f.as_sum, map_sum]
-  rw [Polynomial.finset_sum_coeff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [f.as_sum, map_sum]
+  rw [Polynomial.finsetSum_coeff]
   simp only [coneMap_monomial', Polynomial.coeff_C_mul_X_pow]
-  rw [homogeneousComponent_apply, map_sum, Finset.sum_filter]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [homogeneousComponent_apply, map_sum, Finset.sum_filter]
   refine Finset.sum_congr rfl fun e _ => ?_
   rcases eq_or_ne e.degree d with h | h
   · simp [h]

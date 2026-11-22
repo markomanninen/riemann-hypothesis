@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscrIsUnit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscrIsUnit
+
+@[expose] public section
+
 open IsLocalRing TensorProduct
 
 namespace GlobalTheory.EtaleCoker

@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.IdeleModuleDetOfMemMaxCompact
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
-import GroundTheory.AutomorphicForms.ReductionIwasawa
-import GroundTheory.AutomorphicForms.ReductionHeight
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.IdeleModuleDetOfMemMaxCompact
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import GroundTheory.AutomorphicForms.ReductionIwasawa
+public import GroundTheory.AutomorphicForms.ReductionHeight
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -257,7 +261,7 @@ theorem map_vecMul_diagonal (d : Fin n → IdeleGroup K) :
   have hsm : ∀ i, Measurable fun y : 𝔸[K] => d i • y := fun i =>
     (Homeomorph.smul (d i)).continuous.measurable
   have hmeas : Measurable fun x : Fin n → 𝔸[K] => fun i => d i • x i :=
-    measurable_pi_lambda _ fun i => (hsm i).comp (measurable_pi_apply i)
+    Measurable.of_eval fun i => (hsm i).comp (measurable_pi_apply i)
   set c : Fin n → ℝ≥0 := fun i => Real.toNNReal ((IdeleGroup.ideleModule K (d i) : ℝ))⁻¹
   have hc : ∀ i, ENNReal.ofReal ((IdeleGroup.ideleModule K (d i) : ℝ))⁻¹ = (c i : ℝ≥0∞) :=
     fun i => rfl
@@ -329,7 +333,7 @@ theorem map_vecMul_adelicBorel' {b : GL (Fin n) 𝔸[K]}
     measurePreserving_vecMul_unitriangular (adeleMeasure K) u hlow hdiag
   have hDm : Measurable fun x : Fin n → 𝔸[K] => x ᵥ* D :=
     (continuous_id.matrix_vecMul continuous_const).measurable
-  rw [hcomp, ← map_map hmu.measurable hDm, map_vecMul_diagonal, Measure.map_smul, hmu.map_eq,
+  rw [hcomp, ← map_map hmu.measurable hDm, map_vecMul_diagonal, Measure.map_smul _ hmu.measurable.aemeasurable, hmu.map_eq,
     hdet]
   congr 1
   rw [← ENNReal.ofReal_prod_of_nonneg (fun i _ => inv_nonneg.2 (IdeleGroup.ideleModule K (d i)).2.le),
@@ -347,7 +351,7 @@ theorem map_vecMul_adeleMeasurePi (g : GL (Fin n) 𝔸[K]) :
     funext x
     simp only [Function.comp_apply, Units.val_mul, vecMul_vecMul]
   rw [hcomp, ← map_map (measurable_vecMul' k) (measurable_vecMul' b), map_vecMul_adelicBorel' hb,
-    Measure.map_smul, map_vecMul_maxCompact' hk, map_mul, map_mul,
+    Measure.map_smul _ (measurable_vecMul' k).aemeasurable, map_vecMul_maxCompact' hk, map_mul, map_mul,
     ideleModule_det_of_mem_maxCompact' hk, mul_one]
 
 end

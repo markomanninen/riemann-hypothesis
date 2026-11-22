@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SepChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.PhiDvd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.FrobEig
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SepChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.PhiDvd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.FrobEig
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -47,7 +51,7 @@ theorem UpperTheory.V.FW.algK :
   have hJ : r (MonoidAlgebra.of k G J) = -1 := by
     have h0 : r (1 + MonoidAlgebra.of k G J) = 0 :=
       (hr _).mpr (Ideal.subset_span (Set.mem_insert_of_mem _ rfl))
-    rw [map_add, map_one] at h0
+    rw [map_add (f := _), map_one] at h0
     exact eq_neg_of_add_eq_zero_right h0
   have hla : l ^ a ≠ 0 := pow_ne_zero _ hl.ne_zero
   rw [← hr]

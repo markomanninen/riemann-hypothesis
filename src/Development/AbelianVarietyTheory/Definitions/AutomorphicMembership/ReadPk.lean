@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RealIoX
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroPlacesOverPrimes
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MovedReadingSameMapsBaseReadingAgrees
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RowsRestWordColumnUnitBaseTupleAlt
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RealIoX
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroPlacesOverPrimes
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MovedReadingSameMapsBaseReadingAgrees
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,22 +60,22 @@ structure PerT (Z : w.Lt) (hX : B.fields.Ok) (Xg : Finset (Gc B w.px → B.LL)) 
   crd : ∀ (a : w.C.Tup) y, IsCrd w.I hX a (e a)
     (rowForm (D := (w.st Z).toD7) (famR (w.st Z) w.I hX Set.univ Xg tr).A (lev1 w.I) (chr1 w.I) (tAll w.I a) y) (j a y)
 
-variable {w} in
 
+variable {w} in
 def CoreP {Z : w.Lt} {hX : B.fields.Ok} {Wt : Set B.places.Pl} (z : Dat (w.st Z) w.I hX T Wt) : Prop :=
   Formalism.L2.Pj.LawsCore z.core.toCore ∧ z.core.Q.Canon ∧ (∀ j, 1 ≤ (z.core.Q.Dw j).p + (z.core.Q.Dw j).q) ∧ z.core.pb = f.P.pb
 
-open Classical in
 
+open Classical in
 structure MuW (Wt : Set B.places.Pl) (W : RowsRest B w.C) : Prop where
   tw : ∀ v, w.I.xi (W.muTw v) = T.xiTw f v
   on : ∀ v, v ∈ Wt → W.muAt v = W.muTw v
   off : ∀ v, v ∉ Wt → W.muAt v = w.C.mu0
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 2000000 in
-
 structure RowPk {Z₀ : w.Lt} {hX : B.fields.Ok} {Wt : Set B.places.Pl} (z : Dat (w.st Z₀) w.I hX T Wt) : Type 1 where
   y : Hd z.R.toRealDat
   tup : ∀ t, y.tup t = ixOf w.I (usedOf w.I T Wt) t
@@ -155,10 +159,10 @@ structure Side0 (o : q.Over) : Type 1 where
      jEE_basis := s.basis
      jEE_norm := s.norm }⟩
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 4000000 in
-
 structure Moved (o : q.Over) : Type 1 where
   z : Dat (w.st o.Z) w.I hX T Wt
   intersectionNumber_baseChange : Holds z.R z.F
@@ -174,10 +178,10 @@ structure Moved (o : q.Over) : Type 1 where
   t : PkT z.F y (mAU (w.st o.Z) w.I hX z.Xg z.tr) q.p
   tA : ∀ b a, HEq (t.tA b a).j (q.t.tA b a).j
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 4000000 in
-
 structure ReadPk {o : q.Over} (m : Moved o) (s : Side0 o) : Type 1 where
   Y : Read m.z.R.toRealDat m.z.F.lv2 s.p0
   Z : RationalReadingWithoutCongruence m.z.R m.z.F s.p0 Y

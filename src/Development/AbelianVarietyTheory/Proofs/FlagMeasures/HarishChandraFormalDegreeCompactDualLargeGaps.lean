@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLitG
-import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdCons
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.OmegaDensityUnique
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.PsiFor
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.StdGapOfGapLap
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLitG
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdCons
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.OmegaDensityUnique
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.PsiFor
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.StdGapOfGapLap
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+
+@[expose] public section
 
 noncomputable section
 

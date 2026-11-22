@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfH
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfH
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.OntoI
 
@@ -95,7 +99,7 @@ def nuF : Measure (V (nd X)) :=
 variable {X x0 W FF}
 
 private lemma measurable_cpt : Measurable (cpt X x0) := by
-  refine measurable_pi_lambda _ fun τ => measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun τ => Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [cpt, rmul, mat, nmat, Matrix.mul_apply, Matrix.of_apply]
   refine Finset.measurable_sum _ fun c _ => ?_
   split_ifs

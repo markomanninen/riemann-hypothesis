@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocResidueFibreDim
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreDivSupp
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreTail
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocResidueFibreDim
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreDivSupp
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreTail
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -24,6 +29,20 @@ theorem SemilocResidueFibreDim.proof (hFD : FibreDivSupp.Statement) (hDim : Fibr
   have hsec' : IsSectionOn P' (HermLine.sqMetric (ι := ι') (Function.extend κ α 0)) (rename v s) :=
     ⟨Function.extend κ α 0, fun _ => rfl, isMultiHomog_rename hv hs, hsP⟩
   have hsec : IsSectionOn (imageZ v P') (HermLine.sqMetric (ι := ι) α) s := ⟨α, fun _ => rfl, hs, hsP⟩
+  have divSuppArith : DivSuppArithStatement := by
+    intro K _ ι _ P n A s W hP hs hW
+    obtain ⟨hK, ⟨hPp, hPh, -⟩, -, hPdim⟩ := hP
+    obtain ⟨a, -, hsa, hsP⟩ := hs
+    obtain ⟨hWmin, hWrel⟩ := hW
+    have hWp : W.IsPrime := hWmin.1.1
+    have hWmh : IsMultiHomogIdeal W := isMultiHomogIdeal_of_mem_minimalPrimes hPh hsa hWmin
+    have := hPp
+    have h1 := dim_quot_minimal_add_one P W s hsP hWmin
+    rw [hPdim] at h1
+    have hdim : ringKrullDim (MRing ι ⧸ W) = ((n + Fintype.card K : ℕ) : WithBot ℕ∞) :=
+      withBot_eq_of_add_one (by rw [h1, show n + 1 + Fintype.card K = n + Fintype.card K + 1 by omega])
+    exact ⟨fun hh => ⟨hK, ⟨hWp, hWmh, hWrel⟩, hh, hdim⟩,
+      fun hv => ⟨⟨hWp, hWmh, hWrel⟩, charOf_prime hWp hv, hdim⟩⟩
   have hA' := divSuppArith K' ι' P' n _ _ W' hP' hsec' hD'
   have hA := divSuppArith K ι (imageZ v P') n _ _ W hZ hsec hW
   have hdW : ringKrullDim (MRing ι ⧸ W) = ((n + Fintype.card K : ℕ) : WithBot ℕ∞) := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.HeckeTheorem
-import GroundTheory.GlobalFields.TateThesis.Nonvanishing
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.HeckeTheorem
+public import GroundTheory.GlobalFields.TateThesis.Nonvanishing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex Topology Filter Set
@@ -24,8 +29,8 @@ def normalizedLFunction (s : ℂ) : ℂ :=
 theorem normalizedLFunction_eq {s : ℂ} (hs : 1 < s.re) : χ.normalizedLFunction s = χ.LFunction s :=
   (χ.LFunction_eq_mul_completedLFunction hs).symm
 
-open Classical in
 
+open Classical in
 def continuedLFunction : ℂ → ℂ :=
   if h : ∃ τ : ℝ, ∀ x : IdeleGroup K,
       (χ.toIdele x : ℂ) = ((ideleModule K x : ℝ) : ℂ) ^ ((τ : ℂ) * I) then
@@ -37,7 +42,7 @@ theorem continuedLFunction_of_not
     (hχ : ¬ ∃ τ : ℝ, ∀ x : IdeleGroup K,
       (χ.toIdele x : ℂ) = ((ideleModule K x : ℝ) : ℂ) ^ ((τ : ℂ) * I)) :
     χ.continuedLFunction = χ.normalizedLFunction := by
-  rw [continuedLFunction, dif_neg hχ]
+  rw [continuedLFunction, dite_eq_right hχ]
 
 theorem differentiable_continuedLFunction
     (hχ : ¬ ∃ τ : ℝ, ∀ x : IdeleGroup K,
@@ -63,7 +68,7 @@ theorem continuedLFunction_of_forall :
       (limUnder (𝓝[≠] (-((τ : ℂ) * I))) χ.normalizedLFunction) := by
   have h : ∃ τ : ℝ, ∀ x : IdeleGroup K,
       (χ.toIdele x : ℂ) = ((ideleModule K x : ℝ) : ℂ) ^ ((τ : ℂ) * I) := ⟨τ, hτ⟩
-  rw [continuedLFunction, dif_pos h, choose_eq_of_forall hτ h]
+  rw [continuedLFunction, dite_eq_left h, choose_eq_of_forall hτ h]
 
 theorem continuedLFunction_of_ne {s : ℂ} (hs : s ≠ -((τ : ℂ) * I)) :
     χ.continuedLFunction s = χ.normalizedLFunction s := by
@@ -114,38 +119,6 @@ theorem differentiableOn_continuedLFunction_of_forall :
   exact ((χ.differentiable_cpow_mul_gammaFactor_inv z).mul
     (differentiableAt_completedLFunction_of_forall hτ hz.2 hz.1)).differentiableWithinAt
 
-omit hτ in
-
-theorem residue_continuedLFunction_ne_zero :
-    (χ.gammaFactor (1 - (τ : ℂ) * I))⁻¹ * (((normOneClassMeasure K univ).toReal : ℂ) *
-      ((π : ℂ) ^ nrComplexPlaces K)⁻¹ * χ.fourierConst χ.conductorDifferentIdele) ≠ 0 :=
-  mul_ne_zero (inv_ne_zero (χ.gammaFactor_ne_zero (by simp)))
-    (mul_ne_zero (mul_ne_zero (ofReal_ne_zero.2 (normOneClassMeasure_univ_toReal_ne_zero K))
-      (inv_ne_zero pi_pow_nrComplexPlaces_ne_zero))
-      (χ.fourierConst_ne_zero χ.toFractionalIdeal_conductorDifferentIdele))
-
-theorem tendsto_sub_mul_continuedLFunction_of_forall :
-    Tendsto (fun s ↦ (s - (1 - (τ : ℂ) * I)) * χ.continuedLFunction s) (𝓝[≠] (1 - (τ : ℂ) * I))
-      (𝓝 ((χ.gammaFactor (1 - (τ : ℂ) * I))⁻¹ * (((normOneClassMeasure K univ).toReal : ℂ) *
-        ((π : ℂ) ^ nrComplexPlaces K)⁻¹ * χ.fourierConst χ.conductorDifferentIdele))) := by
-  set d : ℂ := 1 - (τ : ℂ) * I with hd
-  set h : ℂ → ℂ := fun s ↦ (χ.discrNormConductor : ℂ) ^ (-(s / 2)) * (χ.gammaFactor s)⁻¹ with hh
-  have hh' : Tendsto h (𝓝[≠] d) (𝓝 (h d)) :=
-    ((χ.differentiable_cpow_mul_gammaFactor_inv d).continuousAt.tendsto).mono_left nhdsWithin_le_nhds
-  have hA : (χ.discrNormConductor : ℂ) ^ (-(d / 2)) * (χ.discrNormConductor : ℂ) ^ (d / 2) = 1 := by
-    rw [← cpow_add _ _ (ofReal_ne_zero.2 χ.discrNormConductor_pos.ne'), neg_add_cancel, cpow_zero]
-  refine ((hh'.mul (tendsto_mul_completedLFunction_one_sub_of_forall hτ)).congr' ?_).trans
-    (le_of_eq (congrArg 𝓝 ?_))
-  · have hne : ∀ᶠ s in 𝓝[≠] d, s ≠ -((τ : ℂ) * I) :=
-      eventually_nhdsWithin_of_eventually_nhds
-        (isOpen_compl_singleton.mem_nhds neg_ne_one_sub.symm)
-    filter_upwards [hne] with s hs
-    rw [continuedLFunction_of_ne hτ hs, normalizedLFunction]
-    simp only [hh]
-    ring
-  · simp only [hh]
-    linear_combination ((χ.gammaFactor d)⁻¹ * (((normOneClassMeasure K univ).toReal : ℂ) *
-      ((π : ℂ) ^ nrComplexPlaces K)⁻¹ * χ.fourierConst χ.conductorDifferentIdele)) * hA
 
 end Trivial
 

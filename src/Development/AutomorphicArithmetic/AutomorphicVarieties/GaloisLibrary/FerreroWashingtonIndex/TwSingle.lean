@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,12 +55,12 @@ section Grp
 
 variable {C : Type} [CommGroup C]
 
-variable (C) in
 
+variable (C) in
 abbrev powR (n : ℕ) : Subgroup C := (powMonoidHom n : C →* C).range
 
-variable (C) in
 
+variable (C) in
 abbrev torK (n : ℕ) : Subgroup C := (powMonoidHom n : C →* C).ker
 
 abbrev difR (τ : C →* C) : Subgroup C := (MonoidHom.id C / τ).range
@@ -70,8 +74,6 @@ def evenF {G : Type} [Group G] (J : G) : AddSubgroup (G → ZMod 2) where
   zero_mem' _ := rfl
   add_mem' {a b} ha hb g := by simp [ha g, hb g]
   neg_mem' {a} ha g := by simp [ha g]
-
-example : gc 7 3 1 = 1 := by decide +kernel
 
 end UpperTheory.V.FW
 

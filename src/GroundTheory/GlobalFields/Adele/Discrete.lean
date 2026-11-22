@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.Approximation
-import GroundTheory.GlobalFields.Adele.IntegersLattice
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.Approximation
+public import GroundTheory.GlobalFields.Adele.IntegersLattice
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -57,10 +61,10 @@ theorem existsUnique_sub_mem_fundamentalSet (x : 𝔸[K]) :
   obtain ⟨z, hz, -⟩ := existsUnique_sub_mem_fundamentalSetInfinite K (x.1 - algebraMap K K∞ k₁)
   refine ⟨k₁ + z, ⟨?_, ?_⟩, fun k hk => ?_⟩
   · change x.1 - algebraMap K K∞ (k₁ + z) ∈ _
-    rw [map_add, ← sub_sub, ← IsScalarTower.algebraMap_apply]
+    rw [map_add (f := _), ← sub_sub, ← IsScalarTower.algebraMap_apply]
     exact hz
   · change x.2 - algebraMap K (FiniteAdeleRing (𝓞 K) K) (k₁ + z) ∈ _
-    rw [map_add, ← sub_sub]
+    rw [map_add (f := _), ← sub_sub]
     exact Subring.sub_mem _ hk₁ (algebraMap_integers_mem_integralFiniteAdeles K z)
   · obtain ⟨hkinf, hkf⟩ := hk
     change x.1 - algebraMap K K∞ k ∈ fundamentalSetInfinite K at hkinf
@@ -71,7 +75,7 @@ theorem existsUnique_sub_mem_fundamentalSet (x : 𝔸[K]) :
       have h2 := Subring.sub_mem _ (Subring.sub_mem _ hk₁ hkf)
         (algebraMap_integers_mem_integralFiniteAdeles K z)
       convert h2 using 1
-      simp only [map_sub, map_add]
+      simp only [map_sub, map_add (f := _)]
       abel
     obtain ⟨u, hu⟩ := exists_eq_of_forall_mem_adicCompletionIntegers K _ hdiff
     have h1 : z + u = z := by
@@ -79,8 +83,8 @@ theorem existsUnique_sub_mem_fundamentalSet (x : 𝔸[K]) :
         ?_ hz
       convert hkinf using 1
       have hu' : algebraMap (𝓞 K) K u = k - (k₁ + algebraMap (𝓞 K) K z) := hu
-      rw [IsScalarTower.algebraMap_apply (𝓞 K) K K∞, map_add, hu']
-      simp only [map_sub, map_add]
+      rw [IsScalarTower.algebraMap_apply (𝓞 K) K K∞, map_add (f := _), hu']
+      simp only [map_sub, map_add (f := _)]
       abel
     have hu0 : u = 0 := by simpa using h1
     rw [hu0] at hu

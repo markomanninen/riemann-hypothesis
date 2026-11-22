@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+
+@[expose] public section
+
 open NumberField UpperHalfPlane GlobalTheory.HilbFam GlobalTheory.QFam
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization (Emb Frac latM qPow upperHalf cK omegaFactor IsPartialZeta HasExpansion)
 open GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates (iterD partialD)
@@ -65,9 +70,17 @@ theorem exists_den_prime_to : ∀ (E : Type) [Field E] [NumberField E] (l : ℕ)
   have hfin : {w : HeightOneSpectrum (𝓞 E) | ¬ z w ∈ w.adicCompletionIntegers E}.Finite :=
     Filter.eventually_cofinite.mp z.2
   refine ⟨∏ w ∈ hfin.toFinset, m w, ?_, fun w => ?_⟩
-  · rw [hl.prime.dvd_finset_prod_iff]
-    rintro ⟨w, -, h⟩
-    exact hm w h
+  · have hprod : ∀ s : Finset (HeightOneSpectrum (𝓞 E)), ¬ l ∣ ∏ w ∈ s, m w := by
+      intro s
+      induction s using Finset.induction_on with
+      | empty => simpa using hl.not_dvd_one
+      | @insert a s ha ih =>
+        simp only [Finset.prod_insert ha]
+        intro h
+        rcases hl.dvd_mul.mp h with h | h
+        · exact hm a h
+        · exact ih h
+    exact hprod _
   · have e : ∀ M : ℕ, (algebraMap E (Af E) (M : E) * z) w = (M : w.adicCompletion E) * z w := by
       intro M
       rw [← map_natCast (algebraMap E (w.adicCompletion E)) M]

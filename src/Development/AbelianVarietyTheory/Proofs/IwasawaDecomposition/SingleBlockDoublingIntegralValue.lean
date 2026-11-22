@@ -1,15 +1,19 @@
-import Formalism.LocalToGlobal.Divisibility.QLocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
-import Formalism.DoubleCosetMeasures.LatticeCoset
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsClosedLowUni
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
-import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsNrm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLocalAtCompletionIntegersChosenUniformiserStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CardResidueRingCompletionChosenUniformiserStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHaarGLCompletionIntegersVolOneStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAddHaarCompletionIntegralMatricesVolOneStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CardGLFiniteFieldEqPowMulProdStatement
+module
+
+public import Formalism.LocalToGlobal.Divisibility.QLocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
+public import Formalism.DoubleCosetMeasures.LatticeCoset
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsClosedLowUni
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
+public import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsNrm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLocalAtCompletionIntegersChosenUniformiserStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CardResidueRingCompletionChosenUniformiserStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHaarGLCompletionIntegersVolOneStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAddHaarCompletionIntegralMatricesVolOneStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CardGLFiniteFieldEqPowMulProdStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix NumberField IsDedekindDomain Formalism.BasicNotions Formalism.DoubleCosetMeasures Formalism.L2.Host Formalism.L2.DIV Formalism.L2.DIV.QLoc GlobalTheory.Mem.HD
 open scoped ComplexConjugate
@@ -28,7 +32,7 @@ theorem unitCharExtendedByZero_det_eq_char_det (δ : Fˣ →* ℂˣ) {n : ℕ} (
     rw [← Matrix.GeneralLinearGroup.val_det_apply]; exact Units.ne_zero _
   have e : Units.mk0 _ h = GeneralLinearGroup.det k :=
     Units.ext (by simp [Matrix.GeneralLinearGroup.val_det_apply])
-  rw [chi0, dif_neg h, e]
+  rw [chi0, dite_eq_right h, e]
 
 def rowEq (r t : ℕ) : Matrix (Fin r ⊕ Fin t) (Fin r) F ≃ Matrix (Fin (r + t)) (Fin r) F :=
   Matrix.reindex finSumFinEquiv (Equiv.refl _)
@@ -54,7 +58,7 @@ theorem phiQ_rowEq (O : Subring F) (ϖ : F) (δ : Fˣ →* ℂˣ) (r t : ℕ) (x
   unfold phiQ phiU
   by_cases h : (∃ k : GLint O r, ((k : GL (Fin r) F) : Matrix (Fin r) (Fin r) F) = Matrix.toRows₁ x) ∧
       Matrix.toRows₂ x ∈ IIset O ϖ
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     have hc : bAA (d := t) (c := 0) (rowEq r t x) ∈ Jset (GLint O r) ∧
         bDA (d := t) (c := 0) (rowEq r t x) ∈ IIset O ϖ ∧
         bAD (d := t) (c := 0) (rowEq r t x) ∈ intMat O r 0 ∧
@@ -69,7 +73,7 @@ theorem phiQ_rowEq (O : Subring F) (ϖ : F) (δ : Fˣ →* ℂˣ) (r t : ℕ) (x
       rw [← unitCharExtendedByZero_det_eq_char_det, hk]
     rw [e]
     simp [Units.val_inv_eq_inv_val]
-  · rw [dif_neg h, if_neg]
+  · rw [dite_eq_right h, if_neg]
     rintro ⟨h1, h2, -, -⟩
     rw [hA] at h1
     rw [hD] at h2
@@ -88,14 +92,15 @@ variable {F : Type} [Field F] [TopologicalSpace F] [IsTopologicalRing F]
 
 omit [IsTopologicalRing F] in
 theorem isUnrM_one (O : Subring F) (nrm : AbsoluteValue F ℝ) (r : ℕ) (χ : Fin 0 → F → ℂ) :
-    IsUnrM O nrm r 0 χ (1 : GL (Fin r) F × GL (Fin 0) F →* (ℂ ≃ₗᵢ[ℂ] ℂ)) where
-  smooth x := by
+    IsUnrM O nrm r 0 χ (1 : GL (Fin r) F × GL (Fin 0) F →* (ℂ ≃ₗᵢ[ℂ] ℂ)) := by
+  refine { smooth := ?_, irred := ?_, sph := ?_ }
+  · intro x
     convert isOpen_univ using 1
     ext m
     simp
-  irred W _ := Ideal.eq_bot_or_top W
-  sph := by
-    haveI : Subsingleton (GL (Fin 0) F) := ⟨fun a b => Units.ext (Subsingleton.elim _ _)⟩
+  · intro W _
+    exact Ideal.eq_bot_or_top W
+  · have : Subsingleton (GL (Fin 0) F) := ⟨fun a b => Units.ext (Subsingleton.elim _ _)⟩
     refine ⟨1, by simp, fun _ _ _ _ => rfl, fun _ => 1, Measure.dirac 1, ?_, ?_, ?_, ?_⟩
     · intro b _ k _
       simp
@@ -129,10 +134,10 @@ def rowEqM (r t : ℕ) : Matrix (Fin r ⊕ Fin t) (Fin r) F ≃ᵐ Matrix (Fin (
   toEquiv := rowEq r t
   measurable_toFun := by
     change Measurable fun (x : Fin r ⊕ Fin t → Fin r → F) (i : Fin (r + t)) => x (finSumFinEquiv.symm i)
-    exact measurable_pi_lambda _ fun i => measurable_pi_apply _
+    exact Measurable.of_eval fun i => measurable_pi_apply _
   measurable_invFun := by
     change Measurable fun (x : Fin (r + t) → Fin r → F) (i : Fin r ⊕ Fin t) => x (finSumFinEquiv i)
-    refine measurable_pi_lambda _ fun i => ?_
+    refine Measurable.of_eval fun i => ?_
     exact measurable_pi_apply _
 
 omit [Field F] in
@@ -245,7 +250,7 @@ variable {F : Type} [Field F] [MeasurableSpace F]
 omit [Field F] in
 theorem measurable_fromRows' (r t : ℕ) :
     Measurable (fun p : Matrix (Fin r) (Fin r) F × Matrix (Fin t) (Fin r) F => Matrix.fromRows p.1 p.2) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   rcases i with i | i
   · exact (measurable_pi_apply j).comp ((measurable_pi_apply i).comp measurable_fst)
   · exact (measurable_pi_apply j).comp ((measurable_pi_apply i).comp measurable_snd)

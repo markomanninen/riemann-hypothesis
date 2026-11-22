@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -58,7 +63,7 @@ private theorem exDiag (hSim : SimDiag) (hExt : ExtendEmb) {F : Type} [Field F] 
         rw [hent, map_zero, map_zero]
         simp
       map_add' := fun c c' => by
-        rw [hent, hent, hent, map_add, map_add, Matrix.mul_add, Matrix.add_mul, Matrix.add_apply] }
+        rw [hent, hent, hent, map_add (f := _), map_add (f := _), Matrix.mul_add, Matrix.add_mul, Matrix.add_apply] }
   choose ty hty using fun i => hExt F (f i)
   refine ⟨Sb, ty, hdet, fun c => ?_, ?_⟩
   · have h1 : (fun i => ty i (c : F)) = d c := funext fun i => (hty i c).symm
@@ -83,15 +88,13 @@ private theorem exR {g : ℕ} {Idx : Type} (E : Fin g ≃ Idx) (s : Idx → Prop
     rw [← Matrix.mulVec_add]
     congr 1
     funext j
-    simp only [Pi.add_apply]
-    split_ifs <;> simp
+    by_cases h : s (E j) <;> simp [h]
   · intro t x
     simp only [RingHom.id_apply]
     rw [← Matrix.mulVec_smul]
     congr 1
     funext j
-    simp only [Pi.smul_apply]
-    split_ifs <;> simp [Complex.real_smul]
+    by_cases h : s (E j) <;> simp [h, Complex.real_smul]
   · intro x
     funext k
     simp only [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hu, Matrix.one_mulVec, Equiv.apply_symm_apply]

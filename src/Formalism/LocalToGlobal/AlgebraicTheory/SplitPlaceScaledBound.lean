@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.ColBoundOfPaths
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.XiConn
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.EigenFrameDualOf
-import ReciprocityTheory.EigenFrames.EigenPf
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.ColBoundOfPaths
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.XiConn
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.EigenFrameDualOf
+public import ReciprocityTheory.EigenFrames.EigenPf
+
+@[expose] public section
 
 namespace Formalism.L2.AlgTh
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -16,10 +20,11 @@ private theorem tact_prod {X σ S : Type} [AddCommGroup X] [CommRing S] (wt : σ
 
 private theorem tact_aeval {O X σ S : Type} [CommRing O] [AddCommGroup X] [CommRing S] [Algebra O S]
     (wt : σ → X) (t : Multiplicative X →* Sˣ) (x : σ → S) (j : X) (p : MvPolynomial σ O)
-    (hp : ∀ d, Finsupp.weight wt d ≠ j → MvPolynomial.coeff d p = 0) :
+    (hp : ∀ d, Finsupp.weight wt d ≠ j → AddMonoidAlgebra.coeff p d = 0) :
     MvPolynomial.aeval (fun i => (t (Multiplicative.ofAdd (wt i)) : S) * x i) p =
       (t (Multiplicative.ofAdd j) : S) * MvPolynomial.aeval x p := by
-  rw [p.as_sum, map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hd' : Finsupp.weight wt d = j := by
     by_contra h
@@ -32,7 +37,8 @@ private theorem tact_approx {O X σ : Type} [CommRing O] [AddCommGroup X] [Finit
     ∃ s : Finset X, (n : ℕ∞) ≤ (F - ∑ j ∈ s, wcomp O wt j F).order := by
   classical
   refine ⟨(truncTotal n F).support.image (Finsupp.weight wt), nat_le_order fun d hd => ?_⟩
-  rw [map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum]
   simp only [coeff_wcomp]
   rw [Finset.sum_ite_eq]
   split_ifs with h
@@ -50,7 +56,8 @@ private theorem tact_vanish {O X σ S : Type} [CommRing O] [AddCommGroup X] [Fin
   intro n
   obtain ⟨s, hs⟩ := tact_approx wt F n
   have hm := GlobalTheory.algHom_mem_pow_of_le_order φ hφ hs
-  rw [map_sub, map_sum] at hm
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum] at hm
   simpa [h] using hm
 
 theorem UpperTheory.V.Alg.tact :
@@ -62,7 +69,7 @@ theorem UpperTheory.V.Alg.tact :
   haveI : IsAdicComplete (maximalIdeal R') R' := IsCO.complete (O := O)
   have hf_max : ∀ x ∈ maximalIdeal R, f x ∈ maximalIdeal R' := by
     intro x hx
-    rw [← res_eq_zero_iff O R' (f x), res_map f x, res_eq_zero_iff O R x]
+    rw [← res_eq_zero_iff O R' (f x), UpperTheory.V.Alg.res_map f x, res_eq_zero_iff O R x]
     exact hx
   let xs : W.σ → R' := fun i =>
     (t (Multiplicative.ofAdd (W.wt i)) : R') * f (W.π (MvPowerSeries.X i))

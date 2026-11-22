@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.StatementW
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Formalism.SatakeDualWeyl.StatementW
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -31,7 +35,8 @@ lemma wlocal_rowAct_mul {r n : ℕ} (A B : Matrix (Fin r) (Fin r) R) :
     rowAct R (n := n) (A * B) = (rowAct R B).comp (rowAct R A) := by
   apply MvPolynomial.algHom_ext
   intro v
-  simp only [rowAct, AlgHom.comp_apply, aeval_X, map_sum, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rowAct, AlgHom.comp_apply, aeval_X, map_sum, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
     Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun c _ => ?_
@@ -60,7 +65,7 @@ lemma wlocal_eval_rowGen {r n : ℕ} (a b : Fin r) (c : R) (f : MvPolynomial (Fi
   · intro x
     simp [rowGen, rowAct, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
   · intro p q hp hq
-    rw [map_add, map_add, Polynomial.eval_add, hp, hq]
+    rw [map_add (f := _), map_add (f := _), Polynomial.eval_add, hp, hq]
   · intro p v hp
     rw [map_mul, map_mul, Polynomial.eval_mul, hp]
     congr 1
@@ -97,7 +102,7 @@ private lemma coeff_rowGen_mem_weyl {r n : ℕ} (hn : n ≤ r) (ν : Fin n → �
     exact Submodule.subset_span ⟨(a, b, k) :: w, rfl⟩
   · simp
   · intro x y _ _ hx hy
-    rw [map_add, Polynomial.coeff_add]
+    rw [map_add (f := _), Polynomial.coeff_add]
     exact Submodule.add_mem _ hx hy
   · intro m x _ hx
     rw [map_smul, Polynomial.coeff_smul]
@@ -438,7 +443,7 @@ lemma wlocal_map_weyl (φ : R →+* S) {r n : ℕ} (hn : n ≤ r) (ν : Fin n �
   · rw [map_zero]
     exact Submodule.zero_mem _
   · intro x y _ _ hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hx hy
   · intro m x _ hx
     rw [wlocal_map_smul]
@@ -469,13 +474,14 @@ lemma wlocal_kill (P : Ideal R) [P.IsPrime] {σ : Type} (w : MvPolynomial σ R)
   have hc : ∀ m, ∃ t : P.primeCompl, (t : R) * w.coeff m = 0 := by
     intro m
     have h1 : algebraMap R (Localization.AtPrime P) (w.coeff m) = 0 := by
-      have := congrArg (coeff m) hw
-      rwa [coeff_map, coeff_zero] at this
+      have := congrArg (AddMonoidAlgebra.coeff · m) hw
+      simpa only [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] using this
     exact (IsLocalization.map_eq_zero_iff P.primeCompl (Localization.AtPrime P) _).mp h1
   choose t ht using hc
   refine ⟨∏ m ∈ w.support, (t m : R), Submonoid.prod_mem _ (fun m _ => (t m).2), ?_⟩
   ext m
-  rw [coeff_C_mul, coeff_zero]
+  rw [coeff_C_mul, AddMonoidAlgebra.coeff_zero]
+  change (∏ m ∈ w.support, (t m : R)) * w.coeff m = 0
   by_cases hm : m ∈ w.support
   · rw [← Finset.mul_prod_erase _ _ hm, mul_comm ((t m : P.primeCompl) : R), mul_assoc, ht m, mul_zero]
   · have h0 : w.coeff m = 0 := by
@@ -507,7 +513,7 @@ lemma wlocal_loc (P : Ideal R) [P.IsPrime] {r n : ℕ} (hn : n ≤ r) (ν : Fin 
       obtain ⟨s2, hs2, z2, hz2, e2⟩ := h2
       refine ⟨s1 * s2, P.primeCompl.mul_mem hs1 hs2, s2 • z1 + s1 • z2,
         Submodule.add_mem _ (Submodule.smul_mem _ _ hz1) (Submodule.smul_mem _ _ hz2), ?_⟩
-      rw [map_add, wlocal_map_smul, wlocal_map_smul, ← e1, ← e2]
+      rw [map_add (f := _), wlocal_map_smul, wlocal_map_smul, ← e1, ← e2]
       simp only [MvPolynomial.smul_eq_C_mul, map_mul]
       ring
     · intro a y' _ h

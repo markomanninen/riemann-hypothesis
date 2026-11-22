@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.ZeroEquiv
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.Zt2
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.Zt3
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.ZeroEquiv
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.Zt2
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.Zt3
+
+@[expose] public section
 
 noncomputable section
 

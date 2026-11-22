@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTExplDefs
-import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTExplDefs
+public import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
+
+@[expose] public section
 
 open Complex Classical
 
@@ -110,8 +114,8 @@ private theorem exists_factor_zeros_differentiableOn_nonvanishing (f : ℂ → �
     rw [(hgk ρ hρ).self_of_nhds]
     exact hkne ρ hρ
 
-open Filter Topology Metric in
 
+open Filter Topology Metric in
 theorem ex_landau_ord_core (f : ℂ → ℂ) (z₀ : ℂ) (r B : ℝ) (hr : 0 < r) (hB : 1 ≤ B)
     (hf : DifferentiableOn ℂ f (Metric.closedBall z₀ r)) (hfz₀ : f z₀ ≠ 0)
     (hbound : ∀ z ∈ Metric.closedBall z₀ r, ‖f z‖ ≤ B * ‖f z₀‖) :
@@ -174,7 +178,7 @@ theorem ex_landau_ord_core (f : ℂ → ℂ) (z₀ : ℂ) (r B : ℝ) (hr : 0 < 
   have hr3pos : 0 < r / 3 := by positivity
   have hPz₀ : ‖P z₀‖ ≤ (r / 3) ^ N := by
     rw [hP, norm_prod, hN, ← Finset.prod_pow_eq_pow_sum]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro ρ _
       positivity
     · intro ρ hρ
@@ -187,7 +191,7 @@ theorem ex_landau_ord_core (f : ℂ → ℂ) (z₀ : ℂ) (r B : ℝ) (hr : 0 < 
     intro z hz
     have hzd : dist z z₀ = r := Metric.mem_sphere.mp hz
     rw [← mul_pow, hP, norm_prod, hN, ← Finset.prod_pow_eq_pow_sum]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro ρ _
       positivity
     · intro ρ hρ

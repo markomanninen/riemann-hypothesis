@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ElementarySymmetricNormBound
 
@@ -8,7 +12,7 @@ theorem sum_esymm_eq_zero (s : Multiset ℂ) (x : ℂ) (hx : x ∈ s) :
     ∑ j ∈ Finset.range (Multiset.card s + 1),
       (-1) ^ j * (s.esymm j * x ^ (Multiset.card s - j)) = 0 := by
   have h := congrArg (Polynomial.eval x) (Multiset.prod_X_sub_X_eq_sum_esymm s)
-  rw [Polynomial.eval_multiset_prod, Polynomial.eval_finset_sum] at h
+  rw [Polynomial.eval_multiset_prod, Polynomial.eval_finsetSum] at h
   simp only [Multiset.map_map, Function.comp_def, Polynomial.eval_sub, Polynomial.eval_X,
     Polynomial.eval_C, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_neg,
     Polynomial.eval_one] at h

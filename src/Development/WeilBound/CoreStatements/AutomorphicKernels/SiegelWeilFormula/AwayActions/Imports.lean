@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.AlgebraMapAEInjective
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AwayActions.AlgebraMapAEInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,8 @@ theorem free_etale_sheaf_zmod_exists_hom_sending_generator (hcm : IsCMExt F E σ
       rw [sub_smul, one_smul]
       abel
     have hdet := det_idem_sum (fun o => ae (fo o)) (fun o => by rw [← map_mul, hfi]) (fun o o' h => by
-      rw [← map_mul, hfo o o' h, map_zero]) (by rw [← map_sum, hf1, map_one]) Mo
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_mul, hfo o o' h, map_zero]) (by rw [← map_sum, hf1, map_one]) Mo
     rw [← hsum, Fintype.sum_option] at hdet
     have hAeq : A = ∑ b : Bool, (ae (if b then e else 1 - e)) • (if b then (1 : Matrix (Fin n) (Fin n) (AE F E)) else A) := by
       simp only [Fintype.sum_bool, if_true, Bool.false_eq_true, if_false, hae, algebraMap_smul]
@@ -96,11 +101,13 @@ theorem free_etale_sheaf_zmod_exists_hom_sending_generator (hcm : IsCMExt F E σ
         _ = ae e := by rw [he, hee, map_zero, zero_mul, add_zero]
     set zs := ∑ i, ae (η i) * (A - incM F (g i) * C).det with hzs
     have hcz : cA σ zs = ∑ i, ae (η i) * cA σ (A - incM F (g i) * C).det := by
-      rw [hzs, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hzs, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, hae, AlgHom.commutes]
     have hzz : zs * cA σ zs = ae (∑ i, η i * i.1) := by
-      rw [hcz, hzs, sum_idem_mul (fun i => ae (η i)) (fun i => by rw [← map_mul, hηi]) (fun i j h => by
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hcz, hzs, sum_idem_mul (fun i => ae (η i)) (fun i => by rw [← map_mul, hηi]) (fun i j h => by
         rw [← map_mul, hηo i j h, map_zero]), map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, hgN i]

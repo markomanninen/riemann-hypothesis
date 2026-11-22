@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
-import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
+public import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set MeasureTheory
 open scoped NumberField.AdeleRing
@@ -154,8 +158,8 @@ theorem exists_isCompact_superset_unipFundamentalDomain :
   intro X hX p _
   exact ⟨subset_closure (hX p (mem_univ p)).1, (hX p (mem_univ p)).2⟩
 
-variable (r) in
 
+variable (r) in
 def constantTerm (φ : AdelicGLn.AdelicGL K n → ℂ) (g : AdelicGLn.AdelicGL K n) : ℂ :=
   ∫ X in unipFundamentalDomain K n r, φ (unipGL X * g) ∂unipMeasure K n r
 
@@ -201,8 +205,8 @@ theorem constantTerm_rightTranslate (φ : AdelicGLn.AdelicGL K n → ℂ) (h g :
 def IsCuspidal (φ : AdelicGLn.AdelicGL K n → ℂ) : Prop :=
   ∀ r : ℕ, 0 < r → r < n → ∀ g, constantTerm r φ g = 0
 
-variable (K n) in
 
+variable (K n) in
 def cuspForms : Submodule ℂ (AdelicGLn.AdelicGL K n → ℂ) where
   carrier := {φ | IsAutomorphicForm φ ∧ IsCuspidal φ}
   zero_mem' := ⟨isAutomorphicForm_zero, fun r _ _ g => constantTerm_zero g⟩

@@ -1,64 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.SmulBasisMemHatIff
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFiniteAdeleCompleteSeparated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.SmulBasisMemHatIff
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFiniteAdeleCompleteSeparated
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat
 open scoped TensorProduct Matrix nonZeroDivisors
 
 namespace GlobalTheory.AdLat.Complete
-
-theorem baer_fractionField (R K : Type) [CommRing R] [IsDomain R] [Field K] [Algebra R K]
-    [IsFractionRing R K] : Module.Baer R K := by
-  intro I g
-  by_cases hI : ∃ a ∈ I, a ≠ 0
-  · obtain ⟨a, ha, ha0⟩ := hI
-    have ha' : algebraMap R K a ≠ 0 := by
-      simpa using ha0
-    refine ⟨LinearMap.toSpanSingleton R K (g ⟨a, ha⟩ / algebraMap R K a), fun x hx => ?_⟩
-    have h : a • g ⟨x, hx⟩ = x • g ⟨a, ha⟩ := by
-      rw [← map_smul, ← map_smul]
-      congr 1
-      ext
-      simp [mul_comm]
-    rw [LinearMap.toSpanSingleton_apply, Algebra.smul_def]
-    rw [Algebra.smul_def, Algebra.smul_def] at h
-    field_simp
-    rw [← h]
-  · refine ⟨0, fun x hx => ?_⟩
-    have : x = 0 := by
-      by_contra h
-      exact hI ⟨x, hx, h⟩
-    subst this
-    have : (⟨0, hx⟩ : I) = 0 := rfl
-    rw [this, map_zero, map_zero]
-
-theorem exists_frame (R K V : Type) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
-    [IsFractionRing R K] [AddCommGroup V] [Module K V] [Module R V] [IsScalarTower R K V]
-    (M : Submodule R V) [Module.Finite R M] :
-    ∃ (m : ℕ) (e : Fin m → V) (t : Fin m → (V →ₗ[K] K)), (∀ i, e i ∈ M) ∧
-      (∀ i, ∀ v ∈ M, t i v ∈ (algebraMap R K).range) ∧ ∀ v ∈ M, ∑ i, t i v • e i = v := by
-  classical
-  have : Module.IsTorsionFree R V := Module.IsTorsionFree.trans_faithfulSMul R K V
-  have : Module.FinitePresentation R M := Module.finitePresentation_of_finite _ _
-  have : Module.Projective R M := Module.Flat.projective_of_finitePresentation
-  obtain ⟨m, f, g, -, -, hfg⟩ := Module.Finite.exists_comp_eq_id_of_projective R M
-  have h : ∀ i, ∃ s : V →ₗ[R] K, s ∘ₗ M.subtype = Algebra.linearMap R K ∘ₗ LinearMap.proj i ∘ₗ g :=
-    fun i => (baer_fractionField R K).extension_property _ M.injective_subtype _
-  choose s hs using h
-  have hs' : ∀ i v (hv : v ∈ M), s i v = algebraMap R K (g ⟨v, hv⟩ i) := fun i v hv =>
-    LinearMap.congr_fun (hs i) ⟨v, hv⟩
-  refine ⟨m, fun i => f (Pi.single i 1), fun i => (s i).extendScalarsOfIsLocalization R⁰ K,
-    fun i => (f _).2, fun i v hv => ⟨_, (hs' i v hv).symm⟩, fun v hv => ?_⟩
-  have h1 : f (g ⟨v, hv⟩) = ⟨v, hv⟩ := LinearMap.congr_fun hfg _
-  have h2 : ∑ i, g ⟨v, hv⟩ i • f (Pi.single i 1) = ⟨v, hv⟩ := by
-    conv_rhs => rw [← h1, pi_eq_sum_univ' (g _), map_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_smul]
-  have h3 := congrArg Subtype.val h2
-  simp only [Submodule.coe_sum, Submodule.coe_smul] at h3
-  refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) h3
-  rw [LinearMap.extendScalarsOfIsLocalization_apply', hs' i v hv, algebraMap_smul]
 
 section
 
@@ -130,7 +82,8 @@ private theorem eq_zero_of_forall_nsmul_mem_hat [FiniteDimensional F E] {m : ℕ
       (δ * B.repr (w i) ℓ) v ∈ v.adicCompletionIntegers F := by
     intro w hw i ℓ
     obtain ⟨a, ha, rfl⟩ := exists_integral_comb_of_mem_hat he hw
-    simp only [comb_apply_eq_sum_tmul, Finset.sum_apply, map_sum, Finsupp.coe_finset_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [comb_apply_eq_sum_tmul, Finset.sum_apply, map_sum, Finsupp.coe_finsetSum,
       Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply,
       smul_eq_mul, Finset.mul_sum]
     refine Finset.sum_induction _ (fun y : FiniteAdeleRing (𝓞 F) F =>
@@ -208,7 +161,7 @@ private theorem exists_limit_in_hat_of_cauchy_nsmul {m : ℕ} {e : Fin m → Fin
     | succ t ih =>
       show _root_.GlobalTheory.AdLat.Complete.comb e
         (a₀ + ∑ j ∈ Finset.range (t + 1), (j + 1).factorial • c j) = _
-      rw [Finset.sum_range_succ, ← add_assoc, map_add,
+      rw [Finset.sum_range_succ, ← add_assoc, map_add (f := _),
         show a₀ + ∑ j ∈ Finset.range t, (j + 1).factorial • c j = A t from rfl, ih, map_nsmul,
         hcx t]
   have hAint : ∀ t k v, A t k v ∈ v.adicCompletionIntegers F := by
@@ -254,11 +207,11 @@ private theorem exists_limit_in_hat_of_cauchy_nsmul {m : ℕ} {e : Fin m → Fin
   rw [Nat.mul_div_cancel' hdN] at hxw
   refine ⟨w + _root_.GlobalTheory.AdLat.Complete.comb e a,
     add_mem hw (comb_mem_hat_of_integral hmem ha), ?_⟩
-  rw [hyA, map_add, map_nsmul, hA, hxw, smul_add, add_assoc]
+  rw [hyA, map_add (f := _), map_nsmul, hA, hxw, smul_add, add_assoc]
+
 
 open NumberField IsDedekindDomain in
 open scoped TensorProduct Matrix nonZeroDivisors in
-
 theorem _root_.GlobalTheory.AdLat.Complete.hat_separated_complete : ∀ (F E : Type) [Field F] [NumberField F]
     [Field E] [NumberField E] [Algebra F E] (n : ℕ) (L : Submodule (𝓞 E) (Fin n → E)), L.FG →
     (∀ z : Fin n → _root_.GlobalTheory.AdLat.RA F E, (∀ N : ℕ, 0 < N →

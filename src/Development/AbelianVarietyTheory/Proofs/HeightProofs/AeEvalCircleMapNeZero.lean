@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.CastAddNeNatAdd
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralLogNormLeHalfLogIntegralSq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.CastAddNeNatAdd
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralLogNormLeHalfLogIntegralSq
+
+@[expose] public section
 
 open MeasureTheory Metric NumberField ReciprocityTheory.ChartRestriction.G.T0 ReciprocityTheory.MultiplicativeHeights
 open scoped TensorProduct
@@ -51,7 +55,7 @@ theorem ae_eval_circleMap_ne_zero : ∀ (m : ℕ) (f : MvPolynomial (Fin m) ℂ)
       have hQ : Polynomial.map (MvPolynomial.eval w) P ≠ 0 := by
         intro h
         apply hs
-        have := congrArg (fun q => Polynomial.coeff q k) h
+        have := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q k) h
         simpa [Polynomial.coeff_map] using this
       have hfin : ({y : ℂ | Polynomial.eval y (Polynomial.map (MvPolynomial.eval w) P) = 0}).Finite :=
         Polynomial.finite_setOfPred_isRoot hQ
@@ -62,7 +66,7 @@ theorem ae_eval_circleMap_ne_zero : ∀ (m : ℕ) (f : MvPolynomial (Fin m) ℂ)
       have hc : (fun i => circleMap 0 1 ((e.symm (y, s) : Fin (m + 1) → ℝ) i)) =
           Fin.cons (circleMap 0 1 y) w := by
         have : (e.symm (y, s) : Fin (m + 1) → ℝ) = Fin.cons y s := by
-          simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]; rfl
+          simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]
         rw [this]
         funext i
         cases i using Fin.cases <;> simp [hw]

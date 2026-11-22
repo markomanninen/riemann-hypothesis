@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformEnergyBoundOfSection
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.UIObjects
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformEnergyBoundOfSection
+public import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.UIObjects
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

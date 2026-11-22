@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DetShiftNormOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DiagonalMonomialFactorial
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DetShiftNormOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DiagonalMonomialFactorial
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 
@@ -30,7 +34,7 @@ theorem prod_factorial_le (N : ℕ) (hN : 0 < N) (ν : Fin N → ℕ) (hν : Ant
     omega
   calc ∏ i : Fin N, (ν i + (N - 1 - i)).factorial
       ≤ ∏ i : Fin N, ((ν i).factorial * (ν ⟨0, hN⟩ + N) ^ (N - 1 - (i : ℕ))) :=
-        Finset.prod_le_prod (fun _ _ => Nat.zero_le _) fun i _ => factorial_add_le _ _ _ (hB i)
+        Finset.prod_le_prod₀ (fun _ _ => Nat.zero_le _) fun i _ => factorial_add_le _ _ _ (hB i)
     _ = (∏ i, (ν i).factorial) * (ν ⟨0, hN⟩ + N) ^ (N * (N - 1) / 2) := by
         rw [Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, sum_rev_eq]
 
@@ -48,8 +52,8 @@ theorem hook_bound : HookBoundOf := by
   have hF0 : (0 : ℚ) ≤ fockQ (hw ℚ le_rfl ν) (hw ℚ le_rfl ν) := by exact_mod_cast hF0r
   have hP : (1 : ℚ) ≤ ∏ i : Fin N, ∏ j ∈ Finset.Ioi i, ((ν i - ν j + (j - i) : ℕ) : ℚ) := by
     calc (1 : ℚ) = ∏ i : Fin N, ∏ j ∈ Finset.Ioi i, (1 : ℚ) := by simp
-      _ ≤ _ := Finset.prod_le_prod (fun _ _ => by positivity) fun i _ =>
-          Finset.prod_le_prod (fun _ _ => zero_le_one) fun j hj => by
+      _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => by positivity) fun i _ =>
+          Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun j hj => by
             have hij' : i < j := Finset.mem_Ioi.1 hj
             have hij : (i : ℕ) < j := hij'
             exact_mod_cast (show 1 ≤ ν i - ν j + (j - i) by omega)

@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGBasic
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGBasic
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.HilbertClassField
 
 namespace GlobalTheory

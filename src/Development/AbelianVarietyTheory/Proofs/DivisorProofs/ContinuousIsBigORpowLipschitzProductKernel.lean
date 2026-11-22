@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RembApply
-import Formalism.LatticeTheta.Statement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RembApply
+public import Formalism.LatticeTheta.Statement
+
+@[expose] public section
 
 open NumberField nonZeroDivisors MeasureTheory GlobalTheory.LipschitzTR GlobalTheory.IndefiniteRowSideFullHecke.TraceDualDifferent
 open scoped FourierTransform RealInnerProductSpace
@@ -85,7 +89,7 @@ theorem continuous_and_isBigO_rpow_Phi (F : Type) [Field F] [NumberField F] (k :
     Continuous (Phi k z) ∧ ∀ b : ℝ, Phi k z =O[Filter.cocompact (RSp F)] fun v => ‖v‖ ^ (-b) := by
   refine ⟨?_, fun b => ?_⟩
   · unfold Phi
-    exact continuous_finset_prod _ fun τ _ =>
+    exact continuous_finsetProd _ fun τ _ =>
       (continuous_lipschitzOneVariableKernel hk (hz τ)).comp ((EuclideanSpace.proj τ : RSp F →L[ℝ] ℝ).continuous)
   obtain ⟨c, hc, hcle⟩ : ∃ c > 0, ∀ τ, c ≤ 2 * Real.pi * |(z τ).im| / 2 := by
     rcases isEmpty_or_nonempty (F →+* ℝ) with h | h
@@ -107,7 +111,7 @@ theorem continuous_and_isBigO_rpow_Phi (F : Type) [Field F] [NumberField F] (k :
     calc ‖Phi k z v‖ = ∏ τ, ‖phi1 k (z τ) (v τ)‖ := by unfold Phi; rw [norm_prod]
       _ ≤ ∏ τ, ((((k - 1).factorial : ℝ) * (2 / (2 * Real.pi * |(z τ).im|)) ^ (k - 1)) *
           Real.exp (-c * |v τ|)) :=
-        Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun τ _ => hfac τ
+        Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun τ _ => hfac τ
       _ = K * Real.exp (-c * ∑ τ, |v τ|) := by
         rw [Finset.prod_mul_distrib, Finset.mul_sum, Real.exp_sum]
       _ ≤ K * Real.exp (-c * ‖v‖) := by

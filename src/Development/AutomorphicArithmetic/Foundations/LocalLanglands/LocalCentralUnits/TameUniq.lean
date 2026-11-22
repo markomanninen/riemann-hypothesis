@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.EquivariantPartsOfFiniteType
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.PairingFactorsThroughPeriods
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.MemOfTameGeneratorFrobenius
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsUnitRho
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.EquivariantPartsOfFiniteType
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.PairingFactorsThroughPeriods
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.MemOfTameGeneratorFrobenius
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsUnitRho
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,17 +69,18 @@ private theorem orbit_of_sums (hn : 0 < n) (θ θ' : Kˣ →* ℂˣ)
   let l1 : (Kˣ →* ℂˣ) →₀ ℂ := ∑ i ∈ Finset.range n, Finsupp.single (θ ^ g ^ i) 1
   let l2 : (Kˣ →* ℂˣ) →₀ ℂ := ∑ i ∈ Finset.range n, Finsupp.single (θ' ^ g ^ i) 1
   have hl : Finsupp.linearCombination ℂ v l1 = Finsupp.linearCombination ℂ v l2 := by
-    simp only [l1, l2, map_sum, Finsupp.linearCombination_single, one_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [l1, l2, map_sum, Finsupp.linearCombination_single, one_smul]
     funext z
     simp only [Finset.sum_apply, v, MonoidHom.pow_apply, Units.val_pow_eq_pow_val]
     have := h z
     simpa only [map_pow, Units.val_pow_eq_pow_val] using this
   have he : l1 = l2 := hv.finsuppLinearCombination_injective hl
   have h1 : l1 θ' = 0 := by
-    simp only [l1, Finsupp.finset_sum_apply, Finsupp.single_apply]
+    simp only [l1, Finsupp.finsetSum_apply, Finsupp.single_apply]
     exact Finset.sum_eq_zero fun i hi => if_neg fun e => hne i (Finset.mem_range.mp hi) e.symm
   have h2 : l2 θ' ≠ 0 := by
-    simp only [l2, Finsupp.finset_sum_apply, Finsupp.single_apply]
+    simp only [l2, Finsupp.finsetSum_apply, Finsupp.single_apply]
     rw [Finset.sum_boole]
     have : (Finset.filter (fun i => θ' ^ g ^ i = θ') (Finset.range n)).card ≠ 0 := by
       refine Finset.card_ne_zero.mpr ⟨0, ?_⟩
@@ -88,8 +93,8 @@ end Fields
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
 
-open TameWeilRepresentationIrreducibility in
 
+open TameWeilRepresentationIrreducibility in
 private theorem pair_of_gen (φ : Weil h) (hφ : deg φ = -1) : ∃ t₀ : Ine (F := E) A,
     (∀ (n : ℕ) (a : WDRep h (Fin n → ℂ)), (∀ σ : Weil h, Formalism.MainNotions.BlochKatoReduction.IsWild A (σ : G E Ω) → a.ρ σ = 1) →
       a.ρ (ineIncl h t₀) * a.ρ φ = a.ρ φ * a.ρ (ineIncl h t₀) ^ normV w ∧
@@ -189,7 +194,7 @@ theorem UpperTheory.Zero.LLC.tameUniq :
         Module.finrank ℂ (Fin m → ℂ) = n := by
       intro m b hb
       have e := congrArg Polynomial.natDegree (charpoly_of_inFor b hb t₀)
-      rwa [LinearMap.charpoly_natDegree, natDegree_finset_prod_X_sub_C_eq_card, Finset.card_range] at e
+      rwa [LinearMap.charpoly_natDegree, natDegree_finsetProd_X_sub_C_eq_card, Finset.card_range] at e
     have hm := hdim a hV
     have hm' := hdim a' hV'
     obtain ⟨hc, hirr⟩ := h1 m a hat

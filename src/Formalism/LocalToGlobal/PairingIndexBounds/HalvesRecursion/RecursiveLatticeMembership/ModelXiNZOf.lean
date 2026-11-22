@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.RecursiveLatticeMembership.Bridge
-import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.MovesComposeU
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.RecursiveLatticeMembership.Bridge
+public import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.MovesComposeU
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

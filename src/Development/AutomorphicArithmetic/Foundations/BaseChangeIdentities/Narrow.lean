@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.BaseChangeIsobaricNOf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivOfIsSubquotient
-import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.TwoAtCharZero
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.BaseChangeIsobaricNOf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivOfIsSubquotient
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.TwoAtCharZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ structure IsBaseChangeU {E : Type} [Field E] [NumberField E] [IsCMField E] {n : 
   csd : ∀ i, CsdAsc (V i)
   loc : ∀ i w, IsLocCompGL (V i) w (σ i w)
   inf : ∀ i τ, HasInfCharGL (V i) τ (m i τ)
-  unram : ∀ w, IsUnramU π w → GlobalTheory.LGrp.IsSpherical (locProd h w (σ · w)) (GlobalTheory.LFun.KGL w n)
+  unram : ∀ w, IsUnramU π w → GlobalTheory.LGrp.IsSpherical (locProd h w (σ · w)) (GlobalTheory.LFun.KGL w (n := n))
   inert : ∀ (w : HeightOneSpectrum (𝓞 E)) (s : w.adicCompletion E →+* w.adicCompletion E) (ϖ : w.adicCompletion E)
     (q : ℕ), (∀ x : E, s (algebraMap E _ x) = algebraMap E _ (IsCMField.complexConj E x)) → IsUnramInv ϖ s q →
     ∀ α, HasSatAt π w s ϖ q α → GlobalTheory.LFun.HasSatGL w (locProd h w (σ · w)) (GlobalTheory.LGrp.bcParam n α)
@@ -34,7 +38,7 @@ def DefiniteN : Prop :=
         (m : Fin c → (E →+* ℂ) → Multiset ℂ), IsBaseChangeU π h V σ m
 
 def AscComp : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ), 1 ≤ N →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ), 1 ≤ N →
     (∀ (a : ℕ) (π : CuspSub E a), a = N → IsNormalised π →
       ∃ V : Submodule ℂ (Sm E N), IsDiscrete V ∧ AscEmb V π 1) ∧
     ∀ V : Submodule ℂ (Sm E N), IsDiscrete V → ∀ (a d : ℕ) (π : CuspSub E a),
@@ -42,8 +46,8 @@ def AscComp : Prop :=
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
-open GlobalTheory.BaseChangeBridge in
 
+open GlobalTheory.BaseChangeBridge in
 theorem definiteN_of : BaseChangeIsobaricN → DefiniteN := by
   intro hBC E _ _ _ hun n hn π hπ
   obtain ⟨c, N, h, V, σ, m, P, H⟩ := hBC E hun n hn π hπ

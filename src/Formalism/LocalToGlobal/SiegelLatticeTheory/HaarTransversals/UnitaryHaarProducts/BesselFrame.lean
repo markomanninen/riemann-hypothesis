@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WuDecayPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WuDecayPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,21 +47,21 @@ theorem wI_val (c : Fin (k + 1)) : (wI k r c).val = r + c.val := rfl
 theorem esI_val (a : Fin r) : (esI k r a).val = 2 * r + k - a.val := rfl
 
 theorem colQ_eI (a : Fin r) : colQ e f wf z0 (eI k r a) = e a := by
-  unfold colQ; rw [dif_pos (by rw [eI_val]; exact a.isLt)]; rfl
+  unfold colQ; rw [dite_eq_left (by rw [eI_val]; exact a.isLt)]; rfl
 
 theorem colQ_wI (c : Fin (k + 1)) (hc : c.val < k) : colQ e f wf z0 (wI k r c) = wf ⟨c.val, hc⟩ := by
   unfold colQ
-  rw [dif_neg (by rw [wI_val]; omega), dif_pos (by rw [wI_val]; omega)]
+  rw [dite_eq_right (by rw [wI_val]; omega), dite_eq_left (by rw [wI_val]; omega)]
   congr 1; apply Fin.ext; show r + c.val - r = c.val; omega
 
 theorem colQ_wI_last (c : Fin (k + 1)) (hc : c.val = k) : colQ e f wf z0 (wI k r c) = z0 := by
   unfold colQ
-  rw [dif_neg (by rw [wI_val]; omega), dif_neg (by rw [wI_val]; omega), dif_pos (by rw [wI_val]; omega)]
+  rw [dite_eq_right (by rw [wI_val]; omega), dite_eq_right (by rw [wI_val]; omega), dite_eq_left (by rw [wI_val]; omega)]
 
 theorem colQ_esI (a : Fin r) : colQ e f wf z0 (esI k r a) = f a := by
   have ha := a.isLt
   unfold colQ
-  rw [dif_neg (by rw [esI_val]; omega), dif_neg (by rw [esI_val]; omega), dif_neg (by rw [esI_val]; omega)]
+  rw [dite_eq_right (by rw [esI_val]; omega), dite_eq_right (by rw [esI_val]; omega), dite_eq_right (by rw [esI_val]; omega)]
   congr 1; apply Fin.ext; show 2 * r + k - (2 * r + k - a.val) = a.val; omega
 
 def Qm : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ := Matrix.of fun i j => colQ e f wf z0 j i
@@ -192,8 +196,8 @@ section Frame
 variable {ε : Fin (2 * r + k + 1) → Bool} {e f : Fin r → Fin (2 * r + k + 1) → ℂ}
   {wf : Fin k → Fin (2 * r + k + 1) → ℂ} {z0 : Fin (2 * r + k + 1) → ℂ}
 
-variable (ε e f wf z0) in
 
+variable (ε e f wf z0) in
 def Qi : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ := Hpk k r * (Qm e f wf z0)ᴴ * Formalism.REAL.Jm ε
 
 theorem cay_BA {m : ℕ} {A B J H : Matrix (Fin m) (Fin m) ℂ} (hA : Aᴴ * J * A = H) (hH : H * H = 1)
@@ -423,8 +427,8 @@ theorem hJ_colQ_Qm (hF : IsFrameJ ε e f wf z0) (i : Fin (2 * r + k + 1)) (v : F
   rw [← gramQ hF, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec]
   simp only [hJ, mulVec, dotProduct, conjTranspose_apply, Qm, Matrix.of_apply, Pi.star_apply]
 
-variable (ε e f wf z0) in
 
+variable (ε e f wf z0) in
 def piB {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
     (πl : Matrix (Fin k) (Fin k) ℂ → (V →L[ℂ] V)) (g : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) :
     V →L[ℂ] V :=
@@ -433,8 +437,8 @@ def piB {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
 theorem blockW_wI (h : Matrix (Fin k) (Fin k) ℂ) (a b : Fin k) :
     blockW k r h (wI k r ⟨a.val, by omega⟩) (wI k r ⟨b.val, by omega⟩) = h a b := by
   unfold blockW
-  rw [dif_pos ⟨by rw [wI_val]; omega, by rw [wI_val]; simp only [Fin.val_mk]; have := a.isLt; omega⟩,
-    dif_pos ⟨by rw [wI_val]; omega, by rw [wI_val]; simp only [Fin.val_mk]; have := b.isLt; omega⟩]
+  rw [dite_eq_left ⟨by rw [wI_val]; omega, by rw [wI_val]; simp only [Fin.val_mk]; have := a.isLt; omega⟩,
+    dite_eq_left ⟨by rw [wI_val]; omega, by rw [wI_val]; simp only [Fin.val_mk]; have := b.isLt; omega⟩]
   congr 1 <;> apply Fin.ext <;> simp only [wI_val] <;> omega
 
 theorem piB_blockW (hF : IsFrameJ ε e f wf z0) {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
@@ -447,15 +451,6 @@ theorem piB_blockW (hF : IsFrameJ ε e f wf z0) {V : Type} [NormedAddCommGroup V
     rw [colQ_wI _ _ _ _ _ (by simp only; exact c.isLt)]
   rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hw b, Qi_mulVec_col hF, hw a, hJ_colQ_Qm hF, Hpk_mulVec,
     sgn_wI _ (by simp only; exact a.isLt), sig_wI_eq, one_mul, ← mat_apply_bvec, blockW_wI]
-
-theorem piB_conj (hF : IsFrameJ ε e f wf z0) {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
-    (πl : Matrix (Fin k) (Fin k) ℂ → (V →L[ℂ] V)) (h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) :
-    piB ε e f wf z0 πl (Qi ε e f wf z0 * h * Qm e f wf z0) = πl (fun a b => hJ ε (wf a) (h *ᵥ wf b)) := by
-  unfold piB
-  have : Qm e f wf z0 * (Qi ε e f wf z0 * h * Qm e f wf z0) * Qi ε e f wf z0 = h := by
-    simp only [← Matrix.mul_assoc, Qm_mul_Qi hF, Matrix.one_mul]
-    rw [Matrix.mul_assoc, Qm_mul_Qi hF, Matrix.mul_one]
-  rw [this]
 
 end Frame2
 
@@ -608,8 +603,8 @@ section Meas3
 variable {ε : Fin (2 * r + k + 1) → Bool} {e f : Fin r → Fin (2 * r + k + 1) → ℂ}
   {wf : Fin k → Fin (2 * r + k + 1) → ℂ} {z0 : Fin (2 * r + k + 1) → ℂ}
 
-variable (ε e f wf z0) in
 
+variable (ε e f wf z0) in
 def HNset (zB : Fin (2 * r + k + 1) → ℂ) : Set (Formalism.REAL.UJ ε) :=
   {s | Qi ε e f wf z0 * uMat s * Qm e f wf z0 ∈ Sset k r zB}
 
@@ -959,14 +954,6 @@ def BesselLevi : Prop :=
       (s *ᵥ (((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k)))) i =
         (((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k))) i) →
     s ∈ Sset k r (((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k)))
-
-def BesselSGroup : Prop :=
-  ∀ (k r : ℕ) (T : ℝ), 0 < T →
-    (∀ s ∈ Sset k r (((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k))),
-      ∀ t ∈ Sset k r (((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k))),
-        s * t ∈ Sset k r (((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k)))) ∧
-    ∀ s ∈ Sset k r (((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k))),
-      Hpk k r * sᴴ * Hpk k r ∈ Sset k r (((Real.sqrt T : ℝ) : ℂ) • bvec (wI k r (Fin.last k)))
 
 def TensInt : Prop :=
   ∀ (ι : Type) [Fintype ι] (X : ι → Type) [∀ v, MeasurableSpace (X v)] (μ : ∀ v, Measure (X v))

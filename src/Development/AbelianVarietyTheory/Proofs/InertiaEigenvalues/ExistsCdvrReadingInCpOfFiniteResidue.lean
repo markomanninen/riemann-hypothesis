@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NatCastMemPlaceAt
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckePrimeDetection
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUTestNontrivial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPlaceEmb
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteAndIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NatCastMemPlaceAt
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckePrimeDetection
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUTestNontrivial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPlaceEmb
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteAndIntegral
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.GeoTie
 
 set_option autoImplicit false
@@ -34,7 +39,7 @@ theorem exists_factor_algCl {p : ℕ} [Fact p.Prime] {F : Type} [Field F] [Numbe
   · apply hinj; rw [hf]; simp
   · intro x y; apply hinj; rw [map_mul, hf, hf, hf]; exact map_mul φ x y
   · apply hinj; rw [hf]; simp
-  · intro x y; apply hinj; rw [map_add, hf, hf, hf]; exact map_add φ x y
+  · intro x y; apply hinj; rw [map_add (f := _), hf, hf, hf]; exact map_add φ x y
 
 section Val
 

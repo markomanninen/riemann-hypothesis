@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.KernelRankAlgebraicBound
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.KernelRankAlgebraicBound
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat

@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.ClosedEmb
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.RightOfFd
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SiegelSetsSL2AdelicTie
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import GroundTheory.GlobalFields.Adele.Compact
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.ClosedEmb
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.RightOfFd
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SiegelSetsSL2AdelicTie
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import GroundTheory.GlobalFields.Adele.Compact
+
+@[expose] public section
 
 noncomputable section
 
@@ -212,7 +216,7 @@ theorem cusp_of {u : Rˣ} (hu : 2 * pI K (Φ (u⁻¹).1) = 1) (hu' : pF K (Φ (u
   · obtain ⟨L, a, b, c, D, hD⟩ := small_ad U hU
     refine ⟨L, a, b, c, D, fun x => ?_⟩
     obtain ⟨ξ, h⟩ := hD (Φ x)
-    rw [← hi, ← map_add] at h
+    rw [← hi, ← map_add (f := _)] at h
     refine ⟨inc ξ, ⟨uni (.ofAdd ξ), Subtype.ext (Matrix.ext fun i j => ?_)⟩, h⟩
     fin_cases i <;> fin_cases j
     exacts [map_one inc, rfl, map_zero inc, map_one inc]
@@ -232,7 +236,7 @@ theorem lat_of : Lat (inc.toAddMonoidHom.toMultiplicative).range := by
   · obtain ⟨L, -, b, -, D, hD⟩ := small_ad (K := K) _ univ_mem
     refine ⟨_, ((ball_cpt D L b).image hΦ').image continuous_ofAdd, fun x => ?_⟩
     obtain ⟨ξ, h⟩ := hD (Φ x.toAdd)
-    rw [← hi, ← map_add] at h
+    rw [← hi, ← map_add (f := _)] at h
     exact ⟨_, ⟨.ofAdd ξ, rfl⟩, _, ⟨_, h, Φ.symm_apply_apply _⟩, rfl⟩
 
 end PositivityTheory.ThKEnd.Two

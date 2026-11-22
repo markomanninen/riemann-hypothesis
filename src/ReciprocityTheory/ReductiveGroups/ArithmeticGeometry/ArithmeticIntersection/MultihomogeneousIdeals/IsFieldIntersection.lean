@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,8 @@ def IsBlockMap (κ : K → K') (v : (Σ k, ι k) → (Σ k', ι' k')) : Prop :=
   Function.Injective κ ∧ Function.Injective v ∧ (∀ p, (v p).1 = κ p.1) ∧
     ∀ q : Σ k', ι' k', q.1 ∈ Set.range κ → q ∈ Set.range v
 
-variable (F) in
 
+variable (F) in
 def imageVar (v : (Σ k, ι k) → (Σ k', ι' k')) (V' : Ideal (MRingOver F ι')) : Ideal (MRingOver F ι) :=
   V'.comap (rename v : MRingOver F ι →ₐ[F] MRingOver F ι').toRingHom
 

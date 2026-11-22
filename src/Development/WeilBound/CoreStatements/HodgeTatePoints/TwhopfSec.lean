@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteOpenHopfOrder
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorRegular
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteOpenHopfOrder
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorRegular
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open GlobalTheory.CompanionTheory.Ar.BT
 
@@ -110,7 +115,7 @@ theorem regularAt_add_mul {f f' : T → FractionRing R} {g : Γ.G.left} (h : Γ.
   have hb : ∀ t h, valAt (Γ.pt t).left (U ⊓ V) h b = f' t := fun t h =>
     (valAt_restrict _ _ h (top_le_of_le _ inf_le_right h) _).trans (hs' t _)
   refine ⟨⟨U ⊓ V, ⟨hU, hV⟩, a + b, fun t h => ?_⟩, ⟨U ⊓ V, ⟨hU, hV⟩, a * b, fun t h => ?_⟩⟩
-  · rw [← SubOrder.valHom_apply, map_add, SubOrder.valHom_apply, SubOrder.valHom_apply, ha, hb]
+  · rw [← SubOrder.valHom_apply, map_add (f := _), SubOrder.valHom_apply, SubOrder.valHom_apply, ha, hb]
   · rw [← SubOrder.valHom_apply, map_mul, SubOrder.valHom_apply, SubOrder.valHom_apply, ha, hb]
 
 def btSub (U : Γ.G.left.Opens) : Subalgebra R (T → R) where
@@ -118,7 +123,7 @@ def btSub (U : Γ.G.left.Opens) : Subalgebra R (T → R) where
   mul_mem' hf hf' t g hg := by
     simpa only [Pi.mul_apply, map_mul] using (regularAt_add_mul Γ (hf t g hg) (hf' t g hg)).2
   add_mem' hf hf' t g hg := by
-    simpa only [Pi.add_apply, map_add] using (regularAt_add_mul Γ (hf t g hg) (hf' t g hg)).1
+    simpa only [Pi.add_apply, map_add (f := _)] using (regularAt_add_mul Γ (hf t g hg) (hf' t g hg)).1
   algebraMap_mem' r _ g _ := regularAt_const Γ r g
 
 end ops
@@ -127,10 +132,11 @@ theorem mem_order : ∀ (R : Type) [CommRing R] [IsDomain R] (T : Type) [CommGro
   intro R _ _ T _ _ Γ U f
   exact ⟨fun h => Algebra.adjoin_le (S := btSub Γ U) (fun _ hx => hx) h, fun h => Algebra.subset_adjoin h⟩
 
-open GlobalTheory.CompanionTheory.Ar.BT.SubOrder in
 
+open GlobalTheory.CompanionTheory.Ar.BT.SubOrder in
 theorem sub_order : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed R] (T : Type) [CommGroup T] [Finite T] (Γ : QFGroup R T) (U : Γ.G.left.Opens), Γ.IsFinOpenSub U → ∃ (H : Subgroup T) (A : Subalgebra R (H → R)), (∀ t, t ∈ H ↔ ⊤ ≤ (Γ.pt t).left ⁻¹ᵁ U) ∧ IsHopfOrder A ∧ ∀ f : H → R, f ∈ A ↔ ∃ s : Γ(Γ.G.left, U), ∀ (t : H) (h : ⊤ ≤ (Γ.pt t).left ⁻¹ᵁ U), valAt (Γ.pt t).left U h s = algebraMap R _ (f t) := by
   intro R _ _ _ T _ _ Γ U hF
+  open GlobalTheory.CompanionTheory.Ar.BT.SubOrder in
   have hU := isAffineOpen_of_fin Γ hF
   letI : Algebra R Γ(Γ.G.left, U) := (secRho Γ hU).toAlgebra
   have hρ : hU.fromSpec ≫ Γ.G.hom = Spec.map (CommRingCat.ofHom (algebraMap R Γ(Γ.G.left, U))) :=
@@ -163,7 +169,7 @@ theorem sub_order : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed
     · rintro ⟨s, hs⟩
       exact ⟨s, funext fun t => inj ((hΦ s t t.2).symm.trans (hs t t.2))⟩
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro s hs
     refine sec_inj R T Γ U s fun t h => ?_
     have := hΦ s ⟨t, h⟩ h
@@ -205,7 +211,6 @@ theorem sub_order : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrallyClosed
           Algebra.TensorProduct.productMap (valAlg hρ z.1 z.1.2) (valAlg hρ z.2 z.2.2) c' := by
       intro c'
       induction c' with
-      | zero => exact ⟨0, Submodule.zero_mem _, fun z => by simp⟩
       | tmul a b =>
         refine ⟨fun z => Φ a z.1 * Φ b z.2, Submodule.subset_span ⟨Φ a, ⟨a, rfl⟩, Φ b, ⟨b, rfl⟩, rfl⟩, fun z => ?_⟩
         simp only [map_mul, Algebra.TensorProduct.productMap_apply_tmul]

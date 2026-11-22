@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SetAutSelfNaut
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GEquivIntL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeAlgebraCompUnitaryGroupAntidiagTransportMemStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryTorusUnipotentCosetTransportIffStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitarySatakeInvariantAntidiagTransportStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InertHeckeOperatorIndepOfInertDatumStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IrreducibleRepIsotypicOfCentraliserFactorStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryFiniteAdelesSplitPlaceDecompositionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SetAutSelfNaut
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GEquivIntL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeAlgebraCompUnitaryGroupAntidiagTransportMemStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryTorusUnipotentCosetTransportIffStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitarySatakeInvariantAntidiagTransportStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InertHeckeOperatorIndepOfInertDatumStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IrreducibleRepIsotypicOfCentraliserFactorStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryFiniteAdelesSplitPlaceDecompositionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -151,90 +155,24 @@ theorem cl_eq_of_isLocS {L : Type} [Field L] [NumberField L] [IsCMField L] {n : 
   obtain ⟨A, rfl⟩ := he B
   exact φ.isIntertwining' A
 
-theorem tame_locRec {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
-    {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} (hL : GlobalTheory.Published.LocalLanglandsGL) (h : IsPlaceOver A w) {n : ℕ}
-    (τ : IrrRep (GL (Fin n) (w.adicCompletion E)))
-    (hf : GlobalTheory.PRep.fixed τ.ρ (GlobalTheory.SplitWeil.KOne (w.adicCompletion E) (Fin n)) ≠ ⊥) :
-    (GlobalTheory.CuspRep.ParLaws.locRec hL h (cls τ)).tame := by
-  obtain ⟨_, _, _, -, H⟩ := GlobalTheory.CuspRep.ParLaws.isRec_locRec hL h
-  have hx : GlobalTheory.PRep.fixed (cls τ).rep (GlobalTheory.SplitWeil.KOne (w.adicCompletion E) (Fin (cls τ).1)) ≠ ⊥ :=
-    GlobalTheory.LocLanglands.fixed_ne_bot_of_equiv (IrrRep.nonempty_equiv_rep τ).some.symm hf
-  obtain ⟨m, b, hb, hw⟩ := (H.depth _).1 hx
-  rw [← hb, GlobalTheory.WeilDeligne.WD.tame_mk]
-  intro g hg
-  refine hw g ⟨GlobalTheory.WeilDeligne.Wild_le_Ine hg, fun x hx0 => ?_⟩
-  have h1 := hg x hx0
-  have e : ((g : G E Ω) x - x) = ((g : G E Ω) x / x - 1) * x := by field_simp
-  rw [e, map_mul]
-  have h2 : (0 : _) < A.valuation x := by
-    rw [pos_iff_ne_zero]; exact (Valuation.ne_zero_iff _).2 hx0
-  calc A.valuation ((g : G E Ω) x / x - 1) * A.valuation x < 1 * A.valuation x := by
-        exact mul_lt_mul_of_pos_right h1 h2
-    _ = A.valuation x := one_mul _
-
-theorem lpDim_locRec {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
-    {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} (hL : GlobalTheory.Published.LocalLanglandsGL) (h : IsPlaceOver A w) {n : ℕ}
-    (τ : IrrRep (GL (Fin n) (w.adicCompletion E))) : (GlobalTheory.CuspRep.ParLaws.locRec hL h (cls τ)).lpDim = n := by
-  obtain ⟨_, _, _, -, H⟩ := GlobalTheory.CuspRep.ParLaws.isRec_locRec hL h
-  exact H.dim _
-
 variable (hL : GlobalTheory.Published.LocalLanglandsGL) (D : D7) (rep : D.what₂.FT → NG.FinTyp D.host.E D.R.r)
 
 def LocAt (σ : D.what₂.FT) (w : PlE D.host) : Type 1 :=
   {p : (s : SplitPlace D.host.E) × IrrRep (GL (Fin D.R.r) (s.w.adicCompletion D.host.E)) //
     p.1.w = w ∧ IsLocS (rep σ).S p.1 p.2}
 
-def unrW : RowWD D :=
-  RowWD.unram D (fun _ _ => Multiset.replicate D.R.r 1) (fun _ _ h => by simpa using (Multiset.eq_of_mem_replicate h))
-    (fun _ _ => by simp)
-
-def parAt {σ : D.what₂.FT} {w : PlE D.host} (p : LocAt D rep σ w) :
-    GlobalTheory.WeilDeligne.WD (E := D.host.E) (A := D.nd.plOm.1 w) (w := w) (D.nd.plOm.2 w) :=
-  p.2.1 ▸ GlobalTheory.CuspRep.ParLaws.locRec hL (D.nd.plOm.2 p.1.1.w) (cls p.1.2)
-
-def parOf (σ : D.what₂.FT) (w : PlE D.host) :
-    GlobalTheory.WeilDeligne.WD (E := D.host.E) (A := D.nd.plOm.1 w) (w := w) (D.nd.plOm.2 w) := by
-  classical
-  exact if h : Nonempty (LocAt D rep σ w) then parAt hL D rep h.some else (unrW D).par σ w
-
-theorem parAt_eq {σ : D.what₂.FT} {w : PlE D.host} (p : LocAt D rep σ w) (s : SplitPlace D.host.E) (hs : s.w = w)
-    (τ : IrrRep (GL (Fin D.R.r) (s.w.adicCompletion D.host.E))) (hτ : IsLocS (rep σ).S s τ) :
-    parAt hL D rep p = hs ▸ GlobalTheory.CuspRep.ParLaws.locRec hL (D.nd.plOm.2 s.w) (GlobalTheory.LocLanglands.cls τ) := by
-  obtain ⟨⟨s0, τ0⟩, hw, hl⟩ := p
-  subst hs
-  obtain rfl := splitPlace_eq_of_isLocS _ _ s s0 hw τ τ0 hτ hl
-  show GlobalTheory.CuspRep.ParLaws.locRec hL (D.nd.plOm.2 _) (GlobalTheory.LocLanglands.cls τ0) =
-    GlobalTheory.CuspRep.ParLaws.locRec hL (D.nd.plOm.2 _) (GlobalTheory.LocLanglands.cls τ)
-  rw [show GlobalTheory.LocLanglands.cls τ0 = GlobalTheory.LocLanglands.cls τ from
-    congrArg (Sigma.mk _) (cl_eq_of_isLocS (rep σ) _ τ0 τ hl hτ)]
-
-theorem parOf_eq (σ : D.what₂.FT) (s : SplitPlace D.host.E) (τ : IrrRep (GL (Fin D.R.r) (s.w.adicCompletion D.host.E)))
-    (hτ : IsLocS (rep σ).S s τ) :
-    parOf hL D rep σ s.w = GlobalTheory.CuspRep.ParLaws.locRec hL (D.nd.plOm.2 s.w) (GlobalTheory.LocLanglands.cls τ) := by
-  classical
-  have h : Nonempty (LocAt D rep σ s.w) := ⟨⟨⟨s, τ⟩, rfl, hτ⟩⟩
-  unfold parOf
-  rw [dif_pos h]
-  exact parAt_eq hL D rep _ s rfl τ hτ
-
-theorem parOf_dim (σ : D.what₂.FT) (w : PlE D.host) : (parOf hL D rep σ w).lpDim = D.R.r := by
-  classical
-  unfold parOf
-  by_cases h : Nonempty (LocAt D rep σ w)
-  · rw [dif_pos h]
-    generalize h.some = p
-    obtain ⟨⟨s0, τ0⟩, hw, hl⟩ := p
-    subst hw
-    exact lpDim_locRec hL _ τ0
-  · rw [dif_neg h]
-    exact (unrW D).dim σ w
-
-theorem parOf_tame (σ : D.what₂.FT) (s : SplitPlace D.host.E) (τ : IrrRep (GL (Fin D.R.r) (s.w.adicCompletion D.host.E)))
-    (hτ : IsLocS (rep σ).S s τ)
-    (hf : GlobalTheory.PRep.fixed τ.ρ (GlobalTheory.SplitWeil.KOne (s.w.adicCompletion D.host.E) (Fin D.R.r)) ≠ ⊥) :
-    (parOf hL D rep σ s.w).tame := by
-  rw [parOf_eq hL D rep σ s τ hτ]
-  exact tame_locRec hL _ τ hf
+def unrW : RowWD D := by
+  let m : Multiset ℂ := Multiset.replicate D.R.r 1
+  have hm : (0 : ℂ) ∉ m := fun h => zero_ne_one (Multiset.eq_of_mem_replicate h)
+  exact
+    { par := fun _ w => GlobalTheory.WeilDeligne.WD.lpUnr (D.nd.plOm.2 w) m
+      sat := fun _ _ => m
+      dim := fun _ w =>
+        (GlobalTheory.WeilDeligne.WD.lpUnr_spec (h := D.nd.plOm.2 w) m hm).2.2.trans
+          (Multiset.card_replicate _ _)
+      tame := fun _ k v =>
+        GlobalTheory.WeilDeligne.WD.tame_of_unr
+          (GlobalTheory.WeilDeligne.WD.lpUnr_spec (h := D.nd.plOm.2 (D.naut.plGw k v)) m hm).1 }
 
 end Loc
 
@@ -262,18 +200,6 @@ theorem satOf_spec (S : Submodule ℂ (GAf L n → W)) (v : HeightOneSpectrum (�
   refine ⟨h.choose_spec.choose_spec.choose, satAtS_transfer S _ v _ Dv
     (HeightOneSpectrum.ext (hsp.1.symm.trans hO)) _ hsp.2, ?_⟩
   unfold satOf
-  rw [dif_pos h]
-
-theorem exists_rowWD_rowTrue : ∀ (hL : GlobalTheory.Published.LocalLanglandsGL) (D : D7) (rep : D.what₂.FT → NG.FinTyp D.host.E D.R.r), RowDepth D rep →
-    ∃ Rw : RowWD D, RowTrue hL D rep Rw.par Rw.sat := by
-  intro hL D rep hD
-  refine ⟨⟨parOf hL D rep, fun σ => satOf (rep σ).S, parOf_dim hL D rep, fun σ k v => ?_⟩, ?_, ?_⟩
-  · obtain ⟨s, τ, hs, hl, hf⟩ := hD σ k v
-    rw [← hs]
-    exact parOf_tame hL D rep σ s τ hl hf
-  · intro σ s τ hτ
-    exact parOf_eq hL D rep σ s τ hτ
-  · intro σ v w hO Dv hα
-    exact satOf_spec (rep σ).S v w hO Dv hα
+  rw [dite_eq_left h]
 
 end GlobalTheory.RowPar

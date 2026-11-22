@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
@@ -82,7 +86,7 @@ theorem norm_aPre_le (hl : 0 < l) (hρ : ρ ≤ 1) (y : PreDisc l (X : W⟦X⟧)
         _ ≤ r := by rw [div_mul_eq_mul_div, div_le_iff₀ (by positivity)]; exact h1
     · rw [norm_zero, zero_mul]; exact hr.le
   | zero => intro n; rw [map_zero, norm_zero, zero_mul]; exact hr.le
-  | add x y _ _ hx hy => intro n; rw [map_add]; exact hadd r n _ _ (hx n) (hy n)
+  | add x y _ _ hx hy => intro n; rw [map_add (f := _)]; exact hadd r n _ _ (hx n) (hy n)
   | smul s x _ hx =>
     intro n
     rw [aPre_apply, Algebra.smul_def, map_mul, phi_alg, coeff_mul]
@@ -117,12 +121,14 @@ theorem norm_le_of_aPre [Fact l.Prime] (hρ0 : 0 < ρ) (hρ : ρ < 1) (y : PreDi
   obtain ⟨N, hN⟩ := exists_pow_lt_of_lt_one (div_pos ht0 (pow_pos hl c)) (show (ρ : ℝ) < 1 by exact_mod_cast hρ)
   set hd : W⟦X⟧ := ∑ m ∈ Finset.range N, C (coeff m s) * X ^ m with hhd
   obtain ⟨s', hs'⟩ : (X : W⟦X⟧) ^ N ∣ s - hd := X_pow_dvd_iff.2 fun m hm => by
-    simp [hhd, map_sub, coeff_C_mul_X_pow, map_sum, Finset.mem_range, hm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hhd, map_sub, coeff_C_mul_X_pow, map_sum, Finset.mem_range, hm]
   have hsplit : y = ∑ m ∈ Finset.range N, algebraMap _ (PreDisc l (X : W⟦X⟧) ρ) (C (coeff m s) * X ^ m) *
         IsLocalization.Away.invSelf (S := PreDisc l (X : W⟦X⟧) ρ) (l : W⟦X⟧) ^ c +
       algebraMap _ (PreDisc l (X : W⟦X⟧) ρ) (X ^ N * s') *
         IsLocalization.Away.invSelf (S := PreDisc l (X : W⟦X⟧) ρ) (l : W⟦X⟧) ^ c := by
-    rw [hy, ← Finset.sum_mul, ← map_sum, ← add_mul, ← map_add, ← hs', ← hhd, add_sub_cancel]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, ← Finset.sum_mul, ← map_sum, ← add_mul, ← map_add (f := _), ← hs', ← hhd, add_sub_cancel]
   rw [hsplit]
   refine (gauge_add_le_max l _ ρ _ _).trans (max_le ?_ ?_)
   · refine Finset.sum_induction _ (fun z => ‖z‖ ≤ t)
@@ -130,10 +136,10 @@ theorem norm_le_of_aPre [Fact l.Prime] (hρ0 : 0 < ρ) (hρ : ρ < 1) (y : PreDi
       fun m _ => ?_
     have e : algebraMap _ (PreDisc l (X : W⟦X⟧) ρ) (C (coeff m s) * X ^ m) *
         IsLocalization.Away.invSelf (S := PreDisc l (X : W⟦X⟧) ρ) (l : W⟦X⟧) ^ c =
-        preMap l (0 : W) 1 (X : W⟦X⟧) ρ C (algebraMap W _ (coeff m s) *
+        preMap (l := l) (u := (0 : W)) (ρ := 1) (u' := (X : W⟦X⟧)) (ρ' := ρ) C (algebraMap W _ (coeff m s) *
           IsLocalization.Away.invSelf (S := PreDisc l (0 : W) 1) (l : W) ^ c) *
           algebraMap W⟦X⟧ (PreDisc l (X : W⟦X⟧) ρ) (X ^ m) := by
-      rw [map_mul (preMap l (0 : W) 1 (X : W⟦X⟧) ρ C), map_pow (preMap l (0 : W) 1 (X : W⟦X⟧) ρ C), preMap_alg, preMap_inv,
+      rw [map_mul (preMap (l := l) (u := (0 : W)) (ρ := 1) (u' := (X : W⟦X⟧)) (ρ' := ρ) C), map_pow (preMap (l := l) (u := (0 : W)) (ρ := 1) (u' := (X : W⟦X⟧)) (ρ' := ρ) C), preMap_alg, preMap_inv,
         map_mul (algebraMap W⟦X⟧ (PreDisc l (X : W⟦X⟧) ρ))]; ring
     rw [e]
     have hpm := norm_preMap_le (l := l) (u := (0 : W)) (ρ := 1) (u' := (X : W⟦X⟧)) (ρ' := ρ) C (by simp)
@@ -217,7 +223,7 @@ theorem exists_coeff_disc : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK
     have hρn : (ρ : ℝ) ^ n ≤ (ρ : ℝ) ^ N := pow_le_pow_of_le_one (by positivity) (by exact_mod_cast hρ1.le) hn
     rw [lt_div_iff₀ (by linarith)] at hN
     have e : A n y = A n (y - ofPre l (X : bk.S) ρ z) + ofPre l (0 : Wq l bk.a) 1 (aPre l ρ n z) := by
-      rw [← hA, ← map_add, sub_add_cancel]
+      rw [← hA, ← map_add (f := _), sub_add_cancel]
     rw [e]
     calc ‖A n (y - ofPre l (X : bk.S) ρ z) + ofPre l (0 : Wq l bk.a) 1 (aPre l ρ n z)‖ * (ρ : ℝ) ^ n
         ≤ (‖A n (y - ofPre l (X : bk.S) ρ z)‖ + ‖aPre l ρ n z‖) * (ρ : ℝ) ^ n := by

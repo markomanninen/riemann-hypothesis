@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSatMOfSmul
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSatMOfSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem isUnit_Q : IsUnit (algebraMap (LetA O n) W.EE W.Q) := by
     have h2 := (Ideal.mem_jacobson_bot.1 hj) (x * r * (↑u⁻¹ : W.EE))
     have h3 : x * algebraMap (LetA O n) W.EE W.q =
         (((PD.p : ℕ) : W.EE) * (x * r * (↑u⁻¹ : W.EE)) + 1) * u := by
-      rw [hx, ← map_mul, h1, map_sub, map_pow, map_add, map_one, ← hx, hr, ← hu]
+      rw [hx, ← map_mul, h1, map_sub, map_pow, map_add (f := _), map_one, ← hx, hr, ← hu]
       have := u.inv_mul
       linear_combination (-((PD.p : ℕ) : W.EE) * x * r) * this
     exact isUnit_of_mul_isUnit_right (h3 ▸ h2.mul u.isUnit)
@@ -91,7 +95,8 @@ theorem basisDD_apply {T : LocLat G Qp LL O} {S : Submodule (LetA O n) (W.DD T)}
 
 theorem phi_mem_span {T : LocLat G Qp LL O} {r : ℕ} (β : Module.Basis (Fin r) W.EE (W.DD T))
     (x : W.DD T) : W.φD T x ∈ Submodule.span W.EE (Set.range fun i => W.φD T (β i)) := by
-  rw [← β.sum_repr x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← β.sum_repr x, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [W.φD_smul]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -236,7 +241,8 @@ theorem Qpow_mem_φspan_satM {T₁ T₂ : LocLat G Qp LL O} (l : ℕ) (hpl : PD.
     · rw [φspan, Submodule.span_le]
       rintro _ ⟨x, hx, rfl⟩
       obtain ⟨a, ha, -⟩ := hu x hx
-      rw [ha, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ha, map_sum]
       refine Submodule.sum_mem _ fun j _ => ?_
       rw [φD_smulA]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, hcb j⟩)

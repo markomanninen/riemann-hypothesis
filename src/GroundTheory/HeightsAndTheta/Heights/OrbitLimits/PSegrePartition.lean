@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegrePartition
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegrePartition
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,8 +26,8 @@ def numIdx (ι : K → Type*) [∀ k, Fintype (ι k)] : ℝ := Fintype.card ((k 
 def bump (z : (Σ k, ι k) → ℂ) (i : (k : K) → ι k) : ℝ :=
   Real.smoothTransition (2 * numIdx ι * (segreSq z i / segreSqSum z) - 1)
 
-open Classical in
 
+open Classical in
 def rho (i : (k : K) → ι k) (z : (Σ k, ι k) → ℂ) : ℝ :=
   if 0 < segreSqSum z then bump z i / ∑ j, bump z j else 1 / numIdx ι
 
@@ -34,7 +39,7 @@ omit [DecidableEq K] in
 theorem contDiff_segreSq (i : (k : K) → ι k) :
     ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z : (Σ k, ι k) → ℂ => segreSq z i) := by
   have h : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z : (Σ k, ι k) → ℂ => segre z i) :=
-    contDiff_prod fun k _ => contDiff_apply ℝ ℂ (⟨k, i k⟩ : Σ k, ι k)
+    contDiff_prod fun k _ => contDiff_apply ℝ (fun _ => ℂ) (⟨k, i k⟩ : Σ k, ι k)
   exact (contDiff_norm_sq ℝ).comp h
 
 theorem contDiff_segreSqSum :
@@ -47,8 +52,8 @@ theorem segreSqSum_pos {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i�
   exact Finset.sum_pos' (fun j _ => segreSq_nonneg z j)
     ⟨i, Finset.mem_univ _, pow_pos (norm_pos_iff.mpr h) 2⟩
 
-omit [DecidableEq K] [∀ k, Fintype (ι k)] in
 
+omit [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem segre_smul (c : K → ℂ) (z : (Σ k, ι k) → ℂ) (i : (k : K) → ι k) :
     segre (fun p => c p.1 * z p) i = (∏ k, c k) * segre z i :=
   Finset.prod_mul_distrib

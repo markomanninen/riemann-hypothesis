@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjAlgApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjAlgApply
+
+@[expose] public section
+
 open Matrix Polynomial
 
 namespace GlobalTheory

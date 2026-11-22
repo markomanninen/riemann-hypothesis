@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,14 +46,14 @@ section U
 
 variable {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω]
 
-variable (L) in
 
+variable (L) in
 def Large (c : Coef l) : Prop := ∀ (τ : L →+* Qbar l) (x : 𝓞 L), τ x ∈ c.O
 
 variable {s : HidaSetting l L Ω} {V : s.Lev} {c : Coef l} {n : ℕ} {r : Resid V.frame c.O n}
 
-variable (s n) in
 
+variable (s n) in
 abbrev HidaSetting.Wt : Type := ∀ v : Vl l L, Fin n → Emb l (s.w v) → ℤ
 
 def HidaSetting.Wt.Incr (h : s.Wt n) : Prop := ∀ v τ, StrictMono fun j => h v j τ

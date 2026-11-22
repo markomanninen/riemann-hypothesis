@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
-import Formalism.RealPlaceAnalysis.FinalF
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
-import Formalism.PeriodIntegrals.UpqRep
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsWtOnIffOfTorus
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SetIntegralDifferentiability
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+public import Formalism.PeriodIntegrals.UpqRep
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsWtOnIffOfTorus
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SetIntegralDifferentiability
+
+@[expose] public section
 
 open Matrix MeasureTheory Finset
 open scoped InnerProductSpace ContDiff Topology
@@ -453,7 +457,7 @@ theorem diag_skew (θ : Fin k → ℝ) :
     (Matrix.diagonal fun a => (θ a : ℂ) * Complex.I)ᴴ = -Matrix.diagonal fun a => (θ a : ℂ) * Complex.I := by
   rw [Matrix.diagonal_conjTranspose, Matrix.diagonal_neg]
   congr 1
-  funext a
+  ext i
   simp
 
 theorem exp_diag (θ : Fin k → ℝ) (t : ℝ) :
@@ -564,7 +568,7 @@ theorem mem_of_skew {k : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W]
     rw [smul_smul, show -Complex.I / 2 * Complex.I = 1 / 2 by
       rw [div_mul_eq_mul_div, neg_mul, Complex.I_mul_I, neg_neg]]
     module
-  rw [e, map_add, map_smul, map_smul]
+  rw [e, map_add (f := _), map_smul, map_smul]
   exact S.add_mem (S.smul_mem _ h1) (S.smul_mem _ h2)
 
 def actL {k : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W] (E : Fin k → Fin k → Module.End ℂ W) (v : W) :
@@ -664,115 +668,6 @@ theorem exists_type_of_highest [FiniteDimensional ℂ W] (hπ : IsURepOn (UJset 
 section
 attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
 
-theorem hasDerivAt_exp_entry (X : Matrix (Fin k) (Fin k) ℂ) (i j : Fin k) :
-    HasDerivAt (fun t : ℝ => NormedSpace.exp ((t : ℂ) • X) i j) (X i j) 0 := by
-  have h := hasDerivAt_exp_smul_const (𝕂 := ℝ) X (0 : ℝ)
-  let L : Matrix (Fin k) (Fin k) ℂ →ₗ[ℝ] ℂ :=
-    { toFun := fun x => x i j
-      map_add' := fun x y => rfl
-      map_smul' := fun c x => rfl }
-  have h2 := (LinearMap.toContinuousLinearMap L).hasFDerivAt.comp_hasDerivAt 0 h
-  simp only [zero_smul, NormedSpace.exp_zero, one_mul] at h2
-  exact h2
-
 end
-
-theorem root_kills (E : Fin k → Fin k → Module.End ℂ W)
-    (hE : ∀ Z : Matrix (Fin k) (Fin k) ℂ, Zᴴ = -Z → ∀ v,
-      HasDerivAt (fun t : ℝ => π (NormedSpace.exp ((t : ℂ) • Z)) v) (∑ a, ∑ b, Z a b • E a b v) 0)
-    (x : W) (hd : DifferentiableAt ℂ (fun B : Fin k → Fin k → ℂ => π (Matrix.of B) x)
-      (Matrix.of.symm (1 : Matrix (Fin k) (Fin k) ℂ)))
-    (a b : Fin k) (hfix : ∀ t : ℝ, π (1 + (t : ℂ) • Matrix.single a b 1) x = x) : E a b x = 0 := by
-  set D := fderiv ℂ (fun B : Fin k → Fin k → ℂ => π (Matrix.of B) x)
-      (Matrix.of.symm (1 : Matrix (Fin k) (Fin k) ℂ)) with hD
-  have hcurve : ∀ (γ : ℝ → Matrix (Fin k) (Fin k) ℂ) (Z : Matrix (Fin k) (Fin k) ℂ), γ 0 = 1 →
-      (∀ i j, HasDerivAt (fun t => γ t i j) (Z i j) 0) →
-      HasDerivAt (fun t => π (γ t) x) (D (Matrix.of.symm Z)) 0 := by
-    intro γ Z h0 hγ
-    have h1 : HasDerivAt (fun t => (Matrix.of.symm (γ t) : Fin k → Fin k → ℂ)) (Matrix.of.symm Z) 0 :=
-      hasDerivAt_pi.2 fun i => hasDerivAt_pi.2 fun j => hγ i j
-    have h2 := (hd.hasFDerivAt.restrictScalars ℝ)
-    rw [← h0] at h2
-    have h3 := h2.comp_hasDerivAt 0 h1
-    rw [h0] at h3
-    exact h3
-  let DL : Matrix (Fin k) (Fin k) ℂ →ₗ[ℂ] W :=
-    (D : (Fin k → Fin k → ℂ) →ₗ[ℂ] W).comp (Matrix.ofLinearEquiv ℂ).symm.toLinearMap
-  have h1 : (actL E x - DL) (Matrix.single a b 1) ∈ (⊥ : Submodule ℂ W) := by
-    refine mem_of_skew _ _ (fun Z hZ => ?_) _
-    rw [Submodule.mem_bot, LinearMap.sub_apply, sub_eq_zero]
-    exact (hE Z hZ x).unique (hcurve _ Z (by simp) (hasDerivAt_exp_entry Z))
-  rw [Submodule.mem_bot, LinearMap.sub_apply, sub_eq_zero, actL_single] at h1
-  have h2 := hcurve (fun t => 1 + (t : ℂ) • Matrix.single a b 1) (Matrix.single a b 1) (by simp) (by
-    intro i j
-    simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
-    simpa using ((Complex.ofRealCLM.hasDerivAt (x := (0 : ℝ))).mul_const
-      (Matrix.single a b (1 : ℂ) i j)).const_add ((1 : Matrix (Fin k) (Fin k) ℂ) i j))
-  simp only [hfix] at h2
-  rw [h1]
-  exact h2.unique (hasDerivAt_const (0 : ℝ) x)
-
-theorem exists_isHCTypeU_of_highest : ∀ (k : ℕ) (ν : Fin k → ℤ) (u : Fin k → ℝ) (I : Type) [Fintype I] [DecidableEq I] (ρ : Matrix (Fin k) (Fin k) ℂ → Matrix I I ℂ) (v0 : I → ℂ), (∀ a, u a = ν a + (((k : ℝ) - 1) / 2 - (a : ℕ))) → ρ 1 = 1 → (∀ A B, ρ (A * B) = ρ A * ρ B) → (∀ A, ρ Aᴴ = (ρ A)ᴴ) → (∀ A : Fin k → Fin k → ℂ, (Matrix.of A).det ≠ 0 → ∀ i j, DifferentiableAt ℂ (fun B : Fin k → Fin k → ℂ => ρ (Matrix.of B) i j) A) → v0 ≠ 0 → (∀ b : Matrix (Fin k) (Fin k) ℂ, b.BlockTriangular id → b.det ≠ 0 → ρ b *ᵥ v0 = (∏ a, b a a ^ ν a) • v0) → ∃ (Wp : Type) (_ : NormedAddCommGroup Wp) (_ : InnerProductSpace ℂ Wp) (_ : CompleteSpace Wp) (_ : FiniteDimensional ℂ Wp) (π₀ : Matrix (Fin k) (Fin k) ℂ → (Wp →L[ℂ] Wp)), PI.UpqRep.IsHCTypeU k u π₀ := by
-  intro k ν u I _ _ ρ v0 hu h1 hmul hadj hdiff hv0 hB
-  set π : Matrix (Fin k) (Fin k) ℂ → (EuclideanSpace ℂ I →L[ℂ] EuclideanSpace ℂ I) :=
-    fun g => Matrix.toEuclideanCLM (n := I) (𝕜 := ℂ) (ρ g) with hπdef
-  have hU : ∀ g ∈ UJset (allPos k), gᴴ * g = 1 := fun g hg => by
-    have h : gᴴ * Jm (allPos k) * g = Jm (allPos k) := hg
-    rwa [Jm_allPos, Matrix.mul_one] at h
-  have horb : ∀ (v : EuclideanSpace ℂ I) (A : Fin k → Fin k → ℂ), (Matrix.of A).det ≠ 0 →
-      DifferentiableAt ℂ (fun B : Fin k → Fin k → ℂ => π (Matrix.of B) v) A := by
-    intro v A hA
-    rw [differentiableAt_euclidean]
-    intro i
-    simp only [hπdef, Matrix.ofLp_toEuclideanCLM, Matrix.mulVec, dotProduct]
-    exact DifferentiableAt.fun_sum fun j _ => (hdiff A hA i j).mul_const _
-  have hπ : IsURepOn (UJset (allPos k)) π := by
-    refine ⟨⟨by simp [hπdef, h1], fun a _ b _ => ?_⟩, fun g hg => ?_, fun v g hg => ?_⟩
-    · simp only [hπdef, hmul, map_mul]
-      rfl
-    · refine (ContinuousLinearMap.norm_map_iff_adjoint_comp_self _).2 ?_
-      rw [← ContinuousLinearMap.star_eq_adjoint, ← ContinuousLinearMap.mul_def, hπdef]
-      simp only
-      rw [← map_star, ← map_mul, Matrix.star_eq_conjTranspose, ← hadj, ← hmul, hU g hg, h1, map_one]
-    · have hdet : (Matrix.of (Matrix.of.symm g)).det ≠ 0 := by
-        intro h0
-        have := congrArg Matrix.det (hU g hg)
-        rw [Matrix.det_mul, show g.det = 0 from h0] at this
-        simp at this
-      exact (horb v _ hdet).continuousAt.continuousWithinAt
-  obtain ⟨E, hgl, hun, hE⟩ := Derived.exists_derived_action k _ π hπ
-  set x : EuclideanSpace ℂ I := WithLp.toLp 2 v0 with hx
-  have hx0 : x ≠ 0 := fun h => hv0 (by simpa [hx] using h)
-  have hBx : ∀ b : Matrix (Fin k) (Fin k) ℂ, b.BlockTriangular id → (∀ a, b a a ≠ 0) →
-      π b x = (∏ a, b a a ^ ν a) • x := by
-    intro b hb hb0
-    have := hB b hb (by rw [Matrix.det_of_upperTriangular hb]; exact Finset.prod_ne_zero_iff.2 fun a _ => hb0 a)
-    simp only [hπdef, hx, Matrix.toEuclideanCLM_toLp, this, WithLp.toLp_smul]
-  have hlow : lowK (allPos k) u = fun a => (ν a : ℝ) := by
-    rw [GlobalTheory.KTypeCompare.lowK_allPos]
-    funext a
-    simp [GlobalTheory.IndefiniteRowSideFullHecke.HarishChandraRootData.rhoU, hu a]
-  refine ⟨_, inferInstance, inferInstance, inferInstance, inferInstance, _,
-    exists_type_of_highest hπ E hgl hun hE u x hx0 ⟨?_, fun a b hab _ => ?_⟩⟩
-  · rw [hlow]
-    refine isWeight_of_isWtOn E hE _ x fun θ _ => ?_
-    rw [hBx _ (Matrix.blockTriangular_diagonal _) (fun a => by simp)]
-    congr 1
-    simp only [Matrix.diagonal_apply_eq, ← Complex.exp_int_mul, ← Complex.exp_sum]
-    congr 1
-    push_cast
-    rw [Finset.sum_mul]
-    exact Finset.sum_congr rfl fun a _ => by ring
-  · refine root_kills E hE x (horb x _ (by simp)) a b fun t => ?_
-    have hdiag : ∀ c, (1 + (t : ℂ) • Matrix.single a b (1 : ℂ) : Matrix (Fin k) (Fin k) ℂ) c c = 1 := by
-      intro c
-      have : ¬ (a = c ∧ b = c) := fun h => hab.ne (h.1.trans h.2.symm)
-      simp [Matrix.single, this]
-    rw [hBx _ ?_ (fun c => by rw [hdiag]; exact one_ne_zero)]
-    · rw [Finset.prod_eq_one (fun c _ => by rw [hdiag, _root_.one_zpow]), one_smul]
-    · intro i j hij
-      have hij' : j < i := hij
-      have : ¬ (a = i ∧ b = j) := fun h => absurd hab (by rw [h.1, h.2]; exact hij'.le.not_gt)
-      simp [Matrix.single, this, Matrix.one_apply_ne hij'.ne']
 
 end UpperTheory.Lit.Bur.HWSpanType

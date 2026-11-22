@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ContConjAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.CoefEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.MapAdjAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ExistsStrictHenselianAbsolutelyClosedLocalRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ContConjAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.CoefEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.MapAdjAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ExistsStrictHenselianAbsolutelyClosedLocalRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -17,7 +21,7 @@ private theorem ex_mu {O A : Type} [CommRing O] [IsLocalRing O] [CommRing A] [Al
   have k2 : ∀ a : O, s (residue O a) • η = a • η := fun a => k _ _ (hs _)
   refine ⟨AddMonoidHom.mk' (fun c => s c • η) fun c d => ?_, k2, fun a c => ?_⟩
   · rw [← add_smul]
-    exact k _ _ (by rw [map_add, hs, hs, hs])
+    exact k _ _ (by rw [map_add (f := _), hs, hs, hs])
   · obtain ⟨b, hb⟩ := IsCO.res_surj (O := O) a
     have e : res O A a = residue O b := by
       have := (res_eq_zero_iff O A _).2 hb
@@ -66,20 +70,24 @@ theorem UpperTheory.V.Ws.X1.obWeak :
     have h1 : (Submodule.Quotient.mk (∑ u, residue O (c u) •
         (⟨z u, z0 u⟩ : Fr.continuousCocycles2 loc (adSp rb hb) (fun v => bor (nb v)))) :
         Fr.coneH2 loc (adSp rb hb) (fun v => bor (nb v))) = 0 := by
-      rw [← hc, ← Submodule.mkQ_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, ← Submodule.mkQ_apply, map_sum]
       rfl
-    rw [Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, map_sum] at h1
     exact h1
   obtain ⟨μ, m1, m2⟩ := ex_mu (O := O) η hη
   have pp : ∀ x, p'' (p' x) = p x := fun x => DFunLike.congr_fun hpp x
   have key : ∀ x, p x = 0 → p' x = μ (∑ u, residue O (c u) * co u x) := fun x hx => by
     obtain ⟨a, ha, hxa⟩ := k4 x hx
     have : ∑ u, residue O (c u) * co u x = residue O (∑ u, a u * c u) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun u _ => by rw [map_mul, ha, mul_comm]
     rw [this, m1, Finset.sum_smul]
     conv_lhs => rw [hxa]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun u _ => ?_
     rw [map_smul, e1, mul_smul]
   have keyM : ∀ (M : M4 A) (Y : κ → sp4 (ResidueField O)) (g : M4 (ResidueField O)),

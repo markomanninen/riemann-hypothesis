@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.YvRatOfValRat
-import Formalism.SharpRestriction.GrowthBounds.JointsLit
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.YvRatOfValRat
+public import Formalism.SharpRestriction.GrowthBounds.JointsLit
+
+@[expose] public section
 
 namespace Formalism.L2.G.Cmp
 

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+
+@[expose] public section
+
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical UpperTheory.Gal.Gen
 
 private lemma circle_mean (g : ℂ → ℂ)
@@ -55,7 +60,7 @@ theorem UpperTheory.Gal.Gen.meanVal_pf :
   have hd : ∀ u ∈ Metric.closedBall (0 : ℂ) 1, DifferentiableAt ℂ g u := by
     intro u hu
     refine (differentiableAt_id.pow m).mul ?_
-    refine DifferentiableAt.fun_finset_prod fun p _ => ?_
+    refine DifferentiableAt.fun_finsetProd fun p _ => ?_
     refine DifferentiableAt.div ?_ ?_ (hden u hu p)
     · exact (differentiableAt_const _).sub ((differentiableAt_id.pow _).mul (differentiableAt_const _))
     · exact (differentiableAt_const _).sub

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMinorsMemInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMinorsMemInv
+
+@[expose] public section
+
 open Classical MeasureTheory
 
 noncomputable section
@@ -30,7 +35,7 @@ def fockQL : MvPolynomial σ ℚ →ₗ[ℚ] MvPolynomial σ ℚ →ₗ[ℚ] ℚ
         fockQ_eq_sum f g (f.support ∪ f'.support) Finset.subset_union_left,
         fockQ_eq_sum f' g (f.support ∪ f'.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun m _ => ?_
-      rw [coeff_add]; ring)
+      rw [MvPolynomial.coeff_add]; ring)
     (by
       intro c f g
       rw [fockQ_eq_sum (c • f) g f.support support_smul, fockQ, smul_eq_mul, Finset.mul_sum]
@@ -38,7 +43,7 @@ def fockQL : MvPolynomial σ ℚ →ₗ[ℚ] MvPolynomial σ ℚ →ₗ[ℚ] ℚ
       rw [coeff_smul, smul_eq_mul]; ring)
     (by
       intro f g g'
-      simp only [fockQ, coeff_add, mul_add, add_mul, Finset.sum_add_distrib])
+      simp only [fockQ, MvPolynomial.coeff_add, mul_add, add_mul, Finset.sum_add_distrib])
     (by
       intro c f g
       simp only [fockQ, coeff_smul, smul_eq_mul, Finset.mul_sum]
@@ -103,7 +108,8 @@ theorem exists_rat_proj : ∀ {ι : Type} [Fintype ι] (a d : ℕ) (n : ι → �
   refine ⟨Fintype.card (Tup ι a d n), fun p => c (e p), fun p => e p, fun T => ?_⟩
   have hsum : (∑ p, ((c (e p) : ℚ) : ℂ) • prodMinors (e p)) =
       map (algebraMap ℚ ℂ) (w₀ : MvPolynomial (Var ι d a) ℚ) := by
-    rw [e.sum_comp (fun T => ((c T : ℚ) : ℂ) • prodMinors T), ← hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e.sum_comp (fun T => ((c T : ℚ) : ℂ) • prodMinors T), ← hc, map_sum]
     refine Finset.sum_congr rfl fun T _ => ?_
     simp only [PQ]
     rw [smul_eq_C_mul (prodMinorsQ T) (c T), map_mul, map_C, map_prodMinorsQ, smul_eq_C_mul]

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.HasPairingOfHerm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.HasPairingOfHerm
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.L2.Host UpperTheory.V UpperTheory.V.TR UpperTheory.V.Af.Gk
 
 noncomputable section
@@ -9,11 +14,13 @@ private theorem map_qdet_conj {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (f :
     (hf : ∀ c : ℂ, f (algebraMap ℂ A c) = algebraMap ℂ A (starRingEnd ℂ c)) (X : Fin n → Fin n → A)
     (hX : ∀ i j, f (X i j) = X i j) (u : ℂ) :
     f (Formalism.REAL.qdet X u) = Formalism.REAL.qdet X (starRingEnd ℂ u) := by
-  simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 3
   funext k
-  simp only [Function.comp_apply, Formalism.REAL.Tm, map_add, hX, apply_ite f, hf, map_zero, map_sub, map_natCast]
+  simp only [Function.comp_apply, id_eq, Formalism.REAL.Tm, map_add, hX]
+  split_ifs <;> simp [hf, map_sub]
 
 variable {E : Type} [Field E] [NumberField E] [IsTotallyReal E] {a : ℕ}
 
@@ -41,7 +48,7 @@ private theorem conjOp_cap (v : InfinitePlace E) (u : ℂ) :
     conjOp (cap (a := a) v u) = cap v (starRingEnd ℂ u) := by
   refine (map_qdet_conj (conjOp (E := E) (a := a)) conjOp_algebraMap (Eop v) (conjOp_Eop v) _).trans ?_
   refine congrArg (Formalism.REAL.qdet (Eop (a := a) v)) ?_
-  simp only [map_add, map_div₀, map_sub, map_natCast, map_one, map_ofNat]
+  simp only [map_add (f := _), map_div₀, map_sub, map_natCast, map_one, map_ofNat]
 
 private theorem conjOp_mem {z : Module.End ℂ (Sm E a)} (hz : z ∈ Zalg E a) : conjOp z ∈ Zalg E a := by
   induction hz using Algebra.adjoin_induction with
@@ -63,25 +70,26 @@ private theorem fin_of_conj {s t : Set (Sm E a)} (h : FiniteDimensional ℂ (Sub
   obtain ⟨x, hx, rfl⟩ := hst y hy
   exact ⟨x, Submodule.subset_span hx, rfl⟩
 
-private theorem isAutForm_conjFn {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (conjFn E a φ) where
-  left γ g := by rw [conjFn_apply, conjFn_apply, h.left]
-  level := by
-    convert h.level using 1
-    ext k
-    exact (Iff.of_eq (congrArg (· = conjFn E a φ) (act_conjFn (.fin k) φ))).trans (conjFn E a).injective.eq_iff
-  kfin := fin_of_conj h.kfin (by
-    rintro _ ⟨k, rfl⟩
-    exact ⟨_, ⟨k, rfl⟩, (act_conjFn (.cpt k) φ).symm⟩)
-  zfin := fin_of_conj h.zfin (by
-    rintro _ ⟨z, hz, rfl⟩
-    refine ⟨_, ⟨conjOp z, conjOp_mem hz, rfl⟩, ?_⟩
-    beta_reduce
-    rw [conjOp_apply, conjFn_conjFn])
-  growth g := by
-    obtain ⟨C, N, h1⟩ := h.growth g
-    refine ⟨C, N, fun y => ?_⟩
-    rw [conjFn_apply, Complex.norm_conj]
-    exact h1 y
+private theorem isAutForm_conjFn {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (conjFn E a φ) := by
+  exact {
+    left γ g := by rw [conjFn_apply, conjFn_apply, h.left]
+    level := by
+      convert h.level using 1
+      ext k
+      exact (Iff.of_eq (congrArg (· = conjFn E a φ) (act_conjFn (.fin k) φ))).trans (conjFn E a).injective.eq_iff
+    kfin := fin_of_conj h.kfin (by
+      rintro _ ⟨k, rfl⟩
+      exact ⟨_, ⟨k, rfl⟩, (act_conjFn (.cpt k) φ).symm⟩)
+    zfin := fin_of_conj h.zfin (by
+      rintro _ ⟨z, hz, rfl⟩
+      refine ⟨_, ⟨conjOp z, conjOp_mem hz, rfl⟩, ?_⟩
+      beta_reduce
+      rw [conjOp_apply, conjFn_conjFn])
+    growth g := by
+      obtain ⟨C, N, h1⟩ := h.growth g
+      refine ⟨C, N, fun y => ?_⟩
+      rw [conjFn_apply, Complex.norm_conj]
+      exact h1 y }
 
 end UpperTheory.V.Af.Gk
 

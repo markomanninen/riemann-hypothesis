@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingTrRep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaSeriesFactorizableRestrictionFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingTrRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaSeriesFactorizableRestrictionFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.WeilTr MeasureTheory
 open scoped Matrix ENNReal
 
@@ -31,7 +36,7 @@ theorem evI_infAd (s : mixedEmbedding.mixedSpace F) : evI F (infAd s) = s :=
 
 theorem sndA_infAd (s : mixedEmbedding.mixedSpace F) : sndA F (infAd s) = 0 := rfl
 
-theorem evFin_infAd (v : Pl F) (s : mixedEmbedding.mixedSpace F) : evFin F v (infAd s) = 0 := by
+theorem evFin_infAd (v : Pl (F := F)) (s : mixedEmbedding.mixedSpace F) : evFin F v (infAd s) = 0 := by
   show evalV F v (sndA F (infAd s)) = 0
   rw [sndA_infAd, map_zero]
 
@@ -65,23 +70,25 @@ theorem evIHom_invOf [Invertible (2 : AF F)] [Invertible (2 : mixedEmbedding.mix
 
 theorem schr_pure [Invertible (2 : AF F)] [Invertible (2 : mixedEmbedding.mixedSpace F)] {κ : Type} [Fintype κ]
     (Ψ : AddChar (AF F) ℂ) (a b : κ → mixedEmbedding.mixedSpace F) (f : SInf F κ)
-    (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (x : κ → AF F) :
+    (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (x : κ → AF F) :
     schr Ψ (fun i => infAd (a i), fun i => infAd (b i)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) x =
       schr (Ψ.compAddMonoidHom infAd) (a, b) (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (fun i => evI F (x i)) *
         ∏ᶠ v, φ v fun i => evFin F v (x i) := by
   have e1 : (fun i => evI F ((x + fun i => infAd (a i)) i)) = (fun i => evI F (x i)) + a := by
     funext i
     change evIHom (x i + infAd (a i)) = evIHom (x i) + a i
-    rw [map_add, evIHom_apply (infAd _), evI_infAd]
+    rw [map_add (f := _), evIHom_apply (infAd _), evI_infAd]
   have e2 : ∀ v, (fun i => evFin F v ((x + fun i => infAd (a i)) i)) = fun i => evFin F v (x i) := fun v => by
     funext i
-    simp only [Pi.add_apply, map_add, evFin_infAd, add_zero]
+    simp only [Pi.add_apply, map_add (f := _), evFin_infAd, add_zero]
   have hs : sndA F (x ⬝ᵥ (fun i => infAd (b i)) + ⅟(2 : AF F) * ((fun i => infAd (a i)) ⬝ᵥ fun i => infAd (b i))) = 0 := by
-    simp only [dotProduct, map_add, map_sum, map_mul, sndA_infAd, mul_zero, Finset.sum_const_zero, add_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_add (f := _), map_sum, map_mul, sndA_infAd, mul_zero, Finset.sum_const_zero, add_zero]
   have hi : evI F (x ⬝ᵥ (fun i => infAd (b i)) + ⅟(2 : AF F) * ((fun i => infAd (a i)) ⬝ᵥ fun i => infAd (b i))) =
       (fun i => evI F (x i)) ⬝ᵥ b + ⅟(2 : mixedEmbedding.mixedSpace F) * (a ⬝ᵥ b) := by
     rw [← evIHom_apply]
-    simp only [dotProduct, map_add, map_sum, map_mul, evIHom_invOf]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_add (f := _), map_sum, map_mul, evIHom_invOf]
     simp only [evIHom_apply, evI_infAd]
   have e3 := infAd_evI _ hs
   rw [hi] at e3
@@ -91,9 +98,9 @@ theorem schr_pure [Invertible (2 : AF F)] [Invertible (2 : mixedEmbedding.mixedS
   rw [e1, e2', ← e3, AddChar.compAddMonoidHom_apply]
   ring
 
-open Classical in
 
-theorem exists_finprod_ne {κ : Type} [Fintype κ] (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (h0 : ∀ v, φ v ≠ 0)
+open Classical in
+theorem exists_finprod_ne {κ : Type} [Fintype κ] (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (h0 : ∀ v, φ v ≠ 0)
     (hstd : ∀ᶠ v in Filter.cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1)
     (y : κ → mixedEmbedding.mixedSpace F) :
     ∃ x : κ → AF F, (fun i => evI F (x i)) = y ∧ ∏ᶠ v, φ v (fun i => evFin F v (x i)) ≠ 0 := by
@@ -102,29 +109,32 @@ theorem exists_finprod_ne {κ : Type} [Fintype κ] (φ : ∀ v : Pl F, (κ → F
   let T := hS.toFinset
   let xf : κ → AF F := fun i => ∑ w ∈ T, GlobalTheory.LatVac.liftV w (p w i)
   have hxf1 : ∀ i, evI F (xf i) = 0 := fun i => by
-    rw [← evIHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← evIHom_apply, map_sum]
     exact Finset.sum_eq_zero fun w _ => (map_zero (InfiniteAdeleRing.ringEquiv_mixedSpace F))
   have hxf2 : ∀ w i, w ∈ T → evFin F w (xf i) = p w i := fun w i hw => by
-    simp only [xf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [xf, map_sum]
     rw [Finset.sum_eq_single_of_mem w hw]
     · exact GlobalTheory.LatVac.evFin_liftV w _
     · intro x _ hx
       exact GlobalTheory.AdelicU.evalV_singleFin_ne (Ne.symm hx) _
   have hxf3 : ∀ w i, w ∉ T → evFin F w (xf i) = 0 := fun w i hw => by
-    simp only [xf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [xf, map_sum]
     exact Finset.sum_eq_zero fun x hx => GlobalTheory.AdelicU.evalV_singleFin_ne (fun h => hw (by rw [h]; exact hx)) _
   refine ⟨fun i => infAd (y i) + xf i, funext fun i => ?_, ?_⟩
-  · rw [← evIHom_apply, map_add, evIHom_apply, evIHom_apply, evI_infAd, hxf1, add_zero]
+  · rw [← evIHom_apply, map_add (f := _), evIHom_apply, evIHom_apply, evI_infAd, hxf1, add_zero]
   · have hfin := GlobalTheory.PureFactor.mulSupport_finite φ hstd (fun i => infAd (y i) + xf i)
     rw [finprod_eq_prod_of_mulSupport_toFinset_subset _ hfin (subset_refl _)]
     refine Finset.prod_ne_zero_iff.mpr fun w _ => ?_
     by_cases hw : w ∈ T
     · have : (fun i => evFin F w (infAd (y i) + xf i)) = p w := funext fun i => by
-        rw [map_add, evFin_infAd, zero_add, hxf2 w i hw]
+        rw [map_add (f := _), evFin_infAd, zero_add, hxf2 w i hw]
       rw [this]
       simpa using hp w
     · have : (fun i => evFin F w (infAd (y i) + xf i)) = 0 := funext fun i => by
-        rw [map_add, evFin_infAd, zero_add, hxf3 w i hw, Pi.zero_apply]
+        rw [map_add (f := _), evFin_infAd, zero_add, hxf3 w i hw, Pi.zero_apply]
       have hw' : φ w = Set.indicator {x | ∀ i, x i ∈ w.adicCompletionIntegers F} 1 := by
         by_contra h
         exact hw (hS.mem_toFinset.mpr h)
@@ -138,7 +148,7 @@ theorem ei_schr : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
     IsPair B M χX χW om r s r' s' → ∀ M₁ : Model σ X W, M₁.IsGood B.ψ → ∀ e : Fn F n d →ₗ[ℂ] Fn F n d,
     IsEv B M M₁ 1 1 ∅ e →
     ∀ (ei : SInf F (Fin n × Fin d) →L[ℂ] SInf F (Fin n × Fin d))
-      (ev : ∀ v : Pl F, ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Fin n × Fin d → Fv F v) → ℂ), ei ≠ 0 →
+      (ev : ∀ v : Pl (F := F), ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Fin n × Fin d → Fv F v) → ℂ), ei ≠ 0 →
       (∀ v, ev v (M.vac v) = M₁.vac v ∧ (SB _).map (ev v) = SB _) →
       (∀ f φ, (∀ v, φ v ∈ SB _) → (∀ᶠ v in Filter.cofinite, φ v = M.vac v) →
         e (pure f φ) = pure (ei f) fun v => ev v (φ v)) →

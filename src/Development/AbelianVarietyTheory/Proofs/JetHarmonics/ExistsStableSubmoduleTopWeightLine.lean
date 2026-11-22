@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Formalism.REAL
 
 namespace GlobalTheory
@@ -36,7 +41,7 @@ theorem loweringWord_span_lower (a b : Fin n) (hab : b < a) :
     obtain ⟨N, hN⟩ := hx
     exact Submodule.subset_span ⟨_, hN.step a b hab⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem loweringWord_apply_mem (hE : GlRel E) (hv : IsHW E ν v) {N : ℕ} {x : V}
@@ -73,7 +78,8 @@ theorem loweringWord_height (hE : GlRel E) (hv : IsHW E ν v) {N : ℕ} {x : V}
     have key : (∑ a : Fin n, ((a.val : ℕ) : ℂ) • E a a) (E c d y)
         = E c d ((∑ a : Fin n, ((a.val : ℕ) : ℂ) • E a a) y)
           + ((c.val : ℕ) : ℂ) • E c d y - ((d.val : ℕ) : ℂ) • E c d y := by
-      simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
       simp only [glRel_apply_comm hE _ _ c d y, smul_sub, smul_add, Finset.sum_sub_distrib,
         Finset.sum_add_distrib, smul_ite, smul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq',
         Finset.mem_univ, if_true]
@@ -107,7 +113,7 @@ theorem exists_stable_submodule_topWeight_line :
       obtain ⟨N, hN⟩ := hx
       exact loweringWord_apply_mem hE hv hN a b
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
   · intro x hx hw
     set H : Module.End ℂ V := ∑ a : Fin n, ((a.val : ℕ) : ℂ) • E a a with hH

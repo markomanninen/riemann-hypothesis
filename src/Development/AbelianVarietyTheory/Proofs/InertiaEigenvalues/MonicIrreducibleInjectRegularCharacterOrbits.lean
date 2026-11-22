@@ -1,5 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenRegularCharacters
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenRegularCharacters
+
+@[expose] public section
+
 open GlobalTheory.GLq GlobalTheory.Published Formalism.MainNotions.ArithmeticCylinders Polynomial
 open scoped Classical
 
@@ -29,7 +34,7 @@ theorem card_le_of_gen_fixed {L : Type} [Field L] [Algebra (ZMod g) L] [Fintype 
     (hgen : ∀ y : L, ∃ Q : (ZMod g)[X], aeval x Q = y) (hx : x ^ g ^ k = x) : Fintype.card L ≤ g ^ k := by
   have hq : 1 < g ^ k := Nat.one_lt_pow hk.ne' hg.out.one_lt
   set f : L[X] := X ^ (g ^ k) - X with hf
-  have hf0 : f ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero L hq
+  have hf0 : f ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero hq
   have hfix : ∀ y : L, y ^ g ^ k = y := by
     intro y
     obtain ⟨Q, rfl⟩ := hgen y
@@ -41,7 +46,7 @@ theorem card_le_of_gen_fixed {L : Type} [Field L] [Algebra (ZMod g) L] [Fintype 
     _ ≤ f.roots.toFinset.card := Finset.card_le_card hsub
     _ ≤ Multiset.card f.roots := Multiset.toFinset_card_le _
     _ ≤ f.natDegree := card_roots' f
-    _ = g ^ k := FiniteField.X_pow_card_sub_X_natDegree_eq L hq
+    _ = g ^ k := Polynomial.natDegree_X_pow_sub_X (R := L) hq
 
 section adjoin
 

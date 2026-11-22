@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightWith
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightTieRec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightWith
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightTieRec
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Core GlobalTheory.Core.Ht2 GlobalTheory.CoreHt
 open GlobalTheory.ColumnNormCompare (numDatumOfParameters codeRec plRec)
 attribute [local instance] GlobalTheory.Mem.Col2.starE
@@ -19,14 +24,14 @@ theorem weightTie_trueCols : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} 
     obtain ⟨i, hi⟩ := i
     have hi' : i < (I.rec7 l Z).R.k := hi
     by_cases h : 1 ≤ i ∧ i + 1 < (I.rec7 l Z).R.k
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       obtain ⟨k, rfl⟩ : ∃ k, i = k + 1 := ⟨i - 1, by omega⟩
       have hk : k < (I.rec7 l Z).R.k - 2 := by omega
       have a := (I.rec7 l Z).s.u_letter u (plRec (I.rec7 l Z) z) k hk
       have hv := (I.rec7 l Z).hcW_v u (plRec (I.rec7 l Z) z)
       rw [a, hv, ← hfl]
       rfl
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       by_cases h0 : i = 0
       · subst h0
         exact (I.rec7 l Z).hcW_first u _ hi'

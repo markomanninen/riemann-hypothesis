@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.ModuleStructureOfCommuting
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryPointProperties
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LevelUR2OrdPt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.ModuleStructureOfCommuting
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryPointProperties
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LevelUR2OrdPt
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -21,7 +25,7 @@ private theorem hecke_poly_coeff_formula {A : Type} [CommRing A] (n q : ℕ) (a 
   simp
 private theorem hecke_poly_coeff_zero {A : Type} [CommRing A] (n q : ℕ) (a : ℕ → A) (i : ℕ) (hi : n < i) :
     (heckePol n q a).coeff i = 0 := by
-  rw [Hi.heckePol, finset_sum_coeff]
+  rw [Hi.heckePol, finsetSum_coeff]
   refine Finset.sum_eq_zero fun j _ => ?_
   rw [coeff_C_mul_X_pow, if_neg]
   omega
@@ -95,13 +99,13 @@ private theorem hecke_part_frobenius {L Ω : Type} [Field L] [NumberField L] [Fi
   constructor
   · intro h j hj
     rcases j with _ | j
-    · rw [Y.a_zero, dif_neg (by omega)]
+    · rw [Y.a_zero, dite_eq_right (by omega)]
       simp
-    · rw [dif_pos ⟨Nat.succ_pos _, hj⟩]
+    · rw [dite_eq_left ⟨Nat.succ_pos _, hj⟩]
       exact h ⟨j, hj⟩
   · intro h k
     have := h (k + 1) k.2
-    rw [dif_pos ⟨Nat.succ_pos _, k.2⟩] at this
+    rw [dite_eq_left ⟨Nat.succ_pos _, k.2⟩] at this
     exact this
 theorem UpperTheory.V.Hi.levelUR2H3Abs_alt :
     _root_.GlobalTheory.Mem.LiteralAutomorphy.LiteratureRankNHypothesis → ∀ (L Ω : Type) [Field L] [NumberField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] (l : ℕ) [Fact l.Prime] (n : ℕ) (c : Coef l) (H : HSet L Ω l n c), H.Ax →

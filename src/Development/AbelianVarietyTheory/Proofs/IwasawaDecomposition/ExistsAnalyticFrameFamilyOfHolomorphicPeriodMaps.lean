@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricUniformisationSmoothOnInterior
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtEqOfPtOfFrameEq
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.UnitHmD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricUniformisationSmoothOnInterior
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtEqOfPtOfFrameEq
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.UnitHmD
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric GlobalTheory.LieBase
 open Classical
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame
@@ -156,9 +161,9 @@ theorem perFr_conj_type (X : Data E r) (x : Frame X.Ψ r) (ρ : X.Ψ) (w : Fin r
       ∑ k : Fin r, (if (k : ℕ) = X.p0 - 1 - i then hermC ρ.1 X.Gm (col (mat x ρ) k) (Data.emb ρ.1 w) else 0) := by
   rw [sum_fin_ite]
   unfold Formalism.L2.PjFree.perFr
-  rw [dif_neg (ReciprocityTheory.ChartRestriction.G.PullbackSections.UH.conjEmb_not_mem X ρ)]
+  rw [dite_eq_right (ReciprocityTheory.ChartRestriction.G.PullbackSections.UH.conjEmb_not_mem X ρ)]
   have h' : conjEmb (conjEmb ρ.1) ∈ X.Ψ := by rw [ReciprocityTheory.ChartRestriction.G.PullbackSections.UH.conjEmb_conjEmb]; exact ρ.2
-  rw [dif_pos h']
+  rw [dite_eq_left h']
   suffices ∀ τ' (h' : τ' ∈ X.Ψ), τ' = ρ.1 →
       (if hj : X.p0 - 1 - i < r then hermC τ' X.Gm (col (mat x ⟨τ', h'⟩) ⟨X.p0 - 1 - i, hj⟩) (Data.emb τ' w) else 0) =
       (if hj : X.p0 - 1 - i < r then hermC ρ.1 X.Gm (col (mat x ρ) ⟨X.p0 - 1 - i, hj⟩) (Data.emb ρ.1 w) else 0) from

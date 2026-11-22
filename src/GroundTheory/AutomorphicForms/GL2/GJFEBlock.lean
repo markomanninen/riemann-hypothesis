@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFEDefs
-import GroundTheory.AutomorphicForms.GL2.GJFEBlockPoint
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFEDefs
+public import GroundTheory.AutomorphicForms.GL2.GJFEBlockPoint
+
+@[expose] public section
 
 noncomputable section
 

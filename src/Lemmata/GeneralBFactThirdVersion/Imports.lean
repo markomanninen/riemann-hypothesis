@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.general_b_fact_third_version
 
@@ -64,10 +68,9 @@ theorem goal1 :
         (@CommRing.toCommSemiring.{0} (@NumberField.RingOfIntegers.{0} E inst)
           (@NumberField.instCommRingRingOfIntegers.{0} E inst)))
       (@AddCommGroup.toAddCommMonoid.{0} V inst_2) inst_4),
-  @Submodule.IsLattice.{0, 0, 0} (@NumberField.RingOfIntegers.{0} E inst)
+  @Submodule.IsFullLattice.{0, 0, 0} (@NumberField.RingOfIntegers.{0} E inst)
       (@NumberField.instCommRingRingOfIntegers.{0} E inst) E (@Field.toCommRing.{0} E inst)
-      (@NumberField.RingOfIntegers.instAlgebra_1.{0} E inst) V (@AddCommGroup.toAddCommMonoid.{0} V inst_2) inst_4
-      inst_3 inst_5 inst_5 Λ →
+      (@NumberField.RingOfIntegers.instAlgebra_1.{0} E inst) V inst_2 inst_4 inst_3 inst_5 Λ →
     ∀ (v : V),
       @Exists.{1} Nat fun (m : Nat) ↦
         And (@Ne.{1} Nat m (@OfNat.ofNat.{0} Nat (nat_lit 0) (instOfNatNat (nat_lit 0))))

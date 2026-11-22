@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafTauPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafTauPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -31,14 +35,12 @@ theorem tauRes_unit (H : Hyp) (hG : LeafGeo) (q : ℕ) [NeZero q] (d : ℕ) (R :
   change pull _ (prod.map (Pj.incl (d + 1)) (𝟙 (sp R)) : PR (d + 1) 1 R ⟶ PR (d + 1) 0 R) (tw q i) n
     (poly q (d + 1) 0 R m n i a) = _
   unfold poly
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [pull_cast, (h6 q).1, pull_cpow h6 q _ hI, ← pull_comp, prod.map_snd, Category.comp_id]
   congr 3
   exact hyp_pull h6 q d R hI
-
-def LeafTauResU : Prop := Hyp → ∀ (q : ℕ) [NeZero q] (d : ℕ) (R : Type) [CommRing R], IsUnit (q : R) → ∀ (m : ℕ) (n i : ℤ) a,
-  pull _ (pr d R).hom (tw q i) n (poly q (d + 1) 0 R m n i a) = poly q (d + 1) 1 R m n i a
 
 theorem LeafTau_ofU (hBd : LeafBd) (hG : LeafGeo) (hPB : LeafPB) (hTl : LeafTail)
     (hU : LeafTauU) (hT : LeafTauTop) : LeafTau := by
@@ -57,7 +59,7 @@ theorem LeafTau_ofU (hBd : LeafBd) (hG : LeafGeo) (hPB : LeafPB) (hTl : LeafTail
   have hinj : ∀ n i, Function.Injective (Hs.fgt q (pr d R) n i) := by
     intro N i
     obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := ⟨N - 1, by ring⟩
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro σ hσ
     obtain ⟨u, rfl⟩ := ((hδ q _ hm n i).2.2 σ).1 hσ
     obtain ⟨a, ha⟩ := (hUb n i).2 u

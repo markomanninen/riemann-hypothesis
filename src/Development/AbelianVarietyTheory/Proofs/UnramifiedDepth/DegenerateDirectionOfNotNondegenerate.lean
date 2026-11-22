@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
+
+@[expose] public section
+
 set_option autoImplicit false
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -44,7 +49,7 @@ theorem map_addDefect (ψ : R →+* S) (F : Fin d → PS R 2 d) (ga : Fin d → 
       MvPowerSeries.constantCoeff_subst_eq_zero (hX q.1) (fun _ => by simp) (h0 q.2))
   unfold addDefect
   rw [map_sub, MvPowerSeries.map_subst hq, MvPowerSeries.map_subst hA]
-  simp only [MvPowerSeries.map_subst (hX _), map_add, MvPowerSeries.map_X]
+  simp only [MvPowerSeries.map_subst (hX _), map_add (f := _), MvPowerSeries.map_X]
   rfl
 
 theorem map_cob (ψ : R →+* S) (F : Fin d → PS R 2 d) (hF : ∀ i, MvPowerSeries.constantCoeff (F i) = 0)
@@ -62,7 +67,8 @@ theorem map_cubicalTermLinearAlongTangent (ψ : R →+* S) (ph2 : PS R 3 d) (u :
   ext mu
   rw [MvPowerSeries.coeff_map]
   change ψ (∑ i : Fin d, _) = ∑ i : Fin d, _
-  simp only [map_sum, map_mul, MvPowerSeries.coeff_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, MvPowerSeries.coeff_map]
 
 theorem map_map {T σ : Type} [CommRing T] (ψ : R →+* S) (χ : S →+* T) (f : MvPowerSeries σ R) :
     MvPowerSeries.map (χ.comp ψ) f = MvPowerSeries.map χ (MvPowerSeries.map ψ f) := by

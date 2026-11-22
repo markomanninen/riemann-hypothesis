@@ -1,9 +1,13 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.Fub2
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ParabolicSubgroupEquality
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FlagFacts
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HaarExistence
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicMeasureModulus
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.Fub2
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ParabolicSubgroupEquality
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FlagFacts
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HaarExistence
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicMeasureModulus
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,10 +67,9 @@ theorem muPar_facts (A : Matrix (Fin n) (Fin n) ℂ) (ν : Measure (PSub ε A)) 
       (∀ s ∈ PSub ε A, (muPar ε A ν).map (fun g => s * g) = muPar ε A ν) ∧ muPar ε A ν ≠ 0 := by
   have hcl := GlobalTheory.CompanionTheory.ParabolicHaar.isClosed_pSub ε A
   have hv : Measurable (Subtype.val : PSub ε A → S7.UJ ε) := measurable_subtype_coe
-  refine ⟨⟨⟨⟨compactCovering (S7.UJ ε), fun _ => trivial, fun i => ?_, iUnion_compactCovering _⟩⟩⟩, ?_, ?_, ?_⟩
-  · have hK := isCompact_compactCovering (S7.UJ ε) i
-    rw [muPar, Measure.map_apply hv hK.measurableSet]
-    exact (hcl.isClosedEmbedding_subtypeVal.isCompact_preimage hK).measure_lt_top
+  have hσ : SigmaFinite (muPar ε A ν) :=
+    (MeasurableEmbedding.subtype_coe hcl.measurableSet).sigmaFinite_map (μ := ν)
+  refine ⟨hσ, ?_, ?_, ?_⟩
   · rw [muPar, Measure.map_apply hv hcl.measurableSet.compl]
     have : (Subtype.val : PSub ε A → S7.UJ ε) ⁻¹' (PSub ε A : Set (S7.UJ ε))ᶜ = ∅ := by
       ext x
@@ -77,10 +80,8 @@ theorem muPar_facts (A : Matrix (Fin n) (Fin n) ℂ) (ν : Measure (PSub ε A)) 
         Subtype.val ∘ (fun g : PSub ε A => (⟨s, hs⟩ : PSub ε A) * g) := rfl
     rw [muPar, Measure.map_map (measurable_const_mul s) hv, e,
       ← Measure.map_map hv (measurable_const_mul _), map_mul_left_eq_self]
-  · intro h
-    have h1 : muPar ε A ν Set.univ = 0 := by rw [h]; simp
-    rw [muPar, Measure.map_apply hv MeasurableSet.univ, Set.preimage_univ] at h1
-    exact (Measure.IsHaarMeasure.toIsOpenPosMeasure (μ := ν)).open_pos _ isOpen_univ Set.univ_nonempty h1
+  · exact (Measure.map_ne_zero_iff (μ := ν) hv.aemeasurable).2
+      (fun h => isOpen_univ.measure_ne_zero ν Set.univ_nonempty (by simp [h]))
 
 theorem fub2 : Fub2 := by
   intro n ε A hA

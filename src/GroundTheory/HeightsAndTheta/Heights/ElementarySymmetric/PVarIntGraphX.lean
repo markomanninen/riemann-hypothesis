@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StVarIntGraphCompact
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PVarIntGraph
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLelongPolyLimit
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PIntegralIndep
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StVarIntGraphCompact
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PVarIntGraph
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLelongPolyLimit
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PIntegralIndep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -50,7 +55,7 @@ theorem LelongPolyLimit.proof_of_compact (hGraph : VarIntGraphCompact.Statement)
     simp only [Φ, graphPt_init]
   have hF : SmoothNear (zeroSet (graphIdeal J p)) F := by
     obtain ⟨U, hU, hJU, hfU⟩ := smoothNear_comp_init p hf
-    exact ⟨U, hU, hJU, hfU.mul ((χ.contDiff.comp (contDiff_apply ℝ ℂ (Fin.last n))).contDiffOn)⟩
+    exact ⟨U, hU, hJU, hfU.mul ((χ.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) (Fin.last n))).contDiffOn)⟩
   have hFc : HasCompactSupport F := by
     refine HasCompactSupport.intro ((hfc.isCompact.prod χ.hasCompactSupport.isCompact).image
       (Continuous.finSnoc (A := fun _ => ℂ) continuous_fst continuous_snd :
@@ -87,7 +92,7 @@ theorem LelongPolyLimit.proof_of_compact (hGraph : VarIntGraphCompact.Statement)
     refine ⟨U ∩ k' ⁻¹' Set.Ioi 0, hkU.continuousOn.isOpen_inter_preimage hU isOpen_Ioi,
       fun x hx => ⟨hJU hx, hk0 _ (init_mem_zeroSet p hx)⟩, ?_⟩
     refine ContDiffOn.div_const (ContDiffOn.log ?_ fun x hx => ?_) _
-    · exact ((contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ (Fin.last n))).contDiffOn.add
+    · exact ((contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) (Fin.last n))).contDiffOn.add
         (contDiffOn_const.mul ((hkU.mono Set.inter_subset_left).pow 2))
     · exact (add_pos_of_nonneg_of_pos (sq_nonneg _) (mul_pos hε (pow_pos hx.2 2))).ne'
   rw [hGraph n (d + 1) J p F _ hJ hF hFc (fun j => Fin.cases hG hΦ j), hFγ]

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FBridge
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem psiM_polar {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) 
   have hex : ∃ (k' : KG ε) (X' : Matrix (Fin n) (Fin n) ℂ), inP ε X' ∧
       toMK k * NormedSpace.exp (pmat z) = toMK k' * NormedSpace.exp X' := ⟨k, pmat z, hX, rfl⟩
   unfold PsiM
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨hP, hEq⟩ := hex.choose_spec.choose_spec
   obtain ⟨h1, h2⟩ := polar_unique hX hP hEq
   rw [← h2, ← h1]

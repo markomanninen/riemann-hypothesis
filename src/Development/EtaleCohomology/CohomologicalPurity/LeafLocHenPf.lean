@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -9,7 +13,8 @@ theorem hs_pull_id (q : ℕ) (P : Arrow Spc) (n i : ℤ) (x : Hs q P n i) : Hs.p
   apply Subtype.ext
   change pull _ (dbl.map (𝟙 P)) _ _ x.1 = x.1
   have e : dbl.map (𝟙 P) = 𝟙 _ := by
-    apply pushout.hom_ext <;> (simp [dbl.map]; try rfl)
+    set_option synthInstance.maxHeartbeats 200000 in
+      apply pushout.hom_ext <;> (simp [dbl.map]; try rfl)
   rw [e, pull_id]
 
 theorem exc_iso (q : ℕ) {P' P : Arrow Spc} (e : P' ≅ P) : Exc q e.hom := fun n i =>
@@ -20,7 +25,8 @@ theorem exc_iso (q : ℕ) {P' P : Arrow Spc} (e : P' ≅ P) : Exc q e.hom := fun
 theorem abv_ext {X : Scheme.{0}} (U : X.Opens) {E : Spc} (π : E ⟶ sch.obj X) {Q : Arrow Spc} (α β : Q ⟶ abv U π)
     (hr : α.right = β.right) (hm : α ≫ abvMap U π = β ≫ abvMap U π) : α = β := by
   apply Arrow.hom_ext _ _ _ hr
-  apply pullback.hom_ext
+  set_option synthInstance.maxHeartbeats 200000 in
+    apply pullback.hom_ext
   · have wa := Arrow.w α
     have wb := Arrow.w β
     change α.left ≫ pullback.fst π (sch.map U.ι) = Q.hom ≫ α.right at wa

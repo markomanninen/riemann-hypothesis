@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockMatrixMulVecBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CapelliDetBlockLeviCongrModUpperBlockIdeal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QdetPolyMapMonic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockMatrixMulVecBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CapelliDetBlockLeviCongrModUpperBlockIdeal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QdetPolyMapMonic
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.ThK.DescB GlobalTheory.ThK.FlagCT GlobalTheory.ThK.FlagPar
+open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.ThK.DescB
 open GlobalTheory.SiegelSet GlobalTheory.UAut GlobalTheory.LeviHC
 
 noncomputable section
@@ -18,12 +23,12 @@ variable {A A' : Type} [Ring A] [Algebra ℂ A] [Ring A'] [Algebra ℂ A']
 theorem qdet_map (φ : A →ₐ[ℂ] A') {n : ℕ} (E : Fin n → Fin n → A) (u : ℂ) :
     φ (Formalism.REAL.qdet E u) = Formalism.REAL.qdet (fun a b => φ (E a b)) u := by
   unfold Formalism.REAL.qdet Formalism.REAL.qminor Formalism.REAL.Tm
-  simp only [map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 3
   funext k
-  simp only [Function.comp_apply, map_add]
-  split_ifs <;> simp
+  simp only [Function.comp_apply, map_add, apply_ite φ, AlgHom.commutes, map_zero]
 
 theorem qdet_mem (S : Subalgebra ℂ A) {n : ℕ} {E : Fin n → Fin n → A} (h : ∀ a b, E a b ∈ S) (u : ℂ) :
     Formalism.REAL.qdet E u ∈ S := by
@@ -46,10 +51,6 @@ theorem comm_qdet {n : ℕ} {E : Fin n → Fin n → A} {z : A} (h : ∀ a b, Co
   obtain ⟨k, rfl⟩ := List.mem_ofFn.1 hy
   unfold Formalism.REAL.Tm
   exact Commute.add_right (GlobalTheory.CapHC.ite_algebraMap_comm _ _ _).symm (h _ _)
-
-theorem qdet_one (E : Fin 1 → Fin 1 → A) (u : ℂ) : Formalism.REAL.qdet E u = algebraMap ℂ A u + E 0 0 := by
-  unfold Formalism.REAL.qdet Formalism.REAL.qminor Formalism.REAL.Tm
-  simp
 
 theorem glComm {n : ℕ} {X : Fin n → Fin n → A} (hX : Formalism.REAL.GlRel X) {a b c d : Fin n} (hbc : b ≠ c)
     (hda : d ≠ a) : Commute (X a b) (X c d) := by
@@ -86,11 +87,6 @@ theorem upperSpan_maps {N K : Submodule ℂ M} {r m : ℕ} (Y : Fin (r + m) → 
 end Stab
 
 section Main
-
-theorem blk_castAdd_lt {n₁ : ℕ} (p : Fin (1 + n₁)) (q : Fin 1) :
-    blk n₁ (Fin.castAdd 1 p) < blk n₁ (Fin.natAdd (1 + n₁) q) := by
-  rw [blk_y]
-  refine Fin.addCases (fun a => ?_) (fun k => ?_) p <;> simp [blk]
 
 end Main
 

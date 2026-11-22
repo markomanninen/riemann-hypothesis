@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StepFacEq
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StepFacEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem locA_of (H : Hyp) (J : Hyp2) (hC : ConeFacA) (hS : StdA) : LocA' := by
   have std' : ∀ v ∈ X.T, ∃ φ ∈ SB _, ∃ φ' ∈ SB _, Rf.p v φ = Rf.p' v φ' ∧ Rf₁.p' v (ev' v φ') ≠ 0 ∧
       Rf₁.p v (Λ v φ) = wT B X s (1 - (((b + 2 - a') / 2 : ℕ) : ℤ)) v • Rf₁.p' v (ev' v φ') := fun v hv => by
     obtain ⟨φ, hφ, φ', hφ', x, y, z⟩ := std v hv
-    exact ⟨φ, hφ, φ', hφ', x, y, by rw [(hΛ v _ hφ).1, wT, dif_pos (t.chars.sub hv)]; exact z⟩
+    exact ⟨φ, hφ, φ', hφ', x, y, by rw [(hΛ v _ hφ).1, wT, dite_eq_left (t.chars.sub hv)]; exact z⟩
   haveI := m₁.real.nontriv
   have pt₁ : Pt B G.M' (fun _ => SB _) R₁.p' Rf₁.p' ei' ev' := by
     refine pt_of ?_ X.T (fun v hv => ?_) fun v hv => ⟨vac_sb t.geo.hM' v, by
@@ -156,8 +160,9 @@ theorem locA_of (H : Hyp) (J : Hyp2) (hC : ConeFacA) (hS : StdA) : LocA' := by
     · rw [cone_sum cadd _ fun j => admissible_pure_tensor_schwartz t.geo.hM _ ⟨(a1 j).2.1, ev_of_off (a1 j).2.2⟩]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [pure_smul, mul_smul, ← cfac T hT _ _ (a1 j).2.1 (a1 j).2.2, inv_smul_smul₀ pne]
-    · rw [map_sum, Finset.smul_sum]
-      exact Finset.sum_congr rfl fun i _ => by rw [h3' _ _ (a2 i).2.1 (ev_of_off (a2 i).2.2), pure_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [map_sum, Finset.smul_sum]
+        exact Finset.sum_congr rfl fun i _ => by rw [h3' _ _ (a2 i).2.1 (ev_of_off (a2 i).2.2), pure_smul]
     · have := tens_step li lf c (fun v => if v ∈ X.T then wT B X s (1 - (((b + 2 - a') / 2 : ℕ) : ℤ)) v else u v) _
         (fun j v => Rf.p' v (φ' j v)) _ (fun i v => Rf.p v (φ i v)) tm.symm ((∏ v ∈ T \ X.T, u v)⁻¹ * k₀)
       have ek : (∏ v ∈ T \ X.T, u v)⁻¹ * k₀ * c * ∏ v ∈ T, (if v ∈ X.T then wT B X s (1 - (((b + 2 - a') / 2 : ℕ) : ℤ)) v else u v) = K₀ := by

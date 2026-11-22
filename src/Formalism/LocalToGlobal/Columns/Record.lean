@@ -1,18 +1,23 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataForms
-import Formalism.LocalToGlobal.Columns.ToHLat
-import Formalism.LocalToGlobal.Columns.ToHLatLemmas
-import Formalism.LocalToGlobal.Columns.PolyFn
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Formalism.LocalToGlobal.Columns.AtTOwedC
-import Formalism.LocalToGlobal.Columns.AtTOwedS
-import Formalism.LocalToGlobal.Columns.AdjointFrobeniusPreservesRamified
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.Columns.RecLevel
-import Formalism.LocalToGlobal.Columns.InputsLemmas
-import Formalism.LocalToGlobal.Columns.CmUnramifiedOfFieldConditions
-import Formalism.LocalToGlobal.Columns.DGamAut
-import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataForms
+public import Formalism.LocalToGlobal.Columns.ToHLat
+public import Formalism.LocalToGlobal.Columns.ToHLatLemmas
+public import Formalism.LocalToGlobal.Columns.PolyFn
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+public import Formalism.LocalToGlobal.Columns.AtTOwedC
+public import Formalism.LocalToGlobal.Columns.AtTOwedS
+public import Formalism.LocalToGlobal.Columns.AdjointFrobeniusPreservesRamified
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.Columns.RecLevel
+public import Formalism.LocalToGlobal.Columns.InputsLemmas
+public import Formalism.LocalToGlobal.Columns.CmUnramifiedOfFieldConditions
+public import Formalism.LocalToGlobal.Columns.DGamAut
+public import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+import Formalism.LocalToGlobal.Columns.HeckeSpCount
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -37,7 +42,8 @@ theorem rec_li_semilin {K V M ι κ : Type} [Field K] [AddCommGroup V] [Module K
     intro x
     conv_lhs => rw [← b.linearCombination_repr x]
     conv_rhs => rw [← b.linearCombination_repr x]
-    rw [Finsupp.linearCombination_apply, Finsupp.sum, TensorProduct.tmul_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.linearCombination_apply, Finsupp.sum, TensorProduct.tmul_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [LinearMap.map_smulₛₗ, TensorProduct.tmul_smul, ← algebraMap_smul ℂ (b.repr x i), map_smul, hLb]
     rfl
@@ -121,9 +127,6 @@ def opOn (δ : S.D → S.D) : (S.Cl → E.Y → ℂ) →ₗ[ℂ] (S.Cl → E.Y �
   map_add' F G := by funext c; exact map_add (E.trPt _) _ _
   map_smul' a F := by funext c; exact map_smul (E.trPt _) _ _
 
-theorem opOn_apply (δ : S.D → S.D) (F : S.Cl → E.Y → ℂ) (c : S.Cl) :
-    E.opOn δ F c = E.trPt (δ (S.outSec.rep c)) (F (S.cls (δ (S.outSec.rep c)))) := rfl
-
 theorem opOn_emb (δ : S.D → S.D) (φ : S.EqFun) (c : S.Cl) :
     E.opOn δ (E.emb φ) c = E.ev ((φ : S.D → S.V) (δ (S.outSec.rep c))) := E.atPt_emb φ _
 
@@ -153,11 +156,6 @@ theorem opOn_comp (hf : S.Free) (δ δ' : S.D → S.D) (hδ' : ∀ (g : S.G) (d 
 
 def lin : (S.ιV → ℂ) →ₗ[ℂ] (E.Y → ℂ) := Fintype.linearCombination ℂ fun i => E.ev (S.bV i)
 
-theorem ev_eq_lin (x : S.V) : E.ev x = E.lin fun i => σ (S.bV.repr x i) := by
-  conv_lhs => rw [← S.bV.sum_repr x]
-  rw [map_sum]
-  simp only [LinearMap.map_smulₛₗ, lin, Fintype.linearCombination_apply]
-
 theorem lin_ker : LinearMap.ker E.lin = ⊥ := by
   first
   | exact Fintype.linearIndependent_iff_ker.mp E.li
@@ -168,46 +166,14 @@ def gram : Matrix S.ιV S.ιV ℂ := Matrix.of fun i j => E.ip (E.ev (S.bV i)) (
 
 def ipB : (E.Y → ℂ) →ₗ[ℂ] (S.ιV → ℂ) := LinearMap.pi fun j => E.ip (E.ev (S.bV j))
 
-theorem ipB_lin (z : S.ιV → ℂ) : E.ipB (E.lin z) = E.gram *ᵥ z := by
-  funext j
-  first
-  | (simp only [ipB, lin, gram, LinearMap.pi_apply, Fintype.linearCombination_apply, map_sum, map_smul, smul_eq_mul,
-      Matrix.mulVec, dotProduct, Matrix.of_apply]
-     exact Finset.sum_congr rfl fun i _ => mul_comm _ _)
-  | simp [ipB, lin, gram, Matrix.mulVec, dotProduct, Fintype.linearCombination_apply, mul_comm]
 
 open Classical in
-
 def co : (E.Y → ℂ) →ₗ[ℂ] (S.ιV → ℂ) :=
   if IsUnit E.gram.det then Matrix.toLin' E.gram⁻¹ ∘ₗ E.ipB
   else (E.lin.exists_leftInverse_of_injective E.lin_ker).choose
 
-theorem co_lin (z : S.ιV → ℂ) : E.co (E.lin z) = z := by
-  unfold co
-  split_ifs with h
-  · rw [LinearMap.comp_apply, ipB_lin, Matrix.toLin'_apply, Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ h,
-      Matrix.one_mulVec]
-  · exact LinearMap.congr_fun (E.lin.exists_leftInverse_of_injective E.lin_ker).choose_spec z
-
 def extend {M : Type} [AddCommGroup M] [Module ℂ M] (ℓ : S.V →ₛₗ[σ] M) : (E.Y → ℂ) →ₗ[ℂ] M :=
   (Fintype.linearCombination ℂ fun i => ℓ (S.bV i)) ∘ₗ E.co
-
-def sharp (ℓ : S.V →ₛₗ[σ] ℂ) : E.Y → ℂ :=
-  ∑ j, starRingEnd ℂ (∑ i, ℓ (S.bV i) * E.gram⁻¹ i j) • E.ev (S.bV j)
-
-theorem extend_eq_ip (hG : IsUnit E.gram.det) (ℓ : S.V →ₛₗ[σ] ℂ) (f : E.Y → ℂ) : E.extend ℓ f = E.ip (E.sharp ℓ) f := by
-  simp only [extend, co, if_pos hG, LinearMap.comp_apply, Fintype.linearCombination_apply, Matrix.toLin'_apply,
-    Matrix.mulVec, dotProduct, ipB, LinearMap.pi_apply, sharp, map_sum, LinearMap.map_smulₛₗ, starRingEnd_self_apply,
-    LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Finset.sum_mul]
-  rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
-theorem extend_ev {M : Type} [AddCommGroup M] [Module ℂ M] (ℓ : S.V →ₛₗ[σ] M) (x : S.V) : E.extend ℓ (E.ev x) = ℓ x := by
-  simp only [extend, LinearMap.comp_apply]
-  rw [E.ev_eq_lin x, E.co_lin, Fintype.linearCombination_apply]
-  conv_rhs => rw [← S.bV.sum_repr x]
-  rw [map_sum]
-  simp only [LinearMap.map_smulₛₗ]
 
 def ipCl (h : S.Ok) : (S.Cl → E.Y → ℂ) →ₗ⋆[ℂ] (S.Cl → E.Y → ℂ) →ₗ[ℂ] ℂ :=
   letI := h.fintypeCl
@@ -248,7 +214,8 @@ theorem span_basis {ι : Type} [Fintype ι] (b : Basis ι K S.EqFun) :
   · show Submodule.span ℂ (Set.range E.emb) ≤ _
     rw [Submodule.span_le]
     rintro _ ⟨φ, rfl⟩
-    rw [← b.sum_repr φ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr φ, map_sum]
     refine Submodule.sum_mem _ fun a _ => ?_
     rw [LinearMap.map_smulₛₗ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩)
@@ -262,7 +229,8 @@ theorem pairAt_mk (S : GSD K) (σ : K →+* ℂ) (hσ : ∀ x : K, σ (star x) =
       ∑ i, ∑ j, starRingEnd ℂ (σ (S.bV.repr x i)) * σ (S.gramV i j) * σ (S.bV.repr y j) := by
     intro x y
     conv_lhs => rw [← S.bV.sum_repr x, ← S.bV.sum_repr y]
-    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, map_mul,
       Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -277,7 +245,8 @@ theorem pairAt_mk (S : GSD K) (σ : K →+* ℂ) (hσ : ∀ x : K, σ (star x) =
   · right
     intro x y
     rw [key, pairAt, h]
-    simp only [map_sum, map_mul, ComplexEmbedding.conjugate_coe_eq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, ComplexEmbedding.conjugate_coe_eq]
 
 theorem Ev.norm_eq {S : GSD K} {σ : K →+* ℂ} (E : S.Ev σ) (h : S.Ok) (R : S.Rat)
     (hσ : ∀ x : K, σ (star x) = starRingEnd ℂ (σ x)) (φ : S.EqFun) :
@@ -299,7 +268,8 @@ theorem Ev.norm_eq {S : GSD K} {σ : K →+* ℂ} (E : S.Ev σ) (h : S.Ok) (R : 
   · simp only [hp]
     rw [← Complex.conj_re]
     congr 1
-    simp only [map_sum, map_mul, map_inv₀, map_natCast, Complex.conj_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_inv₀, map_natCast, Complex.conj_conj]
 
 end GSD
 
@@ -310,14 +280,12 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K} {σ : K �
 def evAt {ι : Type} (pts : ι → S.D) : (S.Cl → E.Y → ℂ) →ₗ[ℂ] (ι → E.Y → ℂ) :=
   LinearMap.pi fun i => (E.trPt (pts i)).toLinearMap ∘ₗ LinearMap.proj (S.cls (pts i))
 
-theorem evAt_apply {ι : Type} (pts : ι → S.D) (F : S.Cl → E.Y → ℂ) (i : ι) : E.evAt pts F i = E.atPt (pts i) F := rfl
-
 def perCl (h : S.Ok) {ι : Type} [Fintype ι] (ℓ : S.Cl → ι → (S.V →ₛₗ[σ] ℂ)) :
     (S.Cl → E.Y → ℂ) →ₗ[ℂ] (ι → ℂ) →ₗ[ℂ] ℂ :=
   letI := h.fintypeCl
   LinearMap.mk₂ ℂ (fun F z => ∑ c : S.Cl,
       ((Nat.card (MulAction.stabilizer S.G (S.outSec.rep c)) : ℕ) : ℂ)⁻¹ * ∑ a, z a * E.extend (ℓ c a) (F c))
-    (fun F F' z => by simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib])
+    (fun F F' z => by simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib])
     (fun a F z => by
       simp only [Pi.smul_apply, map_smul, smul_eq_mul, Finset.mul_sum]
       refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun b _ => ?_
@@ -327,14 +295,6 @@ def perCl (h : S.Ok) {ι : Type} [Fintype ι] (ℓ : S.Cl → ι → (S.V →ₛ
       simp only [Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
       refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun b _ => ?_
       ring)
-
-theorem perCl_emb (h : S.Ok) {ι : Type} [Fintype ι] (ℓ : S.Cl → ι → (S.V →ₛₗ[σ] ℂ)) (φ : S.EqFun) (z : ι → ℂ) :
-    E.perCl h ℓ (E.emb φ) z = (letI := h.fintypeCl
-      ∑ c : S.Cl, ((Nat.card (MulAction.stabilizer S.G (S.outSec.rep c)) : ℕ) : ℂ)⁻¹ *
-        ∑ a, z a * ℓ c a ((φ : S.D → S.V) (S.outSec.rep c))) := by
-  first
-  | simp only [perCl, LinearMap.mk₂_apply, emb_apply, extend_ev]
-  | simp [perCl, emb_apply, extend_ev]
 
 theorem norm_ipCl (h : S.Ok) (R : S.Rat) (hσ : ∀ x : K, σ (star x) = starRingEnd ℂ (σ x)) (φ : S.EqFun) :
     (majAt (S.hB h) (stdFrame (S.hGram h)) (InfinitePlace.mk σ) φ φ).re = (E.ipCl h (E.emb φ) (E.emb φ)).re := by
@@ -375,13 +335,10 @@ def frEquiv (σ₀ : X.K →+* ℂ) (γ : GL (Fin n) X.E) : FrS X σ₀ n ≃ Fr
 def frSub (σ₀ : X.K →+* ℂ) (γ : GL (Fin n) X.E) : (FrS X σ₀ n → ℂ) ≃ₗ[ℂ] (FrS X σ₀ n → ℂ) :=
   LinearEquiv.funCongrLeft ℂ ℂ (frEquiv σ₀ γ⁻¹)
 
-theorem frSub_apply (σ₀ : X.K →+* ℂ) (γ : GL (Fin n) X.E) (f : FrS X σ₀ n → ℂ) (y : FrS X σ₀ n) :
-    frSub σ₀ γ f y = f (frMul σ₀ γ⁻¹ y) := rfl
-
 variable {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
 
 def roundEv (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x))
-    (lam : X.Tau → DomWeight n) (L : DecoSet X.E n ST SG → Submodule (𝓞 X.E) (Sp X.E n)) (Λ : LevFam X.E X.K n SG) :
+    (lam : X.Tau → DomWeight n) (L : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) → Submodule (𝓞 X.E) (Sp X.E n)) (Λ : LevFam X.E X.K n SG) :
     (formGSD (roundPk X lam L) Λ).Ev σ₀ where
   Y := FrS X σ₀ n
   ev := evV X.emb 1 lam σ₀
@@ -423,14 +380,6 @@ def modP.mk (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Sp E n)) :
 def modP.rep {P : HeightOneSpectrum (𝓞 E)} {M : Submodule (𝓞 E) (Sp E n)} (x : modP P M) : Sp E n :=
   ((Quotient.out x : ↥M) : Sp E n)
 
-theorem modP.rep_mem {P : HeightOneSpectrum (𝓞 E)} {M : Submodule (𝓞 E) (Sp E n)} (x : modP P M) : modP.rep x ∈ M := (Quotient.out x : ↥M).2
-
-theorem modP.mk_rep {P : HeightOneSpectrum (𝓞 E)} {M : Submodule (𝓞 E) (Sp E n)} (x : modP P M) :
-    modP.mk P M ⟨modP.rep x, modP.rep_mem x⟩ = x := by
-  first
-  | exact Quotient.out_eq x
-  | exact Quotient.out_eq' x
-
 def modP.lift (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Sp E n)) (f : ↥M →ₗ[𝓞 E] 𝓞 E ⧸ P.asIdeal) :
     Module.Dual (𝓞 E ⧸ P.asIdeal) (modP P M) :=
   LinearMap.extendScalarsOfSurjective (Ideal.Quotient.mk_surjective (I := P.asIdeal))
@@ -442,15 +391,15 @@ def modP.lift (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Sp E n))
 theorem modP.lift_mk (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Sp E n)) (f : ↥M →ₗ[𝓞 E] 𝓞 E ⧸ P.asIdeal)
     (x : ↥M) : modP.lift P M f (modP.mk P M x) = f x := rfl
 
-open Classical in
 
+open Classical in
 def modP.ext (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Sp E n)) (g : modP P M → 𝓞 E ⧸ P.asIdeal) (y : Sp E n) :
     𝓞 E ⧸ P.asIdeal :=
   if h : ∃ s : 𝓞 E, s ∉ P.asIdeal ∧ s • y ∈ M then
     Ring.inverse (Ideal.Quotient.mk P.asIdeal h.choose) * g (modP.mk P M ⟨h.choose • y, h.choose_spec.2⟩)
   else 0
 
-theorem finrank_modP (P : HeightOneSpectrum (𝓞 E)) {M : Submodule (𝓞 E) (Sp E n)} (hM : Submodule.IsLattice E M) :
+theorem finrank_modP (P : HeightOneSpectrum (𝓞 E)) {M : Submodule (𝓞 E) (Sp E n)} (hM : Submodule.IsFullLattice E M) :
     Module.finrank (𝓞 E ⧸ P.asIdeal) (modP P M) = n := by
   obtain ⟨co, hco⟩ := exists_coordAt P hM
   let f : ↥M →ₗ[𝓞 E] (Fin n → 𝓞 E ⧸ P.asIdeal) :=
@@ -483,25 +432,39 @@ def modP.map (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Sp E n)) 
     (Submodule.Quotient.equiv _ _ (gmapEquiv M γ) (by
       rw [Submodule.map_smul'', Submodule.map_top, LinearEquiv.range]))
 
-theorem modP.map_mk (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Sp E n)) (γ : Sp E n ≃ₗ[E] Sp E n) (x : ↥M) :
-    modP.map P M γ (modP.mk P M x) = modP.mk P (gmap γ M) ⟨γ x.1, Submodule.mem_map_of_mem x.2⟩ := rfl
-
 end ModP
+
+private theorem rec_mem_span_of_smul_mem {K V : Type} [Field K] [NumberField K]
+    [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
+    (M : Submodule (𝓞 K) V) {a : 𝓞 K} (ha : a ≠ 0) {x : V} (hx : a • x ∈ M) :
+    x ∈ Submodule.span K (M : Set V) := by
+  have haK : (a : K) ≠ 0 := by exact_mod_cast ha
+  apply (Submodule.smul_mem_iff _ haK).mp
+  rw [algebraMap_smul]
+  exact Submodule.subset_span hx
 
 section LevT
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
+private theorem rec_deco_full_lattice (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :
+    Submodule.IsFullLattice E d.1.N :=
+  hcnt_isFullLattice_of_unimodular d.2.lat d.2.uni
+
 namespace DecoSet
 
-abbrev lv (d : DecoSet E n ST SG) (P : ST) : Type := modP P.1 d.1.N
+abbrev lv (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) : Type := modP P.1 d.1.N
 
-def fv (d : DecoSet E n ST SG) (P : ST) : Module.Dual (𝓞 E ⧸ P.1.asIdeal) (d.lv P) :=
+theorem lv_finrank (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) :
+    Module.finrank (𝓞 E ⧸ P.1.asIdeal) (d.lv P) = n :=
+  finrank_modP P.1 (rec_deco_full_lattice d)
+
+def fv (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) : Module.Dual (𝓞 E ⧸ P.1.asIdeal) (d.lv P) :=
   modP.lift P.1 d.1.N (d.2.fLin P d.1.N (le_locP _ _))
 
-theorem fv_mk (d : DecoSet E n ST SG) (P : ST) (x : ↥d.1.N) : d.fv P (modP.mk P.1 d.1.N x) = d.1.f P x.1 := rfl
+theorem fv_mk (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) (x : ↥d.1.N) : d.fv P (modP.mk P.1 d.1.N x) = d.1.f P x.1 := rfl
 
-theorem fv_ne (d : DecoSet E n ST SG) (P : ST) : d.fv P ≠ 0 := by
+theorem fv_ne (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) : d.fv P ≠ 0 := by
   intro h
   obtain ⟨e, he, hf1, -⟩ := d.2.exists_dualBasis
   have h1 : d.fv P (modP.mk P.1 d.1.N ⟨e P, he P⟩) = 1 := (d.fv_mk P _).trans (hf1 P)
@@ -509,11 +472,11 @@ theorem fv_ne (d : DecoSet E n ST SG) (P : ST) : d.fv P ≠ 0 := by
   haveI := P.1.isPrime
   exact zero_ne_one h1
 
-def upL (d : DecoSet E n ST SG) (P : ST) (q : 𝓞 E) (x : d.lv P) : DecoSet E n ST SG := d.up P q (modP.rep x)
+def upL (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) (q : 𝓞 E) (x : d.lv P) : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) := d.up P q (modP.rep x)
 
-abbrev lk (d : DecoSet E n ST SG) (P : ST) : Type := modP P.1 (d.1.kerAt P)
+abbrev lk (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) : Type := modP P.1 (d.1.kerAt P)
 
-theorem kerAt_lattice (d : DecoSet E n ST SG) (P : ST) : Submodule.IsLattice E (d.1.kerAt P) := by
+theorem kerAt_lattice (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) : Submodule.IsLattice E (d.1.kerAt P) := by
   obtain ⟨p, hp, hp0⟩ : ∃ p ∈ P.1.asIdeal, p ≠ 0 := by
     by_contra H
     push Not at H
@@ -521,22 +484,34 @@ theorem kerAt_lattice (d : DecoSet E n ST SG) (P : ST) : Submodule.IsLattice E (
   exact lattice_of_smul d.2.lat d.2.lat (fun x hx => ((d.2.mem_kerAt P x).1 hx).1) hp0
     fun x hx => d.2.smul_mem_kerAt P hp hx
 
-def e1 (d : DecoSet E n ST SG) (P : ST) : Sp E n := d.2.exists_dualBasis.choose P
+theorem kerAt_full_lattice (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) :
+    Submodule.IsFullLattice E (d.1.kerAt P) := by
+  letI := d.kerAt_lattice P
+  obtain ⟨p, hp, hp0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot P.1.ne_bot
+  refine { span_eq_top := top_unique ?_ }
+  rw [← (rec_deco_full_lattice d).span_eq_top, Submodule.span_le]
+  exact fun x hx => rec_mem_span_of_smul_mem (d.1.kerAt P) hp0 (d.2.smul_mem_kerAt P hp hx)
 
-theorem first_raising_mem_equivariant (d : DecoSet E n ST SG) (P : ST) : d.e1 P ∈ d.1.N := d.2.exists_dualBasis.choose_spec.1 P
+theorem lk_finrank (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) :
+    Module.finrank (𝓞 E ⧸ P.1.asIdeal) (d.lk P) = n :=
+  finrank_modP P.1 (d.kerAt_full_lattice P)
 
-theorem functional_firstBasis_eq_one (d : DecoSet E n ST SG) (P : ST) : d.1.f P (d.e1 P) = 1 := d.2.exists_dualBasis.choose_spec.2.1 P
+def e1 (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) : Sp E n := d.2.exists_dualBasis.choose P
+
+theorem first_raising_mem_equivariant (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) : d.e1 P ∈ d.1.N := d.2.exists_dualBasis.choose_spec.1 P
+
+theorem functional_firstBasis_eq_one (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) : d.1.f P (d.e1 P) = 1 := d.2.exists_dualBasis.choose_spec.2.1 P
+
 
 open Classical in
-
-def te (d : DecoSet E n ST SG) (P : ST) (q : 𝓞 E) : d.lk P :=
+def te (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) (q : 𝓞 E) : d.lk P :=
   if h : q • d.e1 P ∈ d.1.kerAt P then modP.mk P.1 (d.1.kerAt P) ⟨_, h⟩ else 0
 
-theorem te_ne (d : DecoSet E n ST SG) (P : ST) {q : 𝓞 E} (hq : q ∈ P.1.asIdeal) (hq2 : q ∉ P.1.asIdeal ^ 2) :
+theorem te_ne (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) {q : 𝓞 E} (hq : q ∈ P.1.asIdeal) (hq2 : q ∉ P.1.asIdeal ^ 2) :
     d.te P q ≠ 0 := by
   have hm : q • d.e1 P ∈ d.1.kerAt P := d.2.smul_mem_kerAt P hq (d.first_raising_mem_equivariant P)
   unfold te
-  rw [dif_pos hm]
+  rw [dite_eq_left hm]
   intro h0
   have h1 : q • d.e1 P ∈ P.1.asIdeal • d.1.kerAt P := by
     have := (Submodule.Quotient.mk_eq_zero _).1 h0
@@ -548,7 +523,7 @@ theorem te_ne (d : DecoSet E n ST SG) (P : ST) {q : 𝓞 E} (hq : q ∈ P.1.asId
   rw [h3, d.2.mem_kerAt, d.2.f_smul P r _ (le_locP _ _ (d.first_raising_mem_equivariant P)), d.functional_firstBasis_eq_one, mul_one] at h2
   exact hr (Ideal.Quotient.eq_zero_iff_mem.1 h2.2)
 
-def dnL (d : DecoSet E n ST SG) (P : ST) (g : Module.Dual (𝓞 E ⧸ P.1.asIdeal) (d.lk P)) : DecoSet E n ST SG :=
+def dnL (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : ST) (g : Module.Dual (𝓞 E ⧸ P.1.asIdeal) (d.lk P)) : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) :=
   d.dn P (modP.ext P.1 (d.1.kerAt P) g)
 
 end DecoSet
@@ -570,7 +545,7 @@ theorem modP.ext_spec (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (
     Ideal.Quotient.mk P.asIdeal s * modP.ext P M g y = g (modP.mk P M ⟨s • y, hy⟩) := by
   have hex : ∃ s : 𝓞 E, s ∉ P.asIdeal ∧ s • y ∈ M := ⟨s, hs, hy⟩
   unfold modP.ext
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have htP : hex.choose ∉ P.asIdeal := hex.choose_spec.1
   have htM : hex.choose • y ∈ M := hex.choose_spec.2
   have key : Ideal.Quotient.mk P.asIdeal hex.choose * g (modP.mk P M ⟨s • y, hy⟩) =
@@ -600,9 +575,9 @@ theorem modP.ext_of_mem (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E)
   exact Subtype.ext (one_smul _ _)
 
 theorem modP.ext_funAt (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Sp E n)) (g : Module.Dual (𝓞 E ⧸ P.asIdeal) (modP P M)) :
-    FunAt P M (modP.ext P M g) where
-  add := by
-    intro x hx y hy
+    FunAt P M (modP.ext P M g) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro x hx y hy
     obtain ⟨s, hs, hsx⟩ := (mem_locP P M x).1 hx
     obtain ⟨t, ht, hty⟩ := (mem_locP P M y).1 hy
     have hst : s * t ∉ P.asIdeal := fun h => (P.isPrime.mem_or_mem h).elim hs ht
@@ -610,77 +585,69 @@ theorem modP.ext_funAt (P : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) 
     have h2 : (s * t) • y ∈ M := by rw [mul_smul]; exact M.smul_mem s hty
     have h3 : (s * t) • (x + y) ∈ M := by rw [smul_add]; exact M.add_mem h1 h2
     apply mul_left_cancel₀ (mk_ne_zero hst)
-    rw [mul_add, modP.ext_spec P M g _ hst h3, modP.ext_spec P M g _ hst h1, modP.ext_spec P M g _ hst h2, ← map_add, ← map_add]
+    rw [mul_add, modP.ext_spec P M g _ hst h3, modP.ext_spec P M g _ hst h1, modP.ext_spec P M g _ hst h2, ← map_add (f := _), ← map_add (f := _)]
     congr 2
     exact Subtype.ext (smul_add _ _ _)
-  smul := by
-    intro a x hx
+  · intro a x hx
     obtain ⟨s, hs, hsx⟩ := (mem_locP P M x).1 hx
     have h1 : s • a • x ∈ M := by rw [smul_comm]; exact M.smul_mem a hsx
     apply mul_left_cancel₀ (mk_ne_zero hs)
     rw [modP.ext_spec P M g _ hs h1, mul_left_comm, modP.ext_spec P M g _ hs hsx, ← modP.mk_osmul]
     congr 2
     exact Subtype.ext (smul_comm _ _ _)
-  off := by
-    intro x hx
+  · intro x hx
     unfold modP.ext
-    rw [dif_neg fun h => hx ((mem_locP P M x).2 h)]
+    rw [dite_eq_right fun h => hx ((mem_locP P M x).2 h)]
 
 namespace DecoSet
-
-theorem upL_mem (d : DecoSet E n ST SG) (P : ST) (hP : MoveHyp ST SG P) {q : 𝓞 E} (hq : q ∈ P.1.asIdeal)
-    (hq2 : q ∉ P.1.asIdeal ^ 2) {x : d.lv P} (hx : d.fv P x = 1) : d.upL P q x ∈ d.upSet P q := by
-  have h1 : d.1.f P (modP.rep x) = 1 := by
-    rw [← d.fv_mk P ⟨modP.rep x, modP.rep_mem x⟩, modP.mk_rep, hx]
-  exact ⟨modP.rep x, modP.rep_mem x, h1, d.up_val P hP hq hq2 (modP.rep_mem x) h1⟩
-
-theorem exists_upL (d : DecoSet E n ST SG) (P : ST) (hP : MoveHyp ST SG P) {q : 𝓞 E} (hq : q ∈ P.1.asIdeal)
-    (hq2 : q ∉ P.1.asIdeal ^ 2) {d' : DecoSet E n ST SG} (h : d' ∈ d.upSet P q) :
-    ∃ x : d.lv P, d.fv P x = 1 ∧ d' = d.upL P q x := by
-  obtain ⟨y, hy, hfy, e⟩ := h
-  refine ⟨modP.mk P.1 d.1.N ⟨y, hy⟩, hfy, Subtype.ext ?_⟩
-  have h1 : d.1.f P (modP.rep (modP.mk P.1 d.1.N ⟨y, hy⟩)) = 1 := by
-    rw [← d.fv_mk P ⟨modP.rep _, modP.rep_mem _⟩, modP.mk_rep]
-    exact hfy
-  have h2 : y - modP.rep (modP.mk P.1 d.1.N ⟨y, hy⟩) ∈ P.1.asIdeal • d.1.N := by
-    have h3 : modP.mk P.1 d.1.N (⟨y, hy⟩ - ⟨modP.rep (modP.mk P.1 d.1.N ⟨y, hy⟩), modP.rep_mem _⟩) = 0 := by
-      rw [map_sub, modP.mk_rep, sub_self]
-    exact (Submodule.mem_smul_top_iff _ _ _).1 ((Submodule.Quotient.mk_eq_zero _).1 h3)
-  rw [e, upL, d.up_val P hP hq hq2 (modP.rep_mem _) h1]
-  exact d.1.up_congr P q h2
-
-theorem dnL_val (d : DecoSet E n ST SG) (P : ST) (hP : MoveHyp ST SG P) {g : Module.Dual (𝓞 E ⧸ P.1.asIdeal) (d.lk P)}
-    (hg : g ≠ 0) : (d.dnL P g).1 = d.1.dn P (modP.ext P.1 (d.1.kerAt P) g) := by
-  have hF := modP.ext_funAt P.1 (d.1.kerAt P) g
-  have hl := (d.2.dnN_spec P hP.ne).2.2.2
-  have hok : (d.1.dn P (modP.ext P.1 (d.1.kerAt P) g)).Ok := by
-    refine d.2.dn P hP ?_ ?_ ?_ ?_
-    · rw [hl]; exact hF.add
-    · rw [hl]; exact hF.smul
-    · rw [hl]; exact hF.off
-    · obtain ⟨z, hz⟩ : ∃ z, g z ≠ 0 := by
-        by_contra H
-        push Not at H
-        exact hg (LinearMap.ext H)
-      obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ z
-      exact ⟨x.1, Submodule.mem_sup_left x.2, by rw [modP.ext_of_mem]; exact hz⟩
-  unfold dnL DecoSet.dn
-  rw [dif_pos hok]
 
 end DecoSet
 
 end MoveLemmas
 
+private theorem rec_intDel_full {K : Type} [Field K] [NumberField K] [StarRing K]
+    (S : GSD K) (h : S.Ok) (hD : ∀ d, Submodule.IsFullLattice K (S.Del d)) :
+    Submodule.IsFullLattice K S.intDel := by
+  classical
+  let : Fintype S.Cl := h.fintypeCl
+  have hfg : S.intDel.FG := by
+    let e := S.coordOf h S.outSec
+    apply Submodule.fg_of_fg_map_injective (e.toLinearMap.restrictScalars (𝓞 K)) e.injective
+    change (S.intDel.map ((S.coordOf h S.outSec).toLinearMap.restrictScalars (𝓞 K))).FG
+    rw [S.map_intDel h S.outSec]
+    exact (Formalism.DivisionValues.ValuationLatticeField.valLatF_isLattice _
+      (S.toCSD h).I_injective _ fun c => (hD (S.outSec.rep c)).toIsLattice).fg
+  let := Submodule.IsLattice.of_fg K hfg
+  refine { span_eq_top := top_unique ?_ }
+  intro φ _
+  have hex (c : S.Cl) : ∃ a : 𝓞 K, a ≠ 0 ∧
+      a • (φ : S.D → S.V) (S.outSec.rep c) ∈ S.Del (S.outSec.rep c) := by
+    have hs : (φ : S.D → S.V) (S.outSec.rep c) ∈
+        Submodule.span K (S.Del (S.outSec.rep c) : Set S.V) := by
+      rw [(hD (S.outSec.rep c)).span_eq_top]
+      exact Submodule.mem_top
+    obtain ⟨a, ha⟩ := multiple_mem_span_of_mem_localization_span (nonZeroDivisors (𝓞 K)) K _ _ hs
+    rw [Submodule.span_eq] at ha
+    exact ⟨a, nonZeroDivisors.coe_ne_zero a, ha⟩
+  choose a ha ha_mem using hex
+  apply rec_mem_span_of_smul_mem S.intDel (a := ∏ c, a c)
+    (Finset.prod_ne_zero_iff.mpr fun c _ => ha c)
+  apply (S.mem_intDel_iff h S.outSec _).mpr
+  intro c
+  change (∏ c', a c') • (φ : S.D → S.V) (S.outSec.rep c) ∈ S.Del (S.outSec.rep c)
+  rw [← Finset.mul_prod_erase Finset.univ a (Finset.mem_univ c), mul_comm, mul_smul]
+  exact (S.Del (S.outSec.rep c)).smul_mem _ (ha_mem c)
+
 section FormT
 
 variable {X : Fields} {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
 
-theorem diagonalTwist_one (P : ST) (d : DecoSet X.E n ST SG) : d.dia1 P 1 = d := by
+theorem diagonalTwist_one (P : ST) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) : d.dia1 P 1 = d := by
   classical
   unfold DecoSet.dia1
   rw [← DecoSet.dia_smul_def, Pi.mulSingle_one, one_smul]
 
-theorem diagonalTwist_mul (P : ST) (a b : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (d : DecoSet X.E n ST SG) :
+theorem diagonalTwist_mul (P : ST) (a b : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) :
     d.dia1 P (a * b) = (d.dia1 P b).dia1 P a := by
   classical
   unfold DecoSet.dia1
@@ -688,22 +655,22 @@ theorem diagonalTwist_mul (P : ST) (a b : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (d : Dec
   | rw [← DecoSet.dia_smul_def, ← DecoSet.dia_smul_def, ← DecoSet.dia_smul_def, Pi.mulSingle_mul, mul_smul]
   | simp only [← DecoSet.dia_smul_def, Pi.mulSingle_mul, mul_smul]
 
-theorem diagonalTwist_injective (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) {d d' : DecoSet X.E n ST SG} (h : d.dia1 P a = d'.dia1 P a) :
+theorem diagonalTwist_injective (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) {d d' : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d.dia1 P a = d'.dia1 P a) :
     d = d' := by
   unfold DecoSet.dia1 at h
   rw [← DecoSet.dia_smul_def, ← DecoSet.dia_smul_def] at h
   exact MulAction.injective _ h
 
-theorem functional_diagonalTwist (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (d : DecoSet X.E n ST SG) :
+theorem functional_diagonalTwist (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) :
     (d.dia1 P a).fv P = (a : 𝓞 X.E ⧸ P.1.asIdeal) • d.fv P := by
   classical
   apply LinearMap.ext
   intro z
   obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ z
-  show ((Pi.mulSingle P a : DiaG X.E ST) P).1 * d.1.f P x.1 = (a : 𝓞 X.E ⧸ P.1.asIdeal) * d.1.f P x.1
+  show ((Pi.mulSingle P a : DiaG (E := X.E) (ST := ST)) P).1 * d.1.f P x.1 = (a : 𝓞 X.E ⧸ P.1.asIdeal) * d.1.f P x.1
   rw [Pi.mulSingle_eq_same]
 
-theorem rec_lv_smul (g : UF X.E n × GLG X.E n SG) (d : DecoSet X.E n ST SG) (P : ST) :
+theorem rec_lv_smul (g : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (P : ST) :
     ∃ e : d.lv P ≃ₗ[𝓞 X.E ⧸ P.1.asIdeal] (g • d).lv P, d.fv P = ((g • d).fv P).comp e.toLinearMap := by
   refine ⟨modP.map P.1 d.1.N g.1.1, ?_⟩
   apply LinearMap.ext
@@ -712,20 +679,20 @@ theorem rec_lv_smul (g : UF X.E n × GLG X.E n SG) (d : DecoSet X.E n ST SG) (P 
   show d.1.f P x.1 = d.1.f P (g.1.1.symm (g.1.1 x.1))
   rw [LinearEquiv.symm_apply_apply]
 
-theorem rec_lv_of_eq {d₁ d₂ : DecoSet X.E n ST SG} (g : UF X.E n × GLG X.E n SG) (h : g • d₂ = d₁) (P : ST) :
+theorem rec_lv_of_eq {d₁ d₂ : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (g : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) (h : g • d₂ = d₁) (P : ST) :
     ∃ e : d₂.lv P ≃ₗ[𝓞 X.E ⧸ P.1.asIdeal] d₁.lv P, d₂.fv P = (d₁.fv P).comp e.toLinearMap := by
   subst h
   exact rec_lv_smul g d₂ P
 
-variable (C : CoefPk X n (DecoSet X.E n ST SG)) (Λ : LevFam X.E X.K n SG)
+variable (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (Λ : LevFam X.E X.K n SG)
 
-def repD (c : (formGSD C Λ).Cl) : DecoSet X.E n ST SG := (formGSD C Λ).outSec.rep c
+def repD (c : (formGSD C Λ).Cl) : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) := (formGSD C Λ).outSec.rep c
 
-def clsD (d : DecoSet X.E n ST SG) : (formGSD C Λ).Cl := (formGSD C Λ).cls d
+def clsD (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) : (formGSD C Λ).Cl := (formGSD C Λ).cls d
 
 theorem clsD_repD (c : (formGSD C Λ).Cl) : clsD C Λ (repD C Λ c) = c := (formGSD C Λ).outSec.spec c
 
-theorem class_diagonalTwist_congr (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) {d d' : DecoSet X.E n ST SG} (h : clsD C Λ d = clsD C Λ d') :
+theorem class_diagonalTwist_congr (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) {d d' : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : clsD C Λ d = clsD C Λ d') :
     clsD C Λ (d.dia1 P a) = clsD C Λ (d'.dia1 P a) := by
   obtain ⟨g, hg⟩ := ((formGSD C Λ).cls_eq_iff _ _).mp h
   refine ((formGSD C Λ).cls_eq_iff _ _).mpr ⟨g, ?_⟩
@@ -760,7 +727,7 @@ theorem dilD_fv (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (c : (formGSD C Λ).
   | rfl
   | (ext x; rfl)
 
-theorem stabilizer_diagonalTwist (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (d : DecoSet X.E n ST SG) :
+theorem stabilizer_diagonalTwist (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) :
     MulAction.stabilizer (formGSD C Λ).G (d.dia1 P a) = MulAction.stabilizer (formGSD C Λ).G d := by
   ext g
   have hc : g • d.dia1 P a = (g • d).dia1 P a := (DecoSet.dia_smul _ (FormG.incl Λ g) d).symm
@@ -775,13 +742,13 @@ theorem dilD_stab (P : ST) (a : (𝓞 X.E ⧸ P.1.asIdeal)ˣ) (c : (formGSD C Λ
   rw [← hg, MulAction.stabilizer_smul_eq_stabilizer_map_conj, stabilizer_diagonalTwist,
     Subgroup.card_map_of_injective (MulAut.conj g).injective]
 
-theorem formGSD_intOf_span (hX : X.Ok) (hC : C.Eqv) (N : DecoSet X.E n ST SG → Submodule (𝓞 X.K) C.V)
-    (hs : ∀ (a : UF X.E n × GLG X.E n SG) (d : DecoSet X.E n ST SG),
+theorem formGSD_intOf_span (hX : X.Ok) (hC : C.Eqv) (N : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) → Submodule (𝓞 X.K) C.V)
+    (hs : ∀ (a : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)),
       N (a • d) = (N d).map ((C.rho a.1).restrictScalars (𝓞 X.K)))
-    (hN : ∀ d, Submodule.IsLattice X.K (N d)) :
+    (hN : ∀ d, Submodule.IsFullLattice X.K (N d)) :
     Submodule.span X.K ((formGSD C Λ).intOf N : Set (formGSD C Λ).EqFun) = ⊤ := by
-  let C' : CoefPk X n (DecoSet X.E n ST SG) := { C with Del := N }
-  have h := (formGSD C' Λ).intDel_isLattice (formGSD_ok C' Λ hX ⟨hC.nab_smul, hs, hC.inv⟩) hN
+  let C' : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) := { C with Del := N }
+  have h := rec_intDel_full (formGSD C' Λ) (formGSD_ok C' Λ hX ⟨hC.nab_smul, hs, hC.inv⟩) hN
   exact h.span_eq_top
 
 end FormT
@@ -825,34 +792,6 @@ abbrev StCl (u : Pr.Word) (j : ℕ) : Type := (stepGSD W Λ u j).Cl
 abbrev StStab (u : Pr.Word) (j : ℕ) (c : StCl W Λ u j) : Type :=
   MulAction.stabilizer (stepGSD W Λ u j).G ((stepGSD W Λ u j).outSec.rep c)
 
-open Classical in
-
-def recDGam (hX : X.Ok) : ℕ :=
-  Finset.univ.lcm fun u : Pr.Word => (Finset.range (R.m + 1)).lcm fun j =>
-    letI := (stepOk W Λ hX u j).fintypeCl
-    Finset.univ.lcm fun c : StCl W Λ u j => Nat.card (StStab W Λ u j c)
-
-theorem recDGam_dvd (hX : X.Ok) (u : Pr.Word) (j : ℕ) (hj : j ≤ R.m) (c : StCl W Λ u j) :
-    Nat.card (StStab W Λ u j c) ∣ recDGam W Λ hX := by
-  unfold recDGam
-  letI := (stepOk W Λ hX u j).fintypeCl
-  refine dvd_trans ?_ (Finset.dvd_lcm (Finset.mem_univ u))
-  refine dvd_trans ?_ (Finset.dvd_lcm (Finset.mem_range.2 (Nat.lt_succ_of_le hj)))
-  exact Finset.dvd_lcm (Finset.mem_univ c)
-
-theorem recDGam_pos (hX : X.Ok) : 0 < recDGam W Λ hX := by
-  have hpos : ∀ {α : Type} (s : Finset α) (f : α → ℕ), (∀ a ∈ s, 0 < f a) → 0 < s.lcm f := by
-    intro α s f hf
-    apply Nat.pos_of_ne_zero
-    rw [Ne, Finset.lcm_eq_zero_iff]
-    rintro ⟨a, ha, h0⟩
-    exact (hf a ha).ne' h0
-  unfold recDGam
-  refine hpos _ _ fun u _ => hpos _ _ fun j _ => ?_
-  letI := (stepOk W Λ hX u j).fintypeCl
-  refine hpos _ _ fun c _ => ?_
-  haveI := (stepOk W Λ hX u j).fin_stab ((stepGSD W Λ u j).outSec.rep c)
-  exact Nat.card_pos
 
 end Mem
 
@@ -872,13 +811,6 @@ def muAt (i : ℕ) : Formalism.L2.DIV.Chr X.F X.E X.K := if h : i < m then Dc.mu
 
 def Unit (σ₀ : X.K →+* ℂ) : Prop := (∀ j x, ‖σ₀ ((Dc.mu j x : X.Kˣ) : X.K)‖ = 1) ∧ ∀ x, ‖σ₀ ((Dc.chi x : X.Kˣ) : X.K)‖ = 1
 
-def TrivF (σ : X.E →ₐ[X.F] X.E) : Prop :=
-  (∀ j, (Formalism.L2.DIV.h90 σ).ker ≤ (Dc.mu j).ker) ∧ (Formalism.L2.DIV.h90 σ).ker ≤ Dc.chi.ker
-
-structure Tied (σ₀ : X.K →+* ℂ) (mu : Fin m → Formalism.L2.Host.HChar X.E) (chi : Formalism.L2.Host.HChar X.E) : Prop where
-  mu_rat : ∀ j (k : X.Eˣ), σ₀ ((Dc.mu j (Formalism.L2.DIV.ratId X.F X.E k) : X.Kˣ) : X.K) = (((mu j).inf k)⁻¹ : ℂˣ)
-  chi_rat : ∀ k : X.Eˣ, σ₀ ((Dc.chi (Formalism.L2.DIV.ratId X.F X.E k) : X.Kˣ) : X.K) = ((chi.inf k)⁻¹ : ℂˣ)
-
 theorem muAt_unit {σ₀ : X.K →+* ℂ} (h : Dc.Unit σ₀) (i : ℕ) (x : (Formalism.L2.DIV.AfE X.F X.E)ˣ) :
     ‖σ₀ ((Dc.muAt i x : X.Kˣ) : X.K)‖ = 1 := by
   unfold muAt
@@ -897,13 +829,13 @@ theorem rec_norm_tilde {ξ : Formalism.L2.DIV.Chr X.F X.E X.K} (σ₀ : X.K →+
   by_cases h : (Formalism.L2.DIV.h90 σ).ker ≤ ξ.ker
   · have e : Formalism.L2.DIV.tilde σ ξ ((Formalism.L2.DIV.h90 σ).rangeRestrict x) = ξ x := by
       unfold Formalism.L2.DIV.tilde
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       exact MonoidHom.liftOfRightInverse_comp_apply _ _ _ _ x
     rw [← hx, e]
     exact hξ x
   · have e : Formalism.L2.DIV.tilde σ ξ z = 1 := by
       unfold Formalism.L2.DIV.tilde
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       rfl
     rw [e]
     simp
@@ -916,8 +848,8 @@ theorem rec_norm_detTw {ξ : Formalism.L2.DIV.Chr X.F X.E X.K} (σ₀ : X.K →+
   · exact rec_norm_tilde σ₀ hξ σ _
   · simp
 
-variable (W : Wts X Pr.Word R) in
 
+variable (W : Wts X Pr.Word R) in
 structure ChainGlob (σ₀ : X.K →+* ℂ) where
   hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)
   chr : DetChr X R.m
@@ -937,58 +869,9 @@ structure ChainGlob (σ₀ : X.K →+* ℂ) where
 
 attribute [instance] ChainGlob.ιFin
 
-abbrev FamStab (F : GFam X.K) (c : F.Cl) : Type := MulAction.stabilizer (F.G c.1) ((F.mem c.1).outSec.rep c.2)
-
-open Classical in
-
-def famLcm (F : GFam X.K) (h : F.Ok) : ℕ :=
-  letI := h.fintypeCl
-  Finset.univ.lcm fun c : F.Cl => Nat.card (FamStab F c)
-
-theorem famLcm_dvd (F : GFam X.K) (h : F.Ok) (c : F.Cl) : Nat.card (FamStab F c) ∣ famLcm F h := by
-  unfold famLcm
-  letI := h.fintypeCl
-  exact Finset.dvd_lcm (Finset.mem_univ c)
-
-theorem famLcm_pos (F : GFam X.K) (h : F.Ok) : 0 < famLcm F h := by
-  have hpos : ∀ {α : Type} (s : Finset α) (f : α → ℕ), (∀ a ∈ s, 0 < f a) → 0 < s.lcm f := by
-    intro α s f hf
-    apply Nat.pos_of_ne_zero
-    rw [Ne, Finset.lcm_eq_zero_iff]
-    rintro ⟨a, ha, h0⟩
-    exact (hf a ha).ne' h0
-  unfold famLcm
-  letI := h.fintypeCl
-  refine hpos _ _ fun c _ => ?_
-  haveI := (h c.1).fin_stab ((F.mem c.1).outSec.rep c.2)
-  exact Nat.card_pos
 
 variable {W : Wts X Pr.Word R} {σ₀ : X.K →+* ℂ}
 
-open Classical in
-
-def twDGam (G : ChainGlob W σ₀) : ℕ :=
-  Finset.univ.lcm fun a : G.ι => Finset.univ.lcm fun u : Pr.Word => (Finset.range (R.m + 1)).lcm fun j =>
-    famLcm (chF W G.sel (G.mu a) (G.L a) u j) (G.twOk a u j)
-
-theorem twDGam_dvd (G : ChainGlob W σ₀) (a : G.ι) (u : Pr.Word) (j : ℕ) (hj : j ≤ R.m)
-    (c : (chF W G.sel (G.mu a) (G.L a) u j).Cl) :
-    Nat.card (FamStab (chF W G.sel (G.mu a) (G.L a) u j) c) ∣ twDGam G := by
-  unfold twDGam
-  refine (famLcm_dvd _ (G.twOk a u j) c).trans ?_
-  refine dvd_trans ?_ (Finset.dvd_lcm (Finset.mem_univ a))
-  refine dvd_trans ?_ (Finset.dvd_lcm (Finset.mem_univ u))
-  exact Finset.dvd_lcm (Finset.mem_range.2 (Nat.lt_succ_of_le hj))
-
-theorem twDGam_pos (G : ChainGlob W σ₀) : 0 < twDGam G := by
-  have hpos : ∀ {α : Type} (s : Finset α) (f : α → ℕ), (∀ a ∈ s, 0 < f a) → 0 < s.lcm f := by
-    intro α s f hf
-    apply Nat.pos_of_ne_zero
-    rw [Ne, Finset.lcm_eq_zero_iff]
-    rintro ⟨a, ha, h0⟩
-    exact (hf a ha).ne' h0
-  unfold twDGam
-  exact hpos _ _ fun a _ => hpos _ _ fun u _ => hpos _ _ fun j _ => famLcm_pos _ _
 
 end Glob
 
@@ -997,8 +880,8 @@ section Mem2
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R)
   (Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs)
 
-set_option linter.unusedVariables false in
 
+set_option linter.unusedVariables false in
 @[irreducible] def recDGamAll (Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs) {σ₀ : X.K →+* ℂ} (hX : X.Ok) (G : ChainGlob W σ₀) : ℕ := dGamAut X R
 
 variable {W Λ}
@@ -1020,32 +903,25 @@ theorem recDGamAll_dvd {σ₀ : X.K →+* ℂ} (hX : X.Ok) (G : ChainGlob W σ�
       | (show R.k + j * (R.t + 1) ≤ R.k + R.m * (R.t + 1); exact Nat.add_le_add_left (Nat.mul_le_mul_right _ hj) _)
       | (unfold Ranks.N; nlinarith)) _ _ _
 
-theorem recDGamAll_dvd_tw {σ₀ : X.K →+* ℂ} (hX : X.Ok) (G : ChainGlob W σ₀) (a : G.ι) (u : Pr.Word) (j : ℕ) (hj : j ≤ R.m)
-    (c : (chF W G.sel (G.mu a) (G.L a) u j).Cl) :
-    Nat.card (FamStab (chF W G.sel (G.mu a) (G.L a) u j) c) ∣ recDGamAll W Λ hX G := by
-  rw [recDGamAll_eq]
-  exact frmGSD_stab_dvd_dGamAut hX (dga_N_mono R hj) (colValF W G.sel (G.mu a) u j) ((G.L a).levG j c.1) ((G.L a).levQ j c.1)
-    ((((chF W G.sel (G.mu a) (G.L a) u j).mem c.1)).outSec.rep c.2)
 
 variable (W Λ) in
-
 def repPt (hc : Formalism.BasicNotions.CMData X.F X.E) (u : Pr.Word) (j : ℕ) (c : StCl W Λ u j) : GL (Fin (R.N j)) (Formalism.L2.DIV.AfE X.F X.E) :=
   letI : NeZero (R.N j) := ⟨(R.N_pos j).ne'⟩
   ((ptOf hc (R.N j) (Pr.vT u) Pr.vGs ((stepGSD W Λ u j).outSec.rep c) : GL (Fin (R.N j)) (X.E ⊗[X.F] Formalism.L2.Herm.Af X.F)))
 
-variable (W Λ) in
-open Classical in
 
-def rhoK (Dc : DetChr X R.m) (u : Pr.Word) (i : ℕ) (c : StCl W Λ u i) : X.Kˣ :=
+open Classical in
+def rhoK (W : Wts X Pr.Word R) (Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs)
+    (Dc : DetChr X R.m) (u : Pr.Word) (i : ℕ) (c : StCl W Λ u i) : X.Kˣ :=
   if hc : Formalism.BasicNotions.CMData X.F X.E then
     (Formalism.L2.DIV.detTw hc.sig (Dc.muAt i) (repPt W Λ hc u i c))⁻¹ *
       (Formalism.L2.DIV.detTw hc.sig Dc.chi (repPt W Λ hc u i c)) ^ (-((R.N (i + 1) / 2 : ℕ) : ℤ))
   else 1
 
-variable (W Λ) in
-open Classical in
 
-def rhoK' (Dc : DetChr X R.m) (u : Pr.Word) (i : ℕ) (c : StCl W Λ u (i + 1)) : X.Kˣ :=
+open Classical in
+def rhoK' (W : Wts X Pr.Word R) (Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs)
+    (Dc : DetChr X R.m) (u : Pr.Word) (i : ℕ) (c : StCl W Λ u (i + 1)) : X.Kˣ :=
   if hc : Formalism.BasicNotions.CMData X.F X.E then
     Formalism.L2.DIV.detTw hc.sig (Dc.muAt i) (repPt W Λ hc u (i + 1) c) *
       (Formalism.L2.DIV.detTw hc.sig Dc.chi (repPt W Λ hc u (i + 1) c)) ^ (((R.N i / 2 : ℕ) : ℤ))
@@ -1078,22 +954,18 @@ theorem rhoK'_norm {σ₀ : X.K →+* ℂ} (G : ChainGlob W σ₀) (u : Pr.Word)
       (rec_norm_detTw σ₀ G.chr_unit.2 hc.sig _) _).2
   · simp
 
-variable (W) in
 
+variable (W) in
 def sSharpC (u : Pr.Word) (i : ℕ) (τ : X.Tau) : ℤ := ⌊sExp' R ((RowPar.of (W.hc u τ)).eAt i) (i + 1)⌋
 
-variable (W) in
 
+variable (W) in
 def sDivC (u : Pr.Word) (i : ℕ) (τ : X.Tau) : ℤ := ⌊sExp R ((RowPar.of (W.hc u τ)).eAt i) (i + 1)⌋
 
 def dePow (σ₀ : X.K →+* ℂ) (n : ℕ) (e : X.Tau → ℤ) (y : FrS X σ₀ n) : ℂ := ∏ τ, deFr y τ ^ e τ
 
-theorem dePow_ne (σ₀ : X.K →+* ℂ) (n : ℕ) (e : X.Tau → ℤ) (y : FrS X σ₀ n) : dePow σ₀ n e y ≠ 0 := by
-  unfold dePow
-  exact Finset.prod_ne_zero_iff.mpr fun τ _ => zpow_ne_zero _ (y.2 τ).ne_zero
 
 variable (W Λ) in
-
 structure ChainArg {σ₀ : X.K →+* ℂ} (G : ChainGlob W σ₀) (u : Pr.Word) where
   kk : ∀ i, ClsKer (stepGSD W Λ u i) (stepGSD W Λ u (i + 1))
   unf : ∀ i, StCl W Λ u i → StCl W Λ u (i + 1) → ((FrS X σ₀ (R.N i) → ℂ) →ₗ[ℂ] (FrS X σ₀ (R.N (i + 1)) → ℂ))
@@ -1111,44 +983,6 @@ def recUnf {σ₀ : X.K →+* ℂ} (G : ChainGlob W σ₀) (u : Pr.Word) (kk : �
       (((stepEv W Λ σ₀ G.hσ u i).extend ((stepEv W Λ σ₀ G.hσ u (i + 1)).ev.comp
         ((kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L')))).comp
           (mulFun fun y => (dePow σ₀ (R.N i) (sSharpC W u i) y)⁻¹)))
-
-theorem recUnf_sharp {σ₀ : X.K →+* ℂ} (G : ChainGlob W σ₀) (u : Pr.Word) (kk : ∀ i, ClsKer (stepGSD W Λ u i) (stepGSD W Λ u (i + 1))) (i : ℕ)
-    (L : StCl W Λ u i) (L' : StCl W Λ u (i + 1)) (f : FrS X σ₀ (R.N i) → ℂ) :
-    mulFun (fun y' => (dePow σ₀ (R.N (i + 1)) (sDivC W u i) y')⁻¹)
-        (recUnf G u kk i L L' (mulFun (dePow σ₀ (R.N i) (sSharpC W u i)) f)) =
-      (σ₀ (rhoK W Λ G.chr u i L : X.K) * σ₀ (rhoK' W Λ G.chr u i L' : X.K))⁻¹ •
-        (stepEv W Λ σ₀ G.hσ u i).extend ((stepEv W Λ σ₀ G.hσ u (i + 1)).ev.comp
-          ((kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L'))) f := by
-  have h1 : mulFun (fun y => (dePow σ₀ (R.N i) (sSharpC W u i) y)⁻¹) (mulFun (dePow σ₀ (R.N i) (sSharpC W u i)) f) = f := by
-    funext y
-    simp only [mulFun, LinearMap.coe_mk, AddHom.coe_mk]
-    first
-    | rw [inv_mul_cancel_left₀ (dePow_ne _ _ _ y)]
-    | field_simp
-  have e0 : recUnf G u kk i L L' (mulFun (dePow σ₀ (R.N i) (sSharpC W u i)) f) =
-      (σ₀ (rhoK W Λ G.chr u i L : X.K) * σ₀ (rhoK' W Λ G.chr u i L' : X.K))⁻¹ • mulFun (dePow σ₀ (R.N (i + 1)) (sDivC W u i)) ((stepEv W Λ σ₀ G.hσ u i).extend ((stepEv W Λ σ₀ G.hσ u (i + 1)).ev.comp
-          ((kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L'))) (mulFun (fun y => (dePow σ₀ (R.N i) (sSharpC W u i) y)⁻¹) (mulFun (dePow σ₀ (R.N i) (sSharpC W u i)) f))) := rfl
-  rw [h1] at e0
-  funext y'
-  have hd := dePow_ne σ₀ (R.N (i + 1)) (sDivC W u i) y'
-  have e1 : (recUnf G u kk i L L' (mulFun (dePow σ₀ (R.N i) (sSharpC W u i)) f)) y' = (σ₀ (rhoK W Λ G.chr u i L : X.K) * σ₀ (rhoK' W Λ G.chr u i L' : X.K))⁻¹ * ((dePow σ₀ (R.N (i + 1)) (sDivC W u i)) y' * (stepEv W Λ σ₀ G.hσ u i).extend ((stepEv W Λ σ₀ G.hσ u (i + 1)).ev.comp
-          ((kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L'))) f y') := by
-    rw [e0]
-    rfl
-  show ((dePow σ₀ (R.N (i + 1)) (sDivC W u i)) y')⁻¹ * (recUnf G u kk i L L' (mulFun (dePow σ₀ (R.N i) (sSharpC W u i)) f)) y' = (σ₀ (rhoK W Λ G.chr u i L : X.K) * σ₀ (rhoK' W Λ G.chr u i L' : X.K))⁻¹ * (stepEv W Λ σ₀ G.hσ u i).extend ((stepEv W Λ σ₀ G.hσ u (i + 1)).ev.comp
-          ((kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L'))) f y'
-  rw [e1, mul_left_comm, inv_mul_cancel_left₀ hd]
-
-def ChainArg.ofKer {σ₀ : X.K →+* ℂ} {G : ChainGlob W σ₀} {u : Pr.Word} (kk : ∀ i, ClsKer (stepGSD W Λ u i) (stepGSD W Λ u (i + 1))) :
-    ChainArg W Λ G u where
-  kk := kk
-  unf := recUnf G u kk
-  unf_ev i L L' x :=
-    (recUnf_sharp G u kk i L L' ((stepEv W Λ σ₀ G.hσ u i).ev x)).trans
-      (congrArg (fun f : FrS X σ₀ (R.N (i + 1)) → ℂ =>
-          (σ₀ (rhoK W Λ G.chr u i L : X.K) * σ₀ (rhoK' W Λ G.chr u i L' : X.K))⁻¹ • f)
-        ((stepEv W Λ σ₀ G.hσ u i).extend_ev ((stepEv W Λ σ₀ G.hσ u (i + 1)).ev.comp
-          ((kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L'))) x))
 
 def recChain (hX : X.Ok) (σ₀ : X.K →+* ℂ) (G : ChainGlob W σ₀) (u : Pr.Word) (A : ChainArg W Λ G u) :
     ColumnChain R X.Tau (W.hc u) where
@@ -1173,7 +1007,7 @@ def recChain (hX : X.Ok) (σ₀ : X.K →+* ℂ) (G : ChainGlob W σ₀) (u : Pr
     obtain ⟨a, ha⟩ := (rec_sInt R (W.hc u τ) ⟨i, h⟩).2
     have e : (RowPar.of (W.hc u τ)).eAt i = (W.hc u τ).e ⟨i, h⟩ := by
       unfold RowPar.eAt
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       rfl
     unfold sSharpC
     rw [e]
@@ -1184,15 +1018,12 @@ def recChain (hX : X.Ok) (σ₀ : X.K →+* ℂ) (G : ChainGlob W σ₀) (u : Pr
     obtain ⟨a, ha⟩ := (rec_sInt R (W.hc u τ) ⟨i, h⟩).1
     have e : (RowPar.of (W.hc u τ)).eAt i = (W.hc u τ).e ⟨i, h⟩ := by
       unfold RowPar.eAt
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       rfl
     unfold sDivC
     rw [e]
     simp only at ha
     rw [ha, Int.floor_intCast]
-
-theorem recChain_DGam_eq (hX : X.Ok) (σ₀ : X.K →+* ℂ) (G : ChainGlob W σ₀) (u u' : Pr.Word) (A : ChainArg W Λ G u) (A' : ChainArg W Λ G u') :
-    (recChain hX σ₀ G u A).DGam = (recChain hX σ₀ G u' A').DGam := rfl
 
 structure AtTNum where
   Dstar : ℝ
@@ -1200,8 +1031,8 @@ structure AtTNum where
   GamP : ℝ
   one_lt_gammaP : 1 < GamP
 
-variable (W Λ) in
 
+variable (W Λ) in
 def duStarC (u : Pr.Word) : ℕ :=
   Nat.card (formGSD (colVal W u 0 ∅ Pr.vGs) (Λ 0)).Cl * Module.finrank X.K (colVal W u 0 (∅ : Finset _) Pr.vGs).V
 
@@ -1229,12 +1060,12 @@ def rhoTC (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingE
     (𝓞 X.E ⧸ P.1.asIdeal)ˣ →* ((StCl W Λ u 0 → FrS X σ₀ (R.N 0) → ℂ) →ₗ[ℂ] (StCl W Λ u 0 → FrS X σ₀ (R.N 0) → ℂ)) where
   toFun a := (stepEv W Λ σ₀ hσ u 0).opOn (DecoSet.dia1 P a)
   map_one' := by
-    have : (DecoSet.dia1 P 1 : DecoSet X.E (R.N 0) (Pr.vT u) Pr.vGs → _) = fun d => d := funext fun d => diagonalTwist_one P d
+    have : (DecoSet.dia1 P 1 : DecoSet (E := X.E) (n := R.N 0) (ST := Pr.vT u) (SG := Pr.vGs) → _) = fun d => d := funext fun d => diagonalTwist_one P d
     rw [this]
     exact (stepEv W Λ σ₀ hσ u 0).opOn_id hfree
   map_mul' a b := by
     have h := (stepEv W Λ σ₀ hσ u 0).opOn_comp hfree (DecoSet.dia1 P a) (DecoSet.dia1 P b) (fun _ _ => rfl)
-    have e : (fun d : DecoSet X.E (R.N 0) (Pr.vT u) Pr.vGs => (d.dia1 P a).dia1 P b) = DecoSet.dia1 P (a * b) :=
+    have e : (fun d : DecoSet (E := X.E) (n := R.N 0) (ST := Pr.vT u) (SG := Pr.vGs) => (d.dia1 P a).dia1 P b) = DecoSet.dia1 P (a * b) :=
       funext fun d => by rw [mul_comm, diagonalTwist_mul]
     rw [← e]
     exact h.symm
@@ -1277,35 +1108,38 @@ section Levs
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks}
 
-abbrev recLevS (Ch : Chars X Pr R.m) : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs := colLevS Ch
-
-def recursiveLevelFamily (Ch : Chars X Pr R.m) (j : ℕ) : LevFam X.E X.K (R.N j) Pr.vGs := if R.m ≤ j then colLev Ch j else colLevS Ch j
-
 end Levs
 
 @[reducible] def stepH (hX : X.Ok) (u : Pr.Word) (j : ℕ) : HLat X.K :=
   (stepGSD W Λ u j).toH (stepOk W Λ hX u j) (stepGSD W Λ u j).intDel
 
 theorem rec_delAtr_lattice {n : ℕ} (lam : X.Tau → DomWeight n) {M : Submodule (𝓞 X.E) (Sp X.E n)}
-    (hM : Submodule.IsLattice X.E M) : Submodule.IsLattice X.K (delAtr X.emb lam M) :=
+    (hM : Submodule.IsFullLattice X.E M) : Submodule.IsFullLattice X.K (delAtr X.emb lam M) :=
   (nablaDeltaLattice_holds X.K X.Tau n lam _ fun τ =>
-    (dualFrameLattice_holds X.K n 1 _ (by simp) (tauLatticeLattice_holds X.E X.K X.Tau n X.emb τ _ hM)).1).2
+    du_dualFr_lattice latticeBasisExists_holds _ (tauLatticeLattice_holds X.E X.K X.Tau n X.emb τ M hM)).2
 
 theorem stepH_good (hX : X.Ok) (u : Pr.Word) (j : ℕ) : (stepH (W := W) (Λ := Λ) hX u j).Good :=
-  ((stepRat W Λ hX u j).posH (stepOk W Λ hX u j)).good
-    ((stepGSD W Λ u j).intDel_isLattice (stepOk W Λ hX u j) fun d =>
-      rec_delAtr_lattice (W.lamTrue u j) (d : DecoSet X.E (R.N j) (Pr.vT u) Pr.vGs).2.Lsh_lattice)
+  let h := stepOk W Λ hX u j
+  have hL := rec_intDel_full (stepGSD W Λ u j) h fun d => by
+    let := rec_deco_full_lattice d
+    let := d.2.Lsh_lattice
+    exact rec_delAtr_lattice (W.lamTrue u j) (Submodule.IsFullLattice.of_le X.E d.2.N_le_Lsh)
+  ⟨((stepRat W Λ hX u j).posH h).frameOK _, hL.fg, hL.span_eq_top⟩
 
-theorem rec_LshKer_lattice {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (d : DecoSet X.E n ST SG) (P : ST) :
-    Submodule.IsLattice X.E (d.1.LshKer P) := by
-  refine lattice_between d.2.L_lattice d.2.Lsh_lattice (fun x hx => ?_) ?_
-  · exact Submodule.subset_span ⟨d.2.L_le_Lsh hx, ((d.2.mem_L x).1 hx).2 P⟩
-  · unfold Deco.LshKer
-    rw [Submodule.span_le]
-    exact fun x hx => hx.1
+theorem rec_LshKer_lattice {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (P : ST) :
+    Submodule.IsFullLattice X.E (d.1.LshKer P) := by
+  have hle : d.1.LshKer P ≤ d.1.Lsh := Submodule.span_le.mpr fun _ hx => hx.1
+  let := Submodule.IsLattice.of_fg X.E (d.2.Lsh_lattice.fg.of_le hle)
+  refine { span_eq_top := top_unique ?_ }
+  rw [← (rec_deco_full_lattice d).span_eq_top, Submodule.span_le]
+  intro x hx
+  obtain ⟨a, haP, ha⟩ := Submodule.exists_mem_ne_zero_of_ne_bot P.1.ne_bot
+  apply rec_mem_span_of_smul_mem (d.1.LshKer P) ha
+  refine Submodule.subset_span ⟨d.2.N_le_Lsh (d.1.N.smul_mem a hx), ?_⟩
+  rw [d.2.f_smul P a x (lc_le_locP P.1 d.1.N hx), Ideal.Quotient.eq_zero_iff_mem.mpr haP, zero_mul]
+
 
 variable (W Λ) in
-
 def stepBv (u : Pr.Word) (j : ℕ) (P : {P // P ∈ Pr.vT u}) : Submodule (𝓞 X.K) (stepGSD W Λ u j).EqFun :=
   (stepGSD W Λ u j).intOf fun d => BvLat W u j P d
 
@@ -1351,8 +1185,8 @@ structure XpArg {hc : X.Tau → HCParam R} (σ₀ : X.K →+* ℂ) (C : ColumnCh
   thFree : ∀ i, (X.K →+* ℂ) → C.cls i → C.cls (i + 1) → ℝ
   thFree_nonneg : ∀ i s L L', 0 ≤ thFree i s L L'
 
-open Classical in
 
+open Classical in
 def tauOfR (hX : X.Ok) (hPr : Pr.Ok) (u : Pr.Word) (w : HeightOneSpectrum (𝓞 X.K)) : {P // P ∈ Pr.vT u} ≃ X.Tau :=
   haveI := hX.nonempty_Tau
   if hw : (Pr.T u : 𝓞 X.K) ∈ w.asIdeal then Equiv.ofBijective _ (tauOfC_bijective hX hPr u w hw)
@@ -1366,7 +1200,7 @@ def recForms (hX : X.Ok) (hPr : Pr.Ok) (hf : X.f = R.f) (σ₀ : X.K →+* ℂ) 
   lv := fun i v c => (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).lv v
   lvAcg := fun _ _ _ => inferInstance
   lvMod := fun i v c => (inferInstance : Module (𝓞 X.E ⧸ v.1.asIdeal) ((repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).lv v))
-  lv_rank := fun i v c => finrank_modP v.1 (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).2.lat
+  lv_rank := fun i v c => DecoSet.lv_finrank (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c) v
   fv := fun i v c => (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).fv v
   fv_ne := fun i v c => (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).fv_ne v
   up := fun i v c x => clsD _ (Λ i) ((repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).upL v (Pr.T u : 𝓞 X.E) x)
@@ -1374,7 +1208,7 @@ def recForms (hX : X.Ok) (hPr : Pr.Ok) (hf : X.f = R.f) (σ₀ : X.K →+* ℂ) 
   lk := fun i v c => (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).lk v
   lkAcg := fun _ _ _ => inferInstance
   lkMod := fun i v c => (inferInstance : Module (𝓞 X.E ⧸ v.1.asIdeal) ((repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).lk v))
-  lk_rank := fun i v c => finrank_modP v.1 ((repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).kerAt_lattice v)
+  lk_rank := fun i v c => DecoSet.lk_finrank (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c) v
   te := fun i v c => (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).te v (Pr.T u : 𝓞 X.E)
   te_ne := fun i v c => (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).te_ne v (T_unif hX hPr u v).1 (T_unif hX hPr u v).2
   dn := fun i v c g => clsD _ (Λ i) ((repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).dnL v g)
@@ -1439,7 +1273,7 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R)
 @[reducible] def rowGSD : GSD X.K := formGSD (rowVal W SG') ΛM
 
 @[reducible] def ptGSD : GSD X.K :=
-  formGSD (roundPk X W.sgTrue fun d : DecoSet X.E (R.N R.m - 1) ∅ SG' => d.1.N) ΛM.inv
+  formGSD (roundPk X W.sgTrue fun d : DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) (SG := SG') => d.1.N) ΛM.inv
 
 theorem ptOk (hX : X.Ok) : (ptGSD W ΛM).Ok :=
   formGSD_ok _ _ hX
@@ -1455,24 +1289,24 @@ def ptEv (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEn
 @[reducible] def ptH (hX : X.Ok) : HLat X.K := (ptGSD W ΛM).toH (ptOk W ΛM hX) (ptGSD W ΛM).intDel
 
 theorem ptH_good (hX : X.Ok) : (ptH W ΛM hX).Good :=
-  ((ptRat W ΛM hX).posH (ptOk W ΛM hX)).good
-    ((ptGSD W ΛM).intDel_isLattice (ptOk W ΛM hX) fun d =>
-      rec_delAtr_lattice W.sgTrue (d : DecoSet X.E (R.N R.m - 1) ∅ SG').2.lat)
+  let h := ptOk W ΛM hX
+  have hL := rec_intDel_full (ptGSD W ΛM) h fun d => rec_delAtr_lattice W.sgTrue (rec_deco_full_lattice d)
+  ⟨((ptRat W ΛM hX).posH h).frameOK _, hL.fg, hL.span_eq_top⟩
 
 variable {W ΛM}
 
-def tilR (u : Pr.Word) (d : DecoSet X.E (R.N R.m - 1) ∅ SG') : DecoSet X.E (R.N R.m) (Pr.vT u) Pr.vGs :=
+def tilR (u : Pr.Word) (d : DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) (SG := SG')) : DecoSet (E := X.E) (n := R.N R.m) (ST := Pr.vT u) (SG := Pr.vGs) :=
   (DecoSet.tilH (ST := Pr.vT u) (N_m_succ R) (Pr.piT u) d).res hSG
 
-variable (R) in
 
-def extR : UF X.E (R.N R.m - 1) × GLG X.E (R.N R.m - 1) SG' →* UF X.E (R.N R.m) × GLG X.E (R.N R.m) Pr.vGs :=
+variable (R) in
+def extR : UF X.E (R.N R.m - 1) × GLG (E := X.E) (n := R.N R.m - 1) (SG := SG') →* UF X.E (R.N R.m) × GLG (E := X.E) (n := R.N R.m) (SG := Pr.vGs) :=
   MonoidHom.prodMap (extUH (N_m_succ R))
     ((MonoidHom.pi fun w : Pr.vGs => Pi.evalMonoidHom (fun w : SG' => GL (Fin (R.N R.m)) (𝓞 X.E ⧸ w.1.asIdeal))
       ⟨w.1, hSG w.2⟩).comp (extGH (N_m_succ R)))
 
 theorem tilR_smul (hPr : Pr.Ok) (u : Pr.Word) (hpi : ∀ w : SG', Pr.piT u ∉ w.1.asIdeal)
-    (a : UF X.E (R.N R.m - 1) × GLG X.E (R.N R.m - 1) SG') (d : DecoSet X.E (R.N R.m - 1) ∅ SG') :
+    (a : UF X.E (R.N R.m - 1) × GLG (E := X.E) (n := R.N R.m - 1) (SG := SG')) (d : DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) (SG := SG')) :
     tilR hSG u (a • d) = extR R hSG a • tilR hSG u d := by
   unfold tilR
   rw [DecoSet.tilH_smul (N_m_succ R) a d (fun P => conj_piT_notMem hPr u P) hpi]
@@ -1494,8 +1328,8 @@ theorem rec_extUH_injective {E : Type} [Field E] [NumberField E] [StarRing E] {N
     rw [initL_extE, initL_incl]
   rwa [e, e] at h3
 
-variable (ΛM) in
 
+variable (ΛM) in
 def LevExt : Prop := ∀ h : ↥(ΛM.inv).grp, (extR R hSG ((1 : UF X.E (R.N R.m - 1)), h.1)).2 ∈ (Λ R.m).grp
 
 variable {Λ}
@@ -1514,14 +1348,14 @@ def extF (hL : LevExt Λ hSG ΛM) (u : Pr.Word) : (ptGSD W ΛM).G →* (stepGSD 
       exact congrArg Prod.snd (map_mul (extR R hSG) (a.1, a.2.1) (b.1, b.2.1))
 
 theorem tilR_smulF (hPr : Pr.Ok) (u : Pr.Word) (hpi : ∀ w : SG', Pr.piT u ∉ w.1.asIdeal) (hL : LevExt Λ hSG ΛM)
-    (a : (ptGSD W ΛM).G) (d : DecoSet X.E (R.N R.m - 1) ∅ SG') :
+    (a : (ptGSD W ΛM).G) (d : DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) (SG := SG')) :
     tilR hSG u (a • d) = extF hSG hL u a • tilR hSG u d := by
   first
   | exact tilR_smul hSG hPr u hpi (a.1, a.2.1) d
   | exact tilR_smul hSG hPr u hpi _ d
 
-variable (W Λ ΛM) in
 
+variable (W Λ ΛM) in
 def tilCl (u : Pr.Word) (c : (ptGSD W ΛM).Cl) : StCl W Λ u R.m :=
   (stepGSD W Λ u R.m).cls (tilR hSG u ((ptGSD W ΛM).outSec.rep c))
 
@@ -1550,55 +1384,23 @@ theorem stabMapR_injective (hPr : Pr.Ok) (u : Pr.Word) (hpi : ∀ w : SG', Pr.pi
 
 def pairSemi (σ₀ : X.K →+* ℂ) {n : ℕ} (lam : X.Tau → DomWeight n) (y : VV X.K lam) : VV X.K lam →ₛₗ[σ₀] ℂ where
   toFun x := σ₀ (pairBK lam x y)
-  map_add' x x' := by rw [map_add, LinearMap.add_apply, map_add]
+  map_add' x x' := by rw [map_add (f := _), LinearMap.add_apply, map_add (f := _)]
   map_smul' a x := by rw [map_smul, LinearMap.smul_apply, smul_eq_mul, map_mul, smul_eq_mul]
 
-variable (W Λ ΛM) in
 
+variable (W Λ ΛM) in
 def lowC (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word) :
     (FrS X σ₀ (R.N R.m) → ℂ) →ₗ[ℂ] (FrS X σ₀ (R.N R.m - 1) → ℂ) :=
   (stepEv W Λ σ₀ hσ u R.m).extend ((ptEv W ΛM σ₀ hσ).ev.comp (brC W u))
 
-theorem lowC_ev (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word)
-    (x : VV X.K (W.lamTrue u R.m)) :
-    lowC W Λ ΛM σ₀ hσ u ((stepEv W Λ σ₀ hσ u R.m).ev x) = (ptEv W ΛM σ₀ hσ).ev (brC W u x) := (stepEv W Λ σ₀ hσ u R.m).extend_ev _ x
 
 variable (W ΛM) in
-
 def periodC (hX : X.Ok) (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (hM : (rowGSD W ΛM).Ok) :
     ((ptGSD W ΛM).Cl → FrS X σ₀ (R.N R.m - 1) → ℂ) →ₗ[ℂ] (Fin ((rowGSD W ΛM).hDim hM) → ℂ) →ₗ[ℂ] ℂ :=
   (ptEv W ΛM σ₀ hσ).perCl (ptOk W ΛM hX) fun c a => pairSemi σ₀ W.sgTrue
     ((((rowGSD W ΛM).hB hM a : (rowGSD W ΛM).EqFun) : (rowGSD W ΛM).D → (rowGSD W ΛM).V) ((ptGSD W ΛM).outSec.rep c))
 
-variable (W ΛM) in
 
-def jMC (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (hM : (rowGSD W ΛM).Ok)
-    (z : Fin ((rowGSD W ΛM).hDim hM) → ℂ) : (ptGSD W ΛM).Cl → (ptEv W ΛM σ₀ hσ).Y → ℂ :=
-  fun c => ∑ a, starRingEnd ℂ (z a) • (ptEv W ΛM σ₀ hσ).sharp (pairSemi σ₀ W.sgTrue
-    ((((rowGSD W ΛM).hB hM a : (rowGSD W ΛM).EqFun) : (rowGSD W ΛM).D → (rowGSD W ΛM).V) ((ptGSD W ΛM).outSec.rep c)))
-
-theorem periodC_eq_ipCl (hX : X.Ok) (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (hM : (rowGSD W ΛM).Ok)
-    (hG : IsUnit (ptEv W ΛM σ₀ hσ).gram.det) (w : (ptGSD W ΛM).Cl → (ptEv W ΛM σ₀ hσ).Y → ℂ)
-    (z : Fin ((rowGSD W ΛM).hDim hM) → ℂ) :
-    periodC W ΛM hX σ₀ hσ hM w z = (ptEv W ΛM σ₀ hσ).ipCl (ptOk W ΛM hX) (jMC W ΛM σ₀ hσ hM z) w := by
-  rw [GSD.Ev.ipCl_apply]
-  unfold periodC GSD.Ev.perCl
-  refine Finset.sum_congr rfl fun c _ => ?_
-  congr 1
-  simp only [jMC, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, Complex.conj_conj, smul_eq_mul]
-  exact Finset.sum_congr rfl fun a _ => congrArg (fun t => z a * t) (GSD.Ev.extend_eq_ip _ hG _ _)
-
-variable (W ΛM) in
-
-def jMCL (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (hM : (rowGSD W ΛM).Ok) :
-    (Fin ((rowGSD W ΛM).hDim hM) → ℂ) →ₛₗ[starRingEnd ℂ] ((ptGSD W ΛM).Cl → (ptEv W ΛM σ₀ hσ).Y → ℂ) where
-  toFun := jMC W ΛM σ₀ hσ hM
-  map_add' z z' := by
-    funext c
-    simp only [jMC, Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib]
-  map_smul' t z := by
-    funext c
-    simp only [jMC, Pi.smul_apply, smul_eq_mul, map_mul, mul_smul, Finset.smul_sum]
 
 def recPer (hX : X.Ok) (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word)
     (G : ChainGlob W σ₀) (A : ChainArg W Λ G u) (hM : (rowGSD W ΛM).Ok) : PeriodMap R (recChain hX σ₀ G u A) where
@@ -1656,65 +1458,6 @@ section Ker
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs}
 
-theorem recChain_Kmap (hX : X.Ok) (σ₀ : X.K →+* ℂ) (G : ChainGlob W σ₀) (u : Pr.Word) (A : ChainArg W Λ G u) (i : ℕ)
-    (L : StCl W Λ u i) (L' : StCl W Λ u (i + 1)) (x : (stepGSD W Λ u i).V) :
-    (recChain hX σ₀ G u A).Kmap i L L' ((stepEv W Λ σ₀ G.hσ u i).ev x) =
-      (stepEv W Λ σ₀ G.hσ u (i + 1)).ev
-        ((A.kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L') x) := by
-  set r := σ₀ (rhoK W Λ G.chr u i L : X.K) with hr
-  set r' := σ₀ (rhoK' W Λ G.chr u i L' : X.K) with hr'
-  have h0 : r * r' ≠ 0 := by
-    refine mul_ne_zero ?_ ?_
-    · intro h; have := rhoK_norm G u i L; rw [← hr, h, norm_zero] at this; exact zero_ne_one this
-    · intro h; have := rhoK'_norm G u i L'; rw [← hr', h, norm_zero] at this; exact zero_ne_one this
-  funext (y' : FrS X σ₀ (R.N (i + 1)))
-  refine (congrArg (fun z : ℂ => (r * r') * z) (congrFun (A.unf_ev i L L' x) y')).trans ?_
-  show (r * r') * ((r * r')⁻¹ * _) = _
-  rw [← mul_assoc, mul_inv_cancel₀ h0, one_mul]
-
-theorem recChain_Kmap_ofKer (hX : X.Ok) (σ₀ : X.K →+* ℂ) (G : ChainGlob W σ₀) (u : Pr.Word)
-    (kk : ∀ i, ClsKer (stepGSD W Λ u i) (stepGSD W Λ u (i + 1))) (i : ℕ)
-    (L : StCl W Λ u i) (L' : StCl W Λ u (i + 1)) (f : FrS X σ₀ (R.N i) → ℂ) :
-    (recChain hX σ₀ G u (ChainArg.ofKer kk)).Kmap i L L' f =
-      (stepEv W Λ σ₀ G.hσ u i).extend ((stepEv W Λ σ₀ G.hσ u (i + 1)).ev.comp
-        ((kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L'))) f := by
-  set r := σ₀ (rhoK W Λ G.chr u i L : X.K) with hr
-  set r' := σ₀ (rhoK' W Λ G.chr u i L' : X.K) with hr'
-  have h0 : r * r' ≠ 0 := by
-    refine mul_ne_zero ?_ ?_
-    · intro h; have := rhoK_norm G u i L; rw [← hr, h, norm_zero] at this; exact zero_ne_one this
-    · intro h; have := rhoK'_norm G u i L'; rw [← hr', h, norm_zero] at this; exact zero_ne_one this
-  funext (y' : FrS X σ₀ (R.N (i + 1)))
-  refine (congrArg (fun z : ℂ => (r * r') * z) (congrFun (recUnf_sharp G u kk i L L' f) y')).trans ?_
-  show (r * r') * ((r * r')⁻¹ * _) = _
-  rw [← mul_assoc, mul_inv_cancel₀ h0, one_mul]
-
-theorem recChain_K_emb (hX : X.Ok) (σ₀ : X.K →+* ℂ) (G : ChainGlob W σ₀) (u : Pr.Word) (A : ChainArg W Λ G u) (i : ℕ)
-    (φ : (stepGSD W Λ u i).EqFun) :
-    (recChain hX σ₀ G u A).K i ((stepEv W Λ σ₀ G.hσ u i).emb φ) =
-      (stepEv W Λ σ₀ G.hσ u (i + 1)).emb ((A.kk i).op (stepOk W Λ hX u i) φ) := by
-  funext (L' : StCl W Λ u (i + 1))
-  have hK : ∀ L : StCl W Λ u i,
-      (recChain hX σ₀ G u A).Kmap i L L' ((stepEv W Λ σ₀ G.hσ u i).emb φ L) =
-        (stepEv W Λ σ₀ G.hσ u (i + 1)).ev ((A.kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L')
-          ((φ : (stepGSD W Λ u i).D → (stepGSD W Λ u i).V) ((stepGSD W Λ u i).outSec.rep L))) := fun L =>
-    recChain_Kmap hX σ₀ G u A i L L' _
-  let _ := (stepOk W Λ hX u i).fintypeCl
-  have hR : (stepEv W Λ σ₀ G.hσ u (i + 1)).emb ((A.kk i).op (stepOk W Λ hX u i) φ) L' =
-      ∑ L : StCl W Λ u i, ((Nat.card (StStab W Λ u i L) : ℕ) : ℂ)⁻¹ •
-        (stepEv W Λ σ₀ G.hσ u (i + 1)).ev ((A.kk i).k ((stepGSD W Λ u i).outSec.rep L) ((stepGSD W Λ u (i + 1)).outSec.rep L')
-          ((φ : (stepGSD W Λ u i).D → (stepGSD W Λ u i).V) ((stepGSD W Λ u i).outSec.rep L))) := by
-    show (stepEv W Λ σ₀ G.hσ u (i + 1)).ev ((A.kk i).appOf (stepOk W Λ hX u i) (stepGSD W Λ u i).outSec φ
-      ((stepGSD W Λ u (i + 1)).outSec.rep L')) = _
-    unfold ClsKer.appOf
-    rw [map_sum]
-    refine Finset.sum_congr rfl fun L _ => ?_
-    rw [LinearMap.map_smulₛₗ, map_inv₀, map_natCast]
-    congr 3
-    exact (@Nat.card_eq_fintype_card _ ((stepOk W Λ hX u i).fintypeStab _)).symm
-  rw [hR]
-  exact Finset.sum_congr rfl fun L _ => congrArg _ (hK L)
-
 end Ker
 
 section Fam
@@ -1734,60 +1477,6 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
 variable {X : Fields} {R : Ranks}
 
-def sSharpH (hc : X.Tau → HCParam R) (i : ℕ) (τ : X.Tau) : ℤ := ⌊sExp' R ((RowPar.of (hc τ)).eAt i) (i + 1)⌋
-
-def sDivH (hc : X.Tau → HCParam R) (i : ℕ) (τ : X.Tau) : ℤ := ⌊sExp R ((RowPar.of (hc τ)).eAt i) (i + 1)⌋
-
-variable (R) in
-
-structure ChainArgF (F : ℕ → GFam X.K) (σ₀ : X.K →+* ℂ) where
-  rhoDet : ∀ i, (F i).Cl → ℂ
-  rhoDet' : ∀ i, (F (i + 1)).Cl → ℂ
-  rho_norm : ∀ i, i < R.m → ∀ c, ‖rhoDet i c‖ = 1
-  rho'_norm : ∀ i, i < R.m → ∀ c, ‖rhoDet' i c‖ = 1
-  unf : ∀ i, (F i).Cl → (F (i + 1)).Cl → ((FrS X σ₀ (R.N i) → ℂ) →ₗ[ℂ] (FrS X σ₀ (R.N (i + 1)) → ℂ))
-
-def recChainF (hc : X.Tau → HCParam R) (F : ℕ → GFam X.K) (hF : ∀ j, (F j).Ok) (σ₀ : X.K →+* ℂ)
-    (D : ℕ) (hD : 0 < D) (hdvd : ∀ j, j ≤ R.m → ∀ c : (F j).Cl, Nat.card (FamStab (F j) c) ∣ D)
-    (A : ChainArgF R F σ₀) : ColumnChain R X.Tau hc where
-  cls := fun i => (F i).Cl
-  clsFin := fun i => (hF i).fintypeCl
-  stab := fun i c => FamStab (F i) c
-  stabGrp := fun _ _ => inferInstance
-  stabFin := fun i c => (hF i c.1).fin_stab _
-  DGam := D
-  DGam_pos := hD
-  dvd_DGam := hdvd
-  Y := fun i => FrS X σ₀ (R.N i)
-  de := fun _ y τ => deFr y τ
-  de_ne := fun _ y τ => (y.2 τ).ne_zero
-  rhoDet := A.rhoDet
-  rhoDet' := A.rhoDet'
-  rho_norm := A.rho_norm
-  rho'_norm := A.rho'_norm
-  unf := A.unf
-  sSharp := sSharpH hc
-  sSharp_eq := fun i h τ => by
-    obtain ⟨a, ha⟩ := (rec_sInt R (hc τ) ⟨i, h⟩).2
-    have e : (RowPar.of (hc τ)).eAt i = (hc τ).e ⟨i, h⟩ := by
-      unfold RowPar.eAt
-      rw [dif_pos h]
-      rfl
-    unfold sSharpH
-    rw [e]
-    simp only at ha
-    rw [ha, Int.floor_intCast]
-  sDiv := sDivH hc
-  sDiv_eq := fun i h τ => by
-    obtain ⟨a, ha⟩ := (rec_sInt R (hc τ) ⟨i, h⟩).1
-    have e : (RowPar.of (hc τ)).eAt i = (hc τ).e ⟨i, h⟩ := by
-      unfold RowPar.eAt
-      rw [dif_pos h]
-      rfl
-    unfold sDivH
-    rw [e]
-    simp only at ha
-    rw [ha, Int.floor_intCast]
 
 end Fam
 
@@ -1795,71 +1484,11 @@ section NonDeg
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs}
 
-theorem finrank_stepFi (hX : X.Ok) (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word) (j : ℕ) :
-    Module.finrank ℂ (stepEv W Λ σ₀ hσ u j).Fi = Module.finrank X.K (stepGSD W Λ u j).EqFun := by
-  have hli := (stepEv W Λ σ₀ hσ u j).emb_li (stepOk W Λ hX u j) _
-    ((stepGSD W Λ u j).hB (stepOk W Λ hX u j)).linearIndependent
-  rw [← (stepEv W Λ σ₀ hσ u j).span_basis ((stepGSD W Λ u j).hB (stepOk W Λ hX u j)), finrank_span_eq_card hli,
-    Module.finrank_eq_card_basis ((stepGSD W Λ u j).hB (stepOk W Λ hX u j))]
-
-theorem recChain_nonempty (hX : X.Ok) (σ₀ : X.K →+* ℂ) (u : Pr.Word) (G : ChainGlob W σ₀) (A : ChainArg W Λ G u) (i : ℕ) :
-    Nonempty ((recChain hX σ₀ G u A).cls i) ∧ Nonempty ((recChain hX σ₀ G u A).Y i) := by
-  have : NeZero (R.N i) := ⟨(R.N_pos i).ne'⟩
-  exact ⟨⟨(stepGSD W Λ u i).cls (DecoSet.base X.E (R.N i) (Pr.vT u) Pr.vGs)⟩, ⟨(stdFrC (embAt σ₀ X.emb) : FrS X σ₀ (R.N i))⟩⟩
-
-theorem rhoTC_sum_emb (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word)
-    (hfree : (stepGSD W Λ u 0).Free) (P : {P // P ∈ Pr.vT u}) [Fintype (𝓞 X.E ⧸ P.1.asIdeal)ˣ] (φ : (stepGSD W Λ u 0).EqFun) :
-    ∑ a, rhoTC σ₀ hσ u hfree P a ((stepEv W Λ σ₀ hσ u 0).emb φ) =
-      (stepEv W Λ σ₀ hσ u 0).emb (NmG (colVal W u 0 (Pr.vT u) Pr.vGs) (Λ 0) P φ) := by
-  rw [NmG_eq, LinearMap.sum_apply, map_sum]
-  exact Finset.sum_congr rfl fun a _ => step_opOn_dia σ₀ hσ u 0 P a φ
-
 end NonDeg
 
 section Ram
 
-theorem rec_mem_Mram_iff {R : Ranks} {ι : Type} [Fintype ι] {hc : ι → HCParam R} {C : ColumnChain R ι hc} (A : ColumnsAtT R C)
-    (F : C.cls 0 → C.Y 0 → ℂ) : F ∈ A.Mram ↔ F ∈ A.Mu0 ∧ ∀ v, A.Nm v F = 0 := by
-  unfold ColumnsAtT.Mram
-  rw [Submodule.mem_inf, Submodule.mem_iInf]
-  simp only [LinearMap.mem_ker]
-
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs}
-
-theorem recAtT_emb_mem_Mram (hX : X.Ok) (hPr : Pr.Ok) (hf : X.f = R.f) (σ₀ : X.K →+* ℂ)
-    (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word) (G : ChainGlob W σ₀) (A : ChainArg W Λ G u) (Ps : CharT X Pr) (hPs : Ps.Ok)
-    (hfree : (stepGSD W Λ u 0).Free) (N : AtTNum) (φ : (stepGSD W Λ u 0).EqFun) :
-    (stepEv W Λ σ₀ hσ u 0).emb φ ∈ (recAtT hX hPr hf σ₀ hσ u G A Ps hPs hfree N).Mram ↔
-      ∀ P : {P // P ∈ Pr.vT u}, NmG (colVal W u 0 (Pr.vT u) Pr.vGs) (Λ 0) P φ = 0 := by
-  have hinj : Function.Injective (stepEv W Λ σ₀ hσ u 0).emb :=
-    inj_of_li σ₀ _ ((stepGSD W Λ u 0).hB (stepOk W Λ hX u 0))
-      ((stepEv W Λ σ₀ hσ u 0).emb_li (stepOk W Λ hX u 0) _ ((stepGSD W Λ u 0).hB (stepOk W Λ hX u 0)).linearIndependent)
-  have key : ∀ P : {P // P ∈ Pr.vT u},
-      (recAtT hX hPr hf σ₀ hσ u G A Ps hPs hfree N).Nm P ((stepEv W Λ σ₀ hσ u 0).emb φ) =
-        (stepEv W Λ σ₀ hσ u 0).emb (NmG (colVal W u 0 (Pr.vT u) Pr.vGs) (Λ 0) P φ) := by
-    intro P
-    let _ : Fintype (𝓞 X.E ⧸ P.1.asIdeal) := resFintype P.1
-    let _ : DecidableEq (𝓞 X.E ⧸ P.1.asIdeal) := Classical.decEq _
-    refine Eq.trans ?_ (rhoTC_sum_emb σ₀ hσ u hfree P φ)
-    exact LinearMap.sum_apply (M₂ := StCl W Λ u 0 → FrS X σ₀ (R.N 0) → ℂ) _ _ _
-  refine (rec_mem_Mram_iff (recAtT hX hPr hf σ₀ hσ u G A Ps hPs hfree N) ((stepEv W Λ σ₀ hσ u 0).emb φ)).trans ?_
-  constructor
-  · intro h P
-    have h2 := h.2 P
-    rw [key P] at h2
-    exact hinj (h2.trans (map_zero _).symm)
-  · intro h
-    refine ⟨(Submodule.subset_span ⟨φ, rfl⟩ : (stepEv W Λ σ₀ hσ u 0).emb φ ∈ (stepEv W Λ σ₀ hσ u 0).Fi), fun P => ?_⟩
-    rw [key P, h P, map_zero]
-    rfl
-
-theorem recForms_mem_ramSub (hX : X.Ok) (hPr : Pr.Ok) (hf : X.f = R.f) (σ₀ : X.K →+* ℂ)
-    (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word) (G : ChainGlob W σ₀) (A : ChainArg W Λ G u) (Ps : CharT X Pr) (hPs : Ps.Ok)
-    (hfree : (stepGSD W Λ u 0).Free) (N : AtTNum) (Pl : Rows.Places X.K) (pw : Pl.Pl → HeightOneSpectrum (𝓞 X.K))
-    (P : PeriodMap R (recChain hX σ₀ G u A)) (Xp : XpArg σ₀ (recChain hX σ₀ G u A) P) (φ : (stepGSD W Λ u 0).EqFun) :
-    φ ∈ (recForms hX hPr hf σ₀ hσ u G A Ps hPs hfree N Pl pw P Xp).ramSub ↔
-      ∀ Q : {P // P ∈ Pr.vT u}, NmG (colVal W u 0 (Pr.vT u) Pr.vGs) (Λ 0) Q φ = 0 :=
-  recAtT_emb_mem_Mram hX hPr hf σ₀ hσ u G A Ps hPs hfree N φ
 
 end Ram
 
@@ -1876,43 +1505,6 @@ def recFormsX (hX : X.Ok) (hPr : Pr.Ok) (hf : X.f = R.f) (σ₀ : X.K →+* ℂ)
       (recPer hSG hX σ₀ hσ u G A hM) :=
   recForms hX hPr hf σ₀ hσ u G A Ps hPs hfree N Pl pw (recPer hSG hX σ₀ hσ u G A hM) (recXp hSG hX hPr σ₀ hσ u G A hM hpi hL Th)
 
-def recMember (hX : X.Ok) (hPr : Pr.Ok) (hf : X.f = R.f) (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x))
-    (u : Pr.Word) (G : ChainGlob W σ₀) (A : ChainArg W Λ G u) (Ps : CharT X Pr) (hPs : Ps.Ok) (hfree : (stepGSD W Λ u 0).Free) (N : AtTNum)
-    (hM : (rowGSD W ΛM).Ok) : Member R X.Tau (W.hc u) where
-  C := recChain hX σ₀ G u A
-  A := recAtT hX hPr hf σ₀ hσ u G A Ps hPs hfree N
-  P := recPer hSG hX σ₀ hσ u G A hM
-
-variable (W Λ) in
-
-def recClsLat (u : Pr.Word) (i : ℕ) (c : StCl W Λ u i) : Submodule (𝓞 X.E) (Sp X.E (R.N i)) :=
-  (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).1.L
-
-theorem recClsLat_lattice (u : Pr.Word) (i : ℕ) (c : StCl W Λ u i) : Submodule.IsLattice X.E (recClsLat W Λ u i c) :=
-  (repD (colVal W u i (Pr.vT u) Pr.vGs) (Λ i) c).2.L_lattice
-
-theorem recFormsX_KRat (hX : X.Ok) (hPr : Pr.Ok) (hf : X.f = R.f) (σ₀ : X.K →+* ℂ)
-    (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word) (G : ChainGlob W σ₀) (A : ChainArg W Λ G u) (Ps : CharT X Pr) (hPs : Ps.Ok)
-    (hfree : (stepGSD W Λ u 0).Free) (N : AtTNum) (Pl : Rows.Places X.K) (pw : Pl.Pl → HeightOneSpectrum (𝓞 X.K))
-    (hM : (rowGSD W ΛM).Ok) (hpi : ∀ w : SG', Pr.piT u ∉ w.1.asIdeal) (hL : LevExt Λ hSG ΛM) (Th : ThArg W Λ u) (i : ℕ) :
-    (recFormsX hSG hX hPr hf σ₀ hσ u G A Ps hPs hfree N Pl pw hM hpi hL Th).KRat i :=
-  fun x => ⟨(A.kk i).op (stepOk W Λ hX u i) x, (recChain_K_emb hX σ₀ G u A i x).symm⟩
-
-theorem recPer_lower_emb (hX : X.Ok) (σ₀ : X.K →+* ℂ) (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word)
-    (G : ChainGlob W σ₀) (A : ChainArg W Λ G u) (hM : (rowGSD W ΛM).Ok) (φ : (stepGSD W Λ u R.m).EqFun) (c : (ptGSD W ΛM).Cl) :
-    (recPer hSG hX σ₀ hσ u G A hM).lowerMap ((recPer hSG hX σ₀ hσ u G A hM).evz ((stepEv W Λ σ₀ hσ u R.m).emb φ)) c =
-      (ptEv W ΛM σ₀ hσ).ev (brC W u ((φ : (stepGSD W Λ u R.m).D → (stepGSD W Λ u R.m).V)
-        (tilR hSG u ((ptGSD W ΛM).outSec.rep c)))) := by
-  first
-  | (simp only [recPer, LinearMap.pi_apply, LinearMap.comp_apply, LinearMap.proj_apply, GSD.Ev.evAt_apply,
-      GSD.Ev.atPt_emb, lowC_ev]; done)
-  | (show lowC W Λ ΛM σ₀ hσ u ((stepEv W Λ σ₀ hσ u R.m).atPt (tilR hSG u ((ptGSD W ΛM).outSec.rep c))
-        ((stepEv W Λ σ₀ hσ u R.m).emb φ)) = _
-     rw [GSD.Ev.atPt_emb, lowC_ev])
-  | (show lowC W Λ ΛM σ₀ hσ u ((stepEv W Λ σ₀ hσ u R.m).atPt (tilR hSG u ((ptGSD W ΛM).outSec.rep c))
-        ((stepEv W Λ σ₀ hσ u R.m).emb φ)) = _
-     erw [GSD.Ev.atPt_emb, lowC_ev])
-  | (erw [GSD.Ev.atPt_emb]; exact lowC_ev σ₀ hσ u _)
 
 end All
 
@@ -1920,89 +1512,7 @@ section Mink
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs}
 
-theorem rec_N_mono (R : Ranks) {i j : ℕ} (h : i ≤ j) : R.N i ≤ R.N j := by
-  first
-  | (show R.k + i * (R.t + 1) ≤ R.k + j * (R.t + 1); exact Nat.add_le_add_left (Nat.mul_le_mul_right _ h) _)
-  | (unfold Ranks.N; nlinarith)
-
-theorem stStab_dvd_minkM (hX : X.Ok) (u : Pr.Word) (j : ℕ) (hj : j ≤ R.m) (c : StCl W Λ u j) :
-    Nat.card (StStab W Λ u j c) ∣ minkM (2 * X.f * R.N R.m) := (formGSD_stab_dvd_dGamAut hX (rec_N_mono R hj) _ _ _).trans (dGamAut_dvd_minkM hX)
-
-theorem recDGam_dvd_minkM (hX : X.Ok) : recDGam W Λ hX ∣ minkM (2 * X.f * R.N R.m) := by
-  unfold recDGam
-  refine Finset.lcm_dvd fun u _ => Finset.lcm_dvd fun j hj => ?_
-  letI := (stepOk W Λ hX u j).fintypeCl
-  exact Finset.lcm_dvd fun c _ => stStab_dvd_minkM hX u j (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj)) c
-
 variable {σ₀ : X.K →+* ℂ}
-
-def TwMink (G : ChainGlob W σ₀) : Prop := twDGam G ∣ minkM (2 * X.f * R.N R.m)
-
-theorem twMink_of_isEmpty (G : ChainGlob W σ₀) [IsEmpty G.ι] : TwMink G := by
-  unfold TwMink twDGam
-  rw [Finset.univ_eq_empty, Finset.lcm_empty]
-  exact one_dvd _
-
-theorem recDGamAll_dvd_minkM (hX : X.Ok) (G : ChainGlob W σ₀) (hT : TwMink G) :
-    recDGamAll W Λ hX G ∣ minkM (2 * X.f * R.N R.m) := by
-  rw [recDGamAll_eq hX G]
-  exact dGamAut_dvd_minkM hX
-
-theorem recDGamAll_prime_le (hX : X.Ok) (G : ChainGlob W σ₀) (hT : TwMink G) {p : ℕ} (hp : p.Prime)
-    (h : p ∣ recDGamAll W Λ hX G) : p ≤ 2 * X.f * R.N R.m + 1 := prime_le_of_dvd_minkM hp (h.trans (recDGamAll_dvd_minkM hX G hT))
-
-theorem rec_free0 (Ch : Chars X Pr R.m) (hX : X.Ok) (hPr : Pr.Ok) (hbig : 2 * X.f * R.k < Pr.g 0 - 1) (u : Pr.Word) :
-    (formGSD (colVal W u 0 ∅ Pr.vGs) (colLev Ch 0)).Free := by
-  intro d a ha
-  have hpos : 0 < (Pr.vG 0).card := by
-    rw [hPr.vG_card 0, Fields.f, hX.card_Tau]
-    exact Module.finrank_pos
-  obtain ⟨w, hw⟩ := Finset.card_pos.mp hpos
-  have hw' : w ∈ Pr.vGs := by
-    classical
-    unfold Primes.vGs
-    exact Finset.mem_union_left _ hw
-  have hN : R.N 0 = R.k := by simp [Ranks.N]
-  have hm : 0 < R.m := lt_of_lt_of_le (by norm_num) R.two_le_m
-  have hmem : (a.2 : GLG X.E (R.N 0) Pr.vGs) ⟨w, hw'⟩ ∈ (colLev Ch 0 ⟨w, hw'⟩).H :=
-    (Subgroup.mem_pi _).mp a.2.2 ⟨w, hw'⟩ (Set.mem_univ _)
-  rw [colLev_of_lt Ch hm] at hmem
-  have h1 : FormG.incl (colLev Ch 0) a = 1 :=
-    DecoSet.decoration_stabilizer_trivial_unipotent hX hPr (d : DecoSet X.E (R.N 0) ∅ Pr.vGs) ha 0 ⟨w, hw'⟩ hw (by rw [hN]; exact hbig)
-      (isNilpotent_of_mem_HX_zero hN.le hmem)
-  exact FormG.incl_injective _ (h1.trans (map_one _).symm)
-
-theorem duStarC_eq (Ch : Chars X Pr R.m) (hΛ : Λ 0 = colLev Ch 0) (hX : X.Ok) (hPr : Pr.Ok)
-    (hbig : 2 * X.f * R.k < Pr.g 0 - 1) (u : Pr.Word) : (duStarC W Λ u : ℝ) = dstarC W Ch u := by
-  have key : ∀ Λ' : LevFam X.E X.K (R.N 0) Pr.vGs, Λ' = colLev Ch 0 →
-      (Nat.card (formGSD (colVal W u 0 ∅ Pr.vGs) Λ').Cl * Module.finrank X.K (colVal W u 0 (∅ : Finset _) Pr.vGs).V : ℕ) =
-        (Nat.card (formGSD (colVal W u 0 ∅ Pr.vGs) (colLev Ch 0)).Cl * Module.finrank X.K (colVal W u 0 (∅ : Finset _) Pr.vGs).V : ℕ) := by
-    rintro _ rfl
-    rfl
-  unfold duStarC
-  rw [key (Λ 0) hΛ, Nat.cast_mul, card_formCl _ _ hX (rec_free0 Ch hX hPr hbig u)]
-  have hV : Module.finrank X.K (colVal W u 0 (∅ : Finset (HeightOneSpectrum (𝓞 X.E))) Pr.vGs).V = ∏ τ, dimC W u τ :=
-    finrank_colV W u
-  rw [hV, Finset.univ_eq_empty, Finset.prod_empty, mul_one]
-  unfold dstarC massk IpiC
-  push_cast
-  ring
-
-theorem finrank_referenceSpace_at_T (hX : X.Ok) (hPr : Pr.Ok) (hf : X.f = R.f) (σ₀ : X.K →+* ℂ)
-    (hσ : ∀ x : X.K, σ₀ (star x) = starRingEnd ℂ (σ₀ x)) (u : Pr.Word) (G : ChainGlob W σ₀) (A : ChainArg W Λ G u) (Ps : CharT X Pr)
-    (hPs : Ps.Ok) (hfree : (stepGSD W Λ u 0).Free) (N : AtTNum) (Ch : Chars X Pr R.m) (hΛ : Λ 0 = colLev Ch 0)
-    (hbig : 2 * X.f * R.k < Pr.g 0 - 1) :
-    (Module.finrank ℂ (recAtT hX hPr hf σ₀ hσ u G A Ps hPs hfree N).Mu0 : ℝ) =
-      ((recAtT hX hPr hf σ₀ hσ u G A Ps hPs hfree N).duStar : ℝ) *
-        (((recAtT hX hPr hf σ₀ hσ u G A Ps hPs hfree N).T : ℝ) ^ R.k - 1) ^ X.f := by
-  show (Module.finrank ℂ (stepEv W Λ σ₀ hσ u 0).Fi : ℝ) = (duStarC W Λ u : ℝ) * ((Pr.T u : ℝ) ^ R.k - 1) ^ X.f
-  rw [finrank_stepFi hX σ₀ hσ u 0, duStarC_eq Ch hΛ hX hPr hbig u]
-  have key : ∀ Λ' : LevFam X.E X.K (R.N 0) Pr.vGs, Λ' = colLev Ch 0 →
-      Module.finrank X.K (formGSD (colVal W u 0 (Pr.vT u) Pr.vGs) Λ').EqFun = Module.finrank X.K (MfV W Ch u) := by
-    rintro _ rfl
-    rfl
-  rw [show Module.finrank X.K (stepGSD W Λ u 0).EqFun = Module.finrank X.K (MfV W Ch u) from key (Λ 0) hΛ]
-  exact finrank_MfV_eq W Ch hX hPr hbig u
 
 end Mink
 
@@ -2011,80 +1521,11 @@ section FrmMink
 variable {X : Fields} {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 X.E))}
   (C : CoefPk X n (DecoF X.E n ST SG Q)) (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q)
 
-theorem rec_frm_stab_inj (p : DecoF X.E n ST SG Q) {a b : FrmG Λ Θ} (ha : a • p = p) (hb : b • p = p) (hab : a.1 = b.1) : a = b := by
-  have hda : ((a.1, (a.2.1 : GLG X.E n SG)) • p.deco : DecoSet X.E n ST SG) = p.deco :=
-    congrArg (fun q : DecoF X.E n ST SG Q => q.1.1) ha
-  have hdb : ((b.1, (b.2.1 : GLG X.E n SG)) • p.deco : DecoSet X.E n ST SG) = p.deco :=
-    congrArg (fun q : DecoF X.E n ST SG Q => q.1.1) hb
-  have h1 := DecoSet.stab_fst_injective p.deco hda hdb hab
-  have h2 : (a.2.1 : GLG X.E n SG) = b.2.1 := congrArg Prod.snd h1
-  have h3 : ∀ P : Q, (((a.2.2 : GLQ X.E n Q) P)⁻¹).1 = (((b.2.2 : GLQ X.E n Q) P)⁻¹).1 := by
-    intro P
-    have ea : a.1.1 * p.fr P * (((a.2.2 : GLQ X.E n Q) P)⁻¹).1 = p.fr P :=
-      congrArg (fun q : DecoF X.E n ST SG Q => q.1.2 P) ha
-    have eb : b.1.1 * p.fr P * (((b.2.2 : GLQ X.E n Q) P)⁻¹).1 = p.fr P :=
-      congrArg (fun q : DecoF X.E n ST SG Q => q.1.2 P) hb
-    rw [← hab] at eb
-    exact mul_left_cancel (ea.trans eb.symm)
-  refine Prod.ext hab (Prod.ext (Subtype.ext h2) (Subtype.ext (funext fun P => ?_)))
-  exact inv_injective (Subtype.ext (h3 P))
-
-theorem rec_frm_stab_card_dvd (hX : X.Ok) (h : (frmGSD C Λ Θ).Ok) (p : DecoF X.E n ST SG Q) :
-    Nat.card (MulAction.stabilizer (frmGSD C Λ Θ).G p) ∣ minkM (2 * X.f * n) := by
-  let φ : MulAction.stabilizer (frmGSD C Λ Θ).G p →* GL (Fin n) X.E :=
-    (ufGL X.E n).comp ((MonoidHom.fst (UF X.E n) (↥Λ.grp × ↥Θ.grp)).comp (MulAction.stabilizer (frmGSD C Λ Θ).G p).subtype)
-  have hφ : Function.Injective φ := by
-    intro a b hab
-    have h1 : (a.1.1 : UF X.E n) = b.1.1 := Subtype.ext ((toGLm X.E n).injective hab)
-    exact Subtype.ext (rec_frm_stab_inj Λ Θ p a.2 b.2 h1)
-  have hfin : Finite (MulAction.stabilizer (frmGSD C Λ Θ).G p) := h.fin_stab p
-  have hfin' : Finite φ.range := Finite.of_equiv _ (MonoidHom.ofInjective hφ).toEquiv
-  have hst : φ.range ≤ Formalism.UG.stabGL p.deco.1.N := by
-    rintro _ ⟨a, rfl⟩ x
-    have ha : gmap (a.1.1 : UF X.E n).1 p.deco.1.N = p.deco.1.N :=
-      congrArg (fun q : DecoF X.E n ST SG Q => q.1.1.1.N) a.2
-    show x ∈ _ ↔ ((toGLm X.E n (a.1.1 : UF X.E n).1 : GL (Fin n) X.E) : Matrix (Fin n) (Fin n) X.E).mulVec x ∈ _
-    rw [toGLm_mulVec]
-    constructor
-    · intro hx
-      rw [← ha]
-      exact Submodule.mem_map_of_mem hx
-    · intro hx
-      rw [← ha] at hx
-      obtain ⟨y, hy, e⟩ := hx
-      have : y = x := (a.1.1 : UF X.E n).1.injective e
-      rwa [← this]
-  have h1 := mk_card_dvd minkowskiBound_holds p.deco.1.N p.deco.2.lat φ.range hfin' hst
-  rw [← Nat.card_congr (MonoidHom.ofInjective hφ).toEquiv] at h1
-  have h2 : Module.finrank ℚ X.E = 2 * X.f := by
-    rw [← Module.finrank_mul_finrank ℚ X.F X.E, hX.rankE, Fields.f, hX.card_Tau, mul_comm]
-  rw [h2] at h1
-  exact h1
-
 end FrmMink
 
 section TwMinkS
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {σ₀ : X.K →+* ℂ}
-
-theorem twMink_holds (hX : X.Ok) (G : ChainGlob W σ₀) : TwMink G := by
-  classical
-  unfold TwMink twDGam
-  refine Finset.lcm_dvd fun a _ => Finset.lcm_dvd fun u _ => Finset.lcm_dvd fun j hj => ?_
-  have hj' : j ≤ R.m := Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)
-  unfold famLcm
-  refine Finset.lcm_dvd fun c _ => ?_
-  have hc := rec_frm_stab_card_dvd (colValF W G.sel (G.mu a) u j) ((G.L a).levG j c.1) ((G.L a).levQ j c.1) hX
-    (G.twOk a u j c.1) ((((chF W G.sel (G.mu a) (G.L a) u j).mem c.1)).outSec.rep c.2)
-  exact hc.trans (minkM_dvd_minkM (Nat.mul_le_mul_left _ (rec_N_mono R hj')))
-
-theorem recDGamAll_prime_le' {Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs} (hX : X.Ok) (G : ChainGlob W σ₀) {p : ℕ} (hp : p.Prime)
-    (h : p ∣ recDGamAll W Λ hX G) : p ≤ 2 * X.f * R.N R.m + 1 := by
-  first
-  | exact recDGamAll_prime_le hX G (twMink_holds hX G) hp h
-  | exact recDGamAll_prime_le (Λ := Λ) hX G (twMink_holds hX G) hp h
-  | exact prime_le_of_dvd_minkM hp (h.trans (recDGamAll_dvd_minkM hX G (twMink_holds hX G)))
-  | (rw [recDGamAll_eq hX G] at h; exact prime_le_of_dvd_minkM hp (h.trans (dGamAut_dvd_minkM hX)))
 
 end TwMinkS
 

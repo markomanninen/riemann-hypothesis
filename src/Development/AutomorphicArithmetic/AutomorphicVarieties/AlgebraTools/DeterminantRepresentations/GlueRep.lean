@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepCont
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.MapApi
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepCont
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.MapApi
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 
@@ -26,7 +30,7 @@ theorem UpperTheory.V.AlgebraTools.Det.glueRep :
   let ι : A →+* (∀ x, K x) := Pi.ringHom f
   have hιc : Continuous ι := continuous_pi fun x => hf x
   have hιi : Function.Injective ι := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     exact hinj a fun x => congrFun ha x
   let R := UpperTheory.V.AlgebraTools.Det.piRep K ρ
@@ -53,11 +57,11 @@ theorem UpperTheory.V.AlgebraTools.Det.glueRep :
         exact h1.symm
       refine ⟨(-1) ^ i * p.coeff (n - i), ?_⟩
       show ι ((-1) ^ i * p.coeff (n - i)) = (-1) ^ i * ((GDet.ofRep R).chi (MonoidAlgebra.single g 1)).coeff (n - i)
-      rw [(UpperTheory.V.AlgebraTools.Det.repApi R).2.1, hchar, Polynomial.coeff_map, map_mul, map_pow, map_neg, map_one])
+      rw [(UpperTheory.V.AlgebraTools.Det.repApi R).2.1 g, hchar, Polynomial.coeff_map, map_mul, map_pow, map_neg, map_one])
   refine ⟨D, ?_, hDc⟩
   intro x
   have hfx : f x = (Pi.evalRingHom K x).comp ι := by
     ext a
     rfl
-  rw [hfx, ← (UpperTheory.V.AlgebraTools.Det.mapApi D ι).2.2.2.2.2.2.1, hD, (UpperTheory.V.AlgebraTools.Det.repApi R).2.2.2.2.2.1]
+  rw [hfx, ← (UpperTheory.V.AlgebraTools.Det.mapApi D ι).2.2.2.2.2.2.1 (Pi.evalRingHom K x), hD, (UpperTheory.V.AlgebraTools.Det.repApi R).2.2.2.2.2.1 (Pi.evalRingHom K x)]
   congr 1

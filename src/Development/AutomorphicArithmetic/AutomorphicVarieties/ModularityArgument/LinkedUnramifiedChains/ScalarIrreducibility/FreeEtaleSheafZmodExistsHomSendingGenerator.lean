@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+
+@[expose] public section
 
 set_option linter.overlappingInstances false
 
@@ -90,7 +94,8 @@ private theorem der_mul {A : Type} [CommRing A] {n : ℕ} (ξ : A →+* K) (D : 
     (hD : ∀ f g, D (f * g) = ξ f * D g + ξ g * D f) (P Q : Matrix (Fin n) (Fin n) A) :
     (P * Q).map D = P.map ξ * Q.map D + P.map D * Q.map ξ := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.add_apply, Matrix.mul_apply, map_sum, hD, Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, Matrix.add_apply, Matrix.mul_apply, map_sum, hD, Finset.sum_add_distrib]
   congr 1
   exact Finset.sum_congr rfl fun a _ => mul_comm _ _
 
@@ -374,6 +379,8 @@ private theorem z_ne {k : Type} [Field k] (h2 : (2 : k) ≠ 0) {n : ℕ} (hn : n
 
 end UpperTheory.V.J.TorusDerivation
 
+set_option synthInstance.maxHeartbeats 200000
+
 namespace UpperTheory.V.J.TorusDerivation
 
 open Matrix
@@ -443,11 +450,11 @@ private theorem ne_quad (S : Fr.Space c.O F n) (ξ : S.A →ₐ[c.O] Qbar l) (h�
   · have e : res c.O S.R ((S.aB (g * g) k : S.B) : S.R) =
         res c.O S.R ((S.aB g k : S.B) : S.R) * res c.O S.R ((S.aB g k : S.B) : S.R) := by
       rw [res_aB, res_aB, Subgroup.coe_mul, map_mul, mul_zpow, Units.val_mul]
-    simp only [Subalgebra.coe_add, Subalgebra.coe_sub, Subalgebra.coe_mul, map_add, map_sub, map_mul, e]
+    simp only [Subalgebra.coe_add, Subalgebra.coe_sub, Subalgebra.coe_mul, map_add (f := _), map_sub, map_mul, e]
     have e2 : ∀ z β β' : ResidueField c.O, z * z - (β + β') * z + β * β' = (z - β) * (z - β') := fun _ _ _ => by ring
     rw [e2]
     exact mul_ne_zero (sub_ne_zero.2 hb.symm) (sub_ne_zero.2 hb'.symm)
-  · simp only [map_add, map_sub, map_mul, inc_aB]
+  · simp only [map_add (f := _), map_sub, map_mul, inc_aB]
     rw [← map_mul (ptRep S ξ).r]
     exact h1
 

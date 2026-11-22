@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreEig
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsSaturatedSubmoduleIffExistsIsComplOfValuationR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreEig
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsSaturatedSubmoduleIffExistsIsComplOfValuationR
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.MultiplicationKernelIdentity GlobalTheory.HermitianPreEigenvalues Polynomial Module
 
 namespace GlobalTheory.LenMap
@@ -42,7 +47,8 @@ theorem exists_basis_sum {R : Type*} [CommRing R] {M M' : Type*} [AddCommGroup M
       simpa [Fintype.sum_sum_type, u, w] using hg
     have h2 : ∑ j, g (Sum.inr j) • (e j : M') = 0 := by
       have := congrArg f hg'
-      simpa [map_add, map_sum, map_smul, hdf, hσf] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_add (f := _), map_sum, map_smul, hdf, hσf] using this
     have hr : ∀ j, g (Sum.inr j) = 0 := Fintype.linearIndependent_iff.1 heli _ h2
     have h1 : ∑ i, g (Sum.inl i) • (d i : M) = 0 := by simpa [hr] using hg'
     have hl : ∀ i, g (Sum.inl i) = 0 := Fintype.linearIndependent_iff.1 hdli _ h1
@@ -60,7 +66,8 @@ theorem exists_basis_sum {R : Type*} [CommRing R] {M M' : Type*} [AddCommGroup M
       simpa only [Submodule.coe_smul] using h0
     have hk : z - ∑ j, bb j • σ j ∈ Z ⊓ LinearMap.ker f := by
       refine Submodule.mem_inf.2 ⟨Z.sub_mem hz (Z.sum_mem fun j _ => Z.smul_mem _ (hσZ j)), ?_⟩
-      rw [LinearMap.mem_ker, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.mem_ker, map_sub, map_sum]
       simp only [map_smul, hσf]
       rw [hy, sub_self]
     have hkk := congrArg Subtype.val (d.sum_repr ⟨_, hk⟩)
@@ -142,8 +149,8 @@ theorem relLen_map_iff : ∀ (C : Type) [Field C] (v : AddValuation C (WithTop �
   haveI := isTorsionFree_submodule htM (X ⊓ LinearMap.ker f)
   haveI : Module.Finite (Int0 v) (X.map f) := Module.Finite.map X f
   haveI : Module.Finite (Int0 v) (X'.map f) := Module.Finite.map X' f
-  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (Int0 v) (X.map f)
-  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (Int0 v) (X'.map f)
+  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (R := Int0 v) (M := X.map f)
+  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (R := Int0 v) (M := X'.map f)
   let g : X →ₗ[Int0 v] X.map f := f.submoduleMap X
   have hg : Function.Surjective g := f.submoduleMap_surjective X
   haveI : Module.FinitePresentation (Int0 v) (X.map f) := Module.finitePresentation_of_projective _ _
@@ -161,7 +168,7 @@ theorem relLen_map_iff : ∀ (C : Type) [Field C] (v : AddValuation C (WithTop �
   haveI : Module.Finite (Int0 v) ↥(X ⊓ LinearMap.ker f) := by
     rw [Module.Finite.iff_fg, ← hK]
     exact hfg.map _
-  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (Int0 v) ↥(X ⊓ LinearMap.ker f)
+  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (R := Int0 v) (M := ↥(X ⊓ LinearMap.ker f))
   have hK' : X' ⊓ LinearMap.ker f = X ⊓ LinearMap.ker f :=
     le_antisymm (inf_le_inf_right _ hle) (le_inf hker inf_le_right)
   obtain ⟨q, ⟨d⟩⟩ : ∃ q : ℕ, Nonempty (Basis (Fin q) (Int0 v) ↥(X ⊓ LinearMap.ker f)) :=
@@ -191,7 +198,8 @@ theorem relLen_map_iff : ∀ (C : Type) [Field C] (v : AddValuation C (WithTop �
     have hB : ∀ k, (c' k : M') = ∑ j, B j k • (c j : M') := by
       intro k
       have h1 := congrArg f (hA (Sum.inr k))
-      rw [hb', Sum.elim_inr, hσf', map_sum, Fintype.sum_sum_type] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hb', Sum.elim_inr, hσf', map_sum, Fintype.sum_sum_type] at h1
       simpa [hb, hdf, hσf, B, Matrix.toBlocks₂₂] using h1
     rw [relLen_iff_of_basis v (Submodule.map_mono hle) c c' B hB]
     have hinl : ∀ i, Submodule.inclusion hle (b' (Sum.inl i)) = b (Sum.inl i) := by

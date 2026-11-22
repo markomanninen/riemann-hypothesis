@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.LocHerm
-import Formalism.PeriodIntegrals.AlgebraMapMemO
+module
+
+public import Formalism.PeriodIntegrals.LocHerm
+public import Formalism.PeriodIntegrals.AlgebraMapMemO
+
+@[expose] public section
 
 noncomputable section
 

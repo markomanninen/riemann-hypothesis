@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.HenselQuad
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.SecondConstantOfGaussSum
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HeightShare
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.HenselQuad
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.SecondConstantOfGaussSum
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HeightShare
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical

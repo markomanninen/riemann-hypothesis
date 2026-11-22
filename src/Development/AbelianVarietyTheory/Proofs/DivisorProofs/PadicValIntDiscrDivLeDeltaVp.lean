@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemPass
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemPass
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.LatVal UpperHalfPlane ReciprocityTheory.ChartRestriction.L1
 open scoped UpperHalfPlane
 
@@ -16,7 +21,8 @@ theorem finrank_mul_padicValInt_discr_le (K L : Type) [Field K] [NumberField K] 
   have hL : (discr L).natAbs ≠ 0 := Int.natAbs_ne_zero.2 (discr_ne_zero L)
   rw [h] at hL
   unfold padicValInt
-  rw [h, padicValNat.mul (left_ne_zero_of_mul hL) (right_ne_zero_of_mul hL), padicValNat.pow]
+  rw [h, Nat.multiplicity_mul (left_ne_zero_of_mul hL) (right_ne_zero_of_mul hL),
+    Nat.multiplicity_pow]
   omega
 
 theorem padicValInt_discr_div_le_delta_vp :
@@ -25,7 +31,7 @@ theorem padicValInt_discr_div_le_delta_vp :
         GlobalTheory.IndefiniteRowSideFullHecke.ClassZetaValuationBounds.delta_vp E l := by
   intro E _ _ _ l hl
   have h := finrank_mul_padicValInt_discr_le (maximalRealSubfield E) E l hl
-  have h2 := Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E
+  have h2 := (letI : Module.Free (maximalRealSubfield E) E := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E)
   have hF : (0 : ℝ) < Module.finrank ℚ (maximalRealSubfield E) := by exact_mod_cast Module.finrank_pos
   have hE : (0 : ℝ) < Module.finrank ℚ E := by exact_mod_cast Module.finrank_pos
   unfold GlobalTheory.IndefiniteRowSideFullHecke.ClassZetaValuationBounds.delta_vp

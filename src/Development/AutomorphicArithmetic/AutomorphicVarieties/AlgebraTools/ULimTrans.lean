@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ULimKer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ULimKer
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct

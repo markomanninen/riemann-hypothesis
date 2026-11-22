@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetGNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetGNeZero
+
+@[expose] public section
+
 open Classical MvPolynomial
 open scoped Matrix ComplexOrder
 
@@ -56,7 +61,7 @@ theorem eq_zero_of_eval_skew (R : MvPolynomial (ι × Fin a × Fin a) ℂ)
     rw [eval_bind₁_subst]
     congr 2
     funext v
-    simp
+    simp only [eval_add, eval_mul, eval_C, eval_X]
   have hS0 : bind₁ (fun v => C cα * X v + C cβ * X (tr v)) R = 0 := by
     apply eq_zero_of_eval_real
     intro u
@@ -70,7 +75,7 @@ theorem eq_zero_of_eval_skew (R : MvPolynomial (ι × Fin a × Fin a) ℂ)
   have := hev (fun v => cγ * x v + cδ * x (tr v))
   rw [hS0, map_zero] at this
   rw [map_zero, this]
-  congr 2
+  apply congrArg (fun y => eval y R)
   funext v
   simp only [tr_tr]
   linear_combination (-(x v)) * c_one - x (tr v) * c_zero
@@ -140,7 +145,7 @@ theorem mapMatrix_varMat (x : ι × Fin a × Fin a → ℂ) (τ : ι) :
 
 theorem eval_det_one_add (x : ι × Fin a × Fin a → ℂ) (τ : ι) :
     eval x (1 + varMat (a := a) τ).det = (1 + famOf x τ).det := by
-  rw [RingHom.map_det, map_add, map_one, mapMatrix_varMat]
+  rw [RingHom.map_det, map_add (f := _), map_one, mapMatrix_varMat]
 
 theorem eval_cay_entry (x : ι × Fin a × Fin a → ℂ) (τ : ι) (i j : Fin a) :
     eval x (((1 - varMat (a := a) τ) * (1 + varMat τ).adjugate :
@@ -148,7 +153,7 @@ theorem eval_cay_entry (x : ι × Fin a × Fin a → ℂ) (τ : ι) (i j : Fin a
       ((1 - famOf x τ) * (1 + famOf x τ).adjugate) i j := by
   have e : ∀ M : Matrix (Fin a) (Fin a) (MvPolynomial (ι × Fin a × Fin a) ℂ),
       eval x (M i j) = ((eval x).mapMatrix M) i j := fun _ => rfl
-  rw [e, map_mul, map_sub, map_one, RingHom.map_adjugate, map_add, map_one, mapMatrix_varMat]
+  rw [e, map_mul, map_sub, map_one, RingHom.map_adjugate, map_add (f := _), map_one, mapMatrix_varMat]
 
 variable [Fintype ι]
 
@@ -160,7 +165,7 @@ def numer (v : ι × Fin a × Fin a) : MvPolynomial (ι × Fin a × Fin a) ℂ :
     ∏ τ ∈ Finset.univ.erase v.1, (1 + varMat τ).det
 
 def clearQ (Q : MvPolynomial (ι × Fin a × Fin a) ℂ) : MvPolynomial (ι × Fin a × Fin a) ℂ :=
-  ∑ d ∈ Q.support, C (coeff d Q) * (∏ v ∈ d.support, numer v ^ d v) *
+  ∑ d ∈ Q.support, C (AddMonoidAlgebra.coeff Q d) * (∏ v ∈ d.support, numer v ^ d v) *
     denom ^ (Q.totalDegree - d.sum fun _ e => e)
 
 theorem eval_denom (x : ι × Fin a × Fin a → ℂ) :
@@ -174,7 +179,7 @@ theorem eval_numer (x : ι × Fin a × Fin a → ℂ) (v : ι × Fin a × Fin a)
 
 theorem eval_div_mul_pow_totalDegree_clear_denominators {σ : Type} (Q : MvPolynomial σ ℂ) (p : σ → ℂ) (D : ℂ) (hD : D ≠ 0) :
     eval (fun v => p v / D) Q * D ^ Q.totalDegree =
-      ∑ d ∈ Q.support, coeff d Q * (∏ v ∈ d.support, p v ^ d v) *
+      ∑ d ∈ Q.support, AddMonoidAlgebra.coeff Q d * (∏ v ∈ d.support, p v ^ d v) *
         D ^ (Q.totalDegree - d.sum fun _ e => e) := by
   rw [eval_eq, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d hd => ?_
@@ -205,7 +210,8 @@ theorem eval_clearQ (Q : MvPolynomial (ι × Fin a × Fin a) ℂ) (x : ι × Fin
     rw [cay, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.mul_smul, Matrix.smul_apply, smul_eq_mul]
     field_simp [hdet v.1, hE]
   rw [hfun, eval_div_mul_pow_totalDegree_clear_denominators Q _ _ hD]
-  simp only [clearQ, map_sum, map_mul, map_prod, map_pow, eval_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [clearQ, map_sum, map_mul, map_prod, map_pow, eval_C]
 
 theorem unitary_zariski_dense : ∀ {ι : Type} [Fintype ι] {a : ℕ} (Q : MvPolynomial (ι × Fin a × Fin a) ℂ),
     (∀ g : ι → Matrix.unitaryGroup (Fin a) ℂ,

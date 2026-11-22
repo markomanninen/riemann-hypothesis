@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitarySatakeWeylInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricFunctionInverseInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitarySatakeWeylInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricFunctionInverseInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ theorem weyl_of_coeff (hswap : CoeffSwap) (hneg : CoeffNeg) (L : Type) [Field L]
     (h : GU σ n → ℂ) (hh : h ∈ Hecke ℂ (KU σ n)) :
     (∀ π : Equiv.Perm (Fin m), SatU ϖ q h (α ∘ π) = SatU ϖ q h α) ∧
       ∀ i : Fin m, SatU ϖ q h (Function.update α i (α i)⁻¹) = SatU ϖ q h α := by
-  choose T hT using fun a : Fin m → ℤ => P.fSatake_tMat_exists (n := n) hU hm a
+  have hex := fun a : Fin m → ℤ => P.fSatake_tMat_exists (n := n) hU hm a
+  choose T hT using hex
   have hq : (q : ℂ) ≠ 0 := by
     have := hU.2.2.2.2.2.1
     exact_mod_cast (by omega : q ≠ 0)
@@ -87,7 +92,7 @@ theorem eq_of_invariant (m : ℕ) (f : (Fin m → ℂ) → ℂ)
       Finset.univ.val.map α' + Finset.univ.val.map (fun i => (α' i)⁻¹)) : f α = f α' := by
   classical
   have h2 := congrArg (Multiset.map (fun x : ℂ => s(x, x⁻¹))) h
-  simp only [Multiset.map_add, Multiset.map_map, Function.comp_def, inv_inv] at h2
+  simp only [Multiset.map_add (f := _), Multiset.map_map, Function.comp_def, inv_inv] at h2
   have e1 : ∀ γ : Fin m → ℂ, (fun i => s((γ i)⁻¹, γ i)) = fun i => s(γ i, (γ i)⁻¹) :=
     fun γ => funext fun i => Sym2.eq_swap
   rw [e1 α, e1 α'] at h2

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLExh
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLExh
+
+@[expose] public section
 
 open MeasureTheory Topology
 open Formalism.FourierDecayAlt

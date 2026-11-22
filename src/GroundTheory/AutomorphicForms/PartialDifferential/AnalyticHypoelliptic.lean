@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.PartialDifferential.AnalyticHypoSeries
-import GroundTheory.AutomorphicForms.PartialDifferential.AnalyticHypoStep
-import GroundTheory.AutomorphicForms.PartialDifferential.AnalyticHypoGarding
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.PartialDifferential.AnalyticHypoSeries
+public import GroundTheory.AutomorphicForms.PartialDifferential.AnalyticHypoStep
+public import GroundTheory.AutomorphicForms.PartialDifferential.AnalyticHypoGarding
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.Sobolev
 

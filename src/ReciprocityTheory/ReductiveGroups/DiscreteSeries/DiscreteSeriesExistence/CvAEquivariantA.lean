@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.NormSubOneLeOfHsdA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.NormSubOneLeOfHsdA
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,7 @@ theorem exists_cvA_idA (hσ : IsURepOn (UJset ε) σ)
   have hWc : IsCompactElement W :=
     (Submodule.fg_iff_compact W).1 (Module.Finite.iff_fg.1 hWf)
   obtain ⟨t, hts, hWt⟩ :=
-    (CompleteLattice.isCompactElement_iff_exists_le_sSup_of_le_sSup (k := W)).1 hWc _ hWsum
+    (isCompactElement_iff_exists_le_sSup_of_le_sSup W).1 hWc _ hWsum
   let iso : Submodule ℂ H → Submodule ℂ H := fun S =>
     if h : ∃ μ, Formalism.MainNotions.S.IsKTypeOf ε σ μ S then sSup {S' | Formalism.MainNotions.S.IsKTypeOf ε σ h.choose S'} else ⊥
   haveI hisoF : ∀ S, FiniteDimensional ℂ (iso S) := by

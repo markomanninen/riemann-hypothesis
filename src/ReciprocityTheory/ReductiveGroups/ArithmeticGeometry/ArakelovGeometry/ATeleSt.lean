@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsBergDensity
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsBergDensity
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.ArakelovGeometry
 
@@ -7,7 +11,7 @@ open scoped ComplexOrder
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] {κ : Type} [Fintype κ] {D : ℕ}
 
-noncomputable def ratioLine (m₀ m₁ : ConeMetric ℂ (Ix κ)) : HermLine (GlobalTheory κ) where
+noncomputable def ratioLine (m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)) : HermLine (GlobalTheory κ) where
   a := 0
   h z := m₁.ρ z / m₀.ρ z
   pos z hz := by
@@ -97,11 +101,11 @@ theorem tele_herm_ext {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype
   subst hh
   rfl
 
-theorem tele_rho_zero (m : ConeMetric ℂ (Ix κ)) : m.ρ 0 = 0 := by
+theorem tele_rho_zero (m : ConeMetric (C := ℂ) (ι := Ix κ)) : m.ρ 0 = 0 := by
   have h := m.smul 0 0
   simpa using h
 
-theorem tele_ofCone_tensor (m₀ m₁ : ConeMetric ℂ (Ix κ)) :
+theorem tele_ofCone_tensor (m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)) :
     HermLine.ofCone m₁ = (HermLine.ofCone m₀).tensor (ratioLine m₀ m₁) := by
   apply tele_herm_ext
   · show (1 : Unit → ℤ) = 1 + 0
@@ -114,14 +118,14 @@ theorem tele_ofCone_tensor (m₀ m₁ : ConeMetric ℂ (Ix κ)) :
       simp
     · rw [mul_div_cancel₀ _ (m₀.pos z hz).ne']
 
-theorem tele_smooth_ofCone {m : ConeMetric ℂ (Ix κ)} (hm : IsSmoothMetric m) :
+theorem tele_smooth_ofCone {m : ConeMetric (C := ℂ) (ι := Ix κ)} (hm : IsSmoothMetric m) :
     IsSmoothHerm (HermLine.ofCone m) := by
   show ContDiffOn ℝ _ m.ρ _
   refine hm.mono fun z hz h0 => ?_
   obtain ⟨i, hi⟩ := hz ()
   exact hi (congrFun h0 _)
 
-theorem tele_smooth_ratio {m₀ m₁ : ConeMetric ℂ (Ix κ)} (h₀ : IsSmoothMetric m₀)
+theorem tele_smooth_ratio {m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)} (h₀ : IsSmoothMetric m₀)
     (h₁ : IsSmoothMetric m₁) : IsSmoothHerm (ratioLine m₀ m₁) := by
   have hsub : {z : Ix κ → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} ⊆ {z | z ≠ 0} := by
     intro z hz h0
@@ -140,10 +144,10 @@ theorem tele_comp_perm {α : Type*} {n : ℕ} (F : Fin (n + 1) → α) (i : Fin 
   · simp [tele_perm]
   · simp [tele_perm]
 
-def tele_fam (m₀ m₁ : ConeMetric ℂ (Ix κ)) (N i : ℕ) : Fin N → HermLine (GlobalTheory κ) :=
+def tele_fam (m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)) (N i : ℕ) : Fin N → HermLine (GlobalTheory κ) :=
   fun j => if j.val < i then HermLine.ofCone m₁ else HermLine.ofCone m₀
 
-theorem tele_fam_succAbove (m₀ m₁ : ConeMetric ℂ (Ix κ)) (D i : ℕ) (hi : i < D + 1) (k : ℕ)
+theorem tele_fam_succAbove (m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)) (D i : ℕ) (hi : i < D + 1) (k : ℕ)
     (hk : k = i ∨ k = i + 1) :
     tele_fam m₀ m₁ (D + 1) k ∘ (⟨i, hi⟩ : Fin (D + 1)).succAbove = tele_fam m₀ m₁ D i := by
   funext j
@@ -154,14 +158,14 @@ theorem tele_fam_succAbove (m₀ m₁ : ConeMetric ℂ (Ix κ)) (D i : ℕ) (hi 
   rw [hv]
   split_ifs <;> first | rfl | (exfalso; omega)
 
-theorem tele_fam_smooth {m₀ m₁ : ConeMetric ℂ (Ix κ)} (h₀ : IsSmoothMetric m₀)
+theorem tele_fam_smooth {m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)} (h₀ : IsSmoothMetric m₀)
     (h₁ : IsSmoothMetric m₁) (N i : ℕ) (j : Fin N) : IsSmoothHerm (tele_fam m₀ m₁ N i j) := by
   unfold tele_fam
   split_ifs
   · exact tele_smooth_ofCone h₁
   · exact tele_smooth_ofCone h₀
 
-theorem top_sub_top (I : AllFam) (hI : I.IsFamily) {x : Ix κ → Ω} {m₀ m₁ : ConeMetric ℂ (Ix κ)}
+theorem top_sub_top (I : AllFam) (hI : I.IsFamily) {x : Ix κ → Ω} {m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)}
     {μ : Measure (Ix κ → ℂ)} (hg₀ : IsGood D x m₀ μ) (hg₁ : IsGood D x m₁ μ) :
     top I x m₁ D - top I x m₀ D = ∑ i ∈ Finset.range (D + 1),
       ptsIntegral (ι := GlobalTheory κ) (coordIdeal ℤ x) (mixPot m₀ m₁ D i) (logRatio m₀ m₁) := by

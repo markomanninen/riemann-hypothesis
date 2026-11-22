@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.FormTSingle
-import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.ComatrixWordBound
-import Development.WeilBound.CoreStatements.BranchingTraces.CasimirDecomposition.UnitaryDecompositionExists
-import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.KFiniteWordBoundIndefUnitary
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.SchurEigenProjections.BigProjP
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.FormTSingle
+public import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.ComatrixWordBound
+public import Development.WeilBound.CoreStatements.BranchingTraces.CasimirDecomposition.UnitaryDecompositionExists
+public import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.KFiniteWordBoundIndefUnitary
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.SchurEigenProjections.BigProjP
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,10 @@ theorem momentHeA_of (hD : DecEx) (hC : Comat) (hW : WordBd) : MomentHeA := by
   rw [hv1, hξ, one_pow, mul_one] at e0
   haveI : ν.IsInvInvariant := by
     rw [Measure.isMulLeftInvariant_eq_smul ν (muG ε')]
-    exact ⟨by rw [Measure.inv, Measure.map_smul]; exact congrArg _ (Measure.inv_eq_self (muG ε'))⟩
+    refine ⟨?_⟩
+    rw [Measure.inv, Measure.map_smul]
+    · exact congrArg _ (Measure.inv_eq_self (muG ε'))
+    · exact continuous_inv.aemeasurable
   have step : ∀ s ∈ X.S, ∀ l, Integrable (fun g : UJ ε => ‖⟪ξ, X.p s (actT π (um g) (Pi.single l v)) z⟫_ℂ‖ ^ 2) (muG ε) ∧
       ∫ g : UJ ε, ‖⟪ξ, X.p s (actT π (um g) (Pi.single l v)) z⟫_ℂ‖ ^ 2 ∂(muG ε) ≤ T ^ (6 * (n + 1)) * (1 / d) := by
     intro s hs l

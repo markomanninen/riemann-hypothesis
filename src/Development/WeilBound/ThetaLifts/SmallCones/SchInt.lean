@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,8 +44,6 @@ def J (k j : ℕ) : SchwartzMap V ℂ →L[ℂ] V →ᵇ (V [×j]→L[ℝ] ℂ) 
       exact congrArg _ (iteratedFDeriv_const_smul_apply (cd f j).contDiffAt))
     ⟨{(k, j)}, 1, zero_le_one, fun f => by rw [norm_jet, Finset.sup_singleton, one_mul]; rfl⟩
 
-theorem J_apply (k j : ℕ) (f : SchwartzMap V ℂ) : J k j f = jet k j f := rfl
-
 variable {α : Type} [TopologicalSpace α] [SecondCountableTopology α] [MeasurableSpace α] [BorelSpace α] {μ : Measure α}
   {G : α → SchwartzMap V ℂ} (hG : Continuous G) (hI : ∀ k j : ℕ, Integrable (fun a => SchwartzMap.seminorm ℂ k j (G a)) μ)
 
@@ -77,11 +79,11 @@ theorem deriv_D (j : ℕ) (x : V) : HasFDerivAt (fun y => ∫ a, iteratedFDeriv 
   have e := L.toContinuousLinearEquiv.integral_comp_comm (μ := μ) fun a => iteratedFDeriv ℝ (j + 1) (G a) x
   exact h.congr_fderiv e
 
-theorem taylor : HasFTaylorSeriesUpTo ∞ (fun x => ∫ a, G a x ∂μ) fun x j => ∫ a, iteratedFDeriv ℝ j (G a) x ∂μ where
-  zero_eq x := ((continuousMultilinearCurryFin0 ℝ V ℂ).toContinuousLinearEquiv.integral_comp_comm (μ := μ)
-    fun a => iteratedFDeriv ℝ 0 (G a) x).symm
-  fderiv j _ x := deriv_D hG hI j x
-  cont j _ := continuous_iff_continuousAt.2 fun x => (deriv_D hG hI j x).continuousAt
+theorem taylor : HasFTaylorSeriesUpTo ∞ (fun x => ∫ a, G a x ∂μ) fun x j => ∫ a, iteratedFDeriv ℝ j (G a) x ∂μ :=
+  ⟨fun x => ((continuousMultilinearCurryFin0 ℝ V ℂ).toContinuousLinearEquiv.integral_comp_comm (μ := μ)
+      fun a => iteratedFDeriv ℝ 0 (G a) x).symm,
+    fun j _ x => deriv_D hG hI j x,
+    fun j _ => continuous_iff_continuousAt.2 fun x => (deriv_D hG hI j x).continuousAt⟩
 
 theorem eval_int (k j : ℕ) (x : V) :
     (∫ a, J k j (G a) ∂μ) x = ‖x‖ ^ k • iteratedFDeriv ℝ j (fun x => ∫ a, G a x ∂μ) x := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ProjHom
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveSpaceChart
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ProjHom
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveSpaceChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open AlgebraicGeometry CategoryTheory Limits Opposite HomogeneousLocalization
@@ -26,8 +31,8 @@ lemma corr_apply (g : X ⟶ Proj 𝒜) (r : A) (V : X.Opens) (h : V ≤ g ⁻¹�
   erw [hB]
   exact hR
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 lemma ι_appTop_eq (V : X.Opens) (z : Γ(X, ⊤)) :
     V.ι.appTop z = V.topIso.inv (X.presheaf.map (homOfLE le_top).op z) := by
   rw [Scheme.Opens.ι_appTop, Scheme.Opens.topIso_inv, ← CommRingCat.comp_apply,
@@ -175,7 +180,7 @@ theorem eq_fromOfGlobalSections_of_preimage_eq_top {O : Scheme.{u}} (q : O ⟶ p
   have hpre : ∀ j, q ⁻¹ᵁ Proj.basicOpen (grading A n) (X j) = O.basicOpen (f (X j)) := fun j => by
     rw [RingHom.comp_apply, Scheme.basicOpen_appLE, basicOpen_chartHom_X, Scheme.Hom.preimage_inf,
       hq, top_inf_eq, top_inf_eq]
-  refine ProjHom.eq_fromOfGlobalSections f _ (fun j => X j) (fun _ => 1)
+  refine ProjHom.eq_fromOfGlobalSections (𝒜 := grading A n) (ι := Fin (n + 1)) f _ (fun j => X j) (fun _ => 1)
     (fun _ => one_pos) (fun j => X_mem j) iSup_basicOpen_X q hpre fun j t a ha => ?_
   have hW : O.basicOpen (f (X j)) ≤ q ⁻¹ᵁ Proj.basicOpen (grading A n) (X k * X j) := by
     rw [Proj.basicOpen_mul, Scheme.Hom.preimage_inf, hq, top_inf_eq, hpre]

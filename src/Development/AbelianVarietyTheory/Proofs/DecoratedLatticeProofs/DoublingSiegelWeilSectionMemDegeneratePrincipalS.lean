@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilSectionIntegrableAndContinuousStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilSectionDegeneratePrincipalSeriesLawStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilSectionIntegrableAndContinuousStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilSectionDegeneratePrincipalSeriesLawStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ def intSub : Submodule ℂ (WO (dblSp A) B → ℂ) where
     simp only [map_zero, Pi.zero_apply]
     exact integrableOn_zero
   add_mem' {f f'} hf hf' g := by
-    simp only [map_add, Pi.add_apply]
+    simp only [map_add (f := _), Pi.add_apply]
     exact Integrable.add (hf g) (hf' g)
   smul_mem' c f hf g := by
     simp only [map_smul, Pi.smul_apply, smul_eq_mul]
@@ -35,7 +39,7 @@ def swLin : intSub A B omh ν 𝓕 →ₗ[ℂ] (GA D (dblSp A) → ℂ) where
   toFun f := swSec A B omh ν 𝓕 f
   map_add' f f' := by
     funext g
-    simp only [swSec, evZero, Submodule.coe_add, map_add, Pi.add_apply]
+    simp only [swSec, evZero, Submodule.coe_add, map_add (f := _), Pi.add_apply]
     exact integral_add (f.2 g) (f'.2 g)
   map_smul' c f := by
     funext g

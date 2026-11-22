@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open Matrix
 variable {O K : Type} [CommRing O] [IsDomain O] [IsPrincipalIdealRing O] [Field K] [Algebra O K] [IsFractionRing O K]
 
 theorem sep (ψ : AddChar K ℂ) (hψ : ∀ x, (∀ y : O, ψ (x * algebraMap O K y) = 1) ↔ x ∈ (algebraMap O K).range)
-    {V : Type} [AddCommGroup V] [Module K V] [Module O V] [IsScalarTower O K V] (L : Submodule O V) [L.IsLattice K] {y : V}
+    {V : Type} [AddCommGroup V] [Module K V] [Module O V] [IsScalarTower O K V] (L : Submodule O V) [L.IsFullLattice K] {y : V}
     (hy : y ∉ L) : ∃ l : V →ₗ[K] K, (∀ z ∈ L, ψ (l z) = 1) ∧ ψ (l y) ≠ 1 := by
   classical
   haveI : Module.Free O L := Submodule.IsLattice.free K L
@@ -21,7 +25,7 @@ theorem sep (ψ : AddChar K ℂ) (hψ : ∀ x, (∀ y : O, ψ (x * algebraMap O 
     have hr : Set.range v = L.subtype '' Set.range b := by rw [← Set.range_comp]; rfl
     rw [hr, Submodule.span_image, b.span_eq, Submodule.map_top, Submodule.range_subtype]
   have hspK : ⊤ ≤ Submodule.span K (Set.range v) := by
-    rw [← Submodule.IsLattice.span_eq_top (A := K) (M := L)]
+    rw [← Submodule.IsFullLattice.span_eq_top (A := K) (M := L)]
     apply Submodule.span_le.mpr
     intro z hz
     have hz' : z ∈ Submodule.span O (Set.range v) := by rw [hspanO]; exact hz
@@ -53,8 +57,8 @@ theorem sep (ψ : AddChar K ℂ) (hψ : ∀ x, (∀ y : O, ψ (x * algebraMap O 
   · simp only [LinearMap.smul_apply, Module.Basis.coord_apply, smul_eq_mul]
     rwa [mul_comm]
 
-variable (K) in
 
+variable (K) in
 def lam (a : O) (m m' : ℕ) : Submodule O (Matrix (Fin m) (Fin m') K) :=
   LinearMap.range (a • (Algebra.linearMap O K).mapMatrix)
 
@@ -86,20 +90,7 @@ private theorem isLattice_lam_of_ne_zero [IsFractionRing O K] {a : O} {n d : ℕ
   · unfold lam
     rw [LinearMap.range_eq_map]
     exact Module.Finite.fg_top.map _
-  · rw [eq_top_iff]
-    intro Y _
-    rw [Matrix.matrix_eq_sum_single Y]
-    refine Submodule.sum_mem _ fun i _ => Submodule.sum_mem _ fun j _ => ?_
-    have hmem : a • (Matrix.single i j (1 : O)).map (algebraMap O K) ∈ lam K a n d :=
-      mem_lam.mpr ⟨_, rfl⟩
-    have hne : algebraMap O K a ≠ 0 := fun hz =>
-      h0 ((IsFractionRing.injective O K) (by rw [hz, map_zero]))
-    have hrw : Matrix.single i j (Y i j) =
-        (Y i j * (algebraMap O K a)⁻¹) • (a • (Matrix.single i j (1 : O)).map (algebraMap O K)) := by
-      rw [Matrix.map_single, map_one, ← algebraMap_smul K a, smul_smul, inv_mul_cancel_right₀ hne,
-        Matrix.smul_single, smul_eq_mul, mul_one]
-    rw [hrw]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
+  · exact fun _ _ hli => (LinearIndependent.iff_fractionRing _ _).mp hli
 
 private theorem isLattice_map_of_surjective {n d : ℕ} (L : Submodule O (Matrix (Fin n) (Fin d) K)) [L.IsLattice K]
     (G : Matrix (Fin n) (Fin d) K →ₗ[K] Matrix (Fin n) (Fin d) K) (hG : Function.Surjective G) :
@@ -109,8 +100,7 @@ private theorem isLattice_map_of_surjective {n d : ℕ} (L : Submodule O (Matrix
       Set (Matrix (Fin n) (Fin d) K)) = G '' (L : Set (Matrix (Fin n) (Fin d) K)) := by
     rw [Submodule.map_coe]
     rfl
-  rw [himg, Submodule.span_image, Submodule.IsLattice.span_eq_top, Submodule.map_top,
-    LinearMap.range_eq_top.mpr hG]
+  exact fun _ _ hli => (LinearIndependent.iff_fractionRing _ _).mp hli
 
 private theorem isUnit_det_lemma_3 [IsLocalRing O] {a : O} {n : ℕ} (ha : a ∈ IsLocalRing.maximalIdeal O)
     (M : Matrix (Fin n) (Fin n) O) : IsUnit (1 + a • M).det := by
@@ -140,9 +130,30 @@ theorem dich [IsLocalRing O] (ψ : AddChar K ℂ) (hψ : ∀ x, (∀ y : O, ψ (
       show h.1 * ((h⁻¹).1 * Y) = Y
       rw [← Matrix.mul_assoc, Units.mul_inv, Matrix.one_mul]⟩
   haveI : (lam K a n d).IsLattice K := isLattice_lam_of_ne_zero h0
+  haveI : (lam K a n d).IsFullLattice K := by
+    refine { span_eq_top := ?_ }
+    apply top_unique
+    intro M
+    simp only [Submodule.mem_top, true_implies]
+    induction M using Matrix.induction_on' with
+    | h_zero => exact Submodule.zero_mem _
+    | h_add p q hp hq => exact Submodule.add_mem _ hp hq
+    | h_std_basis i j x =>
+      have haK : algebraMap O K a ≠ 0 := fun h => h0 ((IsFractionRing.injective O K) (by simpa using h))
+      have hm : a • (Matrix.single i j (1 : O)).map (algebraMap O K) ∈ lam K a n d :=
+        mem_lam.mpr ⟨_, rfl⟩
+      have hm' : a • (Matrix.single i j (1 : O)).map (algebraMap O K) ∈
+          Submodule.span K (lam K a n d : Set _) := Submodule.subset_span hm
+      have hs := (Submodule.span K (lam K a n d : Set (Matrix (Fin n) (Fin d) K))).smul_mem
+        (x / algebraMap O K a) hm'
+      convert hs using 1
+      ext k l
+      simp [Matrix.single_apply, Algebra.smul_def, haK, div_mul_cancel₀]
   haveI : ((lam K a n d).map (G.restrictScalars O)).IsLattice K := isLattice_map_of_surjective _ G hGs
   haveI : ((lam K a n d) ⊔ (lam K a n d).map (G.restrictScalars O)).IsLattice K :=
     Submodule.IsLattice.sup K _ _
+  haveI : ((lam K a n d) ⊔ (lam K a n d).map (G.restrictScalars O)).IsFullLattice K :=
+    Submodule.IsFullLattice.of_le K le_sup_left
   by_cases hmem : h.1 * y.map (algebraMap O K) - y.map (algebraMap O K) ∈
       (lam K a n d) ⊔ (lam K a n d).map (G.restrictScalars O)
   · left

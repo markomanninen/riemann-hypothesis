@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlue
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlue
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 open scoped DirectSum TensorProduct
 
@@ -58,7 +63,7 @@ theorem tens_ind {V : Scheme.{0}} {st : ℤ} {P : Tens I J V st → Prop} (x : T
     | zero => simpa using h0
     | tmul a b => exact hof p a b
     | add m m' hm hm' =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hadd _ _ hm hm'
 
 end TensAssoc
@@ -88,7 +93,7 @@ theorem lift_nat (τ : Pair I J T) {V U : Scheme.{0}} (g : V ⟶ U) (st : ℤ) (
     Sec.res g (τ.lift U st x) = τ.lift V st (Tens.res g st x) := by
   induction x using tens_ind with
   | h0 => simp
-  | hadd x y hx hy => rw [map_add, res_add', hx, hy, map_add, map_add]
+  | hadd x y hx hy => rw [map_add (f := _), res_add', hx, hy, map_add (f := _), map_add (f := _)]
   | hof p a b => rw [lift_lof, tres_lof, lift_lof, τ.nat]
 
 theorem B_nat (μ' : Pair J K M) (ν' : Pair I M L) (st u w : ℤ) (h : st + u = w) {V U : Scheme.{0}} (g : V ⟶ U)
@@ -96,7 +101,7 @@ theorem B_nat (μ' : Pair J K M) (ν' : Pair I M L) (st u w : ℤ) (h : st + u =
     Sec.res g (B μ' ν' st u w h U c x) = B μ' ν' st u w h V (Sec.res g c) (Tens.res g st x) := by
   induction x using tens_ind with
   | h0 => simp
-  | hadd x y hx hy => rw [map_add, res_add', hx, hy, map_add, map_add]
+  | hadd x y hx hy => rw [map_add (f := _), res_add', hx, hy, map_add (f := _), map_add (f := _)]
   | hof p a b => rw [B_lof, tres_lof, B_lof, ν'.nat, μ'.nat]
 
 theorem B_add_c (μ' : Pair J K M) (ν' : Pair I M L) (st u w : ℤ) (h : st + u = w) (V : Scheme.{0})
@@ -104,15 +109,15 @@ theorem B_add_c (μ' : Pair J K M) (ν' : Pair I M L) (st u w : ℤ) (h : st + u
     B μ' ν' st u w h V (c + c') x = B μ' ν' st u w h V c x + B μ' ν' st u w h V c' x := by
   induction x using tens_ind with
   | h0 => simp
-  | hadd x y hx hy => rw [map_add, hx, hy, map_add, map_add]; abel
-  | hof p a b => rw [B_lof, B_lof, B_lof, map_add, map_add]
+  | hadd x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]; abel
+  | hof p a b => rw [B_lof, B_lof, B_lof, map_add (f := _), map_add (f := _)]
 
 theorem B_smul_c (μ' : Pair J K M) (ν' : Pair I M L) (st u w : ℤ) (h : st + u = w) (V : Scheme.{0})
     (r : ULift.{1} R) (c : Sec (K.X u) V) (x : Tens I J V st) :
     B μ' ν' st u w h V (r • c) x = r • B μ' ν' st u w h V c x := by
   induction x using tens_ind with
   | h0 => simp
-  | hadd x y hx hy => rw [map_add, hx, hy, map_add, smul_add]
+  | hadd x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _), smul_add]
   | hof p a b => rw [B_lof, B_lof, map_smul, map_smul]
 
 section Glue
@@ -130,8 +135,8 @@ theorem key {V : Scheme.{0}} (c : Sec (K.X u) V) (x x' : Tens I J V st) (hx : τ
   rw [map_sub, sub_eq_zero] at this
   rw [this]
 
-variable (τ) in
 
+variable (τ) in
 def Ch (U : Scheme.{0}) (y : Sec (T.X st) U) (c : Sec (K.X u) U) (a : Sec (L.X w) U) : Prop :=
   ∀ (V : Scheme.{0}) (g : V ⟶ U) (x : Tens I J V st), τ.lift V st x = Sec.res g y →
     Sec.res g a = B μ' ν' st u w h V (Sec.res g c) x
@@ -199,7 +204,7 @@ theorem ch_add_y {U : Scheme.{0}} (y y' : Sec (T.X st) U) (c : Sec (K.X u) U) (a
   refine ch_loc hτ μ' ν' st u w h _ _ _ ⟨S1 ⊓ S2, Scheme.etaleTopology.intersection_covering hS1 hS2, fun V g hg => ?_⟩
   obtain ⟨x1, e1⟩ := hl1 V g hg.1
   obtain ⟨x2, e2⟩ := hl2 V g hg.2
-  exact ⟨x1 + x2, by rw [map_add, e1, e2, res_add'], by rw [res_add', ha V g x1 e1, ha' V g x2 e2, map_add]⟩
+  exact ⟨x1 + x2, by rw [map_add (f := _), e1, e2, res_add'], by rw [res_add', ha V g x1 e1, ha' V g x2 e2, map_add (f := _)]⟩
 
 include hτ in
 theorem ch_smul_y {U : Scheme.{0}} (r : ULift.{1} R) (y : Sec (T.X st) U) (c : Sec (K.X u) U) (a : Sec (L.X w) U)
@@ -285,13 +290,13 @@ theorem leib_mul (U : Scheme.{0}) (st u w : ℤ) (h : st + u = w) (s t : ℤ) (h
       nuL hτ μ' ν' U (st + 1) u (w + 1) (by omega) (Sec.map (T.d st (st + 1)) (τ.mul U s t st hp a b)) c +
       st.negOnePow • nuL hτ μ' ν' U st (u + 1) (w + 1) (by omega) (τ.mul U s t st hp a b) (Sec.map (K.d u (u + 1)) c) := by
   rw [τ.leibniz]
-  simp only [map_add, LinearMap.add_apply, Units.smul_def, map_zsmul, LinearMap.smul_apply]
+  simp only [map_add (f := _), LinearMap.add_apply, Units.smul_def, map_zsmul, LinearMap.smul_apply]
   rw [main hτ μ' ν' U s t u st (t + u) w hp h rfl (by omega),
     main hτ μ' ν' U (s + 1) t u (st + 1) (t + u) (w + 1) (by omega) (by omega) rfl (by omega),
     main hτ μ' ν' U s (t + 1) u (st + 1) (t + u + 1) (w + 1) (by omega) (by omega) (by omega) (by omega),
     main hτ μ' ν' U s t (u + 1) st (t + u + 1) (w + 1) hp (by omega) (by omega) (by omega)]
   rw [ν'.leibniz, μ'.leibniz]
-  simp only [map_add, Units.smul_def, map_zsmul, smul_add]
+  simp only [map_add (f := _), Units.smul_def, map_zsmul, smul_add]
   subst hp
   rw [Int.negOnePow_add, Units.val_mul, mul_smul]
   abel
@@ -303,7 +308,7 @@ theorem leib_lift (U : Scheme.{0}) (st u w : ℤ) (h : st + u = w) (x : Tens I J
   induction x using tens_ind with
   | h0 => simp
   | hadd x y hx hy =>
-    simp only [map_add, LinearMap.add_apply, smul_add, hx, hy]
+    simp only [map_add (f := _), LinearMap.add_apply, smul_add, hx, hy]
     abel
   | hof p a b =>
     rw [lift_lof]

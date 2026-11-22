@@ -1,10 +1,14 @@
-import Formalism.PieriBlockIdeals.StatementE
-import Formalism.PieriBlockIdeals.PieriColumnMinors.WeightBounds
-import Formalism.PieriBlockIdeals.PieriColumnMinors.LargeParameterEstimates
-import Formalism.PieriBlockIdeals.PieriColumnMinors.CorollaryOfParamsSevenLinkageAlt
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.AuxStatement14
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
-import Formalism.PieriBlockIdeals.PieriColumnMinors.ProdInitialMinorsMemDetSpan
+module
+
+public import Formalism.PieriBlockIdeals.StatementE
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.WeightBounds
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.LargeParameterEstimates
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.CorollaryOfParamsSevenLinkageAlt
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.AuxStatement14
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.ProdInitialMinorsMemDetSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -364,47 +368,5 @@ theorem recursion_sum_exceptional : RecSum7E := by
   intro hI hC hRS P hH hL ι _ _ W hW hcard hSp Q hQ
   exact totalElementary_holds hRS P hH hL ι (W.sizeData₂ P (W.Jrec7 P))
     (recursion_inputs_exceptional hI hC P hH hL ι W hW hcard hSp) (places_real_holds P hH hL ι W hW _).2 Q hQ
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.ShortWeightBounds.ThinAReal = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ ThinAE = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.ShortWeightBounds.ThickAReal = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ ThickAE = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.ShortWeightBounds.CloudAReal = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ CloudAE = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.ShortWeightBounds.BeyondH = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ BeyondHE = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.ShortWeightBounds.RecIncl7 = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ RecIncl7E = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.ShortWeightBounds.InputsRec7 = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ InputsRec7E = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.ShortWeightBounds.RecSum7 = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ RecSum7E = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.ShortWeightBounds.CorollaryOfRecord7 = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ CorollaryExceptionalStrict = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.LargeParameterEstimates.CorollaryOfRecord7Tail = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ Tail7E = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.LargeParameterEstimates.CorollaryOfRecord7Ev = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧ Ev7E = (ExIntervalLt → ExCut → B) :=
-  ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.Top.CorollaryOfRecord7 = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧
-    CorollaryOfRecord7E = (ExInterval → ExCut → B) := ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.JD.JointRecord = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧
-    JointRecordE = (ExInterval → ExCut → B) := ⟨_, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.Top.CorollaryOfRecord7 = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧
-    CorollaryOfRecord7ELt = (ExIntervalLt → ExCut → B) ∧ CorollaryOfRecord7C = (ExCut → B) := ⟨_, rfl, rfl, rfl⟩
-
-example : ∃ B : Prop, Formalism.CohomologicalDescent.JD.JointRecord = (Formalism.CohomologicalDescent.LA.LemmaAZ → B) ∧
-    JointRecordELt = (ExIntervalLt → ExCut → B) ∧ JointRecordC = (ExCut → B) := ⟨_, rfl, rfl, rfl⟩
 
 end Formalism.CohomologicalDescent.E

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.GlOperatorsFormRepresentation
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LiePolarizationDerEqZeroOfDisjoint
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.FormalSeriesConditionsB1ToB4
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.GlOperatorsFormRepresentation
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LiePolarizationDerEqZeroOfDisjoint
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.FormalSeriesConditionsB1ToB4
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,10 +19,11 @@ section proj
 variable {K : Type*} [Field K] {ι : Type*} {r : ℕ}
 
 theorem coeff_multidegreeProj_of_multidegree_eq (d : ι → ℕ) (H : MvPolynomial (ι × Fin r) K) (m : ι × Fin r →₀ ℕ)
-    (h : ∀ i, multideg m i = d i) : coeff m (polProj K d H) = coeff m H := by
+    (h : ∀ i, multideg m i = d i) : AddMonoidAlgebra.coeff (polProj K d H) m = AddMonoidAlgebra.coeff H m := by
   classical
   conv_lhs => rw [H.as_sum]
-  rw [map_sum, MvPolynomial.coeff_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, MvPolynomial.coeff_sum]
   simp only [polProj_monomial]
   rw [Finset.sum_eq_single m]
   · rw [if_pos h]
@@ -26,7 +31,7 @@ theorem coeff_multidegreeProj_of_multidegree_eq (d : ι → ℕ) (H : MvPolynomi
   · intro b _ hbm
     split_ifs
     · erw [MvPolynomial.coeff_monomial, if_neg hbm]
-    · exact MvPolynomial.coeff_zero m
+    · simp
   · intro hm
     rw [MvPolynomial.mem_support_iff, not_not] at hm
     rw [if_pos h, hm]
@@ -34,12 +39,12 @@ theorem coeff_multidegreeProj_of_multidegree_eq (d : ι → ℕ) (H : MvPolynomi
 
 theorem eq_zero_of_multidegreeProj_eq_zero (H : MvPolynomial (ι × Fin r) K) (h : ∀ d, polProj K d H = 0) : H = 0 := by
   ext m
-  rw [← coeff_multidegreeProj_of_multidegree_eq (fun i => multideg m i) H m (fun i => rfl), h, coeff_zero]
+  rw [← coeff_multidegreeProj_of_multidegree_eq (fun i => multideg m i) H m (fun i => rfl), h]
 
 theorem multidegreeProj_eq_zero_of_ne (d d' : ι → ℕ) (hne : d' ≠ d) (H : MvPolynomial (ι × Fin r) K) (hH : H ∈ Pol K r d') :
     polProj K d H = 0 := by
   ext m
-  rw [coeff_zero]
+  change AddMonoidAlgebra.coeff (polProj K d H) m = 0
   by_cases hm : ∀ i, multideg m i = d i
   · rw [coeff_multidegreeProj_of_multidegree_eq d H m hm]
     by_contra hc
@@ -98,7 +103,7 @@ theorem standardWordsWeightOutside_multidegreeProj (b : Fin N → ℕ) (x : MvPo
     · rw [multidegreeProj_eq_zero_of_ne b b' hb _ (standardWord_mem_multihomogeneous F P I hI)]
       exact Submodule.zero_mem _
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem span_standardWords_eq_span_image (b : Fin N → ℕ) (cond : PPath m N LL b → Prop) :
@@ -127,8 +132,8 @@ theorem isotypicSum_inf_standardWordsOutside_eq_bot (hpi : DomLowerSet pi) (x : 
     (Set.disjoint_left.2 fun x h1 h2 => h1 h2)
   exact (Submodule.disjoint_def.1 hd) _ h1 h2
 
-include D in
 
+include D in
 theorem linearIndependent_standardWords_by_weight (hE4 : TypeSumsByEvaluation) {k : ℕ} (e : Fin m → Fin k) (dcd : Fin k → Option (Fin m))
     (hd1 : ∀ a, dcd (e a) = some a) (hd2 : ∀ c a, dcd c = some a → c = e a) (hpi : DomLowerSet pi)
     {X : Type} (v : X → MvPolynomial (Fin N × Fin k) F) (lab : X → Fin (N + 1) → Fin m → ℤ)

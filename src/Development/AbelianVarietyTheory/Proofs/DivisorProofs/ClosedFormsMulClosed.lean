@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+
+@[expose] public section
+
 open Set Matrix MeasureTheory
 open GlobalTheory.HermFrame
 open scoped ComplexOrder
@@ -20,15 +25,18 @@ theorem repr_mul (a b : Alt n) (S : Finset (Fin (n + n))) :
     (bas n).repr (a * b) S = ∑ p : Finset (Fin (n + n)) × Finset (Fin (n + n)),
       (bas n).repr a p.1 * (bas n).repr b p.2 * (bas n).repr (bas n p.1 * bas n p.2) S := by
   conv_lhs => rw [← (bas n).sum_repr a, ← (bas n).sum_repr b]
-  rw [Fintype.sum_prod_type, Finset.sum_mul_sum, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Fintype.sum_prod_type, Finset.sum_mul_sum, map_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun T _ => ?_
-  rw [map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun U _ => ?_
   rw [smul_mul_smul_comm, map_smul, Finsupp.smul_apply, smul_eq_mul]
 
 theorem repr_coefwise (T : (V n → ℂ) → ℂ) (H : V n → Alt n) (S : Finset (Fin (n + n))) :
     (bas n).repr (coefwise T H) S = T (fun x => (bas n).repr (H x) S) := by
-  simp [coefwise, map_sum, Finsupp.single_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [coefwise, map_sum, Finsupp.single_apply]
 
 theorem coefwise_mul {v : V n} {T : (V n → ℂ) → ℂ}
     (hsum : ∀ f : Finset (Fin (n + n)) × Finset (Fin (n + n)) → V n → ℂ, (∀ p, DifferentiableAt ℝ (f p) v) →
@@ -43,7 +51,7 @@ theorem coefwise_mul {v : V n} {T : (V n → ℂ) → ℂ}
   have e : (fun x => (bas n).repr (F x * G x) S) = fun x => ∑ p : Finset (Fin (n + n)) × Finset (Fin (n + n)),
       (bas n).repr (F x) p.1 * (bas n).repr (G x) p.2 * (bas n).repr (bas n p.1 * bas n p.2) S :=
     funext fun x => repr_mul _ _ _
-  rw [repr_coefwise, e, map_add, Finsupp.add_apply, repr_mul (coefwise T F), repr_mul (F v)]
+  rw [repr_coefwise, e, map_add (f := _), Finsupp.add_apply, repr_mul (coefwise T F), repr_mul (F v)]
   simp only [repr_coefwise]
   rw [hsum (fun p x => (bas n).repr (F x) p.1 * (bas n).repr (G x) p.2 * (bas n).repr (bas n p.1 * bas n p.2) S)
     (fun p => ((hF p.1).mul (hG p.2)).mul (differentiableAt_const _)), ← Finset.sum_add_distrib]

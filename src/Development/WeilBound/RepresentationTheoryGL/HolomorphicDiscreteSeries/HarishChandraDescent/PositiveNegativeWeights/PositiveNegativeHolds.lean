@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,10 +25,10 @@ theorem positive_negative_holds : PosNeg := by
     · simp [max_eq_right (neg_nonpos.mpr h)]
   · intro x
     have hp : 0 ≤ cfc (fun x : ℝ => max x 0) a := cfc_nonneg fun y _ => le_max_right _ _
-    exact ((ContinuousLinearMap.nonneg_iff_isPositive _).mp hp).re_inner_nonneg_left x
+    exact ((ContinuousLinearMap.nonneg_iff_isPositive).mp hp).re_inner_nonneg_left x
   · intro x
     have hm : 0 ≤ cfc (fun x : ℝ => max (-x) 0) a := cfc_nonneg fun y _ => le_max_right _ _
-    exact ((ContinuousLinearMap.nonneg_iff_isPositive _).mp hm).re_inner_nonneg_left x
+    exact ((ContinuousLinearMap.nonneg_iff_isPositive).mp hm).re_inner_nonneg_left x
   · intro S hS
     exact ⟨hS.cfc_real _, hS.cfc_real _⟩
 

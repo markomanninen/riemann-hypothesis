@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementG
+module
+
+public import Formalism.HermitianCurvature.StatementG
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt.G Matrix MeasureTheory Finset
 
@@ -54,21 +58,6 @@ theorem wM_zero_cast {n : ℕ} (X : Matrix (Fin n) (Fin n) ℂ) (B ρ : Fin n �
 theorem wM_zero_last {n : ℕ} (X : Matrix (Fin n) (Fin n) ℂ) (B ρ : Fin n → ℂ) (σ : ℂ) :
     (wMat (n + 1) * Mcoord 0 X B ρ σ) 0 (Fin.last n) = σ := by
   rw [wMat_mul_apply, Fin.rev_zero, Mcoord, blk_ll]
-
-theorem blk_strictUpper {n : ℕ} (X : Matrix (Fin n) (Fin n) ℂ) (B : Fin n → ℂ) (hX : IsStrictUpper X) :
-    IsStrictUpper (blk X B 0 0) := by
-  intro i j hji
-  refine Fin.lastCases ?_ (fun i => ?_) i hji
-  · intro _
-    refine Fin.lastCases ?_ (fun j => ?_) j
-    · rw [blk_ll]
-    · rw [blk_lc]; rfl
-  · refine Fin.lastCases ?_ (fun j => ?_) j
-    · intro h
-      exact absurd h (not_le.mpr (Fin.castSucc_lt_last i))
-    · intro h
-      rw [blk_cc]
-      exact hX i j (by simpa using h)
 
 def ex {d : ℕ} (N : Matrix (Fin d) (Fin d) ℂ) (a b : ℕ) : ℂ :=
   if h : a < d ∧ b < d then N ⟨a, h.1⟩ ⟨b, h.2⟩ else 0
@@ -211,7 +200,10 @@ instance (β : ℂ) : SigmaFinite (mu β) := by unfold mu; infer_instance
 theorem map_mul_mu (β α : ℂ) (hα : α ≠ 0) :
     Measure.map (fun ρ : ℂ => α * ρ) (mu β) = Real.toNNReal ((‖α‖ ^ 2)⁻¹) • mu β := by
   unfold mu
-  rw [Measure.map_smul, map_mul_vol α hα]
+  have hmeas : AEMeasurable (fun ρ : ℂ => α * ρ) (volume : Measure ℂ) :=
+    (measurable_const_mul α).aemeasurable
+  rw [Measure.map_smul (c := (‖β‖ / (2 * Real.pi)).toNNReal)
+    (f := fun ρ : ℂ => α * ρ) hmeas, map_mul_vol α hα]
   rw [smul_comm]
   congr 1
 
@@ -273,26 +265,6 @@ end Formalism.FourierDecayAlt.P.StandardCharacterExists
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.FourierDecayAlt.P.StandardCharacterExists
-
-theorem limit_shape : Formalism.FourierDecayAlt.G.LimitShape := by
-  intro m z σ ρ' X B hX hx i j hji
-  rw [Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul]
-  refine Fin.cases ?_ (fun i => ?_) i hji
-  · intro h
-    have hj : j = 0 := le_antisymm h (Fin.zero_le _)
-    subst hj
-    have := wM_zero_cast X B (Fin.cons z ρ') σ 0
-    simp only [Fin.castSucc_zero, Fin.cons_zero] at this
-    rw [this]; simp
-  · intro h
-    rw [wM_succ]
-    rcases h.eq_or_lt with h | h
-    · subst h
-      have := hx i
-      unfold xOf at this
-      rw [this]; simp
-    · rw [blk_strictUpper X B hX _ _ (Fin.le_castSucc_iff.mpr h), Matrix.one_apply_ne h.ne']
-      simp
 
 theorem limit_matrix : Formalism.FourierDecayAlt.G.LimitMatrix := by
   intro n z hz y

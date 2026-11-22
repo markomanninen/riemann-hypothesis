@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsTwiceDifferentiableAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshBasic
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
-import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsTwiceDifferentiableAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshBasic
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -265,17 +269,17 @@ theorem localBound {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e 
   have hpull := pshPull A ψ hcompat (O := th.U x ∩ (bdry s)ᶜ)
     ((th.isOpen_U x).inter (LeviFormBoundaryTopology.isClosed_bdry hS).isOpen_compl)
     (f := fun y => th.φ x y + u y)
-    (fun j => ((hth.1 x j).mono fun y hy => ⟨hy.1, hy.2.1⟩).add
+    (fun j => ((hth.1 x j).mono (by exact fun y hy => ⟨hy.1, hy.2.1⟩)).add
       ((hu j).mono fun y hy => ⟨hy.1, hy.2.2⟩))
     (fun j y hy w => hpsh x j y ⟨hy.1, ⟨hy.2.1, trivial⟩, hy.2.2⟩ w)
     a (ρ : ℂ) hVo
     (fun z hz => ⟨(hball (hwz z hz.1)).1.1, (hball (hwz z hz.1)).1.2, hoff z hz⟩)
-  obtain ⟨hbd, -⟩ := ReciprocityTheory.AnForm.A.pshExtension_thm e S' (Metric.ball 0 1) _ Cc Metric.isOpen_ball
-    subset_rfl hpull.1 hpull.2 hFb
-  obtain ⟨Bm, hBm⟩ := hbd (Metric.closedBall 0 (1 / 2)) (isCompact_closedBall _ _)
+  obtain ⟨Bm, hBm⟩ := ReciprocityTheory.AnForm.A.PlurisubharmonicExtension.part_a
+    Metric.isOpen_ball subset_rfl hpull.1 hpull.2 hFb
+    (Metric.closedBall 0 (1 / 2)) (isCompact_closedBall _ _)
     (Metric.closedBall_subset_ball (by norm_num))
   refine ⟨ψ.source ∩ ψ ⁻¹' Metric.ball a (ρ / 2), ψ.isOpen_inter_preimage Metric.isOpen_ball,
-    ⟨hxψ, Metric.mem_ball_self (half_pos hρ)⟩, Bm + M₁, ?_⟩
+    ⟨hxψ, Set.mem_preimage.mpr (Metric.mem_ball_self (half_pos hρ))⟩, Bm + M₁, ?_⟩
   rintro y ⟨hy1, hy2⟩ hyb
   have hy2' : ‖ψ y - a‖ < ρ / 2 := by
     have : dist (ψ y) a < ρ / 2 := hy2

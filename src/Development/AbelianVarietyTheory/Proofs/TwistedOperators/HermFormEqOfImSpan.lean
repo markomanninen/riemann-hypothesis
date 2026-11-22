@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFrameOfRealizationModels
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LatticeSpanMembership
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFrameOfRealizationModels
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LatticeSpanMembership
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.L2.Pj Formalism.IndefR.Datum ReciprocityTheory.ChartRestriction.G.PullbackSections ReciprocityTheory.ChartRestriction.G.Geo.Tor
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 noncomputable section
@@ -22,13 +27,15 @@ theorem hermC_mulVec (τ : E →+* ℂ) (G N : Matrix (Fin r) (Fin r) E)
   classical
   have key : ∀ i j, ∑ p, ∑ q, τ (N p i) * τ (G p q) * conj (τ (N q j)) = τ (G i j) := fun i j => by
     have := congrArg τ (hN (Pi.single i 1) (Pi.single j 1))
-    simp only [herm, cc, Matrix.mulVec_single_one, Matrix.col_apply, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [herm, cc, Matrix.mulVec_single_one, Matrix.col_apply, map_sum, map_mul,
       IsCMField.complexEmbedding_complexConj] at this
     rw [this]
     simp [Pi.single_apply, apply_ite, ite_mul]
   have e : hermC τ G (N.map τ *ᵥ u) (N.map τ *ᵥ v) =
       ∑ j, ∑ i, u i * (∑ p, ∑ q, τ (N p i) * τ (G p q) * conj (τ (N q j))) * conj (v j) := by
-    simp only [hermC, Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hermC, Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_congr rfl fun p _ => Finset.sum_comm, Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.sum_congr rfl fun p _ => Finset.sum_comm, Finset.sum_comm]
@@ -50,24 +57,24 @@ theorem perFr_of_mat (X X' : Data E r) (hΨ : ∀ τ, τ ∈ X.Ψ ↔ τ ∈ X'.
     funext k; simp [Data.emb, Matrix.mulVec, dotProduct, map_sum, map_mul]
   unfold perFr
   by_cases h1 : τ ∈ X.Ψ
-  · rw [dif_pos h1, dif_pos ((hΨ _).1 h1)]
+  · rw [dite_eq_left h1, dite_eq_left ((hΨ _).1 h1)]
     by_cases h2 : X.p0 + i < r
-    · rw [dif_pos h2, dif_pos (hp ▸ h2), hx τ h1, he, Matrix.mul_inv_rev, Matrix.mulVec_mulVec,
+    · rw [dite_eq_left h2, dite_eq_left (hp ▸ h2), hx τ h1, he, Matrix.mul_inv_rev, Matrix.mulVec_mulVec,
         Matrix.nonsing_inv_mul_cancel_right _ _ (hu _)]
       simp only [hp]
-    · rw [dif_neg h2, dif_neg (hp ▸ h2)]
-  · rw [dif_neg h1, dif_neg (fun h' => h1 ((hΨ _).2 h'))]
+    · rw [dite_eq_right h2, dite_eq_right (hp ▸ h2)]
+  · rw [dite_eq_right h1, dite_eq_right (fun h' => h1 ((hΨ _).2 h'))]
     by_cases h3 : conjEmb τ ∈ X.Ψ
-    · rw [dif_pos h3, dif_pos ((hΨ _).1 h3)]
+    · rw [dite_eq_left h3, dite_eq_left ((hΨ _).1 h3)]
       by_cases h2 : X.p0 - 1 - i < r
-      · rw [dif_pos h2, dif_pos (hp ▸ h2), hx _ h3, he]
+      · rw [dite_eq_left h2, dite_eq_left (hp ▸ h2), hx _ h3, he]
         have hc : ReciprocityTheory.ChartRestriction.G.FD.col (N.map (conjEmb τ) * mat x' ⟨conjEmb τ, (hΨ _).1 h3⟩) ⟨X.p0 - 1 - i, h2⟩ =
             N.map (conjEmb τ) *ᵥ ReciprocityTheory.ChartRestriction.G.FD.col (mat x' ⟨conjEmb τ, (hΨ _).1 h3⟩) ⟨X.p0 - 1 - i, h2⟩ := by
           funext a; simp [ReciprocityTheory.ChartRestriction.G.FD.col, Matrix.mul_apply, Matrix.mulVec, dotProduct]
         rw [hc, hermC_mulVec _ _ _ hNu, hG]
         simp only [hp]
-      · rw [dif_neg h2, dif_neg (hp ▸ h2)]
-    · rw [dif_neg h3, dif_neg (fun h' => h3 ((hΨ _).2 h'))]
+      · rw [dite_eq_right h2, dite_eq_right (hp ▸ h2)]
+    · rw [dite_eq_right h3, dite_eq_right (fun h' => h3 ((hΨ _).2 h'))]
 
 end General
 
@@ -157,10 +164,14 @@ theorem shift_core (hMod : R.IsModels) (hTie : TieIn T R κ v₀) (i : Fin D.R.m
     exact res_embLL T hTie.alg hTie.laws.pins.2.2.1
   have hg : GoodEmb T.Q.c (res T (sg0 D A)) := e ▸ T.toCore.good_σ₀
   obtain rfl : σ = res T (sg0 D A) := hσ.trans e.symm
-  have hB0 := (GlobalTheory.HolDict.BaseFrame.baseFrT_of_tieIn D G Pl0 T0 A T R κ v₀ hMod hTie i _ hg hV).1
-  have hB : ∀ c t, t ∈ ((T.U ((i : ℕ) + 1) (res T (sg0 D A))).X c).Ψ → ∃ ρ, t = tauE D ρ := fun c t ht => (hB0 c t).1 ht
   have hj : InR D ((i : ℕ) + 1) := ⟨Nat.le_add_left _ _, i.2⟩
   have hU := hTie.laws.unf _ hj _ hg
+  have hB : ∀ c t, t ∈ ((T.U ((i : ℕ) + 1) (res T (sg0 D A))).X c).Ψ → ∃ ρ, t = tauE D ρ := by
+    intro c t ht
+    have h1 := (((T.U ((i : ℕ) + 1) (res T (sg0 D A))).X c).cmType t).1 ht
+    obtain ⟨ρ, hρ⟩ := (GlobalTheory.SmoothForms.RealPts.tauE_cm D t).2 (fun ⟨ρ, hρ⟩ =>
+      h1 (hρ ▸ ((hU.2.1 c).2 _).2 (hTie.laws.pins.1.2.2.2 ρ)))
+    exact ⟨ρ, hρ.symm⟩
   obtain ⟨hr, hmod⟩ := hTie.laws.modelW _ hj _ hg
   have hr0 := rank_Wc i
   set N : Matrix (Fin D.R.r) (Fin D.R.r) D.host.E := Matrix.reindex (finCongr hr0) (finCongr hr0) M with hN
@@ -214,7 +225,6 @@ theorem perFr_shift (hMod : R.IsModels) (hTie : TieIn T R κ v₀) (i : Fin D.R.
   rw [(shift_core hMod hTie i σ hσ hV hS h ha hfr hfr' hM).1]
   congr 1
   funext m
-  simp only [Matrix.reindex_apply, Matrix.mulVec, dotProduct, Matrix.submatrix_apply]
   exact Equiv.sum_comp (finCongr (rank_Wc i)).symm (fun n => M (Fin.cast (rank_Wc i).symm m) n * v n)
 
 end Shift

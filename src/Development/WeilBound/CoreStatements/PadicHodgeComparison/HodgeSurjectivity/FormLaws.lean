@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -8,9 +12,9 @@ namespace CrystallineSemistableComparison.Onto
 
 variable (K : Type) [CommRing K] {A B : Type} [CommRing A] [CommRing B] [Algebra K A] [Algebra K B]
 
-variable (A) in
 
-abbrev Om (a : ℕ) : Type := ⋀[A]^a Ω[A⁄K]
+variable (A) in
+abbrev Om (A : Type) [CommRing A] [Algebra K A] (a : ℕ) : Type := ⋀[A]^a Ω[A⁄K]
 
 def form {a : ℕ} (g₀ : A) (g : Fin a → A) : Om K A a :=
   g₀ • exteriorPower.ιMulti A a fun k => KaehlerDifferential.D K A (g k)
@@ -23,11 +27,11 @@ def omMap (φ : A →ₐ[K] B) (a : ℕ) : Om K A a →ₗ[K] Om K B a :=
   (exteriorPower.alternatingMapLinearEquiv
     { ((exteriorPower.ιMulti B a (M := Ω[B⁄K])).toMultilinearMap.restrictScalars A).compLinearMap
         fun _ => KaehlerDifferential.map K K A B with
-      map_eq_zero_of_eq' := fun v i j h hij =>
+      map_eq_zero_of_eq' := fun v _ _ h hij =>
         (exteriorPower.ιMulti B a (M := Ω[B⁄K])).map_eq_zero_of_eq (fun k => KaehlerDifferential.map K K A B (v k))
           (congrArg _ h) hij } : Om K A a →ₗ[A] Om K B a).restrictScalars K
 
-variable (K) in
+variable (K)
 
 def relOm (I : Ideal A) (a : ℕ) : Submodule A (Om K A a) :=
   Submodule.span A {ω | ∃ (g₀ : A) (g : Fin a → A), (g₀ ∈ I ∨ ∃ k, g k ∈ I) ∧ ω = form K g₀ g}

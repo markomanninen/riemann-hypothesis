@@ -1,20 +1,24 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecEqZeroAndHomEqOfThickenings
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsDenomOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SecScalOfPointwise
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsGeneratorOfBasis
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CompatAlongOfSquare
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PulledComparisonEven
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TripleProductPointCompProjection
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecEqZeroAndHomEqOfThickenings
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsDenomOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SecScalOfPointwise
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsGeneratorOfBasis
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CompatAlongOfSquare
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PulledComparisonEven
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TripleProductPointCompProjection
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -184,7 +188,7 @@ theorem exists_gtCoord (e : ℕ) : ∃ g : GtCoord I D e D.P.A, g.q = 𝟙 _ ∧
   · refine (val_mul hJ _ _ _).trans (Eq.trans ?_ (val_mul hJ _ _ _).symm)
     refine (congrArg₂ (· * ·) (hv _ _ _ y J hJ) (val_cub D.cub (𝟙 _) hJ _ _ _)).trans
       (Eq.trans ?_ (congrArg₂ (· * ·) (hv _ _ _ y J hJ) (hv _ _ _ y J hJ)).symm)
-    rw [Category.id_comp, c_one, (isCub_cubV D.cub hJ).face]
+    rw [Category.id_comp, c_one, (isCub_cubV D.cub hJ).face _ _]
   · exact (val_pull hJ _ _ _).trans ((hv _ _ _ y J hJ).trans (val_one _).symm)
   · refine (val_pull hJ _ _ _).trans ((hv _ _ _ y J hJ).trans (Eq.trans ?_ (val_mul hJ _ _ _).symm))
     refine Eq.symm ((congrArg₂ (· * ·) ?_ ((val_pull hJ _ _ _).trans (hv _ _ _ y J hJ))).trans (_root_.mul_one 1))
@@ -216,8 +220,8 @@ theorem selfW_ident (e : ℕ) : IsIdent (selfW I D e) := (exists_isIdent D.P.isL
 
 end Pre
 
-open UnifPullRig in
 
+open UnifPullRig in
 def selfPre {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} (D : DegData R I) [Subsingleton D.toPre.X]
     (A : PolAV (Spec (CommRingCat.of (FractionRing R)))) (eA : (Over.pullback (jK R)).obj D.toPre.P.A ≅ A.A)
     (hA : IsMonHom eA.hom)
@@ -304,7 +308,7 @@ theorem val_tau {Z : Scheme.{0}} (r : Z ⟶ (TK R).left) (z : Z) {J} (hJ : Good 
     rw [Subsingleton.elim a 0]
   have c := val_cub D.toPre.cub ρ (z := z) hJ (toUnit _ ≫ D.toPre.c 0) (toUnit _ ≫ D.toPre.c 0) (toUnit _ ≫ D.toPre.c 0)
   rw [show cubV D.toPre.cub (T := T) z J (ρ ≫ toUnit _ ≫ D.toPre.c 0) (ρ ≫ toUnit _ ≫ D.toPre.c 0)
-    (ρ ≫ toUnit _ ≫ D.toPre.c 0) = 1 by rw [c_one, comp_one, (isCub_cubV D.toPre.cub (T := T) hJ).face]] at c
+    (ρ ≫ toUnit _ ≫ D.toPre.c 0) = 1 by rw [c_one, comp_one, (isCub_cubV D.toPre.cub (T := T) hJ).face _ _]] at c
   have e := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (v _ _) c)).symm.trans
     ((val_corr hJ (D.tau_bimult 0 0 0) r).trans (val_mul hJ _ _ _))
   have h := (mul_left_cancel e).symm
@@ -531,12 +535,5 @@ end GlobalTheory.SelfUnif
 
 namespace GlobalTheory
 
-open SelfUnif in
-
-theorem exists_unif_abelianScheme : GlobalFnsSt → SecBaseChangeSt → CubeSt → ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R] [IsNoetherianRing R] (I : Ideal R) [IsAdicComplete I R] (P : PolAV (Spec (CommRingCat.of R))) (A : PolAV (Spec (CommRingCat.of (FractionRing R)))) (eA : (Over.pullback (jK R)).obj P.A ≅ A.A), IsMonHom eA.hom → (∃ w : LB.Iso (A.L.pull eA.hom.left) (P.L.pull (pullback.fst P.A.hom (jK R))), w.IsGen) → ∃ D : DegData R I, D.toPre.P = P ∧ Subsingleton D.toPre.X ∧ Nonempty (Unif I D A P.A) := by
-  intro hG _ hC R _ _ _ _ I _ P A eA hA hw
-  obtain ⟨D, rfl, hX⟩ := exists_degData hC I P
-  exact ⟨D, rfl, hX, ⟨⟨selfPre D A eA hA hw, fun k _ =>
-    expBij D A eA hA hw hG (IsAdicComplete.le_jacobson_bot I) k⟩⟩⟩
 
 end GlobalTheory

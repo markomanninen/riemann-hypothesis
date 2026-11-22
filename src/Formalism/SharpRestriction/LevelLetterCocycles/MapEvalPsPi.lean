@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingEveryOrdering
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Graded
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.LinkRing
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingEveryOrdering
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Graded
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.LinkRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,8 +134,8 @@ theorem map_eval_rhoL (hR : Ring9 W) (c : ZMod n) (s : ℕ) (a : PowerSeries O) 
 abbrev Dc (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (c : ZMod n) : Type :=
   ↥(DcrisL PD T.ρ (W.emb c))
 
-open Classical in
 
+open Classical in
 def toKsD (W : LocWach PD LL O v n) (s : ℕ) (D : Type) [AddCommGroup D] [Module LL D] :
     (Rs LL PD.p s → D) →ₗ[LL] KsW W s ⊗[LL] D :=
   (TensorProduct.comm LL D (Rs LL PD.p s → LL)).toLinearMap.comp
@@ -197,7 +201,7 @@ def invSub (T : LocLat G Qp LL O) (c : ZMod n) (hΔ : DeltaRho hR uZ ιZ c) (s :
     Submodule (PowerSeries O) (AmbM hR T c s) where
   carrier := {f | (levW W uZ ιZ s).Inv (D := Dc W T c) (toA hR T c s f)}
   add_mem' := fun {f g} hf hg j => by
-    simp only [Set.mem_ofPred_eq, map_add] at hf hg ⊢
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at hf hg ⊢
     rw [hf j, hg j]
   zero_mem' := fun j => by
     simp only [map_zero]
@@ -257,11 +261,11 @@ theorem coefN_add (Lb : LevB W) (s : ℕ) (x y : ↥(W.N T)) :
     coefN Lb s T c (x + y) = coefN Lb s T c x + coefN Lb s T c y := by
   funext k
   simp only [coefN, Pi.add_apply]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   funext ζ
   apply Subtype.ext
-  simp [map_add]
+  simp [map_add (f := _)]
 
 theorem expN_add (Lb : LevB W) (s : ℕ) (x y : ↥(W.N T)) :
     expN Lb s T c (x + y) = expN Lb s T c x + expN Lb s T c y := by
@@ -286,11 +290,6 @@ def locF (κ : PowerSeries O) (s : ℕ) (x : C.V) (hx : x ∈ (latOf C).N c) :
 def LocInv (c : ZMod n) (uZ : ℤ_[PD.p]ˣ) (ιZ : ℤ_[PD.p] →+* O) (κ : PowerSeries O) : Prop :=
   ∀ (s : ℕ) (x : C.V) (hx : x ∈ (latOf C).N c),
     (levW W uZ ιZ s).Inv (D := Dc W T c) (locF Lb C κ s x hx)
-
-theorem locF_congr (κ : PowerSeries O) (s : ℕ) {x y : C.V} (hx : x ∈ (latOf C).N c)
-    (hy : y ∈ (latOf C).N c) (h : x = y) : locF Lb C κ s x hx = locF Lb C κ s y hy := by
-  subst h
-  rfl
 
 def locM (hΔ : DeltaRho hR uZ ιZ c) (ell : ℕ) (Λ κ : PowerSeries O)
     (hκ : ∀ w ∈ (latOf C).W c ell Λ, κ • w ∈ (latOf C).N c) (hS : ExpSemi Lb hR T c)
@@ -343,7 +342,7 @@ def locLM (hΔ : DeltaRho hR uZ ιZ c) (ell : ℕ) {r : ℕ} (Λ : PowerSeries O
     funext s
     apply Subtype.ext
     change locLF (hR := hR) Λ lam s (y + y') = locLF (hR := hR) Λ lam s y + locLF (hR := hR) Λ lam s y'
-    simp only [locLF, Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib, smul_add]
+    simp only [locLF, Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib, smul_add]
   map_smul' a y := by
     funext s
     apply Subtype.ext
@@ -369,7 +368,7 @@ def NlS (hFil : ∀ s, Antitone (FilD W T c s)) (s : ℕ) :
     Submodule (PowerSeries O) (LvT hR uZ ιZ T c hΔ ell) where
   carrier := {e | prL s e ∈ Xi (KsW W s) (fun i => FilD W T c s (-i))}
   add_mem' := fun {e e'} he he' => by
-    simp only [Set.mem_ofPred_eq, map_add] at he he' ⊢
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at he he' ⊢
     exact add_mem he he'
   zero_mem' := by
     simp only [Set.mem_ofPred_eq, map_zero]
@@ -383,7 +382,7 @@ def NbS (kind : ℕ → Kind) (b : ℕ → ℕ) (η : ℕ) (s : ℕ) :
     Submodule (PowerSeries O) (LvT hR uZ ιZ T c hΔ ell) where
   carrier := {e | prL s e ∈ Xi (KsW W s) (NbK (kind s) (b s) (UOf (kind s) (b s) η (FilD W T c s)))}
   add_mem' := fun {e e'} he he' => by
-    simp only [Set.mem_ofPred_eq, map_add] at he he' ⊢
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at he he' ⊢
     exact add_mem he he'
   zero_mem' := by
     simp only [Set.mem_ofPred_eq, map_zero]
@@ -397,7 +396,7 @@ def FlS (Λ f' : PowerSeries O) (s : ℕ) : Submodule (PowerSeries O) (LvT hR uZ
   carrier := {e | ∃ x ∈ Xi (KsW W s) (Tw (LL := LL) (D := Dc W T c) 0),
     prL s (Λ • e) = HahnSeries.ofPowerSeries ℤ (KsW W s) (rhoL hR c s f') • x}
   add_mem' := fun {e e'} ⟨x, hx, he⟩ ⟨x', hx', he'⟩ =>
-    ⟨x + x', add_mem hx hx', by rw [smul_add, map_add, he, he', smul_add]⟩
+    ⟨x + x', add_mem hx hx', by rw [smul_add, map_add (f := _), he, he', smul_add]⟩
   zero_mem' := ⟨0, zero_mem _, by rw [smul_zero, map_zero, smul_zero]⟩
   smul_mem' := fun a e ⟨x, hx, he⟩ =>
     ⟨HahnSeries.ofPowerSeries ℤ (KsW W s) (rhoL hR c s a) • x,
@@ -407,7 +406,7 @@ def FlS (Λ f' : PowerSeries O) (s : ℕ) : Submodule (PowerSeries O) (LvT hR uZ
 def DcS (ell : ℕ) : AddSubgroup (LvT hR uZ ιZ T c hΔ ell) where
   carrier := {e | ∃ d : Dc W T c, ∀ s' < ell, prL s' e = cstD (KsW W s') d}
   add_mem' := fun {e e'} ⟨d, hd⟩ ⟨d', hd'⟩ => ⟨d + d', fun s' hs' => by
-    rw [map_add, hd s' hs', hd' s' hs']
+    rw [map_add (f := _), hd s' hs', hd' s' hs']
     simp [cstD, TensorProduct.tmul_add]⟩
   zero_mem' := ⟨0, fun s' _ => by simp [cstD]⟩
   neg_mem' := fun {e} ⟨d, hd⟩ => ⟨-d, fun s' hs' => by
@@ -520,7 +519,7 @@ def UL (lam : Fin r → Dc W T c) (kind : ℕ → Kind) (b : ℕ → ℕ) (η : 
     Submodule O (Fin r → O) where
   carrier := {v | ∑ k, algebraMap O LL (v k) • lam k ∈ UOf (kind s) (b s) η (FilD W T c s)}
   add_mem' := fun {v w} hv hw => by
-    simp only [Set.mem_ofPred_eq, Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib] at hv hw ⊢
+    simp only [Set.mem_ofPred_eq, Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib] at hv hw ⊢
     exact add_mem hv hw
   zero_mem' := by
     simp only [Set.mem_ofPred_eq, Pi.zero_apply, map_zero, zero_smul, Finset.sum_const_zero]
@@ -600,8 +599,8 @@ section abelian₂
 
 variable {hR : Ring9 W} {T : LocLat G Qp LL O}
 
-open Classical in
 
+open Classical in
 def lamOf (C : Coord W (baseIdOf hR) T) (c : ZMod n) (ell : ℕ) {r : ℕ} (e : Fin r → C.V) (k : Fin r) :
     Dc W T c :=
   if h : C.t (c - (ell : ZMod n)) (e k) ∈ W.N T then

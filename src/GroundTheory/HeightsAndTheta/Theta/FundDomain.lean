@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set Topology
 
@@ -52,7 +56,7 @@ def firstHit (Γ : Subgroup G) (A : ℕ → Set G) : Set G :=
 theorem measurableSet_firstHit [MeasurableSpace G] [BorelSpace G] (Γ : Subgroup G)
     {A : ℕ → Set G} (hA : ∀ i, IsOpen (A i)) : MeasurableSet (firstHit Γ A) := by
   refine MeasurableSet.iUnion fun i => (hA i).measurableSet.diff ?_
-  exact (isOpen_saturate Γ (isOpen_biUnion fun j _ => hA j)).measurableSet
+  exact (isOpen_saturate Γ (isOpen_iUnion fun j => isOpen_iUnion fun _ : j < i => hA j)).measurableSet
 
 theorem existsUnique_mem_firstHit (Γ : Subgroup G) (A : ℕ → Set G)
     (hinj : ∀ i, ∀ γ ∈ Γ, ∀ x ∈ A i, γ * x ∈ A i → γ = 1)
@@ -129,7 +133,7 @@ theorem exists_isFundamentalDomain_of_isCompact [MeasurableSpace G] [BorelSpace 
     obtain ⟨n, hn, hnc⟩ := List.getElem_of_mem (Finset.mem_toList.mpr hct)
     refine ⟨n, γ, hγ, ?_⟩
     show γ * x ∈ (if h : n < l.length then V (l.get ⟨n, h⟩) else ∅)
-    rw [dif_pos hn]
+    rw [dite_eq_left hn]
     have hget : l.get ⟨n, hn⟩ = c := hnc
     rw [hget]
     exact hcV'

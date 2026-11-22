@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.ParamsHeightRankConstant
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions
 

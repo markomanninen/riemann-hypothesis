@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe13.aux1 :
     ∀ (R : Type) [inst : CommRing R] (n : ℕ),

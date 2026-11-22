@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdeleJoinZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdeleJoinZero
+
+@[expose] public section
 
 open IsDedekindDomain NumberField
 open scoped Classical
@@ -102,7 +106,7 @@ theorem dS_adeleJoin_eq : ∀ (F : Type) [Field F] [NumberField F] [Invertible (
           ∑ k, (t • h.1) k * (t • h.2) k = t ^ 2 • Q := by
         simp only [Pi.smul_apply, smul_mul_smul_comm]
         rw [← Finset.smul_sum, mul_smul_comm, hQ, pow_two]
-      rw [q1, q2, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+      rw [q1, q2, map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   have hr' : HasDerivAt r (ℓ P) 0 := by
     have h1 := (hasDerivAt_mul_const (x := (0 : ℝ)) (ℓ P)).add ((hasDerivAt_pow 2 (0 : ℝ)).mul_const (ℓ Q))
     exact h1.congr_deriv (by simp)

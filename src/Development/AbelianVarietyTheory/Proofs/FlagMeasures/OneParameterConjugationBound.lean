@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.FinalF
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPosOfIsUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsOrthonormalBasis
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryRepMatrixCoefficientBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarSubgroupBiInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalVolumeGrowthStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPosOfIsUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsOrthonormalBasis
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryRepMatrixCoefficientBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarSubgroupBiInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalVolumeGrowthStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId
 open scoped InnerProductSpace ComplexOrder ContDiff
@@ -45,7 +49,7 @@ lemma torus_lipschitz_l2_bound {G ι : Type} [Fintype ι] [TopologicalSpace G] [
     intro g
     obtain ⟨y, hy, hDg⟩ := hD g
     set F : ℝ → ℂ := fun t => ∑ i, (y i : ℂ) * Φ i t g with hF
-    have hFc : Continuous F := continuous_finset_sum _ (fun i _ =>
+    have hFc : Continuous F := continuous_finsetSum _ (fun i _ =>
       continuous_const.mul ((hΦ i).comp (continuous_id.prodMk continuous_const)))
     have hFs : Continuous fun u : ℝ => F (s * u) := hFc.comp (continuous_const.mul continuous_id)
     have hD' : D g = s • ∫ u in (0:ℝ)..1, F (s * u) := by
@@ -70,12 +74,12 @@ lemma torus_lipschitz_l2_bound {G ι : Type} [Fintype ι] [TopologicalSpace G] [
         _ ≤ M * ∑ i, ‖Φ i (s * u) g‖ ^ 2 := mul_le_mul_of_nonneg_right hy a3
     have h3 : ∫ u in (0:ℝ)..1, ‖F (s * u)‖ ^ 2 ≤ ∫ u in (0:ℝ)..1, M * ∑ i, ‖Φ i (s * u) g‖ ^ 2 :=
       intervalIntegral.integral_mono_on zero_le_one ((hFs.norm.pow 2).intervalIntegrable 0 1)
-        ((continuous_const.mul (continuous_finset_sum _ (fun i _ => ((hΦc i g).norm.pow 2)))).intervalIntegrable 0 1)
+        ((continuous_const.mul (continuous_finsetSum _ (fun i _ => ((hΦc i g).norm.pow 2)))).intervalIntegrable 0 1)
         (fun u _ => h2 u)
     have h4 : ∫ u in (0:ℝ)..1, M * ∑ i, ‖Φ i (s * u) g‖ ^ 2 =
         M * ∑ i, ∫ u in (0:ℝ)..1, ‖Φ i (s * u) g‖ ^ 2 := by
       rw [intervalIntegral.integral_const_mul,
-        intervalIntegral.integral_finset_sum (f := fun i u => ‖Φ i (s * u) g‖ ^ 2)
+        intervalIntegral.integral_finsetSum (f := fun i u => ‖Φ i (s * u) g‖ ^ 2)
           (fun i _ => ((hΦc i g).norm.pow 2).intervalIntegrable 0 1)]
     have h5 : ∑ i, q i g = β g * ∑ i, ∫ u in (0:ℝ)..1, ‖Φ i (s * u) g‖ ^ 2 := by
       rw [Finset.mul_sum]
@@ -135,12 +139,12 @@ lemma torus_lipschitz_l2_bound {G ι : Type} [Fintype ι] [TopologicalSpace G] [
           · intro u hu; exact (hB i (s * u) (hsu u hu)).2
         _ = B i := by simp
   have hg_int : Integrable (fun g => M * s ^ 2 * ∑ i, q i g) μ :=
-    (integrable_finset_sum _ (fun i _ => (hq i).1)).const_mul _
+    (integrable_finsetSum _ (fun i _ => (hq i).1)).const_mul _
   calc ∫ g, β g * ‖D g‖ ^ 2 ∂μ ≤ ∫ g, M * s ^ 2 * ∑ i, q i g ∂μ :=
         integral_mono_of_nonneg (Filter.Eventually.of_forall (fun g => mul_nonneg (hβ0 g) (sq_nonneg _)))
           hg_int (Filter.Eventually.of_forall hpt)
     _ = M * s ^ 2 * ∑ i, ∫ g, q i g ∂μ := by
-        rw [integral_const_mul, integral_finset_sum _ (fun i _ => (hq i).1)]
+        rw [integral_const_mul, integral_finsetSum _ (fun i _ => (hq i).1)]
     _ ≤ M * s ^ 2 * ∑ i, B i :=
         mul_le_mul_of_nonneg_left (Finset.sum_le_sum (fun i _ => (hq i).2)) (mul_nonneg hM (sq_nonneg s))
 
@@ -149,8 +153,8 @@ section Abstract
 variable {G H : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [NormedAddCommGroup H]
   [InnerProductSpace ℂ H]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 lemma decay_shift {δ : G → ℝ} (hinv : ∀ g, δ g⁻¹ = δ g) (hsub : ∀ g g', δ (g * g') ≤ δ g + δ g') {c C : ℝ}
     (hc : 0 ≤ c) {f : G → ℂ} (hf : ∀ g, ‖f g‖ ≤ C * Real.exp (-(c * δ g))) (x y g : G) :
     ‖f (x * g * y)‖ ≤ C * Real.exp (c * (δ x + δ y)) * Real.exp (-(c * δ g)) := by
@@ -601,7 +605,8 @@ theorem torus_lipschitz : ∀ (n : ℕ) (ε : Fin n → Bool) (W : Submodule ℂ
         hρ hinv hsub hc0 hνint (hvL (E i) (hE1 i).1) (a t * g)
     have hLX : L Xg = ∑ i, (((Xg * (E i)ᴴ).trace).re) • L (E i) := by
       conv_lhs => rw [hE3 Xg hXg]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl (fun i _ => ?_)
       rw [← map_smul]; congr 1
     have hDform : ∀ t : ℝ, ∫ m, ⟪v, σ (umat (m * (a t * g))) (L Xg)⟫_ℂ ∂ν =
@@ -612,11 +617,12 @@ theorem torus_lipschitz : ∀ (n : ℕ) (ε : Fin n → Bool) (W : Submodule ℂ
       have hpt : ∀ m : UJ ε, ⟪v, σ (umat (m * (a t * g))) (∑ i, (((Xg * (E i)ᴴ).trace).re) • L (E i))⟫_ℂ =
           ∑ i, ((((Xg * (E i)ᴴ).trace).re : ℝ) : ℂ) * ⟪v, σ (umat (m * (a t * g))) (L (E i))⟫_ℂ := by
         intro m
-        rw [map_sum, inner_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, inner_sum]
         refine Finset.sum_congr rfl (fun i _ => ?_)
         rw [ContinuousLinearMap.map_smul_of_tower, ← Complex.coe_smul, inner_smul_right]
       simp only [hpt]
-      rw [integral_finset_sum _ (fun i _ => (hint_i t i).const_mul _)]
+      rw [integral_finsetSum _ (fun i _ => (hint_i t i).const_mul _)]
       simp_rw [integral_const_mul]
     show (∫ m, ⟪v, σ (umat (m * (a s * g))) w⟫_ℂ ∂ν) - (∫ m, ⟪v, σ (umat (m * g)) w⟫_ℂ ∂ν) =
       ∫ t in (0:ℝ)..s, ∑ i, ((((Xg * (E i)ᴴ).trace).re : ℝ) : ℂ) *

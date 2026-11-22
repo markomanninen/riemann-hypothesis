@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -45,7 +50,8 @@ private lemma kos_mem_C (act : S →ₐ[ℂ] Module.End ℂ E) (M : Submodule �
 private lemma wd_pw (act : S →ₐ[ℂ] Module.End ℂ E) (r : κ → S) (s : S) (y : Finset κ → E) :
     wd (fun l => act (r l)) (pwR act _ s y) = pwR act _ s (wd (fun l => act (r l)) y) := by
   funext t
-  simp only [pwR_apply, wd, LinearMap.pi_apply, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pwR_apply, wd, LinearMap.pi_apply, LinearMap.sum_apply, LinearMap.smul_apply,
     LinearMap.comp_apply, LinearMap.proj_apply, map_sum, map_zsmul, act_comm act s]
 
 private lemma kos_B_stab (act : S →ₐ[ℂ] Module.End ℂ E) (R : Subalgebra ℂ S) (M : Submodule ℂ E)
@@ -182,7 +188,7 @@ theorem UpperTheory.Gal.productCup_of_system.locD_of :
         add_mem' := by
           rintro x y ⟨N₁, h₁⟩ ⟨N₂, h₂⟩
           refine ⟨N₁ + N₂, ?_⟩
-          rw [map_add]
+          rw [map_add (f := _)]
           refine Submodule.add_mem _ ?_ ?_
           · rw [add_comm, pow_add, map_mul, Module.End.mul_apply]
             exact sm_stab act R M T hSt _ (R.pow_mem ha _) _ h₁

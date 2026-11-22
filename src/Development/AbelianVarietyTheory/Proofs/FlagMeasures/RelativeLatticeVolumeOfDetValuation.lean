@@ -1,11 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CardQuotPow
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardQuotPow
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImportsBis
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CardQuotPow
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardQuotPow
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -21,8 +24,8 @@ theorem card_quot_pow {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationR
   rw [Submodule.cardQuot_apply, Submodule.cardQuot_apply, Ideal.span_singleton_pow] at hq
   exact hq
 
-open Module Submodule in
 
+open Module Submodule in
 theorem card_coker {R M ι : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
     [AddCommGroup M] [Module R M] [Fintype ι] (b : Basis ι R M) {p : R} (hp : Irreducible p)
     (φ : M →ₗ[R] M) (hφ : Function.Injective φ) :
@@ -37,10 +40,6 @@ theorem resQ_ne_zero {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) : resQ ϖ ≠ 0 := by
   rw [← hϖ.maximalIdeal_eq]
   haveI : Finite (𝒪[F] ⧸ IsLocalRing.maximalIdeal 𝒪[F]) := inferInstanceAs (Finite 𝓀[F])
   exact Nat.card_pos.ne'
-
-theorem exp_eq {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) {a : ℤ} {m : ℕ} {u v : (𝒪[F])ˣ}
-    (h : (ϖ : F) ^ a * ((u : 𝒪[F]) : F) * ((v : 𝒪[F]) : F) = (ϖ : F) ^ m) : a = m :=
-  _root_.GlobalTheory.QuotientCardinality.main hϖ h
 
 theorem relIndex_map {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) {W : Type} [AddCommGroup W] [Module F W]
     {ι : Type} [Fintype ι] (b : Module.Basis ι F W) (ψ : W →ₗ[F] W) (a : ℤ) (u : (𝒪[F])ˣ)
@@ -103,7 +102,8 @@ theorem relVol_map : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace
     intro i
     have : b.repr (ψ.toAddMonoidHom x) i = ∑ j, b.repr x j * b.repr (ψ (b j)) i := by
       change b.repr (ψ x) i = _
-      conv_lhs => rw [← b.sum_repr x, map_sum, map_sum, Finsupp.finset_sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← b.sum_repr x, map_sum, map_sum, Finsupp.finsetSum_apply]
       simp only [map_smul, Finsupp.smul_apply, smul_eq_mul]
     rw [this]
     exact sum_mem fun j _ => mul_mem ((hW x).1 hx j) (hψ i j)

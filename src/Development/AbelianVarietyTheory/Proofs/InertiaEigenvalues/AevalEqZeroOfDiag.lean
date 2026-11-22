@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyOfDiagWith
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqOfExhaustive
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapDcrisEqDdRCrystallineUnramified
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankSpanImageEqCard
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanIsLinesOfGraded
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsPtPrimitiveRoot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupIndepDdRE
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeGradedOfLevelLe
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyOfDiagWith
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqOfExhaustive
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapDcrisEqDdRCrystallineUnramified
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankSpanImageEqCard
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanIsLinesOfGraded
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsPtPrimitiveRoot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupIndepDdRE
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeGradedOfLevelLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem aeval_eq_zero_of_diag [Module.Free O Q] (hinj : Function.Injective (alge
     intro p s
     induction p using Polynomial.induction_on with
     | C a => simp [Algebra.algebraMap_eq_smul_one, LinearMap.baseChange_smul]
-    | add p q hp hq => simp only [map_add, LinearMap.baseChange_add, LinearMap.add_apply, hp, hq, add_smul]
+    | add p q hp hq => simp only [map_add (f := _), LinearMap.baseChange_add, LinearMap.add_apply, hp, hq, add_smul]
     | monomial k a ih =>
       rw [pow_succ, ← mul_assoc, map_mul _ _ Polynomial.X, map_mul _ _ Polynomial.X, Polynomial.aeval_X,
         Polynomial.aeval_X, LinearMap.baseChange_mul, Module.End.mul_apply, he, map_smul, ih, smul_smul, mul_comm]
@@ -49,13 +53,13 @@ theorem aeval_comm {Q' : Type} [AddCommGroup Q'] [Module O Q'] (π : Q →ₗ[O]
     π (Polynomial.aeval f p x) = Polynomial.aeval f' p (π x) := by
   induction p using Polynomial.induction_on generalizing x with
   | C a => simp
-  | add p q hp hq => simp only [map_add, LinearMap.add_apply, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
   | monomial k a ih =>
     rw [pow_succ, ← mul_assoc, map_mul _ _ Polynomial.X, map_mul _ _ Polynomial.X, Polynomial.aeval_X,
       Polynomial.aeval_X, Module.End.mul_apply, Module.End.mul_apply, ih, h]
 
-open Classical in
 
+open Classical in
 theorem finrank_ker_of_diag [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O F] [Module.Free O Q]
     [Module.Finite O Q] (f : Q →ₗ[O] Q) (S : Multiset F) (h : DiagWith (f.baseChange F) S) (c : O) :
     Module.finrank O (LinearMap.ker (f - c • LinearMap.id)) = S.count (algebraMap O F c) := by
@@ -73,7 +77,8 @@ theorem finrank_ker_of_diag [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRin
     · intro x hx
       rw [b.mem_span_image]
       intro s hs
-      rw [LinearMap.mem_ker, ← b.sum_repr x, map_sum] at hx
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.mem_ker, ← b.sum_repr x, map_sum] at hx
       simp only [map_smul, h2, smul_smul] at hx
       have := Fintype.linearIndependent_iff.1 b.linearIndependent _ hx s
       exact (sub_eq_zero.1 ((mul_eq_zero.1 this).resolve_left (Finsupp.mem_support_iff.1 hs))).symm
@@ -84,8 +89,8 @@ theorem finrank_ker_of_diag [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRin
     GlobalTheory.Per.Sen.finrank_span_image_eq_card b b.linearIndependent, Multiset.count_map]
   rfl
 
-open Classical in
 
+open Classical in
 theorem quot_clauses [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O F] (P P' : Submodule O Q)
     (γ : Q →ₗ[O] Q) (hP : ∀ x ∈ P, γ x ∈ P)
     (hs : P'.submoduleOf P ≤ (P'.submoduleOf P).comap (γ.restrict hP))
@@ -161,8 +166,8 @@ theorem adapted_basis (D : Submodule F M) [FiniteDimensional F D] (A : ℤ → S
   rw [hU, ← hu, Multiset.count_map]
   rfl
 
-open GlobalTheory.SenLines.Coords in
 
+open GlobalTheory.SenLines.Coords in
 theorem spanIsLines_of_onto {N : Type} (L : N → ℤ → M) {r : ℕ} (u : Fin r → ℤ) (d : Fin r → M)
     (hd : LinearIndependent F d) (A : ℤ → Submodule F M)
     (hA : ∀ a, A a = Submodule.span F (d '' {k | a ≤ u k})) (h1 : ∀ x k, L x k ∈ A (-k))
@@ -237,9 +242,8 @@ theorem spanIsLines_of_onto {N : Type} (L : N → ℤ → M) {r : ℕ} (u : Fin 
     simp only [he, serAct_lines]
     rw [← lines_sum, ← hf]
     congr 1
-    funext k
-    simp only [Matrix.mulVec, dotProduct, Mx, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-    exact Finset.sum_congr rfl fun s _ => by ring
+    ext k
+    simp [Matrix.mulVec, dotProduct, Mx, mul_comm, mul_assoc]
 
 end Lines
 
@@ -385,8 +389,8 @@ theorem EkNΔ_eq {g : W.Gam} (hJ : QFrame W g J) (k : ℕ) : tableLineDegreeTwo.
   rw [show mulD W T 1 x = x from one_smul _ x]
   rfl
 
-omit T J i in
 
+omit T J i in
 theorem count_pairs {r : ℕ} (u : Fin r → ℤ) (y k : ℕ) (x : ℤ) :
     ((Finset.univ.filter fun p : Fin r × Fin ((k : ℤ) - -(y : ℤ)).toNat => -x = -(y : ℤ) - u p.1 + (p.2 : ℕ)).card : ℤ) =
       ∑ j ∈ Finset.Icc (1 - (k : ℤ)) (y : ℤ), ((Finset.univ.filter fun s => x - j = u s).card : ℤ) := by
@@ -406,8 +410,8 @@ theorem count_pairs {r : ℕ} (u : Fin r → ℤ) (y k : ℕ) (x : ℤ) :
     simp only
     omega
 
-open Formalism.MainNotions in
 
+open Formalism.MainNotions in
 theorem lines_of_coeff (hK : Function.Surjective (algebraMap K₀ K)) (τ : K →ₐ[Qp] LL)
     (hτ : τ.comp (IsScalarTower.toAlgHom Qp K₀ K) = W.emb i) (ζ : LL)
     (hD : ∀ x k, W.levN T i ζ x k ∈ DeltaInvariantLattices.ιDi W T i)
@@ -442,8 +446,8 @@ theorem lines_of_coeff (hK : Function.Surjective (algebraMap K₀ K)) (τ : K �
   exact ⟨x, c, fun j hj => hF _ _ (Submodule.smul_mem _ _ (hD' x j)) (h3 j hj),
     hF _ _ (Submodule.sub_mem _ (Submodule.smul_mem _ _ (hD' x k)) hw.1) h4⟩
 
-open Formalism.MainNotions in
 
+open Formalism.MainNotions in
 theorem clauses_of_lines [CharZero LL] [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O LL]
     (hJ : QFrame W W.gam J) {r : ℕ} (b : Module.Basis (Fin r) (LetA O n) ↥(W.N T))
     (hb : ∀ k, (b k : W.DD T) ∈ W.NΔ T) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p)
@@ -492,8 +496,8 @@ theorem clauses_of_lines [CharZero LL] [IsDomain O] [IsPrincipalIdealRing O] [Is
     by_contra hne
     exact hχ' _ (sub_ne_zero.2 hne) (by rw [zpow_sub₀ hχ, h, div_self (zpow_ne_zero _ hχ)])
 
-open Formalism.MainNotions in
 
+open Formalism.MainNotions in
 theorem senLat_of_tie [CharZero LL] [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O LL]
     {Zl Ai : Type} [CommRing Zl] [CommRing Ai] [Algebra Zl O] [Algebra Zl Ai]
     {RW : Type} [CommRing RW] [Algebra O RW]
@@ -532,9 +536,9 @@ theorem senLat_of_tie [CharZero LL] [IsDomain O] [IsPrincipalIdealRing O] [IsFra
 
 end Generic
 
+
 open Formalism.MainNotions in
 set_option maxHeartbeats 1000000 in
-
 theorem senLat_of_coeff {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l P} (hT : LocTied l P AI)
     {H : LocHW l P} {E : LocFon l P AI H} (C : LocCmpT l P AI H E) {K LL : FinExt l} (hA : CaseA K LL)
     (Pt : ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → ↥LL.1 → (↥K.1 →ₐ[ℚ_[l]] ↥LL.1) → Prop)
@@ -571,8 +575,8 @@ theorem senLat_of_coeff {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf 
 
 end GlobalTheory.SenMult
 
-open GlobalTheory.AdmLoc GlobalTheory.TopSteps Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions in
 
+open GlobalTheory.AdmLoc GlobalTheory.TopSteps Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions in
 theorem GlobalTheory.SenMult.stmtSen : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F), InvariantsGenerators.SenOperatorTheorem D HW F Cm :=
   fun D HW _ Cm h l _ K LL hA => GlobalTheory.SenMult.senLat_of_coeff (D.locT l) (Cm l) hA (DeltaInvariantLattices.ptK D.loc HW hA.2.2)

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsTjCorrDiagModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPIsogPull
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenImmersionSpMapOfIsDiscreteValuationRing
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsTjCorrDiagModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPIsogPull
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenImmersionSpMapOfIsDiscreteValuationRing
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
 
@@ -35,13 +40,30 @@ theorem exists_isPIsog_closedPoint : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) 
       ∃ o₁ : Obj b N σ, Nonempty (ObjMap o₁ o f) := by
     rintro S S' s o f σ rfl
     exact GlobalTheory.HTPull.exists_objMap_pull p D R b N S S' s f o
+  have objMapComp : ∀ {S₁ S₂ S₃ : Scheme.{0}} {s₁ : S₁ ⟶ Sp R} {s₂ : S₂ ⟶ Sp R}
+      {s₃ : S₃ ⟶ Sp R} {o₁ : Obj b N s₁} {o₂ : Obj b N s₂} {o₃ : Obj b N s₃}
+      {f : S₁ ⟶ S₂} {g : S₂ ⟶ S₃}, ObjMap o₁ o₂ f → ObjMap o₂ o₃ g →
+      ObjMap o₁ o₃ (f ≫ g) := by
+    intro S₁ S₂ S₃ s₁ s₂ s₃ o₁ o₂ o₃ f g m₁ m₂
+    exact {
+      φ := m₁.φ ≫ m₂.φ
+      φ₂ := m₁.φ₂ ≫ m₂.φ₂
+      cart := IsGrpPullback.comp m₁.cart m₂.cart
+      sq := ⟨by rw [Category.assoc, m₂.sq.1, ← Category.assoc, m₁.sq.1, Category.assoc],
+        by rw [Category.assoc, m₂.sq.2, ← Category.assoc, m₁.sq.2, Category.assoc]⟩
+      act := fun c => by rw [← Category.assoc, m₁.act, Category.assoc, m₂.act, Category.assoc]
+      pol := LBIso.trans o₁.isLB (pull_isLB o₂.isLB m₁.φ₂) (pull_isLB o₃.isLB _) m₁.pol
+        (LBIso.chartPull (chartPullPull o₂.P m₁.φ₂)
+          (chartPullSame o₃.P (fun _ : PUnit => m₁.φ₂ ≫ m₂.φ₂) (fun _ => m₂.φ₂) (fun _ => 1) m₁.φ₂ (fun _ => rfl))
+          m₂.pol)
+      eta := fun y => by rw [← Category.assoc, m₁.eta, Category.assoc, m₂.eta, Category.assoc] }
   obtain ⟨oV, ⟨mV⟩⟩ := pull M.univ y' (z' ≫ M.s) hyz
   obtain ⟨oV', ⟨mV'⟩⟩ := pull M.univ z' (z' ≫ M.s) rfl
   obtain ⟨oK, ⟨nK⟩⟩ := pull o₀ x _ rfl
   obtain ⟨oK', ⟨nK'⟩⟩ := pull o₀' x _ rfl
   obtain ⟨ψK, hψK, -⟩ := ValExt.isPIsog_pull p D R b N c _ _ _ _ x o₀ o₀' oK oK' nK nK' ψ₀ hψ
-  have m₁ : ObjMap oK M.univ (spMap (algebraMap V K) ≫ y') := hy ▸ GlobalTheory.UPel.HT.ObjMap.comp nK ms₀
-  have m₁' : ObjMap oK' M.univ (spMap (algebraMap V K) ≫ z') := hz' ▸ GlobalTheory.UPel.HT.ObjMap.comp nK' mt₀
+  have m₁ : ObjMap oK M.univ (spMap (algebraMap V K) ≫ y') := hy ▸ objMapComp nK ms₀
+  have m₁' : ObjMap oK' M.univ (spMap (algebraMap V K) ≫ z') := hz' ▸ objMapComp nK' mt₀
   obtain ⟨n₁, -⟩ := GlobalTheory.HTSympCover.exists_objMap_cancel_φ m₁ mV
   obtain ⟨n₁', -⟩ := GlobalTheory.HTSympCover.exists_objMap_cancel_φ m₁' mV'
   obtain ⟨e, he⟩ := hψ.exists_eq_pow
@@ -63,7 +85,7 @@ theorem exists_isPIsog_closedPoint : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) 
   obtain ⟨oz, ⟨nz⟩⟩ := pull oV' g ((g ≫ z') ≫ M.s) (Category.assoc _ _ _).symm
   obtain ⟨ψk, hψk, -⟩ := ValExt.isPIsog_pull p D R b N c _ _ _ _ g oV oV' ou oz nu nz ψV hψV
   exact ⟨k, inferInstance, inferInstance, charP_of_notMem_basicOpen Fact.out (g ≫ z') (hζ ▸ hz), g ≫ z', g ≫ y', ou, oz,
-    GlobalTheory.UPel.HT.ObjMap.comp nu mV, GlobalTheory.UPel.HT.ObjMap.comp nz mV', ψk,
+    objMapComp nu mV, objMapComp nz mV', ψk,
     by rw [Category.assoc, Category.assoc, hyz], hψk, hζ, hυ⟩
 
 end GlobalTheory.UPel.HT.ES.ClosedPtIsog

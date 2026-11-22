@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
+
 open MeasureTheory Topology Matrix
 open scoped ENNReal NNReal
 
@@ -65,7 +70,8 @@ theorem gauss_mul_conj (ψ : AddChar k ℂ) (hψ : ψ ≠ 1) (h2 : (2 : k) ≠ 0
       ← AddChar.map_add_eq_mul, quadForm_add h2 hB]
     congr 1
     ring
-  rw [map_sum, Finset.sum_mul_sum, Finset.sum_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul_sum, Finset.sum_comm]
   simp_rw [step]
   rw [Finset.sum_comm]
   simp_rw [← Finset.mul_sum, inner]

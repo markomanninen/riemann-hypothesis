@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ReductionSurjectiveOfIsNilpotent
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FirstJetEqProdTangent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ReductionSurjectiveOfIsNilpotent
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FirstJetEqProdTangent
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,7 +51,7 @@ def pairDiff (aug : A →ₐ[R] R) {J : Ideal A} (hJ : J * RingHom.ker aug = ⊥
     linear_combination h₁ + h₂
   map_zero' := by simp
   map_add' b c := by
-    simp only [AddMemClass.coe_add, Prod.fst_add, Prod.snd_add, map_add]
+    simp only [AddMemClass.coe_add, Prod.fst_add, Prod.snd_add, map_add (f := _)]
     ring
   commutes' r := by simp
 
@@ -74,7 +78,7 @@ theorem jet_sqZero_eq_lieExp {R : Type} [CommRing R] {G : Over (Spec (CommRingCa
       intro φ hφ
       have hk : J ^ (k + 1 + 1) = ⊥ :=
         le_bot_iff.1 ((Ideal.pow_le_pow_right (by omega)).trans hJ.le)
-      have e : φ = (jetLift R J hk δ hδ).comp (jetTruncR R (Fin d) (k + 1)) :=
+      have e : φ = (jetLift (R := R) J hk δ hδ).comp (jetTruncR R (Fin d) (k + 1)) :=
         jet_ext fun j => (hφ j).trans (jetLift_zR J hk δ hδ j).symm
       rw [e, ← spMap_comp, Category.assoc, hxt]
       exact ih _ (jetLift_zR J hk δ hδ)

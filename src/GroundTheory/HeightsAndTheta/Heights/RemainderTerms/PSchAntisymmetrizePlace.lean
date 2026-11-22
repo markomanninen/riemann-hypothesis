@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -34,7 +39,8 @@ theorem SchAntisymmetrizePlace.proof : SchAntisymmetrizePlace.Statement := by
   intro r a c Q
   set e := smallBlockPlaceEquiv r a c with he
   unfold antisymmetrize antisym
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Fintype.sum_equiv ((Equiv.funUnique (Fin 1) _).trans e.symm.permCongr) _ _ ?_
   intro w
   simp only [Equiv.trans_apply, Equiv.funUnique_apply]
@@ -45,9 +51,7 @@ theorem SchAntisymmetrizePlace.proof : SchAntisymmetrizePlace.Statement := by
   rw [hs]
   congr 3
   funext x
-  simp only [Function.comp_apply, smallBlockPlace_eq, Equiv.permCongr_apply, Equiv.symm_symm]
-  rw [← he]
-  simp
+  simp [smallBlockPlace_eq, ← he]
 
 end
 

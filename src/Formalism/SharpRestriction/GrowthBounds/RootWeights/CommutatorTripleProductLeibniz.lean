@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DegreeZeroWeightsBounded
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DegreeZeroWeightsBounded
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,7 +146,8 @@ theorem projector_recursion_lower {E : GLOps n K V} (hE : IsGLRep E) (c l : Fin 
       intro i hi
       rw [raising_to_column_commute hE c i l (Finset.mem_Iio.mp hi) hl y, gl_commutation_relation_apply hE j i l c (E i c y),
         if_neg hcj, sub_zero]
-    rw [Finset.sum_congr rfl key, Finset.sum_add_distrib, ← map_sum, h2 j hj, map_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl key, Finset.sum_add_distrib, ← map_sum, h2 j hj, map_smul,
       Finset.sum_ite_eq', if_pos (Finset.mem_Iio.mpr hl), raising_to_column_commute hE c l j hl hj y]
     push_cast
     simp only [add_smul, one_smul]
@@ -191,7 +196,8 @@ theorem raising_casimirPower_commutator {E : GLOps n K V} (hE : IsGLRep E) (c j 
         -((s + 1 : ℕ) : K) = ((q + 1 : ℕ) : K) * (2 * (s : K) + (c.val : K) + ((q + 1 : ℕ) : K)) := by
       push_cast
       ring
-    rw [casimirPowerW_succ_apply E c (Iio c) q y, map_sum (E j c), Finset.sum_congr rfl hterm,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [casimirPowerW_succ_apply E c (Iio c) q y, map_sum (E j c), Finset.sum_congr rfl hterm,
       Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib, ← Finset.smul_sum, hW,
       ← map_sum (casimirPower E c (Iio c) q), hy.2 j hj, map_smul (casimirPower E c (Iio c) q), Finset.sum_ite_eq',
       if_pos (Finset.mem_Iio.mpr hj), hPj.1, map_smul (casimirPower E c (Iio c) q),
@@ -271,7 +277,8 @@ theorem extremal_projector_properties [CharZero K] {E : GLOps n K V} (hE : IsGLR
       refine casimirPowerW_vanishes_large hs c L hL L 1 (0 + rootW j c) (E j c u) (hs j c 0 u hu0) ?_ ?_ (by omega)
       · simp only [zero_add, rootWeight_entries_sum_zero]
       · simp [rootW, hjc]
-    rw [extremalProjector_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [extremalProjector_apply, map_sum]
     have h1 : ∀ q ∈ range (L + 1), E j c (extremalProjectorCoeff K c.val q • casimirPower E c (Iio c) q u) =
         extremalProjectorCoeff K c.val q • casimirPower E c (Iio c) q (E j c u) +
           (extremalProjectorCoeff K c.val q * ((q : K) * (2 * ((0 : ℕ) : K) + (c.val : K) + (q : K)))) •
@@ -288,7 +295,8 @@ theorem extremal_projector_properties [CharZero K] {E : GLOps n K V} (hE : IsGLR
     rw [Finset.sum_congr rfl h2, Finset.sum_neg_distrib]
     simp
   · intro a b ha hb
-    rw [extremalProjector_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [extremalProjector_apply, map_sum]
     refine Finset.sum_eq_zero fun q _ => ?_
     rw [map_smul, casimirPowerW_comm_lower_apply hE c a b ha hb, hu a b ha hb, map_zero, smul_zero]
   · rw [extremalProjector_apply]
@@ -296,7 +304,8 @@ theorem extremal_projector_properties [CharZero K] {E : GLOps n K V} (hE : IsGLR
   · refine ⟨fun i => ∑ q ∈ range L, extremalProjectorCoeff K c.val (q + 1) • casimirPower E c (Iio c) q (E i c u), ?_⟩
     rw [extremalProjector_apply, Finset.sum_range_succ', extremalProjectorCoeff_zero, casimirPowerW_zero, one_smul, Module.End.one_apply, add_comm]
     congr 1
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [casimirPowerW_succ_apply, Finset.smul_sum]

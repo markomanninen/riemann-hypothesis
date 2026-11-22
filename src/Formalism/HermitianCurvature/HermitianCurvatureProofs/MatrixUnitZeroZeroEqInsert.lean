@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ReflectionTransposeEntriesMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairOperatorCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMatrixTransferConjTransposeCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FreeOf2RmatrixTranspose
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ReflectionTransposeEntriesMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairOperatorCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMatrixTransferConjTransposeCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FreeOf2RmatrixTranspose
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TLA.W4
 

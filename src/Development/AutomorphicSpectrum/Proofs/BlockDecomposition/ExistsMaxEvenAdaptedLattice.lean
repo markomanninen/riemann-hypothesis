@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem herm_zero_left (H : IsHerm c h) (x : V) : h 0 x = 0 := by
   rw [H.symm x 0, herm_zero_right H, map_zero]
 
 theorem herm_add_left (H : IsHerm c h) (x y z : V) : h (x + y) z = h x z + h y z := by
-  rw [H.symm z (x + y), H.add_right, map_add, ← H.symm z x, ← H.symm z y]
+  rw [H.symm z (x + y), H.add_right, map_add (f := _), ← H.symm z x, ← H.symm z y]
 
 theorem herm_smul_left (H : IsHerm c h) (a : R) (x y : V) : h (a • x) y = c a * h x y := by
   rw [H.symm y (a • x), H.smul_right, map_mul, ← H.symm y x]
@@ -79,7 +83,7 @@ theorem evenInt_span (H : IsHerm c h) (inv : ∀ a, c (c a) = a) (cm : ∀ a ∈
     obtain ⟨a, ha, ea⟩ := hx
     obtain ⟨b, hb, eb⟩ := hy
     refine ⟨a + b + h x y, 𝔬.add_mem (𝔬.add_mem ha hb) (s2 x hx' y hy'), ?_⟩
-    rw [H.add_right, herm_add_left H, herm_add_left H, ea, eb, H.symm x y, map_add, map_add]
+    rw [H.add_right, herm_add_left H, herm_add_left H, ea, eb, H.symm x y, map_add (f := _), map_add (f := _)]
     ring
   | smul a x _ hx =>
     obtain ⟨b, hb, eb⟩ := hx
@@ -189,13 +193,15 @@ theorem exists_maxEven_adapted : ∀ {R : Type} [CommRing R] (c : R →+* R) (�
   have hux : ∀ j k, h (x j) (u k) = 0 := by
     intro j k
     have : hl H (x j) (u k) = 0 := by
-      simp only [u, map_sub, map_sum, map_smul, hl_apply, smul_eq_mul, F.xx, F.xy]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [u, map_sub, map_sum, map_smul, hl_apply, smul_eq_mul, F.xx, F.xy]
       simp
     exact this
   have huy : ∀ j k, h (y j) (u k) = 0 := by
     intro j k
     have : hl H (y j) (u k) = 0 := by
-      simp only [u, map_sub, map_sum, map_smul, hl_apply, smul_eq_mul, F.yy, hyx]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [u, map_sub, map_sum, map_smul, hl_apply, smul_eq_mul, F.yy, hyx]
       simp
     exact this
   obtain ⟨t, ht⟩ := Hr.two.exists_right_inv

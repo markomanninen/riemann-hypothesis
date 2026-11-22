@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LocSpBot
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitIntPI
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtOne
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ToLEInvApply
-import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.PtStep0
-import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LocSpBot
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitIntPI
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtOne
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ToLEInvApply
+public import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.PtStep0
+public import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,8 +101,8 @@ theorem fst_mem_span (A : LocAt F E n G) (hW : LocInt A)
     rw [this]
     exact Submodule.smul_mem _ c hx
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem lbAt_gen (A : LocAt F E n G) (hW : LocInt A)
     (hAlg : ∀ v (a : (A.pl v).1.adicCompletion F), A.spl v ((1 : E) ⊗ₜ[F] a) = (a, a))
     (Lb : Submodule (𝓞 E) (Fin n → E)) (hfr : FrAtB A Lb) (v : Fin G.P.nV) :

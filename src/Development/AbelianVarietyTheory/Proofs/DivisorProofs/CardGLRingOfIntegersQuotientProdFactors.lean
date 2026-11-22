@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowBlockIndicatorFromLtIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowBlockIndicatorFromLtIff
+
+@[expose] public section
+
 open NumberField UniqueFactorizationMonoid GlobalTheory.StdLoc
 
 noncomputable section
@@ -36,8 +41,8 @@ theorem card_GL_field_real (κ : Type) [Field κ] [Finite κ] (n : ℕ) :
     rw [← pow_add]; congr 1; omega
   rw [hsplit, mul_assoc, mul_inv_cancel₀ (pow_ne_zero _ hq0), mul_one]
 
-open Classical in
 
+open Classical in
 theorem card_GL_eq_card_isUnit (S : Type) [CommRing S] [Fintype S] (n : ℕ) :
     Nat.card (GL (Fin n) S) =
       (Finset.univ.filter (fun A : Matrix (Fin n) (Fin n) S => IsUnit A)).card := by

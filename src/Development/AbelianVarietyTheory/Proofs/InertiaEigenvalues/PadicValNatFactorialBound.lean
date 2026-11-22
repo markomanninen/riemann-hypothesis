@@ -1,12 +1,16 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
@@ -23,12 +27,12 @@ theorem exists_eq_l_mul_of_natCast {A : Type} [CommRing A] (htf : ∀ x : A, (l 
   have hp := hl.out
   have hk : k ≠ 0 := by
     rintro rfl
-    simp at hv
+    simp [Nat.padicValNat_def] at hv
   have htf' : ∀ (j : ℕ) (x : A), (l : A) ^ j * x = 0 → x = 0 := fun j => by
     induction j with
     | zero => simp
     | succ j ih => exact fun x hx => htf x (ih _ (by linear_combination hx))
-  rw [← Nat.factorization_def m hp, ← Nat.factorization_def k hp] at hv
+  rw [Nat.padicValNat_def, Nat.padicValNat_def, ← Nat.factorization_def m hp, ← Nat.factorization_def k hp] at hv
   have hm' := Nat.ordProj_mul_ordCompl_eq_self m l
   have hk' := Nat.ordProj_mul_ordCompl_eq_self k l
   have hcop := Nat.coprime_ordCompl hp hm
@@ -59,7 +63,7 @@ theorem cong_add {A : Type} [CommRing A] (φ : A →+* A) {a b : A} (ha : ∃ w,
   obtain ⟨w, hw⟩ := ha
   obtain ⟨w', hw'⟩ := hb
   obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hl.out a b
-  exact ⟨w + w' - a * b * r, by rw [map_add, hw, hw', hr]; ring⟩
+  exact ⟨w + w' - a * b * r, by rw [map_add (f := _), hw, hw', hr]; ring⟩
 
 theorem cong_mul {A : Type} [CommRing A] (φ : A →+* A) {a b : A} (ha : ∃ w, φ a = a ^ l + (l : A) * w)
     (hb : ∃ w, φ b = b ^ l + (l : A) * w) : ∃ w, φ (a * b) = (a * b) ^ l + (l : A) * w := by
@@ -75,7 +79,7 @@ theorem frobC_ainfToAcris (b : Ainf l) :
 theorem cong_ainf (b : Ainf l) :
     ∃ w, frobC l (ainfToAcris l b) = ainfToAcris l b ^ l + (l : Per.Acris l) * w := by
   obtain ⟨c, hc⟩ := frobenius_eq_pow_add b
-  exact ⟨ainfToAcris l c, by rw [frobC_ainfToAcris, hc, map_add, map_pow, map_mul, map_natCast]⟩
+  exact ⟨ainfToAcris l c, by rw [frobC_ainfToAcris, hc, map_add (f := _), map_pow, map_mul, map_natCast]⟩
 
 theorem frob_mem_of_theta {x : Ainf l} (hx : Per.θ l x = 0) :
     ∃ u, ainfToAcris l (WittVector.frobenius x) = (l : Per.Acris l) * u := by
@@ -84,17 +88,18 @@ theorem frob_mem_of_theta {x : Ainf l} (hx : Per.θ l x = 0) :
   have hf : (l.factorial : Per.Acris l) = (l : Per.Acris l) * ((l - 1).factorial : Per.Acris l) := by
     rw [← Nat.cast_mul, Nat.mul_factorial_pred hl.out.ne_zero]
   refine ⟨((l - 1).factorial : Per.Acris l) * d + ainfToAcris l c, ?_⟩
-  rw [hc, map_add, map_pow, ← hd, map_mul, map_natCast, hf]
+  rw [hc, map_add (f := _), map_pow, ← hd, map_mul, map_natCast, hf]
   ring
 
 theorem padicValNat_factorial_bound {n : ℕ} (hn : n ≠ 0) :
     l * padicValNat l n.factorial < padicValNat l n.factorial + n := by
-  have h := sub_one_mul_padicValNat_factorial (p := l) n
+  rw [Nat.padicValNat_def]
+  have h := hl.out.sub_one_mul_multiplicity_factorial (n := n)
   have hlast := Nat.getLast_digit_ne_zero l hn
   have hpos : 0 < (l.digits n).sum :=
     lt_of_lt_of_le (Nat.pos_of_ne_zero hlast) (List.le_sum_of_mem (List.getLast_mem _))
   have h2 : 2 ≤ l := hl.out.two_le
-  generalize padicValNat l n.factorial = v at h ⊢
+  generalize multiplicity l n.factorial = v at h ⊢
   generalize (l.digits n).sum = s at h hpos
   obtain ⟨k, rfl⟩ : ∃ k, l = k + 1 := ⟨l - 1, by omega⟩
   rw [Nat.add_sub_cancel] at h
@@ -115,16 +120,18 @@ theorem cong_gen {x : Ainf l} (hx : Per.θ l x = 0) {n : ℕ} {Y : Per.Acris l}
     have h1 := congrArg (frobC l) hY
     rw [map_mul, map_natCast, map_pow, frobC_ainfToAcris, hu, mul_pow] at h1
     refine exists_eq_l_mul_of_natCast htf (Nat.factorial_ne_zero n) (k := l ^ n) (z := u ^ n) ?_ ?_
-    · rw [padicValNat.prime_pow]
-      exact padicValNat_factorial_lt_of_ne_zero l hn.ne'
+    · simp only [Nat.padicValNat_def]
+      rw [Nat.multiplicity_prime_pow]
+      exact multiplicity_factorial_lt_of_ne_zero l hn.ne'
     · rw [h1]; push_cast; rfl
   obtain ⟨w2, hw2⟩ : ∃ w, Y ^ l = (l : Per.Acris l) * w := by
     obtain ⟨d, hd⟩ := exists_dpow hx (l * n)
     have h2 : ((n.factorial ^ l : ℕ) : Per.Acris l) * Y ^ l = ((l * n).factorial : ℕ) * d := by
       rw [hd, Nat.cast_pow, ← mul_pow, hY, ← pow_mul, mul_comm n l]
     refine exists_eq_l_mul_of_natCast htf (pow_ne_zero _ (Nat.factorial_ne_zero n)) ?_ h2
-    rw [padicValNat.pow n.factorial l, padicValNat_factorial_mul]
-    exact padicValNat_factorial_bound hn.ne'
+    simp only [Nat.padicValNat_def]
+    rw [Nat.multiplicity_pow n.factorial l, multiplicity_factorial_mul]
+    simpa only [Nat.padicValNat_def] using (padicValNat_factorial_bound (l := l) hn.ne')
   exact ⟨w1 - w2, by rw [hw1, hw2]; ring⟩
 
 theorem cong_acris0 : ∀ (s : Per.AinfP l) (hs : s ∈ Per.Acris0 l),
@@ -142,7 +149,10 @@ theorem cong_acris0 : ∀ (s : Per.AinfP l) (hs : s ∈ Per.Acris0 l),
       add_mem' := fun {x y} hx hy => by
         change ∃ w, frobC l (algebraMap (Per.Acris0 l) (Per.Acris l) (x + y)) =
           (algebraMap (Per.Acris0 l) (Per.Acris l) (x + y)) ^ l + (l : Per.Acris l) * w
-        rw [map_add]
+        have he : algebraMap (Per.Acris0 l) (Per.Acris l) (x + y) =
+            algebraMap (Per.Acris0 l) (Per.Acris l) x + algebraMap (Per.Acris0 l) (Per.Acris l) y :=
+          (algebraMap (Per.Acris0 l) (Per.Acris l)).map_add x y
+        rw [he]
         exact cong_add (frobC l).toRingHom hx hy
       algebraMap_mem' := fun r => by
         change ∃ w, frobC l (algebraMap (Per.Acris0 l) (Per.Acris l) (algebraMap (Per.Ainf l) (Per.Acris0 l) r)) =
@@ -170,7 +180,7 @@ theorem frobC_cong (y : Per.Acris l) : ∃ w, frobC l y = y ^ l + (l : Per.Acris
   obtain ⟨c, hc⟩ := sub_dvd_pow_sub_pow (algebraMap (Per.Acris0 l) (Per.Acris l) s + (l : Per.Acris l) ^ 1 * z)
     (algebraMap (Per.Acris0 l) (Per.Acris l) s) l
   refine ⟨w + frobC l z - z * c, ?_⟩
-  rw [map_add, map_mul, map_pow, map_natCast, hw]
+  rw [map_add (f := _), map_mul, map_pow, map_natCast, hw]
   linear_combination -hc
 
 end GlobalTheory.AcrisPrism

@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.HeBranching
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EquivSigLamOfIsDS
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsLowK
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasimirGapAtNoncompactWeight
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.HeBranching
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EquivSigLamOfIsDS
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsLowK
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasimirGapAtNoncompactWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem re_term (hU : IsInfUnitary ε E) (a b : Fin n) (x : M) :
 theorem sum_sq_eq (hU : IsInfUnitary ε E) (x : M) :
     ∑ a, ∑ b, ‖E b a x‖ ^ 2 =
       2 * RCLike.re (inner ℂ (casimirK ε E x) x) - RCLike.re (inner ℂ (casimir E x) x) := by
-  simp only [casimir, casimirK, LinearMap.sum_apply, sum_inner, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [casimir, casimirK, LinearMap.sum_apply, sum_inner, map_sum]
   simp only [Finset.sum_filter, Finset.mul_sum, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [re_term hU a b x]

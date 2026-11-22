@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSublatticeDegreeSteps
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.DetGramLeProdNormSq
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSublatticeDegreeSteps
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.DetGramLeProdNormSq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -39,7 +44,8 @@ theorem GramContraction.proof : GramContraction.Statement := by
   let y : ι ⊕ κ → V := Sum.elim (fun i => Ψ (e i)) w
   have hu : ∀ i, Ψ (u i) = ∑ j, U i j • Ψ (e j) := fun i => by
     conv_lhs => rw [← e.sum_repr (u i)]
-    simp [U, e, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [U, e, map_sum, map_smul]
   have hfam : Sum.elim (Ψ ∘ u) w = fun a => ∑ b, M a b • y b := by
     funext a
     rcases a with i | k
@@ -54,7 +60,7 @@ theorem GramContraction.proof : GramContraction.Statement := by
       Matrix.det_fromBlocks_zero₂₁, Matrix.det_one]
     ring
   have hP : ∏ i, ‖Ψ (e i)‖ ^ 2 ≤ 1 :=
-    Finset.prod_le_one (fun _ _ => sq_nonneg _) fun i _ => by
+    Finset.prod_le_one₀ (fun _ _ => sq_nonneg _) fun i _ => by
       have := hΨ (e i); rw [e.orthonormal.1 i] at this
       nlinarith [norm_nonneg (Ψ (e i))]
   have hW : 0 ≤ ∏ j, ‖w j‖ ^ 2 := Finset.prod_nonneg fun _ _ => sq_nonneg _

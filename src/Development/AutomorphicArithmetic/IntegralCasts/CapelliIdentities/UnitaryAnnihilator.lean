@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Topology Filter
 
@@ -294,7 +298,7 @@ private theorem finite_approx (y : FiniteAdeleRing R K) :
     rw [h4, h4]
     exact div_le_one_of_le₀ (hle v) zero_le
   change y v - algebraMap K (v.adicCompletion K) (algebraMap R K r / algebraMap R K d) ∈ _
-  rw [e, map_add, ← sub_sub]
+  rw [e, map_add (f := _), ← sub_sub]
   exact sub_mem (hk v) h2
 
 end Finite
@@ -364,7 +368,7 @@ private theorem adele_cover [LocallyCompactSpace (AdeleRing (RingOfIntegers F) F
   · change y.1 - algebraMap F (InfiniteAdeleRing F) (a + algebraMap _ F r) ∈ B
     rwa [map_add, ← sub_sub]
   · change y.2 v - algebraMap F (v.adicCompletion F) (a + algebraMap _ F r) ∈ _
-    rw [map_add, ← sub_sub]
+    rw [map_add (f := _), ← sub_sub]
     exact sub_mem (ha v) (coe_algebraMap_mem _ F v r)
 
 private theorem adele_bounded (C : Set (AdeleRing (RingOfIntegers F) F)) (hC : IsCompact C)

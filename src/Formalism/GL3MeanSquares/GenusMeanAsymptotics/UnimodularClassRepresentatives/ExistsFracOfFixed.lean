@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNormRepresentation
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNormRepresentation
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
+
+@[expose] public section
 
 open NumberField
 
@@ -200,7 +204,7 @@ theorem exists_isUnif (hF : IsFixF K F) {P : Ideal (𝓞 K)}
         conjO K u + algebraMap (𝓞 F) (𝓞 K) π₀ * conjO K r := by
       apply IsFractionRing.injective (𝓞 K) K
       rw [hcv]
-      simp only [map_add, map_mul, star_add, star_mul', hπfix, hcu, hcr]
+      simp only [map_add (f := _), map_mul, star_add, star_mul', hπfix, hcu, hcr]
     have hvH : u + algebraMap (𝓞 F) (𝓞 K) π₀ * r ∈ Formalism.HermitianLatticesTheory.hcompl (K := K) P := by
       apply Submonoid.subset_closure
       refine ⟨hvP, fun t ht => ?_⟩
@@ -216,7 +220,7 @@ theorem exists_isUnif (hF : IsFixF K F) {P : Ideal (𝓞 K)}
     have e : 1 + algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) π₀) *
         (algebraMap (𝓞 K) K r / algebraMap (𝓞 K) K u) =
         algebraMap (𝓞 K) K (u + algebraMap (𝓞 F) (𝓞 K) π₀ * r) / algebraMap (𝓞 K) K u := by
-      rw [map_add, map_mul]
+      rw [map_add (f := _), map_mul]
       field_simp
     rw [e]
     refine ⟨div_ne_zero hvK huK, div_mem_locRing hPp _ hu, ?_⟩
@@ -269,7 +273,7 @@ theorem exists_isUnif (hF : IsFixF K F) {P : Ideal (𝓞 K)}
       calc z = z * algebraMap (𝓞 F) (𝓞 K) 1 := by rw [map_one, mul_one]
         _ = _ := by
           rw [h1]
-          simp only [map_add, map_mul]
+          simp only [map_add (f := _), map_mul]
           ring
     rw [hz2]
     exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ hzN) (Ideal.mul_mem_left _ _ hi2)

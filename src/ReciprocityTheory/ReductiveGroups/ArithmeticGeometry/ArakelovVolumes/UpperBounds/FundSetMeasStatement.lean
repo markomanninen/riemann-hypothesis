@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.SumBoundStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.QuotientIsHausdorff
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.SumBoundStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.QuotientIsHausdorff
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up
 
@@ -12,10 +16,6 @@ noncomputable section
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 def phla {r : ℕ} (X : Data E r) (la : Wt X.Ψ r) (x : Frame X.Ψ r) : ℝ := -2 * Real.log (X.nfac la x)
-
-def IsMetric {r : ℕ} (X : Data E r) (la : Wt X.Ψ r) (Ps : Frame X.Ψ r → ℝ) : Prop :=
-  (∀ x ∈ X.dom, ∀ b ∈ Bor X.Ψ r, Ps (rmul x b) = Ps x + Real.log (‖bchar la b‖ ^ 2)) ∧
-  ∀ γ ∈ X.Γ, ∀ x ∈ X.dom, Ps (lact γ x) = Ps x
 
 def IsBEq {r : ℕ} (X : Data E r) (la : Wt X.Ψ r) (P : Frame X.Ψ r → ℂ) : Prop :=
   DifferentiableOn ℂ P X.dom ∧ ∀ x ∈ X.dom, ∀ b ∈ Bor X.Ψ r, P (rmul x b) = bchar la b * P x

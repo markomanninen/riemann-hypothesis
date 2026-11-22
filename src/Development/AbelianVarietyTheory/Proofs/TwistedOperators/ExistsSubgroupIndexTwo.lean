@@ -1,11 +1,15 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSquareMulInfinite
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsKum
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CyclicKummerNormFixedHilbert90
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HerbrandPrimeOrder
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PIdxUnitsFiniteExtensionAdicCompletion
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSquareMulInfinite
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsKum
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CyclicKummerNormFixedHilbert90
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HerbrandPrimeOrder
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PIdxUnitsFiniteExtensionAdicCompletion
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CNorm GlobalTheory.QuadSymbol.NormIndex
 
@@ -30,7 +34,7 @@ theorem exists_mul_conj_iff {B E : Type} [Field B] [CharZero B] [Field E] [Algeb
   · rintro ⟨y, hy⟩
 
     obtain ⟨a, ha⟩ := hfix ((y + σ y) / 2) (by
-      rw [map_div₀, map_add, hinv, map_ofNat, add_comm])
+      rw [map_div₀, map_add (f := _), hinv, map_ofNat, add_comm])
     obtain ⟨b, hb⟩ := hfix ((y - σ y) / (2 * θ)) (by
       rw [map_div₀, map_sub, hinv, map_mul, hconj, map_ofNat, mul_neg, div_neg, ← neg_div, neg_sub])
     have hy' : y = algebraMap B E a + algebraMap B E b * θ := by
@@ -38,7 +42,7 @@ theorem exists_mul_conj_iff {B E : Type} [Field B] [CharZero B] [Field E] [Algeb
       field_simp
       ring
     have hσy : σ y = algebraMap B E a - algebraMap B E b * θ := by
-      rw [hy', map_add, map_mul, AlgEquiv.commutes, AlgEquiv.commutes, hconj]
+      rw [hy', map_add (f := _), map_mul, AlgEquiv.commutes, AlgEquiv.commutes, hconj]
       ring
     refine ⟨a, b, (algebraMap B E).injective ?_⟩
     rw [← hy, hσy, hy']
@@ -47,7 +51,7 @@ theorem exists_mul_conj_iff {B E : Type} [Field B] [CharZero B] [Field E] [Algeb
     ring
   · rintro ⟨a, b, rfl⟩
     refine ⟨algebraMap B E a + algebraMap B E b * θ, ?_⟩
-    rw [map_add, map_mul, AlgEquiv.commutes, AlgEquiv.commutes, hconj]
+    rw [map_add (f := _), map_mul, AlgEquiv.commutes, AlgEquiv.commutes, hconj]
     simp only [map_sub, map_mul, map_pow]
     rw [← hpow]
     ring

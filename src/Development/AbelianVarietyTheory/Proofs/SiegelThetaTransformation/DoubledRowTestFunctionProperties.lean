@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SummableNormSiegelThetaSeriesTerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SummableNormSiegelThetaSeriesTerms
+
+@[expose] public section
 
 open Matrix Complex GlobalTheory.SW GlobalTheory.Phase
 open scoped ComplexConjugate Real Kronecker
@@ -156,7 +160,7 @@ theorem pv_dup {φ : Matrix (Fin n) (Fin g) ℚ → ℂ} (h : PV φ) : PV (dup �
   · rw [mem] at hy
     rw [norm_mul, hV.norm _ hy.1, hV.norm _ hy.2, one_mul]
   · rw [mem] at hy hy'
-    rw [map_add, map_add, hV.semi _ hy.1 _ hy'.1, hV.semi _ hy.2 _ hy'.2, om_eq y y',
+    rw [map_add (f := _), map_add (f := _), hV.semi _ hy.1 _ hy'.1, hV.semi _ hy.2 _ hy'.2, om_eq y y',
       Rat.cast_add, mul_add, Complex.exp_add]
     ring
   · obtain ⟨m, hm, h⟩ := hV.ord

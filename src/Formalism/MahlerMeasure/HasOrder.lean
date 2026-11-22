@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.IsFrozenInv
+module
+
+public import Formalism.MahlerMeasure.IsFrozenInv
+
+@[expose] public section
 
 namespace Formalism.GM.M
 

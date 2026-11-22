@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDVal
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDVal
+
+@[expose] public section
 
 set_option autoImplicit false
 

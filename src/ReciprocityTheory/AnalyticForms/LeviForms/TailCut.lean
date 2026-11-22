@@ -1,10 +1,14 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
-import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffFubiniStudyRatioCompChart0
-import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffFubiniStudyRatioCompChart0
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailCutA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.P
 
@@ -77,7 +81,7 @@ theorem bdry_null : BdryNullStatement := by
   split_ifs with h
   swap
   · simp
-  simp only [Measure.coe_finset_sum, Finset.sum_apply]
+  simp only [FunLike.coe_sum, Finset.sum_apply]
   refine Finset.sum_eq_zero fun j _ => ?_
   have hT : MeasurableSet (A.chart j).target := (A.chart j).open_target.measurableSet
   rw [Measure.map_apply_of_aemeasurable (((A.chart j).continuousOn_symm.aemeasurable hT).mono_ac
@@ -275,7 +279,7 @@ theorem maMeasure_congr_open : MaMeasureCongrOpenStatement := by
   split_ifs with h
   · ext t ht
     rw [Measure.restrict_apply ht, Measure.restrict_apply ht]
-    simp only [Measure.coe_finset_sum, Finset.sum_apply]
+    simp only [FunLike.coe_sum, Finset.sum_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
     have hT : MeasurableSet (A.chart j).target := (A.chart j).open_target.measurableSet
     have hW : IsOpen ((A.chart j).target ∩ (A.chart j).symm ⁻¹' V) :=

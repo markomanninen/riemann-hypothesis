@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPowerSeries
 
@@ -19,7 +23,7 @@ theorem goal1 {n : ℕ} (A : Matrix (Fin n) (Fin n) C) (w : Fin n → C) (lam : 
     Matrix.mulVec (Polynomial.aeval A f) w = f.eval lam • w := by
   induction f using Polynomial.induction_on' with
   | add p q hp hq =>
-    rw [map_add, Matrix.add_mulVec, hp, hq, Polynomial.eval_add, add_smul]
+    rw [map_add (f := _), Matrix.add_mulVec, hp, hq, Polynomial.eval_add, add_smul]
   | monomial k a =>
     rw [Polynomial.aeval_monomial, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul,
       Matrix.smul_mulVec, pow_mulVec_eig A w lam h k, Polynomial.eval_monomial, smul_smul]

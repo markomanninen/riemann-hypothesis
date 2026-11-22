@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.W2.Seed
 open scoped TensorProduct
 
@@ -21,8 +26,10 @@ theorem UpperTheory.Gal.W2.Seed.pFormCoord :
     refine Finset.sum_congr rfl fun τ _ => ?_
     have h2 : ((∑ i, A.hd n i * a i * A.bar (b i) : 𝓞 E) : E) =
         ∑ i, ((A.hd n i : 𝓞 E) : E) * (a i : E) * ((A.bar (b i) : 𝓞 E) : E) := by
-      simpa using map_sum (algebraMap (𝓞 E) E) (fun i => A.hd n i * a i * A.bar (b i)) Finset.univ
-    rw [h2, map_mul, map_sum, Finset.mul_sum, Complex.re_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa using map_sum (algebraMap (𝓞 E) E) (fun i => A.hd n i * a i * A.bar (b i)) Finset.univ
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_mul, map_sum, Finset.mul_sum, Complex.re_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [map_mul, hconj, mul_assoc]
   have hx : ∀ (r : ℝ) (a : Fin n → 𝓞 E) (k : Phi A × Fin n),
@@ -34,13 +41,13 @@ theorem UpperTheory.Gal.W2.Seed.pFormCoord :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | add x₁ x₂ h₁ h₂ =>
-    simp only [map_add, LinearMap.add_apply, h₁, h₂, Pi.add_apply, mul_add, add_mul, Complex.add_re,
+    simp only [map_add (f := _), LinearMap.add_apply, h₁, h₂, Pi.add_apply, mul_add, add_mul, Complex.add_re,
       Finset.sum_add_distrib]
   | tmul r a =>
     induction y using TensorProduct.induction_on with
     | zero => simp
     | add y₁ y₂ h₁ h₂ =>
-      simp only [map_add, h₁, h₂, Pi.add_apply, mul_add, Complex.add_re, Finset.sum_add_distrib]
+      simp only [map_add (f := _), h₁, h₂, Pi.add_apply, mul_add, Complex.add_re, Finset.sum_add_distrib]
     | tmul s b =>
       rw [LinearMap.BilinForm.baseChange_tmul, zsmul_eq_mul, hkey, Finset.sum_mul]
       refine Finset.sum_congr rfl fun k _ => ?_

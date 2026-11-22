@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePLogSt
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePLogSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,42 +17,94 @@ open PartialDerivEval LogEx
 variable {C : Type} [Field C] [CharZero C] {d : ℕ}
 
 theorem ev_zero_pt {n : ℕ} (g : PS C 1 d) : ev (n := n) ![(0 : Pt C n d)] g = MvPowerSeries.C (constantCoeff g) := by
-  have h0 : ∀ j, constantCoeff ((0 : Pt C n d) j) = 0 := fun j => by simp
-  apply pderiv.ext
-  · intro q
-    rw [pderiv_eval_single (0 : Pt C n d) h0 g q, pderiv_C]
-    exact Finset.sum_eq_zero fun b _ => by simp
-  · rw [constantCoeff_ev (z0_1 _ h0), constantCoeff_C]
+  have hz : (fun p : Fin 1 × Fin d => (![0] : Fin 1 → Pt C n d) p.1 p.2) = 0 := by
+    funext p
+    obtain ⟨k, b⟩ := p
+    fin_cases k
+    rfl
+  rw [ev, hz, subst_zero_eq_C_constantCoeff, map_C]
+  simp
 
 theorem cc_pderiv {σ : Type} (i : σ) (f : MvPowerSeries σ C) :
-    constantCoeff (pderiv C i f) = coeff (Finsupp.single i 1) f := by
+    constantCoeff (pderiv (R := C) i f) = coeff (Finsupp.single i 1) f := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]
   simp
 
 theorem add_zero_of (G : FGLaw C d) (Q : PS C 1 d)
     (hQ : ev (n := 2) ![G.F] Q = ev (n := 2) ![pt C d 0] Q + ev (n := 2) ![pt C d 1] Q)
     (hlin : ∀ k, coeff (Finsupp.single ((0 : Fin 1), k) 1) Q = 0) (hc : constantCoeff Q = 0) : Q = 0 := by
-  have hrow : ∀ k, ∑ b, Mm G b k * pderiv C ((0 : Fin 1), b) Q = 0 := by
-    intro k
-    have D := congrArg (fun g => ev (n := 1) ![pt C d 0, 0] (pderiv C ((1 : Fin 2), k) g)) hQ
-    simp only [map_add, pderiv_eval_single G.F G.const, pderiv_eval_single (pt C d 0) (coordinate_point_constantCoeff 0), pderiv_eval_single (pt C d 1) (coordinate_point_constantCoeff 1),
-      sum_d_pt_other (0 : Fin 2) 1 (by decide), sum_d_pt_self, zero_add] at D
+  classical
+  let A : Matrix (Fin d) (Fin d) (PS C 1 d) := Matrix.of fun k b =>
+    ev (n := 1) ![pt C d 0, 0] (pderiv (R := C) ((1 : Fin 2), k) (G.F b))
+  let u : Fin d → PS C 1 d := fun b => pderiv (R := C) ((0 : Fin 1), b) Q
+  have hX (k b : Fin d) :
+      pderiv (R := C) ((0 : Fin 1), k) (pt C d 0 b) = if k = b then 1 else 0 := by
+    by_cases h : k = b
+    · subst b
+      simp [pt]
+    · rw [ite_eq_right h]
+      exact pderiv_X_of_ne (by simpa using Ne.symm h)
+  have hA : (constantCoeff : PS C 1 d →+* C).mapMatrix A = 1 := by
+    ext k b
+    have hz := constant_zero_zero_point (pt C (n := 1) d 0) (coordinate_point_constantCoeff 0)
+    have h := congrArg (pderiv (R := C) ((0 : Fin 1), k)) (G.unit b)
+    change pderiv ((0 : Fin 1), k) (ev ![0, pt C d 0] (G.F b)) =
+      pderiv ((0 : Fin 1), k) (pt C d 0 b) at h
+    rw [ev, Formalism.G.LogCR.pderiv_subst
+      (a := fun p : Fin 2 × Fin d => (![0, pt C d 0] : Fin 2 → Pt C 1 d) p.1 p.2)
+      (fun p => hz p.1 p.2),
+      Fintype.sum_prod_type, Fin.sum_univ_two] at h
+    change (∑ j, ev ![0, pt C d 0] (pderiv ((0 : Fin 2), j) (G.F b)) *
+        pderiv ((0 : Fin 1), k) (0 : PS C 1 d)) +
+      (∑ j, ev ![0, pt C d 0] (pderiv ((1 : Fin 2), j) (G.F b)) *
+        pderiv ((0 : Fin 1), k) (pt C d 0 j)) = _ at h
+    simp only [map_zero, mul_zero, Finset.sum_const_zero, zero_add, hX, mul_ite, mul_one,
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h
+    have hcc := congrArg constantCoeff h
+    rw [constantCoeff_ev hz, apply_ite constantCoeff, map_one, map_zero] at hcc
+    simpa only [RingHom.mapMatrix_apply, Matrix.map_apply, A, Matrix.of_apply, Matrix.one_apply,
+      constantCoeff_ev constant_zero_first_zero] using hcc
+  have hdet : IsUnit A.det := by
+    rw [MvPowerSeries.isUnit_iff_constantCoeff, RingHom.map_det, hA, Matrix.det_one]
+    exact isUnit_one
+  have hchain (P : Pt C 2 d) (hP : ∀ j, constantCoeff (P j) = 0) (q : Fin 2 × Fin d) :
+      pderiv q (ev ![P] Q) = ∑ b, ev ![P] (u b) * pderiv q (P b) := by
+    unfold ev
+    rw [Formalism.G.LogCR.pderiv_subst
+      (a := fun p : Fin 1 × Fin d => (![P] : Fin 1 → Pt C 2 d) p.1 p.2)
+      (fun p => z0_1 P hP p.1 p.2) Q q,
+      Fintype.sum_prod_type, Fin.sum_univ_one]
+    rfl
+  have hrow : A.mulVec u = 0 := by
+    funext k
+    have h0 : pderiv ((1 : Fin 2), k) (ev ![pt C d 0] Q) = 0 := by
+      rw [hchain _ (coordinate_point_constantCoeff 0)]
+      exact Finset.sum_eq_zero fun b _ => by simp [pt]
+    have h1 : pderiv ((1 : Fin 2), k) (ev ![pt C d 1] Q) = ev ![pt C d 1] (u k) := by
+      rw [hchain _ (coordinate_point_constantCoeff 1), Finset.sum_eq_single k]
+      · simp [pt]
+      · intro b _ hb
+        rw [show pt C d 1 b = X ((1 : Fin 2), b) from rfl, pderiv_X_of_ne (by simp [hb]), mul_zero]
+      · simp
+    have D := congrArg (fun g => ev (n := 1) ![pt C d 0, 0] (pderiv (R := C) ((1 : Fin 2), k) g)) hQ
+    rw [map_add (f := _), h0, h1, zero_add, hchain G.F G.const] at D
     rw [ev_sum constant_zero_first_zero] at D
-    simp only [ev_mul constant_zero_first_zero, eval_group_law_at_zero G, log_jacobian_at_zero G] at D
+    simp only [ev_mul constant_zero_first_zero, eval_group_law_at_zero G] at D
     rw [eval_eval_single (z0_1 (pt C d 1) (coordinate_point_constantCoeff 1)) constant_zero_first_zero (a' := (0 : Pt C 1 d)) (fun j => ev_X constant_zero_first_zero 1 j), ev_zero_pt,
-      cc_pderiv, hlin k, map_zero] at D
-    rw [← D]
-    exact Finset.sum_congr rfl fun b _ => mul_comm _ _
-  have hd : ∀ b, pderiv C ((0 : Fin 1), b) Q = 0 := by
-    intro b
-    rw [← vec_cancel G (fun c => pderiv C ((0 : Fin 1), c) Q) b]
-    exact Finset.sum_eq_zero fun k _ => by rw [hrow k, zero_mul]
+      show u k = pderiv ((0 : Fin 1), k) Q from rfl, cc_pderiv, hlin k, map_zero] at D
+    change (∑ b, A k b * u b) = 0
+    change (∑ b, u b * A k b) = 0 at D
+    simpa only [mul_comm (A k _) (u _)] using D
+  have hd : u = 0 := by
+    have h := congrArg (fun v => (A⁻¹).mulVec v) hrow
+    change (A⁻¹).mulVec (A.mulVec u) = (A⁻¹).mulVec 0 at h
+    rwa [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul A hdet, Matrix.one_mulVec, Matrix.mulVec_zero] at h
   apply pderiv.ext
   · intro q
     obtain ⟨q1, q2⟩ := q
     fin_cases q1
     rw [map_zero]
-    exact hd q2
+    exact congrFun hd q2
   · rw [hc, map_zero]
 
 def linM (φ : Pt C 1 d) (i j : Fin d) : C := coeff (Finsupp.single ((0 : Fin 1), j) 1) (φ i)
@@ -112,16 +168,30 @@ theorem log_endo (G : FGLaw C d) (lg : Pt C 1 d) (hlin : LinN lg)
       ring)
     (by
       intro k
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp only [coeff_C_mul, linN_coeff hlin, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq',
         Finset.mem_univ, if_true]
-      rw [← cc_pderiv, show comp1 lg φ i = ev ![φ] (lg i) from rfl, pderiv_eval_single φ hφ0, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← cc_pderiv, show comp1 lg φ i = ev ![φ] (lg i) from rfl]
+      have hchain :
+          pderiv ((0 : Fin 1), k) (ev ![φ] (lg i)) =
+            ∑ b, ev ![φ] (pderiv ((0 : Fin 1), b) (lg i)) * pderiv ((0 : Fin 1), k) (φ b) := by
+        unfold ev
+        rw [Formalism.G.LogCR.pderiv_subst
+          (a := fun p : Fin 1 × Fin d => (![φ] : Fin 1 → Pt C 1 d) p.1 p.2)
+          (fun p => hφ1 p.1 p.2),
+          Fintype.sum_prod_type, Fin.sum_univ_one]
+        rfl
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hchain, map_sum]
       simp only [map_mul, constantCoeff_ev hφ1, cc_pderiv, linN_coeff hlin, ite_mul, one_mul, zero_mul,
         Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
       unfold linM
       ring)
     (by
-      rw [map_sub, map_sum, show comp1 lg φ i = ev ![φ] (lg i) from rfl, constantCoeff_ev hφ1, linN_const hlin]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, show comp1 lg φ i = ev ![φ] (lg i) from rfl, constantCoeff_ev hφ1, linN_const hlin]
       simp [linN_const hlin])
   exact sub_eq_zero.mp hQ
 

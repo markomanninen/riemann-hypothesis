@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstTop
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushI
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstTop
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushI
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,14 +70,14 @@ theorem opVec_wI (p : (Fin k → ℂ) × ℂ) (m : Fin (k + 1)) : opVec k r p (w
   have := m.isLt
   unfold opVec toW wI
   by_cases h : m.val < k
-  · rw [dif_pos (by simp only; omega), dif_pos h]
+  · rw [dite_eq_left (by simp only; omega), dite_eq_left h]
     exact congrArg p.1 (Fin.ext (by simp))
-  · rw [dif_neg (by simp only; omega), dif_neg h, if_pos (by simp only; omega)]
+  · rw [dite_eq_right (by simp only; omega), dite_eq_right h, if_pos (by simp only; omega)]
 
 theorem opVec_inWb (p : (Fin k → ℂ) × ℂ) : inWb k r (opVec k r p) := by
   intro i hi
   unfold opVec
-  rw [dif_neg (by omega), if_neg (by omega)]
+  rw [dite_eq_right (by omega), if_neg (by omega)]
 
 theorem opCo_opVec (p : (Fin k → ℂ) × ℂ) : opCo k r (opVec k r p) = p := by
   refine Eq.trans ?_ (ofW_toW p)
@@ -284,6 +288,7 @@ theorem orbRepY : OrbRepY := by
       inc_memb.lintegral_map, map_pull νg hc]
     simp_rw [act_pt]
   have hbt : b ≠ ⊤ := by
+    open scoped Pointwise in
     obtain ⟨K, hK, hKm⟩ := orbit_proper (k := k) (r := r) hT R
     haveI : T2Space (Gp k r) := inc_closedEmbedding.isEmbedding.t2Space
     refine ne_top_of_le_ne_top (hfin K⁻¹ hK.inv) ?_

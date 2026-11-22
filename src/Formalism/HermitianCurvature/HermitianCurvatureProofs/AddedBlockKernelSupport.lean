@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsIntOfLatOfLe
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELast
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsOpenIsIntSet
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
+module
+
+public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsIntOfLatOfLe
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELast
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsOpenIsIntSet
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
+
+@[expose] public section
 
 open Formalism.DoubleCosetMeasures Formalism.FourierDecayAlt.A5 Matrix
 open scoped ComplexConjugate
@@ -162,7 +166,7 @@ theorem minor_lemma {n m : ℕ} (hmn : m < n) (x w y : Matrix (Fin n) (Fin n) K)
       sum_sub e he (fun k => w (e i) k * y k (e j)) (fun k hk => by
         have hkm : ¬ k.val < m := fun hc => hk (Set.mem_range.2 ⟨⟨k.val, hc⟩, Fin.ext rfl⟩)
         show w (e i) k * y k (e j) = 0
-        rw [hrow, dif_neg hkm, zero_mul])]
+        rw [hrow, dite_eq_right hkm, zero_mul])]
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [hrow]
     split_ifs with hk
@@ -207,10 +211,10 @@ theorem supp_one (h : Point K) (s : ℕ) (hs : 1 ≤ s) (t : Kˣ)
     rw [revIn_app_lt s h.1 a.val ha, blk_app_lt s h.1 a.val ha, Function.update_apply,
       if_neg (ne_of_lt (blk_lt_length h.1 a.val ha))]
     by_cases hb : b.val < h.1.sum
-    · rw [dif_pos hb]
+    · rw [dite_eq_left hb]
       rfl
     · have hne : ¬ ((b : ℕ) = revIn h.1 a) := fun hc => hb (by rw [hc]; exact hrev)
-      rw [dif_neg hb, if_neg hne]
+      rw [dite_eq_right hb, if_neg hne]
   · intro a b ha
     show (if (b : ℕ) = revIn (h.1 ++ [s]) a then
         ((Function.update h.2 h.1.length t (blk (h.1 ++ [s]) a) : Kˣ) : K) else 0) =
@@ -517,185 +521,5 @@ namespace Formalism.FourierDecayAlt.P.A5x7
 section Padic
 variable (p : ℕ) [hp : Fact p.Prime]
 
-def InS (r : ℚ) : Prop := ∃ (k : ℕ) (b : ℤ), (p : ℚ) ^ k * r = b
-
-theorem inS_add {r s : ℚ} (hr : InS p r) (hs : InS p s) : InS p (r + s) := by
-  obtain ⟨k, a, hk⟩ := hr
-  obtain ⟨l, b, hl⟩ := hs
-  refine ⟨k + l, p ^ l * a + p ^ k * b, ?_⟩
-  push_cast
-  rw [← hk, ← hl]
-  ring
-
-theorem inS_neg {r : ℚ} (hr : InS p r) : InS p (-r) := by
-  obtain ⟨k, b, hk⟩ := hr
-  refine ⟨k, -b, ?_⟩
-  push_cast
-  rw [← hk]
-  ring
-
-theorem inS_int {r : ℚ} (hr : InS p r) (hn : ‖(r : ℚ_[p])‖ ≤ 1) : ∃ z : ℤ, r = z := by
-  obtain ⟨k, b, hk⟩ := hr
-  have e : ((b : ℤ) : ℚ_[p]) = (p : ℚ_[p]) ^ k * (r : ℚ_[p]) := by
-    have h := congrArg (fun q : ℚ => (q : ℚ_[p])) hk
-    push_cast at h
-    exact h.symm
-  have hb : ‖((b : ℤ) : ℚ_[p])‖ ≤ (p : ℝ) ^ (-(k : ℤ)) := by
-    rw [e, norm_mul, Padic.norm_p_pow]
-    exact mul_le_of_le_one_right (by positivity) hn
-  obtain ⟨c, hc⟩ := (Padic.norm_int_le_pow_iff_dvd b k).1 hb
-  refine ⟨c, ?_⟩
-  have hp0 : (p : ℚ) ^ k ≠ 0 := pow_ne_zero _ (by exact_mod_cast hp.out.ne_zero)
-  apply mul_left_cancel₀ hp0
-  rw [hk, hc]
-  push_cast
-  ring
-
-theorem exists_approx (x : ℚ_[p]) : ∃ r : ℚ, InS p r ∧ ‖x - (r : ℚ_[p])‖ ≤ 1 := by
-  have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.out.one_lt
-  obtain ⟨m, hm⟩ := pow_unbounded_of_one_lt ‖x‖ hp1
-  have hpm : ‖(p : ℚ_[p]) ^ m * x‖ ≤ 1 := by
-    rw [norm_mul, Padic.norm_p_pow, _root_.zpow_neg, zpow_natCast, inv_mul_le_iff₀ (by positivity),
-      mul_one]
-    exact hm.le
-  let y : ℤ_[p] := ⟨(p : ℚ_[p]) ^ m * x, hpm⟩
-  have hy : ‖y - ((y.appr m : ℕ) : ℤ_[p])‖ ≤ (p : ℝ) ^ (-(m : ℤ)) :=
-    (PadicInt.norm_le_pow_iff_mem_span_pow _ m).2 (PadicInt.appr_spec m y)
-  have hp0 : (p : ℚ_[p]) ^ m ≠ 0 := pow_ne_zero _ (by exact_mod_cast hp.out.ne_zero)
-  have hq : (p : ℚ) ^ m ≠ 0 := pow_ne_zero _ (by exact_mod_cast hp.out.ne_zero)
-  refine ⟨((y.appr m : ℕ) : ℚ) / (p : ℚ) ^ m, ⟨m, (y.appr m : ℕ), ?_⟩, ?_⟩
-  · rw [Int.cast_natCast]
-    field_simp
-  · have e : x - ((((y.appr m : ℕ) : ℚ) / (p : ℚ) ^ m : ℚ) : ℚ_[p])
-        = ((p : ℚ_[p]) ^ m)⁻¹ * ((p : ℚ_[p]) ^ m * x - ((y.appr m : ℕ) : ℚ_[p])) := by
-      push_cast
-      rw [mul_sub, ← mul_assoc, inv_mul_cancel₀ hp0, one_mul, div_eq_inv_mul]
-    have hy' : ‖(p : ℚ_[p]) ^ m * x - ((y.appr m : ℕ) : ℚ_[p])‖ ≤ (p : ℝ) ^ (-(m : ℤ)) := by
-      rwa [PadicInt.norm_def, PadicInt.coe_sub, PadicInt.coe_natCast] at hy
-    rw [e, norm_mul, norm_inv, Padic.norm_p_pow]
-    calc ((p : ℝ) ^ (-(m : ℤ)))⁻¹ * ‖(p : ℚ_[p]) ^ m * x - ((y.appr m : ℕ) : ℚ_[p])‖
-        ≤ ((p : ℝ) ^ (-(m : ℤ)))⁻¹ * (p : ℝ) ^ (-(m : ℤ)) := by gcongr
-      _ = 1 := inv_mul_cancel₀ (by positivity)
-
-noncomputable def fr (x : ℚ_[p]) : ℚ := (exists_approx p x).choose
-
-theorem fr_inS (x : ℚ_[p]) : InS p (fr p x) := (exists_approx p x).choose_spec.1
-theorem fr_norm (x : ℚ_[p]) : ‖x - (fr p x : ℚ_[p])‖ ≤ 1 := (exists_approx p x).choose_spec.2
-
-theorem exp_int (z : ℤ) (w : ℂ) :
-    Complex.exp (2 * Real.pi * Complex.I * (w + z)) = Complex.exp (2 * Real.pi * Complex.I * w) := by
-  rw [mul_add, Complex.exp_add]
-  have h : Complex.exp (2 * Real.pi * Complex.I * z) = 1 := by
-    rw [Complex.exp_eq_one_iff]
-    exact ⟨z, by ring⟩
-  rw [h, mul_one]
-
-noncomputable def stdChar : AddChar ℚ_[p] ℂ where
-  toFun x := Complex.exp (2 * Real.pi * Complex.I * ((fr p x : ℚ) : ℂ))
-  map_zero_eq_one' := by
-    have h := fr_norm p 0
-    rw [zero_sub, norm_neg] at h
-    obtain ⟨z, hz⟩ := inS_int p (fr_inS p 0) h
-    rw [hz, Complex.exp_eq_one_iff]
-    exact ⟨z, by push_cast; ring⟩
-  map_add_eq_mul' x y := by
-    have hS : InS p (fr p (x + y) + (-(fr p x) + -(fr p y))) :=
-      inS_add p (fr_inS p _) (inS_add p (inS_neg p (fr_inS p x)) (inS_neg p (fr_inS p y)))
-    have hn : ‖((fr p (x + y) + (-(fr p x) + -(fr p y)) : ℚ) : ℚ_[p])‖ ≤ 1 := by
-      have e : ((fr p (x + y) + (-(fr p x) + -(fr p y)) : ℚ) : ℚ_[p])
-          = (-(x + y - (fr p (x + y) : ℚ_[p])) + (x - (fr p x : ℚ_[p]))) + (y - (fr p y : ℚ_[p])) := by
-        push_cast; ring
-      rw [e]
-      refine (Padic.nonarchimedean _ _).trans (max_le ?_ (fr_norm p y))
-      refine (Padic.nonarchimedean _ _).trans (max_le ?_ (fr_norm p x))
-      rw [norm_neg]; exact fr_norm p _
-    obtain ⟨z, hz⟩ := inS_int p hS hn
-    have e : ((fr p (x + y) : ℚ) : ℂ) = (((fr p x : ℚ) : ℂ) + ((fr p y : ℚ) : ℂ)) + (z : ℂ) := by
-      have : fr p (x + y) = fr p x + fr p y + z := by linarith
-      rw [this]; push_cast; ring
-    rw [e, exp_int, mul_add, Complex.exp_add]
-
-theorem stdChar_apply (x : ℚ_[p]) :
-    stdChar p x = Complex.exp (2 * Real.pi * Complex.I * ((fr p x : ℚ) : ℂ)) := rfl
-
-theorem stdChar_eq_one_iff (x : ℚ_[p]) : stdChar p x = 1 ↔ ‖x‖ ≤ 1 := by
-  rw [stdChar_apply, Complex.exp_eq_one_iff]
-  constructor
-  · rintro ⟨n, hn⟩
-    have hq : fr p x = n := by
-      have h2 : (2 * Real.pi * Complex.I : ℂ) ≠ 0 := by simp [Real.pi_ne_zero]
-      have h3 : ((fr p x : ℚ) : ℂ) = ((n : ℤ) : ℂ) := by
-        apply mul_left_cancel₀ h2
-        rw [hn]
-        ring
-      exact_mod_cast h3
-    calc ‖x‖ = ‖(x - ((fr p x : ℚ) : ℚ_[p])) + ((n : ℤ) : ℚ_[p])‖ := by
-          rw [hq, Rat.cast_intCast, sub_add_cancel]
-      _ ≤ max ‖x - ((fr p x : ℚ) : ℚ_[p])‖ ‖((n : ℤ) : ℚ_[p])‖ := Padic.nonarchimedean _ _
-      _ ≤ 1 := max_le (fr_norm p x) (Padic.norm_int_le_one n)
-  · intro hx
-    have hn : ‖((fr p x : ℚ) : ℚ_[p])‖ ≤ 1 := by
-      calc ‖((fr p x : ℚ) : ℚ_[p])‖ = ‖x - (x - ((fr p x : ℚ) : ℚ_[p]))‖ := by
-            rw [sub_sub_cancel]
-        _ ≤ max ‖x‖ ‖x - ((fr p x : ℚ) : ℚ_[p])‖ := by
-            rw [sub_eq_add_neg]
-            exact (Padic.nonarchimedean _ _).trans_eq (by rw [norm_neg])
-        _ ≤ 1 := max_le hx (fr_norm p x)
-    obtain ⟨z, hz⟩ := inS_int p (fr_inS p x) hn
-    exact ⟨z, by rw [hz]; push_cast; ring⟩
-
-theorem mem_subring_iff (x : ℚ_[p]) : x ∈ PadicInt.subring p ↔ ‖x‖ ≤ 1 := Iff.rfl
-
-theorem datum : LocalDatum ℚ_[p] (PadicInt.subring p) (stdChar p) where
-  t2 := inferInstance
-  isOpen := by
-    have : ((PadicInt.subring p : Subring ℚ_[p]) : Set ℚ_[p]) = Metric.closedBall 0 1 := by
-      ext x; simp
-    rw [this]
-    exact IsUltrametricDist.isOpen_closedBall 0 one_ne_zero
-  isCompact := by
-    have : ((PadicInt.subring p : Subring ℚ_[p]) : Set ℚ_[p]) = Metric.closedBall 0 1 := by
-      ext x; simp
-    rw [this]
-    exact isCompact_closedBall 0 1
-  unif := by
-    have hp0' : (p : ℚ_[p]) ≠ 0 := by exact_mod_cast hp.out.ne_zero
-    have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.out.one_lt
-    refine ⟨Units.mk0 (p : ℚ_[p]) hp0', ?_, fun x => ?_⟩
-    · rw [mem_subring_iff]; simpa using Padic.norm_int_le_one (p := p) (p : ℤ)
-    · obtain ⟨k, hk⟩ := pow_unbounded_of_one_lt ‖x‖ hp1
-      refine ⟨k, ?_⟩
-      rw [mem_subring_iff, Units.val_mk0, norm_mul, norm_pow, Padic.norm_p, inv_pow,
-        inv_mul_le_iff₀ (by positivity)]
-      simpa using hk.le
-  artin := inferInstance
-  red := inferInstance
-  unitRep := by
-    intro x
-    by_cases hx : x = 0
-    · exact ⟨1, (PadicInt.subring p).one_mem, by simp [hx]⟩
-    · exact ⟨0, (PadicInt.subring p).zero_mem, by simpa using hx⟩
-  unitary := by
-    intro x
-    rw [AddChar.map_neg_eq_inv, stdChar_apply, ← Complex.exp_conj, ← Complex.exp_neg]
-    congr 1
-    simp [Complex.conj_ofReal, Complex.conj_ofNat]
-  selfDual := by
-    intro a
-    constructor
-    · intro h
-      have := h 1 (PadicInt.subring p).one_mem
-      rw [mul_one, stdChar_eq_one_iff] at this
-      exact this
-    · intro ha r hr
-      rw [stdChar_eq_one_iff]
-      exact (PadicInt.subring p).mul_mem ha hr
-
 end Padic
 end Formalism.FourierDecayAlt.P.A5x7
-
-theorem Formalism.FourierDecayAlt.P.padic_local_datum_facts : Formalism.FourierDecayAlt.A5.DatumPadic := by
-  intro p hp
-  refine ⟨⟨Formalism.FourierDecayAlt.P.A5x7.stdChar p, Formalism.FourierDecayAlt.P.A5x7.datum p⟩, fun n hn => ?_⟩
-  rw [isUnit_iff_ne_zero]
-  exact_mod_cast hn

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.FirstLemmaE
 
@@ -21,7 +25,7 @@ theorem goal1 :
     rw [Finset.prod_insert ha, Finset.prod_insert ha]
     have hG : ‖∏ i ∈ t, g i‖ ≤ 1 := by
       rw [norm_prod]
-      exact Finset.prod_le_one (fun i _ => norm_nonneg _) (fun i _ => hg i)
+      exact Finset.prod_le_one₀ (fun i _ => norm_nonneg _) (fun i _ => hg i)
     have key : f a * ∏ i ∈ t, f i - g a * ∏ i ∈ t, g i
         = f a * (∏ i ∈ t, f i - ∏ i ∈ t, g i) + (f a - g a) * ∏ i ∈ t, g i := by ring
     rw [key]

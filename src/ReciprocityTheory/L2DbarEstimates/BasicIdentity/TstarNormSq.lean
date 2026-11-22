@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HasCompactSupportDTw
+module
+
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HasCompactSupportDTw
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.E
 
@@ -60,7 +64,8 @@ theorem tStarIbp (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
       rw [← Complex.ofReal_mul, ← Real.exp_add, add_neg_cancel, Real.exp_zero, Complex.ofReal_one]
     unfold tstar
     rw [← Finset.mul_sum]
-    simp only [map_neg, map_mul, map_sum, Complex.conj_ofReal]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_neg, map_mul, map_sum, Complex.conj_ofReal]
     generalize (∑ j : Fin n, conj (d n z j (fun y => (Real.exp (-ph₂ y) : ℂ) * f y j) x)) = S
     linear_combination (-(g x * S)) * he
   rw [lhs, rhs]

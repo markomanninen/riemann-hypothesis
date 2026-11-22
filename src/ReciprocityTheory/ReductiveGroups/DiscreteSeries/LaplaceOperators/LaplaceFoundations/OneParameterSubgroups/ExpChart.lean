@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Finset
 
@@ -58,7 +62,7 @@ theorem det_of_shear (G : ℕ → Submodule ℝ E) (L : ℕ) (hG0 : G 0 = ⊤) (
       pow_ne_zero _ (by norm_num)
     exact mul_left_cancel₀ hne (hev.symm.trans (mul_one _).symm)
   have hD' : LinearMap.toMatrix b b (D : E →ₗ[ℝ] E) = 1 + LinearMap.toMatrix b b N := by
-    rw [← LinearMap.toMatrix_id b, ← map_add]
+    rw [← LinearMap.toMatrix_id b, ← map_add (f := _)]
     congr 1
     ext x
     simp [N]
@@ -439,7 +443,8 @@ theorem st_exp (hF : IsFil F L) (hst : IsAdj F st) {Y : A} (hY : Y ∈ F 0) :
     induction n with
     | zero => simp [hst.one]
     | succ n ih => rw [pow_succ, hst.mul, ih, pow_succ']
-  rw [hF.exp_eq hY, hF.exp_eq (hst.mem Y hY), map_add, map_add, map_sum, hst.one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hF.exp_eq hY, hF.exp_eq (hst.mem Y hY), map_add (f := _), map_add (f := _), map_sum, hst.one]
   simp only [map_smul, hpow]
 
 theorem exp_mem_grpN (hF : IsFil F L) (hst : IsAdj F st) {Y : A} (hY : Y ∈ lieN F st) :
@@ -628,7 +633,7 @@ theorem exp_chart_embedding (hF : IsFil F L) :
       funext Y
       exact hF.exp_eq (hY0 Y)
     rw [e]
-    exact continuous_const.add (continuous_subtype_val.add (continuous_finset_sum _ fun k _ =>
+    exact continuous_const.add (continuous_subtype_val.add (continuous_finsetSum _ fun k _ =>
       (continuous_subtype_val.pow _).const_smul _))
   haveI : ProperSpace (lieN F st) := FiniteDimensional.proper_real _
   exact hcont.measurableEmbedding fun Y Y' h => Subtype.ext (exp_injOn hF (hY0 Y) (hY0 Y') h)
@@ -657,7 +662,7 @@ theorem exp_chart_haar (hF : IsFil F L) (hst : IsAdj F st) (μ : Measure (lieN F
     obtain ⟨Φ, hΦm, hΦ⟩ := exp_chart_invariant hF hst μ hs
     show Measure.map (s * ·) (Measure.map (fun Y : lieN F st => NormedSpace.exp (Y : A)) μ) =
       Measure.map (fun Y : lieN F st => NormedSpace.exp (Y : A)) μ
-    rw [Measure.map_map (continuous_mul_left s).measurable hemb.measurable]
+    rw [Measure.map_map (continuous_const_mul s).measurable hemb.measurable]
     have hcomp : (s * ·) ∘ (fun Y : lieN F st => NormedSpace.exp (Y : A)) =
         (fun Y : lieN F st => NormedSpace.exp (Y : A)) ∘ Φ := by
       funext Y

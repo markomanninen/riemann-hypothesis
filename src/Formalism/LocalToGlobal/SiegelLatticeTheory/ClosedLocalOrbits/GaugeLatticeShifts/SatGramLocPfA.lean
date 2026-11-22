@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem ram_inertia_split (p : ℕ) (hp : p.Prime)
   have hle : ∀ q : (Ideal.span {(p : ℤ)}).primesOver (𝓞 K),
       1 ≤ q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
     rintro ⟨q, hq, hql⟩
-    exact Nat.mul_pos (Ideal.ramificationIdx_pos q ℤ) (Ideal.inertiaDeg_pos q ℤ)
+    exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := ℤ) q) (Ideal.inertiaDeg_pos q ℤ)
   have hall := (Finset.sum_eq_sum_iff_of_le (fun q _ => hle q)).1 hsum.symm
     ⟨v.asIdeal, v.isPrime, liesOver_natCast p hp v hv⟩ (Finset.mem_univ _)
   exact ⟨Nat.dvd_one.1 ⟨_, hall⟩, Nat.dvd_one.1 ⟨_, hall.trans (mul_comm _ _)⟩⟩

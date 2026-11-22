@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -16,7 +20,7 @@ theorem exists_ringEquiv_prod_of_isIdempotentElem {S : Type*} [CommRing S] {e : 
     rw [Ideal.isCoprime_span_singleton_iff]
     exact ⟨1, 1, by ring⟩
   have hb : (⊥ : Ideal S) = Ideal.span {1 - e} ⊓ Ideal.span {e} := by
-    rw [Ideal.inf_eq_mul_of_isCoprime hc, Ideal.span_singleton_mul_span_singleton, sub_mul,
+    rw [← Ideal.mul_eq_inf_of_isCoprime hc, Ideal.span_singleton_mul_span_singleton, sub_mul,
       one_mul, he.eq, sub_self, Ideal.span_singleton_zero]
   refine ⟨(RingEquiv.quotientBot S).symm.trans ((Ideal.quotEquivOfEq hb).trans
     (Ideal.quotientInfEquivQuotientProd _ _ hc)), fun x => ?_⟩
@@ -29,7 +33,8 @@ theorem exists_local_factor {B S D : Type*} [CommRing B] [HenselianLocalRing B] 
       ∃ ψ : (S ⧸ Ideal.span {1 - e}) →+* D, IsLocalHom ψ ∧
         ∀ x, ψ (Ideal.Quotient.mk _ x) = φ x := by
   have hq : ((maximalIdeal D).comap φ).IsMaximal := by
-    apply Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := B)
+    apply Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap B S)
+      (fun x => Algebra.IsIntegral.isIntegral x)
     rw [Ideal.comap_comap, ← (maximalIdeal.isMaximal B).eq_of_le (Ideal.IsPrime.ne_top inferInstance) hφ]
     infer_instance
   obtain ⟨e, he, H⟩ := exists_idempotent_notMem_iff_of_henselian B ((maximalIdeal D).comap φ)
@@ -109,8 +114,7 @@ theorem bijective_of_complete_quotient {T C A R : Type*} [CommRing T] [IsLocalRi
   have h₂ : ∀ x, χ (ψ (π x)) = π x := by
     intro x
     induction x with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul a c =>
       have e1 : a ⊗ₜ[T] c = (a ⊗ₜ[T] (1 : C)) * (1 ⊗ₜ[T] c) := by simp
       have e2 : π (a ⊗ₜ[T] (1 : C)) = χ (ψ (π (a ⊗ₜ[T] (1 : C)))) := congr($hL a)

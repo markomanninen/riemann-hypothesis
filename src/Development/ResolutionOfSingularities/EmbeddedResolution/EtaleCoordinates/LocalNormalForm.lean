@@ -1,8 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.IdealGeneratorsFromBase
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.SpanSingletonProduct
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.IdealGeneratorsFromBase
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.SpanSingletonProduct
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace FunctorialResolution.EmbeddedResolution
@@ -170,7 +175,7 @@ private theorem mem_maximalIdeal_mul_of_tmul_D_eq_zero (k : Type*) [CommRing k] 
         = (Ideal.Quotient.mk Jm a - σ (Ideal.Quotient.mk J a))
           + (Ideal.Quotient.mk Jm b - σ (Ideal.Quotient.mk J b)) := by
     intro a b
-    simp only [map_add]
+    simp only [map_add (f := _)]
     ring
   have hsmulk : ∀ (c : k) (a : A),
       Ideal.Quotient.mk Jm (c • a) - σ (Ideal.Quotient.mk J (c • a))
@@ -228,7 +233,8 @@ private theorem mem_maximalIdeal_mul_of_tmul_D_eq_zero (k : Type*) [CommRing k] 
     exact Ideal.Quotient.eq_zero_iff_mem.mp h1
   have hsum : Dder.liftKaehlerDifferential (KaehlerDifferential.D k A z) = 0 := by
     conv_lhs => rw [← bb.sum_repr (KaehlerDifferential.D k A z)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     obtain ⟨u, huJ, hu⟩ := hLb i
     rw [map_smul, hu, hsmulmk, Ideal.Quotient.eq_zero_iff_mem]
@@ -273,7 +279,8 @@ private theorem ideal_eq_span_of_tmul_D_mem_span (k : Type*) [CommRing k] (A : T
           KaehlerDifferential.D k A (∑ i, c' i * x i)
           = ∑ i, c i • ((1 : IsLocalRing.ResidueField A) ⊗ₜ[A]
             KaehlerDifferential.D k A (x i)) := by
-        rw [map_sum, TensorProduct.tmul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, TensorProduct.tmul_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [mul_comm (c' i) (x i),
           KaehlerDifferential.residue_tmul_D_mul_of_mem_maximalIdeal, hc' i]
@@ -461,7 +468,8 @@ theorem exists_away_ideal_eq_span_and_isUnit_det
     intro y hy
     rw [← hspanI] at hy
     obtain ⟨f, -, hf⟩ := Submodule.mem_span_finset.mp hy
-    rw [← hf, map_sum, TensorProduct.tmul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hf, map_sum, TensorProduct.tmul_sum]
     refine Submodule.sum_mem _ fun a ha => ?_
     have ham : a ∈ IsLocalRing.maximalIdeal A := by
       refine hJAm ?_

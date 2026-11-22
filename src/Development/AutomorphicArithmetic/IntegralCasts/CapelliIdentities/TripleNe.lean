@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk1.triple_ne :
     ∀ {R ι : Type} [inst : CommRing R] [inst_1 : Fintype ι]

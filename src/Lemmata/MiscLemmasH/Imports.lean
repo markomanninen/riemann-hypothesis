@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial
 
@@ -20,7 +24,7 @@ theorem goal1 [IsAdicComplete I A] (ε : A) (h : ε * ε - ε ∈ I) : ∃ e : A
     rw [hd]
     have hsq : (2 * ε - 1) * (2 * ε - 1) = 1 + 4 * (ε * ε - ε) := by ring
     have hq : Ideal.Quotient.mk I ((2 * ε - 1) * (2 * ε - 1)) = 1 := by
-      rw [hsq, map_add, map_one, Ideal.Quotient.eq_zero_iff_mem.mpr (I.mul_mem_left 4 h), add_zero]
+      rw [hsq, map_add (f := _), map_one, Ideal.Quotient.eq_zero_iff_mem.mpr (I.mul_mem_left 4 h), add_zero]
     rw [map_mul] at hq
     exact ⟨⟨_, _, hq, hq⟩, rfl⟩
   obtain ⟨a, ha, hae⟩ := HenselianRing.is_henselian (I := I) _ hm ε h0 hu

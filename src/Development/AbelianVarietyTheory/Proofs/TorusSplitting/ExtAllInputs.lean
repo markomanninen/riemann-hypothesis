@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GaussianTailBound
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SupLeL2PrincipalTorus
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.GaussTailOfCardLe
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EnormPowLeInvMeasureMulLintegralBall
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsOrthonormalOfLinearIndependent
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.NearestPlaneRounding
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.MulConjTransposeEqOneOfOrthonormal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GaussianTailBound
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SupLeL2PrincipalTorus
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.GaussTailOfCardLe
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EnormPowLeInvMeasureMulLintegralBall
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsOrthonormalOfLinearIndependent
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.NearestPlaneRounding
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.MulConjTransposeEqOneOfOrthonormal
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G.I2
 
@@ -47,7 +51,8 @@ private theorem ext_detPerturbation : _root_.ReciprocityTheory.ChartRestriction.
     simp [hcoef, hpick]
   have hexp : f (fun j => w (σ₀ j) + ∑ k, ε j k • w k)
       = ∑ r : Fin i → Option κ, (∏ j, coef j (r j)) • f (fun j => w (pick j (r j))) := by
-    rw [hcol, MultilinearMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hcol, MultilinearMap.map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
     exact f.map_smul_univ (fun j => coef j (r j)) (fun j => w (pick j (r j)))
   set r0 : Fin i → Option κ := fun _ => none with hr0
@@ -101,21 +106,23 @@ private theorem ext_detPerturbNumeric : _root_.ReciprocityTheory.ChartRestrictio
   linarith
 
 private theorem two_pow_add_pow_sub_two_pow_mul_le (c : ℕ) (ε : ℝ) (h0 : 0 ≤ ε) (h1 : ε ≤ 1) :
-    ∀ i : ℕ, ((2 : ℝ) ^ c + ε) ^ i - 2 ^ (c * i) ≤ i * ε * (2 ^ c + 1) ^ i
-  | 0 => by simp
-  | i + 1 => by
-    have ih := two_pow_add_pow_sub_two_pow_mul_le c ε h0 h1 i
+    ∀ i : ℕ, ((2 : ℝ) ^ c + ε) ^ i - 2 ^ (c * i) ≤ i * ε * (2 ^ c + 1) ^ i := by
+  intro i
+  induction i with
+  | zero => simp
+  | succ i ih =>
     have hb : (0 : ℝ) ≤ 2 ^ c := by positivity
     have hB1 : (1 : ℝ) ≤ 2 ^ c + 1 := by linarith
     have hbB : (2 : ℝ) ^ (c * i) ≤ (2 ^ c + 1) ^ (i + 1) := by
       rw [pow_mul]
-      calc ((2 : ℝ) ^ c) ^ i ≤ (2 ^ c + 1) ^ i := pow_le_pow_left₀ hb (by linarith) i
-        _ ≤ (2 ^ c + 1) ^ (i + 1) := pow_le_pow_right₀ hB1 (Nat.le_succ i)
+      have hbase : ((2 : ℝ) ^ c) ^ i ≤ (2 ^ c + 1) ^ i :=
+        pow_le_pow_left₀ hb (by linarith) i
+      exact hbase.trans (pow_le_pow_right₀ hB1 (Nat.le_succ i))
     have ha : 0 ≤ (2 : ℝ) ^ c + ε := by linarith
     have hpos : 0 ≤ (i : ℝ) * ε * (2 ^ c + 1) ^ i := by positivity
     have e : ((2 : ℝ) ^ c + ε) ^ (i + 1) - 2 ^ (c * (i + 1))
         = (2 ^ c + ε) * ((2 ^ c + ε) ^ i - 2 ^ (c * i)) + ε * 2 ^ (c * i) := by
-      rw [mul_add_one, pow_add, pow_succ]
+      rw [mul_add_one, pow_add (2 : ℝ) (c * i) c, pow_succ ((2 : ℝ) ^ c + ε) i]
       ring
     rw [e]
     have k1 := mul_le_mul_of_nonneg_left ih ha
@@ -123,10 +130,10 @@ private theorem two_pow_add_pow_sub_two_pow_mul_le (c : ℕ) (ε : ℝ) (h0 : 0 
     have k3 := mul_le_mul_of_nonneg_left hbB h0
     have k4 : ((i + 1 : ℕ) : ℝ) * ε * (2 ^ c + 1) ^ (i + 1)
         = (2 ^ c + 1) * (i * ε * (2 ^ c + 1) ^ i) + ε * (2 ^ c + 1) ^ (i + 1) := by
-      push_cast
+      rw [Nat.cast_succ, pow_succ ((2 : ℝ) ^ c + 1) i]
       ring
     rw [k4]
-    linarith
+    exact add_le_add (k1.trans k2) k3
 
 private theorem ext_detProductRest : _root_.ReciprocityTheory.ChartRestriction.G.I2.Ext.DetProductRest := by
   unfold _root_.ReciprocityTheory.ChartRestriction.G.I2.Ext.DetProductRest

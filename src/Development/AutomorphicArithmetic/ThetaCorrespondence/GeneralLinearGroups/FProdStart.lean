@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsIrreducibleOfClsGLEqSingle
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FZfirst
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FFirstProd
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FRedUnique
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsIrreducibleOfClsGLEqSingle
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FZfirst
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FFirstProd
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FRedUnique
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -27,8 +31,8 @@ private theorem eq_single_of_monomial {ι σ : Type*} (Ψ : (ι →₀ ℤ) ≃+
     · rw [smul_zero]
       by_contra hx0
       exact hx (hU w x hw' hx0).symm
-  have h2 : C w * MvPolynomial.coeff m (Ψ (Finsupp.single w 1)) = 1 := by
-    have h3 := congrArg (fun p => MvPolynomial.coeff m (Ψ p)) h1
+  have h2 : C w * AddMonoidAlgebra.coeff (Ψ (Finsupp.single w 1)) m = 1 := by
+    have h3 := congrArg (fun p => AddMonoidAlgebra.coeff (Ψ p) m) h1
     simp only [map_zsmul, ep, MvPolynomial.coeff_monomial, if_true, MvPolynomial.coeff_smul, smul_eq_mul] at h3
     exact h3.symm
   have h4 : C w = 1 := by
@@ -42,7 +46,7 @@ private theorem eq_single_of_monomial {ι σ : Type*} (Ψ : (ι →₀ ℤ) ≃+
 open GlobalTheory.LocGL.SupportRing in
 private theorem occ_of_cls {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     {V : Type} [AddCommGroup V] [Module ℂ V] {N : ℕ} {B : Representation ℂ (GL (Fin N) k) V}
-    (hB : HasFiniteLength B) (w : IrrGL k) (hw : clsGL B hB w ≠ 0) :
+    (hB : HasFiniteLength B) (w : IrrGL (k := k)) (hw : clsGL B hB w ≠ 0) :
     N = w.1 ∧ ∀ e : N = w.1, IsSubquotient w.rep (e ▸ B : Representation ℂ (GL (Fin w.1) k) V) := by
   obtain ⟨n, c⟩ := w
   obtain rfl : n = N := by
@@ -53,7 +57,7 @@ private theorem occ_of_cls {k : Type} [Field k] [ValuativeRel k] [TopologicalSpa
     exact hne (congrArg Sigma.fst h').symm
   refine ⟨rfl, fun _ => ?_⟩
   exact isSubquotient_of_clsGL_ne hB c.rep.smooth c.rep.irr (by
-    have e : IrrGL.of c.rep.ρ c.rep.smooth c.rep.irr = (⟨n, c⟩ : IrrGL k) := IrrGL.of_rep ⟨n, c⟩
+    have e : IrrGL.of c.rep.ρ c.rep.smooth c.rep.irr = (⟨n, c⟩ : IrrGL (k := k)) := IrrGL.of_rep ⟨n, c⟩
     rw [e]
     exact hw)
 
@@ -66,7 +70,7 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 private theorem bas_of_isZSeg {Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)}
     {Ψ : GrothGL k ≃+ MvPolynomial (Segment k) ℤ} (hS : IsSegmentClass k Z)
     (hX : ∀ Δ, Ψ (Finsupp.single ⟨Δ.len * Δ.d, Z Δ⟩ 1) = MvPolynomial.X Δ)
-    (D : Segment k) (y : IrrGL k) (hy : IsZSeg D y.rep) : bas Ψ y = MvPolynomial.X D := by
+    (D : Segment k) (y : IrrGL (k := k)) (hy : IsZSeg D y.rep) : bas Ψ y = MvPolynomial.X D := by
   obtain ⟨n, c⟩ := y
   obtain rfl : D.len * D.d = n := hy.deg_eq
   have e : c = Z D := c.cl_rep.symm.trans (IsZSeg.cl_eq hS (π := c.rep) hy)
@@ -80,8 +84,8 @@ private theorem prod_X_monomial {σ : Type*} {h : ℕ} (Δ : Fin h → σ) (f : 
     exact ⟨a + b, by rw [MvPolynomial.monomial_mul, one_mul]⟩
   · exact ⟨_, hf i⟩
 
-private theorem occ_prodIrr {h N : ℕ} (z : Fin h → IrrGL k) (hd : ∑ i, (z i).1 = N)
-    (hp : HasFiniteLength (prodIrr z hd)) (w : IrrGL k) (hw : clsGL (prodIrr z hd) hp w ≠ 0) :
+private theorem occ_prodIrr {h N : ℕ} (z : Fin h → IrrGL (k := k)) (hd : ∑ i, (z i).1 = N)
+    (hp : HasFiniteLength (prodIrr z hd)) (w : IrrGL (k := k)) (hw : clsGL (prodIrr z hd) hp w ≠ 0) :
     ∃ hc : ∑ i, (z i).1 = w.1, IsSubquotient w.rep (prodIrr z hc) := by
   obtain ⟨e, h1⟩ := occ_of_cls hp w hw
   subst e
@@ -91,7 +95,7 @@ end
 
 open GlobalTheory.LocGL.SupportRing in
 theorem UpperTheory.Lit.Full.prodStart :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ρ : IrrGL k) (h N : ℕ) (Δ : Fin h → Segment k) (z : Fin h → IrrGL k) (hd : ∑ i, (z i).1 = N), ρ.IsCusp → (∀ i, (Δ i).first = ρ) → (∀ i, IsZSeg (Δ i) (z i).rep) → (prodIrr z hd).IsIrreducible := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ρ : IrrGL (k := k)) (h N : ℕ) (Δ : Fin h → Segment k) (z : Fin h → IrrGL (k := k)) (hd : ∑ i, (z i).1 = N), ρ.IsCusp → (∀ i, (Δ i).first = ρ) → (∀ i, IsZSeg (Δ i) (z i).rep) → (prodIrr z hd).IsIrreducible := by
   intro hG hBZ hZ k _ _ _ _ ρ h N Δ z hd hρ hf hz
   obtain ⟨Z, Ψ, hS, hΨ, hX⟩ := hZ k
   obtain ⟨hp, ep⟩ := prodIrr_cls hΨ z hd
@@ -99,7 +103,7 @@ theorem UpperTheory.Lit.Full.prodStart :
   have hF : ∀ i, FirstIn (z i) {ρ} := fun i => by
     rw [← hf i]
     exact (UpperTheory.Lit.Full.zfirst hG hBZ hZ k (Δ i)).2 (z i) (hz i)
-  have key : ∀ w : IrrGL k, clsGL (prodIrr z hd) hp w ≠ 0 →
+  have key : ∀ w : IrrGL (k := k), clsGL (prodIrr z hd) hp w ≠ 0 →
       HasSupport w.rep (∑ i, (Δ i).ms) ∧ FirstIn w {ρ} := by
     intro w hw
     obtain ⟨hc, h1⟩ := occ_prodIrr z hd hp w hw

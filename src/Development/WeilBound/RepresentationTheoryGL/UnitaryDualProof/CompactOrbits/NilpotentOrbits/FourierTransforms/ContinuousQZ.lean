@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseP
-import GroundTheory.AutomorphicForms.WhittakerDistribution
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseP
+public import GroundTheory.AutomorphicForms.WhittakerDistribution
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,6 +64,7 @@ private theorem exists_term_d_sub_termMap_mem {X : Type} [TopologicalSpace X] {A
 theorem locQ_pf : LocQ (k := k) := by
   intro n Z hCR hfib ξ hsupp hinv f hf
   haveI : TotallyDisconnectedSpace k := totallyDisconnectedSpace_localField
+  haveI : TotallyDisconnectedSpace (Matrix (Fin n) (Fin n) k) := Pi.totallyDisconnectedSpace
   let W : Submodule ℂ (Sp k n → ℂ) :=
     { carrier := {w | ∀ V : Set (Fin (Module.finrank k Z) → k), IsClopen V →
         ξ (fun x => ((fun q : Sp k n => qZ Z q.1) ⁻¹' V).indicator 1 x * w x) = 0}
@@ -71,7 +76,7 @@ theorem locQ_pf : LocQ (k := k) := by
           funext x
           simp only [Pi.add_apply]
           ring
-        rw [e, map_add, ha V hV, hb V hV, add_zero]
+        rw [e, map_add (f := _), ha V hV, hb V hV, add_zero]
       zero_mem' := by
         intro V hV
         simp only [Pi.zero_apply, mul_zero]

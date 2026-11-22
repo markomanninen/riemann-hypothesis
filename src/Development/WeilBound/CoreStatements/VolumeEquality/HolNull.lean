@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.RootBranches
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.RootBranches
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
+
+@[expose] public section
 
 noncomputable section
 

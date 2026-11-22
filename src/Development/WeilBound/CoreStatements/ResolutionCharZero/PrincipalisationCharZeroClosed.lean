@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationCharZeroOfBoundary
-import Development.WeilBound.CoreStatements.ResolutionCharZero.RqGbnd
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationCharZeroOfBoundary
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.RqGbnd
+
+@[expose] public section
 
 namespace PositivityTheory.ResPlug.WeightsCompactStabilizer
 

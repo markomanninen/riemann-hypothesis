@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ private theorem exists_in (hσ : IsK σ) {c : Un n → ℂ} (hc : Continuous c) 
       have := b.sum_repr' (G κ)
       simpa [G, Submodule.coe_inner] using this.symm
     rw [e]
-    exact continuous_finset_sum _ fun i _ => (hσ.cont v _).smul continuous_const
+    exact continuous_finsetSum _ fun i _ => (hσ.cont v _).smul continuous_const
   have hF : Integrable (fun κ => c κ • G κ) ν :=
     (hc.smul hG).integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)
   refine ⟨((∫ κ, c κ • G κ ∂ν : S) : V), Subtype.coe_prop _, fun w => ?_⟩
@@ -102,7 +106,7 @@ private theorem exists_op (hσ : IsK σ) {c : Un n → ℂ} (hc : Continuous c) 
   · refine ext_inner_left ℂ fun w => ?_
     rw [inner_add_right, hp, hp, hp, ← integral_add (intg ν hσ hc x w) (intg ν hσ hc y w)]
     refine integral_congr_ae (Filter.Eventually.of_forall fun κ => ?_)
-    simp only [map_add, inner_add_right, mul_add]
+    simp only [map_add (f := _), inner_add_right, mul_add]
   · refine ext_inner_left ℂ fun w => ?_
     rw [RingHom.id_apply, inner_smul_right, hp, hp, ← integral_const_mul]
     refine integral_congr_ae (Filter.Eventually.of_forall fun κ => ?_)
@@ -203,7 +207,7 @@ private theorem mem_iso [ν.IsMulLeftInvariant] (hσ : IsK σ) (E : KMod n) (T :
     refine ext_inner_left ℂ fun w => ?_
     rw [hP x w, inner_sum]
     simp_rw [fun i => hw i (innerSL ℂ (b i)) w]
-    rw [← integral_finset_sum]
+    rw [← integral_finsetSum]
     · refine integral_congr_ae (Filter.Eventually.of_forall fun κ => ?_)
       simp only []
       rw [tr_eq, Finset.sum_mul]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstOneMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstOneMem
+
+@[expose] public section
+
 open GlobalTheory.UseLoc.Cases
 
 theorem _root_.UpperTheory.KN.exists_cyclic_generator_lam_power_quotient :

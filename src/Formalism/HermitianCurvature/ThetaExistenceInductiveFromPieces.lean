@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+module
+
+public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+
+@[expose] public section
 
 noncomputable section
 
 open Matrix Formalism.DoubleCosetMeasures Formalism.FourierDecayAlt.A5 Filter Topology
-open scoped ComplexConjugate
+open scoped Classical ComplexConjugate
 
 namespace Formalism.FourierDecayAlt.A6
 
@@ -41,8 +45,8 @@ def LatInv (Λ : AddSubgroup K) (Om : Set K) (f : K → ℂ) : Prop :=
 def LatInvN (Λ : AddSubgroup K) {d : ℕ} (f : (Fin d → K) → ℂ) : Prop :=
   ∀ x l : Fin d → K, (∀ i, l i ∈ Λ) → f (x + l) = f x
 
-open Classical in
 
+open Classical in
 def intLat (R : Subring K) (Λ : AddSubgroup K) (Om : Set K) (f : K → ℂ) : ℂ :=
   (volL R Λ : ℂ) * ∑ᶠ y : K ⧸ Λ, if (Quotient.out y : K) ∈ Om then f (Quotient.out y) else 0
 
@@ -57,8 +61,8 @@ def IsShift (t t₁ : Kˣ) (σ : K) : Prop := ((t₁⁻¹ : Kˣ) : K) = ((t⁻¹
 def IsCr (R : Subring K) (cr : K ⧸ R.toAddSubgroup → Kˣ) : Prop :=
   ∀ x, ((cr x : K) : K ⧸ R.toAddSubgroup) = x
 
-open Classical in
 
+open Classical in
 def NsK (R : Subring K) (ψ : AddChar K ℂ) (s : ℕ) (h h' : Point K) (z : K) : ℂ :=
   if hz : IsUnit z then Ns R ψ s h h' hz.unit hz.unit else 0
 
@@ -69,8 +73,8 @@ def pt2 (h : Point K) (m : ℕ) (t c : Kˣ) : Point K := addBlock (addBlock h m 
 def cutSet (m : ℕ) (Om : Set K) (t : Kˣ) : Set K :=
   {c | ∃ z ∈ Om, z ^ (m + 1) = (-(t : K)) ^ m * c}
 
-open Classical in
 
+open Classical in
 def uGram (R : Subring K) (ψ : AddChar K ℂ) (m : ℕ) (cr : K ⧸ R.toAddSubgroup → Kˣ) (S : Set K)
     (h h' : Point K) (t t' : Kˣ) : ℂ :=
   ((modK R ((t : K) * (t' : K)) ^ (m * (m + 1) / 2) : ℝ) : ℂ) *
@@ -83,8 +87,8 @@ def thx (R : Subring K) (ψ : AddChar K ℂ) (m : ℕ) (cr : K ⧸ R.toAddSubgro
     ψ (-(z * b)) * conj (ψ (-(z * b'))) *
       uGram R ψ m cr Set.univ h h' (τ (ρ + b)) (τ (ρ + b'))
 
-open Classical in
 
+open Classical in
 def bbZ (R : Subring K) (ψ : AddChar K ℂ) (w : Point K) {n' : ℕ}
     (Z' : Matrix (Fin n') (Fin n') K) : ℂ :=
   ∑ᶠ q : Cos R w, (if IsInt R (orbZ w (rep R q)) then
@@ -105,8 +109,8 @@ def PhiHyp (R : Subring K) (s : ℕ) (L₀ Λ₀ : AddSubgroup K) (Q : Set K)
 def hessM (m : ℕ) (a : Kˣ) : Matrix (Fin m) (Fin m) K :=
   ((a⁻¹ : Kˣ) : K) • (1 + Matrix.of fun _ _ => (1 : K))
 
-open Classical in
 
+open Classical in
 def gaussF (ψ : AddChar K ℂ) (L : AddSubgroup K) {m : ℕ} (M : Matrix (Fin m) (Fin m) K)
     (ξ : Fin m → K) : ℂ :=
   if ∀ i, ξ i ∈ L then ψ (Ring.inverse 2 * (ξ ⬝ᵥ (M *ᵥ ξ))) else 0
@@ -128,8 +132,8 @@ def germCoef (R : Subring K) (ψ : AddChar K ℂ) (m : ℕ) (γ : Kˣ → ℂ) (
     ((modK R ((m + 1 : ℕ) : K) ^ (-(1 : ℝ) / 2) * modK R (z : K) ^ ((m : ℝ) ^ 2 / 2) : ℝ) : ℂ) *
     ψ (((m + 1 : ℕ) : K) * (z : K) * ((t⁻¹ : Kˣ) : K))
 
-open Classical in
 
+open Classical in
 def germSum (R : Subring K) (ψ : AddChar K ℂ) (m : ℕ) (γ : Kˣ → ℂ) (t c : Kˣ) (f : Kˣ → ℂ) : ℂ :=
   ((modK R (t : K) ^ (-((m : ℝ) ^ 2) / 2) : ℝ) : ℂ) *
     ∑ᶠ z : Kˣ, if z ^ (m + 1) = (-t) ^ m * c then germCoef R ψ m γ t z * f z else 0
@@ -223,8 +227,8 @@ def PerpLat : Prop :=
     ∀ L : AddSubgroup K, IsLat L →
       IsLat (perp ψ L) ∧ perp ψ (perp ψ L) = L ∧ volL R L * volL R (perp ψ L) = 1
 
-open Classical in
 
+open Classical in
 def CharMean : Prop :=
   ∀ (K : Type) [CommRing K] (ψ : AddChar K ℂ) (L₁ L₂ : AddSubgroup K) (S : Finset K),
     L₁ ≤ L₂ → IsReps S L₂ L₁ → ∀ a ∈ perp ψ L₁,
@@ -279,31 +283,6 @@ def Exhaust : Prop :=
     ∃ Om : ℕ → Set K, (∀ j, IsOmega s (Om j)) ∧ (∀ j, Om j ⊆ Om (j + 1)) ∧
       ∀ z : Kˣ, ∃ j, (z : K) ∈ Om j
 
-def Param : Prop :=
-  ∀ (K : Type) [CommRing K] (m : ℕ) (t : Kˣ) (c : K) (u' : Matrix (Fin m) (Fin m) K)
-    (a : Matrix Unit (Fin m) K) (b : Matrix (Fin m) Unit K), IsUpUni u' →
-    ∀ w : Matrix (Fin m) (Fin m) K, (w = Matrix.of fun i j => if j = Fin.rev i then 1 else 0) →
-    fromBlocks 1 0 a 1 * fromBlocks ((t : K) • w) 0 0 (Matrix.of fun _ _ => c) *
-        fromBlocks u' b 0 1 =
-      fromBlocks (w * ((t : K) • u')) (w * ((t : K) • b)) (a * w * ((t : K) • u'))
-        ((Matrix.of fun _ _ => c) + a * w * ((t : K) • u') * ((t : K) • u')⁻¹ * ((t : K) • b)) ∧
-    ∀ i : Fin m, i.val = 0 → (a * w * ((t : K) • u')) () i = (t : K) * a () (Fin.rev i)
-
-def CritPoints : Prop :=
-  ∀ (K : Type) [CommRing K] (m : ℕ), 1 ≤ m → ∀ (D' : Kˣ) (x : Fin m → Kˣ),
-    (∀ k, x k * ∏ j, x j = D') ↔ ∃ z : Kˣ, (∀ k, x k = z) ∧ z ^ (m + 1) = D'
-
-def CritValue : Prop :=
-  ∀ (K : Type) [CommRing K] (m : ℕ) (z : Kˣ),
-    g0 ((z : K) ^ (m + 1)) (fun _ : Fin m => (z : K)) = ((m + 1 : ℕ) : K) * (z : K)
-
-def HessianJet : Prop :=
-  ∀ (m : ℕ) (d : Fin m →₀ ℕ),
-    d ∈ ((∏ k : Fin m, (1 + MvPolynomial.X k)) *
-      (1 - ∑ k : Fin m, MvPolynomial.X k + MvPolynomial.C (1 / 2 : ℚ) *
-        (∑ k : Fin m, MvPolynomial.X k ^ 2 + (∑ k : Fin m, MvPolynomial.X k) ^ 2)) -
-      1 : MvPolynomial (Fin m) ℚ).support → 3 ≤ d.sum fun _ e => e
-
 def HessDet : Prop :=
   ∀ (K : Type) [CommRing K] (m : ℕ) (a : Kˣ),
     (hessM m a).det = ((m + 1 : ℕ) : K) * ((a⁻¹ : Kˣ) : K) ^ m
@@ -338,8 +317,8 @@ def GaussAdmSmall : Prop :=
     ∃ V ∈ 𝓝 (0 : K), ∀ t z : Kˣ, (t : K) ∈ V → (z : K) ^ (m + 1) ∈ Q →
       GaussAdm ψ L (hessM m (z * t))
 
-open Classical in
 
+open Classical in
 def NonStationary : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
     (ψ : AddChar K ℂ), LocalDatum K R ψ → (∀ n : ℕ, n ≠ 0 → IsUnit (n : K)) →
@@ -367,8 +346,8 @@ def MorseLemma : Prop :=
           g0 ((z : K) ^ (m + 1)) (fun k => (z : K) + φ ξ k) =
             ((m + 1 : ℕ) : K) * (z : K) + Ring.inverse 2 * (ξ ⬝ᵥ (hessM m z *ᵥ ξ))
 
-open Classical in
 
+open Classical in
 def StationaryPhase : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
     (ψ : AddChar K ℂ), LocalDatum K R ψ → (∀ n : ℕ, n ≠ 0 → IsUnit (n : K)) →
@@ -449,8 +428,8 @@ def Germ : Prop :=
 
 def GermAssemble : Prop := HeadReduction → GermPhi → Germ
 
-open Classical in
 
+open Classical in
 def KpFromBB : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
     (ψ : AddChar K ℂ), LocalDatum K R ψ → ∀ w w' : Point K,
@@ -519,8 +498,8 @@ def LocConst : Prop :=
     ∃ Λ : AddSubgroup K, IsLat Λ ∧ ∀ z z' : Kˣ, (z : K) ∈ Om → (z' : K) - (z : K) ∈ Λ →
       ∀ w' : Point K, Kp R ψ (addBlock h s z') w' = Kp R ψ (addBlock h s z) w'
 
-open Classical in
 
+open Classical in
 def ChangeVar : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
     (ψ : AddChar K ℂ), LocalDatum K R ψ → (∀ n : ℕ, n ≠ 0 → IsUnit (n : K)) →
@@ -533,8 +512,8 @@ def ChangeVar : Prop :=
       (((modK R (t : K) ^ m)⁻¹ * modK R ((m + 1 : ℕ) : K) : ℝ) : ℂ) *
         intLat R Λ Om (fun z => ((modK R z ^ m : ℝ) : ℂ) * f z)
 
-open Classical in
 
+open Classical in
 def CrossVanish : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
     (ψ : AddChar K ℂ), LocalDatum K R ψ → (∀ n : ℕ, n ≠ 0 → IsUnit (n : K)) →
@@ -667,8 +646,8 @@ def ThxBasic : Prop :=
       (∀ z, ∀ r ∈ R, thx R ψ m cr A B τ (z + r) = thx R ψ m cr A B τ z) ∧
       ∀ z, IsPSD F (thx R ψ m cr A B τ z)
 
-open Classical in
 
+open Classical in
 def ThxSum : Prop :=
   ParsevalGroup → PerpDual → PerpLat → LatFinite → GramRealiseCut → CutPSD → KpGram → SingleBlockParseval →
   ModMul →
@@ -726,18 +705,5 @@ def ThOmAssemble : Prop :=
 def ThetaExistenceInductive : Prop :=
   ThOm → SupportModule → NsSupport → CSizeOne → Exhaust → LatFinite → PSDEntryBound → PSDClosed →
     BoundedSubseq → ThetaExistsStep
-
-def ThetaExistenceInductiveFromPieces : Prop :=
-  AvgBoundAssemble → GaussHessAssemble → StationaryAssemble → GermPhiAssemble → GermAssemble →
-    GermKernelAssemble → GermIdentityAssemble → ThOmAssemble → ThetaExistenceInductive →
-  MeanSplit → POrth → OrthNorm → ParsevalGroup → GramRealiseCut → PSDEntryBound → PSDClosed →
-  BoundedSubseq → LatFinite → IntLatRefine → IntKRefine → VolScale → PerpLat → CharMean → PerpDual →
-  LatChoice → ModLocConst → SmallUnits → SmallModules → RootsFinite → RootsSeparated → Exhaust →
-  HessDet → GaussModulus → GaussIndep → GaussAdmSmall →
-  NonStationary → MorseLemma → OscReduction → OscInvariant → HeadReduction → KpFromBB → KpHerm →
-  ShiftUnit → ShiftSmall → CutSame → RootCorr → SquareNear → PhaseDiff → LocConst → ChangeVar → CrossVanish →
-  CSizeAddBlock → UGramEq → UNormBound → CutPSD → UBlock → AvgDataExists → CutNormEval → ThxLower →
-  ThxBasic → ThxSum → SupportModule → CSizeOne →
-  ModMul → IntFinite → KpGram → KpBlockDiag → NsSupport → ThetaExistsStep
 
 end Formalism.FourierDecayAlt.A6

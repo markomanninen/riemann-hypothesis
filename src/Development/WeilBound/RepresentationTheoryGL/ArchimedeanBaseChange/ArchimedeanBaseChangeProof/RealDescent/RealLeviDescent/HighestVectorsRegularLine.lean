@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.IsCoreMod
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.IsCoreMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,14 +13,6 @@ namespace PositivityTheory.RgBcC.RealD
 
 open PositivityTheory.RgTw (Mat G th IsThetaOp)
 open PositivityTheory.RgBcC.Real
-
-def TrPass : Prop :=
-  ∀ (n : ℕ) (lam : Fin n → ℤ) (E : KMod n) (T : E.V →L[ℂ] E.V), IsLefK lam E T →
-    ∀ [MeasurableSpace (G n)] [BorelSpace (G n)] (μ : Measure (G n)) [μ.IsHaarMeasure] (U : Type) [NormedAddCommGroup U]
-      [InnerProductSpace ℂ U] [CompleteSpace U] (π : G n →* (U →L[ℂ] U)) (A : U →L[ℂ] U), IsUnitaryRep π →
-      IsTopIrreducible π → IsThetaOp n π A → A * A = 1 → HasInf π (infOf lam) →
-      ∀ k val (T' : ℝ), IsMult μ E k val T' →
-        HasTrace (repOp π μ (phiOf E T k) ∘L A) (val (infOf lam) * trInv π E A T)
 
 def Bridge : Prop :=
   ∀ (n : ℕ) (lam : Fin n → ℤ) (U : Type) [NormedAddCommGroup U] [InnerProductSpace ℂ U] [CompleteSpace U]
@@ -33,21 +29,6 @@ def Core : Prop :=
       (σ : Matrix.unitaryGroup (Fin n) ℂ →* (V →ₗ[ℂ] V)) (A : V →ₗ[ℂ] V), IsCoreMod (infOf lam) E1 E2 σ A →
       FiniteDimensional ℂ (invA σ E) → invA σ E ≠ ⊥ →
         ∃ s : ℂ, (s = 1 ∨ s = -1) ∧ trOn (invA σ E) (flipA E A T) = s * 2 ^ n
-
-def CountK : Prop :=
-  ∀ (n : ℕ) (lam : Fin n → ℤ), StrictAnti lam → ∀ (E : KMod n) (T : E.V →L[ℂ] E.V), IsLefK lam E T →
-    ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V] (E1 E2 : Fin n → Fin n → Module.End ℂ V)
-      (σ : Matrix.unitaryGroup (Fin n) ℂ →* (V →ₗ[ℂ] V)) (A : V →ₗ[ℂ] V), IsCoreMod (infOf lam) E1 E2 σ A →
-      FiniteDimensional ℂ (invA σ E) →
-        (∀ x ∈ hwSp E1 E2 (m0 lam), A x ∈ hwSp E1 E2 (m0 lam)) ∧ FiniteDimensional ℂ (hwSp E1 E2 (m0 lam)) ∧
-          (invA σ E ≠ ⊥ → hwSp E1 E2 (m0 lam) ≠ ⊥) ∧
-          trOn (invA σ E) (flipA E A T) = 2 ^ n * trOn (hwSp E1 E2 (m0 lam)) A
-
-def HighestVectorsRegularLine : Prop :=
-  ∀ (n : ℕ) (lam : Fin n → ℤ), StrictAnti lam → ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V]
-    (E1 E2 : Fin n → Fin n → Module.End ℂ V) (σ : Matrix.unitaryGroup (Fin n) ℂ →* (V →ₗ[ℂ] V)) (A : V →ₗ[ℂ] V),
-    IsCoreMod (infOf lam) E1 E2 σ A → ∀ v w : V, v ∈ hwSp E1 E2 (m0 lam) → w ∈ hwSp E1 E2 (m0 lam) → v ≠ 0 →
-      ∃ c : ℂ, w = c • v
 
 def SignOne : Prop :=
   ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (S : Submodule ℂ V) (A : V →ₗ[ℂ] V), A * A = 1 → (∀ x ∈ S, A x ∈ S) →

@@ -1,26 +1,30 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ValIrreducible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ToMatrixTwRight
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCompactIntMatrix
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegralRightCosetFunEqFinsum
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeAlgebraMapOfStarEqStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormLeIffValuationLe
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFixedBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SgnLatSpanBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanSelfDual
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowerBasisOfCharpolySeparable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DetTracePowAddMulUnitNeZeroStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HermBasisOrthonormal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OrthonormalIffUnitary
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryGroupPositiveCharacterTrivialAndUnimodulaStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeneralLinearHaarIsMulRightInvariantUnramified
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisBorderedMatrixNormalFormInvariants
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisTransferFactorKrylovDet
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualHermitianLatticeBasisExistsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocallyCompactOfComplete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ValIrreducible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ToMatrixTwRight
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCompactIntMatrix
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegralRightCosetFunEqFinsum
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeAlgebraMapOfStarEqStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormLeIffValuationLe
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFixedBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SgnLatSpanBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanSelfDual
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowerBasisOfCharpolySeparable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DetTracePowAddMulUnitNeZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HermBasisOrthonormal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OrthonormalIffUnitary
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryGroupPositiveCharacterTrivialAndUnimodulaStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeneralLinearHaarIsMulRightInvariantUnramified
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisBorderedMatrixNormalFormInvariants
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisTransferFactorKrylovDet
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualHermitianLatticeBasisExistsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocallyCompactOfComplete
+
+@[expose] public section
 
 open Matrix Module MeasureTheory
 
@@ -58,7 +62,8 @@ theorem repr_sigma {n : ℕ} (e : Basis (Fin n) K.E B.A) (he : ∀ i, B.σ (e i)
     e.repr (B.σ y) i = K.c (e.repr y i) := by
   have : B.σ y = ∑ j, K.c (e.repr y j) • e j := by
     conv_lhs => rw [← e.sum_repr y]
-    simp only [map_sum, sigma_smul, he]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, sigma_smul, he]
   rw [this]; simp [Finsupp.single_apply]
 
 theorem norm_eta (a : K.E) : ‖((K.eta a : ℚ) : ℂ)‖ = 1 := by
@@ -87,8 +92,8 @@ theorem exists_iota {φ : K.E ≃+* E} (hs : ∀ y, φ (K.c y) = star (φ y)) {a
   obtain ⟨x, hx⟩ := GlobalTheory.T.mem_range_algebraMap_of_star_eq F E (φ a) (by rw [← hs, h])
   exact ⟨x, by rw [iota_apply, hx, RingEquiv.symm_apply_apply]⟩
 
-open Classical in
 
+open Classical in
 def wG (u : B.A) (L : Submodule K.O B.A) : ℂ :=
   if (∀ y ∈ L, B.g * y ∈ L) ∧ u ∈ L ∧ ∀ z ∈ L, Algebra.trace K.E B.A z ∈ (algebraMap K.O K.E).range
   then ((B.sgnLat L : ℚ) : ℂ) else 0
@@ -122,7 +127,8 @@ theorem tw_fixed {n : ℕ} {φ : K.E ≃+* E} (hs : ∀ y, φ (K.c y) = star (φ
     (e : Basis (Fin n) K.E B.A) (he : ∀ i, B.σ (e i) = e i) (γ : GL (Fin n) F) (j : Fin n) :
     B.σ (tw e (Matrix.GeneralLinearGroup.map (iota F φ) γ) j) =
       tw e (Matrix.GeneralLinearGroup.map (iota F φ) γ) j := by
-  rw [tw_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [tw_apply, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [sigma_smul, he, ← map_inv, Matrix.GeneralLinearGroup.map_apply, c_iota hs]
 
@@ -206,8 +212,8 @@ theorem unit_iff {n : ℕ} {φ : K.E ≃+* E} (hs : ∀ y, φ (K.c y) = star (φ
   rw [h1, ← Matrix.map_mul, ← Matrix.map_one φ (map_zero φ) (map_one φ)]
   exact (Matrix.map_injective φ.injective).eq_iff.symm
 
-open Classical in
 
+open Classical in
 def wU (w : B.A) (L : Submodule K.O B.A) : ℂ :=
   if (∀ y ∈ L, B.g * y ∈ L) ∧ w ∈ L then 1 else 0
 
@@ -318,7 +324,8 @@ theorem repr_orth {n : ℕ} {x : B.A} (b : Basis (Fin n) K.E B.A)
   have h2 : ∀ j, (Algebra.trace K.E B.A ∘ₗ LinearMap.mulLeft K.E (x * B.σ (b i))) (b j) = if j = i then 1 else 0 :=
     fun j => by rw [← this, hb]
   rw [this]
-  conv_rhs => rw [← b.sum_repr y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← b.sum_repr y, map_sum]
   simp only [map_smul, h2]
   simp
 

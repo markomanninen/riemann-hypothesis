@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.FrMemLetters
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.FrMemLetters
+
+@[expose] public section
 
 noncomputable section
 

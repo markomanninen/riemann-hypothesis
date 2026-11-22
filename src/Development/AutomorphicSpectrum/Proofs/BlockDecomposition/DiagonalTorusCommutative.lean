@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.JPred
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.CosetMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem offDiag_of_mem {N : ℕ} {x : GL (Fin N) k} (hx : x ∈ Tor k N) {i j : 
       omega
     have hpq : p = q := Fin.ext (hp.trans hq.symm)
     rw [hpq]
-  exact leviEmb_apply_ne k _ s hab p q
+  simp [leviEmb, Matrix.blockDiagonal'_apply, hab]
 
 theorem diag_ne_zero {N : ℕ} (x : GL (Fin N) k)
     (h : ∀ i j : Fin N, i ≠ j → (x : Matrix (Fin N) (Fin N) k) i j = 0) (i : Fin N) :
@@ -73,11 +77,13 @@ theorem mem_of_offDiag {N : ℕ} (x : GL (Fin N) k)
       simp only [ones] at hp hq
       omega
     subst hpq
-    refine (leviEmb_apply_same (m := fun c => Fin (ones N c)) k _ _ a p p).trans ?_
-    rw [stdBlocks_ones_eq N a p]
-    simp [Matrix.GeneralLinearGroup.scalar]
+    have hs : ((stdBlocks (ones N) (sum_ones N)).symm a).fst = a := by
+      have hh := stdBlocks_ones_eq N ((stdBlocks (ones N) (sum_ones N)).symm a).fst
+        ((stdBlocks (ones N) (sum_ones N)).symm a).snd
+      simpa using hh.symm
+    simp [leviEmb, stdBlocks_ones_eq, Matrix.GeneralLinearGroup.scalar, hs]
   · rw [h _ _ (fun heq => hab (congrArg Sigma.fst ((stdBlocks (ones N) (sum_ones N)).injective heq)))]
-    exact leviEmb_apply_ne (m := fun c => Fin (ones N c)) k _ _ hab p q
+    simp [leviEmb, Matrix.blockDiagonal'_apply, hab]
 
 theorem eq_diagonal {N : ℕ} (M : Matrix (Fin N) (Fin N) k)
     (h : ∀ i j : Fin N, i ≠ j → M i j = 0) : M = Matrix.diagonal fun i => M i i := by

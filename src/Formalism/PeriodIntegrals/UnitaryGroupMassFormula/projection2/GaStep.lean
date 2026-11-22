@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.MemFlagUnipotent
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.MemFlagUnipotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,8 @@ theorem fix_of_basis (g : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k))
       simp [eN_apply, hx]
     · intro hx
       exact absurd (Finset.mem_univ x) hx
-  rw [hsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_smul]
   by_cases hl : l.1 < n
@@ -112,7 +117,7 @@ theorem gaStep : GaStep := by
   have hg : ∀ v, g v = g (XP v) + AP v := by
     intro v
     conv_lhs => rw [← lowProj_add_highProj (n := n) (c := c) v]
-    rw [map_add, hfix _ (XP_AP v)]
+    rw [map_add (f := _), hfix _ (XP_AP v)]
   have hγ : ∀ v, (g * κ⁻¹) v = g (XP v) + AP v - AP (g (XP v)) := by
     intro v
     show g (κ.symm v) = _

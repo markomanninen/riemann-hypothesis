@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConnectionLinearInSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConnectionLinearInSection
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,8 +19,8 @@ open GlobalTheory.PlaceInt
 
 namespace GlobalTheory.PlaceInt
 
-open GlobalTheory.NabLinear in
 
+open GlobalTheory.NabLinear in
 theorem nab_smul_secN {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
     (Xo : Moduli Dw l) (c : Coeff l) [StarRing (𝓞 E)] (nab : NabV Xo c) (hnab : IsNab Xo c nab)
     {S : Type} [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) (k : ℕ) (F F' : SecN Xo y.x k) (r : S)

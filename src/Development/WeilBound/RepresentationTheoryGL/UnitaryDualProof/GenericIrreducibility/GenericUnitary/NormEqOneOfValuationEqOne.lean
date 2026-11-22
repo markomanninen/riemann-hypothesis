@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace PositivityTheory.RgUd.Exp.Rpow
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 theorem exists_unit_uniformizer : ∃ ϖ : kˣ, valuation k (ϖ : k) = uniformizer k := by
   obtain ⟨x, hx⟩ := valuation_surjective (uniformizer k)
   have hx0 : x ≠ 0 := by
@@ -37,8 +41,8 @@ def normHom (χ : kˣ →* ℂˣ) : kˣ →* ℝ where
   map_one' := by simp
   map_mul' x y := by simp
 
-omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem mem_units_integer {u : kˣ} (hu : valuation k (u : k) = 1) :
     u ∈ (𝒪[k]).toSubmonoid.units := by
   refine ⟨?_, ?_⟩
@@ -70,7 +74,7 @@ theorem norm_eq_one_of_valuation_eq_one (χ : kˣ →* ℂˣ) (hχ : IsSmoothCha
 theorem norm_eq_nabs_rpow (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) :
     ∃ s : ℝ, ∀ z : kˣ, ‖(χ z : ℂ)‖ = nabs k z ^ s := by
-  obtain ⟨ϖ, hϖ⟩ := exists_unit_uniformizer k
+  obtain ⟨ϖ, hϖ⟩ := exists_unit_uniformizer (k := k)
   set a := ‖(χ ϖ : ℂ)‖
   set b := nabs k ϖ
   have ha : 0 < a := norm_pos_iff.2 (χ ϖ).ne_zero
@@ -89,7 +93,7 @@ theorem norm_eq_nabs_rpow (k : Type) [Field k] [ValuativeRel k] [TopologicalSpac
     simp only [ordHom, MonoidHom.coe_mk, OneHom.coe_mk, toAdd_mul, toAdd_zpow, toAdd_ofAdd, hord1] at e2
     rw [e2]
     simp [m]
-  have hu : valuation k (u : k) = 1 := ord_eq_zero_iff.1 hordu
+  have hu : valuation k (u : k) = 1 := (ord_eq_zero_iff).1 hordu
   have hz : z = u * ϖ ^ m := by
     simp only [u, mul_assoc, ← zpow_add, neg_add_cancel, zpow_zero, mul_one]
   have hnorm : ‖(χ z : ℂ)‖ = a ^ m := by

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitC
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -29,7 +33,8 @@ theorem so_norm_ge (w : E) (hw0 : w ≠ 0)
     have e : w * (b i * b j) = b i * (w * b j) := by ring
     rw [show ((B i * B j : 𝓞 E) : E) = b i * b j by rw [hb, hb]; push_cast; ring, e]
     conv_rhs => rw [← b.sum_repr (w * b j)]
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [mul_smul_comm, map_smul, smul_eq_mul, mul_comm]
   have hdet := congrArg Matrix.det hTA
@@ -62,7 +67,7 @@ theorem so_sum_sq_ge [IsCMField E] (w : E) (hw0 : w ≠ 0)
     field_simp
   have amgm := Real.geom_mean_le_arith_mean_weighted Finset.univ (fun _ => 1 / (Module.finrank ℚ E : ℝ))
     (fun σ : E →+* ℂ => ‖σ w‖ ^ 2) (fun _ _ => by positivity) hwt (fun _ _ => by positivity)
-  rw [Real.finset_prod_rpow Finset.univ (fun σ : E →+* ℂ => ‖σ w‖ ^ 2) (fun _ _ => by positivity),
+  rw [Real.finsetProd_rpow Finset.univ (fun σ : E →+* ℂ => ‖σ w‖ ^ 2) (fun _ _ => by positivity),
     Finset.prod_pow, so_prod_norm, ← Finset.mul_sum] at amgm
   have hX : 0 ≤ |(Algebra.norm ℚ w : ℝ)| := abs_nonneg _
   have hY : 0 ≤ |(discr E : ℝ)| := abs_nonneg _

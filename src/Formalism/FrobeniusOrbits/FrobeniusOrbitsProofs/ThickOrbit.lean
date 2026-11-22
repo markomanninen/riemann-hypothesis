@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.HostThickExists
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.HostThickExists
+
+@[expose] public section
 
 open Classical
 

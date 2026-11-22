@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.OpGenSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.OpGenSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem hasTemperateGrowth_evX (P : PX m n) : (fun u : EE => evX P u).HasTempera
   | mul_X p k hp =>
     have hk : (fun u : EE => if k.2.2 then star (u k.1 k.2.1) else u k.1 k.2.1).HasTemperateGrowth := by
       by_cases h : k.2.2
-      · simp only [h, if_true]
+      · simp only [h, ite_true]
         exact ((Complex.conjCLE.toContinuousLinearMap.restrictScalars ℝ).comp (coordL k.1 k.2.1)).hasTemperateGrowth
       · simp only [h]
         exact (coordL k.1 k.2.1).hasTemperateGrowth
@@ -94,7 +98,8 @@ theorem hasTemperateGrowth_evX (P : PX m n) : (fun u : EE => evX P u).HasTempera
 
 theorem gramX_herm (ε : Fin m → Bool) (u : EE) : (gramX ε u)ᴴ = gramX ε u := by
   ext i j
-  simp [Matrix.conjTranspose_apply, gramX, Qp, Qb, evX, map_sum, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.conjTranspose_apply, gramX, Qp, Qb, evX, map_sum, mul_comm]
 
 theorem trace_real (ε : Fin m → Bool) (b : Matrix (Fin n) (Fin n) ℂ) (hb : bᴴ = b) (u : EE) :
     (((b * gramX ε u).trace.re : ℝ) : ℂ) = (b * gramX ε u).trace := by
@@ -107,7 +112,8 @@ theorem hasTemperateGrowth_phase (ε : Fin m → Bool) (t : ℝ) (b : Matrix (Fi
   have hP : (fun u : EE => (b * gramX ε u).trace) =
       fun u => evX (∑ i, ∑ j, MvPolynomial.C (b i j) * Qp ε j i) u := by
     funext u
-    simp [evX, gramX, Matrix.trace, Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [evX, gramX, Matrix.trace, Matrix.mul_apply, map_sum]
   have hT : (fun u : EE => (b * gramX ε u).trace).HasTemperateGrowth := by
     rw [hP]
     exact hasTemperateGrowth_evX _
@@ -119,9 +125,7 @@ theorem hasTemperateGrowth_phase (ε : Fin m → Bool) (t : ℝ) (b : Matrix (Fi
   have h3 := hasTemperateGrowth_expI.comp hR
   convert h3 using 1
   funext u
-  simp only [Function.comp]
-  rw [Complex.ofReal_mul, trace_real ε b hb u]
-  ring_nf
+  simp only [Function.comp_apply, Complex.ofReal_mul, trace_real ε b hb u, mul_assoc]
 
 theorem isSch_phase (ε : Fin m → Bool) (t : ℝ) (b : Matrix (Fin n) (Fin n) ℂ) (hb : bᴴ = b) {f : EE → ℂ}
     (hf : IsSch f) : IsSch (fun u => Complex.exp (Complex.I * (t : ℂ) * (b * gramX ε u).trace) * f u) := by

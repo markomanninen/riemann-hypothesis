@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -6,156 +10,6 @@ open MeasureTheory Filter Topology
 open scoped ContDiff
 
 noncomputable section
-
-def rmStep (t : ℝ) : ℝ := 2 * Real.smoothTransition (t + 1 / 2) - 1
-
-lemma rmStep_contDiff : ContDiff ℝ ∞ rmStep := by
-  unfold rmStep
-  exact (contDiff_const.mul (Real.smoothTransition.contDiff.comp (contDiff_id.add contDiff_const))).sub
-    contDiff_const
-
-lemma rmStep_continuous : Continuous rmStep := rmStep_contDiff.continuous
-
-lemma rmStep_monotone : Monotone rmStep := by
-  intro a b h
-  have := Real.smoothTransition.monotone (show a + 1 / 2 ≤ b + 1 / 2 by linarith)
-  unfold rmStep
-  linarith
-
-lemma rmStep_of_le (t : ℝ) (h : 1 / 2 ≤ t) : rmStep t = 1 := by
-  unfold rmStep
-  rw [Real.smoothTransition.one_of_one_le (by linarith)]
-  norm_num
-
-lemma rmStep_of_ge (t : ℝ) (h : t ≤ -1 / 2) : rmStep t = -1 := by
-  unfold rmStep
-  rw [Real.smoothTransition.zero_of_nonpos (by linarith)]
-  norm_num
-
-lemma abs_rmStep_le (t : ℝ) : |rmStep t| ≤ 1 := by
-  have h0 := Real.smoothTransition.nonneg (t + 1 / 2)
-  have h1 := Real.smoothTransition.le_one (t + 1 / 2)
-  unfold rmStep
-  rw [abs_le]
-  constructor <;> linarith
-
-def rmPrim (t : ℝ) : ℝ := ∫ s in (0 : ℝ)..t, rmStep s
-
-lemma rmPrim_hasDerivAt (t : ℝ) : HasDerivAt rmPrim (rmStep t) t :=
-  (rmStep_continuous.integral_hasStrictDerivAt 0 t).hasDerivAt
-
-def rmRho0 (t : ℝ) : ℝ := (rmPrim t + rmPrim (-t)) / 2
-
-def rmRho (t : ℝ) : ℝ := rmRho0 t + (1 / 2 - rmRho0 (1 / 2))
-
-def rmRho' (t : ℝ) : ℝ := (rmStep t - rmStep (-t)) / 2
-
-lemma rmRho_hasDerivAt (t : ℝ) : HasDerivAt rmRho (rmRho' t) t := by
-  have h1 := rmPrim_hasDerivAt t
-  have h2 : HasDerivAt (fun s => rmPrim (-s)) (-rmStep (-t)) t := by
-    have := (rmPrim_hasDerivAt (-t)).comp t (hasDerivAt_neg t)
-    rw [mul_neg_one] at this
-    exact this
-  have h3 := ((h1.add h2).div_const 2).add_const (1 / 2 - rmRho0 (1 / 2))
-  have h4 : rmRho' t = (rmStep t + -rmStep (-t)) / 2 := by
-    unfold rmRho'
-    ring
-  rw [h4]
-  exact h3
-
-lemma rmRho_deriv : deriv rmRho = rmRho' := funext fun t => (rmRho_hasDerivAt t).deriv
-
-lemma rmRho'_contDiff : ContDiff ℝ ∞ rmRho' := by
-  unfold rmRho'
-  exact (rmStep_contDiff.sub (rmStep_contDiff.comp contDiff_neg)).div_const 2
-
-lemma rmRho_contDiff : ContDiff ℝ ∞ rmRho := by
-  rw [contDiff_infty_iff_deriv, rmRho_deriv]
-  exact ⟨fun t => (rmRho_hasDerivAt t).differentiableAt, rmRho'_contDiff⟩
-
-lemma abs_rmRho'_le (t : ℝ) : |rmRho' t| ≤ 1 := by
-  have h1 := abs_le.mp (abs_rmStep_le t)
-  have h2 := abs_le.mp (abs_rmStep_le (-t))
-  unfold rmRho'
-  rw [abs_le]
-  constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
-
-lemma rmRho'_monotone : Monotone rmRho' := by
-  intro a b h
-  have h1 := rmStep_monotone h
-  have h2 := rmStep_monotone (show -b ≤ -a by linarith)
-  unfold rmRho'
-  linarith
-
-lemma rmRho_even (t : ℝ) : rmRho (-t) = rmRho t := by
-  unfold rmRho rmRho0
-  rw [neg_neg]
-  ring
-
-lemma rmRho_of_le (t : ℝ) (h : 1 / 2 ≤ t) : rmRho t = t := by
-  have hg : ∀ x ∈ Set.Icc (1 / 2 : ℝ) t, rmRho x - x = rmRho (1 / 2) - 1 / 2 := by
-    refine constant_of_has_deriv_right_zero (f := fun x => rmRho x - x) ?_ ?_
-    · exact (rmRho_contDiff.continuous.sub continuous_id).continuousOn
-    · intro x hx
-      have hx1 : 1 / 2 ≤ x := hx.1
-      have hd := (rmRho_hasDerivAt x).sub (hasDerivAt_id x)
-      have h0 : rmRho' x - 1 = 0 := by
-        unfold rmRho'
-        rw [rmStep_of_le x hx1, rmStep_of_ge (-x) (by linarith)]
-        norm_num
-      rw [h0] at hd
-      exact hd.hasDerivWithinAt
-  have h12 : rmRho (1 / 2) = 1 / 2 := by
-    unfold rmRho
-    ring
-  have := hg t ⟨h, le_rfl⟩
-  linarith
-
-lemma rmRho_of_abs (t : ℝ) (h : 1 / 2 ≤ |t|) : rmRho t = |t| := by
-  rcases le_or_gt 0 t with h0 | h0
-  · rw [abs_of_nonneg h0] at h ⊢
-    exact rmRho_of_le t h
-  · rw [abs_of_neg h0] at h ⊢
-    rw [← rmRho_even]
-    exact rmRho_of_le (-t) h
-
-lemma rmRho_lip (a b : ℝ) : |rmRho a - rmRho b| ≤ |a - b| := by
-  have hL : LipschitzWith 1 rmRho := by
-    refine lipschitzWith_of_nnnorm_deriv_le (fun x => (rmRho_hasDerivAt x).differentiableAt) fun x => ?_
-    rw [rmRho_deriv, ← NNReal.coe_le_coe, coe_nnnorm, Real.norm_eq_abs, NNReal.coe_one]
-    exact abs_rmRho'_le x
-  have := hL.dist_le_mul a b
-  simpa [Real.dist_eq] using this
-
-lemma rmRho_bounds (t : ℝ) : |t| ≤ rmRho t ∧ rmRho t ≤ |t| + 1 := by
-  have h12 : rmRho (1 / 2) = 1 / 2 := by
-    unfold rmRho
-    ring
-  have hanti : Antitone (fun x => rmRho x - x) := by
-    have hd : ∀ x, HasDerivAt (fun x => rmRho x - x) (rmRho' x - 1) x :=
-      fun x => (rmRho_hasDerivAt x).sub (hasDerivAt_id x)
-    refine antitone_of_deriv_nonpos (fun x => (hd x).differentiableAt) fun x => ?_
-    rw [(hd x).deriv]
-    have := (abs_le.mp (abs_rmRho'_le x)).2
-    linarith
-  have hge : ∀ s : ℝ, s ≤ rmRho s := by
-    intro s
-    rcases le_or_gt s (1 / 2) with hs | hs
-    · have := hanti hs
-      simp only at this
-      linarith
-    · rw [rmRho_of_le s hs.le]
-  constructor
-  · rw [abs_le]
-    constructor
-    · have := hge (-t)
-      rw [rmRho_even] at this
-      linarith
-    · exact hge t
-  · have hl := rmRho_lip t (1 / 2)
-    have hA : |t - 1 / 2| ≤ |t| + 1 / 2 := abs_le.mpr ⟨by linarith [neg_abs_le t], by linarith [le_abs_self t]⟩
-    have := le_abs_self (rmRho t - rmRho (1 / 2))
-    linarith
 
 variable {n : ℕ}
 
@@ -217,12 +71,13 @@ lemma rm_bil_expand (B : V n →L[ℝ] V n →L[ℝ] ℝ) (z w : ℂ) (a b : V n
     B (z • a) (w • b) = z.re * w.re * B a b + z.re * w.im * B a (Complex.I • b)
       + z.im * w.re * B (Complex.I • a) b + z.im * w.im * B (Complex.I • a) (Complex.I • b) := by
   rw [rm_cplx_smul_eq z a, rm_cplx_smul_eq w b]
-  simp only [map_add, map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+  simp only [map_add (f := _), map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
   ring
 
 lemma rm_bil_sum (B : V n →L[ℝ] V n →L[ℝ] ℝ) (c : Fin n → ℂ) :
     B (∑ j, c j • bas n j) (∑ k, c k • bas n k) = ∑ j, ∑ k, B (c j • bas n j) (c k • bas n k) := by
-  simp only [map_sum, ContinuousLinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, ContinuousLinearMap.sum_apply]
   exact Finset.sum_comm
 
 lemma rm_I_smul_vec (ξ : Fin n → ℂ) : Complex.I • rmVec ξ = ∑ j, (Complex.I * ξ j) • bas n j := by

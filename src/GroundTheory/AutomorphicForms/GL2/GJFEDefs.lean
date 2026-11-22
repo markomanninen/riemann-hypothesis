@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFERat
-import GroundTheory.AutomorphicForms.GL2.GJMatrixLocal
-import GroundTheory.AutomorphicForms.GL2.GJInducedZeta
-import GroundTheory.AutomorphicForms.LeviStagesProduct
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFERat
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixLocal
+public import GroundTheory.AutomorphicForms.GL2.GJInducedZeta
+public import GroundTheory.AutomorphicForms.LeviStagesProduct
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ open scoped NNReal
 
 variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
 
-variable (F) in
 
+variable (F) in
 def centralUnif (m : ℕ) : GL (Fin m) F := Cartan.diagPow F m fun _ => 1
 
 section Block
@@ -60,8 +64,8 @@ def leviIntegrandB (σ : Representation ℂ (levi F n β) W) (κ : levi F n β �
   Ψ ((m : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) * (((κ m)⁻¹ * leviModulus β m : ℝ≥0) : ℂ) *
     detPow (m : GL (Fin n) F) (-s) * ℓ (σ m⁻¹ w)
 
-variable (F) in
 
+variable (F) in
 def LeviFE (σ : Representation ℂ (levi F n β) W) (κ : levi F n β →* ℝ≥0)
     (μM : Measure (levi F n β)) (ψ : AddChar F Circle) (γ : RatFunc ℂ) : Prop :=
   ∀ φ : LeviIndex n β → F → ℂ, (∀ ij, φ ij ∈ LocalField.schwartzBruhat F) → ∀ w : W,
@@ -79,8 +83,8 @@ section Induced
 variable {n : ℕ} {α : Type*} [LinearOrder α] {β : Fin n → α}
   {W : Type*} [AddCommGroup W] [Module ℂ W] [MeasurableSpace F] [BorelSpace F]
 
-variable (F) in
 
+variable (F) in
 def InducedFE [MeasurableSpace (GL (Fin n) F)] (σ : Representation ℂ (levi F n β) W)
     (μG : Measure (GL (Fin n) F)) (ψ : AddChar F Circle) (γ : RatFunc ℂ) : Prop :=
   ∀ Φ : Matrix (Fin n) (Fin n) F → ℂ, IsSchwartzBruhat Φ → ∀ φ ∈ parabolicIndSpace F n β σ,

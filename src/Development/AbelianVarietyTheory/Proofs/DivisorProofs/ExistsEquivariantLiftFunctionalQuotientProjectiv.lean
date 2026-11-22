@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
@@ -32,7 +37,7 @@ theorem eqLift_tensorModOf : ∀ {C : Type} [CommRing C] (I : Ideal C) {A : Type
   let F : H → C := fun x => (s x).sum (fun y c => χt c * g y)
   have hadd : ∀ x x', F (x + x') = F x + F x' := by
     intro x x'
-    simp only [F, map_add]
+    simp only [F, map_add (f := _)]
     exact Finsupp.sum_add_index' (by simp) (by intros; simp [add_mul])
   have hS : ∀ (t : C ⊗[ℤ] A) x, F (t • x) = χt t * F x := by
     intro t x
@@ -60,7 +65,7 @@ theorem eqLift_tensorModOf : ∀ {C : Type} [CommRing C] (I : Ideal C) {A : Type
     | tmul r a =>
       rw [GlobalTheory.HTSummand.tensorModOf_tmul, l₀.map_smul, hl₀, hχt, map_mul, Algebra.smul_def,
         Ideal.Quotient.algebraMap_eq, _root_.mul_assoc]
-    | add t t' h h' => rw [add_smul, map_add, h, h', map_add, map_add, add_mul]
+    | add t t' h h' => rw [add_smul, map_add (f := _), h, h', map_add (f := _), map_add (f := _), add_mul]
   refine ⟨l, ?_, ?_⟩
   · intro a x
     show F (σ a x) = χ a * F x

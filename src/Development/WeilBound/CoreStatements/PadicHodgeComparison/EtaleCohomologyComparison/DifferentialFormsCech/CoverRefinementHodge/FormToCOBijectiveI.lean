@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CoverRefinementHodge.BridgeLApply
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GrCechFin
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechFormsAddSmulStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormsToCechBijectiveStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormsToCechSmulStatement
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.FormCochPullPf
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.PfPull
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CoverRefinementHodge.BridgeLApply
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GrCechFin
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechFormsAddSmulStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormsToCechBijectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormsToCechSmulStatement
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.FormCochPullPf
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.PfPull
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -23,7 +27,7 @@ def bridgeI (hB : type_of% (@CrystallineSemistableComparison.Om.Cech.formToCO_bi
     (formCos q U.U a).cx.H j ≃ₗ[K] CO q U.U a j :=
   LinearEquiv.ofBijective
     { toFun := formToCO q U.U a j
-      map_add' := map_add _
+      map_add' := (formToCO q U.U a j).map_add'
       map_smul' := hS q U.U a j }
     (hB q U.U (cov_aff U) a j)
 
@@ -45,8 +49,8 @@ def isoI (hG : type_of% (@CrystallineSemistableComparison.Om.Glob.glob_iso _)) (
     (a j : ℕ) : HT.Hdg q a (a + j) ≃ₗ[K] HodgeC q a j :=
   ((Classical.choose (hG K) q U a j).trans (bridgeI hB hS q U a j)).trans (lerayI hA q U a j)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem isoI_nat (hG : type_of% (@CrystallineSemistableComparison.Om.Glob.glob_iso _)) (hB : type_of% (@CrystallineSemistableComparison.Om.Cech.formToCO_bijective _))
     (hS : type_of% (@CrystallineSemistableComparison.Om.Cech.formToCO_smul _)) (hA : type_of% (@CrystallineSemistableComparison.Om.Cech.cechOmAdd_smul _))
     (hP : type_of% (@CrystallineSemistableComparison.Om.Cech.cechOm_pull _)) (hC : type_of% (@CrystallineSemistableComparison.Om.Cech.formCoch_pull _))
@@ -73,7 +77,8 @@ theorem isoI_nat (hG : type_of% (@CrystallineSemistableComparison.Om.Glob.glob_i
       { toFun := fun f => f (τ ∘ i), map_zero' := rfl, map_add' := fun _ _ => rfl }
     change evU (Cos.d (formCos q U.U a) j c') =
       formRes q (hτ' (j + 1) i) a (formPull hu (Pb.capO W.U (τ ∘ i)) a (evW (Cos.d (formCos p W.U a) j c)))
-    rw [Cos.d_apply, Cos.d_apply, map_sum, map_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Cos.d_apply, Cos.d_apply, map_sum, map_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul, map_zsmul, map_zsmul, map_zsmul]
     congr 1

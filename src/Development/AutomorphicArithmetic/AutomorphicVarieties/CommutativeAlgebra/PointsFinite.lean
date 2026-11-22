@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Carver
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAbsoluteValueOfIsDiscreteValuationRing
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesEvalOfPowMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Carver
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAbsoluteValueOfIsDiscreteValuationRing
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesEvalOfPowMem
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -117,7 +121,7 @@ private theorem pf_prod {X σ S : Type} [AddCommGroup X] [CommRing S] (wt : σ �
   | zero => simp
   | add f g hf hg =>
     rw [Finsupp.prod_add_index' (by simp) (fun _ _ _ => pow_add _ _ _),
-      Finsupp.prod_add_index' (by simp) (fun _ _ _ => pow_add _ _ _), hf, hg, map_add, ofAdd_add,
+      Finsupp.prod_add_index' (by simp) (fun _ _ _ => pow_add _ _ _), hf, hg, map_add (f := _), ofAdd_add,
       map_mul, Units.val_mul]
     ring
   | single i k =>
@@ -129,7 +133,8 @@ private theorem pf_approx {O X σ : Type} [CommRing O] [AddCommGroup X] [Finite 
     ∃ s : Finset X, (n : ℕ∞) ≤ (F - ∑ j ∈ s, wcomp O wt j F).order := by
   classical
   refine ⟨(truncTotal n F).support.image (Finsupp.weight wt), nat_le_order fun d hd => ?_⟩
-  rw [map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum]
   simp only [coeff_wcomp]
   rw [Finset.sum_ite_eq]
   split_ifs with h
@@ -213,20 +218,23 @@ private theorem pf_step (hg : ∀ s, ι (g (MvPowerSeries.X s)) = t (Multiplicat
   choose c hc hc' using fun m => hI (b m) (hb m) (β m) rfl
   have hx' : x = ∑ m ∈ μ, β m * m.prod fun s k => W.zA s ^ k := by
     apply Subtype.ext
-    rw [hx, map_sum, AddSubmonoidClass.coe_finset_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, AddSubmonoidClass.coe_finsetSum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [Subalgebra.coe_mul, pf_zprod, map_mul]
   refine ⟨∑ m ∈ μ, c m * g (monomial m 1), ?_, ?_⟩
-  · rw [hx', map_sum, map_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun m hm => ?_
-    rw [map_mul, map_mul, hc, pf_monomial, map_finsuppProd, map_finsuppProd]
-    simp only [map_pow, hg]
-    rw [pf_prod W.wt t (fun s => ξ (W.zA s)), hS m (hμ hm)]
-    ring
-  · rw [map_sum, ← Finset.sum_sub_distrib]
-    refine Ideal.sum_mem _ fun m hm => ?_
-    rw [map_mul, ← sub_mul]
-    exact Ideal.mul_mem_mul (hc' m) (hJ m (hμ hm))
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [hx', map_sum, map_sum, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun m hm => ?_
+      rw [map_mul, map_mul, hc, pf_monomial, map_finsuppProd, map_finsuppProd]
+      simp only [map_pow, hg]
+      rw [pf_prod W.wt t (fun s => ξ (W.zA s)), hS m (hμ hm)]
+      ring
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, ← Finset.sum_sub_distrib]
+      refine Ideal.sum_mem _ fun m hm => ?_
+      rw [map_mul, ← sub_mul]
+      exact Ideal.mul_mem_mul (hc' m) (hJ m (hμ hm))
 
 private theorem pf_agree (hι : Function.Injective ι)
     (hg : ∀ s, ι (g (MvPowerSeries.X s)) = t (Multiplicative.ofAdd (W.wt s)) * ξ (W.zA s))
@@ -258,7 +266,7 @@ private theorem pf_agree (hι : Function.Injective ι)
         (x - algebraMap O _ (constantCoeff b)) (by
           rw [map_sub, AlgHom.commutes, ← hx]; rfl)
       refine ⟨c + algebraMap O B (constantCoeff b), ?_, ?_⟩
-      · rw [map_add, hc, AlgHom.commutes, map_sub, AlgHom.commutes]
+      · rw [map_add (f := _), hc, AlgHom.commutes, map_sub, AlgHom.commutes]
         simp
       · rw [map_sub, AlgHom.commutes, sub_sub, add_comm] at hc'
         rwa [pow_succ]
@@ -296,7 +304,7 @@ private theorem pf_factor [DecidableEq X] (hι : Function.Injective ι)
   refine ⟨f, AlgHom.ext fun x => ?_⟩
   induction x using DirectSum.Decomposition.inductionOn W.gr with
   | zero => rw [map_zero, map_zero]
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | @homogeneous j x =>
     obtain ⟨x, hx⟩ := x
     rw [act_of_mem W.gr t ξ hx]

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitarySchrodinger
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HalfData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitarySchrodinger
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HalfData
+
+@[expose] public section
+
 open scoped Matrix NNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.Core.Rk.SWLaw GlobalTheory.Core.Rk.SW GlobalTheory.StdUnn
@@ -56,7 +61,7 @@ theorem continuous_detGL : Continuous (Matrix.GeneralLinearGroup.det : GL (Fin n
   rw [← map_inv]; rfl
 
 theorem isCompact_K : IsCompact (K D n : Set (G D n)) :=
-  haveI : Submodule.IsLattice D.host.E (stdLattice D.host.E (n + n)) := isLattice_stdLattice
+  haveI := isLattice_stdLattice (E := D.host.E) (n := n + n)
   isCompact_levelAll (isCMExt_host D) _ _ _
 
 theorem isClosed_P : IsClosed (P D n : Set (G D n)) := by
@@ -83,8 +88,8 @@ end GlobalTheory.StdUnn.HeightExists
 
 namespace GlobalTheory.StdUnn
 
-open HeightExists in
 
+open HeightExists in
 theorem exists_height : ∀ (D : D7) (n : ℕ), ∃ H : G D n → ℝ≥0, IsHeight H := by
   intro D n
   let δ : P D n →* ℝ≥0 := (absA D).comp (Matrix.GeneralLinearGroup.det.comp leviBlock)

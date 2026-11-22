@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory
@@ -18,7 +23,8 @@ theorem norm_word_le_number_pow : ∀ (T H κ : Type) [AddCommGroup T] [Module �
     intro x; subst hM; simp [Module.End.mul_apply]
   have hQeq : ∀ x, RCLike.re (inner ℂ (Φ x) (Φ (M x))) = ∑ j, ‖Φ (a j x)‖ ^ 2 + r * ‖Φ x‖ ^ 2 := by
     intro x
-    rw [hMx, map_add, inner_add_right, map_add, ← hreal, map_sum, inner_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hMx, map_add (f := _), inner_add_right, map_add (f := _), ← hreal, map_sum, inner_sum, map_sum]
     simp only [hca]
   have hQ : ∀ x, ∑ j, ‖Φ (a j x)‖ ^ 2 + r * ‖Φ x‖ ^ 2 ≤ ‖Φ x‖ * ‖Φ (M x)‖ := by
     intro x; rw [← hQeq]; exact (RCLike.re_le_norm _).trans (norm_inner_le_norm _ _)
@@ -57,7 +63,7 @@ theorem norm_word_le_number_pow : ∀ (T H κ : Type) [AddCommGroup T] [Module �
     (Commute.refl M).add_right ((Commute.one_right M).smul_right _)
   have hshift : ∀ (s : ℝ), |s| ≤ r → ∀ y, ‖Φ ((M + (s : ℂ) • 1) y)‖ ≤ 2 * ‖Φ (M y)‖ := by
     intro s hs y
-    rw [LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, map_add, map_smul]
+    rw [LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, map_add (f := _), map_smul]
     calc ‖Φ (M y) + (s : ℂ) • Φ y‖ ≤ ‖Φ (M y)‖ + ‖(s : ℂ) • Φ y‖ := norm_add_le _ _
       _ = ‖Φ (M y)‖ + |s| * ‖Φ y‖ := by rw [norm_smul, Complex.norm_real, Real.norm_eq_abs]
       _ ≤ ‖Φ (M y)‖ + r * ‖Φ y‖ := by gcongr
@@ -125,7 +131,7 @@ theorem norm_word_le_number_pow : ∀ (T H κ : Type) [AddCommGroup T] [Module �
       obtain ⟨C1, h1⟩ := hX k
       obtain ⟨C2, h2⟩ := hY k
       refine ⟨C1 + C2, fun x => ?_⟩
-      rw [LinearMap.add_apply, map_add, map_add]
+      rw [LinearMap.add_apply, map_add (f := _), map_add (f := _)]
       calc _ ≤ _ := norm_add_le _ _
         _ ≤ C1 * _ + C2 * _ := add_le_add (h1 x) (h2 x)
         _ = _ := by ring

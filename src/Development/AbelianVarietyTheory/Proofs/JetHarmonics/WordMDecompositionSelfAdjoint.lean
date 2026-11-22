@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LetterLiftOfParts
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HatLettersPassDiGIBoundedFactorsStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrameStartConstantsNormalFormEmptyWordStatement
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LetterLiftOfParts
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HatLettersPassDiGIBoundedFactorsStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrameStartConstantsNormalFormEmptyWordStatement
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 
@@ -22,20 +26,6 @@ def bAlg (d : Q.NFData P A) : Subalgebra ℂ A :=
     exact (bmon d).mul_mem ha hb)
 
 variable {S : Type} [Fintype S] [DecidableEq S]
-
-def EM (B : Subalgebra ℂ A) (E : SlopeTestRemainingChoices S A) : Prop := ∀ e e', E e e' ∈ B
-
-theorem EM.add {B : Subalgebra ℂ A} {E F : SlopeTestRemainingChoices S A} (hE : EM B E) (hF : EM B F) : EM B (E + F) := fun i j =>
-  B.add_mem (hE i j) (hF i j)
-
-theorem EM.smul {B : Subalgebra ℂ A} {E : SlopeTestRemainingChoices S A} (z : ℂ) (hE : EM B E) : EM B (z • E) := fun i j =>
-  B.smul_mem (hE i j) z
-
-theorem EM.io {B : Subalgebra ℂ A} {a : A} (ha : a ∈ B) : EM B (io a : SlopeTestRemainingChoices S A) := fun i j => by
-  simp only [Wd.io, Matrix.scalar_apply, Matrix.diagonal_apply]
-  split_ifs
-  · exact ha
-  · exact B.zero_mem
 
 variable [StarModule ℂ A]
 
@@ -84,11 +74,11 @@ private lemma star_l0_sub_one_add_eq_m0_add {P : _root_.Formalism.FourierDecayAl
   · rw [← mul_assoc d.L.GGi, hperm]
     exact hcE.eq
 
+
 open MeasureTheory in
 variable {P : _root_.Formalism.FourierDecayAlt.M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A] in
 variable {S : Type} [Fintype S] [DecidableEq S] in
 variable [StarModule ℂ A] in
-
 theorem _root_.GlobalTheory.HatNF.MShapeNF.mshape : ∀ (P : _root_.Formalism.FourierDecayAlt.M.Par) (A : Type) [Ring A] [StarRing A]
     [Algebra ℂ A] [StarModule ℂ A] (d : _root_.Formalism.FourierDecayAlt.Q.NFData P A), _root_.GlobalTheory.HatNF.HatHyp d →
     ∀ (L : _root_.Formalism.FourierDecayAlt.R.LevelData A P.r) (st : _root_.Formalism.FourierDecayAlt.Fr.Start A) (s : ℂ), _root_.GlobalTheory.HatNF.Comparison₂ d L st s →

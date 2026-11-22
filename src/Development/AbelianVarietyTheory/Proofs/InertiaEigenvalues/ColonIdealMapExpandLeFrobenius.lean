@@ -1,18 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMemA
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImageStableDegreeBounds
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowerSeriesExistsUniqueDecompOverFrobeniusLikeEnStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMemA
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImageStableDegreeBounds
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowerSeriesExistsUniqueDecompOverFrobeniusLikeEnStatement
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.BK Matrix GlobalTheory.LiftCoker
 
 namespace GlobalTheory.LiftCoker
 
 theorem colon_map_expand_le : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebra O K]
     [IsUnitBall O K] (l : ℕ) [Fact l.Prime] (ι κ : Type) [Fintype ι] [Fintype κ] (G : Matrix κ ι K⟦X⟧),
-    (colon O K G).map (PowerSeries.expand l (Fact.out : l.Prime).ne_zero) ≤ colon O K (G.map (frob K l)) := by
+    (colon (O := O) (K := K) G).map (PowerSeries.expand l (Fact.out : l.Prime).ne_zero) ≤
+      colon (O := O) (K := K) (G.map (frob K l)) := by
   intro O K _ _ _ _ _ l _ ι κ _ _ G
   rw [Ideal.map_le_iff_le_comap]
   intro α hα
-  rw [Ideal.mem_comap, mem_colon]
+  rw [Ideal.mem_comap]
   intro w hw
   have hl2 : 2 ≤ l := (Fact.out : l.Prime).two_le
   have hf : ∀ i, ∃ f : O⟦X⟧, PowerSeries.map (algebraMap O K) f = w i := fun i => by
@@ -22,7 +28,7 @@ theorem colon_map_expand_le : ∀ (O K : Type) [CommRing O] [NormedField K] [IsU
   have hdec := fun i => (GlobalTheory.T.powerSeries_existsUnique_decomp_over_frobeniusLike_endo l hl2 (PowerSeries.expand l (Fact.out : l.Prime).ne_zero)
     (fun g m => PowerSeries.coeff_expand _ _ g) (f i)).exists
   choose g hg using hdec
-  have hα' := fun j : Fin l => (mem_colon.1 hα) (fun i => PowerSeries.map (algebraMap O K) (g i j))
+  have hα' := fun j : Fin l => hα (fun i => PowerSeries.map (algebraMap O K) (g i j))
     (fun i => map_mem_A _)
   choose m hm hmeq using hα'
   have hX : (X : K⟦X⟧) ∈ A O K := by simpa using map_mem_A (O := O) (K := K) X
@@ -33,7 +39,8 @@ theorem colon_map_expand_le : ∀ (O K : Type) [CommRing O] [NormedField K] [IsU
     exact mul_mem (pow_mem hX _) (frob_mem_A l (hm j i))
   · funext i
     have hwi : w i = ∑ j : Fin l, (X : K⟦X⟧) ^ j.val * frob K l (PowerSeries.map (algebraMap O K) (g i j)) := by
-      rw [← hf i, hg i, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hf i, hg i, map_sum]
       simp [map_mul, map_pow, map_X, map_expand, frob]
     have key : ∀ j : Fin l, frob K l (PowerSeries.map (algebraMap O K) α) *
         frob K l (PowerSeries.map (algebraMap O K) (g i j)) = (G.map (frob K l) *ᵥ frobV l (m j)) i := by

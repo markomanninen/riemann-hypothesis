@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.JGenLinLie
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapHCMem
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.JGenLinLie
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapHCMem
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -32,7 +36,7 @@ private theorem UpperTheory.ConvolutionTheory.Dp.capZc_prod (n : ℕ) (u : ℂ) 
   · rw [MvPolynomial.esymm_zero, MvPolynomial.smul_eq_C_mul, map_pow, Nat.sub_zero, mul_comm]
   · exact Finset.sum_congr rfl fun i _ => by rw [MvPolynomial.smul_eq_C_mul, map_pow, mul_comm]
 
-private theorem UpperTheory.ConvolutionTheory.Dp.capZc_center {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+private theorem UpperTheory.ConvolutionTheory.Dp.capZc_center {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
     {z : Cm.UC E n} (h : ∀ τ i j, Cm.genC τ i j * z = z * Cm.genC τ i j) :
     z ∈ Subalgebra.center ℂ (Cm.UC E n) := by
   have : Algebra.adjoin ℂ {x : Cm.UC E n | ∃ τ i j, x = Cm.genC τ i j} ≤ Subalgebra.centralizer ℂ {z} := by
@@ -74,9 +78,11 @@ theorem UpperTheory.ConvolutionTheory.Dp.capZc :
     have e : z = u ^ n • 1 + ∑ i : Fin n, u ^ (n - (i + 1)) • w i := by
       apply HarishChandra.harishChandraHom_injective
       rw [hH, capZc_prod]
-      simp only [map_add, map_smul, map_one, map_sum, hwH]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_smul, map_one, map_sum, hwH]
     have e2 := congrArg (j.comp (Subalgebra.center ℂ (HarishChandra.U n)).val) e
-    simp only [map_add, map_smul, map_one, map_sum] at e2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_smul, map_one, map_sum] at e2
     simp only [hzc]
     refine Eq.trans ?_ e2
     change _ = j (z : HarishChandra.U n)

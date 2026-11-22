@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.BernsteinExponentBounds.IsInvForm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerHeredityStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.BernsteinExponentBounds.IsInvForm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerHeredityStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem sesq_eq_zero_of_self {V : Type} [AddCommGroup V] [Module ℂ V] (Q : V �
   have key := hp (l • v + w)
   have e : Q (l • v + w) (l • v + w) =
       l * starRingEnd ℂ l * Q v v + l * c + starRingEnd ℂ l * Q w v + Q w w := by
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul, hc]
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul, hc]
     ring
   have hlc : l * c = ((-(t * Complex.normSq c) : ℝ) : ℂ) := by
     rw [hl, Complex.ofReal_neg, Complex.ofReal_mul, Complex.normSq_eq_conj_mul_self]
@@ -80,7 +84,7 @@ theorem quad_re {V : Type} [AddCommGroup V] [Module ℂ V] (Q : V →ₗ[ℂ] V 
   have hut : u = c • f₀ + (u - c • f₀) := (add_sub_cancel _ _).symm
   have hQu : Q u u = c * starRingEnd ℂ c * Q f₀ f₀ := by
     rw [hut]
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
       hQt, hQt']
     ring
   rw [hQu, Complex.mul_conj, Complex.re_ofReal_mul]

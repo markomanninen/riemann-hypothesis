@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.WtMatFix
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFiltered
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.WtMatFix
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFiltered
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 noncomputable section
@@ -23,7 +28,7 @@ private theorem eq_sum [Module.Finite Q A] (x : A ⊗[Q] B) :
   | tmul a b =>
     simp only [ctr_tmul, ← smul_tmul, ← sum_tmul, Basis.coord_apply, Basis.sum_repr]
   | add y z hy hz =>
-    simp only [map_add, tmul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), tmul_add, Finset.sum_add_distrib]
     rw [← hy, ← hz]
 
 private theorem mem_iff [Module.Finite Q A] (F : Submodule Q B) (x : A ⊗[Q] B) :
@@ -34,7 +39,7 @@ private theorem mem_iff [Module.Finite Q A] (F : Submodule Q B) (x : A ⊗[Q] B)
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simpa [ctr_tmul] using F.smul_mem _ b.2
-    | add y z hy hz => simpa only [map_add] using F.add_mem hy hz
+    | add y z hy hz => simpa only [map_add (f := _)] using F.add_mem hy hz
   · intro h
     rw [eq_sum x]
     exact Submodule.sum_mem _ fun i _ => ⟨Module.finBasis Q A i ⊗ₜ ⟨_, h ((Module.finBasis Q A).coord i)⟩, by simp⟩
@@ -45,7 +50,7 @@ private theorem ctr_map (lam : A →ₗ[Q] Q) (u : A) (s : B →ₗ[Q] B) (x : A
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [ctr_tmul, sub_mul, sub_smul]
-  | add y z hy hz => simp only [map_add, hy, hz]; abel
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]; abel
 
 private theorem step [Module.Finite Q A] {G : Type} (u : G → A) (hu : ∀ g, IsNilpotent (u g - 1))
     (s : G → B →ₗ[Q] B) (F F' : Submodule Q B) (hs : ∀ g, ∀ b ∈ F', s g b ∈ F')
@@ -136,14 +141,14 @@ private theorem fil {l : ℕ} [Fact l.Prime] {G : Type} [Group G] (φ : G →* G
         obtain ⟨a, ha⟩ := hy
         obtain ⟨b, hb⟩ := hz
         exact ⟨min a b, fun lam => by
-          rw [map_add]
+          rw [map_add (f := _)]
           exact (F _).add_mem (hanti (min_le_left _ _) (ha lam)) (hanti (min_le_right _ _) (hb lam))⟩
     obtain ⟨a, ha⟩ := ex
     rcases le_total 0 a with h | h
     · exact fun lam => hanti h (ha lam)
     have key : ∀ m, a ≤ m → m ≤ 0 → ∀ lam, ctr lam x ∈ F m := by
       intro m hm
-      induction m, hm using Int.le_induction with
+      induction m, hm using Int.leInduction with
       | base => exact fun _ => ha
       | succ m hm ih => exact fun h => up x hx m (by omega) (ih (by omega))
     exact key 0 h le_rfl
@@ -151,7 +156,7 @@ private theorem fil {l : ℕ} [Fact l.Prime] {G : Type} [Group G] (φ : G →* G
     have h1 := (mem_iff (F 1) x).1 hx.2
     have key : ∀ m : ℤ, 1 ≤ m → ∀ lam, ctr lam x ∈ F m := by
       intro m hm
-      induction m, hm using Int.le_induction with
+      induction m, hm using Int.leInduction with
       | base => exact h1
       | succ m hm ih => exact up x hx.1 m (by omega) ih
     have h0 : ∀ lam, ctr lam x = 0 := fun lam => ((PP l).PD K).Fil_sep _ fun a =>

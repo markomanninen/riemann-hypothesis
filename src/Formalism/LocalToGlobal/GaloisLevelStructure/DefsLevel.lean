@@ -1,6 +1,10 @@
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+module
+
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ section lvl
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 
-local notation3 "L⁺" => NumberField.maximalRealSubfield L
+local notation3 "L⁺" => maximalRealSubfield L
 
 def ParaRT (s : SplitPlace L) (r : ℕ) (h : GL (Fin n) (s.v.adicCompletion L⁺)) : Prop :=
   h ∈ Formalism.UG.GLint (Fin n) (s.v.adicCompletionIntegers L⁺).toSubring ∧
@@ -29,19 +33,19 @@ def supDiag (s : SplitPlace L) (r : ℕ) (h : GL (Fin n) (s.v.adicCompletion L�
   ∑ a : Fin n, ∑ b : Fin n, if a.val + 1 = b.val ∧ b.val < r then h.val a b else 0
 
 def IsProdLevel (J : Subgroup (GAf L n)) : Prop :=
-  ∀ κ ∈ J, ∀ v, ∃ κ' ∈ J, TrivOutside {v} κ' ∧
+  ∀ κ ∈ J, ∀ v, ∃ κ' ∈ J, TrivOutside (L := L) {v} κ' ∧
     (κ'.1 : Matrix (Fin n) (Fin n) (AL L)).map (compAt L v) = (κ.1 : Matrix (Fin n) (Fin n) (AL L)).map (compAt L v)
 
 structure LevelPara (J : Subgroup (GAf L n)) (χ : J →* ℂˣ) (s : SplitPlace L) (r : ℕ)
     (ξ : (s.v.adicCompletion L⁺)ˣ →* ℂˣ) : Prop where
-  mem : ∀ κ, TrivOutside {s.v} κ → (κ ∈ J ↔ ParaRT s r (s.loc n κ))
-  chr : ∀ κ (h : κ ∈ J), TrivOutside {s.v} κ → ∀ u : (s.v.adicCompletion L⁺)ˣ,
+  mem : ∀ κ, TrivOutside (L := L) {s.v} κ → (κ ∈ J ↔ ParaRT s r (s.loc n κ))
+  chr : ∀ κ (h : κ ∈ J), TrivOutside (L := L) {s.v} κ → ∀ u : (s.v.adicCompletion L⁺)ˣ,
     (u : s.v.adicCompletion L⁺) = detDD s r (s.loc n κ) → χ ⟨κ, h⟩ = ξ u
 
 structure LevelUni (J : Subgroup (GAf L n)) (χ : J →* ℂˣ) (s : SplitPlace L) (r : ℕ)
     (ψ₀ : AddChar (s.v.adicCompletion L⁺) ℂ) (ξ : (s.v.adicCompletion L⁺)ˣ →* ℂˣ) : Prop where
-  mem : ∀ κ, TrivOutside {s.v} κ → (κ ∈ J ↔ UniRT s r (s.loc n κ))
-  chr : ∀ κ (h : κ ∈ J), TrivOutside {s.v} κ → ∀ u : (s.v.adicCompletion L⁺)ˣ,
+  mem : ∀ κ, TrivOutside (L := L) {s.v} κ → (κ ∈ J ↔ UniRT s r (s.loc n κ))
+  chr : ∀ κ (h : κ ∈ J), TrivOutside (L := L) {s.v} κ → ∀ u : (s.v.adicCompletion L⁺)ˣ,
     (u : s.v.adicCompletion L⁺) = detDD s r (s.loc n κ) →
     ((χ ⟨κ, h⟩ : ℂˣ) : ℂ) = ψ₀ (supDiag s r (s.loc n κ)) * ξ u
 
@@ -55,8 +59,8 @@ def IsPsi0 (s : SplitPlace L) (ψ₀ : AddChar (s.v.adicCompletion L⁺) ℂ) : 
 
 end lvl
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def paramV (R : Ranks) (h : HCParam R) (j : Fin R.m) (sh : ℂ) : Multiset ℂ :=
   (Finset.univ.val.map fun i : Fin (R.k - 1) => ((h.v i : ℚ) : ℂ) - sh) +
   (Finset.univ.val.map fun i : Fin R.m => -((h.b i : ℚ) : ℂ) - sh) +

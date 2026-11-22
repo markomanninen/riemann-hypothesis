@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.TwOrbMEqTwOrbUOfNormal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TwOrbMEqTwOrbUOfNormal
+
+@[expose] public section
+
 open ReciprocityTheory.DiscreteGroups.LocalClassField Matrix GlobalTheory.LKRes
 
 open scoped TensorProduct
@@ -49,6 +54,6 @@ theorem sigKQ_fixed_eq_inclK : ∀ (p : ℕ) [Fact p.Prime] (K : IntermediateFie
     change (c • a) ⊗ₜ[ℚ_[p]] (1 : Qr p r) = a ⊗ₜ[ℚ_[p]] (algebraMap ℚ_[p] (Qr p r) c)
     rw [Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul]
   | add u v hu hv =>
-    rw [map_add, map_add, hu, hv, map_add]
+    rw [map_add (f := _), map_add (f := _), hu, hv, map_add (f := _)]
 
 end GlobalTheory.LKRes

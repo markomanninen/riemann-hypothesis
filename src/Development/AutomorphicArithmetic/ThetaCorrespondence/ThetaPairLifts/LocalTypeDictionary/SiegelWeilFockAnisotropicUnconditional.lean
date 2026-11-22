@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.FockAnisoFree
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.FockAnisoFree
+
+@[expose] public section
 
 section
 namespace UpperTheory.Lit.Sw47

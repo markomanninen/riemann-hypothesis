@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi36.aux :
     ∀ {R Q M : Type} [inst : CommRing R] [inst_1 : Group Q]
@@ -25,7 +29,8 @@ theorem UpperTheory.Reformulated.B.Qi36.aux :
   have hs : ∑ x : Q ⧸ H, f (g • x).out = ∑ x : Q ⧸ H, f x.out :=
     Equiv.sum_comp (MulAction.toPerm g) (fun x : Q ⧸ H => f x.out)
   simp only [step, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ] at hs
-  rw [← map_sum] at hs
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum] at hs
   rw [Subgroup.index, Nat.card_eq_fintype_card, map_neg, sub_neg_eq_add,
     eq_sub_of_add_eq hs]
   abel

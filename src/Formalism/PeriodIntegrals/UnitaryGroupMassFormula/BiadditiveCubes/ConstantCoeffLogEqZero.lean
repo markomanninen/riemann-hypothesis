@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BiaddOfCube
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BiaddOfCube
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,9 +60,9 @@ theorem add_assoc' {l ex : PowerSeries ℂ_[p]}
   show PowerSeries.subst (PowerSeries.subst (add l ex a b) l + PowerSeries.subst c l) ex =
     PowerSeries.subst (PowerSeries.subst a l + PowerSeries.subst (add l ex b c) l) ex
   rw [show add l ex a b = PowerSeries.subst (PowerSeries.subst a l + PowerSeries.subst b l) ex from rfl,
-    subst_subst_log hex h _ (by rw [map_add, hla, hlb, add_zero]),
+    subst_subst_log hex h _ (by rw [map_add (f := _), hla, hlb, add_zero]),
     show add l ex b c = PowerSeries.subst (PowerSeries.subst b l + PowerSeries.subst c l) ex from rfl,
-    subst_subst_log hex h _ (by rw [map_add, hlb, hlc, add_zero]), add_assoc]
+    subst_subst_log hex h _ (by rw [map_add (f := _), hlb, hlc, add_zero]), add_assoc]
 
 theorem simeq_of_sub_eq {f g f' g' : MvPowerSeries σ ℂ_[p]} (e : f - g = f' - g')
     (hs : Simeq f' g') : Simeq f g := by
@@ -68,18 +72,5 @@ theorem simeq_of_sub_eq {f g f' g' : MvPowerSeries σ ℂ_[p]} (e : f - g = f' -
 
 theorem cc_Xv (i : Fin 3) : MvPowerSeries.constantCoeff (Xv (p := p) i) = 0 := by
   exact MvPowerSeries.constantCoeff_X i
-
-theorem target : Target := by
-  intro p _ l ex ph hex h hC
-  constructor
-  · refine simeq_of_sub_eq ?_ hC
-    simp only [be]
-    rw [add_comm' l ex (Xv 2) (Xv 0)]
-    ring
-  · refine simeq_of_sub_eq ?_ hC
-    simp only [be]
-    rw [add_comm' l ex (Xv 2) (Xv 0),
-      add_assoc' hex h (Xv 0) (Xv 1) (Xv 2) (cc_Xv 0) (cc_Xv 1) (cc_Xv 2)]
-    ring
 
 end PI.BiaddOfCubeWork

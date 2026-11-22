@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.PhiFg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProBurnside
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.PhiFg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProBurnside
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct
@@ -30,7 +34,7 @@ private theorem isProL_of_PL (l : ℕ) (Γ : Type) [Group Γ] [TopologicalSpace 
     rw [h, Subgroup.mem_bot] at hxPL
     subst hxPL
     exact hx1 ⟨1, N.toOpenSubgroup.one_mem, rfl⟩
-  obtain ⟨u, hu⟩ := hKc.elim_finite_subfamily_closed t htc hempty
+  obtain ⟨u, hu⟩ := (hKc.elim_finite_subfamily_closed t htc (Set.disjoint_iff_inter_eq_empty.2 hempty)).imp (fun _ => Disjoint.inter_eq)
   choose e he using fun (i : ι) => i.2 (g : Γ) g.2
   refine ⟨∑ i ∈ u, e i, ?_⟩
   have hin : ((g : Γ) ^ l ^ (∑ i ∈ u, e i)) ∈ ⋂ i ∈ u, t i := by

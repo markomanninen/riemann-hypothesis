@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsDoubleCoset
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdelicLattices
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsDoubleCoset
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdelicLattices
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -11,7 +15,7 @@ open scoped Pointwise ComplexOrder ENNReal NumberField.AdeleRing
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 theorem archEmbed_injective (h : HermitianForm F E W) (v : Basis ι E W) :

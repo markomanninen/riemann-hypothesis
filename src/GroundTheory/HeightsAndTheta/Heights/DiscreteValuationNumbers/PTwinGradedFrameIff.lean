@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerBis
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.ChartGlueSat
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerBis
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.ChartGlueSat
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -18,7 +23,8 @@ variable {Ω : Type*} [Field Ω] {E : Type*} [AddCommGroup E] [Module Ω E] {N :
 theorem repr_sum_smul {τ : Type*} [Fintype τ] (w : Module.Basis (Fin N) Ω E) (a : τ → Ω) (bb : τ → E)
     (j : Fin N) :
     w.repr (∑ q, a q • bb q) j = ∑ q, a q * w.repr (bb q) j := by
-  simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
     smul_eq_mul]
 
 theorem coeff_eq_zero_of_tri (w : Module.Basis (Fin N) Ω E) (bb : Fin N → E)
@@ -82,16 +88,16 @@ variable {o : Type u} [CommRing o] {Ω : Type v} [Field Ω] [Algebra o Ω] {K : 
   [AddCommGroup E] [Module Ω E] {B : ChartBundle o (segreVec y) N E}
   {w : Module.Basis (Fin N) Ω E} {b : Fin N → K → ℤ}
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem mon_ne_zero {c : ∀ k, ι k} (hc : segreVec y c ≠ 0) (a : K → ℤ) :
     IndefiniteRowSideFullHecke.NumbersDVR.Bundles.chartMon y c a ≠ 0 := by
   have hy : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k =>
     (Finset.prod_ne_zero_iff.mp hc) k (Finset.mem_univ _)
   exact Finset.prod_ne_zero_iff.mpr fun k _ => zpow_ne_zero _ (hy k)
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem forward (h : IsFlagFrame y B w b) :
     IndefiniteRowSideFullHecke.NumbersDVR.Bundles.IsGradedFrame o y B
       (fun i => Submodule.span Ω (w '' {j | (j : ℕ) < i})) b w := by
@@ -173,8 +179,8 @@ theorem forward (h : IsFlagFrame y B w b) :
       apply hj
       rw [hdiag, Finsupp.single_eq_same, mul_one, sub_self]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem backward (h : IndefiniteRowSideFullHecke.NumbersDVR.Bundles.IsGradedFrame o y B
       (fun i => Submodule.span Ω (w '' {j | (j : ℕ) < i})) b w) :
     IsFlagFrame y B w b := by

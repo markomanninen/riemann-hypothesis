@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh68.reps.{u_1} :
     ∀ {α : Type u_1} (r : α → α → Prop),

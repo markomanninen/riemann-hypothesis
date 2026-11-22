@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Characterised
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChowFormHomog
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Characterised
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChowFormHomog
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

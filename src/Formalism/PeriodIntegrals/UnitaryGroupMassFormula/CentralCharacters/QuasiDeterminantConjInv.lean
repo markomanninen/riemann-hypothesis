@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CentralCharacters.CentralScalar
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CentralCharacters.CentralScalar
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,11 +24,13 @@ theorem ofFn_prod_sum {R : Type*} [Ring R] {ι : Type*} [Fintype ι] [DecidableE
 
 theorem ofFn_prod_smul {R : Type*} [Ring R] [Algebra ℂ R] :
     ∀ (t : ℕ) (a : Fin t → ℂ) (x : Fin t → R),
-      (List.ofFn fun k => a k • x k).prod = (∏ k, a k) • (List.ofFn x).prod
-  | 0, a, x => by simp
-  | t + 1, a, x => by
-    have h := ofFn_prod_smul t (fun i => a i.succ) (fun i => x i.succ)
-    rw [List.ofFn_succ, List.prod_cons, h, List.ofFn_succ (f := x), List.prod_cons, Fin.prod_univ_succ,
+      (List.ofFn fun k => a k • x k).prod = (∏ k, a k) • (List.ofFn x).prod := by
+  intro t
+  induction t with
+  | zero => simp
+  | succ t ih =>
+    intro a x
+    rw [List.ofFn_succ, List.prod_cons, ih, List.ofFn_succ (f := x), List.prod_cons, Fin.prod_univ_succ,
       smul_mul_smul_comm]
 
 theorem intCast_mul_eq {R : Type*} [Ring R] [Algebra ℂ R] (z : ℤ) (y : R) : (z : R) * y = (z : ℂ) • y := by
@@ -126,7 +132,7 @@ theorem quasi_determinant_conj_inv : QdetConjInv := by
     funext x a b
     simp only [Formalism.REAL.Tm, Matrix.transpose_apply, smul_add, Finset.sum_add_distrib, Finset.smul_sum, smul_smul]
     congr 1
-    simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    simp only [smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [← Finset.sum_smul]
     have h1 : ∑ c, g c a * g⁻¹ b c = (g⁻¹ * g) b a := by
       rw [Matrix.mul_apply]

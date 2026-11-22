@@ -1,6 +1,33 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLineFubiniStudyFacts
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShift
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.SNCAtlas
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenSt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLCurveA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLLocalStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PushAFinsumInter
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Pullback
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Measure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AtlasIndep
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Degree
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffFubiniStudyRatioCompChart0
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLinePartitionContinuousCoe
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -132,26 +159,6 @@ theorem EnergyStep.proof : EnergyStep.Statement := by
   rw [h8, h9, add_zero, hV] at h7
   rw [h1, h2, h3]
   linarith [h4, h5, h7]
-
-def projectiveLineEnergyData : EnergyStep.Data p1 projectiveLineKaehler where
-  w _ := -1
-  v _ := -1 / 2
-  f := Fin.elim0
-  M := 1
-  w_smooth := st_smooth_const p1 (-1)
-  w_psh := isPsh_add_const projectiveLineKaehler.isPsh (-1)
-  v_smooth := st_smooth_const p1 (-1 / 2)
-  v_nonpos _ := by norm_num
-  le_v _ := by norm_num
-  f_smooth i := Fin.elim0 i
-  f_psh i := Fin.elim0 i
-
-theorem projectiveLine_energy_inequality :
-    mInt p1 (Fin.cons (projectiveLineKaehler.pot + LocPot.ofFun projectiveLineEnergyData.v) projectiveLineEnergyData.T)
-        (fun x => -projectiveLineEnergyData.w x) ≤
-      mInt p1 (Fin.cons projectiveLineKaehler.pot projectiveLineEnergyData.T) (fun x => -projectiveLineEnergyData.w x) +
-        projectiveLineEnergyData.M * projectiveLineKaehler.vol :=
-  EnergyStep.proof p1 projectiveLineKaehler projectiveLineEnergyData
 
 end
 

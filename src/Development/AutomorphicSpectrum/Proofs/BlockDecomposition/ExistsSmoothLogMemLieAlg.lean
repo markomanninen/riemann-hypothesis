@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SmComplete
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtExpMulExpOfFiniteDimensional
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSmoothLog
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SmComplete
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtExpMulExpOfFiniteDimensional
+
+@[expose] public section
+
 open SmoothVectors Filter Topology
 open scoped ContDiff Matrix.Norms.Elementwise
 

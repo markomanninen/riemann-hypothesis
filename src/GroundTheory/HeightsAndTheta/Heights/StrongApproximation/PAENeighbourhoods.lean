@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -54,7 +59,8 @@ theorem intAt_repr (v : HeightOneSpectrum (𝓞 F)) {z : Kv E v} (hz : z ∈ int
     obtain ⟨a, ha, b, rfl⟩ := hx
     refine ⟨fun l => (RingOfIntegers.basis E).repr b l • a, fun l => zsmul_mem ha _, ?_⟩
     conv_lhs => rw [← (RingOfIntegers.basis E).sum_repr b]
-    rw [map_sum, tmul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, tmul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_zsmul, ← smul_tmul]
     rfl
@@ -70,7 +76,8 @@ theorem intAt_repr (v : HeightOneSpectrum (𝓞 F)) {z : Kv E v} (hz : z ∈ int
 theorem compAt_sum (v : HeightOneSpectrum (𝓞 F))
     (X : Module.Free.ChooseBasisIndex ℤ (𝓞 E) → FiniteAdeleRing (𝓞 F) F) :
     compAt E v (∑ l, X l ⊗ₜ[F] intBasis E l) = ∑ l, X l v ⊗ₜ[F] intBasis E l := by
-  rw [map_sum]; rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]; rfl
 
 theorem exists_repr (a : AE F E) :
     ∃ X : Module.Free.ChooseBasisIndex ℤ (𝓞 E) → FiniteAdeleRing (𝓞 F) F,

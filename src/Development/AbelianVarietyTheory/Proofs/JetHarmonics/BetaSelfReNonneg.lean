@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementU
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Finset MeasureTheory
 

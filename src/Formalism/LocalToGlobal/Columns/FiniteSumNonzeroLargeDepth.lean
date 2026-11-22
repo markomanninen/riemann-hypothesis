@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.ColForms
-import Formalism.LocalToGlobal.Columns.ColFormsLemmas
-import Formalism.LocalToGlobal.Columns.ScaledRamifiedLattice
-import Formalism.LocalToGlobal.Columns.RowForms
-import Formalism.LocalToGlobal.Columns.RowFormsSym
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.SizeWindowBrackets.SlopesHypothesisFinitePlaces
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.ColForms
+public import Formalism.LocalToGlobal.Columns.ColFormsLemmas
+public import Formalism.LocalToGlobal.Columns.ScaledRamifiedLattice
+public import Formalism.LocalToGlobal.Columns.RowForms
+public import Formalism.LocalToGlobal.Columns.RowFormsSym
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.SizeWindowBrackets.SlopesHypothesisFinitePlaces
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module MvPolynomial
 
@@ -65,8 +69,8 @@ variable {K : Type} [Field K] {ι : Type} [Fintype ι] {n : ℕ}
 def gramB (sg : ι → DomWeight n) : Matrix (VVIdx sg) (VVIdx sg) K :=
   Matrix.of fun i j => fockB (bVVfun K sg i) (bVVfun K sg j)
 
-open Classical in
 
+open Classical in
 def projVV (sg : ι → DomWeight n) : Pol K ι n →ₗ[K] VV K sg :=
   ∑ i : VVIdx sg, ∑ j : VVIdx sg,
     ((gramB (K := K) sg)⁻¹ i j) • (fockBL (bVVfun K sg j)).smulRight (bVV K sg i)
@@ -87,8 +91,8 @@ theorem upVar_inj : Function.Injective (upVar (ι := ι) hN) := by
 def IsTop (b : ι → Fin n → ℕ) (m : ι × Fin N × Fin N →₀ ℕ) : Prop :=
   (∀ τ s, m (τ, iL hN, iC hN s) = b τ s) ∧ ∀ τ a, m (τ, a, iL hN) = 0
 
-open Classical in
 
+open Classical in
 def coefLast (b : ι → Fin n → ℕ) : Pol K ι N →ₗ[K] Pol K ι n :=
   (basisMonomials (ι × Fin N × Fin N) K).constr K fun m =>
     if IsTop hN b m then monomial (m.comapDomain (upVar hN) (upVar_inj hN).injOn) (1 : K) else 0
@@ -145,7 +149,7 @@ section Cast
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {N n : ℕ} (hN : N = n + 1)
   {ST SG SG' : Finset (HeightOneSpectrum (𝓞 E))}
 
-def DecoSet.tilH (pi : 𝓞 E) : DecoSet E n ∅ SG → DecoSet E N ST SG := by
+def DecoSet.tilH (pi : 𝓞 E) : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG) → DecoSet (E := E) (n := N) (ST := ST) (SG := SG) := by
   subst hN
   exact DecoSet.til pi
 
@@ -153,11 +157,11 @@ def extUH : UF E n →* UF E N := by
   subst hN
   exact extU
 
-def extGH : GLG E n SG →* GLG E N SG := by
+def extGH : GLG (E := E) (n := n) (SG := SG) →* GLG (E := E) (n := N) (SG := SG) := by
   subst hN
   exact extG
 
-theorem DecoSet.tilH_smul (a : UF E n × GLG E n SG) (d : DecoSet E n ∅ SG) {pi : 𝓞 E}
+theorem DecoSet.tilH_smul (a : UF E n × GLG (E := E) (n := n) (SG := SG)) (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG)) {pi : 𝓞 E}
     (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal) :
     DecoSet.tilH (ST := ST) hN pi (a • d) = (extUH hN a.1, extGH hN a.2) • DecoSet.tilH (ST := ST) hN pi d := by
   subst hN
@@ -168,20 +172,22 @@ def Deco.res (h : SG ⊆ SG') (d : Deco E n ST SG') : Deco E n ST SG where
   f := d.f
   be w := d.be ⟨w.1, h w.2⟩
 
-theorem Deco.Ok.res {d : Deco E n ST SG'} (hd : d.Ok) (h : SG ⊆ SG') : (d.res h).Ok where
-  lat := hd.lat
-  uni := hd.uni
-  f_add := hd.f_add
-  f_smul := hd.f_smul
-  f_off := hd.f_off
-  f_ne := hd.f_ne
-  be_add w := hd.be_add ⟨w.1, h w.2⟩
-  be_smul w := hd.be_smul ⟨w.1, h w.2⟩
-  be_off w := hd.be_off ⟨w.1, h w.2⟩
-  be_surj w := hd.be_surj ⟨w.1, h w.2⟩
-  be_ker w := hd.be_ker ⟨w.1, h w.2⟩
+theorem Deco.Ok.res {d : Deco E n ST SG'} (hd : d.Ok) (h : SG ⊆ SG') : (d.res h).Ok := by
+  exact {
+    lat := hd.lat
+    uni := hd.uni
+    f_add := hd.f_add
+    f_smul := hd.f_smul
+    f_off := hd.f_off
+    f_ne := hd.f_ne
+    be_add w := hd.be_add ⟨w.1, h w.2⟩
+    be_smul w := hd.be_smul ⟨w.1, h w.2⟩
+    be_off w := hd.be_off ⟨w.1, h w.2⟩
+    be_surj w := hd.be_surj ⟨w.1, h w.2⟩
+    be_ker w := hd.be_ker ⟨w.1, h w.2⟩
+  }
 
-def DecoSet.res (h : SG ⊆ SG') (d : DecoSet E n ST SG') : DecoSet E n ST SG := ⟨d.1.res h, d.2.res h⟩
+def DecoSet.res (h : SG ⊆ SG') (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG')) : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) := ⟨d.1.res h, d.2.res h⟩
 
 end Cast
 
@@ -197,16 +203,16 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
 def brC (u : Pr.Word) : VV X.K (W.lamTrue u R.m) →ₗ[X.K] VV X.K W.sgTrue :=
   Br.brAt (N_m_succ R) (W.lamTrue u R.m) W.sgTrue fun τ => X.emb τ (star ((Pr.piT u : 𝓞 X.E) : X.E))
 
+
 variable (Pr R) in
+abbrev RowPt : Type := DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) (SG := rowSG Pr sel mu)
 
-abbrev RowPt : Type := DecoSet X.E (R.N R.m - 1) ∅ (rowSG Pr sel mu)
-
-def tilQ (u : Pr.Word) : RowPt Pr R sel mu → DecoSet X.E (R.N R.m) (Pr.vT u) (rowSG Pr sel mu) :=
+def tilQ (u : Pr.Word) : RowPt Pr R sel mu → DecoSet (E := X.E) (n := R.N R.m) (ST := Pr.vT u) (SG := rowSG Pr sel mu) :=
   DecoSet.tilH (N_m_succ R) (Pr.piT u)
 
-open Classical in
 
-def tilC (u : Pr.Word) : RowPt Pr R sel mu → DecoSet X.E (R.N R.m) (Pr.vT u) Pr.vGs :=
+open Classical in
+def tilC (u : Pr.Word) : RowPt Pr R sel mu → DecoSet (E := X.E) (n := R.N R.m) (ST := Pr.vT u) (SG := Pr.vGs) :=
   fun d => (tilQ sel mu u d).res Finset.subset_union_left
 
 def evzC (u : Pr.Word) : ColV W Ch u R.m →ₗ[X.K] (RowPt Pr R sel mu → VV X.K (W.lamTrue u R.m)) :=
@@ -217,10 +223,6 @@ def PtilFF (P : LevFam X.E X.K R.r Pr.vGs) (h : (mtildeGSD W Ch sel mu P).Ok) (u
   (mtildeGSD W Ch sel mu P).csOf h (mtildeGSD W Ch sel mu P).outSec fun d' =>
     (pairBK (K := X.K) W.sgTrue).compl₁₂ (brC W u ∘ₗ LinearMap.proj d') (LinearMap.proj d')
 
-def PtilC (P : LevFam X.E X.K R.r Pr.vGs) (h : (mtildeGSD W Ch sel mu P).Ok) (u : Pr.Word) :
-    ColV W Ch u R.m →ₗ[X.K] MtildeV W Ch sel mu P →ₗ[X.K] X.K :=
-  (PtilFF W Ch sel mu P h u).compl₁₂ (evzC W Ch sel mu u) (Submodule.subtype _)
-
 def evRho (P : LevFam X.E X.K R.r Pr.vGs) (u : Pr.Word) :
     FormG (rowTy Ch sel mu P).inv →* Module.End X.K (colVal W u R.m (Pr.vT u) (rowSG Pr sel mu)).V where
   toFun a := ((((rowTy Ch sel mu P).inv.chr a.2)⁻¹ : X.Kˣ) : X.K) •
@@ -230,8 +232,8 @@ def evRho (P : LevFam X.E X.K R.r Pr.vGs) (u : Pr.Word) :
     simp only [Prod.fst_mul, Prod.snd_mul, map_mul, mul_inv, Units.val_mul]
     rw [smul_mul_smul_comm]
 
-open Classical in
 
+open Classical in
 @[reducible] def evGSD (P : LevFam X.E X.K R.r Pr.vGs) (u : Pr.Word) : GSD X.K where
   G := FormG (rowTy Ch sel mu P).inv
   D := RowPt Pr R sel mu
@@ -315,7 +317,8 @@ def CplKer.comp {S₀ S S₁ : GSD K} {Y : Cpl S} (A : CplKer S₀ S S₁ Y) (h 
       rw [this]
       rfl
     ext x
-    simp only [e1, e2, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e1, e2, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum, map_smul]
 
 def colCpl {F : ℕ → GFam K} (kk : KerFam F) (hF : ∀ j, (F j).Ok) (n : ℕ) {S S₁ : GSD K} {Y : Cpl S}
     (A : ∀ b : (F n).β, CplKer ((F n).mem b) S S₁ Y) (h : S.Ok) : (F 0).Forms →ₗ[K] S₁.EqFun :=
@@ -343,26 +346,26 @@ def GLint (P : HeightOneSpectrum (𝓞 E)) : Subgroup (Sp E n ≃ₗ[E] Sp E n) 
 variable (ST SG Q : Finset (HeightOneSpectrum (𝓞 E)))
 
 def DecoF : Type :=
-  {p : DecoSet E n ST SG × (∀ P : Q, Sp E n ≃ₗ[E] Sp E n) //
+  {p : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) × (∀ P : Q, Sp E n ≃ₗ[E] Sp E n) //
     ∀ (P : Q) (x : Sp E n), p.2 P x ∈ p.1.1.at P.1 ↔ x ∈ stdAt E n P.1}
 
 abbrev GLQ : Type := ∀ P : Q, ↥(GLint E n P.1)
 
 variable {E n ST SG Q}
 
-def DecoF.deco (p : DecoF E n ST SG Q) : DecoSet E n ST SG := p.1.1
+def DecoF.deco (p : DecoF E n ST SG Q) : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) := p.1.1
 
 def DecoF.fr (p : DecoF E n ST SG Q) (P : Q) : Sp E n ≃ₗ[E] Sp E n := p.1.2 P
 
-variable (E n ST SG Q) in
 
+variable (E n ST SG Q) in
 def DecoF.base [NeZero n] : DecoF E n ST SG Q := ⟨(DecoSet.base E n ST SG, fun _ => 1), fun _ _ => Iff.rfl⟩
 
 instance [NeZero n] : Nonempty (DecoF E n ST SG Q) := ⟨DecoF.base E n ST SG Q⟩
 
-instance : MulAction (UF E n × GLG E n SG × GLQ E n Q) (DecoF E n ST SG Q) where
+instance : MulAction (UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) (DecoF E n ST SG Q) where
   smul a p := ⟨((a.1, a.2.1) • p.1.1, fun P => a.1.1 * p.1.2 P * ((a.2.2 P)⁻¹).1), fun P x => by
-    have h1 : (((a.1, a.2.1) • p.1.1 : DecoSet E n ST SG)).1.at P.1 =
+    have h1 : (((a.1, a.2.1) • p.1.1 : DecoSet (E := E) (n := n) (ST := ST) (SG := SG))).1.at P.1 =
         localization₂ P.1.asIdeal (gmap a.1.1 p.1.1.1.N) := rfl
     rw [h1, mem_localization_gmap]
     show a.1.1.symm (a.1.1 (p.1.2 P (((a.2.2 P)⁻¹).1 x))) ∈ _ ↔ _
@@ -403,8 +406,8 @@ def grp : Subgroup (GLQ E n Q) := Subgroup.pi Set.univ fun P => (Θ P).H
 
 def chr : ↥Θ.grp →* Kˣ := piChar (fun P => (Θ P).H) fun P => (Θ P).lam
 
-variable (E K n Q) in
 
+variable (E K n Q) in
 def top : LevQFam E K n Q := fun _ => ⟨⊤, 1⟩
 
 end LevQFam
@@ -416,7 +419,7 @@ variable {X : Fields} {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 X.E))
 abbrev FrmG (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) : Type := UF X.E n × ↥Λ.grp × ↥Θ.grp
 
 def FrmG.incl (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) :
-    FrmG Λ Θ →* UF X.E n × GLG X.E n SG × GLQ X.E n Q :=
+    FrmG Λ Θ →* UF X.E n × GLG (E := X.E) (n := n) (SG := SG) × GLQ X.E n Q :=
   MonoidHom.prodMap (MonoidHom.id _) (MonoidHom.prodMap Λ.grp.subtype Θ.grp.subtype)
 
 instance frmAct (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) :
@@ -432,8 +435,8 @@ def frmRho (C : CoefPk X n (DecoF X.E n ST SG Q)) (Λ : LevFam X.E X.K n SG) (Θ
     congr 1
     ring
 
-open Classical in
 
+open Classical in
 @[reducible] def frmGSD (C : CoefPk X n (DecoF X.E n ST SG Q)) (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) :
     GSD X.K where
   G := FrmG Λ Θ
@@ -641,8 +644,8 @@ def kerOf (th : ThDist E K a b SB V V') (Sall : Finset (HeightOneSpectrum (𝓞 
 def inFr (f : Sp E a ≃ₗ[E] Sp E a) (f' : Sp E b ≃ₗ[E] Sp E b) (x : HomE E a b) : HomE E a b :=
   f'.symm.toLinearMap ∘ₗ x ∘ₗ f.toLinearMap
 
-open Classical in
 
+open Classical in
 def phiT (K : Type) [Field K] {ST SG SG' : Finset (HeightOneSpectrum (𝓞 E))} (d : Deco E a ST SG) (d' : Deco E b ST SG')
     (x : HomE E a b) : K :=
   if ∀ P : ST, ∀ y ∈ d.at P.1, x y ∈ d'.at P.1 ∧ d'.f P (x y) = d.f P y then 1 else 0
@@ -663,17 +666,17 @@ variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] (P : Heig
 
 def vP (a : E) : ℤ := Classical.epsilon fun z : ℤ => IsUnit (redP P (a / (q : E) ^ z))
 
+
 variable {P} in
 open Classical in
-
 def unitV (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (a : E) : K := if h : IsUnit (redP P a) then ((χ h.unit : Kˣ) : K) else 0
 
-variable {P} in
 
+variable {P} in
 def locChar (cq : K) (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (a : E) : K := cq ^ vP P q a * unitV χ (a / (q : E) ^ vP P q a)
 
-open Classical in
 
+open Classical in
 def valsQ (E : Type) [Field E] (q A B : ℕ) : Finset E :=
   (Finset.range (q ^ (A + B))).image fun i : ℕ => ((i : ℕ) : E) / (q : E) ^ A
 
@@ -706,8 +709,8 @@ variable {P}
 def lamQB (kj n : ℕ) {N : ℕ} (h : HomE E N N) : K :=
   (unitV ξ (Matrix.det (Matrix.of fun s t : Fin (n - kj) => atN (h (eN E N (kj + t.1))) (kj + s.1))))⁻¹
 
-open Classical in
 
+open Classical in
 def PhiQ (k₀ r c' n' c n : ℕ) : SF E K (n' + c') (n + c) := fun x =>
   if (∀ p p', p < n + c → p' < n' + c' → IntAt P (entB q k₀ c' n' c n 0 0 x p p')) ∧
       (∀ p p', r ≤ p → p < n + c → p' < r → IntAt P (entB q k₀ c' n' c n 0 0 x p p' / (q : E)))
@@ -752,9 +755,6 @@ def JG (k₀ r t n c : ℕ) : Subgroup (Sp E (n + c) ≃ₗ[E] Sp E (n + c)) :=
   stabL E (n + c) (lamY P q n c fun i => i + 1) ⊓
     flagU (flagG P q k₀ n c) (bvecG E q k₀ n c) r {s | ∃ i, s = r + i * t}
 
-def JGsharp (k₀ r t n c : ℕ) : Subgroup (Sp E (n + c) ≃ₗ[E] Sp E (n + c)) :=
-  JG P q k₀ r t n c ⊓ flagU (fun _ => flagG P q k₀ n c 0) (fun _ => bvecG E q k₀ n c k₀) 1 ∅
-
 def bd5 (k₀ rS s : ℕ) : ℕ := if s = rS + k₀ then rS else s
 
 def flagS (k₀ rS n c s : ℕ) : Submodule (𝓞 E) (Sp E (n + c)) :=
@@ -775,8 +775,8 @@ def lamGv (r t j : ℕ) (M : ℕ → ℕ → E) : K :=
 def lamGB (k₀ r t j n c : ℕ) (h : HomE E (n + c) (n + c)) : K :=
   lamGv ψ₀ χ r t j (entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) h)
 
-open Classical in
 
+open Classical in
 def PhiG (sharp : Bool) (k₀ r t j c' n' c n : ℕ) : SF E K (n' + c') (n + c) := fun x =>
   let M := entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x
   let a := r + (j - 1) * t
@@ -793,8 +793,8 @@ def lamGvS (k₀ r t j : ℕ) (M : ℕ → ℕ → E) : K :=
 def lamGBS (k₀ r t j n c : ℕ) (h : HomE E (n + c) (n + c)) : K :=
   lamGvS ψ₀ χ k₀ r t j (entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) h)
 
-open Classical in
 
+open Classical in
 def PhiGS (k₀ rS r t j c' n' c n : ℕ) : SF E K (n' + c') (n + c) := fun x =>
   let M := entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x
   let a := r + (j - 1) * t
@@ -881,8 +881,8 @@ def IsQValC (ξ : Chr F E L) (P : HeightOneSpectrum (𝓞 E)) (k : Lˣ) : Prop :
     y₀ - toRInt F E ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∈ (P.asIdeal ^ 2).map (toRInt F E) →
     (∀ P' : HeightOneSpectrum (𝓞 E), P' ≠ P → y₀ - 1 ∈ P'.asIdeal.map (toRInt F E)) → ξ y = k
 
-open Classical in
 
+open Classical in
 def qValC (ξ : Chr F E L) (P : HeightOneSpectrum (𝓞 E)) : Lˣ := if h : ∃ k, IsQValC ξ P k then h.choose else 1
 
 end XiQ
@@ -890,48 +890,48 @@ end XiQ
 variable (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu))
 
-open Classical in
 
+open Classical in
 def psi0P (P : HeightOneSpectrum (𝓞 X.E)) : AddChar (𝓞 X.E ⧸ P.asIdeal) X.K :=
   if h : P ∈ Pr.vGs then Ch.psi0 ⟨P, h⟩ else 1
 
-open Classical in
 
+open Classical in
 def chiP (P : HeightOneSpectrum (𝓞 X.E)) : ℕ → (𝓞 X.E ⧸ P.asIdeal)ˣ →* X.Kˣ :=
   if h : P ∈ Pr.vGs then chiAt Ch ⟨P, h⟩ else fun _ => 1
 
 abbrev AutY (X : Fields) (R : Ranks) (j : ℕ) : Type := Sp X.E (R.N j + cOf R j) ≃ₗ[X.E] Sp X.E (R.N j + cOf R j)
 
-open Classical in
 
+open Classical in
 def Jat (sharp : Bool) (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) : Subgroup (AutY X R j) :=
   if P ∈ Pr.vGs then
     (if sharp then LocE.JGsym P (qOf P) R.k R.rS R.r R.t (R.N j) (cOf R j) else LocE.JG P (qOf P) R.k R.r R.t (R.N j) (cOf R j))
   else LocE.JQ P (qOf P) (R.k + j) (R.N j) (cOf R j)
 
-open Classical in
 
+open Classical in
 def lamRow (sharp : Bool) (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) (h : HomE X.E (R.N j + cOf R j) (R.N j + cOf R j)) : X.K :=
   if P ∈ Pr.vGs then
     (if sharp then LocE.lamGBS (qOf P) (psi0P Ch P) (chiP Ch P) R.k R.r R.t j (R.N j) (cOf R j) h
       else LocE.lamGB (qOf P) (psi0P Ch P) (chiP Ch P) R.k R.r R.t j (R.N j) (cOf R j) h)
   else LocE.lamQB (resChar (mu : Chr X.F X.E X.K) P) (R.k + j) (R.N j) h
 
-open Classical in
 
+open Classical in
 def lamYat (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) : Submodule (𝓞 X.E) (Sp X.E (R.N j + cOf R j)) :=
   LocE.lamY P (qOf P) (R.N j) (cOf R j) (if P ∈ Pr.vGs then fun i => i + 1 else 0)
 
-open Classical in
 
+open Classical in
 def PhiAt (sharp : Bool) (i : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) : Loc.SF X.E X.K (R.N i + cOf R i) (R.N (i + 1) + cOf R (i + 1)) :=
   if P ∈ Pr.vGs then
     (if sharp then LocE.PhiGS (qOf P) (psi0P Ch P) (chiP Ch P) R.k R.rS R.r R.t (i + 1) (cOf R i) (R.N i) (cOf R (i + 1)) (R.N (i + 1))
       else LocE.PhiG (qOf P) (psi0P Ch P) (chiP Ch P) false R.k R.r R.t (i + 1) (cOf R i) (R.N i) (cOf R (i + 1)) (R.N (i + 1)))
   else LocE.PhiQ (qOf P) (resChar (mu : Chr X.F X.E X.K) P) R.k R.r (cOf R i) (R.N i) (cOf R (i + 1)) (R.N (i + 1))
 
-open Classical in
 
+open Classical in
 def muAt (i : ℕ) (P : rowSG Pr sel mu) : X.E → X.K :=
   LocE.locChar (qOf P.1) (cst.muq (i + 1) P)
     (if P.1 ∈ Pr.vGs then chiP Ch P.1 i else (resChar (mu : Chr X.F X.E X.K) P.1)⁻¹)
@@ -988,8 +988,8 @@ def PsiAt (m2 : ℕ) (P : rowSG Pr sel mu) (hal : AutY X R m2) (x₀ : HomE X.E 
 def FiniteSumNonzeroLargeDepth (i : ℕ) (P : rowSG Pr sel mu) (hal : AutY X R i) (h : AutY X R (i + 1)) : Prop :=
   ∃ A₀ B₀ : ℕ, ∀ A' B', A₀ ≤ A' → B₀ ≤ B' → E1at Ch sel mu { cst with A := A', B := B' } i P hal h ≠ 0
 
-open Classical in
 
+open Classical in
 structure ChIdx.Ok (G : ChGlob X R.m) (m2 : ℕ) : Prop where
   hm : R.m = m2 + 2
   cst_ok : cst.Ok
@@ -1083,8 +1083,8 @@ abbrev ChPt (u : Pr.Word) (j : ℕ) : Type := DecoF X.E (R.N j) (Pr.vT u) Pr.vGs
 def colValF (u : Pr.Word) (j : ℕ) : CoefPk X (R.N j) (ChPt (R := R) sel mu u j) :=
   (colVal W u j (Pr.vT u) Pr.vGs).pull DecoF.deco
 
-open Classical in
 
+open Classical in
 @[reducible] def chF (u : Pr.Word) (j : ℕ) : GFam X.K where
   β := L.β j
   V := (colValF W sel mu u j).V
@@ -1098,15 +1098,15 @@ open Classical in
   Nab _ := (colValF W sel mu u j).Nab
   Del _ := (colValF W sel mu u j).Del
 
-open Classical in
 
+open Classical in
 def frsF {u : Pr.Word} {j : ℕ} (p : ChPt (R := R) sel mu u j) : Frs X.E (R.N j) (rowSG Pr sel mu) := fun P =>
   if h : P.1 ∈ Pr.vGs then p.deco.1.liftFr ⟨P.1, h⟩ else p.fr ⟨P.1, (Finset.mem_union.mp P.2).resolve_left h⟩
 
 def frsT (u : Pr.Word) (d : RowPt Pr R sel mu) : Frs X.E (R.N R.m) (rowSG Pr sel mu) := fun P => (tilQ sel mu u d).1.liftFr P
 
-open Classical in
 
+open Classical in
 def Sall (u : Pr.Word) : Finset (HeightOneSpectrum (𝓞 X.E)) := Pr.vT u ∪ rowSG Pr sel mu
 
 def cAof : ℕ := (∏ P : rowSG Pr sel mu, qOf P.1) ^ cst.A
@@ -1123,8 +1123,8 @@ def locLat {E : Type} [Field E] [NumberField E] {n : ℕ} (SB : Finset (HeightOn
   ⨅ P : SB, (localization₂ P.1.asIdeal N).comap
     ((((qOf P.1 : E) ^ e P)⁻¹ • (LinearMap.id : Sp E n →ₗ[E] Sp E n)).restrictScalars (𝓞 E))
 
-open Classical in
 
+open Classical in
 def ybSet {n : ℕ} (N : Submodule (𝓞 X.E) (Sp X.E n)) : Set (Set (Sp X.E n)) :=
   {Y | ∃ y ∈ locLat (rowSG Pr sel mu) N (fun P => if P.1 ∈ Pr.vGs then -1 else -(cst.M : ℤ)),
     Y = {z | z - y ∈ locLat (rowSG Pr sel mu) N (fun P => if P.1 ∈ Pr.vGs then 0 else (cst.M : ℤ))}}
@@ -1137,16 +1137,16 @@ def XiCpl1 {u : Pr.Word} (m2 : ℕ) (al : L.β m2) (p₀ : ChPt (R := R) sel mu 
     ∏ P : rowSG Pr sel mu, PsiAt Ch sel mu cst m2 P (L.h m2 al P) (inFr (frsF sel mu p₀ P) (frsF sel mu p P) x)
       ((frsF sel mu p P).symm (repY Y))
 
-open Classical in
 
+open Classical in
 def PhiTop (sharp : Bool) (m2 : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) : Loc.SF X.E X.K (R.N (m2 + 1) + cOf R (m2 + 1)) ((R.N R.m - 1) + 0) :=
   if P ∈ Pr.vGs then
     (if sharp then LocE.PhiGS (qOf P) (psi0P Ch P) (chiP Ch P) R.k R.rS R.r R.t R.m (cOf R (m2 + 1)) (R.N (m2 + 1)) 0 (R.N R.m - 1)
       else LocE.PhiG (qOf P) (psi0P Ch P) (chiP Ch P) false R.k R.r R.t R.m (cOf R (m2 + 1)) (R.N (m2 + 1)) 0 (R.N R.m - 1))
   else LocE.PhiQ (qOf P) (resChar (mu : Chr X.F X.E X.K) P) R.k R.r (cOf R (m2 + 1)) (R.N (m2 + 1)) 0 (R.N R.m - 1)
 
-open Classical in
 
+open Classical in
 def ftY {n : ℕ} (P : rowSG Pr sel mu) (η : Sp X.E n →ₗ[X.E] X.E) (y' : Sp X.E n) : X.K :=
   if P.1 ∈ Pr.vGs then
     (if ∀ i : Fin n, IntAt P.1 (η (Pi.single i 1)) then cst.psi P ((epsSg : X.E) * η y') else 0)
@@ -1199,7 +1199,10 @@ theorem ybSet_gmap {n : ℕ} (N : Submodule (𝓞 X.E) (Sp X.E n)) (γ : Sp X.E 
   · rintro ⟨y, hy, hY⟩
     refine ⟨γ y, (mem_locLat_gmap _ _ _ _ _).2 (by rwa [LinearEquiv.symm_apply_apply]), ?_⟩
     ext z
-    rw [Set.mem_ofPred_eq, mem_locLat_gmap, map_sub, LinearEquiv.symm_apply_apply]
+    classical
+    change z ∈ (fun v => γ v) '' Y ↔ z - γ y ∈
+      locLat (rowSG Pr sel mu) (gmap γ N) (fun P => if P.1 ∈ Pr.vGs then 0 else cst.M)
+    rw [mem_locLat_gmap, map_sub, LinearEquiv.symm_apply_apply]
     constructor
     · rintro ⟨z', h', rfl⟩
       rw [hY] at h'
@@ -1241,13 +1244,13 @@ structure ChTh (u : Pr.Word) (m2 : ℕ) where
   top : ThDist X.E X.K (R.N (m2 + 1)) (R.N R.m) (rowSG Pr sel mu) (colValF W sel mu u (m2 + 1)).V
     (colVal W u R.m (Pr.vT u) (rowSG Pr sel mu)).V
 
-open Classical in
 
+open Classical in
 def rhoS (i : ℕ) (P : rowSG Pr sel mu) : X.E → X.K :=
   LocE.unitV (if P.1 ∈ Pr.vGs then chiP Ch P.1 i else (resChar (mu : Chr X.F X.E X.K) P.1)⁻¹)
 
-open Classical in
 
+open Classical in
 def rhoT (i : ℕ) (P : rowSG Pr sel mu) : X.E → X.K :=
   LocE.unitV (if P.1 ∈ Pr.vGs then (chiP Ch P.1 i)⁻¹ else resChar (mu : Chr X.F X.E X.K) P.1)
 
@@ -1258,20 +1261,6 @@ structure ChTh.Ok (cst : LocCst X (rowSG Pr sel mu)) {u : Pr.Word} {m2 : ℕ} (T
     (colValF W sel mu u (i + 1)).rho (rhoS Ch sel mu i) (rhoT Ch sel mu i)
   top : ThDist.Ok T.top (Sall sel mu u) (cAof sel mu cst * cBof sel mu cst u) (colValF W sel mu u (m2 + 1)).rho
     (colVal W u R.m (Pr.vT u) (rowSG Pr sel mu)).rho (rhoS Ch sel mu (m2 + 1)) (rhoT Ch sel mu (m2 + 1))
-
-structure ChKer.Shape {P : LevFam X.E X.K R.r Pr.vGs} {u : Pr.Word} {m2 : ℕ} {b : L.β (m2 + 1)}
-    {hY : YbHyp (R := R) sel mu cst L u m2 b} (A : ChKer W Ch sel mu cst L P u m2 b hY) (T : ChTh W sel mu u m2) : Prop where
-
-  lev : (cst.sharp = false ∧ P = rP0 Ch) ∨ (cst.sharp = true ∧ P = rPsymF Ch)
-  mat : ∀ i, i < m2 → ∀ (al : L.β i) (be : L.β (i + 1)) (p : ChPt (R := R) sel mu u i) (p' : ChPt (R := R) sel mu u (i + 1)),
-    (A.kk i al be).k p p' = kerOf (T.th i) (Sall sel mu u) (cAof sel mu cst) (cBof sel mu cst u) p.deco.1.N (frsF sel mu p)
-      p'.deco.1.N (frsF sel mu p') (XiEntry Ch sel mu cst L i al be p p')
-  cp1 : ∀ (al : L.β m2) (p₀ : ChPt (R := R) sel mu u m2) (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1)))),
-    Y ∈ ybSet sel mu cst p.deco.1.N → (A.cp al).k1 p₀ p Y = kerOf (T.th m2) (Sall sel mu u) (cAof sel mu cst) (cBof sel mu cst u) p₀.deco.1.N (frsF sel mu p₀)
-      p.deco.1.N (frsF sel mu p) (XiCpl1 Ch sel mu cst L m2 al p₀ p Y)
-  cp2 : ∀ (al : L.β m2) (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1)))) (d : RowPt Pr R sel mu),
-    Y ∈ ybSet sel mu cst p.deco.1.N → (A.cp al).k2 p Y d = kerOf T.top (Sall sel mu u) (cAof sel mu cst) (cBof sel mu cst u) p.deco.1.N (frsF sel mu p)
-      (tilQ sel mu u d).1.N (frsT sel mu u d) (XiCpl2 Ch sel mu cst m2 p Y d)
 
 def ChKer.colF {P : LevFam X.E X.K R.r Pr.vGs} {u : Pr.Word} {m2 : ℕ} {b : L.β (m2 + 1)}
     {hY : YbHyp (R := R) sel mu cst L u m2 b} (A : ChKer W Ch sel mu cst L P u m2 b hY) (hF : ∀ j, (chF W sel mu L u j).Ok) :
@@ -1293,18 +1282,6 @@ def BtOf (P : LevFam X.E X.K R.r Pr.vGs) (h : (mtildeGSD W Ch sel mu P).Ok) (Xg 
     ((mtildeKGSD W Ch sel mu).EqFun.subtype ∘ₗ (V0X W Ch sel mu Xg P).subtype)
 
 variable {W Ch sel mu}
-
-def PerKillsU {P : LevFam X.E X.K R.r Pr.vGs} {Xg : Finset (G0 X.E Pr.vGs R.r → X.K)} {u : Pr.Word}
-    (B : MramV W Ch u →ₗ[X.K] ↥(V0X W Ch sel mu Xg P) →ₗ[X.K] X.K) (U : Submodule X.K ↥(V0X W Ch sel mu Xg P)) : Prop :=
-  ∀ φ, ∀ F ∈ U, B φ F = 0
-
-def BkOf {P : LevFam X.E X.K R.r Pr.vGs} {Xg : Finset (G0 X.E Pr.vGs R.r → X.K)} {u : Pr.Word}
-    (B : MramV W Ch u →ₗ[X.K] ↥(V0X W Ch sel mu Xg P) →ₗ[X.K] X.K) (U : Submodule X.K ↥(V0X W Ch sel mu Xg P))
-    (hU : PerKillsU B U) : MramV W Ch u →ₗ[X.K] (↥(V0X W Ch sel mu Xg P) ⧸ U) →ₗ[X.K] X.K :=
-  (U.liftQ B.flip fun F hF => by
-    rw [LinearMap.mem_ker]
-    ext φ
-    exact hU φ F hF).flip
 
 end Bt
 
@@ -1333,8 +1310,8 @@ def Serv.NP {u : Pr.Word} (Sv : Serv W Ch u) (w : HeightOneSpectrum (𝓞 X.K)) 
   (Sv.yM w ⊓ (MfL W Ch u).map (((prW w : 𝓞 X.K) ^ Sv.tau w) • (LinearMap.id : MfV W Ch u →ₗ[𝓞 X.K] MfV W Ch u))).comap
     ((MramV W Ch u).subtype.restrictScalars (𝓞 X.K))
 
-open Classical in
 
+open Classical in
 def NuAt {u : Pr.Word} (Sv : Serv W Ch u) (w : HeightOneSpectrum (𝓞 X.K)) : Submodule (𝓞 X.K) (MramV W Ch u) :=
   if ((Pr.T u : ℕ) : 𝓞 X.K) ∈ w.asIdeal then NlamG W Ch u w
   else if prW w ∈ Sv.served then Sv.NP w
@@ -1349,32 +1326,8 @@ section NuPrime
 
 variable {K : Type} [Field K] [NumberField K]
 
-def toFinPl (w : HeightOneSpectrum (𝓞 K)) : Formalism.LFunctionChainParameters.slopeLatticeData.FinPl K := ⟨w.asIdeal, w.isMaximal⟩
-
-def ofFinPl (w : Formalism.LFunctionChainParameters.slopeLatticeData.FinPl K) : HeightOneSpectrum (𝓞 K) where
-  asIdeal := w.1
-  isPrime := w.2.isPrime
-  ne_bot := fun h => by
-    have h1 := w.2
-    rw [h] at h1
-    exact RingOfIntegers.not_isField K (Ring.isField_iff_maximal_bot.mpr h1)
-
-def sgFloor (s : HeightOneSpectrum (𝓞 K) → ℝ) (w : HeightOneSpectrum (𝓞 K)) : ℤ := ⌊(eW w : ℝ) * s w⌋
-
-open Classical in
-
-def sgFin (s : HeightOneSpectrum (𝓞 K) → ℝ) : Formalism.LFunctionChainParameters.slopeLatticeData.FinPl K →₀ ℤ :=
-  if h : (Function.support fun w : Formalism.LFunctionChainParameters.slopeLatticeData.FinPl K => sgFloor s (ofFinPl w)).Finite
-  then Finsupp.ofSupportFinite _ h else 0
-
-def sgSumOf (m : ℕ) (gain F Eu : ℕ → HeightOneSpectrum (𝓞 K) → ℝ) (w : HeightOneSpectrum (𝓞 K)) : ℝ :=
-  ∑ j ∈ Finset.Icc 1 m, (gain j w + F j w) - ∑ j ∈ Finset.Icc 1 m, Eu j w
 
 end NuPrime
-
-def NuPrimeC {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Ch : Chars X Pr R.m} {u : Pr.Word}
-    (Sv : Serv W Ch u) (gain F Eu : ℕ → HeightOneSpectrum (𝓞 X.K) → ℝ) : Submodule (𝓞 X.K) (MramV W Ch u) :=
-  Formalism.LFunctionChainParameters.slopeLatticeData.modLat (sgFin (sgSumOf R.m gain F Eu)) (NuC Sv)
 
 section ColOp
 
@@ -1416,20 +1369,6 @@ def colC {P : LevFam X.E X.K R.r Pr.vGs} {u : Pr.Word} {m2 : ℕ} {b : L.β (m2 
     MfV W Ch u →ₗ[X.K] (evGSD W Ch sel mu P u).EqFun :=
   A.colF hF ∘ₗ startC hL u
 
-def BtC {P : LevFam X.E X.K R.r Pr.vGs} {u : Pr.Word} {m2 : ℕ} {b : L.β (m2 + 1)} {hY : YbHyp (R := R) sel mu cst L u m2 b}
-    (A : ChKer W Ch sel mu cst L P u m2 b hY) (hF : ∀ j, (chF W sel mu L u j).Ok) {G : ChGlob X R.m} (hL : L.Ok Ch sel mu cst G m2)
-    (h : (mtildeGSD W Ch sel mu P).Ok) (Xg : Finset (G0 X.E Pr.vGs R.r → X.K)) (_hXg : ∀ χ ∈ Xg, IsAbsIrrChar χ)
-    (_hS : Pr.T u ∈ S ∧ ∀ i, Pr.g i ∈ S) :
-    MramV W Ch u →ₗ[X.K] ↥(V0X W Ch sel mu Xg P) →ₗ[X.K] X.K :=
-  BtOf W Ch sel mu P h Xg u (colC A hF hL)
-
-def BkC {P : LevFam X.E X.K R.r Pr.vGs} {u : Pr.Word} {m2 : ℕ} {b : L.β (m2 + 1)} {hY : YbHyp (R := R) sel mu cst L u m2 b}
-    (A : ChKer W Ch sel mu cst L P u m2 b hY) (hF : ∀ j, (chF W sel mu L u j).Ok) {G : ChGlob X R.m} (hL : L.Ok Ch sel mu cst G m2)
-    (h : (mtildeGSD W Ch sel mu P).Ok) (Xg : Finset (G0 X.E Pr.vGs R.r → X.K)) (hXg : ∀ χ ∈ Xg, IsAbsIrrChar χ)
-    (hS : Pr.T u ∈ S ∧ ∀ i, Pr.g i ∈ S) (U : Submodule X.K ↥(V0X W Ch sel mu Xg P))
-    (hU : PerKillsU (BtC A hF hL h Xg hXg hS) U) : MramV W Ch u →ₗ[X.K] (↥(V0X W Ch sel mu Xg P) ⧸ U) →ₗ[X.K] X.K :=
-  BkOf (BtC A hF hL h Xg hXg hS) U hU
-
 end ColOp
 
 section Names
@@ -1437,21 +1376,6 @@ section Names
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Ch : Chars X Pr R.m}
   {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
   {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)} {L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))}
-
-def Kop {P : LevFam X.E X.K R.r Pr.vGs} {u : Pr.Word} {m2 : ℕ} {b : L.β (m2 + 1)} {hY : YbHyp (R := R) sel mu cst L u m2 b}
-    (A : ChKer W Ch sel mu cst L P u m2 b hY) (hF : ∀ j, (chF W sel mu L u j).Ok) (i : ℕ) :
-    (chF W sel mu L u i).Forms →ₗ[X.K] (chF W sel mu L u (i + 1)).Forms :=
-  A.kk.step hF i
-
-def KopLast {P : LevFam X.E X.K R.r Pr.vGs} {u : Pr.Word} {m2 : ℕ} {b : L.β (m2 + 1)} {hY : YbHyp (R := R) sel mu cst L u m2 b}
-    (A : ChKer W Ch sel mu cst L P u m2 b hY) (hF : ∀ j, (chF W sel mu L u j).Ok) (al : L.β m2) :
-    ((chF W sel mu L u m2).mem al).EqFun →ₗ[X.K] (evGSD W Ch sel mu P u).EqFun :=
-  ((A.cp al).comp (hF (m2 + 1) b) (midGSD W sel mu L u m2 b).outSec).opOf (hF m2 al) ((chF W sel mu L u m2).mem al).outSec
-
-def PerInv (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E))
-    (mu : Tup X.F X.E X.K S) (P : LevFam X.E X.K R.r Pr.vGs) (u : Pr.Word) : Prop :=
-  ∀ (g : FormG (rowTy Ch sel mu P).inv) (x : VV X.K (W.lamTrue u R.m)) (y : VV X.K W.sgTrue),
-    pairBK W.sgTrue (brC W u (evRho W Ch sel mu P u g x)) ((mtildeGSD W Ch sel mu P).ρ g y) = pairBK W.sgTrue (brC W u x) y
 
 end Names
 

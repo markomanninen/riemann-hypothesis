@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsPolynomialEqMapEvalRootsOfPermInvariant
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsPolynomialEqMapEvalRootsOfPermInvariant
+
+@[expose] public section
 
 noncomputable section
 open Polynomial
@@ -38,7 +42,7 @@ private lemma Phi_sym {A : Type} [CommRing A] (N m : ℕ) (σ : Equiv.Perm (Fin 
 private lemma eval_derivative_prod_X_sub_C {R ι : Type*} [CommRing R] [DecidableEq ι] (s : Finset ι) (y : ι → R) (a : R) :
     (derivative (∏ J ∈ s, ((X : R[X]) - C (y J)))).eval a = ∑ J ∈ s, ∏ J' ∈ s.erase J, (a - y J') := by
   rw [derivative_prod_finset]
-  simp [eval_finset_sum, eval_prod]
+  simp [eval_finsetSum, eval_prod]
 
 private lemma exists_chi {A : Type} [CommRing A] [Nontrivial A] (g : A[X]) (N m : ℕ) (hm : m ≤ N) :
     ∃ χ : A[X], χ.Monic ∧ ∀ (S : Type) [CommRing S] [Algebra A S] (x : Fin N → S),
@@ -75,7 +79,7 @@ private lemma exists_chi {A : Type} [CommRing A] [Nontrivial A] (g : A[X]) (N m 
     exact lt_of_le_of_lt Polynomial.degree_le_natDegree
       (by exact_mod_cast lt_of_le_of_lt hpdeg hlt)
   · intro S _ _ x hx
-    rw [Polynomial.map_add, hp S x hx, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sub,
+    rw [Polynomial.map_add (f := _), hp S x hx, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sub,
       Polynomial.map_pow, Polynomial.map_X, add_sub_cancel, hΦ, Polynomial.map_prod]
     refine Finset.prod_congr rfl (fun J _ => ?_)
     rw [Polynomial.map_sub, Polynomial.map_X, Polynomial.map_C, AlgHom.toRingHom_eq_coe,
@@ -170,7 +174,8 @@ theorem UpperTheory.exists_root_subset_product_equation_of_henselian_reduction :
       rw [hk]
       exact I.mul_mem_right k hα1
     have hunit : IsUnit ((derivative χ).eval α) := by
-      haveI := isLocalHom_of_le_jacobson_bot I (HenselianRing.jac (I := I))
+      haveI := isLocalHom_of_le_jacobson_bot I (by
+        simpa only [Ideal.jacobson_bot] using (HenselianRing.jac (I := I)))
       exact isUnit_of_map_unit (Ideal.Quotient.mk I) _ (by rw [hcong, hE1]; exact isUnit_one)
     refine ⟨α, hunit.unit, hα1, ?_⟩
     intro S _ _ x hx

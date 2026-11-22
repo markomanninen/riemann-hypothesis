@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.Statements
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.StatementsBounds
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.Statements
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.StatementsBounds
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -27,7 +32,7 @@ theorem prod_fderiv_le {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {�
         have hA : 0 ≤ A := (norm_nonneg _).trans (h i hi).2.1
         have hprod : ‖∏ j ∈ s.erase i, g j p‖ ≤ A ^ (s.card - 1) := by
           rw [norm_prod, ← Finset.card_erase_of_mem hi, ← Finset.prod_const]
-          exact Finset.prod_le_prod (fun _ _ => norm_nonneg _)
+          exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
             (fun j hj => (h j (Finset.mem_of_mem_erase hj)).2.1)
         refine (ContinuousLinearMap.opNorm_smul_le _ _).trans ?_
         exact mul_le_mul hprod (h i hi).2.2 (norm_nonneg _) (pow_nonneg hA _)

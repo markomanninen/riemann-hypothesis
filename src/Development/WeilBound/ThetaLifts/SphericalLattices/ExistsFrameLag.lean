@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.ChartSt
-import Development.WeilBound.ThetaLifts.SphericalLattices.MemIntGLIff
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.ChartSt
+public import Development.WeilBound.ThetaLifts.SphericalLattices.MemIntGLIff
+
+@[expose] public section
 
 noncomputable section
 

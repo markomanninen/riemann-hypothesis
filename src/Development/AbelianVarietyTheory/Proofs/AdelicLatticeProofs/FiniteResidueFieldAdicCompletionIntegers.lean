@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Landherr₂.ExistsNormTensor
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemIffForallMemLocalizeRingOfIntegers
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.TraceFormDualOneTraceFormDual
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAbsoluteValueOfIsDiscreteValuationRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Landherr₂.ExistsNormTensor
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemIffForallMemLocalizeRingOfIntegers
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.TraceFormDualOneTraceFormDual
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAbsoluteValueOfIsDiscreteValuationRing
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum IsLocalRing
 open scoped Matrix TensorProduct nonZeroDivisors ComplexConjugate
@@ -90,7 +94,7 @@ theorem locConj_locConj (z : LocAlg v) : locConj v (locConj v z) = z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => simp [locConj_tmul, cc]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem locEmb_coe (a : (maximalRealSubfield E)) :
     locEmb v (a : E) = algebraMap (v.adicCompletion (maximalRealSubfield E)) (LocAlg v) (algebraMap (maximalRealSubfield E) _ a) := by
@@ -121,7 +125,7 @@ theorem exists_of_locConj_eq {z : LocAlg v} (hz : locConj v z = z) :
     ∃ a : v.adicCompletion (maximalRealSubfield E), algebraMap _ (LocAlg v) a = z := by
   obtain ⟨θ, h0, hθ⟩ := Published.exists_cc_eq_neg E
   obtain ⟨p, q, rfl⟩ := exists_coord v h0 hθ z
-  rw [map_add, map_mul, locConj_algebraMap, locConj_algebraMap, locConj_locEmb, hθ, map_neg] at hz
+  rw [map_add (f := _), map_mul, locConj_algebraMap, locConj_algebraMap, locConj_locEmb, hθ, map_neg] at hz
   have hu : IsUnit (locEmb v (2 * θ)) := (IsUnit.mk0 _ (mul_ne_zero two_ne_zero h0)).map _
   have : algebraMap _ (LocAlg v) q = 0 := by
     rw [← hu.mul_left_eq_zero, map_mul, map_ofNat]
@@ -155,8 +159,6 @@ theorem isIntegral_of_mem_locOrder {z : LocAlg v} (hz : z ∈ locOrder v) :
 
 def locOrderConj : locOrder v →+* locOrder v :=
   (locConj v).restrict (locOrder v).toSubring (locOrder v).toSubring fun _ => locConj_mem v
-
-theorem coe_locOrderConj (z : locOrder v) : (locOrderConj v z : LocAlg v) = locConj v z := rfl
 
 theorem exists_of_mem_locOrder_of_locConj_eq {z : LocAlg v} (hz : z ∈ locOrder v)
     (hc : locConj v z = z) :
@@ -301,11 +303,11 @@ theorem locEmb_mem_locOrder_iff (z : E) : locEmb v z ∈ locOrder v ↔ z ∈ se
 theorem exists_frame {L : Submodule (𝓞 E) (Fin r → E)} (hL : ReciprocityTheory.MultiplicativeHeights.IsLattice L) :
     ∃ g : GL (Fin r) E, ∀ x, (∃ s ∉ v.asIdeal, algebraMap (𝓞 (maximalRealSubfield E)) (𝓞 E) s • x ∈ L) ↔
       ∀ i, (((g⁻¹ : GL (Fin r) E) : Matrix (Fin r) (Fin r) E) *ᵥ x) i ∈ semiLoc v := by
-  haveI : Submodule.IsLattice E (Submodule.span (semiLoc v) (L : Set (Fin r → E))) := by
-    constructor
-    · obtain ⟨s, rfl⟩ := hL.1
-      exact ⟨s, (Submodule.span_span_of_tower (𝓞 E) _ _).symm⟩
-    · rw [Submodule.span_span_of_tower, hL.2]
+  haveI : Submodule.IsFullLattice E (Submodule.span (semiLoc v) (L : Set (Fin r → E))) := {
+    toIsLattice := Submodule.IsLattice.of_fg E (by
+      obtain ⟨s, rfl⟩ := hL.1
+      exact ⟨s, (Submodule.span_span_of_tower (𝓞 E) _ _).symm⟩)
+    span_eq_top := by rw [Submodule.span_span_of_tower, hL.2] }
   obtain ⟨g, hg⟩ := exists_eq_frameLattice (Submodule.span (semiLoc v) (L : Set (Fin r → E)))
   refine ⟨g, fun x => ?_⟩
   rw [← mem_span_semiLoc_iff, hg, mem_frameLattice_iff_inv]
@@ -626,7 +628,7 @@ theorem exists_unit_locConj_mul_eq {𝔟 : FractionalIdeal (𝓞 E)⁰ E} (hc : 
     rw [← map_mul]; congr 1; field_simp
   have e2 : locEmb v (cc (b⁻¹ * cc b)) * locEmb v (cc b) = locEmb v b := by
     rw [← map_mul, hcu]; congr 1; field_simp
-  rw [e0, map_mul, map_add, map_mul, locConj_locConj, locConj_locEmb, locConj_locEmb]
+  rw [e0, map_mul, map_add (f := _), map_mul, locConj_locConj, locConj_locEmb, locConj_locEmb]
   linear_combination (a : LocAlg v) * e2 - locConj v a * e1
 
 omit [Algebra.Unramified (𝓞 (maximalRealSubfield E)) (𝓞 E)] in
@@ -767,7 +769,7 @@ theorem congr_of_local_norm (H : Published.Landherr) (H' : Published.HasseNormSt
       obtain ⟨p, q, rfl⟩ := exists_coord v h0 hθ z
       refine ⟨p, q, algebraMap_locAlg_injective v ?_⟩
       rw [← locEmb_coe, map_sub, map_mul, ← locEmb_coe, hdθ, map_pow, map_pow, map_mul]
-      rw [map_add, map_mul, locConj_algebraMap, locConj_algebraMap, locConj_locEmb, hθ,
+      rw [map_add (f := _), map_mul, locConj_algebraMap, locConj_algebraMap, locConj_locEmb, hθ,
         map_neg] at hz
       exact hz.trans (by ring))
   refine H E r G G' hG hG' hd hd' hs ⟨(p : E) + q * θ, ?_⟩
@@ -775,7 +777,7 @@ theorem congr_of_local_norm (H : Published.Landherr) (H' : Published.HasseNormSt
     simpa using congrArg Subtype.val hpq
   have h2 : cc ((p : E) + q * θ) = p - q * θ := by
     change IsCMField.complexConj E _ = _
-    rw [map_add, map_mul, IsCMField.complexConj_apply_eq_self, IsCMField.complexConj_apply_eq_self,
+    rw [map_add (f := _), map_mul, IsCMField.complexConj_apply_eq_self, IsCMField.complexConj_apply_eq_self,
       show IsCMField.complexConj E θ = -θ from hθ]
     ring
   rw [h1, h2, hdθ]
@@ -862,8 +864,8 @@ theorem modular_of_perfect {ξ : E} (hξ0 : ξ ≠ 0) (hd : G.det ≠ 0) (hL : R
     (FractionalIdeal.spanSingleton_ne_zero_iff.2 hξ0) coe_different_ne_zero)),
     ← traceFormDual_eq hξ0, (perfect_iff_traceFormDual_eq hξ0 hd hL).1 h]
 
-variable (E r) in
 
+variable (E r) in
 def signMatrix (p : ℕ) : Matrix (Fin r) (Fin r) E :=
   Matrix.diagonal fun a => if (a : ℕ) < p then 1 else -1
 

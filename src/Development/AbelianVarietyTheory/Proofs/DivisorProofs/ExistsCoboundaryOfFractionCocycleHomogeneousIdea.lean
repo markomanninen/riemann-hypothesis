@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CubeComplexGradedModuleExactAtOfLargeDegree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CubeComplexGradedModuleExactAtOfLargeDegree
+
+@[expose] public section
+
 open MvPolynomial DirectSum
 
 namespace GlobalTheory
@@ -153,7 +158,7 @@ theorem exists_coboundary_lt {ι : Type} [LinearOrder ι] [Fintype ι] {A : Type
     refine ⟨L, ?_⟩
     have hL' := Ideal.Quotient.eq_zero_iff_mem.2 hL
     rw [hP]
-    simp only [map_mul, map_pow, map_add, map_sub] at hL'
+    simp only [map_mul, map_pow, map_add (f := _), map_sub] at hL'
     simp only [Algebra.smul_def, Ideal.Quotient.algebraMap_eq, Ideal.Quotient.mk_eq_mk, map_mul,
       map_pow]
     linear_combination hL'
@@ -216,9 +221,9 @@ theorem exists_coboundary_of_cocycle_homogeneous : ∀ (A : Type) [CommRing A] [
   obtain ⟨L, hL⟩ := cocycle_all_pairs_of_lt (fun i => Ideal.Quotient.mk J (X i))
     (fun i j => Ideal.Quotient.mk J (F i j)) (fun i => Ideal.Quotient.mk J (G i)) N N'
     (fun i j l => (hcoc i j l).imp fun L hL => by
-      simpa only [map_mul, map_pow, map_sub, map_add] using Ideal.Quotient.eq_zero_iff_mem.2 hL)
+      simpa only [map_mul, map_pow, map_sub, map_add (f := _)] using Ideal.Quotient.eq_zero_iff_mem.2 hL)
     (fun i j h => (hlt i j h).imp fun L hL => by
-      simpa only [map_mul, map_pow, map_sub, map_add] using Ideal.Quotient.eq_zero_iff_mem.2 hL)
+      simpa only [map_mul, map_pow, map_sub, map_add (f := _)] using Ideal.Quotient.eq_zero_iff_mem.2 hL)
     i j
   exact ⟨L, Ideal.Quotient.eq_zero_iff_mem.1 (by simpa only [map_mul, map_pow, map_sub] using hL)⟩
 

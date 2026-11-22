@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwLMulSelf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwLMulSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -310,9 +314,6 @@ theorem xE_comm {E1 E2 : Fin n → Fin n → Module.End ℂ V} (hE : IsPairA E1 
     simp only [mul_add, add_mul, mul_sub, sub_mul, c1, ← c2, g1, g2]
   all_goals split_ifs <;> abel
 
-theorem liftL_mul (T U : Module.End ℂ V) :
-    (liftL n (T * U) : Module.End ℂ (Cq n V)) = liftL n T * liftL n U := rfl
-
 theorem lE_comm {E1 E2 : Fin n → Fin n → Module.End ℂ V} (hE : IsPairA E1 E2) (r : Bool) (p q : Fin n) (s : Bool)
     (a b : Fin n) :
     lE E1 E2 r p q * lE E1 E2 s a b - lE E1 E2 s a b * lE E1 E2 r p q =
@@ -531,7 +532,7 @@ theorem levStab : LevStab := by
   constructor
   · refine Submodule.mem_map.2 ⟨(1 / 2 : ℂ) • (evLc lev E1 E2 (FreeAlgebra.ι ℂ (false, p, q)) y +
       evLc lev E1 E2 (FreeAlgebra.ι ℂ (true, p, q)) y), Submodule.smul_mem _ _ (add_mem (mem _) (mem _)), ?_⟩
-    simp only [firstLeviFamily, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add, key]
+    simp only [firstLeviFamily, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add (f := _), key]
   · refine Submodule.mem_map.2 ⟨(1 / 2 : ℂ) • (evLc lev E1 E2 (FreeAlgebra.ι ℂ (false, p, q)) y -
       evLc lev E1 E2 (FreeAlgebra.ι ℂ (true, p, q)) y), Submodule.smul_mem _ _ (sub_mem (mem _) (mem _)), ?_⟩
     simp only [secondLeviFamily, LinearMap.smul_apply, LinearMap.sub_apply, map_smul, map_sub, key]

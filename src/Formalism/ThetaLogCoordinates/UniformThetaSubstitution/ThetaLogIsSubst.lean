@@ -1,7 +1,14 @@
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.KernelFromKOneK
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.ThetaLogIsSubstitution
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementN
+module
+
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.KernelFromKOneK
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.EdgeNoTrunc
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.EChain
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
+public import Formalism.GaussJetBounds.StatementI
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.G7.Top
 
@@ -13,7 +20,8 @@ theorem thetaLogIsSubst : ThetaLogIsSubst := by
   have hz0 : ∀ x : Bool × EV ν r0 r1, MvPowerSeries.constantCoeff (zLin om oms x) = 0 := by
     intro x
     unfold zLin
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     apply Finset.sum_eq_zero
     intro s _
     split_ifs <;> simp

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -143,7 +148,7 @@ theorem UpperTheory.Gal.productCup_of_system.edgeInj_of :
         have h0 : y s = 0 := by simpa using this
         simp [h0]
   · change deltaL ℂ (ι ⊕ₗ ι) E (e + ((-1 : ℤ) ^ d) • y) = 0
-    rw [← wd_one_eq, map_add, map_zsmul, hy']
+    rw [← wd_one_eq, map_add (f := _), map_zsmul, hy']
     funext s
     simp [hwe]
   · intro J

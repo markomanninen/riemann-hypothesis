@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValLamOfSubset
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValLamOfSubset
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,7 +115,8 @@ theorem twistSub_monomial_MH (u : ι × Fin n →₀ ℕ) :
 
 theorem twistSub_support (F : MvPolynomial (ι × Fin n) R) (m : ι × Fin n →₀ ℕ)
     (hm : m ∈ (twistSub LL S j F).support) : ∃ u ∈ F.support, ∀ i, multideg m i = multideg u i := by
-  rw [F.as_sum, map_sum] at hm
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [F.as_sum, map_sum] at hm
   obtain ⟨u, hu, hmu⟩ := Finset.mem_biUnion.mp (MvPolynomial.support_sum hm)
   exact ⟨u, hu, twistSub_monomial_MH LL S j u _ m hmu⟩
 
@@ -160,7 +165,7 @@ theorem valComp : ValComp := by
       exact hu rfl
     by_cases hm : ∀ i, multideg m i = δ i
     · rw [if_pos hm]
-      conv_rhs => rw [hF, map_add, MvPolynomial.coeff_add]
+      conv_rhs => rw [hF, map_add (f := _), MvPolynomial.coeff_add]
       have h0 : (twistSub LL S j (F - homComp δ F)).coeff m = 0 := by
         by_contra hne
         obtain ⟨u, hu, hmu⟩ := twistSub_support LL S j _ m (MvPolynomial.mem_support_iff.mpr hne)

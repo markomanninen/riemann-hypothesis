@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CongAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ChartReadsAtClassGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsDefiniteLaws
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMoveRight
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CongruentOneMemStepLevelLevelCharEqOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalCharDetEqOneOfCongrOneModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CongAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ChartReadsAtClassGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsDefiniteLaws
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMoveRight
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CongruentOneMemStepLevelLevelCharEqOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalCharDetEqOneOfCongrOneModPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -198,7 +202,7 @@ theorem eq_of_near {K : Type} (Ξ : HomE E a b → K) {c d : E} (hc0 : c ≠ 0) 
       congr 2
       · exact LinearMap.toMatrix'_toLin' _
       · exact LinearMap.toMatrix'_toLin' _
-    rw [map_add, e1, LinearMap.toMatrix'_toLin', Matrix.mul_sub, ← Matrix.mul_assoc t' u', ht2', Matrix.one_mul]
+    rw [map_add (f := _), e1, LinearMap.toMatrix'_toLin', Matrix.mul_sub, ← Matrix.mul_assoc t' u', ht2', Matrix.one_mul]
     abel
   refine (congrArg Ξ e).trans ((hinv _ _ fun s l => intAt_inv_mul hd0 ?_).trans (hcong _ _ (hk ht1 ht2 n1) (hk ht1' ht2' n2) x))
   have e2 : Matrix.toLin' (t' * (u' * X' - X * u)) (Pi.single s 1) l = (t' * (u' * X' - X * u)) l s := by
@@ -232,7 +236,8 @@ theorem mle_frame {g : GL (Fin a) (AfE F E)} {p : DecoF E a ST SG Q} (h : IsPtOf
   convert AdT.FrameMove.val_sub_lt_of_liftFr h w r s using 2
   rw [Matrix.sub_apply, Matrix.mul_apply]
   unfold GlobalTheory.Mem.Col2.pullV
-  rw [Matrix.mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mulVec, dotProduct, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [map_mul, adAt_inclE]
@@ -366,39 +371,5 @@ open scoped TensorProduct Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.Transport.Entry
-
-theorem entry_transport : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X) (hI : I.Ok) (l : I.Laws) (u : B.Word) (i : ℕ) (hm : i + 2 < B.R.m) (al : (I.idx I.mu0).β i) (be : (I.idx I.mu0).β (i + 1)) (P : Formalism.L2.Col.rowSG (B.primes X) I.sel (I.tup I.mu0))
-    (p q : PtAt B.R I.sel (I.tup I.mu0) (I.cst I.mu0) u (i)) (p' q' : PtAt B.R I.sel (I.tup I.mu0) (I.cst I.mu0) u (i + 1))
-    (k y : TC.GA B (B.R.N (i))) (k' y' : TC.GA B (B.R.N (i + 1))),
-    TC.PtOf k p.1.1 → p.1.1.deco.1.N = Formalism.L2.Col.stdLat B.fields.E (B.R.N (i)) →
-    TC.PtOf k' p'.1.1 → p'.1.1.deco.1.N = Formalism.L2.Col.stdLat B.fields.E (B.R.N (i + 1)) →
-    TC.PtOf (y * k) q.1.1 → TC.PtOf (y' * k') q'.1.1 →
-    ∃ M : ℕ, 0 < M ∧ ∀ M₀ : ℕ, M ∣ M₀ → ∀ x x₀ : Formalism.L2.Col.HomE B.fields.E (B.R.N i) (B.R.N (i + 1)),
-      GlobalTheory.Transport.CongAt B P.1 M₀ y y' x x₀ →
-      Formalism.L2.Col.XiAt I.Ch I.sel (I.tup I.mu0) (I.cst I.mu0) i P ((I.idx I.mu0).h i al P) ((I.idx I.mu0).h (i + 1) be P)
-                (Formalism.L2.Col.inFr (Formalism.L2.Col.frsF I.sel (I.tup I.mu0) p.1.1 P) (Formalism.L2.Col.frsF I.sel (I.tup I.mu0) p'.1.1 P) x₀) =
-        Formalism.L2.Col.XiAt I.Ch I.sel (I.tup I.mu0) (I.cst I.mu0) i P ((I.idx I.mu0).h i al P) ((I.idx I.mu0).h (i + 1) be P)
-          (Formalism.L2.Col.inFr (Formalism.L2.Col.frsF I.sel (I.tup I.mu0) q.1.1 P) (Formalism.L2.Col.frsF I.sel (I.tup I.mu0) q'.1.1 P) x) := by
-  intro B X I hI l u i hm al be P p q p' q' k y k' y' hp _ hp' _ hq hq'
-  have hX := (GlobalTheory.Mem.FieldsLaws.fields_satisfy_definite_laws B).1
-  have hL := hI.idx_ok I.mu0
-  have hP : P.1 ∈ (B.primes X).vGs := (Finset.mem_union.1 P.2).resolve_right fun h => by
-    have h' : P.1 ∈ I.Q I.mu0 := h
-    rw [I.twistPrimes_reference_tuple_eq_empty] at h'
-    exact Finset.notMem_empty _ h'
-  have hq0 : ((Formalism.L2.Col.qOf P.1 : ℕ) : B.fields.E) ≠ 0 := Nat.cast_ne_zero.2 (qOf_pos P.1).ne'
-  obtain ⟨M, hM, H⟩ := exists_modulus hp hp' hq hq' ⟨P.1, hP⟩ (pow_ne_zero (I.cst I.mu0).B hq0)
-  refine ⟨M, hM, fun M₀ hM₀ x x₀ hx => ?_⟩
-  obtain ⟨U, U', hU, hU', h⟩ := H M₀ hM₀ x x₀ hx
-  have hu := exp_le_val_qOf (GlobalTheory.UnfoldTwoSided.degOne_bad hX.ok l.pr hI.sel_ok P)
-  unfold Formalism.L2.Col.frsF
-  simp only [dif_pos hP]
-  refine (eq_of_near (P := P.1) _ hq0 (val_qOf_lt_one P.1) (pow_ne_zero (I.cst I.mu0).B hq0) (fun κ κ' hκ hκ' z => ?_)
-    (hL.xiInv i (by omega) al be P) _ _ U U' (hU.mono hu) (hU'.mono hu) h).symm
-  refine xiAt_inFr hX l.pr hI.ch_ok hI.sel_ok hL (by omega) al be P κ κ' ?_ ?_ z
-  · rw [hL.depthG P hP, pow_one]
-    exact hκ
-  · rw [hL.depthG P hP, pow_one]
-    exact hκ'
 
 end GlobalTheory.Transport.Entry

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsZeroOfLinearFormJacobianHenselian
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsPowerDecompositionOfRootOfUnity
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsTwoChartQuotientOfFiniteCoord
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsZeroOfLinearFormJacobianHenselian
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsPowerDecompositionOfRootOfUnity
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsTwoChartQuotientOfFiniteCoord
+
+@[expose] public section
 
 noncomputable section
 open IsLocalRing UpperTheory.Et
@@ -102,7 +106,7 @@ private lemma L_mem {n : ℕ} (I : Ideal A) (L : D →ₗ[A] (Fin n → A)) (x :
     | zero => intro d i; simp
     | add y z _ _ hy hz =>
       intro d i
-      rw [mul_add, map_add]
+      rw [mul_add, map_add (f := _)]
       exact I.add_mem (hy d i) (hz d i)
     | smul e y _ hy =>
       intro d i
@@ -124,7 +128,8 @@ private lemma eval_lin (c : D) (a y : Fin n → D) :
 
 private lemma pderiv_lin (c : D) (a : Fin n → D) (j : Fin n) :
     MvPolynomial.pderiv j (lin c a) = MvPolynomial.C (a j) := by
-  simp [lin, MvPolynomial.pderiv_X, Pi.single_apply, map_sum, Derivation.leibniz]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [lin, MvPolynomial.pderiv_X, Pi.single_apply, map_sum, Derivation.leibniz]
 
 end
 
@@ -181,7 +186,7 @@ theorem UpperTheory.exists_factorization_near_root_of_unity_henselian :
     refine ⟨a, ha, b, hb, c, hc, ?_⟩
     rw [← Ideal.Quotient.eq_zero_iff_mem]
     rw [hT't] at hk
-    simp only [map_sub, map_add, map_mul, map_pow, map_natCast]
+    simp only [map_sub, map_add (f := _), map_mul, map_pow, map_natCast]
     rw [hk]
     ring
   choose a ha b hb c hc hkey using hdec

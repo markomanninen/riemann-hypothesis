@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PotOfFlag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.NewformTwistNorms.PowEqOneOfKills
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PotOfFlag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.NewformTwistNorms.PowEqOneOfKills
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Polynomial UpperTheory.V UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V.Af UpperTheory.V.Sd
@@ -92,7 +96,7 @@ theorem UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.potOfFlag :
   refine ⟨κ, hflag, fun i j b hb h => ?_⟩
   have hAl : A.valuation (l : Ω) < 1 := by
     have h1 := (hA ((l : ℕ) : 𝓞 F)).2 hv
-    simpa using h1
+    simpa only [map_natCast] using h1
   obtain ⟨s, hs, hinf⟩ := cyc_inf_over F Ω l A hAl
   let t : ↥(Dec (F := F) A) := ⟨s, Ine_le_Dec A hs⟩
   have h1 : κ i t ^ b = (κ j t * cycBar F Ω l s) ^ b := DFunLike.congr_fun h t

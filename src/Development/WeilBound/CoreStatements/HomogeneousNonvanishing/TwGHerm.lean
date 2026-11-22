@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField TensorProduct
 
 namespace PositivityTheory.UnitarySelfGeneration
@@ -7,7 +12,7 @@ theorem tw_g_herm : ∀ (Z R : Type) [CommRing Z] [CommRing R] [Algebra Z R] (σ
   intro Z R _ _ _ σ hσ lam hlam hbij N ψ halt hψ hadj
   have hskew : ∀ x y, ψ x y = -ψ y x := fun x y => by
     have := halt (x + y)
-    simp only [map_add, LinearMap.add_apply, halt] at this
+    simp only [map_add (f := _), LinearMap.add_apply, halt] at this
     linear_combination this
   have hinj : ∀ a b : R, (∀ r, lam (a * r) = lam (b * r)) → a = b := fun a b h =>
     hbij.1 (LinearMap.ext fun r => h r)
@@ -20,7 +25,8 @@ theorem tw_g_herm : ∀ (Z R : Type) [CommRing Z] [CommRing R] [Algebra Z R] (σ
   have hform : ∀ x y, ψ x y = lam (∑ i, ∑ j, x i * A i j * σ (y j)) := by
     intro x y
     conv_lhs => rw [pi_eq_sum_univ' x, pi_eq_sum_univ' y]
-    simp only [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     have h1 := hadj (σ (y j)) (x i • Pi.single i 1) (Pi.single j 1)

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.AlmostEverywhereEigen.OneStepOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.AlmostEverywhereEigen.OneStepOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem exists_measure_of_positive (Λ : C(X, ℂ) →ₗ[ℂ] ℂ)
   { toFun g := (Λ (ofR g.toContinuousMap)).re
     map_add' g g' := by
       have : (g + g').toContinuousMap = g.toContinuousMap + g'.toContinuousMap := rfl
-      rw [this, ofR_add, map_add, Complex.add_re]
+      rw [this, ofR_add, map_add (f := _), Complex.add_re]
     map_smul' c g := by
       have : (c • g).toContinuousMap = c • g.toContinuousMap := rfl
       rw [this, ofR_smul, map_smul]; simp
@@ -91,7 +95,7 @@ theorem exists_measure_of_positive (Λ : C(X, ℂ) →ₗ[ℂ] ℂ)
   have hint : Integrable (fun x => f x) (RealRMK.rieszMeasure Λr) :=
     f.continuous.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)
   conv_lhs => rw [eq_ofR_re_add_im f]
-  rw [map_add, map_smul, key, key, ← integral_re_add_im hint, smul_eq_mul, mul_comm]
+  rw [map_add (f := _), map_smul, key, key, ← integral_re_add_im hint, smul_eq_mul, mul_comm]
   rfl
 
 end PositivityTheory.Rg.BcB.E2.P.Specmeas
@@ -102,7 +106,7 @@ theorem specmeas : SpecMeas := by
   intro K _ _ _ S _ _ _ _ _ π v
   let Λ : C(S, ℂ) →ₗ[ℂ] ℂ :=
   { toFun f := inner ℂ v (π f v)
-    map_add' f g := by simp [map_add]
+    map_add' f g := by simp [map_add (f := _)]
     map_smul' c f := by simp }
   have hΛ : ∀ f : C(S, ℂ), 0 ≤ Λ (star f * f) := by
     intro f

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsTildeTail
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeTailLoc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsTildeTail
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeTailLoc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -55,7 +60,8 @@ theorem FinGradedSub.cellCone_cocycle {z : Cech.Cochain (locSys S N M.coneSub) 0
     change ({a, b} : Finset (Fin (N + 1))).erase j = K.1.1
     rw [hj, ha, Finset.pair_comm, Finset.erase_insert (Finset.notMem_singleton.mpr (Ne.symm hab))]
   have h0 := congrArg (M.cellCone Kp.1) (congrFun hz Kp)
-  rw [Cech.d_apply, map_sum, Pi.zero_apply, map_zero] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Cech.d_apply, map_sum, Pi.zero_apply, map_zero] at h0
   have hterm : ∀ j : Kp.1.1, M.cellCone Kp.1 (Cech.sgn Kp.1.1 j • locResS (Cech.face Kp j).1 Kp.1
       (Cech.face_subset Kp j) (z (Cech.face Kp j))) =
       Cech.sgn Kp.1.1 j • M.cellCone (Cech.face Kp j).1 (z (Cech.face Kp j)) := by
@@ -162,7 +168,7 @@ theorem TildeTail.proof (h : SerreTail.Statement.{u, w}) : TildeTail.Statement.{
   let G : Submodule S (Cech.Cochain (locSys S N M.coneSub) 0) :=
     { carrier := {z | ∀ d, coeffAt S x d (Ψ z) ∈ (M.tildeSys d).secs ∧ (d < c₁ → coeffAt S x d (Ψ z) = 0)}
       add_mem' := fun {a b} ha hb d => by
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
         exact ⟨add_mem (ha d).1 (hb d).1, fun hd => by rw [(ha d).2 hd, (hb d).2 hd, add_zero]⟩
       zero_mem' := fun d => by rw [map_zero, map_zero]; exact ⟨zero_mem _, fun _ => rfl⟩
       smul_mem' := fun s z hz d => by
@@ -221,9 +227,10 @@ theorem TildeTail.proof (h : SerreTail.Statement.{u, w}) : TildeTail.Statement.{
         · simp
         · simp
     · intro d; rw [map_zero, map_zero]; exact zero_mem _
-    · intro a b _ _ ha hb d; rw [map_add, map_add]; exact add_mem (ha d) (hb d)
+    · intro a b _ _ ha hb d; rw [map_add (f := _), map_add (f := _)]; exact add_mem (ha d) (hb d)
     · intro p a _ ha d
-      rw [map_smul, ← sum_homogeneousComponent p, Finset.sum_smul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, ← sum_homogeneousComponent p, Finset.sum_smul, map_sum]
       refine Submodule.sum_mem _ fun k _ => ?_
       rw [coeffAt_smul_of_isHomogeneous (homogeneousComponent_isHomogeneous k p)]
       exact hmulSp _ k (homogeneousComponent_isHomogeneous k p) d _ (ha (d - k))

@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EqOfForallAlgClosed
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MarkedIsometryHalf
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DatEqOfPhiHat
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemCuspOfThetaSum
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EqOfForallAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MarkedIsometryHalf
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DatEqOfPhiHat
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemCuspOfThetaSum
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -37,22 +41,6 @@ section Shift
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c : Coeff l} {n : ℕ} {A : Type} [AddCommGroup A]
-
-def ShiftTie (d : DeltaDat Xo c n) (cs : A → Rul d.Xo₂ d.c₂) (κ : (LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) → A) : Prop :=
-  ∀ (k : LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) (s : Sim Dw) (ρ : d.Xo₂.X ≅ d.Xo₂.X), s.InGam l d.l₂ → d.Xo₂.LevAut s ρ →
-    (∀ x : Dw.La, (Submodule.Quotient.mk (s.f d.l₂.M x) : LaI Xo c d) = k (Submodule.Quotient.mk x)) →
-    ∀ (K : Type) [Field K] [IsAlgClosed K] [Algebra d.c₂.F K] (y y' : FrPt d.Xo₂ d.c₂ K), y'.x = y.x ≫ ρ.hom →
-      ∀ a, evR d.Xo₂ d.c₂ (cs (a + κ k)) y' = evR d.Xo₂ d.c₂ (cs a) y
-
-def ShiftEq (d : DeltaDat Xo c n) (ψ : (LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) →* c.Fˣ)
-    (κ : (LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) → A) (φ : A → (Fin n → LevQc Dw d.l₂) → c.F) : Prop :=
-  ∀ (k : LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) (σq : LevQ Dw d.l₂ ≃ₗ[𝓞 E] LevQ Dw d.l₂)
-    (σc : LevQc Dw d.l₂ ≃ₗ[𝓞 E] LevQc Dw d.l₂),
-    (∀ x y : Dw.La, σq (Submodule.Quotient.mk x) = Submodule.Quotient.mk y →
-      x - y ∈ l.Mb • (⊤ : Submodule (𝓞 E) Dw.La) ∧ k (Submodule.Quotient.mk x) = Submodule.Quotient.mk y) →
-    (∀ (x : LevQc Dw d.l₂) (q : LevQ Dw d.l₂), (d.l₂.M : ℤ) ∣
-      Dw.EF (qRep (σc x)) (cSep d.l₂ • levRep (σq q)) - Dw.EF (qRep x) (cSep d.l₂ • levRep q)) →
-    ∀ a x, φ a (fun b => σc.symm (x b)) = (((ψ k)⁻¹ : c.Fˣ) : c.F) * φ (a + κ k) x
 
 end Shift
 

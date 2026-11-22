@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOverLocFiniteCut
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOverLocFiniteCut
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -38,7 +43,7 @@ theorem exists_mul_mem_of_mem_blowUpColon (A : Subring L) (I : Ideal A) (hI : I 
     rw [map_pow, hr, mul_comm]
   · rintro g₁ g₂ ⟨d₁, hd₁, r₁, h₁⟩ ⟨d₂, hd₂, r₂, h₂⟩
     refine ⟨d₁ * d₂, mul_ne_zero hd₁ hd₂, d₂ * r₁ + d₁ * r₂, ?_⟩
-    simp only [map_mul, map_add, ← h₁, ← h₂]
+    simp only [map_mul, map_add (f := _), ← h₁, ← h₂]
     ring
 
 theorem finite_finrank_one_of_le_blowUpColon (A B : Subring L) [IsNoetherianRing A] (hAB : A ≤ B)
@@ -63,7 +68,7 @@ theorem finite_finrank_one_of_le_blowUpColon (A B : Subring L) [IsNoetherianRing
   have hd0 : (∏ g ∈ s, dg g) ≠ 0 := Finset.prod_ne_zero_iff.mpr hdg0
   let T : Submodule A L :=
     { carrier := {g | ∃ r : A, algebraMap A L (∏ g ∈ s, dg g) * g = algebraMap A L r}
-      add_mem' := fun ⟨r₁, h₁⟩ ⟨r₂, h₂⟩ => ⟨r₁ + r₂, by rw [map_add, ← h₁, ← h₂, mul_add]⟩
+      add_mem' := fun ⟨r₁, h₁⟩ ⟨r₂, h₂⟩ => ⟨r₁ + r₂, by rw [map_add (f := _), ← h₁, ← h₂, mul_add]⟩
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := fun c g ⟨r, hr⟩ => ⟨c * r, by
         rw [Algebra.smul_def, map_mul, ← hr]

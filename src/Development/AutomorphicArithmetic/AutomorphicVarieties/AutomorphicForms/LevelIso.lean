@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicHodgePropertiesConjInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecOfRecLiteralStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicHodgePropertiesConjInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecOfRecLiteralStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,10 +61,6 @@ theorem PotCrysAt.of_iso {A : ValuationSubring Ω} (H : PotCrysAt r A) (h : RepI
   obtain ⟨O, i1, i2, i3, Bw, hj, hp⟩ := H
   exact ⟨O, i1, i2, i3, Bw, hj, (GlobalTheory.T.padicHodgeProperties_conj_invariant l (Loc.PP l) F Ω O _ Bw n _ _ g fun s => hg s).2.2.1 hp⟩
 
-theorem LevelAway.of_iso {M : ℕ} (H : LevelAway l M r) (h : RepIso r r') : LevelAway l M r' := fun w hw => by
-  obtain ⟨A, hA, χ, h1, h2⟩ := H w hw
-  exact ⟨A, hA, χ, h1, h2.of_iso h⟩
-
 theorem LevelAt.of_iso {M : ℕ} {m : Fin n → ℤ} (H : LevelAt l M m r) (h : RepIso r r') : LevelAt l M m r' := fun w hw => by
   obtain ⟨A, hA, χ, κ, h1, h2, h3, h4⟩ := H w hw
   exact ⟨A, hA, χ, κ, h1, h2.of_iso h, h3, h4.imp id fun h5 => h5.of_iso h⟩
@@ -71,11 +71,8 @@ theorem continuous_of_iso (H : Continuous r) (h : RepIso r r') : Continuous r' :
   rw [e]
   exact (continuous_const.mul H).mul continuous_const
 
-theorem Level.of_iso {M : ℕ} {m : Fin n → ℤ} (H : Level l M m r) (h : RepIso r r') : Level l M m r' :=
-  ⟨continuous_of_iso H.cont h, H.away.of_iso h, H.above.of_iso h⟩
 
 variable (F l) in
-
 theorem eventually_not_mem : ∀ᶠ w : HeightOneSpectrum (𝓞 F) in Filter.cofinite, ((l : ℕ) : 𝓞 F) ∉ w.asIdeal := by
   have h0 : Ideal.span {((l : ℕ) : 𝓞 F)} ≠ 0 := by
     simpa using (Fact.out : l.Prime).ne_zero
@@ -85,7 +82,7 @@ theorem eventually_not_mem : ∀ᶠ w : HeightOneSpectrum (𝓞 F) in Filter.cof
 variable [IsAlgClosure F Ω]
 
 theorem Hypotheses₂.exists_rec (P : Hypotheses₂) {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 F)} (h : IsPlaceOver A w) :
-    ∃ rc : IrrGL (w.adicCompletion F) → WD h, IsRec h rc := by
+    ∃ rc : IrrGL (k := w.adicCompletion F) → WD h, IsRec h rc := by
   have L := P.litN.loc
   obtain ⟨rc, hrc⟩ := L.llc F Ω A w h
   exact ⟨rc, GlobalTheory.T.rec_of_rec_literal L.dzc L.dzi L.exh L.multi L.cos L.zel L.geo L.bz F Ω A w h rc hrc⟩

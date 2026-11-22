@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLenThreeThickLetters
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLenThreeThickLetters
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -37,7 +41,7 @@ theorem letE_mul_self (a : ZMod n) : (letE a : LetA O n) * letE a = letE a := by
 theorem ea_add (a : ZMod n) (F F' : PowerSeries O) : ea Br a (F + F') = ea Br a F + ea Br a F' := by
   have h : Br.cst (F + F') = Br.cst F + Br.cst F' := funext fun _ => map_add Br.ι F F'
   unfold Formalism.MainNotions.N.FrobeniusPowerSeries.ArcLengthThreeFiltration.ea
-  rw [h, mul_add, map_add]
+  rw [h, mul_add, map_add (f := _)]
 
 theorem ea_zero (a : ZMod n) : ea Br a 0 = 0 := by
   have h : Br.cst 0 = 0 := funext fun _ => map_zero Br.ι
@@ -69,7 +73,8 @@ theorem ea_sum (a : ZMod n) {ι : Type*} (s : Finset ι) (F : ι → PowerSeries
     rw [Finset.sum_apply]
     exact map_sum Br.ι F s
   unfold Formalism.MainNotions.N.FrobeniusPowerSeries.ArcLengthThreeFiltration.ea
-  rw [h1, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, Finset.mul_sum, map_sum]
 
 theorem ea_inj (a : ZMod n) {F F' : PowerSeries O} (h : ea Br a F = ea Br a F') : F = F' := by
   unfold Formalism.MainNotions.N.FrobeniusPowerSeries.ArcLengthThreeFiltration.ea at h

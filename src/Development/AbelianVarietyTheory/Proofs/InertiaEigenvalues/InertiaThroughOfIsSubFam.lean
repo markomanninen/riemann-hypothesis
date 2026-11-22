@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EigenvectorMemOfSumMem
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EigenvectorMemOfSumMem
+
+@[expose] public section
 
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial Module TensorProduct GlobalTheory.Pass
 
@@ -51,7 +55,8 @@ theorem subIner_pullback {L X Y I α J : Type} [Field L] [AddCommGroup X] [Modul
     rw [map_sub, hm, map_smul, (hx a ha).2, hy j a ha, sub_self]
   · rw [← sub_eq_zero]
     refine hinj _ fun j => ?_
-    rw [map_sub, map_sum, ← hs j, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, ← hs j, sub_eq_zero]
     exact Finset.sum_congr rfl fun a ha => (hx a ha).2 j
 
 theorem subIner_rTensor_inj {Qp LL B V U : Type} [Field Qp] [Field LL] [Algebra Qp LL]
@@ -64,7 +69,8 @@ theorem subIner_rTensor_inj {Qp LL B V U : Type} [Field Qp] [Field LL] [Algebra 
     (LinearMap.ker_eq_bot'.2 fun v hv => hp v fun j => congrFun hv j)
   have h1 : ∀ v, ∑ j, q (Pi.single j (p j v)) = v := by
     intro v
-    rw [← map_sum, Finset.univ_sum_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Finset.univ_sum_single]
     exact LinearMap.congr_fun hq v
   have h2 : ∀ z : V ⊗[Qp] B, ∑ j, AlgebraTensorModule.rTensor Qp B
       (q.comp (LinearMap.single LL (fun _ => U) j)) (AlgebraTensorModule.rTensor Qp B (p j) z) = z := by
@@ -74,7 +80,7 @@ theorem subIner_rTensor_inj {Qp LL B V U : Type} [Field Qp] [Field LL] [Algebra 
     | tmul v b =>
       conv_rhs => rw [← h1 v, TensorProduct.sum_tmul]
       simp
-    | add z w hz hw => simp only [map_add, Finset.sum_add_distrib, hz, hw]
+    | add z w hz hw => simp only [map_add (f := _), Finset.sum_add_distrib, hz, hw]
   rw [← h2 x]
   simp [hx]
 
@@ -102,7 +108,7 @@ theorem subIner_mem_Dpcris (ρ : Representation LL G V) (x : V ⊗[Qp] B) :
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [actVB, PotCrysData.resH, PC.actB_eq]
-    | add z w hz hw => simp only [map_add, hz, hw]
+    | add z w hz hw => simp only [map_add (f := _), hz, hw]
   simp [PotCrysData.Dpcris, Dcris, Submodule.mem_iInf, sub_eq_zero, h1]
 
 theorem subIner_actVB_mul (ρ : Representation LL G V) (g h : G) (z : V ⊗[Qp] B) :
@@ -110,7 +116,7 @@ theorem subIner_actVB_mul (ρ : Representation LL G V) (g h : G) (z : V ⊗[Qp] 
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVB]
-  | add z w hz hw => simp only [map_add, hz, hw]
+  | add z w hz hw => simp only [map_add (f := _), hz, hw]
 
 theorem subIner_Dpcris_stable (ρ : Representation LL G V) (g : G) (x : V ⊗[Qp] B)
     (hx : x ∈ PC.Dpcris ρ) : actVB PC.PD ρ g x ∈ PC.Dpcris ρ := by
@@ -129,7 +135,7 @@ theorem subIner_rTensor_actVB (ρ : Representation LL G V) (σ : Representation 
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVB, hf]
-  | add z w hz hw => simp only [map_add, hz, hw]
+  | add z w hz hw => simp only [map_add (f := _), hz, hw]
 
 theorem subIner_mem_Eig (ρ : Representation LL G V) (I : Subgroup G) (a : I →* LLˣ) (x : V ⊗[Qp] B) :
     x ∈ PC.Eig ρ I a ↔ x ∈ PC.Dpcris ρ ∧ ∀ g : I, actVB PC.PD ρ g x = ((a g : LLˣ) : LL) • x := by

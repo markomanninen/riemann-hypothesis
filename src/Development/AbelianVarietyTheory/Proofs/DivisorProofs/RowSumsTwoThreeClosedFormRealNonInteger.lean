@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+
+@[expose] public section
+
 open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate
 open GlobalTheory.QFam GlobalTheory.WpFam
 open Filter Topology
@@ -63,7 +68,7 @@ private lemma tsum_one_div_add_int_pow_of_real_of_continuousAt {w : ℂ} (hw : w
   have hcont : ContinuousOn (fun x : ℂ => ∑' m : ℤ, 1 / (x + (m : ℂ)) ^ k)
       (Metric.closedBall w (δ / 2)) := by
     refine continuousOn_tsum (fun m => ?_) hsum (fun m x hx => ?_)
-    · refine ContinuousOn.div continuousOn_const (by fun_prop) (fun x hx => pow_ne_zero _ ?_)
+    · refine ContinuousOn.div₀ continuousOn_const (by fun_prop) (fun x hx => pow_ne_zero _ ?_)
       have h1 := hlow m x hx
       have h2 := hδm m
       exact norm_ne_zero_iff.mp (by linarith)
@@ -143,9 +148,9 @@ private lemma tsum_one_div_add_int_pow_three_of_im_pos (z : ℂ) (hz : 0 < z.im)
   rw [h, tsum_sq_mul_geometric_of_norm_lt_one hq]
   ring
 
+
 open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
 open Filter Topology in
-
 theorem _root_.GlobalTheory.WpFam.RowReal.row_real : ∀ w : ℂ, w.im = 0 → (∀ n : ℤ, w ≠ n) → (∑' m : ℤ, 1 / (w + m) ^ 2 = (2 * (Real.pi : ℂ) * Complex.I) ^ 2 * (Complex.exp ((2 * (Real.pi : ℂ) * Complex.I) * w) / (1 - Complex.exp ((2 * (Real.pi : ℂ) * Complex.I) * w)) ^ 2)) ∧ ∑' m : ℤ, 1 / (w + m) ^ 3 = -(1 / 2) * (2 * (Real.pi : ℂ) * Complex.I) ^ 3 * (Complex.exp ((2 * (Real.pi : ℂ) * Complex.I) * w) * (1 + Complex.exp ((2 * (Real.pi : ℂ) * Complex.I) * w)) / (1 - Complex.exp ((2 * (Real.pi : ℂ) * Complex.I) * w)) ^ 3) := by
   intro w hw hn
   have hne : 1 - Complex.exp ((2 * (Real.pi : ℂ) * Complex.I) * w) ≠ 0 := by

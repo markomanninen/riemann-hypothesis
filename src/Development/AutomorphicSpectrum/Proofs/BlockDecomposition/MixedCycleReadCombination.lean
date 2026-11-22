@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermRepTensorProduct
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermRepDualInverse
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermRepTensorPower
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermRepTrivialLineBundle
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermRepTensorProduct
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermRepDualInverse
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermRepTensorPower
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermRepTrivialLineBundle
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardPairMembersMemSchwartzBruhat
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardPairMembersMemSchwartzBruhat
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints GlobalTheory.Grid GlobalTheory.ChainFr GlobalTheory.SquareComm GlobalTheory.FinMatch
@@ -30,11 +34,11 @@ private theorem gfun_lc {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace 
     · rw [if_pos hB]
       unfold gfun
       by_cases hA : A.det ≠ 0 ∧ IsGLO A
-      · rw [dif_pos ⟨hA.1, hA.2, hB⟩, dif_pos ⟨hA.1, hA.2, h0 n⟩]
-      · rw [dif_neg fun h => hA ⟨h.1, h.2.1⟩, dif_neg fun h => hA ⟨h.1, h.2.1⟩]
+      · rw [dite_eq_left ⟨hA.1, hA.2, hB⟩, dite_eq_left ⟨hA.1, hA.2, h0 n⟩]
+      · rw [dite_eq_right fun h => hA ⟨h.1, h.2.1⟩, dite_eq_right fun h => hA ⟨h.1, h.2.1⟩]
     · rw [if_neg hB]
       unfold gfun
-      rw [dif_neg fun h => hB h.2.2]
+      rw [dite_eq_right fun h => hB h.2.2]
   have h1 : IsLocallyConstant
       (fun q : Matrix (Fin m) (Fin m) k × Matrix (Fin m) (Fin r) k =>
         gfun ν ϖ n q.1 (0 : Matrix (Fin m) (Fin r) k)) :=

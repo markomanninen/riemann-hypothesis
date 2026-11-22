@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+
+@[expose] public section
 
 namespace Formalism.L2.Forms
 
@@ -32,16 +36,8 @@ theorem delSq_shW (R : Type) [CommRing R] (l : DomWeight N) (c : ℤ) : delSq R 
   unfold delSq
   rw [natW_shW]
 
-theorem extremal_shW (R : Type) [CommRing R] (l : DomWeight N) (c : ℤ) : extremal R N (shW l c) = extremal R N l := by
-  unfold extremal
-  rw [natW_shW]
-
 theorem CSpan_shW {ι : Type} [Fintype ι] (lam : ι → DomWeight N) (c : ι → ℤ) :
     CSpan (fun τ => shW (lam τ) (c τ)) = CSpan lam := by
   simp only [CSpan, delSq_shW]
-
-theorem nfAll_shW {ι : Type} [Fintype ι] (lam : ι → DomWeight N) (c : ι → ℤ)
-    (p q : MvPolynomial (ι × Fin N × Fin N) ℂ) : nfAll (fun τ => shW (lam τ) (c τ)) p q = nfAll lam p q := by
-  simp only [nfAll, extremal_shW]
 
 end Formalism.L2.Forms

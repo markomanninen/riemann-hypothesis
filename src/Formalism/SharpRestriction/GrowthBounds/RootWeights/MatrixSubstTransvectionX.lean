@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.TwistSubEqMatrixSubst
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.TwistSubEqMatrixSubst
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem matrixSubst_transvection_X (v : ι × Fin n) :
       if v.1 ∈ S ∧ v = sourceVar LL a b v.1 then X v + C (letterSign B LL v.1 * t) * X (targetVar LL a b v.1) else X v := by
   obtain ⟨l, c⟩ := v
   rw [matrixSubst_X]
-  simp only [Matrix.transvection, Matrix.add_apply, map_add, add_mul, Finset.sum_add_distrib,
+  simp only [Matrix.transvection, Matrix.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib,
     sum_C_one_col, sum_C_one_row, sum_C_single_col, sum_C_single_row, sourceVar, targetVar, letterSign]
   by_cases hS : l ∈ S <;> by_cases hv : LL.vec l <;> simp [hS, hv]
   all_goals split_ifs <;> simp

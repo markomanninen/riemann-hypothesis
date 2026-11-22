@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LiftFrameEmbeddingBase
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinIndMapRangeField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JKInvOfTriv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelMapExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralHeckeEigensystemDeligneSerreStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModuleFiniteFrameLatticeFormsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearIndependentFrameFormsBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftFormsToLatticeOfFiniteInvertibleStabilisersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitNatCastFrameCoeffRingNotDvdStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualWeylEqBotOfNotAntitoneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LiftFrameEmbeddingBase
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinIndMapRangeField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JKInvOfTriv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelMapExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralHeckeEigensystemDeligneSerreStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModuleFiniteFrameLatticeFormsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearIndependentFrameFormsBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftFormsToLatticeOfFiniteInvertibleStabilisersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitNatCastFrameCoeffRingNotDvdStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualWeylEqBotOfNotAntitoneStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Pj GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.ExpTie GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative Formalism.CohomologicalDescent.LogSmallConstantBounds Formalism.CohomologicalDescent.ShortWeightBounds Formalism.CohomologicalDescent.LD Formalism.RankGapBounds.FormsTensorLocalization
 
@@ -84,10 +88,11 @@ theorem hecke_compat (hH : F.IsHecke lam jK Gm) (hHm : F.IsHecke mu jKm (NablaT 
     rw [map_smul, hxz, hψs]
   | add p q hp hq =>
     rw [add_smul, add_smul]
-    simp only [Submodule.coe_add, Pi.add_apply, map_add]
+    simp only [Submodule.coe_add, Pi.add_apply, map_add (f := _)]
     rw [hp x z hxz g, hq x z hxz g]
   | mul_X p i hp =>
-    rw [mul_comm, mul_smul, mul_smul, hHm.2, hH.2, map_smul, hψs, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_comm, mul_smul, mul_smul, hHm.2, hH.2, map_smul, hψs, map_sum, map_sum]
     congr 1
     exact Finset.sum_congr rfl fun s _ => hp x z hxz (g * s)
 
@@ -187,7 +192,7 @@ theorem form_of_mem_span (hJm : F.IsJ mu jKm) (b : NablaT F.O N mu →ₛₗ[F.e
   | zero => exact ⟨fun _ _ _ => rfl, fun _ _ => by simp⟩
   | add w w' _ _ hw hw' =>
     refine ⟨fun γ hγ g => by simp [hw.1 γ hγ g, hw'.1 γ hγ g], fun κ g => ?_⟩
-    simp only [Pi.add_apply, map_add, smul_add]
+    simp only [Pi.add_apply, map_add (f := _), smul_add]
     rw [hw.2 κ g, hw'.2 κ g]
   | smul c w _ hw =>
     refine ⟨fun γ hγ g => by simp [hw.1 γ hγ g], fun κ g => ?_⟩
@@ -203,7 +208,8 @@ theorem jmap_equiv (hHm : F.IsHecke mu jKm (NablaT F.O N mu)) (b : NablaT F.O N 
   funext g
   show b ((((MvPolynomial.X i : F.T) • x : Forms F.O (A := alg F.O N mu) F.Γ jKm (NablaT F.O N mu)) : F.G → NablaT F.O N mu) g) =
     F.emb (F.cst i) • ∑ s ∈ F.tr i, b ((x : F.G → NablaT F.O N mu) (g * s))
-  rw [hHm.2 i x g, map_smulₛₗ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hHm.2 i x g, map_smulₛₗ, map_sum]
 
 theorem eig_of_ann (hOk : F.Ok) (hJm : F.IsJ mu jKm) (hHm : F.IsHecke mu jKm (NablaT F.O N mu))
     (b : NablaT F.O N mu →ₛₗ[F.emb] NablaT (PadicAlgCl l) N mu) (hbi : Function.Injective b)

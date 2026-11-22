@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GalAwayCongr
-import GroundTheory.PAdicHodge.FontaineLemmaInvariants
-import GroundTheory.PAdicHodge.UnramifiedFrob
-import GroundTheory.PAdicHodge.BCrisEigenWitt
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GalAwayCongr
+public import GroundTheory.PAdicHodge.FontaineLemmaInvariants
+public import GroundTheory.PAdicHodge.UnramifiedFrob
+public import GroundTheory.PAdicHodge.BCrisEigenWitt
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 set_option maxHeartbeats 1600000
@@ -54,7 +58,7 @@ private theorem untilt_pow' (x : Ob l) (n : ℕ) :
     ((PreTilt.untilt (x ^ n) : OC l) : ℂ_[l]) = ((PreTilt.untilt x : OC l) : ℂ_[l]) ^ n := by
   induction n with
   | zero => simp
-  | succ n ih => rw [pow_succ, pow_succ, untilt_mul]; simp [ih]
+  | succ n ih => rw [pow_succ, pow_succ, untilt_mul]; simp
 
 private theorem gfix (r : Res l K) (g : Gal(PadicAlgCl l/K)) (a : r.k) : EigenWitt.galFlat g (r.s a) = r.s a := by
   obtain ⟨f, hf, haf⟩ := pow_fix r a
@@ -132,7 +136,7 @@ private theorem wexp {k : Type} [Field k] [CharP k l] [PerfectRing k l] (τ : Wi
       have h1 := hAN x
       have h2 : τ (E x) = τ (WittVector.teichmuller l (A x)) + (l : OC l) * τ (E (N x)) := by
         conv_lhs => rw [hE x]
-        rw [map_add, map_mul, map_natCast]
+        rw [map_add (f := _), map_mul, map_natCast]
       rw [h2, h1, pow_succ']
       linear_combination (l : OC l) * hy
   intro x hx
@@ -274,30 +278,15 @@ private theorem hK [FiniteDimensional ℚ_[l] K] (r : Res l K) {k : PadicAlgCl l
     have hl0 : (l : PadicAlgCl l) ≠ 0 := Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero
     have hy' : (k - k₀) / (l : PadicAlgCl l) ∈ maxUnramified l K := div_mem hy (natCast_mem _ l)
     have hn : ‖(k - k₀) / (l : PadicAlgCl l)‖ ≤ 1 := by
-      by_cases h0 : k - k₀ = 0
-      · simp [h0]
-      obtain ⟨D, hD⟩ := ACris.exists_norm_eq_zpow_maxUnramified (K := K) (x := ⟨k - k₀, hy⟩)
-        (fun h => h0 (congrArg Subtype.val h))
-      have hD' : ‖k - k₀‖ = ‖(l : PadicAlgCl l)‖ ^ D := hD
-      have hlpos := ACris.norm_p_algCl_pos (p := l)
-      have hl1 : ‖(l : PadicAlgCl l)‖ < 1 := norm_natCast_p_algCl_lt_one
-      have hD1 : 1 ≤ D := by
-        by_contra hcon
-        have h3 : D ≤ 0 := by omega
-        have h4 : 1 ≤ ‖(l : PadicAlgCl l)‖ ^ D := one_le_zpow_of_nonpos₀ hlpos hl1.le h3
-        rw [hD'] at hlt
-        linarith
-      rw [norm_div, hD', div_le_one hlpos]
-      calc ‖(l : PadicAlgCl l)‖ ^ D ≤ ‖(l : PadicAlgCl l)‖ ^ (1 : ℤ) :=
-            zpow_le_zpow_right_of_le_one₀ hlpos hl1.le hD1
-        _ = ‖(l : PadicAlgCl l)‖ := zpow_one _
+      rw [norm_div, div_le_one (norm_pos_iff.2 hl0)]
+      exact (ACris.isACrisFraction_of_mem (mem_maxUnramified.1 hy).2).norm_le hlt
     refine ⟨r.ρ xo, ⟨clToC l ((k - k₀) / (l : PadicAlgCl l)), mem_normInteger.2 (by rw [norm_clToC]; exact hn)⟩,
       ⟨_, hy', rfl⟩, ?_⟩
     apply Subtype.ext
     rw [tau_teich]
     change (x : ℂ_[l]) = ((PreTilt.untilt (r.s (r.ρ xo)) : OC l) : ℂ_[l]) +
       (l : ℂ_[l]) * clToC l ((k - k₀) / (l : PadicAlgCl l))
-    rw [hx, ← hk₀τ, ← map_natCast (clToC l) l, ← map_mul, ← map_add]
+    rw [hx, ← hk₀τ, ← map_natCast (clToC l) l, ← map_mul, ← map_add (f := _)]
     congr 1
     field_simp
     ring

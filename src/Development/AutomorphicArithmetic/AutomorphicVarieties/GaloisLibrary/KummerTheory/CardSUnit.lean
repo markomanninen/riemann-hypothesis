@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import GroundTheory.GlobalFields.ExistenceTheorem.PowerIndex
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+public import GroundTheory.GlobalFields.ExistenceTheorem.PowerIndex
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
@@ -24,7 +28,7 @@ private theorem mem_unit_of_pow_mem {K : Type} [Field K] [NumberField K] {S : Se
   simpa [hp] using h
 
 private theorem powK_subgroupOf {K : Type} [Field K] [NumberField K] (S : Set (HeightOneSpectrum (𝓞 K))) {p : ℕ}
-    (hp : p ≠ 0) : (powK K p).subgroupOf (S.unit K) = (powMonoidHom p : S.unit K →* S.unit K).range := by
+    (hp : p ≠ 0) : (powK (K := K) p).subgroupOf (S.unit K) = (powMonoidHom p : S.unit K →* S.unit K).range := by
   ext x
   rw [Subgroup.mem_subgroupOf, powK.eq_1, MonoidHom.mem_range, MonoidHom.mem_range]
   constructor
@@ -60,7 +64,7 @@ private theorem card_ker_eq {K : Type} [Field K] [NumberField K] (S : Set (Heigh
       right_inv := fun _ => rfl }
 
 theorem UpperTheory.V.Kum.cardSUnit :
-    ∀ (K : Type) [Field K] [NumberField K] (S : Set (HeightOneSpectrum (𝓞 K))) (n : ℕ) [NeZero n], S.Finite → Nat.card (S.unit K ⧸ (powK K n).subgroupOf (S.unit K)) = n ^ (InfinitePlace.nrRealPlaces K + InfinitePlace.nrComplexPlaces K - 1 + Nat.card S) * Nat.card (rootsOfUnity n K) := by
+    ∀ (K : Type) [Field K] [NumberField K] (S : Set (HeightOneSpectrum (𝓞 K))) (n : ℕ) [NeZero n], S.Finite → Nat.card (S.unit K ⧸ (powK (K := K) n).subgroupOf (S.unit K)) = n ^ (InfinitePlace.nrRealPlaces K + InfinitePlace.nrComplexPlaces K - 1 + Nat.card S) * Nat.card (rootsOfUnity n K) := by
   intro K _ _ S n _ hS
   haveI : Finite S := hS
   rw [← Subgroup.index_eq_card, powK_subgroupOf S (NeZero.ne n),

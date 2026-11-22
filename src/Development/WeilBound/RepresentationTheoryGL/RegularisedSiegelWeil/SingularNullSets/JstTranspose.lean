@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem dense_loc (F E : Type) [Field F] [NumberField F] [Field E] [NumberField 
   · induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a y => simp [sigR, hc]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   · exact IsModuleTopology.continuous_of_linearMap
       (Algebra.TensorProduct.map (AlgHom.id (Fv F v) (Fv F v)) σ).toLinearMap
   · let S : AddSubgroup (Fv F v ⊗[F] E) :=

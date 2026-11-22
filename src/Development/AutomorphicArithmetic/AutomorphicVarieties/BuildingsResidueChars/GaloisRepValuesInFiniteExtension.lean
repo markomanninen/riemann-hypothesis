@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+
+@[expose] public section
 
 theorem UpperTheory.galois_rep_values_in_finite_extension :
     UpperTheory.V.Af.Wd.FinVal := by

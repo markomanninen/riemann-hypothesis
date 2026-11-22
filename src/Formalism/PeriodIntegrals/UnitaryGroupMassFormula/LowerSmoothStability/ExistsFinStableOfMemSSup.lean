@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.IsLowUnitH
-import Formalism.PeriodIntegrals.LowCyc
-import Formalism.PeriodIntegrals.KFinSmooth
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.IsLowUnitH
+public import Formalism.PeriodIntegrals.LowCyc
+public import Formalism.PeriodIntegrals.KFinSmooth
+
+@[expose] public section
 
 open Matrix
 
@@ -32,7 +36,7 @@ theorem finStable_directed (G : Set ι) (ρ : ι → H →L[ℂ] H) :
     infer_instance
   · intro g hg x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hS.2 g hg y hy) (hT.2 g hg z hz)
 
 theorem exists_finStable_of_mem_sSup (G : Set ι) (ρ : ι → H →L[ℂ] H) {F : Set (Submodule ℂ H)}

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+
+@[expose] public section
+
 open Formalism.MainNotions Formalism.MainNotions.N
 
 namespace GlobalTheory.DoubleBlock

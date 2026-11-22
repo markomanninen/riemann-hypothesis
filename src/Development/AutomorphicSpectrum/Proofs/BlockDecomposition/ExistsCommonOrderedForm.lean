@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.Interleave
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOrderedForm
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.Interleave
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOrderedForm
+
+@[expose] public section
 
 open Zc.Comb
 

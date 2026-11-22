@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStD
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStD
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,27 +27,16 @@ theorem sum_secFun_eq' {x : Ix κ → Ω} {n r : ℕ} {b : Fin r → MvPolynomia
       ((mem_homogeneousSubmodule _ _).mpr hg)
     exact (mem_homogeneousSubmodule _ _).mp this
   have hx : aeval x h = 0 := by
-    rw [hh_def, map_sub, map_sum, ← hc, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hh_def, map_sub, map_sum, ← hc, sub_eq_zero]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_zsmul, zsmul_eq_mul, hbf j, aeval_map_intQ]
   have h0 := hz.2 h (mem_coordIdeal_of_isHomogeneous (o := ℤ) (x := x) hh hx)
-  rw [hh_def, map_sub, map_sum, map_sub, map_sum, sub_eq_zero] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hh_def, map_sub, map_sum, map_sub, map_sum, sub_eq_zero] at h0
   rw [← h0]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_zsmul, map_zsmul, zsmul_eq_mul, hbf j, secFun_map_intQ]
-
-theorem bNormSq_le_of_pts' {x : Ix κ → Ω} {m : ConeMetric ℂ (Ix κ)} {μ : Measure (Ix κ → ℂ)}
-    (hg : IsGood D x m μ) {n r : ℕ} (s : Fin r → (Ix κ → ℂ) → ℂ) (c : Fin r → ℂ) {B : ℝ}
-    (h : ∀ z ∈ pts (coordIdeal ℤ x), ‖∑ j, c j * s j z‖ ^ 2 * wgt m n z ≤ B) :
-    bNormSq μ s (wgt m n) c ≤ B := by
-  have := hg.vol.1
-  have hae : ∀ᵐ z ∂μ, z ∈ pts (coordIdeal ℤ x) := ae_iff.mpr hg.vol.2.1
-  unfold bNormSq
-  calc ∫ z, ‖∑ j, c j * s j z‖ ^ 2 * wgt m n z ∂μ ≤ ∫ _z, B ∂μ := by
-        refine integral_mono_of_nonneg (ae_of_all _ fun z => ?_) (integrable_const B) ?_
-        · exact mul_nonneg (sq_nonneg _) (inv_nonneg.mpr (pow_nonneg (m.nonneg z) _))
-        · filter_upwards [hae] with z hz using h z hz
-    _ = B := by simp
 
 theorem sum_mulVec_secFun {x : Ix κ → Ω} {n r R : ℕ} {b : Fin r → MvPolynomial (Ix κ) ℚ}
     (hb : IsSecBasis x n b) (M : Matrix (Fin r) (Fin R) ℤ) (Q : Fin R → MvPolynomial (Ix κ) ℤ)
@@ -62,13 +55,13 @@ theorem diag_conj_eq {r s : ℕ} (N : Matrix (Fin s) (Fin r) ℂ) (G : Matrix (F
     (i : Fin r) :
     (Nᴴ * G * N) i i = star (N *ᵥ Pi.single i 1) ⬝ᵥ G *ᵥ (N *ᵥ Pi.single i 1) := by
   simp only [Matrix.mul_apply, Matrix.mulVec, dotProduct, Matrix.conjTranspose_apply, Pi.star_apply,
-    Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.sum_mul,
+    Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_mul,
     Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
 
-theorem pt_lower {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric ℂ (Ix κ)}
+theorem pt_lower {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric (C := ℂ) (ι := Ix κ)}
     (hFS : IsPullFS x e m) {N kε δ : ℕ} (H : Fin δ → MvPolynomial (Ix κ) ℤ) {Cε : ℝ}
     (hCε0 : 0 ≤ Cε)
     (hCε : ∀ l, ∀ z ∈ pts (coordIdeal ℤ x),
@@ -80,6 +73,9 @@ theorem pt_lower {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric 
       Cε ^ 2 * δ * ((N + D).choose D : ℝ) *
         ∑ l : Fin δ, ∑ i, ‖c (finProdFinEquiv (l, i))‖ ^ 2 * monoNormSq (adtEnum D N i) := by
   have hρ0 : 0 ≤ m.ρ z := m.nonneg z
+  have hsqN : sqN (z ∘ e) = m.ρ z ^ 2 := by
+    rw [hFS z hz, Real.sq_sqrt (Finset.sum_nonneg fun k _ => sq_nonneg ‖z (e k)‖)]
+    rfl
   have hBn0 : (0 : ℝ) ≤ ((N + D).choose D : ℝ) := Nat.cast_nonneg _
   set q : Fin δ → ℝ := fun l =>
     ∑ i, ‖c (finProdFinEquiv (l, i))‖ ^ 2 * monoNormSq (adtEnum D N i) with hq
@@ -97,10 +93,13 @@ theorem pt_lower {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric 
     rw [Equiv.symm_apply_apply, eval_prodForm]; ring
   have hPl : ∀ l, ‖P l‖ ≤ Real.sqrt (((N + D).choose D : ℝ) * q l) * m.ρ z ^ N := fun l => by
     have h := form_enum_sq_le D N (fun i => c (finProdFinEquiv (l, i))) (z ∘ e)
-    rw [sqN_comp_eq hFS hz] at h
-    refine norm_le_sqrt_of_sq_le (norm_nonneg _) (mul_nonneg hBn0 (hq0 l)) (pow_nonneg hρ0 N) ?_
-    calc ‖P l‖ ^ 2 ≤ ((N + D).choose D : ℝ) * (m.ρ z ^ 2) ^ N * q l := h
-      _ = ((N + D).choose D : ℝ) * q l * (m.ρ z ^ N) ^ 2 := by ring
+    rw [hsqN] at h
+    have hsq : ‖P l‖ ^ 2 ≤ ((N + D).choose D : ℝ) * q l * (m.ρ z ^ N) ^ 2 := by
+      calc ‖P l‖ ^ 2 ≤ ((N + D).choose D : ℝ) * (m.ρ z ^ 2) ^ N * q l := h
+        _ = ((N + D).choose D : ℝ) * q l * (m.ρ z ^ N) ^ 2 := by ring
+    have hsqrt := Real.sqrt_le_sqrt hsq
+    rwa [Real.sqrt_sq (norm_nonneg _), Real.sqrt_mul (mul_nonneg hBn0 (hq0 l)),
+      Real.sqrt_sq (pow_nonneg hρ0 N)] at hsqrt
   have hmain : ‖∑ l, eval z (map (Int.castRingHom ℂ) (H l)) * P l‖ ≤
       (Cε * ∑ l, Real.sqrt (((N + D).choose D : ℝ) * q l)) * m.ρ z ^ (N + kε) := by
     refine (norm_sum_le _ _).trans ?_
@@ -112,7 +111,12 @@ theorem pt_lower {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric 
           mul_le_mul (hCε l z hz) (hPl l) (norm_nonneg _) (by positivity)
       _ = Cε * Real.sqrt (((N + D).choose D : ℝ) * q l) * m.ρ z ^ (N + kε) := by ring
   rw [hsum]
-  refine (sq_wgt_le_of_le hz.1 (norm_nonneg _) hmain).trans ?_
+  have hweighted : ‖∑ l, eval z (map (Int.castRingHom ℂ) (H l)) * P l‖ ^ 2 *
+      wgt m (N + kε) z ≤ (Cε * ∑ l, Real.sqrt (((N + D).choose D : ℝ) * q l)) ^ 2 := by
+    have hρ : 0 < m.ρ z ^ (N + kε) := pow_pos (m.pos z hz.1) _
+    rw [wgt, Nat.mul_comm 2, pow_mul, mul_inv_le_iff₀ (pow_pos hρ 2), ← mul_pow]
+    exact pow_le_pow_left₀ (norm_nonneg _) hmain 2
+  refine hweighted.trans ?_
   have hcs := sq_sum_le_card_mul_sum_sq (s := Finset.univ)
     (f := fun l => Real.sqrt (((N + D).choose D : ℝ) * q l))
   simp only [Finset.card_univ, Fintype.card_fin] at hcs
@@ -124,19 +128,24 @@ theorem pt_lower {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric 
         simp_rw [Real.sq_sqrt (mul_nonneg hBn0 (hq0 _))]
         rw [← Finset.mul_sum]; ring
 
-theorem pt_small {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric ℂ (Ix κ)}
+theorem pt_small {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric (C := ℂ) (ι := Ix κ)}
     (hFS : IsPullFS x e m) {N k₀ : ℕ} {a : Fin (D + 1) → ℕ} (ha : ∑ t, a t = N)
     (t : MvPolynomial (Ix κ) ℤ) {Ct : ℝ}
     (hCt : ∀ z ∈ pts (coordIdeal ℤ x), ‖eval z (map (Int.castRingHom ℂ) t)‖ ≤ Ct * m.ρ z ^ k₀)
     {z : Ix κ → ℂ} (hz : z ∈ pts (coordIdeal ℤ x)) :
     ‖eval z (map (Int.castRingHom ℂ) (prodForm e a t))‖ ^ 2 * wgt m (N + k₀) z ≤ Ct ^ 2 := by
   have hρ0 : 0 ≤ m.ρ z := m.nonneg z
+  have hsqN : sqN (z ∘ e) = m.ρ z ^ 2 := by
+    rw [hFS z hz, Real.sq_sqrt (Finset.sum_nonneg fun k _ => sq_nonneg ‖z (e k)‖)]
+    rfl
   have hm : ‖monoC a (z ∘ e)‖ ≤ m.ρ z ^ N := by
     have h := norm_monoC_sq_le a (z ∘ e)
     have e2 : (m.ρ z ^ 2) ^ N = (m.ρ z ^ N) ^ 2 := by ring
-    rw [sqN_comp_eq hFS hz, ha, e2] at h
+    rw [hsqN, ha, e2] at h
     exact (pow_le_pow_iff_left₀ (norm_nonneg _) (pow_nonneg hρ0 N) two_ne_zero).mp h
-  refine sq_wgt_le_of_le hz.1 (norm_nonneg _) ?_
+  have hρ : 0 < m.ρ z ^ (N + k₀) := pow_pos (m.pos z hz.1) _
+  rw [wgt, Nat.mul_comm 2, pow_mul, mul_inv_le_iff₀ (pow_pos hρ 2), ← mul_pow]
+  refine pow_le_pow_left₀ (norm_nonneg _) ?_ 2
   rw [eval_prodForm, norm_mul]
   have h2 := hCt z hz
   calc ‖monoC a (z ∘ e)‖ * ‖eval z (map (Int.castRingHom ℂ) t)‖ ≤ m.ρ z ^ N * (Ct * m.ρ z ^ k₀) :=
@@ -169,15 +178,15 @@ theorem sec_le_span_prod {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {n k₀ 
   have hpa' : pa.IsHomogeneous (n - k₀) := (mem_homogeneousSubmodule _ _).mp hpa
   rw [← htb.2.2, Submodule.mem_span_range_iff_exists_fun] at ht
   obtain ⟨cc, rfl⟩ := ht
-  have ea : (aeval (x ∘ e)).toLinearMap pa = ∑ i, (coeff (Finsupp.equivFunOnFinite.symm
-      (adtEnum D (n - k₀) i)) pa : ℤ) • ∏ t, (x ∘ e) t ^ adtEnum D (n - k₀) i t := by
+  have ea : (aeval (x ∘ e)).toLinearMap pa = ∑ i, (AddMonoidAlgebra.coeff pa (Finsupp.equivFunOnFinite.symm
+      (adtEnum D (n - k₀) i)) : ℤ) • ∏ t, (x ∘ e) t ^ adtEnum D (n - k₀) i t := by
     rw [AlgHom.toLinearMap_apply, aeval_eq_sum_adt pa hpa', ← sum_adtEnum]
     simp only [zsmul_eq_mul]
   rw [ea, Finset.sum_mul_sum]
   refine Submodule.sum_mem _ fun i _ => Submodule.sum_mem _ fun i₀ _ => ?_
-  have : (coeff (Finsupp.equivFunOnFinite.symm (adtEnum D (n - k₀) i)) pa : ℤ) •
+  have : (AddMonoidAlgebra.coeff pa (Finsupp.equivFunOnFinite.symm (adtEnum D (n - k₀) i)) : ℤ) •
       (∏ t, (x ∘ e) t ^ adtEnum D (n - k₀) i t) * cc i₀ • aeval x (tb i₀) =
-      (coeff (Finsupp.equivFunOnFinite.symm (adtEnum D (n - k₀) i)) pa * cc i₀) •
+      (AddMonoidAlgebra.coeff pa (Finsupp.equivFunOnFinite.symm (adtEnum D (n - k₀) i)) * cc i₀) •
         aeval x (prodForm e (adtEnum D (n - k₀) i) (Tf i₀)) := by
     rw [aeval_prodForm, hTfb i₀, aeval_map_intQ]
     simp only [zsmul_eq_mul]; push_cast; ring

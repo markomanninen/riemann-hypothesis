@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupOrb
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupGlob
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.DiffIdealNeBot
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupOrb
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupGlob
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.DiffIdealNeBot
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem frame_li {T : E} (F : LFlag S r T) (hT : T ≠ 0) : LinearIndependent E 
       obtain ⟨a, rfl⟩ := hy
       exact F.fl.z_orth a
     | zero => simp
-    | add x y _ _ hx hy => simp [map_add, hx, hy]
+    | add x y _ _ hx hy => simp [map_add (f := _), hx, hy]
     | smul c x _ hx => simp [hx]
   have := h0 _ hz
   rw [F.fl.z_norm] at this
@@ -135,7 +139,8 @@ theorem zhat_lift {T T' : E} (F : LFlag S r T) (F₁ : LFlag S r T') {ν m : S.V
     rw [← hiso (frame F a) (ν⁻¹ (m (frame F₁ b)))]
     simp [LinearEquiv.coe_inv]
   rw [e, hνF a, hmF b]
-  simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, ZhatL, Zhat, brS, map_sum, map_smulₛₗ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, ZhatL, Zhat, brS, map_sum, map_smulₛₗ,
     LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Finset.sum_mul, Finset.mul_sum, starRingEnd_apply]
   refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
   simp only [RingHom.id_apply]
@@ -157,7 +162,7 @@ variable {D : D7}
 
 theorem isRowLat_of_pd {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
     {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hΛ : IsRowLat D F0 Λ)
-    {F₁ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} (hp : PD D Λ (lf D F0) u' F₁) :
+    {F₁ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)} (hp : PD D Λ (lf D F0) u' F₁) :
     IsRowLat D F₁.fl Λ :=
   ⟨hΛ.1, ⟨hΛ.2.1.1, hΛ.2.1.2.1, ⟨hp.1.1, rfl⟩, hp.2.2.1⟩, hp.2.2.2⟩
 
@@ -183,7 +188,9 @@ theorem repAtTup_of (M : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D,
   have hFun := Formalism.L2.SG.Closed.TermFun_holds D u u' F0 γ.lam hΛ
   obtain ⟨Fa, ⟨pa, ea⟩, hGa, hcell⟩ := hel.2
   have hdca := (hEq ⟨Fa, pa⟩ ⟨F₁, p₁⟩).1 (ea.trans e₁.symm)
-  have hG₁ : Gval (lf D F0) F₁ ≠ 0 := by rw [Formalism.L2.SG.Pf.gval_rel (lf D F0) hdca]; exact hGa
+  change DCRel γ.lam (lf D F0) Fa F₁ at hdca
+  have hG₁ : Gval (lf D F0) F₁ ≠ 0 := fun h =>
+    hGa ((Formalism.L2.SG.Pf.gval_rel (lf D F0) hdca).symm.trans h)
   have hcell₁ : IsInCell (ZhatOM (ZhatL (lf D F0) F₁)) w := (hFun.2.1 ⟨Fa, pa⟩ ⟨F₁, p₁⟩ hdca w).1 hcell
   obtain ⟨Fg, ⟨pg, eg⟩, hgen⟩ := hel.1.1
   have hgen₁ : IsGeneric γ.lam (gS D) (lf D F0) F₁ :=

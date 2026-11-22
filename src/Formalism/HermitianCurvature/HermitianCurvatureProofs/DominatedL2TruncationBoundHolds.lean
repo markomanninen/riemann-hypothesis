@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFApxDom
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFApxDomThQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DominatedL2OperatorBoundHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFApxDom
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFApxDomThQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DominatedL2OperatorBoundHolds
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 
@@ -25,7 +29,7 @@ theorem jf_sub_thr (D : B.RealPlaceData k r Wp Wq) {A : ℝ} (hT : JF.Transporte
   rw [hJ, hJ, hJ, ← integral_sub (hFi h hh) (hGi h hh)]
   congr 1
   funext q
-  simp only [JF.integrand, B.rho, ContinuousLinearMap.sub_comp, ContinuousLinearMap.comp_sub, smul_sub]
+  simp [JF.integrand, B.rho, smul_sub]
 
 theorem hsVec_sub'' (A C : Wq →L[ℂ] Wp) : B.hsVec (A - C) = B.hsVec A - B.hsVec C := by
   unfold B.hsVec
@@ -182,8 +186,8 @@ theorem ew_lint_le (p : KB.Pl P Wp Wq) {A : ℝ} (hAB : B.AB P.k P.r ≤ A) (hT 
 
 end place
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem dominated_L2_truncation_bound_holds : DominatedL2TruncationBound := by
   intro Cb C₁
   refine ⟨max C₁ 0 + 21, ?_⟩
@@ -371,8 +375,6 @@ theorem dominated_L2_truncation_bound_holds : DominatedL2TruncationBound := by
         2 * (‖TBB.Gp p (TBB.bigPt P.r c)‖ ^ (2 * p₀ - N) *
           TBB.Ew p (fun _ => 1) (B.opApply Th (ψ n)) (P.r + 1) [] (TBB.bigPt P.r c)) := by ring
     _ ≤ 2 * (Hn c).toReal := by linarith
-
-theorem nfApxDomAll_of_ptw (hP : NFDomPtw) : NFApxDomAll := nfApxDomAll_of_cut domination_at_zero_holds hP dominated_L2_truncation_bound_holds
 
 end
 

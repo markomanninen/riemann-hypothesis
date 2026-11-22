@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PBcGal
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PBcSplits
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsBasic
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsPts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PIsoPts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PPtsOfSplits
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PBcGal
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PBcSplits
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsBasic
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsPts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PIsoPts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PPtsOfSplits
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV TensorProduct
 open UpperTheory.Gal.Seam
@@ -74,7 +78,7 @@ private theorem bc_range {R L M M' N : Type*} [CommRing R] [CommRing L] [Algebra
     obtain ⟨n, hn⟩ := h m
     exact ⟨a ⊗ₜ n, by simp [hn]⟩
   | add x y hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hx hy
 
 private theorem bc_sum {R L M N J : Type*} [CommRing R] [CommRing L] [Algebra R L] [AddCommGroup M] [AddCommGroup N]
@@ -83,7 +87,7 @@ private theorem bc_sum {R L M N J : Type*} [CommRing R] [CommRing L] [Algebra R 
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul a m => simp [TensorProduct.tmul_sum]
-  | add x y hx hy => simp only [map_add, hx, hy, Finset.sum_add_distrib]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, Finset.sum_add_distrib]
 
 private theorem inv_mem (hV : VInv) (l : ℕ) [Fact l.Prime] {W Z : Scheme.{0}} (f : W ⟶ Z) (G : Type) [Group G] [Finite G]
     (b : G → (W ⟶ W)) (hG : IsGalois f G b) (L : Type) [Field L] [Algebra ℚ_[l] L] (y : L ⊗[ℚ_[l]] Htot l (sch.obj W))
@@ -97,7 +101,8 @@ private theorem inv_mem (hV : VInv) (l : ℕ) [Fact l.Prime] {W Z : Scheme.{0}} 
     rfl
   have hE : ∀ m, (∑ δ, pullTot l (sch.map (b δ))) m ∈ LinearMap.range (pullTot l (sch.map f)) := fun m => by
     refine tot_range hV l _ G b hG _ fun δ' => ?_
-    rw [LinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.sum_apply, map_sum]
     simp only [hmul]
     exact Fintype.sum_equiv (Equiv.mulLeft δ') _ _ fun _ => rfl
   have hEy : (∑ δ, pullTot l (sch.map (b δ))).baseChange L y = ((Fintype.card G : ℕ) : L) • y := by

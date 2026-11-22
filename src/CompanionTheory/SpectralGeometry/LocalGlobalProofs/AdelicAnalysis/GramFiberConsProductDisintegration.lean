@@ -1,9 +1,13 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StageData
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.BlockOneScalarPreservesNondegenerateStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasureGeneralRankExtensionStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StageData
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.BlockOneScalarPreservesNondegenerateStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasureGeneralRankExtensionStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW GlobalTheory.CompanionTheory.SW.PiLocalization₂ NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -37,7 +41,7 @@ theorem lintegral_fibS_of_mem : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
   have hvec : ∀ (A : R ⊗[F] E) (c : Fin n → R ⊗[F] E),
       Measurable (fun X : Fin n → Fin M → R ⊗[F] E => vec A c X) := by
     intro A c
-    refine measurable_pi_lambda _ (fun i => ?_)
+    refine Measurable.of_eval (fun i => ?_)
     induction i using Fin.cases with
     | zero =>
       have h0 : (fun X : Fin n → Fin M → R ⊗[F] E => vec A c X 0) =
@@ -45,7 +49,7 @@ theorem lintegral_fibS_of_mem : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
       rw [h0]
       exact measurable_const
     | succ j =>
-      refine measurable_pi_lambda _ (fun k => ?_)
+      refine Measurable.of_eval (fun k => ?_)
       induction k using Fin.cases with
       | zero =>
         have h0 : (fun X : Fin n → Fin M → R ⊗[F] E => vec A c X j.succ 0) = fun _ => c j := rfl

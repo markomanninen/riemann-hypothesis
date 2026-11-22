@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
-import Development.WeilBound.ThetaLifts.FrameEstimates.Parity
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+public import Development.WeilBound.ThetaLifts.FrameEstimates.Parity
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem exists_ratEquiv (hp : IsPair B M χX χW om r s r' s') :
     { toFun := fun x => (y x, z x)
       map_add' := fun a b => by
         have h := hyz (a + b)
-        rw [hadd, map_add, hyz a, hyz b] at h
+        rw [hadd, map_add (f := _), hyz a, hyz b] at h
         refine Prod.ext (funext fun i => sq_alg_inj ?_) (funext fun i => sq_alg_inj ?_)
         · exact (congrFun (congrArg Prod.fst h) i).symm.trans (map_add _ _ _).symm
         · exact (congrFun (congrArg Prod.snd h) i).symm.trans (map_add _ _ _).symm

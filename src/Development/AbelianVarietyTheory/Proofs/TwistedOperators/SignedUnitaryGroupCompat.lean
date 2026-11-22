@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FiniteDimensionalCoeffSpan
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FiniteDimensionalCoeffSpan
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,13 +71,13 @@ theorem atTau_sgn (θ : InfFam D) (hθ : IsInfFam θ) (ε : Bool) (V : HSp D) (�
       refine ⟨(ofSgn ε V).symm x, (isAtTau_sgn θ ε V τ g _).2 ?_⟩
       rw [MulEquiv.apply_symm_apply]; exact hx
     have a : IsAtTau θ (sgn ε V) τ g (atTau θ (sgn ε V) τ g) := by
-      unfold atTau; rw [dif_pos h₁]; exact h₁.choose_spec
+      unfold atTau; rw [dite_eq_left h₁]; exact h₁.choose_spec
     have b : IsAtTau θ V τ g (atTau θ V τ g) := by
-      unfold atTau; rw [dif_pos h]; exact h.choose_spec
+      unfold atTau; rw [dite_eq_left h]; exact h.choose_spec
     exact GlobalTheory.Published.AutFin.Model.isAtTau_unique θ V hθ ((isAtTau_sgn θ ε V τ g _).1 a) b
   · have h₁ : ¬ ∃ x, IsAtTau θ (sgn ε V) τ g x := fun ⟨x, hx⟩ => h ⟨_, (isAtTau_sgn θ ε V τ g x).1 hx⟩
-    have a : atTau θ (sgn ε V) τ g = 1 := by unfold atTau; rw [dif_neg h₁]
-    have b : atTau θ V τ g = 1 := by unfold atTau; rw [dif_neg h]
+    have a : atTau θ (sgn ε V) τ g = 1 := by unfold atTau; rw [dite_eq_right h₁]
+    have b : atTau θ V τ g = 1 := by unfold atTau; rw [dite_eq_right h]
     rw [a, b, map_one]
 
 theorem meas_sgn (ε : Bool) (V : HSp D) (ν : Measure (GA D V)) (𝓕 : Set (GA D V)) (hν : ν.IsHaarMeasure)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianCharacterContinuousUnit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CircleZero
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianCharacterContinuousUnit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CircleZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,9 +48,9 @@ theorem ker_eq (d : Polynomial ℂ) (F : ℂ → ℂ) (s₀ : ℂ) (ε : ℝ) (k
       (2 * Real.pi * Complex.I)⁻¹ * ((w - s₀) ^ (k - 1) * (F w / d.eval w)) := fun w => by ring
   simp only [h, circleIntegral.integral_const_mul]
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem cfFJ_of_pcBound : PcBound → CfFJ := by
   intro hPc D n H φ s₀ U d E σ hC ε hR
   obtain ⟨hε, hB, hroot⟩ := hR

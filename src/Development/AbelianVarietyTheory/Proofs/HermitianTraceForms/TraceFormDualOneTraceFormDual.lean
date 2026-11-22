@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
-import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
+public import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -67,8 +71,8 @@ theorem mem_one_fractionalIdeal_iff {x : E} :
   rw [FractionalIdeal.mem_one_iff]
   exact ⟨fun ⟨z, hz⟩ => hz ▸ z.isIntegral_coe, fun h => ⟨⟨x, h⟩, rfl⟩⟩
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem mem_inv_different_iff {x : E} :
     x ∈ ((differentIdeal ℤ (𝓞 E) : Ideal (𝓞 E)) : FractionalIdeal (𝓞 E)⁰ E)⁻¹ ↔
       ∀ a : E, IsIntegral ℤ a → ∃ k : ℤ, Algebra.trace ℚ E (x * a) = k := by
@@ -125,8 +129,8 @@ theorem fractionalIdeal_inv_smul_smul {a : FractionalIdeal (𝓞 E)⁰ E} (ha : 
     ((a⁻¹ : FractionalIdeal (𝓞 E)⁰ E) : Submodule (𝓞 E) E) • (a : Submodule (𝓞 E) E) • Λ = Λ := by
   rw [← fractionalIdeal_mul_smul, inv_mul_cancel₀ ha, fractionalIdeal_one_smul]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem isLattice_fractionalIdeal_smul {a : FractionalIdeal (𝓞 E)⁰ E} (ha : a ≠ 0)
     {Λ : Submodule (𝓞 E) (Fin r → E)} (hΛ : ReciprocityTheory.MultiplicativeHeights.IsLattice Λ) :
     ReciprocityTheory.MultiplicativeHeights.IsLattice ((a : Submodule (𝓞 E) E) • Λ) := by
@@ -156,12 +160,18 @@ theorem isLattice_fractionalIdeal_smul {a : FractionalIdeal (𝓞 E)⁰ E} (ha :
       by_contra h
       push Not at h
       exact ha (FractionalIdeal.eq_zero_iff.2 fun x hx => by_contra fun h0 => h x h0 hx)
-    rw [eq_top_iff, ← hΛ.2, Submodule.span_le]
-    intro y hy
-    have : y = α⁻¹ • α • y := by rw [smul_smul, inv_mul_cancel₀ hα0, one_smul]
-    rw [this]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span (Submodule.smul_mem_smul hα hy))
-
+    apply Submodule.eq_top_iff'.2
+    intro x
+    have hx : x ∈ Submodule.span E (Λ : Set (Fin r → E)) := by rw [hΛ.2]; trivial
+    induction hx using Submodule.span_induction with
+    | mem y hy =>
+      have h : α • y ∈ (a : Submodule (𝓞 E) E) • Λ := Submodule.smul_mem_smul hα hy
+      have h' : α • y ∈ Submodule.span E (↑((a : Submodule (𝓞 E) E) • Λ)) := Submodule.subset_span h
+      have h'' := Submodule.smul_mem (Submodule.span E (((a : Submodule (𝓞 E) E) • Λ : Submodule (𝓞 E) (Fin r → E)) : Set (Fin r → E))) α⁻¹ h'
+      simpa [smul_smul, hα0] using h''
+    | zero => exact zero_mem _
+    | add x y _ _ hx hy => exact add_mem hx hy
+    | smul c x _ hx => exact Submodule.smul_mem _ c hx
 omit [NumberField E] [IsCMField E] in
 theorem smul_mem_of_isIntegral (Λ : Submodule (𝓞 E) (Fin r → E)) {a : E} (ha : IsIntegral ℤ a)
     {y : Fin r → E} (hy : y ∈ Λ) : a • y ∈ Λ :=
@@ -235,11 +245,11 @@ theorem hermDual_smul {a : FractionalIdeal (𝓞 E)⁰ E} (ha : a ≠ 0) :
 
 def traceFormBilin (ξ : E) (G : Matrix (Fin r) (Fin r) E) : LinearMap.BilinForm ℚ (Fin r → E) :=
   LinearMap.mk₂ ℚ (EFf ξ G)
-    (fun x x' y => by simp only [EFf, herm_add_left, mul_add, map_add])
+    (fun x x' y => by simp only [EFf, herm_add_left, mul_add, map_add (f := _)])
     (fun c x y => by
       rw [EFf, EFf, ← algebraMap_smul E c x, herm_smul_left, mul_left_comm, ← Algebra.smul_def,
         map_smul])
-    (fun x y y' => by simp only [EFf, herm_add_right, mul_add, map_add])
+    (fun x y y' => by simp only [EFf, herm_add_right, mul_add, map_add (f := _)])
     (fun c x y => by
       have hc : cc (algebraMap ℚ E c) = algebraMap ℚ E c := by simp [cc]
       rw [EFf, EFf, ← algebraMap_smul E c y, herm_smul_right, hc, mul_left_comm,
@@ -268,7 +278,7 @@ def traceFormDual (ξ : E) (G : Matrix (Fin r) (Fin r) E) (Λ : Submodule (𝓞 
     obtain ⟨k, hk⟩ := hx y hy
     obtain ⟨k', hk'⟩ := hx' y hy
     refine ⟨k + k', ?_⟩
-    rw [← traceFormBilin_apply, map_add, LinearMap.add_apply, traceFormBilin_apply,
+    rw [← traceFormBilin_apply, map_add (f := _), LinearMap.add_apply, traceFormBilin_apply,
       traceFormBilin_apply, hk, hk', Int.cast_add]
   zero_mem' y _ := ⟨0, by simp [EFf, herm]⟩
   smul_mem' c x hx y hy := by
@@ -321,33 +331,46 @@ theorem hermDual_eq_smul_traceFormDual {ξ : E} (hξ : ξ ≠ 0) :
   rw [traceFormDual_eq hξ, fractionalIdeal_smul_inv_smul
     (mul_ne_zero (FractionalIdeal.spanSingleton_ne_zero_iff.2 hξ) coe_different_ne_zero)]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem exists_rat_basis_of_isLattice (hΛ : ReciprocityTheory.MultiplicativeHeights.IsLattice Λ) :
     ∃ (n : ℕ) (b : Module.Basis (Fin n) ℚ (Fin r → E)),
       Submodule.span ℤ (Set.range b) = Λ.restrictScalars ℤ := by
-  have : (Λ.restrictScalars ℤ).IsLattice ℚ := by
+  haveI : (Λ.restrictScalars ℤ).IsLattice ℚ := by
     constructor
     · have : Module.Finite (𝓞 E) Λ := Module.Finite.iff_fg.2 hΛ.1
       have : Module.Finite ℤ Λ := Module.Finite.trans (𝓞 E) Λ
       exact Module.Finite.iff_fg.1 this
-    · rw [eq_top_iff]
-      intro x _
-      obtain ⟨d, hd, hdx⟩ := exists_smul_mem (F := E) Λ (x := x) (hΛ.2 ▸ Submodule.mem_top)
-      obtain ⟨e, he⟩ : ∃ e : 𝓞 E, e * d = (Algebra.norm ℤ d : 𝓞 E) := by
-        have := Ideal.absNorm_mem (Ideal.span {d})
-        rw [Ideal.absNorm_span_singleton, Ideal.mem_span_singleton'] at this
-        obtain ⟨e, he⟩ := this
-        rcases Int.natAbs_eq (Algebra.norm ℤ d) with h | h
-        · exact ⟨e, by rw [he, h]; simp⟩
-        · exact ⟨-e, by rw [neg_mul, he, h]; simp⟩
-      have hn : (Algebra.norm ℤ d : ℚ) ≠ 0 := by
-        exact_mod_cast Algebra.norm_ne_zero_iff.2 hd
-      have h1 : (Algebra.norm ℤ d : ℚ) • x ∈ Λ := by
-        have := Λ.smul_mem e hdx
-        rwa [smul_smul, he, Int.cast_smul_eq_zsmul, ← Int.cast_smul_eq_zsmul ℚ] at this
-      rw [← inv_smul_smul₀ hn x]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span h1)
+    · intro s hs hli
+      exact (LinearIndependent.iff_fractionRing _ _).mp hli
+  have hsmul (a : E) {x : Fin r → E}
+      (hx : x ∈ Submodule.span ℚ ((Λ.restrictScalars ℤ : Submodule ℤ (Fin r → E)) : Set (Fin r → E))) :
+      a • x ∈ Submodule.span ℚ ((Λ.restrictScalars ℤ : Submodule ℤ (Fin r → E)) : Set (Fin r → E)) := by
+    obtain ⟨m, s, hm, hms⟩ :=
+      (IsFractionRing.isAlgebraic_iff ℤ ℚ E |>.mpr (.of_finite ℚ a)).exists_nsmul_eq (𝓞 E)
+    induction hx using Submodule.span_induction with
+    | mem y hy =>
+      have hsy : s • y ∈ Λ := Λ.smul_mem s hy
+      have key : a • y = (m : ℚ)⁻¹ • (s • y) := by
+        rw [← algebraMap_smul E s y, ← hms, smul_assoc, ← Nat.cast_smul_eq_nsmul ℚ,
+          inv_smul_smul₀ (by exact_mod_cast hm)]
+      rw [key]
+      exact Submodule.smul_mem _ _ (Submodule.subset_span hsy)
+    | zero => simp
+    | add y z _ _ hy hz => rw [smul_add]; exact add_mem hy hz
+    | smul q y _ hy => rw [smul_comm]; exact Submodule.smul_mem _ _ hy
+  have hspan : Submodule.span ℚ ((Λ.restrictScalars ℤ : Submodule ℤ (Fin r → E)) : Set (Fin r → E)) = ⊤ := by
+    apply Submodule.eq_top_iff'.2
+    intro x
+    have hx : x ∈ Submodule.span E (Λ : Set (Fin r → E)) := by rw [hΛ.2]; trivial
+    induction hx using Submodule.span_induction with
+    | mem y hy => exact Submodule.subset_span hy
+    | zero => exact zero_mem _
+    | add y z _ _ hy hz => exact add_mem hy hz
+    | smul a y _ hy => exact hsmul a hy
+  haveI : (Λ.restrictScalars ℤ).IsFullLattice ℚ := ⟨hspan⟩
+  haveI : Module.Free ℤ (Λ.restrictScalars ℤ) := Submodule.IsLattice.free ℚ _
+  haveI : Module.Finite ℤ (Λ.restrictScalars ℤ) := Submodule.IsLattice.finite ℚ _
   let b := Module.finBasis ℤ (Λ.restrictScalars ℤ)
   refine ⟨_, b.extendOfIsLattice ℚ, ?_⟩
   have h1 : Set.range (b.extendOfIsLattice ℚ) = (Λ.restrictScalars ℤ).subtype '' Set.range b := by
@@ -370,7 +393,8 @@ theorem exists_traceFormDual_eq {ξ : E} (hξ : ξ ≠ 0) (hG : G.det ≠ 0)
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).1 hy'
     have : (⟨∑ i, c i • b i, hy⟩ : Λ) = ∑ i, c i • (⟨b i, hbm i⟩ : Λ) := by
       ext1; simp
-    rw [this, map_sum, Submodule.coe_sum, map_sum, Int.cast_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum, Submodule.coe_sum, map_sum, Int.cast_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, Submodule.coe_smul_of_tower, map_zsmul, Module.Basis.constr_basis,
       smul_eq_mul, Int.cast_mul, zsmul_eq_mul]

@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.RealDisplayAllK
+module
+
+public import Formalism.AdmissibleDesigns.RealDisplayAllK
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -8,12 +12,19 @@ noncomputable section
 
 namespace Formalism.MainNotions.N.K
 
-open Formalism.RepresentationBoundsCohomology.SF
-open Formalism.NG Formalism.RepresentationBoundsCohomology.BR Formalism.RepresentationBoundsCohomology.TorsionBoundCyclotomic Formalism.RepresentationBoundsCohomology.JL Formalism.RepresentationBoundsCohomology.JT Formalism.RepresentationBoundsCohomology.JS Formalism.RepresentationBoundsCohomology.SplitClassesAll Formalism.RepresentationBoundsCohomology.LocallyConstantCohomology Formalism.RepresentationBoundsCohomology.FIN
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.RepresentationBoundsCohomology.LOC
-open Formalism.RepresentationBoundsCohomology.T2
-open ReciprocityTheory.ChartRestriction.T2 (PadicCoeff FracTop IsFGTop cupFG IsCycOn)
-open Formalism.RepresentationBoundsCohomology.ringDataObjects (RingData RingDef bcT bcR bcM bcChar ChainHyp ChainAB blockPoly PrimHyp AbsIrr BlockDiagonalIrreducibleAt)
+open NumberField IsDedekindDomain
+open Formalism.NG
+open Formalism.RepresentationBoundsCohomology.BR
+  (InChi InRowRho inputs_from_selmer_inj theorem_n_five_delta_clause)
+open Formalism.RepresentationBoundsCohomology.FIN
+  (InRhoFixReal blk_ko colPsi_lc decs inRowReal_of kRowRange pi_ko_torsion resLC rowRhoReal)
+open Formalism.RepresentationBoundsCohomology.JL (colFun colK colk)
+open Formalism.RepresentationBoundsCohomology.JT (BKIn InRowRhoNoBK rowBK)
+open Formalism.RepresentationBoundsCohomology.LocallyConstantCohomology (clsRow kRow kRowInj lcH1 qK)
+open Formalism.RepresentationBoundsCohomology.SplitClassesAll (InRhoFix)
+open Formalism.RepresentationBoundsCohomology.T2 (vhEInChi)
+open ReciprocityTheory.ChartRestriction.T2 (IsCycOn)
+open ReciprocityTheory.Gal (H1)
 
 set_option maxHeartbeats 8000000 in
 set_option synthInstance.maxHeartbeats 400000 in

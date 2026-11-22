@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalOperatorBlocks.LongWeylFunctional
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSchwartzPolyMulGauss
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalOperatorBlocks.LongWeylFunctional
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSchwartzPolyMulGauss
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,11 +29,11 @@ section Real
 
 variable {σ : Type}
 
-def reP (p : MvPolynomial σ ℂ) : MvPolynomial σ ℝ := ∑ k ∈ p.support, MvPolynomial.monomial k (MvPolynomial.coeff k p).re
+def reP (p : MvPolynomial σ ℂ) : MvPolynomial σ ℝ := ∑ k ∈ p.support, MvPolynomial.monomial k (AddMonoidAlgebra.coeff p k).re
 
-def imaginary (p : MvPolynomial σ ℂ) : MvPolynomial σ ℝ := ∑ k ∈ p.support, MvPolynomial.monomial k (MvPolynomial.coeff k p).im
+def imaginary (p : MvPolynomial σ ℂ) : MvPolynomial σ ℝ := ∑ k ∈ p.support, MvPolynomial.monomial k (AddMonoidAlgebra.coeff p k).im
 
-theorem coeff_reP (p : MvPolynomial σ ℂ) (k : σ →₀ ℕ) : MvPolynomial.coeff k (reP p) = (MvPolynomial.coeff k p).re := by
+theorem coeff_reP (p : MvPolynomial σ ℂ) (k : σ →₀ ℕ) : AddMonoidAlgebra.coeff (reP p) k = (AddMonoidAlgebra.coeff p k).re := by
   classical
   rw [reP, MvPolynomial.coeff_sum]
   simp only [MvPolynomial.coeff_monomial]
@@ -38,7 +42,7 @@ theorem coeff_reP (p : MvPolynomial σ ℂ) (k : σ →₀ ℕ) : MvPolynomial.c
   · rfl
   · rw [MvPolynomial.notMem_support_iff.1 h, Complex.zero_re]
 
-theorem coeff_imP (p : MvPolynomial σ ℂ) (k : σ →₀ ℕ) : MvPolynomial.coeff k (imaginary p) = (MvPolynomial.coeff k p).im := by
+theorem coeff_imP (p : MvPolynomial σ ℂ) (k : σ →₀ ℕ) : AddMonoidAlgebra.coeff (imaginary p) k = (AddMonoidAlgebra.coeff p k).im := by
   classical
   rw [imaginary, MvPolynomial.coeff_sum]
   simp only [MvPolynomial.coeff_monomial]

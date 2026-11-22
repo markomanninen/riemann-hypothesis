@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace GlobalTheory.SplitWeil GlobalTheory.PRep GlobalTheory.LocGL
 open scoped ComplexConjugate InnerProductSpace
@@ -25,8 +29,8 @@ theorem apply_mem_fixed_ker {v : V} (hv : v ∈ fixed κ r.ker) (k : K) : κ k v
     rw [← Module.End.mul_apply, ← map_mul]
     exact apply_eq_of_map_eq hv (by rw [map_mul, MonoidHom.mem_ker.1 hn, one_mul])
 
-variable (κ) in
 
+variable (κ) in
 def kerRep (hr : Function.Surjective r) : Representation ℂ Q (fixed κ r.ker) where
   toFun q := (κ (Function.surjInv hr q)).restrict fun _ hv => apply_mem_fixed_ker hv _
   map_one' := LinearMap.ext fun v => Subtype.ext <|
@@ -79,7 +83,8 @@ theorem sum_character_mul [Fintype Q] [FiniteDimensional ℂ W] {τ : Representa
     (h : Q) : ((Module.finrank ℂ W : ℂ) / Fintype.card Q) * ∑ q, τ.character q * τ.character (q⁻¹ * h) =
       τ.character h := by
   have := congrArg (fun T => LinearMap.trace ℂ W (T * τ h)) (charIdem_self hτ)
-  simp only [charIdem, smul_mul_assoc, Finset.sum_mul, map_smul, map_sum, one_mul, ← map_mul, smul_eq_mul] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [charIdem, smul_mul_assoc, Finset.sum_mul, map_smul, map_sum, one_mul, ← map_mul, smul_eq_mul] at this
   rw [Representation.character, ← this]
   congr 1
   exact Fintype.sum_equiv (Equiv.inv Q) _ _ fun q => by simp [Representation.character]
@@ -92,9 +97,9 @@ variable {G Q : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Mea
   [Group Q] (μ : Measure G) [μ.IsHaarMeasure] {K : Subgroup G} (ho : IsOpen (K : Set G)) (hc : IsCompact (K : Set G))
   {F : G → ℂ}
 
+
 omit [IsTopologicalGroup G] [μ.IsHaarMeasure] in
 include ho in
-
 theorem integral_eq_subgroup (h0 : ∀ g ∉ K, F g = 0) : ∫ g, F g ∂μ = ∫ k : K, F k ∂(μ.comap K.subtype) :=
   (setIntegral_eq_integral_of_forall_compl_eq_zero (s := (K : Set G)) h0).symm.trans
     (integral_subtype_comap ho.measurableSet F).symm
@@ -116,31 +121,31 @@ theorem integral_inv_of_compact (h0 : ∀ g ∉ K, F g = 0) : ∫ g, F g⁻¹ �
   rw [integral_eq_subgroup μ ho h0, integral_eq_subgroup μ ho fun g hg => h0 _ (by rwa [K.inv_mem_iff])]
   exact integral_inv_eq_self (fun x : K => F x) _
 
-omit [μ.IsHaarMeasure] ho hc in
 
+omit [μ.IsHaarMeasure] ho hc in
 def kerSet (r : K →* Q) : Set G := (↑) '' (r.ker : Set K)
 
 variable {r : K →* Q} (hr : Function.Surjective r) (hk : IsOpen (r.ker : Set K))
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] ho hc in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] ho hc in
 theorem coe_mem_kerSet {k : K} : (k : G) ∈ kerSet r ↔ r k = 1 := Subtype.val_injective.mem_set_image
+
 
 omit [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] hc in
 include hk in
-
 theorem isOpen_kerSet : IsOpen (kerSet r) := ho.isOpenMap_subtype_val _ hk
+
 
 omit [MeasurableSpace G] [BorelSpace G] ho in
 include hk in
-
 theorem isCompact_kerSet : IsCompact (kerSet r) :=
   haveI : CompactSpace K := isCompact_iff_compactSpace.1 hc
   (r.ker.isClosed_of_isOpen hk).isCompact.image continuous_subtype_val
 
+
 omit hc in
 include hk in
-
 theorem integral_eq_sum_ker [Fintype Q] (hF : Integrable F μ) (h0 : ∀ g ∉ K, F g = 0) :
     ∫ g, F g ∂μ = ∑ q, ∫ x in kerSet r, F ((Function.surjInv hr q : K) * x) ∂μ := by
   classical
@@ -152,14 +157,14 @@ theorem integral_eq_sum_ker [Fintype Q] (hF : Integrable F μ) (h0 : ∀ g ∉ K
         rw [map_mul, map_inv, Function.surjInv_eq hr, inv_mul_eq_one]
       simp only [indicator_apply, this, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     · simp [indicator_apply, h0 g hg]
-  rw [integral_congr_ae (.of_forall e), integral_finset_sum _ fun q _ => hF.indicator (hm.preimage (by fun_prop))]
+  rw [integral_congr_ae (.of_forall e), integral_finsetSum _ fun q _ => hF.indicator (hm.preimage (by fun_prop))]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [← integral_mul_left_eq_self _ ((Function.surjInv hr q : K) : G), ← integral_indicator hm]
   refine integral_congr_ae (.of_forall fun x => ?_)
   simp [indicator_apply]
 
-include hr hk in
 
+include hr hk in
 theorem real_eq_card_mul [Fintype Q] : (μ.real K : ℂ) = Fintype.card Q * μ.real (kerSet r) := by
   have h := integral_eq_sum_ker μ ho hr hk (F := (K : Set G).indicator fun _ => 1)
     ((integrable_indicator_iff ho.measurableSet).2 (integrableOn_const hc.measure_ne_top))
@@ -172,24 +177,24 @@ theorem real_eq_card_mul [Fintype Q] : (μ.real K : ℂ) = Fintype.card Q * μ.r
       exact indicator_of_mem (K.mul_mem (Subtype.prop _) k.2) _
   simpa [e, integral_indicator ho.measurableSet] using h
 
-include hk in
 
+include hk in
 theorem real_kerSet_ne_zero : (μ.real (kerSet r) : ℂ) ≠ 0 := by
   exact_mod_cast ENNReal.toReal_ne_zero.2 ⟨((isOpen_kerSet ho hk).measure_pos μ ⟨1, 1, one_mem _, rfl⟩).ne',
     (isCompact_kerSet hc hk).measure_ne_top⟩
 
 variable {W : Type} [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (τ : Representation ℂ Q W)
 
-include hr hk in
 
+include hr hk in
 theorem typeIdem_mul_real [Fintype Q] (k : K) : typeIdem μ r τ k * μ.real (kerSet r) =
     (Module.finrank ℂ W : ℂ) / Fintype.card Q * conj (τ.character (r k)) := by
   have := real_kerSet_ne_zero μ ho hc hk
   rw [typeIdem_coe, real_eq_card_mul μ ho hc hr hk]
   field_simp
 
-include hr hk in
 
+include hr hk in
 theorem conv_typeIdem [Finite Q] (hτ : τ.IsIrreducible) :
     conv μ (typeIdem μ r τ) (typeIdem μ r τ) = typeIdem μ r τ := by
   have := Fintype.ofFinite Q
@@ -215,7 +220,8 @@ theorem conv_typeIdem [Finite Q] (hτ : τ.IsIrreducible) :
         rw [(typeIdem_mul_ker μ r τ hk1 _).2, ← h1]
         simp [mul_assoc]
     simp only [e]
-    rw [← Finset.mul_sum, ← map_sum, ← Finset.mul_sum, sum_character_mul hτ, typeIdem_coe]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.mul_sum, ← map_sum, ← Finset.mul_sum, sum_character_mul hτ, typeIdem_coe]
   · rw [typeIdem_of_notMem μ r τ hy]
     have : ∀ x, typeIdem μ r τ x * typeIdem μ r τ (x⁻¹ * y) = 0 := fun x => by
       by_cases hx : x ∈ K
@@ -223,8 +229,8 @@ theorem conv_typeIdem [Finite Q] (hτ : τ.IsIrreducible) :
       · rw [typeIdem_of_notMem μ r τ hx, zero_mul]
     simp [conv, this]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] ho hc in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] ho hc in
 theorem conj_mem_kerSet (k : K) (g : G) : (k : G)⁻¹ * (g * k) ∈ kerSet r ↔ g ∈ kerSet r := by
   by_cases hg : g ∈ K
   · lift g to K using hg
@@ -238,8 +244,8 @@ theorem conj_mem_kerSet (k : K) (g : G) : (k : G)⁻¹ * (g * k) ∈ kerSet r �
     · rintro ⟨x, -, rfl⟩
       exact hg x.2
 
-include hr hk in
 
+include hr hk in
 theorem proj_of_weak [Finite Q] (hτ : τ.IsIrreducible) {V : Type} [AddCommGroup V] [Module ℂ V]
     {ρ : Representation ℂ G V} {L : Set (V →ₗ[ℂ] ℂ)} (hsep : ∀ v w, (∀ l ∈ L, l v = l w) → v = w)
     (hst : ∀ l ∈ L, ∀ g, l ∘ₗ ρ g ∈ L) (hct : ∀ l ∈ L, ∀ v, Continuous fun g => l (ρ g v)) {B P : V →ₗ[ℂ] V}
@@ -283,7 +289,8 @@ theorem proj_of_weak [Finite Q] (hτ : τ.IsIrreducible) {V : Type} [AddCommGrou
   · rw [hP l hl, integral_eq_sum_ker μ ho hr hk (F := fun g => typeIdem μ r τ g * l (ρ g v))
       ((he.1.continuous.mul (hct l hl v)).integrable_of_hasCompactSupport he.2.mul_right)
       fun g hg => by rw [typeIdem_of_notMem μ r τ hg, zero_mul], charIdem_apply]
-    simp only [Submodule.coe_smul, Submodule.coe_sum, map_smul, map_sum, smul_eq_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Submodule.coe_smul, Submodule.coe_sum, map_smul, map_sum, smul_eq_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
     have e1 : l (kerRep (ρ.comp K.subtype) hr q ⟨_, h1 v⟩ : V) =
         (μ.real (kerSet r) : ℂ)⁻¹ * ∫ g in kerSet r, l (ρ (Function.surjInv hr q : K) (ρ g v)) ∂μ := by
@@ -298,8 +305,8 @@ theorem proj_of_weak [Finite Q] (hτ : τ.IsIrreducible) {V : Type} [AddCommGrou
     simp only
     rw [(typeIdem_mul_ker μ r τ hk1 _).2, map_mul, Module.End.mul_apply]
 
-include hr hk in
 
+include hr hk in
 theorem smoothOp_typeIdem [T2Space G] [Finite Q] (hτ : τ.IsIrreducible) {V : Type} [AddCommGroup V] [Module ℂ V]
     {ρ : Representation ℂ G V} (hρ : IsSmooth ρ) :
     (∀ k : K, smoothOp ρ μ (typeIdem μ r τ) ∘ₗ ρ k = ρ k ∘ₗ smoothOp ρ μ (typeIdem μ r τ)) ∧
@@ -313,18 +320,14 @@ theorem smoothOp_typeIdem [T2Space G] [Finite Q] (hτ : τ.IsIrreducible) {V : T
     (fun _ _ _ => trivial) (fun l _ v => ((hρ.isLocallyConstant_orbit v).comp l).continuous)
     (fun l _ v => hρ.map_smoothOp hb.1 hb.2 l v) fun l _ v => hρ.map_smoothOp he.1 he.2 l v
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] ho hc in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] ho hc in
 def linRep {H : Type} [NormedAddCommGroup H] [NormedSpace ℂ H] (π : G →* (H →L[ℂ] H)) : Representation ℂ G H :=
   ContinuousLinearMap.toLinearMapRingHom.toMonoidHom.comp π
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] ho hc in
 
-@[simp] theorem linRep_apply {H : Type} [NormedAddCommGroup H] [NormedSpace ℂ H] (π : G →* (H →L[ℂ] H)) (g : G)
-    (v : H) : linRep π g v = π g v := rfl
 
 include hr hk in
-
 theorem repOp_typeIdem [T2Space G] [Finite Q] (hτ : τ.IsIrreducible) {H : Type} [NormedAddCommGroup H]
     [InnerProductSpace ℂ H] [CompleteSpace H] {π : G →* (H →L[ℂ] H)} (hπ : IsUnitaryRep π) :
     (∀ k : K, repOp π μ (typeIdem μ r τ) ∘L π k = π k ∘L repOp π μ (typeIdem μ r τ)) ∧
@@ -340,7 +343,7 @@ theorem repOp_typeIdem [T2Space G] [Finite Q] (hτ : τ.IsIrreducible) {H : Type
       l ((repOp π μ f).toLinearMap v) = ∫ g, f g * l (linRep π g v) ∂μ := fun {f} hf l hl v => by
     have := (⟨l, hl⟩ : H →L[ℂ] ℂ).integral_comp_comm (hπ.isRepOp (μ := μ) hf.1.continuous hf.2 v).1
     rw [← hπ.repOp_apply hf.1.continuous hf.2] at this
-    simpa using this.symm
+    simpa [linRep] using this.symm
   obtain ⟨h1, h2, h3, h4⟩ := proj_of_weak μ ho hc hr hk τ hτ (ρ := linRep π) (L := {l | Continuous l})
     (fun v w h => ext_inner_left ℂ fun u => h (innerSL ℂ u).toLinearMap (innerSL ℂ u).continuous)
     (fun l hl g => Continuous.comp (g := l) hl (π g).continuous) (fun l hl v => Continuous.comp hl (hπ.continuous_apply v))
@@ -392,30 +395,18 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
   {v : HeightOneSpectrum (𝓞 F)} (s : SplitAt σ J L v)
 
 theorem isOpen_ker_red : IsOpen (s.red.ker : Set (stabLoc σ J L v)) := by
-  rw [show (s.red.ker : Set (stabLoc σ J L v)) = (↑) ⁻¹' (stabLocOne σ J s.emb L : Set (GLoc σ J v)) from
-    Set.ext s.red_eq_one_iff]
-  exact (isOpen_stabLocOne J s.emb L s.cm).preimage continuous_subtype_val
-
-theorem idem_projector (μ : Measure (GLoc σ J v)) [μ.IsHaarMeasure] {W : Type} [AddCommGroup W] [Module ℂ W]
-    [FiniteDimensional ℂ W] {τ : Representation ℂ (GL (Fin n) (ResF v)) W} (hτ : τ.IsIrreducible) :
-    conv μ (s.idem μ τ) (s.idem μ τ) = s.idem μ τ ∧
-    (∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GLoc σ J v) V), IsSmooth ρ →
-      (∀ k : stabLoc σ J L v, smoothOp ρ μ (s.idem μ τ) ∘ₗ ρ k = ρ k ∘ₗ smoothOp ρ μ (s.idem μ τ)) ∧
-      smoothOp ρ μ (s.idem μ τ) ∘ₗ smoothOp ρ μ (s.idem μ τ) = smoothOp ρ μ (s.idem μ τ) ∧
-      LinearMap.range (smoothOp ρ μ (s.idem μ τ)) =
-        (isotypic (ρ.comp (stabLoc σ J L v).subtype) (τ.comp s.red)).toSubmodule ∧
-      (smoothOp ρ μ (s.idem μ τ) ≠ 0 ↔
-        ∃ f : Representation.IntertwiningMap (τ.comp s.red) (ρ.comp (stabLoc σ J L v).subtype), f ≠ 0)) ∧
-    ∀ (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (π : (GLoc σ J v) →* (H →L[ℂ] H)),
-      IsUnitaryRep π →
-      (∀ k : stabLoc σ J L v, repOp π μ (s.idem μ τ) ∘L π k = π k ∘L repOp π μ (s.idem μ τ)) ∧
-      repOp π μ (s.idem μ τ) ∘L repOp π μ (s.idem μ τ) = repOp π μ (s.idem μ τ) ∧
-      IsSelfAdjoint (repOp π μ (s.idem μ τ)) ∧
-      LinearMap.range (repOp π μ (s.idem μ τ)).toLinearMap =
-        (isotypic ((linRep π).comp (stabLoc σ J L v).subtype) (τ.comp s.red)).toSubmodule ∧
-      (repOp π μ (s.idem μ τ) ≠ 0 ↔
-        ∃ f : Representation.IntertwiningMap (τ.comp s.red) ((linRep π).comp (stabLoc σ J L v).subtype), f ≠ 0) :=
-  typeIdem_projector μ (isOpen_stabLoc σ J L v) (isCompact_stabLoc σ J L v) s.red_surjective s.isOpen_ker_red hτ
+  have hU : IsOpen {z : Fv F v | Valued.v z < 1} := by
+    simpa using Valued.isOpen_ball (Fv F v) 1
+  have e : (s.red.ker : Set (stabLoc σ J L v)) = ⋂ i, ⋂ j,
+      (fun g : stabLoc σ J L v => ((s.basis⁻¹ * splitHom σ J s.emb g * s.basis).1 - 1) i j) ⁻¹'
+        {z : Fv F v | Valued.v z < 1} := by
+    ext g
+    simp only [Set.mem_iInter, Set.mem_preimage, Set.mem_ofPred_eq]
+    exact (s.red_eq_one_iff g).trans (s.isBasis.mem_stabLocOne_iff.trans (and_iff_right g.2))
+  rw [e]
+  refine isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun j => hU.preimage ?_
+  exact (((Units.continuous_val.comp ((continuous_const.mul (continuous_splitHom s.emb)).mul
+    continuous_const)).sub continuous_const).matrix_elem i j).comp continuous_subtype_val
 
 end SplitAt
 

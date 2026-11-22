@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsEquivOfIsPushout
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsEquivOfIsPushout
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.UU GlobalTheory.FlatSec
@@ -28,12 +32,12 @@ theorem exists_of_mem_map [Algebra R R'] {A A' : Type} [CommRing A] [CommRing A'
     | add a b ha hb =>
       obtain ⟨x, hx⟩ := ha
       obtain ⟨x', hx'⟩ := hb
-      exact ⟨x + x', by rw [map_add, map_add, hx, hx', map_add, add_mul]⟩
+      exact ⟨x + x', by rw [map_add (f := _), map_add (f := _), hx, hx', map_add (f := _), add_mul]⟩
   · exact fun r => ⟨0, by simp⟩
   · intro a b _ _ ha hb r
     obtain ⟨x, hx⟩ := ha r
     obtain ⟨x', hx'⟩ := hb r
-    exact ⟨x + x', by rw [map_add, map_add, hx, hx', mul_add]⟩
+    exact ⟨x + x', by rw [map_add (f := _), map_add (f := _), hx, hx', mul_add]⟩
   · intro a b _ hb r
     obtain ⟨x, hx⟩ := hb (r * a)
     exact ⟨x, by rw [hx, smul_eq_mul, mul_assoc]⟩
@@ -86,7 +90,7 @@ theorem exists_sec_mem (g : R →+* R') (hg : g.Flat) [CompactSpace X] [QuasiSep
     { toFun := fun v p => rs X inf_le_left (v p.1).1 -
         rs X (inf_le_inf (hW p.1) (hW p.2)) (M.g (j p.1) (j p.2)).val * rs X inf_le_right (v p.2).1
       map_add' := fun v w => funext fun p => by
-        simp only [Pi.add_apply, Submodule.coe_add, map_add]; ring
+        simp only [Pi.add_apply, Submodule.coe_add, map_add (f := _)]; ring
       map_smul' := fun r v => funext fun p => by
         simp only [Pi.smul_apply, Submodule.coe_smul, Algebra.smul_def, map_mul, RingHom.algebraMap_toAlgebra, rs_cst,
           RingHom.id_apply]; ring }
@@ -96,7 +100,8 @@ theorem exists_sec_mem (g : R →+* R') (hg : g.Flat) [CompactSpace X] [QuasiSep
       ∀ a z, π z ∈ W a → gs (𝟙 X') z _ (σ.f fun _ => j a) =
         ∑ i, gs (𝟙 X') z ⊤ (cst f' ⊤ (c i)) * gs π z _ (v i a).1 := fun {n c v} h a z hz => by
     have h' := congrArg (gs (𝟙 X') z (π ⁻¹ᵁ W a)) (hxe a).symm
-    simp only [h a, map_sum, AddEquiv.refl_apply, LinearMap.lTensor_tmul, Submodule.subtype_apply, he] at h'
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [h a, map_sum, AddEquiv.refl_apply, LinearMap.lTensor_tmul, Submodule.subtype_apply, he] at h'
     rw [gs_comb f' π _ z hz] at h'
     exact (gs_res (𝟙 X') z _ hz _).symm.trans h'
   obtain ⟨n, c, v, hv, hd⟩ := exists_comb_ker (fun a => AddEquiv.refl _) e' d x

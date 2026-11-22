@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open scoped ContDiff
 
 namespace UpperTheory.V.FieldIso
 
-variable {E F : Type} [Field E] [NumberField E] [IsTotallyComplex E] [Field F] [NumberField F] [IsTotallyComplex F] {a : ℕ}
+variable {E F : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] {a : ℕ}
 
 omit [NumberField E] in
 theorem coord_conj (τ : E →+* ℂ) (x : Cinf E) :
@@ -24,30 +28,30 @@ theorem coord_conj (τ : E →+* ℂ) (x : Cinf E) :
   · rw [if_pos h, if_neg (by rw [InfinitePlace.mk_conjugate_eq, h]; exact hne.symm)]; rfl
   · rw [if_pos (by rw [InfinitePlace.mk_conjugate_eq, h]), if_neg (by rw [h]; exact hne)]; simp
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem coord_embedding (w : InfinitePlace E) (x : Cinf E) : coord w.embedding x = x w := by
   unfold coord
   rw [if_pos (by rw [InfinitePlace.mk_embedding])]
   simp [InfinitePlace.mk_embedding]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem coord_smul (τ : E →+* ℂ) (t : ℝ) (x : Cinf E) : coord τ (t • x) = t • coord τ x := by
   unfold coord
   split_ifs <;> simp
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem coord_star (τ : E →+* ℂ) (x : Cinf E) : coord τ (star x) = star (coord τ x) := by
   unfold coord
   split_ifs <;> simp
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem norm_coord_le (τ : E →+* ℂ) (x : Cinf E) : ‖coord τ x‖ ≤ ‖x‖ := by
   unfold coord
   split_ifs
   · exact norm_le_pi_norm x _
   · exact (Complex.norm_conj _).trans_le (norm_le_pi_norm x _)
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem coord_atEmb_of_ne {τ τ' : E →+* ℂ} (h : InfinitePlace.mk τ' ≠ InfinitePlace.mk τ) (z : ℂ) :
     coord τ' (atEmb τ z) = 0 := by
   classical
@@ -56,11 +60,11 @@ theorem coord_atEmb_of_ne {τ τ' : E →+* ℂ} (h : InfinitePlace.mk τ' ≠ I
 
 variable (j : E ≃+* F)
 
-omit [NumberField E] [IsTotallyComplex E] [NumberField F] [IsTotallyComplex F] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] [NumberField F] [_root_.NumberField.IsTotallyComplex F] in
 def cinf : Cinf E →+* Cinf F := RingHom.pi fun u => coord (u.embedding.comp (j : E →+* F))
 
-omit [NumberField E] [NumberField F] [IsTotallyComplex F] in
+omit [NumberField E] [NumberField F] [_root_.NumberField.IsTotallyComplex F] in
 theorem coord_cinf (τ : F →+* ℂ) (x : Cinf E) : coord τ (cinf j x) = coord (τ.comp (j : E →+* F)) x := by
   have h0 : cinf j x (InfinitePlace.mk τ) = coord ((InfinitePlace.mk τ).embedding.comp (j : E →+* F)) x := rfl
   conv_lhs => unfold coord
@@ -71,7 +75,7 @@ theorem coord_cinf (τ : F →+* ℂ) (x : Cinf E) : coord τ (cinf j x) = coord
     rw [h0, h']
     exact (congrArg (starRingEnd ℂ) (coord_conj (τ.comp (j : E →+* F)) x)).trans (starRingEnd_self_apply _)
 
-omit [NumberField E] [NumberField F] [IsTotallyComplex F] in
+omit [NumberField E] [NumberField F] [_root_.NumberField.IsTotallyComplex F] in
 theorem cinf_cinf (x : Cinf E) : cinf j.symm (cinf j x) = x := by
   funext w
   change coord (w.embedding.comp _) _ = _
@@ -102,16 +106,14 @@ def adm : Ad E →+* Ad F :=
 
 theorem pInf_adm (x : Ad E) : pInf F (adm j x) = cinf j (pInf E x) := (infEq F).symm_apply_apply _
 
-theorem pFin_adm (x : Ad E) : pFin F (adm j x) = finMap j (pFin E x) := rfl
-
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 theorem finMap_algebraMap (k : E) : finMap j (algebraMap E (Af E) k) = algebraMap F (Af F) (j k) :=
   FiniteAdeleRing.ext _ fun v => by
     have h := compEquiv_symm_algebraMap j.symm v (j k)
     rw [RingEquiv.symm_apply_apply] at h
     exact h
 
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 theorem finMap_finMap (x : Af E) : finMap j.symm (finMap j x) = x := by
   have key : ∀ (v w : HeightOneSpectrum (𝓞 E)) (_ : w = v) (f : w.adicCompletion E → v.adicCompletion E),
       Continuous f → (∀ k : E, f (algebraMap E _ k) = algebraMap E _ k) → f (pLoc E w x) = pLoc E v x := by
@@ -132,20 +134,20 @@ theorem adm_algebraMap (k : E) : adm j (algebraMap E (Ad E) k) = algebraMap F (A
     rw [pInf_adm, pInf_algebraMap]
     exact coord_algebraMap _ k) (finMap_algebraMap j k)
 
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 theorem norm_cinf_le (x : Cinf E) : ‖cinf j x‖ ≤ ‖x‖ :=
   (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun _ => norm_coord_le _ x
 
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
-variable (a) in
 
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
+variable (a) in
 def lieMap : Lie E a →L[ℝ] Lie F a :=
   LinearMap.toContinuousLinearMap
     { toFun := fun X i k => cinf j (X i k)
       map_add' := fun X Y => funext fun i => funext fun k => map_add (cinf j) _ _
       map_smul' := fun t X => funext fun i => funext fun k => funext fun u => coord_smul _ t _ }
 
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 theorem continuous_cinf : Continuous (cinf j) :=
   AddMonoidHomClass.continuous_of_bound (cinf j) 1 fun x => by simpa using norm_cinf_le j x
 
@@ -155,8 +157,8 @@ theorem continuous_adm : Continuous (adm j) := by
       (continuous_apply w)
   exact ((continuous_infEq F).comp ((continuous_cinf j).comp h)).prodMap (continuous_finMap j)
 
-variable (a) in
 
+variable (a) in
 def gaMap : GA E a →* GA F a := GeneralLinearGroup.map (adm j)
 
 theorem gaMap_gaMap (g : GA E a) : gaMap a j.symm (gaMap a j g) = g :=
@@ -193,8 +195,8 @@ theorem gaMap_mem_Sm {φ : GA F a → ℂ} (hφ : φ ∈ Sm F a) : (fun g => φ 
   ((hφ (gaMap a j g)).comp (lieMap a j).contDiff.contDiffOn
     fun _ hx => (chart_gaMap j φ g hx).2).congr fun _ hx => (chart_gaMap j φ g hx).1
 
-variable (a) in
 
+variable (a) in
 def pull : Sm F a ≃ₗ[ℂ] Sm E a where
   toFun φ := ⟨fun g => φ.1 (gaMap a j g), gaMap_mem_Sm j φ.2⟩
   invFun φ := ⟨fun g => φ.1 (gaMap a j.symm g), gaMap_mem_Sm j.symm φ.2⟩
@@ -221,8 +223,8 @@ theorem lie_pull (X : Lie E a) (φ : Sm F a) : lie E a X (pull a j φ) = pull a 
   rw [e.fderiv_eq, h2.fderiv]
   rfl
 
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
 
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 def opMap : Op E a → Op F a
   | .fin k => .fin (GeneralLinearGroup.map (finMap j) k)
   | .cpt k => .cpt ⟨(cinf j).mapMatrix k.1, Matrix.mem_unitaryGroup_iff.2 (by
@@ -250,7 +252,10 @@ theorem Eop_pull (τ : F →+* ℂ) (i k : Fin a) (φ : Sm F a) :
       toL (Matrix.single i k (atEmb τ z)) := fun z => by
     rw [← cinf_atEmb j τ z]
     exact Matrix.map_single i k _ (cinf j)
-  simp only [Eop, lieS_apply, LinearMap.smul_apply, LinearMap.sub_apply, lie_pull, h, map_smul, map_sub]
+  have hsub (x y : Sm F a) : pull a j (x - y) = pull a j x - pull a j y :=
+    (pull a j).toLinearMap.map_sub x y
+  simp only [Eop, lieS_apply, LinearMap.smul_apply, LinearMap.sub_apply, lie_pull, h,
+    LinearEquiv.map_smul, hsub]
 
 theorem cap_pull (τ : F →+* ℂ) (u : ℂ) (φ : Sm F a) :
     cap (τ.comp (j : E →+* F)) u (pull a j φ) = pull a j (cap τ u φ) := by
@@ -268,7 +273,7 @@ theorem cap_pull (τ : F →+* ℂ) (u : ℂ) (φ : Sm F a) :
   change pull a j (z ((pull a j).symm (pull a j φ))) = _
   rw [LinearEquiv.symm_apply_apply]
 
-omit [NumberField E] [IsTotallyComplex E] [NumberField F] [IsTotallyComplex F] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] [NumberField F] [_root_.NumberField.IsTotallyComplex F] in
 theorem exists_comp (τ : E →+* ℂ) : ∃ σ : F →+* ℂ, σ.comp (j : E →+* F) = τ :=
   ⟨τ.comp (j.symm : F →+* E), RingHom.ext fun x => by simp⟩
 
@@ -289,7 +294,7 @@ theorem Zalg_pull {z : Module.End ℂ (Sm E a)} (hz : z ∈ Zalg E a) :
     obtain ⟨y', h3, h4⟩ := hy
     exact ⟨x' * y', mul_mem h1 h3, fun φ => by simp [h2, h4]⟩
 
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 theorem height_le (y : GL (Fin a) (Cinf E)) : height (GeneralLinearGroup.map (cinf j) y) ≤ height y := by
   have h1 : ∀ y : GL (Fin a) (Cinf E), ‖toL (GeneralLinearGroup.map (cinf j) y).val‖ ≤ ‖toL y.val‖ := fun y =>
     (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun i => (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun k =>
@@ -299,28 +304,32 @@ theorem height_le (y : GL (Fin a) (Cinf E)) : height (GeneralLinearGroup.map (ci
   unfold height
   linarith [h1 y]
 
-theorem isAutForm_pull {φ : Sm F a} (h : IsAutForm φ) : IsAutForm (pull a j φ) where
-  left γ g := by rw [pull_apply, map_mul, gaMap_ratGL, h.left, pull_apply]
-  level := by
+theorem isAutForm_pull {φ : Sm F a} (h : IsAutForm φ) : IsAutForm (pull a j φ) := by
+  constructor
+  case left =>
+    intro γ g
+    rw [pull_apply, map_mul, gaMap_ratGL, h.left, pull_apply]
+  case level =>
     have hc : Continuous (GeneralLinearGroup.map (n := Fin a) (finMap j)) :=
       Continuous.units_map _ (continuous_id.matrix_map (continuous_finMap j))
     convert h.level.preimage hc using 1
     ext k
     exact (Eq.congr_left (act_pull j (.fin k) φ)).trans (pull a j).injective.eq_iff
-  kfin := by
+  case kfin =>
     have := h.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep F a k φ)).map
       (pull a j).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.subset_span ⟨_, rfl⟩, (act_pull j (.cpt k) φ).symm⟩
-  zfin := by
+  case zfin =>
     have := h.zfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm F a) => z φ) ''
       Zalg F a)).map (pull a j).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     obtain ⟨z', h1, h2⟩ := Zalg_pull j hz
     exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  growth g := by
+  case growth =>
+    intro g
     obtain ⟨C, N, h1⟩ := h.growth (gaMap a j g)
     refine ⟨|C|, N, fun y => ?_⟩
     rw [pull_apply, map_mul, gaMap_infGL]
@@ -332,7 +341,7 @@ theorem gaMap_unip {r : ℕ} (x : BlockIx a r → Ad E) : gaMap a j (unip x) = u
   ext i k
   change adm j ((1 + nilM x : Matrix (Fin a) (Fin a) (Ad E)) i k) =
     (1 + nilM fun p => adm j (x p) : Matrix (Fin a) (Fin a) (Ad F)) i k
-  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add]
+  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add (f := _)]
   split_ifs <;> simp
 
 theorem mem_ratN {r : ℕ} {x : BlockIx a r → Ad E} (hx : x ∈ ratN E a r) : (fun p => adm j (x p)) ∈ ratN F a r := by
@@ -360,7 +369,7 @@ theorem isCuspidal_pull {φ : GA F a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal
   have h2 := hφ r h0 h1 (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
     (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving e fun y x => by
       change β (β.symm y + x) = y + β x
-      rw [map_add, β.apply_symm_apply]) (gaMap a j g)
+      rw [map_add (f := _), β.apply_symm_apply]) (gaMap a j g)
   rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
   rw [← h2]
   congr 1
@@ -404,7 +413,7 @@ theorem isRegAlg_pullSub {π : CuspSub F a} (h : (CG.mk π).IsRegAlg) : (CG.mk (
     · obtain ⟨m, hm⟩ := h1
       rw [hm.infChar_eq]
       exact CG.HasInfChar.infChar_eq (π := CG.mk (pullSub j π)) ((hasInfChar_pullSub j π σ m).2 hm)
-    · rw [CG.infChar, CG.infChar, dif_neg h1, dif_neg]
+    · rw [CG.infChar, CG.infChar, dite_eq_right h1, dite_eq_right]
       rintro ⟨m, hm⟩
       exact h1 ⟨m, (hasInfChar_pullSub j π σ m).1 hm⟩
   rw [e]
@@ -451,7 +460,7 @@ theorem Tj_mapEquiv (ϖ : Kˣ) (i : ℕ) (g : GL (Fin a) K) :
 
 end Doset
 
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 theorem hasSatGL_of_equiv {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectrum (𝓞 E)}
     (c : v.adicCompletion F ≃+* w.adicCompletion E) (hc : ∀ x, Valued.v (c x) = Valued.v x)
     (hq : qV E w = qV F v) {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
@@ -462,7 +471,7 @@ theorem hasSatGL_of_equiv {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectru
   have hO : ∀ x, c x ∈ Ov E w ↔ x ∈ Ov F v := fun x => by
     change Valued.v (c x) ≤ 1 ↔ Valued.v x ≤ 1
     rw [hc]
-  have hK : ∀ g, g ∈ KGL v a ↔ e g ∈ KGL w a := mem_iff_mapEquiv c hO
+  have hK : ∀ g, g ∈ KGL v (n := a) ↔ e g ∈ KGL w (n := a) := mem_iff_mapEquiv c hO
   have hTj : ∀ (ϖ : (v.adicCompletion F)ˣ) (i : ℕ) g, Tj ℂ a (Ov E w) (c ϖ) i (e g) = Tj ℂ a (Ov F v) ϖ i g :=
     Tj_mapEquiv c hO
   clear_value e
@@ -493,7 +502,7 @@ theorem hasSatGL_of_equiv {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectru
 end Sat
 
 open scoped WithZeroTopology in
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 theorem valued_compEquiv (w : HeightOneSpectrum (𝓞 E)) (x : w.adicCompletion E) :
     Valued.v (compEquiv j w x) = Valued.v x := by
   refine (HeightOneSpectrum.denseRange_algebraMap E w).induction_on
@@ -505,7 +514,7 @@ theorem valued_compEquiv (w : HeightOneSpectrum (𝓞 E)) (x : w.adicCompletion 
   exact (HeightOneSpectrum.valuedAdicCompletion_eq_valuation' _ _).trans
     ((valuation_plMap j w k).trans (HeightOneSpectrum.valuedAdicCompletion_eq_valuation' w _).symm)
 
-omit [IsTotallyComplex E] [IsTotallyComplex F] in
+omit [_root_.NumberField.IsTotallyComplex E] [_root_.NumberField.IsTotallyComplex F] in
 theorem finMap_locGL (v : HeightOneSpectrum (𝓞 F)) (g : GL (Fin a) (v.adicCompletion F)) :
     GeneralLinearGroup.map (finMap j)
       (locGL E a (plMap j.symm v) (Units.mapEquiv (compEquiv j.symm v).mapMatrix.toMulEquiv g)) = locGL F a v g := by

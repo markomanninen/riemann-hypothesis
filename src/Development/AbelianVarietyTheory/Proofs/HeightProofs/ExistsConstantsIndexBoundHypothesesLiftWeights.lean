@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.NormComparisonConstants
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPageRunRecordSubFour
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.FieldSmallIffOpo
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsThresholdRunHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NoCommonZeroSt
-import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.NormComparisonConstants
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPageRunRecordSubFour
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.FieldSmallIffOpo
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsThresholdRunHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NoCommonZeroSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.DIV.Cons Formalism.MainNotions.Gaps Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.RunJoin GlobalTheory.RunIn GlobalTheory.FinalJoin GlobalTheory.FinalJoin2
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ValUnitsC
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ModelF
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ValUnitsC
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ModelF
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -40,14 +44,14 @@ theorem isTorsionFree_zp_K : Module.IsTorsionFree ℤ_[p] K := by
 theorem isIntegral_zp_K_iff (x : K) :
     IsIntegral ℤ_[p] x ↔ IsIntegral (PadicInt.subring p) (x : PadicAlgCl p) := by
   have := isScalarTower_zp_K_alg p K
-  rw [← isIntegral_algebraMap_iff (A := K) (B := PadicAlgCl p) (algebraMap K (PadicAlgCl p)).injective]
+  rw [← isIntegral_algebraMap_iff (A := K) (B := PadicAlgCl p) ]
   exact Iff.rfl
 
-theorem isIntegralClosure_OK : IsIntegralClosure (OK p K) ℤ_[p] K where
-  algebraMap_injective := Subtype.val_injective
-  isIntegral_iff {x} := by
-    rw [isIntegral_zp_K_iff, ← norm_le_one_iff_isIntegral, ← mem_OK_iff]
-    exact ⟨fun h => ⟨⟨x, h⟩, rfl⟩, by rintro ⟨y, rfl⟩; exact y.2⟩
+theorem isIntegralClosure_OK : IsIntegralClosure (OK p K) ℤ_[p] K := by
+  refine ⟨Subtype.val_injective, ?_⟩
+  intro x
+  rw [isIntegral_zp_K_iff, ← norm_le_one_iff_isIntegral, ← mem_OK_iff]
+  exact ⟨fun h => ⟨⟨x, h⟩, rfl⟩, by rintro ⟨y, rfl⟩; exact y.2⟩
 
 theorem card_OK_quot_p (hK : FiniteDimensional ℚ_[p] K) :
     Nat.card (OK p K ⧸ Ideal.span {(p : OK p K)}) = p ^ Module.finrank ℚ_[p] K := by
@@ -59,7 +63,8 @@ theorem card_OK_quot_p (hK : FiniteDimensional ℚ_[p] K) :
   have hr := IsIntegralClosure.rank ℤ_[p] ℚ_[p] K (OK p K)
   have hn' : (p : OK p K) = algebraMap ℤ_[p] (OK p K) (p : ℕ) := (map_natCast _ _).symm
   rw [hn', card_quot_span_algebraMap (Module.finBasis ℤ_[p] (OK p K)),
-    card_quot_natCast_padicInt p (Fact.out : p.Prime).ne_zero, Fintype.card_fin, hr, padicValNat_self, pow_one]
+    card_quot_natCast_padicInt p (Fact.out : p.Prime).ne_zero, Fintype.card_fin, hr,
+    Nat.padicValNat_def, Nat.Prime.multiplicity_self, pow_one]
 
 theorem isDedekindDomain_OK (hK : FiniteDimensional ℚ_[p] K) : IsDedekindDomain (OK p K) := by
   have := isScalarTower_zp_OK p K

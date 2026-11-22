@@ -1,12 +1,16 @@
-import Formalism.SharpRestriction.GrowthBounds.AevalValuation.PlDefs
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ProdRangeZmod
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RenameMemSupported
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.FrRevInj
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosULeIff
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValuationOneEqZero
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemLin
-import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.AevalValuation.PlDefs
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ProdRangeZmod
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RenameMemSupported
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.FrRevInj
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosULeIff
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValuationOneEqZero
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemLin
+public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeMapFractionField
+
+@[expose] public section
 
 noncomputable section
 
@@ -218,7 +222,8 @@ theorem chain_core (hNN : ValNN) (hPM : PhMon) (hFP : FdigPh) (hFS : FdigSum) (h
   have e1 : Dt.ph Pi' = ∑ M ∈ Pi'.support.image (fun μ => μ.filter (fun v => v.1 ∈ w)),
       Dt.ph (monomial M 1) * Dt.ph (wCoeff w M Pi') := by
     conv_lhs => rw [sum_wCoeff w Pi']
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun M _ => map_mul _ _ _
   rw [e1, Finset.mul_sum, hFS]
   refine le_valS_sum _ _ _ _ _ fun M hM => ?_

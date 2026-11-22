@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsMulRightInvariantOfCovolumeOne
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsMulRightInvariantOfCovolumeOne
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure Set
 open scoped ENNReal Pointwise
@@ -26,7 +30,7 @@ theorem measurePreserving_mulEquiv_of_covolume_one (ν : Measure U) [SigmaFinite
     simp⟩
   have h := measure_eq_div_smul (ν.map c) ν (s := D) (by rw [hνD]; exact one_ne_zero)
     (by rw [hνD]; exact ENNReal.one_ne_top)
-  have hq : QuasiMeasurePreserving c ν ν := ⟨hc, by rw [h]; exact smul_absolutelyContinuous⟩
+  have hq : QuasiMeasurePreserving c ν ν := ⟨hc.aemeasurable, by rw [h]; exact smul_absolutelyContinuous⟩
   have hD' : IsFundamentalDomain U₀ (c ⁻¹' D) ν :=
     hD.preimage_of_equiv hq (e := fun b : U₀ => (⟨c.symm b, h₂ b b.2⟩ : U₀))
       ⟨fun b b' hb => Subtype.ext (c.symm.injective (congrArg Subtype.val hb)),

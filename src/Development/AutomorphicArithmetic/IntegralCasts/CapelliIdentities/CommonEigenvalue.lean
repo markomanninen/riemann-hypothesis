@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.CommonEigenvectorOfCommutingSet.common_eig :
     ∀ {k : Type} [inst : Field k] [IsAlgClosed k]

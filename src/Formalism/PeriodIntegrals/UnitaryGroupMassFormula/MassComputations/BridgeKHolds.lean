@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BridgeFinK
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BridgeFinK
+
+@[expose] public section
 
 noncomputable section
 

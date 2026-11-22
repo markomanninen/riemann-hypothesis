@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SizeAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SlopeTestRemainingChoicesAlt
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +122,7 @@ theorem hc_bounds (P : ParameterChoice' D L) (hS : SizesAt L) (hx : L.sc.x ≤ L
     nlinarith
   have hwj : wj D (l.1 + 1) τ = (((D.hc τ).e l : ℚ) : ℝ) := by
     unfold wj
-    rw [dif_pos (by simp)]
+    rw [dite_eq_left (by simp)]
     rfl
   have hbT : ∀ t, (L.bT t : ℝ) ≤ 2 * L.sc.b' := fun t => by
     have h1 := P.bT_le t
@@ -161,8 +166,8 @@ section Main
 
 variable {D : D7} {L : SizeData₂ D}
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem sizeRows_of (P : ParameterChoice' D L) (T : ParamsT D L P) (hC : P.CnW = 10) (hS : SizesAt L)
     (hn : L.sc.x ^ (2 + 8 * L.sc.eps) ≤ (D.R.n : ℝ))
     (hm0 : Real.sqrt (L.sc.x * L.sc.delta1) ≤ (D.R.m : ℝ)) (hm1 : (D.R.m : ℝ) ≤ 2 * Real.sqrt (L.sc.x * L.sc.delta1))
@@ -326,11 +331,6 @@ theorem sizeRows_fam {eps : ℝ} (he : 0 < eps) (Fm : FamP eps) (h : FamHyp Fm) 
     rw [← Real.rpow_mul (by norm_num), show 4 / eps * (eps / 4) = 1 by field_simp, Real.rpow_one]
   rw [e1]
   exact Real.rpow_le_rpow (by positivity) (le_of_max_le_right h0) (by positivity)
-
-theorem sizeAt : SizeAt :=
-  ⟨1, one_pos, fun _ he _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun Fm _ hF _ =>
-    let ⟨x₀, h⟩ := sizeRows_fam he Fm hF
-    ⟨x₀, fun x hx h0 i _ _ => h x hx h0 i⟩⟩⟩
 
 end Main
 

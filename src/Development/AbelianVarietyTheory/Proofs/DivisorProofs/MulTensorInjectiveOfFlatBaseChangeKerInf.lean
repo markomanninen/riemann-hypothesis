@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits
 
 open TensorProduct
@@ -66,7 +71,7 @@ theorem mul_tensor_injective : ∀ (P R₂ B B₂ : Type) [CommRing P] [CommRing
 
   let ψ0 : K₁ →+ B →+ J₂ ⊗[R₂] B₂ :=
     AddMonoidHom.mk' (fun k => AddMonoidHom.mk' (fun b => ej k ⊗ₜ[R₂] c₂ b)
-      (fun b b' => by rw [map_add, tmul_add]))
+      (fun b b' => by rw [map_add (f := _), tmul_add]))
       (fun k k' => by
         ext b
         have : ej (k + k') = ej k + ej k' := Subtype.ext (by simp [ej])
@@ -79,11 +84,11 @@ theorem mul_tensor_injective : ∀ (P R₂ B B₂ : Type) [CommRing P] [CommRing
 
   let χ0 : J₂ →+ B₂ →+ K₁ ⊗[P] B :=
     AddMonoidHom.mk' (fun j => AddMonoidHom.mk' (fun β => einv j ⊗ₜ[P] s β)
-      (fun β β' => by rw [← tmul_add]; exact L1 _ _ _ (by rw [map_add, hs, hs, hs])))
+      (fun β β' => by rw [← tmul_add]; exact L1 _ _ _ (by rw [map_add (f := _), hs, hs, hs])))
       (fun j j' => by
         ext β
         have : einv (j + j') = einv j + einv j' :=
-          hE _ _ (by rw [Submodule.coe_add, map_add, hE', hE', Submodule.coe_add])
+          hE _ _ (by rw [Submodule.coe_add, map_add (f := _), hE', hE', Submodule.coe_add])
         simp only [AddMonoidHom.mk'_apply, AddMonoidHom.add_apply, this, add_tmul])
   let χ : J₂ ⊗[R₂] B₂ →+ K₁ ⊗[P] B := liftAddHom χ0 (by
     intro r j β
@@ -96,8 +101,7 @@ theorem mul_tensor_injective : ∀ (P R₂ B B₂ : Type) [CommRing P] [CommRing
   have hχψ : ∀ t, χ (ψ t) = t := by
     intro t
     induction t with
-    | zero => simp
-    | add u v hu hv => rw [map_add, map_add, hu, hv]
+    | add u v hu hv => rw [map_add (f := _), map_add (f := _), hu, hv]
     | tmul k b =>
       simp only [ψ, χ, liftAddHom_tmul, ψ0, χ0, AddMonoidHom.mk'_apply]
       rw [hE k (ej k) rfl]
@@ -112,8 +116,7 @@ theorem mul_tensor_injective : ∀ (P R₂ B B₂ : Type) [CommRing P] [CommRing
   have key : ∀ t, ν (ψ t) = c₂ (μ t) := by
     intro t
     induction t with
-    | zero => simp
-    | add u v hu hv => rw [map_add, map_add, hu, hv, map_add, map_add]
+    | add u v hu hv => rw [map_add (f := _), map_add (f := _), hu, hv, map_add (f := _), map_add (f := _)]
     | tmul k b =>
       simp only [ψ, liftAddHom_tmul, ψ0, AddMonoidHom.mk'_apply, ν, LinearMap.coe_comp,
         Function.comp_apply, LinearMap.rTensor_tmul, Submodule.subtype_apply, LinearEquiv.coe_coe,

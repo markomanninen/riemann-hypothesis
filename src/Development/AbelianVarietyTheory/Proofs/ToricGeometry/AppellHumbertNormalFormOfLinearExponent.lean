@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex Matrix Filter Topology
 open scoped BigOperators Real
@@ -6,9 +10,9 @@ open scoped BigOperators Real
 namespace GlobalTheory
 namespace AppellHumbert
 
+
 open Complex Matrix Filter Topology in
 open scoped BigOperators Real in
-
 theorem _root_.GlobalTheory.AppellHumbert.exists_real_extension {g : ℕ} (Λ : Submodule ℤ (Fin g → ℂ))
     [DiscreteTopology Λ]
     (hΛ : Submodule.span ℝ (Λ : Set (Fin g → ℂ)) = ⊤) {W : Type*} [AddCommGroup W] [Module ℝ W]
@@ -32,40 +36,11 @@ theorem _root_.GlobalTheory.AppellHumbert.eq_sum_re_im {g : ℕ} (u : Fin g → 
   ext i
   simp [Finset.sum_apply, Finset.sum_add_distrib, Pi.single_apply, Complex.re_add_im]
 
-theorem apply_eq_sum {g : ℕ} (φ : (Fin g → ℂ) →ₗ[ℂ] ℂ) (z : Fin g → ℂ) :
-    φ z = ∑ i, z i * φ (Pi.single i 1) := by
-  conv_lhs => rw [pi_eq_sum_univ' z]
-  simp [map_sum]
-
-theorem exists_split {g : ℕ} (F : (Fin g → ℂ) →ₗ[ℝ] ((Fin g → ℂ) →ₗ[ℂ] ℂ)) :
-    ∃ S H : Matrix (Fin g) (Fin g) ℂ, ∀ u z,
-      F u z = z ⬝ᵥ S.mulVec u + z ⬝ᵥ H.mulVec (star u) := by
-  refine ⟨Matrix.of fun a b => (F (Pi.single b 1) (Pi.single a 1)
-      - I * F (Pi.single b I) (Pi.single a 1)) / 2,
-    Matrix.of fun a b => (F (Pi.single b 1) (Pi.single a 1)
-      + I * F (Pi.single b I) (Pi.single a 1)) / 2, fun u z => ?_⟩
-  rw [apply_eq_sum, ← dotProduct_add, dotProduct]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  congr 1
-  conv_lhs => rw [eq_sum_re_im u]
-  simp only [map_sum, map_add, map_smul, LinearMap.sum_apply, LinearMap.add_apply,
-    LinearMap.smul_apply, Pi.add_apply, mulVec, dotProduct, of_apply, ← Finset.sum_add_distrib,
-    Pi.star_apply, real_smul]
-  refine Finset.sum_congr rfl fun b _ => ?_
-  have h1 : u b = (u b).re + (u b).im * I := (re_add_im _).symm
-  have h2 : star (u b) = (u b).re - (u b).im * I := by
-    apply Complex.ext <;> simp
-  rw [h2]
-  generalize (u b).re = x at *
-  generalize (u b).im = y at *
-  rw [h1]
-  linear_combination (y * F (Pi.single b I) (Pi.single a 1)) * I_mul_I
-
 end AppellHumbert
+
 
 open Complex Matrix Filter Topology in
 open scoped BigOperators Real in
-
 theorem _root_.GlobalTheory.appellHumbert_normal_form_of_linear_exponent :
     (∀ (g : ℕ) (Λ : Submodule ℤ (Fin g → ℂ)), DiscreteTopology Λ → Submodule.span ℝ (Λ : Set (Fin g → ℂ)) = ⊤ → ∀ (a : Λ → ℂ) (B : Λ →+ ((Fin g → ℂ) →ₗ[ℂ] ℂ)), (∀ l, a l ≠ 0) → (∀ l m : Λ, a (l + m) = a l * a m * cexp (B l m)) → ∃ (Hm : Matrix (Fin g) (Fin g) ℂ) (χ : Λ → ℂ) (Ef : LinearMap.BilinForm ℤ Λ) (Q : (Fin g → ℂ) → ℂ), Hm.IsHermitian ∧ (∀ l, ‖χ l‖ = 1) ∧ (∀ l m : Λ, (Ef l m : ℝ) = ((l : Fin g → ℂ) ⬝ᵥ Hm.mulVec (star (m : Fin g → ℂ))).im) ∧ Differentiable ℂ Q ∧ Q 0 = 0 ∧ ∀ (l : Λ) z, a l * cexp (B l z) * cexp (Q z - Q (z + l)) = (χ l * cexp (Real.pi * (z ⬝ᵥ Hm.mulVec (star (l : Fin g → ℂ))) + Real.pi / 2 * ((l : Fin g → ℂ) ⬝ᵥ Hm.mulVec (star (l : Fin g → ℂ)))))) := by
   intro g Λ hdisc hΛ a B ha hcoc
@@ -80,7 +55,8 @@ theorem _root_.GlobalTheory.appellHumbert_normal_form_of_linear_exponent :
     intro l z
     rw [hF0]
     conv_lhs => rw [show z = ∑ j, z j • (Pi.single j (1 : ℂ) : Fin g → ℂ) by ext i; simp [Pi.single_apply]]
-    simp [map_sum, dotProduct, b, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, dotProduct, b, mul_comm]
   have hskew : ∀ l m : Λ, ∃ n : ℤ, B l m = B m l + n * (2 * π * I) := by
     intro l m
     have h := hcoc l m
@@ -99,7 +75,7 @@ theorem _root_.GlobalTheory.appellHumbert_normal_form_of_linear_exponent :
     intro u m
     refine hlin (fun u => (F u ⬝ᵥ m - F m ⬝ᵥ u).re = 0) (by simp) (fun x y hx hy => ?_)
       (fun c x hx => ?_) (fun l => ?_) u
-    · simp only [map_add, add_dotProduct, dotProduct_add, Complex.sub_re, Complex.add_re] at hx hy ⊢
+    · simp only [map_add (f := _), add_dotProduct, dotProduct_add, Complex.sub_re, Complex.add_re] at hx hy ⊢
       linarith
     · simp only [map_smul, smul_dotProduct, dotProduct_smul, Complex.sub_re, Complex.smul_re,
         smul_eq_mul] at hx ⊢
@@ -110,7 +86,7 @@ theorem _root_.GlobalTheory.appellHumbert_normal_form_of_linear_exponent :
     intro u v
     refine hlin (fun v => (F u ⬝ᵥ v - F v ⬝ᵥ u).re = 0) (by simp) (fun x y hx hy => ?_)
       (fun c x hx => ?_) (fun m => hD1 u m) v
-    · simp only [map_add, add_dotProduct, dotProduct_add, Complex.sub_re, Complex.add_re] at hx hy ⊢
+    · simp only [map_add (f := _), add_dotProduct, dotProduct_add, Complex.sub_re, Complex.add_re] at hx hy ⊢
       linarith
     · simp only [map_smul, smul_dotProduct, dotProduct_smul, Complex.sub_re, Complex.smul_re,
         smul_eq_mul] at hx ⊢
@@ -122,7 +98,8 @@ theorem _root_.GlobalTheory.appellHumbert_normal_form_of_linear_exponent :
   have hFMN : ∀ u, F u = u ᵥ* M + star u ᵥ* N := by
     intro u; ext j
     conv_lhs => rw [_root_.GlobalTheory.AppellHumbert.eq_sum_re_im u]
-    simp only [map_sum, map_add, map_smul, Finset.sum_apply, Pi.add_apply, Pi.smul_apply, vecMul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_smul, Finset.sum_apply, Pi.add_apply, Pi.smul_apply, vecMul,
       dotProduct, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
     apply Complex.ext <;> simp [M, N, Complex.mul_re, Complex.mul_im] <;> ring
@@ -160,7 +137,8 @@ theorem _root_.GlobalTheory.appellHumbert_normal_form_of_linear_exponent :
     rw [hF, hFMN, add_dotProduct, dotProduct_mulVec, mulVec_transpose, dotProduct_comm z]
   have hKherm : ∀ u v, K v u = (starRingEnd ℂ) (K u v) := by
     intro u v
-    simp only [K, dotProduct, mulVec, transpose_apply, map_sum, map_mul, Pi.star_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [K, dotProduct, mulVec, transpose_apply, map_sum, map_mul, Pi.star_apply,
       Complex.star_def, Complex.conj_conj, hNherm, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -233,7 +211,8 @@ theorem _root_.GlobalTheory.appellHumbert_normal_form_of_linear_exponent :
   have hc : ∀ u, (c ⬝ᵥ u).re = φ u := by
     intro u
     conv_rhs => rw [_root_.GlobalTheory.AppellHumbert.eq_sum_re_im u]
-    simp only [map_sum, map_add, map_smul, smul_eq_mul, dotProduct, Complex.re_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_smul, smul_eq_mul, dotProduct, Complex.re_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     simp [c, Complex.mul_re]
     ring

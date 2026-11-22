@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -40,7 +45,8 @@ theorem unitsOneAdd_zero : unitsOneAdd p 0 = ⊤ := by
 theorem eq_one_of_forall_mem_unitsOneAdd {u : ℤ_[p]ˣ} (hu : ∀ k, u ∈ unitsOneAdd p k) : u = 1 := by
   by_contra hne
   have h0 : (u : ℤ_[p]) - 1 ≠ 0 := by
-    intro h; apply hne; ext; simpa [sub_eq_zero] using h
+    intro h
+    exact hne (Units.ext (sub_eq_zero.mp h))
   have h := (PadicInt.mem_span_pow_iff_le_valuation _ h0 (((u : ℤ_[p]) - 1).valuation + 1)).1
     (Ideal.mem_span_singleton.2 (hu _))
   omega
@@ -134,7 +140,6 @@ theorem toZMod_natCast_prime_pow {k : ℕ} (hk : 1 ≤ k) :
   rw [map_pow, map_natCast, ZMod.natCast_self, zero_pow (by omega)]
 
 variable (p) in
-
 def levelHom (k : ℕ) (hk : 1 ≤ k) : unitsOneAdd p k →* Multiplicative (ZMod p) where
   toFun u := Multiplicative.ofAdd (PadicInt.toZMod (levelQuot u))
   map_one' := by
@@ -151,7 +156,7 @@ def levelHom (k : ℕ) (hk : 1 ≤ k) : unitsOneAdd p k →* Multiplicative (ZMo
       linear_combination (((v : ℤ_[p]ˣ) : ℤ_[p])) * hu + (1 + (p : ℤ_[p]) ^ k * levelQuot u) * hv
     rw [levelQuot_eq _ e, ← ofAdd_add]
     congr 1
-    rw [map_add, map_add, map_mul, map_mul, toZMod_natCast_prime_pow hk, zero_mul, zero_mul, add_zero]
+    rw [map_add (f := _), map_add (f := _), map_mul, map_mul, toZMod_natCast_prime_pow hk, zero_mul, zero_mul, add_zero]
 
 theorem levelHom_apply {k : ℕ} (hk : 1 ≤ k) (u : unitsOneAdd p k) :
     levelHom p k hk u = Multiplicative.ofAdd (PadicInt.toZMod (levelQuot u)) := rfl

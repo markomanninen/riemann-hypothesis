@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.BaseChange.FiniteTensor
-import GroundTheory.GlobalFields.SemilocalAlgebras.InfiniteAdeleTopology
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.BaseChange.FiniteTensor
+public import GroundTheory.GlobalFields.SemilocalAlgebras.InfiniteAdeleTopology
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -14,7 +18,6 @@ namespace AdeleBaseChange
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
 variable (K L) in
-
 def adeleMap : 𝔸[K] →+* 𝔸[L] :=
   RingHom.prodMap (GroundTheory.Global.InfinitePlace.infiniteAdeleRingMap (K := K) (L := L))
     (finiteAdeleMap K L)
@@ -33,7 +36,6 @@ theorem adeleMap_algebraMap (k : K) :
     (finiteAdeleMap_algebraMap k)
 
 variable (K L) in
-
 def adeleTensorEquiv : L ⊗[K] 𝔸[K] ≃ₐ[L] 𝔸[L] :=
   (Algebra.TensorProduct.prodRight K L L (InfiniteAdeleRing K) (FiniteAdeleRing (𝓞 K) K)).trans
     (AlgEquiv.prodCongr GroundTheory.Global.InfinitePlace.tensorInfiniteAdeleRingEquiv
@@ -70,19 +72,24 @@ def sndAddHom : 𝔸[L] →+ FiniteAdeleRing (𝓞 L) L where
 
 theorem adeleTensorEquiv_sum_coord (y : 𝔸[L]) :
     adeleTensorEquiv K L (∑ i, b i ⊗ₜ coord b i y) = y := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [adeleTensorEquiv_tmul]
   refine Prod.ext ?_ ?_
   · change fstAddHom (∑ i, algebraMap L 𝔸[L] (b i) * adeleMap K L (coord b i y)) = y.1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [← GroundTheory.Global.InfinitePlace.tensorInfiniteAdeleRingEquiv_sum_adeleCoord b y.1]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [GroundTheory.Global.InfinitePlace.tensorInfiniteAdeleRingEquiv_tmul']
     rfl
   · change sndAddHom (∑ i, algebraMap L 𝔸[L] (b i) * adeleMap K L (coord b i y)) = y.2
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [← finiteTensorMap_sum_finiteCoord b y.2]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [finiteTensorMap_tmul]
     rfl
 

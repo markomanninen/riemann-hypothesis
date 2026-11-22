@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClOfSelf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GeometricLemmaCellOneBlockSwapEquiv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClOfSelf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GeometricLemmaCellOneBlockSwapEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,8 +57,9 @@ theorem exists_equiv_tensor {α : Type} [Fintype α] [DecidableEq α] (X : α �
           exact ((hc i h').2 (f i)).symm
       have e2 : PiTensorProduct.tprod ℂ f =
           (∏ i, d i) • PiTensorProduct.tprod ℂ (Function.update x i₀ (f i₀)) := by
-        rw [← MultilinearMap.map_smul_univ]
-        exact congrArg _ e1
+        calc
+          _ = PiTensorProduct.tprod ℂ (fun i => d i • Function.update x i₀ (f i₀) i) := congrArg _ e1
+          _ = _ := by simpa using (PiTensorProduct.tprod ℂ).map_smul_univ d (Function.update x i₀ (f i₀))
       exact ⟨r • (∏ i, d i) • f i₀, by rw [map_smul, map_smul, hT, e2]⟩
     · obtain ⟨u, rfl⟩ := hy
       obtain ⟨v, rfl⟩ := hz
@@ -173,7 +178,7 @@ theorem multiProd_single {α : Type} [Fintype α] [LinearOrder α] (b : α → �
         rfl)
   exact ⟨φ.symm⟩
 
-theorem multiProd_clOf_single : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (a : IrrGL k) {α : Type} [Fintype α] [LinearOrder α] (b : α → ℕ) (i₀ : α), b i₀ = a.1 → (∀ i, i ≠ i₀ → b i = 0) → ∀ (g : (Σ i, Fin (b i)) ≃ Fin a.1), Nonempty ((multiProd g fun i => (clOf a (b i)).rep.ρ).Equiv a.rep) := by
+theorem multiProd_clOf_single : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (a : IrrGL (k := k)) {α : Type} [Fintype α] [LinearOrder α] (b : α → ℕ) (i₀ : α), b i₀ = a.1 → (∀ i, i ≠ i₀ → b i = 0) → ∀ (g : (Σ i, Fin (b i)) ≃ Fin a.1), Nonempty ((multiProd g fun i => (clOf a (b i)).rep.ρ).Equiv a.rep) := by
   intro k _ _ _ _ a α _ _ b i₀ hb h0 g
   obtain ⟨N, c⟩ := a
   dsimp only at hb g ⊢

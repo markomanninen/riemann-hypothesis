@@ -1,5 +1,9 @@
-import Formalism.AlgebraicWeights.IsAlgWeight
-import Formalism.SatakeDualWeyl.StatementG
+module
+
+public import Formalism.AlgebraicWeights.IsAlgWeight
+public import Formalism.SatakeDualWeyl.StatementG
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ section Inert
 
 variable (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ)
 
-local notation3 "L⁺" => NumberField.maximalRealSubfield L
+local notation3 "L⁺" => maximalRealSubfield L
 
 open ReciprocityTheory.Aut
 
@@ -35,42 +39,24 @@ def InertDatum.loc {v : HeightOneSpectrum (𝓞 L⁺)} {w : HeightOneSpectrum (�
   D.P⁻¹ * Formalism.UG.bc (n := Fin n) (D.e : L ⊗[L⁺] v.adicCompletion L⁺ →+* w.adicCompletion L)
     (Matrix.GeneralLinearGroup.map (compAt L v) (x : GL (Fin n) (AL L))) * D.P
 
-open Classical in
 
+open Classical in
 def InertDatum.hval {v : HeightOneSpectrum (𝓞 L⁺)} {w : HeightOneSpectrum (𝓞 L)} (D : InertDatum L n v w)
     (h : Formalism.UG.GU D.σw n → ℂ) (y : GL (Fin n) (w.adicCompletion L)) : ℂ :=
   if hy : y ∈ Formalism.UG.GU D.σw n then h ⟨y, hy⟩ else 0
 
 variable (L n)
 
-open Classical in
 
+open Classical in
 def heckeFunI {W : Type} [AddCommGroup W] [Module ℂ W] (U : Subgroup (GAf L n))
     {v : HeightOneSpectrum (𝓞 L⁺)} {w : HeightOneSpectrum (𝓞 L)} (D : InertDatum L n v w)
     (h : Formalism.UG.GU D.σw n → ℂ) (f : GAf L n → W) : GAf L n → W :=
   fun g => ∑ᶠ c : GAf L n ⧸ U,
-    if hc : ∃ x : GAf L n, (x : GAf L n ⧸ U) = c ∧ TrivOutside {v} x then
+    if hc : ∃ x : GAf L n, (x : GAf L n ⧸ U) = c ∧ TrivOutside (L := L) {v} x then
       D.hval h (D.loc hc.choose) • f (g * hc.choose) else 0
 
-open Classical in
-
-def heckeEndI {W : Type} [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ (GQ L n) W)
-    (U : Subgroup (GAf L n)) {v : HeightOneSpectrum (𝓞 L⁺)} {w : HeightOneSpectrum (𝓞 L)}
-    (D : InertDatum L n v w) (h : Formalism.UG.GU D.σw n → ℂ) : Module.End ℂ (Forms L n ρ U) :=
-  if hφ : ∃ φ : Module.End ℂ (Forms L n ρ U), ∀ f g,
-      (φ f : GAf L n → W) g = heckeFunI L n U D h (f : GAf L n → W) g
-  then hφ.choose else 0
 
 end Inert
-
-def inertPoly (q n : ℕ) {m : ℕ} (α : Fin m → ℂ) : ℂ[X] :=
-  (∏ i, (X - C ((q : ℂ) ^ (n - 1) * α i)) * (X - C ((q : ℂ) ^ (n - 1) * (α i)⁻¹))) *
-    (X - C ((q : ℂ) ^ (n - 1))) ^ (n % 2)
-
-def InertDatumExists : Prop :=
-  Formalism.UG.InertLocal → Formalism.UG.InertAntidiag →
-  ∀ (L : Type) [Field L] [NumberField L] [IsCMField L], GoodCM L →
-  ∀ (n : ℕ) (v : HeightOneSpectrum (𝓞 (NumberField.maximalRealSubfield L))) (w : HeightOneSpectrum (𝓞 L)),
-    Formalism.UG.IsInertAt (NumberField.maximalRealSubfield L) L v w → Nonempty (InertDatum L n v w)
 
 end Formalism.AUTREP

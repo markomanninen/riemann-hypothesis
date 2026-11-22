@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinSubRange
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinSubRange
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -22,7 +27,7 @@ theorem closure_pow_lift {L L' : Type*} [CommRing L] [CommRing L'] (ρ : L →+*
     obtain ⟨l, v, hv, e'⟩ := hb
     refine ⟨k + l, u ^ l * w + u ^ k * v,
       C.add_mem (C.mul_mem (C.pow_mem hu _) hw) (C.mul_mem (C.pow_mem hu _) hv), ?_⟩
-    rw [map_add, map_mul, map_mul, map_pow, map_pow, e, e']
+    rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, e, e']
     ring
   | neg a _ ha =>
     obtain ⟨k, w, hw, e⟩ := ha

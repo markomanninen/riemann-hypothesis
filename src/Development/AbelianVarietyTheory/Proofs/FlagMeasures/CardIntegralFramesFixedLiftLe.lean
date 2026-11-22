@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralOfUnimodular
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CentralMapMemIntegralUnipotentFixingFrame
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PerpendicularRankIdealBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FixedFramesPerpendicularVectorsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesSameGramDifferBySkewSolutionStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MinorSmulEqRowSpaceOfCofVecOrth
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.XClassesDenom
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneLeNormMulAbsNormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralOfUnimodular
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CentralMapMemIntegralUnipotentFixingFrame
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PerpendicularRankIdealBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FixedFramesPerpendicularVectorsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesSameGramDifferBySkewSolutionStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MinorSmulEqRowSpaceOfCofVecOrth
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.XClassesDenom
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneLeNormMulAbsNormSq
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
@@ -374,11 +378,11 @@ lemma eich_single {u : D.what₂.Word} {F0 : Fb D u} {Λ : LatV D} (hb : IsBase 
     have a1 : (hS D).hT σ (D.sp.iXY 0 (p : (D.sp.X 0).V) + φ p) = 0 := by
       apply hT_symm0
       have b1 : (hS D).hT (φ p) σ = 0 := mem_orth.1 hσ.2 _ hp
-      rw [map_add, LinearMap.add_apply, b1, eσ, map_sub, iXY_isom, iXY_X hb _ hx,
+      rw [map_add (f := _), LinearMap.add_apply, b1, eσ, map_sub, iXY_isom, iXY_X hb _ hx,
         mem_perpE.1 h3 _ p.2]
       simp
     have a2 : (hS D).hT (F0.e a) (D.sp.iXY 0 (p : (D.sp.X 0).V) + φ p) = 0 := by
-      rw [map_add, X_iso (heX a) hp, hT_symm0 (iXY_X hb _ (heX a)), add_zero]
+      rw [map_add (f := _), X_iso (heX a) hp, hT_symm0 (iXY_X hb _ (heX a)), add_zero]
     rw [hnf, a1, a2]
     simp
   · have a1 : (hS D).hT (D.sp.iXY 0 τ) (F0.e a) = 0 := iXY_X hb _ (heX a)
@@ -406,7 +410,7 @@ lemma eich {u : D.what₂.Word} {F0 : Fb D u} {Λ : LatV D} (hb : IsBase D u F0)
         conv_lhs => rw [← this]
         exact hm.1.1.1 _ _
       rw [LinearEquiv.trans_apply, sn, sm]
-      simp only [this, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib, add_assoc]
+      simp only [this, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, add_assoc]
   · exact ⟨LinearEquiv.refl _ _, ⟨NLam_one, fun _ => rfl, fun _ => rfl⟩, fun x σ => by simp⟩
 
 theorem card_frames_le : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D), Stand D u u' → IsBase D u F0 → IsRowLat D F0 Λ → IsSplit D F0 Λ → ∀ (P : LatW D) (φ : P →ₗ[𝓞 D.host.E] (hS D).V) (Z : GramM D) (s : ℕ) (De Q : ℝ), 1 ≤ s → s ≤ D.R.k → (∀ p, φ p ∈ XLam Λ (lf D F0)) → SubOK D (L0X D Λ (lf D F0)) P s De → QOK D u u' Z Q → (cntCl (FixSet D Λ (lf D F0) ((Tu D u' : ℕ) : D.host.E) Z P φ) (TEqv D Λ (lf D F0)) : ℝ≥0∞) ≤ ENNReal.ofReal (fixB D s (NT D u) De Q) := by
@@ -486,7 +490,8 @@ theorem card_frames_le : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ 
       · rw [e0]
         refine Submodule.sub_mem _ (hw b).1.1 (Submodule.sum_mem _ fun a _ => ?_)
         exact (S0.smul_mem (Y' a b) (hv a)).2
-      · rw [frame_move, sn, (hw b).1.2 σ hσ, e0, map_sub, map_sum, sub_eq_add_neg,
+      · set_option synthInstance.maxHeartbeats 100000 in
+        rw [frame_move, sn, (hw b).1.2 σ hσ, e0, map_sub, map_sum, sub_eq_add_neg,
           ← Finset.sum_neg_distrib]
         congr 1
         refine Finset.sum_congr rfl fun a _ => ?_
@@ -519,7 +524,8 @@ theorem card_frames_le : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ 
     refine Finset.sum_congr rfl fun a' _ => ?_
     have : (hS D).hT ((lf D F0).fl.e a') (frame (G w₀) b + ∑ a, x₀ a b • F0.e a) =
         (Y'.map (algebraMap (𝓞 D.host.E) D.host.E)) a' b := by
-      rw [hYZ, map_add, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hYZ, map_add (f := _), map_sum]
       have : ∀ a, (hS D).hT ((lf D F0).fl.e a') (x₀ a b • F0.e a) = 0 := fun a => by
         rw [map_smul, show (hS D).hT ((lf D F0).fl.e a') (F0.e a) = 0 from F0.e_iso a' a, smul_zero]
       simp only [this, Finset.sum_const_zero, add_zero]

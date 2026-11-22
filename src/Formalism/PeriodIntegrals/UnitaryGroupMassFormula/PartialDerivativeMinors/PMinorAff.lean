@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.EntAtD
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.EntAtD
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,16 +53,16 @@ def Acon {H : Type} [Fintype H] {N0 N1 : ℕ} (P : PolyXZ H N0 N1) (m : XV H N0 
     (κ2 : ZV H N0 N1 →₀ ℕ) (n : H → ℕ) : ℤ :=
   ∑ μ ∈ P.support,
     if xpart μ = m ∧ κ2 ≤ zpart μ ∧ Bal N0 N1 n (zpart μ - κ2) then
-      MvPolynomial.coeff μ P * (binomF (zpart μ) κ2 : ℤ) *
+      AddMonoidAlgebra.coeff P μ * (binomF (zpart μ) κ2 : ℤ) *
         ∏ t : H, ∏ a : Fin N0, ∏ b : Fin N1, (((zpart μ - κ2) ((true, t), a, b)).factorial : ℤ)
     else 0
 
 def PExpand : Prop :=
   ∀ (H : Type) [Fintype H] [DecidableEq H] (N0 N1 p : ℕ) [Fact p.Prime] (S : ℂ_[p]) (ut : H → ℂ_[p])
     (sg : MvPowerSeries (ZV H N0 N1) ℂ_[p]) (P : PolyXZ H N0 N1) (m : XV H N0 →₀ ℕ),
-    MvPolynomial.coeff m (applyAt0 N0 N1 p (expS ℂ_[p] (-(S • ∑ t : H, ut t • ∑ a : Fin N0, ∑ b : Fin N1,
+    AddMonoidAlgebra.coeff (applyAt0 N0 N1 p (expS ℂ_[p] (-(S • ∑ t : H, ut t • ∑ a : Fin N0, ∑ b : Fin N1,
         (MvPowerSeries.X ((false, t), a, b) * MvPowerSeries.X ((true, t), a, b) :
-          MvPowerSeries (ZV H N0 N1) ℂ_[p]))) * sg) P) =
+          MvPowerSeries (ZV H N0 N1) ℂ_[p]))) * sg) P) m =
       ∑ κ2 ∈ P.support.biUnion (fun μ => Finset.Iic (zpart μ)),
         ∑ n ∈ Fintype.piFinset (fun _ : H => Finset.range (P.totalDegree + 1)),
           ((κ2.prod fun _ k => (k.factorial : ℂ_[p])) * MvPowerSeries.coeff κ2 sg) *
@@ -83,7 +87,7 @@ def PBridge : Prop :=
   ∀ (H : Type) [Fintype H] [DecidableEq H] (N0 N1 : ℕ) (P : PolyXZ H N0 N1) (m : XV H N0 →₀ ℕ)
     (κ2 : ZV H N0 N1 →₀ ℕ) (n : H → ℕ),
     (∏ t : H, ((n t).factorial : ℤ)) * Acon P m κ2 n =
-      MvPolynomial.coeff (Finsupp.sumFinsuppEquivProdFinsupp.symm (m, κ2)) (lapAll N0 N1 n P)
+      AddMonoidAlgebra.coeff (lapAll N0 N1 n P) (Finsupp.sumFinsuppEquivProdFinsupp.symm (m, κ2))
 
 def PLapComm : Prop :=
   ∀ (H : Type) (N0 N1 : ℕ) (t t' : H), Commute (lapT (H := H) N0 N1 t) (lapT N0 N1 t')

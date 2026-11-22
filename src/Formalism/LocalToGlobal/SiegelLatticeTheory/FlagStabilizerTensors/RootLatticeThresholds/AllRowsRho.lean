@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRedKerA
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ReductionConjugacy
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.AllRowsOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRedKerA
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ReductionConjugacy
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.AllRowsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,8 @@ theorem redMatB_unique {p : ℕ} (hp : p.Prime) (hcard : Nat.card (𝓞 I.E ⧸ 
     have h0 : (Lq I w).mkQ (∑ l, (((M' l i).val : ℕ) : I.E ⊗[I.F] Af I.F) • iv I (b l) -
         ∑ l, (((M l i).val : ℕ) : I.E ⊗[I.F] Af I.F) • iv I (b l)) = 0 :=
       (Submodule.Quotient.mk_eq_zero _).2 hdiff
-    rw [map_sub, map_sum, map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, map_sum] at h0
     simp only [mkQ_natSmul] at h0
     rw [← h0, ← Finset.sum_sub_distrib]
     exact Finset.sum_congr rfl fun l _ => sub_smul _ _ _
@@ -138,13 +143,13 @@ structure RedB (I : AutInst) (m : ℕ) where
 
 variable {I} {m : ℕ}
 
-open Classical in
 
+open Classical in
 def matB (R : RedB I m) (x : I.Gf) : Matrix (Fin m) (Fin m) (ZMod R.p) :=
   if hx : x ∈ I.Kset then Classical.choose (redMatB_exists I R.w R.hp R.hcard R.hb hx) else 0
 
 theorem matB_spec (R : RedB I m) {x : I.Gf} (hx : x ∈ I.Kset) : RedMatB I R.w R.p R.b x (matB R x) := by
-  unfold matB; rw [dif_pos hx]; exact Classical.choose_spec (redMatB_exists I R.w R.hp R.hcard R.hb hx)
+  unfold matB; rw [dite_eq_left hx]; exact Classical.choose_spec (redMatB_exists I R.w R.hp R.hcard R.hb hx)
 
 theorem matB_eq (R : RedB I m) {x : I.Gf} (hx : x ∈ I.Kset) {M : Matrix (Fin m) (Fin m) (ZMod R.p)}
     (h : RedMatB I R.w R.p R.b x M) : matB R x = M :=

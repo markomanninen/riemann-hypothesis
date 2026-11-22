@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.TensorProductsG2.FormalDegreeConstantDiscrete
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.HarishChandraMultiplicityBound
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.DecBoundOfCompact
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.ShiftApply
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.TensorProductsG2.FormalDegreeConstantDiscrete
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.HarishChandraMultiplicityBound
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.DecBoundOfCompact
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.ShiftApply
+
+@[expose] public section
 
 open Matrix
 
@@ -36,20 +40,19 @@ theorem dsigW_SK {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpac
     change Formalism.MainNotions.S.dsig σ X (Formalism.MainNotions.S.dsigW σ W v) = PI.UpqRep.dsig σ X (PI.UpqRep.dsigW σ W v)
     rw [dsigW_SK σ W v]; rfl
 
-theorem zuckerman_library_bounds : Lib thr where
-  zg := fun n ε μ H _ _ _ σ hμ hσ h hg ht =>
+theorem zuckerman_library_bounds : Lib thr := by
+  refine { zg := ?_, dec := ?_, uniq := ?_, exist := ?_ }
+  · intro n ε μ H _ _ _ σ hμ hσ h hg ht
     have ht' : G2.thrS ε + 1 < h := lt_of_le_of_lt (by unfold thr; linarith [le_max_right (thrStar ε) (G2.thrS ε)]) ht
-    ⟨G2.zuckerman_tensor_exists n ε μ H σ hμ hσ h hg ht', G2.zuckerman_dual_tensor_exists n ε μ H σ hμ hσ h hg ht'⟩
-  dec := by
-    intro k r ε μ U h m hU hg ht
+    exact ⟨G2.zuckerman_tensor_exists n ε μ H σ hμ hσ h hg ht', G2.zuckerman_dual_tensor_exists n ε μ H σ hμ hσ h hg ht'⟩
+  · intro k r ε μ U h m hU hg ht
     obtain ⟨C, Ws, hWs, hC⟩ := DecInf.decSm hU.1 hg m
       (lt_of_le_of_lt (by unfold thr; linarith [le_max_left (thrStar ε) (G2.thrS ε)]) ht) (σ := U.R.σ) hU.2
     refine ⟨C, Ws, fun W hW => (hWs W hW).2, fun u hu v hv g hg' => ?_⟩
     have h1 := hC u hu v hv g hg'
     simp only [dsigW_SK] at h1
     exact h1
-  uniq := by
-    intro k r ε μ R R' h hR hR' hg ht
+  · intro k r ε μ R R' h hR hR' hg ht
     have h2 : 2 * ((2 * r + k + 1 : ℕ) : ℝ) < h :=
       lt_of_le_of_lt ((le_max_left _ _).trans (le_max_right (thrStar ε) (G2.thrS ε))) ht
     obtain ⟨P, hP, hd⟩ := hR.2
@@ -87,8 +90,7 @@ theorem zuckerman_library_bounds : Lib thr where
     have e1 : P'⁻¹ * (P * g * P⁻¹) * P' = P'⁻¹ * P * g * (P⁻¹ * P') := by simp only [Matrix.mul_assoc]
     rw [h3, e1, ← hm _ hb _ ((PI.UnitaryGroupMassFormula.CapelliEig.unitary_Hecke_group k r _ hag).2.2 _ hb), ← hm _ hg _ hb,
       ← Matrix.mul_assoc (P⁻¹ * P') (P'⁻¹ * P * g), ← Matrix.mul_assoc (P⁻¹ * P') (P'⁻¹ * P), hba, Matrix.one_mul]
-  exist := by
-    intro k r ε μ μ' R h hR hμ' hg ht
+  · intro k r ε μ μ' R h hR hμ' hg ht
     obtain ⟨P, hP, -⟩ := hR.2
     have h1 : G2.thrS ε < h := lt_of_le_of_lt (le_max_right (thrStar ε) (G2.thrS ε)) ht
     have h2 : (0 : ℝ) ≤ ((2 * r + k + 1 : ℕ) : ℝ) * (S7.q0 ε : ℝ) := by positivity

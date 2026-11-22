@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.OrbAddUp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.OrbEmb
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.SolvableEquivalenceOfBaseChange
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.ExpSum
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.JetRen
+module
+
+public import Formalism.PeriodIntegrals.OrbAddUp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.OrbEmb
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.SolvableEquivalenceOfBaseChange
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.ExpSum
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.JetRen
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,8 +124,8 @@ theorem rename_jet (D : D7) (p : ℕ) [Fact p.Prime] {β : Type} (r : Pl D) (w :
     intro e
     simp only [Finsupp.mapDomain_single, pE_apply, key, Nat.cast_mul, Nat.cast_ofNat]
   funext m
-  show renameFun (pE D p r β) (jetLogG p (nP D p) w) m = logPl D p ((pE D p r β) w) m
-  unfold renameFun Filter.TendstoCofinite.mapDomain
+  change coeff m (rename (pE D p r β) (jetLogG p (nP D p) w)) = _
+  rw [MvPowerSeries.coeff_rename]
   by_cases hm : ∃ n, Finsupp.mapDomain (pE D p r β) n = m
   · obtain ⟨n, rfl⟩ := hm
     refine (Finset.sum_eq_single n ?_ ?_).trans ?_
@@ -134,7 +138,8 @@ theorem rename_jet (D : D7) (p : ℕ) [Fact p.Prime] {β : Type} (r : Pl D) (w :
       exfalso
       apply hn
       simp
-    · unfold jetLogG logPl
+    · change (jetLogG p (nP D p) w) n = _
+      unfold jetLogG logPl
       rw [hdeg]
       refine Finset.sum_congr rfl fun e _ => ?_
       simp only [hidx, hinj.eq_iff]

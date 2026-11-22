@@ -1,17 +1,21 @@
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolPos
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqCovolume
-import Formalism.LatticeSlopes.LatticeSlopesProofs.GramDetLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopesBdd
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeLeMuMaxOf
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeInequality
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DegQuot
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SaturationProperties
-import Formalism.LatticeSlopes.LatticeSlopesProofs.ShortVector
-import Formalism.LatticeSlopes.LatticeSlopesProofs.FiniteSaturated
-import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxAttained
-import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxLeMin
-import Formalism.LatticeSlopes.LatticeSlopesProofs.OrthSum
+module
+
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolPos
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqCovolume
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.GramDetLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopesBdd
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeLeMuMaxOf
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeInequality
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DegQuot
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SaturationProperties
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.ShortVector
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.FiniteSaturated
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxAttained
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxLeMin
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.OrthSum
+
+@[expose] public section
 
 namespace Formalism.F
 
@@ -22,7 +26,6 @@ theorem covolEqCovolume : CovolEqCovolume := covol_eq_covolume'
 theorem gramDetLe : GramDetLe := gram_det_le
 theorem slopesBdd : SlopesBdd := slopesBdd_of gramDetLe
 theorem slopeLeMuMax : SlopeLeMuMax := slopeLeMuMax_of slopesBdd
-theorem muMaxMono : MuMaxMono := muMaxMono_of slopesBdd
 theorem degQuot : DegQuot := degree_quotient
 theorem covolAntiSameRank : CovolAntiSameRank := covol_anti_same_rank
 theorem saturProps : SaturProps := saturation_properties
@@ -34,10 +37,6 @@ theorem orthSum : OrthSum := orthogonal_sum_slope
 section
 variable {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
-
-theorem muMax_mono {L N : Submodule ℤ E} [DiscreteTopology L] (hN : N ≤ L) (hN0 : N ≠ ⊥) :
-    muMax N ≤ muMax L :=
-  muMaxMono E L N ‹_› hN hN0
 
 theorem covol_pos (L : Submodule ℤ E) [DiscreteTopology L] : 0 < covol L :=
   covolPos E L ‹_›

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DFaithfulSs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DFactor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DPull
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DProd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DMatrix
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DFaithfulSs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DFactor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DPull
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DProd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DMatrix
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -31,9 +35,8 @@ private theorem pull_pull {n : ℕ} {A E E' E'' : Type} [CommRing A] [Ring E] [A
     D.D S (Algebra.TensorProduct.map (AlgHom.id S S) (f.comp g) x)
   congr 1
   induction x with
-  | zero => simp
   | tmul s y => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 private theorem pull_id {n : ℕ} {A E : Type} [CommRing A] [Ring E] [Algebra A E] (D : Det n A E) :
     D.pull (AlgHom.id A E) = D := by
@@ -48,9 +51,8 @@ private theorem ofRep_comp {n : ℕ} {A E E' ι : Type} [CommRing A] [Ring E] [A
   change (Det.repS (r.comp g) S x).det = (Det.repS r S (Algebra.TensorProduct.map (AlgHom.id S S) g x)).det
   congr 1
   induction x with
-  | zero => simp
   | tmul s y => simp [Det.repS_tmul]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 private theorem ofRep_fin {n : ℕ} {A E ι : Type} [CommRing A] [Ring E] [Algebra A E]
     [Fintype ι] [DecidableEq ι] (h : Fintype.card ι = n) (r : E →ₐ[A] Matrix ι ι A) :
@@ -61,9 +63,8 @@ private theorem ofRep_fin {n : ℕ} {A E ι : Type} [CommRing A] [Ring E] [Algeb
   rw [← Matrix.det_submatrix_equiv_self e.symm (Det.repS r S x)]
   congr 1
   induction x with
-  | zero => simp
   | tmul s y => ext a b; simp [Det.repS_tmul]
-  | add a b ha hb => simp only [map_add, ha, hb]; rfl
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]; rfl
 
 private def bdRep {k ι κ : Type} [CommRing k] [Fintype κ] [DecidableEq κ] (m : ι → Type) [∀ i, Fintype (m i)]
     [∀ i, DecidableEq (m i)] (p : κ → ι) :
@@ -84,7 +85,6 @@ private theorem bdRep_repS {k ι κ : Type} [CommRing k] [Fintype κ] [Decidable
     Det.repS (bdRep m p) S y = Matrix.blockDiagonal' fun j => Det.repS (AlgHom.id k _) S
       (Algebra.TensorProduct.map (AlgHom.id S S) (Pi.evalAlgHom k (fun i => Matrix (m i) (m i) k) (p j)) y) := by
   induction y with
-  | zero => simp; exact Matrix.blockDiagonal'_zero.symm
   | tmul s x =>
     ext ⟨a, a'⟩ ⟨b, b'⟩
     by_cases hab : a = b
@@ -92,7 +92,7 @@ private theorem bdRep_repS {k ι κ : Type} [CommRing k] [Fintype κ] [Decidable
       simp [Det.repS_tmul, bdRep]
     · simp [Det.repS_tmul, bdRep, Matrix.blockDiagonal'_apply_ne _ _ _ hab]
   | add a b ha hb =>
-    simp only [map_add, ha, hb]
+    simp only [map_add (f := _), ha, hb]
     rw [← Matrix.blockDiagonal'_add]
     rfl
 

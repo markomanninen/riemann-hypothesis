@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,13 +137,13 @@ theorem norm_entry_le {Γ : Matrix (Fin r) (Fin r) ℂ} {K : ℝ} (hΓ : Γ.PosS
   have hd : ∀ p, ∑ i, ‖S i p‖ ^ 2 ≤ K := fun p => by
     have h1 := (Complex.nonneg_iff.1 (h.diag_nonneg (i := p))).1
     have h2 : (Γ p p).re = ∑ i, ‖S i p‖ ^ 2 := by
-      rw [hS, mul_apply, Complex.re_sum]
+      rw [hS, Matrix.mul_apply, Complex.re_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [conjTranspose_apply, Complex.star_def, Complex.conj_mul', ← Complex.ofReal_pow, Complex.ofReal_re]
     simp [h2] at h1
     exact h1
   have h3 : ‖Γ p q‖ ≤ ∑ i, (‖S i p‖ ^ 2 + ‖S i q‖ ^ 2) / 2 := by
-    rw [hS, mul_apply]
+    rw [hS, Matrix.mul_apply]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [conjTranspose_apply, norm_mul, norm_star]
     nlinarith [sq_nonneg (‖S i p‖ - ‖S i q‖)]

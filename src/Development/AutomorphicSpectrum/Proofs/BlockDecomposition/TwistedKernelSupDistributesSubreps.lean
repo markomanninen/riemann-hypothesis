@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnlinkedGL.UnlinkedRealize
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwKerWhitCharReflect
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnlinkedGL.UnlinkedRealize
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwKerWhitCharReflect
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.RgGu
 open scoped TensorProduct
@@ -24,7 +28,7 @@ theorem mem_sup_of_mem_twKer_sup {G V : Type} [Group G] [AddCommGroup V] [Module
     have hρu : ((X ⊔ Y).toRepresentation h u : V) = ρ h u := rfl
     have hcoe : (((X ⊔ Y).toRepresentation h u - (χ h : ℂ) • u : (X ⊔ Y).toSubmodule) : V) =
         (ρ h x - (χ h : ℂ) • x) + (ρ h y - (χ h : ℂ) • y) := by
-      rw [Submodule.coe_sub, Submodule.coe_smul, hρu, ← hxy, map_add, smul_add]
+      rw [Submodule.coe_sub, Submodule.coe_smul, hρu, ← hxy, map_add (f := _), smul_add]
       abel
     rw [hcoe]
     apply Submodule.add_mem_sup

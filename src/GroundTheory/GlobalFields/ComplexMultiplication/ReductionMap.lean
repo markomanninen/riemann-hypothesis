@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionPoints
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionGauss
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.ReductionTorsion
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionPoints
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionGauss
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.ReductionTorsion
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -42,8 +46,8 @@ theorem map_curveRed_eq :
     (W.map (residue 𝒪₁)).map (ResidueField.map f) = (W.map f).map (residue 𝒪₂) := by
   rw [WeierstrassCurve.map_map, WeierstrassCurve.map_map, ResidueField.map_comp_residue]
 
-include hσ in
 
+include hσ in
 theorem map_notMem_range {X : K₁} (hX : X ∉ Set.range (algebraMap 𝒪₁ K₁)) :
     σ X ∉ Set.range (algebraMap 𝒪₂ K₂) := by
   rintro ⟨s, hs⟩
@@ -110,7 +114,7 @@ theorem gaussCurve_map_residue :
   simp only [gaussCurve, WeierstrassCurve.baseChange, WeierstrassCurve.map_map]
   congr 1
   ext c
-  simp [gaussResidue_residue_algebraMap, ← IsScalarTower.algebraMap_apply]
+  simp [gaussResidue_residue_algebraMap]
 
 variable [W'.IsElliptic]
 

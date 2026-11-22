@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.LetterSize
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.LetterSize
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+
+@[expose] public section
 
 open Matrix
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U Formalism.REAL
@@ -97,11 +101,13 @@ theorem rw_comp (hR : SliceRight) :
     ∀ (v : List (B.Mat k ρ)) (F : B.Mat k (p + s + ρ) → E),
       B.Rw v (fun γ' => F (gaXi k ρ σ d ξ Z γ')) =
         fun γ' => B.Rw (v.map (cj k (p + s) ρ ξ.1.2)) F (gaXi k ρ σ d ξ Z γ')
-  | [], _ => rfl
-  | Y :: v, F => by
-    simp only [B.Rw, List.foldr_cons, List.map_cons] at *
-    have ih := rw_comp hR v F
+  := by
+  intro v F
+  induction v with
+  | nil => rfl
+  | cons Y v ih =>
     simp only [B.Rw] at ih
+    simp only [B.Rw, List.foldr_cons, List.map_cons]
     rw [ih]
     exact rdv_comp hR _ Y
 
@@ -109,12 +115,15 @@ theorem dLR_comp (hL : SliceLeft) (hR : SliceRight) (v : List (B.Mat k ρ)) (F :
     ∀ u : List (B.Mat k ρ),
       B.dLR u v (fun γ' => F (gaXi k ρ σ d ξ Z γ')) =
         fun γ' => B.dLR (u.map (cj k (p + s) ρ ξ.1.1)) (v.map (cj k (p + s) ρ ξ.1.2)) F (gaXi k ρ σ d ξ Z γ')
-  | [] => by
+  := by
+  intro u
+  induction u with
+  | nil =>
     simp only [B.dLR, List.foldr_nil, List.map_nil]
     exact rw_comp hR v F
-  | Y :: u => by
-    have ih := dLR_comp hL hR v F u
-    simp only [B.dLR, List.foldr_cons, List.map_cons] at ih ⊢
+  | cons Y u ih =>
+    simp only [B.dLR] at ih
+    simp only [B.dLR, List.foldr_cons, List.map_cons]
     rw [ih]
     exact ldv_comp hL _ Y
 

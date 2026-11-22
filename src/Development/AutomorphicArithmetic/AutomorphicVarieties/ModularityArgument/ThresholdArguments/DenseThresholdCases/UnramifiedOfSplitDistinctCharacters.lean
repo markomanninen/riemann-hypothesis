@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.AbsPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TPsIrr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.AbsPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TPsIrr
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -50,7 +54,9 @@ theorem UpperTheory.V.Z.Sym.Al.unramified_of_split_distinct_characters :
     ⟨fun h => (hne i j hij).1 (by simp only [h]), fun h => (hne i j hij).2 (by
       simp only []
       rw [h, mul_right_comm])⟩
-  obtain ⟨E⟩ := (_root_.UpperTheory.V.Hi.prin_series_irreducible_and_unique_subquotient H (Kw w) n ω hω hneω).2 _ τ.ρ τ.irred hsq
+  have hE : Nonempty (τ.ρ.Equiv (UpperTheory.V.Hi.PS ω)) :=
+    (_root_.UpperTheory.V.Hi.prin_series_irreducible_and_unique_subquotient H (Kw w) n ω hω hneω).2 _ τ.ρ τ.irred hsq
+  obtain ⟨E⟩ := hE
   obtain ⟨v₀, hv₀, hfix⟩ := locSph (Kw w) n _ hu
   obtain ⟨v, rfl⟩ := E.surjective v₀
   have hv : v ≠ 0 := by

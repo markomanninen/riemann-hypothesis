@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem multAt_sup_span_eq_of_sub_mem {P W : Ideal (MRing ι)} (hW : W.IsPrime) 
     rwa [neg_sub] at this
   haveI := hW
   unfold multAt
-  rw [dif_pos hW, dif_pos hW,
+  rw [dite_eq_left hW, dite_eq_left hW,
     length_localizedModule_quot_eq W
       (fun x hx => ⟨u, hu, mul_mem_sup_span_of_sub_mem hm hx⟩)
       (fun x hx => ⟨v, hv, mul_mem_sup_span_of_sub_mem hm' hx⟩)]

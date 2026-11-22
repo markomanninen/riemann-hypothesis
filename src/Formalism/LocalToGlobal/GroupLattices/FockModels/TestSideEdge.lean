@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
+
+@[expose] public section
 
 noncomputable section
 

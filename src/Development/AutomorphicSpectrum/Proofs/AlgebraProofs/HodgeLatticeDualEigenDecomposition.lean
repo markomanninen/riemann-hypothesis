@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigCoordApply
+
+@[expose] public section
 
 open scoped NNReal
 open NumberField GlobalTheory.IndefiniteRowSideFullHecke.QuotientEigenDifference GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Flat.ExG
@@ -18,7 +22,8 @@ theorem eigProj_comp_bar [Fintype (E →+* C)] (bar : 𝓞 E ≃+* 𝓞 E) (σ �
     HT.eigProj (ρ.comp (bar : 𝓞 E →+* 𝓞 E)) σ x = HT.eigProj ρ σ' x := by
   classical
   conv_lhs => rw [← hsum x]
-  rw [map_sum, Finset.sum_eq_single σ']
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single σ']
   · apply HT.LatBasic.eigProj_of_mem
     rw [HT.LatBasic.mem_eigSp]
     intro a
@@ -82,7 +87,8 @@ theorem span_iff_proj : ∀ (E : Type) [Field E] [NumberField E] (V C : Type) [C
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun C).1 hm
     have hcj : ∀ j, (ψ j).2 x = c j := by
       intro j
-      rw [hχ j x, ← hc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hχ j x, ← hc, map_sum]
       simp [(hψ j).2.2]
     simp only [hcj]
     exact hc.symm
@@ -94,7 +100,8 @@ theorem span_iff_proj : ∀ (E : Type) [Field E] [NumberField E] (V C : Type) [C
     · simp [Prod.fst_sum, (hψ _).2.1]
     · ext x
       simp only [LinearMap.comp_apply]
-      rw [hexp x, map_sum, Prod.snd_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hexp x, map_sum, Prod.snd_sum, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun j _ => ?_
       simp [mul_comm]
 

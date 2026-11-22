@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AbsInvOf
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AbsInvOf
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 set_option maxHeartbeats 1000000

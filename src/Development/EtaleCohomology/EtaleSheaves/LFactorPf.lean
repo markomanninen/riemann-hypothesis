@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.HensIdemCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.HensIdemCut
+
+@[expose] public section
 
 noncomputable section
 open Polynomial
@@ -13,7 +17,9 @@ theorem LFactor_of (hE : LEtaleLift) : LateralTheory.E.HensIdemCut.LFactor := by
   intro A _ I _ f g₀ h₀ hf hg hh hgh e
   rcases subsingleton_or_nontrivial (A ⧸ I) with hs | hs
   · have hI : I = ⊤ := Ideal.Quotient.subsingleton_iff.mp hs
-    have h1 : (1 : A) ∈ (⊥ : Ideal A).jacobson := HenselianRing.jac (I := I) (hI ▸ Submodule.mem_top)
+    have h1 : (1 : A) ∈ (⊥ : Ideal A).jacobson := by
+      rw [Ideal.jacobson_bot]
+      exact HenselianRing.jac (I := I) (hI ▸ Submodule.mem_top)
     have hu := Ideal.mem_jacobson_bot.mp h1 (-1)
     have hA : Subsingleton A := by
       simp at hu

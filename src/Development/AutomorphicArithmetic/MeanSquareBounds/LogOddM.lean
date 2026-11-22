@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+module
+
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+
+@[expose] public section
 
 open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
 
@@ -8,7 +12,7 @@ theorem log_oddM :
     ∀ (z : ℝ) (q : ℕ), 0 ≤ z → 0 < q → Real.log ((16 * oddM z q : ℕ) : ℝ) ≤ Real.log 16 + Real.log q + z * Real.log 4 := by
   intro z q hz hq
   have hPle : (∏ p ∈ Icc 3 ⌊z⌋₊ with Nat.Prime p, p) ≤ 4 ^ ⌊z⌋₊ := by
-    refine le_trans ?_ (primorial_le_4_pow ⌊z⌋₊)
+    refine le_trans ?_ (primorial_le_four_pow ⌊z⌋₊)
     unfold primorial
     apply Finset.prod_le_prod_of_subset_of_one_le'
     · intro p hp

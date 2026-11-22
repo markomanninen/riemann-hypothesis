@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Pull1RestrictPairRestriction
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFiniteTorusExtensionOfModel
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MulLeftCompOfPullbackPointEquivMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAbelianSchemeAndRelDimOfIsGrpPullback
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Pull1RestrictPairRestriction
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFiniteTorusExtensionOfModel
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MulLeftCompOfPullbackPointEquivMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAbelianSchemeAndRelDimOfIsGrpPullback
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,7 +51,7 @@ theorem coboundary_zero_reduction {A : C ⥤ CommAlgCat.{0} R} {B : C ⥤ CommAl
 theorem coboundary_one_reduction {A : C ⥤ CommAlgCat.{0} R} {B : C ⥤ CommAlgCat.{0} R₀} (a : BC A B) (f : C1 A) :
     d1 B (red1 a f) = red2 a (d1 A f) := by
   funext T T' T'' φ ψ
-  simp only [d1_apply, red1, red2, map_sub, map_add, a.naturality]
+  simp only [d1_apply, red1, red2, map_sub, map_add (f := _), a.naturality]
 
 theorem cocycle_d1_eq_zero {A : C ⥤ CommAlgCat.{0} R} (f : Z1 A) : d1 A f.1 = 0 :=
   LinearMap.mem_ker.1 ((commAlgFunctorCocyclesOne_eq_ker A).le f.2)
@@ -72,7 +76,7 @@ theorem reduction_mem_cocycles_of_smul (hb : ExB b t) (f : C1 F) (y : C2 F) (e :
       y T' T'' T''' ψ χ) = 0 := by
     simp only [smul_sub, smul_add, h]; abel
   have k' := hb.ann _ _ k
-  simp only [map_sub, map_add, b.naturality] at k'
+  simp only [map_sub, map_add (f := _), b.naturality] at k'
   simp only [red2]
   linear_combination k'
 
@@ -130,9 +134,9 @@ theorem Bd.add {c c' : H1 F₀} {z z' : H2 Fk} (h : Bd a b t c z) (h' : Bd a b t
   have k₂ : red2 b (y + y') = red2 b y + red2 b y' := by
     funext T T' T'' φ ψ; simp [red2]
   refine ⟨f + f', y + y', k₁ ▸ add_mem hf hf', k₂ ▸ add_mem hy hy', ?_, ?_, ?_⟩
-  · rw [map_add, e, e', smul_add]
-  · rw [← map_add]; exact congrArg _ (Subtype.ext k₁)
-  · rw [← map_add]; exact congrArg _ (Subtype.ext k₂)
+  · rw [map_add (f := _), e, e', smul_add]
+  · rw [← map_add (f := _)]; exact congrArg _ (Subtype.ext k₁)
+  · rw [← map_add (f := _)]; exact congrArg _ (Subtype.ext k₂)
 
 theorem lift_of_bd (ha : ExA a t) (hb : ExB b t) {c : H1 F₀} (h : Bd a b t c 0) :
     ∃ d : H1 F, a.coef.pull1 d = c := by
@@ -223,7 +227,7 @@ theorem Bd.pull (M : TriMap a b a' b') {c : H1 F₀} {z : H2 Fk} (h : Bd a b t c
   funext T T' T'' φ ψ
   have k := congrFun (congrFun (congrFun (congrFun (congrFun e _) _) _) (M.fn.map φ)) (M.fn.map ψ)
   have k' := congrArg (M.α T'') k
-  simp only [d1_apply, Pi.smul_apply, map_add, map_sub, M.smul, ← Functor.map_comp, M.nat] at k'
+  simp only [d1_apply, Pi.smul_apply, map_add (f := _), map_sub, M.smul, ← Functor.map_comp, M.nat] at k'
   exact k'
 
 end Abstract

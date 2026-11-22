@@ -1,18 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackCorrespondence
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapFromSpecStalk
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelBaseChangeMapStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFreeOverLocalRingStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackCorrespondence
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapFromSpecStalk
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelBaseChangeMapStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFreeOverLocalRingStatement
+
+@[expose] public section
 
 noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
+
+open GlobalTheory.CompanionTheory.Ar (dualMap)
 
 namespace GlobalTheory.CompanionTheory.Ar.LiePull
 
@@ -106,7 +112,10 @@ def extLat (hx : Spec.map (CommRingCat.ofHom g) ≫ x = ξ) (M : LieModel G ξ E
   carrier := {e | ∃ v, Ext g x M e v}
   add_mem' := fun ⟨v, hv⟩ ⟨v', hv'⟩ => ⟨_, hv.mul hx hv'⟩
   zero_mem' := ⟨_, Ext.zero hx⟩
-  neg_mem' := fun {e} ⟨v, hv⟩ => ⟨_, by simpa using hv.smul (-1)⟩
+  neg_mem' := by
+    rintro e ⟨v, hv⟩
+    refine ⟨LieEx.hom x ((-1 : A) • (LinearMap.id : A →ₗ[A] A)) ≫ v, ?_⟩
+    simpa only [map_neg, map_one, neg_smul, one_smul] using hv.smul (-1)
 
 def ExtE (hx : Spec.map (CommRingCat.ofHom g) ≫ x = ξ) (M : LieModel G ξ E) : Type := ↥(extLat hx M)
 
@@ -166,7 +175,7 @@ variable {X X' : Scheme.{0}} {Ω Ω' : Type} [Field Ω] [Field Ω'] {ξ : Sp Ω 
   {x : Sp A ⟶ X} {x' : Sp A' ⟶ X'}
 
 theorem ext_up (hG : IsGrpPullback G' G f φ)
-    (hj : ∀ e, (M'.pt (j e)).left ≫ φ = Spec.map (CommRingCat.ofHom (dualMap i)) ≫ (M.pt e).left)
+    (hj : ∀ e, (M'.pt (j e)).left ≫ φ = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap i)) ≫ (M.pt e).left)
     (hρ : Spec.map (CommRingCat.ofHom ρ) ≫ x = x' ≫ f) (hρ' : g'.comp ρ = i.comp g)
     (hx' : Spec.map (CommRingCat.ofHom g') ≫ x' = ξ') {e : V} {v : epsAt x ⟶ G} (hv : Ext g x M e v) :
     ∃ v' : epsAt x' ⟶ G', Ext g' x' M' (j e) v' ∧
@@ -188,7 +197,7 @@ theorem ext_up (hG : IsGrpPullback G' G f φ)
     exact w₁.trans w₂.symm
 
 theorem core [IsLocalRing A] (hs : Smooth G.hom) (hG : IsGrpPullback G' G f φ)
-    (hj : ∀ e, (M'.pt (j e)).left ≫ φ = Spec.map (CommRingCat.ofHom (dualMap i)) ≫ (M.pt e).left)
+    (hj : ∀ e, (M'.pt (j e)).left ≫ φ = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap i)) ≫ (M.pt e).left)
     (hg : Function.Injective g) (hg' : Function.Injective g')
     (hρ : Spec.map (CommRingCat.ofHom ρ) ≫ x = x' ≫ f) (hρ' : g'.comp ρ = i.comp g)
     (hx : Spec.map (CommRingCat.ofHom g) ≫ x = ξ) (hx' : Spec.map (CommRingCat.ofHom g') ≫ x' = ξ')

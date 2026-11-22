@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.XiIntH
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.TLeftH
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.XiIntH
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.TLeftH
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem hpk_K : Hpk k r ∈ Kset k r := by
   · rw [hpk_conjT, h2]
 
 theorem gN_sq (g : Mat k r) : (∑ i, ∑ j, Complex.normSq (g i j)) = (trace (gᴴ * g)).re := by
-  simp only [trace, diag, mul_apply, conjTranspose_apply, Complex.re_sum]
+  simp only [trace, diag, Matrix.mul_apply, conjTranspose_apply, Complex.re_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
   rw [Complex.normSq_apply, Complex.star_def, Complex.mul_re, Complex.conj_re, Complex.conj_im]; ring

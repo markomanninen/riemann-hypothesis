@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
+
+@[expose] public section
+
 open Polynomial Matrix GlobalTheory.LatOrb
 
 namespace GlobalTheory.LatOrb

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.TraceNilpotentConeProjection
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.TraceNilpotentConeProjection
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ abbrev TT : Type := ↥(LinearMap.ker (Dl Z)) × (Fin n → k)
 theorem continuous_E : Continuous (E Z) := by
   have e : E Z = fun u => ∑ j, u j • ee Z j := funext (E_apply Z)
   rw [e]
-  exact continuous_finset_sum _ fun j _ => (continuous_apply j).smul continuous_const
+  fun_prop
 
 theorem continuous_D : Continuous (D Z) :=
   continuous_pi fun j => (continuous_const.matrix_mul continuous_id).matrix_trace

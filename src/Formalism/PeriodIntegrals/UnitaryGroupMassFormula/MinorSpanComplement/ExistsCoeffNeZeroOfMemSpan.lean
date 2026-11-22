@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -98,7 +102,7 @@ theorem isCompl_map_rename (O : MonomialOrder σ) {τ : Type*} {φ : σ → τ}
     have hsupp := (MvPolynomial.mem_restrictSupport_iff R).mp hg2
     have hmem : Finsupp.mapDomain φ (O.degree (c i)) ∈ ((rename φ).toLinearMap h).support := by
       rw [MvPolynomial.mem_support_iff]
-      show MvPolynomial.coeff (Finsupp.mapDomain φ (O.degree (c i))) (rename φ h) ≠ 0
+      show AddMonoidAlgebra.coeff (rename φ h) (Finsupp.mapDomain φ (O.degree (c i))) ≠ 0
       rw [MvPolynomial.coeff_rename_mapDomain φ hφ]
       exact hi
     exact hsupp (Finset.mem_coe.mpr hmem) ⟨O.degree (c i), ⟨i, rfl⟩, rfl⟩
@@ -111,7 +115,7 @@ theorem isCompl_map_rename (O : MonomialOrder σ) {τ : Type*} {φ : σ → τ}
       have h1 := monomial_mem_sup O c hlc e (g.coeff (Finsupp.mapDomain φ e))
       rw [← MvPolynomial.rename_monomial]
       obtain ⟨y, hy, z, hz, hyz⟩ := Submodule.mem_sup.mp h1
-      rw [← hyz, map_add]
+      rw [← hyz, map_add (f := _)]
       refine Submodule.add_mem_sup (Submodule.mem_map_of_mem hy) ?_
       rw [MvPolynomial.mem_restrictSupport_iff] at hz ⊢
       intro d' hd'

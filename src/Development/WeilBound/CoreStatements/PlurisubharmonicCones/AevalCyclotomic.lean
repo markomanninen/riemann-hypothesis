@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianPartLatticeEigenCompat
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBound
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeStableUnderAction
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundleStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelEmbeddingInjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundleStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SandwichPointOverFieldExtStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GhModelGeo
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianPartLatticeEigenCompat
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBound
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeStableUnderAction
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundleStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelEmbeddingInjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundleStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SandwichPointOverFieldExtStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GhModelGeo
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -92,11 +97,11 @@ theorem value_cp (hg : IsCptGen ξ) {F : Type} [Field F] [CharZero F] {z : Spec 
     have hp0 : NeZero (p : F) := ⟨Nat.cast_ne_zero.2 hp.ne_zero⟩
     have h3 := value_aeval hg hv ((Polynomial.cyclotomic p ℤ).comp (Polynomial.X + 1)) (by
       rw [Polynomial.aeval_comp]
-      simp only [map_add, Polynomial.aeval_X, map_one, sub_add_cancel]
+      simp only [map_add (f := _), Polynomial.aeval_X, map_one, sub_add_cancel]
       rw [aeval_cyclotomic]
       exact hζ.isRoot_cyclotomic hp.pos)
     rw [Polynomial.aeval_comp] at h3
-    simp only [map_add, Polynomial.aeval_X, map_one] at h3
+    simp only [map_add (f := _), Polynomial.aeval_X, map_one] at h3
     rw [aeval_cyclotomic] at h3
     exact Polynomial.isRoot_cyclotomic_iff.1 h3
 
@@ -160,8 +165,8 @@ theorem val_mem_eig {s : CMType H ⊕ CMType H} {σ : 𝓞 E →+* R} (hσ : ∀
   rw [mem_eigSp.1 he a] at h1
   exact MC.inj (h1.unique 𝔐.tie.gen h2)
 
-include hact in
 
+include hact in
 theorem off_S (σ : CMType H ⊕ CMType H → (𝓞 E →+* R)) (hσ : ∀ s a, ValAt 𝔐.ξ z (𝔐.emb s a) (σ s a))
     (hinj : Function.Injective fun s => (algebraMap R C).comp (σ s)) (hS : ∀ p ∈ S, IsUnit (p : R))
     (hd : IsUnit (((discr E).natAbs : ℕ) : R)) (s : CMType H ⊕ CMType H) :
@@ -225,8 +230,8 @@ theorem off_S (σ : CMType H ⊕ CMType H → (𝓞 E →+* R)) (hσ : ∀ s a, 
   obtain ⟨x', h1, h2⟩ := key e (hs1 ▸ he)
   rwa [MC.inj (hw.unique hξ h2)]
 
-include hact in
 
+include hact in
 theorem on_S {p : ℕ} (hpS : p ∈ S) (κ : Ω) (hfree : HT.HTFree 𝔐 p) (hsand : HT.Sandwich 𝔐 p κ)
     (v : Valuation C NNReal) (hv : v.Integers R) (hvp : v (p : C) < 1) (s : CMType H ⊕ CMType H)
     (σ : 𝓞 E →+* R) (hσ : ∀ a, ValAt 𝔐.ξ z (𝔐.emb s a) (σ a)) (κz : R) (hκ : ValAt 𝔐.ξ z κ κz) :

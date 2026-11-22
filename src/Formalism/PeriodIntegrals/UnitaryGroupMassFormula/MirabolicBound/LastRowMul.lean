@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.Development
+
+@[expose] public section
 
 namespace PI.GGMirBoundW
 

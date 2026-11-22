@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.WindowSums
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.WindowSums
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.WindowSums
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.ContinuousLatticeNorm
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.ContinuousLatticeNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,9 +49,9 @@ theorem digits_sep {ϖ : Fv F v} (hϖ1 : ‖ϖ‖ < 1) :
         cases hδ : δ 0 <;> cases hδ' : δ' 0 <;> simp_all
       have hsmall : ‖ϖ * (digits ϖ m (Fin.tail δ) - digits ϖ m (Fin.tail δ'))‖ < 1 := by
         rw [norm_mul]
-        have := norm_sub_le_one (norm_digits_le hϖ1.le m (Fin.tail δ)) (norm_digits_le hϖ1.le m (Fin.tail δ'))
-        calc _ ≤ ‖ϖ‖ * 1 := mul_le_mul_of_nonneg_left this (norm_nonneg _)
-          _ < 1 := by rw [mul_one]; exact hϖ1
+        have htail := norm_sub_le_one (norm_digits_le hϖ1.le m (Fin.tail δ))
+          (norm_digits_le hϖ1.le m (Fin.tail δ'))
+        exact (mul_le_of_le_one_right (norm_nonneg _) htail).trans_lt hϖ1
       have hre : ((if δ 0 then (1 : Fv F v) else 0) + ϖ * digits ϖ m (Fin.tail δ)) -
           ((if δ' 0 then 1 else 0) + ϖ * digits ϖ m (Fin.tail δ')) =
           ((if δ 0 then 1 else 0) - (if δ' 0 then 1 else 0)) +

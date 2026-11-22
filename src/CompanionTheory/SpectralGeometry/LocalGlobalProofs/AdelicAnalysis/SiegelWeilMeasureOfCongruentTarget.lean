@@ -1,20 +1,24 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeStableAlmostEverywhere
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.EulerProductMeasureTransportStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresSupportStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleProjectionsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatrixEulerProductStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RightMultiplicationEulerProductStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramRightMulActionLawsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelMeanValueNonnegativeStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitProductClosurePropertiesStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresContinuityStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeStableAlmostEverywhere
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.EulerProductMeasureTransportStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresSupportStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleProjectionsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatrixEulerProductStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RightMultiplicationEulerProductStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramRightMulActionLawsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelMeanValueNonnegativeStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitProductClosurePropertiesStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresContinuityStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,8 @@ variable (R : Type) [CommRing R] [Algebra F R]
 theorem ratTup_rE {M n : ℕ} (X : Fin n → Fin M → E) (G : Matrix (Fin n) (Fin n) E) :
     ratTup (F := F) R (rE X G) = rmul R (ratTup R X) (G.map (inclR R)) := by
   funext a i
-  simp [ratTup, rE, rmul, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ratTup, rE, rmul, map_sum, map_mul]
 
 theorem cT_map_incl (σ : E →ₐ[F] E) {n : ℕ} (G : Matrix (Fin n) (Fin n) E) :
     cT (sigR R σ) (G.map (inclR R)) = (cT (σ : E →+* E) G).map (inclR R) := by
@@ -108,7 +113,7 @@ theorem measurable_rmul (σ : E →ₐ[F] E) (hcm : IsCMExt F E σ) (R : Type) [
   obtain ⟨t1, -, t3, -, -, -, -, t8, -, -⟩ := TopK.topTens_props F E σ hcm R
   haveI := t8 n M
   have hc : Continuous (fun X : Fin n → Fin M → R ⊗[F] E => rmul R X G) :=
-    continuous_pi fun a => continuous_pi fun i => continuous_finset_sum _ fun c _ => by
+    continuous_pi fun a => continuous_pi fun i => continuous_finsetSum _ fun c _ => by
       have h : Continuous fun X : Fin n → Fin M → R ⊗[F] E => X c i :=
         (continuous_apply i).comp (continuous_apply c)
       exact h.mul continuous_const
@@ -149,14 +154,16 @@ theorem unitary_conjugate_local (σ : E →ₐ[F] E) (hcm : IsCMExt F E σ) (hin
 theorem projInf_rmul {M n : ℕ} (X : Fin n → Fin M → AF F ⊗[F] E) (G : Matrix (Fin n) (Fin n) E) :
     projInf (rmul (AF F) X (G.map (inclR (AF F)))) = rmul (Ainf F) (projInf X) (G.map (inclR (Ainf F))) := by
   funext a i
-  simp [projInf, rmul, map_sum, map_mul, inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [projInf, rmul, map_sum, map_mul, inclR]
 
 theorem projV_rmul (v : HeightOneSpectrum (𝓞 F)) {M n : ℕ} (X : Fin n → Fin M → AF F ⊗[F] E)
     (G : Matrix (Fin n) (Fin n) E) :
     projV v (projFin (rmul (AF F) X (G.map (inclR (AF F))))) =
       rmul (Fv F v) (projV v (projFin X)) (G.map (inclR (Fv F v))) := by
   funext a i
-  simp [projV, projFin, rmul, map_sum, map_mul, inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [projV, projFin, rmul, map_sum, map_mul, inclR]
 
 end Top
 

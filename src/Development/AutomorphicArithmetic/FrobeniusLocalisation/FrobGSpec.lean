@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.SizeDefs
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.SizeDefs
+
+@[expose] public section
 
 open UpperTheory.HF
 

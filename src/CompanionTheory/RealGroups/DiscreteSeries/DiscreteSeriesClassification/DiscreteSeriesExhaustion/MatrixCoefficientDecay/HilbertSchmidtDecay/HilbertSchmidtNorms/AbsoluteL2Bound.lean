@@ -1,5 +1,9 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HilbertSchmidtNorms.AbsoluteL2OfLineChain
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IntegrableOfLtTop
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HilbertSchmidtNorms.AbsoluteL2OfLineChain
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IntegrableOfLtTop
+
+@[expose] public section
 
 namespace CompanionTheory.RgExh.Dec.L.AB
 

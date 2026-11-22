@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ThetaSquareIntegrable
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.PHeisFC
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ThetaSquareIntegrable
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.PHeisFC
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ def cEi (D : D7) : (Ainf D.host.F ⊗[D.host.F] D.host.E) ≃ₗ[Ainf D.host.F] 
 theorem cEf_finPart (x : AE D) : cEf D (finPart D x) = fun a => (cED D x a).2 := by
   induction x using TensorProduct.induction_on with
   | zero => funext a; simp <;> rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy]; funext a; simp <;> rfl
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]; funext a; simp <;> rfl
   | tmul a e =>
     funext i
     simp [finPart, cEf, cED, PHeisFC.cE, PHeisFC.bA, Algebra.TensorProduct.basis_repr_tmul]
@@ -38,7 +42,7 @@ theorem cEf_finPart (x : AE D) : cEf D (finPart D x) = fun a => (cED D x a).2 :=
 theorem cEi_infPart (x : AE D) : cEi D (infPart D x) = fun a => (cED D x a).1 := by
   induction x using TensorProduct.induction_on with
   | zero => funext a; simp <;> rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy]; funext a; simp <;> rfl
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]; funext a; simp <;> rfl
   | tmul a e =>
     funext i
     simp [infPart, cEi, cED, PHeisFC.cE, PHeisFC.bA, Algebra.TensorProduct.basis_repr_tmul]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOpenKerUnramMulTame
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOpenKerUnramMulTame
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -21,18 +25,6 @@ def twist (w : VTup t) (s : ∀ j, t.Ch j → ℂ) : VTup t :=
     ε := fun j α => s j α • w.ε j α
     εT := fun n h β => s n β • w.εT n h β }
 
-def QPinS (v : VCom c) (w : VTup t) : Prop :=
-  ∃ (w₀ : VTup t) (s : ∀ j, t.Ch j → ℂ), (∀ j α, s j α ^ 2 = 1) ∧ QPin v w₀ ∧ w = twist w₀ s
-
-theorem twist_one (w : VTup t) : twist w (fun _ _ => 1) = w := by
-  cases w; simp [twist]
-
-theorem QPinS.of {v : VCom c} {w : VTup t} (h : QPin v w) : QPinS v w :=
-  ⟨w, fun _ _ => 1, fun _ _ => one_pow _, h, (twist_one w).symm⟩
-
-example (w : VTup t) (j α γ) : (twist w fun _ _ => -1).dQ j α γ = w.dQ j α γ ∧ (twist w fun _ _ => -1).ε j α = -w.ε j α := by
-  simp [twist]
-
 variable {v : VCom c} {B : GlobalTheory.Fam.Base c} {PP : Formalism.L2.DIV.Pl D.host.E}
 
 def QGeo.Res (G : QGeo v B PP) (δ : G.kˣ →* ℂˣ) (ξ : (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ) : Prop :=
@@ -41,13 +33,6 @@ def QGeo.Res (G : QGeo v B PP) (δ : G.kˣ →* ℂˣ) (ξ : (Formalism.L2.DIV.k
 
 def QExt.tw {G : QGeo v B PP} {χ : ℕ → (AE D)ˣ →* Circle} (E : QExt G χ) (hψ : Continuous G.ψk) (sg : ℂ) : GlobalTheory.TwBridge.TwData G.k :=
   ⟨G.ϖ, G.unif, G.ψk, hψ, G.cond, E.δ, E.tame, E.η, E.unr, sg⟩
-
-structure QGeo.FrTie (G : QGeo v B PP) (fr : ∀ i, i ≤ D.R.m → Matrix (Fin (c.X i).rank) (Fin (D.R.N i)) D.host.E) : Prop where
-  frX : ∀ i (hi : i ≤ G.s + 1) (hm : i ≤ D.R.m), ∃ e : XIx (Fin D.R.k) (Fin D.R.t) i ≃ Fin (D.R.N i),
-    GlobalTheory.SymBridge.IsOrd GlobalTheory.SymBridge.xPos e ∧ ∀ r a, (G.FX i hi).β r a = (ofSplit G.q).pr (fr i hm r (e a))
-  frM : ∀ hm : G.s + 1 + 1 ≤ D.R.m, ∃ e : Ix (Fin D.R.k ⊕ Fin (G.s + 1)) (Fin D.R.t) (G.s + 2) ⊕ Unit ≃ Fin (D.R.N (G.s + 1 + 1)),
-    GlobalTheory.SymBridge.IsOrd (Sum.elim GlobalTheory.SymBridge.zPos fun _ => D.R.N D.R.m - 1) e ∧
-      ∀ r a, G.FM.β r a = (ofSplit G.q).pr (fr (G.s + 1 + 1) hm r (e a))
 
 theorem exists_xOrd (R : Ranks) (j : ℕ) :
     ∃ e : XIx (Fin R.k) (Fin R.t) j ≃ Fin (R.N j), GlobalTheory.SymBridge.IsOrd GlobalTheory.SymBridge.xPos e := by
@@ -127,12 +112,6 @@ def baseFr (P : BadPr I a) (i : ℕ) (hi : i ≤ B.R.m) (β : Ch₀ i) :
     Matrix (Fin ((I.rec7 l Z).sp.X i).rank) (Fin (B.R.N i)) (I.rec7 l Z).host.E := fun r b =>
   Formalism.L2.Col.frsF I.sel (I.tup a) (A.p0 i β).1.1 P (Pi.single b 1) (finCongr (rankN (I.rec7 l Z) i hi) r)
 
-def BaseMoved : Prop := ∀ i, i ≤ B.R.m → ∀ β β',
-  (A.p0 i β).1.1.deco = (A.p0 i β').1.1.deco ∧ (i + 1 ≠ B.R.m → (A.p0 i β).1.1 = (A.p0 i β').1.1)
-
-theorem BaseCommon.moved (h : BaseCommon A) : BaseMoved A :=
-  fun i hi β β' => ⟨congrArg _ (h i hi β β').1, fun _ => (h i hi β β').1⟩
-
 variable {c : Comm (I.rec7 l Z)} {v : VCom c} {Bs : GlobalTheory.Fam.Base c} {PP : Formalism.L2.DIV.Pl (I.rec7 l Z).host.E} {G : QGeo v Bs PP}
   {χ : ℕ → (AE (I.rec7 l Z))ˣ →* Circle}
 
@@ -143,17 +122,11 @@ structure ReadsAt (P : BadPr I a) (E : QExt G χ) (hψ : Continuous G.ψk) (sg :
   rep : ∀ j d (h : j + d = G.s) (hj : j < B.R.m) β, GlobalTheory.TwBridge.IsGL (X := B.fields) (R := B.R) (k := G.k) (G.q.pr.comp (incA (I.rec7 l Z)))
     ((I.idx a).h j ((A.b0 j β).get hj) P) (E.rep j d h (π j β))
 
-variable (G) in
 
+variable (G) in
 def ownVec (P : BadPr I a) (e : XIx (Fin B.R.k) (Fin B.R.t) (G.s + 1) ≃ Fin (B.R.N (G.s + 1))) (β : Ch₀ (G.s + 1)) :
     XIx (Fin B.R.k) (Fin B.R.t) (G.s + 1) → G.k := fun r => (ofSplit G.q).pr
   ((Formalism.L2.Col.frsF I.sel (I.tup a) (A.p0 (G.s + 1) β).1.1 P).symm (Formalism.L2.Col.repY (A.p0 (G.s + 1) β).1.2) (e r))
-
-structure ReadsOrb (P : BadPr I a) (E : QExt G χ) (hψ : Continuous G.ψk) (sg : ℂ) (π : ∀ j, Ch₀ j → E.Ch j) : Prop
-    extends ReadsAt A P E hψ sg π where
-  orb : ∀ β (e : XIx (Fin B.R.k) (Fin B.R.t) (G.s + 1) ≃ Fin (B.R.N (G.s + 1))), GlobalTheory.SymBridge.IsOrd GlobalTheory.SymBridge.xPos e →
-    SameOrb ((G.T E.δ E.tame E.η).lev (G.s + 1) 0 rfl).J (box _ (G.ϖ ^ E.M)) (E.cos (π (G.s + 1) β))
-      (Submodule.Quotient.mk (ownVec A G P e β))
 
 structure MovedAt (P : BadPr I a) (E : QExt G χ) (hψ : Continuous G.ψk) (sg : ℂ) (π : ∀ j, Ch₀ j → E.Ch j) : Prop
     extends ReadsAt A P E hψ sg π where

@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemisimpleOfInjective
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStdB
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverThm
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverPoly
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAlg
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAct
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffMonicPolySum
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ComplexHeckeEigenvectorDescendsToCoefficientFiel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitExEveryDatum
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevelStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SphericalHeckeScalarOnTypeSpacesAllPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OrthKerEqRangeAdjoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemisimpleOfInjective
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStdB
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverThm
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverPoly
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAlg
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAct
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffMonicPolySum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ComplexHeckeEigenvectorDescendsToCoefficientFiel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitExEveryDatum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SphericalHeckeScalarOnTypeSpacesAllPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OrthKerEqRangeAdjoint
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 NumberField IsDedekindDomain Polynomial GlobalTheory.EtaJoin GlobalTheory.CoefDuty
 
 noncomputable section
@@ -129,7 +134,7 @@ theorem tC_exists (D : D7) (M : MtFam D) (B : NLocBase D M) (hstd : HeckeStdTw B
         map_add' := fun y y' => by
           have := hadd 1 (Mw.real y) (Mw.real y')
           rw [one_smul, one_smul] at this
-          simp only [map_add]
+          simp only [map_add (f := _)]
           exact this
         map_smul' := fun c y => by
           have := hadd c (Mw.real y) 0

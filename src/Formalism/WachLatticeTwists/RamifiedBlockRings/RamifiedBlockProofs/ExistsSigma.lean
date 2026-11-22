@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.LemmaFiveThreeAnyResidueField
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.AbsIrrOfSpan
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.LemmaFiveThreeAnyResidueField
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.AbsIrrOfSpan
+
+@[expose] public section
 
 open Finset Classical
 
@@ -38,7 +42,8 @@ theorem blockPoly_bc (x : X) :
       (eB x * r g₀ x * eB x + s x).map (algebraMap O O') := by
     rw [h1, h3, hs]
     ext i j
-    simp [Matrix.mul_apply, Matrix.add_apply, map_sum, map_mul, map_add]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mul_apply, Matrix.add_apply, map_sum, map_mul, map_add (f := _)]
   rw [h2, h1, blockPoly_map_lemma, blockPoly_map_lemma]
 
 theorem exists_sigma (hj : Function.Injective (algebraMap O O')) (hX : DistinctEigenvalueCornerPerturbation O T r π t g₀ eB s)
@@ -170,7 +175,8 @@ theorem bcR'_mem (hD : RingDef O T r π χ₁ ε g₀ eB e₁ s D)
     fun g => hmem _ (hc g), ?_⟩
   funext y'
   ext i j
-  simp [Finset.sum_apply, Matrix.sum_apply, map_sum, hr, hr', hσ1, hκ, bcR, bcM]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Finset.sum_apply, Matrix.sum_apply, map_sum, hr, hr', hσ1, hκ, bcR, bcM]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [Algebra.smul_def, Algebra.smul_def, map_mul, hκ, hκ, ← IsScalarTower.algebraMap_apply O O' (FractionRing O')]
 

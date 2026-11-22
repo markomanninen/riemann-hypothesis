@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.HasIwasawaArch
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.HasIwasawaArch
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,8 +142,9 @@ theorem exists_arch (hc : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E 
         cT_blkMat _ (starRingEnd ℂ) _ _, Matrix.mul_smul, Matrix.smul_mul, blkMat_mul, blkMat_mul]
       rw [Matrix.mul_smul, Matrix.smul_mul] at h2
       rw [← blkMat_one finSumFinEquiv, ← h2]
-      exact (congrArg (fun X => Matrix.submatrix X finSumFinEquiv.symm finSumFinEquiv.symm) (Matrix.fromBlocks_smul s _ 0 0 _)).trans
-        (by rw [smul_zero]; rfl)
+      let A : Matrix (Fin n) (Fin n) ℂ := b.1ᴴ * (((r : ℂ) • Mᵀ) * θ) * b.1
+      exact (congrArg (fun X => Matrix.submatrix X finSumFinEquiv.symm finSumFinEquiv.symm) (Matrix.fromBlocks_smul s A 0 0 A)).trans
+        (by simp only [smul_zero]; rfl)
     · have := inj.1 (show cT _ (matHom _ σ _ g).1 * JR _ _ * (matHom _ σ _ g).1 = JR _ _ from g.2)
       rwa [Matrix.map_mul, Matrix.map_mul, Frames.map_cT_sigR hc, e2] at this
 

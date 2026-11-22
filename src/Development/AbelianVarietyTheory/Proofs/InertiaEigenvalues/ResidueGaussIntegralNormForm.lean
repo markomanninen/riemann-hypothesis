@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStableGauss
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyMeasAndReps
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedStandardAddCharConductorProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStableGauss
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyMeasAndReps
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedStandardAddCharConductorProperties
+
+@[expose] public section
+
 open GlobalTheory.JR GlobalTheory.JR.WeilQuad Matrix MeasureTheory Filter Topology
 open scoped Pointwise
 
@@ -175,7 +180,7 @@ theorem residue_gauss_integral : ∀ (F E : Type) [NontriviallyNormedField F] [N
   set f : A.K → ℂ := fun t => A.psiK ψ (a * t) with hfdef
   have hfadd : ∀ x y, f (x + y) = f x * f y := by
     intro x y
-    simp only [hfdef, Et.psiK, mul_add, map_add, AddChar.map_add_eq_mul]
+    simp only [hfdef, Et.psiK, mul_add, map_add (f := _), AddChar.map_add_eq_mul]
   have hfc : Continuous f := by
     have htr : Continuous (fun t : A.K => Algebra.trace F A.K t) :=
       IsModuleTopology.continuous_of_linearMap (Algebra.trace F A.K)

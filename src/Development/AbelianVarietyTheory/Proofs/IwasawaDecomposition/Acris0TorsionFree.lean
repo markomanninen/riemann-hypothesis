@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.AdicMaps
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.AdicMaps
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -63,15 +67,6 @@ theorem torsionFree (ha : ∀ s : R, a * s = 0 → s = 0) (x : AdicCompletion (I
   obtain ⟨t, ht⟩ := (dvd_iff a _ _).1 h1
   exact ⟨t, sub_eq_zero.1 (ha _ (by linear_combination ht))⟩
 
-theorem basic (p : ℕ) (R : Type) [CommRing R] (hp : ∀ s : R, (p : R) * s = 0 → s = 0) :
-    IsAdicComplete (Ideal.span {(p : AdicCompletion (Ideal.span {(p : R)}) R)}) (AdicCompletion (Ideal.span {(p : R)}) R) ∧
-    (∀ x : AdicCompletion (Ideal.span {(p : R)}) R, (p : AdicCompletion (Ideal.span {(p : R)}) R) * x = 0 → x = 0) ∧
-    (∀ (x : AdicCompletion (Ideal.span {(p : R)}) R) (r : ℕ), ∃ (s : R) (z : AdicCompletion (Ideal.span {(p : R)}) R),
-      x = algebraMap R (AdicCompletion (Ideal.span {(p : R)}) R) s + (p : AdicCompletion (Ideal.span {(p : R)}) R) ^ r * z) ∧
-    ∀ (s : R) (r : ℕ), (p : AdicCompletion (Ideal.span {(p : R)}) R) ^ r ∣ algebraMap R (AdicCompletion (Ideal.span {(p : R)}) R) s ↔ (p : R) ^ r ∣ s := by
-  rw [← map_natCast (algebraMap R (AdicCompletion (Ideal.span {(p : R)}) R)) p]
-  exact ⟨complete _, torsionFree _ hp, dense _, dvd_iff _⟩
-
 theorem basic_of_equiv_pt (p : ℕ) (R A : Type) [CommRing R] [CommRing A] [Algebra R A]
     (hp : ∀ s : R, (p : R) * s = 0 → s = 0)
     (e : A ≃+* AdicCompletion (Ideal.span {(p : R)}) R)
@@ -92,7 +87,7 @@ theorem basic_of_equiv_pt (p : ℕ) (R A : Type) [CommRing R] [CommRing A] [Alge
     rw [← hpe, ← map_mul, hx, map_zero]
   · obtain ⟨s, z, hz⟩ := dense (p : R) (e x) r
     refine ⟨s, e.symm z, e.injective ?_⟩
-    rw [map_add, map_mul, map_pow, he, hpe, RingEquiv.apply_symm_apply]
+    rw [map_add (f := _), map_mul, map_pow, he, hpe, RingEquiv.apply_symm_apply]
     exact hz
   · rw [← dvd_iff (p : R) s r, ← hpe, ← he, ← map_pow, map_dvd_iff]
 

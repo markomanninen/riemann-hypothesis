@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLMat
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLMat
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical Matrix
@@ -27,7 +31,8 @@ theorem formV_phi {N N' : ℕ} (A : ℝ) (M : Matrix (Fin N') (Fin N') D.host.E)
   rw [formV_apply', formV_apply']
   congr 1
   refine Finset.sum_congr rfl fun τ _ => ?_
-  simp only [phi_apply, Matrix.conjTranspose_apply, Formalism.L2.Ker.Cd.PairingIndexBounds.Eq.embT_star', Complex.star_def, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [phi_apply, Matrix.conjTranspose_apply, Formalism.L2.Ker.Cd.PairingIndexBounds.Eq.embT_star', Complex.star_def, map_sum,
     map_mul, Complex.conj_conj, Finset.sum_mul, Finset.mul_sum]
   refine (sum_three_comm _).trans ?_
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
@@ -50,17 +55,17 @@ variable {D cc δ N N'}
 
 theorem qq_add (x y : TaylorLogMetric.VC D N N') :
     qq D cc δ N N' (x + y) = qq D cc δ N N' x + qq D cc δ N N' y + cp D cc δ N N' x y := by
-  simp only [qq, cp, map_add, LinearMap.add_apply, Complex.add_re]
+  simp only [qq, cp, map_add (f := _), LinearMap.add_apply, Complex.add_re]
   ring
 
 theorem bet_add_left (x x' y : TaylorLogMetric.VC D N N') :
     bet D cc δ N N' (x + x') y = bet D cc δ N N' x y + bet D cc δ N N' x' y := by
-  simp only [bet, cp, map_add, LinearMap.add_apply, Complex.add_re, Complex.add_im]
+  simp only [bet, cp, map_add (f := _), LinearMap.add_apply, Complex.add_re, Complex.add_im]
   ring
 
 theorem bet_add_right (x y y' : TaylorLogMetric.VC D N N') :
     bet D cc δ N N' x (y + y') = bet D cc δ N N' x y + bet D cc δ N N' x y' := by
-  simp only [bet, cp, map_add, LinearMap.add_apply, Complex.add_re, Complex.add_im]
+  simp only [bet, cp, map_add (f := _), LinearMap.add_apply, Complex.add_re, Complex.add_im]
   ring
 
 theorem bet_phi (e : Matrix (Fin N') (Fin N') D.host.E) (x y : TaylorLogMetric.VC D N N') :

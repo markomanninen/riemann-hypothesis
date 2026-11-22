@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecompositionGroupEquivLocalGaloisGroup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecompositionGroupEquivLocalGaloisGroup
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.X
 
 private noncomputable def subquotEquiv {R R' X : Type*} [CommRing R] [CommRing R'] [AddCommGroup X]
@@ -13,7 +18,7 @@ private noncomputable def subquotEquiv {R R' X : Type*} [CommRing R] [CommRing R
 private theorem ef_eq_one (v : HeightOneSpectrum (𝓞 ℚ)) : v.asIdeal.ramificationIdx ℤ * v.asIdeal.inertiaDeg ℤ = 1 := by
   classical
   haveI := v.isPrime
-  have h1 := Ideal.ramificationIdx_pos v.asIdeal ℤ
+  have h1 := Ideal.ramificationIdx_pos (R := ℤ) v.asIdeal
   have h2 := Ideal.inertiaDeg_pos v.asIdeal ℤ
   have hsum := Ideal.sum_ramification_inertia_eq_finrank (v.asIdeal.under ℤ) (NumberField.RingOfIntegers ℚ)
   rw [NumberField.RingOfIntegers.rank, Module.finrank_self] at hsum
@@ -36,7 +41,7 @@ private theorem card_H0dual {R k Γ Γ' M : Type} [Field R] [Field k] [Finite k]
       map_add' := fun f f' => by ext; simp }
   have hT : ∀ f m, T f m = Algebra.trace R k (f m) := fun _ _ => rfl
   have hinj : Function.Injective T := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro f hf
     ext m
     refine (traceForm_nondegenerate R k).1 (f m) fun a => ?_
@@ -73,7 +78,8 @@ private theorem card_twDual {R Γ M : Type} [CommRing R] [Group Γ] [AddCommGrou
     rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply] at e
     exact e.symm
   · intro hy g
-    refine TDual.ext fun m => ?_
+    apply LinearMap.ext
+    intro m
     simp only [MonoidHom.comp_apply, MonoidHom.id_apply, twDual_apply]
     have := hy g (ρ g⁻¹ m)
     rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply] at this

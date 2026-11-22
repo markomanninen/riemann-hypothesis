@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqOfNearOfCharpolyEq
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqOfNearOfCharpolyEq
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AutomorphicL2Unitary GlobalTheory.Orb Matrix
 open scoped ContDiff ComplexConjugate
@@ -72,7 +76,7 @@ theorem contDiff_conjMx (Q P : Matrix (Fin n) (Fin n) ℂ) : ContDiff ℝ ∞ (c
   refine contDiff_pi.2 fun i => contDiff_pi.2 fun j => ?_
   simp only [conjMx, Matrix.mul_apply, Matrix.of_apply]
   exact ContDiff.sum fun x _ => ContDiff.mul (ContDiff.sum fun y _ =>
-    contDiff_const.mul ((contDiff_apply ℝ ℂ x).comp (contDiff_apply ℝ (Fin n → ℂ) y))) contDiff_const
+    contDiff_const.mul ((contDiff_apply ℝ (fun _ => ℂ) x).comp (contDiff_apply ℝ (fun _ => (Fin n → ℂ)) y))) contDiff_const
 
 end MainStatements.WeightKernel.PWeight
 

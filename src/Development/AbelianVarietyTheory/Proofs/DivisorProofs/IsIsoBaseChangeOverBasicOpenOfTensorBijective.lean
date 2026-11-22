@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -104,7 +109,6 @@ theorem exists_smooth_basicOpen_iso : ∀ (R R' : Type) [CommRing R] [CommRing R
       Algebra.TensorProduct.includeLeftRingHom φ H (Submonoid.powers (f * g))
     have Q := (Q1.flip.paste_vert Q2).flip
     convert Q using 1
-    · ext c; simp [← IsScalarTower.algebraMap_apply]
     · ext r; simp [RingHom.algebraMap_toAlgebra, Φ, ← IsScalarTower.algebraMap_apply]
   have hs : (spMap (algebraMap C' A') ≫ j) ≫ s = spMap (algebraMap R' A') := by
     rw [Category.assoc, hj, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← IsScalarTower.algebraMap_eq]

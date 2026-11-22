@@ -1,7 +1,11 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactStandardMaximal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeightContinuousPos
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinSeriesConvergent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinHeckeFunctional
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactStandardMaximal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeightContinuousPos
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinSeriesConvergent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinHeckeFunctional
+
+@[expose] public section
 
 noncomputable section
 

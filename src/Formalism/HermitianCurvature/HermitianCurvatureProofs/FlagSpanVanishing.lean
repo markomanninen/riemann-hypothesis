@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearChangeOfVariablesBis
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearChangeOfVariablesBis
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 open scoped ComplexConjugate
@@ -156,7 +160,7 @@ theorem standard_flag_property : C2.SFlag := by
     have hzc : ∀ i : Fin (2 * r + k + 1), r ≤ i.val → (s *ᵥ z) i = z i := by
       intro i hi
       have h := flagSpan_vanish z (Fin.last r) _ (hfl (Fin.last r)) i (by simpa using hi)
-      have hf : fvec k r z (Fin.last r) = z := by rw [fvec, dif_neg (by simp)]
+      have hf : fvec k r z (Fin.last r) = z := by rw [fvec, dite_eq_right (by simp)]
       rw [hf, Pi.sub_apply, sub_eq_zero] at h; exact h
     have hA : ∀ p j : Fin (2 * r + k + 1), r + k < p.val → r ≤ j.val → j.val ≤ r + k → s p j = 0 := by
       intro p j hp hj1 hj2

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadAATopOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadAATopOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
+
+@[expose] public section
 
 open MeasureTheory Matrix
 
@@ -19,21 +23,25 @@ theorem pOp_locO (l : Fin r) {f₁ f₂ : (Fin r → ℂ) → E} (h : ∀ c ∈ 
     (hc : c ∈ OmX r) : pOp l f₁ c = pOp l f₂ c := by
   have hev : f₁ =ᶠ[nhds c] f₂ := by
     filter_upwards [(Formalism.FourierDecayAlt.P.Qx3.isOpen_OmX r).mem_nhds hc] with c' hc' using h c' hc'
-  simp only [pOp, wirt, if_pos hc, hev.fderiv_eq]
+  simp only [pOp, wirt, ite_eq_left hc, hev.fderiv_eq]
 
 theorem vAB_loc (Y : ℂ) : ∀ (i : ℕ) (f₁ f₂ : (Fin r → ℂ) → E), (∀ c ∈ OmX r, f₁ c = f₂ c) →
-    ∀ c ∈ OmX r, (Q.vAB r Y i).1 f₁ c = (Q.vAB r Y i).1 f₂ c ∧ (Q.vAB r Y i).2 f₁ c = (Q.vAB r Y i).2 f₂ c
-  | 0, f₁, f₂, h, c, hc => ⟨h c hc, rfl⟩
-  | i + 1, f₁, f₂, h, c, hc => by
-    have ih := vAB_loc Y i f₁ f₂ h
+    ∀ c ∈ OmX r, (Q.vAB r Y i).1 f₁ c = (Q.vAB r Y i).1 f₂ c ∧ (Q.vAB r Y i).2 f₁ c = (Q.vAB r Y i).2 f₂ c := by
+  intro i f₁ f₂ h
+  induction i with
+  | zero =>
+    intro c hc
+    exact ⟨h c hc, rfl⟩
+  | succ i ih =>
+    intro c hc
     by_cases hi : i < r
-    · simp only [Q.vAB, dif_pos hi]
+    · simp only [Q.vAB, dite_eq_left hi]
       refine ⟨?_, ?_⟩
       · simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, cOp]
         rw [(ih c hc).1, (ih c hc).2, pOp_locO _ (fun c' hc' => (ih c' hc').1) hc]
       · simp only [ciOp]
         rw [(ih c hc).1]
-    · simp only [Q.vAB, dif_neg hi]
+    · simp only [Q.vAB, dite_eq_right hi]
       exact ih c hc
 
 end loc

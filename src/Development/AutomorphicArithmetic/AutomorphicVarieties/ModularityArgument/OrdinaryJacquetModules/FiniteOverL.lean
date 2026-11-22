@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.SpehInfLenOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.AuTeichEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.SpehInfLenOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.AuTeichEx
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne
 open GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC GlobalTheory.PRep UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
@@ -8,8 +12,6 @@ open UpperTheory.V.HV (Coef)
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 set_option synthInstance.maxHeartbeats 200000
 open UpperTheory.V.Z UpperTheory.V.Z.Ord
-
-open private au_isTeich au_open from Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.AuTeichEx
 
 private theorem finite_over_l (L : Type) [Field L] [NumberField L] (l : ℕ) [hl : Fact l.Prime] :
     {w : Plc L | ((l : ℕ) : 𝓞 L) ∈ w.asIdeal}.Finite := by
@@ -52,11 +54,36 @@ private theorem autPO (hP : Af.HypothesesH) (l : ℕ) [Fact l.Prime] (L Ω : Typ
     AutY (hset Q τ₀) ι (PO Q τ₀ ι) := by
   intro lam _ d ξ hξ F hF hK hI
   obtain ⟨e, he⟩ := hξ
-  obtain ⟨t, ht⟩ := au_isTeich c r
-  have hop : IsOpen (τ₀.ker : Set (KT n (wt s))) :=
-    au_open _ (ι.injective.comp Subtype.val_injective) τ₀ (hτ t ht).1
+  have hTeich : ∃ t, r.IsTeich t := by
+    obtain ⟨hc, hfin, hlm, -⟩ := UpperTheory.V.abelian₂.dvr_finite l c.O
+    have : CharP (ResidueField c.O) l := by
+      refine (CharP.charP_iff_prime_eq_zero (Fact.out : l.Prime)).2 ?_
+      rw [← map_natCast (residue c.O), residue_eq_zero_iff]
+      exact hlm
+    have : CharP (c.O ⧸ maximalIdeal c.O) l := inferInstanceAs (CharP (ResidueField c.O) l)
+    have : PerfectRing (ResidueField c.O) l := inferInstance
+    let lift := Perfection.lift l (ResidueField c.O) (c.O ⧸ maximalIdeal c.O)
+    let j := lift (RingHom.id (ResidueField c.O))
+    let τ := (Perfection.teichmuller l (maximalIdeal c.O)).comp j.toMonoidHom
+    have hres (x : ResidueField c.O) : residue c.O (τ x) = x :=
+      (Perfection.mk_teichmuller (j x)).trans
+        (RingHom.congr_fun (lift.symm_apply_apply (RingHom.id (ResidueField c.O))) x)
+    refine ⟨fun i => (Units.map τ).comp (r.chib i), fun i g => ⟨hres _, ?_⟩⟩
+    rw [MonoidHom.comp_apply, ← map_pow, ← Nat.card_units, pow_card_eq_one', map_one]
+  obtain ⟨t, ht⟩ := hTeich
+  have hop : IsOpen (τ₀.ker : Set (KT n (wt s))) := by
+    let f := ι.toRingHom.comp (algebraMap c.O (Qbar l))
+    have hf : Function.Injective f := ι.injective.comp Subtype.val_injective
+    have hmap : Function.Injective (Matrix.GeneralLinearGroup.map (n := Fin m) f) := by
+      intro A B hAB
+      apply Units.ext
+      apply Matrix.ext
+      intro i j
+      exact hf (congrArg (fun M : GL (Fin m) ℂ => (M : Matrix (Fin m) (Fin m) ℂ) i j) hAB)
+    rw [← MonoidHom.ker_comp_of_injective τ₀ _ hmap]
+    exact (hτ t ht).1
   have h1 := decompU l L Ω s n hn V Q c m τ₀ ι hop lam d e ξ he F hF hK hI
-  refine SetLike.le_def.1 (iSup_le fun σ => ?_) h1
+  refine IsConcreteLE.le_iff.1 (iSup_le fun σ => ?_) h1
   by_cases h0 : YOf Q ι τ₀ e ξ σ.1 = ⊥
   · rw [h0]; exact bot_le
   · obtain ⟨Y, hY, -, hcomp, hLG⟩ := partU hP l L Ω s n hn V Q c r ι m τ₀ hτ lam d e ξ he σ.1 σ.2 h0

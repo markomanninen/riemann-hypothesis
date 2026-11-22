@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -37,7 +41,7 @@ theorem exists_continuous_modulus :
     rw [Measure.map_map (measurable_const_add g) (hat t).measurable]
     have e : (fun x => g + x) ∘ a t = a t ∘ fun x => a t⁻¹ g + x := by
       funext x
-      simp only [Function.comp_apply, map_add, hright]
+      simp only [Function.comp_apply, map_add (f := _), hright]
     rw [e, ← Measure.map_map (hat t).measurable (measurable_const_add _),
       map_add_left_eq_self]
   have hscale : ∀ t, ∃ c : ℝ≥0, μ.map (a t) = c • μ := by

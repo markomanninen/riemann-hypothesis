@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+
+@[expose] public section
 
 noncomputable section
 

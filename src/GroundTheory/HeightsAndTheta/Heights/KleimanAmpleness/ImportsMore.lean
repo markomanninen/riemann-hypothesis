@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherAlt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.MemChartSecOverOfMem
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisExtra
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerTer
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreLast
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PBundlePair
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherAlt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.MemChartSecOverOfMem
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisExtra
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerTer
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreLast
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PBundlePair
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

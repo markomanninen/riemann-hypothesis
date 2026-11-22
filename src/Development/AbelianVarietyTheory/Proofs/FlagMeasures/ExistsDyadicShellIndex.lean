@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ShellSumElementaryInequalities
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ShellSumElementaryInequalities
+
+@[expose] public section
 
 open Finset
 
@@ -57,7 +61,7 @@ theorem sum_over_dyadic_shells :
 
   have hwF : ∀ γ, w γ ≤ ∏ v, F (K γ v) := by
     intro γ
-    refine (hw γ).2.trans (Finset.prod_le_prod (fun v _ => (Real.exp_pos _).le) (fun v _ => ?_))
+    refine (hw γ).2.trans (Finset.prod_le_prod₀ (fun v _ => (Real.exp_pos _).le) (fun v _ => ?_))
     have hmin0 : 0 ≤ min (d γ v ^ 2) (d γ v / c) := le_min (sq_nonneg _) (div_nonneg (hd γ v) hc.le)
     simp only [F, K]
     split_ifs with hk

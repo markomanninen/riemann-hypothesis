@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 open scoped ENNReal
 open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.AutomorphicForm
@@ -8,10 +13,9 @@ namespace GlobalTheory.CompanionTheory.LatCount
 
 theorem countable_subgroupClosure {G : Type*} [Group G] (s : Set G) (hs : s.Countable) :
     ((Subgroup.closure s : Subgroup G) : Set G).Countable := by
+  open scoped Pointwise in
   have ht : (s ∪ s⁻¹).Countable := hs.union (by simpa using hs.image (·⁻¹))
   haveI : Countable ↥(s ∪ s⁻¹) := ht.to_subtype
-  haveI : Countable (FreeMonoid ↥(s ∪ s⁻¹)) :=
-    inferInstanceAs (Countable (List ↥(s ∪ s⁻¹)))
   have h : ((Subgroup.closure s : Subgroup G) : Set G)
       = Set.range (FreeMonoid.lift ((↑) : ↥(s ∪ s⁻¹) → G)) := by
     have h1 : ((Subgroup.closure s : Subgroup G) : Set G)

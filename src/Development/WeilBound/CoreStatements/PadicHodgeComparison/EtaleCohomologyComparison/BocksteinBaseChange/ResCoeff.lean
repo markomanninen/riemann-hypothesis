@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ExistsDpPow
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapAcrFromBase
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FrobeniusElement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ExistsDpPow
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapAcrFromBase
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FrobeniusElement
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -183,12 +187,12 @@ def pullS (u : B.Fn.Map F F') (j : ℕ) : Sys.Hom (HS l F' ρ j) (HS l F ρ j) (
   f m := (pullMor l ρ u m).pull j
   comm m x := red_pull l ρ u m j x
 
-variable (k) in
 
+variable (k) in
 abbrev K₀ : Type := FractionRing (WittVector l k)
 
-variable (k) in
 
+variable (k) in
 def frob₀ : K₀ l k →ₛₗ[(WittVector.frobenius : WittVector l k →+* WittVector l k)] K₀ l k where
   toFun := WittVector.FractionRing.frobeniusRingHom l k
   map_add' := map_add _
@@ -197,16 +201,16 @@ def frob₀ : K₀ l k →ₛₗ[(WittVector.frobenius : WittVector l k →+* Wi
     congr 1
     exact IsFractionRing.ringEquivOfRingEquiv_algebraMap _ a
 
-variable (F) in
 
+variable (F) in
 def D (j : ℕ) : Type 1 := K₀ l k ⊗[WittVector l k] (HS l F ρ j).lim
 
 instance (j : ℕ) : AddCommGroup (D l F ρ j) := inferInstanceAs (AddCommGroup (K₀ l k ⊗[WittVector l k] (HS l F ρ j).lim))
 
 instance (j : ℕ) : Module (K₀ l k) (D l F ρ j) := inferInstanceAs (Module (K₀ l k) (K₀ l k ⊗[WittVector l k] (HS l F ρ j).lim))
 
-variable (F) in
 
+variable (F) in
 def phiD (j : ℕ) : D l F ρ j →+ D l F ρ j := (TensorProduct.map (frob₀ l k) (phiS l F ρ j).lim).toAddMonoidHom
 
 def pullD (u : B.Fn.Map F F') (j : ℕ) : D l F' ρ j →ₗ[K₀ l k] D l F ρ j := ((pullS l ρ u j).lim).baseChange (K₀ l k)

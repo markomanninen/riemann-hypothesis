@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
-import GroundTheory.AutomorphicForms.AnisotropicHeight
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsFactor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
+public import GroundTheory.AutomorphicForms.AnisotropicHeight
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsFactor
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,8 @@ def detPoly (h : Fin n → K[X]) (γ : Matrix (Fin n) (Fin n) K) (M : Matrix (Fi
 theorem Ph_map (h : Fin n → K[X]) (γ : Matrix (Fin n) (Fin n) K) (f : R →ₐ[K] R') (z : Fin n → R) :
     (Ph h γ z).map f = Ph h γ (f ∘ z) := by
   ext a b
-  simp [Ph, Matrix.sum_apply, map_sum, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Ph, Matrix.sum_apply, map_sum, Matrix.map_apply]
 
 theorem Qm_map (h : Fin n → K[X]) (γ : Matrix (Fin n) (Fin n) K) (M : Matrix (Fin n) (Fin r) K)
     (N : Matrix (Fin r) (Fin n) K) (f : R →ₐ[K] R') (z : Fin n → R) :
@@ -205,7 +210,8 @@ theorem det_Qm_ne_zero (hs : ∀ j, (Pi.single j 1 : Fin n → K) = v ᵥ* aeval
     (he : IsPrim γ e) (hNM : N * M = 1) (hMN : M * N = e) (x : Fin n → K) (hx : x ᵥ* e ≠ 0) :
     (Qm h γ M N x).det ≠ 0 := by
   have hB : Ph h γ x = aeval γ (∑ j, Polynomial.C (x j) * h j) := by
-    simp [Ph, map_sum, Algebra.smul_def, Polynomial.aeval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Ph, map_sum, Algebra.smul_def, Polynomial.aeval_C]
   have hv : v ᵥ* Ph h γ x = x := by
     have := vecMul_Ph (R := K) hs x
     simpa using this

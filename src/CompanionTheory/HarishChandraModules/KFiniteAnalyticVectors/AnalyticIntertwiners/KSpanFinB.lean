@@ -1,4 +1,8 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.SecondDerivativeHolds
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.SecondDerivativeHolds
+
+@[expose] public section
 
 open Matrix
 open scoped InnerProductSpace
@@ -49,7 +53,7 @@ theorem uAdm_of (hK : KFSm) : UAdm := by
   by_cases h0 : ∀ v ∈ A, v = 0
   · have : Submodule.span ℂ A = ⊥ := Submodule.span_eq_bot.2 h0
     rw [this]; infer_instance
-  push_neg at h0
+  push Not at h0
   obtain ⟨v₀, hv₀A, hv₀0⟩ := h0
 
   have key : ∀ v ∈ A, v ≠ 0 → ∃ (hf : FiniteDimensional ℂ (Formalism.REAL.kSpan ε (smE ε σ) v))

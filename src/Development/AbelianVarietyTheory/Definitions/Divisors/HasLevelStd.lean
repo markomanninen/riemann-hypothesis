@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.DefiningCoordinates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.DefiningCoordinates
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameDualUnipotentGroupActsUnitriangularOnto
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameDualUnipotentGroupActsUnitriangularOnto
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver
 open scoped Classical
@@ -40,8 +44,8 @@ end GlobalTheory.LocOver.InnerDual
 
 namespace GlobalTheory.LocOver.InnerDual
 
-open GlobalTheory.LocOver.UnipOnto in
 
+open GlobalTheory.LocOver.UnipOnto in
 theorem exists_inner_lattice_vector_anisotropic' : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] {E : Type} [CommRing E]
     [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : Model F E), M.OK → ∀ {V : Type}
     [AddCommGroup V] [Module E V] (H : HermSp M V) (r : ℕ) (Fr : FrameD H r)
@@ -66,7 +70,7 @@ theorem exists_inner_lattice_vector_anisotropic' : ∀ {F : Type} [Field F] [Val
           H.h (Fr.f (Fin.last r)) (y : V) = (c : E)}
        add_mem' := by
          rintro a b ⟨y, hy, hya⟩ ⟨y', hy', hyb⟩
-         refine ⟨y + y', by rw [map_add]; exact L.add_mem hy hy', ?_⟩
+         refine ⟨y + y', by rw [map_add (f := _)]; exact L.add_mem hy hy', ?_⟩
          show H.h _ ((y : V) + (y' : V)) = (a : E) + (b : E)
          rw [h_add_right, hya, hyb]
        zero_mem' := by

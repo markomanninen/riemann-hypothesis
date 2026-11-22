@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryCoordinateAlgebraDense
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AutFormDefiniteUnitaryEqSumPolynomialMulAutForm
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsConjPolynomialDefiniteUnitaryRational
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DefiniteUnitaryRealApproxAndFiniteInfiniteSplit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryCoordinateAlgebraDense
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AutFormDefiniteUnitaryEqSumPolynomialMulAutForm
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsConjPolynomialDefiniteUnitaryRational
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DefiniteUnitaryRealApproxAndFiniteInfiniteSplit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -24,8 +29,8 @@ def gen (t : (E →+* ℂ) × Fin n × Fin n) : infU E n → ℂ := fun x => (cE
 
 def mono (l : List ((E →+* ℂ) × Fin n × Fin n)) : infU E n → ℂ := (l.map gen).prod
 
-variable (E n) in
 
+variable (E n) in
 def polys (N : ℕ) : Submodule ℂ (infU E n → ℂ) :=
   Submodule.span ℂ (mono '' {l | l.length ≤ N})
 
@@ -35,8 +40,8 @@ theorem polys_fd (N : ℕ) : FiniteDimensional ℂ (polys E n N) :=
 theorem polys_mono {N N' : ℕ} (h : N ≤ N') : polys E n N ≤ polys E n N' :=
   Submodule.span_mono (Set.image_mono fun _ hl => le_trans hl h)
 
-variable (E n) in
 
+variable (E n) in
 abbrev gens : Set (infU E n → ℂ) := {f : infU E n → ℂ | ∃ (τ : E →+* ℂ) (i j : Fin n), f = fun x => (cEmb τ x.1).val i j}
 
 theorem exists_mono_of_mem_closure {f : infU E n → ℂ} (hf : f ∈ Submonoid.closure (gens E n)) :
@@ -107,7 +112,7 @@ theorem exists_conj_polys (σ : ℂ ≃+* ℂ) {N : ℕ} {p : infU E n → ℂ} 
     obtain ⟨f', hf', hf⟩ := hf
     obtain ⟨g', hg', hg⟩ := hg
     exact ⟨f' + g', add_mem hf' hg', fun γ hγ k hk => by
-      rw [Pi.add_apply, Pi.add_apply, map_add, hf γ hγ k hk, hg γ hγ k hk]⟩
+      rw [Pi.add_apply, Pi.add_apply, map_add (f := _), hf γ hγ k hk, hg γ hγ k hk]⟩
   | smul c f _ hf =>
     obtain ⟨f', hf', hf⟩ := hf
     exact ⟨σ c • f', Submodule.smul_mem _ _ hf', fun γ hγ k hk => by
@@ -115,7 +120,7 @@ theorem exists_conj_polys (σ : ℂ ≃+* ℂ) {N : ℕ} {p : infU E n → ℂ} 
 
 theorem conj_span_finite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (φ : UA E n → ℂ),
     IsAutFormU φ → ∃ M : Submodule ℂ (UA E n → ℂ), FiniteDimensional ℂ M ∧ ∀ (σ : ℂ ≃+* ℂ) (φ' : UA E n → ℂ),
-      IsAutFormU φ' → (∀ g ∈ finU E n, φ' g = σ (φ g)) → φ' ∈ M := by
+      IsAutFormU φ' → (∀ g ∈ finU (E := E) (n := n), φ' g = σ (φ g)) → φ' ∈ M := by
   intro E _ _ _ n φ hφ
   classical
   obtain ⟨hdense, hdk, -, a, b, -, -, hab, -⟩ := GlobalTheory.UnitarySplit.dense_and_split E n
@@ -126,7 +131,7 @@ theorem conj_span_finite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   have hpN : ∀ i, p i ∈ polys E n N := fun i => polys_mono (Finset.le_sup (Finset.mem_univ i)) (hD i)
   set K := GlobalTheory.UnitaryDecomp.finStab φ with hK
   obtain ⟨S, hS⟩ := GlobalTheory.DefU.ClassFin.classSet_finite E n K hφ.level
-  set S' : Finset (UA E n) := S.image fun s => ((a s : finU E n) : UA E n) with hS'
+  set S' : Finset (UA E n) := S.image fun s => ((a s : finU (E := E) (n := n)) : UA E n) with hS'
   let M : Submodule ℂ (UA E n → ℂ) :=
     { carrier := {ψ | (∀ γ ∈ ratU E n, ∀ g, ψ (γ * g) = ψ g) ∧ (∀ k ∈ K, ∀ g, ψ (g * (k : UA E n)) = ψ g) ∧
         ∀ s ∈ S', (fun x : infU E n => ψ (s * x)) ∈ polys E n N}
@@ -143,7 +148,7 @@ theorem conj_span_finite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   have hred : ∀ g : UA E n, ∃ s ∈ S', ∃ y : infU E n, ∀ ψ ∈ M, ψ g = ψ (s * y) := by
     intro g
     obtain ⟨γ, hγ, s, hs, x, hx, k, hk, rfl⟩ := hS g
-    refine ⟨((a s : finU E n) : UA E n), by rw [hS']; exact Finset.mem_image_of_mem _ hs, ⟨(b s).1 * x, mul_mem (b s).2 hx⟩, fun ψ hψ => ?_⟩
+    refine ⟨((a s : finU (E := E) (n := n)) : UA E n), by rw [hS']; exact Finset.mem_image_of_mem _ hs, ⟨(b s).1 * x, mul_mem (b s).2 hx⟩, fun ψ hψ => ?_⟩
     rw [hψ.2.1 k hk, mul_assoc, hψ.1 γ hγ]
     conv_lhs => rw [hab s]
     simp only [mul_assoc]
@@ -160,10 +165,10 @@ theorem conj_span_finite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     exact congrFun (congrArg Subtype.val (congrFun h ⟨s, hs⟩)) y
   refine ⟨M, Module.Finite.of_injective f hinj, fun σ φ' hφ' hagree => ?_⟩
 
-  have hrat : ∀ s ∈ finU E n, ∀ k : infU E n, ∀ γ ∈ ratU E n, cInf k.1 = cInf γ →
+  have hrat : ∀ s ∈ finU (E := E) (n := n), ∀ k : infU E n, ∀ γ ∈ ratU E n, cInf k.1 = cInf γ →
       φ' (s * (k : UA E n)) = σ (φ (s * (k : UA E n))) := by
     intro s hs k γ hγ hk
-    have hy : γ⁻¹ * (s * (k : UA E n)) ∈ finU E n := by
+    have hy : γ⁻¹ * (s * (k : UA E n)) ∈ finU (E := E) (n := n) := by
       have hs1 : cInf s = 1 := hs
       show cInf (γ⁻¹ * (s * (k : UA E n))) = 1
       rw [map_mul, map_mul, map_inv, hs1, hk, one_mul, inv_mul_cancel]
@@ -174,11 +179,11 @@ theorem conj_span_finite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     have hkφ : ∀ x, φ (x * (k : UA E n)) = φ x := fun x => congrFun hk x
     refine congrFun (Continuous.ext_on hdense (hφ'.cont.comp (continuous_mul_const _)) hφ'.cont ?_)
     rintro _ ⟨γ, hγ, x, hx, rfl⟩
-    have hxk : x * (k : UA E n) ∈ finU E n := mul_mem hx k.2
+    have hxk : x * (k : UA E n) ∈ finU (E := E) (n := n) := mul_mem hx k.2
     simp only [Function.comp_apply]
     rw [mul_assoc, hφ'.left γ hγ, hφ'.left γ hγ, hagree _ hxk, hagree _ hx, hkφ]
   · obtain ⟨s₀, hs₀, rfl⟩ := Finset.mem_image.1 hs
-    have hsf : ((a s₀ : finU E n) : UA E n) ∈ finU E n := (a s₀).2
+    have hsf : ((a s₀ : finU (E := E) (n := n)) : UA E n) ∈ finU (E := E) (n := n) := (a s₀).2
     choose p' hp'm hp' using fun i => exists_conj_polys σ (hpN i)
     have hq : (∑ i, σ (e i (a s₀)) • p' i) ∈ polys E n N :=
       Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (hp'm i)
@@ -187,7 +192,8 @@ theorem conj_span_finite : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
       (hcont _ (polys_le_adjoin N hq)) ?_
     rintro k ⟨γ, hγ, hk⟩
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-    rw [hrat _ hsf k γ hγ hk, hdec k, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hrat _ hsf k γ hγ hk, hdec k, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, hp' i γ hγ k hk, mul_comm]
 

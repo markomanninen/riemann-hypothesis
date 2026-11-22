@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartClosed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartClosed
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -131,7 +135,7 @@ theorem UpperTheory.V.Alg.cont_section :
     have h : ∃ e, e ∈ W.part j ∧ Ideal.Quotient.mk (maximalIdeal R' ^ (max N0 N1)) (p e) =
         Ideal.Quotient.mk _ (x g) := ⟨e, he, by rw [← hpe]; rfl⟩
     simp only [base]
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     refine ⟨h.choose_spec.1, ?_⟩
     rw [← Ideal.Quotient.eq]
     exact h.choose_spec.2.symm
@@ -173,5 +177,5 @@ theorem UpperTheory.V.Alg.cont_section :
     rw [h4]
     exact Ideal.pow_le_pow_right (le_max_left _ _) hv
   · show p (base _ + w g) = x g
-    rw [map_add, hwp]
+    rw [map_add (f := _), hwp]
     ring

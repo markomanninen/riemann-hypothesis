@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SummableSeriesBounds
 
@@ -24,7 +28,7 @@ def bdd (C : Type) [NontriviallyNormedField C] [IsUltrametricDist C] :
   add_mem' := by
     rintro Φ Ψ ⟨a, ha⟩ ⟨b, hb⟩
     refine ⟨a + b, fun n => ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (norm_add_le _ _).trans (add_le_add (ha n) (hb n))
   zero_mem' := ⟨0, fun n => by simp⟩
   neg_mem' := by

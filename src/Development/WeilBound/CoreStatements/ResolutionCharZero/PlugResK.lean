@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.ResolutionCharZero.PlugResW
-import Development.WeilBound.CoreStatements.ResolutionCharZero.PlugPrincW
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.PlugResW
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.PlugPrincW
+
+@[expose] public section
 
 namespace PositivityTheory.ResPlug.FromRes
 

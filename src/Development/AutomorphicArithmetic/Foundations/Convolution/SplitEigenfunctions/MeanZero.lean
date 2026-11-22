@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.DiagInvVal
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.AbLower
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ContinuousPrN
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.DiagInvVal
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.AbLower
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ContinuousPrN
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -11,7 +15,7 @@ open scoped Classical Pointwise
 
 namespace UpperTheory.ConvolutionTheory.RankTwoDescent.MZ
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 private theorem cont_gl : Continuous (gl : G1 E → GL (Fin 2) (A E)) := Matrix.SpecialLinearGroup.continuous_toGL
 
@@ -39,7 +43,9 @@ private theorem curve (X : Lie E 2) : ∃ c : ℝ → GL (Fin 2) (Cinf E), c 0 =
       (Y : GroundTheory.Automorphic.AutomorphicForm.ArchMatrix E 2) 0 := by
     simpa using hasDerivAt_exp_smul_const (𝕂 := ℝ) (Y : GroundTheory.Automorphic.AutomorphicForm.ArchMatrix E 2) 0
   have h4 := (Cm.archEq E 2).symm.hasFDerivAt.comp_hasDerivAt (0 : ℝ) h3
-  have e : (Cm.archEq E 2).symm Y = X := (Cm.archEq E 2).symm_apply_apply X
+  have e : (Cm.archEq E 2).symm Y = X := by
+    change (Cm.archEq E 2).symm (Cm.archEq E 2 X) = X
+    exact (Cm.archEq E 2).symm_apply_apply X
   refine ⟨fun t => (Cm.grpEq E 2).symm (h.expG (t • Y)), ?_, fun s t => ?_, ?_, h4.congr_deriv e⟩
   · simp only [zero_smul, h.expG_zero, map_one]
   · have e2 : h.expG ((s + t) • Y) = h.expG (s • Y) * h.expG (t • Y) := by
@@ -110,7 +116,7 @@ private def Ker (N : MeasE E) (P : CuspSub E 2) (hI : ∀ φ ∈ P.V, ∀ y, Int
     rw [integral_const_mul, ha.2, mul_zero]⟩
 
 private theorem ker_stable (hD : DecE) (hR : RedE) (N : MeasE E) (hfin : N.μ N.D < ⊤) (P : CuspSub E 2) (hI) :
-    IsStable (Ker N P hI) := by
+    _root_.GlobalTheory.CuspRep.IsStable (Ker N P hI) := by
   intro o φ hφ
   refine ⟨P.stable o φ hφ.1, fun y => ?_⟩
   cases o with

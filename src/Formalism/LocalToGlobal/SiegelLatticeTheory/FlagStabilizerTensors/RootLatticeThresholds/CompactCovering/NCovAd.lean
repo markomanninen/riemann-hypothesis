@@ -1,17 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.IntAdCpctOpen
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.IntAdCpctOpen
+
+@[expose] public section
 
 noncomputable section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Metric
 
 namespace Formalism.L2.SG.Pf.RescaleCore.NCov
-
-def AdCocpt : Prop :=
-  ∀ (F : Type) [Field F] [NumberField F],
-    ∃ C : Set (AF F), IsCompact C ∧ ∀ a : AF F, ∃ x : F, a - algebraMap F (AF F) x ∈ C
 
 namespace AdCocptW
 
@@ -53,7 +53,8 @@ theorem NCovAd_inf_approx : ∃ R : ℝ, ∀ x : Ainf F, ∃ β : 𝓞 F,
   let γ : 𝓞 F := ∑ i, c i • NumberField.RingOfIntegers.basis F i
   have hγ : NumberField.mixedEmbedding F (algebraMap (𝓞 F) F γ) = w := by
     rw [← hc]
-    simp only [γ, map_sum, map_zsmul, hb, NumberField.mixedEmbedding.latticeBasis_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [γ, map_sum, map_zsmul, hb, NumberField.mixedEmbedding.latticeBasis_apply,
       NumberField.integralBasis_apply]
   refine ⟨-γ, fun v => ?_⟩
   have hneg : ((-γ : 𝓞 F) : F) = -(algebraMap (𝓞 F) F γ) := by
@@ -64,7 +65,7 @@ theorem NCovAd_inf_approx : ∃ R : ℝ, ∀ x : Ainf F, ∃ β : 𝓞 F,
   set z := x - algebraMap F (Ainf F) ((-γ : 𝓞 F) : F) with hzdef
   have hz : NumberField.InfiniteAdeleRing.ringEquiv_mixedSpace F z ∈ ZSpan.fundamentalDomain b := by
     have e : NumberField.InfiniteAdeleRing.ringEquiv_mixedSpace F z = w + NumberField.InfiniteAdeleRing.ringEquiv_mixedSpace F x := by
-      rw [hzdef, hneg, map_neg, sub_neg_eq_add, map_add, ← hγ,
+      rw [hzdef, hneg, map_neg, sub_neg_eq_add, map_add (f := _), ← hγ,
         NumberField.InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp, add_comm]
     rw [e]
     first

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.KummerH0Surjection
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.KummerH0Surjection
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4 LateralTheory.E.H2CurveOrder.LeafKumSeqPf LateralTheory.E.H2CurveOrder.KummerH0Surjection
@@ -9,9 +13,9 @@ theorem surj_of_mem {R : Type} [CommRing R] {F G : Shv R} (φ : F ⟶ G) [Mono �
     (s : Sec G U) (hs : Presheaf.imageSieve φ.hom s ∈ Scheme.etaleTopology U) :
     ∃ t : Sec F U, Sec.map φ t = s := by
   have hF := (isSheaf_iff_isSheaf_of_type _ _).1
-    ((Presheaf.isSheaf_iff_isSheaf_forget Scheme.etaleTopology F.obj (forget _)).1 F.cond)
+    ((Presheaf.isSheaf_iff_isSheaf_forget Scheme.etaleTopology F.obj (forget _)).1 F.property)
   have hG := (isSheaf_iff_isSheaf_of_type _ _).1
-    ((Presheaf.isSheaf_iff_isSheaf_forget Scheme.etaleTopology G.obj (forget _)).1 G.cond)
+    ((Presheaf.isSheaf_iff_isSheaf_forget Scheme.etaleTopology G.obj (forget _)).1 G.property)
   let x : Presieve.FamilyOfElements (F.obj ⋙ forget _) (Presheaf.imageSieve φ.hom s).arrows :=
     fun V f hf => Presheaf.localPreimage φ.hom s f hf
   have hx : x.Compatible := by

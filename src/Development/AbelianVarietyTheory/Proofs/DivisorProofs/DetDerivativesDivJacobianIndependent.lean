@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsKSIffKsRel
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvRFrMapOfIsReduced
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimeSpectrumDualNumberEq
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsKSIffKsRel
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvRFrMapOfIsReduced
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimeSpectrumDualNumberEq
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.CechPic GlobalTheory.Vanishing GlobalTheory.CompHS GlobalTheory.TangentOrigin
 open GlobalTheory.FlagMod GlobalTheory.TopForm
 open GlobalTheory.FlagTan (dimFlag psiSet TIx HIx VIx IsTanFrame IsDef IsVert KSIso kap)
@@ -27,7 +32,7 @@ theorem snd_eq_zero {F K : Type} [Field F] [NumberField F] [Field K] (χ : F →
   letI : Module F K := ((TrivSqZeroExt.fstHom K K K).toRingHom.comp χ).toModule
   let δ : Derivation ℤ F K := Derivation.mk'
     { toFun := fun x => (χ x).snd
-      map_add' := fun x y => by rw [map_add, TrivSqZeroExt.snd_add]
+      map_add' := fun x y => by rw [map_add (f := _), TrivSqZeroExt.snd_add]
       map_smul' := fun n x => by
         rw [map_zsmul, TrivSqZeroExt.snd_smul]
         rfl }
@@ -59,7 +64,7 @@ theorem exists_forms_map {k A K : Type} [CommRing k] [CommRing A] [Field K] {D :
     { toFun := δ
       map_add' := fun f g => by
         funext b
-        simp only [δ, map_add, TrivSqZeroExt.snd_add, Pi.add_apply]
+        simp only [δ, map_add (f := _), TrivSqZeroExt.snd_add, Pi.add_apply]
       map_smul' := fun a f => by
         rw [Algebra.smul_def, hmul, hδc, smul_zero, add_zero, algebraMap_smul]
         rfl } hmul

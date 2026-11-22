@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsIsUnitField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsIsUnitField
+
+@[expose] public section
+
 open GlobalTheory.KeyKa
 
 namespace GlobalTheory.KeyKa.KoszulTors
@@ -29,7 +34,8 @@ private lemma map_kosD_inl_inl {S : Type} [CommRing S] (f : R →+* S)
     {d' : ℕ} (e : ∀ j, Matrix (Fin d') (Fin (N j)) S) (p q : (I : Finset (Fin g)) × Fin (N I.card)) :
     f (_root_.GlobalTheory.KeyKa.kosD m ev (.inl p) (.inl q)) =
       _root_.GlobalTheory.KeyKa.kosD (fun i j j' => (m i j j').map f) e (.inl p) (.inl q) := by
-  simp [_root_.GlobalTheory.KeyKa.kosD, map_sum, apply_ite]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [_root_.GlobalTheory.KeyKa.kosD, map_sum, apply_ite]
 
 theorem _root_.GlobalTheory.KeyKa.KoszulTors.koszul_tors : ∀ (O : Type) [CommRing O] [IsDomain O] [IsLocalRing O]
     (g d : ℕ) (N : ℕ → ℕ) (m : Fin g → ∀ j j', Matrix (Fin (N j)) (Fin (N j')) O)
@@ -128,7 +134,8 @@ theorem _root_.GlobalTheory.KeyKa.KoszulTors.koszul_tors : ∀ (O : Type) [CommR
     have h := congrFun hv (.inr a)
     rw [Pi.zero_apply, hmv, Finset.sum_eq_single (∅ : Finset (Fin g))] at h
     · rw [← h]
-      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [hx]
       rfl
@@ -225,7 +232,8 @@ theorem _root_.GlobalTheory.KeyKa.KoszulTors.koszul_tors : ∀ (O : Type) [CommR
         rw [← hent, h0, map_zero, zero_mul, zero_mul]
   · rw [hmv, Finset.sum_eq_single (∅ : Finset (Fin g))]
     · rw [← hu0 a, ← hs]
-      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
       refine Finset.sum_congr rfl fun l _ => ?_
       show IsLocalRing.residue O (if (∅ : Finset (Fin g)) = ∅ then ev₀ 0 a l else 0) * wf ∅ l = _
       first

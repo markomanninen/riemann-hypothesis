@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.InducedCellSemisimplificationStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.JacquetOfInducedFiltration
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.InducedCellSemisimplificationStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.JacquetOfInducedFiltration
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.GeoLink
 

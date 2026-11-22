@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.LocalFields.ConductorMatch
-import GroundTheory.PAdicHodge.FieldOfNormsCyclBase
-import GroundTheory.PAdicHodge.FieldOfNormsRam
-import GroundTheory.PAdicHodge.SenTateCharUnits
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.ConductorMatch
+public import GroundTheory.PAdicHodge.FieldOfNormsCyclBase
+public import GroundTheory.PAdicHodge.FieldOfNormsRam
+public import GroundTheory.PAdicHodge.SenTateCharUnits
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -90,14 +95,20 @@ theorem map_mem_charTower (hη : Continuous η) {k : ℕ} (σ : Gal(PadicAlgCl p
 
 section CFT
 
+local instance : ValuativeExtension ℚ_[p] (PadicAlgCl p) := by
+  refine ⟨fun {a b} ↦ ?_⟩
+  rw [vle_iff_norm_le, PadicAlgCl.norm_extends, PadicAlgCl.norm_extends,
+    Valuation.Compatible.vle_iff_le (v := Padic.mulValuation),
+    GroundTheory.LocalField.Padic.mulValuation_le_iff_norm_le]
+
 variable (K) [FiniteDimensional ℚ_[p] K]
 
 def artinGal (n : ℕ) : Subgroup Gal(PadicAlgCl p/K) :=
   ((unitFiltrationUnits K n).map (localArtinMap K (PadicAlgCl p))).comap
     (AlgEquiv.restrictNormalHom (maximalAbelianExtension K (PadicAlgCl p)))
 
-variable (η) in
 
+variable (η) in
 def artinImage (n : ℕ) : Subgroup ℤ_[p]ˣ := (artinGal K n).map η
 
 variable {K}
@@ -109,8 +120,8 @@ variable (η) in
 theorem artinImage_antitone : Antitone (artinImage K η) := fun _ _ h =>
   Subgroup.map_mono (artinGal_antitone h)
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem restrictAb_restrictNormalHom (E : IntermediateField K (PadicAlgCl p)) [Normal K E]
     (h : E ≤ maximalAbelianExtension K (PadicAlgCl p)) (ρ : Gal(PadicAlgCl p/K)) :
     restrictAb E h (AlgEquiv.restrictNormalHom (maximalAbelianExtension K (PadicAlgCl p)) ρ) =
@@ -118,14 +129,14 @@ theorem restrictAb_restrictNormalHom (E : IntermediateField K (PadicAlgCl p)) [N
   ext x
   rw [restrictAb_apply, AlgEquiv.restrictNormalHom_apply, AlgEquiv.restrictNormalHom_apply]
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem eq_one_of_mem_fixingSubgroup_maximalAbelianExtension (hη : Continuous η)
     {ρ : Gal(PadicAlgCl p/K)}
     (hρ : ρ ∈ (maximalAbelianExtension K (PadicAlgCl p)).fixingSubgroup) : η ρ = 1 := by
   rw [fixingSubgroup_maximalAbelianExtension] at hρ
   have hker : (commutator Gal(PadicAlgCl p/K)).topologicalClosure ≤ η.ker := by
-    refine Subgroup.topologicalClosure_minimal _ (Abelianization.commutator_subset_ker η) ?_
+    refine Subgroup.topologicalClosure_minimal _ (Group.Abelianization.commutator_le_ker η) ?_
     rw [MonoidHom.coe_ker]
     exact isClosed_singleton.preimage hη
   exact hker hρ

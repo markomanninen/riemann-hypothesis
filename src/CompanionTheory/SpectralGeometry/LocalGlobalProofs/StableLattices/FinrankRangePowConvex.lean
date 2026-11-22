@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.CommNil
 
@@ -81,7 +85,7 @@ theorem range_le_ker_of_commute (a b : Module.End ℂ V) (hab : Commute b a) (ha
     refine ⟨u, hu, ?_⟩
     have hba := LinearMap.congr_fun hab.eq u
     rw [Module.End.mul_apply, Module.End.mul_apply] at hba
-    rw [map_add, LinearMap.mem_ker.1 (hb hy), zero_add, hba]
+    rw [map_add (f := _), LinearMap.mem_ker.1 (hb hy), zero_add, hba]
   have key : ∀ k : ℕ, ∀ v ∈ LinearMap.range (a ^ x), ∃ u ∈ LinearMap.range (a ^ x),
       b v = (a ^ k) (b u) := by
     intro k

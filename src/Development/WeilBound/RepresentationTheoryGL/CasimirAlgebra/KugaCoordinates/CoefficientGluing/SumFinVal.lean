@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.KTypeData
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.KTypeData
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem cas_shift (S : Finset P) (s : ℂ) (f : TV n ℂ P) :
 
 def colAnti {C : Type} (col : P → C) : Submodule ℂ (TV n ℂ P) where
   carrier := {f | ∀ p p', col p = col p' → p ≠ p' → pm (Equiv.swap p p') f = -f}
-  add_mem' := fun {f g} hf hg p p' h1 h2 => by rw [map_add, hf p p' h1 h2, hg p p' h1 h2, neg_add]
+  add_mem' := fun {f g} hf hg p p' h1 h2 => by rw [map_add (f := _), hf p p' h1 h2, hg p p' h1 h2, neg_add]
   zero_mem' := fun p p' _ _ => by simp
   smul_mem' := fun c f hf p p' h1 h2 => by rw [map_smul, hf p p' h1 h2, smul_neg]
 
@@ -71,7 +75,8 @@ theorem tmap_actT {ι Γ : Type} (lab : P → ι) (κ : ι → Γ → Matrix (Fi
     (Jh : Matrix (Fin d) (P → Fin n) ℂ) (B : Matrix (Fin d) (Fin d) ℂ)
     (h : Jh * Matrix.of (fun I J : P → Fin n => ∏ p, κ (lab p) γ (I p) (J p)) = B * Jh) (f : TV n M P) :
     tmap Jh (actT lab κ ρ γ f) = TensorProduct.map (ρ γ) (Matrix.toLin' B) (tmap Jh f) := by
-  rw [tmap_apply, tmap_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [tmap_apply, tmap_apply, map_sum]
   simp only [actT_apply, TensorProduct.sum_tmul, TensorProduct.smul_tmul, TensorProduct.map_tmul, Matrix.toLin'_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun J _ => ?_
@@ -88,7 +93,8 @@ theorem tmap_ne (Jh : Matrix (Fin d) (P → Fin n) ℂ) (f : TV n M P) (lam : M 
   intro h0
   apply h
   have h1 := congrArg (fun x => TensorProduct.lid ℂ (Fin d → ℂ) (lam.rTensor _ x)) h0
-  simp only [tmap_apply, map_sum, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, map_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tmap_apply, map_sum, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, map_zero] at h1
   funext m
   have h2 := congrFun h1 m
   simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at h2

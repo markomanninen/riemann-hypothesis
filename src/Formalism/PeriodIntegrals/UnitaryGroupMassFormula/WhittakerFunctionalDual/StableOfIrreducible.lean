@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WhitFunctDual
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WhitFunctDual
+
+@[expose] public section
 
 namespace PI.WhitFunctDualWork
 

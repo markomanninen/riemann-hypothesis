@@ -1,9 +1,13 @@
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.IntegralSubstVector
-import Formalism.TorsionNormIteration.InverseIntegralClasses.SigmaNormLeOne
-import Formalism.TorsionNormIteration.InverseIntegralClasses.MemSpanOfNormLe
-import Formalism.TorsionNormIteration.InverseIntegralClasses.NormSigmaLeOne
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.CoeffV
-import Lemmata.MultivariateIntegrals.IntegralMv
+module
+
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.IntegralSubstVector
+public import Formalism.TorsionNormIteration.InverseIntegralClasses.SigmaNormLeOne
+public import Formalism.TorsionNormIteration.InverseIntegralClasses.MemSpanOfNormLe
+public import Formalism.TorsionNormIteration.InverseIntegralClasses.NormSigmaLeOne
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.CoeffV
+public import Lemmata.MultivariateIntegrals.IntegralMv
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,24 +36,6 @@ lemma norm_finsum_le {α : Type v} {g : α → K} {C : ℝ} (hC : 0 ≤ C) (hg :
     exact IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hC (fun i _ => hg i)
   · rw [finsum_of_infinite_support hfin]
     simpa using hC
-
-lemma bd_add {τ : Type w} {C : ℝ} {A B : MvPowerSeries τ K} (hA : Bd C A) (hB : Bd C B) :
-    Bd C (A + B) := fun d => by rw [map_add]; exact norm_add_le_of (hA d) (hB d)
-
-lemma bd_mul_left {τ : Type w} {C : ℝ} (hC : 0 ≤ C) {A B : MvPowerSeries τ K}
-    (hA : IntegralMv A) (hB : Bd C B) : Bd C (A * B) := by
-  classical
-  intro d
-  rw [MvPowerSeries.coeff_mul]
-  refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hC fun x _ => ?_
-  rw [norm_mul]
-  calc ‖MvPowerSeries.coeff x.1 A‖ * ‖MvPowerSeries.coeff x.2 B‖ ≤ 1 * C :=
-        mul_le_mul (hA _) (hB _) (norm_nonneg _) zero_le_one
-    _ = C := one_mul C
-
-lemma bd_mul_right {τ : Type w} {C : ℝ} (hC : 0 ≤ C) {A B : MvPowerSeries τ K}
-    (hA : Bd C A) (hB : IntegralMv B) : Bd C (A * B) := by
-  rw [mul_comm]; exact bd_mul_left hC hB hA
 
 lemma bd_prod_sub {τ : Type w} {ι : Type v} {C : ℝ} (hC : 0 ≤ C) (X Y : ι → MvPowerSeries τ K)
     (s : Finset ι) (hX : ∀ i ∈ s, IntegralMv (X i)) (hY : ∀ i ∈ s, IntegralMv (Y i))
@@ -128,7 +114,8 @@ theorem main (hC : Formalism.FG.CoeffBoundV.{u, v, v}) : Formalism.FG.FunEqSubst
       MvPowerSeries.subst α (f j) - (p : K)⁻¹ •
         ∑ k, M j k • MvPowerSeries.subst αq (MvPowerSeries.map σ (f k)) := by
     intro j
-    rw [← MvPowerSeries.substAlgHom_apply hαS, map_sub, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPowerSeries.substAlgHom_apply hαS, map_sub, map_smul, map_sum]
     simp only [map_smul, MvPowerSeries.substAlgHom_apply, subst_expand q hq hαS, hαq]
 
   have hbr : ∀ k, Bd ‖(p : K)‖ (MvPowerSeries.subst αq (MvPowerSeries.map σ (f k)) -
@@ -185,7 +172,8 @@ theorem main (hC : Formalism.FG.CoeffBoundV.{u, v, v}) : Formalism.FG.FunEqSubst
     simp only [smul_sub, Finset.sum_sub_distrib]; abel
   rw [e]
   intro d
-  rw [map_add, MvPowerSeries.coeff_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), MvPowerSeries.coeff_smul, map_sum]
   refine norm_add_le_of (hgI d) ?_
   rw [norm_mul, norm_inv]
   have hsum : ‖∑ k, MvPowerSeries.coeff d (M j k • (MvPowerSeries.subst αq

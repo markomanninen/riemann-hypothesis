@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSplitK
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSplitK
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -19,7 +24,7 @@ theorem pi_map_update_add {V : Type} [AddCommGroup V] [MeasurableSpace V] [Measu
     (Measure.pi fun _ : Fin n => ν).map (fun x => Function.update x a (x a + T x)) =
       Measure.pi fun _ : Fin n => ν := by
   have hf : Measurable (fun x : Fin n → V => Function.update x a (x a + T x)) := by
-    refine measurable_pi_lambda _ fun j => ?_
+    refine Measurable.of_eval fun j => ?_
     by_cases h : j = a
     · subst h
       simp only [Function.update_self]
@@ -53,7 +58,7 @@ theorem coordW_map_shearK : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
   have hmul : ∀ c : Ainf F ⊗[F] E, Measurable (fun y : Ainf F ⊗[F] E => c * y) := fun c =>
     (continuous_const.mul continuous_id).measurable
   have hT : Measurable (fun (x : Fin n → Fin M → Ainf F ⊗[F] E) (i : Fin M) => ∑ c, s c * x c i) := by
-    refine measurable_pi_lambda _ fun i => ?_
+    refine Measurable.of_eval fun i => ?_
     refine Finset.measurable_sum _ fun c _ => ?_
     exact (hmul (s c)).comp ((measurable_pi_apply i).comp (measurable_pi_apply c))
   have hTa : ∀ (x : Fin n → Fin M → Ainf F ⊗[F] E) (y : Fin M → Ainf F ⊗[F] E),

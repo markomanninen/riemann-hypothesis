@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.L2.Host
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
@@ -70,7 +74,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.indMap :
         change (F (z + z')).1.1 = (F z).1.1 + (F z').1.1
         refine uniq (j (z + z')) _ _ (hF1 _) (hF0 _) ?_ ?_
         · intro p c hc
-          simp only [Pi.add_apply, hF1 z p c hc, hF1 z' p c hc, map_add]
+          simp only [Pi.add_apply, hF1 z p c hc, hF1 z' p c hc, map_add (f := _)]
         · intro g hg
           simp only [Pi.add_apply, hF0 z g hg, hF0 z' g hg, add_zero]
       map_smul' := by

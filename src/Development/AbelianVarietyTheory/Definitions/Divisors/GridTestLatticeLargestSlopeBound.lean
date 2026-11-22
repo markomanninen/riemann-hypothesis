@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.IsCyclotomicExtensionFourSlopeModelField
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.IsCyclotomicExtensionFourSlopeModelField
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ section Delta
 variable {Γ A K M : Type} [Group Γ] [Group A] [Field K] [AddCommGroup M] [Module K M]
   (ι : Γ →* A) (U : Subgroup A) (ρ : Γ →* Module.End K M)
 
-open Classical in
 
+open Classical in
 def deltaForm (x : A) (v : M) (g : A) : M := ∑ᶠ γ : Γ, if x⁻¹ * ((ι γ)⁻¹ * g) ∈ U then ρ γ v else 0
 
 theorem deltaForm_left (x : A) (v : M) (δ : Γ) (g : A) :
@@ -69,8 +73,8 @@ def LaP (τ : D.what₂.Tau) : DomWeight (Xp G).rank where
   w a := (La D sc.cGap τ).w (Fin.cast (rank_Xp G) a)
   anti _ _ h := (La D sc.cGap τ).anti h
 
-variable (D) in
 
+variable (D) in
 abbrev emb : D.what₂.Tau → D.host.E →+* D.what₂.LL := labLL D
 
 abbrev WtSp : Type := VV D.what₂.LL (LaP G)
@@ -137,8 +141,8 @@ theorem psi_left (rp : ClassReps G) {n : ℕ} (e : Fin n ≃ TestIx G × VVIdx (
 theorem psi_right (rp : ClassReps G) {n : ℕ} (e : Fin n ≃ TestIx G × VVIdx (LaP G)) (a : Fin n) (g : GLf G) {k : GLf G}
     (hk : k ∈ G.Kplus) : psi rp e a (g * k) = psi rp e a g := deltaForm_right _ _ _ _ _ _ hk
 
-open Classical in
 
+open Classical in
 theorem ClassReps.gridClassReps_delta_apply_rep (rp : ClassReps G) (hN : rp.Neat) (c c' : G.ClPlus) (v : WtSp G) :
     rp.delta c v (rp.x c') = if c' = c then v else 0 := by
   split_ifs with h
@@ -150,28 +154,7 @@ theorem ClassReps.gridClassReps_delta_apply_rep (rp : ClassReps G) (hN : rp.Neat
       exact mul_mem (mul_mem (rp.x c').2 (inv_mem hu.1)) (inv_mem (rp.x c).2)
     rw [← rp.classRepresentative_mk c, ← rp.classRepresentative_mk c']
     symm
-    exact (DoubleCoset.eq _ _ _ _).2 ⟨⟨_, hγ⟩, ⟨γ.1, γ.2, rfl⟩, ⟨u, hu.1⟩, hu, Subtype.ext he⟩
-
-theorem testFunction_value_at_rep (rp : ClassReps G) (hN : rp.Neat) {n : ℕ} (e : Fin n ≃ TestIx G × VVIdx (LaP G)) (a : Fin n) (c : G.ClPlus) :
-    psi rp e a (rp.x c) = valAt (LaP G) e (datumOf e a, c) (Pi.single a 1) := by
-  classical
-  rw [psi, rp.gridClassReps_delta_apply_rep hN]
-  apply (bVV D.what₂.LL (LaP G)).equivFun.injective
-  funext i
-  have e1 : (bVV D.what₂.LL (LaP G)).equivFun (valAt (LaP G) e (datumOf e a, c) (Pi.single a 1)) i =
-      (Pi.single a 1 : Fin n → D.what₂.LL) (e.symm ((datumOf e a, c), i)) := by
-    exact congrFun ((bVV D.what₂.LL (LaP G)).equivFun.apply_symm_apply _) i
-  have e2 : e.symm ((datumOf e a, c), i) = a ↔ c = (e a).1.2 ∧ i = (e a).2 := by
-    rw [Equiv.symm_apply_eq]
-    simp [Prod.ext_iff, datumOf]
-  rw [e1, Pi.single_apply]
-  simp only [e2]
-  split_ifs with h1 h2 h2
-  · simp [h2.2]
-  · have : ¬ (e a).2 = i := fun h => h2 ⟨h1, h.symm⟩
-    simp [Finsupp.single_apply, this]
-  · exact absurd h2.1 h1
-  · simp
+    exact (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨⟨_, hγ⟩, ⟨γ.1, γ.2, rfl⟩, ⟨u, hu.1⟩, hu, Subtype.ext he⟩
 
 variable (G)
 
@@ -184,8 +167,62 @@ theorem isSelfDualE_latOf (g : UA D.sp.cm (Xp G).gram) :
     IsSelfDualE (D.sp.cm.sig : D.host.E →+* D.host.E) (Xp G).gram (latOf G g) := by
   obtain ⟨h1, h2⟩ := (isV_Xp G).sd
   have hf := Module.Finite.iff_fg.2 h1.fg
-  exact ⟨Formalism.UG.P.global_lattice_isLattice_holds _ _ _ _ hf h1.span_eq_top _,
-    GlobalTheory.PointLattice.globLat_selfDual D.sp.cm.sig _ _ h2 hf h1.span_eq_top g.1 g.2⟩
+  classical
+  have hspan : Submodule.span D.host.E ((G.node (.top 0)).lat : Set (Fin (Xp G).rank → D.host.E)) = ⊤ := by
+    let W := Submodule.span D.host.E ((G.node (.top 0)).lat : Set (Fin (Xp G).rank → D.host.E))
+    change W = ⊤
+    by_contra hW
+    let g : (Fin (Xp G).rank → D.host.E) →ₗ[D.host.E] Module.Dual D.host.E W :=
+      { toFun := fun x => { toFun := fun y => ∑ i, ∑ j, x i * (Xp G).gram i j * y.1 j
+                            map_add' := by intros; simp [mul_add, Finset.sum_add_distrib]
+                            map_smul' := by intros; simp [mul_comm, mul_left_comm, mul_assoc, Finset.mul_sum] }
+        map_add' := by intros; ext y; simp [add_mul, Finset.sum_add_distrib]
+        map_smul' := by intros; ext y; simp [mul_comm, mul_left_comm, mul_assoc, Finset.mul_sum] }
+    have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E (Fin (Xp G).rank → D.host.E) := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt hW
+    obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    let v : Fin (Xp G).rank → D.host.E := fun i => star (x i)
+    have hv0 : v ≠ 0 := by
+      intro hv
+      apply hx0
+      funext i
+      have hi := congrFun hv i
+      simpa [v] using congrArg star hi
+    have hline (r : D.host.E) : r • v ∈ (G.node (.top 0)).lat := by
+      apply (h2 _).2
+      intro y hy
+      have hz : (∑ i, ∑ j, x i * (Xp G).gram i j * y j) = 0 :=
+        congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+      have hzy : (∑ i, ∑ j, star (y i) * (Xp G).gram i j * v j) = 0 := by
+        have hg (i j : Fin (Xp G).rank) : star ((Xp G).gram i j) = (Xp G).gram j i := by
+          exact (Xp G).herm.eq _ _
+        have hs : (starRingEnd D.host.E) (∑ i, ∑ j, x i * (Xp G).gram i j * y j) = 0 := by rw [hz, map_zero]
+        simp only [map_sum, map_mul] at hs
+        change (∑ i, ∑ j, star (x i) * star ((Xp G).gram i j) * star (y j)) = 0 at hs
+        simp only [hg] at hs
+        rw [Finset.sum_comm] at hs
+        simpa [mul_comm, mul_left_comm, mul_assoc] using hs
+      refine ⟨0, ?_⟩
+      simp only [map_zero, Pi.smul_apply, smul_eq_mul]
+      calc
+        0 = r * (∑ i, ∑ j, star (y i) * (Xp G).gram i j * v j) := by rw [hzy, mul_zero]
+        _ = ∑ i, ∑ j, star (y i) * (Xp G).gram i j * (r * v j) := by simp [Finset.mul_sum, mul_comm, mul_left_comm, mul_assoc]
+    obtain ⟨i, hi⟩ : ∃ i, v i ≠ 0 := by
+      by_contra hn
+      apply hv0
+      funext i
+      simpa using not_exists.mp hn i
+    let coord := (LinearMap.proj i : (Fin (Xp G).rank → D.host.E) →ₗ[D.host.E] D.host.E).restrictScalars (𝓞 D.host.E)
+    have htop : (G.node (.top 0)).lat.map coord = ⊤ := by
+      rw [eq_top_iff]
+      intro a _
+      exact ⟨(a / v i) • v, hline _, div_mul_cancel₀ _ hi⟩
+    have : Module.Finite (𝓞 D.host.E) D.host.E := Module.finite_def.mpr (htop ▸ h1.fg.map coord)
+    exact RingOfIntegers.not_isField D.host.E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 D.host.E) D.host.E) (Field.toIsField D.host.E))
+  exact ⟨Formalism.UG.P.global_lattice_isLattice_holds _ _ _ _ hf hspan _,
+    GlobalTheory.PointLattice.globLat_selfDual D.sp.cm.sig _ _ h2 hf hspan g.1 g.2⟩
 
 theorem star_emb (τ : D.what₂.Tau) (x : D.host.E) :
     star (emb D τ x) = emb D τ ((D.sp.cm.sig : D.host.E →+* D.host.E) x) := by
@@ -223,11 +260,6 @@ theorem IsTestLat.gridTestLattice_largestSlope_bound (hS : SlopeE) {v₀ : Infin
   rw [h.2]
   exact (hS D.host.E D.what₂.LL v₀ hv _ (fun φ x => D.sp.cm.cmUnram.2.1 φ x) _ (emb D) star_emb _ (LaP G) R hR hLa
     _ (posDef_Xp G) (TestIx G) (fun c => rp.lat c.2) (fun c => isSelfDualE_latOf G _) n e X').2.2.1 h.1
-
-example : deltaForm (MonoidHom.id ℚˣ) ⊥ ((Algebra.lsmul ℚ ℚ ℚ).toMonoidHom.comp (Units.coeHom ℚ)) 1 (3 : ℚ) (-1) = -3 := by
-  have h := deltaForm_left (MonoidHom.id ℚˣ) ⊥ ((Algebra.lsmul ℚ ℚ ℚ).toMonoidHom.comp (Units.coeHom ℚ)) 1 (3 : ℚ) (-1) 1
-  rw [deltaForm_self _ _ _ _ _ (by simp)] at h
-  simpa using h
 
 end GlobalTheory.FunObj
 

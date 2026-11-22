@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidTorsionOfDataRigid
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidTorsionOfDataRigid
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -78,7 +82,7 @@ theorem end_eq_one_of_pow_eq_one_of_congr (Y : Type*) [AddCommGroup Y] [Module.F
         induction j with
         | zero => simp
         | succ j ihj =>
-          rw [pow_succ', Module.End.mul_apply, ihj, map_add, map_nsmul, hzz, hz, add_mul, one_mul,
+          rw [pow_succ', Module.End.mul_apply, ihj, map_add (f := _), map_nsmul, hzz, hz, add_mul, one_mul,
             add_smul]
           abel
       have h0 : (n * M) • z = 0 := by

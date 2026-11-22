@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanIntegralPullMulDegreeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernFormTopPowerPullbackSmallerDimEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPointClosureDimBasicProjArithAmbientStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointClosureDimLeAndResidueDegreeNeZeroIffStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoheightOneIffPointClosureDimProjArithStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDominantRestrictionPointClosuresStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumMultPullbackRationalSectionPushforwardStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanIntegralPullMulDegreeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernFormTopPowerPullbackSmallerDimEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPointClosureDimBasicProjArithAmbientStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointClosureDimLeAndResidueDegreeNeZeroIffStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoheightOneIffPointClosureDimProjArithStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDominantRestrictionPointClosuresStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumMultPullbackRationalSectionPushforwardStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -61,13 +66,44 @@ theorem main : ∀ (k : Type) [CommRing k] (X Y : Scheme.{0}) (p : X ⟶ Sp k) (
 
   obtain ⟨r, hr⟩ := exists_isRatSec (L.restr (cloι (π y))).isLB
   have hr1 := MultPull.isRatSec_pull_map g hη' hr
-  have ref1 := L.refines_pull_comp (cloι (π y)) rfl g hg1 hC
+  have ref1 : Refines (L.pull (g ≫ cloι (π y)) hC)
+      ((L.restr (cloι (π y))).pull g hg1) (fun c _ => c) 0 := by
+    refine { le := ?_, g := ?_, φ := ?_ }
+    · intro c z hz
+      exact Set.mem_iInter.2 fun _ => Set.mem_iInter.2 fun a => Set.mem_iInter.1 hz a
+    · intro W s z c c' hc hc'
+      have h₁ : (s ≫ g) z ∈ (L.B.pull (cloι (π y))).U c := Set.mem_iInter.2 fun a => Set.mem_iInter.1 hc a
+      have h₂ : (s ≫ g) z ∈ (L.B.pull (cloι (π y))).U c' := Set.mem_iInter.2 fun a => Set.mem_iInter.1 hc' a
+      have h₃ : s z ∈ ((L.B.pull (cloι (π y))).pull g).U (fun _ => c) := Set.mem_iInter.2 fun _ => h₁
+      have h₄ : s z ∈ ((L.B.pull (cloι (π y))).pull g).U (fun _ => c') := Set.mem_iInter.2 fun _ => h₂
+      have e₁ := gm_pull_g (L.B.pull (cloι (π y))) g s z (fun _ => c) (fun _ => c') h₃ h₄
+      have e₂ := gm_pull_g L.B (cloι (π y)) (s ≫ g) z c c' h₁ h₂
+      have e₃ := gm_pull_g L.B (g ≫ cloι (π y)) s z c c' hc hc'
+      rw [← Category.assoc] at e₃
+      exact e₃.trans (e₁.trans e₂).symm
+    · intro σ c z hz
+      refine ((L.φ σ).pull_φ (g ≫ cloι (π y)) hC c z).trans (Eq.symm ((add_zero _).trans ?_))
+      refine (((L.restr (cloι (π y))).φ σ).pull_φ g hg1 (fun _ => c) z).trans (((L.φ σ).pull_φ (cloι (π y)) rfl _ _).trans ?_)
+      exact congrArg _ (Subtype.ext (Category.assoc _ _ _))
   have hrC := ref1.isRatSec hr1
   obtain ⟨ρ, ref2⟩ : ∃ ρ, Refines ((L.pull π hπ).restr (cloι y)) (L.pull (g ≫ cloι (π y)) hC) ρ 0 := by
     have key : ∀ (f : clo y ⟶ X) (hf : f ≫ p = cloι y ≫ q), f = cloι y ≫ π →
         ∃ ρ, Refines ((L.pull π hπ).restr (cloι y)) (L.pull f hf) ρ 0 := by
       rintro f hf rfl
-      exact ⟨_, L.refines_pull_pull π hπ (cloι y) rfl hf⟩
+      refine ⟨fun c => c PUnit.unit, { le := ?_, g := ?_, φ := ?_ }⟩
+      · intro c z hz
+        exact Set.mem_iInter.2 fun a => Set.mem_iInter.1 (Set.mem_iInter.1 hz PUnit.unit) a
+      · intro W s z c c' hc hc'
+        have h₁ := Set.mem_iInter.1 hc PUnit.unit
+        have h₂ := Set.mem_iInter.1 hc' PUnit.unit
+        refine (gm_pull_g _ (cloι y) s z c c' hc hc').trans ((gm_pull_g _ π (s ≫ cloι y) z _ _ h₁ h₂).trans ?_)
+        refine Eq.trans ?_ (gm_pull_g _ (cloι y ≫ π) s z (c PUnit.unit) (c' PUnit.unit)
+          (Set.mem_iInter.2 fun a => Set.mem_iInter.1 h₁ a) (Set.mem_iInter.2 fun a => Set.mem_iInter.1 h₂ a)).symm
+        rw [Category.assoc]
+      · intro σ c z hz
+        refine (((L.pull π hπ).φ σ).pull_φ (cloι y) rfl c z).trans (((L.φ σ).pull_φ π hπ _ _).trans ?_)
+        refine Eq.trans ?_ (((L.φ σ).pull_φ (cloι y ≫ π) hf (c PUnit.unit) z).symm.trans (add_zero _).symm)
+        exact congrArg _ (Subtype.ext (Category.assoc _ _ _))
     exact key _ hC hgc
   have hrA := ref2.isRatSec hrC
   obtain ⟨-, hrecW⟩ := H'.recursion_one (cloι y) hc (by omega : 1 ≤ e + 1) hdW hrA

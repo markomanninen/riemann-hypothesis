@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.WtUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaArtin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaCyc
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IneInclOntoUnits
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.WtUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaArtin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaCyc
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IneInclOntoUnits
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Pr UpperTheory.V.Alg UpperTheory.V.J
 
@@ -121,7 +125,7 @@ private theorem mem_G' {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberF
   simp only [GlobalTheory.GalOfCusp.cycBar, MonoidHom.comp_apply, Units.coe_map, Units.val_one] at hv
   have hinj : Function.Injective ((algebraMap ℚ_[l] (Qbar l)).comp PadicInt.Coe.ringHom) :=
     (algebraMap ℚ_[l] (Qbar l)).injective.comp Subtype.val_injective
-  ext
+  apply Units.ext
   apply hinj
   rw [Units.val_one, map_one]
   exact hv
@@ -144,7 +148,7 @@ theorem UpperTheory.V.J.wtEx :
     have hlw : ((l : ℕ) : 𝓞 L) ∈ (R.s.w v.1).asIdeal := by
       apply (R.s.hw v.1 _).1
       have hA := (R.s.hA v.1 _).2 v.2
-      simpa using hA
+      simpa only [map_natCast] using hA
     have hbig : 5 < Φ.dv (R.K.e v) := R.big.2 (R.K.e v)
     rw [k.dv (R.K.e v)] at hbig
     obtain ⟨g, hgD, hgU⟩ : ∃ g ∈ Dec (F := ℚ) (k.pl (R.K.e v)), g ∉ upl Ω L := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CoefficientContraction
 
@@ -10,7 +14,7 @@ theorem coeff_eq_contraction {V W : Type} [AddCommGroup V] [Module ℚ V] [AddCo
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul v w => simp [TensorProduct.equivFinsuppOfBasisRight_apply_tmul_apply]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem eq_zero_of_contractions {V W : Type} [AddCommGroup V] [Module ℚ V] [AddCommGroup W]
     [Module ℚ W] (t : TensorProduct ℚ V W)

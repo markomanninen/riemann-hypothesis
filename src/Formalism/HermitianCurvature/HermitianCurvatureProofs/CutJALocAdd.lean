@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocCC
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocCC
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 open Formalism.REAL Formalism.QuantumDeterminants
@@ -47,7 +51,7 @@ theorem local_additivity_transfer : JALocAdd := by
     rw [Pi.add_apply, hF3 x hx hG, hF3' x hx hG, e, e, e, ← integral_add i1 i2]
     congr 1
     funext p
-    simp only [JF.integrand, B.rho, Pi.add_apply, ContinuousLinearMap.add_comp, ContinuousLinearMap.comp_add, smul_add]
+    simp [JF.integrand, B.rho, smul_add]
 
 end Formalism.FourierDecayAlt.P.CutMP.JA
 

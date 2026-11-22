@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ abbrev muLoc (A : ValuationSubring Ω) :
     Representation (ZMod (l ^ r)) (Dec (F := F) A) (ZMod (l ^ r)) :=
   charRep ((cycMod F Ω l r).comp (Dec (F := F) A).subtype)
 
-variable (Ω) in
 
+variable (Ω) in
 abbrev InvFam : Type :=
   ∀ A : ValuationSubring Ω, H2 (muLoc F l r A) →ₗ[ZMod (l ^ r)] ZMod (l ^ r)
 
@@ -196,7 +200,7 @@ theorem NineTermExact.mem_range_localization_H2_iff {hρ : ContAction ρ} (h : N
 def idInv (μ : GS Ω (S : Set (HeightOneSpectrum (𝓞 F))) →* (ZMod (l ^ r))ˣ) :
     H0 (twDual μ (charRep μ)) :=
   ⟨TDual.mk LinearMap.id, fun g => by
-    ext m
+    refine DFunLike.ext _ _ fun m => ?_
     simp only [twDual_apply, TDual.mk_apply, LinearMap.id_apply, charRep_apply, map_inv]
     rw [← mul_assoc, Units.mul_inv, one_mul]⟩
 
@@ -284,9 +288,8 @@ end Global
 end PoitouTate
 
 open PoitouTate in
-
 def PoitouTateTotallyComplex : Prop :=
-  ∀ (F Ω : Type) [Field F] [NumberField F] [IsTotallyComplex F] [Field Ω] [Algebra F Ω]
+  ∀ (F Ω : Type) [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] [Field Ω] [Algebra F Ω]
     [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (r : ℕ), 0 < r →
   ∀ ζ : Ω, IsPrimitiveRoot ζ (l ^ r) →
   ∃ inv : InvFam F Ω l r, IsLocalInvariants ζ inv ∧
@@ -301,9 +304,8 @@ def PoitouTateTotallyComplex : Prop :=
       NineTermExact S Av μ (invAt S Av μ hμ inv) ρ hρ ∧ ShaDual S Av μ ρ
 
 open PoitouTate in
-
 theorem PoitouTateTotallyComplex.annihilators (h : PoitouTateTotallyComplex)
-    (F Ω : Type) [Field F] [NumberField F] [IsTotallyComplex F] [Field Ω] [Algebra F Ω]
+    (F Ω : Type) [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] [Field Ω] [Algebra F Ω]
     [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (r : ℕ) (hr : 0 < r) (ζ : Ω)
     (hζ : IsPrimitiveRoot ζ (l ^ r)) :
     ∃ inv : InvFam F Ω l r, IsLocalInvariants ζ inv ∧

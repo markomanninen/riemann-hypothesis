@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CartanIdeles.SpacesExOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CartanIdeles.SpacesExOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,16 +61,18 @@ theorem stdHerm : StdHerm := by
       · have e' : ¬ j = i := fun h => e h.symm
         simp [e, e']
     all_goals first | exact i.elim0 | exact j.elim0
-  · refine ⟨Submodule.fg_pi fun _ => ?_, ?_⟩
-    · rw [Submodule.one_eq_span]
-      exact Submodule.fg_span_singleton 1
-    · rw [eq_top_iff]
-      intro z _
-      have hz : z = ∑ i, z i • (Pi.single i (1 : E) : Fin n → E) := by
-        ext j
-        simp [Pi.single_apply]
-      rw [hz]
-      exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span (hs i))
+  · haveI : (stdSpc F E n).L.IsLattice E := by
+      refine ⟨Submodule.fg_pi fun _ => ?_, ?_⟩
+      · rw [Submodule.one_eq_span]
+        exact Submodule.fg_span_singleton 1
+      · intro s _ h
+        exact (LinearIndependent.iff_fractionRing (𝓞 E) E).mp h
+    refine ⟨?_⟩
+    apply top_unique
+    rw [← (Pi.basisFun E (Fin n)).span_eq, Submodule.span_le]
+    rintro _ ⟨i, rfl⟩
+    rw [Pi.basisFun_apply]
+    exact Submodule.subset_span (hs i)
   · intro y
     rw [hL]
     constructor

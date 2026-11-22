@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivativeBound
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivRiemannZetaLocalZeroSumStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivativeBound
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivRiemannZetaLocalZeroSumStatement
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 open Filter Topology
 
@@ -275,9 +280,9 @@ private lemma exists_riemannZeta_ne_zero_near_one_of_abs_im_le_one :
   simp only [g, Function.update_of_ne hs] at hgs
   exact right_ne_zero_of_mul hgs
 
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory in
 open Filter Topology in
-
 theorem _root_.GlobalTheory.ZeroFreePrincipal.zero_free : ∃ c : ℝ, 0 < c ∧ ∀ (q : ℕ) [NeZero q] (s : ℂ),
     s ≠ 1 → LFunction (1 : DirichletCharacter ℂ q) s = 0 →
     s.re < 1 - c / Real.log (q * (|s.im| + 2)) := by

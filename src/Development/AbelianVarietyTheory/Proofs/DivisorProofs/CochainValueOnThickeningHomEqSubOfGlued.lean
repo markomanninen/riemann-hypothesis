@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecPullA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecFunctionsEqOfRestrictionsOnPairsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecPullA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecFunctionsEqOfRestrictionsOnPairsStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -94,7 +98,7 @@ theorem fv_eq_sub_of_glued : ∀ {R : Type} [CommRing R] {X : Scheme.{0}} {s : X
     (fv_of_comp f (bM T p) c (φ ≫ bM T' p') h2).symm.trans (f.2 φ (bM T' p'))
   change toSec R T'.obj.B V' (fv f φ) = toSec R T'.obj.B V' (G' - φ.hom.φ G)
   rw [map_sub, ← h2, hG p, hG' p']
-  simp only [hSec, map_sub, map_add, h1]
+  simp only [hSec, map_sub, map_add (f := _), h1]
   change _ = _ - (_ + χ (fv f (aM T p)) - χ (fv f (bM T p)))
   linear_combination -e1 - e2
 

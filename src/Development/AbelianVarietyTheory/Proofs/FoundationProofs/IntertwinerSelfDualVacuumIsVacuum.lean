@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.SharpRestriction.Divisibility.WeightFamilies
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatumStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniquenessStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.SharpRestriction.Divisibility.WeightFamilies
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatumStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniquenessStatement
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -76,7 +80,7 @@ lemma genus_one (D : D7) (L : PeriodPair) (Λ : AddSubgroup ℂ) (h : ∀ z, z �
   have hsc : starRingEnd ℂ s = s := Complex.conj_ofReal _
   have hw0 : w0 D = (1 + Complex.I * s) / 2 := rfl
   have hw0c : starRingEnd ℂ (w0 D) = (1 - Complex.I * s) / 2 := by
-    rw [hw0, map_div₀, map_add, map_mul, hsc, Complex.conj_I, map_one, map_ofNat]; ring
+    rw [hw0, map_div₀, map_add (f := _), map_mul, hsc, Complex.conj_I, map_one, map_ofNat]; ring
   have hq : w0 D ^ 2 - w0 D + 2 * m = 0 := by
     rw [hw0]
     linear_combination (s ^ 2 / 4) * Complex.I_sq - (1 / 4) * hs2 - (1 / 4) * hm'
@@ -138,7 +142,7 @@ lemma genus_one (D : D7) (L : PeriodPair) (Λ : AddSubgroup ℂ) (h : ∀ z, z �
   have hab' := congrArg (starRingEnd ℂ) hab
   have hcd' := congrArg (starRingEnd ℂ) hcd
   have huv' := congrArg (starRingEnd ℂ) huv
-  simp only [map_add, map_mul, map_intCast, map_ofNat, hw0c] at hab' hcd' huv'
+  simp only [map_add (f := _), map_mul, map_intCast, map_ofNat, hw0c] at hab' hcd' huv'
   have h3 : ¬ (2 ∣ u * a + v * c ∧ 2 ∣ u * b + v * d) := by
     rw [← half_mem L, ← h]
     convert ht.2.1 using 2
@@ -155,7 +159,7 @@ lemma genus_one (D : D7) (L : PeriodPair) (Λ : AddSubgroup ℂ) (h : ∀ z, z �
   have hp := even_im_hermitian_sub a b c d u v x y (2 * m) e (by simp) he had r1.1 h3 h4
   refine ⟨e * ((x * a + y * c) * y - (x * b + y * d) * x), ?_, fun z => ?_⟩
   · rw [hw0] at hab hcd
-    simp only [map_add, map_mul, map_intCast]
+    simp only [map_add (f := _), map_mul, map_intCast]
     field_simp
     push_cast
     apply mul_left_cancel₀ Complex.I_ne_zero
@@ -168,7 +172,7 @@ lemma genus_one (D : D7) (L : PeriodPair) (Λ : AddSubgroup ℂ) (h : ∀ z, z �
         (x * L.ω₁ + y * L.ω₂) * starRingEnd ℂ t) / (area Λ : ℂ)) = (-1) ^ ((-e) * (x * v - y * u)) := by
       rw [← Complex.exp_pi_mul_I, ← Complex.exp_int_mul]
       congr 1
-      simp only [map_add, map_mul, map_intCast]
+      simp only [map_add (f := _), map_mul, map_intCast]
       field_simp
       push_cast
       linear_combination (-(x * v - y * u) / 2 : ℂ) * hS
@@ -194,7 +198,8 @@ lemma coordB_embV (htr : TraceMapNormalisation D) (hb : Orthonormal D b) (i j : 
       if i = j then 1 else 0 := by
     split_ifs <;> simp
   rw [← h3, ← h1]
-  simp only [coordB, embV, tor0, map_sum, map_mul, WeightFamilies.emb_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordB, embV, tor0, map_sum, map_mul, WeightFamilies.emb_conj]
   rfl
 
 lemma coordB_add (T : Tor D) (j : Fin r) (z x : VC D N N') :
@@ -209,7 +214,8 @@ lemma coordB_sum (htr : TraceMapNormalisation D) (hb : Orthonormal D b) (c : Fin
     coordB D (tor0 D cc δ) b j (∑ i, c i • embV D (tor0 D cc δ) (b i)) = c j := by
   let f : VC D N N' →+ ℂ := AddMonoidHom.mk' (coordB D (tor0 D cc δ) b j) (coordB_add _ j)
   change f _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   change ∑ i, coordB D (tor0 D cc δ) b j _ = _
   simp [coordB_smul, coordB_embV htr hb]
 
@@ -218,7 +224,8 @@ lemma Hf_sum (T : Tor D) (c : Fin r → ℂ) (z : VC D N N') :
       ∑ i, coordB D T b i z * starRingEnd ℂ (c i) / (area T.abelian₂ : ℂ) := by
   rw [Hf, ← Finset.sum_div]
   congr 1
-  simp only [coordB, embV, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordB, embV, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul,
     Finset.mul_sum, Finset.sum_mul]
   symm
   rw [Finset.sum_comm]
@@ -265,7 +272,7 @@ lemma pullB_mem (htr : TraceMapNormalisation D) (hb : Orthonormal D b) (g : ℂ 
       refine hg.comp ?_
       unfold coordB
       fun_prop
-    exact fun z => (HasFDerivAt.finset_prod fun j _ => (hd j z).hasFDerivAt).differentiableAt
+    exact fun z => (HasFDerivAt.finsetProd fun j _ => (hd j z).hasFDerivAt).differentiableAt
   · obtain ⟨c, hc, rfl⟩ := exists_coords _ hx
     choose n hn hU using fun i => hch (c i) (hc i)
     have hal : al D (tor0 D cc δ) (∑ i, c i • embV D (tor0 D cc δ) (b i)) = ∏ i, (-1 : ℂ) ^ n i := by

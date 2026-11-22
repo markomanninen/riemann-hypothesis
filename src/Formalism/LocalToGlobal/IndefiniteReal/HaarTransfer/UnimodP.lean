@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.HaarTransfer.Unimod
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.HaarTransfer.Unimod
+
+@[expose] public section
 
 namespace Formalism.IndefR.Leaf.Proofs
 open Formalism.IndefR.Leaf MeasureTheory

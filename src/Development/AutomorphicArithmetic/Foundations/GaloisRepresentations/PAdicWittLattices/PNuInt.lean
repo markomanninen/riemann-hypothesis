@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,12 +48,12 @@ private theorem dvdInt_form (D : Datum p) (g : ℤ) (hg : ∀ x y, g ∣ D.EF x 
       simp [Algebra.smul_def]
       ring
     | zero => rw [map_zero]; exact DvdInt.zero g
-    | add w₁ w₂ _ _ h₁ h₂ => rw [map_add]; exact h₁.add h₂
+    | add w₁ w₂ _ _ h₁ h₂ => rw [map_add (f := _)]; exact h₁.add h₂
     | neg w _ h => rw [map_neg]; exact h.neg
   induction hv using AddSubgroup.closure_induction with
   | mem z hz => exact hgen z hz w hw
   | zero => rw [map_zero, LinearMap.zero_apply]; exact DvdInt.zero g
-  | add v₁ v₂ _ _ h₁ h₂ => rw [map_add, LinearMap.add_apply]; exact h₁.add h₂
+  | add v₁ v₂ _ _ h₁ h₂ => rw [map_add (f := _), LinearMap.add_apply]; exact h₁.add h₂
   | neg v _ h => rw [map_neg, LinearMap.neg_apply]; exact h.neg
 
 private theorem exists_form_ne (D : Datum p) : ∃ x y, D.EF x y ≠ 0 := by

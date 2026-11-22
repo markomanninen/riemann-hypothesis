@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
-import Development.AutomorphicArithmetic.AdelicQuotients.FinAtMapGLGalAdMemIwahori
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalAdEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Places
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+public import Development.AutomorphicArithmetic.AdelicQuotients.FinAtMapGLGalAdMemIwahori
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalAdEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Places
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo

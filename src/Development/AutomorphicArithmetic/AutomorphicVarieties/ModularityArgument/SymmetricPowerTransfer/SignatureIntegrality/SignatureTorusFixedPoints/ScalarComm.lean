@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.UnitaryHyperbolicOrbitCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.LevelTorusLeTorus
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.Contract
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.ConjDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.ScMemIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.BdMul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.UnitaryHyperbolicOrbitCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.LevelTorusLeTorus
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.Contract
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.ConjDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.ScMemIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.BdMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,17 @@ private theorem sdom2 {x : Fin 2 → kˣ} (h : valuation k (x 0 : k) < valuation
 
 private theorem dg_mem_ZJ (V : Lev k) (ω : kˣ →* ℂˣ) (hω : ∀ u ∈ V.H, ω u = 1) {w : Fin 2 → kˣ} :
     dg w ∈ V.ZJ 2 ↔ w 0 / w 1 ∈ V.H := by
-  have hz := (eqZ k V ω hω 2 (by norm_num)).2.1
+  have hz : ∀ u : GL (Fin 2) k, u ∈ V.ZJ 2 ↔ ∃ z : kˣ, ∃ j ∈ V.J 2, u = GeneralLinearGroup.scalar (Fin 2) z * j := by
+    haveI : (GeneralLinearGroup.scalar (Fin 2) : kˣ →* GL (Fin 2) k).range.Normal := ⟨by
+      rintro _ ⟨z, rfl⟩ g
+      exact ⟨z, by rw [← scalar_comm z g]; simp⟩⟩
+    intro u
+    rw [← SetLike.mem_coe, Lev.ZJ, Subgroup.normal_mul, Set.mem_mul]
+    constructor
+    · rintro ⟨_, ⟨z, rfl⟩, j, hj, rfl⟩
+      exact ⟨z, j, hj, rfl⟩
+    · rintro ⟨z, j, hj, rfl⟩
+      exact ⟨_, ⟨z, rfl⟩, j, hj, rfl⟩
   constructor
   · intro h
     obtain ⟨z, j, hj, e⟩ := (hz _).1 h
@@ -101,7 +115,7 @@ private theorem supp_orb (V : Lev k) (ω : kˣ →* ℂˣ) (d : Fin 2 → kˣ) (
     a / b / (d 0 / d 1) ∈ V.H ∧ ∃ u : Fin 2 → kˣ, ∃ j ∈ V.J 2, g = g₀ * dg u * j := by
   have hex : ∃ z : kˣ, (GeneralLinearGroup.scalar (Fin 2) z)⁻¹ * (g⁻¹ * (g₀ * dg ![a, b] * g₀⁻¹) * g) ∈ V.DC d := by
     by_contra hn
-    exact h (by rw [Lev.fZ, dif_neg hn])
+    exact h (by rw [Lev.fZ, dite_eq_right hn])
   obtain ⟨z, hz⟩ := hex
   obtain ⟨j, hj, s, ⟨s', hs', rfl⟩, e⟩ := contract k V 2 (MonoidHom.id _) (pres_id V 2) d hd _ hz
   have hs : ∀ i, s' i ∈ V.H := fun i => hs' i trivial
@@ -130,8 +144,18 @@ private theorem value_orb (V : Lev k) (ω : kˣ →* ℂˣ) (hω : ∀ u ∈ V.H
     (g₀ : GL (Fin 2) k) (a b : kˣ) (hc : a / b / (d 0 / d 1) ∈ V.H) (u : Fin 2 → kˣ) (v : GL (Fin 2) k)
     (hv : v ∈ V.ZJ 2) :
     V.fZ ω d ((g₀ * dg u * v)⁻¹ * (g₀ * dg ![a, b] * g₀⁻¹) * (g₀ * dg u * v)) = (ω (d 1 / b) : ℂ) := by
-  have hE := eqZ k V ω hω 2 (by norm_num)
-  obtain ⟨z', j, hj, rfl⟩ := (hE.2.1 v).1 hv
+  have hz : ∀ u : GL (Fin 2) k, u ∈ V.ZJ 2 ↔ ∃ z : kˣ, ∃ j ∈ V.J 2, u = GeneralLinearGroup.scalar (Fin 2) z * j := by
+    haveI : (GeneralLinearGroup.scalar (Fin 2) : kˣ →* GL (Fin 2) k).range.Normal := ⟨by
+      rintro _ ⟨z, rfl⟩ g
+      exact ⟨z, by rw [← scalar_comm z g]; simp⟩⟩
+    intro u
+    rw [← SetLike.mem_coe, Lev.ZJ, Subgroup.normal_mul, Set.mem_mul]
+    constructor
+    · rintro ⟨_, ⟨z, rfl⟩, j, hj, rfl⟩
+      exact ⟨z, j, hj, rfl⟩
+    · rintro ⟨z, j, hj, rfl⟩
+      exact ⟨_, ⟨z, rfl⟩, j, hj, rfl⟩
+  obtain ⟨z', j, hj, rfl⟩ := (hz v).1 hv
   have hD : dg ![a, b] = GeneralLinearGroup.scalar (Fin 2) (b / d 1) * (dg ![a / b / (d 0 / d 1), 1] * dg d) := by
     rw [scalar_eq, ← dg_mul, ← dg_mul]
     congr 1
@@ -154,12 +178,43 @@ private theorem value_orb (V : Lev k) (ω : kˣ →* ℂˣ) (hω : ∀ u ∈ V.H
       rw [mul_assoc, ← scalar_comm, inv_mul_cancel_left]
     rw [h1, h2, h3, hD, mul_assoc j⁻¹ (dg ![a / b / (d 0 / d 1), 1]) (dg d), conj_sc _ _ _ (scalar_comm _ j⁻¹)]
     group
-  rw [hX, hE.2.2 d hd |>.1 _ _ ⟨j⁻¹ * dg ![a / b / (d 0 / d 1), 1], mul_mem (inv_mem hj) (V.dg_mem ?_), j, hj, rfl⟩,
-    ← map_inv, inv_div]
-  intro i
-  fin_cases i
-  · exact hc
-  · exact one_mem _
+  have hdc : j⁻¹ * dg ![a / b / (d 0 / d 1), 1] * dg d * j ∈ V.DC d := by
+    refine ⟨j⁻¹ * dg ![a / b / (d 0 / d 1), 1], mul_mem (inv_mem hj) (V.dg_mem ?_), j, hj, rfl⟩
+    intro i
+    fin_cases i
+    · exact hc
+    · exact one_mem _
+  have hH : ∀ {g : GL (Fin 2) k} {z : kˣ}, g ∈ V.DC d →
+      GeneralLinearGroup.scalar (Fin 2) z * g ∈ V.DC d → z ∈ V.H := by
+    intro g z hg h
+    obtain ⟨j, hj, _, ⟨t, ht, rfl⟩, e⟩ := contract k V 2 (MonoidHom.id _) (pres_id V 2) d hd g hg
+    obtain ⟨a, ha, b, hb, e2⟩ := h
+    have e3 : dg ((fun _ => z) * t * d) = (j⁻¹ * a) * dg d * (b * j) := by
+      have e4 : dg ((fun _ => z) * t * d) = GeneralLinearGroup.scalar (Fin 2) z * (dg t * dg d) := by
+        rw [scalar_eq, dg_mul, dg_mul, mul_assoc]
+      rw [e4, ← e, MonoidHom.id_apply]
+      calc GeneralLinearGroup.scalar (Fin 2) z * (j⁻¹ * g * j) = j⁻¹ * (GeneralLinearGroup.scalar (Fin 2) z * g) * j := by
+            rw [← mul_assoc, ← mul_assoc, scalar_comm z j⁻¹]; simp only [mul_assoc]
+        _ = _ := by rw [e2]; group
+    have h1 : dg ((fun _ => z) * t * d) ∈ V.DC d := ⟨_, mul_mem (inv_mem hj) ha, _, mul_mem hb hj, e3⟩
+    have h2 := (diagDC k V 2 d _ (fun i j h => h.eq_or_lt.elim (fun e => by rw [e]) (fun l => (hd i j l).le))).1 h1 0
+    have h3 : z * t 0 * d 0 / d 0 ∈ V.H := h2
+    have h4 := div_mem h3 (ht 0 trivial)
+    simpa using h4
+  rw [hX, Lev.fZ]
+  have hex : ∃ z : kˣ, (GeneralLinearGroup.scalar (Fin 2) z)⁻¹ *
+      (GeneralLinearGroup.scalar (Fin 2) (b / d 1) * (j⁻¹ * dg ![a / b / (d 0 / d 1), 1] * dg d * j)) ∈ V.DC d :=
+    ⟨b / d 1, by rw [inv_mul_cancel_left]; exact hdc⟩
+  rw [dite_eq_left hex]
+  have hchoose := hex.choose_spec
+  generalize hex.choose = c at hchoose ⊢
+  have h1 : (b / d 1) / c ∈ V.H := hH (z := (b / d 1) / c) hdc (by
+    convert hchoose using 1
+    rw [map_div, div_eq_mul_inv, ← map_inv, scalar_comm (b / d 1) (GeneralLinearGroup.scalar (Fin 2) (c⁻¹))]
+    group)
+  have h2 := hω _ h1
+  rw [map_div, div_eq_one] at h2
+  rw [← h2, ← map_inv, inv_div]
 
 theorem orbZ : OrbZ := by
   classical

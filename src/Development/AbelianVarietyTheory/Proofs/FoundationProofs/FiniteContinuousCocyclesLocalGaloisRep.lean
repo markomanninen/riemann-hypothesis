@@ -1,24 +1,26 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelmerRankVanishing
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixingSubgroupEquivBicontinuous
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.GaloisCohomology.Statement
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixingSubgroupEquivBicontinuous
+
+@[expose] public section
 
 noncomputable section
 
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction GlobalTheory.IndefiniteRowSideFullHecke.LengthValuationTwists
+open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction
 
 namespace GlobalTheory.LocalH1Finiteness
-
-theorem finite_cocycles_of_finite_h1 {R G M : Type} [CommRing R] [Group G] [TopologicalSpace G]
-    [AddCommGroup M] [Module R M] [TopologicalSpace M] [IsTopologicalAddGroup M]
-    [ContinuousConstSMul R M] [Finite M] (rho : Representation R G M) (h : Finite (H1 rho)) :
-    Finite (Z1 rho) := by
-  have hB : Finite (B1 rho) := Finite.of_surjective _ (d0 rho).surjective_rangeRestrict
-  have hB' : Finite ((B1 rho).comap (Z1 rho).subtype) :=
-    Finite.of_injective (fun x : (B1 rho).comap (Z1 rho).subtype => (⟨x.1.1, x.2⟩ : B1 rho))
-      (fun a b hab => Subtype.ext (Subtype.ext (congrArg (fun x : B1 rho => x.1) hab)))
-  exact @Finite.of_addSubgroup_quotient _ _ ((B1 rho).comap (Z1 rho).subtype).toAddSubgroup hB' h
 
 section General
 
@@ -270,7 +272,7 @@ open Formalism.BasicNotions.Loc
 
 variable {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω]
   {Gw : Subgroup (Ω ≃ₐ[E] Ω)} {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O]
-  (Bw : LocBridge l E Ω Gw O)
+  (Bw : _root_.Formalism.BasicNotions.LocBridge l E Ω Gw O)
 
 variable {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω]
   {Gw : Subgroup (Ω ≃ₐ[E] Ω)} {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O]
@@ -283,10 +285,10 @@ theorem rep_apply {m : ℕ} (r : ↥Gw →* GL (Fin m) O) (g : ↥(GK Bw.Kw)) (v
     (a : Fin m) :
     Bw.rep r g v a = ∑ b, Bw.toLL ((r (Bw.e.symm g) : Matrix (Fin m) (Fin m) O) a b) * v b := rfl
 
+
 variable {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω]
   {Gw : Subgroup (Ω ≃ₐ[E] Ω)} {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O]
   (Bw : _root_.Formalism.BasicNotions.LocBridge l E Ω Gw O) in
-
 theorem _root_.GlobalTheory.LocalH1Finiteness.finite_continuous_cocycles_localGaloisRep (hK : _root_.Formalism.GaloisCohomology.LocalFinitenessK) {m : ℕ}
     (r : ↥Gw →* GL (Fin m) O)
     (hr : Continuous fun g => (r g : Matrix (Fin m) (Fin m) O)) :
@@ -305,7 +307,7 @@ theorem _root_.GlobalTheory.LocalH1Finiteness.finite_continuous_cocycles_localGa
       htoLL.comp ((hr.comp Bw.e_symm_cont).matrix_elem a b)
     refine continuous_pi fun a => ?_
     simp only [_root_.GlobalTheory.LocalH1Finiteness.rep_apply]
-    exact continuous_finset_sum _ fun b _ =>
+    exact continuous_finsetSum _ fun b _ =>
       ((hent a b).comp continuous_fst).mul ((continuous_apply b).comp continuous_snd)
   · intro g v
     refine (pi_norm_le_iff_of_nonneg (norm_nonneg v)).2 fun a => ?_

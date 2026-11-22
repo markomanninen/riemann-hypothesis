@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.QALetterNe
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Imports
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.QALetterNe
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,8 @@ theorem build [IsDomain O] (W : LocWach PD LL O v n) (hcase : Formalism.MainNoti
   have hyy : ∀ r < R₀, ∀ m, algebraMap O LL (yy r m) =
       (PD.p : LL) ^ (2 * R₀) * ∑ k, algebraMap O LL (c₀ k) * sol₁ k r m := by
     intro r hr m
-    simp only [hyydef, map_sum, map_mul, hys' _ _ _ hr, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hyydef, map_sum, map_mul, hys' _ _ _ hr, Finset.mul_sum]
     exact Finset.sum_congr rfl fun k _ => by ring
   have hyy0 : ∀ m, yy 0 m = (PD.p : O) ^ (2 * R₀) * c₀ m := by
     intro m
@@ -157,7 +162,8 @@ theorem build [IsDomain O] (W : LocWach PD LL O v n) (hcase : Formalism.MainNoti
       nlinarith [mul_nonneg (show (0:ℚ) ≤ (PD.p : ℚ) - 2 by linarith) (show (0:ℚ) ≤ r' - k by linarith)]
     choose o' ho' using hint
     refine ⟨∑ k', c₀ k' * o' k', hinj ?_⟩
-    simp only [map_mul, map_pow, map_natCast, map_sum, ho', hyydef, hys' _ _ _ hr, Finset.sum_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_pow, map_natCast, map_sum, ho', hyydef, hys' _ _ _ hr, Finset.sum_mul,
       Finset.mul_sum]
     exact Finset.sum_congr rfl fun k' _ => by ring
   choose! o ho using hos
@@ -249,17 +255,19 @@ theorem build [IsDomain O] (W : LocWach PD LL O v n) (hcase : Formalism.MainNoti
     hz₁, hn₁eq, hBR, hR1, hR₀lt.le, hyy, rfl, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact sum_mem' W _ _ fun r _ => smulA_mem W (pow_mem hπ₀ r) (hvec _)
   · exact sum_mem' W _ _ fun k _ => smulO_mem W _ (hxk k)
-  · rw [hXeq, map_sum, ← Finset.sum_sub_distrib, Finset.smul_sum]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_smul, ← smul_sub, hxke k]
-    exact smul_comm _ _ _
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [hXeq, map_sum, ← Finset.sum_sub_distrib, Finset.smul_sum]
+      refine Finset.sum_congr rfl fun k _ => ?_
+      rw [map_smul, ← smul_sub, hxke k]
+      exact smul_comm _ _ _
   · refine ⟨_, AddSubgroup.sum_mem _ fun m _ => AddSubgroup.subset_closure
       ⟨Y m, hY m, b₁ m, hb₁.1.1 m, by rw [pow_one]⟩, by rw [one_smul]⟩
   · refine ⟨_, AddSubgroup.sum_mem _ fun m _ => AddSubgroup.subset_closure
       ⟨Zc m, hZ m, b₁ m, hb₁.1.1 m, by rw [pow_one]⟩, by rw [one_smul]⟩
   · have hφX : W.φD T (∑ r ∈ Finset.range R₀, W.π₀ ^ r • Formalism.MainNotions.LiftingTheory.vecB W T b₁ (yy r)) =
         ∑ m, (∑ r ∈ Finset.range R₀, (W.φA W.π₀) ^ r * cO (yy r m)) • W.φD T (b₁ m) := by
-      simp only [map_sum, Formalism.MainNotions.N.FrobeniusPowerSeries.DYAa.phi_smul, Formalism.MainNotions.LiftingTheory.vecB, map_pow, map_smul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, Formalism.MainNotions.N.FrobeniusPowerSeries.DYAa.phi_smul, Formalism.MainNotions.LiftingTheory.vecB, map_pow, map_smul,
         Finset.smul_sum, Finset.sum_smul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun m _ => Finset.sum_congr rfl fun r _ => ?_

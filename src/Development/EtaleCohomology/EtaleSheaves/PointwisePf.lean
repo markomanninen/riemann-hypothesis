@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CokernelKilling.KillCokOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CokernelKilling.KillCokOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E3Cut
@@ -80,5 +84,4 @@ end LateralTheory.E.PointwisePf
 
 namespace LateralTheory.E.PointwisePf
 
-theorem Pointwise_of : LateralTheory.E.KillCokPf.Pointwise := Pointwise_of_pushColim pushColim
 end LateralTheory.E.PointwisePf

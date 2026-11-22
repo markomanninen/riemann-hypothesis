@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Sym.Glob
 
@@ -47,7 +51,7 @@ private theorem sum_pos (σ : F →+* ℝ) (h : σ Δ < 0) (y : Fin 3 → Lsq F 
   have h1 := nrm_nonneg σ h (y 1)
   have h2 := nrm_nonneg σ h (y 2)
   have hp := nrm_pos σ h (y i) hi
-  rw [Fin.sum_univ_three, QuadraticAlgebra.re_add, QuadraticAlgebra.re_add, map_add, map_add]
+  rw [Fin.sum_univ_three, QuadraticAlgebra.re_add, QuadraticAlgebra.re_add, map_add (f := _), map_add (f := _)]
   fin_cases i
   · exact add_pos_of_pos_of_nonneg (add_pos_of_pos_of_nonneg hp h1) h2
   · exact add_pos_of_pos_of_nonneg (add_pos_of_nonneg_of_pos h0 hp) h2
@@ -63,7 +67,7 @@ theorem UpperTheory.V.Z.Sym.Glob.posLaw :
   intro F _ _ Δ D hD τ d m hm c t
   have hneg := hD.neg
   refine ⟨fun hc ht x hx σ => ?_, fun δ ι P hM => ?_⟩
-  · rw [herm_re, map_add, map_mul, map_mul]
+  · rw [herm_re, map_add (f := _), map_mul, map_mul]
     have h1 := nrm_nonneg σ (hneg σ) x.1
     by_cases h2 : x.2 = 0
     · have hx1 : x.1 ≠ 0 := by
@@ -93,6 +97,6 @@ theorem UpperTheory.V.Z.Sym.Glob.posLaw :
       have h1 := key _ hx σ
       have h2 : 0 < σ (herm 1 m (0, ((0 : Lsq F Δ), (1 : EL Δ τ)).2) (0, ((0 : Lsq F Δ), (1 : EL Δ τ)).2)).re := hm _ hx σ
       have hz : ((0 : Lsq F Δ) * star (0 : Lsq F Δ)).re = 0 := by simp
-      rw [herm_re, map_add, map_mul, map_mul] at h1
+      rw [herm_re, map_add (f := _), map_mul, map_mul] at h1
       simp only [hz, map_zero, mul_zero, zero_add] at h1
       nlinarith

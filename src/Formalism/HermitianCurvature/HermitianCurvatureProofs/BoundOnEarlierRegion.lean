@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveLSubOneCcle
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveDiffFormOf
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveLSubOneCcle
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveDiffFormOf
+
+@[expose] public section
 
 noncomputable section
 

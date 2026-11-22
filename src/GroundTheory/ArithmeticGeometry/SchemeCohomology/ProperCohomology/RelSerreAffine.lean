@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelSerreLocal
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelSerreLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -41,7 +46,7 @@ abbrev overBase {V : X.Opens} (hV : IsAffineOpen V) : (ψ ⁻¹ᵁ V).toScheme.O
 
 def embedProj {V : X.Opens} (hV : IsAffineOpen V) : (ψ ⁻¹ᵁ V).toScheme ⟶ projectiveSpace Γ(X, V) N :=
   letI := baseAlgebra A hV
-  ProjSpace.toBaseChange (embed i ψ h hV)
+  embed i ψ h hV ≫ (ProjSpace.isPullback_baseChange A Γ(X, V) N).isoPullback.inv
 
 instance isClosedImmersion_embedProj [IsClosedImmersion i] [IsSeparated (X ↘ Spec (.of A))]
     {V : X.Opens} (hV : IsAffineOpen V) : IsClosedImmersion (embedProj i ψ h hV) := by
@@ -54,13 +59,16 @@ lemma embedProj_isOver {V : X.Opens} (hV : IsAffineOpen V) :
     (embedProj i ψ h hV).IsOver (Spec (.of Γ(X, V))) := by
   letI := baseAlgebra A hV
   letI := overBase i ψ h hV
-  exact ⟨ProjSpace.toBaseChange_toSpecBase _⟩
+  refine ⟨?_⟩
+  change embedProj i ψ h hV ≫ ProjSpace.toSpecBase Γ(X, V) N =
+    embed i ψ h hV ≫ pullback.snd _ _
+  rw [embedProj, Category.assoc, IsPullback.isoPullback_inv_snd]
 
 lemma embedProj_baseChangeMap {V : X.Opens} (hV : IsAffineOpen V) :
     letI := baseAlgebra A hV
     embedProj i ψ h hV ≫ ProjSpace.baseChangeMap A Γ(X, V) N = (ψ ⁻¹ᵁ V).ι ≫ i := by
   letI := baseAlgebra A hV
-  rw [embedProj, ProjSpace.toBaseChange_baseChangeMap, embed_fst]
+  rw [embedProj, Category.assoc, IsPullback.isoPullback_inv_fst, embed_fst]
 
 def twistRestrictIso {V : X.Opens} (hV : IsAffineOpen V) (G : X'.Modules) (k : ℤ) :
     ProjScheme.twist (embedProj i ψ h hV) (G.restrict (ψ ⁻¹ᵁ V).ι) k ≅

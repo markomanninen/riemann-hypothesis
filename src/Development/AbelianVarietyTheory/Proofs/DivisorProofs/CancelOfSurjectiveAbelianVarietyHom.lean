@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIsIntegralNoetherianCompactStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIsIntegralNoetherianCompactStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -14,7 +19,8 @@ theorem cancel_of_surjective : âˆ€ (K : Type) [Field K] (A B : AbVar K) (p : A â
   intro K _ A B p hp C f g h
   have hB : IsIntegral B.X.left := (GlobalTheory.T.abelianVariety_isIntegral_noetherian_compact K B).1
   have hsep : IsSeparated C.X.hom := C.ab.proper.toIsSeparated
-  apply hom_ext
+  apply Subtype.ext
+  change f.hom = g.hom
   refine Over.OverMorphism.ext (ext_of_isDominant_of_isSeparated C.X.hom
     ((Over.w f.hom).trans (Over.w g.hom).symm) p.hom.left ?_)
   have := congrArg (fun u => (Hom.hom u).left) h

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.ClassFieldGSUnram
-import GroundTheory.GlobalFields.GlobalArtinMap.Kernel
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.ClassFieldGSUnram
+public import GroundTheory.GlobalFields.GlobalArtinMap.Kernel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -148,15 +153,15 @@ theorem charToSIdelePos_mk_eq (x : IdeleGroup K) (g : Gal(Ω/K))
 
 end Character
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem liftNormal_apply_of_mem (σ : maximalAbelianExtension K Ω ≃ₐ[K] maximalAbelianExtension K Ω)
     (y : Ω) (hy : y ∈ maximalAbelianExtension K Ω) :
     σ.liftNormal Ω y = (σ ⟨y, hy⟩ : Ω) :=
   AlgEquiv.liftNormal_commutes σ Ω ⟨y, hy⟩
 
-variable (K Ω S n) in
 
+variable (K Ω S n) in
 def charToSIdelePosHom :
     ContinuousMonoidHom (galUnramifiedOutside K Ω S) (Multiplicative (ZMod n)) →*
       (SIdeleClassGroupPos S →* Multiplicative (ZMod n)) where
@@ -174,8 +179,8 @@ def charToSIdelePosHom :
       charToSIdelePos_mk_eq _ x _ (liftNormal_apply_of_mem _),
       charToSIdelePos_mk_eq _ x _ (liftNormal_apply_of_mem _), ContinuousMonoidHom.mul_apply]
 
-variable (S) in
 
+variable (S) in
 def ofIdeleClassPos : IdeleClassGroup K →* SIdeleClassGroupPos S :=
   QuotientGroup.map _ _ (MonoidHom.id _) le_sup_left
 
@@ -268,8 +273,8 @@ theorem charToSIdelePosHom_bijective [IsAlgClosure K Ω] (hS : S.Finite) [NeZero
     Bijective (charToSIdelePosHom K Ω S n) :=
   ⟨charToSIdelePosHom_injective, charToSIdelePosHom_surjective hS⟩
 
-variable (Ω) in
 
+variable (Ω) in
 def charEquivPos [IsAlgClosure K Ω] (hS : S.Finite) [NeZero n] :
     ContinuousMonoidHom (galUnramifiedOutside K Ω S) (Multiplicative (ZMod n)) ≃*
       (SIdeleClassGroupPos S →* Multiplicative (ZMod n)) :=

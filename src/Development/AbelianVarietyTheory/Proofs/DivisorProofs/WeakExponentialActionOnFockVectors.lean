@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+
+@[expose] public section
+
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
 noncomputable section
@@ -12,7 +17,8 @@ attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebr
 theorem form_eq_sum {d : ℕ} (φ : (Fin d → ℂ) →ₗ[ℂ] ℂ) (y : Fin d → ℂ) :
     φ y = ∑ i, y i * φ (Pi.single i 1) := by
   conv_lhs => rw [pi_eq_sum_univ y]
-  simp only [map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   congr 2
   ext j
@@ -131,7 +137,7 @@ theorem exists_isExp {V : Type} [AddCommGroup V] [Module ℂ V] (L : Module.End 
   refine ⟨{ toFun := U0, map_add' := fun v w => ?_, map_smul' := fun c v => ?_ }, fun v l => hU0 v l⟩
   · refine eq_of_forms fun l => (hU0 (v + w) l).unique ?_
     have := (hU0 v l).add (hU0 w l)
-    simp only [map_add, mul_add]
+    simp only [map_add (f := _), mul_add]
     exact this
   · refine eq_of_forms fun l => (hU0 (c • v) l).unique ?_
     have := (hU0 v l).mul_left c
@@ -143,8 +149,8 @@ theorem exists_isExp {V : Type} [AddCommGroup V] [Module ℂ V] (L : Module.End 
 
 def evalAt {X : Type} (p : X) : (X → ℂ) →ₗ[ℂ] ℂ := LinearMap.proj p
 
-open scoped Classical in
 
+open scoped Classical in
 theorem evalAt_mem_adm (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ]
     (p : κ → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) : evalAt p ∈ (GlobalTheory.WeilM.adeleClass F).adm κ := by
   intro g _
@@ -153,8 +159,8 @@ theorem evalAt_mem_adm (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype
     (SchwartzMap.toBoundedContinuousFunctionCLM ℂ (κ → mixedEmbedding.mixedSpace F) ℂ)), fun f => ?_⟩
   simp [evalAt, GlobalTheory.WeilM.pureA, mul_comm]
 
-open scoped Classical in
 
+open scoped Classical in
 def pureL (F : Type) [Field F] [NumberField F] {κ : Type} [Fintype κ] (g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ) :
     GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.SInf F κ →ₗ[ℂ] ((κ → AdeleRing (𝓞 F) F) → ℂ) where
   toFun f := GlobalTheory.WeilM.pureA F f g

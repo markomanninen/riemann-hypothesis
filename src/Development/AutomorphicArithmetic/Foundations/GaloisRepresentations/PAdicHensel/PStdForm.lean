@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.AuxiliaryInertOddPrime
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.AuxiliaryInertOddPrime
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed UpperTheory.Gal.G1 UpperTheory.Gal.Int.Geo GlobalTheory.CongL
 open scoped TensorProduct
 
@@ -84,35 +89,3 @@ private lemma sym_eq {E : Type} [Field E] [NumberField E] [IsCMField E] (A : Ari
     funext i
     ring
   rw [hH, hD, Matrix.diagonal_transpose, Matrix.mul_assoc, hc, Matrix.nonsing_inv_mul_cancel_left _ _ hu]
-
-theorem UpperTheory.Gal.G1.pStdForm :
-    HdSign → StdForm := by
-  intro _ E _ _ _ A n p _ S
-  have h1 : (Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)) * (Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)⁻¹) = 1 := by
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext i
-    exact mul_inv_cancel₀ (dg_ne A n i)
-  have h2 : (Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)⁻¹) * (Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)) = 1 := by
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext i
-    exact inv_mul_cancel₀ (dg_ne A n i)
-  let β : S.G.Cˣ := (⟨Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E), Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)⁻¹, h1, h2⟩ :
-    (Matrix (Fin n) (Fin n) E)ˣ)
-  refine ⟨β, rfl, sym_eq A n, ?_⟩
-  intro v x hx
-  have hs : sigPosH (S.G.gram_herm v) = sigPos (A.herm n) v.embedding := rfl
-  have hf : S.G.gram v * S.G.psi v ((β⁻¹ : S.G.Cˣ) : S.G.C) = Matrix.diagonal fun _ => -v.embedding (A.c : E) :=
-    form_eq A n v.embedding
-  have hP := sum_pos' hx
-  rw [hf, re_form, hs, Complex.neg_re]
-  by_cases hm : InfinitePlace.mk v.embedding = InfinitePlace.mk A.τ₀
-  · have hc := c_re_neg A v.embedding hm
-    have h1' := ((S.sig v.embedding).1 hm).1
-    exact ⟨fun _ => mul_pos (neg_pos.2 hc) hP, fun h => absurd h1' h⟩
-  · have hc := A.c_pos v.embedding hm
-    have h0 := ((S.sig v.embedding).2 hm).1
-    refine ⟨fun h => ?_, fun _ => mul_neg_of_neg_of_pos (neg_neg_of_pos hc) hP⟩
-    rw [h0] at h
-    exact absurd h (by norm_num)

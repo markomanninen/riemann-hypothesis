@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantLevels
-import GroundTheory.ProfiniteCohomology.CohomologyTwoIntAddEquivQZSymmApply
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantLevels
+public import GroundTheory.ProfiniteCohomology.CohomologyTwoIntAddEquivQZSymmApply
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -11,9 +16,9 @@ variable (F Ω : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarc
   [Field Ω] [Algebra F Ω] [IsSepClosure F Ω]
   [ValuativeRel Ω] [TopologicalSpace Ω] [IsValuativeTopology Ω] [ValuativeExtension F Ω]
 
+
 omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [ValuativeRel Ω]
   [TopologicalSpace Ω] [IsValuativeTopology Ω] [ValuativeExtension F Ω] in
-
 theorem brauerInflation_unitsInflationOfLE {E E' : IntermediateField F Ω} (h : E ≤ E')
     [FiniteDimensional F E] [Normal F E] [FiniteDimensional F E'] [Normal F E']
     (y : groupCohomology (galUnits F E) 2) :
@@ -152,7 +157,7 @@ theorem unramifiedLevelInv_injective (n : ℕ+) : Function.Injective (unramified
   (unramifiedInv_injective F (unramifiedLevel F Ω n)).comp (h2GalUnitsAddEquiv F _).injective
 
 theorem brauerInv_injective : Function.Injective (brauerInv F Ω) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨n, y, rfl⟩ := exists_brauerInflation_unramifiedLevel F Ω x
   rw [brauerInv_brauerInflation] at hx
@@ -173,12 +178,5 @@ theorem brauerInv_surjective : Function.Surjective (brauerInv F Ω) := by
 
 theorem brauerInv_bijective : Function.Bijective (brauerInv F Ω) :=
   ⟨brauerInv_injective F Ω, brauerInv_surjective F Ω⟩
-
-noncomputable def brauerInvEquiv : galoisBrauerGroup F Ω ≃+ QZ :=
-  AddEquiv.ofBijective (brauerInv F Ω) (brauerInv_bijective F Ω)
-
-@[simp]
-theorem brauerInvEquiv_apply (x : galoisBrauerGroup F Ω) : brauerInvEquiv F Ω x = brauerInv F Ω x :=
-  rfl
 
 end GroundTheory.ProfCoh

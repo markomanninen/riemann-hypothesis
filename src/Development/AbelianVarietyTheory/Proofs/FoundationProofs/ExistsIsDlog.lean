@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+
+@[expose] public section
 
 open GlobalTheory.K5 Polynomial
 
@@ -15,7 +19,7 @@ def dlogSub (p : ℕ) [Fact p.Prime] (n : ℕ) : Subalgebra (O0 p) (On p n) wher
     exact add_mem (Submodule.smul_mem _ _ hb) (Submodule.smul_mem _ _ ha)
   add_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact add_mem ha hb
   algebraMap_mem' := by
     intro r
@@ -34,7 +38,7 @@ theorem mem_dlogSub (p : ℕ) [Fact p.Prime] (n : ℕ) (w : On p n) : w ∈ dlog
     | C r =>
       have : Ideal.Quotient.mk (towerIdeal p n) (C (C r)) = algebraMap (O0 p) (On p n) r := rfl
       rw [this]; exact Subalgebra.algebraMap_mem _ r
-    | add a b ha hb => rw [Polynomial.C_add, map_add]; exact add_mem ha hb
+    | add a b ha hb => rw [Polynomial.C_add, RingHom.map_add (Ideal.Quotient.mk (towerIdeal p n))]; exact add_mem ha hb
     | monomial k r _ =>
       rw [Polynomial.C_mul, Polynomial.C_pow, map_mul, map_pow]
       refine mul_mem ?_ (pow_mem hx _)
@@ -42,7 +46,7 @@ theorem mem_dlogSub (p : ℕ) [Fact p.Prime] (n : ℕ) (w : On p n) : w ∈ dlog
       rw [this]; exact Subalgebra.algebraMap_mem _ r
   induction f using Polynomial.induction_on with
   | C a => exact hC a
-  | add a b ha hb => rw [map_add]; exact add_mem ha hb
+  | add a b ha hb => rw [RingHom.map_add (Ideal.Quotient.mk (towerIdeal p n))]; exact add_mem ha hb
   | monomial k a _ =>
     rw [map_mul, map_pow]
     exact mul_mem (hC a) (pow_mem hy _)

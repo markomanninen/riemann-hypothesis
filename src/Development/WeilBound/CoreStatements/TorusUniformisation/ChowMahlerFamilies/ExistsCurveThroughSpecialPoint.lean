@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenericCentreSpecializes
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LocalComponentsSurjective
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropZ
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsCurveOfFunctionField
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueValuationRingLift
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ExistsPrimeDimOneAvoiding
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenericCentreSpecializes
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LocalComponentsSurjective
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropZ
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsCurveOfFunctionField
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueValuationRingLift
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ExistsPrimeDimOneAvoiding
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat
 
 namespace PositivityTheory.Xgn.CurveExistence
@@ -88,7 +93,12 @@ theorem alg (O B S D : Type) [CommRing O] [IsLocalRing O] [CommRing B] [Algebra 
       Algebra.EssFiniteType.of_isLocalization _ (nonZeroDivisors D)
     haveI := Algebra.EssFiniteType.comp (ResidueField O) B' D
     exact Algebra.EssFiniteType.comp (ResidueField O) D _
-  · rw [GroundTheory.Arith.Abelian.Jacobian.trdeg_eq_of_isFractionRing (ResidueField O) (A := D), hD]
+  · haveI : FaithfulSMul D (FractionRing D) :=
+      (faithfulSMul_iff_algebraMap_injective _ _).2 (IsFractionRing.injective D (FractionRing D))
+    haveI : Algebra.IsAlgebraic D (FractionRing D) :=
+      IsLocalization.isAlgebraic (FractionRing D) (nonZeroDivisors D)
+    rw [← trdeg_add_eq (ResidueField O) D (A := FractionRing D),
+      trdeg_eq_zero (R := D) (A := FractionRing D), add_zero, hD]
 
 theorem chart {X : Scheme.{0}} {O : Type} [CommRing O] [IsLocalRing O] (s : X ⟶ Spec (CommRingCat.of O))
     [LocallyOfFiniteType s] (x : X) (hx : IsClosed ({x} : Set X)) :

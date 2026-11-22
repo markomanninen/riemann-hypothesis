@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.LInjective
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedFormsMutualShuffleEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCommonOrderedForm
-import GroundTheory.PAdicHodge.AInfGalois
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.LInjective
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedFormsMutualShuffleEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCommonOrderedForm
+public import GroundTheory.PAdicHodge.AInfGalois
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem aPrecedes_of_precedes {Δ Δ' : Segment k} (h : Δ.Precedes Δ') : Comb.
   obtain ⟨⟨⟨Γ, hΓ⟩, h1, h2⟩, j, hj, hs⟩ := h
   refine ⟨⟨⟨toA Γ, ?_⟩, fun e => h1 (carrier_subset_of_image e), fun e => h2 (carrier_subset_of_image e)⟩, j, hj,
     Subtype.ext ?_⟩
-  · apply Set.image_injective.2 (Subtype.val_injective (p := fun x : IrrGL k => x.IsCusp))
+  · apply Set.image_injective.2 (Subtype.val_injective (p := fun x : IrrGL (k := k) => x.IsCusp))
     rw [Set.image_union, ZcWords.image_carrier, ZcWords.image_carrier, ZcWords.image_carrier, hΓ]
   · exact hs.trans (ZcWords.val_sNu_iterate (toA Δ).start j).symm
 
@@ -61,7 +65,7 @@ theorem exists_common_orderedForm : ∀ {k : Type} [Field k] [ValuativeRel k] [T
   obtain ⟨L₁, L₂, L, h1, h2, h3, o1, o2, o3, hI⟩ := GlobalTheory.CompanionTheory.SegOrder.exists_common_ordered_form (sNu (k := k)) ZcWords.sNu_injective
     ZcWords.sNu_aperiodic (𝔪.map toA) (𝔫.map toA)
   refine ⟨_, _, _, (L₁.map fromA).get, (L₂.map fromA).get, (L.map fromA).get, isOrderedForm_get h1 o1,
-    isOrderedForm_get h2 o2, isOrderedForm_get (by rw [h3, Multiset.map_add]) o3, ?_⟩
+    isOrderedForm_get h2 o2, isOrderedForm_get (by rw [h3, Multiset.map_add (f := _)]) o3, ?_⟩
   rw [wtW_get, wtW_get, wtW_get]
   exact ZcWords.interleave_map _ hI
 

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddOp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABStar
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHat
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddOp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABStar
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHat
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

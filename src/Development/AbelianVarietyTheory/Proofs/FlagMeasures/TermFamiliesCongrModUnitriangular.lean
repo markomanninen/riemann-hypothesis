@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+
+@[expose] public section
+
 open Formalism.MainNotions.S
 
 namespace GlobalTheory.SlocCong
@@ -140,7 +145,8 @@ theorem coords_of_flag {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F
       { toFun := fun v => H.h v w
         map_add' := fun x y => H.h_add_left x y w
         map_smul' := fun a x => by simp [H.h_smul_left] }
-    rw [show H.h (∑ a, c a • Fr.f a) w = φ (∑ a, c a • Fr.f a) from rfl, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show H.h (∑ a, c a • Fr.f a) w = φ (∑ a, c a • Fr.f a) from rfl, map_sum]
     simp [φ, H.h_smul_left]
   have hex : ∀ b, ∃ l : Fin (r + 1) →₀ E, (∀ c, ¬ c < b → l c = 0) ∧
       g (y b) = B b b • Fr.f b + ∑ c, l c • Fr.f c := by
@@ -149,7 +155,8 @@ theorem coords_of_flag {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F
       have e1 : g (y b) - B b b • Fr.f b =
           ∑ a, (B a b • g (Fr.f a) - if a = b then B b b • Fr.f b else 0) := by
         rw [Finset.sum_sub_distrib, Finset.sum_ite_eq' Finset.univ b, if_pos (Finset.mem_univ _), hy b]
-        simp [map_sum, map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [map_sum, map_smul]
       rw [e1]
       refine Submodule.sum_mem _ fun a _ => ?_
       rcases lt_trichotomy a b with h | rfl | h
@@ -232,13 +239,15 @@ theorem loc_cong_unitri : ∀ {F : Type} [Field F] [ValuativeRel F] [Topological
   have hy2 : ∀ a, y a = ∑ c, W c a • τ.f c := by
     intro a
     have := congrArg n (hWy a)
-    simp only [map_sum, map_smul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul] at this
     rw [hf]
     simpa using this
   have hx2 : ∀ b, x b = ∑ c, W' c b • τ.f' c := by
     intro b
     have := congrArg n' (hWx b)
-    simp only [map_sum, map_smul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul] at this
     rw [hf']
     simpa using this
   let WO : Matrix (Fin (r + 1)) (Fin (r + 1)) M.L.O := Matrix.of fun a b => ⟨W a b, hWO a b⟩

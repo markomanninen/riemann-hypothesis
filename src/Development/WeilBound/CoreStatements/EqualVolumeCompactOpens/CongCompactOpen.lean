@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.LocGen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.EichAlongSub
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PHypPairExists
-import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.IsIsotropicHermitianSetting
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.LocGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.EichAlongSub
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PHypPairExists
+public import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.IsIsotropicHermitianSetting
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem eich_mul {R : Type} [CommRing R] {N : ℕ} {σ : R →+* R} {J : Matrix 
   have heu : hf σ J e u = 0 := by rw [← hf_symm hσ hJ, hue, map_zero]
   rw [ext_iff_mulVec]
   intro x
-  rw [← mulVec_mulVec, eich_mulVec σ J e u, eich_mulVec σ J e u', eich_mulVec σ J e (u + u')]
+  rw [← mulVec_mulVec, eich_mulVec (σ := σ) (J := J) e u, eich_mulVec (σ := σ) (J := J) e u', eich_mulVec (σ := σ) (J := J) e (u + u')]
   simp only [hf_add_left, hf_sub_left, hf_smul_left, hf_add_right, he, hue', heu, mul_zero, add_zero, sub_zero]
   module
 
@@ -48,7 +52,7 @@ theorem eich_root {E : Type} [Field E] [CharZero E] {N : ℕ} {σ : E →+* E} {
   refine ⟨_, ⟨t • u, t * (c + h / 2) - t ^ 2 * h / 2, by rw [hf_smul_left, hue, mul_zero],
     by rw [hf_smul_left, huf, mul_zero], ?_, rfl⟩, ?_⟩
   · rw [hf_smul_left, hf_smul_right, ← hh]
-    simp only [map_sub, map_mul, map_add, map_div₀, map_pow, hσt, hσh, hσ2]
+    simp only [map_sub, map_mul, map_add (f := _), map_div₀, map_pow, hσt, hσh, hσ2]
     linear_combination t * hc
   · rw [hpow, ht, mul_inv_cancel₀ hn', one_smul]
     congr 1

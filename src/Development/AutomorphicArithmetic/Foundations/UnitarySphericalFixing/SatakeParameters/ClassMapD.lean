@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRecTLocRecT
-import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.GoodLem
-import Development.DiscreteGroups.GlobalIrreducibility.SerLocOfTiesLe
-import Development.DiscreteGroups.GlobalIrreducibility.DzBigDef
-import Development.DiscreteGroups.GlobalIrreducibility.ActKEEqSelfLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowTruthOfLabelTie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRecTLocRecT
+public import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.GoodLem
+public import Development.DiscreteGroups.GlobalIrreducibility.SerLocOfTiesLe
+public import Development.DiscreteGroups.GlobalIrreducibility.DzBigDef
+public import Development.DiscreteGroups.GlobalIrreducibility.ActKEEqSelfLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowTruthOfLabelTie
+
+@[expose] public section
 
 section
 noncomputable section

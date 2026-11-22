@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ZeroSheafMaps
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ZeroSheafMaps
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite

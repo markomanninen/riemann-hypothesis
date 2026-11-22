@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.ProdFormula
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.ProdFormula
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix
@@ -121,7 +125,11 @@ theorem vw_star (w : HeightOneSpectrum (𝓞 K)) (a : K) :
 theorem absNorm_map_ringEquiv {S : Type*} [CommRing S] [IsDedekindDomain S]
     [Module.Free ℤ S] [Module.Finite ℤ S] (g : S ≃+* S) (I : Ideal S) :
     Ideal.absNorm (I.map g) = Ideal.absNorm I := by
-  rw [Ideal.absNorm_apply, Ideal.absNorm_apply, Submodule.cardQuot_apply,
+  by_cases hI : I = ⊥
+  · simp [hI]
+  have hI' : I.map g ≠ ⊥ := fun h =>
+    hI ((Ideal.map_eq_bot_iff_of_injective g.injective).mp h)
+  rw [Ideal.absNorm_of_ne_bot hI', Ideal.absNorm_of_ne_bot hI, Submodule.cardQuot_apply,
     Submodule.cardQuot_apply]
   exact (Nat.card_congr (Ideal.quotientEquiv I (I.map g) g rfl).toEquiv).symm
 

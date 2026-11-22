@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.ZD
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.ZD
+
+@[expose] public section
 
 noncomputable section
 

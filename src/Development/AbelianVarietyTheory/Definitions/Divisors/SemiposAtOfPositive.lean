@@ -1,16 +1,38 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
-import Development.AbelianVarietyTheory.Definitions.Divisors.ReferenceMetricMulDualEqOne
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ComponentMean
-import Formalism.SharpRestriction.Divisibility.LatticeTransfer
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ThetaDictionaryComparison
-import Development.AbelianVarietyTheory.Definitions.Divisors.NormSqColGrLineOfOrthogonal
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ToroidalChartsForFan
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AdmissibleBaseChartRing
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ArBirational
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ReferenceMetricMulDualEqOne
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.SharpRestriction.Divisibility.WeightThresholdDefs
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLimDeg
+public import Formalism.SharpRestriction.Divisibility.LatticeTransfer
+public import Formalism.LocalToGlobal.ProjectiveLattices.SpMapAlgHomId
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.AdelicNormWeight
+public import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrMoveTransfer
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FramedPointsLiftToLevelCover
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NoCommonZeroIffOfSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionFractionalIdealProperties
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsValueBelow
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenericPointAsIdeal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CurveCl
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.MulConjTransposeEqOneOfOrthonormal
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ToroidalChartsForFan
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AdmissibleBaseChartRing
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ArBirational
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -25,10 +47,6 @@ namespace GlobalTheory.CovHt
 
 def cost {K : Type} [Field K] [NumberField K] (e : HeightOneSpectrum (𝓞 K) →₀ ℝ) (t : (K →+* ℂ) → ℝ) : ℝ :=
   ((e.sum fun la a => a * Real.log (Ideal.absNorm la.asIdeal : ℝ)) + ∑ σ, t σ) / (Module.finrank ℚ K : ℝ)
-
-example {K : Type} [Field K] [NumberField K] (s : ℝ) : cost (K := K) 0 (fun _ => s) = s := by
-  have h : (Module.finrank ℚ K : ℝ) ≠ 0 := by exact_mod_cast Module.finrank_pos.ne'
-  simp [cost, NumberField.Embeddings.card, h]
 
 section Generic
 
@@ -71,18 +89,18 @@ def Mult (Z : Comp Xo c) (u u' : AllWt.Weight Dw) (cc : ℝ) : Prop :=
 
 def l1 (u : AllWt.Weight Dw) : ℝ := ∑ τ, ∑ i, |(u τ i : ℝ)|
 
-variable (E) in
 
+variable (E) in
 def htEx (p : ℕ) : ℝ := 1 / ((p : ℝ) - 1) + 40 * ((padicValNat p (discr E).natAbs : ℝ) / (Module.finrank ℚ E : ℝ))
 
-variable (Xo c) in
 
+variable (Xo c) in
 def HTCmp : Prop := ∀ (p : ℕ) (la : HeightOneSpectrum (𝓞 c.F)), p.Prime → ((p : ℕ) : 𝓞 c.F) ∈ la.asIdeal →
   ∀ v ∈ (recVals Xo c).1 la, ∃ w ∈ (htVals Xo c).1 la, ∀ (u : AllWt.Weight Dw), ∀ f ∈ secZ Xo c (exOf Dw u 0),
     w f ≤ v f + (((vLa la (p : c.F) : ℝ) * htEx E p * l1 u : ℝ) : EReal)
 
-variable (l) in
 
+variable (l) in
 def htCost (B : ℝ) : ℝ := ∑ᶠ p ∈ htPrimes l B, htEx E p * Real.log p
 
 def WtGap (u : AllWt.Weight Dw) (g : ℝ) : Prop :=
@@ -124,103 +142,20 @@ def DeRhamHodgeTateDifferenceKilledAt : Prop := ∀ (Sx : Finset ℕ) (R : ℝ) 
   ∀ (τ : D.what₂.Tau) (k : ℕ), 1 ≤ k → ∀ Q : MvPolynomial (Rt D.what₂.Tau Y.N) ℝ,
     Y.arMix Sx R p (tagHT D.what₂.Tau _ (pk D _ τ k) * (tagDR D.what₂.Tau _ Q - tagHT D.what₂.Tau _ Q)) = 0
 
-example (V : DivX D) (P : DIV.Align.PrinLev V) : LatticeTransfer.PointsLemma D V P ↔
-    ∀ S κ, HidaSetting D V S κ → DIV.Align.LevB P κ → DeRhamMinusHodgeTateGoodPrimesAt (V.shv S κ) := Iff.rfl
-
-example (V : DivX D) (P : DIV.Align.PrinLev V) : WeightThresholdDefs.TrivialFlagIntersectionCond V P ↔
-    ∀ S κ, HidaSetting D V S κ → DIV.Align.LevB P κ → DeRhamHodgeTateDifferenceKilledAt (V.shv S κ) := Iff.rfl
-
 end One
 
-open GlobalTheory.Mean4O in
 
-def SlopeSt : Prop := ∃ C : ℝ, 0 ≤ C ∧ ∀ (D : D7) (O : Setup D), O.Core → 2 < D.R.f * (O.N - 1) → GlobalTheory.Mean4.FewBad O.Y →
-  GlobalTheory.IndefiniteRowSideFullHecke.ComponentMean.VolEq O.Y ∧ GlobalTheory.IndefiniteRowSideFullHecke.ComponentMean.SlopeMean O.Y C
-
-open GlobalTheory.ShFam in
-
-def SrcSt : Prop := ∃ C : ℝ, 0 ≤ C ∧ ∀ (D : D7) (A : Amb D) (N j : ℕ) (S : Sig A N j) (κ : Lv A) (s : FinalTheorems S κ),
-  N - j < j → j < N → 2 < D.R.f * (N - 1) → κ.primes.card ≤ 15 →
-    MeanAll (Xo := s.Xo) (c := κ.c) (r := N) (fun σ => GlobalTheory.ThetaDictCompare.toU (s.U σ)) (xiR D) (ell D) C
-
-def DeepSt : Prop := ∃ C : ℝ, 0 ≤ C ∧ ∀ (D : D7) (T : CoreJ D), LawsJ T → ∀ j : ℕ, 1 ≤ j → j < D.R.m →
-  ∀ (Y : Deep T.toCore j) (e : ℕ) (o : ℝ), Y.Good e o →
-    Y.d.l₂.M'.primeFactors.card ≤ 15 → MeanAll Y.U (xiR D) (ell D) C
 
 section Obj
 
 open GlobalTheory.Mean4 GlobalTheory.Mean4O Formalism.BasicNotions.DV
 
-def OnObj (Q : ∀ (D : D7) (O : Setup D) (A : SlopeTestRemainingChoices O.Y) (T : Real0 O.Y) (H : Ht O.Y), O.Reads A T H → Prop) : Prop :=
-  ∀ (D : D7) (O : Setup D), O.Core → 2 < D.R.f * (O.N - 1) →
-    ∀ (A : SlopeTestRemainingChoices O.Y) (T : Real0 O.Y) (H : Ht O.Y) (h : O.Reads A T H), Q D O A T H h
-
-def NefAt {D : D7} {Y : ShimX D.what₂.Tau} (A : SlopeTestRemainingChoices Y) : Prop := ∀ B : ℝ, 2 ≤ B → ∀ (u : Wt Y) (s : ℚ), IsRat Y u → 0 < s →
-  WeightThresholdDefs.Dominant Y (A.sh u s) → NefCond Y B (A.sh u s) → Y.semipos (Y.Mbar B u s) → Y.nefFib (Y.Mbar B u s)
-
-def SemiposAt {D : D7} {Y : ShimX D.what₂.Tau} (A : SlopeTestRemainingChoices Y) : Prop := ∀ Λ : ℝ, ∃ s₀ : ℝ, 0 < s₀ ∧ ∀ B : ℝ, 2 ≤ B →
-  ∀ (u : Wt Y) (s : ℚ), IsRat Y u → Formalism.MainNotions.WeightThresholdDefs.supAbs Y u ≤ Λ → 0 < s → (s : ℝ) ≤ s₀ → WeightThresholdDefs.Dominant Y (A.sh u s) →
-    NefCond Y B (A.sh u s) → Y.semipos (Y.Mbar B u s)
-
-theorem NefAt.positive {D : D7} {Y : ShimX D.what₂.Tau} {A : SlopeTestRemainingChoices Y} (h : NefAt A) (hs : SemiposAt A) : Positive A :=
-  fun Λ => have ⟨s₀, h₀, hs⟩ := hs Λ
-    ⟨s₀, h₀, fun B hB u s hu hΛ h₁ h₂ hd hn =>
-      ⟨hs B hB u s hu hΛ h₁ h₂ hd hn, h B hB u s hu h₁ hd hn (hs B hB u s hu hΛ h₁ h₂ hd hn)⟩⟩
-
-open Filter Topology in
-
-theorem semiposAt_of_famS {D : D7} {Y : ShimX D.what₂.Tau} {T : Real0 Y} {A : SlopeTestRemainingChoices Y} (hF : ∀ c, (T.F c).FamS)
-    (hM : TieM T A) : SemiposAt A := fun Λ => by
-  choose s₀ hs₀ K hK using fun c => hF c (Λ + ‖A.dir‖)
-  obtain ⟨s₁, hs₁, hs1, hle⟩ : ∃ s₁ : ℝ, 0 < s₁ ∧ s₁ ≤ 1 ∧ ∀ c, s₁ ≤ s₀ c := by
-    have : ∀ᶠ s in 𝓝[>] (0 : ℝ), 0 < s ∧ s ≤ 1 ∧ ∀ c, s ≤ s₀ c := by
-      refine eventually_mem_nhdsWithin.and (Eventually.filter_mono nhdsWithin_le_nhds ?_)
-      exact (eventually_le_nhds zero_lt_one).and (eventually_all.2 fun c => eventually_le_nhds (hs₀ c))
-    exact this.exists
-  refine ⟨s₁, hs₁, fun B hB u s hu hΛ hs hss hdom _ => ?_⟩
-  have hs' : (0 : ℝ) < s := by exact_mod_cast hs
-  have hL : 0 ≤ Λ := (Real.iSup_nonneg fun _ => abs_nonneg _).trans hΛ
-  have a2 : ‖u‖ ≤ Λ := (pi_norm_le_iff_of_nonneg hL).2 fun τ => (pi_norm_le_iff_of_nonneg hL).2 fun i =>
-    (le_ciSup (f := fun x : Rt D.what₂.Tau Y.N => |u x.1 x.2|) (Set.finite_range _).bddAbove (τ, i)).trans hΛ
-  have hn : ‖A.sh u s‖ ≤ Λ + ‖A.dir‖ := by
-    have e : A.sh u s = u - (s : ℝ) • A.dir := by ext τ i; simp [SlopeTestRemainingChoices.sh]
-    have a1 := norm_sub_le u ((s : ℝ) • A.dir)
-    rw [norm_smul, Real.norm_of_nonneg hs'.le] at a1
-    have a3 := mul_le_of_le_one_left (norm_nonneg A.dir) (hss.trans hs1)
-    rw [e]; linarith
-  have key := fun c σ => hK c (A.sh u s) hdom hn s hs' (hss.trans (hle c)) σ
-  exact ((hM B hB u s hu hs).2 hdom fun c σ => (key c σ).1).2.2 fun c σ => (key c σ).2.1
-
-def HtIntSt : Prop := OnObj fun _ _ _ _ H _ => HtInt H
-
-def HtBdSt : Prop := OnObj fun _ _ _ _ H _ => HtBd H
-
-def HtUpSt : Prop := OnObj fun _ _ A _ H _ => HtUp A H
-
-def RegSt : Prop := OnObj fun _ _ _ T _ _ => ∀ c, (T.F c).InS
-
-def TestSt : Prop := ∃ r : ℝ, OnObj fun D O _ _ _ _ => ∀ hh : Fn O.Y, GlobalTheory.FlagZ.IsHh D.what₂.Tau O.Y.N hh →
-  ∀ Φ : ℝ → Fn O.Y, LimFam Φ → TestVal Φ hh r
-
-def AntiSt : Prop := OnObj fun D O _ _ _ _ => ∀ hh : Fn O.Y, GlobalTheory.FlagZ.IsHh D.what₂.Tau O.Y.N hh →
-  ∀ Φ : ℝ → Fn O.Y, LimFam Φ → Antisym Φ hh
-
-structure Known₂ : Prop where
-  int : HtIntSt
-  bd : HtBdSt
-  up : HtUpSt
-  reg : RegSt
-  test : TestSt
-  anti : AntiSt
 
 structure HypothesesH : Prop where
   sieg : GlobalTheory.Published.SiegelToroidalIntegral
   fan : GlobalTheory.Published.ToroidalChartsForFan
   charts : GlobalTheory.Published.ToroidalCharts
   deg : GlobalTheory.Published.ArDegree
-
-def InputsSt : Prop := ∃ r Cf : ℝ, ∀ (D : D7) (O : Setup D), O.Core → 2 < D.R.f * (O.N - 1) → FewBad O.Y →
-  ∃ (A : SlopeTestRemainingChoices O.Y) (Φ : ℝ → Fn O.Y) (hh : Fn O.Y), Inputs A Φ hh r Cf
 
 end Obj
 

@@ -1,17 +1,22 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingPrimes
-import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackeyTransfer
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingPrimes
+public import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackeyTransfer
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 attribute [local instance 2000] Rep.hV2
 
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
@@ -34,13 +39,13 @@ theorem subsingleton_gsTateCompactCohomology {n : ℕ} (hn : n ≠ 0)
   ⟨fun x y => (gsTateCompactCohomology_eq_zero S ιr ιs hn hS M hM hr x).trans
     (gsTateCompactCohomology_eq_zero S ιr ιs hn hS M hM hr y).symm⟩
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 32000000 in
 theorem injective_gsRealRes_of_four_le {n : ℕ} (hn : n ≠ 0)
     (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((n : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) {r : ℕ} (hr : 4 ≤ r) :
-    Function.Injective (gsRealRes S ιr M r).hom := by
+    Function.Injective (gsRealRes S ιr M r).hom := set_option maxHeartbeats 16000000 in by
   obtain ⟨ιs'⟩ : Nonempty (∀ v : S,
       ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) :=
     ⟨fun _ => Classical.choice nonempty_algHom_of_isSepClosed⟩
@@ -54,13 +59,13 @@ theorem injective_gsRealRes_of_four_le {n : ℕ} (hn : n ≠ 0)
       (fun w => Rep.res (gsRealFamily S ιr w).toMonoidHom M) (fun _ => 𝟙 _) p
       (gsTateCompactCohomology_eq_zero S ιr ιs' hn hS M hM hr))
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 32000000 in
 theorem surjective_gsRealRes_of_three_le {n : ℕ} (hn : n ≠ 0)
     (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((n : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) {r : ℕ} (hr : 3 ≤ r) :
-    Function.Surjective (gsRealRes S ιr M r).hom := by
+    Function.Surjective (gsRealRes S ιr M r).hom := set_option maxHeartbeats 16000000 in by
   obtain ⟨ιs'⟩ : Nonempty (∀ v : S,
       ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) :=
     ⟨fun _ => Classical.choice nonempty_algHom_of_isSepClosed⟩

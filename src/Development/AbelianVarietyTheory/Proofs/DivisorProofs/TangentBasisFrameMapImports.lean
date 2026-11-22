@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtMapDualBCLeft
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtMapDualBCLeft
+
+@[expose] public section
 
 set_option autoImplicit false
 

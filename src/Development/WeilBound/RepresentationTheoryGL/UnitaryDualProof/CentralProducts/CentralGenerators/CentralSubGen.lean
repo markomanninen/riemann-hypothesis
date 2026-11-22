@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CentralProducts.TopProdD
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CentralProducts.TopProdD
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,7 @@ theorem centralSub_gen [TopologicalSpace k] : CentralSub k := by
         have hu' : ∀ y : kˣ, A.ρ (sc n y) u = lam y • u := hu
         have hv' : ∀ y : kˣ, A.ρ (sc n y) v = lam y • v := hv
         show A.ρ (sc n y) (u + v) = lam y • (u + v)
-        rw [map_add, hu' y, hv' y, smul_add]
+        rw [map_add (f := _), hu' y, hv' y, smul_add]
       zero_mem' := by
         intro y
         show A.ρ (sc n y) 0 = lam y • (0 : A.V)

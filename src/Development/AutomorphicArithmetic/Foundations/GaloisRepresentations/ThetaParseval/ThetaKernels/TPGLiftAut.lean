@@ -1,17 +1,28 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.LiftAut
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaBasicK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsNhdsOneWeilFixesPureTensor
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.GalTPDefs
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.WeilRepMemPolynomialFockOfArchimedean
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.WeilRepMemPolynomialFockOfFinitePlace
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EndEgrpMatch
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LevelK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaLiftWeilTranslateEquivariant
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousThetaLiftOfDefinite
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsFiniteDimensionalWeilArchimedeanOrbit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaLiftLinearInSchwartz
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
+public import Development.WeilBound.ThetaLifts.FrameEstimates.CuspRapid
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.TendstoIndMul
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PolFin
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ArchimedeanEvaluationVector
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsL
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsB
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaBasicK
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsNhdsOneWeilFixesPureTensor
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.GalTPDefs
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.WeilRepMemPolynomialFockOfArchimedean
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.WeilRepMemPolynomialFockOfFinitePlace
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.EndEgrpMatch
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LevelK
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaLiftWeilTranslateEquivariant
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ContinuousThetaLiftOfDefinite
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsFiniteDimensionalWeilArchimedeanOrbit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaLiftLinearInSchwartz
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -58,7 +69,7 @@ theorem levelX_sch_k {r s r' s' : ℕ} (hp : _root_.GlobalTheory.ThK.IsPair_k B 
     obtain ⟨U, hU, h⟩ := _root_.UpperTheory.exists_nhds_one_weil_fixes_pure_tensor F E σ B n d X W M χX χW om r s r' s' hp g hg
     exact mem_of_superset hU fun u hu k => h u hu k f
   | zero => exact Eventually.of_forall fun _ _ => map_zero _
-  | add x y _ _ hx hy => filter_upwards [hx, hy] with u h1 h2 k using by rw [map_add, h1 k, h2 k]
+  | add x y _ _ hx hy => filter_upwards [hx, hy] with u h1 h2 k using by rw [map_add (f := _), h1 k, h2 k]
   | smul a x _ hx => filter_upwards [hx] with u h1 k using by rw [map_smul, h1 k]
 theorem polStab_k (T : _root_.UpperTheory.TP.Tools_k) (hp : _root_.GlobalTheory.ThK.IsPair_k B M χX χW om n 0 d 0) (x : UA σ X.J) (y : UA σ W.J) :
     ∀ Φ ∈ PolData B M, om (x, y) Φ ∈ PolData B M := by
@@ -87,7 +98,7 @@ theorem lift_left_k (T : _root_.UpperTheory.TP.Tools_k) (hp : _root_.GlobalTheor
 private theorem real_of_off_pk {τ : ∀ w : InfinitePlace F, EmbOver E w} {g : UA σ W.J} (hg : g ∈ gOff σ W ∅) (w : InfinitePlace F) :
     (mat g).map (piInf (τ w)) = 1 := by
   have h : ∀ w, (mat g).map (compInf F E w) = 1 := by
-    refine Subgroup.closure_induction (p := fun g _ => ∀ w, (mat g).map (compInf F E w) = 1) (fun x hx => hx.1) ?_ ?_ ?_ hg
+    refine Subgroup.closure_induction (k := {g : UA σ W.J | (∀ w : InfinitePlace F, (mat g).map (compInf F E w) = 1) ∧ ∀ v ∈ (∅ : Finset (Pl F)), OffAt v g}) (p := fun g _ => ∀ w, (mat g).map (compInf F E w) = 1) (fun x hx => hx.1) ?_ ?_ ?_ hg
     · intro w; exact Matrix.map_one _ (map_zero _) (map_one _)
     · intro x y _ _ hx hy w
       rw [show mat (x * y) = mat x * mat y from rfl, Matrix.map_mul, hx, hy, one_mul]
@@ -120,7 +131,7 @@ theorem aut_lift_k (T : _root_.UpperTheory.TP.Tools_k) (hp : _root_.GlobalTheory
     rw [map_mul]
     exact _root_.UpperTheory.TP.lift_left_k T hp hs ψ ((he'.rat γ).2 hγ) _
   · let f := lift M om Φ ψ ∘ e'
-    let H : Subgroup (GlobalTheory.UnitaryBC.finU E d) :=
+    let H : Subgroup (GlobalTheory.UnitaryBC.finU (E := E) (n := d)) :=
       { carrier := {k | GlobalTheory.UnitaryBC.RU E d k f = f}
         one_mem' := by show GlobalTheory.UnitaryBC.RU E d 1 f = f; rw [map_one]; rfl
         mul_mem' := fun {a b} ha hb => by
@@ -133,7 +144,7 @@ theorem aut_lift_k (T : _root_.UpperTheory.TP.Tools_k) (hp : _root_.GlobalTheory
           rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one]; rfl }
     refine Subgroup.isOpen_of_mem_nhds H (g := 1) ?_
     have h1 := _root_.PositivityTheory.ThKEnd.Grp.level_sch_k _root_.PositivityTheory.ThKEst.level_k hp hs
-    have c : Tendsto (fun k : GlobalTheory.UnitaryBC.finU E d => e' k.1) (𝓝 1) (𝓝 1) :=
+    have c : Tendsto (fun k : GlobalTheory.UnitaryBC.finU (E := E) (n := d) => e' k.1) (𝓝 1) (𝓝 1) :=
       (e'.continuous.comp continuous_subtype_val).tendsto' _ _ (map_one e')
     filter_upwards [c.eventually h1] with k hk
     show GlobalTheory.UnitaryBC.RU E d k.1 f = f
@@ -180,7 +191,7 @@ theorem _root_.UpperTheory.TP.liftAut_k :
         have := congrFun (l3 Φ.1 (sch Φ) _ _ (fn _ (p1 ψ)) (fn _ (p1 ψ'))) (e' h)
         refine Eq.trans ?_ this
         show lift M om Φ.1 (Pj (ψ + ψ') ∘ e.symm) (e' h) = _
-        rw [map_add]
+        rw [map_add (f := _)]
         rfl)
       (fun c Φ ψ => funext fun h => by
         have := congrFun (l4 c Φ.1 (sch Φ) _ (fn _ (p1 ψ))) (e' h)
@@ -198,7 +209,7 @@ theorem _root_.UpperTheory.TP.liftAut_k :
   have hm := _root_.UpperTheory.TP.polStab_k T hP (e g) (e' h) Φ.1 Φ.2
   refine ⟨⟨_, hm⟩, rfl, ?_⟩
   have hRC : GlobalTheory.UnitaryBC.RU E n g φ ∈ C :=
-    ⟨hφ.cont.comp (continuous_mul_right g), fun γ hγ x => by
+    ⟨hφ.cont.comp (continuous_mul_const g), fun γ hγ x => by
       show φ (γ * x * g) = φ (x * g)
       rw [mul_assoc]
       exact hφ.left γ hγ _⟩

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Side0PosOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointLevelZeroEqEmbedding
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProperDomP
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Side0PosOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointLevelZeroEqEmbedding
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProperDomP
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.SliceIntegralLemmas
 

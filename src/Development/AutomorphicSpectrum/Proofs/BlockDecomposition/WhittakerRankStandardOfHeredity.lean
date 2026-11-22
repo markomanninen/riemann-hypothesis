@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspStdSubGeneric
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspStdSubGeneric
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,6 +24,7 @@ theorem rank_piTensorProduct_le_one {ι : Type} [Fintype ι] (W : ι → Type) [
     refine ⟨r * ∏ a, c a, ?_⟩
     have hf : f = fun a => c a • w a := funext fun a => (hc a).symm
     rw [hf, (PiTensorProduct.tprod ℂ).map_smul_univ, smul_smul]
+    simp only [RingHom.id_apply]
   | add x y hx hy =>
     obtain ⟨r, rfl⟩ := hx
     obtain ⟨s, rfl⟩ := hy

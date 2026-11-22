@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLsB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteWeilRepEqLatticeIntertwinerMulCharacter
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticePointSignEqThetaLawSemicharacter
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StdCharFiniteAdeleRationalEqExpTrace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLsB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteWeilRepEqLatticeIntertwinerMulCharacter
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticePointSignEqThetaLawSemicharacter
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StdCharFiniteAdeleRationalEqExpTrace
+
+@[expose] public section
 
 open NumberField MeasureTheory IsDedekindDomain
 open scoped Classical
@@ -105,7 +109,8 @@ theorem phase_eq : ∀ D : D7, ∃ w : 𝓞 D.host.E, w + GlobalTheory.FinWeil.s
       rw [Finset.sum_congr rfl fun τ _ => e τ, ← Finset.sum_div, hc]
     have hcre : ((c.re : ℝ) : ℂ) = c := by
       have : starRingEnd ℂ c = c := by
-        rw [hc, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hc, map_sum]
         refine Finset.sum_congr rfl fun τ _ => ?_
         rw [← GlobalTheory.FockCompare.tauE_star, hns]
       exact Complex.conj_eq_iff_re.1 this
@@ -121,9 +126,11 @@ theorem phase_eq : ∀ D : D7, ∃ w : 𝓞 D.host.E, w + GlobalTheory.FinWeil.s
     have hsum : ∑ τ, ∑ i, ∑ j, Z τ i j * starRingEnd ℂ (Z τ i j) = c := by
       rw [hc]
       refine Finset.sum_congr rfl fun τ _ => ?_
-      rw [hn, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hn, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, GlobalTheory.FockCompare.tauE_star, hZ]
       show -(tauE D τ (X i j)) * starRingEnd ℂ (-(tauE D τ (X i j))) = _

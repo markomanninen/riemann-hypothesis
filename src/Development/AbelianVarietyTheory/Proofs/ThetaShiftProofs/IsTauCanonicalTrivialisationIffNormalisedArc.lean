@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ theorem pow_eq_one_iff (n : ℕ) (y : d.A.X) : D₀.c (d.eX y) ^ n = 1 ↔ n •
     | succ k ih => rw [succ_nsmul, d.u.ex_add, ih, d.ex_ct, pow_succ]
   rw [← h, d.u.ker, d.lam_eq]
 
-omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 
+omit [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 theorem ah_ratio (A : AnArc O) (l m : A.abelian₂) :
     A.ah (l + m) 0 = A.ah l 0 * A.ah m 0 * Complex.exp (Real.pi * A.H l m) := by
   have h1 := A.H_conj l m
@@ -103,7 +107,7 @@ theorem kappa_eq {n : ℕ} (hc : ∀ y, D₀.c y ^ n = 1) (y y' : d.A.X) :
   have hk := congrArg e ((TauTwist.unitAt_kappa hc (d.eX y) (d.eX y') hG).trans (TauTwist.val_tau D₀ _ _ _ hG))
   have hl : ∀ x, d.A.ct (n • x) ∈ d.A.abelian₂ := fun x => by
     rw [map_nsmul]; exact (pow_eq_one_iff d n x).1 (hc _)
-  rw [map_mul, map_mul, map_mul, map_inv, map_inv, map_inv, ← map_nsmul, ← map_nsmul, ← map_add, hρ,
+  rw [map_mul, map_mul, map_mul, map_inv, map_inv, map_inv, ← map_nsmul, ← map_nsmul, ← map_add (f := _), hρ,
     hψ (n • y) ⟨_, hl y⟩ rfl, hψ (n • y') ⟨_, hl y'⟩ rfl,
     hψ (n • y + n • y') (⟨_, hl y⟩ + ⟨_, hl y'⟩) (map_add _ _ _), ah_ratio, d.A.psi_add] at hk
   have hu : e (TauTwist.unitAt (𝟙 (Out.TK ℂ).left) p (TauTwist.kappa hc (d.eX y) (d.eX y'))) =

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MassDataMassesOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MassHNonneg
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.EllipticCentralizerQuotientCompact
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MassDataMassesOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MassHNonneg
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.EllipticCentralizerQuotientCompact
+
+@[expose] public section
 
 open Formalism.L2.SG.TypedSets
 

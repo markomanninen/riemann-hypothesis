@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PaddedWittNormSquare
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColumnInclusionRenaming
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableOfUnitCoord
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsMulOfApprox
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormLeOfCoord
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExtremalRowWeight
-import Formalism.ThetaSupremumBounds.LiftOperatorBoundOfFockJet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PaddedWittNormSquare
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColumnInclusionRenaming
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableOfUnitCoord
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsMulOfApprox
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormLeOfCoord
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExtremalRowWeight
+public import Formalism.ThetaSupremumBounds.LiftOperatorBoundOfFockJet
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BasicNotions Formalism.L2.DIV
 open Formalism.REAL (fockF)
@@ -47,7 +51,8 @@ theorem rowAct_pad {a b : ℕ} (h : a ≤ b) (A : Matrix (Fin a) (Fin b) ℂ) (f
       (rename (incl h)).comp (rowAct ℂ (A * Aᴴ)) := by
     apply MvPolynomial.algHom_ext
     rintro ⟨p, q⟩
-    simp only [AlgHom.comp_apply, rename_X, rowAct, aeval_X, map_sum, map_mul, rename_C, Prod.map]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, rename_X, rowAct, aeval_X, map_sum, map_mul, rename_C, Prod.map]
     rw [sum_castLE h]
     · refine Finset.sum_congr rfl fun β _ => ?_
       simp [Matrix.mul_apply, padRows]
@@ -143,8 +148,8 @@ theorem rename_hw {a b : ℕ} (h : a ≤ b) (ν : Fin a → ℕ) :
   ext p q : 2
   simp [GlobalTheory.Proof.ColumnInclusionRenaming.colIncl]
 
-open GlobalTheory.DualWeyl GlobalTheory.WeylMinorDual in
 
+open GlobalTheory.DualWeyl GlobalTheory.WeylMinorDual in
 theorem fock_mul_det {n : ℕ} (μ : Fin n → ℕ) (hμ : Antitone μ) (e : ℕ) {f : MvPolynomial (Fin n × Fin n) ℂ}
     (hf : f ∈ dualWeyl ℂ n n μ) :
     fockF (f * gdet ℂ n ^ e) (f * gdet ℂ n ^ e) /

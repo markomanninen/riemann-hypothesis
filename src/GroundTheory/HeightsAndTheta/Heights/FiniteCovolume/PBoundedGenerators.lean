@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StBoundedGenerators
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StReducedBasisBound
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StArchCovolumeBound
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StMajorantTransport
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StBoundedGenerators
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StReducedBasisBound
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StArchCovolumeBound
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StMajorantTransport
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -12,11 +16,11 @@ open NumberField GroundTheory.Automorphic Module Matrix Topology MeasureTheory
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem BoundedGenerators.proof (h : HermitianForm F E W) (v : Basis ι E W)
     (hR : ReducedBasisBound.Statement) (hA : ArchCovolumeBound.Statement h v)
     (hT : MajorantTransport.Statement h v) : BoundedGenerators.Statement h v := by
@@ -70,7 +74,8 @@ theorem BoundedGenerators.proof (h : HermitianForm F E W) (v : Basis ι E W)
     set r := b.repr ⟨Φ x, hxL⟩
     have hx' : x = ∑ i, r i • e i := by
       apply hΦinj
-      rw [← hsum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hsum, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_zsmul, heb i]
     rw [hx']

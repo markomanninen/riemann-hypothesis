@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.PartShortOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.PartShortOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,8 @@ theorem successive_vector_majorant_e : SvMajE := by
   have hid : ∀ (N : Matrix (Fin m) (Fin m) ℂ) (z : Fin m → ℂ),
       star z ⬝ᵥ (N.map (starRingEnd ℂ) *ᵥ z) = starRingEnd ℂ (z ⬝ᵥ (N *ᵥ star z)) := by
     intro N z
-    simp [dotProduct, mulVec, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dotProduct, mulVec, map_sum, map_mul]
   choose H0 hH0 using fun φ : E →+* ℂ => successive_vector_majorant m (J.map φ) (hherm φ) (hdetφ φ)
   let ι := Fintype.equivFin (E →+* ℂ)
   refine ⟨fun φ => if ι φ < ι (ComplexEmbedding.conjugate φ) then H0 φ

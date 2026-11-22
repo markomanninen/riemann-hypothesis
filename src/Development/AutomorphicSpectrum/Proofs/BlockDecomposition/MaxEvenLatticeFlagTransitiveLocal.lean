@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,22 +63,25 @@ theorem cT_mul_apply (Jm : Matrix (Fin n) (Fin n) R) {k l : ℕ} (M : Matrix (Fi
   exact Finset.sum_comm
 
 theorem isHerm_hform (hc : ∀ a, c (c a) = a) (Jm : Matrix (Fin n) (Fin n) R)
-    (hJ : ∀ i j, c (Jm j i) = Jm i j) : IsHerm c (Formalism.UG.hform c Jm) where
-  add_right x y z := by
+    (hJ : ∀ i j, c (Jm j i) = Jm i j) : IsHerm c (Formalism.UG.hform c Jm) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro x y z
     simp only [Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
-  smul_right a x y := by
+  · intro a x y
     simp only [Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-  symm x y := by
-    simp only [Formalism.UG.hform, map_sum, map_mul, hc]
+  · intro x y
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.UG.hform, map_sum, map_mul, hc]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [hJ]
     ring
 
 theorem isPerfect_hform (hc : ∀ a, c (c a) = a) (Jm : Matrix (Fin n) (Fin n) R)
-    (hd : IsUnit Jm.det) : IsPerfect (Formalism.UG.hform c Jm) where
-  nondeg x hx := by
+    (hd : IsUnit Jm.det) : IsPerfect (Formalism.UG.hform c Jm) := by
+  refine ⟨?_, ?_⟩
+  · intro x hx
     have h1 : (fun i => c (x i)) ᵥ* Jm = 0 := by
       funext j
       have h2 := hx (Pi.single j 1)
@@ -88,7 +95,7 @@ theorem isPerfect_hform (hc : ∀ a, c (c a) = a) (Jm : Matrix (Fin n) (Fin n) R
     have h4 : c (x i) = 0 := h3
     rw [← hc (x i), h4, map_zero]
     rfl
-  repr f := by
+  · intro f
     let w : Fin n → R := fun j => f (fun k => if j = k then 1 else 0)
     let u : Fin n → R := w ᵥ* Jm⁻¹
     refine ⟨fun i => c (u i), fun y => ?_⟩
@@ -105,7 +112,8 @@ theorem hform_mulVec (Jm g : Matrix (Fin n) (Fin n) R) (hg : cT c g * Jm * g = J
     Formalism.UG.hform c Jm (g *ᵥ x) (g *ᵥ y) = Formalism.UG.hform c Jm x y := by
   have h1 : (fun i => c ((g *ᵥ x) i)) = (fun i => c (x i)) ᵥ* cT c g := by
     funext i
-    simp only [mulVec, vecMul, dotProduct, cT, map_sum, map_mul, Matrix.transpose_apply, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [mulVec, vecMul, dotProduct, cT, map_sum, map_mul, Matrix.transpose_apply, Matrix.map_apply]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   rw [hform_eq, hform_eq, h1, Matrix.mulVec_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec,
     ← Matrix.mul_assoc, hg]
@@ -210,7 +218,7 @@ theorem sigR_sigR {F E : Type} [Field F] [NumberField F] [Field E] [NumberField 
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sigR, hs]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end Place
 

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalComponentDefiniteUnitaryFinitePartEqLocalPo
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatakeMatchBaseChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalComponentDefiniteUnitaryFinitePartEqLocalPo
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatakeMatchBaseChange
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil Formalism.BasicNotions Matrix
 open UpperTheory.V UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
@@ -24,8 +28,8 @@ private theorem fin_snd {L : Type} [Field L] [NumberField L] {n : ℕ} (g : GL (
       ((0 : InfiniteAdeleRing L), g.val i j)).2 = _
   by_cases h : i = j <;> simp [Matrix.one_apply, h]
 
-open Formalism.UG GlobalTheory.BCT.FinPtLoc in
 
+open Formalism.UG GlobalTheory.BCT.FinPtLoc in
 private theorem fin_mem {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} (g : GL (Fin n) (Af L))
     (hg : cT (cjF (L := L)) g.val * g.val = 1) : finGL L n g ∈ UA L n := by
   show cT (conjAd L) (finGL L n g).val * 1 * (finGL L n g).val = 1
@@ -41,7 +45,7 @@ private theorem fin_mem {L : Type} [Field L] [NumberField L] [IsCMField L] {n : 
 
 open Formalism.UG GlobalTheory.BCT.FinPtLoc in
 private theorem fin_ker {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} (g : GL (Fin n) (Af L))
-    (h : finGL L n g ∈ UA L n) : (⟨_, h⟩ : UA L n) ∈ finU L n := by
+    (h : finGL L n g ∈ UA L n) : (⟨_, h⟩ : UA L n) ∈ finU (E := L) (n := n) := by
   show cInf (⟨_, h⟩ : UA L n) = 1
   apply Units.ext
   refine Matrix.ext fun i j => ?_
@@ -50,7 +54,7 @@ private theorem fin_ker {L : Type} [Field L] [NumberField L] [IsCMField L] {n : 
   by_cases h : i = j <;> simp [Matrix.one_apply, h]
 
 theorem UpperTheory.V.Z.Sym.Dict.Br.adEx :
-    ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (R : RingBr L) (n : ℕ) (x : ∀ v : Pl (Lp L), Matrix (Fin n) (Fin n) (Lsq (Kv v) (cv v R.Δ))), (∀ v, star (x v) * x v = 1) → (∀ᶠ v in Filter.cofinite, ∀ i j, IsIntegral (Ov v) (x v i j)) → ∃ g ∈ finU L n, ∀ w, mL w g = (x (un w)).map (R.ρ _ w rfl) := by
+    ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (R : RingBr L) (n : ℕ) (x : ∀ v : Pl (Lp L), Matrix (Fin n) (Fin n) (Lsq (Kv v) (cv v R.Δ))), (∀ v, star (x v) * x v = 1) → (∀ᶠ v in Filter.cofinite, ∀ i j, IsIntegral (Ov v) (x v i j)) → ∃ g ∈ finU (E := L) (n := n), ∀ w, mL w g = (x (un w)).map (R.ρ _ w rfl) := by
   intro L _ _ _ R n x hx hint
   have ev : ∀ i j, ∀ᶠ w : Plc L in Filter.cofinite, R.ρ _ w rfl (x (un w) i j) ∈ w.adicCompletionIntegers L :=
     fun i j => ((GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.tendsto_under (Lp L) L).eventually hint).mono
@@ -65,9 +69,11 @@ theorem UpperTheory.V.Z.Sym.Dict.Br.adEx :
   have hM : Formalism.UG.cT (cjF (L := L)) M * M = 1 := by
     refine Matrix.ext fun i j => Subtype.ext (funext fun w => ?_)
     have h1 := congrArg (R.ρ _ w rfl) (congrFun (congrFun (hx (un w)) i) j)
-    rw [Matrix.mul_apply, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum] at h1
     change pLoc L w _ = pLoc L w _
-    rw [Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum]
     have h2 : pLoc L w ((1 : Matrix (Fin n) (Fin n) (Af L)) i j) = R.ρ _ w rfl ((1 : Matrix (Fin n) (Fin n) _) i j) := by
       by_cases h : i = j <;> simp [Matrix.one_apply, h]
     rw [h2, ← h1]

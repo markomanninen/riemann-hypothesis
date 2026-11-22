@@ -1,4 +1,9 @@
-import Formalism.LocalToGlobal.Columns.TwQLift
+module
+
+public import Formalism.LocalToGlobal.Columns.TwQSurj
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -37,19 +42,6 @@ section QEmpty
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) {K : Type} [Field K]
-
-def QLoc.empty (Θ : LevQFam E K n (∅ : Finset (Pl E))) : QLoc hc n ∅ Θ where
-  sp P := absurd P.2 (Finset.notMem_empty _)
-  sp_sig P := absurd P.2 (Finset.notMem_empty _)
-  sp_alg P := absurd P.2 (Finset.notMem_empty _)
-  sp_int P := absurd P.2 (Finset.notMem_empty _)
-  sp_P P := absurd P.2 (Finset.notMem_empty _)
-  U P := absurd P.2 (Finset.notMem_empty _)
-  U_int P := absurd P.2 (Finset.notMem_empty _)
-  U_rat P := absurd P.2 (Finset.notMem_empty _)
-  U_dense P := absurd P.2 (Finset.notMem_empty _)
-  chr P := absurd P.2 (Finset.notMem_empty _)
-  chr_rat P := absurd P.2 (Finset.notMem_empty _)
 
 end QEmpty
 

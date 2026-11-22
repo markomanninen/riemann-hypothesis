@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsScalarFormTraceForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsScalarFormTraceForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -175,8 +179,8 @@ section Root
 variable {O : Type} [CommRing O] [StarRing O] [Module O D.X] {w : O} {t : D.X → D.X → (FractionRing R)ˣ} {k : ℕ}
   {r : D.X → D.X → Fˣ}
 
-variable (O) in
 
+variable (O) in
 def IsRootForm {X K F : Type} [AddCommGroup X] [Module O X] [Field K] [Field F] [Algebra K F] (k : ℕ) (t : X → X → Kˣ)
     (r : X → X → Fˣ) : Prop :=
   IsScalarForm O r ∧ ∀ y x, r y x ^ k = Units.map (algebraMap K F).toMonoidHom (t y x)
@@ -231,14 +235,6 @@ theorem qkAct {oa : D.OAct O} {oa' : (withPsi D ψ hψ).OAct O} (ho : oa'.onB = 
 theorem equiv_iff (h₁ : QkRel r p₁ p₁') (h₂ : QkRel r p₂ p₂') :
     QkPt.Equiv (withPsi D ψ hψ) F p₁' p₂' ↔ QkPt.Equiv D F p₁ p₂ :=
   ⟨equiv (D := withPsi D ψ hψ) hw ht.inv hq.symm hr.inv h₁.symm h₂.symm, equiv hw ht hq hr h₁ h₂⟩
-
-theorem qkAdd_iff (h₁ : QkRel r p₁ p₁') (h₂ : QkRel r p₂ p₂') (h₃ : QkRel r p₃ p₃') :
-    QkAdd p₁' p₂' p₃' ↔ QkAdd p₁ p₂ p₃ :=
-  ⟨qkAdd (D := withPsi D ψ hψ) hw ht.inv hq.symm hr.inv h₁.symm h₂.symm h₃.symm, qkAdd hw ht hq hr h₁ h₂ h₃⟩
-
-theorem qkAct_iff {oa : D.OAct O} {oa' : (withPsi D ψ hψ).OAct O} (ho : oa'.onB = oa.onB) {x : O} (h₁ : QkRel r p₁ p₁')
-    (h₂ : QkRel r p₂ p₂') : QkAct oa' x p₁' p₂' ↔ QkAct oa x p₁ p₂ :=
-  ⟨qkAct (D := withPsi D ψ hψ) hw ht.inv hq.symm hr.inv ho.symm h₁.symm h₂.symm, qkAct hw ht hq hr ho h₁ h₂⟩
 
 end QkRel
 

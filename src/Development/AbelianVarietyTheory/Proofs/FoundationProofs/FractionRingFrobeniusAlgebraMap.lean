@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.DataG
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+
+@[expose] public section
 
 noncomputable section
 

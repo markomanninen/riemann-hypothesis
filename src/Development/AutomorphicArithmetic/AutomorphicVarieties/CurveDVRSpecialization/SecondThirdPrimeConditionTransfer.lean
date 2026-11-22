@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SecondThirdPrimeConditionTransferAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.PointEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NiceOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.StableOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ThickOf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SecondThirdPrimeConditionTransferAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.PointEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NiceOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.StableOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ThickOf
+
+@[expose] public section
 
 private theorem chain_nat {α : Type} {r : α → α → Prop} {p q : α} (H : Relation.ReflTransGen r p q) :
     ∃ (h : ℕ) (c : ℕ → α), c 0 = p ∧ c h = q ∧ ∀ i < h, r (c i) (c (i + 1)) := by

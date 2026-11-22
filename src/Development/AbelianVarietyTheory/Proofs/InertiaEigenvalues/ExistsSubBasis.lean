@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc
 open Matrix
@@ -146,8 +150,8 @@ theorem frame_of_idem (act : GQ l →* (PadicComplex l ≃+* PadicComplex l)) (�
   refine ⟨⟨hgen, ?_, ?_, ?_, ?_, ?_⟩, ?_, heq, ?_, ?_, ?_⟩
   · intro a b
     simp only [Matrix.mul_apply]
-    refine continuousOn_finset_sum _ fun k _ => ContinuousOn.mul ?_ continuousOn_const
-    exact continuousOn_finset_sum _ fun j _ => ContinuousOn.mul continuousOn_const (hcont _ _)
+    refine continuousOn_finsetSum _ fun k _ => ContinuousOn.mul ?_ continuousOn_const
+    exact continuousOn_finsetSum _ fun j _ => ContinuousOn.mul continuousOn_const (hcont _ _)
   · intro σ hσ a b
     refine ⟨mem_subC.1 (mem_mul _ _ _ (mem_mul _ _ _ (fun i j => (hR i j).1)
       (fun i j => mem_subC.2 (hint σ hσ i j).1)) (fun i j => (hS i j).1) a b), ?_⟩
@@ -200,7 +204,8 @@ theorem frame_of_idem (act : GQ l →* (PadicComplex l ≃+* PadicComplex l)) (�
       have hmap : (fun a => act σ (Pm.mulVec (e (κ k)) a)) =
           (Pm.map (act σ)).mulVec (fun a => act σ (e (κ k) a)) := by
         funext a
-        simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
       simp only
       rw [hmap, Matrix.mulVec_mulVec, ← heq σ hσ, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_smul, h3]
   · intro y hy

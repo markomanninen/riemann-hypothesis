@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsExamples
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsExamples
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -29,25 +34,6 @@ def RelevantPrimeDimGe.Statement : Prop :=
   ∀ (F : Type u) [Field F] (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type)
     [∀ k, Fintype (ι k)] (P : Ideal (MRing ι F)), IsMultiProjPrime P →
     ((Fintype.card K : ℕ) : WithBot ℕ∞) ≤ ringKrullDim (MRing ι F ⧸ P)
-
-theorem EventuallyPolyUnique.hypotheses_example :
-    EventuallyPoly (hilbFn (⊥ : Ideal (MRing (ProjIdx 1) ℚ))) (X () + 1) ∧
-      EventuallyPoly (hilbFn (⊥ : Ideal (MRing (ProjIdx 1) ℚ))) (X () + 1) :=
-  ⟨eventuallyPoly_projectiveLine, eventuallyPoly_projectiveLine⟩
-
-theorem EventuallyPolyShift.hypotheses_example :
-    EventuallyPoly (hilbFn (⊥ : Ideal (MRing (ProjIdx 1) ℚ))) (X () + 1) :=
-  eventuallyPoly_projectiveLine
-
-theorem HilbIrrelevantZero.hypotheses_example :
-    ¬ IsRelevant (Ideal.span (Set.range X) : Ideal (MRing (ProjIdx 1) ℚ)) := by
-  intro h
-  obtain ⟨i, hi⟩ := h ()
-  exact hi (Ideal.subset_span ⟨_, rfl⟩)
-
-theorem RelevantPrimeDimGe.hypotheses_example :
-    IsMultiProjPrime (⊥ : Ideal (MRing (ProjIdx 1) ℚ)) :=
-  isMultiProjPrime_bot
 
 end
 

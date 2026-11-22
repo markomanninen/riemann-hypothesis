@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousTorepK
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.WeylBridge
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousTorepK
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.WeylBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.HW
 open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.S7
 
 variable {n : ℕ}
-
-theorem hwfin_rhoC_eq (ε : Fin n → Bool) : Formalism.REAL.rhoC ε = rhoC ε := rfl
 
 theorem hwfin_weyl {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) :
     (Module.finrank ℂ T.V : ℝ) =

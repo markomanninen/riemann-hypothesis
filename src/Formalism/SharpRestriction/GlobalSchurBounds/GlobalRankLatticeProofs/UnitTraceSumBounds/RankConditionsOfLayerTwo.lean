@@ -1,14 +1,19 @@
-import Formalism.LocalToGlobal.GroupLattices.Joint0
-import Formalism.LocalToGlobal.HermitianForms.FormsTied
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Formalism.LocalToGlobal.Columns.InputsWeyl
-import Formalism.LocalToGlobal.Columns.CmUnramifiedOfFieldConditions
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Formalism.SharpRestriction.GlobalSchurBounds.TheoremThreeFamilyOfFormalDegreeInput
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.LwRankTies
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.LwAdmWeyl
-import Formalism.SharpRestriction.GlobalSchurBounds.LinkTied
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.Joint0
+public import Formalism.LocalToGlobal.HermitianForms.FormsTied
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Formalism.LocalToGlobal.Columns.InputsWeyl
+public import Formalism.LocalToGlobal.Columns.CmUnramifiedOfFieldConditions
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Formalism.SharpRestriction.GlobalSchurBounds.TheoremThreeFamilyOfFormalDegreeInput
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.LwRankTies
+public import Formalism.SharpRestriction.GlobalSchurBounds.AdmittedWeylDimension
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeWeylDS
+public import Formalism.SharpRestriction.GlobalSchurBounds.LinkTied
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +124,7 @@ theorem fiC_eq_pi (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) (l
       x.1 = bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ.1 * (y c0).1 * κ.1 := by
     intro x
     obtain ⟨c0, hc0⟩ := hy.2 (Quotient.mk'' x)
-    obtain ⟨h, hh, k, hk, e⟩ := (DoubleCoset.eq _ _ (y c0) x).1 hc0
+    obtain ⟨h, hh, k, hk, e⟩ := (@DoubleCoset.eq _ _ _ _ (y c0) x).1 hc0
     have hh' : (h : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) ∈
         (UJ (σ : E →+* E) J).map (bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F))) := Subgroup.mem_subgroupOf.1 hh
     have hk' : (k : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) ∈ S.U := Subgroup.mem_subgroupOf.1 hk
@@ -151,7 +156,7 @@ theorem fiC_eq_pi (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) (l
         rw [Subgroup.mem_subgroupOf]
         exact (κ1 * κ2⁻¹).2
       refine hy.1 (show (Quotient.mk'' (y c1) : Cls S) = Quotient.mk'' (y c2) from
-        (DoubleCoset.eq _ _ (y c1) (y c2)).2 ⟨r, hrR, kk, hkK, ?_⟩)
+        (@DoubleCoset.eq _ _ _ _ (y c1) (y c2)).2 ⟨r, hrR, kk, hkK, ?_⟩)
       apply Subtype.ext
       simp only [r, kk, Subgroup.coe_mul, Subgroup.coe_inv]
       group
@@ -270,7 +275,7 @@ theorem card_ssIdx_eq {D : D7} (u : D.what₂.Word) (τ : D.what₂.Tau) :
   refine key _ _ (Formalism.L2.Col.rankN_zero D.R) fun i hi => ?_
   have hi0 : i < D.R.N 0 := by rw [Formalism.L2.Col.rankN_zero]; exact hi
   have h := (D.fm u).lam_eq 0 (Nat.zero_le _) τ ⟨i, hi0⟩
-  rw [dif_pos hi] at h
+  rw [dite_eq_left hi] at h
   unfold hcToWeightQ rhoVec at h
   have h' : ((((D.fm u).lam 0 τ).w ⟨i, hi0⟩ : ℤ) : ℝ) =
       (((D.hcW u τ).u ⟨i, hi⟩ : ℚ) : ℝ) - (((D.R.k : ℝ) - 1) / 2 - (i : ℝ)) := by
@@ -278,7 +283,7 @@ theorem card_ssIdx_eq {D : D7} (u : D.what₂.Word) (τ : D.what₂.Tau) :
     push_cast at h2
     exact h2
   unfold Formalism.L2.Col.wSeq StandardLattice.uN
-  rw [dif_pos hi0, dif_pos hi, h']
+  rw [dite_eq_left hi0, dite_eq_left hi, h']
   ring
 
 theorem mu0Tie_of_sym {D : D7} (C : ColsTiedSym D) (u : D.what₂.Word) : StandardLattice.Mu0Tie D u := by
@@ -291,18 +296,6 @@ theorem mu0Tie_of_sym {D : D7} (C : ColsTiedSym D) (u : D.what₂.Word) : Standa
 end Rec
 
 section Fam
-
-theorem rank_conditions_of_layer_two {eps : ℝ} (Fm : FamP eps) (h : RealPlaceSecondLayerConditions Fm) : RankTiesF Fm := by
-  obtain ⟨x0, h⟩ := h
-  exact rank_conditions_of_lowest_space Fm ⟨x0, fun x hx i u => mu0Tie_of_sym (h x hx i).2.choose u⟩
-
-theorem rankTiesF_of_col' {eps : ℝ} (Fm : FamP eps)
-    (h : ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, ∀ u : (Fm.D x i).what₂.Word,
-      ∃ X : StandardLattice.ColRep (Fm.D x i) (Fm.ex x hx i).lev u, StandardLattice.BaseWeightColumnCondition (Fm.D x i) (Fm.ex x hx i).lev u X) :
-    RankTiesF Fm := by
-  obtain ⟨x0, h⟩ := h
-  exact rankTiesF_of_col Fm ⟨x0, fun x hx h0 i =>
-    ⟨StandardLattice.HarishChandraReduction.content_bound_clause _ _, StandardLattice.HarishChandraReduction.levels_pro_g_on_columns _ _, weyl_dimension_formula_holds _, h x hx h0 i⟩⟩
 
 end Fam
 

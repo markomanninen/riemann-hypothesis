@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScalPairs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScalPairs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem orth_anti {U W : Submodule E S.V} (h : U ≤ W) : orth S W ≤ orth S U 
   rw [PI.UnitaryGroupMassFormula.BetaLUniq.mem_orth] at hv ⊢
   exact fun x hx => hv x (h hx)
 
-theorem Hp_le_orth (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) {T T' : E}
+theorem Hp_le_orth (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) {T T' : E}
     (F : LFlag S r T) (F' : LFlag S r T') : Hp Λ F F' ≤ orth S (Xsp F') :=
   orth_anti (PI.UnitaryGroupMassFormula.BetaLUniq.Xsp_le_UUE' S Λ hΛ F F')
 
@@ -38,7 +42,7 @@ theorem mem_ThPairs (Λ : Submodule (𝓞 E) S.V) {T T' : E} (F : LFlag S r T) (
 variable (Λ : Submodule (𝓞 E) S.V) {T T' : E} (F : LFlag S r T) (F' F'' : LFlag S r T')
   (β₁ β₂ : S.V ≃ₗ[E] S.V)
 
-theorem ThPairs_eq (hΛ : Submodule.IsLattice E Λ)
+theorem ThPairs_eq (hΛ : Submodule.IsFullLattice E Λ)
     (H : ∀ v ∈ orth S (Xsp F'), β₁ v - β₂ v ∈ Xsp F'') :
     ThPairs Λ F F' F'' β₁ = ThPairs Λ F F' F'' β₂ := by
   ext p
@@ -56,13 +60,13 @@ theorem ThPairs_eq (hΛ : Submodule.IsLattice E Λ)
     rw [e]
     exact add_mem h4 (hd h1)
 
-theorem Th_eq (hΛ : Submodule.IsLattice E Λ)
+theorem Th_eq (hΛ : Submodule.IsFullLattice E Λ)
     (H : ∀ v ∈ orth S (Xsp F'), β₁ v - β₂ v ∈ Xsp F'') :
     Th Λ F F' F'' β₁ = Th Λ F F' F'' β₂ := by
   unfold Th
   rw [ThPairs_eq Λ F F' F'' β₁ β₂ hΛ H]
 
-theorem s0_eq (hΛ : Submodule.IsLattice E Λ)
+theorem s0_eq (hΛ : Submodule.IsFullLattice E Λ)
     (H : ∀ v ∈ orth S (Xsp F'), β₁ v - β₂ v ∈ Xsp F'') (k : ℕ) :
     s0 Λ F F' F'' β₁ k = s0 Λ F F' F'' β₂ k := by
   unfold s0
@@ -99,7 +103,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 theorem betaIndep_of (D : D7) (u u' : D.what₂.Word) (h : PI.ScalPairs.BetaL D u u') :
     PI.ScalPairs.BetaFree D u u' := by
   intro hg F0 Λ hR x y hx hy β₁ β₂ h1 h2
-  have hΛ : Submodule.IsLattice D.host.E Λ := hR.1.1
+  have hΛ : Submodule.IsFullLattice D.host.E Λ := hR.1.1
   have H := h hg F0 Λ hR x y hx hy β₁ β₂ h1 h2
   exact ⟨s0_eq Λ _ _ _ β₁ β₂ hΛ H _, isScalar_iff Λ _ _ _ β₁ β₂ H⟩
 

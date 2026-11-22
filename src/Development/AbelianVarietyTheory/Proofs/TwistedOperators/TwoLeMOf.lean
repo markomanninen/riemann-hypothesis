@@ -1,16 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyVertices
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyVertices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
+public import Lean
+meta import Lean
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim
 open Formalism.L2.Host (HChar)
@@ -69,15 +75,34 @@ theorem firstCore (L : LevCh D T) (μ0 : T) (h : L.Is μ0) : ∃ Z : LSp D, Z.Is
 
 abbrev recOf (_L : LevCh D T) : D7 := D
 
-local macro:max "kd% " e:term:max : term => `((by kexactB $e))
+-- Comparing the types of copied fields in the kernel avoids unfolding the stage records in the elaborator.
+open Lean Elab Tactic in
+local elab "exact_by_kernel " term:term : tactic =>
+  closeMainGoalUsing `exact_by_kernel fun target _ => do
+    let value ← elabTerm term none
+    Term.synthesizeSyntheticMVarsNoPostponing
+    let value ← instantiateMVars value
+    let actual ← instantiateMVars (← Meta.inferType value)
+    let target ← instantiateMVars target
+    let lctx ← instantiateLCtxMVars (← getLCtx)
+    match Kernel.isDefEq (← getEnv) lctx actual target with
+    | .ok true => pure value
+    | .ok false => throwError "expected{indentExpr target}\nbut the term has type{indentExpr actual}"
+    | .error error => throwError (error.toMessageData (← getOptions))
 
 local macro "copyDec% " d:term:max : term =>
-  `({ ι := ($d).ι, isom := (by kexactB ($d).isom), a := ($d).a, gram := (by kexactB ($d).gram),
-      perp := (by kexactB ($d).perp), rank := (by kexactB ($d).rank) })
+  `({ ι := by exact_by_kernel ($d).ι
+      isom := by exact_by_kernel ($d).isom
+      a := by exact_by_kernel ($d).a
+      gram := by exact_by_kernel ($d).gram
+      perp := by exact_by_kernel ($d).perp
+      rank := by exact_by_kernel ($d).rank })
 
 local macro "copyIsV% " h:term:max : term =>
-  `(⟨(by kexactB ($h).rank), (by kexactB ($h).sigOK), (by kexactB ($h).sig), (by kexactB ($h).sd)⟩)
+  `(⟨by exact_by_kernel ($h).rank, by exact_by_kernel ($h).sigOK,
+    by exact_by_kernel ($h).sig, by exact_by_kernel ($h).sd⟩)
 
+set_option maxHeartbeats 16000000 in
 theorem carryG : CarryG := by
   intro X X' T T' L L' μ₀ μ₀' ι hA sc G
   obtain ⟨B, Cc, Wr, Vd, Ss, Nn, Gj⟩ := X
@@ -140,18 +165,26 @@ theorem carryG : CarryG := by
       colDec := fun i h h' => match i, h, h' with
         | 0, h, _ => absurd h (by omega)
         | k + 1, h, h' => copyDec% (G.sp.colDec (k + 1) h h')
-      colLat := fun i h h' => match i, h, h' with
-        | 0, h, _ => absurd h (by omega)
-        | k + 1, h, h' => (by with_unfolding_all exact ((G.sp.colLat (k + 1) h h') :))
+      colLat := by
+        intro i
+        cases i with
+        | zero => intro h; omega
+        | succ k =>
+          intro h h'
+          exact_by_kernel G.sp.colLat (k + 1) h h'
       rowDecS := fun j h => castDec rfl (congrArg LSp.sp (vtxOf_pos L' Vs' _ (j + 1) h1X').symm)
         (copyDec% (castDec rfl (congrArg LSp.sp (vtxOf_pos L G.sp.Vs _ (j + 1) h1X)) (G.sp.rowDecS j h)))
       rowLat := fun j h => castDec_lat rfl (vtxOf_pos L' Vs' _ (j + 1) h1X').symm _ _
-        ((by with_unfolding_all exact ((castDec_lat rfl (vtxOf_pos L G.sp.Vs _ (j + 1) h1X) (G.sp.rowDecS j h) _ (G.sp.rowLat j h)) :)))
+        (by
+          exact_by_kernel (castDec_lat rfl (vtxOf_pos L G.sp.Vs _ (j + 1) h1X)
+            (G.sp.rowDecS j h) _ (G.sp.rowLat j h)))
       topDec := castDec (congrArg LSp.sp (vtxOf_pos L' Vs' _ _ h1X').symm) (congrArg LSp.sp (xOf_pos (P' _) Xs' _ h1X').symm)
         (copyDec% (castDec (congrArg LSp.sp (vtxOf_pos L G.sp.Vs _ _ h1X)) (congrArg LSp.sp (xOf_pos (G.sp.P _) G.sp.Xs _ h1X))
           G.sp.topDec))
       topLat := castDec_lat (vtxOf_pos L' Vs' _ _ h1X').symm (xOf_pos (P' _) Xs' _ h1X').symm _ _
-        ((by with_unfolding_all exact ((castDec_lat (vtxOf_pos L G.sp.Vs _ _ h1X) (xOf_pos (G.sp.P _) G.sp.Xs _ h1X) G.sp.topDec _ G.sp.topLat) :))) }
+        (by
+          exact_by_kernel (castDec_lat (vtxOf_pos L G.sp.Vs _ _ h1X)
+            (xOf_pos (G.sp.P _) G.sp.Xs _ h1X) G.sp.topDec _ G.sp.topLat)) }
   refine ⟨⟨pl', ch', sp'⟩, (by with_unfolding_all exact ((HEq.refl G.pl.v0) :)), (by with_unfolding_all exact ((HEq.refl G.pl.w) :)), (by with_unfolding_all exact ((HEq.refl G.ch.chiH) :)), (by with_unfolding_all exact ((HEq.refl G.ch.chi) :)),
     fun i j => ⟨(by with_unfolding_all exact ((HEq.refl (G.V (.grid (i + 1) j))) :)), (by with_unfolding_all exact ((HEq.refl (G.Λ (.grid (i + 1) j))) :))⟩, ?_, ?_, ?_⟩
   · intro j

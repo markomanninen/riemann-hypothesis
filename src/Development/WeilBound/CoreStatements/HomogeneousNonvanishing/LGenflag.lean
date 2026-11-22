@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.LGenflagFld
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.LGenflagFld
+
+@[expose] public section
 
 open MvPolynomial AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cmp
 
@@ -41,16 +45,13 @@ private theorem l_genflag_lemma_3 {F K : Type} [Field F] [Field K] (f : F →+* 
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero =>
       convert (Submodule.span K ((fun v l => f (v l)) '' S)).zero_mem using 1
-      funext l
-      simp
+      ext i; simp
     | add x y _ _ hx hy =>
       convert Submodule.add_mem _ hx hy using 1
-      funext l
-      simp
+      ext i; simp
     | smul a x _ hx =>
       convert Submodule.smul_mem _ (f a) hx using 1
-      funext l
-      simp
+      ext i; simp
   · exact Submodule.span_mono (Set.image_mono Submodule.subset_span)
 
 private theorem l_genflag_lemma_4 {F K : Type} [Field F] [Field K] (f : F →+* K) {n : ℕ}

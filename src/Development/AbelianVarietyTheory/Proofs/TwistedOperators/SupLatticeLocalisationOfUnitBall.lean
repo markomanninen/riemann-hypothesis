@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSmulMemSupLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSmulMemSupLattice
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.IndefR.Arith
 

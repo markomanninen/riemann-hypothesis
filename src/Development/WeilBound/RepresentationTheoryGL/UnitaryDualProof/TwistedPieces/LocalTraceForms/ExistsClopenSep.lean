@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.LocalTraceForms.LocChi
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ZNClosed
-import GroundTheory.AutomorphicForms.WhittakerDistribution
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.LocalTraceForms.LocChi
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ZNClosed
+public import GroundTheory.AutomorphicForms.WhittakerDistribution
+
+@[expose] public section
 
 noncomputable section
 
@@ -211,7 +215,8 @@ theorem split_pf : PositivityTheory.RgUd.TP.Loc.Split k := by
       rw [e, sub_self]
   · intro f hf
     simp only [LinearMap.comp_apply]
-    rw [← sub_eq_zero, ← map_sum, ← map_sub]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sub_eq_zero, ← map_sum, ← map_sub]
     apply hsupp
     · exact sub_mem hf (sum_mem fun i _ => indicator_mul_mem (hWp i) hf)
     · rintro ⟨x, v⟩ ⟨hx, -⟩

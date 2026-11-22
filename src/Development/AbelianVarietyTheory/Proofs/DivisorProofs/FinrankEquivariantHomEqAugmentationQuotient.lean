@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.KottwitzDimSignatureOneOne
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KottwitzDimSignatureOneOne
+
+@[expose] public section
+
 open Module GlobalTheory.HTRho GlobalTheory.UPel.Sm GlobalTheory.UPel.Sm.Model
 
 namespace GlobalTheory.HTRho
@@ -35,7 +40,8 @@ theorem quotFacts {k O C Idx H : Type*} [Field k] [AddCommGroup H] [Module k H] 
       hJ (Submodule.subset_span ⟨r, lam, c, y, trivial, hc, rfl⟩)
     have : (∑ l, lam l • qAct σ G hG (algebraMap C O (c l)) (Submodule.Quotient.mk y)) =
         G.mkQ (∑ l, lam l • σ (algebraMap C O (c l)) y) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [map_smul]
       rfl

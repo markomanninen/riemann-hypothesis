@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualRevDualRev
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualRevDualRev
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Num.HodgeModel
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -31,7 +36,8 @@ theorem mConeMap_form (y : (Σ k, ι k) → Ω) {h : MRing ι} {d : K → ℕ} (
     mConeMap y h = MvPolynomial.C (aeval y h) * ∏ k, (X k : MvPolynomial K Ω) ^ d k := by
   classical
   unfold mConeMap
-  rw [aeval_def, aeval_def, eval₂_eq', eval₂_eq', map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [aeval_def, aeval_def, eval₂_eq', eval₂_eq', map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hX : ∏ p : Σ k, ι k, (X p.1 : MvPolynomial K Ω) ^ m p = ∏ k, X k ^ d k := by
     rw [Fintype.prod_sigma]
@@ -214,7 +220,7 @@ theorem latFlagPair_of_twoLevels : ∀ (E : Type) [Field E] [NumberField E] [IsC
     have hlt : ((Fin.castAdd D.q i : Fin (D.p + D.q)) : ℕ) < D.p := i.isLt
     have hidx : HodgeCpt.rootIdx D (τ, Fin.castAdd D.q i) = ⟨.inl τ, i⟩ := by
       unfold HodgeCpt.rootIdx
-      rw [dif_pos hlt]
+      rw [dite_eq_left hlt]
       exact Sigma.ext rfl (heq_of_eq (Fin.ext rfl))
     have hsgn : HodgeCpt.rootSgn D (τ, Fin.castAdd D.q i) = 1 := by
       unfold HodgeCpt.rootSgn
@@ -232,7 +238,7 @@ theorem latFlagPair_of_twoLevels : ∀ (E : Type) [Field E] [NumberField E] [IsC
     have hj : (j : ℕ) < D.q := j.isLt
     have hidx : HodgeCpt.rootIdx D (τ, Fin.natAdd D.p j.rev) = ⟨.inr τ, j⟩ := by
       unfold HodgeCpt.rootIdx
-      rw [dif_neg (by simp)]
+      rw [dite_eq_right (by simp)]
       refine Sigma.ext rfl (heq_of_eq (Fin.ext ?_))
       have e1 : ((Fin.natAdd D.p j.rev : Fin (D.p + D.q)) : ℕ) = D.p + ((j.rev : Fin (labelRk D (.inr τ))) : ℕ) := rfl
       have e2 : ((j.rev : Fin (labelRk D (.inr τ))) : ℕ) = labelRk D (.inr τ) - ((j : ℕ) + 1) := Fin.val_rev j

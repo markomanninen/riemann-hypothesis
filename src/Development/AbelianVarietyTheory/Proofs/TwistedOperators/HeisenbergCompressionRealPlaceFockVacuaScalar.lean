@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CmAdeleIdempotentOfPlacePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitianStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasDerivAtHeisenbergMatrixCoeffRealLineSkewStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CmAdeleIdempotentOfPlacePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitianStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasDerivAtHeisenbergMatrixCoeffRealLineSkewStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem wAt_eq_lineAt (hθ : IsInfFam θ) {m n : ℕ} (τ : D.what₂.Tau) (w : 
   apply hσ.ext
   · have h1 : finPart D (lineAt θ τ (compAt θ τ w) 1 i j) = 0 := by
       have := congrFun (congrFun (hfin 1) i) j
-      simpa [Matrix.map_apply] using this
+      simpa only [Matrix.map_apply, Matrix.zero_apply] using this
     simp [GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting.wAt, map_sub, map_mul, hfi τ, h1]
   · intro τ'
     have h2 := congrFun (congrFun (hcomp 1 τ') i) j
@@ -137,7 +141,7 @@ private theorem flow_lemma {μ : Measure (WO S T)} {𝓕 : Set (WO S T)} (hψ : 
     simp only [sub_add_cancel] at hd
     refine hd.congr_deriv ?_
     have hDzh := GlobalTheory.WeilVacMove.isTheta_dRho hψ hθ τ z hh
-    have hDJh := GlobalTheory.WeilVacMove.isTheta_dRho hψ hθ τ J hh
+    have hDJh : IsThetaFunO ψ S T (DJ h) := GlobalTheory.WeilVacMove.isTheta_dRho hψ hθ τ J hh
     have hDJg := GlobalTheory.WeilVacMove.isTheta_dRho hψ hθ τ J hg
     have cA : Dz h + Complex.I • DJ h =
         (-2 * (phase lam S T (L 1) (L s) + Complex.I * phase lam S T (L' 1) (L s))) • h := by
@@ -155,7 +159,21 @@ private theorem flow_lemma {μ : Measure (WO S T)} {𝓕 : Set (WO S T)} (hψ : 
       rw [hz, ((U h (DJ g) hh hDJg).2.2.1 (-Complex.I)).2]
       simp [Complex.conj_I]
     have e4 : ipO μ 𝓕 (Dz h + Complex.I • DJ h) g = ipO μ 𝓕 (Dz h) g + Complex.I * ipO μ 𝓕 (DJ h) g := by
-      rw [((U (Dz h) g hDzh hg).2.2.2.1 _ (GlobalTheory.WeilVacMove.isTheta_smul Complex.I hDJh)).1,
+      have hsmul : IsThetaFunO ψ S T (Complex.I • DJ h) := by
+        refine { quasi := ?_, level := ?_, cont := ?_, smooth := ?_ }
+        · intro γ w
+          rw [Pi.smul_apply, Pi.smul_apply, hDJh.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+        · obtain ⟨U, hU, h1⟩ := hDJh.level
+          refine ⟨U, hU, fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu h0) w
+          change ψ (symplOH S T w u) * DJ h (w + u) = DJ h w at e1
+          unfold heisO
+          rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+        · exact hDJh.cont.const_smul Complex.I
+        · intro k L h1 h2 w
+          exact contDiff_const.mul (hDJh.smooth k L h1 h2 w)
+      rw [((U (Dz h) g hDzh hg).2.2.2.1 _ hsmul).1,
         ((U (DJ h) g hDJh hg).2.2.1 Complex.I).1]
     rw [cA, ((U h g hh hg).2.2.1 _).1, hp (L 1) s, hp (L' 1) s] at e4
     linear_combination (-1 / 2 : ℂ) * e4 + (1 / 2 : ℂ) * hXs - (Complex.I / 2) * hYs - (1 / 2 : ℂ) * e3

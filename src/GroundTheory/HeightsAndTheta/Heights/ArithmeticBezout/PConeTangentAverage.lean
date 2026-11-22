@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeLocalMass
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeJacMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeTangentDim
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsTangentGaussInvariant
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeIntegralLine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeLocalMass
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeJacMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeTangentDim
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsTangentGaussInvariant
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeIntegralLine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -27,7 +32,8 @@ theorem mem_coneTangent_self {n : ℕ} (h : HermNorm n) {J : Ideal (MvPolynomial
     _ = ∑ d ∈ Finset.range (q.totalDegree + 1),
           eval (h.pointOf y) (∑ j, X j * pderiv j (homogeneousComponent d q)) := by
         conv_lhs => rw [← sum_homogeneousComponent q]
-        simp only [map_sum, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, Finset.mul_sum]
         exact Finset.sum_comm
     _ = 0 := Finset.sum_eq_zero fun d _ => hd d
 

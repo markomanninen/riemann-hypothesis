@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.DetFactor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.PadicUnitsDistanceLeMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.NormVal
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.DetFactor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.PadicUnitsDistanceLeMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.NormVal
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.PropA
 
@@ -27,7 +31,7 @@ theorem UpperTheory.V.PropA.detBound :
     ext p q
     simp [Matrix.sub_apply, Matrix.one_apply, RingHom.mapMatrix_apply]
   rw [← hφ, hdet, norm_prod]
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro i _
     positivity
   · intro i _

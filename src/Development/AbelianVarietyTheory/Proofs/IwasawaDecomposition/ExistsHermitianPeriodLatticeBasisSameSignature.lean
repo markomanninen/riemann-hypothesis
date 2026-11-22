@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbRtSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbRtSq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -87,10 +91,12 @@ theorem exists_isPerBasis : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     have hk := congrFun hker k'
     simp only [Matrix.vecMul, dotProduct, Matrix.of_apply, Pi.zero_apply] at hk
     have : ((Di.EF (a • v) (x k') : ℤ) : ℚ) = 0 := by
-      rw [hv, Finset.smul_sum, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hv, Finset.smul_sum, map_sum, LinearMap.sum_apply]
       push_cast
       simp_rw [← mul_smul, hhm]
-      rw [← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum]
       have : ∑ k, ((a * c k : 𝓞 E) : E) * hm k k' = (a : E) * ((d : 𝓞 E) : E) * ∑ k, c₀ k * hm k k' := by
         rw [Finset.mul_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
@@ -109,7 +115,7 @@ theorem exists_isPerBasis : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
       have := h1 (H.bar.symm a) k
       rwa [Di.adj, RingEquiv.apply_symm_apply] at this
     | zero => simp
-    | add y z _ _ hy hz => intro a; rw [smul_add, map_add, hy, hz, add_zero]
+    | add y z _ _ hy hz => intro a; rw [smul_add, map_add (f := _), hy, hz, add_zero]
     | smul b y _ hy => intro a; rw [← mul_smul, hy]
   have h3 : v = 0 := by
     apply Di.unimod.1

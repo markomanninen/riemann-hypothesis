@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.IsCompactCset
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.IsCompactCset
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,7 @@ theorem continuous_psi (N d D m : ℕ) (hd : 0 < d) (hD : 0 < D) (hm : 0 < m)
   refine continuous_iff_continuousAt.mpr fun p => ?_
   intro U hU
   have hV : (fun z => psi I N p * z) ⁻¹' U ∈ 𝓝 (1 : I.Gf) := by
-    have := (continuous_mul_left (psi I N p)).tendsto 1
+    have := (continuous_const_mul (psi I N p)).tendsto 1
     rw [mul_one] at this
     exact this hU
   obtain ⟨g, hg1, hsub⟩ := I.topf_basis _ hV

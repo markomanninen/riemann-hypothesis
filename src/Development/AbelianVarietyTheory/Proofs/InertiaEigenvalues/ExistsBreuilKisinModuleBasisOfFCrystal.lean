@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIterateDerivative
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismaticFCrystalValueLocalPrismAinfWittTensor
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FreeOfXRegularQuotientTorsionFreeScalarTower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIterateDerivative
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismaticFCrystalValueLocalPrismAinfWittTensor
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FreeOfXRegularQuotientTorsionFreeScalarTower
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem isDVR (l : ℕ) [hl : Fact l.Prime] (O K : Type) [CommRing O] [IsDomain 
     simp only [map_mul, map_natCast, map_one, norm_mul, norm_one] at h1
     have h2 := norm_algebraMap_le (K := K) y
     nlinarith [norm_nonneg (l : K), norm_nonneg (algebraMap O K y)]
-  exact ((IsDiscreteValuationRing.TFAE O hF).out 0 1).2 hV
+  exact ((IsDiscreteValuationRing.TFAE O hF).out 1 2).2 hV
 
 theorem exists_dual_pair {A S W R V ι : Type} [CommRing A] [CommRing S] [CommRing W] [CommRing R]
     [AddCommGroup V] [Module R V] [Module W V] [Module A V] [Fintype ι] (ω : W →+* R) (g : A →+* R)
@@ -67,7 +71,8 @@ theorem exists_dual_pair {A S W R V ι : Type} [CommRing A] [CommRing S] [CommRi
       refine Finset.sum_congr rfl fun i _ => ?_
       change _ = f i • ε • c i
       rw [hW, hA, smul_smul, smul_smul, hf, mul_comm])
-    rw [h1, hs, map_sum, map_sum, Finset.sum_apply', map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, hs, map_sum, map_sum, Finset.sum_apply', map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, map_smul, Finsupp.smul_apply, smul_eq_mul, map_mul, ← mul_assoc, ← hf]
     simp only [ν, Module.Basis.constr_basis]
@@ -75,7 +80,8 @@ theorem exists_dual_pair {A S W R V ι : Type} [CommRing A] [CommRing S] [CommRi
     ring
   have hνW : ∀ j w x, ν j (ω w • x) = ω w * ν j x := fun j w x => by rw [← hW, map_smul]; rfl
   have hνA : ∀ j f x, ν j (g f • x) = g f * ν j x := fun j f x => by
-    rw [← c.sum_repr x, Finset.smul_sum, map_sum, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← c.sum_repr x, Finset.smul_sum, map_sum, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hW, smul_comm, hνW, hνW, hν _ _ (hg f _ (hc i)), hν _ _ (hc i)]
     have h1 : (⟨_, hm _ (hg f _ (hc i))⟩ : M) = f • (⟨_, hm _ (hc i)⟩ : M) := Subtype.ext (by
@@ -89,7 +95,7 @@ theorem exists_dual_pair {A S W R V ι : Type} [CommRing A] [CommRing S] [CommRi
       map_smul' := fun r x => by
         refine hgen (fun r => ν j (r • x) = r * ν j x) (by simp) (fun w f => ?_) (fun r r' h h' => ?_) r
         · simp only [mul_smul, hνW, hνA, mul_assoc]
-        · simp only [add_smul, map_add, add_mul, h, h'] }
+        · simp only [add_smul, map_add (f := _), add_mul, h, h'] }
   have hμ : ∀ j x, μ j x = ν j x := fun _ _ => rfl
   refine ⟨fun k => β k, μ, fun k => ((hM _).1 (β k).2).1, fun j k => ?_, fun x => ?_,
     fun x hx j => ⟨_, hν j x hx⟩⟩
@@ -107,7 +113,8 @@ theorem exists_dual_pair {A S W R V ι : Type} [CommRing A] [CommRing S] [CommRi
       rw [hμ, hν _ _ (hc i), mul_smul, ← hA]
       rfl
     rw [← c.sum_repr x]
-    simp only [hW, map_sum, map_smul, Finset.sum_smul, Finset.smul_sum, smul_eq_mul, mul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hW, map_sum, map_smul, Finset.sum_smul, Finset.smul_sum, smul_eq_mul, mul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← Finset.smul_sum, h0, smul_comm]
@@ -131,11 +138,13 @@ theorem exists_basis_of_dual_pairs {A R V I : Type} [CommRing R] [AddCommGroup V
       have e1 : ∑ j, μ j (b j) = m • ε τ := by simp [hd]
       have e2 : ∑ i, v.repr (∑ j, μ j (v i) • b j) i = n • ε τ := by simp [hs]
       rw [← e1, ← e2]
-      simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply, smul_eq_mul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun j _ => ?_
       conv_lhs => rw [← v.sum_repr (b j)]
-      simp only [map_sum, map_smul, smul_eq_mul, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul, mul_comm]
     exact ⟨b, μ, hb, hd, hs, hf⟩
   choose b μ hb hd hs hf using h'
   have key : ∀ {Y : Type} [AddCommGroup Y] [Module R Y] (y : I → Y) (τ : I),
@@ -182,24 +191,25 @@ variable {l : ℕ} [hl : Fact l.Prime] {a : ℕ} [NeZero a] {e : ℕ} [NeZero e]
 
 def iR : (ZMod a → A O K) →ₐ[O] OW l O := (inclO l O).comp (ϖ.iTot t K)
 
-omit [NeZero e] [NormedAlgebra ℚ_[l] K] in
 
+omit [NeZero e] [NormedAlgebra ℚ_[l] K] in
 theorem iR_toAc (s : (Wq l a)⟦X⟧) : iR K t ϖ (toAc t K s) = 1 ⊗ₜ inclW l (ϖ.ev a s) :=
   congrArg (inclO l O) (ϖ.iTot_toAc t K s)
 
-omit [NeZero e] [NormedAlgebra ℚ_[l] K] in
 
+omit [NeZero e] [NormedAlgebra ℚ_[l] K] in
 theorem iR_E : iR K t ϖ (fun _ => EIn l e _) = 1 ⊗ₜ inclW l (ϖ.ev a (eis l a e)) :=
   congrArg (inclO l O) (ϖ.iTot_E t K)
 
 theorem iR_injective : Function.Injective (iR K t ϖ) := inclO_injective.comp (ϖ.iTot_injective t K)
 
-omit [NeZero e] [NormedAlgebra ℚ_[l] K] in
 
+omit [NeZero e] [NormedAlgebra ℚ_[l] K] in
 theorem iR_apply (f : ZMod a → A O K) :
     iR K t ϖ f = ∑ τ, idem (constW t) τ * inclO l O (ϖ.iA O K (f τ)) := by
   change inclO l O (∑ τ, _) = _
-  simp only [map_sum, map_mul, inclO_idem]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, inclO_idem]
 
 theorem exists_iW_eq {k : ℕ} {r : OW l O} {f : ZMod a → A O K}
     (h : iR K t ϖ (fun _ => EIn l e _) ^ k * r = iR K t ϖ f) : ∃ y, ϖ.iW t K y = r := by
@@ -218,15 +228,15 @@ theorem exists_iW_eq {k : ℕ} {r : OW l O} {f : ZMod a → A O K}
 
 variable {K}
 
-omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 
+omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 theorem TWmap_smul {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[l] K O) (r : OW l O)
     (x : TW (OW l O) T) : TWmap (frobOW l O) T (r • x) = frobOW l O r • TWmap (frobOW l O) T x := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [smul_zero, map_zero]
   | tmul w x =>
     simp only [TWmap, smul_tmul', TensorProduct.map_tmul, AlgHom.toLinearMap_apply, smul_eq_mul, map_mul]
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 theorem exists_frobMat_eq {n : ℕ} (X Y : Fin n → Fin n → ZMod a → invE l e (A O K))
     (h : ∀ i j, ∑ m, ϖ.iW t K (X i m) * ϖ.iW t K (Y m j) = if i = j then 1 else 0) :
@@ -234,7 +244,8 @@ theorem exists_frobMat_eq {n : ℕ} (X Y : Fin n → Fin n → ZMod a → invE l
   have hτ : ∀ τ, (Matrix.of fun i j => X i j τ) * (Matrix.of fun i j => Y i j τ) = 1 := fun τ => by
     ext1 i j
     have h1 : ∑ m, X i m * Y m j = if i = j then 1 else 0 := ϖ.iW_injective t K (by
-      rw [map_sum, apply_ite (ϖ.iW t K), map_one, map_zero, ← h]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, apply_ite (ϖ.iW t K), map_one, map_zero, ← h]
       simp only [map_mul])
     have h2 := congrFun h1 τ
     rw [Finset.sum_apply, ite_apply] at h2
@@ -274,24 +285,28 @@ theorem exists_ident {V : Type} [AddCommGroup V] [Module (OW l O) V] (F : V →+
     refine ⟨y, ?_⟩
     have h4 : ∀ i, F (c i) =
         ∑ m, iR K t ϖ (frobAc l (f i m)) • F (b m) := fun i => by
-      conv_lhs => rw [← b.sum_repr (c i), map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← b.sum_repr (c i), map_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [hF, hf]
       congr 1
       exact (frobOW_inclO _).trans (congrArg (inclO l O) (ϖ.iTot_frob t K _).symm)
     rw [← one_smul (OW l O) (b j), ← hv, mul_comm, mul_smul, hk]
-    simp only [hy, h4, map_sum, map_mul, mul_smul, Finset.sum_smul, ← Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hy, h4, map_sum, map_mul, mul_smul, Finset.sum_smul, ← Finset.smul_sum]
     simp only [Finset.smul_sum]
     exact Finset.sum_comm
   choose Y hY using hY
   obtain ⟨P, hP⟩ := exists_frobMat_eq t ϖ X (fun m j => Y j m) fun i j => by
     have h3 := congrArg (b.repr · i) (hY j)
-    simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply, smul_eq_mul, ← hX, b.repr_self,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply, smul_eq_mul, ← hX, b.repr_self,
       Finsupp.single_apply] at h3
     simpa only [mul_comm, eq_comm (a := j)] using h3.symm
   simp only [hX] at hP
   have hj : ∀ v, b.equivFun.symm (phiW t ϖ P v) = F (b.equivFun.symm v) := fun v => by
-    rw [b.equivFun_symm_apply, b.equivFun_symm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [b.equivFun_symm_apply, b.equivFun_symm_apply, map_sum]
     have h0 : ∀ i, phiW t ϖ P v i = ∑ j, frobMat t ϖ P i j * frobOW l O (v j) := fun _ => rfl
     simp only [h0, hP, Finset.sum_smul, hF]
     rw [Finset.sum_comm]
@@ -430,8 +445,8 @@ theorem exists_basis {V : Type} [AddCommGroup V] [Module (OW l O) V] [Module (WC
   obtain ⟨f, hf⟩ := hb' x hx j
   exact ⟨fun τ => equivA O K (f τ), by simp only [hf, iR_apply, hg', ε]⟩
 
-omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 
+omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 theorem kappa_smul {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[l] K O) (w : WCb l) :
     letI := zlLat T
     ∀ y : WCb l ⊗[ℤ_[l]] ↥T.L.T, kappa T (w • y) = ((1 : O) ⊗ₜ[ℤ_[l]] w) • kappa T y := by
@@ -442,10 +457,10 @@ theorem kappa_smul {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[
   | tmul w' x =>
     rw [smul_tmul', kappa_tmul, kappa_tmul, smul_tmul', smul_eq_mul, smul_eq_mul,
       Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
+
 
 omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
-
 theorem kappa_frob {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[l] K O) :
     letI := zlLat T
     ∀ y : WCb l ⊗[ℤ_[l]] ↥T.L.T, kappa T (TensorProduct.map (frobW l).toLinearMap LinearMap.id y) =
@@ -455,7 +470,7 @@ theorem kappa_frob {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul w' x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def mulZ {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[l] K O) (c : O) :
     letI := zlLat T
@@ -465,8 +480,8 @@ def mulZ {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[l] K O) (c
     map_add' := smul_add c
     map_smul' := fun z x => smul_comm c (algebraMap ℤ_[l] O z) x }
 
-omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 
+omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 theorem kappa_mulZ {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[l] K O) (c : O) :
     letI := zlLat T
     ∀ y : WCb l ⊗[ℤ_[l]] ↥T.L.T, kappa T ((mulZ T c).lTensor (WCb l) y) = c • kappa T y := by
@@ -475,7 +490,7 @@ theorem kappa_mulZ {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[
   induction y using TensorProduct.induction_on with
   | zero => simp only [smul_zero, map_zero]
   | tmul w' x => exact tmul_smul c _ x
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 theorem exists_ident_of_basis {G : Type} [Group G] [TopologicalSpace G] (T : LocLat G ℚ_[l] K O) {M : Type}
     [AddCommGroup M] [Module (Wq l a)⟦X⟧ M] {q : ℕ} (β : Module.Basis (Fin q) (Wq l a)⟦X⟧ M) :
@@ -513,7 +528,8 @@ theorem exists_ident_of_basis {G : Type} [Group G] [TopologicalSpace G] (T : Loc
   have hs : ∀ f, ∀ x ∈ J.range, iR K t ϖ f • x ∈ J.range := by
     rintro f _ ⟨y, rfl⟩
     obtain ⟨s, rfl⟩ := exists_eq_sum_toAc t K (Module.Free.chooseBasis ℤ_[l] O) f
-    rw [map_sum, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_smul]
     refine sum_mem fun i _ => ?_
     obtain ⟨z, hz⟩ := hO₀ (Module.Free.chooseBasis ℤ_[l] O i) (s i • y)
     refine ⟨z, ?_⟩
@@ -532,7 +548,8 @@ theorem exists_ident_of_basis {G : Type} [Group G] [TopologicalSpace G] (T : Loc
       rintro _ ⟨y, rfl⟩
       obtain ⟨k, s, hm⟩ := hφ' y
       refine ⟨k, fun i => toAc t K (s i), ?_⟩
-      rw [hJ, hE, hm, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hJ, hE, hm, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [kappa_smul, kappa_frob, iR_toAc, hc]
       rfl)

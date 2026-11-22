@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameTransport.InstIsModTopTens
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameTransport.InstIsModTopTens
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel ValuativeRel
 open scoped Pointwise
@@ -18,7 +22,8 @@ theorem gram_det_isUnit {E : Type} [Field E] [NumberField E] [StarRing E] (S : H
       apply S.nondeg.2
       intro x
       rw [← S.frame.sum_repr x]
-      simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
         RingHom.id_apply, Finset.mul_sum]
       rw [Finset.sum_comm]
       refine Finset.sum_eq_zero fun i _ => ?_
@@ -67,7 +72,7 @@ theorem continuous_sigR {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a y => simp [LinearMap.baseChange_tmul, sigR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem unitary_mt {D : D7} {S : HSp D} (x : GA D S) :
     Formalism.UG.cT (cA D) (mt S x) * S.gram.map (incA D) * mt S x = S.gram.map (incA D) := (PI.FT.toHR x).2

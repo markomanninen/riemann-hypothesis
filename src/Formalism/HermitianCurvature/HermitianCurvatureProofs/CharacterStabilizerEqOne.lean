@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixRightTranslate
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VecVSplit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RaisingCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixRightTranslate
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VecVSplit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RaisingCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -99,17 +103,21 @@ theorem inSS_pL (Bs : B.RealPlaceData k r Wp Wq) {x : Mt k r × Mt k r}
     (hx : (Matrix.of x.1 : B.Mat k r) ∈ UWset k r Bs.z ∧ (Matrix.of x.2 : B.Mat k r) ∈ Formalism.QuantumDeterminants.Nset k r) :
     Bs.inSS (pL x) := by
   refine ⟨hx.1, hx.2, ?_, ?_⟩
-  · simpa [pL] using Formalism.FourierDecayAlt.P.BigCellZetaMinors.one_uw (k := k) (r := r) Bs.z'
-  · simpa [pL] using (Formalism.QuantumDeterminants.WeylGroupFacts.mem_n_one : (1 : B.Mat k r) ∈ Formalism.QuantumDeterminants.Nset k r)
+  · change Matrix.of (Matrix.of.symm (1 : B.Mat k r)) ∈ UWset k r Bs.z'
+    rw [Equiv.apply_symm_apply]
+    exact Formalism.FourierDecayAlt.P.BigCellZetaMinors.one_uw (k := k) (r := r) Bs.z'
+  · change Matrix.of (Matrix.of.symm (1 : B.Mat k r)) ∈ Formalism.QuantumDeterminants.Nset k r
+    rw [Equiv.apply_symm_apply]
+    exact Formalism.QuantumDeterminants.WeylGroupFacts.mem_n_one
 
 theorem sgs_pL (x : Mt k r × Mt k r) (g : B.Mat k r) :
     B.sgs (pL x) g = (Matrix.of x.1 : B.Mat k r)⁻¹ * (Matrix.of x.2 : B.Mat k r)⁻¹ * g := by
-  simp [B.sgs, pL]
+  simp only [B.sgs, pL, Prod.fst, Prod.snd, Equiv.apply_symm_apply, Matrix.mul_one]
 
 theorem contDiff_lmul (σ : B.Mat k r) : ContDiff ℝ (⊤ : ℕ∞) (fun g : B.Mat k r => σ * g) := by
   refine contDiff_pi.2 fun i => contDiff_pi.2 fun j => ?_
   simp only [Matrix.mul_apply]
-  exact ContDiff.sum fun l _ => contDiff_const.mul ((contDiff_apply ℝ ℂ j).comp (contDiff_apply ℝ _ l))
+  exact ContDiff.sum fun l _ => contDiff_const.mul ((contDiff_apply ℝ (fun _ => ℂ) j).comp (contDiff_apply ℝ _ l))
 
 theorem cpt_left (Bs : B.RealPlaceData k r Wp Wq) {G : B.Mat k r → (Wq →L[ℂ] Wp)} (hG : KB.CptCoef Bs G)
     {x : Mt k r × Mt k r}

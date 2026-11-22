@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.StatementJF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LongWeylElement
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.FormalDegreeBessel.FinalBF
+module
+
+public import Formalism.HermitianCurvature.StatementJF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LongWeylElement
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.FormalDegreeBessel.FinalBF
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter
 
@@ -122,8 +126,5 @@ theorem jf_psiOnto_of_cellDecomp (hCD : BigCellDecomposition.CellDecomp) : Forma
   rw [← Matrix.mul_assoc (bigCell k r c 1) h⁻¹, hcomm]
   simp only [Matrix.mul_assoc]
   rw [Matrix.nonsing_inv_mul_cancel_left _ _ hu1]
-
-theorem jf_equivDet_of_cellDecomp (hCD : BigCellDecomposition.CellDecomp) : Formalism.FourierDecayAlt.JF.EquivDet :=
-  Formalism.FourierDecayAlt.P.equiv_det_of_onto (jf_psiOnto_of_cellDecomp hCD)
 
 end Formalism.FourierDecayAlt.P

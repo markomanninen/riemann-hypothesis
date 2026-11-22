@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ def gauss (x : Fin a → Cinf E) : ℝ := Real.exp (-Real.pi * qf x)
 def quad (p : Matrix (Fin a) (Fin a) (Cinf E)) (x : Fin a → Cinf E) : ℝ :=
   ∑ w : InfinitePlace E, (((x ᵥ* p) ⬝ᵥ star x) w).re
 
-variable (E a) in
 
+variable (E a) in
 def poly : Subalgebra ℂ ((Fin a → Cinf E) → ℂ) :=
   Algebra.adjoin ℂ (Set.range fun l : (Fin a → Cinf E) →ₗ[ℝ] ℂ => (l : (Fin a → Cinf E) → ℂ))
 
@@ -66,7 +70,7 @@ def ptF (g : GA E a) : (Fin a → E) →+ (Fin a → Af E) where
 
 def lat (L : AddSubgroup (Fin a → Af E)) (g : GA E a) : AddSubgroup (Fin a → E) := L.comap (ptF g)
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def vInf (v : Fin a → E) : Fin a → Cinf E := fun i => pInf E (algebraMap E (Ad E) (v i))
 

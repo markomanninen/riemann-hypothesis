@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.SingToDiffAlt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.SingToDiffAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem contDiff_det_one_add (M : Matrix ι ι ℂ) {k : WithTop ℕ∞} :
         fun S => (1 : Matrix ι ι ℂ) a b + ∑ c, M a c * S c b := by
       funext S; simp [Matrix.add_apply, Matrix.mul_apply]
     rw [e]
-    exact contDiff_const.add (ContDiff.sum fun c _ => contDiff_const.mul (contDiff_apply_apply ℂ ℂ c b))
+    exact contDiff_const.add (ContDiff.sum fun c _ => contDiff_const.mul (contDiff_apply_apply ℂ c b))
   simp only [Matrix.det_apply]
   exact ContDiff.sum fun σ _ => (contDiff_prod fun i _ => hent _ _).const_smul _
 
@@ -98,11 +102,11 @@ theorem dp_embOn_eq (s : Finset (Fin n)) (T : Matrix s s ℂ) : embOn s T = dp_i
   ext a b
   rw [incl_mul_apply]
   by_cases ha : a ∈ s
-  · rw [dif_pos ha, mul_proj_apply]
+  · rw [dite_eq_left ha, mul_proj_apply]
     by_cases hb : b ∈ s
-    · rw [dif_pos hb, embOn, dif_pos ⟨ha, hb⟩]
-    · rw [dif_neg hb, embOn, dif_neg (fun h => hb h.2)]
-  · rw [dif_neg ha, embOn, dif_neg (fun h => ha h.1)]
+    · rw [dite_eq_left hb, embOn, dite_eq_left ⟨ha, hb⟩]
+    · rw [dite_eq_right hb, embOn, dite_eq_right (fun h => hb h.2)]
+  · rw [dite_eq_right ha, embOn, dite_eq_right (fun h => ha h.1)]
 
 theorem proj_mul_mul_incl (s : Finset (Fin n)) (M : Matrix (Fin n) (Fin n) ℂ) :
     proj s * M * dp_incl s = M.submatrix (fun i : s => (i : Fin n)) (fun i : s => (i : Fin n)) := by

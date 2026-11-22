@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.CentralCharts.PshAt0Logdet
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.PshAt0Logdet
+
+@[expose] public section
 
 noncomputable section
 

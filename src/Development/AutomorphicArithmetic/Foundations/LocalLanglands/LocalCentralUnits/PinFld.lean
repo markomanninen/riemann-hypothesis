@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.PinChar
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.PinNum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.PinChar
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.PinNum
+
+@[expose] public section
 
 open Finset
 
@@ -135,10 +139,11 @@ theorem exists_D [Fintype Kˣ] (hn : 0 < n) (hr : Module.finrank (ZMod g) K = n)
 
 end Fld
 
-open Classical in
 
-noncomputable def cj {G : Type} [CommGroup G] (g n : ℕ) (θ : G →* ℂˣ) : Finset (G →* ℂˣ) :=
-  (range n).image (fun j => θ ^ g ^ j)
+open Classical in
+noncomputable def cj {G : Type} [CommGroup G] (g n : ℕ) (θ : G →* ℂˣ) : Finset (G →* ℂˣ) := by
+  classical
+  exact (range n).image (fun j => θ ^ g ^ j)
 
 theorem mem_cj {G : Type} [CommGroup G] {g n : ℕ} {θ χ : G →* ℂˣ} :
     χ ∈ cj g n θ ↔ ∃ j < n, θ ^ g ^ j = χ := by

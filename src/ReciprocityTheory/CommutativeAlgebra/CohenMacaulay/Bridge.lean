@@ -1,4 +1,8 @@
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 

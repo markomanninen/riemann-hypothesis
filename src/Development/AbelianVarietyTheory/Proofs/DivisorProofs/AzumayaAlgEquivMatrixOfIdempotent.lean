@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing
 open scoped TensorProduct
 
@@ -26,7 +31,7 @@ theorem leftIdealMulAlgHom_injective (e : Λ)
     (h : ∃ (N : ℕ) (a b : Fin N → Λ), ∑ i, a i * e * b i = 1) :
     Function.Injective (leftIdealMulAlgHom A e) := by
   obtain ⟨N, a, b, hab⟩ := h
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro l hl
   have h0 : ∀ y : Λ, l * (y * e) = 0 := by
     intro y
@@ -52,7 +57,7 @@ theorem exists_mul_eq_mulLeftRight_of_corner (e : Λ)
   | add s t hs ht =>
     obtain ⟨l, hl⟩ := hs
     obtain ⟨m, hm⟩ := ht
-    exact ⟨l + m, fun y => by rw [map_add, LinearMap.add_apply, add_mul, hl, hm, add_mul]⟩
+    exact ⟨l + m, fun y => by rw [map_add (f := _), LinearMap.add_apply, add_mul, hl, hm, add_mul]⟩
 
 theorem leftIdealMulAlgHom_surjective [IsAzumaya A Λ] (e : Λ) (he : IsIdempotentElem e)
     (hc : ∀ y : Λ, ∃ c : A, e * y * e = c • e) :

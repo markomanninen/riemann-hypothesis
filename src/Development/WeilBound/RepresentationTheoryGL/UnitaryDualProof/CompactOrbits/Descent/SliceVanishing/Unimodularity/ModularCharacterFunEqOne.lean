@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.OpenSlices.OpenSlice
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.OpenSlices.OpenSlice
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem measure_subgroup_eq {G : Type*} [Group G] [TopologicalSpace G] [IsTopolo
     have hm := K.mul_mem hx (K.inv_mem hx')
     simpa [mul_assoc] using hm
   rw [hcover, measure_iUnion hdisj
-    (fun q => (hK.preimage (continuous_mul_left _)).measurableSet)]
+    (fun q => (hK.preimage (continuous_const_mul _)).measurableSet)]
   simp only [measure_preimage_mul, tsum_fintype, Finset.sum_const, Finset.card_univ,
     nsmul_eq_mul]
   rw [Subgroup.relIndex, Subgroup.index, Nat.card_eq_fintype_card]

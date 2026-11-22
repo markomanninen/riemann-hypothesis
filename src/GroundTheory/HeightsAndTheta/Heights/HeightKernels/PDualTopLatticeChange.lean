@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSubLattice
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeBasisExists
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualEmbBijective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSubLattice
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeBasisExists
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualEmbBijective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -25,8 +30,8 @@ def supStandard (F : HermLattice K i) : HermLattice K i where
   posDef := fun _ => Matrix.PosDef.one
   conj := fun _ => by simp
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem gramAt_one_single (σ : K →+* ℂ) :
     gramAt (1 : Matrix (Fin i) (Fin i) ℂ) σ (fun j : Fin i => (Pi.single j 1 : Fin i → K)) = 1 := by
   ext a c
@@ -54,8 +59,8 @@ theorem standard_degree : (HermLattice.standard K i).degree = 0 := by
 
 end TopDualLatticeChange
 
-open TopDualLatticeChange in
 
+open TopDualLatticeChange in
 theorem DualTopLatticeChange.proof (hSub : DualTopSubLattice.Statement) :
     DualTopLatticeChange.Statement := by
   intro K _ _ i F T T' _ _ _ _ b hb b' hb' II hi hII

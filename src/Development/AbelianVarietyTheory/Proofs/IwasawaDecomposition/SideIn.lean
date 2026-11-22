@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DatVtEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DatVtEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +15,9 @@ namespace GlobalTheory.MtIn
 
 variable {D : D7}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure SideIn (V : HSp D) (β : GL (Fin V.rank) (EAf D)) (c : CoefA V) (j : ℕ) (hr : D.R.r ≤ V.rank)
     (Pg Q : Finset (Pl D.host.E)) (chi xi : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ)
     (ψ : ∀ PP : Pl D.host.E, AddChar (kP PP) ℂ) : Type 1 where
@@ -58,9 +62,9 @@ def fn (x : Fin u.dim → D.what₂.LL) : Bridge.Gf V → c.W := u.pres.ext (lvl
 
 end SideIn
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure TupIn (μ : D.what₂.Tup) (i : Fin D.R.m) (c : CoefA (Vc D i)) {T : Type} (L : LevCh D T) (t : T)
     (ψ : ∀ PP : Pl D.host.E, AddChar (kP PP) ℂ) : Type 1 where
   u : SideIn (Vc D i) (L.βV i) c ((i : ℕ) + 1) (r_le_V i) L.Pg (L.Q t) (L.chi ((i : ℕ) + 1)) (L.xiR t) ψ

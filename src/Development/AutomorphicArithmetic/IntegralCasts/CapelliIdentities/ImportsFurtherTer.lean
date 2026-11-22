@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk64.diag_mul :
     ∀ {n : ℕ} {Q : Type} [inst : CommRing Q]

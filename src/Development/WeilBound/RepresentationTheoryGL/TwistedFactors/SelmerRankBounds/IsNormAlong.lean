@@ -1,9 +1,13 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.HeightLe
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.InvTransposeGLInvTransposeGL
-import GroundTheory.GlobalFields.Adele.BaseChange
-import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
-import GroundTheory.AutomorphicForms.AffineBruhat
-import GroundTheory.AutomorphicForms.Cartan
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.HeightLe
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.InvTransposeGLInvTransposeGL
+public import GroundTheory.GlobalFields.Adele.BaseChange
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
+public import GroundTheory.AutomorphicForms.AffineBruhat
+public import GroundTheory.AutomorphicForms.Cartan
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ variable {G T X : Type*} [Group G] [MeasurableSpace G] [MeasurableSpace T] [Meas
 def IsNormAlong (u : X → G) (j : T → G) (ν : Measure T) (ρ : G → ℝ≥0∞) : Prop :=
   Measurable ρ ∧ ∀ x, ∫⁻ t, ρ (j t * u x) ∂ν = 1
 
-open Classical in
 
+open Classical in
 def quotInt (μ : Measure X) (u : X → G) (j : T → G) (ν : Measure T) (Φ : X → ℂ) : ℂ :=
   if h : ∃ ρ, IsNormAlong u j ν ρ then ∫ x, Φ x * ((h.choose (u x)).toReal : ℂ) ∂μ else 0
 end Quot
@@ -66,8 +70,8 @@ def galFin (σ : E ≃ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) : CompletionsOv
 def galInf (σ : E ≃ₐ[F] E) : InfiniteAdeleRing E →+* InfiniteAdeleRing E :=
   galOf (GroundTheory.Global.InfinitePlace.tensorInfiniteAdeleRingEquiv (K := F) (L := E)) σ
 
-variable (E) in
 
+variable (E) in
 def incFin (v : HeightOneSpectrum (𝓞 F)) : v.adicCompletion F →+* CompletionsOver E v :=
   RingHom.pi fun w => completionMap v w.1
 
@@ -80,8 +84,8 @@ def atFin (v : HeightOneSpectrum (𝓞 F)) : 𝔸[E] →+* CompletionsOver E v w
 
 variable {n : ℕ}
 
-variable (E n) in
 
+variable (E n) in
 def unitSet (v : HeightOneSpectrum (𝓞 F)) : Set (GL (Fin n) (CompletionsOver E v)) :=
   {g | ∀ w : PlacesOver E v, mapGL n (Pi.evalRingHom (fun w : PlacesOver E v => w.1.adicCompletion E) w) g ∈
     GLnLocal.integralGL (w.1.adicCompletion E) n}
@@ -97,9 +101,9 @@ def Ell (σ : E ≃ₐ[F] E) (f : G1 E n → ℂ) : Prop :=
     (x : AdelicGLn.AdelicGL E n)⁻¹ * AdelicGLn.diagonal E n δ * mapGL n (galAd σ) (x : AdelicGLn.AdelicGL E n) →
     f y ≠ 0 → EllElt σ δ
 
-open Classical in
 
-def ext0 (f : G1 E n → ℂ) (g : AdelicGLn.AdelicGL E n) : ℂ := if h : g ∈ normOneGL E n then f ⟨g, h⟩ else 0
+open Classical in
+def ext0 (f : G1 E n → ℂ) (g : AdelicGLn.AdelicGL E n) : ℂ := if h : g ∈ normOneGL (K := E) (n := n) then f ⟨g, h⟩ else 0
 
 def GMatch (σ : E ≃ₐ[F] E) (μE : Measure (G1 E n)) (μF : Measure (G1 F n)) (c : ℂ) (fE : G1 E n → ℂ) (fF : G1 F n → ℂ) : Prop :=
   ∀ (γ : GL (Fin n) F) (γ₁ : G1 F n), (γ₁ : AdelicGLn.AdelicGL F n) = AdelicGLn.diagonal F n γ →

@@ -1,14 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelCoordinatesCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConnectionRaisingConstantEq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterpolationInverseMatrixSumIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelCoordinatesCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConnectionRaisingConstantEq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterpolationInverseMatrixSumIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem actual_spectral_hypotheses : Formalism.FourierDecayAlt.NF.ActualSHyp :=
-  actual_hypotheses_of_parts actual_start zeta_commutes leading_term_alt spectral_two_by_two
-    level_coordinates_commute types_complete
 
 theorem normalFormFromModule_statement : Formalism.FourierDecayAlt.Q.NormalFormFromModule :=
   normal_form_from_module theorem_S_ring actual_pre_level actual_hypotheses_of_parts

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueComplexPointUnder
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueComplexPointUnder
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -191,12 +195,12 @@ theorem exists_hermLine (h₁ : FrameLaw M u) (h₂ : MonoLaw M a u) :
   let H : ((Σ k, Bk n k) → ℂ) → ℝ := fun z =>
     if hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0 then (key z hz).choose else 0
   have Hpos : ∀ z, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) → 0 < H z := fun z hz => by
-    simp only [H, dif_pos hz]
+    simp only [H, dite_eq_left hz]
     exact (key z hz).choose_spec.1
   have Hval : ∀ z (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (y : CxPts (mpStr ℤ m n) σ₀) (i : M.B.ι) (c : ∀ k, Bk n k),
       IsUnder y z → y ∈ ptsIn (mpStr ℤ m n) σ₀ (M.B.U i ⊓ mchart c) → H z = hVal M a u y z i c :=
     fun z hz y i c hy hm => by
-      simp only [H, dif_pos hz]
+      simp only [H, dite_eq_left hz]
       exact (key z hz).choose_spec.2 y i c hy hm
   refine ⟨⟨a, H, Hpos, fun b z hb => ?_⟩, ⟨u, h₁, h₂, fun i c y z hy hm => ?_⟩, rfl⟩
   · by_cases hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0
@@ -208,7 +212,7 @@ theorem exists_hermLine (h₁ : FrameLaw M u) (h₂ : MonoLaw M a u) :
     · have hz' : ¬ ∀ k, ∃ i, (fun p : Σ k, Bk n k => b p.1 * z p) ⟨k, i⟩ ≠ 0 := fun h => hz fun k => by
         obtain ⟨i, hi⟩ := h k
         exact ⟨i, right_ne_zero_of_mul hi⟩
-      simp only [H, dif_neg hz, dif_neg hz', mul_zero]
+      simp only [H, dite_eq_right hz, dite_eq_right hz', mul_zero]
   · have hc := (mem_ptsIn_inf.1 hm).2
     exact Hval z (fun k => ⟨c k, (hy k (c k)).1.1 (mem_ptsIn_mchart.1 hc k)⟩) y i c hy hm
 
@@ -284,9 +288,9 @@ theorem prod_zpow_single {G : Type*} [CommGroup G] (f : Fin (m + 1) → G) (p q 
     ∏ k, f k ^ ((Pi.single p 1 + t • Pi.single q 1 : Fin (m + 1) → ℤ) k) = f p * f q ^ t := by
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, zpow_add, Finset.prod_mul_distrib]
   congr 1
-  · rw [Finset.prod_eq_single p (fun k _ hk => by simp [Pi.single_apply, hk]) (by simp)]
+  · rw [Finset.prod_eq_single p (fun k _ hk => by simp [hk]) (by simp)]
     simp
-  · rw [Finset.prod_eq_single q (fun k _ hk => by simp [Pi.single_apply, hk]) (by simp)]
+  · rw [Finset.prod_eq_single q (fun k _ hk => by simp [hk]) (by simp)]
     simp
 
 variable {M : HermLB (mpStr ℤ m n)} {b : Fin m} {t : ℤ}

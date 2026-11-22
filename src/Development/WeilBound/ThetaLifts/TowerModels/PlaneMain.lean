@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.TowerModels.PlanePair
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneIso
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneBas
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneComp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddConjEqOneOfFormallyUnramified
+module
+
+public import Development.WeilBound.ThetaLifts.TowerModels.PlanePair
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneIso
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneBas
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneComp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddConjEqOneOfFormallyUnramified
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,10 +22,54 @@ structure IsEps (σ : E →ₐ[F] E) (B : Base F E) (ε : E) (κ : ℂ) (D : Sub
     (r s : ℕ) : Prop where
   herm : ∀ i j, σ (X.J j i) = ε * X.J i j
   sig : ∀ w, HasSig (κ • X.J.map (B.emb w).1) r s
-  lat : X.L.IsLattice E
+  lat : X.L.IsFullLattice E
   dual : ∀ y, y ∈ X.L ↔ ∀ x ∈ X.L, form σ X.J y x ∈ D
   cartan : ∀ w, IsCartan (κ • X.J.map (B.emb w).1) (X.θ w)
   bas : ∀ v : B.P, IsSplitBasis (B.τ v) X.L (X.bas v)
+
+private theorem full_of_self_dual {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (L : Submodule (𝓞 E) (Fin n → E)) (hcm : IsCMExt F E σ)
+    {ε : E} (hεε : ε * ε = 1) (D : Submodule (𝓞 E) E)
+    (hherm : ∀ i j, σ (J j i) = ε * J i j)
+    (hlat : L.IsLattice E)
+    (hdual : ∀ y, y ∈ L ↔ ∀ x ∈ L, form σ J y x ∈ D) :
+    L.IsFullLattice E := by
+    let := hlat
+    refine { span_eq_top := ?_ }
+    let W := Submodule.span E (L : Set (Fin n → E))
+    change W = ⊤
+    by_contra hW
+    let g : (Fin n → E) →ₗ[E] Module.Dual E W :=
+      ((dotProductBilin E E).compl₂ (Matrix.mulVecLin Jᵀ)).domRestrict₂ W
+    have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Fin n → E) := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt hW
+    obtain ⟨z, hz, hz₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    let y : Fin n → E := fun i => σ (z i)
+    have hy₀ : y ≠ 0 := by
+      intro hy
+      apply hz₀
+      exact funext fun i => σ.injective ((congrFun hy i).trans (map_zero σ).symm)
+    have horth (x : Fin n → E) (hx : x ∈ L) : form σ J y x = 0 := by
+      have hz' : z ⬝ᵥ Jᵀ *ᵥ x = 0 :=
+        congrArg (fun f : Module.Dual E W => f ⟨x, Submodule.subset_span hx⟩)
+          (LinearMap.mem_ker.mp hz)
+      have hzero : form σ J x y = 0 := by
+        rw [Matrix.dotProduct_transpose_mulVec] at hz'
+        simpa only [form, y, sigma_sigma hcm] using hz'
+      have hs := form_swap hcm hherm x y
+      rw [hzero, map_zero] at hs
+      exact (mul_eq_zero.mp hs.symm).resolve_left (left_ne_zero_of_mul_eq_one hεε)
+    have hline (a : E) : a • y ∈ L := (hdual _).2 fun x hx => by
+      rw [form_smul_left, horth x hx, mul_zero]
+      exact D.zero_mem
+    let i : E →ₗ[𝓞 E] L :=
+      ((LinearMap.toSpanSingleton E _ y).restrictScalars (𝓞 E)).codRestrict L hline
+    let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hlat.fg
+    let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective E hy₀ (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
 
 theorem exists_plane {B : Base F E} (hB : B.IsGood σ) {ε : E} (hε : ε = 1 ∨ ε = -1) {κ : ℂ} (hκ1 : κ * star κ = 1)
     (hκ : ∀ e : E →+* ℂ, star κ * e ε = κ) (D : Submodule (𝓞 E) E) (hD1 : (1 : E) ∈ D)
@@ -45,8 +93,9 @@ theorem exists_plane {B : Base F E} (hB : B.IsGood σ) {ε : E} (hε : ε = 1 �
   obtain ⟨θ₀, hθ₀⟩ : ∃ θ : 𝓞 E, (θ : E) + σ θ = 1 := by
     haveI : Algebra.Unramified (𝓞 F) (𝓞 E) := hB.unram
     exact GlobalTheory.exists_integer_add_conj_eq_one_of_formallyUnramified F E σ hB.cm inferInstance
+  have hFull : Y.L.IsFullLattice E := hY.lat
   obtain ⟨x₀, hx₀, hx₀x₀⟩ := exists_isotropic hcm B.emb (by omega) hr hs hdet hε hY.herm hκ0 hκ hY.sig
-  obtain ⟨x, y, hxx, hyy, hxy, hL, hP⟩ := exists_adapted_pair hcm hdet hε hY.herm D hD1 Y.L hY.lat hY.dual θ₀ hθ₀ B.P B.τ
+  obtain ⟨x, y, hxx, hyy, hxy, hL, hP⟩ := exists_adapted_pair hcm hdet hε hY.herm D hD1 Y.L hFull hY.dual θ₀ hθ₀ B.P B.τ
     hDτ x₀ hx₀ hx₀x₀
   have hyx : form σ Y.J y x = ε := by
     have := form_swap hcm hY.herm x y
@@ -66,9 +115,14 @@ theorem exists_plane {B : Base F E} (hB : B.IsGood σ) {ε : E} (hε : ε = 1 �
     · rw [← hu]; exact Y.L.sub_mem (Y.L.sub_mem hz (hL z hz).2) ht
     · rw [← hu]; abel
   set L₁ := Y.L.comap ((Matrix.mulVecLin ι).restrictScalars (𝓞 E)) with hL₁def
-  have hlat₁ : L₁.IsLattice E := isLattice_comap n n₁ Y.L ι P hPι hY.lat
+  have hlat₁ : L₁.IsLattice E := by
+    apply Submodule.IsLattice.of_fg E
+    apply Submodule.fg_of_fg_map_injective _ _ (hY.lat.fg.of_le (Submodule.map_comap_le _ _))
+    intro u u' e
+    have he := congrArg (P *ᵥ ·) (show ι *ᵥ u = ι *ᵥ u' from e)
+    simpa [Matrix.mulVec_mulVec, hPι] using he
   have hx0 : x ≠ 0 := by rintro rfl; simp [form] at hxy
-  obtain ⟨𝔟, h𝔟⟩ := exists_ideal n Y.L hY.lat x hx0
+  obtain ⟨𝔟, h𝔟⟩ := exists_ideal n Y.L hY.lat.toIsLattice x hx0
   set J₁ := ιᵀ * Y.J * ι.map σ with hJ₁
   have hform₁ : ∀ u u', form σ J₁ u u' = form σ Y.J (ι *ᵥ u) (ι *ᵥ u') := form_gram Y.J ι
   let e : InfinitePlace F → E →+* ℂ := fun w => (B.emb w).1
@@ -89,12 +143,26 @@ theorem exists_plane {B : Base F E} (hB : B.IsGood σ) {ε : E} (hε : ε = 1 �
         map_orth hcm _ Y.J ι y (fun u => (horth u).2), smul_zero, smul_zero]
     · rw [← Matrix.map_mul, hPι, Matrix.map_one _ (map_zero _) (map_one _)]
   choose hsig₁ θ θ₁ hθ hθ₁ hθι hθx using hreal
-  haveI := hlat₁
+  have hherm₁ : ∀ i j, σ (J₁ j i) = ε * J₁ i j := by
+    intro i j
+    rw [← form_single (σ := σ) J₁ j i, ← form_single (σ := σ) J₁ i j, hform₁, hform₁,
+      form_swap hcm hY.herm]
+  have hdual₁ : ∀ u, u ∈ L₁ ↔ ∀ u' ∈ L₁, form σ J₁ u u' ∈ D := by
+    intro u
+    refine ⟨fun hu u' hu' => ?_, fun H => ?_⟩
+    · rw [hform₁]; exact (hY.dual _).1 hu _ hu'
+    · show ι *ᵥ u ∈ Y.L
+      refine (hY.dual _).2 fun z hz => ?_
+      obtain ⟨_, _, u', -, -, hu', hz'⟩ := hsplit z hz
+      rw [hz', form_add_right, form_add_right, form_smul_right, form_smul_right, (horth u).1,
+        (horth u).2, mul_zero, mul_zero, zero_add, add_zero, ← hform₁]
+      exact H u' hu'
+  haveI hfull₁ : L₁.IsFullLattice E := full_of_self_dual J₁ L₁ hcm hεε D hherm₁ hlat₁ hdual₁
   have hb₁ : ∀ v : B.P, ∃ β, IsSplitBasis (B.τ v) L₁ β := fun v => exists_isSplitBasis (B.τ v) L₁ hcm
   choose β₁ hβ₁ using hb₁
   let bas₁ : ∀ v : Pl F, GL (Fin n₁) (Fv F v) := fun v => if h : v ∈ B.P then β₁ ⟨v, h⟩ else 1
   have hbas₁ : ∀ v : B.P, bas₁ v = β₁ v := fun v => by simp only [bas₁, dif_pos v.2]
-  choose β hβ using fun v : B.P => exists_basis (B.τ v) n n₁ Y.L x y ι (β₁ v) i₀ i₁ hn h01 h1n hY.lat hsplit
+  choose β hβ using fun v : B.P => exists_basis (B.τ v) n n₁ Y.L x y ι (β₁ v) i₀ i₁ hn h01 h1n hFull hsplit
     (hP v).1 (hP v).2 (hβ₁ v)
   let bas : ∀ v : Pl F, GL (Fin n) (Fv F v) := fun v => if h : v ∈ B.P then β ⟨v, h⟩ else Y.bas v
   have hbas : ∀ v : B.P, bas v = β v := fun v => by simp only [bas, dif_pos v.2]
@@ -105,22 +173,10 @@ theorem exists_plane {B : Base F E} (hB : B.IsGood σ) {ε : E} (hε : ε = 1 �
             bas := fun v => by
               rw [show (GlobalTheory.ThK.reS Y Y').bas v = β v from hbas v]
               exact (hβ v).2 }
-  · exact { herm := fun i j => by
-              show σ (J₁ j i) = ε * J₁ i j
-              rw [← form_single (σ := σ) J₁ j i, ← form_single (σ := σ) J₁ i j, hform₁, hform₁,
-                form_swap hcm hY.herm]
+  · exact { herm := hherm₁
             sig := hsig₁
-            lat := hlat₁
-            dual := fun u => by
-              show u ∈ L₁ ↔ ∀ u' ∈ L₁, form σ J₁ u u' ∈ D
-              refine ⟨fun hu u' hu' => ?_, fun H => ?_⟩
-              · rw [hform₁]; exact (hY.dual _).1 hu _ hu'
-              · show ι *ᵥ u ∈ Y.L
-                refine (hY.dual _).2 fun z hz => ?_
-                obtain ⟨_, _, u', -, -, hu', hz'⟩ := hsplit z hz
-                rw [hz', form_add_right, form_add_right, form_smul_right, form_smul_right, (horth u).1,
-                  (horth u).2, mul_zero, mul_zero, zero_add, add_zero, ← hform₁]
-                exact H u' hu'
+            lat := hfull₁
+            dual := hdual₁
             cartan := hθ₁
             bas := fun v => by
               rw [show Y₁.bas v = β₁ v from hbas₁ v]

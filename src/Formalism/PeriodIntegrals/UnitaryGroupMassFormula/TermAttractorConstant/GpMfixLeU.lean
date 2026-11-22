@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.GpLocPSubE
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.GpLocPSubE
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem gp_X_iso (F : LFlag S r T) : ∀ v ∈ Xsp F, v ∈ orth S (Xsp F) := by
       obtain ⟨a, rfl⟩ := hy
       exact F.fl.e_iso a b
     | zero => simp
-    | add y y' _ _ h1 h2 => rw [map_add, LinearMap.add_apply, h1, h2, add_zero]
+    | add y y' _ _ h1 h2 => rw [map_add (f := _), LinearMap.add_apply, h1, h2, add_zero]
     | smul c y _ h => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, h, smul_zero]
   intro v hv
   rw [mem_orth_iff]
@@ -50,7 +54,7 @@ theorem gp_X_iso (F : LFlag S r T) : ∀ v ∈ Xsp F, v ∈ orth S (Xsp F) := by
     obtain ⟨b, rfl⟩ := hy
     exact key b x hx
   | zero => simp
-  | add y y' _ _ h1 h2 => rw [map_add, h1, h2, add_zero]
+  | add y y' _ _ h1 h2 => rw [map_add (f := _), h1, h2, add_zero]
   | smul c y _ h => rw [map_smul, h, smul_zero]
 
 theorem gp_Mfix_le_U (F : LFlag S r T) (hl : IsLift Λ F) : ∀ w ∈ gpMfix Λ F, w ∈ gpU F := by

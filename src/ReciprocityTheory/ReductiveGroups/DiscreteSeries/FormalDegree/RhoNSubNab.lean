@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Finrank
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Finrank
+
+@[expose] public section
 
 noncomputable section
 

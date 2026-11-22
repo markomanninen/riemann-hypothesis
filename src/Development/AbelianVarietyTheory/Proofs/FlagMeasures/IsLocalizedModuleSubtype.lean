@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
 
@@ -53,7 +58,7 @@ theorem star_mem_one {x : K} (h : x ∈ (1 : Submodule (𝓞 K) K)) : star x ∈
 variable [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
 omit [StarRing K] [FiniteDimensional K V] in
-theorem exists_smul_mem {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L) (y : V) :
+theorem exists_smul_mem {L : Submodule (𝓞 K) V} (hL : Submodule.IsFullLattice K L) (y : V) :
     ∃ s : nonZeroDivisors (𝓞 K), s • y ∈ L := by
   have hy : y ∈ Submodule.span K (L : Set V) := by rw [hL.span_eq_top]; trivial
   obtain ⟨s, hs⟩ := multiple_mem_span_of_mem_localization_span (nonZeroDivisors (𝓞 K)) K (L : Set V) y hy
@@ -61,19 +66,21 @@ theorem exists_smul_mem {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L
   exact ⟨s, hs⟩
 
 omit [StarRing K] [FiniteDimensional K V] in
-theorem isLocalizedModule_subtype {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L) :
-    IsLocalizedModule (nonZeroDivisors (𝓞 K)) L.subtype where
-  map_units s := by
+theorem isLocalizedModule_subtype {L : Submodule (𝓞 K) V} (hL : Submodule.IsFullLattice K L) :
+    IsLocalizedModule (nonZeroDivisors (𝓞 K)) L.subtype := by
+  refine { map_units := ?_, surj := ?_, exists_of_eq := ?_ }
+  · intro s
     have := isLocalizedModule_id (nonZeroDivisors (𝓞 K)) V K
     exact IsLocalizedModule.map_units (S := nonZeroDivisors (𝓞 K)) (LinearMap.id : V →ₗ[𝓞 K] V) s
-  surj y := by
+  · intro y
     obtain ⟨s, hs⟩ := exists_smul_mem hL y
     exact ⟨(⟨_, hs⟩, s), rfl⟩
-  exists_of_eq h := ⟨1, by rw [Subtype.ext h]⟩
+  · intro x₁ x₂ h
+    exact ⟨1, by rw [Subtype.ext h]⟩
+
 
 omit [StarRing K] [FiniteDimensional K V] in
-
-theorem exists_extension {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L) (S : Submodule K V)
+theorem exists_extension {L : Submodule (𝓞 K) V} (hL : Submodule.IsFullLattice K L) (S : Submodule K V)
     (φ : ↥(L ⊓ rs (𝓞 K) S) →ₗ[𝓞 K] 𝓞 K) :
     ∃ ψ : L →ₗ[𝓞 K] 𝓞 K, ∀ x : ↥(L ⊓ rs (𝓞 K) S), ψ ⟨x, x.2.1⟩ = φ x := by
   let N : Submodule (𝓞 K) L := (rs (𝓞 K) S).comap L.subtype
@@ -88,6 +95,7 @@ theorem exists_extension {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K 
       rw [algebraMap_smul]; exact h1
     have h3 : algebraMap (𝓞 K) K a ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors a.2
     exact (S.smul_mem_iff h3).1 h2
+  have : Module.Finite (𝓞 K) L := Submodule.IsLattice.finite K L
   have : Module.FinitePresentation (𝓞 K) (L ⧸ N) := Module.finitePresentation_of_finite _ _
   have : Module.Projective (𝓞 K) (L ⧸ N) := Module.Flat.projective_of_finitePresentation
   obtain ⟨s, hs⟩ := Module.projective_lifting_property N.mkQ LinearMap.id N.mkQ_surjective
@@ -114,7 +122,10 @@ theorem exists_extension {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K 
 theorem exists_lattice_rep (H : HermSpace K V) {L : Submodule (𝓞 K) V} (hU : IsUnimod H L) (S : Submodule K V)
     (φ : ↥(L ⊓ rs (𝓞 K) S) →ₗ[𝓞 K] 𝓞 K) :
     ∃ y ∈ L, ∀ x : ↥(L ⊓ rs (𝓞 K) S), H.B x y = (φ x : K) := by
-  have hL := (isLatMod_top_bot_iff L).1 hU.1
+  have hL : Submodule.IsFullLattice K L := by
+    obtain ⟨⟨N, hN, hLN⟩, hspan⟩ := hU.1
+    have h : L = N := by simpa only [rs, Submodule.restrictScalars_bot, sup_bot_eq] using hLN
+    exact { toIsLattice := Submodule.IsLattice.of_fg K (h.symm ▸ hN), span_eq_top := hspan }
   obtain ⟨ψ, hψ⟩ := exists_extension hL S φ
   have := isLocalizedModule_subtype hL
   have hu : ∀ x : nonZeroDivisors (𝓞 K), IsUnit (algebraMap (𝓞 K) (Module.End (𝓞 K) K) x) :=
@@ -137,7 +148,10 @@ theorem exists_lattice_rep (H : HermSpace K V) {L : Submodule (𝓞 K) V} (hU : 
 theorem isUnimodMod_quot (H : HermSpace K V) {L : Submodule (𝓞 K) V} (hU : IsUnimod H L) {I : Submodule K V}
     (hI : ∀ x ∈ I, ∀ y ∈ I, H.B x y = 0) :
     IsUnimodMod H ((L ⊓ rs (𝓞 K) (perp H I)) ⊔ rs (𝓞 K) I) (perp H I) I := by
-  have hL := (isLatMod_top_bot_iff L).1 hU.1
+  have hL : Submodule.IsFullLattice K L := by
+    obtain ⟨⟨N, hN, hLN⟩, hspan⟩ := hU.1
+    have h : L = N := by simpa only [rs, Submodule.restrictScalars_bot, sup_bot_eq] using hLN
+    exact { toIsLattice := Submodule.IsLattice.of_fg K (h.symm ▸ hN), span_eq_top := hspan }
   have hint : ∀ y ∈ L, ∀ x ∈ L, H.B y x ∈ (1 : Submodule (𝓞 K) K) := by
     intro y hy
     rw [← hU.2, mem_dual_iff] at hy
@@ -161,7 +175,8 @@ theorem isUnimodMod_quot (H : HermSpace K V) {L : Submodule (𝓞 K) V} (hU : Is
       rw [← Submodule.smul_mem_iff _ hc]
       exact Submodule.subset_span (Submodule.mem_sup_left h)
   refine ⟨⟨⟨_, ?_, rfl⟩, hspan⟩, ?_⟩
-  · have : IsNoetherian (𝓞 K) L := inferInstance
+  · have : Module.Finite (𝓞 K) L := Submodule.IsLattice.finite K L
+    have : IsNoetherian (𝓞 K) L := inferInstance
     have : IsNoetherian (𝓞 K) ↥(L ⊓ rs (𝓞 K) (perp H I)) := isNoetherian_of_le inf_le_left
     rw [← Module.Finite.iff_fg]
     infer_instance
@@ -203,7 +218,7 @@ theorem isUnimodMod_quot (H : HermSpace K V) {L : Submodule (𝓞 K) V} (hU : Is
     have h1 : H.B a d = 0 := (mem_perp_iff H I a).1 hap d hd
     have h2 : H.B b c = 0 := by rw [← H.herm, (mem_perp_iff H I c).1 hcp b hb, star_zero]
     have h3 : H.B b d = 0 := hI b hb d hd
-    simp only [map_add, LinearMap.add_apply, h1, h2, h3, add_zero]
+    simp only [map_add (f := _), LinearMap.add_apply, h1, h2, h3, add_zero]
     exact hint a haL c hcL
 
 end GlobalTheory.UnimodQuot

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.UG GlobalTheory.CuspRep MeasureTheory
 open scoped ENNReal
 
@@ -43,9 +48,9 @@ theorem hasSum_nonneg {μ : Measure α} {𝓕 A : Set α} {c : ι → ℝ} (hc :
     (Filter.Eventually.of_forall hg0) hg.aestronglyMeasurable] at key
   convert key using 1
   funext i
-  simp only [hF, ENNReal.toReal_mul, ENNReal.toReal_ofReal (hc i).le]
   rw [integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall (fun x => hg0 _))
     (hg.comp (hT i)).aestronglyMeasurable]
+  simp [F, ENNReal.toReal_mul, (hc i).le]
 
 theorem hasSum_real {μ : Measure α} {𝓕 A : Set α} {c : ι → ℝ} (hc : ∀ i, 0 < c i)
     {T : ι → α → α} (hT : ∀ i, Measurable (T i)) {H : Set (α → α)}

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.MvPowerSeriesSubstConstTermsLocalAlgHomSpec
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupLawCompMulNZero
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.GermPointsNoConstantTermFirstZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.MvPowerSeriesSubstConstTermsLocalAlgHomSpec
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FormalGroupLawCompMulNZero
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.GermPointsNoConstantTermFirstZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,10 +22,10 @@ section General
 
 variable {R : Type} [CommRing R] {d n : ℕ} (G : FGLaw R d)
 
-def invJ (z : Pt R n d) (a l : Fin d) : PS R n d := ev ![z, 0] (pderiv R ((1 : Fin 2), l) (G.F a))
+def invJ (z : Pt R n d) (a l : Fin d) : PS R n d := ev ![z, 0] (pderiv (R := R) ((1 : Fin 2), l) (G.F a))
 
 def invD (q : Fin n × Fin d) (f : PS R n d) : PS R n d :=
-  ∑ c, pderiv R (q.1, c) f * invJ G (pt R d q.1) c q.2
+  ∑ c, pderiv (R := R) (q.1, c) f * invJ G (pt R d q.1) c q.2
 
 theorem const_invJ {z : Pt R n d} (hz : ∀ i, constantCoeff (z i) = 0) (a l : Fin d) :
     constantCoeff (invJ G z a l) = if a = l then 1 else 0 := by
@@ -32,9 +36,9 @@ theorem const_invJ {z : Pt R n d} (hz : ∀ i, constantCoeff (z i) = 0) (a l : F
 
 theorem invD_ev {m : ℕ} {a : Fin m → Pt R n d} (ha : ∀ j i, constantCoeff (a j i) = 0)
     (f : PS R m d) (q : Fin n × Fin d) :
-    invD G q (ev a f) = ∑ j, ∑ l, ev a (pderiv R (j, l) f) * invD G q (a j l) := by
+    invD G q (ev a f) = ∑ j, ∑ l, ev a (pderiv (R := R) (j, l) f) * invD G q (a j l) := by
   unfold invD
-  calc _ = ∑ c, ∑ j, ∑ l, ev a (pderiv R (j, l) f) * pderiv R (q.1, c) (a j l) *
+  calc _ = ∑ c, ∑ j, ∑ l, ev a (pderiv (R := R) (j, l) f) * pderiv (R := R) (q.1, c) (a j l) *
         invJ G (pt R d q.1) c q.2 := by
         simp_rw [GlobalTheory.DerivEndo.pderiv_ev ha, Finset.sum_mul]
     _ = _ := by
@@ -47,8 +51,8 @@ theorem invD_ev {m : ℕ} {a : Fin m → Pt R n d} (ha : ∀ j i, constantCoeff 
       ring
 
 private theorem pderiv_pt_eq_ite {k : ℕ} (j j' : Fin k) (l c : Fin d) :
-    pderiv R (j', c) (pt R d j l) = if (j, l) = (j', c) then 1 else 0 := by
-  show pderiv R (j', c) (X (j, l)) = _
+    pderiv (R := R) (j', c) (pt R d j l) = if (j, l) = (j', c) then 1 else 0 := by
+  show pderiv (R := R) (j', c) (X (j, l)) = _
   split_ifs with h
   · rw [h, pderiv_X_self]
   · exact pderiv_X_of_ne h
@@ -67,7 +71,7 @@ private theorem ev_ev_pair_eq_ev_pair_ev {k m : ℕ} (b : Fin m → Pt R k d) (h
 
 theorem right_invJ {z w : Pt R n d} (hz : ∀ i, constantCoeff (z i) = 0)
     (hw : ∀ i, constantCoeff (w i) = 0) (a i : Fin d) :
-    ∑ c, ev ![z, w] (pderiv R ((1 : Fin 2), c) (G.F a)) * invJ G w c i = invJ G (G.add z w) a i := by
+    ∑ c, ev ![z, w] (pderiv (R := R) ((1 : Fin 2), c) (G.F a)) * invJ G w c i = invJ G (G.add z w) a i := by
   have hz0 : ∀ i, constantCoeff ((0 : Pt R n d) i) = 0 := fun i => by simp
   have c0 := GlobalTheory.DerivEndo.cc_pt (R := R) (n := 3) (d := d) 0
   have c1 := GlobalTheory.DerivEndo.cc_pt (R := R) (n := 3) (d := d) 1
@@ -76,16 +80,16 @@ theorem right_invJ {z w : Pt R n d} (hz : ∀ i, constantCoeff (z i) = 0)
   have c12 := GlobalTheory.FormalMulN.const_add G c1 c2
   have e3 : ∀ j i, constantCoeff ((![z, w, 0] : Fin 3 → Pt R n d) j i) = 0 :=
     GlobalTheory.FormalMulN.const_three hz hw hz0
-  have hL0 : ∀ l, pderiv R ((2 : Fin 3), i) (G.add (pt R d 0) (pt R d 1) l) = 0 := by
+  have hL0 : ∀ l, pderiv (R := R) ((2 : Fin 3), i) (G.add (pt R d 0) (pt R d 1) l) = 0 := by
     intro l
     rw [formalGroup_add_apply_eq_ev, GlobalTheory.DerivEndo.pderiv_ev (GlobalTheory.DerivEndo.noConst_two c0 c1)]
     simp [pderiv_pt_eq_ite, Fin.sum_univ_two]
-  have hR : ∀ l, pderiv R ((2 : Fin 3), i) (G.add (pt R d 1) (pt R d 2) l) =
-      ev ![pt R (n := 3) d 1, pt R d 2] (pderiv R ((1 : Fin 2), i) (G.F l)) := by
+  have hR : ∀ l, pderiv (R := R) ((2 : Fin 3), i) (G.add (pt R d 1) (pt R d 2) l) =
+      ev ![pt R (n := 3) d 1, pt R d 2] (pderiv (R := R) ((1 : Fin 2), i) (G.F l)) := by
     intro l
     rw [formalGroup_add_apply_eq_ev, GlobalTheory.DerivEndo.pderiv_ev (GlobalTheory.DerivEndo.noConst_two c1 c2)]
     simp [pderiv_pt_eq_ite, Fin.sum_univ_two]
-  have hA := congrArg (fun P : Pt R 3 d => pderiv R ((2 : Fin 3), i) (P a))
+  have hA := congrArg (fun P : Pt R 3 d => pderiv (R := R) ((2 : Fin 3), i) (P a))
     (GlobalTheory.FormalMulN.add_assoc_pt G c0 c1 c2)
   rw [formalGroup_add_apply_eq_ev G (G.add _ _) _ a, formalGroup_add_apply_eq_ev G (pt R d 0) _ a,
     GlobalTheory.DerivEndo.pderiv_ev (GlobalTheory.DerivEndo.noConst_two c01 c2),
@@ -106,7 +110,7 @@ theorem right_invJ {z w : Pt R n d} (hz : ∀ i, constantCoeff (z i) = 0)
 
 theorem ev_left_eq {z w : Pt R n d} (hz : ∀ i, constantCoeff (z i) = 0)
     (hw : ∀ i, constantCoeff (w i) = 0) (a c : Fin d) :
-    ev ![z, w] (pderiv R ((0 : Fin 2), c) (G.F a)) = ev ![w, z] (pderiv R ((1 : Fin 2), c) (G.F a)) := by
+    ev ![z, w] (pderiv (R := R) ((0 : Fin 2), c) (G.F a)) = ev ![w, z] (pderiv (R := R) ((1 : Fin 2), c) (G.F a)) := by
   have h2 : ∀ j i, constantCoeff ((![pt R (n := 2) d 1, pt R (n := 2) d 0] : Fin 2 → Pt R 2 d) j i) = 0 :=
     GlobalTheory.DerivEndo.noConst_two (GlobalTheory.DerivEndo.cc_pt 1) (GlobalTheory.DerivEndo.cc_pt 0)
   have hzw := GlobalTheory.DerivEndo.noConst_two hz hw
@@ -115,8 +119,8 @@ theorem ev_left_eq {z w : Pt R n d} (hz : ∀ i, constantCoeff (z i) = 0)
       (GlobalTheory.DerivEndo.cc_pt 1)
     rw [GlobalTheory.DerivEndo.add_pt] at h
     exact congrFun h a
-  have hd : pderiv R ((0 : Fin 2), c) (G.F a) =
-      ev ![pt R (n := 2) d 1, pt R (n := 2) d 0] (pderiv R ((1 : Fin 2), c) (G.F a)) := by
+  have hd : pderiv (R := R) ((0 : Fin 2), c) (G.F a) =
+      ev ![pt R (n := 2) d 1, pt R (n := 2) d 0] (pderiv (R := R) ((1 : Fin 2), c) (G.F a)) := by
     conv_lhs => rw [hc]
     rw [GlobalTheory.DerivEndo.pderiv_ev h2]
     simp [Fin.sum_univ_two, pderiv_pt_eq_ite]
@@ -148,16 +152,16 @@ theorem inv_add {z w : Pt R n d} (hz : Inv G z) (hw : Inv G w) : Inv G (G.add z 
   obtain ⟨u, hu⟩ := hzu q
   obtain ⟨v, hv⟩ := hwu q
   refine ⟨u + v, fun a => ?_⟩
-  have hZ : ∀ m, ∑ l, ev ![z, w] (pderiv R ((0 : Fin 2), l) (G.F a)) * invJ G z l m =
+  have hZ : ∀ m, ∑ l, ev ![z, w] (pderiv (R := R) ((0 : Fin 2), l) (G.F a)) * invJ G z l m =
       invJ G (G.add z w) a m := by
     intro m
     simp_rw [ev_left_eq G hz0 hw0]
     rw [right_invJ G hw0 hz0, GlobalTheory.FormalMulN.add_comm_pt G hw0 hz0]
-  have hW : ∀ m, ∑ l, ev ![z, w] (pderiv R ((1 : Fin 2), l) (G.F a)) * invJ G w l m =
+  have hW : ∀ m, ∑ l, ev ![z, w] (pderiv (R := R) ((1 : Fin 2), l) (G.F a)) * invJ G w l m =
       invJ G (G.add z w) a m := fun m => right_invJ G hz0 hw0 a m
   rw [formalGroup_add_apply_eq_ev, invD_ev G (GlobalTheory.DerivEndo.noConst_two hz0 hw0), Fin.sum_univ_two]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, hu, hv]
-  simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
   congr 1
   · simp_rw [← hZ, Finset.sum_mul, Finset.mul_sum, mul_assoc]
     exact Finset.sum_comm
@@ -195,7 +199,7 @@ theorem inv_comp (φ : Pt R 1 d) (hφ : ∀ i, constantCoeff (φ i) = 0)
       fin_cases j
       rfl
     rw [e, ev_single_ev_restrict_first_axis (comp1 φ z) hc]
-  have K : ∀ m, ∑ l, ev ![z] (pderiv R ((0 : Fin 1), l) (φ a)) * invJ G z l m =
+  have K : ∀ m, ∑ l, ev ![z] (pderiv (R := R) ((0 : Fin 1), l) (φ a)) * invJ G z l m =
       ∑ b, invJ G (comp1 φ z) a b * C (dLin φ b m) := by
     intro m
     have hj := congrArg (ev ![z]) (GlobalTheory.DerivEndo.jac_endo G φ hφ hom a m)
@@ -207,7 +211,8 @@ theorem inv_comp (φ : Pt R 1 d) (hφ : ∀ i, constantCoeff (φ i) = 0)
   simp only [Finset.mul_sum, ← mul_assoc]
   rw [Finset.sum_comm]
   simp only [← Finset.sum_mul, K]
-  simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, mul_assoc]
   exact Finset.sum_comm
 
 theorem isUnit_det_of_const {σ ι : Type} [Fintype ι] [DecidableEq ι]
@@ -231,13 +236,13 @@ theorem const_blockJ {z : Fin n → Pt R n d} (hz : ∀ b i, constantCoeff (z b 
   · rw [if_neg h, map_zero, if_neg (fun e => h (congrArg Prod.fst e))]
 
 theorem det_jac_of_inv (ψ : Fin n → Pt R n d) (hψ : ∀ b, Inv G (ψ b)) :
-    ∃ U : (PS R n d)ˣ, Matrix.det (Matrix.of fun i j : Fin n × Fin d => pderiv R j (ψ i.1 i.2)) =
+    ∃ U : (PS R n d)ˣ, Matrix.det (Matrix.of fun i j : Fin n × Fin d => pderiv (R := R) j (ψ i.1 i.2)) =
       C (Matrix.det (Matrix.of fun p q : Fin n × Fin d =>
         coeff (Finsupp.single q 1) (ψ p.1 p.2))) * (U : PS R n d) := by
   have hψ' : ∀ b, (∀ i, constantCoeff (ψ b i) = 0) ∧ ∀ q : Fin n × Fin d, ∃ u : Fin d → R,
       ∀ a, invD G q (ψ b a) = ∑ l, invJ G (ψ b) a l * C (u l) := hψ
   choose hψ0 u hu using hψ'
-  set Jac := Matrix.of fun i j : Fin n × Fin d => pderiv R j (ψ i.1 i.2) with hJac
+  set Jac := Matrix.of fun i j : Fin n × Fin d => pderiv (R := R) j (ψ i.1 i.2) with hJac
   set Lm := Matrix.of fun p q : Fin n × Fin d => coeff (Finsupp.single q 1) (ψ p.1 p.2) with hLm
   set Um : Matrix (Fin n × Fin d) (Fin n × Fin d) R := Matrix.of fun p q => u p.1 q p.2 with hUm
   have hpt0 : ∀ b i, constantCoeff ((fun b => pt R d b : Fin n → Pt R n d) b i) = 0 :=
@@ -247,7 +252,7 @@ theorem det_jac_of_inv (ψ : Fin n → Pt R n d) (hψ : ∀ b, Inv G (ψ b)) :
     ext i q
     rw [Matrix.mul_apply, Matrix.mul_apply, Fintype.sum_prod_type, Fintype.sum_prod_type]
     have e1 : ∀ j1 : Fin n, ∑ j2, Jac i (j1, j2) * blockJ G (fun b => pt R d b) (j1, j2) q =
-        if j1 = q.1 then ∑ c, pderiv R (j1, c) (ψ i.1 i.2) * invJ G (pt R d j1) c q.2 else 0 := by
+        if j1 = q.1 then ∑ c, pderiv (R := R) (j1, c) (ψ i.1 i.2) * invJ G (pt R d j1) c q.2 else 0 := by
       intro j1
       unfold blockJ
       split_ifs with h <;> simp [hJac, h]
@@ -335,7 +340,7 @@ theorem det_jacobian_matV : ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscrete
     [IsAdicComplete (maximalIdeal V) V] [CharZero V] (d : ℕ) (O : Type) [CommRing O] [StarRing O]
     (B : FB V d O) (n : ℕ) (p : Matrix (Fin n) (Fin n) O), ∃ U : (PS V n d)ˣ,
     Matrix.det (Matrix.of fun i j : Fin n × Fin d =>
-      MvPowerSeries.pderiv V j (matV B p (fun j => pt V (n := n) d j) i.1 i.2)) =
+      MvPowerSeries.pderiv (R := V) j (matV B p (fun j => pt V (n := n) d j) i.1 i.2)) =
       MvPowerSeries.C (jacM B p) * (U : PS V n d) := by
   intro V _ _ _ _ _ d O _ _ B n p
   exact det_jac_of_inv B.G _ (fun b => inv_matV B p b)

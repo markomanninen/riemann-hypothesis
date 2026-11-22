@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSubstitutionIdentitiesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsInvertibleFamilyEvalSpanStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeylDeterminantTwistTensorFiniteDimensionalStablStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSubstitutionIdentitiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsInvertibleFamilyEvalSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeylDeterminantTwistTensorFiniteDimensionalStablStatement
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions Formalism.L2.Forms Formalism.L2.Ker GlobalTheory.KJInf MeasureTheory
 open scoped TensorProduct
 
@@ -15,7 +20,7 @@ theorem continuous_lin_mvZ {T : Type} [TopologicalSpace T] (g : T → ι → Mat
     ∀ Λ : FP ι a b →ₗ[ℂ] ℂ, Continuous fun x => Λ (mvZ (g x) h P) := by
   induction P using MvPolynomial.induction_on with
   | C c => intro Λ; simp only [mvZ, aeval_C, algebraMap_eq]; exact continuous_const
-  | add p q hp hq => intro Λ; simp only [map_add]; exact (hp Λ).add (hq Λ)
+  | add p q hp hq => intro Λ; simp only [map_add (f := _)]; exact (hp Λ).add (hq Λ)
   | mul_X p v hp =>
     intro Λ
     have key : ∀ x, Λ (mvZ (g x) h (p * X v)) = ∑ i, ∑ j, (h v.1 i v.2.1 * g x v.1 v.2.2 j) *
@@ -23,11 +28,12 @@ theorem continuous_lin_mvZ {T : Type} [TopologicalSpace T] (g : T → ι → Mat
       intro x
       rw [map_mul]
       conv_lhs => rw [show mvZ (g x) h (X v) = ∑ i, ∑ j, C (h v.1 i v.2.1 * g x v.1 v.2.2 j) * X (v.1, i, j) by simp [mvZ, aeval_X]]
-      simp only [Finset.mul_sum, map_sum, LinearMap.comp_apply, LinearMap.mulRight_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.mul_sum, map_sum, LinearMap.comp_apply, LinearMap.mulRight_apply]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       rw [C_mul', mul_smul_comm, map_smul, smul_eq_mul]
     simp_rw [key]
-    refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+    refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
     refine Continuous.mul (continuous_const.mul ?_) (hp _)
     exact ((continuous_apply j).comp ((continuous_apply v.2.2).comp ((continuous_apply v.1).comp hg)))
 
@@ -73,7 +79,8 @@ theorem subY_eq_sum_averages : ∀ (ι : Type) [Fintype ι] (a b : ℕ) (hab : a
         funext τ; rw [hinv, hstar']
       have hb : (fun τ => (1 : Matrix (Fin b) (Fin b) ℂ) * y' τ) = y' := by funext τ; simp
       rw [ha, hb, h5]
-    rw [← e1, hG, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e1, hG, map_sum, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, map_smul, smul_eq_mul, h6, mul_comm]
   have hst : Continuous fun u : ι → Matrix (Fin a) (Fin a) ℂ => fun τ => star (u τ) := continuous_pi fun τ => (continuous_apply τ).star
@@ -92,7 +99,7 @@ theorem subY_eq_sum_averages : ∀ (ι : Type) [Fintype ι] (a b : ℕ) (hab : a
     obtain ⟨C, hC⟩ := (isCompact_entries_le_one (ι := ι) (a := a)).exists_bound_of_continuousOn (hcont j).continuousOn
     refine Integrable.of_bound ((hcont j).comp hr.cont).aestronglyMeasurable C (Filter.Eventually.of_forall fun k => ?_)
     exact hC _ fun τ i i' => entry_norm_bound_of_unitary (hr.uni k τ) i i'
-  rw [← integral_finset_sum _ hint]
+  rw [← integral_finsetSum _ hint]
   simp_rw [hpt]
   simp
 

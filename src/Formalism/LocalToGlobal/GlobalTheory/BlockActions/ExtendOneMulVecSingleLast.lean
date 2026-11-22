@@ -1,6 +1,10 @@
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import Mathlib.Data.Matrix.Block
-import Mathlib.Algebra.BigOperators.Fin
+module
+
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import Mathlib.Data.Matrix.Block
+public import Mathlib.Algebra.BigOperators.Fin
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def inclusionAlt : Matrix (Fin (n + 1)) (Fin n) R := of fun a b => if a = Fin.ca
 
 theorem extendOne_mul_inclusion (g : Matrix (Fin n) (Fin n) R) : blk1 g * inclusionAlt = inclusionAlt * g := by
   ext i j
-  simp only [mul_apply, inclusionAlt, of_apply, mul_ite, mul_one, mul_zero, ite_mul, one_mul, zero_mul,
+  simp only [Matrix.mul_apply, inclusionAlt, of_apply, mul_ite, mul_one, mul_zero, ite_mul, one_mul, zero_mul,
     Finset.sum_ite_eq', Finset.mem_univ, if_true]
   induction i using Fin.lastCases with
   | last =>
@@ -60,7 +64,8 @@ theorem extM_spec {E : Type} [Field E] (φ : E →+* R) (A : Matrix (Fin (n + 1)
   have hz : (fun a => φ (z a)) = B.map φ *ᵥ Pi.single (Fin.last n) 1 := by
     rw [← hBz]
     ext a
-    simp only [Matrix.mulVec, dotProduct, map_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_apply, map_sum, map_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     congr 1
     by_cases hk : k = Fin.last n
@@ -87,8 +92,9 @@ theorem ext_general {E : Type} [Field E] (φ : E →+* R) {N : ℕ} (hN : n + 1 
     Matrix.of (fun a (b : Fin (n + 1)) => if hb : (b : ℕ) < n then A a ⟨b, hb⟩ else z a) with hBdef
   have hBA : B * inclusionAlt = A := by
     ext a b
-    simp only [mul_apply, inclusionAlt, of_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
-      Finset.mem_univ, if_true, hBdef, Fin.coe_castSucc, b.isLt, dif_pos]
+    change (∑ k : Fin (n + 1), B a k * inclusionAlt k b) = A a b
+    simp only [hBdef, inclusionAlt, of_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
+      Finset.mem_univ, if_true, Fin.coe_castSucc, b.isLt, dif_pos]
   have hBz : B *ᵥ Pi.single (Fin.last n) 1 = z := by
     ext a
     rw [Matrix.mulVec_single_one]

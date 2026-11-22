@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.SplitElementExistsHolds
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.ModelXiAll
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.SplitElementExistsHolds
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.ModelXiAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem good_rec (hA : HfIntRec) (hB : SelfDualRec) (D : D7) (cc : Ideal (𝓞 D
     intro z hz
     obtain ⟨y, hy, rfl⟩ := AddSubgroup.mem_map.1 hz
     obtain ⟨a, ha, b, hb, rfl⟩ := c1 y hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact AddSubgroup.add_mem_sup
       ⟨AddSubgroup.mem_map_of_mem _ (Submodule.mem_inf.1 ha).1, AddSubgroup.mem_map_of_mem _ (Submodule.mem_inf.1 ha).2⟩
       ⟨AddSubgroup.mem_map_of_mem _ (Submodule.mem_inf.1 hb).1, AddSubgroup.mem_map_of_mem _ (Submodule.mem_inf.1 hb).2⟩
@@ -89,7 +93,7 @@ theorem good_rec (hA : HfIntRec) (hB : SelfDualRec) (D : D7) (cc : Ideal (𝓞 D
   obtain ⟨a', ha', rfl⟩ := AddSubgroup.mem_map.1 ha
   obtain ⟨b', hb', rfl⟩ := AddSubgroup.mem_map.1 hb
   rw [hΛ] at hab ⊢
-  rw [← map_add, AddSubgroup.mem_map_iff_mem hinj] at hab
+  rw [← map_add (f := _), AddSubgroup.mem_map_iff_mem hinj] at hab
   exact AddSubgroup.mem_map_of_mem _ (c2 a' ha' b' hb' hab)
 
 theorem movesCompose_of_parts (hA : HfIntRec) (hB : SelfDualRec) (D : D7) : movesCompose D := by

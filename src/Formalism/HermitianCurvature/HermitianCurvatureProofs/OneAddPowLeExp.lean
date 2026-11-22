@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopRatio
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutIntervalLong
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaFactorisation
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopRatio
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutIntervalLong
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaFactorisation
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -17,7 +21,7 @@ theorem pratio (s : Finset ℕ) (lam : ℕ → ℝ) (α β y : ℝ) (hI : 3 ≤ 
     (hroot : ∀ t ∈ s, -lam t < α ∨ β < -lam t) (hy1 : α + (β - α) / 3 ≤ y) (hy2 : y + 1 ≤ β - (β - α) / 3) :
     |∏ t ∈ s, (y + lam t)| ≤ (1 + 3 / (β - α)) ^ s.card * |∏ t ∈ s, (y + 1 + lam t)| := by
   rw [Finset.abs_prod, Finset.abs_prod, ← Finset.prod_const, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun t _ => abs_nonneg _) fun t ht => ?_
+  refine Finset.prod_le_prod₀ (fun t _ => abs_nonneg _) fun t ht => ?_
   have hI0 : 0 < β - α := by linarith
   have h3 : 0 ≤ 3 / (β - α) := by positivity
   rcases hroot t ht with h | h

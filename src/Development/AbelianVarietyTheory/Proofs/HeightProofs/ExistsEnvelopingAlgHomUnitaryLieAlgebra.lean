@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.SmoothForms Matrix
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -27,11 +32,11 @@ theorem exists_algHom_of_real (L : Type) [LieRing L] [LieAlgebra ℝ L] (A : Typ
     intro u v
     induction u using TensorProduct.induction_on with
     | zero => simp
-    | add u₁ u₂ h₁ h₂ => rw [add_lie, map_add, h₁, h₂, map_add, add_lie]
+    | add u₁ u₂ h₁ h₂ => rw [add_lie, map_add (f := _), h₁, h₂, map_add (f := _), add_lie]
     | tmul a x =>
       induction v using TensorProduct.induction_on with
       | zero => simp
-      | add v₁ v₂ h₁ h₂ => rw [lie_add, map_add, h₁, h₂, map_add, lie_add]
+      | add v₁ v₂ h₁ h₂ => rw [lie_add, map_add (f := _), h₁, h₂, map_add (f := _), lie_add]
       | tmul b y =>
         rw [LieAlgebra.ExtendScalars.bracket_tmul, hF, hF, hF, hbr, Ring.lie_def,
           smul_mul_smul_comm, smul_mul_smul_comm, mul_comm b a, smul_sub]

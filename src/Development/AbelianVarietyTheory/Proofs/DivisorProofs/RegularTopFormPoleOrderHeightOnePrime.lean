@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOnePrimeIntegralClosureIffDvdIrreduciblStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolynomialRingIrreduciblePrimeReduction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanDLiftClearDenominatorsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DadjCombinationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentialRelationLocalRingBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExteriorWedgeEqOfLocalizedSpanStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTranscendenceBasisQuotientIntegralClosureStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralClosureFiniteTypeOfCharZeroStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOnePrimeIntegralClosureIffDvdIrreduciblStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolynomialRingIrreduciblePrimeReduction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanDLiftClearDenominatorsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DadjCombinationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentialRelationLocalRingBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExteriorWedgeEqOfLocalizedSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTranscendenceBasisQuotientIntegralClosureStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralClosureFiniteTypeOfCharZeroStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -125,7 +129,7 @@ theorem omB_top_coeff_iff_pole : ∀ (k F K : Type) [Field k] [CharZero k] [Fiel
         obtain ⟨c1, ρ1, h1, e1⟩ := hx
         obtain ⟨c2, ρ2, h2, e2⟩ := hw
         refine ⟨ρ2 * c1 + ρ1 * c2, ρ1 * ρ2, fun h => (hQ.mem_or_mem h).elim h1 h2, ?_⟩
-        rw [map_add]; push_cast
+        rw [map_add (f := _)]; push_cast
         linear_combination (ρ2 : K) * e1 + (ρ1 : K) * e2
       | smul a x _ hx =>
         obtain ⟨c, ρ, h1, e1⟩ := hx

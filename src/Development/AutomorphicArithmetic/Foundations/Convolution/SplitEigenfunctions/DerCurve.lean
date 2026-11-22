@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.MeanLaws
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.UILaws
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.IILaws
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ExValCont
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieSkewAdjointL2
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.MeanLaws
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.UILaws
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.IILaws
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ExValCont
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieSkewAdjointL2
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -106,7 +110,7 @@ private theorem outer_der (N : MeasE E) {Ψ Q : GL (Fin 2) (A E) → ℂ} (hΨ :
   · exact integrable_const _
   · exact ae_of_all _ fun z s _ => inner_der N hΨ hQ hg hd _ s
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 private theorem ex_zero' (X : Lie E 2) : ex X 0 = 1 := by
   have h := (exPar E X).1 0 0

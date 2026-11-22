@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaProdAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.EllCsr
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaProd
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.LpolTwist
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaProdAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.EllCsr
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaProd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.LpolTwist
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct

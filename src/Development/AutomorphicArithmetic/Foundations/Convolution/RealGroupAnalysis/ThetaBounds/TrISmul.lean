@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.DerX
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.SumCoordPl
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.DLFock
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ImportsAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.LieSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.OpsEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.DerX
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.SumCoordPl
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.DLFock
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ImportsAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.LieSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.OpsEx
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -14,7 +18,7 @@ namespace UpperTheory.ConvolutionTheory.R2.Ff
 
 section SlopeTestRemainingChoices
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E]
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 private theorem zE_add (a b : Cinf E) : zE (a + b) = zE a + zE b := by
   ext i j w
@@ -55,7 +59,7 @@ end UpperTheory.ConvolutionTheory.R2.Ff
 attribute [-instance] GlobalTheory.AdmLoc.modFun
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.derT :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (π : TR.CuspSub F 2), ∀ f ∈ π.V, ∀ φ ∈ Fock D.δ,
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (π : TR.CuspSub F 2), ∀ f ∈ π.V, ∀ φ ∈ Fock D.δ,
       ∃ T : Lie E 2 →ₗ[ℝ] (GL (Fin 2) (A E) → ℂ),
         (∀ X, T X ∈ Submodule.span ℂ {Φ : GL (Fin 2) (A E) → ℂ | ∃ f ∈ π.V, ∃ φ ∈ Fock D.δ, Φ = lift W M f.1 φ}) ∧
         ∀ X g, HasDerivAt (fun t => lift W M f.1 φ (g * infGL E 2 (ex X t))) (T X g) 0 := by
@@ -81,7 +85,7 @@ theorem UpperTheory.ConvolutionTheory.R2.Ff.derT :
     rw [hsSmul, zE_smul, smul_sub]
   have hLieAdd : ∀ X X', TR.lie F 2 (zF (trI F (s (X + X')))) f =
       TR.lie F 2 (zF (trI F (s X))) f + TR.lie F 2 (zF (trI F (s X'))) f := fun X X' => by
-    rw [hsAdd, trI_add, zF_add, map_add, LinearMap.add_apply]
+    rw [hsAdd, trI_add, zF_add, map_add (f := _), LinearMap.add_apply]
   have hLieSmul : ∀ (c : ℝ) X, TR.lie F 2 (zF (trI F (s (c • X)))) f =
       (c : ℂ) • TR.lie F 2 (zF (trI F (s X))) f := fun c X => by
     rw [hsSmul, trI_smul, zF_smul, map_smul, LinearMap.smul_apply, Complex.coe_smul]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.SmoothTensorFactor.IsSmooth :
     {k G V : Type} →
@@ -70,7 +74,7 @@ private lemma UpperTheory.Reformulated.B.SmoothTensorFactor.stab_mem_nhds {s : �
     have h1' : UpperTheory.Reformulated.B.SmoothTensorFactor.intersection_update_fsHerm_neg_one σ a g x = x := h1
     have h2' : UpperTheory.Reformulated.B.SmoothTensorFactor.intersection_update_fsHerm_neg_one σ a g y = y := h2
     change UpperTheory.Reformulated.B.SmoothTensorFactor.intersection_update_fsHerm_neg_one σ a g (x + y) = x + y
-    rw [map_add, h1', h2']
+    rw [map_add (f := _), h1', h2']
 
 theorem UpperTheory.Reformulated.B.SmoothTensorFactor.position_smooth :
     ∀ {s : ℕ} {G V : Fin s → Type} [inst : (a : Fin s) → Group (G a)] [inst_1 : (a : Fin s) → AddCommGroup (V a)]

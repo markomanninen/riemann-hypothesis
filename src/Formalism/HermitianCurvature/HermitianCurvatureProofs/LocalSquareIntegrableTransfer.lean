@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocCC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferSquareIntegrableHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCutTr
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocCC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferSquareIntegrableHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCutTr
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 open Formalism.REAL Formalism.QuantumDeterminants

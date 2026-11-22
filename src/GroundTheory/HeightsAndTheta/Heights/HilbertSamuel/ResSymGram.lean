@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResSymMeasure
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionSup
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResSymMeasure
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionSup
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -210,7 +215,8 @@ theorem sup_le_gram (hR : ResolutionSupBound.Statement) (d : HSMDatum D Ω κ) :
   have hdeg : ∀ (a : ℂ) z, a ≠ 0 → h (a • z) = h z := fun a z ha => isDegZero_normSq hb.1 c a z ha
   have hevf : ∀ w, eval w f = ∑ i, c i * secFun (b i) w := by
     intro w
-    simp [hf, secFun, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hf, secFun, map_sum]
   have hpt : ∀ w : Ix κ → ℂ, w ≠ 0 → ptNorm d.m (RingHom.id ℂ) n f w ^ 2 = h w := by
     intro w hw
     have hρ : 0 < d.m.ρ w := d.m.pos w hw
@@ -274,7 +280,7 @@ theorem resChi_eq (d : HSMDatum D Ω κ) (n : ℕ)
     resChi d n = -(1 / 2) * Real.log
       (bGram (symMeasure d) (fun k => secFun (h.choose.2 k)) (wgt d.m n)).det.re := by
   unfold resChi
-  rw [dif_pos h, det_resGram d h.choose_spec.1]
+  rw [dite_eq_left h, det_resGram d h.choose_spec.1]
 
 end
 

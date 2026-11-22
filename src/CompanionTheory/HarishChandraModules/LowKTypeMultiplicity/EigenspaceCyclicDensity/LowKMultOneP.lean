@@ -1,4 +1,8 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -59,7 +63,7 @@ def bd (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ V) : Module
 
 def Ft (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ V) (c : Fin n) : Module.End ℂ (Cn n V) where
   toFun x := fun A => E c c (x A) + (wt (A.filter (cpt ε)) c : ℂ) • x A
-  map_add' x y := by funext A; simp only [Pi.add_apply, map_add, smul_add]; abel
+  map_add' x y := by funext A; simp only [Pi.add_apply, map_add (f := _), smul_add]; abel
   map_smul' s x := by funext A; simp only [Pi.smul_apply, map_smul, RingHom.id_apply, smul_add, smul_comm s]
 
 def Sup (ε : Fin n → Bool) (B : Finset (Pos n)) (j : ℕ) (x : Cn n V) : Prop :=
@@ -114,19 +118,9 @@ def Free (n m : ℕ) : Prop :=
     (a d : Pos n → Module.End ℂ Z) (Fil : ℕ → Submodule ℂ Z),
     GlRel M ∧ χ z₀ = 1 ∧ (∀ c e z, χ (M c e z) = 0) ∧ Filt (fun i => (i.1.1 : ℕ) < m) M a d Fil
 
-def CARp : Prop :=
-  ∀ (n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (i j : Pos n),
-    (ann i * ann j + ann j * ann i : Module.End ℂ (Cn n V)) = 0 ∧
-    (cre i * cre j + cre j * cre i : Module.End ℂ (Cn n V)) = 0 ∧
-    (ann i * cre j + cre j * ann i : Module.End ℂ (Cn n V)) = if i = j then 1 else 0
-
 def BdSq : Prop :=
   ∀ (n : ℕ) (ε : Fin n → Bool) (V : Type) [AddCommGroup V] [Module ℂ V] (E : Fin n → Fin n → Module.End ℂ V),
     KRel ε E → bd ε E * bd ε E = 0
-
-def BdWt : Prop :=
-  ∀ (n : ℕ) (ε₀ ε : Fin n → Bool) (V : Type) [AddCommGroup V] [Module ℂ V] (E : Fin n → Fin n → Module.End ℂ V),
-    (∀ a b, ε a = ε b → ε₀ a = ε₀ b) → KRel ε E → ∀ c, Commute (Ft ε₀ E c) (bd ε E)
 
 def BdSup : Prop :=
   ∀ (n : ℕ) (ε : Fin n → Bool) (V : Type) [AddCommGroup V] [Module ℂ V] (E : Fin n → Fin n → Module.End ℂ V),

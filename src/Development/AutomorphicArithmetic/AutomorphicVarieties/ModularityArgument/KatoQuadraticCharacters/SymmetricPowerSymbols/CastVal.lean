@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.SymExOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.CycSpec
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.SymExOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.CycSpec
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym
@@ -79,7 +83,7 @@ theorem UpperTheory.V.Z.Kato.Sym.redB :
   · rw [← hP.hb, pow_mul]; rfl
   · intro g h hg hh
     simp only [Pt.red]
-    rw [ka_red X hk hm hP.hu.1 hP.ha hg, ka_red X hk hm hP.hv.1 hP.hb hh, ← map_mul, hP.cob g h hg hh, map_add, map_sub]
+    rw [ka_red X hk hm hP.hu.1 hP.ha hg, ka_red X hk hm hP.hv.1 hP.hb hh, ← map_mul, hP.cob g h hg hh, map_add (f := _), map_sub]
   · obtain ⟨B, hB⟩ := hP.lc
     refine ⟨B, fun h h' a b c => ?_⟩
     simp only [Pt.red]
@@ -96,6 +100,6 @@ theorem UpperTheory.V.Z.Kato.Sym.redB :
     have ea : σ P.a ^ (k * m) = Q.a ^ (k * m) := by rw [← map_pow, hP.ha, hσ, hQ.ha]
     have eb : σ P.b ^ (k * m) = Q.b ^ (k * m) := by rw [← map_pow, hP.hb, hσ, hQ.hb]
     rw [ka_red X hk hm f.ne_zero hθ hh, hd h hh]
-    simp only [dif, Pt.mv, Pt.red, map_add, map_sub, map_mul, map_pow]
+    simp only [dif, Pt.mv, Pt.red, map_add (f := _), map_sub, map_mul, map_pow]
     rw [ka_red X hk hm hQ.hu.1 hQ.ha hh, ka_red X hk hm hQ.hv.1 hQ.hb hh, lg_red X hk hm (nz _ _ hQ.hu.1 hQ.ha) ea,
       lg_red X hk hm (nz _ _ hQ.hv.1 hQ.hb) eb, cyc_red X hk hm s]

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -14,10 +18,10 @@ def dbl.fold (P : Arrow Spc) : dbl P ⟶ P.right := pushout.desc (𝟙 _) (𝟙 
 def dbl.map {P' P : Arrow Spc} (φ : P' ⟶ P) : dbl P' ⟶ dbl P :=
   pushout.map _ _ _ _ φ.right φ.right φ.left (Arrow.w φ).symm (Arrow.w φ).symm
 
-theorem dbl.inr_fold (P : Arrow Spc) : dbl.inr P ≫ dbl.fold P = 𝟙 _ := pushout.inr_desc _ _ _
+theorem dbl.inr_fold (P : Arrow Spc) : dbl.inr P ≫ dbl.fold P = 𝟙 _ := pushout.inr_desc (f := P.hom) (g := P.hom) _ _ _
 
 theorem dbl.inr_map {P' P : Arrow Spc} (φ : P' ⟶ P) : dbl.inr P' ≫ dbl.map φ = φ.right ≫ dbl.inr P :=
-  pushout.inr_desc _ _ _
+  pushout.inr_desc (f := P'.hom) (g := P'.hom) _ _ _
 
 def Hs (q : ℕ) (P : Arrow Spc) (n i : ℤ) : AddSubgroup (Ht q (dbl P) n i) := (pull _ (dbl.inr P) (tw q i) n).ker
 

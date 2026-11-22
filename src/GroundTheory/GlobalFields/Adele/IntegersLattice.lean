@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -22,8 +26,8 @@ theorem discreteTopology_of_isOpen_of_forall_mem {G : Type*} [AddGroup G] [Topol
 
 variable (K : Type*) [Field K]
 
-open scoped Classical in
 
+open scoped Classical in
 noncomputable def homeomorphMixedSpace : K∞ ≃ₜ mixedEmbedding.mixedSpace K :=
   (Homeomorph.piEquivPiSubtypeProd (fun v : InfinitePlace K => IsReal v)
       (fun v => v.Completion)).trans
@@ -56,11 +60,8 @@ theorem eq_zero_of_forall_infinitePlace_lt_one (z : 𝓞 K) (h : ∀ w : Infinit
 omit [NumberField K] in
 theorem norm_algebraMap_apply (k : K) (w : InfinitePlace K) :
     ‖algebraMap K K∞ k w‖ = w k := by
-  simp [InfiniteAdeleRing.algebraMap_apply, WithAbs.norm_toAbs_eq]
+  rw [InfiniteAdeleRing.algebraMap_apply, AbsoluteValue.Completion.norm_coe]
   rfl
-
-noncomputable def integersInfinite : AddSubgroup K∞ :=
-  (algebraMap (𝓞 K) K∞).range.toAddSubgroup
 
 open scoped Classical
 

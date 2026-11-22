@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkDerField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RaynaudCoordinateInChartsHasCharacterWeightStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAbelianPartFunctionOfWeightUnitLogDerivStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkDerField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RaynaudCoordinateInChartsHasCharacterWeightStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAbelianPartFunctionOfWeightUnitLogDerivStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -36,7 +41,17 @@ theorem exists_coordEq : ∀ {R : Type} [CommRing R] [IsDomain R] {Q : DegPre R}
   intro R _ _ Q O _ _ _ oa Y n dd D h K _ _ φ e ν A₀ _ m₀ hF V ed pb hC hD α hfree
   obtain ⟨T, hT₁, hT₂⟩ := hF.exists_strictHenselian_absolutely_closed_local_ring α
   have hT0 : T 0 = 𝟙 _ := hF.T_zero (hT₁ 0) (hT₂ 0)
-  have hab : IsAbelianScheme A₀ := PolPull.isAbelianScheme_of_isGrpPullback Q.P.isAb hF.pull
+  have hab : IsAbelianScheme A₀ := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · haveI := Q.P.isAb.comm
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (hF.pull.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← hF.pull.2 T x y (pushPt hF.pull.1.w x) (pushPt hF.pull.1.w y) rfl rfl,
+        ← hF.pull.2 T y x (pushPt hF.pull.1.w y) (pushPt hF.pull.1.w x) rfl rfl, _root_.mul_comm]
+    · exact MorphismProperty.of_isPullback (P := @Smooth) hF.pull.1 Q.P.isAb.smooth
+    · exact MorphismProperty.of_isPullback (P := @IsProper) hF.pull.1 Q.P.isAb.proper
+    · exact MorphismProperty.of_isPullback (P := @GeometricallyConnected) hF.pull.1 Q.P.isAb.geomConnected
   have hV : ∀ i, V i ≤ Q.P.L.U (h.j i) := hC.2.2.1
   let U : (Fin 4 → h.J) → Q.P.A.left.Opens := fun i =>
     V (i 0) ⊓ LB.wchart Q.P.L (Q.famφB α) (fun j => h.j (i j))

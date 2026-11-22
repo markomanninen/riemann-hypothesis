@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.EtaleSheaves.UnderFAOf
-import Development.EtaleCohomology.EtaleSheaves.FPColimPf
-import Development.EtaleCohomology.EtaleSheaves.EtStagePf
-import Development.EtaleCohomology.EtaleSheaves.SHExistsPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.UnderFAOf
+public import Development.EtaleCohomology.EtaleSheaves.FPColimPf
+public import Development.EtaleCohomology.EtaleSheaves.EtStagePf
+public import Development.EtaleCohomology.EtaleSheaves.SHExistsPf
+
+@[expose] public section
 
 theorem LateralTheory.E.TruncationIsoComparison.IEComp_of : LateralTheory.E.t_E3Cut.IEComp :=
   LateralTheory.E.IECompPf.IEComp_of (LateralTheory.E.UnderFAPf.UnderFA_of LateralTheory.E.FPColimPf.FPColim_of)

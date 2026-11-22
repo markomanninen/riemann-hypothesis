@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SpnRel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SpnRel
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ private theorem UpperTheory.RealTr.dCore {n : ℕ} {A : Type} [Ring A] [Algebra 
           refine Finset.sum_congr rfl fun d _ => Finset.sum_congr rfl fun b _ => ?_
           rw [← Finset.mul_sum, UpperTheory.RealTr.sumSwap c hc]
   have hhalf : algebraMap ℂ A ((n : ℂ) / 2) + algebraMap ℂ A ((n : ℂ) / 2) = (n : A) := by
-    rw [← map_add, add_halves, map_natCast]
+    rw [← map_add (f := _), add_halves, map_natCast]
   have hfin : ∑ a, ∑ b, K a b * (spn c b a + if b = a then algebraMap ℂ A ((n : ℂ) / 2) else 0) -
       ∑ a, ∑ b, K a b * ((if a = b then (n : A) else 0) -
         (spn c b a + if b = a then algebraMap ℂ A ((n : ℂ) / 2) else 0)) =

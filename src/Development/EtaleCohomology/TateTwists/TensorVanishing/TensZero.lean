@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.acycPf
+module
+
+public import Development.EtaleCohomology.TateTwists.acycPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 open scoped TensorProduct DirectSum
@@ -78,7 +82,6 @@ theorem Dm_lof (U : Scheme.{0}) (w w' : ℤ) (hw : w + 1 = w') (p : Ix w) (v : C
   classical
   unfold Dm
   convert DirectSum.toModule_lof (ULift.{1} R) p v using 1
-  simp only [LinearMap.add_apply, LinearMap.smul_apply, LinearMap.comp_apply]
 
 theorem lift_lof (τ : Pair C J T) (U : Scheme.{0}) (w : ℤ) (p : Ix w) (a : Sec (C.X p.1.1) U)
     (b : Sec (J.X p.1.2) U) :
@@ -93,7 +96,7 @@ theorem lift_Dm (τ : Pair C J T) (U : Scheme.{0}) (w : ℤ) (x : Tens C J U w) 
   classical
   have : (τ.lift U (w + 1)) ∘ₗ Dm U w (w + 1) rfl = ((T.d w (w + 1)).hom.app (op U)).hom ∘ₗ τ.lift U w := by
     apply DirectSum.linearMap_ext; intro p; apply TensorProduct.ext'; intro a b
-    simp only [LinearMap.comp_apply, Dm_lof, map_add, map_zsmul, TensorProduct.map_tmul, LinearMap.id_apply]
+    simp only [LinearMap.comp_apply, Dm_lof, map_add (f := _), map_zsmul, TensorProduct.map_tmul, LinearMap.id_apply]
     erw [lift_lof, lift_lof, lift_lof]
     have := τ.leibniz U p.1.1 p.1.2 w p.2 a b
     simp only [Sec.map] at this

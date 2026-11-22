@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRankSB
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRankSB
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,14 +14,14 @@ namespace GlobalTheory.RankFibre
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-local notation:70 M:70 " ⬝ₘ " N:71 => HMul.hMul (self := Matrix.instHMulOfFintypeOfMulOfAddCommMonoid) M N
-
 theorem stdSum_rfl' (a b : ℕ) : stdSum (rfl : a + b = a + b) = finSumFinEquiv := by
   ext x; simp [stdSum]
 
 theorem X0_mul_invT_parab (a b : ℕ) (p : parab k (blocks a b)) :
-    X0 k finSumFinEquiv ⬝ₘ (invT (p : GL (Fin (a + b)) k)).val =
-      (invT (leviProj k (blocks a b) p false)).val ⬝ₘ X0 k finSumFinEquiv := by
+    (X0 (k := k) (finSumFinEquiv (m := a) (n := b)) * (invT (p : GL (Fin (a + b)) k)).val :
+      Matrix (Fin a) (Fin (a + b)) k) =
+      ((invT (leviProj k (blocks a b) p false)).val : Matrix (Fin a) (Fin a) k) *
+        X0 (k := k) (finSumFinEquiv (m := a) (n := b)) := by
   have hA : (invT (leviProj k (blocks a b) p false)).val
       = ((leviProj k (blocks a b) p⁻¹ false : GL (Fin a) k) : Matrix (Fin a) (Fin a) k)ᵀ := by
     rw [invT_val, map_inv]; rfl
@@ -40,25 +44,26 @@ theorem fibre_mem_indSpace (a b : ℕ) (ν β : kˣ →* ℂˣ) (Φ : Matrix (Fi
     fibre ν β a b Φ ∈ indSpace (parab k (blocks a b)) (ofChar (parChar ν β a b)) := by
   intro p x
   rw [ofChar_apply]
-  set A := leviProj k (blocks a b) p false with hAdef
+  set A : GL (Fin a) k := leviProj k (blocks a b) p false with hAdef
   set D := leviProj k (blocks a b) p true with hDdef
   set Ψ := omA ν β 1 x Φ with hΨ
   set z : ℂ := ((a + b : ℕ) : ℂ) / 2 with hz
-  set F : GL (Fin a) k → ℂ := fun g => Ψ (g.val ⬝ₘ X0 k finSumFinEquiv) * (ν (gdet g) : ℂ) *
+  let X : Matrix (Fin a) (Fin (a + b)) k := X0 (k := k) finSumFinEquiv
+  set F : GL (Fin a) k → ℂ := fun g => Ψ (g.val * X) * (ν (gdet g) : ℂ) *
     apow (gdet g) z with hF
   set c : ℂ := (β (gdet (p : GL (Fin (a + b)) k)) : ℂ) * apow (gdet (p : GL (Fin (a + b)) k)) (-(a : ℂ) / 2) *
     ν (gdet A) * apow (gdet A) z with hc
   have h1 : omA ν β 1 ((p : GL (Fin (a + b)) k) * x) Φ = omA ν β 1 ↑p Ψ := by rw [hΨ, ← omA_mul, one_mul]
   have h2 : ∀ Y, omA ν β 1 (↑p : GL (Fin (a + b)) k) Ψ Y =
       (β (gdet (p : GL (Fin (a + b)) k)) : ℂ) * apow (gdet (p : GL (Fin (a + b)) k)) (-(a : ℂ) / 2) *
-        Ψ (Y ⬝ₘ (invT (p : GL (Fin (a + b)) k)).val) := by
+        Ψ (Y * (invT (p : GL (Fin (a + b)) k)).val) := by
     intro Y
     simp [omA]
-  have hm : ∀ g : GL (Fin a) k, (g.val ⬝ₘ X0 k finSumFinEquiv) ⬝ₘ (invT (p : GL (Fin (a + b)) k)).val =
-      (g * invT A).val ⬝ₘ X0 k finSumFinEquiv := by
+  have hm : ∀ g : GL (Fin a) k,
+      (g.val * X) * (invT (p : GL (Fin (a + b)) k)).val = (g * invT A).val * X := by
     intro g
     rw [Matrix.mul_assoc, X0_mul_invT_parab, ← Matrix.mul_assoc, ← Units.val_mul]
-  have key : ∀ g : GL (Fin a) k, omA ν β 1 ((p : GL (Fin (a + b)) k) * x) Φ (g.val ⬝ₘ X0 k finSumFinEquiv) * (ν (gdet g) : ℂ) *
+  have key : ∀ g : GL (Fin a) k, omA ν β 1 ((p : GL (Fin (a + b)) k) * x) Φ (g.val * X) * (ν (gdet g) : ℂ) *
       apow (gdet g) z = c * F (g * invT A) := by
     intro g
     rw [h1, h2, hm g]
@@ -76,7 +81,7 @@ theorem fibre_mem_indSpace (a b : ℕ) (ν β : kˣ →* ℂˣ) (Φ : Matrix (Fi
   have hab : ∀ (s : ℂ) (y : kˣ), ((absPow k s y : ℂˣ) : ℂ) = apow y s := fun _ _ => rfl
   have hchar : ((parChar ν β a b p : ℂˣ) : ℂ) = c := by
     simp only [parChar, MonoidHom.comp_apply, MonoidHom.mul_apply, Units.val_mul, hL,
-      MulEquiv.toMonoidHom_eq_coe, MonoidHom.coe_coe, MulEquiv.symm_apply_apply, deltaHalf_two,
+      MulEquiv.toMonoidHom_eq_coe, MonoidHom.coe_ofClass, MulEquiv.symm_apply_apply, deltaHalf_two,
       MonoidHom.coe_fst, MonoidHom.coe_snd, detChar_apply, hab, Fintype.card_fin]
     have e : apow (gdet A) z * apow (gdet A) (-(a : ℂ) / 2) = apow (gdet A) ((b : ℂ) / 2) := by
       rw [← apow_add, hz]; congr 1; push_cast; ring

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.Fr UpperTheory.V.GC
 
@@ -30,7 +34,7 @@ private def inflW : Submodule k (Z2 ρ × (Γ' → M)) where
   add_mem' := by
     rintro x y ⟨a1, a2, a3⟩ ⟨b1, b2, b3⟩
     refine ⟨a1.add b1, by simp [a2, b2], fun g h => ?_⟩
-    simp only [Prod.snd_add, Prod.fst_add, Pi.add_apply, map_add, Submodule.coe_add, ← a3, ← b3]
+    simp only [Prod.snd_add, Prod.fst_add, Pi.add_apply, map_add (f := _), Submodule.coe_add, ← a3, ← b3]
     abel
   smul_mem' := by
     rintro c x ⟨a1, a2, a3⟩
@@ -158,7 +162,7 @@ theorem UpperTheory.V.GC.inflKer :
       obtain ⟨q, hq⟩ := Set.mem_iUnion.1 h
       exact congrFun (congrArg Subtype.val (congrFun hx q)) ⟨s, hq⟩
   have hinj : Function.Injective (resH1 ρ p hp) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ y
     obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 ((Submodule.Quotient.mk_eq_zero _).1 hy)

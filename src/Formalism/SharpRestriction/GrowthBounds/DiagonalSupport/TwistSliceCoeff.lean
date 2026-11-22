@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MemSupportSumMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MemSupportSumMonomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,8 @@ theorem twist_slice_coeff (hST : S ⊆ T) (M : ι × Fin n →₀ ℕ) (hM : M �
   have hsum : twistSub LL S j F =
       ∑ M' ∈ F.support.image (offT T), twistSub LL S j (sliceT T F M') * monomial M' 1 := by
     conv_lhs => rw [slice_sum T F]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun M' hM' => ?_
     rw [map_mul, twistSub_monomial_off LL S j M' fun v hv hvS => hoff M' hM' v hv (hST hvS)]
   rw [hsum, coeff_sum, Finset.sum_eq_single M]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsIntSmulMemOfFg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsIntSmulMemOfFg
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair ValuativeRel NumberField Filter IsDedekindDomain
 open scoped TensorProduct
@@ -48,7 +52,7 @@ theorem exists_zsmul_mem_of_fg {L M : Submodule (𝓞 E) V} (hL : ∀ x, ∃ N :
   | (intros; apply @_root_.GlobalTheory.FiniteGenIntegerScalar.exists_int_smul_mem_of_fg <;> first | assumption | infer_instance)
   | (intros; exact _root_.GlobalTheory.FiniteGenIntegerScalar.exists_int_smul_mem_of_fg ..)
 
-theorem exists_commensurable {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsLattice E L) :
+theorem exists_commensurable {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L) :
     ∃ N : ℤ, N ≠ 0 ∧ (∀ x ∈ L, ∀ i, ∃ o : 𝓞 E, (o : E) = N • x i) ∧
       ∀ (i : Fin n) (o : 𝓞 E), (Pi.single i (N • (o : E)) : Fin n → E) ∈ L := by
   let M : Submodule (𝓞 E) (Fin n → E) := Submodule.pi Set.univ fun _ => LinearMap.range (Algebra.linearMap (𝓞 E) E)
@@ -59,7 +63,9 @@ theorem exists_commensurable {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (h
     exact ⟨b, hb, fun i _ => ⟨⟨b • x i, h _ (Finset.mem_image_of_mem _ (Finset.mem_univ i))⟩, rfl⟩⟩) hL.fg
   obtain ⟨b, hb, h₂⟩ := exists_zsmul_mem_of_fg (L := L)
     (M := Submodule.span (𝓞 E) (Set.range fun i : Fin n => (Pi.single i 1 : Fin n → E)))
-    (fun x => exists_zsmul_mem_of_span (by rw [hL.span_eq_top]; trivial)) (Submodule.fg_span (Set.finite_range _))
+    (fun x => exists_zsmul_mem_of_span (by
+      letI : Submodule.IsFullLattice E L := hL
+      rw [Submodule.IsFullLattice.span_eq_top]; trivial)) (Submodule.fg_span (Set.finite_range _))
   refine ⟨a * b, mul_ne_zero ha hb, fun x hx i => ?_, fun i o => ?_⟩
   · obtain ⟨o, ho⟩ := h₁ (b • x) (zsmul_mem hx b) i trivial
     exact ⟨o, ho.trans (mul_smul a b (x i)).symm⟩
@@ -83,7 +89,7 @@ theorem repr_map (f : A →ₐ[F] B) (a : A ⊗[F] E) (k : ι) :
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => simp [Algebra.TensorProduct.basis_repr_tmul]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 end Tensor
 
@@ -203,9 +209,9 @@ theorem plc_finPart (v : Pl D) (a : AE D) : plc v (finPart D a) = pairA D.host.F
     show pairA D.host.F 0 (singleV D.host.F v 1 * a.2) ⊗ₜ[D.host.F] x = _
     congr 1
     exact Prod.ext (zero_mul _).symm rfl
-  | add x y hx hy => rw [RingHom.map_add, AddMonoidHom.map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [RingHom.map_add (f := _), AddMonoidHom.map_add (f := _), hx, hy, smul_add]
 
-theorem eventually_latV_iff : ∀ (D : D7) (S : HSp D) (L : Lat S), Submodule.IsLattice D.host.E L → ∀ᶠ v : Pl D in cofinite, ∀ y : Fin S.rank → AE D, y ∈ latV S L (· = v) ↔ ∀ i, y i ∈ intAt D (· = v) := by
+theorem eventually_latV_iff : ∀ (D : D7) (S : HSp D) (L : Lat S), Submodule.IsFullLattice D.host.E L → ∀ᶠ v : Pl D in cofinite, ∀ y : Fin S.rank → AE D, y ∈ latV S L (· = v) ↔ ∀ i, y i ∈ intAt D (· = v) := by
   intro D S L hL
   obtain ⟨N, hN, h₁, h₂⟩ := exists_commensurable L hL
   filter_upwards [eventually_notMem (F := D.host.F) hN] with v hv y

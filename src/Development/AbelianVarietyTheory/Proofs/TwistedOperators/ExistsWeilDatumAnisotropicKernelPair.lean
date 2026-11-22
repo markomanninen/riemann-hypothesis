@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowBesZeroE
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CmHostImaginaryGeneratorNeZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCore
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastTwoStepsDoubleLiftPeriodEqIntegral
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagGenDiag
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowBesZeroE
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CmHostImaginaryGeneratorNeZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCore
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastTwoStepsDoubleLiftPeriodEqIntegral
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagGenDiag
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,13 +29,13 @@ def besDecAt (j σ : ℕ) (hj : j + 2 * σ + 2 = D.R.m) :
     HypDec (G.V (.grid D.R.m j)) (GlobalTheory.Doubling.hsum (G.V (.top j)) (GlobalTheory.SeeSaw.Model.nLine D)) σ :=
   diagDec (rowBes G j (by omega) σ (by omega)) (lam σ) (lam_ne σ)
 
-variable {G t M} in
 
+variable {G t M} in
 def volAt (hM : M.Is t) (X : Node) (hX : X.InRange D.R.m) : GlobalTheory.Unf.Vol (G.V X) :=
   ⟨M.ν X, M.fd X, (hM.vtx X hX).haar_fund.1, (hM.vtx X hX).haar_fund.2⟩
 
-variable {t M} in
 
+variable {t M} in
 def besAt (hM : M.Is t) (j σ : ℕ) (hj : j + 2 * σ + 2 = D.R.m) (vN : VolN (besDecAt G j σ hj)) : BesLev D σ where
   V := G.V (.grid D.R.m j)
   V₀ := GlobalTheory.Doubling.hsum (G.V (.top j)) (GlobalTheory.SeeSaw.Model.nLine D)
@@ -45,8 +49,8 @@ def besAt (hM : M.Is t) (j σ : ℕ) (hj : j + 2 * σ + 2 = D.R.m) (vN : VolN (b
   vA := volAt hM (.top j) (by show j ≤ D.R.m; omega)
   vN := vN
 
-variable {t M} in
 
+variable {t M} in
 def jacAt (hM : M.Is t) (n σ : ℕ) (hn : n + 2 * σ + 1 = D.R.m) : JacLev D σ where
   W := G.V (.grid D.R.m n)
   W₀ := G.V (.top n)
@@ -61,8 +65,8 @@ theorem exists_weilDatum_anisotropicKernelPair {ψ : AddChar (AF D.host.F) ℂ} 
   obtain ⟨om₁, h₁⟩ := (GlobalTheory.Desc.weil_data_descend D ψ V W χV χW om h).1 V₀ ρ dV
   exact (GlobalTheory.Desc.weil_data_descend D ψ V₀ W χV χW om₁ h₁).2 W₀ σ dW
 
-variable {M} in
 
+variable {M} in
 def stepAt (hM : M.Is t) (j : ℕ) (hj : j + 1 ≤ D.R.m) {V₀ W₀ : HSp D} {ρ σ : ℕ} (dV : HypDec (G.V (.grid D.R.m j)) V₀ ρ)
     (dW : HypDec (G.V (.grid D.R.m (j + 1))) W₀ σ) :
     Step Wl.ψ (G.V (.grid D.R.m j)) V₀ (G.V (.grid D.R.m (j + 1))) W₀ ρ σ where
@@ -100,8 +104,8 @@ theorem link_norm (L : HSp D) (σ : ℕ) :
   rw [e, star_smul, mulVec_smul, dotProduct_smul, smul_dotProduct, smul_eq_mul, smul_eq_mul]
   ring
 
-variable {G t M} in
 
+variable {G t M} in
 def linkAt (hM : M.Is t) (j σ : ℕ) (hj : j + 2 * (σ + 1) + 2 = D.R.m) (vN : VolN (besDecAt G j (σ + 1) hj))
     (hj' : j + 1 + 1 + 2 * σ + 2 = D.R.m) (vN' : VolN (besDecAt G (j + 1 + 1) σ hj')) :
     Link (besAt G hM j (σ + 1) hj vN) (besAt G hM (j + 1 + 1) σ hj' vN').L (besAt G hM (j + 1 + 1) σ hj' vN').ζ where
@@ -135,8 +139,8 @@ theorem castSch_theta {ψ : AddChar (AF D.host.F) ℂ} {V : HSp D} {n n' : ℕ} 
   subst h
   exact hf
 
-variable {M} in
 
+variable {M} in
 def lastAt (hM : M.Is t) (j : ℕ) (hj : j + 2 * 0 + 2 = D.R.m) (vN : VolN (besDecAt G j 0 hj)) :
     Last Wl.ψ (G.V (.grid D.R.m D.R.m)) (besAt G hM j 0 hj vN) where
   J := jacAt G hM (j + 1) 0 (by omega)
@@ -149,8 +153,8 @@ def lastAt (hM : M.Is t) (j : ℕ) (hj : j + 2 * 0 + 2 = D.R.m) (vN : VolN (besD
   weil := castOm_weil G (show j + 1 + 1 = D.R.m by omega) (Wl.om_is (.mu t D.R.m (j + 1)) ⟨le_rfl, by omega⟩)
   vT := volAt hM (.grid D.R.m D.R.m) ⟨le_rfl, le_rfl⟩
 
-variable {M} in
 
+variable {M} in
 noncomputable def chainFrom (hM : M.Is t) : (σ j : ℕ) → (hj : j + 2 * σ + 2 = D.R.m) → (vN : VolN (besDecAt G j σ hj)) →
     Chain Wl.ψ (G.V (.grid D.R.m D.R.m)) σ (besAt G hM j σ hj vN)
   | 0, j, hj, vN => .last (lastAt G Wl t hM j hj vN)
@@ -175,24 +179,24 @@ theorem top_idx : 0 + 2 * ((D.R.m - 2) / 2) + 2 = D.R.m := by
   obtain ⟨a, ha⟩ := D.R.m_even
   omega
 
-variable {G t M} in
 
+variable {G t M} in
 def topVN (hM : M.Is t) : VolN (besDecAt G 0 ((D.R.m - 2) / 2) top_idx) :=
   volNOf (d := rowBes G 0 (by have := D.R.two_le_m; omega) ((D.R.m - 2) / 2) (by have := top_idx (D := D); omega))
     (nFlag_diag _ (lam _) (lam_ne _)).symm
     (topVolN G M hM.isRow (by have := D.R.two_le_m; omega) (by have := top_idx (D := D); omega))
 
-variable {t M} in
 
+variable {t M} in
 def topLev (hM : M.Is t) : BesLev D ((D.R.m - 2) / 2) := besAt G hM 0 ((D.R.m - 2) / 2) top_idx (topVN hM)
 
-variable {M} in
 
+variable {M} in
 noncomputable def chain (hM : M.Is t) : Chain Wl.ψ (G.V (.grid D.R.m D.R.m)) ((D.R.m - 2) / 2) (topLev G hM) :=
   chainFrom G Wl t hM _ 0 top_idx (topVN hM)
 
-variable {M} in
 
+variable {M} in
 noncomputable def dataFrom (hM : M.Is t) (d : PureT G (downPath t D.R.m D.R.m)) :
     (σ j : ℕ) → (hj : j + 2 * σ + 2 = D.R.m) → (vN : VolN (besDecAt G j σ hj)) → (chainFrom G Wl t hM σ j hj vN).Data
   | 0, j, hj, _ => (getD t D.R.m D.R.m d j (by omega),
@@ -212,13 +216,13 @@ theorem dataFrom_isTheta (hM : M.Is t) (d : PureT G (downPath t D.R.m D.R.m)) (h
   | σ + 1, j, hj, _ => ⟨getD_all _ t D.R.m D.R.m d hd j (by omega), getD_all _ t D.R.m D.R.m d hd (j + 1) (by omega),
       dataFrom_isTheta hM d hd σ (j + 1 + 1) (by omega) _⟩
 
-variable {M} in
 
+variable {M} in
 noncomputable def chainData (hM : M.Is t) (d : PureT G (downPath t D.R.m D.R.m)) : (chain G Wl t hM).Data :=
   dataFrom G Wl t hM d _ 0 top_idx (topVN hM)
 
-variable {M} in
 
+variable {M} in
 theorem chainData_isTheta (hM : M.Is t) (d : PureT G (downPath t D.R.m D.R.m)) (hd : AllTheta G Wl t d) :
     (chain G Wl t hM).IsTheta (chainData G Wl t hM d) :=
   dataFrom_isTheta G Wl t hM d hd _ 0 top_idx (topVN hM)

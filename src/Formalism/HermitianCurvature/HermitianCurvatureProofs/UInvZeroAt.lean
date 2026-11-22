@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorIsomorphismLevels
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFCstmt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorIsomorphismLevels
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFCstmt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,11 +19,16 @@ variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
 
 theorem uInv_zero_at (s : ℂ) (g : B.Mat k r) :
     ∀ (w : List C.Letter) (x : Wd.Ix (Fin w.length) → B.Mat k r → (Wq →L[ℂ] Wp)),
-      (∀ e', x e' g = 0) → ∀ e, KB.uInv s w x e g = 0
-  | [], x, hx, e => hx e
-  | l :: w, x, hx, e => by
-    have h0 := uInv_zero_at s g w (fun e' => x (Fin.cons (0 : Fin 2) e')) (fun e' => hx _)
-    have h1 := uInv_zero_at s g w (fun e' => x (Fin.cons (1 : Fin 2) e')) (fun e' => hx _)
+      (∀ e', x e' g = 0) → ∀ e, KB.uInv s w x e g = 0 := by
+  intro w
+  induction w with
+  | nil =>
+    intro x hx e
+    exact hx e
+  | cons l w ih =>
+    intro x hx e
+    have h0 := ih (fun e' => x (Fin.cons (0 : Fin 2) e')) (fun e' => hx (Fin.cons (0 : Fin 2) e'))
+    have h1 := ih (fun e' => x (Fin.cons (1 : Fin 2) e')) (fun e' => hx (Fin.cons (1 : Fin 2) e'))
     show (if e (0 : Fin (w.length + 1)) = 0 then KB.uInv s w (fun e' => x (Fin.cons (0 : Fin 2) e')) (fun a => e a.succ)
       else KB.uInv s w (fun e' => x (Fin.cons (1 : Fin 2) e')) (fun a => e a.succ) +
         (if l.1 then s else (starRingEnd ℂ) s) • KB.uInv s w (fun e' => x (Fin.cons (0 : Fin 2) e')) fun a => e a.succ) g = 0

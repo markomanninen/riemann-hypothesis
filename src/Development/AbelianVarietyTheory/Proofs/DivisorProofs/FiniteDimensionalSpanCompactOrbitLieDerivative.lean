@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+
+@[expose] public section
 
 open NumberField GlobalTheory.CuspRep
 
 namespace GlobalTheory.CuspRep.KFin
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem cptRep_lie (k : Kinf E a) (X : Lie E a) (ψ : Sm E a) :
     cptRep E a k (lie E a X ψ) =
@@ -22,7 +26,7 @@ theorem cptRep_lie (k : Kinf E a) (X : Lie E a) (ψ : Sm E a) :
   change (y.val : Matrix (Fin a) (Fin a) (Cinf E)) * Matrix.of X = (y.val * Matrix.of X * y⁻¹.val) * (y.val : Matrix (Fin a) (Fin a) (Cinf E))
   rw [mul_assoc, Units.inv_mul, mul_one]
 
-theorem kfin_lie (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (X : Lie E a) (φ : Sm E a)
+theorem kfin_lie (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (X : Lie E a) (φ : Sm E a)
     (hφ : FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k => cptRep E a k φ))) :
     FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k => cptRep E a k (lie E a X φ))) := by
   set V := Submodule.span ℂ (Set.range fun k => cptRep E a k φ)
@@ -31,7 +35,8 @@ theorem kfin_lie (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : 
   rintro _ ⟨k, rfl⟩
   rw [SetLike.mem_coe]
   change cptRep E a k (lie E a X φ) ∈ _
-  rw [cptRep_lie, ← b.sum_repr (toL _), map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cptRep_lie, ← b.sum_repr (toL _), map_sum, LinearMap.sum_apply]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [map_smul, LinearMap.smul_apply]
   exact Submodule.smul_of_tower_mem _ _ (Submodule.mem_iSup_of_mem i

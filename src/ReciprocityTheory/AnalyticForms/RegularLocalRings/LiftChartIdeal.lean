@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjBCompl
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.EvalValChartCoord
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjBCompl
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.EvalValChartCoord
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -20,8 +24,8 @@ def M : Type := {x : w.W // IsClosed ({x} : Set w.W)}
 
 def src (c : w.Idx) : Set w.M := {x | x.1 ∈ (w.pres c.1 c.2).V}
 
-open Classical in
 
+open Classical in
 def coord (c : w.Idx) (x : w.M) : Fin (w.pres c.1 c.2).n → ℂ :=
   if h : x.1 ∈ (w.pres c.1 c.2).V then (w.pres c.1 c.2).coord x.1 h else 0
 
@@ -29,8 +33,8 @@ instance topology : TopologicalSpace w.M :=
   TopologicalSpace.generateFrom
     {S | ∃ (c : w.Idx) (O : Set (Fin (w.pres c.1 c.2).n → ℂ)), IsOpen O ∧ S = w.src c ∩ w.coord c ⁻¹' O}
 
-open Classical in
 
+open Classical in
 def lift (c : w.Idx) (q : Σ k, ι k) : MvPolynomial (Fin (w.pres c.1 c.2).n) ℂ :=
   if q.2 = c.1 q.1 then 1 else X (w.yq c.1 c.2 q)
 

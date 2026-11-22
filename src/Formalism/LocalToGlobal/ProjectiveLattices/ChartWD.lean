@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.AlgebraMapCAt
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.AlgebraMapCAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ private theorem evalAt_spec_lemma {f : Rules pts} {S : Type} [CommRing S] [Algeb
       mapR φ y0 y ∧ evalAt pts mapR f y = φ (f p y0) := by
   refine ⟨hy.choose, hy.choose_spec.choose, hy.choose_spec.choose_spec.choose,
     hy.choose_spec.choose_spec.choose_spec, ?_⟩
-  rw [evalAt, dif_pos hy]
+  rw [evalAt, dite_eq_left hy]
 
 theorem wtAll_of_borChart [Fintype ι] (h : BorChart pts mapR borR) (e : ι → ℕ) {f : Rules pts}
     (hf : IsNatural pts mapR f) (hw : IsWeight pts borR e f) (S : Type) [CommRing S] [Algebra K S] (t : ι → Sˣ)

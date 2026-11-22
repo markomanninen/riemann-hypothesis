@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,8 +75,6 @@ instance : StarRing (TensO s) where
 theorem star_def (a : TensO s) : star a = ofMat s (((s.1⁻¹ : (Matrix (Fin r) (Fin r) ℤ)ˣ) : Matrix (Fin r) (Fin r) ℤ) *
     (mat s a).transpose * (s.1 : Matrix (Fin r) (Fin r) ℤ)) := rfl
 
-@[simp] theorem mat_mul (a b : TensO s) : mat s (a * b) = mat s a * mat s b := rfl
-@[simp] theorem mat_add (a b : TensO s) : mat s (a + b) = mat s a + mat s b := rfl
 @[simp] theorem mat_one : mat s (1 : TensO s) = 1 := rfl
 
 end TensO
@@ -109,7 +111,8 @@ def Tens.mod (T : Tens D D' W) (s : SymUnit r) : Module (TensO s) D'.X where
     show T.smulF s (a * b) z = T.smulF s a (T.smulF s b z)
     apply T.xe.injective
     funext i
-    simp only [Tens.xe_smulF, TensO.mat_mul, Matrix.mul_apply, Finset.sum_smul, Finset.smul_sum, mul_smul]
+    have hmat : TensO.mat s (a * b) = TensO.mat s a * TensO.mat s b := rfl
+    simp only [Tens.xe_smulF, hmat, Matrix.mul_apply, Finset.sum_smul, Finset.smul_sum, mul_smul]
     exact Finset.sum_comm
   smul_zero a := by
     show T.smulF s a 0 = 0
@@ -125,7 +128,8 @@ def Tens.mod (T : Tens D D' W) (s : SymUnit r) : Module (TensO s) D'.X where
     show T.smulF s (a + b) z = T.smulF s a z + T.smulF s b z
     apply T.xe.injective
     funext i
-    simp [Tens.xe_smulF, add_smul, Finset.sum_add_distrib]
+    have hmat : TensO.mat s (a + b) = TensO.mat s a + TensO.mat s b := rfl
+    simp [Tens.xe_smulF, hmat, Matrix.add_apply, add_smul, Finset.sum_add_distrib]
   zero_smul z := by
     show T.smulF s 0 z = 0
     apply T.xe.injective

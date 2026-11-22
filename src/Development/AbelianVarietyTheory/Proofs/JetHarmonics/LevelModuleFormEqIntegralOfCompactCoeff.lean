@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.HermitianCurvature.HerGenC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfHeads
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadGermSmoothExtension
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialExhaustion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLevelZeroOfMemGroup
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.HermitianCurvature.HerGenC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfHeads
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadGermSmoothExtension
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialExhaustion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLevelZeroOfMemGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,8 +69,8 @@ section pairing
 variable {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
 
-omit [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] in
 
+omit [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] in
 theorem act_one {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {π : Mx k r → (Wp →L[ℂ] Wp)}
     {π' : Mx k r → (Wq →L[ℂ] Wq)} {S : Type} [Fintype S] [DecidableEq S] (x : Ix S → RadSp k r z z' π π') :
     act (1 : SlopeTestRemainingChoices S (Pr (RadSp k r z z' π π'))) x = x := by
@@ -398,7 +402,7 @@ theorem radHead_of_cpt (hOne : FormConstOneCpt) (hZN : PBO.ZetaNormExists) (hHP 
   rw [hTΦ, hTΦ']
   have hRR : p.RR F (j + 1) w (h ++ [(1, t)]) (h' ++ [(1, t)]) = D.formLev p.T (M.sgn P p.l0) jF w x2 x2' := by
     unfold KB.Pl.RR D.RRplace
-    rw [dif_pos ⟨hl, hl'⟩, dif_pos hj]
+    rw [dite_eq_left ⟨hl, hl'⟩, dite_eq_left hj]
     rfl
   have key : P5.RRform Ls sts μs 0 (D.positionted w) Φ2 Φ2' 0 = D.formLev p.T (M.sgn P p.l0) jF w x2 x2' := hOne'.symm
   calc _ = ((‖t‖ ^ (-2 : ℤ) : ℝ) : ℂ) * ((lam : ℂ) * conj (lam : ℂ) * P5.RRform Ls sts μs 0 (D.positionted w) Φ2 Φ2' 0) :=

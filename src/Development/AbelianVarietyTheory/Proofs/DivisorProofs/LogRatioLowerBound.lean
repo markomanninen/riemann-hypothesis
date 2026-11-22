@@ -1,9 +1,53 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasAtOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HostBoundHolds
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightBoundHolds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FundamentalDomainVolumeLowerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasAtOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HostBoundHolds
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightBoundHolds
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OneMeasureSizes
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealQuotientVolumeGrowthOfScalarHypotheses
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsMeasLevW
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelIndexBoundOfPublished
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryLieBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMultipleInLieLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormCmTypeProductSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormTraceFormDetIndexStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieLatticeDualIndex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalFactorProductBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannianVolumeLieBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalFactorLowerBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoLeHermitianRankAndHostDegreeEqStatement
+public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmTypeFromConjugateComplement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfDualLatticeOfLevelClass
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ClassMassEqSumOfBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecialUnitaryRepresentativesThetaCompatible
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinCongMemLevEnv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SurjectiveReductionOntoFiniteLevelGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PermMMulTranspose
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsContinuousEquivariantDetOneFactorProjectioStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFlagDomainOrthonormalFrameIdentificationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsContinuousRealComponentHomUnitaryAdelicStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocallyCompactSecondCountableBorelCountable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCompactParahoricLevelAndContainsLifts
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.HostTorsionOrderLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPackingSetMeasureGeCovolumeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CountableRationalSubgroupInRealSpecialUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannianHaarIndependentOfOrthonormalFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalCongruenceConjMemArithmeticGroup
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.MuCardLeTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableSetDetImPosAtIndexStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelMeasureFinitePartPreimage
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanMassProductLowerBoundUnitaryPqStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryExistsWithPrescribedParts
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -67,7 +111,7 @@ theorem one_le_abs_weylDimU_mul {p : ℕ} (lam : Fin p → ℤ) (h : Formalism.I
     calc c ^ p ≤ c ^ (Finset.univ.filter (fun j : Fin p => i < j)).card := pow_le_pow_of_le_one c0 c1 hcard
       _ = ∏ j ∈ Finset.univ.filter (fun j : Fin p => i < j), c := by rw [Finset.prod_const]
       _ ≤ _ := by
-        apply Finset.prod_le_prod (fun _ _ => c0)
+        apply Finset.prod_le_prod₀ (fun _ _ => c0)
         intro j hj
         exact key i j hj (fun hz => h0 (Finset.prod_eq_zero hj hz))
   have outer : c ^ (p * p) ≤ |∏ i : Fin p, ∏ j ∈ Finset.univ.filter (fun j : Fin p => i < j),
@@ -75,7 +119,7 @@ theorem one_le_abs_weylDimU_mul {p : ℕ} (lam : Fin p → ℤ) (h : Formalism.I
     rw [Finset.abs_prod]
     calc c ^ (p * p) = ∏ _i : Fin p, c ^ p := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← pow_mul, mul_comm]
       _ ≤ _ := by
-        apply Finset.prod_le_prod (fun _ _ => pow_nonneg c0 _)
+        apply Finset.prod_le_prod₀ (fun _ _ => pow_nonneg c0 _)
         intro i _
         rcases inner i with h1 | h1
         · exact h1
@@ -139,7 +183,7 @@ theorem log_prod_dimAt (D : D7) (i : Fin D.R.m) :
   have hprod : 1 ≤ |∏ τ, GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.dimAt D i τ| * R ^ D.R.f := by
     rw [Finset.abs_prod, ← D.what₂.card_Tau, ← Finset.card_univ, ← Finset.prod_const, ← Finset.prod_mul_distrib]
     calc (1 : ℝ) = ∏ _τ : D.what₂.Tau, (1 : ℝ) := by simp
-      _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun τ _ => one_le_abs_dimAt_mul D i τ (hne τ))
+      _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun τ _ => one_le_abs_dimAt_mul D i τ (hne τ))
   have hpos : 0 < |∏ τ, GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.dimAt D i τ| := abs_pos.2 h0
   have hl := Real.log_le_log one_pos hprod
   rw [Real.log_one, Real.log_mul hpos.ne' (by positivity), Real.log_abs, Real.log_pow, hR, Real.log_pow] at hl
@@ -256,41 +300,6 @@ theorem unit_nonneg {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalis
   have hb : 0 ≤ L.sc.b := le_trans (Real.rpow_nonneg (by linarith) _) hroom
   have : (0 : ℝ) ≤ Real.log (Real.log L.sc.x) := by linarith
   positivity
-
-theorem lower (hP : Hypotheses2) :
-    Closed FamHyp fun Fm _ => ∃ K : ℝ, 0 ≤ K ∧ EvTied Fm fun _ _ _ p => ∀ i, -(K * unitE p) ≤ Real.log (ratAt p i) := by
-  obtain ⟨C, hC0, hC⟩ := GlobalTheory.T.fundamental_domain_volume_lower hP
-  refine Closed.imp (Closed.and (Sizes.hostN 1) WtShape.wtN) ?_
-  rintro eps Fm CH - ⟨⟨C1, -, hE1⟩, ⟨C2, -, hE2⟩⟩
-  refine ⟨6 * C + 3, by positivity, ?_⟩
-  obtain ⟨x0, hx⟩ := hE1.and hE2
-  refine ⟨x0, fun x hx' hle ι p hp i => ?_⟩
-  have hn := (hx x hx' hle ι p hp).1 i
-  have hw := (hx x hx' hle ι p hp).2 i
-  have hsz := size_le_unit p i hC0 hn hw
-  have hdim := log_prod_dimAt _ i
-  have hm := hC _ _ _ _ p.charW.base.lev i p.R.triv _ _ (p.charW.base.models.νW i)
-  have hu0 : 0 ≤ unitE p := unit_nonneg p i hn hw
-  unfold ratAt GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.ratio
-  set V := ((p.R.toRealDat.νW i) (p.R.toRealDat.fdW i)).toReal with hV
-  set Q := ∏ τ, GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.dimAt (Fm.D x ι) i τ with hQ
-  have hK0 : -((6 * C + 3) * unitE p) ≤ 0 := by nlinarith
-  by_cases hV0 : V = 0
-  · rw [hV0, zero_mul, Real.log_zero]; exact hK0
-  by_cases hQ0 : Q = 0
-  · rw [hQ0, mul_zero, Real.log_zero]; exact hK0
-  have hQl : -((Fm.D x ι).R.f * (((Fm.D x ι).R.r : ℝ) ^ 2 * Real.log (((Fm.D x ι).R.r : ℝ) + 1))) ≤ Real.log Q :=
-    hdim.resolve_left hQ0
-  have htop : (p.R.toRealDat.νW i) (p.R.toRealDat.fdW i) ≠ ⊤ := by
-    intro h; apply hV0; rw [hV, h]; rfl
-  have hVe : Real.exp (-(C * (((Fm.D x ι).R.f : ℝ) * ((Fm.D x ι).R.r : ℝ) ^ 2 *
-      (Real.log (((Fm.D x ι).R.f : ℝ) * (Fm.D x ι).R.r + 3) + 1) + Real.log |(discr (Fm.D x ι).host.E : ℝ)|))) ≤ V :=
-    (ENNReal.ofReal_le_iff_le_toReal htop).1 hm
-  have hVpos : 0 < V := lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hV0)
-  have hlV := Real.log_le_log (Real.exp_pos _) hVe
-  rw [Real.log_exp] at hlV
-  rw [Real.log_mul hV0 hQ0]
-  linarith
 
 end GlobalTheory.CovTop.MeasLow
 

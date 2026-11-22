@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExpNegGlue
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermFiniteOfSmaller
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
-import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
-import GroundTheory.PAdicHodge.NormalizedTrace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExpNegGlue
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermFiniteOfSmaller
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+public import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
+public import GroundTheory.PAdicHodge.NormalizedTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.CompanionTheory.CT
 
 namespace PositivityTheory.Rg.Rs.JFinTr
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem chart_left {a : ℕ} (φ : GA E a → ℂ) (h g : GA E a) :
     chart (fun x => φ (h * x)) g = chart φ (h * g) := by
@@ -92,7 +96,18 @@ theorem diag_mul_unip {a r : ℕ} {R : Type} [CommRing R] (g : GL (Fin a) R) (d 
 theorem aT_comm_lev {r s : ℕ} (t : ℝ) (p : GA E r × GA E s) :
     aT E (r + s) r t * lev (Ad E) r s p = lev (Ad E) r s p * aT E (r + s) r t := by
   apply Units.ext
-  rw [Units.val_mul, Units.val_mul, aT_val, GlobalTheory.SmGL.val_emb₂]
+  have hlev : ((lev (Ad E) r s p : GL (Fin (r + s)) (Ad E)) : Matrix _ _ (Ad E)) =
+      Matrix.reindex (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
+        (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
+        (Matrix.fromBlocks p.1.val 0 0 p.2.val) := by
+    ext i j
+    obtain ⟨i, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective i
+    obtain ⟨j, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective j
+    simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply]
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp [GlobalTheory.SmGL.emb₂, GlobalTheory.SmGL.leviEmb,
+        GlobalTheory.SmGL.leviTwo, GlobalTheory.SmGL.two, Matrix.blockDiagonal']
+  rw [Units.val_mul, Units.val_mul, aT_val, hlev]
   ext i j
   rw [Matrix.diagonal_mul, Matrix.mul_diagonal]
   obtain ⟨i, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective i
@@ -143,8 +158,8 @@ def stabFin {a : ℕ} (φ : Sm E a) : Subgroup (GL (Fin a) (Af E)) where
     conv_lhs => rw [← hx']
     rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one]; rfl
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem cofin_ann {a : ℕ} (φ : Sm E a)
     [hφ : FiniteDimensional ℂ (Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) '' Zalg E a))] :
     Cofin {z : Module.End ℂ (Sm E a) | z ∈ Zalg E a ∧ z φ = 0} := by

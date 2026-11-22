@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.StrictMonoIntExists
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TopCountLowerBoundsOfOccurrence
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.StrictMonoIntExists
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TopCountLowerBoundsOfOccurrence
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+
+@[expose] public section
 
 noncomputable section
 
@@ -364,7 +368,7 @@ private theorem nuG_map_eq_of_psiG_comm {μ : Measure (Mt k r)} (hμ : IsHaarOn 
 theorem nuG_left {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV k r) μ) : (nuG μ).IsMulLeftInvariant := by
   constructor
   intro u
-  exact nuG_map_eq_of_psiG_comm hμ _ (continuous_mul_left u).measurable (lmulM (psiM k r u)) (measurable_lmulM _)
+  exact nuG_map_eq_of_psiG_comm hμ _ (continuous_const_mul u).measurable (lmulM (psiM k r u)) (measurable_lmulM _)
     (fun x => psiG_mul' u x) (hμ.left _ (psiM_mem u))
 
 theorem nuG_finite {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV k r) μ) : IsFiniteMeasureOnCompacts (nuG μ) := by
@@ -405,6 +409,7 @@ private theorem nuG_isOpenPosMeasure {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV
     | exact smul_ne_zero hc h0
     | exact mul_ne_zero (ENNReal.coe_ne_zero.2 hc) h0
 
+open scoped Pointwise in
 theorem nuG_inv {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV k r) μ) : (nuG μ).IsInvInvariant := by
   haveI := nuG_left hμ
   haveI := nuG_finite hμ
@@ -415,7 +420,7 @@ theorem nuG_inv {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV k r) μ) : (nuG μ).
   haveI hR : (nuG μ).IsMulRightInvariant := by
     constructor
     intro u
-    refine nuG_map_eq_of_psiG_comm hμ _ (continuous_mul_right u).measurable (Formalism.FourierDecayAlt.B.rmulF (psiM k r u)) ?_
+    refine nuG_map_eq_of_psiG_comm hμ _ (continuous_mul_const u).measurable (Formalism.FourierDecayAlt.B.rmulF (psiM k r u)) ?_
       (fun x => ?_) (hμ.right _ (psiM_mem u))
     · apply Continuous.measurable
       unfold Formalism.FourierDecayAlt.B.rmulF
@@ -469,18 +474,22 @@ variable {k r : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H
 theorem sqRep_psiG {μ : Measure (Mt k r)} (hμ : IsHaarOn (GV k r) μ) {σ : Mat k r → (H →L[ℂ] H)}
     (hU : Formalism.MainNotions.S.IsURepOn (GV k r) σ)
     (hS : ∀ v w : H, MemLp (fun g : Mt k r => ⟪w, σ (Matrix.of g) v⟫_ℂ) 2 μ) :
-    Formalism.MainNotions.BridgeCSchur.SqRep (nuG μ) (fun u => σ (psiM k r u)) where
-  one := by rw [psiM_one]; exact hU.1.1
-  mul a b := by rw [psiM_mul]; exact hU.1.2 _ (psiM_mem a) _ (psiM_mem b)
-  iso g v := hU.2.1 _ (psiM_mem g) v
-  cont v := (hU.2.2 v).comp_continuous (continuous_psiM k r) psiM_mem
-  sq v w := by
+    Formalism.MainNotions.BridgeCSchur.SqRep (nuG μ) (fun u => σ (psiM k r u)) := by
+  constructor
+  · rw [psiM_one]
+    exact hU.1.1
+  · intro a b
+    rw [psiM_mul]
+    exact hU.1.2 _ (psiM_mem a) _ (psiM_mem b)
+  · intro g v
+    exact hU.2.1 _ (psiM_mem g) v
+  · intro v
+    exact (hU.2.2 v).comp_continuous (continuous_psiM k r) psiM_mem
+  · intro v w
     have h := hS v w
     rw [← map_nuG hμ] at h
-    have h' := ((measurableEmbedding_psiG k r).memLp_map_measure_iff).mp h
-    convert h' using 1
-    funext u
-    simp only [Function.comp_apply, of_psiG]
+    simpa only [Function.comp_def, of_psiG] using
+      (measurableEmbedding_psiG k r).memLp_map_measure_iff.mp h
 
 theorem irr_psiG {σ : Mat k r → (H →L[ℂ] H)} (hI : Formalism.MainNotions.S.IsIrredOn (GV k r) σ) :
     ∀ S : Submodule ℂ H, IsClosed (S : Set H) →

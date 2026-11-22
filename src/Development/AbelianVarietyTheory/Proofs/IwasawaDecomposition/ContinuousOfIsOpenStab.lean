@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.L2.Host GlobalTheory.CuspRep Topology Matrix
 
 namespace GlobalTheory.CuspRep.ContAut
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_pFin : Continuous (pFin E) := continuous_snd
 
 theorem continuous_pInf : Continuous (pInf E) :=
@@ -16,8 +20,8 @@ theorem continuous_pInf : Continuous (pInf E) :=
     (InfinitePlace.Completion.isometryEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)).continuous.comp
       ((continuous_apply w).comp continuous_fst)
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_map_pFin :
     Continuous (GeneralLinearGroup.map (pFin E) : GA E a → GL (Fin a) (Af E)) :=
   Continuous.units_map _ (continuous_id.matrix_map (continuous_pFin E))
@@ -26,7 +30,7 @@ theorem continuous_map_pInf :
     Continuous (GeneralLinearGroup.map (pInf E) : GA E a → GL (Fin a) (Cinf E)) :=
   Continuous.units_map _ (continuous_id.matrix_map (continuous_pInf E))
 
-theorem continuous_of_isOpen_stab : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a),
+theorem continuous_of_isOpen_stab : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a),
     IsOpen {k | finRep E a k φ = φ} → Continuous φ.1 := by
   intro E _ _ _ a φ hφ
   refine continuous_iff_continuousAt.2 fun g => ?_

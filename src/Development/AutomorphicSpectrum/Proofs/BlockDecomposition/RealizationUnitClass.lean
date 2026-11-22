@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.OneSTr
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.OneSTr
+
+@[expose] public section
 
 open CrystallineSemistableComparison.Pb.Kap
 
@@ -25,7 +29,8 @@ theorem rho_one_eval : ∀ {Λ A B K : Type} [CommRing Λ] [CommRing A] [CommRin
     simpa only [smul_smul, Units.inv_mul, one_smul] using h1'
   have h3 : C.μ 0 P.oneV = ∑ s, C.o (bs.coord s P.oneV) • C.μ 0 (bs s) := by
     conv_lhs => rw [← bs.sum_repr P.oneV]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [map_smulₛₗ]
     rfl
@@ -36,13 +41,16 @@ theorem rho_one_eval : ∀ {Λ A B K : Type} [CommRing Λ] [CommRing A] [CommRin
     simp [Finset.sum_apply, Module.Basis.coord_apply, Finsupp.single_apply]
   have h6 : φ P.oneV = ∑ s, bs.coord s P.oneV * φ (bs s) := by
     conv_lhs => rw [← bs.sum_repr P.oneV]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [map_smul, smul_eq_mul]
     rfl
-  rw [h6, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h6, map_sum]
   conv_lhs => rw [h5]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [hsem, map_mul, mul_comm]
   exact congrArg (· * C.o (φ (bs s))) (congrFun h4 s)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,9 +60,8 @@ theorem exists_coeff {E : Type} [CommRing E] [Algebra F E]
           c.sum fun a y => ((∏ j, t j ^ a j : Fˣ) : F) • y) := by
     rintro x y ⟨c, hc⟩ ⟨d, hd⟩
     refine ⟨c + d, fun t => ?_⟩
-    rw [map_add, hc, hd, Finsupp.sum_add_index' (by simp) (by simp [smul_add])]
+    rw [map_add (f := _), hc, hd, Finsupp.sum_add_index' (by simp) (by simp [smul_add])]
   induction x with
-  | zero => exact ⟨0, fun t => by simp⟩
   | add x y hx hy => exact hadd x y hx hy
   | tmul e p =>
     induction p using AddMonoidAlgebra.induction_linear with

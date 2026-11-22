@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumNormAddSqLeOfBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumNormAddSqLeOfBounds
+
+@[expose] public section
+
 open Finset
 open scoped InnerProductSpace
 set_option maxHeartbeats 1000000 in

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.StGenusOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.StGenusOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ def HInt {m : ℕ} (J : Matrix (Fin m) (Fin m) E) (M : Submodule (𝓞 E) (Fin m
 def HDual {m : ℕ} (J : Matrix (Fin m) (Fin m) E) (M : Submodule (𝓞 E) (Fin m → E)) (d : ℕ) : Prop :=
   ∀ w : Fin m → E, (∀ x ∈ M, hform (starRingEnd E) J x w ∈ (algebraMap (𝓞 E) E).range) → (d : E) • w ∈ M
 
-variable (E) in
 
+variable (E) in
 def Lat (m d : ℕ) : Set (Matrix (Fin m) (Fin m) E × Submodule (𝓞 E) (Fin m → E)) :=
   {p | IsHerm (starRingEnd E) p.1 ∧ p.1.det ≠ 0 ∧ p.2.FG ∧ Submodule.span E (p.2 : Set (Fin m → E)) = ⊤ ∧
     HInt p.1 p.2 ∧ HDual p.1 p.2 d}
@@ -31,15 +35,15 @@ def Iso {m : ℕ} (p q : Matrix (Fin m) (Fin m) E × Submodule (𝓞 E) (Fin m �
 def FinCl {m : ℕ} (S : Set (Matrix (Fin m) (Fin m) E × Submodule (𝓞 E) (Fin m → E))) : Prop :=
   ∃ T : Set (Matrix (Fin m) (Fin m) E × Submodule (𝓞 E) (Fin m → E)), T.Finite ∧ ∀ p ∈ S, ∃ q ∈ T, Iso p q
 
-variable (E) in
 
+variable (E) in
 def HL (m : ℕ) : Prop := ∀ d : ℕ, 1 ≤ d → FinCl (Lat E m d)
 
 def gram {m k : ℕ} (J : Matrix (Fin m) (Fin m) E) (v : Fin k → Fin m → E) : Matrix (Fin k) (Fin k) E :=
   Matrix.of fun i j => hform (starRingEnd E) J (v i) (v j)
 
-variable (E) in
 
+variable (E) in
 def SplitSet (m k d : ℕ) (G : Set (Matrix (Fin k) (Fin k) E)) :
     Set (Matrix (Fin m) (Fin m) E × Submodule (𝓞 E) (Fin m → E)) :=
   {p | p ∈ Lat E m d ∧ ∃ v : Fin k → Fin m → E, (∀ i, v i ∈ p.2) ∧ gram p.1 v ∈ G}
@@ -196,7 +200,7 @@ theorem stH_of_hl (hHL : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [N
     show cT (starRingEnd E) ((dite _ _ _ : Submodule (𝓞 E) (Fin n → E) × GL (Fin n) E).2 : Matrix (Fin n) (Fin n) E) * J *
         ((dite _ _ _ : Submodule (𝓞 E) (Fin n → E) × GL (Fin n) E).2 : Matrix (Fin n) (Fin n) E) = q.1 ∧
       IsImg (dite _ _ _ : Submodule (𝓞 E) (Fin n → E) × GL (Fin n) E).2 q.2 (dite _ _ _ : Submodule (𝓞 E) (Fin n → E) × GL (Fin n) E).1
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact Classical.choose_spec (Classical.choose_spec h)
   refine ⟨(hT0.image (fun q => (pick q).1)).toFinset, fun M hfg hspan hsd => ?_⟩
   have hLat : (J, M) ∈ Lat E n 1 := by

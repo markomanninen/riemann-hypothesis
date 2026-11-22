@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseChart
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseHeight
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseLift
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseIntegral
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseChart
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseHeight
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseLift
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseIntegral
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -37,9 +42,9 @@ theorem denseBoundedHeight : DenseBoundedHeight.Statement := by
     rw [← P.evalCone_chartPoint c ψ f]
     exact hvan _ ⟨ψ, hroots, rfl⟩
   · rintro z ⟨ψ, hroots, rfl⟩
-    refine height_standard_le _ (P.chartPoint_mem c hc ψ).1 hΔpos hR0pos (fun k i ↦ ?_)
-      (fun σ k i ↦ ?_)
-    · have h1 := (hbd ⟨k, i⟩ ψ hroots).1
+    refine height_standard_le (P.chartPoint c ψ) (P.chartPoint_mem c hc ψ).1 hΔpos hR0pos ?_ ?_
+    · intro k i
+      have h1 := (hbd ⟨k, i⟩ ψ hroots).1
       have h2 : (Δ : AlgebraicClosure ℚ) * P.chartPoint c ψ k i =
           ((∏ w ∈ Finset.univ.erase ⟨k, i⟩, δ w : ℕ) : AlgebraicClosure ℚ) *
             ((δ ⟨k, i⟩ : AlgebraicClosure ℚ) * ψ (b ⟨k, i⟩)) := by
@@ -51,7 +56,8 @@ theorem denseBoundedHeight : DenseBoundedHeight.Statement := by
           (x := ((∏ w ∈ Finset.univ.erase ⟨k, i⟩, δ w : ℕ) : ℤ))
         simpa using this
       exact h3.mul h1
-    · calc ‖σ (P.chartPoint c ψ k i)‖ ≤ R ⟨k, i⟩ := (hbd ⟨k, i⟩ ψ hroots).2 σ
+    · intro σ k i
+      calc ‖σ (P.chartPoint c ψ k i)‖ ≤ R ⟨k, i⟩ := (hbd ⟨k, i⟩ ψ hroots).2 σ
         _ ≤ ∑ v, R v := Finset.single_le_sum (fun v _ ↦ hRnn v) (Finset.mem_univ _)
         _ ≤ R0 := by linarith
 

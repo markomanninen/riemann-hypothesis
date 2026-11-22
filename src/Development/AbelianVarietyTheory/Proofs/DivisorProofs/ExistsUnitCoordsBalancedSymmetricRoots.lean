@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyFiniteRootsOfBimul
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidCoords
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyFiniteRootsOfBimul
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidCoords
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -20,7 +24,7 @@ theorem exists_coords {O : Type} [CommRing O] [StarRing O] [IsDedekindDomain O]
   have := Forms.projective_of_int O X
   have := Forms.finite_balTensor (O := O) (X := X)
   have := Forms.free_balTensor (X := X) hw
-  let e := Module.Free.chooseBasis ℤ ((TensorProduct ℤ X X) ⧸ Forms.balTensorRel O X)
+  let e := Module.Free.chooseBasis ℤ ((TensorProduct ℤ X X) ⧸ Forms.balTensorRel (O := O) (X := X))
   have hm := Forms.balTensorMk_mem_balForms O X
   let β : _ → PolFan.balForms (star : O → O) X := fun j =>
     ⟨(Forms.balTensorMk O).compr₂ (e.coord j),
@@ -33,7 +37,8 @@ theorem exists_coords {O : Type} [CommRing O] [StarRing O] [IsDedekindDomain O]
     simp only [Submodule.coe_sum, Submodule.coe_smul, LinearMap.sum_apply, LinearMap.smul_apply,
       smul_eq_mul] at h
     exact h.symm
-  rw [← Forms.balTensorLift_mk, ← e.sum_repr (Forms.balTensorMk O a b), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Forms.balTensorLift_mk, ← e.sum_repr (Forms.balTensorMk O a b), map_sum]
   simp only [map_zsmul]
   simp only [h1, Finset.sum_smul, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
@@ -99,7 +104,7 @@ theorem exists_unit_coords : ∀ {E : Type} [Field E] [NumberField E] [IsCMField
     ∏ i, τ i ^ ((n : ℤ) * (ε (.inl i) : LinearMap.BilinForm ℤ X) a b)
   have Ms (a b) : M a b = M b a := Finset.prod_congr rfl fun i _ => by rw [(ε (.inl i)).2.1 a b]
   have Ma (a a' b) : M (a + a') b = M a b * M a' b := by
-    simp only [M, map_add, LinearMap.add_apply, mul_add, zpow_add, Finset.prod_mul_distrib]
+    simp only [M, map_add (f := _), LinearMap.add_apply, mul_add, zpow_add, Finset.prod_mul_distrib]
   have Mb (x : 𝓞 E) (a b) : M (x • a) b = M a (H.bar x • b) :=
     Finset.prod_congr rfl fun i _ => by rw [(ε (.inl i)).2.2 x a b]
   have hmem := mem_of_diag H.bar hw φ.range (fun a b => q a b / M a b)

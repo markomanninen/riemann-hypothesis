@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.SumSqGe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.SumSqGe
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,6 +18,30 @@ theorem primal_place (hN : 1 ≤ N) {g : GL (Fin N) L} {z : InfinitePlace L → 
     (y : Lat L N) {i0 : Fin N} (hgt : ∀ j, i0 < j → (gi g *ᵥ toL y) j = 0) (w : InfinitePlace L) :
     (Real.exp (-s i0) * M⁻¹ * (‖z w‖⁻¹ * ‖w.embedding ((gi g *ᵥ toL y) i0)‖)) ^ 2 ≤
       ∑ i, ‖(mt (c * (p * dg L N s hs * k))⁻¹ w *ᵥ toR y w) i‖ ^ 2 := by
+  have mt_mul (x y : Sp L N) (v : InfinitePlace L) :
+      mt (x * y) v = mt x v * mt y v := rfl
+  have mt_inv_mul (x : Sp L N) (v : InfinitePlace L) : mt x⁻¹ v * mt x v = 1 := by
+    rw [← mt_mul, inv_mul_cancel]
+    rfl
+  have cinv_vec : mt c⁻¹ w *ᵥ toR y w = (z w)⁻¹ •
+      (fun a => w.embedding ((gi g *ᵥ toL y) a)) := by
+    have hz : z w ≠ 0 := by
+      intro h
+      have h1 := hc w
+      rw [h, zero_smul] at h1
+      have h2 : (mt c w).det = 1 := (c w).prop
+      haveI : Nonempty (Fin N) := ⟨⟨0, hN⟩⟩
+      rw [h1, Matrix.det_zero] at h2
+      exact zero_ne_one h2
+    have hgg : (g : Matrix (Fin N) (Fin N) L) * gi g = 1 := g.mul_inv
+    have hx : toR y w = mt c w *ᵥ ((z w)⁻¹ •
+        (fun a => w.embedding ((gi g *ᵥ toL y) a))) := by
+      rw [hc w, Matrix.smul_mulVec, Matrix.mulVec_smul, smul_smul, mul_inv_cancel₀ hz, one_smul]
+      funext a
+      change toR y w a = ((g : Matrix (Fin N) (Fin N) L).map w.embedding *ᵥ (w.embedding ∘ (gi g *ᵥ toL y))) a
+      rw [← RingHom.map_mulVec, Matrix.mulVec_mulVec, hgg, Matrix.one_mulVec]
+      rfl
+    rw [hx, Matrix.mulVec_mulVec, mt_inv_mul, Matrix.one_mulVec]
   obtain ⟨hpu, hpM, -, -⟩ := hp
   have hPp : mt p⁻¹ w * mt p w = 1 := mt_inv_mul p w
   obtain ⟨hPu, hPd⟩ := inv_upper (hpu w) hPp
@@ -48,7 +76,7 @@ theorem primal_place (hN : 1 ≤ N) {g : GL (Fin N) L} {z : InfinitePlace L → 
     intro j hj
     simp only [Pi.smul_apply, smul_eq_mul]
     rw [hgt j hj, map_zero, mul_zero]
-  rw [cinv_vec hN hc y w, hD, mulVec_diagonal, mulVec_upper hPu hzero]
+  rw [cinv_vec, hD, mulVec_diagonal, mulVec_upper hPu hzero]
   have hne : mt p w i0 i0 ≠ 0 := by
     intro h
     have h1 := hPd i0
@@ -74,6 +102,16 @@ theorem dual_place {g : GL (Fin N) L} {z : InfinitePlace L → ℂ} {c : Sp L N}
     (w : InfinitePlace L) :
     (Real.exp (s i1) * M⁻¹ * (‖z w‖ * ‖w.embedding (((g : Matrix (Fin N) (Fin N) L)ᵀ *ᵥ toL y) i1)‖)) ^ 2 ≤
       ∑ i, ‖((mt (c * (p * dg L N s hs * k)) w)ᵀ *ᵥ toR y w) i‖ ^ 2 := by
+  have mt_mul (x y : Sp L N) (v : InfinitePlace L) :
+      mt (x * y) v = mt x v * mt y v := rfl
+  have cT_vec : (mt c w)ᵀ *ᵥ toR y w = z w •
+      (fun a => w.embedding (((g : Matrix (Fin N) (Fin N) L)ᵀ *ᵥ toL y) a)) := by
+    rw [hc w, transpose_smul, smul_mulVec, ← transpose_map]
+    congr 1
+    ext a
+    have := RingHom.map_mulVec w.embedding (g : Matrix (Fin N) (Fin N) L)ᵀ (toL y) a
+    rw [this]
+    rfl
   obtain ⟨hpu, hpM, hpm, -⟩ := hp
   have hKT : (mt k w)ᵀ ∈ unitaryGroup (Fin N) ℂ := by
     rw [mem_unitaryGroup_iff]
@@ -97,7 +135,7 @@ theorem dual_place {g : GL (Fin N) L} {z : InfinitePlace L → ℂ} {c : Sp L N}
     rw [hlt j hj, map_zero, mul_zero]
   rw [hQ, sum_norm_unitary hKT]
   refine le_trans ?_ (single_le_sum_sq _ i1)
-  rw [cT_vec hc y w, hD, mulVec_diagonal, mulVec_lower hlow hzero, transpose_apply]
+  rw [cT_vec, hD, mulVec_diagonal, mulVec_lower hlow hzero, transpose_apply]
   have hM : 0 ≤ M := (norm_nonneg _).trans (hpM w i1 i1)
   have hM' : 0 ≤ M⁻¹ := inv_nonneg.2 hM
   simp only [Pi.smul_apply, smul_eq_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs,

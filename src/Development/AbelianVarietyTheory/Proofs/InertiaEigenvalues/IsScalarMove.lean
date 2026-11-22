@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharacterisationTransferMovedReadings
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharacterisationTransferMovedReadings
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -48,8 +52,6 @@ def moveZ (Z : ExportTie YS v₀) : ExportTie (Rl := fullHeckeRealDatMovedReadin
   tie := cast (congrArg (Comparison₂ Z.good (Y := D.nexp)) (rd_move kap lam hw hst Z).symm) Z.tie
   hecke := fun i j b => (congrArg HeckeTie (realRd_move kap lam YS hw hst v₀ Z.good i j b _)).mpr (Z.hecke i j b)
   univ := Z.univ
-
-theorem rd_moveZ (Z : ExportTie YS v₀) : (moveZ kap lam hw hst Z).rd = Z.rd := rd_move kap lam hw hst Z
 
 end GlobalTheory.Unframe
 

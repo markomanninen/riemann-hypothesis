@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRightInvRightTwisted
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRightInvRightTwisted
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ def cocyc (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E) : Submodule ℂ (Γ →
   carrier := {z | ∀ γ δ : Γ, z (γ * δ) = ρ (δ : G) (z γ) + z δ}
   add_mem' := by
     intro z z' h h' γ δ
-    simp only [Pi.add_apply, h γ δ, h' γ δ, map_add]
+    simp only [Pi.add_apply, h γ δ, h' γ δ, map_add (f := _)]
     abel
   zero_mem' := fun _ _ => by simp
   smul_mem' := by
@@ -28,7 +32,7 @@ def extn (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E) (s : G) : Submodule ℂ 
     rintro f f' ⟨h1, h2⟩ ⟨h1', h2'⟩
     refine ⟨fun γ hγ x => ?_, fun x => by simp [h2, h2']⟩
     simp only [Pi.add_apply]
-    rw [add_sub_add_comm, h1 γ hγ, h1' γ hγ, add_sub_add_comm, map_add]
+    rw [add_sub_add_comm, h1 γ hγ, h1' γ hγ, add_sub_add_comm, map_add (f := _)]
   zero_mem' := ⟨fun _ _ _ => by simp, fun _ => by simp⟩
   smul_mem' := by
     rintro c f ⟨h1, h2⟩
@@ -42,7 +46,7 @@ def relThree (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E) (t : G) : Submodule 
   add_mem' := by
     rintro f f' ⟨h1, h2⟩ ⟨h1', h2'⟩
     refine ⟨Submodule.add_mem _ h1 h1', fun x => ?_⟩
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
     rw [← add_zero (0 : E)]
     nth_rewrite 1 [← h2 x]
     rw [← h2' x]

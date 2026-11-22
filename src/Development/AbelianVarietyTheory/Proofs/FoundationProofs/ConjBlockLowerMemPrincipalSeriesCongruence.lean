@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationDetBlocks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationDetBlocks
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel GlobalTheory.PsType Matrix
 
@@ -13,8 +17,10 @@ theorem conj_blockLower_mem_theta : ∀ (k : Type) [Field k] [ValuativeRel k] [T
     intro i; simp only [hd]; split_ifs <;> simp [hϖ]
   have h2 : diagonal (fun i => (d i)⁻¹) * z.val = 1 := by
     rw [hz, diagonal_mul_diagonal]
-    ext i j
-    simp [diagonal, one_apply, hd0]
+    rw [← diagonal_one]
+    congr 1
+    funext i
+    exact inv_mul_cancel₀ (hd0 i)
   have hzi : (z⁻¹).val = diagonal (fun i => (d i)⁻¹) := by
     calc (z⁻¹).val = (diagonal (fun i => (d i)⁻¹) * z.val) * (z⁻¹).val := by rw [h2, Matrix.one_mul]
       _ = diagonal (fun i => (d i)⁻¹) := by

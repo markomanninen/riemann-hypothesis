@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) (Y : Pend X)
 def EntB (j : ℕ) (i0 : X.Pl → ℕ) (g : ℝ) : Prop :=
   ∀ (La : X.Lt j) (La' : X.Lt (j + 1)), (X.Pj j).IsLatTup La.2 → (X.Pj (j + 1)).IsLatTup La'.2 →
     ∀ (φ : Y.Frm j La La') (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-      Y.geC (MvPolynomial.coeff n (applyD (X.PI j I i0) (X.ThZA Y.Kc j (Y.ThA j La La' φ)))) g
+      Y.geC (AddMonoidAlgebra.coeff (applyD (X.PI j I i0) (X.ThZA Y.Kc j (Y.ThA j La La' φ))) n) g
 
 def TtL (j : ℕ) (i0 : X.Pl → ℕ) (vs : List X.Pl) (F : X.Fm j) : X.Fm j :=
   vs.foldr (fun v F' => X.Tt v (i0 v) j F') F

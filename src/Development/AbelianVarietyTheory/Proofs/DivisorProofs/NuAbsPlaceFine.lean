@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LevelLossDegreeBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDegreeGapBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOneIdealIffAdditiveValuationPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LevelLossDegreeBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDegreeGapBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOneIdealIffAdditiveValuationPos
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions Formalism.MainNotions.G NumberField GlobalTheory.IndefiniteRowSideFullHecke.LevelLossDegreeBounds
 
 namespace GlobalTheory.FockDegreeFine

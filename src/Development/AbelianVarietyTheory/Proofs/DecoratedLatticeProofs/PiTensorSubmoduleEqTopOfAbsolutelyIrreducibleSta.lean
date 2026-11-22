@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurAndTensorSubmodule
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ScalarOfComm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurAndTensorSubmodule
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ScalarOfComm
+
+@[expose] public section
+
 open scoped TensorProduct Classical
 
 noncomputable section
@@ -26,6 +31,7 @@ theorem position_algebraMap (i : ι) (c : ℂ) :
   ext v
   simp only [LinearMap.compMultilinearMap_apply, position_tprod, LinearMap.smul_apply, LinearMap.id_apply]
   rw [Module.algebraMap_end_apply, MultilinearMap.map_update_smul, Function.update_eq_self]
+  rfl
 
 theorem stable_adjoin_position (i : ι) {G : Type} (a : G → Module.End ℂ (K i))
     (N : Submodule ℂ (⨂[ℂ] j, K j)) (hN : ∀ g, ∀ x ∈ N, intersection_update_fsHerm_neg_one i (a g) x ∈ N)
@@ -56,7 +62,7 @@ theorem exists_finset_position (i : ι) (t : ⨂[ℂ] j, K j) :
     obtain ⟨s, hs⟩ := hx
     obtain ⟨s', hs'⟩ := hy
     refine ⟨s ∪ s', fun f g h => ?_⟩
-    rw [map_add, map_add, hs f g fun m hm => h m (Finset.mem_union_left _ hm),
+    rw [map_add (f := _), map_add (f := _), hs f g fun m hm => h m (Finset.mem_union_left _ hm),
       hs' f g fun m hm => h m (Finset.mem_union_right _ hm)]
 
 theorem eq_zero_of_subsingleton (i : ι) [Subsingleton (K i)] (t : ⨂[ℂ] j, K j) : t = 0 := by

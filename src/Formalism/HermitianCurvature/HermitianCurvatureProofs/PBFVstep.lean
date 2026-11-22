@@ -1,12 +1,16 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopTwistDensOfZeta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopTwistDensOfWaveQQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InsCombineMk
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagScalarCommuteTransposedRMatrix
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopTwistDensOfZeta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopTwistDensOfWaveQQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InsCombineMk
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagScalarCommuteTransposedRMatrix
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -167,14 +171,14 @@ theorem topDens_wave_right (hD : IsData P z z' π π' X μ L st l0) (w : List (L
   have hW'W : Wv' * Wv = 1 := by
     apply LinearMap.ext; intro Φ; apply Subtype.ext; funext c g
     simp only [Module.End.mul_apply, Module.End.one_apply, hW1, hW2, smul_smul, fsv_neg_mul_fsv, one_smul]
-  have f_fi : mkP Wv Wv' * mkP Wv' Wv = 1 := pr_ext (by simpa using hWW') (by simpa using hWW')
-  have fi_f : mkP Wv' Wv * mkP Wv Wv' = 1 := pr_ext (by simpa using hW'W) (by simpa using hW'W)
+  have f_fi : mkP Wv Wv' * mkP Wv' Wv = 1 := pr_ext hWW' hWW'
+  have fi_f : mkP Wv' Wv * mkP Wv Wv' = 1 := pr_ext hW'W hW'W
   have hfn : ∀ g ∈ Fr.zfns L, Commute (mkP Wv Wv') g := by
     obtain ⟨-, -, -, -, -, -, hz, hzi, hzb, hzbi, hG, hGi, -⟩ := hAL
     have key : ∀ j j' : Fin 6, Commute (mkP Wv Wv') (mkP (X.fn j) (X.fn j')) := by
       intro j j'
       show _ * _ = _ * _
-      exact pr_ext (by simpa using mulOp_comm_fn X Wv _ hW j) (by simpa using (mulOp_comm_fn X Wv' _ hW' j').symm)
+      exact pr_ext (mulOp_comm_fn X Wv _ hW j) (mulOp_comm_fn X Wv' _ hW' j').symm
     intro g hg
     simp only [Fr.zfns, Set.mem_insert_iff, Set.mem_singleton_iff] at hg
     rcases hg with rfl | rfl | rfl | rfl | rfl | rfl
@@ -226,7 +230,8 @@ theorem topDens_wave_right (hD : IsData P z z' π π' X μ L st l0) (w : List (L
   unfold topDens
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
-  rw [← act_mul, hFV, act_mul (io (mkP Wv Wv')) (Fr.ofWord L st w).F y, act_io, mkPair_fst', hW1, hsInner_smul_right]
+  rw [← act_mul, hFV, act_mul (io (mkP Wv Wv')) (Fr.ofWord L st w).F y, act_io,
+    show (mkP Wv Wv').1 = Wv from rfl, hW1, hsInner_smul_right]
 
 theorem rr_wave_B (hD : IsData P z z' π π' X μ L st l0) (hOn : ThmPOn (S := S) P z z' π π' μ L st K l0)
     (w : List (Letter ℂ S)) (hw : WordOK P z z' π π' st l0 w) (hr : P.r = 0) (s : ℂ)

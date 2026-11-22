@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.NormACPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.NormACPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Polynomial Opposite

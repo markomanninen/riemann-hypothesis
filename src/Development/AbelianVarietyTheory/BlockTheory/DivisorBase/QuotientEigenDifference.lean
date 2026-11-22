@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped NNReal
 
@@ -87,7 +91,7 @@ def dualLie {S : Type} [DecidableEq S] {r : ℕ}
   add_mem' := by
     rintro x x' ⟨hx, h⟩ ⟨hx', h'⟩
     refine ⟨add_mem hx hx', fun y hy => ?_⟩
-    rw [Pi.single_add, map_add, LinearMap.add_apply]
+    rw [Pi.single_add, map_add (f := _), LinearMap.add_apply]
     exact add_mem (h y hy) (h' y hy)
   smul_mem' := by
     rintro c x ⟨hx, h⟩
@@ -188,207 +192,9 @@ end Stmt
 def Stmt : Prop :=
   ∀ (C : Type) [Field C] (w : Valuation C ℝ≥0) (ℓ : C), 0 < w ℓ → w ℓ < 1 → ValuedFieldThreeCases w ℓ
 
-def PadicComplexThreeCases : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime], ValuedFieldThreeCases (PadicComplex.valued l).v (l : ℂ_[l])
-
-theorem stmtPadic_of_stmt (h : Stmt) : PadicComplexThreeCases := by
-  intro l hl
-  have h1 : (1 : ℝ≥0) < (l : ℝ≥0) := by exact_mod_cast hl.out.one_lt
-  have h0 : (0 : ℝ≥0) < (l : ℝ≥0) := lt_trans zero_lt_one h1
-  refine h _ _ _ ?_ ?_
-  · rw [PadicComplex.valuation_p]; positivity
-  · rw [PadicComplex.valuation_p, div_lt_one h0]; exact h1
-
 noncomputable section Example
 
 variable {C : Type} [Field C] {w : Valuation C ℝ≥0}
-
-theorem mem_freeLattice_bool (a : Bool → w.valuationSubring) (h : a true ≠ a false) {r : ℕ}
-    (x : Bool → Fin r → C) :
-    x ∈ freeLattice a r ↔ ∀ i, x false i ∈ w.valuationSubring ∧
-      (x true i - x false i) / ((a true : C) - a false) ∈ w.valuationSubring := by
-  have hδ : (a true : C) - a false ≠ 0 := sub_ne_zero.2 fun e => h (Subtype.ext e)
-  constructor
-  · intro hx i
-    obtain ⟨f, hf⟩ := hx i
-    obtain ⟨t, ht⟩ := Polynomial.sub_dvd_eval_sub (a true) (a false) f
-    refine ⟨by rw [hf]; exact Subtype.prop _, ?_⟩
-    have := congrArg (fun z : w.valuationSubring => (z : C)) ht
-    push_cast at this
-    rw [hf, hf, this, mul_div_cancel_left₀ _ hδ]
-    exact t.2
-  · intro hx i
-    obtain ⟨h0, h1⟩ := hx i
-    refine ⟨Polynomial.C ⟨_, h0⟩ + Polynomial.C ⟨_, h1⟩ * (Polynomial.X - Polynomial.C (a false)),
-      fun s => ?_⟩
-    cases s
-    · simp
-    · simp [div_mul_cancel₀ _ hδ]
-
-def resPair (a : Bool → w.valuationSubring) (r : ℕ) :
-    (Bool → Fin r → C) →ₗ[C] (Bool → Fin r → C) →ₗ[C] C :=
-  LinearMap.mk₂ C
-    (fun x y => ∑ i, (x true i * y true i - x false i * y false i) / ((a true : C) - a false))
-    (fun x x' y => by
-      rw [← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun i _ => by simp only [Pi.add_apply]; ring)
-    (fun c x y => by
-      rw [smul_eq_mul, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun i _ => by simp only [Pi.smul_apply, smul_eq_mul]; ring)
-    (fun x y y' => by
-      rw [← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun i _ => by simp only [Pi.add_apply]; ring)
-    (fun c x y => by
-      rw [smul_eq_mul, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun i _ => by simp only [Pi.smul_apply, smul_eq_mul]; ring)
-
-theorem resPair_apply (a : Bool → w.valuationSubring) (r : ℕ) (x y : Bool → Fin r → C) :
-    resPair a r x y =
-      ∑ i, (x true i * y true i - x false i * y false i) / ((a true : C) - a false) := rfl
-
-theorem resPair_comm (a : Bool → w.valuationSubring) (r : ℕ) (x y : Bool → Fin r → C) :
-    resPair a r x y = resPair a r y x := by
-  rw [resPair_apply, resPair_apply]
-  exact Finset.sum_congr rfl fun i _ => by ring
-
-theorem resPair_perfect (a : Bool → w.valuationSubring) (h : a true ≠ a false) (r : ℕ)
-    (x : Bool → Fin r → C) :
-    x ∈ freeLattice a r ↔ ∀ y ∈ freeLattice a r, resPair a r x y ∈ w.valuationSubring := by
-  have hδ : (a true : C) - a false ≠ 0 := sub_ne_zero.2 fun e => h (Subtype.ext e)
-  have hδm : (a true : C) - a false ∈ w.valuationSubring := sub_mem (a true).2 (a false).2
-  constructor
-  · intro hx y hy
-    rw [mem_freeLattice_bool a h] at hx hy
-    rw [resPair_apply]
-    refine sum_mem fun i _ => ?_
-    obtain ⟨x0, x1⟩ := hx i
-    obtain ⟨y0, y1⟩ := hy i
-    have : (x true i * y true i - x false i * y false i) / ((a true : C) - a false) =
-        (x true i - x false i) / ((a true : C) - a false) * y false i +
-        x false i * ((y true i - y false i) / ((a true : C) - a false)) +
-        ((a true : C) - a false) * ((x true i - x false i) / ((a true : C) - a false)) *
-          ((y true i - y false i) / ((a true : C) - a false)) := by
-      field_simp; ring
-    rw [this]
-    exact add_mem (add_mem (mul_mem x1 y0) (mul_mem x0 y1)) (mul_mem (mul_mem hδm x1) y1)
-  · intro hx
-    rw [mem_freeLattice_bool a h]
-    intro i
-    have h1 := hx (fun _ => Pi.single i 1) ((mem_freeLattice_bool a h _).2 fun j => by
-      by_cases e : j = i <;> simp [e])
-    have h2 := hx (fun s => Pi.single i (if s then (a true : C) - a false else 0))
-      ((mem_freeLattice_bool a h _).2 fun j => by
-        by_cases e : j = i <;> simp [e, hδ])
-    rw [resPair_apply, Finset.sum_eq_single i (fun j _ e => by simp [e]) (by simp)] at h1 h2
-    simp only [Pi.single_eq_same, mul_one] at h1
-    simp only [Pi.single_eq_same, if_true, Bool.false_eq_true, if_false, mul_zero, sub_zero,
-      mul_div_cancel_right₀ _ hδ] at h2
-    refine ⟨?_, h1⟩
-    have : x false i = x true i - ((a true : C) - a false) *
-        ((x true i - x false i) / ((a true : C) - a false)) := by field_simp; ring
-    rw [this]
-    exact sub_mem h2 (mul_mem hδm h1)
-
-def coordFil (a : Bool → w.valuationSubring) (κ : Bool → Fin 2) :
-    Submodule w.valuationSubring (Bool → Fin 2 → C) where
-  carrier := {x | x ∈ freeLattice a 2 ∧ ∀ s, x s (κ s) = 0}
-  zero_mem' := ⟨zero_mem _, fun _ => rfl⟩
-  add_mem' := fun hx hy => ⟨add_mem hx.1 hy.1, fun s => by simp [hx.2 s, hy.2 s]⟩
-  smul_mem' := fun c _ hx => ⟨Submodule.smul_mem _ c hx.1, fun s => by simp [hx.2 s]⟩
-
-theorem coordFil_isFiltration (a : Bool → w.valuationSubring) (κ : Bool → Fin 2) :
-    IsFiltration a (coordFil a κ) where
-  le := fun _ hx => hx.1
-  stable := by
-    rintro x ⟨hx, h0⟩
-    refine ⟨fun i => ?_, fun s => by simp [unif, h0 s]⟩
-    obtain ⟨f, hf⟩ := hx i
-    exact ⟨Polynomial.X * f, fun s => by simp [unif, hf s, mul_comm]⟩
-  saturated := by
-    rintro x hx c hc ⟨-, h0⟩
-    refine ⟨hx, fun s => ?_⟩
-    have := h0 s
-    have hc' : (c : C) ≠ 0 := fun e => hc (Subtype.ext e)
-    simpa [Algebra.smul_def, hc, hc'] using this
-
-theorem single_mem_coordFil (a : Bool → w.valuationSubring) (h : a true ≠ a false)
-    (κ : Bool → Fin 2) (s : Bool) (i : Fin 2) (hi : i ≠ κ s) :
-    (Pi.single s (Pi.single i ((a true : C) - a false)) : Bool → Fin 2 → C) ∈ coordFil a κ := by
-  have hδ : (a true : C) - a false ≠ 0 := sub_ne_zero.2 fun e => h (Subtype.ext e)
-  have hδm : (a true : C) - a false ∈ w.valuationSubring := sub_mem (a true).2 (a false).2
-  refine ⟨(mem_freeLattice_bool a h _).2 fun j => ?_, fun t => ?_⟩
-  · have hsw : w ((a false : C) - a true) = w ((a true : C) - a false) := w.map_sub_swap _ _
-    cases s <;> by_cases e : j = i <;> simp [e, hδ, hδm, neg_div, hsw]
-  · by_cases e : t = s
-    · subst e; simp [hi.symm]
-    · simp [e]
-
-theorem coordFil_ann (a : Bool → w.valuationSubring) (h : a true ≠ a false)
-    (κ κ' : Bool → Fin 2) (hκ : ∀ s, κ s ≠ κ' s) (x : Bool → Fin 2 → C)
-    (hx : x ∈ freeLattice a 2) :
-    x ∈ coordFil a κ ↔ ∀ y ∈ coordFil a κ', resPair a 2 x y = 0 := by
-  have hδ : (a true : C) - a false ≠ 0 := sub_ne_zero.2 fun e => h (Subtype.ext e)
-  constructor
-  · rintro ⟨-, h0⟩ y ⟨-, h1⟩
-    have key : ∀ s i, x s i * y s i = 0 := by
-      intro s i
-      by_cases e : i = κ s
-      · rw [e, h0, zero_mul]
-      · have : i = κ' s := by
-          have := hκ s
-          omega
-        rw [this, h1, mul_zero]
-    rw [resPair_apply]
-    simp [key]
-  · intro H
-    refine ⟨hx, fun s => ?_⟩
-    have := H _ (single_mem_coordFil a h κ' s (κ s) (hκ s))
-    rw [resPair_apply, Finset.sum_eq_single (κ s)
-      (fun j _ e => by cases s <;> simp [e]) (by simp)] at this
-    cases s <;> simpa [hδ] using this
-
-theorem finrank_filSpace_coordFil (a : Bool → w.valuationSubring) (h : a true ≠ a false)
-    (κ κ' : Bool → Fin 2) (hκ : ∀ s, κ s ≠ κ' s) (s : Bool) :
-    Module.finrank C (filSpace (coordFil a κ) s) = 1 := by
-  have hδ : (a true : C) - a false ≠ 0 := sub_ne_zero.2 fun e => h (Subtype.ext e)
-  have hne : (Pi.single (κ' s) ((a true : C) - a false) : Fin 2 → C) ≠ 0 := by
-    intro e
-    have := congrFun e (κ' s)
-    simp [hδ] at this
-  have : filSpace (coordFil a κ) s =
-      Submodule.span C {(Pi.single (κ' s) ((a true : C) - a false) : Fin 2 → C)} := by
-    apply le_antisymm
-    · refine Submodule.span_le.2 ?_
-      rintro _ ⟨x, ⟨-, h0⟩, rfl⟩
-      refine Submodule.mem_span_singleton.2 ⟨x s (κ' s) / ((a true : C) - a false), ?_⟩
-      funext i
-      by_cases e : i = κ' s
-      · simp [e, hδ]
-      · have : i = κ s := by
-          have := hκ s
-          omega
-        rw [this]
-        simp [hκ s, h0 s]
-    · refine Submodule.span_mono ?_
-      rintro _ rfl
-      exact ⟨_, single_mem_coordFil a h κ s (κ' s) (hκ s).symm, by simp⟩
-  rw [this, finrank_span_singleton hne]
-
-theorem exists_isDualDatum (a : Bool → w.valuationSubring) (h : a true ≠ a false) :
-    IsDualDatum a (resPair a (1 + 1)) (coordFil a fun s => if s then 0 else 1)
-        (coordFil a fun s => if s then 1 else 0) ∧
-      ∀ s, Module.finrank C (filSpace (coordFil a fun s => if s then 0 else 1) s) = 1 := by
-  have hκ : ∀ s : Bool, (if s then (0 : Fin 2) else 1) ≠ (if s then (1 : Fin 2) else 0) := by
-    decide
-  refine ⟨⟨coordFil_isFiltration a _, coordFil_isFiltration a _, fun x y => ?_,
-    resPair_perfect a h _, fun y => ?_, fun x hx => coordFil_ann a h _ _ hκ x hx,
-    fun y hy => ?_⟩, finrank_filSpace_coordFil a h _ _ hκ⟩
-  · rw [resPair_apply, resPair_apply]
-    exact Finset.sum_congr rfl fun i _ => by simp only [unif, Pi.smul_apply, smul_eq_mul]; ring
-  · simp only [resPair_comm a _ _ y]
-    exact resPair_perfect a h _ y
-  · simp only [resPair_comm a _ _ y]
-    exact coordFil_ann a h _ _ (fun s => (hκ s).symm) y hy
 
 end Example
 

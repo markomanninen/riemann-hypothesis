@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentOfIntegralModels
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OddDualWeyl
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentOfIntegralModels
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OddDualWeyl
+
+@[expose] public section
 
 namespace Formalism.L2.G.RelativeIndexFlags
 

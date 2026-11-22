@@ -1,12 +1,21 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsNormalFr
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTopAlt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RatioOKOfRootOfUnity
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsNormalFr
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTopAlt
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PairForm
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotBadPrimeBase
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqZeroOfRootOfSUnitRatio
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.StepData GlobalTheory.SymChain GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.MiTop GlobalTheory.Fam ValuativeRel
 open scoped TensorProduct Classical
@@ -64,11 +73,8 @@ theorem selfDualFor_map {ι κ : Type} [Fintype ι] [Fintype κ] [DecidableEq ι
         Matrix.mul_one, Matrix.smul_mulVec, ← Matrix.mulVec_mulVec]
     rw [h1, dotProduct_smul, Matrix.dotProduct_mulVec, ← Matrix.star_mulVec, smul_eq_mul]
   refine ⟨⟨hΛ.1.fg.map _, ?_⟩, ?_⟩
-  · have hsurj : Function.Surjective (Matrix.mulVecLin Q) := fun y =>
-      ⟨P *ᵥ y, by simp only [Matrix.mulVecLin_apply, Matrix.mulVec_mulVec, hQP, Matrix.one_mulVec]⟩
-    have : (Λ.map ((Matrix.mulVecLin Q).restrictScalars (𝓞 D.host.E)) : Set (ι → D.host.E)) = (Matrix.mulVecLin Q) '' Λ := by
-      simp [Submodule.map_coe]
-    rw [this, Submodule.span_image, hΛ.1.span_eq_top, Submodule.map_top, LinearMap.range_eq_top.2 hsurj]
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · intro y
     rw [mem, hΛ.2]
     constructor
@@ -98,9 +104,6 @@ def extR (ι κ : Type) : (κ → D.host.E) →ₗ[D.host.E] (ι ⊕ κ → D.ho
   map_add' v w := by ext (i | i) <;> simp
   map_smul' c v := by ext (i | i) <;> simp
 
-@[simp] theorem extL_apply {ι κ : Type} (v : ι → D.host.E) : extL (D := D) ι κ v = Sum.elim v (fun _ => 0) := rfl
-@[simp] theorem extR_apply {ι κ : Type} (v : κ → D.host.E) : extR (D := D) ι κ v = Sum.elim (fun _ => 0) v := rfl
-
 def sumLat {ι κ : Type} (ΛA : Submodule (𝓞 D.host.E) (ι → D.host.E)) (ΛB : Submodule (𝓞 D.host.E) (κ → D.host.E)) :
     Submodule (𝓞 D.host.E) (ι ⊕ κ → D.host.E) :=
   ΛA.comap (LinearMap.funLeft (𝓞 D.host.E) D.host.E Sum.inl) ⊓ ΛB.comap (LinearMap.funLeft (𝓞 D.host.E) D.host.E Sum.inr)
@@ -111,7 +114,7 @@ theorem mem_sumLat {ι κ : Type} {ΛA : Submodule (𝓞 D.host.E) (ι → D.hos
 
 theorem split_vec {ι κ : Type} (y : ι ⊕ κ → D.host.E) :
     y = extL (D := D) ι κ (y ∘ Sum.inl) + extR (D := D) ι κ (y ∘ Sum.inr) := by
-  ext (i | i) <;> simp
+  ext (i | i) <;> simp [extL, extR]
 
 theorem form_sum {ι κ : Type} [Fintype ι] [Fintype κ] (GA : Matrix ι ι D.host.E) (GB : Matrix κ κ D.host.E)
     (x y : ι ⊕ κ → D.host.E) :
@@ -134,34 +137,20 @@ theorem selfDualFor_sum {ι κ : Type} [Fintype ι] [Fintype κ] {GA : Matrix ι
     · refine sup_le ?_ ?_
       · rintro _ ⟨x, hx, rfl⟩
         rw [mem_sumLat]
-        refine ⟨by simpa using hx, ?_⟩
-        have : (extL (D := D) ι κ x) ∘ Sum.inr = 0 := by ext i; simp
+        refine ⟨by simpa [extL, extR] using hx, ?_⟩
+        have : (extL (D := D) ι κ x) ∘ Sum.inr = 0 := by ext i; simp [extL, extR]
         simp only [LinearMap.coe_restrictScalars] at this ⊢
         rw [this]; exact ΛB.zero_mem
       · rintro _ ⟨x, hx, rfl⟩
         rw [mem_sumLat]
-        refine ⟨?_, by simpa using hx⟩
-        have : (extR (D := D) ι κ x) ∘ Sum.inl = 0 := by ext i; simp
+        refine ⟨?_, by simpa [extL, extR] using hx⟩
+        have : (extR (D := D) ι κ x) ∘ Sum.inl = 0 := by ext i; simp [extL, extR]
         simp only [LinearMap.coe_restrictScalars] at this ⊢
         rw [this]; exact ΛA.zero_mem
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · rw [heq]; exact (hA.1.fg.map _).sup (hB.1.fg.map _)
-  · rw [eq_top_iff]
-    intro y _
-    rw [split_vec (D := D) y]
-    refine Submodule.add_mem _ ?_ ?_
-    · have h1 : extL (D := D) ι κ (y ∘ Sum.inl) ∈ Submodule.span D.host.E (extL (D := D) ι κ '' (ΛA : Set _)) := by
-        rw [Submodule.span_image, hA.1.span_eq_top]; exact ⟨_, Submodule.mem_top, rfl⟩
-      refine Submodule.span_mono ?_ h1
-      rintro _ ⟨x, hx, rfl⟩
-      rw [SetLike.mem_coe, heq]
-      exact Submodule.mem_sup_left ⟨x, hx, rfl⟩
-    · have h1 : extR (D := D) ι κ (y ∘ Sum.inr) ∈ Submodule.span D.host.E (extR (D := D) ι κ '' (ΛB : Set _)) := by
-        rw [Submodule.span_image, hB.1.span_eq_top]; exact ⟨_, Submodule.mem_top, rfl⟩
-      refine Submodule.span_mono ?_ h1
-      rintro _ ⟨x, hx, rfl⟩
-      rw [SetLike.mem_coe, heq]
-      exact Submodule.mem_sup_right ⟨x, hx, rfl⟩
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · intro y
     rw [mem_sumLat, hA.2, hB.2]
     constructor
@@ -175,26 +164,26 @@ theorem selfDualFor_sum {ι κ : Type} [Fintype ι] [Fintype κ] {GA : Matrix ι
       · intro x hx
         have hm : extL (D := D) ι κ x ∈ sumLat ΛA ΛB := by
           rw [mem_sumLat]
-          refine ⟨by simpa using hx, ?_⟩
-          have : (extL (D := D) ι κ x) ∘ Sum.inr = 0 := by ext i; simp
+          refine ⟨by simpa [extL, extR] using hx, ?_⟩
+          have : (extL (D := D) ι κ x) ∘ Sum.inr = 0 := by ext i; simp [extL, extR]
           rw [this]; exact ΛB.zero_mem
         obtain ⟨b, hb⟩ := h _ hm
         refine ⟨b, ?_⟩
         rw [hb, form_sum]
-        have e1 : (extL (D := D) ι κ x) ∘ Sum.inl = x := by ext i; simp
-        have e2 : (extL (D := D) ι κ x) ∘ Sum.inr = 0 := by ext i; simp
+        have e1 : (extL (D := D) ι κ x) ∘ Sum.inl = x := by ext i; simp [extL, extR]
+        have e2 : (extL (D := D) ι κ x) ∘ Sum.inr = 0 := by ext i; simp [extL, extR]
         rw [e1, e2]; simp
       · intro x hx
         have hm : extR (D := D) ι κ x ∈ sumLat ΛA ΛB := by
           rw [mem_sumLat]
-          refine ⟨?_, by simpa using hx⟩
-          have : (extR (D := D) ι κ x) ∘ Sum.inl = 0 := by ext i; simp
+          refine ⟨?_, by simpa [extL, extR] using hx⟩
+          have : (extR (D := D) ι κ x) ∘ Sum.inl = 0 := by ext i; simp [extL, extR]
           rw [this]; exact ΛA.zero_mem
         obtain ⟨b, hb⟩ := h _ hm
         refine ⟨b, ?_⟩
         rw [hb, form_sum]
-        have e1 : (extR (D := D) ι κ x) ∘ Sum.inl = 0 := by ext i; simp
-        have e2 : (extR (D := D) ι κ x) ∘ Sum.inr = x := by ext i; simp
+        have e1 : (extR (D := D) ι κ x) ∘ Sum.inl = 0 := by ext i; simp [extL, extR]
+        have e2 : (extR (D := D) ι κ x) ∘ Sum.inr = x := by ext i; simp [extL, extR]
         rw [e1, e2]; simp
 
 theorem line_mat_eq {κ : Type} [Fintype κ] (hk : Fintype.card κ = 1) {M N : Matrix κ κ D.host.E} {ζ : κ → D.host.E}
@@ -230,6 +219,7 @@ theorem exists_prime_not_mem (K : Type) [Field K] [NumberField K] {n : ℕ} (hn 
     rw [Ideal.mem_comap, Ideal.mem_bot] at hx
     have : x = 0 := hinj (by rw [hx, map_zero])
     rw [this]; exact Ideal.zero_mem _)
+  rw [Ideal.under_def] at hcomap
   have hqQ : algebraMap ℤ (𝓞 K) (q : ℤ) ∈ Q := by
     rw [← Ideal.mem_comap, hcomap]; exact Ideal.subset_span rfl
   have hne : Q ≠ ⊥ := by
@@ -268,7 +258,7 @@ end GlobalTheory.CoreLat
 
 namespace GlobalTheory.CoreLat
 
-theorem exists_selfDual_core : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Yd cX} (W : RealPack ex) (u : D.what₂.Word), PkHyp W → ∀ (a : XGeo D) (y : YRat a) (m : YMeas y) (b₀ : ∀ j, GA D (Yc D j)) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ι : Type) (v : VCom (commOf (pk W) u (mkGeo m b₀))) (o : TDat (commOf (pk W) u (mkGeo m b₀)) k ι) (l : ∀ PP, PP ∈ (pk W).Pg ∨ QAll W PP → LocX a (pk W).βX PP) (bas : ∀ PP h j c, j + c = (l PP h).s + 1 → GL (XIx (Fin D.R.k) (Fin D.R.t) j ⊕ Fin c) (l PP h).k), (commOf (pk W) u (mkGeo m b₀)).Is → y.Tau (-D.host.xi0 ^ (D.R.m / 2)) → star a.ζ₀ ⬝ᵥ a.Lz.gram *ᵥ a.ζ₀ = (((D.mem u).A.T : ℕ) : D.host.E) → v.τ = y.τ → v.NT = a.LT → o.ζ₀ = a.ζ₀ → IsSelfDualC D.sp.X' a.LT → (∀ p, p ∈ v.gP ↔ ∃ PP ∈ (pk W).Pg, p = PP.under (𝓞 D.host.F)) → (∀ p, p ∈ v.tP ↔ (((D.mem u).A.T : ℕ) : 𝓞 D.host.F) ∈ p.asIdeal) → Disjoint v.gP v.tP → PreT v o → (∀ n (h : n = D.R.m) x, x ∉ v.tP → ∃ LZ : GlobalTheory.FinPl.Lat a.Lz, IsSelfDualC _ LZ ∧ GlobalTheory.FinPl.OrthAt (a.oT n h) (a.x n).L a.LT LZ x) → (∀ PP h, PP ∉ (pk W).Pg → ∀ j c hc, bas PP h j c hc = 1) → ∀ (FY : ∀ PP h, FYFam (l PP h)) (sc : ∀ PP h, ℕ → (l PP h).k), (∀ PP h, IsNormalFr (l PP h) y (FY PP h) (sc PP h)) → ∀ j ρ h, ∃ L : GlobalTheory.FinPl.Lat (y.bes j ρ h).V₀, IsSelfDualC (y.bes j ρ h).V₀ L := by
+theorem exists_selfDual_core : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Yd cX} (W : RealPack ex) (u : D.what₂.Word), PkHyp W → ∀ (a : XGeo D) (y : YRat a) (m : YMeas y) (b₀ : ∀ j, GA D (Yc D j)) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ι : Type) (v : VCom (commOf (pk W) u (mkGeo m b₀))) (o : TDat (commOf (pk W) u (mkGeo m b₀)) k ι) (l : ∀ PP, PP ∈ (pk W).Pg ∨ QAll W PP → LocX a (pk W).βX PP) (bas : ∀ PP h j c, j + c = (l PP h).s + 1 → GL (XIx (Fin D.R.k) (Fin D.R.t) j ⊕ Fin c) (l PP h).k), (commOf (pk W) u (mkGeo m b₀)).Is → y.Tau (-D.host.xi0 ^ (D.R.m / 2)) → star a.ζ₀ ⬝ᵥ a.Lz.gram *ᵥ a.ζ₀ = (((D.mem u).A.T : ℕ) : D.host.E) → v.τ = y.τ → v.NT = a.LT → o.ζ₀ = a.ζ₀ → IsSelfDualC D.sp.X' a.LT → (∀ p, p ∈ v.gP ↔ ∃ PP ∈ (pk W).Pg, p = (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)) → (∀ p, p ∈ v.tP ↔ (((D.mem u).A.T : ℕ) : 𝓞 D.host.F) ∈ (_root_.IsDedekindDomain.HeightOneSpectrum.asIdeal p)) → Disjoint v.gP v.tP → PreT v o → (∀ n (h : n = D.R.m) x, x ∉ v.tP → ∃ LZ : GlobalTheory.FinPl.Lat a.Lz, IsSelfDualC _ LZ ∧ GlobalTheory.FinPl.OrthAt (a.oT n h) (a.x n).L a.LT LZ x) → (∀ PP h, PP ∉ (pk W).Pg → ∀ j c hc, bas PP h j c hc = 1) → ∀ (FY : ∀ PP h, FYFam (l PP h)) (sc : ∀ PP h, ℕ → (l PP h).k), (∀ PP h, IsNormalFr (l PP h) y (FY PP h) (sc PP h)) → ∀ j ρ h, ∃ L : GlobalTheory.FinPl.Lat (y.bes j ρ h).V₀, IsSelfDualC (y.bes j ρ h).V₀ L := by
   intro D Ld hT Gi Gl Kc Yd cX ex W u hPk a y m b₀ k _ _ _ _ ι v o l bas hIs hTau hζ hvτ hNT hoζ hLT hgP htP hdisj hPre hLZ
     hbas FY sc hFY
   have hξ : D.host.xi0 ≠ 0 := GlobalTheory.DualPairCompare.embedding_xi_zero_ne_zero D

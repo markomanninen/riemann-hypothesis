@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.WithZeroEqOfLeExpIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.WithZeroEqOfLeExpIff
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.UnitaryBC
 
@@ -47,7 +51,7 @@ theorem exists_valuation_lt_one {F : Type} [Field F] [NumberField F] (u : Height
       _ ≤ 1 * Valued.v p := by gcongr
       _ < 1 := by rw [one_mul]; exact hvp
   have hhalf : h2 + h2 = 1 := by
-    rw [hh2, ← map_add, ← map_one (algebraMap F (u.adicCompletion F))]
+    rw [hh2, ← map_add (f := _), ← map_one (algebraMap F (u.adicCompletion F))]
     congr 1
     norm_num
   have hkey : algebraMap F (u.adicCompletion F) (1 / 4 - c ^ 2 * a) = -z * (1 + z) := by
@@ -125,7 +129,7 @@ theorem isSplitAt_of_isSquare : ∀ (L : Type) [Field L] [NumberField L] [IsCMFi
   set x : L := 2⁻¹ + (c : L) * δ with hx
   have hcc : IsCMField.complexConj L (c : L) = c := IsCMField.complexConj_apply_eq_self L c
   have hx' : IsCMField.complexConj L x = 2⁻¹ - (c : L) * δ := by
-    rw [hx, map_add, map_mul, hcc, hconj, map_inv₀, map_ofNat]
+    rw [hx, map_add (f := _), map_mul, hcc, hconj, map_inv₀, map_ofNat]
     ring
   have hsum : x + IsCMField.complexConj L x = 1 := by
     rw [hx', hx]
@@ -139,7 +143,8 @@ theorem isSplitAt_of_isSquare : ∀ (L : Type) [Field L] [NumberField L] [IsCMFi
   have : w.asIdeal.LiesOver u.asIdeal := ⟨rfl⟩
   have hlt : w.valuation L (x * IsCMField.complexConj L x) < 1 := by
     rw [hprod, ← HeightOneSpectrum.valuation_liesOver L u w]
-    exact pow_lt_one₀ zero_le hc (Ideal.IsDedekindDomain.ramificationIdx'_ne_zero_of_liesOver w.asIdeal u.ne_bot)
+    exact pow_lt_one₀ zero_le hc
+      (Ideal.ramificationIdx_pos_of_isDedekindDomain' w.asIdeal u.ne_bot).ne'
   have heq := valuation_complexConj_of_not_split w hw x
   rw [map_mul, heq] at hlt
   have hx1 : w.valuation L x < 1 := by

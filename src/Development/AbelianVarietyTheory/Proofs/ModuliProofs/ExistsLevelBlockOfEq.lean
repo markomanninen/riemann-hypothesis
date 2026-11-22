@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HermFormConjDiag
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameOfPeriodLinear
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DetOfTriangular
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsEqNsmulOfDvdPairing
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HermFormConjDiag
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameOfPeriodLinear
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DetOfTriangular
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsEqNsmulOfDvdPairing
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open scoped nonZeroDivisors
@@ -25,7 +29,7 @@ theorem exists_smul_eq {L : Type} [AddCommGroup L] [Module (𝓞 E) L] (φ : L �
     obtain ⟨c, v, hc, hv⟩ := hx
     obtain ⟨d, w, hd, hw⟩ := hy
     refine ⟨c * d, d • v + c • w, mul_ne_zero hc hd, ?_⟩
-    rw [map_add, map_smul, map_smul, ← hv, ← hw]
+    rw [map_add (f := _), map_smul, map_smul, ← hv, ← hw]
     ext k
     simp [Algebra.smul_def]
     ring
@@ -165,8 +169,8 @@ theorem exists_level_block_of_eq : ∀ (E : Type) [Field E] [NumberField E] [IsC
     apply (Matrix.mulVec_injective_of_isUnit γ.isUnit)
     rw [hγ, LinearEquiv.apply_symm_apply, hv]
   · obtain ⟨e, he⟩ := hM v
-    exact ⟨e, by rw [hγ, he, map_add, map_nsmul]⟩
+    exact ⟨e, by rw [hγ, he, map_add (f := _), map_nsmul]⟩
   · obtain ⟨e, he⟩ := hA v
-    exact ⟨e, by rw [hγ, he, map_add, map_nsmul]⟩
+    exact ⟨e, by rw [hγ, he, map_add (f := _), map_nsmul]⟩
 
 end GlobalTheory.FrameFibre

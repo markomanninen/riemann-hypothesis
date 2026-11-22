@@ -1,6 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
-import Development.EtaleCohomology.KummerTheory.FinSHInv
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+public import Development.EtaleCohomology.KummerTheory.FinSHInv
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4
@@ -62,14 +66,6 @@ abbrev bm {Y B S S' : Scheme.{0}} (p : Y ⟶ B) (t : S ⟶ B) (a : S' ⟶ S) : p
     bm p t a ≫ pullback.fst p t = pullback.fst p (a ≫ t) :=
   (pullback.lift_fst _ _ _).trans (Category.comp_id _)
 
-@[reassoc] theorem bm_snd {Y B S S' : Scheme.{0}} (p : Y ⟶ B) (t : S ⟶ B) (a : S' ⟶ S) :
-    bm p t a ≫ pullback.snd p t = pullback.snd p (a ≫ t) ≫ a :=
-  pullback.lift_snd _ _ _
-
-@[reassoc] theorem fib_fst {Y1 Y0 B S : Scheme.{0}} (g : Y1 ⟶ Y0) (p : Y0 ⟶ B) (s : S ⟶ B) :
-    fibMap g p s ≫ pullback.fst p s = pullback.fst (g ≫ p) s ≫ g :=
-  pullback.lift_fst _ _ _
-
 @[reassoc] theorem fib_snd {Y1 Y0 B S : Scheme.{0}} (g : Y1 ⟶ Y0) (p : Y0 ⟶ B) (s : S ⟶ B) :
     fibMap g p s ≫ pullback.snd p s = pullback.snd (g ≫ p) s :=
   (pullback.lift_snd _ _ _).trans (Category.comp_id _)
@@ -78,7 +74,7 @@ theorem fst_eq {Y B S S' : Scheme.{0}} (p : Y ⟶ B) (t : S ⟶ B) (a : S' ⟶ S
     pullback.fst (pullback.snd p t) a = (pullbackLeftPullbackSndIso p t a).hom ≫ bm p t a := by
   apply pullback.hom_ext
   · rw [Category.assoc, bm_fst, pullbackLeftPullbackSndIso_hom_fst]
-  · rw [Category.assoc, bm_snd, pullbackLeftPullbackSndIso_hom_snd_assoc, pullback.condition]
+  · simp [Category.assoc, bm, pullbackLeftPullbackSndIso_hom_snd_assoc, pullback.condition]
 
 theorem eqv_bm {q : ℕ} {i : ℤ} {Y B S S' : Scheme.{0}} (p : Y ⟶ B) (t : S ⟶ B) (a : S' ⟶ S)
     (h : Eqv _ (sch.map (pullback.fst (pullback.snd p t) a)) (tw q i)) : Eqv _ (sch.map (bm p t a)) (tw q i) := by
@@ -101,9 +97,9 @@ theorem same_of {q : ℕ} {i : ℤ} {B Y0 Y1 S S' : Scheme.{0}} (p : Y0 ⟶ B) (
   refine ⟨fun m => sub_iff q i m _ (e0 m), fun m => ?_, ?_⟩
   · refine sq_zero q i m (bm (g ≫ p) t a) (bm p t a) _ _ ?_ (e1 m) (e0 m)
     apply pullback.hom_ext
-    · simp only [Category.assoc, fib_fst, bm_fst, bm_fst_assoc]
-    · simp only [Category.assoc, fib_snd, bm_snd, fib_snd_assoc]
-  · exact sq_bij q i 0 (bm (g ≫ p) t a) a _ _ (bm_snd _ _ _) (e1 0) (e2 0)
+    · simp [Category.assoc, fibMap, bm]
+    · simp [Category.assoc, fibMap, bm]
+  · exact sq_bij q i 0 (bm (g ≫ p) t a) a _ _ (by simp [bm]) (e1 0) (e2 0)
 
 theorem unit_of {k R : Type} [Field k] [CommRing R] {q : ℕ} (hq : IsUnit (q : k)) {B : Scheme.{0}} (b : B ⟶ Sp k)
     (t : Sp R ⟶ B) : IsUnit (q : R) := by
@@ -282,7 +278,7 @@ theorem leaf : LeafSpec := by
   have bi : ∀ m, Function.Bijective (pl q i (𝟙 (Sp Ω)) m) := LateralTheory.KummerTheory.AlgExtPf.eqv_sch_iso _ _
   have hsq : e1.hom ≫ fibMap g p s = γ ≫ e0.hom := by
     apply pullback.hom_ext
-    · simp only [Category.assoc, fib_fst, e0, e1, IsPullback.isoPullback_hom_fst, IsPullback.isoPullback_hom_fst_assoc, hc]
+    · simp [Category.assoc, fibMap, e0, e1, hc]
     · simp only [Category.assoc, fib_snd, e0, e1, IsPullback.isoPullback_hom_snd]
   have hsn : e1.hom ≫ pullback.snd (g ≫ p) s = (γ ≫ c0) ≫ 𝟙 _ := by
     simp only [Category.comp_id, e1, IsPullback.isoPullback_hom_snd]

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.CrRootMem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.CrRootMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem cr_aeval_mod (T : Module.End K V) (Z : Submodule K V) (hZ : ∀ x ∈ Z,
   refine Polynomial.induction_on' q (fun p r hp hr => ?_) (fun n c => ?_)
   · have e : aeval T (p + r) x - (p + r).eval a • x =
         (aeval T p x - p.eval a • x) + (aeval T r x - r.eval a • x) := by
-      rw [map_add, LinearMap.add_apply, eval_add, add_smul]; abel
+      rw [map_add (f := _), LinearMap.add_apply, eval_add, add_smul]; abel
     rw [e]; exact Z.add_mem hp hr
   · rw [aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply, eval_monomial, mul_smul,
       ← smul_sub]
@@ -50,7 +54,7 @@ theorem cr_aeval_comm (T X' : Module.End K V) (h : T * X' = X' * T) (q : K[X]) (
     aeval T q (X' x) = X' (aeval T q x) := by
   have hc : Commute T X' := h
   refine Polynomial.induction_on' q (fun p r hp hr => ?_) (fun n c => ?_)
-  · rw [map_add, LinearMap.add_apply, LinearMap.add_apply, hp, hr, map_add]
+  · rw [map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hr, map_add (f := _)]
   · rw [aeval_monomial, Module.End.mul_apply, Module.End.mul_apply, Module.algebraMap_end_apply,
       Module.algebraMap_end_apply, map_smul]
     congr 1

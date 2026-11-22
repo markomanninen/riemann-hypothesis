@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ def cocOff {R Γ M : Type} [CommRing R] [Group Γ] [TopologicalSpace Γ] [AddCom
     (ρ : Representation R Γ M) (S : Set Γ) : Submodule R (Γ → M) where
   carrier := {z | IsLocallyConstant z ∧ (∀ g h, z (g * h) = z g + ρ g (z h)) ∧ ∀ g ∈ S, z g = 0}
   zero_mem' := ⟨IsLocallyConstant.const _, by simp, by simp⟩
-  add_mem' {a b} ha hb := ⟨ha.1.add hb.1, fun g h => by simp only [Pi.add_apply, ha.2.1, hb.2.1, map_add]; abel,
+  add_mem' {a b} ha hb := ⟨ha.1.add hb.1, fun g h => by simp only [Pi.add_apply, ha.2.1, hb.2.1, map_add (f := _)]; abel,
     fun g h => by simp [ha.2.2 g h, hb.2.2 g h]⟩
   smul_mem' c a ha := ⟨ha.1.comp (c • ·), fun g h => by simp [ha.2.1], fun g h => by simp [ha.2.2 g h]⟩
 

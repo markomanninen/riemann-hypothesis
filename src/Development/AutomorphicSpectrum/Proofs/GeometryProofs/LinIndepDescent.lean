@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -65,7 +69,8 @@ theorem linIndep_descent : ∀ (F : Type) [Field F] (σ : F →+* ℂ) (J : Type
     have := single_ext F (K j) σ (fun k => (B k : ℂ)) hbind
       (fun k => ∑ l, algebraMap F (K j) (B.repr ⟨d l, hmem l⟩ k) * v l j) (fun τ hτ => by
         refine Eq.trans ?_ (hd j τ hτ)
-        simp only [map_sum, map_mul, hτ' τ hτ]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul, hτ' τ hτ]
         rw [Finset.sum_congr rfl fun l _ => congrArg (· * τ (v l j)) (hdc l)]
         simp only [Finset.mul_sum, Finset.sum_mul]
         rw [Finset.sum_comm]

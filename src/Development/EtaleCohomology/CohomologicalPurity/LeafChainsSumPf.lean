@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafSumPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafSumPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -28,8 +32,7 @@ theorem presExtend {ι ι' : Type*} {c : ComplexShape ι} {c' : ComplexShape ι'
     have hp : e.f p = i' := e.f_eq_of_r_eq_some h
     let φ : HomologicalComplex.eval C c p ≅ e.extendFunctor C ⋙ HomologicalComplex.eval C c' i' :=
       NatIso.ofComponents (fun K => (K.extendXIso e hp).symm) (fun {K L} f => by
-        simp [ComplexShape.Embedding.extendFunctor, HomologicalComplex.extendMap_f _ e hp]
-        exact (Iso.inv_hom_id_assoc _ _).symm)
+        simp [ComplexShape.Embedding.extendFunctor, HomologicalComplex.extendMap_f _ e hp])
     exact preservesColimitsOfShape_of_natIso φ
 
 theorem presAFM {C : Type*} [Category* C] [Preadditive C] (J : Type*) [Category* J] [HasColimitsOfShape J C] :

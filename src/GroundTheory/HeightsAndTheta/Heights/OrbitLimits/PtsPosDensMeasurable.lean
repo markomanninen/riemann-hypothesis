@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsPosDensIntegrable
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsSumMeasurableA
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NoCommonComponentCoordinatesPlane
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsPosDensIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsSumMeasurableA
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NoCommonComponentCoordinatesPlane
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -140,7 +145,7 @@ theorem aestronglyMeasurable {P : Ideal (MRing ι)} {e : ℕ}
     intro m
     have : S m = B m ∩ ⋂ m' ∈ Finset.range m, (B m' ∩ {y | σ m' y = σ m y})ᶜ := by
       ext y
-      simp [hSdef]
+      simp [hSdef, imp_iff_not_or]
     rw [this]
     exact (hBo m).measurableSet.inter (Finset.measurableSet_biInter _ fun m' _ =>
       ((hBo m').measurableSet.inter (measurableSet_eq_fun (hσm m') (hσm m))).compl)
@@ -161,7 +166,7 @@ theorem aestronglyMeasurable {P : Ideal (MRing ι)} {e : ℕ}
     simp only
     rw [Set.indicator_of_mem hm, hdens m y hm.1]
     unfold sheetDensity
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     rw [hy _ _ _ hex.choose_spec hsh]
   have hmemF : ∀ m, y ∈ S m → σ m y ∈ (hfin y).toFinset := by
     intro m hm
@@ -204,7 +209,7 @@ theorem aestronglyMeasurable {P : Ideal (MRing ι)} {e : ℕ}
       · rfl
     · have h0 : sheetDensity P Ψ (pot L) g y w = 0 := by
         unfold sheetDensity
-        rw [dif_neg hex]
+        rw [dite_eq_right hex]
       refine Eventually.of_forall fun N => ?_
       rw [h0, max_self]
       refine (Finset.sum_eq_zero fun m _ => ?_).symm

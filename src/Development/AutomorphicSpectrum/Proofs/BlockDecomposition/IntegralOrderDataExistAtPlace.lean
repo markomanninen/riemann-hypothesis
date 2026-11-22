@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EMatMulNegCol
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IntegralClosureCompletedCMAlgebraCompactOpen
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.DictionaryStatement
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.SpectralNormIntegrality.SpecInt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EMatMulNegCol
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IntegralClosureCompletedCMAlgebraCompactOpen
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.DictionaryStatement
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.SpectralNormIntegrality.SpecInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -284,11 +288,11 @@ theorem exists_idems (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (v : HeightOneS
     let e₁ : Fv F v ⊗[F] E := (2⁻¹ : Fv F v) • (1 + c⁻¹ • θ)
     let e₂ : Fv F v ⊗[F] E := (2⁻¹ : Fv F v) • (1 - c⁻¹ • θ)
     have v11 : ψ₁ e₁ = 1 := by
-      simp only [e₁, map_smul, map_add, map_one, p1, smul_eq_mul]
+      simp only [e₁, map_smul, map_add (f := _), map_one, p1, smul_eq_mul]
       field_simp
       norm_num
     have v12 : ψ₂ e₁ = 0 := by
-      simp only [e₁, map_smul, map_add, map_one, p2, smul_eq_mul]
+      simp only [e₁, map_smul, map_add (f := _), map_one, p2, smul_eq_mul]
       field_simp
       norm_num
     have v21 : ψ₁ e₂ = 0 := by
@@ -404,8 +408,8 @@ end Local
 end GlobalTheory.CompanionTheory.AvgFree.Ord
 
 open scoped Matrix NNReal ENNReal TensorProduct
-open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.WhitFree GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.AvgFree MeasureTheory in
 
+open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.WhitFree GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.AvgFree MeasureTheory in
 theorem GlobalTheory.CompanionTheory.AvgFree.exists_ordData : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (d : ℕ) (b : Module.Basis (Fin d) F E) (v : IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers F)) (lv : Measure (Fv F v)), GlobalTheory.CompanionTheory.SW.IsStdV v lv → ∃ (O : Subring (Fv F v ⊗[F] E)) (S : Finset ((Fv F v ⊗[F] E)ˣ × (Fv F v ⊗[F] E))), IsOrdData (Fv F v) σ b lv O S := by
   intro F E _ _ _ _ _ σ hσ d b v lv hlv
   classical

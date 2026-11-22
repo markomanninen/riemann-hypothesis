@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalArtinMap
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalArtinMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,11 +25,6 @@ end Index
 
 section Lattice
 
-omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
-theorem isAbelianGalois_sup (L L' : IntermediateField K Ω) [IsAbelianGalois K L]
-    [IsAbelianGalois K L'] : IsAbelianGalois K (L ⊔ L' : IntermediateField K Ω) :=
-  isAbelianGalois_of_le_maximalAbelianExtension _
-    (sup_le (le_maximalAbelianExtension L) (le_maximalAbelianExtension L'))
 
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [IsSepClosure K Ω] in
 theorem mul_comm_of_isAbelianGalois' (L : IntermediateField K Ω) [IsAbelianGalois K L]
@@ -49,13 +48,13 @@ end Lattice
 
 section OrderIso
 
-variable (K) in
 
+variable (K) in
 def openFiniteIndexSubgroups : Set (Subgroup Kˣ) :=
   {H | IsOpen (H : Set Kˣ) ∧ H.FiniteIndex}
 
-variable (K Ω) in
 
+variable (K Ω) in
 def normGroupMap (L : finiteAbelianExtensions K Ω) : openFiniteIndexSubgroups K :=
   have := L.2.1
   ⟨(normUnits K (L : IntermediateField K Ω)).range,
@@ -85,8 +84,8 @@ theorem normGroupMap_le_iff {L L' : finiteAbelianExtensions K Ω} :
   have := L'.2.2
   exact range_normUnits_le_iff
 
-variable (K Ω) in
 
+variable (K Ω) in
 def normGroupOrderIso : finiteAbelianExtensions K Ω ≃o (openFiniteIndexSubgroups K)ᵒᵈ where
   toEquiv := (Equiv.ofBijective _ ⟨normGroupMap_injective, normGroupMap_surjective⟩).trans
     OrderDual.toDual

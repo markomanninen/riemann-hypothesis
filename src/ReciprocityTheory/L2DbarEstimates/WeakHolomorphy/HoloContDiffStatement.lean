@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 

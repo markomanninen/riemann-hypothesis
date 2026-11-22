@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeBaseChangeLargerRingHoldsStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerLiftOfEmbedding
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemSpanOverOfMem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeBaseChangeLargerRingHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerLiftOfEmbedding
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemSpanOverOfMem
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -31,7 +36,7 @@ theorem span_span {V₀ V₁ V₂ : Type} [AddCommGroup V₁] [Module Ω' V₁] 
       exact AddSubgroup.subset_closure ⟨_, RC.mul_mem ht (hR a ha), _, ⟨e, he, rfl⟩, rfl⟩
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add, smul_add]
+      rw [map_add (f := _), smul_add]
       exact add_mem hx hy
     | neg x _ hx =>
       rw [map_neg, smul_neg]
@@ -125,8 +130,8 @@ theorem mseg_map (y : (Σ k, J k) → Ω) (c : ∀ k, J k) :
     mseg (fun v => algebraMap Ω Ω' (y v)) c = algebraMap Ω Ω' (mseg y c) := by
   simp [mseg, map_prod]
 
-omit [∀ k, Fintype (J k)] in
 
+omit [∀ k, Fintype (J k)] in
 theorem map_mem_chartRing (y : (Σ k, J k) → Ω) (c : ∀ k, J k) {a : Ω} (ha : a ∈ chartRing O (mseg y) c) :
     algebraMap Ω Ω' a ∈ chartRing O' (mseg (fun v => algebraMap Ω Ω' (y v))) c := by
   induction ha using Algebra.adjoin_induction with

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TargetLaw
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawLocalSourceLevelCharacter
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FoldrExtract
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdLocalParts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TargetLaw
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawLocalSourceLevelCharacter
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FoldrExtract
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdLocalParts
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl
 open scoped TensorProduct
@@ -221,8 +226,8 @@ theorem src_law {D : D7} {c : Comm D} {v : VCom c} {n : ℕ} (G : Fin n → GLoc
 
 end GlobalTheory.RowLevel.Std
 
-open GlobalTheory.LocMod GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain ValuativeRel GlobalTheory.RowLevel.Std in
 
+open GlobalTheory.LocMod GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain ValuativeRel GlobalTheory.RowLevel.Std in
 theorem GlobalTheory.RowLevel.Std.lift_laws : ∀ (D : D7) (c : Comm D) (v : VCom c) (n : ℕ) (G : Fin n → GLoc v), IsStdChar D c.ψ (-1) → v.Is → GPin G → ∀ t : Tup c, t.Is → (∀ i, (G i).Chars t) → ∀ j σ (_ : j + 2 * σ + 2 = D.R.m), (∀ k ∈ v.JG (j + 1), ∃ a, a ≠ 0 ∧ GLam G (j + 1) k a ∧ ∀ f, Vac c.ψ _ _ (v.N j) (v.N (j + 1)) (· ∈ v.gP) f → t.om j (1, k) (comb c.ψ _ _ (v.eG j) f) = a⁻¹ • comb c.ψ _ _ (v.eG j) f) ∧ (∀ k ∈ v.JG j, ∃ a, a ≠ 0 ∧ GLam G j k a ∧ ∀ f, Vac c.ψ _ _ (v.N j) (v.N (j + 1)) (· ∈ v.gP) f → t.om j (k, 1) (comb c.ψ _ _ (v.eG j) f) = a • comb c.ψ _ _ (v.eG j) f) ∧ (0 < σ → (∀ k ∈ v.JG (j + 1 + 1), ∃ a, a ≠ 0 ∧ GLam G (j + 1 + 1) k a ∧ ∀ f, Vac c.ψ _ _ (v.N (j + 1)) (v.N (j + 1 + 1)) (· ∈ v.gP) f → t.om (j + 1) (1, k) (comb c.ψ _ _ (v.eG (j + 1)) f) = a⁻¹ • comb c.ψ _ _ (v.eG (j + 1)) f) ∧ ∀ k ∈ v.JG (j + 1), ∃ a, a ≠ 0 ∧ GLam G (j + 1) k a ∧ ∀ f, Vac c.ψ _ _ (v.N (j + 1)) (v.N (j + 1 + 1)) (· ∈ v.gP) f → t.om (j + 1) (k, 1) (comb c.ψ _ _ (v.eG (j + 1)) f) = a • comb c.ψ _ _ (v.eG (j + 1)) f) := by
   intro D c v n G hc hv hG t ht hch j σ hσ
   have hm : j + 1 < D.R.m := by omega

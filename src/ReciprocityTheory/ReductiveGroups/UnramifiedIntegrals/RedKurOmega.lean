@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorHensel
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorHensel
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopHer
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEOneLetterDens
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceDone
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSRadLoc
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfSpectralData
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopHer
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEOneLetterDens
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceDone
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSRadLoc
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfSpectralData
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutSE
 

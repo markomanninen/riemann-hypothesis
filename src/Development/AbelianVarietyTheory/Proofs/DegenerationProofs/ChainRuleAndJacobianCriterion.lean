@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open KaehlerDifferential TensorProduct
 
@@ -112,7 +116,8 @@ private theorem det_derivation_eq_mul_det_repr {R B I : Type} [CommRing R] [Comm
       rw [Derivation.liftKaehlerDifferential_comp_D]; rfl
     rw [h1]
     conv_lhs => rw [← b.sum_repr (D R B (t' j))]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, hb, ← h1, Algebra.smul_def, mul_comm]
     rfl
@@ -144,8 +149,8 @@ private theorem etale_eval2Hom_of_basis_D (R B I : Type) [CommRing R] [CommRing 
   exact _root_.GlobalTheory.EtaleCoordJacobian.etale_of_basis R B I b fun i => by
     rw [hb]; simp [RingHom.algebraMap_toAlgebra]
 
-open KaehlerDifferential TensorProduct in
 
+open KaehlerDifferential TensorProduct in
 theorem _root_.GlobalTheory.EtaleCoordJacobian.chain_rule_and_jacobian_criterion : ∀ (R B : Type) [CommRing R] [CommRing B] (c : R →+* B) (I : Type) [Fintype I] [DecidableEq I] (t t' : I → B), (MvPolynomial.eval₂Hom c t).Etale → ∃ a : B, (∀ (C : Type) [CommRing C] (φ : B →+* C) (d : I → B →+ C), (∀ i x y, d i (x * y) = φ x * d i y + φ y * d i x) → (∀ i r, d i (c r) = 0) → (Matrix.of fun i j => d i (t' j)).det = φ a * (Matrix.of fun i j => d i (t j)).det) ∧ (IsUnit a → (MvPolynomial.eval₂Hom c t').Etale) := by
   intro R B _ _ c I _ _ t t' het
   letI : Algebra R B := c.toAlgebra

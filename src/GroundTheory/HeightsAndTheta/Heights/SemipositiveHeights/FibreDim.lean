@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PEvalKerKrullDim
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PFibreMultiHomog
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PEvalKerKrullDim
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PFibreMultiHomog
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -74,8 +79,8 @@ theorem aeval_mem_closure {σ : Type} {L : Type} [Field L] (y : σ → L) (f : M
 
 end FibreTranscendenceDegree
 
-open FibreTranscendenceDegree in
 
+open FibreTranscendenceDegree in
 theorem FibreDim.proof : FibreDimStatement := by
   intro K _ ι _ K' _ ι' _ κ v P' d r G hv hP' hP
   classical
@@ -91,7 +96,7 @@ theorem FibreDim.proof : FibreDimStatement := by
     (Set.range fun q : (Σ k : FibreBlock κ, ι' k.1) => G.x' ⟨q.1.1, q.2⟩) with hEdef
 
   have hZ : Function.Injective (algebraMap ℤ G.Φ) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     have hmem : (C a : MRing ι) ∈ imageZ v P' := by
       rw [← G.ker_x, RingHom.mem_ker, aeval_C]
@@ -119,7 +124,7 @@ theorem FibreDim.proof : FibreDimStatement := by
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp
-    | add f g hf hg => simp only [map_add, IntermediateField.coe_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), IntermediateField.coe_add, hf, hg]
     | mul_X f i hf =>
       simp only [map_mul, IntermediateField.coe_mul, hf, aeval_X]
       rfl
@@ -156,7 +161,7 @@ theorem FibreDim.proof : FibreDimStatement := by
           intro f
           induction f using MvPolynomial.induction_on with
           | C a => simp
-          | add f g hf hg => simp only [map_add, hf, hg]
+          | add f g hf hg => simp only [map_add (f := _), hf, hg]
           | mul_X f i hf => simp only [map_mul, hf, aeval_X, rename_X, G.compat]
         rw [map_div₀, key, key]
         exact div_mem (aeval_mem_closure _ _) (aeval_mem_closure _ _)

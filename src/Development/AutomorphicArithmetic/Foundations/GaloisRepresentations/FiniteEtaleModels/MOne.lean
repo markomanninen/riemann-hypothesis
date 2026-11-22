@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BiholomorphicLiftSystem
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BiholomorphicLiftSystem
+
+@[expose] public section
 
 open NumberField GlobalTheory.UPel.HT
 

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.ExistsKmat
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.ExistsKmat
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,8 @@ theorem iw_core (Y : Fin (r + 1) → Fin (2 * r + k + 1) → ℂ) (hk : 1 ≤ k)
     intro a b
     obtain ⟨ca, hca⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 (hspan a)
     obtain ⟨cb, hcb⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 (hspan b)
-    rw [← hca, ← hcb, map_sum, sum_inner]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hca, ← hcb, map_sum, sum_inner]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [inner_sum]
     refine Finset.sum_eq_zero fun j _ => ?_
@@ -81,7 +86,8 @@ theorem iw_core (Y : Fin (r + 1) → Fin (2 * r + k + 1) → ℂ) (hk : 1 ≤ k)
   · have h1 : (WithLp.toLp 2 (Y a) : EE k r) = ∑ b, τ b a • (WithLp.toLp 2 (κ *ᵥ phiV' k r b) : EE k r) := by
       rw [hwe a]; simp only [hκ']
     have h2 := congrArg (WithLp.linearEquiv 2 ℂ (Fin (2 * r + k + 1) → ℂ)) h1
-    rw [map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h2
     simpa using h2
   · rw [ga_eq]
     have hle : l.val + 1 ≤ r + 1 := by omega

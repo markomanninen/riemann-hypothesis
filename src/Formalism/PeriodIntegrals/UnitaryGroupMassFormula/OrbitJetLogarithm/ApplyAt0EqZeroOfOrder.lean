@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.JetMul
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.JetMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {Lt : Type} [Fintype Lt] [DecidableEq Lt] {N0 N1 : ℕ} (l : ℕ) [Fact
 
 theorem applyTerm_addT (T1 T2 : MvPowerSeries (Lt × Fin N0 × Fin N1) ℂ_[l]) (μ : XZ Lt N0 N1 →₀ ℕ) (c : ℤ) :
     applyTerm l (T1 + T2) μ c = applyTerm l T1 μ c + applyTerm l T2 μ c := by
-  simp [applyTerm, mul_add, map_add]
+  simp [applyTerm, mul_add, map_add (f := _)]
 
 theorem applyAt0_addT (T1 T2 : MvPowerSeries (Lt × Fin N0 × Fin N1) ℂ_[l]) (P : MvPolynomial (XZ Lt N0 N1) ℤ) :
     applyAt0 N0 N1 l (T1 + T2) P = applyAt0 N0 N1 l T1 P + applyAt0 N0 N1 l T2 P := by
@@ -78,8 +82,9 @@ theorem trunc_split (n : ℕ) (U : MvPowerSeries σ K) :
   refine ⟨Q.support, U - (Q : MvPowerSeries σ K), ?_, ?_⟩
   · have hQ : (Q : MvPowerSeries σ K) = ∑ k ∈ Q.support, MvPowerSeries.monomial k (MvPowerSeries.coeff k U) := by
       conv_lhs => rw [Q.as_sum]
-      rw [show ((∑ k ∈ Q.support, MvPolynomial.monomial k (MvPolynomial.coeff k Q) : MvPolynomial σ K) :
-          MvPowerSeries σ K) = ∑ k ∈ Q.support, ((MvPolynomial.monomial k (MvPolynomial.coeff k Q) :
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [show ((∑ k ∈ Q.support, MvPolynomial.monomial k (AddMonoidAlgebra.coeff Q k) : MvPolynomial σ K) :
+          MvPowerSeries σ K) = ∑ k ∈ Q.support, ((MvPolynomial.monomial k (AddMonoidAlgebra.coeff Q k) :
           MvPolynomial σ K) : MvPowerSeries σ K) from map_sum (MvPolynomial.coeToMvPowerSeries.ringHom) _ _]
       refine Finset.sum_congr rfl fun k hk => ?_
       rw [MvPolynomial.coe_monomial]

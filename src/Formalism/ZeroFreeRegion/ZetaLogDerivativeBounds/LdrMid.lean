@@ -1,4 +1,8 @@
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.LdrInvSubOneLe
+module
+
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.LdrInvSubOneLe
+
+@[expose] public section
 
 open Complex Metric
 

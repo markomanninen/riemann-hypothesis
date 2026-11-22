@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.VacuumIwasawa.IwaCut
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.VacuumIwasawa.IwaCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,6 @@ open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.Inde
 namespace PositivityTheory.SiegelWeilFormula.Avac
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-
-local notation:70 X:70 " ⬝ " Y:71 => @HMul.hMul _ _ _ Matrix.instHMulOfFintypeOfMulOfAddCommMonoid X Y
 
 section Mat
 
@@ -41,9 +43,9 @@ theorem det_row {ι R : Type} [Fintype ι] [DecidableEq ι] [CommRing R] {A : Ma
   set v : ι → R := Pi.single c 1 with hv
   have hvc : v c = 1 := by simp [hv]
   have hvn : ∀ j, j ≠ c → v j = 0 := fun j hj => by simp [hv, Pi.single_eq_of_ne hj]
-  have e : A = 1 + Matrix.replicateCol Unit v ⬝ Matrix.replicateRow Unit (A c - v) := by
+  have e : A = 1 + Matrix.replicateCol Unit v * Matrix.replicateRow Unit (A c - v) := by
     ext j k
-    have hm : (Matrix.replicateCol Unit v ⬝ Matrix.replicateRow Unit (A c - v)) j k = v j * (A c k - v k) := by
+    have hm : (Matrix.replicateCol Unit v * Matrix.replicateRow Unit (A c - v)) j k = v j * (A c k - v k) := by
       simp [Matrix.mul_apply]
     rw [Matrix.add_apply, hm]
     by_cases hj : j = c

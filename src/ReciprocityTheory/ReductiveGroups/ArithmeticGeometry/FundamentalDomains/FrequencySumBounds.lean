@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealFlowPeriodsSpanEqTop
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealFlowPeriodsSpanEqTop
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -155,7 +159,7 @@ theorem freq_sum_bound (X : Data E r) (la : Wt X.Ψ r) (a : ℝ) (ha : 0 < a) :
         Finset.sum_le_sum_of_subset_of_nonneg hsub
           (fun k _ _ => Finset.prod_nonneg fun p _ => hw0 _)
     _ = ∏ _p : U, ∑ j ∈ I, w j := (Finset.prod_univ_sum (fun _ : U => I) (fun _ j => w j)).symm
-    _ ≤ ∏ _p : U, Z := Finset.prod_le_prod (fun _ _ => Finset.sum_nonneg fun j _ => hw0 j)
+    _ ≤ ∏ _p : U, Z := Finset.prod_le_prod₀ (fun _ _ => Finset.sum_nonneg fun j _ => hw0 j)
           (fun _ _ => hZ ▸ hw.sum_le_tsum I (fun j _ => hw0 j))
     _ = Z ^ U.card := by simp
 

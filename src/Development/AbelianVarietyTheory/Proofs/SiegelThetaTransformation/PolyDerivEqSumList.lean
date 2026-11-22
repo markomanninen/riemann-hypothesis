@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PolyDerivVanishesOfTranslationInvariance
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.PolyDerivVanishesOfTranslationInvariance
+
+@[expose] public section
 
 open Filter Topology
 open scoped ComplexConjugate
@@ -78,7 +82,8 @@ theorem polyDeriv_barP_symm [StarAddMonoid W] [StarModule ℂ W] (P : MvPolynomi
   have e2 := polyDeriv_polyDeriv P (barP P) u hG
   dsimp only at e1 e2
   rw [e1, e2, hs, Finset.sum_comm]
-  simp only [map_sum, map_mul, hc, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hc, Complex.conj_conj]
   refine Finset.sum_congr rfl fun m _ => Finset.sum_congr rfl fun m' _ => ?_
   have h1 : (fun p : W × W => G p.1 p.2) =
       fun p => conj ((fun q : W × W => F q.2 q.1) (star p)) := funext fun p => h p.1 p.2
@@ -98,7 +103,7 @@ theorem lineDerivList_exp (ℓ : W →L[ℂ] ℂ) (C : ℂ) (l : List W) :
     lineDerivList ℂ l (fun w => C * Complex.exp (ℓ w)) =
       fun w => (l.map ℓ).prod * (C * Complex.exp (ℓ w)) := by
   induction l with
-  | nil => simp
+  | nil => simp [lineDerivList]
   | cons v l ih =>
     funext w
     rw [lineDerivList_cons, ih]
@@ -143,7 +148,7 @@ theorem coeff_aeval_smul_X [Fintype σ] (t : σ → ℂ) (Q : MvPolynomial σ �
     by_cases e : m = n
     · subst e; simp [mul_comm]
     · simp [e, Ne.symm e]
-  | add P Q hP hQ => simp only [map_add, hP, hQ, MvPolynomial.coeff_add, mul_add]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ, MvPolynomial.coeff_add, mul_add]
 
 theorem polyDeriv_barP_exp [Fintype σ] [DecidableEq σ] (P : MvPolynomial σ ℂ) (u : σ → W)
     (π : σ → W →L[ℂ] ℂ) (hπ : ∀ s s', π s (u s') = if s = s' then 1 else 0) (t : σ → ℝ) (C : ℝ) :

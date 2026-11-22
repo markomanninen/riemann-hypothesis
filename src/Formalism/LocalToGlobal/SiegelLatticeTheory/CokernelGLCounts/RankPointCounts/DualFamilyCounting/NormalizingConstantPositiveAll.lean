@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcAllC
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowFormAllOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Rescale
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AmpValAll
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXDens
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataTies
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocVolPrim
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataPos
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdConvHoldsGen
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovolumeFrames.StepSize
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocFramePrim
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcAllC
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowFormAllOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Rescale
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AmpValAll
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXDens
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataTies
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocVolPrim
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataPos
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdConvHoldsGen
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovolumeFrames.StepSize
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocFramePrim
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,9 +38,10 @@ theorem normalizing_constants_all (hCov : Formalism.L2.SG.Pf.NcReal.JX.CovolRef)
   have hStd : StdHyp T.X.B.I.cm.sig T.X.B.I.J T.ψ :=
     ⟨MassDataVolumesW.stepCM T.X, MassDataVolumesW.stepHerm T.X, T.ψ_char, T.ψ_std⟩
   have hlat : ∃ L : Submodule (NumberField.RingOfIntegers T.X.B.I.E) (Fin T.X.B.I.n → T.X.B.I.E),
-      Submodule.IsLattice T.X.B.I.E L ∧
+      Submodule.IsFullLattice T.X.B.I.E L ∧
       (L : Set (Fin T.X.B.I.n → T.X.B.I.E)) = (T.X.B.I.L : Set (Fin T.X.B.I.n → T.X.B.I.E)) :=
-    ⟨T.X.B.I.L, ⟨T.X.B.I.L_fg, T.X.B.I.L_span⟩, rfl⟩
+    ⟨T.X.B.I.L, ⟨{ toIsLattice := Submodule.IsLattice.of_fg T.X.B.I.E T.X.B.I.L_fg,
+                    span_eq_top := T.X.B.I.L_span }, rfl⟩⟩
   have hdet' : (gramE T.X.B.I.cm.sig T.X.B.I.J (tupH (frameOf T.X u'))).det ≠ 0 :=
     Formalism.L2.SG.Pf.Rescale.standard_gram_nondegenerate T.X.B.I.F T.X.B.I.E T.X.B.I.cm.sig T.X.B.I.n T.X.B.I.J _ _ _
       (fun x => star_star x) hStd.2.1 (Formalism.L2.SG.Pf.Rescale.frame_stdX T.X u')

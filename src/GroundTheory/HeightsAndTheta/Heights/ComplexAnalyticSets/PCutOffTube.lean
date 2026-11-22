@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffTube
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeFormCompare
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeEuclMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffTube
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeFormCompare
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeEuclMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

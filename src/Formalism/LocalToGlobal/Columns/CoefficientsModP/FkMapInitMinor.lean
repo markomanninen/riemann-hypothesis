@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+module
+
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+
+@[expose] public section
 
 open MvPolynomial
 open scoped Matrix

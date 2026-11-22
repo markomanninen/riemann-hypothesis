@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -42,7 +46,8 @@ theorem UpperTheory.ConvolutionTheory.R2.H.avg :
   intro h
   have hinj : Function.Injective (fun q : H ⧸ S => (Quotient.out q : H)) :=
     fun a b hab => Quotient.out_injective hab
-  rw [Finset.sum_image hinj.injOn, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_image hinj.injOn, map_sum]
   refine Fintype.sum_equiv (ι := H ⧸ S) (κ := H ⧸ S) (MulAction.toPerm h) _ _ ?_
   intro q
   show ρ h (ρ (Quotient.out q) x) = ρ (Quotient.out (h • q)) x

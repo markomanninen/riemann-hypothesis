@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+
+@[expose] public section
 
 noncomputable section
 

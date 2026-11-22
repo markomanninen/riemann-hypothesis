@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionHeight
-import GroundTheory.AutomorphicForms.ReductionIdele
-import GroundTheory.GlobalFields.Adele.Discrete
-import GroundTheory.GlobalFields.Adele.Compact
-import GroundTheory.GlobalFields.IdeleGroups.Restricted
-import GroundTheory.GlobalFields.IdeleGroups.UnitBound
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionHeight
+public import GroundTheory.AutomorphicForms.ReductionIdele
+public import GroundTheory.GlobalFields.Adele.Discrete
+public import GroundTheory.GlobalFields.Adele.Compact
+public import GroundTheory.GlobalFields.IdeleGroups.Restricted
+public import GroundTheory.GlobalFields.IdeleGroups.UnitBound
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set Matrix
 open scoped NumberField.AdeleRing RestrictedProduct
@@ -51,7 +55,7 @@ theorem finprod_le_finprod_of_nonneg {α : Type*} {f g : α → ℝ}
       (fun a ha => Finset.mem_coe.2 (Finset.mem_union_left _ (hf.mem_toFinset.2 ha))),
     finprod_eq_prod_of_mulSupport_subset g (s := hf.toFinset ∪ hg.toFinset)
       (fun a ha => Finset.mem_coe.2 (Finset.mem_union_right _ (hg.mem_toFinset.2 ha)))]
-  exact Finset.prod_le_prod (fun a _ => h0 a) fun a _ => h a
+  exact Finset.prod_le_prod₀ (fun a _ => h0 a) fun a _ => h a
 
 theorem adelicNorm_le_of_local {y y' : Fin n → 𝔸[K]} (hy : HasFiniteContent y)
     (hy' : HasFiniteContent y') (a : InfinitePlace K → ℝ) (b : HeightOneSpectrum (𝓞 K) → ℝ)
@@ -72,7 +76,7 @@ theorem adelicNorm_le_of_local {y y' : Fin n → 𝔸[K]} (hy : HasFiniteContent
   have hinf' : ∏ w, euclidNorm (infComp w y) ^ w.mult ≤
       (∏ w, a w ^ w.mult) * ∏ w, euclidNorm (infComp w y') ^ w.mult := by
     rw [← Finset.prod_mul_distrib]
-    exact Finset.prod_le_prod (fun w _ => pow_nonneg (euclidNorm_nonneg _) _) fun w _ => by
+    exact Finset.prod_le_prod₀ (fun w _ => pow_nonneg (euclidNorm_nonneg _) _) fun w _ => by
       rw [← mul_pow]
       exact pow_le_pow_left₀ (euclidNorm_nonneg _) (hinf w) _
   have hfin' : ∏ᶠ v, ‖finComp v y‖ ≤ (∏ v ∈ S, b v) * ∏ᶠ v, ‖finComp v y'‖ := by
@@ -345,13 +349,13 @@ theorem exists_finite_smul_mem_of_height_le {C : Set (AdelicGLn.AdelicGL K n)} (
   have hup : (ideleModule K s : ℝ) ≤ B := by
     refine le_trans ?_ hxB
     rw [hmod, height, ← hy, adelicNorm]
-    exact mul_le_mul_of_nonneg_right (Finset.prod_le_prod (fun _ _ => pow_nonneg (norm_nonneg _) _)
+    exact mul_le_mul_of_nonneg_right (Finset.prod_le_prod₀ (fun _ _ => pow_nonneg (norm_nonneg _) _)
       fun w _ => pow_le_pow_left₀ (norm_nonneg _) (norm_le_euclidNorm_pi _) _) hfp
   have hlow : ε / P₀ ≤ (ideleModule K s : ℝ) := by
     rw [div_le_iff₀ hP₀pos]
     refine (hεC g hg x hx).trans ?_
     rw [hmod, height, ← hy, adelicNorm, mul_comm _ P₀, ← mul_assoc, hP₀, ← Finset.prod_mul_distrib]
-    refine mul_le_mul_of_nonneg_right (Finset.prod_le_prod (fun _ _ => pow_nonneg (euclidNorm_nonneg _) _)
+    refine mul_le_mul_of_nonneg_right (Finset.prod_le_prod₀ (fun _ _ => pow_nonneg (euclidNorm_nonneg _) _)
       fun w _ => ?_) hfp
     rw [← mul_pow]
     exact pow_le_pow_left₀ (euclidNorm_nonneg _) (euclidNorm_le_sqrt_mul _) _

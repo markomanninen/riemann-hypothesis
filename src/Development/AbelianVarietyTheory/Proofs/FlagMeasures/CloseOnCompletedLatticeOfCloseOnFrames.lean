@@ -1,14 +1,19 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCommonStabiliserEqPairingMatrixStabiliser
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalExtend
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralOfQuad
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCommonStabiliserEqPairingMatrixStabiliser
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalExtend
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralOfQuad
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL NumberField IsDedekindDomain
 open scoped Pointwise ENNReal Classical
 
@@ -144,7 +149,8 @@ theorem close_on_lattice : ∀ {F E : Type} [Field F] [NumberField F] [Field E] 
     have hl' : l = w + ∑ q, α q • Sum.elim G.f G.f' q := by simp only [w, sub_add_cancel]
     have hsplit : h (A.bc p l) - A.bc p l = ∑ q, (A.loc p).ιE (α q) •
         (h (A.bc p (Sum.elim G.f G.f' q)) - A.bc p (Sum.elim G.f G.f' q)) := by
-      rw [hl', bc_add, bc_sum, map_add, map_sum, hhw]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hl', bc_add, bc_sum, map_add (f := _), map_sum, hhw]
       simp only [bc_smul, map_smul, smul_sub, Finset.sum_sub_distrib]
       abel
     have hα : ∀ q, ∃ o : 𝓞 E, (D : E) ^ 2 * α q = o := by
@@ -173,7 +179,7 @@ theorem close_on_lattice : ∀ {F E : Type} [Field F] [NumberField F] [Field E] 
   | add a b _ _ ha hb' =>
     obtain ⟨y1, hy1, e1⟩ := ha
     obtain ⟨y2, hy2, e2⟩ := hb'
-    exact ⟨y1 + y2, add_mem hy1 hy2, by rw [map_add, smul_add, ← e1, ← e2]; abel⟩
+    exact ⟨y1 + y2, add_mem hy1 hy2, by rw [map_add (f := _), smul_add, ← e1, ← e2]; abel⟩
   | smul c a _ ha =>
     obtain ⟨y, hy, e⟩ := ha
     refine ⟨c • y, Submodule.smul_mem _ c hy, ?_⟩

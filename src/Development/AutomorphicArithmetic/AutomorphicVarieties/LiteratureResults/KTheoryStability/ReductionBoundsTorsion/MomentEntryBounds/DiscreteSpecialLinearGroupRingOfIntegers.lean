@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.InstLCSL
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.InstLCSL
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem eq_zero_of_lt_one {L : Type} [Field L] [NumberField L] (a : 𝓞 L)
     obtain ⟨w0⟩ := (inferInstance : Nonempty (InfinitePlace L))
     rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ w0)]
     have hp : ∏ w ∈ Finset.univ.erase w0, w (a : L) ^ w.mult ≤ 1 :=
-      Finset.prod_le_one (fun w _ => pow_nonneg (apply_nonneg _ _) _)
+      Finset.prod_le_one₀ (fun w _ => pow_nonneg (apply_nonneg _ _) _)
         (fun w _ => pow_le_one₀ (apply_nonneg _ _) (h w).le)
     have hw0 : w0 (a : L) ^ w0.mult < 1 :=
       pow_lt_one₀ (apply_nonneg _ _) (h w0) InfinitePlace.mult_pos.ne'

@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPair
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormOpen
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.CyclicBr
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.EqZeroOfMemBrKerOfCoprime
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecCyclicB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPair
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormOpen
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.CyclicBr
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.EqZeroOfMemBrKerOfCoprime
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecCyclicB
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -19,7 +23,7 @@ def RecCyc.kerChar (χ : charGrp (GK p K)) : Subgroup (GK p K) where
   one_mem' := map_zero χ.1
   mul_mem' := fun {a b} ha hb => by
     show χ.1 (Additive.ofMul a + Additive.ofMul b) = 0
-    rw [map_add, show χ.1 (Additive.ofMul a) = 0 from ha, show χ.1 (Additive.ofMul b) = 0 from hb, add_zero]
+    rw [map_add (f := _), show χ.1 (Additive.ofMul a) = 0 from ha, show χ.1 (Additive.ofMul b) = 0 from hb, add_zero]
   inv_mem' := fun {a} ha => by
     show χ.1 (- Additive.ofMul a) = 0
     rw [map_neg, show χ.1 (Additive.ofMul a) = 0 from ha, neg_zero]
@@ -33,7 +37,7 @@ theorem normal_of_char (χ : charGrp (GK p K)) (hχ : ∀ g, χ.1 (Additive.ofMu
     (subG p K L).Normal := by
   refine ⟨fun n hn g => ?_⟩
   rw [← hχ] at hn ⊢
-  rw [ofMul_mul, ofMul_mul, ofMul_inv, map_add, map_add, map_neg, hn]
+  rw [ofMul_mul, ofMul_mul, ofMul_inv, map_add (f := _), map_add (f := _), map_neg, hn]
   abel
 
 noncomputable def RecCyc.charBar [(subG p K L).Normal] (χ : charGrp (GK p K)) (hχ : TrivOn p K L χ) :
@@ -44,7 +48,7 @@ noncomputable def RecCyc.charBar [(subG p K L).Normal] (χ : charGrp (GK p K)) (
 theorem RecCyc.charBar_injective [(subG p K L).Normal] (χ : charGrp (GK p K))
     (hχ : ∀ g, χ.1 (Additive.ofMul g) = 0 ↔ g ∈ subG p K L) :
     Injective (RecCyc.charBar χ (fun g hg => (hχ g).2 hg)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨g, hg⟩ := QuotientGroup.mk_surjective (Additive.toMul a)
   have ha' : a = Additive.ofMul (QuotientGroup.mk g) := by rw [hg]; rfl

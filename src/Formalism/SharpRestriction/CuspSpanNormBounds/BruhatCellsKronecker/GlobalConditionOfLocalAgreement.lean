@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem mem_iff_forall_atP (I : FractionalIdeal (𝓞 E)⁰ E) (t : E) :
           have ha' : algebraMap F E (a : F) * t ∈ I := ha
           have hb' : algebraMap F E (b : F) * t ∈ I := hb
           change algebraMap F E ((a : F) + (b : F)) * t ∈ I
-          rw [map_add, add_mul]
+          rw [map_add (f := _), add_mul]
           exact Submodule.add_mem (I : Submodule (𝓞 E) E) ha' hb'
         zero_mem' := by
           change algebraMap F E (0 : F) * t ∈ I
@@ -218,7 +222,7 @@ private theorem exists_integer_eq_algebraMap_integer (b : 𝓞 F) : ∃ z : 𝓞
 
 theorem int_iff (hinv : ∀ x, sig (sig x) = x) (hfix : ∀ x : E, sig x = x → ∃ a : F, algebraMap F E a = x) (x : E) :
     A.ιE x ∈ A.O ↔ atP p 1 x := by
-  obtain ⟨tr, htr⟩ := hfix (x + sig x) (by rw [map_add, hinv, add_comm])
+  obtain ⟨tr, htr⟩ := hfix (x + sig x) (by rw [map_add (f := _), hinv, add_comm])
   obtain ⟨nm, hnm⟩ := hfix (x * sig x) (by rw [map_mul, hinv, mul_comm])
   have hq : x * x - algebraMap F E tr * x + algebraMap F E nm = 0 := by
     rw [htr, hnm]
@@ -230,7 +234,7 @@ theorem int_iff (hinv : ∀ x, sig (sig x) = x) (hfix : ∀ x : E, sig x = x →
       exact cj_mem A _ hx
     have htrO : A.ιF tr ∈ 𝒪[A.Fp] := by
       apply mem_OF_of_alg A
-      rw [← A.compat, htr, map_add]
+      rw [← A.compat, htr, map_add (f := _)]
       exact A.O.add_mem hx hsx
     have hnmO : A.ιF nm ∈ 𝒪[A.Fp] := by
       apply mem_OF_of_alg A
@@ -825,6 +829,7 @@ theorem locGen_gdd (p : PlF D) (c : D.host.F)
     simp only [Lat.gS, Nat.cast_mul]
     exact mul_ne_zero (Nat.cast_ne_zero.2 (D.host.g_prime 0).ne_zero) (Nat.cast_ne_zero.2 (D.host.g_prime 1).ne_zero)
   simp only [gdd, zpow_natCast, map_mul, map_pow, map_natCast]
+  rw [FractionalIdeal.spanSingleton_pow]
   exact (LocGen.span (p := p) (pow_ne_zero k hgS)).mul (h.pow ν)
 
 theorem laIsPeriod_of (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
@@ -858,42 +863,6 @@ section Rec3
 open Formalism.MainNotions.S.LocalSplitGroups Formalism.MainNotions.JointEigenvalueBoundsFromAnyDatum Formalism.MainNotions.LocalModelPeriodLattices
 
 variable {D : Formalism.BasicNotions.D7}
-
-theorem G1root_of_agree (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-    (hA : ∀ p, Agree δ M p) : G1root δ M := by
-  intro p x
-  obtain ⟨-, hδ, -, -, hpsi, -⟩ := hA p
-  rw [hpsi]
-  congr 1
-  have hg : ((gpart p : ℕ) : (D.s.atP p).Fp) ≠ 0 := natFp_ne_zero p _ (gpart_ne_zero p)
-  have hoth : ((oth p : ℕ) : (D.s.atP p).Fp) ≠ 0 := natFp_ne_zero p _ (oth_ne_zero p)
-  have hu : ((uP p : ℚ) : D.host.E) = algebraMap D.host.F D.host.E (((oth p : ℕ) : D.host.F)⁻¹) := by
-    rw [unitAt_eq p]
-    simp [map_inv₀, map_natCast]
-  have hx : x / ((Lat.gS D : ℕ) : D.host.E) = x * algebraMap D.host.F D.host.E (((Lat.gS D : ℕ) : D.host.F)⁻¹) := by
-    rw [map_inv₀, map_natCast, div_eq_mul_inv]
-  rw [qE_eq p, inverse_alg _ hg, hx, hu]
-  simp only [map_neg, map_mul, (D.s.atP p).compat]
-  simp only [map_inv₀, map_natCast]
-  rw [neg_inj]
-  have e : δ p * ((oth p : ℕ) : (D.s.atP p).Fp)⁻¹ * ((gpart p : ℕ) : (D.s.atP p).Fp)⁻¹ * (δ p)⁻¹ =
-      ((Lat.gS D : ℕ) : (D.s.atP p).Fp)⁻¹ := by
-    rw [← gpart_mul_oth p, Nat.cast_mul]
-    field_simp
-  rw [← e]
-  simp only [map_mul]
-  ring
-
-theorem G3lat_of (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-    (hA : ∀ p, Agree δ M p) (hd : ∀ p, IsDiffGen δ p) (ν s : ℕ) :
-    (∀ t, t ∈ La M δ ν s ↔ t ∈ gdd (D := D) 1 ν ∧ t - (-1) ^ s * D.conjF t ∈ gdd (D := D) 2 ν) ∧
-    (∀ t ∈ gdd (D := D) 2 ν, t ∈ La M δ ν s) ∧
-    (∀ l ∈ dualPsiG (D := D) (La M δ ν s), l ∈ gdd (D := D) (-1) (-((ν : ℤ) + 1))) :=
-  ⟨laIsPeriod_of δ M hA hd ν s, period_lattice_bounds_of_known δ M ν s (laIsPeriod_of δ M hA hd ν s)⟩
-
-theorem global_condition_of_local_agreement (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-    (hA : ∀ p, Agree δ M p) (hd : ∀ p, IsDiffGen δ p) (i : ℕ) (hi : i ≤ D.R.rS + 1) : G4 δ M i :=
-  period_lattice_unramified_of_known (unramE D) δ M i hi (laIsPeriod_of δ M hA hd _ 1)
 
 end Rec3
 

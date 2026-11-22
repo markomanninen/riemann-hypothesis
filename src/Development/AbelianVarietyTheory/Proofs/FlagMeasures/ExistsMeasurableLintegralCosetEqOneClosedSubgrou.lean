@@ -1,13 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
 namespace GlobalTheory
 
+
 open MeasureTheory in
 open scoped ENNReal in
 open scoped Pointwise in
-
 theorem _root_.GlobalTheory.exists_measurable_lintegral_coset_eq_one
     (G H : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G]
     [T2Space G] [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G] [Group H]
@@ -29,13 +33,15 @@ theorem _root_.GlobalTheory.exists_measurable_lintegral_coset_eq_one
       _ = 2⁻¹ ^ n := ENNReal.div_mul_cancel (by simp) (by simp [ha n])
   have hKm : ∀ n, MeasurableSet (K n) := fun n => (K.isCompact n).isClosed.measurableSet
   set f : G → ℝ≥0∞ := fun y => ∑' n, (K n).indicator (fun _ => c n) y with hf_def
-  have hf : Measurable f := Measurable.ennreal_tsum fun n => measurable_const.indicator (hKm n)
+  have hf : Measurable f := Measurable.tsum fun n => measurable_const.indicator (hKm n)
   have hf_pos : ∀ y, f y ≠ 0 := by
     intro y
     obtain ⟨n, hn⟩ := K.exists_mem y
     refine ne_of_gt (lt_of_lt_of_le (pos_iff_ne_zero.2 (hc_pos n)) ?_)
     calc c n = (K n).indicator (fun _ => c n) y := (Set.indicator_of_mem hn (fun _ => c n)).symm
-      _ ≤ f y := ENNReal.le_tsum n
+      _ ≤ f y := by
+        change (K n).indicator (fun _ => c n) y ≤ ∑' i, (K i).indicator (fun _ => c i) y
+        exact le_tsum (fun i => (K i).indicator (fun _ => c i) y) n
   have hjg : ∀ g, Measurable fun h => j h * g := fun g => hj.continuous.measurable.mul_const g
   have hmeas : ∀ g, Measurable fun h => f (j h * g) := fun g => hf.comp (hjg g)
   set F : G → ℝ≥0∞ := fun g => ∫⁻ h, f (j h * g) ∂ν with hF_def

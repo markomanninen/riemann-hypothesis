@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AevalFirstChernSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AevalFirstChernSurjective
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -33,13 +37,6 @@ namespace GenIso
 
 variable {Z} {L L' L'' : LB Z.X} (φ : Z.GenIso L L')
 
-theorem rel' (i i₁ : L.ι) (j j₁ : L'.ι) {W : Z.X.Opens} (h : W ≤ Z.gen ⊓ (L.U i ⊓ L'.U j))
-    (h₁ : W ≤ Z.gen ⊓ (L.U i₁ ⊓ L'.U j₁)) (hi : W ≤ L.U i ⊓ L.U i₁) (hj : W ≤ L'.U j ⊓ L'.U j₁) :
-    res h (φ.u i j) * res hj (L'.g j j₁) = res hi (L.g i i₁) * res h₁ (φ.u i₁ j₁) := by
-  have := congrArg (fun u => (res (le_inf h (h₁.trans inf_le_right)) u).val) (φ.rel i i₁ j j₁)
-  refine Units.ext ?_
-  simpa only [map_mul, Units.val_mul, val_res, resG_resG] using this
-
 def pair (hL : L.IsLB) (hL' : L'.IsLB) : VPair Z :=
   .ofUnits (LB.div L L') (Semi.LB.isLB_div hL hL') (fun p => (φ.u p.1 p.2).val) (fun _ => Units.isUnit _) fun p q => by
     have := congrArg Units.val (eq_mul_inv_iff_mul_eq.2 (φ.rel p.1 q.1 p.2 q.2))
@@ -56,96 +53,6 @@ def dual : Z.GenIso (CechPic.dual L) (CechPic.dual L') where
     simp only [mul_inv, ← map_inv] at this
     exact this
 
-def symm : Z.GenIso L' L where
-  u j i := res (inf_le_inf_left _ (inf_comm _ _).le) (φ.u i j)⁻¹
-  rel j j₁ i i₁ := by
-    have h := φ.rel' i i₁ j j₁ (W := Z.gen ⊓ (L'.U j ⊓ L.U i) ⊓ (L'.U j₁ ⊓ L.U i₁))
-      (inf_le_left.trans (inf_le_inf_left _ (inf_comm _ _).le))
-      (inf_le_inf inf_le_left (inf_comm _ _).le)
-      (inf_le_inf (inf_le_right.trans inf_le_right) inf_le_right)
-      (inf_le_inf (inf_le_right.trans inf_le_left) inf_le_left)
-    have e (a b) {W W' : Z.X.Opens} (h₁ : W ≤ Z.gen ⊓ (L.U a ⊓ L'.U b)) (h₂ : W' ≤ W) :
-        res h₂ (res h₁ (φ.u a b)⁻¹) = (res (h₂.trans h₁) (φ.u a b))⁻¹ :=
-      (Units.ext (resG_resG _ _ _)).trans (map_inv _ _)
-    rw [e, e, inv_mul_eq_iff_eq_mul, ← mul_assoc, eq_mul_inv_iff_mul_eq]
-    exact h.symm
-
-def ofGlobal (w : LB.Iso L' L) (hw : w.IsGen) : Z.GenIso L L' where
-  u i j := res inf_le_right (w.s (i, j))
-  rel i i₁ j j₁ := by
-    have h : res _ (w.s (i, j)) = res _ _ * (res _ _)⁻¹ * res _ (w.s (i₁, j₁)) := hw (i, j) (i₁, j₁)
-    rw [mul_right_comm, eq_mul_inv_iff_mul_eq] at h
-    have := congrArg (res (inf_le_inf_right (L.U i₁ ⊓ L'.U j₁) (inf_le_right : Z.gen ⊓ (L.U i ⊓ L'.U j) ≤ _))) h
-    rw [map_mul, map_mul] at this
-    exact (congrArg₂ (· * ·) ((Semi.LB.res_res _ _ _).trans (Semi.LB.res_res _ _ _).symm)
-      (Semi.LB.res_res _ _ _).symm).trans (this.trans (congrArg₂ (· * ·) (Semi.LB.res_res _ _ _)
-        ((Semi.LB.res_res _ _ _).trans (Semi.LB.res_res _ _ _).symm)))
-
-theorem chart_eq (p : (L.pull Z.gen.ι).ι × (L'.pull Z.gen.ι).ι) :
-    (L.pull Z.gen.ι).U p.1 ⊓ (L'.pull Z.gen.ι).U p.2 = Z.gen.ι ⁻¹ᵁ (Z.gen ⊓ (L.U (p.1 ⟨⟩) ⊓ L'.U (p.2 ⟨⟩))) :=
-  le_antisymm (fun x hx => ⟨x.2, mem_pull.1 hx.1, mem_pull.1 hx.2⟩) fun _ hx => ⟨mem_pull.2 hx.2.1, mem_pull.2 hx.2.2⟩
-
-def toIso : LB.Iso (L'.pull Z.gen.ι) (L.pull Z.gen.ι) :=
-  ⟨fun p => res (chart_eq p).le (pullU Z.gen.ι _ (φ.u (p.1 ⟨⟩) (p.2 ⟨⟩)))⟩
-
-theorem isGen_iff (u : ∀ (i : L.ι) (j : L'.ι), Γ(Z.X, Z.gen ⊓ (L.U i ⊓ L'.U j))ˣ) :
-    LB.Gen.IsGen (L := LB.div (L.pull Z.gen.ι) (L'.pull Z.gen.ι))
-      ⟨fun p => res (chart_eq p).le (pullU Z.gen.ι _ (u (p.1 ⟨⟩) (p.2 ⟨⟩)))⟩ ↔
-    ∀ (y : Z.gen.toScheme) i i₁ j j₁, y.1 ∈ L.U i ⊓ L'.U j → y.1 ∈ L.U i₁ ⊓ L'.U j₁ →
-      gm Z.gen.ι y _ (u i j) * gm Z.gen.ι y _ (L'.g j j₁) = gm Z.gen.ι y _ (L.g i i₁) * gm Z.gen.ι y _ (u i₁ j₁) := by
-  have key (y : Z.gen.toScheme) (p q : (L.pull Z.gen.ι).ι × (L'.pull Z.gen.ι).ι)
-      (hp : y ∈ (L.pull Z.gen.ι).U p.1 ⊓ (L'.pull Z.gen.ι).U p.2)
-      (hq : y ∈ (L.pull Z.gen.ι).U q.1 ⊓ (L'.pull Z.gen.ι).U q.2) :=
-    (gm_div' (L.pull Z.gen.ι) (L'.pull Z.gen.ι) (𝟙 _) y p q hp hq).trans (congrArg₂ (fun a b => a * b⁻¹)
-      (gm_pull_g L Z.gen.ι (𝟙 _) y p.1 q.1 hp.1 hq.1) (gm_pull_g L' Z.gen.ι (𝟙 _) y p.2 q.2 hp.2 hq.2))
-  simp only [Category.id_comp] at key
-  rw [isGen_iff_germ]
-  constructor
-  · intro h y i i₁ j j₁ hp hq
-    have hp' : y ∈ (L.pull Z.gen.ι).U (fun _ => i) ⊓ (L'.pull Z.gen.ι).U (fun _ => j) :=
-      ⟨mem_pull.2 hp.1, mem_pull.2 hp.2⟩
-    have hq' : y ∈ (L.pull Z.gen.ι).U (fun _ => i₁) ⊓ (L'.pull Z.gen.ι).U (fun _ => j₁) :=
-      ⟨mem_pull.2 hq.1, mem_pull.2 hq.2⟩
-    have := (gm_rp₁ _ y _ _ _ hp' _).symm.trans ((h y (fun _ => i, fun _ => j) (fun _ => i₁, fun _ => j₁) hp' hq').trans
-      (congrArg₂ (· * ·) (key y (fun _ => i, fun _ => j) (fun _ => i₁, fun _ => j₁) hp' hq') (gm_rp₁ _ y _ _ _ hq' _)))
-    rwa [mul_right_comm, eq_mul_inv_iff_mul_eq] at this
-  · intro h y p q hp hq
-    refine (gm_rp₁ _ y _ _ _ hp _).trans (Eq.trans ?_
-      (congrArg₂ (· * ·) (key y p q hp hq) (gm_rp₁ _ y _ _ _ hq _)).symm)
-    rw [mul_right_comm, eq_mul_inv_iff_mul_eq]
-    exact h y _ _ _ _ ⟨mem_pull.1 hp.1, mem_pull.1 hp.2⟩ ⟨mem_pull.1 hq.1, mem_pull.1 hq.2⟩
-
-theorem isGen_toIso : φ.toIso.IsGen := (isGen_iff φ.u).2 fun y i i₁ j j₁ hp hq => by
-  have hy : Z.gen.ι y ∈ Z.gen ⊓ (L.U i ⊓ L'.U j) ⊓ (L.U i₁ ⊓ L'.U j₁) := ⟨⟨y.2, hp⟩, hq⟩
-  simpa only [map_mul, gm_res _ y _ hy] using congrArg (gm Z.gen.ι y _) (φ.rel i i₁ j j₁)
-
-theorem bijective_res_pullU {V : Z.X.Opens} (hV : V ≤ Z.gen) {W : Z.gen.toScheme.Opens} (h : W = Z.gen.ι ⁻¹ᵁ V) :
-    Function.Bijective fun u => res h.le (pullU Z.gen.ι V u) := by
-  subst h
-  have := Z.gen.ι.isIso_app V (hV.trans Z.gen.opensRange_ι.ge)
-  have e : (fun u => res le_rfl (pullU Z.gen.ι V u)) =
-      Units.mapEquiv (asIso (Z.gen.ι.app V)).commRingCatIsoToRingEquiv.toMulEquiv :=
-    funext fun u => Units.ext (resG_self _ _)
-  rw [e]
-  exact MulEquiv.bijective _
-
-variable (L L') in
-
-def equivIso : Z.GenIso L L' ≃ {w : LB.Iso (L'.pull Z.gen.ι) (L.pull Z.gen.ι) // w.IsGen} :=
-  Equiv.ofBijective (fun φ => ⟨φ.toIso, φ.isGen_toIso⟩) <| by
-    refine ⟨fun φ ψ h => GenIso.ext (funext₂ fun i j => ?_), fun ⟨w, hw⟩ => ?_⟩
-    · exact (bijective_res_pullU inf_le_left (chart_eq (fun _ => i, fun _ => j))).1
-        (congrArg (fun w => w.1.s (fun _ => i, fun _ => j)) h)
-    · choose u hu using fun (i : L.ι) (j : L'.ι) =>
-        (bijective_res_pullU inf_le_left (chart_eq (fun _ => i, fun _ => j))).2 (w.s (fun _ => i, fun _ => j))
-      have e : (⟨fun p => res (chart_eq p).le (pullU Z.gen.ι _ (u (p.1 ⟨⟩) (p.2 ⟨⟩)))⟩ :
-          LB.Iso (L'.pull Z.gen.ι) (L.pull Z.gen.ι)) = w := congrArg LB.Gen.mk (funext fun p => hu _ _)
-      refine ⟨⟨u, fun i i₁ j j₁ => (bijective_res_pullU (inf_le_left.trans inf_le_left) rfl).1
-        (unit_ext fun y hy => ?_)⟩, Subtype.ext e⟩
-      refine (gm_rp₁ _ y _ _ _ hy _).trans (Eq.trans ?_ (gm_rp₁ _ y _ _ _ hy _).symm)
-      have hy' : Z.gen.ι y ∈ Z.gen ⊓ (L.U i ⊓ L'.U j) ⊓ (L.U i₁ ⊓ L'.U j₁) := hy
-      simp only [map_mul, gm_res Z.gen.ι y _ hy']
-      exact (isGen_iff u).1 (e ▸ hw) y i i₁ j j₁ hy.1.2 hy.2
 
 end GenIso
 
@@ -175,48 +82,6 @@ def div : Z.VDivZ := (φ.pair hL hL').cls
 
 @[simp] theorem vCls_div : Z.vCls (φ.div hL hL') = cls L hL - cls L' hL' := (vCls_cls _).trans (cls_div _ _ _)
 
-theorem div_eq_add (φ' : Z.GenIso L' L'') (φ'' : Z.GenIso L L'')
-    (h : ∀ i j k, res (inf_le_inf_left _ (inf_le_inf_right _ inf_le_left) :
-        Z.gen ⊓ (L.U i ⊓ L'.U j ⊓ L''.U k) ≤ _) (φ''.u i k) =
-      res (inf_le_inf_left _ inf_le_left) (φ.u i j) *
-        res (inf_le_inf_left _ (inf_le_inf_right _ inf_le_right)) (φ'.u j k)) :
-    φ''.div hL hL'' = φ.div hL hL' + φ'.div hL' hL'' := by
-  refine VPair.isSum_iff.1 fun a b c => ?_
-  obtain ⟨i, j⟩ := a
-  obtain ⟨j₁, k⟩ := b
-  obtain ⟨i₁, k₁⟩ := c
-  let V := L.U i ⊓ L'.U j ⊓ (L'.U j₁ ⊓ L''.U k) ⊓ (L.U i₁ ⊓ L''.U k₁)
-  have hi : V ≤ L.U i := inf_le_left.trans (inf_le_left.trans inf_le_left)
-  have hj : V ≤ L'.U j := inf_le_left.trans (inf_le_left.trans inf_le_right)
-  have hj₁ : V ≤ L'.U j₁ := inf_le_left.trans (inf_le_right.trans inf_le_left)
-  have hk : V ≤ L''.U k := inf_le_left.trans (inf_le_right.trans inf_le_right)
-  have hi₁ : V ≤ L.U i₁ := inf_le_right.trans inf_le_left
-  have hk₁ : V ≤ L''.U k₁ := inf_le_right.trans inf_le_right
-  refine ⟨res (le_inf hi₁ hi) (L.g i₁ i) * res (le_inf hj hj₁) (L'.g j j₁) * (res (le_inf hk₁ hk) (L''.g k₁ k))⁻¹, ?_⟩
-  have e (W W' W'' : Z.X.Opens) (h₁ : W' ≤ W) (h₂ : W'' ≤ W') (u : Γ(Z.X, W)ˣ) :
-    res h₂ (res h₁ u) = res (h₂.trans h₁) u := Units.ext (resG_resG _ _ _)
-  have h₁ := φ''.rel' i₁ i k₁ k (W := Z.gen ⊓ V) (inf_le_inf_left _ (le_inf hi₁ hk₁))
-    (inf_le_inf_left _ (le_inf hi hk)) (inf_le_right.trans (le_inf hi₁ hi)) (inf_le_right.trans (le_inf hk₁ hk))
-  have h₂ := φ.rel' i i j j₁ (W := Z.gen ⊓ V) (inf_le_inf_left _ (le_inf hi hj))
-    (inf_le_inf_left _ (le_inf hi hj₁)) (inf_le_right.trans (le_inf hi hi)) (inf_le_right.trans (le_inf hj hj₁))
-  have h₃ := congrArg (res (inf_le_inf_left Z.gen (le_inf (le_inf hi hj₁) hk))) (h i j₁ k)
-  have h₄ := congrArg (res ((inf_le_right : Z.gen ⊓ V ≤ V).trans hi)) (hL.g_self i)
-  simp only [map_mul, e, map_one] at h₃ h₄
-  rw [h₄, one_mul] at h₂
-  rw [h₃, ← h₂, ← eq_mul_inv_iff_mul_eq] at h₁
-  refine (congrArg Units.val h₁).trans ?_
-  change _ = (res (inf_le_right : Z.gen ⊓ V ≤ V) _ * (res _ (φ.u i j) * res _ (φ'.u j₁ k))).val
-  refine congrArg Units.val ?_
-  simp only [map_mul, map_inv, e]
-  ac_rfl
-
-@[simp] theorem div_ofGlobal (w : LB.Iso L' L) (hw : w.IsGen) : (ofGlobal w hw : Z.GenIso L L').div hL hL' = 0 := by
-  rw [← VPair.cls_zero]
-  refine (VPair.cls_eq_iff.2 (VPair.isIsom_of_units (fun p _ => res inf_le_left (w.s p)) fun p q => ?_)).symm
-  change resG _ _ (resG _ _ _) = resG _ _ (resG _ _ _) * resG _ _ 1
-  rw [map_one, mul_one]
-  exact (resG_resG _ _ _).trans (resG_resG _ _ _).symm
-
 @[simp] theorem div_smul (g : O) (hg : g ≠ 0) : (smul hL g hg).div hL hL = Z.div g hg := by
   refine (VPair.cls_eq_iff.2 (VPair.isIsom_of_units
     (P' := (smul hL g hg).pair hL hL) (fun p _ => res inf_le_left (L.g p.1 p.2)) fun p q => ?_)).symm
@@ -225,44 +90,14 @@ theorem div_eq_add (φ' : Z.GenIso L' L'') (φ'' : Z.GenIso L L'')
   exact congrArg₂ (· * ·) ((resG_resG _ _ _).trans (resG_resG _ _ _).symm)
     ((resG_resG _ _ _).trans (resG_resG _ _ _).symm)
 
-@[simp] theorem div_symm : φ.symm.div hL' hL = -φ.div hL hL' := by
-  refine eq_neg_of_add_eq_zero_right ((φ.div_eq_add hL hL' hL φ.symm (ofGlobal (idIso L) (idIso_isGen hL))
-    fun i j k => ?_).symm.trans (div_ofGlobal _ _ _ _))
-  have h₁ := φ.rel' i k j j (W := Z.gen ⊓ (L.U i ⊓ L'.U j ⊓ L.U k)) (inf_le_inf_left _ inf_le_left)
-    (inf_le_inf_left _ (le_inf inf_le_right (inf_le_left.trans inf_le_right)))
-    (inf_le_right.trans (inf_le_inf_right _ inf_le_left))
-    (inf_le_right.trans (inf_le_left.trans (le_inf inf_le_right inf_le_right)))
-  have h₂ := congrArg (res ((inf_le_right : Z.gen ⊓ (L.U i ⊓ L'.U j ⊓ L.U k) ≤ _).trans
-    (inf_le_left.trans inf_le_right))) (hL'.g_self j)
-  rw [Semi.LB.res_res, map_one] at h₂
-  rw [h₂, mul_one, ← mul_inv_eq_iff_eq_mul, ← map_inv] at h₁
-  exact (Semi.LB.res_res _ _ _).trans (h₁.symm.trans (congrArg _ (Semi.LB.res_res _ _ _).symm))
-
-@[simp] theorem div_dual : φ.dual.div (isLB_dual hL) (isLB_dual hL') = -φ.div hL hL' := by
-  refine eq_neg_of_add_eq_zero_right ((VPair.isSum_iff.1 fun a b c => ?_).symm.trans (VPair.cls_zero Z))
-  obtain ⟨i, j⟩ := a
-  obtain ⟨i₁, j₁⟩ := b
-  let V := L.U i ⊓ L'.U j ⊓ (L.U i₁ ⊓ L'.U j₁) ⊓ ⊤
-  have hi : V ≤ L.U i ⊓ L.U i₁ := inf_le_left.trans (inf_le_inf inf_le_left inf_le_left)
-  have hj : V ≤ L'.U j ⊓ L'.U j₁ := inf_le_left.trans (inf_le_inf inf_le_right inf_le_right)
-  refine ⟨res hj (L'.g j j₁) * (res hi (L.g i i₁))⁻¹, ?_⟩
-  have h₁ := φ.rel' i i₁ j j₁ (W := Z.gen ⊓ V) (inf_le_inf_left _ (inf_le_left.trans inf_le_left))
-    (inf_le_inf_left _ (inf_le_left.trans inf_le_right)) (inf_le_right.trans hi) (inf_le_right.trans hj)
-  refine (map_one _).trans ?_
-  change (1 : Γ(Z.X, Z.gen ⊓ V)ˣ).val =
-    (res (inf_le_right : Z.gen ⊓ V ≤ V) _ * (res _ (φ.u i j) * res _ (φ.u i₁ j₁)⁻¹)).val
-  refine congrArg Units.val ?_
-  simp only [map_mul, map_inv, Semi.LB.res_res]
-  rw [mul_mul_mul_comm, mul_comm (res _ (L'.g j j₁)), h₁, ← mul_inv, mul_inv_cancel]
-
 end GenIso
 
 variable (Z)
 
 abbrev VDivQ : Type := ℚ ⊗[ℤ] Z.VDivZ
 
-variable {Z} in
 
+variable {Z} in
 def toQ : Z.VDivZ →+ Z.VDivQ := (TensorProduct.mk ℤ ℚ Z.VDivZ 1).toAddMonoidHom
 
 def cDQ : Z.VDivQ →ₗ[ℚ] PicSym Z.X := LinearMap.liftBaseChange ℚ (firstChernPic.comp Z.vCls).toIntLinearMap
@@ -278,37 +113,12 @@ theorem capDeg_vp_toQ (p d : ℕ) (D : Z.VDivZ) (Q : PicSym Z.X) :
     Z.capDeg_vp p d (toQ D) Q = Z.vDeg d D Q / ramIdx O p := by
   simp [capDeg_vp, toQ, div_eq_inv_mul]
 
-def vResQ (C : Z.Comp) : Z.VDivQ →ₗ[ℚ] (Z.comp C).VDivQ := (Z.vRes C).toIntLinearMap.baseChange ℚ
-
-@[simp] theorem vResQ_toQ (C : Z.Comp) (D : Z.VDivZ) : vResQ C (toQ D) = Model.toQ (Z.vRes C D) := rfl
-
-theorem capDeg_vp_eq_sum (p d : ℕ) (D : Z.VDivQ) (Q : PicSym Z.X) : Z.capDeg_vp p d D Q =
-    ∑ C ∈ Finset.univ.filter fun C : Z.Comp => (Z.comp C).relDim = d,
-      (Z.comp C).capDeg_vp p (vResQ C D) (picSymPull (Z.compι C) Q) := by
-  induction D using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a D =>
-    have : a ⊗ₜ[ℤ] D = a • toQ D := by simp [toQ, smul_tmul']
-    simp only [this, map_smul, LinearMap.smul_apply, capDeg_vp_toQ, vResQ_toQ, Model.capDeg_vp_toQ, vDeg_apply,
-      Finset.sum_div, Finset.smul_sum]
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb, Finset.sum_add_distrib]
-
 theorem capDeg_vp_eq_zero (p : ℕ) {d n : ℕ} (D : Z.VDivQ) (hn : n ≠ d) {x : PicSym Z.X}
     (hx : x ∈ symDeg (SmallPic Z.X) n) : Z.capDeg_vp p d D x = 0 := by
   induction D using TensorProduct.induction_on with
   | zero => simp
   | tmul a D => simp [capDeg_vp, vDeg_eq_zero D hn hx]
-  | add a b ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
-
-theorem vDeg_prod {d : ℕ} {D : Z.VDivZ} {I : ∀ C, (Z.comp C).effVert} (h : ∀ C, Z.vRes C D = Model.ofEff (I C))
-    (L : Fin d → FinLB Z.X) : Z.vDeg d D (∏ i, (L i).c1) =
-      ∑ C ∈ Finset.univ.filter fun C : Z.Comp => (Z.comp C).relDim = d,
-        (interLen O (divMod (I C).1) fun i => ((L i).pull (Z.compι C)).lb : ℚ) := by
-  rw [vDeg_apply]
-  refine Finset.sum_congr rfl fun C hC => ?_
-  simp only [h, map_prod, FinLB.pullback_firstChern]
-  exact (Model.vDeg_ofEff_prod _ fun i => ((L i).pull (Z.compι C)).isLB).trans
-    (if_pos ((Fintype.card_fin _).trans (Finset.mem_filter.1 hC).2.symm))
+  | add a b ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
 
 section Theory
 
@@ -316,15 +126,8 @@ variable (Z) (p : ℕ) [Fact p.Prime] [CharZero O] [CharP (ResidueField O) p]
 
 def divP : Z.VDivZ := Z.div p (natCast_ne_zero O p)
 
-theorem toQ_div (g : O) (hg : g ≠ 0) : toQ (Z.div g hg) =
-    (((IsDiscreteValuationRing.addVal O g).toNat : ℚ) / ramIdx O p) • toQ (Z.divP p) := by
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
-  rw [divP, div_eq_addVal_smul hϖ, div_eq_addVal_smul hϖ (natCast_ne_zero O p), map_nsmul, map_nsmul,
-    ← Nat.cast_smul_eq_nsmul ℚ, ← Nat.cast_smul_eq_nsmul ℚ, smul_smul, ← ramIdx,
-    div_mul_cancel₀ _ (Nat.cast_ne_zero.2 (ramIdx_ne_zero O p))]
 
 set_option linter.overlappingInstances false in
-
 @[reducible] def toITh [CharP (ResidueField O) p] (d : ℕ) : Formalism.BasicNotions.DV.ITh where
   LB := FinLB Z.X
   Ch := PicSym Z.X
@@ -338,19 +141,13 @@ set_option linter.overlappingInstances false in
 
 end Theory
 
-variable (Z) in
 
+variable (Z) in
 def vdiv (L L' : FinLB Z.X) (u : Z.GenIso L.lb L'.lb) : Z.VDivQ := toQ (u.div L.isLB L'.isLB)
 
 theorem firstChern_eq_sub_divisor (L L' : FinLB Z.X) (u : Z.GenIso L.lb L'.lb) : L'.c1 = L.c1 - Z.cDQ (Z.vdiv L L' u) := by
   rw [vdiv, cDQ_toQ, GenIso.vCls_div, map_sub]
   exact (sub_sub_cancel _ _).symm
-
-theorem vdiv_dual (L L' : FinLB Z.X) (u : Z.GenIso L.lb L'.lb) : Z.vdiv L.dual L'.dual u.dual = -Z.vdiv L L' u :=
-  (congrArg toQ (u.div_dual L.isLB L'.isLB)).trans (map_neg _ _)
-
-theorem vdiv_symm (L L' : FinLB Z.X) (u : Z.GenIso L.lb L'.lb) : Z.vdiv L' L u.symm = -Z.vdiv L L' u :=
-  (congrArg toQ (u.div_symm L.isLB L'.isLB)).trans (map_neg _ _)
 
 theorem vdiv_smul (L : FinLB Z.X) (g : O) (hg : g ≠ 0) : Z.vdiv L L (.smul L.isLB g hg) = toQ (Z.div g hg) :=
   congrArg toQ (GenIso.div_smul L.isLB g hg)
@@ -373,9 +170,9 @@ section Iso
 variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {B B' : Model O} {f : B'.X ⟶ B.X} [IsIso f]
   (hf : f ≫ B.str = B'.str)
 
+
 variable (f) in
 include f in
-
 theorem relDim_eq_of_isIso : B'.relDim = B.relDim := by
   refine Model.relDim_eq_iff.2 (Eq.trans ?_ B.dim_eq)
   rw [← topologicalKrullDim_eq_of_isEmbedding f.isOpenEmbedding.isEmbedding f.surjective.range_eq,
@@ -476,21 +273,6 @@ theorem capDeg_divP_copies : ((copies O n (N + 1)).toITh p (N + 1)).capDeg ((cop
     nsmul_eq_mul]
   exact mul_div_cancel_right₀ (n : ℚ) (b := ramIdx O p) (Nat.cast_ne_zero.2 (ramIdx_ne_zero O p))
 
-example : let Z := copies O 2 1; let L := twistingSheafOnCopies O 2 1
-    let D := Z.vdiv L L (.smul L.isLB p (natCast_ne_zero O p))
-    (Z.toITh p 1).capDeg D L.c1 = 2 ∧ (Z.toITh p 1).capDeg D L.dual.c1 = -2 ∧ (Z.toITh p 1).capDeg D 1 = 0 := by
-  intro Z L D
-  have h : (Z.toITh p 1).capDeg D L.c1 = 2 := by
-    rw [show D = _ from vdiv_smul _ _ _, ← pow_one L.c1]
-    exact capDeg_divP_copies O 2 0 p
-  exact ⟨h, by rw [FinLB.firstChern_dual, map_neg, h],
-    capDeg_vp_eq_zero p _ (n := 0) (by simp) (Submodule.subset_span ⟨finZeroElim, by simp⟩)⟩
-
-example : ¬ (VPair.const (copies O 1 1) p (natCast_ne_zero O p)).IsIsom (.zero _) := fun h => by
-  have := capDeg_divP_copies O 1 0 p
-  rw [capDeg_vp_toQ, divP, div, VPair.cls_eq_iff.2 h, VPair.cls_zero] at this
-  simp at this
-
 end Example
 
 end NModel
@@ -539,23 +321,6 @@ variable (hp : p.Prime) (hW : (p : ℂ) ∈ W.nonunits) (Z : Mdl Y i₀) (d : �
   haveI := charP_residueField_of_mem_nonunits Z.i.c hp hW
   (nmodel Z).toITh p d
 
-theorem dim_ithOf : (ithOf hp hW Z d).dim = d + 1 := rfl
-
-theorem LB_ithOf : (ithOf hp hW Z d).LB = FinLB Z.X := rfl
-
-theorem firstChern_lineBundleTheory (L : FinLB Z.X) : (ithOf hp hW Z d).c1 L = L.c1 := rfl
-
-theorem firstChern_dual_eq_neg (L : FinLB Z.X) : (ithOf hp hW Z d).c1 L.dual = -(ithOf hp hW Z d).c1 L := L.firstChern_dual
-
-theorem capDeg_ithOf (D : (ithOf hp hW Z d).VDiv) (Q : (ithOf hp hW Z d).Ch) :
-    haveI := Fact.mk hp
-    haveI := isDiscreteValuationRing_V Z.i.c hp hW
-    haveI := charP_residueField_of_mem_nonunits Z.i.c hp hW
-    (ithOf hp hW Z d).capDeg D Q = ∑ C ∈ Finset.univ.filter fun C : (nmodel Z).Comp => ((nmodel Z).comp C).relDim = d,
-      (((nmodel Z).comp C).toITh p).capDeg (NModel.vResQ C D) (picSymPull ((nmodel Z).compι C) Q) :=
-  haveI := isDiscreteValuationRing_V Z.i.c hp hW
-  NModel.capDeg_vp_eq_sum p d D Q
-
 variable {Z}
 
 def vdiv (L L' : FinLB Z.X) (u : GenIso Z L L') : (ithOf hp hW Z d).VDiv :=
@@ -566,11 +331,6 @@ theorem firstChern_eq_sub_divisor (L L' : FinLB Z.X) (u : GenIso Z L L') :
     (ithOf hp hW Z d).c1 L' = (ithOf hp hW Z d).c1 L - (ithOf hp hW Z d).cD (vdiv hp hW d L L' u) :=
   haveI := isDiscreteValuationRing_V Z.i.c hp hW
   NModel.firstChern_eq_sub_divisor (Z := nmodel Z) L L' u
-
-theorem vdiv_dual (L L' : FinLB Z.X) (u : GenIso Z L L') :
-    vdiv hp hW d L.dual L'.dual (NModel.GenIso.dual u) = -vdiv hp hW d L L' u :=
-  haveI := isDiscreteValuationRing_V Z.i.c hp hW
-  NModel.vdiv_dual (Z := nmodel Z) L L' u
 
 def fpairOf {r : ℕ} (x x' : Fin r → FinLB Z.X) (u : ∀ i, GenIso Z (x i) (x' i)) :
     Formalism.BasicNotions.DV.FPair (ithOf hp hW Z d) r :=
@@ -599,10 +359,6 @@ theorem chart_le_gen (a : Fin Z.m) : (Z.U a).1 ≤ (nmodel Z).gen := by
   refine le_basicOpen_of_isUnit le_top ?_
   rw [map_natCast, ← map_natCast (Z.alg a)]
   exact (Ne.isUnit (Nat.cast_ne_zero.2 hp.ne_zero)).map _
-
-theorem opn_subset_gen : Z.opn ⊆ (nmodel Z).gen := by
-  rw [← Z.cover]
-  exact Set.iUnion_subset (chart_le_gen hp hW)
 
 end Mdl
 

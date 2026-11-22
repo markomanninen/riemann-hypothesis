@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLocalCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NfRadOrder0OfRadRed
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLocalCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NfRadOrder0OfRadRed
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -111,7 +115,8 @@ theorem radDZ_comp_left {P : M.Par} {Bs : B.RealPlaceData P.k P.r Wp Wq}
     RadDZ P Bs T' := by
   obtain ⟨n, A, hA, hTA⟩ := hT
   refine ⟨n, fun j ζ => (Mf ζ).comp (A j ζ), fun j => hM.clm_comp (hA j), fun Φ q hq => ?_⟩
-  rw [h Φ q hq, hTA Φ q hq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h Φ q hq, hTA Φ q hq, map_sum]
   rfl
 
 theorem radDZ_fun_left {P : M.Par} {Bs : B.RealPlaceData P.k P.r Wp Wq}

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitution
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitution
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxes
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -117,8 +121,8 @@ private theorem exists_monoidHom_precomp {S : Scheme.{0}} {X Y G : Over S} [GrpO
     ∃ N : (Y ⟶ G) →* (X ⟶ G), ∀ g, N g = h ≫ g :=
   ⟨MonoidHom.mk' (fun g => h ≫ g) (fun a b => MonObj.comp_mul h a b), fun _ => rfl⟩
 
-open GlobalTheory.CechPic in
 
+open GlobalTheory.CechPic in
 theorem forward {h g : ℕ} {W : Matrix (Fin 8) (Fin 8) ℤ} {J : Type} {a : J → Matrix (Fin 8) (Fin 8) ℤ}
     {bas : (Fin (2 * g) → ℤ) ≃ₗ[ℤ] (Fin 8 → (Fin h ⊕ Fin h → ℤ))} {k : ℕ} {o : Type} [CommRing o] {b : TBase o k}
     {S S' : Scheme.{0}} {s : S ⟶ Sp o} {s' : S' ⟶ Sp o} {c : SiegPre h k (b.ζ : o) s} {c' : SiegPre h k (b.ζ : o) s'}
@@ -169,7 +173,8 @@ theorem forward {h g : ℕ} {W : Matrix (Fin 8) (Fin 8) ℤ} {J : Type} {a : J �
     have hPc := (cls_eq_iff c'.isLB (pull_isLB c.isLB φ₂)).2 hP
     rw [cls_pull c.isLB] at hPc
     refine (cls_eq_iff t'.isLB (pull_isLB t.isLB Φ)).1 ?_
-    rw [cls_pull t.isLB, hLt', hLt, cls_linComb c'.isLB, cls_linComb c.isLB, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [cls_pull t.isLB, hLt', hLt, cls_linComb c'.isLB, cls_linComb c.isLB, map_sum]
     refine Finset.sum_congr rfl fun uv _ => ?_
     rw [map_zsmul, hPc, ← pull_comp, ← pull_comp, lift_square hsq Φ (hΦ₂ uv.1).symm (hΦ₂ uv.2).symm]
   · intro i
@@ -262,8 +267,8 @@ theorem exists_factor {S S' : Scheme.{0}} {A C : Over S} {A' C' : Over S'} [GrpO
     rw [← MonObj.mul_comp, ← map_mul, ← hιmul, Over.comp_left, hMh, Over.comp_left]
     simp only [Category.assoc]
 
-open GlobalTheory.CechPic in
 
+open GlobalTheory.CechPic in
 theorem pair_mul (hG : Out.GlobalFnsSt) {h k : ℕ} {o : Type} [CommRing o] {ζ : o} {S : Scheme.{0}} {s : S ⟶ Sp o}
     (c : SiegPre h k ζ s) (hc : c.Principal) {T : Over S} (x x' y : T ⟶ c.A) :
     pull (lift (x * x') y).left (cls c.P c.isLB) =
@@ -277,8 +282,8 @@ theorem pair_mul (hG : Out.GlobalFnsSt) {h k : ℕ} {o : Type} [CommRing o] {ζ 
   rw [← sub_eq_zero, ← h0]
   abel
 
-open GlobalTheory.CechPic in
 
+open GlobalTheory.CechPic in
 theorem pair_symm {h k : ℕ} {o : Type} [CommRing o] {ζ : o} {S : Scheme.{0}} {s : S ⟶ Sp o}
     (c : SiegPre h k ζ s) {T : Over S} (x y : T ⟶ c.A) :
     pull (lift x y).left (cls c.P c.isLB) = pull (lift y x).left (cls c.P c.isLB) := by
@@ -298,8 +303,8 @@ theorem prod_single {G : Type*} [CommGroup G] (x : Fin 8 → G) (u v w : Fin 8) 
   · rw [if_neg hw]
     exact Finset.prod_eq_one fun i _ => by simp [Ne.symm hw]
 
-open GlobalTheory.CechPic in
 
+open GlobalTheory.CechPic in
 theorem backward (hG : Out.GlobalFnsSt) {h g : ℕ} {W : Matrix (Fin 8) (Fin 8) ℤ} {J : Type}
     {a : J → Matrix (Fin 8) (Fin 8) ℤ}
     {bas : (Fin (2 * g) → ℤ) ≃ₗ[ℤ] (Fin 8 → (Fin h ⊕ Fin h → ℤ))} (hW : IsE8 W) {k : ℕ} {o : Type} [CommRing o]
@@ -333,7 +338,8 @@ theorem backward (hG : Out.GlobalFnsSt) {h g : ℕ} {W : Matrix (Fin 8) (Fin 8) 
       have hLt' := (cls_eq_iff t'.isLB (LB.isLB_linComb c'.isLB _ _)).2 hL'
       have hLt := (cls_eq_iff t.isLB (LB.isLB_linComb c.isLB _ _)).2 hL
       have hT2 := (cls_eq_iff t'.isLB (pull_isLB t.isLB Φ)).2 hLΦ
-      rw [cls_pull t.isLB, hLt', hLt, cls_linComb c'.isLB, cls_linComb c.isLB, map_sum] at hT2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [cls_pull t.isLB, hLt', hLt, cls_linComb c'.isLB, cls_linComb c.isLB, map_sum] at hT2
       rw [← sub_eq_zero, ← Finset.sum_sub_distrib] at hT2
       rw [← hT2]
       refine Finset.sum_congr rfl fun uv _ => ?_
@@ -364,7 +370,8 @@ theorem backward (hG : Out.GlobalFnsSt) {h g : ℕ} {W : Matrix (Fin 8) (Fin 8) 
           (cls c'.P c'.isLB - pull φ₂ (cls c.P c.isLB))) := fun uv => by
         rw [map_zsmul, ← pull_comp, ← Over.comp_left, comp_lift, hX, hX]
       simp only [e]
-      rw [← map_sum, hD0, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hD0, map_zero]
   · obtain ⟨Mh, hMh⟩ := exists_monoidHom_points_of_isGrpPullback hψ (𝟙_ (Over S'))
     let F : Over.mk ((𝟙_ (Over S')).hom ≫ f) ⟶ 𝟙_ (Over S) :=
       Over.homMk f (by show f ≫ 𝟙 S = 𝟙 S' ≫ f; simp)
@@ -393,9 +400,11 @@ theorem backward (hG : Out.GlobalFnsSt) {h g : ℕ} {W : Matrix (Fin 8) (Fin 8) 
         rw [Pi.single_eq_same] at e2
         rw [← e2]
         conv_lhs => rw [hv]
-        rw [map_sum, Finset.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.sum_apply]
         simp only [map_zsmul, Pi.smul_apply]
-      rw [ha, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ha, map_sum, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_zsmul, map_zsmul, hbasis]
     intro a

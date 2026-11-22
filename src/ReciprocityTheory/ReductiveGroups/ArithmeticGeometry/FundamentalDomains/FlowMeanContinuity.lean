@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealEmbeddingCharacters
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSum
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealEmbeddingCharacters
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSum
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.FlowMeanContinuity
 
@@ -167,7 +171,7 @@ theorem fj_eq_fourCoeff (P : Frame X.Ψ r → ℂ) (hP : X.IsSec la P) {ξ : Fin
       exact (Submodule.mem_span_range_iff_exists_fun ℤ).mp hp
   haveI : Countable (X.periods la) := hcount.to_subtype
   unfold Data.fj
-  rw [if_pos hcond, dif_pos hex]
+  rw [if_pos hcond, dite_eq_left hex]
   obtain ⟨-, hD, -, -⟩ := hex.choose_spec
   show ((volume hex.choose).toReal : ℂ)⁻¹ * ∫ s in hex.choose, fjI X ξ ν P x s = _
 

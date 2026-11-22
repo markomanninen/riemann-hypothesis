@@ -1,18 +1,23 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PHypPairExists
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PAETopologicalRing
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PEDenseInAE
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.POrthProjection
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PEichlerDense
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PClosureIsSubmonoid
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PLocalRingHypotheses
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PPlaceMaps
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PEichlerAtPlace
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PLocalInClosure
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PTruncation
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PAENeighbourhoods
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PSAHolds
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PSAOpenHolds
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PHypPairExists
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PAETopologicalRing
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PEDenseInAE
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.POrthProjection
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PEichlerDense
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PClosureIsSubmonoid
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PLocalRingHypotheses
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PPlaceMaps
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PEichlerAtPlace
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PLocalInClosure
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PTruncation
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PAENeighbourhoods
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PSAHolds
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.PSAOpenHolds
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.StrongApprox

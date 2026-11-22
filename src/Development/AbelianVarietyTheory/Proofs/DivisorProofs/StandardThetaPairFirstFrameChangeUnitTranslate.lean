@@ -1,12 +1,15 @@
-import Mathlib
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulCutSubOneEntry
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstStandardPairMemberHasThetaFunction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulCutSubOneEntry
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstStandardPairMemberHasThetaFunction
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset
 open Formalism.L2.Host (HChar)
@@ -137,10 +140,10 @@ private theorem unitChar_mul (ν : (AE D)ˣ →* Circle) {e : AE D} {S : Finset 
   unfold unitChar
   by_cases hL : ∃ x, IsUnitDet e L x
   · have hLκ : ∃ x, IsUnitDet e (L * κ) x := ⟨_, isUnitDet_mul he hL.choose_spec hy⟩
-    rw [dif_pos hL, dif_pos hLκ, isUnitDet_unique hLκ.choose_spec (isUnitDet_mul he hL.choose_spec hy), map_mul,
+    rw [dite_eq_left hL, dite_eq_left hLκ, isUnitDet_unique hLκ.choose_spec (isUnitDet_mul he hL.choose_spec hy), map_mul,
       _root_.mul_inv_rev, Circle.coe_mul]
   · have hLκ : ¬ ∃ x, IsUnitDet e (L * κ) x := fun ⟨z, hz⟩ => hL ⟨_, isUnitDet_div he hκ hz hy⟩
-    rw [dif_neg hL, dif_neg hLκ, mul_zero]
+    rw [dite_eq_right hL, dite_eq_right hLκ, mul_zero]
 
 end GlobalTheory.frameChangeUnitDeterminant
 
@@ -176,9 +179,9 @@ private theorem exists_unitDet {e : AE D} {S : Finset (Formalism.L2.DIV.Pl D.hos
   exact ⟨x, ⟨a, b, c ▸ m2⟩, a, GlobalTheory.PlaceDatum.finPart_mem_of_toEAf (b ▸ m1),
     GlobalTheory.PlaceDatum.finPart_mem_of_toEAf (c ▸ m2)⟩
 
+
 set_option synthInstance.maxHeartbeats 100000 in
 set_option maxHeartbeats 1000000 in
-
 private theorem smul_inv_eq {n : ℕ} {ε : EAf D} {g B : GL (Fin n) (EAf D)} (h : ε • g.val = ε • B.val) :
     ε • (g⁻¹).val = ε • (B⁻¹).val := by
   calc ε • (g⁻¹).val = (g⁻¹).val * (ε • B.val) * (B⁻¹).val := by
@@ -186,9 +189,9 @@ private theorem smul_inv_eq {n : ℕ} {ε : EAf D} {g B : GL (Fin n) (EAf D)} (h
     _ = (g⁻¹).val * (ε • g.val) * (B⁻¹).val := by rw [h]
     _ = ε • (B⁻¹).val := by rw [Matrix.mul_smul, Units.inv_mul, Matrix.smul_mul, Matrix.one_mul]
 
+
 set_option synthInstance.maxHeartbeats 100000 in
 set_option maxHeartbeats 2000000 in
-
 private theorem frMapO_change {e : AE D} (A WW : HSp D) (βA βA' : GL (Fin A.rank) (EAf D)) (βW βW' : GL (Fin WW.rank) (EAf D))
     (k : GA D WW) (hk : ∀ i j, toEAf D e * (Formalism.IndefR.Lev.finE WW k).1 i j = toEAf D e * (βW' * βW⁻¹).1 i j)
     {y : WO A WW} (hh : IsHalf e y) :
@@ -218,9 +221,9 @@ namespace GlobalTheory.frameChangeUnitDeterminant
 
 open Formalism.IndefR.Datum
 
+
 set_option synthInstance.maxHeartbeats 100000 in
 set_option maxHeartbeats 4000000 in
-
 private theorem stdFst_change_frames : ∀ {D : D7} (ν : (AE D)ˣ →* Circle) (e : AE D) (S : Finset (Formalism.L2.DIV.Pl D.host.E)), IsIdemSum e S →
     ∀ (I : Ideal (𝓞 D.host.E)) (A WW : HSp D) (ΛA : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E))
     (βA βA' : GL (Fin A.rank) (EAf D)), Formalism.L2.DIV.IsFrame βA ΛA → Formalism.L2.DIV.IsFrame βA' ΛA →

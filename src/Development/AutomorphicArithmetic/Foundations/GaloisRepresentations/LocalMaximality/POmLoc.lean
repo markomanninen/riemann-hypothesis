@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -39,7 +44,7 @@ private lemma ι_mul_mem (B : Subalgebra ℂ L) (q : ℕ) {w : Ω[L⁄ℂ]} (hw 
     | add a a' _ _ h h' => rw [mul_add]; exact Submodule.add_mem _ h h'
     | smul t a _ h => rw [mul_smul_comm]; exact Submodule.smul_mem _ t h
   | zero => simp
-  | add a a' _ _ h h' => rw [map_add, add_mul]; exact Submodule.add_mem _ h h'
+  | add a a' _ _ h h' => rw [map_add (f := _), add_mul]; exact Submodule.add_mem _ h h'
   | smul t a _ h => rw [LinearMap.map_smul_of_tower, smul_mul_assoc]; exact Submodule.smul_mem _ t h
 
 private lemma ιMulti_mem (B : Subalgebra ℂ L) (q : ℕ) (w : Fin q → Ω[L⁄ℂ]) (hw : ∀ j, w j ∈ om1 B) :

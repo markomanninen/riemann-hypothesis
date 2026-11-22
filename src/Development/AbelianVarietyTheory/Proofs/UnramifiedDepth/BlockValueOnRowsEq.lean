@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DetPowDiagonalRowsBlockJetRestrict
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DetPowDiagonalRowsBlockJetRestrict
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds Formalism.UnitaryBoundIntegral
 open scoped BigOperators
@@ -12,111 +16,10 @@ variable {C : Type} [Field C] {σ κ : Type}
 def OnlyIn (S : σ → Prop) (f : MvPowerSeries σ C) : Prop :=
   ∀ m : σ →₀ ℕ, MvPowerSeries.coeff m f ≠ 0 → ∀ x ∈ m.support, S x
 
-lemma OnlyIn.one (S : σ → Prop) : OnlyIn S (1 : MvPowerSeries σ C) := by
-  classical
-  intro m hm x hx
-  rw [MvPowerSeries.coeff_one] at hm
-  have : m = 0 := by by_contra h; simp [h] at hm
-  simp [this] at hx
-
-lemma OnlyIn.mul {S : σ → Prop} {f g : MvPowerSeries σ C} (hf : OnlyIn S f) (hg : OnlyIn S g) :
-    OnlyIn S (f * g) := by
-  classical
-  intro m hm x hx
-  rw [MvPowerSeries.coeff_mul] at hm
-  obtain ⟨p, hp, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hm
-  rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-  rw [← hp] at hx
-  rcases Finset.mem_union.mp (Finsupp.support_add hx) with h | h
-  · exact hf _ (left_ne_zero_of_mul hne) x h
-  · exact hg _ (right_ne_zero_of_mul hne) x h
-
-lemma OnlyIn.pow {S : σ → Prop} {f : MvPowerSeries σ C} (hf : OnlyIn S f) (k : ℕ) :
-    OnlyIn S (f ^ k) := by
-  induction k with
-  | zero => simpa using OnlyIn.one S
-  | succ k ih => rw [pow_succ]; exact ih.mul hf
-
-lemma OnlyIn.exp {S : σ → Prop} {f : MvPowerSeries σ C} (hf : OnlyIn S f) :
-    OnlyIn S (mvExp f) := by
-  intro m hm
-  change ∑ k ∈ Finset.range (m.degree + 1), _ ≠ _ at hm
-  obtain ⟨k, _, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hm
-  exact hf.pow k m (fun h => hne (by rw [h, zero_div]))
-
-lemma OnlyIn.prod {S : σ → Prop} {ι : Type} (s : Finset ι) {f : ι → MvPowerSeries σ C}
-    (hf : ∀ i ∈ s, OnlyIn S (f i)) : OnlyIn S (∏ i ∈ s, f i) :=
-  Finset.prod_induction _ _ (fun _ _ => OnlyIn.mul) (OnlyIn.one S) hf
-
 def Lead (π : σ → κ) (d : σ →₀ ℕ) (f : MvPowerSeries σ C) : Prop :=
   (∀ m : σ →₀ ℕ, MvPowerSeries.coeff m f ≠ 0 →
     d.mapDomain π ≤ m.mapDomain π ∧ (m.mapDomain π ≤ d.mapDomain π → m = d)) ∧
   MvPowerSeries.coeff d f = 1
-
-lemma eq_zero_of_mapDomain_le (π : σ → κ) {m : σ →₀ ℕ} (h : m.mapDomain π ≤ 0) : m = 0 := by
-  have h0 : m.mapDomain π = 0 := le_antisymm h bot_le
-  have := Finsupp.degree_mapDomain π m
-  rw [h0, map_zero] at this
-  exact (Finsupp.degree_eq_zero_iff m).mp this.symm
-
-lemma Lead.of_coeff_zero (π : σ → κ) {f : MvPowerSeries σ C} (h : MvPowerSeries.coeff 0 f = 1) :
-    Lead π 0 f := by
-  refine ⟨fun m _ => ?_, h⟩
-  rw [Finsupp.mapDomain_zero]
-  exact ⟨bot_le, eq_zero_of_mapDomain_le π⟩
-
-lemma Lead.mul {π : σ → κ} {d e : σ →₀ ℕ} {f g : MvPowerSeries σ C} (hf : Lead π d f)
-    (hg : Lead π e g) : Lead π (d + e) (f * g) := by
-  classical
-  have key : ∀ a b : σ →₀ ℕ, MvPowerSeries.coeff a f * MvPowerSeries.coeff b g ≠ 0 →
-      (d + e).mapDomain π ≤ (a + b).mapDomain π ∧
-        ((a + b).mapDomain π ≤ (d + e).mapDomain π → a = d ∧ b = e) := by
-    intro a b hne
-    obtain ⟨h1, h2⟩ := hf.1 a (left_ne_zero_of_mul hne)
-    obtain ⟨h3, h4⟩ := hg.1 b (right_ne_zero_of_mul hne)
-    rw [Finsupp.mapDomain_add, Finsupp.mapDomain_add]
-    refine ⟨add_le_add h1 h3, fun h => ⟨h2 fun x => ?_, h4 fun x => ?_⟩⟩
-    all_goals
-      have a1 := h x
-      have a2 := h1 x
-      have a3 := h3 x
-      simp only [Finsupp.add_apply] at a1
-      omega
-  refine ⟨fun m hm => ?_, ?_⟩
-  · rw [MvPowerSeries.coeff_mul] at hm
-    obtain ⟨p, hp, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hm
-    rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-    obtain ⟨k1, k2⟩ := key _ _ hne
-    rw [← hp]
-    refine ⟨k1, fun h => ?_⟩
-    rw [(k2 h).1, (k2 h).2]
-  · rw [MvPowerSeries.coeff_mul, Finset.sum_eq_single (d, e)]
-    · simp [hf.2, hg.2]
-    · intro p hp hpe
-      rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-      by_contra hne
-      have := (key _ _ hne).2 (by rw [hp])
-      exact hpe (Prod.ext this.1 this.2)
-    · intro h
-      rw [Finset.HasAntidiagonal.mem_antidiagonal] at h
-      exact absurd rfl h
-
-lemma Lead.pow {π : σ → κ} {d : σ →₀ ℕ} {f : MvPowerSeries σ C} (hf : Lead π d f) (k : ℕ) :
-    Lead π (k • d) (f ^ k) := by
-  induction k with
-  | zero => simpa using Lead.of_coeff_zero π (by simp)
-  | succ k ih => rw [pow_succ, succ_nsmul]; exact ih.mul hf
-
-lemma Lead.prod {π : σ → κ} {ι : Type} (s : Finset ι) {d : ι → σ →₀ ℕ}
-    {f : ι → MvPowerSeries σ C} (hf : ∀ i ∈ s, Lead π (d i) (f i)) :
-    Lead π (∑ i ∈ s, d i) (∏ i ∈ s, f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using Lead.of_coeff_zero π (by simp)
-  | insert i s hi ih =>
-    rw [Finset.sum_insert hi, Finset.prod_insert hi]
-    exact (hf i (Finset.mem_insert_self _ _)).mul
-      (ih fun j hj => hf j (Finset.mem_insert_of_mem hj))
 
 def sideRow (n : ℕ) : PVar n → Fin n ⊕ Fin n := Sum.map Prod.fst Prod.fst
 
@@ -144,18 +47,10 @@ open scoped BigOperators in
 variable {C : Type} [Field C] {σ κ : Type} in
 private lemma coeff_pow_eq_zero_of_degree_lt_unramified_depth (f : MvPowerSeries σ C)
     (hf : MvPowerSeries.constantCoeff f = 0) :
-    ∀ (k : ℕ) (m : σ →₀ ℕ), m.degree < k → MvPowerSeries.coeff m (f ^ k) = 0
-  | 0, m, h => absurd h (Nat.not_lt_zero _)
-  | k + 1, m, h => by
-    classical
-    rw [pow_succ', MvPowerSeries.coeff_mul]
-    refine Finset.sum_eq_zero fun p hp => ?_
-    rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-    by_cases hp1 : p.1 = 0
-    · rw [hp1, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hf, zero_mul]
-    · have h1 : 0 < p.1.degree := Nat.pos_of_ne_zero ((Finsupp.degree_eq_zero_iff _).not.mpr hp1)
-      have h2 : m.degree = p.1.degree + p.2.degree := by rw [← hp, map_add]
-      rw [coeff_pow_eq_zero_of_degree_lt_unramified_depth f hf k p.2 (by omega), mul_zero]
+    ∀ (k : ℕ) (m : σ →₀ ℕ), m.degree < k → MvPowerSeries.coeff m (f ^ k) = 0 := by
+  intro k m h
+  exact MvPowerSeries.coeff_of_lt_order
+    (lt_of_lt_of_le (by exact_mod_cast h) (f.le_order_pow_of_constantCoeff_eq_zero k hf))
 
 open scoped BigOperators in
 variable {C : Type} [Field C] {σ κ : Type} in
@@ -178,7 +73,7 @@ private lemma coeff_pow_mul_pow_eq_zero_of_degree_lt {f g : MvPowerSeries σ C}
   rw [MvPowerSeries.coeff_mul]
   refine Finset.sum_eq_zero fun p hp => ?_
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-  have hd : m.degree = p.1.degree + p.2.degree := by rw [← hp, map_add]
+  have hd : m.degree = p.1.degree + p.2.degree := by rw [← hp, map_add (f := _)]
   by_cases h1 : p.1.degree < i
   · rw [coeff_pow_eq_zero_of_degree_lt_unramified_depth f hf i _ h1, zero_mul]
   · rw [coeff_pow_eq_zero_of_degree_lt_unramified_depth g hg j _ (by omega), mul_zero]
@@ -192,7 +87,7 @@ private lemma mvExp_add_unramified_depth [CharZero C] {a b : MvPowerSeries σ C}
   ext m
   obtain ⟨N, hN⟩ : ∃ N, N = m.degree + 1 := ⟨_, rfl⟩
   have hfac : ∀ k : ℕ, (k.factorial : C) ≠ 0 := fun k => Nat.cast_ne_zero.2 k.factorial_ne_zero
-  have hab : MvPowerSeries.constantCoeff (a + b) = 0 := by rw [map_add, ha, hb, add_zero]
+  have hab : MvPowerSeries.constantCoeff (a + b) = 0 := by rw [map_add (f := _), ha, hb, add_zero]
   have hprod : ∀ p ∈ Finset.HasAntidiagonal.antidiagonal m,
       MvPowerSeries.coeff p.1 (_root_.Formalism.IncomingBounds.mvExp a) * MvPowerSeries.coeff p.2 (_root_.Formalism.IncomingBounds.mvExp b) =
         ∑ i ∈ Finset.range N, ∑ j ∈ Finset.range N,
@@ -200,7 +95,7 @@ private lemma mvExp_add_unramified_depth [CharZero C] {a b : MvPowerSeries σ C}
             ((i.factorial : C) * (j.factorial : C)) := by
     intro p hp
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-    have hd : m.degree = p.1.degree + p.2.degree := by rw [← hp, map_add]
+    have hd : m.degree = p.1.degree + p.2.degree := by rw [← hp, map_add (f := _)]
     rw [coeff_mvExp_eq_sum_range_of_degree_lt a ha p.1 N (by omega),
       coeff_mvExp_eq_sum_range_of_degree_lt b hb p.2 N (by omega), Finset.sum_mul_sum]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => div_mul_div_comm _ _ _ _
@@ -210,7 +105,8 @@ private lemma mvExp_add_unramified_depth [CharZero C] {a b : MvPowerSeries σ C}
           MvPowerSeries.coeff m (a ^ i * b ^ (k - i)) /
             ((i.factorial : C) * ((k - i).factorial : C)) := by
         refine Finset.sum_congr rfl fun k _ => ?_
-        rw [add_pow, map_sum, Finset.sum_div]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [add_pow, map_sum, Finset.sum_div]
         refine Finset.sum_congr rfl fun i hi => ?_
         have hik : i ≤ k := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
         have hch : ((k.choose i : ℕ) : C) ≠ 0 := Nat.cast_ne_zero.2 (Nat.choose_pos hik).ne'
@@ -250,7 +146,8 @@ private lemma mvExp_sum' [CharZero C] {ι : Type} (s : Finset ι) (f : ι → Mv
   | @insert a s ha ih =>
     rw [Finset.sum_insert ha, Finset.prod_insert ha,
       mvExp_add_unramified_depth (h a (Finset.mem_insert_self a s)), ih fun i hi => h i (Finset.mem_insert_of_mem hi)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun i hi => h i (Finset.mem_insert_of_mem hi)
 
 open scoped BigOperators in
@@ -301,7 +198,8 @@ private lemma onlyIn_sum {S : σ → Prop} {ι : Type} (s : Finset ι) (f : ι �
     (h : ∀ i ∈ s, _root_.GlobalTheory.BlockValue.OnlyIn S (f i)) :
     _root_.GlobalTheory.BlockValue.OnlyIn S (∑ i ∈ s, f i) := by
   intro m hm
-  rw [map_sum] at hm
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at hm
   obtain ⟨i, hi, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hm
   exact h i hi m hne
 
@@ -403,7 +301,7 @@ private lemma mapDomain_eq_single_degree_of_const {π : σ → κ} {z : κ} {m :
   classical
   rw [Finsupp.mapDomain, Finsupp.sum,
     Finset.sum_congr rfl (fun x hx => congrArg (fun w => Finsupp.single w (m x)) (h x hx)),
-    ← Finsupp.single_finset_sum] <;> rfl
+    ← Finsupp.single_finsetSum] <;> rfl
 
 open scoped BigOperators in
 variable {C : Type} [Field C] {σ κ : Type} in
@@ -456,7 +354,7 @@ variable {C : Type} [Field C] {σ κ : Type} in
 private lemma mapDomain_sideRow_inl {n : ℕ} (m : _root_.Formalism.IncomingBounds.PVar n →₀ ℕ) (ρ : Fin n) :
     (m.mapDomain (_root_.GlobalTheory.BlockValue.sideRow n)) (Sum.inl ρ) = ∑ c : Fin n, m (Sum.inl (ρ, c)) := by
   classical
-  rw [Finsupp.mapDomain, Finsupp.sum_fintype _ _ (by simp), Finsupp.finset_sum_apply]
+  rw [Finsupp.mapDomain, Finsupp.sum_fintype _ _ (by simp), Finsupp.finsetSum_apply]
   simp [Fintype.sum_sum_type, Fintype.sum_prod_type, _root_.GlobalTheory.BlockValue.sideRow, Finsupp.single_apply]
   rw [Finset.sum_eq_single ρ (fun b _ hb => by simp [hb]) (by simp)]
   simp
@@ -466,14 +364,14 @@ variable {C : Type} [Field C] {σ κ : Type} in
 private lemma mapDomain_sideRow_inr {n : ℕ} (m : _root_.Formalism.IncomingBounds.PVar n →₀ ℕ) (ρ : Fin n) :
     (m.mapDomain (_root_.GlobalTheory.BlockValue.sideRow n)) (Sum.inr ρ) = ∑ c : Fin n, m (Sum.inr (ρ, c)) := by
   classical
-  rw [Finsupp.mapDomain, Finsupp.sum_fintype _ _ (by simp), Finsupp.finset_sum_apply]
+  rw [Finsupp.mapDomain, Finsupp.sum_fintype _ _ (by simp), Finsupp.finsetSum_apply]
   simp [Fintype.sum_sum_type, Fintype.sum_prod_type, _root_.GlobalTheory.BlockValue.sideRow, Finsupp.single_apply]
   rw [Finset.sum_eq_single ρ (fun b _ hb => by simp [hb]) (by simp)]
   simp
 
+
 open scoped BigOperators in
 variable {C : Type} [Field C] {σ κ : Type} in
-
 theorem _root_.GlobalTheory.blockValue_rows : _root_.Formalism.L2.FormalSeriesBounds.BiValue := by
   unfold _root_.Formalism.L2.FormalSeriesBounds.BiValue
   intro C _ _ l i n0 n hn hr t t' h1 hB y
@@ -568,7 +466,7 @@ theorem _root_.GlobalTheory.blockValue_rows : _root_.Formalism.L2.FormalSeriesBo
         by_cases hρ : n0 ≤ (ρ : ℕ)
         · have hX : ∑ c : Fin n, (_root_.Formalism.UnitaryBoundIntegral.diagMon n0 n (l ^ i) y) (Sum.inl (ρ, c)) = l ^ i * y := by
             unfold _root_.Formalism.UnitaryBoundIntegral.diagMon
-            simp only [Finsupp.finset_sum_apply, Finsupp.add_apply, Finsupp.single_apply,
+            simp only [Finsupp.finsetSum_apply, Finsupp.add_apply, Finsupp.single_apply,
               Sum.inl.injEq, Prod.mk.injEq, reduceCtorEq, if_false, add_zero]
             rw [Finset.sum_comm, Finset.sum_eq_single_of_mem ρ (by simpa using hρ)]
             · simp
@@ -582,7 +480,7 @@ theorem _root_.GlobalTheory.blockValue_rows : _root_.Formalism.L2.FormalSeriesBo
         by_cases hρ : n0 ≤ (ρ : ℕ)
         · have hX : ∑ c : Fin n, (_root_.Formalism.UnitaryBoundIntegral.diagMon n0 n (l ^ i) y) (Sum.inr (ρ, c)) = y := by
             unfold _root_.Formalism.UnitaryBoundIntegral.diagMon
-            simp only [Finsupp.finset_sum_apply, Finsupp.add_apply, Finsupp.single_apply,
+            simp only [Finsupp.finsetSum_apply, Finsupp.add_apply, Finsupp.single_apply,
               Sum.inr.injEq, Prod.mk.injEq, reduceCtorEq, if_false, zero_add]
             rw [Finset.sum_comm, Finset.sum_eq_single_of_mem ρ (by simpa using hρ)]
             · simp

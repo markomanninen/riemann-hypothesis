@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ActsLinOfSplitLin
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemUniq
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TendstoCut
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ActsLinOfSplitLin
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemUniq
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TendstoCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem evalV_sglS (A : Finset (HeightOneSpectrum (𝓞 F))) (w : HeightOneSpect
     evalV F w (sglS A) = if w ∈ A then 1 else 0 := by
   classical
   unfold sglS
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have : ∀ v ∈ A, evalV F w (sglV v (1 : v.adicCompletion F)) = if w = v then 1 else 0 := by
     intro v _
     by_cases h : w = v
@@ -34,10 +39,6 @@ theorem evalV_sglS (A : Finset (HeightOneSpectrum (𝓞 F))) (w : HeightOneSpect
   rw [Finset.sum_congr rfl this, Finset.sum_ite_eq]
 
 def idemS (A : Finset (HeightOneSpectrum (𝓞 F))) : AF F := pairA F 0 (sglS A)
-
-theorem fstA_idemS (A : Finset (HeightOneSpectrum (𝓞 F))) : fstA F (idemS A) = 0 := rfl
-
-theorem sndA_idemS (A : Finset (HeightOneSpectrum (𝓞 F))) : sndA F (idemS A) = sglS A := rfl
 
 theorem sglS_mul_self (A : Finset (HeightOneSpectrum (𝓞 F))) : sglS A * sglS A = sglS A := by
   apply af_ext; intro w
@@ -98,7 +99,8 @@ theorem fstA_coord_of_infPart {z : AE D} (hz : infPart D z = 0) {ι : Type} [Fin
     conv_lhs => rw [← (Algebra.TensorProduct.basis (AF D.host.F) b).sum_repr z]
     simp only [Algebra.TensorProduct.basis_apply, c]
   have hinf : infPart D z = ∑ i, fstA D.host.F (c i) • bI i := by
-    rw [hz', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz', map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one, Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul',
       smul_eq_mul, mul_one]

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OfFactorE
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.W8AddTransposeEqE8
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvTranspose
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordTensorDataMatrixActionRingHomProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorActionCompatibleWithDegeneration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordTensorDataLatticeFactorProps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OfFactorE
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.W8AddTransposeEqE8
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvTranspose
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordTensorDataMatrixActionRingHomProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorActionCompatibleWithDegeneration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordTensorDataLatticeFactorProps
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,8 @@ def mod (s : SymUnit r) : Module (TensO s) X' where
     show smulF xe s (a * b) z = smulF xe s a (smulF xe s b z)
     apply xe.injective
     funext i
-    simp only [xe_smulF, TensO.mat_mul, Matrix.mul_apply, Finset.sum_smul, Finset.smul_sum, mul_smul]
+    have hmul : TensO.mat s (a * b) = TensO.mat s a * TensO.mat s b := rfl
+    simp only [xe_smulF, hmul, Matrix.mul_apply, Finset.sum_smul, Finset.smul_sum, mul_smul]
     exact Finset.sum_comm
   smul_zero a := by
     show smulF xe s a 0 = 0
@@ -84,7 +89,8 @@ def mod (s : SymUnit r) : Module (TensO s) X' where
     show smulF xe s (a + b) z = smulF xe s a z + smulF xe s b z
     apply xe.injective
     funext i
-    simp [xe_smulF, add_smul, Finset.sum_add_distrib]
+    have hadd : TensO.mat s (a + b) = TensO.mat s a + TensO.mat s b := rfl
+    simp [xe_smulF, hadd, Matrix.add_apply, add_smul, Finset.sum_add_distrib]
   zero_smul z := by
     show smulF xe s 0 z = 0
     apply xe.injective

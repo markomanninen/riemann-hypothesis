@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PhiAt
-import Formalism.LocalToGlobal.ProjectiveLattices.SecPtOrd
-import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCdvrMkLeContinuum
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.RegularityFirstClauseBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PhiAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.SecPtOrd
+public import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCdvrMkLeContinuum
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.RegularityFirstClauseBot
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.Taylor
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.AnChart
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.Taylor
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.ThetaValCSteps
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ theorem expS_zero' (k : Type) [CommRing k] [Algebra ℚ k] {n d : ℕ} : FB.expS
   have h0 : PowerSeries.constantCoeff (PowerSeries.exp k - 1) = 0 := by
     rw [map_sub, PowerSeries.constantCoeff_exp, map_one, sub_self]
   have e : PowerSeries.exp k = 1 + (PowerSeries.exp k - 1) := by ring
-  rw [e, ← PowerSeries.coe_substAlgHom ha, map_add, map_one, PowerSeries.coe_substAlgHom ha,
+  rw [e, ← PowerSeries.coe_substAlgHom ha, map_add (f := _), map_one, PowerSeries.coe_substAlgHom ha,
     PowerSeries.subst_zero_of_constantCoeff_zero h0, add_zero]
 
 private theorem hL0_lemma {d : ℕ} {O : Type} [CommRing O] [StarRing O] (B : FB ℂ d O) (w0 : O) :

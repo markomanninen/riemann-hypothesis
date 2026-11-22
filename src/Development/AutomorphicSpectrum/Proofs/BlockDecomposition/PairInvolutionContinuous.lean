@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwCentSwTw
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicUnitaryPointOfLocalFamily
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSatGLOfInvT
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwCentSwTw
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicUnitaryPointOfLocalFamily
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSatGLOfInvT
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcB.G8.Fin GlobalTheory.CompanionTheory.LocalHypotheses
@@ -14,7 +19,7 @@ noncomputable section
 namespace GlobalTheory.CompanionTheory.LocalHypotheses
 
 theorem thetaGL_id_mem {E : Type} [Field E] [NumberField E] (n : ℕ) (w : Pl E) {g : GLw n w}
-    (hg : g ∈ GlobalTheory.LFun.KGL w n) : thetaGL n (RingHom.id _) g ∈ GlobalTheory.LFun.KGL w n := by
+    (hg : g ∈ GlobalTheory.LFun.KGL w (n := n)) : thetaGL n (RingHom.id _) g ∈ GlobalTheory.LFun.KGL w (n := n) := by
   have hid : GeneralLinearGroup.map (RingHom.id (w.adicCompletion E)) g = g :=
     Units.ext (Matrix.ext fun _ _ => rfl)
   change PhiU n _ * invT n _ (GeneralLinearGroup.map (RingHom.id _) g) * (PhiU n _)⁻¹ ∈ _

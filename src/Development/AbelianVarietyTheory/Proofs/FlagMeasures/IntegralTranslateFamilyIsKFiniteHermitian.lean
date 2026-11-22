@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCompactKH
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCompactKH
+
+@[expose] public section
+
 open MeasureTheory Matrix Filter Topology
 
 noncomputable section
@@ -30,7 +35,7 @@ theorem integral_sum_smul_orbit {k r : ℕ} {H : Type} [NormedAddCommGroup H] [I
     (c : Fin N → ℂ) (v : H) :
     ∫ g, (∑ j, c j * b j g) • σ g v ∂μ = ∑ j, c j • ∫ g, b j g • σ g v ∂μ := by
   simp_rw [Finset.sum_smul, mul_smul]
-  rw [integral_finset_sum Finset.univ (f := fun j g => c j • (b j g • σ g v)) (fun j _ => (Integrable.smul (c j) (integrable_smul_orbit hσ hμ (hb j) v) :
+  rw [integral_finsetSum Finset.univ (f := fun j g => c j • (b j g • σ g v)) (fun j _ => (Integrable.smul (c j) (integrable_smul_orbit hσ hμ (hb j) v) :
       Integrable (fun g => c j • (b j g • σ g v)) μ))]
   simp_rw [integral_smul]
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ISupIInfEigenspaceEqTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaIntegrandIntegrable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ISupIInfEigenspaceEqTop
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaIntegrandIntegrable
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Mult Formalism.IndefR.Lev
   Formalism.IndefR
@@ -45,19 +49,5 @@ theorem exists_open_subgroup (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (L :
   · exact Kg_le_lev (D := L) (T := L.Pg ∪ L.Q) Finset.subset_union_left Finset.subset_union_right hk
   · unfold levChi
     rw [levFn_eq_one Finset.subset_union_left Finset.subset_union_right hk, Units.val_one]
-
-theorem goodFinite_of_hcFinite' (D : D7)
-    (h : ∀ θ (j : ℕ), 1 ≤ j → j ≤ D.R.m → ∀ (M : GlobalTheory.IndefiniteRowSideFullHecke.GoodReductionModelReading.ModelW D j) J χ, HCFinite θ M J χ) :
-    GlobalTheory.HeckeOrthSum.GoodFinite D := by
-  intro θ hθ pb Pg _ pl _ red ψ _ om _ Sb _ j h1 h2 hj M β _
-  have := h θ j h1 h2 M _ _ hθ (exists_open_subgroup (D.sp.W j) β (GlobalTheory.IndefiniteRowSideFullHecke.GoodReductionModelReading.levelDatumAtBasePrime (D.sp.W j) Pg ψ))
-  exact Submodule.finiteDimensional_of_le (goodPart_le θ M _ _ _)
-
-theorem goodFinite_of_hcFinite : ∀ D : Formalism.BasicNotions.D7,
-    (∀ θ (V : Formalism.BasicNotions.TH.HSp D) S (M : Formalism.IndefR.Mult.DSModel V S) J χ, Formalism.IndefR.Mult.HCFinite θ M J χ) →
-      GlobalTheory.HeckeOrthSum.GoodFinite D := by
-  intro D h θ hθ pb Pg _ pl _ red ψ _ om _ Sb _ j _ _ hj M β _
-  have := h θ _ _ M _ _ hθ (exists_open_subgroup (D.sp.W j) β (GlobalTheory.IndefiniteRowSideFullHecke.GoodReductionModelReading.levelDatumAtBasePrime (D.sp.W j) Pg ψ))
-  exact Submodule.finiteDimensional_of_le (goodPart_le θ M _ _ _)
 
 end GlobalTheory.GoodFiniteDim

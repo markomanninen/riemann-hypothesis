@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroCuspidalLL
-import Formalism.SharpRestriction.LevelLetterCocycles.WildPro
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroCuspidalLL
+public import Formalism.SharpRestriction.LevelLetterCocycles.WildPro
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +53,8 @@ theorem val_sub_one_lt_of_pow {K Γ : Type*} [Field K] [LinearOrderedCommGroupWi
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem wildPf_of_isWild {σ : G E Ω} (hσ : Formalism.MainNotions.BlochKatoReduction.IsWild A σ) : Formalism.MainNotions.N.KillingConditions.WildPf.IsWild A σ := by
   intro y hy
   have hv : A.valuation y ≠ 0 := by simpa using hy

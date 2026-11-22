@@ -1,13 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsNeOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsIntBasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsUniqueUnramifiedCocycleFrobeniusValue
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtCont
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
-open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Published IsLocalRing Polynomial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsNeOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsIntBasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsUniqueUnramifiedCocycleFrobeniusValue
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtCont
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial
 
 private theorem dz_pi {E ι M : Type} [Field E] [Fintype ι] [AddCommGroup M] [Module E M]
     {N : Type} [AddCommGroup N] [Module E N] (Φ : N ≃ₗ[E] (ι → M)) (S : ι → Submodule E M) (T : Submodule E N)
@@ -40,7 +45,8 @@ private theorem dz_dec {l : ℕ} [Fact l.Prime] {E : Type} [Field E] [Algebra �
       (fun g x => by simp [he, dz_ch]) c h
   · have h1 : c = ∑ i, fun g => e.symm (Pi.single i (e (c g) i)) := by
       funext g
-      rw [Finset.sum_apply, ← map_sum, Finset.univ_sum_single, e.symm_apply_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_apply, ← map_sum, Finset.univ_sum_single, e.symm_apply_apply]
     rw [h1]
     refine Submodule.sum_mem _ fun i _ => ?_
     refine (z1fMap _ (chRep (χ i)) ρ).2
@@ -187,7 +193,7 @@ private theorem dz_sum (j : ℤ) :
   · obtain ⟨h1, h2⟩ := h
     interval_cases j <;> decide
   · have hw : ∀ p : Fin 3 × Fin 3, -2 ≤ wt p.1 p.2 ∧ wt p.1 p.2 ≤ 2 := by decide
-    rw [Finset.sum_eq_zero fun p _ => if_neg fun (hp : wt p.1 p.2 = j) => h (hp ▸ hw p)]
+    rw [Finset.sum_eq_zero fun p _ => ite_eq_right fun (hp : wt p.1 p.2 = j) => h (hp ▸ hw p)]
     unfold locDims
     split_ifs <;> omega
 
@@ -210,12 +216,12 @@ theorem UpperTheory.V.Loc.dim_Z1f_crystalline_deformation :
     intro p
     rcases lt_trichotomy (wt p.1 p.2) 0 with h | h | h
     · obtain ⟨h1, h2⟩ := (hch p).1 (mul_neg_of_pos_of_neg he h)
-      rw [h1, h2, if_neg h.le.not_gt]
+      rw [h1, h2, ite_eq_right h.le.not_gt]
       exact ⟨by unfold ReciprocityTheory.Gal.B1; infer_instance, rfl⟩
-    · rw [if_neg h.le.not_gt]
+    · rw [ite_eq_right h.le.not_gt]
       exact (hun p h).2
     · obtain ⟨h1, h2⟩ := (hch p).2 (mul_pos he h)
-      rw [if_pos h, h2, MonoidHom.range_eq_top.2 Function.surjective_id, Subgroup.index_top]
+      rw [ite_eq_left h, h2, MonoidHom.range_eq_top.2 Function.surjective_id, Subgroup.index_top]
       exact ⟨h1, rfl⟩
   let Φ : (GQ l → Matrix (Fin 3) (Fin 3) E) ≃ₗ[E] (Fin 3 × Fin 3 → GQ l → E) :=
     (LinearEquiv.piCongrRight fun _ => dzE E).trans
@@ -226,8 +232,8 @@ theorem UpperTheory.V.Loc.dim_Z1f_crystalline_deformation :
       (fun c => ?_) fun p => ?_).2]
     · refine Finset.sum_congr rfl fun p _ => ?_
       by_cases h : wt p.1 p.2 = j
-      · rw [if_pos h, if_pos h, (hdim p).2]
-      · rw [if_neg h, if_neg h, finrank_bot]
+      · rw [ite_eq_left h, ite_eq_left h, (hdim p).2]
+      · rw [ite_eq_right h, ite_eq_right h, finrank_bot]
     · rw [Submodule.mem_inf, (hd c).1, Submodule.mem_pi]
       simp only [dz_gw, hΦ]
       refine ⟨fun h p => ?_, fun h => ⟨fun p => ?_, fun g _ p hp => ?_⟩⟩
@@ -237,18 +243,18 @@ theorem UpperTheory.V.Loc.dim_Z1f_crystalline_deformation :
       · have := h p
         split_ifs at this with hp
         · exact this
-        · exact SetLike.le_def.1 bot_le this
+        · exact IsConcreteLE.le_iff.1 bot_le this
       · have := h p
-        rw [if_neg hp] at this
+        rw [ite_eq_right hp] at this
         exact congrFun this g
     · by_cases h : wt p.1 p.2 = j
-      · rw [if_pos h]; exact (hdim p).1
-      · rw [if_neg h]; infer_instance
+      · rw [ite_eq_left h]; exact (hdim p).1
+      · rw [ite_eq_right h]; infer_instance
   · rw [(hd _).1] at hγ ⊢
     intro p
     by_cases h : wt p.1 p.2 = j
-    · simpa only [dzE_apply, Matrix.of_apply, dz_wt, if_pos h] using hγ p
-    · simp only [dzE_apply, Matrix.of_apply, dz_wt, if_neg h, mul_zero, add_zero]
+    · simpa only [dzE_apply, Matrix.of_apply, dz_wt, ite_eq_left h] using hγ p
+    · simp only [dzE_apply, Matrix.of_apply, dz_wt, ite_eq_right h, mul_zero, add_zero]
       exact Submodule.zero_mem _
   · have h0 : ∀ p : Fin 3 × Fin 3, wt p.1 p.2 ≠ j → (fun g => dzE E (γ g) p) = 0 :=
       fun p hp => funext fun g => (dz_gw _ _).1 (hg g) p hp

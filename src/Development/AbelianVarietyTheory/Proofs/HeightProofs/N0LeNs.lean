@@ -1,13 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.PageOKRun
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.XLeOfSqLeFMulR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.PageOKRun
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.XLeOfSqLeFMulR
+
+@[expose] public section
 
 set_option autoImplicit false
 
 noncomputable section
 namespace GlobalTheory.RunJoin.InhAll
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.MainNotions.Gaps.EtaleWeightGaps.Num GlobalTheory.RunJoin GlobalTheory.RunJoin.Inh
-open GlobalTheory.Survey.NumericBoundConstants
 
 def prog (p l g : ℕ) (i : Fin p) : ℕ := l + (p - 1 - i.1) * g
 
@@ -21,13 +24,13 @@ theorem prog_anti (p l g : ℕ) : Antitone (prog p l g) := by
 theorem gapZ_prog (p l g : ℕ) (i : Fin p) : gapZ (prog p l g) i = if i.1 + 1 < p then (g : ℤ) else l := by
   unfold gapZ
   by_cases h : i.1 + 1 < p
-  · rw [dif_pos h, if_pos h]
+  · rw [dite_eq_left h, if_pos h]
     show ((l + (p - 1 - i.1) * g : ℕ) : ℤ) - ((l + (p - 1 - (i.1 + 1)) * g : ℕ) : ℤ) = g
     have e : p - 1 - i.1 = (p - 1 - (i.1 + 1)) + 1 := by omega
     rw [e]
     push_cast
     ring
-  · rw [dif_neg h, if_neg h]
+  · rw [dite_eq_right h, if_neg h]
     show ((l + (p - 1 - i.1) * g : ℕ) : ℤ) = l
     have e : p - 1 - i.1 = 0 := by omega
     rw [e]
@@ -206,7 +209,7 @@ theorem ncAt_ka (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (τ : D.what₂.Tau) : (X.kl :
   have e : (ka j X).aP τ ⟨(D.R.sigW j).1 - 1, by omega⟩ = X.kl :=
     prog_last _ _ _ _ (by show ¬ ((D.R.sigW j).1 - 1 + 1 < (D.R.sigW j).1); omega)
   unfold ncAt
-  rw [dif_pos hp]
+  rw [dite_eq_left hp]
   split_ifs <;> omega
 
 theorem DF_ka_le (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) :

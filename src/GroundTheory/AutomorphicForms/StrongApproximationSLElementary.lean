@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -94,7 +98,6 @@ theorem diagonal_update_mem_elementarySubgroup (i j : n) (hij : i â‰  j) (u : RË
     rw [transvection_mul_eq_diagonal_update i j hij u]
     congr 1
     funext k
-    simp only [Pi.mul_apply, Units.val_mul, Function.update_apply, Pi.one_apply, Pi.mulSingle_apply]
     by_cases hki : k = i <;> by_cases hkj : k = j <;> simp_all
   rw [h]
   refine mul_mem (mul_mem (mul_mem (mul_mem (mul_mem ?_ ?_) ?_) ?_) ?_) ?_ <;>

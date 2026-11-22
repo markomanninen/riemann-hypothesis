@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsModelOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecZEqZeroOfGenVal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsRatSecOfPull
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotIsChowFormIntLineZero
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.ContinuousAeval
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsModelOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecZEqZeroOfGenVal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsRatSecOfPull
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotIsChowFormIntLineZero
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.ContinuousAeval
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.CovTop GlobalTheory.CovHt GlobalTheory.Mean4 GlobalTheory.Mean4O
 open scoped ENNReal Classical
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.Points GlobalTheory.ChartGlue GlobalTheory.CechPic GlobalTheory.CxPts GlobalTheory.Cartier
@@ -97,7 +102,8 @@ theorem norm_le_of_emb {K V Ω : Type} [Field K] [NumberField K] [AddCommGroup V
         exact this
       have e3 : ∀ m, ρ (ψ (ev (b m))) = ∑ j, σ' (c j m) * ρ (ψ (ev (gw j))) := fun m => by
         rw [hbc m]
-        simp only [map_sum, map_smul, Algebra.smul_def, map_mul, hσa]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, Algebra.smul_def, map_mul, hσa]
       have e4 : ∀ a, ∑ j, (∑ m, σ' (c j m) * A σ' m a) * (ρ (ψ (ev (gw j))) * lam) =
           lam * ∑ m, A σ' m a * ρ (ψ (ev (b m))) := fun a => by
         simp only [e3, Finset.sum_mul, Finset.mul_sum]

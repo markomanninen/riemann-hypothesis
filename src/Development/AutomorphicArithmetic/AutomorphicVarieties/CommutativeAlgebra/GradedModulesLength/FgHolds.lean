@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -36,7 +40,7 @@ theorem UpperTheory.V.Alg.M.fg_holds :
       exact Submodule.subset_span hyA
     obtain ⟨f, -, hf⟩ := Submodule.mem_span_finset.1 hy'
     have hyj : y = (DirectSum.decompose 𝒜 y j : A) := (DirectSum.decompose_of_mem_same 𝒜 hyA).symm
-    rw [hyj, ← hf, DirectSum.decompose_sum, DFinsupp.finset_sum_apply, Submodule.coe_sum]
+    rw [hyj, ← hf, DirectSum.decompose_sum, DFinsupp.finsetSum_apply, Submodule.coe_sum]
     refine Submodule.sum_mem _ fun i hi => ?_
     have e : (DirectSum.decompose 𝒜 (f i • i) j : A) = (DirectSum.decompose 𝒜 (f i) 0 : A) * i := by
       have := DirectSum.coe_decompose_mul_add_of_right_mem 𝒜 (a := f i) (i := 0) (ht hi)

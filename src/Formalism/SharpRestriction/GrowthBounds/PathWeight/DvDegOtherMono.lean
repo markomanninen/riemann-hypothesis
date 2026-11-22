@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem dv_comp_zero (ψ : MvPolynomial (ι × Fin n) R) (d : ι → ℕ)
 theorem dv_whc_mul (φ ψ : MvPolynomial (ι × Fin n) R) (e d : ι → ℕ) (hφ : φ ∈ Pol R n e) :
     weightedHomogeneousComponent (letterWeight (ι := ι) (n := n)) (e + d) (φ * ψ) = φ * multidegreeComponent d ψ := by
   have hφ' := (dv_pol_iff φ e).1 hφ
-  conv_lhs => rw [eq_sum_multidegree_components ψ, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [eq_sum_multidegree_components ψ, Finset.mul_sum, map_sum]
   rw [Finset.sum_eq_single d]
   · exact (hφ'.mul ((dv_pol_iff _ _).1 (homogeneous_component_mem d ψ))).weightedHomogeneousComponent_same
   · intro b _ hb

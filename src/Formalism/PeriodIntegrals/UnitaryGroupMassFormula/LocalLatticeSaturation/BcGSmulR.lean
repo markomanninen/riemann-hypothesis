@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocLatSat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocLatSat
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ lemma baseChange_apply_baseChange (f : (Fin n → K) →ₗ[K] K) (x : Fin n →
     simp [Finset.sum_apply]
   show ∑ k, φ (x k) * φ (f fun j => if k = j then 1 else 0) = φ (f x)
   conv_rhs => rw [hx]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl (fun k _ => ?_)
   rw [map_smul, smul_eq_mul, map_mul]
 
@@ -102,7 +107,7 @@ theorem step (Λ : Submodule R (Fin n → K)) (f : (Fin n → K) →ₗ[K] K)
             have e : φ (a * b) • (y + z) - (fP φ f (y + z) * φ b) • bcG φ lam =
                 (φ (a * b) • y - (fP φ f y * φ b) • bcG φ lam) +
                   (φ (a * b) • z - (fP φ f z * φ b) • bcG φ lam) := by
-              rw [map_add, add_mul, add_smul, smul_add]
+              rw [map_add (f := _), add_mul, add_smul, smul_add]
               abel
             rw [e]
             exact M.add_mem hy hz
@@ -117,7 +122,7 @@ theorem step (Λ : Submodule R (Fin n → K)) (f : (Fin n → K) →ₗ[K] K)
         have := hgen x hx
         rwa [h0, zero_mul, zero_smul, sub_zero] at this
       · intro t1 t2 h1 h2
-        simp only [map_add, add_smul]
+        simp only [map_add (f := _), add_smul]
         exact M.add_mem h1 h2
     have h1 : (1 : K) ∈ (I : Submodule R K) * ((I⁻¹ : FractionalIdeal R⁰ K) : Submodule R K) := by
       rw [← FractionalIdeal.coe_mul, hmul]

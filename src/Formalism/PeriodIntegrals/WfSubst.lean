@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.ExpIntW
+module
+
+public import Formalism.PeriodIntegrals.ExpIntW
+
+@[expose] public section
 
 namespace PI
 

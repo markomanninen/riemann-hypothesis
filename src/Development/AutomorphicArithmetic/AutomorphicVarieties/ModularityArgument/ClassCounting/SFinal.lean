@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.ShaLenEqShaInv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.CardAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.PrimeLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.NumFin
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.EmultiplicityPowSubOneOdd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.ShaLenEqShaInv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.CardAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.PrimeLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.NumFin
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.EmultiplicityPowSubOneOdd
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Gal Formalism.ConjugateSelfDual Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK
 
@@ -56,7 +60,7 @@ private theorem sf_nu {l : ℕ} [Fact l.Prime] (U : Subgroup ℤ_[l]ˣ) (h0 : U.
   rw [hw] at hdvd
   have hm := KStar.TotallyRealRoots.emultiplicity_pow_sub_one_sq (l := l) (u := 1 + (l:ℤ_[l]) ^ 2) (by simp) (U.index * e)
   rw [add_sub_cancel_left, emultiplicity_pow_self hp.ne_zero hp.not_unit,
-    ← padicValNat_eq_emultiplicity (Nat.mul_ne_zero h0 he), padicValNat.mul h0 he] at hm
+    ← padicValNat_eq_emultiplicity (Nat.mul_ne_zero h0 he), ← Nat.padicValNat_def, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) h0 he] at hm
   have h5 := (pow_dvd_iff_le_emultiplicity).1 hdvd
   rw [hm] at h5
   norm_cast at h5
@@ -82,10 +86,10 @@ private theorem sf_loc {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberF
     have hne : (e : ℤ).natAbs ≠ 0 := by simpa using he
     refine le_trans (sf_nu _ hd0 hne) ?_
     have a1 : padicValNat l (LDataCardLeFinrank.decImage L l (D.A v)).index ≤ Nat.log l n :=
-      le_trans (padicValNat_le_nat_log _) (Nat.log_mono_right hdn)
+      le_trans (by simpa only [Nat.padicValNat_def] using (padicValNat_le_nat_log (LDataCardLeFinrank.decImage L l (D.A v)).index)) (Nat.log_mono_right hdn)
     have a2 : padicValNat l e ≤ e := by
       have hp := (Fact.out : l.Prime)
-      have b1 : l ^ padicValNat l e ≤ e := Nat.le_of_dvd (Nat.pos_of_ne_zero he) pow_padicValNat_dvd
+      have b1 : l ^ padicValNat l e ≤ e := Nat.le_of_dvd (Nat.pos_of_ne_zero he) (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
       have b2 : padicValNat l e < l ^ padicValNat l e := Nat.lt_pow_self hp.one_lt
       omega
     have hea : (e : ℤ).natAbs = e := rfl

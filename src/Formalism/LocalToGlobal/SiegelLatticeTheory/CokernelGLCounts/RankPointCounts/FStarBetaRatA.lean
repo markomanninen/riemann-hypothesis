@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaS
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarIsomG
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarNMove
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaS
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarIsomG
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarNMove
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNA
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,11 +80,11 @@ theorem isometry_extension_two {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fi
       have dx : x = x' + lin u (pc u x) := by rw [hx']; abel
       have dy : y = y' + lin u (pc u y) := by rw [hy']; abel
       conv_lhs => rw [dx, dy]
-      simp only [map_add, LinearMap.add_apply]
+      simp only [map_add (f := _), LinearMap.add_apply]
       rw [(hT_span_rem u hdet x _ (lin_sub u _)).2, (hT_span_rem u hdet y _ (lin_sub u _)).1]
       ring
     rw [← hx', ← hy']
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     rw [t1, t2, t3, t6, hxy]
     ring
   have hinj : Function.Injective β := by
@@ -118,7 +122,7 @@ theorem norm_om_ne {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB) (hdet : (Zh
     rwa [NMoveP.fvecL] at h
   have hnorm : S.hT Ω Ω = star c * c * (-TB) := by
     rw [hΩe]
-    simp only [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, map_smul, LinearMap.smul_apply, hxx, hxz, hzx,
+    simp only [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, map_smul, LinearMap.smul_apply, hxx, hxz, hzx,
       B.z_norm, smul_eq_mul, starRingEnd_apply, mul_zero, zero_add, add_zero]
     ring
   have hcl : c = leadMinorE (Zhat A B) r / (Zhat A B).det := inv_last _
@@ -149,13 +153,13 @@ theorem key_X {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB) (hdet : (Zhat A 
         rw [← fvec_cs, hΩ.2]
         simp [Fin.castSucc_ne_last]
       | zero => simp
-      | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+      | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
       | smul t y _ hy => rw [BwdNA.hT_smulL, hy, mul_zero]
   have hΩz : S.hT Ω A.z = 1 := by
     rw [BwdNA.hsw S A.z Ω, ← fvec_last, hΩ.2]
     simp
   have h1 : S.hT Ω (x + c • (A.z + TA • Ω)) = c * (1 + TA * S.hT Ω Ω) := by
-    rw [map_add, hΩx, zero_add, map_smul, map_add, map_smul, hΩz, smul_eq_mul, smul_eq_mul]
+    rw [map_add (f := _), hΩx, zero_add, map_smul, map_add (f := _), map_smul, hΩz, smul_eq_mul, smul_eq_mul]
   rw [h1] at hqΩ
   have hc : c = 0 := (mul_eq_zero.1 hqΩ).resolve_right (norm_om_ne A B hdet hΩ hG)
   rw [hc, zero_smul, add_zero]

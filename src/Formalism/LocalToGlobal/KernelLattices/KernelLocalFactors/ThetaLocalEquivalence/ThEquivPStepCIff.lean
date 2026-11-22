@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThetaLocalEquivalence.ThEquivPOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThetaLocalEquivalence.ThEquivPOf
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial
 
@@ -51,10 +55,10 @@ theorem wtLaw_step (u : Pr.Word) {i : ℕ} (hi : i < R.m) (e : X.Tau → ℤ) (h
   · rw [nuLast_eq W u i hi τ]
     have h1 : (W.nuW u (i + 1) τ).detShift = (W.nuW u (i + 1) τ).w ⟨R.N i - 1, by rw [Nat.add_sub_cancel]; omega⟩ := by
       unfold DomWeight.detShift
-      exact dif_pos hNi
+      exact dite_eq_left hNi
     have h2 : (W.lamTrue u i τ).detShift = (W.lamTrue u i τ).w ⟨R.N i - 1, by omega⟩ := by
       unfold DomWeight.detShift
-      exact dif_pos hNi
+      exact dite_eq_left hNi
     have h3 := Wts.nuW_eq_true W u hi τ ⟨R.N i - 1, by omega⟩
     unfold sExp' at h3
     rw [← he τ] at h3
@@ -71,7 +75,7 @@ theorem wtLaw_step (u : Pr.Word) {i : ℕ} (hi : i < R.m) (e : X.Tau → ℤ) (h
     exact_mod_cast h5
   · have h2 : (W.lamTrue u (i + 1) τ).detShift = (W.lamTrue u (i + 1) τ).w ⟨R.N (i + 1) - 1, by omega⟩ := by
       unfold DomWeight.detShift
-      exact dif_pos hNi1
+      exact dite_eq_left hNi1
     have h3 := Wts.lamTrue_new W u hi τ (⟨R.N (i + 1) - 1, by omega⟩ : Fin (R.N (i + 1)))
       (show ¬ (R.N (i + 1) - 1 < R.N i) by omega)
     unfold sExp at h3
@@ -94,19 +98,6 @@ section Step
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (A : Amb X) (u : Pr.Word)
-
-theorem thEquivP_stepT_of {i : ℕ} (hi : i < R.m) (e : X.Tau → ℤ) (he : ∀ τ, (e τ : ℚ) = (W.hc u τ).e ⟨i, hi⟩)
-    (hrat : A.JetsRat (R.N i) (R.N (i + 1)) (Sall sel mu u) (cAof sel mu cst * cBof sel mu cst u))
-    (hE : A.EOmega (R.N i) (R.N (i + 1)))
-    (hInd : A.ThIndEq (R.N i) (R.N (i + 1)) (Sall sel mu u) (cAof sel mu cst * cBof sel mu cst u))
-    (hChi : A.ChiLaw (R.N i) (R.N (i + 1)))
-    (hMa : MuProdLaw (R.N i) sel (rowSG Pr sel mu) (mUof Ch mu i) (muAtT Ch sel mu cst i) e)
-    (hMb : MuProdLaw (R.N (i + 1)) sel (rowSG Pr sel mu) (mUof Ch mu i) (muAtT Ch sel mu cst i) e) :
-    ThEquivP (stepT W Ch sel mu cst A u i (W.lamTrue u (i + 1))) (Sall sel mu u) (cAof sel mu cst * cBof sel mu cst u)
-      (colValF W sel mu u i).rho (colValF W sel mu u (i + 1)).rho :=
-  thEquivP_of A (Sall sel mu u) (rowSG Pr sel mu) (cAof sel mu cst * cBof sel mu cst u) sel (mUof Ch mu i) (muAtT Ch sel mu cst i)
-    (W.lamTrue u i) (W.lamTrue u (i + 1)) (nuLast W u i) e (jet_in_weight_space_chain W u hi) hrat (indOmega_of A _ _ _ _ hE) hInd hChi hMa hMb
-    (wtLaw_step W u hi e he)
 
 theorem top_cast {m2 : ℕ} (hm : R.m = m2 + 2) :
     (ThEquivP (stepT W Ch sel mu cst A u (m2 + 1) (W.lamTrue u R.m)) (Sall sel mu u) (cAof sel mu cst * cBof sel mu cst u)

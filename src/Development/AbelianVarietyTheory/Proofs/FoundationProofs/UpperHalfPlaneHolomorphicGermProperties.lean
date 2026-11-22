@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlTwoPosRatMobiusBasicLawsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlTwoPosRatMobiusBasicLawsStatement
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.KZ.H3 Matrix
 open scoped MatrixGroups TensorProduct
 open Filter Topology
@@ -27,7 +32,7 @@ theorem eq_zero_or_eq_zero {a b : ℂ → ℂ} (ha : DifferentiableOn ℂ a Hs) 
   by_cases hA : ∀ z ∈ Hs, a z = 0
   · exact Or.inl hA
   · right
-    push_neg at hA
+    push Not at hA
     obtain ⟨z₀, hz₀, hne⟩ := hA
     have hcont : ContinuousAt a z₀ := (ha.continuousOn).continuousAt (isOpen_Hs.mem_nhds hz₀)
     have hev : ∀ᶠ z in 𝓝 z₀, a z ≠ 0 := hcont.eventually_ne hne
@@ -48,9 +53,7 @@ theorem exists_eq_zero_of_prod {ι : Type} [DecidableEq ι] (s : Finset ι) (f :
     simpa using h _ hI
   | insert j s hj ih =>
     have hP : DifferentiableOn ℂ (fun z => ∏ i ∈ s, f i z) Hs := by
-      have := DifferentiableOn.finset_prod (u := s) (f := f) (fun i hi => hf i (Finset.mem_insert_of_mem hi))
-      rw [show (fun z => ∏ i ∈ s, f i z) = ∏ i ∈ s, f i from by funext z; simp [Finset.prod_apply]]
-      exact this
+      exact DifferentiableOn.fun_finsetProd (fun i hi => hf i (Finset.mem_insert_of_mem hi))
     rcases eq_zero_or_eq_zero (hf j (Finset.mem_insert_self j s)) hP
         (fun z hz => by have := h z hz; rwa [Finset.prod_insert hj] at this) with h1 | h1
     · exact ⟨j, Finset.mem_insert_self j s, h1⟩
@@ -95,7 +98,7 @@ theorem main : (∀ a b : ℂ → ℂ, DifferentiableOn ℂ a Hs → Differentia
       exact h z hz
   · intro m a b hm ha hb h
     have hm0 : m ≠ 0 := hm.ne'
-    haveI : NeZero m := ⟨hm0⟩
+    have : NeZero m := ⟨hm0⟩
     have hζ := Complex.isPrimitiveRoot_exp m hm0
     obtain ⟨ξ, hξ, hξ'⟩ := exists_eq_zero_of_prod (Polynomial.nthRootsFinset m (1 : ℂ)) (fun ξ z => a z - ξ * b z)
       (fun ξ _ => ha.sub (hb.const_mul ξ))

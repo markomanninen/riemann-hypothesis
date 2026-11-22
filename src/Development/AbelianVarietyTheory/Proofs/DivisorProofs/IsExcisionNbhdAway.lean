@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+
+@[expose] public section
+
 open GlobalTheory.EtC
 
 namespace GlobalTheory.EtC

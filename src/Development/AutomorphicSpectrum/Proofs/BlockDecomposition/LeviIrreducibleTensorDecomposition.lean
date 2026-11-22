@@ -1,16 +1,20 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrreducibleAdmissibleDecomposableCompEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContractsTensorProductChain
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivProdChosenIrrGLPairDegreeZero
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ParabolicInductionFiniteLength
-import GroundTheory.AutomorphicForms.GLnLocal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleOfFiniteLengthSubquotients
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalOfSmIndFixed
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIrreducibleOfFixed
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfSumApplyEqZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrreducibleAdmissibleDecomposableCompEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContractsTensorProductChain
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivProdChosenIrrGLPairDegreeZero
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ParabolicInductionFiniteLength
+public import GroundTheory.AutomorphicForms.GLnLocal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleOfFiniteLengthSubquotients
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalOfSmIndFixed
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIrreducibleOfFixed
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfSumApplyEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,8 +98,7 @@ theorem evMap_equivariant (ρ : Representation ℂ (G × H) V) (σ : Representat
     (x : X ⊗[ℂ] homSp ρ σ) :
     evMap ρ σ (extTensor σ (homRep ρ σ) p x) = ρ p (evMap ρ σ x) := by
   induction x with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul s f =>
     obtain ⟨g, h⟩ := p
     rw [extTensor_tmul, evMap_tmul, evMap_tmul, homRep_apply, f.2 g s, ← Module.End.mul_apply, ← map_mul]
@@ -164,7 +167,7 @@ theorem homRep_irreducible {ρ : Representation ℂ (G × H) V} {σ : Representa
         rw [homRep_apply, f.2 p.1 s, ← Module.End.mul_apply, ← map_mul]
         simp
       | zero => simp
-      | add a b _ _ ha hb => rw [map_add]; exact R.add_mem ha hb
+      | add a b _ _ ha hb => rw [map_add (f := _)]; exact R.add_mem ha hb
       | smul c a _ ha => rw [map_smul]; exact R.smul_mem c ha
     · obtain ⟨s, hs⟩ : ∃ s, (f₁ : X →ₗ[ℂ] V) s ≠ 0 := by
         by_contra! h
@@ -328,8 +331,7 @@ theorem piTensor_succ_equiv {s : ℕ} (Γ : Fin (s + 1) → Type) [∀ a, Group 
   obtain ⟨y, rfl⟩ := e.surjective x
   show L (piTensor π g (e y)) = ρ g (L (e y))
   induction y with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul t a =>
     have h1 : piTensor π g = PiTensorProduct.map fun a => π a (g a) := rfl
     have h2 : (piTensor fun a : Fin s => π a.succ) (fun a => g a.succ) =

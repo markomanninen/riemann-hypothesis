@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsUnitarisableOfCharIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsUnitarisableOfCharIff
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.HeckeProduct
 
@@ -32,7 +36,8 @@ theorem heckeSum_eq_sum (hf : (Function.support fun q : G ⧸ K => f q.out).Fini
 theorem map_heckeSum (hf : (Function.support fun q : G ⧸ K => f q.out).Finite)
     (T : V →ₗ[ℂ] V) (hT : ∀ g u, T (π g u) = π g (T u)) (u : V) :
     T (heckeSum π K f u) = heckeSum π K f (T u) := by
-  rw [heckeSum_eq_sum π K hf, heckeSum_eq_sum π K hf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [heckeSum_eq_sum π K hf, heckeSum_eq_sum π K hf, map_sum]
   exact Finset.sum_congr rfl fun q _ => by rw [map_smul, hT]
 
 noncomputable def heckeLin (hf : (Function.support fun q : G ⧸ K => f q.out).Finite) : V →ₗ[ℂ] V :=
@@ -60,7 +65,8 @@ theorem heckeSum_fixed (hf : (Function.support fun q : G ⧸ K => f q.out).Finit
     simp only [hq]
     rw [h1, map_smul, hl k hk, map_mul, Module.End.mul_apply]
   have h2 : π k (heckeSum π K f u) = ∑ᶠ q : G ⧸ K, π k (f q.out • π q.out u) := by
-    rw [heckeSum_eq_sum π K hf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [heckeSum_eq_sum π K hf, map_sum]
     refine (finsum_eq_sum_of_support_subset _ ?_).symm
     intro q hq
     refine term_support_subset π K hf u ?_
@@ -151,7 +157,8 @@ theorem product_sum (hf : (Function.support fun q : G₁ ⧸ K₁ => f q.out).Fi
   rw [finsum_congr h1, finsum_eq_sum_of_support_subset (s := hf.toFinset ×ˢ hf'.toFinset) _ ?_,
     Finset.sum_product, heckeSum_eq_sum _ K₁ hf]
   · refine Finset.sum_congr rfl fun a _ => ?_
-    rw [heckeSum_eq_sum _ K₂ hf', map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [heckeSum_eq_sum _ K₂ hf', map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [left_right_mul, map_smul, smul_smul]
   · rintro ⟨a, b⟩ hp

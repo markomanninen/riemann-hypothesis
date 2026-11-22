@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory.Twist
@@ -79,7 +84,8 @@ theorem lintegral_haar_eq_transversal (G E : Type) [Group G] [TopologicalSpace G
     rw [Measure.inv_inv] at this
     rw [this]
     change Measure.map _ (c • μ) = _
-    rw [Measure.map_smul, Measure.map_inv_eq_self]
+    rw [Measure.map_smul (c := c) (f := Inv.inv)
+      (measurable_inv.aemeasurable : AEMeasurable Inv.inv μ), Measure.map_inv_eq_self μ]
   have hc0 : c ≠ 0 := by
     intro h
     apply hν0

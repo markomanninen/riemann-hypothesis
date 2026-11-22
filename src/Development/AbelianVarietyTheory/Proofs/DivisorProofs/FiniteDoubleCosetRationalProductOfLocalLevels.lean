@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernSum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenProductOfLocalLevelsUnitaryStatement
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernSum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenProductOfLocalLevelsUnitaryStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -11,13 +16,13 @@ namespace GlobalTheory.BCT.ClassFinLev
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-def finPart : UA E n →* finU E n where
+def finPart : UA E n →* finU (E := E) (n := n) where
   toFun u := ⟨⟨finGL E n (GeneralLinearGroup.map (pFin E) u.1), GlobalTheory.DefU.ClassFin.finGL_mem_UA _ (GlobalTheory.DefU.ClassFin.cT_pFin u)⟩,
     pInf_finGL _⟩
   map_one' := Subtype.ext (Subtype.ext (by simp))
   map_mul' a b := Subtype.ext (Subtype.ext (by simp))
 
-theorem finPart_fin (k : finU E n) : finPart (k : UA E n) = k :=
+theorem finPart_fin (k : finU (E := E) (n := n)) : finPart (k : UA E n) = k :=
   Subtype.ext (Subtype.ext (GlobalTheory.DefU.ClassFin.finGL_pFin k))
 
 theorem finPart_inf {x : UA E n} (hx : x ∈ infU E n) : finPart x = 1 := by
@@ -50,13 +55,13 @@ theorem finPart_rat {γ : UA E n} (hγ : γ ∈ ratU E n) : finPart γ ∈ ratFi
   rw [← hγ₀]
   rfl
 
-theorem finite_doubleCoset_of_isOpen (K : Subgroup (finU E n)) (hK : IsOpen (K : Set (finU E n))) :
-    Finite (DoubleCoset.Quotient (ratFinU E n : Set (finU E n)) (K : Set (finU E n))) := by
+theorem finite_doubleCoset_of_isOpen (K : Subgroup (finU (E := E) (n := n))) (hK : IsOpen (K : Set (finU (E := E) (n := n)))) :
+    Finite (DoubleCoset.Quotient (ratFinU E n : Set (finU (E := E) (n := n))) (K : Set (finU (E := E) (n := n)))) := by
   obtain ⟨T, hT⟩ := GlobalTheory.DefU.ClassFin.classSet_finite E n K hK
-  let φ : T → DoubleCoset.Quotient (ratFinU E n : Set (finU E n)) (K : Set (finU E n)) :=
+  let φ : T → DoubleCoset.Quotient (ratFinU E n : Set (finU (E := E) (n := n))) (K : Set (finU (E := E) (n := n))) :=
     fun s => DoubleCoset.mk _ _ (finPart (s : UA E n))
   refine Finite.of_surjective φ fun q => ?_
-  obtain ⟨g, rfl⟩ : ∃ g, DoubleCoset.mk _ _ g = q := ⟨q.out, DoubleCoset.out_eq' _ _ q⟩
+  obtain ⟨g, rfl⟩ : ∃ g, DoubleCoset.mk _ _ g = q := ⟨q.out, DoubleCoset.out_eq' q⟩
   obtain ⟨γ, hγ, s, hs, x, hx, k, hk, e⟩ := hT (g : UA E n)
   refine ⟨⟨s, hs⟩, ?_⟩
   have hg : g = finPart γ * finPart s * k := by
@@ -65,12 +70,12 @@ theorem finite_doubleCoset_of_isOpen (K : Subgroup (finU E n)) (hK : IsOpen (K :
     exact this
   show DoubleCoset.mk _ _ (finPart (s : UA E n)) = DoubleCoset.mk _ _ g
   rw [hg]
-  exact (DoubleCoset.eq _ _ _ _).2 ⟨finPart γ, finPart_rat hγ, k, hk, rfl⟩
+  exact (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨finPart γ, finPart_rat hγ, k, hk, rfl⟩
 
 end GlobalTheory.BCT.ClassFinLev
 
-open GlobalTheory.BCT.ClassFinLev in
 
-theorem GlobalTheory.BCT.finite_doubleCoset_globLev : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, 1 ≤ n → ∀ (S : Set (Pl E)), IsSection S → ∀ (K' : ∀ w : Pl E, Subgroup (UL n w)), IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' → Finite (DoubleCoset.Quotient (ratFinU E n : Set (finU E n)) (globLev S K' : Set (finU E n))) := by
+open GlobalTheory.BCT.ClassFinLev in
+theorem GlobalTheory.BCT.finite_doubleCoset_globLev : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, 1 ≤ n → ∀ (S : Set (Pl E)), IsSection S → ∀ (K' : ∀ w : Pl E, Subgroup (UL n w)), IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' → Finite (DoubleCoset.Quotient (ratFinU E n : Set (finU (E := E) (n := n))) (globLev S K' : Set (finU (E := E) (n := n)))) := by
   intro E _ _ _ hE n _ S _ K' hK
   exact finite_doubleCoset_of_isOpen _ (GlobalTheory.T.isOpen_productOfLocalLevelsUnitary E hE n S K' hK)

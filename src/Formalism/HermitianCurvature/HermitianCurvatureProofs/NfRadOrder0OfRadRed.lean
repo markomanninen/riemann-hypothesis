@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmulRApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmulRApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+
+@[expose] public section
 
 noncomputable section
 
@@ -174,7 +178,7 @@ theorem good_add {f g : ℂ → ℂ} (hf : Good T a b f) (hg : Good T a b g) : G
     have hgd := (hg.1.differentiableOn (by simp)).differentiableAt (isOpen_U.mem_nhds hw)
     simp only [(wirt_add hfd hgd).1, (wirt_add hfd hgd).2]
     ring
-  rw [hΨ, map_add, Submodule.coe_add, hf.2 Φ Ψf rfl, hg.2 Φ Ψg rfl, mulZ_congr hL]
+  rw [hΨ, map_add (f := _), Submodule.coe_add, hf.2 Φ Ψf rfl, hg.2 Φ Ψg rfl, mulZ_congr hL]
   simp only [mulZ_add_left]
   abel
 

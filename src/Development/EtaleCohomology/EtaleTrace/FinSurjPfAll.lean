@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.FinSurjPfDense
+module
+
+public import Development.EtaleCohomology.EtaleTrace.FinSurjPfDense
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MvPolynomial
@@ -36,11 +40,11 @@ theorem linForm {k : Type} [Field k] {K : Type} [Field K] (f : k →+* K) {N : �
   refine ⟨∑ j, C (c j) * X j, ?_, by simp [eval₂_sum]⟩
   exact IsHomogeneous.sum _ _ _ fun j _ => isHomogeneous_C_mul_X _ _
 
-theorem PN_cover (k : Type) [Field k] (d : ℕ) (y : PN k d) :
+theorem PN_cover (k : Type) [Field k] (d : ℕ) (y : PN (k := k) d) :
     ∃ i : Fin (d + 1), y ∈ Proj.basicOpen (homogeneousSubmodule (Fin (d + 1)) k) (X i) := by
   have htop := Proj.iSup_basicOpen_eq_top (homogeneousSubmodule (Fin (d + 1)) k)
     (fun i : Fin (d + 1) => (X i : MvPolynomial (Fin (d + 1)) k)) ?_
-  · have : y ∈ (⊤ : (PN k d).Opens) := trivial
+  · have : y ∈ (⊤ : (PN (k := k) d).Opens) := trivial
     rw [← htop] at this
     exact TopologicalSpace.Opens.mem_iSup.mp this
   intro q hq

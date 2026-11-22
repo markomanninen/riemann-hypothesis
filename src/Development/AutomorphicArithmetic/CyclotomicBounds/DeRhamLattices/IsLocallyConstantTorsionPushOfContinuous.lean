@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.AdmissibleLatticesCommensurable
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.AdmissibleLatticesCommensurable
+
+@[expose] public section
 
 open Formalism Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations TensorProduct UpperTheory.KN
 
@@ -56,4 +60,4 @@ theorem _root_.UpperTheory.KN.isLocallyConstant_torsion_push_of_continuous :
     simp only [Submodule.coe_add, Submodule.coe_smul]
     rw [← hyeq]
     abel
-  rw [hsplit, map_add, map_smul, hkill, add_zero]
+  rw [hsplit, map_add (f := _), map_smul, hkill, add_zero]

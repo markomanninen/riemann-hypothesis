@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.TailInt
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.TailInt
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal Real

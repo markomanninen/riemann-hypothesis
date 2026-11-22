@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.CoreStar
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.CoreStar
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate ContDiff
@@ -146,7 +150,7 @@ lemma clm_split (L : ℂ →L[ℝ] ℂ) (d : ℂ) : L d = L 1 * reC d + L Comple
   have h : d = (d.re : ℝ) • (1 : ℂ) + (d.im : ℝ) • Complex.I := by
     apply Complex.ext <;> simp
   conv_lhs => rw [h]
-  rw [map_add, map_smul, map_smul, reC_apply, imC_apply, Complex.real_smul, Complex.real_smul]
+  rw [map_add (f := _), map_smul, map_smul, reC_apply, imC_apply, Complex.real_smul, Complex.real_smul]
   ring
 
 lemma Dx_comp (x : Bool × Mat k r) {χ : ℂ → ℂ} {ψ : Mat k r → ℂ} (hχ : ContDiff ℝ ∞ χ)

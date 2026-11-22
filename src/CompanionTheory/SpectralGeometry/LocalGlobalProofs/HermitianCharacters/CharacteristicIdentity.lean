@@ -1,7 +1,13 @@
-import Mathlib
-import Formalism.FlagUnipotentLattices.QDetNegTranspose
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-open Finset TensorProduct Formalism.HermitianLatticeCounting.S8
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementC
+public import Formalism.FormalDegreeBessel.StatementDS
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
+open Finset TensorProduct
 
 noncomputable section
 
@@ -60,9 +66,9 @@ theorem isPoly_Tm {n : ℕ} (E : Fin n → Fin n → B) (c : ℂ) (a b : Fin n) 
     IsPolyFun (fun u => Tm E (u - c) a b) := by
   unfold Tm
   by_cases h : a = b
-  · simp only [h, if_true, sub_eq_add_neg, map_add]
+  · simp only [h, ite_true, sub_eq_add_neg, map_add (f := _)]
     exact (IsPolyFun.scalar.add (IsPolyFun.const _)).add (IsPolyFun.const _)
-  · simp only [h, if_false]
+  · simp only [h, ite_false]
     exact IsPolyFun.const _
 
 theorem isPoly_qminor {n t : ℕ} (E : Fin n → Fin n → B) (a b : Fin t → Fin n) (c : ℂ) :
@@ -83,13 +89,14 @@ theorem eq_zero_of_eval (P : B[X]) (h : ∀ u : ℂ, P.eval (algebraMap ℂ B u)
     apply Polynomial.funext
     intro u
     have := congrArg ℓ (h u)
-    rw [eval_eq_sum, Polynomial.sum, map_sum, map_zero] at this
-    rw [eval_zero, ← this, eval_finset_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eval_eq_sum, Polynomial.sum, map_sum, map_zero] at this
+    rw [eval_zero, ← this, Polynomial.eval_finsetSum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← map_pow, ← Algebra.commutes, ← Algebra.smul_def, map_smul, eval_monomial, smul_eq_mul,
       mul_comm]
   have hk := congrArg (fun r => r.coeff k) hq
-  simp only [q, finset_sum_coeff, coeff_monomial, coeff_zero, Finset.sum_ite_eq'] at hk
+  simp only [q, Polynomial.finsetSum_coeff, coeff_monomial_apply, coeff_zero, Finset.sum_ite_eq'] at hk
   by_cases hs : k ∈ P.support
   · simpa [hs] using hk
   · simp [notMem_support_iff.mp hs]
@@ -98,9 +105,6 @@ end
 
 section
 variable {V : Type} [AddCommGroup V] [Module ℂ V] {n : ℕ}
-
-def op (M : Fin n → Fin n → Module.End ℂ V) : Module.End ℂ (V ⊗[ℂ] (Fin n → ℂ)) :=
-  ∑ a, ∑ b, TensorProduct.map (M a b) (stdRep n a b)
 
 end
 

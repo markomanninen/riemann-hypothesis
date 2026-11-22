@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.AugBij
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AugBij
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC

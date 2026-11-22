@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,8 @@ theorem ae_nuG (Γ : Set (GL (Fin k) E)) (d : ℕ) (hae : ∀ᵐ u ∂nuD E k d,
   rw [nuG, Measure.sum_apply_of_countable, ENNReal.tsum_eq_zero]
   intro γ
   rw [(measurableEmbedding_mulLeft (ratGL E k γ)).map_apply]
-  exact measure_mono_null (fun u hu hUU => hu ⟨γ.1, u, γ.2, hUU, rfl⟩) hae
+  exact measure_mono_null (t := {u | ¬ UU (k - d) u})
+    (fun u hu hUU => hu ⟨γ.1, u, γ.2, hUU, rfl⟩) hae
 
 theorem nuD_ne_zero (hsf : ∀ d ≤ k, SFinite (nuD E k d)) : ∀ d ≤ k, nuD E k d ≠ 0 := by
   intro d
@@ -97,7 +102,7 @@ theorem nuD_ne_zero (hsf : ∀ d ≤ k, SFinite (nuD E k d)) : ∀ d ≤ k, nuD 
     simp only [Measure.prod_prod, vecMeasure_vecDomain, one_mul, Measure.coe_zero, Pi.zero_apply] at h2
     exact ih (by omega) (Measure.measure_univ_eq_zero.mp h2)
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem main_nuG (hD0 : D0) (hN1 : N1) (Γ : Set (GL (Fin k) E)) (d : ℕ) (hd : d ≤ k)
     (hinv : ∀ γ ∈ Γ, γ⁻¹ ∈ Γ) (hblk : ∀ γ ∈ Γ, GlobalTheory (k - d) γ) :

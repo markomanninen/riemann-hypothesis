@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntegralExpRename
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntegralExpRename
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,8 @@ theorem th_inParamK_map {σ : Type} [Finite σ] (K1 K' : Type) [Field K1] [Algeb
   congr 1
   ext n
   unfold lgF
-  rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, PowerSeries.coeff_mk, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, PowerSeries.coeff_mk, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [apply_ite (algebraMap K1 K'), map_zero, map_inv₀, map_pow, map_natCast]
 
@@ -152,7 +157,8 @@ theorem th_inParam_sum {σ α : Type} [Finite σ] (s : Finset α) (f : α → Mv
     inParam p (∑ a ∈ s, f a) = ∑ a ∈ s, inParam p (f a) := by
   have ha := th_hasSubst_lX p (σ := σ)
   unfold inParam
-  rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom ha, map_sum]
 
 theorem th_ren_hasSubst {κ σ R : Type} [Finite κ] [CommRing R] (φ : κ → σ) :
     MvPowerSeries.HasSubst (fun k => (MvPowerSeries.X (φ k) : MvPowerSeries σ R)) :=
@@ -215,14 +221,16 @@ theorem th_reduce {E τ : Type} [Fintype E] (be : MvPowerSeries (Fin 2) (K0 p))
   have hPsi0 : MvPowerSeries.constantCoeff
       (∑ e : E, sub2 p be (MvPowerSeries.X (Sum.inl e)) (MvPowerSeries.X (Sum.inr e)) :
         MvPowerSeries (E ⊕ E) (K0 p)) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun e _ => by rw [substitution_of_variables]; exact th_ren_const _ hbe0
   have hPh0 : MvPowerSeries.constantCoeff Ph = 0 := by
     rw [map_sub, hPsi0, sub_zero] at hc0
     exact hc0
   have hGt0 : MvPowerSeries.constantCoeff (Gt p E c c') = 0 := by
     unfold Gt
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun e _ => th_ren_const _ hG0
   have hδ : E0 p (inParam p Ph - Gt p E c c') := by
     have e : inParam p Ph - Gt p E c c' =

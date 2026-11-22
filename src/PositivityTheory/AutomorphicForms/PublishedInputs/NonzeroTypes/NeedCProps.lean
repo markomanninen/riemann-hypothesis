@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.JacNeZero
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CJDefs
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.FiniteDimensionalTranslationCoordinates
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.JacNeZero
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CJDefs
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.FiniteDimensionalTranslationCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ def CSteps : Prop :=
     G.ParabolicJacquetProp ∧ G.AnnihilationProp ∧ G.NonIntegralProp ∧ G.TorusCentreEigenProp ∧ G.TorusPowerProp ∧ G.JacquetKernelProp ∧ G.TorusCentreInjectiveProp ∧
     G.JacquetImageProp ∧ G.JacquetModuleFiniteProp ∧ G.SubquotientProp ∧ G.TensorProductProp ∧ G.SupportOfProductProp
 
-open UpperTheory.NonzeroTypeTheory in
 
+open UpperTheory.NonzeroTypeTheory in
 theorem need_CMain (hC : CSteps) (hlL : LeviSubgroupRestriction) (L : GlobalTheory.Mem.LiteralAutomorphy.LitN) :
     ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n : ℕ) (G : Grp k n)
     (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin n) k) V), IsSmooth ρ → ρ.IsIrreducible →
@@ -49,8 +53,8 @@ theorem need_CMain (hC : CSteps) (hlL : LeviSubgroupRestriction) (L : GlobalTheo
   exact G.cMain hcb hccB hJone hJmul hJinv hKC hΔU hΔM hlM hlB hlU hiw hPJ hkill hni hTE hTp hjK hTI hun hlL hjI
     (G.jacProd_of hjF hsub hten hsupp) L V ρ hs hi hx
 
-open UpperTheory.NonzeroTypeTheory in
 
+open UpperTheory.NonzeroTypeTheory in
 theorem need_CProps (hC : CSteps) : Need_CProps := by
   intro k _ _ _ _ n G
   obtain ⟨hcb, -, -, hG⟩ := hC k
@@ -64,8 +68,8 @@ theorem need_CProps (hC : CSteps) : Need_CProps := by
   rw [← hK.1]
   exact (KCg k n G.lev).one_mem
 
-open UpperTheory.NonzeroTypeTheory in
 
+open UpperTheory.NonzeroTypeTheory in
 theorem need_Grp (hC : CSteps) : Need_Grp := by
   intro k _ _ _ _ n μ hμ
   obtain ⟨-, -, hex, -⟩ := hC k

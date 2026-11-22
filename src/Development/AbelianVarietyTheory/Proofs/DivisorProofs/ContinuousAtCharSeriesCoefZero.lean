@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 
@@ -118,7 +122,7 @@ theorem continuousAt_coef_zero {Y Ξ P : Type} [AddCommGroup Y] [Zero Ξ] [Topol
     exact inv_mul_cancel₀ (by exact_mod_cast Fintype.card_ne_zero)
   let A : P → ℂ := fun p => (Fintype.card ι : ℂ)⁻¹ * ∑ i, ∑' a, e a (w i) * c p a
   have hAc : ContinuousAt A p0 :=
-    continuousAt_const.mul (tendsto_finset_sum _ (fun i _ => hc (w i)))
+    continuousAt_const.mul (tendsto_finsetSum _ (fun i _ => hc (w i)))
 
   have key : ∀ p, (∀ a, ‖c p a‖ ≤ M a) → ‖A p - c p 0‖ ≤ δ * S + (S - ∑ a ∈ s, M a) := by
     intro p hp

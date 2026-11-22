@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Odd UpperTheory.V.Stick UpperTheory.V.ML
 open scoped nonZeroDivisors Pointwise
@@ -16,7 +20,7 @@ private theorem cyc_hom_ext {K Ω : Type} [Field K] [CharZero K] [Field Ω] [Cha
       rw [hn] at hy1
       exact h y hy1
     | algebraMap c => rw [AlgHom.commutes, AlgHom.commutes]
-    | add a b _ _ ha hb => rw [map_add, map_add, ha, hb]
+    | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     | mul a b _ _ ha hb => rw [map_mul, map_mul, ha, hb]
   ext x
   exact congrArg (fun φ : K →ₐ[ℚ] Ω => φ x) key

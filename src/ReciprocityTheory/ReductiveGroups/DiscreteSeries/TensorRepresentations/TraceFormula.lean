@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Decomp
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaM
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Decomp
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaM
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,8 @@ section FormB
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {D : Submodule ℂ H} {ε : Fin n → Bool}
 
 theorem formB_conj (f g : Fin n → D) : starRingEnd ℂ (formB ε f g) = formB ε g f := by
-  simp only [formB, map_sum, map_mul, inner_conj_symm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [formB, map_sum, map_mul, inner_conj_symm]
   refine sum_congr rfl fun c _ => ?_
   split_ifs <;> simp
 
@@ -80,7 +85,7 @@ end FormB
 
 def closRep {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H))
     (S : Submodule ℂ H) [S.HasOrthogonalProjection] (g : Matrix (Fin n) (Fin n) ℂ) : S →L[ℂ] S :=
-  S.orthogonalProjection ∘L σ g ∘L S.subtypeL
+  S.orthogonalProjectionOnto ∘L σ g ∘L S.subtypeL
 
 theorem trace_nonneg (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] {ε : Fin n → Bool}
     {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {D : Submodule ℂ H} {E : Fin n → Fin n → Module.End ℂ D}
@@ -115,7 +120,8 @@ theorem trace_nonneg (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAddC
       exact h h0 b
   have hVt : ∀ f ∈ tensSub V, P f = 0 := by
     intro f hf
-    rw [← Finset.univ_sum_single f, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.univ_sum_single f, map_sum]
     exact sum_eq_zero fun b _ => hV0 _ ((tset_mem.1 hf) b) b
   have hle : tensSub (genSub E V) ≤ tensSub (genSub E V) ⊓ LinearMap.ker P := by
     refine tfg_gen dual E V _ (fun f hf => ⟨tset_mem.2 fun b => rorth_le_genSub ((tset_mem.1 hf) b), hVt f hf⟩) ?_
@@ -211,8 +217,7 @@ theorem trace_ge (dual : Bool) {lam lam' : Fin n → ℝ} {H : Type*} [NormedAdd
   have hre : c.re = (∑ i, ‖wv i‖ ^ 2) / d := by rw [hc0eq, Complex.ofReal_re]
   refine ⟨by rw [hre]; exact div_le_div_of_nonneg_right hge hdpos.le, fun h => ?_⟩
   have hT : ∑ i, ‖wv i‖ ^ 2 = d' := by
-    rw [hre, div_left_inj' hdpos.ne'] at h
-    exact h
+    rwa [hre, div_left_inj₀ hdpos.ne'] at h
   have hle := heq hT
   refine tf_eq_case dual hσ hD hsm hgap hV hcas hVK hW hd hy0G hy0H hP hι.1 hgap' hV₂ hc₂ hVK₂ hgen1 ?_
   intro f hf
@@ -267,7 +272,8 @@ theorem eigenProj_formB (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedA
   have hL : ∀ f ∈ tensSub (genSub E V), ∀ h ∈ tensSub (genSub E V), formB ε (P f) (h - P h) = 0 := by
     intro f hf h hh
     obtain ⟨hb, hbe, rfl⟩ := hdec h hh
-    rw [map_sum, ← sum_sub_distrib, formB_sum_right]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← sum_sub_distrib, formB_sum_right]
     refine sum_eq_zero fun b _ => ?_
     by_cases hbz : ((b : ℝ) : ℂ) = z
     · rw [hP1 _ (hbe b).1 (by rw [(hbe b).2, hbz]), sub_self, formB_zero_right]

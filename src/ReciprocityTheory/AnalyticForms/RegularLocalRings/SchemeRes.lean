@@ -1,8 +1,12 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsSncDataW
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WeightedSieveThreeParameter
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.NormEvalLeOfVarsSubset
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WCharts
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.NeZeroOfSpanEqMaximalIdeal
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsSncDataW
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WeightedSieveThreeParameter
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.NormEvalLeOfVarsSubset
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WCharts
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.NeZeroOfSpanEqMaximalIdeal
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -13,13 +17,13 @@ noncomputable section
 variable {K : Type} [Fintype K] [Nonempty K] {ι : K → Type} [∀ k, Fintype (ι k)]
 variable {P D : Ideal (MvPolynomial (Σ k, ι k) ℂ)} {hP : IsMultiHomogIdeal P}
 
-open Classical in
 
+open Classical in
 def WData.idxEquiv (w : WData P D hP) : w.Idx ≃ Fin (Fintype.card w.Idx) :=
   Fintype.equivFin w.Idx
 
-open Classical in
 
+open Classical in
 def WData.toAlgRes (w : WData P D hP) {e : ℕ} (he : ∀ x : w.M, ringKrullDim (w.W.presheaf.stalk x.1) = e)
     (hD : IsMultiHomogIdeal D) (hcomp : ∀ Q ∈ P.minimalPrimes, IsRelevant Q → ¬ D ≤ Q) :
     AlgRes ι P D e where

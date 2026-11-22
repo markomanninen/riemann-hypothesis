@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ThetaTowerRecognition
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CubNSucc
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationWeilPairingProperties
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NormRepGeneratorsAndThetaSeriesTerm
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransport
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SummableVtQT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ThetaTowerRecognition
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CubNSucc
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationWeilPairingProperties
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NormRepGeneratorsAndThetaSeriesTerm
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransport
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SummableVtQT
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Ex GlobalTheory.IndefiniteRowSideFullHecke.ThetaTowerRecognition
 open scoped BigOperators
@@ -63,8 +67,8 @@ def up {k m L : ℕ} (hL : L = k * m) (p : N.QT k) : N.QT L :=
 theorem wp_level_cg (hio : Function.Injective N.io) {k m L : ℕ} (hL : L = k * m) (P Q : N.QT L) (p q : N.QT k)
     (h₂ : cg N p.1.2 = cg N P.1.2 ^ m) (h₄ : cg N Q.1.2 = cg N q.1.2) : N.wp P Q = N.wp p q := by
   let p₀ : N.QT k := ⟨(P.1.1, P.1.2 ^ m), by rw [NumD.mem_QT, ← pow_mul, mul_comm m k, ← hL]; exact N.mem_QT.1 P.2⟩
-  rw [wp_congr ((N.qEq_equivalence _).refl P) ((qEq_iff_cg hio (p' := up hL q)).2 h₄),
-    wp_congr ((qEq_iff_cg hio (p' := p₀)).2 (h₂.trans (map_pow _ _ _).symm)) ((N.qEq_equivalence _).refl q)]
+  rw [wp_congr (show N.QEq P P from ⟨0, by simp, by simp⟩) ((qEq_iff_cg hio (p' := up hL q)).2 h₄),
+    wp_congr ((qEq_iff_cg hio (p' := p₀)).2 (h₂.trans (map_pow _ _ _).symm)) (show N.QEq q q from ⟨0, by simp, by simp⟩)]
   exact wp_level hL _ _ _ _ rfl rfl rfl rfl
 end Alg
 
@@ -209,7 +213,7 @@ theorem exists_tower (hn : n ≠ 0) (mt : Match N N' n) : ∃ w : TowerIso N N' 
   have t' : ∀ j (p' : N'.QT ((n ^ j) ^ 2)), ∃ p, mt.r _ p p' := fun j => by rw [← pow_mul]; exact mt.cotot _
   choose f hf using t
   have key : ∀ j p p', mt.r ((n ^ j) ^ 2) p p' ↔ N'.QEq (f j p) p' := fun j p p' =>
-    mt.eqv _ p p _ _ (hf j p) ((N.qEq_equivalence _).refl p)
+    mt.eqv _ p p _ _ (hf j p) (show N.QEq p p from ⟨0, by simp, by simp⟩)
   exact ⟨{
     io := f
     eqv := fun j p q => ⟨fun h => mt.inj _ _ _ _ ((key j _ _).2 h) (hf j q), fun h => (mt.eqv _ _ _ _ _ (hf j p) h).1 (hf j q)⟩
@@ -222,9 +226,10 @@ theorem exists_tower (hn : n ≠ 0) (mt : Match N N' n) : ∃ w : TowerIso N N' 
 theorem SameMatch.proportional {mt : Match N N' n} {w : TowerIso N N' n} (h : SameMatch mt w)
     (hs : ∀ j p, Summable (N.txT (n ^ j) p)) (hs' : ∀ j p, Summable (N'.txT (n ^ j) p)) : w.Proportional mt.c₀ :=
   fun j p => ⟨_, (hs j p).hasSum, by
-    have := mt.tx j p _ ((h j p _).2 ((N'.qEq_equivalence _).refl _))
+    have := mt.tx j p _ ((h j p _).2 (show N'.QEq (w.io j p) (w.io j p) from ⟨0, by simp, by simp⟩))
     rw [NumD.tx, NumD.tx] at this
-    exact this ▸ (hs' j _).hasSum⟩
+    rw [← this]
+    exact (hs' j _).hasSum⟩
 end MatchTower
 
 section Sum

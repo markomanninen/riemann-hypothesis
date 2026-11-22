@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsOneAddKill
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsOneAddKill
+
+@[expose] public section
 
 noncomputable section
 
@@ -233,7 +237,7 @@ theorem gen_iff {R T : Type} [CommRing R] {D : Z.Opens} (ψ : R →+* Γ(Z, D)) 
     | add x y _ _ hx hy =>
       obtain ⟨p, hp⟩ := hx
       obtain ⟨q, hq⟩ := hy
-      exact ⟨p + q, fun z hz => by rw [map_add, map_add, hp, hq]; rfl⟩
+      exact ⟨p + q, fun z hz => by rw [map_add (f := _), map_add (f := _), hp, hq]; rfl⟩
     | neg x _ hx =>
       obtain ⟨p, hp⟩ := hx
       exact ⟨-p, fun z hz => by rw [map_neg, map_neg, hp]; rfl⟩
@@ -254,7 +258,7 @@ theorem gen_iff {R T : Type} [CommRing R] {D : Z.Opens} (ψ : R →+* Γ(Z, D)) 
     | add p q hp hq =>
       obtain ⟨a, ha, e⟩ := hp
       obtain ⟨b, hb, e'⟩ := hq
-      exact ⟨a + b, add_mem ha hb, fun z hz => by rw [map_add, map_add, e, e']; rfl⟩
+      exact ⟨a + b, add_mem ha hb, fun z hz => by rw [map_add (f := _), map_add (f := _), e, e']; rfl⟩
     | mul_X p t hp =>
       obtain ⟨a, ha, e⟩ := hp
       exact ⟨a * ρ t, mul_mem ha (Subring.subset_closure (Or.inr ⟨t, rfl⟩)), fun z hz => by

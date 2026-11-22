@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.OffOpenAlt
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.OffOpenAlt
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
+
+@[expose] public section
 
 noncomputable section
 

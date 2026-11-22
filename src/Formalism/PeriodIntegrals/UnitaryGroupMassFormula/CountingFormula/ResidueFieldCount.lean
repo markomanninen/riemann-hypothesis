@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.FrIcFree
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.FrIcFree
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ theorem fr_frob {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [Co
     obtain ⟨n, hn⟩ := fl_norm L hinj x.2
     have hT : Ideal.Quotient.mk I x + σ (Ideal.Quotient.mk I x) =
         algebraMap 𝓀[F] (L.O ⧸ I) (IsLocalRing.residue 𝒪[F] t) := by
-      rw [hσ, ← map_add, hρ]
+      rw [hσ, ← map_add (f := _), hρ]
       show _ = Ideal.Quotient.mk I (ι0 t)
       congr 1
       exact Subtype.ext (by rw [hι0, ht]; rfl)
@@ -88,7 +92,7 @@ theorem fr_frob {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [Co
         Ideal.Quotient.mk I x + algebraMap 𝓀[F] (L.O ⧸ I) (IsLocalRing.residue 𝒪[F] n) = 0 := by
       rw [← hT, ← hN]; ring
     have h1 := congrArg Fr h0
-    rw [map_add, map_sub, map_pow, map_mul, AlgEquiv.commutes, AlgEquiv.commutes, map_zero,
+    rw [map_add (f := _), map_sub, map_pow, map_mul, AlgEquiv.commutes, AlgEquiv.commutes, map_zero,
       ← hT, ← hN] at h1
     linear_combination h1
   have hq1 : 1 < Fintype.card 𝓀[F] := Fintype.one_lt_card

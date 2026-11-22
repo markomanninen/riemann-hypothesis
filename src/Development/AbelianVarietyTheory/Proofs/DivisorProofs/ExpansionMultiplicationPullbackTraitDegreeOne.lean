@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsLeadOfUnif
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulSecK
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntFamPull
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorsionFrameIsUnitAlongSection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComponentEq
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSemiAbelianOfUniformisationOverDvr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EqZeroOfSval
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsLeadOfUnif
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulSecK
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntFamPull
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorsionFrameIsUnitAlongSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComponentEq
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSemiAbelianOfUniformisationOverDvr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EqZeroOfSval
+
+@[expose] public section
 
 noncomputable section
 

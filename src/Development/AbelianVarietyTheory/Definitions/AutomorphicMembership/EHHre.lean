@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RedivisionStructureEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RedivisionStructureEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,17 +17,17 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (Z : New D)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def reTR {X : HidaSetting D} (T : TypedRed X) : TypedRed (reX Z X) := { T with }
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def reCS {X : HidaSetting D} {u : D.what₂.Word} {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (c : ColSys X u what₂) :
     ColSys (reX Z X) u what₂ := { c with }
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def eHHre (X : HidaSetting D) : HHX X ≃ₗᵢ[ℂ] HHX (reX Z X) := LinearIsometryEquiv.refl ℂ (HHX X)
 
 end GlobalTheory.Mem.SRe

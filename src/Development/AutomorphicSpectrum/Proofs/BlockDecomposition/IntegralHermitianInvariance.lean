@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.CProps
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.CProps
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,12 +18,12 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem trPair_add_left (R : Type) [CommRing R] [Algebra F R] {n : ℕ}
     (A B C : Matrix (Fin n) (Fin n) (R ⊗[F] E)) :
     trPair (F := F) (E := E) R (A + B) C = trPair (F := F) (E := E) R A C + trPair (F := F) (E := E) R B C := by
-  simp only [trPair, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add, mul_add]
+  simp only [trPair, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _), mul_add]
 
 theorem trPair_add_right (R : Type) [CommRing R] [Algebra F R] {n : ℕ}
     (A B C : Matrix (Fin n) (Fin n) (R ⊗[F] E)) :
     trPair (F := F) (E := E) R A (B + C) = trPair (F := F) (E := E) R A B + trPair (F := F) (E := E) R A C := by
-  simp only [trPair, Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add]
+  simp only [trPair, Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem multiplicity_add_lattice_preserving {R : Type} [CommRing R] [MeasurableSpace R] {n : ℕ} (lam : Measure (Fin n → R))
     (L : AddSubgroup (Fin n → R)) (b h : Matrix (Fin n) (Fin n) R) (hh : ∀ y ∈ L, h.mulVec y ∈ L) :

@@ -1,18 +1,22 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModBasic
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEisInt
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDeltaInt
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffRescaleExpandOfNotDvd
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEvalSer
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEvalMF
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQExpEq
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGmForm
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGmQ
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.IsIntegralOfRoot
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModFrobSer
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModKronSer
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModBasic
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEisInt
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDeltaInt
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffRescaleExpandOfNotDvd
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEvalSer
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEvalMF
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQExpEq
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGmForm
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGmQ
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.IsIntegralOfRoot
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModFrobSer
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModKronSer
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane MatrixGroups CongruenceSubgroup Manifold
@@ -71,7 +75,7 @@ theorem kronFun_div {p : ℕ} (hp : p.Prime) :
       prodSer p + xp p ((aC * dC ^ p - aC ^ p * dC) ^ 2) := by
     rw [← gmQ_xp hp0]
     ext m
-    simp only [xp, PowerSeries.coeff_mk, map_add]
+    simp only [xp, PowerSeries.coeff_mk, map_add (f := _)]
     split_ifs <;> simp
   rw [← key, hsum, hk]
   rw [PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul, PowerSeries.coeff_mk]

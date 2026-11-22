@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.FormalGroups.Basics
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.FormalGroups.Basics
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -189,7 +193,7 @@ theorem zwPoly_wAt {τ : Type*} {u : MvPowerSeries τ R} (hu : MvPowerSeries.con
   have := congrArg (PowerSeries.substAlgHom (R := R) hs) (zwPoly_formalW W)
   rw [map_zero] at this
   rw [← this]
-  simp only [zwPoly, map_add, map_sub, map_mul, map_pow]
+  simp only [zwPoly, map_add (f := _), map_sub, map_mul, map_pow]
   simp [PowerSeries.coe_substAlgHom, PowerSeries.subst_X hs, wAt]
 
 theorem constantCoeff_wAt {τ : Type*} {u : MvPowerSeries τ R}
@@ -275,7 +279,7 @@ theorem map_thirdZ : MvPowerSeries.map f (thirdZ W) = thirdZ (W.map f) := by
     map_addSlope, map_addIntercept, thirdZ]
 
 theorem map_thirdW : MvPowerSeries.map f (thirdW W) = thirdW (W.map f) := by
-  rw [thirdW, map_add, map_mul, map_addSlope, map_thirdZ, map_addIntercept, thirdW]
+  rw [thirdW, map_add (f := _), map_mul, map_addSlope, map_thirdZ, map_addIntercept, thirdW]
 
 theorem map_negDen : MvPowerSeries.map f (negDen W) = negDen (W.map f) := by
   simp [negDen, map_thirdZ, map_thirdW, MvPowerSeries.map_C]
@@ -387,7 +391,7 @@ theorem coeff_single_subst_pair [DecidableEq τ] {G : MvPowerSeries (Fin 2) R} {
       (fun j => by fin_cases j <;> simp [ha, hb]) (by simpa using hG)
     rwa [← MvPowerSeries.subst_sub hab, sub_zero] at this
   rw [hGH, ← MvPowerSeries.coe_substAlgHom hab]
-  simp only [map_add, map_mul, MvPowerSeries.coe_substAlgHom hab, MvPowerSeries.subst_X hab,
+  simp only [map_add (f := _), map_mul, MvPowerSeries.coe_substAlgHom hab, MvPowerSeries.subst_X hab,
     MvPowerSeries.subst_C]
   rw [MvPowerSeries.coeff_of_lt_order (lt_of_lt_of_le (by simp) h2), add_zero,
     MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_C_mul]

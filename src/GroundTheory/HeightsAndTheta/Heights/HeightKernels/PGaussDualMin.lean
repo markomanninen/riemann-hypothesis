@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -25,8 +30,8 @@ theorem qf_inv_transpose_mulVec {g : ℕ} (B : Matrix (Fin g) (Fin g) ℝ) (hB :
 
 end PGaussDualMin
 
-open PGaussDualMin in
 
+open PGaussDualMin in
 theorem GaussDualMin.proof : GaussDualMin.Statement := by
   intro g B hB μ hμ hμ0
   classical

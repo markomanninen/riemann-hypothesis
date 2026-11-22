@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Pr UpperTheory.V.Fr UpperTheory.V
 
@@ -27,7 +31,7 @@ theorem UpperTheory.V.Fr.st_loc :
   have hinv : ∀ φ : TDual (ZMod (l ^ 1)) M,
       φ ∈ H0 ((twDual ((cycMod ℚ Ω l 1).comp (Dec (F := ℚ) A).subtype) ρ).comp (MonoidHom.id _)) := by
     intro φ g
-    apply TDual.ext
+    apply LinearMap.ext
     intro m
     simp [twDual, hcyc g.1 g.2]
     show φ (ρ g⁻¹ m) = φ m

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+
+@[expose] public section
+
 universe u v
 
 open TopologicalSpace AlgebraicGeometry

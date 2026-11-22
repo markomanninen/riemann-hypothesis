@@ -1,14 +1,18 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CentredSegments.IrreducibleUnif
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.StandardFunctorsFiniteLength
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormPowLeOfEigenvaluesLt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactKm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeOperatorExists
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeOperatorsCommuteOnFixed
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantCoweightAntitonePairingSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantCoweightAdditiveFundamental
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CentredSegments.IrreducibleUnif
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.StandardFunctorsFiniteLength
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormPowLeOfEigenvaluesLt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactKm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeOperatorExists
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeOperatorsCommuteOnFixed
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantCoweightAntitonePairingSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantCoweightAdditiveFundamental
+
+@[expose] public section
 
 open Filter Topology MeasureTheory GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult ValuativeRel
 
@@ -19,7 +23,7 @@ theorem exists_radius {W : Type} [AddCommGroup W] [Module ℂ W] [FiniteDimensio
     (hb : ∀ μ : ℂ, T.HasEigenvalue μ → ‖μ‖ < b) :
     ∃ ρ : ℝ, 0 ≤ ρ ∧ ρ < b ∧ ∀ μ : ℂ, T.HasEigenvalue μ → ‖μ‖ < ρ := by
   classical
-  have hfin : Set.Finite (T.HasEigenvalue : Set ℂ) := Module.End.finite_hasEigenvalue T
+  have hfin : Set.Finite {μ : ℂ | T.HasEigenvalue μ} := Module.End.finite_hasEigenvalue T
   let s : Finset ℝ := insert 0 (hfin.toFinset.image fun μ => ‖μ‖)
   have hs : s.Nonempty := Finset.insert_nonempty _ _
   have hM : s.max' hs < b := by

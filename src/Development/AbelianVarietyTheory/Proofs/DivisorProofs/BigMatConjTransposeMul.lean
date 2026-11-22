@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMinorsMemInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColumnInclusionRenaming
-import ReciprocityTheory.DualLattices.FischerSelfNeZero
-import ReciprocityTheory.DualLattices.ConstantCoeffRowSubst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMinorsMemInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColumnInclusionRenaming
+public import ReciprocityTheory.DualLattices.FischerSelfNeZero
+public import ReciprocityTheory.DualLattices.ConstantCoeffRowSubst
+
+@[expose] public section
+
 open Classical
 
 noncomputable section
@@ -37,9 +42,10 @@ theorem rename_rowSub (κ : ι → Matrix (Fin d) (Fin d) ℂ) (P : Pol ι d a) 
     refine MvPolynomial.algHom_ext fun y => ?_
     rw [AlgHom.comp_apply, AlgHom.comp_apply, rowSub, aeval_X, rename_X, ReciprocityTheory.PGsh.rowSubst_X,
       ← (rowEquiv ι d).sum_comp, Fintype.sum_prod_type, Finset.sum_comm, Finset.sum_eq_single y.1]
-    · simp only [map_sum, map_mul, rename_C, rename_X, bigMat, submatrix_apply, varFlat, Equiv.symm_apply_apply]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [blockDiagonal_apply_eq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [map_sum, map_mul, rename_C, rename_X, bigMat, submatrix_apply, varFlat, Equiv.symm_apply_apply]
+        refine Finset.sum_congr rfl fun i _ => ?_
+        rw [blockDiagonal_apply_eq]
     · intro τ _ hτ
       refine Finset.sum_eq_zero fun i _ => ?_
       simp [bigMat, varFlat, blockDiagonal_apply_ne _ _ _ hτ]

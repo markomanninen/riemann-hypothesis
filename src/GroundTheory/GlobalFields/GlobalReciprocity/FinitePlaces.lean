@@ -1,18 +1,22 @@
-import Mathlib
-import GroundTheory.GlobalFields.GlobalReciprocity.Layers
-import GroundTheory.GlobalFields.GlobalReciprocity.NormSquare
-import GroundTheory.GlobalFields.GlobalReciprocity.LocalSurjective
-import GroundTheory.GlobalFields.GlobalReciprocity.DegreeLift
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.PowInvariant
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.GlobalReciprocity.Layers
+public import GroundTheory.GlobalFields.GlobalReciprocity.NormSquare
+public import GroundTheory.GlobalFields.GlobalReciprocity.LocalSurjective
+public import GroundTheory.GlobalFields.GlobalReciprocity.DegreeLift
+public import GroundTheory.PowerSubgroups.CountableNeighbourhoods.PowInvariant
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open IsDedekindDomain NumberField IntermediateField GroundTheory.LocalField.Abstract IdeleGroup SemiLocal
 open scoped Pointwise GroundTheory.LocalField.Abstract
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 namespace IdeleClassLimit
 
@@ -38,10 +42,6 @@ theorem isOpen_degreeLevel (m : ℕ+) : IsOpen (degreeLevel m : Set Gal(ℚ̄/�
 
 def layerGroup (L : FiniteSubfield) (m : ℕ+) : OpenSubgroup Gal(ℚ̄/ℚ) :=
   ⟨L.1.fixingSubgroup ⊓ degreeLevel m, L.1.fixingSubgroup_isOpen.inter (isOpen_degreeLevel m)⟩
-
-theorem mem_layerGroup {L : FiniteSubfield} {m : ℕ+} {τ : Gal(ℚ̄/ℚ)} :
-    τ ∈ (layerGroup L m : Subgroup Gal(ℚ̄/ℚ)) ↔ τ ∈ L.1.fixingSubgroup ∧ τ ∈ degreeLevel m :=
-  Iff.rfl
 
 def layerField (L : FiniteSubfield) (m : ℕ+) : FiniteSubfield :=
   ofOpenSubgroup (layerGroup L m)
@@ -73,13 +73,6 @@ theorem le_powerSubgroup (U : Subgroup Gal(ℚ̄/ℚ)) (s : Gal(ℚ̄/ℚ))
   | exact @GroundTheory.Variant₂.N1.le_powerSubgroup₂ U s hU
   | exact GroundTheory.Variant₂.N1.le_powerSubgroup₂ ..
   | (intros; apply GroundTheory.Variant₂.N1.le_powerSubgroup₂ <;> assumption)
-
-theorem mem_powerSubgroup_self (U : Subgroup Gal(ℚ̄/ℚ)) (s : Gal(ℚ̄/ℚ))
-    (hU : ∀ (k : ℤ), ∀ x ∈ U, s ^ k * x * (s ^ k)⁻¹ ∈ U) : s ∈ powerSubgroup U s hU := by
-  first
-  | exact @GroundTheory.Variant₂.N1.mem_mulZPowers_self U s hU
-  | exact GroundTheory.Variant₂.N1.mem_mulZPowers_self ..
-  | (intros; apply GroundTheory.Variant₂.N1.mem_mulZPowers_self <;> assumption)
 
 section Fields
 
@@ -179,7 +172,7 @@ theorem exists_abstractSymbol_eq_localSymbol (P : Ideal (𝓞 ℚ̄)) [P.IsPrime
     (hh : ∀ q : Nat.Primes, toPadicInt q (Multiplicative.toAdd (degree s)) ≠ 0) :
     ∃ y : ((FiniteSubfield.placeBelow P hP K).adicCompletion K.1)ˣ,
       abstractSymbol K L (IdeleClassGroup.mk K.1 (finiteEmbedding _ y)) =
-        Abelianization.of (restrictHom (E := L) (⟨s, hsK⟩ : K.1.fixingSubgroup)) ∧
+        Group.Abelianization.of (restrictHom (E := L) (⟨s, hsK⟩ : K.1.fixingSubgroup)) ∧
       localSymbol L.1 _ y = restrictHom (E := L) (⟨s, hsK⟩ : K.1.fixingSubgroup) := by
 
   set g := Nat.card (L.1 ≃ₐ[K.1] L.1) with hgdef
@@ -215,8 +208,9 @@ theorem exists_abstractSymbol_eq_localSymbol (P : Ideal (𝓞 ℚ̄)) [P.IsPrime
 
   have ha : abstractSymbol S M
       (IdeleClassGroup.mk S.1 (finiteEmbedding (FiniteSubfield.placeBelow P hP S) y)) =
-        Abelianization.of (restrictHom (E := M) (⟨s, hsS⟩ : S.1.fixingSubgroup)) := by
-    rw [abstractSymbol_mk_of_le_sup_zhatField S M hMsup, ideleSymbol_finiteEmbedding, hy]
+        Group.Abelianization.of (restrictHom (E := M) (⟨s, hsS⟩ : S.1.fixingSubgroup)) := by
+    rw [abstractSymbol_mk_of_le_sup_zhatField S M hMsup, ideleSymbol_finiteEmbedding]
+    exact congrArg Group.Abelianization.of hy
 
   have hb := abstractSymbol_ideleClassNorm (K := K) (L := L) (K' := S) (L' := M) hKS.out
     (le_layerField L m) _ _ ha
@@ -234,7 +228,7 @@ theorem exists_abstractSymbol_eq_localSymbol (P : Ideal (𝓞 ℚ̄)) [P.IsPrime
 theorem abstractSymbol_mk_finiteEmbedding (v : HeightOneSpectrum (𝓞 K.1))
     (x : (v.adicCompletion K.1)ˣ) :
     abstractSymbol K L (IdeleClassGroup.mk K.1 (finiteEmbedding v x)) =
-      Abelianization.of (localSymbol L.1 v x) := by
+      Group.Abelianization.of (localSymbol L.1 v x) := by
   obtain ⟨P, hPp, hP, rfl⟩ := exists_placeBelow_eq K v
   set σ := localSymbol L.1 (FiniteSubfield.placeBelow P hP K) x with hσdef
 
@@ -273,11 +267,6 @@ theorem abstractSymbol_mk_finiteEmbedding (v : HeightOneSpectrum (𝓞 K.1))
     rw [mk_finiteEmbedding_normUnits (K := K.1) (L := L.1) (FiniteSubfield.placeBelow P hP K) wL z]
     exact abstractSymbol_ideleClassNorm_eq_one K L _
   rw [hx, map_mul, map_mul, map_mul, hy1, h2, mul_one]
-
-theorem abstractSymbol_comp_finiteEmbedding (v : HeightOneSpectrum (𝓞 K.1)) :
-    ((abstractSymbol K L).comp (IdeleClassGroup.mk K.1)).comp (finiteEmbedding v) =
-      Abelianization.of.comp (localSymbol L.1 v) :=
-  MonoidHom.ext fun x ↦ abstractSymbol_mk_finiteEmbedding K L v x
 
 end Main
 

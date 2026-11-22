@@ -1,15 +1,20 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegRadialWeight
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StStokesOnChart
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRadialPrimitive
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StMaDensLogPow
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMaDensChain
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PChartMassCompact
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjectionCluster
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffBoundaryBound
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegRadialWeight
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StStokesOnChart
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRadialPrimitive
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StMaDensLogPow
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMaDensChain
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PChartMassCompact
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjectionCluster
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffBoundaryBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -216,8 +221,8 @@ theorem smoothNear_cons {m : ℕ} {S : Set (Fin n → ℂ)} {g : (Fin n → ℂ)
 
 end RegRadialWeight
 
-open RegRadialWeight in
 
+open RegRadialWeight in
 theorem RegRadialWeight.proof (hS : StokesOnChart.Statement) (hM : ChartMassCompact.Statement)
     (hRP : RadialPrimitive.Statement) (hLP : MaDensLogPow.Statement) : RegRadialWeight.Statement := by
   intro n d J A u ε x a t₀ T hJ hd hA hε ha ht₀ hconst hT hint

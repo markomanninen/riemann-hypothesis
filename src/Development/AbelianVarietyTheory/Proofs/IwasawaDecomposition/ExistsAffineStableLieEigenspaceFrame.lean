@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TriIff
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAffineLieBasisBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TriIff
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAffineLieBasisBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -99,7 +103,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {X : Sc
 def Compat (t : SAB H X) {S S' : Type} [CommRing S] [CommRing S'] (ψ : S →+* S') {x : Sp S ⟶ X} {x' : Sp S' ⟶ X} {n : ℕ}
     (xc : ∀ m : ℕ, sp (R₀ := S) (ReciprocityTheory.ChartRestriction.G.Chart.JetR S (Fin n) m) ⟶ (Over.pullback x).obj t.G)
     (xc' : ∀ m : ℕ, sp (R₀ := S') (ReciprocityTheory.ChartRestriction.G.Chart.JetR S' (Fin n) m) ⟶ (Over.pullback x').obj t.G) : Prop :=
-  ∀ cc : Fin n → S, vec t x' xc' (ψ ∘ cc) = spMap (dualMap ψ) ≫ vec t x xc cc
+  ∀ cc : Fin n → S, vec t x' xc' (ψ ∘ cc) =
+    spMap (_root_.Formalism.L2.Pj.dualMap ψ) ≫ vec t x xc cc
 
 theorem vec_bc_of_chart {S : Type} [CommRing S] {x : Sp S ⟶ X} {n : ℕ}
     {xc : ∀ m : ℕ, sp (R₀ := S) (ReciprocityTheory.ChartRestriction.G.Chart.JetR S (Fin n) m) ⟶ (Over.pullback x).obj t.G}
@@ -124,8 +129,8 @@ theorem vec_bc_of_chart {S : Type} [CommRing S] {x : Sp S ⟶ X} {n : ℕ}
   rw [key, Category.assoc, hφ, ← Category.assoc, hcomp cc, Category.assoc]
   rfl
 
-variable (t) in
 
+variable (t) in
 theorem exists_affine_chart {Y : Scheme.{0}} (i : Y ⟶ X) (y : Y) :
     ∃ (U : Y.Opens) (hU : IsAffineOpen U), y ∈ U ∧ ∃ (x : Sp Γ(Y, U) ⟶ X) (_ : x = hU.fromSpec ≫ i)
       (_ : ReciprocityTheory.ChartRestriction.G.Chart.Chart ((Over.pullback x).obj t.G)) (n : ℕ)
@@ -188,7 +193,7 @@ theorem exists_projectors {L : Type} [CommRing L] (φ : c.F →+* L) {x : Sp L �
       ψ ∘ Polynomial.aeval (rho hx α) (Q.map (algebraMap c.F L)) cc := fun Q cc => by
     induction Q using Polynomial.induction_on' with
     | add p q hp hq =>
-      rw [Polynomial.map_add, Polynomial.map_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hp, hq]
+      rw [Polynomial.map_add (f := _), Polynomial.map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq]
       funext j; simp
     | monomial j a =>
       rw [Polynomial.map_monomial, Polynomial.map_monomial, Polynomial.aeval_monomial, Polynomial.aeval_monomial,
@@ -209,9 +214,9 @@ theorem exists_projectors {L : Type} [CommRing L] (φ : c.F →+* L) {x : Sp L �
 
 end GlobalTheory.ShFam.EigSpread
 
+
 open AlgebraicGeometry CategoryTheory Limits NumberField ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.L2.Pj
   GlobalTheory.Toroidal GlobalTheory.Cartier GlobalTheory.ShFam GlobalTheory.FlagBundle GlobalTheory.ShFam.EigLoc GlobalTheory.LieLocBasis GlobalTheory.ShFam.EigSpread in
-
 theorem GlobalTheory.ShFam.EigSpread.exists_stable_eigFrame : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Z : Model Xo c β) (z : gen Z), ∃ (U : (gen Z).Opens) (hU : IsAffineOpen U) (φ : c.F →+* Γ(gen Z, U)) (f : EigFrame Z φ (hU.fromSpec ≫ genι Z)), z ∈ U ∧ hU.fromSpec ≫ genStr Z = spMap φ ∧ f.Stable := by
   intro E _ _ _ H Dw l Xo c O _ β Z z
   obtain ⟨U₀, hU₀, hz, x₀, hx₀, C, n, xc, hx⟩ := exists_affine_chart Z.t (genι Z) z
@@ -237,7 +242,8 @@ theorem GlobalTheory.ShFam.EigSpread.exists_stable_eigFrame : ∀ (E : Type) [Fi
       simpa only [comb_iff hxL] using this)
   have frame : ∀ (S : Type) [CommRing S] (ψ : Γ(gen Z, U₀) →+* S) (x' : Sp S ⟶ Z.X) (φ' : c.F →+* S),
       x' = spMap ψ ≫ x₀ → φ' = ψ.comp φ₀ → IsUnit (ψ (∏ τ, g τ)) →
-      ∃ f : EigFrame Z φ' x', ∀ τ i, f.v τ i = spMap (dualMap ψ) ≫ vec Z.t x₀ xc (B₀ τ i) := by
+      ∃ f : EigFrame Z φ' x', ∀ τ i, f.v τ i =
+        spMap (_root_.Formalism.L2.Pj.dualMap ψ) ≫ vec Z.t x₀ xc (B₀ τ i) := by
     intro S _ ψ x' φ' h1 h2 hu
     subst h2
     obtain ⟨xc', hx', hv⟩ := vec_bc_of_chart C hx ψ h1
@@ -266,4 +272,4 @@ theorem GlobalTheory.ShFam.EigSpread.exists_stable_eigFrame : ∀ (E : Type) [Fi
     refine ⟨f', fun τ i => ?_⟩
     rw [hf', hf, ← Category.assoc, ReciprocityTheory.ChartRestriction.G.PullbackSections.spMap_comp_spMap]
     congr 2
-    exact RingHom.ext fun w => by ext <;> simp [dualMap]
+    exact RingHom.ext fun w => by ext <;> simp [_root_.Formalism.L2.Pj.dualMap]

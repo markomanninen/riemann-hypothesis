@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ConstTermOnMulLeftOfNormalizer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdHomeoSymmApplySnd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CocompactNormalSubgroupFibrationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CocompactFibrationSectionMeasureStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ConstTermOnMulLeftOfNormalizer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdHomeoSymmApplySnd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CocompactNormalSubgroupFibrationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CocompactFibrationSectionMeasureStatement
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AutomorphicL2Unitary
 open scoped ENNReal

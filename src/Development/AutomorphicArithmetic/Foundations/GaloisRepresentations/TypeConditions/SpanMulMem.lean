@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,7 @@ theorem core {O K k Γ : Type} [CommRing O] [Field K] [Field k] [Monoid Γ] (f :
     | mem _ h => obtain ⟨g, rfl⟩ := h; exact ⟨h1 g, h2 g⟩
     | zero => simp
     | add _ _ _ _ h h' =>
-      simp only [Prod.fst_add, Prod.snd_add, trace_add, map_add, h.1, h.2, h'.1, h'.2, Pi.add_apply, Finset.sum_add_distrib]
+      simp only [Prod.fst_add, Prod.snd_add, trace_add, map_add (f := _), h.1, h.2, h'.1, h'.2, Pi.add_apply, Finset.sum_add_distrib]
       constructor <;> ring
     | smul c _ _ h =>
       have a1 : ∀ z : K, c • z = f c * z := fun z => Algebra.smul_def c z

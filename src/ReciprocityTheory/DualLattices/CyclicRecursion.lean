@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CyclicRecursionStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CyclicRecursionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ private lemma univ_coeff {ι : Type} (s : Finset ι) :
   refine ⟨h0, ?_⟩
   have hg : ghostComponent 1 (∑ i ∈ s, teichmuller p (X i : MvPolynomial ι ℤ)) =
       ∑ i ∈ s, (X i : MvPolynomial ι ℤ) ^ p := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [ghost_one]
     simp [WittVector.teichmuller_coeff_pos]
@@ -105,7 +110,8 @@ theorem teichSum (p : ℕ) [Fact p.Prime] : TeichSumStatement p := by
     have hmap : WittVector.map (MvPolynomial.aeval X).toRingHom
         (∑ i ∈ s, teichmuller p (MvPolynomial.X i : MvPolynomial ι ℤ)) =
           ∑ i ∈ s, teichmuller p (X i) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl (fun i _ => ?_)
       rw [WittVector.map_teichmuller]
       simp
@@ -134,10 +140,6 @@ theorem teichSum (p : ℕ) [Fact p.Prime] : TeichSumStatement p := by
 end TeichSum
 
 section Cyclic
-
-private def cycT {V : Type} [AddCommGroup V] [Module ℚ V] (o : ℕ) (P : ℚ) (La : ZMod o → V)
-    (i : ZMod o) : V :=
-  ∑ n ∈ Finset.range o, P⁻¹ ^ (n + 1) • La (i + ((n + 1 : ℕ) : ZMod o))
 
 end Cyclic
 

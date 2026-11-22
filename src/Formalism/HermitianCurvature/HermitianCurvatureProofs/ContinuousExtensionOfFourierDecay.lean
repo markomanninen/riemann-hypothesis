@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothBoundedOfFourierDecay
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothDecayOfWeighted
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothBoundedOfFourierDecay
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothDecayOfWeighted
+
+@[expose] public section
 
 open MeasureTheory Real Complex Module
 

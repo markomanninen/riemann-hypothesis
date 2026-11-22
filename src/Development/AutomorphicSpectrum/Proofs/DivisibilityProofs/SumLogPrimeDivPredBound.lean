@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.SumLogDivPredLe
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.SumLogDivPredLe
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
 

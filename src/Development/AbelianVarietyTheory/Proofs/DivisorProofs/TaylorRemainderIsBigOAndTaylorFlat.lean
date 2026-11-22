@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConstantCoeffDpolyOfAdditiveTaylorPts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConstantCoeffDpolyOfAdditiveTaylorPts
+
+@[expose] public section
 
 open Filter Topology
 
@@ -20,7 +24,8 @@ theorem taylor_eq_partialSum {I : Type} [Fintype I] [DecidableEq I] (N : ℕ) {f
     have hz : (fun _ : Fin k ↦ z) = fun _ ↦ ∑ i, z i • (Pi.single i (1 : ℂ) : I → ℂ) := by
       funext a j
       simp [Finset.sum_apply, Pi.single_apply]
-    rw [hz, ContinuousMultilinearMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, ContinuousMultilinearMap.map_sum]
     refine Finset.sum_congr rfl fun s _ ↦ ?_
     rw [ContinuousMultilinearMap.map_smul_univ]
   rw [h2, nsmul_eq_mul] at h1

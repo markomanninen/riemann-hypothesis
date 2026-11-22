@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.BridgeDefs
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.BridgeDefs
+
+@[expose] public section
 
 namespace KStar.Ram
 
@@ -85,8 +89,9 @@ private theorem adjoin_toInteger_eq_top (A : Type*) [CommRing A] [Algebra A (�
     Algebra.adjoin_le (by simp)
   exact this hy
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem relDifferent_eq_span_prod (E : IntermediateField ℚ K) {ζ : K} (hζ : IsPrimitiveRoot ζ N) :
     differentIdeal (𝓞 E) (𝓞 K) = Ideal.span
       {∏ σ ∈ Finset.univ.filter (fun σ : Gal(K/ℚ) => σ ∈ E.fixingSubgroup ∧ σ ≠ 1),
@@ -122,8 +127,9 @@ theorem relDifferent_eq_span_prod (E : IntermediateField ℚ K) {ζ : K} (hζ : 
   · intro σ _
     rfl
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem map_differentIdeal_eq_span_prod (E : IntermediateField ℚ K) {ζ : K}
     (hζ : IsPrimitiveRoot ζ N) :
     (differentIdeal ℤ (𝓞 E)).map (algebraMap (𝓞 E) (𝓞 K)) = Ideal.span

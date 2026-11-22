@@ -1,8 +1,11 @@
-import Mathlib
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsLatFlagPair
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsLatFlagPair
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -15,11 +18,11 @@ theorem contDiff_eval (σ : Type) [Fintype σ] (p : MvPolynomial σ ℂ) :
     simp only [MvPolynomial.eval_C]
     exact contDiff_const
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p i hp =>
     simp only [map_mul, MvPolynomial.eval_X]
-    exact hp.mul (contDiff_apply ℝ ℂ i)
+    exact hp.mul (contDiff_apply ℝ (fun _ => ℂ) i)
 
 end PositivityTheory.Xgn.SmoothPolynomialNormSquare
 

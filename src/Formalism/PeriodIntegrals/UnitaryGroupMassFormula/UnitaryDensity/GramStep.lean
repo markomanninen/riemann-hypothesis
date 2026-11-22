@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryDense
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryDense
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexOrder

@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdBox
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdBox
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -169,7 +173,7 @@ theorem zF_pr (i : Fin j) : (DegPre.zF D' F).left ≫ prB pD F i = (DegPre.zF D 
   · simp [DegPre.zF]
 
 theorem xe_shift (k : ℕ) (α mu : D'.X) (i : Fin j) : pD.xe (α + k • mu) i = pD.xe α i + k • pD.xe mu i := by
-  rw [map_add, map_nsmul]; rfl
+  rw [map_add (f := _), map_nsmul]; rfl
 
 theorem deltaφ_pr (k : ℕ) (α mu : D'.X) (i : Fin j) (a : Fin 4 ⊕ Fin 4) :
     DegPre.deltaφ D' F k α mu a ≫ (pD.pw.pr i).left =
@@ -253,7 +257,7 @@ theorem famMult_box (k : ℕ) (α mu : D'.X) (y : (TF (R := R) F).left) {J J'}
   rw [a₂] at b₂
   have b₃ := (b₁ (mu + α)).trans (Finset.prod_congr rfl fun i _ => congrArg
     (fun χ => val (D.psi χ) (𝟙 (TF (R := R) F).left ≫ jFK (R := R) F) y J)
-    (show pD.xe (mu + α) i = pD.xe mu i + pD.xe α i by rw [map_add]; rfl))
+    (show pD.xe (mu + α) i = pD.xe mu i + pD.xe α i by rw [map_add (f := _)]; rfl))
   rw [prod_delta_zero F D' k α mu (om pD.w y J J'), famMult_val F hJ']
   simp only [famMult_val F hJ, Finset.prod_mul_distrib, Finset.prod_pow, Finset.prod_inv_distrib]
   rw [← b₃, ← b₁ mu, ← b₁ α, ← b₂]

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.CoprimeProd
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.CoprimeProd
+
+@[expose] public section
 
 noncomputable section
 

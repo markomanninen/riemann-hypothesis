@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDA
-import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormByPlaces
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDA
+public import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormByPlaces
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -52,12 +56,13 @@ theorem pf_arch (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (a : Ω c) (ha : a ≠ 0)
   have hSF : SFinite (blockSphereProb d.D (d.N + 1)) := by have := hPD; infer_instance
   have hSF1 : SFinite (sphereProb (d.N + 1)) := by have := hP1; infer_instance
   set e := ReciprocityTheory.MultiplicativeHeights.lh0Split d.D (d.N + 1)
-  have hmp : MeasurePreserving e.symm ((sphereProb (d.N + 1)).prod (blockSphereProb d.D (d.N + 1)))
-      (blockSphereProb (d.D + 1) (d.N + 1)) :=
-    (measurePreserving_piFinSuccAbove (fun _ => sphereProb (d.N + 1)) 0).symm _
   have hmp' : MeasurePreserving e (blockSphereProb (d.D + 1) (d.N + 1))
       ((sphereProb (d.N + 1)).prod (blockSphereProb d.D (d.N + 1))) :=
-    measurePreserving_piFinSuccAbove (fun _ => sphereProb (d.N + 1)) 0
+    measurePreserving_piFinSuccAbove
+      (n := d.D) (α := fun _ : Fin (d.D + 1) => UnitSphereC (d.N + 1))
+      (μ := fun _ => sphereProb (d.N + 1)) 0
+  have hmp : MeasurePreserving e.symm ((sphereProb (d.N + 1)).prod (blockSphereProb d.D (d.N + 1)))
+      (blockSphereProb (d.D + 1) (d.N + 1)) := hmp'.symm
   have hsnd : MeasurePreserving (fun z => (e z).2) (blockSphereProb (d.D + 1) (d.N + 1))
       (blockSphereProb d.D (d.N + 1)) :=
     (measurePreserving_snd (μ := sphereProb (d.N + 1)) (ν := blockSphereProb d.D (d.N + 1))).comp hmp'
@@ -68,7 +73,7 @@ theorem pf_arch (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (a : Ω c) (ha : a ≠ 0)
   have hIA := sphereLogIntegrable (d.D + 1) (d.N + 1) eA _ hsA (isMultiHomogeneous_map_ring eA PA hAm sg)
   have hIB := sphereLogIntegrable (d.D + 1) (d.N + 1) eB _ hsB (isMultiHomogeneous_map_ring eB PB hBm sg)
   have hB0 := ae_blockSphere_eval_ne_zero (d.D + 1) (d.N + 1) eB _ hsB (isMultiHomogeneous_map_ring eB PB hBm sg)
-  have hS := hsnd.quasiMeasurePreserving.ae (d.norm_at_sg hd h c sg)
+  have hS := hsnd.quasiMeasurePreserving.ae (d.norm_at_sg_B hd h c sg)
   have hae : (fun z => Real.log ‖eval (blockPoint z) (MvPolynomial.map sg PA)‖ -
       Real.log ‖eval (blockPoint z) (MvPolynomial.map sg PB)‖) =ᵐ[blockSphereProb (d.D + 1) (d.N + 1)]
       fun z => d.lsum c sg a (e z).2 := by

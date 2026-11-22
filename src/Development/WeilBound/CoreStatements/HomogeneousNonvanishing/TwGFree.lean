@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField TensorProduct
 
 namespace PositivityTheory.UnitarySelfGeneration
@@ -13,7 +18,7 @@ theorem free_semilocal (A R : Type) [CommRing A] [IsLocalRing A] [CommRing R] [A
     fun P =>
       haveI := P.isMaximal
       (IsLocalRing.eq_maximalIdeal
-        (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := A) P.asIdeal)).symm
+        (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := A) P.asIdeal)).symm
   exact Finite.of_injective (β := ↥((IsLocalRing.maximalIdeal A).primesOver R))
     (fun P => ⟨P.asIdeal, P.isMaximal.isPrime, Ideal.LiesOver.mk (hover P)⟩)
     (fun P Q h => MaximalSpectrum.ext (congrArg Subtype.val h))

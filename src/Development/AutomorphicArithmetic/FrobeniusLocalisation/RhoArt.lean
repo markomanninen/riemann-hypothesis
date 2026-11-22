@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.RdArith
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.RdArith
+
+@[expose] public section
 
 open UpperTheory.HF
 

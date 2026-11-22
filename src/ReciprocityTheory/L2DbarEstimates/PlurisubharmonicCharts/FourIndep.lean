@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -37,7 +41,6 @@ lemma fiBox_slices {n : ℕ} (i : Fin (n + 1)) (Φ : (Fin (n + 1) → ℝ) → �
   rw [IntegrableOn, ← Measure.prod_restrict] at hint'
   rw [← Measure.prod_restrict, integral_prod_symm (fun z => Φ (e z)) hint']
   simp [e]
-  rfl
 
 lemma fiG_differentiableOn {f : ℕ} {Ω : Set (Fin f → ℝ)} {h : (Fin f → ℂ) → ℂ}
     (hh : DifferentiableOn ℂ h (tube f Ω)) (ν : Fin f → ℤ) :

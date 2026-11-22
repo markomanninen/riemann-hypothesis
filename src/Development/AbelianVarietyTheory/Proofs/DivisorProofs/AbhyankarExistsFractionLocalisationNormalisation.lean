@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocHomAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocHomAlgebraMap
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.AbhyankarLocal
@@ -35,7 +40,7 @@ theorem exists_frac_closure : ∀ (S K L : Type) [CommRing S] [IsDomain S] [IsDi
     | algebraMap r =>
       rw [AlgEquiv.commutes, hS]
       exact Subring.subset_closure (Or.inl ⟨_, rfl⟩)
-    | add x y _ _ hx hy => rw [map_add, map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _)]; exact add_mem hx hy
     | mul x y _ _ hx hy => rw [map_mul, map_mul]; exact mul_mem hx hy
 
   have hT : ∀ u : TensorProduct S D (integralClosure S L), ∃ b : integralClosure D (TensorProduct S D L),
@@ -52,7 +57,7 @@ theorem exists_frac_closure : ∀ (S K L : Type) [CommRing S] [IsDomain S] [IsDi
     | add u v hu hv =>
       obtain ⟨b1, h1, m1⟩ := hu
       obtain ⟨b2, h2, m2⟩ := hv
-      exact ⟨b1 + b2, by simp [h1, h2], by rw [map_add]; exact add_mem m1 m2⟩
+      exact ⟨b1 + b2, by simp [h1, h2], by rw [(algebraMap (integralClosure D (TensorProduct S D L)) (Localization.AtPrime Q)).map_add]; exact add_mem m1 m2⟩
   have hI : ∀ y : TensorProduct S D L, ∃ σ : S, σ ≠ 0 ∧ ∃ u : TensorProduct S D (integralClosure S L),
       Algebra.TensorProduct.map (AlgHom.id S D) (integralClosure S L).val u = σ • y := by
     intro y
@@ -66,7 +71,7 @@ theorem exists_frac_closure : ∀ (S K L : Type) [CommRing S] [IsDomain S] [IsDi
       obtain ⟨σ1, n1, u1, e1⟩ := h1
       obtain ⟨σ2, n2, u2, e2⟩ := h2
       refine ⟨σ1 * σ2, mul_ne_zero n1 n2, σ2 • u1 + σ1 • u2, ?_⟩
-      rw [map_add, map_smul, map_smul, e1, e2, smul_add, smul_smul, smul_smul, mul_comm σ1 σ2]
+      rw [map_add (f := _), map_smul, map_smul, e1, e2, smul_add, smul_smul, smul_smul, mul_comm σ1 σ2]
   obtain ⟨⟨b, s⟩, rfl⟩ := IsLocalization.mk'_surjective Q.primeCompl w
   obtain ⟨σ1, n1, u1, e1⟩ := hI (b : TensorProduct S D L)
   obtain ⟨σ2, n2, u2, e2⟩ := hI ((s : integralClosure D (TensorProduct S D L)) : TensorProduct S D L)

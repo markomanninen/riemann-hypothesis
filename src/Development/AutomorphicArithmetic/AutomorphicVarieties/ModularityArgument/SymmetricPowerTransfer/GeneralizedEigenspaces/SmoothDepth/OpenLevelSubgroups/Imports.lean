@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.DcMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.AutProj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.CoefAut
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.ContCoef
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.DcMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.AutProj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.CoefAut
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.W (Plc Lp)
@@ -26,8 +30,9 @@ theorem UpperTheory.V.Z.Sym.Al.proj :
   have hF : ∀ k (f : V →ₗ[ℂ] ℂ) g, f (F k g) = (P k (C f)).1 g := by
     intro k f g
     conv_rhs => rw [← b.sum_dual_apply_smul_coord f]
-    simp only [F, map_sum, map_smul, smul_eq_mul, Submodule.coe_sum, Finset.sum_apply,
-      Submodule.coe_smul, Pi.smul_apply, AddSubmonoidClass.coe_finset_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, map_sum, map_smul, smul_eq_mul, Submodule.coe_sum, Finset.sum_apply,
+      Submodule.coe_smul, Pi.smul_apply, AddSubmonoidClass.coe_finsetSum]
     exact Finset.sum_congr rfl fun i _ => mul_comm _ _
   have hext : ∀ {v v' : V}, (∀ f : V →ₗ[ℂ] ℂ, f v = f v') → v = v' := fun h =>
     b.ext_elem fun i => h (b.coord i)
@@ -37,7 +42,7 @@ theorem UpperTheory.V.Z.Sym.Al.proj :
     push_neg at h
     refine hφ (funext fun g => hext fun f => ?_)
     have e := congrArg (fun x : GlobalTheory.DefU.autU L n => x.1 g) (hsum f)
-    simp only [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply] at e
+    simp only [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply] at e
     have e' : (C f).1 g = f (φ g) := rfl
     rw [Pi.zero_apply, map_zero, ← e', ← e]
     refine Finset.sum_eq_zero fun k _ => ?_

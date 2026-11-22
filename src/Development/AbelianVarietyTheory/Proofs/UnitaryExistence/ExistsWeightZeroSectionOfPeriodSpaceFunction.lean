@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIdempotentSectionFamily
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.MemRangeOfIsAlgebraicRatFun
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIdempotentSectionFamily
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.MemRangeOfIsAlgebraicRatFun
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.PureType GlobalTheory.CompRat
@@ -17,7 +21,11 @@ open GlobalTheory.CompIdem
 theorem isField_tensor {K κ F : Type} [Field K] [CharZero K] [Field κ] [Field F] [Algebra K κ] [Algebra K F]
     [FiniteDimensional K F] (h : ∀ x : κ, IsIntegral K x → x ∈ (algebraMap K κ).range) : IsField (κ ⊗[K] F) := by
   let Ω := AlgebraicClosure κ
-  let ψ : F →ₐ[K] Ω := IsAlgClosed.lift
+  let ψ : F →ₐ[K] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let pb := Field.powerBasisOfFiniteOfSeparable K F
   let m : κ ⊗[K] F →ₐ[κ] Ω := Algebra.TensorProduct.lift (Algebra.ofId κ Ω) ψ fun _ _ => Commute.all _ _
   let b := Algebra.TensorProduct.basis κ pb.basis
@@ -30,7 +38,7 @@ theorem isField_tensor {K κ F : Type} [Field K] [CharZero K] [Field κ] [Field 
     funext i
     simp [m, b]
   have hinj : Function.Injective m := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have h2 : Finsupp.linearCombination κ (m.toLinearMap ∘ b) (b.repr x) = 0 := by
       rw [← Finsupp.apply_linearCombination, b.linearCombination_repr]
@@ -135,7 +143,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Da
   {l : Level H} {Xo : Moduli D l} {c : Coeff l}
 
 theorem exists_idempotent (hA : AllTest Xo c) (σ : c.F →+* ℂ) {g : ℕ} {ty : Fin g → (E →+* ℂ)}
-    (F : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty) (hcl : FnAlgClosed Xo c)
+    (F : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty) (hcl : FnAlgClosed (Xo := Xo) (c := c))
     (i : Fin F.n) : ∃ χ ∈ sec Xo c 0 0, χ * χ = χ ∧ ∀ (y : FrPt Xo c (CAt σ)) (i' : Fin F.n) P,
       IsPeriod (F.Di i') ty P → y.x = F.u i' P → evR Xo c χ y = if i' = i then 1 else 0 := by
   classical
@@ -217,7 +225,7 @@ theorem one_add_smul_pow {K R : Type} [CommRing K] [CommRing R] [Algebra K R] {e
     simp only [Algebra.smul_def, map_sub, map_mul, map_one]
     linear_combination (algebraMap K R (v ^ m) - 1) * (algebraMap K R v - 1) * he
 
-theorem exists_section_of_function : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (σ : c.F →+* ℂ) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (F : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty), 1 ≤ D.p + D.q → (σ.comp (IntermediateField.inclusion c.le).toRingHom) (baseKA l).ρ = H.rt0 → IsTypeFn H D.p D.q ty → l.A = 1 → FnAlgClosed Xo c → ∀ v : Fin F.n → c.F, ∃ f ∈ sec Xo c 0 0, (∀ m : ℕ, (∀ i, v i ^ m = 1) → f ^ m = 1) ∧ ∀ (y : FrPt Xo c (CAt σ)) (i : Fin F.n) P, IsPeriod (F.Di i) ty P → y.x = F.u i P → Formalism.L2.PjFree.toC (evR Xo c f y) = σ (v i) := by
+theorem exists_section_of_function : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (σ : c.F →+* ℂ) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (F : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty), 1 ≤ D.p + D.q → (σ.comp (IntermediateField.inclusion c.le).toRingHom) (baseKA l).ρ = H.rt0 → IsTypeFn H D.p D.q ty → l.A = 1 → FnAlgClosed (Xo := Xo) (c := c) → ∀ v : Fin F.n → c.F, ∃ f ∈ sec Xo c 0 0, (∀ m : ℕ, (∀ i, v i ^ m = 1) → f ^ m = 1) ∧ ∀ (y : FrPt Xo c (CAt σ)) (i : Fin F.n) P, IsPeriod (F.Di i) ty P → y.x = F.u i P → Formalism.L2.PjFree.toC (evR Xo c f y) = σ (v i) := by
   intro E _ _ _ H D l Xo c σ g ty F _ _ _ _ hcl v
   classical
   have hA := GlobalTheory.Frames.allTest_of_secBaseChange GlobalTheory.allSixLaws.1.secBaseChange E H D l Xo c
@@ -228,7 +236,7 @@ theorem exists_section_of_function : ∀ (E : Type) [Field E] [NumberField E] [I
     simpa using sec_mul Xo c 0 0 0 0 ha hb
   · rw [← Finset.prod_pow]
     refine Finset.prod_eq_one fun i _ => ?_
-    rw [one_add_smul_pow (h2 i), hm i, sub_self, zero_smul, add_zero]
+    rw [one_add_smul_pow (h2 i), hm i, sub_self, Algebra.smul_def, map_zero, zero_mul, add_zero]
   · have : IsReduced (CAt σ) := inferInstanceAs (IsReduced ℂ)
     have hy' := hA (CAt σ) y
     let ev : Rul Xo c →* CAt σ :=

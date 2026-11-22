@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MvecLeviMulUv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemTwKerPolyBall
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicFourierExpansion
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GpProjContinuous
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInducedBallIndicatorStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocallyConstantFiniteBallSumStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RestrictionBallIndicatorSpanStatement
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.PhiPG0
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MvecLeviMulUv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemTwKerPolyBall
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicFourierExpansion
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GpProjContinuous
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInducedBallIndicatorStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocallyConstantFiniteBallSumStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RestrictionBallIndicatorSpanStatement
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.PhiPG0
+
+@[expose] public section
 
 noncomputable section
 open Matrix GlobalTheory.PRep GlobalTheory.BZMir GlobalTheory.SplitWeil GlobalTheory.CompanionTheory.MirFourier
@@ -44,13 +48,26 @@ theorem restr_periodic (ρ : Representation ℂ (LH k n) E) (f : cIndSpace (LH k
   exact congrFun (congrArg Subtype.val h1) (uv n v)
 
 theorem continuous_mvec (n : ℕ) : Continuous (mvec (k := k) (n := n)) := by
-  have h1 : Continuous fun g : Mir k n => (((mirabolicProjection k n g)⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) :=
-    Units.continuous_val.comp (GlobalTheory.CompanionTheory.BZMirFun.continuous_mirProj k n).inv
+  have hval : Continuous fun g : Mir k n =>
+      ((g : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) :=
+    Units.continuous_val.comp continuous_subtype_val
+  have hblock : Continuous fun g : Mir k n =>
+      ((mirabolicProjection k n g : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) := by
+    refine continuous_pi fun i => continuous_pi fun j => ?_
+    exact (continuous_apply (Fin.castSucc j)).comp ((continuous_apply (Fin.castSucc i)).comp hval)
+  have h1 : Continuous fun g : Mir k n =>
+      (((mirabolicProjection k n g)⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) := by
+    have hinv : Continuous fun g : Mir k n => g⁻¹ := continuous_inv
+    have heq : (fun g : Mir k n =>
+        (((mirabolicProjection k n g)⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k)) =
+        fun g => ((mirabolicProjection k n g⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) := by
+      funext g
+      rw [map_inv]
+    rw [heq]
+    exact hblock.comp hinv
   have h2 : Continuous (colv (k := k) (n := n)) := by
     refine continuous_pi fun i => ?_
-    have : Continuous fun g : Mir k n => ((g : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) :=
-      Units.continuous_val.comp continuous_subtype_val
-    exact this.matrix_elem _ _
+    exact hval.matrix_elem _ _
   exact h1.matrix_mulVec h2
 
 theorem exists_compact_polyBall (n : ℕ) {C : Set (Fin n → k)} (hC : IsCompact C) :
@@ -174,20 +191,23 @@ theorem ker_abs {X E A : Type} [AddCommGroup X] [Module ℂ X] [AddCommGroup E] 
   have hf1 : f = ∑ x ∈ R, tr (-x) (b (r f x)) := by
     apply hinj
     funext v
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     conv_lhs => rw [hR v]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [hr, hb, sub_eq_add_neg]
   have hbsum : ∑ x ∈ R, χ (-x) • b (r f x) = b w := by
     apply hinj
     funext v
-    rw [map_sum, Finset.sum_apply, hb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply, hb]
     simp only [map_smul, Pi.smul_apply, hb]
     by_cases hv : L v
     · simp [hv, hw]
     · simp [hv]
   have hTf : T f = c • w := by
-    rw [hf1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf1, map_sum]
     simp only [hT1, hTb]
     rw [hw, Finset.smul_sum]
     refine Finset.sum_congr rfl fun x _ => ?_
@@ -484,8 +504,6 @@ theorem twKer_zero (τ : MRep k 0) : twKer τ.ρ (MirUin k 0) 1 = ⊥ := by
 def eMk (τ : MRep k 0) : τ.V ≃ₗ[ℂ] (psiN τ).V :=
   (Submodule.quotEquivOfEqBot _ (twKer_zero τ)).symm
 
-theorem eMk_apply (τ : MRep k 0) (x : τ.V) : eMk τ x = Submodule.Quotient.mk x := rfl
-
 theorem smooth_mirabolic_zero {V : Type} [AddCommGroup V] [Module ℂ V] (a : Representation ℂ (Mir k 0) V) : IsSmooth a := by
   intro v
   have : {g : Mir k 0 | a g v = v} = Set.univ := by
@@ -598,7 +616,7 @@ theorem final_match (m : Mir k (0 + t)) (x : τ.V ⊗[ℂ] σ.V) :
     ((rhoR τ σ).comp (iotaG t)) m (TensorProduct.congr (eMk τ) (LinearEquiv.refl ℂ σ.V) x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul a b =>
     exact match_tmul τ σ m a b
 
@@ -617,6 +635,7 @@ theorem phi_of_induced_rank_zero_equiv (ψ : AddChar k Circle) (hψ : Continuous
   core ψ hψ (0 + t) (HPG k 0 (t + 1)) (HPG_zero (t + 1)) (rho0 τ σ) (smooth_rho0 τ σ hσ) (hlv t) _
     (fun m x => congrArg (fun c : ℂ => c • (rho0 τ σ ⟨_, hlv t m⟩ x)) (dpowM_one (0 + t) m))
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem comb_lem (ψ : AddChar k Circle) (hψ : Continuous ψ) (hσ : IsSmooth σ.ρ) :
     Nonempty ((twist (phiMinus k ψ (cInd (HPG k 0 (t + 1)) (rho0 τ σ) : Representation ℂ (Mir k (0 + t + 1)) _)) (dpowM (0 + t) (-1 / 2))).Equiv
       (cInd (MirabolicParabolic k 0 t) (rhoR τ σ))) :=
@@ -631,8 +650,6 @@ theorem aux0 (ψ : AddChar k Circle) (hψ : Continuous ψ) (hσ : IsSmooth σ.ρ
     MIso (phiN (n := 0 + t) ψ (⟨_, cInd (HPG k 0 (t + 1)) (rho0 τ σ)⟩ : MRep k (0 + t + 1))) (prodGPn (psiN τ) (gres σ)) :=
   miso_of ψ _ _ (comb_lem τ σ ψ hψ hσ)
 
-theorem mcast_self {a : ℕ} (h : a = a) (X : MRep k a) : mcast h X = X := rfl
-
 theorem phiPG_zero (ψ : AddChar k Circle) (hψ : Continuous ψ) (hσ : IsSmooth σ.ρ) {n : ℕ} (hc : 0 + (t + 1) = n + 1) (hd : 0 + t = n) :
     MIso (phiN ψ (mcast hc (prodPGn τ σ))) (mcast hd (prodGPn (psiN τ) (gres σ))) := by
   subst hd
@@ -640,8 +657,8 @@ theorem phiPG_zero (ψ : AddChar k Circle) (hψ : Continuous ψ) (hσ : IsSmooth
 
 end Final
 
-open GlobalTheory.RgGu.Leib in
 
+open GlobalTheory.RgGu.Leib in
 theorem phiPG0_holds : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], PhiPG0 k := by
   intro k _ _ _ _ ψ hψ _ t τ σ hσ
   exact phiPG_zero τ σ ψ hψ hσ _ rfl

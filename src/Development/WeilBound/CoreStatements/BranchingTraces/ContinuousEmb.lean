@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.HeBranching
-import Development.WeilBound.HeckeVectors.HeckeDoubleCosets.HeckeCoefficientDegrees.DegreeHcOfGoodPresentFamily
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothVec
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilyProjectorSectionLocal
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.HeBranching
+public import Development.WeilBound.HeckeVectors.HeckeDoubleCosets.HeckeCoefficientDegrees.DegreeHcOfGoodPresentFamily
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothVec
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilyProjectorSectionLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem idem_avg {G K : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup
   let L : K →ₗ[ℂ] ℂ :=
     { toFun := fun a => ∫ h, φ h * ⟪b, ρ h a⟫_ℂ ∂ν
       map_add' := fun x y => by
-        simp only [map_add, inner_add_right, mul_add]
+        simp only [map_add (f := _), inner_add_right, mul_add]
         exact integral_add (hint b x) (hint b y)
       map_smul' := fun c x => by
         simp only [map_smul, inner_smul_right, RingHom.id_apply, smul_eq_mul]
@@ -85,9 +89,8 @@ theorem idem_avg {G K : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup
           funext h
           rw [← integral_const_mul, ← integral_mul_left_eq_self (fun g => φ h * φ (h⁻¹ * g) * F g) h]
           congr 1
-          funext k
-          simp only [inv_mul_cancel_left]
-          ring
+          funext g
+          simp [mul_assoc]
       _ = ∫ g, ∫ h, φ h * φ (h⁻¹ * g) * F g ∂ν ∂ν := integral_integral_swap hI
       _ = ∫ g, κ * φ g * F g ∂ν := by
           congr 1
@@ -95,10 +98,7 @@ theorem idem_avg {G K : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup
           rw [integral_mul_const, hconv]
       _ = κ * ∫ h, φ h * ⟪b, ρ h b⟫_ℂ ∂ν := by
           rw [← integral_const_mul]
-          congr 1
-          funext g
-          simp only [hF]
-          ring
+          simp [hF, mul_assoc]
   rw [hb'a b', hb'a b]
   exact hmain
 
@@ -198,9 +198,9 @@ theorem fdeg_shift {m : ℕ} {lam : Fin m → ℝ} (s : Fin m) (h : Formalism.Qu
   rw [mul_div_assoc']
   apply div_le_div_of_nonneg_right
   · calc _ ≤ ∏ a : Fin m, ∏ b ∈ Finset.univ.filter (fun b => a < b), (c a * c b * |l' a - l' b|) := by
-          apply Finset.prod_le_prod (fun a _ => Finset.prod_nonneg fun b _ => abs_nonneg _)
+          apply Finset.prod_le_prod₀ (fun a _ => Finset.prod_nonneg fun b _ => abs_nonneg _)
           intro a _
-          apply Finset.prod_le_prod (fun b _ => abs_nonneg _)
+          apply Finset.prod_le_prod₀ (fun b _ => abs_nonneg _)
           intro b hb
           exact fdeg_of_isHCParam_sub_single_ne s h a b (Finset.mem_filter.mp hb).2.ne
       _ = (∏ a : Fin m, ∏ b ∈ Finset.univ.filter (fun b => a < b), (c a * c b)) *
@@ -213,7 +213,7 @@ theorem fdeg_shift {m : ℕ} {lam : Fin m → ℝ} (s : Fin m) (h : Formalism.Qu
             (Finset.prod_nonneg fun a _ => Finset.prod_nonneg fun b _ => abs_nonneg _)
           calc ∏ a : Fin m, ∏ b ∈ Finset.univ.filter (fun b => a < b), (c a * c b)
                 ≤ ∏ a : Fin m, ∏ b : Fin m, (c a * c b) := by
-                apply Finset.prod_le_prod
+                apply Finset.prod_le_prod₀
                 · intro a _
                   refine Finset.prod_nonneg fun b _ => ?_
                   have := hc1 a
@@ -221,7 +221,7 @@ theorem fdeg_shift {m : ℕ} {lam : Fin m → ℝ} (s : Fin m) (h : Formalism.Qu
                   positivity
                 · intro a _
                   rw [Finset.prod_filter]
-                  apply Finset.prod_le_prod
+                  apply Finset.prod_le_prod₀
                   · intro b _
                     have := hc1 a
                     have := hc1 b

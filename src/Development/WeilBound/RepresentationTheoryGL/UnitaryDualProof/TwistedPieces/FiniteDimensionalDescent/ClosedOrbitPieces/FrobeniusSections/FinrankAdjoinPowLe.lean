@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.FrobeniusSections.FieldGen
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.FrobeniusSections.FieldGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,7 +124,7 @@ theorem sectionEx {k R : Type*} [Field k] [CommRing R] [Algebra k R] [FiniteDime
   let Lbar : Fin n → R ⧸ N := fun i => π.symm (fun I => α I i)
   let σ : ∀ I : MaximalSpectrum R, R ⧸ I.asIdeal → R ⧸ N := fun I z => π.symm (Pi.single I z)
   have hσadd : ∀ I z w, σ I (z + w) = σ I z + σ I w := fun I z w => by
-    simp only [σ, Pi.single_add, map_add]
+    simp only [σ, Pi.single_add, map_add (f := _)]
   have hσmul : ∀ I z w, σ I (z * w) = σ I z * σ I w := fun I z w => by
     simp only [σ, Pi.single_mul, map_mul]
   have hσpow : ∀ I z, σ I (z ^ (p ^ c)) = σ I z ^ (p ^ c) := fun I z => by
@@ -165,7 +169,8 @@ theorem sectionEx {k R : Type*} [Field k] [CommRing R] [Algebra k R] [FiniteDime
     intro x
     have : x = ∑ I, σ I (π x I) := by
       apply π.injective
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [σ, AlgEquiv.apply_symm_apply]
       exact (Finset.univ_sum_single (π x)).symm
     rw [this]; exact A.sum_mem fun I _ => hσA I _

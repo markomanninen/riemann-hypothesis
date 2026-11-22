@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.NeutralLocalFields.Duality
-import ReciprocityTheory.GroupCohomology.LengthKerEqCoker
+module
+
+public import Mathlib
+public import ReciprocityTheory.NeutralLocalFields.Duality
+public import ReciprocityTheory.GroupCohomology.LengthKerEqCoker
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField.InflationOneCocycles
 
@@ -22,9 +26,6 @@ abbrev qT (hrho : ContAction rho) (hN : ∀ σ ∈ N, ∀ m, rho σ m = m) : TRe
     refine continuous_prod_of_discrete_right.2 fun m => ?_
     rw [← QuotientGroup.isOpenQuotientMap_mk.continuous_comp_iff]
     exact hrho.comp (continuous_id.prodMk continuous_const)
-
-scoped instance (hrho : ContAction rho) (hN : ∀ σ ∈ N, ∀ m, rho σ m = m) : DiscreteTopology (qT N rho hrho hN).V :=
-  inferInstanceAs (DiscreteTopology M)
 
 variable {N rho}
 

@@ -1,8 +1,12 @@
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
-import GroundTheory.AutomorphicForms.ReductionMahler
-import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
-import GroundTheory.GlobalFields.Adele.Compact
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+module
+
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+public import GroundTheory.AutomorphicForms.ReductionMahler
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
+public import GroundTheory.GlobalFields.Adele.Compact
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GroundTheory.Automorphic GroundTheory.Automorphic.Reduction Formalism.L2.Host
 
@@ -80,7 +84,7 @@ private theorem map_idem (s : AdeleRing (𝓞 K) K →+* AdeleRing (𝓞 K) K) (
     inf_kill w (((Pi.evalRingHom (fun w : InfinitePlace K => w.Completion) w).comp (RingHom.fst _ _)).comp s)
       (((continuous_apply w).comp continuous_fst).comp hs)
   have e : zi 1 + zf 1 = (1 : AdeleRing (𝓞 K) K) := Prod.ext (add_zero _) (zero_add _)
-  have h3 : s (zi 1) + s (zf 1) = 1 := by rw [← map_add, e, map_one]
+  have h3 : s (zi 1) + s (zf 1) = 1 := by rw [← map_add (f := _), e, map_one]
   have h4 : (s (zi 1)).1 + (s (zf 1)).1 = 1 := congrArg Prod.fst h3
   have h5 : (s (zi 1)).2 + (s (zf 1)).2 = 1 := congrArg Prod.snd h3
   rw [h2, add_zero] at h4
@@ -107,7 +111,7 @@ private theorem ext_of_field (s t : AdeleRing (𝓞 K) K →+* AdeleRing (𝓞 K
       rw [e, map_mul, map_mul, h, (map_idem s hs).2, (map_idem t ht).2])
   refine RingHom.ext fun x => ?_
   have e : x = zi x.1 + zf x.2 := Prod.ext (add_zero _).symm (zero_add _).symm
-  rw [e, map_add, map_add]
+  rw [e, map_add (f := _), map_add (f := _)]
   exact congrArg₂ (· + ·) (congrFun hi x.1) (congrFun hf x.2)
 
 private theorem adMap_algebraMap (σ : K ≃+* K) (x : K) :

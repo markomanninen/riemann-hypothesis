@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -43,52 +48,6 @@ namespace QZDual
 variable {A B C : Type*} [AddCommGroup A] [TopologicalSpace A] [AddCommGroup B]
   [TopologicalSpace B] [AddCommGroup C] [TopologicalSpace C]
 
-def map (f : A →ₜ+ B) : QZDual B →ₜ+ QZDual A :=
-  ContinuousAddMonoidHom.compLeft QZ f
-
-@[simp]
-theorem map_apply (f : A →ₜ+ B) (χ : QZDual B) (a : A) : map f χ a = χ (f a) :=
-  rfl
-
-@[simp]
-theorem map_id : map (ContinuousAddMonoidHom.id A) = ContinuousAddMonoidHom.id (QZDual A) :=
-  rfl
-
-theorem map_comp (g : B →ₜ+ C) (f : A →ₜ+ B) :
-    map (g.comp f) = (map f).comp (map g) :=
-  rfl
-
-def toAddMonoidHomEquiv [DiscreteTopology A] : QZDual A ≃+ (A →+ QZ) where
-  toFun χ := χ.toAddMonoidHom
-  invFun f := { f with continuous_toFun := continuous_of_discreteTopology }
-  left_inv _ := rfl
-  right_inv _ := rfl
-  map_add' _ _ := rfl
-
-@[simp]
-theorem toAddMonoidHomEquiv_apply [DiscreteTopology A] (χ : QZDual A) (a : A) :
-    toAddMonoidHomEquiv χ a = χ a :=
-  rfl
-
-@[simp]
-theorem toAddMonoidHomEquiv_symm_apply [DiscreteTopology A] (f : A →+ QZ) (a : A) :
-    toAddMonoidHomEquiv.symm f a = f a :=
-  rfl
-
-variable (A) in
-
-def eval : A →+ QZDual (QZDual A) where
-  toFun a :=
-    { toFun := fun χ => χ a
-      map_zero' := rfl
-      map_add' := fun _ _ => rfl
-      continuous_toFun := continuous_eval_const a }
-  map_zero' := by ext χ; exact map_zero χ
-  map_add' a b := by ext χ; exact map_add χ a b
-
-@[simp]
-theorem eval_apply (a : A) (χ : QZDual A) : eval A a χ = χ a :=
-  rfl
 
 end QZDual
 

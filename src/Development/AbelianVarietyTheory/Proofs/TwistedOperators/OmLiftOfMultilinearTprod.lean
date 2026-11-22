@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.MinorOrderedEntries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.MinorOrderedEntries
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.MinorOrderedEntries
 open scoped TensorProduct
 
@@ -10,8 +15,8 @@ namespace GlobalTheory.RowReal
 variable {ι : Type} [Fintype ι] [DecidableEq ι] {S : Sizes} (P : ι → Entries S)
 
 def omLiftOfMultilinear
-    (Φ : MultilinearMap ℂ (fun j : Fin S.m => Pol ι (S.nR j.castSucc) (S.nR j.succ))
-      (MultilinearMap ℂ (fun i : Fin S.m => Pol ι (S.nC i.castSucc) (S.nC i.succ))
+    (Φ : MultilinearMap (RingHom.id ℂ) (fun j : Fin S.m => Pol ι (S.nR j.castSucc) (S.nR j.succ))
+      (MultilinearMap (RingHom.id ℂ) (fun i : Fin S.m => Pol ι (S.nC i.castSucc) (S.nC i.succ))
         (weylSub (S.nR (0 : Fin (S.m + 1))) (psiWt P) →ₗ[ℂ]
           Module.Dual ℂ (weylSub (S.nC (0 : Fin (S.m + 1))) (baseWt P)) →ₗ[ℂ] ℂ))) : OM P →ₗ[ℂ] ℂ :=
   TensorProduct.lift
@@ -20,8 +25,8 @@ def omLiftOfMultilinear
         PiTensorProduct.lift.toLinearMap).comp (PiTensorProduct.lift Φ)))
 
 theorem omLiftOfMultilinear_tprod
-    (Φ : MultilinearMap ℂ (fun j : Fin S.m => Pol ι (S.nR j.castSucc) (S.nR j.succ))
-      (MultilinearMap ℂ (fun i : Fin S.m => Pol ι (S.nC i.castSucc) (S.nC i.succ))
+    (Φ : MultilinearMap (RingHom.id ℂ) (fun j : Fin S.m => Pol ι (S.nR j.castSucc) (S.nR j.succ))
+      (MultilinearMap (RingHom.id ℂ) (fun i : Fin S.m => Pol ι (S.nC i.castSucc) (S.nC i.succ))
         (weylSub (S.nR (0 : Fin (S.m + 1))) (psiWt P) →ₗ[ℂ]
           Module.Dual ℂ (weylSub (S.nC (0 : Fin (S.m + 1))) (baseWt P)) →ₗ[ℂ] ℂ))) (x y v φ) :
     omLiftOfMultilinear P Φ (PiTensorProduct.tprod ℂ x ⊗ₜ[ℂ] (PiTensorProduct.tprod ℂ y ⊗ₜ[ℂ] (v ⊗ₜ[ℂ] φ))) =
@@ -30,8 +35,8 @@ theorem omLiftOfMultilinear_tprod
     LinearMap.llcomp_apply, LinearEquiv.coe_coe, PiTensorProduct.lift.tprod]
 
 theorem invFun_of_multilinear : ∀ {ι : Type} [Fintype ι] [DecidableEq ι] {S : Sizes} (P : ι → Entries S)
-    (Φ : MultilinearMap ℂ (fun j : Fin S.m => Pol ι (S.nR j.castSucc) (S.nR j.succ))
-      (MultilinearMap ℂ (fun i : Fin S.m => Pol ι (S.nC i.castSucc) (S.nC i.succ))
+    (Φ : MultilinearMap (RingHom.id ℂ) (fun j : Fin S.m => Pol ι (S.nR j.castSucc) (S.nR j.succ))
+      (MultilinearMap (RingHom.id ℂ) (fun i : Fin S.m => Pol ι (S.nC i.castSucc) (S.nC i.succ))
         (weylSub (S.nR (0 : Fin (S.m + 1))) (psiWt P) →ₗ[ℂ]
           Module.Dual ℂ (weylSub (S.nC (0 : Fin (S.m + 1))) (baseWt P)) →ₗ[ℂ] ℂ)))
     (hΦ : ∀ g x y v φ, Φ (fun j => rowFock P j g (x j)) (fun i => colFock P i g (y i)) (psiRep P g v)

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory.CompanionTheory.AePoly
@@ -41,10 +46,10 @@ theorem ae_eval_ne_zero_fin : ∀ (d : ℕ) (Q : MvPolynomial (Fin d) ℂ), Q �
         have hR : (MvPolynomial.finSuccEquiv ℂ d Q).map (MvPolynomial.eval s) ≠ 0 := by
           intro h0
           apply hs
-          have := congrArg (fun p => Polynomial.coeff p
+          have := congrArg (fun (p : Polynomial ℂ) => p.coeff
             (MvPolynomial.finSuccEquiv ℂ d Q).natDegree) h0
           simpa [Polynomial.coeff_map] using this
-        refine measure_mono_null ?_ ((Polynomial.finite_setOf_isRoot hR).measure_zero volume)
+        refine measure_mono_null ?_ ((Polynomial.finite_setOfPred_isRoot hR).measure_zero volume)
         intro y hy
         simpa [Polynomial.IsRoot, MvPolynomial.eval_eq_eval_mv_eval'] using hy
       rw [lintegral_congr_ae hz]

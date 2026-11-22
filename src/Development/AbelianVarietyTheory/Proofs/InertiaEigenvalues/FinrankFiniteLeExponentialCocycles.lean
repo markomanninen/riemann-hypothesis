@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CrystallineCocycles
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineCoboundaryLift
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DcrisFiniteOfIsDR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CrystallineCocycles
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineCoboundaryLift
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DcrisFiniteOfIsDR
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ def pairs : Submodule LL ((G → V) × (V ⊗[Qp] B)) where
   add_mem' := by
     rintro a b ⟨ha, hx⟩ ⟨hb, hy⟩
     refine ⟨(continuousCocycles ρ).add_mem ha hb, fun g => ?_⟩
-    simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, add_tmul, hx, hy, map_add]
+    simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, add_tmul, hx, hy, map_add (f := _)]
     abel
   smul_mem' := by
     rintro c a ⟨ha, hx⟩

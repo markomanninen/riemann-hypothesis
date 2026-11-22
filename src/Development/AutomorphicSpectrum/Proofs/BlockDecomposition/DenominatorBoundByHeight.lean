@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl
@@ -12,7 +17,7 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.GodementH.Den
 
-theorem local_exponent {F : Type} [Field F] [NumberField F] (v : Pl F) {y : F} (hy : y ≠ 0) :
+theorem local_exponent {F : Type} [Field F] [NumberField F] (v : Pl (F := F)) {y : F} (hy : y ≠ 0) :
     ∃ e : ℕ, v.valuation F y ≤ WithZero.exp (e : ℤ) ∧
       max 1 ‖algebraMap F (Fv F v) y‖₊ = (Ideal.absNorm v.asIdeal : ℝ≥0) ^ e := by
   have ha : v.valuation F y ≠ 0 := (Valuation.ne_zero_iff _).2 hy
@@ -24,7 +29,7 @@ theorem local_exponent {F : Type} [Field F] [NumberField F] (v : Pl F) {y : F} (
   have hval : WithZeroMulInt.toNNReal (HeightOneSpectrum.absNorm_ne_zero v) (WithZero.exp n) =
       (Ideal.absNorm v.asIdeal : ℝ≥0) ^ n := by
     rw [WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero]
-    simp [WithZero.exp]
+    rw [WithZero.log_exp]
   refine ⟨n.toNat, ?_, ?_⟩
   · rw [hn]
     exact WithZero.exp_le_exp.2 (Int.self_le_toNat n)
@@ -54,7 +59,7 @@ theorem finite_mulSupport {F : Type} [Field F] [NumberField F] {y : F} (hy : y �
   rw [h2, max_self]
 
 theorem denominator_le (F : Type) [Field F] [NumberField F] (y : F) :
-    ∃ m : ℕ, 0 < m ∧ (m : ℝ≥0) ≤ ∏ᶠ v : Pl F, max 1 ‖algebraMap F (Fv F v) y‖₊ ∧
+    ∃ m : ℕ, 0 < m ∧ (m : ℝ≥0) ≤ ∏ᶠ v : Pl (F := F), max 1 ‖algebraMap F (Fv F v) y‖₊ ∧
       IsIntegral ℤ ((m : F) * y) := by
   classical
   by_cases hy : y = 0
@@ -62,7 +67,7 @@ theorem denominator_le (F : Type) [Field F] [NumberField F] (y : F) :
     exact ⟨1, one_pos, by simp, by simpa using isIntegral_zero⟩
   choose e he1 he2 using fun v : Pl F => local_exponent v hy
   have hfin := finite_mulSupport hy
-  set S : Finset (Pl F) := hfin.toFinset with hS
+  set S : Finset (Pl (F := F)) := hfin.toFinset with hS
   set b : Ideal (𝓞 F) := ∏ v ∈ S, v.asIdeal ^ e v with hb
   have hb0 : b ≠ ⊥ := by
     rw [hb, ← Ideal.zero_eq_bot, Finset.prod_ne_zero_iff]
@@ -74,7 +79,7 @@ theorem denominator_le (F : Type) [Field F] [NumberField F] (y : F) :
   · rw [finprod_eq_prod_of_mulSupport_subset _ (s := S) (by simp [hS])]
     simp only [he2]
     simp [hb, map_prod, map_pow]
-  · have key : ∀ v : Pl F, v.valuation F ((Ideal.absNorm b : F) * y) ≤ 1 := by
+  · have key : ∀ v : Pl (F := F), v.valuation F ((Ideal.absNorm b : F) * y) ≤ 1 := by
       intro v
       have hmem : ((Ideal.absNorm b : ℕ) : 𝓞 F) ∈ v.asIdeal ^ e v := by
         by_cases hv : v ∈ S

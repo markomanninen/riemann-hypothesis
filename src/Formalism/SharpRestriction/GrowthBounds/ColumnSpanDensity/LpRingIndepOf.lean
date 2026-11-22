@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.HLepolyTr
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.HLepolyTr
+
+@[expose] public section
 
 noncomputable section
 

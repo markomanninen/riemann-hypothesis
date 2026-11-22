@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementE
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.SingleLetterBiextensionRelation
-import Formalism.GaussJetBounds.GaussJetProofs.Transfer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementE
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.SingleLetterBiextensionRelation
+public import Formalism.GaussJetBounds.GaussJetProofs.Transfer
+
+@[expose] public section
 
 open UpperTheory.G2 Classical
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
@@ -161,7 +165,8 @@ private theorem map_logS {K K' Lt β : Type} [Field K] [Field K'] [DecidableEq L
   ext n
   rw [MvPowerSeries.coeff_map, MvPowerSeries.coeff_apply, MvPowerSeries.coeff_apply]
   simp only [logS, Formalism.DworkPowerSeriesWeights.genLog]
-  simp [map_sum, apply_ite j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, apply_ite j]
 
 private theorem cc_logS {K Lt β : Type} [Field K] [DecidableEq Lt] [DecidableEq β] {l : ℕ} (hl : 2 ≤ l) (i : ℕ)
     (pos : Lt → ℕ → Lt) (v : Lt × β) : constantCoeff (logS (K := K) l i pos v) = 0 := by
@@ -225,7 +230,8 @@ private theorem diagJ (K0 K : Type) [NormedField K0] [IsUltrametricDist K0] [Cha
   · rw [← Formalism.InvariantFactorPaths.G7.FormalGroupLaws.map_lgF j l,
       ← PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero (hx0 ρ)), hxL ρ]
     unfold linEL linS
-    rw [map_sum, Pair.subst_sum hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Pair.subst_sum hs]
     refine Finset.sum_congr rfl fun s _ => ?_
     split_ifs
     · rw [map_mul, MvPowerSeries.map_C, MvPowerSeries.subst_mul hs, MvPowerSeries.subst_C,
@@ -235,7 +241,8 @@ private theorem diagJ (K0 K : Type) [NormedField K0] [IsUltrametricDist K0] [Cha
   · have hm := (Formalism.InvariantFactorPaths.G7.Top.mapSimeq K0 K (Lt × β) j hj).1 _ _ hsim
     have e1 : map j (∑ ρ, PowerSeries.subst (x ρ) ph)
         = ∑ ρ, PowerSeries.subst (map j (x ρ)) (PowerSeries.map j ph) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun ρ _ =>
         PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero (hx0 ρ)) ph
     have e2 : map j (C ((2 : K0)⁻¹) * subst L0 (beMean (d := 2 * i) l σ be0 om (fun r => σ^[i] (om r)) ζ))
@@ -244,7 +251,7 @@ private theorem diagJ (K0 K : Type) [NormedField K0] [IsUltrametricDist K0] [Cha
       rw [map_mul, MvPowerSeries.map_C, map_inv₀, map_ofNat, MvPowerSeries.map_subst hs0]
       congr 2
       funext s
-      simp only [hL0, map_logS]
+      exact map_logS j l i pos (pos r s.val, b)
     rw [e1, e2] at hm
     exact hm
 
@@ -312,7 +319,8 @@ theorem UpperTheory.integral_mvExp_sum_logS_of_odd_period :
       linS j σ i pos (σ^[i] (om e.1.2)) e.1.1.1 e.2) := by
     refine MvPowerSeries.hasSubst_of_constantCoeff_zero (fun e => ?_)
     unfold linS
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun s _ => ?_
     split_ifs
     · rw [map_mul, MvPowerSeries.constantCoeff_X, mul_zero]
@@ -335,7 +343,8 @@ theorem UpperTheory.integral_mvExp_sum_logS_of_odd_period :
       PowerSeries.coeff_zero_eq_constantCoeff_apply, hphdef, FAux.cc_phFF hl2, map_zero]
   have hP0 : constantCoeff (∑ e : ({r // r ∈ R} × Fin i) × β,
       (at1 e (PowerSeries.map j ph) : MvPowerSeries (({r // r ∈ R} × Fin i) × β) ℂ_[p])) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun e _ => Pair.constantCoeff_inVar_eq_zero e hph0
   have hW := Formalism.InvariantFactorPaths.G7.LogarithmEquivalence.integral_subst' hy0 hyI hI
   rw [MvPowerSeries.subst_mul hys, Formalism.InvariantFactorPaths.G7.LogarithmEquivalence.subst_mvExp' hys hP0, Pair.subst_sum hys] at hW
@@ -360,9 +369,11 @@ theorem UpperTheory.integral_mvExp_sum_logS_of_odd_period :
   have hbeS0 : constantCoeff (beS i pos R (fun _ => (-1 : ℂ_[p])) (fun _ => map j bM) :
       MvPowerSeries (Lt × β) ℂ_[p]) = 0 := by
     unfold beS
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun r _ => ?_
-    rw [MvPowerSeries.smul_eq_C_mul, map_mul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [MvPowerSeries.smul_eq_C_mul, map_mul, map_sum,
       Finset.sum_eq_zero (fun b _ => MvPowerSeries.constantCoeff_subst_eq_zero (hXs r b)
         (fun s => MvPowerSeries.constantCoeff_X _) hbe0c), mul_zero]
   have hsub : subst Λ (beS i pos R (fun _ => (-1 : ℂ_[p])) (fun _ => map j bM)) = -Q2 := by
@@ -376,7 +387,8 @@ theorem UpperTheory.integral_mvExp_sum_logS_of_odd_period :
     simp only [MvPowerSeries.subst_X hΛs]
     rw [show ((-1 : ℂ_[p]) / 2) = -(2⁻¹) by ring, map_neg, neg_mul]
   have hQc : constantCoeff Q = 0 := by
-    rw [hQdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hQdef, map_sum]
     exact Finset.sum_eq_zero fun e _ => Pair.cc_ps (hy0 e) hph0
   have hQ2c : constantCoeff Q2 = 0 := by
     have := hQ.1
@@ -388,7 +400,7 @@ theorem UpperTheory.integral_mvExp_sum_logS_of_odd_period :
   rw [step1, Formalism.InvariantFactorPaths.G7.LogarithmEquivalence.subst_mvExp' hΛs hbeS0, hsub]
   have h1 : mvExp Q * mvExp (Q2 - Q) * mvExp (-Q2) = (1 : MvPowerSeries (Lt × β) ℂ_[p]) := by
     rw [← Formalism.InvariantFactorPaths.G7.mvExp_add hQc (by rw [map_sub, hQc, hQ2c, sub_zero]),
-      ← Formalism.InvariantFactorPaths.G7.mvExp_add (by rw [map_add, map_sub, hQc, hQ2c]; simp) (by rw [map_neg, hQ2c, neg_zero])]
+      ← Formalism.InvariantFactorPaths.G7.mvExp_add (by rw [map_add (f := _), map_sub, hQc, hQ2c]; simp) (by rw [map_neg, hQ2c, neg_zero])]
     rw [show Q + (Q2 - Q) + -Q2 = 0 by ring, Formalism.InvariantFactorPaths.G7.LogarithmEquivalence.mvExp_zero']
   calc subst y G = subst y G * (mvExp Q * mvExp (Q2 - Q) * mvExp (-Q2)) := by rw [h1, mul_one]
     _ = _ := by ring

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResEqIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgEquivRootOfUnityEqPow
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResEqIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgEquivRootOfUnityEqPow
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc TensorProduct
 
@@ -27,7 +31,8 @@ theorem exists_gen_of_isOpen {G : Type} [Group G] [TopologicalSpace G] [IsTopolo
       neg_mem' := fun {a} ha => by
         show π g ^ (-a) ∈ U.map π
         rw [zpow_neg]; exact inv_mem ha }
-  obtain ⟨f, hf⟩ := Int.subgroup_cyclic S
+  obtain ⟨f, hf⟩ := S.isAddCyclic_iff_exists_zmultiples_eq.mp S.isAddCyclic
+  have hf : S = AddSubgroup.closure {f} := by rw [← hf, AddSubgroup.zmultiples_eq_closure]
   have hfS : f ∈ S := by rw [hf]; exact AddSubgroup.subset_closure rfl
   obtain ⟨φ, hφU, hφ⟩ : π g ^ f ∈ U.map π := hfS
   refine ⟨⟨φ, hφU⟩, ?_⟩

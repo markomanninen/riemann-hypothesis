@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobFactsAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.BrMain
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobFactsAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.BrMain
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ private lemma galOf_mul' {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x c => simp
-    | add x c hx hc => simp only [map_add, hx, hc]
+    | add x c hx hc => simp only [map_add (f := _), hx, hc]
   simp [PositivityTheory.Rg.Tf.Geo.galOf, h]
 
 private lemma galOf_one' {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
@@ -36,7 +40,7 @@ private lemma galOf_one' {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x c => simp
-    | add x c hx hc => simp only [map_add, hx, hc]
+    | add x c hx hc => simp only [map_add (f := _), hx, hc]
   simp [PositivityTheory.Rg.Tf.Geo.galOf, h]
 
 private lemma galFin_mul' {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
@@ -110,7 +114,7 @@ theorem globOf : GlobOf := by
             rw [RingEquiv.symm_apply_apply, ← galFin_mul', mul_inv_cancel, galFin_one',
               RingEquiv.apply_symm_apply]
           map_mul' := fun a b => by simp only [map_mul]
-          map_add' := fun a b => by simp only [map_add]
+          map_add' := fun a b => by simp only [map_add (f := _)]
           commutes' := fun r => by
             show ψ (galFin σ v (ψ.symm (algebraMap _ _ r))) = _
             rw [hψalg, halg]

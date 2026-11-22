@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjIntCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCont
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjIntCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCont
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt MeasureTheory Filter Topology
 

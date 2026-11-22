@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolynomialEvalBoundOnCircleFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolynomialEvalBoundOnCircleFamily
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -91,7 +95,10 @@ private lemma isCompact_image_homs_over_isCompact {d : ℕ} {B : Type} [CommRing
   rw [hS]
   have hclosed : IsClosed S := by
     refine IsClosed.inter ?_ (hT.isClosed.preimage (continuous_pi fun i => continuous_apply _))
-    refine IsClosed.inter (isClosed_eq (continuous_apply 1) continuous_const) (IsClosed.inter ?_ ?_)
+    change IsClosed ({g : B → ℂ | g 1 = 1} ∩
+      ({g : B → ℂ | ∀ a c, g (a + c) = g a + g c} ∩
+       {g : B → ℂ | ∀ a c, g (a * c) = g a * g c}))
+    refine IsClosed.inter (isClosed_eq (f := fun g : B → ℂ => g 1) (g := fun _ => (1 : ℂ)) (continuous_apply 1) continuous_const) (IsClosed.inter ?_ ?_)
     · show IsClosed {g : B → ℂ | ∀ a c, g (a + c) = g a + g c}
       simp only [Set.setOf_forall]
       exact isClosed_iInter fun a : B => isClosed_iInter fun c : B =>
@@ -215,8 +222,8 @@ private lemma exists_small_direction_eval_circle_ne_zero {d : ℕ} {P : MvPolyno
       · rw [mem_sphere_zero_iff_norm] at hw
         rw [norm_mul, hw, one_mul, Complex.norm_real, Real.norm_of_nonneg hr.1.le]
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.local_maximum_principle_weight_finite_mvPolynomial_algebra :
     ∀ (d : ℕ) (B : Type) [CommRing B] [IsDomain B] [Algebra (MvPolynomial (Fin d) ℚ) B] [Module.Finite (MvPolynomial (Fin d) ℚ) B], Function.Injective (algebraMap (MvPolynomial (Fin d) ℚ) B) → (letI : TopologicalSpace (B →+* ℂ) := TopologicalSpace.induced (fun x : B →+* ℂ => (x : B → ℂ)) inferInstance; ∀ (ψ : (B →+* ℂ) → ℝ), Continuous ψ → ∀ s : B, s ≠ 0 → ∀ (x₀ : B →+* ℂ) (δ : ℝ), 0 < δ → ∃ (W K : Set (B →+* ℂ)), W ∈ nhds x₀ ∧ IsCompact K ∧ (∀ x ∈ K, x s ≠ 0) ∧ ∀ (N : ℕ) (f : B) (R : ℝ), (∀ x ∈ K, ‖x f‖ * Real.exp (-(N * ψ x)) ≤ R) → ∀ y ∈ W, ‖y f‖ * Real.exp (-(N * ψ y)) ≤ Real.exp (δ * N) * R) := by
   intro d B _ _ _ _ hinj
@@ -251,7 +258,7 @@ theorem _root_.GlobalTheory.local_maximum_principle_weight_finite_mvPolynomial_a
   set Φ : (B →+* ℂ) × (B →+* ℂ) → ℂ := fun p => ∏ j, (p.2 (b j) - t j) * (p.1 (b j) - t j)⁻¹
   have hΦc : ∀ x, ContinuousAt Φ (x₀, x) := by
     intro x
-    refine tendsto_finset_prod _ fun j _ => ?_
+    refine tendsto_finsetProd _ fun j _ => ?_
     refine (((hev (b j)).comp continuous_snd).sub continuous_const).continuousAt.mul ?_
     refine ((((hev (b j)).comp continuous_fst).sub continuous_const).continuousAt).inv₀ ?_
     exact sub_ne_zero.mpr (hb j).symm

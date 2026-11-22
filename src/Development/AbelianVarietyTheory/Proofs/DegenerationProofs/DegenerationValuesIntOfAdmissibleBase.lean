@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBimultiplicativeOfSecondQuotConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBimultiplicativeOfSecondQuotConst
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -56,7 +60,7 @@ def ball {C S : Type} [NormedField C] [IsUltrametricDist C] [CommRing S] (f : S 
   zero_mem' := by simpa using ht
   add_mem' := fun {a b} ha hb => by
     show ‖f (a + b)‖ ≤ t
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
   smul_mem' := fun c x hx => by
     show ‖f (c * x)‖ ≤ t
@@ -103,11 +107,11 @@ theorem exists_int {C : Type} [NormedField C] (N : NumD C) (hθ : ∀ x y u, ‖
     simp only [Units.val_mul, Units.val_div_eq_div_val, norm_mul, norm_div, hθ, _root_.mul_one, ef, ← Real.exp_sub,
       ← Real.exp_add, Real.exp_eq_exp] at this
     linarith
-  refine ⟨hc.quadraticMap he, hθ, hσ, hth, fun χ => by simp [f0, ef], ?_⟩
+  refine ⟨hc.quadraticMap he, hθ, hσ, hth, fun χ => by simp [HasConstSecondDiff.quadraticMap, f0, ef], ?_⟩
   have : Filter.Tendsto f Filter.cofinite Filter.atTop :=
     Filter.tendsto_neg_atBot_atTop.comp (Real.tendsto_log_nhdsGT_zero.comp
       (tendsto_nhdsWithin_iff.2 ⟨hψ, Filter.Eventually.of_forall pos⟩))
-  exact this.congr fun χ => by simp [f0]
+  exact this.congr fun χ => by simp [HasConstSecondDiff.quadraticMap, f0]
 
 section Gauge
 variable {R : Type} [CommRing R] [IsDomain R] {D : DegPre R} {F : Type} [Field F] [Algebra (FractionRing R) F]

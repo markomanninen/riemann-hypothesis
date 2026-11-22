@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundUniformiser
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.Imports
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundUniformiser
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.Imports
+
+@[expose] public section
 
 noncomputable section
 

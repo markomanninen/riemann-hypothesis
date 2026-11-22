@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsProdAbsSubGeOnSegment
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsInterpolationExteriorSmallCoeffsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsProdAbsSubGeOnSegment
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsInterpolationExteriorSmallCoeffsStatement
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology
 
 namespace GlobalTheory
@@ -45,7 +50,7 @@ lemma tendsto_inv_prod {κ : Type*} (a : κ → ℂ) (T : Finset κ) (ha : ∀ t
   rw [norm_inv, norm_mul, norm_pow, norm_prod]
   have hp : 1 ≤ ∏ t ∈ T, ‖w - a t‖ := by
     calc (1 : ℝ) = ∏ t ∈ T, (1 : ℝ) := by simp
-      _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun t ht => by
+      _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun t ht => by
         have := norm_sub_norm_le w (a t)
         have := ha t ht
         linarith)
@@ -135,7 +140,7 @@ lemma core (N M : ℕ) (z : Fin N → ℂ) (i₁ : Fin N) (h1 : ‖z i₁‖ = 1
         rw [← norm_mul, hf]
         simp only
         rw [Finset.prod_mul_prod_compl, norm_prod]
-        refine hr3.trans (Finset.prod_le_prod (fun _ _ => abs_nonneg _) fun i _ => ?_)
+        refine hr3.trans (Finset.prod_le_prod₀ (fun _ _ => abs_nonneg _) fun i _ => ?_)
         rw [← hw]; exact abs_norm_sub_norm_le _ _
       have e3 : 0 < ‖f w‖ := norm_pos_iff.2 (right_ne_zero_of_mul (hfne w hw.ge))
       rw [e1, norm_inv, norm_mul, norm_pow, hw, hG, inv_mul_eq_div, inv_eq_one_div,
@@ -200,8 +205,8 @@ lemma core (N M : ℕ) (z : Fin N → ℂ) (i₁ : Fin N) (h1 : ‖z i₁‖ = 1
 
 end PowerSumSecond
 
-open PowerSumSecond in
 
+open PowerSumSecond in
 theorem powerSum_second_main :
     ∃ C : ℝ, 1 ≤ C ∧ ∀ (N M : ℕ) (z : Fin N → ℂ) (i₀ : Fin N), ∃ k : ℕ, M + 1 ≤ k ∧ k ≤ M + N ∧
       ((N : ℝ) / (C * (M + N))) ^ N * ‖z i₀‖ ^ k ≤ ‖∑ i, z i ^ k‖ := by

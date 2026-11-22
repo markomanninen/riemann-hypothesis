@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationAlgebraicHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationAlgebraicHolds
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField Matrix Polynomial
 open scoped ContDiff

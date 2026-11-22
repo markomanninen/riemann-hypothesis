@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -81,12 +86,6 @@ def LengthDecomp.Statement : Prop :=
         ∑ᶠ 𝔫 : MaximalSpectrum B,
           Ring.ord (Localization.AtPrime 𝔫.asIdeal) (algebraMap B (Localization.AtPrime 𝔫.asIdeal) b) *
             Module.length R (B ⧸ 𝔫.asIdeal)
-
-def PrimitiveUnit.Statement : Prop :=
-  ∀ (R F : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] [Field F] [Algebra R F]
-    [IsFractionRing R F] (σ : Type) (p q : MvPolynomial σ R) (c : F),
-    (∃ m, IsUnit (p.coeff m)) → (∃ m, IsUnit (q.coeff m)) →
-      p.map (algebraMap R F) = C c * q.map (algebraMap R F) → ∃ w : Rˣ, c = algebraMap R F w
 
 def NormFormEval.Statement : Prop :=
   ∀ (R A : Type) [CommRing R] [CommRing A] [Algebra R A] [Module.Free R A] [Module.Finite R A]

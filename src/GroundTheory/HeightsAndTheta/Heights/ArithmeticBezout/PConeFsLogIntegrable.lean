@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeSlab
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeSlab
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -65,8 +70,8 @@ theorem norm_le_of_fsLog_le (h : HermNorm n) (u : Fin n → ℂ) (y : EuclideanS
 
 end ConeFsLog
 
-open ConeFsLog in
 
+open ConeFsLog in
 theorem ConeFsLogIntegrable.proof (hfin : ConeBallFinite.Statement)
     (hslab : ConeSlabBound.Statement) : ConeFsLogIntegrable.Statement := by
   intro n e h W f u hW hf hu

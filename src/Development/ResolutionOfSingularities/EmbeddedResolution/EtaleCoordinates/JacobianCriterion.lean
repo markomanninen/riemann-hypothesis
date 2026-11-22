@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -20,7 +24,7 @@ variable (k : Type*) [CommRing k] (ι : Type*) (S : Type*) [CommRing S]
 variable [Algebra k S] [Algebra (MvPolynomial ι k) S] [IsScalarTower k (MvPolynomial ι k) S]
 
 omit [Algebra k S] [IsScalarTower k (MvPolynomial ι k) S] in
-private theorem linearIndependent_one_tmul_D_X :
+theorem linearIndependent_one_tmul_D_X :
     LinearIndependent S fun i : ι =>
       (1 : S) ⊗ₜ[MvPolynomial ι k]
         (KaehlerDifferential.D k (MvPolynomial ι k) (MvPolynomial.X i)) := by
@@ -44,7 +48,7 @@ private theorem D_mem_span_range_D_X (K : Type*) [CommRing K] (σ : Type*)
     rw [← MvPolynomial.algebraMap_eq, Derivation.map_algebraMap]
     exact Submodule.zero_mem _
   · rename_i p q hp hq
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hp hq
   · rename_i p i hp
     rw [Derivation.leibniz]
@@ -106,7 +110,7 @@ private theorem top_le_span_range_one_tmul
     exact Submodule.add_mem _ hu hv
 
 omit [Algebra k S] [IsScalarTower k (MvPolynomial ι k) S] in
-private theorem top_le_span_one_tmul_D_X :
+theorem top_le_span_one_tmul_D_X :
     ⊤ ≤ Submodule.span S (Set.range fun i : ι =>
         (1 : S) ⊗ₜ[MvPolynomial ι k]
           (KaehlerDifferential.D k (MvPolynomial ι k) (MvPolynomial.X i))) :=
@@ -211,13 +215,13 @@ variable (S : Type*) [CommRing S]
 variable [Algebra k S] [Algebra (MvPolynomial ι k) S] [IsScalarTower k (MvPolynomial ι k) S]
 
 omit [IsScalarTower k (MvPolynomial ι k) S] in
-private theorem linearIndependent_D_coord_of_isUnit_det (b : Module.Basis ι S (KaehlerDifferential k S))
+theorem linearIndependent_D_coord_of_isUnit_det (b : Module.Basis ι S (KaehlerDifferential k S))
     (h : IsUnit (b.det fun i : ι => KaehlerDifferential.D k S (coord k ι S i))) :
     LinearIndependent S fun i : ι => KaehlerDifferential.D k S (coord k ι S i) :=
   (b.is_basis_iff_det.mpr h).1
 
 omit [IsScalarTower k (MvPolynomial ι k) S] in
-private theorem top_le_span_D_coord_of_isUnit_det (b : Module.Basis ι S (KaehlerDifferential k S))
+theorem top_le_span_D_coord_of_isUnit_det (b : Module.Basis ι S (KaehlerDifferential k S))
     (h : IsUnit (b.det fun i : ι => KaehlerDifferential.D k S (coord k ι S i))) :
     ⊤ ≤ Submodule.span S
         (Set.range fun i : ι => KaehlerDifferential.D k S (coord k ι S i)) := by
@@ -252,7 +256,7 @@ variable (k : Type*) [CommRing k] (ι : Type*) (S : Type*) [CommRing S] [Algebra
 variable (S' : Type*) [CommRing S'] [Algebra k S'] [Algebra S S'] [IsScalarTower k S S']
 variable [Algebra.FormallyEtale S S']
 
-private theorem linearIndependent_kaehlerMap_basis
+theorem linearIndependent_kaehlerMap_basis
     (b : Module.Basis ι S (KaehlerDifferential k S)) :
     LinearIndependent S' fun i : ι => KaehlerDifferential.map k k S S' (b i) := by
   have hbc := KaehlerDifferential.isBaseChange_of_formallyEtale k S S'
@@ -263,7 +267,7 @@ private theorem linearIndependent_kaehlerMap_basis
   rw [hfun]
   exact ((Algebra.TensorProduct.basis S' b).map hbc.equiv).linearIndependent
 
-private theorem top_le_span_kaehlerMap_basis (b : Module.Basis ι S (KaehlerDifferential k S)) :
+theorem top_le_span_kaehlerMap_basis (b : Module.Basis ι S (KaehlerDifferential k S)) :
     ⊤ ≤ Submodule.span S'
         (Set.range fun i : ι => KaehlerDifferential.map k k S S' (b i)) := by
   have hsub : Subsingleton (KaehlerDifferential S S') :=

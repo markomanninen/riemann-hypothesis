@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
-import Formalism.LocalToGlobal.ProjectiveLattices.IntAllFree
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsOfValILeOne
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntAllFree
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsOfValILeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,19 +116,6 @@ theorem algPtLa_of (hN : XoNumPt Xo c) (hL : LocFld) : AlgPtLa Xo c := by
   rw [← Spec.map_comp]
   rfl
 
-theorem intFrNe_of' (hN : XoNumPt Xo c) (hL : LocFld) (hE : IntFrExt Xo c) : IntFrNe Xo c (algCls Xo c) := by
-  intro la
-  obtain ⟨T, io, e, hO, hF, x, hx⟩ := algPtLa_of hN hL la
-  obtain ⟨T', i, r, hr, hv, hF', y, hy⟩ := hE T io hF x hx
-  refine ⟨T', i.comp io, r * e, ?_, y, ?_⟩
-  · unfold OverLa at hO ⊢
-    refine ⟨Nat.mul_pos hr hO.1, fun a => ?_⟩
-    rw [RingHom.comp_apply, hv, hO.2 a]
-    push_cast
-    ring
-  · unfold algCls IntFr.IsAlg
-    exact hF'
-
 end Proofs
 
 section Frames
@@ -218,8 +209,8 @@ def TanLin : Prop :=
         (N : Fin m' → S) (w' : Sp (DualNumber S) ⟶ Xo.univ.t.G.left),
         (∀ i, IsCombAt x v (fun j => A j i) (w i)) → IsCombAt x w N w' → IsCombAt x v (A.mulVec N) w'
 
-variable {Xo c} in
 
+variable {Xo c} in
 def SClause {S : Type} [CommRing S] [Algebra c.F S] (a : S) (y y' : FrPt Xo c S) : Prop :=
   ∃ pm : Gx y'.x ⟶ Gx y.x, pm ≫ (snd (Over.mk y.x) Xo.univ.t.G).left = (snd (Over.mk y'.x) Xo.univ.t.G).left ∧
     pm ≫ (fst (Over.mk y.x) Xo.univ.t.G).left = (fst (Over.mk y'.x) Xo.univ.t.G).left ∧

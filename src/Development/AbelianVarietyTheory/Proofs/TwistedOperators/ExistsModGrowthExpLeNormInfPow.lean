@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryAdelicHeightCosetLeNormInfPow
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NormInfSubmultiplicativeLeAdelicHeight
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryAdelicHeightCosetLeNormInfPow
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NormInfSubmultiplicativeLeAdelicHeight
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem htInf_eq_infMat {F E : Type} [Field F] [NumberField F] [Field E] [Number
         AlgHom.id_apply, GlobalTheory.AdelicU.infEmb_tmul]
       rw [e, map_mul, hre, hθ.1]
       rfl
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   have hm : ∀ k : HA (AF F) σ J, ((bc (compInf F E w) (GlobalTheory.AdelicU.matHom _ σ J k) : GL (Fin n) _) :
       Matrix (Fin n) (Fin n) _).map (GlobalTheory.AdelicU.infEmb t) = infMat σ J θ k := by
     intro k
@@ -79,7 +83,7 @@ private theorem htFin_eq_one_of_mem_GinfC {g : GA D V} (hg : g ∈ GinfC V) (v :
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => rfl
-    | add y z hy hz => rw [map_add, map_add, map_add, hy, hz]
+    | add y z hy hz => rw [map_add (f := _), map_add (f := _), map_add (f := _), hy, hz]
   have h1 : bc (compFin D.host.F D.host.E v) (Formalism.L2.Theta.matHom V g) = 1 := by
     apply Units.ext
     ext i j
@@ -138,7 +142,7 @@ theorem height_le_normInf_pow (hθ : IsInfFam θ) : ∃ d : ℕ, ∀ g ∈ GinfC
     simp [GlobalTheory.SmoothForms.HeightCoset.infHt_rank_zero θ V h0]
   · refine ⟨Fintype.card D.what₂.Tau, fun g hg => ?_⟩
     rw [height_eq_prod_infHt V hθ hg, ← Finset.card_univ, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun τ _ => NNReal.coe_nonneg _)
+    exact Finset.prod_le_prod₀ (fun τ _ => NNReal.coe_nonneg _)
       (fun τ _ => GlobalTheory.SmoothForms.HeightCoset.infHt_le_normInf θ V hpos τ g)
 
 theorem normInf_height_comparison (D : D7) (V : HSp D)

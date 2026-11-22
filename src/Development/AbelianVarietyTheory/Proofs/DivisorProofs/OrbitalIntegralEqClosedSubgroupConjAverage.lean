@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParP
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -113,21 +118,21 @@ theorem dcMap_bij (K P : Subgroup G) (δ : G) (hδ : δ ∈ P) (hT : twCent (Mon
     (hPK : ∀ g : G, ∃ p ∈ P, ∃ k ∈ K, g = p * k) : Function.Bijective (dcMap K P δ hδ) := by
   constructor
   · intro q₁ q₂ h
-    obtain ⟨t, ht, k, hk, he⟩ := (DoubleCoset.eq _ _ _ _).1 h
+    obtain ⟨t, ht, k, hk, he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 h
     have htP : t ∈ P := hT ht
     have hkP : k ∈ P := by
       have : k = ((Quotient.out q₁ : P) : G)⁻¹ * t⁻¹ * ((Quotient.out q₂ : P) : G) := by rw [he]; group
       rw [this]
       exact P.mul_mem (P.mul_mem (P.inv_mem (Quotient.out q₁).2) (P.inv_mem htP)) (Quotient.out q₂).2
-    rw [← DoubleCoset.out_eq' _ _ q₁, ← DoubleCoset.out_eq' _ _ q₂, DoubleCoset.eq]
+    rw [← DoubleCoset.out_eq' q₁, ← DoubleCoset.out_eq' q₂, DoubleCoset.eq]
     refine ⟨⟨t, htP⟩, (mem_twCent_sub P δ hδ _).2 ht, ⟨k, hkP⟩, (Subgroup.mem_subgroupOf).2 hk, ?_⟩
     exact Subtype.ext (by simpa using he)
   · intro q
     obtain ⟨p, hp, k, hk, hg⟩ := hPK (Quotient.out q)
     refine ⟨DoubleCoset.mk _ _ (⟨p, hp⟩ : P), ?_⟩
-    obtain ⟨t, ht, k', hk', he⟩ := (DoubleCoset.eq _ _ _ _).1
-      (DoubleCoset.out_eq' (twCent (MonoidHom.id P) ⟨δ, hδ⟩) (K.subgroupOf P) (DoubleCoset.mk _ _ (⟨p, hp⟩ : P))).symm
-    rw [← DoubleCoset.out_eq' _ _ q]
+    obtain ⟨t, ht, k', hk', he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1
+      (DoubleCoset.out_eq' (DoubleCoset.mk _ _ (⟨p, hp⟩ : P))).symm
+    rw [← DoubleCoset.out_eq' q]
     show DoubleCoset.mk _ K _ = _
     rw [DoubleCoset.eq]
     refine ⟨(t : G)⁻¹, (twCent (MonoidHom.id G) δ).inv_mem ((mem_twCent_sub P δ hδ t).1 ht), ((k' : P) : G)⁻¹ * k,
@@ -149,8 +154,8 @@ theorem twOrb_sub : ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopological
   refine finsum_congr fun q => ?_
   rw [summand_sub K P hP δ hδ hT f]
   show summand _ K δ f (Quotient.out (DoubleCoset.mk _ K ((Quotient.out q : P) : G))) = _
-  obtain ⟨t, ht, k, hk, he⟩ := (DoubleCoset.eq _ _ _ _).1
-    (DoubleCoset.out_eq' (twCent (MonoidHom.id G) δ) K (DoubleCoset.mk _ K ((Quotient.out q : P) : G))).symm
+  obtain ⟨t, ht, k, hk, he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1
+    (DoubleCoset.out_eq' (DoubleCoset.mk _ K ((Quotient.out q : P) : G))).symm
   rw [he, summand_rep _ K δ f _ ht hk]
 
 end GlobalTheory.IwRed

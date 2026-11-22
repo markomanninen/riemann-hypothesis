@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.TiedCrd
-import Formalism.LocalToGlobal.Columns.RecLevelStep
+module
+
+public import Formalism.LocalToGlobal.Columns.TiedCrd
+public import Formalism.LocalToGlobal.Columns.RecLevelStep
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -53,10 +57,10 @@ variable {X : Fields} {Pr : Primes X} (hc : CMData X.F X.E) (hX : X.Ok) (hPr : P
 
 def tieLev : Formalism.L2.Forms.StepLevel X.F X.E hc.sig (1 : Matrix (Fin n) (Fin n) X.E) (Pr.T u) X.f (plUnder X.F Pr.vGs) :=
   stepOf hc n (fun w => (Λ w).H) (basePi_of_ok hX hPr u) (hPr.piT_norm u) (rls_vT_iff hX hPr u)
-    (fun P hP => (hPr.vT_norm u P hP : Ideal.absNorm P.asIdeal = Pr.T u)) (rls_T_notUnder hPr u)
+    (fun P hP => (Ideal.absNorm_eq_natCard P.asIdeal).symm.trans (hPr.vT_norm u P hP)) (rls_T_notUnder hPr u)
     (colBase_index hc n hPr u) ((Units.map σ₀.toMonoidHom).comp Λ.chr)
 
-variable (c₀ : DiaG X.E (Pr.vT u)) (s : DecoCl n (Pr.vT u) Pr.vGs Λ.grp → DecoSet X.E n (Pr.vT u) Pr.vGs)
+variable (c₀ : DiaG (E := X.E) (ST := Pr.vT u)) (s : DecoCl n (Pr.vT u) Pr.vGs Λ.grp → DecoSet (E := X.E) (n := n) (ST := Pr.vT u) (SG := Pr.vGs))
 
 def clsG₁ (hS : DecoPtSurj hc n (Pr.vT u) Pr.vGs) (hs : ∀ c, decoCls n (Pr.vT u) Pr.vGs Λ.grp (s c) = c) :
     ClsG hc.sig (1 : Matrix (Fin n) (Fin n) X.E) (Pr.T u) X.f (plUnder X.F Pr.vGs)
@@ -75,9 +79,6 @@ def clsG (hS : DecoPtSurj hc n (Pr.vT u) Pr.vGs) (hs : ∀ c, decoCls n (Pr.vT u
   obtain ⟨J, f, bad, emb, lat, l0, rfl, rfl, rfl, rfl, rfl, rfl⟩ := Q
   exact clsG₁ hc hX hPr σ₀ u Λ c₀ s hS hs
 
-theorem clsG_std (hS : DecoPtSurj hc n (Pr.vT u) Pr.vGs) (hs : ∀ c, decoCls n (Pr.vT u) Pr.vGs Λ.grp (s c) = c) :
-    clsG hc hX hPr σ₀ u Λ c₀ s hS hs (StepCrd.std Pr σ₀ n _) = clsG₁ hc hX hPr σ₀ u Λ c₀ s hS hs := rfl
-
 end Gen
 
 section Rec
@@ -85,34 +86,11 @@ section Rec
 variable {d : ColDat} (a : ColArgs d)
 
 theorem badG_eq : CF.badG (d.colRec a) = plUnder d.X.F d.Pr.vGs := by
-  classical
-  have key : ∀ (i : Fin 2) (v : HeightOneSpectrum (𝓞 d.X.F)), v ∈ plUnder d.X.F (d.Pr.vG i) ↔ (d.Pr.g i : 𝓞 d.X.F) ∈ v.asIdeal := by
-    intro i v
-    have h0 : d.X.conjO (d.Pr.piG i) ≠ 0 := by
-      intro h
-      have h1 := d.hPr.piG_norm i
-      rw [h, mul_zero] at h1
-      exact (Nat.cast_ne_zero.2 (d.hPr.g_prime i).ne_zero) h1.symm
-    refine mem_plUnder_iff_norm d.sp.cm (fun P => mem_divs h0 P) (d.Pr.g i) ?_ v
-    have h2 : cO d.X.E (d.X.conjO (d.Pr.piG i)) = d.Pr.piG i := cO_cO _
-    rw [h2, mul_comm]
-    exact d.hPr.piG_norm i
-  ext v
-  show ((d.Pr.g 0 : 𝓞 d.X.F) ∈ v.asIdeal ∨ (d.Pr.g 1 : 𝓞 d.X.F) ∈ v.asIdeal) ↔ _
-  rw [← key 0, ← key 1]
-  constructor
-  · rintro (⟨P, hP, h⟩ | ⟨P, hP, h⟩)
-    · exact ⟨P, Finset.mem_union_left _ hP, h⟩
-    · exact ⟨P, Finset.mem_union_right _ hP, h⟩
-  · rintro ⟨P, hP, h⟩
-    rcases Finset.mem_union.1 hP with h' | h'
-    · exact Or.inl ⟨P, h', h⟩
-    · exact Or.inr ⟨P, h', h⟩
+  exact Set.ext fun v => (plUnder_vGs d.sp.cm d.hPr v).symm
 
-theorem selfDualLatticeCoords_eq_std (hS : SpStd d.toColBase) (i : ℕ) (hi : i ≤ d.R.m) : CF.selfDualLatticeCoords (d.colRec a) i hi = stdLat d.X.E (d.R.N i) := by
-  show (d.sp.X i).L0.map (((d.crd i hi : (d.sp.X i).V ≃ₗ[d.host.E] (Fin (d.R.N i) → d.host.E)) :
-    (d.sp.X i).V →ₗ[d.host.E] (Fin (d.R.N i) → d.host.E)).restrictScalars (𝓞 d.host.E)) = _
-  rw [hS.selfDual_span_frame_X i hi, Submodule.map_span, ← Set.range_comp]
+private theorem selfDual_map_crd_eq_std (hS : SpStd d.toColBase) (i : ℕ) (hi : i ≤ d.R.m) :
+    (d.sp.X i).L0.map ((d.crd i hi).toLinearMap.restrictScalars (𝓞 d.host.E)) = stdLat d.X.E (d.R.N i) := by
+  rw [hS.selfDual_span_frame_X i hi, Submodule.map_span, ← Set.range_comp, stdLat_eq_span]
   have hfr : ∀ b, (d.crd i hi) ((d.sp.X i).frame b) = Pi.single (finCongr (d.sp.X_rank i hi) b) (1 : d.host.E) := by
     intro b
     funext j
@@ -120,29 +98,14 @@ theorem selfDualLatticeCoords_eq_std (hS : SpStd d.toColBase) (i : ℕ) (hi : i 
     rw [Basis.equivFun_self, Pi.single_apply]
     congr 1
     exact propext ⟨fun h => by rw [h, Equiv.apply_symm_apply], fun h => by rw [h, Equiv.symm_apply_apply]⟩
-  apply le_antisymm
-  · rw [Submodule.span_le]
-    rintro _ ⟨b, rfl⟩
-    show (d.crd i hi) ((d.sp.X i).frame b) ∈ _
-    rw [hfr]
-    intro j _
-    rw [Pi.single_apply]
-    split_ifs
-    · exact Submodule.one_le.1 le_rfl
-    · exact zero_mem _
-  · intro x hx
-    have hx' : ∀ j, ∃ r : 𝓞 d.host.E, algebraMap (𝓞 d.host.E) d.host.E r = x j := fun j =>
-      Submodule.mem_one.1 (hx j trivial)
-    choose r hr using hx'
-    have hsum : x = ∑ j, r j • (d.crd i hi) ((d.sp.X i).frame ((finCongr (d.sp.X_rank i hi)).symm j)) := by
-      funext k
-      rw [Finset.sum_apply, Finset.sum_eq_single k]
-      · rw [hfr, Equiv.apply_symm_apply, Pi.smul_apply, Pi.single_eq_same, Algebra.smul_def, mul_one, hr]
-      · intro j _ hj
-        rw [hfr, Equiv.apply_symm_apply, Pi.smul_apply, Pi.single_eq_of_ne (Ne.symm hj), smul_zero]
-      · intro h; exact absurd (Finset.mem_univ k) h
-    rw [hsum]
-    exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
+  change Submodule.span _ (Set.range fun b => (d.crd i hi) ((d.sp.X i).frame b)) = _
+  simp_rw [hfr]
+  exact congrArg (Submodule.span (𝓞 d.host.E))
+    ((finCongr (d.sp.X_rank i hi)).surjective.range_comp (fun j => Pi.single j (1 : d.host.E)))
+
+theorem selfDualLatticeCoords_eq_std (hS : SpStd d.toColBase) (i : ℕ) (hi : i ≤ d.R.m) :
+    CF.selfDualLatticeCoords (d.colRec a) i hi = stdLat d.X.E (d.R.N i) :=
+  selfDual_map_crd_eq_std hS i hi
 
 def stepCrd (hS : SpStd d.toColBase) (hH : HostHyp d) (u : d.what₂.Word) (i : ℕ) (hi : i ≤ d.R.m) :
     StepCrd d.Pr d.σ₀ (d.R.N i) fun c : StCl (Pr := d.Pr) d.W d.lev u i => (d.repr u i c).1.L where

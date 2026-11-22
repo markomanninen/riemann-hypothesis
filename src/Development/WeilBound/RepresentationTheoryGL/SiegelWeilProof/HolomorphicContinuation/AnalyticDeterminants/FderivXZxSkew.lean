@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.InfInvA
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.InfInvA
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,6 @@ theorem dK_xZx (Z x e : M2 n) (i j : Fin n ⊕ Fin n) :
   ring
 
 theorem toBlocks₂₂_apply' (M : M2 n) (a b : Fin n) : M.toBlocks₂₂ a b = M (Sum.inr a) (Sum.inr b) := rfl
-theorem toBlocks₂₁_apply' (M : M2 n) (a b : Fin n) : M.toBlocks₂₁ a b = M (Sum.inr a) (Sum.inl b) := rfl
 theorem toBlocks₁₁_apply' (M : M2 n) (a b : Fin n) : M.toBlocks₁₁ a b = M (Sum.inl a) (Sum.inl b) := rfl
 
 theorem decomp (M : M2 n) : M = fromBlocks (M.toBlocks₁₁ - M.toBlocks₂₂) (M.toBlocks₁₂ + M.toBlocks₂₁) 0 0 +
@@ -133,7 +136,7 @@ theorem ptId : PtId := by
   have hdK : ∀ e, dK Θ x e = fderiv ℂ Θ x (e * x) := fun e => by
     rw [dK, hR, hR]
     conv_rhs => rw [← reK_add_imK e]
-    rw [Matrix.add_mul, Matrix.smul_mul, map_add, map_smul, smul_eq_mul]
+    rw [Matrix.add_mul, Matrix.smul_mul, map_add (f := _), map_smul, smul_eq_mul]
   have hLeib : ∀ c : M2 n → ℂ, DifferentiableAt ℝ c x → ∀ e,
       dK (fun y => c y * Θ y) x e = dK c x e * Θ x + c x * dK Θ x e := fun c hc e => by
     have hΘr : DifferentiableAt ℝ Θ x := hΘd.restrictScalars ℝ
@@ -164,8 +167,9 @@ theorem ptId : PtId := by
       ∑ a, ∑ b, (cA Z a b x * dK Θ x (eA a b) + cB Z a b x * dK Θ x (eB a b)) := by
     rw [hxZ]
     conv_lhs => rw [decomp M]
-    rw [Matrix.add_mul, map_add, hlaw _ (by simp)]
-    simp only [Matrix.sum_mul, map_sum, Matrix.add_mul, Matrix.smul_mul, map_add, map_smul, smul_eq_mul, hdK]
+    rw [Matrix.add_mul, map_add (f := _), hlaw _ (by simp)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.sum_mul, map_sum, Matrix.add_mul, Matrix.smul_mul, map_add (f := _), map_smul, smul_eq_mul, hdK]
     congr 1
     · simp [Matrix.trace_sub]
   rw [hL]

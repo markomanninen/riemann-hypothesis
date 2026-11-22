@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,7 @@ theorem algChart_of_relativeDimension {R : Type} [CommRing R] (B : Type) [CommRi
   have hπ : ∀ m : ℕ, ∃ π : B →ₐ[R] JetR R (Fin n) m, (jetAug R (Fin n) m).comp π = ε' ∧
       ∀ j, π (sX R j) = algebraMap R _ (ε' (sX R j)) + zR m j := fun m =>
     etale_exists (n := n) ε' (jetAug R (Fin n) m) (ker_jetAug_nil (Fin n) m) _ (fun j => by
-      rw [map_add, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, jetAug_zR, add_zero])
+      rw [map_add (f := _), AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, jetAug_zR, add_zero])
   choose π hπaug hπX using hπ
   refine ⟨π, ?_, ?_, ?_⟩
   · intro m
@@ -46,7 +50,7 @@ theorem algChart_of_relativeDimension {R : Type} [CommRing R] (B : Type) [CommRi
       exact hπaug (m + 1)
     · exact hπaug m
     · intro j
-      rw [AlgHom.comp_apply, hπX, hπX, map_add, AlgHom.commutes]
+      rw [AlgHom.comp_apply, hπX, hπX, map_add (f := _), AlgHom.commutes]
       rfl
   · intro m
     refine etale_ext (n := n) ε' (jetAug R (Fin n) 0) (ker_jetAug_nil (Fin n) 0) _ _ ?_ ?_ ?_
@@ -55,7 +59,7 @@ theorem algChart_of_relativeDimension {R : Type} [CommRing R] (B : Type) [CommRi
     · ext s
       simp
     · intro j
-      rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes, AlgHom.comp_apply, jetZero_zR, add_zero]
+      rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes, AlgHom.comp_apply, jetZero_zR, add_zero]
       rfl
   · intro A _ _ aug m hJ φ' hφ'aug
     have hJn := nil_of_pow _ hJ
@@ -74,14 +78,14 @@ theorem algChart_of_relativeDimension {R : Type} [CommRing R] (B : Type) [CommRi
         exact hπaug m
       · exact hφ'aug
       · intro j
-        rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes, jetLift_zR, add_sub_cancel]
+        rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes, jetLift_zR, add_sub_cancel]
     refine ⟨ψ, ⟨hψaug, hψπ⟩, ?_⟩
     rintro ψ₂ ⟨_, h4⟩
     apply jet_ext
     intro j
     rw [jetLift_zR]
     have := AlgHom.congr_fun h4 (sX R j)
-    rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes] at this
+    rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes] at this
     rw [← this, add_sub_cancel_left]
 
 theorem univChart_of_relativeDimension {k : Type} [Field k] (G : Over (Spec (CommRingCat.of k))) [GrpObj G] {n : ℕ}
@@ -144,8 +148,8 @@ section Count
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] (H : Host E) {k : Type} [Field k] [IsAlgClosed k]
   [CharZero k]
 
-open Classical in
 
+open Classical in
 theorem two_mul_sum_embeddings {r : k} (hr : r ^ 2 = -(H.d : k)) (p q : ℕ) :
     2 * ∑ φ : E →+* k, (if φ (H.rt : E) = r then p else q) = Module.finrank ℚ E * (p + q) := by
   let c : E ≃+* E := (IsCMField.complexConj E).toRingEquiv

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.NVolAllOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.NVolAllOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,19 +17,11 @@ namespace MassDataMassesW
 theorem prod_rect_of_ne_zero {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] (μ : Measure α)
     (ν : Measure β) (h0 : μ.prod ν ≠ 0) {s : Set α} {t : Set β} (hs : MeasurableSet s)
     (ht : MeasurableSet t) : μ.prod ν (s ×ˢ t) = μ s * ν t := by
-  have hf : AEMeasurable (fun x : α => Measure.map (Prod.mk x) ν) μ := by
-    by_contra hf
-    apply h0
-    rw [Measure.prod, Measure.bind, Measure.map_of_not_aemeasurable hf, Measure.join_zero]
-  rw [Measure.prod, Measure.bind_apply (hs.prod ht) hf]
-  have key : ∀ x, Measure.map (Prod.mk x) ν (s ×ˢ t) = s.indicator (fun _ => ν t) x := by
-    intro x
-    rw [Measure.map_apply measurable_prodMk_left (hs.prod ht)]
-    by_cases hx : x ∈ s
-    · simp [hx, Set.mk_preimage_prod_right hx]
-    · simp [hx, Set.mk_preimage_prod_right_eq_empty hx]
-  simp_rw [key]
-  rw [lintegral_indicator_const hs, mul_comm]
+  have hν : SFinite ν := by
+    by_contra hν
+    exact h0 (Measure.prod_eq_zero_of_not_sfinite hν)
+  letI : SFinite ν := hν
+  exact Measure.prod_prod s t
 
 theorem tauF_eq_comm {D : D7} (X : HidaSetting D) (y : AF X.B.I.F ⊗[X.B.I.F] X.B.I.E) :
     tauF X.B.I y = Algebra.TensorProduct.comm X.B.I.F (Af X.B.I.F) X.B.I.E
@@ -35,7 +31,7 @@ theorem tauF_eq_comm {D : D7} (X : HidaSetting D) (y : AF X.B.I.F ⊗[X.B.I.F] X
   | tmul a x =>
     rw [tauF_tmul]
     rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem toHA_fin_one {D : D7} (X : HidaSetting D) (hb : AdBridgeIso X.B.I) (s : X.B.I.Ginf) :
     (splitA X.B.I.cm.sig X.B.I.J (toHA X.B.I hb (s, 1))).2 = 1 := by

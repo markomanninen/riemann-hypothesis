@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.DiscIn
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.DiscIn
+
+@[expose] public section
 
 namespace PI.EF.Loc
 

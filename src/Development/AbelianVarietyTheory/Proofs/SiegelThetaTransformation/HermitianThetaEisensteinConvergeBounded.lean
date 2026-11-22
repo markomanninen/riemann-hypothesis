@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFnStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianWeilActionSiegelParabolicExplicitStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.WeilActionLevelSupNormUniformInLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LinearIndependentMul
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PosSemidefSubMulConjTranspose
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SummableEisMajorantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFnStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianWeilActionSiegelParabolicExplicitStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.WeilActionLevelSupNormUniformInLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LinearIndependentMul
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PosSemidefSubMulConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SummableEisMajorantStatement
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real
@@ -15,8 +20,8 @@ namespace GlobalTheory.SW.EisBdd
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Ψ : Finset (E →+* ℂ)} {n N : ℕ}
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem approx_entry (hΨ : IsType Ψ) : ∃ K : ℝ, ∀ w : Ψ → ℂ, ∃ a : E, IsIntegral ℤ a ∧
     ∀ τ : Ψ, ‖w τ - τ.1 a‖ ≤ K := by
   classical
@@ -33,7 +38,8 @@ theorem approx_entry (hΨ : IsType Ψ) : ∃ K : ℝ, ∀ w : Ψ → ℂ, ∃ a 
     have h2 : ComplexEmbedding.conjugate (ComplexEmbedding.conjugate τ.1) = τ.1 := star_star _
     have e1 := hx τ.1
     have e2 := congrArg conj (hx (ComplexEmbedding.conjugate τ.1))
-    simp only [x, h0, h1, h2, map_zero, add_zero, zero_add, conj_conj, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [x, h0, h1, h2, map_zero, add_zero, zero_add, conj_conj, map_sum, map_mul,
       ComplexEmbedding.conjugate_coe_eq] at e1 e2
     have : w τ = (w τ + w τ) / 2 := by ring
     rw [this]
@@ -46,15 +52,16 @@ theorem approx_entry (hΨ : IsType Ψ) : ∃ K : ℝ, ∀ w : Ψ → ℂ, ∃ a 
   · refine IsIntegral.mul ?_ ?_
     · simpa using isIntegral_algebraMap (R := ℤ) (A := E) (x := ⌊(c i).re⌋)
     · rw [integralBasis_apply]; exact RingOfIntegers.isIntegral_coe _
-  · rw [hre, map_sum, ← Finset.sum_sub_distrib]
-    refine le_trans ((norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_))
-      (Finset.single_le_sum (f := fun σ : E →+* ℂ => ∑ i, ‖σ (integralBasis E i)‖)
-        (fun _ _ => Finset.sum_nonneg fun _ _ => norm_nonneg _) (Finset.mem_univ τ.1))
-    rw [map_mul, map_intCast, ← sub_mul, norm_mul]
-    refine mul_le_of_le_one_left (norm_nonneg _) ?_
-    rw [← Complex.ofReal_intCast, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs,
-      Int.self_sub_floor, abs_of_nonneg (Int.fract_nonneg _)]
-    exact (Int.fract_lt_one _).le
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [hre, map_sum, ← Finset.sum_sub_distrib]
+      refine le_trans ((norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_))
+        (Finset.single_le_sum (f := fun σ : E →+* ℂ => ∑ i, ‖σ (integralBasis E i)‖)
+          (fun _ _ => Finset.sum_nonneg fun _ _ => norm_nonneg _) (Finset.mem_univ τ.1))
+      rw [map_mul, map_intCast, ← sub_mul, norm_mul]
+      refine mul_le_of_le_one_left (norm_nonneg _) ?_
+      rw [← Complex.ofReal_intCast, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs,
+        Int.self_sub_floor, abs_of_nonneg (Int.fract_nonneg _)]
+      exact (Int.fract_lt_one _).le
 
 theorem approx_herm (hΨ : IsType Ψ) : ∃ K : ℝ, ∀ Z : CM Ψ N N,
     ∃ β : Matrix (Fin N) (Fin N) E, ccT β = β ∧ IntM β ∧
@@ -80,7 +87,8 @@ theorem im_nonneg {W : Matrix (Fin N) (Fin N) ℂ} (h : (imH W).PosSemidef) (v :
     0 ≤ (v ⬝ᵥ W *ᵥ star v).im := by
   have h1 := h.re_dotProduct_nonneg (star v)
   have h2 : v ⬝ᵥ Wᴴ *ᵥ star v = conj (v ⬝ᵥ W *ᵥ star v) := by
-    simp only [dotProduct, mulVec, Finset.mul_sum, conjTranspose_apply, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, mulVec, Finset.mul_sum, conjTranspose_apply, map_sum, map_mul,
       Pi.star_apply, Complex.star_def, conj_conj]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -115,8 +123,8 @@ omit [NumberField E] [IsCMField E] in
 theorem mem_Hn {δ : ℝ} (hδ : 0 < δ) {Z : CM Ψ N N} (hZ : Z ∈ HnGe Ψ N δ) : Z ∈ Hn Ψ N := fun τ => by
   simpa using (posDef_scalar hδ).add_posSemidef (hZ τ)
 
-open Classical in
 
+open Classical in
 theorem theta_bdd (hΨ : IsType Ψ) {R : ℕ} {δ : ℝ} (hR : 0 < R) (hδ : 0 < δ) :
     ∃ C : ℝ, ∀ φ : Matrix (Fin n) (Fin N) E → ℂ, HasLevel R φ → ∀ B : ℝ, (∀ x, ‖φ x‖ ≤ B) →
       ∀ Z ∈ HnGe Ψ N δ, ‖thH Ψ φ Z 0 0‖ ≤ C * B := by
@@ -170,8 +178,8 @@ theorem transl_mem {β : Matrix (Fin N) (Fin N) E} (h : ccT β = β) :
   rw [e, Matrix.J, fromBlocks_multiply, fromBlocks_multiply]
   simp
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem botSpan_mul (γ t : M2 E N) : botSpan (γ * t) = (botSpan γ).map (vecMulLinear t) := by
   unfold botSpan
   rw [Submodule.map_span, ← Set.range_comp]
@@ -253,7 +261,7 @@ theorem eis_bdd (hΨ : IsType Ψ) (hn : Even n) (hN : 4 * N < n) {R : ℕ} {δ :
       simp only [hFac, h0, zero_dotProduct, Finset.sum_const_zero, mul_zero, Complex.exp_zero,
         mul_one, hmd]
       rw [← Finset.prod_mul_distrib, ← Finset.prod_inv_distrib, norm_prod]
-      refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun τ _ => ?_
+      refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun τ _ => ?_
       obtain ⟨p1, p2, p3⟩ := pair (hU (σ U)) τ
       have hb : (β.map τ.1)ᴴ = β.map τ.1 := by rw [← Base.ccT_map, hβ]
       have h3 := (hcomp _ _ (Z τ - β.map τ.1) p1 p2
@@ -280,8 +288,8 @@ theorem eis_bdd (hΨ : IsType Ψ) (hn : Even n) (hN : 4 * N < n) {R : ℕ} {δ :
 
 end GlobalTheory.SW.EisBdd
 
-open GlobalTheory.SW.EisBdd in
 
+open GlobalTheory.SW.EisBdd in
 theorem GlobalTheory.SW.theta_eis_bounded : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Ψ : Finset (E →+* ℂ)), IsType Ψ → ∀ (n N : ℕ), Even n → 4 * N < n → ∀ (R : ℕ) (δ : ℝ), 0 < R → 0 < δ → ∃ C : ℝ, ∀ φ : Matrix (Fin n) (Fin N) E → ℂ, HasLevel R φ → ∀ B : ℝ, (∀ x, ‖φ x‖ ≤ B) → ∀ Z ∈ HnGe Ψ N δ, (Summable fun U : Lag E N => ‖eisTerm Ψ U.2.choose φ Z 0 0‖) ∧ ‖thH Ψ φ Z 0 0‖ ≤ C * B ∧ ‖eis Ψ φ Z 0 0‖ ≤ C * B := by
   intro E _ _ _ Ψ hΨ n N hn hN R δ hR hδ
   obtain ⟨C₁, h₁⟩ := theta_bdd (n := n) (N := N) hΨ hR hδ

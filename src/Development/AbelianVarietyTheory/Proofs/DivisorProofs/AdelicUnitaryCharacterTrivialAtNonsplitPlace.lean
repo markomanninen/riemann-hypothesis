@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryGroupCharacterEqOneOfTrivialIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedConjugatePlaceUniformiser
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSplitAt
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemHermitianStandardLatticeIffPairingIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryGroupCharacterEqOneOfTrivialIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedConjugatePlaceUniformiser
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSplitAt
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemHermitianStandardLatticeIffPairingIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,24 +107,26 @@ theorem mem_dual (V : HSpace E) (L : Submodule (𝓞 E) V.V) (z : V.V) :
 def withLat (V : HSpace E) (Λ : Submodule (𝓞 E) (Fin V.rank → E)) (h1 : Submodule.IsLattice E Λ)
     (h2 : ∀ y : Fin V.rank → E, y ∈ Λ ↔
       ∀ x ∈ Λ, ∃ b : 𝓞 E, (b : E) = ∑ i, ∑ j, star (x i) * V.gram i j * y j) : HSpace E :=
+  let f : (Fin V.rank → E) →ₗ[𝓞 E] V.V :=
+    V.frame.equivFun.symm.toLinearMap.restrictScalars (𝓞 E)
+  let L : Submodule (𝓞 E) V.V := Λ.map f
+  have hL : Formalism.HermitianLatticesTheory.dual V.hT L = L := by
+    refine Submodule.ext fun z => (mem_dual V L z).trans ?_
+    obtain ⟨y, rfl⟩ := V.frame.equivFun.symm.surjective z
+    constructor
+    · intro h
+      refine ⟨y, (h2 y).2 fun x hx => ?_, rfl⟩
+      rw [← GlobalTheory.WeilUnramifiedCompare.hT_coord, ← V.frame.equivFun_symm_apply, ← V.frame.equivFun_symm_apply]
+      exact h _ ⟨x, hx, rfl⟩
+    · rintro ⟨y', hy, e⟩ _ ⟨x, hx, rfl⟩
+      obtain rfl : y' = y := V.frame.equivFun.symm.injective e
+      have := (h2 y').1 hy x hx
+      rwa [← GlobalTheory.WeilUnramifiedCompare.hT_coord, ← V.frame.equivFun_symm_apply,
+        ← V.frame.equivFun_symm_apply] at this
   { V with
-    L0 := Λ.map (V.frame.equivFun.symm.toLinearMap.restrictScalars (𝓞 E))
-    standardTuple_isLattice := ⟨h1.fg.map _, by
-      change Submodule.span _ (V.frame.equivFun.symm.toLinearMap '' (Λ : Set (Fin V.rank → E))) = ⊤
-      rw [← Submodule.map_span, h1.span_eq_top, Submodule.map_top, LinearEquiv.range]⟩
-    baseLattice_isUnimodular := by
-      refine Submodule.ext fun z => (mem_dual V _ z).trans ?_
-      obtain ⟨y, rfl⟩ := V.frame.equivFun.symm.surjective z
-      constructor
-      · intro h
-        refine ⟨y, (h2 y).2 fun x hx => ?_, rfl⟩
-        rw [← GlobalTheory.WeilUnramifiedCompare.hT_coord, ← V.frame.equivFun_symm_apply, ← V.frame.equivFun_symm_apply]
-        exact h _ ⟨x, hx, rfl⟩
-      · rintro ⟨y', hy, e⟩ _ ⟨x, hx, rfl⟩
-        obtain rfl : y' = y := V.frame.equivFun.symm.injective e
-        have := (h2 y').1 hy x hx
-        rwa [← GlobalTheory.WeilUnramifiedCompare.hT_coord, ← V.frame.equivFun_symm_apply,
-          ← V.frame.equivFun_symm_apply] at this }
+    L0 := L
+    standardTuple_isLattice := Submodule.IsLattice.of_fg E (h1.fg.map f)
+    baseLattice_isUnimodular := hL }
 
 theorem coord_withLat (V : HSpace E) (Λ : Submodule (𝓞 E) (Fin V.rank → E)) (h1 h2) :
     {x : Fin V.rank → E | ∑ i, x i • V.frame i ∈ (withLat V Λ h1 h2).L0} = Λ := by
@@ -160,7 +166,7 @@ theorem char_eq_one_of_nonSplit : ∀ (D : D7) (V : HSp D) (Λ : Submodule (𝓞
         (FaithfulSMul.algebraMap_injective _ _)]
       exact bot_le)
   have hQ0 : Q ≠ ⊥ := fun h0 => v.ne_bot (by
-    rw [← hQv, h0, Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _)])
+    rw [← hQv, h0, Ideal.under_bot])
   let P : HeightOneSpectrum (𝓞 D.host.E) := ⟨Q, hQ.isPrime, hQ0⟩
   have hPv : P.under (𝓞 D.host.F) = v := HeightOneSpectrum.ext hQv
   have : IsCMField D.host.E := D.host.isCMField_hostE

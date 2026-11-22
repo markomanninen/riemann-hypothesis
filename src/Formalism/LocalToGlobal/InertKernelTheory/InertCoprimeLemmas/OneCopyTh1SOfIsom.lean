@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.NotSquareOfJacobiNegOne
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMScale
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMModelS
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMReadS
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMCoord
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.PowerSeriesEmbedding
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.NotSquareOfJacobiNegOne
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMScale
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMModelS
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMReadS
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMCoord
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.PowerSeriesEmbedding
+
+@[expose] public section
 
 namespace Formalism.L2.KerInert
 

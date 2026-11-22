@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothVecLowKSub
-import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.SobolevContinuityLowGeneration
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothVecLowKSub
+public import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.SobolevContinuityLowGeneration
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,14 +37,14 @@ def lie (G : Matrix (Fin n) (Fin n) ℂ) : Submodule ℝ (Matrix (Fin n) (Fin n)
 
 def smooth (G : Matrix (Fin n) (Fin n) ℂ) (ρ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) : Submodule ℂ H where
   carrier := {w | SmoothVec (lie G) ρ w}
-  add_mem' := fun h h' k Xs hX => by simpa only [map_add] using (h k Xs hX).add (h' k Xs hX)
+  add_mem' := fun h h' k Xs hX => by simpa only [map_add (f := _)] using (h k Xs hX).add (h' k Xs hX)
   zero_mem' := fun k Xs hX => by simpa only [map_zero] using contDiff_const
   smul_mem' := fun c _ h k Xs hX => by simpa only [map_smul] using (h k Xs hX).const_smul c
 
 def smoothAll (G : Matrix (Fin n) (Fin n) ℂ) (ρ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) : Submodule ℂ H where
   carrier := {w | ∀ (k : ℕ) (x : (Fin k → ℝ) → Matrix (Fin n) (Fin n) ℂ), ContDiff ℝ ∞ x →
     (∀ t, x t ∈ Formalism.QuantumDeterminants.UH G) → ContDiff ℝ ∞ fun t => ρ (x t) w}
-  add_mem' := fun h h' k x hx hG => by simpa only [map_add] using (h k x hx hG).add (h' k x hx hG)
+  add_mem' := fun h h' k x hx hG => by simpa only [map_add (f := _)] using (h k x hx hG).add (h' k x hx hG)
   zero_mem' := fun k x hx hG => by simpa only [map_zero] using contDiff_const
   smul_mem' := fun c _ h k x hx hG => by simpa only [map_smul] using (h k x hx hG).const_smul c
 
@@ -100,7 +104,7 @@ def dOp (hG : IsUnit G) (hρ : IsURepOn (Formalism.QuantumDeterminants.UH G) ρ)
   map_add' v w := Subtype.ext <| by
     have := ((hasDerivAt_dRep v.2 hX).add (hasDerivAt_dRep w.2 hX)).deriv
     show dRep ρ X ((v : H) + w) = dRep ρ X v + dRep ρ X w
-    rw [← this]; unfold dRep; simp only [map_add]; rfl
+    rw [← this]; unfold dRep; simp only [map_add (f := _)]; rfl
   map_smul' c w := Subtype.ext <| by
     have := ((hasDerivAt_dRep w.2 hX).const_smul c).deriv
     show dRep ρ X (c • (w : H)) = c • dRep ρ X w
@@ -229,7 +233,7 @@ theorem dRep_eq_fderiv (hG : IsUnit G) {k : ℕ} {B : Fin k → Matrix (Fin n) (
   have h1 : ContDiff ℝ ∞ (NormedSpace.exp : Matrix (Fin n) (Fin n) ℂ → _) :=
     contDiff_iff_contDiffAt.2 fun x => (NormedSpace.exp_analytic (𝕂 := ℝ) x).contDiffAt
   have h2 : ContDiff ℝ ∞ fun t : Fin k → ℝ => ∑ i, t i • B i :=
-    ContDiff.sum fun i _ => (contDiff_apply ℝ ℝ i).smul contDiff_const
+    ContDiff.sum fun i _ => (contDiff_apply ℝ (fun _ => ℝ) i).smul contDiff_const
   have h3 := hy k _ (h1.comp h2) fun t => by
     have := exp_mem hG ((lie G).sum_mem (t := Finset.univ) fun i _ => (lie G).smul_mem (t i) (hB i)) 1
     rwa [one_smul] at this
@@ -239,8 +243,8 @@ theorem dRep_eq_fderiv (hG : IsUnit G) {k : ℕ} {B : Fin k → Matrix (Fin n) (
   refine ⟨_, fun c => Eq.trans ?_ (h4.comp_hasDerivAt_of_eq 0 (h5 c) (by simp)).deriv⟩
   unfold dRep
   congr 1
-  funext s
-  simp only [Function.comp, Finset.smul_sum, Pi.smul_apply, smul_eq_mul, mul_smul]
+  funext t
+  simp [Finset.smul_sum, smul_smul]
 
 theorem dRep_sum_all (hG : IsUnit G) {k : ℕ} {B : Fin k → Matrix (Fin n) (Fin n) ℂ} (hB : ∀ i, B i ∈ lie G)
     {y : H} (hy : y ∈ smoothAll G ρ) (c : Fin k → ℝ) :
@@ -250,7 +254,8 @@ theorem dRep_sum_all (hG : IsUnit G) {k : ℕ} {B : Fin k → Matrix (Fin n) (Fi
     rw [← hA]
     congr 1
     simp [Pi.single_apply]
-  simp only [hA, e, ← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, e, ← map_smul, ← map_sum]
   congr 1
   funext j
   simp [Pi.single_apply]
@@ -289,8 +294,9 @@ theorem continuous_word (hG : IsUnit G) (hρ : IsURepOn (Formalism.QuantumDeterm
       rw [← e1] at e2
       rw [Submodule.coe_sum]
       exact e2
-    simp only [e, map_sum, map_smul]
-    refine continuous_finset_sum _ fun i _ => Continuous.smul ?_ (hc (f ∘ₗ dOp hG hρ (b i).2))
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, map_sum, map_smul]
+    refine continuous_finsetSum _ fun i _ => Continuous.smul ?_ (hc (f ∘ₗ dOp hG hρ (b i).2))
     exact Complex.continuous_ofReal.comp ((b.coord i).continuous_of_finiteDimensional.comp (h1.subtype_mk h2))
 
 theorem continuous_word_orbit (hG : IsUnit G) (hρ : IsURepOn (Formalism.QuantumDeterminants.UH G) ρ)
@@ -349,7 +355,8 @@ theorem exists_factor (hG : IsUnit G) (hρ : IsURepOn (Formalism.QuantumDetermin
   refine ⟨_, S', fun i => g ∘L ContinuousLinearMap.single ℂ (fun _ => H) i, hS', fun w hw => ?_⟩
   have h1 := hg ⟨Φ ⟨w, hw⟩, ⟨_, rfl⟩⟩
   rw [LinearMap.mkContinuous_apply, hf] at h1
-  simp only [ContinuousLinearMap.comp_apply, ← map_sum, ContinuousLinearMap.single_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.comp_apply, ← map_sum, ContinuousLinearMap.single_apply]
   refine h1.symm.trans (congrArg g ?_)
   funext j
   simp [hΦ, Pi.single_apply]
@@ -478,7 +485,7 @@ theorem eq_zero_of_translates [CompleteSpace H] (hσ : IsURepOn (UJset ε) σ) (
   obtain ⟨m, S, Λ, hS, hΛ⟩ := exists_factor hG hρ hℓ
   have hF : Continuous fun g : Formalism.REAL.UJ ε => ℓ (σ (umat g) w) := by
     simp only [fun g : Formalism.REAL.UJ ε => hΛ _ (htr w hw (umat g) g.2)]
-    exact continuous_finset_sum _ fun i _ => (Λ i).continuous.comp (hcont _ (hS i) w hw)
+    exact continuous_finsetSum _ fun i _ => (Λ i).continuous.comp (hcont _ (hS i) w hw)
   have key := eq_zero_of_bumps hF fun φ hφ hφc => ?_
   · have e : σ (umat (1 : Formalism.REAL.UJ ε)) = 1 := hσ.1.1
     rwa [e] at key
@@ -508,13 +515,14 @@ theorem eq_zero_of_translates [CompleteSpace H] (hσ : IsURepOn (UJset ε) σ) (
     intro v hv
     rw [hΛ _ (hγs v)]
     simp only [fun i => hex _ (hS i) v hv, fun i => ((Λ i).integral_comp_comm (hint _ (hS i) v hv)).symm]
-    rw [← integral_finset_sum _ fun i _ => (Λ i).integrable_comp (hint _ (hS i) v hv)]
+    rw [← integral_finsetSum _ fun i _ => (Λ i).integrable_comp (hint _ (hS i) v hv)]
     refine integral_congr_ae (Filter.Eventually.of_forall fun g => ?_)
     simp only [hΛ _ (htr v hv (umat g) g.2), Finset.smul_sum, ContinuousLinearMap.map_smul_of_tower]
 
   have hbd : Continuous fun x => ℓ (γ x) := by
     simp only [fun x => hΛ _ (hγs x)]
-    refine continuous_finset_sum _ fun i _ => (Λ i).continuous.comp ?_
+    refine continuous_finsetSum _ fun i _ => (Λ i).continuous.comp ?_
+
     obtain ⟨L, hL⟩ := exists_word hG hρ (S i) (hS i)
     let A : H →ₗ[ℂ] H := (smooth G ρ).subtype ∘ₗ L ∘ₗ γ.codRestrict _ hγs
     have hA : ∀ x, A x = (S i).foldr (dRep ρ) (γ x) := fun x => hL _

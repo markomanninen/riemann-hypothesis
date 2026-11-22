@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,11 +96,6 @@ def CongBound_at (D : D7) (L : SizeData₂ D) : Prop :=
     ∀ π ∈ D.nd.Z i, ∀ ρ : GE D.nd →* GL (Fin D.R.r) (D.nd.O i), IsRankRPart D i (r π) ρ →
       vCC D i π ≤ sPi D i π ρ + shaSum D i + vClass D i + epsQ D i
 
-def CongBoundF {eps : ℝ} (Fm : FamP eps) : Prop :=
-  ∃ x0 : ℝ, ∀ x ≥ x0, ∀ a : Fm.Ix x, CongBound_at (Fm.D x a) (Fm.L x a)
-
-def CongBound (𝒞 : FamClass) : Prop := Closed 𝒞 (fun Fm _ => CongBoundF Fm)
-
 theorem zetaP_eq (D : D7) (i : D.nd.Loc) (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : P ∈ D.nd.Q i) :
     zetaP D i P = D.nd.zeta i P := by
   have hl : P ∉ placesOver D.host.E (D.nd.l i) := D.nd.SQ_l i P (Or.inr hP)
@@ -124,7 +123,10 @@ theorem lStar_pos {D : D7} (L : SizeData₂ D) : 0 < LevelStarExponents.lStar L 
   have hm : (0 : ℝ) < D.R.m := by have := D.R.two_le_m; exact_mod_cast (by omega : 0 < D.R.m)
   have hk : (0 : ℝ) < D.R.k := by
     have := D.R.m_add_three_le_k; exact_mod_cast (by omega : 0 < D.R.k)
-  have hn : (0 : ℝ) < D.R.n := by unfold Ranks.n; positivity
+  have hn : (0 : ℝ) < D.R.n := by
+    have := D.R.two_le_m
+    have := D.R.m_le_f
+    exact_mod_cast (by unfold Ranks.n; omega : 0 < D.R.n)
   have hx : 0 < L.sc.x := by have := L.sc.one_lt_alt; linarith
   have hL : 0 < L.sc.L := by unfold Scale.L; positivity
   have hb : 0 < L.sc.b := Real.exp_pos _
@@ -143,7 +145,7 @@ theorem vO_l (D : D7) (i : D.nd.Loc) : vO (D.nd.O i) (D.nd.l i) (D.nd.l i : D.nd
   have hu : ¬ IsUnit (D.nd.l i : D.nd.O i) := by
     intro hu
     have hinj : Function.Injective (algebraMap ℤ_[D.nd.l i] (D.nd.O i)) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro z hz
       by_contra hz0
       rw [PadicInt.unitCoeff_spec hz0, map_mul, map_pow, map_natCast] at hz

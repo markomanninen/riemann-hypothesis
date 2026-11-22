@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAveragingProjection
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAveragingProjection
+
+@[expose] public section
 
 open GlobalTheory.PRep Formalism.UG GlobalTheory.LFun PositivityTheory.SphericalProduct
 
@@ -57,8 +61,8 @@ theorem avg_translate (ρ : Representation ℂ G V) (K : Subgroup G) {x : V}
 
 end GlobalTheory.CompanionTheory.KAvg
 
-open GlobalTheory.OrbitAvg GlobalTheory.CompanionTheory.KAvg in
 
+open GlobalTheory.OrbitAvg GlobalTheory.CompanionTheory.KAvg in
 theorem GlobalTheory.CompanionTheory.KAvg.kInvForm : PositivityTheory.SphericalProduct.KInvForm := by
   unfold PositivityTheory.SphericalProduct.KInvForm
   intro G _ _ _ K _ hc V _ _ ρ hs v₀ hv₀ hne

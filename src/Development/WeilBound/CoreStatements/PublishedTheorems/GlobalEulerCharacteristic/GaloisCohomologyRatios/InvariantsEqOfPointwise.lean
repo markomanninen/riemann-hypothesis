@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.Places
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.MemShaSubmoduleCohomologyAddEquivOfEquivIff
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CoprimeRegular
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.Places
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.MemShaSubmoduleCohomologyAddEquivOfEquivIff
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CoprimeRegular
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
@@ -42,8 +46,8 @@ theorem modNRep_actA_one_apply (g : galUnramifiedOutside K.1 ℚ̄ S) :
     (QuotientGroup.mk'_surjective _) (QuotientGroup.ker_mk' _).le (galSUnitsMax K.1 ℚ̄ S) 1 g y
   exact congrArg Submodule.Quotient.mk (h1.trans h2.symm)
 
-omit [Module.Finite (ZMod ℓ) M] in
 
+omit [Module.Finite (ZMod ℓ) M] in
 theorem nRep_gsRestrictGal (g : galUnramifiedOutside K.1 ℚ̄ S) :
     nRep hL hζ M hM (gsRestrictGal hL g) =
       quotientRep (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))
@@ -57,8 +61,8 @@ theorem nRep_gsRestrictGal (g : galUnramifiedOutside K.1 ℚ̄ S) :
     (homRep (gsRootsZMod S ℓ) M)
     (homRep_ρ_of_mem (gsOpenSubgroup S hL) (gsRootsZMod S ℓ) M (roots_trivial hL hζ) hM)) h1
 
-omit [Module.Finite (ZMod ℓ) M] in
 
+omit [Module.Finite (ZMod ℓ) M] in
 theorem tprod_gsRestrictGal (g : galUnramifiedOutside K.1 ℚ̄ S) :
     (letI := actA hL 1; (modNRep (L.1 ≃ₐ[K.1] L.1) (AA hL 1) ℓ).tprod (nRep hL hζ M hM)) (gsRestrictGal hL g) =
       ((gsH1SUnitsModRep ℓ hL).tprod

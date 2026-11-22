@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.SCWick
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantTheorems.DivPowInteg
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.SCWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantTheorems.DivPowInteg
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +27,7 @@ theorem cc_expS {n : ℕ} (F : PS k n d) (hF : constantCoeff F = 0) : constantCo
   have h1 : PowerSeries.exp k = 1 + (PowerSeries.exp k - 1) := by ring
   have h2 : PowerSeries.constantCoeff (PowerSeries.exp k - 1) = 0 := by simp
   unfold FB.expS
-  rw [h1, ← PowerSeries.coe_substAlgHom ha, map_add, map_one, map_add, PowerSeries.coe_substAlgHom ha,
+  rw [h1, ← PowerSeries.coe_substAlgHom ha, map_add (f := _), map_one, map_add (f := _), PowerSeries.coe_substAlgHom ha,
     PowerSeries.constantCoeff_subst_eq_zero hF _ h2, map_one, add_zero]
 
 def embX (d : ℕ) : Fin 1 × Fin d ↪ Fin d ⊕ Fin d :=
@@ -87,7 +91,8 @@ theorem cc_ordEval_mem (J : Submodule R k) (e : ℕ) (E0 : AA k d) (hE0 : consta
     (σ : AA k d) (hσ : GoodE R E0 σ) (Q : MvPolynomial (Fin r ⊕ Fin q) k) (hQ : ∀ mo, Q.coeff mo ∈ J ^ e) :
     constantCoeff (PI.WickFormula.ordEval a a' Q σ) ∈ J ^ e := by
   unfold PI.WickFormula.ordEval
-  rw [LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, map_sum]
   refine Submodule.sum_mem _ fun mo _ => ?_
   have hgood : GoodE R E0 (((List.ofFn fun i => a i ^ mo (Sum.inl i)).prod *
       (List.ofFn fun j => a' j ^ mo (Sum.inr j)).prod) σ) :=

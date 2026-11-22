@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.UnivChartLoc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecRel
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.UnivChartLoc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecRel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,8 +55,8 @@ theorem gsvVec_w (cc : Fin n → L) :
   rw [gsvVec, Category.assoc, pullback.condition, ← Category.assoc]
   exact congrArg (· ≫ x) h1
 
-variable (xc) in
 
+variable (xc) in
 def gsvW (cc : Fin n → L) : tEps x ⟶ Xo.univ.t.G := Over.homMk (gsvVec x xc cc) (gsvVec_w cc)
 
 variable (xc) in
@@ -138,7 +142,7 @@ theorem gsv_eig_iff [Algebra c.F L] (hx : IsUnivChart _ n xc) (τ : E →+* ℂ)
       pullback.fst Xo.univ.t.G.hom x ≫ (Xo.univ.t.act.act a).left := by
     intro a
     simp
-    first
+    all_goals first
     | exact pullback.lift_fst _ _ _
     | erw [pullback.lift_fst]
     | (rw [limit.lift_π]; rfl)

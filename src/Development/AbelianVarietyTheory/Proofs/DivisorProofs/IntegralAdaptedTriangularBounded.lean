@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsWeilFormulas
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBoundedUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatHomOfGAdSymm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsWeilFormulas
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBoundedUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatHomOfGAdSymm
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,10 +123,10 @@ theorem exists_compact (σ : E →ₐ[F] E) (hcm : IsCMExt F E σ) {M : ℕ} (J 
   obtain ⟨C₃, hC₃, hCe₃⟩ := GlobalTheory.Mem.AnisoQuotient.exists_compact_mul ((hC₂.insert 0).insert 1)
     (h𝓒.image fun N => N.map (inclR (F := F) (AF F)))
   obtain ⟨K, hK, hKe⟩ := GlobalTheory.StabCompact.exists_compact_of_entries (AF F) σ J hJ.2 C₃ hC₃
-  refine ⟨K⁻¹, hK.inv, fun g => ?_⟩
+  refine ⟨Inv.inv '' K, hK.image continuous_inv, fun g => ?_⟩
   obtain ⟨γ, hγ, h₁⟩ := H₁ g⁻¹
   obtain ⟨u, hu, B, N, hN, hum, hBi, hBR⟩ := H₂ (g⁻¹ * γ)
-  refine ⟨γ * u, mul_mem hγ hu, (g⁻¹ * γ * u)⁻¹, Set.inv_mem_inv.2 (hKe _ fun a b => ?_), by group⟩
+  refine ⟨γ * u, mul_mem hγ hu, (g⁻¹ * γ * u)⁻¹, ⟨_, hKe _ fun a b => ?_, rfl⟩, by group⟩
   have e : matA (g⁻¹ * γ * u) = matA (g⁻¹ * γ) * B.map (inclR (F := F) (AF F)) *
       N.map (inclR (F := F) (AF F)) * 1 := by
     rw [show matA (g⁻¹ * γ * u) = matA (g⁻¹ * γ) * matA u from rfl, hum, Matrix.map_mul, Matrix.mul_one,

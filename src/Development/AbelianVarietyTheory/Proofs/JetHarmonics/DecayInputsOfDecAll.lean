@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DecSmoothAtGapOfDecSmooth
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DFactsHolds
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.ExistsIsCayleyUIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DecSmoothAtGapOfDecSmooth
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DFactsHolds
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.ExistsIsCayleyUIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ lemma hs_le_op {n : ℕ} (x : Matrix (Fin n) (Fin n) ℂ) :
   have h : ∀ j, ∑ i, Complex.normSq (x i j) ≤ ‖Matrix.toEuclideanCLM (n := Fin n) (𝕜 := ℂ) x‖ ^ 2 := by
     intro j
     have h1 := (Matrix.toEuclideanCLM (n := Fin n) (𝕜 := ℂ) x).le_opNorm (EuclideanSpace.single j (1 : ℂ))
-    rw [EuclideanSpace.norm_single, norm_one, mul_one] at h1
+    rw [PiLp.norm_single, norm_one, mul_one] at h1
     refine le_trans (le_of_eq ?_) (pow_le_pow_left₀ (norm_nonneg _) h1 2)
     rw [EuclideanSpace.norm_sq_eq]
     refine Finset.sum_congr rfl fun i _ => ?_

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableEmbeddingLevM
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableEmbeddingLevM
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ContDiff ENNReal
@@ -156,7 +160,8 @@ variable {k ρ : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace 
 theorem act_tr {V V' : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup V'] [Module ℂ V'] {T : V →ₗ[ℂ] V'}
     {M : Wd.SlopeTestRemainingChoices S (Pr V)} {M' : Wd.SlopeTestRemainingChoices S (Pr V')} (hM : ARel T M M') (x : Wd.Ix S → V) (a : Wd.Ix S) :
     T (∑ b, (M a b).1 (x b)) = ∑ b, (M' a b).1 (T (x b)) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl (fun b _ => ?_)
   exact (LinearMap.congr_fun (hM a b).1 (x b)).symm
 
@@ -189,7 +194,7 @@ theorem glue_cf (c : Fin (1 + ρ) → ℂ) (c'' : P5.Cf ρ 0) :
     have h : ((1 : Fin (1 + ρ + 1)) : ℕ) ≤ (shS (⟨l.val - 1, by omega⟩ : Fin ρ)).val := by
       rw [one_val]; simp [shS]
     have h' : ((0 : Fin (ρ + 1)) : ℕ) ≤ (⟨l.val - 1, by omega⟩ : Fin ρ).val := Nat.zero_le _
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     have : (⟨shS ⟨l.val - 1, by omega⟩, h⟩ : {l : Fin (1 + ρ) // (1 : Fin (1 + ρ + 1)).val ≤ l.val}) =
         cfEquiv ρ ⟨⟨l.val - 1, by omega⟩, h'⟩ := rfl
     rw [this, MeasurableEquiv.piCongrLeft_apply_apply]
@@ -198,7 +203,7 @@ theorem glue_zero (c c' : Fin ρ → ℂ) (c'' : P5.Cf ρ 0) : P5.glue 0 c c'' =
   funext l
   unfold P5.glue
   have h : ((0 : Fin (ρ + 1)) : ℕ) ≤ l.val := Nat.zero_le _
-  rw [dif_pos h, dif_pos h]
+  rw [dite_eq_left h, dite_eq_left h]
 
 theorem prod_cf (c'' : P5.Cf ρ 0) :
     (∏ l, ‖MeasurableEquiv.piCongrLeft (fun _ => ℂ) (cfEquiv ρ) c'' l‖ ^ (-2 : ℤ)) = ∏ l, ‖c'' l‖ ^ (-2 : ℤ) := by

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HilbertSubgroupLeKerOfKillsInertia
-import Mathlib
-import ReciprocityTheory.GaloisValuations.Global
-import ReciprocityTheory.NeutralLocalFields.HilbertClassField
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HilbertClassFieldA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HilbertSubgroupLeKerOfKillsInertia
+public import ReciprocityTheory.GaloisValuations.Global
+public import ReciprocityTheory.NeutralLocalFields.HilbertClassField
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HilbertClassFieldA
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Neutral.HilbertClassField
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.hilbertSubgroup_le_ker_of_kills_inertia : ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.DedekindZetaContinuation
-import GroundTheory.GlobalFields.LocalFieldAtPlace
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.DedekindZetaContinuation
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Complex Topology Filter
 
@@ -171,7 +175,7 @@ theorem one_le_norm_dedekindZeta_pow_mul {σ : ℝ} (hσ : 1 < σ) (t : ℝ) :
   have hcl : IsClosed {x : ℂ | 1 ≤ ‖x‖} := isClosed_le continuous_const continuous_norm
   refine hcl.mem_of_tendsto (show Tendsto _ _ _ from P) (Eventually.of_forall fun S ↦ ?_)
   simp only [Set.mem_ofPred_eq, norm_prod]
-  refine Finset.one_le_prod fun v _ ↦ ?_
+  refine Finset.one_le_prod₀ fun v _ ↦ ?_
 
   have hN1 := one_lt_absNorm_asIdeal v
   have hNpos : (0 : ℝ) < Ideal.absNorm v.asIdeal := Nat.cast_pos.2 (zero_lt_one.trans hN1)

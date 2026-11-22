@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernTransgressionFormsFrameInvariantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernTransgressionFormsFrameInvariantStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,13 +47,13 @@ theorem loc_fields_near : ∀ (M : Type) [TopologicalSpace M] (n : ℕ) (A : Hol
     (fun u => T ((A.e i).symm u)) (fun u => K ((A.e i).symm u)) (fun u => K' ((A.e i).symm u)) v
     h1 h3 h2 h4 dT hT.1 dK hK.1 dK' hK'.1 (hct.eventually hw) k
   refine ⟨?_, ?_, ?_⟩
-  · rw [HolAtlas.loc, dif_pos hv]
+  · rw [HolAtlas.loc, dite_eq_left hv]
     show ((powAt (fun u => G ((A.e i).symm v) ((A.e i).symm u)) (A.e i ((A.e i).symm v)) k : Ev n) : Alt n) = _
     rw [hzv, key.1]
-  · rw [HolAtlas.loc, dif_pos hv]
+  · rw [HolAtlas.loc, dite_eq_left hv]
     show ((chernAt (fun u => G ((A.e i).symm v) ((A.e i).symm u)) (A.e i ((A.e i).symm v)) k : Ev n) : Alt n) = _
     rw [hzv, key.2.1]
-  · rw [HolAtlas.loc, dif_pos hv]
+  · rw [HolAtlas.loc, dite_eq_left hv]
     show transAt (fun u => G ((A.e i).symm v) ((A.e i).symm u)) (fun u => G' ((A.e i).symm v) ((A.e i).symm u))
       (A.e i ((A.e i).symm v)) k = _
     rw [hzv, key.2.2]

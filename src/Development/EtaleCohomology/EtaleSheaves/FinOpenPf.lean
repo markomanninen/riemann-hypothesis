@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.FinEtSectionPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.FinEtSectionPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.MemIffOfLocBasisG
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardIntegralLatticeExists
-import Formalism.SharpRestriction.GlobalSchurBounds.LinkGLOBAL7Tied4
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.MemIffOfLocBasisG
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardIntegralLatticeExists
+public import Formalism.SharpRestriction.GlobalSchurBounds.LinkGLOBAL7Tied4
+
+@[expose] public section
 
 noncomputable section
 

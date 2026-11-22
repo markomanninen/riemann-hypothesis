@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaSystemFixedExponent
-import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleNewformZetaData
-import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleHodgeTateZetaClassParams
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTPresNuOfPolys
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamF
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamFROfIsLamF
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamFR2
-import Development.AbelianVarietyTheory.Definitions.Foundations.ChiProj
-import Development.AbelianVarietyTheory.Definitions.Foundations.CoPtMu
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLPowLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UntwistedRepresentationOrdinaryTriangularShape
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ShCocQuotCoord
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KumValSubMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PieceTUnitSetMuModelSmoothedSb
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaSystemFixedExponent
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleNewformZetaData
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleHodgeTateZetaClassParams
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTPresNuOfPolys
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HtCoIOfEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamFROfIsLamF
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamFR2
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ChiProj
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CoPtMu
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLPowLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UntwistedRepresentationOrdinaryTriangularShape
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ShCocQuotCoord
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KumValSubMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PieceTUnitSetMuModelSmoothedSb
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +71,7 @@ theorem htCoL_smooth {A : ValuationSubring Ω} {c : Coef l} {j : Ω →+* Qbar l
       cases b
       · exact H'
       · exact H)
-  convert h1 using 1
+  convert (preTransparency := .reducible) h1 using 1
   · funext r s y'
     simp [sub_eq_add_neg]
   · simp [sub_eq_add_neg]
@@ -107,7 +112,8 @@ theorem sum_chiVal [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (j : Ω →+* Qbar 
     simp only [up, chiProj, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     exact Fintype.sum_equiv (Equiv.inv _) _ _ fun δ => by simp only [Equiv.inv_apply, inv_inv]
   simp only [chiVal, Finset.mul_sum (s := (Finset.univ : Finset (ZMod N)ˣ))]
-  rw [Finset.sum_comm, hup, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_comm, hup, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun δ _ => ?_
   simp only [mul_left_comm (ψ _) (χ _)⁻¹]
   rw [← Finset.mul_sum, sum_unitVal ε j lam N k c d _ _ m β ψ

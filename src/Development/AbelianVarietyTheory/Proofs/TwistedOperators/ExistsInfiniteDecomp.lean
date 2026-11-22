@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SelfReciprocalLocalField
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EtaProdEqOfEverywhereNormDiv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SelfReciprocalLocalField
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EtaProdEqOfEverywhereNormDiv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAA
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,8 +77,8 @@ theorem exists_finite_decomp :
     exact dif_pos w.2
   · simpa using GlobalTheory.LFun.complMap_mem w.2 ha
 
-open scoped NumberField.LiesOver in
 
+open scoped NumberField.LiesOver in
 theorem exists_infinite_decomp :
     ∃ ψ : ∀ (v : InfinitePlace F) (w : {w : InfinitePlace K // w.comap (algebraMap F K) = v}),
       v.Completion ⊗[F] K →+* w.1.Completion,
@@ -85,10 +89,7 @@ theorem exists_infinite_decomp :
       w.1.LiesOver v := fun v w => ⟨congrArg Subtype.val w.2⟩
   haveI : ∀ w : InfinitePlace K, IsScalarTower F K w.Completion := fun w =>
     .of_algebraMap_eq fun x => by
-      apply InfinitePlace.Completion.ext
-      rw [InfinitePlace.Completion.algebraMap_toCompletion, InfinitePlace.Completion.algebraMap_toCompletion,
-        UniformSpace.Completion.algebraMap_def, UniformSpace.Completion.algebraMap_def]
-      rfl
+      simp [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
   let φ : ∀ (v : InfinitePlace F) (w : {w : InfinitePlace K // w.comap (algebraMap F K) = v}),
       v.Completion ⊗[F] K →ₐ[v.Completion] w.1.Completion := fun v w =>
     Algebra.TensorProduct.lift (Algebra.ofId _ _) (IsScalarTower.toAlgHom F K _) fun _ _ => Commute.all _ _
@@ -135,8 +136,8 @@ section Local
 
 variable {F K}
 
-omit [NumberField F] [NumberField K] in
 
+omit [NumberField F] [NumberField K] in
 theorem form_iff {A ι : Type} [CommRing A] [Algebra F A] {B : ι → Type} [∀ i, CommRing (B i)]
     [∀ i, Algebra K (B i)] (ψ : ∀ i, A ⊗[F] K →+* B i) (h1 : ∀ i x, ψ i (1 ⊗ₜ x) = algebraMap K _ x)
     (hb : Function.Bijective fun y i => ψ i y) (d : K) (x : A ⊗[F] K) :

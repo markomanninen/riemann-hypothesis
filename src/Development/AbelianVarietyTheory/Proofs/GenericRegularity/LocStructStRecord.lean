@@ -1,21 +1,25 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
-import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveSec
-import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
-import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
-import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.EfRankSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ValuationLifting.RApprox
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FinrankHostDivTwo
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.GenericSectionPointsInequivalentValuationsStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IntegralElementsGenericLinearSectionGaussPointStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SubalgebraEqIntegralClosureOfValuesResiduesStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsRatioFormsAtPointsStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.GaussValuationDensityGenerationLocalisationStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsSubfieldValuationClosureStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIntegralCongrWeakApproximationStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.EfRankSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ValuationLifting.RApprox
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FinrankHostDivTwo
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.GenericSectionPointsInequivalentValuationsStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IntegralElementsGenericLinearSectionGaussPointStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SubalgebraEqIntegralClosureOfValuesResiduesStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsRatioFormsAtPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.GaussValuationDensityGenerationLocalisationStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsSubfieldValuationClosureStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIntegralCongrWeakApproximationStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj
 
@@ -116,7 +120,7 @@ theorem core {O A : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] 
         obtain ⟨c, hc, h1⟩ := hx
         obtain ⟨c', hc', h2⟩ := hy
         refine ⟨c + c', C.add_mem hc hc', ?_⟩
-        rw [map_add, add_sub_add_comm]
+        rw [map_add (f := _), add_sub_add_comm]
         exact (v ζ).map_add_lt h1 h2
       | neg x _ hx =>
         obtain ⟨c, hc, h1⟩ := hx
@@ -236,17 +240,17 @@ variable {y : PtsG G la → E.Pt' la} (hs : ∀ ζ, SecPt ζ (y ζ))
 
 theorem op_mem_RGL (hU : IsUnif (OsK (xplus X E hM) la G.w) (unifO (xplus X E hM) la G.N)) [∀ ζ : PtsG G la, IsDVRAt ζ] (o : Op (xplus X E hM) la G.N) :
     ιW hs (algebraMap (Rp (xplus X E hM) la G.N) (Lw (xplus X E hM) la G.w) (algebraMap (Kp (xplus X E hM) la G.N) (Rp (xplus X E hM) la G.N)
-      (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) o))) ∈ RGL hs := by
+      (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ o))) ∈ RGL hs := by
   refine mem_RGL_of_stable hs (S := Set.range fun o : Op (xplus X E hM) la G.N =>
     ιW hs (algebraMap (Rp (xplus X E hM) la G.N) (Lw (xplus X E hM) la G.w) (algebraMap (Kp (xplus X E hM) la G.N) (Rp (xplus X E hM) la G.N)
-      (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) o)))) ?_ ?_ ⟨o, rfl⟩
+      (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ o)))) ?_ ?_ ⟨o, rfl⟩
   · rintro β _ ⟨o, rfl⟩
     refine ⟨hasseOp (xplus X E hM) la G.N β o, ?_⟩
     show _ = hdL hs β (ιW hs _)
     rw [hdW_ι]
     refine congrArg (ιW hs) ?_
     refine Eq.trans ?_ (hasse_algebraMap (xplus X E hM) la G.w β _).symm
-    rw [hasseRp_algebraMap, hasseKp_algebraMap]
+    rw [hasseRp_algebraMap, ← hasseKp_algebraMap]
     rfl
   · rintro _ ⟨o, rfl⟩ ζ
     show 0 ≤ nval _ 1 (evL hs ζ (ιW hs _))
@@ -267,11 +271,11 @@ def liftable (hU : IsUnif (OsK (xplus X E hM) la G.w) (unifO (xplus X E hM) la G
     rintro a b ⟨f, d, hd, he, r, hr, hf⟩ ⟨f', d', hd', he', r', hr', hf'⟩
     refine ⟨f * d' + d * f', d * d', fun ζ => ?_, ?_, r + r', (RGL hs).add_mem hr hr', ?_⟩
     · rw [Subalgebra.coe_mul, map_mul]; exact mul_ne_zero (hd ζ) (hd' ζ)
-    · rw [map_add, map_mul, map_mul, map_mul, he, he']; ring
-    · rw [Subalgebra.coe_add, Subalgebra.coe_mul, Subalgebra.coe_mul, Subalgebra.coe_mul, map_add, map_mul, map_mul,
+    · rw [map_add (f := _), map_mul, map_mul, map_mul, he, he']; ring
+    · rw [Subalgebra.coe_add, Subalgebra.coe_mul, Subalgebra.coe_mul, Subalgebra.coe_mul, map_add (f := _), map_mul, map_mul,
         map_mul, hf, hf']; ring
   algebraMap_mem' o := by
-    refine ⟨algebraMap (Kp (xplus X E hM) la G.N) _ (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) o), 1, fun ζ => ?_, ?_, _,
+    refine ⟨algebraMap (Kp (xplus X E hM) la G.N) _ (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ o), 1, fun ζ => ?_, ?_, _,
       op_mem_RGL hs hU o, ?_⟩
     · rw [Subalgebra.coe_one, map_one]; exact one_ne_zero
     · rw [map_one, one_mul, AlgHom.commutes]; rfl
@@ -382,10 +386,11 @@ section Point
 variable {ζ : PtsG G la} {y₀ : E.Pt' la} (h : SecPt ζ y₀)
 
 theorem ev_sec (i : Fin (WeightFamilies.dimY D j + 1)) : h.ev (Formalism.MainNotions.Gaps.EtaleWeightGaps.sec (xplus X E hM) la G.w i) =
-    ∑ k, h.ev (algebraMap (Kp (xplus X E hM) la G.N) (Rp (xplus X E hM) la G.N) (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) (Tv (xplus X E hM) la G.N (i, k)))) *
+    ∑ k, h.ev (algebraMap (Kp (xplus X E hM) la G.N) (Rp (xplus X E hM) la G.N) (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ (Tv (xplus X E hM) la G.N (i, k)))) *
       h.ev (emb (xplus X E hM) la G.N (X.inc wL (G.w k))) := by
   unfold Formalism.MainNotions.Gaps.EtaleWeightGaps.sec
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Algebra.smul_def, map_mul]
   rfl
@@ -451,7 +456,7 @@ theorem phiPt_mem (S : Subfield h.T.Fr) (hK : ∀ c, h.ev (algebraMap (Kp (xplus
       rw [e, e', pow_succ', mul_div_mul_left _ _ hk] at h1
       exact h1 ▸ hΩ _
     | zero => rw [map_zero, zero_div]; exact S.zero_mem
-    | add a b _ _ ha hb => rw [map_add, add_div]; exact S.add_mem ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _), add_div]; exact S.add_mem ha hb
     | smul c a _ ha => rw [Algebra.smul_def, map_mul, mul_div_assoc]; exact S.mul_mem (hK c) ha
   have e : h.ev g * (h.ev (Formalism.MainNotions.Gaps.EtaleWeightGaps.sec (xplus X E hM) la G.w 0))⁻¹ ^ k = h.ev g / w₀ ^ k * (h.ev (Formalism.MainNotions.Gaps.EtaleWeightGaps.sec (xplus X E hM) la G.w 0) / w₀)⁻¹ ^ k := by
     rw [inv_div, div_pow, inv_pow, div_mul_div_cancel₀ (pow_ne_zero k hk), div_eq_mul_inv]
@@ -466,11 +471,11 @@ theorem residue_at (hU : IsUnif (OsK (xplus X E hM) la G.w) (unifO (xplus X E hM
     ∃ d ∈ Subring.closure ({u | u ∈ Set.range jz ∧ valV h.T.V u ≤ 1} ∪ Set.range t),
       valV h.T.V d = 1 ∧ valV h.T.V (phiPt h b * d - a) < 1 := by
   let ψ : Kp (xplus X E hM) la G.N →+* h.T.Fr := h.ev.comp (algebraMap (Kp (xplus X E hM) la G.N) (Rp (xplus X E hM) la G.N))
-  have hψ : ∀ o : Op (xplus X E hM) la G.N, ψ (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) o) =
+  have hψ : ∀ o : Op (xplus X E hM) la G.N, ψ (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ o) =
       phiPt h (algebraMap (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w) o) := fun o => (phiPt_Kp h _).symm
-  have hint : ∀ o : Op (xplus X E hM) la G.N, valV h.T.V (ψ (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) o)) ≤ 1 := fun o => by
+  have hint : ∀ o : Op (xplus X E hM) la G.N, valV h.T.V (ψ (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ o)) ≤ 1 := fun o => by
     rw [hψ]; exact phiPt_int hU h ((As (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)).algebraMap_mem o)
-  have hϖ : valV h.T.V (ψ (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) (unifO (xplus X E hM) la G.N))) < 1 := by
+  have hϖ : valV h.T.V (ψ (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ (unifO (xplus X E hM) la G.N))) < 1 := by
     rw [hψ]
     have he := ep_pos ζ hU
     rcases ord_cases (ord_phiPt h (algebraMap (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w) (unifO (xplus X E hM) la G.N))) with
@@ -478,13 +483,13 @@ theorem residue_at (hU : IsUnif (OsK (xplus X E hM) la G.w) (unifO (xplus X E hM
     · rw [h1, map_zero]; exact zero_lt_one
     · rw [ord_unif ζ hU, WithTop.coe_inj] at h2
       rw [h1, ← WithZero.exp_zero, WithZero.exp_lt_exp]; omega
-  have ht' : t = fun q => ψ (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) (Tv (xplus X E hM) la G.N q)) :=
+  have ht' : t = fun q => ψ (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ (Tv (xplus X E hM) la G.N q)) :=
     funext fun q => (ht q).trans (hψ _).symm
   obtain ⟨g1, g2, g3⟩ := GlobalTheory.T.gauss_valuation_density_generation_localisation D B P j (xplus X E hM) la G.N h.T.Fr (valV h.T.V) ψ hint hϖ
   obtain ⟨S', hS'⟩ := GlobalTheory.T.exists_subfield_valuation_closure' h.T.Fr (valV h.T.V) (Subfield.closure (Set.range jz ∪ Set.range t))
   have hle : ∀ u ∈ Subfield.closure (Set.range jz ∪ Set.range t), u ∈ S' := fun u hu =>
     (hS' u).2 fun γ hγ => ⟨u, hu, by rw [sub_self, map_zero]; exact zero_lt_iff.2 hγ⟩
-  have hK : ∀ c, ψ c ∈ S' := by
+  have hK : ∀ c : Kp (xplus X E hM) la G.N, ψ c ∈ S' := by
     refine g3 S' (fun c => (hS' _).2 fun γ hγ => ?_) fun q => hle _ (Subfield.subset_closure (Or.inr ⟨q, by rw [ht']⟩))
     obtain ⟨a, ha⟩ := g2 c γ hγ
     exact ⟨_, Subfield.subset_closure (Or.inl ⟨algebraMap B.KO Ω a, jz_const h gF jz h2 h3 a⟩), ha⟩
@@ -616,9 +621,9 @@ namespace GlobalTheory.Reg
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem locStructSt_record : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c) (hT : GenFromTest (T.Q.Xo j) T.Q.c hG) (ka wL wF : WeightFamilies.Wt D j) (G : GlobalFamilyData (recPlus h j hj) ka wL wF) (S : Scal (recB h.toLawsCore)) (g0 : (recB h.toLawsCore).Cusp j wF) (la : HeightOneSpectrum (𝓞 (recB h.toLawsCore).KO)), CurveHyp h j hj hG ka wL wF G S g0 → GenValInjSt h j hG → CompSplitSt h j hG → BIRSt h j hj hG G → Formalism.L2.Pj.LocStructSt (E := extAll h j hj) (hM := intAtExt_extAll h j hj) G la := by
   intro D T h j hj hG hT ka wL wF G S g0 la hH hI hC hB
   exact UnitBall.locStruct_of (X := recPJ h j hj) (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (G := G) (la := la)

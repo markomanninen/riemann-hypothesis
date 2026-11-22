@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.PAdicHodge.PerfectoidField
-import GroundTheory.PAdicHodge.TiltValuation
-import GroundTheory.PAdicHodge.TiltField
-import GroundTheory.PAdicHodge.KerTheta
-import GroundTheory.PAdicHodge.KerFontaineThetaCompFrobeniusEquivSymmPow
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.PerfectoidField
+public import GroundTheory.PAdicHodge.TiltValuation
+public import GroundTheory.PAdicHodge.TiltField
+public import GroundTheory.PAdicHodge.KerTheta
+public import GroundTheory.PAdicHodge.KerFontaineThetaCompFrobeniusEquivSymmPow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -34,8 +39,8 @@ variable (φ : K →+* L) (hφ : ∀ x, ‖φ x‖ = ‖x‖)
 
 local notation "𝒪K♭" => PreTilt (normInteger K) p
 local notation "𝒪L♭" => PreTilt (normInteger L) p
-local notation "K♭" => Tilt K NormedField.valuation (normInteger K) normInteger_integers p
-local notation "L♭" => Tilt L NormedField.valuation (normInteger L) normInteger_integers p
+local notation "K♭" => FractionRing (PreTilt (normInteger K) p)
+local notation "L♭" => FractionRing (PreTilt (normInteger L) p)
 
 def modPMap : ModP (normInteger K) p →+* ModP (normInteger L) p :=
   Ideal.quotientMap _ (integerMap φ hφ) (Ideal.span_le.2 (Set.singleton_subset_iff.2 (by
@@ -48,18 +53,18 @@ theorem modPMap_mk (a : normInteger K) :
       Ideal.Quotient.mk (Ideal.span {(p : normInteger L)}) (integerMap φ hφ a) :=
   Ideal.quotientMap_mk
 
-variable (p) in
 
+variable (p) in
 def preTiltMap : 𝒪K♭ →+* 𝒪L♭ :=
   Perfection.map p (modPMap φ hφ)
 
 theorem coeff_preTiltMap (x : 𝒪K♭) (n : ℕ) :
-    Perfection.coeff (ModP (normInteger L) p) p n (preTiltMap p φ hφ x) =
+      Perfection.coeff (ModP (normInteger L) p) p n (preTiltMap (p := p) φ hφ x) =
       modPMap φ hφ (Perfection.coeff (ModP (normInteger K) p) p n x) :=
   Perfection.coeff_map _ _ _ _
 
 theorem untilt_preTiltMap (x : 𝒪K♭) :
-    PreTilt.untilt (preTiltMap p φ hφ x) = integerMap φ hφ (PreTilt.untilt x) := by
+    PreTilt.untilt (preTiltMap (p := p) φ hφ x) = integerMap φ hφ (PreTilt.untilt x) := by
   let y : ℕ → normInteger K :=
     fun n => PreTilt.untilt ((frobeniusEquiv 𝒪K♭ p).symm^[n] x)
   have hy : ∀ n, y (n + 1) ^ p = y n := IsPerfectoidField.untilt_iterate_succ_pow p x
@@ -68,10 +73,10 @@ theorem untilt_preTiltMap (x : 𝒪K♭) :
       rw [IsPerfectoidField.coeff_ofCompatible, IsPerfectoidField.mk_untilt_iterate]
   have hy' : ∀ n, (integerMap φ hφ ∘ y) (n + 1) ^ p = (integerMap φ hφ ∘ y) n := fun n => by
     simp only [Function.comp_apply, ← map_pow, hy]
-  have key : preTiltMap p φ hφ x = IsPerfectoidField.ofCompatible p _ hy' := by
+  have key : preTiltMap (p := p) φ hφ x = IsPerfectoidField.ofCompatible p _ hy' := by
     refine IsPerfectoidField.preTilt_ext p fun n => ?_
     rw [IsPerfectoidField.coeff_ofCompatible]
-    change Perfection.coeff (ModP (normInteger L) p) p n (preTiltMap p φ hφ x) = _
+    change Perfection.coeff (ModP (normInteger L) p) p n (preTiltMap (p := p) φ hφ x) = _
     rw [coeff_preTiltMap]
     change modPMap φ hφ (PreTilt.coeff n x) = _
     rw [← IsPerfectoidField.mk_untilt_iterate, modPMap_mk]
@@ -80,47 +85,21 @@ theorem untilt_preTiltMap (x : 𝒪K♭) :
   rfl
 
 theorem coe_untilt_preTiltMap (x : 𝒪K♭) :
-    ((PreTilt.untilt (preTiltMap p φ hφ x) : normInteger L) : L) =
+    ((PreTilt.untilt (preTiltMap (p := p) φ hφ x) : normInteger L) : L) =
       φ ((PreTilt.untilt x : normInteger K) : K) := by
   rw [untilt_preTiltMap, coe_integerMap]
 
-theorem preTiltMap_injective : Function.Injective (preTiltMap p φ hφ) := by
+theorem preTiltMap_injective : Function.Injective (preTiltMap (p := p) φ hφ) := by
   refine (injective_iff_map_eq_zero _).2 fun x hx => ?_
   have h1 := coe_untilt_preTiltMap φ hφ x
   rw [hx, IsPerfectoidField.untilt_zero, ZeroMemClass.coe_zero, eq_comm,
     map_eq_zero_iff φ φ.injective] at h1
   exact (IsPerfectoidField.untilt_eq_zero_iff p).1 (Subtype.ext h1)
 
-theorem norm_preTiltMap (x : 𝒪K♭) : ‖preTiltMap p φ hφ x‖ = ‖x‖ := by
-  rw [preTilt_norm_def, preTilt_norm_def, coe_untilt_preTiltMap, hφ]
 
 variable (p) in
-
 def tiltMap : K♭ →+* L♭ :=
   IsFractionRing.map (preTiltMap_injective (p := p) φ hφ)
-
-@[simp]
-theorem tiltMap_algebraMap (a : 𝒪K♭) :
-    tiltMap p φ hφ (algebraMap 𝒪K♭ K♭ a) = algebraMap 𝒪L♭ L♭ (preTiltMap p φ hφ a) :=
-  IsLocalization.map_eq (M := nonZeroDivisors 𝒪K♭) (S := K♭) (T := nonZeroDivisors 𝒪L♭)
-    (Q := L♭)
-    (nonZeroDivisors_le_comap_nonZeroDivisors_of_injective _ (preTiltMap_injective φ hφ)) a
-
-theorem tiltSharp_tiltMap (x : K♭) : tiltSharp L p (tiltMap p φ hφ x) = φ (tiltSharp K p x) := by
-  obtain ⟨a, b, hb, h⟩ := exists_mul_algebraMap_eq x
-  have hb' : preTiltMap p φ hφ b ≠ 0 :=
-    (map_ne_zero_iff _ (preTiltMap_injective φ hφ)).2 hb
-  have h' : tiltMap p φ hφ x * algebraMap 𝒪L♭ L♭ (preTiltMap p φ hφ b) =
-      algebraMap 𝒪L♭ L♭ (preTiltMap p φ hφ a) := by
-    rw [← tiltMap_algebraMap, ← tiltMap_algebraMap, ← map_mul, h]
-  rw [tiltSharp_eq hb' h', tiltSharp_eq hb h, map_div₀, coe_untilt_preTiltMap,
-    coe_untilt_preTiltMap]
-
-theorem norm_tiltMap (x : K♭) : ‖tiltMap p φ hφ x‖ = ‖x‖ := by
-  rw [← norm_tiltSharp, tiltSharp_tiltMap, hφ, norm_tiltSharp]
-
-theorem tiltMap_injective : Function.Injective (tiltMap p φ hφ) :=
-  (tiltMap p φ hφ).injective
 
 theorem ringHom_ext_wittVector_preTilt {f g : WittVector p 𝒪K♭ →+* normInteger L}
     (h : ∀ a, f (WittVector.teichmuller p a) = g (WittVector.teichmuller p a)) : f = g := by
@@ -133,13 +112,14 @@ theorem ringHom_ext_wittVector_preTilt {f g : WittVector p 𝒪K♭ →+* normIn
     rw [hw] at hc
     have hS : f (∑ i ∈ Finset.Iic n, WittVector.teichmuller p (a i) * (p : WittVector p 𝒪K♭) ^ i) =
         g (∑ i ∈ Finset.Iic n, WittVector.teichmuller p (a i) * (p : WittVector p 𝒪K♭) ^ i) := by
-      simp only [map_sum, map_mul, map_pow, map_natCast, h]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, map_pow, map_natCast, h]
     have hfw : f w = f (∑ i ∈ Finset.Iic n, WittVector.teichmuller p (a i) * (p : WittVector p 𝒪K♭) ^ i)
         + (p : normInteger L) ^ (n + 1) * f c := by
-      rw [← map_natCast f p, ← map_pow, ← map_mul, ← hc, ← map_add, add_sub_cancel]
+      rw [← map_natCast f p, ← map_pow, ← map_mul, ← hc, ← map_add (f := _), add_sub_cancel]
     have hgw : g w = g (∑ i ∈ Finset.Iic n, WittVector.teichmuller p (a i) * (p : WittVector p 𝒪K♭) ^ i)
         + (p : normInteger L) ^ (n + 1) * g c := by
-      rw [← map_natCast g p, ← map_pow, ← map_mul, ← hc, ← map_add, add_sub_cancel]
+      rw [← map_natCast g p, ← map_pow, ← map_mul, ← hc, ← map_add (f := _), add_sub_cancel]
     rw [hfw, hgw, hS]
     have hc1 := mem_normInteger.1 (f c).2
     have hc2 := mem_normInteger.1 (g c).2
@@ -160,10 +140,10 @@ theorem ringHom_ext_wittVector_preTilt {f g : WittVector p 𝒪K♭ →+* normIn
   exact sub_eq_zero.1 (norm_le_zero_iff.1 h0)
 
 theorem fontaineTheta_map_preTiltMap (w : WittVector p 𝒪K♭) :
-    WittVector.fontaineTheta (normInteger L) p (WittVector.map (preTiltMap p φ hφ) w) =
+    WittVector.fontaineTheta (normInteger L) p (WittVector.map (preTiltMap (p := p) φ hφ) w) =
       integerMap φ hφ (WittVector.fontaineTheta (normInteger K) p w) := by
   have := ringHom_ext_wittVector_preTilt
-    (f := (WittVector.fontaineTheta (normInteger L) p).comp (WittVector.map (preTiltMap p φ hφ)))
+    (f := (WittVector.fontaineTheta (normInteger L) p).comp (WittVector.map (preTiltMap (p := p) φ hφ)))
     (g := (integerMap φ hφ).comp (WittVector.fontaineTheta (normInteger K) p)) fun a => by
       rw [RingHom.comp_apply, RingHom.comp_apply, WittVector.map_teichmuller,
         WittVector.fontaineTheta_teichmuller, WittVector.fontaineTheta_teichmuller, untilt_preTiltMap]

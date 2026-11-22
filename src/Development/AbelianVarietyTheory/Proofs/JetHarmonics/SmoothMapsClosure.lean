@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivedActionDiscreteSeriesPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivedActionDiscreteSeriesPropertiesStatement
+
+@[expose] public section
+
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -74,13 +79,14 @@ theorem cw_comp {Wp : Type} [NormedAddCommGroup Wp] {R R' : Rep k r} {T : R.H �
   exact cw_of_semiBd R ((semiBd_sum hT Ws h1).mul h0) (fun v hv => h2 _ (hT.mem v hv))
 
 theorem smMap_comp {R R' R'' : Rep k r} {T : R.H → R'.H} {T' : R'.H → R''.H}
-    (hT : SmMap R R' T) (hT' : SmMap R' R'' T') : SmMap R R'' (fun v => T' (T v)) where
-  mem v hv := hT'.mem _ (hT.mem v hv)
-  add v hv w hw := by
+    (hT : SmMap R R' T) (hT' : SmMap R' R'' T') : SmMap R R'' (fun v => T' (T v)) := by
+  refine ⟨fun v hv => hT'.mem _ (hT.mem v hv), ?_, ?_, ?_⟩
+  · intro v hv w hw
     rw [hT.add v hv w hw, hT'.add _ (hT.mem v hv) _ (hT.mem w hw)]
-  smul a v hv := by
+  · intro a v hv
     rw [hT.smul a v hv, hT'.smul a _ (hT.mem v hv)]
-  cont W hW := cw_comp (Bm := fun v => dsigW (k := k) (r := r) R''.σ W (T' v)) hT (hT'.cont W hW)
+  · intro W hW
+    exact cw_comp (Bm := fun v => dsigW (k := k) (r := r) R''.σ W (T' v)) hT (hT'.cont W hW)
 
 section DS
 
@@ -104,7 +110,7 @@ theorem dsig_lin (hK : PI.KFinSmooth) (hR : R.IsDS ε mu) {X : Mx k r} (hX : InL
   refine HasDerivAt.deriv ?_
   convert h1 using 1
   funext t
-  simp
+  simp only [Pi.add_apply, Pi.smul_apply, map_add, map_smul]
 
 theorem dsigW_lin (hK : PI.KFinSmooth) (hR : R.IsDS ε mu) (W : List (Mx k r))
     (hW : ∀ X ∈ W, InLieHpk k r X) (a : ℂ) {v w : R.H} (hv : v ∈ R.sm) (hw : w ∈ R.sm) :
@@ -178,11 +184,11 @@ theorem dsigW_sigma (hK : PI.KFinSmooth) (hR : R.IsDS ε mu) {g : Mx k r} (hg : 
     rw [ih hW', h]
 
 theorem smMap_sigma (hK : PI.KFinSmooth) (hR : R.IsDS ε mu) {g : Mx k r} (hg : g ∈ GG k r) :
-    SmMap R R (fun v => R.σ g v) where
-  mem v hv := PI.UnitaryGroupMassFormula.CapelliEig.smooth_right_action k r ε mu R.H R.σ hR.2 v hv g hg
-  add v _ w _ := map_add _ _ _
-  smul a v _ := map_smul _ _ _
-  cont W hW := by
+    SmMap R R (fun v => R.σ g v) := by
+  refine ⟨?_, fun v _ w _ => map_add (R.σ g) v w, fun a v _ => map_smul (R.σ g) a v, ?_⟩
+  · intro v hv
+    exact PI.UnitaryGroupMassFormula.CapelliEig.smooth_right_action k r ε mu R.H R.σ hR.2 v hv g hg
+  · intro W hW
     refine ⟨1, [W.map fun X => g⁻¹ * X * g], ?_, fun v hv => ?_⟩
     · intro w hw Y hY
       rw [List.mem_singleton.mp hw] at hY
@@ -192,14 +198,17 @@ theorem smMap_sigma (hK : PI.KFinSmooth) (hR : R.IsDS ε mu) {g : Mx k r} (hg : 
       rw [dsigW_sigma hK hR hg W hW hv, norm_sigma hR hg]
 
 theorem smMap_lin (hK : PI.KFinSmooth) {R₀ : Rep k r} (hR : R.IsDS ε mu) {T T' : R₀.H → R.H} (a : ℂ)
-    (hT : SmMap R₀ R T) (hT' : SmMap R₀ R T') : SmMap R₀ R (fun v => a • T v + T' v) where
-  mem v hv := Formalism.FourierDecayAlt.P.DDSmoothness.smooth_add (Formalism.FourierDecayAlt.P.DDSmoothness.smooth_smul a (hT.mem v hv)) (hT'.mem v hv)
-  add v hv w hw := by
+    (hT : SmMap R₀ R T) (hT' : SmMap R₀ R T') : SmMap R₀ R (fun v => a • T v + T' v) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro v hv
+    exact Formalism.FourierDecayAlt.P.DDSmoothness.smooth_add
+      (Formalism.FourierDecayAlt.P.DDSmoothness.smooth_smul a (hT.mem v hv)) (hT'.mem v hv)
+  · intro v hv w hw
     rw [hT.add v hv w hw, hT'.add v hv w hw, smul_add]
     abel
-  smul b v hv := by
+  · intro b v hv
     rw [hT.smul b v hv, hT'.smul b v hv, smul_add, smul_comm]
-  cont W hW := by
+  · intro W hW
     refine cw_of_semiBd R₀ (((semiBd_of_cw R₀ (hT.cont W hW)).mul (norm_nonneg a)).add
       (semiBd_of_cw R₀ (hT'.cont W hW))) (fun v hv => ?_)
     rw [dsigW_lin hK hR W hW a (hT.mem v hv) (hT'.mem v hv)]

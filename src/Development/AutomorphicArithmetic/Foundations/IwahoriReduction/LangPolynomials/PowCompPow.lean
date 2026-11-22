@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ private theorem step {R : Type} [CommRing R] [IsDomain R] (p : ℕ) [hp : Fact p
   have key : ∀ j, c ≤ j → ∀ a b : PowerSeries R, h = (p : PowerSeries R) ^ (j + 1 - c) * a + cyc R p (j + 1) * b →
       PowerSeries.map π h = PowerSeries.X ^ (p ^ (j + 1) - p ^ j) * PowerSeries.map π b := by
     intro j hj a b hab
-    rw [hab, map_add, map_mul, map_mul, map_pow, map_natCast, hp1, zero_pow (by omega), zero_mul, zero_add,
+    rw [hab, map_add (f := _), map_mul, map_mul, map_pow, map_natCast, hp1, zero_pow (by omega), zero_mul, zero_add,
       coeffMap_cyc, cyc_charP]
   have h0 : PowerSeries.map π h = 0 := by
     ext k

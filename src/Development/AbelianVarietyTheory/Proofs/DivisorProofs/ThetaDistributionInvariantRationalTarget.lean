@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDetSmulSubOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussSumNondegenerateFiniteHermitianModuleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexMapNsmulComapEqAbsNormDetStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalLatticeSelfDualFgFullIndexStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralGaussianRealIsometryNoFixedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaTildeHeckeCharSplitMulSignOfNormFormulaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartanInvolutionCommQuasiReflectionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalIsometryVacuumScalarGaussSumIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteWeilRepEqLatticeIntertwinerMulCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalSubstitutionThetaHeisenbergUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaThetaFunctionsOrientedPairStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitCharacter
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryMatrixEqProdQuasiReflections
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryQuasiReflectionLaws
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.CmHostImaginaryGeneratorNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDetSmulSubOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussSumNondegenerateFiniteHermitianModuleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexMapNsmulComapEqAbsNormDetStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalLatticeSelfDualFgFullIndexStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralGaussianRealIsometryNoFixedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaTildeHeckeCharSplitMulSignOfNormFormulaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartanInvolutionCommQuasiReflectionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalIsometryVacuumScalarGaussSumIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteWeilRepEqLatticeIntertwinerMulCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalSubstitutionThetaHeisenbergUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaThetaFunctionsOrientedPairStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitCharacter
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryMatrixEqProdQuasiReflections
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryQuasiReflectionLaws
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CmHostImaginaryGeneratorNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem exists_idempotentUnitEmbeddings_character_relation {R E H : Type} [CommR
   have e1 := cut_add h1 h3 h2 h4 (i u)
   have e3 : (cut ε h1 (i (star u)) : R) = σ (cut _ h3 (i u) : R) := by
     show ε * j (star (u : E)) + (1 - ε) = σ (σ ε * j u + (1 - σ ε))
-    rw [map_add, map_mul, map_sub, map_one, hσ, hj]
+    rw [map_add (f := _), map_mul, map_sub, map_one, hσ, hj]
   have e2 := hη (cut _ h3 (i u)) (cut _ h3 (i u) * cut ε h1 (i (star u))) (by rw [Units.val_mul, e3])
   show η (cut _ h4 (i u)) * η (cut ε h1 (i (star u))) = η (cut ε h1 (i u))
   rw [e1, map_mul, mul_assoc, ← map_mul, e2, mul_one]
@@ -128,8 +132,8 @@ theorem final_algebra {c δ z ln li lc I P Q Z e y₁ y₂ s : ℂ} {r₁ r₂ r
   linear_combination (ln * y₂ * lc * Z) * h8 - (c * e * r₂ * n) * h4 + (r₁ * s) * h3 + (r₁ * ln * lc * Z * P) * h6
     - (c * e * r₂ * y₂ * lc * li * Z * Q) * h5
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem scalar_const (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT)
     (hη : IsEtaTilde D η) (hf : IsFinWeil ψ S T ΛS ΛT (η ^ S.rank) (η ^ T.rank) of) (hi : IsInfWeil ψ θ S T oi)
     (cS : ∀ τ, IsCartanInv (gramAt D S τ) (sS τ)) (cT : ∀ τ, IsCartanInv (gramAt D T τ) (sT τ)) :
@@ -244,8 +248,8 @@ theorem of_oi_comm (hψ : IsStdChar D ψ (-1)) (hS : IsSelfDualC S ΛS) (hT : Is
     (GlobalTheory.SplitDetChar.cut ε hε.1 (Matrix.GeneralLinearGroup.det (matHom S p.1)))
     (GlobalTheory.SplitDetChar.cut ε hε.1 (Matrix.GeneralLinearGroup.det (matHom T p.2))) rfl rfl⟩) p q f h
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem isScalar_one_of_comm (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT)
     (hη : IsEtaTilde D η) (hf : IsFinWeil ψ S T ΛS ΛT (η ^ S.rank) (η ^ T.rank) of) (hi : IsInfWeil ψ θ S T oi)
     (cS : ∀ τ, IsCartanInv (gramAt D S τ) (sS τ)) (cT : ∀ τ, IsCartanInv (gramAt D T τ) (sT τ))
@@ -309,7 +313,7 @@ theorem exists_cartan_refl (V : HSp D) (x : Fin V.rank → D.host.E) (c : D.host
   refine ⟨s, h1, ?_⟩
   have e : (1 + c • Matrix.vecMulVec x (star x ᵥ* V.gram)).map (tauE D τ) =
       1 + tauE D τ c • Matrix.vecMulVec (tauE D τ ∘ x) (star (tauE D τ ∘ x) ᵥ* gramAt D V τ) := by
-    rw [← RingHom.mapMatrix_apply, map_add, map_one, e0]
+    rw [← RingHom.mapMatrix_apply, map_add (f := _), map_one, e0]
     congr 1
     ext i j
     show tauE D τ (c * (x i * (star x ᵥ* V.gram) j)) = _

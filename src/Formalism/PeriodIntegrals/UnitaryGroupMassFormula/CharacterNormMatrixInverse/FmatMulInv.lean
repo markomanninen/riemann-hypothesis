@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ChiNCut
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ChiNCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem hA_left_inv (k : I.Gf) (x y : VA I) : hA I x (I.fmat k *ᵥ y) = hA I (I
   exact h.symm
 
 theorem hA_add_left (x x' y : VA I) : hA I (x + x') y = hA I x y + hA I x' y := by
-  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hA_sub_left (x x' y : VA I) : hA I (x - x') y = hA I x y - hA I x' y := by
   simp only [hA, Formalism.UG.hform, Pi.sub_apply, map_sub, sub_mul, Finset.sum_sub_distrib]
@@ -103,7 +107,8 @@ theorem sigA_inclE' (e : I.E) :
 theorem hA_incl' (x y : Fin I.n → I.E) :
     hA I (incl I x) (incl I y) =
       Formalism.UG.inclE (F := I.F) (Af I.F) (Formalism.UG.hform (starRingEnd I.E) I.J x y) := by
-  simp only [hA, Formalism.UG.hform, incl, Matrix.map_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, Formalism.UG.hform, incl, Matrix.map_apply, map_sum, map_mul]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [show Formalism.UG.sigR I.cm.sig (Af I.F) (Formalism.UG.inclE (F := I.F) (Af I.F) (x i)) =
     Formalism.UG.inclE (F := I.F) (Af I.F) (starRingEnd I.E (x i)) from sigA_inclE' I (x i)]

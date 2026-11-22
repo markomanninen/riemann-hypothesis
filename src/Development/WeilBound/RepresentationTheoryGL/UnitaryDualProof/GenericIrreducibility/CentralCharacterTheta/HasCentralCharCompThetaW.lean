@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.GenericIrreducibility.CentralProd2
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StdQuotGenericOfStdSubGeneric
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralCharacterEqProdSupercuspidalSupport
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.GenericIrreducibility.CentralProd2
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StdQuotGenericOfStdSubGeneric
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralCharacterEqProdSupercuspidalSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem hasCentralChar_comp_thetaW {N : ℕ} {V : Type} [AddCommGroup V] [Module
   intro z v
   rw [MonoidHom.comp_apply, thetaW_scalar, h z⁻¹ v, MonoidHom.inv_apply, map_inv]
 
-theorem hasCentralChar_prodIrr_two (x y : IrrGL k) (N : ℕ) (hd : ∑ a, (![x, y] a).1 = N) (ω ω' : kˣ →* ℂˣ)
+theorem hasCentralChar_prodIrr_two (x y : IrrGL (k := k)) (N : ℕ) (hd : ∑ a, (![x, y] a).1 = N) (ω ω' : kˣ →* ℂˣ)
     (hx : HasCentralChar x.rep ω) (hy : HasCentralChar y.rep ω') :
     HasCentralChar (prodIrr ![x, y] hd) (ω * ω') := by
   have key := GlobalTheory.CentralSupport.hasCentralChar_multiProd_prod

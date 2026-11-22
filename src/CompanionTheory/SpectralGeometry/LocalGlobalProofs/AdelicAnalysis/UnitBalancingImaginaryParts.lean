@@ -1,23 +1,30 @@
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
-open NumberField IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core
+module
+
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+
+@[expose] public section
+
+open NumberField NumberField.Units NumberField.Units.dirichletUnitTheorem
+  IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core
 open scoped ENNReal NNReal MatrixGroups
 
 namespace GlobalTheory.CompanionTheory.SW.UnitBalance
 
-open NumberField.Units NumberField.Units.dirichletUnitTheorem in
 
+open NumberField.Units NumberField.Units.dirichletUnitTheorem in
 theorem exists_bound_log_centered (E : Type) [Field E] [NumberField E] :
     ∃ R : ℝ, ∀ t : InfinitePlace E → ℝ, ∃ (u : (𝓞 E)ˣ) (s : ℝ), ∀ w : InfinitePlace E,
       |t w + Real.log (w (u : E)) - s| ≤ R := by
   classical
-  let B := (basisUnitLattice E).ofZLatticeBasis ℝ (unitLattice E)
+  let B := (NumberField.Units.basisUnitLattice E).ofZLatticeBasis ℝ
+    (NumberField.Units.unitLattice E)
   obtain ⟨C, hC⟩ := (ZSpan.fundamentalDomain_isBounded B).exists_norm_le
   refine ⟨Fintype.card (InfinitePlace E) * |C|, fun t => ?_⟩
   have hd : (Module.finrank ℚ E : ℝ) ≠ 0 := by exact_mod_cast Module.finrank_pos.ne'
   let s : ℝ := (∑ w : InfinitePlace E, (w.mult : ℝ) * t w) / Module.finrank ℚ E
   let l : logSpace E := fun w => (w.1.mult : ℝ) * (t w.1 - s)
   obtain ⟨⟨e, he⟩, h2, -⟩ := ZSpan.exist_unique_vadd_mem_fundamentalDomain B l
-  rw [Module.Basis.ofZLatticeBasis_span ℝ (unitLattice E)] at he
+  rw [Module.Basis.ofZLatticeBasis_span ℝ (NumberField.Units.unitLattice E)] at he
   obtain ⟨u, -, rfl⟩ := he
   let a : InfinitePlace E → ℝ := fun w => (w.mult : ℝ) * (t w - s + Real.log (w (u.toMul : E)))
   have hsum : ∑ w, a w = 0 := by

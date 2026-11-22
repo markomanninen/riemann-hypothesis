@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalc
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatLocA
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalc
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatLocA
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -27,14 +31,6 @@ theorem denominator_ne_zero_on_chart (hD : A.D0 L w w0 s) {x : Y} (hx : x ∈ A.
   unfold WeightedAtlas.IsSec WeightedAtlas.IsSecOn at hw
   rw [hw.2 i (A.pick x) x trivial hi (A.mem_pick x)]
   exact mul_ne_zero (A.g_ne L i (A.pick x) x hi (A.mem_pick x)) hx.1
-
-theorem denominator_ne_zero_of_overlap (hD : A.D0 L w w0 s) {y : Y} {i j : ι} (hi : y ∈ (A.chart i).source)
-    (hj : y ∈ (A.chart j).source) (h : w0 j y ≠ 0) : w0 i y ≠ 0 := by
-
-  have hw := hD.isSection_denom
-  unfold WeightedAtlas.IsSec WeightedAtlas.IsSecOn at hw
-  rw [hw.2 i j y trivial hi hj]
-  exact mul_ne_zero (A.g_ne L i j y hi hj) h
 
 theorem flL_zLoc_chart (hD : A.D0 L w w0 s) {y : Y} {i : ι} (hi : y ∈ (A.chart i).source)
     (_hne : w0 i y ≠ 0) : A.zLoc w0 s i (A.chart i y) = A.zmap w0 s y := by
@@ -284,7 +280,7 @@ private theorem d_eq_wd_comp_chart_symm' {n : ℕ} {M : Type*} [TopologicalSpace
     d n z j G x = wd n j (G ∘ E.symm) (z x) := by
   unfold d
   have h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source := ⟨E, hE, hx⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨hc, hxc⟩ := Classical.choose_spec h
   apply wd_congr
   filter_upwards [chart_symm_eventuallyEq_of_isChart' hc hE hxc hx] with v hv
@@ -295,7 +291,7 @@ private theorem db_eq_wdb_comp_chart_symm' {n : ℕ} {M : Type*} [TopologicalSpa
     db n z j G x = wdb n j (G ∘ E.symm) (z x) := by
   unfold db
   have h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source := ⟨E, hE, hx⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨hc, hxc⟩ := Classical.choose_spec h
   apply wdb_congr
   filter_upwards [chart_symm_eventuallyEq_of_isChart' hc hE hxc hx] with v hv
@@ -368,7 +364,8 @@ private theorem ofLp_apply_toLp_eq_sum_mul_basis {n : ℕ} (T : V n →L[ℂ] V 
   have h := (EuclideanSpace.basisFun (Fin n) ℂ).sum_repr (WithLp.toLp 2 η)
   simp only [EuclideanSpace.basisFun_repr, EuclideanSpace.basisFun_apply] at h
   conv_lhs => rw [← h]
-  simp [map_sum, bas, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, bas, smul_eq_mul]
 
 theorem dbar_flat_loc {n : ℕ} {Y : Type u} [TopologicalSpace Y] [T2Space Y] [SecondCountableTopology Y] [MeasurableSpace Y] [BorelSpace Y] {ι : Type*} {La : Type*} [AddCommGroup La] (A : WeightedAtlas n Y ι La) {L : La} {N : ℕ} {w : Fin N → ι → Y → ℂ} {w0 : ι → Y → ℂ} {s : Fin n → ι → Y → ℂ} {De : MvPolynomial (Fin n) ℂ} (hD : A.D0 L w w0 s) (hF : A.Flat w0 s De) (u : Y → ℂ) (i : ι) (x : A.Mset w0 s De)
     (hx : (x : Y) ∈ (A.chart i).source)
@@ -413,7 +410,8 @@ theorem dbar_flat_loc {n : ℕ} {Y : Type u} [TopologicalSpace Y] [T2Space Y] [S
       (fun k => jz A w0 s i x (WithLp.toLp 2 ξ) k) b
     rw [hJ'] at h1
     exact h1
-  rw [hb, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hb, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul]
   ring

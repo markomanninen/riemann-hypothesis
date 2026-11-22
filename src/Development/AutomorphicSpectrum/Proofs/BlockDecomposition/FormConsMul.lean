@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -22,10 +26,6 @@ def pairU (P : CH.Pairing F₁ F₂ F₃) (W : ObjectProperty C) :
     CH.Pairing (W.ι ⋙ F₁) (W.ι ⋙ F₂) (W.ι ⋙ F₃) :=
   ⟨fun T => P.μ T.obj, fun φ => P.nat φ.hom⟩
 
-theorem cupU_eq {K : Type} [CommRing K] {Z : Scheme.{0}} (q : Z ⟶ Spec (CommRingCat.of K))
-    (U : ObjectProperty (Thick (smFun Z q))) {a a' c i j n : ℕ} (ha : a + a' = c) (h : i + j = n) :
-    cupU q U ha h = (pairU (grOk (smFun Z q) ha).pair U).cupC h := rfl
-
 def incl (F : C ⥤ ModuleCat.{0} R) (W : ObjectProperty C) {Q : ObjectProperty C} (hQ : Cosieve Q) :
     Cx.Hom (RC F W hQ) (CH.cx (W.ι ⋙ F)) (RingHom.id R) :=
   ⟨fun n => Submodule.subtype _, fun _ _ => rfl⟩
@@ -43,20 +43,6 @@ theorem cup_mem_rel (P : CH.Pairing F₁ F₂ F₃) (W : ObjectProperty C) {Q : 
 def relCup (P : CH.Pairing F₁ F₂ F₃) (W : ObjectProperty C) {Q : ObjectProperty C} (hQ : Cosieve Q)
     {p n m : ℕ} (h : p + n = m) (b : CH.Cn (W.ι ⋙ F₁) p) : (RC F₂ W hQ).X n →ₗ[R] (RC F₃ W hQ).X m :=
   (((pairU P W).cupC h b).comp (Submodule.subtype _)).codRestrict _ fun x => cup_mem_rel P W hQ h b x
-
-theorem relCup_val (P : CH.Pairing F₁ F₂ F₃) (W : ObjectProperty C) {Q : ObjectProperty C} (hQ : Cosieve Q)
-    {p n m : ℕ} (h : p + n = m) (b : CH.Cn (W.ι ⋙ F₁) p) (x : (RC F₂ W hQ).X n) :
-    (relCup P W hQ h b x).1 = (pairU P W).cupC h b x.1 := rfl
-
-theorem res_cup (P : CH.Pairing F₁ F₂ F₃) {W V : ObjectProperty C} (k : V ≤ W) {p n m : ℕ} (h : p + n = m)
-    (b : CH.Cn (W.ι ⋙ F₁) p) (x : CH.Cn (W.ι ⋙ F₂) n) :
-    (resU F₃ k).pullC m ((pairU P W).cupC h b x) =
-      (pairU P V).cupC h ((resU F₁ k).pullC p b) ((resU F₂ k).pullC n x) := rfl
-
-theorem res_cup_top (P : CH.Pairing F₁ F₂ F₃) (V : ObjectProperty C) {p n m : ℕ} (h : p + n = m)
-    (b : CH.Cn F₁ p) (x : CH.Cn F₂ n) :
-    (CH.Mor.restrict F₃ V.ι).pullC m (P.cupC h b x) =
-      (pairU P V).cupC h ((CH.Mor.restrict F₁ V.ι).pullC p b) ((CH.Mor.restrict F₂ V.ι).pullC n x) := rfl
 
 end Abs
 
@@ -171,7 +157,8 @@ theorem form_cons_mul {a : ℕ} (g₀ u f : A) (v : Fin a → A) :
   have h3 := (exteriorPower.ιMulti A (a + 1) (M := Ω[A⁄K])).toMultilinearMap.cons_smul
     (fun k => KaehlerDifferential.D K A (v k)) f (KaehlerDifferential.D K A u)
   simp only [AlternatingMap.coe_multilinearMap] at h1 h2 h3
-  rw [h1, h2, h3, smul_add, smul_comm g₀ u, smul_comm g₀ f]
+  rw [h1, h2, h3]
+  simp only [RingHom.id_apply, smul_add, smul_comm g₀ u, smul_comm g₀ f]
 
 theorem wedge_mul (hFL : FormLaws) {a : ℕ} (u f : A) (wuf wf wu : Om K A a →ₗ[A] Om K A (a + 1))
     (huf : ∀ g₀ (g : Fin a → A), wuf (form K g₀ g) = form K g₀ (Fin.cons (u * f) g))
@@ -182,24 +169,6 @@ theorem wedge_mul (hFL : FormLaws) {a : ℕ} (u f : A) (wuf wf wu : Om K A a →
     intro g₀ v
     simp [huf, hf, hu, form_cons_mul])
   exact LinearMap.congr_fun this ω
-
-theorem relOm_map (hFL : FormLaws) {a : ℕ} (φ : A →ₐ[K] B) (f : A) (ω : Om K A a)
-    (hω : ω ∈ relOm K (Ideal.span {f}) a) : omMap φ a ω ∈ relOm K (Ideal.span {φ f}) a := by
-  obtain ⟨-, hφ⟩ := hFL K A B a
-  obtain ⟨h1, h2, -⟩ := hφ φ
-  induction hω using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨g₀, g, hg, rfl⟩ := hx
-    rw [h1]
-    refine Submodule.subset_span ⟨_, _, ?_, rfl⟩
-    have hm : ∀ {x : A}, x ∈ Ideal.span {f} → φ x ∈ Ideal.span {φ f} := fun {x} hx => by
-      obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1 hx
-      rw [map_mul]
-      exact Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self _)
-    exact hg.imp hm fun ⟨k, hk⟩ => ⟨k, hm hk⟩
-  | zero => rw [map_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
-  | smul c x _ hx => rw [h2]; exact Submodule.smul_mem _ _ hx
 
 theorem wedge_map (hFL : FormLaws) {a : ℕ} (φ : A →ₐ[K] B) (f : A) (w : Om K A a →ₗ[A] Om K A (a + 1))
     (w' : Om K B a →ₗ[B] Om K B (a + 1))

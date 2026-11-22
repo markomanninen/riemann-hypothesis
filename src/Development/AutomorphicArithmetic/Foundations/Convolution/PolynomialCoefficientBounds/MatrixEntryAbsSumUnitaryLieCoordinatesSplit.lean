@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial Filter Topology
 
@@ -18,7 +22,7 @@ private theorem intMvPolynomialCoeffAbsSum_add_le {ι : Type} (p q : MvPolynomia
     matrixEntryAbsSum_unitaryLie_coordinates_split p (p.support ∪ q.support) Finset.subset_union_left,
     matrixEntryAbsSum_unitaryLie_coordinates_split q (p.support ∪ q.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_le_sum fun α _ => ?_
-  rw [coeff_add]
+  rw [MvPolynomial.coeff_add]
   exact norm_add_le _ _
 
 private theorem intMvPolynomialCoeffAbsSum_sum_le {ι κ : Type} (s : Finset κ) (f : κ → MvPolynomial ι ℂ) :
@@ -78,7 +82,8 @@ private theorem l1_rename {ι ι' : Type} (p : MvPolynomial ι ℂ) (δ : ι →
     l1 (rename δ p) ≤ l1 p := by
   have h : rename δ p = ∑ a ∈ p.support,
       (monomial (Finsupp.mapDomain δ a) (p.coeff a) : MvPolynomial ι' ℂ) := by
-    conv_lhs => rw [p.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [p.as_sum, map_sum]
     simp only [rename_monomial]
   rw [h]
   refine (intMvPolynomialCoeffAbsSum_sum_le _ _).trans (le_of_eq ?_)

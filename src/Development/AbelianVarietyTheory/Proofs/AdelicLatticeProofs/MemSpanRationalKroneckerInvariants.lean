@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.GaloisStableSubmoduleLeSpanRationalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.GaloisStableSubmoduleLeSpanRationalStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -29,7 +34,8 @@ theorem mem_span_rational :
     funext b
     have h1 := congrArg σ (congrFun (hw _ (hΓ σ.symm g hg)) b)
     rw [← h1]
-    simp [Matrix.vecMul, dotProduct, tpow, map_sum, map_prod])
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.vecMul, dotProduct, tpow, map_sum, map_prod])
   have h2 := h (show l ∈ invSub Γ n from hl)
   simp only [Pi.basisFun_repr] at h2
   exact h2

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.GlueRelPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.GlueRelPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC CochainComplex.HomComplex CochainComplex
@@ -44,8 +48,5 @@ theorem range_of_pre_zero (R : Type) [CommRing R] {K L : Cx R} (φ : K ⟶ L) (F
 theorem coneExact : LateralTheory.E.GlueRelPf.ConeExact := by
   intro R _ K L φ F m x
   exact ⟨range_of_pre_zero R φ F m x, by rintro ⟨b, rfl⟩; exact pre_pull_zero R φ F m b⟩
-
-theorem GlueRel_of (hE : LateralTheory.E.GlueRelPf.EdgeInj) : LateralTheory.E.LocGlueEtPf.GlueRel :=
-  LateralTheory.E.GlueRelPf.GlueRel_of coneExact hE
 
 end LateralTheory.E.GlueRelPfCone

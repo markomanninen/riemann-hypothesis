@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qf30.GLOps.{u_2, u_3} :
     ℕ → (K : Type u_2) → (V : Type u_3) → [inst : Field K] → [inst_1 : AddCommGroup V] → [_root_.Module K V] → Type u_3 :=
@@ -15,12 +19,6 @@ noncomputable def UpperTheory.Reformulated.B.Qf30.Umon.{u_2, u_3} :
     fun {n : ℕ} {K : Type u_2} {V : Type u_3} [Field K] [AddCommGroup V] [_root_.Module K V]
         (E : UpperTheory.Reformulated.B.Qf30.GLOps n K V) ↦
       Submonoid.closure (Set.range fun (ab : Fin n × Fin n) ↦ E ab.1 ab.2)
-
-theorem UpperTheory.Reformulated.B.Qf30.aux3.{u_1, u_2} :
-    ∀ {K : Type u_1} {V : Type u_2} [inst : Field K] [inst_1 : AddCommGroup V] [inst_2 : _root_.Module K V],
-      SMulCommClass K K V := by
-  intro K V _ _ _
-  exact ⟨fun r s x => by rw [smul_smul, smul_smul, mul_comm]⟩
 
 noncomputable def UpperTheory.Reformulated.B.Qf30.weightSp.{u_2, u_3} :
     {n : ℕ} →
@@ -68,7 +66,7 @@ theorem UpperTheory.Reformulated.B.Qf30.isotypic_stable_under_operators.{u_1, u_
   · rw [map_zero]
     exact Submodule.zero_mem _
   · intro y z _ _ hy hz
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hy hz
   · intro c y _ hy
     rw [map_smul]

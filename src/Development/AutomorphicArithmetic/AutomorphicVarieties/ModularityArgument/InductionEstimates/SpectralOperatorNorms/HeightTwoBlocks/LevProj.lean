@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ParHaar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ParHaar
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -35,37 +40,47 @@ private theorem ret_zt {K : Type} [Field K] [NumberField K] (m : G1 K 2) (t : �
   rw [coe_retractOne, h]
   exact mul_inv_cancel_right _ _
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.levProj :
-    ∀ {K : Type} [Field K] [NumberField K], ∃ (S : Subgroup (G1 K (2 + 2))) (π : S →* G1 K 2 × G1 K 2), IsClosed (S : Set (G1 K (2 + 2))) ∧ Continuous π ∧
-      (∀ g, g ∈ S ↔ ∃ X m₁ m₂ t, g = nn X * lv m₁ m₂ t) ∧ ∀ X m₁ m₂ t (p : S), (p : G1 K (2 + 2)) = nn X * lv m₁ m₂ t → π p = (m₁, m₂) := by
+    ∀ {K : Type} [Field K] [NumberField K],
+      ∃ (S : Subgroup (G1 K (2 + 2))) (π : S →* G1 K 2 × G1 K 2),
+        IsClosed (S : Set (G1 K (2 + 2))) ∧ Continuous π ∧
+        (∀ g, g ∈ S ↔ ∃ X m₁ m₂ t, g = unipOne (K := K) (n := 2 + 2) 2 X * lv m₁ m₂ t) ∧
+        ∀ X m₁ m₂ t (p : S),
+          (p : G1 K (2 + 2)) = unipOne (K := K) (n := 2 + 2) 2 X * lv m₁ m₂ t →
+          π p = (m₁, m₂) := by
   intro K _ _
-  obtain ⟨S, ν, hS, -, hmem, -⟩ := parHaar (K := K) (Measure.haar)
+  obtain ⟨S, -, hS, -, hmem, -⟩ := parHaar (K := K) (Measure.haar : Measure (G1 K 2))
   obtain ⟨hlv, hmul, hone, -⟩ := blkLaws (K := K)
   obtain ⟨-, -, hinj, -⟩ := pkLaws (K := K)
-  have hp : ∀ p : S, ∃ X m₁ m₂ t, (p : G1 K (2 + 2)) = nn X * lv m₁ m₂ t := fun p => (hmem p).1 p.2
+  let unipotent := unipOne (K := K) (n := 2 + 2) 2
+  have hp : ∀ p : S, ∃ X m₁ m₂ t, (p : G1 K (2 + 2)) = unipotent X * lv m₁ m₂ t :=
+    fun p => (hmem p).1 p.2
   choose X m₁ m₂ t hX using hp
-  have hcomm : ∀ (a b : G1 K 2) (u : ℝ) Y, ∃ Z, lv a b u * nn Y = nn Z * lv a b u := by
+  have hcomm : ∀ (a b : G1 K 2) (u : ℝ) Y, ∃ Z, lv a b u * unipotent Y = unipotent Z * lv a b u := by
     intro a b u Y
     obtain ⟨e, he, -⟩ := adMeas a b u
-    exact ⟨e.symm Y, by rw [he, e.apply_symm_apply]⟩
+    exact ⟨e.symm Y, by simpa only [e.apply_symm_apply] using (he (e.symm Y)).symm⟩
   have hprod : ∀ p q : S, m₁ (p * q) = m₁ p * m₁ q ∧ m₂ (p * q) = m₂ p * m₂ q := by
     intro p q
     obtain ⟨Z, hZ⟩ := hcomm (m₁ p) (m₂ p) (t p) (X q)
-    have h : nn (X (p * q)) * lv (m₁ (p * q)) (m₂ (p * q)) (t (p * q)) =
-        nn (X p + Z) * lv (m₁ p * m₁ q) (m₂ p * m₂ q) (t p + t q) := by
+    have h : unipotent (X (p * q)) * lv (m₁ (p * q)) (m₂ (p * q)) (t (p * q)) =
+        unipotent (X p + Z) * lv (m₁ p * m₁ q) (m₂ p * m₂ q) (t p + t q) := by
       rw [← hX, Subgroup.coe_mul, hX p, hX q, mul_assoc, ← mul_assoc (lv _ _ _), hZ, mul_assoc, hmul, ← mul_assoc]
-      exact congrArg (· * _) (unipOne_add 2 _ _).symm
+      exact congrArg (· * _) (unipOne_add (K := K) (n := 2 + 2) 2 (X p) Z).symm
     obtain ⟨-, h1, h2, -⟩ := hinj _ _ _ _ _ _ _ _ h
     exact ⟨h1, h2⟩
-  have hunit : ∀ (Y : UPos (2 + 2) 2 → 𝔸[K]) (a b : G1 K 2) (u : ℝ) (p : S), (p : G1 K (2 + 2)) = nn Y * lv a b u →
-      m₁ p = a ∧ m₂ p = b := by
+  have hunit : ∀ (Y : UPos (2 + 2) 2 → 𝔸[K]) (a b : G1 K 2) (u : ℝ) (p : S),
+      (p : G1 K (2 + 2)) = unipotent Y * lv a b u → m₁ p = a ∧ m₂ p = b := by
     intro Y a b u p h
     obtain ⟨-, h1, h2, -⟩ := hinj _ _ _ _ _ _ _ _ ((hX p).symm.trans h)
     exact ⟨h1, h2⟩
   let π : S →* G1 K 2 × G1 K 2 :=
     { toFun := fun p => (m₁ p, m₂ p)
       map_one' := by
-        obtain ⟨h1, h2⟩ := hunit 0 1 1 0 1 (by rw [hone, mul_one]; exact (unipOne_zero 2).symm)
+        obtain ⟨h1, h2⟩ := hunit 0 1 1 0 1 (by
+          rw [hone, mul_one]
+          exact (unipOne_zero (K := K) (n := 2 + 2) 2).symm)
         exact Prod.ext h1 h2
       map_mul' := fun p q => Prod.ext (hprod p q).1 (hprod p q).2 }
   let F : G1 K (2 + 2) → Matrix (Fin 2 ⊕ Fin 2) (Fin 2 ⊕ Fin 2) 𝔸[K] := fun g =>
@@ -78,7 +93,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.levProj :
     obtain ⟨B, hB⟩ := unip_blk' (X p) (A p) (D p)
     refine ⟨B, ?_⟩
     rw [← hB]
-    simp only [F, hX p, Subgroup.coe_mul, hlv, coe_unipOne, A, D]
+    simp only [F, hX p, Subgroup.coe_mul, hlv, unipotent, coe_unipOne, A, D]
   have hFinv : ∀ p : S, F (p : G1 K (2 + 2)) * F ((p⁻¹ : S) : G1 K (2 + 2)) = 1 := by
     intro p
     simp only [F, Matrix.submatrix_mul_equiv, Subgroup.coe_inv, ← Units.val_mul, mul_inv_cancel, Units.val_one,

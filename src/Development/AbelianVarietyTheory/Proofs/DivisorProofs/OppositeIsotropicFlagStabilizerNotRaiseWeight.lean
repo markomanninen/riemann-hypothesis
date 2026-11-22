@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut
 open scoped TensorProduct
@@ -63,7 +67,8 @@ theorem not_raise_of_mem_parFlag : ∀ (F E : Type) [Field F] [NumberField F] [F
   · have := adj 1
     rw [Matrix.mul_one, Formalism.UG.cT_one, Matrix.map_one _ (map_zero _) (map_one _), Matrix.mul_one] at this
     simp only [fam, Option.elim, Fintype.sum_sum_type, Sum.elim_inl, Sum.elim_inr]
-    rw [← map_sum, sum_idemA, this, Matrix.map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, sum_idemA, this, Matrix.map_mul]
   · refine (adj (single j j 1)).trans ?_
     congr 2
     ext a b

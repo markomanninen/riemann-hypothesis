@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsWeilDatumAnisotropicKernelPair
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsWeilDatumAnisotropicKernelPair
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,11 +51,11 @@ theorem pathLift_downPath : ∀ n (d : PureT G (downPath t i n)) (F : Fn G (.gri
     show _ = lowLift Wl M t i (getD t i (n + 1) d) n _ (liftA Wl M (.down t i n) (getD t i (n + 1) d n (Nat.lt_succ_self n)) F)
     have hx : getD t i (n + 1) d n (Nat.lt_succ_self n) =
         (splitFam (p := Path.one (.down t i n)) (downPath t i n) d).1.2 := by
-      rw [getD, dif_neg (lt_irrefl n)]
+      rw [getD, dite_eq_right (lt_irrefl n)]
     rw [hx]
     refine lowLift_congr Wl M t i _ _ n _ _ (fun j hj => ?_) _
     show _ = getD t i (n + 1) d j _
-    rw [getD, dif_pos hj]
+    rw [getD, dite_eq_left hj]
 
 def castFn {n n' : ℕ} (e : n = n') (F : Fn G (.grid i n)) : Fn G (.grid i n') :=
   Eq.rec (motive := fun k _ => Fn G (.grid i k)) F e

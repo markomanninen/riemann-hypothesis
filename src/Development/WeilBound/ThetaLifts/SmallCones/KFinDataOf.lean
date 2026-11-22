@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.SmallCones.KFinArch
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.KFinArch
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,7 +136,7 @@ theorem kFinData_of (hS : StabEx) : KFinData := by
       obtain ⟨a1, m, hm⟩ := ha
       obtain ⟨b1, m', hm'⟩ := hb
       refine ⟨add_mem a1 b1, max m m', fun k hk => ?_⟩
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem (slc_mono (fil_mono _ _ (le_max_left _ _)) (hm k hk)) (slc_mono (fil_mono _ _ (le_max_right _ _)) (hm' k hk))
     | smul c a _ ha =>
       obtain ⟨a1, m, hm⟩ := ha

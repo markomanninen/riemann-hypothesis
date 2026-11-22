@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LatOfLamSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModNOfDvdModulus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LatOfLamSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModNOfDvdModulus
+
+@[expose] public section
 
 open NumberField IsDedekindDomain AlgebraicGeometry CategoryTheory Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.DivisionValues Formalism.EigenvalueLevelCeiling
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff SABMap)
@@ -64,7 +68,7 @@ theorem exists_isometry_mod (l : Level H) (γ : LaMod D l ≃ₗ[𝓞 E] LaMod D
     have h2 := Ideal.mem_map_of_mem (H.bar : 𝓞 E →+* 𝓞 E) he
     have h3 : (H.bar : 𝓞 E →+* 𝓞 E).comp (H.bar : 𝓞 E →+* 𝓞 E) = RingHom.id _ := RingHom.ext bar_bar
     rwa [Ideal.map_map, h3, Ideal.map_id] at h2
-  have hb1 : H.bar e' + H.bar e = 1 := by rw [← map_add, hee, map_one]
+  have hb1 : H.bar e' + H.bar e = 1 := by rw [← map_add (f := _), hee, map_one]
   have m1 : H.bar e * e ∈ Ideal.span {(l.M : 𝓞 E)} := by
     rw [← l.prod]; exact Ideal.mul_mem_mul hbe he
   have m2 : H.bar e' * e' ∈ Ideal.span {(l.M : 𝓞 E)} := by
@@ -92,13 +96,13 @@ theorem exists_isometry_mod (l : Level H) (γ : LaMod D l ≃ₗ[𝓞 E] LaMod D
     have k5 := dvd_form_right D a (modN_smul_of_mem D l (Ideal.add_mem _ m1 m2) b)
     have k6 : D.EF a b = D.EF a ((H.bar e * e + H.bar e' * e') • b) + D.EF a ((H.bar e' * e) • b) +
         D.EF a ((e' * H.bar e) • b) := by
-      rw [← map_add, ← map_add, ← add_smul, ← add_smul]
+      rw [← map_add (f := _), ← map_add (f := _), ← add_smul, ← add_smul]
       have : H.bar e * e + H.bar e' * e' + H.bar e' * e + e' * H.bar e = 1 := by
         linear_combination (e' + e) * hb1 + hee
       rw [this, one_smul]
     obtain ⟨c, hc⟩ := dvd_sub (dvd_add (dvd_add (dvd_sub k1 k2) k3) k4) k5
     refine ⟨c, ?_⟩
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add]
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _)]
     linear_combination hc - k6
   · have : (e • f + e' • h) x - f x = e' • (h x - f x) := by
       have h1 : e = 1 - e' := by linear_combination hee

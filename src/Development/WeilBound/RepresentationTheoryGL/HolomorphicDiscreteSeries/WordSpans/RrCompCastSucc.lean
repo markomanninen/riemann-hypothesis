@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WordSpans.WordSpan
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowExp
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmColExp
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WordSpans.WordSpan
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowExp
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmColExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem qminor_comp {n m t : ℕ} (E : Fin n → Fin n → A) (ι : Fin m → Fi
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 3
   funext k
-  simp only [Tm, Function.comp_apply, hι.eq_iff]
+  simp [Tm, hι.eq_iff]
 
 theorem qdet_perm {n : ℕ} (E : Fin n → Fin n → A) (hE : GlRel E) (τ : Equiv.Perm (Fin n)) (u : ℂ) :
     qminor E τ τ u = qdet E u := by

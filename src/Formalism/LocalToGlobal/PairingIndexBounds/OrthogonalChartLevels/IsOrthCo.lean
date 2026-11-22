@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.ClsSEqIffExistsGMapPrPSRatAS
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.ClsSEqIffExistsGMapPrPSRatAS
+
+@[expose] public section
 
 noncomputable section
 

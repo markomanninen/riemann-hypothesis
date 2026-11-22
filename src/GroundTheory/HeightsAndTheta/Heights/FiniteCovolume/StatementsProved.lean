@@ -1,23 +1,27 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Assembly
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.OfUnfolding
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.MainOf
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PTorusEmbedding
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineEigenvalue
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PTorusModulus
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PSemidirectHaar
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnitsInvHaar
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentCoordProper
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentHorizontal
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentCentral
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PRationalUnipotent
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipRadicalOfRational
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementArchCocompact
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PImaginaryLatticeCocompact
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PRadicalTorusModulus
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerLevi
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulus
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.OfUnfolding
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.MainOf
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PTorusEmbedding
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineEigenvalue
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PTorusModulus
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PSemidirectHaar
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnitsInvHaar
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentCoordProper
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentHorizontal
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentCentral
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PRationalUnipotent
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipRadicalOfRational
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementArchCocompact
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PImaginaryLatticeCocompact
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PRadicalTorusModulus
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerLevi
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulus
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -29,7 +33,7 @@ noncomputable section
 universe u
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 theorem TorusEmbedding.full {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι]
     [DecidableEq ι] (h : HermitianForm F E W) (v : Basis ι E W) : TorusEmbedding.Statement h v :=
@@ -55,18 +59,6 @@ theorem UnipotentCentral.full {W : Type*} [AddCommGroup W] [Module E W] {ι : Ty
 
 variable {W : Type u} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-theorem UnfoldingIntegral.full (h : HermitianForm F E W) (v : Basis ι E W) :
-    UnfoldingIntegral.Statement h v :=
-  UnfoldingIntegral.of_remaining.{u}
-    (fun _ _ _ _ h _ v => TorusEmbedding.full h v) (fun _ _ _ _ h _ v => LineEigenvalue.closed h v)
-    (fun _ _ _ _ h _ v => TorusModulus.full h v) (fun _ _ _ _ _ _ _ => SemidirectHaar.proof _ _)
-    (UnitsInvHaar.proof _) (fun _ _ _ _ h _ v => UnipotentCoordProper.proof h v)
-    (fun _ _ _ _ h _ v => UnipotentHorizontal.full h v)
-    (fun _ _ _ _ h _ v => UnipotentCentral.full h v)
-    h v (TorusEmbedding.full h v) (LineEigenvalue.closed h v) (TorusModulus.full h v)
-    (SemidirectHaar.proof _ _) (UnipotentCoordProper.proof h v) (UnipotentHorizontal.full h v)
-    (UnipotentCentral.full h v)
-
 theorem ScalingLaw.full (h : HermitianForm F E W) (v : Basis ι E W) : ScalingLaw.Statement h v :=
   ScalingLaw.of_remaining.{u}
     (fun _ _ _ _ h _ v => TorusEmbedding.full h v) (fun _ _ _ _ h _ v => LineEigenvalue.closed h v)
@@ -81,18 +73,6 @@ theorem ScalingLaw.full (h : HermitianForm F E W) (v : Basis ι E W) : ScalingLa
 theorem ArithmeticCovolumeFinite.full (h : HermitianForm F E W) (v : Basis ι E W) :
     ArithmeticCovolumeFinite.Statement h v :=
   ArithmeticCovolumeFinite.of_remaining.{u}
-    (fun _ _ _ _ h _ v => TorusEmbedding.full h v) (fun _ _ _ _ h _ v => LineEigenvalue.closed h v)
-    (fun _ _ _ _ h _ v => TorusModulus.full h v) (fun _ _ _ _ _ _ _ => SemidirectHaar.proof _ _)
-    (UnitsInvHaar.proof _) (fun _ _ _ _ h _ v => UnipotentCoordProper.proof h v)
-    (fun _ _ _ _ h _ v => UnipotentHorizontal.full h v)
-    (fun _ _ _ _ h _ v => UnipotentCentral.full h v)
-    h v (TorusEmbedding.full h v) (LineEigenvalue.closed h v) (TorusModulus.full h v)
-    (SemidirectHaar.proof _ _) (UnipotentCoordProper.proof h v) (UnipotentHorizontal.full h v)
-    (UnipotentCentral.full h v)
-
-theorem AdelicCovolumeFinite.full (h : HermitianForm F E W) (v : Basis ι E W) :
-    AdelicCovolumeFinite.Statement h v :=
-  AdelicCovolumeFinite.of_remaining.{u}
     (fun _ _ _ _ h _ v => TorusEmbedding.full h v) (fun _ _ _ _ h _ v => LineEigenvalue.closed h v)
     (fun _ _ _ _ h _ v => TorusModulus.full h v) (fun _ _ _ _ _ _ _ => SemidirectHaar.proof _ _)
     (UnitsInvHaar.proof _) (fun _ _ _ _ h _ v => UnipotentCoordProper.proof h v)

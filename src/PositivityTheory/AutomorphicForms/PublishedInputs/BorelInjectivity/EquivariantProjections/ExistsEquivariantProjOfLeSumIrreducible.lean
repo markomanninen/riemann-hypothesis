@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.BasicForm
-open GlobalTheory.BorelCoh CategoryTheory
+module
+
+public import Mathlib
+
+@[expose] public section
+
+open CategoryTheory
 open scoped ContDiff Matrix
 
 namespace GlobalTheory.BorelCoh
@@ -17,7 +22,7 @@ theorem exists_equivariant_proj_of_le_sum_irreducible {M O : Type} [AddCommGroup
       ∀ o, ∀ x ∈ A ⊔ B, act o x ∈ A ⊔ B := by
     intro A B hA hB o x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hA o y hy) (hB o z hz)
 
   let s : Set (Submodule ℂ M) := {C | (∀ o, ∀ x ∈ C, act o x ∈ C) ∧ C ≤ Wt ∧ Disjoint V C}
@@ -63,7 +68,7 @@ theorem exists_equivariant_proj_of_le_sum_irreducible {M O : Type} [AddCommGroup
   have hz' : z ∈ C ⊔ D := Submodule.mem_sup_left hz
   have hz'' : act o z ∈ C ⊔ D := Submodule.mem_sup_left (hCst o z hz)
   show (V.linearProjOfIsCompl _ hc (act o (y + z)) : M) = act o (V.linearProjOfIsCompl _ hc (y + z))
-  rw [map_add, map_add, map_add, hr _ hz'', hr _ hz', add_zero, add_zero, hl _ (hVst o y hy), hl _ hy]
+  rw [map_add (f := _), map_add (f := _), map_add (f := _), hr _ hz'', hr _ hz', add_zero, add_zero, hl _ (hVst o y hy), hl _ hy]
 
 theorem exists_equivariant_proj_of_irreducible_family : ∀ (M O ι : Type) [AddCommGroup M] [Module ℂ M] [Fintype ι] [DecidableEq ι] (act : O → Module.End ℂ M) (V : ι → Submodule ℂ M), (∀ i o, ∀ x ∈ V i, act o x ∈ V i) → (∀ i, V i ≠ ⊥) → (∀ i (W : Submodule ℂ M), W ≤ V i → (∀ o, ∀ x ∈ W, act o x ∈ W) → W = ⊥ ∨ W = V i) → (∀ i j, i ≠ j → ∀ f : M →ₗ[ℂ] M, (∀ o, ∀ x ∈ V i, f (act o x) = act o (f x)) → (∀ x ∈ V i, f x ∈ V j) → ∀ x ∈ V i, f x = 0) → ∀ i, ∃ p : M →ₗ[ℂ] M, (∀ o, ∀ x ∈ (⨆ (W : Submodule ℂ M) (_ : (∀ o, ∀ x ∈ W, act o x ∈ W) ∧ W ≠ ⊥ ∧ ∀ W' ≤ W, (∀ o, ∀ x ∈ W', act o x ∈ W') → W' = ⊥ ∨ W' = W), W), p (act o x) = act o (p x)) ∧ (∀ x ∈ (⨆ (W : Submodule ℂ M) (_ : (∀ o, ∀ x ∈ W, act o x ∈ W) ∧ W ≠ ⊥ ∧ ∀ W' ≤ W, (∀ o, ∀ x ∈ W', act o x ∈ W') → W' = ⊥ ∨ W' = W), W), p x ∈ V i) ∧ (∀ x ∈ V i, p x = x) ∧ ∀ j, j ≠ i → ∀ x ∈ V j, p x = 0 := by
   intro M O ι _ _ _ _ act V h1 h2 h3 h4 i

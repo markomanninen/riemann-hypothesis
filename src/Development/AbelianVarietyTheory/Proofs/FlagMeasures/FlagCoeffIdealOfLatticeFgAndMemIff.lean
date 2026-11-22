@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Ia
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Ia
+
+@[expose] public section
 
 open NumberField
 
@@ -12,9 +16,9 @@ private theorem coefX_add_flag_measures {E : Type} [Field E] [NumberField E] [St
     F.coefX (x + y) a = F.coefX x a + F.coefX y a := by
   have hxy : x + y ∈ Submodule.span E (Set.range F.e) := Submodule.add_mem _ hx hy
   unfold Formalism.MainNotions.S.FlagG.coefX
-  rw [dif_pos hx, dif_pos hy, dif_pos hxy]
+  rw [dite_eq_left hx, dite_eq_left hy, dite_eq_left hxy]
   have hsum : (⟨x + y, hxy⟩ : Submodule.span E (Set.range F.e)) = ⟨x, hx⟩ + ⟨y, hy⟩ := rfl
-  rw [hsum, map_add, Finsupp.add_apply]
+  rw [hsum, map_add (f := _), Finsupp.add_apply]
 
 private theorem coefX_smul_flag_measures {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalism.BasicNotions.HSpace E}
     {r : ℕ} {T : E} (F : Formalism.MainNotions.S.FlagG S r T) (a : Fin r) (c : E) {x : S.V}
@@ -22,7 +26,7 @@ private theorem coefX_smul_flag_measures {E : Type} [Field E] [NumberField E] [S
     F.coefX (c • x) a = c * F.coefX x a := by
   have hcx : c • x ∈ Submodule.span E (Set.range F.e) := Submodule.smul_mem _ c hx
   unfold Formalism.MainNotions.S.FlagG.coefX
-  rw [dif_pos hx, dif_pos hcx]
+  rw [dite_eq_left hx, dite_eq_left hcx]
   have hprod : (⟨c • x, hcx⟩ : Submodule.span E (Set.range F.e)) = c • ⟨x, hx⟩ := rfl
   rw [hprod, map_smul, Finsupp.smul_apply, smul_eq_mul]
 

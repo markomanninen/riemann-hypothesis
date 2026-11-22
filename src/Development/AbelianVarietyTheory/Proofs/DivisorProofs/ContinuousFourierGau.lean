@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,11 +41,6 @@ theorem norm_gau (u : V) : ‖gau u‖ = Real.exp (-(π / 2) * ‖u‖ ^ 2) := b
   have : (-(π / 2 : ℂ) * (‖u‖ : ℂ) ^ 2) = ((-(π / 2) * ‖u‖ ^ 2 : ℝ) : ℂ) := by push_cast; ring
   rw [this, ofReal_re]
 
-theorem norm_gau_le_one (u : V) : ‖gau u‖ ≤ 1 := by
-  rw [norm_gau, Real.exp_le_one_iff]
-  have := Real.pi_pos
-  nlinarith [sq_nonneg ‖u‖]
-
 theorem gau_ne_zero (u : V) : gau u ≠ 0 := Complex.exp_ne_zero _
 
 theorem gau_zero : gau (0 : V) = 1 := by simp [gau]
@@ -52,7 +51,7 @@ theorem continuous_gau : Continuous (gau : V → ℂ) := by unfold gau; fun_prop
 
 theorem IsHeis.twist {om : V → V → ℝ} {ρ : V → B →L[ℂ] B} (h : IsHeis om ρ) (g : V →L[ℝ] V)
     (hg : ∀ x y, om (g x) (g y) = om x y) : IsHeis om fun v => ρ (g v) :=
-  ⟨fun f => by simp only [map_zero, h.1], fun u v f => by simp only [h.2.1, hg, map_add], fun u f => h.2.2.1 _ f,
+  ⟨fun f => by simp only [map_zero, h.1], fun u v f => by simp only [h.2.1, hg, map_add (f := _)], fun u f => h.2.2.1 _ f,
     fun f => (h.2.2.2 f).comp g.continuous⟩
 
 theorem IsHeis.continuous {om : V → V → ℝ} {ρ : V → B →L[ℂ] B} (h : IsHeis om ρ) {Y : Type} [TopologicalSpace Y]
@@ -102,7 +101,7 @@ def proj (h : IsHeis om ρ) : B →L[ℂ] B :=
     { toFun := fun f => ∫ u, gau u • ρ u f
       map_add' := fun f f' => by
         rw [← integral_add (h.integrable f) (h.integrable f')]
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
       map_smul' := fun a f => by
         rw [RingHom.id_apply, ← integral_smul]
         simp only [map_smul, smul_comm a] }

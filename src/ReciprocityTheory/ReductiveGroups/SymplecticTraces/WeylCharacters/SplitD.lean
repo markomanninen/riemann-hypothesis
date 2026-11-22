@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SplitB
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SplitC
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.URepCompRed
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SplitB
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SplitC
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.URepCompRed
+
+@[expose] public section
 
 noncomputable section
 

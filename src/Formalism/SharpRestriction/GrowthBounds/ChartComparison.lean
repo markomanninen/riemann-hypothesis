@@ -1,8 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.KerLabelsMu
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.CmpJMemSpan
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.IntAtJIffN
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.HtupWLeHtupJ
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.TwPinned
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.KerLabelsMu
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.CmpJMemSpan
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.IntAtJIffN
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.HtupWLeHtupJ
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.StepIn
+public import Formalism.LocalToGlobal.HermitianColumns.HermCols
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +23,7 @@ theorem locW_map {LL : Type} [Field LL] [NumberField LL] (Pl : Rows.Places LL) (
   induction hx using Submodule.span_induction with
   | mem y hy => exact Submodule.subset_span (h y hy)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ h1 h2 => rw [map_add]; exact Submodule.add_mem _ h1 h2
+  | add y z _ _ h1 h2 => rw [map_add (f := _)]; exact Submodule.add_mem _ h1 h2
   | smul a y _ h1 =>
     rw [Subring.smul_def, map_smul, ← Subring.smul_def]
     exact Submodule.smul_mem _ _ h1
@@ -77,8 +82,6 @@ structure CmpJIn where
 
 variable {Tw u μ w h Lv}
 
-def CmpJIn.Pinned (Hh : Formalism.L2.Herm.HermTied D) (I : CmpJIn Tw u μ w h Lv) : Prop := ∀ j hj, (I.at' j hj).st.TwPinned Hh
-
 structure CmpJHyp (I : CmpJIn Tw u μ w h Lv) : Prop where
 
   core : ∀ j hj β, (I.at' j hj).st.Core (c.embW u w h) β
@@ -104,8 +107,8 @@ theorem CmpJHyp.valInt {I : CmpJIn Tw u μ w h Lv} (H : CmpJHyp c I) (j : ℕ) (
     (I.at' j hj).st.ValIntJ (c.embW u w h) w :=
   StepIn.valIntJ_of (S := (I.at' j hj).st) (c.embW u w h) w (H.twUnit j hj) (H.valIntN j hj)
 
-open Classical in
 
+open Classical in
 def cmpSJ {I : CmpJIn Tw u μ w h Lv} (H : CmpJHyp c I) (hS : BlockRationalityField) (j : ℕ) :
     ((Tw.fm u μ).lat (j + 1)).V →ₛₗ[c.embW u w h] Lv.Fm (j + 1) :=
   if hj : j + 1 ≤ D.R.m then
@@ -116,7 +119,7 @@ theorem cmpSJ_apply {I : CmpJIn Tw u μ w h Lv} (H : CmpJHyp c I) (hS : BlockRat
     (x : ((Tw.fm u μ).lat (j + 1)).V) :
     cmpSJ H hS j x = (I.at' j hj).st.cmpJ (c.embW u w h) ((I.at' j hj).eps.symm x) := by
   unfold cmpSJ
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
   rfl
 
 theorem descUp {I : CmpJIn Tw u μ w h Lv} (H : CmpJHyp c I) (Gt : GatTies D) : DescUp c u w h Lv := by
@@ -175,27 +178,6 @@ def kerAtMu_any (K : KerLabelsMu Tw u μ w h Lv) {I : CmpJIn Tw u μ w h Lv} (H 
   cmp_K := hCh
   rat := K.rat
   val := (kerAtMu_cmpJ K H hS Gt).val
-
-structure TieAt (c : LatCmp D) (Tw : TwForms D) (u : D.what₂.Word) (μ : D.what₂.Tup) (w : D.what₂.places.Pl)
-    (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) {Fl : Fills (D.gat u w h)} {Lv : Levels Fl} (Ch : Chain Lv)
-    (hS : BlockRationalityField) (Gt : GatTies D) where
-  lab : KerLabelsMu Tw u μ w h Lv
-  inp : CmpJIn Tw u μ w h Lv
-  hyp : CmpJHyp c inp
-  ch : ∀ j, j < D.R.m → ∀ (x : ((Tw.fm u μ).lat j).V) (y : ((Tw.fm u μ).lat (j + 1)).V),
-      (Tw.fm u μ).emb (j + 1) y = (D.chTw u μ).K j ((Tw.fm u μ).emb j x) →
-      (stepsMu hyp hS Gt).up.cmp (j + 1) y = Ch.Kz j ((stepsMu hyp hS Gt).up.cmp j x)
-
-def twistCompatibleAt_of_localCompatibility {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {K : G.Consts} {Dx : DivX D} {cX : ExtraC}
-    (E : Extra D L hT Gi Gl K Dx cX)
-    (LC : D.what₂.Tup → ∀ u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
-      Σ Lv : Levels (Gl.Fl u w hg), Chain Lv) (hS : BlockRationalityField)
-    (t : ∀ (μ : D.what₂.Tup), DV.Used D μ → ∀ u (w : D.what₂.places.Pl) (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
-      D.what₂.places.resChar w ∉ Dx.Qp μ → TieAt E.cmp E.tw u μ w h (((Pk.reW Gl LC).Yt μ).Ch u w h) hS hT)
-    (e0 : ∀ u, E.tw.e0 u D.what₂.mu0 = E.tw.eMu0 u 0 (Nat.zero_le _)) : TwTie.TwistedUnitaryExtraData E where
-  LC := LC
-  ker := fun μ hU u w h hq => kerAtMu_any (t μ hU u w h hq).lab (t μ hU u w h hq).hyp hS hT _ (t μ hU u w h hq).ch
-  twisted_e0_at_mu0_eq_eMu0 := e0
 
 end Formalism.MainNotions.G.CmpJ
 

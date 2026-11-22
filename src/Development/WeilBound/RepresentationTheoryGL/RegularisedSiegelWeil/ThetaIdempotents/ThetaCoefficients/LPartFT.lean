@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.ThetaCoefficients.LPartFTE
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.ThetaCoefficients.LPartFTE
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,11 +67,36 @@ theorem clause3 {V : HSp D} {ψ χ θ μ ω} (hS : SetW D n V ψ χ θ μ ω) (h
   have hv : HMul.hMul (HMul.hMul (xz (jn hn x v₀)) (mat (M.emb w))) (mat (M.emb w)⁻¹) = xz (jn hn x v₀) := by
     rw [Matrix.mul_assoc, mat_mul_inv', Matrix.mul_one]
   rw [hv] at hc
-  have step1 : (ω (M.emb w) Φ).1 (jn hn x v₀) = (ω (M.emb w) Ψ).1 0 := by rw [hc, heis_xz]
+  have step1 : (ω (M.emb w) Φ).1 (jn hn x v₀) = (ω (M.emb w) Ψ).1 0 := by
+    rw [hc]
+    simp [PositivityTheory.GramSchwartzFunctions.EC.Heisenberg₂, xPart_xz, yPart_xz,
+      GlobalTheory.StdUnn.inner, halfTr]
   have step2 : (ω (M.emb w) Ψ).1 0 = (ω (γQ⁻¹ * M.emb w) Ψ).1 0 := by
     conv_lhs => rw [show M.emb w = γQ * (γQ⁻¹ * M.emb w) by group]
-    rw [map_mul, Module.End.mul_apply]
-    exact levi_zero hS γQ (uP D hn) (mat_gQ hn hmQ) _
+    rw [map_mul, mul_apply_eq_comp]
+    obtain ⟨-, hχ, -, -, hω⟩ := hS
+    let u := uP D hn
+    let a : GL (Fin n) (AE D) := Matrix.GeneralLinearGroup.map (incA D) u
+    have hdet : Matrix.GeneralLinearGroup.det a =
+        Units.map (incA D).toMonoidHom (Matrix.GeneralLinearGroup.det u) := by
+      apply Units.ext
+      simp [a, Matrix.GeneralLinearGroup.map]
+      exact (RingHom.map_det _ _).symm
+    have habs : absA D (Matrix.GeneralLinearGroup.det a) = 1 := by
+      rw [hdet]
+      exact absE_inclR _
+    have hchar : χ (Matrix.GeneralLinearGroup.det a) = 1 := by
+      rw [hdet]
+      exact hχ.2 _
+    have hinv : (a⁻¹).1 = (u⁻¹).1.map (incA D) := by
+      show ((Matrix.GeneralLinearGroup.map (incA D) u)⁻¹).1 = _
+      rw [← map_inv]
+      rfl
+    have hmatQ : mat γQ = blk4 a.1 0 0 (adj (a⁻¹).1) := by
+      rw [hinv]
+      exact mat_gQ hn hmQ
+    rw [hω.levi γQ a hmatQ _, habs, hchar]
+    simp [npow]
   rw [step1, step2, partial_fourier_second_term hS Ψ t (by omega) μt hμt (c₃ D hn) (Pm D.host.E hn) (compl_c₃ hn) (h0 D t) _ hγ' hmat']
   have hx : xPart (HMul.hMul (xz (jn hn x v₀)) (mat (M.emb w))) = jn hn x 0 := by
     rw [mat_emb' hn M w hw, x_part_mul_block, xPart_xz, yPart_xz, jn_mul_bl]; simp
@@ -75,6 +104,13 @@ theorem clause3 {V : HSp D} {ψ χ θ μ ω} (hS : SetW D n V ψ χ θ μ ω) (h
     rw [mat_emb' hn M w hw, y_part_mul_block, xPart_xz, yPart_xz, jn_mul_bl]; simp
   have hip1 : ∀ {a b : ℕ} (z : Mx D V.rank b), ip V (0 : Mx D V.rank a) z = 0 := fun z => by simp [ip, mm, adj]
   have hip2 : ∀ {a b : ℕ} (z : Mx D V.rank a), ip V z (0 : Mx D V.rank b) = 0 := fun z => by simp [ip, mm]
+  have htrace (a a' : Mx D V.rank r) (b b' : Mx D V.rank t) :
+      Matrix.trace (GlobalTheory.StdUnn.inner V (jn hn a b) (jn hn a' b')) =
+        Matrix.trace (ip V a a') + Matrix.trace (ip V b b') := by
+    simp only [Matrix.trace, Matrix.diag, GlobalTheory.StdUnn.inner, ip, mm]
+    rw [← (ee hn).sum_comp, Fintype.sum_sum_type]
+    simp only [Matrix.mul_apply, adj, Matrix.transpose_apply, Matrix.map_apply, jn_ee,
+      Matrix.fromCols_apply_inl, Matrix.fromCols_apply_inr]
   unfold J pull
   refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
   beta_reduce
@@ -82,7 +118,7 @@ theorem clause3 {V : HSp D} {ψ χ θ μ ω} (hS : SetW D n V ψ χ θ μ ω) (h
   show PositivityTheory.GramSchwartzFunctions.EC.Heisenberg₂ ψ V _ Φ.1 _ = _
   rw [show (HMul.hMul y ((c₃ D hn).map (incA D)) : Mx D V.rank n) = jn hn 0 y from mul_c₃ hn y]
   simp only [PositivityTheory.GramSchwartzFunctions.EC.Heisenberg₂]
-  rw [hx, hy, jn_add, trace_inner_jn, trace_inner_jn, hip1, hip1, hip2]
+  rw [hx, hy, jn_add, htrace, htrace, hip1, hip1, hip2]
   simp only [Matrix.trace_zero, zero_add, add_zero, halfTr, map_zero, mul_zero]
   rw [psi_ip_symm, mul_comm]
 

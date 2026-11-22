@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
+
+@[expose] public section
+
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals
@@ -36,11 +41,13 @@ theorem dual_symm (hh : ∀ x y, star (h x y) = h y x) {e c : Fin r → V}
 
 theorem pair_sum_e {e c : Fin r → V} (hd : ∀ a b, h (c a) (e b) = if a = b then 1 else 0)
     (s : Fin r → K) (b : Fin r) : h (c b) (∑ a, s a • e a) = s b := by
-  simp [map_sum, map_smul, hd, Finset.sum_ite_eq]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, hd, Finset.sum_ite_eq]
 
 theorem pair_sum_zero {x : V} {c : Fin r → V} (H : ∀ a, h x (c a) = 0) (s : Fin r → K) :
     h x (∑ a, s a • c a) = 0 := by
-  simp [map_sum, map_smul, H]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, H]
 
 theorem coord {e c : Fin r → V} (hd : ∀ a b, h (c a) (e b) = if a = b then 1 else 0) {v : V}
     (hv : v ∈ Submodule.span K (Set.range e)) : v = ∑ a, h (c a) v • e a := by
@@ -69,7 +76,8 @@ variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V]
 
 theorem pair_first (s : Fin r → K) (e : Fin r → V) (y : V) :
     h (∑ a, s a • e a) y = ∑ a, star (s a) * h (e a) y := by
-  simp [map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply]
 
 theorem P_iso (hh : ∀ x y, star (h x y) = h y x) {e : Fin r → V} (hee : ∀ a b, h (e a) (e b) = 0)
     {u u' : V} (hu : ∀ a, h (e a) u = 0) (hu' : ∀ a, h (e a) u' = 0) (s s' : Fin r → K) :
@@ -80,8 +88,8 @@ theorem P_iso (hh : ∀ x y, star (h x y) = h y x) {e : Fin r → V} (hee : ∀ 
   rw [LinearMap.map_sub₂, pair_first s e, map_sub (h u), pair_sum_zero h1, sub_zero,
     Finset.sum_eq_zero (fun a _ => by rw [h2 a, mul_zero]), sub_zero]
 
-variable (h) in
 
+variable (h) in
 def pi (e f : Fin r → V) : V →ₗ[K] V := LinearMap.id - mix h f e - mix h e f
 
 theorem pi_apply (e f : Fin r → V) (v : V) :
@@ -104,13 +112,13 @@ theorem decomp_pair (hh : ∀ x y, star (h x y) = h y x) {e f : Fin r → V} (he
       ∑ a, (star (s a) * t' a + star (t a) * s' a) + h w w' := by
   have hd' := dual_symm hh hd
   have he : ∀ b, h (e b) (∑ a, s' a • e a + ∑ a, t' a • f a + w') = t' b := by
-    intro b; simp only [map_add, pair_sum_zero (hee b), pair_sum_e hd, (hw' b).1, zero_add, add_zero]
+    intro b; simp only [map_add (f := _), pair_sum_zero (hee b), pair_sum_e hd, (hw' b).1, zero_add, add_zero]
   have hf : ∀ b, h (f b) (∑ a, s' a • e a + ∑ a, t' a • f a + w') = s' b := by
-    intro b; simp only [map_add, pair_sum_zero (hff b), pair_sum_e hd', (hw' b).2, zero_add, add_zero]
+    intro b; simp only [map_add (f := _), pair_sum_zero (hff b), pair_sum_e hd', (hw' b).2, zero_add, add_zero]
   have hwe : ∀ a, h w (e a) = 0 := fun a => star_pair hh (hw a).1
   have hwf : ∀ a, h w (f a) = 0 := fun a => star_pair hh (hw a).2
   have hww : h w (∑ a, s' a • e a + ∑ a, t' a • f a + w') = h w w' := by
-    simp only [map_add, pair_sum_zero hwe, pair_sum_zero hwf, zero_add]
+    simp only [map_add (f := _), pair_sum_zero hwe, pair_sum_zero hwf, zero_add]
   rw [LinearMap.map_add₂, LinearMap.map_add₂, pair_first s e, pair_first t f, hww]
   simp only [he, hf, Finset.sum_add_distrib]
 end Gen2
@@ -121,8 +129,8 @@ section Gam
 variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V]
   {h : V →ₗ⋆[K] V →ₗ[K] K} {r : ℕ} {e fY f1 f2 : Fin r → V} {W : Submodule K V}
 
-variable (h e fY f1 f2 W) in
 
+variable (h e fY f1 f2 W) in
 def gam (hcod : ∀ v, P h e fY (pi h e f1 v) ∈ W) (g : W ≃ₗ[K] W) : V →ₗ[K] V :=
   mix h f1 e + mix h e f2 +
     (P h e f2 ∘ₗ W.subtype ∘ₗ g.toLinearMap ∘ₗ LinearMap.codRestrict W (P h e fY ∘ₗ pi h e f1) hcod)
@@ -278,7 +286,7 @@ theorem lmap_char (X : HidaSetting D) (u : D.what₂.Word) (Λ : Submodule (𝓞
       intro a
       have e1 := (hwWb a).1
       rw [← hsum] at e1
-      simp only [map_add] at e1
+      simp only [map_add (f := _)] at e1
       rw [orth_span (X.ee a) hs', (hL l hl a).1, orth_span (X.ee a) hx'] at e1
       simpa using e1
     have ht0 : t = 0 := by

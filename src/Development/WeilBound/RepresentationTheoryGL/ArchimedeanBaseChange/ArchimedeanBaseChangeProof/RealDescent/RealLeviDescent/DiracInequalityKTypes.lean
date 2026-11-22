@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.DiracOfDiracZeroModule
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiagonalMemUnitary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormSqLeDominantRearrangement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestTermLemmaReal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.N2TopReal
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.DiracOfDiracZeroModule
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiagonalMemUnitary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormSqLeDominantRearrangement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HighestTermLemmaReal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.N2TopReal
+
+@[expose] public section
 
 namespace PositivityTheory.RgBcC.RealD
 

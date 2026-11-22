@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.FrameJetEval
-import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+module
+
+public import Formalism.GaussJetBounds.FrameJetEval
+public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -16,7 +20,8 @@ lemma eval₂_jetPairPoly {F K : Type} [Field F] [Field K] {σ ι : Type} (φ : 
       jetPair (MvPolynomial.map (MvPolynomial.eval₂Hom φ x) P) (MvPowerSeries.map φ Th) := by
   classical
   unfold jetPairPoly jetPair
-  rw [show MvPolynomial.eval₂ φ x = MvPolynomial.eval₂Hom φ x from rfl, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show MvPolynomial.eval₂ φ x = MvPolynomial.eval₂Hom φ x from rfl, map_sum]
   symm
   rw [Finset.sum_subset (MvPolynomial.support_map_subset _ P)]
   · refine Finset.sum_congr rfl fun κ _ => ?_
@@ -51,7 +56,8 @@ lemma constantCoeff_bSum (M : ZV d N0 N1 → ι → K) (be : MvPowerSeries (ZMod
     (hbe : MvPowerSeries.constantCoeff be = 0) :
     MvPowerSeries.constantCoeff (bSum M be) = 0 := by
   unfold bSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun ab _ => ?_
   exact MvPowerSeries.constantCoeff_subst_eq_zero
     (MvPowerSeries.hasSubst_of_constantCoeff_zero fun s => constantCoeff_linSub M _)
@@ -60,12 +66,14 @@ lemma constantCoeff_bSum (M : ZV d N0 N1 → ι → K) (be : MvPowerSeries (ZMod
 lemma map_linSub (M : ZV d N0 N1 → ι → F) (z : ZV d N0 N1) :
     MvPowerSeries.map φ (linSub M z) = linSub (fun z i => φ (M z i)) z := by
   unfold linSub
-  simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 lemma map_bSum (M : ZV d N0 N1 → ι → F) (be : MvPowerSeries (ZMod d) F) :
     MvPowerSeries.map φ (bSum M be) = bSum (fun z i => φ (M z i)) (MvPowerSeries.map φ be) := by
   unfold bSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun ab _ => ?_
   rw [MvPowerSeries.map_subst
     (MvPowerSeries.hasSubst_of_constantCoeff_zero fun s => constantCoeff_linSub M _)]
@@ -124,7 +132,8 @@ lemma theta_subst (M Mg A : ZV d N0 N1 → ZV d N0 N1 → K)
   have hlin : ∀ z, MvPowerSeries.subst aa (linSub M z) = linSub Mg z := subst_linSub _ _ _ h
   have hbS : MvPowerSeries.subst aa (bSum M be) = bSum Mg be := by
     unfold bSum
-    rw [← MvPowerSeries.coe_substAlgHom hs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPowerSeries.coe_substAlgHom hs, map_sum]
     refine Finset.sum_congr rfl fun ab _ => ?_
     rw [MvPowerSeries.coe_substAlgHom hs, MvPowerSeries.subst_comp_subst_apply
       (MvPowerSeries.hasSubst_of_constantCoeff_zero fun s => constantCoeff_linSub M _) hs]

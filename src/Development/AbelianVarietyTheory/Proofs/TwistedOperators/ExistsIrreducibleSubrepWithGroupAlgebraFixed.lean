@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.FixedVec
 
@@ -96,7 +100,7 @@ theorem exists_irreducible_subrep_fixed : ∀ (G G' W : Type) [Group G] [Finite 
     exact Submodule.sum_mem _ (fun g _ => Submodule.smul_mem _ _ (U.apply_mem_toSubmodule _ hz))
   have hyin : y' ∈ T.toSubmodule ⊔ T'.toSubmodule := hsup ▸ Submodule.mem_top
   obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.1 hyin
-  have hsum : E a + E b = a + b := by rw [← map_add, hab, hy'fix]
+  have hsum : E a + E b = a + b := by rw [← map_add (f := _), hab, hy'fix]
   have hd : E a - a ∈ T.toSubmodule ⊓ T'.toSubmodule := by
     refine ⟨Submodule.sub_mem _ (hmemE T a ha) ha, ?_⟩
     have : E a - a = b - E b := by

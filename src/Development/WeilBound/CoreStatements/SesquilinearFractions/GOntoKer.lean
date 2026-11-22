@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.GOntoA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.GOntoA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CM GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -145,7 +150,7 @@ theorem kap_mem (b : Bool) (α : OK H) : kap ty H b α ∈ quadRing (H := H) := 
     let f : 𝓞 E →+* ℂ := (ty j).comp (algebraMap (𝓞 E) E)
     have hw : f H.w0 = (1 + sgnRt H b) / 2 := by
       have e := congrArg f H.two_weight_eq_one_add_root
-      simp only [map_mul, map_add, map_one, map_ofNat] at e
+      simp only [map_mul, map_add (f := _), map_one, map_ofNat] at e
       have : f H.rt = sgnRt H b := hj
       rw [this] at e
       field_simp
@@ -174,7 +179,7 @@ theorem qC_eq (b : Bool) (z : ℂ) :
 theorem qC_add (b : Bool) (z z' : ℂ) : qC X b (z + z') = qC X b z * qC X b z' := by
   rw [qC_eq, qC_eq, qC_eq, ← map_mul, ← map_mul, ← (Z b).u.ex_add]
   congr 3
-  funext _
+  funext j
   simp only [Pi.add_apply]
   ring
 

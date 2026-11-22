@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DetUnitOfSelfdual
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LastRescaleOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DetUnitOfSelfdual
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LastRescaleOf
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -59,7 +63,51 @@ theorem last_unit_holds : LastUnit := by
     congr 1
     · exact Finset.prod_congr rfl (fun i _ => by rw [hγ]; exact hbn i)
     · exact Finset.prod_congr rfl (fun k _ => by rw [hγ]; exact (hwn k).1)
-  obtain ⟨β, -, hβ⟩ := LocalSpans.exists_basis_locF hΛlat h𝔭
+  have hfull : Submodule.IsFullLattice K Λ₀ := by
+    refine { toIsLattice := hΛlat, span_eq_top := ?_ }
+    obtain ⟨S, hS⟩ := hΛlat.fg
+    obtain ⟨⟨d, hd⟩, hint⟩ := IsLocalization.exist_integer_multiples_of_finset
+      (nonZeroDivisors (𝓞 K)) (Finset.image (fun p : V × _ => h p.1 (γ p.2)) (S ×ˢ Finset.univ))
+    have hdK : algebraMap (𝓞 K) K d ≠ 0 := by
+      exact fun e => (nonZeroDivisors.ne_zero hd) (IsFractionRing.injective (𝓞 K) K (by simpa using e))
+    have hmem : ∀ i, d • γ i ∈ Λ₀ := by
+      intro i
+      rw [← hΛu]
+      simp only [HermitianLatticesTheory.dual, Formalism.E.hdual, Submodule.mem_iInf,
+        Submodule.mem_comap, LinearMap.restrictScalars_apply, Submodule.mem_one]
+      intro y hy
+      have key : ∀ y ∈ Submodule.span (𝓞 K) (S : Set V),
+          ∃ r : 𝓞 K, algebraMap (𝓞 K) K r = h y (d • γ i) := by
+        intro y hy
+        induction hy using Submodule.span_induction with
+        | mem y hy =>
+          obtain ⟨r, hr⟩ := hint (h y (γ i)) (Finset.mem_image.mpr ⟨(y, i), Finset.mem_product.mpr ⟨hy, Finset.mem_univ _⟩, rfl⟩)
+          refine ⟨r, ?_⟩
+          rw [← algebraMap_smul K d, LinearMap.map_smul, smul_eq_mul]
+          exact hr
+        | zero => exact ⟨0, by simp⟩
+        | add x y _ _ hx hy =>
+          obtain ⟨a, ha⟩ := hx
+          obtain ⟨b, hb⟩ := hy
+          exact ⟨a + b, by simp only [map_add, LinearMap.add_apply, ha, hb]⟩
+        | smul a x _ hx =>
+          obtain ⟨b, hb⟩ := hx
+          obtain ⟨a', ha'⟩ := Formalism.HermitianLatticesTheory.star_algebraMap_ringOfIntegers_mem_range a
+          refine ⟨a' * b, ?_⟩
+          rw [map_mul, ha', hb, ← algebraMap_smul K a x, LinearMap.map_smulₛₗ₂]
+          simp only [LinearMap.smul_apply, starRingEnd_apply, smul_eq_mul]
+      exact key y (by rw [hS]; exact hy)
+    rw [eq_top_iff]
+    intro x _
+    rw [← γ.sum_repr x]
+    refine Submodule.sum_mem _ fun i _ => ?_
+    have hi : γ i ∈ Submodule.span K (Λ₀ : Set V) := by
+      have : γ i = (algebraMap (𝓞 K) K d)⁻¹ • (d • γ i) := by
+        rw [← algebraMap_smul K d, smul_smul, inv_mul_cancel₀ hdK, one_smul]
+      rw [this]
+      exact Submodule.smul_mem _ _ (Submodule.subset_span (hmem i))
+    exact Submodule.smul_mem _ _ hi
+  obtain ⟨β, -, hβ⟩ := LocalSpans.exists_basis_locF hfull h𝔭
   let e : Fin (finrank K V) ≃ Fin (finrank K U) ⊕ Fin (finrank K (orthK h U)) :=
     Fintype.equivOfCardEq (by rw [Fintype.card_fin, hcard])
   let β' := β.reindex e
@@ -97,7 +145,7 @@ theorem last_unit_holds : LastUnit := by
     have hAu := unit_part hCM hFix h𝔭 hU0 (ha0 i)
     have hAd := mem_SP_of_inP (K := K) hU0 (inP_vF (K := K) h𝔭 (ha0 i))
     have hs := mem_SP_of_inP (K := K) hU0 (hpair i hv)
-    rw [map_add] at hs
+    rw [map_add (f := _)] at hs
     set A := algebraMap F K (a i : F)
     set C := algebraMap F K (c (τ i))
     set P := algebraMap F K (π : F)

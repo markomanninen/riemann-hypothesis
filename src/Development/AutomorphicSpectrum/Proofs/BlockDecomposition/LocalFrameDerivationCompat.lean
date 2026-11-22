@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.LocDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BasicOpenRsLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoordNear
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.LocDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BasicOpenRsLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoordNear
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris CrystallineSemistableComparison CrystallineSemistableComparison.Pb GlobalTheory.CompanionTheory.ConeLocal
@@ -31,7 +36,7 @@ def coefIdeal (y : Γ(X, V)) : Ideal Γ(X, V') where
   carrier := {a | rs h a * y ∈ jacSpan h (RingHom.id _) D κ}
   add_mem' {a b} ha hb := by
     simp only [Set.mem_setOf_eq] at ha hb ⊢
-    rw [map_add, add_mul]
+    rw [map_add (f := _), add_mul]
     exact add_mem ha hb
   zero_mem' := by
     simp only [Set.mem_setOf_eq]

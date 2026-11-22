@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.IECompPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.IECompPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Cardinal

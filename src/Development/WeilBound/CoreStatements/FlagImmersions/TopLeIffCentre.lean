@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifVec
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBoundStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SectionBoundaryClosedAndCodenseStatement
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifVec
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SectionBoundaryClosedAndCodenseStatement
+
+@[expose] public section
 
 noncomputable section
 

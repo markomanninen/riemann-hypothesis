@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.LatSumRedH
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LatSumRedH
+
+@[expose] public section
 
 noncomputable section
 

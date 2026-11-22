@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AutomorphicArithmetic.OrbitLabellings.GalEArithFrobEqIotaHP
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.FrobHOrder
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AutomorphicArithmetic.OrbitLabellings.GalEArithFrobEqIotaHP
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.FrobHOrder
+
+@[expose] public section
 
 open UpperTheory.HF
 

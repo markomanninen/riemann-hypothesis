@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ConeSite
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechRefinementCohomologyBijective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InOpenFiniteInfIff
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ConeSite
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechRefinementCohomologyBijective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InOpenFiniteInfIff
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris ReciprocityTheory.ChartRestriction.G.Geo.Tor CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -21,7 +26,7 @@ theorem irrelevant_le_span (K : Type) [Field K] (N : ℕ) :
       Ideal.span (Set.range (MvPolynomial.X : Fin (N + 1) → MvPolynomial (Fin (N + 1)) K)) := by
   intro x hx
   rw [HomogeneousIdeal.mem_iff, HomogeneousIdeal.mem_irrelevant_iff, GradedRing.proj_apply] at hx
-  have h0 : MvPolynomial.coeff 0 x = 0 := by
+  have h0 : AddMonoidAlgebra.coeff x 0 = 0 := by
     erw [MvPolynomial.decomposition.decompose'_apply, MvPolynomial.homogeneousComponent_zero] at hx
     exact MvPolynomial.C_eq_zero.1 hx
   rw [← Set.image_univ, MvPolynomial.mem_ideal_span_X_image]

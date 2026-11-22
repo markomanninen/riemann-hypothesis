@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.TateCohomology.CohTrivial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FieldNormSurjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.COnePropertyFiniteExtensionStatement
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.CohTrivial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.C1FieldNormSurjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.COnePropertyFiniteExtensionStatement
+
+@[expose] public section
+
 open IsLocalRing
 
 open CategoryTheory Limits groupCohomology GroundTheory.GroupCoh IntermediateField

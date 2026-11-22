@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.RedPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Cases
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CardLeLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostIndex
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.BchiFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.SumBack
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.RedPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Cases
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CardLeLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostIndex
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.BchiFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.SumBack
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.Top UpperTheory.V.HV
 
@@ -14,7 +18,6 @@ private theorem exists_closure : ∃ (Q : Type) (_ : Field Q) (_ : CharZero Q), 
     (isAlgClosure_iff ℚ (AlgebraicClosure ℚ)).2 ⟨inferInstance, ?_⟩⟩
   have h := AlgebraicClosure.isAlgebraic ℚ
   convert h using 1
-  exact Subsingleton.elim (α := Algebra ℚ (AlgebraicClosure ℚ)) _ _
 
 private theorem card_small (S : Finset Nat.Primes) (n : ℕ) (h : ∀ l ∈ S, (l : ℕ) ≤ n) : S.card ≤ n := by
   have key : S.card ≤ (Finset.Icc 1 n).card := by

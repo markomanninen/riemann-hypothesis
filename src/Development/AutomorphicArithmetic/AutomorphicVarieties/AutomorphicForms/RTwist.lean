@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealCusp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RChar2
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealCusp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RChar2
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ namespace UpperTheory.V.TR
 
 variable {E : Type} [Field E] [NumberField E] [IsTotallyReal E] {a : ℕ}
 
-variable (E a) in
 
+variable (E a) in
 def lieS (i j : Fin a) : Rinf E →ₗ[ℝ] Module.End ℂ (Sm E a) :=
   (lie E a).comp (Matrix.singleLinearMap ℝ i j : Rinf E →ₗ[ℝ] Matrix (Fin a) (Fin a) (Rinf E))
 
@@ -32,8 +36,8 @@ theorem lieS_comm (i j k l : Fin a) (x y : Rinf E) :
     · subst h; rw [mul_comm x]; exact congrArg (fun X => lie E a (toL X)) (Matrix.single_mul_single_same _ _ _ _ _)
     · exact (congrArg (fun X => lie E a (toL X)) (Matrix.single_mul_single_of_ne _ _ _ _ h _)).trans (map_zero _)
 
-open Classical in
 
+open Classical in
 theorem Eop_eq (v : InfinitePlace E) (i j : Fin a) : Eop v i j = lieS E a i j (Pi.single v 1) := rfl
 
 theorem glRel_Eop (v : InfinitePlace E) : Formalism.REAL.GlRel (Eop (a := a) v) := by
@@ -57,12 +61,6 @@ theorem Eop_comm {v v' : InfinitePlace E} (h : v ≠ v') (i j k l : Fin a) :
 
 theorem cap_comm (τ : InfinitePlace E) (u : ℂ) (i j : Fin a) : cap τ u * Eop τ i j = Eop τ i j * cap τ u :=
   Formalism.REAL.qDetCentral _ a _ (glRel_Eop τ) _ i j
-
-theorem cap_highest (τ : InfinitePlace E) (ν : Fin a → ℂ) (φ : Sm E a) (h : Formalism.REAL.IsHW (Eop τ) ν φ) (u : ℂ) :
-    cap τ u φ = (∏ k : Fin a, (u + (ν k + (((a : ℂ) - 1) / 2 - (k : ℕ))))) • φ := by
-  rw [cap, Formalism.REAL.qDetHW _ a _ ν φ (glRel_Eop τ) h]
-  congr 1
-  exact Finset.prod_congr rfl fun k _ => by ring
 
 theorem det_finGL (k : GL (Fin a) (Af E)) :
     GeneralLinearGroup.det (finGL E a k) = finId E (GeneralLinearGroup.det k) := by
@@ -90,14 +88,15 @@ theorem dchi_eq_of_exp (χ : HChar E) (d : Rinf E →ₗ[ℝ] ℂ)
   rw [dchi, fderiv_extZero (L := LinearMap.toContinuousLinearMap d) (continuous_chiInf χ) h]
   rfl
 
-open Classical in
 
+open Classical in
 def expo (χ : HChar E) (v : InfinitePlace E) : ℂ := dchi χ (Pi.single v 1)
 
 theorem dchi_eq_sum (χ : HChar E) (z : Rinf E) : dchi χ z = ∑ v, expo χ v * (z v : ℂ) := by
   classical
   conv_lhs => rw [pi_eq_sum_univ' z]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun v _ => ?_
   rw [map_smul, Complex.real_smul, mul_comm]
   rfl
@@ -106,8 +105,8 @@ theorem chiInf_expU_eq (χ : HChar E) (z : Rinf E) :
     ((chiInf χ (expU z) : ℂˣ) : ℂ) = Complex.exp (∑ v, expo χ v * (z v : ℂ)) := by
   rw [chiInf_expU, dchi_eq_sum]
 
-open Classical in
 
+open Classical in
 theorem expo_eq_of_exp (χ : HChar E) (v : InfinitePlace E) (p : ℂ)
     (h : ∀ t : ℝ, ((chiInf χ (expU (Pi.single v t)) : ℂˣ) : ℂ) = Complex.exp (p * t)) : expo χ v = p := by
   have h1 : HasDerivAt (fun t : ℝ => Complex.exp (t * expo χ v)) (expo χ v) 0 := by
@@ -128,15 +127,6 @@ theorem dchi_mul (χ χ' : HChar E) (z : Rinf E) : dchi (χ * χ') z = dchi χ z
 
 theorem dchi_one (z : Rinf E) : dchi (1 : HChar E) z = 0 :=
   dchi_eq_of_exp 1 0 (fun z => by simp [chiInf]) z
-
-theorem dchi_inv (χ : HChar E) (z : Rinf E) : dchi χ⁻¹ z = -dchi χ z :=
-  eq_neg_of_add_eq_zero_left (by rw [← dchi_mul, inv_mul_cancel, dchi_one])
-
-theorem expo_mul (χ χ' : HChar E) (v : InfinitePlace E) : expo (χ * χ') v = expo χ v + expo χ' v := dchi_mul _ _ _
-
-theorem expo_one (v : InfinitePlace E) : expo (1 : HChar E) v = 0 := dchi_one _
-
-theorem expo_inv (χ : HChar E) (v : InfinitePlace E) : expo χ⁻¹ v = -expo χ v := dchi_inv _ _
 
 theorem chart_mul_chi (χ : HChar E) (φ : GA E a → ℂ) (g : GA E a) :
     chart (fun x => φ x * (chiDet a χ x : ℂˣ)) g =
@@ -162,8 +152,8 @@ theorem mul_chi_mem_Sm (χ : HChar E) {φ : GA E a → ℂ} (hφ : φ ∈ Sm E a
   rw [chart_mul_chi]
   exact (hφ g).mul (contDiffOn_const.mul fun x hx => (contDiffAt_chi_det χ hx).contDiffWithinAt)
 
-variable (a) in
 
+variable (a) in
 def mulChi (χ : HChar E) : Sm E a ≃ₗ[ℂ] Sm E a where
   toFun φ := ⟨fun x => φ.1 x * (chiDet a χ x : ℂˣ), mul_chi_mem_Sm χ φ.2⟩
   invFun φ := ⟨fun x => φ.1 x * (chiDet a χ⁻¹ x : ℂˣ), mul_chi_mem_Sm χ⁻¹ φ.2⟩
@@ -185,8 +175,8 @@ theorem rt_mulChi (χ : HChar E) (h : GA E a) (φ : Sm E a) :
   Subtype.ext <| funext fun g => by
     simp only [rt_apply, mulChi_apply, map_mul, Units.val_mul, Submodule.coe_smul, Pi.smul_apply, smul_eq_mul]; ring
 
-omit [IsTotallyReal E] in
 
+omit [IsTotallyReal E] in
 theorem fderiv_det_one (X : Lie E a) :
     fderiv ℝ (fun x : Lie E a => (Matrix.of x).det) (oneL E a) X = (Matrix.of X).trace := by
   have hd : HasFDerivAt (fun x : Lie E a => (Matrix.of x).det)
@@ -287,20 +277,20 @@ theorem isOpen_ker_chiDet (χ : HChar E) : IsOpen {k : GL (Fin a) (Af E) | chiDe
   ext k
   exact Iff.of_eq (congrArg (fun u => χ.1 u = 1) (det_finGL k))
 
-omit [IsTotallyReal E] in
 
+omit [IsTotallyReal E] in
 theorem one_le_height (y : GL (Fin a) (Rinf E)) : 1 ≤ height y := by
   unfold height; linarith [norm_nonneg (toL y.val), norm_nonneg (toL (y⁻¹).val)]
 
-omit [IsTotallyReal E] in
 
+omit [IsTotallyReal E] in
 theorem norm_det_le (x : Matrix (Fin a) (Fin a) (Rinf E)) {B : ℝ} (hx : ‖toL x‖ ≤ B) :
     ‖x.det‖ ≤ a.factorial * B ^ a := by
   rw [Matrix.det_apply]
   refine (norm_sum_le _ _).trans ((Finset.sum_le_card_nsmul _ _ (B ^ a) fun σ _ => ?_).trans_eq
     (by simp [Fintype.card_perm]))
   have h : ‖∏ i, x (σ i) i‖ ≤ B ^ a := by
-    refine (Finset.norm_prod_le _ _).trans ((Finset.prod_le_prod (g := fun _ => B) (fun _ _ => norm_nonneg _)
+    refine (Finset.norm_prod_le _ _).trans ((Finset.prod_le_prod₀ (g := fun _ => B) (fun _ _ => norm_nonneg _)
       fun i _ => ?_).trans_eq (by simp))
     exact ((norm_le_pi_norm (toL x (σ i)) i).trans (norm_le_pi_norm (toL x) (σ i))).trans hx
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with e | e <;> simpa [e] using h
@@ -333,28 +323,34 @@ theorem Zalg_mulChi (χ : HChar E) {z : Module.End ℂ (Sm E a)} (hz : z ∈ Zal
     obtain ⟨y', h3, h4⟩ := hy
     exact ⟨x' * y', mul_mem h1 h3, fun φ => by simp [h2, h4]⟩
 
-theorem IsAutForm.mulChi {φ : Sm E a} (h : IsAutForm φ) (χ : HChar E) : IsAutForm (mulChi a χ φ) where
-  left γ g := by simp [h.left, chiDet_ratGL]
-  level := isOpen_stab_of_mem_nhds _ _ <| Filter.mem_of_superset
-    ((h.level.inter (isOpen_ker_chiDet χ)).mem_nhds ⟨by simp, by simp⟩) fun k hk => by
-      have h1 : rt E a (finGL E a k) φ = φ := hk.1
-      have h2 : chiDet a χ (finGL E a k) = 1 := hk.2
-      change rt E a (finGL E a k) _ = _
-      rw [rt_mulChi, h1, h2, Units.val_one, one_smul]
-  kfin := by
+theorem IsAutForm.mulChi {φ : Sm E a} (h : IsAutForm φ) (χ : HChar E) : IsAutForm (mulChi a χ φ) := by
+  refine { left := ?left, level := ?level, kfin := ?kfin, zfin := ?zfin, growth := ?growth }
+  case left =>
+    intro γ g
+    simp [h.left, chiDet_ratGL]
+  case level =>
+    refine isOpen_stab_of_mem_nhds _ _ (Filter.mem_of_superset
+      ((h.level.inter (isOpen_ker_chiDet χ)).mem_nhds ⟨by simp, by simp⟩) ?_)
+    intro k hk
+    have h1 : rt E a (finGL E a k) φ = φ := hk.1
+    have h2 : chiDet a χ (finGL E a k) = 1 := hk.2
+    change rt E a (finGL E a k) _ = _
+    rw [rt_mulChi, h1, h2, Units.val_one, one_smul]
+  case kfin =>
     have := h.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep E a k φ)).map
       (TR.mulChi a χ).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩), (rt_mulChi χ _ φ).symm⟩
-  zfin := by
+  case zfin =>
     have := h.zfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) ''
       Zalg E a)).map (TR.mulChi a χ).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     obtain ⟨z', h1, h2⟩ := Zalg_mulChi χ hz
     exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  growth g := by
+  case growth =>
+    intro g
     obtain ⟨C, N, h1⟩ := h.growth g
     obtain ⟨C', N', h2⟩ := chiDet_growth (a := a) χ
     refine ⟨C * (‖((chiDet a χ g : ℂˣ) : ℂ)‖ * C'), N + N', fun y => ?_⟩
@@ -384,11 +380,6 @@ variable {π π'} in
 theorem Iso.trans {π'' : CuspSub E a} (h : Iso π π') (h' : Iso π' π'') : Iso π π'' :=
   h.elim fun T h => h'.elim fun T' h' => ⟨T.trans T', fun o φ => by simp [h, h']⟩
 
-variable (E a) in
-
-instance setoid : Setoid (CuspSub E a) where
-  r := Iso
-  iseqv := ⟨Iso.refl, Iso.symm, Iso.trans⟩
 
 def twist (χ : HChar E) : CuspSub E a where
   V := π.V.map (mulChi a χ).toLinearMap
@@ -413,8 +404,8 @@ theorem op_toTwist (χ : HChar E) (o : Op E a) (φ : π.V) :
     (π.twist χ).op o (π.toTwist χ φ) = π.toTwist χ (((opMul χ o : ℂˣ) : ℂ) • π.op o φ + opAdd χ o • φ) :=
   Subtype.ext (act_mulChi χ o φ.1)
 
-variable {π π'} in
 
+variable {π π'} in
 theorem Iso.twist (h : Iso π π') (χ : HChar E) : Iso (π.twist χ) (π'.twist χ) := by
   obtain ⟨T, hT⟩ := h
   refine ⟨((π.toTwist χ).symm.trans T).trans (π'.toTwist χ), fun o φ => ?_⟩
@@ -484,11 +475,8 @@ theorem HasInfChar.twist {τ : InfinitePlace E} {m : Multiset ℂ} (h : π.HasIn
   change cap τ u (mulChi a χ φ) = _ • mulChi a χ φ
   rw [cap_mulChi, h.2 _ φ hφ, map_smul, Multiset.map_map]
   congr 3
-  funext z
-  simp only [Function.comp_apply]; ring
-
-theorem Iso.isRegAlg (h : Iso π π') (hπ : π.IsRegAlg) : π'.IsRegAlg := fun v =>
-  (hπ v).imp fun _ hm => ⟨h.hasInfChar hm.1, hm.2⟩
+  funext x
+  simp only [Function.comp_apply, add_assoc, add_comm (expo χ τ) x]
 
 theorem IsRegAlg.twist (h : π.IsRegAlg) {χ : HChar E} (hχ : ∀ v, ∃ n : ℤ, expo χ v = n) : (π.twist χ).IsRegAlg := fun v => by
   obtain ⟨m, h1, h2, h3⟩ := h v
@@ -503,15 +491,15 @@ theorem finPart_eq (k : GL (Fin a) (Af E)) : π.finPart k = π.op (.fin k) := rf
 theorem locRep_eq (w : HeightOneSpectrum (𝓞 E)) (g : GL (Fin a) (w.adicCompletion E)) :
     π.locRep w g = π.op (.fin (locGL E a w g)) := rfl
 
-variable (π) in
 
+variable (π) in
 theorem isSmooth_finPart : GlobalTheory.PRep.IsSmooth π.finPart := fun φ => by
   convert (π.cusp _ φ.2).1.level using 1
   ext k
   exact Subtype.ext_iff
 
-variable (π) in
 
+variable (π) in
 theorem isSmooth_locRep (w : HeightOneSpectrum (𝓞 E)) : GlobalTheory.PRep.IsSmooth (π.locRep w) := fun φ =>
   (π.isSmooth_finPart φ).preimage (GlobalTheory.CuspRep.CuspSub.continuous_locGL w)
 
@@ -523,7 +511,7 @@ theorem IsLocComp.congr {w : HeightOneSpectrum (𝓞 E)} {σ σ' : SmIrr (GL (Fi
   refine ⟨T.toLinearMap ∘ₗ f ∘ₗ e.symm.toLinearEquiv.toLinearMap, fun h => h0 (LinearMap.ext fun v => T.injective ?_),
     fun g v => ?_⟩
   · have := LinearMap.congr_fun h (e.toLinearEquiv v)
-    rw [LinearMap.zero_apply, map_zero]
+    rw [LinearMap.zero_apply, T.map_zero]
     exact (congrArg (fun x => T (f x)) (e.toLinearEquiv.symm_apply_apply v)).symm.trans this
   · have h1 : e.symm.toLinearEquiv (σ'.ρ g v) = σ.ρ g (e.symm.toLinearEquiv v) :=
       LinearMap.congr_fun (e.symm.isIntertwining' g) v
@@ -542,7 +530,8 @@ theorem IsLocComp.twist {w : HeightOneSpectrum (𝓞 E)} {σ : SmIrr (GL (Fin a)
     (π.twist χ).IsLocComp w (σ.twist (GlobalTheory.CuspRep.CuspSub.locDet a χ w) (isOpen_ker_locDet χ w)) := by
   obtain ⟨f, h0, hf⟩ := h
   refine ⟨(π.toTwist χ).toLinearMap ∘ₗ f, fun h => h0 (LinearMap.ext fun v => (π.toTwist χ).injective ?_), fun g v => ?_⟩
-  · rw [LinearMap.zero_apply, map_zero]; exact LinearMap.congr_fun h v
+  · rw [LinearMap.zero_apply, (π.toTwist χ).map_zero]
+    exact LinearMap.congr_fun h v
   · change π.toTwist χ (f (((GlobalTheory.CuspRep.CuspSub.locDet a χ w g : ℂˣ) : ℂ) • σ.ρ g v)) =
       (π.twist χ).op (.fin (locGL E a w g)) (π.toTwist χ (f v))
     rw [op_toTwist, map_smul f, hf g v, ← chiDet_locGL, opAdd, zero_smul, add_zero]

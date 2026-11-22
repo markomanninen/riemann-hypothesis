@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct Module
 
@@ -12,9 +16,10 @@ theorem repr_apply_of_semilinear (s : L →+* L) (b : Basis ι L M) (φ : M →+
     (hφ : ∀ a i, φ (a • b i) = s a • b i) (w : M) (i : ι) :
     b.repr (φ w) i = s (b.repr w i) := by
   classical
-  conv_lhs => rw [← b.linearCombination_repr w, Finsupp.linearCombination_apply, Finsupp.sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← b.linearCombination_repr w, Finsupp.linearCombination_apply, Finsupp.sum,
     map_sum, map_sum]
-  simp only [hφ, map_smul, Basis.repr_self, Finsupp.coe_finset_sum, Finset.sum_apply,
+  simp only [hφ, map_smul, Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply,
     Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq', Finsupp.mem_support_iff]
   split_ifs with h
@@ -139,10 +144,9 @@ theorem contract_smul (hf : IsBaseChange L f) (l : L →ₗ[K] K) (a : L) (v : V
 theorem induction_smul (hf : IsBaseChange L f) {p : M → Prop} (x : M) (h0 : p 0)
     (hs : ∀ (a : L) (v : V), p (a • f v)) (ha : ∀ x y, p x → p y → p (x + y)) : p x := by
   obtain ⟨t, rfl⟩ := hf.equiv.surjective x
-  induction t with
-  | zero => rwa [map_zero]
+  induction t using TensorProduct.inductionOn with
   | tmul a v => rw [hf.equiv_tmul]; exact hs a v
-  | add x y hx hy => rw [map_add]; exact ha _ _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact ha _ _ hx hy
 
 theorem contract_smul_left (hf : IsBaseChange L f) (l : L →ₗ[K] K) (a : L) (x : M) :
     contract hf l (a • x) = contract hf (l ∘ₗ LinearMap.mulLeft K a) x := by
@@ -152,7 +156,7 @@ theorem contract_smul_left (hf : IsBaseChange L f) (l : L →ₗ[K] K) (a : L) (
     rw [smul_smul, contract_smul, contract_smul]
     rfl
   · intro x y hx hy
-    rw [smul_add, map_add, map_add, hx, hy]
+    rw [smul_add, map_add (f := _), map_add (f := _), hx, hy]
 
 theorem exists_finsupp_contract (hf : IsBaseChange L f) {ι : Type*} (e : Basis ι K L) (x : M) :
     ∃ c : ι →₀ V, (∀ i, c i = contract hf (e.coord i) x) ∧ x = c.sum fun i v => e i • f v := by
@@ -169,7 +173,7 @@ theorem exists_finsupp_contract (hf : IsBaseChange L f) {ι : Type*} (e : Basis 
     rw [map_smul, smul_assoc, smul_comm]
   · rintro x y ⟨c, hc, hx⟩ ⟨d, hd, hy⟩
     refine ⟨c + d, fun i => ?_, ?_⟩
-    · rw [map_add, ← hc, ← hd, Finsupp.add_apply]
+    · rw [map_add (f := _), ← hc, ← hd, Finsupp.add_apply]
     · rw [Finsupp.sum_add_index' (by simp) (by simp), ← hx, ← hy]
 
 theorem mem_span_image_iff (hf : IsBaseChange L f) (N : Submodule K V) (x : M) :
@@ -183,7 +187,7 @@ theorem mem_span_image_iff (hf : IsBaseChange L f) (N : Submodule K V) (x : M) :
       rw [← one_smul L (f v), contract_smul]
       exact N.smul_mem _ hv
     | zero => simp
-    | add x y _ _ hx hy => intro l; rw [map_add]; exact N.add_mem (hx l) (hy l)
+    | add x y _ _ hx hy => intro l; rw [map_add (f := _)]; exact N.add_mem (hx l) (hy l)
     | smul a x _ hx => intro l; rw [contract_smul_left]; exact hx _
   · intro hx
     obtain ⟨c, hc, h⟩ := exists_finsupp_contract hf (Basis.ofVectorSpace K L) x
@@ -197,11 +201,6 @@ theorem comap_span_image (hf : IsBaseChange L f) (N : Submodule K V) :
   obtain ⟨l, hl⟩ := Module.Projective.exists_dual_eq_one K (one_ne_zero (α := L))
   have := (mem_span_image_iff hf N _).1 hv l
   rwa [← one_smul L (f v), contract_smul, hl, one_smul] at this
-
-theorem span_image_injective (hf : IsBaseChange L f) :
-    Function.Injective fun N : Submodule K V => Submodule.span L (f '' N) := fun N N' h => by
-  rw [← comap_span_image hf N, ← comap_span_image hf N']
-  exact congrArg (fun W : Submodule L M => (W.restrictScalars K).comap f) h
 
 theorem span_image_iInf (hf : IsBaseChange L f) {J : Sort*} (N : J → Submodule K V) :
     Submodule.span L (f '' (⨅ j, N j : Submodule K V)) = ⨅ j, Submodule.span L (f '' N j) := by
@@ -222,7 +221,7 @@ theorem contract_map (hf : IsBaseChange L f) (hf' : IsBaseChange L f') (p : V �
   · intro a v
     rw [map_smul, hF, contract_smul, contract_smul, map_smul]
   · intro x y hx hy
-    simp only [map_add, hx, hy]
+    simp only [map_add (f := _), hx, hy]
 
 theorem span_image_comap_map (hf : IsBaseChange L f) (hf' : IsBaseChange L f') (p : V →ₗ[K] V')
     (F : M →ₗ[L] M') (hF : ∀ v, F (f v) = f' (p v)) (N : Submodule K V') :
@@ -246,13 +245,8 @@ section Tensor
 variable {K L V G : Type*} [Field K] [Field L] [Algebra K L] [AddCommGroup V] [Module K V]
 
 variable (K) in
-
 def rationalPart (W : Submodule L (L ⊗[K] V)) : Submodule K V :=
   (W.restrictScalars K).comap (TensorProduct.mk K L V 1)
-
-@[simp]
-theorem mem_rationalPart {W : Submodule L (L ⊗[K] V)} {v : V} :
-    v ∈ rationalPart K W ↔ (1 : L) ⊗ₜ[K] v ∈ W := Iff.rfl
 
 theorem baseChange_eq_span_image (N : Submodule K V) :
     N.baseChange L = Submodule.span L (TensorProduct.mk K L V 1 '' N) :=

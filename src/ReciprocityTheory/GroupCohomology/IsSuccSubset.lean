@@ -1,5 +1,9 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 
@@ -112,7 +116,7 @@ lemma Is_torsor (hs : ∀ m n, Function.Surjective ((τ m).f n)) :
         refine ⟨hy0, ?_⟩
         have : (⟨p' + y' - p', hy0⟩ : (A (m+1)).Z k) = y' := Subtype.ext (add_sub_cancel_left _ _)
         rw [this, h1]; exact hh
-      · rw [map_add, h2']; abel
+      · rw [map_add (f := _), h2']; abel
 
 lemma Is_nonempty (hP : ∀ m, ∃ b, (A m).d k b = c m) : ∀ j m, (Is A τ k c j m).Nonempty := by
   intro j

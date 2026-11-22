@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.NormLeOneOfInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ArtinRees
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.NormLeOneOfInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ArtinRees
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Pr UpperTheory.V.Alg UpperTheory.V.J
 
@@ -148,7 +152,7 @@ private theorem exists_max_entry {B A K G : Type} [CommRing B] [CommRing A] [Alg
       | mem x hx => exact hUm x hx
       | zero => simpa using hm
       | add x y _ _ hx hy =>
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
       | smul b x _ hx =>
         rw [Algebra.smul_def, map_mul, norm_mul]
@@ -217,6 +221,7 @@ private theorem scale_core {O B A K G I : Type} [CommRing O] [CommRing B] [CommR
 private theorem w_sub_ne {n : ℕ} (hn : n = 2 ∨ n = 3) (i j : Fin n) (h : i ≠ j) : Fr.w n i - Fr.w n j ≠ 0 := by
   rcases hn with rfl | rfl <;> fin_cases i <;> fin_cases j <;> simp_all [Fr.w]
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem UpperTheory.V.J.scale :
     ∀ (l : ℕ) [Fact l.Prime] (c : Coef l) [Fr.IsCoef l c.O] (F : Fr.Frame l (ResidueField c.O)) (C₀ n : ℕ), F.Ok C₀ → (n = 2 ∨ n = 3) →
         ∀ (S : Fr.Space c.O F n), ∀ ξ : S.A →ₐ[c.O] Qbar l, S.u.OffTri (RingHom.ker ξ) →
@@ -269,7 +274,7 @@ theorem UpperTheory.V.J.scale :
       exact hy1 _
     · intro x y hx hy ihx ihy
       show ‖ξ' (⟨x, hx⟩ + ⟨y, hy⟩)‖ ≤ 1
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ihx ihy)
     · intro x y hx hy ihx ihy
       show ‖ξ' (⟨x, hx⟩ * ⟨y, hy⟩)‖ ≤ 1

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -17,7 +22,7 @@ private def mv (h : ∀ w : Fin G.m, Matrix (Fin G.n) (Fin G.n) (G.Fw w)) (z : L
   fun w => h w *ᵥ z w
 
 private lemma pairL_add_left (a a' b : Loc G) : pairL (a + a') b = pairL a b + pairL a' b := by
-  simp only [pairL, Pi.add_apply, add_dotProduct, map_add, Finset.sum_add_distrib]
+  simp only [pairL, Pi.add_apply, add_dotProduct, map_add (f := _), Finset.sum_add_distrib]
 
 private lemma pairL_comm (a b : Loc G) : pairL a b = pairL b a := by
   simp only [pairL, dotProduct_comm]

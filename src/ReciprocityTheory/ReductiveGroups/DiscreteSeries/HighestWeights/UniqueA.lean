@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+module
+
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,7 +148,7 @@ lemma uq_bij {P U : Type} [NormedAddCommGroup P] [InnerProductSpace ℂ P] [Fini
            exact ⟨y, hy, z, hz, e.symm⟩)
     have hnr : ∀ c d, c < d → ε c = ε d → G c d nn = 0 := by
       intro c d hcd hε
-      have h0 : G c d nn + G c d mm = 0 := by rw [← map_add, ← hxnm, hx.2 c d hcd hε]
+      have h0 : G c d nn + G c d mm = 0 := by rw [← map_add (f := _), ← hxnm, hx.2 c d hcd hε]
       have h1 : G c d nn = -G c d mm := eq_neg_of_add_eq_zero_left h0
       refine hzero _ (hNst c d hε nn hnn) ?_
       rw [h1]; exact Nᗮ.neg_mem (hNo c d hε mm hmm)

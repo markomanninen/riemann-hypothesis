@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsolutelyClosedPolynomialSplitsStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsolutelyClosedPolynomialSplitsStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 
 namespace GlobalTheory.CompanionTheory.UnitRoot
@@ -26,7 +31,7 @@ theorem coeff_prod_mem {S : Type} [CommRing S] (m : Ideal S) (s : Multiset S)
       simp only [coeff_sub, coeff_X_mul, coeff_C_mul]
       exact m.sub_mem (ih' k (by omega)) (m.mul_mem_right _ ha)
 
-theorem exists_root : ∀ {S : Type} [CommRing S] , Aic S →
+theorem exists_root : ∀ {S : Type} [CommRing S] , Aic (S := S) →
     (∀ a b : S, IsUnit (a + b) → IsUnit a ∨ IsUnit b) →
     ∀ (Q : Polynomial S) (i : ℕ), Q.coeff 0 = 1 → 0 < i → IsUnit (Q.coeff i) →
       ∃ y, Q.eval y = 0 := by

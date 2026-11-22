@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.HasInfExpF
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.HasInfExpF
+
+@[expose] public section
 
 noncomputable section
 

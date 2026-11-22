@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FvecMemAsp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FvecMemAsp
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,21 +54,21 @@ private theorem sub_mem_X_of_mem_Asp_of_hT_orth {F : FlagG S r T} {F' : FlagG S 
     simp [homX x hx, hzX x hx]
   have hzy0 : S.hT F.z y0 = 0 := by
     rw [hy0]
-    simp only [map_add, map_smul, smul_eq_mul, hzo, hzz]
+    simp only [map_add (f := _), map_smul, smul_eq_mul, hzo, hzz]
     ring
   have hy0z : S.hT y0 F.z = 0 := by
     rw [hy0]
-    simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, hoz, hzz, hTs]
     ring
   have hy0o : S.hT y0 (omp F F') = T * (-T' * (Dl F F' r * star (Dl F F' r))) + star (Dl F F' (r + 1)) * Dl F F' (r + 1) := by
     rw [hy0]
-    simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, hoo, hzo, hTs]
   have hy0y0 : S.hT y0 y0 = T * Gflag F F' := by
     have e : S.hT y0 y0 = T * S.hT y0 (omp F F') + Dl F F' (r + 1) * S.hT y0 F.z := by
       conv_lhs => rw [show S.hT y0 y0 = S.hT y0 (T • omp F F' + Dl F F' (r + 1) • F.z) by rw [← hy0]]
-      simp only [map_add, map_smul, smul_eq_mul]
+      simp only [map_add (f := _), map_smul, smul_eq_mul]
     rw [e, hy0o, hy0z]
     simp only [Gflag]
     ring
@@ -118,7 +122,7 @@ private theorem sub_mem_X_of_mem_Asp_of_hT_orth {F : FlagG S r T} {F' : FlagG S 
   have hy0W : σ y0 - y0 ∈ F.X := by
     have e : σ y0 - y0 = T • (σ (omp F F') - omp F F') + Dl F F' (r + 1) • (σ F.z - F.z) := by
       rw [hy0]
-      simp only [map_add, map_smul, smul_sub]
+      simp only [map_add (f := _), map_smul, smul_sub]
       abel
     rw [e]
     exact Submodule.add_mem _ (Submodule.smul_mem _ _ hσω) (Submodule.smul_mem _ _ hσz)
@@ -153,7 +157,7 @@ theorem tau_exists (F : FlagG S r T) (F1 : FlagG S r T') (hG : Gflag F F1 ≠ 0)
     { toFun := p
       map_add' := fun w1 w2 => huniq (w1 + w2) (p w1 + p w2) (Submodule.add_mem _ (hpH w1) (hpH w2)) (by
         have h := Submodule.add_mem _ (hpσ w1) (hpσ w2)
-        rw [Submodule.coe_add, map_add]
+        rw [Submodule.coe_add, map_add (f := _)]
         convert h using 1
         abel)
       map_smul' := fun c w => huniq (c • w) (c • p w) (Submodule.smul_mem _ c (hpH w)) (by
@@ -188,7 +192,7 @@ theorem tau_exists (F : FlagG S r T) (F1 : FlagG S r T') (hG : Gflag F F1 ≠ 0)
     obtain ⟨a, ha, w, hx, hτx⟩ := hsplit x
     obtain ⟨a', ha', w', hy, hτy⟩ := hsplit y
     rw [hτx, hτy, hx, hy]
-    simp only [map_add, LinearMap.add_apply, hT_A_H ha (hpH w'), hT_H_A ha' (hpH w),
+    simp only [map_add (f := _), LinearMap.add_apply, hT_A_H ha (hpH w'), hT_H_A ha' (hpH w),
       hT_A_H ha w'.2, hT_H_A ha' w.2, hpp, add_zero, zero_add]
   have hinj : Function.Injective τl := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
@@ -224,7 +228,7 @@ theorem tau_exists (F : FlagG S r T) (F1 : FlagG S r T') (hG : Gflag F F1 ≠ 0)
       have e : a = y - w := by rw [hs]; abel
       rw [e, map_sub, hyo x hx, hT_A_H (X_le_Asp F F1 hx) w.2, sub_zero]
     have key := sub_mem_X_of_mem_Asp_of_hT_orth hG hT hTs σ.toLinearMap hσf hσz hσω ha hX
-    rw [hτy, hs, map_add]
+    rw [hτy, hs, map_add (f := _)]
     have e : a + p w - (σ a + σ w) = -(σ.toLinearMap a - a) - (σ w - p w) := by
       simp only [LinearEquiv.coe_coe]
       abel
@@ -245,7 +249,7 @@ theorem tau_exists (F : FlagG S r T) (F1 : FlagG S r T') (hG : Gflag F F1 ≠ 0)
     have hG' : Gflag F1 F ≠ 0 := by rw [Gflag_swap]; exact hG
     have ha' : a ∈ Asp F1 F := by rw [Asp_symm]; exact ha
     have key := sub_mem_X_of_mem_Asp_of_hT_orth hG' hT' hTs' ς.toLinearMap hςf hςz hςω ha' hX
-    rw [hτy, hs, map_add]
+    rw [hτy, hs, map_add (f := _)]
     have e : a + p w - (ς a + ς w) = -(ς.toLinearMap a - a) - (ς w - p w) := by
       simp only [LinearEquiv.coe_coe]
       abel

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MomentIntegrable
-import Formalism.HermitianCurvature.CompositeFormulaLevelZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MomentIntegrable
+public import Formalism.HermitianCurvature.CompositeFormulaLevelZero
+
+@[expose] public section
 
 open MeasureTheory Real Complex
 open scoped FourierTransform ComplexConjugate

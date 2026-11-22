@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.SelfDualCongr
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.SelfDualCongr
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,8 +70,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 def epsU (B B' γ : GL (Fin n) E) (k : ℕ) : Eˣ :=
   (Matrix.GeneralLinearGroup.det B' * (Matrix.GeneralLinearGroup.det B)⁻¹) ^ k * (Matrix.GeneralLinearGroup.det γ)⁻¹
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem epsU_ph (S : StepLevel F E σ J T f bad) (A : LocAt F E n G) (hp : p.Prime) (hT : ¬ p ∣ T)
     (halg : ∀ v (a : (A.pl v).1.adicCompletion F), A.spl v ((1 : E) ⊗ₜ[F] a) = (a, a))
     (hb : ∀ v (t : Fin n → (A.pl v).1.adicCompletion F),

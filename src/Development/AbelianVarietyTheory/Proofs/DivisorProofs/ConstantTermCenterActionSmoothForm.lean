@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermAutomorphicFormIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermAutomorphicFormIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ namespace GlobalTheory.ConstTermZalg
 
 open GlobalTheory.ConstTermSmooth
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem good_add {φ ψ : Sm E a} (hφ : Good φ) (hψ : Good ψ) : Good (φ + ψ) := by
   refine ⟨fun γ g => ?_, ?_⟩
@@ -21,7 +25,7 @@ theorem good_add {φ ψ : Sm E a} (hφ : Good φ) (hψ : Good ψ) : Good (φ + �
     have h1' : finRep E a k φ = φ := h1
     have h2' : finRep E a k ψ = ψ := h2
     show finRep E a k (φ + ψ) = φ + ψ
-    rw [map_add, h1', h2']
+    rw [map_add (f := _), h1', h2']
 
 theorem good_smul {φ : Sm E a} (hφ : Good φ) (s : ℂ) : Good (s • φ) := by
   refine ⟨fun γ g => ?_, ?_⟩
@@ -38,7 +42,7 @@ theorem good_integrable {r : ℕ} [MeasurableSpace (BlockIx a r → Ad E)] [Bore
   exact integrable_unip ν (Ψ := fun g (_ : Lie E a) => φ.1 g) (hc.comp continuous_fst).continuousOn
     (fun γ g => funext fun _ => h.1 γ g) g (y := oneL E a) isUnit_one
 
-theorem constTerm_zalg : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a r : ℕ)
+theorem constTerm_zalg : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a r : ℕ)
     [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E))
     (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → μ 𝓕 = 1 →
     ∀ φ : Sm E a, (∀ γ g, φ.1 (ratGL E a γ * g) = φ.1 g) → IsOpen {k | finRep E a k φ = φ} →

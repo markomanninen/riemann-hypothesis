@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+
+@[expose] public section
+
 open GlobalTheory.Cong
 
 namespace GlobalTheory.Cong.UnitPairing
@@ -203,7 +208,8 @@ theorem main (B : Matrix (Fin a) (Fin a) R)
       rw [hφ, (Submodule.Quotient.mk_eq_zero L).mpr hxL, map_zero, Finsupp.zero_apply]
     have e1 : (fun i => algebraMap R k (f i)) ⬝ᵥ (fun i => algebraMap R k (x i)) =
         algebraMap R k (f ⬝ᵥ x) := by
-      simp [dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [dotProduct, map_sum, map_mul]
     rw [hx, dotProduct_smul, smul_eq_mul, hf, hφx, map_zero] at e1
     rcases mul_eq_zero.mp e1 with h | h
     · exact absurd h ((map_ne_zero_iff _ hinj).mpr hd)

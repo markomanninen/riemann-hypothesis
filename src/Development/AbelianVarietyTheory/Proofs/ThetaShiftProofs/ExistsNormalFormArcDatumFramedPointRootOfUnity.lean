@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Formalism.LocalToGlobal.ProjectiveLattices.ArcTheta
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsSmulPtSmulPt
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTangentOfIsLieImage
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeExistsUniqueOfSamePoint
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroupStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsOpenImmersionJKPowerSeries
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsIntegralElemOfIsAlgebraicInt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FrameChangeExistsUniqueInvertible
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FrameChangeComposeInvertBaseChangeTriangularStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueConstantTangentVectorsAlongArcStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LieImgIffIsLieCombStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThetaGeneratorEqRootOfUnityMulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArcTheta
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsSmulPtSmulPt
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTangentOfIsLieImage
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeExistsUniqueOfSamePoint
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsOpenImmersionJKPowerSeries
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsIntegralElemOfIsAlgebraicInt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FrameChangeExistsUniqueInvertible
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FrameChangeComposeInvertBaseChangeTriangularStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueConstantTangentVectorsAlongArcStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LieImgIffIsLieCombStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThetaGeneratorEqRootOfUnityMulStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,21 +67,6 @@ theorem scale_over (s : S) : spMap (epsScaleR s) ≫ spMap (algebraMap S (DualNu
   rw [← spMap_comp]
   congr 1
   ext r <;> simp [epsScaleR, TrivSqZeroExt.algebraMap_eq_inl]
-
-theorem eig_iff (w : epsR S ⟶ t'.G) (a : 𝓞 E) (s : S) :
-    (w.left ≫ m.φ) ≫ (Xo.univ.t.act.act a).left = spMap (epsMul s) ≫ w.left ≫ m.φ ↔
-      (w ≫ t'.act.act a).left = spMap (epsScaleR s) ≫ w.left := by
-  have hw : w.left ≫ t'.G.hom = spMap (algebraMap S (DualNumber S)) := Over.w w
-  have e : (w.left ≫ m.φ) ≫ (Xo.univ.t.act.act a).left = (w ≫ t'.act.act a).left ≫ m.φ := by
-    rw [Over.comp_left, Category.assoc, Category.assoc, m.act]
-  rw [e]
-  constructor
-  · intro h
-    apply m.cart.1.hom_ext
-    · rw [Category.assoc]; exact h
-    · rw [Over.w, Category.assoc, hw, scale_over]; rfl
-  · intro h
-    rw [h, Category.assoc]; rfl
 
 theorem exists_lift {T : Over (Sp S)} (v : T.left ⟶ Xo.univ.t.G.left) (hv : v ≫ Xo.univ.t.G.hom = T.hom ≫ x) :
     ∃ w : T ⟶ t'.G, w.left ≫ m.φ = v :=
@@ -494,8 +483,8 @@ theorem algZ_of_pow {S : Type} [CommRing S] {ζ : S} {N : ℕ} (hN : 0 < N) (h :
 
 end GlobalTheory.ArcQ.NormalForm
 
-open GlobalTheory.ArcQ.NormalForm in
 
+open GlobalTheory.ArcQ.NormalForm in
 theorem GlobalTheory.ArcQ.exists_normalForm : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (K₁ : Type) [Field K₁] [Algebra c.F K₁] [Algebra c.F (ArcS Dw K₁)] (d : ArcDatum Xo c K₁), ∃ (ζ : K₁) (N : ℕ), 0 < N ∧ ζ ^ N = 1 ∧ ((∀ τ k, GtTanR (d.e τ k)) → d.Normal ζ) ∧ ∃ (e₀ : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Out.GtPt (d.a.restrict (c.V d.Wp).subtype).D₀ (epsR K₁)) (y₀ : FrPt Xo c (ArcS Dw K₁)), (∀ τ k, GtComb (Pi.single k (1 : K₁)) (d.e τ) (e₀ τ k)) ∧ IsArcFr d.W e₀ d.th (arcι Dw K₁) y₀ ∧ FrChg (letM Dw K₁) (GlobalTheory.ArcQ.cst Dw ζ) y₀ d.yF := by
   intro hL hL2 E _ _ _ H Dw l Xo c K₁ _ _ _ d
   obtain ⟨-, ⟨z, hz, hzx⟩, v, hv, hvS⟩ := d.arcDatum_isArc_point_basis
@@ -503,7 +492,11 @@ theorem GlobalTheory.ArcQ.exists_normalForm : Out.Laws → Out.Laws2 → ∀ (E 
   have : CharZero K₁ := charZero_of_injective_ringHom (algebraMap c.F K₁).injective
   have : IsDomain (ArcS Dw K₁) := GlobalTheory.ArcConst.isDomain Dw K₁
   obtain ⟨ξ, N, y₀, hN, hξ, hchg, h1, e₀, h2, h3⟩ := exists_frame hL hL2 (GlobalTheory.ThetaShiftProofs.mono_j d.Y (mono_spMap_subtype _))
-    d.W d.e d.th (arcι Dw K₁) (letM Dw K₁) (isUnit_det_letM Dw K₁) d.yF z hz hzx v hv hvS θ
+    d.W d.e d.th (arcι Dw K₁) (letM Dw K₁) (isUnit_det_letM Dw K₁) d.yF z hz hzx v hv (by
+      intro τ i
+      have hrow : letM Dw K₁ τ i = fun k => arcX Dw K₁ τ i k :=
+        funext fun k => Matrix.of_apply (fun j k => arcX Dw K₁ τ j k) i k
+      simpa only [hrow] using hvS τ i) θ
     ⟨σ, fam, θ', a1, a2, a3, a4⟩ t m1 m2 w1 w2 σ' s1 θ2 r1 r2 i1 i2 ps hg
   obtain ⟨ζ, hζ⟩ := GlobalTheory.ArcConst.exists_const Dw K₁ ξ (algZ_of_pow hN hξ)
   have hζN : ζ ^ N = 1 := GlobalTheory.ArcConst.arcι_C_injective Dw K₁

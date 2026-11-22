@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.OcbPhiFIdxFPos
-import Formalism.LocalToGlobal.Columns.OcbTIntOfStab
+module
+
+public import Formalism.LocalToGlobal.Columns.OcbPhiFIdxFPos
+public import Formalism.LocalToGlobal.Columns.OcbTIntOfStab
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -122,7 +126,7 @@ theorem ocbA_om_ne {K : Type} [Field K] (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal
     unfold LocE.locChar
     rw [vP_eq_zero_of_isUnit_redP hq hu hI hU, zpow_zero, zpow_zero, one_mul, div_one]
     unfold LocE.unitV
-    rw [dif_pos hU]
+    rw [dite_eq_left hU]
     exact Units.ne_zero _
   unfold Loc.om
   rw [vP_eq_zero_of_isUnit_redP hq hu hd.1 hd.2, vP_eq_zero_of_isUnit_redP hq hu hd1.1 hd1.2]

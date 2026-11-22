@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem dual_contr (ι : V →ₗ[ℂ] H) (y : V) (l : A →ₗ[ℂ] ℂ) (t : A
   | tmul a v =>
     rw [contr_tmul, map_smul, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, map_smul, inner_smul_right,
       smul_eq_mul, mul_comm]
-  | add s u hs hu => simp only [map_add, inner_add_right, hs, hu]
+  | add s u hs hu => simp only [map_add (f := _), inner_add_right, hs, hu]
 
 theorem eq_zero_of_contr (ι : V →ₗ[ℂ] H) (hι : Function.Injective ι) (t : A ⊗[ℂ] V)
     (h : ∀ y, contr ι y t = 0) : t = 0 := by
@@ -59,7 +63,8 @@ theorem exists_tensor (ι : V →ₗ[ℂ] H) (β : V →ₛₗ[starRingEnd ℂ] 
   have hpre : ∀ k, ∃ e : V, e ∈ E ∧ ι e = (b k : H) := fun k => Submodule.mem_map.mp (b k).2
   choose e heE he using hpre
   refine ⟨∑ k, β (e k) ⊗ₜ[ℂ] e k, fun y => ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [contr_tmul, he]
 
   set z : V := ∑ k, ⟪(b k : H), ι y⟫_ℂ • e k with hz
@@ -74,11 +79,13 @@ theorem exists_tensor (ι : V →ₗ[ℂ] H) (β : V →ₛₗ[starRingEnd ℂ] 
       rw [inner_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [inner_smul_right, mul_comm]
-    simp only [hz, map_sub, map_sum, map_smul, he, inner_sub_left, sum_inner, inner_smul_left, inner_conj_symm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hz, map_sub, map_sum, map_smul, he, inner_sub_left, sum_inner, inner_smul_left, inner_conj_symm]
     rw [key, sub_self]
   have hyz := h (y - z) hperp
   rw [map_sub, sub_eq_zero] at hyz
-  rw [hyz, hz, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hyz, hz, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [LinearMap.map_smulₛₗ, inner_conj_symm]
 

@@ -1,23 +1,14 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.FrameCodeOfAdditive
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.FrameCodeOfAdditive
+
+@[expose] public section
 
 noncomputable section
 
 namespace Formalism.L2.GlobalTheoryTheory.Loss
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.LFunctionChainParameters.DeficitSplitLemmas Formalism.LFunctionChainParameters.PrimeWindowSizeBounds
-
-def StPts : Prop :=
-  ∀ (eps : ℝ) (Fm : FamP eps) (Cb : ℝ), ChosenTT Fm → ChosenBad Fm Cb → LinkG Fm → Lnk.StatementsAtPointsLargeScales Fm
-
-def StCore : Prop :=
-  ∀ (eps : ℝ) (Fm : FamP eps) (Cb : ℝ), ChosenTT Fm → ChosenBad Fm Cb → LinkG Fm → Fm.CoverAll → Lnk.SmallOrderPrimes Fm
-
-def StLoss : Prop :=
-  ∀ (eps : ℝ) (Fm : FamP eps) (Cb : ℝ), ChosenTT Fm → ChosenBad Fm Cb → LinkG Fm → Fm.CoverAll → Lnk.LossF Fm 0
-
-def SlopeLoss : Prop :=
-  ∀ (eps : ℝ) (Fm : FamP eps) (Cb eL : ℝ), 0 ≤ eL → ChosenTT Fm → ChosenBad Fm Cb → LinkG Fm → Fm.CoverAll →
-    LocalQuadraticParts.SlopeLossFamily Fm eL
 
 section AtRecord
 
@@ -26,28 +17,28 @@ variable {D : D7} {L : SizeData₂ D}
 def bndP (L : SizeData₂ D) : ℕ :=
   max ⌊L.sc.a + L.sc.a / ((D.R.k : ℝ) * L.sc.x ^ (Scale.A / 2))⌋₊ ⌊L.sc.X'' D.R.n⌋₊ + 1
 
-open Classical in
 
+open Classical in
 def PsAt (L : SizeData₂ D) : Finset ℕ := (Finset.range (bndP L)).filter (fun p => p.Prime ∧ InertK D p)
 
-open Classical in
 
+open Classical in
 def sAt (L : SizeData₂ D) (K : G.Consts) : Finset ℕ := (Finset.range ⌈L.sc.X'⌉₊).filter (fun p => G.Cand D L K p)
 
 def TTv (D : D7) : Finset ℕ := D.host.TT.image Formalism.HC.Frame.A.val
 
 def badAt (X : G.Inst D L) (p n : ℕ) : Prop := ¬ G.Good X p (X.bs (G.stepP D p) (D.R.ofNat n))
 
-open Classical in
 
+open Classical in
 def clAt (X : G.Inst D L) (K : G.Consts) (p : ℕ) : PClass :=
   if p ∉ L.drop then PClass.served
   else if L.sc.X'' D.R.n < (p : ℝ) then PClass.high
   else if G.Cand D L K p ∧ L.sc.x ^ (-L.sc.eps) < G.Sig X K (G.aL L) (G.bL L) p then PClass.second
   else PClass.first
 
-open Classical in
 
+open Classical in
 def gainQ (X : G.Inst D L) (K : G.Consts) (j p : ℕ) : ℝ :=
   if p ∈ L.drop then 0 else G.gainP X K (G.aL L) (G.bL L) p j
 
@@ -131,12 +122,6 @@ def par (C bo Cb Cord : ℝ) : Par where
   bo := bo
 
 variable {Fm x i0}
-
-def aO (o : Lnk.Wt Fm x i0) (t : G.HH (Fm.D x i0)) : ℤ := Lnk.avOf o t.val
-
-def bO (o : Lnk.Wt Fm x i0) (t : G.HH (Fm.D x i0)) : ℤ := Lnk.bvOf o t.val
-
-def SigO (p : ℕ) (o : Lnk.Wt Fm x i0) : ℝ := G.Sig (Fm.Gx x i0) Fm.GK (aO o) (bO o) p
 
 end Family
 

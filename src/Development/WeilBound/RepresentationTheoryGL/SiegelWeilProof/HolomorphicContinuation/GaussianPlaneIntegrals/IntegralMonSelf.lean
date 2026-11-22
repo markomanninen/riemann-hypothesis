@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.ContinuousPhi
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.ContinuousPhi
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,10 +94,10 @@ theorem gip_diag (d : ι → ℝ) (g : PV ι A B) :
   simp_rw [hpt]
   have hint : ∀ m m' : Sg ι A B →₀ ℕ, Integrable fun z : Sg ι A B → ℂ => mon m z * star (mon m' z) * Complex.exp (-(∑ s, ‖z s‖ ^ 2 : ℝ)) :=
     integrable_mon
-  rw [integral_finset_sum _ fun m _ => integrable_finset_sum _ fun m' _ => (hint m m').const_mul _]
+  rw [MeasureTheory.integral_finsetSum _ fun m _ => MeasureTheory.integrable_finsetSum _ fun m' _ => (hint m m').const_mul _]
   rw [Complex.ofReal_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
-  rw [integral_finset_sum _ fun m' _ => (hint m m').const_mul _]
+  rw [MeasureTheory.integral_finsetSum _ fun m' _ => (hint m m').const_mul _]
   simp_rw [integral_const_mul]
   rw [Finset.sum_eq_single_of_mem m hm fun m' _ hne => by rw [integral_mon_ne m m' hne.symm, mul_zero]]
   rw [integral_mon_self]

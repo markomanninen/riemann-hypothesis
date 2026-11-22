@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomFiniteFreeFinrankLeFourMulDimStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomFiniteFreeFinrankLeFourMulDimStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -13,10 +18,14 @@ theorem end_isogeny_algebra_finrank_le : ∀ (K : Type) [Field K] (A : AbVar K),
     Module.Finite ℚ (End0 A) ∧ Module.finrank ℚ (End0 A) ≤ 4 * A.dim * A.dim := by
   intro K _ A
   obtain ⟨hfin, hfree, hrk⟩ := GlobalTheory.T.hom_finite_free_finrank_le_four_mul_dim K A A
-  haveI : Module.Finite ℤ (End A) := hfin
-  haveI : Module.Free ℤ (End A) := hfree
+  let e : End A ≃ₗ[ℤ] (A ⟶ A) := End.addEquiv.toIntLinearEquiv
+  haveI : Module.Finite ℤ (A ⟶ A) := hfin
+  haveI : Module.Free ℤ (A ⟶ A) := hfree
+  haveI : Module.Finite ℤ (End A) := Module.Finite.equiv e.symm
+  haveI : Module.Free ℤ (End A) := Module.Free.of_equiv e.symm
   refine ⟨inferInstance, ?_⟩
   rw [Module.finrank_baseChange]
+  rw [e.finrank_eq]
   exact hrk
 
 end GlobalTheory.AV.AbVar

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.CycFFTB
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.CycFFTB
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem th_embT (c : PV (Rw ε true) (Fin n) (Fin n)) : Th ε (emb ε true c) = 
   induction c using MvPolynomial.induction_on with
   | C a =>
     simp [emb, Th]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     have e : eqv ε (jv ε true v) = Sum.inr v := (eqv ε).apply_symm_apply (Sum.inr v)
     have hx : Th ε (emb ε true (X v)) = C (X v) := by
@@ -44,7 +48,7 @@ theorem th_embF (t : PV (Rw ε false) (Fin n) (Fin n)) :
   induction t using MvPolynomial.induction_on with
   | C a =>
     simp [emb, Th]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     have e : eqv ε (jv ε false v) = Sum.inl v := (eqv ε).apply_symm_apply (Sum.inl v)
     have hx : Th ε (emb ε false (X v)) = X v := by
@@ -60,12 +64,13 @@ theorem th_prod (c : PV (Rw ε true) (Fin n) (Fin n)) (μ : VV (Rw ε false) n �
 theorem decomp (Q : PX m n) :
     Q = ∑ μ ∈ (Th ε Q).support, emb ε true ((Th ε Q).coeff μ) * emb ε false (monomial μ 1) := by
   apply (Th ε).injective
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [th_prod]
   exact (Th ε Q).as_sum
 
 theorem coeff_sum_monomial {σ R : Type*} [CommSemiring R] [DecidableEq σ] (S : Finset (σ →₀ ℕ)) (f : (σ →₀ ℕ) → R) (μ : σ →₀ ℕ) :
-    coeff μ (∑ ν ∈ S, monomial ν (f ν)) = if μ ∈ S then f μ else 0 := by
+    AddMonoidAlgebra.coeff (∑ ν ∈ S, monomial ν (f ν)) μ = if μ ∈ S then f μ else 0 := by
   rw [coeff_sum]
   simp only [coeff_monomial]
   split_ifs with h
@@ -83,18 +88,21 @@ theorem coeff_sum_monomial {σ R : Type*} [CommSemiring R] [DecidableEq σ] (S :
 theorem indep {J : Type} [Fintype J] (b : J → PV (Rw ε true) (Fin n) (Fin n)) (hb : LinearIndependent ℂ b)
     (t : J → PV (Rw ε false) (Fin n) (Fin n)) (h : ∑ j, emb ε true (b j) * emb ε false (t j) = 0) : ∀ j, t j = 0 := by
   have h2 := congrArg (Th ε) h
-  rw [map_sum, map_zero] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h2
   simp_rw [map_mul, th_embT, th_embF] at h2
   intro j
   ext μ
-  have h3 := congrArg (coeff μ) h2
-  rw [coeff_sum, coeff_zero] at h3
+  have h3 := congrArg (AddMonoidAlgebra.coeff · μ) h2
+  rw [coeff_sum] at h3
+  change _ = 0 at h3
   simp_rw [coeff_C_mul, coeff_map] at h3
-  have h4 : ∑ i, (coeff μ (t i)) • b i = 0 := by
+  have h4 : ∑ i, (AddMonoidAlgebra.coeff (t i) μ) • b i = 0 := by
     rw [← h3]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [Algebra.smul_def, mul_comm]
   have := Fintype.linearIndependent_iff.1 hb _ h4 j
-  simpa using this
+  change AddMonoidAlgebra.coeff (t j) μ = 0
+  exact this
 
 end PositivityTheory.Rg.Sw.FFTSteps.CycF

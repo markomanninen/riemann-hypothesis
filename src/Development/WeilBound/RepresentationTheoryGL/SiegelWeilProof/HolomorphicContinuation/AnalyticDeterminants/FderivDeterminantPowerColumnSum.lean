@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.AnalyticAtDeterminantPowerZeroInt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.AnalyticAtDeterminantPowerZeroInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem colQ_expand (X : Matrix (Fin N) (Fin (N + 1)) ℂ) (c : Fin N) :
 
 theorem fderiv_determinant_power_column_sum (t : ℤ) (X : Matrix (Fin N) (Fin (N + 1)) ℂ) (hX : (1 + piF X).det ≠ 0) (c : Fin N) :
     fderiv ℂ (H (N + 1) t) (phiF X) (Matrix.single 0 c.succ 1) = fsum t c X := by
-  rw [fderiv_determinant_power_column_int t X hX c, colQ_expand, map_sum, fsum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fderiv_determinant_power_column_int t X hX c, colQ_expand, map_sum, fsum]
   simp only [map_smul, smul_eq_mul]
 
 theorem analyticAt_entry (k : Fin N) (j : Fin (N + 1)) (X0 : Matrix (Fin N) (Fin (N + 1)) ℂ) :

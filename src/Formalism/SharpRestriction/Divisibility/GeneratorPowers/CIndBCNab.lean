@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ theorem const_ev {m n : ℕ} (a : Fin m → Pt S n d) (ha : ∀ j i, constantCoe
     rw [Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hs') (zero_pow hs'), smul_zero]
 
 theorem map_pderiv {σ : Type} (i : σ) (f : MvPowerSeries σ S) :
-    map ψ (pderiv S i f) = pderiv S' i (map ψ f) := by
+    map ψ (pderiv i f) = pderiv i (map ψ f) := by
   ext n
   simp [MvPowerSeries.coeff_pderiv]
 
@@ -55,7 +59,8 @@ theorem map_eval_first_point_zero (g : PS S 2 d) :
 
 theorem map_Dof (F : Fin d → PS S 2 d) (v : Fin d → S) (f : PS S 1 d) :
     map ψ (Dof F v f) = Dof (fun j => map ψ (F j)) (fun i => ψ (v i)) (map ψ f) := by
-  simp only [Dof, map_sum, map_mul, MvPowerSeries.map_C, map_eval_first_point_zero, map_pderiv]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Dof, map_sum, map_mul, MvPowerSeries.map_C, map_eval_first_point_zero, map_pderiv]
 
 theorem map_iter_Dof (F : Fin d → PS S 2 d) (v : Fin d → S) (k : ℕ) (f : PS S 1 d) :
     map ψ ((Dof F v)^[k] f) = (Dof (fun j => map ψ (F j)) (fun i => ψ (v i)))^[k] (map ψ f) := by
@@ -75,7 +80,8 @@ theorem map_DpolyOf (F : Fin d → PS S 2 d) {κ : Type} [Fintype κ] (u : κ �
     (P : MvPolynomial κ S) (f : PS S 1 d) :
     map ψ (DpolyOf F u P f) =
       DpolyOf (fun j => map ψ (F j)) (fun l i => ψ (u l i)) (MvPolynomial.map ψ P) (map ψ f) := by
-  simp only [DpolyOf, map_sum, map_mul, MvPowerSeries.map_C, map_DmonOf, MvPolynomial.coeff_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [DpolyOf, map_sum, map_mul, MvPowerSeries.map_C, map_DmonOf, MvPolynomial.coeff_map]
   symm
   apply Finset.sum_subset (MvPolynomial.support_map_subset ψ P)
   intro e _ he

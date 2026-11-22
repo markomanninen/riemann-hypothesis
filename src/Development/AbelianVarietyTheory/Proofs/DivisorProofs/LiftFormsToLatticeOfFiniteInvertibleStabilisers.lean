@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -23,7 +27,8 @@ theorem lift_forms_of_card_isUnit : ∀ (O : Type) [CommRing O] (G : Type) [Grou
     obtain ⟨u, hu'⟩ := hu
     let kk : {γ : Γ // s⁻¹ * (γ : G) * s ∈ K} → K := fun h => ⟨_, h.2⟩
     refine ⟨(↑u⁻¹ : O) • ∑ h, ρ (kk h) y0, ?_, ?_⟩
-    · rw [map_smul, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, map_sum]
       have hval : ∀ h, π (ρ (kk h) y0) = f s := by
         intro h
         have e := hf h.1 s (kk h)⁻¹ y0 hy0.symm
@@ -36,7 +41,8 @@ theorem lift_forms_of_card_isUnit : ∀ (O : Type) [CommRing O] (G : Type) [Grou
       rw [← Nat.cast_smul_eq_nsmul O, smul_smul, ← Nat.card_eq_fintype_card, ← hu', Units.inv_mul,
         one_smul]
     · intro h hk
-      rw [map_smul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, map_sum]
       congr 1
       have hmul : ∀ x : {γ : Γ // s⁻¹ * (γ : G) * s ∈ K},
           s⁻¹ * ((h * x.1 : Γ) : G) * s ∈ K := by
@@ -87,10 +93,10 @@ theorem lift_forms_of_card_isUnit : ∀ (O : Type) [CommRing O] (G : Type) [Grou
     refine ⟨fun g => (DoubleCoset.mk Γ K g).out, ?_, ?_⟩
     · intro γ g κ
       have : DoubleCoset.mk Γ K ((γ : G) * g * κ) = DoubleCoset.mk Γ K g :=
-        (DoubleCoset.eq Γ K _ _).2 ⟨(γ : G)⁻¹, Γ.inv_mem γ.2, (κ : G)⁻¹, K.inv_mem κ.2, by group⟩
+        (@DoubleCoset.eq _ _ Γ K _ _).2 ⟨(γ : G)⁻¹, Γ.inv_mem γ.2, (κ : G)⁻¹, K.inv_mem κ.2, by group⟩
       simp only [this]
     · intro g
-      obtain ⟨h, k, hh, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ K g
+      obtain ⟨h, hh, k, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ K g
       refine ⟨⟨h, hh⟩⁻¹, ⟨k, hk⟩⁻¹, ?_⟩
       simp only [e, Subgroup.coe_inv]
       group

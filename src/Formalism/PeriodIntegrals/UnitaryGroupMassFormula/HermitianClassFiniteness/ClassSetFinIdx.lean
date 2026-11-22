@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.InHHClassFin
 
@@ -31,7 +35,7 @@ theorem classSet_finIdx {G : Type} [Group G] (Γ K K' : Subgroup G) (h : K' ≤ 
   refine Finite.of_surjective f ?_
   intro q
   obtain ⟨g, rfl⟩ := Quotient.mk''_surjective q
-  obtain ⟨a, b, ha, hb, hab⟩ := DoubleCoset.mk_out_eq_mul Γ K g
+  obtain ⟨a, ha, b, hb, hab⟩ := DoubleCoset.mk_out_eq_mul Γ K g
   let k : K := ⟨b⁻¹, K.inv_mem hb⟩
   refine ⟨(DoubleCoset.mk Γ K g, (QuotientGroup.mk k : K ⧸ K'.subgroupOf K)), ?_⟩
   have ht : ((QuotientGroup.mk k : K ⧸ K'.subgroupOf K).out)⁻¹ * k ∈ K'.subgroupOf K :=

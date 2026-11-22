@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XMemOne
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsClosedImmersionIffPullRatio
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XMemOne
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsClosedImmersionIffPullRatio
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry KaehlerDifferential GlobalTheory GlobalTheory.PD ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PD.XCover
 
@@ -22,7 +26,7 @@ theorem finiteDimensional_of_finite {A B F K : Type} [CommRing A] [CommRing B] [
     induction ha using Submodule.span_induction with
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact M.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact M.add_mem hx hy
     | smul b x _ hx =>
       obtain ⟨c, hc⟩ := hB b
       rw [Algebra.smul_def, map_mul, RingHom.algebraMap_toAlgebra, ← hc, ← Algebra.smul_def]
@@ -87,7 +91,7 @@ theorem germ_app_mem (Z : Scheme.{0}) [IsIntegral Z] (p : Z ⟶ Sp ℂ) (φ : Z 
     rw [hc]
     exact IntermediateField.algebraMap_mem _ _
   · have hr : (Z.presheaf.germ _ _ h).hom (GlobalTheory.ProjSpace.pullRatio φ (φ ⁻¹ᵁ chart d 0) 0 le_rfl j) = rat φ 0 j := by
-      rw [rat, dif_pos h, ratioSec_eq, ← Scheme.Hom.appLE_eq_app]
+      rw [rat, dite_eq_left h, ratioSec_eq, ← Scheme.Hom.appLE_eq_app]
       rfl
     simp only [Function.comp_apply]
     rw [hr]

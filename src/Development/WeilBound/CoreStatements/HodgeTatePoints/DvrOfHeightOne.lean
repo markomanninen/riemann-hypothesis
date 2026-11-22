@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PositivityTheory.HtPt.Gc
 
@@ -18,6 +22,6 @@ theorem dvr_of_height_one {A : Type} [CommRing A] [IsDomain A] [IsNoetherianRing
     have : Ring.DimensionLEOne (Localization.AtPrime q) :=
       ⟨fun {P} hP hP' => (Ring.krullDimLE_one_iff_of_noZeroDivisors.1 hk) P hP hP'⟩
     exact {}
-  exact ((IsDiscreteValuationRing.TFAE (Localization.AtPrime q) hnf).out 0 2).2 hD
+  exact ((IsDiscreteValuationRing.TFAE (Localization.AtPrime q) hnf).out 1 3).2 hD
 
 end PositivityTheory.HtPt.Gc

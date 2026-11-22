@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExtWEx
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExtWEx
+
+@[expose] public section
 
 noncomputable section
 

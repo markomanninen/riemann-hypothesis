@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitVM
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitVA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitVM
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitVA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -43,7 +47,7 @@ theorem norm_sq_sum_pN (ξ : Vsp dim) : ‖ξ‖ ^ 2 = ∑ σ, pN ξ σ := by
   rw [EuclideanSpace.norm_sq_eq, Fintype.sum_sigma]
   rfl
 
-theorem nS_le [IsTotallyComplex E] (ξ : Vsp dim) (σ : E →+* ℂ) : nS ξ σ ≤ ‖ξ‖ ^ 2 := by
+theorem nS_le [_root_.NumberField.IsTotallyComplex E] (ξ : Vsp dim) (σ : E →+* ℂ) : nS ξ σ ≤ ‖ξ‖ ^ 2 := by
   classical
   rw [norm_sq_sum_pN, nS]
   have hne : ComplexEmbedding.conjugate σ ≠ σ := conjugate_ne σ
@@ -65,7 +69,8 @@ theorem im_Hf_act (x ξ : Vsp dim) (β : 𝓞 E) :
     refine Fintype.sum_equiv (ComplexEmbedding.involutive_conjugate (K := E)).toPerm _ _ (fun σ => ?_)
     simp only [Function.Involutive.coe_toPerm, ComplexEmbedding.involutive_conjugate (K := E) σ,
       ComplexEmbedding.conjugate_coe_eq, Complex.conj_conj]
-  rw [hZ, Complex.im_eq_sub_conj, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hZ, Complex.im_eq_sub_conj, map_sum]
   simp only [map_mul, Complex.conj_conj, mul_sub, mul_div_assoc', Finset.sum_div, Finset.sum_sub_distrib]
   rw [← hre]
   simp only [← Finset.sum_sub_distrib, ← Finset.sum_div]

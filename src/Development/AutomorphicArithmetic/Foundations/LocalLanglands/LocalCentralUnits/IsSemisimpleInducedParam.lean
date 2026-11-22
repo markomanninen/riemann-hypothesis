@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,9 +70,6 @@ private def perEquiv (n : ℕ) (hn : 0 < n) {b : ℂ} (hb : b ≠ 0) : per n b �
     simp only [perExt]
     rw [h2, h1])
   right_inv g := funext fun i => perExt_coe hn b g i
-
-@[simp] private theorem perEquiv_apply {n : ℕ} {hn : 0 < n} {b : ℂ} {hb : b ≠ 0} (f : per n b) (i : Fin n) :
-    perEquiv n hn hb f i = f.1 (i : ℕ) := rfl
 
 private theorem perEquiv_symm {n : ℕ} {hn : 0 < n} {b : ℂ} {hb : b ≠ 0} (g : Fin n → ℂ) (i : Fin n) :
     ((perEquiv n hn hb).symm g).1 (i : ℕ) = g i := perExt_coe hn b g i

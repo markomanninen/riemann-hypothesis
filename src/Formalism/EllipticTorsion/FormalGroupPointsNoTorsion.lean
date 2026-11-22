@@ -1,37 +1,43 @@
-import Formalism.EllipticTorsion.EllipticTorsionProofs.LegendreInvariant
-import Formalism.EllipticTorsion.EllipticTorsionProofs.Legendre
-import Formalism.EllipticTorsion.EllipticTorsionProofs.Deuring
-import Formalism.EllipticTorsion.EllipticTorsionProofs.ModelUnitOf
-import Formalism.EllipticTorsion.EllipticTorsionProofs.IntVal
-import Formalism.EllipticTorsion.EllipticTorsionProofs.PadicMult
-import Formalism.EllipticTorsion.EllipticTorsionProofs.ConstantCoeffLogOnePlus
-import Formalism.EllipticTorsion.EllipticTorsionProofs.IntegralPSBserSubOne
-import Formalism.EllipticTorsion.EllipticTorsionProofs.NDeriv
-import Formalism.EllipticTorsion.EllipticTorsionProofs.JetsCube
-import Formalism.EllipticTorsion.EllipticTorsionProofs.JetsTwo
-import Formalism.EllipticTorsion.EllipticTorsionProofs.JetsOne
-import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsSubgroupHolds
-import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsNoPrimeToPTorsion
-import Formalism.EllipticTorsion.EllipticTorsionProofs.TorInt
-import Formalism.EllipticTorsion.EllipticTorsionProofs.IsogenyExpansion
-import Formalism.EllipticTorsion.EllipticTorsionProofs.Change
-import Formalism.EllipticTorsion.EllipticTorsionProofs.UnitCancel
-import Formalism.EllipticTorsion.EllipticTorsionProofs.LogWeight
-import Formalism.EllipticTorsion.EllipticTorsionProofs.ExpWeight
-import Formalism.EllipticTorsion.EllipticTorsionProofs.CompExp
-import Formalism.EllipticTorsion.EllipticTorsionProofs.CoefficientWeightsLemmaTwo
-import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsSumPowPrimePow
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WPoint
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WChord
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WSubst
-import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsUnitFactor
-import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsParamDef
-import Formalism.EllipticTorsion.EllipticTorsionProofs.VeluInt
-import Formalism.EllipticTorsion.EllipticTorsionProofs.VeluUSeries
-import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsHomDef
-import Formalism.EllipticTorsion.EllipticTorsionProofs.CubeTwo
-import Formalism.EllipticTorsion.EllipticTorsionProofs.CubeThree
+module
+
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.LegendreInvariant
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.Legendre
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.Deuring
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.ModelUnitOf
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.IntVal
+public import Formalism.EllipticTorsion.Statement
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ConstantCoeffSubstOfZero
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.ConstantCoeffLogOnePlus
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.IntegralPSBserSubOne
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.NDeriv
+public import Mathlib
+public import Formalism.EllipticTorsion.JetsCube
+public import Formalism.FormalGroupLog.LogDeterminesLaw
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.JetsTwo
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsSubgroupHolds
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsNoPrimeToPTorsion
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.TorInt
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.IsogenyExpansion
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.Change
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.UnitCancel
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.LogWeight
+public import Formalism.EllipticTorsion.UnitCancel
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.CompExp
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.CoefficientWeightsLemmaTwo
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsSumPowPrimePow
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WPoint
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WChord
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WSubst
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsUnitFactor
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsParamDef
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.VeluInt
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.VeluUSeries
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsHomDef
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.CubeTwo
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.CubeThree
+
+@[expose] public section
 
 universe u
 
@@ -44,15 +50,9 @@ theorem modelDeuring : ModelDeuring.{u} := deuring_model
 theorem modelUnit : ModelUnit.{u} := by
   apply modelUnit_of <;> first | exact modelLegendre | exact modelDeuring | exact legendreInv | exact deuringInv
 theorem intValuedZp : IntValuedZp.{u} := integer_valued_padic_integers
-theorem padicMult : PadicMult.{u} := by
-  apply padicMult_of <;> first | exact intValuedZp | exact nAddSubgroup | exact nZpSmul | exact nPderiv | exact lwP₂ | exact unitCancel | exact compExpWeight | exact lemma2Weights | exact frobExpand | exact wFormalGroup | exact formal_group_points_subgroup | exact formal_group_points_no_torsion | exact isoExpand | exact isoVanish | exact changeIntegral | exact wPoint | exact wSubstUnique | exact wChordSubst | exact wChordSeries | exact veluIntegralModel | exact veluUSeries | exact modelUnit
 theorem nAddSubgroup : NAddSubgroup.{u} := N_additive_subgroup
 theorem nZpSmul : NZpSmul.{u} := N_padic_integer_smul
 theorem nPderiv : NPderiv.{u} := N_partial_derivative
-
-theorem jetsCube : JetsCube.{u} := jetsCube_of N_partial_derivative
-theorem jetsTwo : JetsTwo.{u} := jetsTwo_of nPderiv
-theorem jetsOne : JetsOne.{u} := jetsOne_of N_partial_derivative
 
 theorem formal_group_points_subgroup : FormalGroupPointsSubgroup'.{u} := formal_group_points_subgroup_holds
 theorem formal_group_points_no_torsion : FormalGroupPointsTorsionFree.{u} := formal_group_points_no_prime_to_p_torsion
@@ -64,8 +64,6 @@ theorem isoVanish : IsoVanish.{u} := isogeny_vanishing
 theorem changeIntegral : ChangeIntegral.{u} := change_of_variables_integral
 
 theorem lwP₂ : LogWeight.{u} := logarithm_coeff_weight
-theorem expWeight : ExpWeight.{u} := by
-  apply expWeight_of <;> first | exact intValuedZp | exact nAddSubgroup | exact nZpSmul | exact nPderiv | exact lwP₂ | exact unitCancel | exact compExpWeight | exact lemma2Weights | exact frobExpand | exact wFormalGroup | exact formal_group_points_subgroup | exact formal_group_points_no_torsion | exact isoExpand | exact isoVanish | exact changeIntegral | exact wPoint | exact wSubstUnique | exact wChordSubst | exact wChordSeries | exact veluIntegralModel | exact veluUSeries | exact modelUnit
 theorem unitCancel : UnitCancel.{u} := unit_cancellation
 
 theorem compExpWeight : CompExpWeight.{u} := comp_exp_coeff_weight

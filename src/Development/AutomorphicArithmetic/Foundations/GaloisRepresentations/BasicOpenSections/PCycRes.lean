@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.ResClosed
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.ResClosed
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
 open UpperTheory.Gal.TranscendenceTraces (gp pt Wt fib IsWt nwt LocNml)
@@ -71,7 +75,9 @@ theorem UpperTheory.Gal.Mod.cycRes :
       (Multiset.count y₀ (Finset.univ.val.map fun i : (T j).Sec y =>
         (twist φ Y)^[n - j] (resPt V ≫ i.1 ≫ (T j).r)) : ℤ) := by
     intro j
-    rw [finsum_fib (fun i : (T j).Sec y => resPt V ≫ i.1) _ (w j _)
+    rw [finsum_fib (fun i : (T j).Sec y => resPt V ≫ i.1)
+      {z : gp (IsLocalRing.ResidueField V) ⟶ (T j).Z | z ≫ (T j).p = resPt V ≫ y ∧
+        (twist φ Y)^[n - j] (z ≫ (T j).r) = y₀} (w j _)
       (fun z hz => (hv j).2 z hz.1)]
     congr 1
     rw [Multiset.count_map, Nat.card_eq_fintype_card, Fintype.card_subtype, Finset.card_def,

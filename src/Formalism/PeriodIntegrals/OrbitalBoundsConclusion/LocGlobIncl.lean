@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocGlobIncl
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGlobalInclusion.SmulMemIdealSmul
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocGlobIncl
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGlobalInclusion.SmulMemIdealSmul
+
+@[expose] public section
 
 namespace PI
 

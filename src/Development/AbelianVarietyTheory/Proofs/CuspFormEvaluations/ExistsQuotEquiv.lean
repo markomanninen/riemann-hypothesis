@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.LocalToGlobal.ProjectiveLattices.IsLevMove
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsLevMove
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
@@ -44,7 +48,7 @@ theorem dvd_right (D : Datum H) {N : ℕ} {I : Ideal (𝓞 E)}
     rw [← hI, _root_.mul_comm c a]
     exact Ideal.mul_mem_mul ha hc
   · intro x y hx hy
-    rw [smul_add, map_add]
+    rw [smul_add, map_add (f := _)]
     exact dvd_add hx hy
 
 theorem dvd_left (D : Datum H) {N : ℕ} {I : Ideal (𝓞 E)}
@@ -58,7 +62,7 @@ theorem dvd_left (D : Datum H) {N : ℕ} {I : Ideal (𝓞 E)}
     rw [← hI]
     exact Ideal.mul_mem_mul (bar_mem ha) hc
   · intro x y hx hy
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact dvd_add hx hy
 
 theorem exists_adjoint (D : Datum H) (f : D.La →ₗ[𝓞 E] D.La) :
@@ -68,7 +72,7 @@ theorem exists_adjoint (D : Datum H) (f : D.La →ₗ[𝓞 E] D.La) :
   refine ⟨{ toFun := fun u => e.symm ((D.EF u).comp (f.restrictScalars ℤ)),
             map_add' := fun x y => D.unimod.1 ?_,
             map_smul' := fun a x => D.unimod.1 ?_ }, fun u v => ?_⟩
-  · simp only [hE, map_add, LinearMap.add_comp]
+  · simp only [hE, map_add (f := _), LinearMap.add_comp]
   · rw [hE]
     ext v
     simp only [LinearMap.comp_apply, LinearMap.restrictScalars_apply, RingHom.id_apply]
@@ -81,7 +85,7 @@ theorem modN_of_dvd (D : Datum H) {n : ℕ} (hn : 0 < n) {w : D.La} (h : ∀ v, 
   obtain ⟨b, hb⟩ := D.unimod.2
     ({ toFun := fun v => D.EF w v / n
        map_add' := fun x y => by
-         simp only [map_add]
+         simp only [map_add (f := _)]
          exact Int.add_ediv_of_dvd_left (h x)
        map_smul' := fun m x => by
          simp only [map_zsmul, smul_eq_mul, RingHom.id_apply]
@@ -172,8 +176,8 @@ theorem half_prod {l l₂ : Level H} {pd : ℕ} {I : Ideal (𝓞 E)} (hM : l₂.
     have := l.three_le
     exact_mod_cast (by omega : l.M ≠ 0)
   exact mul_left_cancel₀ h0 h1
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem datum_inv_char : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (n : ℕ) (d : DeltaDat Xo c n), d.l₂.M = l.M * d.pd → Nat.Coprime d.pd l.M → d.l₂.Mb = l.Mb * d.I → d.I ⊔ d.I.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤ → l.Dvd d.l₂ → ∀ (ph : (Fin n → LaJ Xo c d) → c.F) (ψ : (LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) →* c.Fˣ) (x₀ : Fin n → LaJ Xo c d), d.PhiPin ph ψ x₀ → ∀ g : Sim Dw, g.InGam l d.l₂ → ∃ (kI : LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) (σq : LevQ Dw d.l₂ ≃ LevQ Dw d.l₂), (∀ a : Dw.La, (Submodule.Quotient.mk (g.f d.l₂.M a) : LaI Xo c d) = kI (Submodule.Quotient.mk a)) ∧ (∀ a, σq (Submodule.Quotient.mk a) = Submodule.Quotient.mk (g.f d.l₂.M a)) ∧ ∀ (x0 : Fin n → Dw.La) (q : Fin n → LevQ Dw d.l₂), d.w x0 (fun b => σq.symm (q b)) = d.eF (((ψ kI)⁻¹ : c.Fˣ) : c.F) * d.w x0 q := by
   intro E _ _ _ H Dw l Xo c n d hM hcop hb hsup hdvd ph ψ x₀ hpin g hg
   obtain ⟨-, hgM, -⟩ := hg

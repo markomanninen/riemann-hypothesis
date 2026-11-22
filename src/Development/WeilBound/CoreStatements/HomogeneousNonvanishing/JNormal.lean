@@ -1,14 +1,19 @@
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpPair
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpSt
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PadicIntegersHenselianFiniteResidue
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeComparisonCompatibility
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsMultiHomogXpow
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsArithVarOfBlockAlgebraicStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalizationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteExtensionCoordsCompare
+module
+
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpPair
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpSt
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PadicIntegersHenselianFiniteResidue
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeComparisonCompatibility
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsMultiHomogXpow
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsArithVarOfBlockAlgebraicStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalizationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteExtensionCoordsCompare
+
+@[expose] public section
+
 open MvPolynomial AlgebraicGeometry CategoryTheory NumberField Filter Topology ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cmp
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
 open ReciprocityTheory.ChartRestriction.G.AI.I4 (IsPullHerm imageZ blockFnField)
@@ -36,7 +41,7 @@ theorem hom_C (n : ℤ) : IsMultiHomog (MvPolynomial.C n : MRing ι) 0 := by
   intro m hm k
   have : m = 0 := by
     by_contra h
-    rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_C, if_neg (Ne.symm h)] at hm
+    rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_C, ite_eq_right (Ne.symm h)] at hm
     exact hm rfl
   simp [this]
 
@@ -63,7 +68,7 @@ theorem Q_chart (y : (Σ k, ι k) → Ω) (c : (k : K) → ι k) (hc : (∏ k, y
     obtain ⟨d', g', h', hg', hh', h0', e'⟩ := h2
     refine ⟨d + d', g * h' + h * g', h * h', hom_add (hom_mul hg hh') (hom_mul hh hg'), hom_mul hh hh', ?_, ?_⟩
     · rw [map_mul]; exact mul_ne_zero h0 h0'
-    · simp only [map_add, map_mul, e, e']; ring
+    · simp only [map_add (f := _), map_mul, e, e']; ring
   | mul a b _ _ h1 h2 =>
     obtain ⟨d, g, h, hg, hh, h0, e⟩ := h1
     obtain ⟨d', g', h', hg', hh', h0', e'⟩ := h2
@@ -92,14 +97,16 @@ theorem aeval_mem [CharZero Ω] (F : IntermediateField ℚ Ω) {σ : Type} (r : 
     (g : MvPolynomial σ ℤ) : aeval r g ∈ F := by
   induction g using MvPolynomial.induction_on with
   | C n => simp
-  | add p q hp hq => rw [map_add]; exact add_mem hp hq
+  | add p q hp hq =>
+    rw [map_add (f := aeval r)]
+    exact add_mem hp hq
   | mul_X p i hp => rw [map_mul, aeval_X]; exact mul_mem hp (hr i)
 
 theorem aeval_map (i : Ω →+* Ω') {σ : Type} (r : σ → Ω) (g : MvPolynomial σ ℤ) :
     aeval (fun p => i (r p)) g = i (aeval r g) := by
   induction g using MvPolynomial.induction_on with
   | C n => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p j hp => simp only [map_mul, hp, aeval_X]
 
 theorem blockFnField_eq [CharZero Ω'] (i : Ω →+* Ω') (y : (Σ k, ι k) → Ω) (hb : Birational y)
@@ -144,14 +151,14 @@ theorem mCoordIdeal_map (i : Ω →+* Ω') (y : (Σ k, ι k) → Ω) :
     unfold mConeMap
     induction s using MvPolynomial.induction_on with
     | C n => simp
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p j hp => simp only [map_mul, hp, aeval_X, map_C, map_X]
   ext s
   simp only [mCoordIdeal, RingHom.mem_ker, key]
   exact map_eq_zero_iff _ (MvPolynomial.map_injective i i.injective)
 
 theorem finite_of (i : Ω →+* Ω') (h : FiniteDimensional i.fieldRange Ω') :
-    letI := i.toAlgebra; Module.Finite Ω Ω' := by
+    (letI := i.toAlgebra; Module.Finite Ω Ω') := by
   have h1 : (algebraMap i.fieldRange Ω').Finite := RingHom.finite_algebraMap.2 h
   have h2 : i.rangeRestrictField.Finite := RingHom.Finite.of_surjective _ i.rangeRestrictField_bijective.2
   exact RingHom.Finite.comp h1 h2

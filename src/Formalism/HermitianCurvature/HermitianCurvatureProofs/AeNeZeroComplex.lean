@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormPos
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormPos
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -16,7 +20,7 @@ theorem rr_eq_form (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp))
     (w : List C.Letter) (a b : C.LPt) (ha : D.IsLocPt a j) (hb : D.IsLocPt b j) :
     p.RR F j w a b = p.form j hj w (KB.slv p.T F j hj w a ha.2) (KB.slv p.T F j hj w b hb.2) := by
   unfold KB.Pl.RR D.RRplace
-  rw [dif_pos (⟨ha, hb⟩ : D.IsLocPt a j ∧ D.IsLocPt b j), dif_pos hj]
+  rw [dite_eq_left (⟨ha, hb⟩ : D.IsLocPt a j ∧ D.IsLocPt b j), dite_eq_left hj]
   rfl
 
 end rr
@@ -70,21 +74,6 @@ theorem g_pos_of_built {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.
     (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) : (0 : ℝ) < (S.g : ℝ) := by
   obtain ⟨hg1, hg2, -⟩ := hB
   unfold C.HidaSetting.g; exact_mod_cast Nat.mul_pos hg1 hg2
-
-theorem dW_nonneg {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl (D.parOf S v) (Wp (S.pl v)) (Wq (S.pl v))}
-    {f : ∀ v : Fin S.f, B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v))} {χ : ℝ → ℝ} {A₀ : ℝ}
-    (hB : KB.IsLeadingFormSetting Cb Cc S p f χ A₀) (v : Fin S.f) (j : ℕ) (w : List C.Letter) (h h' : C.LPt) :
-    0 ≤ dW S v j w h h' := by
-  have hg := g_pos_of_built hB
-  have hrd := rd_pos' E
-  have hκ : 0 < D.kapG (S.g : ℝ) (S6.rd E) := by unfold D.kapG; positivity
-  have hδ : 0 < D.deG (S.g : ℝ) (S6.rd E) := by unfold D.deG; positivity
-  unfold dW bS ΓS
-  have := bSt_pos' _ hκ h
-  have := bSt_pos' _ hκ h'
-  have := gamLev_pos S.G.k S.G.r _ _ hκ hδ j
-  have := sizeAt_nonneg S v w
-  positivity
 
 theorem pdG_of_built {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl (D.parOf S v) (Wp (S.pl v)) (Wq (S.pl v))}
     {f : ∀ v : Fin S.f, B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v))} {χ : ℝ → ℝ} {A₀ : ℝ}
@@ -430,7 +419,7 @@ theorem rr_zero_of_not {Wp' Wq' : Type} [NormedAddCommGroup Wp'] [InnerProductSp
     (p : KB.Pl P Wp' Wq') (F : B.Mat P.k P.r → (Wq' →L[ℂ] Wp')) (i : ℕ) (w : List C.Letter) (a b : C.LPt)
     (hn : ¬ (D.IsLocPt a i ∧ D.IsLocPt b i)) : p.RR F i w a b = 0 := by
   unfold KB.Pl.RR D.RRplace
-  rw [dif_neg hn]
+  rw [dite_eq_right hn]
 
 private theorem tent_lemma (r : ℕ) (g : ℝ) (hg : g ≠ 0) (P : C.LPt) :
     ∀ x : ℕ, (∀ b ∈ D.toStd r g x P, 1 ≤ b.1 ∧ b.2 ≠ 0) ↔ (∀ b ∈ P, 1 ≤ b.1 ∧ b.2 ≠ 0) := by

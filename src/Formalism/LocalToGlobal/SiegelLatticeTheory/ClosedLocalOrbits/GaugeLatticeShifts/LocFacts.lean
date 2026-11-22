@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalDiscriminantIsUnit
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocalAdditiveCharContinuous
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.RingInverseAlgebraMap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.TrDual
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGSmall
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.T2SpaceOfNonarchimedeanLocalField
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.DApprox
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocLatSat
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocLatEq
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.DensInertDisplayHolds
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TrDualLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalDiscriminantIsUnit
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocalAdditiveCharContinuous
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.RingInverseAlgebraMap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.TrDual
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGSmall
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.T2SpaceOfNonarchimedeanLocalField
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.DApprox
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocLatSat
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocLatEq
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.DensInertDisplayHolds
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TrDualLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,7 +163,7 @@ theorem lf_tr_eq (y : (D.s.atP p).Ep) :
   have ht : Algebra.trace (D.s.atP p).Fp (D.s.atP p).Ep
       (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep b * LocCP.th p) = 0 := by
     rw [← Algebra.smul_def, map_smul, lf_tr_th, smul_zero]
-  rw [map_add, ht, add_zero, Algebra.trace_algebraMap, (D.s.atP p).rank, map_add, map_mul,
+  rw [map_add (f := _), ht, add_zero, Algebra.trace_algebraMap, (D.s.atP p).rank, map_add (f := _), map_mul,
     AlgEquiv.commutes, AlgEquiv.commutes, LocCP.cj_th]
   simp only [nsmul_eq_mul, map_mul, map_natCast]
   push_cast
@@ -175,7 +179,7 @@ theorem lf_int_of_alg (c : (D.s.atP p).Fp) (hc : algebraMap (D.s.atP p).Fp (D.s.
   rw [(D.s.atP p).O_def] at hc
   have hinj : Function.Injective (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep) :=
     RingHom.injective (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep)
-  have hc' : IsIntegral 𝒪[(D.s.atP p).Fp] c := (isIntegral_algebraMap_iff hinj).1 hc
+  have hc' : IsIntegral 𝒪[(D.s.atP p).Fp] c := (isIntegral_algebraMap_iff ).1 hc
   exact (Valuation.integer.integers (valuation (D.s.atP p).Fp)).mem_of_integral hc'
 
 theorem lf_tr_mem (y : (D.s.atP p).Ep) (hy : y ∈ (D.s.atP p).O) :
@@ -310,35 +314,40 @@ theorem lf_mem_inv (hDL : DualLoc) (Z : LocDat D) (y : D.host.E) (hy : y ∈ (dd
     rw [e]
     exact mul_mem (algMap_mem_O D p _ hm) (unitPart_mem₂ p)
   | zero => rw [map_zero, zero_mul]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add, add_mul]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), add_mul]; exact add_mem hx hy
   | smul a x _ hx =>
     rw [Algebra.smul_def, map_mul, mul_assoc]
     exact mul_mem (iE_mem_O D p a) hx
 
 theorem lf_mem_pow (hDL : DualLoc) (Z : LocDat D) :
-    ∀ (m : ℕ) (x : D.host.E), x ∈ (ddS D)⁻¹ ^ m → (D.s.atP p).ιE x * cP p Z ^ m ∈ (D.s.atP p).O
-  | 0, x, hx => by
-      rw [pow_zero] at hx
-      obtain ⟨o, rfl⟩ := (FractionalIdeal.mem_one_iff _).1 hx
-      rw [pow_zero, mul_one]; exact iE_mem_O D p o
-  | m + 1, x, hx => by
-      rw [pow_succ] at hx
-      refine FractionalIdeal.mul_induction_on hx ?_ ?_
-      · intro i hi j hj
-        have := mul_mem (lf_mem_pow hDL Z m i hi) (lf_mem_inv p hDL Z j hj)
-        rw [map_mul, pow_succ]
-        convert this using 1
-        ring
-      · intro a b ha hb
-        rw [map_add, add_mul]
-        exact add_mem ha hb
+    ∀ (m : ℕ) (x : D.host.E), x ∈ (ddS D)⁻¹ ^ m → (D.s.atP p).ιE x * cP p Z ^ m ∈ (D.s.atP p).O := by
+  intro m
+  induction m with
+  | zero =>
+    intro x hx
+    rw [pow_zero] at hx
+    obtain ⟨o, rfl⟩ := (FractionalIdeal.mem_one_iff (𝓞 D.host.E)⁰).1 hx
+    rw [pow_zero, mul_one]
+    exact iE_mem_O D p o
+  | succ m ih =>
+    intro x hx
+    rw [pow_succ] at hx
+    refine FractionalIdeal.mul_induction_on hx ?_ ?_
+    · intro i hi j hj
+      have := mul_mem (ih i hi) (lf_mem_inv p hDL Z j hj)
+      rw [map_mul, pow_succ]
+      convert this using 1
+      ring
+    · intro a b ha hb
+      rw [map_add (f := _), add_mul]
+      exact add_mem ha hb
 
 end Diff2
 
 end LocFacts
 
-open PI.CntNotIntW in
 
+open PI.CntNotIntW in
 theorem locDiffC_of (hDL : DualLoc) (D : D7) (Z : LocDat D) : LocDiffC D Z := by
   intro p a
   have hO : (Z.M p).L.O = (D.s.atP p).O := (Z.agree p).2.2.2.1
@@ -381,7 +390,7 @@ theorem localForm_smul_left₂ (a : (D.s.atP p).Ep) (x y : Vp D p) : LocFacts₂
   simp only [LocFacts₂, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
 
 theorem localForm_add_right (x y y' : Vp D p) : LocFacts₂ Z.M p x (y + y') = LocFacts₂ Z.M p x y + LocFacts₂ Z.M p x y' := by
-  simp only [LocFacts₂, Pi.add_apply, map_add, mul_add, add_mul, Finset.sum_add_distrib]
+  simp only [LocFacts₂, Pi.add_apply, map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib]
 
 theorem localForm_smul_right (a : (D.s.atP p).Ep) (x y : Vp D p) :
     LocFacts₂ Z.M p x (a • y) = (Z.M p).L.cj a * LocFacts₂ Z.M p x y := by
@@ -445,7 +454,8 @@ theorem lf_riesz (φ : (VS D).V →ₗ[D.host.E] D.host.E) : ∃ μ : (VS D).V, 
   have key : (VS D).hT (∑ j, star (φ ((VS D).frame j)) • bs j) = φ := by
     apply (VS D).frame.ext
     intro i
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     have hs : ∀ j, (VS D).hT (star (φ ((VS D).frame j)) • bs j) ((VS D).frame i) =
         φ ((VS D).frame j) * (if i = j then 1 else 0) := by
       intro j
@@ -456,11 +466,53 @@ theorem lf_riesz (φ : (VS D).V →ₗ[D.host.E] D.host.E) : ∃ μ : (VS D).V, 
     simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
   rw [key]
 
+private theorem lf_span_eq_top_of_unimodular {Λ : Submodule (𝓞 D.host.E) (VS D).V}
+    (hL : Λ.FG) (hU : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ) :
+    Submodule.span D.host.E (Λ : Set (VS D).V) = ⊤ := by
+  by_contra hspan
+  obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+  obtain ⟨μ, hμ⟩ := lf_riesz φ
+  have hμ₀ : μ ≠ 0 := by
+    intro h
+    apply hφ₀
+    ext y
+    simpa [h] using (hμ y).symm
+  have hline (a : D.host.E) : a • μ ∈ Λ := by
+    rw [← hU]
+    change a • μ ∈ Formalism.E.hdual (VS D).hT Λ
+    rw [lf_mem_hdual]
+    intro y hy
+    have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+    simp [← (VS D).herm.eq (a • μ) y, LinearMap.map_smulₛₗ, hμ, hy₀]
+  obtain ⟨ψ, hψ, -⟩ := Submodule.exists_le_ker_of_notMem
+    (show μ ∉ (⊥ : Submodule D.host.E (VS D).V) by simpa using hμ₀)
+  let f := ψ.restrictScalars (𝓞 D.host.E)
+  have hmap (x : D.host.E) : x ∈ Λ.map f := by
+    refine ⟨(x / ψ μ) • μ, hline _, ?_⟩
+    change ψ ((x / ψ μ) • μ) = x
+    rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hψ]
+  obtain ⟨d, hd₀, hd⟩ := FractionalIdeal.isFractional_of_fg
+    (S := nonZeroDivisors (𝓞 D.host.E)) (hL.map f)
+  have hinj := IsFractionRing.injective (𝓞 D.host.E) D.host.E
+  have hne {a : 𝓞 D.host.E} (ha : a ≠ 0) : algebraMap (𝓞 D.host.E) D.host.E a ≠ 0 :=
+    fun h => ha (hinj (h.trans (map_zero _).symm))
+  have hinteger (x : D.host.E) : IsLocalization.IsInteger (𝓞 D.host.E) x := by
+    have hx := hd _ (hmap ((algebraMap (𝓞 D.host.E) D.host.E d)⁻¹ * x))
+    rwa [Algebra.smul_def, ← mul_assoc, mul_inv_cancel₀ (hne (nonZeroDivisors.ne_zero hd₀)),
+      one_mul] at hx
+  apply RingOfIntegers.not_isField D.host.E
+  refine ⟨⟨0, 1, zero_ne_one⟩, mul_comm, ?_⟩
+  intro a ha
+  obtain ⟨b, hb⟩ := hinteger ((algebraMap (𝓞 D.host.E) D.host.E a)⁻¹)
+  refine ⟨b, hinj ?_⟩
+  rw [map_mul, hb, map_one, mul_inv_cancel₀ (hne ha)]
+
 theorem lf_riesz_lat {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hL : Submodule.IsLattice D.host.E Λ)
     (hU : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ) (f : Λ →ₗ[𝓞 D.host.E] 𝓞 D.host.E) :
     ∃ μ ∈ Λ, ∀ y : Λ, (VS D).hT μ (y : (VS D).V) = ((f y : 𝓞 D.host.E) : D.host.E) := by
   classical
-  obtain ⟨s, _, b, hb, hsΛ⟩ := Formalism.HermitianLatticesTheory.dualLattice_basis (R := 𝓞 D.host.E) Λ hL.span_eq_top
+  obtain ⟨s, _, b, hb, hsΛ⟩ := Formalism.HermitianLatticesTheory.dualLattice_basis
+    (R := 𝓞 D.host.E) Λ (lf_span_eq_top_of_unimodular hL.fg hU)
   let φ : (VS D).V →ₗ[D.host.E] D.host.E := b.constr D.host.E
     (fun j => ((f ⟨(j : (VS D).V), hsΛ j.2⟩ : 𝓞 D.host.E) : D.host.E))
   have hφ : ∀ y : Λ, φ (y : (VS D).V) = ((f y : 𝓞 D.host.E) : D.host.E) := by
@@ -477,7 +529,8 @@ theorem lf_riesz_lat {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hL : Submodule.I
       rw [← hb j, ← algebraMap_smul D.host.E (c j), hc j, Algebra.smul_def, ← smul_smul,
         algebraMap_smul]
     have h1 := congrArg (fun z => ((f z : 𝓞 D.host.E) : D.host.E)) hy
-    simp only [map_smul, map_sum, smul_eq_mul] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, smul_eq_mul] at h1
     push_cast at h1
     have hd0 : ((d : 𝓞 D.host.E) : D.host.E) ≠ 0 := by
       have := nonZeroDivisors.ne_zero d.2
@@ -523,7 +576,7 @@ theorem locUnimodC_holds (D : D7) (Z : LocDat D) : LocUnimodC D Z := by
       have hL2 : ∀ v, L2 v = ∑ i, (VS D).hT (μ i) v • ((g i : Λ) : (VS D).V) := by
         intro v; simp [L2]
       have heq : LinearMap.id = L2 := by
-        apply LinearMap.ext_on hL.span_eq_top
+        apply LinearMap.ext_on (LocFacts.lf_span_eq_top_of_unimodular hL.fg hU)
         intro y hy
         have e1 := congrArg (fun z : Λ => (z : (VS D).V)) (hgf ⟨y, hy⟩)
         rw [LinearMap.id_apply, hL2]
@@ -543,7 +596,8 @@ theorem locUnimodC_holds (D : D7) (Z : LocDat D) : LocUnimodC D Z := by
         have e : ∀ i, LocFacts₂ Z.M p (baseChange₂ D p v) (baseChange₂ D p (μ i)) = (D.s.atP p).ιE ((VS D).hT (μ i) v) := by
           intro i; rw [baseChangeAt_form Z.M p (Z.hcj p), brS]
         simp only [e, ← baseChange_smul₂]
-        rw [← map_sum, ← hV v]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, ← hV v]
       | zero => simp [LocFacts.localForm_zero_left₂]
       | add w w' _ _ h1 h2 =>
         simp only [LocFacts.localForm_add_left₂, add_smul, Finset.sum_add_distrib]
@@ -569,7 +623,7 @@ theorem bbTie_holds (D : D7) (Z : LocDat D) : BBTie D Z :=
 
 theorem frameGenLoc_holds (D : D7) (Z : LocDat D) {u u' : D.what₂.Word}
     (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (hR : IsRowLat D F0 Λ) (hPD : PD D Λ (lf D F0) u' F') (hMI : MplusIndep Λ (lf D F0) (gS D) F')
     (hG : Gval (lf D F0) F' ≠ 0) :
     IsGeneric Λ (gS D) (lf D F0) F' ↔

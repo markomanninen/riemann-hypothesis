@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MulVecCEApply
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HaarModulusProductFormulaTotallyReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MulVecCEApply
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HaarModulusProductFormulaTotallyReal
+
+@[expose] public section
+
 open MeasureTheory Topology Matrix NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx GlobalTheory.ModuLR
 open scoped NNReal ENNReal TensorProduct Pointwise
 
@@ -32,7 +37,9 @@ theorem distribHaarChar_pi {ι : Type} [Fintype ι] (A : ι → Type) [∀ i, Co
     refine forall_congr' fun i => ?_
     rw [← map_inv]
     rfl
-  rw [e, hp, hp, ENNReal.coe_finset_prod, ← Finset.prod_mul_distrib]
+  rw [e, hp, hp]
+  push_cast
+  rw [← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun i _ => ?_
   rw [distribHaarChar_mul]
 
@@ -42,11 +49,11 @@ namespace GlobalTheory.ModuPiLocal
 
 theorem modu_sPart : ∀ (F : Type) [Field F] [NumberField F] (S : Finset (HeightOneSpectrum (𝓞 F))) (x : SPart F S), IsUnit x → (modu (SPart F S) x : ℝ) = ∏ v : S, ‖x v‖ := by
   intro F _ _ S x hx
-  rw [modu, dif_pos hx, distribHaarChar_pi (fun v : S => Fv F v.1), NNReal.coe_prod]
+  rw [modu, dite_eq_left hx, distribHaarChar_pi (fun v : S => Fv F v.1), NNReal.coe_prod]
   refine Finset.prod_congr rfl fun v _ => ?_
   have hv : IsUnit (x v) := (Pi.isUnit_iff.1 hx) v
   have h := GlobalTheory.GaugeProdFormula.modu_finite F v.1 (x v) hv.ne_zero
-  rw [modu, dif_pos hv] at h
+  rw [modu, dite_eq_left hv] at h
   rw [← h]
   congr 2
   ext

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GaugeGap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IntInter
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FrameTransport
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IntInter
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ variable (F : Type) [Field F] [NumberField F]
 def intSub : AddSubgroup (AF F) where
   carrier := {x | ∀ v : HeightOneSpectrum (𝓞 F), sndA F x v ∈ v.adicCompletionIntegers F}
   add_mem' {a b} ha hb v := by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem (ha v) (hb v)
   zero_mem' v := by
     rw [map_zero]

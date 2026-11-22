@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.InertKernelTheory.FrameLatMap
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.LocalLevelIsKOneAtT
-import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntBasis
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.FrameLatMap
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.LocalLevelIsKOneAtT
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,21 +87,6 @@ theorem subst_hypLin_thOrth (D : D7) (lam : Qbar →+* ℂ_[p]) (c : ℂ_[p]) {N
 variable (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7) (pos' : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau)
     (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
     (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-
-theorem frameHyp_of_lin (S : ∀ j, X.Lt j → X.Lt (j + 1) →
-      (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) →
-      (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) → ℂ_[p])
-    (lam : Qbar →+* ℂ_[p]) (c : ℂ_[p]) (h : FrameLin X E hfin D pos' large₂ Lg' S lam c)
-    (F : ∀ j, X.Lt j → X.Lt (j + 1) →
-      MvPowerSeries (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p]) :
-    FrameHyp X E hfin D pos' large₂ Lg' F S lam c := by
-  intro j L0 hL0 La' hLa' φ
-  obtain ⟨r, b, hb, ho, σ, f, f', hσ, hH, hk⟩ := h j L0 hL0 La' hLa' φ
-  refine ⟨r, b, hb, ho, σ, f, f', hσ, hH, ?_⟩
-  rw [thA_thFOf_linSub X E pos' φ S F, subst_hypLin_thOrth]
-  congr 1
-  funext k
-  exact hk k
 
 end Formalism.L2.KerInert.RepFrame
 
@@ -208,13 +197,15 @@ theorem linFrame_subGen (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj 
       (Eq.trans (sum4 _ _ _ _ _) ?_)
     refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
     rw [map_mul, ← mAt_mul_left, ← mAt_mul_right]
-    simp only [map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul]
   · simp only [if_neg hodd, stdLin, Pi, Qi, Matrix.transpose_apply]
     refine Eq.trans (Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun a _ => by rw [map_mul])
       (Eq.trans (sum4' _ _ _ _ _) ?_)
     refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
     rw [map_mul, ← mAt_mul_left, ← mAt_mul_right]
-    simp only [map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul]
 
 end Formalism.L2.KerInert.RepFrame
 
@@ -228,20 +219,6 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E :
   (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7) (pos : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau)
   (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
   (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-
-theorem frameLin_of_std (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
-    (lam : Qbar →+* ℂ_[p]) (c : ℂ_[p]) (h : FrameStd X E hfin D pos large₂ Lg' M lam c) :
-    FrameLin X E hfin D pos large₂ Lg' (fun j La La' => subGen X E pos M j La La') lam c := by
-  intro j L0 hL0 La' hLa' φ
-  obtain ⟨r, b, hb, ho, σ, f, f', hσ, hH, hk⟩ := h j L0 hL0 La' hLa' φ
-  exact ⟨r, b, hb, ho, σ, f, f', hσ, hH, fun k => (linFrame_subGen X E pos M φ k).trans (hk k)⟩
-
-theorem frameHyp_of_std (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
-    (lam : Qbar →+* ℂ_[p]) (c : ℂ_[p]) (h : FrameStd X E hfin D pos large₂ Lg' M lam c)
-    (F : ∀ j, X.Lt j → X.Lt (j + 1) →
-      MvPowerSeries (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p]) :
-    FrameHyp X E hfin D pos large₂ Lg' F (fun j La La' => subGen X E pos M j La La') lam c :=
-  frameHyp_of_lin X E hfin D pos large₂ Lg' _ lam c (frameLin_of_std X E hfin D pos large₂ Lg' M lam c h) F
 
 end Formalism.L2.KerInert.RepFrame
 
@@ -272,7 +249,8 @@ theorem isLin_sum {ι : Type} [Fintype ι] (L : ι → MvPowerSeries σ K) (h : 
     IsLin (∑ i, L i) := by
   choose w hw using h
   refine ⟨fun y => ∑ i, w i y, ?_⟩
-  simp only [hw, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hw, map_sum, Finset.sum_mul]
   exact Finset.sum_comm
 
 theorem IsLin.repr {L : MvPowerSeries σ K} (h : IsLin L) :
@@ -323,45 +301,6 @@ variable (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7) (pos' : (Σ v : X.
     (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
     (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
 
-theorem frameStd_of (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
-    (lam : Qbar →+* ℂ_[p]) (c : ℂ_[p]) (hc0 : c ≠ 0) (h1 : OnbEx X hfin D large₂ Lg')
-    (h2 : LamTrace X hfin D large₂ Lg' lam) (h3 : HypCoord X E hfin D pos' large₂ Lg' M lam c) :
-    FrameStd X E hfin D pos' large₂ Lg' M lam c := by
-  intro j L0 hL0 La' hLa' φ
-  obtain ⟨r, b, hb, ho⟩ := h1 j L0 hL0 La' hLa'
-  obtain ⟨σ, f, f', hσ, hH, hf, hf'⟩ := h3 j L0 hL0 La' hLa' r b hb ho φ
-  have hL := h2 j L0 hL0 La' hLa' r b hb ho
-  refine ⟨r, b, hb, ho, σ, f, f', hσ, hH, fun k => ?_⟩
-  rw [(isLin_stdLin X E pos' M φ k).repr, Fintype.sum_sum_type]
-  simp only [hypLin, Finset.mul_sum, mul_add, Finset.sum_add_distrib]
-  rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)
-      (f := fun i e => MvPowerSeries.C (c * lamC lam (embT D k.1 (b i k.2.1 k.2.2))) *
-        (MvPowerSeries.C (f e i : ℂ_[p]) * MvPowerSeries.X (Sum.inl e))),
-    Finset.sum_comm (s := Finset.univ) (t := Finset.univ)
-      (f := fun i e => MvPowerSeries.C (c * lamC lam (embT D k.1 (b i k.2.1 k.2.2))) *
-        (MvPowerSeries.C (f' e i : ℂ_[p]) * MvPowerSeries.X (Sum.inr e)))]
-  congr 1
-  · refine Finset.sum_congr rfl fun e _ => ?_
-    simp only [← mul_assoc, ← map_mul]
-    rw [← Finset.sum_mul, ← map_sum]
-    congr 2
-    simp only [hf]
-    exact (coord_recon D lam b hL hc0 (fun k' => frVec X E pos' M φ (Sum.inl e) k') k).symm
-  · refine Finset.sum_congr rfl fun e _ => ?_
-    simp only [← mul_assoc, ← map_mul]
-    rw [← Finset.sum_mul, ← map_sum]
-    congr 2
-    simp only [hf']
-    exact (coord_recon D lam b hL hc0 (fun k' => frVec X E pos' M φ (Sum.inr e) k') k).symm
-
-theorem frameHyp_of_coord (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
-    (lam : Qbar →+* ℂ_[p]) (c : ℂ_[p]) (hc0 : c ≠ 0) (h1 : OnbEx X hfin D large₂ Lg')
-    (h2 : LamTrace X hfin D large₂ Lg' lam) (h3 : HypCoord X E hfin D pos' large₂ Lg' M lam c)
-    (F : ∀ j, X.Lt j → X.Lt (j + 1) →
-      MvPowerSeries (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p]) :
-    Formalism.L2.KerInert.Rep.FrameHyp X E hfin D pos' large₂ Lg' F (fun j La La' => subGen X E pos' M j La La') lam c :=
-  frameHyp_of_std X E hfin D pos' large₂ Lg' M lam c (frameStd_of X E hfin D pos' large₂ Lg' M lam c hc0 h1 h2 h3) F
-
 end Formalism.L2.KerInert.RepFrame
 
 namespace Formalism.L2.KerInert.RepFrame
@@ -372,12 +311,6 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Fo
 variable {p : ℕ} [Fact p.Prime] (X : Sys p) (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7)
     (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
     (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-
-theorem onbEx_of (hO : Formalism.L2.KerInert.OrthBasisExists) (h5 : 5 ≤ p) (hin : jacobiSym (-(D.host.d : ℤ)) p = -1)
-    (hadm : ∀ j (L0 : X.Lt j), L0 ∈ Formalism.L2.G.Pend.repOf X.Lv hfin j → ∀ La' : X.Lt (j + 1),
-      (X.Pj (j + 1)).IsLatTup La'.2 → admitted D _ _ (large₂ j L0 La') (Lg' j L0 La')) :
-    OnbEx X hfin D large₂ Lg' :=
-  fun j L0 hL0 La' hLa' => hO D p h5 hin _ _ _ _ (hadm j L0 hL0 La' hLa')
 
 end Formalism.L2.KerInert.RepFrame
 
@@ -413,10 +346,6 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) (hfin : ∀ j c, (X.Lv.lev j c).Fi
     (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
     (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
 
-theorem lamTrace_of (lam : Qbar →+* ℂ_[p]) (h1 : RankTie X hfin D large₂ Lg') (h2 : ColTie X hfin D large₂ Lg' lam) :
-    LamTrace X hfin D large₂ Lg' lam :=
-  fun j L0 hL0 La' hLa' r b hb ho => lamONB_of_cols D lam b (h1 j L0 hL0 La' hLa' r b hb) (h2 j L0 hL0 La' hLa' r b hb ho)
-
 end Formalism.L2.KerInert.RepFrame
 
 namespace Formalism.L2.KerInert.RepFrame
@@ -446,7 +375,8 @@ theorem cols_of_trace (D : D7) (hT : TraceTau D) {p : ℕ} [Fact p.Prime] (lam :
       = ∑ τ : D.what₂.Tau, lam (embQ D τ Y) := by
         rw [Fintype.sum_prod_type]
         refine Finset.sum_congr rfl fun τ _ => ?_
-        simp only [lamB, lamBc, lamC_embT, hY, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [lamB, lamBc, lamC_embT, hY, map_sum, map_mul]
         exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
     _ = lam (∑ τ : D.what₂.Tau, embQ D τ Y) := (map_sum lam _ _).symm
     _ = if i = i' then 1 else 0 := by
@@ -507,7 +437,7 @@ theorem frVec_inl_same {j : ℕ} {L0 : X.Lt j} {La' : X.Lt (j + 1)} (φ : Frm X 
   · simp only [if_neg hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
     obtain ⟨v, r, a, b⟩ := e
     simp only [Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, if_neg hs, if_false, Finset.sum_const_zero,
-      Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and]
+        Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and]
     rw [Finset.sum_eq_single a (fun x _ hx => by simp [hx]) (by simp),
       Finset.sum_eq_single b (fun x _ hx => by simp [hx]) (by simp),
       Finset.sum_eq_single r (fun x _ hx => by simp [hx]) (by simp)]
@@ -531,7 +461,7 @@ theorem frVec_inr_same {j : ℕ} {L0 : X.Lt j} {La' : X.Lt (j + 1)} (φ : Frm X 
   · simp only [if_pos hs, zOfX, Finset.mul_sum, ← mul_assoc, map_sum, coeff_CC_mul_X]
     obtain ⟨v, r, a, b⟩ := e
     simp only [Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, if_pos hs, if_false, Finset.sum_const_zero,
-      Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and]
+        Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq, true_and]
     rw [Finset.sum_eq_single a (fun x _ hx => by simp [hx]) (by simp),
       Finset.sum_eq_single b (fun x _ hx => by simp [hx]) (by simp),
       Finset.sum_eq_single r (fun x _ hx => by simp [hx]) (by simp)]
@@ -802,9 +732,9 @@ theorem coe_LBc (v : X.Pl) (k : PIx X (j := j) v) (i : Fin r) :
     ((LBc X D b ρ twK v k i : MaximalUnramifiedExtension p) : ℂ_[p]) = lamBc D lam b (pos ⟨v, k.1⟩, k.2.1, k.2.2) i := by
   rw [LBc, htwK, lamBc, hρ]
 
+
 open Classical in
 include hρ htwK in
-
 theorem kurONB (hL : LamONB D lam b) (v v' : X.Pl) (k : PIx X (j := j) v) (k' : PIx X (j := j) v') :
     ∑ i, LB X D b ρ twK v k i * LBc X D b ρ twK v' k' i =
       if ((pos ⟨v, k.1⟩, k.2.1, k.2.2) : D.what₂.Tau × _ × _) = (pos ⟨v', k'.1⟩, k'.2.1, k'.2.2) then 1 else 0 := by
@@ -824,25 +754,29 @@ variable (σ : MaximalUnramifiedExtension p →+* MaximalUnramifiedExtension p)
 include hσtw hσw hev hconj in
 theorem sigma_fK (e : X.EA j) (i : Fin r) :
     σ (fK X D M φ b ρ twK wK e i) = ∑ k, LB X D b ρ twK e.1 k i * ZX X M φ twK wK e k := by
-  simp only [fK, map_sum, map_mul, sigma_LBc X D b ρ twK σ hσtw hev hconj, sigma_YX X M φ twK wK σ hσtw hσw hev]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fK, map_sum, map_mul, sigma_LBc X D b ρ twK σ hσtw hev hconj, sigma_YX X M φ twK wK σ hσtw hσw hev]
   exact Equiv.sum_comp (rotP X e.1) (fun k => LB X D b ρ twK e.1 k i * ZX X M φ twK wK e k)
 
 include hσtw hσw hev hconj in
 theorem sigma_fK' (e : X.EA j) (i : Fin r) :
     σ (fK' X D M φ b ρ twK wK e i) = ∑ k, LB X D b ρ twK e.1 k i * ZX' X M φ twK wK e k := by
-  simp only [fK', map_sum, map_mul, sigma_LBc X D b ρ twK σ hσtw hev hconj, sigma_YX' X M φ twK wK σ hσtw hσw hev]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fK', map_sum, map_mul, sigma_LBc X D b ρ twK σ hσtw hev hconj, sigma_YX' X M φ twK wK σ hσtw hσw hev]
   exact Equiv.sum_comp (rotP X e.1) (fun k => LB X D b ρ twK e.1 k i * ZX' X M φ twK wK e k)
 
 include hσtw hσw hev hconj in
 theorem sigma2_fK (e : X.EA j) (i : Fin r) : σ (σ (fK X D M φ b ρ twK wK e i)) = fK X D M φ b ρ twK wK e i := by
   rw [sigma_fK X D M φ b ρ twK wK σ hσtw hσw hev hconj]
-  simp only [map_sum, map_mul, sigma_LB X D b ρ twK σ hσtw hev hconj, sigma_ZX X M φ twK wK σ hσtw hσw hev]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, sigma_LB X D b ρ twK σ hσtw hev hconj, sigma_ZX X M φ twK wK σ hσtw hσw hev]
   exact Equiv.sum_comp (rotP X e.1) (fun k => LBc X D b ρ twK e.1 k i * YX X M φ twK wK e k)
 
 include hσtw hσw hev hconj in
 theorem sigma2_fK' (e : X.EA j) (i : Fin r) : σ (σ (fK' X D M φ b ρ twK wK e i)) = fK' X D M φ b ρ twK wK e i := by
   rw [sigma_fK' X D M φ b ρ twK wK σ hσtw hσw hev hconj]
-  simp only [map_sum, map_mul, sigma_LB X D b ρ twK σ hσtw hev hconj, sigma_ZX' X M φ twK wK σ hσtw hσw hev]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, sigma_LB X D b ρ twK σ hσtw hev hconj, sigma_ZX' X M φ twK wK σ hσtw hσw hev]
   exact Equiv.sum_comp (rotP X e.1) (fun k => LBc X D b ρ twK e.1 k i * YX' X M φ twK wK e k)
 
 theorem pos_delta_same (v : X.Pl) (k k' : PIx X (j := j) v) :
@@ -957,7 +891,8 @@ theorem dual_fK (hL : LamONB D lam b) (hM : ∀ v, IsUnit (M j L0 v).det) (hM' :
       · simp only [ZX, YX', if_pos hs]
         rw [Fintype.sum_prod_type]
         dsimp only
-        rw [sum2x, map_mul, Matrix.mul_apply, Matrix.mul_apply, map_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [sum2x, map_mul, Matrix.mul_apply, Matrix.mul_apply, map_sum, map_sum]
         simp only [map_mul]
       · simp [ZX, hs]
     simp only [key, Gmi_mul_Gm X M φ hM, Gpi_mul_Gp X M φ hM', Matrix.one_apply, Fin.cast_inj]
@@ -967,7 +902,8 @@ theorem dual_fK (hL : LamONB D lam b) (hM : ∀ v, IsUnit (M j L0 v).det) (hM' :
         subst hb
         simp only [if_true, mul_one, map_one, one_mul]
         rw [← Finset.sum_filter]
-        simp only [← map_mul, ← map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [← map_mul, ← map_sum]
         rw [dualT (X.om v) (hev v) 1 (by norm_num) IsOddPos (fun s => Iff.rfl) r0 r1]
         by_cases hr : r0 = r1
         · subst hr; simp
@@ -1121,41 +1057,6 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E :
   (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
   (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
 
-theorem hypCoord_of (lam : Qbar →+* ℂ_[p]) (ρ : ∀ v : X.Pl, D.host.E →+* X.G.P.Qq v)
-    (hT : LamTrace X hfin D large₂ Lg' lam) (hρ : LamPosG X E D pos lam ρ) (hF : FrobTw X E)
-    (hev : ∀ v, Even (X.G.P.n' v)) (hconj : ∀ x, D.host.conj (D.host.conj x) = x) (hM : MInv X M)
-    (hI : FrameInt X E M hfin D large₂ Lg' ρ) :
-    HypCoord X E hfin D pos large₂ Lg' M lam 1 := by
-  intro j L0 hL0 La' hLa' r b hb ho φ
-  obtain ⟨σ, twK, wK, hσ, htwK, hσtw, hwK, hσw, hwn⟩ := hF
-  have hL := hT j L0 hL0 La' hLa' r b hb ho
-  have hH : IsHypPair σ (fK X D M φ b ρ twK wK) (fK' X D M φ b ρ twK wK) := by
-    unfold IsHypPair
-    refine ⟨fun e i => ⟨?_, ?_⟩, fun e i => ⟨?_, ?_⟩, fun e e' => ?_, fun e e' => ?_, fun e e' => ?_⟩
-    · exact norm_fK X E D M φ b ρ twK wK htwK hwn (fun i v s b0 a0 => (hI j L0 hL0 La' hLa' φ r b hb ho i v s b0 a0).1) e i
-    · exact sigma2_fK X D M φ b ρ twK wK σ hσtw hσw hev hconj e i
-    · exact norm_fK' X E D M φ b ρ twK wK htwK hconj hwn
-        (fun i v s b1 a1 => (hI j L0 hL0 La' hLa' φ r b hb ho i v s b1 a1).2) e i
-    · exact sigma2_fK' X D M φ b ρ twK wK σ hσtw hσw hev hconj e i
-    · exact iso_fK X E D pos lam M φ b ρ twK wK hρ htwK σ hσtw hσw hev hconj hL e e'
-    · exact iso_fK' X E D pos lam M φ b ρ twK wK hρ htwK σ hσtw hσw hev hconj hL e e'
-    · rw [dual_fK X E D pos lam M φ b ρ twK wK hρ htwK σ hσtw hσw hev hconj hL (hM j L0) (hM (j + 1) La') e e']
-  refine ⟨σ, fK X D M φ b ρ twK wK, fK' X D M φ b ρ twK wK, hσ, hH, fun e i => ?_, fun e i => ?_⟩
-  · rw [inv_one, one_mul]
-    exact coe_fK X E D pos lam M φ b ρ twK wK hρ htwK hwK e i
-  · rw [inv_one, one_mul]
-    exact coe_fK' X E D pos lam M φ b ρ twK wK hρ htwK hwK hconj e i
-
-theorem frameHyp_of_local (lam : Qbar →+* ℂ_[p]) (ρ : ∀ v : X.Pl, D.host.E →+* X.G.P.Qq v)
-    (h1 : OnbEx X hfin D large₂ Lg') (hT : LamTrace X hfin D large₂ Lg' lam) (hρ : LamPosG X E D pos lam ρ)
-    (hF : FrobTw X E) (hev : ∀ v, Even (X.G.P.n' v)) (hconj : ∀ x, D.host.conj (D.host.conj x) = x)
-    (hM : MInv X M) (hI : FrameInt X E M hfin D large₂ Lg' ρ)
-    (F : ∀ j, X.Lt j → X.Lt (j + 1) →
-      MvPowerSeries (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p]) :
-    Formalism.L2.KerInert.Rep.FrameHyp X E hfin D pos large₂ Lg' F (fun j La La' => subGen X E pos M j La La') lam 1 :=
-  frameHyp_of_coord X E hfin D pos large₂ Lg' M lam 1 one_ne_zero h1 hT
-    (hypCoord_of X E hfin D pos large₂ Lg' M lam ρ hT hρ hF hev hconj hM hI) F
-
 end Formalism.L2.KerInert.RepFrame
 
 namespace Formalism.L2.KerInert.RepFrame
@@ -1174,14 +1075,6 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E :
   (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
   (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
   (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
-
-theorem frameHyp_of_local' (lam : Qbar →+* ℂ_[p]) (ρ : ∀ v : X.Pl, D.host.E →+* X.G.P.Qq v)
-    (h1 : OnbEx X hfin D large₂ Lg') (hT : LamTrace X hfin D large₂ Lg' lam) (hρ : LamPosG X E D pos lam ρ)
-    (hF : FrobTw X E) (hM : MInv X M) (hI : FrameInt X E M hfin D large₂ Lg' ρ)
-    (F : ∀ j, X.Lt j → X.Lt (j + 1) →
-      MvPowerSeries (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p]) :
-    Formalism.L2.KerInert.Rep.FrameHyp X E hfin D pos large₂ Lg' F (fun j La La' => subGen X E pos M j La La') lam 1 :=
-  frameHyp_of_local X E hfin D pos large₂ Lg' M lam ρ h1 hT hρ hF (fun v => (X.G.P.setting v).even) (conj_conj D) hM hI F
 
 end Formalism.L2.KerInert.RepFrame
 
@@ -1214,36 +1107,6 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E :
   (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
   (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
 
-theorem frameInt_of (ρ : ∀ v : X.Pl, D.host.E →+* X.G.P.Qq v) (hM : MInv X M) (hT : TwInt X E)
-    (hL : FrameLatMap X M hfin D large₂ Lg' ρ) : FrameInt X E M hfin D large₂ Lg' ρ := by
-  intro j L0 hL0 La' hLa' φ r b hb ho i v s b0 a0
-  obtain ⟨h1, h2⟩ := hL j L0 hL0 La' hLa' φ r b hb ho i v
-  constructor
-  · obtain ⟨w, hw⟩ := entry_int (W := X.G.P.W v) (Gm X M φ v) (Gmi X M φ v) (Gmi_mul_Gm X M φ (hM j L0) v)
-      ((b i).map (fun y => ρ v (D.host.conj y)))ᵀ (Gp X M φ v) h2 a0 b0
-    have e1 : ∑ B, ∑ A, ρ v (D.host.conj (b i B A)) * Gp X M φ v B b0 * Gmi X M φ v a0 A =
-        (Gmi X M φ v * ((b i).map (fun y => ρ v (D.host.conj y)))ᵀ * Gp X M φ v) a0 b0 := by
-      rw [Matrix.mul_apply]
-      refine Finset.sum_congr rfl fun B _ => ?_
-      rw [Matrix.mul_apply, Finset.sum_mul]
-      refine Finset.sum_congr rfl fun A _ => ?_
-      simp only [Matrix.transpose_apply, Matrix.map_apply]
-      ring
-    rw [e1, hw]
-    exact hT v s w
-  · obtain ⟨w, hw⟩ := entry_int (W := X.G.P.W v) (Gp X M φ v) (Gpi X M φ v) (Gpi_mul_Gp X M φ (hM (j + 1) La') v)
-      ((b i).map (ρ v)) (Gm X M φ v) h1 b0 a0
-    have e1 : ∑ B, ∑ A, ρ v (b i B A) * Gm X M φ v A a0 * Gpi X M φ v b0 B =
-        (Gpi X M φ v * (b i).map (ρ v) * Gm X M φ v) b0 a0 := by
-      rw [Matrix.mul_apply, Finset.sum_comm]
-      refine Finset.sum_congr rfl fun B _ => ?_
-      rw [Matrix.mul_apply, Finset.sum_mul]
-      refine Finset.sum_congr rfl fun A _ => ?_
-      simp only [Matrix.map_apply]
-      ring
-    rw [e1, hw]
-    exact hT v s w
-
 end Formalism.L2.KerInert.RepFrame
 
 namespace Formalism.L2.KerInert.RepFrame
@@ -1256,13 +1119,5 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E :
   (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
   (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
   (M : ∀ j, X.Lt j → ∀ v : X.Pl, Matrix (Fin ((X.Pj j).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v))
-
-theorem frameHyp_of_lat (lam : Qbar →+* ℂ_[p]) (ρ : ∀ v : X.Pl, D.host.E →+* X.G.P.Qq v)
-    (h1 : OnbEx X hfin D large₂ Lg') (hT : LamTrace X hfin D large₂ Lg' lam) (hρ : LamPosG X E D pos lam ρ)
-    (hF : FrobTw X E) (hM : MInv X M) (hTw : TwInt X E) (hL : FrameLatMap X M hfin D large₂ Lg' ρ)
-    (F : ∀ j, X.Lt j → X.Lt (j + 1) →
-      MvPowerSeries (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p]) :
-    Formalism.L2.KerInert.Rep.FrameHyp X E hfin D pos large₂ Lg' F (fun j La La' => subGen X E pos M j La La') lam 1 :=
-  frameHyp_of_local' X E hfin D pos large₂ Lg' M lam ρ h1 hT hρ hF hM (frameInt_of X E M hfin D large₂ Lg' ρ hM hTw hL) F
 
 end Formalism.L2.KerInert.RepFrame

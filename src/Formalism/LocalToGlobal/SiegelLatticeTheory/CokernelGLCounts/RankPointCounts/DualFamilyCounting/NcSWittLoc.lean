@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSLocSB
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSWSp
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSSplSPf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.HformSmulRight
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSLocSB
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSWSp
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSSplSPf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.HformSmulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem local_witt_theorem : Formalism.L2.SG.Pf.NcS.LocSBPf.WittLocT := by
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul r t => simp [sigR, hσ]
-      | add x y hx hy => rw [map_add, map_add, hx, hy]
+      | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     letI : StarRing (Fv F v ⊗[F] E) := PI.VolStabS.starOfInv (sigR (Fv F v) σ) hinv
     haveI : CharZero (Fv F v ⊗[F] E) :=
       charZero_of_injective_algebraMap (algebraMap F (Fv F v ⊗[F] E)).injective

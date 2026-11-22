@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DgMatOne
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DgMatOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.CtLevel
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -6,7 +11,7 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 namespace GlobalTheory.BCT.AbsHalfInv
 
 theorem v_det_KGL {E : Type} [Field E] [NumberField E] {w : Pl E} {n : ℕ} {k : GLw n w}
-    (hk : k ∈ GlobalTheory.LFun.KGL w n) : Valued.v (k.val.det) = 1 := by
+    (hk : k ∈ GlobalTheory.LFun.KGL w (n := n)) : Valued.v (k.val.det) = 1 := by
   obtain ⟨y, rfl⟩ := hk
   have hu : IsUnit y.val.det := (Matrix.isUnit_iff_isUnit_det _).1 y.isUnit
   obtain ⟨u, hu⟩ := hu
@@ -31,11 +36,11 @@ theorem v_det_KGL {E : Type} [Field E] [NumberField E] {w : Pl E} {n : ℕ} {k :
   exact lt_irrefl _ this
 
 theorem v_det_mul_left {E : Type} [Field E] [NumberField E] {w : Pl E} {n : ℕ} {k m : GLw n w}
-    (hk : k ∈ GlobalTheory.LFun.KGL w n) : Valued.v ((k * m).val.det) = Valued.v m.val.det := by
+    (hk : k ∈ GlobalTheory.LFun.KGL w (n := n)) : Valued.v ((k * m).val.det) = Valued.v m.val.det := by
   rw [Units.val_mul, Matrix.det_mul, map_mul, v_det_KGL hk, one_mul]
 
 theorem v_det_mul_right {E : Type} [Field E] [NumberField E] {w : Pl E} {n : ℕ} {k m : GLw n w}
-    (hk : k ∈ GlobalTheory.LFun.KGL w n) : Valued.v ((m * k).val.det) = Valued.v m.val.det := by
+    (hk : k ∈ GlobalTheory.LFun.KGL w (n := n)) : Valued.v ((m * k).val.det) = Valued.v m.val.det := by
   rw [Units.val_mul, Matrix.det_mul, map_mul, v_det_KGL hk, mul_one]
 
 theorem absHalf_congr {E : Type} [Field E] [NumberField E] {w : Pl E} {x y : w.adicCompletion E}
@@ -48,7 +53,7 @@ end GlobalTheory.BCT.AbsHalfInv
 
 open GlobalTheory.BCT.AbsHalfInv in
 theorem GlobalTheory.BCT.absHalf_blockDet_KGL_invariant : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a b : ℕ) (w : Pl E) (m k : GLw a w × GLw b w),
-    k.1 ∈ GlobalTheory.LFun.KGL w a → k.2 ∈ GlobalTheory.LFun.KGL w b →
+    k.1 ∈ GlobalTheory.LFun.KGL w (n := a) → k.2 ∈ GlobalTheory.LFun.KGL w (n := b) →
     absHalf w ((k * m).1.val.det ^ b / (k * m).2.val.det ^ a) = absHalf w (m.1.val.det ^ b / m.2.val.det ^ a) ∧
       absHalf w ((m * k).1.val.det ^ b / (m * k).2.val.det ^ a) = absHalf w (m.1.val.det ^ b / m.2.val.det ^ a) := by
   intro E _ _ _ a b w m k h1 h2

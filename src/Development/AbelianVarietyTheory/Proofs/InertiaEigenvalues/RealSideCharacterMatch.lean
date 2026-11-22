@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksW
-import Formalism.LocalToGlobal.IndefiniteReal.BridgeLemmas
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksW
+public import Formalism.LocalToGlobal.IndefiniteReal.BridgeLemmas
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -60,54 +65,6 @@ theorem stabK_mul' {y : G} (a b : stab ι J y) : stabK ι (a * b) = stabK ι b *
 variable (P : ClassPres ι S σ ρ J χ) (χ' : J →* ℂˣ) (hχ' : ∀ k, ∃ b : K, σ b = (χ' k : ℂ))
   (hρ : ∀ γ x, ∃ x', P.coef x' = ρ γ (P.coef x))
 
-def rhoF (c : S.Cl) (g : S.Gam c) (x : S.V) : W :=
-  (χ' (stabK ι (P.stabI c g)) : ℂ) • ρ (P.stabI c g : Γ) (P.coef x)
-
-include hχ' hρ in
-theorem rhoF_rg (c : S.Cl) (g : S.Gam c) (x : S.V) : InRg P (rhoF P χ' c g x) := by
-  obtain ⟨x', hx'⟩ := hρ (P.stabI c g : Γ) x
-  exact InRg.smul (hχ' _) ⟨x', hx'⟩
-
-def rhoE (c : S.Cl) (g : S.Gam c) : Module.End K S.V where
-  toFun x := cinv P (rhoF P χ' c g x)
-  map_add' x x' := by
-    apply coef_injective P
-    rw [map_add, coef_cinv P (rhoF_rg P χ' hχ' hρ _ _ _), coef_cinv P (rhoF_rg P χ' hχ' hρ _ _ _),
-      coef_cinv P (rhoF_rg P χ' hχ' hρ _ _ _)]
-    simp only [rhoF, map_add, smul_add]
-  map_smul' b x := by
-    apply coef_injective P
-    rw [map_smulₛₗ, coef_cinv P (rhoF_rg P χ' hχ' hρ _ _ _), coef_cinv P (rhoF_rg P χ' hχ' hρ _ _ _)]
-    simp only [rhoF, map_smulₛₗ, RingHom.id_apply, map_smul]
-    rw [smul_comm]
-
-theorem coef_rhoE (c : S.Cl) (g : S.Gam c) (x : S.V) :
-    P.coef (rhoE P χ' hχ' hρ c g x) = rhoF P χ' c g x :=
-  coef_cinv P (rhoF_rg P χ' hχ' hρ _ _ _)
-
-def rhoNew (c : S.Cl) : S.Gam c →* Module.End K S.V where
-  toFun := rhoE P χ' hχ' hρ c
-  map_one' := by
-    apply LinearMap.ext; intro x
-    apply coef_injective P
-    rw [coef_rhoE]
-    simp [rhoF, stabK_one']
-  map_mul' g g' := by
-    apply LinearMap.ext; intro x
-    apply coef_injective P
-    rw [Module.End.mul_apply, coef_rhoE, coef_rhoE]
-    simp only [rhoF, coef_rhoE, map_mul, stabK_mul', Subgroup.coe_mul, Units.val_mul, Module.End.mul_apply, map_smul,
-      smul_smul, mul_comm]
-
-def presNew : ClassPres ι ({ S with ρ := rhoNew P χ' hχ' hρ } : CSD K) σ ρ J χ' where
-  y := P.y
-  reps := P.reps
-  stabI := P.stabI
-  coef := P.coef
-  coef_li := P.coef_li
-  coef_span := P.coef_span
-  coef_pair := P.coef_pair
-  coef_act c g x := coef_rhoE P χ' hχ' hρ c g x
 
 end Gen
 
@@ -162,7 +119,7 @@ theorem ext_trForm (f : S.Forms) :
 
 def trE : Module.End K S.Forms where
   toFun := trForm P hχ hρ hT
-  map_add' f f' := ext_inj P (by rw [ext_add, ext_trForm, ext_trForm, ext_trForm, ext_add, map_add])
+  map_add' f f' := ext_inj P (by rw [ext_add, ext_trForm, ext_trForm, ext_trForm, ext_add, map_add (f := _)])
   map_smul' b f := ext_inj P (by
     rw [ext_smul, ext_trForm, ext_trForm, ext_smul, RingHom.id_apply, map_smul])
 
@@ -239,14 +196,14 @@ theorem mul_mem_dc (hDC : IsDC J x A) {u : G} (hu : u ∈ J) {a : G} (ha : a ∈
   obtain ⟨j₁, j₂, e⟩ := hDC.1 a ha
   exact ⟨⟨u, hu⟩ * j₁, j₂, by rw [e]; simp [mul_assoc]⟩
 
-open Classical in
 
+open Classical in
 def pick (hDC : IsDC J x A) {u : G} (hu : u ∈ J) (a : G) : G :=
   if ha : a ∈ A then (hDC.2 (u * a) (mul_mem_dc hDC hu ha)).exists.choose else a
 
 theorem pick_spec (hDC : IsDC J x A) {u : G} (hu : u ∈ J) {a : G} (ha : a ∈ A) :
     pick hDC hu a ∈ A ∧ (pick hDC hu a)⁻¹ * (u * a) ∈ J := by
-  unfold pick; rw [dif_pos ha]
+  unfold pick; rw [dite_eq_left ha]
   exact (hDC.2 (u * a) (mul_mem_dc hDC hu ha)).exists.choose_spec
 
 theorem pick_unique (hDC : IsDC J x A) {u : G} (hu : u ∈ J) {a b : G} (ha : a ∈ A) (hb : b ∈ A)
@@ -288,7 +245,8 @@ theorem dcOp_mem (hDC : IsDC J x A) (Lc : Subgroup G) (hAL : ∀ a ∈ A, a ∈ 
         _ = _ := by group
     rw [e, hF', map_mul, hχL j hjL, one_mul, hχk]
   show ∑ a ∈ A, F (ι γ * h * k * a) = (χ k : ℂ) • ρ γ (∑ a ∈ A, F (h * a))
-  rw [Finset.sum_congr rfl term, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_congr rfl term, map_sum, Finset.smul_sum]
   exact Finset.sum_nbij' (pick hDC hk₁) (pick hDC (J.inv_mem hk₁))
     (fun a ha => (pick_spec hDC hk₁ ha).1) (fun a ha => (pick_spec hDC _ ha).1)
     (fun a ha => pick_inv hDC hk₁ ha)
@@ -367,31 +325,7 @@ variable (P : ClassPres ι S σ ρ J χ) (hχ : ∀ k, ∃ b : K, σ b = (χ k :
     (∀ k ∈ J, ∃ k₁ ∈ J, ∃ k₂ ∈ J, k₁ ∈ Lc ∧ k = k₁ * k₂ ∧ ∀ x ∈ Lc, Commute k₂ x) ∧
     ∀ k : J, (k : G) ∈ Lc → χ k = 1)
 
-include hloc in
-theorem keeps_dc (i : I) (hi : inR i) : Keeps P (dcL (W := W) (H.hA i)) := by
-  obtain ⟨Lc, hL1, hL2, hL3⟩ := hloc i hi
-  intro F hF hv
-  refine ⟨dcOp_mem (H.hDC i hi) Lc (fun a ha => hL1 _ (H.hA_loc i hi a ha)) hL2 hL3 hF, fun h => ?_⟩
-  exact InRg.sum _ _ fun a _ => hv _
 
-open Classical in
-
-def opNew (one : I → Prop) (i : I) : Module.End K S.Forms :=
-  if hi : inR i then trE P hχ hρ (keeps_dc P H hloc i hi) else if one i then 1 else 0
-
-def heckeNew (one : I → Prop) : HeckeTie ι P (opNew P hχ hρ H hloc one) inR isT isLoc where
-  hx := H.hx
-  hA := H.hA
-  hx_ok := H.hx_ok
-  hA_loc := H.hA_loc
-  chi_loc i hi k hk := by
-    obtain ⟨Lc, hL1, _, hL3⟩ := hloc i hi
-    exact hL3 k (hL1 _ hk)
-  hDC := H.hDC
-  op_eq i hi f := by
-    unfold opNew
-    rw [dif_pos hi, ext_trE]
-    rfl
 
 end Hecke
 

@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveVertIndexSteps
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CurveCountObjects
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalAmple
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionLatticeFinite
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCurveCharts
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveVertIndexSteps
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CurveCountObjects
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalAmple
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionLatticeFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCurveCharts
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -20,8 +25,8 @@ namespace CurveSectionQuotientFinite
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem charZero (y : (Σ k, ι k) → Ω) (hP : IsHorizontal (mCoordIdeal y)) : CharZero Ω := by
   refine charZero_of_inj_zero fun n hn => ?_
   have h : ((n : ℤ) : ℤ) ∈ (mCoordIdeal y).comap (C : ℤ →+* MRing ι) := by
@@ -40,8 +45,8 @@ theorem aeval_ne_zero (y : (Σ k, ι k) → Ω) {s : MRing ι} {d : K → ℕ} (
   erw [HilbertSamuel.SectionBounded.mConeMap_homog y hs]
   rw [h0, map_zero, zero_mul]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem mem_ratioField [CharZero Ω] (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) {b : Ω}
     (hb : b ∈ chartRingZ y c) : b ∈ ratioField y c := by
   induction hb using Algebra.adjoin_induction with
@@ -68,8 +73,8 @@ theorem exists_nat_mul_mem_chartRingZ [CharZero Ω] (y : (Σ k, ι k) → Ω) (h
     exact hq
   exact CurveAffineCharts.exists_nat_mul_mem_adjoin hq'
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem div_mem_ratioField [CharZero Ω] (y : (Σ k, ι k) → Ω) (a : K → ℤ) (c : ∀ k, ι k)
     (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {m x : Ω} (hm : m ∈ chartLat y a 1) (hx : x ∈ chartLat y a 1) :
     m / x ∈ ratioField y c := by
@@ -122,8 +127,8 @@ theorem finite_curveSectionMod (y : (Σ k, ι k) → Ω) (hP : IsArithVar (mCoor
 
 end CurveSectionQuotientFinite
 
-open CurveSectionQuotientFinite in
 
+open CurveSectionQuotientFinite in
 theorem CurveSectionQuotFinite.proof : CurveSectionQuotFinite.Statement := by
   intro K _ ι _ Ω _ y s d hP hs hsP
   have hxM : aeval y s ∈ chartLat y (fun k => (d k : ℤ)) 1 := HilbertSamuel.LiftBirationalAmple.chartLat_form hs

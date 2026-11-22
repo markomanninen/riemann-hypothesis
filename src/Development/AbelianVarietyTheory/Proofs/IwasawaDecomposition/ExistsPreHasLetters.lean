@@ -1,13 +1,31 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsColsRowsRestPos
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeEmbeddingMemUnitGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InhabitedStage
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTupleConditionOfIdempotentZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocStageInhabited
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInnerProductSpace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjugateEmbApply
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNatBoundPre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsColsRowsRestPos
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeEmbeddingMemUnitGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InhabitedStage
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTupleConditionOfIdempotentZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocStageInhabited
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInnerProductSpace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjugateEmbApply
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DuStarPos
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SpreadLe
+public import Formalism.SharpRestriction.InertJacobiLevels.HostFam
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NcardPrimesOverOfStabilizer
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyRayDataOfNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InfinitelyManyPrimesInRayClass
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.NonemptyFieldAxiomsCyclicPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpacesNormHasFrame
+public import Development.AutomorphicArithmetic.WeightCongruences.IsRootOfIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +44,8 @@ def HasLetters (P : Pre) : Prop :=
 theorem ipC_conj (B : Base) (u : B.Word)
     (φ ψ : ((ColsModel.cols B).mem u).C.cls 0 → ((ColsModel.cols B).mem u).C.Y 0 → ℂ) :
     ((ColsModel.cols B).fm u).ipC 0 ψ φ = starRingEnd ℂ (((ColsModel.cols B).fm u).ipC 0 φ ψ) := by
-  rw [RowsModel.ipC_cols, RowsModel.ipC_cols, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [RowsModel.ipC_cols, RowsModel.ipC_cols, map_sum]
   exact Finset.sum_congr rfl fun c _ => by simp [mul_comm]
 
 theorem ipC_pos (B : Base) (u : B.Word)
@@ -77,32 +96,7 @@ theorem exists_stages_over (B : Base) (hB : HasLetters B.toPre) (D : ℕ) :
   obtain ⟨G, -, hG⟩ := (GJInhab.inhabited_stage B (ColsModel.cols B)).2.2 (hc _ _) (hc _ _)
   exact ⟨⟨B, _, GaloisStage.adapt W, V, S, N, G⟩, rfl, h1, h2, h3, hc, hG⟩
 
-theorem exists_pre_hasLetters : ∃ P : Pre, HasLetters P ∧ Nonempty (PreX P) ∧ 2 ≤ Fintype.card P.Word := by
-  obtain ⟨P, h1, h2, -, -, h3⟩ := exists_pre_two_words
-  exact ⟨P, h3, h1, h2⟩
-
-theorem exists_stages_large (P : Pre) (hP : HasLetters P) (D : ℕ) (S₀ S₁ S₂ : Finset ℂ)
-    (h₀ : ∀ z ∈ S₀, IsAlgebraic ℚ z) (h₁ : ∀ z ∈ S₁, IsAlgebraic ℚ z) (h₂ : ∀ z ∈ S₂, IsAlgebraic ℚ z) :
-    ∃ X : Stages, X.B.toPre = P ∧ (∀ z ∈ S₀, ∃ x ∈ X.B.Ks, X.B.embLL x = z) ∧
-      (∀ z ∈ S₁, ∃ x ∈ X.B.LL0, X.B.embLL x = z) ∧ (∀ z ∈ S₂, ∃ x : X.B.LL, X.B.embLL x = z) ∧
-      X.W.Drows = D ∧ X.W.Dall = D ∧ (∀ u, Nontrivial (X.W.Mu u)) ∧
-      (∀ u i, Nonempty ((X.C.mem u).C.cls i)) ∧ Nonempty X.G.jet.Sit := by
-  obtain ⟨B, rfl, a, b, c⟩ := BaseExt.exists_base P S₀ S₁ S₂ h₀ h₁ h₂
-  obtain ⟨X, rfl, h⟩ := exists_stages_over B hP D
-  exact ⟨X, rfl, a, b, c, h⟩
-
 end StagesInhab
-
-theorem exists_stages : ∃ X : GlobalTheory.Mem.Stages, 0 < X.W.Drows ∧ (∀ u, Nontrivial (X.W.Mu u)) ∧
-    ∀ u i, Nonempty ((X.C.mem u).C.cls i) := by
-  obtain ⟨P, hP, -⟩ := StagesInhab.exists_pre_hasLetters
-  obtain ⟨X, -, -, -, -, h1, -, h2, h3, -⟩ :=
-    StagesInhab.exists_stages_large P hP 1 ∅ ∅ ∅ (by simp) (by simp) (by simp)
-  exact ⟨X, by omega, h2, h3⟩
-
-theorem nonempty_stages : Nonempty Stages := exists_stages.elim fun X _ => ⟨X⟩
-
-theorem nonempty_record : Nonempty Formalism.BasicNotions.D7 := nonempty_stages.map Stages.toD7
 
 end GlobalTheory.Mem
 

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Geo
 
@@ -28,7 +32,7 @@ theorem exists_int_mul_eq_qmap (q : MvPolynomial σ ℚ) :
     obtain ⟨D₁, hD₁, p', hp'⟩ := hp
     obtain ⟨D₂, hD₂, q', hq'⟩ := hq
     refine ⟨D₁ * D₂, mul_ne_zero hD₁ hD₂, (D₂ : MvPolynomial σ ℤ) * p' + (D₁ : MvPolynomial σ ℤ) * q', ?_⟩
-    rw [map_add, map_mul, map_mul, map_intCast, map_intCast, ← hp', ← hq']
+    rw [map_add (f := _), map_mul, map_mul, map_intCast, map_intCast, ← hp', ← hq']
     push_cast
     ring
 
@@ -47,7 +51,7 @@ theorem exists_int_mul_mem_of_mem_qIdeal (P : Ideal (MvPolynomial σ ℤ)) {g : 
     obtain ⟨N₂, hN₂, h₂, hh₂, e₂⟩ := hy
     refine ⟨N₁ * N₂, mul_ne_zero hN₁ hN₂, (N₂ : MvPolynomial σ ℤ) * h₁ + (N₁ : MvPolynomial σ ℤ) * h₂,
       P.add_mem (P.mul_mem_left _ hh₁) (P.mul_mem_left _ hh₂), ?_⟩
-    rw [map_add, map_mul, map_mul, map_intCast, map_intCast, ← e₁, ← e₂]
+    rw [map_add (f := _), map_mul, map_mul, map_intCast, map_intCast, ← e₁, ← e₂]
     push_cast
     ring
   | smul a x _ hx =>
@@ -80,9 +84,9 @@ theorem ratHom_mk (P : Ideal (MvPolynomial σ ℤ)) (f : MvPolynomial σ ℤ) :
     ratHom P (Ideal.Quotient.mk P f) = Ideal.Quotient.mk (qIdeal P) (qmap f) := rfl
 
 theorem ratHom_isLocalization (P : Ideal (MvPolynomial σ ℤ)) :
-    letI := (ratHom P).toAlgebra
-    IsLocalization (Algebra.algebraMapSubmonoid (MvPolynomial σ ℤ ⧸ P) (nonZeroDivisors ℤ))
-      (MvPolynomial σ ℚ ⧸ qIdeal P) := by
+    (letI := (ratHom P).toAlgebra
+     IsLocalization (Algebra.algebraMapSubmonoid (MvPolynomial σ ℤ ⧸ P) (nonZeroDivisors ℤ))
+       (MvPolynomial σ ℚ ⧸ qIdeal P)) := by
   let _ := (ratHom P).toAlgebra
   have hcast : ∀ n : ℤ, algebraMap (MvPolynomial σ ℤ ⧸ P) (MvPolynomial σ ℚ ⧸ qIdeal P)
       (algebraMap ℤ (MvPolynomial σ ℤ ⧸ P) n) = algebraMap ℚ (MvPolynomial σ ℚ ⧸ qIdeal P) n := by

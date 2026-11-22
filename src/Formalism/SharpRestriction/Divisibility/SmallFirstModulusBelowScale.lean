@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.AbsolutelyIrreducibleSpan
+module
+
+public import Formalism.SharpRestriction.Divisibility.AbsolutelyIrreducibleSpan
+
+@[expose] public section
 
 noncomputable section
 

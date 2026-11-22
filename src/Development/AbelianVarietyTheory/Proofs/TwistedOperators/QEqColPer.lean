@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopOrthEmb
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DblHandEqBiLift
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopOrthAtEmb
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnfoldingsOfChain
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OverAllExists
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsPreserveThetaFunctions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopOrthEmb
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DblHandEqBiLift
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopOrthAtEmb
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnfoldingsOfChain
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OverAllExists
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsPreserveThetaFunctions
+
+@[expose] public section
 
 noncomputable section
 

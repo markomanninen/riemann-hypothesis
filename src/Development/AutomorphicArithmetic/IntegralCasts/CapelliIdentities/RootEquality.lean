@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CoboundaryCriterion
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CoboundaryCriterion
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.RootEquality.G.{u_1, u_2} :
     (F : Type u_1) →
@@ -482,7 +486,7 @@ theorem UpperTheory.Reformulated.B.RootEquality.aux5 :
                         (@Pi.addCommMonoid Γ (fun (a : Γ) ↦ M) fun (i : Γ) ↦ @AddCommGroup.toAddCommMonoid M inst_2))))))
               x y) := by
   exact fun ρ _ _ _ hx hy ↦ ⟨hx.1.add hy.1, fun g h ↦ by
-    simp only [Pi.add_apply, hx.2 g h, hy.2 g h, map_add]; abel⟩
+    simp only [Pi.add_apply, hx.2 g h, hy.2 g h, map_add (f := _)]; abel⟩
 
 theorem UpperTheory.Reformulated.B.RootEquality.aux6 :
     ∀ {R Γ M : Type} [inst : CommRing R] [inst_1 : Group Γ] [inst_2 : AddCommGroup M]
@@ -1500,7 +1504,7 @@ private def Fix (K : Subgroup D) : Submodule R M where
 
 private def cob : M →ₗ[R] (D → M) where
   toFun b := fun g ↦ ρ g b - b
-  map_add' a b := by ext g; simp only [map_add, Pi.add_apply]; abel
+  map_add' a b := by ext g; simp only [map_add (f := _), Pi.add_apply]; abel
   map_smul' c b := by ext g; simp [smul_sub]
 
 omit [TopologicalSpace D] [IsTopologicalGroup D] in
@@ -1846,7 +1850,9 @@ private theorem dec_closed [Algebra.IsAlgebraic F Ω] :
     ext σ
     simp [mem_dec]
   rw [this]
-  exact isClosed_iInter fun x ↦ ⟨lc_apply x _ᶜ⟩
+  exact isClosed_iInter fun x ↦ ⟨by
+    simpa only [Set.preimage_compl] using
+      (lc_apply x {y | y ∈ A ↔ x ∈ A}ᶜ)⟩
 
 private theorem root_eq {N : ℕ} (hN : A.valuation (N : Ω) = 1) {x y : Ω} (hx : x ^ N = 1)
     (hy : y ^ N = 1) (h : A.valuation (x - y) < 1) : x = y := by
@@ -1925,7 +1931,7 @@ private theorem invariant : Algebra.IsInvariant (𝓞 F) (𝓞 Ω) (G F Ω) := b
   have h1 : IsIntegral ℤ x := by
     have : IsIntegral ℤ (b : Ω) := b.isIntegral_coe
     rw [← hx] at this
-    exact (isIntegral_algebraMap_iff (algebraMap F Ω).injective).1 this
+    exact (isIntegral_algebraMap_iff ).1 this
   exact ⟨⟨x, h1⟩, Subtype.ext hx⟩
 
 attribute [local instance] Ideal.Quotient.field in

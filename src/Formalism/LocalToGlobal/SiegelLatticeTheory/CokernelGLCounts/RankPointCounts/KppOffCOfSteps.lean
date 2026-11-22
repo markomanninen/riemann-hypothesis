@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.KappaOffDiagonal
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TermAttrConst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.KappaOffDiagonal
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TermAttrConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,9 +62,5 @@ theorem relRepC : RelRepC := by
     have := eqvGen_eq_of (fun y : TermDef.Carrier (TermDef.PD D t.lam (lf D (X.Fu u)) u') =>
       Gval (lf D (X.Fu u)) y.1) (fun a b hab => hGF a b hab) he
     rw [← this]; exact hG'
-
-theorem kppOffC_of_steps (hFold : FoldOKC) (hFE : FundExistsC) (hOI : OOIntAllC) (hV : LemmaVC)
-    (hCov : CovRepC) (hSch : SchurNFC) : Formalism.L2.SG.RowsConc.KppOffC :=
-  kppOffC_of_cut hFold hFE hOI hV relRepC hCov hSch
 
 end Formalism.L2.SG.KappaOffDiagonal

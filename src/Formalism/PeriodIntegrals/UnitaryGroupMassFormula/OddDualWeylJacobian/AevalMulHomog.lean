@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -65,7 +69,8 @@ lemma cM_one : cM (1 : Matrix (Fin k) (Fin k) R) = 1 := by
 lemma map_mul_sbs (A M N : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R)) :
     (M * N).map (sbs A) = M.map (sbs A) * N.map (sbs A) := by
   ext i j
-  simp [Matrix.mul_apply, _root_.map_sum, _root_.map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mul_apply, _root_.map_sum, _root_.map_mul]
 
 lemma sbs_det (A : Matrix (Fin k) (Fin k) (MvPolynomial (Fin k × Fin k) R)) :
     sbs A (genM R k).det = A.det := by
@@ -110,7 +115,8 @@ lemma aeval_mul_homog {σ S : Type*} [CommRing S] [Algebra R S] (b : σ → S) (
   classical
   conv_lhs => rw [p.as_sum]
   conv_rhs => rw [p.as_sum]
-  rw [_root_.map_sum, _root_.map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [_root_.map_sum, _root_.map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hsum := sum_support_eq_degree_of_isHomogeneous' hp hm
   have hc : ∏ i ∈ m.support, c ^ m i = c ^ D := by
@@ -133,15 +139,16 @@ lemma rowAct_homog (g : Matrix (Fin k) (Fin k) R) {p : MvPolynomial (Fin k × Fi
       first | exact isHomogeneous_X _ _ | exact isHomogeneous_X _
     have h1 := hC.mul hX
     rwa [zero_add] at h1
-  rw [p.as_sum, _root_.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, _root_.map_sum]
   apply IsHomogeneous.sum
   intro m hm
   have hsum := sum_support_eq_degree_of_isHomogeneous' hp hm
-  have hmon : PI.OddDualWeyl.rowAct R g (monomial m (coeff m p)) =
-      C (coeff m p) * ∏ i ∈ m.support, (∑ b : Fin k, C (g i.1 b) * X (b, i.2)) ^ m i := by
+  have hmon : PI.OddDualWeyl.rowAct R g (monomial m (AddMonoidAlgebra.coeff p m)) =
+      C (AddMonoidAlgebra.coeff p m) * ∏ i ∈ m.support, (∑ b : Fin k, C (g i.1 b) * X (b, i.2)) ^ m i := by
     rw [PI.OddDualWeyl.rowAct, aeval_monomial, algebraMap_eq, Finsupp.prod]
   rw [hmon]
-  have hC : IsHomogeneous (C (coeff m p) : MvPolynomial (Fin k × Fin k) R) 0 := by
+  have hC : IsHomogeneous (C (AddMonoidAlgebra.coeff p m) : MvPolynomial (Fin k × Fin k) R) 0 := by
     first | exact isHomogeneous_C _ _ | exact isHomogeneous_C _
   have hprod := IsHomogeneous.prod m.support (fun i => (∑ b : Fin k, C (g i.1 b) * X (b, i.2)) ^ m i)
     (fun i => 1 * m i) (fun i _ => (hL i).pow (m i))

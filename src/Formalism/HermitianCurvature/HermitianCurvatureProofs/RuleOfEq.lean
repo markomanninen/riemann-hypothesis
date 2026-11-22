@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroKernel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroKernel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
+
+@[expose] public section
 
 open Matrix
 

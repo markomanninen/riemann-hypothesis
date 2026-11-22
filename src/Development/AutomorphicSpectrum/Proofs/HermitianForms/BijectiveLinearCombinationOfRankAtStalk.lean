@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+
+@[expose] public section
 
 open MeasureTheory HeckeCharacterZeroLocus.SiegelWeilU
 open scoped FourierTransform RealInnerProductSpace

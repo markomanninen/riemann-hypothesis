@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacAll
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacAll
+
+@[expose] public section
 
 noncomputable section
 

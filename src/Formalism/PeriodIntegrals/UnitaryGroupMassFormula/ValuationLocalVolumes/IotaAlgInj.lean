@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.BaseLatticeLeSecondIsotropic
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.DVIsDiffVal
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.BaseLatticeLeSecondIsotropic
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.DVIsDiffVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem pow_tr (hT : OmVDdTr X) (k : ℕ) (d : 𝓞 D.host.F) (hd : d ∈ differ
     · rintro a b ⟨x1, hx1, e1⟩ ⟨x2, hx2, e2⟩
       refine ⟨x1 + x2, Submodule.add_mem _ hx1 hx2, ?_⟩
       have : ((x1 + x2 : 𝓞 X.B.I.F) : X.B.I.F) = (x1 : X.B.I.F) + (x2 : X.B.I.F) := rfl
-      rw [this, map_add, map_add, e1, e2]; rfl
+      rw [this, map_add (f := _), map_add (f := _), e1, e2]; rfl
 
 def Qi (v : PlX X) (c : Fv X.B.I.F v) : Ideal (𝓞 D.host.E) where
   carrier := {i | sc (E := X.B.I.E) v c * inclR (F := X.B.I.F) (Fv X.B.I.F v) (X.ιE.symm (i : D.host.E)) ∈
@@ -64,7 +68,7 @@ def Qi (v : PlX X) (c : Fv X.B.I.F v) : Ideal (𝓞 D.host.E) where
     intro i j hi hj
     show sc (E := X.B.I.E) v c * inclR (F := X.B.I.F) (Fv X.B.I.F v) (X.ιE.symm ((i : D.host.E) + (j : D.host.E))) ∈
       OEv (E := X.B.I.E) v
-    rw [map_add, map_add, mul_add]; exact Submodule.add_mem _ hi hj
+    rw [map_add (f := _), map_add (f := _), mul_add]; exact Submodule.add_mem _ hi hj
   smul_mem' := by
     intro o i hi
     show sc (E := X.B.I.E) v c * inclR (F := X.B.I.F) (Fv X.B.I.F v) (X.ιE.symm ((o : D.host.E) * (i : D.host.E))) ∈

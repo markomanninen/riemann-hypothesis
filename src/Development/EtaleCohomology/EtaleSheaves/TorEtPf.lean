@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LCSplitPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LCSplitPf
+
+@[expose] public section
 
 noncomputable section
 open LateralTheory.E.t_E1Cut LateralTheory.E.LCSplitPf

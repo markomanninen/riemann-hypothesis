@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.HermitianColumns.StarConj
-import Formalism.LocalToGlobal.HermitianForms.FormsTied
-import Formalism.LocalToGlobal.HermitianForms.DefsChi
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.StarConj
+public import Formalism.LocalToGlobal.HermitianForms.FormsTied
+public import Formalism.LocalToGlobal.HermitianForms.DefsChi
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,8 +54,8 @@ def crdN (D : D7) (i : ℕ) (hi : i ≤ D.R.m) : (D.sp.X i).V ≃ₗ[D.host.E] (
 def crdP (D : D7) : D.sp.X'.V ≃ₗ[D.host.E] (Fin (D.R.N D.R.m - 1) → D.host.E) :=
   D.sp.X'.frame.equivFun.trans (LinearEquiv.funCongrLeft D.host.E D.host.E (finCongr (rankP D)).symm)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 structure Joint {D : D7} (X : Formalism.L2.Herm.ColsHerm D) (u : D.what₂.Word) (T : FormsTied D u) : Prop where
 
   eV : T.atT.eV = X.base.vT u
@@ -107,14 +111,6 @@ def ColumnsExtraCompatible {D : D7} {C : ColsTied D} (Fu : ColsFull C) {L : Size
     {Gl : Formalism.MainNotions.G.LatInst D} {K : Formalism.MainNotions.G.Consts} {Y : DivX D} {cX : ExtraC}
     (ex : Extra D L hT Gi Gl K Y cX) : Prop :=
   Formalism.L2.Herm.ExtraTied Fu.full ex
-
-theorem ColsTied.chi_all {D : D7} (C : ColsTied D) (u : D.what₂.Word) : CharacterCompatible (C.forms u).gl D.R.m := by
-  rw [C.gl_const u D.u₀]
-  exact C.chi
-
-theorem FormsTied.chi_unit {D : D7} {u : D.what₂.Word} (T : FormsTied D u) (i : ℕ) (hi : i ≤ D.R.m)
-    (x : (T.cls i hi).lev.U) : ‖(((T.cls i hi).lev.chi x : ℂˣ) : ℂ)‖ = 1 :=
-  (T.glev i hi).chi_unit x
 
 end Formalism.L2.Forms
 

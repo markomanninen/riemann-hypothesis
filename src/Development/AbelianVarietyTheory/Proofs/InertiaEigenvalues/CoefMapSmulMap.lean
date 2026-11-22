@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsInertTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsInertTop
+
+@[expose] public section
+
 open NumberField Matrix Complex IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
@@ -32,8 +37,12 @@ theorem coeff_coefFun (p : MvPolynomial σ ℂ) (m : σ →₀ ℕ) : (coefFun F
 
 def coefMap : MvPolynomial σ ℂ →+ MvPolynomial σ F where
   toFun := coefFun F lam
-  map_zero' := by ext m; rw [coeff_coefFun, coeff_zero, coeff_zero, map_zero]
-  map_add' p q := by ext m; rw [coeff_coefFun, coeff_add, coeff_add, coeff_coefFun, coeff_coefFun, map_add]
+  map_zero' := by
+    ext m
+    simp only [coeff_coefFun, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, map_zero]
+  map_add' p q := by
+    ext m
+    simp only [coeff_coefFun, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, map_add]
 
 variable {F lam}
 
@@ -63,13 +72,14 @@ theorem coefMap_comm (Φ : MvPolynomial σ ℂ →ₗ[ℂ] MvPolynomial σ ℂ) 
     have hm : (monomial m c : MvPolynomial σ ℂ) = c • map (algebraMap F ℂ) (monomial m (1 : F)) := by
       rw [map_monomial, map_one, smul_monomial, smul_eq_mul, mul_one]
     rw [hm, map_smul, h, coefMap_smul_map, ← hm, coefMap_monomial, map_smul]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
 
 variable {T : Type} (r : T → ℕ) (n : ℕ)
 
 theorem lap_map (τ τ' : T) (a : Fin (r τ)) (a' : Fin (r τ')) (Q : MvPolynomial (Letter T r n) F) :
     lap r n ℂ 1 τ τ' a a' (map (algebraMap F ℂ) Q) = map (algebraMap F ℂ) (lap r n F 1 τ τ' a a' Q) := by
-  simp only [lap, LinearMap.sum_apply, map_sum, LinearMap.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lap, LinearMap.sum_apply, map_sum, LinearMap.smul_apply]
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun b' _ => ?_
   rw [Matrix.one_apply, Matrix.one_apply]
   split_ifs <;> simp [pderiv_map]

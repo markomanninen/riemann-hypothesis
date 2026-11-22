@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.CrystallineExtensions
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.JumpMultiplicityDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PeriodDataDeRhamAdmissible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntegralOfNormLeOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodCoefficientRingPadicIntegersFinExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenOfFgOfSpanEqTop
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.CrystallineExtensions
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.JumpMultiplicityDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PeriodDataDeRhamAdmissible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntegralOfNormLeOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodCoefficientRingPadicIntegersFinExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenOfFgOfSpanEqTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,12 +25,10 @@ section Triv
 variable {G Qp F R LL : Type} [Field Qp] [Field F] [Algebra Qp F] [CommRing R] [Algebra Qp R] [Algebra F R]
   [IsScalarTower Qp F R] [Field LL] [Algebra Qp LL]
 
-variable (Qp F R LL) in
 
+variable (Qp F R LL) in
 def incl : LL ⊗[Qp] F →ₗ[LL] LL ⊗[Qp] R :=
   AlgebraTensorModule.map (LinearMap.id : LL →ₗ[LL] LL) (IsScalarTower.toAlgHom Qp F R).toLinearMap
-
-@[simp] theorem incl_tmul (a : LL) (k : F) : incl Qp F R LL (a ⊗ₜ k) = a ⊗ₜ algebraMap F R k := rfl
 
 theorem incl_injective [Nontrivial R] : Function.Injective (incl Qp F R LL) :=
   Module.Flat.lTensor_preserves_injective_linearMap (M := LL)
@@ -50,7 +52,7 @@ theorem invariant_iff [FiniteDimensional Qp LL] (act : G → (R ≃ₐ[F] R))
         refine Finset.sum_congr rfl fun i _ => ?_
         simp [c, TensorProduct.smul_tmul]
       | add a b ha hb =>
-        simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, ← ha, ← hb]
+        simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, ← ha, ← hb]
     have hc : ∀ i g y, c i (AlgebraTensorModule.map (LinearMap.id : LL →ₗ[LL] LL)
         (((act g).toAlgHom.toLinearMap).restrictScalars Qp) y) = act g (c i y) := by
       intro i g y
@@ -61,17 +63,17 @@ theorem invariant_iff [FiniteDimensional Qp LL] (act : G → (R ≃ₐ[F] R))
         have h2 : act g (e.coord i v • b) = e.coord i v • act g b := this
         simp only [c, LinearMap.comp_apply, AlgebraTensorModule.map_tmul,
           LinearMap.rTensor_tmul, LinearEquiv.coe_coe, TensorProduct.lid_tmul, h2]
-        simp
-      | add a b ha hb => simp only [map_add, ha, hb]
+        rfl
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
     rw [hsum x]
     refine Submodule.sum_mem _ fun i _ => ?_
     obtain ⟨k, hk⟩ := hinv (c i x) fun g => by rw [← hc, hx]
-    exact ⟨e i ⊗ₜ k, by simp [hk]⟩
+    exact ⟨e i ⊗ₜ k, by simp [incl, AlgebraTensorModule.map_tmul, hk]⟩
   · rintro ⟨y, rfl⟩ g
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | tmul v b => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | tmul v b => simp [incl, AlgebraTensorModule.map_tmul]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem exists_eigenline [CharZero Qp] [FiniteDimensional Qp F] (τ : F →ₐ[Qp] LL) :
     ∃ z₀ : LL ⊗[Qp] F, z₀ ≠ 0 ∧ ∀ z : LL ⊗[Qp] F,
@@ -88,14 +90,14 @@ theorem exists_eigenline [CharZero Qp] [FiniteDimensional Qp F] (τ : F →ₐ[Q
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => rw [smul_tmul', hΨ, hΨ]; simp
-    | add x y hx hy => simp only [smul_add, map_add, LinearMap.add_apply, hx, hy, mul_add]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), LinearMap.add_apply, hx, hy, mul_add]
   have h2 : ∀ (c : F) z d, Ψ ((LinearMap.mulLeft Qp c).lTensor LL z) d = Ψ z (c * d) := by
     intro c z d
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul v b =>
       rw [LinearMap.lTensor_tmul, hΨ, hΨ, LinearMap.mulLeft_apply, mul_comm c b, mul_assoc]
-    | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
   have h0 : ∀ d, Ψ (Ψ.symm τ.toLinearMap) d = τ d := fun d => by simp
   refine ⟨Ψ.symm τ.toLinearMap, fun h => ?_, fun z => ⟨fun hz => ⟨Ψ z 1, ?_⟩, ?_⟩⟩
   · have := h0 1
@@ -168,7 +170,7 @@ theorem exists_lattice (hO : IsOpen (Set.range (algebraMap O LL))) (ρ : Represe
       obtain ⟨i, h, rfl⟩ := Set.mem_iUnion.1 hx
       exact Submodule.subset_span (Set.mem_iUnion.2 ⟨i, g * h, by simp⟩)
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact T.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact T.add_mem hx hy
     | smul c x _ hx => rw [LinearMap.map_smul_of_tower]; exact T.smul_mem c hx
   · rw [Submodule.span_span_of_tower, eq_top_iff, ← b.span_eq]
     refine Submodule.span_mono ?_
@@ -236,13 +238,13 @@ theorem incl_mem_FilV {a : ℤ} (ha : a ≤ 0) (z : LL ⊗[Qp] K) :
       rw [Algebra.algebraMap_eq_smul_one]
       exact Submodule.smul_mem _ _ (Fil_antitone PD ha PD.one_mem)
     exact ⟨v ⊗ₜ ⟨_, hk⟩, rfl⟩
-  | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
 
 theorem eq_zero_of_incl_mem_FilV {a : ℤ} (ha : 0 < a) (z : LL ⊗[Qp] K)
     (hz : incl Qp K BdR LL z ∈ FilV PD (LL := LL) (V := LL) a) : z = 0 := by
   let q := ((PD.Fil a).restrictScalars Qp).mkQ
   have hinj : Function.Injective (q ∘ₗ (IsScalarTower.toAlgHom Qp K BdR).toLinearMap) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro k hk
     have h1 : algebraMap K BdR k ∈ PD.Fil a := (Submodule.Quotient.mk_eq_zero _).1 hk
     by_contra h0
@@ -262,7 +264,7 @@ theorem eq_zero_of_incl_mem_FilV {a : ℤ} (ha : 0 < a) (z : LL ⊗[Qp] K)
   | tmul v b =>
     have : q (b : BdR) = 0 := (Submodule.Quotient.mk_eq_zero _).2 b.2
     simp [this]
-  | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
 
 theorem finrank_fildR_trivial [CharZero Qp] [FiniteDimensional Qp LL] (τ : K →ₐ[Qp] LL) (a : ℤ) :
     finrank LL ↥(FildR PD (Representation.trivial LL G LL) τ a) = if a ≤ 0 then 1 else 0 := by
@@ -274,8 +276,8 @@ theorem finrank_fildR_trivial [CharZero Qp] [FiniteDimensional Qp LL] (τ : K �
     intro c z
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | tmul v b => simp [mulVdR]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | tmul v b => simp [mulVdR, incl, AlgebraTensorModule.map_tmul]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hE : DdRE PD (Representation.trivial LL G LL) τ = LL ∙ incl Qp K BdR LL z₀ := by
     ext x
     simp only [DdRE, ddR_trivial, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker,
@@ -371,25 +373,25 @@ theorem lift_iff_surjective [FiniteDimensional Qp LL] (h : IsExt ρ ρ' i p) :
         induction w using TensorProduct.induction_on with
         | zero => simp
         | tmul v b => simp [actVB, mulVB]
-        | add x y hx hy => simp only [map_add, hx, hy]
+        | add x y hx hy => simp only [map_add (f := _), hx, hy]
       have h2 : ∀ w : W ⊗[Qp] B, AlgebraTensorModule.rTensor Qp B p (mulVB (LL := LL) k w) =
           mulVB (LL := LL) k (AlgebraTensorModule.rTensor Qp B p w) := by
         intro w
         induction w using TensorProduct.induction_on with
         | zero => simp
         | tmul v b => simp [mulVB]
-        | add x y hx hy => simp only [map_add, hx, hy]
+        | add x y hx hy => simp only [map_add (f := _), hx, hy]
       refine ⟨a • mulVB (LL := LL) k y, Submodule.smul_mem _ _ ((GlobalTheory.CrysSub.mem_Dcris PD _ _).2 fun g => ?_), ?_⟩
       · rw [h1, (GlobalTheory.CrysSub.mem_Dcris PD _ _).1 hy]
       · rw [map_smul, h2, hp]
-        simp [mulVB, smul_tmul']
+        simp [mulVB, incl, AlgebraTensorModule.map_tmul, smul_tmul']
     | add a b ha hb =>
       obtain ⟨x, hx, hx'⟩ := ha
       obtain ⟨w, hw, hw'⟩ := hb
-      exact ⟨x + w, add_mem hx hw, by rw [map_add, map_add, hx', hw']⟩
+      exact ⟨x + w, add_mem hx hw, by rw [map_add (f := _), map_add (f := _), hx', hw']⟩
   · intro hs
     obtain ⟨y, hy⟩ := hs ⟨(1 : LL) ⊗ₜ[Qp] (1 : B), by
-      rw [dcris_trivial]; exact ⟨1 ⊗ₜ 1, by simp⟩⟩
+      rw [dcris_trivial]; exact ⟨1 ⊗ₜ 1, by simp [incl, AlgebraTensorModule.map_tmul]⟩⟩
     exact ⟨y, y.2, congrArg Subtype.val hy⟩
 
 theorem finrank_ext [FiniteDimensional LL V] (h : IsExt ρ ρ' i p) :
@@ -460,7 +462,7 @@ theorem finrank_add_of_exact {A₀ A₁ A₂ : Type} [AddCommGroup A₀] [Module
     ← Submodule.finrank_map_subtype_eq, Submodule.map_comap_subtype, ← h₁, ← LinearMap.range_domRestrict,
     LinearMap.finrank_range_of_inj] at h3
   · omega
-  · rw [injective_iff_map_eq_zero]
+  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     exact fun x hx => Subtype.ext (h₀ x x.2 hx)
 
 theorem extCrysAt [CompactSpace G] [TopologicalSpace Qp] [CharZero Qp] [TopologicalSpace LL] (O : Type)

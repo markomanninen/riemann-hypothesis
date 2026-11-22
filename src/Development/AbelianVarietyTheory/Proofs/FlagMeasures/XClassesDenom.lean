@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions
 open scoped ENNReal
@@ -19,9 +23,9 @@ theorem xClasses_index {K : Type} [Field K] [NumberField K] (I J : Ideal (𝓞 K
   have hNJ : Ideal.absNorm J ≠ 0 := fun h0 => hJ (Ideal.absNorm_eq_zero_iff.mp h0)
   have key := AddSubgroup.relIndex_mul_index
     (H := (Ideal.span {a}).toAddSubgroup) (K := J.toAddSubgroup) hle
-  have e1 : J.toAddSubgroup.index = Ideal.absNorm J := rfl
+  have e1 : J.toAddSubgroup.index = Ideal.absNorm J := (Ideal.absNorm_eq_index J).symm
   have e2 : (Ideal.span {a}).toAddSubgroup.index = Ideal.absNorm I * Ideal.absNorm J := by
-    rw [← map_mul, ← h]; rfl
+    rw [← map_mul, ← h, Ideal.absNorm_eq_index]
   rw [e1, e2] at key
   exact Nat.eq_of_mul_eq_mul_right (Nat.pos_of_ne_zero hNJ) key
 
@@ -71,7 +75,8 @@ theorem xClasses_denom {K : Type} [Field K] [NumberField K] (A : Ideal (𝓞 K))
   choose g hg using fun k => hx i (f k) β hβ
   refine ⟨∑ k, g k * B.adjugate k j, ?_⟩
   have hc : ∀ u : 𝓞 K, (u : K) = φ u := fun u => rfl
-  simp only [hc, map_sum, map_mul] at hg ⊢
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hc, map_sum, map_mul] at hg ⊢
   simp_rw [hg]
   rw [mul_comm (φ B.det) (φ β), mul_assoc, ← hkey, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
@@ -192,7 +197,7 @@ theorem xClasses : ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (A : Id
       refine ⟨t, ?_⟩
       have ht' : φ t * φ a = φ a * (Sx x i j - Sx x' i j) := by
         rw [← map_mul, ht]
-        simp only [AddSubgroup.coe_add, AddSubgroup.coe_neg, map_add, map_neg]
+        simp only [AddSubgroup.coe_add, AddSubgroup.coe_neg, map_add (f := _), map_neg]
         rw [← hc, ← hc, ho, ho']; ring
       exact mul_left_cancel₀ haK (by rw [mul_comm]; exact ht')
     obtain ⟨c, hcc⟩ : ∃ c : Matrix (Fin r) (Fin r) (𝓞 K), ∀ i j, φ (c i j) = Sx x i j - Sx x' i j :=

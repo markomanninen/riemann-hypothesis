@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementLC
-import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+module
+
+public import Formalism.PieriBlockIdeals.StatementLC
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LC
 

@@ -1,4 +1,8 @@
-import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
+module
+
+public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
+
+@[expose] public section
 
 open Complex Filter Topology LSeries ArithmeticFunction
 

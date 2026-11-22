@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.TwistAcrisZeroPreservesFiltration
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.TwistAcrisZeroPreservesFiltration
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -89,7 +93,7 @@ theorem IsTest.sharp_surjective (h : A.IsTest) : Function.Surjective A.sharp := 
     rcases subsingleton_or_nontrivial A.U with h' | h'
     · exact ⟨0, Subsingleton.elim _ _⟩
     obtain ⟨y, hy⟩ := h.val_aic.2 (Polynomial.X ^ l - Polynomial.C x) (Polynomial.monic_X_pow_sub_C x hl.ne')
-      (by rw [Polynomial.natDegree_X_pow_sub_C]; exact hl)
+      (by rw [Polynomial.natDegree_X_pow_sub_C _]; exact hl)
     exact ⟨y, by simpa [sub_eq_zero] using hy⟩
   choose r hr using hr
   obtain ⟨a, -, ha⟩ := RL.tilt_ex A (fun i => r^[i] f) fun i => by rw [Function.iterate_succ_apply', hr]

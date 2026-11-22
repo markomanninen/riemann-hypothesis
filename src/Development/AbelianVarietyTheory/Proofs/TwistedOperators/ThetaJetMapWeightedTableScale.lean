@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+
+@[expose] public section
 
 open Formalism.L2.Ker MvPolynomial
 
@@ -50,7 +54,7 @@ lemma jetLin_scaleDer (c : ι → ℂ) (J : (DVar ι a b →₀ ℕ) → ℂ) (Q
     simp [wDer, Finsupp.comapDomain_apply]
     congr 1
     ring
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
 
 lemma blockAct_diag (c : ι → ℂ) :
     Formalism.GradedWeylDivisibility.blockAct ℂ (n := b) (fun τ => Matrix.diagonal fun _ : Fin b => c τ) = scaleVar (fun v : ι × Fin b × Fin b => c v.1) := by
@@ -66,7 +70,7 @@ lemma jetLin_scaleCoord (c : ι → ℂ) (J : (DVar ι a b →₀ ℕ) → ℂ) 
     simp [wCoord, Finsupp.comapDomain_apply]
     congr 1
     ring
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 lemma scale_subD (c : ι → ℂ) :
     (scaleVar (wDer (a := a) (b := b) c)).comp (subD ℂ ι a b) = (scaleVar (wCoord c)).comp (subD ℂ ι a b) := by
@@ -74,9 +78,10 @@ lemma scale_subD (c : ι → ℂ) :
   intro v
   simp only [AlgHom.comp_apply, subD, aeval_X]
   split_ifs
-  · simp only [map_sum, map_mul, scaleVar, aeval_X, wDer, wCoord, Sum.elim_inl, Sum.elim_inr, map_one, one_mul]
-    refine Finset.sum_congr rfl fun β _ => ?_
-    ring
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, map_mul, scaleVar, aeval_X, wDer, wCoord, Sum.elim_inl, Sum.elim_inr, map_one, one_mul]
+      refine Finset.sum_congr rfl fun β _ => ?_
+      ring
   · simp
 
 lemma jetLin_smul_table (u : ℂ) (J : (DVar ι a b →₀ ℕ) → ℂ) (Q : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) ℂ) :
@@ -86,7 +91,7 @@ lemma jetLin_smul_table (u : ℂ) (J : (DVar ι a b →₀ ℕ) → ℂ) (Q : Mv
     rw [jetLin_monomial, jetLin_monomial, smul_monomial, smul_eq_mul]
     congr 1
     ring
-  | add p q hp hq => simp only [map_add, hp, hq, smul_add]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, smul_add]
 
 end Jet
 

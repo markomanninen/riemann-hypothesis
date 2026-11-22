@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.IntSubst
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.IntSubst
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,8 +46,6 @@ structure RawChart (C : Type) [Field C] (d : ℕ) (I : Fin 2 → Type) (κ : Typ
 namespace RawChart
 
 variable {d : ℕ} {I : Fin 2 → Type} [∀ g, Fintype (I g)] {κ : Type} [Fintype κ] (X : RawChart C d I κ)
-
-instance (g : Fin 2) : Fintype (JJ I g) := inferInstanceAs (Fintype (I (1 - g)))
 
 def sg (v : κ → C) : MvPowerSeries κ C :=
   fun μ => -∑ i, v i * MvPowerSeries.coeff

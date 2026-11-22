@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.UIObjects
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.TailDimZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.UIObjects
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.TailDimZero
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 

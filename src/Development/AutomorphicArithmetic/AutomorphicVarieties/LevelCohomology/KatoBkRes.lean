@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.QuotRepMk
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoResAway
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoEmbConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.QuotRepMk
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoResAway
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoEmbConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published.Kato
 
@@ -50,7 +54,7 @@ theorem UpperTheory.V.X.Kato.bkRes :
     | tmul a b =>
       simp only [TensorProduct.AlgebraTensorModule.map_tmul, LinearMap.id_apply]
       rw [← Module.End.mul_apply, ← map_mul, e1, map_mul, Module.End.mul_apply]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have h2 := congrArg (TensorProduct.AlgebraTensorModule.map (ρ g⁻¹)
     (LinearMap.id : UpperTheory.V.Loc.Bcr l →ₗ[ℚ_[l]] UpperTheory.V.Loc.Bcr l)) h1
   rw [map_sub, key, TensorProduct.AlgebraTensorModule.map_tmul, LinearMap.id_apply] at h2

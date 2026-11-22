@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.DensAbs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.DensAbs
+
+@[expose] public section
 
 noncomputable section
 

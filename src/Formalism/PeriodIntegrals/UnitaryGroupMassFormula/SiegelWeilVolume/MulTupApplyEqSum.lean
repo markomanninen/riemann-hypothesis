@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SiegelWeilVolume.IsFibreFamilyReindex
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SiegelWeilVolume.IsFibreFamilyReindex
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ theorem sigR_sigR (hσ : ∀ x, σ (σ x) = x) (x : R ⊗[F] E) : sigR R σ (sig
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sigR, Algebra.TensorProduct.map_tmul, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem conjT_conjT (hσ : ∀ x, σ (σ x) = x) (A : Matrix (Fin n) (Fin n) (R ⊗[F] E)) :
     conjT R σ (conjT R σ A) = A := by
@@ -128,15 +132,6 @@ theorem hermMap_mul (hσ : ∀ x, σ (σ x) = x) (D₁ D₂ : Matrix (Fin n) (Fi
 theorem hermMap_one (hσ : ∀ x, σ (σ x) = x) (S : HermR R σ n) : hermMap R σ hσ 1 S = S := by
   apply Subtype.ext
   simp [hermMap_coe, conjT_one]
-
-def tupS (X : Fin n → Fin M → R ⊗[F] E) : Matrix (Fin n) (Fin M) (R ⊗[F] E) :=
-  Matrix.of fun a i => sigR R σ (X a i)
-
-def tupT (X : Fin n → Fin M → R ⊗[F] E) : Matrix (Fin M) (Fin n) (R ⊗[F] E) :=
-  Matrix.of fun i b => X b i
-
-def jM (J : Matrix (Fin M) (Fin M) E) : Matrix (Fin M) (Fin M) (R ⊗[F] E) :=
-  Matrix.of fun i j => inclR R (J i j)
 
 end Herm
 

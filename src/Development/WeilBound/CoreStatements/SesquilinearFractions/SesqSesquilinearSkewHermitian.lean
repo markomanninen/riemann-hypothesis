@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -28,12 +33,14 @@ theorem trace_mul_sesq_eq_form (D : Datum H) (a : 𝓞 E) (x y : D.La) :
     rw [show (a : E) * ((D.EF (RingOfIntegers.basis E k • x) y : E) * HT.dualInt E k) =
         (D.EF (RingOfIntegers.basis E k • x) y : ℤ) • (HT.dualInt E k * (a : E)) by rw [zsmul_eq_mul]; ring,
       map_zsmul, zsmul_eq_mul, HT.LatBasic.repr_eq_trace]
-  simp only [sesq, Finset.mul_sum, map_sum, e]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sesq, Finset.mul_sum, map_sum, e]
   have ha : a • x = ∑ k, ((RingOfIntegers.basis E).repr a k : ℤ) • (RingOfIntegers.basis E k • x) := by
     conv_lhs => rw [← (RingOfIntegers.basis E).sum_repr a]
     rw [Finset.sum_smul]
     exact Finset.sum_congr rfl fun k _ => smul_assoc _ _ _
-  rw [ha, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ha, map_sum, LinearMap.sum_apply]
   push_cast
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul, LinearMap.smul_apply, smul_eq_mul]
@@ -42,7 +49,7 @@ theorem trace_mul_sesq_eq_form (D : Datum H) (a : 𝓞 E) (x y : D.La) :
 
 theorem Datum_EF_antisymm (D : Datum H) (x y : D.La) : D.EF y x = -D.EF x y := by
   have h := D.alt (x + y)
-  simp only [map_add, LinearMap.add_apply, D.alt x, D.alt y, zero_add, add_zero] at h
+  simp only [map_add (f := _), LinearMap.add_apply, D.alt x, D.alt y, zero_add, add_zero] at h
   linarith
 
 theorem Host_bar_bar (a : 𝓞 E) : H.bar (H.bar a) = a := by
@@ -72,9 +79,9 @@ theorem sesq_sesquilinear_properties (D : Datum H) :
       ∀ δ ∈ differentIdeal ℤ (𝓞 E), ∀ x y, ∃ b : 𝓞 E, (δ : E) * sesq D x y = b := by
   refine ⟨trace_mul_sesq_eq_form D, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro x x' y
-    simp only [sesq, smul_add, map_add, LinearMap.add_apply, Int.cast_add, add_mul, Finset.sum_add_distrib]
+    simp only [sesq, smul_add, map_add (f := _), LinearMap.add_apply, Int.cast_add, add_mul, Finset.sum_add_distrib]
   · intro x y y'
-    simp only [sesq, map_add, Int.cast_add, add_mul, Finset.sum_add_distrib]
+    simp only [sesq, map_add (f := _), Int.cast_add, add_mul, Finset.sum_add_distrib]
   · intro a x y
     apply eq_of_trace_pairing_eq
     intro c

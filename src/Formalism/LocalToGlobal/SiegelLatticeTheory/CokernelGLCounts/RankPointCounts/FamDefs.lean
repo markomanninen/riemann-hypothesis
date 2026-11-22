@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGLocModel
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGLocModel
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,10 +60,10 @@ open Formalism.MainNotions.S.LocNG
 
 variable {D : D7} {X : HidaSetting D} (Y : Full X) (u u' : D.what₂.Word)
 
-def locF (p : PlF D) {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : Fin (D.R.rS + 1) → Vp D p :=
+def locF (p : PlF D) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) : Fin (D.R.rS + 1) → Vp D p :=
   fun a => frFac (zOf Y).δ p a • baseChange₂ D p (frame F a)
 
-abbrev locF' (p : PlF D) {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : Fin (D.R.rS + 1) → Vp D p := locF Y p F
+abbrev locF' (p : PlF D) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) : Fin (D.R.rS + 1) → Vp D p := locF Y p F
 
 def locT (t : TauC Y u u') (p : PlF D) : Loc.Term (Vp D p) ((zOf Y).M p) D.R.rS where
   abelian₂ := lattice₂ D (zOf Y).M p t.toTerm.lam
@@ -90,8 +94,8 @@ def OrbitFamilyIdentityAt {Cl Nu : Type} (Fm : LocFam (zOf Y) Cl Nu) (V0 : ℝ) 
 
 def FamTie {Cl Nu : Type} (TS : Set (TauC Y u u')) (cls : TauC Y u u' → Cl) (nml : TauC Y u u' → Nu)
     (γ : PN.Pts D.host.E D.R.rS) (Fm : LocFam (zOf Y) Cl Nu) : Prop :=
-  ∃ (w : Point D.host.E (D.R.rS + 1)) (F00 : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
-    (F'0 F'1 : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)),
+  ∃ (w : Point D.host.E (D.R.rS + 1)) (F00 : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E))
+    (F'0 F'1 : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)),
     toPts w = γ ∧
 
     (∀ p ∈ Fm.P, ∀ d ∈ Fm.Ds p, d ∈ (Fm.R p).RD) ∧
@@ -134,7 +138,7 @@ theorem orbitFamilyIdentity_at_volume {Cl Nu : Type} {TS : Set (TauC Y u u')} {c
     (h : ∃ v, OrbitFamilyIdentityAt Fm v) : OrbitFamilyIdentityAt Fm Fm.V0 := by
 
   obtain ⟨_, _, _, _, _, _, hV, _⟩ := hT
-  rw [hV, dif_pos h]
+  rw [hV, dite_eq_left h]
   exact h.choose_spec
 
 end Glob

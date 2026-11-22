@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SumAntidiagonalTuple
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SumAntidiagonalTuple
+
+@[expose] public section
 
 private theorem sum_range_add_choose_eq_choose_succ (E n : ℕ) :
     ∑ k ∈ Finset.range (n + 1), (k + E).choose E = (n + E + 1).choose (E + 1) := by

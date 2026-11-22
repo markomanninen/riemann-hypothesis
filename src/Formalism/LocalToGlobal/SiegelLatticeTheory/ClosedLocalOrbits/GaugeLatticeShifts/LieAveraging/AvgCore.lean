@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LieAveraging.LsSetresAvg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LieAveraging.LsSetresAvg
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,6 +71,7 @@ theorem avg_core (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G
     have : (fun x => x * r) ∘ (Subtype.val : R → G) = Subtype.val ∘ (fun y : R => y * (⟨r, hr⟩ : R)) := rfl
     rw [this, ← Measure.map_map measurable_subtype_coe (measurable_mul_const _),
       ← Measure.map_smul, ← Measure.isMulLeftInvariant_eq_smul]
+    exact measurable_subtype_coe.aemeasurable
   have : SMulInvariantMeasure Γ G ν := ⟨fun c A hA => by
     have := congrArg (fun m : Measure G => m A) (hleft c (hΓR c.2))
     rw [Measure.map_apply (measurable_const_mul _) hA] at this

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfOuter
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfOuter
+
+@[expose] public section
 
 open MeasureTheory
 

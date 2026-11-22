@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwConj
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemCentIffTwConj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwConj
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemCentIffTwConj
+
+@[expose] public section
 
 open GlobalTheory.Tw Matrix Polynomial
 
@@ -64,7 +68,7 @@ theorem snd_aeval (N g : Matrix (Fin n) (Fin n) R) (hc : g * N = N * g) (P : (Du
     obtain ⟨Q1, h1⟩ := hp
     obtain ⟨Q2, h2⟩ := hq
     refine ⟨Q1 + Q2, ?_⟩
-    rw [map_add, Matrix.map_add _ TrivSqZeroExt.snd_add, h1, h2, Polynomial.map_add, derivative_add,
+    rw [map_add (f := _), Matrix.map_add _ TrivSqZeroExt.snd_add, h1, h2, Polynomial.map_add (f := _), derivative_add,
       map_add, map_add, Matrix.add_mul]
     abel
   | monomial k a =>
@@ -109,7 +113,7 @@ theorem inv_mem_adjoin_of_isUnit {N : Matrix (Fin n) (Fin n) R} (hN : IsUnit N) 
     rw [Matrix.det_eq_sign_charpoly_coeff] at hd
     exact isUnit_of_mul_isUnit_right hd
   have key := congrArg (aeval N) (Polynomial.X_mul_divX_add N.charpoly)
-  rw [Matrix.aeval_self_charpoly, map_add, map_mul, aeval_X, aeval_C] at key
+  rw [Matrix.aeval_self_charpoly, map_add (f := _), map_mul, aeval_X, aeval_C] at key
   have hinv : N⁻¹ = -((hc.unit⁻¹ : Rˣ) : R) • aeval N (divX N.charpoly) := by
     apply Matrix.inv_eq_right_inv
     rw [Matrix.mul_smul, eq_neg_iff_add_eq_zero.mpr key, smul_neg, neg_smul, neg_neg,
@@ -234,8 +238,8 @@ theorem cent_eq {δ : Matrix (Fin n) (Fin n) R} (hδ : Reg δ) :
 end Cent
 end GlobalTheory.Tw.CentralizerAdjoin
 
-open GlobalTheory.Tw.CentralizerAdjoin in
 
+open GlobalTheory.Tw.CentralizerAdjoin in
 theorem GlobalTheory.Tw.twisted_centraliser :
     ∀ (n : ℕ) (R : Type) [CommRing R] [StarRing R] [IsArtinianRing R] [IsReduced R] (δ : Matrix (Fin n) (Fin n) R),
       Reg δ → (∀ g h, adj δ (g * h) = adj δ h * adj δ g) ∧ (∀ (c : R) g h, adj δ (c • g + h) = star c • adj δ g + adj δ h) ∧

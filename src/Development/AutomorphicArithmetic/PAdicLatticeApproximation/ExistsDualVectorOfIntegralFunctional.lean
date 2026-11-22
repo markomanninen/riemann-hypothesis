@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitSys
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.PLatticeSaturatedAndCofinite
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitSys
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.PLatticeSaturatedAndCofinite
+
+@[expose] public section
 
 open NumberField
 open GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo UpperTheory.Gal.W2.Wit
@@ -8,13 +12,13 @@ open scoped TensorProduct
 theorem UpperTheory.exists_dual_vector_of_integral_functional :
     ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (X : UpperTheory.Gal.W2.Wit.Sys D) (g : VQ D →ₗ[ℚ] ℚ), (∀ u ∈ X.lat, ∃ z : ℤ, g u = z) → ∃ w ∈ X.M, ∀ u, X.s * X.B w u = g u := by
   intro p _ D X g hg
-  haveI := D.finLa
+  have := D.finLa
   have hnd : X.B.Nondegenerate :=
     (LinearMap.IsRefl.nondegenerate_iff_separatingLeft (LinearMap.IsAlt.isRefl X.alt)).mpr X.nondeg
-  set w0 := (X.B.toDual hnd).symm g with hw0
+  let w0 := (X.B.toDual hnd).symm g
   have hB : ∀ u, X.B w0 u = g u := by
     intro u
-    rw [← LinearMap.BilinForm.toDual_def hnd, hw0, LinearEquiv.apply_symm_apply]
+    exact LinearMap.BilinForm.apply_toDual_symm_apply (hB := hnd) g u
   have hw : ∀ u, X.s * X.B (X.s⁻¹ • w0) u = g u := by
     intro u
     rw [map_smul, LinearMap.smul_apply, hB, smul_eq_mul, ← mul_assoc,
@@ -24,7 +28,8 @@ theorem UpperTheory.exists_dual_vector_of_integral_functional :
   intro u hu
   rw [hw]
   obtain ⟨t, ht0, htp, htm⟩ := DenEnd.exists_coprime_nsmul_mem D (X.r u)
-  have hlat : t • u ∈ X.lat := ⟨X.M.nsmul_mem hu t, by rw [map_nsmul]; exact htm⟩
+  have hlat : t • u ∈ X.lat :=
+    X.mem_lat.mpr ⟨X.M.nsmul_mem hu t, by simpa only [map_nsmul] using htm⟩
   obtain ⟨z, hz⟩ := hg _ hlat
   rw [map_nsmul, nsmul_eq_mul] at hz
   have ht : (t : ℚ) ≠ 0 := by exact_mod_cast ht0.ne'

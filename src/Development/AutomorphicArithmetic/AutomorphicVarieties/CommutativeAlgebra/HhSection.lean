@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ContSection
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ContSection
+
+@[expose] public section
+
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
 open Matrix in
@@ -25,11 +30,11 @@ private theorem expand_small {O : Type} [CommRing O] [IsLocalRing O] {ι : Type}
       Aᵀ * J * B = 0 ∧ Bᵀ * J * A = 0 := fun A B hA hB => by
     constructor
     · ext a b
-      simp only [mul_apply, transpose_apply, Matrix.zero_apply, Finset.sum_mul]
+      simp only [Matrix.mul_apply, transpose_apply, Matrix.zero_apply, Finset.sum_mul]
       refine Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun d _ => ?_
       rw [mul_right_comm, k _ _ (hA _ _) (hB _ _), zero_mul]
     · ext a b
-      simp only [mul_apply, transpose_apply, Matrix.zero_apply, Finset.sum_mul]
+      simp only [Matrix.mul_apply, transpose_apply, Matrix.zero_apply, Finset.sum_mul]
       refine Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun d _ => ?_
       rw [mul_right_comm, mul_comm (B _ _), k _ _ (hA _ _) (hB _ _), zero_mul]
   constructor
@@ -42,7 +47,7 @@ private theorem expand_small {O : Type} [CommRing O] [IsLocalRing O] {ι : Type}
   · ext a b
     have := congrFun (congrFun hh a) b
     simp only [map_apply] at this
-    rw [map_apply, Matrix.add_apply, map_add, z2, add_zero, this]
+    rw [map_apply, Matrix.add_apply, map_add (f := _), z2, add_zero, this]
 
 open Matrix Classical in
 private theorem inv_supp {O : Type} [CommRing O] {ι X : Type} [Fintype ι] [DecidableEq ι] [AddCommGroup X] {w : ι → X}
@@ -119,7 +124,7 @@ private theorem fix_point {O : Type} [CommRing O] [IsLocalRing O] {ι X : Type} 
   have E3 : ∀ a b, Φ.blk b ≠ Φ.σ (Φ.blk a) → E a b = 0 := fun a b e => by
     have : Φ.JR R a b = 0 := by_contra fun n => e (jb a b n)
     rw [hE, Matrix.sub_apply, this, sub_zero]
-    simp only [mul_apply, transpose_apply, Finset.sum_mul]
+    simp only [Matrix.mul_apply, transpose_apply, Finset.sum_mul]
     refine Finset.sum_eq_zero fun c _ => Finset.sum_eq_zero fun d _ => ?_
     by_cases e1 : Φ.blk d = Φ.blk a
     · by_cases e2 : Φ.blk c = Φ.blk b
@@ -130,7 +135,8 @@ private theorem fix_point {O : Type} [CommRing O] [IsLocalRing O] {ι X : Type} 
   set Z0 : Matrix ι ι R := K * ((-u) • E) with hZ0
   have Z1 : Φ.JR R * Z0 = (-u) • E := by rw [hZ0, ← mul_assoc, hK, one_mul]
   have Z2 : ∀ a b, p (Z0 a b) = 0 := fun a b => by
-    rw [hZ0, mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hZ0, Matrix.mul_apply, map_sum]
     refine Finset.sum_eq_zero fun c _ => ?_
     have : p (E c b) = 0 := congrFun (congrFun E1 c) b
     simp [this]
@@ -141,13 +147,13 @@ private theorem fix_point {O : Type} [CommRing O] [IsLocalRing O] {ι X : Type} 
   have Z4 : Φ.JR R * Z = (-u) • E := by
     ext a b
     by_cases e : Φ.blk b = Φ.σ (Φ.blk a)
-    · rw [← Z1, mul_apply, mul_apply]
+    · rw [← Z1, Matrix.mul_apply, Matrix.mul_apply]
       refine Finset.sum_congr rfl fun c _ => ?_
       by_cases n : Φ.JR R a c = 0
       · simp [n]
       · have : Φ.blk c = Φ.blk b := by rw [e]; exact jb a c n
         simp [Z, this]
-    · rw [Matrix.smul_apply, E3 a b e, smul_zero, mul_apply]
+    · rw [Matrix.smul_apply, E3 a b e, smul_zero, Matrix.mul_apply]
       refine Finset.sum_eq_zero fun c _ => ?_
       by_cases n : Φ.JR R a c = 0
       · simp [n]
@@ -178,7 +184,7 @@ private theorem good_zero (j : X) : Good I W j fun _ : S => 0 :=
 
 private theorem good_add {j : X} {f g : S → A} (hf : Good I W j f) (hg : Good I W j g) :
     Good I W j fun s => f s + g s :=
-  ⟨fun N => by simp only [map_add]; exact (hf.1 N).add (hg.1 N), fun s => add_mem (hf.2 s) (hg.2 s)⟩
+  ⟨fun N => by simp only [map_add (f := _)]; exact (hf.1 N).add (hg.1 N), fun s => add_mem (hf.2 s) (hg.2 s)⟩
 
 private theorem good_sub {j : X} {f g : S → A} (hf : Good I W j f) (hg : Good I W j g) :
     Good I W j fun s => f s - g s :=
@@ -245,7 +251,7 @@ theorem UpperTheory.V.Alg.hh_section :
     fun a b => good_const' _ fun n => by rw [← (inv_supp Φ a b n).2]; abel
   have gE : ∀ a b, Good (maximalIdeal A) W (Φ.c - w a - w b)
       fun s => ((h0 s)ᵀ * Φ.JR A * h0 s - Φ.JR A) a b := fun a b => by
-    simp only [Matrix.sub_apply, mul_apply, transpose_apply]
+    simp only [Matrix.sub_apply, Matrix.mul_apply, transpose_apply]
     refine good_sub (good_sum _ fun c => good_mul (i := Φ.c - w a - w c) (good_sum _ fun d =>
       good_mul (g0 d a) (gJ d c) (by abel)) (g0 c b) (by abel)) (gJ a b)
   have g1 : ∀ a b, Good (maximalIdeal A) W (w a - w b) fun s => (h0 s + Matrix.of fun a b =>
@@ -255,7 +261,7 @@ theorem UpperTheory.V.Alg.hh_section :
     refine good_add (g0 a b) ?_
     by_cases e : Φ.blk a = Φ.blk b
     · simp only [if_pos e, ← map_neg]
-      simp only [mul_apply (M := Φ.J⁻¹.map (algebraMap O A)), Matrix.smul_apply, smul_eq_mul]
+      simp only [Matrix.mul_apply (M := Φ.J⁻¹.map (algebraMap O A)), Matrix.smul_apply, smul_eq_mul]
       exact good_sum _ fun c => good_mul (gK a c) (good_mul (good_const (-u)) (gE c b) (zero_add _)) (by abel)
     · simp only [if_neg e]
       exact good_zero _

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorCommutation
+module
+
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorCommutation
+
+@[expose] public section
 
 open Finset Polynomial
 
@@ -186,8 +190,9 @@ theorem decomp (hPV : PolyVanish) (G : Submodule ℂ W) (K : Module.End ℂ W) (
     simp
   have hch := ch hPV G K hK A (N + 1) (∏ j, (X - C (r j))) hP (by intro x hx u; rw [hev]; exact h x hx u)
   refine ⟨fun i => aeval K (Lagrange.basis univ r i) x, fun i => aeval_mem G K hK _ x hx, ?_, ?_⟩
-  · rw [← LinearMap.sum_apply, ← map_sum, Lagrange.sum_basis (hr.injOn) Finset.univ_nonempty, map_one]
-    rfl
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, Lagrange.sum_basis (hr.injOn) Finset.univ_nonempty,
+        map_one, Module.End.one_apply]
   intro i u
   set φ := aeval K (Lagrange.basis univ r i) x with hφ
   have hφG : φ ∈ G := aeval_mem G K hK _ x hx

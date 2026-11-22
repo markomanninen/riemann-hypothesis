@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.PsiZeroNontrivialCharacter
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.PsiZeroNontrivialCharacter
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+
+@[expose] public section
 
 noncomputable section
 

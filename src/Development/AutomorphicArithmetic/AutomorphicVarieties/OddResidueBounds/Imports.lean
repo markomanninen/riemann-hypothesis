@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.LenOfCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.UnrInj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.UnrSel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.SelCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.FnOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.LogH
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.LenOfCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.UnrInj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.UnrSel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.SelCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.FnOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.LogH
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5 UpperTheory.V.Odd
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+
+@[expose] public section
 
 open scoped IntermediateField Polynomial RatFunc
 open GlobalTheory.Nef
@@ -45,8 +49,8 @@ theorem natDegree_eq_zero_of_sq_dvd {F : Type} [Field F] [CharZero F] (f g : F[X
 
 end RatDilation
 
-open RatDilation in
 
+open RatDilation in
 theorem rat_dilation_eq_one (F : Type) [Field F] [CharZero F] (φ : PowerSeries F) (hr : IsRat φ)
     (h0 : PowerSeries.constantCoeff φ = 1) (h2 : PowerSeries.rescale 2 φ = φ ^ 2) : φ = 1 := by
   classical
@@ -75,11 +79,11 @@ theorem rat_dilation_eq_one (F : Type) [Field F] [CharZero F] (φ : PowerSeries 
   have key : p.comp (C (2:F) * X) * q ^ 2 = q.comp (C (2:F) * X) * p ^ 2 := by
     apply Polynomial.coe_inj.1
     have e := congrArg (PowerSeries.rescale (2:F)) hpq
-    rw [map_mul, h2, ← coe_comp_C_mul_X, ← coe_comp_C_mul_X] at e
+    rw [map_mul, h2, ← RatDilation.coe_comp_C_mul_X, ← RatDilation.coe_comp_C_mul_X] at e
     simp only [Polynomial.coe_mul, Polynomial.coe_pow]
     rw [← e, ← hpq]; ring
-  have dq := natDegree_eq_zero_of_sq_dvd q p hq hcop.symm key.symm
-  have dp := natDegree_eq_zero_of_sq_dvd p q hp hcop key
+  have dq := RatDilation.natDegree_eq_zero_of_sq_dvd q p hq hcop.symm key.symm
+  have dp := RatDilation.natDegree_eq_zero_of_sq_dvd p q hp hcop key
   rw [eq_C_of_natDegree_eq_zero dq, eq_C_of_natDegree_eq_zero dp] at hpq
   rw [Polynomial.coe_C, Polynomial.coe_C] at hpq
   have hc := congrArg PowerSeries.constantCoeff hpq
@@ -87,8 +91,8 @@ theorem rat_dilation_eq_one (F : Type) [Field F] [CharZero F] (φ : PowerSeries 
   rw [← hc] at hpq
   have ha : (PowerSeries.C (q.coeff 0) : PowerSeries F) ≠ 0 := by
     intro h
-    have h' := congrArg PowerSeries.constantCoeff h
-    rw [PowerSeries.constantCoeff_C, map_zero] at h'
+    have h0 : PowerSeries.C (q.coeff 0) = PowerSeries.C 0 := by simpa using h
+    have h' : q.coeff 0 = 0 := PowerSeries.C_injective h0
     apply hq; rw [eq_C_of_natDegree_eq_zero dq, h', C_0]
   exact mul_left_cancel₀ ha (hpq.trans (mul_one _).symm)
 

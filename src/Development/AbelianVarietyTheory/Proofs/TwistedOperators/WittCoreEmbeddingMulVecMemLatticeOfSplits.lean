@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,9 +35,9 @@ theorem i₀_mulVec_mem {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) {L : 
     (hL : ∀ z : Fin S.rank → D.host.E, (∀ v : GlobalTheory.FinPl.Pl D, (fun i => pairA D.host.F 0 (GlobalTheory.FinPl.LatMem.indP D.host.F (· = v)) ⊗ₜ[D.host.F] z i) ∈ latV S L (· = v)) → z ∈ L)
     (hmono : ∀ v, MonoAt d L L₀ v) : ∀ y ∈ L₀, d.i₀ *ᵥ y ∈ L := by
   intro y hy
-  have hX : d.qX * d.i₀ = 0 := rat_injective (by rw [rat_mul, rat_zero]; exact d.pX_j0)
-  have hY : d.qY * d.i₀ = 0 := rat_injective (by rw [rat_mul, rat_zero]; exact d.pY_j0)
-  have h0 : d.q0 * d.i₀ = 1 := rat_injective (by rw [rat_mul, rat_one]; exact d.p0_j0)
+  have hX : d.qX * d.i₀ = 0 := rat_injective (D := D) (by rw [rat_mul, rat_zero]; exact d.pX_j0)
+  have hY : d.qY * d.i₀ = 0 := rat_injective (D := D) (by rw [rat_mul, rat_zero]; exact d.pY_j0)
+  have h0 : d.q0 * d.i₀ = 1 := rat_injective (D := D) (by rw [rat_mul, rat_one]; exact d.p0_j0)
   refine hL _ fun v => ?_
   set c : AF D.host.F := pairA D.host.F 0 (indP D.host.F (· = v))
   refine (hmono v _).2 ⟨fun i => ?_, fun i => ?_, ?_⟩

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CommutativeHeckeActsByScalarOnFixedVectors
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CayleyRuleOfBiInvariantVacuumCoefficient
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryIwahoriFacts
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.CommensuratedOfIsOpenIsCompact
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CommutativeHeckeActsByScalarOnFixedVectors
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CayleyRuleOfBiInvariantVacuumCoefficient
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryIwahoriFacts
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.CommensuratedOfIsOpenIsCompact
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial GlobalTheory.BCT GlobalTheory.UnitaryBC Formalism.UG GlobalTheory.PRep
 open PositivityTheory.Rg.BcB.F.Eig
@@ -45,7 +49,7 @@ theorem finrank_fixed_eq_one (π : Representation ℂ G V) (K : Subgroup G) (hc 
       obtain ⟨c, hc₁⟩ := ha
       obtain ⟨d, hd⟩ := hb
       have : orbitMap π x₀ (a + b) = orbitMap π x₀ a + orbitMap π x₀ b := map_add _ _ _
-      exact ⟨c + d, by rw [this, map_add, hc₁, hd, add_smul]⟩
+      exact ⟨c + d, by rw [this, map_add (f := _), hc₁, hd, add_smul]⟩
     | smul r a ha =>
       obtain ⟨c, hc₁⟩ := ha
       have : orbitMap π x₀ (r • a) = r • orbitMap π x₀ a := map_smul _ _ _
@@ -144,7 +148,7 @@ theorem isClosed_UL (hU : Unr E) (n : ℕ) (w : Pl E) : IsClosed (UL n w : Set (
     exact GlobalTheory.CompanionTheory.UnitaryWitt.isClosed_UJ_one n (GlobalTheory.T.placeConjugation_properties_cmField E hU w).1
 
 theorem coe_KL (n : ℕ) (w : Pl E) :
-    (KL n w : Set (UL n w)) = Subtype.val ⁻¹' (GlobalTheory.LFun.KGL w n : Set (GLw n w)) := by
+    (KL n w : Set (UL n w)) = Subtype.val ⁻¹' (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) := by
   ext x
   exact Subgroup.mem_subgroupOf
 
@@ -183,12 +187,12 @@ theorem conv_comm_inert (hU : Unr E) {n : ℕ} {w : Pl E} (hw : ¬ IsSplitAt w) 
     (hconj _).1 (by rwa [show b * (b⁻¹ * x * b) * b⁻¹ = x by group])
   have hH : ∀ x ∈ UL n w, thb b x ∈ UL n w := fun x hx =>
     (hconj _).2 (tr_mem_UJ _ hcc (hback x hx))
-  have hbi := (GlobalTheory.LFun.KGL w n).inv_mem hbK
+  have hbi := (GlobalTheory.LFun.KGL w (n := n)).inv_mem hbK
   have hK : ∀ x : UL n w, x ∈ KL n w → (⟨thb b x, hH _ x.2⟩ : UL n w) ∈ KL n w := fun x hx =>
     Subgroup.mem_subgroupOf.2 (mul_mem (mul_mem hbK (Formalism.UG.P.heckecomm_tr_mem (Ov E w) _
       (mul_mem (mul_mem hbi (Subgroup.mem_subgroupOf.1 hx)) hbK))) hbi)
   have hO : Ov E w = intL (w.adicCompletion E) := Subring.ext fun _ => Iff.rfl
-  have hKU : ∀ k ∈ KU (cj w) n, (k.1 : GLw n w) ∈ GlobalTheory.LFun.KGL w n := fun k hk => by
+  have hKU : ∀ k ∈ KU (cj w) n, (k.1 : GLw n w) ∈ GlobalTheory.LFun.KGL w (n := n) := fun k hk => by
     have h : k.1 ∈ intPts (intL (w.adicCompletion E)).subtype (GU (cj w) n) := Subgroup.mem_subgroupOf.1 hk
     show k.1 ∈ (bc (Ov E w).subtype).range
     rw [hO]

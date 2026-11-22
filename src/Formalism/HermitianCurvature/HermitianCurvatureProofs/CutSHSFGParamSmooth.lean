@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFG
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFG
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ContDiff Convolution

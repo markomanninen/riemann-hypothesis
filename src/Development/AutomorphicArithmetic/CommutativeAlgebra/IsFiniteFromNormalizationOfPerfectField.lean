@@ -1,7 +1,11 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ModuleFiniteIntegralClosureOfFiniteTypePerfect
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ModuleFiniteIntegralClosureOfFiniteTypePerfect
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4
 
@@ -24,7 +28,7 @@ theorem UpperTheory.isFinite_fromNormalization_of_perfectField :
       haveI : Nonempty V := ⟨⟨x, hxV⟩⟩
       haveI : Nonempty (f ⁻¹ᵁ U) := ⟨⟨x, hx⟩⟩
       have hkt : (t.appLE ⊤ U (by simp)).hom.FiniteType :=
-        LocallyOfFiniteType.finiteType_of_affine_subset t (isAffineOpen_top _) hU (by simp)
+        LocallyOfFiniteType.finiteType_appLE t (isAffineOpen_top _) hU (by simp)
       let kA : k →+* Γ(T, U) :=
         (t.appLE ⊤ U (by simp)).hom.comp (Scheme.ΓSpecIso (CommRingCat.of k)).inv.hom
       have hkA : kA.FiniteType :=
@@ -43,7 +47,7 @@ theorem UpperTheory.isFinite_fromNormalization_of_perfectField :
       letI : Algebra Γ(T, U) D.functionField := φ.toAlgebra
       have h1 : (D.germToFunctionField V).hom.EssFiniteType := GlobalTheory.essFiniteType_germ hV _ _
       have h2 : (f.appLE U V hVle).hom.EssFiniteType :=
-        (LocallyOfFiniteType.finiteType_of_affine_subset f hU hV hVle).essFiniteType
+        (LocallyOfFiniteType.finiteType_appLE f hU hV hVle).essFiniteType
       haveI : Algebra.EssFiniteType Γ(T, U) D.functionField := h2.comp h1
       haveI := UpperTheory.module_finite_integralClosure_of_finiteType_perfect k Γ(T, U) D.functionField
       let ψ : Γ(D, f ⁻¹ᵁ U) →ₐ[Γ(T, U)] D.functionField :=

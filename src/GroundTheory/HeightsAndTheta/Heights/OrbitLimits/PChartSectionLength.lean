@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartSectionLength
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeLength
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFundCycleBaseChange
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LocalMultRadical
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LengthLocalizedModuleQuotient
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PComplexMinimalPrimesContract
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPrimeComplexRadical
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartSectionLength
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeLength
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFundCycleBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LocalMultRadical
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LengthLocalizedModuleQuotient
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PComplexMinimalPrimesContract
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPrimeComplexRadical
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -34,7 +39,7 @@ theorem localMult_map_intCast_complex {τ : Type} [Fintype τ] (J W : Ideal (MvP
 theorem multAt_eq_localMult {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] (J W : Ideal (MRing ι))
     [W.IsPrime] : multAt J W = localMult J W := by
   unfold multAt localMult
-  rw [dif_pos ‹_›, dif_pos ‹_›, ObjectsChow.VerticalPartMultiplicity.length_localizedModule_quotient]
+  rw [dite_eq_left ‹_›, dite_eq_left ‹_›, ObjectsChow.VerticalPartMultiplicity.length_localizedModule_quotient]
 
 theorem ChartSectionLength.proof (hComp : ChartConeComponent.Statement) (hLen : ChartConeLength.Statement) :
     ChartSectionLength.Statement := by

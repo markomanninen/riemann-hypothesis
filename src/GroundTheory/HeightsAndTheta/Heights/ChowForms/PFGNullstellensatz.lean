@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,7 +19,11 @@ theorem FGNullstellensatz.proof : FGNullstellensatz.Statement := by
     have : Algebra.FiniteType F (D ⧸ m) := inferInstance
     have : Module.Finite F (D ⧸ m) := finite_of_finite_type_of_isJacobsonRing F (D ⧸ m)
     have : Algebra.IsAlgebraic F (D ⧸ m) := inferInstance
-    let ψ : (D ⧸ m) →ₐ[F] AlgebraicClosure F := IsAlgClosed.lift
+    let ψ : (D ⧸ m) →ₐ[F] AlgebraicClosure F := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     have h0 : ψ (Ideal.Quotient.mkₐ F m r) = 0 := hr (ψ.comp (Ideal.Quotient.mkₐ F m))
     have h1 : Ideal.Quotient.mkₐ F m r = 0 := (map_eq_zero_iff ψ ψ.toRingHom.injective).mp h0
     exact Ideal.Quotient.eq_zero_iff_mem.mp h1

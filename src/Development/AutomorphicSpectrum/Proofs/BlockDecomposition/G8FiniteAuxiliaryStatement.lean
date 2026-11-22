@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteConjugacyExists
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteConjugacyExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem cjv_spec (hc : CjEx) (v : PlF E) (x : Af E) :
     projv v (conjFin (IsCMField.complexConj E).toRingEquiv x) = cjv v (projv v x) := by
   have h := hc E v
   unfold cjv
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec.2 x
 
 theorem pv_thP (hc : CjEx) (v : PlF E) (y : Gf E a b) : pv a b v (thP E a b y) = thv a b v (pv a b v y) :=

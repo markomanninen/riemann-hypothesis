@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogResolutionFubiniStudyPositive
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogResolutionFubiniStudyPositive
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
@@ -28,7 +32,10 @@ private theorem actY_actY_inv {p : ℕ} [Fact p.Prime] {D : UPel.HT.Datum p} {G 
 
 theorem UpperTheory.Gal.W2.fixLine_of :
     UpperTheory.Gal.W2.ActY → UpperTheory.Gal.W2.FixLine := by
-  intro hA p _ D G L v t₀ ρ β RD Q z hQ hrel y
+  intro hA
+  unfold ActY at hA
+  unfold FixLine
+  intro p _ D G L v t₀ ρ β RD Q z hQ hrel y
   have hz0 : z.1 ≠ 0 := by
     intro h0
     have h1 := z.2

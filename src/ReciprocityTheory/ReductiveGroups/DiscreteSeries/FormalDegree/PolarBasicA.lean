@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.TraceMulSelfEqSumEigenvaluesSq
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.TraceMulSelfEqSumEigenvaluesSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem pairpow_continuous (ε : Fin n → Bool) (k : ℕ) :
     simp_rw [sub_eq_add_neg, add_pow, Finset.sum_mul_sum, Finset.sum_mul]
     conv_rhs => rw [Finset.sum_comm]; arg 2; ext a; rw [Finset.sum_comm]
   rw [h]
-  exact continuous_finset_sum _ fun i _ =>
+  exact continuous_finsetSum _ fun i _ =>
     ((psum_continuous ε i).mul (negpsum_continuous ε (k - i))).mul continuous_const
 
 theorem pairpoly_continuous (ε : Fin n → Bool) (P : Polynomial ℝ) :
@@ -67,7 +71,7 @@ theorem pairpoly_continuous (ε : Fin n → Bool) (P : Polynomial ℝ) :
     simp_rw [Polynomial.eval_eq_sum_range, Finset.mul_sum]
     conv_rhs => rw [Finset.sum_comm]; arg 2; ext a; rw [Finset.sum_comm]
   rw [h]
-  exact continuous_finset_sum _ fun i _ => continuous_const.mul (pairpow_continuous ε i)
+  exact continuous_finsetSum _ fun i _ => continuous_const.mul (pairpow_continuous ε i)
 
 theorem pb_abs_pev_le {ε : Fin n → Bool} (z : PCoord ε → ℂ) (a : Fin n) :
     |pev z a| ≤ Real.sqrt (∑ b, pev z b ^ 2) := by

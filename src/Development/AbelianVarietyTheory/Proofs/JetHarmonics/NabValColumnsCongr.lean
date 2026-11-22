@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.NabTrans
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.InvariantDerivAlongEndo
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CanonGaugeDmonOfHLIntegral
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsGroupedOfSublist
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffDmonOfSubMem
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NabValPullbackMonomial
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.NabTrans
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.InvariantDerivAlongEndo
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CanonGaugeDmonOfHLIntegral
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsGroupedOfSublist
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffDmonOfSubMem
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NabValPullbackMonomial
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -103,6 +107,7 @@ theorem nabVal_columns_congr : ∀ (R : Type) [CommRing R] (d : ℕ) (O : Type) 
     exact Finset.prod_congr rfl fun b _ => Ideal.Quotient.eq.2 (hs mo b)
   · rw [add_sub_cancel]
     simp only [he]
-    simp only [map_sum, map_mul, map_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_prod]
 
 end GlobalTheory

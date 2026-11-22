@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SiegelMassRatioOfLI
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsVecOfHermRep
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLand
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SiegelMassRatioOfLI
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsVecOfHermRep
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLand
+
+@[expose] public section
 
 open NumberField Module
 
@@ -38,7 +42,7 @@ def dualF (h : V →ₗ⋆[K] V →ₗ[K] K) (𝔭 : Ideal (𝓞 F)) (L : Submod
   zero_mem' := fun y _ => by simp
   add_mem' := by
     intro x x' hx hx' y hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ (hx y hy) (hx' y hy)
   smul_mem' := by
     intro c x hx y hy

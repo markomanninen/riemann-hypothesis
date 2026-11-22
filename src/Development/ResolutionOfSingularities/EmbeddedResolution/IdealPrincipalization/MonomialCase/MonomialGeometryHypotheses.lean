@@ -1,14 +1,19 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceTransforms
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceTransforms
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -28,30 +33,6 @@ def pullbackOverField (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : T
   ideal := T.ideal.comap h
   mult := T.mult
   boundary := T.boundary.map fun D => D.comap h
-
-theorem pullbackOverField_baseField (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u) [Field k']
-    (q : Y ⟶ Spec (CommRingCat.of k')) (h : Y ⟶ T.scheme) :
-    (T.pullbackOverField Y k' q h).base = k' := rfl
-
-@[simp] theorem pullbackOverField_scheme (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u) [Field k']
-    (q : Y ⟶ Spec (CommRingCat.of k')) (h : Y ⟶ T.scheme) :
-    (T.pullbackOverField Y k' q h).scheme = Y := rfl
-
-theorem pullbackOverField_structureMorphism (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u) [Field k']
-    (q : Y ⟶ Spec (CommRingCat.of k')) (h : Y ⟶ T.scheme) :
-    (T.pullbackOverField Y k' q h).structMap = q := rfl
-
-@[simp] theorem pullbackOverField_ideal (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u) [Field k']
-    (q : Y ⟶ Spec (CommRingCat.of k')) (h : Y ⟶ T.scheme) :
-    (T.pullbackOverField Y k' q h).ideal = T.ideal.comap h := rfl
-
-@[simp] theorem pullbackOverField_mult (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u) [Field k']
-    (q : Y ⟶ Spec (CommRingCat.of k')) (h : Y ⟶ T.scheme) :
-    (T.pullbackOverField Y k' q h).mult = T.mult := rfl
-
-@[simp] theorem pullbackOverField_boundary (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u)
-    [Field k'] (q : Y ⟶ Spec (CommRingCat.of k')) (h : Y ⟶ T.scheme) :
-    (T.pullbackOverField Y k' q h).boundary = T.boundary.map fun D => D.comap h := rfl
 
 theorem pullbackOverField_eq_pullbackAlong (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u})
     (q : Y ⟶ Spec (CommRingCat.of T.base)) (h : Y ⟶ T.scheme) :

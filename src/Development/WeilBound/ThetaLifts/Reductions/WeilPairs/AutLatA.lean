@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.FinIdemSmulOfReal
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepA
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteRationalPointsCompletedLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalLatticeSelfDualFgFullIndex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDetSmulSubOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.QInertHolds
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.FinIdemSmulOfReal
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepA
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteRationalPointsCompletedLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalLatticeSelfDualFgFullIndex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDetSmulSubOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.QInertHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,10 +143,10 @@ theorem isHeisQ (C : Ctx σ B JS JT ξ₀ θ ι) (hc : HeisClosedF σ JS JT ξ�
     IsHeis (sgOF σ) w (gamQF σ JS JT ξ₀ B.ψ) fun x => opFF hc w (finRatF F x) := by
   have H := isHeis_opFF (sgsg C.good) C.hS C.hT C.hξ hc hw
   have e : ∀ x y, gamQF σ JS JT ξ₀ B.ψ x y = gamFF σ JS JT ξ₀ B.ψ (finRatF F x) (finRatF F y) := fun _ _ => rfl
-  exact ⟨H.sg_sg, H.w_add, fun x y z => by rw [e, e, e, map_add, H.add_left],
-    fun x y z => by rw [e, e, e, map_add, H.add_right], fun x => by rw [e, H.alt],
+  exact ⟨H.sg_sg, H.w_add, fun x y z => by rw [e, e, e, map_add (f := _), H.add_left],
+    fun x y z => by rw [e, e, e, map_add (f := _), H.add_right], fun x => by rw [e, H.alt],
     fun r x y => by rw [e, e, map_smul, map_smul, H.adj], fun v => by rw [map_zero, H.zero],
-    fun x y v => by rw [H.comp, e, map_smul, map_add]⟩
+    fun x y v => by rw [H.comp, e, map_smul, map_add (f := _)]⟩
 
 theorem idx_eq (C : Ctx σ B JS JT ξ₀ θ ι) (hG : GoodLat Λ) (hR : RatSD σ JS JT ξ₀ Λ)
     (hO : IsLatRepF σ JS JT ξ₀ B.ψ hc Λ w lam Om) {g : GAF σ JS} {h : GAF σ JT} {a b}
@@ -204,15 +208,22 @@ theorem data (C : Ctx σ B JS JT ξ₀ θ ι) (hG : GoodLat Λ) (hR : RatSD σ J
     obtain ⟨s, hs⟩ := fg
     choose k hk hk' using full
     refine ⟨∏ y ∈ s, k (sandw b a y), Finset.prod_ne_zero_iff.2 fun y _ => (hk _).ne', fun x hx => ?_⟩
-    rw [← hs] at hx
-    induction hx using AddSubgroup.closure_induction with
-    | mem x hx =>
-      obtain ⟨m, hm⟩ := Finset.dvd_prod_of_mem (fun y => k (sandw b a y)) hx
-      rw [hm, mul_comm, mul_smul]
-      exact nsmul_mem (hk' _) m
-    | zero => rw [map_zero, smul_zero]; exact zero_mem _
-    | add x y _ _ hx hy => rw [map_add, smul_add]; exact add_mem hx hy
-    | neg x _ hx => rw [map_neg, smul_neg]; exact neg_mem hx
+    have hz : ∀ z : A, (∏ y ∈ s, k (sandw b a y)) • sandw b a z ∈ A := by
+      intro z
+      have hz' : z ∈ AddSubsemigroup.closure (↑s : Set A) := by
+        rw [hs]
+        trivial
+      induction hz' using AddSubsemigroup.closure_induction with
+      | mem z hz =>
+        change z ∈ s at hz
+        obtain ⟨m, hm⟩ := Finset.dvd_prod_of_mem (fun y : A => k (sandw b a y)) hz
+        rw [hm, mul_comm, mul_smul]
+        exact nsmul_mem (hk' _) m
+      | add x y _ _ hx hy =>
+        change (∏ y ∈ s, k (sandw b a y)) • sandw b a ((x : _) + (y : _)) ∈ A
+        rw [map_add, smul_add]
+        exact add_mem hx hy
+    exact hz ⟨x, hx⟩
   have i1 := GlobalTheory.T.relIndex_map_nsmul_comap_eq_abs_norm_pow_mul_det _ _ A fg full (sandw b a - 1) N hN hd fun x hx => by
     rw [LinearMap.sub_apply, smul_sub]
     exact sub_mem (hNA x hx) (nsmul_mem hx N)

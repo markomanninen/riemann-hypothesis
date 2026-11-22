@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.EllReg
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.EllReg
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,15 +22,17 @@ def symb (m : ℕ) (a : (n : ℕ) → (Fin n → Fin d) → E d → ℂ) (x ξ :
 
 def oneSys (m : ℕ) (a : (n : ℕ) → (Fin n → Fin d) → E d → ℂ) : Sys d Unit := ⟨fun _ => m, fun _ => a⟩
 
-open Classical in
 
-def ext0 (U : Set (E d)) (u : U → ℂ) (x : E d) : ℂ := if hx : x ∈ U then u ⟨x, hx⟩ else 0
+open Classical in
+def ext0 (U : Set (E d)) (u : U → ℂ) (x : E d) : ℂ := by
+  classical
+  exact if hx : x ∈ U then u ⟨x, hx⟩ else 0
 
 def solSet {ι : Type} (P : Sys d ι) (U : Set (E d)) : Set (U →ᵇ ℂ) := {u | WeakSol P U (ext0 U u)}
 
+
 open scoped BoundedContinuousFunction in
 variable {d : ℕ} in
-
 theorem _root_.GlobalTheory.HCA.apOp_zero_one (u : _root_.ZetaZeros.D.EllReg.E d → ℂ) (x : _root_.ZetaZeros.D.EllReg.E d) :
     _root_.GlobalTheory.HCA.apOp 0 (fun _ _ _ => 1) u x = u x := by
   simp only [_root_.GlobalTheory.HCA.apOp, zero_add, Finset.range_one, Finset.sum_singleton,
@@ -34,9 +40,9 @@ theorem _root_.GlobalTheory.HCA.apOp_zero_one (u : _root_.ZetaZeros.D.EllReg.E d
   unfold _root_.ZetaZeros.D.EllReg.dw
   rfl
 
+
 open scoped BoundedContinuousFunction in
 variable {d : ℕ} in
-
 theorem _root_.GlobalTheory.HCA.zero_mem_solSet {ι : Type} (P : _root_.ZetaZeros.D.EllReg.Sys d ι) (U : Set (_root_.ZetaZeros.D.EllReg.E d)) :
     (0 : U →ᵇ ℂ) ∈ _root_.GlobalTheory.HCA.solSet P U := by
   have h : _root_.GlobalTheory.HCA.ext0 U (0 : U →ᵇ ℂ) = fun _ => 0 := by

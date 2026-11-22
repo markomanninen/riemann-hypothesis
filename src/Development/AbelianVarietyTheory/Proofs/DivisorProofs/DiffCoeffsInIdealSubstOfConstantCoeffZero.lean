@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
@@ -21,7 +25,7 @@ theorem euler_mul (j : τ) (x y : MvPowerSeries τ B) :
     euler j (x * y) = euler j x * y + x * euler j y := by
   classical
   ext γ
-  rw [coeff_euler, map_add, coeff_mul, coeff_mul, coeff_mul, Finset.mul_sum,
+  rw [coeff_euler, map_add (f := _), coeff_mul, coeff_mul, coeff_mul, Finset.mul_sum,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun q hq => ?_
   have hq' : q.1 + q.2 = γ := Finset.HasAntidiagonal.mem_antidiagonal.1 hq
@@ -79,7 +83,7 @@ theorem smul_mem_of_mem_span {σ : Type} (N : Submodule B Q) (α : σ → ℕ) (
     · rw [Algebra.smul_def, map_natCast]; exact hc i
     · rw [zero_smul]; exact N.zero_mem
   | zero => intro e; rw [map_zero, zero_smul]; exact N.zero_mem
-  | add x y _ _ hx hy => intro e; rw [map_add, add_smul]; exact N.add_mem (hx e) (hy e)
+  | add x y _ _ hx hy => intro e; rw [map_add (f := _), add_smul]; exact N.add_mem (hx e) (hy e)
   | smul r x _ hx =>
     classical
     intro e
@@ -91,7 +95,13 @@ theorem smul_mem_of_mem_span {σ : Type} (N : Submodule B Q) (α : σ → ℕ) (
 end GlobalTheory.QLog.SubstDiff
 
 open GlobalTheory.QLog.SubstDiff in
-theorem GlobalTheory.QLog.dIn_subst_up : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] [CommRing Q] [CommRing O] [Algebra B Q] (θ : B →+* O), IsFrame p Q θ → ∀ (σ τ : Type) [Fintype σ] (N : Ideal B) (f : MvPowerSeries σ Q) (u : σ → MvPowerSeries τ B), DIn N f → (∀ i, constantCoeff (u i) = 0) → DIn N (subst (up Q u) f) ∧ (In N f → In N (subst (up Q u) f)) := by
+theorem GlobalTheory.QLog.dIn_subst_up :
+    ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] [CommRing Q] [CommRing O]
+      [Algebra B Q] (θ : B →+* O), IsFrame p Q θ →
+      ∀ (σ τ : Type) [Fintype σ] (N : Ideal B) (f : MvPowerSeries σ Q)
+        (u : σ → MvPowerSeries τ B), DIn N f → (∀ i, constantCoeff (u i) = 0) →
+        DIn N (MvPowerSeries.subst (QLog.up Q u) f) ∧
+          (In N f → In N (MvPowerSeries.subst (QLog.up Q u) f)) := by
   intro p _ B O Q _ _ _ _ θ _ σ τ _ N f u hD hu
   set NQ : Submodule B Q := Submodule.map (Algebra.linearMap B Q) N with hNQ
   have memNQ : ∀ q : Q, q ∈ NQ ↔ ∃ b ∈ N, q = algebraMap B Q b := by
@@ -100,18 +110,18 @@ theorem GlobalTheory.QLog.dIn_subst_up : ∀ (p : ℕ) [Fact p.Prime] (B O Q : T
     constructor
     · rintro ⟨b, hb, rfl⟩; exact ⟨b, hb, rfl⟩
     · rintro ⟨b, hb, rfl⟩; exact ⟨b, hb, rfl⟩
-  have ha : HasSubst (up Q u) :=
+  have ha : HasSubst (QLog.up Q u) :=
     hasSubst_of_constantCoeff_zero fun i => by
-      simp only [up]
+      simp only [QLog.up]
       rw [← coeff_zero_eq_constantCoeff_apply, coeff_map, coeff_zero_eq_constantCoeff_apply, hu i,
         map_zero]
 
-  have hprod : ∀ d : σ →₀ ℕ, (d.prod fun s e => (up Q u s) ^ e) =
+  have hprod : ∀ d : σ →₀ ℕ, (d.prod fun s e => (QLog.up Q u s) ^ e) =
       map (algebraMap B Q) (∏ i, u i ^ d i) := by
     intro d
     rw [Finsupp.prod_fintype _ _ (fun i => pow_zero _), map_prod]
-    simp only [up, map_pow]
-  have hcoeff : ∀ e, coeff e (subst (up Q u) f) =
+    simp only [QLog.up, map_pow]
+  have hcoeff : ∀ e, coeff e (MvPowerSeries.subst (QLog.up Q u) f) =
       ∑ d ∈ (coeff_subst_finite ha f e).toFinset,
         algebraMap B Q (coeff e (∏ i, u i ^ d i)) * coeff d f := by
     intro e

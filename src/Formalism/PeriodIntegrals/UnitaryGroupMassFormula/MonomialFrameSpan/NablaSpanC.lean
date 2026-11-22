@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.NablaSpans.MinorProdSpanHasCompl
+module
+
+public import Formalism.PeriodIntegrals.NablaSpans.MinorProdSpanHasCompl
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ def StepSat : Prop :=
   MinorProdSpanHasCompl → ∀ (Lt : Type) [Fintype Lt] [DecidableEq Lt] (l : ℕ) [Fact l.Prime] (N0 : ℕ)
     (nu : Lt → YoungDiagram) (P : MvPolynomial (Lt × ℕ × Fin N0) ℂ_[l]) (B : ℝ),
     P ∈ nablaSpanC Lt l N0 nu →
-    (∀ m, ‖MvPolynomial.coeff m P‖ ≤ (l : ℝ) ^ (-B)) →
+    (∀ m, ‖AddMonoidAlgebra.coeff P m‖ ≤ (l : ℝ) ^ (-B)) →
     ∃ c : ColChoice N0 nu →₀ ℂ_[l], (∀ J, ‖c J‖ ≤ (l : ℝ) ^ (-B)) ∧
       P = c.sum fun J a => a • MvPolynomial.map (Int.castRingHom ℂ_[l]) (nablaX N0 nu J)
 

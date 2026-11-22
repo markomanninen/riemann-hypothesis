@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -67,9 +71,11 @@ theorem isDPMorphism_of_eq_bot (δ : DividedPowers J) (hJ : J = ⊥) (δ' : Divi
   · rw [δ.dpow_zero (Ideal.zero_mem _), δ'.dpow_zero J'.zero_mem, map_one]
   · rw [δ.dpow_eval_zero hn, δ'.dpow_eval_zero hn, map_zero]
 
-open Classical in
 
-def divided₂ (h : J ^ 2 = 0) : DividedPowers J := OfSquareZero.dividedPowers h
+open Classical in
+def divided₂ (h : J ^ 2 = 0) : DividedPowers J := by
+  classical
+  exact OfSquareZero.dividedPowers h
 
 theorem squareZeroDividedPowers_dpow (h : J ^ 2 = 0) {n : ℕ} (hn : 2 ≤ n) (a : B) : (divided₂ h).dpow n a = 0 := by
   classical
@@ -171,7 +177,8 @@ instance : Category (Thick γ s) where
   comp f g := ⟨g.φ.comp f.φ, g.φ₀.comp f.φ₀, fun b ↦ by simp [f.comm, g.comm],
     IsDPMorphism.comp _ g.dp f.dp, by rw [spMap_comp, Category.assoc, f.pt, g.pt]⟩
 
-@[ext] theorem hom_ext {T T' : Thick γ s} {f g : T ⟶ T'} (h : ∀ b, f.φ b = g.φ b) : f = g := Hom.ext' (AlgHom.ext h)
+@[ext] theorem hom_ext {T T' : Thick γ s} {f g : T ⟶ T'}
+    (h : ∀ b, f.φ b = g.φ b) : f = g := Hom.ext' (AlgHom.ext h)
 
 @[simp] theorem comp_φ {T T' T'' : Thick γ s} (f : T ⟶ T') (g : T' ⟶ T'') (b : T.B) :
     (f ≫ g).φ b = g.φ (f.φ b) := rfl
@@ -198,7 +205,7 @@ theorem ev_comp {γ : DividedPowers I} {s : X ⟶ Sp R} (f : Z1 (O γ s)) {T T' 
 theorem ev_sq {γ : DividedPowers I} {s : X ⟶ Sp R} (f : Z1 (O γ s)) {T₁ T₂ T₃ T₄ : Thick γ s}
     (a : T₁ ⟶ T₂) (p : T₂ ⟶ T₄) (q : T₁ ⟶ T₃) (b : T₃ ⟶ T₄) (h : ∀ c, p.φ (a.φ c) = b.φ (q.φ c)) :
     p.φ (ev f a) + ev f p = b.φ (ev f q) + ev f b := by
-  have e : a ≫ p = q ≫ b := Thick.hom_ext fun c ↦ h c
+  have e : a ≫ p = q ≫ b := Thick.Hom.ext' (AlgHom.ext h)
   rw [← ev_comp, ← ev_comp, e]
 
 abbrev H1 (γ : DividedPowers I) (s : X ⟶ Sp R) : Type 1 := CatCoh.H1 (O γ s)
@@ -283,10 +290,6 @@ theorem IsMor.pullCohomologyOne_id (h : IsMor γ s γ s (RingHom.id R) (𝟙 X))
   (h.coef.pullCohomologyOne_eq_of_natTrans (CoefMap.id _) h.idTrans (fun _ _ ↦ rfl) c).trans
     (CoefMap.pullCohomologyOne_id c)
 
-theorem IsMor.pullCohomologyTwo_id (h : IsMor γ s γ s (RingHom.id R) (𝟙 X)) (c : H2 γ s) : h.pull2 c = c :=
-  (h.coef.pullCohomologyTwo_eq_of_natTrans (CoefMap.id _) h.idTrans (fun _ _ ↦ rfl) c).trans
-    (CoefMap.pullCohomologyTwo_id c)
-
 variable {τ : R' →+* R''} {ψ : X'' ⟶ X'} {ρ : R →+* R''} {χ : X'' ⟶ X}
 
 def IsMor.compTrans (h : IsMor γ s γ' s' σ φ) (h' : IsMor γ' s' γ'' s'' τ ψ)
@@ -306,13 +309,6 @@ theorem IsMor.pullback1_comp (h : IsMor γ s γ' s' σ φ) (h' : IsMor γ' s' γ
     h'.pull1 (h.pull1 c) = h''.pull1 c :=
   (h.coef.pullCohomologyOne_comp h'.coef c).symm.trans
     ((h.coef.comp h'.coef).pullCohomologyOne_eq_of_natTrans h''.coef (h.compTrans h' h'' e e')
-      (fun _ _ ↦ rfl) c)
-
-theorem IsMor.pullback2_comp (h : IsMor γ s γ' s' σ φ) (h' : IsMor γ' s' γ'' s'' τ ψ)
-    (h'' : IsMor γ s γ'' s'' ρ χ) (e : ∀ r, τ (σ r) = ρ r) (e' : ψ ≫ φ = χ) (c : H2 γ s) :
-    h'.pull2 (h.pull2 c) = h''.pull2 c :=
-  (h.coef.pullCohomologyTwo_comp h'.coef c).symm.trans
-    ((h.coef.comp h'.coef).pullCohomologyTwo_eq_of_natTrans h''.coef (h.compTrans h' h'' e e')
       (fun _ _ ↦ rfl) c)
 
 end Pull
@@ -586,25 +582,6 @@ theorem val_pull {s' : X' ⟶ Sp R} {φ : X' ⟶ X} (h : IsMor (dp0 R) s (dp0 R)
   rw [val_apply, val_apply, l1, l2, s1, s2]
   exact (add_sub_add_right_eq_sub _ _ _).symm
 
-@[reducible] def self (R B : Type) [CommRing R] [CommRing B] [Algebra R B] : SqExt R where
-  C := B
-  B := B
-  π := AlgHom.id R B
-  i := AlgHom.id R B
-  π_i _ := rfl
-  sq := by
-    rw [(RingHom.injective_iff_ker_eq_bot _).1 (fun _ _ h ↦ h)]
-    simp
-
-theorem val_self {B : Type} [CommRing B] [Algebra R B] (y : Sp B ⟶ X)
-    (hy : y ≫ s = spMap (algebraMap R B)) (f : Form s) : (self R B).val y hy f.1 = 0 := by
-  have hk : RingHom.ker ((self R B).π : B →+* B) = ⊥ :=
-    (RingHom.injective_iff_ker_eq_bot _).1 fun _ _ h ↦ h
-  have k1 : ev f.1 ((self R B).secHom ((self R B).red_w hy) (self R B).i (self R B).π_i) = 0 :=
-    f.2 _ rfl hk
-  have k2 : ev f.1 ((self R B).idHom hy) = 0 := f.2 _ rfl hk
-  rw [val_apply, k1, k2, sub_zero]
-
 theorem π_val (y : Sp E.C ⟶ X) (hy : y ≫ s = spMap (algebraMap R E.C)) (f : Form s) :
     E.π (E.val y hy f.1) = 0 := by
   let ρ : E.thick (spMap (E.π : E.C →+* E.B) ≫ y) (E.red_w hy) ⟶
@@ -644,7 +621,8 @@ theorem val_const (x : Sp E.B ⟶ X) (hx : x ≫ s = spMap (algebraMap R E.B)) (
           spMap (E.i : E.B →+* E.C) ≫ x = spMap (E.i : E.B →+* E.C) ≫ x
       rw [RingHom.id_comp, ← Category.assoc (spMap (E.π : E.C →+* E.B)), ← spMap_comp, hpi,
         spMap_id, Category.id_comp])
-  have k : E.secHom (E.red_w hy) E.i E.π_i = lam ≫ E.idHom hy := Thick.hom_ext fun _ ↦ rfl
+  have k : E.secHom (E.red_w hy) E.i E.π_i = lam ≫ E.idHom hy :=
+    Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl)
   rw [val_apply, k, ev_comp, show ev f.1 lam = 0 from f.2 lam rfl rfl, map_zero, zero_add,
     sub_self]
 

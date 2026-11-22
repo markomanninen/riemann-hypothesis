@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.DIV Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.L2.Indef.Tree.DepthCond Formalism.DivisionValues Formalism.EigenvalueLevelCeiling
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff)
@@ -25,7 +29,7 @@ theorem kappa_entries_le : ∀ (D : D7) (L : SizeData₂ D) (Pm : ParameterChoic
     have e2 := (hK j h1 h2 τ).1 i
     rw [← e1, DV.aPlusQ_eq] at e2
     unfold DV.eQ at e2
-    rw [dif_pos ⟨h1, h2⟩] at e2
+    rw [dite_eq_left ⟨h1, h2⟩] at e2
     have e3 := congrArg (fun q : ℚ => (q : ℝ)) e2
     push_cast at e3
     unfold kaR
@@ -33,16 +37,16 @@ theorem kappa_entries_le : ∀ (D : D7) (L : SizeData₂ D) (Pm : ParameterChoic
   refine ⟨fun i hi => ?_, fun i hi => ?_, fun i => ?_⟩
   · have b := big i
     unfold DV.sigPar at b
-    rw [dif_pos hi] at b
+    rw [dite_eq_left hi] at b
     have a1 := (L.cloud_v τ ⟨i.1, hi⟩).2
     unfold wj
-    rw [dif_pos (by omega : j - 1 < D.R.m)]
+    rw [dite_eq_left (by omega : j - 1 < D.R.m)]
     linarith
   · have b := big i
     have hi2 : i.1 < D.R.k + j - 1 := i.2
     have hb : i.1 - (D.R.k - 1) < D.R.m := by omega
     unfold DV.sigPar at b
-    rw [dif_neg (by omega), dif_pos hb] at b
+    rw [dite_eq_right (by omega), dite_eq_left hb] at b
     have a2 := (abs_le.1 (L.be_close τ ⟨i.1 - (D.R.k - 1), hb⟩ ⟨j - 1, by omega⟩)).1
     push_cast at a2 b
     linarith
@@ -51,7 +55,7 @@ theorem kappa_entries_le : ∀ (D : D7) (L : SizeData₂ D) (Pm : ParameterChoic
     have e2 := (hK j h1 h2 τ).2 (Fin.rev i)
     have hi := (Fin.rev i).2
     unfold DV.aMinusQ DV.eQ at e2
-    rw [dif_pos (by omega), dif_pos ⟨h1, h2⟩] at e2
+    rw [dite_eq_left (by omega), dite_eq_left ⟨h1, h2⟩] at e2
     have a2 := (abs_le.1 (L.be_close τ ⟨j + (Fin.rev i).1, by omega⟩ ⟨j - 1, by omega⟩)).2
     have a8 : (0 : ℝ) ≤ (Fin.rev i).1 := Nat.cast_nonneg _
     have e3 := congrArg (fun q : ℚ => (q : ℝ)) e2

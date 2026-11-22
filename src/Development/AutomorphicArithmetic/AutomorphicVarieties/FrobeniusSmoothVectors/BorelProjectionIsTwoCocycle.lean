@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LcMatrix
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MapThetaLie
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LcMatrix
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MapThetaLie
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -15,7 +19,7 @@ theorem UpperTheory.V.Fr.borelProjection_isTwoCocycle :
     intro y hy
     rw [← res_eq_zero_iff O C', ← res_map p y, RingHom.mem_ker.mp hy, map_zero]
   obtain ⟨hom, -, -, -⟩ := pr_omk hF O C' C p B D hK
-  obtain ⟨x, hx⟩ : ∃ x : F.Γ → GG n C', ∀ a, x a = ⟨D.r a, F.del a⟩ := ⟨_, fun _ => rfl⟩
+  obtain ⟨x, hx⟩ : ∃ x : F.Γ → GG (m := n) (R := C'), ∀ a, x a = ⟨D.r a, F.del a⟩ := ⟨_, fun _ => rfl⟩
   have hW : ∀ a b, x a * x b * (x (a * b))⁻¹ =
       GG.ofGL (D.r a * sgnAct n C' (F.del a) (D.r b) * (D.r (a * b))⁻¹) := by
     intro a b
@@ -36,7 +40,7 @@ theorem UpperTheory.V.Fr.borelProjection_isTwoCocycle :
     · ext i j
       simp [Box.map, GG.map, ← D.r_map s, res_map]
     · simp [Box.map, GG.map, B.nu]
-  have key : ∀ a b : GG n C', a.right = 1 → (a * b).mat = a.mat * b.mat := by
+  have key : ∀ a b : GG (m := n) (R := C'), a.right = 1 → (a * b).mat = a.mat * b.mat := by
     intro a b ha
     simp only [GG.mat, SemidirectProduct.mul_left, ha, map_one, MulAut.one_apply, Units.val_mul]
   have hofr : ∀ w : GL (Fin n) C', (GG.ofGL w).right = 1 := fun w => rfl

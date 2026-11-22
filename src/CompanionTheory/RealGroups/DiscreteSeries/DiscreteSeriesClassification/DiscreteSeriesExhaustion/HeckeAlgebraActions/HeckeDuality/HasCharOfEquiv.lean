@@ -1,5 +1,9 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.HeckeDuality.GlRelTau
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ImportsExtraMore
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.HeckeDuality.GlRelTau
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ImportsExtraMore
+
+@[expose] public section
 
 noncomputable section
 

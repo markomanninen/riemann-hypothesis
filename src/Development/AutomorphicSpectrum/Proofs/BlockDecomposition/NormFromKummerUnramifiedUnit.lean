@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.MainTheorem
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.MainTheorem
+
+@[expose] public section
 
 open ValuativeRel IntermediateField
 

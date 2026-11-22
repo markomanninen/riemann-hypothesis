@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+
+@[expose] public section
+
 open MeasureTheory Matrix
 
 namespace GlobalTheory

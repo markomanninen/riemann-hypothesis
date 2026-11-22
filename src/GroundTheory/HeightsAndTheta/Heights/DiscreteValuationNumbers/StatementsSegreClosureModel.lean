@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -60,11 +65,6 @@ def GenericProjClosureModel.Statement : Prop :=
         aeval (pairProjCoord y e φ φ' t) f₀ = aeval (pairProjCoord y e φ φ' t) g₀
 
 section Examples
-
-abbrev GenericCoordField (N : ℕ) : Type := FractionRing (MvPolynomial (Fin N) LineFieldDyadic)
-
-def genericCoords (N : ℕ) : Fin N → GenericCoordField N :=
-  fun i => algebraMap (MvPolynomial (Fin N) LineFieldDyadic) (GenericCoordField N) (X i)
 
 end Examples
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.CechDR
 
 namespace GlobalTheory
@@ -23,7 +28,7 @@ theorem cocycle_one_forms_coboundary_of_restrict : ∀ {R : Type} [CommRing R] {
     have e2 := hθ T' t u
     have e3 := hθ T t (φ ≫ u)
     rw [oneFormsMapOfFunctorMorphism_comp] at e3
-    simp only [map_add, map_sub, e2, e3]
+    simp only [map_add (f := _), map_sub, e2, e3]
     rw [e1]
     abel
   rw [← sub_eq_zero]

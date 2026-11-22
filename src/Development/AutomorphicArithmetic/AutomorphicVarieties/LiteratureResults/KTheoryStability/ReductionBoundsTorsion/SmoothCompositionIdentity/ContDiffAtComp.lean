@@ -1,5 +1,8 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.BasicForm
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +25,7 @@ theorem contDiffAt_comp {X : Type} [NormedAddCommGroup X] [NormedSpace ℝ X] {�
     let M := ContinuousMultilinearMap ℝ (fun _ : Fin q => V) ℝ
     haveI : FiniteDimensional ℝ M := Module.Finite.of_injective
       (ContinuousMultilinearMap.toMultilinearMapLinear (R' := ℝ) (A := ℝ) :
-        M →ₗ[ℝ] MultilinearMap ℝ (fun _ : Fin q => V) ℝ)
+        M →ₗ[ℝ] MultilinearMap (RingHom.id ℝ) (fun _ : Fin q => V) ℝ)
       ContinuousMultilinearMap.toMultilinearMap_injective
     let ι : (V [⋀^Fin q]→L[ℝ] ℝ) →ₗ[ℝ] M :=
       (ContinuousAlternatingMap.toContinuousMultilinearMapCLM (𝕜 := ℝ) ℝ).toLinearMap
@@ -97,8 +100,9 @@ theorem core (B : V →L[ℝ] V →L[ℝ] V →L[ℝ] V) (e : V) (h1 : B e e = 1
     ext v
     simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply]
     congr 1
-    funext i
-    simp only [Function.comp_apply]
+    ext i
+    change v i = (B (hstrict.localInverse _ _ _ y) (hstrict.localInverse _ _ _ y))
+      ((Ring.inverse (B (hstrict.localInverse _ _ _ y) (hstrict.localInverse _ _ _ y))) (v i))
     rw [← ContinuousLinearMap.mul_apply, Ring.mul_inverse_cancel _ hu]
     rfl
   have hsm : ContDiffAt ℝ ∞ o e := by
@@ -162,7 +166,7 @@ theorem transport (A : V →L[ℝ] V) {h : V} (o : V → V [⋀^Fin q]→L[ℝ] 
   refine ⟨hsm.congr_of_eventuallyEq heq.symm, ?_⟩
   rw [← heq.extDeriv_eq, extDeriv_pullback (r := ∞) (hc.differentiableAt (by simp))
     A.contDiff.contDiffAt
-    (by simp; exact ENat.LEInfty.out), h0]
+    (by simp), h0]
   ext v
   simp
 

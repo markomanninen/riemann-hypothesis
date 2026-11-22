@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
-import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PeriodicValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
-import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PeriodicValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -254,12 +258,6 @@ theorem RealAt.comp {Y : Model Xo c β} {a : ArcIn D l β O' b} {R₁ R₂ : Typ
     (by rw [h₃, RingHom.comp_apply, RingHom.comp_apply, hh]) h₄
   refine ⟨A, r, o, p₁, p₂, ?_, p₄⟩
   rwa [spMap_comp', Category.assoc] at p₃
-
-theorem serBase_algebraMap (K : Type) [Field K] [IsAlgClosed K] [Algebra (FractionRing O') K] [Algebra (PowerSeries O') K]
-    [FaithfulSMul (PowerSeries O') K] [Algebra.IsAlgebraic (PowerSeries O') K]
-    (h : ∀ x, algebraMap (FractionRing O') K (algebraMap O' _ x) = algebraMap (PowerSeries O') K (PowerSeries.C x)) :
-    SerBase (algebraMap (PowerSeries O') K) :=
-  ⟨‹_›, FaithfulSMul.algebraMap_injective _ _, fun x => Algebra.IsAlgebraic.isAlgebraic (R := PowerSeries O') x, h⟩
 
 theorem Mdl.admissible_base_of_complete_dvr {C : Type} [NormedField C] {o : Full D C} (M : Mdl o) :
     AdmBase M.W (IsLocalRing.maximalIdeal M.W) ∧ CharZero M.W := by

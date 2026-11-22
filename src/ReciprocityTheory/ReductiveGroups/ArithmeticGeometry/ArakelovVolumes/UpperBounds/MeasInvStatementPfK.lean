@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPfJ
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPfJ
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.MI
 
@@ -22,13 +26,13 @@ lemma Nmat_low (x : LoI X.Ψ r → ℂ) (τ : X.Ψ) : (Nmat x τ).BlockTriangula
   have h2 : a ≠ b := hab'.ne
   first
   | simp [Nmat, h1, h2]
-  | (unfold Nmat; rw [Matrix.of_apply, dif_neg h1]; simp [h2, Ne.symm h2])
+  | (unfold Nmat; rw [Matrix.of_apply, dite_eq_right h1]; simp [h2, Ne.symm h2])
 
 lemma det_Nmat (x : LoI X.Ψ r → ℂ) (τ : X.Ψ) : (Nmat x τ).det = 1 := by
   rw [Matrix.det_of_lowerTriangular _ (Nmat_low X x τ)]
   refine Finset.prod_eq_one fun a _ => ?_
   unfold Nmat
-  rw [Matrix.of_apply, dif_neg (lt_irrefl a)]
+  rw [Matrix.of_apply, dite_eq_right (lt_irrefl a)]
   simp
 
 private theorem det_gram' (τ : X.Ψ) (M : Matrix (Fin r) (Fin r) ℂ) :

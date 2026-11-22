@@ -1,7 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RealPointsToUnitaryGroupVal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceTensorRatFiniteAlgebraModuleTopology
-open NumberField GlobalTheory.LKTrip GlobalTheory.HTBetti GlobalTheory.Kg IsDedekindDomain
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
+public import GroundTheory.AutomorphicForms.GKModules.RightRegular
+public import GroundTheory.AutomorphicForms.DiscreteSpectrumAbstract
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AestronglyMeasurableQuotMeasureIffLift
+public import GroundTheory.AutomorphicForms.UnitaryRepresentations.IsInvariantIffCommuteStarProjection
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.Product
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianCongrOfPositiveIndexEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveRealTensorToProdMatrixAlgebrasInfPlaces
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceTensorRatFiniteAlgebraModuleTopology
+
+@[expose] public section
+
+open NumberField GlobalTheory.LKTrip IsDedekindDomain
 open scoped TensorProduct Matrix.Norms.L2Operator RestrictedProduct
 
 noncomputable section
@@ -80,7 +93,7 @@ theorem upts_props (R : Type) [CommRing R] [Algebra ℚ R] [TopologicalSpace R] 
     | tmul r x =>
       rw [starT_tmul, LinearMap.baseChange_tmul]
       rfl
-    | add x y hx hy => simp only [map_add, MulOpposite.unop_add] at hx hy ⊢; rw [hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), MulOpposite.unop_add] at hx hy ⊢; rw [hx, hy]
   have hσ : Continuous (fun y : R ⊗[ℚ] C => (starT star R y).unop) := by
     rw [hσeq]
     exact IsModuleTopology.continuous_of_linearMap _
@@ -159,7 +172,5 @@ theorem finiteAdeleRingAway_secondCountableTopology : SecondCountableTopology (A
   exact @TopologicalSpace.secondCountableTopology_of_countable_cover _ _ _ _ U hsc hUo hcov
 
 end AfP
-
-open GlobalTheory.HTBetti
 
 end GlobalTheory.GfTop

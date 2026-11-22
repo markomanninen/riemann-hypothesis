@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.LocAlg
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.PositionTest
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintTranslate
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.LocAlg
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.PositionTest
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintTranslate
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ private theorem hecke_unit (a b : ℕ) (w : Pl E) :
 
 private theorem mconv_unit (a b : ℕ) (w : Pl E) {f : LF a b w} (hf : IsHecke (K2 a b w) f) :
     PositivityTheory.Rg.BcN.F2.mconv f ((K2 a b w : Set _).indicator 1) = f := by
-  have L : Lv a b (∅ : Finset (Pl E)) := ⟨fun w => KGL w a, fun w => KGL w b,
+  have L : Lv a b (∅ : Finset (Pl E)) := ⟨fun w => KGL w (n := a), fun w => KGL w (n := b),
     fun w => (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w a).1,
     fun w => (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w b).1, fun _ => le_rfl, fun _ => le_rfl,
     fun _ _ => ⟨rfl, rfl⟩⟩

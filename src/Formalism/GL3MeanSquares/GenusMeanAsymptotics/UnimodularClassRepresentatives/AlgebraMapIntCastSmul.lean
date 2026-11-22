@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
-import Formalism.HermitianLattices.HermitianLatticesProofs.TraceReal
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.TraceReal
+
+@[expose] public section
 
 open NumberField Module
 
@@ -99,7 +103,7 @@ variable [StarRing K] {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) 
   [IsScalarTower (𝓞 K) K V]
 
 theorem exists_zsmul_le {A B : Submodule (𝓞 K) V} (hA : Submodule.IsLattice K A)
-    (hB : Submodule.IsLattice K B) : ∃ n : ℤ, n ≠ 0 ∧ ∀ x ∈ A, n • x ∈ B := by
+    (hB : Submodule.IsFullLattice K B) : ∃ n : ℤ, n ≠ 0 ∧ ∀ x ∈ A, n • x ∈ B := by
   obtain ⟨S, hS⟩ := hA.fg
   choose n hn hnx using fun x : V => Formalism.HermitianLatticesTheory.traceReal_mult B hB x
   refine ⟨∏ x ∈ S, n x, Finset.prod_ne_zero_iff.mpr fun x _ => hn x, fun x hx => ?_⟩
@@ -117,15 +121,15 @@ theorem algebraMap_intCast_smul (n : ℤ) (x : V) :
     algebraMap (𝓞 F) (𝓞 K) (n : 𝓞 F) • x = n • x := by
   rw [map_intCast, Int.cast_smul_eq_zsmul]
 
-theorem patch {L₀ : Submodule (𝓞 K) V} (hL₀ : Submodule.IsLattice K L₀)
+theorem patch {L₀ : Submodule (𝓞 K) V} (hL₀ : Submodule.IsFullLattice K L₀)
     (s : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal})
     (B : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal} → Submodule (𝓞 K) V)
-    (hB : ∀ 𝔭, Submodule.IsLattice K (B 𝔭)) (hBs : ∀ 𝔭 ∉ s, B 𝔭 = L₀) :
+    (hB : ∀ 𝔭, Submodule.IsFullLattice K (B 𝔭)) (hBs : ∀ 𝔭 ∉ s, B 𝔭 = L₀) :
     Submodule.IsLattice K (⨅ 𝔭, locF 𝔭.1 (B 𝔭)) ∧
       ∀ 𝔭, locF 𝔭.1 (⨅ 𝔮, locF 𝔮.1 (B 𝔮)) = locF 𝔭.1 (B 𝔭) := by
   classical
-  choose n₁ hn₁ hn₁x using fun 𝔭 => exists_zsmul_le (hB 𝔭) hL₀
-  choose n₂ hn₂ hn₂x using fun 𝔭 => exists_zsmul_le hL₀ (hB 𝔭)
+  choose n₁ hn₁ hn₁x using fun 𝔭 => exists_zsmul_le (hB 𝔭).toIsLattice hL₀
+  choose n₂ hn₂ hn₂x using fun 𝔭 => exists_zsmul_le hL₀.toIsLattice (hB 𝔭)
   obtain ⟨N, hN, hN1, hN2⟩ : ∃ N : ℤ, N ≠ 0 ∧ (∀ 𝔭, ∀ x ∈ B 𝔭, N • x ∈ L₀) ∧
       ∀ 𝔭, ∀ x ∈ L₀, N • x ∈ B 𝔭 := by
     refine ⟨∏ 𝔭 ∈ s, (n₁ 𝔭 * n₂ 𝔭),
@@ -171,11 +175,8 @@ theorem patch {L₀ : Submodule (𝓞 K) V} (hL₀ : Submodule.IsLattice K L₀)
       rintro _ ⟨x, hx, rfl⟩
       exact h3 x hx
     exact hL₀.fg.of_le hle
-  · rw [eq_top_iff, ← hL₀.span_eq_top, Submodule.span_le]
-    intro x hx
-    have h4 : (N : K)⁻¹ • (N • x) ∈ Submodule.span K (Λ : Set V) :=
-      Submodule.smul_mem _ _ (Submodule.subset_span (h2 x hx))
-    rwa [← Int.cast_smul_eq_zsmul K, smul_smul, inv_mul_cancel₀ hNK, one_smul] at h4
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · intro 𝔭
     apply le_antisymm
     · calc locF 𝔭.1 Λ ≤ locF 𝔭.1 (locF 𝔭.1 (B 𝔭)) := locF_mono _ (hΛle 𝔭)

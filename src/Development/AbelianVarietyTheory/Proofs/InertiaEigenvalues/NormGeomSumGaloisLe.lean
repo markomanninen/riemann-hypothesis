@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -71,7 +75,8 @@ theorem norm_geom_sum_galois_le (l : ℕ) [Fact l.Prime] (σ : GQ l) (S : AddSub
     let ev : AddMonoid.End (Om l) →+ Om l :=
       { toFun := fun f => f x, map_zero' := rfl, map_add' := fun _ _ => rfl }
     have h := congrArg ev key
-    simp only [map_sum, map_nsmul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_nsmul] at h
     calc ∑ i ∈ Finset.range l, (σ ^ i) x = ∑ i ∈ Finset.range l, (T ^ i) x :=
           Finset.sum_congr rfl fun i _ => (hT i x).symm
       _ = _ := h
@@ -107,7 +112,8 @@ theorem norm_geom_sum_galois_le (l : ℕ) [Fact l.Prime] (σ : GQ l) (S : AddSub
   set y := ∑ i ∈ Finset.range l, (σ ^ i) x with hy
   have hyS : y ∈ S := S.sum_mem fun i _ => hpowS i x hx
   have htel : (σ ^ l) x - x = σ y - y := by
-    rw [hy, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum, ← Finset.sum_sub_distrib]
     have h := Finset.sum_range_sub (fun i => (σ ^ i) x) l
     simp only [pow_zero, AlgEquiv.one_apply] at h
     rw [← h]

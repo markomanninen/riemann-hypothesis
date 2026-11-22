@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Skeleton
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Skeleton
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,8 @@ theorem wa_form (hτ : ∀ a : E, τ (star a) = starRingEnd ℂ (τ a)) (u v : S
   have hu := S.frame.sum_repr u
   have hv := S.frame.sum_repr v
   conv_lhs => rw [← hu, ← hv]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
     smul_eq_mul, map_mul, starRingEnd_apply, hτ]
   simp only [dotProduct, mulVec, wa_cv, HSpace.gram, Matrix.map_apply, Pi.star_apply, Finset.mul_sum]
   conv_lhs => rw [Finset.sum_comm]
@@ -136,12 +141,14 @@ theorem wa_indep {m : ℕ} (u : Fin m → S.V) (hu : LinearIndependent E u) (x :
   have hφ : ∀ v : S.V, g v l = ∑ i, S.frame.repr v i * g (S.frame i) l := by
     intro v
     conv_lhs => rw [← S.frame.sum_repr v]
-    simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   have key : ∀ k, ∑ i, wa_cv S τ (u k) i * τ (g (S.frame i) l) = if l = k then 1 else 0 := by
     intro k
     have h2 := congrArg τ (hφ (u k))
     rw [hgu k] at h2
-    simp only [map_sum, map_mul] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul] at h2
     simp only [wa_cv]
     rw [← h2]
     by_cases h : l = k
@@ -224,7 +231,7 @@ theorem weight_space_anisotropic : WAniso := by
     obtain ⟨x, hx, y, hy, hxy⟩ := Submodule.mem_sup.1 (hle h)
     obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hy
     have h0 : (hS D).hT F'.fl.z (x + c • F'.fl.z) = 0 := by rw [hxy]; exact hzw
-    rw [map_add, hzX x hx, map_smul, hzz, zero_add, smul_eq_mul] at h0
+    rw [map_add (f := _), hzX x hx, map_smul, hzz, zero_add, smul_eq_mul] at h0
     have hc : c = 0 := by
       rcases mul_eq_zero.1 h0 with h' | h'
       · exact h'

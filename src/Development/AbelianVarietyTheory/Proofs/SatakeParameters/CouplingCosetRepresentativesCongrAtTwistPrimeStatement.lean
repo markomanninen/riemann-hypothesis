@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CouplingCosetRepresentativesCongrAtTwistPrime
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiTopEqProd
-import Formalism.LocalToGlobal.Columns.XtPhiTopGCongr
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CouplingCosetRepresentativesCongrAtTwistPrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiTopEqProd
+public import Formalism.LocalToGlobal.Columns.XtPhiTopGCongr
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Col Formalism.MainNotions Formalism.L2.Ker GlobalTheory.TwU GlobalTheory.TwV GlobalTheory.TwTop
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar

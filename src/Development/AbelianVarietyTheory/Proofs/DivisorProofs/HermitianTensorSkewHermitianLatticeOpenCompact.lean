@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareStanding
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsMoreTer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareStanding
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsMoreTer
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -25,14 +29,8 @@ namespace GlobalTheory.LatOpenCpt
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
 theorem exists_zsmul_mem {E : Type} [Field E] [NumberField E] {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : L.IsLattice E) (z : Fin n → E) : ∃ m : ℤ, m ≠ 0 ∧ m • z ∈ L := by
-  first
-  | exact @_root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem
-  | exact _root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem
-  | (apply _root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem <;> assumption)
-  | (intros; apply _root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem ..)
+    (hL : L.IsFullLattice E) (z : Fin n → E) : ∃ m : ℤ, m ≠ 0 ∧ m • z ∈ L := by
+  exact _root_.GlobalTheory.IntegerMultipleMembership.exists_int_smul_mem L hL z
 
 theorem vecMulVec_mem {E : Type} [Field E] [NumberField E] {n d : ℕ} {LX : Submodule (𝓞 E) (Fin n → E)}
     {LY : Submodule (𝓞 E) (Fin d → E)} (sX : Finset LX) (hsX : Submodule.span ℤ (sX : Set LX) = ⊤) (sY : Finset LY)
@@ -66,7 +64,7 @@ theorem exists_gen {E : Type} [Field E] [NumberField E] {n : ℕ} (L : Submodule
   exact Module.Finite.fg_top
 
 theorem locCo_smul {F : Type} [Field F] [NumberField F] {W : Type} [AddCommGroup W] [Module (AF F) W]
-    {B : W → W → AF F} {κ : Type} [Fintype κ] (co : GlobalTheory.WeilM.Darboux B κ) (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F) (a : AF F) (w : W) :
+    {B : W → W → AF F} {κ : Type} [Fintype κ] (co : GlobalTheory.WeilM.Darboux B κ) (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)) (a : AF F) (w : W) :
     GlobalTheory.LatVac.locCo co v (a • w) = GlobalTheory.AdelicU.evFin F v a • GlobalTheory.LatVac.locCo co v w := by
   simp only [GlobalTheory.LatVac.locCo, AddMonoidHom.coe_mk, ZeroHom.coe_mk, map_smul]
   ext k <;> simp [smul_eq_mul, map_mul]
@@ -90,7 +88,7 @@ theorem single_eq_vecMulVec {E : Type} [Field E] {n d : ℕ} (i : Fin n) (j : Fi
   split_ifs <;> simp_all
 
 theorem span_top {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n d : ℕ}
-    {LX : Submodule (𝓞 E) (Fin n → E)} {LY : Submodule (𝓞 E) (Fin d → E)} (hX : LX.IsLattice E) (hY : LY.IsLattice E)
+    {LX : Submodule (𝓞 E) (Fin n → E)} {LY : Submodule (𝓞 E) (Fin d → E)} (hX : LX.IsFullLattice E) (hY : LY.IsFullLattice E)
     {ι : Type} (t : ι → Matrix (Fin n) (Fin d) E)
     (ht : ∀ x ∈ LX, ∀ y ∈ LY, incM F (vecMulVec x y) ∈ Submodule.span (AF F) (Set.range fun i => incM F (t i)))
     (Z : Matrix (Fin n) (Fin d) (AE F E)) : Z ∈ Submodule.span (AF F) (Set.range fun i => incM F (t i)) := by
@@ -125,14 +123,14 @@ theorem main : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField
     X.IsHerm σ B r s → Y.IsSkew σ B r' s' → ∀ M : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Model σ X Y,
     (∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F,
         M.co.e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM F x) = (fun k => algebraMap F (AF F) (y k), fun k => algebraMap F (AF F) (z k))) →
-    ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F,
+    ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F),
       IsOpen (((GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v).map (GlobalTheory.LatVac.locCo M.co v) :
         AddSubgroup ((Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v))) : Set ((Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v))) ∧
       IsCompact (((GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v).map (GlobalTheory.LatVac.locCo M.co v) :
         AddSubgroup ((Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v))) : Set ((Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v))) := by
   intro F E _ _ _ _ _ σ B n d X Y r s r' s' hX hY M _ v
-  obtain ⟨sX, hsX⟩ := exists_gen X.L hX.lat
-  obtain ⟨sY, hsY⟩ := exists_gen Y.L hY.lat
+  obtain ⟨sX, hsX⟩ := exists_gen X.L hX.lat.toIsLattice
+  obtain ⟨sY, hsY⟩ := exists_gen Y.L hY.lat.toIsLattice
   let ι := ↥sX × ↥sY
   let t : ι → Matrix (Fin n) (Fin d) E := fun i => vecMulVec ((i.1 : X.L) : Fin n → E) ((i.2 : Y.L) : Fin d → E)
   let ρ : ι → (Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v) := fun i => GlobalTheory.LatVac.locCo M.co v (incM F (t i))
@@ -193,13 +191,14 @@ theorem main : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField
     rw [hφ]
     have hu : GlobalTheory.LatVac.locCo M.co v (M.co.e.symm U) = u := by
       ext k <;> simp [GlobalTheory.LatVac.locCo, U, GlobalTheory.LatVac.evFin_liftV]
-    rw [← hu, ← hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hu, ← hc, map_sum]
     exact Finset.sum_congr rfl fun i _ => (locCo_smul _ _ _ _).symm
   have hOc : IsCompact (v.adicCompletionIntegers F : Set (Fv F v)) := PI.AdicCompletionValuation.isCompact_adicCompletionIntegers F v
   have hOo : IsOpen (v.adicCompletionIntegers F : Set (Fv F v)) := Valued.isOpen_valuationSubring _
   have hφc : Continuous φ := by
     rw [show (φ : (ι → Fv F v) → _) = fun f => ∑ i, f i • ρ i from rfl]
-    exact continuous_finset_sum _ fun i _ => (continuous_apply i).smul continuous_const
+    exact continuous_finsetSum _ fun i _ => (continuous_apply i).smul continuous_const
   have hset : ((Opi.map φ.toAddMonoidHom : AddSubgroup _) : Set _) =
       φ '' Set.pi Set.univ fun _ => (v.adicCompletionIntegers F : Set (Fv F v)) := by
     ext w
@@ -211,11 +210,12 @@ theorem main : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField
     fun u => ∑ k, u.1 k • f1 k + ∑ k, u.2 k • f2 k
   have hsec : ∀ u, φ (sec u) = u := by
     intro u
-    simp only [sec, map_add, map_sum, map_smul, hf1, hf2]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [sec, map_add (f := _), map_sum, map_smul, hf1, hf2]
     ext k <;> simp [Prod.fst_sum, Prod.snd_sum, Finset.sum_apply, Pi.single_apply]
   have hsc : Continuous sec :=
-    (continuous_finset_sum _ fun k _ => ((continuous_apply k).comp continuous_fst).smul continuous_const).add
-      (continuous_finset_sum _ fun k _ => ((continuous_apply k).comp continuous_snd).smul continuous_const)
+    (continuous_finsetSum _ fun k _ => ((continuous_apply k).comp continuous_fst).smul continuous_const).add
+      (continuous_finsetSum _ fun k _ => ((continuous_apply k).comp continuous_snd).smul continuous_const)
   constructor
   · apply AddSubgroup.isOpen_of_mem_nhds (g := 0)
     have hU : IsOpen (sec ⁻¹' Set.pi Set.univ fun _ => (v.adicCompletionIntegers F : Set (Fv F v))) :=

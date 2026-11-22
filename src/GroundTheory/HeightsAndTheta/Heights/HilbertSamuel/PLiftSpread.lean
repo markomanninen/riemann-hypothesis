@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLiftSpread
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftSpreadRead
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartDenominator
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLiftSpread
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftSpreadRead
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartDenominator
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -22,8 +27,8 @@ theorem exists_common {α : Type} [Fintype α] (Q : α → ℕ → Prop) (hQ : �
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem prod_zpow_nsmul (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (t : ℕ) (a : K → ℤ) :
     ∏ k, y ⟨k, c k⟩ ^ (-(t • a) k) = ∏ _l : Fin t, ∏ k, y ⟨k, c k⟩ ^ (-a k) := by
   rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← Finset.prod_pow]
@@ -49,7 +54,7 @@ theorem LiftSpread.proof : LiftSpread.Statement := by
   intro K _ _ ι _ _ Ω _ _ y D N _ hA
   classical
   obtain ⟨q, hq, hgen, -⟩ := hA
-  obtain ⟨σ, _, s, hs, hrel⟩ := GenRead.exists_sections_of_generatedV y hgen
+  obtain ⟨σ, _, s, hs, hrel⟩ := GenRead.exists_sections_of_generatedV (y := y) hgen
 
   obtain ⟨M, hM1, hM⟩ := LiftSpread.exists_common (fun j n => (n : Ω) * s j ∈ chartLat y (q • N) 1)
     (fun j n k h => by

@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -6,10 +10,6 @@ open MeasureTheory FinHolAtlas Filter Topology
 open scoped ContDiff
 
 noncomputable section
-
-def HoloSmoothStatement : Prop :=
-  ∀ {e e' : ℕ} (F : (Fin e → ℂ) → (Fin e' → ℂ)) (U : Set (Fin e → ℂ)), IsOpen U →
-    AnalyticOnNhd ℂ F U → ContDiffOn ℝ ∞ F U
 
 def SmoothOnAlgStatement : Prop :=
   ∀ {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e X) (U V : Set X) (f g : X → ℝ)
@@ -19,7 +19,7 @@ def SmoothOnAlgStatement : Prop :=
 theorem smoothOnAlg : SmoothOnAlgStatement := by
   intro e X _ A U V f g c hf hg hVU
   refine ⟨fun j => ?_, fun j => ?_⟩
-  · exact ((hf j).mono fun y hy => ⟨hy.1, hVU hy.2⟩).add (hg j)
+  · exact ((hf j).mono (by exact fun y hy => ⟨hy.1, hVU hy.2⟩)).add (hg j)
   · exact contDiffOn_const.mul (hf j)
 
 section SlopeTestRemainingChoices
@@ -62,7 +62,7 @@ theorem isPotentialAdd : IsPotentialAddStatement := by
   intro e X _ A P Q hP hQ
   refine ⟨fun x => ?_, fun x x' y hy => ?_⟩
   · rw [add_U, add_φ]
-    exact fun j => ((hP.1 x j).mono fun y hy => ⟨hy.1, hy.2.1⟩).add
+    exact fun j => ((hP.1 x j).mono (by exact fun y hy => ⟨hy.1, hy.2.1⟩)).add
       ((hQ.1 x j).mono fun y hy => ⟨hy.1, hy.2.2⟩)
   · rw [add_U, add_U] at hy
     obtain ⟨⟨hPx, hQx⟩, hPx', hQx'⟩ := hy

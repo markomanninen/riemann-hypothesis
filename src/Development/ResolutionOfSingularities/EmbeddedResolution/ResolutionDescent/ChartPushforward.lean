@@ -1,12 +1,17 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.StrictTransformClosedImmersion
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DetachedLocus
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.StrictTransformTower
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.StrictTransformClosedImmersion
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DetachedLocus
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.StrictTransformTower
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
@@ -14,16 +19,6 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace
 noncomputable section
 
 namespace FunctorialResolution.EmbeddedResolution
-
-def subschemeIsoOfEq {V : Scheme.{u}} {I J : V.IdealSheafData} (h : I = J) :
-    I.subscheme ≅ J.subscheme :=
-  eqToIso (congrArg (fun K : V.IdealSheafData => K.subscheme) h)
-
-@[reassoc (attr := simp)]
-theorem subschemeIsoOfEq_hom_subschemeι {V : Scheme.{u}} {I J : V.IdealSheafData} (h : I = J) :
-    (subschemeIsoOfEq h).hom ≫ J.subschemeι = I.subschemeι := by
-  subst h
-  simp [subschemeIsoOfEq]
 
 variable {k : Type u} [Field k] [CharZero k] {Y : Scheme.{u}} [AlgebraicGeometry.IsAffine Y]
   {pY : Y ⟶ Spec (CommRingCat.of k)} [AlgebraicGeometry.LocallyOfFiniteType pY]
@@ -56,10 +51,6 @@ section
 
 variable {S S' : EmbeddedBlowupSequence k Y pY}
 
-instance instIsClosedImmersionAmbientMap (P : ChartPushforward S S') :
-    AlgebraicGeometry.IsClosedImmersion P.ambientMap :=
-  P.isClosedImmersion_ambientMap
-
 instance instIsClosedImmersionLevelMap (P : ChartPushforward S S') (i : ℕ) (hi : i ≤ S'.length) :
     AlgebraicGeometry.IsClosedImmersion (P.levelMap i hi) :=
   P.isClosedImmersion_levelMap i hi
@@ -74,30 +65,30 @@ section
 variable (S S' : EmbeddedBlowupSequence k Y pY) (f : S.ambient ⟶ S'.ambient)
   [AlgebraicGeometry.IsClosedImmersion f]
 
-private theorem isClosedImmersion_of_isPushforwardBlowupSeq
+theorem isClosedImmersion_of_isPushforwardBlowupSeq
     (h : IsPushforwardBlowupSeq f S.ambientSeq S'.ambientSeq) (i : ℕ) (hi : i ≤ S'.length) :
     AlgebraicGeometry.IsClosedImmersion (h.2.choose i (hi.trans_eq h.1.symm)) :=
   h.2.choose_spec.1 i (hi.trans_eq h.1.symm)
 
-private theorem isoObjZero_comm_of_isPushforwardBlowupSeq
+theorem isoObjZero_comm_of_isPushforwardBlowupSeq
     (h : IsPushforwardBlowupSeq f S.ambientSeq S'.ambientSeq) :
     h.2.choose 0 ((Nat.zero_le S'.length).trans_eq h.1.symm) ≫ S'.ambientSeq.isoZero.hom =
       S.ambientSeq.isoZero.hom ≫ f := by
   exact h.2.choose_spec.2.1
 
-private theorem blowdown_comm_of_isPushforwardBlowupSeq
+theorem blowdown_comm_of_isPushforwardBlowupSeq
     (h : IsPushforwardBlowupSeq f S.ambientSeq S'.ambientSeq) (i : ℕ) (hi : i < S'.length) :
     h.2.choose (i + 1) (hi.trans_eq h.1.symm) ≫ S'.blowdown i =
       S.blowdown i ≫ h.2.choose i (hi.le.trans_eq h.1.symm) :=
   h.2.choose_spec.2.2.1 i (hi.trans_eq h.1.symm)
 
-private theorem ambientCenter_eq_imageIdealSheaf_of_isPushforwardBlowupSeq
+theorem ambientCenter_eq_imageIdealSheaf_of_isPushforwardBlowupSeq
     (h : IsPushforwardBlowupSeq f S.ambientSeq S'.ambientSeq) (i : ℕ) (hi : i < S'.length) :
     S'.ambientCenter i =
       imageIdealSheaf (h.2.choose i (hi.le.trans_eq h.1.symm)) (S.ambientCenter i) :=
   h.2.choose_spec.2.2.2.1 i (hi.trans_eq h.1.symm)
 
-private theorem ker_succ_eq_strictTransform_of_isPushforwardBlowupSeq
+theorem ker_succ_eq_strictTransform_of_isPushforwardBlowupSeq
     (h : IsPushforwardBlowupSeq f S.ambientSeq S'.ambientSeq) (i : ℕ) (hi : i < S'.length) :
     (h.2.choose (i + 1) (hi.trans_eq h.1.symm)).ker =
       Blowup.strictTransform (S'.blowdown i) (S'.ambientCenter i)
@@ -116,10 +107,6 @@ def ofIsPushforwardSeq (hemb : S.emb ≫ f = S'.emb)
   levelMap_blowdown := fun i hi => blowdown_comm_of_isPushforwardBlowupSeq S S' f h i hi
   ambientCenter_eq := fun i hi => ambientCenter_eq_imageIdealSheaf_of_isPushforwardBlowupSeq S S' f h i hi
   ker_levelMap_succ := fun i hi => ker_succ_eq_strictTransform_of_isPushforwardBlowupSeq S S' f h i hi
-
-theorem ofIsPushforwardSeq_ambientMap (hemb : S.emb ≫ f = S'.emb)
-    (h : IsPushforwardBlowupSeq f S.ambientSeq S'.ambientSeq) :
-    (ofIsPushforwardSeq S S' f hemb h).ambientMap = f := rfl
 
 end
 
@@ -185,7 +172,6 @@ def strictTransformIso (P : ChartPushforward S S') (i : ℕ) (hi : i ≤ S'.leng
     S.strictTransform i ≅ S'.strictTransform i :=
   (P.exists_strictTransform_iso i hi).choose
 
-@[reassoc (attr := simp)]
 theorem strictTransformIso_hom_comp_strictTransformι (P : ChartPushforward S S') (i : ℕ) (hi : i ≤ S'.length) :
     (P.strictTransformIso i hi).hom ≫ S'.strictTransformι i = S.strictTransformι i ≫ P.levelMap i hi :=
   (P.exists_strictTransform_iso i hi).choose_spec

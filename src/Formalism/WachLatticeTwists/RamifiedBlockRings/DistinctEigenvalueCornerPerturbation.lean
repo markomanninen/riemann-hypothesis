@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.Statement
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.WachTwistTheoremDeltaClause
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.Statement
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.WachTwistTheoremDeltaClause
+
+@[expose] public section
 
 open Finset Classical
 
@@ -42,8 +46,6 @@ variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {X d G
 def RingData.δ (D : RingData O X d G t bl) : D.T' := ∏ i ∈ Finset.Ioo 0 t, (D.rr 0 - D.rr i)
 
 def RingData.δO (D : RingData O X d G t bl) : O := (D.δ : D.X' → O) D.π'
-
-def RingData.τ (D : RingData O X d G t bl) : D.T' := ∑ g ∈ D.sE, D.tE g * ((D.χ g : (D.T')ˣ) : D.T')
 
 end
 

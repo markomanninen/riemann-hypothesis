@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsPointVertRSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsInvertibleIdealIndex
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineIndex
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesLineDegree
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsPointVertRSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsInvertibleIdealIndex
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineIndex
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesLineDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -42,7 +47,8 @@ theorem mem_chartLat_iff [Fintype T] {z : K'} :
 theorem aeval_div_mem [Fintype T] {s : MRing (fun _ : Unit => T)} (hs : IsMultiHomog s (fun _ => 1))
     (t : T) : aeval y s / y ⟨(), t⟩ ∈ chartRingZ y (fun _ => t) := by
   classical
-  rw [s.as_sum, map_sum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [s.as_sum, map_sum, Finset.sum_div]
   refine Subalgebra.sum_mem _ fun m hm => ?_
   rw [aeval_monomial, mul_div_assoc]
   refine Subalgebra.mul_mem _ (Subalgebra.algebraMap_mem _ _) ?_
@@ -120,8 +126,8 @@ theorem genIndex_span_pos [NumberField K'] [Fintype T] {p0 : Σ _ : Unit, T} (hp
 
 end SectionIndexNormAlt
 
-open SectionIndexNormAlt in
 
+open SectionIndexNormAlt in
 theorem SectionIndexNorm.proof (hC : CurveCharts.Statement) (hI : InvertibleIdealIndex.Statement) :
     SectionIndexNorm.Statement := by
   intro T _ K' _ _ y s hP hs hsP
@@ -149,7 +155,7 @@ theorem SectionIndexNorm.proof (hC : CurveCharts.Statement) (hI : InvertibleIdea
     rw [hB, KLinesLineDegree.genIndex_map_of_injective f hinj, genIndex_span_div ?_ hx0,
       Real.log_mul (genIndex_span_pos (p0 := ⟨(), t1⟩) ht1).ne'
         (abs_pos.mpr (by exact_mod_cast Algebra.norm_ne_zero_iff.mpr hx0)).ne',
-      hrank, ← Module.finrank_mul_finrank ℚ (blockFnField y) K'] at key
+      hrank, ← (letI : Module.Free (blockFnField y) K' := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (blockFnField y) K')] at key
     · have hF : (0 : ℝ) < Module.finrank ℚ (blockFnField y) := Nat.cast_pos.mpr Module.finrank_pos
       apply mul_left_cancel₀ hF.ne'
       push_cast at key

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.DeltaPsiH
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TwoLatLeTwoSp
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.DeltaPsiH
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TwoLatLeTwoSp
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ theorem model_identification_of_explicit_map (h : TiePsi) : TwoLetterModelIdenti
     rw [show (Prod.snd ∘ Prod.mk false : Fin (m + 1) × Fin (m + 1) → Fin (m + 1) × Fin (m + 1)) = id from rfl,
       rename_id, AlgHom.id_apply]
   have hh0 : deltaB R.Kf m (PsiXY R.Kf m (hXY R.Kf (m + 1))) = 0 := by
-    simp only [hXY, map_sum, map_mul, ha, hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hXY, map_sum, map_mul, ha, hc]
     exact sum_covY R.Kf m (by omega)
   refine ⟨α, β, ?_, ?_, ?_⟩
   · intro a b y

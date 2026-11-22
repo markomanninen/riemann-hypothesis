@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Formalism.LocalToGlobal.IndefiniteReal.RealTB
-import Formalism.LocalToGlobal.IndefiniteReal.RealRec
-import Formalism.LocalToGlobal.IndefiniteReal.RealPins
-import Formalism.LocalToGlobal.IndefiniteReal.RealRecPins
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Formalism.LocalToGlobal.IndefiniteReal.RealTB
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRec
+public import Formalism.LocalToGlobal.IndefiniteReal.RealPins
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRecPins
+public import Lean
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,10 +22,10 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {K : Formalism.MainNotions.G.Consts} {Yd : DivX D}
   {cX : ExtraC}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 2000000 in
-
 structure TwIn (ex : Extra D L hT Gi Gl K Yd cX) : Type 1 where
   G : Type
   [grp : Group G]
@@ -52,8 +56,8 @@ attribute [instance] TwIn.grp TwIn.fin TwIn.alg
 
 variable {ex : Extra D L hT Gi Gl K Yd cX}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 @[reducible] def divisionPairOfAdelicFormsFaceColumnsData (x : TwIn ex) : RowSideFamily ex where
   Gp := x.G
   Pl0 := x.Pl0
@@ -87,10 +91,10 @@ def TwIn.bR (x : TwIn ex) (m : (x.F.Dc (zsOf x.R x.F)).Mem) (i : Fin ((x.F.Dc (z
   D.eMu (x.wd m) (D.jN (x.wd m) (x.C.eNu (x.wd m)
     (Pi.single (Fin.cast (congrArg (x.F.Dc (zsOf x.R x.F)).a (x.wU_wd m)).symm i) 1)))
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 4000000 in
-
 structure RealIn (x : TwIn ex) (Rc : Formalism.L2.RecT ex) (S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc) : Type 1 where
   psiPin : x.R.ψ = Rc.T.theta.W.ψ
   hin : ∀ u, Formalism.L2.SG.PoincareInHH.PoincareSetting.InHH S.X u S.Y.hK
@@ -127,52 +131,6 @@ structure RealIn (x : TwIn ex) (Rc : Formalism.L2.RecT ex) (S : Formalism.L2.SG.
 
 variable {x : TwIn ex} {Rc : Formalism.L2.RecT ex} {S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc}
 
-set_option maxHeartbeats 4000000 in
-
-def realTOf (y : RealIn x Rc S) : RealT Rc (divisionPairOfAdelicFormsFaceColumnsData x) x.F.Dc x.F.Sp x.F.Zsc S x.core.Q.c.F where
-  Rl := x.R
-  sEE := x.sEE
-  charW := (x.pins.char)
-  zs := rfl
-  s0 := (HEq.refl (s0Of x.R x.F))
-  s1 := (HEq.refl (s1Of x.R x.F))
-  dc := rfl
-  sp := HEq.rfl
-  col := (HEq.refl (colOf x.R x.F x.sEE))
-  allPlaces := x.pins.char.allPl
-  trSem := (x.pins.trSem)
-  stdChar := x.pins.keep.std
-  psiPin := y.psiPin
-  signs := (x.pins.keep.signs)
-  wdD := x.wd
-  wdD_wU := x.wd_wU
-  wU_wdD := x.wU_wd
-  hin := y.hin
-  bR := x.bR
-  spPin := (y.spPin)
-  frames := fun h => (Formalism.IndefR.Seed.Frm.framesOKg2_iff x.R).2 (x.pins.keep.frames h)
-  cG := x.cG
-  Sx := y.Sx
-  nexp := y.nexp
-  stdV := y.stdV
-  stdX := y.stdX
-  tS := y.tS
-  cS := y.cS
-  κS := y.κS
-  ιS := y.ιS
-  instEq := y.instEq
-  ιS_eq := y.ιS_eq
-  sEEc := y.sEEc
-  sEEj := y.sEEj
-  seeLev := (y.seeLev)
-  seeEval := (y.seeEval)
-  uS := y.uS
-  uS_norm := y.uS_norm
-  seeDef := (y.seeDef)
-  seeK := (y.seeK)
-  host := y.host
-  err_eq := (x.err)
-  vpos := y.vpos
 
 theorem phEff_one (x : TwIn ex) : phEff x.R = fun _ => 1 := by
   funext i
@@ -180,74 +138,8 @@ theorem phEff_one (x : TwIn ex) : phEff x.R = fun _ => 1 := by
   rw [x.pins.phs i]
   simp
 
-set_option maxHeartbeats 4000000 in
 
-def realTBOf (y : RealIn x Rc S) : RealTB Rc (divisionPairOfAdelicFormsFaceColumnsData x) x.F.Dc x.F.Sp x.F.Zsc S where
-  T := x.core
-  Q := realTOf y
-  κ := x.geo.κ
-  v₀ := (x.geo.v₀)
-  fw := (x.geo.fw)
-  bar := (x.geo.bar)
-  O := (x.geo.O)
-  pins := (x.geo.pins)
-  rhoGeo := (x.geo.rhoGeo)
-  equivAll := (x.geo.equivAll)
-  cTie := (x.geo.cTie)
-  phase := by
-    have h : ∀ i, x.R.toRealDat.LUnif →
-        Formalism.IndefR.FWT.PhaseTie x.core x.R.toRealDat x.geo.κ x.geo.v₀ x.geo.O (phEff x.R) i := by
-      rw [phEff_one x]
-      exact x.geo.phase
-    exact (h)
 
-set_option genInjectivity false in
-set_option genSizeOfSpec false in
-set_option maxHeartbeats 4000000 in
-
-structure RecIn (y : RealIn x Rc S) : Type 1 where
-  E : EigIdx D Yd
-  labPi : E.Pi → x.A3.A.fam.base.Ix
-  piOf : E.Pi → HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ
-  Tp : Formalism.L2.Host.TupTied D x.R.C ex.nch
-  tpEq : HEq Tp Rc.T.n.tp
-  tupXi : ∀ μ, Formalism.IndefR.RecTie.Used0 D μ → x.R.toLevCh.xiH (x.Y.tupT μ) = Tp.xi μ
-  mtRead : Formalism.IndefR.RecTie.MtRead x.R.toRealDat x.F.lv2 x.Y.tupT x.Y.hm x.Y.hTop x.Y.hinj x.Y.IL
-    (twPOf (divisionPairOfAdelicFormsFaceColumnsData x) x.Y.tupT x.Y.tupTie)
-  mjRead : Formalism.IndefR.RecTie.MjRead x.R.toRealDat x.F.lv2 x.Y.tupT x.Y.hm x.Y.hTop x.Y.hinj x.Y.IL
-    (fun i => (x.A3.indefDown (s0Of x.R x.F)).dW i) (fun i v => x.Z.jW i v) ((jDT (realTOf y)))
-
-set_option maxHeartbeats 4000000 in
-
-def realRecOf {y : RealIn x Rc S} (r : RecIn y) : RealRec (realTOf y) where
-  tupT := x.Y.tupT
-  hm := x.Y.hm
-  hTop := x.Y.hTop
-  hinj := x.Y.hinj
-  Ish := (x.Y.Ish)
-  I0 := (x.Y.Iz)
-  IL := (x.Y.IL)
-  Kc := x.Y.Kc
-  E := r.E
-  labPi := r.labPi
-  PY := x.Y.PY
-  PW := x.Y.PW
-  eFT := (x.Y.eFT)
-  piOf := r.piOf
-  ιW := x.Y.ιW
-  Tp := (r.Tp)
-  recR := by
-    have h : Formalism.IndefR.RecTie.RecReal x.R.toRealDat x.F.lv2 x.Y.tupT x.Y.hm x.Y.hTop x.Y.hinj ex.p0 x.Y.Ish x.Y.Iz x.Y.IL x.Y.Kc r.E
-        r.labPi x.Y.PY x.Y.PW x.Y.eFT r.piOf x.Y.ιW ex.nch r.Tp :=
-      ⟨x.pins.char.base, x.Y.tied, x.Y.prtE, x.Y.prtE0, x.Y.prtWE, x.Y.xi, r.tupXi,
-        fun w => by rw [x.Y.muAt w, x.Y.tupT_tup], x.Y.isomFin, x.Y.frameMatch⟩
-    exact (h)
-  tpEq := (r.tpEq)
-  tupTie := x.Y.tupTie
-  tupT_tup := x.Y.tupT_tup
-  muEq := (Eq.refl x.R.mu)
-  mtRead := (r.mtRead)
-  mjRead := (r.mjRead)
 
 end GlobalTheory.Mem.R3
 

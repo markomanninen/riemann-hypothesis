@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.CharIdem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CharacterIdempotents.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.CharIdem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CharacterIdempotents.Development
+
+@[expose] public section
 
 open CategoryTheory
 

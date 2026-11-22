@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+
+@[expose] public section
 
 open Formalism.UG GlobalTheory.LKDef.HeckeTraceForms UpperTheory.Gal.W2.Seed
 open scoped Classical
@@ -9,11 +13,11 @@ private theorem tyFn_mul_of_mem {M : Type} [Group M] (J : Subgroup M) (ψ : J �
   unfold tyFn
   by_cases hb : b ∈ J
   · have hab : a * b ∈ J := J.mul_mem ha hb
-    rw [dif_pos ha, dif_pos hb, dif_pos hab]
+    rw [dite_eq_left ha, dite_eq_left hb, dite_eq_left hab]
     have e : (⟨a * b, hab⟩ : J) = ⟨a, ha⟩ * ⟨b, hb⟩ := rfl
     rw [e, map_mul, mul_inv, Units.val_mul, mul_comm]
   · have hab : a * b ∉ J := fun h => hb (by simpa using J.mul_mem (J.inv_mem ha) h)
-    rw [dif_neg hb, dif_neg hab, mul_zero]
+    rw [dite_eq_right hb, dite_eq_right hab, mul_zero]
 
 private theorem mem_doubleCoset_loc_mul_of_mem_of_pr_eq_one {X M' : Type} [Group X] [Group M'] (L' : Loc X M') (K : Subgroup X)
     (Kw : Subgroup M') (hF : L'.Fact K Kw)
@@ -86,7 +90,8 @@ theorem UpperTheory.Gal.W2.Seed.pTfMulR :
     have h1 := ((hAdm X M T r hr).2 k hk x).2
     have h2 := ((hAdm X M T (L'.loc t) hloc).2 k⁻¹ (T.K.inv_mem hk) (x⁻¹ * g)).1
     rw [show (x * k)⁻¹ * g = k⁻¹ * (x⁻¹ * g) by group, h1, h2]
-    generalize_proofs p1 p2
+    have p1 : T.L.pr k ∈ T.J := T.fact.2 k hk
+    have p2 : T.L.pr k⁻¹ ∈ T.J := T.fact.2 k⁻¹ (T.K.inv_mem hk)
     have e : (⟨T.L.pr k⁻¹, p2⟩ : T.J) = (⟨T.L.pr k, p1⟩ : T.J)⁻¹ := Subtype.ext (map_inv _ _)
     rw [e, map_inv, inv_inv]
     have hu := Units.inv_mul (T.ψ ⟨T.L.pr k, p1⟩)

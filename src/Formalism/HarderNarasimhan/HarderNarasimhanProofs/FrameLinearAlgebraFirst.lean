@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HarderNarasimhan.StatementFrameF
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.CorankShare.CorankShareProofs.SumNormSqLeHilbertSchmidt
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.StatementFrameF
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.CorankShare.CorankShareProofs.SumNormSqLeHilbertSchmidt
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
-import Formalism.GaussJetBounds.StatementN
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
+public import Formalism.GaussJetBounds.StatementN
+
+@[expose] public section
+
 open Formalism.MainNotions Classical
 
 namespace GlobalTheory.Proof.kvalGe_zero_of_integral_jets

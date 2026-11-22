@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.Assemble
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.Blocks
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.DimStep
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.Weights
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.Formula
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.Assemble
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.Blocks
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.DimStep
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.Weights
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.Formula
+
+@[expose] public section
 
 theorem weylForK_of : PI.WeylForU → PI.WeylForK :=
   PI.WeylForKWork.weylForK_of_leaves PI.WeylForKWork.block_reindex_holds PI.WeylForKWork.block_diagonal_torus_holds

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LFixW_C
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LFixW_C
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ def OffS (S : Finset (Pl D)) (a : AE D) : Prop :=
 variable {S : Finset (Pl D)}
 
 theorem IntS.add {a b : AE D} (ha : IntS S a) (hb : IntS S b) : IntS S (a + b) := fun v hv => by
-  rw [map_add]; exact add_mem (ha v hv) (hb v hv)
+  rw [map_add (f := _)]; exact add_mem (ha v hv) (hb v hv)
 
 theorem IntS.mul {a b : AE D} (ha : IntS S a) (hb : IntS S b) : IntS S (a * b) := fun v hv => by
   rw [map_mul]; exact mul_mem (ha v hv) (hb v hv)
@@ -43,7 +47,7 @@ theorem IntS.cA {a : AE D} (ha : IntS S a) : IntS S (cA D a) := fun v hv => by
   rw [LIdemEx.cv_cA]; exact sigR_mem_intLoc _ (ha v hv)
 
 theorem OffS.add {a b : AE D} (ha : OffS S a) (hb : OffS S b) : OffS S (a + b) :=
-  ⟨fun w => by rw [map_add, ha.1 w, hb.1 w, add_zero], fun v hv => by rw [map_add, ha.2.1 v hv, hb.2.1 v hv, add_zero],
+  ⟨fun w => by rw [map_add (f := _), ha.1 w, hb.1 w, add_zero], fun v hv => by rw [map_add (f := _), ha.2.1 v hv, hb.2.1 v hv, add_zero],
     ha.2.2.add hb.2.2⟩
 
 theorem offS_zero : OffS S (0 : AE D) := ⟨fun w => map_zero _, fun v _ => map_zero _, intS_zero⟩

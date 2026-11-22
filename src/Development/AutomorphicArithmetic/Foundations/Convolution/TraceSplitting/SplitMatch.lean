@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchProd
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.MatchOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotLin
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchProd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.MatchOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotLin
+
+@[expose] public section
 
 noncomputable section
 

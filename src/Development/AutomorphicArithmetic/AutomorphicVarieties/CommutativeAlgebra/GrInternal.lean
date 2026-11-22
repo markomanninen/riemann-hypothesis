@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -44,9 +48,9 @@ theorem UpperTheory.V.Alg.gr_internal :
         obtain ⟨fa, hfa⟩ := W.surj a.1
         obtain ⟨fb, hfb⟩ := W.surj b.1
         have e : W.π f = W.π (fa + fb) := by
-          rw [hf, map_add, hfa, hfb]
+          rw [hf, map_add (f := _), hfa, hfb]
           rfl
-        rw [hK j f (fa + fb) e, map_add, map_add, ha fa hfa, hb fb hfb, add_zero]
+        rw [hK j f (fa + fb) e, map_add (f := _), map_add (f := _), ha fa hfa, hb fb hfb, add_zero]
       zero_mem' := by
         intro f hf
         have e : W.π f = W.π 0 := by

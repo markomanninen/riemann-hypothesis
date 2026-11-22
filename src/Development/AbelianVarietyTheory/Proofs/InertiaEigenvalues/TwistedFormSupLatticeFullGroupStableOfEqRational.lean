@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open scoped TensorProduct
@@ -52,7 +57,7 @@ theorem iso_MKFull (Y : NX.FormsIso A A') (h : A'.MKFull) : A.MKFull := by
         induction hy using Submodule.span_induction with
         | mem y hy => exact Submodule.subset_span (by rw [Finset.coe_image]; exact Set.mem_image_of_mem _ hy)
         | zero => simp
-        | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+        | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
         | smul c a _ ha => rw [iso_symm_smul_int]; exact Submodule.smul_mem _ _ ha
       simpa using h2 _ h1
   · apply le_antisymm
@@ -65,7 +70,7 @@ theorem iso_MKFull (Y : NX.FormsIso A A') (h : A'.MKFull) : A.MKFull := by
         induction hy using Submodule.span_induction with
         | mem y hy => exact Submodule.subset_span ((Y.mkK _).2 (by simpa using hy))
         | zero => simp
-        | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+        | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
         | smul c a _ ha => rw [iso_symm_smul]; exact Submodule.smul_mem _ _ ha
       simpa using h2 _ h1
 
@@ -251,7 +256,7 @@ theorem actG_Bsup [Finite S.G] (hst : RhoStab S j) (hχ : ChiInLL0 S j)
     rw [e]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, hM _ _ hx, rfl⟩)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [← algebraMap_smul (FractionRing (tw.O i)) c x, map_smul, algebraMap_smul]
     exact Submodule.smul_mem _ _ hx
@@ -267,8 +272,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
   {A3 : Formalism.L2.DIV.FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem sup_of_tied (Rl : RealDat3 D A3 Ks) (cG : Formalism.L2.DIV.G0 Rl.Pg D.R.r ≃* G0g D.nd) (S : RatDat D.ntw)
     (Y : NExpRealS Rl cG S)
     (hEq : ∀ i j b (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (x : D.nexp.Fm i j b), x ∈ D.nexp.Bsup i j b ↔ Y.eF i j b h1 h2 x ∈ Bsup S i j b)

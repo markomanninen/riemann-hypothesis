@@ -1,10 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumUniqueOnThetaFunctions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumUniqueOnThetaFunctions
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +36,7 @@ theorem continuous_rmul {k m n : ℕ} (P : Mx D m n) : Continuous (rmul (k := k)
 
 theorem theta_comp {ψ : AddChar (AF D.host.F) ℂ} {A B T : HSp D} (P : Matrix (Fin A.rank) (Fin B.rank) D.host.E)
     (h : ∀ x y : WO A T, symplOH B T (x * rat P) (y * rat P) = symplOH A T x y) {f : WO B T → ℂ}
-    (hf : IsThetaFunO ψ B T f) : IsThetaFunO ψ A T fun w => f (w * rat P) where
+    (hf : IsThetaFunO ψ B T f) : IsThetaFunO ψ A T fun w => f (w * rat P) := {
   quasi γ w := by
     have e : ratW T A γ * rat P = ratW T B (γ * P) := by rw [ratW_eq, ratW_eq, rat_mul]
     show f ((ratW T A γ + w) * rat P) = _
@@ -47,7 +53,7 @@ theorem theta_comp {ψ : AddChar (AF D.host.F) ℂ} {A B T : HSp D} (P : Matrix 
   smooth k L hL h0 w := by
     have := hf.smooth k ((rmul (rat P)).comp L) ((continuous_rmul _).comp hL)
       (fun t => map_mul_eq_zero_left _ (h0 t) _) (w * rat P)
-    simpa only [Matrix.add_mul, AddMonoidHom.comp_apply, rmul_apply] using this
+    simpa only [Matrix.add_mul, AddMonoidHom.comp_apply, rmul_apply] using this }
 
 theorem entries_fix_conj {A : Type} [CommRing A] {m n : ℕ} (c : A) {M : Matrix (Fin n) (Fin n) A}
     (hM : ∀ i j, c * M i j = M i j) (P : Matrix (Fin m) (Fin n) A) (Q : Matrix (Fin n) (Fin m) A) (i j : Fin m) :
@@ -186,7 +192,7 @@ theorem theta_iff (f : WO S T → ℂ) : IsThetaFunO ψ S₀ T (fun w => f (d.ex
 theorem heisO_eqv (v : WO S₀ T) (K : WO S T → ℂ) :
     (fun w => heisO ψ S T (eqv d T v) K (eqv d T w)) = heisO ψ S₀ T v fun w => K (eqv d T w) := by
   funext w
-  simp only [heisO, sympl_eqv, map_add]
+  simp only [heisO, sympl_eqv, map_add (f := _)]
 
 def pull (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) : GA D S₀ × GA D T →* Module.End ℂ (WO S₀ T → ℂ) where
   toFun p :=
@@ -196,7 +202,7 @@ def pull (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) : GA D S�
         have e : (fun x => (F + G) ((eqv d T).symm x)) = (fun x => F ((eqv d T).symm x)) + fun x => G ((eqv d T).symm x) :=
           rfl
         show om _ (fun x => (F + G) _) _ = om _ (fun x => F _) _ + om _ (fun x => G _) _
-        rw [e, map_add]; rfl
+        rw [e, map_add (f := _)]; rfl
       map_smul' := fun c F => by
         funext w
         have e : (fun x => (c • F) ((eqv d T).symm x)) = c • fun x => F ((eqv d T).symm x) := rfl
@@ -246,7 +252,7 @@ theorem isWeilDatumO_pull {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D 
         heisO ψ S T (eqv d T w₀) (fun x => F ((eqv d T).symm x)) := by
       funext x
       simp only [heisO]
-      rw [← sympl_eqv_symm d T x (eqv d T w₀), map_add, AddEquiv.symm_apply_apply]
+      rw [← sympl_eqv_symm d T x (eqv d T w₀), map_add (f := _), AddEquiv.symm_apply_apply]
     rw [e1, H.om_heis _ _ _ _ (hT F hF)]
     rw [show actO S T (d.emb0 g) h (eqv d T w₀) = eqv d T (actO S₀ T g h w₀) from d.wittDecomp_homAction_extAnisotropic_equivariant T g h w₀]
     exact heisO_eqv d _ _

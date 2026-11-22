@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrOpen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrTbox
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ResDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrSqz
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrOpen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrTbox
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ResDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrSqz
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -24,11 +28,27 @@ theorem UpperTheory.V.Fr.pr_tsurj :
     intro a
     rw [← res_map p a, hresk]
     rfl
-  obtain ⟨-, -, hlc⟩ := pr_open hF O R B hCont
+  obtain ⟨-, -, hlc⟩ := pr_open (C₀ := C₀) hF O R B hCont
   obtain ⟨B', hB'c, hB'map, hB'snd⟩ := pr_tbox hF O (B.bar O) hlc x hx
   have hOfbar : (Box.map (p : DualNumber (ResidueField O) →+* ResidueField O) B').Of (ρ.bar O) := by
     rw [hB'map]
-    exact hOf.map _
+    refine ⟨?_, ?_, ?_⟩
+    · show ((B.r F.c).mat).map (res O R) = 1
+      rw [hOf.atc]
+      exact Matrix.map_one _ (map_zero _) (map_one _)
+    · intro s
+      show ((B.r s).mat).map (res O R) = _
+      rw [hOf.res]
+      rfl
+    · intro v i s
+      have e : (((B.bar O).g v : GL (Fin n) (ResidueField O)) : Matrix (Fin n) (Fin n) (ResidueField O)) * (ρ.bar O).r (F.loc0 v s) *
+          ((((B.bar O).g v)⁻¹ : GL (Fin n) (ResidueField O)) : Matrix (Fin n) (Fin n) (ResidueField O)) =
+          (res O R).mapMatrix ((B.g v : Matrix (Fin n) (Fin n) R) * ρ.r (F.loc0 v s) *
+            (((B.g v)⁻¹ : GL (Fin n) R) : Matrix (Fin n) (Fin n) R)) := by
+        rw [map_mul, map_mul]
+        rfl
+      rw [e]
+      exact congrArg (res O R) (hOf.psi v i s)
   have hn := pr_norm hF O (DualNumber (ResidueField O)) (ResidueField O) p (ρ.bar O) B'
   have hker : maximalIdeal (DualNumber (ResidueField O)) * RingHom.ker p = ⊥ := by
     refine eq_bot_iff.2 (Ideal.mul_le.2 fun a ha b hb => ?_)
@@ -53,8 +73,33 @@ theorem UpperTheory.V.Fr.pr_tsurj :
   have hbar' : NRep.bar O ρ' = NRep.bar O ρ := by
     show NRep.map _ ρ' = _
     rw [hfun, hρ'p]
-  obtain ⟨D, hD, hDs⟩ := pr_dof hF O R ρ B hU hOf ρ' (conjBy h B'.r) hρ'c hbar'
-    (fun s => by simp [conjBy, B'.nu s]) hrc hr0
+  have hdof : ∃ D ∈ Tan O R, ∀ s, (conjBy h B'.r s).mat.map TrivSqZeroExt.snd = B.tanCo O D s * ((B.bar O).r s).mat := by
+    obtain ⟨g, hg, -⟩ := hU.univ _ ρ' hρ'c hbar'
+    have hfst : ∀ x, (g x).fst = res O R x := fun x => by
+      rw [← hresd (g x), res_map]
+    let Dd : R →ₗ[O] ResidueField O :=
+      { toFun := fun x => (g x).snd
+        map_add' := fun x y => by simp only [map_add (f := _), TrivSqZeroExt.snd_add]
+        map_smul' := fun a x => by simp only [map_smul, TrivSqZeroExt.snd_smul, RingHom.id_apply] }
+    have hDd : ∀ x, Dd x = (g x).snd := fun _ => rfl
+    have hr : (Box.map (g : R →+* DualNumber (ResidueField O)) B).r = conjBy h B'.r := by
+      refine pr_ext hF _ _ _ (Box.nu _) (fun s => by simp [conjBy, B'.nu s]) ?_ ?_
+      · change (B.r F.c).mat.map g = (conjBy h B'.r F.c).mat
+        rw [hOf.atc, hrc]
+        exact Matrix.map_one _ (map_zero g) (map_one g)
+      · intro s
+        change (B.r s).mat.map g = (conjBy h B'.r s).mat
+        rw [hOf.res]
+        change (ρ.map (g : R →+* DualNumber (ResidueField O))).r s = (conjBy h B'.r s).mat
+        rw [hg, hr0]
+    refine ⟨Dd, ?_, fun s => ?_⟩
+    · intro f hf
+      rw [hDd, hDd, hDd, map_mul, TrivSqZeroExt.snd_mul, hfst, hfst, op_smul_eq_smul]
+    · rw [← hr]
+      show ((B.r s).mat.map g).map TrivSqZeroExt.snd = ((B.r s).mat.map Dd * ((((Box.bar O B).r s).left⁻¹ : GL (Fin n) (ResidueField O)) : Matrix (Fin n) (Fin n) (ResidueField O))) * ((((Box.bar O B).r s).left : GL (Fin n) (ResidueField O)) : Matrix (Fin n) (Fin n) (ResidueField O))
+      rw [mul_assoc, Units.inv_mul, mul_one, Matrix.map_map]
+      rfl
+  obtain ⟨D, hD, hDs⟩ := hdof
   let μ : ResidueField O →+ DualNumber (ResidueField O) :=
     (TrivSqZeroExt.inrHom (ResidueField O) (ResidueField O)).toAddMonoidHom
   have hμ : IsSq O μ := by
@@ -92,7 +137,7 @@ theorem UpperTheory.V.Fr.pr_tsurj :
     rw [hgbar] at h5
     rw [he2, map_mul, mul_assoc, ← h5, ← mul_assoc, ← he3, ← hhe, map_inv]
     rfl
-  have hm : ∀ (A : GL (Fin n) (DualNumber (ResidueField O))) (g : GG n (DualNumber (ResidueField O))),
+  have hm : ∀ (A : GL (Fin n) (DualNumber (ResidueField O))) (g : GG (m := n) (R := DualNumber (ResidueField O))),
       (GG.ofGL A * g).mat = (A : Matrix (Fin n) (Fin n) (DualNumber (ResidueField O))) * g.mat := by
     intro A g
     simp [GG.mat, GG.ofGL]

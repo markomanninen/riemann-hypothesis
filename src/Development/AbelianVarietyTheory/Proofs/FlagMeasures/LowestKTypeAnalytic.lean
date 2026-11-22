@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FirstSlotSliceSlotMixedCasimirZero
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantOrthogonalInf
-import Formalism.RealPlaceAnalysis.FinalF
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WeightLeOfMemWtSpan
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NotCdomAdd
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DerivedModuleCoefficientsAndStableFlows
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FirstSlotSliceSlotMixedCasimirZero
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantOrthogonalInf
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WeightLeOfMemWtSpan
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NotCdomAdd
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DerivedModuleCoefficientsAndStableFlows
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId GlobalTheory.Jet
 open scoped InnerProductSpace ComplexOrder
@@ -206,8 +210,8 @@ theorem cas_eigen (hσ : IsURepOn (UJset ε) σ) (hD : IsDer ε σ V E) {μ : Fi
       have hre := cas_real hU hu0 hc'
       rw [hc', ← hre]
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem pow_growth (hD : IsDer ε σ V E) {μ : Fin n → ℝ} {u : V} (hu : KHighest ε E μ u)
     (hf : FiniteDimensional ℂ (kSpan ε E u)) {c : ℝ} (hc : Cas E u = (c : ℂ) • u) (X : Matrix (Fin n) (Fin n) ℂ) :
     ∃ B C : ℝ, 0 ≤ B ∧ 0 ≤ C ∧ ∀ w ∈ kSpan ε E u, ∀ k : ℕ,

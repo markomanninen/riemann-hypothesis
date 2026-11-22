@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Formalism.SharpRestriction.LevelLetterCocycles.JsetEmb
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfJumpsBdd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Formalism.SharpRestriction.LevelLetterCocycles.JsetEmb
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfJumpsBdd
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain TensorProduct Module GlobalTheory.WeilDeligne GlobalTheory.Pst Polynomial
 
 theorem UpperTheory.weil_deligne_span_crystalline :
@@ -33,9 +38,15 @@ theorem UpperTheory.weil_deligne_span_crystalline :
       exact h3
     · rintro y _ ⟨hy, h1⟩
       refine ⟨neg_mem hy, ?_⟩
-      have h2 := S.smul_mem (ι (((-1 : ↥LL.1) : ↥LL.1) : Om l)) h1
-      rw [← wdMk_smul, neg_one_smul] at h2
-      exact h2
+      have heq : wdMk P ι ρ ⟨-y, neg_mem hy⟩ = -wdMk P ι ρ ⟨y, hy⟩ := by
+        apply eq_neg_of_add_eq_zero_left
+        rw [← wdMk_add]
+        have hz : (⟨-y, neg_mem hy⟩ : ↥(Dpst P ρ)) + ⟨y, hy⟩ = 0 := by
+          ext
+          simp
+        rw [hz, wdMk_zero]
+      rw [heq]
+      exact S.neg_mem h1
   rw [eq_top_iff, ← span_wdMk P ι ρ, Submodule.span_le]
   rintro _ ⟨x, rfl⟩
   exact (key x.1 x.2).2

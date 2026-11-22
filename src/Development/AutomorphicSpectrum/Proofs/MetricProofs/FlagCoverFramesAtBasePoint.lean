@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.TransPtBase
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverBasePointRegularStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorOfRegularMatrixValueStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.TransPtBase
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverBasePointRegularStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorOfRegularMatrixValueStatement
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.CovGraph
@@ -29,8 +34,32 @@ theorem coE_regAt_valAt : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, F
   obtain ⟨-, -, -, -, hst⟩ := GlobalTheory.CompanionTheory.Ar.PB.ValRing.regAt_valAt_ring _ _ _ M'.x zb hz
   have hT : ∀ a b, RegAt M'.x (mCoordIdeal zb) (trMat Cv F' F p.1 a b) := fun a b =>
     (Cv.agree zb hz F' F hF' hF hG' hG p.1 a b).1
-  have hmin := fun I I' => GlobalTheory.T.minor_of_regular_matrix_value _ _ _ M'.x zb N (trMat Cv F' F p.1) hz hT I I'
-  have hu := fun I => GlobalTheory.T.flag_cover_base_point_regular K ι Φ y Ψ N j M K' ι' Φ' y' M' Cv zb (F.u q I) hz (hG.2.1 q I).1
+  have hmin := CovMap.LocImg.reg_minor hz hT
+  have hxv : M'.x ∘ Cv.v = Cv.φ ∘ M.x := funext Cv.x_eq
+  have hzv := RegPhi.comp_mem_mcPts Cv.block Cv.φ hxv hz
+  have hu (I : Finset (Fin N)) :
+      RegAt M'.x (mCoordIdeal zb) (Cv.φ (F.u q I)) ∧
+        valAt M'.x (Cv.φ (F.u q I)) zb = valAt M.x (F.u q I) (zb ∘ Cv.v) := by
+    obtain ⟨d, g, h, hg, hh, hn, he⟩ := (hG.2.1 q I).1
+    have hg' := RegPhi.isMultiHomog_rename_block Cv.block hg
+    have hh' := RegPhi.isMultiHomog_rename_block Cv.block hh
+    have hn' := RegPhi.rename_notMem Cv.block hn
+    have hae (f : MRing (baseIdx ι M.blk)) :
+        aeval M'.x (rename Cv.v f) = Cv.φ (aeval M.x f) := by
+      rw [aeval_rename, hxv, RegPhi.aeval_comp_ringHom]
+    have he' : aeval M'.x (rename Cv.v g) = Cv.φ (F.u q I) * aeval M'.x (rename Cv.v h) := by
+      rw [hae, hae, he, map_mul]
+    refine ⟨⟨_, _, _, hg', hh', hn', he'⟩, ?_⟩
+    let value := eval (zb ∘ Cv.v) (map (Int.castRingHom ℂ) g) /
+      eval (zb ∘ Cv.v) (map (Int.castRingHom ℂ) h)
+    have hv : IsValueAt M.x (F.u q I) (zb ∘ Cv.v) value :=
+      ⟨d, g, h, hg, hh, ValRing.aeval_ne_zero_of_notMem hzv hh hn, he,
+        ValRing.eval_ne_zero_of_notMem hh hn, rfl⟩
+    have hv' : IsValueAt M'.x (Cv.φ (F.u q I)) zb value := by
+      refine ⟨_, _, _, hg', hh', ValRing.aeval_ne_zero_of_notMem hz hh' hn', he',
+        ValRing.eval_ne_zero_of_notMem hh' hn', ?_⟩
+      rw [RegPhi.eval_rename_block, RegPhi.eval_rename_block]
+    exact (valAt_eq hz hv').trans (valAt_eq hzv hv).symm
   have hu' := fun I' => (hG'.2.1 r I').2
   have hterm : ∀ I I', RegAt M'.x (mCoordIdeal zb) (Cv.φ (F.u q I) * minorIJ (trMat Cv F' F p.1) I I' * F'.u' I' r) ∧
       valAt M'.x (Cv.φ (F.u q I) * minorIJ (trMat Cv F' F p.1) I I' * F'.u' I' r) zb =

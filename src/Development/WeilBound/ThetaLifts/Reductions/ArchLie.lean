@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ArchimedeanEvaluationVector
-import Development.WeilBound.ThetaLifts.Reductions.ExistsSmoothFun
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ArchimedeanEvaluationVector
+public import Development.WeilBound.ThetaLifts.Reductions.ExistsSmoothFun
+
+@[expose] public section
 
 noncomputable section
 

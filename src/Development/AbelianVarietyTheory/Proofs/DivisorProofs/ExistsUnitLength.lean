@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+
+@[expose] public section
 
 namespace GlobalTheory.InvolutionTraceUnit
 
@@ -18,10 +22,10 @@ theorem ff_norm {k : Type} [Field k] [Finite k] (σ : k →+* k) (hσ : ∀ x, �
   have h1 : ∀ (τ : k ≃ₐ[F] k) (x : k), τ x = x ∨ τ x = σ x := by
     intro τ x
     have hs : τ (x + σ x) = x + σ x :=
-      τ.commutes ⟨x + σ x, (hF _).2 (by rw [map_add, hσ, add_comm])⟩
+      τ.commutes ⟨x + σ x, (hF _).2 (by rw [map_add (f := _), hσ, add_comm])⟩
     have hn : τ (x * σ x) = x * σ x :=
       τ.commutes ⟨x * σ x, (hF _).2 (by rw [map_mul, hσ, mul_comm])⟩
-    rw [map_add] at hs
+    rw [map_add (f := _)] at hs
     rw [map_mul] at hn
     have : (τ x - x) * (τ x - σ x) = 0 := by
       linear_combination (τ x) * hs - hn
@@ -41,9 +45,9 @@ theorem ff_norm {k : Type} [Field k] [Finite k] (σ : k →+* k) (hσ : ∀ x, �
     have ha' := (h1 τ a).resolve_left ha
     have hb' := (h1 τ b).resolve_right hb
     rcases h1 τ (a + b) with h | h
-    · rw [map_add, hb'] at h
+    · rw [map_add (f := _), hb'] at h
       exact ha (add_right_cancel h)
-    · rw [map_add, map_add, ha'] at h
+    · rw [map_add (f := _), map_add (f := _), ha'] at h
       exact hb (add_left_cancel h)
   have h3 : (1 : k ≃ₐ[F] k) ≠ σ' := by
     obtain ⟨x, hx⟩ := hne
@@ -115,7 +119,7 @@ theorem norm_principal [IsAdicComplete (maximalIdeal O) O] (s : O →+* O) (hs :
     linear_combination (t * s t) * e - ((t + s t) * a + (1 - x)) * hM
   have e2 : t * s t * s a ^ 2 + (t + s t) * s a + (1 - x) = 0 := by
     have := congrArg s e1
-    simp only [map_add, map_mul, map_pow, map_sub, map_one, map_zero, hs, hx] at this
+    simp only [map_add (f := _), map_mul, map_pow, map_sub, map_one, map_zero, hs, hx] at this
     linear_combination this
   have e3 : (a - s a) * (t * s t * (a + s a) + (t + s t)) = 0 := by
     linear_combination e1 - e2
@@ -128,7 +132,7 @@ theorem norm_principal [IsAdicComplete (maximalIdeal O) O] (s : O →+* O) (hs :
       rw [this]
       exact neg_mem (Ideal.mul_mem_left _ _ (add_mem ha0 (mem_of_invol s hs ha0)))
   refine ⟨1 + a * t, ?_⟩
-  rw [map_add, map_one, map_mul, e4]
+  rw [map_add (f := _), map_one, map_mul, e4]
   linear_combination e1
 
 theorem norm_unit [IsAdicComplete (maximalIdeal O) O] [Finite (ResidueField O)] (s : O →+* O)
@@ -229,10 +233,10 @@ theorem exists_unit_length (c : E →+* E) (s : O →+* O) (hs : ∀ x, s (s x) 
     obtain ⟨d, hd⟩ := hint z hz z hz
     have hsum : algebraMap O E (b + d + (a + s a)) = h (y + z) (y + z) := by
       have e1 : h y (y + z) = h y y + h y z := by
-        rw [hc (y + z) y, ha, map_add, ← hc, ← hc]
+        rw [hc (y + z) y, ha, map_add (f := _), ← hc, ← hc]
       have e2 : h z (y + z) = h z y + h z z := by
-        rw [hc (y + z) z, ha, map_add, ← hc, ← hc]
-      rw [ha, e1, e2, hc y z, map_add, map_add, map_add, ← hcs, hb, hd, hayz]
+        rw [hc (y + z) z, ha, map_add (f := _), ← hc, ← hc]
+      rw [ha, e1, e2, hc y z, map_add (f := _), map_add (f := _), map_add (f := _), ← hcs, hb, hd, hayz]
       ring
     have := sub_mem (h0 _ (add_mem hy hz) _ hsum) (add_mem (h0 y hy b hb) (h0 z hz d hd))
     simpa using this
@@ -312,12 +316,14 @@ theorem extend_family [IsAdicComplete (maximalIdeal O) O] [Finite (ResidueField 
         · obtain ⟨a, hai⟩ := (hdual z).1 hz (v i) (hv i)
           rw [← hai, algebraMap_smul]
           exact L.smul_mem _ (hv i)
-        · rw [← hB, map_sub, map_sum]
+        · set_option synthInstance.maxHeartbeats 100000 in
+            rw [← hB, map_sub, map_sum]
           simp only [hB, hm, hon]
           simp
       have := hyz _ hz'
       have hvy : ∀ i, h (v i) y = 0 := fun i => by rw [hc, (hφ y).1 hy i, map_zero]
-      rw [hc, ← hB, map_sub, map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hc, ← hB, map_sub, map_sum] at this
       simp only [hB, hm, hvy, mul_zero, Finset.sum_const_zero, sub_zero] at this
       rw [hc]
       exact this)

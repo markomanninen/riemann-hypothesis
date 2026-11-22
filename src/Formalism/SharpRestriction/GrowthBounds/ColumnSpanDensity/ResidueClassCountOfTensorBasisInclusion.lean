@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.EdgeLatRS
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.EdgeLatRS
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,9 +123,6 @@ theorem restOrdBound : RestOrdBound := by
       rw [smul_smul, ← zpow_add₀ hw]
       congr 2
       ring
-
-theorem residueClassCount_of_tensor_basis_inclusion (hTen : RestTensor) (hD3 : DualHeightBasis) (hIncl : DualHeightInclusion) : ResidueClassCount :=
-  tensor_bound_of_order_bound hTen restOrdBound hD3 hIncl
 
 end Formalism.MainNotions.flipOneThree.Pf
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.NumBase
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ColumnSpanNumericalFacts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.NumBase
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ColumnSpanNumericalFacts
+
+@[expose] public section
 
 noncomputable section
 

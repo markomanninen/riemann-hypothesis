@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DefiniteUnitaryRealApproxAndFiniteInfiniteSplit
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RightFiniteMemPoly
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DefiniteUnitaryRealApproxAndFiniteInfiniteSplit
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RightFiniteMemPoly
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +32,10 @@ theorem infSpan_stable (φ : UA E n → ℂ) (k : infU E n) : ∀ ψ ∈ infSpan
     rw [RU_RU]
     exact mem_infSpan φ (k * l)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add _ _ _ _ h₁ h₂ => rw [map_add]; exact Submodule.add_mem _ h₁ h₂
+  | add _ _ _ _ h₁ h₂ => rw [map_add (f := _)]; exact Submodule.add_mem _ h₁ h₂
   | smul c _ _ h => rw [map_smul]; exact Submodule.smul_mem _ c h
 
-def finStab (φ : UA E n → ℂ) : Subgroup (finU E n) where
+def finStab (φ : UA E n → ℂ) : Subgroup (finU (E := E) (n := n)) where
   carrier := {k | RU E n k φ = φ}
   one_mem' := by
     change RU E n 1 φ = φ
@@ -45,7 +49,7 @@ def finStab (φ : UA E n → ℂ) : Subgroup (finU E n) where
     conv_lhs => rw [← show RU E n a φ = φ from ha]
     rw [RU_RU, inv_mul_cancel, map_one]; rfl
 
-theorem isAutFormU_of_mem (hc : ∀ k : infU E n, ∀ g ∈ finU E n, k.1 * g = g * k.1) {φ : UA E n → ℂ}
+theorem isAutFormU_of_mem (hc : ∀ k : infU E n, ∀ g ∈ finU (E := E) (n := n), k.1 * g = g * k.1) {φ : UA E n → ℂ}
     (hφ : IsAutFormU φ) (ψ : UA E n → ℂ) (hψ : ψ ∈ infSpan φ) : IsAutFormU ψ := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · induction hψ using Submodule.span_induction with
@@ -71,7 +75,7 @@ theorem isAutFormU_of_mem (hc : ∀ k : infU E n, ∀ g ∈ finU E n, k.1 * g = 
       obtain ⟨l, rfl⟩ := h
       rw [RU_RU, ← hc l k.1 k.2, ← RU_RU, show RU E n k φ = φ from hk]
     | zero => rw [map_zero]
-    | add _ _ _ _ h₁ h₂ => rw [map_add, h₁, h₂]
+    | add _ _ _ _ h₁ h₂ => rw [map_add (f := _), h₁, h₂]
     | smul c _ _ h => rw [map_smul, h]
   · have := hφ.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := infSpan φ) (Submodule.span_le.2 ?_)

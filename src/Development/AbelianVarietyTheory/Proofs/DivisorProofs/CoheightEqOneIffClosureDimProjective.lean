@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqOfOpenImmersionIntegralSche
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedComplementDimBound
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqOfOpenImmersionIntegralSche
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedComplementDimBound
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -40,7 +44,7 @@ theorem coheight_add_dim_closure_eq (F : Type) [Field F] (X : Scheme.{0}) [IsInt
   have hA : ringKrullDim Γ(X, U) = topologicalKrullDim X := by
     rw [← OpenImmDim.topologicalKrullDim_eq_of_isOpenImmersion F X _ p hU.fromSpec]
     exact (PrimeSpectrum.topologicalKrullDim_eq_ringKrullDim _).symm
-  have h2 := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient F P.asIdeal
+  have h2 := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient (k := F) P.asIdeal
   let x : Spec Γ(X, U) := P
   have eS := (asIso (hU.fromSpec.stalkMap x) ≪≫ Spec.stalkIso Γ(X, U) x).commRingCatIsoToRingEquiv
   have hPh : (P.asIdeal.height : WithBot ℕ∞) = Order.coheight z := by

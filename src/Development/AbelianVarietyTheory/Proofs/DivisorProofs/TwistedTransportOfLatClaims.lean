@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorsTransport
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorsTransportPrinc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RatioConjOfToricRatioConjugates
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomothetyLatSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassInvOfUnitTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartEqOneOfLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValCoordOfMemHatOUnits
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CmCurveGoodOutsidePrimePremises
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsTransport
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsTransportPrinc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RatioConjOfToricRatioConjugates
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomothetyLatSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassInvOfUnitTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartEqOneOfLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValCoordOfMemHatOUnits
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CmCurveGoodOutsidePrimePremises
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.LatVal
@@ -159,7 +163,8 @@ theorem conj_part {K : Type} [Field K] [NumberField K] {d : ℕ} {δ : K} {ι : 
     rw [QuotientGroup.out_eq', QuotientGroup.mk_mul, QuotientGroup.mk_inv, QuotientGroup.out_eq', hct']
   choose S'' hS'' using fun q : PicO (condQ 𝔣 Q) => exists_isLatSum_of_mk_eq hφ s κ' (hmk q) (hS' (q * ct⁻¹))
   rw [finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype, coordIn_eq d s κ Ω₀, coordIn_eq d s κ Ω₁]
-  simp only [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.mul_sum, map_sum]
   refine Fintype.sum_equiv (Equiv.mulRight ct⁻¹) _ _ fun q => ?_
   simp only [Equiv.coe_mulRight]
   have hg1 : g (GlobalTheory.IndefiniteRowSideFullHecke.ToricSymbols.lamF χ s q.out) = lv χ' s q.out := (hcc.1 q.out).symm
@@ -203,7 +208,7 @@ theorem twistedTransport_of_latClaims (hP : PeriodEx) (hA : LatAlg) (hC : LatCon
 
 end GlobalTheory.TwistedTransportProof
 
-open GlobalTheory.TwistedTransportProof in
 
+open GlobalTheory.TwistedTransportProof in
 theorem GlobalTheory.TwistedTransportProof.main : PeriodEx → LatAlg → LatConj → GlobalTheory.ToricTransport.TwistedTransport :=
   twistedTransport_of_latClaims

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.UnitsLevels
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantRes
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.UnitsLevels
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantRes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -25,8 +30,8 @@ def globalDecomp : Gal(Ωv/Kv) →* K.1.fixingSubgroup :=
     (IntermediateField.mem_fixingSubgroup_iff _ _).2 fun x hx =>
       (decompHom Kv ι σ).commutes ⟨x, hx⟩
 
-omit [Algebra.IsIntegral Kv Ωv] in
 
+omit [Algebra.IsIntegral Kv Ωv] in
 theorem globalDecomp_apply (σ : Gal(Ωv/Kv)) (x : ℚ̄) :
     ι ((globalDecomp Kv ι σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) x) = σ (ι x) :=
   decompHom_apply ι σ x
@@ -44,11 +49,6 @@ theorem decompHom_eq_restrictHom_globalDecomp (F : FiniteSubfield) [Fact (K ≤ 
 def unitsLocalMor : Rep.res (globalDecomp Kv ι) (unitsLimitRep K) ⟶ galUnitsZ Kv Ωv :=
   Rep.ofHom ⟨(MonoidHom.toAdditive (Units.map ι.toRingHom.toMonoidHom)).toIntLinearMap,
     fun σ => LinearMap.ext fun _ => congrArg Additive.ofMul (Units.ext (globalDecomp_apply Kv ι σ _))⟩
-
-@[simp]
-theorem unitsLocalMor_hom_apply (x : Additive ℚ̄ˣ) :
-    ((Additive.toMul ((unitsLocalMor Kv ι).hom x) : Ωvˣ) : Ωv) = ι (x.toMul : ℚ̄) :=
-  rfl
 
 def unitsLocalRes (n : ℕ) : cohomology (unitsLimitRep K) n ⟶ cohomology (galUnitsZ Kv Ωv) n :=
   cohomologyMapAlong (globalDecomp Kv ι) (continuous_globalDecomp Kv ι) (unitsLocalMor Kv ι) n
@@ -70,8 +70,8 @@ theorem localUnitsMor_finiteComponentRep_levelDiag (u : Additive F.1ˣ) :
       (unitsLocalMor (v.adicCompletion K.1) ι).hom ((unitsLevelMor K F).hom u) :=
   congrArg Additive.ofMul (Units.ext (completionEmbedding_algebraMap ι F (u.toMul : F.1)))
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem localInfl_finiteComponent_levelDiag (n : ℕ) (y : cohomology (galUnitsZ K.1 F.1) n) :
     (localInfl ι F n).hom ((finiteComponent (placeOfEmbedding ι F) n).hom
       ((cohomologyMap (levelDiag K F) n).hom y)) =
@@ -92,8 +92,8 @@ section Infinite
 variable {v : InfinitePlace K.1} (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion)
   (F : FiniteSubfield) [Fact (K ≤ F)] [F.1.fixingSubgroup.Normal]
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem levelDiag_infiniteComponent_infLocalInfl_cochains :
     cochainsMap (levelDiag K F) ≫
       cochainsMapAlong (MulAction.stabilizer (F.1 ≃ₐ[K.1] F.1)
@@ -123,8 +123,8 @@ theorem levelDiag_infiniteComponent_infLocalInfl_cochains :
   rw [funext fun i => hfun (σ i)]
   exact hval _
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem infLocalInfl_infiniteComponent_levelDiag (n : ℕ) (y : cohomology (galUnitsZ K.1 F.1) n) :
     (infLocalInfl ι F n).hom ((infiniteComponent (infPlaceOfEmbedding ι F) n).hom
       ((cohomologyMap (levelDiag K F) n).hom y)) =
@@ -155,8 +155,8 @@ section Components
 
 variable (ι : LocalEmbeddings K) {n : ℕ} (hn : 1 ≤ n)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem idelesLimitCohomologyEquiv_unitsToIdeles_inr (v : HeightOneSpectrum (𝓞 K.1))
     (x : cohomology (unitsLimitRep K) n) :
     idelesLimitCohomologyEquiv ι hn ((unitsToIdeles K n).hom x) (.inr v) =
@@ -168,8 +168,8 @@ theorem idelesLimitCohomologyEquiv_unitsToIdeles_inr (v : HeightOneSpectrum (�
   rw [CompatiblePlaces.shapiro_placeProj_inr]
   exact localInfl_finiteComponent_levelDiag (ι.fin v) p.1 n y
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem idelesLimitCohomologyEquiv_unitsToIdeles_inl (v : InfinitePlace K.1)
     (x : cohomology (unitsLimitRep K) n) :
     idelesLimitCohomologyEquiv ι hn ((unitsToIdeles K n).hom x) (.inl v) =

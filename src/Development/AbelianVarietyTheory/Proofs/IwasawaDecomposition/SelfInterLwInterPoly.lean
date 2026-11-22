@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric
 
 namespace GlobalTheory.Member
@@ -17,6 +22,6 @@ theorem selfInter_Lw_interPoly : ∀ {E : Type} [Field E] [NumberField E] [IsCMF
   rw [h]
   congr 2
   funext i
-  simp only [FlagCpt.Lw, FlagCpt.LEx, AddMonoidHom.coe_mk, ZeroHom.coe_mk, neg_smul, Finset.sum_neg_distrib]
+  simp [FlagCpt.Lw, FlagCpt.LEx, Finset.sum_neg_distrib]
 
 end GlobalTheory.Member

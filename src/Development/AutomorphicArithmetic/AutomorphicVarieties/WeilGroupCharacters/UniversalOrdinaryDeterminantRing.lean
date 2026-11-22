@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,8 +149,8 @@ structure Pair (R : Type) [CommRing R] [Algebra O R] [IsCO O R] : Type 1 where
   Ord : ∀ v (g : Fin n → F.Gv v) (h : F.G₀), D.tr (MonoidAlgebra.single h 1 * F.oEl v (ψ v) g) = 0
   I : ∀ u, ∀ g ∈ r.Ip u, ∀ h : F.G₀, D.tr (MonoidAlgebra.single h 1 * (MonoidAlgebra.single g 1 - 1)) = 0
 
-variable {r} in
 
+variable {r} in
 def Pair.Maps {R A : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing A] (p : Pair r R) (f : R →+* A)
     (D : GDet n A F.G₀) (ψ : ∀ v, Fin n → F.Gv v →* Aˣ) : Prop :=
   p.D.map f = D ∧ ∀ v i, pushCh f (p.ψ v i) = ψ v i
@@ -177,8 +181,8 @@ structure LamObj : Type 1 where
 
 attribute [instance] LamObj.ring LamObj.alg LamObj.co
 
-variable {r} in
 
+variable {r} in
 def LamObj.toPair (Λ : LamObj r) {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (p : Pair r R) : Λ.Λ →ₐ[O] R :=
   (Λ.univ R (fun v i => (p.ψ v i).comp (F.Iv v).subtype) fun v i => ⟨_, p.psi v i, rfl⟩).choose
 
@@ -272,8 +276,6 @@ def E0gens : Set (MonoidAlgebra B.B F.G₀) :=
 
 def GroupAlgebraKernelIdeal : TwoSidedIdeal (MonoidAlgebra B.B F.G₀) := closureIdeal (maximalIdeal B.B) B.E0gens
 
-abbrev E0 : Type := B.GroupAlgebraKernelIdeal.ringCon.Quotient
-
 abbrev E0kap (q : PrimeSpectrum B.B) : Type :=
   (TwoSidedIdeal.span (MonoidAlgebra.mapRingHom F.G₀ (B.toKap q) '' B.GroupAlgebraKernelIdeal)).ringCon.Quotient
 
@@ -285,20 +287,12 @@ def P1core : Prop :=
   ∀ (x : Point r) (f : B.B →ₐ[O] x.A), x.NiceI → B.IsPt x f → J ≤ RingHom.ker f →
     ∀ q : PrimeSpectrum B.B, q.asIdeal ≤ RingHom.ker f → J ≤ q.asIdeal
 
-def P2core : Prop :=
-  ∀ (x : Point r) (f : B.B →ₐ[O] x.A), x.NiceE → B.IsPt x f →
-    (∃ q₁ : PrimeSpectrum B.B, B.IsStable q₁ ∧ J ≤ q₁.asIdeal ∧ q₁.asIdeal ≤ RingHom.ker f) →
-    ∀ q : PrimeSpectrum B.B, q.asIdeal ≤ RingHom.ker f → B.IsStable q ∨ B.IsThick q → J ≤ q.asIdeal
-
 def P3core : Prop :=
   ∀ (h : ℕ) (x : Fin (h + 1) → Point r) (f : ∀ i, B.B →ₐ[O] (x i).A) (e : Fin h → PrimeSpectrum B.B),
     (∀ i, (x i).NiceE) → (∀ i, B.IsPt (x i) (f i)) →
     (∀ i, B.IsThick (e i) ∧ (e i).asIdeal ≤ RingHom.ker (f i.castSucc) ∧ (e i).asIdeal ≤ RingHom.ker (f i.succ)) →
     (∃ q₁ : PrimeSpectrum B.B, B.IsStable q₁ ∧ J ≤ q₁.asIdeal ∧ q₁.asIdeal ≤ RingHom.ker (f 0)) →
     ∀ q : PrimeSpectrum B.B, q.asIdeal ≤ RingHom.ker (f (Fin.last h)) → B.IsStable q ∨ B.IsThick q → J ≤ q.asIdeal
-
-theorem P3core.p2 {B : UniversalOrdinaryDeterminantRing r} {J : Ideal B.B} (H : B.P3core J) : B.P2core J := fun x f hx hf h₁ q hq hs =>
-  H 0 (fun _ => x) (fun _ => f) Fin.elim0 (fun _ => hx) (fun _ => hf) (fun i => i.elim0) h₁ q hq hs
 
 end UniversalOrdinaryDeterminantRing
 

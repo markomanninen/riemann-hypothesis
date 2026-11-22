@@ -1,1 +1,5 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
+
+@[expose] public section

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+
+@[expose] public section
 
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
@@ -30,14 +34,14 @@ theorem fockTraceCharacterRelations_le_comap_secondAction (x t : ℚ) (Y : Mat R
   have hc : fockAct2 P Q R S Y (fockAct1 P Q R S X f) = fockAct1 P Q R S X (fockAct2 P Q R S Y f) :=
     (LinearMap.congr_fun ((GlobalTheory.FockAlg.fock_lie_and_commute P Q R S).2.2.2 X Y) f).symm
   refine Submodule.subset_span ⟨X, act2 P Q R S t Y f, ?_⟩
-  simp only [fockSecondActionTraceShift_apply, map_sub, map_add, map_smul, hc]
+  simp only [fockSecondActionTraceShift_apply, map_sub, map_add (f := _), map_smul, hc]
 
 theorem isLieAct_fockSecondActionTraceShift (t : ℚ) : IsLieAct (act2 P Q R S t) := by
   intro X Y
   refine LinearMap.ext fun f => ?_
   have h := LinearMap.congr_fun ((GlobalTheory.FockAlg.fock_lie_and_commute P Q R S).2.2.1 X Y) f
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, fockSecondActionTraceShift_apply, map_add, map_smul, h, Matrix.trace_sub,
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, fockSecondActionTraceShift_apply, map_add (f := _), map_smul, h, Matrix.trace_sub,
     Matrix.trace_mul_comm X Y, sub_self, mul_zero, zero_smul, add_zero]
   module
 
@@ -107,32 +111,5 @@ theorem mk_fockFirstAction_eq_trace_smul (x : ℚ) (X : Mat P Q) (f : Pol P Q R 
       ((x : ℂ) * X.trace) • Submodule.Quotient.mk f := by
   rw [← Submodule.Quotient.mk_smul, Submodule.Quotient.eq]
   exact Submodule.subset_span ⟨X, f, rfl⟩
-
-theorem nontrivial_of_form (x : ℚ) (l : Pol P Q R S →ₗ[ℂ] ℂ) (hl : l ≠ 0)
-    (hlX : ∀ X f, l (fockAct1 P Q R S X f) = (x : ℂ) * X.trace * l f) : Nontrivial (Pol P Q R S ⧸ rel P Q R S x) := by
-  have hK : rel P Q R S x ≤ LinearMap.ker l := by
-    refine Submodule.span_le.2 ?_
-    rintro g ⟨X, f, rfl⟩
-    simp [hlX]
-  obtain ⟨f, hf⟩ : ∃ f, l f ≠ 0 := by
-    by_contra h
-    push_neg at h
-    exact hl (LinearMap.ext fun f => by simpa using h f)
-  refine ⟨⟨Submodule.Quotient.mk f, 0, ?_⟩⟩
-  rw [Ne, Submodule.Quotient.mk_eq_zero]
-  exact fun hm => hf (hK hm)
-
-theorem exists_lift : ∀ (P Q R S : ℕ) (x t : ℚ), GlobalTheory.RealLift.HasForm P Q R S x →
-    ∃ (M : Formalism.BasicNotions.TH.GKMod R S) (pr : Formalism.BasicNotions.TH.Pol P Q R S →ₗ[ℂ] M.V),
-      GlobalTheory.RealLift.IsLift x t M pr ∧ Nontrivial M.V := by
-  intro P Q R S x t ⟨l, hl, hlX⟩
-  refine ⟨gkQ P Q R S x t, (rel P Q R S x).mkQ, ⟨Submodule.mkQ_surjective _, ?_, ?_⟩, ?_⟩
-  · intro X f
-    exact mk_fockFirstAction_eq_trace_smul P Q R S x X f
-  · intro Y f
-    show actQ P Q R S x t Y (Submodule.Quotient.mk f) = _
-    rw [actQ_mk, fockSecondActionTraceShift_apply]
-    rfl
-  · exact nontrivial_of_form P Q R S x l hl hlX
 
 end GlobalTheory.FockQuot

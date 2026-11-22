@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem pureTensorL_intertwine {ι X : Type} (p : (X → ℂ) → Prop) (p0 : p 
     rw [hm, hm, map_smul]
     exact ⟨psmul c _ (hl _).1, congrArg (c • ·) (hl _).2⟩
   | add P Q hP hQ =>
-    rw [map_add, map_add, map_add, hP.2, hQ.2]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hP.2, hQ.2]
     exact ⟨padd _ _ hP.1 hQ.1, rfl⟩
 
 theorem cplxO_move {m n : ℕ} {sS sS' G G' : Matrix (Fin n) (Fin n) ℂ} {sT sT' H : Matrix (Fin m) (Fin m) ℂ}

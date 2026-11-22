@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.HeckeSplitOne
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleIndexBoundAllPowers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.HeckeSplitOne
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleIndexBoundAllPowers
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,10 +48,5 @@ theorem isoLoc_append_singleton (S : List (Part A.CG)) (q : Part A.CG) (w : PlE 
     change A.lpSum (spehLoc N A p w) (isoLoc N A (S ++ [q]) w) =
       A.lpSum (A.lpSum (spehLoc N A p w) (isoLoc N A S w)) (spehLoc N A q w)
     rw [ih, A.lpSum_assoc]
-
-theorem main : ∀ (D : D7), CharSum D.nd D.naut → ∀ i : D.nd.Loc, LocCongr D.nd D.naut i := by
-  intro D hL i Sig Sig' _ _ h w hw
-  rw [isoLoc_twist D.nd D.naut hL, isoLoc_twist D.nd D.naut hL, isoLoc_append_singleton,
-    isoLoc_append_singleton, h w hw]
 
 end GlobalTheory.LocCongrRoad

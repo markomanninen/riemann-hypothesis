@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftIdempotentAdicComplete
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftIdempotentAdicComplete
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 
@@ -17,7 +21,7 @@ theorem exists_eq_add_of_mem_span_quot {S : Type} [CommRing S] (ϖ x y : S)
   exact ⟨c, d, by linear_combination hd⟩
 
 theorem mem_span_or_mem_span {S : Type} [CommRing S] (ϖ : S)
-    [IsAdicComplete (Ideal.span {ϖ}) S] (h0 : Val0 (S ⧸ Ideal.span {ϖ ^ 2}))
+    [IsAdicComplete (Ideal.span {ϖ}) S] (h0 : Val0 (S := S ⧸ Ideal.span {ϖ ^ 2}))
     (P : Ideal S) (hP : P.IsPrime) (f g : S ⧸ compI P) :
     f ∈ Ideal.span {g, Ideal.Quotient.mk (compI P) ϖ ^ 2} ∨
       g ∈ Ideal.span {f, Ideal.Quotient.mk (compI P) ϖ ^ 2} := by
@@ -39,7 +43,7 @@ theorem mem_span_or_mem_span {S : Type} [CommRing S] (ϖ : S)
   · right
     have hz := key e he heP
     have hb := congrArg (Ideal.Quotient.mk (compI P)) hcd'
-    simp only [map_mul, map_add, map_sub, map_one, map_pow, hz, sub_zero, one_mul] at hb
+    simp only [map_mul, map_add (f := _), map_sub, map_one, map_pow, hz, sub_zero, one_mul] at hb
     rw [hb]
     exact Ideal.mem_span_pair.2 ⟨Ideal.Quotient.mk _ c', Ideal.Quotient.mk _ d', by ring⟩
   · left
@@ -55,7 +59,7 @@ theorem mem_span_or_mem_span {S : Type} [CommRing S] (ϖ : S)
       rw [map_sub, map_one] at hz
       exact (sub_eq_zero.1 hz).symm
     have ha := congrArg (Ideal.Quotient.mk (compI P)) hcd
-    simp only [map_mul, map_add, map_pow, hz', one_mul] at ha
+    simp only [map_mul, map_add (f := _), map_pow, hz', one_mul] at ha
     rw [ha]
     exact Ideal.mem_span_pair.2 ⟨Ideal.Quotient.mk _ c, Ideal.Quotient.mk _ d, by ring⟩
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ThRestGcVOf
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TheoremSFromKOneOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ThRestGcVOf
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TheoremSFromKOneOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +24,6 @@ theorem cg_refl (f : MvPowerSeries ι K) : Cg R pp f f := ⟨0, IntR_zero, by si
 
 theorem cg_of_eq {f g : MvPowerSeries ι K} (h : f = g) : Cg R pp f g := h ▸ cg_refl f
 
-theorem cg_symm {f g : MvPowerSeries ι K} (h : Cg R pp f g) : Cg R pp g f := by
-  obtain ⟨Y, hY, e⟩ := h
-  exact ⟨-Y, IntR_neg hY, by rw [e]; ring⟩
-
 theorem cg_trans {f g k : MvPowerSeries ι K} (h1 : Cg R pp f g) (h2 : Cg R pp g k) : Cg R pp f k := by
   obtain ⟨Y, hY, e⟩ := h1
   obtain ⟨Y', hY', e'⟩ := h2
@@ -34,12 +34,6 @@ theorem cg_add {f g f' g' : MvPowerSeries ι K} (h1 : Cg R pp f g) (h2 : Cg R pp
   obtain ⟨Y, hY, e⟩ := h1
   obtain ⟨Y', hY', e'⟩ := h2
   exact ⟨Y + Y', IntR_add hY hY', by rw [e, e']; ring⟩
-
-theorem cg_sub {f g f' g' : MvPowerSeries ι K} (h1 : Cg R pp f g) (h2 : Cg R pp f' g') :
-    Cg R pp (f - f') (g - g') := by
-  obtain ⟨Y, hY, e⟩ := h1
-  obtain ⟨Y', hY', e'⟩ := h2
-  exact ⟨Y + -Y', IntR_add hY (IntR_neg hY'), by rw [e, e']; ring⟩
 
 theorem cg_sum {α : Type} (s : Finset α) (F G : α → MvPowerSeries ι K) (h : ∀ a ∈ s, Cg R pp (F a) (G a)) :
     Cg R pp (∑ a ∈ s, F a) (∑ a ∈ s, G a) := by
@@ -73,12 +67,12 @@ theorem cg_of_coeff {f g : MvPowerSeries ι K}
   have hYc : ∀ n, MvPowerSeries.coeff n Y = y n := fun _ => rfl
   refine ⟨Y, fun n => by rw [hYc]; exact hy n, ?_⟩
   ext n
-  rw [map_add, MvPowerSeries.coeff_C_mul, he n, hYc]
+  rw [map_add (f := _), MvPowerSeries.coeff_C_mul, he n, hYc]
 
 theorem cg_coeff {f g : MvPowerSeries ι K} (h : Cg R pp f g) (n : ι →₀ ℕ) :
     ∃ y ∈ R, MvPowerSeries.coeff n f = MvPowerSeries.coeff n g + pp * y := by
   obtain ⟨Y, hY, e⟩ := h
-  exact ⟨_, hY n, by rw [e, map_add, MvPowerSeries.coeff_C_mul]⟩
+  exact ⟨_, hY n, by rw [e, map_add (f := _), MvPowerSeries.coeff_C_mul]⟩
 
 end CgCalc
 

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.EigenFrames.EigenSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.EigenFrames.EigenSt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -37,7 +41,7 @@ theorem eig_norm_det_le_one {p : ℕ} [Fact p.Prime] {κ : Type*} [Fintype κ] [
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun σ _ => ?_
   rw [norm_mul, norm_prod]
   exact mul_le_one₀ (IsUltrametricDist.norm_intCast_le_one _ _)
-    (Finset.prod_nonneg fun _ _ => norm_nonneg _) (Finset.prod_le_one (fun _ _ => norm_nonneg _) fun _ _ => hM _ _)
+    (Finset.prod_nonneg fun _ _ => norm_nonneg _) (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun _ _ => hM _ _)
 
 theorem eig_norm_intCast {p : ℕ} [Fact p.Prime] {z : ℤ} (h : ¬ (p : ℤ) ∣ z) : ‖(z : ℂ_[p])‖ = 1 := by
   rw [← map_intCast (algebraMap ℚ_[p] ℂ_[p]) z, norm_algebraMap']

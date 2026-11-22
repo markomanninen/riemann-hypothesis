@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.OrderOKOneInert
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.VacLoc GlobalTheory.CompanionTheory.FinHeis GlobalTheory.WeilM MeasureTheory Matrix ValuativeRel NumberField IsDedekindDomain
 open scoped TensorProduct

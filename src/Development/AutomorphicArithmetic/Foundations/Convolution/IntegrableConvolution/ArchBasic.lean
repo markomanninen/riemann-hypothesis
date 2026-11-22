@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmooth
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmooth
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem UpperTheory.ConvolutionTheory.L1.archBasic :
     rw [← map_mul, ← h3]
     congr 2
     funext i
-    simp
+    exact map_mul (archEquiv F n).symm (g i) (h i)
   have c4 : Continuous (UpperTheory.ConvolutionTheory.L1.glueA D n) := by
     have : Continuous fun g : Fin (m + 1) → archGroup F n =>
         archEquiv E n (D.glue n fun i => (archEquiv F n).symm (g i)) :=
@@ -71,7 +75,7 @@ theorem UpperTheory.ConvolutionTheory.L1.archBasic :
     exact e.isHaarMeasure_map (Measure.pi fun _ => νF)
   · intro φ
     have hc : Continuous fun g : archGroup E n => ∏ i, φ i (UpperTheory.ConvolutionTheory.L1.compA D n i g) :=
-      continuous_finset_prod _ fun i _ => (φ i).continuous.comp (c5 i)
+      continuous_finsetProd _ fun i _ => (φ i).continuous.comp (c5 i)
     have hK : IsCompact (UpperTheory.ConvolutionTheory.L1.glueA D n '' Set.pi Set.univ fun i => tsupport (φ i)) :=
       (isCompact_univ_pi fun i => (φ i).hasCompactSupport).image c4
     have hs : HasCompactSupport fun g : archGroup E n => ∏ i, φ i (UpperTheory.ConvolutionTheory.L1.compA D n i g) := by

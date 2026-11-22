@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PhiTopAgree
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PhiTopAgree
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory ValuativeRel Matrix
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col
@@ -118,9 +122,6 @@ def LastAgree : Prop :=
         (W.T s R).xiTop (box _ (W.ϖ ^ cst.M)) W.ψ ν (-1) (Submodule.Quotient.mk fun a => ι (y' (e' a))) (toLoc ι e e' y) =
           σ₀ (PhiTop Ch mu cst.sharp s P.1 (prXp X.E R ∘ₗ y ∘ₗ LinearMap.funLeft X.E X.E (Fin.castAdd (cOf R (s + 1)))) *
             ftY sel mu cst P (atNL X.E (R.N R.m) (R.N R.m - 1) ∘ₗ y) y')
-
-def RepsAgree : Prop :=
-  (∀ j, j ≤ s → Nonempty (L.β j)) → (W.T s R).IsRepSystem (fun j _ _ => {g | ∃ b : L.β j, IsGL ι (L.h j b P) g}) W.ψ ν
 
 def IdxIsProd : Prop :=
   ∀ j, j ≤ s → ∀ hh : rowSG Pr sel mu → AutY X R j, (∀ P, ∃ b : L.β j, L.h j b P = hh P) → ∃! b : L.β j, ∀ P, L.h j b P = hh P

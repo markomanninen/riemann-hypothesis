@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.GenSmooth
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterMinorA
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.GenSmooth
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter
@@ -24,8 +29,8 @@ theorem pderiv_facts_charZero {F : Type*} [Field F] [CharZero F] {σ : Type*} (p
     obtain ⟨m, hm, hmj⟩ := this
     have hle : Finsupp.single j 1 ≤ m := Finsupp.single_le_iff.mpr hmj
     intro h0
-    have hc := congr_arg (coeff (m - Finsupp.single j 1)) h0
-    rw [coeff_pderiv, tsub_add_cancel_of_le hle, coeff_zero] at hc
+    have hc := congr_arg (AddMonoidAlgebra.coeff · (m - Finsupp.single j 1)) h0
+    rw [coeff_pderiv, tsub_add_cancel_of_le hle, AddMonoidAlgebra.coeff_zero] at hc
     rw [mem_support_iff] at hm
     exact mul_ne_zero hm (Nat.cast_add_one_ne_zero _) hc
   · rw [degreeOf_lt_iff hj]
@@ -34,7 +39,7 @@ theorem pderiv_facts_charZero {F : Type*} [Field F] [CharZero F] {σ : Type*} (p
     simp only [Finsupp.add_apply, Finsupp.single_eq_same] at this
     omega
   · intro i hi
-    rw [mem_vars] at hi ⊢
+    rw [MvPolynomial.mem_vars_iff_mem_support] at hi ⊢
     obtain ⟨m, hm, him⟩ := hi
     refine ⟨m + Finsupp.single j 1, hsupp m hm, ?_⟩
     rw [Finsupp.mem_support_iff] at him ⊢
@@ -166,12 +171,12 @@ theorem exists_jacobian_minor_not_mem_charZero {F : Type} [Field F] [CharZero F]
       | zero => simp [D]
       | add x y _ _ hx hy =>
         have : D (x + y) = D x + D y := by
-          simp only [D, map_add, add_mul, Finset.sum_add_distrib]
+          simp only [D, map_add (f := _), add_mul, Finset.sum_add_distrib]
         rw [this, hx, hy, add_zero]
       | smul a x hx' hx =>
         have hx0 : π x = 0 := (hπ x).2 (hG ▸ hx')
         have : D (a • x) = π a * D x := by
-          simp only [D, smul_eq_mul, Derivation.leibniz, map_add, map_mul, hx0, zero_mul,
+          simp only [D, smul_eq_mul, Derivation.leibniz, map_add (f := _), map_mul, hx0, zero_mul,
             add_zero, Finset.mul_sum, mul_assoc]
         rw [this, hx, mul_zero]
     funext k0
@@ -195,7 +200,7 @@ theorem exists_jacobian_minor_not_mem_charZero {F : Type} [Field F] [CharZero F]
       intro i hi
       rcases hQv hi with rfl | hi'
       · exfalso
-        rw [Finset.mem_coe, mem_vars] at hi
+        rw [Finset.mem_coe, MvPolynomial.mem_vars_iff_mem_support] at hi
         obtain ⟨m, hm, him⟩ := hi
         have := monomial_le_degreeOf j hm
         rw [Finsupp.mem_support_iff] at him
@@ -234,30 +239,9 @@ theorem exists_jacobian_minor_not_mem_charZero {F : Type} [Field F] [CharZero F]
 
 section Minors
 
-open ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.MultiHomogZ
+open ReciprocityTheory.ChartRestriction.G.Geo
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {R : Type} [CommRing R]
-
-theorem isMultiHomog_det_pderiv_over {s c : ℕ} (G : Fin s → MRingOver R ι)
-    (hG : ∀ i, ∃ a, IsMultiHomog (G i) a) (a : Fin c → Fin s) (b : Fin c → Σ k, ι k) :
-    ∃ d, IsMultiHomog (Matrix.det (Matrix.of fun i j => pderiv (b j) (G (a i)))) d := by
-  choose dG hdG using hG
-  refine ⟨_, isMultiHomog_of_blkWtZ (n := fun k =>
-    ∑ i, ((dG (a i) k : ℤ) - blkWtZ k (b i))) fun k => ?_⟩
-  rw [Matrix.det_apply]
-  refine IsWeightedHomogeneous.sum _ _ _ fun σ _ => ?_
-  have hp : IsWeightedHomogeneous (blkWtZ (ι := ι) k)
-      (∏ i, (Matrix.of fun i j => pderiv (b j) (G (a i))) (σ i) i)
-      (∑ i, ((dG (a (σ i)) k : ℤ) - blkWtZ k (b i))) :=
-    IsWeightedHomogeneous.prod _ _ _ fun i _ =>
-      isWeightedHomogeneous_pderiv_int (isWeightedHomogeneous_blkWtZ (hdG (a (σ i))) k) (b i)
-  have e : ∑ i, ((dG (a (σ i)) k : ℤ) - blkWtZ k (b i)) = ∑ i, ((dG (a i) k : ℤ) - blkWtZ k (b i)) := by
-    simp only [Finset.sum_sub_distrib]
-    congr 1
-    exact Equiv.sum_comp σ (fun i => (dG (a i) k : ℤ))
-  rw [e] at hp
-  rw [Units.smul_def, zsmul_eq_mul, ← map_intCast (C : R →+* MRingOver R ι), ← zero_add (∑ i, _)]
-  exact (isWeightedHomogeneous_C _ _).mul hp
 
 end Minors
 

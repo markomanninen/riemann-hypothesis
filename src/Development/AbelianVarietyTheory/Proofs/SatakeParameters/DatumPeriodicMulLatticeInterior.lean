@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.WeightedChainData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.WeightedChainData
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions
 
@@ -9,9 +13,9 @@ section General
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ}
 
+
 open NumberField IsDedekindDomain in
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ} in
-
 theorem _root_.GlobalTheory.phiT_add_smul_homAt (K : Type) [Field K]
     {ST SG SG' S : Finset (HeightOneSpectrum (𝓞 E))}
     (d : _root_.Formalism.L2.Col.Deco E a ST SG) (d' : _root_.Formalism.L2.Col.Deco E b ST SG') (hd' : d'.Ok) (hS : ST ⊆ S) (c : 𝓞 E)
@@ -52,9 +56,9 @@ theorem _root_.GlobalTheory.inFr_add (f : _root_.Formalism.L2.Col.Sp E a ≃ₗ[
   unfold _root_.Formalism.L2.Col.inFr
   rw [LinearMap.add_comp, LinearMap.comp_add]
 
+
 open NumberField IsDedekindDomain in
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ} in
-
 theorem _root_.GlobalTheory.intAt_inFr_smul_homAt {S : Finset (HeightOneSpectrum (𝓞 E))}
     {N : Submodule (𝓞 E) (_root_.Formalism.L2.Col.Sp E a)}
     {N' : Submodule (𝓞 E) (_root_.Formalism.L2.Col.Sp E b)} {P : HeightOneSpectrum (𝓞 E)} (hP : P ∈ S)

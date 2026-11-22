@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhGroup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhSmall
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhGroup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhSmall
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -102,7 +106,7 @@ private theorem ker_coord (O : Type) [CommRing O] [IsLocalRing O] {R : Type} [Co
       map_add' := fun c d => by
         have : (fun u => e ((c + d) u)) = (fun u => e (c u)) + fun u => e (d u) := by
           funext u; simp
-        rw [this, map_add]; rfl }
+        rw [this, map_add (f := _)]; rfl }
   refine ⟨_, ψ, fun c d h => ?_, fun c => (b.symm fun u => e (c u)).2, fun x hx => ⟨fun u => e.symm (b ⟨x, hx⟩ u), ?_⟩,
     fun x c => ?_⟩
   · have := b.symm.injective (Subtype.ext h)
@@ -139,12 +143,14 @@ private theorem ker_mat (O : Type) [CommRing O] [IsLocalRing O] {R : Type} [Comm
     ext a b
     exact hc a b
   · ext a b
-    simp only [mul_apply, hΨ, h4, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, hΨ, h4, ← map_sum]
     congr 1
     funext u
     simp
   · ext a b
-    simp only [mul_apply, hΨ, mul_comm (ψ _), h4, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, hΨ, mul_comm (ψ _), h4, ← map_sum]
     congr 1
     funext u
     simp [mul_comm]
@@ -171,7 +177,7 @@ omit [DecidableEq ι] in
 private theorem mask_left (j : X) {A : Matrix ι ι k} (hA : ∀ a b, w a ≠ w b → A a b = 0) (Y : Matrix ι ι k) :
     mask w j (A * Y) = A * mask w j Y := by
   ext a b
-  simp only [mask_apply, mul_apply]
+  simp only [mask_apply, Matrix.mul_apply]
   rw [← Finset.sum_const_zero (s := (Finset.univ : Finset ι)), ← Finset.sum_ite_irrel]
   refine Finset.sum_congr rfl fun c _ => ?_
   by_cases h : w a = w c
@@ -182,7 +188,7 @@ omit [DecidableEq ι] in
 private theorem mask_right (j : X) {A : Matrix ι ι k} (hA : ∀ a b, w a ≠ w b → A a b = 0) (Y : Matrix ι ι k) :
     mask w j (Y * A) = mask w j Y * A := by
   ext a b
-  simp only [mask_apply, mul_apply]
+  simp only [mask_apply, Matrix.mul_apply]
   rw [← Finset.sum_const_zero (s := (Finset.univ : Finset ι)), ← Finset.sum_ite_irrel]
   refine Finset.sum_congr rfl fun c _ => ?_
   by_cases h : w c = w b
@@ -196,7 +202,7 @@ private theorem mask_mem (Φ : FormData O w) (j : X) {Y : Matrix ι ι k} (hY : 
   have hJ : ∀ c d, w c + w d ≠ Φ.c → Φ.JR k c d = 0 := fun c d h => by
     have : Φ.J c d = 0 := by_contra fun n => h (Φ.hw c d n)
     simp [FormData.JR, this]
-  simp only [Matrix.add_apply, mul_apply, transpose_apply, mask_apply, Matrix.zero_apply] at h0 ⊢
+  simp only [Matrix.add_apply, Matrix.mul_apply, transpose_apply, mask_apply, Matrix.zero_apply] at h0 ⊢
   have e1 : ∀ c, w c + w b = Φ.c → w c - w a = Φ.c - w a - w b := fun c h => by rw [← h]; abel
   have e2 : ∀ c, w a + w c = Φ.c → w c - w b = Φ.c - w a - w b := fun c h => by rw [← h]; abel
   by_cases hj : Φ.c - w a - w b = j
@@ -248,7 +254,7 @@ private theorem cob_all (Φ : FormData O w) {Γ : Type} [Group Γ] [TopologicalS
       exact Subtype.ext (congrArg (mask w j) hy))
     (fun s t u => Subtype.ext (by
       have := congrArg (mask w j) (h2 s t u)
-      rw [map_add, map_add, mask_right j (hw _), mask_left j (hw _)] at this
+      rw [map_add (f := _), map_add (f := _), mask_right j (hw _), mask_left j (hw _)] at this
       exact this))
     (fun s t n hn n' hn' => Subtype.ext (congrArg (mask w j) (h3 s t n hn n' hn')))
   choose a a1 a2 a3 using key
@@ -387,7 +393,7 @@ private theorem cob_ker (K : Ideal R) (hK : maximalIdeal R * K = ⊥) {Γ : Type
   have hg : ∀ Y, Ψ Y ∈ Φ.g R ↔ ∀ u, Y u ∈ Φ.g (ResidueField O) := fun Y => by
     have e : (Ψ Y)ᵀ * Φ.JR R + Φ.JR R * Ψ Y = 0 ↔
         ∀ u, (Y u)ᵀ * Φ.JR (ResidueField O) + Φ.JR (ResidueField O) * Y u = 0 := by
-      rw [p6, p4, p5, jr, ← map_add, map_eq_zero_iff Ψ p1, funext_iff]
+      rw [p6, p4, p5, jr, ← map_add (f := _), map_eq_zero_iff Ψ p1, funext_iff]
       rfl
     constructor
     · rintro ⟨k1, k2⟩ u
@@ -404,7 +410,7 @@ private theorem cob_ker (K : Ideal R) (hK : maximalIdeal R * K = ⊥) {Γ : Type
     (fun s t v => by
       have := h2 s t v
       simp only [← hc] at this
-      rw [p4, p5, hρ, hρ, ← map_add, ← map_add] at this
+      rw [p4, p5, hρ, hρ, ← map_add (f := _), ← map_add (f := _)] at this
       exact congrFun (p1 this) u)
     (fun s t m hm m' hm' => congrFun (p1 (by rw [hc, hc, h3 s t m hm m' hm'])) u)
   choose a a0 a1 a2 a3 using key
@@ -416,7 +422,7 @@ private theorem cob_ker (K : Ideal R) (hK : maximalIdeal R * K = ⊥) {Γ : Type
       Filter.eventually_all.2 fun u => (IsLocallyConstant.iff_eventually_eq _).1 (a1 u) x
     filter_upwards [this] with y hy
     simp only [hy]
-  · rw [p4, p5, hρ, hρ, ← map_add, ← map_sub, ← hc]
+  · rw [p4, p5, hρ, hρ, ← map_add (f := _), ← map_sub, ← hc]
     congr 1
     funext u
     exact a3 u s t

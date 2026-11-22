@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtWeak
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegBall
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtWeak
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegBall
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 
@@ -88,7 +92,7 @@ theorem extNull : ExtNullStatement := by
   have hZ : ∀ᵐ z ∂volume.restrict (Ω ∩ Z), False := by
     filter_upwards [ae_restrict_of_ae_restrict_of_subset Set.inter_subset_left hae,
       ae_restrict_mem hmeas] with z hz hzZ
-    rw [Set.indicator_of_notMem (fun h => h.2 hzZ.2), hUall hzZ.1] at hz
+    rw [Set.indicator_of_notMem (by exact fun h => h.2 hzZ.2), hUall hzZ.1] at hz
     exact zero_ne_one hz
   have h0 : volume.restrict (Ω ∩ Z) = 0 := ae_eq_bot.1 (Filter.eventually_false_iff_eq_bot.1 hZ)
   exact Measure.restrict_eq_zero.1 h0

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.OrientEv
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.OrientEv
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.W2.Seed UpperTheory.Gal.W2.Seed.Ori
 open scoped TensorProduct
@@ -19,7 +23,7 @@ private theorem R_add_r {K : Type} [Fintype K] (c u v v' : K → ℂ) :
   unfold R
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun k _ => ?_
-  simp only [Pi.add_apply, map_add, mul_add, add_mul, Complex.add_re]
+  simp only [Pi.add_apply, map_add (f := _), mul_add, add_mul, Complex.add_re]
 
 private theorem R_smul_l {K : Type} [Fintype K] (c u v : K → ℂ) (r : ℝ) :
     R c (r • u) v = r * R c u v := by
@@ -46,7 +50,8 @@ private theorem core0 (hT : TraceType) {E : Type} [Field E] [NumberField E] [IsC
   rw [← Finset.mul_sum, ← Complex.re_sum]
   congr 2
   push_cast
-  simp only [Arith.bar_eq, Finset.mul_sum, map_sum, map_mul, IsCMField.complexEmbedding_complexConj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Arith.bar_eq, Finset.mul_sum, map_sum, map_mul, IsCMField.complexEmbedding_complexConj]
   refine Finset.sum_congr rfl fun i _ => ?_
   ring
 
@@ -65,12 +70,12 @@ private theorem core1 (hT : TraceType) {E : Type} [Field E] [NumberField E] [IsC
   induction w using TensorProduct.induction_on with
   | zero => simp [R]
   | add a b ha hb =>
-    rw [TensorProduct.tmul_add, map_add, map_add, LinearMap.add_apply, Rat.cast_add, ha, hb, R_add_l]
+    rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), LinearMap.add_apply, Rat.cast_add, ha, hb, R_add_l]
   | tmul q a =>
     induction w' using TensorProduct.induction_on with
     | zero => simp [R]
     | add a b ha hb =>
-      rw [TensorProduct.tmul_add, map_add, map_add, Rat.cast_add, ha, hb, R_add_r]
+      rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), Rat.cast_add, ha, hb, R_add_r]
     | tmul t b =>
       rw [LinearMap.BilinForm.baseChange_tmul, e1 q a, e1 t b, map_smul, map_smul, R_smul_l, R_smul_r]
       have h : R (fun k : Phi A × Fin n => k.1.1 A.δ * k.1.1 (A.hd n k.2 : E))
@@ -90,11 +95,11 @@ theorem UpperTheory.cmField_hermitianForm_baseChange_real_eq_sum :
     (Th (fun τ : Phi A => τ.1) β x) (Th (fun τ : Phi A => τ.1) β y)
   induction x using TensorProduct.induction_on with
   | zero => simp [R]
-  | add a b ha hb => rw [map_add, map_add, LinearMap.add_apply, ha, hb, R_add_l]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, ha, hb, R_add_l]
   | tmul r w =>
     induction y using TensorProduct.induction_on with
     | zero => simp [R]
-    | add a b ha hb => rw [map_add, map_add, ha, hb, R_add_r]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, R_add_r]
     | tmul s w' =>
       have e : ∀ (r : ℝ) (w : ℚ ⊗[ℤ] (Fin n → 𝓞 E)), r ⊗ₜ[ℚ] w = r • ((1 : ℝ) ⊗ₜ[ℚ] w) := by
         intro r w

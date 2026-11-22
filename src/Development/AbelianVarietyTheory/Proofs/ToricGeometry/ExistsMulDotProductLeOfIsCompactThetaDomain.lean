@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
+
+@[expose] public section
 
 open Complex Matrix ReciprocityTheory.PTheta
 
@@ -83,9 +87,9 @@ private lemma exists_uniform_im_quadForm_lower_bound_on_compact {K : Set ((ι �
           nlinarith [mul_nonneg hm.le (sq_nonneg ‖x‖)]
       _ ≤ Q := h4
 
+
 open Complex Matrix in
 variable {ι : Type*} [Fintype ι] in
-
 theorem _root_.GlobalTheory.thetaMTest_holds : _root_.ReciprocityTheory.PTheta.ThetaMTestStatement := by
   unfold _root_.ReciprocityTheory.PTheta.ThetaMTestStatement
   intro ι _ a K hK hKd
@@ -96,9 +100,9 @@ theorem _root_.GlobalTheory.thetaMTest_holds : _root_.ReciprocityTheory.PTheta.T
   exact _root_.GlobalTheory.norm_riemannThetaTerm_le a b (hcK p hp)
     (fun i => (_root_.GlobalTheory.abs_im_apply_le_norm p.1 i).trans (hS p hp)) l
 
+
 open Complex Matrix in
 variable {ι : Type*} [Fintype ι] in
-
 theorem _root_.GlobalTheory.thetaSummable_holds : _root_.ReciprocityTheory.PTheta.ThetaSummableStatement := by
   have hM := _root_.GlobalTheory.thetaMTest_holds
   unfold _root_.ReciprocityTheory.PTheta.ThetaMTestStatement at hM
@@ -111,9 +115,9 @@ theorem _root_.GlobalTheory.thetaSummable_holds : _root_.ReciprocityTheory.PThet
   exact Summable.of_nonneg_of_le (fun _ => norm_nonneg _)
     (fun l => hbound b _ (Set.mem_singleton _) l) hu
 
+
 open Complex Matrix in
 variable {ι : Type*} [Fintype ι] in
-
 theorem _root_.GlobalTheory.thetaMTest_and_thetaSummable : _root_.ReciprocityTheory.PTheta.ThetaMTestStatement ∧ _root_.ReciprocityTheory.PTheta.ThetaSummableStatement :=
   ⟨_root_.GlobalTheory.thetaMTest_holds, _root_.GlobalTheory.thetaSummable_holds⟩
 

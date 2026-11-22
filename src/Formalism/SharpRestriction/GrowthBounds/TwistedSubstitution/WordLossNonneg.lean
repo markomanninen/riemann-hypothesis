@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemAtDZeroIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemAtDZeroIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,8 +110,6 @@ theorem restWordStep_of (C CLa : ℝ) (hLe : RestLeOfG) (h1 : OneOpStep C CLa) (
     have hb := hB p W Qq O Kf ι σ j w n' m r TT L₁ L₂ de h' x lam0 aT bT a Y cpp c0 Dp cStar K hk hrk F nb B hD l hl hc jz u hu
     have h0 := wordLoss_nonneg F l jz u
     linarith
-
-def RestLeOfG' : Prop := RestLeOfG
 
 def RestOneOp (D : Formalism.BasicNotions.D7) (CLa Ck Crk Cdeg : ℝ) : Prop :=
   tableLineDegreeFive.admitted D CLa Ck Crk Cdeg → ∃ C₁ : ℝ, 0 < C₁ ∧ ∀ C : ℝ, C₁ ≤ C → OneOpStep C CLa

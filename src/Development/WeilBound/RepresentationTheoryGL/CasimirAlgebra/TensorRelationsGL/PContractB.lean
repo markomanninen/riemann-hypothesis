@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PContractA
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PContractD
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PContractE
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PContractA
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PContractD
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PContractE
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def semiS {ι Γ : Type} [Fintype ι] (m : ℕ) (τ0 : ι) (κ : ι → Γ → M
   add_mem' := by
     intro a b ha hb γ
     simp only [Set.mem_ofPred_eq] at ha hb ⊢
-    rw [map_add, ha γ, hb γ, smul_add]
+    rw [map_add (f := _), ha γ, hb γ, smul_add]
   zero_mem' := by
     intro γ
     simp
@@ -90,7 +94,8 @@ theorem core (hQ : QdetFacts) (hW : WallAlg) (hT : TensorGK) (hL : LieInv)
     split_ifs <;> simp [hQap]
   have hQOm : ∀ (j : Fin m) y, Q (Om (E τ0) j y) = Om F1 j (Q y) := by
     intro j y
-    simp only [Om, LinearMap.sum_apply, map_sum, Module.End.mul_apply, hQeAt]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Om, LinearMap.sum_apply, map_sum, Module.End.mul_apply, hQeAt]
     refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
     rw [hQlift _ _ (hq1 a b), hQeAt]
   have hfib1 : fib (fun _ : Fin m => τ0) τ0 = Finset.univ := by
@@ -105,7 +110,8 @@ theorem core (hQ : QdetFacts) (hW : WallAlg) (hT : TensorGK) (hL : LieInv)
     have h := hL n (TV n M (Fin m)) ι Γ bar κ (fun τ => tE (fib (fun _ : Fin m => τ0) τ) (E τ)) (actT (fun _ : Fin m => τ0) κ ρ) hK hGK c y ((hY y).1 hy) τ0 a b
     simp only [hfib1, hfib2, tE, Finset.sum_empty, add_zero] at h
     have h' := congrArg Q h
-    rw [map_sub, LinearMap.add_apply, map_add, LinearMap.sum_apply, map_sum, hQlift _ _ (hq1 a b), hQlift _ _ (hq2 b a)] at h'
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, LinearMap.add_apply, map_add (f := _), LinearMap.sum_apply, map_sum, hQlift _ _ (hq1 a b), hQlift _ _ (hq2 b a)] at h'
     simp only [hQeAt] at h'
     have hl : ∀ (B1 B2 : Module.End ℂ M0) (v : TV n M0 (Fin m)), lift (B1 + -B2) v = lift B1 v - lift B2 v := by
       intro B1 B2 v
@@ -142,7 +148,8 @@ theorem core (hQ : QdetFacts) (hW : WallAlg) (hT : TensorGK) (hL : LieInv)
   obtain ⟨hnm, ξ, hξX, hξalt⟩ := hwall hm
   obtain ⟨y, hy, rfl⟩ := Submodule.mem_map.1 hξX
   have hQalt : Q (alt (firstG m n) y) = alt (firstG m n) (Q y) := by
-    simp only [alt, LinearMap.sum_apply, map_sum, LinearMap.smul_apply, map_smul, hQpm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [alt, LinearMap.sum_apply, map_sum, LinearMap.smul_apply, map_smul, hQpm]
   let ζ' : TV n M (Fin m) := alt (firstG m n) y
   have hζ'Y : ζ' ∈ Y := by
     show (∑ σ ∈ firstG m n, ((Equiv.Perm.sign σ : ℤ) : ℂ) • pm σ) y ∈ Y

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinSubRange
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinSubRange
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Mum
@@ -47,7 +52,7 @@ theorem exists_finset_pow_smul_mem {R A Rf Af : Type} [CommRing R] [CommRing A] 
       obtain ⟨m, v, hv, e'⟩ := hb
       refine ⟨n + m, f ^ m • w + f ^ n • v,
         Submodule.add_mem _ (Submodule.smul_mem _ _ hw) (Submodule.smul_mem _ _ hv), ?_⟩
-      simp only [Algebra.smul_def, map_add, map_mul, map_pow, e, e']
+      simp only [Algebra.smul_def, map_add (f := _), map_mul, map_pow, e, e']
       ring
     | smul c a _ ha =>
       obtain ⟨n, w, hw, e⟩ := ha

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsVeryAmpleZFinite
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PAmpleAffineGen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsVeryAmpleZFinite
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PAmpleAffineGen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -60,8 +65,8 @@ theorem pow_div_xProd_mem {r : ℕ} {h : Fin (r + 1) → Ω} (J : Chart h) (j : 
 
 end VeryAmpleZChartRing
 
-open VeryAmpleZChartRing in
 
+open VeryAmpleZChartRing in
 theorem VeryAmpleZChartRing.proof : VeryAmpleZChartRing.Statement.{u, w} := by
   intro S _ Ω _ _ N x H r h hv J j hjJ c hc K hrat α hα
   have hj0 : h j ≠ 0 := (mem_support h).mp (J.2.2 hjJ)

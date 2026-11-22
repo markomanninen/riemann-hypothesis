@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem last_plus (hK : DV.KapDef D) (hn : Even D.R.nV) (h1 : 1 ≤ j) (h2 : j �
     linarith
   rw [DV.aPlusQ_eq, hc] at e2
   unfold DV.sigPar DV.eQ at e2
-  rw [dif_neg hlt, dif_pos hb, dif_pos ⟨h1, h2⟩] at e2
+  rw [dite_eq_right hlt, dite_eq_left hb, dite_eq_left ⟨h1, h2⟩] at e2
   have hx : (⟨i.1 - (D.R.k - 1), hb⟩ : Fin D.R.m) = ⟨j - 1, by omega⟩ := Fin.ext (by show i.1 - (D.R.k - 1) = j - 1; omega)
   rw [hx, ← e1] at e2
   have e3 : (((Cons.kaWt D hK hn j).aP τ i : ℕ) : ℚ) =
@@ -44,7 +48,7 @@ theorem last_minus (hK : DV.KapDef D) (hn : Even D.R.nV) (h1 : 1 ≤ j) (h2 : j 
   have h0 : ((Fin.rev i : Fin _) : ℕ) = 0 := by rw [Fin.val_rev]; omega
   rw [h0] at e2
   unfold DV.aMinusQ DV.eQ at e2
-  rw [dif_pos (by omega : j + 0 < D.R.m), dif_pos ⟨h1, h2.le⟩] at e2
+  rw [dite_eq_left (by omega : j + 0 < D.R.m), dite_eq_left ⟨h1, h2.le⟩] at e2
   have e1' : (((Cons.kaWt D hK hn j).aM τ i : ℕ) : ℚ) = -(D.what₂.kaSmall j τ (Fin.rev i) : ℚ) := by exact_mod_cast e1
   have e3 : (((Cons.kaWt D hK hn j).aM τ i : ℕ) : ℚ) =
       ((D.hc τ).b ⟨j, h2⟩ - (D.hc τ).e ⟨j - 1, by omega⟩ : ℚ) - ((D.R.t : ℚ) + 1) / 2 := by

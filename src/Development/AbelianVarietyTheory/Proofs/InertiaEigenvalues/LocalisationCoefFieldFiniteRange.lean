@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemisimpleOfInjective
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PolarizedGaloisRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemisimpleOfInjective
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PolarizedGaloisRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem exists_coefField {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDom
       RingHom.ext fun z => (hφ z).symm
     rw [Polynomial.eval₂_map, e]
     exact this
-  haveI : Finite S := (s.finite_toSet.image φ).to_subtype
+  have : Finite S := (s.finite_toSet.image φ).to_subtype
   have hfd : FiniteDimensional ℚ_[l] (IntermediateField.adjoin ℚ_[l] S) :=
     IntermediateField.finiteDimensional_adjoin hint
   have hle : K ≤ IntermediateField.adjoin ℚ_[l] S := by

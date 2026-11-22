@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
 
@@ -30,12 +35,14 @@ theorem UpperTheory.V.Lit.Bor.frameBr :
   · have h1 : ∀ j, β (brH Z hZ (e j)) (e j) = ∑ k, trF (e k).1 (Z * (e j).1 - (e j).1 * Z) • β (e k) (e j) := by
       intro j
       conv_lhs => rw [he (brH Z hZ (e j))]
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
       rfl
     have h2 : ∀ j, β (e j) (brH Z hZ (e j)) = ∑ k, trF (e k).1 (Z * (e j).1 - (e j).1 * Z) • β (e j) (e k) := by
       intro j
       conv_lhs => rw [he (brH Z hZ (e j))]
-      simp only [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul]
       rfl
     simp only [h1, h2]
     rw [Finset.sum_comm, ← Finset.sum_add_distrib]
@@ -65,9 +72,11 @@ theorem UpperTheory.V.Lit.Bor.frameBr :
         ∑ k, trF (e k).1 (brH _ (h j) X).1 • β (Complex.I • (e j).1) (e k) := by
       intro j
       conv_lhs => rw [he (brH _ (h j) X)]
-      simp only [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul]
     simp only [h1, h2]
-    simp only [map_sum, LinearMap.map_smul β, LinearMap.sum_apply, LinearMap.smul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smul β, LinearMap.sum_apply, LinearMap.smul_apply]
     rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← Finset.sum_neg_distrib]

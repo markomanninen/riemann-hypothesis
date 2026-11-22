@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CardTorsionAbelianVariety
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RatioTranslate
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CubicalStrOfTrivTheta
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSiegPreOfPolAV
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEquivOmegaStd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSymplecticBasisToMatrixOffDiagDvd
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubeTrivialAndFiniteFlatSurjectiveMulAbelianSche
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsGenThetaOfIsAbelianScheme
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsStdSympZmod
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsValueEq
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubWeilOneLeft
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CardTorsionGeometricPointOfField
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CardTorsionAbelianVariety
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RatioTranslate
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CubicalStrOfTrivTheta
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSiegPreOfPolAV
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEquivOmegaStd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSymplecticBasisToMatrixOffDiagDvd
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubeTrivialAndFiniteFlatSurjectiveMulAbelianSche
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsGenThetaOfIsAbelianScheme
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsStdSympZmod
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsValueEq
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubWeilOneLeft
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CardTorsionGeometricPointOfField
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -54,13 +58,21 @@ theorem exists_symplectic_hom {M g : ℕ} {G : Type} [CommGroup G] {R : Type} [C
   obtain ⟨bas, hb⟩ := exists_equiv_omegaStd (Matrix.toBilin' (Matrix.of (Out.stdSymp g))) (LinearEquiv.refl ℤ _)
     (fun i j => by simp [Matrix.toBilin'_single])
   refine ⟨fun a => ∏ i, x i ^ bas a i,
-    fun a b => by simp only [map_add, Pi.add_apply, _root_.zpow_add, Finset.prod_mul_distrib], fun a b => ?_⟩
+    fun a b => by simp only [map_add (f := _), Pi.add_apply, _root_.zpow_add, Finset.prod_mul_distrib], fun a b => ?_⟩
   rw [← hb, Matrix.toBilin'_apply]
   have s := map_prod (zpowersHom Rˣ ζ) (fun p : Fin (2 * g) × Fin (2 * g) =>
     Multiplicative.ofAdd (bas a p.1 * Out.stdSymp g p.1 p.2 * bas b p.2)) Finset.univ
   rw [← ofAdd_sum, Fintype.sum_prod_type, Fintype.prod_prod_type] at s
   refine Eq.trans ?_ s.symm
-  rw [map_prod e, MonoidHom.finset_prod_apply]
+  dsimp only
+  rw [map_prod e]
+  have eval_prod (s : Finset (Fin (2 * g))) (f : Fin (2 * g) → G →* Rˣ) (y : G) :
+      (∏ i ∈ s, f i) y = ∏ i ∈ s, f i y := by
+    classical
+    induction s using Finset.induction_on with
+    | empty => simp
+    | insert i s hi ih => simp [hi, ih]
+  rw [eval_prod]
   refine Finset.prod_congr rfl fun i _ => ?_
   rw [map_prod]
   refine Finset.prod_congr rfl fun j _ => ?_
@@ -177,7 +189,7 @@ theorem sq_eq_one_of_translDiff (c : SiegPre h n ζ s) (hc : c.Principal) {F : T
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, one_smul, neg_smul] at e
   rw [← Hom.mul_def] at e
   have e' := congrArg (pull (lift (snd c.A (Over.mk t)) (fst c.A (Over.mk t))).left) e
-  rw [map_zero, map_add, map_neg, ← pull_comp, ← pull_comp, ← Over.comp_left, ← Over.comp_left, MonObj.comp_mul,
+  rw [map_zero, map_add (f := _), map_neg, ← pull_comp, ← pull_comp, ← Over.comp_left, ← Over.comp_left, MonObj.comp_mul,
     lift_fst_assoc, lift_snd, dg, dg, pull_mul_left c hc, sy _ (_ * _), sy _ (_ * _), pull_mul_left c hc,
     pull_mul_left c hc, ← comp_lift, Over.comp_left, pull_comp, x0, map_zero] at e'
   refine hc.2 _ _ ((cls_eq_zero_iff (pull_isLB hL _)).1 ?_)

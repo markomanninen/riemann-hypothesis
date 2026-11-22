@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.EntryMulSubOne
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CartanExists
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BallSubgroup
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.EntryMulSubOne
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CartanExists
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BallSubgroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,8 +128,8 @@ end GlobalTheory.CompanionTheory.CartGL.UnitBall
 
 namespace GlobalTheory.CompanionTheory.CartGL
 
-open UnitBall in
 
+open UnitBall in
 theorem cartan_unitBall (L : Type) [NontriviallyNormedField L] [IsUltrametricDist L] [ProperSpace L]
     (n : ℕ) (p : Lˣ) (hp : IsUnif p) (g : GL (Fin n) L) :
     ∃ a : Fin n → ℤ, Antitone a ∧ ∃ k₁ ∈ congK L n 1 zero_le_one le_rfl,

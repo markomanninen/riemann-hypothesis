@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuUnitsPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuUnitsPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4 LateralTheory.E.H2CurveOrder.LeafKumMuUnitsPf

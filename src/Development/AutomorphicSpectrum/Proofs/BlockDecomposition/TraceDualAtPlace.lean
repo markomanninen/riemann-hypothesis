@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.AlmostGoodOf
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.AlmostGoodOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem repr_mul_mem (O : Subring K) (b : Module.Basis (Fin d) K A)
     rw [smul_mul_smul_comm]
   have h : b.repr (x * y) k = ∑ i, ∑ j, b.repr x i * b.repr y j * b.repr (b i * b j) k := by
     rw [hxy]
-    simp [map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Finsupp.finsetSum_apply]
   rw [h]
   exact O.sum_mem fun i _ => O.sum_mem fun j _ => O.mul_mem (O.mul_mem (hx i) (hy j)) (hc i j k)
 
@@ -70,7 +75,8 @@ theorem dual_iff (O : Subring K) (b : Module.Basis (Fin d) K A)
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [smul_mul_assoc]
       simp only [t, Matrix.vecMul, dotProduct, hMij]
-      rw [ha, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ha, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, smul_eq_mul]
     have hc' : M.det • c = Matrix.vecMul t M.adjugate := by

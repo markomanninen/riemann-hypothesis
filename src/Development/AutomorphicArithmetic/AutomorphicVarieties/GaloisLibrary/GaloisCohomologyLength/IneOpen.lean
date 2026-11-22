@@ -1,11 +1,19 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.LevelInertiaLeLevelDec
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowN
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.LevelInertiaLeLevelDec
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowN
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Gal Formalism.ConjugateSelfDual Formalism.GaloisCohomology UpperTheory.V.LDataCardLeFinrank
 
 theorem UpperTheory.V.LDataCardLeFinrank.ineOpen :
-    ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (v : HeightOneSpectrum (𝓞 F)) (A : ValuationSubring Ω), v ∈ Above F l → IsPlaceOver A v → IsOpen (ineImage F l A : Set ℤ_[l]ˣ) ∧ (ineImage F l A).index ≠ 0 ∧ (ineImage F l A).index ≤ Module.finrank ℚ F := by
+    ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
+    (l : ℕ) [Fact l.Prime] (v : HeightOneSpectrum (𝓞 F)) (A : ValuationSubring Ω),
+    v ∈ Above (F := F) l → IsPlaceOver A v →
+    IsOpen (ineImage F l A : Set ℤ_[l]ˣ) ∧ (ineImage F l A).index ≠ 0 ∧
+    (ineImage F l A).index ≤ Module.finrank ℚ F := by
   intro F Ω _ _ _ _ _ l _ v A hl hA
   have : CharZero Ω := charZero_of_injective_algebraMap (algebraMap F Ω).injective
   have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed F
@@ -23,7 +31,7 @@ theorem UpperTheory.V.LDataCardLeFinrank.ineOpen :
   have hK0 : K.fixingSubgroup.index ≠ 0 := by
     rw [← hK]; exact Module.finrank_pos.ne'
   let I : Subgroup (G ℚ Ω) := Ine (F := ℚ) A
-  let f : I →* ℤ_[l]ˣ := (cycZ ℚ Ω l).comp I.subtype
+  let f : I →* ℤ_[l]ˣ := (cycZ (F := ℚ) (Ω := Ω) l).comp I.subtype
   have hf : Function.Surjective f := fun u => by
     obtain ⟨σ, hσ, h⟩ := GlobalTheory.CycInertia.cycZ_Ine_surjective Ω l A hv u
     exact ⟨⟨σ, hσ⟩, h⟩

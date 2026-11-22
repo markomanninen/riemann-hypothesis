@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.BqOriginSt
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.BqOriginSt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,8 +15,8 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 
 attribute [local instance] Over.cartesianMonoidalCategory
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem bqOrigin : BqOriginSt := by
   unfold BqOriginSt
   intro E _ _ _ H Dw l Xo c _ hstar S _ _ _ y C a wLa hLa wLb hLb Z r z J hJ

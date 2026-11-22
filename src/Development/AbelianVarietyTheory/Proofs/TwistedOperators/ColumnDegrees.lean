@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ISupEigenspaceEqTop
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SumRowDegreeEqOfHarmonicHighestCasimirStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ISupEigenspaceEqTop
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SumRowDegreeEqOfHarmonicHighestCasimirStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem polar_mem {σ : Type} (u v : σ) (N : ℕ) (Q : MvPolynomial σ ℂ)
   have hone : ∀ w : σ, ((Finsupp.single w 1).sum fun _ e => e) = 1 :=
     fun w => Finsupp.sum_single_index rfl
   have key : ∀ s ∈ Q.support,
-      X u * pderiv v (monomial s (coeff s Q)) ∈ restrictTotalDegree σ ℂ N := by
+      X u * pderiv v (monomial s (AddMonoidAlgebra.coeff Q s)) ∈ restrictTotalDegree σ ℂ N := by
     intro s hs
     have hsN : (s.sum fun _ e => e) ≤ N := (le_totalDegree hs).trans hQN
     rw [pderiv_monomial]
@@ -33,7 +37,8 @@ theorem polar_mem {σ : Type} (u v : σ) (N : ℕ) (Q : MvPolynomial σ ℂ)
       rw [hone] at h2
       change ((Finsupp.single u 1 + (s - Finsupp.single v 1)).sum fun _ e => e) ≤ N
       omega
-  rw [polar_apply, Q.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [polar_apply, Q.as_sum, map_sum, Finset.mul_sum]
   exact Submodule.sum_mem _ key
 
 theorem colOp_mem {σ I J : Type} [Fintype I] (z : I × J → σ) (a b : J) (N : ℕ)
@@ -72,7 +77,8 @@ theorem harmonic_rowOp {σ I I' J : Type} [Fintype J] (z : I × J → σ) (y : I
       intro t
       rw [pderiv_swap (y (j, t)) (z (b, k)), pderiv_swap (z (i, t)) (z (b, k))]
     simp only [hsw]
-    rw [← map_sum, hQ i j, map_zero, mul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hQ i j, map_zero, mul_zero]
   have hB : ∑ t, ∑ k, (if i = a ∧ t = k then pderiv (y (j, t)) (pderiv (z (b, k)) Q) else 0)
       = 0 := by
     by_cases hia : i = a
@@ -81,11 +87,12 @@ theorem harmonic_rowOp {σ I I' J : Type} [Fintype J] (z : I × J → σ) (y : I
       exact Finset.sum_congr rfl fun t _ => pderiv_swap _ _ _
     · simp [hia]
   rw [rowOp_apply]
-  simp only [map_sum, hexp, Finset.sum_add_distrib, hA, hB, add_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hexp, Finset.sum_add_distrib, hA, hB, add_zero]
 
 private theorem coeff_apply_of_diagonal_on_monomials' {σ : Type} (g : Module.End ℂ (MvPolynomial σ ℂ))
     (w : (σ →₀ ℕ) → ℂ) (hg : ∀ u, g (monomial u 1) = w u • monomial u 1) (m : σ →₀ ℕ)
-    (Q : MvPolynomial σ ℂ) : coeff m (g Q) = w m * coeff m Q := by
+    (Q : MvPolynomial σ ℂ) : AddMonoidAlgebra.coeff (g Q) m = w m * AddMonoidAlgebra.coeff Q m := by
   classical
   induction Q using MvPolynomial.induction_on' with
   | monomial u c =>
@@ -96,11 +103,11 @@ private theorem coeff_apply_of_diagonal_on_monomials' {σ : Type} (g : Module.En
     split_ifs with h
     · subst h; ring
     · ring
-  | add p q hp hq => rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem coeff_euler {σ : Type} {k n : ℕ} (z : Fin k × Fin n → σ) (m : σ →₀ ℕ)
     (Q : MvPolynomial σ ℂ) :
-    coeff m ((∑ i, rowOp ℂ z i i) Q) = ((∑ i, ∑ t, (m (z (i, t)) : ℤ) : ℤ) : ℂ) * coeff m Q := by
+    AddMonoidAlgebra.coeff ((∑ i, rowOp ℂ z i i) Q) m = ((∑ i, ∑ t, (m (z (i, t)) : ℤ) : ℤ) : ℂ) * AddMonoidAlgebra.coeff Q m := by
   refine coeff_apply_of_diagonal_on_monomials' _ (fun u => ((∑ i, ∑ t, (u (z (i, t)) : ℤ) : ℤ) : ℂ)) (fun u => ?_) m Q
   rw [LinearMap.sum_apply]
   simp only [rowOp_monomial]
@@ -156,9 +163,9 @@ theorem column_degrees (σ : Type) [Fintype σ] [DecidableEq σ] (k l n : ℕ)
        add_mem' := by
          rintro Q R ⟨h1, h2, h3, h4⟩ ⟨g1, g2, g3, g4⟩
          refine ⟨Submodule.add_mem _ h1 g1, fun i j => ?_, fun i j hij => ?_, fun t => ?_⟩
-         · simp only [map_add, Finset.sum_add_distrib, h2 i j, g2 i j, add_zero]
-         · rw [map_add, h3 i j hij, g3 i j hij, add_zero]
-         · rw [map_add, h4 t, g4 t, smul_add]
+         · simp only [map_add (f := _), Finset.sum_add_distrib, h2 i j, g2 i j, add_zero]
+         · rw [map_add (f := _), h3 i j hij, g3 i j hij, add_zero]
+         · rw [map_add (f := _), h4 t, g4 t, smul_add]
        zero_mem' := ⟨Submodule.zero_mem _, fun i j => by simp, fun i j _ => map_zero _,
          fun t => by simp⟩
        smul_mem' := by
@@ -195,7 +202,7 @@ theorem column_degrees (σ : Type) [Fintype σ] [DecidableEq σ] (k l n : ℕ)
   obtain ⟨E, hE⟩ : ∃ E : Module.End ℂ (MvPolynomial σ ℂ), E = ∑ i, rowOp ℂ z i i := ⟨_, rfl⟩
   obtain ⟨zdeg, hzdeg⟩ : ∃ f : (σ →₀ ℕ) → ℤ, ∀ m, f m = ∑ i, ∑ t, (m (z (i, t)) : ℤ) :=
     ⟨_, fun _ => rfl⟩
-  have hcoeffE : ∀ m Q, coeff m (E Q) = (zdeg m : ℂ) * coeff m Q := by
+  have hcoeffE : ∀ m Q, AddMonoidAlgebra.coeff (E Q) m = (zdeg m : ℂ) * AddMonoidAlgebra.coeff Q m := by
     intro m Q
     rw [hE, hzdeg]
     exact coeff_euler z m Q
@@ -210,7 +217,7 @@ theorem column_degrees (σ : Type) [Fintype σ] [DecidableEq σ] (k l n : ℕ)
       ⟨{ carrier := {R | R ∈ W ∧ E R = μ • R}
          add_mem' := by
            rintro R R' ⟨h1, h2⟩ ⟨g1, g2⟩
-           exact ⟨W.add_mem h1 g1, by rw [map_add, h2, g2, smul_add]⟩
+           exact ⟨W.add_mem h1 g1, by rw [map_add (f := _), h2, g2, smul_add]⟩
          zero_mem' := ⟨W.zero_mem, by simp⟩
          smul_mem' := by
            rintro c R ⟨h1, h2⟩
@@ -281,7 +288,7 @@ theorem column_degrees (σ : Type) [Fintype σ] [DecidableEq σ] (k l n : ℕ)
     intro m0 hm0
     by_contra hne
     have hiter : ∀ s : Finset ℤ, ∃ Q ∈ W, ∀ m,
-        coeff m Q = (∏ D ∈ s, ((zdeg m : ℂ) - (D : ℂ))) * coeff m P := by
+        AddMonoidAlgebra.coeff Q m = (∏ D ∈ s, ((zdeg m : ℂ) - (D : ℂ))) * AddMonoidAlgebra.coeff P m := by
       intro s
       induction s using Finset.induction_on with
       | empty => exact ⟨P, hPW, fun m => by simp⟩
@@ -291,17 +298,17 @@ theorem column_degrees (σ : Type) [Fintype σ] [DecidableEq σ] (k l n : ℕ)
         rw [coeff_sub, coeff_smul, hcoeffE, hQ, Finset.prod_insert hD, smul_eq_mul]
         ring
     obtain ⟨Q, hQW, hQ⟩ := hiter ((P.support.image zdeg).erase (zdeg m0))
-    have hQm0 : coeff m0 Q ≠ 0 := by
+    have hQm0 : AddMonoidAlgebra.coeff Q m0 ≠ 0 := by
       rw [hQ]
       refine mul_ne_zero (Finset.prod_ne_zero_iff.2 fun D hD => sub_ne_zero.2 ?_)
         (mem_support_iff.1 hm0)
       intro h
       exact (Finset.mem_erase.1 hD).1 (by exact_mod_cast h.symm)
-    have hQ0 : Q ≠ 0 := fun h => hQm0 (by rw [h, coeff_zero])
+    have hQ0 : Q ≠ 0 := fun h => hQm0 (by simp [h])
     have hEQ : E Q = (zdeg m0 : ℂ) • Q := by
       ext m
       rw [hcoeffE, coeff_smul, smul_eq_mul]
-      by_cases hm : coeff m Q = 0
+      by_cases hm : AddMonoidAlgebra.coeff Q m = 0
       · rw [hm, mul_zero, mul_zero]
       · have hmP : m ∈ P.support := by
           rw [mem_support_iff]
@@ -320,8 +327,8 @@ theorem column_degrees (σ : Type) [Fintype σ] [DecidableEq σ] (k l n : ℕ)
   refine ⟨hκ, fun m hm t => ?_⟩
   have hcol : ∀ t, (∑ i, (m (z (i, t)) : ℤ)) - ∑ j, (m (y (j, t)) : ℤ) = κ t := by
     intro t
-    have h1 : coeff m (mixedOp ℂ z y t t P) =
-        (((∑ i, (m (z (i, t)) : ℤ)) - ∑ j, (m (y (j, t)) : ℤ) : ℤ) : ℂ) * coeff m P := by
+    have h1 : AddMonoidAlgebra.coeff (mixedOp ℂ z y t t P) m =
+        (((∑ i, (m (z (i, t)) : ℤ)) - ∑ j, (m (y (j, t)) : ℤ) : ℤ) : ℂ) * AddMonoidAlgebra.coeff P m := by
       refine coeff_apply_of_diagonal_on_monomials' _
         (fun u => (((∑ i, (u (z (i, t)) : ℤ)) - ∑ j, (u (y (j, t)) : ℤ) : ℤ) : ℂ))
         (fun u => ?_) m P
@@ -330,7 +337,7 @@ theorem column_degrees (σ : Type) [Fintype σ] [DecidableEq σ] (k l n : ℕ)
       push_cast
       rfl
     rw [hwt t, coeff_smul, smul_eq_mul] at h1
-    have hc : coeff m P ≠ 0 := mem_support_iff.1 hm
+    have hc : AddMonoidAlgebra.coeff P m ≠ 0 := mem_support_iff.1 hm
     exact_mod_cast (mul_right_cancel₀ hc h1).symm
   have hsum : ∑ t, (∑ i, (m (z (i, t)) : ℤ)) = ∑ t, max (κ t) 0 := by
     rw [Finset.sum_comm, ← hzdeg]

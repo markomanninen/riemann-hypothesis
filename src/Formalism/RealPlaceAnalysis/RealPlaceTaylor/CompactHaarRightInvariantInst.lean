@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+module
+
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+
+@[expose] public section
 
 open Matrix MeasureTheory MeasureTheory.Measure
 
@@ -59,7 +63,7 @@ theorem group_exponential_facts : ExpGFacts := by
     have hk : ∀ t : ℝ, ((expK ε X t : KG ε) : UJ ε) = expG ε X t := by
       intro t
       unfold expK
-      rw [dif_pos hK]
+      rw [dite_eq_left hK]
     refine ⟨hk, ?_⟩
     apply continuous_induced_rng.2
     have h3 : (Subtype.val ∘ fun t : ℝ => expK ε X t) = fun t : ℝ => expG ε X t := funext hk
@@ -97,7 +101,7 @@ lemma compact_haar_right_invariant (n : ℕ) (ε : Fin n → Bool) (k : KG ε) :
     infer_instance
   have hm : Measurable (fun x : KG ε => x * k) := measurable_mul_const k
   haveI : IsProbabilityMeasure (Measure.map (fun x => x * k) (muK ε)) :=
-    isProbabilityMeasure_map hm.aemeasurable
+    inferInstance
   haveI : IsMulLeftInvariant (Measure.map (fun x => x * k) (muK ε)) := by
     constructor
     intro g
@@ -118,7 +122,7 @@ theorem compact_haar_holds : KHaar := by
     infer_instance
   refine ⟨compact_haar_probability n ε, fun k => map_mul_left_eq_self _ k, fun k => compact_haar_right_invariant n ε k, ?_⟩
   haveI : IsProbabilityMeasure (Measure.map (fun x : KG ε => x⁻¹) (muK ε)) :=
-    isProbabilityMeasure_map measurable_inv.aemeasurable
+    inferInstance
   haveI : IsMulLeftInvariant (Measure.map (fun x : KG ε => x⁻¹) (muK ε)) := by
     constructor
     intro g

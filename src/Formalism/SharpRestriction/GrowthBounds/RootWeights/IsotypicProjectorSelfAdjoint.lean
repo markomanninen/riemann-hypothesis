@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantIsotypicOrthogonal
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsotypicStableGlOperator
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantIsotypicOrthogonal
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsotypicStableGlOperator
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem isotypic_stable_commuting (E : GLOps n K V) (X : Module.End K V) (hX : �
         simp only [Module.End.mul_apply] at h2
         rw [← h2, hv.2.2 a b hab, map_zero]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem isotypic_projector_commutes (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, isoSub E mu) = ⊤) (lam : Fin n → ℤ)
@@ -69,7 +73,7 @@ theorem isotypic_projector_commutes (E : GLOps n K V) (hT : (⨆ mu : Fin n → 
       rw [he.1 x hx, he.1 _ (hX _ x hx)]
     · rw [he.2 mu h x hx, he.2 mu h _ (hX _ x hx), map_zero]
   | zero => simp
-  | add x y _ _ hx hy => simp only [map_add, hx, hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem isotypic_projector_selfAdjoint (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, isoSub E mu) = ⊤) (lam : Fin n → ℤ)
     (e : Module.End K V) (he : IsIsoProj E lam e) (B : V →ₗ[K] V →ₗ[K] K)
@@ -92,9 +96,9 @@ theorem isotypic_projector_selfAdjoint (E : GLOps n K V) (hT : (⨆ mu : Fin n �
         · subst h'; rw [he.1 y hy, hB mu nu h x hx y hy]
         · rw [he.2 nu h' y hy, map_zero]
     | zero => simp
-    | add y z _ _ hy hz => simp only [map_add, hy, hz]
+    | add y z _ _ hy hz => simp only [map_add (f := _), hy, hz]
   | zero => simp
-  | add x z _ _ hx hz => simp only [map_add, LinearMap.add_apply, hx, hz]
+  | add x z _ _ hx hz => simp only [map_add (f := _), LinearMap.add_apply, hx, hz]
 
 end abs
 

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
-import Formalism.ThetaLogCoordinates.SandwichModelDomains.StatementW
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
+public import Formalism.ThetaLogCoordinates.SandwichModelDomains.StatementW
+
+@[expose] public section
 
 open MvPolynomial
 

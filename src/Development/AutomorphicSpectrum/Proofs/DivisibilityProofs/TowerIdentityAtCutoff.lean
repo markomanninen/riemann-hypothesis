@@ -1,15 +1,19 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PowerSumDeltaDecompositionStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagShiftTotalPowerSumStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ExistsFlagDegreeOnePolysStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreeLinearFunctionalsStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RemainderTermSummableStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PowerSumDeltaDecompositionStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagShiftTotalPowerSumStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ExistsFlagDegreeOnePolysStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreeLinearFunctionalsStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RemainderTermSummableStatement
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 
@@ -19,12 +23,13 @@ namespace GlobalTheory.CompanionTheory.Ar.Top
 
 theorem abs_apply_le_of_monomial_bound {σ : Type} (G : MvPolynomial σ ℝ →ₗ[ℝ] ℝ) (F : MvPolynomial σ ℝ) {d : ℕ}
     (hF : F.IsHomogeneous d) {e : ℝ} (he : ∀ m : σ →₀ ℕ, m.degree = d → |G (monomial m 1)| ≤ e) :
-    |G F| ≤ (∑ m ∈ F.support, |coeff m F|) * e := by
-  have h1 : G F = ∑ m ∈ F.support, coeff m F * G (monomial m 1) := by
+    |G F| ≤ (∑ m ∈ F.support, |F.coeff m|) * e := by
+  have h1 : G F = ∑ m ∈ F.support, F.coeff m * G (monomial m 1) := by
     conv_lhs => rw [F.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
-    have : monomial m (coeff m F) = coeff m F • monomial m (1 : ℝ) := by
+    have : monomial m (F.coeff m) = F.coeff m • monomial m (1 : ℝ) := by
       rw [smul_monomial]; simp
     rw [this, map_smul, smul_eq_mul]
   rw [h1, Finset.sum_mul]
@@ -125,7 +130,7 @@ theorem exists_finite_identity (II : IntersectionSystem) (T : RootTower Ψ N) (h
   have hF := pk_mul_isHomogeneous hN τ hkN hQ
   refine ⟨fun B => G B (pk τ k * Q), ?_, ?_⟩
   · refine squeeze_zero_norm' ?_ (tendsto_const_mul_log_div (∑ m ∈ (pk τ k * Q : RP Ψ N).support,
-      |coeff m (pk τ k * Q : RP Ψ N)|) C)
+      |(pk τ k * Q : RP Ψ N).coeff m|) C)
     filter_upwards [eventually_ge_atTop B₁] with B hB
     rw [Real.norm_eq_abs]
     refine abs_apply_le_of_monomial_bound (G B) _ hF fun m hm => ?_

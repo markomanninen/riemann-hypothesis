@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -21,7 +25,7 @@ lemma term_coeff (D j m i : ℕ) (p : Polynomial κ) :
 
 lemma subst_coeff_coeff (D : ℕ) (P : Polynomial (Polynomial κ)) (i k : ℕ) :
     ((subst D P).coeff (k + D * i)).coeff i = (P.coeff i).coeff k := by
-  simp only [subst, coe_eval₂RingHom, eval₂_eq_sum, Polynomial.sum, finset_sum_coeff, term_coeff]
+  simp only [subst, coe_eval₂RingHom, eval₂_eq_sum, Polynomial.sum, finsetSum_coeff, term_coeff]
   rw [Finset.sum_eq_single i]
   · simp
   · intro j _ hj; simp [Ne.symm hj]

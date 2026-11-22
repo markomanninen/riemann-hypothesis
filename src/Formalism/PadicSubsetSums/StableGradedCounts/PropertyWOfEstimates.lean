@@ -1,6 +1,10 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
-import Formalism.PadicSubsetSums.StableGradedCounts.SquareSetMemExceptionalUnion
-import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateThird
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
+public import Formalism.PadicSubsetSums.StableGradedCounts.SquareSetMemExceptionalUnion
+public import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateThird
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.GaloisIrreducibility
 

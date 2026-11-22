@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 
@@ -17,7 +21,7 @@ theorem exists_smul_mem_range {E : Type} [Field E] [NumberField E] {Λ : Type} [
     obtain ⟨a, x, ha, hx⟩ := hu
     obtain ⟨b, y, hb, hy⟩ := hv
     refine ⟨a * b, b • x + a • y, mul_ne_zero ha hb, ?_⟩
-    rw [map_add, map_smul, map_smul, hx, hy, smul_add, smul_smul, smul_smul, mul_comm b a]
+    rw [map_add (f := _), map_smul, map_smul, hx, hy, smul_add, smul_smul, smul_smul, mul_comm b a]
   | smul t u _ hu =>
     obtain ⟨a, x, ha, hx⟩ := hu
     obtain ⟨p, q, hq, rfl⟩ := IsFractionRing.div_surjective (A := RingOfIntegers E) t
@@ -59,7 +63,8 @@ theorem exists_coeffs {E : Type} [Field E] [NumberField E] {Λ : Type} [AddCommG
     rw [hb j, Algebra.smul_def]
   have key : (d : RingOfIntegers E) • v = ∑ j, b j • x j := by
     apply hinj
-    rw [map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
     funext i
     simp only [map_smul, hx, Finset.sum_apply, Pi.smul_apply, Algebra.smul_def, Pi.single_apply]
     rw [Finset.sum_eq_single i]
@@ -71,7 +76,8 @@ theorem exists_coeffs {E : Type} [Field E] [NumberField E] {Λ : Type} [AddCommG
       simp [hj.symm]
     · simp
   have h2 := congrArg f key
-  rw [hf, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hf, map_sum] at h2
   have hσd : σ (algebraMap (RingOfIntegers E) E (d : RingOfIntegers E)) ≠ 0 :=
     (map_ne_zero σ).2 hd0
   apply mul_left_cancel₀ hσd

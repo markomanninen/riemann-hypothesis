@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,6 +129,6 @@ theorem types_of_grpInt {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpac
     rw [gen_capRep_intertwine S hbase V hV hB₀' w v, heig' σ w v hv, map_smul]
   · simp
   · intro a b ha hb
-    simp only [map_add, Finset.sum_add_distrib, ha, hb]
+    simp only [map_add (f := _), Finset.sum_add_distrib, ha, hb]
 
 end Formalism.FourierDecayAlt.P.PBI

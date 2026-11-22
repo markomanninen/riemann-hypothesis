@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.TraceQuot
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.TraceQuot
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter ValuativeRel
 open GroundTheory.Global GroundTheory.Global.SemiLocal
@@ -118,7 +122,7 @@ theorem UpperTheory.Gal.Join.kerKill :
     obtain ⟨r₂, h₂, hb⟩ := hb
     refine ⟨min r₁ r₂, ?_, fun t ht => ?_⟩
     · rcases min_choice r₁ r₂ with h | h <;> rw [h] <;> assumption
-    · rw [map_add, map_add,
+    · rw [map_add (f := _), map_add (f := _),
         ha t fun i j hij => (ht i j hij).trans (mul_le_mul' (min_le_left _ _) le_rfl),
         hb t fun i j hij => (ht i j hij).trans (mul_le_mul' (min_le_right _ _) le_rfl), add_zero]
   | smul c a _ ha =>

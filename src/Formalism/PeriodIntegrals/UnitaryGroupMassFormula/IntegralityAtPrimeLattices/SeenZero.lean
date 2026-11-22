@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.UnitaryNorms.UnramT
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocInd
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.UnramT
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocInd
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,18 +49,18 @@ theorem seen_pos (A : AtTTied u) (w : D.what₂.places.Pl) (hw : Formalism.MainN
   have hpb : A.res v (cO A.piU) ≠ 0 := A.res_conj v (cO A.piU) rfl
   have hπb : ν ((cO A.piU : 𝓞 D.host.E) : D.host.E) = 0 := by
     obtain ⟨zF, hzF⟩ := mkF (A.piU + cO A.piU) (by
-      push_cast; simp only [hcO, map_add, hinv]; ring)
+      push_cast; simp only [hcO, map_add (f := _), hinv]; ring)
     have hnot : zF ∉ (A.eV v).1.asIdeal := by
-      rw [A.res_v, hzF, map_add, A.res_pi, zero_add]; exact hpb
+      rw [A.res_v, hzF, map_add (f := _), A.res_pi, zero_add]; exact hpb
     rw [hTau, hzF] at hnot
     refine le_antisymm (not_lt.mp fun h => hnot ?_) (addVal_nonneg ν _)
     push_cast
     exact lt_of_lt_of_le (lt_min hπ h) (ν.map_add _ _)
   have hy' : A.res v y = 0 := hy
   obtain ⟨zF, hzF⟩ := mkF (y * cO A.piU + cO y * A.piU) (by
-    push_cast; simp only [hcO, map_add, map_mul, hinv]; ring)
+    push_cast; simp only [hcO, map_add (f := _), map_mul, hinv]; ring)
   have hin : zF ∈ (A.eV v).1.asIdeal := by
-    rw [A.res_v, hzF, map_add, map_mul, map_mul, hy', A.res_pi]; simp
+    rw [A.res_v, hzF, map_add (f := _), map_mul, map_mul, hy', A.res_pi]; simp
   rw [hTau, hzF] at hin
   push_cast at hin
   have h2 : 0 < ν (((cO y : 𝓞 D.host.E) : D.host.E) * A.piU) := by

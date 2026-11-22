@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.GelfandPsA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiP
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.GelfandPsA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiP
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,11 +20,13 @@ variable {n : ℕ}
 
 namespace GPs
 
+local notation "𝕄f" => Fin n → Fin n → ℂ
+
 lemma contDiff_entry (i j : Fin n) : ContDiff ℂ ∞ (fun z : Matrix (Fin n) (Fin n) ℂ => z i j) := by
   first
     | exact contDiff_apply_apply (𝕜 := ℂ) (n := ∞) i j
     | fun_prop
-    | exact ((contDiff_apply ℂ (Fin n → ℂ) i).clm_apply contDiff_const).comp contDiff_id
+    | exact ((contDiff_apply ℂ (fun _ => (Fin n → ℂ)) i).clm_apply contDiff_const).comp contDiff_id
 
 lemma contDiff_mat {X : Type*} [NormedAddCommGroup X] [NormedSpace ℂ X] {f : X → Matrix (Fin n) (Fin n) ℂ}
     (h : ∀ i j, ContDiff ℂ ∞ (fun x => f x i j)) : ContDiff ℂ ∞ f := by
@@ -37,26 +43,8 @@ lemma contDiff_trip : ContDiff ℂ ∞ (fun p : Matrix (Fin n) (Fin n) ℂ × Ma
     Matrix (Fin n) (Fin n) ℂ => p.2.2 * p.1 * p.2.1) := by
   exact contDiff_mmul (contDiff_mmul (contDiff_snd.comp contDiff_snd) contDiff_fst) (contDiff_fst.comp contDiff_snd)
 
-lemma contDiff_lead' (i : ℕ) : ContDiff ℂ ∞ (fun z : Matrix (Fin n) (Fin n) ℂ => lead i z) := by
-  unfold lead
-  by_cases h : i ≤ n
-  · simp only [h, dite_true, Matrix.det_apply, Units.smul_def, zsmul_eq_mul]
-    refine ContDiff.sum fun σ _ => contDiff_const.mul ?_
-    first
-      | exact contDiff_prod fun l _ => contDiff_entry (Fin.castLE h (σ l)) (Fin.castLE h l)
-      | exact ContDiff.finset_prod fun l _ => contDiff_entry (Fin.castLE h (σ l)) (Fin.castLE h l)
-  · simp only [h, dite_false]
-    exact contDiff_const
-
 lemma isOpen_omega : IsOpen (OmegaSet n : Set (Matrix (Fin n) (Fin n) ℂ)) := by
   exact ReciprocityTheory.ChartRestriction.DS.S7.isOpen_omega
-
-lemma contDiffOn_zpow' {f : Matrix (Fin n) (Fin n) ℂ → ℂ} {s : Set (Matrix (Fin n) (Fin n) ℂ)}
-    (hf : ContDiffOn ℂ ∞ f s) (h0 : ∀ x ∈ s, f x ≠ 0) (m : ℤ) : ContDiffOn ℂ ∞ (fun y => f y ^ m) s := by
-  rcases m with k | k
-  · simpa only [Int.ofNat_eq_coe, zpow_natCast] using hf.pow k
-  · refine ((hf.pow (k + 1)).inv (fun x hx => pow_ne_zero _ (h0 x hx))).congr fun x _ => ?_
-    exact zpow_negSucc (f x) k
 
 lemma sm_phi (μ : Fin n → ℤ) : ContDiffOn ℂ ∞ (PhiM μ) (OmegaSet n) := by
   exact phiM_contDiffOn μ
@@ -124,8 +112,6 @@ lemma hasFDerivAt_slice (q : Matrix (Fin n) (Fin n) ℂ × Matrix (Fin n) (Fin n
 
 variable {ε : Fin n → Bool} {Λ : Fin n → ℝ}
 
-local notation "𝕄f" => Fin n → Fin n → ℂ
-
 def cK (T : KType ε Λ) : ℂ := (Module.finrank ℂ T.V : ℂ) / ((muK ε Set.univ).toReal : ℂ)
 
 def Pk (T : KType ε Λ) (k : KG ε) : T.V →L[ℂ] T.V := T.op k * projW T * T.op k⁻¹
@@ -185,12 +171,13 @@ lemma contOn_FD (T : KType ε Λ) (hg : ContDiffOn ℂ ∞ g (Wset n)) :
     ContinuousOn (fun q : Matrix (Fin n) (Fin n) ℂ × KG ε => FD T g q.1 q.2) (Ps1.Uset ε ×ˢ Set.univ) := by
   have hop : Continuous (fun k : KG ε => T.op k) := continuous_subtype_val.comp T.cont
   have hPk : Continuous (Pk T) := (hop.mul continuous_const).mul (hop.comp continuous_inv)
-  rw [continuousOn_clm_apply]
+  refine (continuousOn_clm_apply (𝕜 := ℂ) (E := 𝕄f) (F := T.V →L[ℂ] T.V)).2 ?_
   intro H
   have hc : ContinuousOn (fun q : Matrix (Fin n) (Fin n) ℂ × KG ε => fderiv ℂ g (emb q.1 q.2) (H, 0) • Pk T q.2)
       (Ps1.Uset ε ×ˢ Set.univ) :=
     (((hg.continuousOn_fderiv_of_isOpen isOpen_kappaOpenNeighbourhood (by simp)).comp continuous_emb.continuousOn
-      (fun q hq => emb_mem hq.1 q.2)).clm_apply continuousOn_const).smul (hPk.comp continuous_snd).continuousOn
+      (fun q (hq : q ∈ Ps1.Uset ε ×ˢ (Set.univ : Set (KG ε))) => emb_mem hq.1 q.2)).clm_apply
+      continuousOn_const).smul (hPk.comp continuous_snd).continuousOn
   refine hc.congr fun q hq => ?_
   exact FD_apply T hg q.2 (emb_mem hq.1 q.2) H
 
@@ -257,7 +244,7 @@ lemma Fint_sum (T : KType ε Λ) {ι : Type*} (s : Finset ι)
   rw [← Finset.smul_sum]
   congr 1
   simp only [Finset.sum_apply, Finset.sum_smul]
-  exact integral_finset_sum s fun i hi => int_int T (hG i hi) hx
+  exact MeasureTheory.integral_finsetSum s fun i hi => int_int T (hG i hi) hx
 
 end Int
 
@@ -343,30 +330,6 @@ theorem gelfand_Fint (T : KType ε Λ) (μ : Fin n → ℤ) (M : Fin n → Fin n
   rw [integral_smul, smul_comm]
 
 end Ops
-
-lemma exp1 (A B : Matrix (Fin n) (Fin n) ℂ) (a b : Fin n) :
-    A * Matrix.single a b 1 * B = ∑ c, ∑ d, (Aᵀ a c * Bᵀ d b) • Matrix.single c d (1 : ℂ) := by
-  ext i j
-  have lhs : (A * Matrix.single a b 1 * B : Matrix (Fin n) (Fin n) ℂ) i j = A i a * B b j := by
-    simp [Matrix.mul_apply, Matrix.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq', ite_mul]
-  rw [lhs, Matrix.sum_apply]
-  simp [Matrix.sum_apply, Matrix.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq']
-
-lemma exp2 (A B : Matrix (Fin n) (Fin n) ℂ) (a b : Fin n) :
-    A * Matrix.single (Fin.rev b) (Fin.rev a) 1 * B = ∑ c, ∑ d, ((B.submatrix Fin.revPerm Fin.revPerm) a c *
-      (A.submatrix Fin.revPerm Fin.revPerm) d b) • Matrix.single (Fin.rev d) (Fin.rev c) (1 : ℂ) := by
-  ext i j
-  have lhs : (A * Matrix.single (Fin.rev b) (Fin.rev a) 1 * B : Matrix (Fin n) (Fin n) ℂ) i j = A i (Fin.rev b) * B (Fin.rev a) j := by
-    simp [Matrix.mul_apply, Matrix.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq', ite_mul]
-  rw [lhs, Matrix.sum_apply]
-  simp [Matrix.sum_apply, Matrix.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq', Fin.rev_eq_iff, mul_comm]
-
-lemma tr1 {A B : Matrix (Fin n) (Fin n) ℂ} (h : B * A = 1) : Aᵀ * Bᵀ = 1 := by
-  rw [← Matrix.transpose_mul, h, Matrix.transpose_one]
-
-lemma sub1 {A B : Matrix (Fin n) (Fin n) ℂ} (h : B * A = 1) :
-    (B.submatrix Fin.revPerm Fin.revPerm) * (A.submatrix Fin.revPerm Fin.revPerm) = 1 := by
-  rw [Matrix.submatrix_mul_equiv, h, Matrix.submatrix_one_equiv]
 
 end GPs
 

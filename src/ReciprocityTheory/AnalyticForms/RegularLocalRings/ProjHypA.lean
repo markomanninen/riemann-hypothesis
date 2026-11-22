@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjDehom
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.LogResStC
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinTypeQE
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjDehom
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.LogResStC
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinTypeQE
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -35,7 +39,7 @@ theorem isReduced_gammaChart {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : I
     (hrad : P.IsRadical) (p : (k : K) → ι k) :
     _root_.IsReduced Γ(projX P hP, (chartOpen hP p).1) := by
   letI := segreGraded hP
-  have := isReduced_away hP hrad p
+  letI := isReduced_away hP hrad p
   exact isReduced_of_injective _ ((gammaChart hP p).trans (awayEquiv hP p)).injective
 
 theorem qeRing_gammaChart {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMultiHomogIdeal P)
@@ -43,7 +47,7 @@ theorem qeRing_gammaChart {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMu
   letI : Algebra ℂ Γ(projX P hP, (chartOpen hP p).1) :=
     ((gammaChart hP p).symm.toRingHom.comp (algebraMap ℂ (chartRing P p))).toAlgebra
   let e : chartRing P p ≃ₐ[ℂ] Γ(projX P hP, (chartOpen hP p).1) :=
-    { (gammaChart hP p).symm with commutes' := fun c => rfl }
+    AlgEquiv.ofRingEquiv (f := (gammaChart hP p).symm) (fun c => rfl)
   haveI : Algebra.FiniteType ℂ Γ(projX P hP, (chartOpen hP p).1) :=
     Algebra.FiniteType.equiv inferInstance e
   exact hQE Γ(projX P hP, (chartOpen hP p).1)
@@ -96,21 +100,6 @@ theorem eval₂_smul_of_isMultiHomog' {R : Type} [CommRing R] (g : ℂ →+* R)
     intro k
     rw [Finset.prod_pow_eq_pow_sum, hf mo hmo k]
   simp only [hk]
-  ring
-
-theorem eval₂_smul_of_isHomogeneous' {σ R : Type} [Fintype σ] [CommRing R] (g : ℂ →+* R)
-    {f : MvPolynomial σ ℂ} {d : ℕ} (hf : f.IsHomogeneous d) (t : R) (y : σ → R) :
-    eval₂ g (fun i => t * y i) f = t ^ d * eval₂ g y f := by
-  classical
-  rw [f.as_sum, MvPolynomial.eval₂_sum, MvPolynomial.eval₂_sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun mo hmo => ?_
-  have hd : ∑ i, mo i = d := by
-    have := hf (MvPolynomial.mem_support_iff.1 hmo)
-    simpa [Finsupp.weight_apply, Finsupp.sum_fintype] using this
-  rw [MvPolynomial.eval₂_monomial, MvPolynomial.eval₂_monomial,
-    Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
-  simp_rw [mul_pow, Finset.prod_mul_distrib]
-  rw [Finset.prod_pow_eq_pow_sum, hd]
   ring
 
 theorem isUnit_mapId_mk_iff {A : Type} [CommRing A] [Algebra ℂ A]

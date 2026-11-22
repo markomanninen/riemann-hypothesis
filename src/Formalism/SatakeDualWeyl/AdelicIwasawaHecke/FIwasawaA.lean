@@ -1,6 +1,10 @@
-import Formalism.SatakeDualWeyl.StatementF
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SphericalA
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+module
+
+public import Formalism.SatakeDualWeyl.StatementF
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SphericalA
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+
+@[expose] public section
 
 open Formalism.UG Matrix
 
@@ -30,7 +34,8 @@ private theorem cT_apply' (M : Matrix (Fin n) (Fin n) L) (i j : Fin n) : cT σ M
 
 private theorem cT_mul_adelic_iwasawa_hecke (A B : Matrix (Fin n) (Fin n) L) : cT σ (A * B) = cT σ B * cT σ A := by
   ext i j
-  simp only [cT_apply', Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cT_apply', Matrix.mul_apply, map_sum, map_mul]
   exact Finset.sum_congr rfl (fun k _ => mul_comm _ _)
 
 theorem fIwasawa_gram (M : Matrix (Fin n) (Fin n) L) (a b : Fin n) :

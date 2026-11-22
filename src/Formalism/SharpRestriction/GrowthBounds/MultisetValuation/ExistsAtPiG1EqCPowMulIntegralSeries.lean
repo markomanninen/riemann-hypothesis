@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ExpansionAllPlacesOfPlace
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ExpansionAllPlacesOfPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,10 +111,12 @@ theorem th_map_Gser {p : ℕ} {K K2 : Type} [Field K] [Field K2] (φ : K →+* K
   · funext n
     change φ (∑ i ∈ Finset.range (n 0 + 1), ∑ j ∈ Finset.range (n 1 + 1),
       if i ≤ j ∧ n 0 = (p ^ 2) ^ i ∧ n 1 = p * (p ^ 2) ^ j then ((p : K) ^ (i + j + 1))⁻¹ else 0) = _
-    simp [map_sum, apply_ite, map_inv₀]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, apply_ite, map_inv₀]
   · funext n
     change φ (∑ i ∈ Finset.range (n 1 + 1), ∑ j ∈ Finset.range (n 0 + 1),
       if i ≤ j ∧ n 1 = (p ^ 2) ^ i ∧ n 0 = p * (p ^ 2) ^ j then ((p : K) ^ (i + j + 1))⁻¹ else 0) = _
-    simp [map_sum, apply_ite, map_inv₀]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, apply_ite, map_inv₀]
 
 end Formalism.MainNotions.FormalGroupSystem.Pf

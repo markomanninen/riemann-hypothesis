@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3
 open Complex
 open scoped BigOperators ComplexConjugate Real
@@ -40,12 +45,6 @@ def formV (D : D7) (T : Tor D) (N N' : ℕ) : Sesq (VC D N N') :=
     (fun z w w' => by simp [Hf, mul_add, Finset.sum_add_distrib, add_div])
     (fun c z w => by simp [Hf, Finset.mul_sum, mul_left_comm, mul_div_assoc'])
 
-@[simp] theorem formV_apply (D : D7) (T : Tor D) {N N' : ℕ} (z w : VC D N N') :
-    formV D T N N' z w = Hf D T z w := rfl
-
-theorem heis_formV (D : D7) (T : Tor D) {N N' : ℕ} (x : VC D N N') (G : VC D N N' → ℂ) :
-    Heisenberg₂ (formV D T N N') x G = U D T x G := rfl
-
 open NumberField Classical in
 open Complex in
 open scoped BigOperators ComplexConjugate Real in
@@ -53,14 +52,15 @@ theorem _root_.GlobalTheory.UnitaryTheta.isPosHerm_formV (D : _root_.Formalism.B
     (N N' : ℕ) (h : 0 < _root_.Formalism.MainNotions.TaylorLogMetric.area T.abelian₂) :
     _root_.GlobalTheory.UnitaryTheta.IsPosHerm (_root_.GlobalTheory.UnitaryTheta.formV D T N N') := by
   refine ⟨fun z w => ?_, fun z hz => ?_⟩
-  · simp only [_root_.GlobalTheory.UnitaryTheta.formV_apply, _root_.Formalism.MainNotions.TaylorLogMetric.Hf, map_div₀, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [_root_.GlobalTheory.UnitaryTheta.formV, LinearMap.mk₂'ₛₗ_apply, _root_.Formalism.MainNotions.TaylorLogMetric.Hf, map_div₀, map_sum, map_mul,
       Complex.conj_conj, Complex.conj_ofReal]
-    congr 1
-    refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ =>
-      Finset.sum_congr rfl fun j _ => mul_comm _ _
+      congr 1
+      refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ =>
+        Finset.sum_congr rfl fun j _ => mul_comm _ _
   · have hsum : ∀ τ i j, z τ i j * conj (z τ i j) = ((Complex.normSq (z τ i j) : ℝ) : ℂ) :=
       fun τ i j => Complex.mul_conj _
-    simp only [_root_.GlobalTheory.UnitaryTheta.formV_apply, _root_.Formalism.MainNotions.TaylorLogMetric.Hf, hsum]
+    simp only [_root_.GlobalTheory.UnitaryTheta.formV, LinearMap.mk₂'ₛₗ_apply, _root_.Formalism.MainNotions.TaylorLogMetric.Hf, hsum]
     simp only [← Complex.ofReal_sum, ← Complex.ofReal_div, Complex.ofReal_re]
     refine div_pos ?_ h
     obtain ⟨τ, i, j, hz⟩ : ∃ τ i j, z τ i j ≠ 0 := by

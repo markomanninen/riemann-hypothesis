@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.IteratedHeckeBounds.HkIterContOn
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.IteratedHeckeBounds.HkIterContOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -211,6 +215,15 @@ theorem Hk_iter_props {k : ℕ} (q : GK L N) {ω : Form (HS L N) (k + 1)} (hG : 
     rw [Function.iterate_succ_apply']
     exact ⟨Hk_good q ih.1, Hk_finv_emb q ih.2.1, Hk_finv_scal q ih.2.2⟩
 
+private instance pointwiseGKAction (k : ℕ) : MulAction (GK L N) (Fin (k + 2) → GK L N) where
+  smul g y j := g * y j
+  one_smul y := by
+    funext j
+    simp
+  mul_smul g h y := by
+    funext j
+    simp [mul_assoc]
+
 private theorem continuousOn_Hk_of_continuousOn {k : ℕ} (q : GK L N) {ω : Form (HS L N) k} (hc : ContinuousOn ω (Pos L N)) :
     ContinuousOn (Hk q ω) (Pos L N) := by
   have hpb : ∀ g : Gp L N, ContinuousOn (pb g ω) (Pos L N) := by
@@ -223,7 +236,7 @@ private theorem continuousOn_Hk_of_continuousOn {k : ℕ} (q : GK L N) {ω : For
   by_cases hfin : Finite (Quotient (QuotientGroup.rightRel (Sg q)))
   · haveI := Fintype.ofFinite (Quotient (QuotientGroup.rightRel (Sg q)))
     simp only [finsum_eq_sum_of_fintype]
-    exact ContinuousOn.const_smul (continuousOn_finset_sum _ fun c _ => hpb _) ((((Sg q).index : ℕ) : ℝ)⁻¹)
+    exact ContinuousOn.const_smul (continuousOn_finsetSum _ fun c _ => hpb _) ((((Sg q).index : ℕ) : ℝ)⁻¹)
   · have hinf : Infinite (Gm L N ⧸ Sg q) := by
       rw [← not_finite_iff_infinite]
       intro hf
@@ -232,12 +245,14 @@ private theorem continuousOn_Hk_of_continuousOn {k : ℕ} (q : GK L N) {ω : For
     simp only [h0, Nat.cast_zero, _root_.inv_zero, zero_smul]
     exact continuousOn_const
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem hecke_iter {k : ℕ} (q : GK L N) {ω : Form (HS L N) (k + 1)} (hω : ContinuousOn ω (Pos L N)) (r : ℕ)
     (y : Fin (k + 2) → GK L N) :
-    (hecke (toK L N) (MonoidHom.id (GK L N)) q)^[r] (fun y => intP ω fun j => toP L N (y j) • one L N) y =
+    (hecke (Y := Fin (k + 2) → GK L N) (E := ℝ) (toK L N) (MonoidHom.id (GK L N)) q)^[r]
+        (fun y => intP ω fun j => toP L N (y j) • one L N) y =
       intP ((Hk q)^[r] ω) fun j => toP L N (y j) • one L N := by
   have step : ∀ ω' : Form (HS L N) (k + 1), ContinuousOn ω' (Pos L N) →
-      hecke (toK L N) (MonoidHom.id (GK L N)) q
+      hecke (Y := Fin (k + 2) → GK L N) (E := ℝ) (toK L N) (MonoidHom.id (GK L N)) q
           (fun y : Fin (k + 2) → GK L N => intP ω' fun j => toP L N (y j) • one L N) =
         fun y : Fin (k + 2) → GK L N => intP (Hk q ω') fun j => toP L N (y j) • one L N := by
     intro ω' hc
@@ -250,7 +265,8 @@ theorem hecke_iter {k : ℕ} (q : GK L N) {ω : Form (HS L N) (k + 1)} (hω : Co
     rw [intP_pb]
     congr 1
     funext j
-    simp only [Pi.smul_apply, smul_eq_mul, map_mul, mul_smul]
+    simp only [Pi.smul_apply, smul_eq_mul, map_mul]
+    simp only [smul_smul, mul_assoc]
   have hcont : ∀ n, ContinuousOn ((Hk q)^[n] ω) (Pos L N) := by
     intro n
     induction n with
@@ -258,7 +274,8 @@ theorem hecke_iter {k : ℕ} (q : GK L N) {ω : Form (HS L N) (k + 1)} (hω : Co
     | succ n ih =>
       rw [Function.iterate_succ_apply']
       exact continuousOn_Hk_of_continuousOn q ih
-  have hall : ∀ n, (hecke (toK L N) (MonoidHom.id (GK L N)) q)^[n]
+  have hall : ∀ n, (hecke (Y := Fin (k + 2) → GK L N) (E := ℝ)
+        (toK L N) (MonoidHom.id (GK L N)) q)^[n]
         (fun y : Fin (k + 2) → GK L N => intP ω fun j => toP L N (y j) • one L N) =
       fun y : Fin (k + 2) → GK L N => intP ((Hk q)^[n] ω) fun j => toP L N (y j) • one L N := by
     intro n

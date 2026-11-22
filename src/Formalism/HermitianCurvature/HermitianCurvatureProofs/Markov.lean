@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementE
+module
+
+public import Formalism.HermitianCurvature.StatementE
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.Markov
 
@@ -403,7 +407,8 @@ theorem markovVector_of : Formalism.FourierDecayAlt.E.AMarkov → Formalism.Four
     exact (natDegree_C_mul_X_pow_le _ _).trans (Nat.lt_succ_iff.mp k.2)
   have hQeval : ∀ s : ℝ, Q.eval s = φ (∑ k : Fin (d + 1), s ^ (k : ℕ) • a k) := by
     intro s
-    rw [hQ, eval_finsetSum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hQ, eval_finsetSum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [eval_mul, eval_C, eval_pow, eval_X, map_smul, smul_eq_mul, mul_comm]
   have hQb : ∀ s ∈ Set.Icc t₀ (t₀ + L), |Q.eval s| ≤ M := by
@@ -415,7 +420,8 @@ theorem markovVector_of : Formalism.FourierDecayAlt.E.AMarkov → Formalism.Four
       _ ≤ M := by rw [one_mul]; exact hM s hs
   have hQder : (derivative^[q] Q).eval t =
       φ (∑ k : Fin (d + 1), (derivative^[q] ((X : ℝ[X]) ^ (k : ℕ))).eval t • a k) := by
-    rw [hQ, iterate_derivative_sum, eval_finsetSum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hQ, iterate_derivative_sum, eval_finsetSum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [iterate_derivative_C_mul, eval_mul, eval_C, map_smul, smul_eq_mul, mul_comm]
   have key := Markov.interval_iter hA d t₀ L hL q Q M hQdeg hQb t ht

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfJ
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfG
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfHyp
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GeneratorBoundOfHypotheses
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfJ
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfG
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfHyp
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GeneratorBoundOfHypotheses
+
+@[expose] public section
 
 noncomputable section
 

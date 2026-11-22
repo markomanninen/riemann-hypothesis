@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OrthogonalProjectorMulEmbeddingColumns
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OrthogonalProjectorMulEmbeddingColumns
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -53,7 +57,7 @@ theorem projectedVector_add (b : Fin k → Fin r → K) (q q' : Fin r → K) :
     rw [Pi.add_apply, ← mulVec_add]
     congr 1
     funext l
-    simp
+    simp [map_add]
   simp only [hpv, hRe, e, realCoordsFun_add, WithLp.toLp_add]
 
 theorem projectedVector_zero (b : Fin k → Fin r → K) : hpv b 0 = 0 := by
@@ -71,7 +75,8 @@ noncomputable def hpvHom (b : Fin k → Fin r → K) : (Fin r → K) →+ Euclid
 
 theorem normSqSum_pos {r : ℕ} {v : Fin r → ℂ} (hv : v ≠ 0) : 0 < hns v := by
   obtain ⟨l, hl⟩ := Function.ne_iff.mp hv
-  have h1 : 0 < ‖v l‖ ^ 2 := by positivity
+  have h1 : 0 < ‖v l‖ ^ 2 := by
+    exact pow_pos (norm_pos_iff.mpr hl) 2
   exact lt_of_lt_of_le h1
     (Finset.single_le_sum (f := fun i => ‖v i‖ ^ 2) (fun _ _ => by positivity) (Finset.mem_univ l))
 
@@ -104,7 +109,7 @@ theorem orthogonalProjector_mulVec_smul (σ : K →+* ℂ) (b : Fin k → Fin r 
   rw [← mulVec_smul]
   congr 1
   funext l
-  simp
+  simp [map_smul]
 
 theorem inner_projectedVector_smul (b : Fin k → Fin r → K) (a a' : K) (x y : Fin r → K) :
     inner ℝ (hpv b (a • x)) (hpv b (a' • y)) =

@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem piInf_alg {w : InfinitePlace F} (τ : EmbOver E w) (a : AF F) :
 
 theorem piInf_rId (hF : IsTotallyReal F) {w : InfinitePlace F} (τ : EmbOver E w) (t : ℝ) :
     piInf τ (algebraMap (AF F) (AE F E) (rId F t)) = (Real.exp t : ℝ) := by
-  rw [piInf_alg, rId, map_add, map_add, map_one, map_one, emb_realAd hF]
+  rw [piInf_alg, rId, map_add (f := _), map_add (f := _), map_one, map_one, emb_realAd hF]
   push_cast
   ring
 
@@ -56,7 +60,8 @@ theorem sz_mul_le (τ : ∀ w : InfinitePlace F, EmbOver E w) {n d : ℕ} (y : T
   rw [Finset.mul_sum]
   refine Finset.sum_le_sum fun i _ => ?_
   have h : ∀ j, ‖piInf (τ w) ((y * Bᵀ) i j)‖ ≤ M * ∑ k, ‖piInf (τ w) (y i k)‖ := fun j => by
-    rw [Matrix.mul_apply, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum, Finset.mul_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun k _ => ?_)
     rw [map_mul, norm_mul, Matrix.transpose_apply, mul_comm]
     exact mul_le_mul_of_nonneg_right (hB w j k) (norm_nonneg _)
@@ -108,7 +113,8 @@ theorem torus (hb : FrameBasis) (hc : IsCMExt F E σ) (τ : ∀ w : InfinitePlac
     rw [e, ← Matrix.smul_mul, ← Matrix.mul_smul, hu', Matrix.mul_zero, Matrix.zero_mul]
   · have h1 : ‖piInf (τ w) (mat (fr.a t) i j)‖ ≤
         (∑ k, ‖piInf (τ w) (P i k)‖ * ‖piInf (τ w) (Q k j)‖) * Real.exp (∑ j, t j) := by
-      rw [hB, Matrix.mul_apply, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hB, Matrix.mul_apply, map_sum, Finset.sum_mul]
       refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun k _ => ?_)
       rw [hD, Matrix.mul_diagonal, map_mul, map_mul, piInf_rId hc.1, norm_mul, norm_mul, Complex.norm_real,
         Real.norm_of_nonneg (Real.exp_pos _).le, mul_right_comm]

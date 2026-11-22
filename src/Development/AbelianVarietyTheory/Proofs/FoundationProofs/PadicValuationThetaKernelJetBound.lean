@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JetsTorsionTranslatesCmThetaProductStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelAtPrimeEqSumTorsionTranslatesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPeriodPairIdealCurveLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JetsTorsionTranslatesCmThetaProductStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelAtPrimeEqSumTorsionTranslatesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPeriodPairIdealCurveLattice
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -38,7 +43,7 @@ theorem Bd.add {B : ℝ} {x y : ℂ} (hx : Bd lam B x) (hy : Bd lam B y) : Bd la
   lift y to Qbar using hy
   rw [lamC_coe] at h1 h2
   have := Bd.coe (lam := lam) (B := B) (x := x + y) (by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le h1 h2))
   simpa using this
 
@@ -68,7 +73,7 @@ theorem Bd.prod_coe {n : ℕ} {A : ℝ} (c : Fin n → Qbar) (h : ∀ i, ‖lam 
   have := Bd.coe (lam := lam) (B := A ^ n) (x := ∏ i, c i) (by
     rw [map_prod, norm_prod]
     calc ∏ i, ‖lam (c i)‖ ≤ ∏ _i : Fin n, A :=
-          Finset.prod_le_prod (fun i _ => norm_nonneg _) (fun i _ => h i)
+          Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) (fun i _ => h i)
       _ = A ^ n := by simp)
   simpa using this
 
@@ -80,7 +85,7 @@ theorem bd_applyAt0 (D : D7) {a d n : ℕ} {B : ℝ} (hB : 0 ≤ B) (G : VC D a 
       Bd lam B (iteratedFDeriv ℂ m G 0 (fun i => coordV D (f i))) := by
     rintro m rfl; exact h
   refine Bd.sum hB _ _ fun α hα => ?_
-  have hα' : MvPolynomial.coeff α P ≠ 0 :=
+  have hα' : AddMonoidAlgebra.coeff P α ≠ 0 :=
     MvPolynomial.mem_support_iff.1 (MvPolynomial.support_map_subset _ _ hα)
   have hdeg : Multiset.card α.toMultiset = n := by
     have h1 := hP hα'
@@ -91,7 +96,7 @@ theorem bd_applyAt0 (D : D7) {a d n : ℕ} {B : ℝ} (hB : 0 ≤ B) (G : VC D a 
   have hne : (α.prod fun _ n => (n.factorial : ℂ)) ≠ 0 :=
     Finset.prod_ne_zero_iff.2 fun i _ => Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _)
   rw [taylor, mul_assoc, mul_div_cancel₀ _ hne, MvPolynomial.coeff_map]
-  have := (Bd.intCast (lam := lam) (MvPolynomial.coeff α P)).mul (h' _ hdeg
+  have := (Bd.intCast (lam := lam) (AddMonoidAlgebra.coeff P α)).mul (h' _ hdeg
     (fun i => α.toMultiset.toList.get ⟨i, by simpa using i.2⟩))
   rw [one_mul] at this
   exact this
@@ -112,7 +117,8 @@ theorem bd_coord (D : D7) {a d n : ℕ} {A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B
     congr 1
     funext τ s t
     simp [embV, hT]
-  rw [h1, φ.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, φ.map_sum]
   refine Bd.sum (by positivity) _ _ fun r _ => ?_
   rw [φ.map_smul_univ, smul_eq_mul]
   exact (Bd.prod_coe (fun i => c (f i) (r i)) fun i => hc _ _).mul (h _ fun i => hy _ _)
@@ -170,7 +176,7 @@ theorem norm_natCast_inv (p : ℕ) [Fact p.Prime] {Q : ℕ} (hQ : Q ≠ 0) :
     ‖(Q : ℂ_[p])‖⁻¹ = (p : ℝ) ^ (padicValNat p Q : ℝ) := by
   have h1 : (Q : ℂ_[p]) = algebraMap ℚ_[p] ℂ_[p] (Q : ℚ_[p]) := by simp
   rw [h1, norm_algebraMap', Padic.norm_eq_zpow_neg_valuation (by exact_mod_cast hQ), Padic.valuation_natCast]
-  simp
+  simp [Nat.padicValNat_def]
 
 theorem iteratedFDeriv_comb {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V] {k : ℕ} (n : ℕ)
     (r : Fin k → ℂ) (G : Fin k → V → ℂ) (hG : ∀ i, ContDiff ℂ n (G i)) (y : Fin n → V) :
@@ -202,8 +208,11 @@ theorem term_bound : ∀ (D : D7), Inp D → ∀ (S : Finset ℕ) (dl : ℕ → 
   have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.pos
   have hQn := norm_natCast_inv p hQ.1.ne'
   have hN : ‖((M * Q : ℕ) : ℂ_[p])‖⁻¹ = (p : ℝ) ^ (padicValNat p Q : ℝ) := by
-    rw [norm_natCast_inv p (Nat.mul_pos hM hQ.1).ne', padicValNat.mul hM.ne' hQ.1.ne',
-      padicValNat.eq_zero_of_not_dvd (hp.coprime_iff_not_dvd.1 hMp.symm), zero_add]
+    have hval : padicValNat p M = 0 := by
+      simpa only [Nat.padicValNat_def] using
+        (multiplicity_eq_zero_of_not_dvd (hp.coprime_iff_not_dvd.1 hMp.symm))
+    rw [norm_natCast_inv p (Nat.mul_pos hM hQ.1).ne', (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hM.ne' hQ.1.ne',
+      hval, zero_add]
   have hsp : p ∣ M * Q → SplitIn D p := fun h =>
     hQ.2 p hp (hMp.symm.dvd_of_dvd_mul_left h)
   have he0 : 0 ≤ (if p = D.host.d then (p : ℝ) ^ (((P.a * ∑ τ, P.n τ : ℕ) : ℝ) / 4) else 1) := by

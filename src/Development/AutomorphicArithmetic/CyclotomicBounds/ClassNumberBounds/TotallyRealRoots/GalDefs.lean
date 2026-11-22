@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.LeNuIffPowMemPrinc
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.LeNuIffPowMemPrinc
+
+@[expose] public section
 
 namespace KStar.TotallyRealRoots
 
@@ -29,11 +33,5 @@ noncomputable def adjoinRoots (E : Type*) [Field E] (m : ℕ) :
 noncomputable def fieldSubgroup (N : ℕ) [NeZero N] (K : Type*) [Field K] [NumberField K]
     [IsCyclotomicExtension {N} ℚ K] (E : IntermediateField ℚ K) : Subgroup (ZMod N)ˣ :=
   E.fixingSubgroup.map (IsCyclotomicExtension.Rat.galEquivZMod N K).toMonoidHom
-
-noncomputable def nuLevel (N : ℕ) (H : Subgroup (ZMod N)ˣ) (tr l : ℕ) : ℕ :=
-  if h : l.Prime then (@nu l ⟨h⟩ (@levelGroup l ⟨h⟩ N H) tr).toNat else 0
-
-noncomputable def nuField (E : Type*) [Field E] (tr l : ℕ) : ℕ :=
-  if h : l.Prime then (@nuGal l ⟨h⟩ E _ tr).toNat else 0
 
 end KStar.TotallyRealRoots

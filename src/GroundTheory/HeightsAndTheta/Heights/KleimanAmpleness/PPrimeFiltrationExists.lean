@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -116,8 +121,8 @@ theorem exists_homogeneous_notMem {A : Submodule (Poly S N) M} (hne : A ≠ ⊤)
   rw [← DirectSum.sum_support_decompose 𝓜.piece m]
   exact Submodule.sum_mem _ fun c _ => h _ c (SetLike.coe_mem _)
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem exists_isPrime_colonIdeal [IsNoetherianRing S] {A : Submodule (Poly S N) M}
     (hA : 𝓜.IsGradedSub A) (hne : A ≠ ⊤) :
     ∃ ge : M × ℤ, ge.1 ∈ 𝓜.piece ge.2 ∧ (colonIdeal A ge.1).IsPrime ∧
@@ -128,6 +133,7 @@ theorem exists_isPrime_colonIdeal [IsNoetherianRing S] {A : Submodule (Poly S N)
       {I | ∃ (g : M) (e : ℤ), g ∈ 𝓜.piece e ∧ g ∉ A ∧ I = colonIdeal A g}
       ⟨_, g0, e0, hg0, hg0A, rfl⟩
   refine ⟨(g, e), hg, ?_, fun p hp d => homogeneousComponent_mem_colonIdeal hA hg hp d⟩
+  let : GradedAlgebra (homogeneousSubmodule (Fin (N + 1)) S) := MvPolynomial.gradedAlgebra
   refine Ideal.IsHomogeneous.isPrime_of_homogeneous_mem_or_mem
     (𝒜 := homogeneousSubmodule (Fin (N + 1)) S) ?_ ?_ ?_
   · intro i r hr
@@ -157,9 +163,10 @@ theorem exists_isPrime_colonIdeal [IsNoetherianRing S] {A : Submodule (Poly S N)
 
 variable (𝓜)
 
-open Classical in
 
+open Classical in
 def primeFiltNext [IsNoetherianRing S] (A : Submodule (Poly S N) M) : M × ℤ :=
+  open scoped Classical in
   if h : 𝓜.IsGradedSub A ∧ A ≠ ⊤ then Classical.choose (exists_isPrime_colonIdeal h.1 h.2) else (0, 0)
 
 theorem primeFiltNext_mem [IsNoetherianRing S] (A : Submodule (Poly S N) M) :
@@ -175,7 +182,7 @@ theorem primeFiltNext_spec [IsNoetherianRing S] {A : Submodule (Poly S N) M}
       ∀ p ∈ colonIdeal A (𝓜.primeFiltNext A).1, ∀ d : ℕ,
         homogeneousComponent d p ∈ colonIdeal A (𝓜.primeFiltNext A).1 := by
   unfold primeFiltNext
-  rw [dif_pos ⟨hA, hne⟩]
+  rw [dite_eq_left ⟨hA, hne⟩]
   exact (Classical.choose_spec (exists_isPrime_colonIdeal hA hne)).2
 
 def primeFiltSeq [IsNoetherianRing S] : ℕ → Submodule (Poly S N) M
@@ -202,8 +209,9 @@ theorem exists_primeFiltSeq_eq_top [IsNoetherianRing S] [Module.Finite (Poly S N
   have h2 : 𝓜.primeFiltSeq n = 𝓜.primeFiltSeq (n + 1) := hn (n + 1) (Nat.le_succ n)
   rwa [← h2] at h1
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def primeFilt [IsNoetherianRing S] [Module.Finite (Poly S N) M] : PrimeFilt 𝓜 where
   n := Nat.find 𝓜.exists_primeFiltSeq_eq_top
   step i := 𝓜.primeFiltSeq i
@@ -231,6 +239,7 @@ variable {S : Type u} [CommRing S] {N : ℕ}
 variable {M : Type v} [AddCommGroup M] [Module (Poly S N) M] [Module S M]
   {𝓜 : GradedPMod S N M}
 
+open scoped Classical in
 theorem card_prime_eq_length (F : PrimeFilt 𝓜) (pp : Ideal (Poly S N)) [pp.IsPrime]
     (hpp : pp ∈ (Module.annihilator (Poly S N) M).minimalPrimes) :
     (((Finset.univ.filter fun k => F.prime k = pp).card : ℕ) : ℕ∞) =
@@ -300,7 +309,7 @@ theorem card_prime_eq_length (F : PrimeFilt 𝓜) (pp : Ideal (Poly S N)) [pp.Is
       exact Module.length_bot
     | succ j ih =>
       intro hj
-      rw [Finset.sum_range_succ, ← ih (by omega), dif_pos (by omega)]
+      rw [Finset.sum_range_succ, ← ih (by omega), dite_eq_left (by omega)]
       exact hstep ⟨j, by omega⟩
   calc (((Finset.univ.filter fun k => F.prime k = pp).card : ℕ) : ℕ∞)
       = ∑ k : Fin F.n, (if F.prime k = pp then 1 else 0 : ℕ∞) := by
@@ -308,7 +317,7 @@ theorem card_prime_eq_length (F : PrimeFilt 𝓜) (pp : Ideal (Poly S N)) [pp.Is
     _ = ∑ i ∈ Finset.range F.n,
           (if h : i < F.n then (if F.prime ⟨i, h⟩ = pp then 1 else 0) else 0 : ℕ∞) := by
         rw [← Fin.sum_univ_eq_sum_range]
-        exact Finset.sum_congr rfl fun k _ => by rw [dif_pos k.isLt]
+        exact Finset.sum_congr rfl fun k _ => by rw [dite_eq_left k.isLt]
     _ = Module.length R (Loc (F.step ⟨F.n, by omega⟩)) := (key _ le_rfl).symm
     _ = Module.length R (LocalizedModule pp.primeCompl M) := by
         rw [show (⟨F.n, by omega⟩ : Fin (F.n + 1)) = Fin.last F.n from rfl, F.step_last]

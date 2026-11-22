@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeAlgebraMapOC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OcTensorCoeffActionMatrixMultiplicative
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeAlgebraMapOC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OcTensorCoeffActionMatrixMultiplicative
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem specPhi_coord {Z N C : Type} [CommRing Z] [AddCommGroup N] [Module Z N] 
     (fun i => φ (b.repr (u t) i)) = U.mulVec (fun i => φ (b.repr t i)) := by
   funext i
   conv_lhs => rw [← b.sum_repr t]
-  simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
     smul_eq_mul, map_mul, Matrix.mulVec, dotProduct, hU]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 
@@ -62,7 +67,7 @@ theorem specPhi_generic {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Typ
     rw [TensorProduct.smul_tmul', smul_eq_mul]
     show (L (r * x)).mulVec (co t) = (L r).mulVec ((L x).mulVec (co t))
     rw [hLm, Matrix.mulVec_mulVec]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, Matrix.mulVec_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, Matrix.mulVec_add]
 
 theorem specPhi_equiv {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Type} [Field Qp]
     [Field LL] [Algebra Qp LL] [CommRing O] [Algebra O LL] [TopologicalSpace LL]
@@ -79,10 +84,10 @@ theorem specPhi_equiv {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Type}
     exact (Matrix.mulVec_zero U).symm
   | tmul r t => exact h r t
   | add x y hx hy =>
-    rw [map_add, map_add, hx, hy, ← Matrix.mulVec_add]
+    rw [map_add (f := _), map_add (f := _), hx, hy, ← Matrix.mulVec_add]
     congr 1
     funext i
-    simp [map_add]
+    simp [map_add (f := _)]
 
 theorem specPhi_norm {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Type} [Field Qp]
     [Field LL] [Algebra Qp LL] [CommRing O] [Algebra O LL] [TopologicalSpace LL]
@@ -97,8 +102,8 @@ theorem specPhi_norm {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Type} 
 
 variable {l : ℕ} [Fact l.Prime]
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem specPhi_co (K LL : FinExt l) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) {d : ℕ}
     (M : GQ l → Matrix (Fin d) (Fin d) (PadicComplex l))
     (A : ↥(OL LL) → Matrix (Fin d) (Fin d) (PadicComplex l)) (h : IsMat K LL T M A)
@@ -166,7 +171,8 @@ theorem specPhi_abstract {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Ty
     have h2 : (fun i => σ g ((∑ k, κ r k • co (o k • t)) i)) =
         ∑ k, κ (u g r) k • co (o k • t) := by
       funext i
-      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, hσ, ← hκ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, hσ, ← hκ]
     rw [h2, Matrix.mulVec_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [h1, Matrix.mulVec_smul]
@@ -191,7 +197,7 @@ theorem exists_specPhi : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : Loc
   have hL0 : lam o A (thR LL θ 0) = 0 := by rw [map_zero, lamMul_lam_zero]
   have hLa : ∀ x y : RA LL, lam o A (thR LL θ (x + y)) =
       lam o A (thR LL θ x) + lam o A (thR LL θ y) := fun x y => by
-    rw [map_add, lamMul_lam_add]
+    rw [map_add (f := _), lamMul_lam_add]
   have hLm : ∀ x y : RA LL, lam o A (thR LL θ (x * y)) =
       lam o A (thR LL θ x) * lam o A (thR LL θ y) := fun x y => by
     rw [map_mul, hmul.2.2.2]

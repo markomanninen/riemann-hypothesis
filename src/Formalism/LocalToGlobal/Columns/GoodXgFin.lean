@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.GoodPartHermitianSpec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.GoodPartHermitianSpec
+
+@[expose] public section
 
 open Module
 
@@ -16,8 +20,8 @@ variable {G : Type} [Group G] [Fintype G]
 def gxIrrSet (k : Type) [Field k] : Set (G → k) :=
   {ψ | ∃ (n : ℕ) (ρ : Representation k G (Fin n → k)), ρ.IsIrreducible ∧ ρ.character = ψ}
 
-open Classical in
 
+open Classical in
 theorem gx_orth {k : Type} [Field k] [IsAlgClosed k] [CharZero k] {ψ ψ' : G → k}
     (hψ : ψ ∈ gxIrrSet (G := G) k) (hψ' : ψ' ∈ gxIrrSet (G := G) k) :
     (Nat.card G : k)⁻¹ * ∑ g : G, ψ g * ψ' g⁻¹ = if ψ = ψ' then 1 else 0 := by

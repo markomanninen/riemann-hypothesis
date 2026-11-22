@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MajLactRmul
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MajLactRmul
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,49 +27,10 @@ variable {G : Type} [Group G] (Γ : Subgroup G) {Comp : Type}
 
 abbrev AutQ : Type := Quotient (QuotientGroup.rightRel Γ)
 
-def adel {X : Comp → Data E r} (dict : G → Σ k, Frame (X k).Ψ r) (mu : G → ℂ) : FDSec X →ₗ[ℂ] (G → ℂ) where
-  toFun P := fun g => mu g * P (dict g).1 (dict g).2
-  map_add' P Q := by funext g; simp [mul_add]
-  map_smul' a P := by funext g; simp [mul_left_comm]
-
-def onQ : (G → ℂ) →ₗ[ℂ] (AutQ Γ → ℂ) where
-  toFun φ := fun q => φ q.out
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
-
-def MuUnit {X : Comp → Data E r} (dict : G → Σ k, Frame (X k).Ψ r) (mu : G → ℂ) : Prop :=
-  (∀ g g', mu (g * g') = mu g * mu g') ∧ (∀ g, ‖mu g‖ = 1) ∧ (∀ γ ∈ Γ, mu γ = 1) ∧
-    ∀ g τ i, ‖dmin (X (dict g).1).Gm (dict g).2 τ i‖ = 1
-
 variable {K : Type} [Field K] {C : Type} [AddCommGroup C] [Module K C] (σ : K →+* ℂ)
-
-def jFn {X : Comp → Data E r} (rd : C →ₛₗ[σ] FDSec X) (dict : G → Σ k, Frame (X k).Ψ r) (mu : G → ℂ) :
-    C →ₛₗ[σ] (AutQ Γ → ℂ) :=
-  (onQ Γ ∘ₗ adel dict mu).comp rd
 
 variable [MeasurableSpace G] (μ₀ : Measure (AutQ Γ))
 
-open Classical in
-
-def muQ1 : Measure (AutQ Γ) :=
-  if μ₀ Set.univ ≠ 0 ∧ μ₀ Set.univ ≠ ⊤ then (μ₀ Set.univ)⁻¹ • μ₀ else Measure.dirac (Quotient.mk _ 1)
-
-instance isProbabilityMeasure_autQuotientNormalized : IsProbabilityMeasure (muQ1 Γ μ₀) := by
-  unfold muQ1
-  split_ifs with h
-  · exact ⟨by rw [Measure.smul_apply, smul_eq_mul, ENNReal.inv_mul_cancel h.1 h.2]⟩
-  · infer_instance
-
-def JMemL2 {X : Comp → Data E r} (rd : C →ₛₗ[σ] FDSec X) (dict : G → Σ k, Frame (X k).Ψ r) (mu : G → ℂ) : Prop :=
-  ∀ f, MemLp (jFn Γ σ rd dict mu f) 2 (muQ1 Γ μ₀)
-
-def l2NormAlt {X : Comp → Data E r} (rd : C →ₛₗ[σ] FDSec X) (dict : G → Σ k, Frame (X k).Ψ r) (mu : G → ℂ)
-    (h : JMemL2 Γ σ μ₀ rd dict mu) (f : C) : ℝ :=
-  ‖(h f).toLp _‖
-
-def L2Definite {X : Comp → Data E r} (rd : C →ₛₗ[σ] FDSec X) (dict : G → Σ k, Frame (X k).Ψ r) (mu : G → ℂ)
-    (h : JMemL2 Γ σ μ₀ rd dict mu) : Prop :=
-  ∀ f, l2NormAlt Γ σ μ₀ rd dict mu h f = 0 → f = 0
 
 end Adelic
 
@@ -76,31 +41,6 @@ section AdelicCusp
 variable (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (σ : c.F →+* ℂ) {G : Type} [Group G] [MeasurableSpace G]
   (Γ : Subgroup G) (μ₀ : Measure (AutQ Γ)) (dict : G → Σ k, Frame ((U σ).X k).Ψ r) (mu : G → ℂ)
 
-def CuspL2 : Prop := ∀ a n, Dom a n → JMemL2 Γ σ μ₀ (rdC U σ a n) dict mu
-
-open Classical in
-
-def l2C (x : ℝ) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (h : JMemL2 Γ σ μ₀ (rdC U σ a n) dict mu) (f : Rul Xo c) : ℝ :=
-  if hf : f ∈ cusp Xo c U a n then lieFac Dw x a * l2NormAlt Γ σ μ₀ (rdC U σ a n) dict mu h ⟨f, hf⟩ else 0
-
-def L2DefiniteCuspForms (h : CuspL2 U σ Γ μ₀ dict mu) : Prop :=
-  ∀ a n (hd : Dom a n), L2Definite Γ σ μ₀ (rdC U σ a n) dict mu (h a n hd)
-
-def JMeas (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Prop :=
-  ∀ f, AEStronglyMeasurable (jFn Γ σ (rdC U σ a n) dict mu f) (muQ1 Γ μ₀)
-
-def LiesOver : Prop :=
-  ∀ F : ∀ k, Frame ((U σ).X k).Ψ r → ℝ≥0∞, (∀ k, Measurable (F k)) →
-    (∀ k, ∀ γ ∈ ((U σ).X k).Γ, ∀ x ∈ ((U σ).X k).dom, F k (lact γ x) = F k x) →
-    (∀ k, ∀ b ∈ Bor ((U σ).X k).Ψ r, ∀ x ∈ ((U σ).X k).dom, F k (rmul x b) = F k x) →
-    (∫⁻ q, F (dict q.out).1 (dict q.out).2 ∂(muQ1 Γ μ₀)) * totVol (U σ) = totInt (U σ) F
-
-structure Tied (x : ℝ) : Prop where
-  dom : ∀ g, (dict g).2 ∈ ((U σ).X (dict g).1).dom
-  unit : MuUnit Γ dict mu
-  xi : ∀ k (τ : E →+* ℂ), ‖τ ((U σ).X k).ξ0‖ = x
-  vol : FinVol (U σ)
-  lies : LiesOver U σ Γ μ₀ dict
 
 variable {U σ Γ μ₀ dict mu}
 
@@ -111,8 +51,8 @@ section Fundamental
 variable {G : Type} [Group G] [MeasurableSpace G] [MeasurableMul G] {μ : Measure G} [μ.IsMulLeftInvariant]
   {Λ : Subgroup G} [Countable Λ] {𝓕 : Set G}
 
-open scoped Pointwise in
 
+open scoped Pointwise in
 theorem iSup_inj_eq (h𝓕 : IsFundamentalDomain Λ 𝓕 μ) {Φ : G → ℝ≥0∞} (hΦ : ∀ (s : Λ) g, Φ (s • g) = Φ g) :
     ⨆ (D : Set G) (_ : MeasurableSet D) (_ : ∀ s : Λ, ∀ g ∈ D, s • g ∈ D → s = 1), ∫⁻ g in D, Φ g ∂μ =
       ∫⁻ g in 𝓕, Φ g ∂μ := by
@@ -200,11 +140,11 @@ theorem frameOf_injective : Function.Injective (frameOf X) := by
   exact Subtype.ext (Units.ext (hu.mul_left_cancel h1))
 
 theorem measurable_frameOf : Measurable (frameOf X) := by
-  refine measurable_pi_lambda _ fun τ => ?_
+  refine Measurable.of_eval fun τ => ?_
   have h : Continuous fun u : Upq r X.p0 =>
       mat (baseFr X) τ * ((u : GL (Fin r) ℂ) : Matrix (Fin r) (Fin r) ℂ) :=
     continuous_const.matrix_mul (Units.continuous_val.comp continuous_subtype_val)
-  exact measurable_pi_lambda _ fun a => measurable_pi_lambda _ fun b =>
+  exact Measurable.of_eval fun a => Measurable.of_eval fun b =>
     (h.matrix_elem a b).measurable.comp (measurable_pi_apply τ)
 
 theorem lact_frameOf {γ : GL (Fin r) E} {s : RealGrp X} (h : lact γ (baseFr X) = frameOf X s) (g : RealGrp X) :
@@ -331,10 +271,6 @@ section All
 variable (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) {G : (c.F →+* ℂ) → Type} [∀ σ, Group (G σ)]
   [∀ σ, MeasurableSpace (G σ)] (Γ : ∀ σ, Subgroup (G σ)) (μ₀ : ∀ σ, Measure (AutQ (Γ σ)))
   (dict : ∀ σ, G σ → Σ k, Frame ((U σ).X k).Ψ r) (mu : ∀ σ, G σ → ℂ) (x : ℝ)
-
-def l2At (h : ∀ σ, GoodEmb c σ → CuspL2 U σ (Γ σ) (μ₀ σ) (dict σ) (mu σ)) (σ : c.F →+* ℂ)
-    (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (hd : Dom a n) : Rul Xo c → ℝ :=
-  l2C U (goodOf c σ) (Γ _) (μ₀ _) (dict _) (mu _) x a n (h _ (goodEmb_goodOf _ σ) _ _ hd)
 
 end All
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.CountT
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ResidEvFree
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.CountT
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ResidEvFree
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S
 
 namespace GlobalTheory

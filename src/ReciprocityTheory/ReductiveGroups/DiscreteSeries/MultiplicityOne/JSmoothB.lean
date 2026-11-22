@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSmoothA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSmoothA
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,19 +82,21 @@ theorem Dw_joint {Φ : Mat k r → ℂ} (hΦ : ContDiff ℝ ninf Φ) :
     simp only [List.ofFn_zero]
     exact hΦ.comp contDiff_snd
   | j + 1 => by
-    have IH := Dw_joint hΦ j
+    have IH : ContDiff ℝ ninf (fun p : (Fin j → Mat k r) × Mat k r => Dw (List.ofFn p.1) Φ p.2) :=
+      Dw_joint hΦ j
     have e : (fun p : (Fin (j + 1) → Mat k r) × Mat k r => Dw (List.ofFn p.1) Φ p.2) =
         fun p => fderiv ℝ (fun y => Dw (List.ofFn (fun i => p.1 i.succ)) Φ y) p.2 (-(mulLL (p.1 0) p.2)) := by
       funext p
       simp only [List.ofFn_succ, Dw, List.foldr_cons, DX, mulLL_apply]
     rw [e]
     have hT : ContDiff ℝ ninf (fun q : (Fin (j + 1) → Mat k r) => fun i : Fin j => q i.succ) :=
-      contDiff_pi.2 fun i => contDiff_apply ℝ (Mat k r) i.succ
+      contDiff_pi.2 fun i => contDiff_apply ℝ (fun _ => Mat k r) i.succ
     have hf : ContDiff ℝ ninf (Function.uncurry
         (fun (p : (Fin (j + 1) → Mat k r) × Mat k r) (y : Mat k r) => Dw (List.ofFn (fun i => p.1 i.succ)) Φ y)) :=
       IH.comp ((hT.comp (contDiff_fst.comp contDiff_fst)).prodMk contDiff_snd)
     refine (hf.fderiv contDiff_snd ninf_succ_le).clm_apply ?_
-    exact ((mulLL.contDiff.comp ((contDiff_apply ℝ (Mat k r) (0 : Fin (j + 1))).comp contDiff_fst)).clm_apply contDiff_snd).neg
+    exact ((mulLL.contDiff.comp ((contDiff_apply ℝ (fun _ => Mat k r) (0 : Fin (j + 1))).comp
+      contDiff_fst)).clm_apply contDiff_snd).neg
 
 theorem Dw_bound {Φ : Mat k r → ℂ} (hΦ : ContDiff ℝ ninf Φ) (hc : HasCompactSupport Φ) (j : ℕ) :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ q : Fin j → Mat k r, (∀ i a b, ‖q i a b‖ ≤ 1) → ∀ x, ‖Dw (List.ofFn q) Φ x‖ ≤ M := by
@@ -198,7 +204,9 @@ theorem pint_contDiffOn (hμK : ∀ S : Set (Mt k r), IsCompact S → μ S < ∞
     rw [Nat.cast_zero, contDiffOn_zero]
     exact fun g hg => (pint_hasFDerivAt hμK hG hh hMh hU hK hΨ hz hg).continuousAt.continuousWithinAt
   | n + 1, E, _, _, Ψ, hΨ, hz => by
-    have hd := fun g (hg : g ∈ U) => pint_hasFDerivAt hμK hG hh hMh hU hK hΨ hz hg
+    have hd (g : Mt k r) (hg : g ∈ U) :
+        HasFDerivAt (fun g' => ∫ y, h y • Ψ (g', y) ∂μ) (∫ y, h y • pd Ψ (g, y) ∂μ) g :=
+      pint_hasFDerivAt hμK hG hh hMh hU hK hΨ hz hg
     rw [show ((n + 1 : ℕ) : WithTop ℕ∞) = (n : WithTop ℕ∞) + 1 by push_cast; rfl]
     refine (contDiffOn_succ_iff_fderiv_of_isOpen hU).2
       ⟨fun g hg => (hd g hg).differentiableAt.differentiableWithinAt, by simp, ?_⟩

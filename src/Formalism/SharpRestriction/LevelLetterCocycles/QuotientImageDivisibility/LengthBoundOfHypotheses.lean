@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.InIZero
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.H2Bound
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ContentBoundLevel
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkFilLevEq
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LemmaDN0
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.InIZero
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.H2Bound
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ContentBoundLevel
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkFilLevEq
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LemmaDN0
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -259,7 +263,7 @@ theorem length_bound_of_hypotheses [NeZero n] (h3 : Formalism.MainNotions.DeltaI
     hB1 hlow hrk (FilCris PD T₂.ρ (b (c - 1) : ℤ)) F3 (w.comp (Submodule.inclusion hF3))
     (fun f => (hw _).2.1) (fun f => hQK _) (fun f => dd (Submodule.inclusion hF3 f))
     (fun f => hddLB _) (fun f => hdde _) (fun f i hi => hddF _ i hi)
-    (fun f g => by rw [map_add, hdda]) (fun o f => by rw [map_smul, hdds])
+    (fun f g => by rw [map_add (f := _), hdda]) (fun o f => by rw [map_smul, hdds])
     hell (fun ell hell1 hell2 => hLk ell hell1 hell2) hζ₀
   refine ⟨⟨F4, hF4.trans hF3, y, (ch3.trans ch4).mono (by norm_num) (by norm_num), fun f => hres f⟩, ?_⟩
 

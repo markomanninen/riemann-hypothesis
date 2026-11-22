@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HsCodiscreteNeBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HsCodiscreteNeBot
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,10 +23,11 @@ private theorem wc_of_basis {W ι : Type} [AddCommGroup W] [Module ℂ W] [Finty
   intro φ
   have e : (fun g => φ (f g)) = fun g => ∑ i, b.repr (f g) i * φ (b i) := by
     funext g
-    conv_lhs => rw [← b.sum_repr (f g), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← b.sum_repr (f g), map_sum]
     simp only [map_smul, smul_eq_mul, Module.Basis.coord_apply]
   rw [e]
-  exact continuous_finset_sum _ fun i _ => (h i).mul continuous_const
+  exact continuous_finsetSum _ fun i _ => (h i).mul continuous_const
 
 private theorem wc_hom {X Y : Type} [AddCommGroup X] [Module ℂ X] [FiniteDimensional ℂ X] [AddCommGroup Y] [Module ℂ Y]
     [FiniteDimensional ℂ Y] {f : G → (X →ₗ[ℂ] Y)} (h : ∀ x, WC fun g => f g x) : WC f := by
@@ -39,10 +44,12 @@ private theorem exists_wint [CompactSpace G] [MeasurableSpace G] [BorelSpace G] 
   refine ⟨∑ i, (∫ g, b.coord i (f g) ∂ν) • b i, fun φ => ?_⟩
   have e : ∀ g, φ (f g) = ∑ i, b.coord i (f g) * φ (b i) := by
     intro g
-    conv_lhs => rw [← b.sum_repr (f g), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← b.sum_repr (f g), map_sum]
     simp only [map_smul, smul_eq_mul, Module.Basis.coord_apply]
   simp_rw [e]
-  rw [integral_finset_sum _ fun i _ =>
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [integral_finsetSum _ fun i _ =>
     ((hf (b.coord i)).integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)).mul_const _, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [integral_mul_const, map_smul, smul_eq_mul]
@@ -74,7 +81,7 @@ private theorem tr_inv [Group G] [IsTopologicalGroup G] [CompactSpace G] [Measur
   simp only [LinearMap.comp_apply, LinearMap.mulRight_apply] at h4
   rw [← h4, ← LinearMap.trace_restrict_eq_of_forall_mem I (Q * F) h3]
   unfold trOn
-  rw [dif_pos hF]
+  rw [dite_eq_left hF]
   congr 1
   refine LinearMap.ext fun t => Subtype.ext ?_
   exact (h2 _ (hF t t.2)).symm
@@ -86,7 +93,7 @@ private theorem trOn_map' {M N : Type} [AddCommGroup M] [Module ℂ M] [AddCommG
     rintro _ ⟨x, hx, rfl⟩
     exact ⟨f x, hf x hx, (h x).symm⟩
   unfold trOn
-  rw [dif_pos hg, dif_pos hf, ← LinearMap.trace_conj' (f.restrict hf) (Submodule.equivMapOfInjective j hj S)]
+  rw [dite_eq_left hg, dite_eq_left hf, ← LinearMap.trace_conj' (f.restrict hf) (Submodule.equivMapOfInjective j hj S)]
   congr 1
   refine LinearMap.ext fun y => ?_
   obtain ⟨x, rfl⟩ := (Submodule.equivMapOfInjective j hj S).surjective y
@@ -116,7 +123,7 @@ private theorem tr_flipA [FiniteDimensional ℂ V] (E : KMod n) (A : Module.End 
   rw [LinearEquiv.conj_apply_apply, LinearEquiv.symm_apply_apply]
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul φ v =>
     refine LinearMap.ext fun ξ => ?_
     simp [e, flipA, Module.Dual.transpose_apply]
@@ -160,9 +167,10 @@ private theorem wc_flip [FiniteDimensional ℂ V] (σ : Un n →* (V →ₗ[ℂ]
     rw [OrthonormalBasis.coe_toBasis_repr_apply, OrthonormalBasis.repr_apply_apply]
     show ⟪b i, σ g (t (ξ ∘L E.ρ g))⟫_ℂ = _
     conv_lhs => rw [← b.sum_repr' (t (ξ ∘L E.ρ g))]
-    simp only [map_sum, map_smul, inner_sum, inner_smul_right]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, inner_sum, inner_smul_right]
   simp_rw [e]
-  exact continuous_finset_sum _ fun j _ => (continuous_const.inner hv).mul (hσ _ _)
+  exact continuous_finsetSum _ fun j _ => (continuous_const.inner hv).mul (hσ _ _)
 
 private theorem fin_case [FiniteDimensional ℂ V] [MeasurableSpace (Un n)] [BorelSpace (Un n)] (ν : Measure (Un n))
     [IsProbabilityMeasure ν] [ν.IsMulLeftInvariant] (σ : Un n →* (V →ₗ[ℂ] V))
@@ -178,7 +186,7 @@ private theorem fin_case [FiniteDimensional ℂ V] [MeasurableSpace (Un n)] [Bor
     ((LinearMap.trace ℂ E.V).comp (ContinuousLinearMap.coeLM ℂ)).continuous_of_finiteDimensional.comp
       (E.cont.mul continuous_const)
   simp_rw [LinearMap.trace_eq_sum_inner _ b, Finset.mul_sum, Module.End.mul_apply, hP _ _]
-  exact (integral_finset_sum _ fun i _ =>
+  exact (integral_finsetSum _ fun i _ =>
     (hc.mul (hσ _ _)).integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)).symm
 
 private theorem iso_stable (σ : Un n →* (V →ₗ[ℂ] V)) (E : KMod n) {A : Module.End ℂ V}
@@ -232,5 +240,5 @@ theorem UpperTheory.V.Z.GSp4Splitting.avgTr :
       ← fin_case ν σ' (fun v w => hσ.cont v.1 w.1) E T (P.restrict fun x _ => hPS x) (A.restrict hAS) hT
         (fun v w => hP v.1 w.1) hA']
     unfold trOn
-    rw [dif_pos hPA]
+    rw [dite_eq_left hPA]
     rfl

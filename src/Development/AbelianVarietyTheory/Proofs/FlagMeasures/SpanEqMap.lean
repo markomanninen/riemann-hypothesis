@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelativeLatticeVolumeOfDetValuationStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelativeLatticeVolumeOfDetValuationStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -28,7 +32,7 @@ theorem exists_basis [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F E) 
     intro s t h
     simp only [Algebra.smul_def, mul_one] at h
     have h' := congrArg L.cj h
-    simp only [map_add, map_mul, AlgEquiv.commutes, map_zero] at h'
+    simp only [map_add (f := _), map_mul, AlgEquiv.commutes, map_zero] at h'
     have ht : algebraMap F E t = 0 := by
       linear_combination e * h - e * h' - algebraMap F E t * hωe
     have hs : algebraMap F E s = 0 := by rw [ht] at h; simpa using h
@@ -46,7 +50,7 @@ theorem exists_basis [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F E) 
   refine ⟨b, fun x => ⟨fun h => ?_, fun h => ?_⟩, fun x => ?_⟩
   · have h1 := hx x
     have h2 := congrArg L.cj h1
-    simp only [map_add, map_mul, AlgEquiv.commutes] at h2
+    simp only [map_add (f := _), map_mul, AlgEquiv.commutes] at h2
     have h3 : algebraMap F E (b.repr x 1) = (x - L.cj x) * e := by
       linear_combination -e * h1 + e * h2 - algebraMap F E (b.repr x 1) * hωe
     have h4 : algebraMap F E (b.repr x 1) ∈ L.O := by
@@ -69,7 +73,7 @@ theorem exists_basis [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F E) 
     have h2 := congrArg L.cj h1
     have h3 := hx (x * ω)
     have h4 := congrArg L.cj h3
-    simp only [map_add, map_mul, AlgEquiv.commutes] at h2 h4
+    simp only [map_add (f := _), map_mul, AlgEquiv.commutes] at h2 h4
     generalize algebraMap F E (b.repr x 0) = a at *
     generalize algebraMap F E (b.repr x 1) = c at *
     generalize algebraMap F E (b.repr (x * ω) 0) = a' at *
@@ -141,7 +145,7 @@ theorem index_rmul : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace
     rw [Finset.sum_comm]
     simp only [mul_comm]
   have hinj : Function.Injective (Fintype.linearCombination E y).toAddMonoidHom := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     exact funext (Fintype.linearIndependent_iff.1 hy v hv)
   rw [span_eq_map, span_eq_map, ← hW0, hcomp, ← AddSubgroup.map_map,

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.Ra5
 
@@ -38,7 +42,7 @@ private theorem ext_integral {R S K : Type} [CommRing R] [CommRing S] [IsDomain 
     have : a ∈ RingHom.ker y := hQc' ▸ ha
     exact this)
   have hg : Function.Injective g := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a
     obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective a
     intro h
@@ -80,7 +84,7 @@ private theorem gen_alg {A B K : Type} [CommRing A] [IsDomain A] [CommRing B] [I
       rw [← hφ]
       exact RingHom.isIntegralElem_map φ
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact RingHom.IsIntegralElem.add φ hx hy
     | mul x y _ _ hx hy =>
       rw [map_mul]

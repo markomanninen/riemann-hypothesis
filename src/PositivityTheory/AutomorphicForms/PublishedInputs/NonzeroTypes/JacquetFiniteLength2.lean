@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CJDefs
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InductionFiniteLength
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CJDefs
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InductionFiniteLength
+
+@[expose] public section
 
 noncomputable section
 

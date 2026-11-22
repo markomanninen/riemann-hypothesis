@@ -1,4 +1,8 @@
-import Formalism.LFunctionBounds.LFunctionBoundsProofs.LFunctionEqGOfOneLt
+module
+
+public import Formalism.LFunctionBounds.LFunctionBoundsProofs.LFunctionEqGOfOneLt
+
+@[expose] public section
 
 open Complex Filter Topology
 

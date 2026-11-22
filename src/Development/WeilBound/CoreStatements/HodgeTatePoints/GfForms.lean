@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InstFintypeSumElim
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDivisor
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InstFintypeSumElim
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDivisor
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles
 open GroundTheory.Heights₂.Heights.NumbersDVR (blockWeight bundleIdx pairProjCoord projCoord segreVec)
 open GroundTheory.Heights₂.Heights.Bridge (isMultiHomog_iff weight_blockWeight)
@@ -92,7 +97,8 @@ theorem mem_mCoordIdeal {y : (Σ k, J k) → Ω} {g : MRing J} {d : K → ℕ} (
   have key : mConeMap y g = C (aeval y g) * ∏ k, X k ^ d k := by
     conv_lhs => rw [g.as_sum]
     conv_rhs => rw [g.as_sum]
-    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun m hm => ?_
     rw [mConeMap, aeval_monomial, aeval_monomial, Finsupp.prod_fintype _ _ (by simp),
       Finsupp.prod_fintype _ _ (by simp)]
@@ -166,17 +172,18 @@ theorem exists_rep [CharZero Ω] {y : (Σ k, J k) → Ω} {p : ℕ} [hp : Fact p
   suffices H : ∃ (n : ℕ) (g : MRing J), ¬ p ∣ n ∧ IsMultiHomog g (fun _ => d) ∧ n * aeval z U = aeval y g by
     obtain ⟨n, g, h1, h2, h3⟩ := H
     exact ⟨n, d, g, h1, h2, by rw [mul_assoc, ← e, h3]⟩
-  rw [U.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [U.as_sum, map_sum]
   refine Finset.sum_induction _
     (fun u : Ω => ∃ (n : ℕ) (g : MRing J), ¬ p ∣ n ∧ IsMultiHomog g (fun _ => d) ∧ n * u = aeval y g) ?_ ?_ ?_
   · rintro u v ⟨n, g, h1, h2, h3⟩ ⟨n', g', h1', h2', h3'⟩
     refine ⟨n * n', n' * g + n * g', fun h => (hp.out.dvd_mul.1 h).elim h1 h1',
       hom_add (hom_nat_mul _ h2) (hom_nat_mul _ h2'), ?_⟩
-    simp only [map_add, map_mul, map_natCast, ← h3, ← h3']
+    simp only [map_add (f := _), map_mul, map_natCast, ← h3, ← h3']
     push_cast; ring
   · exact ⟨1, 0, hp.out.not_dvd_one, hom_zero _, by simp⟩
   · intro m hm
-    obtain ⟨a, b, hb, hab⟩ := (ho _).1 ⟨coeff m U, rfl⟩
+    obtain ⟨a, b, hb, hab⟩ := (ho _).1 ⟨AddMonoidAlgebra.coeff U m, rfl⟩
     have hb0 : (b : Ω) ≠ 0 := by
       rw [Nat.cast_ne_zero]; rintro rfl; exact hb (dvd_zero _)
     refine ⟨b, C a * ∏ v ∈ m.support, dropVar v ^ m v, hb, ?_, ?_⟩
@@ -211,8 +218,8 @@ theorem coord_div_mem {y : (Σ k, J k) → Ω} {t : ∀ k, J k} (ht : mseg y t �
   · simp
   · rw [Function.update_of_ne hj, div_self (Finset.prod_ne_zero_iff.1 ht j (Finset.mem_univ j))]
 
-omit [∀ k, Fintype (J k)] in
 
+omit [∀ k, Fintype (J k)] in
 theorem exists_pow_mul_trans_mem {y : (Σ k, J k) → Ω} {s t : ∀ k, J k} (hs : mseg y s ≠ 0) (ht : mseg y t ≠ 0)
     (a : K → ℤ) : ∃ n : ℕ, (mseg y s / mseg y t) ^ n * (chartMon y s a / chartMon y t a) ∈
       chartRing o (mseg y) t := by
@@ -265,14 +272,14 @@ theorem chartMon_eq_div {y : (Σ k, J k) → Ω} {s : ∀ k, J k} (hs : mseg y s
 
 end Trans
 
-omit [∀ k, Fintype (J k)] in
 
+omit [∀ k, Fintype (J k)] in
 theorem geoNum_one_linear (W : Ideal (MRing J)) :
     ∃ c : K → ℤ, ∀ a : K → ℤ, geoNum 1 W (fun _ => a) = ∑ k, a k * c k := by
   by_cases h : IsRelevant W
   · refine ⟨fun k => ∑ᶠ W' ∈ divSupp W (X ⟨k, (h k).choose⟩),
       (multAt (W ⊔ Ideal.span {(X ⟨k, (h k).choose⟩ : MRing J)}) W' : ℤ) * geoNum 0 W' Fin.elim0, fun a => ?_⟩
-    rw [geoNum, dif_pos h, Subsingleton.elim (Fin.init fun _ : Fin (0 + 1) => a) Fin.elim0]
-  · exact ⟨0, fun a => by rw [geoNum, dif_neg h]; simp⟩
+    rw [geoNum, dite_eq_left h, Subsingleton.elim (Fin.init fun _ : Fin (0 + 1) => a) Fin.elim0]
+  · exact ⟨0, fun a => by rw [geoNum, dite_eq_right h]; simp⟩
 
 end PositivityTheory.HtPt.Gf

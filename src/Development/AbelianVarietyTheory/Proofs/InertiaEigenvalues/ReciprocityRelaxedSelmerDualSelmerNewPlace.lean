@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleUnramifiedOutsideVanishOnKernel
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedRepresentationKillsSmallSubgroupStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PairingEquivariantStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumInvEqZeroOfUnramifiedCocyclePowStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameCupProductInvariantUnramifiedHomStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleUnramifiedOutsideVanishOnKernel
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedRepresentationKillsSmallSubgroupStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PairingEquivariantStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumInvEqZeroOfUnramifiedCocyclePowStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameCupProductInvariantUnramifiedHomStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ def cupZ (hc : ContAction ρ') (hP : ∀ g x y, P (ρ g x) (ρ' g y) = ((χ g : 
     fun g h k => by
       dsimp only
       rw [charRep_apply, ← hP, x.2.2 g h, y.2.2 h k, map_mul, Module.End.mul_apply]
-      simp only [map_add, AddMonoidHom.add_apply]
+      simp only [map_add (f := _), AddMonoidHom.add_apply]
       abel⟩
 
 end Group
@@ -77,8 +81,8 @@ variable {R M M' : Type} [CommRing R] [AddCommGroup M] [Module R M] [Topological
   [DiscreteTopology M] [AddCommGroup M'] [Module R M'] [TopologicalSpace M'] [DiscreteTopology M']
   {ρ : Representation R (G F Ω) M} {ρ' : Representation R (G F Ω) M'} {P : M →+ M' →+ ZMod (l ^ n)}
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem loc_eq_zero (hc : ContAction ρ')
     (hP : ∀ g x y, P (ρ g x) (ρ' g y) = ((cycMod F Ω l n g : (ZMod (l ^ n))ˣ) : ZMod (l ^ n)) * P x y)
     (x : Z1 ρ) (y : Z1 ρ') (A : ValuationSubring Ω) (m : M') (hm : ∀ g ∈ Dec (F := F) A, y.1 g = ρ' g m - m) :
@@ -91,7 +95,7 @@ theorem loc_eq_zero (hc : ContAction ρ')
     change ((cycMod F Ω l n g : (ZMod (l ^ n))ˣ) : ZMod (l ^ n)) * (-P (x.1 h) (ρ' h m)) -
       (-P (x.1 (g * h)) (ρ' (g * h) m)) + -P (x.1 g) (ρ' g m) = P (x.1 g) (ρ' g (y.1 h))
     rw [mul_neg, ← hP, hm h h.2, x.2.2, map_mul, Module.End.mul_apply]
-    simp only [map_add, map_sub, AddMonoidHom.add_apply]
+    simp only [map_add (f := _), map_sub, AddMonoidHom.add_apply]
     abel
 
 end General
@@ -185,8 +189,8 @@ theorem local_pair (hT : TameLocal) {n : ℕ} (hn : 0 < n) {R W W' : Type} [Comm
 
 end HidaSetting
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem reciprocity : PoitouTateTotallyComplex → TameLocal → ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D.what₂) (X : NTw D.R D.host D.what₂ D.LL0 N) (bkP : BKPh X) (i : X.Tw) (s : X.Sig i), 0 < nu X i → ∀ (M : ℕ) (L : Subgroup (GE N)) (z : GE N) (p : PlE D.host) (d : GE N →* Multiplicative (ZMod (X.l i ^ M))) (σ γ : GE N), nu X i + 2 ≤ M → Small2 i s M L z → NewPl i M L p d σ γ → ∀ (A : Type) [CommRing A] [IsLocalRing A] [Finite A] [Algebra (X.O0 i) A] (κ : GE N →* Aˣ) (Q Q' : Finset (PlE D.host)) (ρ : GE N →* GL (Fin D.R.r) (X.O0 i)), Setup bkP i s κ Q → Kills i A → IsDual i s ρ → AntiHom X.cc κ → (∀ g ∈ DecV N p, κ g = 1) → (∀ v, v ∈ Q' ↔ v ∈ Q ∨ Over p v) → ∀ (Y : Type) [AddCommGroup Y] [Module A Y] [TopologicalSpace Y] [DiscreteTopology Y] (Y' : Type) [AddCommGroup Y'] [Module A Y'] [TopologicalSpace Y'] [DiscreteTopology Y'] (β : Y →+ Y' →+ ZMod (X.l i ^ (nu X i + 1))), Bal A β → ∀ (y : Z1 (repOn ρ κ⁻¹ Y')) (f : GE N → Fin D.R.r → Y), DualSel bkP i s κ ρ β Q y → SelC bkP i s κ Y Q' f → vecPair D.R.r β (f γ) (y.1 σ) = vecPair D.R.r β (f (cConj X γ)) (y.1 (cConj X σ)) := by
   intro hPT hT D N X bkP i s hl2 M L z p d σ γ hM hS hp A _ _ _ _ κ Q Q' ρ hset hK hρ hanti hκ hQ' Y _ _ _ _ Y' _ _ _ _ β hβ
     y f hy hf

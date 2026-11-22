@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementJ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OutsideSystemsBound
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AxiomsFromFamilies
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChebyshevToThreshold
+module
+
+public import Formalism.HermitianCurvature.StatementJ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OutsideSystemsBound
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AxiomsFromFamilies
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChebyshevToThreshold
+
+@[expose] public section
 
 open Finset NumberField Formalism.FourierDecayAlt Formalism.FourierDecayAlt.J
 
@@ -124,7 +128,8 @@ private lemma isPSD_comp_of_isPSD_image {X Y : Type} {inst : DecidableEq Y} (F :
           k p q := by
     rw [← Finset.sum_fiberwise_of_maps_to hmap]
     refine Finset.sum_congr rfl fun p _ => ?_
-    simp only [map_sum, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.sum_mul, Finset.mul_sum]
     conv_rhs => enter [2, q]; rw [Finset.sum_comm]
     conv_rhs => rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun x hx => ?_
@@ -137,15 +142,8 @@ private lemma isPSD_comp_of_isPSD_image {X Y : Type} {inst : DecidableEq Y} (F :
   rw [key]
   exact hk'
 
-theorem top_is_local_kernel : Formalism.FourierDecayAlt.J.TopIsLocalKernel := by
-  intro K _ R ψ E α _ m σ u τ₀ η Θ hΘ t c hc h h' hh hh'
-  have e : (topSys R ψ σ u τ₀ η Θ).N t t h h' = Θ ((u : K) * σ t - τ₀) (η h) (η h') := by
-    simp [topSys]
-  rw [e, ← hc]
-  exact hΘ c (η h) (η h') hh hh'
 
 open Classical in
-
 theorem top_unit_heads : Formalism.FourierDecayAlt.J.TopUnitHeads := by
   intro hAg hN0 K _ _ _ R ψ hLD E α _ m σ u τ₀ η F Θ hm hG hτ hA t
   have hψ : ∀ r ∈ R, ψ r = 1 := fun r hr => by

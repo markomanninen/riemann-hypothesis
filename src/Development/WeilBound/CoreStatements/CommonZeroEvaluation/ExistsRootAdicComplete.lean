@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -77,7 +81,7 @@ theorem exists_root {V : Type} [CommRing V] [IsLocalRing V] [IsAdicComplete (IsL
     rw [this]
     rfl
   rw [derivative_map] at h1
-  simp only [map_add, map_mul, map_pow, hev] at h1
+  simp only [map_add (f := _), map_mul, map_pow, hev] at h1
   simp only [coe_evalRingHom, eval_C, eval_X, eval_add, eval_mul, ← hd] at h1
   refine ⟨α + d * y, ?_, ?_⟩
   · rw [h1, h]

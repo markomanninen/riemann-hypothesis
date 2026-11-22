@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+
+@[expose] public section
 
 noncomputable section
 open NumberField GlobalTheory.DegCnt
@@ -21,8 +25,8 @@ private lemma vInv_nonneg' (K : Type) [Field K] [NumberField K] :
   unfold _root_.Formalism.HermitianLatticesTheory.vInv
   positivity
 
-open NumberField in
 
+open NumberField in
 theorem _root_.GlobalTheory.DegAsm.pairBd_nonneg (K : Type) [Field K] [NumberField K]
     (k g j T x x' : ℕ) : 0 ≤ _root_.GlobalTheory.DegAsm.pairBd K k g j T x x' := by
   have hv := vInv_nonneg' K

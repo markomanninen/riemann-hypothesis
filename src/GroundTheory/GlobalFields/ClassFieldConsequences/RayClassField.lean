@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassFieldLocal
-import GroundTheory.GlobalFields.ClassFieldConsequences.IdealRayClass
-import GroundTheory.GlobalFields.ClassFieldConsequences.OpenSubgroup
-import GroundTheory.GlobalFields.ExistenceTheorem.ExistsIsAbelianGaloisRangeIdeleClassNormEqOfFini
-import GroundTheory.GlobalFields.GlobalArtinMap.ArtinMap
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassFieldLocal
+public import GroundTheory.GlobalFields.ClassFieldConsequences.IdealRayClass
+public import GroundTheory.GlobalFields.ClassFieldConsequences.OpenSubgroup
+public import GroundTheory.GlobalFields.ExistenceTheorem.ExistsIsAbelianGaloisRangeIdeleClassNormEqOfFini
+public import GroundTheory.GlobalFields.GlobalArtinMap.ArtinMap
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

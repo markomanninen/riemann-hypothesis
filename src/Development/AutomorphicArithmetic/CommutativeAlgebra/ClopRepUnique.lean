@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.RepresentationRank.RepOfRank
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.RepresentationRank.RepOfRank
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory
 

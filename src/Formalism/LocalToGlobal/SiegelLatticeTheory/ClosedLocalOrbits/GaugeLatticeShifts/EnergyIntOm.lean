@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BaseOfCore
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LoopTermLem
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianZZEqNeg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BaseOfCore
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LoopTermLem
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianZZEqNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,13 +36,13 @@ theorem q_fvec {v : InfinitePlace X.B.I.F} {lam : ℂ} {Q : Matrix (Fin X.B.I.n)
   | last =>
     have hl : ¬ (Fin.last D.R.rS).val < D.R.rS := by simp
     unfold Formalism.QuantumDeterminants.fvec
-    rw [dif_neg hl, Matrix.mulVec_mulVec, h2, Matrix.one_mulVec, dsc_last, one_smul]
+    rw [dite_eq_right hl, Matrix.mulVec_mulVec, h2, Matrix.one_mulVec, dsc_last, one_smul]
     unfold frm famSc fam
     simp [Fin.snoc_last]
   | cast b =>
     have hb : (Fin.castSucc b).val < D.R.rS := b.isLt
     unfold Formalism.QuantumDeterminants.fvec Formalism.QuantumDeterminants.bvec
-    rw [dif_pos hb]
+    rw [dite_eq_left hb]
     have hbb : (⟨(Fin.castSucc b).val, hb⟩ : Fin D.R.rS) = b := Fin.ext rfl
     rw [hbb, (h4 b b rfl).1]
     unfold dsc frm famSc fam

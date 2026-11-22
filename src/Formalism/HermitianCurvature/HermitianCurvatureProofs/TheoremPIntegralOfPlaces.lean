@@ -1,36 +1,17 @@
-import Formalism.HermitianCurvature.StatementJC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameIntegralJacobian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockEstimatesSumForm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
+module
+
+public import Formalism.HermitianCurvature.StatementJC
+public import Formalism.HermitianCurvature.LowerBlockNormalisedBoundFromComponents
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockEstimatesSumForm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem concrete_data_instance : Formalism.FourierDecayAlt.JC.MkDataInst := by
-  intro E _ _ _ Wp Wq _ _ _ _ S Kr hK0 Th e
-  unfold J.Inst J.PlacesOf
-  exact ⟨rfl, rfl, fun _ _ => rfl, S.hv, fun _ _ => rfl, fun _ _ => rfl, fun _ => rfl, fun _ _ => rfl,
-    fun _ _ _ => rfl, fun _ _ => rfl⟩
-
-theorem concrete_sizes_of_parts : Formalism.FourierDecayAlt.JC.SizesConcreteOfParts := by
-  intro hLSJ hIS hBox hLG hIM hNI hDF hFP hX hILS hMk
-  obtain ⟨C₁, hC₁, h⟩ := hILS hLSJ hIS hBox hLG hIM hNI hDF hFP hX
-  refine ⟨C₁, hC₁, ?_⟩
-  intro E _ _ _ Wp Wq _ _ _ _ S Kr hK0 Th e Θ hU hg1 hg2 hCA hlen hΘ hgr
-  have hI := hMk E Wp Wq S Kr hK0 Th e
-  obtain ⟨h1, h2⟩ := h E _ (S.mkData Kr hK0 Th e) S.pl S.G S.CA S.de S.de' S.T S.T' S.l Θ hU hI hg1 hg2
-    hCA hlen hΘ hgr
-  refine ⟨h1, ?_⟩
-  have hK : (S.mkData Kr hK0 Th e).K = 5 := hI.2.1
-  rw [hK] at h2
-  exact h2
-
-theorem concrete_axioms : Formalism.FourierDecayAlt.JC.AxiomsConcrete := by
-  intro hAx hLC hA13 E _ _ _ Wp Wq _ _ _ _ S Kr hK0 Th hLM
-  exact hAx hLC hA13 E _ (S.mkData Kr hK0 Th fun _ => 0) hLM
 
 end Formalism.FourierDecayAlt.P
 
@@ -51,43 +32,6 @@ open Formalism.FourierDecayAlt
 
 namespace Formalism.FourierDecayAlt.P
 
-private theorem setOf_threshold_values_finite (N : ℕ) (a : ℝ) (b d : ℕ → ℝ) (c : ℕ → ℕ → ℝ) :
-    {x : ℝ | ∃ i : ℕ, 1 ≤ i ∧ i ≤ N ∧ ((i = 1 ∧ x = a) ∨ (2 ≤ i ∧ x = b i) ∨
-      (∃ s : ℕ, 2 ≤ s ∧ s + i ≤ N + 1 ∧ x = c i s) ∨ x = d i)}.Finite := by
-  apply Set.Finite.subset (((Set.finite_Iic N).image b).union
-    ((((Set.finite_Iic N).prod (Set.finite_Iic (N + 1))).image (fun q : ℕ × ℕ => c q.1 q.2)).union
-      ((Set.finite_Iic N).image d)) |>.insert a)
-  rintro x ⟨i, hi1, hiN, h | h | ⟨s, hs2, hsi, h⟩ | h⟩
-  · rw [h.2]
-    exact Set.mem_insert _ _
-  · rw [h.2]
-    exact Set.mem_insert_of_mem _ (Set.mem_union_left _ (Set.mem_image_of_mem b (Set.mem_Iic.2 hiN)))
-  · rw [h]
-    exact Set.mem_insert_of_mem _ (Set.mem_union_right _ (Set.mem_union_left _
-      (Set.mem_image_of_mem (fun q : ℕ × ℕ => c q.1 q.2)
-        (Set.mk_mem_prod (Set.mem_Iic.2 hiN) (Set.mem_Iic.2 (by omega))))))
-  · rw [h]
-    exact Set.mem_insert_of_mem _ (Set.mem_union_right _ (Set.mem_union_right _
-      (Set.mem_image_of_mem d (Set.mem_Iic.2 hiN))))
-
-theorem jc_theta_exists_variant : Formalism.FourierDecayAlt.JC.ThetaExistence₂ := by
-  intro ι _ G C de de' T T' l hf hpos
-  have hfin : (G.thrSet C de de' T T' l).Finite := setOf_threshold_values_finite _ _ _ _ _
-  have hne : (G.thrSet C de de' T T' l).Nonempty := by
-    unfold Set.Nonempty Sz.Glob.thrSet
-    simp only [Set.mem_setOf_eq]
-    exact ⟨_, 1, le_rfl, by omega, Or.inl ⟨rfl, rfl⟩⟩
-  have hmem := hne.csSup_mem hfin
-  have hgr : IsGreatest (G.thrSet C de de' T T' l) (sSup (G.thrSet C de de' T T' l)) :=
-    ⟨hmem, fun x hx => le_csSup hfin.bddAbove hx⟩
-  have hm0 : 0 < sSup (G.thrSet C de de' T T' l) := hpos _ hmem
-  have hf0 : (G.f : ℝ) ≠ 0 := by exact_mod_cast (by omega : G.f ≠ 0)
-  refine ⟨sSup (G.thrSet C de de' T T' l) ^ (-(1 / (G.f : ℝ))), Real.rpow_pos_of_pos hm0 _, ?_⟩
-  have e : ((sSup (G.thrSet C de de' T T' l) ^ (-(1 / (G.f : ℝ)))) ^ G.f)⁻¹ = sSup (G.thrSet C de de' T T' l) := by
-    rw [← Real.rpow_natCast, ← Real.rpow_mul hm0.le, neg_mul, one_div_mul_cancel hf0, Real.rpow_neg_one, inv_inv]
-  rw [e]
-  exact hgr
-
 end Formalism.FourierDecayAlt.P
 
 section cutf
@@ -100,7 +44,7 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem contDiff_entry {k r : ℕ} (i j : Fin (2 * r + k + 1)) :
     ContDiff ℝ (⊤ : ℕ∞) (fun g : B.Mat k r => g i j) := by
-  exact contDiff_apply_apply ℝ ℂ i j
+  exact contDiff_apply_apply ℝ i j
 
 theorem contDiff_det {n : Type} [Fintype n] [DecidableEq n] {k r : ℕ} (M : B.Mat k r → Matrix n n ℂ)
     (hM : ∀ a b, ContDiff ℝ (⊤ : ℕ∞) (fun g => M g a b)) : ContDiff ℝ (⊤ : ℕ∞) (fun g => (M g).det) := by
@@ -390,7 +334,7 @@ theorem combine {ι : Type} [Fintype ι] [DecidableEq ι] (K : ℕ) (abelian₂ 
     rw [← Finset.prod_div_distrib]
     exact Finset.prod_congr rfl fun v _ => div_pow _ _ _
   have hLx' : (∏ v ∈ A, abelian₂ v ^ K) ≤ ∏ v ∈ A, x v ^ K :=
-    Finset.prod_le_prod (fun v _ => pow_nonneg (hL v) K) fun v _ => pow_le_pow_left₀ (hL v) (hLx v) K
+    Finset.prod_le_prod₀ (fun v _ => pow_nonneg (hL v) K) fun v _ => pow_le_pow_left₀ (hL v) (hLx v) K
   rw [hq, div_mul_eq_mul_div, le_div_iff₀ hPa]
   calc N * ∏ v ∈ A, a v ^ K = (∏ v ∈ A, a v ^ K) * N := mul_comm _ _
     _ ≤ (∏ v ∈ A, abelian₂ v ^ K) * M := h
@@ -538,7 +482,7 @@ theorem Formalism.FourierDecayAlt.P.off_diagonal_lift_bound_of_places : Formalis
       ring
     rw [hsum]
     refine hmain.trans (mul_le_mul_of_nonneg_right ?_ (by positivity))
-    refine Finset.prod_le_prod (fun v _ => ?_) (fun v _ => ?_)
+    refine Finset.prod_le_prod₀ (fun v _ => ?_) (fun v _ => ?_)
     · unfold PairingProductCorollary.minFac; split_ifs
       · exact pow_nonneg (div_nonneg (by linarith [(hthr v).1]) (norm_nonneg _)) _
       · exact zero_le_one
@@ -899,9 +843,11 @@ theorem thmPInt_of_covolume_prod (E : Type) [Field E] [NumberField E] [IsCMField
         (⟨C.loc (S.σ v) h, by simp⟩ : ({C.loc (S.σ v) h, C.loc (S.σ v) h'} : Finset C.LPt))
     set X : ℂ := ∑ h ∈ Y, ∑ h' ∈ Y, κ h h' * S.gram ε (i - 1) w.1 h h' with hX
     have hXr : ((X.re : ℝ) : ℂ) = X := by
-      rw [← Complex.conj_eq_iff_re, hX, map_sum, Finset.sum_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Complex.conj_eq_iff_re, hX, map_sum, Finset.sum_comm]
       refine Finset.sum_congr rfl fun h' hh' => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun h hh => ?_
       rw [map_mul, hκH h' hh' h hh, hgH h' h]
     have hN0 : ((S.base.N0 ε (i - 1) w Y κ : ℝ) : ℂ) = X / sz := by

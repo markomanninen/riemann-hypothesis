@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 200000
@@ -127,7 +131,8 @@ theorem sum_repr_map {O K : Type} [CommRing O] [CommRing K] (e : O →+* K) {n :
     (b : Module.Basis (Fin n) O N) (x : N) (j : Fin n) :
     ∑ k, e ((b k : Fin n → O) j) * e (b.repr x k) = e ((x : Fin n → O) j) := by
   have := congrArg (fun y : N => e ((y : Fin n → O) j)) (b.sum_repr x)
-  simp only [Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul] at this
   rw [← this]
   exact Finset.sum_congr rfl fun k _ => mul_comm _ _
 

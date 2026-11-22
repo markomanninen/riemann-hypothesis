@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.InstIsAdicCompleteOCSpanSingletonSetCast
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.InstIsAdicCompleteOCSpanSingletonSetCast
+
+@[expose] public section
 
 noncomputable section
 

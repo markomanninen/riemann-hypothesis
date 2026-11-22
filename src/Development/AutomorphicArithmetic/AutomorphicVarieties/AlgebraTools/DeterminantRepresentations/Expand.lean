@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.GenEval
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.GenHomog
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.GenEval
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.GenHomog
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 
@@ -17,7 +21,8 @@ private theorem hom_two {A : Type} [CommRing A] {n : ℕ} (P : MvPolynomial (Fin
     rw [MvPolynomial.aeval_monomial, Finsupp.prod_fintype _ _ (fun i => pow_zero _), Fin.prod_univ_two]
     simp [mul_assoc]
   conv_lhs => rw [P.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [hF]
   have hinj : Set.InjOn e (Finset.range (n + 1)) := by
     intro i _ j _ h
@@ -45,16 +50,73 @@ private theorem hom_two {A : Type} [CommRing A] {n : ℕ} (P : MvPolynomial (Fin
 theorem UpperTheory.V.AlgebraTools.Det.expand :
     ∀ {n : ℕ} {A G : Type} [CommRing A] [Group G] (D : GDet n A G) (y : MonoidAlgebra A G) (B : Type) [CommRing B] [Algebra A B] (s t : B),
     D.D B (MonoidAlgebra.single 1 s + t • MonoidAlgebra.mapRingHom G (algebraMap A B) y) =
-      ∑ i ∈ Finset.range (n + 1), algebraMap A B (D.lam i y) * s ^ (n - i) * t ^ i := by
+    ∑ i ∈ Finset.range (n + 1), algebraMap A B (D.lam i y) * s ^ (n - i) * t ^ i := by
   intro n A G _ _ D y B _ _ s t
   let y2 : Fin 2 → MonoidAlgebra A G := ![1, y]
-  have hP := UpperTheory.V.AlgebraTools.Det.genHomog D 2 y2
+  have genEval (B : Type) [CommRing B] [Algebra A B] (m : ℕ)
+      (y : Fin m → MonoidAlgebra A G) (b : Fin m → B) :
+      D.D B (∑ j, b j • MonoidAlgebra.mapRingHom G (algebraMap A B) (y j)) =
+        MvPolynomial.aeval b (D.D (MvPolynomial (Fin m) A) (GDet.gen y)) := by
+    rw [← D.nat (MvPolynomial (Fin m) A) B (MvPolynomial.aeval b)]
+    congr 1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [GDet.gen, map_sum]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    ext g
+    simp [MonoidAlgebra.mapRingHom]
+  have coeff_scale {m : ℕ} (P : MvPolynomial (Fin m) A) (s : Fin m →₀ ℕ) :
+      AddMonoidAlgebra.coeff ((MvPolynomial.aeval (fun j => (X * C (MvPolynomial.X j) : (MvPolynomial (Fin m) A)[X])) P).coeff s.degree) s =
+        AddMonoidAlgebra.coeff P s := by
+    induction P using MvPolynomial.induction_on' with
+    | monomial u a =>
+      have h : MvPolynomial.aeval (fun j => (X * C (MvPolynomial.X j) : (MvPolynomial (Fin m) A)[X]))
+          (MvPolynomial.monomial u a) = C (MvPolynomial.monomial u a) * X ^ u.degree := by
+        rw [MvPolynomial.aeval_monomial, MvPolynomial.monomial_eq, Finsupp.prod, Finsupp.prod,
+          show u.degree = ∑ i ∈ u.support, u i from rfl]
+        simp only [mul_pow, Finset.prod_mul_distrib, ← C_pow, ← map_prod, Finset.prod_pow_eq_pow_sum,
+          Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq, map_mul]
+        ring
+      rw [h, Polynomial.C_mul_X_pow_eq_monomial, Polynomial.coeff_monomial_apply, MvPolynomial.coeff_monomial]
+      split_ifs with h1 h2 h2
+      · rw [MvPolynomial.coeff_monomial, if_pos h2]
+      · rw [MvPolynomial.coeff_monomial, if_neg h2]
+      · exact absurd (congrArg Finsupp.degree h2) h1
+      · simp
+    | add p q hp hq =>
+      rw [map_add (f := _), Polynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, MvPolynomial.coeff_add]
+  have hP : (D.D (MvPolynomial (Fin 2) A) (GDet.gen y2)).IsHomogeneous n := by
+    let m := 2
+    let y := y2
+    have hφ : (MvPolynomial.aeval (fun j => (C (MvPolynomial.X j) : (MvPolynomial (Fin m) A)[X]))) =
+        (Polynomial.CAlgHom : MvPolynomial (Fin m) A →ₐ[A] (MvPolynomial (Fin m) A)[X]) :=
+      MvPolynomial.algHom_ext fun i => by
+        change MvPolynomial.aeval _ (MvPolynomial.X i) = Polynomial.C (MvPolynomial.X i)
+        simp
+    have hC : MvPolynomial.aeval (fun j => (C (MvPolynomial.X j) : (MvPolynomial (Fin m) A)[X]))
+        (D.D (MvPolynomial (Fin m) A) (GDet.gen y)) = C (D.D (MvPolynomial (Fin m) A) (GDet.gen y)) := by
+      rw [hφ]
+      rfl
+    have key : MvPolynomial.aeval (fun j => (X * C (MvPolynomial.X j) : (MvPolynomial (Fin m) A)[X]))
+        (D.D (MvPolynomial (Fin m) A) (GDet.gen y)) = X ^ n * C (D.D (MvPolynomial (Fin m) A) (GDet.gen y)) := by
+      rw [← genEval _ m y, ← hC, ← genEval _ m y, ← D.homog,
+        Finset.smul_sum]
+      simp only [mul_smul]
+    intro d hd
+    have h1 := coeff_scale (D.D (MvPolynomial (Fin m) A) (GDet.gen y)) d
+    rw [key, mul_comm, Polynomial.C_mul_X_pow_eq_monomial, Polynomial.coeff_monomial] at h1
+    have hw : Finsupp.weight 1 d = d.degree := by
+      simp only [Finsupp.weight_apply, Pi.one_apply, smul_eq_mul, mul_one]
+      rfl
+    rw [hw]
+    by_contra hne
+    simp [Finsupp.single_apply, Ne.symm hne] at h1
+    exact hd h1.symm
   obtain ⟨c, hc⟩ := hom_two _ hP
   have hev : ∀ (B : Type) [CommRing B] [Algebra A B] (s t : B),
       D.D B (MonoidAlgebra.single 1 s + t • MonoidAlgebra.mapRingHom G (algebraMap A B) y) =
         ∑ i ∈ Finset.range (n + 1), algebraMap A B (c i) * s ^ (n - i) * t ^ i := by
     intro B _ _ s t
-    rw [← hc B s t, ← UpperTheory.V.AlgebraTools.Det.genEval D B 2 y2 ![s, t]]
+    rw [← hc B s t, ← genEval B 2 y2 ![s, t]]
     congr 1
     rw [Fin.sum_univ_two]
     simp [y2, MonoidAlgebra.one_def, MonoidAlgebra.smul_single']
@@ -69,7 +131,7 @@ theorem UpperTheory.V.AlgebraTools.Det.expand :
       rw [map_mul, map_pow, map_neg, map_one]
       ring
     unfold GDet.lam
-    rw [hchi, Polynomial.finset_sum_coeff]
+    rw [hchi, Polynomial.finsetSum_coeff]
     simp only [Polynomial.coeff_C_mul_X_pow]
     rw [Finset.sum_eq_single i]
     · rw [if_pos rfl, mul_left_comm, ← mul_pow, neg_one_mul, neg_neg, one_pow, mul_one]

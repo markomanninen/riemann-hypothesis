@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+
+@[expose] public section
+
 open NumberField UpperHalfPlane GlobalTheory.HilbFam GlobalTheory.QFam
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization (Emb Frac latM qPow upperHalf cK omegaFactor IsPartialZeta HasExpansion)
 open GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates (iterD partialD)
@@ -33,7 +38,7 @@ theorem bijective_pair : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
     intro x hx
     have e : (x 0 : E) * θ + (x 1 : E) = 0 := hx
     have e2 := congrArg ψ e
-    rw [map_add, map_mul, map_zero] at e2
+    rw [map_add (f := _), map_mul, map_zero] at e2
     have him := congrArg Complex.im e2
     simp only [Complex.add_im, Complex.mul_im, hreal, mul_zero, zero_mul, add_zero, Complex.zero_im] at him
     have h0re : (ψ (x 0 : E)).re = 0 := (mul_eq_zero.1 him).resolve_right hθ
@@ -51,5 +56,3 @@ theorem bijective_pair : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
   exact ⟨hinj, (LinearMap.injective_iff_surjective_of_finrank_eq_finrank hdim).1 hinj⟩
 
 end GlobalTheory.HilbFam.EBasis
-
-example : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (ψ : E →+* ℂ) (θ : E), (ψ θ).im ≠ 0 → Function.Bijective (fun x : Fin 2 → FR E ↦ (x 0 : E) * θ + (x 1 : E)) := GlobalTheory.HilbFam.EBasis.bijective_pair

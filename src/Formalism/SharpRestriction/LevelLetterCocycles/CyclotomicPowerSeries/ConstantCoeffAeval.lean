@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ theorem algHom_coe_eq_aeval {O T : Type} [CommRing O] [CommRing T] [Algebra O T]
     (ρ : PowerSeries O →ₐ[O] T) (r : Polynomial O) :
     ρ (r : PowerSeries O) = Polynomial.aeval (ρ X) r := by
   induction r using Polynomial.induction_on' with
-  | add p q hp hq => rw [Polynomial.coe_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [Polynomial.coe_add, map_add (f := _), hp, hq, map_add (f := _)]
   | monomial n a =>
     rw [← Polynomial.C_mul_X_pow_eq_monomial, Polynomial.coe_mul, Polynomial.coe_C,
       Polynomial.coe_pow, Polynomial.coe_X, map_mul, map_pow, map_mul, map_pow,
@@ -25,7 +29,7 @@ theorem constantCoeff_aeval {O S : Type} [CommRing O] [CommRing S] [Algebra O S]
     (x : PowerSeries S) (r : Polynomial O) :
     constantCoeff (Polynomial.aeval x r) = Polynomial.aeval (constantCoeff x) r := by
   induction r using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | monomial n a =>
     rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, map_mul, map_pow]
     congr 1
@@ -89,13 +93,13 @@ theorem rhoCompl : RhoComplStatement := by
     obtain ⟨q, r, hr, he⟩ := exists_weierstrass_div_lemma_2 P hP a
     obtain ⟨w, hw⟩ := hunit
     have hρa : ρ a = (w : PowerSeries S) * X * ρ q + Polynomial.aeval (ρ X) r := by
-      rw [he, map_add, map_mul, hw, algHom_coe_eq_aeval]
+      rw [he, map_add (f := _), map_mul, hw, algHom_coe_eq_aeval]
     have h0 : constantCoeff (ρ a) = 0 := by
       obtain ⟨c, hc⟩ := ha
       rw [hc, map_mul, PowerSeries.constantCoeff_X, zero_mul]
     have hr0 : Polynomial.aeval (constantCoeff (ρ X)) r = 0 := by
       have h1 := congrArg constantCoeff hρa
-      rw [h0, map_add, map_mul, map_mul, PowerSeries.constantCoeff_X, mul_zero, zero_mul, zero_add,
+      rw [h0, map_add (f := _), map_mul, map_mul, PowerSeries.constantCoeff_X, mul_zero, zero_mul, zero_add,
         constantCoeff_aeval] at h1
       exact h1.symm
     have hdvd : P.map (algebraMap O LL) ∣ r.map (algebraMap O LL) := by

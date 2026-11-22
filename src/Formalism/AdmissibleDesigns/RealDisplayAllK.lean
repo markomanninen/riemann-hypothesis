@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.NonemptyPl
+module
+
+public import Formalism.AdmissibleDesigns.NonemptyPl
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -8,15 +12,21 @@ noncomputable section
 
 namespace Formalism.MainNotions.N.K
 
-open Formalism.RepresentationBoundsCohomology.SF
-open Formalism.NG Formalism.RepresentationBoundsCohomology.BR Formalism.RepresentationBoundsCohomology.TorsionBoundCyclotomic Formalism.RepresentationBoundsCohomology.JL Formalism.RepresentationBoundsCohomology.JT Formalism.RepresentationBoundsCohomology.JS Formalism.RepresentationBoundsCohomology.SplitClassesAll Formalism.RepresentationBoundsCohomology.LocallyConstantCohomology Formalism.RepresentationBoundsCohomology.FIN
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.RepresentationBoundsCohomology.LOC
+open Formalism.NG
+open Formalism.RepresentationBoundsCohomology.BR (divBy unrH1 yY)
+open Formalism.RepresentationBoundsCohomology.JL (LiftO ev_equiv ev_equiv_triv mapH1)
+open Formalism.RepresentationBoundsCohomology.LocallyConstantCohomology (kRow lcH1)
+open Formalism.RepresentationBoundsCohomology.FIN
+  (InChiFixReal InChiLoc InRhoFixReal2 IsCycG RealLat decs gRow)
+open Formalism.RepresentationBoundsCohomology.LOC (LatData pairKO)
+open NumberField IsDedekindDomain
+open Formalism.ConjugateSelfDual (IsPlaceOver)
+open ReciprocityTheory.Gal (H1 Ine)
 open ReciprocityTheory.ChartRestriction.T2 (PadicCoeff FracTop IsFGTop cupFG)
-open Formalism.RepresentationBoundsCohomology.ringDataObjects (RingData RingDef bcT bcR bcM bcChar ChainHyp ChainAB blockPoly PrimHyp AbsIrr BlockDiagonalIrreducibleAt)
+
 
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 def RealDisplayAllK (ℓ : ℕ) [Fact ℓ.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     [Algebra ℤ_[ℓ] O] [Module.Finite ℤ_[ℓ] O]
     [TopologicalSpace O] [TopologicalSpace (FractionRing O)]

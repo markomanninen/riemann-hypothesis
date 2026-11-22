@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.TwTrSum
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ThetaFixedGlobalOfTraceInputs
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.TwTrSum
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ThetaFixedGlobalOfTraceInputs
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ def qw (n : ℕ) (w : Pl E) : Bool → (GF E n →* GLw n w)
 def Sl (S : Set (Pl E)) (i : Pl E × Bool) : Prop := i.1 ∈ S ∧ (i.2 = true → IsSplitAt i.1)
 
 def Good (Z : Finset (Pl E)) (N : ∀ w : Pl E, Subgroup (GLw n w)) : Prop :=
-  ∀ w, IsOpen (N w : Set (GLw n w)) ∧ N w ≤ KGL w n ∧ (∀ k ∈ KGL w n, ∀ x ∈ N w, k * x * k⁻¹ ∈ N w) ∧ (w ∉ Z → N w = KGL w n)
+  ∀ w, IsOpen (N w : Set (GLw n w)) ∧ N w ≤ KGL w (n := n) ∧ (∀ k ∈ KGL w (n := n), ∀ x ∈ N w, k * x * k⁻¹ ∈ N w) ∧ (w ∉ Z → N w = KGL w (n := n))
 
 def Lev (S : Set (Pl E)) (N : ∀ w : Pl E, Subgroup (GLw n w)) : Subgroup (GF E n) :=
   ⨅ i : {i : Pl E × Bool // Sl S i}, (N i.1.1).comap (qw n i.1.1 i.1.2)
@@ -80,9 +84,9 @@ def SlotBasic : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
   (∀ (w : Pl E) b, Continuous (jw n w b) ∧ Continuous (qw n w b) ∧ (∀ a, qw n w b (jw n w b a) = a) ∧
     ∀ a c, qw n w b c = 1 → Commute (jw n w b a) c) ∧
   (∀ i k, Sl S i → Sl S k → i ≠ k → ∀ a, qw n k.1 k.2 (jw n i.1 i.2 a) = 1) ∧
-  (∀ g : GF E n, {i : Pl E × Bool | qw n i.1 i.2 g ∉ KGL i.1 n}.Finite) ∧
-  (∀ w : Pl E, ¬ IsSplitAt w → ∀ g, qw n w true g ∈ KGL w n ↔ qw n w false g ∈ KGL w n) ∧
-  ∀ g : GF E n, g ∈ Lev S (fun w => KGL w n) ↔ g ∈ Kf E n
+  (∀ g : GF E n, {i : Pl E × Bool | qw n i.1 i.2 g ∉ KGL i.1 (n := n)}.Finite) ∧
+  (∀ w : Pl E, ¬ IsSplitAt w → ∀ g, qw n w true g ∈ KGL w (n := n) ↔ qw n w false g ∈ KGL w (n := n)) ∧
+  ∀ g : GF E n, g ∈ Lev S (fun w => KGL w (n := n)) ↔ g ∈ Kf E n
 
 def LevTop : Prop := ForLev fun E _ _ _ n S _ N => IsOpen (Lev S N : Set (GF E n)) ∧ IsCompact (Lev S N : Set (GF E n)) ∧
   (∀ k ∈ Lev S N, thF E n k ∈ Lev S N) ∧ ∀ k ∈ Kf E n, ∀ x ∈ Lev S N, k * x * k⁻¹ ∈ Lev S N
@@ -98,7 +102,7 @@ def LevFix : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n :
 def JointFix : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (π : CuspSub E n) (P : Finset (Pl E)),
   (∀ w ∈ P, ∃ B, (CG.mk π).HasSat w B) → ∀ U : Subgroup (GF E n), (∀ k ∈ U, ∀ w ∈ P, qw n w false k = 1) →
     (∃ ψ ∈ π.V, ψ ≠ 0 ∧ ∀ k ∈ U, finRep E n k ψ = ψ) →
-    ∃ ψ ∈ π.V, ψ ≠ 0 ∧ (∀ k ∈ U, finRep E n k ψ = ψ) ∧ ∀ w ∈ P, ψ ∈ fixed (rw' n w false) (KGL w n)
+    ∃ ψ ∈ π.V, ψ ≠ 0 ∧ (∀ k ∈ U, finRep E n k ψ = ψ) ∧ ∀ w ∈ P, ψ ∈ fixed (rw' n w false) (KGL w (n := n))
 
 def LcLevel : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (Z : Finset (Pl E))
   (N₀ : ∀ w : Pl E, Subgroup (GLw n w)), Good Z N₀ → ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w,
@@ -146,8 +150,8 @@ def LocComm : Prop := ForLev fun E _ _ _ n S _ N => ∀ i, Sl S i → ∀ f, IsH
     ∀ k, Sl S k → i ≠ k → ∀ g, IsHecke (N k.1) g → Commute (Lw N i.1 i.2 f) (Lw N k.1 k.2 g)
 
 def SphOp : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (V : Type) [AddCommGroup V] [Module ℂ V]
-  (ρ : Representation ℂ (GLw n w) V) (f g : GLw n w → ℂ), IsHecke (KGL w n) f → IsHecke (KGL w n) g →
-    ∀ x ∈ fixed ρ (KGL w n), Lv ρ (KGL w n) f (Lv ρ (KGL w n) g x) = Lv ρ (KGL w n) g (Lv ρ (KGL w n) f x)
+  (ρ : Representation ℂ (GLw n w) V) (f g : GLw n w → ℂ), IsHecke (KGL w (n := n)) f → IsHecke (KGL w (n := n)) g →
+    ∀ x ∈ fixed ρ (KGL w (n := n)), Lv ρ (KGL w (n := n)) f (Lv ρ (KGL w (n := n)) g x) = Lv ρ (KGL w (n := n)) g (Lv ρ (KGL w (n := n)) f x)
 
 def YLoc : Prop := ForLev fun _ _ _ _ _ S _ N => ∀ π (y : Yd π (Lev S N)) i, Sl S i → ∀ f, IsHecke (N i.1) f →
   ∀ x ∈ y.Y, Lw N i.1 i.2 f x ∈ y.Y
@@ -159,12 +163,12 @@ def YSwap : Prop := ForLev fun E _ _ _ n S Z N => ∀ π (y : Yd π (Lev S N)), 
   (x' : Sm E n) = Lw N w false f x → (y.A x' : Sm E n) = Lw N w true f (y.A x)
 
 def Isot : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (π : CuspSub E n) (w : Pl E) (τ : SmIrr (GLw n w)),
-  π.IsLocComp w τ → ∀ N : Subgroup (GLw n w), IsOpen (N : Set (GLw n w)) → N ≤ KGL w n →
+  π.IsLocComp w τ → ∀ N : Subgroup (GLw n w), IsOpen (N : Set (GLw n w)) → N ≤ KGL w (n := n) →
     ∀ p : FreeAlgebra ℂ (GLw n w → ℂ), (∀ x ∈ fixed τ.ρ N, FreeAlgebra.lift ℂ (Lv τ.ρ N) p x = 0) →
       ∀ y ∈ π.V, y ∈ fixed (rw' n w false) N → FreeAlgebra.lift ℂ (Lv (rw' n w false) N) p y = 0
 
 def SimpleFix : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (τ : SmIrr (GLw n w))
-  (N : Subgroup (GLw n w)), IsOpen (N : Set (GLw n w)) → N ≤ KGL w n →
+  (N : Subgroup (GLw n w)), IsOpen (N : Set (GLw n w)) → N ≤ KGL w (n := n) →
     (∀ f, IsHecke N f → ∀ x ∈ fixed τ.ρ N, Lv τ.ρ N f x ∈ fixed τ.ρ N) ∧
     ∀ W ≤ fixed τ.ρ N, (∀ f, IsHecke N f → ∀ x ∈ W, Lv τ.ρ N f x ∈ W) → W = ⊥ ∨ W = fixed τ.ρ N
 
@@ -195,18 +199,18 @@ def ZTr : Prop := ForLev fun E _ _ _ n S Z N => ∀ π (y : Yd π (Lev S N)) (τ
       d * ∏ w ∈ Z, GlobalTheory.BCT.trOn (fixed (τ w).ρ (N w)) (Lv (τ w).ρ (N w) (F w false) * Lv (τ w).ρ (N w) (F w true))
 
 def SeenTr : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E), IsSplitAt w → ∀ (τ : SmIrr (GLw n w))
-  (N : Subgroup (GLw n w)), IsOpen (N : Set (GLw n w)) → N ≤ KGL w n → ∃ c : ℂ, c ≠ 0 ∧ ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w,
+  (N : Subgroup (GLw n w)), IsOpen (N : Set (GLw n w)) → N ≤ KGL w (n := n) → ∃ c : ℂ, c ≠ 0 ∧ ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w,
     (∀ b, IsHecke N (two φ₁ φ₂ w b)) →
       GlobalTheory.BCT.trOn (fixed τ.ρ N) (Lv τ.ρ N (two φ₁ φ₂ w false) * Lv τ.ρ N (two φ₁ φ₂ w true)) =
-        c * trc τ.ρ (KGL w n) fun g => seen φ₁ φ₂ w (g, 1)
+        c * trc τ.ρ (KGL w (n := n)) fun g => seen φ₁ φ₂ w (g, 1)
 
 def Ex2Act : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (e : Ex (Fin (n + 1) × Fin (0 + 1))),
-  IsHecke (KGL w n) (fun g => fn2 n 0 w e (g, 1)) ∧ ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GLw n w) V)
-    (x : V) (B : Multiset ℂˣ), IsSatVecGL w ρ x B → Lv ρ (KGL w n) (fun g => fn2 n 0 w e (g, 1)) x = ev2 n 0 w e B 0 • x
+  IsHecke (KGL w (n := n)) (fun g => fn2 n 0 w e (g, 1)) ∧ ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GLw n w) V)
+    (x : V) (B : Multiset ℂˣ), IsSatVecGL w ρ x B → Lv ρ (KGL w (n := n)) (fun g => fn2 n 0 w e (g, 1)) x = ev2 n 0 w e B 0 • x
 
 def SatAll : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (π : CuspSub E n) (w : Pl E) (B : Multiset ℂˣ),
-  ∀ y ∈ π.V, y ≠ 0 → ((CG.mk π).HasSat w B → y ∈ fixed (rw' n w false) (KGL w n) → IsSatVecGL w (rw' n w false) y B) ∧
-    ((CG.mk π).HasSat (cPl w) B → y ∈ fixed (rw' n w true) (KGL w n) → IsSatVecGL w (rw' n w true) y (inv B))
+  ∀ y ∈ π.V, y ≠ 0 → ((CG.mk π).HasSat w B → y ∈ fixed (rw' n w false) (KGL w (n := n)) → IsSatVecGL w (rw' n w false) y B) ∧
+    ((CG.mk π).HasSat (cPl w) B → y ∈ fixed (rw' n w true) (KGL w (n := n)) → IsSatVecGL w (rw' n w true) y (inv B))
 
 def TTr : Prop := ForLev fun E _ _ _ n S Z N => ∀ π (y : Yd π (Lev S N)) (B : Pl E → Multiset ℂˣ),
   (∀ w, Off Z w → (CG.mk π).HasSat w (B w)) → ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w, (∀ w ∈ Z, ∀ b, IsHecke (N w) (two φ₁ φ₂ w b)) →
@@ -218,12 +222,12 @@ def TTr : Prop := ForLev fun E _ _ _ n S Z N => ∀ π (y : Yd π (Lev S N)) (B 
 def LevelTr : Prop := ForLev fun E _ _ _ n S Z N => ∀ π (y : Yd π (Lev S N)) (B : Pl E → Multiset ℂˣ) (τ : ∀ w : Pl E, SmIrr (GLw n w)),
   (∀ w, Off Z w → (CG.mk π).HasSat w (B w)) → (∀ w ∈ Z, π.IsLocComp w (τ w)) →
     (∃ φ : ∀ w : Pl E, LF n 0 w, (∀ w ∈ Z, ∀ N' ≤ N w, ∀ b, IsHecke N' (two φ φ w b)) ∧
-      (∏ w ∈ Z, trc (τ w).ρ (KGL w n) fun g => seen φ φ w (g, 1)) ≠ 0) ∧
+      (∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) fun g => seen φ φ w (g, 1)) ≠ 0) ∧
     ∃ d : ℂ, d ≠ 0 ∧ ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w, (∀ w ∈ Z, ∀ b, IsHecke (N w) (two φ₁ φ₂ w b)) →
       ∀ T : Finset (Pl E), Disjoint T Z → ∀ e₁ e₂, TEv S T e₂ →
         IsHecke (Lev S N) (fun g => finFn S (intersection_update_fsHerm_neg_one Z T φ₁ e₁) (intersection_update_fsHerm_neg_one Z T φ₂ e₂) (g, 1)) ∧
         LinearMap.trace ℂ y.Y (y.r (fun g => finFn S (intersection_update_fsHerm_neg_one Z T φ₁ e₁) (intersection_update_fsHerm_neg_one Z T φ₂ e₂) (g, 1)) * y.A) =
-          d * (∏ w ∈ Z, trc (τ w).ρ (KGL w n) fun g => seen φ₁ φ₂ w (g, 1)) * val T e₁ e₂ B 0
+          d * (∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) fun g => seen φ₁ φ₂ w (g, 1)) * val T e₁ e₂ B 0
 
 def WtEx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (π : CuspSub E n), (CG.mk π).IsRegAlg →
   ∃ lamE : (E →+* ℂ) → DomWeight n, ∀ φ, π.HasInfChar φ (infOfWeight (lamE φ))

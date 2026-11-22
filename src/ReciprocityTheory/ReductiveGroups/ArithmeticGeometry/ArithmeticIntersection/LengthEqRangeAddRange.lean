@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.LocalLengthAdditivityTorsionFree
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.LocalLengthAdditivityTorsionFree
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AI
 
@@ -87,10 +91,10 @@ theorem euler_ses {A : Type*} [CommRing A] {M' M M'' : Type*} [AddCommGroup M'] 
               map_add' := ?_, map_smul' := ?_ }, ?_⟩
     · intro z₁ z₂
       show Submodule.mkQ _ (liftP (z₁ + z₂)) = Submodule.mkQ _ (liftP z₁) + Submodule.mkQ _ (liftP z₂)
-      rw [← map_add]
+      rw [← map_add (f := _)]
       exact indep _ _ (lift z₁ + lift z₂) _
-        (by rw [(hlift _).1, map_add, (hlift z₁).1, (hlift z₂).1, Submodule.coe_add]) (hlift _).2
-        (by rw [map_add, (hlift z₁).2, (hlift z₂).2, smul_add])
+        (by rw [(hlift _).1, map_add (f := _), (hlift z₁).1, (hlift z₂).1, Submodule.coe_add]) (hlift _).2
+        (by rw [map_add (f := _), (hlift z₁).2, (hlift z₂).2, smul_add])
     · intro a z
       show Submodule.mkQ _ (liftP (a • z)) = a • Submodule.mkQ _ (liftP z)
       rw [← map_smul]

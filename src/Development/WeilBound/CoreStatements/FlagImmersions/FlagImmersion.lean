@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.TopLeIffCentre
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.TopLeIffCentre
+
+@[expose] public section
 
 noncomputable section
 

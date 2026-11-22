@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
-import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
-import Formalism.MeanHeightDescent.CovolumeFullAssemblyWeighted
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SlopeSqSubLeSlopeSqSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
+public import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
+public import Formalism.MeanHeightDescent.AverageDegreeBounds.GlobalBoundRefinements
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SlopeSqSubLeSlopeSqSpan
+
+@[expose] public section
 
 open NumberField GlobalTheory.AllWt Module Matrix
 
@@ -105,10 +109,12 @@ theorem exists_dual : ∃ (n : ℕ) (a : Fin n → 𝓞 K') (f : Fin n → K' �
   refine ⟨n, fun i => p (Pi.single i 1), f, fun i r => ⟨_, hf i r⟩, fun r => ?_⟩
   have h1 : r = ∑ i, s r i • p (Pi.single i 1) := by
     conv_lhs => rw [← LinearMap.id_apply (R := 𝓞 K) r, ← hps, LinearMap.comp_apply, pi_eq_sum_univ' (s r)]
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   conv_rhs => rw [h1]
   simp only [hf]
-  rw [RingOfIntegers.coe_eq_algebraMap, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [RingOfIntegers.coe_eq_algebraMap, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Algebra.smul_def, map_mul, mul_comm]
   rfl
@@ -121,7 +127,8 @@ variable {K K' V V' : Type} [Field K] [Field K'] [Algebra K K'] [AddCommGroup V]
   [AddCommGroup V'] [Module K' V'] {n : ℕ} (b : Basis (Fin n) K V) (ι : V →ₛₗ[algebraMap K K'] V')
 
 theorem map_eq_sum (v : V) : ι v = ∑ k, algebraMap K K' (b.repr v k) • ι (b k) := by
-  conv_lhs => rw [← b.sum_repr v, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← b.sum_repr v, map_sum]
   simp only [map_smulₛₗ]
 
 theorem exists_coord (h : LinearIndependent K' fun k => ι (b k)) :
@@ -146,7 +153,8 @@ theorem tw_apply (φ : K' →ₗ[K] K') (x : V') : tw b ι c φ x = ∑ k, φ (c
 
 theorem map_dn (f : K' →ₗ[K] K) (x : V') : ι (dn b c f x) = tw b ι c (Algebra.linearMap K K' ∘ₗ f) x := by
   show ι (∑ k, f (c x k) • b k) = _
-  rw [map_sum, tw_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, tw_apply]
   simp only [map_smulₛₗ]
   rfl
 
@@ -196,8 +204,8 @@ theorem inf_eq_span [IsGalois K K'] (hc : ∀ a : Fin n → K', c (∑ k, a k �
       induction hx using Submodule.closure_induction with
       | zero => simp
       | add x y _ _ h1 h2 =>
-        refine ⟨fun i => by rw [map_add]; exact L.add_mem (h1.1 i) (h2.1 i), ?_⟩
-        simp only [map_add, smul_add, Finset.sum_add_distrib, h1.2, h2.2]
+        refine ⟨fun i => by rw [map_add (f := _)]; exact L.add_mem (h1.1 i) (h2.1 i), ?_⟩
+        simp only [map_add (f := _), smul_add, Finset.sum_add_distrib, h1.2, h2.2]
       | smul_mem r x h =>
         obtain ⟨v, hv, rfl⟩ := h
         rw [← algebraMap_smul K' r]
@@ -233,7 +241,7 @@ theorem tw_mem_span (hc : ∀ a : Fin n → K', c (∑ k, a k • ι (b k)) = a)
   induction hx using Submodule.span_induction with
   | mem x h => obtain ⟨v, hv, rfl⟩ := h; rw [tw_map hc]; exact Submodule.subset_span ⟨v, hv, rfl⟩
   | zero => simp
-  | add x y _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
+  | add x y _ _ h1 h2 => rw [map_add (tw b ι c g.toLinearMap)]; exact add_mem h1 h2
   | smul r x _ h1 =>
     have := Submodule.smul_mem _ (RingOfIntegers.mapRingHom (g : K' →+* K') r) h1
     rw [← algebraMap_smul K'] at this
@@ -248,7 +256,7 @@ theorem eq_sum_coord (hc : ∀ a : Fin n → K', c (∑ k, a k • ι (b k)) = a
     exact (tw_map hc 1 v).symm
   | zero => simp
   | add x y _ _ h1 h2 =>
-    simp only [map_add, Pi.add_apply, add_smul, Finset.sum_add_distrib, ← h1, ← h2]
+    simp only [map_add (f := _), Pi.add_apply, add_smul, Finset.sum_add_distrib, ← h1, ← h2]
   | smul r x _ h1 =>
     rw [← algebraMap_smul K', map_smul]
     simp only [Pi.smul_apply, smul_eq_mul, mul_smul, ← Finset.smul_sum, ← h1]
@@ -257,19 +265,20 @@ end Twist
 
 section Norms
 
-variable {K K' V V' : Type} [Field K] [NumberField K] [IsTotallyComplex K] [Field K'] [NumberField K'] [StarRing K']
+variable {K K' V V' : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field K'] [NumberField K'] [StarRing K']
   [Algebra K K'] [AddCommGroup V] [Module K V] [AddCommGroup V'] [Module K' V'] {κ : Type} [Fintype κ] [DecidableEq κ]
   {b' : Basis κ K' V'} {X' : InfinitePlace K' → Matrix κ κ ℂ} {N : (K →+* ℂ) → V → ℝ} {N' : (K' →+* ℂ) → V' → ℝ}
 
-omit [IsTotallyComplex K] [NumberField K] in
 
+omit [_root_.NumberField.IsTotallyComplex K] [NumberField K] in
 theorem cnorm_cols (hG' : IsGram b' X' N') (φ : V →ₛₗ[algebraMap K K'] V')
     (ht : ∀ σ' x, N' σ' (φ x) = N (σ'.comp (algebraMap K K')) x) {j : ℕ} (e : Fin j → V) (w : InfinitePlace K')
     (x : Fin j → K) :
     Formalism.HermitianLatticesTheory.cnorm (cols b' X' w (fun k => φ (e k)) *ᵥ fun k => w.embedding (algebraMap K K' (x k))) =
       N (w.embedding.comp (algebraMap K K')) (∑ k, x k • e k) := by
   have h := ht w.embedding (∑ k, x k • e k)
-  rw [← (hG' w).2, map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (hG' w).2, map_sum] at h
   simp only [map_smulₛₗ] at h
   rw [normAt_sum] at h
   exact h
@@ -350,7 +359,7 @@ theorem gram_ge [StarRing K] {μ : Type} [Fintype μ] [DecidableEq μ] {b : Basi
 
 end Norms
 
-theorem slope_sq_span_le {K K' V V' : Type} [Field K] [NumberField K] [IsTotallyComplex K] [Field K'] [NumberField K']
+theorem slope_sq_span_le {K K' V V' : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field K'] [NumberField K']
     [Algebra K K'] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [AddCommGroup V']
     [Module K' V'] [Module (𝓞 K') V'] [IsScalarTower (𝓞 K') K' V'] {N : (K →+* ℂ) → V → ℝ}
     {N' : (K' →+* ℂ) → V' → ℝ} (ι : V →ₛₗ[algebraMap K K'] V') (L : Submodule (𝓞 K) V) (hg : HasGram N)
@@ -395,7 +404,8 @@ theorem slope_sq_span_le {K K' V V' : Type} [Field K] [NumberField K] [IsTotally
       refine le_antisymm (Submodule.span_le.2 ?_) (Submodule.span_mono ?_)
       · rintro _ ⟨x, hx, rfl⟩
         obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 (hsp ▸ Submodule.subset_span hx)
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact Submodule.sum_mem _ fun k _ => by
           rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
       · rintro _ ⟨k, rfl⟩; exact ⟨e k, heL k, rfl⟩
@@ -447,7 +457,7 @@ theorem slope_sq_span_le {K K' V V' : Type} [Field K] [NumberField K] [IsTotally
   rw [m3, hf]
   linarith
 
-theorem slopeMax_sq_span_le : ∀ (K K' V V' : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field K'] [NumberField K'] [Algebra K K'] [IsGalois K K'] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [AddCommGroup V'] [Module K' V'] [Module (𝓞 K') V'] [IsScalarTower (𝓞 K') K' V'] (N : (K →+* ℂ) → V → ℝ) (N' : (K' →+* ℂ) → V' → ℝ) (ι : V →ₛₗ[algebraMap K K'] V') (L : Submodule (𝓞 K) V), HasGram N → HasGram N' → (∀ σ x, N ((starRingEnd ℂ).comp σ) x = N σ x) → (∀ (n : ℕ) (b : Fin n → V), LinearIndependent K b → LinearIndependent K' (fun k => ι (b k))) → L.FG → L ≠ ⊥ → (∀ σ' x, N' σ' (ι x) = N (σ'.comp (algebraMap K K')) x) → slopeMax_sq N' (Submodule.span (𝓞 K') (ι '' (L : Set V))) ≤ slopeMax_sq N L := by
+theorem slopeMax_sq_span_le : ∀ (K K' V V' : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field K'] [NumberField K'] [Algebra K K'] [IsGalois K K'] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [AddCommGroup V'] [Module K' V'] [Module (𝓞 K') V'] [IsScalarTower (𝓞 K') K' V'] (N : (K →+* ℂ) → V → ℝ) (N' : (K' →+* ℂ) → V' → ℝ) (ι : V →ₛₗ[algebraMap K K'] V') (L : Submodule (𝓞 K) V), HasGram N → HasGram N' → (∀ σ x, N ((starRingEnd ℂ).comp σ) x = N σ x) → (∀ (n : ℕ) (b : Fin n → V), LinearIndependent K b → LinearIndependent K' (fun k => ι (b k))) → L.FG → L ≠ ⊥ → (∀ σ' x, N' σ' (ι x) = N (σ'.comp (algebraMap K K')) x) → slopeMax_sq N' (Submodule.span (𝓞 K') (ι '' (L : Set V))) ≤ slopeMax_sq N L := by
   intro K K' V V' _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ N N' ι L hg hg' hc hli hL h0 hN
   have hL' := (slope_sq_span_le ι L hg hg' hc hli hL h0 hN).1
   obtain ⟨⟨n, ⟨b, X⟩, hG⟩⟩ := id hg
@@ -483,7 +493,7 @@ theorem slopeMax_sq_span_le : ∀ (K K' V V' : Type) [Field K] [NumberField K] [
     induction hx using Submodule.span_induction with
     | mem x h => exact Submodule.subset_span (hst g x h)
     | zero => simp
-    | add x y _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
+    | add x y _ _ h1 h2 => rw [map_add (tw b ι c g.toLinearMap)]; exact add_mem h1 h2
     | smul a x _ h1 => rw [tw_smul]; exact W.smul_mem _ h1
   have hMW : L' ⊓ W.restrictScalars (𝓞 K') = M := by
     have h1 : M ≤ L' ⊓ W.restrictScalars (𝓞 K') := fun x hx => ⟨hM hx, Submodule.subset_span hx⟩

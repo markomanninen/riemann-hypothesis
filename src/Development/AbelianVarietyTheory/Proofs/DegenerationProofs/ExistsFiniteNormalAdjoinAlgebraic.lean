@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -6,7 +10,11 @@ theorem exists_extend_of_ringEquiv_of_isAlgebraic {K L M F : Type} [Field K] [Fi
     [IsAlgClosed F] [Algebra L M] [Algebra.IsAlgebraic L M] (φ : K ≃+* L) (g : K →+* F) :
     ∃ g' : M →+* F, g'.comp ((algebraMap L M).comp φ.toRingHom) = g := by
   letI : Algebra L F := (g.comp φ.symm.toRingHom).toAlgebra
-  let g' : M →ₐ[L] F := IsAlgClosed.lift
+  let g' : M →ₐ[L] F := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨g'.toRingHom, RingHom.ext fun x => ?_⟩
   change g' (algebraMap L _ (φ x)) = g x
   rw [g'.commutes]

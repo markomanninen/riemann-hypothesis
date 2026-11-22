@@ -1,7 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ResidueVanishing.Leaves
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilDoubledSpaceOfStandardUnitary
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousStandardUnitaryChartAndSymmStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardUnitaryChartSiegelLeviDetEqStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ResidueVanishing.Leaves
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilDoubledSpaceOfStandardUnitary
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousStandardUnitaryChartAndSymmStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardUnitaryChartSiegelLeviDetEqStatement
+
+@[expose] public section
+
 noncomputable section
 open scoped ComplexConjugate Matrix NNReal
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
@@ -79,7 +84,7 @@ theorem continuation_chart_defined : KillingPolyConst := by
         absA D (aP A ⟨κ.symm q, hq'⟩) * hgt A a (κ.symm g * (p : GA D (dblSp A))⁻¹) := hI.iwAbs_left ⟨κ.symm q, hq'⟩ _
     simp only [hgtStd]
     rw [map_mul, mul_assoc (κ.symm q), e, hdet, mul_assoc]
-  · haveI : Submodule.IsLattice D.host.E (stdLattice D.host.E (A.rank + A.rank)) := isLattice_stdLattice
+  · haveI : Submodule.IsFullLattice D.host.E (stdLattice D.host.E (A.rank + A.rank)) := isLattice_stdLattice
     refine ⟨levelOpen D.sp.cm.sig (Jst D A.rank) (stdLattice D.host.E (A.rank + A.rank)), isOpen_levelOpen _ _ _,
       fun k hk hf g => ?_⟩
     have hkK : k ∈ K D A.rank := mem_levelAll.2 ⟨mem_levelOpen.1 hk, fun w => by

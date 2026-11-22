@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.LogDetBounds
-import Development.WeilBound.CoreStatements.FlagImmersions.FrameOfMatrix
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointNormalCoords
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CmTypeLatticeComparison
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.LogDetBounds
+public import Development.WeilBound.CoreStatements.FlagImmersions.FrameOfMatrix
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointNormalCoords
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CmTypeLatticeComparison
+
+@[expose] public section
 
 noncomputable section
 

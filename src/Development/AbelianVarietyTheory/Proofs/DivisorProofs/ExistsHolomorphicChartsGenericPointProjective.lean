@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DetJacMatCoordsEqTransitionJacobianDet
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCoordinateNearGenericPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrdegFunctionFieldEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DetJacMatCoordsEqTransitionJacobianDet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCoordinateNearGenericPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrdegFunctionFieldEq
+
+@[expose] public section
 
 set_option autoImplicit false
 

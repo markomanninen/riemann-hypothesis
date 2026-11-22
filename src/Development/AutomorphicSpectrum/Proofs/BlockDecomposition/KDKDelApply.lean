@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaAbsoluteValues.KSumApply
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaAbsoluteValues.KSumApply
+
+@[expose] public section
 
 open PositivityTheory.Rg.Cz Fin Function
 
@@ -12,7 +16,8 @@ theorem kD_kDel_apply {P : Type} [AddCommGroup P] [Module ℝ P] {M : Type} [Add
     kD T (kDel T' b θ) Y = ∑ s, ∑ i, T (Y s) (T' (b i) (θ (Function.update Y s (b i)))) := by
   rw [kD_apply]
   refine Finset.sum_congr rfl fun s _ => ?_
-  rw [kDel_apply, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [kDel_apply, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Fin.insertNth_removeNth, θ.map_insertNth, map_zsmul, map_zsmul]
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LevBasics
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LevBasics
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -16,7 +20,7 @@ variable {O : Type} [CommRing O] [IsLocalRing O] [IsAdicComplete (IsLocalRing.ma
 
 omit [IsLocalRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) O] in
 theorem root_Zp {y : F} (hy : (1 + y) ^ (p ^ m) = 1) : Polynomial.aeval y (Zp (O := O) p m) = 0 := by
-  simp only [Zp, map_sub, map_pow, map_add, map_one, Polynomial.aeval_X, hy, sub_self]
+  simp only [Zp, map_sub, map_pow, map_add (f := _), map_one, Polynomial.aeval_X, hy, sub_self]
 
 theorem evR_congr {x x' : F} (hx : Polynomial.aeval x (Zp (O := O) p m) = 0)
     (hx' : Polynomial.aeval x' (Zp (O := O) p m) = 0) (h : x = x') (f : PowerSeries O) :
@@ -41,7 +45,7 @@ theorem evR_onePow {x : F} (hx : Polynomial.aeval x (Zp (O := O) p m) = 0) (k : 
     show evP p m x PowerSeries.X = x
     rw [evalWeierstrassMod_eq_aeval_of_eq p m hlm hx PowerSeries.X 0 Polynomial.X (by simp)]
     simp
-  rw [map_pow, map_add, map_one, hX]
+  rw [map_pow, map_add (f := _), map_one, hX]
 
 end SlopeTestRemainingChoices
 

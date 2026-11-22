@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelAtPrimeEqSumTorsionTranslates
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JetsTorsionTranslatesCmThetaProductStatement
-import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.CmbIop
-import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.CmbJet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelAtPrimeEqSumTorsionTranslates
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JetsTorsionTranslatesCmThetaProductStatement
+public import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.CmbIop
+public import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.CmbJet
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -25,8 +30,11 @@ theorem UpperTheory.WildA.tabBd :
   obtain ⟨β, M, hβ, hloc, hM, hMl, hcmb⟩ :=
     UpperTheory.WildA.cmbIop D hI cc hcc δ t0 hC ht a b e0 he0 Ls Lt hLs hLt l lam hEs hEt k hk
   have hv : padicValNat l (M * k) = padicValNat l k := by
-    rw [padicValNat.mul hM.ne' hk.ne',
-      padicValNat.eq_zero_of_not_dvd (hp.coprime_iff_not_dvd.1 hMl.symm), zero_add]
+    have hz : padicValNat l M = 0 := by
+      simpa only [← Nat.padicValNat_def] using
+        (multiplicity_eq_zero_of_not_dvd (hp.coprime_iff_not_dvd.1 hMl.symm))
+    rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hM.ne' hk.ne',
+      hz, zero_add]
   have hsp' : l ∣ M * k → SplitIn D l := fun h => hsp (hMl.symm.dvd_of_dvd_mul_left h)
   have hkn := Term.norm_natCast_inv l hk.ne'
   have hk0 : 0 < ‖(k : ℂ_[l])‖ := norm_pos_iff.2 (by exact_mod_cast hk.ne')
@@ -42,7 +50,7 @@ theorem UpperTheory.WildA.tabBd :
     obtain ⟨h, -⟩ := hκ
     refine ⟨h, ?_⟩
     have h1 := hκ1 lam
-    rw [lamC, dif_pos h] at h1
+    rw [lamC, dite_eq_left h] at h1
     exact h1.le
   have hall := KernelAt.Cmb.smul hκb
     (KernelAt.Cmb.sum fun i => KernelAt.Cmb.smul (hrb i) (hcmb (s i) (hs i)))

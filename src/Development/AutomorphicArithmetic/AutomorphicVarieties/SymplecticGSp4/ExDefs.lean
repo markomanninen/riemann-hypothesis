@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ResidueCharMemLevelPrimes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ResidueCharMemLevelPrimes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,16 +114,7 @@ theorem unr_map (f : R →ₐ[c.O] R') (ρ : Lift c.O D.rbar R) (h : D.UnrT ρ.h
 
 theorem hEl_map (f : R →ₐ[c.O] R') (ρ : Lift c.O D.rbar R) (i j : Fin 4) :
     D.hEl (ρ.map f).hom i j = f (D.hEl ρ.hom i j) := by
-  simp only [Raw.hEl, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, Lift.map_hom, map_add, map_mul, AlgHom.commutes]
-
-theorem loc_map (f : R →ₐ[c.O] R') (ρ : Lift c.O D.rbar R) (v : ℕ) :
-    D.loc (ρ.map f) v = (D.loc ρ v).map f := Lift.ext (MonoidHom.ext fun _ => rfl)
-
-theorem nrm_map (f : R →ₐ[c.O] R') (ρ : Lift c.O D.rbar R) (h : D.Nrm ρ.hom) : D.Nrm (ρ.map f).hom := by
-  refine ⟨fun i j hij => ?_, ?_, ?_⟩
-  · rw [Lift.map_hom, h.1 i j hij, map_zero]
-  · rw [hEl_map, h.2.1, map_zero]
-  · rw [hEl_map, h.2.2, map_zero]
+  simp only [Raw.hEl, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, Lift.map_hom, map_add (f := _), map_mul, AlgHom.commutes]
 
 end
 

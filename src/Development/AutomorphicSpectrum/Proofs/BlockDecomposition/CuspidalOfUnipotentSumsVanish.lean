@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+
+@[expose] public section
 
 open ReciprocityTheory.Ty.Fin
 open Formalism.IrreducibleCountingLemmas.TYPES hiding zIdem IsCuspidal
@@ -55,8 +59,8 @@ theorem mem_stdRadical {K : Type} [Field K] [Fintype K] [DecidableEq K] {d a : �
       ((i : ℕ) < a ∧ a ≤ (j : ℕ)) := Iff.rfl
 
 theorem pm_conj {K : Type} [Field K] [Fintype K] [DecidableEq K] {ι : Type} [Fintype ι] [DecidableEq ι]
-    (σ : Equiv.Perm ι) (g : GL ι K) : pm K σ * g * (pm K σ)⁻¹ = glEquiv K σ g := by
-  have hp : ∀ i j, (pm K σ : Matrix ι ι K) i j = if i = σ j then 1 else 0 := by
+    (σ : Equiv.Perm ι) (g : GL ι K) : pm (K := K) σ * g * (pm (K := K) σ)⁻¹ = glEquiv K σ g := by
+  have hp : ∀ i j, (pm (K := K) σ : Matrix ι ι K) i j = if i = σ j then 1 else 0 := by
     intro i j
     show (Equiv.toPEquiv σ⁻¹).toMatrix i j = _
     simp only [PEquiv.toMatrix_apply, Equiv.toPEquiv_apply, Option.mem_def, Option.some.injEq]
@@ -129,13 +133,13 @@ theorem isCuspidal_of_sum_char : ∀ (K : Type) [Field K] [Fintype K] [Decidable
     · rw [if_neg hu, if_neg (fun h' => hu (mem_stdRadical.2 h'))]
 
   have hent : ∀ (x : GL (Fin d) K) (i j : Fin d),
-      ((pm K σ * x * (pm K σ)⁻¹ : GL (Fin d) K) : Matrix (Fin d) (Fin d) K) (σ i) (σ j) =
+      ((pm (K := K) σ * x * (pm (K := K) σ)⁻¹ : GL (Fin d) K) : Matrix (Fin d) (Fin d) K) (σ i) (σ j) =
         (x : Matrix (Fin d) (Fin d) K) i j := by
     intro x i j
     rw [pm_conj]
     show (x : Matrix (Fin d) (Fin d) K) (σ.symm (σ i)) (σ.symm (σ j)) = _
     simp
-  have key : ∀ x : GL (Fin d) K, pm K σ * x * (pm K σ)⁻¹ ∈ stdRadical K d a → ∀ i j,
+  have key : ∀ x : GL (Fin d) K, pm (K := K) σ * x * (pm (K := K) σ)⁻¹ ∈ stdRadical K d a → ∀ i j,
       (x : Matrix (Fin d) (Fin d) K) i j = (if i = j then 1 else 0) ∨ (b i = c0 ∧ b j ≠ c0) := by
     intro x hx i j
     have := hx (σ i) (σ j)
@@ -146,7 +150,7 @@ theorem isCuspidal_of_sum_char : ∀ (K : Type) [Field K] [Fintype K] [Decidable
       refine ⟨(hσ i).1 h1, fun h3 => ?_⟩
       have := (hσ j).2 h3
       omega
-  have hut : ∀ x : GL (Fin d) K, pm K σ * x * (pm K σ)⁻¹ ∈ stdRadical K d a →
+  have hut : ∀ x : GL (Fin d) K, pm (K := K) σ * x * (pm (K := K) σ)⁻¹ ∈ stdRadical K d a →
       IsBlockUT K b (x : Matrix (Fin d) (Fin d) K) := by
     intro x hx i j hij
     rcases key x hx i j with h1 | ⟨h1, -⟩
@@ -154,26 +158,26 @@ theorem isCuspidal_of_sum_char : ∀ (K : Type) [Field K] [Fintype K] [Decidable
       simpa [this] using h1
     · rw [h1] at hij
       exact absurd hij (by simp [c0, Fin.lt_def])
-  have hun : ∀ x : GL (Fin d) K, pm K σ * x * (pm K σ)⁻¹ ∈ stdRadical K d a → x ∈ unip K b := by
+  have hun : ∀ x : GL (Fin d) K, pm (K := K) σ * x * (pm (K := K) σ)⁻¹ ∈ stdRadical K d a → x ∈ unip K b := by
     intro x hx
     refine ⟨⟨hut x hx, hut x⁻¹ ?_⟩, ?_⟩
-    · have : pm K σ * x⁻¹ * (pm K σ)⁻¹ = (pm K σ * x * (pm K σ)⁻¹)⁻¹ := by group
+    · have : pm (K := K) σ * x⁻¹ * (pm (K := K) σ)⁻¹ = (pm (K := K) σ * x * (pm (K := K) σ)⁻¹)⁻¹ := by group
       rw [this]
       exact inv_mem hx
     · intro i j hij
       rcases key x hx i j with h1 | ⟨h1, h2⟩
       · exact h1
       · exact absurd (hij ▸ h1) h2
-  have hw := hfix (τ.ρ (pm K σ) v) (by
+  have hw := hfix (τ.ρ (pm (K := K) σ) v) (by
     intro u hu
-    have hx : (pm K σ)⁻¹ * u * pm K σ ∈ unip K b := by
+    have hx : (pm (K := K) σ)⁻¹ * u * pm (K := K) σ ∈ unip K b := by
       apply hun
-      have : pm K σ * ((pm K σ)⁻¹ * u * pm K σ) * (pm K σ)⁻¹ = u := by group
+      have : pm (K := K) σ * ((pm (K := K) σ)⁻¹ * u * pm (K := K) σ) * (pm (K := K) σ)⁻¹ = u := by group
       rw [this]
       exact hu
-    have hh : u * pm K σ = pm K σ * ((pm K σ)⁻¹ * u * pm K σ) := by group
+    have hh : u * pm (K := K) σ = pm (K := K) σ * ((pm (K := K) σ)⁻¹ * u * pm (K := K) σ) := by group
     rw [← Module.End.mul_apply, ← map_mul, hh, map_mul, Module.End.mul_apply, hv _ hx])
-  have h3 := congrArg (τ.ρ (pm K σ)⁻¹) hw
+  have h3 := congrArg (τ.ρ (pm (K := K) σ)⁻¹) hw
   simpa [← Module.End.mul_apply, ← map_mul] using h3
 
 end GlobalTheory.CompanionTheory.TyFin.CuspIff

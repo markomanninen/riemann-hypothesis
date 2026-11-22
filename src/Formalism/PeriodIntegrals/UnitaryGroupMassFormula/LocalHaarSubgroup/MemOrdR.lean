@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocHaarRR
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalHaarSubgroup.IntegralMemNhdsAndSubsetCompactOfFinrankTwo
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocHaarRR
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalHaarSubgroup.IntegralMemNhdsAndSubsetCompactOfFinrankTwo
+
+@[expose] public section
 
 noncomputable section
 

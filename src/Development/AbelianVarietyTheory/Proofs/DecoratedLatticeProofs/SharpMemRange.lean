@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.KmapEq
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.KmapEq
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Forms Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.KerDia
 attribute [local instance] GlobalTheory.Mem.Col2.starE
 
@@ -8,7 +13,7 @@ namespace GlobalTheory.KerDia.SharpPoly
 
 theorem detShift_shW {N : ℕ} (lam : DomWeight N) (c : ℤ) (h : 0 < N) :
     (GlobalTheory.Mem.Col2.shW lam c).detShift = lam.detShift + c := by
-  unfold DomWeight.detShift; rw [dif_pos h, dif_pos h]; rfl
+  unfold DomWeight.detShift; rw [dite_eq_left h, dite_eq_left h]; rfl
 
 theorem half_cast (R : Ranks) : ((((R.t + 1) / 2 : ℕ) : ℤ) : ℚ) = ((R.t : ℚ) + 1) / 2 := by
   obtain ⟨a, ha⟩ := R.t_odd
@@ -24,7 +29,7 @@ theorem wtN_last {R : Ranks} (P : HCParam R) (i : ℕ) (hi : i < R.m) :
       rw [Nat.mul_comm (R.t + 1) i]; omega]
     rw [Nat.add_mul_div_left _ _ (Nat.succ_pos _), Nat.div_eq_of_lt (Nat.lt_succ_self _), Nat.zero_add]
   unfold Examples₂.wtN
-  rw [dif_neg (by omega), dif_pos (by rw [hq]; exact hi)]
+  rw [dite_eq_right (by omega), dite_eq_left (by rw [hq]; exact hi)]
   simp only [hq]
 
 theorem exp_nonneg {R : Ranks} {ι : Type} (hc : ι → HCParam R) (i : ℕ) (hi : i < R.m) (τ : ι) (s : ℤ)
@@ -34,7 +39,7 @@ theorem exp_nonneg {R : Ranks} {ι : Type} (hc : ι → HCParam R) (i : ℕ) (hi
     unfold GlobalTheory.Mem.Col2.lamT
     rw [detShift_shW _ _ hN]
     unfold DomWeight.detShift
-    rw [dif_pos hN]
+    rw [dite_eq_left hN]
     rw [Int.cast_add, Int.cast_neg, Int.cast_mul, half_cast, Examples₂.lamOf_eq _ i hi.le, Examples₂.wtQ_eq_wtN]
     push_cast
     ring

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV GlobalTheory.HodgeCoh TensorProduct UpperTheory.Gal.G3
 open UpperTheory.Gal.Int.Geo (FEt Cover gen piece IsHEig)
@@ -60,7 +64,8 @@ theorem UpperTheory.Gal.G3.pHopEx :
       simp only [S, Set.Finite.coe_toFinset, Set.mem_setOf_eq]
       intro h0
       exact hz (by simp [h0])
-    rw [hYS, map_sum, ← finsum_eq_sum_of_support_subset _ hsub2, ← hYS, hY]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hYS, map_sum, ← finsum_eq_sum_of_support_subset _ hsub2, ← hYS, hY]
     simp_rw [key]
     exact finsum_comp_equiv (MulAction.toPerm k⁻¹ : Equiv.Perm (G ⧸ X.K j))
       (f := fun z : G ⧸ X.K j => f z.out • X.pl T m j z.out⁻¹ x)
@@ -80,6 +85,6 @@ theorem UpperTheory.Gal.G3.pHopEx :
   have hex : ∃ A, X.IsHop T j f A := ⟨A, hiso A m hmj had (fun x => by rw [hA, hY])⟩
   have hh : X.IsHop T j f (X.hecke T j f) := by
     unfold Tower.hecke
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   exact ⟨hh, fun A' hA' => huniq _ _ hA' hh⟩

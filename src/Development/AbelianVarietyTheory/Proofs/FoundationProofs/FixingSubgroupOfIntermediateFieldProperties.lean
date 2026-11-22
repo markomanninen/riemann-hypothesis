@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsOneCocycleOnSubgroup
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-open GlobalTheory.KCoh Polynomial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+
+@[expose] public section
+
+open Polynomial
 
 noncomputable section
 

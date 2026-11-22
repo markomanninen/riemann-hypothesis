@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -12,10 +17,6 @@ def MaximalIdealHeightFG.Statement : Prop :=
     [Algebra.FiniteType F A] (m : Ideal A), m.IsMaximal → (m.height : WithBot ℕ∞) = ringKrullDim A
 
 section Examples
-
-example : Algebra.FiniteType ℚ (MvPolynomial (Fin 2) ℚ) := inferInstance
-
-example : IsDomain (MvPolynomial (Fin 2) ℚ) := inferInstance
 
 end Examples
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IdTower
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HodgePullHodgePull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IdTower
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HodgePullHodgePull
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV GlobalTheory.HodgeCoh
@@ -120,25 +124,6 @@ structure Tower (B : Scheme.{0}) (G : Type) [Group G] where
   free : ∀ i j, K i ≤ K j → ∀ k ∈ K j, ∀ a b (Ω : Type) [Field Ω] [IsAlgClosed Ω] (x : sp Ω ⟶ Z i),
     x ≫ tr i i k a b = x → k ∈ K i
 
-def Tower.triv {B X : Scheme.{0}} (p : X ⟶ B) : Tower B Unit where
-  ι := Unit
-  K _ := ⊤
-  Δ := ⊤
-  K_le _ _ _ := trivial
-  deep _ _ := ⟨(), le_rfl, fun _ _ _ _ => trivial, fun _ _ _ _ => trivial⟩
-  idx _ _ := by simp
-  Z _ := X
-  q _ := p
-  tr _ _ _ _ _ := 𝟙 X
-  tr_q _ _ _ _ _ := Category.id_comp _
-  tr_self _ _ _ _ _ := rfl
-  tr_mul _ _ _ _ _ _ _ _ _ _ _ := Category.id_comp _
-  fin _ _ _ _ := inferInstance
-  etale _ _ _ _ := inferInstance
-  onto _ _ _ _ := inferInstance
-  trans _ _ _ _ _ _ _ _ x y h := ⟨(), trivial, trivial, fun _ _ => trivial, by simpa using h.symm⟩
-  free _ _ _ _ _ _ _ _ _ _ _ _ := trivial
-
 def conv {G R : Type} [Group G] [Field R] (K : Subgroup G) (f f' : G → R) (x : G) : R :=
   ∑ᶠ y : G ⧸ K, f y.out * f' (y.out⁻¹ * x)
 
@@ -151,8 +136,8 @@ variable {B : Scheme.{0}} {G : Type} [Group G] (X : Tower B G) {R : Type} [Field
 
 def admitted (i j : X.ι) (h : G) : Prop := h ∈ X.Δ ∧ ∀ u ∈ X.K i, h * u * h⁻¹ ∈ X.K j
 
-open Classical in
 
+open Classical in
 def pl (i j : X.ι) (h : G) : T.H (X.q j) →ₗ[R] T.H (X.q i) :=
   if a : X.admitted i j h then T.pull (X.tr i j h a.1 a.2) (X.tr_q ..) else 0
 
@@ -164,17 +149,10 @@ def IsHop (j : X.ι) (f : G → R) (A : Module.End R (T.H (X.q j))) : Prop :=
   ∀ m, X.K m ≤ X.K j → (∀ g, f g ≠ 0 → X.admitted m j g⁻¹) →
     ∀ x, X.pl T m j 1 (A x) = ∑ᶠ y : G ⧸ X.K j, f y.out • X.pl T m j y.out⁻¹ x
 
-open Classical in
 
+open Classical in
 def hecke (j : X.ι) (f : G → R) : Module.End R (T.H (X.q j)) :=
   if h : ∃ A, X.IsHop T j f A then h.choose else 0
-
-structure Endo where
-  e : ∀ i, X.Z i ⟶ X.Z i
-  e_q : ∀ i, e i ≫ X.q i = X.q i
-  comm : ∀ i j h a b, e i ≫ X.tr i j h a b = X.tr i j h a b ≫ e j
-
-def Endo.id : X.Endo := ⟨fun _ => 𝟙 _, fun _ => Category.id_comp _, fun _ _ _ _ _ => by simp⟩
 
 end Tower
 

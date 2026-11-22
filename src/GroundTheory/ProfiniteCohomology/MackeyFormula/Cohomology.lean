@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.MackeyFormula
-import GroundTheory.ProfiniteCohomology.Shapiro
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomApplyHomApplyEqOfCompEq
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.MackeyFormula
+public import GroundTheory.ProfiniteCohomology.Shapiro
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomApplyHomApplyEqOfCompEq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -47,11 +52,6 @@ variable [TopologicalSpace G] [IsTopologicalGroup G] [TopologicalSpace H]
 def mackeyConjₜ (x : G) : mackeySubgroup (V : Subgroup G) ι.toMonoidHom x →ₜ* (V : Subgroup G) :=
   ⟨mackeyConj (V : Subgroup G) ι.toMonoidHom x,
     continuous_mackeyConj V (continuous_toMonoidHom ι) x⟩
-
-@[simp]
-theorem mackeyConjₜ_toMonoidHom (x : G) :
-    (mackeyConjₜ V ι x).toMonoidHom = mackeyConj (V : Subgroup G) ι.toMonoidHom x :=
-  rfl
 
 end Conj
 
@@ -141,7 +141,8 @@ theorem mackeyCohomology_bijective (n : ℕ) :
     choose z hz using fun d => (hS d).2 (y d)
     refine ⟨∑ d, (I d).hom (z d), funext fun d' => ?_⟩
     change (mackeyCohomologyMap V ι N d'.out n).hom (∑ d, (I d).hom (z d)) = y d'
-    rw [key, map_sum, Finset.sum_eq_single d']
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [key, map_sum, Finset.sum_eq_single d']
     · rw [hom_apply_hom_apply_of_comp_eq (hIP d') (z d')]
       exact hz d'
     · intro d _ hd

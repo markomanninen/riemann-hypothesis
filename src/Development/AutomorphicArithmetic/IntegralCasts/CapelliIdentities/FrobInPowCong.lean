@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qf16.frobIn_pow_cong :
     ∀ {Ω : Type} [inst : Field Ω] (A : ValuationSubring Ω)

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.DifferentiableSchwartzTranslate
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.DifferentiableSchwartzTranslate
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -62,10 +66,10 @@ private theorem sInf_mul (x : TR.Rinf F) (a : A F) : TR.sInf F x * a = TR.sInf F
   · rw [map_mul, pFin_sInf, pFin_sInf, zero_mul]
 
 private theorem pInf_aI (w : InfinitePlace F) (t : ℝ) : TR.pInf F (aI w t : (A F)ˣ) = eR w t := by
-  rw [aI_val, map_add, pInf_sInf, map_one]; abel
+  rw [aI_val, map_add (f := _), pInf_sInf, map_one]; abel
 
 private theorem pFin_aI (w : InfinitePlace F) (t : ℝ) : pFin F (aI w t : (A F)ˣ) = 1 := by
-  rw [aI_val, map_add, pFin_sInf, map_one, add_zero]
+  rw [aI_val, map_add (f := _), pFin_sInf, map_one, add_zero]
 
 private theorem ab_aI (w : InfinitePlace F) (t : ℝ) : ab (aI w t) = Real.exp t := by
   have h1 : ((aI w t : (A F)ˣ) : A F).1 = TR.infEq F (eR w t) := by
@@ -100,7 +104,7 @@ private theorem h_apply (O : Fo.Ops F) (w : InfinitePlace F) (φ : S4 F) (v : V4
   change ((∑ i, O.x w i (O.d w i φ) : S4 F)).1 v + 2 * φ.1 v = _
   congr 1
   have : ((∑ i, O.x w i (O.d w i φ) : S4 F)).1 = ∑ i, (O.x w i (O.d w i φ)).1 :=
-    AddSubmonoidClass.coe_finset_sum _ _
+    AddSubmonoidClass.coe_finsetSum _ _
   rw [this, Finset.sum_apply]
   exact Finset.sum_congr rfl fun i _ => O.x_apply w i _ v
 
@@ -191,7 +195,7 @@ private theorem gl_mD_aI (w : InfinitePlace F) (t : ℝ) : gl (mD (aI w t)) = TR
     · change pFin F (((aI w t)⁻¹ : (A F)ˣ) : A F) = 1
       rw [hn]; exact pFin_aI w (-t)
 
-variable {E : Type} [Field E] [NumberField E] [Algebra F E] [IsTotallyComplex E] {D : Dat F E}
+variable {E : Type} [Field E] [NumberField E] [Algebra F E] [_root_.NumberField.IsTotallyComplex E] {D : Dat F E}
 
 private theorem om_aI (W : Weil D) (w : InfinitePlace F) (t : ℝ) (φ : S4 F) (v : V4 F) :
     (W.Om (mD (aI w t)) φ).1 v =
@@ -216,7 +220,7 @@ end
 
 open UpperTheory.ConvolutionTheory.R2.Ff.OneParameterSubgroupCurves in
 theorem UpperTheory.ConvolutionTheory.R2.Ff.curveH :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (O : Fo.Ops F) (W : Weil D), CurveH O W := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (O : Fo.Ops F) (W : Weil D), CurveH O W := by
   intro F E _ _ _ _ _ _ _ D O W w
   have hS := sDiff F O
   refine ⟨fun t => mD (aI w t), cT w, ⟨cT_add w, hasDerivAt_cT w⟩, gl_mD_aI w, fun φ t v => ?_⟩

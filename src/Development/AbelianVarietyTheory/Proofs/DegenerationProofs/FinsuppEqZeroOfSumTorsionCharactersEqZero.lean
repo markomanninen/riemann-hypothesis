@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -66,7 +70,8 @@ theorem finsupp_eq_zero_of_sum_torsion_characters_eq_zero :
   refine Fintype.linearIndependent_iff.mp hli (fun β => φ (c β)) ?_ ⟨α, hmem⟩
   funext t
   have h0 := congrArg φ (hsum t t.2)
-  rw [Finsupp.sum, map_sum, map_zero, ← Finset.sum_coe_sort] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.sum, map_sum, map_zero, ← Finset.sum_coe_sort] at h0
   rw [Finset.sum_apply, Pi.zero_apply, ← h0]
   refine Finset.sum_congr rfl fun β _ => ?_
   rw [map_smul, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_comm]

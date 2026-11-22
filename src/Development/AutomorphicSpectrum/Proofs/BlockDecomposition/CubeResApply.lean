@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.TopologicalKrullDimLeOfIrreducibleCloseds
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.TopologicalKrullDimLeOfIrreducibleCloseds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -78,8 +82,6 @@ instance : (nerveCx (R := R) (C := C)).PreservesZeroMorphisms where
 def dNC (G : C ⥤ ModuleCat.{0} R) (n : ℕ) : NC G n →ₗ[R] NC G (n + 1) :=
   ∑ i : Fin (n + 2), ((-1 : R) ^ (i : ℕ)) • pullNC G (Fin.succAboveOrderEmb i).toOrderHom
 
-theorem nerveCx_X (G : C ⥤ ModuleCat.{0} R) (n : ℕ) : (nerveCx.obj G).X n = ModuleCat.of R (NC G n) := rfl
-
 theorem nerveCx_d (G : C ⥤ ModuleCat.{0} R) (n : ℕ) :
     (nerveCx.obj G).d n (n + 1) = ModuleCat.ofHom (dNC G n) := by
   have h0 : (nerveCx.obj G).d n (n + 1) = AlgebraicTopology.AlternatingCofaceMapComplex.objD (cosimp G) n :=
@@ -94,16 +96,11 @@ theorem nerveCx_d (G : C ⥤ ModuleCat.{0} R) (n : ℕ) :
   have h : ((-1 : R) ^ (i : ℕ)) = (((-1 : ℤ) ^ (i : ℕ) : ℤ) : R) := by push_cast; rfl
   rw [h, Int.cast_smul_eq_zsmul, ModuleCat.hom_zsmul, ModuleCat.hom_ofHom]
 
-theorem nerveCx_map_f {G G' : C ⥤ ModuleCat.{0} R} (φ : G ⟶ G') (n : ℕ) (f : NC G n) (c : Fin (n + 1) ⥤ C) :
-    (show NC G' n from ((nerveCx.map φ).f n).hom f) c = (φ.app _).hom (f c) := rfl
-
 @[simps] def toMod (F : C ⥤ CommAlgCat.{0} R) : C ⥤ ModuleCat.{0} R where
   obj T := ModuleCat.of R (F.obj T)
   map φ := ModuleCat.ofHom (GlobalTheory.CatCoh.mp F φ).toLinearMap
   map_id T := ModuleCat.hom_ext (LinearMap.ext fun b ↦ GlobalTheory.CatCoh.mp_id F T b)
   map_comp φ ψ := ModuleCat.hom_ext (LinearMap.ext fun b ↦ GlobalTheory.CatCoh.mp_comp F φ ψ b)
-
-theorem dNC_toMod (F : C ⥤ CommAlgCat.{0} R) (n : ℕ) : dNC (toMod F) n = MainStatements.Hodge.dn F n := rfl
 
 end Cochains
 
@@ -146,7 +143,7 @@ def cubeOf (G : Pᵒᵖ ⥤ ModuleCat.{0} R) : Cube.{0} κ R :=
         · rw [cubeRes_empty e G h' _ ht hw])
 
 def cubeOfMap {G G' : Pᵒᵖ ⥤ ModuleCat.{0} R} (φ : G ⟶ G') : cubeOf e G ⟶ cubeOf e G' :=
-  Cube.homMk (fun s ↦ LinearMap.pi fun hs ↦ (φ.app _).hom ∘ₗ
+  Cube.homMk κ R (fun s ↦ LinearMap.pi fun hs ↦ (φ.app _).hom ∘ₗ
       LinearMap.proj (R := R) (φ := fun hs : PLift s.Nonempty ↦ (G.obj (op (s.inf' hs.down e)) : Type)) hs)
     (fun {s t} h x ↦ funext fun ht ↦ by
       by_cases hs : s.Nonempty

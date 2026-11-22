@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open PowerSeries
 
 namespace GlobalTheory
@@ -43,8 +48,8 @@ theorem diagonal_entry_of_semilinear_mod_subspace : ∀ (F : Type) [Field F] (n 
   have hcE : c • E ∈ W := by
     have h := W.sub_mem (W.sub_mem (W.add_mem (W.smul_mem (x ^ m * ξ ^ N) hTf) (W.smul_mem (x ^ m * ξ ^ N * ((d : PowerSeries F) : LaurentSeries F)) hf)) (W.smul_mem (((θ a : PowerSeries F) : LaurentSeries F)) hTe)) (W.smul_mem (x ^ m) h4)
     convert h using 1
-    funext i
-    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply, smul_eq_mul, hc, hP, hQ, hE, hFv]
+    ext i
+    simp only [Pi.smul_apply, Pi.sub_apply, Pi.add_apply, smul_eq_mul, hc]
     ring
   have hc0 : c = 0 := by
     by_contra hne

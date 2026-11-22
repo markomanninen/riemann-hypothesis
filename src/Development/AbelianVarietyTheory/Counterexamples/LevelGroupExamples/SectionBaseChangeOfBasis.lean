@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.SpMapAlgHomId
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CoefChangeTypingsEquivOfValueWD
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ChartCoverFOfSectionBaseChange
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRing
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.SpMapAlgHomId
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CoefChangeTypingsEquivOfValueWD
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ChartCoverFOfSectionBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRing
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 200000
@@ -51,7 +55,7 @@ theorem sum_coord {d : ℕ} (B : Module.Basis (Fin d) K K') {R : Type} [CommRing
     simp only [coord_tmul, Module.Basis.coord_apply, ← TensorProduct.smul_tmul]
     rw [← TensorProduct.sum_tmul, B.sum_repr]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
     rw [← hx, ← hy]
 
 def Ext (K K' R : Type) [Field K] [Field K'] [Algebra K K'] [CommRing R] [Algebra K R] : Type := K' ⊗[K] R
@@ -98,7 +102,8 @@ theorem exists_lift {S : Type} [CommRing S] [Algebra K S] [Algebra K' S]
   · show Φ ((1 : K') ⊗ₜ[K] v) = φ v
     simp [Φ]
   · have e := congrArg Φ (sum_coord B (R := R) v)
-    rw [map_sum] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at e
     refine e.trans (Finset.sum_congr rfl fun j _ => ?_)
     simp only [Φ, Algebra.TensorProduct.lift_tmul]
     rfl

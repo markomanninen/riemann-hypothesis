@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CplUniq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CplUniq
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.CA ReciprocityTheory.CA
 
@@ -23,7 +27,7 @@ private theorem precomplete_quot {R : Type} [CommRing R] (I K : Ideal R) [IsPrec
     | zero => simpa [g] using ha
     | succ n ih =>
       have : g (n + 1) = g n + d n := by simp only [g, Finset.sum_range_succ, add_assoc]
-      rw [this, map_add, ih, hd']; abel
+      rw [this, map_add (f := _), ih, hd']; abel
   have hc : ∀ {m n : ℕ}, m ≤ n → g m ≡ g n [SMOD (I ^ m • ⊤ : Submodule R R)] := by
     intro m n h
     induction h with
@@ -69,7 +73,7 @@ theorem UpperTheory.V.CA.cpl_quot :
   haveI : IsAdicComplete J (R ⧸ K) := by
     haveI := precomplete_quot (maximalIdeal R) K
     haveI : IsHausdorff (maximalIdeal R) (R ⧸ K) :=
-      IsHausdorff.of_le_jacobson _ _ (by rw [jacobson_eq_maximalIdeal _ bot_ne_top])
+      IsHausdorff.of_le_jacobson _ _ (ringJacobson_eq_maximalIdeal R).ge
     exact (IsAdicComplete.map_algebraMap_iff (S := R ⧸ K) (maximalIdeal R) (R ⧸ K)).2 ⟨⟩
   let g : C' →+* R ⧸ K := π.liftOfSurjective hπ ⟨(Ideal.Quotient.mk K).comp (algebraMap C R), fun c hc => by
     rw [RingHom.mem_ker, RingHom.comp_apply, Ideal.Quotient.eq_zero_iff_mem]

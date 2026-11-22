@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LCoverCut
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LCoverCut
+
+@[expose] public section
 
 noncomputable section
 open MvPolynomial
@@ -33,7 +37,8 @@ lemma exists_c {k K : Type} [Field k] [Infinite k] [Field K] [Algebra k K] {n : 
   set G : MvPolynomial (Fin (n + 1)) k := ∑ j, C (φ (a j)) * X j with hGdef
   have hG : ∀ c, eval c G = φ (∑ j, a j * algebraMap k K (c j)) := by
     intro c
-    simp only [hGdef, map_sum, map_mul, eval_C, eval_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hGdef, map_sum, map_mul, eval_C, eval_X]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_comm (a j), ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm]
   have hG0 : G ≠ 0 := by

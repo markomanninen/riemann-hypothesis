@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct
@@ -38,10 +42,12 @@ theorem eventually_mem_intLoc_iff_repr {d : ℕ} (b : Module.Basis (Fin d) F E) 
     intro x k
     have hx : (x : E) = ∑ j, (ω.repr x j) • ((ω j : 𝓞 E) : E) := by
       have := congrArg (algebraMap (𝓞 E) E) (ω.sum_repr x)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       simp only [map_zsmul] at this
       exact this.symm
-    rw [hx, map_sum, Finsupp.coe_finset_sum, Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, Finsupp.coe_finsetSum, Finset.sum_apply, map_sum]
     refine sum_mem fun j _ => ?_
     rw [map_zsmul, Finsupp.smul_apply, map_zsmul]
     exact zsmul_mem (h1 j k) _
@@ -58,7 +64,7 @@ theorem eventually_mem_intLoc_iff_repr {d : ℕ} (b : Module.Basis (Fin d) F E) 
     | zero => intro k; simp
     | add z w _ _ hz hw =>
       intro k
-      rw [map_add, Finsupp.add_apply]
+      rw [map_add (f := _), Finsupp.add_apply]
       exact add_mem (hz k) (hw k)
     | neg z _ hz =>
       intro k
@@ -75,11 +81,12 @@ theorem eventually_mem_intLoc_iff_repr {d : ℕ} (b : Module.Basis (Fin d) F E) 
 
 theorem eventually_latLoc_eq_latV :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n d : ℕ)
-      (b : Module.Basis (Fin d) F E) (L : Submodule (𝓞 E) (Fin n → E)), Submodule.IsLattice E L →
+      (b : Module.Basis (Fin d) F E) (L : Submodule (𝓞 E) (Fin n → E)), Submodule.IsFullLattice E L →
       ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite,
         {X : Fin 1 → Fin n → Fv F v ⊗[F] E | X 0 ∈ GlobalTheory.AdelicU.latLoc F L v} = latV b v := by
   intro F E _ _ _ _ _ n d b L hL
-  haveI := isLattice_stdLattice (E := E) (n := n)
+  have : Submodule.IsFullLattice E L := hL
+  have : Submodule.IsFullLattice E (stdLattice E n) := isLattice_stdLattice
   filter_upwards [eventually_latLoc_eq F L (stdLattice E n), eventually_mem_intLoc_iff_repr b]
     with v hv h1
   have hI : ∀ z : Fv F v ⊗[F] E, z ∈ intLoc F E v ↔
@@ -137,6 +144,6 @@ theorem eventually_latLoc_eq_latV :
         exact neg_mem hz
   ext X
   unfold latV
-  simp only [Set.mem_setOf_eq, hv, hloc, h1, Fin.forall_fin_one]
+  simp only [Set.mem_ofPred_eq, hv, hloc, h1, Fin.forall_fin_one]
 
 end GlobalTheory.AdelicU.Cofinite

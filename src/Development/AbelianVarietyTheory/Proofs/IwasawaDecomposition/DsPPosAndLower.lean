@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowHCParameterIsHCParamAndFormalDegreePos
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowHCParameterIsHCParamAndFormalDegreePos
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top NumberField IsDedekindDomain
 
@@ -30,14 +34,14 @@ theorem trueDsig_eq_dimV (R : Ranks) (p : HCParam R) :
     | left i =>
       have hi : d.val = i.val := hcd
       have h1 : d.val < R.k - 1 := hi ▸ i.2
-      rw [Fin.append_left, dif_pos h1]
+      rw [Fin.append_left, dite_eq_left h1]
       have e : (⟨d.val, h1⟩ : Fin (R.k - 1)) = i := Fin.ext hi
       rw [e]
     | right j =>
       have hj : d.val = R.k - 1 + j.val := hcd
       have h1 : ¬ d.val < R.k - 1 := by omega
       have h2 : d.val - (R.k - 1) < R.m := by have := j.2; omega
-      rw [Fin.append_right, dif_neg h1, dif_pos h2]
+      rw [Fin.append_right, dite_eq_right h1, dite_eq_left h2]
       have e : (⟨d.val - (R.k - 1), h2⟩ : Fin R.m) = j := Fin.ext (by simp only; omega)
       rw [e]
   exact key _ _ rfl

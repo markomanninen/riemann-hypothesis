@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BigRep
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BigCasA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BigRep
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BigCasA
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,9 +153,11 @@ theorem factorCasimir_nonneg (k : ℕ) (F : Big n k M) :
     simp only [LinearMap.sum_apply, sum_inner, inner_sum, factorAd_adjoint]
   unfold factorCasimir casimirK
   beta_reduce
-  rw [LinearMap.sum_apply, sum_inner, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, sum_inner, map_sum]
   refine Finset.sum_nonneg fun a _ => ?_
-  rw [LinearMap.sum_apply, sum_inner, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, sum_inner, map_sum]
   refine Finset.sum_nonneg fun b _ => ?_
   rw [Module.End.mul_apply, hadj]
   exact inner_self_nonneg

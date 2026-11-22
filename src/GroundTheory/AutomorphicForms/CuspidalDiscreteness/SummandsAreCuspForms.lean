@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContinuous
-import GroundTheory.AutomorphicForms.GKModules.KernelCalculus
-import GroundTheory.AutomorphicForms.DiscreteSpectrumAbstract
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContinuous
+public import GroundTheory.AutomorphicForms.GKModules.KernelCalculus
+public import GroundTheory.AutomorphicForms.DiscreteSpectrumAbstract
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function
 
@@ -17,7 +21,7 @@ open AutomorphicForm RightCosetSpace Reduction
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-local notation "Γ₁" => Reduction.rationalGLOne K n
+local notation "Γ₁" => Reduction.rationalGLOne (K := K) (n := n)
 
 theorem retractOne_mul (g h : AdelicGLn.AdelicGL K n) :
     retractOne (g * h) = retractOne g * retractOne h := by
@@ -29,15 +33,15 @@ theorem retractOne_mul (g h : AdelicGLn.AdelicGL K n) :
     ← centralSection_inv_mul_comm (detModule K n g) h,
     mul_assoc (centralSection K n (detModule K n g))⁻¹]
 
-theorem retractOne_coe (x : normOneGL K n) : retractOne (x : AdelicGLn.AdelicGL K n) = x := by
+theorem retractOne_coe (x : normOneGL (K := K) (n := n)) : retractOne (x : AdelicGLn.AdelicGL K n) = x := by
   ext1
   rw [coe_retractOne, (mem_normOneGL_iff_detModule).1 x.2, map_one, inv_one, mul_one]
 
-theorem retractOne_mul_coe (g : AdelicGLn.AdelicGL K n) (x : normOneGL K n) :
+theorem retractOne_mul_coe (g : AdelicGLn.AdelicGL K n) (x : normOneGL (K := K) (n := n)) :
     retractOne (g * (x : AdelicGLn.AdelicGL K n)) = retractOne g * x := by
   rw [retractOne_mul, retractOne_coe]
 
-theorem retractOne_coe_mul (x : normOneGL K n) (g : AdelicGLn.AdelicGL K n) :
+theorem retractOne_coe_mul (x : normOneGL (K := K) (n := n)) (g : AdelicGLn.AdelicGL K n) :
     retractOne ((x : AdelicGLn.AdelicGL K n) * g) = x * retractOne g := by
   rw [retractOne_mul, retractOne_coe]
 
@@ -52,17 +56,17 @@ theorem retractOne_centralSection (s : {r : ℝ // 0 < r}) : retractOne (central
     rw [coe_retractOne, detModule_centralSection hn, mul_inv_cancel]
     rfl
 
-def liftOne (F : normOneGL K n → ℂ) (g : AdelicGLn.AdelicGL K n) : ℂ := F (retractOne g)
+def liftOne (F : normOneGL (K := K) (n := n) → ℂ) (g : AdelicGLn.AdelicGL K n) : ℂ := F (retractOne g)
 
-theorem liftOne_coe (F : normOneGL K n → ℂ) (x : normOneGL K n) :
+theorem liftOne_coe (F : normOneGL (K := K) (n := n) → ℂ) (x : normOneGL (K := K) (n := n)) :
     liftOne F (x : AdelicGLn.AdelicGL K n) = F x := by
   rw [liftOne, retractOne_coe]
 
-theorem liftOne_centralSection_mul (F : normOneGL K n → ℂ) (s : {r : ℝ // 0 < r})
+theorem liftOne_centralSection_mul (F : normOneGL (K := K) (n := n) → ℂ) (s : {r : ℝ // 0 < r})
     (g : AdelicGLn.AdelicGL K n) : liftOne F (centralSection K n s * g) = liftOne F g := by
   rw [liftOne, liftOne, retractOne_mul, retractOne_centralSection, one_mul]
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem exists_isContRep_of_mem_span {X : Set (Lp ℂ 2 (quotientMeasure Γ₁ μ))}
     (hX : ∀ x ∈ X, ∃ F, IsContRep μ x F) {w : Lp ℂ 2 (quotientMeasure Γ₁ μ)}
@@ -108,17 +112,17 @@ theorem finiteDimensional_span_liftOne (W : Submodule ℂ (Lp ℂ 2 (quotientMea
 
 variable (ν : Measure (archGroup K n)) [ν.IsHaarMeasure]
 
-theorem eq_integral_of_integrated_eq {v : CuspL2 μ} {Φ : normOneGL K n → ℂ}
+theorem eq_integral_of_integrated_eq {v : CuspL2 μ} {Φ : normOneGL (K := K) (n := n) → ℂ}
     (hrep : IsContRep μ (toLp μ v) Φ) {C : ℝ} (hb : ∀ y, ‖Φ y‖ ≤ C) {κ : archGroup K n → ℂ}
     (hκt : (isExpLieAlgebra K n).IsTestFunction κ) (hκv : (archRepT μ).integrated ν κ v = v)
-    (y : normOneGL K n) : Φ y = ∫ a, κ a * Φ (y * archP K n a) ∂ν :=
+    (y : normOneGL (K := K) (n := n)) : Φ y = ∫ a, κ a * Φ (y * archP K n a) ∂ν :=
   congrFun (hrep.unique ((isContRep_integrated_archRepT μ ν hrep hb hκt.continuous hκt.2).of_eq
     (congrArg (toLp μ) hκv))) y
 
-omit [μ.IsHaarMeasure] in
 
-theorem slice_eq_integral {Φ : normOneGL K n → ℂ} {κ : archGroup K n → ℂ}
-    (hΦκ : ∀ y, Φ y = ∫ a, κ a * Φ (y * archP K n a) ∂ν) (y : normOneGL K n) :
+omit [μ.IsHaarMeasure] in
+theorem slice_eq_integral {Φ : normOneGL (K := K) (n := n) → ℂ} {κ : archGroup K n → ℂ}
+    (hΦκ : ∀ y, Φ y = ∫ a, κ a * Φ (y * archP K n a) ∂ν) (y : normOneGL (K := K) (n := n)) :
     (fun x : archGroup K n => Φ (y * archP K n x)) =
       fun x => ∫ a, (fun x : archGroup K n => Φ (y * archP K n x)) (x * a) * κ a ∂ν := by
   funext x
@@ -126,11 +130,11 @@ theorem slice_eq_integral {Φ : normOneGL K n → ℂ} {κ : archGroup K n → �
   show κ a * Φ (y * archP K n x * archP K n a) = Φ (y * archP K n (x * a)) * κ a
   rw [map_mul, mul_assoc y, mul_comm]
 
-omit [μ.IsHaarMeasure] in
 
-theorem isSmoothFun_slice {Φ : normOneGL K n → ℂ} (hΦc : Continuous Φ) {κ : archGroup K n → ℂ}
+omit [μ.IsHaarMeasure] in
+theorem isSmoothFun_slice {Φ : normOneGL (K := K) (n := n) → ℂ} (hΦc : Continuous Φ) {κ : archGroup K n → ℂ}
     (hκt : (isExpLieAlgebra K n).IsTestFunction κ)
-    (hΦκ : ∀ y, Φ y = ∫ a, κ a * Φ (y * archP K n a) ∂ν) (y : normOneGL K n) :
+    (hΦκ : ∀ y, Φ y = ∫ a, κ a * Φ (y * archP K n a) ∂ν) (y : normOneGL (K := K) (n := n)) :
     (isExpLieAlgebra K n).IsSmoothFun (fun x : archGroup K n => Φ (y * archP K n x)) := by
   have hΨ : Continuous (fun x : archGroup K n => Φ (y * archP K n x)) :=
     hΦc.comp (continuous_const.mul continuous_archP)
@@ -138,13 +142,13 @@ theorem isSmoothFun_slice {Φ : normOneGL K n → ℂ} (hΦc : Continuous Φ) {�
   exact (isExpLieAlgebra K n).isSmoothFun_integral_mul ν hΨ hκt
 
 theorem exists_uAction_slice {v : CuspL2 μ} (hs : (isExpLieAlgebra K n).IsSmoothVector (archRepT μ) v)
-    {Φ : normOneGL K n → ℂ} (hΦc : Continuous Φ) {κ : archGroup K n → ℂ}
+    {Φ : normOneGL (K := K) (n := n) → ℂ} (hΦc : Continuous Φ) {κ : archGroup K n → ℂ}
     (hκt : (isExpLieAlgebra K n).IsTestFunction κ) (hκv : (archRepT μ).integrated ν κ v = v)
     (hΦκ : ∀ y, Φ y = ∫ a, κ a * Φ (y * archP K n a) ∂ν) (u : UEnv K n) :
     ∃ γ : archGroup K n → ℂ, (isExpLieAlgebra K n).IsTestFunction γ ∧
       ((isExpLieAlgebra K n).uAction (archRepT μ) u ⟨v, hs⟩ : CuspL2 μ) =
         (archRepT μ).integrated ν γ v ∧
-      ∀ y : normOneGL K n, ((isExpLieAlgebra K n).rightUAction (F := ℂ) u
+      ∀ y : normOneGL (K := K) (n := n), ((isExpLieAlgebra K n).rightUAction (F := ℂ) u
           ⟨fun x => Φ (y * archP K n x), isSmoothFun_slice ν hΦc hκt hΦκ y⟩ : archGroup K n → ℂ) =
         fun x => ∫ a, Φ (y * archP K n (x * a)) * γ a ∂ν := by
   obtain ⟨γ, hγ, hvec, hfun⟩ := (isExpLieAlgebra K n).exists_uAction_integrated ν (archRepT μ) u hκt
@@ -173,8 +177,8 @@ def IsZKFinite (v : CuspL2 μ) : Prop :=
     FiniteDimensional ℂ (Submodule.span ℂ ((fun z => (isExpLieAlgebra K n).uAction (archRepT μ) z
       ⟨v, hs⟩) '' ((isExpLieAlgebra K n).centerU : Set _)))
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_cuspForm_of_isZKFinite (v : CuspL2 μ) (hv : IsZKFinite μ v) :
     ∃ φ : cuspForms K n,
       ((cuspToL2 μ φ : cuspidalL2 μ) : Lp ℂ 2 (quotientMeasure Γ₁ μ)) = toLp μ v ∧
@@ -204,8 +208,8 @@ theorem exists_cuspForm_of_isZKFinite (v : CuspL2 μ) (hv : IsZKFinite μ v) :
 
   have hli : IsLeftInvariant (liftOne Φ) := by
     intro γ g
-    have hγ1 : AdelicGLn.diagonal K n γ ∈ normOneGL K n := rationalGL_le_normOneGL ⟨γ, rfl⟩
-    have hγΓ : (⟨AdelicGLn.diagonal K n γ, hγ1⟩ : normOneGL K n) ∈ Γ₁ := ⟨γ, rfl⟩
+    have hγ1 : AdelicGLn.diagonal K n γ ∈ normOneGL (K := K) (n := n) := rationalGL_le_normOneGL ⟨γ, rfl⟩
+    have hγΓ : (⟨AdelicGLn.diagonal K n γ, hγ1⟩ : normOneGL (K := K) (n := n)) ∈ Γ₁ := ⟨γ, rfl⟩
     exact (congrArg Φ (retractOne_coe_mul ⟨_, hγ1⟩ g)).trans (hrep.2.1 _ hγΓ _)
 
   have hKf : IsKFinite (liftOne Φ) := by
@@ -238,7 +242,7 @@ theorem exists_cuspForm_of_isZKFinite (v : CuspL2 μ) (hv : IsZKFinite μ v) :
       show Φ (retractOne (g * (k : AdelicGLn.AdelicGL K n))) = Φ (retractOne g * _)
       rw [← retractOne_mul_coe g ⟨k, Reduction.maxCompact_le_normOneGL k.2⟩]
 
-  have hder : ∀ u : UEnv K n, ∃ F : normOneGL K n → ℂ,
+  have hder : ∀ u : UEnv K n, ∃ F : normOneGL (K := K) (n := n) → ℂ,
       IsContRep μ (toLp μ ((isExpLieAlgebra K n).uAction (archRepT μ) u ⟨v, hs⟩ : CuspL2 μ)) F ∧
         (uAction u ⟨liftOne Φ, hsm⟩ : AdelicGLn.AdelicGL K n → ℂ) = liftOne F := by
     intro u
@@ -301,7 +305,7 @@ theorem exists_cuspForm_of_isZKFinite (v : CuspL2 μ) (hv : IsZKFinite μ v) :
     unfold constantTerm
     refine setIntegral_congr_fun (measurableSet_unipFundamentalDomain (K := K) (n := n) (r := r))
       fun X _ => ?_
-    show Φ (retractOne ((unipOne K n r X : AdelicGLn.AdelicGL K n) * g)) = _
+    show Φ (retractOne ((unipOne (K := K) (n := n) r X : AdelicGLn.AdelicGL K n) * g)) = _
     rw [retractOne_coe_mul]
   have haf : IsAutomorphicForm (liftOne Φ) :=
     { isLeftInvariant := hli
@@ -316,30 +320,6 @@ theorem exists_cuspForm_of_isZKFinite (v : CuspL2 μ) (hv : IsZKFinite μ v) :
   obtain ⟨y, rfl⟩ := mk_surjective Γ₁ q
   rw [cuspQuot_mk, quotFun_mk]
   exact liftOne_coe Φ y
-
-theorem exists_cuspToL2_eq_of_isZKFinite (v : cuspidalL2 μ) (hv : IsZKFinite μ v) :
-    ∃ φ : cuspForms K n, cuspToL2 μ φ = v ∧
-      ∀ (s : {r : ℝ // 0 < r}) (g : AdelicGLn.AdelicGL K n),
-        (φ : AdelicGLn.AdelicGL K n → ℂ) (centralSection K n s * g) = (φ : AdelicGLn.AdelicGL K n → ℂ) g := by
-  obtain ⟨φ, hφ, hz⟩ := exists_cuspForm_of_isZKFinite μ v hv
-  exact ⟨φ, Subtype.ext hφ, hz⟩
-
-theorem isZKFinite_subset_range_cuspToL2 :
-    {v : CuspL2 μ | IsZKFinite μ v} ⊆
-      (toLp μ) ⁻¹' ((fun φ : cuspForms K n =>
-        ((cuspToL2 μ φ : cuspidalL2 μ) : Lp ℂ 2 (quotientMeasure Γ₁ μ))) '' Set.univ) := by
-  intro v hv
-  obtain ⟨φ, hφ, -⟩ := exists_cuspForm_of_isZKFinite μ v hv
-  exact ⟨φ, Set.mem_univ _, hφ⟩
-
-theorem exists_cuspForm_of_mem_summand (V : Submodule ℂ (CuspL2 μ)) [CompleteSpace V]
-    (hV : (cuspRepT μ).IsInvariant V) (_hirr : ((cuspRepT μ).restrict V hV).IsIrreducible)
-    {v : CuspL2 μ} (_hvV : v ∈ V) (hv : IsZKFinite μ v) :
-    ∃ φ : cuspForms K n,
-      ((cuspToL2 μ φ : cuspidalL2 μ) : Lp ℂ 2 (quotientMeasure Γ₁ μ)) = toLp μ v ∧
-      ∀ (s : {r : ℝ // 0 < r}) (g : AdelicGLn.AdelicGL K n),
-        (φ : AdelicGLn.AdelicGL K n → ℂ) (centralSection K n s * g) = (φ : AdelicGLn.AdelicGL K n → ℂ) g :=
-  exists_cuspForm_of_isZKFinite μ v hv
 
 end CuspidalSpectrum
 

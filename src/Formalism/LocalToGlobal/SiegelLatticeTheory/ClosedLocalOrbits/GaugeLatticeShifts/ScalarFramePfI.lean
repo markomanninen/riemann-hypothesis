@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfH
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfH
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,13 +24,13 @@ theorem GZ_apply (u v : Fin (D.R.rS + 1) → (VS D).V) (a b : Fin (D.R.rS + 1)) 
 
 theorem GDl_top' (u v : Fin (D.R.rS + 1) → (VS D).V) : GDl u v (D.R.rS + 1) = (GZ u v).det := by
   unfold GDl
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   congr 1
 
 theorem GDl_r' (u v : Fin (D.R.rS + 1) → (VS D).V) :
     GDl u v D.R.rS = ((GZ u v).submatrix Fin.castSucc Fin.castSucc).det := by
   unfold GDl
-  rw [dif_pos (Nat.le_succ _)]
+  rw [dite_eq_left (Nat.le_succ _)]
   have ecs : (Fin.castLE (Nat.le_succ D.R.rS) : Fin D.R.rS → Fin (D.R.rS + 1)) = Fin.castSucc :=
     funext fun i => Fin.ext rfl
   rw [ecs]
@@ -37,7 +41,8 @@ theorem om'_pair (u v : Fin (D.R.rS + 1) → (VS D).V) (a : Fin (D.R.rS + 1)) :
   rw [Matrix.mul_apply, Matrix.smul_apply, Matrix.one_apply] at key
   rw [GDl_top']
   unfold Gom'
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul]
   rw [show (∑ b, (GZ u v).adjugate b (Fin.last _) * (VS D).hT (u a) (v b)) =
       ∑ b, GZ u v a b * (GZ u v).adjugate b (Fin.last _) from
@@ -56,7 +61,8 @@ theorem om_pair (u v : Fin (D.R.rS + 1) → (VS D).V) (b : Fin (D.R.rS + 1)) :
   rw [Matrix.mul_apply, Matrix.smul_apply, Matrix.one_apply] at key
   rw [GDl_top']
   unfold Gom
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   simp only [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
   rw [show (∑ a, (GZ u v).adjugate (Fin.last _) a * (VS D).hT (u a) (v b)) =
       ∑ a, (GZ u v).adjugate (Fin.last _) a * GZ u v a b from rfl, key]
@@ -77,7 +83,8 @@ theorem lemB (u v : Fin (D.R.rS + 1) → (VS D).V) (hdet : GDl u v (D.R.rS + 1) 
   have hm : Matrix.mulVec (GZ u v) π = 0 := by
     funext a
     have := h a
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_smul, smul_eq_mul] at this
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply, GZ_apply]
     rw [← this]
@@ -92,7 +99,8 @@ theorem eq_zero_of_orth_of_det_ne_zero (u v : Fin (D.R.rS + 1) → (VS D).V) (hd
   have hm : Matrix.vecMul (fun a => star (κ a)) (GZ u v) = 0 := by
     funext b
     have := h b
-    rw [map_sum, LinearMap.sum_apply] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply] at this
     simp only [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply] at this
     simp only [Matrix.vecMul, dotProduct, Pi.zero_apply, GZ_apply]
     exact this

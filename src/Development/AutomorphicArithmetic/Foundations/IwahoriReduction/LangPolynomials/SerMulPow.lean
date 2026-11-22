@@ -1,16 +1,20 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.NormGal
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.NormLev
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.SubOneMemOfPow
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DlogCmp
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.PresMono
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.WdVal
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.NormGal
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.NormLev
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.SubOneMemOfPow
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DlogCmp
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.PresMono
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.WdVal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 
 private theorem map_dl_eq_dl_map_of_isUnit {R : Type} [CommRing R] (φ : R →+* R) (f : PowerSeries R) (hf : IsUnit f) :
     PowerSeries.map φ (dl f) = dl (PowerSeries.map φ f) := by
-  have hd : PowerSeries.map φ (PowerSeries.derivative R f) = PowerSeries.derivative R (PowerSeries.map φ f) := by
+  have hd : PowerSeries.map φ (PowerSeries.derivative (R := R) f) = PowerSeries.derivative (R := R) (PowerSeries.map φ f) := by
     ext n
     simp [PowerSeries.coeff_derivative, PowerSeries.coeff_map]
   obtain ⟨u, rfl⟩ := hf

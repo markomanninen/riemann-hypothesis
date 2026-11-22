@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementD
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.BigCellVanishingOfCommute
-import Formalism.HermitianCurvature.StatementU
-import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.MulVecBvecApply
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementD
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.BigCellVanishingOfCommute
+public import Formalism.HermitianCurvature.StatementU
+public import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.MulVecBvecApply
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 

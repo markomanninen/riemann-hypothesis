@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeNullModP
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeNull
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeNullModP
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeNull
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -86,7 +91,7 @@ theorem PullConeNullModP.proof : PullConeNullModP.Statement := by
         Ideal.mem_span_singleton'] at hb'
       obtain ⟨h, rfl⟩ := hb'
       refine ⟨n, π h, ?_⟩
-      rw [← map_pow, ← hab, map_add, Ideal.Quotient.eq_zero_iff_mem.mpr ha, zero_add, map_mul, map_natCast C p,
+      rw [← map_pow, ← hab, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.mpr ha, zero_add, map_mul, map_natCast C p,
         map_natCast, mul_comm]
 
     obtain ⟨a, M₀, hM₀, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hM₁ p hp.ne_one

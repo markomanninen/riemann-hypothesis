@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayDensExHua
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayDensExHua
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,7 @@ theorem tauDeriv_at (h : UpqT P Q) (x : lieU P Q) (hx : x ∈ D0 P Q)
     rfl
   have hF : HasFDerivAt (fun y : lieU P Q => ((tauL h y : lieU P Q) : Mat)) (L.comp ι) x :=
     (HasFDerivAt.comp x hM ι.hasFDerivAt).congr_of_eventuallyEq heq
-  have hclosed : IsClosed ((lieU P Q : Set Mat)) := (lieU P Q).closed_of_finiteDimensional
+  have hclosed : IsClosed ((lieU P Q : Set Mat)) := (lieU P Q).isClosed_of_finiteDimensional
   have hmem : ∀ Y, (L.comp ι) Y ∈ lieU P Q := by
     intro Y
     exact hclosed.mem_of_tendsto (hF.lim_real Y) (Eventually.of_forall fun c =>

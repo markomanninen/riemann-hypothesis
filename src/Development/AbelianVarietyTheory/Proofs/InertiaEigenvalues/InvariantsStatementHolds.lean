@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsIsoOfGenerators
-import Formalism.SharpRestriction.LevelLetterCocycles.ZlWCbInjective
-import Formalism.SharpRestriction.LevelLetterCocycles.NormLtOneIffToZMod
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsIsoOfGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.ZlWCbInjective
+public import Formalism.SharpRestriction.LevelLetterCocycles.NormLtOneIffToZMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,10 +56,6 @@ theorem genFix_of_dense (S : Sit) (hT2 : ∀ T : LocLat S.G S.Qp S.LL S.O, T2Spa
   exact (hact g).2 (hall (Set.mem_univ g))
 
 variable {l : ℕ} [Fact l.Prime]
-
-local instance contMulLL (LL : FinExt l) : ContinuousMul ↥LL.1 :=
-  ⟨continuous_induced_rng.2 ((continuous_subtype_val.comp continuous_fst).mul
-    (continuous_subtype_val.comp continuous_snd))⟩
 
 local instance contAddLL (LL : FinExt l) : ContinuousAdd ↥LL.1 :=
   ⟨continuous_induced_rng.2 ((continuous_subtype_val.comp continuous_fst).add
@@ -166,7 +166,7 @@ theorem chiQ_cont (P : LocPrime l) : Continuous (fun h : GQ l => (P.χQ h : ℚ_
   haveI : FiniteDimensional ℚ_[l] E :=
     IntermediateField.adjoin.finiteDimensional (Algebra.IsIntegral.isIntegral _)
   have hU : IsOpen (E.fixingSubgroup : Set (GQ l)) := E.fixingSubgroup_isOpen
-  have hopen : IsOpen {h : GQ l | g⁻¹ * h ∈ E.fixingSubgroup} := hU.preimage (continuous_mul_left g⁻¹)
+  have hopen : IsOpen {h : GQ l | g⁻¹ * h ∈ E.fixingSubgroup} := hU.preimage (continuous_const_mul g⁻¹)
   filter_upwards [hopen.mem_nhds (by simp)] with h hh
   rw [dist_eq_norm]
   have hfix : (g⁻¹ * h) (P.ζQ (m + 1)) = P.ζQ (m + 1) :=

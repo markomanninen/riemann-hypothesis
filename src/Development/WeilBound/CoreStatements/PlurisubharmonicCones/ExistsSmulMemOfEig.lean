@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AbelianPartHeightLinear
+module
+
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AbelianPartHeightLinear
+
+@[expose] public section
 
 noncomputable section
 

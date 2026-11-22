@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.BasisSet
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CompactCovering.NCovAd
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtraMore
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.BasisSet
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CompactCovering.NCovAd
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtraMore
+
+@[expose] public section
 
 noncomputable section
 
@@ -279,7 +283,7 @@ theorem finite_bad {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F ψ) :
   let K : Submodule (𝓞 F) F :=
     { carrier := {x | ∀ c : 𝓞 F, ψ (pairA F 0 (algebraMap F (Af F) ((c : F) * x))) = 1}
       add_mem' := fun {x y} hx hy c => by
-        rw [mul_add, map_add, pairA_add_snd, AddChar.map_add_eq_mul, hx c, hy c, one_mul]
+        rw [mul_add, map_add (f := _), pairA_add_snd, AddChar.map_add_eq_mul, hx c, hy c, one_mul]
       zero_mem' := fun c => by rw [mul_zero, map_zero]; exact h0
       smul_mem' := fun c' x hx c => by
         have e : (c : F) * (c' • x) = ((c * c' : 𝓞 F) : F) * x := by

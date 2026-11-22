@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.TorsionDualFinite
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.TorsionDualFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -22,7 +27,7 @@ theorem mem_traceSub {σ : M →+ M} {x : M} : x ∈ traceSub σ ↔ ∃ y, y + 
 theorem traceSub_le_fixedSub {σ : M →+ M} (hσ : ∀ x, σ (σ x) = x) : traceSub σ ≤ fixedSub σ := by
   intro x hx
   obtain ⟨y, rfl⟩ := mem_traceSub.1 hx
-  rw [mem_fixedSub, map_add, hσ, add_comm]
+  rw [mem_fixedSub, map_add (f := _), hσ, add_comm]
 
 abbrev tateQuot (σ : M →+ M) : Type _ :=
   fixedSub σ ⧸ (traceSub σ).addSubgroupOf (fixedSub σ)
@@ -43,10 +48,10 @@ theorem mem_fixedSub_dualInv_iff {σ : M →+ M} (f : M →+ QZ) :
   · intro h y
     have e := DFunLike.congr_fun h y
     rw [dualInv_apply] at e
-    rw [map_add, ← e, neg_add_cancel]
+    rw [map_add (f := _), ← e, neg_add_cancel]
   · intro h
     ext y
-    rw [dualInv_apply, neg_eq_iff_add_eq_zero, add_comm, ← map_add]
+    rw [dualInv_apply, neg_eq_iff_add_eq_zero, add_comm, ← map_add (f := _)]
     exact h y
 
 def fixedPair (σ : M →+ M) : fixedSub σ →+ fixedSub (dualInv σ) →+ QZ where
@@ -105,7 +110,7 @@ theorem tatePair_mk (σ : M →+ M) (x : fixedSub σ) (f : fixedSub (dualInv σ)
 variable {σ : M →+ M}
 
 theorem tatePair_injective : Function.Injective (tatePair σ) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨x, rfl⟩ := QuotientAddGroup.mk_surjective x
   rw [QuotientAddGroup.eq_zero_iff, AddSubgroup.mem_addSubgroupOf]
@@ -123,7 +128,7 @@ theorem tatePair_injective : Function.Injective (tatePair σ) := by
   exact DFunLike.congr_fun hx (((⟨f, hf⟩ : fixedSub (dualInv σ))) : tateQuot (dualInv σ))
 
 theorem tatePair_flip_injective : Function.Injective (tatePair σ).flip := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro f hf
   obtain ⟨f, rfl⟩ := QuotientAddGroup.mk_surjective f
   rw [QuotientAddGroup.eq_zero_iff, AddSubgroup.mem_addSubgroupOf]
@@ -173,11 +178,6 @@ def fixedSubCongr (e : M ≃+ N) {σ : M →+ M} {τ : N →+ N} (he : ∀ x, e 
   right_inv y := Subtype.ext (e.apply_symm_apply (y : N))
   map_add' x y := Subtype.ext (map_add e (x : M) (y : M))
 
-@[simp]
-theorem coe_fixedSubCongr_apply (e : M ≃+ N) {σ : M →+ M} {τ : N →+ N}
-    (he : ∀ x, e (σ x) = τ (e x)) (x : fixedSub σ) : (fixedSubCongr e he x : N) = e (x : M) :=
-  rfl
-
 def tateQuotCongr (e : M ≃+ N) {σ : M →+ M} {τ : N →+ N} (he : ∀ x, e (σ x) = τ (e x)) :
     tateQuot σ ≃+ tateQuot τ :=
   QuotientAddGroup.congr _ _ (fixedSubCongr e he) (by
@@ -188,13 +188,13 @@ def tateQuotCongr (e : M ≃+ N) {σ : M →+ M} {τ : N →+ N} (he : ∀ x, e 
       obtain ⟨z, hz⟩ := mem_traceSub.1 hx
       refine mem_traceSub.2 ⟨e z, ?_⟩
       show e z + τ (e z) = e (x : M)
-      rw [← he, ← map_add, hz]
+      rw [← he, ← map_add (f := _), hz]
     · intro hy
       refine ⟨(fixedSubCongr e he).symm y, ?_, AddEquiv.apply_symm_apply _ _⟩
       obtain ⟨z, hz⟩ := mem_traceSub.1 hy
       refine mem_traceSub.2 ⟨e.symm z, ?_⟩
       apply e.injective
-      rw [map_add, he, e.apply_symm_apply, hz]
+      rw [map_add (f := _), he, e.apply_symm_apply, hz]
       change (y : N) = e (e.symm (y : N))
       rw [e.apply_symm_apply])
 

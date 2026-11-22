@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WeakApproxDVR
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.SmOneOfNotIsUnit
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WeakApproxDVR
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.SmOneOfNotIsUnit
+
+@[expose] public section
 
 noncomputable section
 

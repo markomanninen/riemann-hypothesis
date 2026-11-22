@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 
@@ -75,49 +79,6 @@ structure LES (i : Hom A B) (p : Hom B C) (δ : ∀ n, C.H n →ₗ[R] A.H (n + 
   exB : ∀ n, Function.Exact (i.H n) (p.H n)
   exC : ∀ n, Function.Exact (p.H n) (δ n)
   exA : ∀ n, Function.Exact (δ n) (i.H (n + 1))
-
-def up (B : Cx R) : Cx R where
-  X n := match n with | 0 => PUnit | n + 1 => B.X n
-  acg n := match n with | 0 => inferInstance | _ + 1 => inferInstance
-  mod n := match n with | 0 => inferInstance | _ + 1 => inferInstance
-  d n := match n with | 0 => 0 | n + 1 => -B.d n
-  dd n x := match n with
-    | 0 => by show -B.d 0 0 = 0; simp
-    | n + 1 => by show -B.d (n + 1) (-B.d n x) = 0; simp [B.dd]
-
-def fib (φ : Hom A B) : Cx R where
-  X n := A.X n × B.up.X n
-  d n := LinearMap.prod ((A.d n).comp (LinearMap.fst R _ _))
-    ((show A.X n →ₗ[R] B.up.X (n + 1) from φ.f n).coprod (B.up.d n))
-  dd n x := by
-    refine Prod.ext (A.dd n x.1) ?_
-    have h := B.up.dd n x.2
-    show φ.f (n + 1) (A.d n x.1) + -B.d n (φ.f n x.1 + (show B.X n from B.up.d n x.2)) = 0
-    have h' : -B.d n (show B.X n from B.up.d n x.2) = 0 := h
-    rw [map_add, neg_add, h', φ.comm]; simp
-
-def fibFst (φ : Hom A B) : Hom (fib φ) A := ⟨fun _ => LinearMap.fst R _ _, fun _ _ => rfl⟩
-
-def IsFibConn (φ : Hom A B) (δ : ∀ n, B.H n →ₗ[R] (fib φ).H (n + 1)) : Prop :=
-  ∀ n (b : B.X n) (hb : B.d n b = 0) (h : (fib φ).d (n + 1) (0, b) = 0),
-    δ n (B.cls n b hb) = (fib φ).cls (n + 1) (0, b) h
-
-def prod (A B : Cx R) : Cx R where
-  X n := A.X n × B.X n
-  d n := (A.d n).prodMap (B.d n)
-  dd n x := Prod.ext (A.dd n x.1) (B.dd n x.2)
-
-def pi {ι : Type u} (A : ι → Cx R) : Cx R where
-  X n := ∀ v, (A v).X n
-  d n := LinearMap.pi fun v => ((A v).d n).comp (LinearMap.proj v)
-  dd n x := funext fun v => (A v).dd n (x v)
-
-def prodFst (A B : Cx R) : Hom (prod A B) A := ⟨fun _ => LinearMap.fst R _ _, fun _ _ => rfl⟩
-
-def prodSnd (A B : Cx R) : Hom (prod A B) B := ⟨fun _ => LinearMap.snd R _ _, fun _ _ => rfl⟩
-
-def piProj {ι : Type u} (A : ι → Cx R) (v : ι) : Hom (pi A) (A v) :=
-  ⟨fun _ => LinearMap.proj v, fun _ _ => rfl⟩
 
 def FinLen (A : Cx R) (N : ℕ) : Prop :=
   (∀ n, IsFiniteLength R (A.H n)) ∧ ∀ n, N < n → Subsingleton (A.H n)

@@ -1,6 +1,10 @@
-import Formalism.LagrangeIdealLifts.LiftLagrangeIdealInt
-import Formalism.CoboundaryTransfers.StatementBridge
-import Formalism.CoboundaryTransfers.StatementTransfer
+module
+
+public import Formalism.LagrangeIdealLifts.LiftLagrangeIdealInt
+public import Formalism.CoboundaryTransfers.StatementBridge
+public import Formalism.CoboundaryTransfers.StatementTransfer
+
+@[expose] public section
 
 noncomputable section
 

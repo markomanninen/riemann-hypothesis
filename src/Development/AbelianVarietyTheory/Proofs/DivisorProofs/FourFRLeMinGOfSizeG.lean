@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions
 

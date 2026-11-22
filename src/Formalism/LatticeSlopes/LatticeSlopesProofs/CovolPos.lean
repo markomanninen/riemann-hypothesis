@@ -1,5 +1,9 @@
-import Formalism.LatticeSlopes.Statement
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+module
+
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+
+@[expose] public section
 
 open Module Submodule
 

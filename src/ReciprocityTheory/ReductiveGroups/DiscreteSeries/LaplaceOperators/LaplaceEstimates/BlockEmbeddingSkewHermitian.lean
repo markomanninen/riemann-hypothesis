@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SIntEquiv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.BasePointPsiExpFormula
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.Central
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.FromHC
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SIntEquiv
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.BasePointPsiExpFormula
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.Central
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.FromHC
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,7 +129,7 @@ theorem exp_embed (A : Matrix (Fin k) (Fin k) ℂ) :
         abel
       map_zero' := by simp
       map_add' := fun x y => by
-        simp only [Prod.fst_add, Prod.snd_add, map_add, add_smul]; abel }
+        simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), add_smul]; abel }
   have hf : Continuous f :=
     ((emb0 k r).continuous_of_finiteDimensional.comp continuous_fst).add (continuous_snd.smul continuous_const)
   have h := NormedSpace.map_exp f hf (A, (0 : ℂ))

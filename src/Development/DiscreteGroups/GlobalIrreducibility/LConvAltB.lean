@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvAltA
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvAltA
+
+@[expose] public section
 
 noncomputable section
 
@@ -147,7 +151,8 @@ theorem alt_quot {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G
     rfl
   have h1' : Y''.mkQ (∑ σ : Equiv.Perm (Fin d), ((Equiv.Perm.sign σ : ℤ) : ℂ) •
       ((List.ofFn fun i => g (σ i)).map TY).prod e') = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine (Finset.sum_congr rfl fun σ _ => ?_).trans h1
     rw [map_smul, hsum]
   have h2 := (Submodule.Quotient.mk_eq_zero Y'').mp h1'

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.lift_levelP_alt₂
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSplitAdelicMatrixLocalComponentStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.lift_levelP_alt₂
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSplitAdelicMatrixLocalComponentStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,10 +12,10 @@ open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.LFun Positiv
 
 namespace GlobalTheory.CompanionTheory.SatakeBound
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def IsFix (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) (v : π.V) : Prop :=
-  ∀ k ∈ KGL w a, π.locRep w k v = v
+  ∀ k ∈ KGL w (n := a), π.locRep w k v = v
 
 def sphSpan (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) : Submodule ℂ (Sm E a) :=
   Submodule.span ℂ {φ | ∃ (g : GL (Fin a) (w.adicCompletion E)) (v : π.V), IsFix π w v ∧ φ = (π.locRep w g v).1}
@@ -70,7 +74,7 @@ theorem fin_translate (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) (k : G
   rw [e2]
   exact mem_sphSpan π w gw hfix
 
-theorem isStable_sphSpan (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) : IsStable (sphSpan π w) := by
+theorem isStable_sphSpan (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) : _root_.GlobalTheory.CuspRep.IsStable (sphSpan π w) := by
   intro o φ hφ
   induction hφ using Submodule.span_induction with
   | mem x hx =>
@@ -80,7 +84,7 @@ theorem isStable_sphSpan (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) : I
     | cpt y => exact act_translate π w _ (fun u => cpt_comm y _) g hv
     | lie X => exact act_translate π w _ (fun u => lie_comm' X _) g hv
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem sphSpan_le (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) : sphSpan π w ≤ π.V :=

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.UnitVectorOrthogonal
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnramifiedOfIsCMUnram
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Development.AbelianVarietyTheory.PublishedTheorems.Landherr₂.LandherrStIffLandherr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.UnitVectorOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnramifiedOfIsCMUnram
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Development.AbelianVarietyTheory.PublishedTheorems.Landherr₂.LandherrStIffLandherr
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,8 @@ theorem hasComplement_of_basis (W : HSpace E) {n : ℕ} (b : Module.Basis (Fin (
   have key : ∀ i v, W.hT (b i) v = sgn (neg i) * b.repr v i := by
     intro i v
     conv_lhs => rw [← b.sum_repr v]
-    rw [map_sum, Finset.sum_eq_single i (fun j _ hj => by rw [map_smul, hb, if_neg hj.symm, smul_zero])
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single i (fun j _ hj => by rw [map_smul, hb, if_neg hj.symm, smul_zero])
       (by simp), map_smul, hb, if_pos rfl, smul_eq_mul, mul_comm]
   have hperp : ∀ v, v ∈ perp W (b k) ↔ b.repr v k = 0 := by
     intro v
@@ -98,8 +103,7 @@ theorem hasComplement_of_basis (W : HSpace E) {n : ℕ} (b : Module.Basis (Fin (
   have hx : b k ∈ L := Submodule.subset_span ⟨k, rfl⟩
   refine ⟨L, ⟨⟨Submodule.fg_span (Set.finite_range _), ?_⟩, ?_⟩, hx, ?_,
     stdSpace star_isIntegral n (fun i => neg (k.succAbove i)) p q, ι, hk, ?_, ?_, ?_⟩
-  · rw [Submodule.span_span_of_tower]
-    exact b.span_eq
+  · exact fun _ _ => (LinearIndependent.iff_fractionRing (𝓞 E) E).mp
   · have h := (Formalism.E.hermDual (𝓞 E) E W.V (Fin (n + 1)) W.hT b
       (IsFractionRing.injective (𝓞 E) E) (star_integral star_isIntegral)).2
       (Matrix.diagonal fun i => (sgn (neg i) : 𝓞 E)) (by
@@ -126,7 +130,8 @@ theorem hasComplement_of_basis (W : HSpace E) {n : ℕ} (b : Module.Basis (Fin (
   · change ∀ x y : Fin n → E, W.hT (ι x) (ι y) = diagForm n (fun i => neg (k.succAbove i)) x y
     intro x y
     conv_lhs => rw [hι x]
-    rw [diagForm_apply, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [diagForm_apply, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, key, hιs, smul_eq_mul, mul_assoc]
     rfl
@@ -198,7 +203,8 @@ theorem exists_isometry (hc : Formalism.HermitianLatticesTheory.IsCMUnram E) (W 
     rw [Matrix.det_transpose]; exact (GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.gram_det_isUnit W).ne_zero
   obtain ⟨P, hP0, hP⟩ := congr_signMatrix
     (GlobalTheory.LocalQuad.landherr_of_hasseNormSt GlobalTheory.QNorm.hasseNormSt)
-    GlobalTheory.QNorm.hasseNormSt hG hd (isLattice_coordLat W W.L0 W.standardTuple_isLattice)
+    GlobalTheory.QNorm.hasseNormSt hG hd
+    (isLattice_coordLat W W.L0 W.standardTuple_isLattice W.baseLattice_isUnimodular)
     (selfDual_coordLat W W.L0 W.baseLattice_isUnimodular)
     Set.univ (fun _ => Or.inl trivial) p fun τ _ => by
       have h0 := hs τ

@@ -1,8 +1,12 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementD
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.RaisingKeepsEarlyLetters
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.Sl2RaisePowSuccLowerApplyEq
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.EArith
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.TypesLELeYcondC
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementD
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.RaisingKeepsEarlyLetters
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.Sl2RaisePowSuccLowerApplyEq
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.EArith
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.TypesLELeYcondC
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -17,7 +21,7 @@ noncomputable def compL (k : Type) [Field k] {σ : Type} (Pr : (σ →₀ ℕ) �
   map_add' x y := by
     classical
     ext m
-    simp only [coeff_compP, coeff_add]
+    simp only [coeff_compP, MvPolynomial.coeff_add]
     split_ifs <;> simp
   map_smul' c x := by
     classical
@@ -27,7 +31,7 @@ noncomputable def compL (k : Type) [Field k] {σ : Type} (Pr : (σ →₀ ℕ) �
 
 open Classical in
 theorem coeff_compL (Pr : (σ →₀ ℕ) → Prop) (x : MvPolynomial σ k) (m : σ →₀ ℕ) :
-    coeff m (compL k Pr x) = if Pr m then coeff m x else 0 := coeff_compP Pr x m
+    AddMonoidAlgebra.coeff (compL k Pr x) m = if Pr m then AddMonoidAlgebra.coeff x m else 0 := coeff_compP Pr x m
 
 theorem compL_mem (Pr : (σ →₀ ℕ) → Prop) (x : MvPolynomial σ k) :
     compL k Pr x ∈ restrictSupport k {m | Pr m} := by
@@ -55,7 +59,7 @@ theorem compL_of_not (Pr : (σ →₀ ℕ) → Prop) (x : MvPolynomial σ k) (hx
   classical
   rw [mem_restrictSupport_iff] at hx
   ext m
-  rw [coeff_compL, coeff_zero]
+  rw [coeff_compL, AddMonoidAlgebra.coeff_zero]
   split_ifs with h
   · by_contra hc
     exact hx (Finset.mem_coe.mpr (mem_support_iff.mpr hc)) h
@@ -65,7 +69,7 @@ theorem compL_add_not (Pr : (σ →₀ ℕ) → Prop) (x : MvPolynomial σ k) :
     compL k Pr x + compL k (fun m => ¬ Pr m) x = x := by
   classical
   ext m
-  rw [coeff_add, coeff_compL, coeff_compL]
+  rw [MvPolynomial.coeff_add, coeff_compL, coeff_compL]
   by_cases h : Pr m <;> simp [h]
 
 theorem compL_intertwine (T : MvPolynomial σ k →ₗ[k] MvPolynomial σ k) (Pr Pr' : (σ →₀ ℕ) → Prop)
@@ -73,7 +77,7 @@ theorem compL_intertwine (T : MvPolynomial σ k →ₗ[k] MvPolynomial σ k) (Pr
     (h2 : ∀ x ∈ restrictSupport k {m | ¬ Pr' m}, T x ∈ restrictSupport k {m | ¬ Pr m}) (x : MvPolynomial σ k) :
     compL k Pr (T x) = T (compL k Pr' x) := by
   conv_lhs => rw [← compL_add_not Pr' x]
-  rw [map_add, map_add, compL_of_mem Pr _ (h1 _ (compL_mem Pr' x)),
+  rw [map_add (f := _), map_add (f := _), compL_of_mem Pr _ (h1 _ (compL_mem Pr' x)),
     compL_of_not Pr _ (h2 _ (compL_mem (fun m => ¬ Pr' m) x)), add_zero]
 
 theorem XDXD (u v : σ) (huv : u ≠ v) (z : MvPolynomial σ k) (cu cv : k) (hu : X u * pderiv u z = cu • z)
@@ -177,12 +181,12 @@ theorem exists_top (x : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) (hx : x ≠
   obtain ⟨m, hm, rfl⟩ := Finset.mem_image.mp hβ
   refine ⟨wp K m, ?_, ?_, m, hm, rfl⟩
   · intro h0
-    have := congrArg (coeff m) h0
-    rw [cw, coeff_compL, if_pos rfl, coeff_zero] at this
+    have := congrArg (AddMonoidAlgebra.coeff · m) h0
+    rw [cw, coeff_compL, if_pos rfl, AddMonoidAlgebra.coeff_zero] at this
     exact (mem_support_iff.mp hm) this
   · intro γ hγ
     ext m'
-    rw [cw, coeff_compL, coeff_zero]
+    rw [cw, coeff_compL, AddMonoidAlgebra.coeff_zero]
     split_ifs with h
     · by_contra hc
       have := hmax γ (Finset.mem_image.mpr ⟨m', mem_support_iff.mpr hc, h⟩)
@@ -285,7 +289,7 @@ theorem eJ_cw_lt (s t : Fin r) (hs : s ∈ Cs) (ht : t ∈ Cs) (hst : s < t) (γ
   have h0 := hk s t ⟨hs, ht, hst⟩
   rw [glAct_succ LL hv] at h0
   have h1 := congrArg (cw p K γ) h0
-  rw [map_add, map_zero, cw_glAct, cw_WD] at h1
+  rw [map_add (f := _), map_zero, cw_glAct, cw_WD] at h1
   exact eq_neg_of_add_eq_zero_left h1
 
 include hv hx in
@@ -294,7 +298,7 @@ theorem eJ_cw_diag (s : Fin r) (hs : s ∈ Cs) (γ : Fin r → ℤ) :
   have h0 := cartan_eigC LL (K + 1) Cs th x (Submodule.mem_inf.mp hx).1 s hs
   rw [glAct_succ LL hv] at h0
   have h1 := congrArg (cw p K γ) h0
-  rw [map_add, map_smul, cw_glAct, cw_WD, shiftW_self, WD_cw] at h1
+  rw [map_add (f := _), map_smul, cw_glAct, cw_WD, shiftW_self, WD_cw] at h1
   rw [Int.cast_sub, sub_smul, ← h1]
   abel
 
@@ -435,12 +439,13 @@ theorem pderiv_free {σ : Type} (v : σ) (x : MvPolynomial σ ℚ_[p]) (hx : x �
   classical
   rw [FreeOf, mem_restrictSupport_iff] at hx
   ext m
-  rw [coeff_pderiv, coeff_zero]
-  have : coeff (m + Finsupp.single v 1) x = 0 := by
+  rw [coeff_pderiv, AddMonoidAlgebra.coeff_zero]
+  have : AddMonoidAlgebra.coeff x (m + Finsupp.single v 1) = 0 := by
     by_contra hc
     have := hx (Finset.mem_coe.mpr (mem_support_iff.mpr hc))
     simp at this
   rw [this, zero_mul]
+  rfl
 
 theorem eul_pderiv (LL : Letters (K + 1)) (o : ℕ) (a : Fin r) (x : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p])
     (hP : x ∈ Pol p r (setLast LL (o + 1))) :
@@ -526,8 +531,10 @@ theorem omega_top (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (ρ :
         have : ((b : ℕ) : ℤ) < ((a : ℕ) : ℤ) := by exact_mod_cast hab
         omega), map_zero, map_zero, mul_zero, if_neg (ne_of_gt hab), if_neg (not_lt_of_gt hab)]
       simp
-  rw [omega_formula LL ρ c o x hP hF, map_sub, map_smul, map_sum]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [omega_formula LL ρ c o x hP hF, map_sub, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   rw [Finset.sum_congr rfl (fun a ha => Finset.sum_congr rfl (fun b hb => hterm a ha b hb))]
   simp only [← Finset.sum_smul]
   rw [← sub_smul]
@@ -641,10 +648,11 @@ theorem omega_comm (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (ρ 
     have h1 := raising_comm_holds p K r LL c (univ.erase ρ) a s t (dW p K a z) hv hs ht
     have h2 : dW p K a (glAct p LL (K + 1) s t z) =
         glAct p LL (K + 1) s t (dW p K a z) + (if s = a then dW p K t z else 0) := pderiv_glAct LL hv s t a z
-    rw [h2, map_add, ← h1]
+    rw [h2, map_add (f := _), ← h1]
     split_ifs <;> simp
   unfold Omega
-  rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
   simp only [LinearMap.comp_apply, hterm]
   rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq, if_pos hs, if_pos ht]
   abel

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSpecializesIsLocalization
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaSysFFMemFinitePerpProj
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisLatticeNear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSpecializesIsLocalization
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaSysFFMemFinitePerpProj
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisLatticeNear
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -46,7 +50,8 @@ theorem span_lattice_eq_of_valuationRing :
           fun j => S.th x₀ / S.FF _ (c.comp (AddSubgroup.inclusion h)) k' *
             algebraMap o Ω (S.proj _ (c.comp (AddSubgroup.inclusion h)) j l) := by
       funext j
-      conv_lhs => rw [← hp, Matrix.mul_apply, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← hp, Matrix.mul_apply, map_sum, Finset.mul_sum]
       rw [Finset.sum_apply]
       refine Finset.sum_congr rfl fun l _ => ?_
       have h1 := hk.1
@@ -64,7 +69,8 @@ theorem span_lattice_eq_of_valuationRing :
         ∑ c ∈ Finset.univ.filter fun c : S.TT M z →+ ZMod S.N => c.comp (AddSubgroup.inclusion h) = c',
           fun j => S.th x' / S.FF _ c' k' * algebraMap o Ω (S.proj _ c j i) := by
       funext j
-      rw [Finset.sum_apply, hsum, Matrix.sum_apply, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_apply, hsum, Matrix.sum_apply, map_sum, Finset.mul_sum]
     rw [SetLike.mem_coe, e]
     refine Submodule.sum_mem _ fun c hc => ?_
     obtain rfl := (Finset.mem_filter.1 hc).2

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
-import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
-import Formalism.LocalToGlobal.Columns.PolyFn
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RowActCoefPolyAndUnitaryDense
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+public import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+public import Formalism.LocalToGlobal.Columns.PolyFn
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RowActCoefPolyAndUnitaryDense
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.GradedWeylDivisibility GlobalTheory.Branching
 open Formalism.MainNotions.PrimeDegreeVariant (embGL Interlace)
@@ -35,13 +39,14 @@ theorem rowDivClosed_of_rowAct_stable {n k : ℕ} (M : Submodule ℂ (MvPolynomi
     intro c
     simp only [hP, Polynomial.eval_finsetSum, Polynomial.eval_monomial, Polynomial.eval_zero]
     have e := (Submodule.mem_dualAnnihilator l).1 hl _ (hM (lfockq_mat a b c) p hp)
-    rw [← lfockq_eval_rowGen, lfockq_eval_C _ N h1, map_sum] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← lfockq_eval_rowGen, lfockq_eval_C _ N h1, map_sum] at e
     rw [← e]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← smul_eq_C_mul, map_smul, smul_eq_mul, mul_comm]
     rfl
-  have := congrArg (fun p => Polynomial.coeff p j) hP0
-  simp only [hP, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finset.sum_ite_eq',
+  have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p j) hP0
+  simp only [hP, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finsupp.single_apply, Finset.sum_ite_eq',
     if_pos hk, Polynomial.coeff_zero] at this
   exact this
 
@@ -49,13 +54,14 @@ theorem height_rowDiv_le {n k : ℕ} (H : ℤ) (a b : Fin n) (j : ℕ) (f : MvPo
     (hf : ∀ d ∈ f.support, Finsupp.weight (lhwinHt n k) d ≤ H) :
     ∀ d ∈ (rowDiv ℂ a b j f).support, Finsupp.weight (lhwinHt n k) d ≤ H + j * ((a.val : ℤ) - b.val) := by
   intro e he
-  have hs : rowDiv ℂ a b j f = ∑ d ∈ f.support, (rowGen ℂ a b (monomial d (coeff d f))).coeff j := by
+  have hs : rowDiv ℂ a b j f = ∑ d ∈ f.support, (rowGen ℂ a b (monomial d (AddMonoidAlgebra.coeff f d))).coeff j := by
     unfold rowDiv
     conv_lhs => rw [f.as_sum]
-    rw [map_sum, Polynomial.finsetSum_coeff]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Polynomial.finsetSum_coeff]
   rw [mem_support_iff, hs, coeff_sum] at he
   obtain ⟨d, hd, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero he
-  have h1 := lhwinShift_rowGen_monomial ℂ a b d (coeff d f) j hne
+  have h1 := lhwinShift_rowGen_monomial ℂ a b d (AddMonoidAlgebra.coeff f d) j hne
   have h2 := hf d hd
   omega
 

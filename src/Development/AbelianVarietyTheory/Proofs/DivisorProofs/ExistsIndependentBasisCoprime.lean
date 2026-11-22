@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemLocDIffSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemLocDIffSpan
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.CoprimeBasis
@@ -15,6 +20,13 @@ theorem isTorsionFree_of_addTorsionFree {F : Type} [Field F] [NumberField F]
     obtain ⟨b, hb⟩ := Ideal.mem_span_singleton'.1 (Ideal.absNorm_mem (Ideal.span {r}))
     have h1 : (Ideal.absNorm (Ideal.span {r})) • (x - y) = 0 := by
       rw [← Nat.cast_smul_eq_nsmul (𝓞 F), ← hb, mul_smul, smul_sub, hxy', sub_self, smul_zero]
+    haveI : HasUniqueDiv M := by
+      refine ⟨fun {n} hn => ?_⟩
+      intro x y h
+      have h' : (n : ℤ) • x = (n : ℤ) • y := by exact_mod_cast h
+      have hz : (n : ℤ) • (x - y) = 0 := by rw [zsmul_sub, h', sub_self]
+      have hdiff : x - y = 0 := by simpa [hn] using hz
+      exact sub_eq_zero.mp hdiff
     exact sub_eq_zero.1 (nsmul_right_injective hn (h1.trans (nsmul_zero _).symm))
 
 theorem isCoprime_of_mem_primeTo {R : Type} [CommRing R] {s d : R}
@@ -28,15 +40,24 @@ theorem isCoprime_of_mem_primeTo {R : Type} [CommRing R] {s d : R}
 theorem exists_coprime_basis : ∀ (F : Type) [Field F] [NumberField F] (M : Type) [AddCommGroup M] [Module (𝓞 F) M] [Module.Finite ℤ M] [IsAddTorsionFree M] (N : ℕ), 2 ≤ N → ∃ (r : ℕ) (x : Fin r → M), LinearIndependent (𝓞 F) x ∧ ∃ c : 𝓞 F, c ≠ 0 ∧ IsCoprime c (N : 𝓞 F) ∧ ∀ m : M, c • m ∈ Submodule.span (𝓞 F) (Set.range x) := by
   intro F _ _ M _ _ _ _ N hN
   classical
-  set S : Submonoid (𝓞 F) := GlobalTheory.Mass.primeTo (N : 𝓞 F) with hSdef
+  let S : Submonoid (𝓞 F) := GlobalTheory.Mass.primeTo (N : 𝓞 F)
   have hSle : S ≤ nonZeroDivisors (𝓞 F) := GlobalTheory.Mass.SemiBasis.primeTo_le hN
   haveI : Module.IsTorsionFree (𝓞 F) M := isTorsionFree_of_addTorsionFree M
   haveI : Module.Finite (𝓞 F) M := Module.Finite.of_restrictScalars_finite ℤ (𝓞 F) M
   haveI : IsDomain (Localization S) := IsLocalization.isDomain_localization hSle
   haveI : IsPrincipalIdealRing (Localization S) := by
     haveI := GlobalTheory.Mass.SemiBasis.isPID (K := F) hN
-    haveI : IsLocalization S (GlobalTheory.Mass.SemiBasis.A F hN) :=
-      Localization.subalgebra.isLocalization_ofField F _ _
+    have hA : GlobalTheory.Mass.SemiBasis.A F hN =
+        Localization.subalgebra.ofField F (GlobalTheory.Mass.primeTo (N : 𝓞 F))
+          (GlobalTheory.Mass.SemiBasis.primeTo_le hN) := by
+      apply Subalgebra.ext
+      intro x
+      rfl
+    haveI : IsLocalization S (GlobalTheory.Mass.SemiBasis.A F hN) := by
+      rw [hA]
+      exact Localization.subalgebra.isLocalization_ofField (A := 𝓞 F) (K := F)
+        (S := GlobalTheory.Mass.primeTo (N : 𝓞 F))
+        (hS := GlobalTheory.Mass.SemiBasis.primeTo_le hN)
     exact IsPrincipalIdealRing.of_surjective
       (IsLocalization.algEquiv S (GlobalTheory.Mass.SemiBasis.A F hN) (Localization S)).toRingHom
       (IsLocalization.algEquiv S (GlobalTheory.Mass.SemiBasis.A F hN) (Localization S)).surjective

@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+
+@[expose] public section
+
 open ZetaZeros.D.EllReg GlobalTheory.HCA MeasureTheory GroundTheory.Automorphic
 open scoped ContDiff
 
@@ -106,7 +111,9 @@ theorem leftInvariant_frame (𝔸 : Type) [NormedRing 𝔸] [NormedAlgebra ℝ �
     rw [this]; exact isUnit_one
   have hBc : ContinuousAt B 0 :=
     ((hAx 0 (Metric.mem_ball_self hr₁)).clm_comp contDiffAt_const).continuousAt
-  have hU : {x | IsUnit (B x)} ∈ 𝓝 (0 : E d) := hBc.preimage_mem_nhds (Units.isOpen.mem_nhds hB0)
+  have hU : {x | IsUnit (B x)} ∈ 𝓝 (0 : E d) := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      exact hBc.preimage_mem_nhds (Units.isOpen.mem_nhds hB0)
   obtain ⟨r₂, hr₂, hball₂⟩ := Metric.mem_nhds_iff.1 hU
   refine ⟨min r₁ r₂, lt_min hr₁ hr₂, fun X j x => A x X j, ?_, ?_, ?_⟩
   · intro X j x hx
@@ -163,7 +170,8 @@ theorem leftInvariant_frame (𝔸 : Type) [NormedRing 𝔸] [NormedAlgebra ℝ �
       rfl
     rw [key]
     conv_lhs => rw [← (EuclideanSpace.basisFun (Fin d) ℝ).sum_repr (A x X)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, Complex.real_smul, EuclideanSpace.basisFun_repr, EuclideanSpace.basisFun_apply]
     rfl

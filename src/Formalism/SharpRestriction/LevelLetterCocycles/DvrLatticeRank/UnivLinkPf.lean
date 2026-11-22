@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.UnivLinkPfB
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.UnivLinkPfB
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ theorem univLinkPf_deep_sub {up : Bool} {bτ S η h' : ℕ} (hb : η < bτ) (hS 
       exact ⟨by omega, by omega⟩
   · exact ⟨by omega, by omega⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem univlink_pf : UnivLinkStep := by
   intro D HW Fo hA hd hR hC hH hMF hU1 hk hU2 hDn hUp hMx
   intro l _ hl K LL hG π' E hp9 T₁ T₂ F S η m h' up b hN c

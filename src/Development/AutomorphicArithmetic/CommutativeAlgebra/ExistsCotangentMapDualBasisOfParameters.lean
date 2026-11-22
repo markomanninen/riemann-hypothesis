@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open KaehlerDifferential
 
@@ -10,7 +14,8 @@ theorem UpperTheory.exists_cotangent_map_dual_basis_of_parameters :
       ev c • χ (D ℂ R u) = ∑ l, ev (g l) • χ (D ℂ R (t l)) := by
     intro χ hχ u c g hu hcu
     have h := congrArg (fun x => χ (D ℂ R x)) hcu
-    simp only [Derivation.leibniz, map_sum, map_add, hχ, hu, ht, zero_smul, add_zero] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Derivation.leibniz, map_sum, map_add (f := _), hχ, hu, ht, zero_smul, add_zero] at h
     exact h
   set v : Fin d → (Fin d → ℂ) := fun l => ψ (D ℂ R (t l)) with hvdef
   have hspan : ⊤ ≤ Submodule.span ℂ (Set.range v) := by
@@ -41,7 +46,7 @@ theorem UpperTheory.exists_cotangent_map_dual_basis_of_parameters :
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨l, rfl⟩)
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       rw [hψ]

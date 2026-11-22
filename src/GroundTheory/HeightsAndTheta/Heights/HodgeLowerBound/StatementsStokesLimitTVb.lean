@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesGeo
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesGeo
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,8 +21,6 @@ def StokesLimitTVb.Statement : Prop :=
     1 ≤ p → p ≤ q → ∃ L : ℝ, Tendsto (X.Vb B p q) (𝓝[>] 0) (𝓝 L)
 
 namespace Line
-
-open GroundTheory.Heights₂.Heights.Regular.ProjectiveLine
 
 end Line
 

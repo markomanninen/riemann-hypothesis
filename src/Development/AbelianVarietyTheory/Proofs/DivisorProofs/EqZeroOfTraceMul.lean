@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulFix
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledDarbouxCoordsCompat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulFix
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledDarbouxCoordsCompat
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -23,7 +28,8 @@ theorem eq_zero_of_trace_mul {F E R : Type} [Field F] [Field E] [Algebra F E] [F
   have key : ∀ j, bA.repr m j = 0 := by
     intro j
     have hj := h ((1 : R) ⊗ₜ[F] d j)
-    rw [← bA.sum_repr m, Finset.sum_mul, map_sum] at hj
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← bA.sum_repr m, Finset.sum_mul, map_sum] at hj
     rw [← hj, Finset.sum_eq_single j]
     · rw [Algebra.TensorProduct.basis_apply, smul_mul_assoc, map_smul, Algebra.TensorProduct.tmul_mul_tmul, one_mul,
         trace_one_tmul, smul_eq_mul]
@@ -48,14 +54,11 @@ theorem trace_pairing_nondeg : ∀ (F E : Type) [Field F] [NumberField F] [Field
   push_neg at hne
   apply hm
   refine eq_zero_of_trace_mul m fun z => ?_
-  refine GlobalTheory.DiagNonvan.eq_zero_of_psi_mul hψ _ fun y => ?_
+  apply GlobalTheory.DiagNonvan.eq_zero_of_psi_mul hψ
+  intro y
   have e1 : Algebra.trace (AF F) (AEF F E) (m * z) * y = Algebra.trace (AF F) (AEF F E) (m * (y • z)) := by
     rw [mul_smul_comm, map_smul, smul_eq_mul, mul_comm]
   rw [e1]
   exact hne _
-
-example : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (ψ : AddChar (AF F) ℂ),
-    IsStd ψ → ∀ m : AEF F E, m ≠ 0 → ∃ z : AEF F E, ψ (Algebra.trace (AF F) (AEF F E) (m * z)) ≠ 1 :=
-  trace_pairing_nondeg
 
 end GlobalTheory.AdelicTraceNondeg

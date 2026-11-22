@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotientHeightLowerBoundShortIsotropicVector
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFinNormComparison
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsInfFamAndStdChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotientHeightLowerBoundShortIsotropicVector
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFinNormComparison
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsInfFamAndStdChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ open GlobalTheory.HolDict.ShortVec (intRing)
 section
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
+local notation "𝔸" => Af F
 
 theorem tmul_mem {x : E} (hx : IsIntegral ℤ x) {a : 𝔸} (ha : a ∈ intRing F) :
     x ⊗ₜ[F] a ∈ Formalism.L2.Herm.intAf F E := by
@@ -36,7 +40,8 @@ theorem natCast_mul_tmul (c e : ℕ) (x : E) (a : 𝔸) :
 theorem comm_eq_sum {m : ℕ} (b : Module.Basis (Fin m) F E) (z : 𝔸 ⊗[F] E) :
     Algebra.TensorProduct.comm F 𝔸 E z = ∑ k, b k ⊗ₜ[F] (Algebra.TensorProduct.basis 𝔸 b).repr z k := by
   conv_lhs => rw [← (Algebra.TensorProduct.basis 𝔸 b).sum_repr z]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one,
     Algebra.TensorProduct.comm_tmul]

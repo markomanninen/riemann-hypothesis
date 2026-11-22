@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,6 +19,6 @@ theorem evK : EvK := by
     have h : ev (smK Ξ k (φ ⊗ₜ[ℂ] v)) g =
         φ.1 (g * infGL E a (Unitary.toUnits k)) • (Ξ.mat (Unitary.toUnits k) *ᵥ v) := rfl
     rw [h, ev_tmul, Matrix.mulVec_smul]
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy, Matrix.mulVec_add]
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy, Matrix.mulVec_add]
 
 end UpperTheory.V.Lit.Dr

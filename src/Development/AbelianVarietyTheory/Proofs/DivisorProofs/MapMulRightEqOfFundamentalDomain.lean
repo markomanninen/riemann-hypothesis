@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.ConstTermOnMulLeftOfNormalizer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingZeroMeanNormalizedSubgroup
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ConstTermOnMulLeftOfNormalizer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingZeroMeanNormalizedSubgroup
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal NNReal
 
@@ -91,6 +96,7 @@ theorem map_conj_eq_self_of_lattice : ∀ (H : Type) [Group H] [TopologicalSpace
     apply hcancel
     rw [← hdβ, conjB_mul, ← Measure.map_map (hφm x) (hφm y), hdβ y, Measure.map_smul, hdβ x,
       smul_smul, mul_comm]
+    exact (hφm x).aemeasurable
   have hdΛ : ∀ x ∈ Λ, d x = 1 := by
     intro x hx
     apply hcancel

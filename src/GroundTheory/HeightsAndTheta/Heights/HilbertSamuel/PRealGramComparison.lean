@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRealGramComparison
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFSExtension
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionSup
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResSymGram
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.DetIneq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStB
-import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.BergmanDerivSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRealGramComparison
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFSExtension
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionSup
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResSymGram
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.DetIneq
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStB
+public import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.BergmanDerivSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -130,7 +135,8 @@ theorem abs_sub_le (hR : ResolutionSupBound.Statement) (d : HSMDatum D Ω κ) :
       exact (hg'.map _).C_mul _
     have hevf : ∀ w, eval w f = ∑ i, c i * secFun (b i) w := by
       intro w
-      simp [hf, secFun, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [hf, secFun, map_sum]
     have hpt : ∀ w : Ix κ → ℂ, w ≠ 0 → ptNorm d.m (RingHom.id ℂ) n f w ^ 2 = g w := by
       intro w hw
       rw [ptNorm, MvPolynomial.map_id, hevf]

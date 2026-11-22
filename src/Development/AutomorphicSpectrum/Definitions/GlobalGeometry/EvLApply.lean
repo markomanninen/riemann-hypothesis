@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.DefiniteFormStabilizerFiniteAwayFromP
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.DefiniteFormStabilizerFiniteAwayFromP
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,26 +66,17 @@ theorem secZ_nat (a : (E →+* ℂ) × ℕ → ℕ) : secZ Xo c (fun x => (a x :
     forall_congr' fun _ => ?_)
   rw [h]
 
+
 variable {Xo c} in
 open Classical in
-
 def laZ {σ : c.F →+* ℂ} {r : ℕ} (U : Unf Xo c σ r) (a : WZ E) (k : U.Comp) : Wt (U.X k).Ψ r :=
   fun τ j => if (U.X k).p0 ≤ (j : ℕ) then a (Function.invFun (relab c σ) τ.1, (j : ℕ) - (U.X k).p0)
     else -a (Function.invFun (relab c σ) (conjEmb τ.1), (U.X k).p0 - 1 - (j : ℕ))
-
-theorem laZ_nat {σ : c.F →+* ℂ} {r : ℕ} (U : Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) :
-    laZ U (fun x => (a x : ℤ)) = laU U a 0 := by
-  funext k τ j
-  simp [laZ, laU]
 
 variable {r : ℕ} (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r)
 
 def cuspZ (a : WZ E) : Submodule c.F (Rul Xo c) :=
   secZ Xo c a ⊓ ⨅ (σ : c.F →+* ℂ) (_ : GoodEmb c σ), (holSub (U σ).X (laZ (U σ) a)).comap (rdU (U σ))
-
-theorem cuspZ_nat (a : (E →+* ℂ) × ℕ → ℕ) : cuspZ Xo c U (fun x => (a x : ℤ)) = cusp Xo c U a 0 := by
-  unfold cuspZ cusp
-  simp only [secZ_nat, laZ_nat]
 
 variable {Xo c}
 
@@ -104,23 +99,7 @@ def lieFacZ (Dw : Datum H) (x : ℝ) (a : WZ E) : ℝ :=
 
 variable {D : D7} (W : HSp D) (dict : ∀ σ, GA D W → Σ k, Frame ((U σ).X k).Ψ r)
 
-def ipAll (σ : c.F →+* ℂ) (f g : Rul Xo c) : ℂ :=
-  ∫ q, jFn W σ (rdU (U σ)) (dict σ) (fun _ => 1) f q * conj (jFn W σ (rdU (U σ)) (dict σ) (fun _ => 1) g q) ∂(muQ1 W)
 
-open Classical in
-
-def ipOn (x : ℝ) (a : WZ E) (e : Rul Xo c) (σ : c.F →+* ℂ) (f g : Rul Xo c) : ℂ :=
-  let z : ℂ := ((lieFacZ Dw x a ^ 2 : ℝ) : ℂ) * ipAll U W dict (goodOf c σ) f g / ipAll U W dict (goodOf c σ) e e
-  if GoodEmb c σ then z else conj z
-
-open Classical in
-
-def ipGl (x : ℝ) (a : WZ E) (σ : c.F →+* ℂ) (f g : Rul Xo c) : ℂ :=
-  let z : ℂ := ((lieFacZ Dw x a ^ 2 : ℝ) : ℂ) * ipAll U W dict (goodOf c σ) f g
-  if GoodEmb c σ then z else conj z
-
-def volU (e : Rul Xo c) (σ : c.F →+* ℂ) : ℝ :=
-  ∫ q, Complex.normSq (jFn W (goodOf c σ) (rdU (U (goodOf c σ))) (dict (goodOf c σ)) (fun _ => 1) e q) ∂(muQ1 W)
 
 end Forms
 

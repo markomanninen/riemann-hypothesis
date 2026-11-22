@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationPreimageValueRulesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalIdealAffineOpenEqVanishingUniformisationPStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfFderivRegularFunctionsAffineOpenStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationPreimageValueRulesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalIdealAffineOpenEqVanishingUniformisationPStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfFderivRegularFunctionsAffineOpenStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,8 @@ theorem surjective_pi_liftKaehler_of_pointwise {K B J : Type*} [Field K] [CommRi
     have hfy : ∀ y : J → K, f y = ∑ a, y a * f (Pi.single a 1) := by
       intro y
       conv_lhs => rw [pi_eq_sum_univ' y]
-      simp [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum]
     have h0 := hw (fun a => f (Pi.single a 1)) fun x => by
       have : f (φ x) = 0 := hf ⟨x, rfl⟩
       rw [hfy] at this
@@ -73,7 +78,8 @@ theorem surjective_pi_liftKaehler_coord : ∀ (A : Over (Sp ℂ)) [GrpObj A] (g 
   refine GlobalTheory.T.eq_zero_of_fderiv_regular_functions_affineOpen A g L u hA U.1 U.2 z hz w fun b => ?_
   rw [← hw b]
   conv_lhs => rw [pi_eq_sum_univ' w]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [map_smul, smul_eq_mul, mul_comm]
   exact congrArg (· * w a) ((hd a b z hz).symm.trans (he _))

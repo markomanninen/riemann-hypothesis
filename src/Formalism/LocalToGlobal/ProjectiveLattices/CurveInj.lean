@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveOpen
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,8 +35,10 @@ theorem coeff_eq_zero {K Kl K' C : Type*} [Field K] [Field Kl] [Field K'] [Algeb
   have hF : (∑ i, ψ (φ (c i)) • b i) = 0 := by
     refine hev _ fun Z => ?_
     have h := congrArg (fun t => evDual (M := Ω Z) ψ (evDual (M := Kl ⊗[K] Ω Z) φ t)) (hc Z)
-    simp only [map_sum, evDual_tmul, map_zero, TensorProduct.smul_tmul', smul_eq_mul, mul_one] at h
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, evDual_tmul, map_zero, TensorProduct.smul_tmul', smul_eq_mul, mul_one] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simpa only [map_smul] using h
   exact Fintype.linearIndependent_iff.1 b.linearIndependent _ hF i₀
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeightNE
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeightNE
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -43,8 +48,8 @@ theorem isIntegral_rootCoord {f j m : ℕ} (ζ : Fin f → Matrix (Fin j) (Fin m
 
 end RootArithmeticVariety
 
-open RootArithmeticVariety in
 
+open RootArithmeticVariety in
 theorem RootArithVar.proof (h : CoordConeArithVar.Statement) : RootArithVar.Statement := by
   intro f j m ζ hf hζ
   have hK : Nonempty (Fin f) := ⟨⟨0, hf⟩⟩

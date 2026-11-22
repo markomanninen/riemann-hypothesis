@@ -1,25 +1,21 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierXPinsP
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremSClosedP
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTop
+module
 
-noncomputable section
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
 
-open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S
-open scoped Matrix InnerProductSpace
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.MainNotions.S
 
 namespace Formalism.L2.SG.Pf.CarrierXAll
 
-open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT Formalism.L2.SG.RealObj
-open Formalism.FourierDecayAlt Formalism.L2.SG.HidaSetting Formalism.L2.SG.Full Formalism.L2.SG.PackageTie2 Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups
-open Formalism.L2.SG.AdBridge Formalism.L2.SG.DataInst Formalism.L2.SG.SpectralTiesReal
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
-
 theorem rootLatticeThresholds_k_of_fact {D : D7} {large₂ : SizeData₂ D} {C' Cl Cg cb Cu cT CT : ℝ} (h : StandingHypotheses D large₂ C' Cl Cg cb Cu cT CT)
     (hC' : 29 ≤ C') : 1801 ≤ D.R.k := by
-  obtain ⟨-, hk, hmf, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -⟩ := h
-  have hL : 1 < large₂.sc.L := Formalism.MainNotions.S.one_lt_scL large₂
+  delta StandingHypotheses at h
+  obtain ⟨-, hk, hmf, -⟩ := h
+  have hL : 1 < large₂.sc.L := by
+    change 1 < large₂.sc.x ^ large₂.sc.eps
+    exact Real.one_lt_rpow large₂.sc.one_lt_alt large₂.sc.eps_pos
   have hm2 : 2 ≤ D.R.m := D.R.two_le_m
   have hm : (2 : ℝ) ≤ D.R.m := by exact_mod_cast hm2
   have hf16 : 16 ≤ D.R.f := le_trans (by

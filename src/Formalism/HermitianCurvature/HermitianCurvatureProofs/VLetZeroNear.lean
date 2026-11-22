@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstDerivativeAtNormalSet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstDerivativeAtNormalSet
+
+@[expose] public section
 
 open Matrix Finset MeasureTheory
 open scoped ComplexConjugate

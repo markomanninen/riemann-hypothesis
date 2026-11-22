@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.AntitoneOfMemGtBox
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.Branch
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.NormIndexCountBound
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.AntitoneOfMemGtBox
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.Branch
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.NormIndexCountBound
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.GelfandTsetlinBases.Top
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ private theorem lc_repr_lemma (c0 : V0 →ₛₗ[e] W0) (b : Module.Basis ι LL 
   rw [Finsupp.linearCombination_apply, Finsupp.sum_mapRange_index (h := fun i a => a • c0 (b i)) (fun i => zero_smul _ _)]
   conv_rhs => rw [← b.linearCombination_repr x]
   rw [Finsupp.linearCombination_apply]
-  simp only [Finsupp.sum, map_sum, LinearMap.map_smulₛₗ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finsupp.sum, map_sum, LinearMap.map_smulₛₗ]
 
 theorem span_basis_eq (c0 : V0 →ₛₗ[e] W0) (b : Module.Basis ι LL V0) :
     Submodule.span Kf (Set.range fun i => c0 (b i)) = spanK c0 := by
@@ -30,7 +35,7 @@ theorem span_basis_eq (c0 : V0 →ₛₗ[e] W0) (b : Module.Basis ι LL V0) :
 
 theorem inj_of_li (c0 : V0 →ₛₗ[e] W0) (b : Module.Basis ι LL V0)
     (hli : LinearIndependent Kf fun i => c0 (b i)) : Function.Injective c0 := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have h1 := linearIndependent_iff.1 hli _ ((lc_repr_lemma c0 b x).trans hx)
   have h2 : b.repr x = 0 := by
@@ -77,26 +82,6 @@ theorem extK_apply (c0 : V0 →ₛₗ[e] W0) (c1 : V1 →ₛₗ[e] W1) (b : Modu
   rw [← lc_repr_lemma c0 b x, Finsupp.apply_linearCombination, e1]
   exact lc_repr_lemma (c1.comp KL) b x
 
-theorem extK_unique (c0 : V0 →ₛₗ[e] W0) (c1 : V1 →ₛₗ[e] W1) (b : Module.Basis ι LL V0)
-    (hli : LinearIndependent Kf fun i => c0 (b i)) (KL : V0 →ₗ[LL] V1) (g : W0 →ₗ[Kf] W1)
-    (hg : ∀ x, g (c0 x) = c1 (KL x)) (y : W0) (hy : y ∈ spanK c0) : g y = extK c0 c1 b hli KL y := by
-  unfold spanK at hy
-  induction hy using Submodule.span_induction with
-  | mem z hz =>
-    obtain ⟨x, rfl⟩ := hz
-    rw [hg, extK_apply]
-  | zero => simp
-  | add y z _ _ hy hz => rw [map_add, map_add, hy, hz]
-  | smul a y _ hy => rw [map_smul, map_smul, hy]
-
-theorem extK_mem_spanK (c0 : V0 →ₛₗ[e] W0) (c1 : V1 →ₛₗ[e] W1) (b : Module.Basis ι LL V0)
-    (hli : LinearIndependent Kf fun i => c0 (b i)) (KL : V0 →ₗ[LL] V1) (y : W0) :
-    extK c0 c1 b hli KL y ∈ spanK c1 := by
-  have h1 : extK c0 c1 b hli KL y ∈ LinearMap.range (Finsupp.linearCombination Kf fun i => c1 (KL (b i))) :=
-    LinearMap.mem_range.2 ⟨_, rfl⟩
-  rw [Finsupp.range_linearCombination] at h1
-  exact Submodule.span_mono (by rintro _ ⟨i, rfl⟩; exact ⟨KL (b i), rfl⟩) h1
-
 section Indep
 
 open TensorProduct
@@ -117,7 +102,8 @@ private theorem li_core_lemma_2 {κ : Type*} (c0 : V0 →ₛₗ[e] W0) (b : Modu
     simp only [LinearMap.comp_apply, Submodule.subtype_apply, Finsupp.lapply_apply] at h1
     rw [h1, hv.repr_eq_single i _ rfl, Finsupp.single_apply]
   have h2 := congrArg (extK c0 c1 b hli φ) hs
-  rw [map_sum, map_zero] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h2
   simp only [map_smul, extK_apply] at h2
   rw [Finset.sum_eq_single k (fun i _ hik => by rw [hφv, if_neg hik]; simp [c1])
     (fun h => absurd hk h), hφv, if_pos rfl] at h2
@@ -144,7 +130,7 @@ def ratDom (e0 : V0 →ₛₗ[s] M0) (e1 : V1 →ₛₗ[s] M1) (f : M0 →ₗ[Cc
   carrier := {x | ∃ y, e1 y = f (e0 x)}
   add_mem' := by
     rintro a b ⟨y, hy⟩ ⟨z, hz⟩
-    exact ⟨y + z, by rw [map_add, map_add, map_add, hy, hz]⟩
+    exact ⟨y + z, by rw [map_add (f := _), map_add (f := _), map_add (f := _), hy, hz]⟩
   zero_mem' := ⟨0, by rw [map_zero, map_zero, map_zero]⟩
   smul_mem' := by
     rintro a x ⟨y, hy⟩
@@ -158,8 +144,8 @@ def ratPart (e0 : V0 →ₛₗ[s] M0) (e1 : V1 →ₛₗ[s] M1) (hinj : Function
   toFun x := Classical.choose x.2
   map_add' x y := by
     apply hinj
-    rw [map_add, Classical.choose_spec x.2, Classical.choose_spec y.2, Classical.choose_spec (x + y).2]
-    rw [Submodule.coe_add, map_add, map_add]
+    rw [map_add (f := _), Classical.choose_spec x.2, Classical.choose_spec y.2, Classical.choose_spec (x + y).2]
+    rw [Submodule.coe_add, map_add (f := _), map_add (f := _)]
   map_smul' a x := by
     apply hinj
     rw [RingHom.id_apply, LinearMap.map_smulₛₗ, Classical.choose_spec x.2, Classical.choose_spec (a • x).2]
@@ -188,12 +174,6 @@ theorem ratMap_eq (e0 : V0 →ₛₗ[s] M0) (e1 : V1 →ₛₗ[s] M1) (hinj : Fu
   simp only [ratMap, LinearMap.comp_apply]
   rw [hp, ratPart_spec]
   exact h.symm
-
-theorem ratMap_spec (e0 : V0 →ₛₗ[s] M0) (e1 : V1 →ₛₗ[s] M1) (hinj : Function.Injective e1) (f : M0 →ₗ[Cc] M1)
-    (h : ∀ x, ∃ y, e1 y = f (e0 x)) (x : V0) : e1 (ratMap e0 e1 hinj f x) = f (e0 x) := by
-  obtain ⟨y, hy⟩ := h x
-  rw [ratMap_eq e0 e1 hinj f x y hy]
-  exact hy
 
 end Rat
 

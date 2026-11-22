@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasValK
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasValK
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,11 +44,18 @@ theorem layer_le_of_stable {T : Submodule ℂ M} (hVT : V ≤ T)
     exact hT a b v (ih hv)
 
 theorem layer_le_genSub (k : ℕ) : layer ε E V k ≤ genSub E V := by
-  refine layer_le_of_stable (le_sInf fun T hT => hT.1) ?_ k
-  intro a b v hv
-  simp only [genSub, Submodule.mem_sInf, Set.mem_setOf_eq] at hv ⊢
-  intro T hT
-  exact hT.2 a b v (hv T hT)
+  have hVT : V ≤ genSub E V := by
+    unfold genSub
+    apply le_sInf
+    intro T hT
+    exact hT.1
+  have hStable : ∀ a b, ∀ v ∈ genSub E V, E a b v ∈ genSub E V := by
+    intro a b v hv
+    unfold genSub at hv ⊢
+    simp only [Submodule.mem_sInf, Set.mem_setOf_eq] at hv ⊢
+    intro T hT
+    exact hT.2 a b v (hv T hT)
+  exact layer_le_of_stable hVT hStable k
 
 theorem layer_kStable (hE : IsGlRep E) (hV : IsKStableSub ε E V) (k : ℕ) :
     IsKStableSub ε E (layer ε E V k) := by

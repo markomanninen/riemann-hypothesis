@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,9 +123,9 @@ theorem superadditivity_holds : StatASuper := by
   unfold aH
   have hd : ℓ ^ (padicValNat ℓ r.factorial + padicValNat ℓ s.factorial) ∣ (r + s).factorial := by
     rw [pow_add]
-    exact (Nat.mul_dvd_mul pow_padicValNat_dvd pow_padicValNat_dvd).trans
+    exact (Nat.mul_dvd_mul (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)) (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))).trans
       (Nat.factorial_mul_factorial_dvd_factorial_add r s)
-  have h := (padicValNat_dvd_iff_le (Nat.factorial_ne_zero _)).mp hd
+  have h := ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) (Nat.factorial_ne_zero _)).mp hd
   omega
 
 theorem frame_invariance_holds : StatFrameInv := by

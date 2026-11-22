@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitAlgebraMapEqOfValuationEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitAlgebraMapEqOfValuationEqOne
+
+@[expose] public section
 
 universe u v
 
@@ -14,11 +18,6 @@ theorem res_res {X : Scheme.{u}} {U V W : X.Opens} (h : W ≤ V) (h' : V ≤ U) 
     X.presheaf.map (homOfLE h).op (X.presheaf.map (homOfLE h').op s) =
       X.presheaf.map (homOfLE (h.trans h')).op s := by
   rw [← CommRingCat.comp_apply, ← Functor.map_comp]
-  rfl
-
-theorem res_self {X : Scheme.{u}} {U : X.Opens} (h : U ≤ U) (s : Γ(X, U)) :
-    X.presheaf.map (homOfLE h).op s = s := by
-  rw [show (homOfLE h).op = 𝟙 (op U) from rfl, CategoryTheory.Functor.map_id]
   rfl
 
 theorem germ_res {X : Scheme.{u}} {U V : X.Opens} (h : V ≤ U) {x : X} (hx : x ∈ V) (s : Γ(X, U)) :
@@ -66,27 +65,6 @@ theorem res_inf_injective {D : X.Opens} (hD : genericPoint X ∈ D) (W : X.Opens
   have hWD : genericPoint X ∈ W ⊓ D := ⟨hW, hD⟩
   rw [← germ_res (inf_le_left : W ⊓ D ≤ W) hWD s, ← germ_res (inf_le_left : W ⊓ D ≤ W) hWD s', hss]
 
-theorem eq_zero_of_component_eq_zero {ι : Type v} {U : ι → X.Opens}
-    (g : ∀ a b, Γ(X, U a ⊓ U b)) (s : ∀ a, Γ(X, U a))
-    (hs : ∀ a b, X.presheaf.map (homOfLE inf_le_left).op (s a) =
-      g a b * X.presheaf.map (homOfLE inf_le_right).op (s b))
-    {a : ι} {x : X} (hx : x ∈ U a) (h : s a = 0) (b : ι) : s b = 0 := by
-  have hgen : genericPoint X ∈ U a := genericPoint_mem hx
-  apply res_inf_injective hgen (U b)
-  rw [hs b a, h, map_zero, mul_zero, map_zero]
-
-theorem eq_zero_of_forall_pow_dvd_germ [IsLocallyNoetherian X] {t : Γ(X, ⊤)}
-    {ι : Type v} {U : ι → X.Opens} (g : ∀ a b, Γ(X, U a ⊓ U b)) (s : ∀ a, Γ(X, U a))
-    (hs : ∀ a b, X.presheaf.map (homOfLE inf_le_left).op (s a) =
-      g a b * X.presheaf.map (homOfLE inf_le_right).op (s b))
-    {a : ι} {x : X} (hx : x ∈ U a) (hxt : x ∉ X.basicOpen t)
-    (h : ∀ e : ℕ, X.presheaf.germ ⊤ x trivial t ^ e ∣ X.presheaf.germ (U a) x hx (s a))
-    (b : ι) : s b = 0 := by
-  have hnu : ¬ IsUnit (X.presheaf.germ ⊤ x trivial t) := fun hu => hxt ((X.mem_basicOpen_top t x).mpr hu)
-  have h0 : X.presheaf.germ (U a) x hx (s a) = 0 := GlobalTheory.PrimeElement.eq_zero_of_forall_pow_dvd hnu h
-  have hsa : s a = 0 := germ_injective_of_isIntegral X x hx (by rw [h0, map_zero])
-  exact eq_zero_of_component_eq_zero g s hs hx hsa b
-
 end Integral
 
 variable {X : Scheme.{u}} {t : Γ(X, ⊤)} {η : X}
@@ -98,11 +76,6 @@ include hη in
 theorem mem_of_notMem_basicOpen {W : X.Opens} {x : X} (hx : x ∈ W) (hxt : x ∉ X.basicOpen t) :
     η ∈ W := ((hη x).mp hxt).mem_open W.isOpen hx
 
-include hη in
-theorem le_basicOpen_of_notMem {W : X.Opens} (hW : η ∉ W) : W ≤ X.basicOpen t := by
-  intro x hx
-  by_contra hxt
-  exact hW (mem_of_notMem_basicOpen hη hx hxt)
 
 include hp in
 theorem ne_zero : t ≠ 0 := by
@@ -118,8 +91,8 @@ theorem mem_primeIdealOf_iff {U : X.Opens} (hU : IsAffineOpen U) (x : U) (s : Γ
   change X.presheaf.germ U x.1 x.2 s ∈ IsLocalRing.maximalIdeal _ ↔ _
   rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
 
-include hη hp in
 
+include hη hp in
 theorem primeIdealOf_eq_span {U : X.Opens} (hU : IsAffineOpen U) (h : η ∈ U) :
     (hU.primeIdealOf ⟨η, h⟩).asIdeal =
       Ideal.span {X.presheaf.map (homOfLE (le_top : U ≤ ⊤)).op t} := by
@@ -153,8 +126,8 @@ theorem primeIdealOf_eq_span {U : X.Opens} (hU : IsAffineOpen U) (h : η ∈ U) 
       Scheme.basicOpen_res]
     exact fun hm => hηt hm.2
 
-include hη hp in
 
+include hη hp in
 theorem dvd_iff_notMem_basicOpen {U : X.Opens} (hU : IsAffineOpen U) (h : η ∈ U) (s : Γ(X, U)) :
     X.presheaf.map (homOfLE (le_top : U ≤ ⊤)).op t ∣ s ↔ η ∉ X.basicOpen s := by
   rw [← Ideal.mem_span_singleton, ← primeIdealOf_eq_span hη hp hU h]
@@ -162,8 +135,8 @@ theorem dvd_iff_notMem_basicOpen {U : X.Opens} (hU : IsAffineOpen U) (h : η ∈
 
 variable [IsIntegral X]
 
-include hη hp in
 
+include hη hp in
 theorem isDiscreteValuationRing_stalk [IsLocallyNoetherian X] :
     IsDiscreteValuationRing (X.presheaf.stalk η) ∧
       Irreducible (X.presheaf.germ ⊤ η trivial t) := by
@@ -230,8 +203,8 @@ private theorem exists_section_restrict_eq_of_germ_eq {V : X.Opens} (hV : IsAffi
   have hrr : r' = r := hinj (hr'.trans hr.symm)
   exact hrr ▸ hr'u
 
-include hη in
 
+include hη in
 theorem exists_res_eq {W : X.Opens} (r : Γ(X, W ⊓ X.basicOpen t))
     (hr : ∀ h : η ∈ W, ∃ z : X.presheaf.stalk η, algebraMap _ X.functionField z =
       X.presheaf.germ _ (genericPoint X) (genericPoint_mem_inf hp h) r) :
@@ -291,8 +264,8 @@ theorem exists_res_eq {W : X.Opens} (r : Γ(X, W ⊓ X.basicOpen t))
   obtain ⟨s, hs, -⟩ := X.sheaf.existsUnique_gluing' O W (fun i => homOfLE (hOW i)) hcov f hcompat
   exact ⟨s, hs none⟩
 
-include hη hp in
 
+include hη hp in
 theorem isUnit_of_isUnit_res {W : X.Opens} {s : Γ(X, W)}
     (hs : IsUnit (X.presheaf.map (homOfLE (inf_le_left : W ⊓ X.basicOpen t ≤ W)).op s))
     (hsη : η ∈ W → η ∈ X.basicOpen s) : IsUnit s := by
@@ -370,8 +343,8 @@ theorem compatible_of_res_eq {D : X.Opens} (hD : genericPoint X ∈ D) {r : ∀ 
   rw [map_mul, map_mul, germ_res, germ_res, germ_eq_mul_germ hr hga hgb]
   ring
 
-omit [IsIntegral X] in
 
+omit [IsIntegral X] in
 theorem mem_basicOpen_of_compatible (hg : ∀ a b, IsUnit (g a b)) {s : ∀ a, Γ(X, U a)}
     (hs : ∀ a b, X.presheaf.map (homOfLE inf_le_left).op (s a) =
       g a b * X.presheaf.map (homOfLE inf_le_right).op (s b))
@@ -385,8 +358,8 @@ theorem mem_basicOpen_of_compatible (hg : ∀ a b, IsUnit (g a b)) {s : ∀ a, �
 
 variable [IsLocallyNoetherian X]
 
-include hη hp in
 
+include hη hp in
 theorem existsUnique_zpow_mul (hU : ∀ x : X, ∃ a, x ∈ U a) (hg : ∀ a b, IsUnit (g a b))
     (τ : Γ(X, X.basicOpen t)ˣ)
     (hτ : (τ : Γ(X, X.basicOpen t)) = X.presheaf.map (homOfLE le_top).op t)
@@ -454,8 +427,8 @@ theorem existsUnique_zpow_mul (hU : ∀ x : X, ∃ a, x ∈ U a) (hg : ∀ a b, 
     rw [algebraMap_germ, ← germ_res inf_le_left (⟨hga₀, hgD⟩ : genericPoint X ∈ U a₀ ⊓ X.basicOpen t) (s' a₀),
       hs' a₀, map_mul, germ_res, hφ n']
 
-include hη hp in
 
+include hη hp in
 theorem exists_zpow_mul_isUnit (hU : ∀ x : X, ∃ a, x ∈ U a) (hg : ∀ a b, IsUnit (g a b))
     (τ : Γ(X, X.basicOpen t)ˣ)
     (hτ : (τ : Γ(X, X.basicOpen t)) = X.presheaf.map (homOfLE le_top).op t)
@@ -506,63 +479,6 @@ theorem zpow_eq_zero {A B : Type*} [CommRing A] [CommRing B] (ρ : A →+* B)
       have hu' : IsUnit (σ * p ^ (k + 1)) := (hρ h').symm ▸ hu
       exact hp ((isUnit_pow_iff (Nat.succ_ne_zero k)).mp (isUnit_of_mul_isUnit_right hu'))
 
-include hη hp in
-
-theorem exists_isUnit_res_eq (hU : ∀ x : X, ∃ a, x ∈ U a) (hg : ∀ a b, IsUnit (g a b))
-    {r : ∀ a, Γ(X, U a ⊓ X.basicOpen t)}
-    (hr : ∀ a b, X.presheaf.map (homOfLE (inf_le_inf_right _ inf_le_left)).op (r a) =
-      X.presheaf.map (homOfLE (inf_le_left : U a ⊓ U b ⊓ X.basicOpen t ≤ U a ⊓ U b)).op (g a b) *
-        X.presheaf.map (homOfLE (inf_le_inf_right _ inf_le_right)).op (r b))
-    (hru : ∀ a, IsUnit (r a)) {T : Scheme.{u}} [IsIntegral T] (e : T ⟶ X)
-    (he : ∃ y', e y' ∈ X.basicOpen t) {y : T} (hy : e y ∉ X.basicOpen t) {a₀ : ι}
-    (hya : e y ∈ U a₀) {u : Γ(T, e ⁻¹ᵁ U a₀)} (hu : IsUnit u)
-    (hur : T.presheaf.map (homOfLE (e.preimage_mono inf_le_left)).op u =
-      e.app (U a₀ ⊓ X.basicOpen t) (r a₀)) :
-    ∃ s : ∀ a, Γ(X, U a), (∀ a, IsUnit (s a)) ∧
-      (∀ a b, X.presheaf.map (homOfLE inf_le_left).op (s a) =
-        g a b * X.presheaf.map (homOfLE inf_le_right).op (s b)) ∧
-      ∀ a, X.presheaf.map (homOfLE inf_le_left).op (s a) = r a := by
-  obtain ⟨τ, hτ⟩ := exists_unit_eq_res t
-  obtain ⟨n, s, hsu, hsc, hs⟩ := exists_zpow_mul_isUnit hη hp hU hg τ hτ hr hru
-  suffices hn : n = 0 by
-    subst hn
-    refine ⟨s, hsu, hsc, fun a => ?_⟩
-    rw [hs a, zpow_zero, Units.val_one, map_one, one_mul]
-
-  have hTV : genericPoint T ∈ e ⁻¹ᵁ U a₀ := genericPoint_mem (show y ∈ e ⁻¹ᵁ U a₀ from hya)
-  have hTD : genericPoint T ∈ e ⁻¹ᵁ X.basicOpen t := by
-    obtain ⟨y', hy'⟩ := he
-    exact genericPoint_mem (show y' ∈ e ⁻¹ᵁ X.basicOpen t from hy')
-  have hψ : ∀ (W W' : X.Opens) (hWW : W' ≤ W) (h' : genericPoint T ∈ e ⁻¹ᵁ W') (f : Γ(X, W)),
-      T.presheaf.germ _ (genericPoint T) h' (e.app W' (X.presheaf.map (homOfLE hWW).op f)) =
-        T.presheaf.germ _ (genericPoint T) (e.preimage_mono hWW h') (e.app W f) := by
-    intro W W' hWW h' f
-    rw [← CommRingCat.comp_apply (X.presheaf.map (homOfLE hWW).op) (e.app W'), e.naturality, CommRingCat.comp_apply, TopCat.Presheaf.germ_res_apply]
-  have hTVD : genericPoint T ∈ e ⁻¹ᵁ (U a₀ ⊓ X.basicOpen t) := ⟨hTV, hTD⟩
-  let φ := (T.presheaf.germ _ (genericPoint T) hTD).hom.comp (e.app (X.basicOpen t)).hom
-  refine zpow_eq_zero (T.presheaf.germ _ (genericPoint T) hTV).hom
-    (germ_injective_of_isIntegral T _ hTV) (σ := e.app (U a₀) (s a₀)) (u := u)
-    (p := e.app (U a₀) (X.presheaf.map (homOfLE (le_top : U a₀ ≤ ⊤)).op t))
-    ((hsu a₀).map _) hu ?_ (Units.map φ.toMonoidHom τ) ?_ ?_
-  ·
-    intro hpu
-    apply hy
-    have hyb : y ∈ T.basicOpen (e.app (U a₀) (X.presheaf.map (homOfLE (le_top : U a₀ ≤ ⊤)).op t)) := by
-      rw [T.basicOpen_of_isUnit hpu]
-      exact hya
-    rw [← Scheme.preimage_basicOpen, Scheme.basicOpen_res] at hyb
-    exact hyb.2
-  · change φ τ = _
-    simp only [φ, RingHom.comp_apply]
-    rw [hτ, hψ ⊤ (X.basicOpen t) le_top hTD t, hψ ⊤ (U a₀) le_top hTV t]
-  · have h1 := congrArg (T.presheaf.germ _ (genericPoint T) hTVD) (congrArg (e.app _) (hs a₀))
-    rw [hψ (U a₀) _ inf_le_left hTVD (s a₀), map_mul, map_mul, hψ (X.basicOpen t) _ inf_le_right hTVD,
-      ← hur, TopCat.Presheaf.germ_res_apply] at h1
-    rw [h1]
-    congr 1
-    change φ ↑(τ ^ n) = ((Units.map φ.toMonoidHom τ ^ n : _) : T.functionField)
-    rw [← map_zpow]
-    rfl
 
 end Cocycle
 

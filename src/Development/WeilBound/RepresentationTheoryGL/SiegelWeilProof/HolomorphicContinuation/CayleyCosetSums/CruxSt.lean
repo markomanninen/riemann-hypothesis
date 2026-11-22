@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.MultiplicityOneTestOperatorsAlt
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.ScalarSectionCompactBlockInvariant
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.MultiplicityOneTestOperatorsAlt
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.ScalarSectionCompactBlockInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,10 +21,6 @@ def DomZ (n : ℕ) : Set (M2 n) := {x | x ∈ Dom n ∧ (u1 x).det * (ub1 x).det
 
 def KappaC : Prop :=
   ∀ (N : ℕ) (t : ℂ), detD (fun T : Matrix (Fin N) (Fin N) ℂ => (1 + T).det ^ t) = ∏ i ∈ Finset.range N, (t + i)
-
-def CayleyC : Prop :=
-  ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (A : Matrix ι ι ℂ) (t : ℂ),
-    detD (fun T : Matrix ι ι ℂ => (1 + A * T).det ^ t) = (∏ i ∈ Finset.range (Fintype.card ι), (t + i)) * A.det
 
 def DjZ : Prop :=
   ∀ (n m : ℕ) (e : ℤ) (j : ℕ) (z : ℂ) (x : M2 n), j ≤ n → x ∈ DomZ n →

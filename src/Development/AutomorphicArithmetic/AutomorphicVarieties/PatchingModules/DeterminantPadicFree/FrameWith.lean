@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,5 @@ class IsEqDVR (l : outParam ℕ) (A : Type) [CommRing A] [IsDomain A] [IsDiscret
   complete : IsAdicComplete (IsLocalRing.maximalIdeal A) A
   finite : Finite (IsLocalRing.ResidueField A)
   char : CharP A l
-
-abbrev frameWith (F : GFrame l) (I : F.St → Subgroup F.η.ker) : GFrame l := { F with Iu := I, D0 := ⊥, I0 := ⊥ }
 
 end UpperTheory.V.Pa

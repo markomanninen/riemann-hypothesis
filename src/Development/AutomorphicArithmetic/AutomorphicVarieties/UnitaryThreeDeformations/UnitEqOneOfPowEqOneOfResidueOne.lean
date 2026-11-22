@@ -1,17 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TriCanon
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TriCanon
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
 namespace UpperTheory.V.UnitaryThreeInertia
 
-private theorem conjBy_one_inv_eq_self {R D : Type} [CommRing R] [Group D] (r : D →* GG 3 R) :
+private theorem conjBy_one_inv_eq_self {R D : Type} [CommRing R] [Group D] (r : D →* GG (m := 3) (R := R)) :
     conjBy (1 : GL (Fin 3) R)⁻¹ r = r := by
   ext1 g
   simp [conjBy]
 
-private theorem rep_mul_matrix_of_trivial_sign {R D : Type} [CommRing R] [Group D] (r : D →* GG 3 R) (g h : D) (hg : (r g).right = 1) :
+private theorem rep_mul_matrix_of_trivial_sign {R D : Type} [CommRing R] [Group D] (r : D →* GG (m := 3) (R := R)) (g h : D) (hg : (r g).right = 1) :
     (r (g * h)).mat = (r g).mat * (r h).mat := by
   simp [GG.mat, hg]
 
@@ -20,7 +24,7 @@ private theorem diagonal_mul_diag_entry {R : Type} [CommRing R] {X : Matrix (Fin
   rw [Matrix.mul_apply, Finset.sum_eq_single a (fun c _ hc => by rw [hX hc.symm, zero_mul])
     (fun hn => absurd (Finset.mem_univ a) hn)]
 
-private def kap {R D : Type} [CommRing R] [Group D] (η : D →* ℤˣ) (r : D →* GG 3 R) (hm : HasMult η r)
+private def kap {R D : Type} [CommRing R] [Group D] (η : D →* ℤˣ) (r : D →* GG (m := 3) (R := R)) (hm : HasMult η r)
     (hd : ∀ g, η g = 1 → (r g).mat.IsDiag) (a : Fin 3) : η.ker →* R where
   toFun g := (r g).mat a a
   map_one' := by simp [GG.mat]
@@ -36,15 +40,16 @@ private theorem unit_eq_one_of_pow_eq_one_of_residue_one {R : Type} [CommRing R]
     rwa [map_sub, map_one, sub_eq_zero] at this
   have hs : IsUnit (∑ i ∈ Finset.range N, (u : R) ^ i) := by
     rw [← residue_ne_zero_iff_isUnit] at hN ⊢
-    simpa [map_sum, hu] using hN
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, hu] using hN
   exact Units.ext (sub_eq_zero.1 (hs.mul_left_eq_zero.1 e))
 
-private theorem apply_eq_of_hasMult_of_mat_eq {R D : Type} [CommRing R] [Group D] {η : D →* ℤˣ} {r ρ : D →* GG 3 R} (hm : HasMult η r)
+private theorem apply_eq_of_hasMult_of_mat_eq {R D : Type} [CommRing R] [Group D] {η : D →* ℤˣ} {r ρ : D →* GG (m := 3) (R := R)} (hm : HasMult η r)
     (hm' : HasMult η ρ) (g : D) (h : (r g).mat = (ρ g).mat) : r g = ρ g :=
   SemidirectProduct.ext (Units.ext h) ((hm g).trans (hm' g).symm)
 
 private theorem diag_entry_eq_character_on_inertia {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R] [Group D]
-    {η : D →* ℤˣ} {Ψ : D →* Oˣ} {I : Subgroup D} {r : D →* GG 3 R} (hr : Red η Ψ r)
+    {η : D →* ℤˣ} {Ψ : D →* Oˣ} {I : Subgroup D} {r : D →* GG (m := 3) (R := R)} (hr : Red η Ψ r)
     (hd : ∀ g, η g = 1 → (r g).mat.IsDiag) (hx : ∃ x, η x = 1 ∧ IsUnit ((Ψ x : O) ^ 2 - 1)) (hT : CondT η Ψ I r)
     (s : D) (hs : s ∈ I) (hη : η s = 1) (a : Fin 3) : (r s).mat a a = algebraMap O R (psi Ψ a s) := by
   obtain ⟨x, hx, hx'⟩ := hx
@@ -55,7 +60,7 @@ private theorem diag_entry_eq_character_on_inertia {O R D : Type} [CommRing O] [
 private theorem diagonal_reps_eq_of_same_frame_point {O R G Γ ι : Type} [CommRing O] [IsLocalRing O] [Finite (ResidueField O)]
     [CommRing R] [IsLocalRing R] [IsNoetherianRing R] [Algebra O R] [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [Group Γ] [TopologicalSpace Γ] (F : Frame O G Γ ι) (hF : F.Ok) (hC : F.Cl1) (g₁ : Γ)
-    (r ρ : Γ →* GG 3 R) (hr : F.IsPt g₁ r) (hρ : F.IsPt g₁ ρ) (hd : ∀ g, F.η g = 1 → (r g).mat.IsDiag)
+    (r ρ : Γ →* GG (m := 3) (R := R)) (hr : F.IsPt g₁ r) (hρ : F.IsPt g₁ ρ) (hd : ∀ g, F.η g = 1 → (r g).mat.IsDiag)
     (hd' : ∀ g, F.η g = 1 → (ρ g).mat.IsDiag) : r = ρ := by
   classical
   let u : Fin 3 → (F.η.ker →* Rˣ) := fun a =>
@@ -82,7 +87,7 @@ private theorem diagonal_reps_eq_of_same_frame_point {O R G Γ ι : Type} [CommR
   have hI : ∀ v (s : F.D v), s ∈ F.Iv v → F.η (F.loc v s) = 1 → r (F.loc v s) = ρ (F.loc v s) := by
     intro v s hs hη
     by_cases hv : v ∈ F.Tb
-    · have key : ∀ r : Γ →* GG 3 R, F.IsPt g₁ r → (∀ g, F.η g = 1 → (r g).mat.IsDiag) → ∀ a,
+    · have key : ∀ r : Γ →* GG (m := 3) (R := R), F.IsPt g₁ r → (∀ g, F.η g = 1 → (r g).mat.IsDiag) → ∀ a,
           (r (F.loc v s)).mat a a = algebraMap O R (psi (F.Ψv v) a s) := by
         intro r hr hd a
         refine diag_entry_eq_character_on_inertia (η := F.ηv v) (Ψ := F.Ψv v) (I := F.Iv v) (r := r.comp (F.loc v)) ⟨fun g => hr.mult (F.loc v g), fun g => hr.red (F.loc v g)⟩
@@ -132,7 +137,7 @@ private theorem diagonal_reps_eq_of_same_frame_point {O R G Γ ι : Type} [CommR
       Submodule.mem_iInf]
     intro n
     let q : R →* R ⧸ maximalIdeal R ^ n := (Ideal.Quotient.mk (maximalIdeal R ^ n)).toMonoidHom
-    have lc : ∀ (r : Γ →* GG 3 R) (hr : F.IsPt g₁ r) (hd : ∀ g, F.η g = 1 → (r g).mat.IsDiag),
+    have lc : ∀ (r : Γ →* GG (m := 3) (R := R)) (hr : F.IsPt g₁ r) (hd : ∀ g, F.η g = 1 → (r g).mat.IsDiag),
         IsLocallyConstant fun g => Units.map q ((kap F.η r hr.mult hd a).toHomUnits g) := fun r hr hd =>
       IsLocallyConstant.desc _ Units.val
         (((hr.cont n).comp fun X => X a a).comp_continuous continuous_subtype_val) Units.val_injective
@@ -167,7 +172,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.eq_rz_of_diag :
       [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [Algebra O (PadicAlgCl l)] [IsScalarTower ℤ_[l] O (PadicAlgCl l)] [FaithfulSMul O (PadicAlgCl l)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    F.Cl1 → ∀ g₁, F.Marked g₁ → ∀ (r : Γ →* GG 3 (PadicAlgCl l)), F.IsCharZeroPt g₁ r → Upper F.η r → Lower F.η r → r = F.rz (PadicAlgCl l) := by
+    F.Cl1 → ∀ g₁, F.Marked g₁ → ∀ (r : Γ →* GG (m := 3) (R := PadicAlgCl l)), F.IsCharZeroPt g₁ r → Upper F.η r → Lower F.η r → r = F.rz (PadicAlgCl l) := by
   intro l _ O _ _ _ _ _ _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF hC g₁ _ r ⟨A, _, _, t, r', hp, he⟩ hU hL
   haveI : FaithfulSMul O A := (faithfulSMul_iff_algebraMap_injective O A).2 fun x y h =>
     FaithfulSMul.algebraMap_injective O (PadicAlgCl l) (congrArg Subtype.val h)

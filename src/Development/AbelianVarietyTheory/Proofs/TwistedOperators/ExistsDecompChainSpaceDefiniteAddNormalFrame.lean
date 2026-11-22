@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ChainMatrices
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ChainMatrices
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,12 +25,13 @@ theorem exists_decomp {K X Y : Type} [Field K] [AddCommGroup X] [Module K X] [Ad
     ∃ (x : X) (t : Fin c → K), y = ι x + ∑ n, t n • a n := by
   let Ψ : (X × (Fin c → K)) →ₗ[K] Y := ι.coprod (Fintype.linearCombination K a)
   have hinj : Function.Injective Ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨x, t⟩ h
     have h' : ι x + ∑ n, t n • a n = 0 := h
     have ht : t = 0 := funext fun n => by
       have := congrArg (φ n) h'
-      rw [map_add, h0, zero_add, map_sum, map_zero, Finset.sum_eq_single n
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), h0, zero_add, map_sum, map_zero, Finset.sum_eq_single n
         (fun n' _ hn => by rw [map_smul, h1 n n' hn.symm, smul_zero]) (by simp), map_smul, smul_eq_mul] at this
       exact (mul_eq_zero.1 this).resolve_right (h2 n)
     subst ht
@@ -76,7 +81,7 @@ theorem exists_decomp_chainSpace_definite_add_normalFrame {j : ℕ} (hj : j < D.
       omega
   refine exists_decomp (D.sp.iXY j) ?_ ?_ (fun n : Fin (nAux D j) => normalFr D j E Ev z n)
     (fun n => (D.sp.Y j).hT (b n)) (fun n x => ?_) (fun n n' hn => ?_) (fun n => ?_) y
-  · rw [injective_iff_map_eq_zero]
+  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     refine (D.sp.X j).nondeg.1 x fun x' => ?_
     rw [← D.sp.iXY_isom j hj, hx, map_zero, LinearMap.zero_apply]
@@ -199,7 +204,8 @@ theorem isUnit_chainMat {j : ℕ} (hj : j < D.R.m) (γ : GL (Fin (D.sp.X j).rank
   · obtain ⟨x, t, h⟩ := exists_decomp_chainSpace_definite_add_normalFrame hj hA ((D.sp.Y j).frame.equivFun.symm y)
     refine ⟨(D.sp.X j).frame.repr x, t, ?_⟩
     unfold frameMat
-    rw [LinearMap.toMatrix_mulVec_repr, ← (D.sp.Y j).frame.equivFun.apply_symm_apply y, h, map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.toMatrix_mulVec_repr, ← (D.sp.Y j).frame.equivFun.apply_symm_apply y, h, map_add (f := _), map_sum]
     simp only [map_smul]
     rfl
 
@@ -312,7 +318,8 @@ theorem exists_frame_std (V : HSp D) : ∃ β, IsSDFrame V β (crdLat V V.L0) 1 
 
 theorem sum_star_mul_ne {n : ℕ} (x : Fin n → D.host.E) : ∑ i, star (x i) * x i ≠ -1 := fun h => by
   have h1 := congrArg (fun t => (D.host.φ₀ t).re) h
-  simp only [map_sum, map_mul, emb_star, ← Complex.normSq_eq_conj_mul_self, Complex.re_sum, Complex.ofReal_re, map_neg,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, emb_star, ← Complex.normSq_eq_conj_mul_self, Complex.re_sum, Complex.ofReal_re, map_neg,
     map_one, Complex.neg_re, Complex.one_re] at h1
   have : 0 ≤ ∑ i, Complex.normSq (D.host.φ₀ (x i)) := Finset.sum_nonneg fun i _ => Complex.normSq_nonneg _
   linarith

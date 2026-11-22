@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem entN_br {a b n : ℕ} (M : Mt g n) {u v : ℕ} (hu : u < b) (hv : v < b)
   entN_fun (fun i j => entN M (a + i) (a + j)) hu hv
 
 theorem coe_toG {n : ℕ} {M : Mt g n} (h : IsUnit M) : ((toG M : Gn g n) : Mt g n) = M := by
-  unfold toG; rw [dif_pos h]; rfl
+  unfold toG; rw [dite_eq_left h]; rfl
 
 theorem toG_coe {n : ℕ} (x : Gn g n) : toG (x : Mt g n) = x := Units.ext (coe_toG x.isUnit)
 
@@ -255,7 +259,7 @@ theorem blocks_spec {p q r s : ℕ} {M : Mt g (p + q + (r + s))} (h : InPar (p +
     split_ifs
     · rw [entN_tl _ (by omega) (by omega)]
     · rw [entN_tl _ (by omega) (by omega)]; apply hc <;> omega
-    · rw [entR, dif_pos ⟨by omega, by omega⟩, cor]; congr 1; simp only; omega
+    · rw [entR, dite_eq_left ⟨by omega, by omega⟩, cor]; congr 1; simp only; omega
     · symm; apply z₂ <;> omega
     · rw [entN_br _ (by omega) (by omega)]; apply hc <;> omega
     · symm; apply h <;> omega

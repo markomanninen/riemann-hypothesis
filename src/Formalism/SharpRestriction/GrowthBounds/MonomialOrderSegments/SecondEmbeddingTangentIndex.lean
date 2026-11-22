@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SecondEmbeddingInjective
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SecondEmbeddingInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,10 +16,10 @@ variable {K : Type} [Field K] (D : TwistData K) (j : Fin D.J)
 
 def Marked (o : Finset (Fin (D.nB j + D.r))) : Prop := ∃ l ∈ o, l.val < D.nB j
 
-open Classical in
 
+open Classical in
 def fk (o : Finset (Fin (D.nB j + D.r))) : Fin (D.nB j + D.r) → D.ML :=
-  if D.Marked j o then D.e1 j else D.e0 j
+  @ite _ (D.Marked j o) (by unfold Marked; infer_instance) (D.e1 j) (D.e0 j)
 
 theorem fk_inj (o : Finset (Fin (D.nB j + D.r))) : Function.Injective (D.fk j o) := by
   unfold fk; split_ifs

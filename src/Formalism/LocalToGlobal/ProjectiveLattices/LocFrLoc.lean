@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecV
-import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfB
-import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecLocFrM
-import Formalism.LocalToGlobal.ProjectiveLattices.LocFrGen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCRing
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecV
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfB
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecLocFrM
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocFrGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem finrank_range_idem {V k : Type} [CommRing V] [IsLocalRing V] [Field k] [
   have htr : f (LinearMap.trace V _ e) = LinearMap.trace k _ e' := by
     rw [LinearMap.trace_eq_matrix_trace V (Pi.basisFun V (Fin n)),
       LinearMap.trace_eq_matrix_trace k (Pi.basisFun k (Fin n))]
-    simp only [Matrix.trace, Matrix.diag, LinearMap.toMatrix_apply, Pi.basisFun_apply, Pi.basisFun_repr, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.trace, Matrix.diag, LinearMap.toMatrix_apply, Pi.basisFun_apply, Pi.basisFun_repr, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     have := congrFun (h (Pi.single i 1)) i
     rw [hs i] at this
@@ -174,7 +179,7 @@ theorem exists_eig_basis [IsLocalRing L] [Algebra c.F L] (hx0 : x ≫ Xo.s = sOf
       algebraMap L k ∘ Polynomial.aeval (rhoT hx α) (Q.map (algebraMap c.F L)) cc := fun Q cc => by
     induction Q using Polynomial.induction_on' with
     | add p q hp hq =>
-      rw [Polynomial.map_add, Polynomial.map_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hp, hq]
+      rw [Polynomial.map_add (f := _), Polynomial.map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq]
       funext j; simp
     | monomial j a =>
       rw [Polynomial.map_monomial, Polynomial.map_monomial, Polynomial.aeval_monomial, Polynomial.aeval_monomial,

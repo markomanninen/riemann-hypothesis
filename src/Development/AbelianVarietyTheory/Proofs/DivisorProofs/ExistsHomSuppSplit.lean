@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftPRouteSmall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslatesEqPrimFrameLat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacFn
-import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftPRouteSmall
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslatesEqPrimFrameLat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacFn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -92,14 +96,15 @@ def liftMat (h : IsCMExt F E σ) (τ : E →ₐ[F] Fv F v) :
     exact (liftPair h τ).map_zero
   map_add' p q := by
     ext i j
-    simp only [Prod.fst_add, Prod.snd_add, Matrix.add_apply, Matrix.of_apply, ← map_add, Prod.mk_add_mk]
+    simp only [Prod.fst_add, Prod.snd_add, Matrix.add_apply, Matrix.of_apply, ← map_add (f := _), Prod.mk_add_mk]
   map_mul' p q := by
     ext i j
     simp only [Prod.fst_mul, Prod.snd_mul, Matrix.mul_apply, Matrix.of_apply]
     rw [show ((∑ k, p.1 i k * q.1 k j), (∑ k, p.2 i k * q.2 k j)) =
         ∑ k, ((p.1 i k, p.2 i k) * (q.1 k j, q.2 k j)) by
       ext <;> simp [Prod.fst_sum, Prod.snd_sum]]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_mul]
 
 theorem liftMat_apply (h : IsCMExt F E σ) (τ : E →ₐ[F] Fv F v) (p : Matrix n n (Fv F v) × Matrix n n (Fv F v))
@@ -109,26 +114,26 @@ theorem map_one_add_of_zero {R : Type} [CommRing R] (f : AF F ⊗[F] E →+* R) 
     (hf : ∀ q, f (liftPair h τ q) = 0) (p : Matrix n n (Fv F v) × Matrix n n (Fv F v)) :
     (1 + liftMat h τ p).map f = 1 := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.add_apply, map_add, liftMat_apply, hf, add_zero]
+  simp only [Matrix.map_apply, Matrix.add_apply, map_add (f := _), liftMat_apply, hf, add_zero]
   by_cases e : i = j <;> simp [Matrix.one_apply, e]
 
 theorem map_one_add_piW (h : IsCMExt F E σ) (τ : E →ₐ[F] Fv F v) (p : Matrix n n (Fv F v) × Matrix n n (Fv F v)) :
     (1 + liftMat h τ p).map (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.piW τ) = 1 + p.1 := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.add_apply, map_add, liftMat_apply, piW_liftPair]
+  simp only [Matrix.map_apply, Matrix.add_apply, map_add (f := _), liftMat_apply, piW_liftPair]
   by_cases e : i = j <;> simp [Matrix.one_apply, e]
 
 theorem map_one_add_piW_comp (h : IsCMExt F E σ) (τ : E →ₐ[F] Fv F v)
     (p : Matrix n n (Fv F v) × Matrix n n (Fv F v)) :
     (1 + liftMat h τ p).map (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.piW (τ.comp σ)) = 1 + p.2 := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.add_apply, map_add, liftMat_apply, piW_comp_liftPair]
+  simp only [Matrix.map_apply, Matrix.add_apply, map_add (f := _), liftMat_apply, piW_comp_liftPair]
   by_cases e : i = j <;> simp [Matrix.one_apply, e]
 
 theorem map_one_add_cA (h : IsCMExt F E σ) (τ : E →ₐ[F] Fv F v) (p : Matrix n n (Fv F v) × Matrix n n (Fv F v)) :
     (1 + liftMat h τ p).map (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) = 1 + liftMat h τ p.swap := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.add_apply, map_add, liftMat_apply, cA_liftPair, Prod.swap_prod_mk, Prod.fst_swap,
+  simp only [Matrix.map_apply, Matrix.add_apply, map_add (f := _), liftMat_apply, cA_liftPair, Prod.swap_prod_mk, Prod.fst_swap,
     Prod.snd_swap]
   by_cases e : i = j <;> simp [Matrix.one_apply, e]
 
@@ -184,7 +189,7 @@ def oneAdd {R S : Type} [Ring R] [Ring S] (Φ : R →ₙ+* S) : R →* S where
   map_one' := by simp
   map_mul' x y := by
     have e : x * y - 1 = (x - 1) + (y - 1) + (x - 1) * (y - 1) := by noncomm_ring
-    rw [e, map_add, map_add, map_mul]
+    rw [e, map_add (f := _), map_add (f := _), map_mul]
     noncomm_ring
 
 theorem unitary (h : IsCMExt F E σ) (τ : E →ₐ[F] Fv F v) (J : Matrix n n E) (herm : ∀ i j, σ (J j i) = J i j)
@@ -234,8 +239,8 @@ end Unitary
 
 end GlobalTheory.SplitGLLift
 
-open GlobalTheory.SplitGLLift in
 
+open GlobalTheory.SplitGLLift in
 theorem GlobalTheory.SplitGLLift.exists_hom_supp_split : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} (W : G.Weil) (t : T) (i j : Fin D.R.m) (M : Vol G)
     (e : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.Num G i j) (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.Geo G i j)
     (X : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+
+@[expose] public section
+
 open UpperTheory.Gal.Int.Geo
 
 theorem UpperTheory.card_fiber_eq_relIndex_of_normal_quotient :

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.IntegrableChart
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.ContinuousLev
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.GoodSmul
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RapidDecay
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.IntegrableChart
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.ContinuousLev
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.GoodSmul
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RapidDecay
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ open GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.V.Cm
 
 namespace UpperTheory.ConvolutionTheory.BW.SliceClasses
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ} {S : Set (Pl E)}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ} {S : Set (Pl E)}
 
 theorem ct_le (n r N : ℕ) : ∃ C : ℝ, 0 ≤ C ∧ ∀ (φ : GA E n → ℂ) (B : ℝ), (∀ g, ‖φ g‖ ≤ B * AutomorphicForm.height g ^ N) →
     ∀ g, ‖AutomorphicForm.constantTerm r φ g‖ ≤ C * B * AutomorphicForm.height g ^ N := by
@@ -75,14 +79,14 @@ theorem ct_left {φ : GA E (r + s) → ℂ} (hφ : AutomorphicForm.IsLeftInvaria
   rw [hF, ← mul_assoc, ← map_mul, Prod.mk_mul_mk, map_one, one_mul, ← mul_assoc, ← zt_comm, mul_assoc] at this
   exact this
 
-abbrev pt (r s : ℕ) (t : ℝ) (y : RightCosetSpace (rationalGLOne E r)) : GA E (r + s) :=
-  lev (Ad E) r s (zt E r t * ((Quotient.out y : normOneGL E r) : GA E r), 1)
+abbrev pt (r s : ℕ) (t : ℝ) (y : RightCosetSpace (rationalGLOne (K := E) (n := r))) : GA E (r + s) :=
+  lev (Ad E) r s (zt E r t * ((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r), 1)
 
-abbrev wt (f : GA E r → ℂ) (y : RightCosetSpace (rationalGLOne E r)) : ℂ :=
-  starRingEnd ℂ (f ((Quotient.out y : normOneGL E r) : GA E r))
+abbrev wt (f : GA E r → ℂ) (y : RightCosetSpace (rationalGLOne (K := E) (n := r))) : ℂ :=
+  starRingEnd ℂ (f ((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r))
 
-abbrev nu (E : Type) [Field E] [NumberField E] (r : ℕ) : Measure (RightCosetSpace (rationalGLOne E r)) :=
-  quotientMeasure (rationalGLOne E r) (mu1 E r)
+abbrev nu (E : Type) [Field E] [NumberField E] (r : ℕ) : Measure (RightCosetSpace (rationalGLOne (K := E) (n := r))) :=
+  quotientMeasure (rationalGLOne (K := E) (n := r)) (mu1 E r)
 
 instance : IsFiniteMeasure (nu E r) := Reduction.isFiniteMeasure_quotientMeasure (K := E) (n := r) (mu1 E r)
 
@@ -128,9 +132,12 @@ theorem big_le (b : Blo S r) (s : ℕ) (t : ℝ) (N : ℕ) : ∃ C : ℝ, 0 ≤ 
   refine ⟨C * (nu E r).real Set.univ, by positivity, fun φ B hφ hB g => ?_⟩
   exact (norm_integral_le_of_norm_le_const (.of_forall fun y => hC φ B hφ hB y g)).trans (le_of_eq (by ring))
 
-theorem cls (b : Blo S r) (s : ℕ) (t : ℝ) : Cls (nu E r) (pt r s t) (wt b.f.1) (IsCt r s) where
-  lie F X h := by rw [← uC_ιC]; exact h.uC _
-  meas F h g := by
+theorem cls (b : Blo S r) (s : ℕ) (t : ℝ) : Cls (nu E r) (pt r s t) (wt b.f.1) (IsCt r s) := by
+  refine { lie := ?_, meas := ?_, bdd := ?_ }
+  · intro F X h
+    rw [← uC_ιC]
+    exact h.uC _
+  · intro F h g
     have hc := h.continuous
     obtain ⟨φ, hφ, hF⟩ := h
     obtain ⟨hf, -⟩ := cuspUmg E r b.f b.cusp
@@ -142,8 +149,9 @@ theorem cls (b : Blo S r) (s : ℕ) (t : ℝ) : Cls (nu E r) (pt r s t) (wt b.f.
     have hcc : Continuous fun x : GA E r => F.1 (lev (Ad E) r s (zt E r t * x, 1) * g) * starRingEnd ℂ (b.f.1 x) :=
       (hc.comp ((Pair.continuous_lev.comp ((continuous_const.mul continuous_id).prodMk continuous_const)).mul
         continuous_const)).mul (Complex.continuous_conj.comp ((umgOps E r).2 b.f hf).1)
+    have := RightCosetSpace.borelSpace (Γ := rationalGLOne (K := E) (n := r))
     exact (continuous_cuspQuot hl hcc).aestronglyMeasurable.congr (.of_forall fun y => (Pair.out_eq hl y).symm)
-  bdd F h K hK := by
+  · intro F h K hK
     obtain ⟨φ, hφ, hF⟩ := h
     obtain ⟨N, hN⟩ := hφ.growth
     obtain ⟨B, hB⟩ := hN 1
@@ -169,7 +177,7 @@ private def passAlg (b : Blo S r) (s : ℕ) (t : ℝ) : Subalgebra ℂ (UC E (r 
     exact hu _ _ (hF.uC v) (hv F G hF hG)
   add_mem' {u v} hu hv F G hF hG := by
     funext g
-    rw [map_add]
+    rw [map_add (f := _)]
     change (uC E (r + s) u G).1 g + (uC E (r + s) v G).1 g = _
     rw [hu F G hF hG, hv F G hF hG, avg, avg, avg,
       ← integral_add ((cls b s t).integrable (hF.uC u) g) ((cls b s t).integrable (hF.uC v) g)]

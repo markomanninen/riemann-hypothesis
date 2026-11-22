@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem sz_mul_mul_le {n d : ℕ} (A : Ten F E n n) (B : Ten F E d d) (z : Ten F
   have key : ∀ w i j, ‖piInf (τ w) ((A * z * Bᵀ : Ten F E n d) i j)‖ ≤
       (sz τ A * sz τ B) * ∑ k, ∑ l, ‖piInf (τ w) (z k l)‖ := by
     intro w i j
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, map_sum, map_mul]
     rw [Finset.sum_comm, Finset.mul_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun l _ => ?_)
     rw [Finset.sum_mul, Finset.mul_sum]
@@ -112,8 +117,8 @@ theorem mat_mul_inv {n : ℕ} {J : Matrix (Fin n) (Fin n) E} (g κ : UA σ J) : 
 
 end LatticeQuotientCompactness
 
-open LatticeQuotientCompactness in
 
+open LatticeQuotientCompactness in
 theorem latCpt_of : LatCpt := by
   intro F E _ _ _ _ _ σ _ τ n d J J' _ _ Ω Ω' hΩ hΩ' C N hC
   have := topRing (F := F) (E := E)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,7 +149,7 @@ private theorem diag_fac (hs : Function.Surjective (completionMap v w)) (ν : Fi
     rw [Cartan.coe_diagPow, Matrix.diagonal_map (map_zero _)]
     congr 1
     funext i
-    simp only [Function.comp_apply, map_zpow₀, ha]
+    exact map_zpow₀ (completionMap v w) _ _
   rw [Units.val_mul, hxm, hm, Cartan.coe_diagPow, Matrix.diagonal_mul_diagonal]
   congr 1
   funext i

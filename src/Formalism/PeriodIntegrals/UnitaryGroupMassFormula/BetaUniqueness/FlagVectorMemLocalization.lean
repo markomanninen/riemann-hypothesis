@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BetaLUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.EqZeroOfNormLtOne
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BetaLUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.EqZeroOfNormLtOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,9 +52,6 @@ theorem natCast_mem_conjP (P : HeightOneSpectrum (𝓞 E)) (g : ℕ) (hg : (g : 
 section Loc
 
 variable {W : Type} [AddCommGroup W] [Module (𝓞 E) W]
-
-theorem mem_locP (p : Ideal (𝓞 E)) [p.IsPrime] (M : Submodule (𝓞 E) W) (x : W) :
-    x ∈ Formalism.HermitianLatticesTheory.localization₂ p M ↔ ∃ s : 𝓞 E, s ∉ p ∧ s • x ∈ M := Iff.rfl
 
 theorem le_locP (p : Ideal (𝓞 E)) [p.IsPrime] (M : Submodule (𝓞 E) W) : M ≤ Formalism.HermitianLatticesTheory.localization₂ p M :=
   fun x hx => ⟨1, p.primeCompl.one_mem, by simpa using hx⟩
@@ -175,9 +176,6 @@ theorem frame_castSucc {r : ℕ} {T : E} (F : LFlag S r T) (a : Fin r) :
     frame F (Fin.castSucc a) = F.fl.e a := by
   simp [frame, FlagG.fvec]
 
-theorem frame_last {r : ℕ} {T : E} (F : LFlag S r T) : frame F (Fin.last r) = F.fl.z := by
-  simp [frame, FlagG.fvec]
-
 theorem flag_vector_mem_localization {g r : ℕ} {T T' : E} {F : LFlag S r T} {F' : LFlag S r T'}
     {ξ : Matrix (Fin (r + 1)) (Fin (r + 1)) (𝓞 E)} (hFC : IsFixedConv Λ g F) (hA : AdmWit Λ g F F' ξ)
     (Q : HeightOneSpectrum (𝓞 E)) (hgQ : (g : 𝓞 E) ∈ Q.asIdeal) (a : Fin r)
@@ -258,7 +256,8 @@ theorem e_mem_loc_adm {g r : ℕ} {T T' : E} {F : LFlag S r T} {F' : LFlag S r T
 
 theorem hT_sum_left {ι : Type*} (s : Finset ι) (f : ι → S.V) (y : S.V) :
     S.hT (∑ i ∈ s, f i) y = ∑ i ∈ s, S.hT (f i) y := by
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
 
 theorem algebraMap_injO : Function.Injective (algebraMap (𝓞 E) E) :=
   FaithfulSMul.algebraMap_injective (𝓞 E) E
@@ -358,7 +357,7 @@ theorem surj {r : ℕ} (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT
   have iv_add : ∀ a, ∀ x ∈ Λ, ∀ y ∈ Λ, iv (ε a) (x + y) = iv (ε a) x + iv (ε a) y := by
     intro a x hx y hy
     apply algebraMap_injO
-    rw [map_add, iv_spec hU (hε a) hx, iv_spec hU (hε a) hy, iv_spec hU (hε a) (Λ.add_mem hx hy),
+    rw [map_add (f := _), iv_spec hU (hε a) hx, iv_spec hU (hε a) hy, iv_spec hU (hε a) (Λ.add_mem hx hy),
       map_add]
   have iv_smul : ∀ a, ∀ (o : 𝓞 E), ∀ x ∈ Λ, iv (ε a) (o • x) = o * iv (ε a) x := by
     intro a o x hx
@@ -374,7 +373,7 @@ theorem surj {r : ℕ} (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT
       add_mem' := by
         rintro _ _ ⟨x, hx, rfl⟩ ⟨y, hy, rfl⟩
         refine ⟨x + y, Λ.add_mem hx hy, ?_⟩
-        funext a; simp only [ρ, Pi.add_apply, iv_add a x hx y hy, map_add]
+        funext a; simp only [ρ, Pi.add_apply, iv_add a x hx y hy, map_add (f := _)]
       zero_mem' := ⟨0, Λ.zero_mem, by funext a; simp [ρ, iv_zero]⟩
       smul_mem' := by
         rintro q _ ⟨x, hx, rfl⟩
@@ -401,14 +400,16 @@ theorem surj {r : ℕ} (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT
           rw [hfW] at this
           exact (Submodule.mem_bot _).mp this
         rw [hfw] at h1
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         simp only [map_mul]
         rw [← h1]
         apply Finset.sum_congr rfl
         intro a _
         show mk (c a) * mk (iv (ε a) l) = mk (iv (ε a) l) * f (ef a)
         rw [hc a]; ring
-      · rw [map_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         apply Finset.sum_congr rfl
         intro a _
         rw [map_mul, iv_spec hU (hε a) hl])
@@ -452,8 +453,10 @@ theorem surj {r : ℕ} (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT
       simp only [wv, Matrix.mulVec_mulVec, Matrix.mul_adjugate, Matrix.smul_mulVec,
         Matrix.one_mulVec, Pi.smul_apply, smul_eq_mul]
     have e1 : S.hT (ε b) (∑ a, wv a • lam a) = algebraMap (𝓞 E) E ((Mo.mulVec wv) b) := by
-      rw [map_sum]
-      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
       apply Finset.sum_congr rfl
       intro a _
       rw [smulO, hT_smul_right, ← iv_spec hU (hε b) (hlamΛ a)]
@@ -495,7 +498,7 @@ theorem iotaLift {g r : ℕ} {T T' : E} {F : LFlag S r T} {F' : LFlag S r T'}
     refine ⟨cO s₀ * o, ?_⟩
     have h0 : S.hT y₂ x' = 0 := (mem_orth S).mp hx'o y₂ hy₂.2
     have h1 : S.hT (s₁' • F.fl.e a) x' = (g : E) * algebraMap (𝓞 E) E o := by
-      rw [← hsum, map_add, LinearMap.add_apply, h0, add_zero, hT_gl, ho]
+      rw [← hsum, map_add (f := _), LinearMap.add_apply, h0, add_zero, hT_gl, ho]
     rw [smulO, hT_smul_left, ← cO_coe] at h1
     simp only [ε]
     rw [smulO, hT_smul_left, ← cO_coe, map_mul]
@@ -595,7 +598,7 @@ theorem cong {g r : ℕ} {T T' : E} {F : LFlag S r T} {F' F'' : LFlag S r T'}
   · have key : (s * t) • (β₁.symm (β₂ y) - y) = β₁.symm (s • (β₂ x - β₁ x)) := by
       simp only [x, smulO, map_smul, map_sub, LinearEquiv.symm_apply_apply, smul_sub, map_mul,
         mul_smul]
-    rw [key, ← hz, map_add, smulO, map_smul, ← smulO]
+    rw [key, ← hz, map_add (f := _), smulO, map_smul, ← smulO]
     refine Submodule.add_mem _ (Submodule.mem_sup_left (g_mem_gΛ (Λ := Λ) g
       (symm_mem hP1.1 hl₁))) (Submodule.mem_sup_right ⟨symm_mem hP1.1 hz₂.1, ?_⟩)
     exact symm_mem_X hP1.2.1 hz₂.2

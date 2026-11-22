@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfVectorMultiplicationsMemFiltrationLattiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfVectorMultiplicationsMemFiltrationLattiStatement
+
+@[expose] public section
+
 open NumberField MvPolynomial ReciprocityTheory.MultiplicativeHeights ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.HermTools GlobalTheory.HilbertSamuel GlobalTheory.HSChoice GlobalTheory.HSShort
 
@@ -41,7 +46,7 @@ theorem ofFn_prod_comm : ∀ (n : ℕ) (g' : Fin n → Module.End E A') (g : Fin
   | zero => intro g' g _ x; simp
   | succ n ih =>
     intro g' g hg x
-    rw [List.ofFn_succ, List.prod_cons, List.ofFn_succ, List.prod_cons, Module.End.mul_apply, Module.End.mul_apply,
+    rw [List.ofFn_succ, List.prod_cons, List.ofFn_succ, List.prod_cons, mul_apply_eq_comp, mul_apply_eq_comp,
       ih _ _ (fun i => hg i.succ), hg 0]
 
 theorem pow_comm (f' : Module.End E A') (f : Module.End F A) (h : ∀ x, f' (ι x) = ι (f x)) :
@@ -49,7 +54,7 @@ theorem pow_comm (f' : Module.End E A') (f : Module.End F A) (h : ∀ x, f' (ι 
   intro n
   induction n with
   | zero => intro x; simp
-  | succ n ih => intro x; rw [pow_succ, pow_succ, Module.End.mul_apply, Module.End.mul_apply, h, ih]
+  | succ n ih => intro x; rw [pow_succ, pow_succ, mul_apply_eq_comp, mul_apply_eq_comp, h, ih]
 
 theorem mem_span_image (Y : Set A) : ∀ y ∈ Submodule.span F Y, ι y ∈ Submodule.span E (ι '' Y) := by
   intro y hy
@@ -71,7 +76,7 @@ theorem up_mul (S : Sys F A) : ∀ a b k l, Up S a k → Up S b l → Up S (a * 
   intro a b k l ha hb j hj x hx
   have h1 := hb j (by omega) x hx
   have h2 := ha (j + l) (by omega) _ h1
-  rw [Module.End.mul_apply]
+  rw [mul_apply_eq_comp]
   have e : j + (k + l) = j + l + k := by omega
   rw [e]; exact h2
 
@@ -88,8 +93,8 @@ theorem up_pw (S : Sys F A) (hS : S.Hyp) (s : Fin S.D → Fin S.N → F) (α : F
 
 end GlobalTheory.HSShort.DeepStep
 
-open GlobalTheory.HSShort.DeepStep in
 
+open GlobalTheory.HSShort.DeepStep in
 theorem GlobalTheory.HSShort.deepStep_finrank : ∀ (F A : Type) [Field F] [NumberField F] [AddCommGroup A] [Module F A] [Module (𝓞 F) A] [IsScalarTower (𝓞 F) F A] (S : Sys F A), S.Hyp → ∀ (E A' : Type) [Field E] [Algebra F E] [AddCommGroup A'] [Module E A'] (s : Fin S.D → Fin S.N → F) (δ : ℕ) (Φ : S.Flat E A' (fun i k => algebraMap F E (s i k)) δ), FiniteDimensional E (Φ.U (S.T - S.D)) ∧ Module.finrank E (Φ.U (S.T - S.D)) = S.deepRank s ∧ S.deepRank s ≤ Module.finrank F (S.V S.T) := by
   intro F A _ _ _ _ _ _ S hS E A' _ _ _ _ s δ Φ
   set P : Submodule F A := ⨆ α : MonoDeg (Fin S.D) (S.T - S.D), (S.V S.D).map (pw S.mul s α.1) with hP
@@ -140,7 +145,7 @@ theorem GlobalTheory.HSShort.deepStep_finrank : ∀ (F A : Type) [Field F] [Numb
           rw [← hcomm]
           exact Submodule.mem_iSup_of_mem α (Submodule.mem_map_of_mem (Submodule.subset_span ⟨x, hx, rfl⟩)))
         (by simp only [map_zero]; exact zero_mem _)
-        (fun y z hy hz => by simp only [map_add]; exact add_mem hy hz)
+        (fun y z hy hz => by simp only [map_add (f := _)]; exact add_mem hy hz)
   refine ⟨?_, ?_, ?_⟩
   · rw [hU]; exact FiniteDimensional.span_of_finite E (Set.finite_range _)
   · rw [hU, finrank_span_eq_card hli, Fintype.card_fin, hdeep]

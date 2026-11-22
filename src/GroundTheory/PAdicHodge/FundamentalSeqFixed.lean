@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.FundamentalSeqSurj
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.FundamentalSeqSurj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -13,9 +18,6 @@ namespace ACris
 variable {p : ℕ} [hp : Fact p.Prime]
 
 local notation "𝒪" => normInteger ℂ_[p]
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "𝔭" => Ideal.span {(p : ACris ℂ_[p] p)}
-local notation "θdR" => IsPerfectoidField.thetaBDeRhamPlusField (K := ℂ_[p]) p
 
 section Residue
 
@@ -26,7 +28,7 @@ theorem prod_range_X_sub_C_zmod :
   have hr : (X ^ p - X : (ZMod p)[X]).roots = Finset.univ.val := by
     simpa [ZMod.card] using FiniteField.roots_X_pow_card_sub_X (ZMod p)
   have hdeg : (X ^ p - X : (ZMod p)[X]).natDegree = p :=
-    FiniteField.X_pow_card_sub_X_natDegree_eq (ZMod p) hp.out.one_lt
+    Polynomial.natDegree_X_pow_sub_X (R := (ZMod p)) hp.out.one_lt
   have h := prod_multiset_X_sub_C_of_monic_of_roots_card_eq hmon (by
     rw [hr, hdeg, Finset.card_val, Finset.card_univ, ZMod.card])
   rw [hr, ← Finset.prod_eq_multiset_prod] at h
@@ -41,7 +43,7 @@ theorem C_dvd_of_map_eq_zero {F : ℤ[X]} (h : F.map (Int.castRingHom (ZMod p)) 
   rw [C_dvd_iff_dvd_coeff]
   intro i
   have h1 : (F.coeff i : ZMod p) = 0 := by
-    have := congrArg (fun f => Polynomial.coeff f i) h
+    have := congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f i) h
     simpa only [coeff_map, eq_intCast, coeff_zero] using this
   exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).1 h1
 
@@ -92,8 +94,8 @@ theorem natCast_p_ne_zero' : (p : 𝒪) ≠ 0 := fun h => by
   simp only [SubringClass.coe_natCast, ZeroMemClass.coe_zero, Nat.cast_eq_zero] at this
   exact hp.out.ne_zero this
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_natCast_dvd_sub_of_dvd_pow_sub {v : 𝒪} (hv : (p : 𝒪) ∣ v ^ p - v) :
     ∃ a : ℕ, a < p ∧ (p : 𝒪) ∣ v - a := by
   obtain ⟨g, hg⟩ := exists_prod_range_sub_eq v
@@ -128,8 +130,8 @@ end Residue
 
 section Approx
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_int_dvd_sub (m : ℕ) : ∀ v : 𝒪, (∃ c : ℕ → 𝒪, ∀ k : ℕ,
     (p : 𝒪) ^ m ∣ v - ∑ i ∈ Finset.range m, (p : 𝒪) ^ i * c i ^ p ^ k) →
     ∃ z : ℤ, (p : 𝒪) ^ m ∣ v - z := by
@@ -219,8 +221,8 @@ theorem norm_algebraMap_padic (q : ℚ_[p]) : ‖algebraMap ℚ_[p] ℂ_[p] q‖
 theorem isClosed_range_algebraMap_padic : IsClosed (Set.range (algebraMap ℚ_[p] ℂ_[p])) :=
   (AddMonoidHomClass.isometry_of_norm _ norm_algebraMap_padic).isUniformInducing.isComplete_range.isClosed
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem theta_mem_range_of_phi_eq {y : ACris ℂ_[p] p} (hy : phi ℂ_[p] p y = y) :
     ∃ q : ℚ_[p], ((theta ℂ_[p] p y : 𝒪) : ℂ_[p]) = algebraMap ℚ_[p] ℂ_[p] q := by
   have happrox : ∀ m : ℕ, ∃ z : ℤ,
@@ -256,6 +258,9 @@ end Approx
 
 section Plus
 
+local notation "𝔭" => Ideal.span {(p : ACris ℂ_[p] p)}
+local notation "θdR" => IsPerfectoidField.thetaBDeRhamPlusField (K := ℂ_[p]) p
+
 theorem mem_pow_of_p_pow_mul_phi_eq {a : ACris ℂ_[p] p} {m : ℕ} (hm : 1 ≤ m)
     (ha : (p : ACris ℂ_[p] p) ^ m * phi ℂ_[p] p a = a) (j : ℕ) : a ∈ 𝔭 ^ j := by
   induction j with
@@ -270,8 +275,8 @@ theorem mem_pow_of_p_pow_mul_phi_eq {a : ACris ℂ_[p] p} {m : ℕ} (hm : 1 ≤ 
     simp only [Nat.add_sub_cancel]
     ring
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem eq_zero_of_p_pow_mul_phiPlus_eq {y : BCrisPlus ℂ_[p] p} {m : ℕ} (hm : 1 ≤ m)
     (hy : (p : BCrisPlus ℂ_[p] p) ^ m * phiPlus ℂ_[p] p y = y) : y = 0 := by
   obtain ⟨⟨a, s⟩, hs⟩ := IsLocalization.surj (Submonoid.powers (p : ACris ℂ_[p] p)) y
@@ -299,8 +304,8 @@ theorem iotaPlus_periodTPlus_ne_zero : iotaPlus ℂ_[p] p (periodTPlus hε) ≠ 
   rw [iotaPlus_periodTPlus]
   exact fontaineT_ne_zero hε hζ
 
-include hζ in
 
+include hζ in
 theorem periodTPlus_mul_left_cancel {a b : BCrisPlus ℂ_[p] p}
     (h : periodTPlus hε * a = periodTPlus hε * b) : a = b :=
   iotaPlus_injective (K := ℂ_[p]) (p := p) (mul_left_cancel₀ (iotaPlus_periodTPlus_ne_zero hε hζ)
@@ -316,9 +321,9 @@ theorem iterate_phiPlus_eq_pow_mul {y : BCrisPlus ℂ_[p] p} {n : ℕ}
     rw [Function.iterate_succ_apply', ih, map_mul, map_pow, map_pow, map_natCast, hy]
     ring
 
+
 include hε hζ in
 set_option maxHeartbeats 1600000 in
-
 theorem exists_eq_algebraMap_of_phiPlus_eq {y : BCrisPlus ℂ_[p] p}
     (hy : phiPlus ℂ_[p] p y = y) : ∃ q : ℚ_[p], y = algebraMap ℚ_[p] (BCrisPlus ℂ_[p] p) q := by
   obtain ⟨⟨a, s⟩, hs⟩ := IsLocalization.surj (Submonoid.powers (p : ACris ℂ_[p] p)) y
@@ -357,9 +362,9 @@ theorem exists_eq_algebraMap_of_phiPlus_eq {y : BCrisPlus ℂ_[p] p}
   rw [h4, zero_mul] at hy''
   rw [← sub_eq_zero, ← hy'_def, ← hy'']
 
+
 include hζ in
 set_option maxHeartbeats 1600000 in
-
 theorem exists_eq_algebraMap_mul_pow_of_phiPlus_eq (n : ℕ) : ∀ {y : BCrisPlus ℂ_[p] p},
     phiPlus ℂ_[p] p y = (p : BCrisPlus ℂ_[p] p) ^ n * y →
     iotaPlus ℂ_[p] p y ∈ Ideal.span {fontaineT ε hε ^ n} →

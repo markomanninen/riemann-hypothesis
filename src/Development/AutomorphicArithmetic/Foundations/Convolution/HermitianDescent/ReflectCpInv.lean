@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
+
+@[expose] public section
 
 noncomputable section
 

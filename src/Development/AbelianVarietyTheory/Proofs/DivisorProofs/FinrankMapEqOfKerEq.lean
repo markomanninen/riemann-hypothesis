@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
-import Development.AbelianVarietyTheory.Definitions.Divisors.KottwitzDimSignatureOneOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KottwitzDimSignatureOneOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,24 +16,6 @@ section Gen
 
 variable {k H O : Type*} [Field k] [AddCommGroup H] [Module k H] [Ring O]
 
-def ksForm (φ : LinearMap.BilinForm k H) (Fil : Submodule k H) :
-    (H →ₗ[k] H) →ₗ[k] LinearMap.BilinForm k Fil where
-  toFun g := φ.compl₁₂ (g ∘ₗ Fil.subtype) Fil.subtype
-  map_add' f g := by ext; simp
-  map_smul' c f := by ext; simp
-
-@[simp] theorem ksForm_apply (φ : LinearMap.BilinForm k H) (Fil : Submodule k H) (g : H →ₗ[k] H)
-    (x y : Fil) : ksForm φ Fil g x y = φ (g x) y := rfl
-
-def blockSym {E ι : Type*} [AddCommGroup E] [Module k E] (W : ι → Submodule k E) (c : ι → ι) :
-    Submodule k (LinearMap.BilinForm k E) where
-  carrier := {B | (∀ x y, B x y = B y x) ∧ ∀ i j, j ≠ c i → ∀ x ∈ W i, ∀ y ∈ W j, B x y = 0}
-  zero_mem' := ⟨by simp, by simp⟩
-  add_mem' {B C} hB hC := ⟨fun x y => by simp [hB.1 x y, hC.1 x y],
-    fun i j hij x hx y hy => by simp [hB.2 i j hij x hx y hy, hC.2 i j hij x hx y hy]⟩
-  smul_mem' a B hB := ⟨fun x y => by simp [hB.1 x y],
-    fun i j hij x hx y hy => by simp [hB.2 i j hij x hx y hy]⟩
-
 theorem ksDim_finrank [FiniteDimensional k H] (ρ : O →+* Module.End k H) (φ : LinearMap.BilinForm k H)
     (Fil Z : Submodule k H) : KSDim ρ φ Fil Z (finrank k ((ksSub ρ φ Fil Z).map (cls Fil))) := by
   set M := (ksSub ρ φ Fil Z).map (cls Fil) with hM
@@ -40,7 +26,8 @@ theorem ksDim_finrank [FiniteDimensional k H] (ρ : O →+* Module.End k H) (φ 
       (∀ x ∈ Fil, g x - ∑ i, c i • f i x ∈ Fil) ↔
         cls Fil g = ∑ i, c i • (b i : Fil →ₗ[k] H ⧸ Fil) := fun g c => by
     simp_rw [← hfb]
-    simp only [← map_smul, ← map_sum, cls_eq_iff, LinearMap.sum_apply, LinearMap.smul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_smul, ← map_sum, cls_eq_iff, LinearMap.sum_apply, LinearMap.smul_apply]
   refine ⟨f, hf, fun g hg => ?_⟩
   let m : M := ⟨cls Fil g, g, hg, rfl⟩
   have hsum : ∀ c : Fin (finrank k M) → k, (cls Fil g = ∑ i, c i • (b i : Fil →ₗ[k] H ⧸ Fil)) ↔

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.InFrameStabilizer
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.InFrameStabilizer
+
+@[expose] public section
 
 open GlobalTheory.SgAlg Matrix Module
 

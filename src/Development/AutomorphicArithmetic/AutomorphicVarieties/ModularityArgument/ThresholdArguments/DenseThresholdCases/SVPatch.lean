@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RankTwoPatching.GaloisRankTwoAutomorphyOfPatching
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.InertiaLeRangeOfUnramified
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BcRegAlgPolarizedPairStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.IsoCommStatement
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RankTwoPatching.GaloisRepExistsTotallyRealGL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RankTwoPatching.GaloisRankTwoAutomorphyOfPatching
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.InertiaLeRangeOfUnramified
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BcRegAlgPolarizedPairStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.IsoCommStatement
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RankTwoPatching.GaloisRepExistsTotallyRealGL2
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -16,7 +20,6 @@ open GlobalTheory GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst
 open UpperTheory.Zero.LLC UpperTheory.V.Z.Win
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Af.Bc GlobalTheory.RealGal UpperTheory.V.Af.ExLib
-open private UpperTheory.V.Z.Win.SplitTorusFixedPoints.plainTor_of_iso from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PAdicTorsionHoms.SplitTr
 namespace UpperTheory.Gal.SV
 theorem attRes_alt : _root_.GlobalTheory.Mem.LiteralAutomorphy.LiteratureRankNHypothesis → ∀ (F Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (K : Type) [Field K] [NumberField K] [IsCMField K] [Algebra F K] [Algebra K Ω] [IsScalarTower F K Ω] [IsAlgClosure K Ω] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (a : ℕ), 1 ≤ a → ∀ (π : TR.CuspSub F a) (P : CuspSub K a), IsBC π P → ∀ (r : G K Ω →* GL (Fin a) (Qbar l)) (wt : ℤ) (HT : (K →+* Qbar l) → Multiset ℤ), UpperTheory.GalStar.PropsB (fun h rc => IsRecT h rc) P ι r wt HT → AttRes π ι K r := by
   intro L F Ω _ _ _ _ _ _ K _ _ _ _ _ _ _ l _ ι a ha π P hBC r wt HT H
@@ -57,8 +60,44 @@ theorem local_condition_at_place_of_decomposition_le_range (L : _root_.GlobalThe
     fun hx hy e => S.injective (by rw [(hS _ _).1 hx, (hS _ _).1 hy, e])
   have up : ∀ σ, π.IsLocComp v σ → GlobalTheory.RoadU.PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred) → Gd (rc' (algNorm σ')) := fun σ hσ hp => by
     obtain ⟨e, he⟩ := hBC.split v w i hi.cont hi.loc σ σ' hσ hσ'
-    exact gdOf K Ω A w h' rc' hrc' a σ' (UpperTheory.V.Z.Win.SplitTorusFixedPoints.plainTor_of_iso i hi.cont
-      (GlobalTheory.LocalFieldIso.continuous_symm i hi.cont) _ _ _ _ e he hp)
+    have hplain : GlobalTheory.RoadU.PlainTor (IrrGL.of σ'.ρ σ'.smooth σ'.irred) := by
+      have hi' := GlobalTheory.LocalFieldIso.continuous_symm i hi.cont
+      obtain ⟨s, hS, h1, hU⟩ := hp
+      have hρ := hS.of_equiv (IrrGL.equivOf σ.ρ σ.smooth σ.irred).symm
+      have hg (g : GL (Fin a) (w.adicCompletion K)) :
+          Matrix.GeneralLinearGroup.map i.toRingHom (Matrix.GeneralLinearGroup.map i.symm.toRingHom g) = g :=
+        Units.ext (Matrix.ext fun _ _ => i.apply_symm_apply _)
+      let φ : Representation.Equiv
+          (σ.ρ.comp (Matrix.GeneralLinearGroup.map (n := Fin a) i.symm.toRingHom)) σ'.ρ :=
+        GlobalTheory.LocGL.equivOfBijective ⟨e.toLinearMap, fun g => LinearMap.ext fun x => by
+          change e (σ.ρ (Matrix.GeneralLinearGroup.map i.symm.toRingHom g) x) = σ'.ρ g (e x)
+          rw [he, hg]⟩ e.bijective
+      have hS' := (GlobalTheory.SuppIne.hasSupport_comp i hi.cont hi' hρ).of_equiv φ
+      refine ⟨s.map (GlobalTheory.SuppIne.trGL i hi'), hS'.of_equiv (IrrGL.equivOf σ'.ρ σ'.smooth σ'.irred), ?_, ?_⟩
+      · intro y hy
+        obtain ⟨z, hz, rfl⟩ := Multiset.mem_map.1 hy
+        exact h1 z hz
+      · intro y hy z hz heq
+        obtain ⟨y₀, hy₀, rfl⟩ := Multiset.mem_map.1 hy
+        obtain ⟨z₀, hz₀, rfl⟩ := Multiset.mem_map.1 hz
+        obtain ⟨χ, hχ, rfl⟩ := GlobalTheory.RoadU.PlainChars.exists_eq_ofChar y₀ (h1 y₀ hy₀)
+        obtain ⟨ψ, hψ, rfl⟩ := GlobalTheory.RoadU.PlainChars.exists_eq_ofChar z₀ (h1 z₀ hz₀)
+        have smooth_comp {θ : (v.adicCompletion F)ˣ →* ℂˣ} (hθ : GlobalTheory.SmGL.IsSmoothChar θ) :
+            GlobalTheory.SmGL.IsSmoothChar (θ.comp (Units.map i.symm.toRingHom.toMonoidHom)) :=
+          IsOpen.preimage (f := Units.map i.symm.toRingHom.toMonoidHom) (Continuous.units_map _ hi') hθ
+        rw [GlobalTheory.DegOneChar.trGL_ofChar i hi' χ hχ (smooth_comp hχ),
+          GlobalTheory.DegOneChar.trGL_ofChar i hi' ψ hψ (smooth_comp hψ), IrrGL.nu, IrrGL.tw_ofChar,
+          IrrGL.ofChar_inj] at heq
+        refine hU _ hy₀ _ hz₀ ?_
+        rw [IrrGL.nu, IrrGL.tw_ofChar, IrrGL.ofChar_inj]
+        refine MonoidHom.ext fun t => ?_
+        have h4 := DFunLike.congr_fun heq (Units.map i.toRingHom.toMonoidHom t)
+        have h5 : Units.map i.symm.toRingHom.toMonoidHom (Units.map i.toRingHom.toMonoidHom t) = t :=
+          Units.ext (i.symm_apply_apply _)
+        rw [MonoidHom.mul_apply, MonoidHom.comp_apply, MonoidHom.comp_apply, h5,
+          GlobalTheory.LocalFieldIso.absPow_map i hi.cont] at h4
+        exact h4
+    exact gdOf K Ω A w h' rc' hrc' a σ' hplain
   have br : ∀ (O : Type) [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (Bw : LocBridge l F Ω (Dec (F := F) A) O), Induces Bw →
       ∃ (Bw' : LocBridge l K Ω (Dec (F := K) A) O) (_ : Induces Bw'), Bw'.Kw = Bw.Kw ∧ Bw'.j = Bw.j ∧ Bw'.LL = Bw.LL :=
     fun O _ _ _ Bw hj => by
@@ -118,7 +157,10 @@ theorem galois_rep_exists_totally_real_rank_two_of_base_change : _root_.GlobalTh
     obtain ⟨m, hm⟩ := Ideal.exists_maximal (𝓞 F)
     exact ⟨⟨m, hm.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hm (RingOfIntegers.not_isField F)⟩⟩
   obtain ⟨A0, hA0⟩ := ReciprocityTheory.Gal.exists_isPlaceOver (F := F) Ω v0
-  have hS : S.Infinite := (good v0 A0 hA0).mono fun Q hQ => hQ.2
+  have hS : S.Infinite := by
+    refine (good v0 A0 hA0).mono ?_
+    intro Q hQ
+    exact hQ.2
   have key : ∀ Q : ↥S, ∃ (P : CuspSub ↥Q.1.K a)
       (r : G ↥Q.1.K Ω →* GL (Fin a) (Qbar l)) (wt : ℤ) (HT : (↥Q.1.K →+* Qbar l) → Multiset ℤ),
       IsBC π P ∧ UpperTheory.GalStar.PropsB (fun h rc => IsRecT h rc) P ι r wt HT := by
@@ -147,7 +189,7 @@ theorem galois_rep_exists_totally_real_rank_two_of_base_change : _root_.GlobalTh
         UpperTheory.GalStar.PropsB (fun h rc => IsRecT h rc) (P Q) ι (ρ.comp (res F Ω ↥Q.1.K)) (wt Q) (HT Q) := by
     intro v A hA
     have hfin := (Filter.eventually_cofinite.1 hgal).image Subtype.val
-    obtain ⟨Q, hQ, hQn⟩ := ((good v A hA).diff hfin).nonempty
+    obtain ⟨Q, hQ, hQn⟩ := ((good v A hA).sdiff hfin).nonempty
     refine ⟨⟨Q, hQ.2⟩, hQ.1, ?_⟩
     by_contra hc
     exact hQn ⟨⟨Q, hQ.2⟩, hc, rfl⟩

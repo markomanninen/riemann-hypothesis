@@ -1,4 +1,8 @@
-import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.GaussSt
+module
+
+public import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.GaussSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,7 +163,7 @@ theorem sphMonom_key [NeZero N] {k : ℕ} (f : (Fin N → ℂ) → ℂ)
 
 theorem sphMonom_continuous_sqN : Continuous (fun z : Fin N → ℂ => sqN z) := by
   unfold sqN
-  exact continuous_finset_sum _ fun i _ => (continuous_norm.comp (continuous_apply i)).pow 2
+  exact continuous_finsetSum _ fun i _ => (continuous_norm.comp (continuous_apply i)).pow 2
 
 theorem sphMonom_measurable_normalize :
     Measurable (fun z : Fin N → ℂ => (((Real.sqrt (sqN z))⁻¹ : ℝ) : ℂ) • z) :=
@@ -198,7 +202,7 @@ theorem sphMonom_f_smul (a b : Fin N → ℕ) (r : ℝ) (z : Fin N → ℂ) :
 theorem sphMonom_continuous_f (a b : Fin N → ℕ) :
     Continuous fun z : Fin N → ℂ => starRingEnd ℂ (monoC a z) * monoC b z := by
   have hm : ∀ c : Fin N → ℕ, Continuous fun z : Fin N → ℂ => monoC c z := fun c =>
-    continuous_finset_prod _ fun i _ => (continuous_apply i).pow _
+    continuous_finsetProd _ fun i _ => (continuous_apply i).pow _
   exact (Complex.continuous_conj.comp (hm a)).mul (hm b)
 
 theorem sphMonom_sqN_smul (c : ℂ) (z : Fin N → ℂ) : sqN (c • z) = ‖c‖ ^ 2 * sqN z := by

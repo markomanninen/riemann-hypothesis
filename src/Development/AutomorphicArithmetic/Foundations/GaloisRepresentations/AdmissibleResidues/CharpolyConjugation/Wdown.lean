@@ -1,8 +1,32 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.IsAutomorphicOverImagQuad
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.CharpolyConjugation.Unlfrob
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.CharpolyConjugation.Unlres
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.CharpolyConjugation.Unliso
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.CharpolyConjugation.Unlwd
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.IsAutomorphicOverImagQuad
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.CharpolyConjugation.Unlfrob
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.SphericalOfHasSat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.JacquetShalikaBound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilDeligneParamMonodromyEqZeroIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.CountRankThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.LocFixed
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IrreducibleWeilDeligneTameLevelEqCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.InertiaFixesRootsOfUnityOfArtinCongruence
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.JacquetBorelNontrivialOfCharacterSupport
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.JacquetBorelExistsTorusCongruenceFixed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FixedCongruenceNeBotOfJacquetTorusFixed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HasFixedOfAlgNormFixedNeBot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemMaximalCompactAndCongruentOfMemPrincipalCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatakeMatchBaseChange
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.CharpolyConjugation.Unliso
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N Polynomial GlobalTheory GlobalTheory.WeilDeligne GlobalTheory.CuspRep UpperTheory.V.Af UpperTheory.GalN.V
 
@@ -62,42 +86,3 @@ private theorem exists_place {F K Ω : Type} [Field F] [NumberField F] [Field K]
     rw [hI, Ideal.mem_bot] at h2
     exact hx0 (FaithfulSMul.algebraMap_injective (𝓞 F) (𝓞 K) (by simpa using h2))
   exact ⟨⟨I, hprime, hne⟩, fun x => (hmem x).symm⟩
-
-theorem UpperTheory.GalN.V.L.wdown :
-    ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (n : ℕ) (r : G F Ω →* GL (Fin n) (Qbar l)) (K : Type) [Field K] [NumberField K] [Algebra F K] [Algebra K Ω] [IsScalarTower F K Ω], Unlinked (r.comp (AlgEquiv.restrictScalarsHom F : G K Ω →* G F Ω)) → Unlinked r := by
-  intro F Ω _ _ _ _ _ l _ n r K _ _ _ _ _ hK w hl A hA hfin
-  obtain ⟨v, hv⟩ := exists_place (K := K) hA
-  have hu : v.under (𝓞 F) = w := by
-    have h1 : IsPlaceOver A (v.under (𝓞 F)) := GlobalTheory.AboveL.SatBC.isPlaceOver_under hv
-    refine HeightOneSpectrum.ext (Ideal.ext fun x => ?_)
-    exact (h1 x).symm.trans (hA x)
-  have hN : normV v = normV w ^ v.asIdeal.inertiaDeg (𝓞 F) := by
-    have := GlobalTheory.AboveL.SatBC.normV_under_pow F K v
-    rwa [hu] at this
-  have hf : 1 ≤ v.asIdeal.inertiaDeg (𝓞 F) := by
-    rcases Nat.eq_zero_or_pos (v.asIdeal.inertiaDeg (𝓞 F)) with h0 | h0
-    · exfalso
-      rw [h0, pow_zero] at hN
-      have hne : v.asIdeal ≠ ⊤ := v.isPrime.ne_top
-      exact hne (Ideal.absNorm_eq_one_iff.1 hN)
-    · exact h0
-  have hlv : ((l : ℕ) : 𝓞 K) ∉ v.asIdeal := by
-    intro h
-    apply hl
-    have h1 := (hv _).2 h
-    refine (hA _).1 ?_
-    simpa using h1
-  have hfinK : ((r.comp (AlgEquiv.restrictScalarsHom F : G K Ω →* G F Ω)) '' (Ine (F := K) A : Set (G K Ω))).Finite := by
-    refine hfin.subset ?_
-    rintro _ ⟨s, hs, rfl⟩
-    exact ⟨(AlgEquiv.restrictScalarsHom F : G K Ω →* G F Ω) s, ⟨hs.1, hs.2⟩, rfl⟩
-  obtain ⟨s, j, hj, hs, hno⟩ := hK v hlv A hv hfinK
-  set f := v.asIdeal.inertiaDeg (𝓞 F) with hfdef
-  have hpow : normV v ^ j = normV w ^ (f * j) := by rw [hN, pow_mul]
-  refine ⟨(AlgEquiv.restrictScalarsHom F : G K Ω →* G F Ω) s, f * j, Nat.mul_pos hf hj, ⟨hs.1, ?_⟩, ?_⟩
-  · intro x hx
-    have := hs.2 x hx
-    rw [hpow] at this
-    exact this
-  · rw [← hpow]
-    exact hno

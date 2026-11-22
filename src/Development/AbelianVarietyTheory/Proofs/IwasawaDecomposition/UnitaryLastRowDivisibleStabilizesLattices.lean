@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.RecLevelLocK
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.RecLevelLocK
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.UG Formalism.L2.Col Formalism.L2.DIV Matrix
 open scoped TensorProduct
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.CyclicSubmoduleIsSubrepresentation
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.CyclicSubmoduleIsSubrepresentation
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem linearMap_ext_on_weightSpaces {V' : Type} [AddCommGroup V'] [Module K V'
   have : x ∈ (⨆ mu, weightSp E mu) := by rw [hE.2.2]; trivial
   exact hle this
 
-open Classical in
 
+open Classical in
 def lagrangeWeightFactor (E : GLOps n K V) (mu nu : Fin n → ℤ) : Module.End K V :=
   if h : ∃ a, nu a ≠ mu a then
     (((mu h.choose : K) - (nu h.choose : K))⁻¹) • (E h.choose h.choose - (nu h.choose : K) • (1 : Module.End K V))
@@ -56,7 +60,7 @@ theorem lagrangeFactor_kills_other_weight (E : GLOps n K V) (mu nu : Fin n → �
   have h : ∃ a, nu a ≠ mu a := by
     by_contra hc; exact hne (funext fun a => by_contra fun h => hc ⟨a, h⟩)
   unfold lagrangeWeightFactor
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   simp [(mem_weightSp_iff_diagonal_apply E nu x).1 hx]
 
 theorem lagrangeFactor_preserves_stable (E : GLOps n K V) (mu nu : Fin n → ℤ) (W : Submodule K V)
@@ -103,7 +107,7 @@ theorem finitely_many_weights_span [FiniteDimensional K V] (E : GLOps n K V) (hE
     ∃ s : Finset (Fin n → ℤ), (⨆ mu ∈ s, weightSp E mu) = ⊤ := by
   have hc : IsCompactElement (⊤ : Submodule K V) :=
     (Submodule.fg_iff_compact _).1 (Module.finite_def.1 inferInstance)
-  obtain ⟨s, hs⟩ := CompleteLattice.IsCompactElement.exists_finset_of_le_iSup _ hc (weightSp E) (by rw [hE.2.2])
+  obtain ⟨s, hs⟩ := IsCompactElement.exists_finset_of_le_iSup hc (weightSp E) (by rw [hE.2.2])
   exact ⟨s, top_le_iff.1 hs⟩
 
 theorem weightSpace_eq_bot_outside_support [CharZero K] (E : GLOps n K V) (s : Finset (Fin n → ℤ))

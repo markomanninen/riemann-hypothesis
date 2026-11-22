@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaXiSplit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFactor
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaXiSplit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFactor
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+
+@[expose] public section
 
 noncomputable section
 

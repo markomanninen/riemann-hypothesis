@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +24,6 @@ def fam (m : ℕ) (X : Fin n → ℝ) (z : ℂ) (u : Fin m → Fin n → ℂ) : 
 def strip (X : Fin n → ℝ) : Set ℂ := {z | ∀ j, |z.im * X j| < Real.pi / 4}
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-
-def thS {d : SD σ} (R : RD d) (w : InfinitePlace F) (f : (Fin d.m → Fin d.n → ℂ) → ℂ) (Ψ : Mx F E d.m d.n → ℂ)
-    (h : UA σ d.A.J) : ℂ :=
-  ∑' X : Matrix (Fin d.m) (Fin d.n) E, f (R.loc w (mat h⁻¹ * incM F X)) * Ψ (mat h⁻¹ * incM F X)
 
 end PositivityTheory.SiegelWeilFormula.Kdil
 

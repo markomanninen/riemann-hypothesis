@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HxiTZeroComb
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HxiTZeroComb
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.KS
 
@@ -9,7 +14,7 @@ theorem powMap_pr {S S' : Scheme.{0}} {A : Over S} {A' : Over S'} (f : S' ⟶ S)
     (hφ : φ ≫ A.hom = A'.hom ≫ f) (m : ℕ) (i : Fin m) :
     powMap f φ hφ m ≫ (pr A i).left = (pr A' i).left ≫ φ := by
   unfold powMap
-  rw [← Over.comp_left, Pi.lift_π]
+  rw [← Over.comp_left, Pi.lift_comp_π]
   rfl
 
 theorem powMap_w {S S' : Scheme.{0}} {A : Over S} {A' : Over S'} (f : S' ⟶ S) (φ : A'.left ⟶ A.left)
@@ -45,7 +50,7 @@ theorem liftPow_pr {S S' : Scheme.{0}} {A : Over S} {A' : Over S'} {f : S' ⟶ S
     (w : a ≫ (pow A m).hom = b ≫ f) (i : Fin m) :
     liftPow H m a b w ≫ (pr A' i).left = H.lift (a ≫ (pr A i).left) b (by rw [Category.assoc, Over.w]; exact w) := by
   unfold liftPow
-  rw [← Over.comp_left, Pi.lift_π]
+  rw [← Over.comp_left, Pi.lift_comp_π]
   rfl
 
 theorem powMap_isPullback : ∀ (S S' : Scheme.{0}) (A : Over S) (A' : Over S') (f : S' ⟶ S) (φ : A'.left ⟶ A.left)

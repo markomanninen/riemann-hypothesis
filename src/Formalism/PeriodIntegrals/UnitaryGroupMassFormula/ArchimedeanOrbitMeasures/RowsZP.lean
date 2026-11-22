@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.LamDer
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.LamDer
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,7 @@ theorem rowsZ_holds : RowsZ := by
     simp only [Dm, Formalism.REAL.Jm, Matrix.diagonal_conjTranspose, Matrix.diagonal_mul_diagonal]
     congr 1
     funext j
-    simp only [d, Pi.star_apply]
-    split_ifs <;> simp
+    by_cases h : j = i0 <;> simp [d, h] <;> split_ifs <;> simp
   let g : X.B.I.Ginf := Pi.mulSingle v ⟨Du, hDmem⟩
   have hstd : ∀ w, InStd (S w) (g w) := by
     intro w i hi j

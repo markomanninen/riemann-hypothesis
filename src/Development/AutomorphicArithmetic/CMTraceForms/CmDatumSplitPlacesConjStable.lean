@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CMTraceForms.Places
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CMTraceForms.Places
+
+@[expose] public section
 
 open NumberField TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs Formalism.L2.Pj UpperTheory.Depth
@@ -25,7 +29,7 @@ private theorem bar_rt' {E : Type} [Field E] [NumberField E] [IsCMField E] (H : 
 private theorem host_bar_w0_eq_one_sub_w0 {E : Type} [Field E] [NumberField E] [IsCMField E] (H : Host E) :
     H.bar H.w0 = 1 - H.w0 := by
   have h := congrArg H.bar H.two_weight_eq_one_add_root
-  rw [map_mul, map_add, map_one, bar_rt', map_ofNat] at h
+  rw [map_mul, map_add (f := _), map_one, bar_rt', map_ofNat] at h
   have h2 : (2 : 𝓞 E) * H.bar H.w0 = 2 * (1 - H.w0) := by linear_combination h + H.two_weight_eq_one_add_root
   exact mul_left_cancel₀ two_ne_zero h2
 
@@ -89,7 +93,7 @@ private theorem exists_beta {p : ℕ} (hp : p.Prime) {E : Type} [Field E] [Numbe
           exact (ZMod.natCast_eq_zero_iff _ _).mpr h
         rw [hr, this, mul_zero]
     refine ⟨hpd, (a : 𝓞 E) + H.rt, (a : 𝓞 E) - H.rt, a ^ 2 + H.d, 2 * a, ?_, ?_, ?_, ?_, hn, ht⟩
-    · rw [map_add, map_natCast, bar_rt']
+    · rw [map_add (f := _), map_natCast, bar_rt']
       ring
     · rw [map_sub, map_natCast, bar_rt']
       ring
@@ -203,7 +207,7 @@ theorem UpperTheory.cmDatum_splitPlaces_conj_stable :
       have hbg : σ β * σ γ = (n : O) := by
         rw [← map_mul, mul_comm β γ, hn, map_natCast]
       have hsum : σ β + σ γ = (t : O) := by
-        rw [← map_add, ht, map_natCast]
+        rw [← map_add (f := _), ht, map_natCast]
       have close : ∀ b : O, (p : O) ^ (k + 1) ∣ b ^ ((p - 1) * p ^ k) - 1 →
           v (algebraMap O C (b ^ ((p - 1) * p ^ k) - 1)) < v (algebraMap O C x) := by
         intro b hb
@@ -218,7 +222,7 @@ theorem UpperTheory.cmDatum_splitPlaces_conj_stable :
         have h1 : v (algebraMap O C (σ β)) < 1 := lt_of_le_of_ne (hv.map_le_one _) hc.1
         have h2 : v (algebraMap O C (σ γ)) < 1 := lt_of_le_of_ne (hv.map_le_one _) hc.2
         have h3 : v (algebraMap O C (σ β + σ γ)) < 1 := by
-          rw [map_add]
+          rw [map_add (f := _)]
           exact Valuation.map_add_lt v h1 h2
         rw [hsum, map_natCast, vcop t hpt] at h3
         exact lt_irrefl _ h3

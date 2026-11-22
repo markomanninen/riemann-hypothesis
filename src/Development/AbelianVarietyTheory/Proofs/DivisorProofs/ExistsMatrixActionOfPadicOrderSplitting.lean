@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
@@ -21,7 +26,7 @@ theorem padicInt_ringHom_eq_val {p : ℕ} [Fact p.Prime] {B : Type*} [Ring B] (k
   obtain ⟨y, hy⟩ := hmem
   have hz : z = (v : ℤ_[p]) + (p : ℤ_[p]) ^ k * y := by rw [← hy]; ring
   calc f z = f ((v : ℤ_[p]) + (p : ℤ_[p]) ^ k * y) := by rw [← hz]
-    _ = (v : B) := by rw [map_add, map_mul, map_pow, map_natCast, map_natCast, hB, zero_mul, add_zero]
+    _ = (v : B) := by rw [map_add (f := _), map_mul, map_pow, map_natCast, map_natCast, hB, zero_mul, add_zero]
 
 theorem exists_matrix_action_of_splitting : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (C : Type) [CommRing C] (k : ℕ), (p : C) ^ k = 0 →
   ∀ (H : Type u) [AddCommGroup H] [Module C H] (ρ : D.O →+* Module.End C H)
@@ -49,7 +54,7 @@ theorem exists_matrix_action_of_splitting : ∀ (p : ℕ) [Fact p.Prime] (D : Gl
     induction t using TensorProduct.induction_on with
     | zero => simpa using h0
     | tmul c z => rw [hΦ]; exact hgen c (ιp z)
-    | add a b ha hb => rw [map_add]; exact hadd _ _ ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact hadd _ _ ha hb
   let Ψ : Matrix (Fin D.m) (Fin D.m) (𝓞 D.F ⊗[ℤ] ℤ_[p]) →+* Module.End C H :=
     (Φ : D.O ⊗[ℤ] ℤ_[p] →+* Module.End C H).comp (s.symm : _ →+* _)
   have hΨ : ∀ M, Ψ M = Φ (s.symm M) := fun M => rfl
@@ -94,6 +99,6 @@ theorem exists_matrix_action_of_splitting : ∀ (p : ℕ) [Fact p.Prime] (D : Gl
         rw [Algebra.TensorProduct.tmul_mul_tmul, _root_.mul_one, _root_.one_mul]
       rw [this, map_mul, map_mul, Module.End.mul_apply]
       exact hleft a _ (hright z x hx)
-    | add a b ha hb => rw [map_add, map_add, LinearMap.add_apply]; exact N.add_mem (ha x hx) (hb x hx)
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), LinearMap.add_apply]; exact N.add_mem (ha x hx) (hb x hx)
 
 end GlobalTheory

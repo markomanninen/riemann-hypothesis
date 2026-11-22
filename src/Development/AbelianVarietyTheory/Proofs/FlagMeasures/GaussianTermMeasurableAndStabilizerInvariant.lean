@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFinEmb
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeStabiliserIsCompactIsOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFinEmb
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeStabiliserIsCompactIsOpen
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean GlobalTheory.StabUnfold
 open scoped TensorProduct
@@ -34,7 +38,7 @@ theorem gaussAt_meas_inv : ∀ (I : AutInst) (x : Fin I.n → I.E), IsOpen {h : 
       exact Units.continuous_coe_inv.comp continuous_subtype_val
     have hc2 := hc.matrix_mulVec (continuous_const (y := infVec I v x))
     unfold gauss
-    refine Real.continuous_exp.comp (Continuous.neg (continuous_finset_sum _ fun i _ => ?_))
+    refine Real.continuous_exp.comp (Continuous.neg (continuous_finsetSum _ fun i _ => ?_))
     exact (((continuous_apply i).comp hc2).norm).pow 2
   · rw [(GlobalTheory.PointLattice.lamX_selfDual I (1, h * g)).1, (GlobalTheory.PointLattice.lamX_selfDual I (1, g)).1]
     have h1 : I.fmat g⁻¹ = I.fmat (h * g)⁻¹ * I.fmat h := by

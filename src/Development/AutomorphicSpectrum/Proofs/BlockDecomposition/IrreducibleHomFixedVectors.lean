@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
+
+@[expose] public section
 
 noncomputable section
 
@@ -184,7 +188,8 @@ theorem eq_zero_of_rel {K : Subgroup (GL ι F)} (hKo : IsOpen (K : Set (GL ι F)
   have hcard : (Fintype.card (K ⧸ L.subgroupOf K) : ℂ) ≠ 0 :=
     Nat.cast_ne_zero.2 Fintype.card_ne_zero
   have key : avg τ K L (act τ (T ∘ₗ (fixed π K).subtype) x) = T (avg π K L (act π (fixed π K).subtype x)) := by
-    simp only [act, Finsupp.coe_lsum, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [act, Finsupp.coe_lsum, Finsupp.sum, map_sum]
     refine Finset.sum_congr rfl fun g hg => ?_
     have h1 := hT _ (isHk_cosetFn hKo hKc g (hL g hg)) _ (x g).2
     rw [hk_cosetFn g π (x g).2, hk_cosetFn g τ (hfix _ (x g).2)] at h1

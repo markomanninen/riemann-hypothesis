@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -66,20 +71,25 @@ theorem exists_algHom_rootsOfUnity_ne_zero {B : Type*} [CommRing B] [IsDomain B]
   have := hQ
   set p := Q.comap (algebraMap (MvPolynomial (Fin s) ℚ) B) with hp
   have : p.IsPrime := Ideal.comap_isPrime _ Q
+  have hpc : p = RingHom.ker ev := hQc
 
   have hvan : ∀ a ∈ p, ev a = 0 := fun a ha ↦ by
-    rw [hQc] at ha
+    rw [hpc] at ha
     exact RingHom.mem_ker.mp ha
   let evq : MvPolynomial (Fin s) ℚ ⧸ p →+* AlgebraicClosure ℚ := Ideal.Quotient.lift p ev hvan
   have hevq : Function.Injective evq :=
-    RingHom.lift_injective_of_ker_le_ideal p hvan (by rw [hQc])
+    RingHom.lift_injective_of_ker_le_ideal p hvan (by rw [hpc])
   let : Algebra (MvPolynomial (Fin s) ℚ ⧸ p) (AlgebraicClosure ℚ) := evq.toAlgebra
   have : Module.IsTorsionFree (MvPolynomial (Fin s) ℚ ⧸ p) (AlgebraicClosure ℚ) :=
     (Module.isTorsionFree_iff_algebraMap_injective).mpr hevq
   have : Module.IsTorsionFree (MvPolynomial (Fin s) ℚ ⧸ p) (B ⧸ Q) :=
     (Module.isTorsionFree_iff_algebraMap_injective).mpr Ideal.algebraMap_quotient_injective
   have : Algebra.IsIntegral (MvPolynomial (Fin s) ℚ ⧸ p) (B ⧸ Q) := Algebra.IsIntegral.quotient
-  let ψq : (B ⧸ Q) →ₐ[MvPolynomial (Fin s) ℚ ⧸ p] AlgebraicClosure ℚ := IsAlgClosed.lift
+  let ψq : (B ⧸ Q) →ₐ[MvPolynomial (Fin s) ℚ ⧸ p] AlgebraicClosure ℚ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let ψ0 : B →+* AlgebraicClosure ℚ := ψq.toRingHom.comp (Ideal.Quotient.mk Q)
   have hψ0 : ∀ a, ψ0 (g0 a) = aeval y a := by
     intro a

@@ -1,10 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRulesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocallyIffAffineEtalePointCoverStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlueStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleToSheafifyLocallyBijectiveAndLiftStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChosenInjectiveResolutionEtaleSheafSectionsExactStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRulesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocallyIffAffineEtalePointCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlueStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleToSheafifyLocallyBijectiveAndLiftStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChosenInjectiveResolutionEtaleSheafSectionsExactStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC TensorProduct
 
@@ -15,9 +19,6 @@ private noncomputable abbrev sι {n : ℕ} (C : Fin n → Type) [∀ i, CommRing
 private lemma sι_eq {n : ℕ} (C : Fin n → Type) [∀ i, CommRing (C i)] (i : Fin n) :
     sι C i = Sigma.ι (fun i => Spec (CommRingCat.of (C i))) i ≫ sigmaSpec (fun i => CommRingCat.of (C i)) :=
   (ι_sigmaSpec (fun i => CommRingCat.of (C i)) i).symm
-
-private instance {n : ℕ} (C : Fin n → Type) [∀ i, CommRing (C i)] (i : Fin n) : IsOpenImmersion (sι C i) := by
-  rw [sι_eq]; infer_instance
 
 private theorem bijective_sheaf_sigma_restrict {P : Scheme.{0}ᵒᵖ ⥤ Type 1}
     (hP : Presieve.IsSheaf Scheme.zariskiTopology P) {n : ℕ} (X : Fin n → Scheme.{0}) :
@@ -50,7 +51,7 @@ theorem UpperTheory.sections_specPi_bijective_prod_sections :
       (F.obj ⋙ CategoryTheory.forget (ModuleCat (ULift.{1, 0} R))) := by
     apply Presieve.isSheaf_of_le _ Scheme.zariskiTopology_le_etaleTopology
     rw [← isSheaf_iff_isSheaf_of_type]
-    exact (Presheaf.isSheaf_iff_isSheaf_forget _ _ (CategoryTheory.forget _)).mp F.cond
+    exact (Presheaf.isSheaf_iff_isSheaf_forget _ _ (CategoryTheory.forget _)).mp F.property
   have key := bijective_sheaf_sigma_restrict hG (fun i => Spec (CommRingCat.of (C i)))
   have hiso : Function.Bijective ((F.obj ⋙ CategoryTheory.forget _).map
       (sigmaSpec (fun i => CommRingCat.of (C i))).op) :=

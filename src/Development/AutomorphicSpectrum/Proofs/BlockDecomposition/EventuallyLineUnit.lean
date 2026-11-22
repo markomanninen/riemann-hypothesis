@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
-import Formalism.GelfandTransference.HadamardGelfand.Highest
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
+public import Formalism.GelfandTransference.Statement
+public import Formalism.GelfandTransference.GelfandCentral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +41,7 @@ theorem XA_sum (lam : Fin n → ℤ) {ι : Type} (s : Finset ι) (B : ι → Mat
 
 theorem Rm_of_unit (lam : Fin n → ℤ) {x : Mat n} (h : IsUnit x.det) :
     Rm lam x = LinearMap.toMatrix (wb lam) (wb lam) (GlobalTheory.Branching.sqRep ℂ n (dw lam) (Matrix.nonsingInvUnit x h)) := by
-  rw [Rm, dif_pos h]
+  rw [Rm, dite_eq_left h]
 
 theorem Rm_one (lam : Fin n → ℤ) : Rm lam (1 : Mat n) = 1 := by
   have h : IsUnit (1 : Mat n).det := by simp

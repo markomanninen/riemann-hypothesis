@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+
+@[expose] public section
+
 open Polynomial Classical GlobalTheory.BadShare
 
 namespace GlobalTheory.BadShare
@@ -43,7 +48,7 @@ theorem sum_primePowerParts_le :
   have hpow : ∀ p k : ℕ, p.Prime → p ^ k ∣ n → p ^ k ≤ f p := by
     intro p k hp hk
     haveI := Fact.mk hp
-    exact Nat.pow_le_pow_right hp.pos ((padicValNat_dvd_iff_le hn.ne').1 hk)
+    exact Nat.pow_le_pow_right hp.pos (((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hn.ne').1 hk)
   have hge : ∀ p ∈ n.primeFactors, p ≤ f p := by
     intro p hp
     have := hpow p 1 (Nat.prime_of_mem_primeFactors hp)
@@ -66,10 +71,11 @@ theorem sum_primePowerParts_le :
   have hn2 : (2 : ℕ) ∉ ({q, d} : Finset ℕ) := by
     simp only [Finset.mem_insert, Finset.mem_singleton]; omega
   have hprod : ∏ l ∈ n.primeFactors, f l = n := by
-    conv_rhs => rw [← Nat.factorization_prod_pow_eq_self hn.ne']
+    conv_rhs => rw [← Nat.prod_factorization_pow_eq_self hn.ne']
     rw [Finsupp.prod, Nat.support_factorization]
     refine Finset.prod_congr rfl fun p hp => ?_
     rw [Nat.factorization_def _ (Nat.prime_of_mem_primeFactors hp)]
+    simp [f, Nat.padicValNat_def]
   set s := n.primeFactors \ {2, q, d} with hs
   have hs2 : ∀ i ∈ s, 2 ≤ f i := fun i hi =>
     (Nat.prime_of_mem_primeFactors (Finset.mem_sdiff.1 hi).1).two_le.trans

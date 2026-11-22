@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.ConjMapSecondProj
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.ConjMapSecondProj
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem vals :
         p1 g ((Y (Sum.inl b) : E) + algebraMap F E (g.q : F) * Y (Sum.inr b)) =
         (Zh.map (p2 g))⁻¹ b (Fin.last r) * p2 g η * dl r b +
           -(-(g.q : F) * (Zh.map (p2 g))⁻¹ b (Fin.last r) * p2 g (l b)) := fun b => by
-      rw [map_add, map_mul, firstProj_algebraMap_split, (fY b).2]; ring
+      rw [map_add (f := _), map_mul, firstProj_algebraMap_split, (fY b).2]; ring
     rw [Finset.sum_congr rfl fun b _ => e b, Finset.sum_add_distrib, Finset.sum_neg_distrib, sum_dl]
     ring
   · rw [lambdaStar_secondProj hs hZh, lastCoordinate_secondProj hs hZc, corner_inverse_firstProj hs hZh, conj_map_secondProj]
@@ -110,7 +114,7 @@ theorem vals :
         p2 g ((Y (Sum.inl b) : E) + algebraMap F E (g.q : F) * Y (Sum.inr b)) =
         (Zh.map (p1 g))⁻¹ b (Fin.last r) * p2 g η' * dl r b +
           -(-(g.q : F) * (Zh.map (p1 g))⁻¹ b (Fin.last r) * p2 g (l' b)) := fun b => by
-      rw [map_add, map_mul, secondProj_algebraMap_split, (gY b).2]; ring
+      rw [map_add (f := _), map_mul, secondProj_algebraMap_split, (gY b).2]; ring
     rw [Finset.sum_congr rfl fun b _ => e b, Finset.sum_add_distrib, Finset.sum_neg_distrib, sum_dl]
     ring
   · rw [lambda_firstProj hs hZh, lastCoordinate_firstProj hs hZh, corner_inverse_firstProj hs hZh]
@@ -127,10 +131,10 @@ theorem vals :
       rw [hW2, (gY b).1, (gZ b).1]; ring
     rw [Finset.sum_congr rfl fun b _ => e b, Finset.sum_add_distrib, Finset.sum_neg_distrib, sum_dl]
     ring
-  · rw [map_add, map_mul, firstProj_algebraMap_split, hW1, hW1]
+  · rw [map_add (f := _), map_mul, firstProj_algebraMap_split, hW1, hW1]
     linear_combination (fY (Fin.last r)).2 - (g.q : F) * (fZ (Fin.last r)).2 +
       p2 g η * (dl_last (F := F) r)
-  · rw [map_add, map_mul, secondProj_algebraMap_split, hW2, hW2]
+  · rw [map_add (f := _), map_mul, secondProj_algebraMap_split, hW2, hW2]
     linear_combination (gY (Fin.last r)).2 - (g.q : F) * (gZ (Fin.last r)).2 +
       p2 g η' * (dl_last (F := F) r)
 

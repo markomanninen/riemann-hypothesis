@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.InterNumRestrictSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrLenRestrictSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PRestrictTwist
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.InterNumRestrictSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrLenRestrictSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PRestrictTwist
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -25,11 +30,21 @@ theorem inr_foldl_restrict {n : ℕ} (L : Fin n → LineBundle k x) (L' : Fin n 
       ∃ (P : LineBundle k x) (P' : LineBundle k y) (s : Ω → K'),
         l.foldl (fun F i => F.twist (L i).toSubSystem) Q.toSubSystem = P.toSubSystem ∧
         l.foldl (fun F i => F.twist (L' i).toSubSystem) Q'.toSubSystem = P'.toSubSystem ∧
-        RestrictData P.toSubSystem hxy P'.toSubSystem s
-  | [], Q, Q', r, h => ⟨Q, Q', r, rfl, rfl, h⟩
-  | i :: l, Q, Q', r, h => by
-    obtain ⟨s, hs⟩ := RestrictTwist.proof.2 k Ω N x K' y hxy Q (L i) Q' (L' i) r (rr i) h (hL i)
-    exact inr_foldl_restrict L L' rr hL l (Q.tensorProd (L i)) (Q'.tensorProd (L' i)) s hs
+        RestrictData P.toSubSystem hxy P'.toSubSystem s := by
+  intro l
+  induction l with
+  | nil =>
+    intro Q Q' r h
+    exact ⟨Q, Q', r, rfl, rfl, h⟩
+  | cons i l ih =>
+    intro Q Q' r h
+    have htwist : ∃ s : Ω → K',
+        RestrictData (Q.toSubSystem.twist (L i).toSubSystem) hxy
+          (Q'.toSubSystem.twist (L' i).toSubSystem) s :=
+      RestrictTwist.restrictData_twist (Q₁ := Q) (Q₂ := L i)
+        (Q₁' := Q') (Q₂' := L' i) (hxy := hxy) (r₁ := r) (r₂ := rr i) h (hL i)
+    obtain ⟨s, hs⟩ := htwist
+    exact ih (Q.tensorProd (L i)) (Q'.tensorProd (L' i)) s hs
 
 theorem proof (hRL : RestrLenRestrict.Statement.{u, w}) : InterNumRestrict.Statement.{u, w} := by
   intro k _ Ω _ _ N x K' _ _ y hxy hle pp n hsub L L' rr hL
@@ -37,9 +52,9 @@ theorem proof (hRL : RestrLenRestrict.Statement.{u, w}) : InterNumRestrict.State
       restrLen pp ((tensorSub (fun i => (L' i).toSubSystem) T).twist (twistSys k y (c : ℤ))) =
         restrLen pp ((tensorSub (fun i => (L i).toSubSystem) T).twist (twistSys k x (c : ℤ))) := by
     intro T
-    obtain ⟨r0, h0⟩ := RestrictTwist.proof.1 k Ω N x K' y hxy hle 0
     obtain ⟨P, P', s, hP, hP', hs⟩ := inr_foldl_restrict L L' rr hL
-      ((List.finRange n).filter (· ∈ T)) (twistBundle k x 0) (twistBundle k y 0) r0 h0
+      ((List.finRange n).filter (· ∈ T)) (twistBundle k x 0) (twistBundle k y 0)
+      (RestrictTwist.twistRes k x y 0) (RestrictTwist.restrictData_twistSys hxy hle 0)
     have e1 : tensorSub (fun i => (L i).toSubSystem) T = P.toSubSystem := hP
     have e2 : tensorSub (fun i => (L' i).toSubSystem) T = P'.toSubSystem := hP'
     rw [e1, e2]

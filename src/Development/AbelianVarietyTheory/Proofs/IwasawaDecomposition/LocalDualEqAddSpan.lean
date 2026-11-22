@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataLevel
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataLevel
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.UG Matrix
 open scoped TensorProduct
 
@@ -87,7 +92,7 @@ theorem localDual_eq_add_span : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
       refine ⟨r1 + r2, ?_⟩
       have : y + z - (algebraMap (𝓞 E) E (r1 + r2)) • e0 =
           (y - (algebraMap (𝓞 E) E r1) • e0) + (z - (algebraMap (𝓞 E) E r2) • e0) := by
-        rw [map_add, add_smul]; abel
+        rw [map_add (f := _), add_smul]; abel
       rw [this]
       exact L.add_mem hr1 hr2
     | smul c y _ h =>

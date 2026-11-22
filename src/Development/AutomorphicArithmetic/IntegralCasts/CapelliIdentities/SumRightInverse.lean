@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.SumRightInverse.sum_rightInv :
     ∀ {G : Type} [inst : Group G] [inst_1 : TopologicalSpace G]

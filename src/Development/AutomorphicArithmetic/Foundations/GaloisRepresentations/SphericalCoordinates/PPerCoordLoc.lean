@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpoly
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PerCoordExists
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpoly
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PerCoordExists
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemma
-import GroundTheory.AutomorphicForms.LeviStagesProduct
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemma
+public import GroundTheory.AutomorphicForms.LeviStagesProduct
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -68,10 +73,6 @@ def leviConj (w : Equiv.Perm (Fin n)) (h : ∀ a b, δ a = δ b ↔ β (w a) = �
     continuous_const).subtype_mk _
   continuous_invFun := ((continuous_const.mul continuous_subtype_val).mul
     continuous_const).subtype_mk _
-
-theorem coe_leviConj (h : ∀ a b, δ a = δ b ↔ β (w a) = β (w b)) (m : levi F n δ) :
-    ((leviConj w h m : levi F n β) : GL (Fin n) F) = permGL F w * m * (permGL F w)⁻¹ :=
-  rfl
 
 end Conj
 
@@ -209,8 +210,8 @@ theorem piece_apply_eq (σ : Representation ℂ (levi F n β) W)
     ((f : levi F n δ → innerJacquetSpace β δ w σ) 1)]
   rw [innerEquiv_apply, innerEquiv_apply, levJacquetAction_mk, leviInfIncl_cellInnerHom h]
 
-variable (w) in
 
+variable (w) in
 def pieceEval (σ : Representation ℂ (levi F n β) W) (h : ∀ a b, δ a = δ b ↔ β (w a) = β (w b)) :
     Representation.IntertwiningMap (indRep (cellLeviSub F β δ w) (normInducing σ δ w))
       (σ.comp (leviConj w h).toMulEquiv.toMonoidHom) where

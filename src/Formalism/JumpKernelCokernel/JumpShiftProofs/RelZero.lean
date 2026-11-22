@@ -1,5 +1,9 @@
-import Formalism.JumpKernelCokernel.Statement
-import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.TruncZero
+module
+
+public import Formalism.JumpKernelCokernel.Statement
+public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.TruncZero
+
+@[expose] public section
 
 namespace Formalism.KernelCokernelLengths
 

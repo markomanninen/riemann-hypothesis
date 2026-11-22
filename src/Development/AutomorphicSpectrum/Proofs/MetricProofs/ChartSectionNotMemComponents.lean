@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.PoincareLelong
-import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.SheetDensityEqSetSheetDensity
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxPosDens
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxSimple
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.SegreChartProjObjects
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MemChartComponents
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartA
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.PoincareLelong
+public import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.SheetDensityEqSetSheetDensity
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxPosDens
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxSimple
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.SegreChartProjObjects
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MemChartComponents
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartA
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +96,7 @@ theorem exists_homogenise {m : ℕ} (σ : Fin m ≃ ((k : K) → ι k)) (i : (k 
     obtain ⟨F, D, hF⟩ := hf
     obtain ⟨G, E, hG⟩ := hg
     refine ⟨F * chartMono i ^ E + G * chartMono i ^ D, D + E, fun x hx => ?_⟩
-    simp only [map_add, map_mul, map_pow, eval_chartMono, hF x hx, hG x hx]
+    simp only [map_add (f := _), map_mul, map_pow, eval_chartMono, hF x hx, hG x hx]
     ring
   | mul_X f a hf =>
     obtain ⟨F, D, hF⟩ := hf
@@ -134,7 +138,7 @@ theorem eval_chartSection [DecidableEq K] {m : ℕ} (σ : Fin m ≃ ((k : K) →
   induction s using MvPolynomial.induction_on with
   | C c => simp [chartSection]
   | add f g hf hg =>
-    simp only [chartSection, map_add] at hf hg ⊢
+    simp only [chartSection, map_add (f := _)] at hf hg ⊢
     rw [hf, hg]
   | mul_X f q hf =>
     simp only [chartSection, map_mul, aeval_X, eval_X] at hf ⊢
@@ -143,8 +147,8 @@ theorem eval_chartSection [DecidableEq K] {m : ℕ} (σ : Fin m ≃ ((k : K) →
 
 end SecNotIn
 
-open SecNotIn in
 
+open SecNotIn in
 theorem chartSection_notMem_component : ∀ (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)]
     (Q : Ideal (MRingOver ℂ ι)) (e m : ℕ) (σ : Fin m ≃ ((k : K) → ι k)) (i : (k : K) → ι k)
     (s : MRingOver ℂ ι) (a : K → ℕ),

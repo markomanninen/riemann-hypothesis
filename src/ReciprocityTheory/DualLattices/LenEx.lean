@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.UnramifiedCokernelLowerBoundOf
-import ReciprocityTheory.DualLattices.UpSmith
-import ReciprocityTheory.DualLattices.ExistsSmulMemOfMemSpan
+module
+
+public import ReciprocityTheory.DualLattices.UnramifiedCokernelLowerBoundOf
+public import ReciprocityTheory.DualLattices.UpSmith
+public import ReciprocityTheory.DualLattices.ExistsSmulMemOfMemSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,19 @@ theorem lenEx : LenExStatement := by
   set K := N'.map e.toLinearMap with hK
   have hfgK : K.FG := hfgN'.map _
   obtain ⟨n, gK, hgK⟩ := Submodule.fg_iff_exists_fin_generating_family.1 hfgK
-  obtain ⟨c, ⟨ec⟩⟩ := Smith.smith_gen hv _ gK
+  have smithGen (b : ℕ) (f : Fin n → Fin b → R) :
+      ∃ c : Fin b → R, Nonempty (((Fin b → R) ⧸ Submodule.span R (Set.range f)) ≃ₗ[R]
+        ((i : Fin b) → R ⧸ Ideal.span {c i})) := by
+    induction b with
+    | zero =>
+      exact ⟨Fin.elim0, ⟨LinearEquiv.ofSubsingleton _ _⟩⟩
+    | succ b ih =>
+      obtain ⟨i, a, u, s, hu, hau, hs, -, -⟩ := Smith.exists_pivot hv (b := b) f
+      obtain ⟨ep⟩ := Smith.pivot_equiv f i a u s hu hau hs
+      obtain ⟨c, ⟨er⟩⟩ := ih (fun j => Fin.removeNth i (f j - s j • a • u))
+      exact ⟨Fin.cons a c,
+        ⟨(ep.trans ((LinearEquiv.refl R _).prodCongr er)).trans (Smith.consEquiv a c)⟩⟩
+  obtain ⟨c, ⟨ec⟩⟩ := smithGen _ gK
   refine ⟨∏ i, v (algebraMap R C (c i)), _, c, ⟨?_⟩, rfl⟩
   have h1 : N.comap Mm.subtype = Mm.comap Mm.subtype ⊓ N.comap Mm.subtype := by
     rw [Submodule.comap_subtype_self, top_inf_eq]

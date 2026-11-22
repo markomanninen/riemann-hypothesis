@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.EulerFacMulConjInvSplit
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.EulerFacMulConjInvSplit
+
+@[expose] public section
 
 open NumberField Module
 
@@ -18,7 +22,8 @@ variable {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberFi
 
 theorem comap_isMaximal {P : Ideal (𝓞 K)} (hP : P.IsMaximal) :
     (P.comap (algebraMap (𝓞 F) (𝓞 K))).IsMaximal :=
-  Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+  haveI : P.IsMaximal := hP
+  Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := 𝓞 F) P
 
 theorem hasProd_fibre (hK : Formalism.HermitianLatticesTheory.IsCMUnram K)
     (hF : ∀ a : K, star a = a ↔ a ∈ Set.range (algebraMap F K)) (M : ℕ) (hM : 1 ≤ M)
@@ -109,9 +114,5 @@ theorem lValEta_eq_lValEtaF (hK : Formalism.HermitianLatticesTheory.IsCMUnram K)
       (⟨x.1.comap (algebraMap (𝓞 F) (𝓞 K)), Regroup.comap_isMaximal x.2⟩ :
         {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}))
     (multipliable_eulerFac hK M hM) (Regroup.hasProd_fibre hK hF M (by omega))
-
-theorem eulerEta : EulerEta := by
-  intro K F _ _ _ _ _ _ hK hF M hM
-  exact ⟨multipliable_eulerFac hK M hM, lValEta_pos hK M hM, lValEta_eq_lValEtaF hK hF M hM⟩
 
 end Formalism.HermitianLattices.Ext.L3

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDivisorOneComponent
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDivisorBranches
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDivisorOneComponent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDivisorBranches
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

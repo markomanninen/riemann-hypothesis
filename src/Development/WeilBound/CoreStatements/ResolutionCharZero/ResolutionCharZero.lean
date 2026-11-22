@@ -1,5 +1,9 @@
-import Development.ResolutionOfSingularities.HasSimpleNormalCrossingsOfInStrictNormalCrossing
-import Development.WeilBound.CoreStatements.ResolutionCharZero.ResolutionCharZeroOfTop
+module
+
+public import Development.ResolutionOfSingularities.HasSimpleNormalCrossingsOfInStrictNormalCrossing
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.ResolutionCharZeroOfTop
+
+@[expose] public section
 
 namespace PositivityTheory.Resplug.ResolutionBlowup
 

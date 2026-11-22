@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryLeviNormalizesUnipotentRadical
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryBlockTriangularLeviPartUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryLeviNormalizesUnipotentRadical
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryBlockTriangularLeviPartUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,8 @@ def hf (σ : L →+* L) (x y : Fin n → L) : L := ∑ k, σ (x k.rev) * y k
 omit [Valued L (WithZero (Multiplicative ℤ))] in
 theorem hf_conj (hσσ : ∀ x, σ (σ x) = x) (x y : Fin n → L) : σ (hf σ x y) = hf σ y x := by
   unfold hf
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Fintype.sum_equiv Fin.revPerm _ _ (fun k => ?_)
   simp [hσσ, mul_comm]
 
@@ -30,7 +35,7 @@ theorem hf_sub_right (x y y' : Fin n → L) : hf σ x (y - y') = hf σ x y - hf 
 
 omit [Valued L (WithZero (Multiplicative ℤ))] in
 theorem hf_add_left (x x' y : Fin n → L) : hf σ (x + x') y = hf σ x y + hf σ x' y := by
-  simp only [hf, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hf, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 omit [Valued L (WithZero (Multiplicative ℤ))] in
 theorem hf_smul (c c' : L) (x y : Fin n → L) : hf σ (c • x) (c' • y) = σ c * c' * hf σ x y := by

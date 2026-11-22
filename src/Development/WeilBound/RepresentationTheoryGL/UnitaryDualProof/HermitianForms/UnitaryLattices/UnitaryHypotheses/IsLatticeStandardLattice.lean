@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.UnitaryHypotheses.UnipBLeColFixOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.UnitaryHypotheses.UnipBLeColFixOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 section Lat
 
-variable (k) in
 
+variable (k) in
 def lat0 (m : ℕ) : AddSubgroup (Fin (m + 1) → k) where
   carrier := {x | ∀ i, valuation k (x i) ≤ valuation k ((1 : kˣ) : k)}
   add_mem' := fun {a b} ha hb i => by
@@ -75,8 +79,8 @@ end Transport
 
 section Chain
 
-open Classical in
 
+open Classical in
 def chain (hUD : UDens k) {ψ : AddChar k Circle} (hψc : Continuous ψ) (hψ1 : ψ ≠ 1) {N : ℕ} {V : Type}
     [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π)
     (B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ) : ℕ → (V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ)
@@ -116,8 +120,11 @@ theorem isPsd_of_inv (hB : IsInvForm π B) : IsPsd B := by
   · exact (h2 v hv).le
 
 theorem chain_lvl (hB : IsInvForm π B) :
-    ∀ d (hd : d + 2 ≤ N), Lvl k ψ π (N - 2 - d) (by omega) (d : ℝ) (chain hUD hψc hψ1 π hs B d)
-  | 0, hd => by
+    ∀ d (hd : d + 2 ≤ N), Lvl k ψ π (N - 2 - d) (by omega) (d : ℝ) (chain hUD hψc hψ1 π hs B d) := by
+  intro d
+  induction d with
+  | zero =>
+    intro hd
     refine ⟨isPsd_of_inv π B hB, ?_, ?_⟩
     · refine kills_congr (a := N) (by omega) ?_
       intro v hv w
@@ -126,8 +133,9 @@ theorem chain_lvl (hB : IsInvForm π B) :
       simp
     · intro p _ v w
       simp [chain_zero, hB.2.2]
-  | d + 1, hd => by
-    obtain ⟨h1, h2, h3, h4, -⟩ := chain_succ hUD hψc hψ1 π hs B d (by omega) (chain_lvl hB d (by omega))
+  | succ d ih =>
+    intro hd
+    obtain ⟨-, h2, h3, h4, -⟩ := chain_succ hUD hψc hψ1 π hs B d (by omega) (ih (by omega))
     exact ⟨h2, kills_congr (by omega) h3, mirEq_congr (by omega) (by push_cast; ring) h4⟩
 
 end Chain

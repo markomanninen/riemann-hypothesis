@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
-import ReciprocityTheory.AdicCompleteness.IsAdicCompleteComapConstantCoeff
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DvdOfForallSubMulMem
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GraphRingMono
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsDVROfClosedSubringPrincipal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsIntegrallyClosedPowerSeries
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsSystemOfParametersInsert
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+public import ReciprocityTheory.AdicCompleteness.IsAdicCompleteComapConstantCoeff
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DvdOfForallSubMulMem
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GraphRingMono
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsDVROfClosedSubringPrincipal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsIntegrallyClosedPowerSeries
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsSystemOfParametersInsert
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries
 
@@ -73,7 +77,7 @@ theorem finite_quotient_of_pow_le {A S : Type} [CommRing A] [CommRing S] [Algebr
 theorem injective_of_ringKrullDim_eq {A S : Type} [CommRing A] [IsDomain A] [CommRing S]
     [Algebra A S] [Module.Finite A S] {n : ℕ} (hA : ringKrullDim A = n) (hS : ringKrullDim S = n) :
     Function.Injective (algebraMap A S) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   by_contra hr0
   have h1 := ReciprocityTheory.CA.ringKrullDim_quotient_eq_quotient_comap_of_isIntegral (A := A) (⊥ : Ideal S)

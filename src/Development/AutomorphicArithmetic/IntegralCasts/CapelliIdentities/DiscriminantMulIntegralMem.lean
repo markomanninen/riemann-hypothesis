@@ -1,10 +1,14 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private theorem int_of_rat {K : Type} [Field K] [CharZero K] (r : ℚ)
     (h : IsIntegral ℤ (r : K)) : ∃ a : ℤ, (a : ℚ) = r := by
   have h1 : IsIntegral ℤ r := by
     have h2 : IsIntegral ℤ (algebraMap ℚ K r) := by simpa using h
-    exact (isIntegral_algebraMap_iff (algebraMap ℚ K).injective).mp h2
+    exact (isIntegral_algebraMap_iff ).mp h2
   obtain ⟨a, ha⟩ := IsIntegrallyClosed.isIntegral_iff.mp h1
   exact ⟨a, by simpa using ha⟩
 
@@ -44,7 +48,7 @@ theorem UpperTheory.discriminant_mul_integral_mem :
     hz.add (hz.map σ.toIntAlgHom)
   have hσw : σ w = (t : K) - w := by linear_combination ht
   have hσy : σ y = (p : K) + (q : K) * ((t : K) - w) := by
-    rw [hpq, map_add, map_mul, map_ratCast, map_ratCast, hσw]
+    rw [hpq, map_add (f := _), map_mul, map_ratCast, map_ratCast, hσw]
   have hA : y + σ y = ((2 * p + q * t : ℚ) : K) := by
     rw [hσy, hpq]; push_cast; ring
   have hB : w * y + σ (w * y) = ((p * t + q * (t ^ 2 - 2 * n) : ℚ) : K) := by

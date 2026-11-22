@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.OneSTr
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.OneSTr
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -15,7 +19,8 @@ theorem semilinear_eq_sum_coord {K B : Type*} {V : Type*} [Field K] [CommRing B]
     refine bs.ext fun t => ?_
     simp [LinearMap.sum_apply, Finsupp.single_apply]
   conv_lhs => rw [hφ]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [hf, mul_comm]
 
@@ -56,12 +61,14 @@ theorem rho_cup :
     intro s s'
     rw [← hP.μ]
     conv_lhs => rw [← b.sum_repr (P.cV i j (bs s) (bs' s'))]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [LinearMap.map_smulₛₗ, Module.Basis.coord_apply]
   have hcup : P.cW i j (∑ s, f (bs.coord s) • C.μ i (bs s))
       (∑ s', g (bs'.coord s') • C.μ j (bs' s')) = ∑ t, c t • C.μ (i + j) (b t) := by
-    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, hμ, c,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, hμ, c,
       Finset.sum_smul, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     symm
@@ -89,7 +96,8 @@ theorem rho_cup :
       ∑ t, C.o (b.coord t (P.cV i j (bs s) (bs' s'))) * C.o (φ (b t)) := by
     intro s s'
     conv_lhs => rw [← b.sum_repr (P.cV i j (bs s) (bs' s'))]
-    simp only [map_sum, map_smul, smul_eq_mul, map_mul, Module.Basis.coord_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, map_mul, Module.Basis.coord_apply]
   refine (semilinear_eq_sum_coord C.o h hh1 b φ).trans ?_
   simp only [hc, c, hφ, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]

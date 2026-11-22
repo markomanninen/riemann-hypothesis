@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.ResidueCharacters.RowDef
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.BoundAtTwoThreeFamilyFon
+module
+
+public import Development.AutomorphicArithmetic.ResidueCharacters.RowDef
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.BoundAtTwoThreeFamilyFon
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

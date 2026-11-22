@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,7 +40,7 @@ theorem allPrim_of_free (H : GlobalTheory.Published.AbelianDeRhamFree) {A : Over
       r (pullOver (dp0 R) (𝟙 _) (fst A A) a + pullOver (dp0 R) (𝟙 _) (snd A A) b) = (a, b) := by
     intro a b
     rw [hv]
-    simp only [map_add, pullOver_pullOver, lift_fst, lift_snd, pullOver_one_eq_zero,
+    simp only [map_add (f := _), pullOver_pullOver, lift_fst, lift_snd, pullOver_one_eq_zero,
       pullOver_id_apply, add_zero, zero_add]
   have hs : Function.Surjective r := fun x ↦ ⟨_, hr x.1 x.2⟩
   have hb : Function.Bijective r :=

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.CechDR
 
 set_option autoImplicit false
@@ -13,7 +18,7 @@ theorem glue_comma_of_basis : ∀ {R : Type} [CommRing R] {C : Type} [Category.{
       (w₁ : G.obj t₁ ⟶ S) (w₂ : G.obj t₂ ⟶ S), mp F w₁ (s t₁ u₁) = mp F w₂ (s t₂ u₂) := by
     intro t₁ t₂ u₁ u₂ S w₁ w₂
     obtain ⟨n, b, hb, hb'⟩ := hdir t₁ t₂ S w₁ w₂
-    refine sub_eq_zero.1 (sep_std H hb _ fun S' u' ⟨i, hi⟩ ↦ ?_)
+    refine sub_eq_zero.1 (GlobalTheory.CatCoh.Desc.sep_std H hb _ fun S' u' ⟨i, hi⟩ ↦ ?_)
     obtain ⟨t₃, ⟨a₁⟩, ⟨a₂⟩, ⟨g⟩⟩ := hb' i S' u' hi
     have e1 : mp F u' (mp F w₁ (s t₁ u₁)) = mp F g (s t₃ (u₁ ≫ G.map a₁)) := by
       rw [hs, ← mp_comp, ← mp_comp, Subsingleton.elim (G.map a₁ ≫ g) (w₁ ≫ u')]
@@ -31,7 +36,7 @@ theorem glue_comma_of_basis : ∀ {R : Type} [CommRing R] {C : Type} [Category.{
       exact ⟨mp F w (s t v), fun _ ↦ ⟨t, v, w, rfl⟩⟩
     · exact ⟨0, fun h' ↦ absurd h' h⟩
   choose σ hσ using hex
-  obtain ⟨x, hx⟩ := glue_std H hb σ fun S S' u ψ hp ↦ by
+  obtain ⟨x, hx⟩ := GlobalTheory.CatCoh.Desc.glue_std H hb σ fun S S' u ψ hp ↦ by
     obtain ⟨t, v, w, e⟩ := hσ S u hp
     obtain ⟨i, hi⟩ := hp
     obtain ⟨t', v', w', e'⟩ := hσ S' (u ≫ ψ) ⟨i, isUnit_comp ψ hi⟩
@@ -41,7 +46,7 @@ theorem glue_comma_of_basis : ∀ {R : Type} [CommRing R] {C : Type} [Category.{
   have hb2 : Ideal.span (Set.range fun i ↦ mp F u (b i)) = ⊤ := by
     have := congrArg (Ideal.map (mp F u)) hb
     rwa [Ideal.map_span, Ideal.map_top, ← Set.range_comp] at this
-  refine sub_eq_zero.1 (sep_std H hb2 _ fun S' ψ ⟨i, hi⟩ ↦ ?_)
+  refine sub_eq_zero.1 (GlobalTheory.CatCoh.Desc.sep_std H hb2 _ fun S' ψ ⟨i, hi⟩ ↦ ?_)
   have hi' : IsUnit (mp F (u ≫ ψ) (b i)) := by rw [mp_comp]; exact hi
   obtain ⟨t', v', w', e'⟩ := hσ S' (u ≫ ψ) ⟨i, hi'⟩
   rw [map_sub, ← mp_comp, hx _ _ ⟨i, hi'⟩, ← e', key t' t v' u S' w' ψ, sub_self]

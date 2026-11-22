@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionInjectiveSaturatedInter
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionInjectiveSaturatedInter
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem q_eq (W : LocWach PD LL O v n) : W.q = ∑ i ∈ Finset.range PD.p, (1 +
   simpa [LocWach.q, letπ, Finset.sum_apply] using h2
 
 theorem φA_one_add (W : LocWach PD LL O v n) : W.φA (1 + letπ) = (1 + letπ) ^ PD.p := by
-  rw [map_add, map_one, W.φA_π, q_eq]
+  rw [map_add (f := _), map_one, W.φA_π, q_eq]
   linear_combination geom_sum_mul (1 + (letπ : LetA O n)) PD.p
 
 theorem φA_pow_one_add (W : LocWach PD LL O v n) (k : ℕ) :
@@ -37,11 +41,12 @@ theorem φA_pow_one_add (W : LocWach PD LL O v n) (k : ℕ) :
   | succ k ih => rw [pow_succ', AlgHom.mul_apply, ih, map_pow, φA_one_add, ← pow_mul, pow_succ']
 
 theorem X_eq (W : LocWach PD LL O v n) : W.X = (1 + letπ) ^ (PD.p ^ (W.s - 1)) - 1 := by
-  rw [← φA_pow_one_add W, map_add, map_one, add_sub_cancel_left, LocWach.X]
+  rw [← φA_pow_one_add W, map_add (f := _), map_one, add_sub_cancel_left, LocWach.X]
 
 theorem Q_eq (W : LocWach PD LL O v n) :
     W.Q = ∑ i ∈ Finset.range PD.p, ((1 + letπ) ^ (PD.p ^ (W.s - 1))) ^ i := by
-  rw [LocWach.Q, q_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LocWach.Q, q_eq, map_sum]
   simp only [map_pow, φA_pow_one_add]
 
 theorem isUnit_φA_pow (W : LocWach PD LL O v n) {a : LetA O n} (ha : IsUnit (algebraMap _ W.EE a)) (k : ℕ) :
@@ -76,7 +81,7 @@ theorem ioE_φ (hO : Function.Injective (algebraMap O LL)) {W : LocWach PD LL O 
     have := congrArg Subtype.val hc
     simpa [h] using this.symm
   have hinj : Function.Injective (LinearMap.toSpanSingleton O W.one.L.T e₀) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     have h1 : c • (e₀ : W.one.V) = 0 := congrArg Subtype.val hc
     rw [← algebraMap_smul LL, smul_eq_zero] at h1
@@ -94,12 +99,13 @@ theorem ioE_φ (hO : Function.Injective (algebraMap O LL)) {W : LocWach PD LL O 
 
 theorem io_X_gen {W : LocWach PD LL O v n} (E : EtTie W RA RW inclR φR gR πA) :
     E.io W.X = (1 + πA) ^ (PD.p ^ (W.s - 1)) - 1 := by
-  rw [X_eq, map_sub, map_pow, map_add, map_one, E.io_π]
+  rw [X_eq, map_sub, map_pow, map_add (f := _), map_one, E.io_π]
 
 theorem io_Q_gen {W : LocWach PD LL O v n} (E : EtTie W RA RW inclR φR gR πA) :
     E.io W.Q = ∑ i ∈ Finset.range PD.p, ((1 + πA) ^ (PD.p ^ (W.s - 1))) ^ i := by
-  rw [Q_eq, map_sum]
-  simp only [map_pow, map_add, map_one, E.io_π]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Q_eq, map_sum]
+  simp only [map_pow, map_add (f := _), map_one, E.io_π]
 
 end Generic
 
@@ -154,79 +160,80 @@ theorem incl_io_φ (a : AA K LL) : inclR LL (E.io (W.φA a)) = φRW LL (inclR LL
   ((E.ioE_ext _).symm.trans (congrArg E.ioE (W.φE_ext a).symm)).trans
     ((ioE_φ' E _).trans (congrArg (φRW LL) (E.ioE_ext a)))
 
+
 open GlobalTheory.IoInj in
 set_option maxHeartbeats 1000000 in
-
 theorem ioE_inj_inter : Function.Injective E.ioE ∧
       ∀ x : W.EE, (∃ y, inclR LL y = E.ioE x) → ∃ a : AA K LL, algebraMap _ W.EE a = x := by
-  classical
-  obtain ⟨_, hc, hl0, hlu, hfree, -, -⟩ := GlobalTheory.Per.integers_completeDVR l LL
-  obtain ⟨hWc, hWtf, -, hsat, hμ⟩ := GlobalTheory.HWL.TensorWitt.main l LL
-  haveI : FiniteDimensional ℚ_[l] K.1 := K.2
-  haveI : FiniteDimensional ℚ_[l] (K0 K) :=
-    Module.Finite.of_injective (IntermediateField.inclusion (inf_le_left : K0 K ≤ K.1)).toLinearMap
-      (IntermediateField.inclusion_injective (inf_le_left : K0 K ≤ K.1))
-  haveI : NeZero (Module.finrank ℚ_[l] (K0 K)) := ⟨Module.finrank_pos.ne'⟩
-  haveI : Nontrivial (RW LL) := Module.FaithfullyFlat.lTensor_nontrivial ℤ_[l] ↥(OL LL) (WCb l)
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible ↥(OL LL)
-  obtain ⟨N, hN⟩ := IsDiscreteValuationRing.associated_pow_irreducible hl0 hϖ
-  obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := by
-    rcases N with _ | n
-    · exact absurd (by simpa using hN) hlu
-    · exact ⟨n, rfl⟩
-  obtain ⟨u, hu⟩ := hN.symm
-  have hm : IsLocalRing.maximalIdeal ↥(OL LL) = Ideal.span {ϖ} := hϖ.maximalIdeal_eq
-  have hO : ∀ a : ↥(OL LL), IsUnit a ∨ ϖ ∣ a := by
-    intro a
-    by_cases h : IsUnit a
-    · exact Or.inl h
-    · right
-      rw [← Ideal.mem_span_singleton, ← hm]
-      exact h
-  have hOp : ∀ a : ℕ → ↥(OL LL), (∀ k k', k ≤ k' → (l : ↥(OL LL)) ^ k ∣ a k - a k') →
-      ∃ L, ∀ k, (l : ↥(OL LL)) ^ k ∣ a k - L := by
-    intro a ha
-    have hiff : ∀ (k : ℕ) (x y : ↥(OL LL)),
-        x ≡ y [SMOD (IsLocalRing.maximalIdeal ↥(OL LL) ^ k • ⊤ : Submodule ↥(OL LL) ↥(OL LL))] ↔ ϖ ^ k ∣ x - y := by
-      intro k x y
-      rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top, hm, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
-    obtain ⟨L, hL⟩ := IsPrecomplete.prec hc.toIsPrecomplete (f := a) (by
-      intro k k' hk
-      rw [hiff]
-      refine (pow_dvd_pow_of_dvd ?_ k).trans (ha k k' hk)
-      exact ⟨ϖ ^ n * u, by rw [← hu]; ring⟩)
-    refine ⟨L, fun k => ?_⟩
-    have h1 := (hiff _ _ _).mp (hL ((n + 1) * k))
-    have h2 : (l : ↥(OL LL)) ^ k ∣ ϖ ^ ((n + 1) * k) := by
-      rw [pow_mul]
-      exact pow_dvd_pow_of_dvd hN.dvd k
-    have : a k - L = (a k - a ((n + 1) * k)) + (a ((n + 1) * k) - L) := by ring
-    rw [this]
-    exact dvd_add (ha _ _ (by nlinarith)) (h2.trans h1)
-  have hp := P.PD_p K
-  have hE := W.EE_complete
-  have hdense := W.EE_dense
-  have hEsat := W.EE_sat
-  rw [hp] at hE hdense hEsat
-  refine (fun h => ⟨h.1, h.2.2.2⟩) (abstract (algebraMap _ W.EE) E.ioE.toRingHom E.io.toRingHom
-    (inclR LL).toRingHom E.ioE_ext l
-    (fun _ => C ϖ) letπ (fun _ => C (u : ↥(OL LL))) n
-    (Pi.isUnit_iff.mpr fun _ => u.isUnit.map C) ?_ (fun i => Pi.single i 1) ?_ ?_
-    (letter_form ϖ hO) (prec_pi l hOp) W.EE_π hE (fun x => hdense x 1) hEsat
-    (IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)) hWtf hsat ?_ ?_)
-  · funext i
-    have := congrArg (C : ↥(OL LL) →+* _) hu
-    rw [map_natCast, map_mul, map_pow] at this
-    simp only [Pi.natCast_apply, Pi.mul_apply, Pi.pow_apply, ← this]
-    ring
-  · intro i
-    rw [← Pi.single_mul, mul_one]
-  · exact Finset.univ_sum_single (1 : LetA ↥(OL LL) _)
-  · haveI := hμ _ (not_isUnit_εroot_sub_one AI s)
-    change E.io letπ ∈ _
-    rw [E.io_π]
-    exact IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)
-  · exact idem_ne_zero (algebraMap _ W.EE) E.ioE.toRingHom W.φ₀ W.φE (φRW LL) (map_zero _) W.φE_ext (ioE_φ' E)
+  set_option synthInstance.maxHeartbeats 200000 in
+    classical
+    obtain ⟨_, hc, hl0, hlu, hfree, -, -⟩ := GlobalTheory.Per.integers_completeDVR l LL
+    obtain ⟨hWc, hWtf, -, hsat, hμ⟩ := GlobalTheory.HWL.TensorWitt.main l LL
+    haveI : FiniteDimensional ℚ_[l] K.1 := K.2
+    haveI : FiniteDimensional ℚ_[l] (K0 K) :=
+      Module.Finite.of_injective (IntermediateField.inclusion (inf_le_left : K0 K ≤ K.1)).toLinearMap
+        (IntermediateField.inclusion_injective (inf_le_left : K0 K ≤ K.1))
+    haveI : NeZero (Module.finrank ℚ_[l] (K0 K)) := ⟨Module.finrank_pos.ne'⟩
+    haveI : Nontrivial (RW LL) := Module.FaithfullyFlat.lTensor_nontrivial ℤ_[l] ↥(OL LL) (WCb l)
+    obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible ↥(OL LL)
+    obtain ⟨N, hN⟩ := IsDiscreteValuationRing.associated_pow_irreducible hl0 hϖ
+    obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := by
+      rcases N with _ | n
+      · exact absurd (by simpa using hN) hlu
+      · exact ⟨n, rfl⟩
+    obtain ⟨u, hu⟩ := hN.symm
+    have hm : IsLocalRing.maximalIdeal ↥(OL LL) = Ideal.span {ϖ} := hϖ.maximalIdeal_eq
+    have hO : ∀ a : ↥(OL LL), IsUnit a ∨ ϖ ∣ a := by
+      intro a
+      by_cases h : IsUnit a
+      · exact Or.inl h
+      · right
+        rw [← Ideal.mem_span_singleton, ← hm]
+        exact h
+    have hOp : ∀ a : ℕ → ↥(OL LL), (∀ k k', k ≤ k' → (l : ↥(OL LL)) ^ k ∣ a k - a k') →
+        ∃ L, ∀ k, (l : ↥(OL LL)) ^ k ∣ a k - L := by
+      intro a ha
+      have hiff : ∀ (k : ℕ) (x y : ↥(OL LL)),
+          x ≡ y [SMOD (IsLocalRing.maximalIdeal ↥(OL LL) ^ k • ⊤ : Submodule ↥(OL LL) ↥(OL LL))] ↔ ϖ ^ k ∣ x - y := by
+        intro k x y
+        rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top, hm, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
+      obtain ⟨L, hL⟩ := IsPrecomplete.prec hc.toIsPrecomplete (f := a) (by
+        intro k k' hk
+        rw [hiff]
+        refine (pow_dvd_pow_of_dvd ?_ k).trans (ha k k' hk)
+        exact ⟨ϖ ^ n * u, by rw [← hu]; ring⟩)
+      refine ⟨L, fun k => ?_⟩
+      have h1 := (hiff _ _ _).mp (hL ((n + 1) * k))
+      have h2 : (l : ↥(OL LL)) ^ k ∣ ϖ ^ ((n + 1) * k) := by
+        rw [pow_mul]
+        exact pow_dvd_pow_of_dvd hN.dvd k
+      have : a k - L = (a k - a ((n + 1) * k)) + (a ((n + 1) * k) - L) := by ring
+      rw [this]
+      exact dvd_add (ha _ _ (by nlinarith)) (h2.trans h1)
+    have hp := P.PD_p K
+    have hE := W.EE_complete
+    have hdense := W.EE_dense
+    have hEsat := W.EE_sat
+    rw [hp] at hE hdense hEsat
+    refine (fun h => ⟨h.1, h.2.2.2⟩) (abstract (algebraMap _ W.EE) E.ioE.toRingHom E.io.toRingHom
+      (inclR LL).toRingHom E.ioE_ext l
+      (fun _ => C ϖ) letπ (fun _ => C (u : ↥(OL LL))) n
+      (Pi.isUnit_iff.mpr fun _ => u.isUnit.map C) ?_ (fun i => Pi.single i 1) ?_ ?_
+      (letter_form ϖ hO) (prec_pi l hOp) W.EE_π hE (fun x => hdense x 1) hEsat
+      (IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)) hWtf hsat ?_ ?_)
+    · funext i
+      have := congrArg (C : ↥(OL LL) →+* _) hu
+      rw [map_natCast, map_mul, map_pow] at this
+      simp only [Pi.natCast_apply, Pi.mul_apply, Pi.pow_apply, ← this]
+      ring
+    · intro i
+      rw [← Pi.single_mul, mul_one]
+    · exact Finset.univ_sum_single (1 : LetA ↥(OL LL) _)
+    · haveI := hμ _ (not_isUnit_εroot_sub_one AI s)
+      change E.io letπ ∈ _
+      rw [E.io_π]
+      exact IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)
+    · exact idem_ne_zero (algebraMap _ W.EE) E.ioE.toRingHom W.φ₀ W.φE (φRW LL) (map_zero _) W.φE_ext (ioE_φ' E)
 
 end Concrete
 

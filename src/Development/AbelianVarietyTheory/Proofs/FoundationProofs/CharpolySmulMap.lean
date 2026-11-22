@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 CongruenceSubgroup
 open scoped Matrix MatrixGroups ModularForm
 
@@ -22,7 +27,9 @@ theorem mem_iff (v : HeightOneSpectrum (𝓞 ℚ)) (n : ℕ) : (n : 𝓞 ℚ) �
     exact Ideal.mul_mem_right _ _ (Ideal.absNorm_mem _)
 
 theorem normV_prime (v : HeightOneSpectrum (𝓞 ℚ)) : (normV v).Prime := by
-  have h1 : 1 < normV v := NumberField.HeightOneSpectrum.one_lt_absNorm v
+  have h1 : 1 < normV v := by
+    rw [normV_eq]
+    exact NumberField.HeightOneSpectrum.one_lt_absNorm v
   refine Nat.prime_def.2 ⟨h1, fun m hm => ?_⟩
   obtain ⟨c, hc⟩ := hm
   have h2 := (mem_iff v _).2 dvd_rfl

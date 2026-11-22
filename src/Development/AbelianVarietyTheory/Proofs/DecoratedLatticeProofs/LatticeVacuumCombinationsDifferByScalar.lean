@@ -1,8 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.QLev
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ProdDat
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationDisjointPlacesCommuteVacua
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTopAlt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ProdDat
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationDisjointPlacesCommuteVacua
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 noncomputable section
@@ -42,7 +49,8 @@ theorem iso_mem {V ι J : Type} [AddCommGroup V] [Module ℂ V] (A : ι → V �
       have h1 : A i (z a + ∑ j ∈ s, z j) - l a i • (z a + ∑ j ∈ s, z j) ∈ U :=
         U.sub_mem (hU i _ hsum) (U.smul_mem _ hsum)
       have h2 : A i (z a + ∑ j ∈ s, z j) - l a i • (z a + ∑ j ∈ s, z j) = ∑ j ∈ s, (l j i - l a i) • z j := by
-        rw [map_add, map_sum, hz a (Finset.mem_insert_self a s), smul_add, Finset.smul_sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_add (f := _), map_sum, hz a (Finset.mem_insert_self a s), smul_add, Finset.smul_sum,
           Finset.sum_congr rfl (fun j hj => hz j (Finset.mem_insert_of_mem hj) i), add_sub_add_comm, sub_self, zero_add,
           ← Finset.sum_sub_distrib]
         exact Finset.sum_congr rfl fun j _ => (sub_smul _ _ _).symm
@@ -85,7 +93,7 @@ theorem symplOH_eq (S T : HSp D) (m y : WO S T) :
   unfold symplOH
   rw [GlobalTheory.SplitScalar.symplO_skew S T m y]
   have ha : (algebraMap D.host.F (AF D.host.F)) (1 / 2) + (algebraMap D.host.F (AF D.host.F)) (1 / 2) = 1 := by
-    rw [← map_add]; norm_num
+    rw [← map_add (f := _)]; norm_num
   linear_combination (symplO S T m y) * ha
 
 theorem heisO_eig (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) {m y : WO S T} {f : WO S T → ℂ} {c : ℂ}
@@ -151,15 +159,15 @@ theorem vac_eigen (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1)) (
   have hsplit : ∀ u ∈ latO S T (LS : Set _) (LT : Set _) (fun _ => True),
       GlobalTheory.DisjComb.idem (· ∈ Q) • u ∈ latO S T (LS : Set _) (LT : Set _) (· ∈ Q) := fun u hu =>
     (GlobalTheory.DisjComb.split_latO ψ hψ hLS hLT (P := (· ∈ Q)) (P' := (· ∉ Q)) (fun p h h' => h' h) (hmono hu)).2.2.1
-  let G : AddSubgroup (WO S T) := H.comap (DistribMulAction.toAddMonoidHom (WO S T) (GlobalTheory.DisjComb.idem (· ∈ Q)))
+  let G : AddSubgroup (WO S T) := H.comap (DistribSMul.toAddMonoidHom (WO S T) (GlobalTheory.DisjComb.idem (· ∈ Q)))
   have hG : ∀ {u : WO S T}, u ∈ latO S T (LS : Set _) (LT : Set _) (fun _ => True) → u ∈ G := by
     intro u hu
     refine GlobalTheory.LatVac.le_of_two_of_half G (fun u hu => ?_) (fun e he u hu hh => ?_) hu
     · refine AddSubgroup.mem_comap.2 ?_
-      rw [DistribMulAction.toAddMonoidHom_apply, smul_comm]
+      rw [DistribSMul.toAddMonoidHom_apply, smul_comm]
       exact hHmem _ ⟨1, fun f hf => by rw [one_smul]; exact hf.2.1 _ (hsplit u hu)⟩
     · refine AddSubgroup.mem_comap.2 ?_
-      rw [DistribMulAction.toAddMonoidHom_apply]
+      rw [DistribSMul.toAddMonoidHom_apply]
       exact hHmem _ ⟨1, fun f hf => by rw [one_smul]; exact hf.2.2 e he _ (hsplit u hu) (GlobalTheory.DisjComb.isHalf_parts hh).1⟩
   have hH : ∀ m ∈ latO S T (LS : Set _) (LT : Set _) (· ∈ Q), m ∈ H := by
     intro m hm
@@ -223,7 +231,8 @@ theorem class_mem (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (Λ : AddSubgro
     rwa [sub_sub_cancel] at this
   have hz : ∀ C, ∀ m : Λ, hL ψ S T m (z C) = l C m • z C := by
     intro C m
-    simp only [z, map_sum, map_smul, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [z, map_sum, map_smul, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j hj => ?_
     have hjC : mk (y j) = C := (Finset.mem_filter.1 hj).2
     have e : hL ψ S T m (heisO ψ S T (y j) f) = (ψ (symplO S T m (y j)) * q m) • heisO ψ S T (y j) f :=

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ variable {l : ℕ} [Fact l.Prime] {L : Loc} {G G0 : Glob l L} (h : G.Hom G0) {n 
 
 abbrev NP.Fr {F : GFrame l} (x : NP F n) : Type := FractionRing x.A
 
-variable (x) in
 
+variable (x) in
 def BdP (X : Type) [CommRing X] [Algebra x.A X] := Bd G.frame (fun g => x.ρX X (h.p₀ g)) (Ev x.A X n x.a)
 
 def kapF (j : Fin k.g) (γ : G.G₀) : Matrix (Fin n) (Fin n) x.Fr := (k.κ j (h.p₀ γ)).map (algebraMap x.A x.Fr)

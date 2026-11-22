@@ -1,5 +1,9 @@
-import Formalism.UnipotentAdelicQuotients.EllRegStep
-import Formalism.UnipotentAdelicQuotients.EllipticRegularity.BaseLevel
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllRegStep
+public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.BaseLevel
+
+@[expose] public section
 
 namespace ZetaZeros.D.EllReg
 

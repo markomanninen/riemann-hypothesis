@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,10 +15,6 @@ namespace UpperTheory.V.TG
 variable (E : Type) [Field E] [NumberField E]
 
 instance : (volume : Measure (Cinf E)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
-
-instance (a : ℕ) : (volume : Measure (Fin a → Cinf E)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
-
-instance (a : ℕ) : (volume : Measure (Lie E a)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
 
 def tr : Cinf E →ₗ[ℝ] ℝ where
   toFun x := ∑ w, 2 * (x w).re

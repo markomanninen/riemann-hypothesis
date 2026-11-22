@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StructureSheafPullbackRelationsBasicStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSquareAffineH1VanishStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StructureSheafPullbackRelationsBasicStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSquareAffineH1VanishStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.LiftSys GlobalTheory.Obs
@@ -85,8 +90,8 @@ theorem isPullO_zero_iff {Y A : Over (Sp R)} (f : Y ⟶ A) (c : HO1 A.hom) : IsP
 
 end Axes
 
-open Axes in
 
+open Axes in
 theorem axesO1_of_cohomology_structure : (∀ (R : Type) [CommRing R] (A : Over (Sp R)) [GrpObj A] (g : ℕ), IsAbelianScheme A →
     SmoothOfRelativeDimension g A.hom → (Module.Finite R (HO1 A.hom) ∧ Module.Projective R (HO1 A.hom) ∧
       ∀ p : PrimeSpectrum R, Module.rankAtStalk (HO1 A.hom) p = g) ∧
@@ -103,10 +108,10 @@ theorem axesO1_of_cohomology_structure : (∀ (R : Type) [CommRing R] (A : Over 
   have hNP : N ∘ₗ P = LinearMap.id := by
     refine LinearMap.ext fun x ↦ Prod.ext ?_ ?_
     · show pb (lift (𝟙 A) 1) (pb (fst A A) x.1 + pb (snd A A) x.2) = x.1
-      rw [map_add, ← pb_comp, ← pb_comp, lift_fst, lift_snd, pb_id]
+      rw [map_add (f := _), ← pb_comp, ← pb_comp, lift_fst, lift_snd, pb_id]
       rw [show (1 : A ⟶ A) = toUnit A ≫ η[A] from rfl, pb_one, add_zero]
     · show pb (lift 1 (𝟙 A)) (pb (fst A A) x.1 + pb (snd A A) x.2) = x.2
-      rw [map_add, ← pb_comp, ← pb_comp, lift_fst, lift_snd, pb_id]
+      rw [map_add (f := _), ← pb_comp, ← pb_comp, lift_fst, lift_snd, pb_id]
       rw [show (1 : A ⟶ A) = toUnit A ≫ η[A] from rfl, pb_one, zero_add]
   have hinj := injective_of_section N P hNP (fun p ↦ by
     rw [Module.rankAtStalk_prod, Pi.add_apply, r1, r2])

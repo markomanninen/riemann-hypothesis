@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipApplyCastSuccLast
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipApplyCastSuccLast
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,8 +42,8 @@ def AD (ψ : AddChar k Circle) {n : ℕ} (col : (Fin n → k) → V →ₗ[ℂ] 
   p.1 ≤ A ∧ IsOpen (p.1 : Set (Fin n → k)) ∧ (∀ a ∈ p.1, col a v = v) ∧ (∀ a ∈ p.1, ψ (ξ ⬝ᵥ a) = 1) ∧
     (∀ t ∈ p.2, t ∈ A) ∧ ∀ a ∈ A, ∃! t, t ∈ p.2 ∧ a - t ∈ p.1
 
-open Classical in
 
+open Classical in
 def av (ψ : AddChar k Circle) {n : ℕ} (col : (Fin n → k) → V →ₗ[ℂ] V) (ξ : Fin n → k) (A : AddSubgroup (Fin n → k))
     (v : V) : V :=
   if hd : ∃ p, AD ψ col ξ A v p then

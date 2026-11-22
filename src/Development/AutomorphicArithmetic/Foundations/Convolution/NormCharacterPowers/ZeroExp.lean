@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.OrderAsym
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.AbsRigClosed
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AnalyticSeries.AnalyticAtTsum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.OrderAsym
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.AbsRigClosed
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AnalyticSeries.AnalyticAtTsum
+
+@[expose] public section
 
 open UpperTheory.ConvolutionTheory.R
 

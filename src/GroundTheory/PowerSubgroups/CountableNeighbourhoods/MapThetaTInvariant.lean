@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ContragredientTranspose.GelfandKazhdan
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ContragredientTranspose.GelfandKazhdan
+
+@[expose] public section
 
 namespace GroundTheory.Variant₂.N1
 
@@ -57,23 +61,23 @@ lemma secondCountableTopology_GL : SecondCountableTopology (GL (Fin n) F) := by
     (MulOpposite.opHomeomorph (M := Matrix (Fin n) (Fin n) F)).symm.isEmbedding.isInducing.secondCountableTopology
   exact Units.isEmbedding_embedProduct.isInducing.secondCountableTopology
 
-open GroundTheory.Automorphic.ContragredientTranspose in
 
+open GroundTheory.Automorphic.ContragredientTranspose in
 lemma continuous_transposeGL {F : Type*} [Field F] [TopologicalSpace F] {n : ℕ} :
     Continuous (transposeGL : GL (Fin n) F → GL (Fin n) F) := by
   refine Units.continuous_iff.2 ⟨?_, ?_⟩
   · exact Units.continuous_val.matrix_transpose
   · exact Units.continuous_coe_inv.matrix_transpose
 
-open GroundTheory.Automorphic.ContragredientTranspose in
 
+open GroundTheory.Automorphic.ContragredientTranspose in
 noncomputable def thetaTContinuous : GL (Fin n) F ≃ₜ* GL (Fin n) F :=
   { (thetaT : GL (Fin n) F ≃* GL (Fin n) F) with
     continuous_toFun := continuous_transposeGL.inv
     continuous_invFun := continuous_transposeGL.inv }
 
-open GroundTheory.Automorphic.ContragredientTranspose in
 
+open GroundTheory.Automorphic.ContragredientTranspose in
 lemma thetaT_thetaT {F : Type*} [Field F] {n : ℕ} (g : GL (Fin n) F) :
     (thetaT : GL (Fin n) F ≃* GL (Fin n) F) (thetaT g) = g :=
   (thetaT : GL (Fin n) F ≃* GL (Fin n) F).symm_apply_apply g
@@ -84,8 +88,8 @@ end MapThetaTInvariant
 
 open MapThetaTInvariant
 
-open GroundTheory.Automorphic.ContragredientTranspose in
 
+open GroundTheory.Automorphic.ContragredientTranspose in
 theorem map_thetaT_eq_self {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F]
     [IsNonarchimedeanLocalField F] {n : ℕ} [MeasurableSpace (GL (Fin n) F)]
     [BorelSpace (GL (Fin n) F)] (μ : Measure (GL (Fin n) F)) [μ.IsHaarMeasure] :
@@ -104,7 +108,7 @@ theorem map_thetaT_eq_self {F : Type*} [Field F] [ValuativeRel F] [TopologicalSp
     ext g : 1
     exact thetaT_thetaT g
   have hsq : (c * c) • μ = μ := by
-    conv_rhs => rw [← h2, hc, Measure.map_smul, hc, smul_smul]
+    conv_rhs => rw [← h2, hc, Measure.map_smul c hmeas.aemeasurable, hc, smul_smul]
 
   obtain ⟨K, hK, hK1⟩ := exists_compact_mem_nhds (1 : GL (Fin n) F)
   have hpos : 0 < μ K := Measure.measure_pos_of_mem_nhds μ hK1

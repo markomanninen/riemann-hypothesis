@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH
@@ -20,7 +25,8 @@ theorem coeff_symm_sum {A B X : Type} [CommRing A] [CommRing B] [AddCommGroup X]
     change _ = AddMonoidAlgebra.liftNCRingHom f g hc _
     simp [AddMonoidAlgebra.liftNCRingHom]
   change (e.symm _).coeff χ = ∑ i, c i * (e.symm (s i)).coeff χ
-  simp [map_sum, map_mul, h1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul, h1]
 
 theorem app_constFn {R : Type} [CommRing R] {X Y : Scheme.{0}} (q : X ⟶ Sp R) (q' : Y ⟶ Sp R) (f : Y ⟶ X)
     (hf : f ≫ q = q') (U : X.Opens) (a : R) :

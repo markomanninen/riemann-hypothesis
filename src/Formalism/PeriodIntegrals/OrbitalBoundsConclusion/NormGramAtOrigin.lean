@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.NormGramAtOrigin
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrthogonalFamilyExistence.ExistsOrthFamily
+module
+
+public import Formalism.PeriodIntegrals.NormGramAtOrigin
+public import Mathlib
+
+@[expose] public section
 
 private lemma hform_add_right_orbital_bounds_conclusion {E : Type} [Field E] (σ : E →+* E) {n : ℕ}
     (J : Matrix (Fin n) (Fin n) E) (x y z : Fin n → E) :
@@ -28,7 +32,8 @@ private lemma Hf_sub_right' {E : Type} [Field E] (σ : E →+* E) {n : ℕ}
 private lemma hform_symm_of_involutive_of_hermitian {E : Type} [Field E] (σ : E →+* E) (hσ : ∀ a, σ (σ a) = a) {n : ℕ}
     (J : Matrix (Fin n) (Fin n) E) (hJ : ∀ i j, σ (J j i) = J i j) (x y : Fin n → E) :
     σ (PI.NormGramAtOrigin.hform σ J x y) = PI.NormGramAtOrigin.hform σ J y x := by
-  simp only [PI.NormGramAtOrigin.hform, map_sum, map_mul, hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PI.NormGramAtOrigin.hform, map_sum, map_mul, hσ]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => by rw [hJ j i]; ring
 

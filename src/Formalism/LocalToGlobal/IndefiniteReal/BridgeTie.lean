@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.IndefiniteReal.Bridge
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.LocalToGlobal.Divisibility.DefGroup
-import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.Bridge
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+public import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped TensorProduct

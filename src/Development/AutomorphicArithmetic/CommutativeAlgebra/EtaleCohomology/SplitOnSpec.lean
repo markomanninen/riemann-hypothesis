@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitsOfSplitOn
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitsOfSplitOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ private theorem perm_of_aut {B : Type} [CommRing B] {d : ℕ} (a b : (Fin d → 
   have Esum : ∀ i, ∑ k, E i k = 1 := by
     intro i
     have := congrFun (congrArg a δsum) i
-    rw [map_sum, map_one, Finset.sum_apply] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one, Finset.sum_apply] at this
     exact this
   have Emul : ∀ i k (x : Fin d → B), E i k * (a x i - x k) = 0 := by
     intro i k x

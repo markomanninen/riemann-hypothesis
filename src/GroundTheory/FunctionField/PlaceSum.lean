@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.FunctionField.PlaceAbove
+module
+
+public import Mathlib
+public import GroundTheory.FunctionField.PlaceAbove
+
+@[expose] public section
 
 namespace GroundTheory.FunctionField
 
@@ -116,8 +120,8 @@ noncomputable def primeHS (q : (maximalIdeal v.ring).primesOver (integralClosure
     HeightOneSpectrum (integralClosure v.ring K') :=
   ⟨q.1, q.2.1, v.ne_bot_of_mem_primesOver q.2⟩
 
-omit [IsScalarTower k K K'] [IsFunctionField k K] [FiniteDimensional K K'] [Algebra.IsSeparable K K'] in
 
+omit [IsScalarTower k K K'] [IsFunctionField k K] [FiniteDimensional K K'] [Algebra.IsSeparable K K'] in
 theorem mem_of_isIntegral_of_liesOver {w : Place k K'} (h : w.LiesOver v) {x : K'}
     (hx : IsIntegral v.ring x) : x ∈ w.ring := by
   let := h.algebra
@@ -175,7 +179,14 @@ noncomputable def primeOfPlace {w : Place k K'} (h : w.LiesOver v) :
     (maximalIdeal v.ring).primesOver (integralClosure v.ring K') :=
   ⟨(maximalIdeal w.ring).comap (v.closureHom h), Ideal.comap_isPrime _ _, ⟨by
     let := h.algebra
-    have := h.isLocalHom
+    have : IsLocalHom (algebraMap v.ring w.ring) := by
+      refine ⟨fun a ha => ?_⟩
+      obtain ⟨hne, hinv⟩ := Submonoid.isUnit_iff_and.mp ha
+      refine Submonoid.isUnit_iff_and.mpr ⟨fun hzero => hne ?_, h.mem_iff.mp ?_⟩
+      · change algebraMap K K' (a : K) = 0
+        rw [hzero, map_zero]
+      · rw [map_inv₀]
+        exact hinv
     have hc : (v.closureHom h).comp (algebraMap v.ring (integralClosure v.ring K')) =
         algebraMap v.ring w.ring := RingHom.ext fun a => Subtype.ext rfl
     change maximalIdeal v.ring = Ideal.comap (algebraMap v.ring (integralClosure v.ring K'))
@@ -280,35 +291,48 @@ theorem ramificationIdx_primeOfPlace_eq
   have := q.2.1
   have := q.2.2
   have : (v.primeHS q).asIdeal.LiesOver v.heightOneSpectrum.asIdeal := q.2.2
-  have hp : maximalIdeal v.ring ≠ ⊥ := IsDiscreteValuationRing.not_a_field v.ring
-  have h := v.placeOfPrime_liesOver q
-  rw [← Ideal.ramificationIdx'_eq_ramificationIdx (maximalIdeal v.ring) q.1 hp,
-    ← h.ramificationIdx'_eq]
-  have e1 : v.valuation v.uniformizer ^ (maximalIdeal v.ring).ramificationIdx' q.1 =
+  have he : v.valuation v.uniformizer ^ q.1.ramificationIdx v.ring =
       (v.primeHS q).valuation K' (algebraMap K K' v.uniformizer) :=
     HeightOneSpectrum.valuation_liesOver K' v.heightOneSpectrum (v.primeHS q) v.uniformizer
-  have e2 := h.valuation_algebraMap v.uniformizer
-  rw [valuation_primeHS, ← e2, v.valuation_eq_exp_neg_ord v.uniformizer_ne_zero, v.ord_uniformizer,
-    ← WithZero.exp_nsmul, ← WithZero.exp_nsmul, WithZero.exp_inj] at e1
-  simpa using e1
+  rw [valuation_primeHS, v.valuation_eq_exp_neg_ord v.uniformizer_ne_zero, v.ord_uniformizer,
+    ← WithZero.exp_nsmul] at he
+  have hlog := congrArg WithZero.log he
+  rw [WithZero.log_exp, nsmul_eq_mul, mul_neg_one] at hlog
+  change _ = (-WithZero.log ((v.placeOfPrime q).valuation (algebraMap K K' v.uniformizer))).toNat
+  rw [← hlog, neg_neg, Int.toNat_natCast]
+
 
 omit [IsFunctionField k K'] in
-
 theorem inertiaDeg_primeOfPlace_eq
     (q : (maximalIdeal v.ring).primesOver (integralClosure v.ring K')) :
     q.1.inertiaDeg v.ring = (v.placeOfPrime q).inertiaDeg v := by
   have := q.2.1
   have := q.2.2
   have hmax : q.1.IsMaximal := q.2.1.isMaximal (v.ne_bot_of_mem_primesOver q.2)
-  have h := v.placeOfPrime_liesOver q
-  rw [Ideal.inertiaDeg_eq_of_isMaximal (maximalIdeal v.ring) q.1, ← h.finrank_residueField]
+  let w := v.placeOfPrime q
+  have h : w.LiesOver v := v.placeOfPrime_liesOver q
   let := h.algebra
-  have := h.isLocalHom
+  have hcomap : (maximalIdeal w.ring).comap (algebraMap v.ring w.ring) = maximalIdeal v.ring := by
+    have hq : maximalIdeal v.ring =
+        ((maximalIdeal w.ring).comap (v.closureHom h)).under v.ring := (v.primeOfPlace h).2.2.over
+    have hc : (v.closureHom h).comp (algebraMap v.ring (integralClosure v.ring K')) =
+        algebraMap v.ring w.ring := RingHom.ext fun a => Subtype.ext rfl
+    simpa only [Ideal.under, Ideal.comap_comap, hc] using hq.symm
+  have : IsLocalHom (algebraMap v.ring w.ring) := ((local_hom_tfae _).out 5 1).mp hcomap
+  have hfinrank : Module.finrank v.ResidueField w.ResidueField = w.inertiaDeg v := by
+    let : Algebra k w.ring := (fun u : Place k K' => (inferInstance : Algebra k u.ring)) w
+    have : IsScalarTower k v.ring w.ring := IsScalarTower.of_algebraMap_eq fun c =>
+      Subtype.ext (IsScalarTower.algebraMap_apply k K K' c)
+    have : Module.Free v.ResidueField w.ResidueField := Module.Free.of_divisionRing _ _
+    have hdeg : v.deg * Module.finrank v.ResidueField w.ResidueField = w.deg :=
+      Module.finrank_mul_finrank k v.ResidueField w.ResidueField
+    rw [inertiaDeg, ← hdeg, Nat.mul_div_cancel_left _ v.deg_pos]
+  rw [Ideal.inertiaDeg_eq_of_isMaximal (maximalIdeal v.ring) q.1, ← hfinrank]
   have : IsLocalization.AtPrime (v.placeOfPrime q).ring q.1 :=
     inferInstanceAs (IsLocalization (v.primeHS q).asIdeal.primeCompl
       (HeightOneSpectrum.valuationSubringAtPrime K' (v.primeHS q)))
   refine Algebra.finrank_eq_of_equiv_equiv (RingEquiv.refl _)
-    (IsLocalization.AtPrime.equivQuotMaximalIdeal q.1 (v.placeOfPrime q).ring) ?_
+    (IsLocalization.AtPrime.equivQuotMaximalIdeal q.1 (v.placeOfPrime q).ring).toRingEquiv ?_
   apply Ideal.Quotient.ringHom_ext
   ext a
   rfl
@@ -336,20 +360,6 @@ theorem sum_ramificationIdx_mul_inertiaDeg :
   refine (Fintype.sum_equiv v.primesOverEquiv _ _ fun q => ?_).symm
   rw [ramificationIdx_primeOfPlace_eq, inertiaDeg_primeOfPlace_eq]
   rfl
-
-noncomputable def heightOneSpectrumEquiv :
-    {P : HeightOneSpectrum (integralClosure v.ring K') //
-        P.asIdeal.LiesOver (maximalIdeal v.ring)} ≃
-      (maximalIdeal v.ring).primesOver (integralClosure v.ring K') where
-  toFun P := ⟨P.1.asIdeal, P.1.isPrime, P.2⟩
-  invFun q := ⟨v.primeHS q, q.2.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-noncomputable def heightOneSpectrumEquivPlaces :
-    {P : HeightOneSpectrum (integralClosure v.ring K') //
-        P.asIdeal.LiesOver (maximalIdeal v.ring)} ≃ {w : Place k K' // w.LiesOver v} :=
-  v.heightOneSpectrumEquiv.trans v.primesOverEquiv
 
 end Sum
 

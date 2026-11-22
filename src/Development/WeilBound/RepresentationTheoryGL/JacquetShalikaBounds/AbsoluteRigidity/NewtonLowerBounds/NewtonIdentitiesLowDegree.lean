@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.NewtonLow
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.NewtonLow
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,8 @@ variable {A : Type} [Fintype A]
 def ev (a : A → ℂ) (j : ℕ) : ℂ := ∑ t ∈ powersetCard j (univ : Finset A), ∏ i ∈ t, a i
 
 theorem aeval_esymm (a : A → ℂ) (j : ℕ) : aeval a (esymm A ℂ j) = ev a j := by
-  simp [esymm, ev, map_sum, map_prod]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [esymm, ev, map_sum, map_prod]
 
 theorem ev_zero (a : A → ℂ) : ev a 0 = 1 := by simp [ev]
 
@@ -22,7 +27,8 @@ theorem newton [DecidableEq A] (a : A → ℂ) (j : ℕ) :
     (j : ℂ) * ev a j = (-1) ^ (j + 1) *
       ∑ x ∈ antidiagonal j with x.1 < j, (-1) ^ x.1 * ev a x.1 * ∑ i, a i ^ x.2 := by
   have h := congrArg (aeval a) (MvPolynomial.mul_esymm_eq_sum A ℂ j)
-  simpa [map_mul, map_sum, aeval_esymm, MvPolynomial.psum] using h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_mul, map_sum, aeval_esymm, MvPolynomial.psum] using h
 
 omit [Fintype A] in
 theorem card_filter_lt (j : ℕ) : #{x ∈ antidiagonal j | x.1 < j} ≤ j := by

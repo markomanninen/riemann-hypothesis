@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGluing.LocGlueOfPair
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGluing.LocGlueOfPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
   {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V)
 
 theorem h_add_right (x y y' : V) : H.h x (y + y') = H.h x y + H.h x y' := by
-  rw [H.h_herm (y + y') x, H.h_add_left, map_add, ← H.h_herm, ← H.h_herm]
+  rw [H.h_herm (y + y') x, H.h_add_left, map_add (f := _), ← H.h_herm, ← H.h_herm]
 
 theorem h_sub_left (x x' y : V) : H.h (x - x') y = H.h x y - H.h x' y := by
   rw [sub_eq_add_neg, ← neg_one_smul E x', H.h_add_left, H.h_smul_left]
@@ -111,7 +115,7 @@ theorem pair_of (hR : Riesz) (hS : Scale) (hO : PI.LocHerm.LocOProj) : Pair := b
     have hpA'd : ∀ l : abelian₂, (pA' l : V) = d l := by
       intro l
       have : (l : V) = d l + (s (π l) : V) := by simp [d]
-      rw [this, map_add, Submodule.projectionOnto_apply_of_mem_right hcompl (hsW _), add_zero,
+      rw [this, map_add (f := _), Submodule.projectionOnto_apply_of_mem_right hcompl (hsW _), add_zero,
         Submodule.projectionOnto_apply_of_mem_left hcompl (hdA l)]
     let f : V →ₗ[E] E := hlin H u ∘ₗ A.subtype ∘ₗ pA'
     have hfA : ∀ y ∈ A, f y = H.h y u := by

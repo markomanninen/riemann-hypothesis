@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.CapOComp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.CapOComp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -48,7 +52,8 @@ def idxπ (U : ι → ObjectProperty C) (hU : ∀ α, Cosieve (U α)) : idxF U h
 
 def tupF (U : ι → ObjectProperty C) (hU : ∀ α, Cosieve (U α)) {p : ℕ} (i : Fin (p + 1) → ι) :
     (capT U i).FullSubcategory ⥤ (CH.cech (idxπ U hU) p).Elements where
-  obj T := ⟨T.obj, ⟨fun k => ⟨i k, T.property k⟩, fun _ _ => rfl⟩⟩
+  obj T := (CH.cech (idxπ U hU) p).elementsMk T.obj
+    ⟨fun k => ⟨i k, T.property k⟩, fun _ _ => rfl⟩
   map φ := ⟨φ.hom, Subtype.ext (funext fun k => Subtype.ext rfl)⟩
 
 variable {R : Type} [CommRing R]
@@ -187,9 +192,9 @@ theorem const_H : ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] (F :
   intro R _ C _ F n
   let E : C ⥤ Type := (Functor.const C).obj PUnit.{1}
   let G : C ⥤ E.Elements :=
-    { obj := fun T => ⟨T, PUnit.unit⟩
+    { obj := fun T => E.elementsMk T PUnit.unit
       map := fun φ => ⟨φ, rfl⟩ }
-  let m : CH.Mor F (CH.elF E F) (RingHom.id R) := CH.Mor.restrict F (CategoryOfElements.π E)
+  let m : CH.Mor F (CH.elF E F) (RingHom.id R) := CH.Mor.restrict F (Functor.Elements.π E)
   have hb : ∀ k, Function.Bijective (m.hom.f k) := by
     intro k
     constructor
@@ -210,7 +215,8 @@ theorem mapH_sum {R : Type} [CommRing R] {A B : Cx.{w} R} {κ : Type} [Fintype �
     rw [AddSubmonoidClass.coe_finsetSum]
     exact h z.1
   change Submodule.mkQ _ (ψ.mapZ q z) = ∑ k, c k • Submodule.mkQ _ ((φ k).mapZ q z)
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   exact Finset.sum_congr rfl fun k _ => map_zsmul _ _ _
 
 theorem col_comm : ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {ι : Type} (U : ι → ObjectProperty C) (hU : ∀ α, Cosieve (U α)) (F : C ⥤ ModuleCat.{w} R) (p q : ℕ) (x : ((dbl U hU F).col p).H q), (cechH F U q).d p (fun i => (tupM U hU F i).pull q x) = fun i => (tupM U hU F i).pull q ((colMap (dbl U hU F) p).mapH q x) := by
@@ -219,7 +225,8 @@ theorem col_comm : ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {ι
   have h1 := mapH_sum (colMap (dbl U hU F) p)
     (fun k : Fin (p + 2) => (CH.elMor (CH.cechMap (idxπ U hU) k.succAbove) F).hom) (fun k => (-1 : ℤ) ^ (k : ℕ)) q
     (fun a => Cos.d_apply ((CH.cechCos (idxπ U hU) F).cos q) p a) x
-  rw [h1, map_sum, Cos.d_apply, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, map_sum, Cos.d_apply, Finset.sum_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul]
   obtain ⟨z, rfl⟩ := Submodule.mkQ_surjective _ x
@@ -241,15 +248,28 @@ theorem tupI_val (s : ComposableArrows (CH.cech (idxπ U hU) p).Elements q) (k :
 
 def tupL (s : ComposableArrows (CH.cech (idxπ U hU) p).Elements q) :
     ComposableArrows (capT U (tupI U hU s)).FullSubcategory q :=
-  (capT U (tupI U hU s)).lift (s ⋙ CategoryOfElements.π _) fun k a =>
+  (capT U (tupI U hU s)).lift (s ⋙ Functor.Elements.π _) fun k a =>
     hU _ (s.map (homOfLE (Fin.zero_le k))).1 ((s.obj 0).2.1 a).2
 
 theorem tup_eval (f : CH.Cn (CH.elF (CH.cech (idxπ U hU) p) F) q)
     (s : ComposableArrows (CH.cech (idxπ U hU) p).Elements q) :
-    @Eq (F.obj (s.obj (Fin.last q)).1) (f (tupL U hU s ⋙ tupF U hU (tupI U hU s))) (f s) :=
-  ExtensionDiagram.mk_congr F f (s ⋙ CategoryOfElements.π _)
-    (y := fun k => ((tupL U hU s ⋙ tupF U hU (tupI U hU s)).obj k).2) (y' := fun k => (s.obj k).2)
-    (fun φ => ((tupL U hU s ⋙ tupF U hU (tupI U hU s)).map φ).2) (fun φ => (s.map φ).2)
+    @Eq (F.obj (s.obj (Fin.last q)).1) (f (tupL U hU s ⋙ tupF U hU (tupI U hU s))) (f s) := by
+  let E := CH.cech (idxπ U hU) p
+  let c := s ⋙ Functor.Elements.π E
+  let liftDiagram (y : ∀ k, E.obj (c.obj k))
+      (hy : ∀ {a b : Fin (q + 1)} (φ : a ⟶ b), E.map (c.map φ) (y a) = y b) :
+      ComposableArrows E.Elements q :=
+    { obj k := E.elementsMk (c.obj k) (y k)
+      map φ := Functor.Elements.homMk (c.map φ) (hy φ)
+      map_id k := Functor.Elements.hom_ext (c.map_id k)
+      map_comp φ ψ := Functor.Elements.hom_ext (c.map_comp φ ψ) }
+  have eval_eq {y y' : ∀ k, E.obj (c.obj k)} hy hy' (e : y = y') :
+      @Eq (F.obj (c.obj (Fin.last q))) (f (liftDiagram y hy)) (f (liftDiagram y' hy')) := by
+    subst y'
+    rfl
+  let t := tupL U hU s ⋙ tupF U hU (tupI U hU s)
+  exact eval_eq (y := fun k => (t.obj k).val) (y' := fun k => (s.obj k).val)
+    (fun φ => (t.map φ).2) (fun φ => (s.map φ).2)
     (funext fun k => Subtype.ext (funext fun a => Subtype.ext (tupI_val U hU s k a)))
 
 theorem tup_bij : ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {ι : Type} (U : ι → ObjectProperty C) (hU : ∀ α, Cosieve (U α)) (F : C ⥤ ModuleCat.{w} R) (p q : ℕ), Function.Bijective (fun (x : CH.Cn (CH.elF (CH.cech (idxπ U hU) p) F) q) (i : Fin (p + 1) → ι) => (tupM U hU F i).pullC q x) := by
@@ -372,7 +392,7 @@ theorem lower_vert (x : ∀ p q, K.X p q) (hT : x ∈ K.T n) {a q : ℕ} (haq : 
       rw [hs p r h, K.sgl_ne u (by omega)]
       simp
     · have hsq : ((-1 : ℤ) ^ a * (-1) ^ a) = 1 := by rw [← mul_pow]; simp
-      rw [map_add, map_zsmul, K.D_sgl, hW₁, hu', smul_add, smul_smul, hsq, one_smul, map_sub]
+      rw [map_add (f := _), map_zsmul, K.D_sgl, hW₁, hu', smul_add, smul_smul, hsq, one_smul, map_sub]
       simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply]
       rw [K.sgl_ne (K.dh a q u) (Or.inl (by omega) : p ≠ a + 1 ∨ r ≠ q)]
       simp

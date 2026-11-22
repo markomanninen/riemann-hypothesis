@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QQMemAdjAlgCpt
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.ReverseCauchySchwarzHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GNonneg
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QQMemAdjAlgCpt
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.ReverseCauchySchwarzHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GNonneg
+
+@[expose] public section
 
 open Matrix
 

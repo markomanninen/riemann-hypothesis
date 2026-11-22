@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootHeightDifferenceBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.JoinModelPointsLiftStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BoundedHeightPointsDenseStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LineHeightInvariantScalingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NumberFieldPointHeightStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DominantWeightGapShiftStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootHeightDifferenceBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.JoinModelPointsLiftStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BoundedHeightPointsDenseStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LineHeightInvariantScalingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NumberFieldPointHeightStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DominantWeightGapShiftStatement
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Small GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.Ht
 
@@ -23,7 +27,7 @@ theorem proj_inl_mem {K₁ K₂ : Type} [Fintype K₁] [Fintype K₂] {ι₁ : K
     intro g
     induction g using MvPolynomial.induction_on with
     | C a => simp
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p n hp =>
       simp only [map_mul, hp, rename_X]
       congr 1

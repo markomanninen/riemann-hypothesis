@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped nonZeroDivisors
 
 namespace GlobalTheory.DetClass
@@ -84,7 +89,8 @@ theorem mat_mul {I J : ι → Ideal R} (φ : ((i : ι) → I i) ≃ₗ[R] ((i : 
   have hsum : ∑ i, (v i : R) • (Pi.single i ⟨c, hJ i⟩ : (l : ι) → J l) = c • v := by
     simp_rw [hsw, ← Finset.smul_sum, Finset.univ_sum_single]
   have h := congrArg (fun x => ((φ.symm x) j : R)) hsum
-  simp only [map_sum, map_smul, hv, LinearEquiv.symm_apply_apply, Finset.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hv, LinearEquiv.symm_apply_apply, Finset.sum_apply,
     Pi.smul_apply, Submodule.coe_sum, Submodule.coe_smul, smul_eq_mul] at h
   simp_rw [mul_comm _ ((v _ : J _) : R)]
   rw [h]
@@ -121,8 +127,8 @@ theorem exists_span_mul_eq [IsDomain R] {I J : ι → Ideal R}
 
 end GlobalTheory.DetClass
 
-open GlobalTheory.DetClass in
 
+open GlobalTheory.DetClass in
 theorem GlobalTheory.prod_classGroup_mk0_eq_of_pi_linearEquiv (R : Type) [CommRing R] [IsDedekindDomain R]
     (ι : Type) [Fintype ι] (I J : ι → (Ideal R)⁰)
     (h : Nonempty (((i : ι) → (I i : Ideal R)) ≃ₗ[R] ((i : ι) → (J i : Ideal R)))) :

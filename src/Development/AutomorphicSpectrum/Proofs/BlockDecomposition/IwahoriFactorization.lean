@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
-import GroundTheory.LocalFields.Integers
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+public import GroundTheory.LocalFields.Integers
+
+@[expose] public section
 
 open ValuativeRel PositivityTheory.Rg.Tf.Loc Matrix
 

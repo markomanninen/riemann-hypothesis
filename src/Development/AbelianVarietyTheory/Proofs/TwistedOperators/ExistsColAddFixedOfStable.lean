@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenericDetPowMulHw
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSemisimpleRepresentationTprodOfIsIrreducibleAl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenericDetPowMulHw
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSemisimpleRepresentationTprodOfIsIrreducibleAl
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions Formalism.GradedWeylDivisibility GlobalTheory.Branching GlobalTheory.GLDuality
 open Formalism.REAL (fockF)
 open scoped DirectSum TensorProduct Kronecker Matrix
@@ -26,7 +31,7 @@ theorem rename_swap_colAdd {n n' : ℕ} (l j : Fin n) (c : ℂ) (v : MvPolynomia
       Polynomial.eval (C c) (rowGen ℂ l j (rename Prod.swap v)) := by
   induction v using MvPolynomial.induction_on with
   | C a => simp [colAdd, rowGen]
-  | add p q hp hq => simp only [map_add, hp, hq, Polynomial.eval_add]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, Polynomial.eval_add]
   | mul_X p v hp =>
     obtain ⟨a, s⟩ := v
     simp only [map_mul, hp, Polynomial.eval_mul]
@@ -38,7 +43,7 @@ theorem rowGen_coeff_zero_eq {r n : ℕ} (a b : Fin r) (f : MvPolynomial (Fin r 
   rw [Polynomial.coeff_zero_eq_eval_zero]
   induction f using MvPolynomial.induction_on with
   | C a => simp [rowGen]
-  | add p q hp hq => simp only [map_add, hp, hq, Polynomial.eval_add]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, Polynomial.eval_add]
   | mul_X p v hp =>
     simp only [map_mul, hp, Polynomial.eval_mul]
     congr 1
@@ -62,7 +67,8 @@ theorem exists_colAdd_fixed_of_stable (n n' : ℕ) (N : Submodule ℂ (MvPolynom
   obtain ⟨_, ⟨v, hv, rfl⟩, hv0, hkill⟩ := exists_killed_of_rowDivClosed M hcl hne
   refine ⟨v, hv, fun e => hv0 (by rw [e, map_zero]), fun l j hlj c => hinj ?_⟩
   have hC : rowGen ℂ l j (rename Prod.swap v) = Polynomial.C (rename Prod.swap v) := by
-    ext1 k
+    apply Polynomial.ext
+    intro k
     rcases Nat.eq_zero_or_pos k with rfl | hk
     · rw [rowGen_coeff_zero_eq, Polynomial.coeff_C_zero]
     · rw [Polynomial.coeff_C_of_ne_zero hk.ne']

@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.LocDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.ValNatCastLtOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.GlueHoldsVar
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.LocSplitChiOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.AdelicLatticeToLocalLattices
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.LocDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.ValNatCastLtOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.GlueHoldsVar
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.LocSplitChiOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.AdelicLatticeToLocalLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,9 +22,6 @@ theorem gp_int (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (ε : RV I v) (p
   | exact hp.2.2.2.1
   | exact hp.2.2.2
 
-theorem gp_lin (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (ε : RV I v) (p1 : RV I v →+* KV I v)
-    (hp : IsAdaptedFirstProjection I v ε p1) : ∀ c : KV I v, p1 (algebraMap (KV I v) (RV I v) c) = c := hp.1
-
 def hl (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (X Y : Fin I.n → RV I v) : RV I v :=
   Formalism.UG.hform (sigV I v) (I.J.map (inclV I v)) X Y
 
@@ -32,7 +33,7 @@ theorem sig2 (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (r : RV I v) :
     simp only [sigV, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul,
       AlgHom.id_apply]
     rw [spl_sig_sig]
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 theorem alg_eq (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (c : KV I v) :
     algebraMap (KV I v) (RV I v) c = c ⊗ₜ[I.F] (1 : I.E) := by
@@ -60,7 +61,8 @@ theorem hl_swap (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (X Y : Fin I.n 
     intro i j
     have := congrFun (congrFun hJ i) j
     simpa [Formalism.UG.cT] using this
-  simp only [hl, Formalism.UG.hform, map_sum, map_mul, sig2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hl, Formalism.UG.hform, map_sum, map_mul, sig2]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJij j i]
@@ -69,7 +71,8 @@ theorem hl_swap (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (X Y : Fin I.n 
 theorem pr_vec (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (p1 : RV I v →+* KV I v)
     (X Y : Fin I.n → RV I v) :
     pr (Pm I v p1) (vec2 p1 X) (vec1 p1 Y) = p1 (hl I v X Y) := by
-  simp only [pr, Pm, vec1, vec2, hl, Formalism.UG.hform, dotProduct, mulVec, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pr, Pm, vec1, vec2, hl, Formalism.UG.hform, dotProduct, mulVec, map_sum, map_mul,
     Matrix.map_apply, RingHom.comp_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -81,11 +84,13 @@ theorem hl_ratV (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (l l' : Fin I.n
   have h1 : Formalism.L2.SG.Sub.ratV (F := I.F) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv I.F v) l = fun i => inclV I v (l i) := rfl
   have h2 : Formalism.L2.SG.Sub.ratV (F := I.F) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv I.F v) l' = fun i => inclV I v (l' i) := rfl
   rw [h1, h2]
-  simp only [hl, Formalism.UG.hform, spl_sigV_inclV, Matrix.map_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hl, Formalism.UG.hform, spl_sigV_inclV, Matrix.map_apply, map_sum, map_mul]
 
 theorem psiV_hA (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (x y : VA I) :
     PI.FinKW.psiV I v (hA I x y) = hl I v (PI.FinKW.vecV I v x) (PI.FinKW.vecV I v y) := by
-  simp only [hA, hl, Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, psiV_sigR, psiV_inclE,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, hl, Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, psiV_sigR, psiV_inclE,
     PI.FinKW.vecV]
 
 theorem vecV_incl' (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (l : Fin I.n → I.E) :
@@ -105,7 +110,8 @@ theorem hformE_swap (I : AutInst) (x y : Fin I.n → I.E) :
     intro i j
     have := congrFun (congrFun I.J_herm i) j
     simpa [Formalism.UG.cT] using this
-  simp only [Formalism.UG.hform, map_sum, map_mul, RingHomCompTriple.comp_apply, RingHom.id_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul, RingHomCompTriple.comp_apply, RingHom.id_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJij j i]
@@ -272,7 +278,7 @@ theorem adaptedProjection_psiV_mem_integers_of_mem_intAf (I : AutInst) (v : Heig
       exact ⟨hy, hy⟩
   | zero => simp
   | one => simp
-  | add a b _ _ ha hb => simp only [map_add]; exact ⟨add_mem ha.1 hb.1, add_mem ha.2 hb.2⟩
+  | add a b _ _ ha hb => simp only [map_add (f := _)]; exact ⟨add_mem ha.1 hb.1, add_mem ha.2 hb.2⟩
   | neg a _ ha => simp only [map_neg]; exact ⟨neg_mem ha.1, neg_mem ha.2⟩
   | mul a b _ _ ha hb => simp only [map_mul]; exact ⟨mul_mem ha.1 hb.1, mul_mem ha.2 hb.2⟩
 

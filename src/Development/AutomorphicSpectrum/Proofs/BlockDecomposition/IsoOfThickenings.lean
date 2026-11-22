@@ -1,8 +1,12 @@
-import Mathlib
-import PositivityTheory.PublishedTheorems.TowerLemmas.FormalTowerLemmas.Imports
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.FormalAlgebraisation
+module
 
-import PositivityTheory.PublishedTheorems.UnitKilling.UnitAnnihilation.UnitAnnihilators.ExistsUnitKillsOfIdempotent
+public import Mathlib
+public import PositivityTheory.PublishedTheorems.TowerLemmas.FormalTowerLemmas.Imports
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.FormalAlgebraisation
+public import PositivityTheory.PublishedTheorems.UnitKilling.UnitAnnihilation.UnitAnnihilators.ExistsUnitKillsOfIdempotent
+
+@[expose] public section
+
 set_option autoImplicit false
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Out PositivityTheory.FormalThickening
@@ -174,12 +178,10 @@ theorem ring_case {R A B : Type} [CommRing R] [CommRing A] [CommRing B] [Algebra
 theorem over_pullback_fst {S T : Scheme.{0}} (t : T ⟶ S) {P Q : Over S} (g : P ⟶ Q) :
     ((Over.pullback t).map g).left ≫ pullback.fst Q.hom t = pullback.fst P.hom t ≫ g.left := by
   simp
-  exact pullback.lift_fst _ _ _
 
 theorem over_pullback_snd {S T : Scheme.{0}} (t : T ⟶ S) {P Q : Over S} (g : P ⟶ Q) :
     ((Over.pullback t).map g).left ≫ pullback.snd Q.hom t = pullback.snd P.hom t := by
   simp
-  exact pullback.lift_snd _ _ _
 
 theorem isIso_pullback_conj {S T : Scheme.{0}} (t : T ⟶ S) {P Q P' Q' : Over S} (g : P ⟶ Q)
     (eP : P ≅ P') (eQ : Q ≅ Q') (h : IsIso ((Over.pullback t).map g).left) :

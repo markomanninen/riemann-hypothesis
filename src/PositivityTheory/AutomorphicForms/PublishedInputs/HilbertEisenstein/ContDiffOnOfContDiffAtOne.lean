@@ -1,12 +1,16 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.RightBilinearApply
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HasFDerivAtIntegralSchwartzBilin
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.PolyVHasTemperateGrowth
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ExistsDecayBoundTwo
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SigmaFinitePosRealMeasure
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.PFinInfGLMulVec
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.AestronglyMeasurableColumnWeight
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.PFinModuleSectionInv
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.IsFiniteMeasureRestrictFd
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.RightBilinearApply
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HasFDerivAtIntegralSchwartzBilin
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.PolyVHasTemperateGrowth
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ExistsDecayBoundTwo
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SigmaFinitePosRealMeasure
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.PFinInfGLMulVec
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.AestronglyMeasurableColumnWeight
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.PFinModuleSectionInv
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.IsFiniteMeasureRestrictFd
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,13 +89,13 @@ theorem invL_val (y : GL (Fin 2) (UpperTheory.V.TR.Rinf F)) :
   rw [Matrix.coe_units_inv]
 
 theorem invL_one : invL (UpperTheory.V.TR.oneL F 2) = UpperTheory.V.TR.oneL F 2 := by
-  simp [invL, UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL]
+  simp [invL, UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL, show Matrix.of (Matrix.row (1 : Matrix (Fin 2) (Fin 2) (UpperTheory.V.TR.Rinf F))) = 1 from rfl]
 
 theorem contDiffAt_invL : ContDiffAt ℝ ∞ (invL (F := F)) (UpperTheory.V.TR.oneL F 2) := by
   have hdet : ContDiffAt ℝ ∞ (fun x : UpperTheory.V.TR.Lie F 2 => Ring.inverse (Matrix.of x).det)
       (UpperTheory.V.TR.oneL F 2) := by
     have hx : (Matrix.of (UpperTheory.V.TR.oneL F 2)).det = ((1 : (UpperTheory.V.TR.Rinf F)ˣ) : UpperTheory.V.TR.Rinf F) := by
-      simp [UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL]
+      simp [UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL, show Matrix.of (Matrix.row (1 : Matrix (Fin 2) (Fin 2) (UpperTheory.V.TR.Rinf F))) = 1 from rfl]
     refine ContDiffAt.comp (g := Ring.inverse) (UpperTheory.V.TR.oneL F 2) ?_
       (UpperTheory.V.TR.contDiff_det (E := F) (a := 2)).contDiffAt
     rw [hx]
@@ -102,7 +106,10 @@ theorem contDiffAt_invL : ContDiffAt ℝ ∞ (invL (F := F)) (UpperTheory.V.TR.o
   rw [e]
   refine contDiffAt_pi.2 fun i => contDiffAt_pi.2 fun j => hdet.mul ?_
   have hp : ∀ a b : Fin 2, ContDiff ℝ ∞ fun x : UpperTheory.V.TR.Lie F 2 => x a b := fun a b =>
-    (contDiff_apply ℝ (UpperTheory.V.TR.Rinf F) b).comp (contDiff_apply ℝ (Fin 2 → UpperTheory.V.TR.Rinf F) a)
+    by
+      simpa only [Function.comp_def] using
+        (contDiff_apply ℝ (fun _ : Fin 2 => UpperTheory.V.TR.Rinf F) b).comp
+          (contDiff_apply ℝ (fun _ : Fin 2 => Fin 2 → UpperTheory.V.TR.Rinf F) a)
   fin_cases i <;> fin_cases j <;>
     simp only [Matrix.adjugate_fin_two, Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero,
       Matrix.cons_val_one, Matrix.empty_val', Matrix.cons_val_fin_one, Fin.zero_eta,
@@ -120,10 +127,10 @@ theorem dl_eq (g : GA F 2) (y : GL (Fin 2) (UpperTheory.V.TR.Rinf F))
 
 theorem contDiff_dl (g : GA F 2) : ContDiff ℝ ∞ (dl (F := F) g) :=
   contDiff_const.mul (contDiff_prod fun v _ =>
-    (contDiff_apply ℝ ℝ v).comp (UpperTheory.V.TR.contDiff_det (E := F) (a := 2)))
+    (contDiff_apply ℝ (fun _ => ℝ) v).comp (UpperTheory.V.TR.contDiff_det (E := F) (a := 2)))
 
 theorem dl_one (g : GA F 2) : dl g (UpperTheory.V.TR.oneL F 2) = absD g := by
-  simp [dl, UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL]
+  simp [dl, UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL, show Matrix.of (Matrix.row (1 : Matrix (Fin 2) (Fin 2) (UpperTheory.V.TR.Rinf F))) = 1 from rfl]
 
 theorem eis_decomp (χ : HChar F) (c : HeightOneSpectrum (𝓞 F) → ℕ) (g : GA F 2) {C : ℂ}
     (hC : ∀ h : GA F 2, thetaS (Phi c) h = C * ((absD h)⁻¹ : ℝ) * thetaT (PhiH c) h)
@@ -216,12 +223,12 @@ theorem contDiffAt_chart_one (hP : SPois) (χ : HChar F) (c : HeightOneSpectrum 
   have hinv : ∀ᶠ x in 𝓝 (UpperTheory.V.TR.oneL F 2), invL x ∈ U :=
     contDiffAt_invL.continuousAt.preimage_mem_nhds (by rw [invL_one]; exact hU.mem_nhds h1U)
   have hunit : ∀ᶠ x in 𝓝 (UpperTheory.V.TR.oneL F 2), x ∈ UpperTheory.V.TR.invSet F 2 :=
-    UpperTheory.V.TR.isOpen_invSet.mem_nhds (by simp [UpperTheory.V.TR.invSet, UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL])
+    UpperTheory.V.TR.isOpen_invSet.mem_nhds (by simp [UpperTheory.V.TR.invSet, UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL, show Matrix.of (Matrix.row (1 : Matrix (Fin 2) (Fin 2) (UpperTheory.V.TR.Rinf F))) = 1 from rfl])
   have hdet : ∀ᶠ x in 𝓝 (UpperTheory.V.TR.oneL F 2), ∀ v, 0 < (Matrix.det (Matrix.of x)) v := by
     refine Filter.eventually_all.2 fun v => ?_
     have hcont : ContinuousAt (fun x : UpperTheory.V.TR.Lie F 2 => (Matrix.det (Matrix.of x)) v) (UpperTheory.V.TR.oneL F 2) :=
       ((continuous_apply v).comp (UpperTheory.V.TR.contDiff_det (E := F) (a := 2)).continuous).continuousAt
-    exact continuousAt_const.eventually_lt hcont (by simp [UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL])
+    exact continuousAt_const.eventually_lt hcont (by simp [UpperTheory.V.TR.oneL, UpperTheory.V.TR.toL, show Matrix.of (Matrix.row (1 : Matrix (Fin 2) (Fin 2) (UpperTheory.V.TR.Rinf F))) = 1 from rfl])
   filter_upwards [hU.mem_nhds h1U, hinv, hunit, hdet] with x hxU hxi hxu hxd
   set y : GL (Fin 2) (UpperTheory.V.TR.Rinf F) := (show IsUnit (Matrix.of x) from hxu).unit
   have hy : UpperTheory.V.TR.toL y.val = x := rfl
@@ -248,6 +255,7 @@ theorem contDiffOn_of_contDiffAt_one {φ : GA F 2 → ℂ}
   have h1 : UpperTheory.V.TR.lmul (UpperTheory.V.TR.toL (y⁻¹).val) x = UpperTheory.V.TR.oneL F 2 := by
     rw [← hy]
     change Matrix.of.symm (Matrix.of (UpperTheory.V.TR.toL (y⁻¹).val) * Matrix.of (UpperTheory.V.TR.toL y.val)) = _
+    change Matrix.of.symm ((y⁻¹).val * y.val) = Matrix.of.symm 1
     simp
   refine ContDiffAt.comp x ?_
     (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞) (UpperTheory.V.TR.lmul (UpperTheory.V.TR.toL (y⁻¹).val))).contDiffAt

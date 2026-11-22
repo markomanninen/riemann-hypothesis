@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CondConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.EntInMulRight
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCob
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PrecompleteOfPowLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CondConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.EntInMulRight
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCob
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PrecompleteOfPowLe
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -73,7 +77,8 @@ private theorem exists_sum_X_mul (p : MvPowerSeries σ O) (hp : MvPowerSeries.co
       if h : n ≠ 0 then (if c n h = i then MvPowerSeries.coeff n p else 0) else 0 := fun _ _ => rfl
   have hs : p = ∑ i, q i := by
     ext n
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hq]
     by_cases h : n ≠ 0
     · simp [dif_pos h]
@@ -115,7 +120,8 @@ private theorem map_lin (φ : MvPowerSeries σ O →ₐ[O] A)
       MvPowerSeries.constantCoeff r • φ (MvPowerSeries.X i) := fun i r => by
     obtain ⟨s, hs⟩ := h0 r
     conv_lhs => rw [hs]
-    simp only [map_mul, map_add, map_sum, AlgHom.commutes, mul_add, Finset.mul_sum, ← mul_assoc, hφ, zero_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_add (f := _), map_sum, AlgHom.commutes, mul_add, Finset.mul_sum, ← mul_assoc, hφ, zero_mul,
       Finset.sum_const_zero, add_zero, Algebra.smul_def]
     exact mul_comm _ _
   obtain ⟨r, hr⟩ := h0 p
@@ -123,7 +129,8 @@ private theorem map_lin (φ : MvPowerSeries σ O →ₐ[O] A)
     conv_lhs => rw [hr]
     simp [coeff_X_mul, MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C]
   conv_lhs => rw [hr]
-  simp only [map_add, map_sum, AlgHom.commutes, h1, h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, AlgHom.commutes, h1, h2]
 
 end PS
 
@@ -134,7 +141,7 @@ private def Tm (C : Type) [CommRing C] : Matrix (Fin 3) (Fin 3) C := !![0, 0, 0;
 private theorem Tm_wt (C : Type) [CommRing C] (a b : Fin 3) (h : wt a b ≠ -1) : Tm C a b = 0 := by
   fin_cases a <;> fin_cases b <;> first | rfl | exact absurd rfl h
 
-private theorem deform_eq {D C : Type} [Group D] [CommRing C] {r r' r'' : D →* GG 3 C}
+private theorem deform_eq {D C : Type} [Group D] [CommRing C] {r r' r'' : D →* GG (m := 3) (R := C)}
     {γ : D → Matrix (Fin 3) (Fin 3) C} (h' : IsDeform r γ r') (h'' : IsDeform r γ r'') : r' = r'' :=
   MonoidHom.ext fun g => SemidirectProduct.ext (Units.ext ((h' g).2.trans (h'' g).2.symm))
     ((h' g).1.trans (h'' g).1.symm)
@@ -184,7 +191,7 @@ private theorem exists_pt
     (hU : ∀ v ∉ F.Tb, ∀ s ∈ F.Nv v, ζ (F.loc v s) = 0)
     (hT : ∀ v ∈ F.Tb, ∃ m ∈ I, ∀ g : F.D v, ζ (F.loc v g) = algebraMap O C ((F.Ψ (F.loc v g))⁻¹ : Oˣ) * m - m)
     (hN : algebraMap O C (F.Ψ g₁) * ζ g₁ = algebraMap O C (F.Ψ (gstar F.c g₁)) * ζ (gstar F.c g₁)) :
-    ∃ r : Γ →* GG 3 C, F.IsPt g₁ r ∧
+    ∃ r : Γ →* GG (m := 3) (R := C), F.IsPt g₁ r ∧
       ∀ g a b, (r g).mat a b = (F.rz C g).mat a b + algebraMap O C (Tm O a b * psi F.Ψ b g) * ζ g := by
   have h0 := isPt_rz F hF g₁ (R := C)
   have hent : ∀ x ∈ I, EntIn I (x • Tm C) := fun x hx a b => I.mul_mem_right _ hx
@@ -255,7 +262,8 @@ private theorem coord
     {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι]
-    (F : Frame O G Γ ι) (hF : F.Ok) (g₁ : Γ) {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (u : Γ →* GG 3 R) (hu : F.IsUniv g₁ u)
+    (F : Frame O G Γ ι) (hF : F.Ok) (g₁ : Γ) {R : Type} [CommRing R] [Algebra O R] [IsCO O R]
+    (u : Γ →* GG (m := 3) (R := R)) (hu : F.IsUniv g₁ u)
     (W : WPres O ℤ R) (g : W.σ → Γ) (a b : W.σ → Fin 3)
     (hz : ∀ i, W.z i = (u (g i)).mat (a i) (b i) - (F.rz R (g i)).mat (a i) (b i))
     {M : Type} [AddCommGroup M] [Module O M] [Module.Finite O M] (n : Γ → M) (hlc : IsLocallyConstant n)
@@ -291,7 +299,7 @@ private theorem coord
   simp only [hmul] at hm
   obtain ⟨f, hf, -⟩ := hu.univ _ r hr
   have e1 : ∀ g a b, f ((u g).mat a b) = (r g).mat a b := fun g a b =>
-    congrArg (fun r : Γ →* GG 3 (TrivSqZeroExt O M) => (r g).mat a b) hf
+    congrArg (fun r : Γ →* GG (m := 3) (R := TrivSqZeroExt O M) => (r g).mat a b) hf
   have hX : ∀ i, (f.comp W.π) (MvPowerSeries.X i) =
       TrivSqZeroExt.inr ((Tm O (a i) (b i) * psi F.Ψ (b i) (g i)) • n (g i)) := fun i => by
     have e2 : f ((F.rz R (g i)).mat (a i) (b i)) = (F.rz _ (g i)).mat (a i) (b i) := f.commutes _
@@ -359,7 +367,7 @@ private theorem exists_rep {O : Type} [CommRing O] [IsLocalRing O] {G Γ ι : Ty
     · rw [Submodule.coe_add, Pi.add_apply, h1 v hv s hs, h1' v hv s hs, add_zero]
     · obtain ⟨m, hm⟩ := h2 v hv
       obtain ⟨m', hm'⟩ := h2' v hv
-      exact ⟨m + m', fun g => by rw [Submodule.coe_add, Pi.add_apply, hm, hm', map_add]; abel⟩
+      exact ⟨m + m', fun g => by rw [Submodule.coe_add, Pi.add_apply, hm, hm', map_add (f := _)]; abel⟩
   | smul c x _ hx =>
     obtain ⟨z, rfl, h1, h2⟩ := hx
     refine ⟨c • z, rfl, fun v hv s hs => ?_, fun v hv => ?_⟩
@@ -386,7 +394,8 @@ theorem UpperTheory.V.UnitaryThreeInertia.mprime_coord :
     ∀ {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (u : Γ →* GG 3 R), F.IsUniv g₁ u →
+    ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R]
+    (u : Γ →* GG (m := 3) (R := R)), F.IsUniv g₁ u →
     ∀ (W : WPres O ℤ R), F.Adapted u W → ∀ a : O, a ≠ 0 → ∃ d : F.ShaO a →+ (W.σ → O ⧸ Ideal.span {a}), Function.Injective d ∧
       (∀ x i, W.wt i ≠ -1 → d x i = 0) ∧ ∀ x f, W.π f = 0 → ∑ i, MvPowerSeries.coeff (Finsupp.single i 1) f • d x i = 0 := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF g₁ hg R _ _ _ u hu W hW a ha

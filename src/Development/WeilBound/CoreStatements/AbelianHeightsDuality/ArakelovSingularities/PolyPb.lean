@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyDef
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyDef
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,7 +19,7 @@ variable {k : Type} [CommRing k]
 
 def sumTensEquiv (σ τ : Type) : MvPolynomial (τ ⊕ σ) k ≃+* MvPolynomial σ k ⊗[k] MvPolynomial τ k :=
   (MvPolynomial.sumAlgEquiv k τ σ).toRingEquiv.trans
-    (MvPolynomial.algebraTensorAlgEquiv k (MvPolynomial σ k)).symm.toRingEquiv
+    (MvPolynomial.algebraTensorAlgEquiv (σ := τ) k (MvPolynomial σ k)).symm.toRingEquiv
 
 theorem sumTensEquiv_C (σ τ : Type) (r : k) :
     sumTensEquiv σ τ (MvPolynomial.C r) = algebraMap k (MvPolynomial σ k ⊗[k] MvPolynomial τ k) r := by
@@ -24,7 +28,7 @@ theorem sumTensEquiv_C (σ τ : Type) (r : k) :
     rfl
   have h2 : (MvPolynomial.C (MvPolynomial.C r) : MvPolynomial τ (MvPolynomial σ k)) =
       MvPolynomial.monomial 0 (MvPolynomial.C r) := rfl
-  show (MvPolynomial.algebraTensorAlgEquiv k (MvPolynomial σ k)).symm
+  show (MvPolynomial.algebraTensorAlgEquiv (σ := τ) k (MvPolynomial σ k)).symm
     ((MvPolynomial.sumAlgEquiv k τ σ) (MvPolynomial.C r)) = _
   rw [h1, h2, MvPolynomial.algebraTensorAlgEquiv_symm_monomial, Algebra.TensorProduct.algebraMap_apply]
   rfl

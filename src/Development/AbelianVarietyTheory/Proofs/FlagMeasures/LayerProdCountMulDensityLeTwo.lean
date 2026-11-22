@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+
+@[expose] public section
 
 open GlobalTheory.Count Finset
 
@@ -60,14 +64,14 @@ theorem layerProd_le_exp (n f : ℕ) {a : ℕ} (j : Fin a → ℕ) (τ : Fin a �
   have key : layerProd n f j τ G ≤ layerProd n f j τ (fun _ => Real.exp x) := by
     simp only [layerProd]
     apply mul_le_mul
-    · apply Finset.prod_le_prod
+    · apply Finset.prod_le_prod₀
       · intro i _
         apply Finset.prod_nonneg
         intro k hk
         have hik := (Finset.mem_filter.1 hk).2
         exact mul_nonneg (hb _ (hr i k hik).1 (hr i k hik).2 _).1 (hb _ (hp i k).1 (hp i k).2 _).1
       · intro i _
-        apply Finset.prod_le_prod
+        apply Finset.prod_le_prod₀
         · intro k hk
           have hik := (Finset.mem_filter.1 hk).2
           exact mul_nonneg (hb _ (hr i k hik).1 (hr i k hik).2 _).1 (hb _ (hp i k).1 (hp i k).2 _).1
@@ -75,7 +79,7 @@ theorem layerProd_le_exp (n f : ℕ) {a : ℕ} (j : Fin a → ℕ) (τ : Fin a �
           have hik := (Finset.mem_filter.1 hk).2
           exact mul_le_mul (hb _ (hr i k hik).1 (hr i k hik).2 _).2 (hb _ (hp i k).1 (hp i k).2 _).2
             (hb _ (hp i k).1 (hp i k).2 _).1 (pow_nonneg hex _)
-    · apply Finset.prod_le_prod
+    · apply Finset.prod_le_prod₀
       · intro i _
         exact mul_nonneg (hb _ (hpos i) (hlt i) _).1 (hb _ (hs i).1 (hs i).2 _).1
       · intro i _
@@ -101,7 +105,7 @@ private theorem mul_prod_mul_le_prod_of_le_one {a : ℕ} (X : ℝ) (u v : Fin a 
   rw [Finset.prod_mul_distrib]
   have hA : 0 ≤ ∏ i, u i := Finset.prod_nonneg fun i _ => hu i
   have hB0 : 0 ≤ ∏ i, v i := Finset.prod_nonneg fun i _ => hv0 i
-  have hB1 : ∏ i, v i ≤ 1 := Finset.prod_le_one (fun i _ => hv0 i) (fun i _ => hv1 i)
+  have hB1 : ∏ i, v i ≤ 1 := Finset.prod_le_one₀ (fun i _ => hv0 i) (fun i _ => hv1 i)
   calc X * ((∏ i, u i) * ∏ i, v i) ≤ 1 * ((∏ i, u i) * ∏ i, v i) :=
         mul_le_mul_of_nonneg_right hX1 (mul_nonneg hA hB0)
     _ ≤ ∏ i, u i := by rw [one_mul]; exact mul_le_of_le_one_right hA hB1
@@ -143,13 +147,13 @@ theorem layerProd_count_mul_density_le_two :
       apply Finset.prod_nonneg
       intro k _
       exact mul_nonneg (pow_nonneg (div_pos (hpos i) (hpos k)).le _) (pow_nonneg (mul_pos (hpos i) (hpos k)).le _)
-    · apply Finset.prod_le_one
+    · apply Finset.prod_le_one₀
       · intro i _
         apply Finset.prod_nonneg
         intro k _
         exact mul_nonneg (pow_nonneg (div_pos (hpos i) (hpos k)).le _) (pow_nonneg (mul_pos (hpos i) (hpos k)).le _)
       · intro i _
-        apply Finset.prod_le_one
+        apply Finset.prod_le_one₀
         · intro k _
           exact mul_nonneg (pow_nonneg (div_pos (hpos i) (hpos k)).le _) (pow_nonneg (mul_pos (hpos i) (hpos k)).le _)
         · intro k hk

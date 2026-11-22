@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UpqRep
-import Formalism.PeriodIntegrals.IsLowUnitH
-import Formalism.FormalDegreeBessel.StatementG
-import Formalism.FormalDegreeBessel.StatementDS
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UpqRep
+public import Formalism.PeriodIntegrals.IsLowUnitH
+public import Formalism.FormalDegreeBessel.StatementG
+public import Formalism.FormalDegreeBessel.StatementDS
+
+@[expose] public section
 
 noncomputable section
 

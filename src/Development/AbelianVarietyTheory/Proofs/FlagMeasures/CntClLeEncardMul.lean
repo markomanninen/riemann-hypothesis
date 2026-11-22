@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLatticeDiscriminantModuleCardDetSq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IdxNOneMulAbsNorm
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneLeProdReal
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardSublatticesBoundedDetLeSum
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountTermsGramClassOverSublatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPowLeCardFlagQuotientStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExponentBookkeepingDivisorSumLeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClassNumberRootDiscFactorLeHHZStatement
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLatticeDiscriminantModuleCardDetSq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IdxNOneMulAbsNorm
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneLeProdReal
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardSublatticesBoundedDetLeSum
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountTermsGramClassOverSublatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPowLeCardFlagQuotientStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExponentBookkeepingDivisorSumLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClassNumberRootDiscFactorLeHHZStatement
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+
+@[expose] public section
 
 namespace GlobalTheory.LoopC.GenericMean
 
@@ -30,8 +34,26 @@ theorem lead_eq {E : Type} [Field E] {n : ℕ} {Z Z₂ : Matrix (Fin n) (Fin n) 
       (fun i j hij => by simp [hA0 i j hij]) (fun i => by simp [hB1]) (fun i j hij => by simp [hB0 i j hij])
   · rfl
 
-open GlobalTheory.Mass GlobalTheory.LoopC.DetCard Formalism.HermitianLatticesTheory in
 
+open GlobalTheory.Mass GlobalTheory.LoopC.DetCard Formalism.HermitianLatticesTheory in
+theorem fullLattice_latIn_span {K V : Type} [Field K] [NumberField K] [AddCommGroup V]
+    [Module (𝓞 K) V] [Module K V] [IsScalarTower (𝓞 K) K V]
+    {U : Submodule K V} {N : Submodule (𝓞 K) V} (hN : N.FG)
+    (hU : Submodule.span K (N : Set V) = U) : Submodule.IsFullLattice K (latIn U N) := by
+  letI := isLattice_latIn_span hN hU
+  refine ⟨?_⟩
+  apply Submodule.map_injective_of_injective U.injective_subtype
+  rw [Submodule.map_span, Submodule.map_top, Submodule.range_subtype]
+  rw [← hU]
+  congr 1
+  ext x
+  constructor
+  · rintro ⟨y, hy, rfl⟩
+    exact hy
+  · intro hx
+    exact ⟨⟨x, hU ▸ Submodule.subset_span hx⟩, hx, rfl⟩
+
+open GlobalTheory.Mass GlobalTheory.LoopC.DetCard Formalism.HermitianLatticesTheory in
 theorem det_index {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
     [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K)
     (hK : IsCMUnram K) (hs : h.IsSymm) (M P : Submodule (𝓞 K) V) (hM : M.FG) (hI : IsIntegralLat h M) (hP : P ≤ M)
@@ -47,9 +69,9 @@ theorem det_index {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGr
     ⟨fun x hx => Subtype.ext (hn x x.2 fun y hy => RowPerp.swap_zero hs (hx ⟨y, hy⟩)),
       fun x hx => Subtype.ext (hn x x.2 fun y hy => hx ⟨y, hy⟩)⟩
   have m1 : IsIntLat (hRes h U) (latIn U M) :=
-    ⟨isLattice_latIn_span hM rfl, fun x hx y hy => hI x hx y hy⟩
+    ⟨fullLattice_latIn_span hM rfl, fun x hx y hy => hI x hx y hy⟩
   have p1 : IsIntLat (hRes h U) (latIn U P) :=
-    ⟨isLattice_latIn_span (hM.of_le hP) hU, fun x hx y hy => hIP x hx y hy⟩
+    ⟨fullLattice_latIn_span (hM.of_le hP) hU, fun x hx y hy => hIP x hx y hy⟩
   obtain ⟨q1, q2⟩ := (DiscOrder.main K U _ hK hsU hnU _ p1).2.2.1 _ m1 (Submodule.comap_mono hP)
   rw [← idxN_latIn (U := U) (fun x hx => Submodule.subset_span hx)
     (fun x hx => Submodule.subset_span (hP hx))] at q1 q2
@@ -68,7 +90,7 @@ theorem le_finrank_orth {E : Type} [Field E] [NumberField E] [StarRing E] {S : H
     have hv' : ∀ i, S.hT (Sum.elim F.fvec F'.fvec i) v = 0 := fun i => congrFun (LinearMap.mem_ker.1 hv) i
     refine (Formalism.MainNotions.mem_orth_iff _ _).2 fun x hx => ?_
     obtain ⟨p, hp, q, hq, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add, LinearMap.add_apply,
+    rw [map_add (f := _), LinearMap.add_apply,
       Formalism.MainNotions.hT_zero_of_mem_Xplus F (fun a => by simpa [FlagG.fvec] using hv' (.inl a.castSucc))
         (by simpa [FlagG.fvec] using hv' (.inl (Fin.last r))) p hp,
       Formalism.MainNotions.hT_zero_of_mem_Xplus F' (fun a => by simpa [FlagG.fvec] using hv' (.inr a.castSucc))
@@ -82,8 +104,45 @@ theorem orth_lattice (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D
       rkW D (seen D (lf D F0) (Thp Λ (lf D F0) F')) = D.R.k - 1 ∧
       detW D (seen D (lf D F0) (Thp Λ (lf D F0) F')) ≤ G0 Λ (gS D) (lf D F0) F' := by
   obtain ⟨hW, -, hpd, b4, b5, -⟩ := Base.main D u u' F0 Λ hs hb hΛ
-  obtain ⟨-, ⟨hL, hu, hl, -⟩, hX⟩ := id hΛ
+  obtain ⟨-, ⟨hL, hu, hl, hconv⟩, hX⟩ := id hΛ
+  have hfull : Submodule.IsFullLattice D.host.E Λ :=
+    { toIsLattice := hL
+      span_eq_top := Base.span_eq_top_of_unimodular (hS D).hT (hS D).herm (hS D).nondeg hL hu }
   obtain ⟨⟨hl', had, hG⟩, hc', hX'⟩ := hF'
+  have hm : 0 < D.R.m := lt_of_lt_of_le (by norm_num) D.R.two_le_m
+  have hiso := D.sp.iXY_isom 0 hm
+  have hT : Tu D u ≠ 0 := hs.2.1.ne_zero
+  have hXX : ∀ x ∈ F0.X, ∀ y ∈ F0.X, (hS D).hT x y = 0 := fun x hx y hy =>
+    Formalism.MainNotions.hT_swap_zero ((Formalism.MainNotions.mem_orth_iff _ _).1 (Formalism.MainNotions.X_le_orth_Xplus F0 hx) y (Submodule.mem_sup_left hy))
+  have hXz : ∀ x ∈ F0.X, (hS D).hT x F0.z = 0 := Formalism.MainNotions.hT_zero_of_mem_X F0 F0.z_orth
+  have hWo : ∀ w, ∀ x ∈ F0.Xplus, (hS D).hT x (D.sp.iXY 0 w) = 0 := fun w =>
+    (Formalism.MainNotions.mem_orth_iff _ _).1 (hW.1.le (Submodule.mem_sup_left ⟨w, rfl⟩))
+  have hXW : ∀ x ∈ F0.X, ∀ w, (hS D).hT x (D.sp.iXY 0 w) = 0 := fun x hx w => hWo w x (Submodule.mem_sup_left hx)
+  have hzW : ∀ w, (hS D).hT F0.z (D.sp.iXY 0 w) = 0 := fun w =>
+    hWo w _ (Submodule.mem_sup_right (Submodule.mem_span_singleton_self _))
+  have hdec : ∀ v, (∀ x ∈ F0.X, (hS D).hT x v = 0) → (hS D).hT F0.z v = 0 →
+      ∃ w, ∃ x ∈ F0.X, v = D.sp.iXY 0 w + x := by
+    intro v h1 h2
+    have : v ∈ orth (hS D) F0.Xplus := (Formalism.MainNotions.mem_orth_iff _ _).2
+      (Formalism.MainNotions.hT_zero_of_mem_Xplus F0 (fun a => h1 _ (Submodule.subset_span ⟨a, rfl⟩)) h2)
+    obtain ⟨_, ⟨w, rfl⟩, x, hx, e⟩ := Submodule.mem_sup.1 (hW.1.ge this)
+    exact ⟨w, x, hx, e.symm⟩
+  have hsub : ∀ v, (∀ x ∈ F0.X, (hS D).hT x v = 0) → (v ∈ Lsub Λ (lf D F0) ↔ ∃ x ∈ F0.X, v + x ∈ Λ) := by
+    intro v hv
+    constructor
+    · rintro ⟨h1, -⟩
+      obtain ⟨l, hl, x, hx, rfl⟩ := Submodule.mem_sup.1 h1
+      exact ⟨-x, F0.X.neg_mem hx, by simpa using hl.1⟩
+    · rintro ⟨x, hx, h1⟩
+      refine ⟨Submodule.mem_sup.2 ⟨v + x, ⟨h1, (Formalism.MainNotions.mem_orth_iff _ _).2 fun y hy => ?_⟩, -x, F0.X.neg_mem hx,
+        by abel⟩, (Formalism.MainNotions.mem_orth_iff _ _).2 hv⟩
+      rw [map_add (f := _), hv y hy, hXX y hy x hx, add_zero]
+  obtain ⟨a1, a2, a3⟩ := Base.perp_lattice (hS D).hT (hS D).herm (hS D).nondeg hL hu (D.sp.X 0).hT (D.sp.X 0).herm
+    (D.sp.X 0).nondeg (D.sp.iXY 0) hiso F0.X F0.z (Tu D u) hT hXX hXz hXW hzW F0.z_norm hl.1 hdec
+    (fun c x hx h => hconv.2 c ((hsub _ fun y hy => by simp [hXz y hy]).2 ⟨x, hx, h⟩))
+    (L0X D Λ (lf D F0)) (fun w => by
+      rw [← hsub _ fun x hx => hXW x hx w]
+      exact ⟨fun h => h.1, fun h => ⟨h, hzW w⟩⟩)
   have hF := Partner.frame_mem_of_XS (lf D F0) hl hX
   have hF' := Partner.frame_mem_of_XS F' hl' hX'
   have n1 := Partner.UUE_eq (lf D F0) F' hl hl' hF hF'
@@ -102,8 +161,8 @@ theorem orth_lattice (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D
   have hH : Hp Λ (lf D F0) F' ≤ orth (hS D) (Xplus (lf D F0)) := fun x hx =>
     (Formalism.MainNotions.mem_orth_iff _ _).2 fun y hy => (Formalism.MainNotions.mem_orth_iff _ _).1 hx y (hXp hy)
   have hle := Partner.UU_le (lf D F0) F' hl hl'
-  have hsp : spanE (hS D) (BLat Λ (lf D F0) F') = UUE Λ (lf D F0) F' := GlobalTheory.Mass.DetAgree.span_inf_eq Λ hL _
-  have d1 := Partner.det_seen_le (lf D F0) hL hu hW hpd ⟨b4, b5⟩ (BLat Λ (lf D F0) F') inf_le_left
+  have hsp : spanE (hS D) (BLat Λ (lf D F0) F') = UUE Λ (lf D F0) F' := GlobalTheory.Mass.DetAgree.span_inf_eq Λ hfull _
+  have d1 := Partner.det_seen_le (lf D F0) hL hu hW hpd ⟨a1, b5⟩ (BLat Λ (lf D F0) F') inf_le_left
     (hsp ▸ hXp) (hsp ▸ n2)
   rw [hsp] at d1
   obtain ⟨g1, g2⟩ := det_index (hS D).hT D.sp.cm.cmUnram (hS D).herm (BLat Λ (lf D F0) F') (UU Λ (lf D F0) F')
@@ -114,7 +173,7 @@ theorem orth_lattice (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D
   have hg : gS D ≠ 0 := mul_ne_zero hs.2.2.2.2.2.2.2.1.ne_zero hs.2.2.2.2.2.2.2.2.1.ne_zero
   have hB := GlobalTheory.T.norm_pow_le_card_flag_quotient _ (hS D) _ Λ (gS D) _ _ (lf D F0) F' hg hl hl' hF hF' hc' had hG
     (Nat.finite_of_card_ne_zero g1)
-  refine ⟨Partner.seen_le_L0X _ _ hH, (Partner.rk_seen _ hL hW _ hH ?_).trans n3, d1.trans ?_⟩
+  refine ⟨Partner.seen_le_L0X _ _ hH, (Partner.rk_seen _ (by first | exact hfull | exact hL) hW _ hH ?_).trans n3, d1.trans ?_⟩
   · rw [eq_bot_iff, ← n2, inf_comm]
     exact inf_le_inf (le_sup_left.trans hXp) le_rfl
   · have hN : 0 < NE (E := D.host.E) (gS D) ^ (D.R.rS + 1) := by

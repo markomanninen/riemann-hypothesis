@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.SmulYGenEqZero
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.SmulYGenEqZero
+
+@[expose] public section
 
 open Finset
 
@@ -47,7 +51,7 @@ theorem qPlace : StatQPlace := by
       have hmem : γ ^ k ∈ I := I.pow_mem hγ k
       have ht := htriv (γ ^ k) hmem (φ (yGen r χ E e₁ δ D j Kc k0 (γ : G)))
       rw [Subgroup.coe_pow] at ht
-      rw [pow_succ, yGen_mul, map_add, map_smul, ih, ht, succ_nsmul]
+      rw [pow_succ, yGen_mul, map_add (f := _), map_smul, ih, ht, succ_nsmul]
   refine ⟨h1, ?_⟩
   set ρD := resRep (uRep O (M := M) r χ) Dw with hρD
   set ρI := resRep ρD I with hρI

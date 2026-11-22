@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
+
+@[expose] public section
+
 open NumberField MeasureTheory
 
 namespace GlobalTheory
@@ -31,7 +36,7 @@ theorem mellinSplit_neg (I : Type) [Fintype I] [Nonempty I] (p : (I → ℝ) →
   set S : Set (I → ℝ) := {y | 0 ≤ ∑ i, y i} with hS
   set P : Set (I → ℝ) := {y | 0 < ∑ i, y i} with hP
   have hcont : Continuous (fun y : I → ℝ => ∑ i, y i) :=
-    continuous_finset_sum _ fun i _ => continuous_apply i
+    continuous_finsetSum _ fun i _ => continuous_apply i
   have hSm : MeasurableSet S := (isClosed_le continuous_const hcont).measurableSet
   have hsumneg : ∀ y : I → ℝ, ∑ i, (-y) i = -∑ i, y i := by
     intro y; simp [Finset.sum_neg_distrib]

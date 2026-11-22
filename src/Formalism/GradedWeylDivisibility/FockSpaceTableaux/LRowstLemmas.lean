@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementA
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -28,9 +32,10 @@ theorem isWH_algHom_monomial (φ : MvPolynomial σ R →ₐ[R] MvPolynomial τ R
 theorem isWH_algHom (φ : MvPolynomial σ R →ₐ[R] MvPolynomial τ R) (w : σ → M) (w' : τ → M)
     (hφ : ∀ v, IsWeightedHomogeneous w' (φ (X v)) (w v)) {f : MvPolynomial σ R} {d : M}
     (hf : IsWeightedHomogeneous w f d) : IsWeightedHomogeneous w' (φ f) d := by
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun s hs => ?_
-  have h := isWH_algHom_monomial φ w w' hφ s (coeff s f)
+  have h := isWH_algHom_monomial φ w w' hφ s (AddMonoidAlgebra.coeff f s)
   rwa [hf (mem_support_iff.mp hs)] at h
 
 private theorem weightedHomogeneousComponent_self_of_isWH {w : σ → M} {p : MvPolynomial σ R} {m : M}
@@ -47,7 +52,8 @@ private theorem weightedHomogeneousComponent_eq_zero_of_isWH_ne {w : σ → M} {
     (hne : m ≠ μ) (hp : IsWeightedHomogeneous w p m) : weightedHomogeneousComponent w μ p = 0 := by
   classical
   ext d
-  rw [coeff_weightedHomogeneousComponent, coeff_zero]
+  rw [coeff_weightedHomogeneousComponent]
+  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   split_ifs with h
   · by_contra hd
     exact hne ((hp hd).symm.trans h)
@@ -59,11 +65,12 @@ theorem algHom_weightedHomogeneousComponent (φ : MvPolynomial σ R →ₐ[R] Mv
     φ (weightedHomogeneousComponent w μ f) = weightedHomogeneousComponent w' μ (φ f) := by
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
-  have hs := isWH_algHom_monomial φ w w' hφ s (coeff s f)
-  have hm : IsWeightedHomogeneous w (monomial s (coeff s f)) (Finsupp.weight w s) :=
-    isWeightedHomogeneous_monomial w s (coeff s f) rfl
+  have hs := isWH_algHom_monomial φ w w' hφ s (AddMonoidAlgebra.coeff f s)
+  have hm : IsWeightedHomogeneous w (monomial s (AddMonoidAlgebra.coeff f s)) (Finsupp.weight w s) :=
+    isWeightedHomogeneous_monomial w s (AddMonoidAlgebra.coeff f s) rfl
   by_cases h : Finsupp.weight w s = μ
   · subst h
     rw [weightedHomogeneousComponent_self_of_isWH hm, weightedHomogeneousComponent_self_of_isWH hs]
@@ -90,10 +97,11 @@ theorem colAddGen_rowAct {R : Type*} [CommRing R] {r n : ℕ} (g : Matrix (Fin r
       (rowActO R g).comp (colAddGen R (r := r) l j) := by
     apply MvPolynomial.algHom_ext
     rintro ⟨a, t⟩
-    simp only [AlgHom.comp_apply, colAddGen, rowAct, rowActO, aeval_X, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, colAddGen, rowAct, rowActO, aeval_X, map_sum,
       map_mul, aeval_C, MvPolynomial.algebraMap_eq]
     by_cases h : t = j
-    · simp only [h, if_true, aeval_X, map_add, map_mul, Option.elim]
+    · simp only [h, if_true, aeval_X, map_add (f := _), map_mul, Option.elim]
       rw [Finset.mul_sum, ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun b _ => by ring
     · simp [h]
@@ -117,8 +125,5 @@ theorem rowAct_X_isWH {R : Type*} [CommRing R] {r n : ℕ} (g : Matrix (Fin r) (
   convert (isWeightedHomogeneous_C (colW r n) (g v.1 b)).mul
     (isWeightedHomogeneous_X (R := R) (colW r n) (b, v.2)) using 1
   simp [colW]
-
-def rowWO (r n : ℕ) : Option (Fin r × Fin n) → (Fin r → ℕ) :=
-  fun o => Option.elim o 0 (fun v => Pi.single v.1 1)
 
 end Formalism.GradedWeylDivisibility

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LFunctionEqTsumOfOneLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LFunctionEqTsumOfOneLt
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
 namespace GlobalTheory.ZeroDetect
 
-open Complex DirichletCharacter ArithmeticFunction MeasureTheory in
 
+open Complex DirichletCharacter ArithmeticFunction MeasureTheory in
 theorem _root_.GlobalTheory.ZeroDetect.sum_trunc_conv (a f : ℕ → ℂ)
     (hf : ∀ m n, 0 < m → 0 < n → f (m * n) = f m * f n)
     (D X : ℕ) :
@@ -50,14 +55,14 @@ theorem _root_.GlobalTheory.ZeroDetect.sum_trunc_conv (a f : ℕ → ℂ)
     · rintro ⟨⟨⟨h0, hX⟩, hdn⟩, -, hdD⟩
       exact ⟨⟨h0, hX⟩, ⟨hdn, h0.ne'⟩, hdD⟩
 
-open Complex DirichletCharacter ArithmeticFunction MeasureTheory in
 
+open Complex DirichletCharacter ArithmeticFunction MeasureTheory in
 theorem _root_.GlobalTheory.ZeroDetect.sum_initial (f : ℕ → ℂ) (D : ℕ) (hD : 1 ≤ D) :
     ∑ n ∈ Finset.Ioc 0 D,
       ((∑ d ∈ n.divisors.filter (fun d => d ≤ D), (moebius d : ℤ) : ℤ) : ℂ) * f n = f 1 := by
   have hsum : ∀ n, ∑ d ∈ n.divisors, (moebius d : ℤ) = if n = 1 then 1 else 0 := by
     intro n
-    rw [← coe_mul_zeta_apply, moebius_mul_coe_zeta, one_apply]
+    rw [← coe_mul_zeta_apply, moebius_mul_coe_zeta, ArithmeticFunction.one_apply]
   rw [Finset.sum_eq_single 1]
   · simp [Finset.filter_singleton, hD]
   · intro n hn hn1
@@ -103,8 +108,8 @@ theorem _root_.GlobalTheory.ZeroDetect.rpow_bound {Q y σ : ℝ} (hQ : 1024 ≤ 
   calc 16 * Q ^ 5 ≤ y ^ ((11:ℝ) / 12) := key
     _ ≤ y ^ σ := Real.rpow_le_rpow_of_exponent_le hy1 hσ
 
-open Complex DirichletCharacter ArithmeticFunction MeasureTheory in
 
+open Complex DirichletCharacter ArithmeticFunction MeasureTheory in
 theorem _root_.GlobalTheory.ZeroDetect.zero_detect : ∃ Q₀ : ℕ, ∀ Q : ℕ, Q₀ ≤ Q →
     ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ ≠ 1 → q ≤ Q → ∀ ρ : ℂ,
     1 - 1 / 400 ≤ ρ.re → |ρ.im| ≤ Q → LFunction χ ρ = 0 →

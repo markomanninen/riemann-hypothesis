@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -13,7 +18,7 @@ theorem algebraMap_norm_dvd_polyX {k A : Type} [Field k] [CommRing A] [Algebra k
   have hsplit := Polynomial.X_mul_divX_add M.charpoly
   have h0 : g * Polynomial.aeval g M.charpoly.divX + algebraMap k[X] A (M.charpoly.coeff 0) = 0 := by
     have := congrArg (Polynomial.aeval g) hsplit
-    rw [hCH, map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at this
+    rw [hCH, map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at this
     exact this
   have hdet : Algebra.norm k[X] g = (-1) ^ n * M.charpoly.coeff 0 := by
     rw [Algebra.norm_eq_matrix_det b, ← hM, Matrix.det_eq_sign_charpoly_coeff, Fintype.card_fin]

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.InBlock
-import Formalism.LocalToGlobal.IndefiniteReal.CxPassMet
-import Formalism.LocalToGlobal.Divisibility.TrivialExtensionSideWellFormed
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.InBlock
+public import Formalism.LocalToGlobal.IndefiniteReal.CxPassMet
+public import Formalism.LocalToGlobal.Divisibility.TrivialExtensionSideWellFormed
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -32,8 +36,6 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] 
 theorem side_lv (b : Bool) :
     lv (faceOf3 I.A3 I.P0 I.ψ0 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) b = I.A3.side3 (I.lvP b) (I.lvψ b) I.X.zs := by
   cases b <;> rfl
-
-theorem Jm_eq (b : Bool) : I.Jm b = I.Jt b I.A3.fam3.base3.μ0 := rfl
 
 theorem pFrames : I.PFrames := by
   intro s h v
@@ -76,8 +78,8 @@ variable {I} in
 theorem wf_g {s : ℕ} (h : I.Hyp s) : (lv (faceOf3 I.A3 ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).WF :=
   I.A3.side_well_formed h.ok ⊥ 1 _ h.stable h.inBlock h.sep
 
-variable {I} in
 
+variable {I} in
 theorem opAll_comm {s : ℕ} (h : I.Hyp s) (g : G) (k : (I.A3.rowI I.A.fam.μ0).OpIx) :
     Commute ((I.A3.rowI I.A.fam.μ0).opAll k) ((I.A.fam.R I.A.fam.μ0).r g) := by
   rcases k with i | k

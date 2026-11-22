@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.BlockInvertibleLocal
@@ -27,7 +32,7 @@ theorem exists_linearMap_injective_add_comp {k V : Type} [Field k] [AddCommGroup
   intro v hv
   obtain ⟨w, hw, w', hw', hsum⟩ := Submodule.mem_sup.1 (hW.sup_eq_top ▸ Submodule.mem_top : c v ∈ W ⊔ W')
   have hxw : x (c v) = ((e ⟨w, hw⟩ : R) : V) := by
-    rw [← hsum, map_add]
+    rw [← hsum, map_add (f := _)]
     have hl := LinearMap.ofIsCompl_left_apply (φ := R.subtype ∘ₗ e.toLinearMap) (ψ := (0 : W' →ₗ[k] V)) hW ⟨w, hw⟩
     have hr := LinearMap.ofIsCompl_right_apply (φ := R.subtype ∘ₗ e.toLinearMap) (ψ := (0 : W' →ₗ[k] V)) hW ⟨w', hw'⟩
     simp only at hl hr

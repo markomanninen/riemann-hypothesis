@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistable
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistable
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -23,10 +28,6 @@ theorem J_mul_mem (hF : IsFil Φ Fil) (r : ℕ) {T : C} {x y : Φ.A.obj T} (hx :
 def mulT (Fil : ℤ → IdF Φ.A) (r : ℤ) {T : C} (u : Φ.A.obj T) : (gr Fil r).obj T →ₗ[R] (gr Fil r).obj T :=
   (LinearMap.mulLeft R (Ideal.Quotient.mk ((Fil (r + 1)).S T) u)).restrict fun x hx =>
     Ideal.mul_mem_left _ _ hx
-
-theorem mulT_coe (r : ℤ) {T : C} (u : Φ.A.obj T) (x : (gr Fil r).obj T) :
-    (show sqM (Fil r) (Fil (r + 1)) T from mulT Fil r u x).1 =
-      Ideal.Quotient.mk _ u * (show sqM (Fil r) (Fil (r + 1)) T from x).1 := rfl
 
 theorem mulT_congr (hF : IsFil Φ Fil) (r : ℕ) {T : C} {u v : Φ.A.obj T} (h : u - v ∈ Φ.J.S T)
     (x : (gr Fil r).obj T) : mulT Fil r u x = mulT Fil r v x := by
@@ -80,7 +81,7 @@ theorem mulMor_add {u v w : ∀ T, Φ.A.obj T} (hu hv hw) (h : ∀ T, w T - (u T
   refine (mulT_congr hF r (h _) (z.1 s)).trans ?_
   refine Subtype.ext ?_
   change Ideal.Quotient.mk _ (u _ + v _) * _ = Ideal.Quotient.mk _ (u _) * _ + Ideal.Quotient.mk _ (v _) * _
-  rw [map_add, add_mul]
+  rw [map_add (f := _), add_mul]
   rfl
 
 theorem mulMor_mul {u v w : ∀ T, Φ.A.obj T} (hu hv hw) (h : ∀ T, w T - u T * v T ∈ Φ.J.S T) (n : ℕ) (c : CH.H (gr Fil r) n) :
@@ -170,7 +171,7 @@ variable {O : Type} [CommRing O] {R : Type} [CommRing R] {I : Ideal R} {γ : Div
 theorem fAct_add (f g : Γ(X, W)) (c : HU (grF (nlFun γ p X q κ) r) Q r) :
     fAct hF hQ r (f + g) c = fAct hF hQ r f c + fAct hF hQ r g c := by
   refine mulMor_add hF r _ _ _ (fun T => sub_mem_of_mk (T := T.obj) ?_) r c
-  rw [mk_evLift, map_add (Ideal.Quotient.mk T.obj.J), mk_evLift, mk_evLift, map_add]
+  rw [mk_evLift, map_add (Ideal.Quotient.mk T.obj.J), mk_evLift, mk_evLift, map_add (f := _)]
 
 theorem fAct_mul (f g : Γ(X, W)) (c : HU (grF (nlFun γ p X q κ) r) Q r) :
     fAct hF hQ r (f * g) c = fAct hF hQ r f (fAct hF hQ r g c) := by
@@ -187,8 +188,6 @@ def fHom : Γ(X, W) →+* AddMonoid.End (HU (grF (nlFun γ p X q κ) r) Q r) :=
                 map_one' := AddMonoidHom.ext fun c => fAct_one hF hQ r c
                 map_mul' := fun f g => AddMonoidHom.ext fun c => fAct_mul hF hQ r f g c }
     fun f g => AddMonoidHom.ext fun c => fAct_add hF hQ r f g c
-
-theorem fHom_apply (f : Γ(X, W)) (c : HU (grF (nlFun γ p X q κ) r) Q r) : fHom hF hQ r f c = fAct hF hQ r f c := rfl
 
 theorem ev_rs {W' : X.Opens} (hW : W' ≤ W) (T : Thick (nlFun γ p X q κ)) (h : InU W T) (h' : InU W' T) (f : Γ(X, W)) :
     ev T h' (rs hW f) = ev T h f :=
@@ -220,20 +219,6 @@ namespace GlobalTheory.CompanionTheory.GrCech
 section Sec
 
 variable {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] {Φ : PDF R C} {Fil : ℤ → IdF Φ.A}
-
-theorem sec_nat (hF : IsFil Φ Fil) {d : ℕ} (E : Frame Φ d) (σ : ∀ T : C, E.D ⟶ T) (hc : E.GrConst Fil)
-    (x : Φ.A.obj E.D) {T T' : C} (φ : T ⟶ T') :
-    (Φ.A.map (σ T')).hom x - (Φ.A.map φ).hom ((Φ.A.map (σ T)).hom x) ∈ Φ.J.S T' := by
-  have h0 : x ∈ (Fil ((0 : ℕ) : ℤ)).S E.D := by
-    rw [hF.top _ (by simp)]; trivial
-  have h1 := hc 0 (σ T') (σ T ≫ φ) h0
-  have e : (((0 : ℕ) : ℤ) + 1) = 1 := by simp
-  rw [e, hF.one, Φ.A.map_comp] at h1
-  exact h1
-
-def secMor (hF : IsFil Φ Fil) (r : ℕ) {d : ℕ} (E : Frame Φ d) (σ : ∀ T : C, E.D ⟶ T) (hc : E.GrConst Fil)
-    (x : Φ.A.obj E.D) : CH.Mor (gr Fil r) (gr Fil r) (RingHom.id R) :=
-  mulMor hF r (fun T => (Φ.A.map (σ T)).hom x) (sec_nat hF E σ hc x)
 
 end Sec
 

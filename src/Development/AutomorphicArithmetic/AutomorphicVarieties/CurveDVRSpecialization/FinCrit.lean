@@ -1,12 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NicePrimeEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.WPresGrZeroIsCOOfMemMaximalIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.WPresMaximalIdealGrZeroEqSupSpanMonomials
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NicePrimeEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.WPresGrZeroIsCOOfMemMaximalIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.WPresMaximalIdealGrZeroEqSupSpanMonomials
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg
-
-open private UpperTheory.V.Pr.npe_dim_one from Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NicePrimeEx
 
 attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDomain UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing UpperTheory.V.Pr.IsCD.complete
   UpperTheory.V.Pr.IsCD.fin UpperTheory.V.Pr.IsCD.isLocalHom
@@ -37,7 +39,7 @@ private theorem fc_abs (D V : Type) [CommRing D] [IsDomain D] [IsNoetherianRing 
     rw [h, Ideal.mem_bot] at this
     exact ht0 (FaithfulSMul.algebraMap_injective D V (this.trans (map_zero _).symm))
   have hval : ValuationRing V := inferInstance
-  refine ⟨((IsDiscreteValuationRing.TFAE V hnf).out 1 0).mp hval,
+  refine ⟨((IsDiscreteValuationRing.TFAE V hnf).out 2 1).mp hval,
     GlobalTheory.FormalIsogeny.isAdicComplete_maximalIdeal_of_finite D V, ?_⟩
   have : Module.Finite (ResidueField D) (ResidueField V) := inferInstance
   exact Module.finite_of_finite (ResidueField D)
@@ -136,7 +138,69 @@ theorem UpperTheory.V.Pr.finCrit :
     by_contra hbQ
     have hbm : ((b : W.A) : R) ∈ maximalIdeal R :=
       (h1 b).1 (hmax ▸ Ideal.mem_sup_right (Ideal.subset_span hb))
-    obtain ⟨p, hp, hQle, hbp, hd⟩ := UpperTheory.V.Pr.npe_dim_one Q hbm hbQ
+    let x : R := ((b : W.A) : R)
+    obtain ⟨(p : Ideal R), ⟨hp, hQle, hbp⟩, hmaxp⟩ := set_has_maximal_iff_noetherian.mpr
+      (inferInstance : IsNoetherian R R) {p : Ideal R | p.IsPrime ∧ Q ≤ p ∧ x ∉ p}
+      ⟨Q, hQp, le_rfl, hbQ⟩
+    have hd : ringKrullDim (R ⧸ p) = 1 := by
+      let q := Ideal.Quotient.mk p
+      have : Nontrivial (R ⧸ p) := Ideal.Quotient.nontrivial_iff.mpr hp.ne_top
+      have : IsLocalRing (R ⧸ p) := IsLocalRing.of_surjective' q Ideal.Quotient.mk_surjective
+      let m := maximalIdeal (R ⧸ p)
+      have : m.IsPrime := inferInstanceAs (maximalIdeal (R ⧸ p)).IsPrime
+      have hx0 : q x ≠ 0 := fun h => hbp (Ideal.Quotient.eq_zero_iff_mem.mp h)
+      have := IsLocalHom.of_surjective q Ideal.Quotient.mk_surjective
+      have hxm : q x ∈ m := map_nonunit q x hbm
+      have hlt : ⊥ < m := bot_lt_iff_ne_bot.mpr fun e => hx0 (by simpa [e] using hxm)
+      have hxP (P : Ideal (R ⧸ p)) [P.IsPrime] (hP0 : P ≠ ⊥) : q x ∈ P := by
+        by_contra hx
+        have hle : p ≤ P.comap q := fun y hy => by
+          change q y ∈ P
+          rw [Ideal.Quotient.eq_zero_iff_mem.mpr hy]
+          exact P.zero_mem
+        refine hmaxp (P.comap q) ⟨Ideal.comap_isPrime _ _, hQle.trans hle, hx⟩
+          (lt_of_le_of_ne hle fun e => hP0 ?_)
+        rw [← Ideal.map_comap_of_surjective q Ideal.Quotient.mk_surjective P, ← e]
+        exact Ideal.map_quotient_self p
+      let J : Ideal (R ⧸ p) := Ideal.span {q x}
+      have hJm : J ≤ m := (Ideal.span_singleton_le_iff_mem _).2 hxm
+      -- Every nonzero element of m belongs to a minimal prime over J.
+      have hcover : (m : Set (R ⧸ p)) ⊆ ⋃ P ∈ J.minimalPrimes, ((id P : Ideal _) : Set _) := by
+        intro y hy
+        simp only [Set.mem_iUnion, id, SetLike.mem_coe]
+        by_cases hy0 : y = 0
+        · obtain ⟨P, hP, -⟩ := Ideal.exists_minimalPrimes_le hJm
+          exact ⟨P, hP, hy0 ▸ P.zero_mem⟩
+        obtain ⟨P, hP, -⟩ := Ideal.exists_minimalPrimes_le
+          ((Ideal.span_singleton_le_iff_mem m).2 hy)
+        have hPp : P.IsPrime := hP.1.1
+        have hyP : y ∈ P := (Ideal.span_singleton_le_iff_mem _).1 hP.1.2
+        have hP1 := Ideal.height_le_one_of_isPrincipal_of_mem_minimalPrimes _ P hP
+        have hJP : J ≤ P := (Ideal.span_singleton_le_iff_mem _).2
+          (hxP P fun e => hy0 (by simpa [e] using hyP))
+        obtain ⟨T, hT, hTP⟩ := Ideal.exists_minimalPrimes_le hJP
+        have hTp : T.IsPrime := hT.1.1
+        have hxT : q x ∈ T := (Ideal.span_singleton_le_iff_mem _).1 hT.1.2
+        have hT0 : ⊥ < T := bot_lt_iff_ne_bot.mpr fun e => hx0 (by simpa [e] using hxT)
+        refine ⟨T, hT, ?_⟩
+        rcases hTP.eq_or_lt with e | hTP
+        · exact e ▸ hyP
+        · exfalso
+          have h1 := Ideal.height_add_one_le_of_lt_of_isPrime hT0
+          have h2 := Ideal.height_add_one_le_of_lt_of_isPrime hTP
+          have h3 : (⊥ : Ideal (R ⧸ p)).height + 1 + 1 ≤ 1 :=
+            (add_le_add h1 le_rfl).trans (h2.trans hP1)
+          simp at h3
+          exact absurd h3 (by decide)
+      obtain ⟨P, hP, hmP⟩ := (Ideal.subset_union_prime_finite
+        J.finite_minimalPrimes_of_isNoetherianRing (f := id) ⊥ ⊥
+        (fun i hi _ _ => hi.1.1)).mp hcover
+      have hh : m.height ≤ 1 := (Ideal.height_mono hmP).trans
+        (Ideal.height_le_one_of_isPrincipal_of_mem_minimalPrimes J P hP)
+      have hm1 : m.height = 1 := le_antisymm hh
+        (le_trans le_add_self (Ideal.height_add_one_le_of_lt_of_isPrime hlt))
+      rw [← IsLocalRing.maximalIdeal_height_eq_ringKrullDim, ← show m = maximalIdeal (R ⧸ p) from rfl, hm1]
+      rfl
     haveI : IsCO O (R ⧸ p) := UpperTheory.V.Alg.co_quot O R (R ⧸ p) (Ideal.Quotient.mkₐ O p)
       Ideal.Quotient.mk_surjective
     haveI := fc_finres O (R ⧸ p)
@@ -162,6 +226,7 @@ theorem UpperTheory.V.Pr.finCrit :
     obtain ⟨n, hn, hw, hbn⟩ := hu b hb
     obtain ⟨i, hi, hi0⟩ := fc_sign W.wt n hn hw _ h0 hs
     apply hbp
+    change ((b : W.A) : R) ∈ p
     rw [hbn]
     exact Ideal.prod_mem _ hi (Ideal.pow_mem_of_mem _ ((hker _).1 hi0) _
       (Nat.pos_of_ne_zero (Finsupp.mem_support_iff.1 hi)))

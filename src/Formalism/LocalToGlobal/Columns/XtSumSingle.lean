@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.XtPhiTopGCongr
+module
+
+public import Formalism.LocalToGlobal.Columns.XtPhiTopGCongr
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 
@@ -14,7 +18,8 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {P : HeightOneSpectru
 
 theorem xt_sum_single {a b : ℕ} (z : HomE E a b) (v : Sp E a) : z v = ∑ j, v j • z (Pi.single j 1) := by
   conv_lhs => rw [← Finset.univ_sum_single v]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   have : (Pi.single j (v j) : Sp E a) = v j • Pi.single j 1 := by rw [← Pi.single_smul, smul_eq_mul, mul_one]
   rw [this, map_smul]
@@ -116,7 +121,8 @@ theorem topDat_law (hc : cst.Ok) {m2 : ℕ} (hn : TopNum R (m2 + 1)) {Λm : LevF
       have hζy : IntAt w.1 (ζ y₂) := by
         have e4 : ζ y₂ = ∑ j, y₂ j * ζ (Pi.single j 1) := by
           conv_lhs => rw [← Finset.univ_sum_single y₂]
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           refine Finset.sum_congr rfl fun j _ => ?_
           have : (Pi.single j (y₂ j) : Sp X.E (R.N (m2 + 1))) = y₂ j • Pi.single j 1 := by rw [← Pi.single_smul, smul_eq_mul, mul_one]
           rw [this, map_smul, smul_eq_mul]

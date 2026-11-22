@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -139,8 +143,8 @@ private theorem eig_lemma_5 (χ' : E →+* S) (ρ : 𝓞 E →+* Module.End S M)
     (hθ : IntermediateField.adjoin ℚ {(θ : E)} = ⊤) (v : M) (hv : ρ θ v = χ' (θ : E) • v) (a : 𝓞 E) :
     ρ a v = χ' (a : E) • v := by
   obtain ⟨p, hp⟩ := poly_lemma (θ : E) hθ (a : E)
-  obtain ⟨b, hb⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors ℤ) p
-  have hb0 : ((b : ℤ) : S) ≠ 0 := Int.cast_ne_zero.mpr (nonZeroDivisors.ne_zero b.prop)
+  obtain ⟨b, hb_mem, hb⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors ℤ) p
+  have hb0 : (b : S) ≠ 0 := Int.cast_ne_zero.mpr (nonZeroDivisors.ne_zero hb_mem)
   have hE : aeval (θ : E) (IsLocalization.integerNormalization (nonZeroDivisors ℤ) p) = (b : ℤ) • (a : E) := by
     rw [← Polynomial.aeval_map_algebraMap (A := ℚ), hb, map_zsmul, hp]
   have hO : (b : ℤ) • a = aeval θ (IsLocalization.integerNormalization (nonZeroDivisors ℤ) p) := by
@@ -213,12 +217,14 @@ theorem decomp (χ : ι → (E →+* S)) (hχ : Function.Injective χ) (hcard : 
   refine ⟨fun m => ⟨fun σ => aeval (ρ θ) (Lagrange.basis Finset.univ (fun σ => χ σ (θ : E)) σ) m,
     fun σ a => eig_lemma_5 (χ σ) ρ θ hθ _ (hproj σ m) a, ?_⟩, ?_⟩
   · have h1 : (∑ σ, aeval (ρ θ) (Lagrange.basis Finset.univ (fun σ => χ σ (θ : E)) σ)) m = m := by
-      rw [← map_sum, hLsum, map_one]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hLsum, map_one]
       rfl
     rwa [LinearMap.sum_apply] at h1
   · intro mσ hmσ hsum σ
     have h := congrArg (aeval (ρ θ) (Lagrange.basis Finset.univ (fun σ => χ σ (θ : E)) σ)) hsum
-    rw [map_sum, map_zero, Finset.sum_eq_single σ] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero, Finset.sum_eq_single σ] at h
     · rwa [aeval_eig (ρ θ) (χ σ (θ : E)) (mσ σ) (hmσ σ θ), hLself, one_smul] at h
     · intro τ _ hτ
       rw [aeval_eig (ρ θ) (χ τ (θ : E)) (mσ τ) (hmσ τ θ), hLne σ τ (Ne.symm hτ), zero_smul]
@@ -235,7 +241,8 @@ theorem global_basis (χ : ι → (E →+* S)) (hχ : Function.Injective χ)
   have heig : ∀ σ (c : Fin (mult σ) → S) (a : 𝓞 E),
       ρ a (∑ i, c i • U ⟨σ, i⟩) = χ σ (a : E) • ∑ i, c i • U ⟨σ, i⟩ := by
     intro σ c a
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, hU, smul_comm]
   obtain ⟨mσ, hmσ, hsum⟩ := hex W

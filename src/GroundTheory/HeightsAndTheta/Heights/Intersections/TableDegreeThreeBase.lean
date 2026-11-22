@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherTail
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiHomogFirstCoordinate
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherTail
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiHomogFirstCoordinate
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,8 +21,8 @@ section Pull
 variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
   {K' : Type*} [Fintype K'] {ι' : K' → Type*} [∀ k, Fintype (ι' k)]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem blocks_ne_zero_restrict {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     {z : (Σ k', ι' k') → ℂ} (hz : ∀ k', ∃ i', z ⟨k', i'⟩ ≠ 0) (k : K) : ∃ i, z (v ⟨k, i⟩) ≠ 0 := by
   obtain ⟨i', hi'⟩ := hz (κ k)
@@ -33,14 +38,10 @@ theorem IsPullHerm.isSmoothHerm {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι
     IsSmoothHerm A' := by
   have e : A'.h = A.h ∘ fun (z : (Σ k', ι' k') → ℂ) (p : Σ k, ι k) => z (v p) := funext h.2
   have hR : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun (z : (Σ k', ι' k') → ℂ) (p : Σ k, ι k) => z (v p)) :=
-    contDiff_pi.2 fun p => contDiff_apply ℝ ℂ (v p)
+    contDiff_pi.2 fun p => contDiff_apply ℝ (fun _ => ℂ) (v p)
   unfold IsSmoothHerm
   rw [e]
   exact hA.comp hR.contDiffOn fun z hz => blocks_ne_zero_restrict hv hz
-
-theorem pullExists : PullExistsStatement := fun _ _ _ _ _ _ _ _ _ _ A hv =>
-  ⟨IndefiniteRowSideFullHecke.Inter.pullHerm hv A, IndefiniteRowSideFullHecke.Inter.isPullHerm_pullHerm hv A,
-    IsPullHerm.isSmoothHerm hv (IndefiniteRowSideFullHecke.Inter.isPullHerm_pullHerm hv A)⟩
 
 omit [Fintype K] [Fintype K'] in
 theorem pullDeg_add (κ : K → K') (a b : K → ℤ) : pullDeg κ (a + b) = pullDeg κ a + pullDeg κ b := by
@@ -49,8 +50,8 @@ theorem pullDeg_add (κ : K → K') (a b : K → ℤ) : pullDeg κ (a + b) = pul
   simp only [pullDeg, Function.extend, Pi.add_apply]
   split_ifs <;> simp
 
-omit [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)] in
 
+omit [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)] in
 theorem IsPullHerm.tensor {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} {A B : HermLine ι}
     {A' B' : HermLine ι'} (hA : IsPullHerm κ v A A') (hB : IsPullHerm κ v B B') :
     IsPullHerm κ v (A.tensor B) (A'.tensor B') := by
@@ -66,8 +67,8 @@ section Algebra
 
 variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_prod_X_pow [DecidableEq K] {J : Type*} [Fintype J] (q : J → Σ k, ι k) (e : J → ℕ) :
     IsMultiHomog (∏ j, X (q j) ^ e j : MRing ι)
       (fun k => ∑ j ∈ Finset.univ.filter (fun j => (q j).1 = k), e j) := by

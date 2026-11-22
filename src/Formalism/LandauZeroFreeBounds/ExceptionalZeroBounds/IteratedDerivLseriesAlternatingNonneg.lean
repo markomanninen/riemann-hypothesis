@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.IteratedDerivInvSubOneAtTwo
+module
+
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.IteratedDerivInvSubOneAtTwo
+
+@[expose] public section
 
 open Complex
 open scoped ComplexOrder Nat

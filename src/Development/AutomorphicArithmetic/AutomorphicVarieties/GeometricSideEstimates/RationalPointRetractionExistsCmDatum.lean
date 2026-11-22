@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.SplitEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.InfEmbGrpEq
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.SplitEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.InfEmbGrpEq
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC
 open GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum
@@ -30,7 +34,7 @@ private theorem ptF_rat (γ : GL (Fin a) E) (g : GA E a) (v : Fin a → E) :
   change vFin v ᵥ* _ = vFin (v ᵥ* γ.val) ᵥ* _
   rw [h, map_mul, Units.val_mul, Matrix.vecMul_vecMul]
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 private theorem pt_rat (γ : GL (Fin a) E) (g : GA E a) (v : Fin a → E) :
     pt (ratGL E a γ * g) v = pt g (v ᵥ* γ.val) := by

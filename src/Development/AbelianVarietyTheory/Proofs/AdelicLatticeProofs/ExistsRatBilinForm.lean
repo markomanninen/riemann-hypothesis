@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.RationalValueRealScalar
 
@@ -40,7 +44,7 @@ theorem exists_rat_bilinForm {U : Type} [AddCommGroup U] [Module ℝ U] (om : U 
   refine ⟨LinearMap.mk₂ ℚ q ?_ ?_ ?_ ?_, fun u v => hq u v⟩
   · intro u1 u2 v
     apply Rat.cast_injective (α := ℝ)
-    rw [Rat.cast_add, hq, hq, hq, map_add, LinearMap.map_add, LinearMap.add_apply]
+    rw [Rat.cast_add, hq, hq, hq, map_add (f := _), LinearMap.map_add (f := _), LinearMap.add_apply]
     ring
   · intro c u v
     apply Rat.cast_injective (α := ℝ)
@@ -48,7 +52,7 @@ theorem exists_rat_bilinForm {U : Type} [AddCommGroup U] [Module ℝ U] (om : U 
     ring
   · intro u v1 v2
     apply Rat.cast_injective (α := ℝ)
-    rw [Rat.cast_add, hq, hq, hq, map_add, LinearMap.map_add]
+    rw [Rat.cast_add, hq, hq, hq, map_add (f := _), LinearMap.map_add (f := _)]
     ring
   · intro c u v
     apply Rat.cast_injective (α := ℝ)

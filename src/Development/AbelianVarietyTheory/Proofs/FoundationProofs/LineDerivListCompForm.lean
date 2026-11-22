@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorCoeffConjugateSeries
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MonomialDerivCauchyBoundGaussianGrowth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorCoeffConjugateSeries
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MonomialDerivCauchyBoundGaussianGrowth
+
+@[expose] public section
 
 open Filter Topology
 
@@ -54,7 +58,7 @@ theorem summable_prod_half_pow : Summable fun α : σ →₀ ℕ => ∏ j, (1 / 
         (Finset.le_sup (f := fun α => Finset.univ.sup α) hα)
     refine (Finset.sum_le_sum_of_subset_of_nonneg hsub fun _ _ _ => by positivity).trans ?_
     rw [← Finset.prod_univ_sum (fun _ : σ => Finset.range (n + 1)) (fun _ k => (1 / 2 : ℝ) ^ k)]
-    exact Finset.prod_le_prod (fun _ _ => by positivity) fun _ _ => sum_geometric_two_le _
+    exact Finset.prod_le_prod₀ (fun _ _ => by positivity) fun _ _ => sum_geometric_two_le _
   exact h.comp_injective (i := fun α : σ →₀ ℕ => (α : σ → ℕ)) DFunLike.coe_injective
 
 theorem tsum_of_entire {f : (σ → ℂ) → ℂ} (hf : Differentiable ℂ f) (c : (σ →₀ ℕ) → ℂ)
@@ -79,7 +83,7 @@ theorem tsum_of_entire {f : (σ → ℂ) → ℂ} (hf : Differentiable ℂ f) (c
       exact_mod_cast Nat.factorial_pos _)
     rw [norm_mul, norm_prod]
     calc ‖c α‖ * ∏ j, ‖w j ^ α j‖ ≤ (C / ∏ k, (2 * R) ^ α k) * ∏ j, R ^ α j := by
-          refine mul_le_mul h2 (Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun j _ => ?_)
+          refine mul_le_mul h2 (Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun j _ => ?_)
             (by positivity) (by positivity)
           rw [norm_pow]
           exact pow_le_pow_left₀ (norm_nonneg _)
@@ -188,7 +192,8 @@ theorem ConjPair.sum {κ : Type*} [Fintype κ] {F F' : κ → VC D N N' → ℂ}
     (h : ∀ i, ConjPair D s (F i) (F' i)) :
     ConjPair D s (fun z => ∑ i, F i z) (fun z => ∑ i, F' i z) := by
   refine ⟨Differentiable.fun_sum fun i _ => (h i).1, Differentiable.fun_sum fun i _ => (h i).2.1, ?_⟩
-  rw [taylorDir_sum _ _ fun i _ => an0 (h i).1, taylorDir_sum _ _ fun i _ => an0 (h i).2.1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [taylorDir_sum _ _ fun i _ => an0 (h i).1, taylorDir_sum _ _ fun i _ => an0 (h i).2.1, map_sum]
   exact Finset.sum_congr rfl fun i _ => (h i).2.2
 
 theorem ConjPair.prod {κ : Type*} [Fintype κ] {F F' : κ → VC D N N' → ℂ}

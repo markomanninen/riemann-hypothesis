@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRetractionMulP
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuotientFiniteCommGroupSchemeClosedSubgrouStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuotPDivGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivSubgroupQuotientTowerRSEqSRes
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BialgHomFactorThroughSplitInjectionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotientTransitionSurjectiveSameSubgroupStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRetractionMulP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuotientFiniteCommGroupSchemeClosedSubgrouStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuotPDivGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivSubgroupQuotientTowerRSEqSRes
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BialgHomFactorThroughSplitInjectionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotientTransitionSurjectiveSameSubgroupStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,18 +44,18 @@ theorem ker_succ {C : Type} [CommRing C] [Bialgebra O C] (π : G.A 1 →ₐc[O] 
   Ideal.ext fun _ => Iff.rfl
 
 theorem torsion_le {C : Type} [CommRing C] [Bialgebra O C] (π : G.A 1 →ₐc[O] C) (m : ℕ) :
-    torsionIdeal O (G.A (m + 1)) p ≤ RingHom.ker (π.comp (levelRes G m)) := by
+    torsionIdeal (R := O) (A := G.A (m + 1)) p ≤ RingHom.ker (π.comp (levelRes G m)) := by
   refine (kerIdeal_le_ker_iff _
     ((π.comp (levelRes G m) : G.A (m + 1) →ₐc[O] C) : G.A (m + 1) →ₐ[O] C)).2 fun c => ?_
-  change π (levelRes G m (mulBy O _ p c)) = _
+  change π (levelRes G m (mulBy (R := O) (A := G.A (m + 1)) p c)) = _
   have h := G.mulBy_pow_self 1 (levelRes G m c)
   rw [pow_one] at h
   rw [map_mulBy, h, AlgHomClass.commutes, CoalgHomClass.counit_comp_apply]
 
 end GlobalTheory.QuotField
 
-open GlobalTheory.QuotField GlobalTheory.HTPair.QuotIsog in
 
+open GlobalTheory.QuotField GlobalTheory.HTPair.QuotIsog in
 theorem GlobalTheory.HTPair.exists_quot_field : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p]
     (G : PDivGroup p k) (C : Type) [CommRing C] [HopfAlgebra k C] [IsCocomm k C]
     [Module.Finite k C] (π : G.A 1 →ₐc[k] C), Function.Surjective π →
@@ -106,12 +110,12 @@ theorem GlobalTheory.HTPair.exists_quot_field : ∀ (p : ℕ) [Fact p.Prime] (k 
       tors_le := fun m => (hker m).symm ▸ torsion_le G π m }
   obtain ⟨H, q, hqs, hqk, hqc⟩ := GlobalTheory.HTPair.exists_quotPDivGroup p k G τ
   refine ⟨H, toQuot τ q hqs hqk hqc, fromQuot τ q hqc, ?_, ?_, ?_⟩
-  · refine hom_ext fun n => ?_
+  · refine PDivGroup.Hom.ext (funext fun n => ?_)
     rw [natCast_smul_id_app, comp_app]
     refine BialgHom.ext fun a => ?_
     change (toQuot τ q hqs hqk hqc).app n (q n (τ.s n a)) = _
     rw [toQuot_app_q, τ.j_s, G.res_mulP]
-  · refine hom_ext fun n => ?_
+  · refine PDivGroup.Hom.ext (funext fun n => ?_)
     rw [natCast_smul_id_app, comp_app]
     refine BialgHom.ext fun c => ?_
     obtain ⟨b, rfl⟩ := hqs n c

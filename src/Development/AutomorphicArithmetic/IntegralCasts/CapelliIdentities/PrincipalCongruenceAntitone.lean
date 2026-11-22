@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HeckeOperatorsCommuteOnAutomorphicForms
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FixedSubgroup
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsOpenStabilizerAddSmul
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FiniteSpanAddSmul
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ModerateGrowthAddSmul
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MirabolicRowCongruence
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HeckeOperatorsCommuteOnAutomorphicForms
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FixedSubgroup
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsOpenStabilizerAddSmul
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FiniteSpanAddSmul
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ModerateGrowthAddSmul
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MirabolicRowCongruence
+
+@[expose] public section
 
 open UpperTheory.V.Sd UpperTheory.V.TR in
 private theorem UpperTheory.Reformulated.B.Gr32.aut_zero {F : Type} [Field F] [NumberField F] [NumberField.IsTotallyReal F] :
@@ -78,13 +82,13 @@ theorem UpperTheory.Reformulated.B.Gr32.holLin :
     · change φ.1 _ + z * ψ.1 _ = _ * (φ.1 _ + z * ψ.1 _)
       rw [a3, b3]
       ring
-    · simp only [map_add, map_smul]
+    · simp only [map_add (f := _), map_smul]
       linear_combination (norm := module) a4 v + z • b4 v
-    · simp only [map_add, map_smul]
+    · simp only [map_add (f := _), map_smul]
       linear_combination (norm := module) a5 v + z • b5 v
   · intro φ ψ z c₀ a d₀ b h1 h2 x y hy yf
     have h := (h1 x y hy yf).add ((h2 x y hy yf).mul_left z)
-    convert h using 1
+    convert (preTransparency := .reducible) h using 1
     · funext ξ
       rw [UpperTheory.Reformulated.B.Gr32.coefAt_lin]
       ring

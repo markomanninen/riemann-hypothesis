@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfCongSet
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAfMemIntUIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDivsOfMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfCongSet
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAfMemIntUIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDivsOfMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,8 @@ theorem locK_tame {χ : HChar E} {P : HeightOneSpectrum (𝓞 E)} (h : χ.TameAt
 
 variable [StarRing E] {F : Type} [Field F] [NumberField F] [Algebra F E]
 
-omit [NumberField E] [NumberField F] in
 
+omit [NumberField E] [NumberField F] in
 theorem exists_of_star_eq (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E x) (hr : Module.finrank F E = 2)
     (hc : ∃ a : E, star a ≠ a) {x : E} (hx : star x = x) : ∃ k : F, algebraMap F E k = x := by
   have : FiniteDimensional F E := Module.finite_of_finrank_eq_succ hr
@@ -144,8 +148,8 @@ theorem under_eq_iff (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E x
       show star (((algebraMap (𝓞 F) (𝓞 E) c : 𝓞 E) : E)) = ((algebraMap (𝓞 F) (𝓞 E) c : 𝓞 E) : E)
       rw [hcoe, hF]
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem valuation_up (hr : Module.finrank F E = 2)
     (hu : ∀ v : HeightOneSpectrum (𝓞 F), v.asIdeal.ramificationIdxIn (𝓞 E) = 1) (Q : HeightOneSpectrum (𝓞 E)) (x : F) :
     Q.valuation E (algebraMap F E x) = (Q.under (𝓞 F)).valuation F x := by
@@ -162,7 +166,7 @@ theorem valuation_up (hr : Module.finrank F E = 2)
     rw [Ideal.ramificationIdx'_eq_ramificationIdx (p := (Q.under (𝓞 F)).asIdeal) (q := Q.asIdeal) hv0]
     exact he
   have hwv := IsDedekindDomain.HeightOneSpectrum.valuation_liesOver (K := F) E (Q.under (𝓞 F)) Q x
-  rw [he', pow_one] at hwv
+  rw [he, pow_one] at hwv
   exact hwv.symm
 
 theorem split_prod (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E x) (hr : Module.finrank F E = 2)
@@ -180,7 +184,7 @@ theorem split_prod (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E x) 
     exact ⟨a, ha, b, hb, hab⟩
   have hs1 : P.valuation E (algebraMap (𝓞 E) E b - 1) < 1 := by
     have : algebraMap (𝓞 E) E b - 1 = algebraMap (𝓞 E) E (-a) := by
-      rw [map_neg, ← map_one (algebraMap (𝓞 E) E), ← hab, map_add]; ring
+      rw [map_neg, ← map_one (algebraMap (𝓞 E) E), ← hab, map_add (f := _)]; ring
     rw [this, HeightOneSpectrum.valuation_lt_one_iff_mem]
     exact P.asIdeal.neg_mem ha
   have hs2 : P.valuation E (star (algebraMap (𝓞 E) E b)) < 1 := by
@@ -226,8 +230,8 @@ theorem split_prod (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E x) 
     rw [eq_mul_inv_iff_mul_eq₀ hyb0]; exact hyz.symm
   rw [hz, map_mul, map_inv, ← hPK, inv_eq_of_mul_eq_one_right htriv, hQK]
 
-open Classical in
 
+open Classical in
 theorem place_prod (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E x) (hr : Module.finrank F E = 2)
     (hc : ∃ a : E, star a ≠ a) (hu : ∀ v : HeightOneSpectrum (𝓞 F), v.asIdeal.ramificationIdxIn (𝓞 E) = 1)
     {χ : HChar E} (hχ : χ.TrivOn F) (ht : ∀ P, χ.TameAt P) {T : Finset (HeightOneSpectrum (𝓞 E))}
@@ -428,7 +432,7 @@ theorem valued_lt_of_mem {P : HeightOneSpectrum (𝓞 E)} {w : RInt F E} (h : w 
       exact (IsDedekindDomain.HeightOneSpectrum.valuation_lt_one_iff_mem P p).mpr hp
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [Subring.coe_add, map_add]
+      rw [Subring.coe_add, map_add (f := _)]
       exact lt_of_le_of_lt (Valued.v.map_add _ _) (max_lt hx hy)
     | smul r x _ hx =>
       rw [smul_eq_mul, Subring.coe_mul, map_mul, map_mul]
@@ -914,8 +918,8 @@ theorem prod_twist (hX : X.Ok) (hsel : IsSel X sel)
 
 end Main
 
-open Classical in
 
+open Classical in
 theorem prod_muAt : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (σ₀ : X.K →+* ℂ) (e : Fin R.m → X.Tau → ℤ) (m0 : Fin R.m → Formalism.L2.Host.HChar X.E) (eta : Formalism.L2.Host.HChar X.E), X.Ok → Pr.Ok → IsSel X sel → (∀ i, Pr.g i ∈ S) → (∀ v : HeightOneSpectrum (𝓞 X.F), v.asIdeal.ramificationIdxIn (𝓞 X.E) = 1) → Ch.Tied σ₀ (fun j τ => (e j τ : ℚ)) m0 eta → ∀ (j : Fin R.m) (z : X.E), z * star z = 1 → IsIntegral ℤ z → σ₀ (∏ P : rowSG Pr sel mu, muAt Ch sel mu cst j.1 P z) = ∏ τ, X.embC σ₀ τ z ^ (-(e j τ)) := by
   intro X Pr R Ch sel S mu cs σ₀ e m0 eta hX hPr hsel hS hu hT j z hz hzi
   have hzs : IsIntegral ℤ (star z) := hzi.map (starRingEnd X.E).toIntAlgHom

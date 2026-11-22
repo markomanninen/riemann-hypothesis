@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FockLin
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FockLin
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -110,7 +114,8 @@ theorem stepPure_of (hL : StepLift) (hM : StepMonoFactor) : StepPure := by
       have hc : combo f (∏ t, embS K t (P t)) =
           ∏ t, embS K t (∑ l ∈ L t, a t l • word1 l (P t)) := by
         rw [hcombo]
-        simp only [map_sum, map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul]
         rw [Finset.prod_univ_sum]
         refine Finset.sum_congr rfl fun w _ => ?_
         rw [prod_smul_eq, hL K n' (m + 1) w P]

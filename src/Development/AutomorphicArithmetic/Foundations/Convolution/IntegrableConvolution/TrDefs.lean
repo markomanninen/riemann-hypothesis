@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,9 +63,6 @@ def prodEig (V : Submodule ℂ H) (E : H →L[ℂ] H) (A : Fin (m + 1) → H →
 def jointEig (V : Submodule ℂ H) (E : H →L[ℂ] H) (A : Fin (m + 1) → H →L[ℂ] H) (y : ℝ) : Submodule ℂ H :=
   ⨅ i, eigIn (eigIn V E 1) (A i) y
 end
-
-def PositionsEx : Prop := ∀ m : ℕ, ∃ π : UnitaryRep PUnit.{1} ℂ,
-  Slots π ⊤ m (fun _ => (1 : PUnit.{1} →* PUnit.{1})) 1 (fun _ => 1) (LinearIsometryEquiv.refl ℂ ℂ)
 
 def CutIrr : Prop :=
   ∀ (Γ G H : Type) [Group Γ] [TopologicalSpace Γ] [Group G] [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

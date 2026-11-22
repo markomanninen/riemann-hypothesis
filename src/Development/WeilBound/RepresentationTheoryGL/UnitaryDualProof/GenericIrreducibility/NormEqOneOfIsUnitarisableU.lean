@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIrreducibleSubquotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitarisableSegmentTwistPrecedesAddOneLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIrreducibleSubquotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitarisableSegmentTwistPrecedesAddOneLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem norm_eq_one_of_unitCC {N : ℕ} {X : Type} [AddCommGroup X] [Module ℂ 
   have : c = (ω z : ℂ) := smul_left_injective ℂ hv e
   rw [this, h1]
 
-theorem hasCentralChar_nu_u (x : IrrGL k) {ω : kˣ →* ℂˣ} (h : HasCentralChar x.rep ω) (s : ℂ) :
+theorem hasCentralChar_nu_u (x : IrrGL (k := k)) {ω : kˣ →* ℂˣ} (h : HasCentralChar x.rep ω) (s : ℂ) :
     HasCentralChar (x.nu s).rep (ω * absPow k s ^ x.1) := by
   have h1 := hasCentralChar_twist h (absPow k s)
   rw [Fintype.card_fin] at h1
@@ -47,7 +51,7 @@ theorem sum_range_mul_two_u (l : ℕ) : (∑ i ∈ Finset.range l, (i : ℝ)) * 
   | zero => simp
   | succ n ih => rw [Finset.sum_range_succ, add_mul, ih]; push_cast; ring
 
-theorem log_norm_centralChar_u {δ : IrrGL k} {Δ : Segment k} (hL : IsLSeg Δ δ.rep) (hU : UnitCC δ.rep)
+theorem log_norm_centralChar_u {δ : IrrGL (k := k)} {Δ : Segment k} (hL : IsLSeg Δ δ.rep) (hU : UnitCC δ.rep)
     {ω : kˣ →* ℂˣ} (hω : HasCentralChar Δ.first.rep ω) (z : kˣ) :
     Real.log ‖(ω z : ℂ)‖ = -((Δ.d : ℝ) * ((Δ.len : ℝ) - 1) / 2) * Real.log (nabs k z) := by
   obtain ⟨hd, hi, f, hf, -⟩ := hL
@@ -76,7 +80,7 @@ theorem log_norm_centralChar_u {δ : IrrGL k} {Δ : Segment k} (hL : IsLSeg Δ �
   linear_combination hc - ((Δ.d : ℝ) * Real.log (nabs k z) / 2) * hS
 
 theorem add_one_le_of_precedes_u (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (δ δ' : IrrGL k) (Δ Δ' : Segment k) (hL : IsLSeg Δ δ.rep) (hU : UnitCC δ.rep) (hL' : IsLSeg Δ' δ'.rep)
+    (δ δ' : IrrGL (k := k)) (Δ Δ' : Segment k) (hL : IsLSeg Δ δ.rep) (hU : UnitCC δ.rep) (hL' : IsLSeg Δ' δ'.rep)
     (hU' : UnitCC δ'.rep) (x y : ℝ) (hP : (Δ.nu x).Precedes (Δ'.nu y)) : x + 1 ≤ y := by
   obtain ⟨⟨-, -, hnsub⟩, j, hj, hfirst⟩ := hP
   have hf : Δ'.first.nu (y : ℂ) = (Δ.first.nu (x : ℂ)).nu (j : ℂ) := hfirst

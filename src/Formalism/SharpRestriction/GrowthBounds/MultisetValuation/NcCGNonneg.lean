@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LambdaIndexTwo
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LambdaIndexTwo
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ section Adele
 
 variable {F : Type} [Field F] [NumberField F]
 
-open Classical in
 
+open Classical in
 def ind (S : Finset (HeightOneSpectrum (𝓞 F))) : Af F :=
   ⟨fun u => if u ∈ S then 1 else 0, Eventually.of_forall fun u => by
     by_cases h : u ∈ S

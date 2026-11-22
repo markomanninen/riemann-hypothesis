@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVInjective
-import CompanionTheory.AutomorphicTheory.SiegelWeilFiniteness.Bridge
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Assembly
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVInjective
+public import CompanionTheory.AutomorphicTheory.SiegelWeilFiniteness.Bridge
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Assembly
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR GlobalTheory.CompanionTheory.RedCov
 open Formalism.UG (cT)
@@ -11,8 +15,8 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.RedCov
 
-open GroundTheory.Automorphic GroundTheory.Heights₂.Heights.FiniteCovolume Module in
 
+open GroundTheory.Automorphic GroundTheory.Heights₂.Heights.FiniteCovolume Module in
 theorem exists_ratPts_sends_isotropic : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J → ∀ (r : ℕ) (X Y : Matrix (Fin n) (Fin (r + 1)) E), IsWittFrame σ J X Y → ∀ v : Fin n → E, v ≠ 0 → hE σ J v v = 0 → ∃ γ ∈ ratPts σ J, Sends σ J γ (Xᵀ 0) v := by
   intro F E _ _ _ _ _ σ hσ n J hJ r X Y hW v hv hvv
   obtain ⟨hF, hEc, h2, hc⟩ := hσ

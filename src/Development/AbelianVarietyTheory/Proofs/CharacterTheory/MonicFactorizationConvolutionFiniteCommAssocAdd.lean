@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL
 
@@ -10,11 +14,9 @@ variable {F : Type} [Field F]
 theorem finite_monic_factorisations (P : F[X]) :
     {x : F[X] × F[X] | x.1.Monic ∧ x.2.Monic ∧ x.1 * x.2 = P}.Finite := by
   by_cases hP : P = 0
-  · convert Set.finite_empty
-    ext x
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-    rintro ⟨h1, h2, h3⟩
-    exact (h1.mul h2).ne_zero (h3.trans hP)
+  · refine Set.finite_empty.subset ?_
+    rintro x ⟨h1, h2, h3⟩
+    exact False.elim ((h1.mul h2).ne_zero (h3.trans hP))
   · have hfin : {D : F[X] | D.Monic ∧ D ∣ P}.Finite := by
       letI : Fintype {D : F[X] | D.Monic ∧ D ∣ P} := Polynomial.fintypeSubtypeMonicDvd P hP
       exact Set.toFinite _

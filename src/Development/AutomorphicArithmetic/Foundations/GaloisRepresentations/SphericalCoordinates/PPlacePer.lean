@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FinrankOfPlace
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FinrankOfPlace
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -26,12 +31,12 @@ private theorem exists_extend {M V E : Type} [AddCommGroup M] [AddCommGroup V] [
   refine ⟨AddMonoidHom.mk' (fun w => ((m w : ℚ)⁻¹) • P (u w)) ?_, ?_⟩
   · intro a b
     have hab : (m a * m b) • (a + b) = j (m b • u a + m a • u b) := by
-      rw [map_add, map_nsmul, map_nsmul, ← h a, ← h b, smul_add, mul_smul, mul_smul,
+      rw [map_add (f := _), map_nsmul, map_nsmul, ← h a, ← h b, smul_add, mul_smul, mul_smul,
         smul_comm (m a) (m b) a]
     have hk := key (a + b) (m a * m b) _ (mul_ne_zero (hm a) (hm b)) hab
     have hma : (m a : ℚ) ≠ 0 := by exact_mod_cast hm a
     have hmb : (m b : ℚ) ≠ 0 := by exact_mod_cast hm b
-    rw [hk, map_add, map_nsmul, map_nsmul, smul_add, ← Nat.cast_smul_eq_nsmul ℚ, ← Nat.cast_smul_eq_nsmul ℚ,
+    rw [hk, map_add (f := _), map_nsmul, map_nsmul, smul_add, ← Nat.cast_smul_eq_nsmul ℚ, ← Nat.cast_smul_eq_nsmul ℚ,
       smul_smul, smul_smul]
     push_cast
     congr 2 <;> field_simp
@@ -54,7 +59,8 @@ private theorem period_of_basis {M : Type} [AddCommGroup M] [Module.Free ℤ M] 
   have hPx : ∀ x, P x = ∑ i, (b.repr x i) • v i := by
     intro x
     conv_lhs => rw [← b.sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => map_zsmul _ _ _
   have hsp : ⊤ ≤ Submodule.span ℝ (Set.range v) := by
     rw [← hs]
@@ -135,7 +141,7 @@ theorem UpperTheory.Gal.W2.placePer_of :
     have hsc := herm_scale hH hpos (inv_pos.mpr hsR)
     refine ⟨Q, ⟨fun c w => ?_, ?_, ((((s : ℝ))⁻¹ : ℝ) : ℂ) • Hm, hsc.1, hsc.2, fun u w => ?_⟩, hQ⟩
     · obtain ⟨m, a, hm, h⟩ := hden w
-      apply IsAddTorsionFree.nsmul_right_injective hm
+      refine nsmul_right_injective hm ?_
       show m • Q (actQ D c w) = m • (ρ c *ᵥ Q w)
       have e1 : m • Q (actQ D c w) = P (c • a) := by
         rw [← map_nsmul, ← map_nsmul (actQ D c), h, ← hact, hQ]

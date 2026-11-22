@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+module
+
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -231,7 +235,8 @@ theorem span_top_vectors : Qr.SpanTop := by
   let N : Submodule ℂ V :=
     { carrier := {m | m ∈ Cl E L M ∧ ∀ a b, ¬ L a b → E a b m ∈ Cl E L M}
       add_mem' := fun {x y} hx hy => ⟨add_mem hx.1 hy.1, fun a b h => by
-        rw [map_add]; exact add_mem (hx.2 a b h) (hy.2 a b h)⟩
+        rw [LinearMap.map_add]
+        exact add_mem (hx.2 a b h) (hy.2 a b h)⟩
       zero_mem' := ⟨zero_mem _, fun a b _ => by rw [map_zero]; exact zero_mem _⟩
       smul_mem' := fun c x hx => ⟨Submodule.smul_mem _ c hx.1, fun a b h => by
         rw [map_smul]; exact Submodule.smul_mem _ c (hx.2 a b h)⟩ }
@@ -334,7 +339,8 @@ theorem span_singular_vectors : Qr.SpanSing := by
   let N : Submodule ℂ V :=
     { carrier := {m | m ∈ M ∧ ∀ a b : Fin (n + 1), a ≤ b → E a b m ∈ M}
       add_mem' := fun {x y} hx hy => ⟨add_mem hx.1 hy.1, fun a b h => by
-        rw [map_add]; exact add_mem (hx.2 a b h) (hy.2 a b h)⟩
+        rw [LinearMap.map_add]
+        exact add_mem (hx.2 a b h) (hy.2 a b h)⟩
       zero_mem' := ⟨zero_mem _, fun a b _ => by rw [map_zero]; exact zero_mem _⟩
       smul_mem' := fun c x hx => ⟨Submodule.smul_mem _ c hx.1, fun a b h => by
         rw [map_smul]; exact Submodule.smul_mem _ c (hx.2 a b h)⟩ }

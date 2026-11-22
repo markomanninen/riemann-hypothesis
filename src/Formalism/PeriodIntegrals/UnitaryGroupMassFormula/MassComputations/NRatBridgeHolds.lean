@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.NfinOfRatN
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.NfinOfRatN
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.OperatorsCommuteTranslations
+module
+
+public import Formalism.HermitianCurvature.OperatorsCommuteTranslations
+
+@[expose] public section
 
 open Matrix Finset Formalism.QuantumDeterminants
 

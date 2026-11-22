@@ -1,8 +1,28 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ZariskiLocal
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ZariskiLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
+
+section
+
+open AlgebraicGeometry CategoryTheory TopologicalSpace
+
+universe c236Ext c236Scheme
+
+private noncomputable abbrev H.linearMapV436 {X : Scheme.{c236Scheme}}
+    [HasExt.{c236Ext} (Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpCat.{c236Scheme})]
+    (A : Type*) [CommRing A] [Algebra A Γ(X, ⊤)]
+    {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) :
+    Sheaf.H.{c236Ext} (modulesAb F) n →ₗ[A] Sheaf.H.{c236Ext} (modulesAb G) n :=
+  H.linearMap A φ n
+
+end
 
 open AlgebraicGeometry CategoryTheory Opposite TopologicalSpace Limits IsLocalRing MonoidalCategory
 
@@ -53,8 +73,8 @@ lemma existsUnique_glue_of_supportedIn {F : X.Modules} {T : Set X}
 variable {W₁ W₂ : X.Opens} (hcov : W₁ ⊔ W₂ = ⊤)
   (hdisj : Disjoint ((W₁ ⊓ W₂ : X.Opens) : Set X) (closedFibre (A := A) X))
 
-variable (A) in
 
+variable (A) in
 def splitSection (n : ℕ) : Γ(fibreQuot A X n, ⊤) :=
   (existsUnique_glue_of_supportedIn (supportedIn_fibreQuot_closedFibre n) hcov hdisj
     (resF (fibreQuot A X n) (le_top : W₁ ≤ ⊤) (fibreOne A X n)) 0).exists.choose
@@ -83,8 +103,8 @@ lemma quotPowMap_splitSection (n : ℕ) :
   · rw [resF_app, h₁, ← resF_app, quotPowMap_fibreOne]
   · rw [resF_app, h₂, map_zero]
 
-variable (A X) in
 
+variable (A X) in
 abbrev fibreTower : ∀ n, Sheaf.H.{u} (modulesAb (fibreQuot A X (n + 1))) 0 →ₗ[A]
     Sheaf.H.{u} (modulesAb (fibreQuot A X n)) 0 :=
   fun n => H.linearMap A (quotPowMap (maximalIdeal A) (𝟙_ X.Modules) n) 0
@@ -98,8 +118,8 @@ lemma mem_towerLimit_splitSection :
   exact (Sheaf.H.equiv₀_symm_naturality isTerminalTop _ _).trans
     (congrArg _ (quotPowMap_splitSection hcov hdisj n))
 
-include hcov hdisj in
 
+include hcov hdisj in
 theorem false_of_split (hΓ : Function.Surjective (algebraMap A Γ(X, ⊤)))
     (hsurj : ∀ x : (∀ n, Sheaf.H.{u} (modulesAb (fibreQuot A X n)) 0),
       x ∈ towerLimit (fibreTower A X) → x 0 ∈ LinearMap.range
@@ -111,7 +131,7 @@ theorem false_of_split (hΓ : Function.Surjective (algebraMap A Γ(X, ⊤)))
   obtain ⟨a, ha⟩ := hΓ g
   have hs : splitSection A hcov hdisj 0 = (algebraMap A Γ(X, ⊤) a) • fibreOne A X 0 := by
     have e1 : Sheaf.H.equiv₀ (modulesAb (fibreQuot A X 0)) isTerminalTop
-        (H.linearMap A (quotPowπ (maximalIdeal A) (𝟙_ X.Modules) 0) 0 h) =
+        (H.linearMapV436 A (quotPowπ (maximalIdeal A) (𝟙_ X.Modules) 0) 0 h) =
           splitSection A hcov hdisj 0 := by
       rw [hh]
       exact AddEquiv.apply_symm_apply _ _
@@ -150,8 +170,8 @@ section Connected
 variable {A : Type u} [CommRing A] [IsNoetherianRing A] [IsLocalRing A] {X : Scheme.{u}}
   [X.Over (Spec (.of A))]
 
-omit [IsNoetherianRing A] in
 
+omit [IsNoetherianRing A] in
 lemma isClosed_closedFibre : IsClosed (closedFibre (A := A) X) :=
   (isClosed_singleton_closedPoint A).preimage (X ↘ Spec (.of A)).base.hom.continuous
 

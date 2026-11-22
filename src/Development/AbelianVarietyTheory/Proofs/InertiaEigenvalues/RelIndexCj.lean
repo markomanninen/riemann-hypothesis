@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelIndexNeZeroOfCover
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumSmallerLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelIndexNeZeroOfCover
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumSmallerLevel
+
+@[expose] public section
+
 open GlobalTheory.ClassRefine GlobalTheory.ClassPet
 
 noncomputable section
@@ -63,7 +68,7 @@ theorem Cover.of_relIndex {Γ H H' : Subgroup G} (h : Cover Γ H) (hne : H'.relI
 theorem dsum_eq {Γ H : Subgroup G} {T : Finset G} (hT : Reps Γ H T) {Φ : G → ℂ} (hl : ∀ (γ : Γ) g, Φ ((γ : G) * g) = Φ g)
     (hr : ∀ κ ∈ H, ∀ g, Φ (g * κ) = Φ g) : dsum Γ H Φ = wsum Γ H T Φ := by
   have h : ∃ T, Reps Γ H T := ⟨T, hT⟩
-  rw [dsum, dif_pos h, wsum, sum_classReps_refine le_rfl hT h.choose_spec Φ hl hr (F := {1}) (by simp [H.one_mem])
+  rw [dsum, dite_eq_left h, wsum, sum_classReps_refine le_rfl hT h.choose_spec Φ hl hr (F := {1}) (by simp [H.one_mem])
     (fun κ hκ => ⟨1, by simpa using hκ, fun u hu => by simpa using hu.1⟩)]
   simp [wsum]
 
@@ -72,7 +77,7 @@ theorem dsum_refine {Γ H H' : Subgroup G} (hle : H' ≤ H) (hc : Cover Γ H') {
     (hFu : ∀ κ ∈ H, ∃! u, u ∈ F ∧ u⁻¹ * κ ∈ H') : dsum Γ H' Φ = dsum Γ H fun g => ∑ u ∈ F, Φ (g * u) := by
   have h := (hc.mono hle).reps
   have h' := hc.reps
-  rw [dsum, dif_pos h', dsum, dif_pos h, wsum, wsum, sum_classReps_refine hle h.choose_spec h'.choose_spec Φ hl hr hF hFu]
+  rw [dsum, dite_eq_left h', dsum, dite_eq_left h, wsum, wsum, sum_classReps_refine hle h.choose_spec h'.choose_spec Φ hl hr hF hFu]
 
 theorem dsum_mul (Γ H : Subgroup G) (c : ℂ) (Φ : G → ℂ) : dsum Γ H (fun g => c * Φ g) = c * dsum Γ H Φ := by
   unfold dsum wsum

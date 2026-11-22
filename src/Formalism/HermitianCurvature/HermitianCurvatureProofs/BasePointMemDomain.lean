@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentiableAtOfPuncturedSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockRelationTwistedHeight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentiableAtOfPuncturedSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockRelationTwistedHeight
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ContDiff
@@ -253,8 +257,8 @@ theorem rel_ci : Rel (rdL hn y hdom) (mkP (X.op ⟨0, by omega⟩ 2) (X.op ⟨0,
     (fun Φ τ hτ => (operators_at_base_point hn hc hτ _ (PBH.diff_rad Φ.2 _ (pointWithZeroSecondCoord_mem_chart_of_restricted hn hc hτ))).2.2.1)
     (fun Φ τ hτ => (operators_at_base_point hn hc hτ _ (PBH.diff_rad Φ.2 _ (pointWithZeroSecondCoord_mem_chart_of_restricted hn hc hτ))).2.2.2.2.2)
 
-include hc in
 
+include hc in
 theorem rd_act {L : R.LevelData (Pr (RadSp k n z z' π π')) n} (hL : IsActualLevel X L)
     {S : Type} [Fintype S] [DecidableEq S] (w : List (Wd.Letter ℂ S)) (x : Wd.Ix S → RadSp k n z z' π π')
     (e : Wd.Ix S) :

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsTranslSum
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsIffCommIsOfAndLiftSubsingleton
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.TorsionRationalOverFiniteExtensionLevelStructure
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.AlphaPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsTranslSum
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsIffCommIsOfAndLiftSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.TorsionRationalOverFiniteExtensionLevelStructure
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.AlphaPair
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -144,7 +148,8 @@ theorem char_sum [IsDomain Γ(Y, ⊤)] [IsCommMonObj A] (hA : IsAbelianScheme A)
     have : χ d = 1 := Units.ext (DFunLike.congr_fun h d)
     exact hd (this ▸ hw d)
   have h0 := congrArg (cf r z) (sum_hom_units_eq_zero X hX)
-  rw [map_sum, map_zero] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h0
   rw [← zero_mul (gam β β₀ (r ≫ (translT A c).left) z J * (gam β β₀ r z J)⁻¹).val, ← h0, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d _ => ?_
   refine Eq.trans (congrArg Units.val ?_) (Units.val_mul (cu r z (χ d)) _)

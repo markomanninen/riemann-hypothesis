@@ -1,7 +1,11 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.P
 
@@ -17,7 +21,15 @@ theorem locDens_expand {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtla
       ∑ S : Finset (Fin e), (-1 : ℝ) ^ (e - S.card) *
         locDens A (fun i => if i ∈ S then P i else Θ) j y := by
   classical
-  obtain ⟨M, hM⟩ := ReciprocityTheory.AnForm.A.exists_multilinearMap_eq_mdisc (D := e)
+  obtain ⟨M, hM⟩ := (by
+    show ∃ F : MultilinearMap (RingHom.id ℂ)
+        (fun _ : Fin e => Matrix (Fin e) (Fin e) ℂ) ℂ,
+        ⇑F = _root_.ReciprocityTheory.AnForm.mdisc
+    refine ⟨MultilinearMap.mk' _root_.ReciprocityTheory.AnForm.mdisc
+      _root_.ReciprocityTheory.AnForm.A.mdisc_update_add ?_, rfl⟩
+    intro A k c B
+    simpa only [RingHom.id_apply, smul_eq_mul] using
+      (_root_.ReciprocityTheory.AnForm.A.mdisc_update_smul A k c B))
   set a : Fin e → Matrix (Fin e) (Fin e) ℂ :=
     fun k => hessC (fun y' => (P k).φ ((A.chart j).symm y) ((A.chart j).symm y')) y with ha
   set b : Matrix (Fin e) (Fin e) ℂ :=
@@ -50,7 +62,7 @@ theorem locDens_expand {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtla
       Sᶜ.piecewise (fun k => (-1 : ℂ) • S.piecewise a (fun _ => b) k) (S.piecewise a (fun _ => b)) := by
     funext k
     by_cases hk : k ∈ S <;> simp [hk, Finset.piecewise]
-  rw [h3, M.map_piecewise_smul, Finset.prod_const, Finset.card_compl, Fintype.card_fin, smul_eq_mul]
+  rw [h3, M.map_piecewise_smul, RingHom.id_apply, Finset.prod_const, Finset.card_compl, Fintype.card_fin, smul_eq_mul]
   have : ((-1 : ℂ) ^ (e - S.card)) = (((-1 : ℝ) ^ (e - S.card) : ℝ) : ℂ) := by push_cast; rfl
   rw [this, Complex.re_ofReal_mul]
 
@@ -272,10 +284,7 @@ theorem conv_dens_of_closed {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHo
     rw [show Gm = fun Ms => (e.factorial : ℝ) * (2 / Real.pi) ^ e * (mdisc Ms).re from funext hGm]
     refine continuous_const.mul (Complex.continuous_re.comp ?_)
     unfold mdisc
-    refine continuous_const.mul (continuous_finset_sum _ fun T' _ => continuous_const.mul ?_)
-    first
-      | exact Continuous.matrix_det (continuous_finset_sum _ fun k _ => continuous_apply k)
-      | fun_prop
+    fun_prop
   have hE : ∀ u : Fin e → X → ℝ,
       (∀ k, ∀ y ∈ K, ∀ᶠ z in 𝓝 y, ContDiffAt ℝ (2 : ℕ) (u k ∘ (A.chart j).symm) z) →
       ∀ y ∈ K, locDens A (fun i => th i + LocPot.ofFun (u i) + Θ) j y =

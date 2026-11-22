@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Topology
 open scoped ENNReal NNReal Matrix
@@ -38,7 +42,8 @@ theorem unimodular_of_isFundamentalDomain :
   let c : ℝ≥0∞ := Measure.haarScalarFactor μ.inv μ
   have hc : μ.inv = c • μ := Measure.isMulLeftInvariant_eq_smul μ.inv μ
   have h2 : Measure.map Inv.inv (Measure.map Inv.inv μ) = c ^ 2 • μ := by
-    rw [← Measure.inv_def μ, hc, Measure.map_smul, ← Measure.inv_def μ, hc, smul_smul, pow_two]
+    rw [← Measure.inv_def μ, hc, Measure.map_smul c continuous_inv.measurable.aemeasurable,
+      ← Measure.inv_def μ, hc, smul_smul, pow_two]
   have μeq : μ = c ^ 2 • μ := by
     rw [Measure.map_map continuous_inv.measurable continuous_inv.measurable] at h2
     simpa only [inv_involutive, Function.Involutive.comp_self, Measure.map_id] using h2

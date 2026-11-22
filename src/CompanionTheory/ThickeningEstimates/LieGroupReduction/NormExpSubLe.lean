@@ -1,4 +1,8 @@
-import CompanionTheory.ThickeningEstimates.LieGroupReduction.IsoOfIntegral
+module
+
+public import CompanionTheory.ThickeningEstimates.LieGroupReduction.IsoOfIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,6 +114,7 @@ theorem ld_dil_one {H : ℝ → Eu l →L[ℝ] Eu l} {H' : Eu l →L[ℝ] Eu l} 
 theorem ld_dil {B : ℝ → Eu l →L[ℝ] Eu l} {B' : Eu l →L[ℝ] Eu l} {t₀ : ℝ} (h : HasDerivAt B B' t₀) (h0 : IsUnit (B t₀)) :
     LD (fun t => dil (B t)) (fun f => vf (Ring.inverse (B t₀) * B') (dil (B t₀) f)) t₀ := fun f => by
   refine ld_dil_one (h.const_mul (Ring.inverse (B t₀))) (Ring.inverse_mul_cancel _ h0) _ ?_
+  letI : CompleteSpace (Eu l →L[ℝ] Eu l) := ContinuousLinearMap.instCompleteSpace
   filter_upwards [h.continuousAt.eventually (Units.isOpen.mem_nhds h0)] with t ht x
   rw [dil_apply ht, dil_apply h0, ← ContinuousLinearMap.mul_apply, ← mul_assoc, Ring.mul_inverse_cancel _ h0, one_mul]
 

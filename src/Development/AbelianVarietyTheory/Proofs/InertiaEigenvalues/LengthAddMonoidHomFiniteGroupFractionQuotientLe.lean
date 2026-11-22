@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.CharacterColumnKernels.StatementRho
+module
+
+public import Mathlib
+public import Formalism.CharacterColumnKernels.StatementRho
+
+@[expose] public section
+
 open Formalism.NG
 
 namespace GlobalTheory.HomLen
@@ -203,11 +208,11 @@ theorem length_addMonoidHom_le_of_card_eq (l : ℕ) [Fact l.Prime] [Algebra ℤ_
   have ihq := ih _ hlt (A ⧸ B) rfl
   have hB := length_cyclic_le l eM a p ha
   have hv : padicValNat l n = padicValNat l (Nat.card (A ⧸ B)) + (if p = l then 1 else 0) := by
-    rw [hcard, padicValNat.mul hq0 hp.ne_zero]
+    rw [hcard, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hq0 hp.ne_zero]
     congr 1
     split_ifs with h
-    · subst h; exact padicValNat_self
-    · exact padicValNat_primes (Ne.symm h)
+    · subst h; simpa only [Nat.padicValNat_def] using (Nat.Prime.multiplicity_self (p := p))
+    · simpa only [Nat.padicValNat_def] using (multiplicity_primes (p := l) (q := p) (Ne.symm h))
   calc Module.length O (A →+ M)
       ≤ Module.length O (A ⧸ B →+ M) + Module.length O (B →+ M) := length_le_add B
     _ ≤ Module.length O (O ⧸ Ideal.span {(l : O)}) * (padicValNat l (Nat.card (A ⧸ B)) : ℕ∞) +

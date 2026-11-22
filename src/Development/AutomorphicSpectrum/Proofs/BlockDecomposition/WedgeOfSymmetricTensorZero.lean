@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,7 @@ theorem wedgeT_tmul_self (a : V) : wedgeT (R := R) V (a ⊗ₜ[R] a) = 0 := by
 theorem wedgeT_tmul_add_swap (a b : V) :
     wedgeT (R := R) V (a ⊗ₜ[R] b) + wedgeT (R := R) V (b ⊗ₜ[R] a) = 0 := by
   have h := wedgeT_tmul_self (R := R) (a + b)
-  rw [TensorProduct.add_tmul, TensorProduct.tmul_add, TensorProduct.tmul_add, map_add, map_add,
+  rw [TensorProduct.add_tmul, TensorProduct.tmul_add, TensorProduct.tmul_add, map_add (f := _), map_add (f := _),
     map_add, wedgeT_tmul_self, wedgeT_tmul_self, zero_add, add_zero] at h
   exact h
 
@@ -46,7 +50,7 @@ theorem wedgeT_eq_zero_of_basis {ι : Type} [Fintype ι] [DecidableEq ι] (b : M
       | zero => simp
       | tmul x y =>
         simp [hB, Module.Basis.tensorProduct_repr_tmul_apply, mul_comm]
-      | add x y hx hy => simp [map_add, hx, hy]
+      | add x y hx hy => simp [map_add (f := _), hx, hy]
     intro i j
     rw [← key i j t, ht]
   have hexp : t = ∑ i, ∑ j, B.repr t (i, j) • (b i ⊗ₜ[R] b j) := by
@@ -54,7 +58,8 @@ theorem wedgeT_eq_zero_of_basis {ι : Type} [Fintype ι] [DecidableEq ι] (b : M
     rw [Fintype.sum_prod_type]
     simp [hB, Module.Basis.tensorProduct_apply]
   rw [hexp]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
   refine sum_sum_eq_zero_of_antisymm
     (fun i j ↦ B.repr t (i, j) • wedgeT (R := R) V (b i ⊗ₜ[R] b j)) ?_ ?_ Finset.univ
   · intro i
@@ -72,7 +77,7 @@ theorem map_wedgeT {W : Type} [AddCommGroup W] [Module R W] (r : W →ₗ[R] V) 
     congr 1
     funext i
     fin_cases i <;> rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem wedgeT_eq_zero_of_symm (R V : Type) [CommRing R] [AddCommGroup V] [Module R V]
     [Module.Finite R V] [Module.Projective R V] (t : V ⊗[R] V)
@@ -87,13 +92,13 @@ theorem wedgeT_eq_zero_of_symm (R V : Type) [CommRing R] [AddCommGroup V] [Modul
     induction s using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hback : ∀ s : V ⊗[R] V, TensorProduct.map r r (TensorProduct.map i i s) = s := by
     intro s
     induction s using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [hri]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hW : wedgeT (R := R) (Fin n → R) (TensorProduct.map i i t) = 0 :=
     wedgeT_eq_zero_of_basis (Pi.basisFun R (Fin n)) _ (by rw [hmap, hcomm])
   have := map_wedgeT r (TensorProduct.map i i t)

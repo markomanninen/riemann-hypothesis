@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadsZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsHorizontalGeneratorOfCharts
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactification
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetLineTrivialOfToroidal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsVecEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniformisedFibreOfFramedComplexPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDerivAt0CompLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasMarkingTransportOfCmTypeEmbedding
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComponentGeometricallyIrreducible
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.AppellHumbertSectionEntireWithFactor
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ExpRowsPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnFrameC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadsZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsHorizontalGeneratorOfCharts
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactification
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetLineTrivialOfToroidal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsVecEquiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniformisedFibreOfFramedComplexPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDerivAt0CompLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasMarkingTransportOfCmTypeEmbedding
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComponentGeometricallyIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.AppellHumbertSectionEntireWithFactor
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ExpRowsPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnFrameC
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -42,8 +46,8 @@ theorem herm_map {La : Type} {g g' : ℕ} {Hm : Matrix (Fin g) (Fin g) ℂ} {Hm'
   rw [map_smul] at this
   simpa [herm] using this
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem eq_zero_of_eig {ρ : E →+* ℂ} {v : Fin g → ℂ} (hv : ∀ a : 𝓞 E, tyAct ty a v = ρ a • v) {n : Fin g}
     (hn : ty n ≠ ρ) : v n = 0 := by
   by_contra h0
@@ -65,8 +69,8 @@ theorem herm_eq_zero (hP : IsPeriod D ty P) (hE : ∀ x y, (hermForm Hm (P x) (P
   rw [hv, hermForm_smul_right, emb_bar, Complex.star_def, Complex.conj_conj] at this
   simpa [hermForm, tyAct, dotProduct, Pi.single_apply] using this
 
-open Classical in
 
+open Classical in
 theorem flatCoord_ne_zero (hP : IsPeriod D ty P) (hE : ∀ x y, (hermForm Hm (P x) (P y)).im = D.EF x y)
     {ρ : E →+* ℂ} {p q : ℕ} (hr : p + q = D.p + D.q) {x : Fin q ⊕ Fin p → D.La} (hx : LinearIndependent (𝓞 E) x)
     {V : Fin p → Fin g → ℂ} {W : Fin q → Fin g → ℂ} {C : Fin q ⊕ Fin p → Fin p → ℂ}
@@ -93,7 +97,7 @@ theorem flatCoord_ne_zero (hP : IsPeriod D ty P) (hE : ∀ x y, (hermForm Hm (P 
     simp only [hz₀, tyAct, Pi.smul_apply, smul_eq_mul, Finset.sum_apply, Finset.mul_sum, mul_left_comm _ (c _), this]
   let f : (Fin g → ℂ) →ₗ[ℝ] ℂ :=
     { toFun z := -(Real.pi : ℂ) * hermForm Hm z₀ z + lam (pr z)
-      map_add' z w := by rw [hermForm_add_right, map_add, map_add]; ring
+      map_add' z w := by rw [hermForm_add_right, map_add (f := _), map_add (f := _)]; ring
       map_smul' r z := by
         rw [← Complex.coe_smul, hermForm_smul_right, map_smul, map_smul]
         simp only [Complex.star_def, Complex.conj_ofReal, smul_eq_mul, RingHom.id_apply, Complex.real_smul]; ring }
@@ -108,7 +112,8 @@ theorem flatCoord_ne_zero (hP : IsPeriod D ty P) (hE : ∀ x y, (hermForm Hm (P 
   have fx : ∀ k, f (P (x k)) = 0 := fun k => by
     have e : pr (P (x k)) = ∑ b, C k b • V b := funext fun n => by rw [hpr, hC]; simp
     have := congrFun hc k
-    rw [hf, e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf, e, map_sum]
     simp only [Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Matrix.of_apply, Sum.elim_inl, Sum.elim_inr] at this
     simp only [hz₀, hermForm, sum_dotProduct, smul_dotProduct, map_smul, hlam, smul_eq_mul, Finset.mul_sum]
     refine Eq.trans (congrArg (· + _) (Finset.sum_congr rfl fun b _ => ?_)) this
@@ -128,7 +133,8 @@ theorem flatCoord_ne_zero (hP : IsPeriod D ty P) (hE : ∀ x y, (hermForm Hm (P 
       · exact h
       · exact Fintype.linearIndependent_iff.1 hx (fun k => t (some k)) ht i)
     have h2 := congrArg (fun y => f (P y)) ht
-    simp only [map_add, map_sum, fa, Option.casesOn'_none, Option.casesOn'_some, fx, mul_zero, Finset.sum_const_zero, add_zero, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, fa, Option.casesOn'_none, Option.casesOn'_some, fx, mul_zero, Finset.sum_const_zero, add_zero, map_zero] at h2
     exact (mul_eq_zero.1 h2).resolve_left (by simpa using h1)
   have both : ∀ z, hermForm Hm z₀ z = 0 ∧ lam (pr z) = 0 := fun z => by
     have h1 := (hf z).symm.trans (LinearMap.congr_fun fz z)
@@ -287,8 +293,8 @@ theorem isDerivAt0_of_sameVecs {y : Sp ℂ ⟶ Xo.XF c} {g n : ℕ} {e : (Fin g 
   rw [← k1, ← Y.m.cart.1.hom_ext (h1.trans k2.symm) ((Over.w v₀).trans (Over.w v₁).symm)]
   exact h2
 
-open Classical in
 
+open Classical in
 theorem exists_reading (hU : IsClosed (U : Set (Xo.XF c))) {σb : RuleY Y} {σ : RuleU Xo c}
     (hres : Restricts Y U τ σb σ) {s : c.F →+* ℂ} {g₀ : ℕ} {ty : Fin g₀ → (E →+* ℂ)}
     {Fu : FamilyUnif Xo (s.comp (IntermediateField.inclusion c.le).toRingHom) ty} {i : Fin Fu.n}
@@ -334,11 +340,12 @@ theorem exists_reading (hU : IsClosed (U : Set (Xo.XF c))) {σb : RuleY Y} {σ :
   refine ⟨v, w, o, m, g, u, Hm', κ, h, hfr, hres ℂ s y v w av aw hfr hf sv sw, hA, hex, hΛ, hE', vV, vW,
     ⟨C, fun k j => ?_, ?_⟩, flatCoord_ne_zero hP hE (by rw [(Fu.sig i).1, (Fu.sig i).2]) hx
       (LinearIndependent.of_comp h.toLinearMap iV) (LinearIndependent.of_comp h.toLinearMap iW) eV eW hC⟩
-  · simp only [← map_smul, ← map_sum, ← map_sub]
-    refine (hh _ _).trans (herm_eq_zero hP hE (fun n hn => ?_) (eV j))
-    have := hC k n
-    rw [if_pos hn] at this
-    simp [this]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [← map_smul, ← map_sum, ← map_sub]
+      refine (hh _ _).trans (herm_eq_zero hP hE (fun n hn => ?_) (eV j))
+      have := hC k n
+      rw [if_pos hn] at this
+      simp [this]
   · refine congrArg (fun M => Matrix.det (Matrix.of M)) (funext fun k => congrArg (Sum.elim · _) (funext fun j => ?_))
     exact congrArg (_ * ·) (hh _ _).symm
 
@@ -367,21 +374,3 @@ end Model
 
 end GlobalTheory.DetLine.PeriodFlat
 
-open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt
-  GlobalTheory.FlatLine GlobalTheory.CompHt GlobalTheory.FlatCore GlobalTheory.BdryUnit in
-
-theorem GlobalTheory.DetLine.PeriodFlat.exists_horizontal_section : GlobalTheory.CovTop.Hypotheses2 → GlobalTheory.Published.CanonicalExtensionRankOne → GlobalTheory.Published.DeRhamCanonicalExtension → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (x : ℝ), Laws U x → ∀ (Z : Comp Xo c) (τ : Psi H), ∃ (Y : Model Xo c (RingHom.id c.F)) (V : (Xo.XF c).Opens) (sig : GlobalTheory.IndefiniteRowSideFullHecke.FramedFlatCoordinates.Rule Y V τ.1), (V : Set (Xo.XF c)) = Z ∧ sig ∈ GlobalTheory.IndefiniteRowSideFullHecke.FramedFlatCoordinates.sections Y V τ.1 ∧ GlobalTheory.IndefiniteRowSideFullHecke.FramedFlatCoordinates.VanishesNowhere sig ∧ GlobalTheory.IndefiniteRowSideFullHecke.FramedFlatCoordinates.IsHorizontal sig := by
-  intro hp _ _ E _ _ _ H Dw l Xo c r U x hL Z τ
-  obtain ⟨Y, -⟩ := hp.p1 E H Dw hL.pos l Xo c
-  obtain ⟨V, hV, hirr⟩ := GlobalTheory.GeomIrrComp.exists_open_irreducibleSpace_baseChange E H Dw l Xo c hL.geo Z
-  have hc : IsClosed (V : Set (Xo.XF c)) := hV ▸ isClosed_of_mem_irreducibleComponents _ Z.2
-  have hG : GeometricallyConnected (V.ι ≫ toF Xo c) :=
-    ⟨geometrically_iff_of_commRing_of_isClosedUnderIsomorphisms.2 fun K _ _ => by
-      have := hirr K (algebraMap c.F K)
-      exact (inferInstance : ConnectedSpace ↑(pullback (V.ι ≫ toF Xo c) (spMap (algebraMap c.F K))))⟩
-  obtain ⟨-, σ, -, -, hf, -, hY⟩ := detLineTrivial_of_toroidal hp.p1 E H Dw l Xo c V hc hG τ.1 τ.2
-  obtain ⟨σb, hs, hz, hres, -⟩ := hY _ _ Y (GlobalTheory.FlatRow.isNormal_genFibre Y)
-  refine ⟨Y, V, fun R _ _ a => σb R a.x a.v a.w, hV, fun R R' _ _ j j' a a' f M N h => ?_,
-    fun R _ j a => hz R j _ _ _ (PeriodFlat.frY_framed a), PeriodFlat.isHorizontal_of_isFlatAt hc hres hz hf⟩
-  rw [mul_comm, mul_comm _ N.det]
-  exact (sec_chg hs (PeriodFlat.frY_framed a) (PeriodFlat.frY_framed a') ⟨h.2.1, h.2.2⟩).symm

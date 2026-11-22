@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.ConeIntegralFactorisation
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
-import Development.WeilBound.ThetaLifts.CartanFactorisation.IntegrableOnRight
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ContinuousFinId
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.ConeIntegralFactorisation
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.IntegrableOnRight
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ContinuousFinId
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem I_left (hU : Unimod) (hT : ThetaBasic) (hp : IsPair B M χX χW om r s r
 
 theorem theta_add (hp : IsPair B M χX χW om r s r' s') {Φ Ψ : Fn F n d} (hΦ : Φ ∈ schA F _) (hΨ : Ψ ∈ schA F _) (g h) :
     theta om (Φ + Ψ) g h = theta om Φ g h + theta om Ψ g h := by
-  simp only [theta, map_add]
+  simp only [theta, map_add (f := _)]
   exact thetaSum_add F (hp.weil.isUSplitting.pres _ _ hΦ) (hp.weil.isUSplitting.pres _ _ hΨ)
 
 def convS (hp : IsPair B M χX χW om r s r' s') : Submodule ℂ (Fn F n d) where
@@ -164,8 +168,22 @@ theorem upd_cof {κ : Type} {v : Pl F} {φ φ' : ∀ u : Pl F, (κ → Fv F u) �
 
 theorem upd_so (hM : M.IsGood B.ψ) (f : SInf F (Fin n × Fin d)) {φ} (h1 : ∀ u, φ u ∈ SB _) (h2 : ∀ᶠ u in cofinite, φ u = M.vac u) {z}
     (hz : z ∈ Submodule.span ℂ (M.SoLoc B.ψ B.τ₁)) : pure f (Function.update φ B.v₁ z) ∈ M.So B.ψ B.τ₁ :=
-  pure_update_mem hM.std h2 _ f _ (S := M.SoLoc B.ψ B.τ₁)
-    (fun ψ' h' => Submodule.subset_span (by exact ⟨f, _, upd_sb h1 h'.1, upd_cof h2 _, by simpa using h', rfl⟩)) hz
+  by
+    obtain ⟨t, -, er⟩ := GlobalTheory.CompanionTheory.Ar.RT.Inj.pure_at M B.ψ hM φ h2 f B.v₁
+    have e : ∀ z, pure f (Function.update φ B.v₁ z) = tens (evFin F B.v₁) z t := fun z => by
+      rw [er _ (fun w hw => Function.update_of_ne hw _ _), Function.update_self]
+    induction hz using Submodule.span_induction with
+    | mem z hz =>
+      exact Submodule.subset_span ⟨f, _, upd_sb h1 hz.1, upd_cof h2 _, by simpa using hz, rfl⟩
+    | zero => rw [e]; convert (M.So B.ψ B.τ₁).zero_mem using 1 <;> funext x <;> simp [tens]
+    | add x y _ _ hx hy =>
+      rw [e] at hx hy ⊢
+      convert (M.So B.ψ B.τ₁).add_mem hx hy using 1
+      funext a; simp [tens, add_mul]
+    | smul c x _ hx =>
+      rw [e] at hx ⊢
+      convert (M.So B.ψ B.τ₁).smul_mem c hx using 1
+      funext a; simp [tens, mul_assoc]
 
 theorem soMove_of (hT : ThetaBasic) (hU : Unimod) (hD : DomSoU) (hF : SoFin) (hP : TriplePair) (hL : SoLower) : SoMove := by
   intro F E _ _ _ _ _ σ B a a' G X om om' hTr d₁ W₁ H' i₀ i₁ M₁ om₁ r₁ s₁ hH hp₁ e he Φ' hΦ'
@@ -181,11 +199,48 @@ theorem soMove_of (hT : ThetaBasic) (hU : Unimod) (hD : DomSoU) (hF : SoFin) (hP
   have hsb : ∀ x, π x ∈ SB _ := fun x => soLoc_sub _ _ _ (hπ x).1
   have hc := so_conv hT hD hF hp
   have hst := PositivityTheory.KCo.so_stable G.M' hp.base.cm hp.base.std (detX hp) (detW hp) hp.good hp.weil.isUSplitting.toIsSplitting B.τ₁
+  have hop (f : SInf F (Fin a' × Fin (a + a'))) {φ : ∀ v : Pl F, (Fin a' × Fin (a + a') → Fv F v) → ℂ}
+      (hφ : ∀ᶠ v in cofinite, φ v = G.M'.vac v) :
+      opL B.v₁ π (pure f φ) = pure f (Function.update φ B.v₁ (π (φ B.v₁))) := by
+    let v := B.v₁
+    let r := pure f (Function.update φ v 1)
+    obtain ⟨t, -, er⟩ := GlobalTheory.CompanionTheory.Ar.RT.Inj.pure_at G.M' B.ψ hp.good φ hφ f v
+    have he (z : (Fin a' × Fin (a + a') → Fv F v) → ℂ) :
+        pure f (Function.update φ v z) = tens (evFin F v) z t := by
+      rw [er _ (fun w hw => Function.update_of_ne hw _ _), Function.update_self]
+    have hrt : r = t := by
+      dsimp [r]
+      rw [he]
+      funext x
+      simp [tens]
+    have hu (z : (Fin a' × Fin (a + a') → Fv F v) → ℂ) :
+        pure f (Function.update φ v z) = tens (evFin F v) z r := by rw [hrt]; exact he z
+    have hr (x : Fin a' × Fin (a + a') → AF F) (y : Fin a' × Fin (a + a') → Fv F v) : r (repl v x y) = r x := by
+      unfold r GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure
+      congr 1
+      refine finprod_congr fun w => ?_
+      by_cases e : w = v
+      · subst w; simp
+      · rw [Function.update_of_ne e]
+        congr 1
+        funext i
+        change evalV F w ((x i).2 - singleFin v _ + singleFin v _) = _
+        rw [map_add (f := _), map_sub, evalV_singleFin_ne e, evalV_singleFin_ne e, sub_zero, add_zero]
+        rfl
+    funext x
+    have hs : (fun y => pure f φ (repl v x y)) = r x • φ v := by
+      have hself := hu (φ v)
+      rw [Function.update_eq_self] at hself
+      funext y
+      rw [hself, tens, piK_repl, hr, Pi.smul_apply, smul_eq_mul, mul_comm]
+    change π (fun y => pure f φ (repl v x y)) (piK v (finPart x)) = _
+    rw [hs, map_smul, hu, tens, Pi.smul_apply, smul_eq_mul, mul_comm]
+    rfl
   have A : opL B.v₁ π Φ' ∈ (PolData B G.M' ⊓ G.M'.So B.ψ B.τ₁) ⊓ (M₁.So B.ψ B.τ₁).comap e := by
     rw [← Submodule.mem_comap]
     refine Submodule.span_le.2 ?_ hΦ'.1
     rintro _ ⟨f, hf, φ, h1, h2, rfl⟩
-    rw [SetLike.mem_coe, Submodule.mem_comap, opL_pure hp.good.std h2]
+    rw [SetLike.mem_coe, Submodule.mem_comap, hop f h2]
     refine ⟨⟨Submodule.subset_span (by exact ⟨f, hf, _, upd_sb h1 (hsb _), upd_cof h2 _, rfl⟩), upd_so hp.good f h1 h2 (hπ _).1⟩, ?_⟩
     rw [SetLike.mem_coe, Submodule.mem_comap, hpure f _ (upd_sb h1 (hsb _)) (upd_cof h2 _)]
     have := upd_so hp₁.good (ei f) (φ := fun v => ev v (φ v)) (fun v => (hvac v).2 ▸ Submodule.mem_map_of_mem (h1 v))
@@ -206,16 +261,29 @@ theorem soMove_of (hT : ThetaBasic) (hU : Unimod) (hD : DomSoU) (hF : SoFin) (hP
     rw [er', er', er']; exact funext fun _ => sub_mul _ _ _
   obtain ⟨φ', k1, k2, k3⟩ := key _ h3
   have hu := hπ' (φ B.v₁) (Submodule.mem_sup.2 ⟨φ', ⟨Submodule.subset_span k1, Submodule.subset_span k3⟩, _, k2, by abel⟩)
-  have := pure_update_mem hp.good.std h2 B.v₁ f (kerS hp) (fun z hz => ?_) hu
-  · rw [esub, Function.update_eq_self] at this
-    rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.sub_apply, opL_pure hp.good.std h2]
-    exact this
-  · obtain ⟨g, -, x, hx, y, -, ha, rfl⟩ := hz
-    have hx' := upd_so hp.good f h1 h2 (Submodule.subset_span hx)
-    have e := ha t ⟨ht, er' x ▸ (hc hx').1⟩
-    rw [← er', ← er'] at e
-    rw [esub, ← e]
-    exact (sub_mem_ker hp (hc (hst _ _ hx')) (hc hx')).2 (I_left hU hT hp (hc hx').1 g)
+  have hmem : ∀ z ∈ augOn om' B.v₁ (G.M'.SoLoc B.ψ B.τ₁), pure f (Function.update φ B.v₁ z) ∈ kerS hp := by
+    intro z hz
+    induction hz using Submodule.span_induction with
+    | mem z hz =>
+      obtain ⟨g, -, x, hx, y, -, ha, rfl⟩ := hz
+      have hx' := upd_so hp.good f h1 h2 (Submodule.subset_span hx)
+      have e := ha t ⟨ht, er' x ▸ (hc hx').1⟩
+      rw [← er', ← er'] at e
+      rw [esub, ← e]
+      exact (sub_mem_ker hp (hc (hst _ _ hx')) (hc hx')).2 (I_left hU hT hp (hc hx').1 g)
+    | zero => rw [er']; convert (kerS hp).zero_mem using 1 <;> funext x <;> simp [tens]
+    | add x y _ _ hx hy =>
+      rw [er'] at hx hy ⊢
+      convert (kerS hp).add_mem hx hy using 1
+      funext a; simp [tens, add_mul]
+    | smul c x _ hx =>
+      rw [er'] at hx ⊢
+      convert (kerS hp).smul_mem c hx using 1
+      funext a; simp [tens, mul_assoc]
+  have := hmem _ hu
+  rw [esub, Function.update_eq_self] at this
+  rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.sub_apply, hop f h2]
+  exact this
 
 theorem conePol_of (hM : MeasEx) (hC : ConeIntegralFactorisation) : ConePol := by
   intro F E _ _ _ _ _ σ B b a' G G₁ H H' hc e he K μK μ hK hμK hμ X om om' om₁ om₁' hT hT₁ Φ hΦ

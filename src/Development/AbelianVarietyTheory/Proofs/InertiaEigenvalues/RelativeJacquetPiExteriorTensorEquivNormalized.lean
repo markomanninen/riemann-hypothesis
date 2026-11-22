@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientOfEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientOfEquiv
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.JacStages
 
@@ -19,14 +23,14 @@ theorem mk_qlift (i : ι) (q : M i ⧸ p i) : Submodule.Quotient.mk (qlift p i q
 
 variable {p}
 
-theorem position_eq (f : MultilinearMap ℂ M N) (hf : ∀ v i, ∀ w ∈ p i, f (Function.update v i w) = 0)
+theorem position_eq (f : (∀ i, M i) →ₘₗ[ℂ] N) (hf : ∀ v i, ∀ w ∈ p i, f (Function.update v i w) = 0)
     (v : ∀ i, M i) (i : ι) {u u' : M i} (h : u - u' ∈ p i) :
     f (Function.update v i u) = f (Function.update v i u') := by
   rw [← sub_eq_zero, ← f.map_update_sub]
   exact hf v i _ h
 
-def descend (f : MultilinearMap ℂ M N) (hf : ∀ v i, ∀ w ∈ p i, f (Function.update v i w) = 0) :
-    MultilinearMap ℂ (fun i => M i ⧸ p i) N where
+def descend (f : (∀ i, M i) →ₘₗ[ℂ] N) (hf : ∀ v i, ∀ w ∈ p i, f (Function.update v i w) = 0) :
+    (∀ i, M i ⧸ p i) →ₘₗ[ℂ] N where
   toFun q := f fun i => qlift p i (q i)
   map_update_add' {dec} q i a b := by
     obtain rfl : dec = dec0 := Subsingleton.elim _ _
@@ -45,7 +49,7 @@ def descend (f : MultilinearMap ℂ M N) (hf : ∀ v i, ∀ w ∈ p i, f (Functi
     rw [position_eq f hf _ i (u' := c • qlift p i a), f.map_update_smul]
     rw [← Submodule.Quotient.eq, Submodule.Quotient.mk_smul, mk_qlift, mk_qlift]
 
-theorem descend_mk (f : MultilinearMap ℂ M N) (hf : ∀ v i, ∀ w ∈ p i, f (Function.update v i w) = 0)
+theorem descend_mk (f : (∀ i, M i) →ₘₗ[ℂ] N) (hf : ∀ v i, ∀ w ∈ p i, f (Function.update v i w) = 0)
     (x : ∀ i, M i) : descend f hf (fun i => Submodule.Quotient.mk (x i)) = f x := by
   show f (fun i => qlift p i (Submodule.Quotient.mk (x i))) = f x
   have key : ∀ s : Finset ι,
@@ -100,7 +104,7 @@ theorem piTensor_mulSingle (a : Fin s) (g : GL (Fin (d a)) k) (x : ∀ j, X j) :
   · subst h; simp
   · simp [Pi.mulSingle_eq_of_ne h, Function.update_of_ne h]
 
-def qf : MultilinearMap ℂ X (Jacquet (piTensor ρ) (relUnipD k e')) :=
+def qf : (∀ a, X a) →ₘₗ[ℂ] Jacquet (piTensor ρ) (relUnipD k e') :=
   (twKer (piTensor ρ) (relUnipD k e') 1).mkQ.compMultilinearMap (PiTensorProduct.tprod ℂ)
 
 theorem qf_update (v : ∀ a, X a) (i : Fin s) (w : X i)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,7 @@ theorem avg_mv_fst (f : X × W →+ X × Y) (φ : W →+ Y) (h₁ : ∀ p, (f p)
     (u : A[X × W]) : avg (mv f u) = mv φ (avg u) := by
   induction u using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | single p r =>
     obtain ⟨a, b⟩ := p
     rw [mv_single, avg_single, avg_single, h₁]
@@ -50,14 +54,14 @@ theorem avg_mv_inr (f : W →+ X × Y) (φ : W →+ Y) (h : ∀ w, f w = (0, φ 
     avg (mv f u) = mv φ u := by
   induction u using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | single p r => rw [mv_single, avg_single, h, mv_single, if_pos rfl]
 
 theorem avg_mv_one (f : X →+ X × Y) (h : ∀ a, (f a).1 = a) (u : A[X]) :
     avg (mv f u) = single 0 (u.coeff 0) := by
   induction u using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb, coeff_add, Finsupp.add_apply, single_add]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, coeff_add, Finsupp.add_apply, single_add]
   | single p r =>
     rw [mv_single, avg_single, h]
     split_ifs with hp
@@ -73,7 +77,7 @@ theorem eq_of_cocycle (u : A[X × X × W]) (a b : X →+ Y) (w : W →+ Y)
       mv ((a + b).coprod w) (avg u) + mv (a.coprod (b.coprod w)) u := by
   have := congrArg avg (h (.inl X Y) ((AddMonoidHom.inr X Y).comp a) ((AddMonoidHom.inr X Y).comp b)
     ((AddMonoidHom.inr X Y).comp w))
-  rw [map_add, map_add, avg_mv_fst _ (b.coprod w) (by simp) (by simp),
+  rw [map_add (f := _), map_add (f := _), avg_mv_fst _ (b.coprod w) (by simp) (by simp),
     avg_mv_fst _ (a.coprod w) (by simp) (by simp), avg_mv_fst _ ((a + b).coprod w) (by simp) (by simp),
     avg_mv_inr _ (a.coprod (b.coprod w)) (by simp)] at this
   exact this
@@ -101,7 +105,7 @@ theorem add_exists (u : A[X × X × X])
   have e₄ : ∀ a b : X →+ Y, mv b (avg (avg u)) + mv a (avg (avg u)) =
       mv (a + b) (avg (avg u)) + mv (a.coprod b) (avg u) := fun a b => by
     have := congrArg avg (e₃ _ (.inl X Y) ((AddMonoidHom.inr X Y).comp a) ((AddMonoidHom.inr X Y).comp b))
-    rwa [map_add, map_add, avg_mv_fst _ b (by simp) (by simp), avg_mv_fst _ a (by simp) (by simp),
+    rwa [map_add (f := _), map_add (f := _), avg_mv_fst _ b (by simp) (by simp), avg_mv_fst _ a (by simp) (by simp),
       avg_mv_fst _ (a + b) (by simp) (by simp), avg_mv_inr _ (a.coprod b) (by simp)] at this
   linear_combination -e₁ Y a b c - e₄ b c - e₄ a c + e₄ (a + b) c
 
@@ -109,12 +113,12 @@ theorem add_unique (h : A[X]) (H : ∀ (Y : Type) [AddCommGroup Y] (a b c : X �
     mv (a + b + c) h + mv a h + mv b h + mv c h - mv (a + b) h - mv (a + c) h - mv (b + c) h = 0) : h = 0 := by
   have e₁ : ∀ (Y : Type) [AddCommGroup Y] (b c : X →+ Y), mv b h + mv c h = mv (b + c) h := fun Y _ b c => by
     have := congrArg avg (H _ (.inl X Y) ((AddMonoidHom.inr X Y).comp b) ((AddMonoidHom.inr X Y).comp c))
-    simp only [map_add, map_sub, map_zero] at this
+    simp only [map_add (f := _), map_sub, map_zero] at this
     rw [avg_mv_one _ (by simp), avg_mv_one _ (by simp), avg_mv_inr _ b (by simp), avg_mv_inr _ c (by simp),
       avg_mv_one _ (by simp), avg_mv_one _ (by simp), avg_mv_inr _ (b + c) (by simp)] at this
     linear_combination this
   have := congrArg avg (e₁ _ (.inl X X) (.inr X X))
-  rw [map_add, avg_mv_one _ (by simp), avg_mv_inr _ (.id X) (by simp), avg_mv_one _ (by simp), mv_id] at this
+  rw [map_add (f := _), avg_mv_one _ (by simp), avg_mv_inr _ (.id X) (by simp), avg_mv_one _ (by simp), mv_id] at this
   linear_combination this
 
 abbrev rd (I : Ideal A) : A[X] →+* (A ⧸ I)[X] := mapRingHom X (Ideal.Quotient.mk I)

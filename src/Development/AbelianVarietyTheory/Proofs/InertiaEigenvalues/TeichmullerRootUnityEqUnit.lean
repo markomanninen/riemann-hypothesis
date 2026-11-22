@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsGauss
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsGauss
+
+@[expose] public section
+
 open GlobalTheory.PMon.Gauss
 open scoped Formalism.Per
 
 namespace GlobalTheory.PMon.Gauss
 
-open Polynomial in
 
+open Polynomial in
 theorem exists_zmod_of_pow_eq_self {F : Type} [CommRing F] [IsDomain F] (l : ℕ) [Fact l.Prime] [CharP F l]
     (ζ : F) (h : ζ ^ l = ζ) : ∃ a : ZMod l, ZMod.castHom (dvd_refl l) F a = ζ := by
   have hl : 1 < l := (Fact.out : l.Prime).one_lt
@@ -17,7 +22,7 @@ theorem exists_zmod_of_pow_eq_self {F : Type} [CommRing F] [IsDomain F] (l : ℕ
   have hroots : P.roots = Finset.univ.val := by
     have := FiniteField.roots_X_pow_card_sub_X (ZMod l)
     rwa [ZMod.card] at this
-  have hdeg : P.natDegree = l := FiniteField.X_pow_card_sub_X_natDegree_eq (ZMod l) hl
+  have hdeg : P.natDegree = l := Polynomial.natDegree_X_pow_sub_X (R := (ZMod l)) hl
   have hprod : (Multiset.map (fun a => X - C a) P.roots).prod = P :=
     Polynomial.prod_multiset_X_sub_C_of_monic_of_roots_card_eq hmon
       (by rw [hroots, hdeg]; simp [ZMod.card])
@@ -39,14 +44,14 @@ theorem padicInt_ringHom_witt_ext_pt {l : ℕ} [Fact l.Prime] {F : Type} [CommRi
   have hd : f x = g x + (f y - g y) * (l : WittVector l F) ^ (n + 1) := by
     conv_lhs => rw [hx]
     conv_rhs => rw [hx]
-    simp only [map_add, map_mul, map_pow, map_natCast]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast]
     ring
   have ht : WittVector.truncate (n + 1) ((f y - g y) * (l : WittVector l F) ^ (n + 1)) = 0 := by
     rw [← RingHom.mem_ker, WittVector.mem_ker_truncate]
     intro i hi
     exact WittVector.mul_pow_charP_coeff_zero _ hi
   have he : WittVector.truncate (n + 1) (f x) = WittVector.truncate (n + 1) (g x) := by
-    rw [hd, map_add, ht, add_zero]
+    rw [hd, map_add (f := _), ht, add_zero]
   have := congrArg (fun z => TruncatedWittVector.coeff (⟨n, Nat.lt_succ_self n⟩ : Fin (n + 1)) z) he
   simpa only [WittVector.coeff_truncate] using this
 

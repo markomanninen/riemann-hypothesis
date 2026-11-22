@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameGenPtTransc
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ProjFrameGraphChart
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjFrameFibrePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemSec
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameGenPtTransc
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ProjFrameGraphChart
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjFrameFibrePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemSec
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -36,13 +41,15 @@ theorem proof : ProjFrameGenPtTransc.Statement := by
       rw [graphP, ← G.genericFibre_ker_target, RingHom.mem_ker]; exact h
     refine key _ ?_
     rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum, Polynomial.sum_def] at hq
-    rw [← hq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hq, map_sum]
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [map_mul, map_pow, aeval_X, aeval_rename]
     exact congrArg (· * _) (hg n)
   replace hFΓ : graphMap (coordIdeal ℤ x) (linForm (ι := GlobalTheory κ) (ι₂ := GlobalTheory (Fin (D + 1))) (projMat e))
       (∑ n ∈ q.support, rename (fun p : Ix κ => aV D p.2) (g n) * X (bV κ 0) ^ n) = 0 := hFΓ
-  rw [map_sum] at hFΓ
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at hFΓ
   simp only [map_mul, map_pow, graphMap_rename_inl, graphMap_inr, ProjFrameGraph.linForm_projMat] at hFΓ
   simp only [mul_pow, ← mul_assoc, ← C_pow, ← C_mul] at hFΓ
   have hX : Ideal.Quotient.mk (coordIdeal ℤ x) (X (e 0)) ≠ 0 := by
@@ -51,8 +58,8 @@ theorem proof : ProjFrameGenPtTransc.Statement := by
   have hcoef : ∀ m, q.coeff m = 0 := by
     intro m
     by_cases hm : m ∈ q.support
-    · have h1 := congrArg (coeff (Finsupp.single () m)) hFΓ
-      rw [coeff_sum, coeff_zero, Finset.sum_eq_single m] at h1
+    · have h1 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single () m)) hFΓ
+      rw [coeff_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, Finset.sum_eq_single m] at h1
       · rw [coeff_C_mul, coeff_X_pow, if_pos rfl, mul_one] at h1
         have h2 := (mul_eq_zero.1 h1).resolve_right (pow_ne_zero _ hX)
         rw [Ideal.Quotient.eq_zero_iff_mem] at h2
@@ -66,7 +73,9 @@ theorem proof : ProjFrameGenPtTransc.Statement := by
       · intro h
         exact absurd hm h
     · exact Polynomial.notMem_support_iff.1 hm
-  exact Polynomial.ext fun m => by rw [hcoef m, Polynomial.coeff_zero]
+  apply AddMonoidAlgebra.ext
+  ext m
+  simpa using congrArg Subtype.val (hcoef m)
 
 end ProjFrameGenPtTransc
 

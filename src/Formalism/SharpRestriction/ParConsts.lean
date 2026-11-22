@@ -1,14 +1,18 @@
-import Formalism.SharpRestriction.FamCore
-import Formalism.SharpRestriction.ElevenLe
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.LocalRingCardinality.DataDIV
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.LocalRingCardinality.DataParamsT
-import Formalism.LocalRingCardinality.KernelPlaceMeanBound
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataDIVDefs
-import Formalism.LocalRingCardinality.DataGatTies
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+module
+
+public import Formalism.SharpRestriction.FamCore
+public import Formalism.SharpRestriction.ElevenLe
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.LocalRingCardinality.DataDIV
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalRingCardinality.DataParamsT
+public import Formalism.LocalRingCardinality.KernelPlaceMeanBound
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataDIVDefs
+public import Formalism.LocalRingCardinality.DataGatTies
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,8 +99,6 @@ structure FamP (eps : ℝ) extends FamCore eps where
     (Gx x i).off j (false, t) = (Gx x i').off j (false, t')
   kapI_eq : ∀ x (i i' : Ix x), (Gx x i).kapI = (Gx x i').kapI
   ep_eq : ∀ x (i i' : Ix x), (Gx x i).ep = (Gx x i').ep
-
-def DFamP : Type 1 := ∀ ε : ℝ, 0 < ε → ε < 1 / 52 → FamP ε
 
 end Formalism.MainNotions
 

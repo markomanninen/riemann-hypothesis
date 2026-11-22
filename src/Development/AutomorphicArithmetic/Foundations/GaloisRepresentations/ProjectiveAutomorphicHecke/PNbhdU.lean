@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAdelicUnitaryPointEqOfSectionComponentsEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAdelicUnitaryPointEqOfSectionComponentsEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU GlobalTheory.PRep Formalism.L2.Host GlobalTheory.HeckeGal UpperTheory.Gal.CertificateRingHomMap
 open scoped Classical
 
@@ -11,21 +16,25 @@ namespace UpperTheory.Gal.CertificateRingHomMap.PNbhdU
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 private noncomputable def th {w : Plc E} (hw : IsSplitAt w) : GLw n w →* GLw n (cj w) :=
-  (cLoc (cj w)).comp ((finU E n).subtype.comp (locF hw))
+  (cLoc (cj w)).comp ((finU (E := E) (n := n)).subtype.comp (locF hw))
 
 private theorem continuous_th {w : Plc E} (hw : IsSplitAt w) : Continuous (th (n := n) hw) :=
   (GlobalTheory.BCT.GlobLev.continuous_cLoc (cj w)).comp
     ((continuous_subtype_val (p := (· ∈ locU n w))).comp (locE hw).symm.continuous)
 
-private theorem cLoc_cj_eq {w : Plc E} (hw : IsSplitAt w) (u : finU E n) :
+private theorem cLoc_cj_eq {w : Plc E} (hw : IsSplitAt w) (u : finU (E := E) (n := n)) :
     cLoc (cj w) u.1 = th hw (cLoc w u.1) :=
   GlobalTheory.LocInj.cLoc_conj_eq w u.1 (locF hw (cLoc w u.1)).1 (cLoc_locF hw _).symm
 
 private theorem cj_cj (w : Plc E) : cj (cj w) = w := GlobalTheory.SplitPts.conjSrc_conjSrc_cm w
 
 private theorem exists_lt (α : Type) : ∃ lt : α → α → Prop, (∀ a b, a ≠ b → lt a b ∨ lt b a) ∧ ∀ a b, lt a b → ¬ lt b a := by
-  obtain ⟨_, _⟩ := exists_wellOrder α
-  exact ⟨(· < ·), fun a b h => lt_or_gt_of_ne h, fun a b h => lt_asymm h⟩
+  refine ⟨WellOrderingRel, ?_, fun _ _ h => asymm h⟩
+  intro a b h
+  rcases trichotomous_of (WellOrderingRel : α → α → Prop) a b with hab | heq | hba
+  · exact Or.inl hab
+  · exact (h heq).elim
+  · exact Or.inr hba
 
 private def Top (lt : Plc E → Plc E → Prop) (Up : Plc E → Prop) (w₀ w : Plc E) : Prop :=
   Up w ∧ (Up (cj w) → w = w₀ ∨ (cj w ≠ w₀ ∧ lt w (cj w)))
@@ -82,7 +91,7 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pNbhdU_of :
     · simp only [Kw, dif_pos hw, Subgroup.coe_inf, Subgroup.coe_comap]
       exact (hK₀ w).1.inter ((hK₀ (cj w)).1.preimage (continuous_th hw))
     · simp only [Kw, dif_neg hw]; exact (hK₀ w).1
-  have hKKGL : ∀ w, Kw w ≤ GlobalTheory.LFun.KGL w n := fun w => (hKle w).trans (hK₀ w).2
+  have hKKGL : ∀ w, Kw w ≤ GlobalTheory.LFun.KGL w (n := n) := fun w => (hKle w).trans (hK₀ w).2
   have hmemS : ∀ w, w ∈ T → (IsSplitAt w → Top lt Up w₀ w) → w ∈ S := fun w h h' => Finset.mem_filter.2 ⟨h, h'⟩
   refine ⟨S, Kw, ⟨?_, fun w _ => hKopen w, fun w _ => ?_, fun w _ _ => hKKGL w, fun w hw hs => ?_⟩, ?_⟩
   · exact hmemS _ (Finset.mem_insert_self _ _) fun _ => ⟨hu₀, fun _ => Or.inl rfl⟩
@@ -92,13 +101,13 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pNbhdU_of :
     exact ⟨hw'.1, fun hc => not_both hlt2 (hne w hs) hw' ((Finset.mem_filter.1 hc).2 (hsp w hs))⟩
   · intro u hu
     obtain ⟨hz, hS, hout⟩ := mem_lev.1 hu
-    have hint : ∀ w, cLoc w u.1 ∈ GlobalTheory.LFun.KGL w n := by
+    have hint : ∀ w, cLoc w u.1 ∈ GlobalTheory.LFun.KGL w (n := n) := by
       intro w
       by_cases h1 : w ∈ S
       · exact hKKGL w (hS w h1)
       · by_cases h2 : cj w ∈ S
         · have h3 := hI E n (ofU u) (cj w) hz (hKKGL _ (hS _ h2))
-          have key : ∀ v : Plc E, v = w → comp v (ofU u) ∈ GlobalTheory.LFun.KGL v n → cLoc w u.1 ∈ GlobalTheory.LFun.KGL w n := by
+          have key : ∀ v : Plc E, v = w → comp v (ofU u) ∈ GlobalTheory.LFun.KGL v (n := n) → cLoc w u.1 ∈ GlobalTheory.LFun.KGL w (n := n) := by
             rintro v rfl h; exact h
           exact key _ (cj_cj w) h3
         · exact hout w h1 h2

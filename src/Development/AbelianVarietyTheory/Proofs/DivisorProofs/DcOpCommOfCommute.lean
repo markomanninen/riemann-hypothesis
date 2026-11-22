@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.Bridge
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsDCOfMemDoubleCoset
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiInvolutionOfChars
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormalFamilyOrthogonalDecomposition
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.Bridge
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsDCOfMemDoubleCoset
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiInvolutionOfChars
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormalFamilyOrthogonalDecomposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,12 +85,6 @@ end Grp
 section Normal
 
 variable {E I : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [FiniteDimensional ℂ E]
-
-theorem exists_lift {X : Type} [AddCommGroup X] [Module ℂ X] {e : E →ₗ[ℂ] X} (he : Function.Injective e)
-    (T : X →ₗ[ℂ] X) (hT : ∀ x, T (e x) ∈ LinearMap.range e) : ∃ t : Module.End ℂ E, ∀ x, e (t x) = T (e x) := by
-  choose f hf using hT
-  exact ⟨⟨⟨f, fun x y => he (by rw [map_add, hf, hf, hf, map_add, map_add])⟩,
-    fun a x => he (by rw [RingHom.id_apply, map_smul, hf, hf, map_smul, map_smul])⟩, hf⟩
 
 end Normal
 

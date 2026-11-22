@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.DecaysZero
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.Abstract
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.ConvCoef
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.ContinuousAverage
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.InvMemFlagN
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.FlagNW
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SchurOrthogonalityIndefiniteUnitaryGroupStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.DecaysZero
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.Abstract
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.ConvCoef
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.ContinuousAverage
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.InvMemFlagN
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.FlagNW
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SchurOrthogonalityIndefiniteUnitaryGroupStatement
+
+@[expose] public section
 
 open MeasureTheory Filter Matrix Formalism.REAL Formalism.MainNotions.S GlobalTheory.FlagMeas GlobalTheory.RealInd UpperTheory.Lit.Cusp
 open GlobalTheory.Dec (IsHaarSub IsIsoC NW IsSqIntIrr)

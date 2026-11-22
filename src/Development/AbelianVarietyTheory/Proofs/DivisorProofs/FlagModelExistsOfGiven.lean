@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+
+@[expose] public section
+
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 set_option autoImplicit false
@@ -20,7 +25,8 @@ theorem GlobalTheory.wedge_D_eq_pow_mul_wedge_D_of_eq_unit_mul_pow : ∀ (k K : 
     obtain ⟨ρ, hρ, c, hc⟩ := hgen v
     refine ⟨ρ, hρ, c 0, ?_⟩
     have h2 := congrArg f hc
-    rw [map_smul, map_sum, Fin.sum_univ_succ] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, Fin.sum_univ_succ] at h2
     simpa [hg0, g] using h2
   obtain ⟨ρa, hρa, ca, hA⟩ := key a
   obtain ⟨ρr, hρr, cr, hR⟩ := key r
@@ -28,7 +34,7 @@ theorem GlobalTheory.wedge_D_eq_pow_mul_wedge_D_of_eq_unit_mul_pow : ∀ (k K : 
     rw [← pow_succ']; congr 1; omega
   have hX : (r:K) • f (D k K T) + T • f (D k K (r:K)) = ((a:K) * (e:K) * (s:K)^(e-1)) • f (D k K (s:K)) + ((s:K) * (s:K)^(e-1)) • f (D k K (a:K)) := by
     have h1 := congrArg (fun z => f (D k K z)) hT
-    simp only [Derivation.leibniz, Derivation.leibniz_pow, map_add, map_smul, map_nsmul] at h1
+    simp only [Derivation.leibniz, Derivation.leibniz_pow, map_add (f := _), map_smul, map_nsmul] at h1
     rw [← hse, mul_smul, mul_smul, Nat.cast_smul_eq_nsmul K]; exact h1
   have heB : (e : B) ∉ Q := by
     intro h

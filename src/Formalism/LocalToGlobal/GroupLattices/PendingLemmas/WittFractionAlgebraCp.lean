@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WittFractionToCpAlgebraMap
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WittEmbeddingsCompatible
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.DetOfColSpanEq
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WeightUpdateAtPlace
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SubstZOfXCoordZA
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.XiOfSpec
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.DetYtMatNeZero
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WittFractionToCpAlgebraMap
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WittEmbeddingsCompatible
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.DetOfColSpanEq
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WeightUpdateAtPlace
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SubstZOfXCoordZA
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.XiOfSpec
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.DetYtMatNeZero
+
+@[expose] public section
 
 noncomputable section
 

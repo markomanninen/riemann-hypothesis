@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantFormAbelianVarietyTranslateValueStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCrystallineFormLiftDifferenceEqSumStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantFormAbelianVarietyTranslateValueStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCrystallineFormLiftDifferenceEqSumStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -11,6 +15,22 @@ open GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.Cech
 attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.CechKS.LiftDiff
+
+private theorem thickHom_ext {R : Type} [CommRing R] {I : Ideal R}
+    {powers : DividedPowers I} {X : Scheme.{0}} {s : X ⟶ Sp R}
+    {T T' : Thick powers s} {f g : T ⟶ T'} (h : ∀ b, f.φ b = g.φ b) : f = g := by
+  change Thick.Hom T T' at f g
+  cases f with
+  | mk φ φ₀ comm dp pt =>
+    cases g with
+    | mk ψ ψ₀ comm' dp' pt' =>
+      have e : φ = ψ := AlgHom.ext h
+      subst ψ
+      have e₀ : φ₀ = ψ₀ := RingHom.ext fun c ↦ by
+        obtain ⟨b, rfl⟩ := T.surj c
+        rw [comm, comm']
+      subst ψ₀
+      rfl
 
 theorem spMap_fst_surjective {B : Type} [CommRing B] (f : DualNumber B →+* B) (hf : ∀ c, f c = c.fst) :
     Function.Surjective (spMap f) := by
@@ -87,8 +107,8 @@ theorem ev_sec_sub_ev_tan (h : IsGrpPullback A A' (GlobalTheory.DeRham.epsRed K)
             pt := by
               show spMap (RingHom.id (DualNumber P.B)) ≫ P.trx v ≫ i = P.trx v ≫ i
               rw [Cris.spMap_id, Category.id_comp] }
-  case ea => exact Thick.hom_ext fun _ ↦ rfl
-  case eb => exact Thick.hom_ext fun _ ↦ rfl
+  case ea => exact thickHom_ext fun _ ↦ rfl
+  case eb => exact thickHom_ext fun _ ↦ rfl
 
 theorem liftVal_sub_snd : ∀ (K : Type) [Field K] (A : Over (Sp K)) [GrpObj A] (A' : Over (Sp (DualNumber K))) [GrpObj A'] (i : A.left ⟶ A'.left) (h : IsGrpPullback A A' (GlobalTheory.DeRham.epsRed K) i), IsAbelianScheme A → ∀ (ω : Form (A'.hom ≫ 𝟙 (Sp (DualNumber K)))) (U : A'.left.Opens), IsAffineOpen U → ∀ (P : GPt A), P.In (i ⁻¹ᵁ U) → ∀ (y₁ y₂ : Sp (DualNumber P.B) ⟶ A'.left) (h₁ : IsLift i P y₁) (h₂ : IsLift i P y₂) (n : ℕ) (u : Fin n → (epsR K ⟶ A)) (c : Fin n → P.B), (∀ a, IsTangent (u a)) → (∀ f : Γ(A'.left, U), valR y₁ U f - valR y₂ U f = (TrivSqZeroExt.inr (∑ a, c a * (valR (P.trx (u a)) (i ⁻¹ᵁ U) ((i.app U).hom f)).snd) : DualNumber P.B)) → (liftVal h ω.1 h₁ - liftVal h ω.1 h₂).snd = -∑ a, c a * algebraMap K P.B (tanVal (u a) ((fibMor h).isMor.pullForm ω)) := by
   intro K _ A _ A' _ i h hA ω U hU P hP y₁ y₂ h₁ h₂ n u c hu hdiff
@@ -132,8 +152,8 @@ theorem liftVal_sub_snd : ∀ (K : Type) [Field K] (A : Over (Sp K)) [GrpObj A] 
   have G := Finset.sum_congr rfl fun k (_ : k ∈ Finset.univ) ↦ congrArg (valR y₂ U (r k) * ·) (D k)
   refine (congrArg (fun z : DualNumber P.B ↦ (-z).snd) G).trans ?_
   simp only [TrivSqZeroExt.snd_neg, TrivSqZeroExt.snd_sum, TrivSqZeroExt.snd_mul, TrivSqZeroExt.fst_inr,
-    TrivSqZeroExt.snd_inr, f2, smul_eq_mul, MulOpposite.smul_eq_mul_unop, MulOpposite.op_zero,
-    MulOpposite.unop_zero, mul_zero, zero_smul, add_zero, neg_inj]
+    TrivSqZeroExt.snd_inr, f2, smul_eq_mul, MulOpposite.op_zero,
+    zero_smul, add_zero, neg_inj]
   simp only [← step2, Finset.mul_sum]
   clear H k1 e1 hdiff D G step2 f2 red
   conv_lhs => rw [Finset.sum_comm]

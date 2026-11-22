@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IterateOnePlusCasOfEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoefBoundTwo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRankOneIsAvg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInnerApprox
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IterateOnePlusCasOfEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoefBoundTwo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRankOneIsAvg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInnerApprox
+
+@[expose] public section
+
 open Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.TypeSum
 open scoped InnerProductSpace
 

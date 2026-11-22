@@ -1,11 +1,15 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataDIVDefs
-import Formalism.LocalRingCardinality.DataLatDefs
-import Formalism.LocalRingCardinality.DataKap
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.Rerealize
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataDIVDefs
+public import Formalism.LocalRingCardinality.DataLatDefs
+public import Formalism.LocalRingCardinality.DataKap
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.Rerealize
+
+@[expose] public section
 
 open Module NumberField
 
@@ -73,30 +77,14 @@ theorem RRV_finrank : finrank D.what₂.LL D.div.RR.V = D.what₂.Drows := by
     simpa using finrank_eq_card_basis D.what₂.onb.toBasis
   omega
 
-variable {D} in
 
+variable {D} in
 theorem RRFull.rank (h : D.RRFull) : D.div.Drows = D.what₂.Drows := by
   unfold DivData.Drows HLat.rank Formalism.HN.rkK
   rw [h.2, finrank_top]
   exact D.RRV_finrank
 
-variable {D} in
 
-theorem RRFull.D_eq (h : D.RRFull) : (D.div.RR.rank : ℝ) = (1 - D.div.delP) * (D.div.Dall : ℝ) := by
-  have := h.rank
-  unfold DivData.Drows at this
-  rw [this, D.delP_eq, D.Dall_eq]
-  exact D.what₂.D_eq
-
-variable {D} in
-theorem RRFull.good (h : D.RRFull) : D.div.RR.Good := ⟨D.div_good.1, h.1, h.2⟩
-
-theorem RR_span_of_rank (h : D.div.Drows = D.what₂.Drows) :
-    Submodule.span D.what₂.LL (D.div.RR.L : Set D.div.RR.V) = ⊤ := by
-  have : Module.Finite D.what₂.LL D.div.RR.V := Module.Finite.of_basis D.div.RR.b
-  apply Submodule.eq_top_of_finrank_eq
-  rw [D.RRV_finrank]
-  exact h
 
 theorem NuV_finrank (u : D.what₂.Word) : finrank D.what₂.LL (D.div.Nu u).V = (D.mem u).A.du := by
   have h1 : finrank D.what₂.LL (D.div.Nu u).V = Fintype.card (D.div.Nu u).ι := finrank_eq_card_basis (D.div.Nu u).b
@@ -105,30 +93,15 @@ theorem NuV_finrank (u : D.what₂.Word) : finrank D.what₂.LL (D.div.Nu u).V =
   have h3 : finrank ℂ (D.what₂.Mu u) = (D.mem u).A.du := (D.eMu u).finrank_eq
   omega
 
-variable {D} in
 
+variable {D} in
 theorem NuFull.rank (h : D.NuFull) (u : D.what₂.Word) : D.div.d u = (D.mem u).A.du := by
   unfold DivData.d dU HLat.rank Formalism.HN.rkK
   rw [(h u).2, finrank_top]
   exact D.NuV_finrank u
 
-variable {D} in
-theorem NuFull.good (h : D.NuFull) (u : D.what₂.Word) : (D.div.Nu u).Good := ⟨D.div_good.2 u, (h u).1, (h u).2⟩
 
-variable {D} in
 
-theorem NuFull.R_eq (h : D.NuFull) : D.div.R = ∑ u, (D.mem u).A.du :=
-  Finset.sum_congr rfl (fun u _ => h.rank u)
-
-theorem Nu_span_of_rank (u : D.what₂.Word) (h : D.div.d u = (D.mem u).A.du) :
-    Submodule.span D.what₂.LL ((D.div.Nu u).L : Set (D.div.Nu u).V) = ⊤ := by
-  have : Module.Finite D.what₂.LL (D.div.Nu u).V := Module.Finite.of_basis (D.div.Nu u).b
-  apply Submodule.eq_top_of_finrank_eq
-  rw [D.NuV_finrank u]
-  exact h
-
-variable {D} in
-theorem allGood (h1 : D.RRFull) (h2 : D.NuFull) : D.div.AllGood := ⟨h1.good, h2.good⟩
 
 end D7
 
@@ -151,38 +124,6 @@ theorem normAt_nonneg {K V ι : Type*} [Field K] [NumberField K] [StarRing K] [A
 namespace D7
 
 variable (D : D7)
-
-theorem jN_norm (u : D.what₂.Word) (x : (D.div.Nu u).V) :
-    Formalism.HermitianLatticesTheory.normAt (D.div.Nu u).b (D.div.Nu u).X (InfinitePlace.mk D.what₂.embLL) x = ‖D.jN u x‖ := by
-  have h : Formalism.HermitianLatticesTheory.normAt (D.div.Nu u).b (D.div.Nu u).X (InfinitePlace.mk D.what₂.embLL) x ^ 2 =
-      ‖D.jN u x‖ ^ 2 := by
-    rw [D.nuIn_norm, normAt_sq_eq_majAt, (D.fm u).emb_norm, ← D.nuIn_jN]
-    rw [← @inner_self_eq_norm_sq ℂ, D.eMu_isom]
-    rfl
-  exact (sq_eq_sq₀ (normAt_nonneg _ _ _ _) (norm_nonneg _)).1 h
-
-theorem Drows_le_Dall (h : 0 < D.what₂.Dall) : D.what₂.Drows ≤ D.what₂.Dall := by
-  have : Module.Finite ℂ D.s.HH := Module.finite_of_finrank_pos (by rw [D.s_HH]; exact h)
-  have hli : LinearIndependent ℂ (D.sEE.toLinearMap.toAddMonoidHom ∘ D.what₂.onb) :=
-    D.what₂.onb.orthonormal.linearIndependent.map_of_surjective_injectiveₛ (starRingEnd ℂ)
-      D.sEE.toLinearMap.toAddMonoidHom (fun z => ⟨starRingEnd ℂ z, Complex.conj_conj z⟩) D.sEE.injective
-      (fun r m => D.sEE.map_smulₛₗ r m)
-  have := hli.fintype_card_le_finrank
-  rwa [Fintype.card_fin, D.s_HH] at this
-
-theorem delpNonneg (h : 0 < D.what₂.Dall) : Rows.DelpNonneg D.what₂ := by
-  unfold Rows.DelpNonneg
-  have h1 : (D.what₂.Drows : ℝ) ≤ (D.what₂.Dall : ℝ) := by exact_mod_cast D.Drows_le_Dall h
-  have h2 : (0 : ℝ) < (D.what₂.Dall : ℝ) := by exact_mod_cast h
-  rw [D.what₂.D_eq] at h1
-  by_contra hc
-  have hc' : D.what₂.delp < 0 := not_le.1 hc
-  nlinarith
-
-theorem delPNonneg (h : 0 < D.div.Dall) : D.div.DelPNonneg := by
-  unfold DivData.DelPNonneg
-  rw [D.delP_eq]
-  exact D.delpNonneg (by rw [← D.Dall_eq]; exact h)
 
 end D7
 
@@ -218,7 +159,7 @@ theorem range_liftBaseChange {A : Type*} [CommRing A] (O : Type*) [CommRing O] [
     | tmul c x =>
       rw [LinearMap.liftBaseChange_tmul]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨x, rfl⟩)
-    | add a b ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   · rw [Submodule.span_le]
     rintro _ ⟨x, rfl⟩
     exact ⟨1 ⊗ₜ x, by simp⟩
@@ -317,7 +258,7 @@ theorem liftBaseChange_injective_top
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul c x => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   intro s t hst
   rw [hc, hc] at hst
   exact h2 (h3 hst)
@@ -334,15 +275,15 @@ theorem liftBaseChange_injective [Module.Flat A O]
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul c x => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   intro s t hst
   rw [hc, hc] at hst
   exact h1 (liftBaseChange_injective_top hO φ b hb hst)
 
+
 omit [CommRing A] [IsDomain A] [Algebra A K] [IsFractionRing A K] [CommRing O] [Algebra A O] [Algebra O Kf] [Algebra A Kf]
   [IsScalarTower A O Kf] [IsScalarTower A K Kf] [Module A V] [IsScalarTower A K V] [Module O W] [IsScalarTower O Kf W]
   [Module A W] [IsScalarTower A O W] [IsScalarTower A K W] [IsScalarTower A Kf W] in
-
 theorem li_tower {ι' : Type*} (φ : V →ₗ[K] W) (b : Basis ι K V) (hb : LinearIndependent Kf (φ ∘ b))
     (e : ι' → V) (he : LinearIndependent K e) : LinearIndependent Kf (φ ∘ e) := by
   have h4 : Function.Injective (φ.liftBaseChange Kf) := by
@@ -398,7 +339,7 @@ theorem span_inf_span_tower [Module.Flat A O]
         induction hy using Submodule.span_induction with
         | mem y hy => obtain ⟨i, rfl⟩ := hy; exact Submodule.subset_span ⟨i, rfl⟩
         | zero => simp
-        | add y y' _ _ h h' => rw [map_add]; exact Submodule.add_mem _ h h'
+        | add y y' _ _ h h' => rw [map_add (f := _)]; exact Submodule.add_mem _ h h'
         | smul k y _ h =>
           rw [map_smul, ← IsScalarTower.algebraMap_smul Kf k (φ y)]
           exact Submodule.smul_mem _ _ h
@@ -438,7 +379,7 @@ theorem span_inf_span_tower [Module.Flat A O]
       induction t using TensorProduct.induction_on with
       | zero => simp
       | tmul c x => simp [f, φq]
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
     have h0 : f.lTensor O t = 0 := by
       apply hΞ
       rw [hcomm, map_zero]
@@ -450,7 +391,7 @@ theorem span_inf_span_tower [Module.Flat A O]
       induction s using TensorProduct.induction_on with
       | zero => simp
       | tmul c x => simp
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
     rw [hc2]
     have hmem : (((φ.restrictScalars A) ∘ₗ L.subtype ∘ₗ (LinearMap.ker f).subtype).liftBaseChange O) s ∈
         LinearMap.range (((φ.restrictScalars A) ∘ₗ L.subtype ∘ₗ (LinearMap.ker f).subtype).liftBaseChange O) := ⟨s, rfl⟩
@@ -523,8 +464,8 @@ theorem toO_injective : Function.Injective (toO w σ hσ) := by
   rw [toO_spec, toO_spec] at this
   exact IsFractionRing.injective A K (σ.injective this)
 
-include hσ in
 
+include hσ in
 theorem isUnit_of_val_one (x : K) (hx : w.valuation K x = 1) (c : O) (hc : algebraMap O Kf c = σ x) :
     IsUnit c := by
   have hx0 : x ≠ 0 := by
@@ -754,8 +695,8 @@ variable {A K : Type*} [CommRing A] [IsDedekindDomain A] [Field K] [Algebra A K]
   [IsFractionRing O Kf]
   (σ : K →+* Kf) (hσ : ∀ x : K, w.valuation K x ≤ 1 ↔ σ x ∈ Set.range (algebraMap O Kf))
 
-include hσ in
 
+include hσ in
 theorem span_image_le_of_loc {V W : Type*} [AddCommGroup V] [Module K V] [Module A V] [IsScalarTower A K V]
     [AddCommGroup W] [Module Kf W] [Module O W] [IsScalarTower O Kf W]
     (φ : V →+ W) (hφ : ∀ (a : K) x, φ (a • x) = σ a • φ x) (T : Set V) (N : Submodule A V)
@@ -817,8 +758,8 @@ variable {A K : Type*} [CommRing A] [IsDedekindDomain A] [Field K] [Algebra A K]
   [IsFractionRing O Kf]
   (σ : K →+* Kf) (hσ : ∀ x : K, w.valuation K x ≤ 1 ↔ σ x ∈ Set.range (algebraMap O Kf))
 
-include hσ in
 
+include hσ in
 theorem fg_span_image {V W : Type*} [AddCommGroup V] [Module K V] [Module A V] [IsScalarTower A K V]
     [AddCommGroup W] [Module Kf W] [Module O W] [IsScalarTower O Kf W]
     (φ : V →+ W) (hφ : ∀ (a : K) x, φ (a • x) = σ a • φ x) (N : Submodule A V) (hN : N.FG) :
@@ -833,7 +774,7 @@ theorem fg_span_image {V W : Type*} [AddCommGroup V] [Module K V] [Module A V] [
       induction hx using Submodule.span_induction with
       | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
       | zero => simp
-      | add y y' _ _ h h' => rw [map_add]; exact Submodule.add_mem _ h h'
+      | add y y' _ _ h h' => rw [map_add (f := _)]; exact Submodule.add_mem _ h h'
       | smul a y _ h =>
         rw [← algebraMap_smul K a y, hφ, ← toO_spec w σ hσ a, algebraMap_smul]
         exact Submodule.smul_mem _ _ h
@@ -895,8 +836,8 @@ theorem addVal_toO_uniformizer (hsurj : ∀ c : O, ∃ x : K, σ x = algebraMap 
   · rw [Ideal.span_singleton_le_iff_mem, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, isUnit_toO_iff]
     exact fun h => h hmemw
 
-include hσ in
 
+include hσ in
 theorem length_valuationRing (hsurj : ∀ c : O, ∃ x : K, σ x = algebraMap O Kf c)
     {V W ι : Type*} [AddCommGroup V] [Module K V] [Module A V] [IsScalarTower A K V]
     [AddCommGroup W] [Module Kf W] [Module O W] [IsScalarTower O Kf W]
@@ -1223,15 +1164,17 @@ theorem length_quotient_ne_top₂ {L : SizeData₂ D} (X : Inst D L) (Y : LatIns
     rw [pow_add, mul_smul]
     rfl
 
-omit c in
 
+omit c in
 theorem frac_of_ties (hT : GatTies D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
     IsFractionRing (D.gat u w hg).O (D.gat u w hg).Kf := by
   have h : 0 < Fintype.card D.what₂.Tau := by
     rw [D.what₂.card_Tau]
-    unfold Ranks.f Ranks.n
-    positivity
+    have h₁ := D.R.two_le_m
+    have h₂ := D.R.m_le_f
+    unfold Ranks.f Ranks.n at *
+    omega
   obtain ⟨τ⟩ := Fintype.card_pos_iff.1 h
   exact ((D.gat u w hg).P.setting ((hT.gat_pos u w hg).symm τ).1).frac_O
 
@@ -1242,18 +1185,6 @@ theorem sizeDataLat_of_latDefs {L : SizeData₂ D} (hT : GatTies D) (X : Inst D 
     (fun u w hg _ => haveI := frac_of_ties hT u w hg; c.length_quotient_ne_top₂ X Y K hl.vram u w hg) w
 
 end LatCmp
-
-theorem DV.lamPDef_of {D : D7} (h : DV.LamDef D) (hs : DV.LamScalar D) : Rows.LamPDef D.what₂ := by
-  intro μ j h1 h2 π x hx
-  obtain ⟨c, hc⟩ := hs μ j h1 h2 π
-  by_cases h0 : D.what₂.isot j π = ⊥
-  · rw [h0, Submodule.mem_bot] at hx
-    simp [hx]
-  · rw [h μ j h1 h2 π h0, DV.lamTr_of_scalar D μ j π c h0 hc]
-    exact hc x hx
-
-theorem DV.lamDef_of_lamPDef {D : D7} (h : Rows.LamPDef D.what₂) : DV.LamDef D :=
-  fun μ j h1 h2 π h0 => (DV.lamTr_of_scalar D μ j π _ h0 (h μ j h1 h2 π)).symm
 
 namespace D7
 

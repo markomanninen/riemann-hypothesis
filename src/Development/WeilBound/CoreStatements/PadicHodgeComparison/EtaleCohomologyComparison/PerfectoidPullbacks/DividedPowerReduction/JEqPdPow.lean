@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SheafFiltrationProperty
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SheafFiltrationProperty
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -87,7 +91,7 @@ theorem ψBar_κ (h : TF l s T) : (ψBar T d h).comp κ' = (qBar T l n).comp ((s
   rw [e]
   refine Ideal.Quotient.eq.2 ?_
   change Ideal.Quotient.mk _ (T.i _) - _ ∈ _
-  rw [← map_sub, map_add, add_sub_cancel_left]
+  rw [← map_sub, map_add (f := _), add_sub_cancel_left]
   exact Ideal.mem_map_of_mem _ (T.i_mem hy)
 
 def redObj (h : TF l s T) : Thick (nlFun γ' l X q κ') :=

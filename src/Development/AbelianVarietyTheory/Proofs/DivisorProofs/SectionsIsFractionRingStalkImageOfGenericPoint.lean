@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FamIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FamIdeal
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits
 
 namespace GlobalTheory.NormSheafDescent
@@ -23,7 +28,7 @@ theorem sections_isDomain_isFractionRing_stalk : ∀ (Y Z : Scheme.{0}) (π : Y 
   letI := algAK π U h
   have hl := hU.isLocalization_stalk ⟨ζ, h⟩
   have hbot : (hU.primeIdealOf ⟨ζ, h⟩).asIdeal = ⊥ := by
-    let q : PrimeSpectrum Γ(Z, U) := ⟨⊥, Ideal.bot_prime⟩
+    let q : PrimeSpectrum Γ(Z, U) := ⟨⊥, Ideal.isPrime_bot⟩
     have hq : hU.fromSpec q ∈ U := hU.range_fromSpec.le ⟨_, rfl⟩
     have hs : hU.fromSpec (hU.primeIdealOf ⟨ζ, h⟩) ⤳ hU.fromSpec q := by
       rw [hU.fromSpec_primeIdealOf]

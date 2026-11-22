@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoCut
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
@@ -84,7 +88,7 @@ theorem eigenvector_orthogonality_holds : EigOrth := by
       rw [(hlin Fr hFr w).map_zero, smul_zero]
     | add a b _ _ ha hb =>
       intro Fr hFr w
-      rw [(hlin Fr hFr w).map_add, ha Fr hFr w, hb Fr hFr w, smul_add]
+      rw [(hlin Fr hFr w).map_add a b, ha Fr hFr w, hb Fr hFr w, smul_add]
     | smul c a _ ha =>
       intro Fr hFr w
       rw [(hlin Fr hFr w).map_smul, ha Fr hFr w, smul_comm]

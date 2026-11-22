@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CubicalReadingOneAnalyticFrameStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsHolFamPullbackLiftOfCommonBase
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.JetRdMulInvPow
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CorrOfJetsOfAnalyticFrameProductsStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AppLESpMapJetPt
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CmFrameJetPointsAreExponentialJets
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.JetReadingLinearSubstitutionPoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CubicalReadingOneAnalyticFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsHolFamPullbackLiftOfCommonBase
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.JetRdMulInvPow
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CorrOfJetsOfAnalyticFrameProductsStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AppLESpMapJetPt
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CmFrameJetPointsAreExponentialJets
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.JetReadingLinearSubstitutionPoints
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,11 +26,18 @@ open scoped ContDiff
 attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem tay_coord {N : ℕ} (k : Fin N) : tay (fun v : Fin N → ℂ => v k) 0 = MvPowerSeries.X ((0 : Fin 1), k) := by
-  have hc : ContDiffAt ℂ ω (fun v : Fin N → ℂ => v k) 0 := (contDiff_apply ℂ ℂ k).contDiffAt
+  have hc : ContDiffAt ℂ ω (fun v : Fin N → ℂ => v k) 0 := (contDiff_apply ℂ (fun _ => ℂ) k).contDiffAt
   refine MvPowerSeries.pderiv.ext (fun q => ?_) ?_
   · obtain ⟨a, j⟩ := q
     obtain rfl : a = 0 := Subsingleton.elim _ _
-    rw [TM.pderiv_tay hc]
+    have hd : MvPowerSeries.pderiv ((0 : Fin 1), j) (tay (fun v : Fin N → ℂ => v k) 0) =
+        tay (fun y : Fin N → ℂ => fderiv ℂ (fun v : Fin N → ℂ => v k) y (Pi.single j 1)) 0 := by
+      ext n
+      rw [MvPowerSeries.coeff_pderiv, coeff_tay, coeff_tay, dirs_add_single, fct_add_single,
+        add_zero, add_zero, TM.mD_cons_deriv hc]
+      push_cast
+      rw [← div_div, div_mul_cancel₀ _ (Nat.cast_add_one_ne_zero _)]
+    rw [hd]
     have : (fun y : Fin N → ℂ => fderiv ℂ (fun v : Fin N → ℂ => v k) y (Pi.single j 1)) =
         fun _ => (Pi.single j (1 : ℂ) : Fin N → ℂ) k := by
       funext y
@@ -36,12 +47,13 @@ theorem tay_coord {N : ℕ} (k : Fin N) : tay (fun v : Fin N → ℂ => v k) 0 =
     rw [this, TM.tay_const, MvPowerSeries.pderiv_X]
     by_cases h : k = j
     · subst h; simp
-    · simp [h, Prod.ext_iff, Ne.symm h]
+    · simp [h, Prod.ext_iff]
   · rw [constantCoeff_tay, TM.mD_zero]; simp
 
 theorem jetOf_coord {N : ℕ} (m : ℕ) (k : Fin N) :
     jetOf m (fun v : Fin N → ℂ => v k) = Ideal.Quotient.mk _ (MvPolynomial.X ((0 : Fin 1), k)) := by
-  rw [jetOf, tay_coord, ← MvPolynomial.coe_X, psJet, FBIdJet.psTrunc_eq, FBIdJet.mk_trunc_coe]
+  simpa only [jetOf, tay_coord, psJet, FBIdJet.psTrunc_eq, MvPolynomial.coe_X] using
+    FBIdJet.mk_trunc_coe m (MvPolynomial.X ((0 : Fin 1), k) : MvPolynomial (Fin 1 × Fin N) ℂ)
 
 theorem jetOf_sum_coord {N : ℕ} (m : ℕ) {T : Type} (I : Finset T) (k : T → Fin N) :
     jetOf m (fun v : Fin N → ℂ => ∑ i ∈ I, v (k i)) =
@@ -50,11 +62,11 @@ theorem jetOf_sum_coord {N : ℕ} (m : ℕ) {T : Type} (I : Finset T) (k : T →
   induction I using Finset.induction_on with
   | empty => simpa using jetOf_const (g := N) m 0
   | insert a s ha ih =>
-    simp only [Finset.sum_insert ha, map_add]
+    simp only [Finset.sum_insert ha, map_add (f := _)]
     rw [← ih, ← jetOf_coord, ← jetOf_add]
     · rfl
-    · exact (contDiff_apply ℂ ℂ _).contDiffAt
-    · exact (ContDiff.sum fun i _ => contDiff_apply ℂ ℂ _).contDiffAt
+    · exact (contDiff_apply ℂ (fun _ => ℂ) _).contDiffAt
+    · exact (ContDiff.sum fun i _ => contDiff_apply ℂ (fun _ => ℂ) _).contDiffAt
 
 theorem psumL_apply (n g : ℕ) (I : Finset (Fin n)) (w : Fin n → Fin g → ℂ) :
     psumL n g ⟨I⟩ w = ∑ i ∈ I, w i := by
@@ -66,7 +78,8 @@ theorem jetN_psum {n g : ℕ} (m : ℕ) (I : Finset (Fin n)) (j : Fin g) :
     funext v
     rw [psumL_apply, Finset.sum_apply]; rfl
   rw [jetN, this, jetOf_sum_coord, renN, GermD.jetMap_mk]
-  simp only [map_sum, MvPolynomial.aeval_X, Equiv.symm_apply_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPolynomial.aeval_X, Equiv.symm_apply_apply]
 
 theorem sameSum_of_factor {X Y : Scheme.{0}} {K K' J : Type} [Fintype K] [Fintype K'] [Fintype J] [DecidableEq J]
     (φ : K → (Y ⟶ X)) (ε : K → ℤ) (φ' : K' → (Y ⟶ X)) (ε' : K' → ℤ) (F : J → (Y ⟶ X)) (σ : K → J) (σ' : K' → J)

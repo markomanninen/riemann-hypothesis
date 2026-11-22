@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.SmoothQ
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.KProps
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PrepairingEtaleValue
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.SmoothQ
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.KProps
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PrepairingEtaleValue
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -34,8 +38,8 @@ def xx {M : Model l K} (hM : M.Sm) {j : ℕ} (v : M.T j) : Fam M (rr h1 hM j) j 
 
 theorem xx_spec {M : Model l K} (hM : M.Sm) {j : ℕ} (v : M.T j) : Lf _ v (xx h1 hM v) := ((h1.ex M hM j).choose_spec v).choose_spec
 
-variable (γ) in
 
+variable (γ) in
 def gT {M : Model l K} (hM : M.Sm) (a : ℕ) {j : ℕ} (v : M.T j) : Module.Dual K (Hdg M.q a j) →+ ℂ_[l] := γ (xx h1 hM v) a
 
 include h2 in
@@ -80,14 +84,14 @@ def hV {M : Model l K} (hM : M.Sm) (a n : ℕ) : M.V n →+ (Module.Dual K (Hdg 
       ring) :
     ℚ_[l] ⊗[ℤ_[l]] M.T n →+ (Module.Dual K (Hdg M.q a n) →+ ℂ_[l]))
 
-open Classical in
 
+open Classical in
 def hP (M : Model l K) (a n : ℕ) : M.V n →+ (Module.Dual K (Hdg M.q a n) →+ ℂ_[l]) :=
   if hM : M.Sm then hV h1 h2 hM a n else 0
 
 theorem hP_tmV {M : Model l K} (hM : M.Sm) (a n : ℕ) (z : ℚ_[l]) (u : M.T n) (φ : Module.Dual K (Hdg M.q a n)) :
     hP h1 h2 M a n (tmV M n z u) φ = qC l z * gT h1 (@γ) hM a u φ := by
-  rw [hP, dif_pos hM]
+  rw [hP, dite_eq_left hM]
   unfold hV tmV
   erw [TensorProduct.liftAddHom_tmul]
   rfl
@@ -98,7 +102,7 @@ theorem hP_toV {M : Model l K} (hM : M.Sm) (a : ℕ) {n r : ℕ} {u : M.T n} {x 
 
 theorem hP_not {M : Model l K} (hM : ¬ M.Sm) (a n : ℕ) (v : M.V n) (φ : Module.Dual K (Hdg M.q a n)) :
     hP h1 h2 M a n v φ = 0 := by
-  rw [hP, dif_neg hM]; rfl
+  rw [hP, dite_eq_right hM]; rfl
 
 include h1 h2 in
 theorem pre_of (hF : KFin) (hC : DlogClassExistsUnique) : Nonempty (HTPre l K) := ⟨{
@@ -110,7 +114,7 @@ theorem pre_of (hF : KFin) (hC : DlogClassExistsUnique) : Nonempty (HTPre l K) :
       · intro z' u
         simp only [smul_tmV, hP_tmV h1 h2 hM, map_mul, mul_assoc]
       · intro x y hx hy
-        simp only [smul_add, map_add, AddMonoidHom.add_apply, mul_add] at hx hy ⊢
+        simp only [smul_add, map_add (f := _), AddMonoidHom.add_apply, mul_add] at hx hy ⊢
         rw [hx, hy]
     · simp only [hP_not h1 h2 hM, mul_zero]
   lin' := fun M a n k v φ => by
@@ -121,7 +125,7 @@ theorem pre_of (hF : KFin) (hC : DlogClassExistsUnique) : Nonempty (HTPre l K) :
         simp only [hP_tmV h1 h2 hM, gT]
         rw [h2.lin' hM _ (h1.comp (xx_spec h1 hM u)), mul_left_comm]
       · intro x y hx hy
-        simp only [map_add, AddMonoidHom.add_apply, mul_add] at hx hy ⊢
+        simp only [map_add (f := _), AddMonoidHom.add_apply, mul_add] at hx hy ⊢
         rw [hx, hy]
     · simp only [hP_not h1 h2 hM, mul_zero]
   fin := fun M hM a n => by
@@ -136,7 +140,7 @@ theorem pre_of (hF : KFin) (hC : DlogClassExistsUnique) : Nonempty (HTPre l K) :
       simp only [act_tmV, hP_tmV h1 h2 hM]
       rw [map_mul, σC_qC, mul_left_comm, gT_act h1 h2 hM]
     · intro x y hx hy
-      simp only [map_add, AddMonoidHom.add_apply, mul_add] at hx hy ⊢
+      simp only [map_add (f := _), AddMonoidHom.add_apply, mul_add] at hx hy ⊢
       rw [hx, hy]
   nat := fun M N u hu hM hN a n v φ => by
     refine V_induction (p := fun v => hP h1 h2 M a n (Model.pullV u hu n v) φ =
@@ -147,7 +151,7 @@ theorem pre_of (hF : KFin) (hC : DlogClassExistsUnique) : Nonempty (HTPre l K) :
       rw [gT_eq h1 h2 hM a (h1.nat u hu (xx_spec h1 hN w)), h2.nat u hu hM hN _ (h1.comp (xx_spec h1 hN w))]
       rfl
     · intro x y hx hy
-      simp only [map_add, AddMonoidHom.add_apply] at hx hy ⊢
+      simp only [map_add (f := _), AddMonoidHom.add_apply] at hx hy ⊢
       rw [hx, hy]
   cup := fun M hM i j x y z hz m m' b b' c φ => by
     have hx := xx_spec h1 hM x

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.TracePiReal
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.DictIrr
-import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.TracePiReal
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.DictIrr
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ theorem evR_eq (a : AF F) : evI F a = evR a := rfl
 
 def lf : (κ → mixedEmbedding.mixedSpace F) →ₗ[ℝ] Module.Dual ℝ (κ → mixedEmbedding.mixedSpace F) :=
   LinearMap.mk₂ ℝ (fun b y => -(2 * Real.pi) * Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (y ⬝ᵥ b))
-    (fun a b y => by rw [dotProduct_add, map_add, mul_add]) (fun c b y => by rw [dotProduct_smul, map_smul, smul_eq_mul, smul_eq_mul]; ring)
-    (fun b x y => by rw [add_dotProduct, map_add, mul_add]) (fun c b y => by rw [smul_dotProduct, map_smul, smul_eq_mul, smul_eq_mul]; ring)
+    (fun a b y => by rw [dotProduct_add, map_add (f := _), mul_add]) (fun c b y => by rw [dotProduct_smul, map_smul, smul_eq_mul, smul_eq_mul]; ring)
+    (fun b x y => by rw [add_dotProduct, map_add (f := _), mul_add]) (fun c b y => by rw [smul_dotProduct, map_smul, smul_eq_mul, smul_eq_mul]; ring)
 
 theorem lf_surj [IsTotallyReal F] : Function.Surjective (lf (F := F) (κ := κ)) := by
   haveI : IsEmpty {w : InfinitePlace F // w.IsComplex} :=
@@ -50,7 +54,8 @@ theorem schr_acts {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) (a b : κ → AF F)
   have hz : At (evI F) (x ⬝ᵥ b) := fun s hs => by
     rw [← dotProduct_smul, hb s hs, dotProduct_zero]
   have e1 : evI F (x ⬝ᵥ b) = (fun i => evI F (x i)) ⬝ᵥ fun i => evI F (b i) := by
-    simp only [evR_eq, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [evR_eq, dotProduct, map_sum, map_mul]
   have e2 : (fun i => evI F ((x + a) i)) = (fun i => evI F (x i)) - -fun i => evI F (a i) := by
     funext i
     simp [evR_eq]
@@ -95,7 +100,7 @@ theorem rest_pure (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (
   refine ⟨fun x z hz => ?_, ?_⟩
   · refine finprod_congr fun v => congrArg (φ v) (funext fun i => ?_)
     have : z i = realAd F 1 * z i := (congrFun (at_iff.1 hz) i).symm
-    rw [Pi.add_apply, map_add, this, map_mul, show evFin F v (realAd F 1) = 0 from map_zero (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v),
+    rw [Pi.add_apply, map_add (f := _), this, map_mul, show evFin F v (realAd F 1) = 0 from map_zero (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v),
       zero_mul, add_zero]
   · exact Submodule.subset_span ⟨f, fun y => ∏ᶠ v, φ v fun i => evalV F v (y i),
       ⟨GlobalTheory.WeilM.isLocallyConstant_finprod_evalV φ h1 h2, GlobalTheory.AdelicCoordSupport.hasCompactSupport_finprod φ h1 h2⟩, rfl⟩

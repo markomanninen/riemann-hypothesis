@@ -1,19 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousTranslatesKernelRouteSmallVertex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmallRouteKernelLeftInvariantRationalUnitary
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MatchedIntegralFiniteSupportStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RegularisingTranslateCombinationStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousTranslatesKernelRouteSmallVertex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmallRouteKernelLeftInvariantRationalUnitary
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLatticeForMatchedFrames
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteSupportMulLatticeStabilizerStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RegularisingTranslateCombination
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim
 open Formalism.L2.Host (HChar)
@@ -90,8 +97,8 @@ theorem integral_translates {D : D7} (V : HSp D) (ν : Measure (GA D V)) [ν.IsH
   have e : translates w F = fun u => ∑ k ∈ w.support, w k * F (u * k) := by
     funext u; rfl
   rw [e]
-  refine ⟨integrable_finset_sum _ fun k _ => (h k).1.const_mul _, ?_⟩
-  rw [integral_finset_sum _ fun k _ => (h k).1.const_mul _]
+  refine ⟨integrable_finsetSum _ fun k _ => (h k).1.const_mul _, ?_⟩
+  rw [integral_finsetSum _ fun k _ => (h k).1.const_mul _]
   simp only [integral_const_mul, (h _).2]
   rw [zdeg, Finsupp.sum, Finset.sum_mul]
 
@@ -111,49 +118,6 @@ theorem zdeg_mul_integral_comm {D : D7} (V : HSp D) (ν : Measure (GA D V)) [ν.
     zdeg a * ∫ u in fd, translates b F u ∂ν = zdeg b * ∫ u in fd, translates a F u ∂ν := by
   rw [← (integral_translates V ν fd hfd _ (translates_left_inv F hF b) hb a).2,
     ← (integral_translates V ν fd hfd _ (translates_left_inv F hF a) ha b).2, translates_comm F a b hab]
-
-theorem regIntegral_const : GlobalTheory.FunPr.Hypotheses₂ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.ThetaIntegralsAgree → GlobalTheory.SquareSt.WeilConvergence → GlobalTheory.SquareSt.LocalMatching → GlobalTheory.SquareSt.ThetaIntegralsAgree → BigR fun {D} _ _ _ _ T _ _ _ _ _ R sc => ∀ (G : GridData R.toLevCh sc) (W : G.Weil), W.Over R → ∀ (B : Frames G)
-  (ρ : RealMatch W), ρ.Over R → ∀ (t : T) (i j : Fin D.R.m) (M : Vol G), M.Is t → ∀ Θ Θ', IsMatched B t ρ i j Θ Θ' → ∀ g g₁,
-  ∃ J : ℂ, ∀ z, IntegrableOn (translates z (kerSmall W Θ' g g₁)) (M.fd _) (M.ν _) →
-    ∫ u in M.fd _, translates z (kerSmall W Θ' g g₁) u ∂M.ν _ = zdeg z * J := by
-  intro h1 h2 h3 h4 h5
-  obtain ⟨C1, H1⟩ := GlobalTheory.T.matched_integral_finite_support h1 h2 h3 h4 h5
-  obtain ⟨C2, H2⟩ := GlobalTheory.T.matched_integral_euler_product h1 h2 h3 h4 h5
-  refine ⟨max C1 C2, fun ε CF hCF => ?_⟩
-  obtain ⟨x1, K1⟩ := H1 ε CF (le_trans (le_max_left _ _) hCF)
-  obtain ⟨x2, K2⟩ := H2 ε CF (le_trans (le_max_right _ _) hCF)
-  refine ⟨max x1 x2, fun D large₂ he hx Γ _ _ Pl0 T A Ks _ _ _ R F hS => ?_⟩
-  have k1 := K1 D large₂ he (le_trans (le_max_left _ _) hx) Γ Pl0 T A Ks R F hS
-  have k2 := K2 D large₂ he (le_trans (le_max_right _ _) hx) Γ Pl0 T A Ks R F hS
-  intro G W hW B ρ hρ t i j M hM Θ Θ' hΘ g g₁
-  set f := kerSmall W Θ' g g₁ with hf
-  have hfd := (hM.vtx (.grid i j) ⟨i.2.le, j.2.le⟩).haar_fund
-  haveI := hfd.1
-  have hinv : ∀ γ ∈ GQ (G.V (.grid i j)), ∀ u, f (γ * u) = f u := kerSmall_rat_mid W B ρ t i j Θ Θ' hΘ g g₁
-  have key := zdeg_mul_integral_comm (G.V (.grid i j)) (M.ν _) (M.fd _) hfd.2 f hinv
-  obtain ⟨v₀, -, w₀, hw₀, hi₀, hs₀⟩ := k2 G W hW B ρ hρ t i j M hM Θ Θ' hΘ g g₁ ∅
-  refine ⟨(∫ u in M.fd _, translates w₀ f u ∂M.ν _) / zdeg w₀, fun z hz => ?_⟩
-  obtain ⟨z', P, hz'f, hz'd, hz'P⟩ := k1 G W hW B ρ hρ t i j Θ Θ' hΘ g g₁ z
-  classical
-  obtain ⟨v, hv, w, hw, hi, hs⟩ := k2 G W hW B ρ hρ t i j M hM Θ Θ' hΘ g g₁ (insert v₀ P)
-  have hvP : v ∉ P := fun h => hv (Finset.mem_insert_of_mem h)
-  have hv0 : v ≠ v₀ := fun h => hv (h ▸ Finset.mem_insert_self _ _)
-  have c1 : ∀ x ∈ w.support, ∀ y ∈ z'.support, x * y = y * x := by
-    intro x hx y hy
-    obtain ⟨x', rfl⟩ := hs x hx
-    exact GlobalTheory.AdelicU.commute_emb _ _ x' (hz'P y hy v hvP)
-  have c2 : ∀ x ∈ w.support, ∀ y ∈ w₀.support, x * y = y * x := by
-    intro x hx y hy
-    obtain ⟨x', rfl⟩ := hs x hx
-    obtain ⟨y', rfl⟩ := hs₀ y hy
-    exact GlobalTheory.AdelicU.commute_emb _ _ x' (GlobalTheory.AdelicU.proj_emb_ne _ _ hv0 y')
-  have hz'i : IntegrableOn (translates z' f) (M.fd _) (M.ν _) := by rw [hz'f]; exact hz
-  have e1 := key w z' c1 hi hz'i
-  have e2 := key w w₀ c2 hi hi₀
-  rw [hz'f, hz'd] at e1
-  rw [mul_div_assoc', eq_div_iff hw₀]
-  apply mul_left_cancel₀ hw
-  linear_combination zdeg w₀ * e1 - zdeg z * e2
 
 end GlobalTheory.SmallConst
 

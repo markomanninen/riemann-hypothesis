@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OnePointBasisFundamentalDomainVolume
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.InterlacingGrids.FreeFamily
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.InterlacingGrids.LagSum
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.InterlacingGrids.GridSum
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OnePointBasisFundamentalDomainVolume
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.InterlacingGrids.FreeFamily
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.InterlacingGrids.LagSum
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.InterlacingGrids.GridSum
+
+@[expose] public section
 
 namespace CompanionTheory.WaveGrid
 

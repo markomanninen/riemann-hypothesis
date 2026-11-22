@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeDeepAreaCount
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIsolatedPointsCount
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetAreaCompare
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaMultiplicityWeight
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeDeepAreaCount
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIsolatedPointsCount
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetAreaCompare
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaMultiplicityWeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -23,7 +28,7 @@ theorem differentiable_eval {k : ℕ} (P : MvPolynomial (Fin k) ℂ) :
   induction P using MvPolynomial.induction_on with
   | C a => simp
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p i hp =>
     simp only [map_mul, eval_X]
@@ -39,7 +44,7 @@ theorem differentiableOn_deepMap (P : MvPolynomial (Fin (d + 1)) ℂ) {s : (Fin 
 
 theorem measurable_deepMap (P : MvPolynomial (Fin (d + 1)) ℂ) {s : (Fin (d + 1) → ℂ) → Fin n → ℂ}
     (I : Fin d → Fin n) (hs : Measurable s) : Measurable (deepMap P s I) := by
-  refine measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun j => ?_
   cases j using Fin.cases with
   | zero => simpa [deepMap] using (MvPolynomial.continuous_eval P).measurable
   | succ i =>
@@ -121,8 +126,8 @@ theorem mem_isolatedFibrePts {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix 
 
 end TubeDeepAreaCount
 
-open TubeDeepAreaCount SheetAreaCompare in
 
+open TubeDeepAreaCount SheetAreaCompare in
 theorem TubeDeepAreaCount.proof (hB : IsolatedPointsCount.Statement) : TubeDeepAreaCount.Statement := by
   classical
   intro n d J A P R _ _ _
@@ -248,7 +253,9 @@ theorem TubeDeepAreaCount.proof (hB : IsolatedPointsCount.Statement) : TubeDeepA
           · obtain ⟨k, hk⟩ := hEcover x hx.1 hx.2
             rw [Set.indicator_of_mem hxf]
             exact (Set.indicator_of_mem (show x ∈ E k ∩ fibre J A y from ⟨hk, hxf⟩)
-              (fun x => ENNReal.ofReal (t y x))).symm.le.trans (ENNReal.le_tsum k)
+              (fun x => ENNReal.ofReal (t y x))).symm.le.trans
+                (ENNReal.le_tsum (f := fun k =>
+                  (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t y x)) x) k)
           · have : t y x = 0 := by
               simp only [ht]
               split_ifs with h

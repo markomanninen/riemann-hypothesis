@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
+
+@[expose] public section
 
 noncomputable section
 

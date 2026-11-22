@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stdform
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovol
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stdform
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovol
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory Formalism.BasicNotions Formalism.MainNotions.S
 open scoped ENNReal Classical
@@ -18,11 +22,11 @@ section General
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-omit [StarRing K] in
 
-theorem exists_smul_mem {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (v : V) :
+omit [StarRing K] in
+theorem exists_smul_mem {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsFullLattice K Λ) (v : V) :
     ∃ d : 𝓞 K, d ≠ 0 ∧ d • v ∈ Λ := by
-  obtain ⟨s, _, b, hbv, hsL⟩ := dualLattice_basis (R := 𝓞 K) Λ hΛ.span_eq_top
+  obtain ⟨s, _, b, hbv, hsL⟩ := dualLattice_basis (R := 𝓞 K) Λ (Submodule.IsFullLattice.span_eq_top (self := hΛ))
   obtain ⟨d, hd0, hd⟩ := dualLattice_denom (R := 𝓞 K) b (Submodule.span (𝓞 K) {v}) (Submodule.fg_span_singleton v)
   refine ⟨d, hd0, (Submodule.span_le.2 ?_) (hd v (Submodule.mem_span_singleton_self v))⟩
   rintro _ ⟨i, rfl⟩
@@ -39,8 +43,8 @@ omit [FiniteDimensional K V] [NumberField K] [Module (𝓞 K) V] [IsScalarTower 
 theorem swap_zero {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) {x y : V} (H : h x y = 0) : h y x = 0 := by
   rw [← hs.eq x y, H, map_zero]
 
-omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem mem_of_perp_perp {h : V →ₗ⋆[K] V →ₗ[K] K} (hn : h.Nondegenerate) (U : Submodule K V) (v : V)
     (H : ∀ y, (∀ u ∈ U, h u y = 0) → h v y = 0) : v ∈ U := by
   have : h v ∈ (U.map h).dualCoannihilator.dualAnnihilator := by
@@ -53,9 +57,70 @@ theorem mem_of_perp_perp {h : V →ₗ⋆[K] V →ₗ[K] K} (hn : h.Nondegenerat
   have : v - u = 0 := hn.1 _ fun y => by rw [map_sub, e, sub_self, LinearMap.zero_apply]
   rwa [sub_eq_zero.1 this]
 
+theorem span_dual_eq_top {h : V →ₗ⋆[K] V →ₗ[K] K} (hn : h.Nondegenerate)
+    (Λ : Submodule (𝓞 K) V) (hfg : Λ.FG) :
+    Submodule.span K (dual h Λ : Set V) = ⊤ := by
+  let b := Module.finBasis K V
+  obtain ⟨bs, hbs⟩ := dualLattice_dualBasis h hn b
+  obtain ⟨d, hd0, hdL⟩ := dualLattice_denom b Λ hfg
+  obtain ⟨d', hd'⟩ := star_algebraMap_ringOfIntegers_mem_range d
+  have hd'0 : algebraMap (𝓞 K) K d' ≠ 0 := by
+    rw [hd']
+    exact star_ne_zero.mpr ((map_ne_zero_iff _ (IsFractionRing.injective (𝓞 K) K)).mpr hd0)
+  have hA : ∀ z ∈ Submodule.span (𝓞 K) (Set.range b), ∀ j,
+      ∃ r : 𝓞 K, algebraMap (𝓞 K) K r = h z (bs j) := by
+    intro z hz
+    induction hz using Submodule.span_induction with
+    | mem x hx =>
+      obtain ⟨i, rfl⟩ := hx
+      intro j
+      refine ⟨if i = j then 1 else 0, ?_⟩
+      rw [hbs]
+      split_ifs <;> simp
+    | zero => intro j; exact ⟨0, by simp⟩
+    | add x y _ _ ihx ihy =>
+      intro j
+      obtain ⟨r1, hr1⟩ := ihx j
+      obtain ⟨r2, hr2⟩ := ihy j
+      exact ⟨r1 + r2, by rw [map_add (f := _), hr1, hr2, map_add (f := _), LinearMap.add_apply]⟩
+    | smul r x _ ih =>
+      intro j
+      obtain ⟨r1, hr1⟩ := ih j
+      obtain ⟨r', hr'⟩ := star_algebraMap_ringOfIntegers_mem_range r
+      refine ⟨r' * r1, ?_⟩
+      rw [map_mul, hr', hr1, ← algebraMap_smul K r x, LinearMap.map_smulₛₗ₂]
+      simp only [LinearMap.smul_apply, starRingEnd_apply, smul_eq_mul]
+  have hbsK : ∀ j, bs j ∈ Submodule.span K (dual h Λ : Set V) := by
+    intro j
+    have hmem : d' • bs j ∈ dual h Λ := by
+      rw [dualBasic_mem_dual]
+      intro y hy
+      obtain ⟨r, hr⟩ := hA _ (hdL y hy) j
+      apply Submodule.mem_one.2
+      refine ⟨r, ?_⟩
+      have e1 : h y (d' • bs j) = algebraMap (𝓞 K) K d' * h y (bs j) := by
+        rw [← algebraMap_smul K d' (bs j), LinearMap.map_smul, smul_eq_mul]
+      have e2 : h (d • y) (bs j) = star (algebraMap (𝓞 K) K d) * h y (bs j) := by
+        rw [← algebraMap_smul K d y, LinearMap.map_smulₛₗ₂]
+        simp only [LinearMap.smul_apply, starRingEnd_apply, smul_eq_mul]
+      rw [hr, e1, e2, hd']
+    have e : bs j = (algebraMap (𝓞 K) K d')⁻¹ • (d' • bs j) := by
+      rw [← algebraMap_smul K d' (bs j), smul_smul, inv_mul_cancel₀ hd'0, one_smul]
+    rw [e]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
+  rw [eq_top_iff]
+  intro x _
+  rw [dualLattice_expand h hn b bs hbs x]
+  exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (hbsK j)
+
 theorem exists_sub_mem {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hn : h.Nondegenerate)
     {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (hu : IsUnimodular h Λ) (U : Submodule K V) (v : V)
     (H : ∀ y ∈ Λ, (∀ u ∈ U, h u y = 0) → h v y ∈ (1 : Submodule (𝓞 K) K)) : ∃ l ∈ Λ, v - l ∈ U := by
+  have hfull : Submodule.IsFullLattice K Λ :=
+    { toIsLattice := hΛ
+      span_eq_top := by
+        have he : dual h Λ = Λ := hu
+        simpa only [he] using span_dual_eq_top hn Λ hΛ.fg }
   let P : Submodule K V := perp h U
   have hP : ∀ y, y ∈ P ↔ ∀ u ∈ U, h u y = 0 := fun y => by simp [P, perp, Submodule.mem_iInf]
   let φ : Λ →ₗ[𝓞 K] (V ⧸ P) := (P.mkQ.restrictScalars (𝓞 K)) ∘ₗ Λ.subtype
@@ -80,14 +145,14 @@ theorem exists_sub_mem {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hn : 
   let f := g.codRestrictOfInjective (Algebra.linearMap (𝓞 K) K) (IsFractionRing.injective (𝓞 K) K) hg
   have hf : ∀ y, algebraMap (𝓞 K) K (f y) = h v (p y) := fun y =>
     g.codRestrictOfInjective_comp_apply _ _ hg y
-  obtain ⟨t, _, b, hbv, hsL⟩ := dualLattice_basis (R := 𝓞 K) Λ hΛ.span_eq_top
+  obtain ⟨t, _, b, hbv, hsL⟩ := dualLattice_basis (R := 𝓞 K) Λ (Submodule.IsFullLattice.span_eq_top (self := hfull))
   obtain ⟨bs, hbs⟩ := dualLattice_dualBasis h hn b
   obtain ⟨d, hd0, hdL⟩ := dualLattice_denom (R := 𝓞 K) b Λ hΛ.fg
   obtain ⟨w, hw⟩ := dualLattice_repr h hs b bs hbs Λ (fun i => by rw [hbv]; exact hsL i.2) d hd0 hdL f
   refine ⟨w, ?_, mem_of_perp_perp hn U _ fun y hy => ?_⟩
   · rw [← hu, dualBasic_mem_dual]
     exact fun y hy => swap_mem hs (Submodule.mem_one.2 ⟨_, (hw y hy).symm⟩)
-  · obtain ⟨c, hc0, hc⟩ := exists_smul_mem hΛ y
+  · obtain ⟨c, hc0, hc⟩ := exists_smul_mem hfull y
     have h1 := hw _ hc
     rw [hf, hp1 _ (by
       change c • y ∈ P
@@ -135,9 +200,9 @@ theorem perp_lattice {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hn : h.
   have hπz : π z = 0 := hπU z (Submodule.mem_sup_right (Submodule.mem_span_singleton_self z))
   have hF : ∀ v, (∀ x ∈ X, h x v = 0) → v + (h z v / T) • z - ι (π v) ∈ X := fun v hv => by
     obtain ⟨w, hw⟩ := hsp (v + (h z v / T) • z) (fun x hx => by simp [hv x hx, hXz x hx])
-      (by rw [map_add, map_smul, hz, smul_eq_mul]; field_simp; ring)
+      (by rw [map_add (f := _), map_smul, hz, smul_eq_mul]; field_simp; ring)
     have := hπX _ hw
-    rw [map_sub, map_add, map_smul, hπz, smul_zero, add_zero, hπι, sub_eq_zero] at this
+    rw [map_sub, map_add (f := _), map_smul, hπz, smul_zero, add_zero, hπι, sub_eq_zero] at this
     rwa [this]
   have hperp : ∀ {w l}, ι w - l ∈ U → ∀ x ∈ X, h x l = 0 := fun {w l} H x hx => by
     have := swap_zero hs ((hU x).2 ⟨fun y hy => hXX y hy x hx, swap_zero hs (hXz x hx)⟩ _ H)
@@ -148,7 +213,7 @@ theorem perp_lattice {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hn : h.
     obtain ⟨l', hl', e⟩ := (hL y).1 hy
     have e1 := swap_zero hs (hXι _ (hF l hlX) y)
     have e2 := hlX _ e
-    rw [map_sub, map_add, map_smul, swap_zero hs (hzι y), smul_zero, add_zero, hι, sub_eq_zero] at e1
+    rw [map_sub, map_add (f := _), map_smul, swap_zero hs (hzι y), smul_zero, add_zero, hι, sub_eq_zero] at e1
     rw [map_sub, LinearMap.sub_apply, sub_eq_zero] at e2
     rw [← e1, e2]
     exact hint _ hl' _ hl
@@ -156,17 +221,27 @@ theorem perp_lattice {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hn : h.
     have := hπU _ H
     rw [map_sub, hπι, sub_eq_zero] at this
     exact this.symm
-  refine ⟨⟨⟨?_, ?_⟩, fun x hx y hy => ?_⟩, ?_⟩
+  have hfull : Submodule.IsFullLattice K Λ :=
+    { toIsLattice := hΛ
+      span_eq_top := by
+        have he : dual h Λ = Λ := hu
+        simpa only [he] using span_dual_eq_top hn Λ hΛ.fg }
+  refine ⟨⟨{ toIsLattice := ⟨?_, ?_⟩, span_eq_top := ?_ }, fun x hx y hy => ?_⟩, ?_⟩
   · refine (hΛ.fg.map (π.restrictScalars (𝓞 K))).of_le fun w hw => ?_
     obtain ⟨l, hl, e⟩ := (hL w).1 hw
     exact ⟨l, hl, hπl (Submodule.mem_sup_left e)⟩
-  · rw [eq_top_iff]
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
+  · apply eq_top_iff.mpr
     intro w _
-    obtain ⟨d, hd0, hd⟩ := exists_smul_mem hΛ (ι w)
-    have h1 : d • w ∈ L := (hL _).2 ⟨_, hd, by
-      rw [← algebraMap_smul K d w, map_smul, algebraMap_smul, sub_self]; exact X.zero_mem⟩
-    have h2 := Submodule.smul_mem _ (algebraMap (𝓞 K) K d)⁻¹ (Submodule.subset_span (R := K) h1)
-    rwa [← algebraMap_smul K d w, inv_smul_smul₀ ((map_ne_zero_iff _ inj).mpr hd0)] at h2
+    obtain ⟨c, hc, hw⟩ := exists_smul_mem hfull (ι w)
+    have hc' : (c : K) ≠ 0 := (map_ne_zero_iff _ inj).mpr hc
+    have hcw : c • w ∈ L := (hL _).2 ⟨c • ι w, hw, by simp⟩
+    have hspan : (c : K) • w ∈ Submodule.span K (L : Set W) := by
+      rw [algebraMap_smul K c w]
+      exact Submodule.subset_span hcw
+    have := (Submodule.span K (L : Set W)).smul_mem (c : K)⁻¹ hspan
+    simpa only [← mul_smul, inv_mul_cancel₀ hc', one_smul] using this
   · obtain ⟨l, hl, e⟩ := (hL y).1 hy
     rw [← hπl (Submodule.mem_sup_left e)]
     exact hpair x hx l hl (hperp (Submodule.mem_sup_left e))
@@ -255,7 +330,8 @@ theorem main : ∀ (D : D7) (u : D.what₂.Word), letI := D.host.cmStar; ∀ F0 
       refine Finsupp.ext fun k => ?_
       simpa using congrFun e k)
     rw [hT_expand]
-    simp only [map_sum, map_mul, D.sp.cm.cmUnram.2.1 τ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, D.sp.cm.cmUnram.2.1 τ]
     exact h2
   · rw [(D.sp.X 0).rank_eq, D.sp.X_rank 0 (Nat.zero_le _)]
     simp [Ranks.N]

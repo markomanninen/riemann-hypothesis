@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.EntriesOfMemUnipRad
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.EntriesOfMemUnipRad
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem conj_colU (j : ℕ) (hj : j < n) (x : GL (Fin n) k) (hx : TopLeft j (x :
   have hYX : Y * X = 1 := by rw [← Units.val_mul, inv_mul_cancel, Units.val_one]
   have hYC : Y * colM j c = colM j (colMul j Y c) := by
     ext i b
-    rw [mul_apply, colM_apply]
+    rw [Matrix.mul_apply, colM_apply]
     by_cases hb : b.val = j
     · simp only [colM_apply, hb, and_true]
       by_cases hi : i.val < j
@@ -38,7 +42,7 @@ theorem conj_colU (j : ℕ) (hj : j < n) (x : GL (Fin n) k) (hx : TopLeft j (x :
   have hCX : ∀ d : Fin n → k, colM j d * X = colM j d := by
     intro d
     ext i l
-    rw [mul_apply, Finset.sum_eq_single (⟨j, hj⟩ : Fin n)]
+    rw [Matrix.mul_apply, Finset.sum_eq_single (⟨j, hj⟩ : Fin n)]
     · rw [hx _ l (Or.inl le_rfl)]
       by_cases hl : (⟨j, hj⟩ : Fin n) = l
       · rw [← hl, one_apply_eq, mul_one]
@@ -61,7 +65,7 @@ def R1 : Matrix (Fin n) (Fin n) k := Matrix.of fun i l => if i = i0 j hj hj1 the
 
 theorem rankOne_mul_self : R1 j hj hj1 ξ * R1 j hj hj1 ξ = (vrow j hj hj1 ξ (i0 j hj hj1)) • R1 j hj hj1 ξ := by
   ext i l
-  rw [mul_apply, Finset.sum_eq_single (i0 j hj hj1)]
+  rw [Matrix.mul_apply, Finset.sum_eq_single (i0 j hj hj1)]
   · simp only [R1, of_apply, Matrix.smul_apply, smul_eq_mul, if_true]
     split_ifs <;> ring
   · intro b _ hb; simp [R1, hb]

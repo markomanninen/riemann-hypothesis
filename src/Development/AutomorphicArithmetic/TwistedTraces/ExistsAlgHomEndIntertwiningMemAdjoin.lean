@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped BigOperators
 
 private theorem burnside_endomorphism {S A : Type} [AddCommGroup S] [Module ℂ S] [FiniteDimensional ℂ S]

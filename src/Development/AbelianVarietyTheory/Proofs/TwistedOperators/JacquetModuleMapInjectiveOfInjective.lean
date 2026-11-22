@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,16 +20,6 @@ variable {G V W : Type} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup 
 theorem map_apply' (f : π₁.IntertwiningMap π) (g : G) (v : V) : f (π₁ g v) = π g (f v) := by
   have h := LinearMap.congr_fun (f.isIntertwining' g) v
   simpa using h
-
-theorem map_mem_twKer (f : π₁.IntertwiningMap π) {H : Subgroup G} {v : V} (hv : v ∈ twKer π₁ H 1) :
-    f v ∈ twKer π H 1 := by
-  have hle : twKer π₁ H 1 ≤ (twKer π H 1).comap f.toLinearMap := by
-    refine Submodule.span_le.2 ?_
-    rintro _ ⟨h, w, rfl⟩
-    simp only [SetLike.mem_coe, Submodule.mem_comap, map_sub, map_smul]
-    refine Submodule.subset_span ⟨h, f w, ?_⟩
-    simp [map_apply']
-  exact hle hv
 
 variable [TopologicalSpace G] [IsTopologicalGroup G]
 
@@ -45,7 +39,8 @@ theorem mem_twKer_of_map (f : π₁.IntertwiningMap π) (hπ : IsSmooth π) (hf 
   have hUf : ∀ u ∈ U, π (u : H) (f v) = f v := fun u hu => by rw [← map_apply', hUv u hu]
   rw [← GlobalTheory.LocGL.idem_eq_zero_iff h₁ hH]
   apply hf
-  rw [map_zero, GlobalTheory.LocGL.idem_eq_cosetSum h₁ hH U hUv, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, GlobalTheory.LocGL.idem_eq_cosetSum h₁ hH U hUv, map_smul, map_sum]
   simp only [map_apply']
   rw [← GlobalTheory.LocGL.idem_eq_cosetSum hπ hH U hUf]
   exact (GlobalTheory.LocGL.idem_eq_zero_iff hπ hH).2 hv

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory
@@ -35,7 +40,7 @@ theorem annihilation_pow_vacuum {T : Type} [AddCommGroup T] [Module ℂ T]
         rw [pow_succ, Module.End.mul_apply]
       have e4 : (s : ℂ) + ((k : ℂ) + 1) * (s : ℂ) = (((k + 1 : ℕ) : ℂ) + 1) * (s : ℂ) := by
         push_cast; ring
-      rw [e1, ih, e3, hD, map_add, map_smul, ← e2, add_assoc, ← add_smul, e4]
+      rw [e1, ih, e3, hD, map_add (f := _), map_smul, ← e2, add_assoc, ← add_smul, e4]
   have := key k v
   rw [hv, map_zero, zero_add] at this
   exact this
@@ -74,7 +79,7 @@ theorem pow_vacuum_fock_bound (T H : Type) [AddCommGroup T] [Module ℂ T]
     intro y
     have e : inner ℂ (Φ (c y)) (Φ (c y)) =
         inner ℂ (Φ (a y)) (Φ (a y)) + (s : ℂ) * inner ℂ (Φ y) (Φ y) := by
-      rw [hadj, hc, map_add, map_smul, inner_add_right, inner_smul_right]
+      rw [hadj, hc, map_add (f := _), map_smul, inner_add_right, inner_smul_right]
       congr 1
       rw [← inner_conj_symm (Φ y) (Φ (c (a y))), hadj]
       exact inner_conj_symm _ _

@@ -1,24 +1,31 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
-import Development.AbelianVarietyTheory.Statements.HeckeInFamilies.GenericMemChart
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoStalkMapOfFlatOfSurjectiveOnStalks
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GenericPartDenseProOpen
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionPointFixedOfGenericSectionsFixed
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsTorsionSectionsOfRoot
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SerreLemmaSemiAbelian
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientSubringDedekindCompatibleEmbed
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientInclusionsEtaleOpenImmersion
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.OneAddZeta21PowSevenAddPowFourteenEqZero
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoStalkMapOfFlatOfSurjectiveOnStalks
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GenericPartDenseProOpen
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionPointFixedOfGenericSectionsFixed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsTorsionSectionsOfRoot
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SerreLemmaSemiAbelian
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientSubringDedekindCompatibleEmbed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientInclusionsEtaleOpenImmersion
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -91,40 +98,80 @@ theorem torsion_fixed {X X' U' : Scheme.{0}} [IsLocallyNoetherian X'] (hN : Geo.
   rw [← hy'l, Category.assoc, ← hφ'₁, ← Category.assoc, key]
 
 theorem fibre_fixed {X : Scheme.{0}} (G : Over X) [GrpObj G] (hG : IsSemiAbelian G) (ρ : X ⟶ X)
-    (τ : Aut G.left) (hφ : IsGrpPullback G G ρ τ.hom) (d : ℕ) (hd : 0 < d) (hτ : τ ^ d = 1)
+    (τ : Aut G.left) (hφ : IsGrpPullback G G ρ τ.asIso.hom) (d : ℕ) (hd : 0 < d) (hτ : τ ^ d = 1)
     (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X) (hx : x ≫ ρ = x) (N : ℕ) (hodd : Odd N) (h3 : 3 ≤ N)
-    (hN : (N : k) ≠ 0) (hfix : ∀ y : Over.mk x ⟶ G, y ^ N = 1 → y.left ≫ τ.hom = y.left) :
-    pullback.fst G.hom x ≫ τ.hom = pullback.fst G.hom x := by
+    (hN : (N : k) ≠ 0) (hfix : ∀ y : Over.mk x ⟶ G, y ^ N = 1 → y.left ≫ τ.asIso.hom = y.left) :
+    pullback.fst G.hom x ≫ τ.asIso.hom = pullback.fst G.hom x := by
   let G' := (Over.pullback x).obj G
   have hπ : IsGrpPullback G' G x (show G'.left ⟶ G.left from pullback.fst G.hom x) := isGrpPullback_pullback G x
-  show (show G'.left ⟶ G.left from pullback.fst G.hom x) ≫ τ.hom = (show G'.left ⟶ G.left from pullback.fst G.hom x)
+  show (show G'.left ⟶ G.left from pullback.fst G.hom x) ≫ τ.asIso.hom = (show G'.left ⟶ G.left from pullback.fst G.hom x)
   generalize (show G'.left ⟶ G.left from pullback.fst G.hom x) = π at hπ ⊢
   obtain ⟨u, hu, hul⟩ := grpPullback_iso ((hπ.comp hφ).congr hx rfl) hπ
-  have hpow : ∀ m : ℕ, ((show Aut G' from u) ^ m).hom.left ≫ π = π ≫ (τ ^ m).hom := by
+  let a : Aut G' := Aut.of u
+  have hpow : ∀ m : ℕ, (a ^ m).asIso.hom.left ≫ π = π ≫ (τ ^ m).asIso.hom := by
     intro m
     induction m with
     | zero => exact (Category.id_comp _).trans (Category.comp_id _).symm
     | succ m ih =>
-      rw [pow_succ, pow_succ, Aut.Aut_mul_def, Aut.Aut_mul_def]
-      show (u.hom ≫ _).left ≫ π = π ≫ τ.hom ≫ _
+      rw [pow_succ, pow_succ, Aut.mul_asIso, Aut.mul_asIso]
+      show (u.hom ≫ _).left ≫ π = π ≫ τ.asIso.hom ≫ _
       rw [Over.comp_left, Category.assoc, ih, ← Category.assoc, hul, Category.assoc]
-  have h1 : (show Aut G' from u) = 1 := GlobalTheory.serre_lemma_semiAbelian k G' (IsSemiAbelian.pullback x G hG) N d u hodd h3 hN hd hu
-    (by
-      apply Iso.ext
-      apply Over.OverMorphism.ext
-      apply hπ.1.hom_ext
-      · rw [hpow, hτ]; exact (Category.comp_id _).trans (Category.id_comp _).symm
-      · rw [Over.w, Over.w])
-    (fun z hz => by
-      have hzw : z.left ≫ G'.hom = 𝟙 (Sp k) := Over.w z
-      let y : Over.mk x ⟶ G := Over.homMk (z.left ≫ π) (by
-        show (z.left ≫ π) ≫ G.hom = x
-        rw [Category.assoc, hπ.1.w, ← Category.assoc, hzw]; exact Category.id_comp _)
-      have := hfix y ((pow_eq_one_iff hπ (T := 𝟙_ _) (Category.id_comp x).symm z y rfl N).1 hz)
-      apply Over.OverMorphism.ext
-      apply hπ.1.hom_ext
-      · rw [Over.comp_left, Category.assoc, hul, ← Category.assoc]; exact this
-      · rw [Over.w, Over.w])
+  have hur : a ^ d = 1 := by
+    apply Aut.ext
+    apply Iso.ext
+    apply Over.OverMorphism.ext
+    apply hπ.1.hom_ext
+    · rw [hpow, hτ]; exact (Category.comp_id _).trans (Category.id_comp _).symm
+    · rw [Over.w, Over.w]
+  have hfix' (z : 𝟙_ (Over (Sp k)) ⟶ G') (hz : z ^ N = 1) : z ≫ u.hom = z := by
+    have hzw : z.left ≫ G'.hom = 𝟙 (Sp k) := Over.w z
+    let y : Over.mk x ⟶ G := Over.homMk (z.left ≫ π) (by
+      show (z.left ≫ π) ≫ G.hom = x
+      rw [Category.assoc, hπ.1.w, ← Category.assoc, hzw]; exact Category.id_comp _)
+    have := hfix y ((pow_eq_one_iff hπ (T := 𝟙_ _) (Category.id_comp x).symm z y rfl N).1 hz)
+    apply Over.OverMorphism.ext
+    apply hπ.1.hom_ext
+    · rw [Over.comp_left, Category.assoc, hul, ← Category.assoc]; exact this
+    · rw [Over.w, Over.w]
+  have h1 : a = 1 := by
+    have hG' : IsSemiAbelian G' := IsSemiAbelian.pullback x G hG
+    have := hG'.comm
+    obtain ⟨p, hp, hpN⟩ := Nat.exists_prime_and_dvd (n := N) (by omega)
+    have hpo : Odd p := Odd.of_dvd_nat hodd hpN
+    have hpk : (p : k) ≠ 0 := by
+      obtain ⟨c, rfl⟩ := hpN
+      rw [Nat.cast_mul] at hN
+      exact left_ne_zero_of_mul hN
+    let e : (𝟙_ (Over (Sp k)) ⟶ G') ≃* (𝟙_ (Over (Sp k)) ⟶ G') :=
+      { toFun z := z ≫ u.hom
+        invFun z := z ≫ u.inv
+        left_inv z := (Category.assoc _ _ _).trans ((congrArg (z ≫ ·) u.hom_inv_id).trans (Category.comp_id z))
+        right_inv z := (Category.assoc _ _ _).trans ((congrArg (z ≫ ·) u.inv_hom_id).trans (Category.comp_id z))
+        map_mul' y z := MonObj.mul_comp y z u.hom }
+    have hit : ∀ (n : ℕ) z, e^[n] z = z ≫ (a ^ n).asIso.hom := by
+      intro n
+      induction n with
+      | zero => intro z; exact (Category.comp_id z).symm
+      | succ n ih =>
+        intro z
+        rw [Function.iterate_succ_apply', ih, pow_succ', Aut.mul_asIso]
+        exact Category.assoc z (a ^ n).asIso.hom u.hom
+    have hpoints := GlobalTheory.minkowski_divisible _ p e d hp hpo hd (SerreLemma.exists_pow_eq G' hG' p hpk)
+      (fun z => by rw [hit, hur]; exact Category.comp_id z)
+      (fun z hz => hfix' z (by obtain ⟨c, rfl⟩ := hpN; rw [pow_mul, hz, one_pow]))
+    have hm : IsMonHom (u.hom * (𝟙 G')⁻¹) :=
+      { one_hom := by
+          rw [MonObj.comp_mul, GrpObj.comp_inv, Category.comp_id, IsMonHom.one_hom, mul_inv_cancel,
+            one_eq_one]
+        mul_hom := by
+          rw [mul_eq_mul, MonObj.comp_mul, GrpObj.comp_inv, Category.comp_id, MonObj.mul_comp,
+            MonObj.comp_mul, mul_inv, _root_.mul_mul_mul_comm]
+          congr 1 <;> simp [MonObj.comp_mul, GrpObj.comp_inv] }
+    have heq := GlobalTheory.TorsionDense.eq_one_of_torsion_comp_eq_one k G' G' hG' hG' p hp hpk
+      (u.hom * (𝟙 G')⁻¹) hm (fun _ _ z m hz => by
+        rw [MonObj.comp_mul, GrpObj.comp_inv, Category.comp_id]
+        exact mul_inv_eq_one.mpr (hpoints z m hz))
+    exact Aut.ext (Iso.ext (mul_inv_eq_one.mp heq))
   have := hpow 1
   rw [h1, one_pow, pow_one] at this
   exact this.symm.trans (Category.id_comp _)
@@ -157,9 +204,9 @@ end GlobalTheory.StabTriv
 
 namespace GlobalTheory
 
-open StabTriv in
 
-theorem fibre_fixed_of_finite_order_of_level_fixed : Out.Laws → Out.Laws2 → Out.Laws3 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (S : ℕ) (β : RZ H S l.A →+* KA l) (C : Cpt Xo.s Xo.univ.t β) (r : Xo.X ≅ Xo.X) (ν : SABMap Xo.univ.t Xo.univ.t r.hom) (ρ : C.X ≅ C.X) (mu : SABMap C.t C.t ρ.hom), IsInc (RZ H S l.A).subtype (KA l).val.toRingHom β → 0 < S → (∃ e, l.A ∣ S ^ e) → C.j ≫ ρ.hom = r.hom ≫ C.j → C.m.φ ≫ mu.φ = ν.φ ≫ C.m.φ → l.M ∣ S → r.hom ≫ Xo.s = Xo.s → (∀ x, (Xo.univ.eta x).left ≫ ν.φ = r.hom ≫ (Xo.univ.eta x).left) → (∃ (τ : Aut C.t.G.left) (d : ℕ), 0 < d ∧ τ ^ d = 1 ∧ τ.hom = mu.φ) → ∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ C.X), x ≫ ρ.hom = x → pullback.fst C.t.G.hom x ≫ mu.φ = pullback.fst C.t.G.hom x := by
+open StabTriv in
+theorem fibre_fixed_of_finite_order_of_level_fixed : Out.Laws → Out.Laws2 → Out.Laws3 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (S : ℕ) (β : RZ H S l.A →+* KA l) (C : Cpt Xo.s Xo.univ.t β) (r : Xo.X ≅ Xo.X) (ν : SABMap Xo.univ.t Xo.univ.t r.hom) (ρ : C.X ≅ C.X) (mu : SABMap C.t C.t ρ.hom), IsInc (RZ H S l.A).subtype (KA l).val.toRingHom β → 0 < S → (∃ e, l.A ∣ S ^ e) → C.j ≫ ρ.hom = r.hom ≫ C.j → C.m.φ ≫ mu.φ = ν.φ ≫ C.m.φ → l.M ∣ S → r.hom ≫ Xo.s = Xo.s → (∀ x, (Xo.univ.eta x).left ≫ ν.φ = r.hom ≫ (Xo.univ.eta x).left) → (∃ (τ : Aut C.t.G.left) (d : ℕ), 0 < d ∧ τ ^ d = 1 ∧ τ.asIso.hom = mu.φ) → ∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ C.X), x ≫ ρ.hom = x → pullback.fst C.t.G.hom x ≫ mu.φ = pullback.fst C.t.G.hom x := by
   intro L₁ L₂ L₃ E _ _ _ H D l Xo S β C r ν ρ mu hβ hS ⟨e, he⟩ hj hm hM hr hη ⟨τ, d, hd, hτ, hτ'⟩ k _ _ x hx
   have hMpos : 0 < l.M := lt_of_lt_of_le (by norm_num) l.three_le
   obtain ⟨⟨_, hded⟩, _, hfrac⟩ := (GlobalTheory.BaseRing.isDedFrac_RZ E H l S e hS he).2.2 β hβ

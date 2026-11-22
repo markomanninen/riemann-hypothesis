@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ theorem sum_place {W : Type} {N q : ℕ} (w : Fin q → W)
   · intro a _
     rfl
 
-open Classical in
 
+open Classical in
 def fTL (Y : Fin q → HS L N) :
     Matrix (Fin q → Ix (InfinitePlace L) N) (Fin q → Ix (InfinitePlace L) N) ℂ →ₗ[ℂ] ℂ where
   toFun T := fT T Y
@@ -73,7 +77,6 @@ theorem fT_perm' (σ : Equiv.Perm (Fin q)) (w : Fin q → InfinitePlace L) (Y : 
   by_cases hw : ∀ i, w (σ i) = w i
   · rw [if_pos hw]
     simp [ContinuousMultilinearMap.sum_apply, blk, ent, hw]
-    rfl
   · rw [if_neg hw]
     push_neg at hw
     obtain ⟨i, hi⟩ := hw

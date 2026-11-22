@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.LocalGeometry.Imports
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.LocalGeometry.Imports
+
+@[expose] public section
 
 namespace GlobalTheory
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.CoefModAt
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActPMemLocPNabStdOfIsBasisAt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.CoefModAt
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActPMemLocPNabStdOfIsBasisAt
+
+@[expose] public section
+
 open NumberField
 
 noncomputable section
@@ -90,7 +95,7 @@ theorem polyAction_scaled_mem_locP_nabStd {ι : Type} [Fintype ι] (lam : ι →
       simp only [map_smul, smul_smul]
       rw [Finset.prod_smul]
     | zero => rw [map_zero, smul_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add, smul_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), smul_add]; exact Submodule.add_mem _ hx hy
     | smul r x _ hx =>
       rw [LinearMap.map_smul_of_tower, smul_comm]
       exact Submodule.smul_mem _ _ hx
@@ -182,12 +187,12 @@ end ESide
 
 theorem nabAtr_smul_pow_mem : ∀ (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] (ι : Type) [Fintype ι]
     (n : ℕ) (emb : ι → E →+* K) (lam : ι → Formalism.BasicNotions.DomWeight n) (M M' : Submodule (𝓞 E) (Fin n → E)) (N : ℕ),
-    N ≠ 0 → Submodule.IsLattice E M → Submodule.IsLattice E M' → (∀ x ∈ M, (N : 𝓞 E) • x ∈ M') →
+    N ≠ 0 → Submodule.IsFullLattice E M → Submodule.IsFullLattice E M' → (∀ x ∈ M, (N : 𝓞 E) • x ∈ M') →
     (∀ x ∈ M', (N : 𝓞 E) • x ∈ M) →
     ∃ a : ℕ, ∀ F ∈ Formalism.L2.DIV.nabAtr emb lam M, ((N : K) ^ a) • F ∈ Formalism.L2.DIV.nabAtr emb lam M' := by
   intro E K _ _ _ _ ι _ n emb lam M M' N _ hM _ h1 h2
   refine ⟨scaleExp lam, fun F hF => ?_⟩
-  have hL : ∀ τ, Submodule.IsLattice K (dualFr (tauLat emb τ M)) := fun τ => dualFr_tauLat_isLattice emb τ M hM
+  have hL : ∀ τ, Submodule.IsFullLattice K (dualFr (tauLat emb τ M)) := fun τ => dualFr_tauLat_isLattice emb τ M hM
   have hLL' : ∀ τ, ∀ φ ∈ dualFr (tauLat emb τ M), (N : K) • φ ∈ dualFr (tauLat emb τ M') :=
     fun τ => dualFr_tauLat_smul_mem emb τ N h2
   have hL'L : ∀ τ, ∀ φ ∈ dualFr (tauLat emb τ M'), (N : K) • φ ∈ dualFr (tauLat emb τ M) :=

@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.LiftChartIdeal
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.BijOnClosedPointsOfIsIso
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsBasicOpenCover
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.LiftChartIdeal
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.BijOnClosedPointsOfIsIso
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsBasicOpenCover
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

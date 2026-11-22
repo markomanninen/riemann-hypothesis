@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,27 +47,6 @@ def sum (D D' : TrData q e) : TrData q e where
 theorem card_sum (D D' : TrData q e) : Nat.card (D.sum D').S = Nat.card D.S + Nat.card D'.S := by
   have := D.fin; have := D'.fin
   exact Nat.card_sum
-
-theorem Classifies.sum {Γ : Type} [Group Γ] {l : ℕ} [Fact l.Prime] {D D' : TrData q e} {ι : Qbar l ≃+* ℂ} {g : Γ}
-    {P P' : (Γ →* GL (Fin 3) (Qbar l)) → Prop} (h : D.Classifies ι g P) (h' : D'.Classifies ι g P') :
-    (D.sum D').Classifies ι g fun r => P r ∨ P' r := by
-  classical
-  obtain ⟨cl, h1, h2⟩ := h
-  obtain ⟨cl', h1', h2'⟩ := h'
-  let F : {r // P r ∨ P' r} → D.S ⊕ D'.S :=
-    fun r => if hr : P r.1 then Sum.inl (cl ⟨r.1, hr⟩) else Sum.inr (cl' ⟨r.1, r.2.resolve_left hr⟩)
-  have e1 : ∀ r (hr : P r.1), F r = Sum.inl (cl ⟨r.1, hr⟩) := fun r hr => dif_pos hr
-  have e2 : ∀ r (hr : ¬ P r.1), F r = Sum.inr (cl' ⟨r.1, r.2.resolve_left hr⟩) := fun r hr => dif_neg hr
-  refine ⟨F, fun r r' (H : F r = F r') => ?_, fun r => ?_⟩
-  · by_cases hr : P r.1 <;> by_cases hr' : P r'.1
-    · rw [e1 r hr, e1 r' hr'] at H; exact h1 _ _ (Sum.inl.inj H)
-    · rw [e1 r hr, e2 r' hr'] at H; cases H
-    · rw [e2 r hr, e1 r' hr'] at H; cases H
-    · rw [e2 r hr, e2 r' hr'] at H; exact h1' _ _ (Sum.inr.inj H)
-  · change _ = ι.symm (Sum.elim D.t D'.t (F r))
-    by_cases hr : P r.1
-    · rw [e1 r hr]; exact h2 ⟨r.1, hr⟩
-    · rw [e2 r hr]; exact h2' ⟨r.1, _⟩
 
 end TrData
 

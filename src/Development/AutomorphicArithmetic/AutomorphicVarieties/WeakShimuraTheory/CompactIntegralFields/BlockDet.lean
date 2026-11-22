@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -58,7 +62,7 @@ private theorem bd_notMem (m : Ideal R) [hm : m.IsPrime] {t x p q p' q' r s : R}
     rw [← Ideal.Quotient.eq] at ht hp hq
     rw [← Ideal.Quotient.eq_zero_iff_mem] at hr ⊢
     have := congrArg (Ideal.Quotient.mk m) h0
-    simp only [map_add, map_sub, map_mul, map_zero, ht, hp, hq, hr] at this ⊢
+    simp only [map_add (f := _), map_sub, map_mul, map_zero, ht, hp, hq, hr] at this ⊢
     linear_combination this
   rcases hm.mem_or_mem e with e | e
   · exact h1 e

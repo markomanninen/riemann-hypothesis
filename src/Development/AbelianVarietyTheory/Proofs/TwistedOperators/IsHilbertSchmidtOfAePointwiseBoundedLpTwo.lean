@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetIntegralNormRmulLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousIntegralInvMulOfLocallyIntegrable
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CcGASmoothAndRderMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousSetIntegralConstTermOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetIntegralNormRmulLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousIntegralInvMulOfLocallyIntegrable
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CcGASmoothAndRderMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousSetIntegralConstTermOn
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta MeasureTheory Set Filter NumberField
 open scoped Topology ContDiff TensorProduct
@@ -38,7 +42,8 @@ theorem pointwise {X : Type} [MeasurableSpace X] {ν : Measure X}
   have hw2 : ∀ c, ‖w c‖ ^ 2 = ∑ j : s, ‖c j‖ ^ 2 := by
     intro c
     have h := hon.inner_sum c c Finset.univ
-    rw [@norm_sq_eq_re_inner ℂ, h, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [@norm_sq_eq_re_inner ℂ, h, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [RCLike.conj_mul, ← RCLike.ofReal_pow, RCLike.ofReal_re]
 
@@ -46,7 +51,8 @@ theorem pointwise {X : Type} [MeasurableSpace X] {ν : Measure X}
   have hD : ∀ c ∈ D, ∀ᵐ x ∂ν, ‖∑ j : s, c j * T (e j) x‖ ≤ C * ‖w c‖ := by
     intro c _
     have hlin : T (w c) = ∑ j : s, c j • T (e j) := by
-      simp only [w, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [w, map_sum, map_smul]
     have hsm : ∀ᵐ x ∂ν, ∀ j : s, (c j • T (e j) : Lp ℂ 2 ν) x = c j * T (e j) x := by
       rw [ae_all_iff]
       intro j
@@ -99,19 +105,19 @@ theorem sum_le {X : Type} [MeasurableSpace X] {ν : Measure X} [IsFiniteMeasure 
     have hm : MemLp f ((2 : ℕ) : ENNReal) ν := by simpa using Lp.memLp f
     exact hm.integrable_norm_pow (by norm_num)
   calc ∑ i ∈ s, ‖T (e i)‖ ^ 2 = ∫ x, ∑ i ∈ s, ‖T (e i) x‖ ^ 2 ∂ν := by
-        rw [integral_finset_sum s fun i _ => hint (T (e i))]
+        rw [integral_finsetSum s fun i _ => hint (T (e i))]
         exact Finset.sum_congr rfl fun i _ => hn _
     _ ≤ ∫ _x, C ^ 2 ∂ν :=
-        integral_mono_ae (integrable_finset_sum s fun i _ => hint (T (e i)))
+        integral_mono_ae (integrable_finsetSum s fun i _ => hint (T (e i)))
           (integrable_const _) (pointwise e he T C hT s)
     _ = C ^ 2 * ν.real univ := by rw [integral_const, smul_eq_mul, mul_comm]
 
 end GlobalTheory.HSAbs
 
-open GlobalTheory.HSAbs in
 
+open GlobalTheory.HSAbs in
 theorem GlobalTheory.isHilbertSchmidt_of_ae_bounded : ∀ {X : Type} [MeasurableSpace X] {ν : Measure X} [IsFiniteMeasure ν] {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (T : H →L[ℂ] Lp ℂ 2 ν) (C : ℝ), (∀ v, ∀ᵐ x ∂ν, ‖T v x‖ ≤ C * ‖v‖) → GlobalTheory.OpTrace.IsHilbertSchmidt T := by
   intro X _ ν _ H _ _ _ T C hT
   unfold GlobalTheory.OpTrace.IsHilbertSchmidt
   refine summable_of_sum_le (c := C ^ 2 * ν.real univ) (fun i => sq_nonneg _) fun u => ?_
-  exact GlobalTheory.HSAbs.sum_le _ (GlobalTheory.OpTrace.stdBasis H).orthonormal T C hT u
+  exact GlobalTheory.HSAbs.sum_le _ (GlobalTheory.OpTrace.stdBasis (H := H)).orthonormal T C hT u

@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.PsiDatumStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.WhittakerZeroStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.TopContDiffOn
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.PsiDatumStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.WhittakerZeroStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.TopContDiffOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,7 @@ variable (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (ι : V ≃ₗ[�
 
 lemma opC_add (h : Matrix (Fin n) (Fin n) ℂ) (B₁ B₂ : Module.End ℂ D) :
     opC σ ι h (B₁ + B₂) = opC σ ι h B₁ + opC σ ι h B₂ := by
-  simp only [opC, LinearMap.add_apply, Submodule.coe_add, map_add, inner_add_right, add_smul,
+  simp only [opC, LinearMap.add_apply, Submodule.coe_add, map_add (f := _), inner_add_right, add_smul,
     Finset.sum_add_distrib]
 
 lemma opC_smul (h : Matrix (Fin n) (Fin n) ℂ) (c : ℂ) (B : Module.End ℂ D) :
@@ -123,17 +127,20 @@ def opL (h : Matrix (Fin n) (Fin n) ℂ) : Module.End ℂ D →ₗ[ℂ] (W →L[
 lemma vec_expand (v : V) :
     ((v : D) : H) = ∑ j, ⟪ob W j, ι v⟫_ℂ • (((ι.symm (ob W j) : V) : D) : H) := by
   conv_lhs => rw [← ι.symm_apply_apply v, ← (ob W).sum_repr' (ι v)]
-  simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul]
 
 lemma vec_expandD (v : V) :
     (v : D) = ∑ j, ⟪ob W j, ι v⟫_ℂ • ((ι.symm (ob W j) : V) : D) := by
   conv_lhs => rw [← ι.symm_apply_apply v, ← (ob W).sum_repr' (ι v)]
-  simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul]
 
 lemma opC_coef (h : Matrix (Fin n) (Fin n) ℂ) (B : Module.End ℂ D) (v v' : V) :
     ⟪ι v', opC σ ι h B (ι v)⟫_ℂ = ⟪((v' : D) : H), σ h ((B v : D) : H)⟫_ℂ := by
   rw [vec_expandD ι v, vec_expand ι v']
-  simp only [opC, map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [opC, map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul,
     ContinuousLinearMap.coe_sum', Finset.sum_apply, ContinuousLinearMap.coe_smul', Pi.smul_apply,
     ContinuousLinearMap.smulRight_apply, innerSL_apply_apply, inner_sum, sum_inner, inner_smul_left,
     inner_smul_right, inner_conj_symm]
@@ -217,7 +224,8 @@ lemma qdet_opC {F : Matrix (Fin n) (Fin n) ℂ → (W →L[ℂ] W)} {B : Module.
   unfold Formalism.QuantumDeterminants.qdetOp Formalism.QuantumDeterminants.qminorOp Capelli.capelliC Capelli.cminor
   rw [Finset.sum_apply, Finset.sum_mul]
   change _ = opL σ ι g _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [Pi.smul_apply, smul_mul_assoc, ← Int.cast_smul_eq_zsmul ℂ, map_smul]
   congr 1

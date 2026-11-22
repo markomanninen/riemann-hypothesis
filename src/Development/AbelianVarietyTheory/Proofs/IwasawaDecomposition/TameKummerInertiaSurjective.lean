@@ -1,9 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EmbeddingMemCoefficientField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValSubOneLtOfRed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteGaloisInertiaLiftsAbsoluteInertiaRat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompositumIntermediateFieldExistsPlaceValuationE
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsInertiaLift
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.WittCoreInclusionMulVecMemLatticeCompletionAtPla
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteTwistFrameExtraExcludedOverSmallPrimes
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValSubOneLtOfRed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteGaloisInertiaLiftsAbsoluteInertiaRat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompositumIntermediateFieldExistsPlaceValuationE
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsInertiaLift
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.FrobeniusOrbits Formalism.L2.Host Formalism.L2.NT Formalism.L2.TwC Formalism.L2.NC NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting
 
 noncomputable section
@@ -24,7 +30,7 @@ theorem unram_of_fixed : ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] 
   have hlift : ∀ x : L, A.valuation (algebraMap L Ω x) ≤ 1 →
       A.valuation (algebraMap L Ω (τ x) - algebraMap L Ω x) < 1 := by
     intro x hx
-    obtain ⟨s, t, hs, e⟩ := GlobalTheory.CMRam.exists_den_field (algebraMap L Ω) A hx
+    obtain ⟨s, t, hs, e⟩ := GlobalTheory.CMRam.exists_den_field (algebraMap L Ω) A (x := x) hx
     have hτs : A.valuation (algebraMap L Ω (τ (s : L))) = 1 := by
       refine le_antisymm ?_ ?_
       · have := hint (τ • s); rwa [hsm] at this
@@ -90,8 +96,8 @@ theorem index_one_root : ∀ (E K : Type) [Field E] [NumberField E] [Field K] [N
   obtain ⟨j, hjJ, hjv⟩ := Set.not_subset.1 hJv
   have hjP : algebraMap (𝓞 E) (𝓞 K) j ∉ P := by
     intro h; apply hjv; rw [← hPv]; exact h
-  haveI hPmax : P.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap P
-    (by rw [show Ideal.comap (algebraMap (𝓞 E) (𝓞 K)) P = v.asIdeal from hPv]; exact v.isMaximal)
+  haveI hPmax : P.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := 𝓞 E) P
+    (by rw [hPv]; exact v.isMaximal)
   have hrad : (P ^ 2).radical = P := by rw [Ideal.radical_pow _ two_ne_zero, hPmax.isPrime.radical]
   have hprim : (P ^ 2).IsPrimary := Ideal.isPrimary_of_isMaximal_radical (by rw [hrad]; exact hPmax)
   apply hnot

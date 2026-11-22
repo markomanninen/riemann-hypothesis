@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SmithMat
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmithNormalForm.ExistsMoveRow
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SmithMat
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmithNormalForm.ExistsMoveRow
+
+@[expose] public section
 
 theorem smith_normal_form_theory.{u} : PI.SmithMat.{u} := by
   intro R _ _ _ n A

@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubsingletonOfGiso
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicExtensionExactStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PhiPreservesIsomorphismStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PsiPreservesIsomorphismStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PhiProductRankZeroTrivialStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PhiProductLeftRankZeroStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RestrictionProductRankZeroLeftStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RestrictionProductRankZeroRightStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeTwistedIsoStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistProductDistributesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistTwistAddStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFiltrationStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubsingletonOfGiso
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicExtensionExactStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PhiPreservesIsomorphismStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PsiPreservesIsomorphismStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PhiProductRankZeroTrivialStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PhiProductLeftRankZeroStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RestrictionProductRankZeroLeftStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RestrictionProductRankZeroRightStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeTwistedIsoStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistProductDistributesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistTwistAddStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFiltrationStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,9 +63,6 @@ theorem isSmooth_iterN (ψ : AddChar k Circle) : ∀ (j : ℕ) {n : ℕ} {τ : M
     IsSmooth (iterN ψ j τ).ρ
   | 0, _, _, h => h
   | j + 1, _, _, h => isSmooth_iterN ψ j (isSmooth_phiN ψ h)
-
-theorem isSmooth_dN (ψ : AddChar k Circle) (j : ℕ) {n : ℕ} {τ : MRep k (n + j)} (h : IsSmooth τ.ρ) :
-    IsSmooth (dN ψ j τ).ρ := isSmooth_psiN (isSmooth_iterN ψ j h)
 
 theorem ses_iterN (ψ : AddChar k Circle) (hc : Continuous ψ) : ∀ (j : ℕ) {n : ℕ} {A B C : MRep k (n + j)},
     IsSmooth A.ρ → IsSmooth B.ρ → IsSmooth C.ρ → Ses A.ρ B.ρ C.ρ →

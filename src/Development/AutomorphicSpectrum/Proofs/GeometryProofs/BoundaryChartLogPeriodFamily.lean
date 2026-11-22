@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DifferentiableOnStarStar
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLogPeriodFamily
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeGramComplexConjugateStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyExponentialConjugateStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogPeriodsConjugateExistsStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjugateRootZeroThird
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DifferentiableOnStarStar
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLogPeriodFamily
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeGramComplexConjugateStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyExponentialConjugateStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogPeriodsConjugateExistsStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjugateRootZeroThird
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -67,7 +72,8 @@ def conjTan {S : Scheme.{0}} {G : Over S} {x x' : Sp ℂ ⟶ S} (h : x' = spMap 
 
 theorem conj_hermForm' {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (a b : Fin g → ℂ) :
     hermForm (Hm.map (starRingEnd ℂ)) a b = (starRingEnd ℂ) (hermForm Hm (star a) (star b)) := by
-  simp [hermForm, dotProduct, Matrix.mulVec, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [hermForm, dotProduct, Matrix.mulVec, map_sum, map_mul]
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H} {l : Level H}
 

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceAt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FourVac
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceAt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FourVac
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+
+@[expose] public section
 
 noncomputable section
 
@@ -397,13 +401,15 @@ theorem exists_decomp (ϖ : O) (hϖ : Irreducible ϖ) (w : Lˣ) (hw : (w : L) = 
   have hPC : ∀ j c, ∑ m, algebraMap O L (P.1 j m) * algebraMap O L (GlobalTheory.CompanionTheory.Jp.lowerLeftBlock κ m c) =
       algebraMap O L ((P.1 * GlobalTheory.CompanionTheory.Jp.lowerLeftBlock κ) j c) := by
     intro j c
-    rw [Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum]
     simp only [map_mul]
   have hPD : ∀ j c, ∑ m, algebraMap O L (P.1 j m) *
       (algebraMap O L (GlobalTheory.CompanionTheory.Jp.dBlk κ m c) * ((w⁻¹ : Lˣ) : L)) =
       algebraMap O L ((P.1 * GlobalTheory.CompanionTheory.Jp.dBlk κ) j c) * ((w⁻¹ : Lˣ) : L) := by
     intro j c
-    rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
     simp only [map_mul, mul_assoc]
   have hbot : dd.1 * X.1.submatrix Sum.inr id =
       (GlobalTheory.CompanionTheory.Jp.inL κ₂).1.submatrix Sum.inr id := by

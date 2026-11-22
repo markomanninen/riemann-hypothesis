@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.PartialFiltrationCoeff.part_filt_coeff :
     ∀ {O σ : Type} [inst : CommRing O]
@@ -23,7 +27,7 @@ theorem UpperTheory.Reformulated.B.PartialFiltrationCoeff.part_filt_coeff :
       rintro ⟨p, q⟩ hpq
       have hsum : p + q = n := by simpa using hpq
       have hdeg : Finsupp.degree p + Finsupp.degree q = Finsupp.degree n := by
-        rw [← hsum, map_add]
+        rw [← hsum, map_add (f := _)]
       have hp := ih a ha p
       by_cases hq : q = 0
       · subst hq
@@ -37,5 +41,5 @@ theorem UpperTheory.Reformulated.B.PartialFiltrationCoeff.part_filt_coeff :
       · have hq' : Finsupp.degree q ≠ 0 := fun h => hq ((Finsupp.degree_eq_zero_iff q).mp h)
         exact Ideal.mul_mem_right _ _ (Ideal.pow_le_pow_right (by omega) hp)
     · intro x y hx hy n
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Ideal.add_mem _ (hx n) (hy n)

@@ -1,20 +1,25 @@
-import Development.AutomorphicArithmetic.BlowupCategories.SpanScale
-import Development.AutomorphicArithmetic.BlowupCategories.AffC
-import Development.AutomorphicArithmetic.CommutativeAlgebra.IsIsoOfBijectiveOnSimplices
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MonoOfInjectiveOnSimplices
-import Development.AutomorphicArithmetic.CommutativeAlgebra.IsPullbackOfUniqueSimplicesPullback
-import Development.AutomorphicArithmetic.CommutativeAlgebra.SimplicesPullbackExistsUniqueOfMapEq
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisCoverOfMonoOfZariskiLocal
-import Development.AutomorphicArithmetic.CommutativeAlgebra.LocallyExistsIsUnitOfSpanRangeEqTop
-import Development.AutomorphicArithmetic.CommutativeAlgebra.IsIsoStackProductMapOfBijective
-import Development.AutomorphicArithmetic.CommutativeAlgebra.IsIsoStackProductPairOfBijective
-import Development.AutomorphicArithmetic.CommutativeAlgebra.StackProductIsPullbackOfActionPullback
-import Development.AutomorphicArithmetic.CommutativeAlgebra.LerayHirschOfIsoSquare
-import Development.AutomorphicArithmetic.CommutativeAlgebra.LerayHirschOneIffTwistEquiv
-import Development.AutomorphicArithmetic.CommutativeAlgebra.AffineLineActionFstTwistEquiv
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisStackProductOfInjectiveOfLocallyCov
-import Development.AutomorphicArithmetic.CommutativeAlgebra.PullCupPowEqCupPowPull
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FirstChernClassTateTwistCocycleUniqueNaturalAddiStatement
+module
+
+public import Development.AutomorphicArithmetic.BlowupCategories.SpanScale
+public import Development.AutomorphicArithmetic.BlowupCategories.AffC
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.IsIsoOfBijectiveOnSimplices
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MonoOfInjectiveOnSimplices
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.IsPullbackOfUniqueSimplicesPullback
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.SimplicesPullbackExistsUniqueOfMapEq
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisCoverOfMonoOfZariskiLocal
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.LocallyExistsIsUnitOfSpanRangeEqTop
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.IsIsoStackProductMapOfBijective
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.IsIsoStackProductPairOfBijective
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.StackProductIsPullbackOfActionPullback
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.LerayHirschOfIsoSquare
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.LerayHirschOneIffTwistEquiv
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.AffineLineActionFstTwistEquiv
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisStackProductOfInjectiveOfLocallyCov
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.PullCupPowEqCupPowPull
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FirstChernClassTateTwistCocycleUniqueNaturalAddiStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf UpperTheory.Blow
 
 noncomputable section
@@ -132,7 +137,7 @@ private instance isIso_u (S : Spc) (M : ℕ) : IsIso (uMap S M) := by
 private theorem tau_line (M : ℕ) : tauS M ≫ PGL.line M = lineOf (chiX M) := rfl
 
 private theorem u_line (S : Spc) (M : ℕ) :
-    uMap S M ≫ pullback.snd _ _ ≫ PGL.line M = Sp.line S (chiX M) := by
+    uMap S M ≫ pullback.snd (triv S M) (PGL.pr M) ≫ PGL.line M = Sp.line S (chiX M) := by
   rw [← Category.assoc, uMap, pullback.lift_snd, Category.assoc, tau_line]
 
 end UpperTheory.PullPf
@@ -141,7 +146,8 @@ open UpperTheory.PullPf in
 theorem UpperTheory.projBundleFormula_iff_pglForm :
     ∀ (q : ℕ) [NeZero q] (S : Spc) (M : ℕ), Inv q S → (PBF q S M ↔ Pbf q S M) := by
   intro q _ S M hS
-  have hP : Inv q (pullback (triv S M) (PGL.pr M)) := fun U ⟨x⟩ => hS U ⟨Sx.map (pullback.fst _ _) x⟩
+  have hP : Inv q (pullback (triv S M) (PGL.pr M)) :=
+    fun U ⟨x⟩ => hS U ⟨Sx.map (pullback.fst (triv S M) (PGL.pr M)) x⟩
   have hX : Inv q (Sp S (XC M)) := fun U ⟨x⟩ => hS U ⟨x.1⟩
   have hf : uMap S M ≫ pullback.fst _ _ = Sp.fst S (XC M) := pullback.lift_fst _ _ _
   constructor

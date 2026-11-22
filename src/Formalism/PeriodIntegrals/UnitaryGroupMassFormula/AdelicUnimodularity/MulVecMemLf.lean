@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.LamAfLeOhatL
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.KCountable
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.LamAfLeOhatL
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.KCountable
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E] {B : Type} [CommRing B] 
 variable {ι : Type} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι F E)
 
 theorem emb_add (c c' : ι → B) : emb b (c + c') = emb b c + emb b c' := by
-  apply coord_injective b; rw [map_add, coord_emb, coord_emb, coord_emb]
+  apply coord_injective b; rw [map_add (f := _), coord_emb, coord_emb, coord_emb]
 
 theorem emb_zero : emb b (0 : ι → B) = 0 := by
   apply coord_injective b; rw [map_zero, coord_emb]
@@ -35,9 +39,6 @@ theorem isClosed_eqA [TopologicalSpace B] [IsTopologicalRing B] [T2Space B] {X :
   rw [this]; exact isClosed_eq hf hg
 
 end General
-
-theorem stab_mem {I : AutInst} {x : I.Gf} (hx : x ∈ I.Kset) {w : Fin I.n → I.E ⊗[I.F] Af I.F}
-    (hw : w ∈ I.Lf) : I.fmat x *ᵥ w ∈ I.Lf := (hx w).mp hw
 
 namespace Cpt
 
@@ -63,7 +64,8 @@ theorem mulVec_mem_Lf (M : Matrix (Fin I.n) (Fin I.n) (I.E ⊗[I.F] Af I.F))
     exact Submodule.smul_mem _ a hx
 
 theorem isClosed_LfC (d : ℕ) (hd : 0 < d)
-    (hlow : ∀ y : Fin I.n → I.E ⊗[I.F] Af I.F, (∀ j, IntC (bs I) (y j)) → d • y ∈ I.Lf) :
+    (hlow : ∀ y : Fin I.n → I.E ⊗[I.F] Af I.F,
+      (∀ j k, coord (bs I) (y j) k ∈ Ohat I.F) → d • y ∈ I.Lf) :
     IsClosed {w : Fin I.n → ιb I → Af I.F | (fun j => emb (bs I) (w j)) ∈ I.Lf} := by
   let S : AddSubgroup (Fin I.n → ιb I → Af I.F) :=
     { carrier := {w | (fun j => emb (bs I) (w j)) ∈ I.Lf}
@@ -105,28 +107,6 @@ theorem isClosed_LfC (d : ℕ) (hd : 0 < d)
     rw [Pi.smul_apply, nsmul_eq_mul, ← mul_assoc, ← map_natCast (algebraMap I.F (Af I.F)), ← map_mul,
       mul_inv_cancel₀ hd0, map_one, one_mul]
   exact AddSubgroup.isClosed_of_isOpen S (S.isOpen_of_mem_nhds hnhds)
-
-theorem intC_single (D1 : ℕ) (h1 : IntC (bs I) (D1 • (1 : I.E ⊗[I.F] Af I.F))) (j : Fin I.n) :
-    ∀ i, IntC (bs I) ((Pi.single j (D1 • (1 : I.E ⊗[I.F] Af I.F)) : Fin I.n → I.E ⊗[I.F] Af I.F) i) := by
-  intro i
-  by_cases hij : i = j
-  · subst hij; rw [Pi.single_eq_same]; exact h1
-  · rw [Pi.single_eq_of_ne hij]; exact intC_zero
-
-theorem bound_K (d D D1 : ℕ)
-    (hlow : ∀ y : Fin I.n → I.E ⊗[I.F] Af I.F, (∀ j, IntC (bs I) (y j)) → d • y ∈ I.Lf)
-    (hup : ∀ y ∈ I.Lf, ∀ j, IntC (bs I) (D • y j)) (h1 : IntC (bs I) (D1 • (1 : I.E ⊗[I.F] Af I.F)))
-    {x : I.Gf} (hx : x ∈ I.Kset) (i j : Fin I.n) : IntC (bs I) ((D * (d * D1)) • I.fmat x i j) := by
-  have hl := hlow _ (intC_single I D1 h1 j)
-  have hxl := stab_mem hx hl
-  have := hup _ hxl i
-  have e : (I.fmat x *ᵥ (d • (Pi.single j (D1 • (1 : I.E ⊗[I.F] Af I.F)) : Fin I.n → I.E ⊗[I.F] Af I.F))) i =
-      (d * D1) • I.fmat x i j := by
-    rw [Matrix.mulVec_smul, Pi.smul_apply]
-    simp [Matrix.mulVec, dotProduct, Pi.single_apply, mul_smul_comm, smul_smul, mul_comm]
-    ring
-  rw [e, smul_smul] at this
-  exact this
 
 end Cpt
 

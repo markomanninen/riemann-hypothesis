@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ProductLeftMaps
 
@@ -17,7 +21,7 @@ theorem prodLeft_eq_maps {F A B E : Type} [Field F] [CommRing A] [CommRing B] [C
     obtain ⟨a, b⟩ := x
     simp [Algebra.TensorProduct.map_tmul]
   | add x y hx hy =>
-    rw [map_add, hx, hy, map_add, map_add]
+    rw [map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
     rfl
 
 theorem main : ∀ {F A B E : Type} [inst : Field F] [inst_1 : CommRing A] [inst_2 : CommRing B]

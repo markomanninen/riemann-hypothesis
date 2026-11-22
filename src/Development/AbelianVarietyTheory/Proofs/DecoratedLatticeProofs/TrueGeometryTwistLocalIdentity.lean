@@ -1,10 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Live
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LevTrue
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TrueGeometryTwistChainValue
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationVacuumCosetVectorsGrid
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Live
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsStdFr
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTopAlt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.XiEqXiOffMul
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChartZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Placed
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TrueGeometryTwistChainValue
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationVacuumCosetVectorsGrid
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
@@ -74,10 +89,10 @@ theorem idele_off {R : Type} [CommRing R] (φ : AE D →+* R) (h : φ (p.e + cA 
     have : p.e = p.e * (p.e + cA D p.e) := by rw [mul_add, e1, e2, add_zero]
     rw [this, map_mul, h, mul_zero]
   have f2 : φ (cA D p.e) = 0 := by
-    rw [map_add, f1, zero_add] at h; exact h
+    rw [map_add (f := _), f1, zero_add] at h; exact h
   have s : p.sec a = p.e * p.sec a := by rw [← p.sec_pr, p.pr_sec]
   rw [p.idele_val, s]
-  simp only [map_add, map_sub, map_mul, map_one, f1, f2]
+  simp only [map_add (f := _), map_sub, map_mul, map_one, f1, f2]
   simp
 
 theorem idele_on {R : Type} [CommRing R] (φ : AE D →+* R) (h : φ (p.e + cA D p.e) = 1) (a : kˣ) (δ : AE D)
@@ -86,7 +101,7 @@ theorem idele_on {R : Type} [CommRing R] (φ : AE D →+* R) (h : φ (p.e + cA D
   have s : p.sec a = p.e * δ := by rw [← ha, p.sec_pr]
   rw [p.idele_val, s]
   have h2 := congrArg φ hδ
-  simp only [map_add, map_sub, map_mul, map_one] at h h2 ⊢
+  simp only [map_add (f := _), map_sub, map_mul, map_one] at h h2 ⊢
   linear_combination (φ δ - 1) * h - φ (cA D p.e) * h2
 
 end Pt
@@ -102,8 +117,8 @@ theorem det_sub_one_mem {V : HSp D} {I : Ideal (AE D)} {h : GA D V} (hh : h ∈ 
     exact hh i j
   rw [this, map_one, Matrix.det_one]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem isDetRoot_prod {ι : Type} [Fintype ι] {k : ι → Type} [∀ i, Field (k i)] [∀ i, ValuativeRel (k i)]
     [∀ i, TopologicalSpace (k i)] [∀ i, IsNonarchimedeanLocalField (k i)] (p : ∀ i, SplitPt D (k i))
     (hp : Function.Injective fun i => (p i).v) {V : HSp D} {h : GA D V} (hh : h ∈ grpAt V fun w => ∃ i, (p i).v = w)
@@ -183,55 +198,5 @@ theorem det_cast (n n' : ℕ) (e : n = n') (h : GA D (D.sp.X n')) :
     (Formalism.L2.Theta.mt _ (e ▸ h : GA D (D.sp.X n))).det = (Formalism.L2.Theta.mt _ h).det := by
   subst e; rfl
 
-set_option maxHeartbeats 1000000 in
-
-theorem chr_quot_chart_free : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)} {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} (W : RealPack ex), AllTrue W → ∀ (u : B.Word) (a : GeoAll W u), a.Is → a.True → ∀ t (J : QJ a t), J.Reads → ∀ j, j + 1 < B.R.m → ∀ β β' : J.Ch₀ (j + 1), J.A.chr (j + 1 + 1) (J.A.xr (j + 1) β) * (J.A.chr (j + 1) (J.A.xr (j + 1) β))⁻¹ = J.A.chr (j + 1 + 1) (J.A.xr (j + 1) β') * (J.A.chr (j + 1) (J.A.xr (j + 1) β'))⁻¹ := by
-  intro B X I l Z L hT Gi Gl Kc Yd cX ex W hW u a ha ha' t J hJ j hj β β'
-  have hA := hJ.is
-  have hj0 : j < B.R.m := by omega
-  have hle : j + 1 ≤ B.R.m := hj.le
-  have c1 : ChrEq (J.A.chr (j + 1)) (I.C.mu0 ⟨j, hj0⟩ * I.xi (W.P.I.tup t)) := hA.chr ⟨j, hj0⟩
-  have c2 : ChrEq (J.A.chr (j + 1 + 1)) (I.C.mu0 ⟨j + 1, hj⟩ * I.xi (W.P.I.tup t)) := hA.chr ⟨j + 1, hj⟩
-  have hF : ∀ b, (J.A.chr (j + 1 + 1) * (J.A.chr (j + 1))⁻¹) (idF (I.rec7 l Z) b) = 1 :=
-    quot_triv (D := I.rec7 l Z) c2 c1 (I.C.isMu0 ⟨j + 1, hj⟩).triv (I.C.isMu0 ⟨j, hj0⟩).triv
-  show (J.A.chr (j + 1 + 1) * (J.A.chr (j + 1))⁻¹) _ = (J.A.chr (j + 1 + 1) * (J.A.chr (j + 1))⁻¹) _
-  have key : ∀ γ, ∃ k₀ : GA (I.rec7 l Z) ((I.rec7 l Z).sp.X (j + 1)), k₀ ∈ GfC _ ∧
-      finM _ (rankN (I.rec7 l Z) (j + 1) hle) k₀ = (TC.kStd X u (B.R.N (j + 1))).1 ∧
-      ∀ x, IsDetRoot _ k₀ x → (J.A.chr (j + 1 + 1) * (J.A.chr (j + 1))⁻¹) (J.A.xr (j + 1) γ) =
-        (J.A.chr (j + 1 + 1) * (J.A.chr (j + 1))⁻¹) x := by
-    intro γ
-    obtain ⟨hG, hM, hR⟩ := hA.kA (j + 1) hle γ
-    rcases Nat.lt_or_ge (j + 1 + 1) B.R.m with h | h
-    · refine ⟨_, hG, ?_, fun x hx => chr_eq_of_root hF hR hx⟩
-      rw [hM, hJ.std (j + 1) h γ]
-    · have hm : j + 1 + 1 = B.R.m := by omega
-      obtain ⟨k₀, h₀, hG₀, hM₀, hk, hsupp, hloc⟩ := hJ.pen (j + 1) hm γ
-      refine ⟨k₀, hG₀, hM₀, fun x hx => ?_⟩
-      have hs : ∀ i, (J.G i).s = j := fun i => by
-        have : (J.G i).s + 1 + 1 = B.R.m := (J.G i).hs
-        omega
-      have hd : ∀ i, ∃ d : (J.G i).kˣ, valuation (J.G i).k (d : (J.G i).k) = 1 ∧
-          (J.G i).q.pr (Formalism.L2.Theta.mt _ h₀).det = d := fun i => by
-        have e : (J.G i).s + 1 = j + 1 := by rw [hs i]
-        obtain ⟨g, hg, hmat⟩ := hloc i e
-        obtain ⟨d, hd1, hd2⟩ := exists_unit_det ((J.G i).FX ((J.G i).s + 1) le_rfl) g ((J.E i).le _ _ _ hg)
-        refine ⟨d, hd1, ?_⟩
-        rw [← det_cast _ _ e h₀, RingHom.map_det]
-        exact (congrArg Matrix.det hmat).trans hd2
-      choose d hd1 hd2 using hd
-      have hroot := isDetRoot_prod (fun i => (J.G i).q)
-        (GlobalTheory.TopVol.TwistPlaces.places_injective W hW u a ha ha' t J hJ) hsupp d hd2
-      rw [hk] at hR
-      refine chr_eq_of_root_mul hF hx hroot ?_ hR
-      rw [map_prod]
-      refine Finset.prod_eq_one fun i _ => ?_
-      rw [MonoidHom.mul_apply, MonoidHom.inv_apply, hJ.chr (j + 1) hj, hJ.chr j hj0,
-        eq_on_unit (J.G i).q ((J.E i).mu (j + 1) (by rw [hs i])).1 ((J.E i).mu j (by rw [hs i]; omega)).1
-          ((J.E i).unr _) ((J.E i).unr _) (d i) (hd1 i), mul_inv_cancel]
-  obtain ⟨k₁, g1, m1, h1⟩ := key β
-  obtain ⟨k₂, g2, m2, h2⟩ := key β'
-  obtain rfl : k₁ = k₂ := eq_of_finM _ g1 g2 (m1.trans m2.symm)
-  obtain ⟨x, hx⟩ := (GlobalTheory.Member.isDetRoot_laws _ _).1 k₁
-  rw [h1 x hx, h2 x hx]
 
 end GlobalTheory.ChartQuot

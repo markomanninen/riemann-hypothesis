@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
-import Development.WeilBound.ThetaLifts.LatticeBasics.EulerHalf
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
+public import Development.WeilBound.ThetaLifts.LatticeBasics.EulerHalf
+
+@[expose] public section
 
 noncomputable section
 

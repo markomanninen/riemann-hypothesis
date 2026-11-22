@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
-import Mathlib.LinearAlgebra.Lagrange
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsSideTer
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
+public import Mathlib.LinearAlgebra.Lagrange
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsSideTer
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AutomorphicL2Unitary GlobalTheory.Orb Matrix Polynomial
 open scoped ContDiff ComplexConjugate
@@ -26,7 +30,7 @@ lemma cd_pow (k : ℕ) : ∀ a b, ContDiff ℝ ∞ (fun Y : Mx n => ((Matrix.of 
 
 lemma cd_aeval (P : ℂ[X]) : ∀ a b, ContDiff ℝ ∞ (fun Y : Mx n => (aeval (Matrix.of Y) P) a b) := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => intro a b; simp only [map_add, Matrix.add_apply]; exact (hp a b).add (hq a b)
+  | add p q hp hq => intro a b; simp only [map_add (f := _), Matrix.add_apply]; exact (hp a b).add (hq a b)
   | monomial k c =>
     simp only [Polynomial.aeval_monomial]
     exact cd_mul (fun a b => contDiff_const) (cd_pow k)
@@ -38,7 +42,7 @@ lemma conj_pow (g g' D : Matrix (Fin n) (Fin n) ℂ) (h1 : g' * g = 1) (h2 : g *
 lemma aeval_conj (g g' D : Matrix (Fin n) (Fin n) ℂ) (h1 : g' * g = 1) (h2 : g * g' = 1) (P : ℂ[X]) :
     aeval (g' * D * g) P = g' * aeval D P * g := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, hp, hq, mul_add, add_mul]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, mul_add, add_mul]
   | monomial k c =>
     rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, conj_pow g g' D h1 h2,
       ← Algebra.smul_def, ← Algebra.smul_def, mul_smul_comm, smul_mul_assoc]
@@ -46,7 +50,7 @@ lemma aeval_conj (g g' D : Matrix (Fin n) (Fin n) ℂ) (h1 : g' * g = 1) (h2 : g
 lemma aeval_diag (l : Fin n → ℂ) (P : ℂ[X]) :
     aeval (diagonal l) P = diagonal fun j => P.eval (l j) := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, hp, hq, Matrix.diagonal_add]; simp [Polynomial.eval_add]
+  | add p q hp hq => rw [map_add (f := _), hp, hq, Matrix.diagonal_add]; simp [Polynomial.eval_add]
   | monomial k c =>
     rw [Polynomial.aeval_monomial, Matrix.diagonal_pow, Matrix.algebraMap_eq_diagonal,
       Matrix.diagonal_mul_diagonal]

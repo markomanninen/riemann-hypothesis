@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ResidueSpanScale
 
@@ -50,7 +54,8 @@ theorem finrank_span_residue_le {O K I A B : Type} [CommRing O] [IsDomain O] [Va
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Function.comp_apply,
         Pi.zero_apply] at h1 ⊢
       have h2 : c j₀ * algebraMap O K (∑ i, d i * w (e i)) = 0 := by
-        rw [← h1, map_sum, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← h1, map_sum, Finset.mul_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [map_mul, (hw (e i)).1, ← mul_assoc, ← hd i]
       have h3 : ∑ i, d i * w (e i) = 0 := by
@@ -58,7 +63,8 @@ theorem finrank_span_residue_le {O K I A B : Type} [CommRing O] [IsDomain O] [Va
         rw [map_zero]
         exact (mul_eq_zero.1 h2).resolve_left hc₀
       have h4 := congrArg (IsLocalRing.residue O) h3
-      rw [map_sum, map_zero] at h4
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h4
       rw [← h4]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, (hw (e i)).2]

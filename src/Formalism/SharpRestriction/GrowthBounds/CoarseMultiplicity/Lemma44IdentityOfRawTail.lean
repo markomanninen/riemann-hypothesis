@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CoarseMultiplicityAtIdentity
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SymmetricFamilySpan
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CoarseMultiplicityAtIdentity
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SymmetricFamilySpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def wjSub (w : O) (j : ℕ) : Submodule O (MvPolynomial σ (KK O)) where
     intro P Q hP hQ m
     obtain ⟨a, ha⟩ := hP m
     obtain ⟨b, hb⟩ := hQ m
-    exact ⟨a + b, by rw [coeff_add, ha, hb, ← map_add, mul_add]⟩
+    exact ⟨a + b, by rw [MvPolynomial.coeff_add, ha, hb, ← map_add (f := _), mul_add]⟩
   zero_mem' := fun m => ⟨0, by simp⟩
   smul_mem' := by
     intro c P hP m
@@ -58,7 +62,7 @@ def cleanSub (o : ℕ) : Submodule O (MvPolynomial ((X.TT × Bool) × Fin (X.m +
     · rw [mul_add, inA_iff_wj w]
       exact (wjSub w 0).add_mem ((inA_iff_wj w).1 h2) ((inA_iff_wj w).1 k2)
     · unfold InWjRg
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (wjSub w X.c).add_mem (h3 g' hg' hne) (k3 g' hg' hne)
   zero_mem' := by
     refine ⟨Submodule.zero_mem _, ?_, fun g' _ _ => ?_⟩
@@ -112,7 +116,7 @@ theorem ioBlock_add (j : Fin (numSeg X.TT)) (b : SegBlock (segS X.TT j) X.m)
     ioBlock (KK O) X.p C0 CE1 CE2 X j b (u + v) =
       ioBlock (KK O) X.p C0 CE1 CE2 X j b u + ioBlock (KK O) X.p C0 CE1 CE2 X j b v := by
   unfold ioBlock
-  rw [map_add, mul_add]
+  rw [map_add (f := _), mul_add]
 
 theorem symFam_span (β : GlobalTheory X)
     (G : ∀ j : Fin (numSeg X.TT), Set (MvPolynomial (BVar (2 * segS X.TT j + 1) X.m (X.seg C0 CE1 CE2 j).t) (KK O)))
@@ -155,7 +159,7 @@ theorem t44 {C0 Cde CE1 CE2 : ℝ}
           add_mem' := by
             rintro σ σ' ⟨F, hF, hFσ⟩ ⟨F', hF', hFσ'⟩
             refine ⟨F + F', (cleanSub X O S.w g o).add_mem hF hF', ?_⟩
-            rw [map_add, add_sub_add_comm]
+            rw [map_add (f := _), add_sub_add_comm]
             exact (wjSub S.w n).add_mem hFσ hFσ'
           zero_mem' := by
             refine ⟨0, (cleanSub X O S.w g o).zero_mem, ?_⟩
@@ -185,7 +189,8 @@ theorem t44 {C0 Cde CE1 CE2 : ℝ}
               (liftSubst X.p X.n' O S.w 1 (hhLetters X.TT) g raw - symFam (KK O) X.p C0 CE1 CE2 X β s -
                 ∑ ε ∈ Finset.Ico 1 n, (S.w ^ ε) • τ ε) -
               ∑ ε ∈ Finset.Ico 1 n, (S.w ^ ε) • (liftSubst X.p X.n' O S.w 1 (hhLetters X.TT) g (Fe ε) - τ ε) := by
-            rw [map_sub, map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sub, map_sum]
             simp only [AlgHom.map_smul_of_tower, smul_sub, Finset.sum_sub_distrib]
             ring
           rw [e1]
@@ -216,19 +221,10 @@ theorem lemma44_at_body {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hK : KeptBLAt C0
     exact hK X hD hH hc j (β j) (hβ j)
   exact t44 X O S mm g hRT X.c le_rfl _ _ hσ
 
-theorem lemma44_at_of_raw_tail {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hRT : RawTailAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc)
-    (hK : KeptBLAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc) : Lemma44At C0 CYb Cde Ck CD Cb CE1 CE2 Cc := by
-  intro X _ _ O _ _ _ _ S hSq hD hH hc mm hmm g hg β hβ s hs
-  obtain ⟨F, hF, hcong⟩ := lemma44_at_body hK X O S hD hH hc mm g (hRT X O S hSq hD hH hc mm hmm g hg) β hβ s hs
-  exact ⟨F, hF.1, hF.2.1, hcong, hF.2.2⟩
-
 theorem lemma44_identity_of_raw_tail {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hRT : RawTailAt1 C0 CYb Cde Ck CD Cb CE1 CE2 Cc)
     (hK : KeptBLAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc) : CoarseMultiplicityAtIdentity C0 CYb Cde Ck CD Cb CE1 CE2 Cc := by
   intro X _ _ O _ _ _ _ S hSq hD hH hc mm hmm β hβ s hs
   obtain ⟨F, hF, hcong⟩ := lemma44_at_body hK X O S hD hH hc mm 1 (hRT X O S hSq hD hH hc mm hmm) β hβ s hs
   exact ⟨F, hF.1, hF.2.1, hcong, hF.2.2⟩
-
-theorem lemma44_of_raw_tail_kept (hRT : RestRawTail) (hK : RestKeptBL) : BinomialRatioBeyondThreshold :=
-  TransportedAlt.mono (fun _ _ _ _ _ _ _ _ _ _ h => lemma44_at_of_raw_tail h.1 h.2) (hRT.and hK)
 
 end Formalism.MainNotions.ColumnSystems.Pf

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,9 +101,11 @@ theorem dτ_mem {W : Submodule ℂ R.V} (hW : Formalism.REAL.KStable ε R.units 
     {X : Matrix (Fin n) (Fin n) ℂ} (hX : ∀ a b, ε a ≠ ε b → X a b = 0) :
     ∀ v ∈ W, R.dτ X v ∈ W := by
   intro v hv
-  rw [Matrix.matrix_eq_sum_single X, map_sum, _root_.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.matrix_eq_sum_single X, map_sum, _root_.sum_apply]
   refine W.sum_mem fun a _ => ?_
-  rw [map_sum, _root_.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, _root_.sum_apply]
   refine W.sum_mem fun b _ => ?_
   by_cases hab : ε a = ε b
   · have e : Matrix.single a b (X a b) = X a b • Matrix.single a b 1 := by
@@ -145,8 +151,8 @@ end Piece
 
 end PieceCon
 
-open PieceCon in
 
+open PieceCon in
 def pieceKType {n : ℕ} {ε : Fin n → Bool} (R : KRep ε)
     (hS : KRepStableStatement) (hR : KRepRelStatement) (μ : Fin n → ℝ) (x : R.V) (hx : x ≠ 0)
     (hhi : Formalism.REAL.KHighest ε R.units μ x) : KType ε μ :=
@@ -214,8 +220,8 @@ def pieceKType {n : ℕ} {ε : Fin n → Bool} (R : KRep ε)
       have h1 : R.dτ (Matrix.single a b 1) x = 0 := hhi.2 a b hab hε
       rw [h1, smul_zero] }
 
-open PieceCon in
 
+open PieceCon in
 theorem kRepPiece_of (hR : KRepRelStatement) (hS : KRepStableStatement) : KRepPieceStatement := by
   intro n ε R μ x hx hhi
   set W := Formalism.REAL.kSpan ε R.units x with hWdef

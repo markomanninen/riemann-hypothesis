@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementJCT
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QNFAsm
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.SecondCapelliMinorLevel
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelLiftBasics.LevelGroupUnitaryHermitian
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelImageArithmetic.GlevImageOf
+module
+
+public import Formalism.HermitianCurvature.StatementJCT
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QNFAsm
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.SecondCapelliMinorLevel
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelLiftBasics.LevelGroupUnitaryHermitian
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelImageArithmetic.GlevImageOf
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -143,11 +147,11 @@ theorem unitB_lift {m : ℕ} (Bs : Fin m → Fin (2 * r' + k + 1) → ℂ) (a b 
   by_cases hp : i ≤ p.val ∧ p.val < 2 * r' + k + 1 + i
   · by_cases hq : i ≤ q.val ∧ q.val < 2 * r' + k + 1 + i
     · rw [dif_pos hp, dif_pos hq, liftVec_apply_of_mid _ p hp, bvec_eq_liftVec_bvec_of_mid q hq, herm_hpk_liftVec_liftVec]
-    · rw [dif_pos hp, dif_neg hq, herm_bvec_liftVec_eq_zero_of_outside _ q hq, mul_zero]
-  · rw [dif_neg hp]
+    · rw [dif_pos hp, dite_eq_right hq, herm_bvec_liftVec_eq_zero_of_outside _ q hq, mul_zero]
+  · rw [dite_eq_right hp]
     have h0 : liftVec k i r' (Bs a) p = 0 := by
       simp only [liftVec]
-      rw [dif_neg hp]
+      rw [dite_eq_right hp]
     rw [h0, zero_mul]
 
 theorem hpart1_Lz (Z : Matrix (Fin (2 * r' + k + 1)) (Fin (2 * r' + k + 1)) ℂ) :
@@ -199,7 +203,7 @@ theorem frame_lift {m : ℕ} (z : Fin (2 * r' + k + 1) → ℂ) (Bs : Fin m → 
     · rw [liftVec_apply_of_mid _ p hm]
       exact h1 a _ (show p.val - i < r' ∨ r' + k < p.val - i by omega)
     · simp only [liftVec]
-      rw [dif_neg hm]
+      rw [dite_eq_right hm]
   · simp only [herm_hpk_liftVec_liftVec]
     exact h2 a b
   · simp only [List.mem_singleton] at hv

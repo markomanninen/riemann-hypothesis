@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsShiftSectionSeparation
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionPointHeight
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.ImportsAlt
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveDivVertical
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PZhangLowerX
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsShiftSectionSeparation
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionPointHeight
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.ImportsAlt
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveDivVertical
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.Counterexample
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PZhangLowerX
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -43,8 +48,8 @@ theorem zcomb_eq [∀ k, Fintype (ι k)] (A H : ReciprocityTheory.ChartRestricti
 
 end ShiftSectionSeparation
 
-open ShiftSectionSeparation in
 
+open ShiftSectionSeparation in
 theorem ShiftSectionSeparation.proof (h₁ : ArithIntersectionSystemStatement)
     (h₂ : IndefiniteRowSideFullHecke.HeightsSet.DenseBoundedHeight.Statement) (h₃ : SmallSectionPointHeight.Statement) :
     ShiftSectionSeparation.Statement := by

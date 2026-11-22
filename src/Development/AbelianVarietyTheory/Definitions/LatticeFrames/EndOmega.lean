@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.CM4
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
-import Formalism.FormalGroupLog.Statement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.CM4
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
+public import Formalism.FormalGroupLog.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +32,10 @@ def hondaSum (τ : K →+* K) (q : ℕ) (c : ℕ → K) (f : K⟦X⟧) : K⟦X�
   PowerSeries.mk fun n => ∑ j ∈ Finset.range n, c j * coeff n (frobOp τ q (j + 1) f)
 
 def IntLog [IsUltrametricDist K] (f e : K⟦X⟧) : Prop :=
-  Formalism.L2.Th1.C.IsLogPair f e ∧ CoefLe 1 (derivative K f) ∧ Formalism.L2.Th1.C.FGInt (Formalism.G.unitBall K) f e
+  Formalism.L2.Th1.C.IsLogPair f e ∧ CoefLe 1 (derivative f) ∧ Formalism.L2.Th1.C.FGInt (Formalism.G.unitBall K) f e
+
 
 open Formalism.L2.Th1.CM in
-
 def EndOmega : Prop :=
   ∀ (d : ℕ) (L : PeriodPair), d % 4 = 3 → HasCMBy d L →
     ∀ (l : ℕ) [Fact l.Prime], 5 ≤ l → ¬ l ∣ d → (¬ ∃ a : ZMod l, a ^ 2 = -(d : ZMod l)) →

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivCompM
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivCompM
+
+@[expose] public section
 
 open GlobalTheory.Nef
 
@@ -45,7 +49,7 @@ theorem limit_of_jets (A B R : Type) [CommRing A] [CommRing B] [CommRing R] (π 
     rw [hg f x.1 k (by omega), hg h x.2 k (by omega)]
   have gadd : ∀ f h, g (f + h) = g f + g h := by
     intro f h; ext k
-    rw [hg _ k k (by omega), hdv _ _ _ ((hφ k).1.2.1 f h) k (by omega), map_add, map_add,
+    rw [hg _ k k (by omega), hdv _ _ _ ((hφ k).1.2.1 f h) k (by omega), map_add (f := _), map_add (f := _),
       hg f k k (by omega), hg h k k (by omega)]
   have gone : g 1 = 1 := by
     ext k

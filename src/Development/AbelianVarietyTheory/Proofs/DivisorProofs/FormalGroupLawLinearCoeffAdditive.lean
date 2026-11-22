@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CoeffSingleLawAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CoeffSingleLawAdd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,7 @@ theorem eq_single_of_degree_eq_one {σ : Type} {e : σ →₀ ℕ} (h : e.degree
   have hsum : e = (e - Finsupp.single j 1) + Finsupp.single j 1 := (tsub_add_cancel_of_le hle).symm
   have hd : (e - Finsupp.single j 1).degree = 0 := by
     have h2 := congrArg Finsupp.degree hsum
-    rw [map_add, Finsupp.degree_single, h] at h2
+    rw [map_add (f := _), Finsupp.degree_single, h] at h2
     omega
   rw [Finsupp.degree_eq_zero_iff] at hd
   rw [hsum, hd, zero_add]
@@ -29,7 +33,7 @@ theorem coeff_addLaw (R : Type) [CommRing R] (d : ℕ) (i : Fin d) (α : Fin d �
     coeff α (addLaw R d i) =
       if α = Finsupp.single (Sum.inl i) 1 ∨ α = Finsupp.single (Sum.inr i) 1 then 1 else 0 := by
   classical
-  simp only [addLaw, map_add, coeff_X]
+  simp only [addLaw, map_add (f := _), coeff_X]
   by_cases h1 : α = Finsupp.single (Sum.inl i) 1
   · have h2 : α ≠ Finsupp.single (Sum.inr i) 1 := by
       rw [h1]; intro h
@@ -63,8 +67,8 @@ end GlobalTheory.Katz.LowLaw
 
 namespace GlobalTheory.Katz
 
-open LowLaw in
 
+open LowLaw in
 theorem coeff_law_of_degree_le_one (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p]
     [PerfectRing k p] (d : ℕ) (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) k) (h : IsLaw μ)
     (i : Fin d) (α : Fin d ⊕ Fin d →₀ ℕ) (hα : α.degree ≤ 1) :

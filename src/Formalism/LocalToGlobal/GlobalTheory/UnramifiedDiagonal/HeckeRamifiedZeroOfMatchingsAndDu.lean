@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.TrpDia
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.UpMatch
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnDiaMatch0FHolds
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.TrpDia
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.UpMatch
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnDiaMatch0FHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,12 +20,6 @@ theorem hecke_ramified_zero_of_same_place (T : Forms0 D u) (hU : UpDiaSame0F T) 
     (trpDia0_of T hU hE) h6
 
 def SameAll : Prop := ∀ (D : D7) (u : D.what₂.Word) (T : Forms0 D u), UpDiaSame0F T ∧ DnDiaSame0F T ∧ EDiaSame0F T
-
-def UpSameAll : Prop := ∀ (D : D7) (u : D.what₂.Word) (T : Forms0 D u), UpDiaSame0F T
-
-def DnSameAll : Prop := ∀ (D : D7) (u : D.what₂.Word) (T : Forms0 D u), DnDiaSame0F T
-
-def ESameAll : Prop := ∀ (D : D7) (u : D.what₂.Word) (T : Forms0 D u), EDiaSame0F T
 
 def DUAll : Prop := ∀ (D : D7) (u : D.what₂.Word), Forms0 D u → DUFormulaLevelZero D u
 

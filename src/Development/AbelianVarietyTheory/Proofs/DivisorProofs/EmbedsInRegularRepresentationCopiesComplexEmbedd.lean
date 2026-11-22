@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRingEquivComplexCompEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRingEquivComplexCompEq
+
+@[expose] public section
 
 open Module NumberField
 
@@ -9,7 +13,8 @@ namespace GlobalTheory.BadCount
 theorem semilin_eq_sum {K V : Type} [Field K] [AddCommGroup V] [Module ℂ V] {N : ℕ} {σ : K →+* ℂ}
     (f : (Fin N → K) →ₛₗ[σ] V) (x : Fin N → K) : f x = ∑ k, σ (x k) • f (Pi.single k 1) := by
   conv_lhs => rw [pi_eq_sum_univ' x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smulₛₗ]
 
@@ -89,7 +94,7 @@ theorem embReg_of_baseChange : ∀ (K V V' G : Type) [Field K] [NumberField K] [
       obtain ⟨x, rfl⟩ := hx
       rw [he', hTf, hTf, he]
     | zero => simp
-    | add x y _ _ hx hy => simp only [map_add, hx, hy]
+    | add x y _ _ hx hy => simp only [map_add (f := _), hx, hy]
     | smul c x _ hx => rw [map_smul, hs, hs, map_smul, hx]
 
 end GlobalTheory.BadCount

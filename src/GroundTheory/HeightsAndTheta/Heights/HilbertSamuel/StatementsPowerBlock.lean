@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.IsBoundedAtOfIsBoundedH
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.IsBoundedAtOfIsBoundedH
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -13,8 +18,8 @@ section Objects
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-variable (ι) in
 
+variable (ι) in
 def addIdx (N : ℕ) : Option K → Type := fun k => Option.elim k (Fin N) ι
 
 instance addIdx.instFintype (N : ℕ) : ∀ k, Fintype (addIdx ι N k)
@@ -69,18 +74,6 @@ def BlockChiCovolume.Statement : Prop :=
 open ProjLine
 
 namespace PowerBlockProjectiveLine
-
-def projectiveLineCoordinates : Fin 2 → FnField := fun j => y ⟨(), j⟩
-
-def fsNew : HermLine (addIdx (GlobalTheory (Fin 2)) 2) :=
-  HermLine.ofMetrics (fun k => fsMetric (addIdx (GlobalTheory (Fin 2)) 2 k)) (unitDeg (none : Option Unit))
-
-theorem minor_mem :
-    (X ⟨some (), (0 : Fin 2)⟩ * X ⟨none, (1 : Fin 2)⟩ - X ⟨some (), (1 : Fin 2)⟩ * X ⟨none, (0 : Fin 2)⟩ :
-      MRing (addIdx (GlobalTheory (Fin 2)) 2)) ∈ mCoordIdeal (addBlock y projectiveLineCoordinates) := by
-  show mConeMap (addBlock y projectiveLineCoordinates) _ = 0
-  simp [mConeMap, addBlock, projectiveLineCoordinates, ProjLine.y]
-  ring
 
 end PowerBlockProjectiveLine
 

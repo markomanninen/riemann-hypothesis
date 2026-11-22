@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.SpanOfVariable.span_X :
     ∀ {O σ : Type} [inst : CommRing O] (I : Ideal (MvPowerSeries σ O))

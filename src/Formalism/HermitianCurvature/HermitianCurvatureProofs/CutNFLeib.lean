@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomPtw
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VecVSplit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ListSumSplittings
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomPtw
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VecVSplit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ListSumSplittings
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 

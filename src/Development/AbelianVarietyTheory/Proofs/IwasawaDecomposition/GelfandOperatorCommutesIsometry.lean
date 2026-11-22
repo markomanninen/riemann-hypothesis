@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousKapSymm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TracePowEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousKapSymm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TracePowEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,12 +82,14 @@ theorem gelf_tr : ∀ (D : D7) (V V' : HSp D) (I : GlobalTheory.Mem.Isom.IsoMat 
     (fun a b => by
       simp only [E', E0]
       rw [I.derEnd_tr hθ τ, I.symm_adP_single τ a b]
-      simp only [map_sum, LinearMap.map_smul, conjSm_smul]) (k + 1)
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.map_smul, conjSm_smul]) (k + 1)
   have hm : Matrix.of (fun c d => I.conjSm hθ (E0 c d)) = (I.conjSm hθ).mapMatrix (Matrix.of E0) := by
     ext c d; rfl
   have hs : ∑ c, (((I.conjSm hθ).mapMatrix (Matrix.of E0)) ^ (k + 1)) c c =
       I.conjSm hθ (∑ c, (Matrix.of E0 ^ (k + 1)) c c) := by
-    rw [← RingHom.map_pow, map_sum]; rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← RingHom.map_pow, map_sum]; rfl
   rw [hm, hs, ← GlobalTheory.SmoothForms.gelfA_eq_sum_pow, ← GlobalTheory.SmoothForms.gelfA_eq_sum_pow] at key
   have e1 := GlobalTheory.Mem.RealTranslate.gelf_eq hθ τ k (I.trSm hθ ⟨φ, hφ⟩)
   have e2 := GlobalTheory.Mem.RealTranslate.gelf_eq hθ τ k (⟨φ, hφ⟩ : GlobalTheory.Mem.AutSpace.SmFun θ V)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 open Filter Topology
@@ -106,8 +110,9 @@ variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchi
   [MeasurableSpace k] [BorelSpace k] {n n' : Type*} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n']
   {c : ℕ}
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem integrable_opE_integrand (p : ℕ) {ψ : AddChar k Circle} (hψ : Continuous ψ) (ν : Measure k)
     [ν.IsAddHaarMeasure] {Φ : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k → ℂ}
     (hΦ : Φ ∈ SB (Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k)) (x₀ : Matrix n n' k) :
@@ -118,7 +123,7 @@ theorem integrable_opE_integrand (p : ℕ) {ψ : AddChar k Circle} (hψ : Contin
     (continuous_affPt_uncurry p).comp (Continuous.prodMk_right x₀)
   refine Continuous.integrable_of_hasCompactSupport ?_ ?_
   · refine (hΦ.1.continuous.comp hc).mul (continuous_subtype_val.comp (hψ.comp (Continuous.neg ?_)))
-    exact continuous_finset_sum _ fun i _ => hc.matrix_elem _ _
+    exact continuous_finsetSum _ fun i _ => hc.matrix_elem _ _
   · refine HasCompactSupport.mul_right ?_
     have h2 := (comp_affPt_mem_SB p hΦ).2
     refine HasCompactSupport.intro (h2.isCompact.image continuous_snd) fun e he => ?_
@@ -126,8 +131,8 @@ theorem integrable_opE_integrand (p : ℕ) {ψ : AddChar k Circle} (hψ : Contin
       (f := fun z : Matrix n n' k × ({rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free p rs} → k) =>
         Φ (affPt p z.1 z.2)) (x := (x₀, e)) fun h' => he ⟨_, h', rfl⟩
 
-omit [BorelSpace k] [DecidableEq n] [DecidableEq n'] in
 
+omit [BorelSpace k] [DecidableEq n] [DecidableEq n'] in
 theorem opE_mem_SB (p : ℕ) (ψ : AddChar k Circle) (ν : Measure k)
     {Φ : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k → ℂ}
     (hΦ : Φ ∈ SB (Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k)) : opE ψ ν p Φ ∈ SB (Matrix n n' k) := by

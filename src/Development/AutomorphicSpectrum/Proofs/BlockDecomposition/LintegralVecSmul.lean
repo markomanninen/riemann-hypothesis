@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CountingPairs
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CountingPairs
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem map_vec_smul {ι : Type} [Fintype ι] (a : ι → (Ad E)ˣ) :
 theorem lintegral_vec_smul {ι : Type} [Fintype ι] (a : ι → (Ad E)ˣ) (G : (ι → Ad E) → ℝ≥0∞) (hG : Measurable G) :
     ∫⁻ x, G (fun p => a p • x p) ∂vecMeasure E ι =
       (∏ p, ENNReal.ofReal ((GroundTheory.Global.IdeleGroup.ideleModule E (a p) : ℝ))⁻¹) * ∫⁻ x, G x ∂vecMeasure E ι := by
-  have hf : Measurable (fun (x : ι → Ad E) p => a p • x p) := measurable_pi_lambda _ fun p =>
+  have hf : Measurable (fun (x : ι → Ad E) p => a p • x p) := Measurable.of_eval fun p =>
     (show Continuous fun x : Ad E => (a p : Ad E) * x from continuous_const_mul _).measurable.comp (measurable_pi_apply p)
   rw [← lintegral_map hG hf, map_vec_smul, lintegral_smul_measure]
   rfl
@@ -108,7 +112,9 @@ theorem sFinite_nuD (d : ℕ) : SFinite (nuD E k d) := by
   | succ d ih => change SFinite (Measure.map _ _); infer_instance
 
 theorem measurable_blkMul (j : ℕ) : Measurable (fun p : (UnipotentBlockColumnIndex k j j → Ad E) × GA E k => blkU p.1 * p.2) :=
-  ((continuous_posU _).measurable.comp measurable_fst).mul measurable_snd
+  by
+    set_option synthInstance.maxHeartbeats 400000 in
+      exact (((continuous_posU _).comp continuous_fst).mul continuous_snd).measurable
 
 theorem nuD_conj (t : GA E k) (u : Fin k → (Ad E)ˣ) (ht : t.val = diagonal fun i => (u i : Ad E)) {q : ℝ} (hq : 0 < q)
     (e : Fin k → ℤ) (hmod : ∀ a b, ((GroundTheory.Global.IdeleGroup.ideleModule E (u a * (u b)⁻¹) : ℝ))⁻¹ = q ^ (e a - e b))
@@ -133,7 +139,7 @@ theorem nuD_conj (t : GA E k) (u : Fin k → (Ad E)ˣ) (ht : t.val = diagonal fu
         F (t * (blkU p.1 * p.2) * t⁻¹) := hFc.comp hM
     have hG : Measurable G := hFM.lintegral_prod_right'
     have hf : Measurable (fun (x : UnipotentBlockColumnIndex k (k - (d + 1)) (k - (d + 1)) → Ad E) p => a p • x p) :=
-      measurable_pi_lambda _ fun p =>
+      Measurable.of_eval fun p =>
         (show Continuous fun x : Ad E => (a p : Ad E) * x from continuous_const_mul _).measurable.comp (measurable_pi_apply p)
     have hR : ∫⁻ h, F h ∂nuD E k (d + 1) = ∫⁻ y, G y ∂vecMeasure E _ := by
       change ∫⁻ h, F h ∂(Measure.map _ _) = _
@@ -200,7 +206,7 @@ theorem totS_eq (l : Fin k → ℤ) : totS l (k - 1) = rhoPair l := by
     have := Finset.mem_range.1 hi
     omega
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem mod_locId (hD : D0) (w : Pl E) (m : ℤ) :
     (GroundTheory.Global.IdeleGroup.ideleModule E (locId w (Iwasawa.uniformizerUnit (w.adicCompletion E) ^ m)) : ℝ) =

@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.WPresGrZeroIsCOOfMemMaximalIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.WPresGrZeroIsCOOfMemMaximalIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 private theorem aW_comb {σ : Type} [Fintype σ] (lam : σ → ℤ) (hl : ∀ s, lam s = -1 ∨ lam s = 0 ∨ lam s = 1)
@@ -90,13 +95,14 @@ private theorem aW_gen {O R : Type} [CommRing O] [CommRing R] [Algebra O R] (W :
   have hfst : ∀ m : W.σ →₀ ℕ, Finsupp.weight (fun s => (W.wt s).1) m = (Finsupp.weight W.wt m).1 := fun m => by
     induction m using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, ha, hb, Prod.fst_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, Prod.fst_add]
     | single s k => simp [Finsupp.weight_single]
   obtain ⟨μ, hμ, hdec⟩ := part_span O R (ℤ × ℤ) W {m | Finsupp.weight W.wt m = (0, n)} (0, n) (fun _ h => h)
   rintro _ ⟨f, hf, rfl⟩
   obtain ⟨b, hb, rfl⟩ := hdec f hf
   show W.π _ ∈ _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine sum_mem fun m hm => ?_
   rw [map_mul]
   refine mul_mem (h0 _ ⟨b m, hb m, rfl⟩) (hmon m ?_)
@@ -160,7 +166,8 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.aW :
   have hz : ∀ s, M.W.z s ∈ maximalIdeal M.R := fun s => by
     rw [← res_eq_zero_iff c.O, ← res_map (M.W.origin M.org), WPres.z, M.W.origin_π, MvPowerSeries.constantCoeff_X,
       map_zero]
-  refine ⟨?_, ?_, ?_⟩
+  set_option synthInstance.maxHeartbeats 100000 in
+    refine ⟨?_, ?_, ?_⟩
   · haveI := wPres_gr_zero_isCO_of_mem_maximalIdeal c.O (ℤ × ℤ) M.R M.W hz
     let p : M.W.gr 0 →ₐ[c.O] M.gr 0 :=
       { toFun := fun F => ⟨⟨F.1.1, M.aPart_le (n := 0) F.2⟩, F.2⟩

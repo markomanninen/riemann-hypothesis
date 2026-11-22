@@ -1,29 +1,50 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleUnif
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsIsFundU
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselToJacobiFlatSchwartzEquivariantStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiToBesselFlatIntertwinesWeilActionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatSchwartzTargetUnipotentConjBesselCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittSourceProofStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinatesOfThetaFunctionAreThetaFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsConvergeThetaFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierJacobiHandOffAutomorphic
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselToFourierJacobiHandedFamilyContinuousAutom
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiActionsMatchThroughLinkMap
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCore
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PairedThetaKernelContinuousAndRationallyInvarian
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsPreserveThetaFunctions
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagUnipotentRadicalSurjectsUnitriangularCharactStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierBesselThetaCharIntegrandLaws
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergIntegralFourierBesselBasePointEqPairin
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierBesselBasePointIsUnfoldingBasePointSpecStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselPeriodRightTranslationInvariant
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselLineContractionHeisenbergInvariant
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructure
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsMulRightInvariantOfFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarMapMulRightEqOfFiniteFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FundamentalDomainIntegralMulRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleUnif
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.QuasiOfFam
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselToJacobiFlatSchwartzEquivariantStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiToBesselFlatIntertwinesWeilActionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatSchwartzTargetUnipotentConjBesselCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittSourceProofStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinatesOfThetaFunctionAreThetaFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsConvergeThetaFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierJacobiHandOffAutomorphic
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselToFourierJacobiHandedFamilyContinuousAutom
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiActionsMatchThroughLinkMap
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCore
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PairedThetaKernelContinuousAndRationallyInvarian
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsPreserveThetaFunctions
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagUnipotentRadicalSurjectsUnitriangularCharactStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierBesselThetaCharIntegrandLaws
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergIntegralFourierBesselBasePointEqPairin
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierBesselBasePointIsUnfoldingBasePointSpecStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselPeriodRightTranslationInvariant
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselLineContractionHeisenbergInvariant
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructure
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsMulRightInvariantOfFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarMapMulRightEqOfFiniteFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FundamentalDomainIntegralMulRight
+
+namespace I195MixedCoordinates_2089fe766d5afe6260d6ab44
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev target
+    {D : D7} {T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (S : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D ρ S.rank))
+    (𝓕 : Set (Mx D ρ S.rank)) (f : WO S T → ℂ) (y : Mx D S.rank ρ) : WO S T₀ → ℂ :=
+  fun w₀ => ∫ ξ in 𝓕, heisO ψ S T (d.jX * ξ)
+    (heisO ψ S T (d.jY * (incA D (-D.host.xi0⁻¹) • (adj y * gA S)))
+      (heisO ψ S T (d.j0 * w₀) f)) 0 ∂μ
+
+end I195MixedCoordinates_2089fe766d5afe6260d6ab44
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,9 +72,9 @@ theorem om_mul {S T : HSp D} (om : Om S T) (a b : GA D S) (a' b' : GA D T) (f : 
 
 theorem mixT_zero_heis {S T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (v : VolM D ρ S.rank) {g : WO S T → ℂ}
     (hg : IsThetaFunO ψ S T g) (c : ℂ) (η : Mx D ρ S.rank) (w : WO S T₀) :
-    d.mixT S ψ v.μ v.𝓕 (heisO ψ S T (d.incX S η + d.inc0 S w) (c • g)) 0 =
-      c • heisO ψ S T₀ w (d.mixT S ψ v.μ v.𝓕 g 0) := by
-  have hmix : ∀ (f : WO S T → ℂ) w₀, d.mixT S ψ v.μ v.𝓕 f 0 w₀ = ∫ ξ in v.𝓕, f (d.incX S ξ + d.inc0 S w₀) ∂v.μ := by
+    (_root_.I195MixedCoordinates_2089fe766d5afe6260d6ab44.target d) S ψ v.μ v.𝓕 (heisO ψ S T (d.incX S η + d.inc0 S w) (c • g)) 0 =
+      c • heisO ψ S T₀ w ((_root_.I195MixedCoordinates_2089fe766d5afe6260d6ab44.target d) S ψ v.μ v.𝓕 g 0) := by
+  have hmix : ∀ (f : WO S T → ℂ) w₀, (_root_.I195MixedCoordinates_2089fe766d5afe6260d6ab44.target d) S ψ v.μ v.𝓕 f 0 w₀ = ∫ ξ in v.𝓕, f (d.incX S ξ + d.inc0 S w₀) ∂v.μ := by
     intro f w₀
     change ∫ ξ in v.𝓕, heisO ψ S T (d.incX S ξ) (heisO ψ S T (d.incAdj S 0) (heisO ψ S T (d.inc0 S w₀) f)) 0 ∂v.μ = _
     congr 1
@@ -74,7 +95,7 @@ theorem mixT_zero_heis {S T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (v :
       HypDec.wittDecomp_sympl_inclIsotropic_inclAnisotropic, HypDec.wittDecomp_sympl_inclAnisotropic_inclAnisotropic, zero_add]
     rw [symplOH_skew S T (d.incX S _) (d.inc0 S _), HypDec.wittDecomp_sympl_inclIsotropic_inclAnisotropic, neg_zero, zero_add]
   have e2 : d.incX S ξ + d.inc0 S w₀ + (d.incX S η + d.inc0 S w) = d.incX S (ξ + η) + d.inc0 S (w₀ + w) := by
-    rw [map_add, map_add]; abel
+    rw [map_add (f := _), map_add (f := _)]; abel
   rw [heisO, e1, e2, Pi.smul_apply, smul_eq_mul]
   ring
 
@@ -85,8 +106,8 @@ theorem fourierBessel_centralTerm_const_on_orbit {σ : ℕ} (B : BesLev D σ) {S
   rw [← h S S₀ d c, ← cenS_nC, ← cenS_nC, ← neg_inj, LinkPoint.neg_cenS_eq, LinkPoint.neg_cenS_eq, ← hn,
     GlobalTheory.MixPer.Decomp.gram_mt]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem flatFB_source {σ : ℕ} {J : JacLev D (σ + 1)} {B : BesLev D σ} (s : StepFB ψ J B) {Ψ : WO J.W B.V → ℂ}
     (hΨ : IsThetaFunO ψ J.W B.V Ψ) {n : GA D J.W} (hn : n ∈ flagN J.d) :
     flatFB s (s.om (n, 1) Ψ) = (psiFlag ψ J.d n * ψ (cenS J.d B.L (zl B) n)) •
@@ -135,7 +156,9 @@ theorem flatFB_source {σ : ℕ} {J : JacLev D (σ + 1)} {B : BesLev D σ} (s : 
         ψ (J.d.qS B.V c (x0 B ⬝ (v * u').1.1)) • J.d.mixS B.V ψ s.vS.μ s.vS.𝓕 Ψ (x0 B ⬝ (v * u').1.1) :=
       (FS _ hΨ).centre c _
     rw [fourierBessel_centralTerm_const_on_orbit] at t3
-    unfold evalAt
+    change J.d.mixS B.V ψ s.vS.μ s.vS.𝓕 _ _ = J.d.mixS B.V ψ s.vS.μ s.vS.𝓕 _ _ at t1
+    change J.d.mixS B.V ψ s.vS.μ s.vS.𝓕 _ _ = heisO ψ J.W₀ B.V _ (J.d.mixS B.V ψ s.vS.μ s.vS.𝓕 _ _) at t2
+    change B.d.mixT J.W₀ ψ s.vT.μ s.vT.𝓕 (J.d.mixS B.V ψ s.vS.μ s.vS.𝓕 _ _) 0 = _
     rw [e, t1, t2, t3]
     exact mixT_zero_heis B.d s.vT (MV _) _ _ _
   have : BorelSpace (UX D (σ + 1)) := ⟨rfl⟩
@@ -226,7 +249,7 @@ theorem pairKer_heis {σ : ℕ} {J : JacLev D (σ + 1)} {B : BesLev D σ} (s : S
     have q1 := hY.quasi (h₀ * h) γ₁ w
     have e2 : ratW B.V₀ J.W₀ γ₂ = (B.o.resT J.W₀).symm (0, γ) := hγ₂
     have e1 : ratW B.L J.W₀ γ₁ = γ := hγ₁
-    rw [e2, ← map_add, Prod.mk_add_mk, zero_add, hT] at q2
+    rw [e2, ← map_add (f := _), Prod.mk_add_mk, zero_add, hT] at q2
     rw [e1] at q1
     rw [q2, q1, star_mul', mul_mul_mul_comm, mul_star_psi hψ, one_mul]
   simp only [contractT, thPair]
@@ -234,7 +257,7 @@ theorem pairKer_heis {σ : ℕ} {J : JacLev D (σ + 1)} {B : BesLev D σ} (s : S
     (p ⬝ mt J.W₀ h₀⁻¹)]
   congr 1
   funext w
-  rw [hY', Pi.smul_apply, smul_eq_mul, heisO, hT, ← map_add, Prod.mk_add_mk, add_zero, star_mul', star_mul', star_star]
+  rw [hY', Pi.smul_apply, smul_eq_mul, heisO, hT, ← map_add (f := _), Prod.mk_add_mk, add_zero, star_mul', star_mul', star_star]
   have h1 := mul_star_psi hψ (symplOH J.W₀ B.L w (p ⬝ mt J.W₀ h₀⁻¹))
   generalize F _ = z
   generalize star (Y _ _) = y
@@ -283,7 +306,7 @@ theorem per_flag {ρ : ℕ} (B : BesLev D ρ) (hψ : IsStdChar D ψ (-1)) (φ : 
   rw [← (GlobalTheory.fundamentalDomain_integral_mul_right B.vN.ν _ _ _ (⟨_, hm⟩ : flagN B.d) u2 hK).2]
   congr 1
   funext m
-  simp only [besFun, Subgroup.coe_mul, rTrans, Pi.smul_apply, smul_eq_mul]
+  simp only [besFun, Subgroup.coe_mul, Pi.smul_apply, smul_eq_mul, rTrans]
   rw [psiBes_mul B.d ψ 1 _ m.2 hm, GlobalTheory.CharLaws.psiBes_conj, star_mul', mul_assoc (m : GA D B.V) (_ * _ * _),
     inv_mul_cancel_right, mul_assoc (m : GA D B.V)]
   ring

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.MapUgAlgebraMap
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.MapUgAlgebraMap
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -122,24 +126,25 @@ def twF (σ : Gal(PadicAlgCl l/K)) : PAlg l ⥤ PAlg l where
 
 abbrev El (P : PAlg l ⥤ Type) : Type 1 := (testι l ⋙ P).Elements
 
-abbrev elπ (P : PAlg l ⥤ Type) : El P ⥤ PAlg l := CategoryOfElements.π _ ⋙ testι l
+abbrev elπ (P : PAlg l ⥤ Type) : El P ⥤ PAlg l := Functor.Elements.π _ ⋙ testι l
 
 abbrev AcrEl (P : PAlg l ⥤ Type) (n : ℕ) : El P ⥤ CommAlgCat.{0} (Acris l) := elπ P ⋙ AcrA l n
 
 abbrev MH (P : PAlg l ⥤ Type) (n j : ℕ) : Type 1 := CH.H (CH.modF (AcrEl P n)) j
 
-def FilEl (P : PAlg l ⥤ Type) (n r : ℕ) : CH.SubF (CH.modF (AcrEl P n)) where
-  S T := (((elπ P).obj T).Fil n r).restrictScalars (Acris l)
-  map_mem φ _ hx := mapAcr_fil ((elπ P).map φ) n r hx
-
-def MFil (P : PAlg l ⥤ Type) (n r j : ℕ) : Submodule (Acris l) (MH P n j) := (FilEl P n r).img j
-
-def phiMor (P : PAlg l ⥤ Type) (n : ℕ) : CH.Mor (CH.modF (AcrEl P n)) (CH.modF (AcrEl P n)) (ACris.phi ℂ_[l] l) where
+def phiMor (P : PAlg l ⥤ Type) (n : ℕ) :
+    CH.Mor (CH.modF (AcrEl P n)) (CH.modF (AcrEl P n)) (ACris.phi (K := ℂ_[l]) (p := l)) where
   G := 𝟭 _
   τ T := { toFun := ((elπ P).obj T).phi n
            map_add' := map_add _
-           map_smul' := fun a (x : ((elπ P).obj T).Acr n) => (map_mul (((elπ P).obj T).phi n) (((elπ P).obj T).cris n a) x).trans
-             (congrArg (· * ((elπ P).obj T).phi n x) (((elπ P).obj T).phi_cris n a)) }
+           map_smul' := fun a (x : ((elπ P).obj T).Acr n) => by
+             let A := (elπ P).obj T
+             have h : A.phi n (A.cris n a) = A.cris n (ACris.phi (K := ℂ_[l]) (p := l) a) :=
+               A.pdOk_frob.acr_cris A.frob_comp_s (ACris.phiZero (K := ℂ_[l]) (p := l))
+                 (fun y => RingHom.congr_fun (f := ACris.phiAway (K := ℂ_[l]) (p := l))
+                   (awayW_ext fun x => by
+                     rw [ACris.phiAway_algebraMap, awayW_algebraMap, wmap_frobenius]) y.1) n a
+             exact (map_mul (A.phi n) (A.cris n a) x).trans (congrArg (· * A.phi n x) h) }
   nat φ x := (mapAcr_phi ((elπ P).map φ) n x).symm
 
 def redEl (P : PAlg l ⥤ Type) {m n : ℕ} (h : n ≤ m) : CH.modF (AcrEl P m) ⟶ CH.modF (AcrEl P n) :=
@@ -148,7 +153,7 @@ def redEl (P : PAlg l ⥤ Type) {m n : ℕ} (h : n ≤ m) : CH.modF (AcrEl P m) 
 def MSys (P : PAlg l ⥤ Type) (j : ℕ) : Sys.{1} (Acris l) :=
   CH.towerH (fun n => CH.modF (AcrEl P n)) (fun n => redEl P n.le_succ) j
 
-def elMap {P P' : PAlg l ⥤ Type} (u : P ⟶ P') : El P ⥤ El P' := CategoryOfElements.map (Functor.whiskerLeft (testι l) u)
+def elMap {P P' : PAlg l ⥤ Type} (u : P ⟶ P') : El P ⥤ El P' := (Functor.whiskerLeft (testι l) u).mapElements
 
 def pullMor {P P' : PAlg l ⥤ Type} (u : P ⟶ P') (n : ℕ) :
     CH.Mor (CH.modF (AcrEl P' n)) (CH.modF (AcrEl P n)) (RingHom.id _) where
@@ -157,22 +162,23 @@ def pullMor {P P' : PAlg l ⥤ Type} (u : P ⟶ P') (n : ℕ) :
   nat _ _ := rfl
 
 def elTw (σ : Gal(PadicAlgCl l/K)) {P : PAlg l ⥤ Type} (a : P ⟶ twF σ ⋙ P) : El P ⥤ El P where
-  obj T := ⟨⟨tw σ T.1.obj, T.1.property.tw σ⟩, a.app T.1.obj T.2⟩
-  map {T T'} φ := ⟨ObjectProperty.homMk (twMap σ φ.1.hom), by
-    have h := ConcreteCategory.congr_hom (a.naturality φ.1.hom) T.2
-    have e : P.map φ.1.hom T.2 = T'.2 := φ.2
-    exact h.symm.trans (congrArg (a.app T'.1.obj) e)⟩
+  obj T := (testι l ⋙ P).elementsMk ⟨tw σ T.obj.obj, T.obj.property.tw σ⟩ (a.app T.obj.obj T.val)
+  map {T T'} φ := ⟨ObjectProperty.homMk (twMap σ φ.hom.hom), by
+    have h := ConcreteCategory.congr_hom (a.naturality φ.hom.hom) T.val
+    have e : P.map φ.hom.hom T.val = T'.val := φ.map_val
+    exact h.symm.trans (congrArg (a.app T'.obj.obj) e)⟩
   map_id _ := rfl
   map_comp _ _ := rfl
 
 def galMor (σ : Gal(PadicAlgCl l/K)) {P : PAlg l ⥤ Type} (a : P ⟶ twF σ ⋙ P) (n : ℕ) :
     CH.Mor (CH.modF (AcrEl P n)) (CH.modF (AcrEl P n)) (ACris.galCris σ) where
   G := elTw σ a
-  τ T := { toFun := twAcr σ T.1.obj n
+  τ T := { toFun := twAcr σ T.obj.obj n
            map_add' := map_add _
-           map_smul' := fun c (x : (tw σ T.1.obj).Acr n) => (map_mul (twAcr σ T.1.obj n) ((tw σ T.1.obj).cris n c) x).trans
-             (congrArg (· * twAcr σ T.1.obj n x) (twAcr_cris σ T.1.obj n c)) }
-  nat φ x := twAcr_mapAcr σ φ.1.hom n x
+           map_smul' := fun c (x : (tw σ T.obj.obj).Acr n) =>
+             (map_mul (twAcr σ T.obj.obj n) ((tw σ T.obj.obj).cris n c) x).trans
+               (congrArg (· * twAcr σ T.obj.obj n x) (twAcr_cris σ T.obj.obj n c)) }
+  nat φ x := twAcr_mapAcr σ φ.hom.hom n x
 
 section Points
 variable {O : Type} [CommRing O] {X Y : Scheme.{0}}

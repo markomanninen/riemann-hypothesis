@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClsCrdEqGlob
-import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PNeatB
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ToLEInvApply
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSDLatLatK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClsCrdEqGlob
+public import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PNeatB
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ToLEInvApply
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSDLatLatK
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.UG Formalism.L2.Col Formalism.L2.PairingIndexBounds.F Formalism.MainNotions.G.KAat Formalism.L2.Forms Formalism.L2.Ker Formalism.MainNotions Formalism.L2.DIV Formalism.MainNotions.G GlobalTheory.TwU GlobalTheory.TwV
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -47,7 +52,7 @@ section Gen
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {N : ℕ}
 
-local notation "ιA" => Formalism.UG.inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
+local notation "ιA" => inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
 
 theorem incl_int_mem (x : 𝓞 E) : ιA (algebraMap (𝓞 E) E x) ∈ Formalism.L2.Herm.intAf F E :=
   Subring.subset_closure (Or.inl ⟨⟨algebraMap (𝓞 E) E x, x, rfl⟩, rfl⟩)
@@ -89,7 +94,7 @@ section Gen2
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {N : ℕ}
 
-local notation "ιA" => Formalism.UG.inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
+local notation "ιA" => inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
 
 theorem coord_int (B : GL (Fin N) E) (Λ : Submodule (𝓞 E) (Fin N → E)) (t : 𝓞 E)
     (ht : ∀ x ∈ Λ, t • x ∈ mvL B (stdLat E N)) (z : Fin N → E ⊗[F] FiniteAdeleRing (𝓞 F) F)
@@ -134,10 +139,10 @@ theorem int_conj (Q : HeightOneSpectrum (𝓞 E)) (B : GL (Fin N) E) (Λ : Submo
     rw [← hB]
     exact Submodule.mem_map.2 ⟨Pi.single j 1, ⟨1, Q.asIdeal.primeCompl.one_mem, by simpa using hstd⟩, rfl⟩
   obtain ⟨s, hs, hsΛ⟩ := hej
-  have h1 := GlobalTheory.LevStab.coord_int B Λ t hΛt _ (hg _ hsΛ) i
+  have h1 := GlobalTheory.LevStab.coord_int (F := F) B Λ t hΛt _ (hg _ hsΛ) i
   refine ⟨t * s, Q.asIdeal.primeCompl.mul_mem ht hs, ?_⟩
-  have e1 : (fun l => ιA ((s • ((B : Matrix (Fin N) (Fin N) E) *ᵥ (Pi.single j (1 : E) : Fin N → E))) l)) =
-      ιA (algebraMap (𝓞 E) E s) • (((ratA F B : GL (Fin N) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) :
+  have e1 : (fun l : Fin N => (ιA ((s • ((B : Matrix (Fin N) (Fin N) E) *ᵥ (Pi.single j (1 : E) : Fin N → E))) l) : E ⊗[F] FiniteAdeleRing (𝓞 F) F)) =
+      (ιA (algebraMap (𝓞 E) E s) : E ⊗[F] FiniteAdeleRing (𝓞 F) F) • (((ratA F B : GL (Fin N) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) :
         Matrix (Fin N) (Fin N) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) *ᵥ fun l => ιA ((Pi.single j (1 : E) : Fin N → E) l)) := by
     rw [GlobalTheory.LevStab.ratA_mulVec]
     funext l
@@ -207,7 +212,7 @@ theorem lev_stab_cong : ∀ {D : D7} (i : ℕ) (hi : i ≤ D.R.m) {T : ℕ} {bad
     refine sub_mem h ?_
     rw [Matrix.one_apply]
     split_ifs
-    · rw [mul_one]; exact GlobalTheory.LevStab.incl_int_mem s
+    · rw [mul_one]; exact GlobalTheory.LevStab.incl_int_mem (F := D.host.F) s
     · rw [mul_zero]; exact zero_mem _
   refine ⟨hcong κ.1 κ.2, ?_⟩
   have e : ((ratA D.host.F B)⁻¹ * κ.1 * ratA D.host.F B)⁻¹ = (ratA D.host.F B)⁻¹ * κ.1⁻¹ * ratA D.host.F B := by group

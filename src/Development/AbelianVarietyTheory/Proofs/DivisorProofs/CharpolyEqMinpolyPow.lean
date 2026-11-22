@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegAevalEqProdAroots
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsogenyCompIffAndDegreeMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIntCastSmulIsogenyDegree
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyEndCharpolySpec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegAevalEqProdAroots
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsogenyCompIffAndDegreeMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIntCastSmulIsogenyDegree
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyEndCharpolySpec
+
+@[expose] public section
 
 open CategoryTheory Polynomial
 open GlobalTheory.AV GlobalTheory.AV.AbVar
@@ -36,16 +40,16 @@ theorem eq_pow_of_roots (Ω : Type) [Field Ω] [IsAlgClosed Ω] [Algebra ℚ Ω]
 
 theorem deg_ne_zero {K : Type} [Field K] (A : AbVar K) {F : Type} [Field F] [NumberField F]
     (ι : NumberField.RingOfIntegers F →+* End A) (r : NumberField.RingOfIntegers F) (hr : r ≠ 0) :
-    deg (A := A) (B := A) (ι r) ≠ 0 := by
+    deg (ι r).asHom ≠ 0 := by
   have hI : Ideal.span {r} ≠ ⊥ := by rwa [Ne, Ideal.span_singleton_eq_bot]
   have hN0 : Ideal.absNorm (Ideal.span {r}) ≠ 0 := fun h => hI (Ideal.absNorm_eq_zero_iff.1 h)
   obtain ⟨s, hs⟩ := Ideal.mem_span_singleton'.1 (Ideal.absNorm_mem (Ideal.span {r}))
   have hc : ((Ideal.absNorm (Ideal.span {r}) : ℕ) : ℤ) ≠ 0 := by exact_mod_cast hN0
-  have hι : ι r ≫ ι s = ((Ideal.absNorm (Ideal.span {r}) : ℕ) : ℤ) • 𝟙 A := by
-    rw [← End.mul_def, ← map_mul, hs, map_natCast, natCast_zsmul]
-    exact (nsmul_one (A := End A) _).symm
+  have hι : (ι r).asHom ≫ (ι s).asHom = ((Ideal.absNorm (Ideal.span {r}) : ℕ) : ℤ) • 𝟙 A := by
+    rw [← End.mul_asHom, ← map_mul, hs, map_natCast, natCast_zsmul, ← nsmul_one]
+    exact map_nsmul End.addEquiv _ (1 : End A)
   obtain ⟨-, hdN⟩ := GlobalTheory.MulIsogeny.mul_isogeny K A _ hc
-  have hcomp := (isIsogeny_comp_iff_and_deg_comp K A A A (ι r) (ι s) rfl rfl).2
+  have hcomp := (isIsogeny_comp_iff_and_deg_comp K A A A (ι r).asHom (ι s).asHom rfl rfl).2
   rw [hι, hdN] at hcomp
   intro h0
   rw [h0, zero_mul] at hcomp
@@ -77,8 +81,8 @@ theorem charpoly_eq_minpoly_pow {K : Type} [Field K] (A : AbVar K) (hA : A.dim �
     have hmem : a ∈ ((charpoly (ι x)).map (Int.castRingHom ℚ)).aroots (AlgebraicClosure ℚ) :=
       (Polynomial.mem_aroots).2 ⟨hPm.ne_zero, ha⟩
     rw [Multiset.prod_eq_zero (Multiset.mem_map.2 ⟨a, hmem, hRa⟩)] at hprod
-    have hdeg0 : deg (A := A) (B := A) (aeval (ι x)
-        (IsLocalization.integerNormalization (nonZeroDivisors ℤ) (minpoly ℚ a))) = 0 := by
+    have hdeg0 : deg (aeval (ι x)
+        (IsLocalization.integerNormalization (nonZeroDivisors ℤ) (minpoly ℚ a))).asHom = 0 := by
       have h := (map_eq_zero_iff _ (algebraMap ℚ (AlgebraicClosure ℚ)).injective).1 hprod
       exact_mod_cast h
     rw [show aeval (ι x) (IsLocalization.integerNormalization (nonZeroDivisors ℤ) (minpoly ℚ a)) =

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpA
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpA
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Matrix

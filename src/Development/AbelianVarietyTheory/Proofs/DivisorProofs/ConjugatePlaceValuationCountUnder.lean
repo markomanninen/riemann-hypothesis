@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IpEqZeroOfHeisEigen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicPointUnitaryGroupGramOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceIdempotentComponentsConjValuation
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IpEqZeroOfHeisEigen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicPointUnitaryGroupGramOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceIdempotentComponentsConjValuation
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+
+@[expose] public section
 
 open NumberField MeasureTheory IsDedekindDomain UniqueFactorizationMonoid
 open scoped Classical Pointwise
@@ -62,7 +66,7 @@ theorem exists_norm (D : D7) (x : 𝓞 D.host.E) :
     change star ((x * cO D x : 𝓞 D.host.E) : D.host.E) = _
     rw [← cO_coe, map_mul, cO_cO, mul_comm]
   refine ⟨⟨⟨_, hm⟩, ?_⟩, rfl⟩
-  exact (isIntegral_algebraMap_iff (algebraMap D.host.F D.host.E).injective).1 (x * cO D x).isIntegral_coe
+  exact (isIntegral_algebraMap_iff ).1 (x * cO D x).isIntegral_coe
 
 theorem cO_algebraMap (D : D7) (y : 𝓞 D.host.F) :
     cO D (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) y) = algebraMap (𝓞 D.host.F) (𝓞 D.host.E) y := by

@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdelicHeightGeArchOpNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelSetInterTranslateFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdelicHeightGeArchOpNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelSetInterTranslateFinite
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V UpperTheory.V.Fb
 
 private theorem one_le_ht {E : Type} [Field E] [NumberField E] [IsTotallyReal E] {a : ℕ}
@@ -40,26 +45,3 @@ private theorem unif {E : Type} [Field E] [NumberField E] [IsTotallyReal E] {a :
       rw [mul_assoc, TR.infGL_comm, ← mul_assoc, ← map_mul, mul_inv_cancel_left] at e
       rw [e]
       exact (h y).trans (mul_le_mul_of_nonneg_right (le_abs_self C) (pow_nonneg (zero_le_one.trans (one_le_ht y)) _))
-
-theorem UpperTheory.growth_of_siegel_height :
-    UpperTheory.V.Fb.SiegelHeight → UpperTheory.V.Fb.GrowthTo := by
-  intro hS E _ _ _ a φ hinv hl hg
-  obtain ⟨ω, hω, hB, t, ht, hred⟩ := Reduction.exists_siegelSet (K := E) a
-  obtain ⟨C₁, N₁, h₁⟩ := hS E a ω hω hB t ht
-  obtain ⟨Ω, hΩ, h₂⟩ := UpperTheory.siegelSet_inter_translate_finite E a ω hω t
-  obtain ⟨C, N, hC, h⟩ := unif φ hl hg hΩ
-  refine ⟨C * (3 * C₁) ^ N, N₁ * N, fun g => ?_⟩
-  obtain ⟨γ, hγ⟩ := hred g
-  have h3 := h₁ g γ hγ
-  have h4 := UpperTheory.adelicHeight_ge_archOpNorm E a (AdelicGLn.diagonal E a γ * g)
-  have h5 := h _ (h₂ _ hγ) (GeneralLinearGroup.map (TR.pInf E) (AdelicGLn.diagonal E a γ * g))
-  have e : finGL E a (finPart (AdelicGLn.diagonal E a γ * g)) *
-      TR.infGL E a (GeneralLinearGroup.map (TR.pInf E) (AdelicGLn.diagonal E a γ * g)) = ratGL E a γ * g := by
-    rw [← TR.infGL_comm]
-    exact TR.infGL_mul_finGL _
-  rw [e, hinv] at h5
-  refine h5.trans ?_
-  rw [mul_assoc, pow_mul, ← mul_pow]
-  refine mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (zero_le_one.trans (one_le_ht _)) ?_ N) hC
-  rw [mul_assoc]
-  linarith

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Set Filter Topology MeasureTheory
 
 namespace GlobalTheory

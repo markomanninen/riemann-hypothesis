@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.G
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.FMX GlobalTheory.CompanionTheory.Ar.FlagBun
 
 theorem blkF_eq_none_iff (Ψ : Type) (p q : ℕ) (K₀ : Type) (r : Ψ × Fin (p + q)) :
-    blkF Ψ p q K₀ r = none ↔ ¬ IsProperStep (p + q) p r.2 := by
+    blkF (Ψ := Ψ) (p := p) (q := q) K₀ r = none ↔ ¬ IsProperStep (p + q) p r.2 := by
   unfold blkF
   split_ifs with h <;> simp [h]
 
@@ -19,21 +23,22 @@ theorem stepOf_injective (Ψ : Type) (p q : ℕ) : Function.Injective (stepOf Ψ
   have hi := i.2
   have hi' := i'.2
   by_cases h₁ : (i : ℕ) < p <;> by_cases h₂ : (i' : ℕ) < p
-  · simp only [stepOf, dif_pos h₁, dif_pos h₂] at h
+  · simp only [stepOf, dite_eq_left h₁, dite_eq_left h₂] at h
     have e₁ : τ = τ' := Sum.inl.inj (congrArg Sigma.fst h)
     have e₂ := congrArg (fun t : StepIx Ψ p q => (t.2 : ℕ)) h
     exact Prod.ext e₁ (Fin.ext e₂)
-  · simp only [stepOf, dif_pos h₁, dif_neg h₂] at h
+  · simp only [stepOf, dite_eq_left h₁, dite_eq_right h₂] at h
     exact absurd (congrArg Sigma.fst h) (by simp)
-  · simp only [stepOf, dif_neg h₁, dif_pos h₂] at h
+  · simp only [stepOf, dite_eq_right h₁, dite_eq_left h₂] at h
     exact absurd (congrArg Sigma.fst h) (by simp)
-  · simp only [stepOf, dif_neg h₁, dif_neg h₂] at h
+  · simp only [stepOf, dite_eq_right h₁, dite_eq_right h₂] at h
     have e₁ : τ = τ' := Sum.inr.inj (congrArg Sigma.fst h)
     have e₂ : (i : ℕ) - p = (i' : ℕ) - p := congrArg (fun t : StepIx Ψ p q => (t.2 : ℕ)) h
     exact Prod.ext e₁ (Fin.ext (by show (i : ℕ) = (i' : ℕ); omega))
 
 theorem blkF_inj (Ψ : Type) (p q : ℕ) (K₀ : Type) (r r' : Ψ × Fin (p + q)) (k : K₀ ⊕ StepIx Ψ p q)
-    (h : blkF Ψ p q K₀ r = some k) (h' : blkF Ψ p q K₀ r' = some k) : r = r' := by
+    (h : blkF (Ψ := Ψ) (p := p) (q := q) K₀ r = some k)
+    (h' : blkF (Ψ := Ψ) (p := p) (q := q) K₀ r' = some k) : r = r' := by
   unfold blkF at h h'
   split_ifs at h h'
   apply stepOf_injective Ψ p q
@@ -66,8 +71,9 @@ theorem gMat_isBlockDiag (Ψ : Type) (p q : ℕ) (Ω : Type) [Field Ω] (τ : Ψ
   fromBlocks_isBlockDiag p q (genU Ω (rk Ψ p q) (.inr τ)) (genU Ω (rk Ψ p q) (.inl τ))
 
 theorem blocks_main : ∀ (Ψ : Type) [Fintype Ψ] (p q : ℕ) (Ω : Type) [Field Ω] (K₀ : Type),
-    (∀ r, blkF Ψ p q K₀ r = none ↔ ¬ IsProperStep (p + q) p r.2) ∧
-    (∀ r r' k, blkF Ψ p q K₀ r = some k → blkF Ψ p q K₀ r' = some k → r = r') ∧
+    (∀ r, blkF (Ψ := Ψ) (p := p) (q := q) K₀ r = none ↔ ¬ IsProperStep (p + q) p r.2) ∧
+    (∀ r r' k, blkF (Ψ := Ψ) (p := p) (q := q) K₀ r = some k →
+      blkF (Ψ := Ψ) (p := p) (q := q) K₀ r' = some k → r = r') ∧
     ∀ τ : Ψ, IsBlockDiag p (gMat p q Ω τ) :=
   fun Ψ _ p q Ω _ K₀ => ⟨blkF_eq_none_iff Ψ p q K₀, blkF_inj Ψ p q K₀, gMat_isBlockDiag Ψ p q Ω⟩
 

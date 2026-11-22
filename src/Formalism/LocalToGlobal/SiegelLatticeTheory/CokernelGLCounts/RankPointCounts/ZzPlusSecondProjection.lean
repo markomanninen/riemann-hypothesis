@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountP
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PcIntGen
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountP
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PcIntGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,7 +137,7 @@ theorem clsOf_mul_sgn (p : PlF D) (Y : MatP D p) :
     congr 1
   · have hc' : ¬ ((∀ a b, (Y * S) a b ∈ (M p).R) ∧ IsUnit (Y * S).det) := by
       rintro ⟨h1', h2'⟩; exact hc ⟨hint.1 h1', hdet.1 h2'⟩
-    rw [dif_neg hc, dif_neg hc']
+    rw [dite_eq_right hc, dite_eq_right hc']
 
 theorem clsSgn_holds (Zd : LocDat D) : ClsSgn Zd := by
   intro p Y s
@@ -265,7 +269,8 @@ theorem zhat_vc (Zd : LocDat D) (p : PlF D) (γ : TermDef.Term D u u' F0 what₂
   ext a b
   rw [Matrix.mul_apply]
   simp only [tLoc]
-  rw [zhat_loc, Matrix.mul_apply, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [zhat_loc, Matrix.mul_apply, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [zhat_locF', vc, Matrix.of_apply, map_mul (D.s.atP p).ιE]
   linear_combination (-((TermLoc.sgnP' D p b * frFac Zd.δ p b) *
@@ -379,8 +384,8 @@ def XiTyped : Prop :=
       (∃ x ∈ 𝒪[(D.s.atP p).Fp], p2 g.e ((D.s.atP p).ιE ((((admXi D γ.lam (lf D F0) (repF γ))⁻¹).map
           (algebraMap (𝓞 D.host.E) D.host.E)) k b)) = (g.q : (D.s.atP p).Fp) * x)
 
-variable (D) in
 
+variable (D) in
 def UInt : Prop := ∀ p : PlF D, (D.s.atP p).ιF ((uP p : ℚ) : D.host.F) ∈ 𝒪[(D.s.atP p).Fp]
 
 variable {Zd u u' F0 what₂}

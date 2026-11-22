@@ -1,11 +1,15 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNewTwistLamFull
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RestageCopyRealStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FactsStatement
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNewTwistLamFull
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RestageCopyRealStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FactsStatement
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -48,27 +52,68 @@ theorem pre_at_of_side_b_tau_true_lam_ok (hA : GlobalTheory.Published.GlobalArti
     GlobalTheory.T.exists_newThetaData_series_classSums_lattices hA (Dof x) _ _ _ _ _ _ x.m.z.R x.m.z.F x.m.z.cG l.rat.kKs l.rat.hk _ _ _ _ _ Bs l.rat.In.Sb x.m.z.geo.v₀ x.r.Y.hF
       x.m.z.pins x.m.intersectionNumber_baseChange (fun j => x.m.z.geo.fw.hv₀ j _) x.m.z.geo.fw.ks l.rat.rat.hecke hSb hτ (h4 ▸ l.a.A.chr) (h4 ▸ l.a.val)
       l.a.elem.split l.Pq_over h1 h2 hZ h3⟩
+
+private theorem charFrame_heq_of_fields {D D' : D7} (hD : D = D')
+    {c : CharFrame D} {c' : CharFrame D'}
+    (hP : HEq c.P c'.P) (hW : HEq c.W c'.W) (hmu : HEq c.mu0 c'.mu0)
+    (heta : HEq c.eta c'.eta) (hchi : HEq c.chiPsi c'.chiPsi)
+    (hdel : HEq c.del c'.del) (hdel' : HEq c.del' c'.del') : HEq c c' := by
+  subst D'
+  cases c
+  cases c'
+  cases eq_of_heq hP
+  cases eq_of_heq hW
+  cases eq_of_heq hmu
+  cases eq_of_heq heta
+  cases eq_of_heq hchi
+  cases eq_of_heq hdel
+  cases eq_of_heq hdel'
+  rfl
+
+private theorem sideB_tau_reindex {D D' : D7} {cf cf' Rw Rw' low low' Pq Pq' S S' hL hL' eig eig' θ θ'}
+    (hD : D = D') (hc : HEq cf cf') (hr : HEq Rw Rw') (hlow : low = low')
+    (hq : HEq Pq Pq') (hs : HEq S S') (hh : HEq hL hL') (he : HEq eig eig') (hθ : HEq θ θ')
+    (h : ∃ Bs : SideB D cf Rw low Pq S hL eig θ, TauTrue Bs.exp) :
+    ∃ Bs : SideB D' cf' Rw' low' Pq' S' hL' eig' θ', TauTrue Bs.exp := by
+  subst D' low'
+  cases eq_of_heq hc
+  cases eq_of_heq hr
+  cases eq_of_heq hq
+  cases eq_of_heq hs
+  cases eq_of_heq hh
+  cases eq_of_heq he
+  cases eq_of_heq hθ
+  exact h
+
 theorem pre_at_twisted_copy_of_side_b_tau_true (hA : GlobalTheory.Published.GlobalArtinReciprocity) {hL : _root_.UpperTheory.Zero.LLC.RecTExists} (hK : K.Over B.toPre)
     (hS : Start K B f T w) (x : St P) (l : _root_.GlobalTheory.HeightCounting.Up.IntermediateLevel hL x) (N : TwNew (Dof x))
     (hB : ∃ Bs : SideB N.toD7 (N.cf (cfOf x)) (N.row l.a.A.row) (lowAll (Dof x)) l.Pq (N.rat l.rat.S) l.rat.In.hL l.rat.In.eig
       l.rat.In.θ, TauTrue Bs.exp)
     (hSb : ∀ i, l.rat.In.Sb ⊆ N.tw.S0 i) (hZ : ∃ Z : GlobalTheory.LamTie.LamDat N.toD7, Z.Ok) :
-    PreAt (P := P) (datTw x N) ((by with_unfolding_all exact ((N.row l.a.A.row) :))) ((by with_unfolding_all exact (l.Pq :))) l.rat.In.hL ((by with_unfolding_all exact (l.rat.In.eig :))) ((by with_unfolding_all exact (l.rat.In.θ :))) := by
+    PreAt (P := P) (Z := (oTw x N).Z) (datTw x N)
+      (cast (congrArg RowSide (dof_oTw x N).symm) (N.row l.a.A.row))
+      (by with_unfolding_all exact l.Pq) l.rat.In.hL
+      (by with_unfolding_all exact l.rat.In.eig) (by with_unfolding_all exact l.rat.In.θ) := by
   obtain ⟨x', l', ho, -, hrow, hPq, hS', hSb', hhL, heig, hθ, hR, hcG, hgeo⟩ := _root_.GlobalTheory.T.twisted_state_transport_heq_levels' hL x l N
   obtain ⟨o', fits', G_eq', etaF', bk', m', copy', coh', s', r', pin'⟩ := x'
   dsimp only at ho
   subst ho
   have hz : m'.z = datTw x N := moved_eq_datTw x N m' copy' hR hcG hgeo
-  have e1 : l'.a.A.row = (by with_unfolding_all exact ((N.row l.a.A.row) :)) := (by with_unfolding_all exact ((eq_of_heq hrow) :))
+  have hc : HEq (N.cf (cfOf x)) (TC.cf w.I w.l (oTw x N).Z) := by
+    with_unfolding_all
+      apply charFrame_heq_of_fields (dof_oTw x N).symm <;> rfl
+  have hZ' : ∃ Z : GlobalTheory.LamTie.LamDat (DN x N), Z.Ok :=
+    Eq.mpr (congrArg (fun D => ∃ Z : GlobalTheory.LamTie.LamDat D, Z.Ok) (dof_oTw x N)) hZ
   have e2 : l'.Pq = (by with_unfolding_all exact (l.Pq :)) := (by with_unfolding_all exact ((eq_of_heq hPq) :))
-  have e3 : l'.rat.S = (by with_unfolding_all exact ((N.rat l.rat.S) :)) := (by with_unfolding_all exact ((eq_of_heq hS') :))
   have e4 : l'.rat.In.Sb = (by with_unfolding_all exact (l.rat.In.Sb :)) := (by with_unfolding_all exact ((eq_of_heq hSb') :))
   have e5 : l'.rat.In.eig = (by with_unfolding_all exact (l.rat.In.eig :)) := (by with_unfolding_all exact ((eq_of_heq heig) :))
   have e6 : l'.rat.In.θ = (by with_unfolding_all exact (l.rat.In.θ :)) := (by with_unfolding_all exact ((eq_of_heq hθ) :))
-  have h := _root_.GlobalTheory.HeightCounting.SerCopy.pre_at_of_side_b_tau_true_lam_ok hA hK hS _ l' (by
-    rewrite [e1, e5, e6]
-    exact sideB_tau_congr rfl e2.symm e3.symm hhL.symm ((by with_unfolding_all exact (hB :)))) (by rewrite [e4]; exact (by with_unfolding_all exact (hSb :))) ((by with_unfolding_all exact (hZ :)))
-  exact preAt_congr hz e1 e2 hhL e5 e6 h
+  have h := pre_at_of_side_b_tau_true_lam_ok hA hK hS _ l'
+    (sideB_tau_reindex (dof_oTw x N).symm hc hrow.symm (by with_unfolding_all rfl)
+      hPq.symm hS'.symm hhL.symm heig.symm hθ.symm hB)
+    (by rw [e4]; with_unfolding_all exact hSb) hZ'
+  have hrow' := hrow.trans (cast_heq (congrArg RowSide (dof_oTw x N).symm) (N.row l.a.A.row)).symm
+  exact preAt_congr hz (eq_of_heq hrow') e2 hhL e5 e6 h
 section Install
 variable {x : St P} {N₁ : TwNew (Dof x)} {kKs : (datTw x N₁).core.Q.c.F →+* ↥(DN x N₁).LL0}
   {hk : ∀ y, ((kKs y : ↥(DN x N₁).LL0) : (DN x N₁).what₂.LL) = algebraMap (datTw x N₁).core.Q.c.F (DN x N₁).what₂.LL y}

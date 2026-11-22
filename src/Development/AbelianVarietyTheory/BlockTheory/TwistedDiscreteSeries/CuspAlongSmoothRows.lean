@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NodeYPredEqChainVertexAtRowZeroLast
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NodeYPredEqChainVertexAtRowZeroLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ namespace GlobalTheory.IndefiniteRowSideFullHecke.CuspAlongSmoothLifts
 
 variable {D : D7}
 
-variable (D) in
 
+variable (D) in
 def Sizes : Prop :=
   1800 < D.R.r ∧ ∀ (τ : D.what₂.Tau) (j : ℕ) (hj : j + 1 < D.R.m),
     2 * (bigN D : ℚ) ^ 3 < (D.hc τ).b ⟨j + 1, hj⟩ - (D.hc τ).b ⟨j, by omega⟩
@@ -144,7 +148,7 @@ theorem LiftsMult.exists_linear {θ : InfFam D} {A B : Node D} {P : Type} {m : A
     refine ⟨?_, ?_⟩
     · rw [e]
       exact hx1.add hy1
-    · rw [e, integral_add hx1 hy1, hx2, hy2, map_add]
+    · rw [e, integral_add hx1 hy1, hx2, hy2, map_add (f := _)]
       simp
   | smul c x _ hx =>
     intro p v h
@@ -205,8 +209,6 @@ theorem cuspAlong_iff_hasLifts (G : GridPre R) : CuspAlong G ↔ G.HasLifts := b
       obtain ⟨io, hio⟩ := hl.col t j hj f hf
       exact ⟨(io ⟨F, hF⟩).1, (io ⟨F, hF⟩).2, fun p v h =>
         ⟨Lift.IsIo.integ hio ⟨F, hF⟩ p v h, Lift.IsIo.eq hio ⟨F, hF⟩ p v h⟩⟩
-
-example (G : GridDat R) (h : G.Is) : CuspAlong G.toGridPre := (cuspAlong_iff_hasLifts _).2 h.lifts.hasLifts
 
 end
 

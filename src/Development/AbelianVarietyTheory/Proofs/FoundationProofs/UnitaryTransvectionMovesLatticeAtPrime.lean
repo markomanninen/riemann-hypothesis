@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem tv_mulVec (D : D7) {n : ℕ} (μ : D.host.E) (w v : Fin n → D.host.E) 
   rw [tv, Matrix.add_mulVec, Matrix.one_mulVec, Matrix.smul_mulVec]
   congr 1
   funext i
-  simp only [Matrix.mulVec, dotProduct, Matrix.vecMulVec_apply, Pi.smul_apply, smul_eq_mul, hE,
+  simp only [Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct, Matrix.vecMulVec_apply, hE,
     Finset.mul_sum, Finset.sum_mul]
   exact Finset.sum_congr rfl fun j _ => by ring
 

@@ -1,17 +1,22 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToRingActOpOfRingAct
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyHomFixRepTrivial
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuativeExistenceOfDvrLiftsLocallyNoetherianStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AbelianSchemeHomExtendsDedekindOfIsGrpPullbackAl
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HomExtensionSemiAbelianDiscreteValuationRing
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.FinrankMumfordBundleCechHomologyOrigin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EighthPowerUniversalObjectAtModelStalk
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToRingActOpOfRingAct
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyHomFixRepTrivial
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuativeExistenceOfDvrLiftsLocallyNoetherianStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AbelianSchemeHomExtendsDedekindOfIsGrpPullbackAl
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HomExtensionSemiAbelianDiscreteValuationRing
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.FinrankMumfordBundleCechHomologyOrigin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EighthPowerUniversalObjectAtModelStalk
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.EndLoc
@@ -26,8 +31,6 @@ theorem lbIso_pull_eq {X Y : Scheme.{0}} {L : LB X} (hL : L.IsLB) {f g : Y ⟶ X
 theorem lbIso_pull_pull {X Y : Scheme.{0}} {L L' : LB X} (h : LBIso L L') (f : Y ⟶ X) :
     LBIso (L.pull f) (L'.pull f) :=
   LBIso.chartPull (chartPullPull L f) (chartPullPull L' f) h
-
-macro "lbt" : tactic => `(tactic| (repeat (first | assumption | apply pull_isLB)))
 
 theorem isProper_of_finiteType : ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (A B : Over S) [GrpObj A] [IsCommMonObj A] [GrpObj B] [IsCommMonObj B] (L : LB A.left) (M : LB B.left) (R : HomFixRep A B L M), IsAbelianScheme A → IsAbelianScheme B → L.IsLB → M.IsLB → Out.Rigidified A L → Out.Rigidified B M → QuasiCompact R.π → IsSeparated R.π → LocallyOfFiniteType R.π → IsProper R.π := by
   intro S _ A B _ _ _ _ L M R hA hB hL hM _ _ hqc hsep hlft
@@ -87,38 +90,53 @@ theorem isProper_of_finiteType : ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (A
             _ = u ≫ ΦK.left ≫ κB ≫ ψB := by rw [hκB1]; simp only [Category.assoc]
             _ = ((u ≫ κA) ≫ ΦV.left) ≫ ψB := by
                 rw [← Category.assoc ΦK.left, hΦV1]; simp only [Category.assoc]
-      refine LBIso.trans (B := L.pull ((u ≫ κA) ≫ ψA)) (by lbt) (by lbt) (by lbt)
+      refine LBIso.trans (B := L.pull ((u ≫ κA) ≫ ψA)) ?_ ?_ ?_
         (GlobalTheory.OriginCohom.lbIso_pull_pull_comp hL _ _) ?_
-      refine LBIso.trans (B := L.pull ((u ≫ pA) ≫ R.φA)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := L.pull ((u ≫ pA) ≫ R.φA)) ?_ ?_ ?_
         (lbIso_pull_eq hL (by simp only [Category.assoc, hκA1])) ?_
-      refine LBIso.trans (B := (L.pull R.φA).pull (u ≫ pA)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := (L.pull R.φA).pull (u ≫ pA)) ?_ ?_ ?_
         (LBIso.symm (GlobalTheory.OriginCohom.lbIso_pull_pull_comp hL _ _)) ?_
-      refine LBIso.trans (B := ((M.pull R.φB).pull R.Φ.left).pull (u ≫ pA)) (by lbt) (by lbt) (by lbt) i0 ?_
-      refine LBIso.trans (B := (M.pull R.φB).pull ((u ≫ pA) ≫ R.Φ.left)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := ((M.pull R.φB).pull R.Φ.left).pull (u ≫ pA)) ?_ ?_ ?_ i0 ?_
+      rotate_left 3
+      refine LBIso.trans (B := (M.pull R.φB).pull ((u ≫ pA) ≫ R.Φ.left)) ?_ ?_ ?_
         (GlobalTheory.OriginCohom.lbIso_pull_pull_comp hm _ _) ?_
-      refine LBIso.trans (B := M.pull (((u ≫ pA) ≫ R.Φ.left) ≫ R.φB)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := M.pull (((u ≫ pA) ≫ R.Φ.left) ≫ R.φB)) ?_ ?_ ?_
         (GlobalTheory.OriginCohom.lbIso_pull_pull_comp hM _ _) ?_
-      refine LBIso.trans (B := M.pull (((u ≫ κA) ≫ ΦV.left) ≫ ψB)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := M.pull (((u ≫ κA) ≫ ΦV.left) ≫ ψB)) ?_ ?_ ?_
         (lbIso_pull_eq hM eqM) ?_
-      refine LBIso.symm (LBIso.trans (B := (M.pull ψB).pull ((u ≫ κA) ≫ ΦV.left)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.symm (LBIso.trans (B := (M.pull ψB).pull ((u ≫ κA) ≫ ΦV.left)) ?_ ?_ ?_
         (GlobalTheory.OriginCohom.lbIso_pull_pull_comp (pull_isLB hM _) _ _) ?_)
+      rotate_left 3
       exact GlobalTheory.OriginCohom.lbIso_pull_pull_comp hM _ _
+      all_goals (first | assumption | (apply pull_isLB; first | assumption | (apply pull_isLB; first | assumption | (apply pull_isLB; assumption))))
 
     obtain ⟨g, ⟨hg, χA, χB, hχA, hχB, hχA1, hχB1, hχΦ⟩, -⟩ :=
       R.rep (Sp V) y AV BV ψA ψB ΦV hVA hVB hΦV iso
     have isoK : LBIso (L.pull (pA ≫ R.φA)) ((M.pull (pB ≫ R.φB)).pull ΦK.left) := by
       have hm := pull_isLB hM R.φB
-      refine LBIso.trans (B := (L.pull R.φA).pull pA) (by lbt) (by lbt) (by lbt)
+      refine LBIso.trans (B := (L.pull R.φA).pull pA) ?_ ?_ ?_
         (LBIso.symm (GlobalTheory.OriginCohom.lbIso_pull_pull_comp hL _ _)) ?_
-      refine LBIso.trans (B := ((M.pull R.φB).pull R.Φ.left).pull pA) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := ((M.pull R.φB).pull R.Φ.left).pull pA) ?_ ?_ ?_
         (lbIso_pull_pull R.iso pA) ?_
-      refine LBIso.trans (B := (M.pull R.φB).pull (pA ≫ R.Φ.left)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := (M.pull R.φB).pull (pA ≫ R.Φ.left)) ?_ ?_ ?_
         (GlobalTheory.OriginCohom.lbIso_pull_pull_comp hm _ _) ?_
-      refine LBIso.trans (B := M.pull ((pA ≫ R.Φ.left) ≫ R.φB)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := M.pull ((pA ≫ R.Φ.left) ≫ R.φB)) ?_ ?_ ?_
         (GlobalTheory.OriginCohom.lbIso_pull_pull_comp hM _ _) ?_
-      refine LBIso.trans (B := M.pull (ΦK.left ≫ pB ≫ R.φB)) (by lbt) (by lbt) (by lbt)
+      rotate_left 3
+      refine LBIso.trans (B := M.pull (ΦK.left ≫ pB ≫ R.φB)) ?_ ?_ ?_
         (lbIso_pull_eq hM (by rw [← Category.assoc, hΦK1])) ?_
+      rotate_left 3
       exact LBIso.symm (GlobalTheory.OriginCohom.lbIso_pull_pull_comp hM _ _)
+      all_goals (first | assumption | (apply pull_isLB; first | assumption | (apply pull_isLB; first | assumption | (apply pull_isLB; assumption))))
     obtain ⟨g0, -, huniq⟩ := R.rep (Sp (FractionRing V)) (x ≫ R.π) AK BK (pA ≫ R.φA) (pB ≫ R.φB) ΦK hKA hKB hΦK isoK
     have e1 : x = g0 := huniq x ⟨rfl, pA, pB, hK1A, hK1B, rfl, rfl, hΦK1⟩
     have e2 : Out.jK V ≫ g = g0 := huniq _ ⟨by rw [Category.assoc, hg, hxy], κA ≫ χA, κB ≫ χB,

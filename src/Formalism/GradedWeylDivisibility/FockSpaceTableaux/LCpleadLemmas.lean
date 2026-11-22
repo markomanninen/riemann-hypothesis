@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementC
+module
+
+public import Formalism.GradedWeylDivisibility.StatementC
+
+@[expose] public section
 
 open MvPolynomial
 open scoped MonomialOrder
@@ -20,7 +24,7 @@ theorem lcplead_weight_apply {r n : ℕ} (l j : Fin n) (hlj : l ≠ j) (d : Fin 
     Finsupp.weight (pairW l j) d (b, t) =
       if t = l then d (b, l) + d (b, j) else if t = j then 0 else d (b, t) := by
   classical
-  rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp), Finsupp.finset_sum_apply]
+  rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp), Finsupp.finsetSum_apply]
   simp only [Finsupp.smul_apply, pairW_apply, smul_eq_mul]
   split_ifs with h1 h2
   · subst h1
@@ -69,7 +73,7 @@ private lemma support_eq_of_pairW_homogeneous_of_erase_eq (hlj : l ≠ j) (a0 : 
 theorem lcplead_coeff_peel (hlj : l ≠ j) (a0 : Fin r) {ω : Fin r × Fin n →₀ ℕ}
     {g : MvPolynomial (Fin r × Fin n) B}
     (hg : IsWeightedHomogeneous (pairW l j) g ω) {m : Fin r × Fin n →₀ ℕ} (hm : m ∈ g.support) :
-    coeff ((m.erase (a0, l)).erase (a0, j)) (peel l j a0 (m (a0, l)) g) = coeff m g := by
+    AddMonoidAlgebra.coeff (peel l j a0 (m (a0, l)) g) ((m.erase (a0, l)).erase (a0, j)) = AddMonoidAlgebra.coeff g m := by
   classical
   unfold peel
   rw [coeff_sum]

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsLocalHomeomorphAddMonoidHomOfEventuallyEq
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsLocalHomeomorphAddMonoidHomOfEventuallyEq
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Complex Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -233,7 +237,7 @@ theorem exists_holUnif :
   refine ⟨{ ex := fun z => Additive.toMul (hφ.exp z)
             ex_add := fun z w => by
               show Additive.toMul (hφ.exp (z + w)) = _
-              rw [map_add]
+              rw [map_add (f := _)]
               rfl
             ex_onto := fun y => by
               obtain ⟨z, hz⟩ := hsurj (Additive.ofMul y)
@@ -262,7 +266,7 @@ theorem exists_holUnif :
       filter_upwards [ht0.eventually (hNo.mem_nhds hN0)] with z hz
       rw [← hNeq _ hz]
       show Additive.toMul (hφ.exp z) = Additive.toMul (hφ.exp z0) * Additive.toMul (hφ.exp (z - z0))
-      rw [← toMul_add, ← map_add, add_sub_cancel]
+      rw [← toMul_add, ← map_add (f := _), add_sub_cancel]
   · intro i j z hz
     obtain ⟨e, he⟩ := (H1 _ (Additive.toMul (hφ.exp z)).left).2.1 _ hz
     rw [he]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+
+@[expose] public section
 
 open UpperTheory.V.Loc UpperTheory.V.Alg IsLocalRing
 
@@ -34,7 +38,7 @@ private theorem cg_ext {O R E : Type} [CommRing O] [IsDomain O] [CommRing R] [Al
     intro N b hb
     obtain ⟨u, hu, v, hv, rfl⟩ := Submodule.mem_sup.mp hb
     have hv0 : α v - β v = 0 := sub_eq_zero.mpr (hI v hv)
-    rw [map_add, map_add, add_sub_add_comm, hv0, add_zero]
+    rw [map_add (f := _), map_add (f := _), add_sub_add_comm, hv0, add_zero]
     exact Ideal.sub_mem _ (hA α hα N u hu) (hA β hβ N u hu)
   have hC : ∀ p : MvPolynomial (Fin n) O, α (MvPolynomial.aeval z p) = β (MvPolynomial.aeval z p) := by
     intro p
@@ -50,7 +54,7 @@ private theorem cg_ext {O R E : Type} [CommRing O] [IsDomain O] [CommRing R] [Al
     | C c =>
       rw [MvPolynomial.aeval_C, AlgHom.commutes, MvPolynomial.map_C, MvPolynomial.coe_C,
         MvPowerSeries.algebraMap_apply]
-    | add p q hp hq => simp only [map_add, hp, hq, MvPolynomial.coe_add]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq, MvPolynomial.coe_add]
     | mul_X p i hp =>
       simp only [map_mul, hp, MvPolynomial.aeval_X, hz i, MvPolynomial.map_X, MvPolynomial.coe_mul,
         MvPolynomial.coe_X]
@@ -70,7 +74,7 @@ private theorem cg_ext {O R E : Type} [CommRing O] [IsDomain O] [CommRing R] [Al
       have hds : d ∈ s := by
         rw [hs, Set.Finite.mem_toFinset]
         exact hd
-      have hcp : MvPolynomial.coeff d p = k d := by
+      have hcp : AddMonoidAlgebra.coeff p d = k d := by
         rw [hp, MvPolynomial.coeff_sum]
         simp only [MvPolynomial.coeff_monomial]
         rw [Finset.sum_ite_eq' s d (fun e => k e), if_pos hds]

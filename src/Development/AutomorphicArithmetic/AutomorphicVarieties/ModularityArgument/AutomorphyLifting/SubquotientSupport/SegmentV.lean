@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.ExistsRec
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsSumMultiplicityOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.ExistsRec
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsSumMultiplicityOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,24 +16,14 @@ namespace UpperTheory.V.Z.Win.T2
 
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
-  {rc : IrrGL (w.adicCompletion E) → WD h}
+  {rc : IrrGL (k := w.adicCompletion E) → WD h}
 
 private theorem segmentV {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {ε : EpsFamily A}
-    (H : LawsV a ha ε rc) {Δ : Segment (w.adicCompletion E)} {x : IrrGL (w.adicCompletion E)}
+    (H : LawsV a ha ε rc) {Δ : Segment (w.adicCompletion E)} {x : IrrGL (k := w.adicCompletion E)}
     (hx : IsLSeg Δ x.rep) :
-    rc x = ((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp h Δ.len) :=
+    rc x = ((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp (h := h) Δ.len) :=
   (H.langlands [Δ] x hx.isL).trans (WD.lpSum_zero _)
 
 end UpperTheory.V.Z.Win.T2
-
-theorem UpperTheory.V.Z.Win.T2.lQuot :
-    type_of% @GlobalTheory.LocLanglands.IsRec.langlandsQuotient := by
-  intro E Ω i₁ i₂ i₃ i₄ i₅ A w h rc hrc 𝔪 s N δ hδ hd π hπ
-  have h1 : IsL 𝔪 (GlobalTheory.LocLanglands.cls π).rep := IsL.of_equiv ⟨s, δ, hd, hδ, hπ⟩ (equivRep π)
-  obtain ⟨Δ, ⟨hm, -⟩, hΔ⟩ := hδ
-  obtain ⟨a, ha, ε, H⟩ := UpperTheory.V.Z.Win.toV hrc
-  simp only [fun i => UpperTheory.V.Z.Win.T2.segmentV H (hΔ i)]
-  rw [H.langlands (List.ofFn Δ) (GlobalTheory.LocLanglands.cls π) (by rwa [← Fin.univ_val_map, hm]), List.map_ofFn]
-  rfl
 
 end

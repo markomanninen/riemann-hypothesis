@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
+
+@[expose] public section
 
 open Matrix UpperTheory.V.Weyl
 
@@ -17,7 +21,7 @@ theorem UpperTheory.V.Weyl.rtrPoly :
     intro φ
     obtain ⟨p1, h1⟩ := hp φ
     obtain ⟨p2, h2⟩ := hq φ
-    exact ⟨p1 + p2, fun g => by rw [map_add, map_add, h1, h2, map_add]⟩
+    exact ⟨p1 + p2, fun g => by rw [map_add (f := _), map_add (f := _), h1, h2, map_add (f := _)]⟩
   | mul_X p ij hp =>
     intro φ
     choose P hP using fun k : Fin n =>
@@ -26,7 +30,8 @@ theorem UpperTheory.V.Weyl.rtrPoly :
     have hX : rtr g (MvPolynomial.X ij : Pol n)
         = ∑ k, (MvPolynomial.X (ij.1, k) : Pol n) * MvPolynomial.C (g k ij.2) := by
       simp [rtr, MvPolynomial.aeval_X]
-    rw [map_mul, hX, Finset.mul_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, hX, Finset.mul_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     have hk := hP k g
     simp only [LinearMap.comp_apply, LinearMap.mulRight_apply] at hk

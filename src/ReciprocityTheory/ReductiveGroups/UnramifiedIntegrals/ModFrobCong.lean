@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGBasic
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModPrincNorm
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.IsIntegralOfRoot
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLatTau
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModCMPoint
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModVanish
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModFrobSer
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModKronPt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGBasic
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModPrincNorm
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.IsIntegralOfRoot
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLatTau
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModCMPoint
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModVanish
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModFrobSer
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModKronPt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane

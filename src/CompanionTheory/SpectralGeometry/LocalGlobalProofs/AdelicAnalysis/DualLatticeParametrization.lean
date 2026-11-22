@@ -1,4 +1,9 @@
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SumRhoEqTrace
+module
+
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SumRhoEqTrace
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core GlobalTheory.CompanionTheory.SW.ThW
 open scoped ENNReal NNReal MatrixGroups Kronecker
 
@@ -57,7 +62,8 @@ theorem exists_dual_param (F : Type) [Field F] [NumberField F] (ι : Type) [Fint
     refine ⟨fun n i => ∑ u, algebraMap ℚ F ((n (i, u) : ℚ) / N) * d u, fun n i v => ?_⟩
     have : Algebra.trace ℚ F ((b v : F) * ∑ u, algebraMap ℚ F ((n (i, u) : ℚ) / N) * d u)
         = (n (i, v) : ℚ) / N := by
-      simp only [Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.mul_sum, map_sum]
       have hterm : ∀ u, Algebra.trace ℚ F ((b v : F) * (algebraMap ℚ F ((n (i, u) : ℚ) / N) * d u))
           = ((n (i, u) : ℚ) / N) * (if v = u then 1 else 0) := by
         intro u

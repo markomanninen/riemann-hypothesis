@@ -1,38 +1,42 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowFormSectionPerfect
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowFormSectionAlgClosed
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionCycleReduced
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMinimalPrimeComap
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsFundCycleBaseChange
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PRadicalBaseChange
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormExtend
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormBaseChange
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormAssoc
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormCycleAdd
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormCycleSmul
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIncIdealSeparate
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIncidenceZeroLocus
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFormsThroughPoint
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PThroughPointIncIdeal
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChartZeroTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PThroughTwoPointsTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PTrdegAdjoinLe
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PTrdegBaseAlgebraic
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIncIdealNeBotDim
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LocalMultRadical
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PAffineChartTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PFGNullstellensatz
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncidenceGeneric
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealPrime
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PGenericLinearTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealDim
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimOfChowForm
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormExists
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimComponent
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormReducedRadical
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionOrderAlgClosed
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionComponents
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionLengthSum
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowFormSectionPerfect
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowFormSectionAlgClosed
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionCycleReduced
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMinimalPrimeComap
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsFundCycleBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PRadicalBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormExtend
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormAssoc
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormCycleAdd
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormCycleSmul
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIncIdealSeparate
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIncidenceZeroLocus
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFormsThroughPoint
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PThroughPointIncIdeal
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChartZeroTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PThroughTwoPointsTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PTrdegAdjoinLe
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PTrdegBaseAlgebraic
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIncIdealNeBotDim
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LocalMultRadical
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PAffineChartTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PFGNullstellensatz
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncidenceGeneric
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealPrime
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PGenericLinearTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PIncIdealDim
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimOfChowForm
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormExists
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimComponent
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChowFormReducedRadical
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionOrderAlgClosed
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionComponents
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionLengthSum
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -128,12 +132,12 @@ theorem eq_C_mul_of_map_eq {F K : Type*} [Field F] [Field K] (σ : F →+* K) {�
     {a b : MvPolynomial ι F} (hb : b ≠ 0) {c : K} (hc : c ≠ 0) (h : map σ a = C c * map σ b) :
     ∃ c₀ : F, c₀ ≠ 0 ∧ a = C c₀ * b := by
   obtain ⟨m, hm⟩ := ne_zero_iff.mp hb
-  have hcoef := congrArg (coeff m) h
+  have hcoef := congrArg (AddMonoidAlgebra.coeff · m) h
   rw [coeff_map, coeff_C_mul, coeff_map] at hcoef
-  have hσm : σ (coeff m b) ≠ 0 := (map_ne_zero σ).mpr hm
-  have hcc : σ (coeff m a / coeff m b) = c := by
+  have hσm : σ (AddMonoidAlgebra.coeff b m) ≠ 0 := (map_ne_zero σ).mpr hm
+  have hcc : σ (AddMonoidAlgebra.coeff a m / AddMonoidAlgebra.coeff b m) = c := by
     rw [map_div₀, hcoef, mul_div_cancel_right₀ _ hσm]
-  refine ⟨coeff m a / coeff m b, fun h0 => hc (by rw [← hcc, h0, map_zero]), ?_⟩
+  refine ⟨AddMonoidAlgebra.coeff a m / AddMonoidAlgebra.coeff b m, fun h0 => hc (by rw [← hcc, h0, map_zero]), ?_⟩
   apply map_injective σ σ.injective
   rw [h, map_mul, map_C, hcc]
 
@@ -167,8 +171,8 @@ theorem mem_relComps_of_mem_support {R : Type*} [CommRing R] [IsNoetherianRing R
 
 end SectionPerfect
 
-open SectionPerfect in
 
+open SectionPerfect in
 theorem chowFormSectionPerfect_of (hA : ChowFormSectionAlgClosed.Statement)
     (hS : SectionCycleReduced.Statement) (hM : MinimalPrimeComap.Statement)
     (hB : FundCycleBaseChange.Statement) : ChowFormSectionPerfect.Statement := by
@@ -311,8 +315,8 @@ theorem dvd_of_forall_emultiplicity_le' {R : Type*} [CommRing R] [IsDomain R]
 
 end SectionAlgClosed
 
-open SectionAlgClosed in
 
+open SectionAlgClosed in
 theorem chowFormSectionAlgClosed_of (h₅ : SectionOrderAlgClosed.Statement) :
     ChowFormSectionAlgClosed.Statement := by
   have h₁ : ConeDimOfChowForm.Statement := SectionPerfect.coneDimOfChowForm_full

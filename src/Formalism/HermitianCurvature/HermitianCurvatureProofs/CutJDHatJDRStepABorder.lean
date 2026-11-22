@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BorderedDeterminants
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BorderedDeterminants
+
+@[expose] public section
 
 open Finset
 

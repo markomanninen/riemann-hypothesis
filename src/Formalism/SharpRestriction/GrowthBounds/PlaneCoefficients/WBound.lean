@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.WordLossNonneg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.WordLossNonneg
+
+@[expose] public section
 
 noncomputable section
 

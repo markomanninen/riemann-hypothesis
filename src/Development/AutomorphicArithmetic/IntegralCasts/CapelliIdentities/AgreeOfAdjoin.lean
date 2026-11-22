@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped IntermediateField TensorProduct Matrix Pointwise NumberField Topology ContDiff NNReal ENNReal Polynomial DirectSum BigOperators InnerProductSpace Manifold
 
@@ -12,6 +16,6 @@ theorem UpperTheory.Reformulated.B.Qk58.agree_of_adjoin :
     rw [Set.mem_singleton_iff.mp hx]
     exact ha
   | algebraMap q => simp
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | inv x _ hx => rw [map_inv₀, map_inv₀, hx]
   | mul x y _ _ hx hy => rw [map_mul, map_mul, hx, hy]

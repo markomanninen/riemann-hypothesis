@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.PartitionSolutions.SplitFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.PartitionSolutions.SplitFacts
+
+@[expose] public section
+
 open UpperTheory.V.Cj.A
 open Matrix NumberField GlobalTheory.CuspRep UpperTheory.V.Lit.Dr
 
-private theorem sand_split (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (t : ℝ) (p : HV E a) :
+private theorem sand_split (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (t : ℝ) (p : HV E a) :
     sand (GeneralLinearGroup.map (pInf E) (GlobalTheory.UnitaryBC.splitCentre E a t)) p = (Real.exp t * Real.exp t) • p := by
   rw [GlobalTheory.UnitaryBC.splitCentre, pInf_infGL]
   refine Subtype.ext ?_

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DualFLeOfInv
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LinearIndependentOrth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DualFLeOfInv
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LinearIndependentOrth
+
+@[expose] public section
 
 open NumberField Module
 
@@ -37,7 +41,7 @@ theorem family_dual_holds : FamDual := by
   have key_ii : ∀ i, h (b i + w (τ i)) (b i + w (τ i)) =
       algebraMap F K ((a i : 𝓞 F) : F) + algebraMap F K (c (τ i)) := by
     intro i
-    simp only [map_add, LinearMap.add_apply, hbw, hwb, hbn, hwn1]
+    simp only [map_add (f := _), LinearMap.add_apply, hbw, hwb, hbn, hwn1]
     ring
 
   have hgg : ∀ i, vF 𝔭 (a i) ≠ 0 →
@@ -51,13 +55,13 @@ theorem family_dual_holds : FamDual := by
       h (glueFam K 𝔭 b a π w τ (Sum.inl i)) (glueFam K 𝔭 b a π w τ (Sum.inr (τ i))) =
         (algebraMap F K (π : F) ^ vF 𝔭 (a i))⁻¹ * algebraMap F K (c (τ i)) := by
     intro i hi
-    rw [hGl i hi, hGr, form_smul_left, star_inv_pow hF, inv_pow (algebraMap F K (π : F)), map_add,
+    rw [hGl i hi, hGr, form_smul_left, star_inv_pow hF, inv_pow (algebraMap F K (π : F)), map_add (f := _),
       LinearMap.add_apply, hbw, hwn1, zero_add]
   have hwg : ∀ i, vF 𝔭 (a i) ≠ 0 →
       h (glueFam K 𝔭 b a π w τ (Sum.inr (τ i))) (glueFam K 𝔭 b a π w τ (Sum.inl i)) =
         (algebraMap F K (π : F) ^ vF 𝔭 (a i))⁻¹ * algebraMap F K (c (τ i)) := by
     intro i hi
-    rw [hGl i hi, hGr, form_smul_right, inv_pow (algebraMap F K (π : F)), map_add, hwb, hwn1, zero_add]
+    rw [hGl i hi, hGr, form_smul_right, inv_pow (algebraMap F K (π : F)), map_add (f := _), hwb, hwn1, zero_add]
   have hww : ∀ j, h (glueFam K 𝔭 b a π w τ (Sum.inr j)) (glueFam K 𝔭 b a π w τ (Sum.inr j)) =
       algebraMap F K (c j) := fun j => by rw [hGr, hwn1]
   have hdiag0 : ∀ i, vF 𝔭 (a i) = 0 →
@@ -93,7 +97,7 @@ theorem family_dual_holds : FamDual := by
           if s = Sum.inl i then X else if s = Sum.inr (τ i) then Y else 0 := by
     intro i hi X Y hX hY
     obtain ⟨r, hr, hre⟩ := (mem_noncompactPart_iff hu _ _).1 (hcong i hi)
-    rw [jι_eq', map_add] at hre
+    rw [jι_eq', map_add (f := _)] at hre
     have hre' : algebraMap F K ((a i : 𝓞 F) : F) + algebraMap F K (c (τ i)) =
         (algebraMap F K (π : F) ^ vF 𝔭 (a i)) ^ 2 * r := by
       rw [hre]; ring

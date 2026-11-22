@@ -1,9 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.LinkEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.LinkEx
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp UpperTheory.V.Ws.Lk
-open private exists_conj ne_top val_nat fin_nat eq_of_mem from Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.UnipotentIdempotents.EqOfMem
-open private bu bu_val bu_open eq_of_ker dec_of from Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.UnipotentIdempotents.EqOfKer
-open private pre_ex from Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.LinkEx
 
 private theorem exists_placeOver_of_placeOver_lp {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω]
     (A : ValuationSubring Ω) (v : W.Plc (W.Lp L)) (h : IsPlaceOver A v) : ∃ w : W.Plc L, IsPlaceOver A w := by
@@ -40,9 +41,22 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.mkSetP :
     ∀ (l : ℕ) [Fact l.Prime] (L Ω : Type) [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω], l ≠ 2 → (∀ A : ValuationSubring Ω, Ine (F := W.Lp L) A ≤ (W.resP L Ω).range) → ∀ S : Finset ℕ, (∀ q ∈ S, q.Prime) → l ∈ S → (∀ q ∈ S, ∀ A : ValuationSubring Ω, A.valuation (q : Ω) < 1 → Dec (F := W.Lp L) A ≤ (W.resP L Ω).range) → ∀ A₀ : W.Vl l L → ValuationSubring Ω, (∀ v, IsPlaceOver (A₀ v) v.1) → ∀ (v₀ : W.Plc (W.Lp L)) (B : ValuationSubring Ω) (p : ℕ), p.Prime → p ≠ 2 → p ∉ S → ¬ (p : ℤ) ∣ discr L → ((p : ℕ) : 𝓞 (W.Lp L)) ∈ v₀.asIdeal → normV v₀ = p → IsPlaceOver B v₀ → Dec (F := W.Lp L) B ≤ (W.resP L Ω).range → ∃ s : W.HidaSetting l L Ω, s.p = p ∧ (∀ v : W.Vl l L, s.A v = A₀ v) ∧ s.A s.v0 = B ∧ s.S.Finite ∧ (∀ q ∈ S, ¬ B.valuation (q : Ω) < 1) ∧ ∀ (A : ValuationSubring Ω) (v : W.Plc (W.Lp L)), IsPlaceOver A v → v ∉ s.S → ∀ q ∈ S, ¬ A.valuation (q : Ω) < 1 := by
   intro l _ L Ω _ _ _ _ _ _ hl hunr S hSp hlS hSd A₀ hA₀ v₀ B p hp hp2 hpS hdisc hpv hnorm hB hBd
   classical
+  have eq_of_mem {q : ℕ} (hq : q.Prime) (hqv : (q : 𝓞 (W.Lp L)) ∈ v₀.asIdeal) : p = q := by
+    by_contra hne
+    obtain ⟨a, b, hab⟩ := Nat.Coprime.cast (R := 𝓞 (W.Lp L)) ((Nat.coprime_primes hp hq).2 hne)
+    exact v₀.isPrime.ne_top ((Ideal.eq_top_iff_one _).2
+      (hab ▸ add_mem (v₀.asIdeal.mul_mem_left a hpv) (v₀.asIdeal.mul_mem_left b hqv)))
+  have val_nat {A : ValuationSubring Ω} {v : W.Plc (W.Lp L)} (h : IsPlaceOver A v) (q : ℕ) :
+      A.valuation (q : Ω) < 1 ↔ (q : 𝓞 (W.Lp L)) ∈ v.asIdeal := by
+    rw [← map_natCast (algebraMap (W.Lp L) Ω) q]
+    exact h (q : 𝓞 (W.Lp L))
+  have fin_nat {q : ℕ} (hq : q ≠ 0) : {v : W.Plc (W.Lp L) | (q : 𝓞 (W.Lp L)) ∈ v.asIdeal}.Finite := by
+    have h := Ideal.finite_factors (I := Ideal.span {(q : 𝓞 (W.Lp L))}) fun hspan =>
+      Nat.cast_ne_zero.mpr hq (Ideal.span_singleton_eq_bot.mp hspan)
+    simpa only [Ideal.dvd_span_singleton] using h
   have hl0 : l ≠ 0 := (Fact.out : l.Prime).ne_zero
   have hpl : p ≠ l := fun e => hpS (e ▸ hlS)
-  have hlv₀ : ((l : ℕ) : 𝓞 (W.Lp L)) ∉ v₀.asIdeal := fun h => hpl (eq_of_mem hp Fact.out hpv h)
+  have hlv₀ : ((l : ℕ) : 𝓞 (W.Lp L)) ∉ v₀.asIdeal := fun h => hpl (eq_of_mem Fact.out h)
   let Aof : W.Plc (W.Lp L) → ValuationSubring Ω := fun v =>
     if h : ((l : ℕ) : 𝓞 (W.Lp L)) ∈ v.asIdeal then A₀ ⟨v, h⟩
     else if v = v₀ then B else Classical.choose (exists_isPlaceOver Ω v)
@@ -55,12 +69,12 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.mkSetP :
       exact hB
     · exact Classical.choose_spec (exists_isPlaceOver Ω v)
   have hA0 : Aof v₀ = B := by
-    simp only [Aof, dif_neg hlv₀, if_true]
+    simp only [Aof, dite_eq_right hlv₀, ite_true]
   let wof : W.Plc (W.Lp L) → W.Plc L := fun v => Classical.choose (exists_placeOver_of_placeOver_lp (Aof v) v (hAof v))
   have hwof : ∀ v, IsPlaceOver (Aof v) (wof v) := fun v => Classical.choose_spec (exists_placeOver_of_placeOver_lp (Aof v) v (hAof v))
   have hStf : {v : W.Plc (W.Lp L) | ∃ q ∈ S, ((q : ℕ) : 𝓞 (W.Lp L)) ∈ v.asIdeal ∧
       ((l : ℕ) : 𝓞 (W.Lp L)) ∉ v.asIdeal}.Finite := by
-    refine (Set.Finite.biUnion S.finite_toSet fun q hq => fin_nat (k := W.Lp L) (hSp q hq).ne_zero).subset ?_
+    refine (Set.Finite.biUnion S.finite_toSet fun q hq => fin_nat (hSp q hq).ne_zero).subset ?_
     rintro v ⟨q, hq, hqv, -⟩
     exact Set.mem_biUnion hq hqv
   let St := hStf.toFinset
@@ -73,7 +87,7 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.mkSetP :
   have hv0 : v₀ ∉ St := by
     intro hv
     obtain ⟨q, hq, hqv, -⟩ := (hSt v₀).mp hv
-    obtain rfl := eq_of_mem hp (hSp q hq) hpv hqv
+    obtain rfl := eq_of_mem (hSp q hq) hqv
     exact hpS hq
   have hsplit : ∀ v : W.Plc (W.Lp L), ((l : ℕ) : 𝓞 (W.Lp L)) ∈ v.asIdeal ∨ v ∈ St ∨ v = v₀ →
       Dec (Aof v) ≤ (W.resP L Ω).range := by
@@ -83,20 +97,31 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.mkSetP :
       exact hSd q hq (Aof v) ((val_nat (hAof v) q).mpr hqv)
     · rw [hA0]
       exact hBd
-  obtain ⟨c, hc⟩ := exists_conj L Ω
+  have exists_conj : ∃ c : G (W.Lp L) Ω, ∃ j : Ω →+* ℂ, ∀ x, j (c x) = starRingEnd ℂ (j x) := by
+    obtain ⟨φ⟩ : Nonempty (L →+* ℂ) := inferInstance
+    let : Algebra L ℂ := φ.toAlgebra
+    have : Algebra.IsAlgebraic L Ω := IsAlgClosure.isAlgebraic
+    let j : Ω →ₐ[L] ℂ := _root_.IsAlgClosed.lift
+    let : Algebra Ω ℂ := (j : Ω →+* ℂ).toAlgebra
+    have : IsScalarTower (W.Lp L) Ω ℂ :=
+      IsScalarTower.of_algebraMap_eq fun x => (j.commutes (x : L)).symm
+    let conjugation : ℂ →ₐ[W.Lp L] ℂ :=
+      { starRingEnd ℂ with commutes' := fun x => (mem_maximalRealSubfield_iff (x : L)).1 x.2 φ }
+    exact ⟨conjugation.restrictNormal' Ω, j, fun x => conjugation.restrictNormal_commutes Ω x⟩
+  obtain ⟨c, hc⟩ := exists_conj
   refine ⟨W.HidaSetting.mk hl (fun A _ _ => hunr A) c hc wof Aof hwof hAof St hSt_l v₀ hv0 p hp hp2 hpl hdisc hnorm
     hsplit, rfl, ?_, hA0, ?_, ?_, ?_⟩
   · intro v
     show Aof v.1 = A₀ v
-    simp only [Aof, dif_pos v.2]
-  · refine (((fin_nat (k := W.Lp L) hl0).union St.finite_toSet).union (Set.finite_singleton v₀)).subset ?_
+    simp only [Aof, dite_eq_left v.2]
+  · refine (((fin_nat hl0).union St.finite_toSet).union (Set.finite_singleton v₀)).subset ?_
     rintro v (h | h | h)
     · exact Or.inl (Or.inl h)
     · exact Or.inl (Or.inr h)
     · exact Or.inr h
   · intro q hq hlt
     rw [val_nat hB] at hlt
-    obtain rfl := eq_of_mem hp (hSp q hq) hpv hlt
+    obtain rfl := eq_of_mem (hSp q hq) hlt
     exact hpS hq
   · intro A v hAv hvS q hq hlt
     rw [val_nat hAv] at hlt
@@ -108,9 +133,13 @@ private theorem mem_ine_of_apply_eq_of_mem_ine {Ω F F' : Type} [Field Ω] [Fiel
     [Algebra F Ω] [Algebra F' Ω] {A : ValuationSubring Ω} {σ : G F Ω} {τ : G F' Ω}
     (h : ∀ x : Ω, τ x = σ x) (hs : σ ∈ Ine A) : τ ∈ Ine A := by
   obtain ⟨h1, h2⟩ := hs
-  refine ⟨dec_of h h1, fun x hx => ?_⟩
-  rw [h x]
-  exact h2 x hx
+  refine ⟨?_, fun x hx => by simpa only [h x] using h2 x hx⟩
+  change τ ∈ Dec A
+  rw [mem_Dec]
+  ext x
+  rw [ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem, AlgEquiv.smul_def,
+    ← apply_mem_iff_of_mem_Dec h1 (τ⁻¹ x), ← h]
+  simp
 
 private theorem dec_of_ok_of_valuation_lt_one {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
     {D : Raw Ω c} (T : Tower D) (hOk : T.Ok) (q : ℕ) (hq : q ∈ D.S) (A : ValuationSubring Ω)
@@ -118,7 +147,9 @@ private theorem dec_of_ok_of_valuation_lt_one {Ω : Type} [Field Ω] [CharZero �
   intro σ hσ
   obtain ⟨hF, ⟨φ, hφ, hφL⟩, hGal⟩ := galEq T
   let σ' : G ℚ Ω := σ.restrictScalars ℚ
-  have h1 : σ' ∈ Dec (F := ℚ) A := dec_of (fun x => rfl) hσ
+  have h1 : σ' ∈ Dec (F := ℚ) A := by
+    rw [mem_Dec] at hσ ⊢
+    exact hσ
   have hK : σ' ∈ T.K.fixingSubgroup := hOk.split q hq A hA h1
   have hFix : ∀ x ∈ T.F, σ' x = x := by
     intro x hx
@@ -145,10 +176,24 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.setAv :
     intro A σ hσ
     exact (hφL σ).mp (hOk.unr A (mem_ine_of_apply_eq_of_mem_ine (hφ σ) hσ))
   have hbf := barFacts hG
-  let U : Subgroup (G T.L Ω) := (⨅ i : Fin 4, (bu T.L (chi D T.pr i)).ker) ⊓ (bu T.L D.om).ker
+  let bu (γ : G ℚ Ω →* c.Oˣ) : G T.L Ω →* (ResidueField c.O)ˣ :=
+    ((Units.map (residue c.O).toMonoidHom).comp γ).comp (resQ T.L)
+  have bu_val (γ : G ℚ Ω →* c.Oˣ) (g : G T.L Ω) :
+      (bu γ g : ResidueField c.O) = Raw.bar γ (resQ T.L g) := rfl
+  have bu_open (γ : G ℚ Ω →* c.Oˣ) (h : IsOpen {g : G ℚ Ω | Raw.bar γ g = 1}) :
+      IsOpen ((bu γ).ker : Set (G T.L Ω)) := by
+    have hk : ((bu γ).ker : Set (G T.L Ω)) = resQ T.L ⁻¹' {g | Raw.bar γ g = 1} := by
+      ext g
+      simp [MonoidHom.mem_ker, Units.ext_iff, bu_val]
+    rw [hk]
+    exact h.preimage (Af.continuous_restrictScalarsHom ℚ T.L Ω)
+  have eq_of_ker {γ : G ℚ Ω →* c.Oˣ} {a b : G T.L Ω} (h : a⁻¹ * b ∈ (bu γ).ker) :
+      bu γ a = bu γ b := by
+    rwa [MonoidHom.mem_ker, map_mul, map_inv, inv_mul_eq_one] at h
+  let U : Subgroup (G T.L Ω) := (⨅ i : Fin 4, (bu (chi D T.pr i)).ker) ⊓ (bu D.om).ker
   have hUo : IsOpen (U : Set (G T.L Ω)) := by
     rw [Subgroup.coe_inf, Subgroup.coe_iInf]
-    refine (isOpen_iInter_of_finite fun i => bu_open T.L _ ?_).inter (bu_open T.L _ hbf.2.1)
+    refine (isOpen_iInter_of_finite fun i => bu_open _ ?_).inter (bu_open _ hbf.2.1)
     unfold chi
     exact hbf.1 _
   let M : ℕ := p₀ * 2 * (∏ q ∈ D.S, q) * (NumberField.discr T.L).natAbs
@@ -174,15 +219,15 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.setAv :
     obtain ⟨n, hn⟩ := hU1 d hd
     have key : ∀ k : Fin 4, Raw.bar (chi D T.pr k) ((resQ T.L) d) = Raw.bar (chi D T.pr k) ((resQ T.L) g₀) ^ n := by
       intro k
-      have hk := eq_of_ker (f := bu T.L (chi D T.pr k)) (Subgroup.mem_iInf.mp hn.1 k)
+      have hk := eq_of_ker (γ := chi D T.pr k) (Subgroup.mem_iInf.mp hn.1 k)
       rw [← bu_val, ← bu_val, hk]
-      exact (congrArg Units.val (map_zpow (bu T.L (chi D T.pr k)) g₀ n)).trans (Units.val_zpow_eq_zpow_val _ _)
+      exact (congrArg Units.val (map_zpow (bu (chi D T.pr k)) g₀ n)).trans (Units.val_zpow_eq_zpow_val _ _)
     rw [key i, key j, hg₁ i j]
   have hom : ∃ d ∈ Dec (s.A s.v0), Raw.bar D.om ((resQ T.L) d) ≠ 1 := by
     rw [hsv0]
     obtain ⟨d, hd, hdU⟩ := hU2
     refine ⟨d, hd, ?_⟩
-    have hk := eq_of_ker (f := bu T.L D.om) hdU.2
+    have hk := eq_of_ker (γ := D.om) hdU.2
     rw [← bu_val, hk, bu_val]
     exact hg₂
   refine ⟨SetD.mk s e hsA hSf (fun A w h1 h2 => hAway A w h1 h2) (by rw [hsv0]; exact hBaway) hchi hom (ccOf T s), ?_⟩

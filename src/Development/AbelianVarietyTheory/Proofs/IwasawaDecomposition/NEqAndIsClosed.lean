@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselDatumAuxiliaryVectorOrthogonalImage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselDatumAuxiliaryVectorOrthogonalImage
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem mulVec_mem_spanLt {k : ℕ} (M : Matrix (Fin B.rank) (Fin B.rank) (AE D)
     (hM : ∀ l : Fin ρ, l.1 < k → M.mulVec (vecA B (e l)) - vecA B (e l) ∈ spanLt B e l.1)
     {v} (hv : v ∈ spanLt B e k) : M.mulVec v ∈ spanLt B e k := by
   obtain ⟨c, hc, rfl⟩ := hv
-  rw [← Matrix.mulVecLin_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Matrix.mulVecLin_apply, map_sum]
   refine Submodule.sum_mem _ fun l _ => ?_
   rcases lt_or_ge l.1 k with hl | hl
   · rw [map_smul]

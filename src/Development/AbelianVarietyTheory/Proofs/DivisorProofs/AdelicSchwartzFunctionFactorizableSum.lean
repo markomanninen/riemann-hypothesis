@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjLinApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzBruhatInvariantUnderIntegralLattice
-import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
-import GroundTheory.GlobalFields.LocalAtPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjLinApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzBruhatInvariantUnderIntegralLattice
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+public import GroundTheory.GlobalFields.LocalAtPlace
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.DblEval
@@ -51,12 +55,12 @@ theorem exists_levSub_subset (V : Set (κ → Af F)) (hV : V ∈ 𝓝 (0 : κ �
   rw [he] at hmem
   exact Set.mem_iInter.1 hmem i
 
-def locInd (d : 𝓞 F) (a : κ → Af F) (v : Pl F) : (κ → Fv F v) → ℂ :=
+def locInd (d : 𝓞 F) (a : κ → Af F) (v : Pl (F := F)) : (κ → Fv F v) → ℂ :=
   Set.indicator {y | ∀ i, algebraMap F (Fv F v) ((d : F)⁻¹) * (y i - evalV F v (a i)) ∈
     v.adicCompletionIntegers F} 1
 
 theorem mem_levSub_iff (d : 𝓞 F) (u : κ → Af F) : u ∈ levSub (κ := κ) d ↔
-    ∀ v : Pl F, ∀ i, algebraMap F (Fv F v) ((d : F)⁻¹) * evalV F v (u i) ∈ v.adicCompletionIntegers F := by
+    ∀ v : Pl (F := F), ∀ i, algebraMap F (Fv F v) ((d : F)⁻¹) * evalV F v (u i) ∈ v.adicCompletionIntegers F := by
   constructor
   · intro h v i
     have := h i v
@@ -75,19 +79,19 @@ namespace GlobalTheory.SBRestrProd
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-theorem isClosed_integers (v : Pl F) : IsClosed (v.adicCompletionIntegers F : Set (Fv F v)) :=
+theorem isClosed_integers (v : Pl (F := F)) : IsClosed (v.adicCompletionIntegers F : Set (Fv F v)) :=
   GroundTheory.Global.isClosed_adicCompletionIntegers v
 
-theorem isCompact_integers' (v : Pl F) : IsCompact (v.adicCompletionIntegers F : Set (Fv F v)) :=
+theorem isCompact_integers' (v : Pl (F := F)) : IsCompact (v.adicCompletionIntegers F : Set (Fv F v)) :=
   GroundTheory.Global.isCompact_adicCompletionIntegers v
 
-theorem coe_d_mem (d : 𝓞 F) (v : Pl F) : algebraMap F (Fv F v) (d : F) ∈ v.adicCompletionIntegers F :=
+theorem coe_d_mem (d : 𝓞 F) (v : Pl (F := F)) : algebraMap F (Fv F v) (d : F) ∈ v.adicCompletionIntegers F :=
   GroundTheory.Global.coe_algebraMap_mem_adicCompletionIntegers v d
 
 theorem coe_ne_zero {d : 𝓞 F} (hd : d ≠ 0) : (d : F) ≠ 0 := by
   rwa [Ne, map_eq_zero_iff _ (IsFractionRing.injective (𝓞 F) F)]
 
-theorem locInd_mem_SB (d : 𝓞 F) (hd : d ≠ 0) (a : κ → Af F) (v : Pl F) : locInd d a v ∈ SB (κ → Fv F v) := by
+theorem locInd_mem_SB (d : 𝓞 F) (hd : d ≠ 0) (a : κ → Af F) (v : Pl (F := F)) : locInd d a v ∈ SB (κ → Fv F v) := by
   classical
   set S : Set (κ → Fv F v) := {y | ∀ i, algebraMap F (Fv F v) ((d : F)⁻¹) * (y i - evalV F v (a i)) ∈
     v.adicCompletionIntegers F} with hS
@@ -129,7 +133,7 @@ theorem eventually_good (d : 𝓞 F) (a : κ → Af F) : ∀ᶠ v : Pl F in cofi
       ∀ i, evalV F v (a i) ∈ v.adicCompletionIntegers F :=
   (algebraMap F (Af F) ((d : F)⁻¹)).2.and (Filter.eventually_all.2 fun i => (a i).2)
 
-theorem locInd_eq_stdInd (d : 𝓞 F) (hd : d ≠ 0) (a : κ → Af F) (v : Pl F)
+theorem locInd_eq_stdInd (d : 𝓞 F) (hd : d ≠ 0) (a : κ → Af F) (v : Pl (F := F))
     (h1 : algebraMap F (Fv F v) ((d : F)⁻¹) ∈ v.adicCompletionIntegers F)
     (h2 : ∀ i, evalV F v (a i) ∈ v.adicCompletionIntegers F) : locInd d a v = stdInd F κ v := by
   unfold locInd stdInd
@@ -159,17 +163,17 @@ theorem finite_mulSupport_locInd (d : 𝓞 F) (hd : d ≠ 0) (a z : κ → Af F)
     show (locInd d a v fun i => evalV F v (z i)) = 1
     rw [locInd_eq_stdInd d hd a v h.1.1 h.1.2, stdInd, Set.indicator_of_mem (show (fun i => evalV F v (z i)) ∈ {x : κ → Fv F v | ∀ i, x i ∈ v.adicCompletionIntegers F} from fun i => h.2 i), Pi.one_apply]
 
-open Classical in
 
+open Classical in
 theorem ind_eq_finprod (d : 𝓞 F) (hd : d ≠ 0) (a z : κ → Af F) :
     (if z - a ∈ levSub (κ := κ) d then (1 : ℂ) else 0) =
       ∏ᶠ v, locInd d a v fun i => evalV F v (z i) := by
   have hfin := finite_mulSupport_locInd d hd a z
-  have hloc : ∀ v : Pl F, (locInd d a v fun i => evalV F v (z i)) =
+  have hloc : ∀ v : Pl (F := F), (locInd d a v fun i => evalV F v (z i)) =
       if ∀ i, algebraMap F (Fv F v) ((d : F)⁻¹) * (evalV F v (z i) - evalV F v (a i)) ∈
         v.adicCompletionIntegers F then 1 else 0 := fun v => by
     simp only [locInd, Set.indicator_apply, Set.mem_setOf_eq, Pi.one_apply]
-  have hmem : z - a ∈ levSub (κ := κ) d ↔ ∀ v : Pl F, ∀ i, algebraMap F (Fv F v) ((d : F)⁻¹) *
+  have hmem : z - a ∈ levSub (κ := κ) d ↔ ∀ v : Pl (F := F), ∀ i, algebraMap F (Fv F v) ((d : F)⁻¹) *
       (evalV F v (z i) - evalV F v (a i)) ∈ v.adicCompletionIntegers F := by
     rw [mem_levSub_iff]
     simp only [Pi.sub_apply, map_sub]
@@ -182,14 +186,14 @@ theorem ind_eq_finprod (d : 𝓞 F) (hd : d ≠ 0) (a z : κ → Af F) :
     refine (finprod_eq_zero _ v ?_ hfin).symm
     rw [hloc, if_neg hv]
 
-theorem exists_place : Nonempty (Pl F) := by
+theorem exists_place : Nonempty (Pl (F := F)) := by
   obtain ⟨M, hM⟩ := Ideal.exists_maximal (𝓞 F)
   exact ⟨⟨M, hM.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hM (RingOfIntegers.not_isField F)⟩⟩
 
-open Classical in
 
+open Classical in
 theorem coset_restrProd (c : ℂ) (d : 𝓞 F) (hd : d ≠ 0) (a : κ → Af F) :
-    ∃ φ : ∀ v : Pl F, (κ → Fv F v) → ℂ, (∀ v, φ v ∈ SB (κ → Fv F v)) ∧
+    ∃ φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ, (∀ v, φ v ∈ SB (κ → Fv F v)) ∧
       (∀ᶠ v in cofinite, φ v = stdInd F κ v) ∧
       ∀ z, c * (if z - a ∈ levSub (κ := κ) d then (1 : ℂ) else 0) = ∏ᶠ v, φ v fun i => evalV F v (z i) := by
   classical
@@ -219,8 +223,8 @@ namespace GlobalTheory.SBRestrProd
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-open Classical in
 
+open Classical in
 theorem exists_sum_coset (f : (κ → Af F) → ℂ) (hf : f ∈ SB (κ → Af F)) :
     ∃ d : 𝓞 F, d ≠ 0 ∧ ∃ s : Finset (κ → Af F), ∀ z,
       f z = ∑ a ∈ s, f a * (if z - a ∈ levSub (κ := κ) d then (1 : ℂ) else 0) := by
@@ -254,7 +258,7 @@ end GlobalTheory.SBRestrProd
 namespace GlobalTheory.SBRestrProd
 
 theorem sb_eq_sum_restrProd : ∀ {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] (a : (κ → Af F) → ℂ),
-    a ∈ SB (κ → Af F) → ∃ (m : ℕ) (φ : Fin m → ∀ v : Pl F, (κ → Fv F v) → ℂ), (∀ j v, φ j v ∈ SB (κ → Fv F v)) ∧
+    a ∈ SB (κ → Af F) → ∃ (m : ℕ) (φ : Fin m → ∀ v : Pl (F := F), (κ → Fv F v) → ℂ), (∀ j v, φ j v ∈ SB (κ → Fv F v)) ∧
       (∀ j, ∀ᶠ v in cofinite, φ j v = stdInd F κ v) ∧ ∀ x, a x = ∑ j, ∏ᶠ v, φ j v fun i => evalV F v (x i) := by
   intro F _ _ κ _ f hf
   obtain ⟨d, hd, s, hs⟩ := exists_sum_coset f hf

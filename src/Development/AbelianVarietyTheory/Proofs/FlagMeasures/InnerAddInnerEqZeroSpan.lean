@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.InnerSumZeroSpan
 
@@ -10,12 +14,12 @@ theorem main : (let d1 : ℕ → Type := @(fun (n : ℕ) ↦ EuclideanSpace ℂ 
     | mem u hu' => exact h u hu' z hz'
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add, inner_add_left, inner_add_left, add_add_add_comm, hx, hy, add_zero]
+      rw [map_add (f := _), inner_add_left, inner_add_left, add_add_add_comm, hx, hy, add_zero]
     | smul c x _ hx =>
       rw [map_smul, inner_smul_left, inner_smul_left, ← mul_add, hx, mul_zero]
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add, inner_add_right, inner_add_right, add_add_add_comm, hx, hy, add_zero]
+    rw [map_add (f := _), inner_add_right, inner_add_right, add_add_add_comm, hx, hy, add_zero]
   | smul c x _ hx =>
     rw [map_smul, inner_smul_right, inner_smul_right, ← mul_add, hx, mul_zero]
 

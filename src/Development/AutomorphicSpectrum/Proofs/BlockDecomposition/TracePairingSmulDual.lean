@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PsiApply
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PsiApply
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.Pb.Psi
 
@@ -12,6 +16,6 @@ theorem T_ksmul : ∀ {W A C₀ : Type} [CommRing W] [CommRing A] [CommRing C₀
   | tmul a y =>
     rw [T_tmul, T_tmul, LinearMap.smul_apply, smul_eq_mul, map_mul]
     ring
-  | add z z' hz hz' => rw [map_add, map_add, hz, hz', mul_add]
+  | add z z' hz hz' => rw [map_add (f := _), map_add (f := _), hz, hz', mul_add]
 
 end GlobalTheory.CompanionTheory.FrobPsi

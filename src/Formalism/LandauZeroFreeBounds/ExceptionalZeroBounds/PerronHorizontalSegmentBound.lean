@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+module
+
+public import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+
+@[expose] public section
 
 open Complex MeasureTheory
 

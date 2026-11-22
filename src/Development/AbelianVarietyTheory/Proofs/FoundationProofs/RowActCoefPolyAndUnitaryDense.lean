@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
-import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
-import Formalism.LocalToGlobal.Columns.PolyFn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+public import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+public import Formalism.LocalToGlobal.Columns.PolyFn
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.GradedWeylDivisibility GlobalTheory.Branching
 open Formalism.MainNotions.PrimeDegreeVariant (embGL Interlace)
@@ -18,13 +22,14 @@ theorem exists_poly_rowAct_coef (n k : ℕ) (f : MvPolynomial (Fin n × Fin k) �
   | add p q hp hq =>
     obtain ⟨P, hP⟩ := hp l
     obtain ⟨Q, hQ⟩ := hq l
-    exact ⟨P + Q, fun g => by simp only [map_add, hP, hQ]⟩
+    exact ⟨P + Q, fun g => by simp only [map_add (f := _), hP, hQ]⟩
   | mul_X p v hp =>
     choose P hP using fun b : Fin n => hp (l ∘ₗ LinearMap.mulRight ℂ (X (b, v.2)))
     refine ⟨∑ b, X (v.1, b) * P b, fun g => ?_⟩
     have e : rowAct ℂ g (X v) = ∑ b, g v.1 b • X (b, v.2) := by
       simp [rowAct, smul_eq_C_mul]
-    rw [map_mul, e, Finset.mul_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, e, Finset.mul_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [mul_smul_comm, map_smul, map_mul (eval _), eval_X, ← hP b g]
     rfl

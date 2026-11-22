@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsTop
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsTop
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -12,7 +17,7 @@ noncomputable section
 
 theorem SchurSignCoefficient.coeff_aeval_diagonal {N : ℕ} (c : Fin N → ℚ)
     (P : MvPolynomial (Fin N) ℚ) (e : Fin N →₀ ℕ) :
-    coeff e (aeval (fun i : Fin N => C (c i) * X i) P) = (∏ i, c i ^ e i) * coeff e P := by
+    AddMonoidAlgebra.coeff (aeval (fun i : Fin N => C (c i) * X i) P) e = (∏ i, c i ^ e i) * AddMonoidAlgebra.coeff P e := by
   induction P using MvPolynomial.induction_on' with
   | monomial u a =>
     have hmon : aeval (fun i : Fin N => C (c i) * X i) (monomial u a) =
@@ -25,7 +30,7 @@ theorem SchurSignCoefficient.coeff_aeval_diagonal {N : ℕ} (c : Fin N → ℚ)
     split_ifs with hue
     · subst hue; ring
     · simp
-  | add p q hp hq => rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem SchurSignCoefficient.aeval_smul_powerSumHom (N : ℕ) (s : ℚ)
     (S : MvPolynomial (Fin N) ℚ) :
@@ -35,7 +40,8 @@ theorem SchurSignCoefficient.aeval_smul_powerSumHom (N : ℕ) (s : ℚ)
       (powerSumHom N).comp (aeval (fun i : Fin N => C (s ^ ((i : ℕ) + 1)) * X i)) := by
     apply MvPolynomial.algHom_ext
     intro i
-    simp only [AlgHom.comp_apply, powerSumHom, aeval_X, map_mul, aeval_C, algebraMap_eq, psum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, powerSumHom, aeval_X, map_mul, aeval_C, algebraMap_eq, psum,
       map_sum, map_pow, mul_pow, Finset.mul_sum]
   exact DFunLike.congr_fun key S
 

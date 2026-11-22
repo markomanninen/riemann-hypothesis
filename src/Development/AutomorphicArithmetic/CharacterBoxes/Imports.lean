@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CoprimeRanks.SecondSetNoRelation
+module
+
+public import Development.AutomorphicArithmetic.CoprimeRanks.SecondSetNoRelation
+
+@[expose] public section
 
 noncomputable section
 

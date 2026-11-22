@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSum
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,21 +21,19 @@ def cF (D : D7) : Af D.host.F ⊗[D.host.F] D.host.E →ₐ[D.host.F] Af D.host.
   Algebra.TensorProduct.map (AlgHom.id D.host.F (Af D.host.F)) D.sp.cm.sig
 
 theorem cA_cA (z : AE D) : cA D (cA D z) = z := by
-  induction z using TensorProduct.induction_on with
-  | zero => rw [map_zero, map_zero]
+  induction z using TensorProduct.inductionOn with
   | tmul a w =>
     show (Algebra.TensorProduct.map (AlgHom.id D.host.F (AF D.host.F)) D.sp.cm.sig)
       ((Algebra.TensorProduct.map (AlgHom.id D.host.F (AF D.host.F)) D.sp.cm.sig) (a ⊗ₜ[D.host.F] w)) = _
     rw [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul]
     show a ⊗ₜ[D.host.F] star (star w) = _
     rw [star_star]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem finPart_cA (z : AE D) : finPart D (cA D z) = cF D (finPart D z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => rw [map_zero, map_zero, map_zero]
+  induction z using TensorProduct.inductionOn with
   | tmul a w => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem cF_int {z : Af D.host.F ⊗[D.host.F] D.host.E} (hz : z ∈ intAE D) : cF D z ∈ intAE D := by
   induction hz using AddSubgroup.closure_induction with
@@ -43,12 +45,11 @@ theorem cF_int {z : Af D.host.F ⊗[D.host.F] D.host.E} (hz : z ∈ intAE D) : c
   | neg x _ hx => rw [map_neg]; exact neg_mem hx
 
 theorem cF_cF (z : Af D.host.F ⊗[D.host.F] D.host.E) : cF D (cF D z) = z := by
-  induction z using TensorProduct.induction_on with
-  | zero => rw [map_zero, map_zero]
+  induction z using TensorProduct.inductionOn with
   | tmul a w =>
     show a ⊗ₜ[D.host.F] star (star w) = _
     rw [star_star]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem intAf_mul {a a' : Af D.host.F} (ha : a ∈ intAf D.host.F) (ha' : a' ∈ intAf D.host.F) :
     a * a' ∈ intAf D.host.F := fun w => by rw [map_mul]; exact mul_mem (ha w) (ha' w)
@@ -70,8 +71,8 @@ theorem intAE_mul {z z' : Af D.host.F ⊗[D.host.F] D.host.E} (hz : z ∈ intAE 
   | add x y _ _ hx hy => rw [add_mul]; exact add_mem hx hy
   | neg x _ hx => rw [neg_mul]; exact neg_mem hx
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem idem_class (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjPl (D := D) P P)
     (e₀ : AE D) (ι : D.host.E →ₐ[D.host.F] (belowPl P).adicCompletion D.host.F)
     (hs₀ : e₀ + cA D e₀ = phiE (belowPl P) 1)
@@ -81,7 +82,7 @@ theorem idem_class (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjPl
     e = e₀ ∨ e = cA D e₀ := by
   have hκφ : compV (belowPl P) ι (finPart D (phiE (belowPl P) 1)) = 1 := compV_phiE (belowPl P) ι 1
   have hsum : compV (belowPl P) ι (finPart D e) + compV (belowPl P) ι (finPart D (cA D e)) = 1 := by
-    rw [← map_add, ← map_add, h3, hκφ]
+    rw [← map_add (f := _), ← map_add (f := _), h3, hκφ]
   have hidem : compV (belowPl P) ι (finPart D e) * compV (belowPl P) ι (finPart D e) =
       compV (belowPl P) ι (finPart D e) := by rw [← map_mul, ← map_mul, h1]
   have heps : e * phiE (belowPl P) 1 = e := by rw [← h3, mul_add, h1, h2, add_zero]

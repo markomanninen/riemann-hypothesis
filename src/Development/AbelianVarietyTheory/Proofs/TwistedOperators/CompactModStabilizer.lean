@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 
@@ -9,13 +13,6 @@ namespace GlobalTheory.PairingOne
 
 section Alg
 variable {k : Type*} [Field k] {m : Type*} [Fintype m] [DecidableEq m]
-
-def rowMat (o j : m) (l y : m → k) : Matrix m m k := fun r c =>
-  if r = o then l c else (if Equiv.swap o j r = c then 1 else 0) - y (Equiv.swap o j r) * l c
-
-def colMat (o j : m) (l y : m → k) : Matrix m m k := fun c r =>
-  if r = o then y c else
-    (if Equiv.swap o j r = c then 1 else 0) - (if j = c then 1 else 0) * (l (Equiv.swap o j r) / l j)
 
 end Alg
 

@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.TailBoundA
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailBoundA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.P
 
@@ -37,12 +41,25 @@ theorem lintegral_rW_le {e : ℕ} {X : Type} [TopologicalSpace X] [CompactSpace 
       funext y; simp only [rW]; ring
     rw [this]
     exact (measurable_const.sub hrm).div_const 2
-  obtain ⟨hfin, hint⟩ := maMeasure_thm A Φ hΦ hΦp
+  have hforward {g : X → ℝ} (hg : Measurable g) (hgi : MIntegrable A Φ g) :
+      Integrable g (maMeasure A Φ) ∧ mInt A Φ g = ∫ y, g y ∂maMeasure A Φ := by
+    by_cases hP : Nonempty (ChartPartition A)
+    · have hμ : maMeasure A Φ = ∑ j, chartMeasure A hP.some Φ j := by
+        simp [maMeasure, hP, chartMeasure]
+      have hc j := chartMeasure_integrable_integral A hP.some Φ hΦ hΦp j hg hgi
+      rw [hμ]
+      refine ⟨integrable_finsetSum_measure.2 fun j _ => (hc j).1, ?_⟩
+      rw [integral_finsetSum_measure fun j _ => (hc j).1]
+      simp only [mInt, dif_pos hP, integralWith]
+      refine Finset.sum_congr rfl fun j _ => ?_
+      rw [(hc j).2]
+      exact integral_congr_ae (Filter.Eventually.of_forall fun y => by ring)
+    · simp [maMeasure, mInt, hP]
   have hlI := logNormIntegrable A L s m W hL hs hsnc Φ hΦ
-  have hI : Integrable (logNormSec L s) (maMeasure A Φ) := ((hint _ hlm).1).1 hlI
-  have h1 := (hint (fun _ => (1 : ℝ)) measurable_const).2
+  obtain ⟨hI, h2⟩ := hforward hlm hlI
+  obtain ⟨hI1, h1⟩ := hforward (g := fun _ => (1 : ℝ)) measurable_const
     (mIntegrableCont A Φ hΦ _ continuous_const)
-  have h2 := (hint _ hlm).2 hlI
+  letI : IsFiniteMeasure (maMeasure A Φ) := (integrable_const_iff_isFiniteMeasure one_ne_zero).1 hI1
   have hrI : Integrable (rW L s) (maMeasure A Φ) := (integrable_const _).sub (hI.const_mul 2)
   have hr0 : 0 ≤ᵐ[maMeasure A Φ] rW L s := Filter.Eventually.of_forall fun y =>
     le_trans (Real.exp_pos 1).le (rW_ge L s hle y)

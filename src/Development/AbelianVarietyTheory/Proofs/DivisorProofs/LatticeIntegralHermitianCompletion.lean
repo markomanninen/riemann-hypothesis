@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusOfSpec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralSummandGoodPlaceIndicator
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsOrthonormalBasisUnimodularHermitianLocalRi
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWittBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFactsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeEqIntegralCoords
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusOfSpec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralSummandGoodPlaceIndicator
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsOrthonormalBasisUnimodularHermitianLocalRi
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWittBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeEqIntegralCoords
+
+@[expose] public section
+
 open NumberField GlobalTheory.UnitaryBC IsDedekindDomain Matrix Polynomial GlobalTheory.CuspRep Formalism.UG GlobalTheory.BCT GlobalTheory.KapLat GlobalTheory.KapOrb
 open scoped Classical
 
@@ -29,7 +34,7 @@ theorem exists_orthonormal_of_selfDual : ∀ (K : GlobalTheory.UnitLemma.UQ) (V 
   obtain ⟨hN, ⟨t, ht⟩, -⟩ := GlobalTheory.T.unramifiedQuadratic_norms_trace_uniformizer_facts K
   have hadd2 : ∀ y z z', h y (z + z') = h y z + h y z' := by
     intro y z z'
-    rw [hsym, hadd, map_add, ← hsym, ← hsym]
+    rw [hsym, hadd, map_add (f := _), ← hsym, ← hsym]
   have hlin2 : ∀ (a : K.E) y z, h y (a • z) = K.c a * h y z := by
     intro a y z
     rw [hsym, hlin, map_mul, ← hsym]
@@ -46,7 +51,8 @@ theorem exists_orthonormal_of_selfDual : ∀ (K : GlobalTheory.UnitLemma.UQ) (V 
   have hsum2 : ∀ (S : Finset (Fin (Module.finrank K.E V))) (c : Fin (Module.finrank K.E V) → K.E) (u : Fin (Module.finrank K.E V) → V) y,
       h y (∑ i ∈ S, c i • u i) = ∑ i ∈ S, K.c (c i) * h y (u i) := by
     intro S c u y
-    rw [hsym, hsum1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsym, hsum1, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, ← hsym]
   have hrng : ∀ o : K.O, K.c (algebraMap K.O K.E o) ∈ (algebraMap K.O K.E).range :=
@@ -109,7 +115,8 @@ theorem exists_orthonormal_of_selfDual : ∀ (K : GlobalTheory.UnitLemma.UQ) (V 
   have hQR : Matrix.of Q * Matrix.of R = 1 := by
     ext i j
     apply inj
-    simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, hQ, hR]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, hQ, hR]
     have h5 : h (d j) (b i) = ∑ k, b.repr (d j) k * h (b k) (b i) := by
       conv_lhs => rw [hexp (d j)]
       rw [hsum1]
@@ -120,7 +127,7 @@ theorem exists_orthonormal_of_selfDual : ∀ (K : GlobalTheory.UnitLemma.UQ) (V 
   have hQu : IsUnit (Matrix.of Q) :=
     (Matrix.isUnit_iff_isUnit_det _).mpr (Matrix.isUnit_det_of_right_inverse hQR)
   obtain ⟨a, ha⟩ := GlobalTheory.Core.Rk.Exh.exists_orthonormal_of_isLocalRing K.O s hss
-    ⟨t, inj (by rw [map_add, hs, ht, map_one])⟩
+    ⟨t, inj (by rw [map_add (f := _), hs, ht, map_one])⟩
     (by
       intro u hu hsu
       obtain ⟨z, hz⟩ := hN hu.unit (by rw [IsUnit.unit_spec, ← hs, hsu])
@@ -133,7 +140,8 @@ theorem exists_orthonormal_of_selfDual : ∀ (K : GlobalTheory.UnitLemma.UQ) (V 
   have hfo : ∀ i j, h (f i) (f j) = if i = j then 1 else 0 := by
     intro i j
     have hM := congrArg (fun M : Matrix (Fin (Module.finrank K.E V)) (Fin (Module.finrank K.E V)) K.O => algebraMap K.O K.E (M j i)) ha
-    simp only [cT, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [cT, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply, map_sum,
       map_mul, Matrix.one_apply] at hM
     simp only [f, hsum1, hsum2]
     simp only [hs, hQ, apply_ite (algebraMap K.O K.E), map_one, map_zero] at hM
@@ -153,7 +161,8 @@ theorem exists_orthonormal_of_selfDual : ∀ (K : GlobalTheory.UnitLemma.UQ) (V 
     have h6 : ∀ k, ∑ j, algebraMap K.O K.E (A k j) * algebraMap K.O K.E (A' j l) = if k = l then 1 else 0 := by
       intro k
       have := congrArg (fun M : Matrix (Fin (Module.finrank K.E V)) (Fin (Module.finrank K.E V)) K.O => algebraMap K.O K.E (M k l)) hAA'
-      simpa [Matrix.mul_apply, map_sum, Matrix.one_apply, apply_ite] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [Matrix.mul_apply, map_sum, Matrix.one_apply, apply_ite] using this
     calc b l = ∑ k, (if k = l then (1 : K.E) else 0) • b k := by simp
       _ = ∑ k, (∑ j, algebraMap K.O K.E (A k j) * algebraMap K.O K.E (A' j l)) • b k := by simp only [h6]
       _ = ∑ j, algebraMap K.O K.E (A' j l) • f j := by
@@ -180,7 +189,7 @@ theorem exists_unitary_pullLat_eq : ∀ (E : Type) [Field E] [NumberField E] [Is
     rw [← hc, ← hc, K.c_c]
   have hadd : ∀ y y' z, B.herm x (y + y') z = B.herm x y z + B.herm x y' z := by
     intro y y' z
-    simp only [GlobalTheory.UnitLemma.InvAlg.herm, mul_add, add_mul, map_add]
+    simp only [GlobalTheory.UnitLemma.InvAlg.herm, mul_add, add_mul, map_add (f := _)]
   have hlin : ∀ (a : K.E) y z, B.herm x (a • y) z = a * B.herm x y z := by
     intro a y z
     simp only [GlobalTheory.UnitLemma.InvAlg.herm]
@@ -190,7 +199,8 @@ theorem exists_unitary_pullLat_eq : ∀ (E : Type) [Field E] [NumberField E] [Is
     intro y z
     apply e.injective
     rw [hc, ← hψh, ← hψh]
-    simp only [stdH, map_sum, map_mul, hcc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [stdH, map_sum, map_mul, hcc]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
   have hnd : ∀ y, (∀ z, B.herm x y z = 0) → y = 0 := by
     intro y hy

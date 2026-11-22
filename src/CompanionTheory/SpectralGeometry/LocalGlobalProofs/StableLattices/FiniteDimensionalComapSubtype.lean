@@ -1,13 +1,16 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.SimpleDistinctness.ScalarCharacterOfL2Embedding
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.L2Embedding
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.RgSteps
 
 open CompanionTheory.RgExh
-open Formalism.REAL (GlRel IsWeight)
+open Formalism.REAL (IsWeight)
 open CompanionTheory.D.LK (LocFin)
-open CompanionTheory.D.DSIC (KStab)
 
 variable {n : ℕ}
 
@@ -20,7 +23,7 @@ theorem locFin_tens (ε : Fin n → Bool) (X : GMod n) (h : LocFin ε X.E) : Loc
     refine Submodule.iSup_induction S (motive := fun y => X.E a b y ∈ ⨆ i, S i) hx
       (fun i y hy => (le_iSup S i) (hSst i a b hab y hy)) (by simp) ?_
     intro y w hy hw
-    rw [map_add]
+    rw [(X.E a b).map_add]
     exact Submodule.add_mem _ hy hw
   have hfd : FiniteDimensional ℂ (Submodule.pi Set.univ fun _ : Fin n => ⨆ i, S i) := by
     let f : (Submodule.pi Set.univ fun _ : Fin n => ⨆ i, S i) →ₗ[ℂ] (Fin n → ↥(⨆ i, S i)) :=
@@ -92,21 +95,15 @@ theorem locFin_step (ε : Fin n → Bool) (X : GMod n) (z : ℂ) (h : LocFin ε 
 theorem intWt_step (X : GMod n) (z : ℂ) (h : IntWt X) : IntWt (step X z) := by
   exact intWt_sub (CompanionTheory.RgExh.tens X) _ _ (intWt_tens X h)
 
-theorem pathFin : CompanionTheory.RgExh.Fin.PathFin := by
+theorem pathFin :
+    ∀ (n : ℕ) (ε : Fin n → Bool) (X : GMod n) (χ : Fin n → ℂ) (ss : List (Fin n)),
+      (LocFin ε X.E → LocFin ε (path X χ ss).E) ∧ (IntWt X → IntWt (path X χ ss)) := by
   intro n ε X χ ss
   induction ss generalizing X χ with
   | nil => exact ⟨id, id⟩
   | cons s ss ih =>
-    constructor
-    · intro h
-      first
-        | exact (ih _ _).1 (locFin_step ε X _ h)
-        | exact locFin_step ε _ _ ((ih X χ).1 h)
-        | exact locFin_step ε _ _ ((ih _ _).1 h)
-    · intro h
-      first
-        | exact (ih _ _).2 (intWt_step X _ h)
-        | exact intWt_step _ _ ((ih X χ).2 h)
-        | exact intWt_step _ _ ((ih _ _).2 h)
+    have h := ih (step X (χ s)) (χ + Pi.single s 1)
+    exact ⟨fun hX => h.1 (locFin_step ε X (χ s) hX),
+      fun hX => h.2 (intWt_step X (χ s) hX)⟩
 
 end GlobalTheory.CompanionTheory.RgSteps

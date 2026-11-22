@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+
+@[expose] public section
 
 open Matrix Formalism.REAL Filter Topology
 open scoped InnerProductSpace Matrix.Norms.L2Operator
@@ -35,9 +39,6 @@ def Rw {B : Type} [NormedAddCommGroup B] [NormedSpace ℂ B] (ε : Fin n → Boo
 
 def formOf {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℂ W] (T : W →ₗ[ℂ] W) : W →ₗ⋆[ℂ] W →ₗ[ℂ] ℂ :=
   (innerₛₗ ℂ).compl₂ T
-
-@[simp] theorem formOf_apply {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℂ W] (T : W →ₗ[ℂ] W) (y x : W) :
-    formOf T y x = ⟪y, T x⟫_ℂ := rfl
 
 def funJet {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℂ W] (ε : Fin n → Bool)
     (f : Matrix (Fin n) (Fin n) ℂ → (W →L[ℂ] W)) (l : List (Fin n × Fin n)) : W →ₗ⋆[ℂ] W →ₗ[ℂ] ℂ :=

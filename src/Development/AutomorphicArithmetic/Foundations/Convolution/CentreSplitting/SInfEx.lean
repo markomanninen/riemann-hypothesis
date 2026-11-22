@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.AutBridge
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.AutBridge
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -13,6 +17,10 @@ open GlobalTheory.CuspRep in
 theorem UpperTheory.ConvolutionTheory.Dp.sInfEx :
     UpperTheory.ConvolutionTheory.Dp.SInfEx := by
   intro E _ _ _ n μ _ V hV τ
-  obtain ⟨π, hπ, -⟩ := exCusp E n μ V hV
-  refine ⟨(CG.mk π).infChar τ, (sInfIff E n μ π V hπ τ _).2 (ParLaws.hasInfChar_infChar (CG.mk π) τ), fun m hm => ?_⟩
-  exact (CG.HasInfChar.infChar_eq (π := CG.mk π) ((sInfIff E n μ π V hπ τ m).1 hm)).symm
+  have hex : ∃! π : CuspSub E n, Carries μ π V :=
+    UpperTheory.ConvolutionTheory.Dp.exCusp E n μ V hV
+  obtain ⟨π, hπ⟩ := hex.exists
+  refine ExistsUnique.intro ((CG.mk π).infChar τ) ?_ ?_
+  · exact (sInfIff E n μ π V hπ τ _).2 (ParLaws.hasInfChar_infChar (CG.mk π) τ)
+  · intro m hm
+    exact (CG.HasInfChar.infChar_eq (π := CG.mk π) ((sInfIff E n μ π V hπ τ m).1 hm)).symm

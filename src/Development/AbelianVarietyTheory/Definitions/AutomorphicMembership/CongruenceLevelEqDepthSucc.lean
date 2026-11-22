@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CardStabilizerForgetFr
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.IntegralGLSuccEmbeddingMemParahoricTimesPrincipa
-import Formalism.LocalToGlobal.Columns.LevGCount
-import Formalism.LocalToGlobal.Columns.RowFormsLemmas
-import Formalism.LocalToGlobal.Columns.ColFormsLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CardStabilizerForgetFr
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.IntegralGLSuccEmbeddingMemParahoricTimesPrincipa
+public import Formalism.LocalToGlobal.Columns.LevGCount
+public import Formalism.LocalToGlobal.Columns.RowFormsLemmas
+public import Formalism.LocalToGlobal.Columns.ColFormsLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -191,13 +195,13 @@ theorem N_succ_of_eq {j : ℕ} (h : j = R.m) : R.N j = (R.N R.m - 1) + 1 := h �
 
 def levGTop : LevFam X.E X.K (R.N R.m) Pr.vGs := fun w => levDiag (Nat.sub_le _ 1) (rowTyG Ch P w)
 
-variable (R) in
 
+variable (R) in
 def levQTop (c : ℕ) : LevQFam X.E X.K (R.N R.m) (QE sel (mu : Chr X.F X.E X.K)) := fun Q =>
   levCong (N_m_succ R) Q.1 c (rowTyQ R (mu : Chr X.F X.E X.K) (QE sel (mu : Chr X.F X.E X.K)) Q)
 
-open Classical in
 
+open Classical in
 def topLevAt (c : ℕ) : TopLev X Pr R (QE sel (mu : Chr X.F X.E X.K)) where
   levG j := if h : j = R.m then fun w => levDiag (by have := N_succ_of_eq h; omega) (rowTyG Ch P w) else fun _ => ⟨⊤, 1⟩
   levQ j := if h : j = R.m then
@@ -205,23 +209,23 @@ def topLevAt (c : ℕ) : TopLev X Pr R (QE sel (mu : Chr X.F X.E X.K)) where
     else LevQFam.top X.E X.K (R.N j) _
   pref u j p := ∀ h : j = R.m, ∃ d : XPt Pr R sel mu, p = tilFr (N_succ_of_eq h) (Pr.piT u) d
 
-variable (R) in
 
+variable (R) in
 def topDep (M : ℕ) : ℕ := max (4 * R.m) (2 * R.m + 2 * M - 1)
 
-variable (R) in
 
+variable (R) in
 theorem topDep_succ (M : ℕ) : topDep R M + 1 = max (4 * R.m + 1) (2 * R.m + 2 * M) := by
   have := R.two_le_m
   unfold topDep
   omega
 
-variable (R) in
 
+variable (R) in
 theorem topDep_succ_eq_default (M : ℕ) : topDep R M + 1 = (default : TopDepth R M).1 := topDep_succ R M
 
-variable (R) in
 
+variable (R) in
 theorem two_mul_le_topDep (M : ℕ) : 2 * M ≤ topDep R M := by
   have := R.two_le_m
   unfold topDep
@@ -269,7 +273,7 @@ theorem topLev_root (j : ℕ) (Q : QE sel (mu : Chr X.F X.E X.K)) :
 theorem mem_levGTop (w : Pr.vGs) (a : GL (Fin (R.N R.m)) (𝓞 X.E ⧸ w.1.asIdeal)) :
     a ∈ (levGTop Ch P w).H ↔ ∃ g ∈ (rowTyG Ch P w).H, diagEmb _ (Nat.sub_le _ 1) g = a := Iff.rfl
 
-theorem mem_levGTop_grp (a : GLG X.E (R.N R.m) Pr.vGs) :
+theorem mem_levGTop_grp (a : GLG (E := X.E) (n := R.N R.m) (SG := Pr.vGs)) :
     a ∈ (levGTop Ch P).grp ↔ ∃ h ∈ (rowTyG Ch P).grp, extGH (N_m_succ R) h = a := by
   constructor
   · intro ha
@@ -287,28 +291,16 @@ theorem levGTop_PsymF (w : Pr.vGs) : levGTop Ch (rPsymF Ch) w =
     ⟨HXmsym _ (R.N R.m) R.k R.r R.t R.m R.rS ((r_le_X' R).trans (Nat.sub_le _ 1)),
       lamXmsym (Ch.psi0 w) (chiAt Ch w) (R.N R.m) R.k R.r R.t R.m R.rS _⟩ := levGTop_eq Ch _ w
 
-variable {sel mu} in
 
-theorem mem_levQTop (c : ℕ) (Q : QE sel (mu : Chr X.F X.E X.K)) (k : GLint X.E (R.N R.m) Q.1) :
-    k ∈ (levQTop R sel mu c Q).H ↔ ∃ h ∈ (levQX R sel mu Q).H, ∀ x ∈ stdAt X.E (R.N R.m) Q.1,
-      ((qOf Q.1 : X.E) ^ (c + 1))⁻¹ • (k.1 x - sumE (N_m_succ R) h.1 1 x) ∈ stdAt X.E (R.N R.m) Q.1 := mem_levCong_iff _ _ _ k
+
 
 variable {sel mu} in
-
-theorem levQTop_lam (c : ℕ) (Q : QE sel (mu : Chr X.F X.E X.K)) (k : (levQTop R sel mu c Q).H) (h : (levQX R sel mu Q).H)
-    (e : ∀ x ∈ stdAt X.E (R.N R.m) Q.1,
-      ((qOf Q.1 : X.E) ^ (c + 1))⁻¹ • (k.1.1 x - sumE (N_m_succ R) h.1.1 1 x) ∈ stdAt X.E (R.N R.m) Q.1) :
-    (levQTop R sel mu c Q).lam k = (levQX R sel mu Q).lam h :=
-  levCong_lam _ c _ k.2 h.2 ((inv_mul_mem_prinCong (c + 1) (extI (N_m_succ R) Q.1 h.1) k.1).2 e)
-
-variable {sel mu} in
-
 theorem extQ_mem_levQTop (c : ℕ) (a : GLQ X.E (R.N R.m - 1) (QE sel (mu : Chr X.F X.E X.K))) :
     extQ X.E (N_m_succ R) _ a ∈ (levQTop R sel mu c).grp ↔ a ∈ (levQX R sel mu).grp :=
   forall₂_congr fun Q _ => extI_mem_levCong (N_m_succ R) c _ (a Q)
 
-variable (R) in
 
+variable (R) in
 theorem levQTop_eq_topLevQ' {c c' : ℕ} (e : c + 1 = c') (hc : 0 < c') : levQTop R sel mu c = topLevQ R sel mu hc := by
   subst e
   rfl
@@ -323,16 +315,20 @@ section Ok
 variable (hPr : Pr.Ok) (hQ : ∀ (u : Pr.Word) (Q : QE sel (mu : Chr X.F X.E X.K)), Pr.piT u ∉ Q.1.asIdeal)
 include hPr hQ
 
-theorem topLevAt_ok (c : ℕ) : (topLevAt Ch sel mu P c).Ok where
-  idx := topLevAt_finiteIndex Ch sel mu P c
-  root j Q g := by
+theorem topLevAt_ok (c : ℕ) : (topLevAt Ch sel mu P c).Ok := by
+  constructor
+  case idx => exact topLevAt_finiteIndex Ch sel mu P c
+  case root =>
+    intro j Q g
     obtain ⟨m, h, h'⟩ := topLevAt_root Ch sel mu P c j Q
     exact ⟨m, h, h' g⟩
-  levG_top a ha := by
+  case levG_top =>
+    intro a ha
     rw [topLevAt_levG_m] at ha
     obtain ⟨h, -, e⟩ := (mem_levGTop_grp Ch P a).1 ha
     exact ⟨h, e⟩
-  levQ_last Q k hk x hx := by
+  case levQ_last =>
+    intro Q k hk x hx
     rw [topLevAt_levQ_m] at hk
     obtain ⟨g, -, e⟩ := sup_prinCong_le _ _ _ _ hk
     have h2 := congrFun (redV_redGL k hx) (Br.iL (N_m_succ R))
@@ -342,7 +338,8 @@ theorem topLevAt_ok (c : ℕ) : (topLevAt Ch sel mu P c).Ok where
     have hh : ¬ (Br.iL (N_m_succ R)).1 < R.N R.m - 1 := lt_irrefl (R.N R.m - 1)
     simp only [diagMat_of_not_left _ _ hh]
     simp [Matrix.one_apply, redV]
-  levQ_ini Q k hk i := by
+  case levQ_ini =>
+    intro Q k hk i
     rw [topLevAt_levQ_m] at hk
     obtain ⟨g, -, e⟩ := sup_prinCong_le _ _ _ _ hk
     have h2 := congrFun (redV_redGL k (single_mem_stdAt (Br.iL (N_m_succ R)))) (Br.iC (N_m_succ R) i)
@@ -352,8 +349,9 @@ theorem topLevAt_ok (c : ℕ) : (topLevAt Ch sel mu P c).Ok where
     have hh : ¬ (Br.iL (N_m_succ R)).1 < R.N R.m - 1 := lt_irrefl (R.N R.m - 1)
     rw [diagMat_of_not_right _ _ hh, Matrix.one_apply_ne]
     exact fun h => absurd (congrArg Fin.val h) i.2.ne
-  pref_off u j h p := fun h' => absurd h' h
-  pref_top u p h := by
+  case pref_off => exact fun u j h p h' => absurd h' h
+  case pref_top =>
+    intro u p h
     obtain ⟨d, rfl⟩ : ∃ d, p = tilF sel mu u d := h rfl
     exact ⟨d.deco, tilF_deco sel mu hPr u (hQ u) d⟩
 
@@ -373,8 +371,10 @@ abbrev TopG : Type := FrmG ((topLev Ch sel mu cst P).levG R.m) ((topLev Ch sel m
 
 def extTop : FrmG (rowTyG Ch P) (levQX R sel mu) →* TopG Ch sel mu cst P :=
   (extUH (N_m_succ R)).prodMap
-    ((((extGH (N_m_succ R)).comp (Subgroup.subtype _)).codRestrict _ (extGH_mem_topLev Ch sel mu cst P)).prodMap
-      (((extQ X.E (N_m_succ R) _).comp (Subgroup.subtype _)).codRestrict _ (extQ_mem_topLev Ch sel mu cst P)))
+    ((((extGH (N_m_succ R)).comp (Subgroup.subtype (rowTyG Ch P).grp)).codRestrict
+        ((topLev Ch sel mu cst P).levG R.m).grp (extGH_mem_topLev Ch sel mu cst P)).prodMap
+      (((extQ X.E (N_m_succ R) _).comp (Subgroup.subtype (levQX R sel mu).grp)).codRestrict
+        ((topLev Ch sel mu cst P).levQ R.m).grp (extQ_mem_topLev Ch sel mu cst P)))
 
 theorem incl_extTop (g : FrmG (rowTyG Ch P) (levQX R sel mu)) : FrmG.incl _ _ (extTop Ch sel mu cst P g) =
     (extUH (N_m_succ R) g.1, extGH (N_m_succ R) g.2.1.1, extQ X.E (N_m_succ R) _ g.2.2.1) := rfl
@@ -437,37 +437,6 @@ theorem levQAt_of_le (Tp : TopLev X Pr R (QE sel (mu : Chr X.F X.E X.K))) {j : �
   obtain ⟨_ | b, hb⟩ := b
   · rfl
   · exact absurd (hb.1 rfl) (by omega)
-
-example (u : Pr.Word) : ∃ p, (topLev Ch sel mu cst P).pref u R.m p :=
-  ⟨_, (topLev_pref_m Ch sel mu cst P u _).2 ⟨DecoF.base _ _ _ _ _, rfl⟩⟩
-
-example (c : ℕ) (Q : QE sel (mu : Chr X.F X.E X.K)) (h : (levQX R sel mu Q).H)
-    (hk : extI (N_m_succ R) Q.1 h.1 ∈ (levQTop R sel mu c Q).H) :
-    (levQTop R sel mu c Q).lam ⟨_, hk⟩ *
-      lamQP (mu : Chr X.F X.E X.K) Q.1 (R.N R.m - 1) R.r (R.m * R.t) ⟨redGL _ Q.1 h.1, h.2⟩ = 1 := by
-  rw [show (levQTop R sel mu c Q).lam ⟨_, hk⟩ = (levQX R sel mu Q).lam h from levCong_lam_extI _ _ _ hk h.2]
-  exact inv_mul_cancel _
-
-example (w : Pr.vGs) : ((topLev Ch sel mu cst P).levG R.m w).H ≤ fixCol _ _ (R.r + R.m * R.t) := by
-  rw [topLev_levG_m, levGTop_eq]
-  exact inf_le_right
-
-example (Q : QE sel (mu : Chr X.F X.E X.K)) (k : GLint X.E (R.N R.m) Q.1) (hk : k ∈ ((topLev Ch sel mu cst P).levQ R.m Q).H)
-    (x : Sp X.E (R.N R.m)) (hx : x ∈ stdAt X.E (R.N R.m) Q.1) :
-    IntAt Q.1 (((qOf Q.1 : X.E) ^ max (4 * R.m + 1) (2 * R.m + 2 * cst.M))⁻¹ * (k.1 x (Br.iL (N_m_succ R)) - x (Br.iL (N_m_succ R)))) := by
-  rw [topLev_levQ_m] at hk
-  rw [← topDep_succ]
-  exact levCong_last _ _ _ hk hx
-
-example (h : R.m = 2) : topDep R 1 + 1 = 9 ∧ topDep R 5 + 1 = 14 := by
-  rw [topDep_succ, topDep_succ, h]
-  exact ⟨rfl, rfl⟩
-
-example (hPr : Pr.Ok) (cst : LocCst X (rowSG Pr sel (mu0 X.F X.E X.K S))) : (topLev Ch sel (mu0 X.F X.E X.K S) cst P).Ok :=
-  topLev_ok Ch sel _ cst P hPr fun u Q => by
-    obtain ⟨Q, hQ⟩ := Q
-    rw [twistPrimes_trivialTuple_empty] at hQ
-    simp at hQ
 
 end Top
 

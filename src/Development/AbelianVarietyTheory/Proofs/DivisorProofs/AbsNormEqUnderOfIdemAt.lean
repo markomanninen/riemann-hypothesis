@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSplit
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSplit
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,8 +78,8 @@ theorem absNorm_eq_under_of_idemAt {P : HeightOneSpectrum (𝓞 D.host.E)} {e : 
 
 variable {T : Type} {L : LevCh D T}
 
-open Classical in
 
+open Classical in
 theorem absNorm_w (P : Places L) {v : HeightOneSpectrum (𝓞 D.host.F)} (hv : v ∈ P.S0) :
     Ideal.absNorm (P.w v).asIdeal = Ideal.absNorm v.asIdeal := by
   have hv' : v ∈ insert P.v0 (S1 D) := by

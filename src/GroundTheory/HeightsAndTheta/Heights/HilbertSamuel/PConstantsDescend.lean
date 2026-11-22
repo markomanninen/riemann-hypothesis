@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsConstantsDescend
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsConstantsDescend
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -76,7 +81,11 @@ theorem exists_sub_mem_map (θ : B) (hgen : Algebra.adjoin A {θ} = ⊤) (p : �
     Algebra.FiniteType.of_surjective (Ideal.Quotient.mkₐ ℚ I) (Ideal.Quotient.mkₐ_surjective ℚ I)
   haveI : Module.Finite ℚ (A ⧸ I) := finite_of_finite_type_of_isJacobsonRing ℚ (A ⧸ I)
   haveI : Algebra.IsAlgebraic ℚ (A ⧸ I) := Algebra.IsAlgebraic.of_finite ℚ _
-  let σ : A ⧸ I →ₐ[ℚ] ℂ := IsAlgClosed.lift
+  let σ : A ⧸ I →ₐ[ℚ] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   set θ' := Ideal.Quotient.mk J θ with hθ'def
   have hpF : p.map (algebraMap ℚ (A ⧸ I)) = (p.map (algebraMap ℚ A)).map (algebraMap A (A ⧸ I)) := by
     rw [Polynomial.map_map, ← IsScalarTower.algebraMap_eq]
@@ -140,7 +149,9 @@ theorem algebraMap_surjective (hinj : Function.Injective (algebraMap A B)) (θ :
       obtain ⟨Q, hQ, hQI⟩ := Ideal.exists_ideal_over_maximal_of_isIntegral I hk
       intro htop
       apply hQ.ne_top
-      rw [eq_top_iff, ← htop, Ideal.map_le_iff_le_comap, hQI]
+      rw [eq_top_iff, ← htop, Ideal.map_le_iff_le_comap]
+      change I ≤ Ideal.under A Q
+      rw [hQI]
     have hsmul : (⊤ : Submodule A (B ⧸ N)) ≤ I • ⊤ := by
       rintro x -
       obtain ⟨b, rfl⟩ := Submodule.Quotient.mk_surjective N x

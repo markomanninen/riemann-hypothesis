@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TranslateUnitaryLifts
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelGroupActionEqZeroOfNoLift
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftIntertwinesLiftsSmoothVectors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftMemLevelOfDatumFlagCharacter
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlacesApart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLeviFlagOfMemParabolic
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TranslateUnitaryLifts
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelGroupActionEqZeroOfNoLift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftIntertwinesLiftsSmoothVectors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftMemLevelOfDatumFlagCharacter
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlacesApart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLeviFlagOfMemParabolic
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.IndefR
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -21,7 +26,7 @@ theorem translate_lift_linear_isometry : ∀ {D : D7} {G : Type} [Group G] [Fint
   · intro y z
     apply hinj
     funext h
-    simp only [map_add, Pi.add_apply, hS, smul_add]
+    simp only [map_add (f := _), Pi.add_apply, hS, smul_add]
   · intro a y
     apply hinj
     funext h

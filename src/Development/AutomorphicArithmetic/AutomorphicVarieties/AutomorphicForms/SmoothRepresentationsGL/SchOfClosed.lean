@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -79,7 +83,8 @@ theorem UpperTheory.V.Af.Smo.schOfClosed :
         rw [ContinuousLinearMap.sum_apply]
         simp only [hL, hg, hc]
         conv_lhs => rw [← b.sum_repr v]
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         simp only [map_smul]
       have hsum : iteratedFDeriv ℝ n (fun x => ∑ i, L i (g i x))
           = ∑ i, iteratedFDeriv ℝ n (fun y => L i (g i y)) :=

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.Hilbert
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaSplit
-import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatDual
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.Hilbert
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaSplit
+public import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,15 +28,15 @@ def arch (x y : UpperTheory.V.TR.Rinf F) : ℂ :=
 
 def dd (w : HeightOneSpectrum (𝓞 F)) : ℤ := (ordI w (differentIdeal ℤ (𝓞 F)) : ℤ)
 
-open Classical in
 
+open Classical in
 def Phi (c : HeightOneSpectrum (𝓞 F) → ℕ) (ξ : Fin 2 → Ad F) : ℂ :=
   arch (UpperTheory.V.TR.pInf F (ξ 0)) (UpperTheory.V.TR.pInf F (ξ 1)) *
     if ∀ w, Valued.v (pLoc F w (pFin F (ξ 0))) ≤ WithZero.exp (-(c w : ℤ)) ∧
         Valued.v (pLoc F w (pFin F (ξ 1)) - 1) ≤ WithZero.exp (-(c w : ℤ)) then 1 else 0
 
-open Classical in
 
+open Classical in
 def PhiH (c : HeightOneSpectrum (𝓞 F) → ℕ) (ξ : Fin 2 → Ad F) : ℂ :=
   arch (UpperTheory.V.TR.pInf F (ξ 0)) (UpperTheory.V.TR.pInf F (ξ 1)) *
     if ∀ w, Valued.v (pLoc F w (pFin F (ξ 0))) ≤ WithZero.exp ((c w : ℤ) + dd w) ∧

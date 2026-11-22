@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.LemmaDSkeletonUnit
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.LemmaDSkeletonUnit
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LP
 

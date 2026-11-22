@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,8 @@ theorem lagrange (C : Finset ℂ) (c : ℂ) : ∃ (τs : Finset ℝ) (a : ℝ �
         have hv : v (Multiplicative.toAdd x) = ∑ i : C, (v (Multiplicative.toAdd x) i) • Pi.single i 1 := by
           funext j
           simp [Finset.sum_apply, Pi.single_apply]
-        rw [hv, map_sum] at hx
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hv, map_sum] at hx
         simp only [map_smul, smul_eq_mul] at hx
         simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
         rw [← hx]

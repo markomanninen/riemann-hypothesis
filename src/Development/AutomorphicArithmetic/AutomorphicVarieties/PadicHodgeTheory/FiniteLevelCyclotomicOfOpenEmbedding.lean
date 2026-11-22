@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
-import ReciprocityTheory.GroupCohomology.ImportsAlt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixingSubgroupEquivBicontinuous
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContCohomologyTransportMulEquiv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCard
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+public import ReciprocityTheory.GroupCohomology.ImportsAlt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixingSubgroupEquivBicontinuous
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContCohomologyTransportMulEquiv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCard
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 private theorem numField {v : ℕ} [Fact v.Prime] (K : FinExt v) {Ω : Type} [Field Ω] [CharZero Ω]
@@ -152,7 +157,7 @@ private theorem core {n : ℕ} [NeZero n] {G D M : Type} [Group G] [TopologicalS
       rw [h, this]
     · intro hf g
       obtain ⟨g, rfl⟩ := e.surjective g
-      refine TDual.ext fun x => ?_
+      refine DFunLike.ext _ _ fun x => ?_
       rw [twDual_apply, hχ, ← hf, h, ← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one,
         Module.End.one_apply]
 

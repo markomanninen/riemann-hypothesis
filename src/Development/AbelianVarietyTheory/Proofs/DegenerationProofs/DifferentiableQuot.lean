@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstOfNormPeriodic
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsHolomorphicUniformisationPowerThetaKeyDatu
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstOfNormPeriodic
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsHolomorphicUniformisationPowerThetaKeyDatu
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -135,7 +139,7 @@ theorem fibPrim : FibPrimSt := by
       push_cast
       linear_combination (-Real.pi : ℂ) * hH v l - (Real.pi / 2 : ℂ) * hH l l
     rw [s] at c
-    rw [hV, hV, per, a₁, a₂, a₃, map_add, add_add_add_comm v]
+    rw [hV, hV, per, a₁, a₂, a₃, map_add (f := _), add_add_add_comm v]
     simp only [ahFactor, c, Submodule.coe_add, x]
     have n := chi_ne_zero hAH l
     have n' := chi_ne_zero hAH ⟨F l, hF l l.2⟩

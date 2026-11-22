@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.Topology
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
-import GroundTheory.GlobalFields.TateThesis.AdeleMeasurable
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.Topology
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
+public import GroundTheory.GlobalFields.TateThesis.AdeleMeasurable
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter TopologicalSpace
 open scoped NumberField.AdeleRing RestrictedProduct

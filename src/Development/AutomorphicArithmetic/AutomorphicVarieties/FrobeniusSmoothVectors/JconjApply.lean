@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem jconj_apply {R : Type} [CommRing R] {n : ℕ} (M : Matrix (Fin n) (Fin n) R) (i j : Fin n) :
-    (Jmat R n * Mᵀ * Jmat R n) i j = M j.rev i.rev := by
-  have h1 : ∀ k, (Jmat R n * Mᵀ) i k = M k i.rev := by
+    (Jmat (R := R) n * Mᵀ * Jmat (R := R) n) i j = M j.rev i.rev := by
+  have h1 : ∀ k, (Jmat (R := R) n * Mᵀ) i k = M k i.rev := by
     intro k
     rw [Matrix.mul_apply, Finset.sum_eq_single i.rev]
     · simp [Jmat]
@@ -79,12 +83,12 @@ theorem UpperTheory.V.Fr.pr_norm2 :
     have h0 : p (A i j) = 0 := by
       have := hAI i j
       rwa [RingHom.mem_ker] at this
-    simp only [Units.val_mk, Matrix.map_apply, Matrix.add_apply, map_add, h0, add_zero,
+    simp only [Units.val_mk, Matrix.map_apply, Matrix.add_apply, map_add (f := _), h0, add_zero,
       Matrix.one_apply]
     split_ifs <;> simp
   · apply Units.ext
     rw [theta_val]
-    show Jmat C' n * (1 - A)ᵀ * Jmat C' n = 1 + A
+    show Jmat (R := C') n * (1 - A)ᵀ * Jmat (R := C') n = 1 + A
     rw [Matrix.transpose_sub, Matrix.transpose_one, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one,
       Jmat_mul_Jmat, sub_eq_add_neg]
     congr 1

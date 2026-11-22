@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralPointsFinitePlaceTensorProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalComponentsNontrivialAdelicCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueSelfDualMeasuresFinitePlaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralPointsFinitePlaceTensorProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalComponentsNontrivialAdelicCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueSelfDualMeasuresFinitePlaceStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,7 +149,8 @@ theorem trace_mul_eq (R : Type) [CommRing R] [Algebra F R] (e : E) (y : R ⊗[F]
       ∑ k, (Algebra.TensorProduct.basis R b).repr y k *
         algebraMap F R (Algebra.trace F E (e * b k)) := by
   conv_lhs => rw [GlobalTheory.GaugeEx.IntBasis.eq_sum b R y]
-  rw [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   have h1 : inclR R e * ((Algebra.TensorProduct.basis R b).repr y k ⊗ₜ[F] b k) =
       (Algebra.TensorProduct.basis R b).repr y k • ((1 : R) ⊗ₜ[F] (e * b k)) := by
@@ -169,7 +174,8 @@ def intGrp (v : HeightOneSpectrum (𝓞 F)) : AddSubgroup (Fv F v ⊗[F] E) wher
   zero_mem' := by intro k; simp
   add_mem' := by
     intro x y hx hy k
-    rw [map_add]; exact add_mem (hx k) (hy k)
+    rw [map_add (f := _), Finsupp.add_apply]
+    exact add_mem (hx k) (hy k)
   neg_mem' := by
     intro x hx k
     rw [map_neg]; exact neg_mem (hx k)
@@ -191,7 +197,7 @@ variable (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin M) (Fin M) E)
 omit [NumberField F] [NumberField E] in
 theorem BR_add (R : Type) [CommRing R] [Algebra F R] {n : ℕ} (X X' Y : Fin n → Fin M → R ⊗[F] E) :
     BR R σ J (X + X') Y = BR R σ J X Y + BR R σ J X' Y := by
-  simp only [BR, hR, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [BR, hR, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 omit [NumberField F] [NumberField E] in
 theorem BR_zero (R : Type) [CommRing R] [Algebra F R] {n : ℕ} (X : Fin n → Fin M → R ⊗[F] E) :
@@ -204,7 +210,7 @@ theorem sigR_smul (R : Type) [CommRing R] [Algebra F R] (t : R) (y : R ⊗[F] E)
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [sigR, TensorProduct.smul_tmul']
-  | add y₁ y₂ h₁ h₂ => rw [smul_add, map_add, map_add, h₁, h₂, smul_add]
+  | add y₁ y₂ h₁ h₂ => rw [smul_add, map_add (f := _), map_add (f := _), h₁, h₂, smul_add]
 
 omit [NumberField F] [NumberField E] in
 theorem BR_smul (R : Type) [CommRing R] [Algebra F R] {n : ℕ} (t : R)
@@ -237,7 +243,8 @@ theorem BR_test (hJ : J.det ≠ 0) (j : Fin M) (k : Fin d) : ∃ x : Fin M → E
   have hrow : ∀ j' : Fin M, (∑ i, inclR R (b.traceDual k * J⁻¹ j i) * inclR R (J i j') * Y 0 j') =
       inclR R (if j = j' then b.traceDual k else 0) * Y 0 j' := by
     intro j'
-    rw [← key j', map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← key j', map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [map_mul]
   have hsum : hR R σ J (fun i => inclR R (τ (b.traceDual k * J⁻¹ j i))) (Y 0) =

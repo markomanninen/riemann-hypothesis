@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.RegOkPi
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.RegOkPi
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Global.SemiLocal PositivityTheory.Rg.Tf.Geo
@@ -25,7 +29,7 @@ theorem UpperTheory.ConvolutionTheory.L1.matchFin :
       continuous_toFun := hgc
       continuous_invFun := continuous_pi hcc }
   have hΨc : Continuous fun g : Fin (m + 1) → GL (Fin n) (v.adicCompletion F) => ∏ i, φ i (g i) :=
-    continuous_finset_prod _ fun i _ => (h i).1.comp (continuous_apply i)
+    continuous_finsetProd _ fun i _ => (h i).1.comp (continuous_apply i)
   have hΨs : HasCompactSupport fun g : Fin (m + 1) → GL (Fin n) (v.adicCompletion F) => ∏ i, φ i (g i) := by
     refine HasCompactSupport.intro' (K := Set.pi Set.univ fun i => tsupport (φ i))
       (isCompact_univ_pi fun i => (h i).2) (isClosed_set_pi fun i _ => isClosed_tsupport _) ?_
@@ -46,4 +50,6 @@ theorem UpperTheory.ConvolutionTheory.L1.matchFin :
     unfold UpperTheory.ConvolutionTheory.L1.Split.transfer
     congr 1
     funext g
-    simp only [UpperTheory.ConvolutionTheory.L1.Split.tens, hcomp]
+    rw [htens]
+    change (∏ i, φ i ((e.symm (e g)) i)) = _
+    rw [e.symm_apply_apply]

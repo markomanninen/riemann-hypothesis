@@ -1,12 +1,16 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.KExpCut
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldUnfold
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldDCUnfold
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ComplexDoubleCosets.ComplexDoubleCoset
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHNeat
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHFinal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.LevelSubgroupProperties
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.KExpCut
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldUnfold
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldDCUnfold
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ComplexDoubleCosets.ComplexDoubleCoset
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHNeat
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHFinal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.LevelSubgroupProperties
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem dcSingleE (Γ S S' : Subgroup G) [Countable Γ] (hS : S ≤ Γ) (hS' : S
     _ = ∑' r : R, ∫⁻ x in F, ∑' t : E (r : G), f ((t : G) * x) * h ((r : G)⁻¹ * ((t : G) * x)) ∂μ := by
         refine lintegral_tsum fun r => ?_
         have := hEc (r : G)
-        exact (Measurable.ennreal_tsum fun t => (hφm (r : G)).comp (measurable_const_mul _)).aemeasurable
+        exact (Measurable.tsum fun t => (hφm (r : G)).comp (measurable_const_mul _)).aemeasurable
     _ = ∑' r : R, ∫⁻ x in Fs r, f x * h ((r : G)⁻¹ * x) ∂μ := by
         refine tsum_congr fun r => ?_
         exact lintegralTransversalSum G μ S (stab S S' r) inf_le_left (Fs r) (hFs r r.2) F hF (E r) (hE r) _
@@ -76,8 +80,8 @@ theorem dcSingleE (Γ S S' : Subgroup G) [Countable Γ] (hS : S ≤ Γ) (hS' : S
 
 end DC
 
-open PI.PoincareSeriesInner.W in
 
+open PI.PoincareSeriesInner.W in
 theorem double_coset_single_unfolding : Formalism.L2.SG.TermOp.KExpCut.DCSingle := by
   intro G _ _ _ μ _ _ Γ S S' _ hS hS' D' hD' R hR Fs hFs F hF f g hfm hgm hfi hgi hfin hsum
   set ψ : G → ℂ := fun x => conj (g x) with hψdef
@@ -112,7 +116,7 @@ theorem double_coset_single_unfolding : Formalism.L2.SG.TermOp.KExpCut.DCSingle 
     ne_top_of_le_ne_top (hgs x) (hWle k x)
   have hD'c : Countable D' := countable_of_sub Γ D' hD'.1
   have hWm : ∀ k, Measurable fun x => ∑' δ : D', w k ((δ : G) * x) :=
-    fun k => Measurable.ennreal_tsum fun δ => (hwm k).comp (measurable_const_mul _)
+    fun k => Measurable.tsum fun δ => (hwm k).comp (measurable_const_mul _)
   have hsf : ∀ x, f x = ∑ k, cf k * ((u k x).toReal : ℂ) := fun x => by rw [hu]; exact split (f x)
   have hsψ : ∀ x, ψ x = ∑ k, cf k * ((w k x).toReal : ℂ) := fun x => by rw [hw]; exact split (ψ x)
   have hprod : ∀ x, f x * poinc D' ψ x = ∑ k, ∑ l, cf k * cf l *
@@ -368,8 +372,8 @@ variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
   {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
-variable (X u u' F0 F0' what₂ rows') in
 
+variable (X u u' F0 F0' what₂ rows') in
 def OOLintSum : Prop :=
   ∑' t : GTerm X u u' F0 F0' what₂ rows',
     ∫⁻ x in FundOf t, ‖X.Wu u x‖ₑ * ‖X.Wu u' (t.pt.1⁻¹ * x)‖ₑ ∂(Formalism.L2.SG.ProjRows.muInf X.B.I) < ⊤
@@ -378,7 +382,8 @@ theorem ooLint_of (h : OOLintSum X u u' F0 F0' what₂ rows') : OOLint F0 F0' wh
   unfold OOLintSum at h
   unfold OOLint
   intro t
-  exact lt_of_le_of_lt (ENNReal.le_tsum t) h
+  exact lt_of_le_of_lt (ENNReal.le_tsum (f := fun t : GTerm X u u' F0 F0' what₂ rows' =>
+    ∫⁻ x in FundOf t, ‖X.Wu u x‖ₑ * ‖X.Wu u' (t.pt.1⁻¹ * x)‖ₑ ∂(Formalism.L2.SG.ProjRows.muInf X.B.I)) t) h
 
 theorem norm_OOt_le (t : GTerm X u u' F0 F0' what₂ rows') :
     ‖OOt t‖ ≤ (∫⁻ x in FundOf t, ‖X.Wu u x‖ₑ * ‖X.Wu u' (t.pt.1⁻¹ * x)‖ₑ
@@ -665,7 +670,7 @@ theorem Slab.ooLintSum_of {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting 
     have hinv : ∀ s ∈ Srat X u, ∀ y, Ph X u Y.hK (T i) (s * y) = Ph X u Y.hK (T i) y := hFD.2.1
     have hinv' : ∀ s ∈ Srat X u', ∀ y, Ph X u' Y.hK (T' j) (s * y) = Ph X u' Y.hK (T' j) y := hFD'.2.1
     have hGm : Measurable G :=
-      hPhm.enorm.mul (Measurable.ennreal_tsum fun δ => (hPhm'.comp (measurable_const_mul _)).enorm)
+      hPhm.enorm.mul (Measurable.tsum fun δ => (hPhm'.comp (measurable_const_mul _)).enorm)
     have hGi : ∀ s ∈ Srat X u, ∀ y, G (s * y) = G y := by
       intro s hs y
       simp only [hG]
@@ -684,7 +689,7 @@ theorem Slab.ooLintSum_of {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting 
       have hy1 : Ph X u Y.hK (T i) y ≠ 0 := by
         intro h0; apply hy; simp only [hG, h0, enorm_zero, zero_mul]
       have hd : ∃ n h k, IsDec X u y.2 n h k := by
-        by_contra hn; apply hy1; unfold Ph; rw [dif_neg hn]
+        by_contra hn; apply hy1; unfold Ph; rw [dite_eq_right hn]
       obtain ⟨s, hs, ρ, hsy⟩ := hcov y hd
       exact ⟨s, hs, Set.mem_iUnion.2 ⟨ρ, hsy⟩⟩
     have hGu : ∀ y ∈ ⋃ ρ, slab (Y.cs u) ρ (Ωs ρ), ∀ s ∈ Srat X u, s * y ∈ ⋃ ρ, slab (Y.cs u) ρ (Ωs ρ) → s = 1 := by
@@ -782,8 +787,9 @@ theorem tsum_lintegral_le {α ι : Type*} [MeasurableSpace α] {μ : Measure α}
     (hf : ∀ i, AEMeasurable (f i) μ) : ∑' i, ∫⁻ x, f i x ∂μ ≤ ∫⁻ x, ∑' i, f i x ∂μ := by
   rw [ENNReal.tsum_eq_iSup_sum]
   refine iSup_le fun s => ?_
-  rw [← lintegral_finset_sum' s (fun i _ => hf i)]
-  exact lintegral_mono fun x => ENNReal.sum_le_tsum s
+  calc
+    _ = ∫⁻ x, ∑ i ∈ s, f i x ∂μ := (lintegral_finsetSum' s (fun i _ => hf i)).symm
+    _ ≤ _ := lintegral_mono fun x => ENNReal.sum_le_tsum s
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -931,7 +937,7 @@ theorem termsLEC_of (hMaj : MajPtC) (hInv : RInvC) (hCnt : CountC) : TermsLEC :=
             have h := (hEt t.1 t.2).1
             exact Function.Injective.countable (f := fun s : E t.1 => (⟨(s : X.B.I.Ginf), h s.2⟩ : NOlam X u Λ))
               (by intro p q hpq; apply Subtype.ext; have := congrArg Subtype.val hpq; exact this)
-          exact (Measurable.ennreal_tsum fun m => (hFm i j t.1).comp (measurable_const_mul _)).aemeasurable
+          exact (Measurable.tsum fun m => (hFm i j t.1).comp (measurable_const_mul _)).aemeasurable
       _ ≤ ∫⁻ x in Ωs b, M * (‖Ph X u Y.hK (T i) (x, a)‖ₑ *
             ∑' δ : Y.Dt u', ‖Ph X u' Y.hK (T' j) ((δ : X.B.I.GA) * (x, a))‖ₑ) ∂(Formalism.L2.SG.ProjRows.muInf X.B.I) :=
           lintegral_mono fun x => hcnt (T i) (T' j) Λ hΛ E hEt x
@@ -952,10 +958,10 @@ theorem termsLEC_of (hMaj : MajPtC) (hInv : RInvC) (hCnt : CountC) : TermsLEC :=
             ∫⁻ x in FundOf t.1, c * ∑ i, ∑ j, F i j t.1 x ∂(Formalism.L2.SG.ProjRows.muInf X.B.I) =
               c * ∑ i, ∑ j, ∫⁻ x in FundOf t.1, F i j t.1 x ∂(Formalism.L2.SG.ProjRows.muInf X.B.I) := by
           intro t
-          rw [lintegral_const_mul' _ _ hc, lintegral_finset_sum _ (fun i _ => Finset.measurable_sum _
+          rw [lintegral_const_mul' _ _ hc, lintegral_finsetSum _ (fun i _ => Finset.measurable_sum _
             (fun j _ => hFm i j t.1))]
           congr 1
-          exact Finset.sum_congr rfl fun i _ => lintegral_finset_sum _ (fun j _ => hFm i j t.1)
+          exact Finset.sum_congr rfl fun i _ => lintegral_finsetSum _ (fun j _ => hFm i j t.1)
         rw [tsum_congr hint, ENNReal.tsum_mul_left]
         congr 1
         rw [Summable.tsum_finsetSum (fun _ _ => ENNReal.summable)]

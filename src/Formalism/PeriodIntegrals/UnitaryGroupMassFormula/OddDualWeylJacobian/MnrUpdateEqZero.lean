@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -217,10 +221,10 @@ theorem step {n : ℕ} (σ : Equiv.Perm (Fin (n + 1))) (i : Fin n) (ν : Fin (n 
     rcases Nat.lt_or_gt_of_ne this with h | h
     · obtain ⟨h1, h2⟩ := stepA (R := R) σ i s h
       refine ⟨h1, ?_⟩
-      simp only [m', m, ε, h2, if_neg (by omega : ¬ i.val < s.val), map_one, one_mul]
+      simp only [m', m, ε, h2, ite_eq_right (by omega : ¬ i.val < s.val), map_one, one_mul]
     · obtain ⟨h1, h2⟩ := stepC (R := R) σ i s h
       refine ⟨h1, ?_⟩
-      simp only [m', m, ε, h2, if_pos h, map_neg, map_one, neg_one_mul]
+      simp only [m', m, ε, h2, ite_eq_left h, map_neg, map_one, neg_one_mul]
   have hI : rowGen R (σ i.succ) (σ i.castSucc) (m i.castSucc) =
       Polynomial.C (m i.castSucc) + Polynomial.X * Polynomial.C (m' i.castSucc) :=
     stepB (R := R) σ i i.castSucc (by simp)

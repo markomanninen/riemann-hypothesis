@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.LatticeIndexLifts.SummandInv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.LatticeIndexLifts.SummandInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,8 @@ variable {V : Type} [AddCommGroup V] [Module ℂ V] {n : ℕ}
 theorem B_u (B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ) (c : (Fin n → k) → ℂ) (col : (Fin n → k) → V →ₗ[ℂ] V)
     (T : Finset (Fin n → k)) (v w : V) :
     B (∑ t ∈ T, c t • col t v) w = ∑ t ∈ T, c t * B (col t v) w := by
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smul, LinearMap.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smul, LinearMap.smul_apply, smul_eq_mul]
 
 theorem gram (φ : AddChar k Circle) (col : (Fin n → k) → V →ₗ[ℂ] V)
     (hc0 : ∀ v, col 0 v = v) (hca : ∀ x y v, col (x + y) v = col x (col y v))
@@ -41,8 +46,9 @@ theorem gram (φ : AddChar k Circle) (col : (Fin n → k) → V →ₗ[ℂ] V)
       starRingEnd ℂ ((φ (ξ ⬝ᵥ (t + -r)) : Circle) : ℂ) * starRingEnd ℂ ((φ (ξ ⬝ᵥ r) : Circle) : ℂ) := by
     intro t r
     rw [← map_mul, ← Circle.coe_mul, ← AddChar.map_add_eq_mul, ← dotProduct_add, neg_add_cancel_right]
-  conv_lhs =>
-    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smul, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs =>
+      simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smul, LinearMap.smul_apply,
       LinearMap.map_smulₛₗ, smul_eq_mul, starRingEnd_self_apply, RingHom.id_apply, key, Finset.mul_sum]
   rw [Finset.sum_mul]
   refine Finset.sum_congr rfl fun r hr => ?_
@@ -60,7 +66,17 @@ theorem gram_av (φ : AddChar k Circle) (col : (Fin n → k) → V →ₗ[ℂ] V
     B (av φ col ξ A v) (av φ col ζ A v) =
       ((p.2.card : ℂ)⁻¹ * ∑ r ∈ p.2, ((((φ (ξ ⬝ᵥ r))⁻¹ * φ (ζ ⬝ᵥ r) : Circle)) : ℂ)) *
         B (av φ col ξ A v) v := by
-  rw [av_eq' φ col hca A ξ v p hpξ, av_eq' φ col hca A ζ v p hpζ]
+  have av_eq_local (η : Fin n → k) (hp : AD φ col η A v p) :
+      av φ col η A v = ((p.2.card : ℂ)⁻¹) • ∑ t ∈ p.2,
+        (starRingEnd ℂ ((φ (η ⬝ᵥ t) : Circle) : ℂ)) • col t v := by
+    have hd : ∃ q, AD φ col η A v q := ⟨p, hp⟩
+    unfold av
+    rw [dite_eq_left hd]
+    obtain ⟨h1, -, h3, h4, h5, h6⟩ := hd.choose_spec
+    obtain ⟨g1, -, g3, g4, g5, g6⟩ := hp
+    exact avg_indep A _ _ h1 g1 _ _ h5 h6 g5 g6 _
+      (summand_inv φ col hca η v _ h3 h4) (summand_inv φ col hca η v _ g3 g4)
+  rw [av_eq_local ξ hpξ, av_eq_local ζ hpζ]
   obtain ⟨h1, -, h3, h4, h5, h6⟩ := hpξ
   rw [LinearMap.map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ,
     gram φ col hc0 hca B hBc A p.1 h1 p.2 h5 h6 v h3 ξ ζ h4, LinearMap.smul_apply, B_u]
@@ -73,12 +89,14 @@ theorem bessel_abs (B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ) (hB : Psd B) {ι : T
     ∑ i ∈ s, (B (w i) v).re ≤ (B v v).re := by
   classical
   have hWW : B (∑ i ∈ s, w i) (∑ i ∈ s, w i) = ∑ i ∈ s, B (w i) v := by
-    simp only [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i hi => ?_
     rw [Finset.sum_congr rfl fun d hd => hw d hd i hi]
     simp [hi]
   have hWv : B (∑ i ∈ s, w i) v = ∑ i ∈ s, B (w i) v := by
-    simp only [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply]
   have hvW : B v (∑ i ∈ s, w i) = starRingEnd ℂ (∑ i ∈ s, B (w i) v) := by
     rw [hB.1 (∑ i ∈ s, w i) v, hWv]
   have h0 := hB.2 (v - ∑ i ∈ s, w i)

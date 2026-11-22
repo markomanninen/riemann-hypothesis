@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfValNonneg
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegerSpanningFamilyOfUnramifiedExtStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfValNonneg
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegerSpanningFamilyOfUnramifiedExtStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,7 +141,8 @@ theorem isLat_overExt_iff : ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), IsU
   · intro y
     obtain ⟨a, ha⟩ := hu y
     refine ⟨a, ?_⟩
-    rw [hO', ha, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hO', ha, map_sum]
     simp only [map_mul, hO, hO']
   · intro e
     exact ⟨φ e, by rw [hE', hψ]⟩

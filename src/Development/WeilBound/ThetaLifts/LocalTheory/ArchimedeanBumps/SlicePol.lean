@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.SliceMain
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.SliceMain
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,9 +88,11 @@ theorem sy_vec (M : Model σ X W) (c : AE F E) (a : Fin n → AE F E) (b : Fin d
     (w : Matrix (Fin n₁) (Fin d₁) (AE F E)) : sy σ X W (c • Matrix.vecMulVec a b) (ι * w * ι'ᵀ) = 0 := by
   rw [mid_sum]
   refine (form_eq M.co _ _).trans ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun k _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun l _ => ?_
   refine (form_eq M.co _ _).symm.trans ?_
   change Algebra.trace _ _ _ = _
@@ -126,7 +132,7 @@ theorem decompS (M : Model σ X W) (o : PositivityTheory.Mix.PlaneOK (cA σ).toR
     abel
   rw [e]
   refine (form_eq M.co _ _).trans ?_
-  rw [map_add, map_add, map_add]
+  rw [map_add (f := _), map_add (f := _), map_add (f := _)]
   simp only [LinearMap.add_apply]
   have a1 := sy_vec (ι' := ι') M 1 x (s ᵥ* u) (Or.inl o.xi) w
   have a2 := sy_vec (ι' := ι') M 1 y (t ᵥ* u) (Or.inl o.yi) w
@@ -168,7 +174,7 @@ theorem pol_fd (hA : ActsLaws) (hD : DerEx) (hV : VacLine) (hF : FockEx) (hFr : 
     rw [hAe s hs, pureA_ptA, mul_div_cancel_right₀ _ ha]
   have hadd : ∀ s, At (evI F) s → ∀ g g', A s (g + g') = A s g + A s g' := fun s hs g g' => SchwartzMap.ext fun y => by
     have : pureA F (g + g' : SInf F _) ψ = pureA F g ψ + pureA F g' ψ := funext fun x => add_mul _ _ _
-    rw [SchwartzMap.add_apply, hval s hs, hval s hs, hval s hs, this, rho_add, map_add, Pi.add_apply, add_div]
+    rw [SchwartzMap.add_apply, hval s hs, hval s hs, hval s hs, this, rho_add, map_add (f := _), Pi.add_apply, add_div]
   have hsm : ∀ s, At (evI F) s → ∀ (c : ℂ) g, A s (c • g) = c • A s g := fun s hs c g => SchwartzMap.ext fun y => by
     have : pureA F (c • g : SInf F _) ψ = c • pureA F g ψ := funext fun x => mul_assoc _ _ _
     rw [SchwartzMap.smul_apply, hval s hs, hval s hs, this, rho_smul, map_smul, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_div_assoc]
@@ -209,7 +215,7 @@ theorem pol_fd (hA : ActsLaws) (hD : DerEx) (hV : VacLine) (hF : FockEx) (hFr : 
         have p1 := (form_eq M.co _ _).symm.trans (hs.2 w)
         have p2 := (form_eq M.co _ _).symm.trans (hv.2 w)
         refine (form_eq M.co _ _).trans ?_
-        rw [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, p1, p2, smul_zero, add_zero]⟩
+        rw [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, p1, p2, smul_zero, add_zero]⟩
       rw [rho_rho, map_smul, map_smul, hAe _ hS.1, hl2 _ _ hψ₁, hL0 _ (hg _ hS), mul_zero, smul_zero]
     rw [this] at h1
     have h3 := h1.unique (hasDerivAt_const _ _)

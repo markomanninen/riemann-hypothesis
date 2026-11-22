@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.KProps
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.ResMIncl
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.SplitField
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.gr_aff
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.KProps
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.ResMIncl
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.SplitField
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.gr_aff
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -41,8 +45,7 @@ theorem gen_assoc {F₁ F₂ F₃ F₁₂ F₂₃ F : C ⥤ ModuleCat.{w} R} (P�
     (congrArg₂ (fun u v => P₃.μ _ u v) (term_congr _ _ _ _ _ ?_) (term_congr _ _ _ _ _ ?_)) <;>
   · funext t
     apply Fin.ext
-    simp only [front, back, Function.comp]
-    try omega
+    simp only [front, back, Function.comp, ← h₁, Nat.add_assoc]
 
 theorem gen_left {F₀ F : C ⥤ ModuleCat.{w} R} (P : Pairing F₀ F F) (o : ∀ T, F₀.obj T)
     (ho : ∀ {T T' : C} (φ : T ⟶ T'), (F₀.map φ).hom (o T) = o T') (hμ : ∀ T x, P.μ T (o T) x = x) (h0) (n : ℕ) (x : H F n) :
@@ -87,10 +90,12 @@ theorem dividedPowerFiltration_le {B : Type} [CommRing B] {J : Ideal B} (δ : Di
       · exact Ideal.mul_mem_right _ _ (δ.dpow_mem h0 (hl q List.mem_cons_self))
   exact key l hl (hr.trans h)
 
-theorem tfBase_field (K : Type) [Field K] [CharZero K] {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersBot K) 1 s where
-  nil := le_bot_iff.1 (dividedPowerFiltration_le _ hs)
-  tf r x hx := by simpa using hx
-  dv n hn := ⟨0, (n : K)⁻¹, by rw [pow_zero, mul_inv_cancel₀ (Nat.cast_ne_zero.2 hn)]⟩
+theorem tfBase_field (K : Type) [Field K] [CharZero K] {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersBot K) 1 s := by
+  exact {
+    nil := le_bot_iff.1 (dividedPowerFiltration_le _ hs)
+    tf r x hx := by simpa using hx
+    dv n hn := ⟨0, (n : K)⁻¹, by rw [pow_zero, mul_inv_cancel₀ (Nat.cast_ne_zero.2 hn)]⟩
+  }
 
 theorem kFin_of (hF : FinO) : KFin := by
   intro K _ _ X q _ _ a n
@@ -165,28 +170,30 @@ theorem oneH_eq (q : X ⟶ Spec (CommRingCat.of K)) :
 
 end Form
 
-theorem kForm : KForm where
-  bilin q _ _ _ _ _ _ ha h := CrystallineSemistableComparison.P.cup_bilin (grOk (smFun _ q) ha).pair h
-  pull_id q u hu e a n x := by subst e; exact pull_id' q hu a n x
-  pull_comp u hu v hv h a n x := pull_comp' u hu v hv h a n x
-  pull_cup u hu _ _ _ _ _ _ ha h x y := pull_cup' u hu ha h x y
-  pull_one u hu := rfl
-  one_cup {K _ X} q a n x := by
-    obtain ⟨h0, e⟩ := oneH_eq q
-    rw [e]
-    refine ⟨gen_left (grOk (smFun X q) (Nat.zero_add a)).pair (oneSec q) (oneSec_map q) (fun T x => ?_) h0 n x,
-      gen_right (grOk (smFun X q) (Nat.add_zero a)).pair (oneSec q) (oneSec_map q) (fun T x => ?_) h0 n x⟩
-    · obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
-      exact (pair_mk _ _ _ _ _).trans (mk_congr _ _ (one_mul _) _ _)
-    · obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
-      exact (pair_mk _ _ _ _ _).trans (mk_congr _ _ (mul_one _) _ _)
-  assoc {K _ X} q _ _ _ _ _ _ _ _ _ _ _ _ h₁ h₂ h₃ h₄ e₁ e₂ e₃ e₄ x y z :=
-    gen_assoc (grOk (smFun X q) h₁).pair (grOk (smFun X q) h₂).pair (grOk (smFun X q) h₃).pair (grOk (smFun X q) h₄).pair
-      (fun T x y z => by
-        obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
-        obtain ⟨y, hy, rfl⟩ := sq_surj _ _ y
-        obtain ⟨z, hz, rfl⟩ := sq_surj _ _ z
-        rw [pair_mk, pair_mk, pair_mk, pair_mk]
-        exact mk_congr _ _ (mul_assoc _ _ _) _ _) e₁ e₂ e₃ e₄ x y z
+theorem kForm : KForm := by
+  exact {
+    bilin q _ _ _ _ _ _ ha h := CrystallineSemistableComparison.P.cup_bilin (grOk (smFun _ q) ha).pair h
+    pull_id q u hu e a n x := by subst e; exact pull_id' q hu a n x
+    pull_comp u hu v hv h a n x := pull_comp' u hu v hv h a n x
+    pull_cup u hu _ _ _ _ _ _ ha h x y := pull_cup' u hu ha h x y
+    pull_one u hu := rfl
+    one_cup {K _ X} q a n x := by
+      obtain ⟨h0, e⟩ := oneH_eq q
+      rw [e]
+      refine ⟨gen_left (grOk (smFun X q) (Nat.zero_add a)).pair (oneSec q) (oneSec_map q) (fun T x => ?_) h0 n x,
+        gen_right (grOk (smFun X q) (Nat.add_zero a)).pair (oneSec q) (oneSec_map q) (fun T x => ?_) h0 n x⟩
+      · obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
+        exact (pair_mk _ _ _ _ _).trans (mk_congr _ _ (one_mul _) _ _)
+      · obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
+        exact (pair_mk _ _ _ _ _).trans (mk_congr _ _ (mul_one _) _ _)
+    assoc {K _ X} q _ _ _ _ _ _ _ _ _ _ _ _ h₁ h₂ h₃ h₄ e₁ e₂ e₃ e₄ x y z :=
+      gen_assoc (grOk (smFun X q) h₁).pair (grOk (smFun X q) h₂).pair (grOk (smFun X q) h₃).pair (grOk (smFun X q) h₄).pair
+        (fun T x y z => by
+          obtain ⟨x, hx, rfl⟩ := sq_surj _ _ x
+          obtain ⟨y, hy, rfl⟩ := sq_surj _ _ y
+          obtain ⟨z, hz, rfl⟩ := sq_surj _ _ z
+          rw [pair_mk, pair_mk, pair_mk, pair_mk]
+          exact mk_congr _ _ (mul_assoc _ _ _) _ _) e₁ e₂ e₃ e₄ x y z
+  }
 
 end CrystallineSemistableComparison.HT

@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.TensorProductsG2.HasDerivAtInvExpCurveEntry
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.StdGap
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.AnyDec
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.DataGenSubIrred
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.HasGelfandCharSigLam
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.TensorProductsG2.HasDerivAtInvExpCurveEntry
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.StdGap
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.AnyDec
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.DataGenSubIrred
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.HasGelfandCharSigLam
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem tensor_group_mul_kDiag (dual : Bool) (hσ : IsURepOn (UJset ε) σ) {g k
     rw [Matrix.mul_assoc, ← hk.2, ← Matrix.mul_assoc, h1, Matrix.one_mul]
   have hσm : σ (g * k) = (σ g).comp (σ k) := hσ.1.2 g hg k hkU
   funext c
-  simp only [tensGrp, kDiag, hσm, ContinuousLinearMap.comp_apply, map_sum, map_smul, Finset.smul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tensGrp, kDiag, hσm, ContinuousLinearMap.comp_apply, map_sum, map_smul, Finset.smul_sum,
     smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun d _ => ?_
@@ -107,7 +112,7 @@ theorem smoothOnG_inner_rep (w : H) {v : H} (hv : IsSmoothVecU ε σ v) :
 
 theorem smoothOnG_tensor_phi (dual : Bool) (c d : Fin n) : Formalism.REAL.SmoothOnG ε (fun g => oa1Phi dual g c d) := by
   have hentry : ContDiff ℝ ∞ fun g : Matrix (Fin n) (Fin n) ℂ => g c d :=
-    (contDiff_apply ℝ ℂ d).comp (contDiff_apply ℝ (Fin n → ℂ) c)
+    (contDiff_apply ℝ (fun _ => ℂ) d).comp (contDiff_apply ℝ (fun _ => (Fin n → ℂ)) c)
   have hstar : ContDiff ℝ ∞ fun g : Matrix (Fin n) (Fin n) ℂ => star (g c d) :=
     Complex.conjCLE.contDiff.comp hentry
   intro g₀ _

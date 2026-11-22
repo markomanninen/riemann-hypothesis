@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PlaceEqOneOfNotMem
-import ReciprocityTheory.SemistableReduction.SemiDegBB
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PlaceEqOneOfNotMem
+public import ReciprocityTheory.SemistableReduction.SemiDegBB
+
+@[expose] public section
+
 open NumberField Matrix IsDedekindDomain GlobalTheory.CompanionTheory.Ar.Cusp.LocFrame
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp.GlobDet

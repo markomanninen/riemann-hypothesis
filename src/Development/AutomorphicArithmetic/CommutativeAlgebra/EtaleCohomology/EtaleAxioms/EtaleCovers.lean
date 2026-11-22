@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.CoverIntegralClosure
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.CoverIntegralClosure
+
+@[expose] public section
 
 namespace UpperTheory.Et.EtaleCovers
 

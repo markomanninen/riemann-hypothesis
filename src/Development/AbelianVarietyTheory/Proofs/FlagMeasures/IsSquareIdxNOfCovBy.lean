@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodula
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeLatIn
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodula
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeLatIn
+
+@[expose] public section
 
 open NumberField Module IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions.S.Lat GlobalTheory.Mass GlobalTheory.Mass.DiscOrder Formalism.HermitianLatticesTheory
 open scoped Classical
@@ -11,10 +15,10 @@ namespace GlobalTheory.Mass.DetNat
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-omit [StarRing K] [FiniteDimensional K V] in
 
-theorem isSquare_idxN_of_covBy {X : Submodule (𝓞 K) V} (hX : Submodule.IsLattice K X) : ∀ (n : ℕ)
-    (Y : Submodule (𝓞 K) V), Submodule.IsLattice K Y → X ≤ Y → idxN Y X = n →
+omit [StarRing K] [FiniteDimensional K V] in
+theorem isSquare_idxN_of_covBy {X : Submodule (𝓞 K) V} (hX : Submodule.IsFullLattice K X) : ∀ (n : ℕ)
+    (Y : Submodule (𝓞 K) V), Submodule.IsFullLattice K Y → X ≤ Y → idxN Y X = n →
     (∀ Z Z' : Submodule (𝓞 K) V, X ≤ Z → Z ⋖ Z' → Z' ≤ Y → IsSquare (idxN Z' Z)) → IsSquare n := by
   intro n
   induction n using Nat.strong_induction_on with
@@ -25,7 +29,7 @@ theorem isSquare_idxN_of_covBy {X : Submodule (𝓞 K) V} (hX : Submodule.IsLatt
       exact ⟨1, rfl⟩
     · have hlt : X < Y := lt_of_le_of_ne hXY (fun h => hYX (h ▸ le_rfl))
       obtain ⟨Z, hXZ, hZY⟩ := GlobalTheory.Mass.DiscOrder.exists_covBy hY.fg hlt
-      have hZ : Submodule.IsLattice K Z := GlobalTheory.Mass.DiscOrder.lattice_between hX hY hXZ hZY.le
+      have hZ : Submodule.IsFullLattice K Z := GlobalTheory.Mass.DiscOrder.lattice_between hX hY hXZ hZY.le
       have hmul : idxN Z X * idxN Y Z = idxN Y X := GlobalTheory.Mass.DiscOrder.idxN_mul hXZ hZY.le
       have hne : idxN Y X ≠ 0 := GlobalTheory.Mass.DiscOrder.idxN_ne_zero hX hY.fg
       have h1 : idxN Y Z ≠ 1 := fun h => not_le_of_gt hZY.lt (GlobalTheory.Mass.DiscOrder.idxN_eq_one.1 h)
@@ -41,16 +45,16 @@ theorem isSquare_idxN_of_covBy {X : Submodule (𝓞 K) V} (hX : Submodule.IsLatt
       rw [← hn, ← hmul]
       exact hsZ.mul hsY
 
-omit [StarRing K] [FiniteDimensional K V] in
 
-theorem exists_killed {M : Submodule (𝓞 K) V} (hM : Submodule.IsLattice K M) {P : Ideal (𝓞 K)} (hP : P ≠ ⊤)
+omit [StarRing K] [FiniteDimensional K V] in
+theorem exists_killed {M : Submodule (𝓞 K) V} (hM : Submodule.IsFullLattice K M) {P : Ideal (𝓞 K)} (hP : P ≠ ⊤)
     (y : V) (hy : ∀ r : 𝓞 K, r • y ∈ M → r ∈ P) : ∃ j : 𝓞 K, j • y ∉ M ∧ ∀ r ∈ P, r • j • y ∈ M := by
   obtain ⟨I, hmemI⟩ : ∃ I : Ideal (𝓞 K), ∀ r, r ∈ I ↔ r • y ∈ M :=
     ⟨M.comap (LinearMap.toSpanSingleton (𝓞 K) V y), fun r => by simp⟩
   have hIP : I ≤ P := fun r hr => hy r ((hmemI r).1 hr)
   have hI0 : I ≠ ⊥ := by
     have hy' : y ∈ Formalism.HermitianLatticesTheory.locS (nonZeroDivisors (𝓞 K)) M := by
-      rw [Formalism.HermitianLatticesTheory.indexBasic_locS_top (K := K) M hM.span_eq_top]
+      rw [Formalism.HermitianLatticesTheory.indexBasic_locS_top (K := K) M (Submodule.IsFullLattice.span_eq_top (A := K) (M := M))]
       exact Submodule.mem_top
     obtain ⟨s, hs, hsy⟩ : ∃ s ∈ nonZeroDivisors (𝓞 K), s • y ∈ M := hy'
     intro hbot
@@ -88,7 +92,7 @@ private theorem star_algebraMap_mem_range' (r : 𝓞 K) :
 
 theorem isSquare_disc (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h.Nondegenerate)
     (hP : ∀ P : HeightOneSpectrum (𝓞 K), conjIdeal (K := K) P.asIdeal = P.asIdeal →
-      IsSquare (Ideal.absNorm P.asIdeal)) : ∀ (n : ℕ) (M : Submodule (𝓞 K) V), Submodule.IsLattice K M →
+      IsSquare (Ideal.absNorm P.asIdeal)) : ∀ (n : ℕ) (M : Submodule (𝓞 K) V), Submodule.IsFullLattice K M →
       M ≤ dual h M → idxN (dual h M) M = n → IsSquare n := by
   have hstar : ∀ r : 𝓞 K, star (algebraMap (𝓞 K) K r) ∈ Set.range (algebraMap (𝓞 K) K) :=
     star_algebraMap_mem_range'
@@ -104,15 +108,15 @@ theorem isSquare_disc (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h
   induction n using Nat.strong_induction_on with
   | _ n ih =>
   intro M hM hle hidx
-  have hD : Submodule.IsLattice K (dual h M) :=
+  have hD : Submodule.IsFullLattice K (dual h M) :=
     (Formalism.HermitianLatticesTheory.dualLattice (𝓞 K) K V h hs hn hstar M hM).1
   by_cases hall : ∀ Z Z' : Submodule (𝓞 K) V, M ≤ Z → Z ⋖ Z' → Z' ≤ dual h M → IsSquare (idxN Z' Z)
   · exact isSquare_idxN_of_covBy hM n (dual h M) hD hle hidx hall
   push_neg at hall
   obtain ⟨Z, Z', hMZ, hcov, hZ'D, hnsq⟩ := hall
-  have hZl : Submodule.IsLattice K Z :=
+  have hZl : Submodule.IsFullLattice K Z :=
     GlobalTheory.Mass.DiscOrder.lattice_between hM hD hMZ (hcov.le.trans hZ'D)
-  have hZ'l : Submodule.IsLattice K Z' :=
+  have hZ'l : Submodule.IsFullLattice K Z' :=
     GlobalTheory.Mass.DiscOrder.lattice_between hM hD (hMZ.trans hcov.le) hZ'D
   obtain ⟨P, hPmax, hPiff, hPcard⟩ := GlobalTheory.Mass.DiscOrder.exists_max_of_covBy hcov
   have hcard : idxN Z' Z = Ideal.absNorm P := by
@@ -182,7 +186,8 @@ theorem isSquare_disc (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h
   have hMM' : M ≤ M' := le_sup_left
   have hyM' : j • w ∈ M' := Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)
   have hM'D : M' ≤ dual h M := sup_le hle ((Submodule.span_singleton_le_iff_mem _ _).2 hyD)
-  have hM'l : Submodule.IsLattice K M' := GlobalTheory.Mass.DiscOrder.lattice_between hM hD hMM' hM'D
+  have hM'l : Submodule.IsFullLattice K M' := by
+    exact GlobalTheory.Mass.DiscOrder.lattice_between hM hD hMM' hM'D
   have hM'int : M' ≤ dual h M' := by
     refine (hint M').1 ?_
     intro x hx z hz
@@ -204,7 +209,7 @@ theorem isSquare_disc (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h
       rw [Formalism.HermitianLatticesTheory.locDual_h_smul_left, Formalism.HermitianLatticesTheory.locDual_h_smul_right]
       exact Formalism.HermitianLatticesTheory.locDual_one_mul (hstar1 _ (Formalism.HermitianLatticesTheory.locDual_alg_mem a))
         (Formalism.HermitianLatticesTheory.locDual_one_mul (Formalism.HermitianLatticesTheory.locDual_alg_mem b) hyy)
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     exact add_mem (add_mem e1 e3) (add_mem e2 e4)
 
   have hDM'le : dual h M' ≤ dual h M := hanti M M' hMM'
@@ -255,19 +260,20 @@ theorem latDetH_nat (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (ha : ∀
     refine inf_eq_right.2 ?_
     intro m hm
     exact LinearMap.mem_range.2 ⟨⟨m, hMU m hm⟩, rfl⟩
-  have hMUl : Submodule.IsLattice K MU := by
-    refine ⟨?_, ?_⟩
-    · exact Submodule.fg_of_fg_map_injective φ hφ (hmapMU ▸ hM)
-    · apply Submodule.map_injective_of_injective (f := U.subtype) Subtype.val_injective
-      rw [Submodule.map_top, Submodule.range_subtype, Submodule.map_span]
-      conv_rhs => rw [hU]
-      congr 1
-      ext v
-      constructor
-      · rintro ⟨u, hu, rfl⟩
-        exact hu
-      · intro hv
-        exact ⟨⟨v, hMU v hv⟩, hv, rfl⟩
+  have hMUl : Submodule.IsFullLattice K MU := by
+    have hfg : MU.FG := Submodule.fg_of_fg_map_injective φ hφ (hmapMU ▸ hM)
+    haveI : Submodule.IsLattice K MU := Submodule.IsLattice.of_fg K hfg
+    refine ⟨?_⟩
+    apply Submodule.map_injective_of_injective (f := U.subtype) Subtype.val_injective
+    rw [Submodule.map_top, Submodule.range_subtype, Submodule.map_span]
+    conv_rhs => rw [hU]
+    congr 1
+    ext v
+    constructor
+    · rintro ⟨u, hu, rfl⟩
+      exact hu
+    · intro hv
+      exact ⟨⟨v, hMU v hv⟩, hv, rfl⟩
   have hMUint : MU ≤ dual g MU := by
     intro x hx
     rw [Formalism.HermitianLatticesTheory.dualBasic_mem_dual]

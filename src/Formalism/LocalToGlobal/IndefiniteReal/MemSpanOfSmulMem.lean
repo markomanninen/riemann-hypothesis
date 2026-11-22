@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.AllPartsTransfer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.AllPartsTransfer
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -83,7 +87,8 @@ variable {p₀ p : V →ₗ[K] V} {x y : Fin n → V →ₗ[K] V} {c : Matrix (F
 
 theorem Tr.yx_sum (h : Tr p₀ p x y c) (a : Fin n → V) (ha : ∀ j, p₀ (a j) = a j) (i : Fin n) :
     y i (∑ j, x j (a j)) = ∑ j, c i j • a j := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun j _ => h.2.2.2.2.2.1 i j _ (ha j)
 
 theorem Tr.first_axis_injective (h : Tr p₀ p x y c) (a : Fin n → V) (ha : ∀ j, p₀ (a j) = a j)
@@ -118,7 +123,7 @@ theorem Tr.rank [FiniteDimensional K V] (h : Tr p₀ p x y c) :
       LinearMap.pi fun i => LinearMap.codRestrict _ (y i ∘ₗ (LinearMap.range p).subtype)
         fun a => ⟨_, h.2.2.2.1 i a (hfix a)⟩
     refine LinearMap.finrank_le_finrank_of_injective (f := Y) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     apply Subtype.ext
     refine h.inj_y a (hfix a) fun i => ?_
@@ -129,7 +134,7 @@ theorem Tr.rank [FiniteDimensional K V] (h : Tr p₀ p x y c) :
           rw [LinearMap.sum_apply]
           exact Submodule.sum_mem _ fun j _ => ⟨_, h.2.2.1 j (a j) (hfix0 _)⟩
     refine LinearMap.finrank_le_finrank_of_injective (f := X) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     have h1 := congrArg Subtype.val ha
     simp only [X, LinearMap.codRestrict_apply, LinearMap.sum_apply, LinearMap.comp_apply,
@@ -223,7 +228,8 @@ theorem sandwich (hE : IdemE) (hP : IdemP) (hτ : IsGood τ) (ρ : Representatio
   · obtain ⟨haA, z, hz⟩ := ha
     have hz' : a = ∑ s, epP H χ ρ (eS (τ s) ρ z) := by
       rw [← hz]
-      simp only [LinearMap.comp_apply, eGood, LinearMap.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.comp_apply, eGood, LinearMap.sum_apply, map_sum]
     have hs : ∀ s, eS (τ s) ρ a = epP H χ ρ (eS (τ s) ρ z) := by
       intro s
       have h2 : ∀ a, eS (τ s) ρ (epP H χ ρ a) = epP H χ ρ (eS (τ s) ρ a) :=
@@ -231,7 +237,8 @@ theorem sandwich (hE : IdemE) (hP : IdemP) (hτ : IsGood τ) (ρ : Representatio
       have h3 : eS (τ s) ρ (eGood τ ρ z) = eS (τ s) ρ z := by
         classical
         unfold eGood
-        rw [LinearMap.sum_apply, map_sum, Finset.sum_eq_single s]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [LinearMap.sum_apply, map_sum, Finset.sum_eq_single s]
         · exact LinearMap.congr_fun (he s) z
         · intro t _ hts
           exact LinearMap.congr_fun (ho s t hts.symm) z

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocCharEqZpowMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocCharEqZpowMul
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker
 
 namespace GlobalTheory.LocCharComp
@@ -117,7 +122,7 @@ private theorem isUnit_redP_of_integer_ratio {E : Type} [Field E] [NumberField E
     ⟨Ideal.Quotient.mk P.asIdeal r * (Ideal.Quotient.mk P.asIdeal s)⁻¹, r, s, hs, hsb,
       by rw [mul_comm (Ideal.Quotient.mk P.asIdeal r), ← mul_assoc, mul_inv_cancel₀ hs', one_mul]⟩
   unfold redP
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨r₂, s₂, hs₂, hsb₂, hc₂⟩ := hex.choose_spec
   refine isUnit_iff_ne_zero.2 fun h0 => ?_
   rw [h0, mul_zero, eq_comm, Ideal.Quotient.eq_zero_iff_mem] at hc₂
@@ -174,7 +179,7 @@ theorem locChar_eq_locK : ∀ (E K : Type) [Field E] [NumberField E] [Field K] (
   have es := h2 xs s cs rfl rfl
   show σ (cq ^ w * LocE.unitV t ((a : E) / ((qOf P : ℕ) : E) ^ w)) = _
   unfold LocE.unitV
-  rw [dif_pos hU, hB]
+  rw [dite_eq_left hU, hB]
   conv_rhs => rw [hA]
   simp only [map_mul, map_inv, map_zpow, map_zpow₀, Units.val_mul, Units.val_inv_eq_inv_val,
     Units.val_zpow_eq_zpow_val, map_inv₀, eQ, er, es]

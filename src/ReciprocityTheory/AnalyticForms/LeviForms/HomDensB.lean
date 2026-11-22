@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.HomDensA
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.HomDensA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.P
 
@@ -45,7 +49,7 @@ theorem zMat_apply (N : ℕ) (z : Pairs N → ℂ) (i j : Fin N) :
 
 theorem zMat_eq_zero_of_le {N : ℕ} (z : Pairs N → ℂ) {i j : Fin N} (h : i ≤ j) :
     zMat N z i j = 0 := by
-  rw [zMat_apply, dif_neg (not_lt.2 h)]
+  rw [zMat_apply, dite_eq_right (not_lt.2 h)]
 
 theorem zMat_mul_swap (N : ℕ) (z : Pairs N → ℂ) (i j : Fin N) :
     zMat N z i j * zMat N z j i = 0 := by
@@ -65,7 +69,7 @@ theorem zMat_real_smul (N : ℕ) (z : Pairs N → ℂ) (s : ℝ) :
 
 theorem zMat_of_le_one {N : ℕ} (z : Pairs N → ℂ) (hN : N ≤ 1) : zMat N z = 0 := by
   ext i j
-  rw [zMat_apply, dif_neg]
+  rw [zMat_apply, dite_eq_right]
   · rfl
   intro h
   have := Fin.lt_iff_val_lt_val.1 h
@@ -270,7 +274,8 @@ theorem eval_cpP (N : ℕ) (A : Matrix (Fin N) (Fin N) ℂ) (t : ℂ) :
     (cpP N A).map (eval t) = ∑ k ∈ Finset.range N, (t ^ k * ((k.factorial : ℂ)⁻¹)) • A ^ k := by
   ext i j
   simp only [cpP, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
-  rw [← coe_evalRingHom, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_evalRingHom, map_sum]
   simp [mul_assoc]
 
 theorem det_gramPolyMinor_coeff_zero_one (N : ℕ) (hd : Fin N → ℝ) (m : ℕ) (hm : m ≤ N) (v : Pairs N → ℂ) :

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturb
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturb
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -141,7 +146,7 @@ theorem exists_fracData_of_mem_chartRingZ (c : ∀ k, ι k) (hc : ∀ k, y ⟨k,
     · refine homog_add (homog_mul hF1 (homog_cmon c d2)) ?_
       rw [add_comm d1 d2]
       exact homog_mul hF2 (homog_cmon c d1)
-    · rw [map_add, map_mul, map_mul, hv1, hv2, aeval_cmon, aeval_cmon, prod_pow_add]
+    · rw [map_add (f := _), map_mul, map_mul, hv1, hv2, aeval_cmon, aeval_cmon, prod_pow_add]
       ring
   | mul x z _ _ hx hz =>
     obtain ⟨e1, F1, d1, hF1, hd1, hv1⟩ := hx
@@ -269,14 +274,14 @@ theorem IsRep.add {T : Submonoid (MRingOver S ι)} {x x' : LocalizedModule T (MR
   · have := hd1 k
     simp only [Pi.add_apply, Nat.cast_add]
     omega
-  · rw [map_add, map_mul, map_mul, aeval_cmon, aeval_cmon, hv1, hv2, prod_pow_add]
+  · rw [map_add (f := _), map_mul, map_mul, aeval_cmon, aeval_cmon, hv1, hv2, prod_pow_add]
     ring
   · rw [LocalizedModule.mk_add_mk]
     have hs : (⟨_, h1⟩ * ⟨_, h2⟩ : T) = ⟨_, hT⟩ :=
       Subtype.ext (by simp only [Submonoid.coe_mul, cmon_add, map_mul])
     rw [hs]
     congr 1
-    simp only [Submonoid.smul_def, smul_mk, map_add, map_mul]
+    simp only [Submonoid.smul_def, smul_mk, map_add (f := _), map_mul]
 
 theorem IsRep.mul {T : Submonoid (MRingOver S ι)} {x x' : LocalizedModule T (MRingOver S ι ⧸ idealOver y S)}
     {c : ∀ k, ι k} {s s' : Ω} {a b : K → ℤ} (hx : IsRep y S T x c s a) (hx' : IsRep y S T x' c s' b) :
@@ -396,7 +401,7 @@ theorem cellMon_mono {J I : ∀ k, Finset (ι k)} (h : ∀ k, J k ⊆ I k) : KH.
 theorem cellRes_of_le {M : Type} [AddCommGroup M] [Module (MRingOver S ι) M] {J I : ∀ k, Finset (ι k)}
     (h : KH.cellMon S J ≤ KH.cellMon S I) : KH.cellRes S M J I = LocalizedModule.liftOfLE _ _ h := by
   unfold KH.cellRes
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 variable [LinearOrder K] [∀ k, LinearOrder (ι k)]
 
@@ -476,7 +481,7 @@ theorem cechD_zero_eq_zero {M : Type} [AddCommGroup M] [Module (MRingOver S ι) 
   simp only [LinearMap.sum_apply]
   rw [Finset.sum_eq_single k0]
   · rw [Finset.sum_eq_add_of_mem i1 i2 hi1 hi2 (ne_of_lt hlt)]
-    · rw [dif_pos (hface i1 hi1), dif_pos (hface i2 hi2)]
+    · rw [dite_eq_left (hface i1 hi1), dite_eq_left (hface i2 hi2)]
       show KH.faceSign I.1 k0 i1 • KH.cellRes S M (Function.update I.1 k0 ((I.1 k0).erase i1)) I.1
           (z ⟨_, hface i1 hi1⟩) + KH.faceSign I.1 k0 i2 • KH.cellRes S M
           (Function.update I.1 k0 ((I.1 k0).erase i2)) I.1 (z ⟨_, hface i2 hi2⟩) = 0
@@ -509,10 +514,10 @@ section Main
 variable {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {S : Type} [CommRing S]
 variable [LinearOrder K] [∀ k, LinearOrder (ι k)]
 
-variable (y S) in
-open Classical in
 
-def secCoch (s : Ω) (a : K → ℤ) : KH.CechC S ι (MRingOver S ι ⧸ idealOver y S) 0 := fun J =>
+open Classical in
+def secCoch (y : (Σ k, ι k) → Ω) (S : Type) [CommRing S] (s : Ω) (a : K → ℤ) :
+    KH.CechC S ι (MRingOver S ι ⧸ idealOver y S) 0 := fun J =>
   if h : ∃ x, IsRep y S (KH.cellMon S J.1) x (cellChart J) s a then h.choose else 0
 
 theorem secCoch_spec {s : Ω} {a : K → ℤ} (hs : s ∈ chartLat y a 1) (J : KH.Cell K ι 0)
@@ -522,7 +527,7 @@ theorem secCoch_spec {s : Ω} {a : K → ℤ} (hs : s ∈ chartLat y a 1) (J : K
     obtain ⟨e, F, hF⟩ := exists_fracData_of_mem_chartLat y hs (cellChart J) hc
     exact ⟨_, e, F, hF, cmon_mem S (cellChart_mem J) e, rfl⟩
   unfold secCoch
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 theorem secCoch_mem {s : Ω} {a : K → ℤ} (hs : s ∈ chartLat y a 1) :
@@ -545,8 +550,8 @@ theorem secCoch_mem {s : Ω} {a : K → ℤ} (hs : s ∈ chartLat y a 1) :
       rw [cellRes_of_le (cellMon_mono hJ), cellRes_of_le (cellMon_mono hJ')]
       exact ((secCoch_spec hs J hJc).lift _).unique ((secCoch_spec hs J' hJc').lift _)
 
-variable (S) in
 
+variable (S) in
 theorem generatedV_idealOver {a : K → ℤ} {n : ℕ} {w : Fin n → Ω} (hw : ∀ j, w j ∈ chartLat y a 1)
     (hg : KH.GeneratesOn y a w) : KH.GeneratedV S (idealOver y S) a := by
   intro I

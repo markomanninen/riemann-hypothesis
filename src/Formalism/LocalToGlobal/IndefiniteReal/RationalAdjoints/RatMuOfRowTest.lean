@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatZOfTests
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.CoordRat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatZOfTests
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.CoordRat
+
+@[expose] public section
 
 open Module NumberField
 open scoped InnerProductSpace
@@ -15,7 +19,7 @@ theorem solve_spec {E : Type} [AddCommGroup E] [Module ℂ E] {n : ℕ} (f : (Fi
     (he : e ∈ LinearMap.range f) : f (solve f e) = e := by
   have hex : ∃ y, f y = e := he
   unfold solve
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 theorem lin_single {E : Type} [AddCommGroup E] [Module ℂ E] {n : ℕ} (v : Fin n → E) (k : Fin n) :

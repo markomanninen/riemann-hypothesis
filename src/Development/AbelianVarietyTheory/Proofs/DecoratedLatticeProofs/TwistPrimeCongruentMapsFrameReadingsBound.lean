@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CongAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PhiTTransport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CongAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PhiTTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,11 +74,13 @@ theorem read_sub_le {k y : GL (Fin a) (AfE F E)} {k' y' : GL (Fin b) (AfE F E)} 
   have e2 := congrFun (congrFun (map_read hp hp' hPQ hPG x₀) r) s
   simp only [Matrix.map_apply] at e1 e2
   rw [← valued_algebraMap, ← valued_algebraMap, map_natCast, Matrix.sub_apply, map_sub, e1, e2, ← map_sub, ← Matrix.sub_apply, hd]
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   refine Valuation.map_sum_le _ fun j _ => ?_
   rw [map_mul, map_mul]
   refine (mul_le_of_le_one_right' (hK j s)).trans ?_
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   refine Valuation.map_sum_le _ fun l _ => ?_
   rw [map_mul, map_mul]
   exact (mul_le_of_le_one_left' (hA r l)).trans (h l j)

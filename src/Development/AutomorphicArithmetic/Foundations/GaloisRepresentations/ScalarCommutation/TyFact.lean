@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.ExistsIdempotentHeckeOperatorWithRegularSupportAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.InvTMemSim
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PLocComm
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PIntConj
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PLocMem
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.NsmulIntegIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPrimeMem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.ExistsIdempotentHeckeOperatorWithRegularSupportAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.InvTMemSim
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PLocComm
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PIntConj
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PLocMem
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.NsmulIntegIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPrimeMem
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -99,7 +103,7 @@ private theorem bound (F : Frame S) (V : Vec x U w₀ Up) :
     ∃ c : ℕ, 0 < c ∧ c.Coprime p ∧ ∀ g : GUf E n, F.th g ∈ lev V.S V.Kw → ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → ∀ i k,
       (c : w.adicCompletion E) * F.cmp w g i k ∈ w.adicCompletionIntegers E := by
   choose c h0 h1 h2 using fun w => bound_at F V.cpt w
-  have hfin : {w | ¬ F.a w ∈ GlobalTheory.LFun.KGL w n}.Finite := Filter.eventually_cofinite.1 F.a_cof
+  have hfin : {w | ¬ F.a w ∈ GlobalTheory.LFun.KGL w (n := n)}.Finite := Filter.eventually_cofinite.1 F.a_cof
   let B : Finset (Plc E) := hfin.toFinset ∪ V.S ∪ V.S.image cj
   refine ⟨∏ w ∈ B, c w, Finset.prod_pos fun w _ => h0 w, Nat.Coprime.prod_left fun w _ => h1 w, fun g hg w hw i k => ?_⟩
   rw [th_eq] at hg
@@ -116,13 +120,13 @@ private theorem bound (F : Frame S) (V : Vec x U w₀ Up) :
 
 private theorem loc_mem {F : Frame S} {V : Vec x U w₀ Up} {W : Finset (Spl E p)} {N : ℕ}
     {L : ∀ w : Spl E p, Loc S.G.GAf (GLw n w.1)} {hw : IsSplitAt w₀ ∧ (p : 𝓞 E) ∉ w₀.asIdeal} {Ty : TyLev S.G.GAf (GLw n w₀)}
-    (h : TyOK F V W N L hw Ty) (w : Spl E p) (h1 : w.1 ∉ V.S) (h2 : cj w.1 ∉ V.S) {y : GLw n w.1} (hy : y ∈ GlobalTheory.LFun.KGL w.1 n)
+    (h : TyOK F V W N L hw Ty) (w : Spl E p) (h1 : w.1 ∉ V.S) (h2 : cj w.1 ∉ V.S) {y : GLw n w.1} (hy : y ∈ GlobalTheory.LFun.KGL w.1 (n := n))
     (hI : ∀ u ∈ W, (L u).pr ((L w).loc y) ∈ Iw n u.1) : (L w).loc y ∈ Ty.K := by
   refine (h.K_iff _).2 ⟨⟨UpperTheory.Gal.CertificateRingHomMap.loc w.2.1 y, ((h.fac w).2 y).symm, ?_⟩, hI⟩
   rw [th_eq, UpperTheory.Gal.CertificateRingHomMap.th_mem_lev]
   exact (UpperTheory.Gal.CertificateRingHomMap.pLocMem_of UpperTheory.Gal.CertificateRingHomMap.pIntConj_of UpperTheory.Gal.CertificateRingHomMap.pLocComm_of E n V.S _ w.1 w.2.1 h2 y).2 h1 hy
 
-private theorem iw_le (w : Plc E) : Iw n w ≤ GlobalTheory.LFun.KGL w n := by
+private theorem iw_le (w : Plc E) : Iw n w ≤ GlobalTheory.LFun.KGL w (n := n) := by
   intro y hy
   have := GlobalTheory.SmGL.iwahori_le_KO _ _ hy
   rwa [GlobalTheory.SmGL.SphCompletion.KO_completion] at this

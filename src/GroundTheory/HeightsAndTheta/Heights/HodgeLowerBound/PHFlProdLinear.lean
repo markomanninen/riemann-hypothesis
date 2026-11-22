@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsFlagGrassSteps
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmAExpand
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsFlagGrassSteps
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmAExpand
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -107,7 +112,7 @@ theorem I_update_fsHerm_add (hI : IsIntersectionFamily I) (hP : IsArithVar P (n 
   exact I_snoc_fsHerm_add hI hP _ (fun i => hL _) a b
 
 def fsMultilin (hI : IsIntersectionFamily I) (hP : IsArithVar P (n + 1)) :
-    MultilinearMap ℤ (fun _ : Fin (n + 1) => K → ℤ) ℝ where
+    MultilinearMap (RingHom.id ℤ) (fun _ : Fin (n + 1) => K → ℤ) ℝ where
   toFun v := I P (n + 1) (fun i => fsHerm ι (v i))
   map_update_add' := by
     intro inst v j a b
@@ -129,10 +134,12 @@ theorem I_fsHerm_sum (hI : IsIntersectionFamily I) (hP : IsArithVar P (n + 1)) {
     (ℓ : Fin (n + 1) → α → ℤ) (x : α → K → ℤ) :
     I P (n + 1) (fun i => fsHerm ι (∑ p, ℓ i p • x p)) =
       ∑ r : Fin (n + 1) → α, (∏ i, (ℓ i (r i) : ℝ)) * I P (n + 1) (fun i => fsHerm ι (x (r i))) := by
-  rw [← fsMultilin_apply hI hP, MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← fsMultilin_apply hI hP, MultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [MultilinearMap.map_smul_univ (fsMultilin hI hP) (fun i => ℓ i (r i)) (fun i => x (r i)),
-    fsMultilin_apply, zsmul_eq_mul, Int.cast_prod]
+    fsMultilin_apply]
+  simp only [RingHom.id_apply, zsmul_eq_mul, Int.cast_prod]
 
 end FS
 
@@ -143,7 +150,7 @@ theorem hFl_sum_monomial (II : IntersectionSystem) {β : Type} (s : Finset β) (
     hFl Ψ N II (∑ b ∈ s, monomial (m b) (a b)) = ∑ b ∈ s, (a b : ℝ) * hFlMono Ψ N II (m b) := by
   classical
   have hsub : ∀ (F : RootPoly Ψ N) (S : Finset ((Ψ × Fin N) →₀ ℕ)), F.support ⊆ S →
-      hFl Ψ N II F = ∑ m ∈ S, ((coeff m F : ℚ) : ℝ) * hFlMono Ψ N II m := by
+      hFl Ψ N II F = ∑ m ∈ S, ((AddMonoidAlgebra.coeff F m : ℚ) : ℝ) * hFlMono Ψ N II m := by
     intro F S hS
     unfold hFl
     exact Finset.sum_subset hS fun m _ hm => by rw [notMem_support_iff.mp hm]; simp
@@ -153,7 +160,7 @@ theorem hFl_sum_monomial (II : IntersectionSystem) {β : Type} (s : Finset β) (
       hsub F (F.support ∪ G.support) Finset.subset_union_left,
       hsub G (F.support ∪ G.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun m _ => ?_
-    rw [coeff_add]
+    rw [MvPolynomial.coeff_add]
     push_cast
     ring
   have hmono : ∀ (m : (Ψ × Fin N) →₀ ℕ) (a : ℚ), hFl Ψ N II (monomial m a) = (a : ℝ) * hFlMono Ψ N II m := by
@@ -163,8 +170,8 @@ theorem hFl_sum_monomial (II : IntersectionSystem) {β : Type} (s : Finset β) (
   | empty => simp [hsub 0 ∅ (by simp)]
   | insert b s hb ih => rw [Finset.sum_insert hb, Finset.sum_insert hb, hadd, hmono, ih]
 
-omit [DecidableEq Ψ] in
 
+omit [DecidableEq Ψ] in
 theorem C_mul_prod_linForm (c : ℚ) {d : ℕ} (ℓ : Fin d → Ψ × Fin N → ℤ) :
     (C c * ∏ i, linForm Ψ N (ℓ i) : RootPoly Ψ N) =
       ∑ r : Fin d → Ψ × Fin N, monomial (∑ i, Finsupp.single (r i) 1) (c * ∏ i, (ℓ i (r i) : ℚ)) := by
@@ -183,7 +190,8 @@ theorem hFlMono_sum_single (II : IntersectionSystem) (hII : IsIntersectionSystem
     hFlMono Ψ N II (∑ i, Finsupp.single (r i) 1) =
       II (FlBlock Ψ N) (FlIdx Ψ N) (PFl Ψ N) (dimFl Ψ N + 1) (fun i => xLine Ψ N (r i)) := by
   have hdeg : (∑ i, Finsupp.single (r i) (1 : ℕ)).degree = dimFl Ψ N + 1 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp [Finsupp.degree_single]
   have hm : Finsupp.toMultiset (∑ i, Finsupp.single (r i) (1 : ℕ)) = Multiset.map r Finset.univ.val := by
     rw [Finsupp.toMultiset_sum]
@@ -199,7 +207,7 @@ theorem hFlMono_sum_single (II : IntersectionSystem) (hII : IsIntersectionSystem
       simp [Multiset.length_toList]
       omega
     unfold monoLines
-    rw [hm, dif_pos hk, hσ k hk]
+    rw [hm, dite_eq_left hk, hσ k hk]
     rfl
   unfold hFlMono
   rw [if_pos hdeg, hML]
@@ -207,8 +215,8 @@ theorem hFlMono_sum_single (II : IntersectionSystem) (hII : IsIntersectionSystem
 
 end FlagHeightMultilinear
 
-open FlagHeightMultilinear in
 
+open FlagHeightMultilinear in
 theorem HFlProdLinear.proof (hA : FlagArithVar.Statement) : HFlProdLinear.Statement := by
   intro II Ψ _ _ _ N d c ℓ hII hN hd
   subst hd

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FormPolyIsHomogeneousAndEval
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.KillNoneFormPoly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagHeightPolynomialWeightForm
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.XFlArith
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHFlProdLinear
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FormPolyIsHomogeneousAndEval
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.KillNoneFormPoly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagHeightPolynomialWeightForm
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.XFlArith
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHFlProdLinear
+
+@[expose] public section
 
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 
@@ -90,7 +94,7 @@ private theorem imageZ_mCoordIdeal' {K : Type} {ι : K → Type} {K' : Type} {ι
   have h : (mConeMap y) (rename v g) = rename κ (mConeMap (y ∘ v) g) := by
     induction g using MvPolynomial.induction_on with
     | C a => simp [mConeMap]
-    | add f g hf hg => simp only [map_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), hf, hg]
     | mul_X f p hf =>
       simp only [map_mul, rename_X, hf]
       simp [mConeMap, hv]
@@ -257,7 +261,8 @@ theorem flZero_main : Inputs → ∀ (II : IntersectionSystem), IsFullIntersecti
     simp only [xLine]
     rw [← h1, ← h2, FlLines.deg_abel_smul]
   rw [hpoly, eval_toWt_gap]
-  simp only [formPoly, map_sum, map_mul, map_prod, eval_C, eval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [formPoly, map_sum, map_mul, map_prod, eval_C, eval_X]
   apply Finset.sum_eq_zero
   intro w _
   by_cases hw : ∃ j, w j = p

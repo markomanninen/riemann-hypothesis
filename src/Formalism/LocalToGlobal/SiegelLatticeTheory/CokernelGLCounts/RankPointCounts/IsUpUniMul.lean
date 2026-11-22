@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolGrp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UpUniMul
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolGrp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UpUniMul
+
+@[expose] public section
 
 noncomputable section
 

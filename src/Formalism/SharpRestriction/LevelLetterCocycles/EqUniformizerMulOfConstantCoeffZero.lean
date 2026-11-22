@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.HermFlagUnipotentAnisotropicVectorSubMem
-import Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorLevelsUnramifiedStatement
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ResiduePi0EqNegPrime
-import Formalism.SharpRestriction.LevelLetterCocycles.CompleteOfPow
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.HermFlagUnipotentAnisotropicVectorSubMem
+public import Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorLevelsUnramifiedStatement
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ResiduePi0EqNegPrime
+public import Formalism.SharpRestriction.LevelLetterCocycles.CompleteOfPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL] [CommRing O] [Algebra O LL]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ} (W : LocWach PD LL O v n)
 
-open PowerSeries in
 
+open PowerSeries in
 def ιS (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) : PowerSeries O →ₐ[O] PowerSeries O :=
   PowerSeries.substAlgHom (R := O) (PowerSeries.HasSubst.of_constantCoeff_zero'
     (Formalism.MainNotions.UnusedSlot80.ToolsR.π₀₁_cc hR))
@@ -63,7 +67,7 @@ theorem Gd01 : (Gd (O := O) PD.p 0 1) = PowerSeries.X + ((PD.p : ℕ) : PowerSer
 
 theorem ιS_qp (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) (i : ZMod n) :
     Formalism.MainNotions.LiftingTheory.qp W i = ιS W hR (PowerSeries.X + ((PD.p : ℕ) : PowerSeries O)) := by
-  rw [map_add, ιS_X, map_natCast]
+  rw [map_add (f := _), ιS_X, map_natCast]
   rfl
 
 theorem res_decomp [IsLocalRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) O]
@@ -81,7 +85,7 @@ theorem res_decomp [IsLocalRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) 
     simp
   have he : g = (fun i => PowerSeries.C ((R i).coeff 0)) + Formalism.MainNotions.LiftingTheory.qp W * fun i => ιS W hR (Q i) := by
     funext i
-    rw [Pi.add_apply, Pi.mul_apply, hF i, hQR i, Gd01, map_add, map_mul, ← ιS_qp, hRc i]
+    rw [Pi.add_apply, Pi.mul_apply, hF i, hQR i, Gd01, map_add (f := _), map_mul, ← ιS_qp, hRc i]
     rw [show ιS W hR (PowerSeries.C ((R i).coeff 0)) = PowerSeries.C ((R i).coeff 0) from
       (ιS W hR).commutes _]
     ring
@@ -205,14 +209,14 @@ theorem hγp_of [IsDomain O] [CharZero O] [IsLocalRing O] [IsAdicComplete (IsLoc
   set u : LetA O n := χ + p1 * W.φA rq
   have huA : u ∈ W.AΔ := W.AΔ.add_mem (W.AΔ.algebraMap_mem _) (W.AΔ.mul_mem hp1A (Formalism.MainNotions.LiftingTheory.lifta_φΔ W _ hrq))
   have hγp1 : W.γA W.gam p1 = u * p1 := by
-    rw [hp1, ← W.φA_γA, hγq, map_mul, map_add, map_mul]
+    rw [hp1, ← W.φA_γA, hγq, map_mul, map_add (f := _), map_mul]
     simp only [u, χ, AlgHom.commutes]
     rw [← hp1]
   obtain ⟨g', hg', hγg'⟩ := hγg_of W hR z hz hz1 p1 hp1A
   have hu1 : (u - 1) * p1 = W.π₀ * qp * g' := by rw [← hγg', hγp1]; ring
   obtain ⟨t, ht, hφπ⟩ := hLR.φπ
   have hp1e : p1 = ((PD.p : ℕ) : LetA O n) + W.π₀ * qp ^ (PD.p - 1) * t := by
-    rw [hp1, show qp = W.π₀ + ((PD.p : ℕ) : LetA O n) from rfl, map_add, hφπ, map_natCast]
+    rw [hp1, show qp = W.π₀ + ((PD.p : ℕ) : LetA O n) from rfl, map_add (f := _), hφπ, map_natCast]
     simp only [Formalism.MainNotions.LiftingTheory.qp]
     ring
   obtain ⟨o, a, ha, hua⟩ := res_decomp W hlm hR (W.AΔ.sub_mem huA W.AΔ.one_mem)
@@ -319,8 +323,8 @@ namespace Formalism.MainNotions.CrystallineLiftingInputs.truncatedSeriesData
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem gamma_lemma_of_crystalline (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (h9 : Formalism.MainNotions.DeltaInvariantLattices.P9 D HW F) :
     ∀ (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (hg : Good K 1 LL)
       [NeZero (Module.finrank ℚ_[l] ↥(K0 K))], Formalism.MainNotions.N.Pv.LocalLengthBound.WachGammaDerivation ((HW l).W K 1 LL hg) := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.Mem.Vol
 open scoped TensorProduct Topology
@@ -19,7 +23,7 @@ theorem exists_compact_latHat (F E : Type) [Field F] [NumberField F] [Field E] [
   obtain ⟨m, x, hx⟩ := Submodule.fg_iff_exists_fin_generating_family.1 hZ
   let g : (Fin m → Af F) → Fin M → Af F ⊗[F] E := fun c i => ∑ k, c k ⊗ₜ[F] x k i
   have hg : Continuous g := by
-    refine continuous_pi fun i => continuous_finset_sum _ fun k _ => ?_
+    refine continuous_pi fun i => continuous_finsetSum _ fun k _ => ?_
     have : (fun c : Fin m → Af F => c k ⊗ₜ[F] x k i) = fun c => c k • ((1 : Af F) ⊗ₜ[F] x k i) := by
       funext c
       rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -49,7 +53,7 @@ theorem exists_compact_latHat (F E : Type) [Field F] [NumberField F] [Field E] [
     obtain ⟨c, hc, rfl⟩ := hy
     obtain ⟨d, hd, rfl⟩ := hz
     refine ⟨c + d, fun k _ w => ?_, ?_⟩
-    · rw [Pi.add_apply, map_add]
+    · rw [Pi.add_apply, map_add (f := _)]
       exact add_mem (hc k trivial w) (hd k trivial w)
     · funext i
       simp only [g, Pi.add_apply, TensorProduct.add_tmul, Finset.sum_add_distrib]

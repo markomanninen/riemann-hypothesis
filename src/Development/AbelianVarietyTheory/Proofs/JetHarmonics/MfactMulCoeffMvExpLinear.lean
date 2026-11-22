@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds Formalism.UnitaryBoundIntegral
 
@@ -38,7 +42,8 @@ theorem mfact_mul_coeff_mvExp_linear [Fintype σ] (y : σ → C) (m : σ →₀ 
   classical
   have hL : (∑ s, y s • (MvPowerSeries.X s : MvPowerSeries σ C)) =
       ((∑ s, y s • (MvPolynomial.X s : MvPolynomial σ C) : MvPolynomial σ C) : MvPowerSeries σ C) := by
-    rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [MvPolynomial.coeToMvPowerSeries.ringHom_apply, MvPolynomial.smul_eq_C_mul, MvPolynomial.coe_mul,
       MvPolynomial.coe_C, MvPolynomial.coe_X, MvPowerSeries.smul_eq_C_mul]
@@ -69,7 +74,7 @@ theorem mvExp_add_subst_linear : ∀ (C : Type) [Field C] [CharZero C] (σ : Typ
   intro C _ _ σ _
   refine ⟨fun a b ha hb => ?_, fun a ha => mvExp_eq_subst_exp a ha, fun τ _ φ a hφ ha => ?_, fun y P => ?_⟩
   · rw [mvExp_eq_subst_exp a ha, mvExp_eq_subst_exp b hb,
-      mvExp_eq_subst_exp (a + b) (by rw [map_add, ha, hb, add_zero])]
+      mvExp_eq_subst_exp (a + b) (by rw [map_add (f := _), ha, hb, add_zero])]
     exact ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.exp_add ha hb
   · have hs := MvPowerSeries.hasSubst_of_constantCoeff_zero hφ
     rw [mvExp_eq_subst_exp a ha,

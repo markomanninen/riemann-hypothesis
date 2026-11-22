@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MulLaurentSup
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MulLaurentSup
+
+@[expose] public section
 
 noncomputable section
 
@@ -146,7 +150,8 @@ theorem mul_valS_detA_le {R : Type} [Field R] {ι : Type} (LL : Letters ι) {r :
     · have : twistSub LL S' (lastIdx r) (X (A i, j) : MvPolynomial (ι × Fin r) R) =
           ∑ b : Fin r, C (twistMat R r (lastIdx r) 1 b j) * X (A i, b) := by
         simp [twistSub, hS, hv]
-      rw [this, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, map_sum]
       simp only [map_mul, hC, hX, ht]
       simp only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
       by_cases hij : i = j

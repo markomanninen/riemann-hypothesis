@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.SeriesState
+module
+
+public import ReciprocityTheory.DualLattices.SeriesState
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh
 

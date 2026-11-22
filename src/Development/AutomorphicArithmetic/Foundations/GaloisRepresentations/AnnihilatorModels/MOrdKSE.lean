@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PulledRead
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FibrePowerMapOfTotalSpacesIsPullbackStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PulledRead
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FibrePowerMapOfTotalSpacesIsPullbackStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
@@ -26,7 +30,7 @@ private theorem pm_hom {S S' : Scheme.{0}} {A' : Over S'} {A : Over S} (f : S' �
 private theorem pm_pr {S S' : Scheme.{0}} {A' : Over S'} {A : Over S} (f : S' ⟶ S) (φ : A'.left ⟶ A.left)
     (h : φ ≫ A.hom = A'.hom ≫ f) (m : ℕ) (i : Fin m) :
     GlobalTheory.KS.powMap f φ h m ≫ (GlobalTheory.KS.pr A i).left = (GlobalTheory.KS.pr A' i).left ≫ φ := by
-  simp only [GlobalTheory.KS.powMap, GlobalTheory.KS.pr, ← Over.comp_left, Pi.lift_π, Over.homMk_left]
+  simp only [GlobalTheory.KS.powMap, GlobalTheory.KS.pr, ← Over.comp_left, Pi.lift_comp_π, Over.homMk_left]
 
 private theorem ksR_hom (L : TjE E mπ T) (k : ℕ) :
     L.ksR k ≫ (GlobalTheory.KS.pow E.univ.A k).hom = (GlobalTheory.KS.pow L.o.A k).hom ≫ L.t := by

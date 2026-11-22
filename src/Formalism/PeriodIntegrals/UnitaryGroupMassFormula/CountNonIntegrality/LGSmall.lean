@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGDefs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +96,7 @@ theorem dual_lattice_powers : DualPow := by
     | add x y _ _ hx hy =>
       obtain ⟨w₁, hw₁⟩ := (FractionalIdeal.mem_one_iff _).mp hx
       obtain ⟨w₂, hw₂⟩ := (FractionalIdeal.mem_one_iff _).mp hy
-      exact (FractionalIdeal.mem_one_iff _).mpr ⟨w₁ + w₂, by rw [map_add, hw₁, hw₂, map_add, mul_add]⟩
+      exact (FractionalIdeal.mem_one_iff _).mpr ⟨w₁ + w₂, by rw [map_add (f := _), hw₁, hw₂, map_add (f := _), mul_add]⟩
     | smul a x _ hx =>
       rw [smul_eq_mul, map_mul, mul_left_comm]
       obtain ⟨w, hw⟩ := (FractionalIdeal.mem_one_iff _).mp hx

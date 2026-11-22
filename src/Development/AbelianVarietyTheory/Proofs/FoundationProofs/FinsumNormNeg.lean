@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.InertSign
 open scoped BigOperators
 
@@ -75,7 +80,7 @@ theorem sum_norm_neg {k : Type} [Field k] [Fintype k] (s : k →+* k) (hs : ∀ 
     intro h
     have hmem : a + s a ∈ F := by
       show s (a + s a) = a + s a
-      rw [map_add, hs, add_comm]
+      rw [map_add (f := _), hs, add_comm]
     apply ha
     have := congrArg (fun χ : AddChar F ℂ => χ ⟨a + s a, hmem⟩) h
     simpa only [hφ_apply, AddChar.one_apply] using this
@@ -217,13 +222,13 @@ theorem finsum_norm_neg : ∀ (R : Type) [CommRing R] (σ : R →+* R) (P : Idea
         intro q₁ q₂
         rw [← hχ]
         apply hχ_congr
-        rw [← Ideal.Quotient.eq, map_add, Ideal.Quotient.mk_out, Ideal.Quotient.mk_out,
+        rw [← Ideal.Quotient.eq, map_add (f := _), Ideal.Quotient.mk_out, Ideal.Quotient.mk_out,
           Ideal.Quotient.mk_out] }
   have hψ_mk : ∀ a, ψ (Ideal.Quotient.mk P a) = χ a := fun a =>
     hχ_congr _ _ (by rw [← Ideal.Quotient.eq, Ideal.Quotient.mk_out])
   have hψne : ∃ x, ψ (x + s x) ≠ 1 := by
     obtain ⟨a, ha⟩ := hχa
-    exact ⟨Ideal.Quotient.mk P a, by rw [hs_mk, ← map_add, hψ_mk]; exact ha⟩
+    exact ⟨Ideal.Quotient.mk P a, by rw [hs_mk, ← map_add (f := _), hψ_mk]; exact ha⟩
   obtain ⟨m, hm, hsum⟩ := sum_norm_neg s hs hsne ψ hψne
   refine ⟨m, hm, ?_⟩
   rw [finsum_eq_sum_of_fintype, ← hsum]

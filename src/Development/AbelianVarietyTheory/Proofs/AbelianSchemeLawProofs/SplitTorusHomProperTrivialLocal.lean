@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsPullbackCompIsoMonHom
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomProperTrivialField
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomEqOneOfNilpotent
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsPullbackCompIsoMonHom
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomProperTrivialField
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomEqOneOfNilpotent
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
@@ -48,8 +52,8 @@ theorem eq_zero_of_forall_mem_map_pow {A C : Type} [CommRing A] [IsLocalRing A] 
   rw [Algebra.algebraMap_self, Ideal.map_id] at this
   exact Ideal.pow_le_pow_right (Nat.le_succ n) this
 
-open TorusNil in
 
+open TorusNil in
 theorem pt_ext_of_quotients {A C : Type} [CommRing A] [CommRing C] [Algebra A C] {N : Type}
     (I : N → Ideal C) (hI : ∀ x, (∀ i, x ∈ I i) → x = 0)
     {B : Over (Spec (CommRingCat.of A))} [IsSeparated B.hom] {a b : sp A C ⟶ B}
@@ -57,7 +61,7 @@ theorem pt_ext_of_quotients {A C : Type} [CommRing A] [CommRing C] [Algebra A C]
     a = b := by
   have : IsAffine (sp A C).left := inferInstanceAs (IsAffine (Spec (CommRingCat.of C)))
   have hinj : Function.Injective (equalizer.ι a b).left.appTop := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have hb := ConcreteCategory.bijective_of_isIso (Scheme.ΓSpecIso (CommRingCat.of C)).hom
     apply hb.1
@@ -76,8 +80,8 @@ theorem pt_ext_of_quotients {A C : Type} [CommRing A] [CommRing C] [Algebra A C]
 
 end TorusLocal
 
-open TorusNil TorusLocal in
 
+open TorusNil TorusLocal in
 theorem splitTorus_hom_proper_trivial_local (A : Type) [CommRing A] [IsLocalRing A]
     [IsNoetherianRing A] (X : Type) [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X]
     (B : Over (Spec (CommRingCat.of A))) [GrpObj B] [IsProper B.hom]

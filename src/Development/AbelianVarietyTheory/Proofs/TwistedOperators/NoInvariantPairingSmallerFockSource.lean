@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteDimensionalKill
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteDimensionalKill
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible Formalism.L2.Theta
 open scoped TensorProduct
@@ -53,30 +57,24 @@ def pre1 (Z : Mat p q) : invSub p q R →ₗ[ℂ] invSub p q R where
   map_add' a b := by apply Subtype.ext; ext P y; simp
   map_smul' c b := by apply Subtype.ext; ext P y; simp
 
-@[simp] theorem invariantFockPairingPrecompAction_coe (Z : Mat p q) (b : invSub p q R) :
-    ((pre1 R Z b : invSub p q R) : Pairing p q R) = b.1 ∘ₗ fockAct1 p q r s Z := rfl
-
 theorem invariantFockPairingPrecompAction_add (Z W : Mat p q) (b : invSub p q R) :
     pre1 R (Z + W) b = pre1 R Z b + pre1 R W b := by
-  apply Subtype.ext; ext P y; simp
+  apply Subtype.ext; ext P y; simp [pre1]
 
 theorem invariantFockPairingPrecompAction_smul (c : ℂ) (Z : Mat p q) (b : invSub p q R) :
     pre1 R (c • Z) b = c • pre1 R Z b := by
-  apply Subtype.ext; ext P y; simp
+  apply Subtype.ext; ext P y; simp [pre1]
 
 theorem invariantFockPairingPrecompAction_commutator (Z W : Mat p q) (b : invSub p q R) :
     pre1 R (Z * W - W * Z) b = pre1 R W (pre1 R Z b) - pre1 R Z (pre1 R W b) := by
   have hl := (GlobalTheory.FockAlg.fock_lie_and_commute p q r s).2.1 Z W
   apply Subtype.ext; ext P y
-  simp [hl]
+  simp [pre1, hl]
 
 def evalB (P : Pol p q r s) (y : R.HK.V) : Module.Dual ℂ (invSub p q R) where
   toFun b := b.1 P y
   map_add' _ _ := by simp
   map_smul' _ _ := by simp
-
-@[simp] theorem evalB_apply (P : Pol p q r s) (y : R.HK.V) (b : invSub p q R) :
-    evalB R P y b = b.1 P y := rfl
 
 theorem dualMap_evalB (Z : Mat p q) (P : Pol p q r s) (y : R.HK.V) :
     (pre1 R Z).dualMap (evalB R P y) = evalB R (fockAct1 p q r s Z P) y := by
@@ -112,11 +110,8 @@ def MMact : Mat p q →ₗ[ℂ] Module.End ℂ (MM R p q) where
 
 def Ly (y : R.HK.V) : Pol p q r s →ₗ[ℂ] MM R p q where
   toFun P := ⟨evalB R P y, evalB_mem R P y⟩
-  map_add' _ _ := by apply Subtype.ext; ext b; simp
-  map_smul' _ _ := by apply Subtype.ext; ext b; simp
-
-@[simp] theorem Ly_coe (y : R.HK.V) (P : Pol p q r s) :
-    ((Ly R y P : MM R p q) : Module.Dual ℂ (invSub p q R)) = evalB R P y := rfl
+  map_add' _ _ := by apply Subtype.ext; ext b; simp [evalB]
+  map_smul' _ _ := by apply Subtype.ext; ext b; simp [evalB]
 
 theorem MMact_Ly (Z : Mat p q) (y : R.HK.V) (P : Pol p q r s) :
     MMact R Z (Ly R y P) = Ly R y (fockAct1 p q r s Z P) := by
@@ -147,7 +142,7 @@ theorem kfin_MMact (v : MM R p q) :
     · exact Submodule.add_mem_sup m₁ m₂
     · intro Z hZ w hw
       obtain ⟨a, ha, c, hc, rfl⟩ := Submodule.mem_sup.1 hw
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (k₁ Z hZ a ha) (k₂ Z hZ c hc)
   | smul c x hx ih =>
     obtain ⟨W₁, f₁, m₁, k₁⟩ := ih
@@ -187,8 +182,8 @@ def BB : Pol p q r s →ₗ[ℂ] R.HK.V →ₛₗ[starRingEnd ℂ] MM R p q :=
   LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun P y => Ly R y P)
     (fun _ _ _ => by simp)
     (fun _ _ _ => by simp)
-    (fun _ _ _ => by apply Subtype.ext; ext b; simp)
-    (fun _ _ _ => by apply Subtype.ext; ext b; simp)
+    (fun _ _ _ => by apply Subtype.ext; ext b; simp [Ly, evalB])
+    (fun _ _ _ => by apply Subtype.ext; ext b; simp [Ly, evalB])
 
 @[simp] theorem BB_apply (P : Pol p q r s) (y : R.HK.V) : BB R P y = Ly R y P := rfl
 
@@ -202,7 +197,7 @@ theorem eq_zero_of_noIntw (hadm : AdmGK R.HK)
     intro Z hZ P y
     apply Subtype.ext; ext c
     have hc : IsInvPairing R c.1 := c.2
-    simpa using hc Z hZ P y
+    simpa [Ly, evalB] using hc Z hZ P y
   obtain ⟨f, h2, hB, hc⟩ :=
     GlobalTheory.InvPairingTensor.exists_tensor_map p q r s T₂ R hadm (MM R p q) (BB R) hinv
   have h1 : ∀ Z, f ∘ₗ fockAct1 p q r s Z = TensorProduct.map (MMact R Z) LinearMap.id ∘ₗ f :=
@@ -213,7 +208,7 @@ theorem eq_zero_of_noIntw (hadm : AdmGK R.HK)
   rw [hf] at h
   simp only [LinearMap.zero_apply, map_zero, BB_apply] at h
   have h' := congrArg (fun φ : MM R p q => (φ : Module.Dual ℂ (invSub p q R)) ⟨b, hb⟩) h
-  simpa using h'
+  simpa [Ly, evalB] using h'
 
 theorem eq_zero_of_noIntw' {T₀ : GrpData (p * r + q * s) (p * s + q * r)} {T₁ : GrpData p q}
     (F : FockData T₀ T₁ T₂) (hadm : AdmGK R.HK)

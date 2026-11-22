@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetGNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumNormRowSubProdMinors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetGNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumNormRowSubProdMinors
+
+@[expose] public section
+
 open Classical MvPolynomial
 
 noncomputable section

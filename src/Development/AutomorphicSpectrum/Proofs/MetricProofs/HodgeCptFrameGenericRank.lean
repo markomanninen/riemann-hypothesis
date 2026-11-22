@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncModelReindexedCoords
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexCoordsReindexed
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCoordsForComponent
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncModelReindexedCoords
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexCoordsReindexed
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCoordsForComponent
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.FMX GlobalTheory.CompanionTheory.Ar.FlagBun

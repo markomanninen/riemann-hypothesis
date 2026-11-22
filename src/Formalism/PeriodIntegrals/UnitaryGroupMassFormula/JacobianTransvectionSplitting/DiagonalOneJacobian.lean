@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JacobianTransvectionSplitting.DiscreteHaar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JacobianTransvectionSplitting.DiscreteHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,8 @@ theorem diagonal_one_jacobian : DiagOne := by
   set μ : Measure F := Measure.addHaar with hμ
   set P : Measure (ι → F) := Measure.pi fun _ => μ with hP
   set m' : ℝ≥0 := distribHaarChar F (Units.mk0 a ha) with hm'
-  have hmod : modF F a = (m' : ℝ≥0∞) := by simp [modF, ha, hm']
+  have hmod : modF F a = (m' : ℝ≥0∞) := by
+    rw [modF, dif_neg ha, hm']
   set φ := scaleAt i a ha with hφ
   have himg : ∀ T : Set (ι → F), φ '' T = φ.symm ⁻¹' T := fun T => by
     rw [Set.image_eq_preimage_of_inverse (fun x => φ.symm_apply_apply x)

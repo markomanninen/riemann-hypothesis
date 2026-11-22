@@ -1,4 +1,8 @@
-import Formalism.PieriBlockIdeals.PieriColumnMinors.RowGenDerivative
+module
+
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.RowGenDerivative
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -86,11 +90,6 @@ def ColumnsReal : Prop :=
   ∀ (p q w : ℕ) (lam2 : Fin q → ℕ), Antitone lam2 → (∀ b, lam2 b ≤ w) → ∀ (n : ℕ) (tau : Fin q → ℕ),
     (∃ b : Fin q, ∃ j < tau b, p < LD.colLen lam2 tau j) →
     ∀ z ∈ PathSpace ℚ (P := Fin p) (rationalBlockModuleSetting p q w lam2).EW n lam2 tau, toSym ℚ z = 0
-
-def HighestWeightMemWZero : Prop :=
-  ∀ (p q w : ℕ) (lam2 : Fin q → ℕ), Antitone lam2 → (∀ b, lam2 b ≤ w) →
-    ∃ h : VQ p q w lam2, (h : MvPolynomial (Fin (p + q) × Fin (p + q)) ℚ) = hw ℚ le_rfl (LD.blockWt p q w lam2) ∧
-      h ∈ W0 p q w lam2
 
 def RealContra : Prop :=
   ∀ (p q w : ℕ) (lam2 : Fin q → ℕ), Contra (rationalBlockModuleSetting p q w lam2) (formB p q w lam2)

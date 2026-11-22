@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.LevelS
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.StrGen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GwTame
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.LevelS
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.StrGen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GwTame
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.Fr UpperTheory.V.GC
 
@@ -166,7 +170,7 @@ theorem UpperTheory.V.GC.character_H1_galois_quotient :
     exact (continuous_of_discreteTopology (f := fun q : k × k => q.1 * q.2)).comp
       (((h2.comp Units.val).continuous.comp continuous_fst).prodMk continuous_snd)
   obtain ⟨τ, hτ⟩ := ch_trace (ZMod (l ^ 1)) k
-  have hτe : ∀ g a, twDual μ ρ g (τ a) = τ (κ (p g) * a) := fun g a => TDual.ext fun m => by
+  have hτe : ∀ g a, twDual μ ρ g (τ a) = τ (κ (p g) * a) := fun g a => DFunLike.ext _ _ fun m => by
     rw [twDual_apply, hτ, hτ, hρa, ← smul_eq_mul, ← map_smul, Algebra.smul_def]
     congr 1
     have e : κ' g⁻¹ * ω g = κ (p g) := by
@@ -187,7 +191,7 @@ theorem UpperTheory.V.GC.character_H1_galois_quotient :
   let f : (H1C loc (chRep κ) fun _ => ⊤) → Z1 (twDual μ ρ) := fun x => ⟨fun g => τ ((s x).1.1 (p g)),
     (((s x).2.1.comp_continuous hp).comp τ).continuous, fun a b => by
       beta_reduce
-      rw [map_mul p, (s x).2.2.1, map_add, hτe, chRep_apply]⟩
+      rw [map_mul p, (s x).2.2.1, map_add (f := _), hτe, chRep_apply]⟩
   obtain ⟨hfin, hle⟩ := gwTame P l h.odd S S' h.above hS' A' hA' _ ho hi k ρ hρ μ hμ
     (fun g hg => ⟨LinearMap.ext fun m => by rw [hρa, hK1 g hg, Units.val_one, one_mul]; rfl, (hμ' g).trans hg.2⟩) c hc _ f
     (fun a b hab => by

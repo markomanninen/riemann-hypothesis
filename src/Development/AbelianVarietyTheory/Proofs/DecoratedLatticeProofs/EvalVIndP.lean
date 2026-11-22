@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer
@@ -29,7 +33,7 @@ theorem indicatorAdele_singleton_mul_singleton (X Y : Set (Pl D)) : indP D X * i
   by_cases hX : v ∈ X <;> by_cases hY : v ∈ Y <;> simp [hX, hY]
 
 theorem indicatorAdele_union_of_disjoint {X Y : Set (Pl D)} (h : Disjoint X Y) : indP D X + indP D Y = indP D (X ∪ Y) := by
-  apply finiteAdele_ext; intro v; rw [map_add, evalV_indP, evalV_indP, evalV_indP]
+  apply finiteAdele_ext; intro v; rw [map_add (f := _), evalV_indP, evalV_indP, evalV_indP]
   by_cases hX : v ∈ X <;> by_cases hY : v ∈ Y <;> simp [hX, hY]
   exact Set.disjoint_left.mp h hX hY
 

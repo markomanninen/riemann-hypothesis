@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RaSmith
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCoord
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CompMemAddFun
-import Development.WeilBound.CoreStatements.HodgeTatePoints.FormMemLin
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RaSmith
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCoord
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CompMemAddFun
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.FormMemLin
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix

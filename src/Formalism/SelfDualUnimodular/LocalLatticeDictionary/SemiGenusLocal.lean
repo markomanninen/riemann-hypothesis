@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SelfDualUnimodular.LocalLatticeDictionary.SelfDualRestr
+module
+
+public import Mathlib
+public import Formalism.SelfDualUnimodular.LocalLatticeDictionary.SelfDualRestr
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,29 @@ theorem core {p : Ideal (𝓞 K)} (hK : Formalism.HermitianLatticesTheory.IsCMUn
   have hXu : IsUnitIn (locRing p) (h X X) := hXe ▸ heu
   have hX0 : h X X ≠ 0 := hXu.1
   obtain ⟨τ, hτ, hτe⟩ := exists_isom_vec hsy hnd heu.1 hXe
-  have hN1 := selfDual_map h1 τ hτ
+  have hN1 : IsSelfDualMod (locRing p) h (M₁.comap (τ.symm : V →ₗ[K] V).toAddMonoidHom) := by
+    refine { smul_mem := ?_, int := ?_, dual := ?_, span := ?_ }
+    · intro a ha m hm
+      change τ.symm (a • m) ∈ M₁
+      rw [map_smul]
+      exact h1.smul_mem a ha _ hm
+    · intro x hx y hy
+      have hxy : h (τ.symm x) (τ.symm y) ∈ locRing p := h1.int _ hx _ hy
+      rwa [← hτ, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply] at hxy
+    · intro x hx
+      change τ.symm x ∈ M₁
+      apply h1.dual
+      intro m hm
+      have hτm : τ m ∈ M₁.comap (τ.symm : V →ₗ[K] V).toAddMonoidHom := by
+        change τ.symm (τ m) ∈ M₁
+        rwa [LinearEquiv.symm_apply_apply]
+      rw [← hτ m (τ.symm x), LinearEquiv.apply_symm_apply]
+      exact hx (τ m) hτm
+    · intro x
+      obtain ⟨t, ht, htx⟩ := h1.span (τ.symm x)
+      refine ⟨t, ht, ?_⟩
+      change τ.symm (t • x) ∈ M₁
+      rwa [map_smul]
   have hXN : X ∈ M₁.comap (τ.symm : V →ₗ[K] V).toAddMonoidHom := by
     change τ.symm X ∈ M₁
     rw [← hτe, LinearEquiv.symm_apply_apply]
@@ -68,9 +94,34 @@ theorem core {p : Ideal (𝓞 K)} (hK : Formalism.HermitianLatticesTheory.IsCMUn
       rw [Module.finrank_pos_iff_exists_ne_zero]
       exact ⟨⟨h X X, X, rfl⟩, fun h0 => hX0 (congrArg Subtype.val h0)⟩
     omega
+  have hSelfDualRestr {M : AddSubgroup V} (hM : IsSelfDualMod (locRing p) h M) (hXM : X ∈ M) :
+      IsSelfDualMod (locRing p) (restr h (LinearMap.ker (h X)))
+        (M.comap (LinearMap.ker (h X)).subtype.toAddMonoidHom) := by
+    refine { smul_mem := ?_, int := ?_, dual := ?_, span := ?_ }
+    · intro a ha m hm
+      change ((a • m : LinearMap.ker (h X)) : V) ∈ M
+      rw [Submodule.coe_smul]
+      exact hM.smul_mem a ha _ hm
+    · intro x hx y hy
+      exact hM.int x hx y hy
+    · intro x hx
+      change (x : V) ∈ M
+      apply hM.dual
+      intro m hm
+      have hpm : (proj h X hX0 m : V) ∈ M := ((mem_iff_split hM hXM hXu m).1 hm).2
+      have heq : h m x = h (proj h X hX0 m) x := by
+        conv_lhs => rw [decomp h X hX0 m]
+        rw [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply,
+          LinearMap.mem_ker.mp x.2, smul_zero, zero_add]
+      rw [heq]
+      exact hx (proj h X hX0 m) hpm
+    · intro x
+      obtain ⟨t, ht, htx⟩ := hM.span (x : V)
+      refine ⟨t, ht, ?_⟩
+      change ((t • x : LinearMap.ker (h X)) : V) ∈ M
+      rwa [Submodule.coe_smul]
   obtain ⟨g', hg', hmem'⟩ := ih _ hdim (LinearMap.ker (h X)) rfl (restr h (LinearMap.ker (h X)))
-    (symm_restr hsy _) (nondeg_restr hs hnd hX0) _ _ (selfDual_restr hs hN1 hXN hXu)
-    (selfDual_restr hs h2 hXM hXu)
+    (symm_restr hsy _) (nondeg_restr hs hnd hX0) _ _ (hSelfDualRestr hN1 hXN) (hSelfDualRestr h2 hXM)
   refine ⟨τ.trans (extE h X hX0 g'), ?_, ?_⟩
   · intro x y
     rw [LinearEquiv.trans_apply, LinearEquiv.trans_apply, extE_isom h X hX0 hs g' (fun u v => hg' u v), hτ]

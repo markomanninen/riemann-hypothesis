@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CountFromEqFilterLength
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CountFromEqFilterLength
+
+@[expose] public section
 
 noncomputable section
 

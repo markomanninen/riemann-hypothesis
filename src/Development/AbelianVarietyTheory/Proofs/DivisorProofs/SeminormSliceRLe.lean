@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthElim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClmSupBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzTranslationSeminormBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowNormMulSeminormSliceRLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthElim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClmSupBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzTranslationSeminormBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowNormMulSeminormSliceRLe
+
+@[expose] public section
 
 open GlobalTheory.SliceSchwartz GlobalTheory.SliceOp
 open scoped ContDiff

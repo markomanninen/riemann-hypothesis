@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TChiKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TChiKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContRep
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -38,7 +42,7 @@ private theorem th_int (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure] (a : CC 
       by_contra hn
       exact hq (by simpa only [mul_assoc] using h0 q hn g)
   simp only [h1]
-  rw [integral_finset_sum, th, finsum_eq_sum_of_support_subset (s := hS.toFinset)]
+  rw [integral_finsetSum, th, finsum_eq_sum_of_support_subset (s := hS.toFinset)]
   · intro q hq
     by_contra hn
     exact hq (by simp only [h0 q hn, integral_zero])
@@ -58,7 +62,7 @@ private theorem exp_cast (t : ℝ) : Complex.exp ((((2 + 2 : ℕ) : ℝ) / 2 * t
   push_cast
   ring
 
-private theorem specW [IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure] {μ₂ : Measure (G1 K 2)} [μ₂.IsHaarMeasure]
+private theorem specW [_root_.NumberField.IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure] {μ₂ : Measure (G1 K 2)} [μ₂.IsHaarMeasure]
     {τ₁ τ₂ : Submodule ℂ (L2 μ₂)} (hP : Pair μ₂ τ₁ τ₂) {D : TypeDat K (2 + 2)} {d : ℕ} (A : Line μ τ₁ τ₂ D d)
     (w : ℝ → Eu d) (hw : Continuous w) (hwc : HasCompactSupport w) (u : L (Eu d)) (hu : ∀ᵐ x : ℝ, u x = w x) :
     IsContRep μ (A.J u) (th fun y => Complex.exp (2 * (HH y : ℂ)) * A.sec (w (HH y)) y) := by
@@ -80,13 +84,15 @@ private theorem specW [IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsH
   have hT := fun i => thBasic μ _ (hB i).1.cont (hB i).1.rat (hB i).2
   have hR := rep_sum Finset.univ (fun i => A.J (U i)) (fun i => th (bf (fun x => w x i) (A.sec (e i))))
     fun i => ⟨(hT i).2.1, (hT i).2.2.1, A.spec _ _ _ (hc i) (hcc i) (hU i)⟩
-  rw [huU, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [huU, map_sum]
   convert hR using 1
   funext x
   simp only [Finset.sum_apply, th]
   rw [← finsum_sum_comm]
   · refine finsum_congr fun q => ?_
-    rw [hsum (HH _), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum (HH _), map_sum]
     simp only [Finset.sum_apply, map_smul, Pi.smul_apply, smul_eq_mul, bf, exp_cast, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => by ring
   · intro i _

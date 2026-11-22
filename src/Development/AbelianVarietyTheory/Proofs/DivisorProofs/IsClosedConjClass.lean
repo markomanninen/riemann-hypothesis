@@ -1,28 +1,34 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinpolyIrreducibleNatDegreeOfRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralOrbitCentralizerAlmostAll
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelMeanValueNonnegative
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactCentralizerTranslate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalFinIrr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalConjugacyClassClosed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeCentralizerComm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryAdelicPointOfEventuallyIntegralLocaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicPointExtOfComponentsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactUnitaryAdelicProdLocalCompactsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyCompactUnitaryAdelicImageIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousUnitaryAdelicComponentAtPlaceExplicitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralUnitaryPointsAtPlaceMulMemStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactIntegralUnitaryPointsAtPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIsIntegralInCompletedTensorBasisMulExpStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarPreservesIntegrality
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalUnitsLocallyCompactStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactUnitaryPointsAtPlaceFstMemCompactStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRingStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHomStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralOrderCentralizerStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyCompletedTensorMatrixSplitSemilocalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSqrtFixedNearOneCommutativeCentralizerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkedSumIrr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralOrbitCentralizerAlmostAll
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelMeanValueNonnegative
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactCentralizerTranslate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalFinIrr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalConjugacyClassClosed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeCentralizerComm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryAdelicPointOfEventuallyIntegralLocaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicPointExtOfComponentsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactUnitaryAdelicProdLocalCompactsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyCompactUnitaryAdelicImageIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousUnitaryAdelicComponentAtPlaceExplicitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralUnitaryPointsAtPlaceMulMemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactIntegralUnitaryPointsAtPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIsIntegralInCompletedTensorBasisMulExpStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarPreservesIntegrality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalUnitsLocallyCompactStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactUnitaryPointsAtPlaceFstMemCompactStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRingStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHomStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralOrderCentralizerStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyCompletedTensorMatrixSplitSemilocalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSqrtFixedNearOneCommutativeCentralizerStatement
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx GlobalTheory.OrbFinAf
 open scoped TensorProduct Classical
 
@@ -138,6 +144,7 @@ theorem orbA' (G : HTGroup p) (v : AwayP p) (y : G.Cˣ) (hdeg : (minpoly G.F (y 
     rw [horb]; exact isClosed_conjClass' G v y hdeg hsep X
   obtain ⟨C, hC, hCg⟩ := @GlobalTheory.OrbitSumInt.exists_compact_reach _ _ _ _ _ hlc hsc act _ h2
     (by haveI := h2; infer_instance) hcs e hcl Ω hΩ
+  open scoped Pointwise in
   refine ⟨C⁻¹, hC.inv, fun g hg => ?_⟩
   obtain ⟨c, hc, hce⟩ := hCg g⁻¹ (by show g⁻¹ * e * g⁻¹⁻¹ ∈ Ω; rwa [inv_inv])
   change c * e * c⁻¹ = g⁻¹ * e * g⁻¹⁻¹ at hce
@@ -155,8 +162,8 @@ open GlobalTheory.OrbFinAf.TorusNorm
 
 variable {p : ℕ} [Fact p.Prime]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem normProper (G : HTGroup p) (v : AwayP p) (g0 : Gv G v)
     (hcomA0 : ∀ a b : Qv v ⊗[ℚ] G.C,
       a * (((g0 : (Qv v ⊗[ℚ] G.C)ˣ × (Qv v)ˣ).1 : (Qv v ⊗[ℚ] G.C)ˣ) : Qv v ⊗[ℚ] G.C) =
@@ -205,7 +212,7 @@ theorem normProper (G : HTGroup p) (v : AwayP p) (g0 : Gv G v)
     induction a using TensorProduct.induction_on with
     | zero => simp
     | tmul r y => rw [hsl, hsl, starT_tmul, starT_tmul, G.star_star]
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   let stU : (Qv v ⊗[ℚ] G.C)ˣ → (Qv v ⊗[ℚ] G.C)ˣ := fun g =>
     ⟨sl g, sl ((g⁻¹ : (Qv v ⊗[ℚ] G.C)ˣ) : Qv v ⊗[ℚ] G.C), by rw [← hsl_mul, Units.inv_mul, hsl1],
       by rw [← hsl_mul, Units.mul_inv, hsl1]⟩
@@ -238,7 +245,9 @@ theorem normProper (G : HTGroup p) (v : AwayP p) (g0 : Gv G v)
   let Z : Subgroup (Qv v ⊗[ℚ] G.C)ˣ := Subgroup.centralizer {e}
   have hZ : ∀ z : (Qv v ⊗[ℚ] G.C)ˣ, z ∈ Z ↔ (z : Qv v ⊗[ℚ] G.C) * e = e * z := by
     intro z
-    rw [Subgroup.mem_centralizer_singleton_iff, Units.ext_iff, Units.val_mul, Units.val_mul]
+    rw [Subgroup.mem_centralizer_singleton_iff]
+    change z * e = e * z ↔ _
+    rw [Units.ext_iff, Units.val_mul, Units.val_mul]
   have hZc : IsClosed (Z : Set (Qv v ⊗[ℚ] G.C)ˣ) := by
     have : (Z : Set (Qv v ⊗[ℚ] G.C)ˣ) = {z | z * e = e * z} := by
       ext z; exact Subgroup.mem_centralizer_singleton_iff

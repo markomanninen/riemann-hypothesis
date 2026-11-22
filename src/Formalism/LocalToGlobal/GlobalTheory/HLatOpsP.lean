@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GlobalTheory.HLatOps
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.ExistsNsmulMem
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.TruncatedLatticeHolds
-import Formalism.LocalRingCardinality.DataDIVDefs
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.HLatOps
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.ExistsNsmulMem
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.TruncatedLatticeHolds
+public import Formalism.LocalRingCardinality.DataDIVDefs
+
+@[expose] public section
 
 open Module NumberField ComplexOrder
 
@@ -173,7 +177,7 @@ theorem sesq_ext {F G : V → V → ℂ} {σ : K →+* ℂ} (hσ : ∃ a : K, (�
   · exact absurd h0 hne
   · exact sub_eq_zero.1 h0
 
-theorem exists_im_ne_zero [IsTotallyComplex K] (v : InfinitePlace K) :
+theorem exists_im_ne_zero [_root_.NumberField.IsTotallyComplex K] (v : InfinitePlace K) :
     ∃ a : K, (v.embedding a).im ≠ 0 := by
   have hc : v.IsComplex := IsTotallyComplex.isComplex v
   rw [InfinitePlace.isComplex_iff] at hc
@@ -238,16 +242,6 @@ theorem Iso.mem_L (I : Iso A B) {x : A.V} : I.e x ∈ B.L ↔ x ∈ A.L := by
   · intro hx
     exact ⟨x, hx, rfl⟩
 
-theorem Iso.span_L (I : Iso A B) : Submodule.span K (B.L : Set B.V) =
-    (Submodule.span K (A.L : Set A.V)).map I.e.toLinearMap := by
-  rw [← I.map_L, Submodule.map_coe, ← Submodule.span_image]
-  rfl
-
-theorem Iso.rank_eq (I : Iso A B) : A.rank = B.rank := by
-  unfold HLat.rank rkK
-  rw [I.span_L]
-  exact (LinearEquiv.finrank_map_eq I.e _).symm
-
 theorem Iso.frameOK (I : Iso A B) (h : FrameOK A) : FrameOK B := by
   intro v
   by_contra hv
@@ -264,27 +258,6 @@ theorem Iso.frameOK (I : Iso A B) (h : FrameOK A) : FrameOK B := by
   apply hv
   rw [Matrix.det_isEmpty]
   exact isUnit_one
-
-theorem Iso.fg (I : Iso A B) (h : A.L.FG) : B.L.FG := by
-  rw [← I.map_L]
-  exact h.map _
-
-theorem Iso.good (I : Iso A B) (h : A.Good) : B.Good := by
-  obtain ⟨h1, h2, h3⟩ := h
-  refine ⟨I.frameOK h1, I.fg h2, ?_⟩
-  rw [I.span_L, h3, Submodule.map_top]
-  exact I.e.range
-
-theorem Iso.numbers (I : Iso A B) (hX : FrameOK A) (hL : A.L.FG) :
-    A.mu = B.mu ∧ A.muMax = B.muMax ∧ A.muMin = B.muMin ∧ A.lcv = B.lcv := by
-  obtain ⟨h1, -, h3, h4, h5, -, -⟩ := rerealize K A.V A.ι B.V B.ι A.b A.X B.b B.X I.e.toLinearMap hX
-    (I.frameOK hX) I.e.injective I.norm A.L hL
-  rw [I.map_L] at h1 h3 h4 h5
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · unfold HLat.mu muDef; rw [h3]
-  · unfold HLat.muMax muMaxDef; rw [h4]
-  · unfold HLat.muMin muMinDef; rw [h5]
-  · unfold HLat.lcv; rw [h1]
 
 def Iso.withL (I : Iso A B) (L' : Submodule (𝓞 K) A.V) :
     Iso (withL A L') (HLatOps.withL B (L'.map (I.e.toLinearMap.restrictScalars (𝓞 K)))) where
@@ -305,7 +278,7 @@ theorem frame_free : FrameFree := by
   · unfold muMaxDef; rw [h4]
   · unfold muMinDef; rw [h5]
 
-theorem Iso.maj [IsTotallyComplex K] (I : Iso A B) (v : InfinitePlace K) (x y : A.V) :
+theorem Iso.maj [_root_.NumberField.IsTotallyComplex K] (I : Iso A B) (v : InfinitePlace K) (x y : A.V) :
     majAt B.b B.X v (I.e x) (I.e y) = majAt A.b A.X v x y := by
   obtain ⟨a, ha⟩ := exists_im_ne_zero v
   have hA := isSesq_maj A.b A.X v
@@ -313,10 +286,10 @@ theorem Iso.maj [IsTotallyComplex K] (I : Iso A B) (v : InfinitePlace K) (x y : 
   refine sesq_ext (F := fun x y => majAt B.b B.X v (I.e x) (I.e y)) (G := majAt A.b A.X v)
     (σ := v.embedding) ⟨a, ha⟩ ⟨?_, ?_, ?_, ?_⟩ hA ?_ x y
   · intro x x' y
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hB.1 _ _ _
   · intro x y y'
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hB.2.1 _ _ _
   · intro c x y
     simp only [map_smul]
@@ -362,7 +335,7 @@ theorem frameOf_spec {ι : Type} [Fintype ι] [DecidableEq ι] {G : Matrix ι ι
   have h := exists_frame hG
   have hspec := Classical.choose_spec h
   unfold frameOf
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   refine ⟨Matrix.isUnit_nonsing_inv_det _ hspec.1, ?_⟩
   rw [Matrix.nonsing_inv_nonsing_inv _ hspec.1]
   exact hspec.2
@@ -429,9 +402,9 @@ theorem isSesq_comp {V W : Type} [AddCommGroup V] [Module K V] [AddCommGroup W] 
   intro v
   obtain ⟨h1, h2, h3, h4⟩ := hH v
   refine ⟨fun x x' y => ?_, fun x y y' => ?_, fun a x y => ?_, fun a x y => ?_⟩
-  · simp only [map_add]
+  · simp only [map_add (f := _)]
     exact h1 _ _ _
-  · simp only [map_add]
+  · simp only [map_add (f := _)]
     exact h2 _ _ _
   · simp only [map_smul]
     exact h3 _ _ _
@@ -540,35 +513,6 @@ theorem pull_spec : PullSpec := by
     rw [h5]
     exact Submodule.smul_mem _ _ (Submodule.subset_span h4)
 
-theorem embIso' (A B : HLat K) (ψ : A.V →ₗ[K] B.V) (U : Submodule K B.V) (hB : FrameOK B)
-    (hψ : Function.Injective ψ) (hU : LinearMap.range ψ = U)
-    (hn : ∀ v x, normAt A.b A.X v x = normAt B.b B.X v (ψ x))
-    (hL : A.L = B.L.comap (ψ.restrictScalars (𝓞 K))) :
-    ∃ I : Iso A (sub B U), ∀ x : A.V, U.subtype (I.e x) = ψ x := by
-  let e : A.V ≃ₗ[K] U := (LinearEquiv.ofInjective ψ hψ).trans (LinearEquiv.ofEq _ _ hU)
-  have he : ∀ a, ((e a : U) : B.V) = ψ a := fun a => rfl
-  have hps := pull_spec1 B (sub B U).b U.subtype hB Subtype.val_injective
-  refine ⟨⟨e, ?_, fun v x => ?_⟩, fun x => rfl⟩
-  · ext y
-    constructor
-    · rintro ⟨a, ha, rfl⟩
-      rw [hL] at ha
-      exact ha
-    · intro hy
-      obtain ⟨a, ha⟩ := e.surjective y
-      refine ⟨a, ?_, ha⟩
-      rw [hL]
-      show ψ a ∈ B.L
-      rw [← he a, ha]
-      exact hy
-  · rw [hn]
-    exact hps.2.2 v (e x)
-
-theorem with_lattice_index : WithLIndex := by
-  intro K _ _ _ _ A L' hA hL hle h0
-  exact ⟨Formalism.LFunctionChainParameters.slopeLatticeData.muMaxDef_mono A.b A.X hA hL hle h0,
-    fun hr => Formalism.LFunctionChainParameters.slopeLatticeData.muDef_index A.b A.X hA hL hle h0 hr⟩
-
 end Pull
 
 section Unitary
@@ -634,7 +578,7 @@ theorem Iso.fcoord_eq (I : Iso A B) (hA : FrameOK A) (v : InfinitePlace K) (x : 
   simp only [Iso.umat, Matrix.mulVec_mulVec, Matrix.mul_assoc, Matrix.mul_nonsing_inv _ (hA v),
     Matrix.mul_one]
 
-theorem Iso.umat_star_mul [IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A)
+theorem Iso.umat_star_mul [_root_.NumberField.IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A)
     (v : InfinitePlace K) : (I.umat v).conjTranspose * I.umat v = 1 := by
   have hcol : ∀ i, fcoord B.b B.X v (I.e (A.b i)) = fun k => (I.umat v * (A.X v)⁻¹) k i := by
     intro i
@@ -680,7 +624,7 @@ theorem Iso.umat_mul_symm (I : Iso A B) (hA : FrameOK A) (v : InfinitePlace K) :
     ← Matrix.mul_assoc ((LinearMap.toMatrix A.b B.b I.e.toLinearMap).map v.embedding), hM',
     Matrix.one_mul, Matrix.nonsing_inv_mul _ (hB v)]
 
-theorem Iso.umat_conjTranspose [IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A)
+theorem Iso.umat_conjTranspose [_root_.NumberField.IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A)
     (v : InfinitePlace K) : (I.umat v).conjTranspose = I.symm.umat v := by
   calc (I.umat v).conjTranspose
       = (I.umat v).conjTranspose * (I.umat v * I.symm.umat v) := by
@@ -688,11 +632,11 @@ theorem Iso.umat_conjTranspose [IsTotallyComplex K] (I : Iso A B) (hA : FrameOK 
     _ = I.symm.umat v := by
         rw [← Matrix.mul_assoc, I.umat_star_mul hA, Matrix.one_mul]
 
-theorem Iso.umat_mul_star [IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A)
+theorem Iso.umat_mul_star [_root_.NumberField.IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A)
     (v : InfinitePlace K) : I.umat v * (I.umat v).conjTranspose = 1 := by
   rw [I.umat_conjTranspose hA, I.umat_mul_symm hA]
 
-def Iso.dual [IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A) :
+def Iso.dual [_root_.NumberField.IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A) :
     Iso (HLatOps.dual A) (HLatOps.dual B) where
   e := I.e.symm.dualMap
   map_L := by
@@ -743,13 +687,6 @@ def Iso.dual [IsTotallyComplex K] (I : Iso A B) (hA : FrameOK A) :
         congr 1
       rw [this, I.umat_mul_star hA, Matrix.transpose_one]
     rw [← hw, cnorm_mulVec hU]
-
-theorem iso_inv_dual : IsoInvDual := by
-  intro K _ _ _ _ A B I hG
-  have hd := dualPl K A.V A.ι A.b A.X hG.1 A.L hG.2.1 hG.2.2
-  have hX : FrameOK (HLatOps.dual A) := DualPolygon.dualFrame_unit A.X hG.1
-  obtain ⟨h1, h2, h3, -⟩ := (I.dual hG.1).numbers hX hd.1
-  exact ⟨h1, h2, h3⟩
 
 theorem dual_numbers : DualNumbers := by
   intro K _ _ _ _ A hG hr
@@ -863,25 +800,11 @@ section Record
 
 open Formalism.BasicNotions.DV
 
-example (D : D7) (L : SizeData₂ D) (u : D.what₂.Word) : L.NuH u = withL (D.div.Nu u) (L.NuLat u) := rfl
-example (D : D7) (u : D.what₂.Word) :
-    (D.fm u).ramLat = withL ((D.fm u).lat 0) (D.fm u).ramL := rfl
-
 end Record
 
 section Checks
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
-
-example (A : HLat K) : (dual A).mu = A.muDual := rfl
-example (A : HLat K) : (dual A).muMax = A.muMaxDual := rfl
-example (A : HLat K) : (dual A).muMin = A.muMinDual := rfl
-example (A : HLat K) : withL A A.L = A := rfl
-example {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
-    [Module.Finite K V] (L : Submodule (𝓞 K) V) (H : InfinitePlace K → V → V → ℂ) :
-    ofForm L H = ofFormB (Module.finBasis K V) L H := rfl
-example (A : HLat K) (L' : Submodule (𝓞 K) A.V) : withL A L' = { A with L := L' } := rfl
-example (A : HLat K) (L' : Submodule (𝓞 K) A.V) : (withL A L').mu = muDef A.b A.X L' := rfl
 
 end Checks
 

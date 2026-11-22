@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.HeckeIntegrability.LiftFactorization
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.HeckeIntegrability.LiftFactorization
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ private theorem exists_hecke (hM : HeckeMem) (π : CuspSub E n) {K : Subgroup (G
   choose f hf using hex
   refine ⟨⟨⟨f, fun a b => D.inj ?_⟩, fun c a => D.inj ?_⟩, hf⟩
   · refine Subtype.ext (Subtype.ext (funext fun x => ?_))
-    rw [map_add]
+    rw [map_add (f := _)]
     change (D.i (f (a + b))).1.1 x = (D.i (f a)).1.1 x + (D.i (f b)).1.1 x
     rw [hf, hf, hf, heckeOp, heckeOp, heckeOp,
       ← integral_add (integrable_hecke π hKo μf hh a x) (integrable_hecke π hKo μf hh b x)]
@@ -180,7 +184,7 @@ theorem UpperTheory.V.Z.Mult.Pi.twisted_trace_global_bound_of_archimedean :
     · refine Or.inl ((Submodule.eq_bot_iff _).2 fun y hy => ?_)
       obtain ⟨y, rfl⟩ := e.surjective y
       have : (y : D.U) = 0 := (Submodule.eq_bot_iff _).1 h0 _ ⟨y, hy, rfl⟩
-      rw [show y = 0 from Subtype.ext this, map_zero]
+      exact (congrArg e (show y = 0 from Subtype.ext this)).trans e.map_zero
     · refine Or.inr (Submodule.eq_top_iff'.2 fun y => ?_)
       obtain ⟨y, rfl⟩ := e.surjective y
       obtain ⟨z, hz, hzy⟩ : (y : D.U) ∈ (W.comap e.toLinearMap).map Y.subtype := h1.symm ▸ y.2

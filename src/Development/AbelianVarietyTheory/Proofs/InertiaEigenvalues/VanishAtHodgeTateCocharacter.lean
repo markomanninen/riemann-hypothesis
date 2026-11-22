@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateWeightGradedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateWeightGradedStatement
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -27,16 +31,16 @@ theorem unit_prod (k : n → ℤ) (u : Cˣ) (m : (n × n) →₀ ℕ) :
 
 theorem eval_eq_sum {σ : Type} [Fintype σ] (x : σ → C) (p : MvPolynomial σ C)
     (s : Finset (σ →₀ ℕ)) (hs : p.support ⊆ s) :
-    eval x p = ∑ m ∈ s, coeff m p * ∏ i, x i ^ m i := by
+    eval x p = ∑ m ∈ s, AddMonoidAlgebra.coeff p m * ∏ i, x i ^ m i := by
   rw [eval_eq']
   refine Finset.sum_subset hs fun m _ hm => ?_
-  have : coeff m p = 0 := by simpa [MvPolynomial.mem_support_iff] using hm
+  have : AddMonoidAlgebra.coeff p m = 0 := by simpa [MvPolynomial.mem_support_iff] using hm
   rw [this, zero_mul]
 
 theorem eval_mul_diag (k : n → ℤ) (u : Cˣ) (y : Matrix n n C) (p : MvPolynomial (n × n) C)
     (s : Finset ((n × n) →₀ ℕ)) (hs : p.support ⊆ s) :
     eval (fun ij => (y * Matrix.diagonal (fun j => ((u ^ k j : Cˣ) : C))) ij.1 ij.2) p
-      = ∑ m ∈ s, ((u ^ wt k m : Cˣ) : C) * coeff m p * ∏ i : n × n, y i.1 i.2 ^ m i := by
+      = ∑ m ∈ s, ((u ^ wt k m : Cˣ) : C) * AddMonoidAlgebra.coeff p m * ∏ i : n × n, y i.1 i.2 ^ m i := by
   rw [eval_eq_sum _ _ s hs]
   refine Finset.sum_congr rfl fun m _ => ?_
   simp_rw [Matrix.mul_diagonal, mul_pow, Finset.prod_mul_distrib, unit_prod]
@@ -52,7 +56,7 @@ def vanJ (ρ : Γ →* Matrix.GeneralLinearGroup n C) (P : Matrix n n C) :
     intro a b ha hb γ
     simp only [Set.mem_setOf_eq] at *
     rw [show (AddMonoidAlgebra.ofCoeff (a + b) : MvPolynomial (n × n) C) =
-      AddMonoidAlgebra.ofCoeff a + AddMonoidAlgebra.ofCoeff b by simp, map_add, ha γ, hb γ, add_zero]
+      AddMonoidAlgebra.ofCoeff a + AddMonoidAlgebra.ofCoeff b by simp, map_add (f := _), ha γ, hb γ, add_zero]
   zero_mem' := by
     intro γ
     simp
@@ -112,7 +116,7 @@ theorem vanJ_stable (χ : Γ →* Cˣ) (ρ : Γ →* Matrix.GeneralLinearGroup n
             intro h0
             apply hm
             rw [h0, smul_zero, mul_zero])) : MvPolynomial (n × n) C)
-        = ∑ m ∈ φ.support, ((χ g ^ wt k m : Cˣ) : C) * coeff m (map σg p) *
+        = ∑ m ∈ φ.support, ((χ g ^ wt k m : Cˣ) : C) * AddMonoidAlgebra.coeff (map σg p) m *
             ∏ i : n × n, ((ρ γ : Matrix n n C) * P) i.1 i.2 ^ m i := by
       refine (eval_eq_sum _ _ φ.support ?_).trans ?_
       · intro m hm
@@ -180,8 +184,8 @@ theorem vanish_at_cocharacter : ∀ {C Γ n : Type} [Field C] [Group Γ] [MulSem
     eval_eq_sum _ _ (p.support.filter (fun m => wt k m = d)) ?_, Finset.mul_sum]
   · refine Finset.sum_congr rfl fun m hm => ?_
     rw [Finset.mem_filter] at hm
-    have hc : coeff m (AddMonoidAlgebra.ofCoeff ((AddMonoidAlgebra.coeff p).filter
-        (fun m => wt k m = d)) : MvPolynomial (n × n) C) = coeff m p :=
+    have hc : AddMonoidAlgebra.coeff (AddMonoidAlgebra.ofCoeff ((AddMonoidAlgebra.coeff p).filter
+        (fun m => wt k m = d)) : MvPolynomial (n × n) C) m = AddMonoidAlgebra.coeff p m :=
       Finsupp.filter_apply_pos _ _ hm.2
     rw [hc, hm.2]
     ring

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem _root_.UpperTheory.KN.filtration_eq_span_of_eisensteinPow_basisChange :
     ∀ (R W : Type) [CommRing R] [AddCommGroup W] (act : R →+ (W →+ W)), (∀ (r s : R) (w : W), act (r * s) w = act r (act s w)) → (∀ w : W, act 1 w = w) → ∀ (eD : R), Function.Bijective (act eD) → ∀ (F : ℤ → W → Prop), (∀ (y : W) (j : ℤ), F j y ↔ F (j + 1) (act eD y)) → ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (β : ℕ) (h b : ι → W) (m m' : Matrix ι ι R), m' * m = 1 → (∀ i, h i = ∑ k, act (eD ^ β * m i k) (b k)) → (∀ v, F 0 v ↔ ∃ d : ι → R, v = ∑ k, act (d k) (b k)) → ∀ w, F (β : ℤ) w ↔ ∃ d : ι → R, w = ∑ i, act (d i) (h i) := by
@@ -24,9 +28,11 @@ theorem _root_.UpperTheory.KN.filtration_eq_span_of_eisensteinPow_basisChange :
   have hexp : ∀ d : ι → R,
       ∑ i, act (d i) (h i) = act (eD ^ β) (∑ k, act (∑ i, d i * m i k) (b k)) := by
     intro d
-    simp only [hh, map_sum, AddMonoidHom.finset_sum_apply, ← hmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hh, map_sum, AddMonoidHom.finsetSum_apply, ← hmul]
     rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl (fun k _ => Finset.sum_congr rfl (fun i _ => ?_))
+    refine Finset.sum_congr rfl (fun k _ => ?_)
+    refine Finset.sum_congr rfl (fun i _ => ?_)
     exact congrArg (fun r => act r (b k)) (by ring)
   have hspan : ∀ y : W, (∃ d : ι → R, y = ∑ k, act (d k) (b k)) ↔
       ∃ e : ι → R, y = ∑ k, act (∑ i, e i * m i k) (b k) := by

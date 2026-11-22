@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryMemGLs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryMemGLs
+
+@[expose] public section
 
 noncomputable section
 
@@ -193,7 +197,8 @@ theorem word_Pw (comm : ∀ a b c d, T a b * T c d - T c d * T a b =
       exact Z.zero_mem
   | succ m ih =>
     intro a b p hp
-    simp only [Pw, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Pw, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
     refine Z.sum_mem fun c _ => ?_
     have e : wordOp T p (T a c (Pw T m c b f)) = wordOp T (p ++ [(a, c)]) (Pw T m c b f) := by
       simp [wordOp_append, wordOp_cons, wordOp_nil]
@@ -383,7 +388,7 @@ theorem Tc_stab (blk : Fin n → ℕ) (s : Bool) (a b : Fin n) :
 theorem Tc_pos (blk : Fin n → ℕ) (s : Bool) (a b : Fin n) (hab : blk a < blk b) :
     ∀ x ∈ nilF V blk, RCalc.Tc (RCalc.DA n V) s a b x ∈ levZ V blk := by
   intro x hx g hg hb
-  rw [RCalc.Tc_apply _ _ _ _ hg]
+  rw [RCalc.Tc_apply s a b x hg]
   have hs : ∀ z : ℂ, ∀ c d, ¬ blk c < blk d → (Matrix.single a b z : Mat n) c d = 0 := by
     intro z c d hcd
     rw [Matrix.single_apply, if_neg]
@@ -394,7 +399,7 @@ theorem Tc_pos (blk : Fin n → ℕ) (s : Bool) (a b : Fin n) (hab : blk a < blk
 theorem Tc_lev (blk : Fin n → ℕ) (s : Bool) (a b : Fin n) (hab : blk a = blk b) :
     ∀ x ∈ levZ V blk, RCalc.Tc (RCalc.DA n V) s a b x ∈ levZ V blk := by
   intro x hx g hg hb
-  rw [RCalc.Tc_apply _ _ _ _ hg]
+  rw [RCalc.Tc_apply s a b x hg]
   have hs : ∀ z : ℂ, ∀ c d, blk c ≠ blk d → (Matrix.single a b z : Mat n) c d = 0 := by
     intro z c d hcd
     rw [Matrix.single_apply, if_neg]

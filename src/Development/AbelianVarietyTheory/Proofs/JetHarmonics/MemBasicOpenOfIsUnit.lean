@@ -1,15 +1,22 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.JetLemmaStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.IsUnivChart
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.DualLiftInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.AlgChart
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.LocalResidues
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.SectionScalarValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ConstGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.BaseOver
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.IsUnivChart
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.DualLiftInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.AlgChart
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.LocalResidues
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.SectionScalarValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -162,12 +169,8 @@ section Alg
 
 variable {F R : Type} [CommRing F] [CommRing R] [Algebra F R]
 
-theorem one_le_pow {V : Submodule F R} (h1 : 1 ≤ V) : ∀ n : ℕ, 1 ≤ V ^ n
-  | 0 => by rw [pow_zero]
-  | n + 1 => by
-    rw [pow_succ]
-    calc (1 : Submodule F R) = 1 * 1 := (_root_.mul_one 1).symm
-      _ ≤ V ^ n * V := mul_le_mul' (one_le_pow h1 n) h1
+theorem one_le_pow {V : Submodule F R} (h1 : 1 ≤ V) : ∀ n : ℕ, 1 ≤ V ^ n :=
+  Left.one_le_pow_of_le h1
 
 theorem pow_mono {V : Submodule F R} (h1 : 1 ≤ V) {a b : ℕ} (hab : a ≤ b) : V ^ a ≤ V ^ b := by
   obtain ⟨c, rfl⟩ := Nat.exists_eq_add_of_le hab
@@ -442,7 +445,7 @@ theorem jets (hL : Laws) (hTW : TwistBCSpanStatement) (V : Type) [CommRing V] [I
       obtain ⟨p, rfl⟩ := hsurj b
       induction p using MvPolynomial.induction_on with
       | C c => rw [MvPolynomial.eval₂Hom_C]; exact hc c
-      | add p p' hp hp' => rw [map_add, map_add]; exact add_mem hp hp'
+      | add p p' hp hp' => rw [map_add (f := _), map_add (f := _)]; exact add_mem hp hp'
       | mul_X p i hp =>
         rw [map_mul, map_mul, MvPolynomial.eval₂Hom_X']
         exact mul_mem hp (Algebra.subset_adjoin ⟨i, rfl⟩)
@@ -491,7 +494,7 @@ theorem jets (hL : Laws) (hTW : TwistBCSpanStatement) (V : Type) [CommRing V] [I
       add_mem' := by
         rintro v v' ⟨β, hβ⟩ ⟨β', hβ'⟩
         refine ⟨SectionArithmetic.secAdd β β', fun z J hJ => ?_⟩
-        rw [add_mul, map_add, add_mul, ← hβ z J hJ, ← hβ' z J hJ]
+        rw [add_mul, (germOf z).map_add, add_mul, ← hβ z J hJ, ← hβ' z J hJ]
         exact gs_add xn z _ (hJ.mem _ xn) _ _
       zero_mem' := ⟨SectionArithmetic.secZero _, fun z J hJ => by
         rw [zero_mul, map_zero, zero_mul]

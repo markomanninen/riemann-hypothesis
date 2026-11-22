@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ theorem map_mem_unipRad_of_ringHom (f : R →+* S) {e : (Σ a, m a) ≃ n} {g : 
   · show f ((g : Matrix n n R) i j) = 0
     rw [mem_parab.1 h1 i j hij, map_zero]
   · show f ((g : Matrix n n R) _ _) = _
-    rw [h2 a i j, one_apply, one_apply]
-    split_ifs <;> simp
+    rw [h2 a i j]
+    by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
 
 end Rad
 

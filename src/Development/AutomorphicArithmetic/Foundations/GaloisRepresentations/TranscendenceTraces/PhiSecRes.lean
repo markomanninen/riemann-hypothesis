@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -12,7 +16,6 @@ variable {R : Type} [CommRing R] {Z S : Scheme.{0}} (p : Z ⟶ S)
 def pbm {U' U : Scheme.{0}} (g : U' ⟶ U) (u : U ⟶ S) (u' : U' ⟶ S) (h : g ≫ u = u') : pullback p u' ⟶ pullback p u :=
   pullback.lift (pullback.fst p u') (pullback.snd p u' ≫ g) (by rw [Category.assoc, h, pullback.condition])
 
-@[reassoc (attr := simp)]
 theorem pbm_fst {U' U : Scheme.{0}} (g : U' ⟶ U) (u : U ⟶ S) (u' : U' ⟶ S) (h : g ≫ u = u') :
     pbm p g u u' h ≫ pullback.fst p u = pullback.fst p u' := pullback.lift_fst _ _ _
 
@@ -56,12 +59,12 @@ def phiP (G : Shv R) : Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} (ULift.{1} R) where
   map_id U := ModuleCat.hom_ext (DS.hom_ext p fun u a => by
     change DS.res p G (𝟙 _) (inc p G u a) = inc p G u a
     rw [DS.res_inc p G _ u _ rfl]
-    exact inc_congr p G (Category.id_comp u) _ (by simp) (by simp) a)
+    exact inc_congr p G (Category.id_comp u) _ (pbm_fst p _ _ _ _) (by simp) a)
   map_comp f g := ModuleCat.hom_ext (DS.hom_ext p fun u a => by
     change DS.res p G (g.unop ≫ f.unop) (inc p G u a) = DS.res p G g.unop (DS.res p G f.unop (inc p G u a))
     rw [DS.res_inc p G _ u _ (Category.assoc _ _ _), DS.res_inc p G f.unop u _ rfl, DS.res_inc p G g.unop _ _ rfl, res_res]
     congr 2
-    exact pullback.hom_ext (by simp) (by simp))
+    exact pullback.hom_ext (by simp only [Category.assoc, pbm_fst]) (by simp))
 
 def phiPF (R : Type) [CommRing R] : Shv R ⥤ (Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} (ULift.{1} R)) where
   obj G := phiP p G
@@ -79,7 +82,7 @@ def phiPF (R : Type) [CommRing R] : Shv R ⥤ (Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1
 instance (R : Type) [CommRing R] : (phiPF p R).Additive where
   map_add {G G' f g} := NatTrans.ext (funext fun U => ModuleCat.hom_ext (DS.hom_ext p fun u a => by
     change DS.map p (f + g) _ (inc p G u a) = DS.map p f _ (inc p G u a) + DS.map p g _ (inc p G u a)
-    rw [DS.map_inc, DS.map_inc, DS.map_inc, ← map_add]
+    rw [DS.map_inc, DS.map_inc, DS.map_inc, ← map_add (f := _)]
     rfl))
 
 def phi (R : Type) [CommRing R] : Shv R ⥤ Shv R := phiPF p R ⋙ presheafToSheaf _ _
@@ -102,7 +105,6 @@ theorem phiSec_map {G G' : Shv R} (f : G ⟶ G') (U : Scheme.{0}) (x : DS p G U)
 def Sq.cmp {p : Z ⟶ S} (A : Sq p) : pullback p A.u ⟶ A.V :=
   A.pb.lift (pullback.fst p A.u) (pullback.snd p A.u) pullback.condition
 
-@[reassoc (attr := simp)]
 theorem Sq.cmp_v {p : Z ⟶ S} (A : Sq p) : A.cmp ≫ A.v = pullback.fst p A.u := A.pb.lift_fst _ _ _
 
 @[reassoc (attr := simp)]
@@ -115,7 +117,8 @@ def phiE (G : Shv R) : Fam0 p G ((phi p R).obj G) where
       phiSec p G A.U (inc p G A.u (Sec.res A.cmp (Sec.res t.k a)))
     rw [phiSec_res, DS.res_inc p G t.g B.u A.u t.hu, res_res, res_res]
     congr 3
-    exact B.pb.hom_ext (by simp [t.hv]) (by simp [t.hr])
+    exact B.pb.hom_ext (by simp only [Category.assoc, Sq.cmp_v, pbm_fst, t.hv])
+      (by simp [t.hr])
 
 theorem phiE_app (G : Shv R) (A : Sq p) (a : Sec G A.V) :
     (phiE p G).app A a = phiSec p G A.U (inc p G A.u (Sec.res A.cmp a)) := rfl

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionMahler
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionMahler
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open NumberField IsDedekindDomain Topology Set Matrix
@@ -111,7 +116,7 @@ theorem diagonal_mem_adelicCentralizer_iff {L : m → Matrix (Fin n) (Fin n) K}
   exact hinj.eq_iff
 
 theorem exists_isCompact_centralizer_reduction [Finite m] (L : m → Matrix (Fin n) (Fin n) K)
-    (G : Subgroup (AdelicGLn.AdelicGL K n)) (hG1 : G ≤ Reduction.normOneGL K n)
+    (G : Subgroup (AdelicGLn.AdelicGL K n)) (hG1 : G ≤ Reduction.normOneGL (K := K) (n := n))
     (hGL : G ≤ adelicCentralizer L) {ε : ℝ} (hε : 0 < ε)
     (hh : ∀ g ∈ G, ∀ x : Fin n → K, x ≠ 0 → ε ≤ Reduction.height g x) :
     ∃ C : Set (AdelicGLn.AdelicGL K n), IsCompact C ∧ ∀ g ∈ G, ∃ γ : GL (Fin n) K,

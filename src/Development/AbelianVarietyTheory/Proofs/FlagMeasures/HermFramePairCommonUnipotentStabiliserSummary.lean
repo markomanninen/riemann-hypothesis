@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
@@ -66,14 +70,6 @@ theorem _root_.GlobalTheory.UnipStab.orth_X {y : V}
   hermFlag_orthogonal_graded_of_basis_lemma_2 F (fun a _ => hy a) hx
 
 variable {F}
-
-theorem step {g : V →ₗ[K] V} (hg : F.InN g) (a : ℕ) {x : V} (hx : x ∈ F.Xa (a + 1)) :
-    g x - x ∈ F.Xa a := by
-  have : F.Xa (a + 1) ≤ (F.Xa a).comap (g - LinearMap.id) := by
-    refine Submodule.span_le.2 ?_
-    rintro _ ⟨b, hb, rfl⟩
-    exact Xa_mono F (Nat.lt_succ_iff.1 hb) (hg.2.2.1 b)
-  exact this hx
 
 open NumberField in
 open scoped Pointwise ENNReal Classical in
@@ -160,17 +156,6 @@ theorem _root_.GlobalTheory.UnipStab.inN_mul {s t : V ≃ₗ[K] V} (hs : F.InN (
     have := add_mem h1 h2
     rwa [map_sub, sub_add_sub_cancel] at this
 
-theorem symm_mem [FiniteDimensional K V] (s : V ≃ₗ[K] V) (S : Submodule K V)
-    (h : ∀ x ∈ S, s x ∈ S) {x : V} (hx : x ∈ S) : s.symm x ∈ S := by
-  have h1 : S.map (s : V →ₗ[K] V) = S := by
-    apply Submodule.eq_of_le_of_finrank_eq
-    · rintro _ ⟨y, hy, rfl⟩
-      exact h y hy
-    · exact LinearEquiv.finrank_map_eq s S
-  rw [← h1] at hx
-  obtain ⟨y, hy, rfl⟩ := hx
-  simpa using hy
-
 open NumberField in
 open scoped Pointwise ENNReal Classical in
 variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V]
@@ -237,7 +222,7 @@ private theorem hermFlagUnipotent_sub_lowers_graded_lemma_6 {g : V →ₗ[K] V} 
     exact _root_.GlobalTheory.UnipStab.Xa_mono F (by omega) (he b)
   | zero => simp
   | add x z _ _ hx hz =>
-    rw [map_add, add_sub_add_comm]
+    rw [map_add (f := _), add_sub_add_comm]
     exact add_mem hx hz
   | smul c x _ hx =>
     rw [map_smul, ← smul_sub]
@@ -251,12 +236,12 @@ private theorem hermFlag_graded_zero_lemma_7 {x : V} (hx : x ∈ F.Xa 0) : x = 0
   unfold _root_.Formalism.HermitianLatticeCounting.S6.FlagD.Xa at hx
   simpa using hx
 
+
 open NumberField in
 open scoped Pointwise ENNReal Classical in
 variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V]
   {H : _root_.Formalism.HermitianLatticeCounting.S6.HermSpace K V} {r : ℕ} (F : _root_.Formalism.HermitianLatticeCounting.S6.FlagD H r) in
 variable {F} in
-
 theorem _root_.GlobalTheory.UnipStab.pow_eq_zero [FiniteDimensional K V]
     {s : V ≃ₗ[K] V} (hs : F.InN (s : V →ₗ[K] V)) :
     ((s : V →ₗ[K] V) - 1) ^ (2 * r + 1) = 0 := by
@@ -478,9 +463,9 @@ theorem _root_.GlobalTheory.UnipStab.conj_ZI {s t : V ≃ₗ[K] V}
 
 end Two
 
+
 open NumberField in
 open scoped Pointwise ENNReal Classical in
-
 theorem _root_.GlobalTheory.UnipStab.common_unipotent_stabiliser : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (H : _root_.Formalism.HermitianLatticeCounting.S6.HermSpace K V), _root_.Formalism.HermitianLatticesTheory.IsCMUnram K → ∀ (r : ℕ) (N : _root_.GlobalTheory.DegCnt.NF H r), (∀ s : V ≃ₗ[K] V, s ∈ N.R ↔ N.F.InN (s : V →ₗ[K] V) ∧ N.F'.InN (s : V →ₗ[K] V)) ∧ (∀ s ∈ N.R, ∀ y ∈ _root_.GlobalTheory.HermLat.uPerp N.F N.F', s y - y ∈ _root_.Formalism.HermitianLatticeCounting.S6.II N.F N.F') ∧ (∀ s ∈ N.R, ∀ t ∈ N.R1, s * t * s⁻¹ ∈ N.R1) ∧ (∀ s ∈ N.R, ∀ t ∈ N.ZI, s * t * s⁻¹ ∈ N.ZI) ∧ ∀ s ∈ N.R, ((s : V →ₗ[K] V) - 1) ^ (2 * r + 1) = 0 := by
   intro K V _ _ _ _ _ _ _ _ H _ r N
   refine ⟨_root_.GlobalTheory.UnipStab.mem_R N,

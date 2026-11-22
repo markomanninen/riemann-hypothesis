@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CompCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CompCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.CompCut

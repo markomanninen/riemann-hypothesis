@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsHaarStabilizer
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InverseSplitting
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsHaarStabilizer
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InverseSplitting
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.UC
 
@@ -94,7 +98,7 @@ theorem upper_mem {m : ℕ} (u : G.UT m → ℂ) : G.upper u ∈ C2.UTset m := b
 theorem utLeft : UTLeft := by
   intro m a ha
   refine ShearMeasurability.shear_mp (fun q : G.UT m => q.1.2.val - q.1.1.val) _ ?_ ?_
-  · refine measurable_pi_lambda _ fun q => ?_
+  · refine Measurable.of_eval fun q => ?_
     exact ((continuous_const.matrix_mul cont_upper).matrix_elem q.1.1 q.1.2).measurable
   · intro q x y hxy
     simp only [utc, Matrix.mul_apply]
@@ -104,8 +108,8 @@ theorem utLeft : UTLeft := by
     have hq := q.2
     by_cases hki : k = q.1.1
     · subst hki
-      rw [if_pos rfl, if_pos rfl, upper_apply, upper_apply, Matrix.one_apply_ne (ne_of_lt q.2), dif_pos hq,
-        dif_pos hq, zero_add, zero_add, ha.2]
+      rw [if_pos rfl, if_pos rfl, upper_apply, upper_apply, Matrix.one_apply_ne (ne_of_lt q.2), dite_eq_left hq,
+        dite_eq_left hq, zero_add, zero_add, ha.2]
       simp
     · rw [if_neg hki, if_neg hki, sub_zero, sub_zero]
       rcases lt_or_gt_of_ne hki with hk | hk
@@ -184,13 +188,13 @@ theorem lowerUnipotent_mem {m : ℕ} (w : Equiv.Perm (Fin m)) (y : C2.LPidx w �
     intro a b
     simp [U.wP, Matrix.mul_apply, Equiv.symm_apply_eq]
   refine ⟨⟨fun i j h => ?_, fun i => ?_⟩, ?_⟩
-  · rw [lowP_apply', Matrix.one_apply_ne (ne_of_lt h), dif_neg (fun hh => lt_asymm h hh.1), zero_add]
-  · rw [lowP_apply', Matrix.one_apply_eq, dif_neg (fun hh => lt_irrefl _ hh.1), add_zero]
+  · rw [lowP_apply', Matrix.one_apply_ne (ne_of_lt h), dite_eq_right (fun hh => lt_asymm h hh.1), zero_add]
+  · rw [lowP_apply', Matrix.one_apply_eq, dite_eq_right (fun hh => lt_irrefl _ hh.1), add_zero]
   · rw [hP, hinv]
     refine ⟨fun a b h => ?_, fun a => ?_⟩
     · rw [hent, lowP_apply', Matrix.one_apply_ne (w.injective.ne (ne_of_lt h)),
-        dif_neg (fun hh => lt_asymm h (by simpa using hh.2)), zero_add]
-    · rw [hent, lowP_apply', Matrix.one_apply_eq, dif_neg (fun hh => lt_irrefl _ hh.1), add_zero]
+        dite_eq_right (fun hh => lt_asymm h (by simpa using hh.2)), zero_add]
+    · rw [hent, lowP_apply', Matrix.one_apply_eq, dite_eq_right (fun hh => lt_irrefl _ hh.1), add_zero]
 
 theorem lowS_mem {m : ℕ} (w : Equiv.Perm (Fin m)) (x : C2.Lstidx w → ℂ) :
     lowS w x ∈ C2.Lstg (C2.monoP w fun _ => (1 : ℂ)) := by
@@ -340,11 +344,11 @@ theorem permutationMatrix_mul_lowerUnipotent (y : C2.LPidx σ.symm → ℂ) :
   congr 1
   · simp only [Matrix.one_apply, Equiv.eq_symm_apply]
   · by_cases h : j < σ i ∧ σ.symm j < σ.symm (σ i)
-    · rw [dif_pos h, dif_pos ⟨by simpa using h.2, by simpa using h.1⟩]
+    · rw [dite_eq_left h, dite_eq_left ⟨by simpa using h.2, by simpa using h.1⟩]
       congr 1
       apply Subtype.ext
       simp [iota]
-    · rw [dif_neg h, dif_neg]
+    · rw [dite_eq_right h, dite_eq_right]
       rintro ⟨h1, h2⟩
       exact h ⟨by simpa using h2, by simpa using h1⟩
 
@@ -359,7 +363,8 @@ theorem conj_lowW (y : C2.LPidx σ.symm → ℂ) :
   rw [permutationMatrix_mul_lowerUnipotent, Matrix.mul_nonsing_inv_cancel_right _ _ hu]
 
 theorem subS_eq (L : Matrix (Fin m) (Fin m) ℂ) : C2.simpleUp Lᴴ = conj (U.subS L) := by
-  simp only [C2.simpleUp, U.subS, map_sum, Matrix.conjTranspose_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [C2.simpleUp, U.subS, map_sum, Matrix.conjTranspose_apply]
   refine Finset.sum_congr rfl fun a _ => ?_
   split_ifs <;> simp
 

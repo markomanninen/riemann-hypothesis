@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.NvalLeOfMul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.NvalLeOfMul
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.CovTop GlobalTheory.CovHt GlobalTheory.Mean4 GlobalTheory.Mean4O
 open scoped ENNReal Classical
 open GlobalTheory GlobalTheory.CompanionTheory GlobalTheory.CompanionTheory.SmallFin
@@ -52,7 +57,7 @@ theorem point_of_val {K Ω : Type} [Field K] [NumberField K] [Field Ω] [Algebra
   have hmax : (m.comap (algebraMap (𝓞 K) A)) = la.asIdeal :=
     (la.isMaximal.eq_of_le (Ideal.IsPrime.ne_top inferInstance) hlaM).symm
   have hinj' : Function.Injective (algebraMap (𝓞 K) (A ⧸ q.asIdeal)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     by_contra ha0
     have h1 : a ∈ q.asIdeal.comap (algebraMap (𝓞 K) A) :=
@@ -75,8 +80,8 @@ theorem point_of_val {K Ω : Type} [Field K] [NumberField K] [Field Ω] [Algebra
   · have : φ (Ideal.Quotient.mk _ t) = 0 := h
     exact Ideal.Quotient.eq_zero_iff_mem.1 ((map_eq_zero_iff φ hφi).1 this)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem cdvr_point {K Ω : Type} [Field K] [NumberField K] [Field Ω] [Algebra K Ω]
     {Γ : Type} [LinearOrderedCommGroupWithZero Γ]
     (la : HeightOneSpectrum (𝓞 K)) (ν : Valuation Ω Γ)
@@ -167,27 +172,18 @@ theorem cdvr_point {K Ω : Type} [Field K] [NumberField K] [Field Ω] [Algebra K
       rw [Ideal.mem_comap, ← HeightOneSpectrum.valuation_lt_one_iff_mem (K := L)]
       exact nonU _ (hOnon a ha)
     exact la.isMaximal.eq_of_le (Ideal.IsPrime.ne_top inferInstance) hle⟩
-  have : Finite (𝓞 L ⧸ w.asIdeal) := w.asIdeal.finiteQuotientOfFreeOfNeBot w.ne_bot
-  have : CharZero (HeightOneSpectrum.adicCompletionIntegers L w) :=
-    charZero_of_injective_algebraMap (FaithfulSMul.algebraMap_injective (𝓞 L) (HeightOneSpectrum.adicCompletionIntegers L w))
-  obtain ⟨e1, he1, h1e⟩ := GlobalTheory.AdicCompl.exists_e (L := L) w
-  let T : CDVR := { V := HeightOneSpectrum.adicCompletionIntegers L w, cpl := GlobalTheory.AdicCompl.isAdicComplete w }
-  let k : L →+* T.Fr := GlobalTheory.AdicCompl.kMap w
-  have hvk : ∀ x : L, vV T.V (k x) = (e1 : ℤ) * vLa w x := fun x => by
-    show vV (HeightOneSpectrum.adicCompletionIntegers L w) (GlobalTheory.AdicCompl.kMap w x) = _
-    simp only [vV, vLa]
-    rw [h1e, WithZero.log_pow]
-    simp
-  have he2 : la.asIdeal.ramificationIdx' w.asIdeal ≠ 0 :=
-    Ideal.IsDedekindDomain.ramificationIdx'_ne_zero_of_liesOver w.asIdeal la.ne_bot
-  have ho : OverLa la T.V (k.comp (algebraMap K L)) (la.asIdeal.ramificationIdx' w.asIdeal * e1) := by
-    refine ⟨Nat.mul_pos (Nat.pos_of_ne_zero he2) he1, fun a => ?_⟩
-    show vV (HeightOneSpectrum.adicCompletionIntegers L w) (GlobalTheory.AdicCompl.kMap w (algebraMap K L a)) = _
-    simp only [vV, vLa]
-    rw [h1e, ← HeightOneSpectrum.valuation_liesOver L la w a, ← pow_mul, WithZero.log_pow]
+  have hlocal : ∃ (T : CDVR) (k : L →+* T.Fr) (e : ℕ), OverLa w T.V k e ∧ T.FinRes := by
+    simpa only [RingHom.comp_id] using GlobalTheory.locFld L L (RingHom.id L) w
+  obtain ⟨T, k, e1, ⟨he1, hvk⟩, hfin⟩ := hlocal
+  have he2 : 0 < w.asIdeal.ramificationIdx (𝓞 K) :=
+    Ideal.ramificationIdx_pos_of_isDedekindDomain' w.asIdeal la.ne_bot
+  have ho : OverLa la T.V (k.comp (algebraMap K L)) (w.asIdeal.ramificationIdx (𝓞 K) * e1) := by
+    refine ⟨Nat.mul_pos he2 he1, fun a => ?_⟩
+    rw [RingHom.comp_apply, hvk]
+    simp only [vLa]
+    rw [← HeightOneSpectrum.valuation_liesOver L la w a, WithZero.log_pow]
     push_cast
-    simp
-  have hfin : T.FinRes := GlobalTheory.AdicCompl.finite_res w
+    ring
   let g : A →+* T.Fr := (k.comp O.subtype).comp φ
   have hg : ∀ a : A, g a = k (φ a : O) := fun _ => rfl
   have hfg : IsFractionRing A Ω := IsFractionRing.of_field A Ω fun z =>
@@ -292,8 +288,9 @@ section Main
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
+set_option synthInstance.maxHeartbeats 100000 in
 theorem fin_small_gen {r : ℕ} (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (Z : Comp Xo c) (G : WTZ E)
     (hFG : (latOn U Z G).FG) (hsp : Submodule.span c.F (latOn U Z G : Set (cuspOn U Z G)) = ⊤)
     (hB : GlobalTheory.DegVal.BirOn U Z G) {Γ : Type} [LinearOrderedCommGroupWithZero Γ]
@@ -367,7 +364,7 @@ theorem fin_small_gen {r : ℕ} (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (Z :
       rw [this]
       exact S.algebraMap_mem a
     | add P Q hP hQ =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact S.add_mem hP hQ
     | mul_X P i hP =>
       rw [map_mul, map_mul]

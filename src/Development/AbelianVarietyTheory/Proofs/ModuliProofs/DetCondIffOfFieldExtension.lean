@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -28,8 +32,8 @@ theorem lieMult_fibre {S : Scheme.{0}} {k : Type} [Field k] (x : Sp k ⟶ S) {G 
   LiePull.lieMult_pull O _ _ G _ x _ a a' (isGrpPullback_pullback G x)
     (fun c => by rw [h]; exact pullback.lift_fst _ _ _) k' y τ n
 
-open ReciprocityTheory.ChartRestriction.G.Chart (prodPts scaleD tvec tmap eigLat IsUnivChart) in
 
+open ReciprocityTheory.ChartRestriction.G.Chart (prodPts scaleD tvec tmap eigLat IsUnivChart) in
 theorem lieMult_iff_finrank {k : Type} [Field k] {O : Type} [CommRing O] {G : Over (Sp k)} [GrpObj G]
     (act : OAct O G) [∀ a, IsMonHom (act.act a)] {n : ℕ}
     {x : ∀ m : ℕ, Chart.sp (R₀ := k) (Chart.JetR k (Fin n) m) ⟶ G} (hx : IsUnivChart G n x)
@@ -70,7 +74,7 @@ theorem lieMult_iff_finrank {k : Type} [Field k] {O : Type} [CommRing O] {G : Ov
     obtain ⟨h, E⟩ := Chart.prodPts_tan hx d (fun i => tvec (x := x) (b i)) fun i => Chart.isTan_tvec hx _
     have E' : prodPts d (fun i => tvec (x := x) (b i)) = tvec (x := x) _ := Chart.tcoord_spec hx _ h
     rw [E', E, Subtype.ext_iff, Fintype.linearCombination_apply]
-    simp only [Chart.tcoord_tvec, AddSubmonoidClass.coe_finset_sum, SetLike.val_smul]
+    simp only [Chart.tcoord_tvec, AddSubmonoidClass.coe_finsetSum, SetLike.val_smul]
     exact ⟨fun h => (Chart.tvec_inj hx h).symm, fun h => by rw [h]⟩
   rw [key]
   constructor
@@ -88,8 +92,8 @@ theorem lieMult_iff_finrank {k : Type} [Field k] {O : Type} [CommRing O] {G : Ov
     ext r
     simp [Fintype.linearCombination_apply]
 
-open ReciprocityTheory.ChartRestriction.G.Chart (tvec tmap eigLat fB pushR dualMapA) in
 
+open ReciprocityTheory.ChartRestriction.G.Chart (tvec tmap eigLat fB pushR dualMapA) in
 theorem lieMult_extend {S : Scheme.{0}} {G : Over S} [GrpObj G] [Smooth G.hom] {K Ω : Type} [Field K] [Field Ω]
     (i : K →+* Ω) (x : Sp K ⟶ S) {O : Type} [CommRing O] (act : OAct O G) (τ : O →+* K) (N : ℕ) :
     LieMult act (spMap i ≫ x) (i.comp τ) N ↔ LieMult act x τ N := by

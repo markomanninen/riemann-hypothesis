@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSaturated
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSaturated
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -31,7 +35,7 @@ theorem StableDvd.isIntegrallyClosed {A : Type*} [CommRing A] [IsDomain A] (h : 
         intro r r' hr hr' z hz
         obtain ⟨s, hs⟩ := hr z hz
         obtain ⟨s', hs'⟩ := hr' z hz
-        exact ⟨s + s', by rw [map_add, hs, hs', add_smul]⟩
+        exact ⟨s + s', by rw [map_add (f := _), hs, hs', add_smul]⟩
       smul_mem' := by
         intro c r hr z hz
         obtain ⟨s, hs⟩ := hr z hz
@@ -65,8 +69,8 @@ theorem dvd_of_not_dvd (hx : Prime x) (h : StableDvd (A ⧸ Ideal.span {x})) {a 
   | (intros; apply @_root_.GlobalTheory.SaturatedNotDvd.main <;> first | assumption | infer_instance)
   | (intros; exact _root_.GlobalTheory.SaturatedNotDvd.main ..)
 
-omit [IsLocalRing A] in
 
+omit [IsLocalRing A] in
 theorem prime_dvd_of_stable (hx : Prime x) {a b : A} {I : Ideal A} (hI : I ≠ ⊥)
     (hst : ∀ r ∈ I, ∃ s ∈ I, a * r = x * b * s) : x ∣ a := by
   by_contra ha

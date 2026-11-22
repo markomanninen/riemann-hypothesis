@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModuleForms
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BetaFinsetSumSmulOfXiExists
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LimitOfModuleForms
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BetaFinsetSumSmulOfXiExists
+
+@[expose] public section
 
 noncomputable section
 

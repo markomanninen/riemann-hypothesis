@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.DensOn
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.DensOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem exp_strict :
   | exact hasStrictFDerivAt_exp_zero
   | exact hasStrictFDerivAt_exp_zero.congr_fderiv (by ext; simp)
 
-variable (n) in
 
+variable (n) in
 def logM : Matrix (Fin n) (Fin n) ℂ → Matrix (Fin n) (Fin n) ℂ :=
   (exp_strict (n := n)).localInverse _ _ _
 

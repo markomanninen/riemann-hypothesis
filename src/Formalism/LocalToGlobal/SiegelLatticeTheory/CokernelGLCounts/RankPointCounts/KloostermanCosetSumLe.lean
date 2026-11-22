@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DimFormC
-import Formalism.SharpRestriction.CuspSpanNormBounds.MinorCosetSumOfLatticeIndexHypOfTieOK
-import Formalism.SharpRestriction.CuspSpanNormBounds.MinorIntegralityTorus
-import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeSumBound
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DimFormC
+public import Formalism.SharpRestriction.CuspSpanNormBounds.MinorCosetSumOfLatticeIndexHypOfTieOK
+public import Formalism.SharpRestriction.CuspSpanNormBounds.MinorIntegralityTorus
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeSumBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ theorem cosets_sum_gen {D : D7} (hNT : KTwoMinorIntegrality.NormLB) (hLS : KTwoM
     have step2 := sum_prod_le S TS (fun l x => wl (D := D) H1 l x) (fun l x => wl_nonneg H1 l x) hinj
     have step3 : ∏ l ∈ S, ∑ x ∈ TS.image (fun δ => δ l), wl (D := D) H1 l x ≤
         ∏ l ∈ S, (64 * Rl (D := D) H1 l) ^ (2 * Fintype.card D.what₂.Tau) := by
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro l _; exact Finset.sum_nonneg fun x _ => wl_nonneg H1 l x
       · intro l _
         have hint : ∀ x ∈ TS.image (fun δ => δ l), IsIntegral ℤ x := by
@@ -130,7 +134,7 @@ theorem kloostermanCosetSum_le {D : D7} (hNT : KTwoMinorIntegrality.NormLB) (hLS
       ((64 * B) ^ (2 * Fintype.card D.what₂.Tau)) ^ j := by
     calc ∏ l ∈ Finset.Icc 1 j, (64 * Rl (D := D) H1 l) ^ (2 * Fintype.card D.what₂.Tau)
         ≤ ∏ l ∈ Finset.Icc 1 j, (64 * B) ^ (2 * Fintype.card D.what₂.Tau) :=
-          Finset.prod_le_prod (fun l _ => pow_nonneg (by linarith [one_le_Rl (D := D) H1 l]) _)
+          Finset.prod_le_prod₀ (fun l _ => pow_nonneg (by linarith [one_le_Rl (D := D) H1 l]) _)
             (fun l hl => pow_le_pow_left₀ (by linarith [one_le_Rl (D := D) H1 l]) (by linarith [hRl l hl]) _)
       _ = ((64 * B) ^ (2 * Fintype.card D.what₂.Tau)) ^ j := by rw [Finset.prod_const]; simp
   have hfin := final_arith (L := large₂.sc.L) (CH := CH) (rd := D.host.rdE) (r := D.R.rS) (m := D.R.m) (f := D.R.f)
@@ -156,7 +160,7 @@ theorem minorInt_conc (t : GTu Y u) (l : ℕ) (hl : l ≤ D.R.rS) :
   have he' : ∀ a, (frq X t.rep).fl.e a ∈ t.lam := e_mem_lam D t.lam (frq X t.rep) hOK.2
   have hl' : l ≤ D.R.rS + 1 := by omega
   unfold Dl leadMinorE
-  rw [dif_pos hl']
+  rw [dite_eq_left hl']
   apply det_isIntegral
   intro i j
   have hi : Fin.castLE hl' i = Fin.castSucc ⟨i, by omega⟩ := Fin.ext rfl

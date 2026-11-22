@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MulSmulIdemMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NullMeasurableSetClassesOverFramesOn
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemSuppOnIffIdemMulOfNatural
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ComponentMassSum
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MulSmulIdemMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NullMeasurableSetClassesOverFramesOn
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemSuppOnIffIdemMulOfNatural
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ComponentMassSum
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.FlatTw GlobalTheory.IndefiniteRowSideFullHecke.ComponentMassSum
 
 set_option synthInstance.maxHeartbeats 400000
@@ -46,7 +51,7 @@ theorem sqN_support (la : ∀ k, Wt (U.X k).Ψ r) {Z : Comp Xo c} {f : Rul Xo c}
 theorem petAt_sq (x : ℝ) (μ : Measure (AutQ V)) (G : WTZ D.host.E) (f : Rul Xo c) :
     petAt U x V dict μ G f ^ 2 = lieFacZ Dw x G ^ 2 * (∫⁻ q, sqN U V dict (modelWt U G) f q ∂μ).toReal := by
   unfold petAt petE
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num), ENNReal.toReal_ofNat,
+  rw [eLpNorm'_eq_lintegral_eNorm,
     ← ENNReal.toReal_rpow, mul_pow]
   congr 1
   rw [← Real.rpow_natCast, ← Real.rpow_mul ENNReal.toReal_nonneg]
@@ -61,14 +66,17 @@ theorem petE_rdU_ne_top (μ : Measure (AutQ V)) [IsProbabilityMeasure μ] (la : 
         ⟨(dict q.out).1, ⟨(dict q.out).2, hd⟩⟩
     · rw [ptN_rdU_of_not_dom U la f hd, ENNReal.ofReal_zero]
       exact bot_le
-  refine ne_top_of_le_ne_top ?_ (eLpNorm_le_of_ae_enorm_bound (Filter.Eventually.of_forall h))
-  rw [measure_univ, ENNReal.one_rpow, smul_eq_mul, mul_one]
-  exact supE_ne_top U.X la hP
+  have hle : petE V dict μ la (rdU U f) ≤ eLpNorm' (fun _ : AutQ V => supE U.X la (rdU U f)) 2 μ :=
+    eLpNorm'_mono_eNorm_ae (by norm_num) (Filter.Eventually.of_forall h)
+  apply ne_top_of_le_ne_top (supE_ne_top U.X la hP)
+  refine hle.trans ?_
+  rw [eLpNorm'_const _ (by norm_num), eNorm_eq_self, measure_univ]
+  simp
 
 theorem lint_sqN_ne_top (μ : Measure (AutQ V)) [IsProbabilityMeasure μ] (la : ∀ k, Wt (U.X k).Ψ r)
     {f : Rul Xo c} (hP : rdU U f ∈ holSub U.X la) : ∫⁻ q, sqN U V dict la f q ∂μ ≠ ⊤ := by
   have h := petE_rdU_ne_top U V dict μ la hP
-  rw [petE, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)] at h
+  rw [petE, eLpNorm'_eq_lintegral_eNorm] at h
   intro ht
   apply h
   simp only [sqN] at ht
@@ -85,7 +93,8 @@ theorem lint_sqN_sum [Fintype (Comp Xo c)] (μ : Measure (AutQ V))
       sqN U V dict la (∑ Z, f Z) q = sqN U V dict la (f Z) q := by
     intro Z q hq
     have e : rdU U (∑ Z', f Z') (dict q.out).1 (dict q.out).2 = rdU U (f Z) (dict q.out).1 (dict q.out).2 := by
-      rw [map_sum, Finset.sum_apply, Finset.sum_apply, Finset.sum_eq_single Z]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_apply, Finset.sum_apply, Finset.sum_eq_single Z]
       · intro Z' _ hZ'
         exact rdU_eq_zero U (hf Z') fun h => Set.disjoint_left.1 (framesOn_disjoint U hZ') h hq
       · intro h; exact absurd (Finset.mem_univ Z) h
@@ -96,7 +105,8 @@ theorem lint_sqN_sum [Fintype (Comp Xo c)] (μ : Measure (AutQ V))
     simp only [Set.mem_iUnion, not_exists] at hn
     apply hq
     have e : rdU U (∑ Z', f Z') (dict q.out).1 (dict q.out).2 = 0 := by
-      rw [map_sum, Finset.sum_apply, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_apply, Finset.sum_apply]
       exact Finset.sum_eq_zero fun Z _ => rdU_eq_zero U (hf Z) (hn Z)
     have h0 : ptN la (rdU U (∑ Z', f Z')) (dict q.out) = 0 := by
       simp only [ptN, Data.pnorm, e, norm_zero, zero_mul]
@@ -131,7 +141,7 @@ theorem petAt_idem_le (x : ℝ) (μ : Measure (AutQ V)) [IsProbabilityMeasure μ
   refine mul_le_mul_of_nonneg_left ?_ (lieFacZ_pos _ _).le
   refine ENNReal.toReal_mono (petE_rdU_ne_top U V dict μ _ hP) ?_
   unfold petE
-  refine eLpNorm_mono fun q => ?_
+  refine eLpNorm'_mono_ae (by norm_num) (Filter.Eventually.of_forall fun q => ?_)
   rw [Real.norm_of_nonneg (ptN_nonneg _ _ _), Real.norm_of_nonneg (ptN_nonneg _ _ _)]
   simp only [ptN, Data.pnorm]
   refine mul_le_mul_of_nonneg_right ?_ (pnorm_fac_nonneg _ _ _)

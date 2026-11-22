@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.RootBranches
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.RootBranches
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToNatLengthEqRangeAddRange
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsFormOfEqRatioPowMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToNatLengthEqRangeAddRange
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsFormOfEqRatioPowMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,13 +97,6 @@ abbrev lb (L : FLB i) (e : ℕ) : LB (X e) := ⟨L.ι, L.U e, L.g e⟩
 
 theorem mem_succ (L : FLB i) {e : ℕ} {a : L.ι} {x : X e} (h : x ∈ L.U e a) : i e x ∈ L.U (e + 1) a := (L.U_eq e a).le h
 
-theorem gm_g (L : FLB i) {e : ℕ} {a b : L.ι} {x : X e} (h : x ∈ L.U e a ⊓ L.U e b) :
-    gm (𝟙 _) x _ (L.g e a b) = gm (i e) x _ (L.g (e + 1) a b) := (eq_res_pullU_iff _ _ _ _).1 (L.g_eq e a b) x h
-
-theorem lb_iso_pull (L : FLB i) (e : ℕ) : LBIso (L.lb e) ((L.lb (e + 1)).pull (i e)) :=
-  LBIso.chartPull (A := L.lb (e + 1)) (B := L.lb (e + 1)) (h := i e) ⟨fun a => a, fun a => (L.U_eq e a).le, fun _ _ _ ha hb => L.gm_g ⟨ha, hb⟩⟩
-    (Geo.Tor.chartPullPull _ _ _ rfl) (PolBaseChange.lbIso_refl (L.isLB (e + 1)))
-
 def Compat {L M : FLB i} (u : ∀ e, LB.Iso (L.lb e) (M.lb e)) : Prop :=
   ∀ e (p : M.ι × L.ι), (u e).s p = res (U := i e ⁻¹ᵁ (M.U (e + 1) p.1 ⊓ L.U (e + 1) p.2))
     (le_inf (inf_le_left.trans (M.U_eq e p.1).le) (inf_le_right.trans (L.U_eq e p.2).le)) (pullU (i e) _ ((u (e + 1)).s p))
@@ -174,8 +171,6 @@ def ofPull (L : LB Y) (hL : L.IsLB) : FLB i :=
         (Eq.trans ?_ (gm_pull_g L (q (e + 1)) (i e) x a b ((hU e a).le hx.1) ((hU e b).le hx.2)).symm)
       rw [Category.id_comp, hq] }
 
-theorem ofPull_lb (L : LB Y) (hL : L.IsLB) (e : ℕ) : (ofPull q hq L hL).lb e = L.pull (q e) := rfl
-
 theorem iso_of_chartPull {L M : FLB i} {A B : LB Y} (a : L.ι → A.ι) (b : M.ι → B.ι)
     (la : ∀ e k, L.U e k ≤ q e ⁻¹ᵁ A.U (a k)) (lb : ∀ e k, M.U e k ≤ q e ⁻¹ᵁ B.U (b k))
     (ga : ∀ e (x : X e) k l, x ∈ L.U e k → x ∈ L.U e l → gm (𝟙 _) x _ (L.g e k l) = gm (q e) x _ (A.g (a k) (a l)))
@@ -206,20 +201,10 @@ theorem ofPull_iso {A B : LB Y} (hA : A.IsLB) (hB : B.IsLB) (h : LBIso A B) : (o
     (fun e x k l hk hl => (Geo.Tor.chartPullPull A (q e) (q e) rfl).g x k l hk hl)
     (fun e x k l hk hl => (Geo.Tor.chartPullPull B (q e) (q e) rfl).g x k l hk hl) hq h
 
-theorem ofPull_comp (f : Y ⟶ Y') {A : LB Y'} (hA : A.IsLB) :
-    (ofPull q hq (A.pull f) (pull_isLB hA f)).Iso
-      (ofPull (fun e => q e ≫ f) (fun e => by rw [← Category.assoc, hq]) A hA) :=
-  iso_of_chartPull (fun e => q e ≫ f) (fun J => J ⟨⟩ ⟨⟩) (fun J => J ⟨⟩) (fun e J x hx => (mem_pull (F := f) (x := q e x) (J := J ⟨⟩)).1 (mem_pull.1 hx))
-    (fun _ _ _ hx => mem_pull.1 hx)
-    (fun e x k l hk hl => ((Geo.Tor.chartPullPull (A.pull f) (q e) (q e) rfl).g x k l hk hl).trans
-      (gm_pull_g A f (q e) x _ _ (mem_pull.1 hk) (mem_pull.1 hl)))
-    (fun e x k l hk hl => (Geo.Tor.chartPullPull A (q e ≫ f) (q e ≫ f) rfl).g x k l hk hl)
-    (fun e => by rw [← Category.assoc, hq]) (PolBaseChange.lbIso_refl hA)
-
 end FLB
 
-variable (i) in
 
+variable (i) in
 structure FLBOn (κ : Type) : Type where
 
   U : ∀ e, κ → (X e).Opens
@@ -241,8 +226,8 @@ instance small_quotient : Small.{0} (Quotient (FLB.setoid (i := i))) := by
   have h : ∀ e (x : X e), ∃ k, x ∈ L.U e (j k) := fun e x => ⟨⟨e, x⟩, hj ⟨e, x⟩⟩
   exact ⟨(L.reindex j h).toOn, Quotient.sound (L.reindex_iso j h)⟩
 
-variable (i) in
 
+variable (i) in
 def FPic : Type := Shrink.{0} (Quotient (FLB.setoid (i := i)))
 
 def fcls (L : FLB i) : FPic i := equivShrink _ (Quotient.mk _ L)
@@ -250,21 +235,12 @@ def fcls (L : FLB i) : FPic i := equivShrink _ (Quotient.mk _ L)
 theorem fcls_eq_iff {L M : FLB i} : fcls L = fcls M ↔ L.Iso M :=
   (equivShrink _).injective.eq_iff.trans (Quotient.eq (r := FLB.setoid))
 
-theorem fcls_surj (c : FPic i) : ∃ L, fcls L = c := by
-  obtain ⟨L, h⟩ := Quotient.exists_rep ((equivShrink _).symm c)
-  exact ⟨L, (Equiv.eq_symm_apply _).1 h⟩
-
 def level (e : ℕ) (c : FPic i) : SmallPic (X e) :=
   Quotient.lift (s := FLB.setoid) (fun L : FLB i => smallCls (L.lb e) (L.isLB e))
     (fun _ _ h => (smallCls_eq_iff _ _).2 (h.elim fun u hu => ⟨u e, hu.1 e⟩)) ((equivShrink _).symm c)
 
 theorem level_fcls (e : ℕ) (L : FLB i) : level e (fcls L) = smallCls (L.lb e) (L.isLB e) := by
   rw [level, fcls, Equiv.symm_apply_apply]; rfl
-
-theorem smallPull_level (e : ℕ) (c : FPic i) : smallPull (i e) (level (e + 1) c) = level e c := by
-  obtain ⟨L, rfl⟩ := fcls_surj c
-  rw [level_fcls, level_fcls, smallPull_smallCls _ _ (pull_isLB (L.isLB _) _)]
-  exact (smallCls_eq_iff _ _).2 (L.lb_iso_pull e).symm
 
 variable {Y Y' : Scheme.{0}} (q : ∀ e, X e ⟶ Y) (hq : ∀ e, i e ≫ q (e + 1) = q e)
 
@@ -280,51 +256,11 @@ theorem level_fpull (e : ℕ) (c : SmallPic Y) : level e (fpull q hq c) = smallP
   rw [fpull_smallCls, level_fcls, smallPull_smallCls _ _ (pull_isLB hL _)]
   rfl
 
-theorem fpull_smallPull (f : Y ⟶ Y') (c : SmallPic Y') :
-    fpull q hq (smallPull f c) = fpull (fun e => q e ≫ f) (fun e => by rw [← Category.assoc, hq]) c := by
-  obtain ⟨L, hL, rfl⟩ := smallCls_surj c
-  rw [smallPull_smallCls _ _ (pull_isLB hL _), fpull_smallCls, fpull_smallCls]
-  exact fcls_eq_iff.2 (FLB.ofPull_comp q hq f hL)
-
-theorem fpull_eq_iff (q' : ∀ e, X e ⟶ Y') (hq' : ∀ e, i e ≫ q' (e + 1) = q' e) {L : LB Y} (hL : L.IsLB) {M : LB Y'}
-    (hM : M.IsLB) : fpull q hq (smallCls L hL) = fpull q' hq' (smallCls M hM) ↔
-      ∃ u : ∀ e, LB.Iso (L.pull (q e)) (M.pull (q' e)), (∀ e, (u e).IsGen) ∧
-        FLB.Compat (L := FLB.ofPull q hq L hL) (M := FLB.ofPull q' hq' M hM) u := by
-  rw [fpull_smallCls, fpull_smallCls, fcls_eq_iff]; rfl
-
-theorem fpull_id_injective (Y : Scheme.{0}) :
-    Function.Injective (fpull (X := fun _ => Y) (i := fun _ => 𝟙 Y) (fun _ => 𝟙 Y) fun _ => Category.id_comp _) := by
-  intro c d h
-  have e := congrArg (level 0) h
-  rw [level_fpull, level_fpull] at e
-  simpa [smallPull, pull_id] using e
-
 section Projective
 
 open GlobalTheory.ProjSpace
 
 variable {R : Type} [CommRing R] (I : Ideal R) (N : ℕ)
-
-def projTrans (e : ℕ) : PSpace (R ⧸ I ^ (e + 1)) N ⟶ PSpace (R ⧸ I ^ (e + 1 + 1)) N :=
-  baseChange N (Ideal.Quotient.factor (Ideal.pow_le_pow_right (Nat.le_succ (e + 1))))
-
-theorem projTrans_comp (e : ℕ) : projTrans I N e ≫ baseChange N (Ideal.Quotient.mk (I ^ (e + 1 + 1))) =
-    baseChange N (Ideal.Quotient.mk (I ^ (e + 1))) := by
-  rw [projTrans, ← baseChange_comp, Ideal.Quotient.factor_comp_mk]
-
-def formalTwistingSheaf : FLB (X := fun e => PSpace (R ⧸ I ^ (e + 1)) N) (projTrans I N) :=
-  FLB.ofPull (fun e => baseChange N (Ideal.Quotient.mk (I ^ (e + 1)))) (projTrans_comp I N) (O1 R N) (O1_isLB R N)
-
-theorem formalTwisting_ne_trivial (hI : I ≠ ⊤) : fcls (formalTwistingSheaf I (N + 1)) ≠
-    fpull (X := fun e => PSpace (R ⧸ I ^ (e + 1)) (N + 1)) (fun e => baseChange (N + 1) (Ideal.Quotient.mk (I ^ (e + 1))))
-      (projTrans_comp I (N + 1)) 0 := by
-  intro h
-  have : Nontrivial (R ⧸ I ^ (0 + 1)) := Ideal.Quotient.nontrivial_iff.2 (by simpa using hI)
-  have e := congrArg (level 0) h
-  rw [level_fpull, level_fcls, map_zero] at e
-  have e' := ((smallCls_eq_iff _ (O1_isLB _ _)).2 (lbIso_pull_O1 (N + 1) (Ideal.Quotient.mk (I ^ (0 + 1))))).symm.trans e
-  obtain ⟨t, ht⟩ := (cls_eq_zero_iff _).1 ((smallPicEquiv _).symm.map_eq_zero_iff.1 e')
-  exact Model.not_isGen_O1 t ht
 
 end Projective
 

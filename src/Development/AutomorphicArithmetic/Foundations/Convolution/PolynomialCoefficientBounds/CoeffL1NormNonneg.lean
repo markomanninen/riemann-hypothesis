@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.MatrixEntryAbsSumUnitaryLieCoordinatesSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenRed
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenFund
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenTrunc
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.MatrixEntryAbsSumUnitaryLieCoordinatesSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenRed
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenFund
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenTrunc
+
+@[expose] public section
 
 open MvPolynomial Filter Topology
 
@@ -60,8 +64,10 @@ theorem UpperTheory.ConvolutionTheory.FX.generators0 :
       (∑ β, G α β * F β) = ∑ w : τ → Equiv.Perm (Fin n),
         rename (fun ti : τ × Fin n => (ti.1, w ti.1 ti.2)) (monomial α (1 : ℂ)) := by
     intro α
-    rw [hG α, map_sum]
-    simp only [map_mul, hF, map_sum, gen_inv, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hG α, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, hF, map_sum, gen_inv, Finset.mul_sum]
     exact Finset.sum_comm
   have hP' : P = ∑ α ∈ P.support, C (P.coeff α) * monomial α (1 : ℂ) := by
     conv_lhs => rw [P.as_sum]
@@ -75,9 +81,11 @@ theorem UpperTheory.ConvolutionTheory.FX.generators0 :
         rename (fun ti : τ × Fin n => (ti.1, w ti.1 ti.2)) (monomial α (1 : ℂ)) = C (N : ℂ) * P := by
       rw [← h1]
       conv_rhs => rw [hP']
-      simp only [map_sum, map_mul, rename_C, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, rename_C, Finset.mul_sum]
       exact Finset.sum_comm
-    rw [map_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_sum]
     simp only [map_mul (aeval _) (C _), hmon, aeval_C, algebraMap_eq]
     rw [h2, ← mul_assoc, ← C_mul, inv_mul_cancel₀ hNC, C_1, one_mul]
   obtain ⟨G', h1, h2, h3⟩ := UpperTheory.ConvolutionTheory.FX.gen_trunc τ n k _ (by rw [hE]; exact hP)

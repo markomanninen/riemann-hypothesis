@@ -1,10 +1,14 @@
-import Development.EtaleCohomology.TateTwists.EtaleTateTwistSectionsLocallyGenerated
-import Development.EtaleCohomology.TateTwists.EtaleTorsionCohomologyLocalizationBasic
-import Development.EtaleCohomology.TateTwists.EtaleSheafLocalizationPropertiesOfComponents
-import Development.EtaleCohomology.TateTwists.EtaleLocallyExistsPrimitiveRootOfUnityOfInvertibleOrder
-import Development.EtaleCohomology.TateTwists.EtaleLocallyKummerRootsOfUnitsOfInvertibleOrder
-import Development.EtaleCohomology.TateTwists.TwFGenInjPf
-import Development.EtaleCohomology.TateTwists.EtaleKInjectiveExtensionAlongQuasiIsoFromSingle
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTateTwistSectionsLocallyGenerated
+public import Development.EtaleCohomology.TateTwists.EtaleTorsionCohomologyLocalizationBasic
+public import Development.EtaleCohomology.TateTwists.EtaleSheafLocalizationPropertiesOfComponents
+public import Development.EtaleCohomology.TateTwists.EtaleLocallyExistsPrimitiveRootOfUnityOfInvertibleOrder
+public import Development.EtaleCohomology.TateTwists.EtaleLocallyKummerRootsOfUnitsOfInvertibleOrder
+public import Development.EtaleCohomology.TateTwists.TwFGenInjPf
+public import Development.EtaleCohomology.TateTwists.EtaleKInjectiveExtensionAlongQuasiIsoFromSingle
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.EtaleFoundations
@@ -49,7 +53,7 @@ theorem res_comp {R : Type} [CommRing R] {F : Shv R} {W V U : Scheme.{0}} (h : W
   simp [Sec.res]
 
 theorem twF_loc (q : ℕ) [NeZero q] (i : ℤ) (V : Scheme.{0}) (ζ : Prim q Γ(V, ⊤)) (x : (twF q i).obj Γ(V, ⊤)) :
-    Loc V fun W h => ∃ c : ℕ, Sec.res h (ofRings.sec (twF q i) V x) = c • twGen i (ζ.map h.appTop.hom) := by
+    Loc V fun _ h => ∃ c : ℕ, Sec.res h (ofRings.sec (twF q i) V x) = c • twGen i (ζ.map h.appTop.hom) := by
   have L := LateralTheory.Fin.EtaleLocalPropertyBasicClosure.intersectionNumber_baseChange
   have hZ := (etale_locally_roots_of_unity_structure_of_exists_and_kummer etale_locally_exists_primitive_root_of_unity_of_invertible_order etale_locally_kummer_roots_of_units_of_invertible_order q V).2.1
   have key : Loc V fun W h => ∃ c : ℕ, ((twF q i).map h.appTop).hom x =

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,14 +33,16 @@ theorem finrank_eq_of_coord {k K V W : Type} [Field k] [Field K] [Algebra k K] [
     have h2 : ∑ i, lam (a i) • b i = 0 := by
       apply Subtype.ext
       have := congrArg (L lam) h1
-      simpa [map_sum, hL] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, hL] using this
     exact Fintype.linearIndependent_iff.1 b.linearIndependent _ h2 i
   have hJs : ∀ v : S, (⟨J v, hS _ v.2⟩ : T) ∈ Submodule.span K (Set.range w) := by
     intro v
     have : (⟨J v, hS _ v.2⟩ : T) = ∑ i, algebraMap k K (b.repr v i) • w i := by
       apply Subtype.ext
       have e := congrArg (fun x : S => J x) (b.sum_repr v)
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, map_sum, hJ] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, map_sum, hJ] at e
       simp [w, e]
     rw [this]
     exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -62,7 +68,7 @@ variable {R R' : Type} [CommRing R] [CommRing R'] {Γ : Type} [Group Γ] [Topolo
 def cocycleMapOfEquivariant : Z1 rho →+ Z1 rho' where
   toFun z := ⟨fun g => u (z.1 g), hu.comp z.2.1, fun g h => by
     beta_reduce
-    rw [z.2.2, map_add, he]⟩
+    rw [z.2.2, map_add (f := _), he]⟩
   map_add' z w := Subtype.ext (funext fun g => map_add u _ _)
   map_zero' := Subtype.ext (funext fun g => map_zero u)
 
@@ -73,9 +79,6 @@ def h1MapOfAdditive : H1 rho →+ H1 rho' :=
     refine (mem_coboundaries1 _ _).2 ⟨u m, fun g => ?_⟩
     change u (z.1 g) = _
     rw [show z.1 g = _ from hm g, map_sub, he]
-
-theorem h1MapOfAdditive_mk (z : Z1 rho) :
-    h1MapOfAdditive rho rho' u hu he (Submodule.Quotient.mk z) = Submodule.Quotient.mk (cocycleMapOfEquivariant rho rho' u hu he z) := rfl
 
 theorem res_addH1 {H : Type} [Group H] [TopologicalSpace H] (phi : H →* Γ) (hphi : Continuous phi) (x : H1 rho) :
     resH1 rho' phi hphi (h1MapOfAdditive rho rho' u hu he x) =
@@ -103,7 +106,8 @@ def vecAdd : (Fin r → K) →+ (Fin r → K') where
 theorem vecAdd_repOn {Γ : Type} [Group Γ] {r : ℕ} (ρ : Γ →* GL (Fin r) O) (g : Γ) (m : Fin r → K) :
     vecAdd f r (repOn ρ (1 : Γ →* Kˣ) K g m) = repOn ρ (1 : Γ →* K'ˣ) K' g (vecAdd f r m) := by
   funext a
-  simp [vecAdd, repOn, matAct, map_sum, ← Algebra.smul_def]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [vecAdd, repOn, matAct, map_sum, ← Algebra.smul_def]
 
 end Coef
 
@@ -131,7 +135,7 @@ theorem addH1_mem_bkOn (v : PlE D.host) (x : H1 ((repOn ρ (1 : GE N →* Kˣ) K
       change f (t * (z : ↥(DecV N v) → Fin r → K) g a) = _
       rw [hz, algebraMap_smul, algebraMap_smul, mul_smul_comm, map_smul]
     | zero => rw [smul_zero, map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [smul_add, map_add]; exact Submodule.add_mem _ (hx t) (hy t)
+    | add x y _ _ hx hy => rw [smul_add, map_add (f := _)]; exact Submodule.add_mem _ (hx t) (hy t)
     | smul a x _ hx => rw [smul_smul]; exact hx _
   · rw [Submodule.mem_bot] at hx ⊢
     rw [hx, map_zero]
@@ -194,7 +198,7 @@ theorem selOn_baseChange (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D
           continuous_of_discreteTopology (vecAdd_repOn _ ρ) (cocycleMapOfEquivariant _ _ (vecAdd ((b.coord j).restrictScalars (X.O0 i)) _)
           continuous_of_discreteTopology (vecAdd_repOn _ ρ) z) := by
         refine Subtype.ext (funext fun g => funext fun a => ?_)
-        rw [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply, Finset.sum_apply]
+        rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply, Finset.sum_apply]
         change _ = ∑ j ∈ s, b j * algebraMap k K (b.repr (z.1 g a) j)
         have hsub : (b.repr (z.1 g a)).support ⊆ s := fun j hj =>
           Finset.mem_biUnion.2 ⟨z.1 g, by simp, Finset.mem_biUnion.2 ⟨a, Finset.mem_univ _, hj⟩⟩
@@ -202,7 +206,8 @@ theorem selOn_baseChange (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D
           Finsupp.sum_of_support_subset _ hsub (fun j c => c • b j) (fun j _ => zero_smul _ _)]
         exact Finset.sum_congr rfl fun j _ => by rw [Algebra.smul_def, mul_comm]
       refine (congrArg (Submodule.mkQ _) key).trans ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       rfl
 
 end GlobalTheory.ResSel.BaseChange

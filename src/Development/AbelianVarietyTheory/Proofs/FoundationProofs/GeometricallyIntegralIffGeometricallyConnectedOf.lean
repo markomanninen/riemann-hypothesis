@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.AbelianSchemeQuotients.IsAbelianScheme
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.AbelianSchemeQuotients.IsAbelianScheme
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
+
+@[expose] public section
 
 universe u
 
@@ -79,11 +83,6 @@ theorem isIntegral_fiber_of_smooth (f : X ⟶ S) [Smooth f] [GeometricallyConnec
     IsIntegral (f.fiber s) :=
   have := geometricallyIntegral_of_smooth f
   inferInstance
-
-theorem geometricallyConnected_of_isIso (f : X ⟶ S) [IsIso f] : GeometricallyConnected f := by
-  refine ⟨fun K _ y Z fst snd h ↦ ?_⟩
-  have : IsIso snd := h.isIso_snd_of_isIso
-  exact snd.homeomorph.symm.surjective.connectedSpace snd.homeomorph.symm.continuous
 
 end Morphisms
 
@@ -182,9 +181,9 @@ variable {S : Scheme.{0}} (G : Over S) [Smooth G.hom]
 
 theorem smooth_powObj_hom : ∀ n : ℕ, Smooth (powObj G n).hom
   | 0 => inferInstanceAs (Smooth (𝟙 S))
-  | n + 1 =>
+  | n + 1 => by
     have := smooth_powObj_hom n
-    smooth_tensorObj_hom G (powObj G n)
+    exact smooth_tensorObj_hom G (powObj G n)
 
 variable [GeometricallyConnected G.hom]
 

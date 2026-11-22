@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtalePrismAlexanderWhitneyHomotopyOfRelations
+module
+
+public import Development.EtaleCohomology.TateTwists.EtalePrismAlexanderWhitneyHomotopyOfRelations
+
+@[expose] public section
 
 open CategoryTheory GlobalTheory.EtC
 
@@ -17,7 +21,8 @@ def inv {N : ℕ} (p : Fin (N + 3) × Fin (N + 2)) : Fin (N + 3) × Fin (N + 2) 
 theorem prism_boundary_map_square_zero_holds : leaf_bdbd := by
   intro N c
   unfold Pr.bd
-  simp only [map_sum, map_zsmul, push_push, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, push_push, Finset.smul_sum, smul_smul]
   rw [← Finset.sum_product' (f := fun (i : Fin (N + 3)) (j : Fin (N + 2)) => ((-1 : ℤ) ^ (i : ℕ) * (-1) ^ (j : ℕ)) • Pr.push (SimplexCategory.δ j ≫ SimplexCategory.δ i) c)]
   refine Finset.sum_involution (fun p _ => inv p) ?_ ?_ (fun p _ => by simp) ?_
   · rintro ⟨i, j⟩ -

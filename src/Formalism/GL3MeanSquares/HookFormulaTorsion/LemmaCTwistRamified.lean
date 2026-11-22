@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GL3MeanSquares.RationalMatrixPrimeOrderBound
-import Formalism.GL3MeanSquares.HookFormulaTorsion.LengthQuotientBoundGeneral
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.RationalMatrixPrimeOrderBound
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.LengthQuotientBoundGeneral
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.RamifiedHeckeModels
 

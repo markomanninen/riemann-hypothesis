@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLNf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLFrozen
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLNf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLFrozen
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutHL
 

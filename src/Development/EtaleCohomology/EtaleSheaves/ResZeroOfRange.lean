@@ -1,13 +1,17 @@
-import Development.EtaleCohomology.EtaleSheaves.CovOfPoints
-import Development.EtaleCohomology.EtaleSheaves.LeafNegPf
-import Development.EtaleCohomology.EtaleSheaves.PointDetect0Of
-import Development.EtaleCohomology.EtaleSheaves.LeafConeExactPf
-import Development.EtaleCohomology.EtaleSheaves.LeafTwPtPf
-import Development.EtaleCohomology.EtaleSheaves.LeafOfRingsLocSurjPf
-import Development.EtaleCohomology.EtaleSheaves.LeafOfRingsLocInjPf
-import Development.EtaleCohomology.EtaleSheaves.LeafTwAdjPf
-import Development.EtaleCohomology.EtaleSheaves.LeafTwGenPf
-import Development.EtaleCohomology.EtaleSheaves.LeafTwFieldZPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CovOfPoints
+public import Development.EtaleCohomology.EtaleSheaves.LeafNegPf
+public import Development.EtaleCohomology.EtaleSheaves.PointDetect0Of
+public import Development.EtaleCohomology.EtaleSheaves.LeafConeExactPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwPtPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafOfRingsLocSurjPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafOfRingsLocInjPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwAdjPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwGenPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwFieldZPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex CochainComplex.HomComplex

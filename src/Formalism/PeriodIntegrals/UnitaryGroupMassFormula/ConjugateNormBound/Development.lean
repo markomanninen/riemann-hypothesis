@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BeConjNorm
-import Formalism.PeriodIntegrals.PhNormUnits
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.NormUnitsOfCalculation
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BeConjNorm
+public import Formalism.PeriodIntegrals.PhNormUnits
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.NormUnitsOfCalculation
+
+@[expose] public section
 
 noncomputable section
 

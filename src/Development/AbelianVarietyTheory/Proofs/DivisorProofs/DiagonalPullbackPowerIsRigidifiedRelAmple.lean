@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomProdPow
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SymplecticFormBasisChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomProdPow
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SymplecticFormBasisChange
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.EndLoc GlobalTheory.ActFin
@@ -29,7 +34,7 @@ theorem diagPow_isLB_rigidified_relAmple : ∀ (S : Scheme.{0}) (A : Over S) [Gr
   have hcls : CechPic.cls _ hD = d • CechPic.cls _ hM := by
     refine (CechPic.cls_linComb hQL (K := Fin 1) (fun _ => (lift (𝟙 A) (𝟙 A)).left) (fun _ => (d : ℤ)) hD).trans ?_
     rw [Fintype.sum_unique, CechPic.cls_pull hQL _ hM]
-    exact natCast_zsmul _ _
+    exact natCast_zsmul _ d
   refine ⟨hD, ?_, GlobalTheory.SiegelOfTheta.relAmple_of_pow hA hM hD hd hcls hamp⟩
   have h₁ : CechPic.cls _ (pull_isLB hQL (lift (1 : A ⟶ A) (𝟙 A)).left) = 0 :=
     (CechPic.cls_eq_zero_iff _).2 ⟨t₁, ht₁⟩

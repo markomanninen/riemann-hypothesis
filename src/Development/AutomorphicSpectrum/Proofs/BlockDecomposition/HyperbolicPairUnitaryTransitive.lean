@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeGramScalarAlmostAll
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeGramScalarAlmostAll
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU
 open scoped Matrix
 
@@ -57,7 +62,8 @@ theorem exists_hyperbolic_partner (hτ : ∀ y, τ (τ y) = y) (h2 : IsUnit (2 :
   have hyw : hform τ H y (Hi *ᵥ (τ ∘ a)) = 1 := by
     rw [hform_eq_dot, Matrix.mulVec_mulVec, hHi, Matrix.one_mulVec]
     have h : (τ ∘ y) ⬝ᵥ (τ ∘ a) = τ (∑ k, a k * y k) := by
-      simp only [dotProduct, Function.comp_apply, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, Function.comp_apply, map_sum, map_mul]
       exact Finset.sum_congr rfl (fun k _ => mul_comm _ _)
     rw [h, hay, map_one]
   have hwy : hform τ H (Hi *ᵥ (τ ∘ a)) y = 1 := by

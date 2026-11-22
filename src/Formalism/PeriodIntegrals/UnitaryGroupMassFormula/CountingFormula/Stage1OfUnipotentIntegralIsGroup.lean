@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.HTIntLeft
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.HTIntLeft
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,6 +15,67 @@ open Classical
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
+private theorem stage1_riesz (D : Formalism.BasicNotions.D7) (φ : (VS D).V →ₗ[D.host.E] D.host.E) : ∃ μ : (VS D).V, ∀ v, (VS D).hT μ v = φ v := by
+  classical
+  obtain ⟨bs, hbs⟩ := Formalism.HermitianLatticesTheory.dualLattice_dualBasis (VS D).hT (VS D).nondeg (VS D).frame
+  refine ⟨∑ j, star (φ ((VS D).frame j)) • bs j, fun v => ?_⟩
+  have key : (VS D).hT (∑ j, star (φ ((VS D).frame j)) • bs j) = φ := by
+    apply (VS D).frame.ext
+    intro i
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
+    have hs : ∀ j, (VS D).hT (star (φ ((VS D).frame j)) • bs j) ((VS D).frame i) =
+        φ ((VS D).frame j) * (if i = j then 1 else 0) := by
+      intro j
+      rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
+      congr 1
+      rw [← (VS D).herm.eq ((VS D).frame i) (bs j), hbs]
+      split_ifs <;> simp
+    simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  rw [key]
+
+private theorem stage1_span_eq_top_of_unimodular (D : Formalism.BasicNotions.D7) {Λ : Submodule (𝓞 D.host.E) (VS D).V}
+    (hL : Λ.FG) (hU : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ) :
+    Submodule.span D.host.E (Λ : Set (VS D).V) = ⊤ := by
+  by_contra hspan
+  obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+  obtain ⟨μ, hμ⟩ := stage1_riesz D φ
+  have hμ₀ : μ ≠ 0 := by
+    intro h
+    apply hφ₀
+    ext y
+    simpa [h] using (hμ y).symm
+  have hline (a : D.host.E) : a • μ ∈ Λ := by
+    rw [← hU]
+    change a • μ ∈ Formalism.E.hdual (VS D).hT Λ
+    simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
+    intro y hy
+    have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+    simp [← (VS D).herm.eq (a • μ) y, LinearMap.map_smulₛₗ, hμ, hy₀]
+  obtain ⟨ψ, hψ, -⟩ := Submodule.exists_le_ker_of_notMem
+    (show μ ∉ (⊥ : Submodule D.host.E (VS D).V) by simpa using hμ₀)
+  let f := ψ.restrictScalars (𝓞 D.host.E)
+  have hmap (x : D.host.E) : x ∈ Λ.map f := by
+    refine ⟨(x / ψ μ) • μ, hline _, ?_⟩
+    change ψ ((x / ψ μ) • μ) = x
+    rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hψ]
+  obtain ⟨d, hd₀, hd⟩ := FractionalIdeal.isFractional_of_fg
+    (S := nonZeroDivisors (𝓞 D.host.E)) (hL.map f)
+  have hinj := IsFractionRing.injective (𝓞 D.host.E) D.host.E
+  have hne {a : 𝓞 D.host.E} (ha : a ≠ 0) : algebraMap (𝓞 D.host.E) D.host.E a ≠ 0 :=
+    fun h => ha (hinj (h.trans (map_zero _).symm))
+  have hinteger (x : D.host.E) : IsLocalization.IsInteger (𝓞 D.host.E) x := by
+    have hx := hd _ (hmap ((algebraMap (𝓞 D.host.E) D.host.E d)⁻¹ * x))
+    rwa [Algebra.smul_def, ← mul_assoc, mul_inv_cancel₀ (hne (nonZeroDivisors.ne_zero hd₀)),
+      one_mul] at hx
+  apply RingOfIntegers.not_isField D.host.E
+  refine ⟨⟨0, 1, zero_ne_one⟩, mul_comm, ?_⟩
+  intro a ha
+  obtain ⟨b, hb⟩ := hinteger ((algebraMap (𝓞 D.host.E) D.host.E a)⁻¹)
+  refine ⟨b, hinj ?_⟩
+  rw [map_mul, hb, map_one, mul_inv_cancel₀ (hne ha)]
+
+
 theorem inW_neg (D : Formalism.BasicNotions.D7) {x : (VS D).V} (hx : InW D x) : InW D (-x) := by
   simpa using inW_smul D (-1) hx
 
@@ -18,7 +84,10 @@ theorem stage1_of_unipotentIntegralIsGroup (hN : UnipotentIntegralIsGroup) : Sta
   have hF' := hF
   obtain ⟨hlat, hU, he, heΛ0, c0, hc0, hz⟩ := hF
   have heΛ : ∀ a, D.sp.hypE a ∈ Λ := fun a => by rw [← he]; exact heΛ0 a
-  obtain ⟨d, hd0, hdv, hdk⟩ := common_mult D hlat
+  let : Submodule.IsLattice D.host.E Λ := hlat
+  have hfull : Submodule.IsFullLattice D.host.E Λ :=
+    ⟨stage1_span_eq_top_of_unimodular D hlat.fg hU⟩
+  obtain ⟨d, hd0, hdv, hdk⟩ := common_mult D hfull
     (Finset.univ.image D.sp.hypF ∪ {((D.sp.T : D.host.E)⁻¹) • D.sp.zm})
     (Finset.univ.image (fun p : Fin (D.R.rS + 1) × Fin D.R.rS => R p.1 p.2) ∪
       Finset.univ.image (fun p : Fin (D.R.rS + 1) × Fin (D.R.rS + 1) => Pm D Z R p.1 p.2))

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ namespace PositivityTheory.AdelicQuotientData
 
 namespace WeightCoefficients
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
 def HS (m : ℕ) : Set (GA E k) := {h | ∃ γ u, IsMir m γ ∧ UU (m + 1) u ∧ h = ratGL E k γ * u}
 
@@ -30,7 +34,9 @@ theorem meas_blkU (m : ℕ) : Measurable (fun x : UnipotentBlockColumnIndex k m 
 
 theorem measI {ν : Measure (GA E k)} [SFinite ν] {β : GA E k → ℝ≥0∞} (hβ : Measurable β) (g : GA E k) :
     Measurable fun r : GA E k => ∫⁻ h, β (r⁻¹ * h * g) ∂ν :=
-  (hβ.comp (((measurable_fst.inv).mul measurable_snd).mul_const g)).lintegral_prod_right'
+  by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact (hβ.comp (((measurable_fst.inv).mul measurable_snd).mul_const g)).lintegral_prod_right'
 
 theorem wtB (hN3 : N3) (hN4b : OneMoreAdelicColumn) {m : ℕ} (hmk : m < k) {β : GA E k → ℝ≥0∞} (hβ : IsWt (nuP E k m) β)
     (g : GA E k) : ∫⁻ h, β (h * g) ∂nuB E k m = 1 := by
@@ -56,7 +62,7 @@ theorem wtB (hN3 : N3) (hN4b : OneMoreAdelicColumn) {m : ℕ} (hmk : m < k) {β 
 theorem wtA (hN0 : N0) (hN3 : N3) (hN4a : CosetIntegralParabolic) (hN4b : OneMoreAdelicColumn) {m : ℕ} (hm1 : 1 ≤ m) (hmk : m < k)
     {β : GA E k → ℝ≥0∞} (hβ : IsWt (nuP E k m) β) : IsWt (nuP E k (m - 1)) (bA m β) := by
   haveI : Countable (RowT E k m) := (hN0 E k m hm1 hmk.le).2.2.2.2.2.2.1
-  refine ⟨Measurable.ennreal_tsum fun ξ => hβ.1.comp (measurable_const_mul _), fun g => ?_⟩
+  refine ⟨Measurable.tsum fun ξ => hβ.1.comp (measurable_const_mul _), fun g => ?_⟩
   have := hN4a E k m hm1 hmk.le (fun h => β (h * g)) (hβ.1.comp (measurable_mul_const g))
   rw [wtB hN3 hN4b hmk hβ g] at this
   rw [this]
@@ -85,7 +91,7 @@ theorem lintegral_rhoB {m : ℕ} {Φ : GA E k → ℝ≥0∞} (hΦ : Measurable 
 
 theorem integral_rhoB {m : ℕ} {Φ : GA E k → ℂ} (hΦ : Continuous Φ) (g : GA E k) :
     ∫ r, Φ (r * g) ∂rhoB m = ∫ x in vecDomain E (UnipotentBlockColumnIndex k m m), Φ (blkU x * g) ∂vecMeasure E (UnipotentBlockColumnIndex k m m) :=
-  integral_map (meas_blkU m).aemeasurable (hΦ.comp (continuous_mul_right g)).aestronglyMeasurable
+  integral_map (meas_blkU m).aemeasurable (hΦ.comp (continuous_mul_const g)).aestronglyMeasurable
 
 theorem lintegral_rhoA {m : ℕ} {Φ : GA E k → ℝ≥0∞} (hΦ : Measurable Φ) (g : GA E k) :
     ∫⁻ r, Φ (r * g) ∂rhoA m = ∑' ξ : RowT E k m, Φ (ratGL E k (gam ξ) * g) := by
@@ -95,7 +101,7 @@ theorem lintegral_rhoA {m : ℕ} {Φ : GA E k → ℝ≥0∞} (hΦ : Measurable 
 theorem integral_rhoA {m : ℕ} {Φ : GA E k → ℂ} (hΦ : Continuous Φ) (g : GA E k)
     (hs : Summable fun ξ : RowT E k m => Φ (ratGL E k (gam ξ) * g)) :
     ∫ r, Φ (r * g) ∂rhoA m = ∑' ξ : RowT E k m, Φ (ratGL E k (gam ξ) * g) := by
-  have hc : Continuous fun r => Φ (r * g) := hΦ.comp (continuous_mul_right g)
+  have hc : Continuous fun r => Φ (r * g) := hΦ.comp (continuous_mul_const g)
   have hn := summable_norm_iff.2 hs
   have hint : Integrable (fun r => Φ (r * g)) (rhoA m) := by
     refine ⟨hc.aestronglyMeasurable, ?_⟩
@@ -222,48 +228,49 @@ theorem sf_A (m : ℕ) [Countable (RowT E k m)] : SFinite (rhoA (E := E) (k := k
 end WeightCoefficients
 
 theorem twistedGeometricSide_unfolding : Q1 → Q2 → N0 → N3 → CosetIntegralParabolic → OneMoreAdelicColumn → P0 → P1 → P2 → U1 := by
-  intro hQ1 hQ2 hN0 hN3 hN4a hN4b hP0 hP1 hP2
-  intro E _ _ _ k μ _ ψ hψ m hm1 hmk β hβ
-  haveI : Countable (RowT E k m) := (hN0 E k m hm1 hmk.le).2.2.2.2.2.2.1
-  have hPm := (hN3 E k).1 m hmk
-  have hPm1 := (hN3 E k).1 (m - 1) (by omega)
-  haveI := hPm.1
-  haveI := hPm1.1
-  haveI := WeightCoefficients.sf_A (E := E) (k := k) m
-  haveI := WeightCoefficients.sf_B (E := E) (k := k) m
-  have hwA := WeightCoefficients.wtA hN0 hN3 hN4a hN4b hm1 hmk hβ
-  have hA : ∀ f, Pre ψ m f → ∫⁻ g, ‖colT ψ m f g‖ₑ ^ 2 ∂μ.withDensity (WeightCoefficients.bA m β) ≤
-      ∫⁻ g, ‖f g‖ₑ ^ 2 ∂μ.withDensity β := by
-    intro f hf
+  set_option synthInstance.maxHeartbeats 200000 in
+    intro hQ1 hQ2 hN0 hN3 hN4a hN4b hP0 hP1 hP2
+    intro E _ _ _ k μ _ ψ hψ m hm1 hmk β hβ
+    haveI : Countable (RowT E k m) := (hN0 E k m hm1 hmk.le).2.2.2.2.2.2.1
+    have hPm := (hN3 E k).1 m hmk
+    have hPm1 := (hN3 E k).1 (m - 1) (by omega)
+    haveI := hPm.1
+    haveI := hPm1.1
+    haveI := WeightCoefficients.sf_A (E := E) (k := k) m
+    haveI := WeightCoefficients.sf_B (E := E) (k := k) m
+    have hwA := WeightCoefficients.wtA hN0 hN3 hN4a hN4b hm1 hmk hβ
+    have hA : ∀ f, Pre ψ m f → ∫⁻ g, ‖colT ψ m f g‖ₑ ^ 2 ∂μ.withDensity (WeightCoefficients.bA m β) ≤
+        ∫⁻ g, ‖f g‖ₑ ^ 2 ∂μ.withDensity β := by
+      intro f hf
+      have hcf : Pre ψ (m - 1) (colT ψ m f) := (hP1 E k ψ hψ m hm1 hmk f hf).1
+      rw [hQ1 (GA E k) μ (nuP E k (m - 1)) (WeightCoefficients.rhoA m) (WeightCoefficients.HS (m - 1)) (WeightCoefficients.bA m β) β hPm1.2.1 hPm1.2.2 hwA hβ.1
+          (WeightCoefficients.hypA hN0 hN3 hN4a hN4b hm1 hmk hβ) (fun g => ‖colT ψ m f g‖ₑ ^ 2)
+          (hcf.cont.measurable.enorm.pow_const 2) (WeightCoefficients.inv_sq hP2 hψ hcf),
+        hQ1 (GA E k) μ (nuP E k m) (WeightCoefficients.rhoB m) (WeightCoefficients.HS m) β β hPm.2.1 hPm.2.2 hβ hβ.1
+          (WeightCoefficients.hypB hN3 hN4b hmk hβ) (fun g => ‖f g‖ₑ ^ 2) (hf.cont.measurable.enorm.pow_const 2) (WeightCoefficients.inv_sq hP2 hψ hf)]
+      refine lintegral_mono fun g => ?_
+      rw [WeightCoefficients.lintegral_rhoA (hcf.cont.measurable.enorm.pow_const 2),
+        WeightCoefficients.lintegral_rhoB (hf.cont.measurable.enorm.pow_const 2)]
+      exact WeightCoefficients.bessel hP0 hP1 hψ hm1 hmk hf g
+    refine ⟨WeightCoefficients.bA m β, hwA, hA, ?_⟩
+    intro f φ hf hφ hf2 hφ2
+    have hφp : Pre ψ m φ := (hP2 E k ψ hψ).2.2.2.2.2.1 m φ hφ
     have hcf : Pre ψ (m - 1) (colT ψ m f) := (hP1 E k ψ hψ m hm1 hmk f hf).1
-    rw [hQ1 (GA E k) μ (nuP E k (m - 1)) (WeightCoefficients.rhoA m) (WeightCoefficients.HS (m - 1)) (WeightCoefficients.bA m β) β hPm1.2.1 hPm1.2.2 hwA hβ.1
-        (WeightCoefficients.hypA hN0 hN3 hN4a hN4b hm1 hmk hβ) (fun g => ‖colT ψ m f g‖ₑ ^ 2)
-        (hcf.cont.measurable.enorm.pow_const 2) (WeightCoefficients.inv_sq hP2 hψ hcf),
-      hQ1 (GA E k) μ (nuP E k m) (WeightCoefficients.rhoB m) (WeightCoefficients.HS m) β β hPm.2.1 hPm.2.2 hβ hβ.1
-        (WeightCoefficients.hypB hN3 hN4b hmk hβ) (fun g => ‖f g‖ₑ ^ 2) (hf.cont.measurable.enorm.pow_const 2) (WeightCoefficients.inv_sq hP2 hψ hf)]
-    refine lintegral_mono fun g => ?_
-    rw [WeightCoefficients.lintegral_rhoA (hcf.cont.measurable.enorm.pow_const 2),
-      WeightCoefficients.lintegral_rhoB (hf.cont.measurable.enorm.pow_const 2)]
-    exact WeightCoefficients.bessel hP0 hP1 hψ hm1 hmk hf g
-  refine ⟨WeightCoefficients.bA m β, hwA, hA, ?_⟩
-  intro f φ hf hφ hf2 hφ2
-  have hφp : Pre ψ m φ := (hP2 E k ψ hψ).2.2.2.2.2.1 m φ hφ
-  have hcf : Pre ψ (m - 1) (colT ψ m f) := (hP1 E k ψ hψ m hm1 hmk f hf).1
-  have hcφ : Pre ψ (m - 1) (colT ψ m φ) := (hP1 E k ψ hψ m hm1 hmk φ hφp).1
-  have c1 : Continuous fun g => f g * conj (φ g) := hf.cont.mul (Complex.continuous_conj.comp hφp.cont)
-  have c2 : Continuous fun g => colT ψ m f g * conj (colT ψ m φ g) :=
-    hcf.cont.mul (Complex.continuous_conj.comp hcφ.cont)
-  have hb := (hQ2 (GA E k) μ (nuP E k m) (WeightCoefficients.rhoB m) (WeightCoefficients.HS m) β β hPm.2.1 hPm.2.2 hβ hβ.1
-    (WeightCoefficients.hypB hN3 hN4b hmk hβ) (fun g => f g * conj (φ g)) c1.measurable (WeightCoefficients.inv_prod hP2 hψ hf hφp)
-    (WeightCoefficients.int_mul hf.cont hφp.cont hf2 hφ2)).2
-  have ha := (hQ2 (GA E k) μ (nuP E k (m - 1)) (WeightCoefficients.rhoA m) (WeightCoefficients.HS (m - 1)) (WeightCoefficients.bA m β) β hPm1.2.1 hPm1.2.2 hwA
-    hβ.1 (WeightCoefficients.hypA hN0 hN3 hN4a hN4b hm1 hmk hβ) (fun g => colT ψ m f g * conj (colT ψ m φ g)) c2.measurable
-    (WeightCoefficients.inv_prod hP2 hψ hcf hcφ)
-    (WeightCoefficients.int_mul hcf.cont hcφ.cont ((hA f hf).trans_lt hf2) ((hA φ hφp).trans_lt hφ2))).2
-  rw [hb, ha]
-  refine integral_congr_ae (ae_of_all _ fun g => ?_)
-  have H := WeightCoefficients.parseval hP0 hP1 hψ hm1 hmk hf hφ hφp g
-  exact (WeightCoefficients.integral_rhoB c1 g).trans (H.tsum_eq.symm.trans (WeightCoefficients.integral_rhoA c2 g H.summable).symm)
+    have hcφ : Pre ψ (m - 1) (colT ψ m φ) := (hP1 E k ψ hψ m hm1 hmk φ hφp).1
+    have c1 : Continuous fun g => f g * conj (φ g) := hf.cont.mul (Complex.continuous_conj.comp hφp.cont)
+    have c2 : Continuous fun g => colT ψ m f g * conj (colT ψ m φ g) :=
+      hcf.cont.mul (Complex.continuous_conj.comp hcφ.cont)
+    have hb := (hQ2 (GA E k) μ (nuP E k m) (WeightCoefficients.rhoB m) (WeightCoefficients.HS m) β β hPm.2.1 hPm.2.2 hβ hβ.1
+      (WeightCoefficients.hypB hN3 hN4b hmk hβ) (fun g => f g * conj (φ g)) c1.measurable (WeightCoefficients.inv_prod hP2 hψ hf hφp)
+      (WeightCoefficients.int_mul hf.cont hφp.cont hf2 hφ2)).2
+    have ha := (hQ2 (GA E k) μ (nuP E k (m - 1)) (WeightCoefficients.rhoA m) (WeightCoefficients.HS (m - 1)) (WeightCoefficients.bA m β) β hPm1.2.1 hPm1.2.2 hwA
+      hβ.1 (WeightCoefficients.hypA hN0 hN3 hN4a hN4b hm1 hmk hβ) (fun g => colT ψ m f g * conj (colT ψ m φ g)) c2.measurable
+      (WeightCoefficients.inv_prod hP2 hψ hcf hcφ)
+      (WeightCoefficients.int_mul hcf.cont hcφ.cont ((hA f hf).trans_lt hf2) ((hA φ hφp).trans_lt hφ2))).2
+    rw [hb, ha]
+    refine integral_congr_ae (ae_of_all _ fun g => ?_)
+    have H := WeightCoefficients.parseval hP0 hP1 hψ hm1 hmk hf hφ hφp g
+    exact (WeightCoefficients.integral_rhoB c1 g).trans (H.tsum_eq.symm.trans (WeightCoefficients.integral_rhoA c2 g H.summable).symm)
 
 end PositivityTheory.AdelicQuotientData
 

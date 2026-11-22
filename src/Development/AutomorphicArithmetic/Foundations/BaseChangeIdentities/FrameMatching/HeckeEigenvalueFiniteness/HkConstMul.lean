@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeEigenvalueFiniteness.PowEigAlt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ShuffleChoices.FixedEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteLengthOfProductsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsolateRepresentationAtCharacterStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteSubquotientsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitDictionaryHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeEigenvalueFiniteness.PowEigAlt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ShuffleChoices.FixedEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteLengthOfProductsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsolateRepresentationAtCharacterStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteSubquotientsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitDictionaryHolds
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcB.F.F5 PositivityTheory.Rg.BcB.F.Tail PositivityTheory.Rg.Bc.ArchbcB.B
@@ -40,10 +44,13 @@ theorem UpperTheory.HeckeLevelFrameExistence.locE :
     ⟨hKo, hKc, HasCompactSupport.zero, fun _ _ _ _ _ => rfl⟩
   have hP0 : ∃ v ∈ fixed P.ρ K', v ≠ 0 :=
     ⟨T y₀, ((hd 0 hz).2 y₀ hy₀).1, fun h => hy₀0 (T.map_eq_zero_iff.1 h)⟩
+  have hchoice : PositivityTheory.Rg.BcB.F.Choice.ChoiceS :=
+    PositivityTheory.Rg.BcB.F.Choice.choiceS_of
+      (fun E _ _ _ n w => GlobalTheory.T.isolate_representation_at_character (w.adicCompletion E) (Fin n))
+      (fun E _ _ _ n w => GlobalTheory.T.finite_subquotients (w.adicCompletion E) (Fin n))
+      (fun E _ _ _ n w => GlobalTheory.T.finite_length_of_products (w.adicCompletion E) (Fin n))
   obtain ⟨e₀, hIk, ⟨v₀, hv₀, l, hl1, hl⟩, hkill⟩ :=
-    PositivityTheory.Rg.BcB.F.Choice.choiceS_of (fun E _ _ _ n w => GlobalTheory.T.isolate_representation_at_character _ _)
-      (fun E _ _ _ n w => GlobalTheory.T.finite_subquotients _ _) (fun E _ _ _ n w => GlobalTheory.T.finite_length_of_products _ _)
-      E n w K' hKo hKc P hP0 k D
+    hchoice E n w K' hKo hKc P hP0 k D
   set r : ℂ := (((K'.subgroupOf (UL n w)).relIndex (KL n w) : ℕ) : ℂ) with hr
   have hIk' : PositivityTheory.Rg.BcN.F2.IsHk K' (fun g => r * e₀ g) :=
     ⟨hIk.1, hIk.2.1, hIk.2.2.1.mul_left, fun k₁ h₁ k₂ h₂ g => by

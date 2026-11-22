@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegOUnif
-import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.OLinearMaps
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GtCoordEndRatioDescends
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegOUnif
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegUnif
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GtCoordEndRatioDescends
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,7 +20,7 @@ attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.OLinearCompare
 
-open GlobalTheory.IndefiniteRowSideFullHecke.OLinearMaps GlobalTheory.TorusCoord
+open GlobalTheory.TorusCoord
 
 theorem oneGen_isGen {X Y : Scheme.{0}} (L : LB X) : (LB.oneGen L (Y := Y)).IsGen :=
   isGen_of_gm _ fun _ _ _ _ _ =>

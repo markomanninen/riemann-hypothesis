@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.HermRank
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsMaximalCompactInfinite
-import Development.WeilBound.ThetaLifts.FrameEstimates.LatArch
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopology
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HermRank
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsMaximalCompactInfinite
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LatArch
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopology
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,8 +61,8 @@ theorem cpt_sig {n r s : ℕ} {M : Matrix (Fin n) (Fin n) ℂ} (h : HasSig M r s
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n : ℕ}
 
-variable (F) in
 
+variable (F) in
 def fA : Af F →+ AF F := AddMonoidHom.inr (Ainf F) (Af F)
 
 theorem fA_mul (x : Af F) (a : AF F) : fA F x * a = fA F (x * a.2) := Prod.ext (zero_mul _) rfl
@@ -90,13 +94,14 @@ theorem exists_arch_section (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, 
     have h3 : ∀ t z, c • realAd F t • x z = 0 := fun t z => by rw [smul_comm, x1 _ c hc, smul_zero]
     rw [smul_sub, smul_sub, smul_smul c, h2]
     simp only [sub_self, Finset.smul_sum, smul_add, h3, add_zero, Finset.sum_const_zero]
-  · simp only [map_sub, map_sum, map_add, sm, x2, PositivityTheory.ThKEst.LatArchPf.emb_realAd h.1]
-    rw [show evInf F w (fA F 1) = 0 from rfl, Finset.sum_eq_single w (fun v _ hv => by simp [Pi.single_eq_of_ne hv.symm])
-      (by simp)]
-    simp
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sub, map_sum, map_add (f := _), sm, x2, PositivityTheory.ThKEst.LatArchPf.emb_realAd h.1]
+      rw [show evInf F w (fA F 1) = 0 from rfl, Finset.sum_eq_single w (fun v _ hv => by simp [Pi.single_eq_of_ne hv.symm])
+        (by simp)]
+      simp
+
 
 variable (F E) in
-
 def lamF : AddSubgroup (AE F E) where
   carrier := (fun x : Ix E → Af F => ∑ i, fA F (x i) • bA F i) '' Set.univ.pi fun _ => Oh F
   zero_mem' := ⟨0, fun _ _ v => zero_mem _, Finset.sum_eq_zero fun _ _ => by simp⟩

@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsAtlas
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsAtlas
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

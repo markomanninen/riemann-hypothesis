@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqOneOfPowClose
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqOneOfPowClose
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,12 +26,13 @@ instance : Mul (Heisenberg B) := ⟨fun g h => ⟨g.vec + h.vec, g.cen + h.cen +
 instance : One (Heisenberg B) := ⟨⟨0, 0⟩⟩
 instance : Inv (Heisenberg B) := ⟨fun g => ⟨-g.vec, -g.cen + B g.vec g.vec / 2⟩⟩
 
-@[simp] theorem mul_vec (g h : Heisenberg B) : (g * h).vec = g.vec + h.vec := rfl
-@[simp] theorem mul_cen (g h : Heisenberg B) : (g * h).cen = g.cen + h.cen + B g.vec h.vec / 2 := rfl
-@[simp] theorem one_vec : (1 : Heisenberg B).vec = 0 := rfl
-@[simp] theorem one_cen : (1 : Heisenberg B).cen = 0 := rfl
-@[simp] theorem inv_vec (g : Heisenberg B) : g⁻¹.vec = -g.vec := rfl
-@[simp] theorem inv_cen (g : Heisenberg B) : g⁻¹.cen = -g.cen + B g.vec g.vec / 2 := rfl
+@[local simp] private theorem mul_vec (g h : Heisenberg B) : (g * h).vec = g.vec + h.vec := rfl
+@[local simp] private theorem mul_cen (g h : Heisenberg B) :
+    (g * h).cen = g.cen + h.cen + B g.vec h.vec / 2 := rfl
+@[local simp] private theorem one_vec : (1 : Heisenberg B).vec = 0 := rfl
+@[local simp] private theorem one_cen : (1 : Heisenberg B).cen = 0 := rfl
+@[local simp] private theorem inv_vec (g : Heisenberg B) : g⁻¹.vec = -g.vec := rfl
+@[local simp] private theorem inv_cen (g : Heisenberg B) : g⁻¹.cen = -g.cen + B g.vec g.vec / 2 := rfl
 
 instance : Group (Heisenberg B) :=
   Group.ofLeftAxioms
@@ -37,18 +42,6 @@ instance : Group (Heisenberg B) :=
 
 instance [TopologicalSpace F] [TopologicalSpace W] : TopologicalSpace (Heisenberg B) :=
   TopologicalSpace.induced (fun g => (g.vec, g.cen)) inferInstance
-
-theorem mul_eq_central_mul (h2 : (2 : F) ≠ 0) (hB : B.IsAlt) (g h : Heisenberg B) :
-    g * h = (⟨0, B g.vec h.vec⟩ : Heisenberg B) * (h * g) := by
-  ext
-  · simp [add_comm]
-  · simp [← hB.neg_eq g.vec h.vec]; field_simp; ring
-
-theorem mul_ne_mul (h2 : (2 : F) ≠ 0) (hB : B.IsAlt) {x y : W} (hxy : B x y ≠ 0) :
-    (⟨x, 0⟩ : Heisenberg B) * ⟨y, 0⟩ ≠ ⟨y, 0⟩ * ⟨x, 0⟩ := by
-  intro h
-  rw [mul_eq_central_mul h2 hB, mul_eq_right] at h
-  exact hxy (congrArg Heisenberg.cen h)
 
 def IsIrrSmoothOf [TopologicalSpace F] [TopologicalSpace W] (ψ : AddChar F ℂ) {S : Type} [AddCommGroup S] [Module ℂ S]
     (ρ : Representation ℂ (Heisenberg B) S) : Prop :=
@@ -146,7 +139,8 @@ theorem average (hρ : Ops c ρ) (hα : Splits c A α) (U : AddSubgroup W) (hU :
     [Fintype (A ⧸ U.addSubgroupOf A)] (m : M) (hm : ∀ u ∈ U, ρ u m = m) (a : W) (ha : a ∈ A) :
     ρ a (∑ q : A ⧸ U.addSubgroupOf A, (α q.out.1)⁻¹ • ρ q.out.1 m)
       = α a • ∑ q : A ⧸ U.addSubgroupOf A, (α q.out.1)⁻¹ • ρ q.out.1 m := by
-  rw [← inv_smul_eq_iff₀ (hα.ne a ha), map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← inv_smul_eq_iff₀ (hα.ne a ha), map_sum, Finset.smul_sum]
   refine Fintype.sum_equiv (Equiv.addLeft ((⟨a, ha⟩ : A) : A ⧸ U.addSubgroupOf A)) _ _ fun q => ?_
   rw [hα.comp hρ ha q.out.2]
   set p := (Equiv.addLeft ((⟨a, ha⟩ : A) : A ⧸ U.addSubgroupOf A)) q with hp
@@ -175,7 +169,8 @@ theorem exists_eigen (h : Alt c) (hρ : Ops c ρ) (hα : Splits c A α) (T : Set
       by_contra hne
       exact hcon ⟨_, N.sum_mem fun q _ => N.smul_mem _ (hN _ _ (hN _ _ hvN)), hne, average hρ hα U hU _ hm⟩
     refine hρ.eq_zero h (x := w) ?_
-    rw [map_sum, ← h0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← h0]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [hρ.comm h q.out.1 w, map_smul, map_smul, smul_comm]
   let χ : A ⧸ U.addSubgroupOf A → (Multiplicative (h.perp U) →* ℂ) := fun q =>
@@ -198,7 +193,8 @@ theorem exists_eigen (h : Alt c) (hρ : Ops c ρ) (hα : Splits c A α) (T : Set
     refine Fintype.linearIndependent_iff.1 hli (fun q => φ ((α q.out.1)⁻¹ • ρ q.out.1 v)) ?_ q
     funext w
     have := congrArg φ (hz w.toAdd.1 w.toAdd.2)
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     rw [Finset.sum_apply, Pi.zero_apply, ← this]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [φ.map_smul (c q.out.1 w.toAdd.1 ^ 2), smul_eq_mul, mul_comm]
@@ -216,7 +212,8 @@ theorem eq_zero_of_sum {ι : Type} (s : Finset ι) (β : ι → W → ℂ) (hβ 
     intro m hm hv
     obtain ⟨a, ha, hne⟩ := hβ j
     have key : ∑ i ∈ s, (β i a - β j a) • m i = (α a - β j a) • ∑ i ∈ insert j s, m i := by
-      rw [sub_smul, ← hv a ha, map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib, Finset.sum_insert hj, hm j a ha, sub_self,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [sub_smul, ← hv a ha, map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib, Finset.sum_insert hj, hm j a ha, sub_self,
         zero_add]
       exact Finset.sum_congr rfl fun i _ => by rw [hm i a ha, sub_smul]
     have := ih (fun i => (β i a - β j a) • m i) (fun i b hb => by rw [map_smul, hm i b hb, smul_comm])
@@ -280,7 +277,7 @@ instance {A : Type} [AddCommGroup A] (b : A →+ A →+ Additive ℂˣ) (hb : �
   { AddGroup.ofLeftAxioms (G := Tw b hb)
       (fun x y z => Tw.ext (add_assoc _ _ _) (by
         show x.sc + y.sc + b x.pt y.pt + z.sc + b (x.pt + y.pt) z.pt = x.sc + (y.sc + z.sc + b y.pt z.pt) + b x.pt (y.pt + z.pt)
-        simp only [map_add, AddMonoidHom.add_apply]; abel))
+        simp only [map_add (f := _), AddMonoidHom.add_apply]; abel))
       (fun x => Tw.ext (zero_add _) (by
         show 0 + x.sc + b 0 x.pt = x.sc
         simp))
@@ -323,15 +320,15 @@ theorem exists_splits (h : Alt c) {L A : AddSubgroup W} (hLA : L ≤ A) (hL : �
   have hg' : ∀ p, g (f p) = p.2 := fun p => DFunLike.congr_fun hg p
   refine ⟨fun x => if hx : x ∈ A then ((g ⟨⟨x, hx⟩, 0⟩).toMul : ℂ) else 1, ⟨fun a ha => ?_, fun a ha a' ha' => ?_⟩, fun x hx => ?_⟩
   · simp [ha]
-  · rw [dif_pos ha, dif_pos ha', dif_pos (A.add_mem ha ha')]
+  · rw [dite_eq_left ha, dite_eq_left ha', dite_eq_left (A.add_mem ha ha')]
     have h1 : (⟨⟨a, ha⟩, 0⟩ + ⟨⟨a', ha'⟩, 0⟩ : Tw b hb) = f (0, b ⟨a, ha⟩ ⟨a', ha'⟩) + ⟨⟨a + a', A.add_mem ha ha'⟩, 0⟩ :=
       Tw.ext (Subtype.ext (zero_add _).symm) (by
         show 0 + 0 + b ⟨a, ha⟩ ⟨a', ha'⟩ = b ⟨a, ha⟩ ⟨a', ha'⟩ + 0 + b 0 _
         simp)
     have h2 := congrArg (fun t => ((g t).toMul : ℂ)) h1
-    simpa only [map_add, toMul_add, Units.val_mul, hg', hbv] using h2
+    simpa only [map_add (f := _), toMul_add, Units.val_mul, hg', hbv] using h2
   · beta_reduce
-    rw [dif_pos (hLA hx)]
+    rw [dite_eq_left (hLA hx)]
     exact congrArg (fun t : Additive ℂˣ => (t.toMul : ℂ)) (hg' (⟨x, hx⟩, 0))
 
 def transl (c : W → W → ℂ) (x : W) : Module.End ℂ (W → ℂ) where
@@ -339,9 +336,15 @@ def transl (c : W → W → ℂ) (x : W) : Module.End ℂ (W → ℂ) where
   map_add' f g := by funext z; simp [mul_add]
   map_smul' r f := by funext z; simp; ring
 
-theorem ops_transl (h : Alt c) : Ops c (transl c) where
-  zero v := by funext z; simp [transl, h.zero_right]
-  mul x y v := by funext z; simp [transl, h.left, h.right, add_assoc]; ring
+theorem ops_transl (h : Alt c) : Ops c (transl c) := by
+  constructor
+  · intro v
+    funext z
+    simp [transl, h.zero_right]
+  · intro x y v
+    funext z
+    simp [transl, h.left, h.right, add_assoc]
+    ring
 
 theorem transl_indicator (hα : Splits c A α) (a : W) (ha : a ∈ A) :
     transl c a ((A : Set W).indicator α) = α a • (A : Set W).indicator α := by
@@ -383,9 +386,6 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
 
 theorem isCompact_int : IsCompact (𝒪[F] : Set F) := IsNonarchimedeanLocalField.isCompact_closedBall F 1
 
-theorem int_mem_nhds : (𝒪[F] : Set F) ∈ 𝓝 (0 : F) :=
-  (IsValuativeTopology.hasBasis_nhds_zero' F).mem_iff.2 ⟨1, one_ne_zero, fun _ hx => le_of_lt (α := ValueGroupWithZero F) hx⟩
-
 theorem exists_ne_zero {p : F → Prop} (hp : ∀ᶠ r in 𝓝 (0 : F), p r) : ∃ r, r ≠ 0 ∧ p r := by
   obtain ⟨γ, hγ, hs⟩ := (IsValuativeTopology.hasBasis_nhds_zero' F).mem_iff.1 hp
   obtain ⟨y, rfl⟩ := ValuativeRel.valuation_surjective γ
@@ -412,10 +412,14 @@ theorem eventually_psi' {ψ : AddChar F ℂ} (hψ : Continuous ψ) : ∀ᶠ z in
 variable {W : Type} [AddCommGroup W] [Module F W] {B : LinearMap.BilinForm F W}
 
 omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
-theorem alt_psi (hB : B.IsAlt) (ψ : AddChar F ℂ) : Alt fun x y => ψ (B x y / 2) where
-  left x y z := by rw [← AddChar.map_add_eq_mul, ← add_div]; simp
-  right x y z := by rw [← AddChar.map_add_eq_mul, ← add_div]; simp
-  self x := by rw [hB.self_eq_zero]; simp
+theorem alt_psi (hB : B.IsAlt) (ψ : AddChar F ℂ) : Alt fun x y => ψ (B x y / 2) := by
+  constructor
+  · intro x y z
+    rw [← AddChar.map_add_eq_mul, ← add_div, B.add_left]
+  · intro x y z
+    rw [← AddChar.map_add_eq_mul, ← add_div, B.add_right]
+  · intro x
+    simp [hB.self_eq_zero]
 
 omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem psi_sq (h2 : (2 : F) ≠ 0) (ψ : AddChar F ℂ) (t : F) : ψ (t / 2) ^ 2 = ψ t := by
@@ -523,15 +527,20 @@ variable {F W M : Type} [Field F] [AddCommGroup W] [Module F W] {B : LinearMap.B
 theorem apply_eq (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t • v) (g : Heisenberg B) (v : M) : π g v = ψ g.cen • π ⟨g.vec, 0⟩ v := by
   rw [← hπ, ← Module.End.mul_apply, ← map_mul]
   congr 2
-  ext <;> simp
+  ext <;> simp [mul_vec, mul_cen]
 
-theorem ops_of_central (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t • v) : Ops (fun x y => ψ (B x y / 2)) fun x => π ⟨x, 0⟩ where
-  zero v := by rw [hπ]; simp
-  mul x y v := by rw [← Module.End.mul_apply, ← map_mul, apply_eq hπ]; simp
+theorem ops_of_central (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t • v) : Ops (fun x y => ψ (B x y / 2)) fun x => π ⟨x, 0⟩ := by
+  constructor
+  · intro v
+    rw [hπ]
+    simp
+  · intro x y v
+    rw [← Module.End.mul_apply, ← map_mul, apply_eq hπ]
+    simp [mul_vec, mul_cen]
 
 def funRep (hB : B.IsAlt) (ψ : AddChar F ℂ) : Representation ℂ (Heisenberg B) (W → ℂ) where
   toFun g := ψ g.cen • transl (fun x y => ψ (B x y / 2)) g.vec
-  map_one' := LinearMap.ext fun v => by simp [(ops_transl (alt_psi hB ψ)).zero]
+  map_one' := LinearMap.ext fun v => by simp [one_cen, one_vec, (ops_transl (alt_psi hB ψ)).zero]
   map_mul' g k := LinearMap.ext fun v => by
     simp only [mul_cen, mul_vec, AddChar.map_add_eq_mul, LinearMap.smul_apply, Module.End.mul_apply, map_smul,
       (ops_transl (alt_psi hB ψ)).mul, smul_smul]
@@ -584,6 +593,8 @@ variable (hB : B.IsAlt) {A : AddSubgroup W} {α : W → ℂ} (hα : Splits (fun 
   (h3 : ∀ w, ∀ᶠ u in 𝓝 (0 : W), ψ (B u w / 2) ^ 2 = 1)
 
 omit [ValuativeRel F] [IsNonarchimedeanLocalField F] [FiniteDimensional F W] [IsModuleTopology F W] in
+include hB hα h1 h2 in
+omit [ValuativeRel F] [IsNonarchimedeanLocalField F] [FiniteDimensional F W] [IsModuleTopology F W] in
 include hα h1 h2 in
 theorem exists_eigen_mem (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t • v) (hs : PRep.IsSmooth π) (P : Subrepresentation π) (hP : P ≠ ⊥) :
     ∃ e ∈ P.toSubmodule, e ≠ 0 ∧ ∀ a ∈ A, π ⟨a, 0⟩ e = α a • e := by
@@ -593,8 +604,8 @@ theorem exists_eigen_mem (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t • v) (hs : PRe
   exact exists_eigen (alt_psi hB ψ) (ops_of_central hπ) hα T (fun u hu => (hT hu).1.2) P.toSubmodule
     (fun x m hm => P.apply_mem_toSubmodule _ hm) v hv hv0 fun u hu => (hT hu).2
 
+include hB hα hA h1 h2 h3 in
 include hα hA h1 h2 h3 in
-
 theorem irr_of_span (hψ : Continuous ψ) (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t • v) {e : M} (he0 : e ≠ 0)
     (he : ∀ a ∈ A, π ⟨a, 0⟩ e = α a • e) (hsp : Submodule.span ℂ (Set.range fun x => π ⟨x, 0⟩ e) = ⊤) : IsIrrSmoothOf ψ π := by
   have hs : PRep.IsSmooth π := by
@@ -608,7 +619,7 @@ theorem irr_of_span (hψ : Continuous ψ) (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t
       beta_reduce at this ⊢
       rw [this, hu', he u hu.1, hu.2, one_smul, one_smul]
     | zero => simp
-    | add a b _ _ ha hb => filter_upwards [ha, hb] with u ha hb using by rw [map_add, ha, hb]
+    | add a b _ _ ha hb => filter_upwards [ha, hb] with u ha hb using by rw [map_add (f := _), ha, hb]
     | smul r a _ ha => filter_upwards [ha] with u ha using by rw [map_smul, ha]
   refine ⟨hs, ?_, hπ⟩
   have : Nontrivial (Subrepresentation π) := ⟨⊥, ⊤, fun h => he0 (by
@@ -623,8 +634,8 @@ theorem irr_of_span (hψ : Continuous ψ) (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t
   rintro _ ⟨x, rfl⟩
   exact P.apply_mem_toSubmodule _ heP
 
+include hB hα hA h1 h2 h3 in
 include hα hA h1 h2 h3 in
-
 theorem exists_irr_sub (hψ : Continuous ψ) (hπ : ∀ t v, π ⟨0, t⟩ v = ψ t • v) {e : M} (he0 : e ≠ 0)
     (he : ∀ a ∈ A, π ⟨a, 0⟩ e = α a • e) :
     ∃ P : Subrepresentation π, e ∈ P.toSubmodule ∧ IsIrrSmoothOf ψ P.toRepresentation := by
@@ -680,57 +691,6 @@ theorem StoneVonNeumann_holds : StoneVonNeumann := by
 namespace SvN
 
 open ValuativeRel
-
-theorem exists_char (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] :
-    ∃ ψ : AddChar F ℂ, Continuous ψ ∧ ψ ≠ 1 := by
-  obtain ⟨r, hr, hr1⟩ := Valuation.IsNontrivial.exists_lt_one (v := valuation F)
-  let O : AddSubgroup F := (𝒪[F]).toAddSubgroup
-  have hx : r⁻¹ ∉ O := fun h => by
-    have h' : valuation F r⁻¹ ≤ 1 := h
-    rw [map_inv₀, inv_le_one₀ (zero_lt_iff.2 (by simpa using hr))] at h'
-    exact absurd hr1 (not_lt.2 h')
-  have hx' : ((r⁻¹ : F) : F ⧸ O) ≠ 0 := fun h => hx ((QuotientAddGroup.eq_zero_iff _).1 h)
-  obtain ⟨g, hg⟩ : ∃ g : F ⧸ O →+ Additive ℂˣ, g (r⁻¹ : F) ≠ 0 := by
-    obtain ⟨χ, hχ⟩ := CharacterModule.exists_character_apply_ne_zero_of_ne_zero hx'
-    let j : AddCircle (1 : ℚ) →+ AddCircle (1 : ℝ) := QuotientAddGroup.map _ _ (Rat.castHom ℝ).toAddMonoidHom (by
-      rintro _ ⟨k, rfl⟩
-      exact ⟨k, by simp⟩)
-    have hj : ∀ x, j x = 0 → x = 0 := by
-      intro x
-      induction x using QuotientAddGroup.induction_on with
-      | H q =>
-        intro h
-        obtain ⟨k, hk⟩ := (QuotientAddGroup.eq_zero_iff _).1 (show ((q : ℝ) : AddCircle (1 : ℝ)) = 0 from h)
-        refine (QuotientAddGroup.eq_zero_iff _).2 ⟨k, ?_⟩
-        have : ((k : ℚ) : ℝ) = q := by simpa using hk
-        simpa using (by exact_mod_cast this : (k : ℚ) = q)
-    refine ⟨AddMonoidHom.mk' (fun x => Additive.ofMul (Circle.toUnits (AddCircle.toCircle (j (χ x))))) fun a b => by
-      rw [map_add, map_add, AddCircle.toCircle_add, map_mul, ofMul_mul], fun h => hχ (hj _ ?_)⟩
-    refine AddCircle.injective_toCircle one_ne_zero (Subtype.ext ?_)
-    rw [AddCircle.toCircle_zero]
-    exact congrArg (fun t : Additive ℂˣ => (t.toMul : ℂ)) h
-  have := QuotientAddGroup.discreteTopology (O.isOpen_of_mem_nhds int_mem_nhds)
-  refine ⟨{ toFun := fun t => ((g t).toMul : ℂ), map_zero_eq_one' := by simp, map_add_eq_mul' := fun a b => by simp }, ?_, fun h => hg ?_⟩
-  · exact (continuous_of_discreteTopology (f := fun q : F ⧸ O => ((g q).toMul : ℂ))).comp QuotientAddGroup.continuous_mk
-  · exact Additive.toMul.injective (Units.ext (DFunLike.congr_fun h r⁻¹))
-
-def planeForm (F : Type) [Field F] : LinearMap.BilinForm F (F × F) :=
-  LinearMap.mk₂ F (fun x y => x.1 * y.2 - x.2 * y.1) (fun _ _ _ => by simp; ring) (fun _ _ _ => by simp; ring)
-    (fun _ _ _ => by simp; ring) (fun _ _ _ => by simp; ring)
-
-theorem planeForm_isAlt (F : Type) [Field F] : (planeForm F).IsAlt := fun x => by simp [planeForm, mul_comm]
-
-theorem planeForm_nondegenerate (F : Type) [Field F] : (planeForm F).Nondegenerate := by
-  constructor <;> intro x hx <;> have h1 := hx (1, 0) <;> have h2 := hx (0, 1) <;> simp [planeForm] at h1 h2 <;>
-    exact Prod.ext (by assumption) (by assumption)
-
-theorem plane_model (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] (h2 : (2 : F) ≠ 0) :
-    (∃ g k : Heisenberg (planeForm F), g * k ≠ k * g) ∧
-    ∃ ψ : AddChar F ℂ, Continuous ψ ∧ ψ ≠ 1 ∧ ∃ (S : Type) (_ : AddCommGroup S) (_ : Module ℂ S)
-      (ρ : Representation ℂ (Heisenberg (planeForm F)) S), Heisenberg.IsIrrSmoothOf ψ ρ := by
-  refine ⟨⟨_, _, Heisenberg.mul_ne_mul h2 (planeForm_isAlt F) (x := (1, 0)) (y := (0, 1)) (by simp [planeForm])⟩, ?_⟩
-  obtain ⟨ψ, h, h'⟩ := exists_char F
-  exact ⟨ψ, h, h', (StoneVonNeumann_holds F h2 (F × F) _ (planeForm_isAlt F) (planeForm_nondegenerate F) ψ h h').1⟩
 
 end SvN
 

@@ -1,4 +1,8 @@
-import Formalism.FockGram.StatementLat
+module
+
+public import Formalism.FockGram.StatementLat
+
+@[expose] public section
 
 open Matrix Module
 

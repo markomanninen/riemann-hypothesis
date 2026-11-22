@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
+
+@[expose] public section
+
 open GlobalTheory.Poinc
 
 namespace GlobalTheory.Poinc
@@ -15,7 +20,7 @@ theorem det_eq_one_of_congMod (X : Type) [AddCommGroup X] [Module.Free ℤ X] [M
     ext i j
     obtain ⟨w, hw⟩ := hk (b j)
     have hfb : (f : X →ₗ[ℤ] X) (b j) = k (b j) := rfl
-    rw [RingHom.mapMatrix_apply, Matrix.map_apply, hM, LinearMap.toMatrix_apply, hfb, hw, map_add, map_nsmul,
+    rw [RingHom.mapMatrix_apply, Matrix.map_apply, hM, LinearMap.toMatrix_apply, hfb, hw, map_add (f := _), map_nsmul,
       Finsupp.add_apply, Finsupp.smul_apply, b.repr_self, Finsupp.single_apply, Matrix.one_apply]
     by_cases h : j = i
     · subst h; simp

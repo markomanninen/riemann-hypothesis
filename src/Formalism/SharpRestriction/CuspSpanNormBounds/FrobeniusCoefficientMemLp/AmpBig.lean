@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpUnif
-import Formalism.SharpRestriction.CuspSpanNormBounds.SLemOm
-import Formalism.SharpRestriction.CuspSpanNormBounds.OscillatoryIntegralBounds
-import Formalism.FormalDegreeBessel.FinalBF
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CfgTopFalseIff
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpUnif
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SLemOm
+public import Formalism.SharpRestriction.CuspSpanNormBounds.OscillatoryIntegralBounds
+public import Formalism.FormalDegreeBessel.FinalBF
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CfgTopFalseIff
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal InnerProductSpace

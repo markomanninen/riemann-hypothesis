@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,9 @@ private theorem lintegral_B1_inv_im_sq_le_lintegral (C c : ℝ) (hc : 0 < c) :
 theorem volume_cusp_region_lt_top (C c : ℝ) (hc : 0 < c) : (volume : Measure P) (show Set P from B1 C c) < ⊤ := by
   have hK0 : 0 ≤ (1 + C ^ 2) * (1 + 1 / c ^ 2) := by positivity
   rw [volume_eq_lintegral_inv_im_sq_comap _ (measurableSet_cusp_region C c)]
-  exact lt_of_le_of_lt ((lintegral_B1_inv_im_sq_le_lintegral C c hc).trans (lintegral_comap_im_ne_zero_le_lintegral _)) (lintegral_mul_inv_one_add_sq_lt_top _ hK0)
+  exact lt_of_le_of_lt ((lintegral_B1_inv_im_sq_le_lintegral C c hc).trans (lintegral_comap_im_ne_zero_le_lintegral
+    (fun t : ℂ => ENNReal.ofReal ((1 + C ^ 2) * (1 + 1 / c ^ 2) *
+      ((1 + t.re ^ 2)⁻¹ * (1 + t.im ^ 2)⁻¹))))) (lintegral_mul_inv_one_add_sq_lt_top _ hK0)
 
 end UpperTheory.Esk.CuspRegionVolume
 

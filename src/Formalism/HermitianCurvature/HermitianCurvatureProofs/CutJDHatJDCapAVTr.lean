@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRModelV
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRDrTr
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRModelV
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRDrTr
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

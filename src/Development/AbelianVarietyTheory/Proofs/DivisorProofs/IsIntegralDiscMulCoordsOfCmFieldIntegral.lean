@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+
+@[expose] public section
+
 open NumberField UpperHalfPlane GlobalTheory.HilbFam GlobalTheory.QFam
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization (Emb Frac latM qPow upperHalf cK omegaFactor IsPartialZeta HasExpansion)
 open GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates (iterD partialD)
@@ -28,7 +33,7 @@ theorem isIntegral_coord_of_isIntegral (E : Type) [Field E] [NumberField E] [IsC
   have hri : IsIntegral ℤ r := hθ.sub (hc _ hθ)
   have h0 : IsIntegral ℤ ((x 0 : E) * r) := by
     have := hu.sub (hc _ hu)
-    rw [map_add, map_mul, hfix, hfix] at this
+    rw [map_add (f := _), map_mul, hfix, hfix] at this
     have e : (x 0 : E) * r = (x 0 : E) * θ + (x 1 : E) -
         ((x 0 : E) * IsCMField.complexConj E θ + (x 1 : E)) := by rw [hrdef]; ring
     rw [e]; exact this
@@ -44,10 +49,10 @@ theorem isIntegral_coord_of_isIntegral (E : Type) [Field E] [NumberField E] [IsC
   have hinj : Function.Injective (algebraMap (FR E) E) := (algebraMap (FR E) E).injective
   have hx : algebraMap (FR E) E (x j) = (x j : E) := rfl
   constructor
-  · rw [← isIntegral_algebraMap_iff hinj, map_mul, map_pow, map_natCast, hx, hD']
+  · rw [← (isIntegral_algebraMap_iff (B := E)), map_mul, map_pow, map_natCast, hx, hD']
     have e : -r ^ 2 * (x j : E) ^ 2 = -((x j : E) * r * ((x j : E) * r)) := by ring
     rw [e]; exact (hj.mul hj).neg
-  · rw [← isIntegral_algebraMap_iff hinj, map_mul, map_natCast, hx, hD']
+  · rw [← (isIntegral_algebraMap_iff (B := E)), map_mul, map_natCast, hx, hD']
     have e : -r ^ 2 * (x j : E) = -((x j : E) * r * r) := by ring
     rw [e]; exact (hj.mul hri).neg
 

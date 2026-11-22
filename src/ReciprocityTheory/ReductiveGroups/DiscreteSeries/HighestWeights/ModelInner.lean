@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelSpace
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,9 +27,6 @@ def MV.mk {ε : Fin n → Bool} {m : Fin n → ℤ} (f : KG ε → ℂ) (hf : f 
 
 theorem MV.mem {ε : Fin n → Bool} {m : Fin n → ℤ} (f : MV ε m) : f.fn ∈ Vsp ε m := by
   exact (show ↥(Vsp ε m) from f).2
-
-@[simp] theorem MV.fn_mk {ε : Fin n → Bool} {m : Fin n → ℤ} (f : KG ε → ℂ) (hf : f ∈ Vsp ε m) :
-    (MV.mk f hf).fn = f := rfl
 
 theorem MV.ext {ε : Fin n → Bool} {m : Fin n → ℤ} {f g : MV ε m} (h : f.fn = g.fn) : f = g := by
   exact Subtype.ext h
@@ -65,7 +66,7 @@ theorem mvInner_conj {ε : Fin n → Bool} {m : Fin n → ℤ} (f g : MV ε m) :
   rw [← integral_conj]
   congr 1
   funext x
-  simp only [map_mul, Complex.conj_conj]
+  simp only [map_mul, starRingEnd_apply, star_star]
   exact mul_comm _ _
 
 theorem mvInner_re_nonneg {ε : Fin n → Bool} {m : Fin n → ℤ} (f : MV ε m) : 0 ≤ (mvInner f f).re := by
@@ -74,7 +75,7 @@ theorem mvInner_re_nonneg {ε : Fin n → Bool} {m : Fin n → ℤ} (f : MV ε m
 
 theorem mvInner_add_left {ε : Fin n → Bool} {m : Fin n → ℤ} (f g h : MV ε m) :
     mvInner (f + g) h = mvInner f h + mvInner g h := by
-  simp only [mvInner, MV.fn_add, Pi.add_apply, map_add, add_mul]
+  simp only [mvInner, MV.fn_add, Pi.add_apply, map_add (f := _), add_mul]
   exact integral_add (mvInner_integrable f h) (mvInner_integrable g h)
 
 theorem mvInner_smul_left {ε : Fin n → Bool} {m : Fin n → ℤ} (f g : MV ε m) (c : ℂ) :
@@ -117,7 +118,5 @@ instance (ε : Fin n → Bool) (m : Fin n → ℤ) : FiniteDimensional ℂ (MV �
   finiteDimensional_Vsp ε m
 
 instance (ε : Fin n → Bool) (m : Fin n → ℤ) : CompleteSpace (MV ε m) := FiniteDimensional.complete ℂ _
-
-theorem MV.inner_def {ε : Fin n → Bool} {m : Fin n → ℤ} (f g : MV ε m) : inner ℂ f g = mvInner f g := rfl
 
 end ReciprocityTheory.ChartRestriction.DS.HW

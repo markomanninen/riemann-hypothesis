@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+
+@[expose] public section
+
 open Matrix Formalism.UG Formalism.L2.DIV GlobalTheory.LevNorm
 
 namespace GlobalTheory.LevNorm
@@ -13,7 +18,8 @@ theorem exists_normOne_residues {A : Type} [CommRing A] {S : Subring A} {P : Typ
 
   have comp : ∀ (f : P → A) Q0, Z.p Q0 (∑ Q ∈ T, Z.e Q * f Q) = if Q0 ∈ T then Z.p Q0 (f Q0) else 0 := by
     intro f Q0
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     by_cases h : Q0 ∈ T
     · rw [if_pos h, Finset.sum_eq_single_of_mem Q0 h
         (fun Q _ hQ => by rw [map_mul, Z.e_ne Q Q0 (Ne.symm hQ), zero_mul]), map_mul, Z.e_self, one_mul]
@@ -46,7 +52,8 @@ theorem exists_normOne_residues {A : Type} [CommRing A] {S : Subring A} {P : Typ
   have pa : ∀ Q0, Z.p Q0 a = if Q0 ∈ T then Z.p Q0 (s Q0) else 0 := fun Q0 => by rw [had, comp]
   have pb : ∀ Q0, Z.p Q0 bb = if Q0 ∈ T then Z.p Q0 (t Q0) else 0 := fun Q0 => by rw [hbd, comp]
   have pF : ∀ Q0 ∈ T, Z.p Q0 (σ E) = 0 := fun Q0 hQ0 => by
-    rw [hEd, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hEd, map_sum, map_sum]
     refine Finset.sum_eq_zero fun Q hQ => ?_
     obtain ⟨Q3, h3⟩ := Z.exists_bar hσ Q
     rw [map_mul, map_one, mul_one, h3, Z.e_ne Q3 Q0 (fun h => hT Q hQ Q0 hQ0 (by rw [h3, h]))]
@@ -91,14 +98,14 @@ theorem exists_normOne_residues {A : Type} [CommRing A] {S : Subring A} {P : Typ
   · show (1 - E - F + a + y) * σ (1 - E - F + a + y) = 1
     have hσF : σ F = E := hσ E
     have hσy : σ y = bb := hσ bb
-    rw [map_add, map_add, map_sub, map_sub, map_one, hσF, hσy]
+    rw [map_add (f := _), map_add (f := _), map_sub, map_sub, map_one, hσF, hσy]
     linear_combination hE + hF + 2 * hEF - hEx - hb - hFx - hFb - ha - hFy - hFa - hEy + hax + hab + hxy + hby
   · intro Q hQ
     rw [← hs Q]
     refine Z.r_congr Q ?_
     show Z.p Q (1 - E - F + a + y) = Z.p Q (s Q)
     have hy0 : Z.p Q y = 0 := by rw [← hFy, map_mul, pF Q hQ, zero_mul]
-    rw [map_add, map_add, map_sub, map_sub, map_one, pE, if_pos hQ, pF Q hQ, pa, if_pos hQ, hy0]
+    rw [map_add (f := _), map_add (f := _), map_sub, map_sub, map_one, pE, if_pos hQ, pF Q hQ, pa, if_pos hQ, hy0]
     ring
   · intro w hw
     show (1 - (1 - E - F + a + y)) * w ∈ S

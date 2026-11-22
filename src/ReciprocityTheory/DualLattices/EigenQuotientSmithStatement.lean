@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.RestrictedHopfOrderApproximationStatement
+module
+
+public import ReciprocityTheory.DualLattices.RestrictedHopfOrderApproximationStatement
+
+@[expose] public section
 
 noncomputable section
 

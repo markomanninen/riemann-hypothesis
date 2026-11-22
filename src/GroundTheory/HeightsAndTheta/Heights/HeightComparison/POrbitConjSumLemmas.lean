@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitConjSum
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitConjSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -23,8 +28,8 @@ theorem eval_map_int {κ : Type*} (z : κ → ℂ) (f : MvPolynomial κ ℤ) :
     eval z (map (Int.castRingHom ℂ) f) = aeval z f := by
   rw [eval_map, aeval_def, algebraMap_int_eq]
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem aeval_eq_zero_of_mem (x : Cone n (AlgebraicClosure ℚ)) {f : MvPolynomial (Coord n) ℤ}
     (hmem : f ∈ orbitIdeal x) : aeval (flatCone x) f = 0 := by
   rw [orbitIdeal, Geo.mCoordIdeal, RingHom.mem_ker] at hmem
@@ -34,7 +39,7 @@ theorem aeval_eq_zero_of_mem (x : Cone n (AlgebraicClosure ℚ)) {f : MvPolynomi
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp [Geo.mConeMap]
-    | add f g hf hg => simp only [map_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), hf, hg]
     | mul_X f p hf => simp only [map_mul, hf, aeval_X, eval_X, Geo.mConeMap, eval_C, mul_one]
   rw [h, hmem, map_zero]
 
@@ -46,7 +51,8 @@ theorem mem_orbitIdeal_of_homog (x : Cone n (AlgebraicClosure ℚ)) {f : MvPolyn
       C (aeval (flatCone x) f) * ∏ k, (X k : MvPolynomial ι (AlgebraicClosure ℚ)) ^ d k := by
     conv_lhs => rw [f.as_sum]
     conv_rhs => rw [f.as_sum]
-    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun m hm => ?_
     have hX : ∏ p : Coord n, (X p.1 : MvPolynomial ι (AlgebraicClosure ℚ)) ^ m p =
         ∏ k, (X k : MvPolynomial ι (AlgebraicClosure ℚ)) ^ d k := by
@@ -61,8 +67,8 @@ theorem mem_orbitIdeal_of_homog (x : Cone n (AlgebraicClosure ℚ)) {f : MvPolyn
     ac_rfl
   rw [orbitIdeal, Geo.mCoordIdeal, RingHom.mem_ker, key, h0, map_zero, zero_mul]
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem conj_mem (x : Cone n (AlgebraicClosure ℚ)) (hx : BlockNonzero x)
     (σ : coordField x →+* ℂ) :
     (fun p : Coord n ↦ σ (coordVec x p.1 p.2)) ∈ Geo.mcPts (ι := blockIdx n) (orbitIdeal x) := by
@@ -100,7 +106,7 @@ theorem exists_int_mul {κ : Type*} (F : MvPolynomial κ ℚ) :
     obtain ⟨N₁, P₁, h₁, e₁⟩ := hf
     obtain ⟨N₂, P₂, h₂, e₂⟩ := hg
     refine ⟨N₁ * N₂, C N₂ * P₁ + C N₁ * P₂, mul_ne_zero h₁ h₂, ?_⟩
-    rw [map_add, map_mul, map_mul, MvPolynomial.map_C, MvPolynomial.map_C, e₁, e₂, Int.cast_mul,
+    rw [map_add (f := _), map_mul, map_mul, MvPolynomial.map_C, MvPolynomial.map_C, e₁, e₂, Int.cast_mul,
       C_mul]
     simp only [eq_intCast]
     ring
@@ -131,8 +137,8 @@ theorem isWeightedHomogeneous_chartHomog (c : (k : ι) → Fin (n k + 1))
   funext k
   rw [Pi.add_apply, weight_coordDeg_apply, Nat.add_sub_cancel' (blockDeg_le P hm k)]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem aeval_chartHomog {F : Type*} [Field F] (c : (k : ι) → Fin (n k + 1))
     (P : MvPolynomial (Coord n) ℤ) (w : Coord n → F) (hw : ∀ k, w ⟨k, c k⟩ ≠ 0) :
     aeval w (chartHomog c P) =
@@ -141,7 +147,8 @@ theorem aeval_chartHomog {F : Type*} [Field F] (c : (k : ι) → Fin (n k + 1))
       ∑ m ∈ P.support, aeval (fun p ↦ w p / w ⟨p.1, c p.1⟩) (monomial m (P.coeff m)) := by
     conv_lhs => rw [P.as_sum]
     exact map_sum _ _ _
-  rw [hP, chartHomog, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hP, chartHomog, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm ↦ ?_
   have hden : ∏ p : Coord n, w ⟨p.1, c p.1⟩ ^ m p = ∏ k, w ⟨k, c k⟩ ^ ∑ i, m ⟨k, i⟩ := by
     rw [Fintype.prod_sigma]
@@ -183,8 +190,8 @@ theorem conj_chart_ne_zero (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) →
     σ (coordVec x k (c k)) ≠ 0 :=
   (map_ne_zero σ).mpr fun h ↦ hc k (congrArg Subtype.val h)
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem restrict_eq_iff (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) → Fin (n k + 1))
     (σ σ' : coordField x →+* ℂ) :
     σ.comp (algebraMap (ratioField x c) (coordField x)) =
@@ -206,8 +213,8 @@ def conjPt (x : Cone n (AlgebraicClosure ℚ)) (hx : BlockNonzero x) (σ : coord
     projPts (ι := blockIdx n) (orbitIdeal x) :=
   Quot.mk _ ⟨_, conj_mem x hx σ⟩
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem conjPt_eq_iff (x : Cone n (AlgebraicClosure ℚ)) (hx : BlockNonzero x)
     (c : (k : ι) → Fin (n k + 1)) (hc : ∀ k, x k (c k) ≠ 0) (σ σ' : coordField x →+* ℂ) :
     conjPt x hx σ = conjPt x hx σ' ↔ ∀ p, σ (ratio x c p) = σ' (ratio x c p) := by

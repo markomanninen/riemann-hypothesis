@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementT
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InvOfUnitCoeffMem
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FormalGroupCoeffMem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementT
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InvOfUnitCoeffMem
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FormalGroupCoeffMem
+
+@[expose] public section
 
 open PowerSeries
 
@@ -30,7 +34,7 @@ private def ser {R : Type} [CommRing R] (S : Subring R) : Subring R⟦X⟧ where
     split_ifs
     exacts [S.one_mem, S.zero_mem]
   add_mem' := fun {a b} ha hb n => by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact S.add_mem (ha n) (hb n)
   zero_mem' := fun n => by
     rw [map_zero]
@@ -95,7 +99,7 @@ private lemma xPlus_coeff {R : Type} [CommRing R] (W : WeierstrassCurve R) (x y 
       (2 * y + W.a₁ * x + W.a₃ = 0 →
         coeff 2 (xPlus W x y) = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ - W.a₁ * y) := by
   refine ⟨by simp [xPlus], ?_, fun h => ?_⟩
-  · rw [xPlus, mul_assoc, map_add, coeff_succ_X_mul, coeff_C, if_neg one_ne_zero, zero_add,
+  · rw [xPlus, mul_assoc, map_add (f := _), coeff_succ_X_mul, coeff_C, if_neg one_ne_zero, zero_add,
       coeff_zero_eq_constantCoeff_apply]
     simp [nS, yS, xS_const]
   · have e : xPlus W x y = C x + X ^ 2 *
@@ -104,7 +108,7 @@ private lemma xPlus_coeff {R : Type} [CommRing R] (W : WeierstrassCurve R) (x y 
           invOfUnit (tDen W x) 1 ^ 2) := by
       rw [xPlus, nS, h, map_zero]
       ring
-    rw [e, map_add, coeff_C, if_neg two_ne_zero, zero_add, coeff_X_pow_mul', if_pos le_rfl,
+    rw [e, map_add (f := _), coeff_C, if_neg two_ne_zero, zero_add, coeff_X_pow_mul', if_pos le_rfl,
       Nat.sub_self, coeff_zero_eq_constantCoeff_apply]
     simp only [map_mul, map_add (constantCoeff (R := R)), map_pow, constantCoeff_C, constantCoeff_X,
       xS_const, constantCoeff_invOfUnit]

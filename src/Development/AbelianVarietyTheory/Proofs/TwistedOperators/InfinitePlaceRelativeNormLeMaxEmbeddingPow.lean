@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VsizeNonneg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VsizeNonneg
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix NumberField IsDedekindDomain
 open scoped NNReal TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -14,7 +19,7 @@ theorem infPlace_norm_le {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
   have e : w.embedding (Algebra.norm F y) = ∏ σ : E →ₐ[F] ℂ, σ y := Algebra.norm_eq_prod_embeddings F ℂ y
   rw [e, norm_prod, ← AlgHom.card F E ℂ]
   calc ∏ σ : E →ₐ[F] ℂ, ‖σ y‖ ≤ ∏ _σ : E →ₐ[F] ℂ, (c : ℝ) :=
-        Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun σ _ => by
+        Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun σ _ => by
           exact_mod_cast h ⟨σ.toRingHom, RingHom.ext σ.commutes⟩
     _ = (c : ℝ) ^ Fintype.card (E →ₐ[F] ℂ) := by rw [Finset.prod_const, Finset.card_univ]
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasDerivAtOfContinuousRealToComplexExponential
-import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartFPlaceIdem
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasDerivAtOfContinuousRealToComplexExponential
+public import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ theorem contDiff_char {k : ℕ} (χ : (Fin k → ℝ) → ℂ) (hc : Continuous 
   have hi : ContDiff ℝ ∞ fun s : ℝ => χ (Pi.single i s) :=
     contDiff_real_char _ (hc.comp hsc) (fun s t => by rw [Pi.single_add, hm])
       (by rw [Pi.single_zero, h0])
-  exact hi.comp (contDiff_apply ℝ ℝ i)
+  exact hi.comp (contDiff_apply ℝ (fun _ => ℝ) i)
 
 theorem ker_fin_mem_nhds {F : Type} [Field F] [NumberField F] {ψ : AddChar (AF F) ℂ} (hc : Continuous ψ) :
     {a : Af F | ψ (pairA F 0 a) = 1} ∈ 𝓝 (0 : Af F) := by
@@ -87,8 +91,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 local instance modTopAEF : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
 local instance topRingAEF : IsTopologicalRing (AF F ⊗[F] E) := IsModuleTopology.isTopologicalRing (AF F) _
 
-variable (F) in
 
+variable (F) in
 def eInfF : AF F := pairA F 1 0
 
 theorem smul_eq_zero_of_infF {a : AEF F E} (h : infPartF F E a = 0) : eInfF F • a = 0 := by
@@ -97,7 +101,7 @@ theorem smul_eq_zero_of_infF {a : AEF F E} (h : infPartF F E a = 0) : eInfF F �
     intro a
     induction a using TensorProduct.induction_on with
     | zero => simp only [smul_zero, map_zero]
-    | add a b ha hb => rw [smul_add, ha, hb, RingHom.map_add, map_add]
+    | add a b ha hb => rw [smul_add, ha, hb, RingHom.map_add (f := _), map_add (f := _)]
     | tmul a x =>
       rw [TensorProduct.smul_tmul']
       have : eInfF F • a = LinearMap.inl F (Ainf F) (Af F) (fstA F a) := Prod.ext (one_mul _) (zero_mul _)
@@ -108,7 +112,7 @@ theorem smul_eq_zero_of_infF {a : AEF F E} (h : infPartF F E a = 0) : eInfF F �
 theorem cAF_smul (σ : E →ₐ[F] E) (c : AF F) (a : AEF F E) : cAF σ (c • a) = c • cAF σ a := by
   induction a using TensorProduct.induction_on with
   | zero => simp only [smul_zero, map_zero]
-  | add a b ha hb => rw [smul_add, RingHom.map_add, RingHom.map_add, ha, hb, smul_add]
+  | add a b ha hb => rw [smul_add, RingHom.map_add (f := _), RingHom.map_add (f := _), ha, hb, smul_add]
   | tmul a x => rfl
 
 theorem continuous_cAF (σ : E →ₐ[F] E) : Continuous (cAF σ : AEF F E → AEF F E) := by
@@ -120,12 +124,12 @@ variable (σ : E →ₐ[F] E) {nS nT : ℕ} (JS : Matrix (Fin nS) (Fin nS) E) (J
 theorem symplOHF_add_left (x x' y : WOF F E nS nT) :
     symplOHF σ JS JT xi0 (x + x') y = symplOHF σ JS JT xi0 x y + symplOHF σ JS JT xi0 x' y := by
   unfold symplOHF symplOF hOF
-  simp only [Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem symplOHF_add_right (x y y' : WOF F E nS nT) :
     symplOHF σ JS JT xi0 x (y + y') = symplOHF σ JS JT xi0 x y + symplOHF σ JS JT xi0 x y' := by
   unfold symplOHF symplOF hOF
-  simp only [Matrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem symplOHF_smul_left (c : AF F) (x y : WOF F E nS nT) :
     symplOHF σ JS JT xi0 (c • x) y = c * symplOHF σ JS JT xi0 x y := by
@@ -155,16 +159,16 @@ theorem continuous_symplOHF_left (u : WOF F E nS nT) : Continuous fun w : WOF F 
   have ht : Continuous (Algebra.trace (AF F) (AEF F E)) := IsModuleTopology.continuous_of_linearMap _
   unfold symplOHF symplOF hOF
   refine continuous_const.mul (ht.comp (continuous_const.mul ?_))
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ => continuous_finset_sum _ fun c _ =>
-    continuous_finset_sum _ fun d _ => continuous_const.mul ?_
+  refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun b _ => continuous_finsetSum _ fun c _ =>
+    continuous_finsetSum _ fun d _ => continuous_const.mul ?_
   exact (continuous_apply a).comp (continuous_apply d)
 
 theorem continuous_symplOHF_right (u : WOF F E nS nT) : Continuous fun w : WOF F E nS nT => symplOHF σ JS JT xi0 u w := by
   have ht : Continuous (Algebra.trace (AF F) (AEF F E)) := IsModuleTopology.continuous_of_linearMap _
   unfold symplOHF symplOF hOF
   refine continuous_const.mul (ht.comp (continuous_const.mul ?_))
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ => continuous_finset_sum _ fun c _ =>
-    continuous_finset_sum _ fun d _ => ((continuous_const.mul ?_).mul continuous_const).mul continuous_const
+  refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun b _ => continuous_finsetSum _ fun c _ =>
+    continuous_finsetSum _ fun d _ => ((continuous_const.mul ?_).mul continuous_const).mul continuous_const
   exact (continuous_cAF σ).comp ((continuous_apply b).comp (continuous_apply c))
 
 variable {σ JS JT xi0}
@@ -198,7 +202,7 @@ theorem isThetaFunOF_heisOF : ∀ (F E : Type) [Field F] [NumberField F] [Field 
       AddMonoidHom.mk' (fun u => symplOHF σ JS JT ξ₀ u w₀ - symplOHF σ JS JT ξ₀ w₀ u)
         (fun a b => by simp only [symplOHF_add_left, symplOHF_add_right]; ring)
     let g : WOF F E nS nT →+ AF F :=
-      AddMonoidHom.mk' (fun u => pairA F 0 (c u).2) (fun a b => by rw [map_add]; exact Prod.ext (add_zero 0).symm rfl)
+      AddMonoidHom.mk' (fun u => pairA F 0 (c u).2) (fun a b => by rw [map_add (f := _)]; exact Prod.ext (add_zero 0).symm rfl)
     let Kψ : AddSubgroup (AF F) :=
       { carrier := {x | ψ x = 1}
         zero_mem' := ψ.map_zero_eq_one
@@ -247,7 +251,7 @@ theorem isThetaFunOF_heisOF : ∀ (F E : Type) [Field F] [NumberField F] [Field 
   · exact (hc.comp (continuous_symplOHF_left σ JS JT ξ₀ w₀)).mul (hf.cont.comp (continuous_id.add continuous_const))
   · have hχ : ContDiff ℝ ∞ fun t => ψ (symplOHF σ JS JT ξ₀ (L t) w₀) := by
       refine contDiff_char _ (hc.comp ((continuous_symplOHF_left σ JS JT ξ₀ w₀).comp hL)) (fun s t => ?_) ?_
-      · rw [map_add, symplOHF_add_left, AddChar.map_add_eq_mul]
+      · rw [map_add (f := _), symplOHF_add_left, AddChar.map_add_eq_mul]
       · rw [map_zero, symplOHF_zero_left, ψ.map_zero_eq_one]
     have : (fun t => heisOF σ JS JT ξ₀ ψ w₀ f (w + L t)) =
         fun t => ψ (symplOHF σ JS JT ξ₀ w w₀) * (ψ (symplOHF σ JS JT ξ₀ (L t) w₀) * f (w + w₀ + L t)) := by

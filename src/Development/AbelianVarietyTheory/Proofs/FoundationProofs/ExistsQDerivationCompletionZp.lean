@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SndDualLiftAlgebraMap
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.Laurent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SndDualLiftAlgebraMap
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.Laurent
+
+@[expose] public section
 
 open GlobalTheory.K5
 
@@ -27,7 +31,7 @@ def thetaO :=
   letI : Module ℤ_[p] (Lau p) := Algebra.toModule
   GlobalTheory.BK.complDer (k := ℤ_[p]) (pI p)
     { toFun := thetaFun p
-      map_add' := fun a b => by simp only [thetaFun, map_add, mul_add]
+      map_add' := fun a b => by simp only [thetaFun, map_add (f := _), mul_add]
       map_smul' := fun r f => by
         simp only [thetaFun, Algebra.smul_def, RingHom.id_apply]
         rw [Formalism.L2.Th1.A.dL_mul, dL_algebraMap p r]

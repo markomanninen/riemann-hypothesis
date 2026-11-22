@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Unitarize
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasimirGapAtNoncompactWeight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DecompA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Unitarize
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasimirGapAtNoncompactWeight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DecompA
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {D : Submo
 theorem dc_kDiag_add (k : Matrix (Fin n) (Fin n) ℂ) (x y : Fin n → H) :
     kDiag dual σ k (fun c => x c + y c) = fun c => kDiag dual σ k x c + kDiag dual σ k y c := by
   funext c
-  simp only [kDiag, map_add, smul_add, Finset.sum_add_distrib]
+  simp only [kDiag, map_add (f := _), smul_add, Finset.sum_add_distrib]
 
 theorem dc_kDiag_smul (k : Matrix (Fin n) (Fin n) ℂ) (a : ℂ) (x : Fin n → H) :
     kDiag dual σ k (fun c => a • x c) = fun c => a • kDiag dual σ k x c := by
@@ -89,7 +93,7 @@ theorem dc_isGKEndo_add' {A B : Module.End ℂ (Fin n → D)} (hA : IsGKEndo dua
     (hB : IsGKEndo dual ε σ E S B) : IsGKEndo dual ε σ E S (A + B) := by
   refine ⟨fun f hf => (tensSub S).add_mem (hA.1 f hf) (hB.1 f hf), fun a b f hf => ?_,
     fun k hk f hf f' hf' h => ?_⟩
-  · simp only [LinearMap.add_apply, map_add, hA.2.1 a b f hf, hB.2.1 a b f hf]
+  · simp only [LinearMap.add_apply, map_add (f := _), hA.2.1 a b f hf, hB.2.1 a b f hf]
   · have e1 := hA.2.2 k hk f hf f' hf' h
     have e2 := hB.2.2 k hk f hf f' hf' h
     simp only [LinearMap.add_apply, Pi.add_apply, Submodule.coe_add]
@@ -121,7 +125,7 @@ theorem dc_isGKEndo_zero' : IsGKEndo dual ε σ E S 0 := by
 theorem dc_isGKEndo_aeval {A : Module.End ℂ (Fin n → D)} (hA : IsGKEndo dual ε σ E S A) (p : ℂ[X]) :
     IsGKEndo dual ε σ E S (aeval A p) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact dc_isGKEndo_add' hp hq
+  | add p q hp hq => rw [map_add (f := _)]; exact dc_isGKEndo_add' hp hq
   | monomial k a =>
     rw [aeval_monomial, Module.algebraMap_end_eq_smul_id]
     refine dc_isGKEndo_mul' (dc_isGKEndo_smul' dc_isGKEndo_one' a) ?_

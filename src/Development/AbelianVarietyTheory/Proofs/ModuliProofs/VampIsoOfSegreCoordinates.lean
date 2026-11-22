@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SectionsHaveFiniteDimension
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSegreCoordinates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SectionsHaveFiniteDimension
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSegreCoordinates
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -217,7 +222,7 @@ theorem vamp {K : Type} [Field K] {s : X ⟶ Sp K} (sq : IsPullback p q s s) (hV
         refine ⟨MvPolynomial.C c, ?_⟩
         rw [MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂_C, RingHom.comp_apply, RingHom.comp_apply]
         exact (RepBC.appLE_appLE p s _ _ _ _).symm
-      | add F G hF hG => rw [MvPolynomial.eval₂_add, map_add]; exact Subring.add_mem _ hF hG
+      | add F G hF hG => rw [MvPolynomial.eval₂_add, map_add (f := _)]; exact Subring.add_mem _ hF hG
       | mul_X F i hF =>
         rw [MvPolynomial.eval₂_mul, map_mul]
         refine Subring.mul_mem _ hF ⟨MvPolynomial.X (i, a.2), ?_⟩
@@ -229,7 +234,7 @@ theorem vamp {K : Type} [Field K] {s : X ⟶ Sp K} (sq : IsPullback p q s s) (hV
         refine ⟨MvPolynomial.C c, ?_⟩
         rw [MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂_C, sq.w, RingHom.comp_apply, RingHom.comp_apply]
         exact (RepBC.appLE_appLE q s _ _ _ _).symm
-      | add F G hF hG => rw [MvPolynomial.eval₂_add, map_add]; exact Subring.add_mem _ hF hG
+      | add F G hF hG => rw [MvPolynomial.eval₂_add, map_add (f := _)]; exact Subring.add_mem _ hF hG
       | mul_X F i hF =>
         rw [MvPolynomial.eval₂_mul, map_mul]
         refine Subring.mul_mem _ hF ⟨MvPolynomial.X (a.1, i), ?_⟩

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdEApproxMono
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCount
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdEApproxMono
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCount
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,6 @@ def lat (c : K) : AddSubgroup K where
   neg_mem' := by
     rintro x ⟨y, hy, rfl⟩
     exact ⟨-y, I.neg_mem hy, by ring⟩
-
-theorem mem_lat {c x : K} : x ∈ lat I c ↔ ∃ y ∈ I, x = c * y := Iff.rfl
 
 variable {I}
 

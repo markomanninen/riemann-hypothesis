@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BetaLUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Skeleton
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BetaLUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Skeleton
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,39 @@ open NumberField Module Formalism.BasicNotions Formalism.MainNotions.S Formalism
 namespace PI.UnitaryGroupMassFormula.BetaLUniq
 
 theorem agreeOnH : AgreeOnH := by
-  intro E _ _ _ S Λ r T T' F F' F'' β₁ β₂ k hΛ hLF hLF'' hdim n' n'' hs1 hs2 x hx
+  intro E _ _ _ S Λ r T T' F F' F'' β₁ β₂ k _ hLF hLF'' hdim n' n'' hs1 hs2 x hx
+  have hX : Xsp F ≤ UUE Λ F F'' := by
+    have hflag {t : E} (G : LFlag S r t) : finrank E (Xplus G) ≤ r + 1 := by
+      have hXG : finrank E (Xsp G) = r := by
+        change finrank E (Submodule.span E (Set.range G.fl.e)) = r
+        simpa using finrank_span_eq_card G.fl.e_indep
+      have hz : finrank E (Submodule.span E {G.fl.z}) ≤ 1 := by
+        classical
+        simpa using (finrank_span_le_card (R := E) ({G.fl.z} : Set S.V))
+      change finrank E (Xsp G ⊔ Submodule.span E {G.fl.z} : Submodule E S.V) ≤ r + 1
+      exact (Submodule.finrank_add_le_finrank_add_finrank _ _).trans (by rw [hXG]; omega)
+    have hlat {t : E} (G : LFlag S r t) (hG : IsLift Λ G) :
+        XLam Λ G ⊔ Submodule.span (𝓞 E) {G.zt} ≤ (Xplus G).restrictScalars (𝓞 E) := by
+      refine sup_le (fun y hy => ?_) ?_
+      · exact (show Xsp G ≤ Xplus G from le_sup_left) hy.2
+      · rw [Submodule.span_le, Set.singleton_subset_iff, hG.2]
+        exact (show Submodule.span E {G.fl.z} ≤ Xplus G from le_sup_right)
+          (Submodule.mem_span_singleton_self _)
+    have hU : UUE Λ F F'' ≤ Xplus F ⊔ Xplus F'' := by
+      rw [UUE, spanE, Submodule.span_le]
+      change UU Λ F F'' ≤ (Xplus F ⊔ Xplus F'').restrictScalars (𝓞 E)
+      rw [UU, sup_assoc]
+      exact sup_le
+        ((hlat F hLF).trans (Submodule.restrictScalars_mono (𝓞 E) le_sup_left))
+        ((hlat F'' hLF'').trans (Submodule.restrictScalars_mono (𝓞 E) le_sup_right))
+    have hEq := Submodule.eq_of_le_of_finrank_le hU (by
+      rw [n''.1]
+      have hsum := Submodule.finrank_add_le_finrank_add_finrank (Xplus F) (Xplus F'')
+      have h₁ := hflag F
+      have h₂ := hflag F''
+      omega)
+    rw [hEq]
+    exact (show Xsp F ≤ Xplus F from le_sup_left).trans le_sup_left
   have hHp : finrank E (Hp Λ F F') + (2 * r + 2) = finrank E S.V := by
     have := finrank_orth_add S (UUE Λ F F')
     rw [n'.1] at this
@@ -35,7 +71,7 @@ theorem agreeOnH : AgreeOnH := by
   have e : p.2 = q.2 := by
     have hin : p.2 - q.2 ∈ UUE Λ F F'' ⊓ orth S (UUE Λ F F'') := by
       refine ⟨?_, ?_⟩
-      · apply Xsp_le_UUE S Λ hΛ F F''
+      · apply hX
         have : p.2 - q.2 = (q.1 - q.2) - (p.1 - p.2) := by rw [hq1]; abel
         rw [this]
         exact (Xsp F).sub_mem hq.1.2 hp.1.2

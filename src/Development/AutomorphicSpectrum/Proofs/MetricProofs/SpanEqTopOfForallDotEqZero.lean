@@ -1,7 +1,11 @@
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
-import Mathlib
+module
+
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem ptI_le_of_span_grad_eq_top (t : Fin m → ℂ) (J : Ideal (MvPolynomial 
   let φ : (Fin m → ℂ) →ₗ[ℂ] MvPolynomial (Fin m) ℂ :=
     { toFun := fun v => ∑ i, C (v i) * (X i - C (t i))
       map_add' := fun v w => by
-        simp only [Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+        simp only [Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
       map_smul' := fun c v => by
         simp only [Pi.smul_apply, smul_eq_mul, map_mul, RingHom.id_apply, Finset.smul_sum,
           MvPolynomial.smul_eq_C_mul, mul_assoc] }
@@ -80,7 +84,7 @@ private theorem gradP_eq_eval_pderiv (t : Fin m → ℂ) (a : MvPolynomial (Fin 
   next c =>
     rw [ReciprocityTheory.AnForm.R.JacobianCriterionAlt.grad_C, pderiv_C, map_zero, Pi.zero_apply]
   next p q hp hq =>
-    rw [ReciprocityTheory.AnForm.R.JacobianCriterionAlt.grad_add, Pi.add_apply, hp, hq, map_add, map_add]
+    rw [ReciprocityTheory.AnForm.R.JacobianCriterionAlt.grad_add, Pi.add_apply, hp, hq, map_add (f := _), map_add (f := _)]
   next p i hp =>
     have hX : gradP t (X i) = Pi.single i 1 := by
       have h2 : (X i : MvPolynomial (Fin m) ℂ) = (X i - C (t i)) + C (t i) := by ring

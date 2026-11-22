@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffThetaTransformAdelicSchwartzRealDirection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanStandardCharEqExpRealLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DarbouxCoordsRealFamilyArchimedeanLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatPairIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLintegralSqEqMulSetLIntegralThetaTransformStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffThetaTransformAdelicSchwartzRealDirection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanStandardCharEqExpRealLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DarbouxCoordsRealFamilyArchimedeanLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatPairIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLintegralSqEqMulSetLIntegralThetaTransformStatement
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -32,7 +37,7 @@ theorem psiInf_eq_exp_linearF {F E : Type} [Field F] [NumberField F] [Field E] [
         simp [TensorProduct.add_tmul, Finset.sum_add_distrib, mul_add] }
   have hg : Continuous g := by
     show Continuous fun m => c * ∑ ρ, θ ρ (e.symm m ⊗ₜ[F] (1 : E))
-    refine continuous_const.mul (continuous_finset_sum _ fun ρ _ => ?_)
+    refine continuous_const.mul (continuous_finsetSum _ fun ρ _ => ?_)
     exact (hθ ρ).2.comp (GlobalTheory.PsiInfLinear.continuous_ringEquiv_mixedSpace_symm F)
   refine ⟨AddMonoidHom.toRealLinearMap g hg, fun x => ?_⟩
   rw [hform x]
@@ -80,7 +85,7 @@ theorem darboux_real_coordsF {F E : Type} [Field F] [NumberField F] [Field E] [N
         map_add' := by
           intro a b
           funext i
-          rw [map_add, LinearEquiv.map_add, hadd]
+          rw [map_add (f := _), e.map_add, hadd]
           exact map_add (InfiniteAdeleRing.ringEquiv_mixedSpace F) _ _ }
     have hf : Continuous f := by
       refine continuous_pi fun i => ?_
@@ -98,8 +103,8 @@ theorem darboux_real_coordsF {F E : Type} [Field F] [NumberField F] [Field E] [N
     rw [hQ, RingEquiv.symm_apply_apply]
     exact Prod.ext rfl (hsnd t i).2
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem contDiff_thetaTr_realF : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
     B.IsGood σ → IsStdCharF (fun w : InfinitePlace F => (B.emb w).1) B.ψ (-1) →
     ∀ (nS nT : ℕ) (JS : Matrix (Fin nS) (Fin nS) E) (JT : Matrix (Fin nT) (Fin nT) E),
@@ -147,9 +152,9 @@ theorem contDiff_thetaTr_realF : ∀ (F E : Type) [Field F] [NumberField F] [Fie
     let c2 : mixedEmbedding.mixedSpace F := eM (⅟(2 : AF F)).1
     let B0 : (κ → mixedEmbedding.mixedSpace F) →ₗ[ℝ] (Fin k → ℝ) →ₗ[ℝ] ℂ :=
       LinearMap.mk₂ ℝ (fun y t => Λ (∑ i, y i * Q t i))
-        (fun y₁ y₂ t => by simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add])
+        (fun y₁ y₂ t => by simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _)])
         (fun r y t => by simp only [Pi.smul_apply, smul_mul_assoc, ← Finset.smul_sum, map_smul])
-        (fun y t₁ t₂ => by simp only [map_add, Pi.add_apply, mul_add, Finset.sum_add_distrib])
+        (fun y t₁ t₂ => by simp only [map_add (f := _), Pi.add_apply, mul_add, Finset.sum_add_distrib])
         (fun r y t => by simp only [map_smul, Pi.smul_apply, mul_smul_comm, ← Finset.smul_sum])
     let B : (κ → mixedEmbedding.mixedSpace F) →L[ℝ] (Fin k → ℝ) →L[ℝ] ℂ :=
       LinearMap.toContinuousLinearMap
@@ -164,7 +169,7 @@ theorem contDiff_thetaTr_realF : ∀ (F E : Type) [Field F] [NumberField F] [Fie
       Λ.contDiff.comp (contDiff_const.mul (ContDiff.sum fun i _ =>
         ((contDiff_const.mul (hQi i)).add ((hPi i).mul contDiff_const)).add ((hPi i).mul (hQi i))))
     have hre : ∀ y t, (B y t + hfun t).re = 0 := by
-      intro y t; rw [hB, ← map_add]; exact hΛre _
+      intro y t; rw [hB, ← map_add (f := _)]; exact hΛre _
     let K : (κ → F) → ℂ := fun x =>
       ψ ((fun i => algebraMap F (AF F) (x i)) ⬝ᵥ (co.e w).2 + ⅟2 * ((co.e w).1 ⬝ᵥ (co.e w).2)) *
         g (fun i => algebraMap F (FiniteAdeleRing (𝓞 F) F) (x i) + ((co.e w).1 i).2)
@@ -176,7 +181,7 @@ theorem contDiff_thetaTr_realF : ∀ (F E : Type) [Field F] [NumberField F] [Fie
       intro x t
       have he : co.e (w + L t) = ((co.e w).1 + fun i => pairA F (eM.symm (P t i)) 0,
           (co.e w).2 + fun i => pairA F (eM.symm (Q t i)) 0) := by
-        rw [map_add, hPQ t]; rfl
+        rw [map_add (f := _), hPQ t]; rfl
       have hy : ∀ i, eM (algebraMap F (AF F) (x i)).1 = yv x i := by
         intro i; simp only [yv, eM]; rw [InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp]; rfl
       have h1 : (fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F
@@ -184,7 +189,7 @@ theorem contDiff_thetaTr_realF : ∀ (F E : Type) [Field F] [NumberField F] [Fie
             ((co.e w).1 + fun i => pairA F (eM.symm (P t i)) 0)) i).1) = yv x + ah + P t := by
         funext i
         change eM ((algebraMap F (AF F) (x i)).1 + (((co.e w).1 i).1 + eM.symm (P t i))) = _
-        rw [map_add, map_add, RingEquiv.apply_symm_apply, hy i, ← add_assoc]
+        rw [map_add (f := _), map_add (f := _), RingEquiv.apply_symm_apply, hy i, ← add_assoc]
         rfl
       have h2 : (fun i => (((fun i => algebraMap F (AF F) (x i)) +
             ((co.e w).1 + fun i => pairA F (eM.symm (P t i)) 0)) i).2) =
@@ -233,9 +238,11 @@ theorem contDiff_thetaTr_realF : ∀ (F E : Type) [Field F] [NumberField F] [Fie
           refine Prod.ext ?_ ?_
           · apply eM.injective
             rw [hφdef, hφdef, hφpair, hm]
-            simp only [dotProduct, map_add, map_mul, map_sum, hφx, hφP, hφQ, hφa, hφb, hφ2, Finset.sum_add_distrib]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [dotProduct, map_add (f := _), map_mul, map_sum, hφx, hφP, hφQ, hφa, hφb, hφ2, Finset.sum_add_distrib]
           · rw [hφfdef, hφfdef, hφfpair]
-            simp only [dotProduct, map_add, map_mul, map_sum, hφfP, hφfQ, mul_zero, zero_mul, Finset.sum_const_zero,
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [dotProduct, map_add (f := _), map_mul, map_sum, hφfP, hφfQ, mul_zero, zero_mul, Finset.sum_const_zero,
               add_zero]
         rw [← hY, hX]
         simp only [dotProduct_add, add_dotProduct]

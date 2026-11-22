@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksCapE
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksCapE
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ theorem eq_zero_of_levi {F : Sm E (r + s)} (hF : ∀ (x : BlockIx (r + s) r → 
       F.1 (lev (Ad E) r s m * (infGL E (r + s) (Unitary.toUnits k) * finGL E (r + s) g)) = 0) : F = 0 :=
   eq_of_levi hF (fun _ _ => rfl) h
 
-theorem isStable_map {a : ℕ} {L : Submodule ℂ (Sm E a)} (hL : IsStable L) {z : Module.End ℂ (Sm E a)}
-    (hz : ∀ o : Op E a, Commute z (act o)) : IsStable (L.map z) := by
+theorem isStable_map {a : ℕ} {L : Submodule ℂ (Sm E a)} (hL : _root_.GlobalTheory.CuspRep.IsStable L) {z : Module.End ℂ (Sm E a)}
+    (hz : ∀ o : Op E a, Commute z (act o)) : _root_.GlobalTheory.CuspRep.IsStable (L.map z) := by
   rintro o _ ⟨φ, hφ, rfl⟩
   exact ⟨act o φ, hL o φ hφ, by
     change z (act o φ) = act o (z φ)
@@ -52,12 +56,12 @@ theorem isStable_map {a : ℕ} {L : Submodule ℂ (Sm E a)} (hL : IsStable L) {z
 
 theorem finGen_map {a : ℕ} {L : Submodule ℂ (Sm E a)} {z : Module.End ℂ (Sm E a)}
     (hz : ∀ o : Op E a, Commute z (act o)) (S₁ : Finset (Sm E a)) (hS₁ : (↑S₁ : Set (Sm E a)) ⊆ L)
-    (hgen : ∀ W : Submodule ℂ (Sm E a), IsStable W → (↑S₁ : Set (Sm E a)) ⊆ W → L ≤ W) : FinGen (L.map z) := by
+    (hgen : ∀ W : Submodule ℂ (Sm E a), _root_.GlobalTheory.CuspRep.IsStable W → (↑S₁ : Set (Sm E a)) ⊆ W → L ≤ W) : FinGen (L.map z) := by
   classical
   refine ⟨S₁.image z, fun x hx => ?_, fun W hW hSW => ?_⟩
   · obtain ⟨y, hy, rfl⟩ := Finset.mem_image.1 (Finset.mem_coe.1 hx)
     exact Submodule.mem_map_of_mem (hS₁ hy)
-  · have hst : IsStable (W.comap z) := fun o φ hφ => by
+  · have hst : _root_.GlobalTheory.CuspRep.IsStable (W.comap z) := fun o φ hφ => by
       change z (act o φ) ∈ W
       rw [← Module.End.mul_apply, (hz o).eq, Module.End.mul_apply]
       exact hW o _ hφ

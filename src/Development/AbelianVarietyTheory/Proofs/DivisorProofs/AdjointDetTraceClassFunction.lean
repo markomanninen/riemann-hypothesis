@@ -1,9 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.AdMatConjTranspose
+module
 
-section
-open GlobalTheory.PsCo.PcEG
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.AdMatConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,13 +76,16 @@ end GlobalTheory.PsCo.PcEF.PhysicalMatrixDeterminant
 
 namespace GlobalTheory.PsCo.PcEF
 
-theorem adjointDetTrace_classFunction : ClassFn := by
-  intro n ε k k'
+theorem adjointDetTrace_classFunction (n : ℕ) (ε : Fin n → Bool) (k k' : KG ε) :
+    physDet ε (toMK (k'⁻¹ * k * k')) = physDet ε (toMK k) ∧
+      ∀ (W : Type) [NormedAddCommGroup W] [InnerProductSpace ℂ W] [FiniteDimensional ℂ W]
+        (T : Matrix (Fin n) (Fin n) ℂ → (W →L[ℂ] W)),
+        Formalism.MainNotions.S.IsURepOn (Formalism.REAL.Kset ε) T →
+        trK T (toMK (k'⁻¹ * k * k')) = trK T (toMK k) := by
   refine ⟨PhysicalMatrixDeterminant.physDet_conj k k', ?_⟩
   intro W _ _ _ T hT
   exact PhysicalMatrixDeterminant.trK_conj T hT k k'
 
 end GlobalTheory.PsCo.PcEF
 
-end
 end

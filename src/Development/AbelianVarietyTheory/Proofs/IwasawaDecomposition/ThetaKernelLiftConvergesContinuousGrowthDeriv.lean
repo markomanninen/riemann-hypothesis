@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QuotVolumeNeZeroNeTop
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeightLocallyBounded
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QuotVolumeNeZeroNeTop
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeightLocallyBounded
+
+@[expose] public section
 
 noncomputable section
 

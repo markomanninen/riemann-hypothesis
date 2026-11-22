@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,9 +17,10 @@ theorem isIntegral_trace_of_isIntegral_matrix {K n : Type} [Field K] [Fintype n]
   let φ : Matrix n n K →ₐ[ℤ] Matrix n n L := ((algebraMap K L).mapMatrix).toIntAlgHom
   have hM' : IsIntegral ℤ (φ M) := hM.map φ
   have htr : algebraMap K L M.trace = (φ M).trace := by
-    simp only [Matrix.trace, Matrix.diag, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.trace, Matrix.diag, map_sum]
     rfl
-  rw [← isIntegral_algebraMap_iff (A := K) (B := L) (algebraMap K L).injective, htr,
+  rw [← isIntegral_algebraMap_iff (A := K) (B := L) , htr,
     Matrix.trace_eq_sum_roots_charpoly]
   refine IsIntegral.multiset_sum fun μ hμ => ?_
   have hroot : IsRoot (φ M).charpoly μ := (mem_roots'.1 hμ).2
@@ -56,7 +61,7 @@ theorem isIntegral_of_mapsTo_lattice (Λ : Submodule (𝓞 E) (Fin r → E)) (hf
       rfl
     | add p q hp hq =>
       intro x hx
-      rw [map_add, add_mulVec, hp x hx, hq x hx, map_add]
+      rw [map_add (f := _), add_mulVec, hp x hx, hq x hx, map_add (f := _)]
       rfl
     | monomial n a ih =>
       intro x hx

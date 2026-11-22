@@ -1,6 +1,10 @@
-import Formalism.MahlerMeasure.MahlerMeasureProofs.WindowAP
-import Formalism.MahlerMeasure.MahlerMeasureProofs.WindowMeanAP
-import Formalism.MahlerMeasure.FinalD
+module
+
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.WindowAP
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.WindowMeanAP
+public import Formalism.MahlerMeasure.FinalD
+
+@[expose] public section
 
 namespace Formalism.GM.Top
 open Formalism.GM

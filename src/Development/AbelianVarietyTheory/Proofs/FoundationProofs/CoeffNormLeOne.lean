@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IntegralCoefficientNormBound
 
@@ -21,7 +25,8 @@ theorem norm_le_one_of_isIntegral :
   have key : (aeval x p) = x ^ p.natDegree +
       ∑ i ∈ Finset.range p.natDegree, algebraMap ℤ_[l] (PadicAlgCl l) (p.coeff i) * x ^ i := by
     conv_lhs => rw [hm.as_sum]
-    simp [map_add, map_sum, aeval_C, aeval_X_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_add (f := _), map_sum, aeval_C, aeval_X_pow]
   rw [← aeval_def] at hp
   rw [hp] at key
   rcases Nat.eq_zero_or_pos p.natDegree with h0 | hpos

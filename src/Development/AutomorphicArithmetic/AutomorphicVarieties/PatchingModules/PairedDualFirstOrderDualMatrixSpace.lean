@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,8 +104,8 @@ def Compat {G G' : Glob l L} (h : Hom G G') {O : Type} [CommRing O] [IsLocalRing
 
 end Glob
 
-variable (l) in
 
+variable (l) in
 def PL {Γ : Type} [Group Γ] [TopologicalSpace Γ] (H : Subgroup Γ) : Subgroup Γ :=
   ⨅ (U : OpenNormalSubgroup Γ) (_ : ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U), U.toSubgroup
 
@@ -358,11 +362,5 @@ def NonSS {R S G : Type} [CommRing R] [CommRing S] [Group G] (I : Set (MonoidAlg
 
 def GenBy (O : Type) {B : Type} [CommRing O] [CommRing B] [Algebra O B] [IsLocalRing B] (S : Set B) : Prop :=
   ∀ (N : ℕ) (b : B), ∃ a ∈ Algebra.adjoin O S, b - a ∈ maximalIdeal B ^ N
-
-structure IsCompl (R : Type) [CommRing R] (q : Ideal R) (B : Type) [CommRing B] [Algebra R B] [IsLocalRing B] : Prop where
-  noeth : IsNoetherianRing B
-  complete : IsAdicComplete (maximalIdeal B) B
-  dense : ∀ (N : ℕ) (b : B), ∃ a s : R, s ∉ q ∧ algebraMap R B s * b - algebraMap R B a ∈ maximalIdeal B ^ N
-  mem_iff : ∀ (N : ℕ) (a : R), algebraMap R B a ∈ maximalIdeal B ^ N ↔ ∃ s, s ∉ q ∧ s * a ∈ q ^ N
 
 end UpperTheory.V.Pa

@@ -1,31 +1,36 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftPRouteSmall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslatesEqPrimFrameLat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPureSumZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GenPtSSubset
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmallModelThetaTransformInjectiveProductsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmulOfMapsInlMemS
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatPtSLeClosureAndSelfDual
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HTensMixHalfS
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGaussianDatumFlippedFiniteTensorBigRoute
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerFixedFunctionsProportionalOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridLocalTensorPlacesSplitIdempotentSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeVacuumFinitePlacesRationalDarboux
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzFinitePureTensors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeisenbergOperatorFixThetaDatumAwaySplitPlaces
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeisenbergOrientedFiniteFixesFockPolynomialVecto
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FockVectorsChainIsVacuumOffThetaLevels
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowestKTypeFockMapThetaVectors
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtYAndItYOfPair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNegConjMemberHermitianLatticeSpaceData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHermitianLatticeLocalBases
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLatticeLatticeBlockDirectSumScaled
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScaledLatticeConjDirectSumTraceSelfDualStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftPRouteSmall
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslatesEqPrimFrameLat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPureSumZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GenPtSSubset
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmallModelThetaTransformInjectiveProductsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmulOfMapsInlMemS
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatPtSLeClosureAndSelfDual
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HTensMixHalfS
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGaussianDatumFlippedFiniteTensorBigRoute
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerFixedFunctionsProportionalOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridLocalTensorPlacesSplitIdempotentSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeVacuumFinitePlacesRationalDarboux
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzFinitePureTensors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeisenbergOperatorFixThetaDatumAwaySplitPlaces
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeisenbergOrientedFiniteFixesFockPolynomialVecto
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FockVectorsChainIsVacuumOffThetaLevels
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowestKTypeFockMapThetaVectors
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtYAndItYOfPair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNegConjMemberHermitianLatticeSpaceData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHermitianLatticeLocalBases
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridSquareSkewSumSpaceIsSkewHermitianSelfDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLatticeLatticeBlockDirectSumScaled
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScaledLatticeConjDirectSumTraceSelfDualStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -46,9 +51,9 @@ noncomputable section
 namespace GlobalTheory.SmallDatumPure
 
 theorem isPureSum_of_slices {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
-    (vac : ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F, (κ → Fv F v) → ℂ)
+    (vac : ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F), (κ → Fv F v) → ℂ)
     (hvac : ∀ᶠ v in Filter.cofinite, vac v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1)
-    (v₁ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F) {φ₀ : (κ → Fv F v₁) → ℂ} (h₀ : φ₀ ∈ GlobalTheory.WeilM.SB (κ → Fv F v₁)) (hne : φ₀ ≠ 0)
+    (v₁ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)) {φ₀ : (κ → Fv F v₁) → ℂ} (h₀ : φ₀ ∈ GlobalTheory.WeilM.SB (κ → Fv F v₁)) (hne : φ₀ ≠ 0)
     {Φ : (κ → AF F) → ℂ} (hΦ : Φ ∈ schA F κ)
     (hsl : ∀ y : κ → AF F, (∀ k, evFin F v₁ (y k) = 0) →
       ∃ a : ℂ, ∀ ξ : κ → Fv F v₁, Φ (y + fun k => GlobalTheory.LatVac.liftV v₁ (ξ k)) = a * φ₀ ξ) :
@@ -84,7 +89,7 @@ theorem isPureSum_of_slices {F : Type} [Field F] [NumberField F] {κ : Type} [Fi
       rw [hr k _ _ (hat _)]
       congr 2
       funext i
-      rw [Pi.add_apply, map_add, hy, zero_add, GlobalTheory.LatVac.evFin_liftV]
+      rw [Pi.add_apply, map_add (f := _), hy, zero_add, GlobalTheory.LatVac.evFin_liftV]
     have e3 : ∀ k, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure ((φ k v₁ ζ / φ₀ ζ) • f k) (Function.update (φ k) v₁ φ₀) x =
         (φ k v₁ ζ * r k x) * ((φ₀ fun k => evFin F v₁ (x k)) / φ₀ ζ) := fun k => by
       have := congrFun (hr' k φ₀) x
@@ -117,7 +122,8 @@ theorem idem_mul_eq_zero (hL : L.Is μ₀) {t : T} {ε : AE D} (hε : IsIdemSum 
     constructor
     · linear_combination atPl w 1 * h4 - x * h1 - x * h2
     · linear_combination cA D (atPl w 1) * h4 - x * h5 - x * h2
-  rw [(hsum ε hε).1, map_sum, Finset.sum_mul, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [(hsum ε hε).1, map_sum, Finset.sum_mul, Finset.sum_mul]
   exact ⟨Finset.sum_eq_zero fun w hw => (key w hw).1, Finset.sum_eq_zero fun w hw => (key w hw).2⟩
 
 theorem fock_locVec (W : G.Weil) {p : Pair T} {ε : AE D} {f₀ φ f : WO (G.pS p) (G.pT p) → ℂ} (h₀ : W.IsVac p f₀)
@@ -144,14 +150,14 @@ theorem latPtS_le {i j : ℕ} (t : T) (e : Num G i j) (X : Spc D.host.F D.host.E
     (Y : Spc D.host.F D.host.E ((spW G i j).rank + (spW₁ G i j).rank)) (hX : X.L = latSmall G i j) (hY : Y.L = latSkew e)
     (v : Pl D.host.F) : ∀ u ∈ latPtS t e v, u ∈ latAtV X Y v := by
   have k1 : ∀ x ∈ latA G t i j, GlobalTheory.LatVac.liftV v 1 • ofMaps t e (x, 0) ∈ latAtV X Y v := fun x hx => by
-    refine GlobalTheory.BigDat.map_mem_of_closure ((DistribMulAction.toAddMonoidHom (PtS G i j) (GlobalTheory.LatVac.liftV v 1)).comp
+    refine GlobalTheory.BigDat.map_mem_of_closure ((DistribSMul.toAddMonoidHom (PtS G i j) (GlobalTheory.LatVac.liftV v 1)).comp
       ((maps t e).symm.toLinearMap.toAddMonoidHom.comp (AddMonoidHom.inl _ _))) ?_ hx
     rintro _ ⟨α, hα, -, a, ha, s, hs, r, hr, rfl⟩
     exact (congrArg (fun z => GlobalTheory.LatVac.liftV v 1 • z ∈ latAtV X Y v) (ofMaps_genA t e (pairA _ 0 α) a s r)).mpr
       (GlobalTheory.BigDat.one_smul_gen_mem _ _ v hα (hX.ge (GlobalTheory.BigDat.star_mem_conjSub hs))
         (hY.ge (GlobalTheory.BigDat.pair_mem e (GlobalTheory.BigDat.smul_mem_scLat_of_mem ha hr) (zero_mem _))))
   have k2 : ∀ x ∈ latB G i j, GlobalTheory.LatVac.liftV v 1 • ofMaps t e (0, x) ∈ latAtV X Y v := fun x hx => by
-    refine GlobalTheory.BigDat.map_mem_of_closure ((DistribMulAction.toAddMonoidHom (PtS G i j) (GlobalTheory.LatVac.liftV v 1)).comp
+    refine GlobalTheory.BigDat.map_mem_of_closure ((DistribSMul.toAddMonoidHom (PtS G i j) (GlobalTheory.LatVac.liftV v 1)).comp
       ((maps t e).symm.toLinearMap.toAddMonoidHom.comp (AddMonoidHom.inr _ _))) ?_ hx
     rintro _ ⟨α, hα, -, a, ha, s, hs, r, hr, rfl⟩
     exact (congrArg (fun z => GlobalTheory.LatVac.liftV v 1 • z ∈ latAtV X Y v) (ofMaps_genB t e (pairA _ 0 α) a s r)).mpr
@@ -172,7 +178,7 @@ theorem latPtS_le {i j : ℕ} (t : T) (e : Num G i j) (X : Spc D.host.F D.host.E
 section Square
 
 variable {W : G.Weil} {t : T} {i j : Fin D.R.m} {M : Vol G} {e : Num G i j} {Bs : Base D.host.F D.host.E}
-  {Γ : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.Geo G i j} {X : Chars D.host.F D.host.E} {om : Rep D.sp.cm.sig Γ.V Γ.W} {om' : Rep D.sp.cm.sig Γ.V' Γ.W}
+  {Γ : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.Geo G i j} {X : Chars D.host.F D.host.E} {om : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W} {om' : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W}
 
 theorem exists_bases (hL : L.Is μ₀) (h : IsTripleOf W M t i j e Bs Γ X) (hT : IsTriple Bs Γ X om om') :
     ∃ b₁ b₂, Spc.IsHerm D.sp.cm.sig Bs ⟨Γ.V'.J, latSmall G i j, Γ.V'.θ, b₁⟩ Γ.q ((spW₁ G i j).rank - Γ.q) ∧
@@ -182,15 +188,16 @@ theorem exists_bases (hL : L.Is μ₀) (h : IsTripleOf W M t i j e Bs Γ X) (hT 
   have hsd := (node_isV G hL (X := .grid i j) ⟨i.2.le, j.2.le⟩).sd
   have hV := (node_isV G hL (X := .grid i (j + 1)) ⟨i.2.le, j.2⟩).sd
   have hV₁ := (node_isV G hL (X := .grid (i + 1) j) ⟨i.2, j.2.le⟩).sd
-  haveI hl₁ : (latSmall G i j).IsLattice D.host.E := GlobalTheory.TripleSpaceW.conjSub_isLattice hsd.1
+  haveI hl₁ : (latSmall G i j).IsFullLattice D.host.E :=
+    GlobalTheory.TripleSpaceW.conjSub_isFullLattice (GlobalTheory.FunObj.selfDual_isFullLattice _ _ hsd)
   have hAA : D.host.AA ≠ 0 := fun h => by
     have := Formalism.IndefR.Fin.factPrincipalDatum D.R D.host
     rw [h, mul_zero, zero_mul, zero_mul] at this
     exact zero_ne_one this
-  haveI hl₂ : (latSkew e).IsLattice D.host.E :=
-    GlobalTheory.SkewLat.PairLatLattice.pairLat_isLattice (GlobalTheory.SkewLat.PairLatLattice.scLat_isLattice hAA hV.1)
-      (GlobalTheory.TripleSpaceW.conjSub_isLattice (GlobalTheory.SkewLat.PairLatLattice.scLat_isLattice hAA
-        (GlobalTheory.TripleSpaceW.conjSub_isLattice hV₁.1))) e
+  haveI hl₂ : (latSkew e).IsFullLattice D.host.E :=
+    GlobalTheory.SkewLat.pairLat_isFull (GlobalTheory.SkewLat.scLat_isFull hAA (GlobalTheory.FunObj.selfDual_isFullLattice _ _ hV))
+      (GlobalTheory.TripleSpaceW.conjSub_isFullLattice (GlobalTheory.SkewLat.scLat_isFull hAA
+        (GlobalTheory.TripleSpaceW.conjSub_isFullLattice (GlobalTheory.FunObj.selfDual_isFullLattice _ _ hV₁)))) e
   choose b₁ hb₁ using fun v : Bs.P => exists_isSplitBasis (Bs.τ v) (latSmall G i j) (isCMExt_host D)
   choose b₂ hb₂ using fun v : Bs.P => exists_isSplitBasis (Bs.τ v) (latSkew e) (isCMExt_host D)
   refine ⟨fun v => if h : v ∈ Bs.P then b₁ ⟨v, h⟩ else 1, fun v => if h : v ∈ Bs.P then b₂ ⟨v, h⟩ else 1,
@@ -201,17 +208,17 @@ theorem exists_bases (hL : L.Is μ₀) (h : IsTripleOf W M t i j e Bs Γ X) (hT 
     simp only [Formalism.L2.Col.mem_starLat] at this
     exact this
   · show IsSplitBasis _ _ (if h : v.1 ∈ Bs.P then b₁ ⟨v.1, h⟩ else 1)
-    rw [dif_pos v.2]
+    rw [dite_eq_left v.2]
     exact hb₁ v
   · have := GlobalTheory.T.scaledLattice_conj_directSum_trace_selfDual _ _ hV hV₁ e y
     rw [← h.JWW] at this
     exact this
   · show IsSplitBasis _ _ (if h : v.1 ∈ Bs.P then b₂ ⟨v.1, h⟩ else 1)
-    rw [dif_pos v.2]
+    rw [dite_eq_left v.2]
     exact hb₂ v
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_vac (hL : L.Is μ₀) (h : IsTripleOf W M t i j e Bs Γ X) (hT : IsTriple Bs Γ X om om') (v : Pl D.host.F) :
     (latSmall G i j).IsLattice D.host.E ∧ (latSkew e).IsLattice D.host.E ∧
     (∀ z : PtS G i j, At (evFin D.host.F v) z →
@@ -244,7 +251,7 @@ theorem exists_vac (hL : L.Is μ₀) (h : IsTripleOf W M t i j e Bs Γ X) (hT : 
   obtain ⟨φ₀, k1, k2, θ, k3, k4⟩ := GlobalTheory.LatVac.exists_isVac _ Bs X₁ Y₁ _ _ _ _ hT.base h₁ h₂
     ⟨Γ.M'.co, Γ.M'.vac, Γ.M'.μ, Γ.M'.dom⟩ hT.geo.hM'.rat v
   rw [eΛ]
-  refine ⟨h₁.lat, h₂.lat, fun z hz => ⟨fun hz' γ hγ => h.ψ ▸ hiso z hz' γ hγ, fun hz' =>
+  refine ⟨h₁.lat.toIsLattice, h₂.lat.toIsLattice, fun z hz => ⟨fun hz' γ hγ => h.ψ ▸ hiso z hz' γ hγ, fun hz' =>
     hle z ((hsd z hz).2 fun γ hγ => h.ψ ▸ hz' γ (hle γ hγ))⟩, φ₀, k1, k2, ⟨θ, k3, k4⟩, fun Φ hΦ y hy => ?_⟩
   have hfix : ∀ γ ∈ genPtS t e v, Acts (evFin D.host.F v) (Γ.M'.co.rho W.ψ γ) φ₀ φ₀ := fun γ hγ => by
     have a1 : Acts (evFin D.host.F v) (Γ.M'.co.rho Bs.ψ γ) φ₀ _ := k4 γ (hle γ (genPtS_subset t e v hγ))
@@ -258,7 +265,7 @@ theorem exists_vac (hL : L.Is μ₀) (h : IsTripleOf W M t i j e Bs Γ X) (hT : 
           mul_zero, AddChar.map_zero_eq_one]
     rw [a2, one_smul, h.ψ] at a1
     exact a1
-  obtain ⟨c, hc0, hc⟩ := GlobalTheory.LatBound.locCo_latAtV_bounded X₁ Y₁ v Γ.M'.co h₁.lat h₂.lat
+  obtain ⟨c, hc0, hc⟩ := GlobalTheory.LatBound.locCo_latAtV_bounded X₁ Y₁ v Γ.M'.co h₁.lat.toIsLattice h₂.lat.toIsLattice
   obtain ⟨a, ha⟩ := GlobalTheory.SchrFixUniq.proportional_of_fixed v (GlobalTheory.LatVac.psiAt W.ψ v) (GlobalTheory.VacAny.continuous_psiV hstd.1 v)
     (GlobalTheory.PsiNontriv.psiAt_ne_one W.ψ hstd v) (GlobalTheory.LatVac.locCo Γ.M'.co v '' genPtS t e v)
     ((latPtS t e v).map (GlobalTheory.LatVac.locCo Γ.M'.co v)) c
@@ -318,13 +325,13 @@ theorem exists_datum_pure_selfdual : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc
     (hv : ∀ w ∈ locPl G t, w.under (𝓞 D.host.F) ≠ Bs.v₁),
     ∃ ΦB, GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.IsDatumB W e Γ Θ' ΦB ∧
       ∃ (m : ℕ) (f : Fin m → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.SInf D.host.F (Fin (G.V (.grid i j)).rank × Fin ((G.V (.grid (i + 1) (j + 1))).rank + (G.V (.grid i j)).rank)))
-        (φ : Fin m → ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl D.host.F, (Fin (G.V (.grid i j)).rank × Fin ((G.V (.grid (i + 1) (j + 1))).rank + (G.V (.grid i j)).rank) → Fv D.host.F v) → ℂ)
+        (φ : Fin m → ∀ v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := D.host.F), (Fin (G.V (.grid i j)).rank × Fin ((G.V (.grid (i + 1) (j + 1))).rank + (G.V (.grid i j)).rank) → Fv D.host.F v) → ℂ)
         (φ₀ : (Fin (G.V (.grid i j)).rank × Fin ((G.V (.grid (i + 1) (j + 1))).rank + (G.V (.grid i j)).rank) → Fv D.host.F Bs.v₁) → ℂ),
         ΦB = ∑ k, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (f k) (φ k) ∧ (∀ k v, φ k v ∈ GlobalTheory.WeilM.SB _) ∧ (∀ k, ∀ᶠ v in Filter.cofinite, φ k v = Γ.M'.vac v) ∧
         (∀ k, φ k Bs.v₁ = φ₀) ∧ φ₀ ∈ GlobalTheory.WeilM.SB _ ∧ φ₀ ≠ 0 ∧
         ∃ (L₁ : Submodule (𝓞 D.host.E) (Fin (G.V (.grid i j)).rank → D.host.E)) (L₂ : Submodule (𝓞 D.host.E) (Fin ((G.V (.grid (i + 1) (j + 1))).rank + (G.V (.grid i j)).rank) → D.host.E))
           (θ : 𝓞 D.host.E), L₁.IsLattice D.host.E ∧ L₂.IsLattice D.host.E ∧
-          (∀ z : Matrix (Fin (G.V (.grid i j)).rank) (Fin ((G.V (.grid (i + 1) (j + 1))).rank + (G.V (.grid i j)).rank)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE D.host.F D.host.E),
+          (∀ z : Matrix (Fin (G.V (.grid i j)).rank) (Fin ((G.V (.grid (i + 1) (j + 1))).rank + (G.V (.grid i j)).rank)) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := D.host.F) (E := D.host.E)),
             GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (evFin D.host.F Bs.v₁) z →
             (z ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV {Γ.V' with L := L₁} {Γ.W with L := L₂} Bs.v₁ ↔
               ∀ γ ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV {Γ.V' with L := L₁} {Γ.W with L := L₂} Bs.v₁,
@@ -361,11 +368,11 @@ theorem exists_datum_pure_selfdual : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     unfold GlobalTheory.FunObj.tensT
     rw [Finsupp.sum]
-    erw [← Finsupp.sum_finset_sum_index (h := fun d c => c * GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.boxB e d u) (fun _ => zero_mul _)
+    erw [← Finsupp.sum_finsetSum_index (h := fun d c => c * GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.boxB e d u) (fun _ => zero_mul _)
       (fun _ _ _ => add_mul _ _ _)]
     refine Finset.sum_congr rfl fun P _ => ?_
     rw [Finsupp.sum]
-    erw [← Finsupp.sum_finset_sum_index (h := fun d c => c * GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.boxB e d u) (fun _ => zero_mul _)
+    erw [← Finsupp.sum_finsetSum_index (h := fun d c => c * GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.boxB e d u) (fun _ => zero_mul _)
       (fun _ _ _ => add_mul _ _ _)]
     refine Finset.sum_congr rfl fun d _ => ?_
     erw [Finsupp.sum_single_index (h := fun d c => c * GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.boxB e d u) (zero_mul _)]

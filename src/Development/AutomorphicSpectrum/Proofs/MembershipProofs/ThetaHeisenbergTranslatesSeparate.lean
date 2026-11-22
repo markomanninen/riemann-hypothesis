@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
-import GroundTheory.AutomorphicForms.ReductionMeasure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+public import GroundTheory.AutomorphicForms.ReductionMeasure
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.WeilM MeasureTheory
 open scoped TensorProduct
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.LocalRingCardinality.DataParams
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalRingCardinality.DataParams
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,10 +23,10 @@ variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.w
 
 abbrev EigSys (D : D7) : Type := HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ
 
-open Classical in
 
+open Classical in
 def badPl (t : T) : Finset (HeightOneSpectrum (𝓞 D.host.F)) :=
-  (R.Pg ∪ R.Q t).image fun PP => PP.under (𝓞 D.host.F)
+  (R.Pg ∪ R.Q t).image fun PP => (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)
 
 def rowPart (Sb : Finset (HeightOneSpectrum (𝓞 D.host.F))) (c : EigSys D) : Submodule ℂ (MMap (R.MY 0)) :=
   partDual R.θ (R.MY 0) (levS _ (R.βY 0) (R.dat0 R.triv)) (levChi _ (R.βY 0) (R.dat0 R.triv)) Sb c ⊓ R.EEat R.triv
@@ -73,40 +77,6 @@ def ScalarsWith (κ : ℕ → ℝ) : Prop :=
 
 def Scalars : Prop := ∃ κ : ℕ → ℝ, (∀ j, 1 ≤ j → j ≤ D.R.m → 0 < κ j) ∧ ScalarsWith R κ
 
-def IsLabelOf {g : ℕ} [Fact g.Prime] (L : GlobalTheory.GLq.LabelDatum g) {κ : Type} [CommRing κ] (e : ZMod g ≃+* κ)
-    (x : (ZMod g)ˣ) (χ : κˣ →* ℂˣ) : Prop :=
-  ∀ z : (ZMod g)ˣ, GlobalTheory.GLq.thetaOf L 1 (algebraMap (ZMod g) (Formalism.CyclotomicNorms.Fbar g) x) (algebraMap (ZMod g) (Formalism.CyclotomicNorms.Fbar g) z) =
-    ((χ (Units.map (e : ZMod g →+* κ).toMonoidHom z) : ℂˣ) : ℂ)
-
-def GoodTypes : Prop :=
-  haveI : ∀ k, Fact (D.host.g k).Prime := fun k => ⟨D.host.g_prime k⟩
-  ∃ (eR : G ≃* G0g D.nd) (plg : (Σ k : Fin 2, D.nd.PlG k) ≃ R.Pg)
-    (iso : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), ZMod (D.host.g kv.1) ≃+* kP (plg kv).1)
-    (L : ∀ k : Fin 2, GlobalTheory.GLq.LabelDatum (D.host.g k)),
-    (∀ g, D.what₂.embLL ((idemOf A.X).coeff g) = D.ntypes.e0.coeff (eR g)) ∧ (∀ kv, R.C.P.Div kv.1 (plg kv).1) ∧
-    (∀ g kv, R.eG g (plg kv) = Formalism.UG.bc (iso kv : ZMod (D.host.g kv.1) →+* kP (plg kv).1) (eR g kv)) ∧
-    (∀ k, (L k).teich = D.ntypes.teichC k ∧ ∀ f, D.ntypes.eSer k f = GlobalTheory.GLq.eSerC (L k) D.R.r f) ∧
-    ∀ (kv : Σ k : Fin 2, D.nd.PlG k) (j : Fin D.R.m),
-      IsLabelOf (L kv.1) (iso kv) (D.nd.chiT kv.1 kv.2 j) (R.chi ((j : ℕ) + 1) (plg kv).1) ∨
-      IsLabelOf (L kv.1) (iso kv) (D.nd.chiT kv.1 kv.2 j) (R.chi ((j : ℕ) + 1) (plg kv).1)⁻¹
-
-structure HidaSetting : Prop where
-  lev : R.toLevCh.Is A.μ0
-  grp : R.IsGrp F
-  fam : R.IsFam
-  models : R.IsModels
-  chain : R.IsChain
-  thP : R.IsThP
-  scal : R.IsScal F
-  params : ∃ L : SizeData₂ D, Nonempty (ParameterChoice' D L)
-  good : GoodTypes R
-
-def OneStepAt : Prop := HidaSetting R F → Scalars R
-
-def OneStep : Prop :=
-  ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m)
-    (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), OneStepAt R F
-
 theorem rowPart_mono {Sb Sb' : Finset (HeightOneSpectrum (𝓞 D.host.F))} (h : Sb ⊆ Sb') (c : EigSys D) :
     rowPart R Sb c ≤ rowPart R Sb' c := by
   refine inf_le_inf_right _ fun u hu => ?_
@@ -115,18 +85,9 @@ theorem rowPart_mono {Sb Sb' : Finset (HeightOneSpectrum (𝓞 D.host.F))} (h : 
   obtain ⟨e, f, ϖ, α, h1, h2⟩ := hR
   exact ⟨e, f, ϖ, α, fun v hv => h1 v (h hv), h2⟩
 
-theorem GoodTypes.record {R : RealDat D A Ks} (h : GoodTypes R) : R.grp_record := by
-  obtain ⟨eR, plg, iso, -, h1, h2, h3, -⟩ := h
-  exact ⟨eR, plg, iso, h1, h2, h3⟩
-
 theorem IsLValue.unique {R : RealDat D A Ks} {t : T} {B : GlobalTheory.LFun.Fam D.host.E} {j : ℕ} {l l' : ℝ}
     (h : IsLValue R t B j l) (h' : IsLValue R t B j l') : l = l' := by
   exact_mod_cast h.2.2.symm.trans h'.2.2
-
-theorem IsUpTop.unique {R : RealDat D A Ks} {t : T} {u : MMap (R.MY (D.R.m - 1))} {x x' : (R.HX t).H}
-    (v : (R.MY (D.R.m - 1)).Vec) (hv : ∏ τ, ⟪(v τ : (R.MY (D.R.m - 1)).H τ), (v τ : (R.MY (D.R.m - 1)).H τ)⟫_ℂ ≠ 0)
-    (h : IsUpTop R t u x) (h' : IsUpTop R t u x') : x = x' :=
-  ext_inner_right ℂ fun y => hasPeterssonInner_unique _ _ _ _ _ v hv (h y) (h' y)
 
 end GlobalTheory.IndefiniteRowSideFullHecke.LabelSettingScalars
 

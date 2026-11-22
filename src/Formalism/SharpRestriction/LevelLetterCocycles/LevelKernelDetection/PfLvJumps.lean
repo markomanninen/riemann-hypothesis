@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem pfLvJumps_act (g : G) (z : T.V ⊗[Qp] B) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp [actVdR, actVB, ιV, PD.ι_comm]
-  | add x y hx hy => rw [map_add, map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 theorem pfLvJumps_mul (c : K₀) (z : T.V ⊗[Qp] B) :
     mulVdR (K := K) (BdR := BdR) (V := T.V) (LL := LL) (algebraMap K₀ K c) (ιV PD (LL := LL) (V := T.V) z) =
@@ -33,7 +37,7 @@ theorem pfLvJumps_mul (c : K₀) (z : T.V ⊗[Qp] B) :
   | zero => simp
   | tmul x b =>
     simp [mulVdR, mulVB, ιV, map_mul, AlgHom.commutes, IsScalarTower.algebraMap_apply K₀ K BdR]
-  | add x y hx hy => rw [map_add, map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 theorem pfLvJumps_dcrisL (hK : Function.Surjective (algebraMap K₀ K)) (τ₀ : K₀ →ₐ[Qp] LL)
     (τ : K →ₐ[Qp] LL) (hτ : τ.comp (IsScalarTower.toAlgHom Qp K₀ K) = τ₀) (z : T.V ⊗[Qp] B)

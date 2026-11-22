@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantStabCompact
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BallAutomorphismInverseExists
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereDensityOfBallPotentialStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereDensityChangeOfVariablesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantStabCompact
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BallAutomorphismInverseExists
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereDensityOfBallPotentialStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereDensityChangeOfVariablesStatement
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume
 open scoped ENNReal InnerProductSpace
 
@@ -241,7 +246,7 @@ theorem map_haar_eq_smul {π : G → X} (hc : Continuous π) (hs : Function.Surj
   have hsm := isMulLeftInvariant_eq_smul lam μ
   set c : ℝ≥0 := haarScalarFactor lam μ with hcdef
   have hνc : ν = (c : ℝ≥0∞) • ν' := by
-    rw [← hlamπ, hsm, hν'def, Measure.map_smul]
+    rw [← hlamπ, hsm, hν'def, Measure.map_smul _ hm.aemeasurable]
     rfl
   have hc0 : (c : ℝ≥0∞) ≠ 0 := by
     intro h
@@ -265,8 +270,8 @@ theorem contDiff_ballDet (τ : Ψ) :
     intro i k
     simp only [Matrix.sub_apply, Matrix.mul_apply, Matrix.conjTranspose_apply, ballMat, Matrix.of_apply]
     refine contDiff_const.sub (ContDiff.sum fun l _ => ContDiff.mul ?_ ?_)
-    · exact Complex.conjCLE.contDiff.comp (contDiff_apply ℝ ℂ _)
-    · exact contDiff_apply ℝ ℂ _
+    · exact Complex.conjCLE.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) _)
+    · exact contDiff_apply ℝ (fun _ => ℂ) _
   have hd : ContDiff ℝ 2 fun t : Fin n → ℂ => (1 - (ballMat q t τ)ᴴ * ballMat q t τ).det := by
     simp only [Matrix.det_apply]
     refine ContDiff.sum fun σ _ => ContDiff.const_smul _ (contDiff_prod fun i _ => he _ _)
@@ -460,7 +465,8 @@ theorem map_haar_eq (F : UnivFam E Ψ j j' n g Λ) (Δ : GroupDict F)
   have h1 : μ.map Δ.π = (μ.map π').map Subtype.val := by
     rw [Measure.map_map measurable_subtype_coe hc.measurable]
     rfl
-  rw [h1, h, Measure.map_smul, map_comap_subtype_coe hD.measurableSet, ballMeas_restrict]
+  rw [h1, h, Measure.map_smul _ measurable_subtype_coe.aemeasurable,
+    map_comap_subtype_coe hD.measurableSet, ballMeas_restrict]
   rfl
 
 end Main

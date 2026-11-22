@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.Imports
-import ReciprocityTheory.DualLattices.ATowerInh
+module
+
+public import ReciprocityTheory.DualLattices.Imports
+public import ReciprocityTheory.DualLattices.ATowerInh
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ lemma local_of_surj_sq {S T : Type} [CommRing S] [CommRing T] [IsLocalRing T] (f
     obtain ⟨u, hu⟩ := hy
     obtain ⟨z, hz⟩ := hf (↑u⁻¹ : T)
     have hker : y * z - 1 ∈ RingHom.ker f := by
-      rw [RingHom.mem_ker, map_sub, map_mul, map_one, hz, ← hu, Units.mul_inv, sub_self]
+      rw [RingHom.mem_ker, RingHom.map_sub, map_mul, map_one, hz, ← hu, Units.mul_inv, sub_self]
     have hsq := hk _ hker
     have h1 : y * (z * (1 - (y * z - 1))) = 1 := by linear_combination -hsq
     exact ⟨⟨y, _, h1, by rw [mul_comm]; exact h1⟩, rfl⟩

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ColumnOperationTripleForm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterOrthogonalityDual
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
+module
+
+public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ColumnOperationTripleForm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterOrthogonalityDual
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
+
+@[expose] public section
 
 section
 
@@ -37,7 +41,7 @@ def colSpan (k : ℕ) (Z : Matrix (Fin n) (Fin n) K) : Submodule R (Fin n → R)
   add_mem' := by
     rintro x y ⟨t, ht, e⟩ ⟨s, hs, e'⟩
     exact ⟨t + s, fun j hj => by simp [ht j hj, hs j hj], by
-      rw [map_add, map_add, Matrix.mulVec_add, e, e']⟩
+      rw [map_add (f := _), map_add (f := _), Matrix.mulVec_add, e, e']⟩
   zero_mem' := ⟨0, fun _ _ => rfl, by simp⟩
   smul_mem' := by
     rintro r x ⟨t, ht, e⟩
@@ -338,13 +342,6 @@ theorem isPP_of_int {g : Matrix (Fin n) (Fin n) K} (hg : IsUpUni g) (hi : IsInt 
   ⟨⟨hg, fun a b _ => hi a b⟩, ⟨isUpUni_inv K hg, fun a b _ =>
     isInt_inv R hi (isUpUni_det K hg) a b⟩⟩
 
-theorem isD_one : IsD R k (1 : Matrix (Fin n) (Fin n) K) := by
-  refine ⟨isUpUni_one K, fun a b => ?_, fun _ _ _ => rfl⟩
-  rw [Matrix.one_apply]
-  split_ifs
-  · exact R.one_mem
-  · exact R.zero_mem
-
 theorem isD_mul {D E : Matrix (Fin n) (Fin n) K} (hD : IsD R k D) (hE : IsD R k E) :
     IsD R k (D * E) := by
   refine ⟨isUpUni_mul K hD.1 hE.1, isInt_mul R hD.2.1 hE.2.1, fun a b ha => ?_⟩
@@ -601,13 +598,11 @@ theorem latZ_mul_int (Z g : Matrix (Fin n) (Fin n) K) (hg : IsUpUni g) (hi : IsI
 
 theorem mat_add_vecMulVec (Z : Matrix (Fin n) (Fin n) K) (m β y : Fin n → K) :
     (Z + vecMulVec m β) *ᵥ y = Z *ᵥ y + (β ⬝ᵥ y) • m := by
-  rw [Matrix.add_mulVec]
+  rw [Matrix.add_mulVec, Matrix.vecMulVec_mulVec]
   congr 1
-  funext a
-  simp only [Matrix.mulVec, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul,
-    Finset.sum_mul]
-  refine Finset.sum_congr rfl fun b _ => ?_
-  ring
+  funext i
+  change m i * (β ⬝ᵥ y) = (β ⬝ᵥ y) * m i
+  exact mul_comm _ _
 
 theorem mem_latZ_rank1 (Z : Matrix (Fin n) (Fin n) K) (hd : IsUnit Z.det) (m : Fin n → R)
     (β : Fin n → K) (hβ : ∀ b, β b ∈ R) (h0 : β ⬝ᵥ (Z⁻¹ *ᵥ coeLin R m) = 0) (x : Fin n → R) :
@@ -678,7 +673,8 @@ theorem cnta_row {D : Matrix (Fin n) (Fin n) K} (hD : IsD R k D) (Z : Matrix (Fi
   have h1 : (Submodule.Quotient.mk ((D *ᵥ abelian₂ R k Z v) j) : KR R) =
       ∑ b : Fin n, cntaCoef R k hD j b.val • lamN R Z b.val v := by
     simp only [Matrix.mulVec, dotProduct]
-    rw [← Submodule.mkQ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.mkQ_apply, map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [Submodule.mkQ_apply, cnta_coef_fin, cnta_Lam_coord]
     by_cases hb : k < b.val
@@ -1035,7 +1031,7 @@ theorem countId (ψ : AddChar K ℂ) (hsd : ∀ a : K, (∀ r ∈ R, ψ (a * r) 
       refine ⟨x0 + z, ?_, ?_⟩
       · rw [Submodule.Quotient.mk_add, (Submodule.Quotient.mk_eq_zero _).2 hz, add_zero, hx0']
       · show _ = D.1 *ᵥ abelian₂ R k Z₀ (x0 + z)
-        rw [map_add, hzL, Matrix.mulVec_add, Matrix.mulVec_mulVec,
+        rw [map_add (f := _), hzL, Matrix.mulVec_add, Matrix.mulVec_mulVec,
           Matrix.mul_nonsing_inv _ hDdet, Matrix.one_mulVec, add_sub_cancel]
     obtain ⟨Ψ, hΨ⟩ := lift_abs (latZ R (Z₀ * p)) (colSpan R k Z₀) (latZ R (Z₀' * p'))
       (colSpan R k Z₀') (abelian₂ R k Z₀) (abelian₂ R k Z₀') (D.1.mulVecLin.restrictScalars R) φ
@@ -1185,7 +1181,7 @@ theorem shf_sUp (ξ β : Fin n → K) (hξ : ∀ j : Fin n, k < j.val → ξ j =
   unfold sUp
   rw [Finset.sum_eq_single r]
   · have h : r.val + 1 < n := by rw [hr, ← hc]; exact c.2
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     have e : (⟨r.val + 1, h⟩ : Fin n) = c := Fin.ext (by simp [hr, hc])
     rw [e]
     have hne : r ≠ c := by
@@ -1195,7 +1191,7 @@ theorem shf_sUp (ξ β : Fin n → K) (hξ : ∀ j : Fin n, k < j.val → ξ j =
     rw [Matrix.add_apply, Matrix.one_apply_ne hne, zero_add, vecMulVec_apply]
   · intro j _ hj
     by_cases h : j.val + 1 < n
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       have hne : j ≠ ⟨j.val + 1, h⟩ := by
         intro h'
         have := congrArg Fin.val h'
@@ -1206,7 +1202,7 @@ theorem shf_sUp (ξ β : Fin n → K) (hξ : ∀ j : Fin n, k < j.val → ξ j =
         · exact absurd (Fin.ext (h1.trans hr.symm)) hj
         · rw [hξ j h1, zero_mul]
       rw [Matrix.add_apply, Matrix.one_apply_ne hne, zero_add, vecMulVec_apply, h0]
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
   · simp
 
 theorem shf_mul (Z₀ p : Matrix (Fin n) (Fin n) K) (hd : IsUnit Z₀.det) (m : Fin n → R)
@@ -1599,8 +1595,9 @@ def badN (k : ℕ) (w w' : Point K) (q : Cos R w × Cos R w') : ℕ :=
       InTT R (k + 1) (orbZ w (rep R q.1)) (orbZ w' (rep R q.2)) φ ∧
       ¬ InTT R k (orbZ w (rep R q.1)) (orbZ w' (rep R q.2)) φ}
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem fib_core (ψ : AddChar K ℂ) (hsd : ∀ a : K, (∀ r ∈ R, ψ (a * r) = 1) ↔ a ∈ R)
     (hun : ∀ x : K, conj (ψ x) = ψ (-x))
     (hfin : ∀ (m : ℕ) (Z : Matrix (Fin m) (Fin m) K), IsInt R Z → IsUnit Z.det →
@@ -1695,8 +1692,9 @@ theorem fib_core (ψ : AddChar K ℂ) (hsd : ∀ a : K, (∀ r ∈ R, ψ (a * r)
   rw [hsum]
   exact key
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem fibre_zero (ψ : AddChar K ℂ) (hsd : ∀ a : K, (∀ r ∈ R, ψ (a * r) = 1) ↔ a ∈ R)
     (hun : ∀ x : K, conj (ψ x) = ψ (-x))
     (hfin : ∀ (m : ℕ) (Z : Matrix (Fin m) (Fin m) K), IsInt R Z → IsUnit Z.det →

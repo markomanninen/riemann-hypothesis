@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.SlopeRamifiedInducedPrimeField
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.SlopeRamifiedInducedPrimeField
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem rational_span_map_surjective {n : ℕ} (lam : D.what₂.Tau → DomWeigh
   | add p q _ _ hp hq =>
     obtain ⟨a, ha⟩ := hp
     obtain ⟨b, hb⟩ := hq
-    exact ⟨a + b, by rw [map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [map_add (f := _), ha, hb]⟩
   | neg p _ hp =>
     obtain ⟨a, ha⟩ := hp
     exact ⟨-a, by rw [map_neg, ha]⟩
@@ -56,7 +60,8 @@ theorem majAt_swap_eq_conj {V ι : Type} [AddCommGroup V] [Module D.what₂.LL V
     (X : InfinitePlace D.what₂.LL → Matrix ι ι ℂ) (v : InfinitePlace D.what₂.LL) (x y : V) :
     majAt b X v y x = starRingEnd ℂ (majAt b X v x y) := by
   unfold majAt
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [map_mul, Complex.star_def, Complex.conj_conj]
   ring
@@ -81,7 +86,7 @@ theorem metric_disjoint_support_orthogonal (Tf : FormsTied D u) : MetricOrthogon
       fnOf _ (shiftOf (lamT u 0)) 1 (MvPolynomial.map D.what₂.embLL (Px c + MvPolynomial.C a * Py c))
         ((Tf.val 0 (Nat.zero_le _)).eY z) := by
     intro a c z
-    rw [map_add, Pi.add_apply, Pi.add_apply, hPx, hay, map_add, map_add, Pi.add_apply]
+    rw [map_add (f := _), Pi.add_apply, Pi.add_apply, hPx, hay, map_add (f := _), map_add (f := _), Pi.add_apply]
   have key : ∀ a : D.what₂.LL, (majAt ((D.fm u).lat 0).b ((D.fm u).lat 0).X v (x + a • y) (x + a • y)).re =
       (majAt ((D.fm u).lat 0).b ((D.fm u).lat 0).X v x x).re + (majAt ((D.fm u).lat 0).b ((D.fm u).lat 0).X v (a • y) (a • y)).re := by
     intro a

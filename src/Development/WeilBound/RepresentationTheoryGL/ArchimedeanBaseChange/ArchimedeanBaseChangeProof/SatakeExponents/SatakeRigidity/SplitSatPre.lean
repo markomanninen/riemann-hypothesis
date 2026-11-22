@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.ThetaOfCsdR
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.BaseChangeIsobaricNOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.ThetaOfCsdR
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.BaseChangeIsobaricNOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,17 +15,9 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 
 namespace PositivityTheory.Rg.BcB.F.Rig
 
-def preN {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (D : PositivityTheory.Rg.BcN.Datum E n) : Pre E n :=
-  ⟨D.c, D.N, D.h, D.V, D.σ, D.m, D.pos, D.discrete, D.loc, D.inf⟩
-
-def ThetaOfAsc : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (D : Pre E n),
-  (∀ i, PositivityTheory.Rg.BcN.CsdAsc (D.V i)) → D.ThetaStable
-
 def SplitSatPre : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (π : Submodule ℂ (UA E n → ℂ)),
   IsAutRepU π → ∀ D D' : Pre E n, {w | IsSplitAt w ∧ ¬ D.SplitAt π w}.Finite → {w | IsSplitAt w ∧ ¬ D'.SplitAt π w}.Finite →
   ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite, IsSplitAt w → ∃ B, D.Sat w B ∧ D'.Sat w B
-
-def RThetaN : Prop := StrSat → ThetaOfAsc
 
 theorem csdAsc_of (h1 : Strings) (h2 : CuspCsd) {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (D : Pre E n)
     (hr : D.Reg) (ht : D.ThetaStable) (i : Fin D.c) : PositivityTheory.Rg.BcN.CsdAsc (D.V i) := by

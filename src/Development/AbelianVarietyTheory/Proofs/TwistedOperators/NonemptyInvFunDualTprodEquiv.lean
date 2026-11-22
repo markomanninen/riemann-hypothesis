@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyInvFunEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyInvFunEquiv
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.IndefiniteRowSideFullHecke.MinorOrderedEntries GlobalTheory.OneFunctional Formalism.BasicNotions GlobalTheory.Branching
 open scoped TensorProduct DirectSum
@@ -12,14 +16,13 @@ theorem nonempty_invFun_dual_tprod_equiv (G V W : Type) [Group G] [AddCommGroup 
   let L : σ.IntertwiningMap ρ →ₗ[ℂ] invFun (ρ.dual.tprod σ) :=
     { toFun := fun f => ⟨TensorProduct.lift (LinearMap.lcomp ℂ ℂ f.toLinearMap), fun g x => by
         induction x with
-        | zero => simp
         | tmul ξ w =>
           have h := LinearMap.congr_fun (f.isIntertwining' g) w
           simp only [LinearMap.comp_apply] at h
           simp only [Representation.tprod_apply, TensorProduct.map_tmul, TensorProduct.lift.tmul,
             LinearMap.lcomp_apply, Representation.dual_apply, Module.Dual.transpose_apply, LinearMap.comp_apply, h,
             Representation.inv_self_apply]
-        | add a b ha hb => simp only [map_add, ha, hb]⟩
+        | add a b ha hb => simp only [map_add (f := _), ha, hb]⟩
       map_add' := fun f f' => Subtype.ext (TensorProduct.ext' fun ξ w => by
         change ξ (f.toLinearMap w + f'.toLinearMap w) = ξ (f.toLinearMap w) + ξ (f'.toLinearMap w)
         exact map_add _ _ _)

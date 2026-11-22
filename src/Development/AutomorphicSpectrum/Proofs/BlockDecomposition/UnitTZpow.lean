@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectTensorGeneratedLiftStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectTensorGeneratedLiftStatement
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
@@ -8,12 +12,6 @@ open scoped LaurentPolynomial
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.PerfBC
-
-def unitT (R : Type) [CommRing R] : (R[T;T⁻¹])ˣ where
-  val := LaurentPolynomial.T 1
-  inv := LaurentPolynomial.T (-1)
-  val_inv := by rw [← LaurentPolynomial.T_add]; simp
-  inv_val := by rw [← LaurentPolynomial.T_add]; simp
 
 theorem bc_laur : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](B : Type) [CommRing B] [Algebra A B] (K : Type) [CommRing K] [Algebra A K] (i : A[T;T⁻¹] →ₐ[A] B) (f g : A), Pf p A → Pf p K → PQ p (i : A[T;T⁻¹] →+* B) (Ideal.span {LaurentPolynomial.C f - LaurentPolynomial.T 1 * LaurentPolynomial.C g}) → ∃ i₁ : K[T;T⁻¹] →+* B ⊗[A] K, PQ p i₁ (Ideal.span {LaurentPolynomial.C (algebraMap A K f) - LaurentPolynomial.T 1 * LaurentPolynomial.C (algebraMap A K g)}) ∧ (∀ a, i₁ (LaurentPolynomial.C a) = (1 : B) ⊗ₜ[A] a) ∧ ∀ n : ℤ, i₁ (LaurentPolynomial.T n) = i (LaurentPolynomial.T n) ⊗ₜ[A] (1 : K) := by
   intro p _ A _ B _ _ K _ _ i f g hA hK hPQ
@@ -75,14 +73,14 @@ theorem bc_laur : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](B : Type)
     intro s
     refine LaurentPolynomial.induction_on' s ?_ ?_
     · intro a b ha hb
-      rw [map_add, map_add, ha, hb, map_add, TensorProduct.add_tmul]
+      rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), TensorProduct.add_tmul]
     · intro n a
       rw [map_mul, map_mul, hjC, hjT, map_mul, hC, hT, hiC, Algebra.TensorProduct.tmul_mul_tmul,
         one_mul, mul_one, ← Algebra.smul_def, TensorProduct.smul_tmul,
         ← Algebra.algebraMap_eq_smul_one]
   have hmap : (Ideal.span {LaurentPolynomial.C f - LaurentPolynomial.T 1 * LaurentPolynomial.C g} :
-      Ideal A[T;T⁻¹]).map j = Ideal.span {LaurentPolynomial.C (algebraMap A K f) -
-        LaurentPolynomial.T 1 * LaurentPolynomial.C (algebraMap A K g)} := by
+      Ideal A[T;T⁻¹]).map j = Ideal.span {(LaurentPolynomial.C (algebraMap A K f) -
+        LaurentPolynomial.T 1 * LaurentPolynomial.C (algebraMap A K g))} := by
     rw [Ideal.map_span, Set.image_singleton, map_sub, map_mul, hjC, hjC, hjT]
   refine ⟨i₁, ?_, hC, hT⟩
   rw [← hmap]

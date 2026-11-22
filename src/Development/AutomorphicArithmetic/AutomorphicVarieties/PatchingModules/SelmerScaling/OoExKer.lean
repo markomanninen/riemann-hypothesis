@@ -1,10 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplCo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplDvr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplCo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplDvr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+
+@[expose] public section
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 

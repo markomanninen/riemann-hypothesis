@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.ComapMaximalIdealParDVR
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.ComapMaximalIdealParDVR
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -52,13 +57,15 @@ theorem secIdeal_le_ker :
     simp [Ideal.Quotient.eq_zero_iff_mem.mpr hq]
   · rw [Ideal.span_le, Set.range_subset_iff]
     intro i
-    simp only [SetLike.mem_coe, RingHom.mem_ker, secForm, linForm, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [SetLike.mem_coe, RingHom.mem_ker, secForm, linForm, map_sum, map_mul]
     simp only [evalF, coe_eval₂Hom, eval₂_C, eval₂Hom_X', parVal]
     simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
       if_true]
     linear_combination (-(∑ m, X (.inl (i, m)) * cx Q j e m)) * cx_mul_cinv Q j (e := e)
   · rw [Ideal.span_le, Set.singleton_subset_iff]
-    simp only [SetLike.mem_coe, RingHom.mem_ker, chartForm, linForm, map_sub, map_one, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [SetLike.mem_coe, RingHom.mem_ker, chartForm, linForm, map_sub, map_one, map_sum, map_mul]
     simp only [evalF, coe_eval₂Hom, eval₂_C, eval₂Hom_X', parVal]
     simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
       if_true]
@@ -126,14 +133,16 @@ theorem fromPoly_secForm (i : Fin e) :
   have hmem : secForm (X : Par e n → MvPolynomial (Par e n) D) i ∈ secI Q e :=
     Ideal.mem_sup_left (Ideal.mem_sup_right (Ideal.subset_span ⟨i, rfl⟩))
   rw [← toChart_eq_zero Q j hmem]
-  simp only [map_sum, map_mul, fromPoly_X, fromPoly_cx, secForm, linForm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, fromPoly_X, fromPoly_cx, secForm, linForm]
 
 theorem fromPoly_chartForm :
     fromPoly Q j e (∑ m, X (.inr m) * cx Q j e m - 1) = 0 := by
   have hmem : chartForm (X : Par e n → MvPolynomial (Par e n) D) - 1 ∈ secI Q e :=
     Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)
   rw [← toChart_eq_zero Q j hmem]
-  simp only [map_sum, map_mul, map_sub, map_one, fromPoly_X, fromPoly_cx, chartForm, linForm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_sub, map_one, fromPoly_X, fromPoly_cx, chartForm, linForm]
 
 theorem fromPoly_toPoly_toChart :
     ((fromPoly Q j e).comp (toPoly Q j e)).comp (toChart Q j e) = toChart Q j e := by
@@ -172,8 +181,8 @@ theorem toPoly_algebraMap (d : D) : toPoly Q j e (algebraMap D (Chart Q j e) d) 
 
 end ChartDomain
 
-open ChartDomain in
 
+open ChartDomain in
 theorem ChartDomain.proof : ChartDomain.Statement := by
   intro D _ _ n e Q j hQ hQD hXj
   have hxj : Ideal.Quotient.mk Q (X j) ≠ 0 := fun h => hXj (Ideal.Quotient.eq_zero_iff_mem.mp h)

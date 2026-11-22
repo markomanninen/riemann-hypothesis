@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ end GlobalTheory.AffinePointValues
 
 namespace GlobalTheory
 
-open AffinePointValues in
 
+open AffinePointValues in
 theorem existsUnique_point_of_ringHom :
     (∀ (X : Over (Sp ℂ)) (U : X.left.Opens), IsAffineOpen U → ∀ e : Γ(X.left, U) →+* ℂ, (∀ a, e (constFn X.hom U a) = a) → ∃! x : (𝟙_ (Over (Sp ℂ)) ⟶ X), ⊤ ≤ (x).left ⁻¹ᵁ U ∧ ∀ f, valAt' x.left U f = e f) := by
   intro X U hU e he
@@ -60,14 +64,14 @@ theorem existsUnique_point_of_ringHom :
     exact h
   refine ⟨Over.homMk (Spec.map φ ≫ hU.fromSpec) hw, ⟨hpre, fun f => ?_⟩, ?_⟩
   · show valAt' (Spec.map φ ≫ hU.fromSpec) U f = e f
-    rw [valAt', dif_pos hpre]
+    rw [valAt', dite_eq_left hpre]
     exact congrArg (fun g => g.hom f) (appLE_specMap_fromSpec hU φ hpre)
   · rintro y ⟨hy, hv⟩
     apply Over.OverMorphism.ext
     have h1 : y.left.appLE U ⊤ hy ≫ (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom = φ := by
       ext f
       have := hv f
-      rw [valAt', dif_pos hy] at this
+      rw [valAt', dite_eq_left hy] at this
       exact this
     rw [← specMap_appLE_fromSpec hU y.left hy, h1]
     rfl

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyLinear
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD
 open ReciprocityTheory.ChartRestriction.G.TB (perpVec)
@@ -30,7 +34,8 @@ private theorem perpVec_apply_eq_zero {R V : Type} [CommRing R] [AddCommGroup V]
     refine Finset.sum_congr rfl fun a' _ => ?_
     rw [hM]
     ring
-  simp only [perpVec, ← hMdef, map_sub, map_smul, map_sum, Pi.sub_apply, Pi.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [perpVec, ← hMdef, map_sub, map_smul, map_sum, Pi.sub_apply, Pi.smul_apply,
     Finset.sum_apply, smul_eq_mul, hrow, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
     if_true]
   ring
@@ -181,7 +186,8 @@ private theorem minorProd_mem_Ha_of_herm_orthogonal {K : Type} [Field K] {T : Ty
     apply minorProd_mem_rowHighest
     intro t a b
     have := congrArg (τ t) (hef a b)
-    rw [herm_one_eq_sum, map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [herm_one_eq_sum, map_sum, map_zero] at this
     simpa [dotProduct, map_mul] using this
   · change minorProd c c' _ _ ∈ symO p q τ Λ
     unfold symO minorProd

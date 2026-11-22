@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsUnitarySupportedAtPlaceOfMulEqIdem
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsUnitarySupportedAtPlaceOfMulEqIdem
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructure
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.LocMod
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -29,7 +34,7 @@ theorem suppAt_mul {S : HSp D} {e : AE D} {g h : GA D S} (hg : SuppAt e S g) (hh
   rw [this, smul_add, hh, ← Matrix.smul_mul, hg]
 
 theorem suppAt_of_sandwich {S T : HSp D} {e : AE D} {g : GA D S} {h : GA D T} (hh : SuppAt e T h)
-    (A : Mx D S.rank T.rank) (B : Mx D T.rank S.rank) (hg : mt S g - 1 = A ⬝ (mt T h - 1) ⬝ B) : SuppAt e S g := by
+    (A : Mx D S.rank T.rank) (B : Mx D T.rank S.rank) (hg : mt S g - 1 = A * (mt T h - 1) * B) : SuppAt e S g := by
   rw [suppAt_iff] at hh ⊢
   rw [hg, ← Matrix.smul_mul, ← Matrix.mul_smul, hh]
 
@@ -89,18 +94,18 @@ theorem isLoc_inv {S : HSp D} {F : Frame k S.rank Y} {g : GA D S} {q : GL Y k} (
   exact hφ _
 
 theorem pair_zero {S : HSp D} {g : GA D S} (hg : SuppAt p.e S g) {a b : ℕ} (A : Mx D S.rank a) (B : Mx D S.rank b) (i j)
-    (h1 : ((adj A ⬝ gA S).map p.π ⬝ ((mt S g).map p.π - 1) ⬝ B.map p.π) i j = 0)
-    (h2 : ((adj B ⬝ gA S).map p.π ⬝ ((mt S g⁻¹).map p.π - 1) ⬝ A.map p.π) j i = 0) :
-    (adj A ⬝ gA S ⬝ (mt S g - 1) ⬝ B) i j = 0 := by
+    (h1 : ((adj A * gA S).map p.π * ((mt S g).map p.π - 1) * B.map p.π : Matrix (Fin a) (Fin b) k) i j = 0)
+    (h2 : ((adj B * gA S).map p.π * ((mt S g⁻¹).map p.π - 1) * A.map p.π : Matrix (Fin b) (Fin a) k) j i = 0) :
+    (adj A * gA S * (mt S g - 1) * B : Mx D a b) i j = 0 := by
   have m1 : ∀ x : GA D S, (mt S x).map p.π - 1 = (mt S x - 1).map p.π := fun x => by
     rw [Matrix.map_sub _ (map_sub p.π), Matrix.map_one _ (map_zero _) (map_one _)]
   rw [m1, ← Matrix.map_mul, ← Matrix.map_mul] at h1 h2
-  have e1 : adj (mt S g) ⬝ gA S = gA S ⬝ mt S g⁻¹ := by rw [GlobalTheory.MixModel.mt_inv, gA_giA_cancel]
-  have e2 : adj (adj A ⬝ gA S ⬝ (mt S g - 1) ⬝ B) = adj B ⬝ gA S ⬝ (mt S g⁻¹ - 1) ⬝ A := by
+  have e1 : adj (mt S g) * gA S = gA S * mt S g⁻¹ := by rw [GlobalTheory.MixModel.mt_inv, gA_giA_cancel]
+  have e2 : adj (adj A * gA S * (mt S g - 1) * B) = adj B * gA S * (mt S g⁻¹ - 1) * A := by
     simp only [adj_mul, adj_sub, adj_one, adj_adj, adj_gA, Matrix.mul_assoc, Matrix.sub_mul, Matrix.mul_sub, Matrix.one_mul,
       cancel₂ e1]
   refine eq_zero_of_comp p ?_ h1 ?_
-  · have : (p.e + cA D p.e) • (adj A ⬝ gA S ⬝ (mt S g - 1) ⬝ B) = adj A ⬝ gA S ⬝ (mt S g - 1) ⬝ B := by
+  · have : (p.e + cA D p.e) • (adj A * gA S * (mt S g - 1) * B) = adj A * gA S * (mt S g - 1) * B := by
       rw [← Matrix.smul_mul, ← Matrix.mul_smul, suppAt_iff.1 hg]
     exact congrFun (congrFun this i) j
   · rw [← e2] at h2
@@ -141,8 +146,8 @@ def Tri (N : Matrix (Fin S.rank) (Fin S.rank) k) : Prop :=
 variable {p d F₀} {N : Matrix (Fin S.rank) (Fin S.rank) k}
 
 theorem row0 {m : Type} {C : Matrix (Fin S.rank) m k} (h : F₀.γ * d.p0.map p.π * N * C = 0) :
-    (adj d.j0 ⬝ gA S).map p.π * N * C = 0 := by
-  have e : adj d.j0 ⬝ gA S = gA S₀ ⬝ d.p0 := by rw [d.p0_eq, gA_giA_cancel]
+    (adj d.j0 * gA S).map p.π * N * C = 0 := by
+  have e : adj d.j0 * gA S = gA S₀ * d.p0 := by rw [d.p0_eq, gA_giA_cancel]
   have h' := congrArg (F₀.β * ·) h
   simp only [← Matrix.mul_assoc, F₀.βγ, Matrix.one_mul, Matrix.mul_zero] at h'
   rw [e, Matrix.map_mul, Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc _ N, h', Matrix.mul_zero]
@@ -153,46 +158,46 @@ theorem col0 {m : Type} {C : Matrix m (Fin S.rank) k} (h : C * N * (d.j0.map p.�
   simp only [Matrix.mul_assoc, F₀.βγ, Matrix.mul_one, Matrix.zero_mul] at h'
   rwa [Matrix.mul_assoc]
 
-theorem Tri.YX (h : Tri p d F₀ N) : (adj d.jX ⬝ gA S).map p.π * N * d.jX.map p.π = 0 := by
+theorem Tri.YX (h : Tri p d F₀ N) : (adj d.jX * gA S).map p.π * N * d.jX.map p.π = 0 := by
   rw [← d.pY_eq]
   ext i j
   exact h (Sum.inr (Sum.inr i)) (Sum.inr (Sum.inl j)) (by simp only [wlev, Sum.elim_inr, Sum.elim_inl]; omega)
 
-theorem Tri.OX (h : Tri p d F₀ N) : (adj d.j0 ⬝ gA S).map p.π * N * d.jX.map p.π = 0 := by
+theorem Tri.OX (h : Tri p d F₀ N) : (adj d.j0 * gA S).map p.π * N * d.jX.map p.π = 0 := by
   refine row0 (F₀ := F₀) ?_
   ext i j
   exact h (Sum.inl i) (Sum.inr (Sum.inl j)) (by simp only [wlev, Sum.elim_inr, Sum.elim_inl]; omega)
 
-theorem Tri.YO (h : Tri p d F₀ N) : (adj d.jX ⬝ gA S).map p.π * N * d.j0.map p.π = 0 := by
+theorem Tri.YO (h : Tri p d F₀ N) : (adj d.jX * gA S).map p.π * N * d.j0.map p.π = 0 := by
   rw [← d.pY_eq]
   refine col0 (F₀ := F₀) ?_
   ext i j
   exact h (Sum.inr (Sum.inr i)) (Sum.inl j) (by simp only [wlev, Sum.elim_inr, Sum.elim_inl]; omega)
 
-theorem Tri.OO (h : Tri p d F₀ N) : (adj d.j0 ⬝ gA S).map p.π * N * d.j0.map p.π = 0 := by
+theorem Tri.OO (h : Tri p d F₀ N) : (adj d.j0 * gA S).map p.π * N * d.j0.map p.π = 0 := by
   refine row0 (F₀ := F₀) (col0 (F₀ := F₀) ?_)
   ext i j
   exact h (Sum.inl i) (Sum.inl j) le_rfl
 
 theorem Tri.XX (h : Tri p d F₀ N) {i j : Fin ρ} (hij : i ≤ j) :
-    ((adj d.jY ⬝ gA S).map p.π * N * d.jX.map p.π) j i = 0 := by
+    ((adj d.jY * gA S).map p.π * N * d.jX.map p.π) j i = 0 := by
   rw [← d.pX_eq]
   exact h (Sum.inr (Sum.inl j)) (Sum.inr (Sum.inl i)) (by simp only [wlev, Sum.elim_inr, Sum.elim_inl]; omega)
 
 theorem Tri.YY (h : Tri p d F₀ N) {i j : Fin ρ} (hij : i ≤ j) :
-    ((adj d.jX ⬝ gA S).map p.π * N * d.jY.map p.π) i j = 0 := by
+    ((adj d.jX * gA S).map p.π * N * d.jY.map p.π) i j = 0 := by
   rw [← d.pY_eq]
   exact h (Sum.inr (Sum.inr i)) (Sum.inr (Sum.inr j)) (by simp only [wlev, Sum.elim_inr, Sum.elim_inl]; omega)
 
 theorem mem_flagN {g : GA D S} (hg : SuppAt p.e S g) (h : Tri p d F₀ ((mt S g).map p.π - 1))
     (h' : Tri p d F₀ ((mt S g⁻¹).map p.π - 1)) : g ∈ flagN d := by
   have z : ∀ {a b : ℕ} (A : Mx D S.rank a) (B : Mx D S.rank b),
-      (adj A ⬝ gA S).map p.π ⬝ ((mt S g).map p.π - 1) ⬝ B.map p.π = 0 →
-      (adj B ⬝ gA S).map p.π ⬝ ((mt S g⁻¹).map p.π - 1) ⬝ A.map p.π = 0 → adj A ⬝ gA S ⬝ (mt S g - 1) ⬝ B = 0 :=
+      (adj A * gA S).map p.π * ((mt S g).map p.π - 1) * B.map p.π = 0 →
+      (adj B * gA S).map p.π * ((mt S g⁻¹).map p.π - 1) * A.map p.π = 0 → adj A * gA S * (mt S g - 1) * B = 0 :=
     fun A B h1 h2 => Matrix.ext fun i j => pair_zero p hg A B i j (by rw [h1]; rfl) (by rw [h2]; rfl)
-  have key : ∀ {b : ℕ} (B : Mx D S.rank b), adj d.jX ⬝ gA S ⬝ (mt S g - 1) ⬝ B = 0 →
-      adj d.j0 ⬝ gA S ⬝ (mt S g - 1) ⬝ B = 0 → mt S g ⬝ B = B + d.jX ⬝ (d.pX ⬝ (mt S g - 1) ⬝ B) := fun B h1 h2 => by
-    have e := GlobalTheory.MixPer.Decomp.decomp d ((mt S g - 1) ⬝ B)
+  have key : ∀ {b : ℕ} (B : Mx D S.rank b), adj d.jX * gA S * (mt S g - 1) * B = 0 →
+      adj d.j0 * gA S * (mt S g - 1) * B = 0 → mt S g * B = B + d.jX * (d.pX * (mt S g - 1) * B) := fun B h1 h2 => by
+    have e := GlobalTheory.MixPer.Decomp.decomp d ((mt S g - 1) * B)
     rw [Matrix.mul_assoc] at h1 h2
     rw [d.pY_eq, h1, d.p0_eq, Matrix.mul_assoc (giA S₀), h2, Matrix.mul_zero, Matrix.mul_zero, Matrix.mul_zero, add_zero,
       add_zero] at e
@@ -313,7 +318,7 @@ theorem fix_col {K : Type} [Field K] {a b : ℕ} {M : Matrix (Fin a) (Fin a) K} 
     {v : Fin a → K} (t : K) (i : Fin b) (hv : ∀ r, v r = t * X r i) : M *ᵥ v = v :=
   fix_vec h t (Pi.single i 1) fun r => by rw [hv]; simp
 
-theorem map_fix {a b : ℕ} {M : Mx D a a} {X : Mx D a b} (h : M ⬝ X = X) : M.map p.π * X.map p.π = X.map p.π := by
+theorem map_fix {a b : ℕ} {M : Mx D a a} {X : Mx D a b} (h : M * X = X) : M.map p.π * X.map p.π = X.map p.π := by
   rw [← Matrix.map_mul, h]
 
 theorem suppAt_wittLeviEmbedding {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) {e : AE D} {h : GA D S₀} (hh : SuppAt e S₀ h) :
@@ -328,7 +333,7 @@ theorem suppAt_emb {S A L : HSp D} (o : OrthDec S A L) {e : AE D} {h : GA D A} (
   rw [o.mt_emb, GlobalTheory.MixModel.mt_one, ← o.sum_eq_one, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one, Matrix.mul_one]
   abel
 
-theorem intertwine {S T : HSp D} {g : GA D S} {h : GA D T} {j : Mx D S.rank T.rank} (e : mt S g ⬝ j = j ⬝ mt T h)
+theorem intertwine {S T : HSp D} {g : GA D S} {h : GA D T} {j : Mx D S.rank T.rank} (e : mt S g * j = j * mt T h)
     {F₀ : Frame k T.rank Y} {q : GL Y k} (hh : p.IsLoc F₀ h q) :
     (mt S g).map p.π * (j.map p.π * F₀.β) = j.map p.π * F₀.β * q.val := by
   rw [← Matrix.mul_assoc, ← Matrix.map_mul, e, Matrix.map_mul, hh.2]
@@ -410,7 +415,8 @@ theorem mem_flagN_bes (B : BesLev D ρ) (s : k) (FA : Frame k B.A.rank n) (F : F
       exact Finset.sum_congr rfl fun u _ => by rw [h₀.1]; rfl
     · refine (hz _ rfl r).trans (congrArg (s * ·) ?_)
       change Witness.prH p (∑ u, B.d.i₀ r u * vecB B.o B.ζ u) = (B.d.i₀.map (Witness.prH p) * F₀.β) r (Sum.inr ())
-      rw [Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Matrix.mul_apply, map_sum]
       exact Finset.sum_congr rfl fun u _ => by rw [h₀.2, one_mul, RingHom.map_mul]; rfl
     · exact hX i _ rfl r
     · exact hY i _ (by simp only; omega) r
@@ -431,12 +437,12 @@ theorem mem_besGrp (B : BesLev D ρ) (s : k) (FA : Frame k B.A.rank n) (F : Fram
   refine mem_of_gen p F _ (fun g₀ => ?_) (fun g q hq hg => Subgroup.mem_sup_left (mem_flagN_bes p B s FA F hF hq hg)) hq hg
   obtain ⟨rfl, h0, hX, hz, hY⟩ := hF
   obtain ⟨h, hh⟩ := Witness.exists_isLoc p FA g₀
-  have eA : mt B.V (B.d.emb0 (B.o.emb (h, 1))) ⬝ (B.d.j0 ⬝ B.o.jA) = B.d.j0 ⬝ B.o.jA ⬝ mt B.A h := by
+  have eA : mt B.V (B.d.emb0 (B.o.emb (h, 1))) * (B.d.j0 * B.o.jA) = B.d.j0 * B.o.jA * mt B.A h := by
     rw [cancel₂ (B.d.wittDecomp_anisotropicEmbedding_inclAnisotropic _), Matrix.mul_assoc, B.o.emb_jA, Matrix.mul_assoc]
-  have eB : mt B.V (B.d.emb0 (B.o.emb (h, 1))) ⬝ (B.d.j0 ⬝ B.o.jB) = B.d.j0 ⬝ B.o.jB := by
+  have eB : mt B.V (B.d.emb0 (B.o.emb (h, 1))) * (B.d.j0 * B.o.jB) = B.d.j0 * B.o.jB := by
     rw [cancel₂ (B.d.wittDecomp_anisotropicEmbedding_inclAnisotropic _), Matrix.mul_assoc, B.o.emb_jB, GlobalTheory.MixModel.mt_one, Matrix.mul_one]
-  have rA : B.d.j0 ⬝ B.o.jA = rat (B.d.i₀ * B.o.iA) := (rat_mul _ _).symm
-  have rB : B.d.j0 ⬝ B.o.jB = rat (B.d.i₀ * B.o.iB) := (rat_mul _ _).symm
+  have rA : B.d.j0 * B.o.jA = rat (B.d.i₀ * B.o.iA) := (rat_mul _ _).symm
+  have rB : B.d.j0 * B.o.jB = rat (B.d.i₀ * B.o.iB) := (rat_mul _ _).symm
   rw [rA] at eA
   rw [rB] at eB
   refine ⟨B.d.emb0 (B.o.emb (h, 1)), Subgroup.mem_sup_right ⟨h, rfl⟩, suppAt_wittLeviEmbedding B.d (suppAt_emb B.o hh.1),

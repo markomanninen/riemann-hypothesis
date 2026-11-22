@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.EnergyIntLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.EnergyIntLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,12 +27,7 @@ theorem hty_c (C : Choice X θ) (u : D.what₂.Word) (τ : D.what₂.Tau) :
     IsHCTypeW D.R.k D.R.rS (zB X (C.Qi τ) u τ) (fun i => ((D.hcW u τ).u i : ℝ)) (piB X (Qcs C τ) (Qics C τ) u τ) := by
   have h := Formalism.L2.SG.Pf.Choice.colsTypeTr_of X (Formalism.L2.SG.Pf.cfS_ne D) (transpC' C τ) u
   rw [zc_eq] at h
-  have hp : X.pl (vOf X τ) = τ := by
-    first
-    | simp [vOf]
-    | (unfold vOf; simp)
-    | rfl
-  rw [hp] at h
+  rw [show X.pl (vOf X τ) = τ from X.pl.apply_symm_apply τ] at h
   exact h
 
 theorem zT (C : Choice X θ) (u : D.what₂.Word) (τ : D.what₂.Tau) :

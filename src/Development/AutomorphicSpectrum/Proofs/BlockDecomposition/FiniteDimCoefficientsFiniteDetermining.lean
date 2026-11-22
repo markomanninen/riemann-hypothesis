@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
+
+@[expose] public section
 
 open NumberField GlobalTheory.CuspRep MeasureTheory PositivityTheory.Affgl GlobalTheory.CompanionTheory.CTFin
 
@@ -60,7 +64,8 @@ theorem finiteDimensional_coeffSpan {K W : Type} [Group K] [AddCommGroup W] [Mod
     have hw : ∀ v : W, ℓ v = ∑ i, b.repr v i * ℓ (b i) := by
       intro v
       conv_lhs => rw [← b.sum_repr v]
-      simp only [map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul]
     have hf : (fun k => ℓ ((ρ k) w)) = ∑ ij, (b.repr w ij.2 * ℓ (b ij.1)) • m ij := by
       funext k
       rw [Finset.sum_apply]
@@ -69,7 +74,8 @@ theorem finiteDimensional_coeffSpan {K W : Type} [Group K] [AddCommGroup W] [Mod
       dsimp only
       have h1 : ℓ (ρ k w) = ∑ j, b.repr w j * ℓ (ρ k (b j)) := by
         conv_lhs => rw [← b.sum_repr w]
-        simp only [map_sum, map_smul, smul_eq_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, smul_eq_mul]
       rw [h1, Finset.sum_comm]
       refine Finset.sum_congr rfl (fun j _ => ?_)
       rw [hw (ρ k (b j)), Finset.mul_sum]

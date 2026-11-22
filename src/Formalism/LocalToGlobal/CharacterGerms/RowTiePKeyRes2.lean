@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyDef
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,7 +118,7 @@ theorem fixed_nat (p : ℕ) [hp : Fact p.Prime] [CharP k p] (a : k) (ha : a ^ p 
   let φ : ZMod p →+* k := ZMod.castHom (dvd_refl p) k
   have hφ : Function.Injective φ := φ.injective
   have hp1 : 1 < p := hp.out.one_lt
-  have hP : (X ^ p - X : k[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero k hp1
+  have hP : (X ^ p - X : k[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hp1
   have hroot : ∀ b : k, b ^ p = b → b ∈ (X ^ p - X : k[X]).roots.toFinset := by
     intro b hb
     rw [Multiset.mem_toFinset, Polynomial.mem_roots hP]
@@ -147,7 +151,7 @@ theorem fixed_nat (p : ℕ) [hp : Fact p.Prime] [CharP k p] (a : k) (ha : a ^ p 
     calc (X ^ p - X : k[X]).roots.toFinset.card ≤ Multiset.card (X ^ p - X : k[X]).roots :=
           Multiset.toFinset_card_le _
       _ ≤ (X ^ p - X : k[X]).natDegree := Polynomial.card_roots' _
-      _ = p := FiniteField.X_pow_card_sub_X_natDegree_eq k hp1
+      _ = p := Polynomial.natDegree_X_pow_sub_X (R := k) hp1
   omega
 
 theorem exists_lift (p : ℕ) [Fact p.Prime] [CharP k p] (Q : k[X]) (hQ : ∀ i, Q.coeff i ^ p = Q.coeff i) :
@@ -155,7 +159,8 @@ theorem exists_lift (p : ℕ) [Fact p.Prime] [CharP k p] (Q : k[X]) (hQ : ∀ i,
   classical
   choose f hf using fun i => fixed_nat p (Q.coeff i) (hQ i)
   refine ⟨∑ i ∈ Q.support, Polynomial.monomial i ((f i : ℕ) : ℤ), ?_⟩
-  rw [Polynomial.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.map_sum]
   conv_rhs => rw [Q.as_sum_support]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Polynomial.map_monomial, hf i]
@@ -203,7 +208,7 @@ theorem core (p : ℕ) [hp : Fact p.Prime] [CharP k p] {O : Type} [CommRing O] {
       simp only [Polynomial.map_sub, map_X, map_C, frobenius_def, ← hfr]
       exact Fintype.prod_equiv (Equiv.addRight 1) _ _ fun c => rfl
     have hcoef : ∀ i, Q.coeff i ^ p = Q.coeff i := fun i => by
-      have h1 := congrArg (fun P => Polynomial.coeff P i) hfix
+      have h1 := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P i) hfix
       simp only [coeff_map, frobenius_def] at h1
       exact h1
     obtain ⟨μ, hμ⟩ := exists_lift p Q hcoef
@@ -218,7 +223,7 @@ theorem core (p : ℕ) [hp : Fact p.Prime] [CharP k p] {O : Type} [CommRing O] {
     exact ⟨c, hc⟩
 
   have hfin : Finite (Hs (e 0) (p ^ d) hq1 hq) := by
-    have hQ0 : (X ^ (p ^ d) - X : k[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero k hq1
+    have hQ0 : (X ^ (p ^ d) - X : k[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq1
     have hF : Finite ↥(((X ^ (p ^ d) - X : k[X]).roots.toFinset : Set k)) := (Finset.finite_toSet _).to_subtype
     refine Finite.of_injective (β := ↥(((X ^ (p ^ d) - X : k[X]).roots.toFinset : Set k)))
       (fun u => ⟨((u : kˣ) : k), ?_⟩) ?_

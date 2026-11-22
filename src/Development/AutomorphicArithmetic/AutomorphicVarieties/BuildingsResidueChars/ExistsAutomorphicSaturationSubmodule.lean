@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsOpenLevelNormalizedByIntegralFiniteGL
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CenterUActionCommuteRightTranslation
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsOpenLevelNormalizedByIntegralFiniteGL
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CenterUActionCommuteRightTranslation
+
+@[expose] public section
+
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
 attribute [local instance 100] LieRing.ofAssociativeRing
@@ -107,7 +112,7 @@ private theorem sat_centre (hS : Bdd S) : Centre (sat S) := by
   refine ⟨p, hp, ?_⟩
   refine ind S (fun φ => Polynomial.aeval (uAction z) p φ ∈ (⊥ : Submodule ℂ (archSmooth K n)))
       (by rw [map_zero]; exact Submodule.zero_mem _)
-      (fun x y hx hy => by rw [map_add]; exact Submodule.add_mem _ hx hy)
+      (fun x y hx hy => by rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy)
       (fun c x hx => by rw [map_smul]; exact Submodule.smul_mem _ c hx) ?_
   intro k _ φ hφ
   have hc : Commute (rt (K := K) (n := n) k) (Polynomial.aeval (uAction z) p) :=
@@ -122,7 +127,7 @@ private theorem sat_sat : Sat (sat S) := by
   intro k hk
   refine ind S (fun φ => rt k φ ∈ sat S)
       (by rw [map_zero]; exact Submodule.zero_mem _)
-      (fun x y hx hy => by rw [map_add]; exact Submodule.add_mem _ hx hy)
+      (fun x y hx hy => by rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy)
       (fun c x hx => by rw [map_smul]; exact Submodule.smul_mem _ c hx) ?_
   intro k' hk' φ hφ
   exact Submodule.subset_span ⟨k * k', mul_mem hk hk', φ, hφ, hmul _ _ _⟩

@@ -1,20 +1,22 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.LocalConditionCharacters.CharPolSupp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.OrdPlain
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.RecTExists
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TLocCompR
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TJacqOfU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TOrdAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DeRhamWeightsOfLocalArtinCharacters
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.LocalConditionCharacters.CharPolSupp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.OrdPlain
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.RecTExists
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TLocCompR
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TJacqOfU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TOrdAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DeRhamWeightsOfLocalArtinCharacters
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section
-open private UpperTheory.V.Sd.OrdinaryAbove.unr_val UpperTheory.V.Sd.OrdinaryAbove.abs_val UpperTheory.V.Sd.OrdinaryAbove.det_flag from Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.OrdAbove
-open private embAt_of_induced from Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.LocalGlobalCompatibilityGl2
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.HeckeGal UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd
 open UpperTheory.Zero.LLC UpperTheory.V.Z.Win UpperTheory.Gal.SV
@@ -27,7 +29,7 @@ theorem UpperTheory.V.Z.Win.RR.ordAbove_of_alt (hX : ExRS) (hGd : GdOf) :
   obtain ⟨⟨σ, hσ⟩, hiso⟩ := _root_.UpperTheory.V.Af.local_comp_real_of_printed_results hP.toClassicalTheorems F 2 π w
   have hiso := hiso σ hσ
   obtain ⟨rc, hrc⟩ := recTExists F Ω A w h
-  obtain ⟨ar, har, ε, hLV⟩ := toV' hrc
+  obtain ⟨ar, har, ε, hLV⟩ := _root_.UpperTheory.V.Z.Win.toV' hrc
   have hq0 : ((normV w : ℕ) : Qbar l) ≠ 0 := Nat.cast_ne_zero.2 (one_lt_normV w).ne_bot
   have hqc : ((normV w : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (one_lt_normV w).ne_bot
   have hqn : ‖((normV w : ℕ) : Qbar l)‖ ≠ 0 := norm_ne_zero_iff.2 hq0
@@ -46,9 +48,30 @@ theorem UpperTheory.V.Z.Win.RR.ordAbove_of_alt (hX : ExRS) (hGd : GdOf) :
     (UpperTheory.hasUEigenvalue_of_locIsotypic F w _ π.finPart σ hiso 1 lam hU)
   obtain ⟨s1, s2, hsub, hcen⟩ := UpperTheory.isSubquotient_principalSeries_of_borel_functional F w σ μ₁ μ₂ Lf hL0 hLf
   set ω : Fin 2 → (w.adicCompletion F)ˣ →* ℂˣ := ![μ₁ * GlobalTheory.SmGL.absPow (w.adicCompletion F) (-1), μ₂] with hω
+  have habs (t : Weil h) :
+      (GlobalTheory.SmGL.absPow (w.adicCompletion F) (-1) (ar t) : ℂ) =
+        ((normV w : ℕ) : ℂ) ^ GlobalTheory.SmGL.ord (w.adicCompletion F) (ar t) := by
+    obtain ⟨hnorm, hord, -⟩ := (GlobalTheory.CompletionNorm.norm_nabs_valuation F w).1 (ar t)
+    rw [GlobalTheory.SmGL.val_absPow, ← hnorm, hord, Complex.cpow_neg_one]
+    push_cast
+    rw [zpow_neg, inv_inv]
   have hω0 : ∀ t : Weil h, (ω 0 (ar t) : ℂ) = lam ^ (-deg t) := fun t => by
+    have hvalAr : μ₁ (ar t) =
+        μ₁ (atFin w (Formalism.L2.Host.unif w)) ^ GlobalTheory.SmGL.ord (w.adicCompletion F) (ar t) := by
+      have hvaluation := ((GlobalTheory.CompletionNorm.norm_nabs_valuation F w).1 (ar t)).2.2
+      have hvalUnif : Valued.v ((atFin w (Formalism.L2.Host.unif w) : (w.adicCompletion F)ˣ) : w.adicCompletion F) =
+          WithZero.exp (-1 : ℤ) := unif_spec w
+      have hunit : IsUnitAt w (ar t *
+          (atFin w (Formalism.L2.Host.unif w) ^ GlobalTheory.SmGL.ord (w.adicCompletion F) (ar t))⁻¹) := by
+        unfold IsUnitAt
+        rw [Units.val_mul, Units.val_inv_eq_inv_val, Units.val_zpow_eq_zpow_val, map_mul, map_inv₀,
+          map_zpow₀, hvaluation, hvalUnif, ← WithZero.exp_zsmul, ← WithZero.exp_neg, ← WithZero.exp_add]
+        simp
+      have hchar := hunr _ hunit
+      rwa [map_mul, map_inv, map_zpow, mul_inv_eq_one] at hchar
     change ((μ₁ (ar t) * GlobalTheory.SmGL.absPow (w.adicCompletion F) (-1) (ar t) : ℂˣ) : ℂ) = _
-    rw [Units.val_mul, UpperTheory.V.Sd.OrdinaryAbove.abs_val, UpperTheory.V.Sd.OrdinaryAbove.unr_val w μ₁ hunr, har.ord_eq, Units.val_zpow_eq_zpow_val, ← mul_zpow, mul_comm, hval]
+    rw [Units.val_mul, habs, hvalAr, har.ord_eq,
+      Units.val_zpow_eq_zpow_val, ← mul_zpow, mul_comm, hval]
     rfl
   have hsm : ∀ j, GlobalTheory.SmGL.IsSmoothChar (ω j) := by
     refine Fin.forall_fin_two.2 ⟨?_, s2⟩
@@ -63,7 +86,7 @@ theorem UpperTheory.V.Z.Win.RR.ordAbove_of_alt (hX : ExRS) (hGd : GdOf) :
     have h1 := _root_.UpperTheory.V.Sd.OrdinaryAbove.central_weil_ordinary_above hP H hw h har hiso t _ (hcen (ar t))
     have h2 : ((μ₁ (ar t) * μ₂ (ar t) : ℂˣ) : ℂ) = (ω 0 (ar t) : ℂ) * (ω 1 (ar t) : ℂ) * ((normV w : ℕ) : ℂ) ^ deg t := by
       change _ = ((μ₁ (ar t) * GlobalTheory.SmGL.absPow (w.adicCompletion F) (-1) (ar t) : ℂˣ) : ℂ) * (μ₂ (ar t) : ℂ) * _
-      rw [Units.val_mul, Units.val_mul, UpperTheory.V.Sd.OrdinaryAbove.abs_val, har.ord_eq, zpow_neg]
+      rw [Units.val_mul, Units.val_mul, habs, har.ord_eq, zpow_neg]
       field_simp
     rw [h2, map_mul, map_mul, norm_mul, norm_mul, hn0, map_zpow₀, map_natCast, norm_zpow, ← hs,
       show (m w 0 + m w 1 + 1) * deg t = m w 0 * deg t + m w 1 * deg t + deg t by ring, zpow_add₀ hqn, zpow_add₀ hqn] at h1
@@ -80,7 +103,18 @@ theorem UpperTheory.V.Z.Win.RR.ordAbove_of_alt (hX : ExRS) (hGd : GdOf) :
     refine ⟨h1, fun τ LL' τ' hτ => ?_, fun s => ?_⟩
     · have e : HT τ = Finset.univ.val.map fun j => -m w j := by
         refine Multiset.map_injective (f := fun n : ℤ => (n : ℂ)) Int.cast_injective ?_
-        have := hG.weights τ _ (hinf τ (embAt_of_induced h Bw hj τ LL' τ' hτ))
+        have hEmb : EmbAt w τ := by
+          intro x
+          rw [hτ]
+          let τval := LL'.1.val.comp τ'
+          let y : Bw.Kw.1 := ⟨Bw.j (algebraMap F Ω x), Bw.j_E x⟩
+          have hnorm : ‖τval y‖ = ‖(y : PadicAlgCl l)‖ := by
+            rw [← PadicAlgCl.spectralNorm_eq, ← PadicAlgCl.spectralNorm_eq, spectralNorm, spectralNorm,
+              minpoly.algHom_eq τval τval.injective, ← minpoly.algHom_eq Bw.Kw.1.val Bw.Kw.1.val.injective]
+            rfl
+          refine ((hj.valuation_lt_one_iff _).symm.trans (h x)).symm.trans ?_
+          exact iff_of_eq (congrArg (· < 1) hnorm.symm)
+        have := hG.weights τ _ (hinf τ hEmb)
         simp only [this, infOf, Multiset.map_map]
         exact Multiset.map_congr rfl fun i _ => by simp
       exact e ▸ h2 τ LL' τ' hτ
@@ -94,7 +128,16 @@ theorem UpperTheory.V.Z.Win.RR.ordAbove_of_alt (hX : ExRS) (hGd : GdOf) :
     rw [hω0, deg_ineIncl, mul_zero, zpow_zero, neg_zero, zpow_zero, map_one, mul_one, one_mul] at h1
     exact Units.ext (h1.trans (Units.val_zpow_eq_zpow_val _ _).symm)
   refine ⟨κ, hκ, Fin.forall_fin_two.2 ⟨k0, fun g hg => ?_⟩, fun g hg => ?_⟩
-  · have h1 := UpperTheory.V.Sd.OrdinaryAbove.det_flag _ κ hκ g
+  · have h1 : Matrix.GeneralLinearGroup.det (r g) = κ 0 g * κ 1 g := by
+      obtain ⟨b, hb⟩ := hκ
+      have hdet : Matrix.GeneralLinearGroup.det (b * r g * b⁻¹) = Matrix.GeneralLinearGroup.det (r g) := by
+        rw [map_mul, map_mul, map_inv, mul_inv_cancel_comm]
+      simp only [MonoidHom.comp_apply, Subgroup.coe_subtype] at hb
+      rw [← hdet]
+      apply Units.ext
+      rw [Matrix.GeneralLinearGroup.val_det_apply, Matrix.det_fin_two, (hb g).2 0, (hb g).2 1,
+        (hb g).1 1 0 (by decide)]
+      simp
     have h2 : Matrix.GeneralLinearGroup.det (r g) = cycBar F Ω l g ^ s * ξ g := DFunLike.congr_fun H.det (g : G F Ω)
     have h3 : ξ g = 1 := (H.ram w A h).2 (Or.inr hw) hg
     rw [h3, mul_one, ← hs, _root_.zpow_add] at h2

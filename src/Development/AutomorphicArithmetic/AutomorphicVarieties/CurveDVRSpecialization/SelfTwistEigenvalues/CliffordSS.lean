@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial Matrix
 
 theorem UpperTheory.V.Pr.T.cliffordSS :
@@ -23,7 +28,7 @@ theorem UpperTheory.V.Pr.T.cliffordSS :
   have hsup : ∀ n ∈ N, ∀ v ∈ W ⊔ W', ρ n v ∈ W ⊔ W' := by
     intro n hn v hv
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hv
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hW n hn a ha) (hW's n hn b hb)
   have key : ∀ g : G, ∀ s ∈ S, ρ g s ∈ W ⊔ W' := by
     intro g
@@ -33,7 +38,7 @@ theorem UpperTheory.V.Pr.T.cliffordSS :
         · intro n hn v hv
           obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hv
           obtain ⟨s, hs, rfl⟩ := Submodule.mem_map.mp hb
-          rw [map_add]
+          rw [map_add (f := _)]
           refine Submodule.add_mem_sup (hW's n hn a ha) ?_
           refine Submodule.mem_map.mpr ⟨ρ (g⁻¹ * n * g) s, hSs _ (hN.conj_mem' n hn g) s hs, ?_⟩
           rw [hmul, hmul]; congr 2; group

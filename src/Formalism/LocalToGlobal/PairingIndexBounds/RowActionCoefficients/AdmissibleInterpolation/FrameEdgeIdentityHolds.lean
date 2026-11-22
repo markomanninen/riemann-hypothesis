@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+
+@[expose] public section
 
 open MvPolynomial
 

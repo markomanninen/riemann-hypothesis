@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -52,7 +56,7 @@ private theorem θ_mul : rt D.θ * rt D.θ = ι (rt D.δ) := by
   rw [← map_mul, ← sq, D.sq, AdeleBaseChange.adeleMap_algebraMap]
 
 private theorem bar_mkE (u t : A F) : D.bar (D.mkE u t) = D.mkE u (-t) := by
-  simp [Dat.mkE, map_add, map_mul, bar_map, bar_θ, map_neg]
+  simp [Dat.mkE, map_add (f := _), map_mul, bar_map, bar_θ, map_neg]
 
 private theorem mkE_mul_bar (u t : A F) : D.mkE u t * D.mkE u (-t) = ι (u ^ 2 - rt D.δ * t ^ 2) := by
   have h := θ_mul D
@@ -60,13 +64,13 @@ private theorem mkE_mul_bar (u t : A F) : D.mkE u t * D.mkE u (-t) = ι (u ^ 2 -
   linear_combination (-(ι t) ^ 2) * h
 
 private theorem mkE_add (u t u' t' : A F) : D.mkE (u + u') (t + t') = D.mkE u t + D.mkE u' t' := by
-  simp only [Dat.mkE, map_add]; ring
+  simp only [Dat.mkE, map_add (f := _)]; ring
 
 private theorem mkE_mul (a u t : A F) : D.mkE (a * u) (a * t) = ι a * D.mkE u t := by
   simp only [Dat.mkE, map_mul]; ring
 
 private theorem co_add (x y : A E) (i : Fin 2) : D.co (x + y) i = D.co x i + D.co y i := by
-  simp [Dat.co, map_add]
+  simp [Dat.co, map_add (f := _)]
 
 private theorem co_mul (a : A F) (z : A E) (i : Fin 2) : D.co (ι a * z) i = a * D.co z i := by
   have : ι a * z = a • z := by

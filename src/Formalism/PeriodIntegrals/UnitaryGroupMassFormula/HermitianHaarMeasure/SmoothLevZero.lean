@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.RepOnAlgebraMap
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.RepOnAlgebraMap
+
+@[expose] public section
 
 open Matrix Finset MeasureTheory
 open scoped ContDiff
@@ -26,7 +30,7 @@ theorem smoothLev_add {f h : Mx k r → ℂ} (hf : SmoothLev k r i Set.univ f) (
   obtain ⟨U, F, hU, hgU, hF, hfF⟩ := hf g₀ hg₀
   obtain ⟨V, G, hV, hgV, hG, hhG⟩ := hh g₀ hg₀
   refine ⟨U ∩ V, fun x => F x + G x, hU.inter hV, ⟨hgU, hgV⟩,
-    (hF.mono fun _ hx => hx.1).add (hG.mono fun _ hx => hx.2), fun g hg hgl => ?_⟩
+    (hF.mono Set.inter_subset_left).add (hG.mono Set.inter_subset_right), fun g hg hgl => ?_⟩
   show f g + h g = F g + G g
   rw [hfF g hg.1 hgl, hhG g hg.2 hgl]
 
@@ -116,16 +120,16 @@ theorem EOp'_eq (a b : Fin (mdim k r i)) (f : Mx k r → ℂ) :
   simp only [EOp', EOp, Finset.sum_apply, Pi.smul_apply]
 
 theorem adjOp_E (H : Hyp k r z z' i μ) (a b : Fin (mdim k r i)) :
-    AdjOp (μ := μ) (ι := ιo k r) (𝓕 := testSub k r i) (Glev k r i) (EOp k r i a b) (EOp' k r i a b) where
-  mem f hf := H.ET k r i a b f hf
-  mem' f hf := by
+    AdjOp (μ := μ) (ι := ιo k r) (𝓕 := testSub k r i) (Glev k r i) (EOp k r i a b) (EOp' k r i a b) := by
+  refine ⟨fun f hf => H.ET k r i a b f hf, ?_, ?_, ?_, fun f hf h hh => H.EA k r i μ H.hμ a b f h hf hh⟩
+  · intro f hf
     rw [EOp'_eq]
     exact Submodule.sum_mem _ fun c _ => Submodule.sum_mem _ fun d _ =>
       Submodule.smul_mem _ _ (H.ET k r i c d f hf)
-  lin f hf h hh c g hg := by
+  · intro f hf h hh c g hg
     have := (H.EP ℂ k r z i Set.univ a b f h c isOpen_univ hf.1 hh.1).2.2 g ⟨hg, trivial⟩
     simpa only [EOp, smul_eq_mul] using this
-  lin' f hf h hh c g hg := by
+  · intro f hf h hh c g hg
     simp only [EOp']
     rw [Finset.mul_sum, ← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
@@ -137,20 +141,22 @@ theorem adjOp_E (H : Hyp k r z z' i μ) (a b : Fin (mdim k r i)) :
     simp only [smul_eq_mul] at this ⊢
     rw [this]
     ring
-  adj f hf h hh := H.EA k r i μ H.hμ a b f h hf hh
 
 theorem adjOp_M (φ : Mx k r → ℂ)
     (hφ : ∀ f, TestF k r i f → TestF k r i (fun g => φ g * f g) ∧ TestF k r i (fun g => star (φ g) * f g)) :
-    AdjOp (μ := μ) (ι := ιo k r) (𝓕 := testSub k r i) (Glev k r i) (MOp φ) (MOp' φ) where
-  mem f hf := (hφ f hf).1
-  mem' f hf := (hφ f hf).2
-  lin f _ h _ c g _ := by simp only [MOp]; ring
-  lin' f _ h _ c g _ := by simp only [MOp']; ring
-  adj f _ h _ := by
+    AdjOp (μ := μ) (ι := ιo k r) (𝓕 := testSub k r i) (Glev k r i) (MOp φ) (MOp' φ) := by
+  refine ⟨fun f hf => (hφ f hf).1, fun f hf => (hφ f hf).2, ?_, ?_, ?_⟩
+  · intro f _ h _ c g _
+    simp only [MOp]
+    ring
+  · intro f _ h _ c g _
+    simp only [MOp']
+    ring
+  · intro f _ h _
     unfold pr MOp MOp'
     congr 1
     funext x
-    simp only [star_mul', star_star]
+    rw [star_star_mul]
     ring
 
 theorem yTest (H : Hyp k r z z' i μ) (c : Fin (mdim k r i)) (f : Mx k r → ℂ) (hf : TestF k r i f) :

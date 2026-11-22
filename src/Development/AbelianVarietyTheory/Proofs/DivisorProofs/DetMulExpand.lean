@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.DeterminantProductExpansion
 
@@ -11,7 +15,8 @@ theorem det_mul_expand {R : Type} [CommRing R] {i N : ℕ} (A : Matrix (Fin i) (
   have h1 : Matrix.det (A * B) =
       (Matrix.detRowAlternating : (Fin i → R) [⋀^Fin i]→ₗ[R] R).toMultilinearMap (fun a => ∑ k : Fin N, g a k) := by
     rw [hrow]; rfl
-  rw [h1, MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, MultilinearMap.map_sum]
   refine Finset.sum_congr rfl (fun f _ => ?_)
   simp only [g]
   rw [MultilinearMap.map_smul_univ, smul_eq_mul]

@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableZterm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniformiserIdeleMultiplicativeOnIdealsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralResidueSystemFiniteAdelesModStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralUnitCongruenceSubgroupRelIndexNeZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdelicRingClassLatticeOneEqOrderStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmRingClassOrderUnitsEqMaxRealSubfieldUnitsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteRingClassGroupOfConductorNeZero
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableZterm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniformiserIdeleMultiplicativeOnIdealsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralResidueSystemFiniteAdelesModStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralUnitCongruenceSubgroupRelIndexNeZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdelicRingClassLatticeOneEqOrderStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmRingClassOrderUnitsEqMaxRealSubfieldUnitsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteRingClassGroupOfConductorNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ theorem one_sub_ne_zero {x : ℂ} (hx : ‖x‖ ≤ 1) {s : ℂ} (hs : 1 < s.re)
     (Real.rpow_nonneg (Nat.cast_nonneg (α := ℝ) (Ideal.absNorm v.asIdeal)) (-s).re) hx
   linarith
 
-open Classical in
 
+open Classical in
 theorem box_euler (hu : IsUnitary χ) (hr : ∀ w, r w ≤ 1) (hχ : ∀ u ∈ congr r, finPart χ u = 1) {s : ℂ} (hs : 1 < s.re) :
     ∃ Z, QSum (congr r) ((box r).indicator (zterm χ s)) Z ∧
       HasProd (fun w => if r w = 1 then (1 - (val χ w : ℂ) * ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-s))⁻¹ else 1) Z := by
@@ -139,7 +143,7 @@ theorem box_entire (hu : IsUnitary χ) {Λ : ℂ → ℂ} (hΛ : IsHeckeL χ Λ)
   classical
   by_cases h : ∀ u ∈ congr r, finPart χ u = 1
   · refine ⟨fun s => U.relIndex (congr r) * (Λ s * ∏ w ∈ hfin.toFinset, (eulerFactor χ s w)⁻¹), ?_, fun s hs => ?_⟩
-    · refine Differentiable.const_mul (hΛ.1.mul (Differentiable.fun_finset_prod fun w _ => ?_)) _
+    · refine Differentiable.const_mul (hΛ.1.mul (Differentiable.fun_finsetProd fun w _ => ?_)) _
       unfold eulerFactor
       by_cases hw : χ.UnrAt w
       · simp only [if_pos hw, inv_inv]
@@ -243,8 +247,8 @@ theorem exists_box {N : ℕ} (hN : 0 < N) {a : Af E} (ha : ∀ w, Valued.v (a w)
       · intro h2
         simpa using Valuation.map_sub_le _ h2 h1
 
-open Classical in
 
+open Classical in
 theorem class_entire (hu : IsUnitary χ) {Λ : ℂ → ℂ} (hΛ : IsHeckeL χ Λ) {N : ℕ} (hN : 0 < N)
     (hχ : ∀ u ∈ congr (radN E N), finPart χ u = 1) {a : Af E} (ha : ∀ w, Valued.v (a w) ≤ 1) :
     ∃ Z : ℂ → ℂ, Differentiable ℂ Z ∧ ∀ s : ℂ, 1 < s.re → QSum (congr (radN E N))
@@ -315,8 +319,8 @@ theorem exists_hchar {c : Ideal (OF E)} (hc : c ≠ ⊥) [Finite (PicO c)] (θ :
     show θ (QuotientGroup.mk' _ 1) = 1
     rw [map_one, map_one]
 
-open Classical in
 
+open Classical in
 theorem sum_char {G : Type} [CommGroup G] [Finite G] [Fintype (G →* ℂˣ)] (g : G) :
     ∑ θ : G →* ℂˣ, (θ g : ℂ) = if g = 1 then (Fintype.card (G →* ℂˣ) : ℂ) else 0 := by
   split_ifs with h
@@ -325,7 +329,7 @@ theorem sum_char {G : Type} [CommGroup G] [Finite G] [Fintype (G →* ℂˣ)] (g
     refine sum_hom_units_eq_zero ((Units.coeHom ℂ).comp (MonoidHom.eval g)) fun e => hθ (Units.ext ?_)
     exact DFunLike.congr_fun e θ
 
-theorem zterm_princ [IsTotallyComplex E] {I : Type} [Fintype I] {φ : I → E →+* ℂ} (h : IsCMType φ) {s : ℕ} {κ : I → ℕ}
+theorem zterm_princ [_root_.NumberField.IsTotallyComplex E] {I : Type} [Fintype I] {φ : I → E →+* ℂ} (h : IsCMType φ) {s : ℕ} {κ : I → ℕ}
     (hi : HasInf χ φ fun i => (κ i : ℤ) + s) (σ : ℂ) (a : Eˣ) :
     zterm χ (s + σ) (Units.map (algebraMap E (Af E)).toMonoidHom a) = term φ (2 * s) κ σ a := by
   have h2 := term_mul_inf hi a

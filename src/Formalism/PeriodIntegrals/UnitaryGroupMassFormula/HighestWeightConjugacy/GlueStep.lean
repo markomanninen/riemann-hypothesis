@@ -1,14 +1,14 @@
-import Formalism.PeriodIntegrals.HwConjInf
+module
+
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+
+@[expose] public section
 
 noncomputable section
 
 open NumberField Formalism.L2.NG ReciprocityTheory.Aut
 
 namespace PI.UnitaryGroupMassFormula.HwConjInf
-
-def HwConjW : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (a : AlgWt L n) (τ : L →+* ℂ) (lam lam' : Fin n → ℤ),
-    a.HWAt τ lam → a.HWAt (ComplexEmbedding.conjugate τ) lam' → lam' = fun i => -lam (Fin.rev i)
 
 def HwUniqAt : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (a : AlgWt L n) (τ : L →+* ℂ) (lam mu : Fin n → ℤ),

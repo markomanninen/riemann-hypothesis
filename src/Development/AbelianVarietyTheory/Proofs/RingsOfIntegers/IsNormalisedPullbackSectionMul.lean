@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalOfIsTwistPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PullMulValue
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalOfIsTwistPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PullMulValue
+
+@[expose] public section
 
 set_option autoImplicit false
 

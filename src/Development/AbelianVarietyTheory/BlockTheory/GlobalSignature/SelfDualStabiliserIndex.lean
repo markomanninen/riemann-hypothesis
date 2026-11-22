@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataLevel
-import Formalism.LocalRingCardinality.DataLevelD
-import Formalism.SatakeDualWeyl.StatementC
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataLevel
+public import Formalism.LocalRingCardinality.DataLevelD
+public import Formalism.SatakeDualWeyl.StatementC
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,13 +36,5 @@ def IndexAt (D : D7) (Lv : LevelData D) (u : D.what₂.Word) : Prop :=
         idxPi D (D.host.g 0) (D.host.g 1) * (((D.mem u).A.T : ℝ) ^ D.R.k - 1) ^ D.R.f
 
 def IndexKU : Prop := ∀ (D : D7) (Lv : LevelData D) (u : D.what₂.Word), IndexAt D Lv u
-
-def ExistsSelfDualOver : Prop :=
-  ∀ (D : D7) (Lv : LevelData D) (u : D.what₂.Word),
-    letI := D.host.cmStar
-    SplitsF D (D.mem u).A.T →
-      ∃ N : Submodule (𝓞 D.host.E) (Fin D.R.k → D.host.E),
-        IsSelfDualLat (D.sp.cm.sig : D.host.E →+* D.host.E) D.sp.gram0 N ∧ (Lv u).Lb ≤ N ∧
-        (Lv u).U ≤ stabK D N
 
 end GlobalTheory.IndefiniteRowSideFullHecke.SelfDualStabiliserIndex

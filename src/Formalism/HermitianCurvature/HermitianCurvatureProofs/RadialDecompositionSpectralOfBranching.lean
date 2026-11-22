@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DeterminantGeneric
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliTwoByTwo
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QRadialDecompositionOfPieces
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnTPres
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DeterminantGeneric
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliTwoByTwo
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QRadialDecompositionOfPieces
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnTPres
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

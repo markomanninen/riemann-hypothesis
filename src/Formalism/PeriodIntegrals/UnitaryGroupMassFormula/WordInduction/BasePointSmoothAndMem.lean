@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WordInduction.DzFamilySmooth
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WordInduction.DzFamilySmooth
+
+@[expose] public section
 
 open scoped ContDiff ComplexConjugate
 
@@ -142,7 +146,8 @@ theorem core (hH : HeadLetter) (hZ : ZOnly) (hR : RulesClosed) (hX : BasePointSm
 theorem wordIndOfParts_of (hX : BasePointSmoothAndMem) : WordIndOfParts := by
   intro hH hZ hR k r j hj z z' E _ _ Dm Φ hz hz' hDm hDs hΦ Z γ hZd hγ hline w φ hφ t ht e
   have hq : ((t, Matrix.of.symm Z) : ℂ × (Fin j → Fin j → ℂ)) ∈ Om k r j hj Dm γ :=
-    ⟨⟨ht, by simpa using hZd⟩, by simpa using hline t ht⟩
+    ⟨⟨ht, by simpa only [Equiv.apply_symm_apply] using hZd⟩,
+      by simpa only [Set.mem_preimage, Equiv.apply_symm_apply] using hline t ht⟩
   have h1 := core hH hZ hR hX hj hz hz' hDm hDs hΦ hγ w _ hq e
   simp only [Equiv.apply_symm_apply] at h1
   unfold oneBT

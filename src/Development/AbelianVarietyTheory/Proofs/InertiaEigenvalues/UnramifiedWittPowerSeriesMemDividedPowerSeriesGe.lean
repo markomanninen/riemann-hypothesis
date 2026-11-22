@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
+
+@[expose] public section
 
 noncomputable section
 

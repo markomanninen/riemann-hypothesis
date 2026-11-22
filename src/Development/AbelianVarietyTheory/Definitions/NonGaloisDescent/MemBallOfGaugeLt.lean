@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,18 +27,18 @@ def monos (r : ℝ) : Set (PreDisc l u ρ) :=
 
 def ball (r : ℝ) : Submodule A (PreDisc l u ρ) := Submodule.span A (monos l u ρ r)
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.ball_mono {r s : ℝ} (h : r ≤ s) :
     _root_.GlobalTheory.BSP.ball l u ρ r ≤ _root_.GlobalTheory.BSP.ball l u ρ s := by
   refine Submodule.span_mono ?_
   rintro y ⟨a, b, c, hle, rfl⟩
   exact ⟨a, b, c, hle.trans (mul_le_mul_of_nonneg_right h (by positivity)), rfl⟩
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.mul_mem_ball {r s : ℝ} (hr : 0 ≤ r) {x y : _root_.GlobalTheory.BSP.PreDisc l u ρ}
     (hx : x ∈ _root_.GlobalTheory.BSP.ball l u ρ r) (hy : y ∈ _root_.GlobalTheory.BSP.ball l u ρ s) :
     x * y ∈ _root_.GlobalTheory.BSP.ball l u ρ (r * s) := by
@@ -51,27 +55,18 @@ theorem _root_.GlobalTheory.BSP.mul_mem_ball {r s : ℝ} (hr : 0 ≤ r) {x y : _
   · simp only [map_mul, map_pow]
     ring
 
-theorem exists_mem_ball (y : PreDisc l u ρ) : ∃ r : ℝ, 0 < r ∧ y ∈ ball l u ρ r := by
-  obtain ⟨n, a, h⟩ := IsLocalization.Away.surj (l : A) y
-  refine ⟨(l : ℝ) ^ n + 1, by positivity, ?_⟩
-  have e : y = a • (algebraMap A (PreDisc l u ρ) ((l : A) ^ 0 * u ^ 0) * IsLocalization.Away.invSelf (l : A) ^ n) := by
-    rw [Algebra.smul_def, ← h, pow_zero, pow_zero, mul_one, map_one, one_mul, mul_assoc, ← mul_pow,
-      IsLocalization.Away.mul_invSelf, one_pow, mul_one]
-  rw [e]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨0, 0, n, by simp, rfl⟩)
-
 def gauge (y : PreDisc l u ρ) : ℝ := sInf {r : ℝ | 0 < r ∧ y ∈ ball l u ρ r}
+
 
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.gauge_nonneg (y : _root_.GlobalTheory.BSP.PreDisc l u ρ) :
     0 ≤ _root_.GlobalTheory.BSP.gauge l u ρ y :=
   Real.sInf_nonneg fun _ h => h.1.le
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.gauge_le {y : _root_.GlobalTheory.BSP.PreDisc l u ρ} {r : ℝ} (hr : 0 < r)
     (h : y ∈ _root_.GlobalTheory.BSP.ball l u ρ r) : _root_.GlobalTheory.BSP.gauge l u ρ y ≤ r :=
   csInf_le ⟨0, fun _ h => h.1.le⟩ ⟨hr, h⟩
@@ -98,9 +93,9 @@ private lemma preDisc_exists_pos_mem_ball (y : _root_.GlobalTheory.BSP.PreDisc l
   rw [pow_zero, pow_zero, mul_one, mul_one]
   linarith
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.mem_ball_of_gauge_lt {y : _root_.GlobalTheory.BSP.PreDisc l u ρ} {r : ℝ}
     (h : _root_.GlobalTheory.BSP.gauge l u ρ y < r) : y ∈ _root_.GlobalTheory.BSP.ball l u ρ r := by
   obtain ⟨r₀, hr₀, hy⟩ := preDisc_exists_pos_mem_ball l u ρ y
@@ -108,9 +103,9 @@ theorem _root_.GlobalTheory.BSP.mem_ball_of_gauge_lt {y : _root_.GlobalTheory.BS
     (s := {r : ℝ | 0 < r ∧ y ∈ _root_.GlobalTheory.BSP.ball l u ρ r}) ⟨r₀, hr₀, hy⟩ h
   exact _root_.GlobalTheory.BSP.ball_mono l u ρ htr.le hyt
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.gauge_add_le_max (x y : _root_.GlobalTheory.BSP.PreDisc l u ρ) :
     _root_.GlobalTheory.BSP.gauge l u ρ (x + y) ≤
       max (_root_.GlobalTheory.BSP.gauge l u ρ x) (_root_.GlobalTheory.BSP.gauge l u ρ y) := by
@@ -157,51 +152,52 @@ def ofPre : PreDisc l u ρ →+* Disc l u ρ := UniformSpace.Completion.coeRingH
 
 def toDisc : A →+* Disc l u ρ := (ofPre l u ρ).comp (algebraMap A (PreDisc l u ρ))
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.norm_ofPre (y : _root_.GlobalTheory.BSP.PreDisc l u ρ) :
     ‖_root_.GlobalTheory.BSP.ofPre l u ρ y‖ = _root_.GlobalTheory.BSP.gauge l u ρ y :=
   UniformSpace.Completion.norm_coe y
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.denseRange_ofPre :
     DenseRange (_root_.GlobalTheory.BSP.ofPre l u ρ) :=
   UniformSpace.Completion.denseRange_coe
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.isUnit_l_disc : IsUnit ((l : ℕ) : _root_.GlobalTheory.BSP.Disc l u ρ) := by
   have hl : IsUnit ((l : ℕ) : _root_.GlobalTheory.BSP.PreDisc l u ρ) := by
     rw [← map_natCast (algebraMap A (_root_.GlobalTheory.BSP.PreDisc l u ρ))]
     exact IsLocalization.Away.algebraMap_isUnit _
   simpa using hl.map (_root_.GlobalTheory.BSP.ofPre l u ρ)
 
-variable {l u ρ} in
 
+variable {l u ρ} in
 structure IsDiscMap {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} (f : A →+* A')
     (F : Disc l u ρ →+* Disc l u' ρ') : Prop where
   ext : ∀ a, F (toDisc l u ρ a) = toDisc l u' ρ' (f a)
   norm_le : ∀ x, ‖F x‖ ≤ ‖x‖
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
-
 theorem _root_.GlobalTheory.BSP.isDiscMap_id :
-    _root_.GlobalTheory.BSP.IsDiscMap (RingHom.id A) (RingHom.id (_root_.GlobalTheory.BSP.Disc l u ρ)) :=
+    _root_.GlobalTheory.BSP.IsDiscMap (l := l) (u := u) (ρ := ρ)
+      (RingHom.id A) (RingHom.id (_root_.GlobalTheory.BSP.Disc l u ρ)) :=
   ⟨fun _ => rfl, fun _ => le_rfl⟩
 
 section Map
 
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0}
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} in
-
 theorem _root_.GlobalTheory.BSP.norm_algebraMap_le (a : A) :
     ‖algebraMap A (_root_.GlobalTheory.BSP.PreDisc l u ρ) a‖ ≤ 1 := by
   rw [_root_.GlobalTheory.BSP.norm_preDisc]
@@ -212,39 +208,42 @@ theorem _root_.GlobalTheory.BSP.norm_algebraMap_le (a : A) :
   rw [ha]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨0, 0, 0, by simp, rfl⟩)
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} in
-
 theorem _root_.GlobalTheory.BSP.norm_toDisc_le (a : A) :
     ‖_root_.GlobalTheory.BSP.toDisc l u ρ a‖ ≤ 1 := by
   change ‖_root_.GlobalTheory.BSP.ofPre l u ρ (algebraMap A _ a)‖ ≤ 1
   rw [_root_.GlobalTheory.BSP.norm_ofPre, ← _root_.GlobalTheory.BSP.norm_preDisc]
   exact _root_.GlobalTheory.BSP.norm_algebraMap_le a
 
-variable (l u ρ u' ρ') in
 
+variable (l u ρ u' ρ') in
 def preMap (f : A →+* A') : PreDisc l u ρ →+* PreDisc l u' ρ' :=
   IsLocalization.Away.lift (l : A) (g := (algebraMap A' (PreDisc l u' ρ')).comp f) (by
     rw [map_natCast, ← map_natCast (algebraMap A' (PreDisc l u' ρ'))]
     exact IsLocalization.Away.algebraMap_isUnit _)
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} in
-
 theorem _root_.GlobalTheory.BSP.preMap_alg (f : A →+* A') (a : A) :
-    _root_.GlobalTheory.BSP.preMap l u ρ u' ρ' f (algebraMap A _ a) = algebraMap A' _ (f a) :=
+    _root_.GlobalTheory.BSP.preMap (l := l) (u := u) (ρ := ρ) (u' := u') (ρ' := ρ') f
+      (algebraMap A _ a) = algebraMap A' _ (f a) :=
   IsLocalization.Away.lift_eq _ _ a
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} in
-
 theorem _root_.GlobalTheory.BSP.preMap_inv (f : A →+* A') :
-    _root_.GlobalTheory.BSP.preMap l u ρ u' ρ' f (IsLocalization.Away.invSelf (l : A)) =
+    _root_.GlobalTheory.BSP.preMap (l := l) (u := u) (ρ := ρ) (u' := u') (ρ' := ρ') f
+      (IsLocalization.Away.invSelf (l : A)) =
       IsLocalization.Away.invSelf (l : A') := by
-  have h := congrArg (_root_.GlobalTheory.BSP.preMap l u ρ u' ρ' f)
+  have h := congrArg (_root_.GlobalTheory.BSP.preMap
+    (l := l) (u := u) (ρ := ρ) (u' := u') (ρ' := ρ') f)
     (IsLocalization.Away.mul_invSelf (S := _root_.GlobalTheory.BSP.PreDisc l u ρ) (l : A))
   rw [map_mul, map_one, _root_.GlobalTheory.BSP.preMap_alg, map_natCast] at h
   exact (IsLocalization.Away.algebraMap_isUnit (S := _root_.GlobalTheory.BSP.PreDisc l u' ρ') (l : A')).mul_left_cancel
@@ -261,20 +260,22 @@ private lemma preDisc_norm_pow_le_norm_pow (x : _root_.GlobalTheory.BSP.PreDisc 
     rw [pow_succ, pow_succ]
     exact (norm_mul_le _ _).trans (mul_le_mul_of_nonneg_right ih (norm_nonneg _))
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} in
-
 theorem _root_.GlobalTheory.BSP.norm_preMap_le [hl : Fact l.Prime] (f : A →+* A')
     (h : ‖_root_.GlobalTheory.BSP.toDisc l u' ρ' (f u)‖ ≤ ρ) (y : _root_.GlobalTheory.BSP.PreDisc l u ρ) :
-    ‖_root_.GlobalTheory.BSP.preMap l u ρ u' ρ' f y‖ ≤ ‖y‖ := by
+    ‖_root_.GlobalTheory.BSP.preMap (l := l) (u := u) (ρ := ρ)
+      (u' := u') (ρ' := ρ') f y‖ ≤ ‖y‖ := by
   have hl0 : (0 : ℝ) < l := Nat.cast_pos.mpr hl.out.pos
   have hfu : ‖algebraMap A' (_root_.GlobalTheory.BSP.PreDisc l u' ρ') (f u)‖ ≤ ρ := by
     have h' := h
     change ‖_root_.GlobalTheory.BSP.ofPre l u' ρ' (algebraMap A' _ (f u))‖ ≤ _ at h'
     rwa [_root_.GlobalTheory.BSP.norm_ofPre] at h'
   have key : ∀ r : ℝ, 0 ≤ r → ∀ z ∈ _root_.GlobalTheory.BSP.ball l u ρ r,
-      ‖_root_.GlobalTheory.BSP.preMap l u ρ u' ρ' f z‖ ≤ r := by
+      ‖_root_.GlobalTheory.BSP.preMap (l := l) (u := u) (ρ := ρ)
+        (u' := u') (ρ' := ρ') f z‖ ≤ r := by
     intro r hr z hz
     induction hz using Submodule.span_induction with
     | mem z hz =>
@@ -286,7 +287,8 @@ theorem _root_.GlobalTheory.BSP.norm_preMap_le [hl : Fact l.Prime] (f : A →+* 
         rw [pow_zero, mul_one, div_mul_cancel₀ _ (by positivity)]
       have hpow : ‖algebraMap A' (_root_.GlobalTheory.BSP.PreDisc l u' ρ') (f u) ^ b‖ ≤ (ρ : ℝ) ^ b :=
         (preDisc_norm_pow_le_norm_pow _ b).trans (pow_le_pow_left₀ (norm_nonneg _) hfu b)
-      have himg : _root_.GlobalTheory.BSP.preMap l u ρ u' ρ' f
+      have himg : _root_.GlobalTheory.BSP.preMap (l := l) (u := u) (ρ := ρ)
+          (u' := u') (ρ' := ρ') f
           (algebraMap A _ ((l : A) ^ a * u ^ b) * IsLocalization.Away.invSelf (l : A) ^ c) =
           (algebraMap A' (_root_.GlobalTheory.BSP.PreDisc l u' ρ') ((l : A') ^ a) *
             IsLocalization.Away.invSelf (l : A') ^ c) *
@@ -300,7 +302,7 @@ theorem _root_.GlobalTheory.BSP.norm_preMap_le [hl : Fact l.Prime] (f : A →+* 
       exact hle
     | zero => simpa using hr
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (_root_.GlobalTheory.BSP.gauge_add_le_max l u' ρ' _ _).trans (max_le hx hy)
     | smul a x _ hx =>
       rw [Algebra.smul_def, map_mul, _root_.GlobalTheory.BSP.preMap_alg]
@@ -312,16 +314,19 @@ theorem _root_.GlobalTheory.BSP.norm_preMap_le [hl : Fact l.Prime] (f : A →+* 
   exact key t ((norm_nonneg y).trans ht.le) y (_root_.GlobalTheory.BSP.mem_ball_of_gauge_lt l u ρ ht)
 
 def Disc.map [Fact l.Prime] (f : A →+* A') (h : ‖toDisc l u' ρ' (f u)‖ ≤ ρ) : Disc l u ρ →+* Disc l u' ρ' :=
-  UniformSpace.Completion.mapRingHom (preMap l u ρ u' ρ' f)
-    (AddMonoidHomClass.continuous_of_bound _ 1 fun y => (norm_preMap_le f h y).trans (one_mul _).ge)
+  UniformSpace.Completion.mapRingHom (preMap (l := l) (u := u) (ρ := ρ)
+    (u' := u') (ρ' := ρ') f)
+    (AddMonoidHomClass.continuous_of_bound _ 1 fun y =>
+      (norm_preMap_le (l := l) (u := u) (ρ := ρ) f h y).trans (one_mul _).ge)
+
 
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} in
-
 theorem _root_.GlobalTheory.BSP.isDiscMap_map [Fact l.Prime] (f : A →+* A')
     (h : ‖_root_.GlobalTheory.BSP.toDisc l u' ρ' (f u)‖ ≤ ρ) :
-    _root_.GlobalTheory.BSP.IsDiscMap f (_root_.GlobalTheory.BSP.Disc.map f h) := by
+    _root_.GlobalTheory.BSP.IsDiscMap (l := l) (u := u) (ρ := ρ)
+      f (_root_.GlobalTheory.BSP.Disc.map f h) := by
   refine ⟨fun a => ?_, fun x => ?_⟩
   · change UniformSpace.Completion.mapRingHom _ _
         ((algebraMap A (_root_.GlobalTheory.BSP.PreDisc l u ρ) a :
@@ -342,23 +347,23 @@ theorem _root_.GlobalTheory.BSP.isDiscMap_map [Fact l.Prime] (f : A →+* A')
         ‖(y : UniformSpace.Completion (_root_.GlobalTheory.BSP.PreDisc l u ρ))‖
       rw [UniformSpace.Completion.mapRingHom_coe]
       exact (_root_.GlobalTheory.BSP.norm_ofPre l u' ρ' _).trans_le
-        ((_root_.GlobalTheory.BSP.norm_preMap_le f h y).trans
+        ((_root_.GlobalTheory.BSP.norm_preMap_le (l := l) (u := u) (ρ := ρ) f h y).trans
           (_root_.GlobalTheory.BSP.norm_ofPre l u ρ y).ge)
+
 
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} in
-
 theorem _root_.GlobalTheory.BSP.IsDiscMap.unique {f : A →+* A'}
     {F G : _root_.GlobalTheory.BSP.Disc l u ρ →+* _root_.GlobalTheory.BSP.Disc l u' ρ'}
-    (hF : _root_.GlobalTheory.BSP.IsDiscMap f F)
-    (hG : _root_.GlobalTheory.BSP.IsDiscMap f G) : F = G := by
+    (hF : _root_.GlobalTheory.BSP.IsDiscMap (l := l) (u := u) (ρ := ρ) f F)
+    (hG : _root_.GlobalTheory.BSP.IsDiscMap (l := l) (u := u) (ρ := ρ) f G) : F = G := by
   have hFc : Continuous F := AddMonoidHomClass.continuous_of_bound F 1 fun x => by
     simpa using hF.norm_le x
   have hGc : Continuous G := AddMonoidHomClass.continuous_of_bound G 1 fun x => by
     simpa using hG.norm_le x
   have hinv : ∀ H : _root_.GlobalTheory.BSP.Disc l u ρ →+* _root_.GlobalTheory.BSP.Disc l u' ρ',
-      _root_.GlobalTheory.BSP.IsDiscMap f H →
+      _root_.GlobalTheory.BSP.IsDiscMap (l := l) (u := u) (ρ := ρ) f H →
       H (_root_.GlobalTheory.BSP.ofPre l u ρ (IsLocalization.Away.invSelf (l : A))) *
         _root_.GlobalTheory.BSP.toDisc l u' ρ' (l : A') = 1 := by
     intro H hH
@@ -387,10 +392,10 @@ theorem _root_.GlobalTheory.BSP.IsDiscMap.unique {f : A →+* A'}
   exact RingHom.ext (congrFun ((_root_.GlobalTheory.BSP.denseRange_ofPre l u ρ).equalizer hFc hGc
     (funext hpre)))
 
+
 open scoped NNReal in
 variable (l : ℕ) {A : Type} [CommRing A] (u : A) (ρ : ℝ≥0) in
 variable {l u ρ} {A' : Type} [CommRing A'] {u' : A'} {ρ' : ℝ≥0} in
-
 theorem _root_.GlobalTheory.BSP.norm_toDisc_pow_le (k : ℕ) (hρ : 0 < ρ) :
     ‖_root_.GlobalTheory.BSP.toDisc l u ρ (u ^ k)‖ ≤ (ρ : ℝ) ^ k := by
   change ‖_root_.GlobalTheory.BSP.ofPre l u ρ (algebraMap A _ (u ^ k))‖ ≤ _

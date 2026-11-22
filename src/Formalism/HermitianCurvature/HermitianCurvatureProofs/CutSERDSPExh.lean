@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPair
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLSAExh
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLQOf
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPair
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLSAExh
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLQOf
+
+@[expose] public section
 
 open MeasureTheory Topology
 

@@ -1,6 +1,10 @@
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckebasic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EvalFg
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckebasic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EvalFg
+
+@[expose] public section
 
 open Formalism.UG Formalism.UG.P
 

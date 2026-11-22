@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementE
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementE
+
+@[expose] public section
 
 noncomputable section
 

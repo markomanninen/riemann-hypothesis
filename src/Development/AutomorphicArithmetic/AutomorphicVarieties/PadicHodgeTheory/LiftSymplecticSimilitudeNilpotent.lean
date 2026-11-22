@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+
+@[expose] public section
+
 open UpperTheory.V.GradeZeroInterpolatingElement
 
 section SlopeTestRemainingChoices
@@ -59,7 +64,7 @@ theorem UpperTheory.lift_symplectic_similitude_nilpotent :
     subst hc
     rfl
   have hu0 : IsUnit ((π' : B' →+* E).mapMatrix (1 + g)) := by
-    rw [map_add, map_one, hr']
+    rw [map_add (f := _), map_one, hr']
     have := (IsUnit.mk0 (2 : E) two_ne_zero).map (algebraMap E (M4 E))
     rwa [map_ofNat, ← one_add_one_eq_two] at this
   obtain ⟨U, hU⟩ := isUnit_of_res π' hπ' _ hu0
@@ -106,14 +111,14 @@ theorem UpperTheory.lift_symplectic_similitude_nilpotent :
     · rw [adj_smul', adj_sub', adj_adj', ← smul_neg, neg_sub]
   have hY0 : (π : B →+* E).mapMatrix Y = 0 := by rw [hcomp, hY, hY'0]
   obtain ⟨V, hV⟩ := isUnit_of_res π hπ (1 - Y) (by rw [map_sub, map_one, hY0, sub_zero]; exact isUnit_one)
-  obtain ⟨V', hV'⟩ := isUnit_of_res π hπ (1 + Y) (by rw [map_add, map_one, hY0, add_zero]; exact isUnit_one)
+  obtain ⟨V', hV'⟩ := isUnit_of_res π hπ (1 + Y) (by rw [map_add (f := _), map_one, hY0, add_zero]; exact isUnit_one)
   have e4 : ((V' * V⁻¹ : (M4 B)ˣ) : M4 B) * (1 - Y) = 1 + Y := by
     rw [← hV, ← hV', Units.val_mul, Units.inv_mul_cancel_right]
   refine ⟨V' * V⁻¹, ?_⟩
   generalize ((V' * V⁻¹ : (M4 B)ˣ) : M4 B) = h at e4 ⊢
   have hph : (p : B →+* B').mapMatrix h = g := by
     have h1 := congrArg (p : B →+* B').mapMatrix e4
-    rw [map_mul, map_sub, map_add, map_one, hY, ← hk] at h1
+    rw [map_mul, map_sub, map_add (f := _), map_one, hY, ← hk] at h1
     have h2 : IsUnit (1 - Y') := by
       have := V.isUnit.map (p : B →+* B').mapMatrix
       rwa [hV, map_sub, map_one, hY] at this

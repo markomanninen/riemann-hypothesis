@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ def glEquiv {A B : Type} [CommRing A] [CommRing B] (n : ℕ) (ψ : A ≃+* B) : 
 variable {ψ : Fv F v ≃+* w.adicCompletion E}
 
 theorem mem_KGL_iff (h3 : ∀ a, Valued.v (ψ a) = Valued.v a) (x : GL (Fin n) (Fv F v)) :
-    x ∈ KGL v n ↔ glEquiv n ψ x ∈ KGL w n := (bc_mem_KGL_iff h3).symm
+    x ∈ KGL v (n := n) ↔ glEquiv n ψ x ∈ KGL w (n := n) := (bc_mem_KGL_iff h3).symm
 
 theorem Tj_comp (h3 : ∀ a, Valued.v (ψ a) = Valued.v a) (ϖ : Fv F v) (j : ℕ) :
     Tj ℂ n (Ov E w) (ψ ϖ) j ∘ glEquiv n ψ = Tj ℂ n (Ov F v) ϖ j := by
@@ -82,9 +86,6 @@ end Compl
 
 variable (h : IsCMExt F E σ) (hJ : IsHermND σ J) (τ : E →ₐ[F] Fv F v) (hw : (splitPrime τ).under (𝓞 F) = v)
   (β : GL (Fin n) (Fv F v))
-
-def splitChart : GLoc σ J v ≃* GL (Fin n) ((splitPrime τ).adicCompletion E) :=
-  (splitEquivIn h hJ τ β).toMulEquiv.trans (glEquiv n (complEquiv τ hw))
 
 variable {τ β}
 

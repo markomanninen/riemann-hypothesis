@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchMu
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ValUnitsD
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
-open Matrix GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.BCFL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ValUnitsD
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
+
+@[expose] public section
+
+open Matrix GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid
 open scoped TensorProduct Classical
 
 noncomputable section
@@ -32,7 +37,8 @@ theorem exists_basis_OK (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (hK : Fin
   · let z : _ → ℤ_[p] := fun i => ⟨β.repr x i, hx i⟩
     have hx' : x = algebraMap (OK p K) K (∑ i, z i • β₀ i) := by
       conv_lhs => rw [← β.sum_repr x]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Algebra.smul_def, Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply ℤ_[p] (OK p K) K,
         IsScalarTower.algebraMap_apply ℤ_[p] ℚ_[p] K, ← Module.Basis.localizationLocalization_apply ℚ_[p]
@@ -59,7 +65,7 @@ variable {p β γ}
 
 theorem intCoord_add {z w : A ⊗[ℚ_[p]] B} (hz : IntCoord p β γ z) (hw : IntCoord p β γ w) :
     IntCoord p β γ (z + w) := fun k => by
-  rw [map_add, Finsupp.add_apply]
+  rw [map_add (f := _), Finsupp.add_apply]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hz k) (hw k))
 
 theorem intCoord_smul {z : A ⊗[ℚ_[p]] B} (hz : IntCoord p β γ z) {c : ℚ_[p]} (hc : ‖c‖ ≤ 1) :

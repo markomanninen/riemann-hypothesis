@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSpanSubMemSq
+module
+
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSpanSubMemSq
+
+@[expose] public section
+
 open GlobalTheory
 open scoped Pointwise
 

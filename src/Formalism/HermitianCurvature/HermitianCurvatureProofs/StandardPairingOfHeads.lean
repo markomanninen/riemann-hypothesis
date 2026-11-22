@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormEqRadialFormOne
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormEqRadialFormOne
+
+@[expose] public section
 
 noncomputable section
 

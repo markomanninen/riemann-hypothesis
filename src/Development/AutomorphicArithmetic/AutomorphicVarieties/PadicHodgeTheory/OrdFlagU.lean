@@ -1,19 +1,23 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IotaSpec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CharDR
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsCommonEigenvectorOfCharpolySplitCharacters
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.EqZeroOfTwistedCommuteOfDistinctCharacters
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsWeilInvariantInDpstOfWeilDeligneInvariant
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.WeilGroupDenseInGaloisGroup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsInvariantOfDpstPhiFixedOfNonnegWeights
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DeRhamRationalTwistByCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DeRhamRationalOfConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DeRhamRationalOfExtensionByCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsCommonEigenline
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WdPstCycRepNeTrivWD
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IotaSpec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CharDR
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsCommonEigenvectorOfCharpolySplitCharacters
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.EqZeroOfTwistedCommuteOfDistinctCharacters
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsWeilInvariantInDpstOfWeilDeligneInvariant
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.WeilGroupDenseInGaloisGroup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsInvariantOfDpstPhiFixedOfNonnegWeights
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DeRhamRationalTwistByCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DeRhamRationalOfConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DeRhamRationalOfExtensionByCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsCommonEigenline
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WdPstCycRepNeTrivWD
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
+
+@[expose] public section
 
 section Phi
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N GlobalTheory.WeilDeligne GlobalTheory.Pst Polynomial Module Matrix UpperTheory.V.W UpperTheory.V.Hi
@@ -33,7 +37,8 @@ private theorem exists_trace {k U D : Type} [Field k] [Field U] [AddCommGroup D]
     have h2 := Matrix.eq_zero_of_forall_pow_sum_mul_pow_eq_zero (f := fun i : Fin n => t i)
       (v := fun i : Fin n => f ((φ ^ (i : ℕ)) x)) ht (fun j => by
         have h3 := congrArg f (hc j)
-        rw [map_zero, LinearMap.sum_apply, map_sum, Finset.sum_range] at h3
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_zero, LinearMap.sum_apply, map_sum, Finset.sum_range] at h3
         rw [← h3]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [hφ, mul_comm, ← smul_eq_mul, ← map_smul]
@@ -45,7 +50,8 @@ private theorem exists_trace {k U D : Type} [Field k] [Field U] [AddCommGroup D]
     rw [hφ, htn, End.mul_apply, hp, pow_zero, one_mul]
   have h5 := Finset.sum_range_succ (fun i => (φ ^ i * m (t 0 ^ j)) x) n
   rw [Finset.sum_range_succ', h4, add_left_inj] at h5
-  rw [LinearMap.sum_apply, map_sum, ← h5]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, map_sum, ← h5]
   conv_rhs => rw [h5, ← h5]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [pow_succ', mul_assoc, End.mul_apply φ]
@@ -262,18 +268,17 @@ private theorem core (hB : DeRhamPotSemistable) {n : ℕ} (r : ↥(Dec (F := F) 
 omit [IsAlgClosure F Ω] in
 private theorem ordChar_inv {a : ↥(Weil h) →* (w.adicCompletion F)ˣ} {ω : (w.adicCompletion F)ˣ →* ℂˣ}
     {hh : (F →+* Qbar l) → ℤ} {ψ : ↥(Dec (F := F) A) →* (Qbar l)ˣ} (H : OrdChar ι a ω hh ψ) :
-    OrdChar ι a ω⁻¹ (-hh) ψ⁻¹ where
-  smooth := by
-    have := H.smooth
-    unfold GlobalTheory.SmGL.IsSmoothChar at this ⊢
-    convert this using 1
+    OrdChar ι a ω⁻¹ (-hh) ψ⁻¹ := by
+  refine ⟨?_, H.cont.inv, ?_⟩
+  · have hsmooth := H.smooth
+    unfold GlobalTheory.SmGL.IsSmoothChar at hsmooth ⊢
+    convert hsmooth using 1
     ext x
     simp
-  cont := H.cont.inv
-  val := fun s g hg hs => by
-    have := H.val s g hg hs
-    simp only [MonoidHom.comp_apply, Units.coeHom_apply, MonoidHom.inv_apply, Units.val_inv_eq_inv_val] at this ⊢
-    rw [this, mul_inv, map_inv₀]
+  · intro s g hg hs
+    have hval := H.val s g hg hs
+    simp only [MonoidHom.comp_apply, Units.coeHom_apply, MonoidHom.inv_apply, Units.val_inv_eq_inv_val] at hval ⊢
+    rw [hval, mul_inv, map_inv₀]
     congr 1
     unfold algPow
     rw [← finprod_inv_distrib]

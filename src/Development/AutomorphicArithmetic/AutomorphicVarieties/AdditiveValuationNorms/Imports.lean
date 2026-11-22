@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.PropA
 
@@ -15,7 +19,7 @@ theorem UpperTheory.V.PropA.frob :
         ((Polynomial.X - 1) ^ l ^ k - (Polynomial.X ^ l ^ k - 1) : Polynomial ℤ) = 0 := by
       simp only [Polynomial.map_sub, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_one]
       rw [sub_pow_char_pow, one_pow, sub_self]
-    have hc := congrArg (fun P => Polynomial.coeff P i) hmap
+    have hc := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P i) hmap
     simp only [Polynomial.coeff_map, Polynomial.coeff_zero] at hc
     exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ l).1 hc
   obtain ⟨Q, hQ⟩ := hpoly

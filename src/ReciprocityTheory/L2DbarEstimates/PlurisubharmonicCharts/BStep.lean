@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalc
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatNull
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.BStepE
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalc
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatNull
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.BStepE
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 

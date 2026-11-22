@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.DivisorFrames.ExistsIrreducibleSubrepHeckeEigenOfInvariantForm
-import Development.AutomorphicArithmetic.DivisorFrames.ExistsIsOpenIsCompactSubgroupFiniteAdelicUnitary
-import Development.AutomorphicArithmetic.DivisorFrames.FiniteDimensionalAutomorphicFormsUnitaryOfTypeLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.DivisorFrames.ExistsIrreducibleSubrepHeckeEigenOfInvariantForm
+public import Development.AutomorphicArithmetic.DivisorFrames.ExistsIsOpenIsCompactSubgroupFiniteAdelicUnitary
+public import Development.AutomorphicArithmetic.DivisorFrames.FiniteDimensionalAutomorphicFormsUnitaryOfTypeLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
 private theorem orbit_finite {H V : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup H] [AddCommGroup V]
@@ -27,12 +32,12 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {S : Type}
 private def eqForms (ρ : Representation ℂ (infU E n) S) : Submodule ℂ (S →ₗ[ℂ] (UA E n → ℂ)) where
   carrier := {f | (∀ v, f v ∈ autU E n) ∧ ∀ (x : infU E n) v, f (ρ x v) = RU E n x (f v)}
   add_mem' ha hb := ⟨fun v => add_mem (ha.1 v) (hb.1 v), fun x v => by
-    rw [LinearMap.add_apply, LinearMap.add_apply, ha.2, hb.2, map_add]⟩
+    rw [LinearMap.add_apply, LinearMap.add_apply, ha.2, hb.2, map_add (f := _)]⟩
   zero_mem' := ⟨fun _ => zero_mem _, fun _ _ => rfl⟩
   smul_mem' c _ ha := ⟨fun v => Submodule.smul_mem _ c (ha.1 v), fun x v => by
     rw [LinearMap.smul_apply, LinearMap.smul_apply, ha.2, map_smul]⟩
 
-private noncomputable def eqRep (ρ : Representation ℂ (infU E n) S) : Representation ℂ (finU E n) (eqForms ρ) where
+private noncomputable def eqRep (ρ : Representation ℂ (infU E n) S) : Representation ℂ (finU (E := E) (n := n)) (eqForms ρ) where
   toFun k := (LinearMap.llcomp ℂ _ _ _ (RU E n k)).restrict (p := eqForms ρ) (q := eqForms ρ) fun f h =>
     ⟨fun v => RU_mem_autU _ _ (h.1 v), fun x v => by
       change RU E n k (f (ρ x v)) = RU E n x (RU E n k (f v))
@@ -41,11 +46,11 @@ private noncomputable def eqRep (ρ : Representation ℂ (infU E n) S) : Represe
   map_mul' a b := LinearMap.ext fun f => Subtype.ext (LinearMap.ext fun v => funext fun g =>
     congrArg (f.1 v) (mul_assoc g a b).symm)
 
-private theorem eqRep_apply (ρ : Representation ℂ (infU E n) S) (k : finU E n) (f : eqForms ρ) (v : S) :
+private theorem eqRep_apply (ρ : Representation ℂ (infU E n) S) (k : finU (E := E) (n := n)) (f : eqForms ρ) (v : S) :
     (eqRep ρ k f).1 v = RU E n k (f.1 v) := rfl
 
 private theorem eqRep_open [FiniteDimensional ℂ S] (ρ : Representation ℂ (infU E n) S) (f : eqForms ρ) :
-    IsOpen {k : finU E n | eqRep ρ k f = f} := by
+    IsOpen {k : finU (E := E) (n := n) | eqRep ρ k f = f} := by
   let b := Module.finBasis ℂ S
   convert isOpen_iInter_of_finite fun i => (f.2.1 (b i)).level using 1
   ext k
@@ -53,10 +58,10 @@ private theorem eqRep_open [FiniteDimensional ℂ S] (ρ : Representation ℂ (i
   exact ⟨fun h i => LinearMap.congr_fun (congrArg Subtype.val h) (b i), fun h => Subtype.ext (b.ext h)⟩
 
 private theorem eqRep_adm [FiniteDimensional ℂ S] (ρ : Representation ℂ (infU E n) S) (f : eqForms ρ) :
-    ∃ K : Subgroup (finU E n), (∀ k ∈ K, eqRep ρ k f = f) ∧ FiniteDimensional ℂ (GlobalTheory.PRep.fixed (eqRep ρ) K) ∧
+    ∃ K : Subgroup (finU (E := E) (n := n)), (∀ k ∈ K, eqRep ρ k f = f) ∧ FiniteDimensional ℂ (GlobalTheory.PRep.fixed (eqRep ρ) K) ∧
       ∀ w, (Set.range fun k : K => eqRep ρ k w).Finite := by
   obtain ⟨K0, hK0o, hK0c⟩ := UpperTheory.exists_isOpen_isCompact_subgroup_finiteAdelicUnitary E n
-  let St : Subgroup (finU E n) :=
+  let St : Subgroup (finU (E := E) (n := n)) :=
     { carrier := {k | eqRep ρ k f = f}
       one_mem' := by simp
       mul_mem' := fun {a b} ha hb => by
@@ -69,8 +74,8 @@ private theorem eqRep_adm [FiniteDimensional ℂ S] (ρ : Representation ℂ (in
         change eqRep ρ a⁻¹ f = f
         conv_lhs => rw [← ha']
         rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply] }
-  have ho : IsOpen ((K0 ⊓ St : Subgroup (finU E n)) : Set (finU E n)) := hK0o.inter (eqRep_open ρ f)
-  have hc : IsCompact ((K0 ⊓ St : Subgroup (finU E n)) : Set (finU E n)) :=
+  have ho : IsOpen ((K0 ⊓ St : Subgroup (finU (E := E) (n := n))) : Set (finU (E := E) (n := n))) := hK0o.inter (eqRep_open ρ f)
+  have hc : IsCompact ((K0 ⊓ St : Subgroup (finU (E := E) (n := n))) : Set (finU (E := E) (n := n))) :=
     hK0c.of_isClosed_subset (Subgroup.isClosed_of_isOpen _ ho) fun x hx => hx.1
   refine ⟨K0 ⊓ St, fun k hk => hk.2, ?_, fun w => orbit_finite _ _ hc w (eqRep_open ρ w)⟩
   have := UpperTheory.finiteDimensional_automorphicForms_unitary_of_type_level E n S (fun x => ρ x) (K0 ⊓ St) ho
@@ -86,11 +91,11 @@ end
 theorem UpperTheory.exists_admissible_equivariantFormsRep :
     ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (S : Type) [AddCommGroup S] [Module ℂ S] [FiniteDimensional ℂ S] (ρ : Representation ℂ (infU E n) S),
         Submodule.span ℂ (Set.range ρ) = ⊤ → ∀ (B : (UA E n → ℂ) →ₗ⋆[ℂ] (UA E n → ℂ) →ₗ[ℂ] ℂ), (∀ φ, IsAutFormU φ → φ ≠ 0 → 0 < (B φ φ).re) →
-        (∀ k ∈ finU E n, ∀ φ ψ, IsAutFormU φ → IsAutFormU ψ → B (RU E n k φ) (RU E n k ψ) = B φ ψ) →
+        (∀ k ∈ finU (E := E) (n := n), ∀ φ ψ, IsAutFormU φ → IsAutFormU ψ → B (RU E n k φ) (RU E n k ψ) = B φ ψ) →
         ∀ f : S →ₗ[ℂ] (UA E n → ℂ), f ≠ 0 → (∀ v, IsAutFormU (f v)) → (∀ (x : infU E n) v, f (ρ x v) = RU E n x (f v)) →
         ∃ π : Submodule ℂ (UA E n → ℂ), IsAutRepU π ∧ ∃ f' : S →ₗ[ℂ] (UA E n → ℂ), f' ≠ 0 ∧ (∀ v, f' v ∈ π) ∧
           (∀ (x : infU E n) v, f' (ρ x v) = RU E n x (f' v)) ∧
-          ∀ (κ : Type) (s : Finset κ) (y : κ → UA E n) (c : ℂ), (∀ i ∈ s, y i ∈ finU E n) →
+          ∀ (κ : Type) (s : Finset κ) (y : κ → UA E n) (c : ℂ), (∀ i ∈ s, y i ∈ finU (E := E) (n := n)) →
             (∀ v, ∑ i ∈ s, RU E n (y i) (f v) = c • f v) → ∀ v, ∑ i ∈ s, RU E n (y i) (f' v) = c • f' v := by
   intro E _ _ _ n S _ _ _ ρ hsp B hpos hinv f hf0 hfa hfe
   classical
@@ -113,7 +118,7 @@ theorem UpperTheory.exists_admissible_equivariantFormsRep :
   have hinv' : ∀ g u v, B' (eqRep ρ g u) (eqRep ρ g v) = B' u v := fun g u v => by
     rw [hB', hB']
     exact Finset.sum_congr rfl fun i _ => hinv g g.2 _ _ (u.2.1 _) (v.2.1 _)
-  obtain ⟨U, hU, hirr, f', hf'U, hf'0, hsum⟩ := UpperTheory.exists_irreducible_subrep_hecke_eigen_of_invariant_form (finU E n) (eqForms ρ) (eqRep ρ) B' hdef hinv'
+  obtain ⟨U, hU, hirr, f', hf'U, hf'0, hsum⟩ := UpperTheory.exists_irreducible_subrep_hecke_eigen_of_invariant_form (finU (E := E) (n := n)) (eqForms ρ) (eqRep ρ) B' hdef hinv'
     (eqRep_adm ρ) ⟨f, hfa, hfe⟩ (fun h => hf0 (congrArg Subtype.val h))
   let j : U →ₗ[ℂ] S →ₗ[ℂ] (UA E n → ℂ) := (eqForms ρ).subtype ∘ₗ U.subtype
   have hj : ∀ (p : U) (x : infU E n) v, j p (ρ x v) = RU E n x.1 (j p v) := fun p x v => p.1.2.2 x v
@@ -140,7 +145,7 @@ theorem UpperTheory.exists_admissible_equivariantFormsRep :
     rw [h, Submodule.mem_bot] at this
     exact this
   · refine Pairs.eq_bot_or_eq_img hsp (R := fun x => RU E n x.1) hj
-      (Q := fun k : finU E n => (eqRep ρ k).restrict (hU k)) (T := fun k => RU E n k.1) (fun _ _ _ => rfl)
+      (Q := fun k : finU (E := E) (n := n) => (eqRep ρ k).restrict (hU k)) (T := fun k => RU E n k.1) (fun _ _ _ => rfl)
       (fun P hP => ?_) hle (fun x => hN x.1) (fun k => hN k.1)
     rcases hirr (P.map U.subtype) (Submodule.map_subtype_le U P) (by
       rintro g _ ⟨p, hp, rfl⟩
@@ -149,7 +154,7 @@ theorem UpperTheory.exists_admissible_equivariantFormsRep :
       exact Submodule.map_injective_of_injective U.injective_subtype (h.trans (Submodule.map_bot _).symm)
     · right
       exact Submodule.map_injective_of_injective U.injective_subtype (h.trans (Submodule.map_subtype_top _).symm)
-  · let y' : κ → finU E n := fun i => if h : y i ∈ finU E n then ⟨y i, h⟩ else 1
+  · let y' : κ → finU (E := E) (n := n) := fun i => if h : y i ∈ finU (E := E) (n := n) then ⟨y i, h⟩ else 1
     have hy' : ∀ (g : eqForms ρ) v, (∑ i ∈ s, eqRep ρ (y' i) g).1 v = ∑ i ∈ s, RU E n (y i) (g.1 v) := fun g v => by
       rw [Submodule.coe_sum, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun i hi => ?_

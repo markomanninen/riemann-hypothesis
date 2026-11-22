@@ -1,6 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultiplicationFunction
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultiplicationNormBound
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultiplicationNormBound
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.MulLinearAe.mulL_ae.{u_1} :
     ∀ {X : Type u_1} [inst : MeasurableSpace X] {ν : MeasureTheory.Measure X} (c : X → ℝ) (hc : Measurable c)

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonGenericAndKTwoTheorems
-import Formalism.SharpRestriction.CuspSpanNormBounds.UniformConstantsAndStatements
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetAmplitudeBoundLocalStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonGenericAndKTwoTheorems
+public import Formalism.SharpRestriction.CuspSpanNormBounds.UniformConstantsAndStatements
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetAmplitudeBoundLocalStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions
 

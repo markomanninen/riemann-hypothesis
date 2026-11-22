@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.MemParahoricTimesPrincipalCongruenceIff
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.MemParahoricTimesPrincipalCongruenceIff
+
+@[expose] public section
 
 noncomputable section
 

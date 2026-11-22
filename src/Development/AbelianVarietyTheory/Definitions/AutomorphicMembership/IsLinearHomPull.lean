@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
-import Development.AbelianVarietyTheory.Definitions.Divisors.LogAbsVpOfNormalised
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicColimitOfIsNilpotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LogAbsVpOfNormalised
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicColimitOfIsNilpotent
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,8 +54,8 @@ instance : AddCommGroup (Chr D) := inferInstanceAs (AddCommGroup D.X)
 
 instance : Module O (Chr D) := Module.compHom D.X (starRingEnd O)
 
-variable (D O) in
 
+variable (D O) in
 def torAct : OAct O (splitTorus (Sp R) (Chr D)) := Diag.diagAct (Sp R) O (Chr D)
 
 theorem exists_torPt {T : Over (Sp R)} (x : T ⟶ splitTorus (Sp R) (Chr D)) : ∃ g : GtPt D T, g.b = 1 ∧
@@ -88,8 +92,8 @@ variable {oa : D.OAct O} (Y : Ray oa)
 
 def act : OAct O Y.H := ofRingAct Y.ρ
 
-variable (oa) in
 
+variable (oa) in
 def actB : OAct O D.P.A := ofRingAct oa.onB.toRingAct
 
 def q : Y.H ⟶ D.P.A := (Y.Φ Y.H (𝟙 _)).b
@@ -198,32 +202,9 @@ variable {R S O : Type} [CommRing R] [CommRing S] [CommRing O] (f : R →+* S)
 
 abbrev LieAt (a : OAct O G) : Type := Lie (a.pullback (spMap f))
 
-abbrev LieEig (a : OAct O G) (σ : O →+* S) : Type := Lie.eig (a.pullback (spMap f)) σ
-
-theorem isLinearHom_pull {a : OAct O G} {a' : OAct O G'} {φ : G ⟶ G'} (h : IsLinearHom a a' φ) :
-    IsLinearHom (a.pullback (spMap f)) (a'.pullback (spMap f)) ((Over.pullback (spMap f)).map φ) :=
-  haveI := h.isMonHom
-  ⟨inferInstance, fun x => ((Over.pullback (spMap f)).map_comp _ _).symm.trans
-    ((congrArg _ (h.comm x)).trans ((Over.pullback (spMap f)).map_comp _ _))⟩
-
 def lieMap {a : OAct O G} {a' : OAct O G'} {φ : G ⟶ G'} (h : IsLinearHom a a' φ) : LieAt f a →ₗ[S] LieAt f a' :=
   haveI := h.isMonHom
   Lie.map _ _ ((Over.pullback (spMap f)).map φ)
-
-theorem hom_lieMap {a : OAct O G} {a' : OAct O G'} {φ : G ⟶ G'} (h : IsLinearHom a a' φ) (v : LieAt f a) :
-    (lieMap f h v).hom = v.hom ≫ (Over.pullback (spMap f)).map φ := rfl
-
-theorem lieMap_act {a : OAct O G} {a' : OAct O G'} {φ : G ⟶ G'} (h : IsLinearHom a a' φ) (x : O) (v : LieAt f a) :
-    lieMap f h (x • v) = x • lieMap f h v :=
-  haveI := h.isMonHom
-  Lie.map_act_smul (isLinearHom_pull f h) x v
-
-def eigMap {a : OAct O G} {a' : OAct O G'} {φ : G ⟶ G'} (h : IsLinearHom a a' φ) (σ : O →+* S) :
-    LieEig f a σ →ₗ[S] LieEig f a' σ :=
-  (lieMap f h).restrict fun v hv x => by rw [← lieMap_act, hv x, map_smul]
-
-theorem coe_eigMap {a : OAct O G} {a' : OAct O G'} {φ : G ⟶ G'} (h : IsLinearHom a a' φ) (σ : O →+* S)
-    (v : LieEig f a σ) : (eigMap f h σ v).1 = lieMap f h v.1 := rfl
 
 def tanPt {a : OAct O G} (v : LieAt f a) : Over.mk ((epsR S).hom ≫ spMap f) ⟶ G :=
   HTLat.pushEquiv (isGrpPullback_pullback G (spMap f)) _ v.hom

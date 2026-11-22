@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalSplittingCoeff
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalSplittingCoeff
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -39,8 +44,8 @@ theorem scalarDet_mem_center (g : GL (Fin n) F) :
     scalarDet g ∈ Subgroup.center (GL (Fin n) F) :=
   Matrix.GeneralLinearGroup.mem_center_iff_val_mem_range_scalar.2 ⟨_, (coe_scalarDet g).symm⟩
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem scalarDet_of_mem_center {z : GL (Fin n) F} (hz : z ∈ Subgroup.center (GL (Fin n) F)) :
     scalarDet z = z ^ n := by
   obtain ⟨a, ha⟩ := Matrix.GeneralLinearGroup.mem_center_iff_val_mem_range_scalar.1 hz
@@ -105,8 +110,8 @@ theorem map_pow_of_mem_center {z : GL (Fin n) F} (hz : z ∈ Subgroup.center (GL
   | zero => rw [pow_zero, pow_zero, hωπ.one hv]
   | succ m ih => rw [pow_succ, hωπ.mul hv (pow_mem hz m) hz, ih, pow_succ]
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem normChar_of_mem_center {z : GL (Fin n) F} (hz : z ∈ Subgroup.center (GL (Fin n) F)) :
     normChar ω z = ‖ω z‖ := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
@@ -116,8 +121,8 @@ theorem normChar_of_mem_center {z : GL (Fin n) F} (hz : z ∈ Subgroup.center (G
     rw [scalarDet_of_mem_center hz, map_pow_of_mem_center hωπ hv hz, norm_pow,
       Real.pow_rpow_inv_natCast (norm_nonneg _) hn.ne']
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem normChar_eq_one {k : GL (Fin n) F} (hk : π (scalarDet k) v = v) : normChar ω k = 1 := by
   have h1 : ω (scalarDet k) • v = (1 : ℂ) • v := by
     rw [one_smul, ← hωπ _ (scalarDet_mem_center k), hk]
@@ -131,8 +136,8 @@ section Twisted
 variable {V : Type*} [AddCommGroup V] [Module ℂ V] {π : Representation ℂ (GL (Fin n) F) V}
   {ω : GL (Fin n) F → ℂ} {K : Subgroup (GL (Fin n) F)} {f : Module.Dual ℂ V}
 
-variable (π ω) in
 
+variable (π ω) in
 def twVec (x : V) (g : GL (Fin n) F) : V :=
   ((normChar ω g : ℂ)⁻¹) • π g x
 
@@ -189,8 +194,8 @@ theorem norm_twVec_unit {z : GL (Fin n) F} (hz : z ∈ Subgroup.center (GL (Fin 
   rw [norm_div, Complex.norm_real, norm_norm,
     div_self (norm_ne_zero_iff.2 (hωπ.ne_zero hv hz))]
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem normSq_twVec_rightInv {x : V} (hx : x ∈ fixedVectors π K)
     (hK : ∀ k ∈ K, normChar ω k = 1) :
     ∀ g, ∀ h ∈ centerSup K, ‖f (twVec π ω x (g * h))‖ ^ 2 = ‖f (twVec π ω x g)‖ ^ 2 := by

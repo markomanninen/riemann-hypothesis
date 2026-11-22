@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.PairCheckThreeTwo
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NameLaws
-import Development.DiscreteGroups.GlobalIrreducibility.DzKSchur
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.PairCheckThreeTwo
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NameLaws
+public import Development.DiscreteGroups.GlobalIrreducibility.DzKSchur
+
+@[expose] public section
 
 open CategoryTheory Polynomial Matrix GlobalTheory.GLq
 

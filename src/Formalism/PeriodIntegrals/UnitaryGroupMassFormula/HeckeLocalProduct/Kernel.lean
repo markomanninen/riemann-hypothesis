@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Lemmata.MiscLemmasM.Imports
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Lemmata.MiscLemmasM.Imports
+
+@[expose] public section
 
 noncomputable section
 

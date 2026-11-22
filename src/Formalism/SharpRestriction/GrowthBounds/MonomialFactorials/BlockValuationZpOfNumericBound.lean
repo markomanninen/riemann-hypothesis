@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SLetCastSucc
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SLetCastSucc
+
+@[expose] public section
 
 noncomputable section
 

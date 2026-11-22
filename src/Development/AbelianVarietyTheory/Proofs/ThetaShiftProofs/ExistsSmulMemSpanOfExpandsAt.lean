@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtSecIsMul
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtSub
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsFETranslateFeTranslate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtSecIsMul
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtSub
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsFETranslateFeTranslate
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -112,7 +116,7 @@ theorem exists_smul_mem_span_of_expandsAt {R : Type} [CommRing R] [IsDomain R] {
       refine ⟨t₁ * t₂, mul_ne_zero ht₁ ht₂, t₂ • σ₁ + t₁ • σ₂,
         add_mem (Submodule.smul_mem _ _ m₁) (Submodule.smul_mem _ _ m₂), t₂ • f₁ + t₁ • f₂, fun χ => ?_,
         fun n => expandsAt_add _ (expandsAt_smul _ _ (E₁ n)) (expandsAt_smul _ _ (E₂ n))⟩
-      rw [Pi.add_apply, Pi.smul_apply, Pi.smul_apply, map_add, map_smulₛₗ, map_smulₛₗ, e₁, e₂, map_add, map_mul,
+      rw [Pi.add_apply, Pi.smul_apply, Pi.smul_apply, map_add (f := _), map_smulₛₗ, map_smulₛₗ, e₁, e₂, map_add (f := _), map_mul,
         smul_add, smul_smul, smul_smul, mul_comm]
     | smul a x _ hx =>
       obtain ⟨t, ht, σ₁, m₁, f₁, e₁, E₁⟩ := hx

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+
+@[expose] public section
 
 open Matrix Finset Real
 

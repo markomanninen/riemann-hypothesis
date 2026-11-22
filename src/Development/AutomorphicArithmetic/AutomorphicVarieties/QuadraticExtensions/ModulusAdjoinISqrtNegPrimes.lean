@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StmtFields
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LemmaK
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StmtFields
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LemmaK
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,8 +127,6 @@ theorem galChar_spec (m : ℕ) [NeZero m] (g : G ℚ Ω) (ζ : Ω) (hζ : ζ ^ m
   exact modularCyclotomicCharacter.spec Ω (card_roots Ω m) g.toRingEquiv hmem
 
 def abU (A : AbF) : Subgroup (G ℚ Ω) := A.H.comap (galChar Ω A.m)
-
-instance (A : AbF) : (abU Ω A).Normal := by unfold abU; infer_instance
 
 end
 

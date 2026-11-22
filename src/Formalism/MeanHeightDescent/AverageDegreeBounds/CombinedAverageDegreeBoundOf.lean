@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.MeanHeightDescent.CombinedAverageDegreeBound
+module
+
+public import Mathlib
+public import Formalism.MeanHeightDescent.CombinedAverageDegreeBound
+
+@[expose] public section
 
 open Finset
 

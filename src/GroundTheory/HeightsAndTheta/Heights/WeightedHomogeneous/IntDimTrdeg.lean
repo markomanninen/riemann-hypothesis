@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights
 
@@ -30,7 +34,7 @@ theorem trdeg_lt_of_surjective_of_ker_ne_bot {R B C : Type} [CommRing R] [CommRi
     hy.isTranscendenceBasis_of_trdeg_le_of_finite (hlt.trans hs_card.ge)
   have halg := hyb.isAlgebraic
   obtain ⟨q, hq, hq0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hker
-  have hne := Ideal.comap_ne_bot_of_algebraic_mem hq0 hq (halg.isAlgebraic q)
+  have hne := Ideal.under_ne_bot_of_algebraic_mem hq0 hq (halg.isAlgebraic q)
   obtain ⟨a, ha, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hne
   have ha' : f (a : B) = 0 := by
     simpa [Ideal.mem_comap, RingHom.mem_ker] using ha
@@ -50,8 +54,8 @@ theorem trdeg_lt_of_surjective_of_ker_ne_bot {R B C : Type} [CommRing R] [CommRi
 theorem trdeg_zmod_quotient_le {B : Type} [CommRing B] [IsDomain B] [Algebra ℤ B]
     (hinj : Function.Injective (algebraMap ℤ B)) (p : ℕ) [Fact p.Prime] (Q : Ideal B) [Q.IsPrime]
     [CharP (B ⧸ Q) p] :
-    letI := ZMod.algebra (B ⧸ Q) p
-    trdeg (ZMod p) (B ⧸ Q) ≤ trdeg ℤ B := by
+    (letI := ZMod.algebra (B ⧸ Q) p
+     trdeg (ZMod p) (B ⧸ Q) ≤ trdeg ℤ B) := by
   let := ZMod.algebra (B ⧸ Q) p
   have : FaithfulSMul (ZMod p) (B ⧸ Q) :=
     (faithfulSMul_iff_algebraMap_injective _ _).2 (algebraMap (ZMod p) (B ⧸ Q)).injective
@@ -81,8 +85,8 @@ theorem trdeg_zmod_quotient_le {B : Type} [CommRing B] [IsDomain B] [Algebra ℤ
       have hdvd : C (p : ℤ) ∣ P := by
         rw [C_dvd_iff_dvd_coeff]
         intro i
-        have := congrArg (MvPolynomial.coeff i) (hred P hP)
-        rw [coeff_map, coeff_zero, algebraMap_int_eq, eq_intCast,
+        have := congrArg (AddMonoidAlgebra.coeff · i) (hred P hP)
+        rw [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, algebraMap_int_eq, eq_intCast,
           ZMod.intCast_zmod_eq_zero_iff_dvd] at this
         exact this
       obtain ⟨P', rfl⟩ := hdvd

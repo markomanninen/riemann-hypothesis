@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.TendstoUnderCofinite
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousMapGL
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.TendstoUnderCofinite
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousMapGL
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem coord_atEmb_of_ne {σ τ : E →+* ℂ} (h : InfinitePlace.mk σ ≠ Inf
   unfold atEmb
   exact Pi.single_eq_of_ne h _
 
-variable [NumberField E] [IsTotallyComplex E]
+variable [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem coord_conj (τ : E →+* ℂ) (x : Cinf E) :
     coord (ComplexEmbedding.conjugate τ) x = starRingEnd ℂ (coord τ x) := by
@@ -66,18 +70,18 @@ section Inf
 def cInf (e : K ≃+* M) : Cinf K →+* Cinf M :=
   RingHom.pi fun w : InfinitePlace M => coord (w.embedding.comp e.toRingHom)
 
-omit [NumberField K] [NumberField M] in
 
+omit [NumberField K] [NumberField M] in
 theorem cInf_star (e : K ≃+* M) (x : Cinf K) : cInf e (star x) = star (cInf e x) :=
   funext fun _ => coord_star _ x
 
-omit [NumberField K] [NumberField M] in
 
+omit [NumberField K] [NumberField M] in
 theorem cInf_smul (e : K ≃+* M) (t : ℝ) (x : Cinf K) : cInf e (t • x) = t • cInf e x :=
   funext fun _ => coord_smul _ t x
 
-omit [NumberField M] in
 
+omit [NumberField M] in
 theorem continuous_cInf (e : K ≃+* M) : Continuous (cInf e) :=
   LinearMap.continuous_of_finiteDimensional
     ({ toFun := cInf e, map_add' := map_add _, map_smul' := cInf_smul e } : Cinf K →ₗ[ℝ] Cinf M)
@@ -85,10 +89,10 @@ theorem continuous_cInf (e : K ≃+* M) : Continuous (cInf e) :=
 theorem norm_cInf_le (e : K ≃+* M) (x : Cinf K) : ‖cInf e x‖ ≤ ‖x‖ :=
   (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun _ => (norm_coord _ x).trans_le (norm_le_pi_norm x _)
 
-variable [IsTotallyComplex K] [IsTotallyComplex M]
+variable [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex M]
 
-omit [NumberField M] [IsTotallyComplex M] in
 
+omit [NumberField M] [_root_.NumberField.IsTotallyComplex M] in
 theorem coord_cInf (e : K ≃+* M) (τ : M →+* ℂ) (x : Cinf K) :
     coord τ (cInf e x) = coord (τ.comp e.toRingHom) x := by
   conv_lhs => unfold coord
@@ -129,15 +133,15 @@ section Fin
 def Over (e : K ≃+* M) (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 M)) : Prop :=
   ∀ x : 𝓞 K, x ∈ v.asIdeal ↔ RingOfIntegers.mapRingEquiv e x ∈ w.asIdeal
 
-omit [NumberField K] [NumberField M] in
 
+omit [NumberField K] [NumberField M] in
 theorem Over.symm {e : K ≃+* M} {v : HeightOneSpectrum (𝓞 K)} {w : HeightOneSpectrum (𝓞 M)} (h : Over e v w) :
     Over e.symm w v := fun x => by
   rw [h]
   exact Iff.of_eq (congrArg (· ∈ w.asIdeal) ((RingOfIntegers.mapRingEquiv e).apply_symm_apply x).symm)
 
-omit [NumberField K] [NumberField M] in
 
+omit [NumberField K] [NumberField M] in
 theorem Over.unique {e : K ≃+* M} {v v' : HeightOneSpectrum (𝓞 K)} {w : HeightOneSpectrum (𝓞 M)} (h : Over e v w)
     (h' : Over e v' w) : v = v' := HeightOneSpectrum.ext (Ideal.ext fun x => (h x).trans (h' x).symm)
 
@@ -194,7 +198,8 @@ theorem qV_eq (h : Over e v w) : Formalism.UG.qV M w = Formalism.UG.qV K v := by
   have e1 : w.asIdeal = v.asIdeal.map (RingOfIntegers.mapRingEquiv e : 𝓞 K →+* 𝓞 M) := by
     rw [show v.asIdeal = w.asIdeal.comap (RingOfIntegers.mapRingEquiv e : 𝓞 K →+* 𝓞 M) from Ideal.ext h]
     exact (Ideal.map_comap_of_surjective _ (RingEquiv.surjective _) _).symm
-  exact (Nat.card_congr (Ideal.quotientEquiv _ _ (RingOfIntegers.mapRingEquiv e) e1).toEquiv).symm
+  simpa [Formalism.UG.qV, Ideal.absNorm_eq_natCard] using
+    (Nat.card_congr (Ideal.quotientEquiv _ _ (RingOfIntegers.mapRingEquiv e) e1).toEquiv).symm
 
 def cFin (e : K ≃+* M) : Af K →+* Af M :=
   letI := e.toRingHom.toAlgebra
@@ -237,7 +242,7 @@ theorem cFin_locGL {a : ℕ} (h : Over e v w) (g : GL (Fin a) (v.adicCompletion 
 
 end Fin
 
-variable [IsTotallyComplex K] [IsTotallyComplex M]
+variable [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex M]
 
 def cAd (e : K ≃+* M) : Ad K →+* Ad M :=
   RingHom.prod ((infEq M).toRingHom.comp ((cInf e).comp (pInf K))) ((cFin e).comp (pFin K))

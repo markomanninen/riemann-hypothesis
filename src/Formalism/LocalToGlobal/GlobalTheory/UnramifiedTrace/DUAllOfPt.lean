@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.DuFormulaOfFibreCount
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.CardFilterSubtype
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.DuFormulaOfFibreCount
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.CardFilterSubtype
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,8 +74,6 @@ theorem duFib_of_pt (T : Forms0 D u) (h : DUPt0F T) : DUFib0F T := by
         g ((D.fm u).te 0 v c) = 1) (fun g _ => and_self_iff), card_dual_one _ hte, hK, hr]
     · exact card_dual_line _ y h2 h1
     · rw [card_dual_two _ y hte h2, hK, hr]
-
-theorem dUAll_of_pt (h : ∀ (D : D7) (u : D.what₂.Word) (T : Forms0 D u), DUPt0F T) : Formalism.L2.GlobalTheoryTheory.UnramifiedDiagonal.DUAll := fun D u T => du_formula_of_fibre_count T (duFib_of_pt T (h D u T))
 
 end Formalism.L2.GlobalTheoryTheory.UnramifiedTrace
 

@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.SDarb
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.BilinearFormExamples.BfENondeg
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.BilinearFormExamples.TraceIntMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetNeOfSig
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.SDarb
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.BilinearFormExamples.BfENondeg
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.BilinearFormExamples.TraceIntMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetNeOfSig
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -51,21 +55,10 @@ theorem Bf_Ek_Ek [FiniteDimensional F E] (σ : E →ₐ[F] E) (J : Matrix (Fin m
 def bM (bs : Module.Basis (Fin 2) F E) : Module.Basis (Fin m × Fin n × Fin 2) (AF F) (Mx F E m n) :=
   (Algebra.TensorProduct.basis (AF F) bs).matrix (Fin m) (Fin n)
 
-theorem bM_apply (bs : Module.Basis (Fin 2) F E) (k : Fin m × Fin n × Fin 2) : bM bs k = Ek bs k := by
-  obtain ⟨i, j, l⟩ := k
-  simp [bM, Ek, Algebra.TensorProduct.basis_apply]
-
 theorem bM_repr (bs : Module.Basis (Fin 2) F E) (X : Mx F E m n) (k : Fin m × Fin n × Fin 2) :
     (bM bs).repr X k = crdB bs X k := by
   obtain ⟨i, j, l⟩ := k
-  have hinj : Function.Injective (Prod.map id ⇑(Equiv.sigmaEquivProd (Fin n) (Fin 2)) ∘
-      ⇑(Equiv.sigmaEquivProd (Fin m) (Σ _ : Fin n, Fin 2))) :=
-    (Function.injective_id.prodMap (Equiv.injective _)).comp (Equiv.injective _)
   simp [bM, Module.Basis.matrix, crdB, Pi.basis_repr]
-  rw [show ((i, j, l) : Fin m × Fin n × Fin 2) = (Prod.map id ⇑(Equiv.sigmaEquivProd (Fin n) (Fin 2)) ∘
-      ⇑(Equiv.sigmaEquivProd (Fin m) (Σ _ : Fin n, Fin 2))) ⟨i, ⟨j, l⟩⟩ from rfl,
-    Finsupp.mapDomain_apply hinj, Pi.basis_repr, Pi.basis_repr]
-  rfl
 
 theorem incM_one {ι : Type} [Fintype ι] [DecidableEq ι] : incM F (1 : Matrix ι ι E) = 1 :=
   Matrix.map_one _ (map_zero _) (map_one _)

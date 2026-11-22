@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,6 @@ def inter (L : Lat ξ E) (V : Submodule Ω E) : Lat ξ E := fun p => L p ⊓ V.r
 def map (L : Lat ξ E) (f : E →ₗ[Ω] E') : Lat ξ E' := fun p => (L p).map (f.restrictScalars (regAt ξ p))
 
 def comap (L : Lat ξ E') (f : E →ₗ[Ω] E') : Lat ξ E := fun p => (L p).comap (f.restrictScalars (regAt ξ p))
-
-def prod (L : Lat ξ E) (L' : Lat ξ E') : Lat ξ (E × E') := fun p => (L p).prod (L' p)
 
 def scale (L : Lat ξ E) (a : Ω) : Lat ξ E := L.map (a • LinearMap.id)
 

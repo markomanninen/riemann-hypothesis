@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.IsUnitOfMk
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.IsUnitOfMk
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem levRatPf_ev (W : LocWach PD LL O v n) (hR : ToolsR.RingP W) (hT : Formal
       simp only [Pi.mul_apply, Pi.add_apply, hwH, letE, Pi.single_eq_same, one_mul, heq]
     · simp [Pi.mul_apply, Pi.add_apply, hwH, letE, Pi.single_eq_of_ne hi]
   have h1 := congrArg (hB.ev ζ) key
-  rw [map_mul, hB.ev_letE, one_mul, map_add, map_mul, hB.ev_ps, zero_mul, zero_add, map_mul,
+  rw [map_mul, hB.ev_letE, one_mul, map_add (f := _), map_mul, hB.ev_ps, zero_mul, zero_add, map_mul,
     hB.ev_letE, one_mul, ev_aeval hB] at h1
   exact h1
 

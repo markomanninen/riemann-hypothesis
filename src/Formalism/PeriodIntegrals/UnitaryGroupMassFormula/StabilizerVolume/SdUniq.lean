@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.RestrProd
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensFibV
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.RestrProd
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensFibV
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,8 +74,8 @@ variable {V : Type} [AddCommGroup V] [TopologicalSpace V] [IsTopologicalAddGroup
   [MeasurableSpace V] [BorelSpace V] (μ : Measure V) [μ.IsAddHaarMeasure] (χ : V → V → ℂ)
   (hχ : ∀ x t y, χ (t + x) y = χ t y * χ x y) (L : AddSubgroup V)
 
-include hχ in
 
+include hχ in
 theorem transform_indicator (hLo : IsOpen (L : Set V)) (y : V) :
     ∫ x, (L : Set V).indicator (fun _ => (1 : ℂ)) x * χ x y ∂μ =
       (ann χ L).indicator (fun _ => ((μ.real (L : Set V) : ℝ) : ℂ)) y := by
@@ -106,8 +110,8 @@ theorem transform_indicator (hLo : IsOpen (L : Set V)) (y : V) :
     · exact absurd (sub_eq_zero.1 h) hne
     · exact h
 
-include hχ in
 
+include hχ in
 theorem testEx_of_lattice (hLc : IsCompact (L : Set V)) (hLo : IsOpen (L : Set V))
     (hA : IsClosed (ann χ L)) (K : Set V) (hK : IsCompact K) (hAK : ann χ L ⊆ K) :
     TestEx μ χ := by
@@ -165,9 +169,9 @@ theorem testEx_of_trivial (hχ : ∀ x y, χ x y = 1) (L : AddSubgroup V)
   · push_neg at hL
     obtain ⟨t, ht⟩ := hL
     set g : V → ℂ := (L : Set V).indicator (fun _ => (1 : ℂ)) with hg
-    have hcg : Continuous fun x => g (-t + x) := hind.comp' (continuous_add_left (-t))
+    have hcg : Continuous fun x => g (-t + x) := hind.comp' (continuous_const.add continuous_id)
     refine ⟨fun x => g x - g (-t + x), hind.sub hcg, ?_, ?_, ⟨0, ?_⟩⟩
-    · refine HasCompactSupport.intro (hLc.union (hLc.image (continuous_add_left t))) ?_
+    · refine HasCompactSupport.intro (hLc.union (hLc.image (show Continuous (fun x : V => t + x) from continuous_const.add continuous_id))) ?_
       intro x hx
       have h1 : x ∉ L := fun h => hx (Or.inl h)
       have h2 : -t + x ∉ L := fun h => hx (Or.inr ⟨-t + x, h, by abel⟩)
@@ -302,14 +306,14 @@ variable (R : Type) [CommRing R] [Algebra F R]
 theorem BR_add (σ : E →ₐ[F] E) {M n : ℕ} (J : Matrix (Fin M) (Fin M) E)
     (X T Y : Fin n → Fin M → R ⊗[F] E) : BR R σ J (T + X) Y = BR R σ J T Y + BR R σ J X Y := by
   first
-  | simp only [BR, hR, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
-  | simp [BR, hR, Formalism.UG.hform, map_add, add_mul, Finset.sum_add_distrib]
+  | simp only [BR, hR, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
+  | simp [BR, hR, Formalism.UG.hform, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem pairHerm_add (σ : E →ₐ[F] E) (n : ℕ) (S T U : HermR R σ n) :
     pairHerm R σ n (T + S) U = pairHerm R σ n T U + pairHerm R σ n S U := by
   first
-  | simp only [pairHerm, AddSubgroup.coe_add, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add, mul_add]
-  | simp [pairHerm, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add, mul_add]
+  | simp only [pairHerm, AddSubgroup.coe_add, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _), mul_add]
+  | simp [pairHerm, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _), mul_add]
 
 end Add
 
@@ -339,10 +343,10 @@ theorem continuous_pairHerm_right (σ : E →ₐ[F] E) (n : ℕ) (S : HermR R σ
     Continuous (pairHerm R σ n S) := by
   have ht := continuous_trace_tens (F := F) (E := E) R
   unfold pairHerm
-  first
-  | exact continuous_const.mul (ht.comp (continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ =>
-      continuous_const.mul ((continuous_apply a).comp ((continuous_apply b).comp continuous_subtype_val))))
-  | fun_prop
+  apply continuous_const.mul
+  apply ht.comp
+  exact continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun b _ =>
+    continuous_const.mul ((continuous_apply a).comp ((continuous_apply b).comp continuous_subtype_val))
 
 end ContY
 
@@ -365,11 +369,6 @@ def SdTestV : Prop := InCtx fun F E _ _ _ _ _ σ M J a _X0 _hT =>
       TestEx μ (fun X Y => psiV F ψ v (BR (Fv F v) σ J X Y))) ∧
     (∀ ν, SdHerm F E σ (Fv F v) (psiV F ψ v) a ν →
       TestEx ν (fun S T => psiV F ψ v (pairHerm (Fv F v) σ a S T)))
-
-def AnnV : Prop := InCtx fun F E _ _ _ _ _ σ M J a _X0 _hT =>
-  ∀ ψ, IsCharAF F ψ → ∀ v : HeightOneSpectrum (𝓞 F),
-    AnnAt (V := Fin a → Fin M → Fv F v ⊗[F] E) (fun X Y => psiV F ψ v (BR (Fv F v) σ J X Y)) ∧
-    AnnAt (V := HermR (Fv F v) σ a) (fun S T => psiV F ψ v (pairHerm (Fv F v) σ a S T))
 
 def DualLatV : Prop := InCtx fun F E _ _ _ _ _ σ M J a _X0 _hT =>
   ∀ v : HeightOneSpectrum (𝓞 F),

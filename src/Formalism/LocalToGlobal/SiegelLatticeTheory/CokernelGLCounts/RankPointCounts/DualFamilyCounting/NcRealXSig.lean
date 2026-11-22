@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalJacobianOfDoubleCoset
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalJacobianOfDoubleCoset
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,7 +132,8 @@ def negF (e f : Fin r → Fin (2 * r + k + 1) → ℂ) (z0 : Fin (2 * r + k + 1)
 theorem hJ_fe (hF : IsFrameJ ε e f wf z0) (a b : Fin r) : hJ ε (f a) (e b) = if a = b then 1 else 0 := by
   have hs : ∀ x y : Fin (2 * r + k + 1) → ℂ, hJ ε y x = conj (hJ ε x y) := by
     intro x y
-    simp only [hJ, dotProduct, Formalism.REAL.Jm, mulVec_diagonal, map_sum, map_mul, Pi.star_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hJ, dotProduct, Formalism.REAL.Jm, mulVec_diagonal, map_sum, map_mul, Pi.star_apply,
       Complex.star_def, Complex.conj_conj]
     refine Finset.sum_congr rfl fun i _ => ?_
     split_ifs <;> simp <;> ring
@@ -142,7 +147,8 @@ theorem posF_gram (hF : IsFrameJ ε e f wf z0) (i j : Fin r ⊕ Fin k) :
       if i = j then (((Sum.elim (fun _ => (2 : ℝ)) (fun _ => (1 : ℝ))) i : ℝ) : ℂ) else 0 := by
   have hs : ∀ x y : Fin (2 * r + k + 1) → ℂ, hJ ε y x = conj (hJ ε x y) := by
     intro x y
-    simp only [hJ, dotProduct, Formalism.REAL.Jm, mulVec_diagonal, map_sum, map_mul, Pi.star_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hJ, dotProduct, Formalism.REAL.Jm, mulVec_diagonal, map_sum, map_mul, Pi.star_apply,
       Complex.star_def, Complex.conj_conj]
     refine Finset.sum_congr rfl fun i _ => ?_
     split_ifs <;> simp <;> ring
@@ -163,7 +169,8 @@ theorem negF_gram (hF : IsFrameJ ε e f wf z0) (i j : Fin r ⊕ Unit) :
       if i = j then (((Sum.elim (fun _ => (-2 : ℝ)) (fun _ => (-1 : ℝ))) i : ℝ) : ℂ) else 0 := by
   have hs : ∀ x y : Fin (2 * r + k + 1) → ℂ, hJ ε y x = conj (hJ ε x y) := by
     intro x y
-    simp only [hJ, dotProduct, Formalism.REAL.Jm, mulVec_diagonal, map_sum, map_mul, Pi.star_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hJ, dotProduct, Formalism.REAL.Jm, mulVec_diagonal, map_sum, map_mul, Pi.star_apply,
       Complex.star_def, Complex.conj_conj]
     refine Finset.sum_congr rfl fun i _ => ?_
     split_ifs <;> simp <;> ring
@@ -196,20 +203,21 @@ theorem hJ_Qm_self (hF : IsFrameJ ε e f wf z0) (zB : Fin (2 * r + k + 1) → �
     hJ ε (Qm e f wf z0 *ᵥ zB) (Qm e f wf z0 *ᵥ zB) = -((Tz k r zB : ℝ) : ℂ) := by
   have hs : ∀ x y : Fin (2 * r + k + 1) → ℂ, hJ ε y x = conj (hJ ε x y) := by
     intro x y
-    simp only [hJ, dotProduct, Formalism.REAL.Jm, mulVec_diagonal, map_sum, map_mul, Pi.star_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hJ, dotProduct, Formalism.REAL.Jm, mulVec_diagonal, map_sum, map_mul, Pi.star_apply,
       Complex.star_def, Complex.conj_conj]
     refine Finset.sum_congr rfl fun i _ => ?_
     split_ifs <;> simp <;> ring
   have hc1 : ∀ j : Fin (2 * r + k + 1), (hj : j.val < r) → colQ e f wf z0 j = e ⟨j.val, hj⟩ := by
-    intro j hj; unfold colQ; rw [dif_pos hj]
+    intro j hj; unfold colQ; rw [dite_eq_left hj]
   have hc2 : ∀ j : Fin (2 * r + k + 1), (h1 : r ≤ j.val) → (h2 : j.val < r + k) →
       colQ e f wf z0 j = wf ⟨j.val - r, by omega⟩ := by
-    intro j h1 h2; unfold colQ; rw [dif_neg (by omega), dif_pos h2]
+    intro j h1 h2; unfold colQ; rw [dite_eq_right (by omega), dite_eq_left h2]
   have hc3 : ∀ j : Fin (2 * r + k + 1), j.val = r + k → colQ e f wf z0 j = z0 := by
-    intro j h; unfold colQ; rw [dif_neg (by omega), dif_neg (by omega), dif_pos h]
+    intro j h; unfold colQ; rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_left h]
   have hc4 : ∀ j : Fin (2 * r + k + 1), (h : r + k < j.val) →
       colQ e f wf z0 j = f ⟨2 * r + k - j.val, by omega⟩ := by
-    intro j h; unfold colQ; rw [dif_neg (by omega), dif_neg (by omega), dif_neg (by omega)]
+    intro j h; unfold colQ; rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
   have hQ : ∀ v : Fin (2 * r + k + 1) → ℂ, Qm e f wf z0 *ᵥ v = ∑ j, v j • colQ e f wf z0 j := by
     intro v; ext i; simp [Qm, mulVec, dotProduct, Finset.sum_apply, mul_comm]
   have hwe : ∀ c a, hJ ε (wf c) (e a) = 0 := fun c a => by rw [hs, hF.ew]; simp
@@ -245,15 +253,15 @@ theorem hJ_Qm_self (hF : IsFrameJ ε e f wf z0) (zB : Fin (2 * r + k + 1) → �
 theorem hJ_e_Qm (hF : IsFrameJ ε e f wf z0) {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) (a : Fin r) :
     hJ ε (e a) (Qm e f wf z0 *ᵥ v) = 0 := by
   have hc1 : ∀ j : Fin (2 * r + k + 1), (hj : j.val < r) → colQ e f wf z0 j = e ⟨j.val, hj⟩ := by
-    intro j hj; unfold colQ; rw [dif_pos hj]
+    intro j hj; unfold colQ; rw [dite_eq_left hj]
   have hc2 : ∀ j : Fin (2 * r + k + 1), (h1 : r ≤ j.val) → (h2 : j.val < r + k) →
       colQ e f wf z0 j = wf ⟨j.val - r, by omega⟩ := by
-    intro j h1 h2; unfold colQ; rw [dif_neg (by omega), dif_pos h2]
+    intro j h1 h2; unfold colQ; rw [dite_eq_right (by omega), dite_eq_left h2]
   have hc3 : ∀ j : Fin (2 * r + k + 1), j.val = r + k → colQ e f wf z0 j = z0 := by
-    intro j h; unfold colQ; rw [dif_neg (by omega), dif_neg (by omega), dif_pos h]
+    intro j h; unfold colQ; rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_left h]
   have hc4 : ∀ j : Fin (2 * r + k + 1), (h : r + k < j.val) →
       colQ e f wf z0 j = f ⟨2 * r + k - j.val, by omega⟩ := by
-    intro j h; unfold colQ; rw [dif_neg (by omega), dif_neg (by omega), dif_neg (by omega)]
+    intro j h; unfold colQ; rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
   have hQ : ∀ v : Fin (2 * r + k + 1) → ℂ, Qm e f wf z0 *ᵥ v = ∑ j, v j • colQ e f wf z0 j := by
     intro v; ext i; simp [Qm, mulVec, dotProduct, Finset.sum_apply, mul_comm]
   rw [hQ, hJ_sum_r]
@@ -276,18 +284,20 @@ theorem e_li (hF : IsFrameJ ε e f wf z0) : LinearIndependent ℂ e := by
 
 theorem frameX_of (hF : IsFrameJ ε e f wf z0) (hk : 1 ≤ k) {zB zB' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r zB)
     (hz' : inWb k r zB') (hT : 0 < Tz k r zB) (hT' : 0 < Tz k r zB') :
-    FrameLoc ε k e (Qm e f wf z0 *ᵥ zB) (Qm e f wf z0 *ᵥ zB') (Tz k r zB) (Tz k r zB') where
-  dim := by omega
-  k_pos := hk
-  sig := sig_of_frame hF
-  e_li := e_li hF
-  ee := hF.ee
-  ez := hJ_e_Qm hF hz
-  ez' := hJ_e_Qm hF hz'
-  zz := hJ_Qm_self hF zB
-  zz' := hJ_Qm_self hF zB'
-  T_pos := hT
-  T'_pos := hT'
+    FrameLoc ε k e (Qm e f wf z0 *ᵥ zB) (Qm e f wf z0 *ᵥ zB') (Tz k r zB) (Tz k r zB') := by
+  refine
+    { dim := ?_
+      k_pos := hk
+      sig := sig_of_frame hF
+      e_li := e_li hF
+      ee := hF.ee
+      ez := hJ_e_Qm hF hz
+      ez' := hJ_e_Qm hF hz'
+      zz := hJ_Qm_self hF zB
+      zz' := hJ_Qm_self hF zB'
+      T_pos := hT
+      T'_pos := hT' }
+  omega
 
 end Sig
 

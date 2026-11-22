@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolRepOfIsTau
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolRepOfIsTau
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.JointHarm
 open scoped TensorProduct InnerProductSpace Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -51,7 +56,7 @@ theorem vhol_diff_fock {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {s 
     simp only [MvPolynomial.algHom_C]
     exact differentiableOn_const _
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact (hp x).add (hq x)
   | mul_X p v hp =>
     have e1 : ∀ z, Formalism.GradedWeylDivisibility.blockAct ℂ (U z) (p * MvPolynomial.X v) =
@@ -60,7 +65,8 @@ theorem vhol_diff_fock {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {s 
       rw [map_mul, blockAct_X, Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [MvPolynomial.smul_eq_C_mul]; ring
-    simp only [e1, map_sum, map_smul, ← fockL_pderiv_X, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e1, map_sum, map_smul, ← fockL_pderiv_X, smul_eq_mul]
     exact DifferentiableOn.fun_sum fun b _ => (h _ _ _).mul (hp _)
 
 theorem vhol_aniso {σ : Type} (x : MvPolynomial σ ℂ) (hx : fockL x x = 0) : x = 0 := by

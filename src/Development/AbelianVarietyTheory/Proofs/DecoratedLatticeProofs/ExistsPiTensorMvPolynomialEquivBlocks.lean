@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions Formalism.L2.Forms Formalism.L2.Ker GlobalTheory.KJInf MeasureTheory
 open scoped TensorProduct
 
@@ -7,7 +12,7 @@ namespace GlobalTheory.BlockPoly
 variable (ι σ : Type) [Fintype ι] [DecidableEq ι]
 
 noncomputable def blockMul :
-    MultilinearMap ℂ (fun _ : ι => MvPolynomial σ ℂ) (MvPolynomial (ι × σ) ℂ) :=
+    (ι → MvPolynomial σ ℂ) →ₘₗ[ℂ] MvPolynomial (ι × σ) ℂ :=
   (MultilinearMap.mkPiAlgebra ℂ ι (MvPolynomial (ι × σ) ℂ)).compLinearMap
     (fun τ => (rename (Prod.mk τ) : MvPolynomial σ ℂ →ₐ[ℂ] MvPolynomial (ι × σ) ℂ).toLinearMap)
 
@@ -24,8 +29,8 @@ theorem expEquiv_apply (d : ι → σ →₀ ℕ) (a : ι) (b : σ) : expEquiv �
 theorem sum_mapDomain_eq (d : ι → σ →₀ ℕ) :
     ∑ τ, (d τ).mapDomain (Prod.mk τ) = expEquiv ι σ d := by
   ext ⟨a, b⟩
-  rw [expEquiv_apply, Finsupp.coe_finset_sum, Finset.sum_apply, Finset.sum_eq_single a]
-  · exact Finsupp.mapDomain_apply (fun x y h => by simpa using h) _ _
+  rw [expEquiv_apply, Finset.sum_apply', Finset.sum_eq_single a]
+  · exact Finsupp.mapDomain_apply_of_injective (fun x y h => by simpa using h) _ _
   · intro τ _ hτ
     apply Finsupp.mapDomain_notin_range
     rintro ⟨c, hc⟩

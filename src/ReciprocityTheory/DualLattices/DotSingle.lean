@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
-import ReciprocityTheory.DualLattices.ProdDvdOfIso
-import ReciprocityTheory.DualLattices.ExistsSmulMemOfMemSpan
+module
+
+public import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
+public import ReciprocityTheory.DualLattices.ProdDvdOfIso
+public import ReciprocityTheory.DualLattices.ExistsSmulMemOfMemSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ variable {C : Type} [Field C] {v : Valuation C NNReal} {R : Type} [CommRing R] [
 theorem dot_single {ι : Type} [Fintype ι] [DecidableEq ι] (f : (ι → R) →ₗ[R] R) (x : ι → R) :
     (fun k => f (Pi.single k 1)) ⬝ᵥ x = f x := by
   conv_rhs => rw [← Finset.univ_sum_single x]
-  rw [map_sum, dotProduct]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, dotProduct]
   refine Finset.sum_congr rfl fun k _ => ?_
   have hk : (Pi.single k (x k) : ι → R) = x k • (Pi.single k (1 : R) : ι → R) := by
     ext i
@@ -164,7 +169,8 @@ theorem block (hv : v.Integers R) {ι κ' : Type} [Fintype ι] [DecidableEq ι] 
     rw [hlamdot]
     have e1 : ∀ l', ℓ l' (y l) = P l l' := by
       intro l'
-      simp only [hy, map_sum, map_smul, hℓβ, smul_eq_mul, mul_ite, mul_one, mul_zero,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hy, map_sum, map_smul, hℓβ, smul_eq_mul, mul_ite, mul_one, mul_zero,
         Finset.sum_ite_eq', Finset.mem_univ, if_true]
     simp only [e1]
     have := congrFun (congrFun hPP l) j

@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.Divisibility.SlopeExcess.ConstRankBaseLePolyFourth
-import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
-import Formalism.SharpRestriction.GrowthBounds.JointsLit
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.NotSingularOfCentral
-import Formalism.SharpRestriction.GrowthBounds.AdmissibleIntegers.FirstTermSizeBound
-import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+module
+
+public import Formalism.SharpRestriction.Divisibility.SlopeExcess.ConstRankBaseLePolyFourth
+public import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
+public import Formalism.SharpRestriction.GrowthBounds.JointsLit
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.NotSingularOfCentral
+public import Formalism.SharpRestriction.GrowthBounds.AdmissibleIntegers.FirstTermSizeBound
+public import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,8 +130,8 @@ theorem ga_le_at (P : ParameterChoice' D L) (X : Inst D L) (K : Consts) (hK : K.
   rw [e]
   linarith
 
-open Formalism.MainNotions.DIV.Proofs.HHParts in
 
+open Formalism.MainNotions.DIV.Proofs.HHParts in
 theorem logX_le (hN : SizeN L) (hK : SizeK L) :
     Real.log (L.sc.X'' D.R.n + 1) ≤ 4 * Formalism.MainNotions.DIV.Proofs.szPol L := by
   obtain ⟨hn1, hn2⟩ := hN
@@ -189,8 +193,8 @@ theorem logX_le (hN : SizeN L) (hK : SizeK L) :
   have hNm : (0 : ℝ) ≤ (D.R.N D.R.m : ℝ) := by positivity
   linarith
 
-open Formalism.MainNotions.DIV.Proofs.HHParts in
 
+open Formalism.MainNotions.DIV.Proofs.HHParts in
 theorem ga_le_pol (P : ParameterChoice' D L) (X : Inst D L) (K : Consts) (hK : K.Nonneg)
     (hF : ∀ w, ParametersFill X K w) (hM : Formalism.MainNotions.CornerGLContinuity.MertensBound D) (hS : SizesAt L) :
     L.Ga ≤ 64 * Formalism.MainNotions.DIV.Proofs.szPol L ^ 4 * L.sc.b := by

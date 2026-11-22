@@ -1,9 +1,13 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaCore
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaCore
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants CompanionTheory.D.Upq.Sm CompanionTheory.Bmu
 open scoped ComplexConjugate
@@ -292,7 +296,7 @@ theorem rootVec : RootVec := by
       have hba : eI k r b = eI k r a ↔ b = a := by simp only [eI, Fin.ext_iff]
       unfold PI.BesselMapUniq.ellA
       by_cases h : b.val + 1 < r
-      · rw [dif_pos h, Matrix.add_apply, Matrix.smul_apply, hent, colI,
+      · rw [dite_eq_left h, Matrix.add_apply, Matrix.smul_apply, hent, colI,
           if_neg (c := _ = esI k r a) (by simp only [eI, esI, Fin.ext_iff]; omega),
           Matrix.one_apply_ne (by simp only [eI, Ne, Fin.ext_iff]; omega)]
         by_cases e : b = a
@@ -309,7 +313,7 @@ theorem rootVec : RootVec := by
           split_ifs
           · rw [Finset.mul_sum]; simp only [mul_assoc]
           · simp
-        rw [dif_neg h, add_mulVec, one_mulVec, smul_mulVec, Pi.add_apply, Pi.smul_apply, hM,
+        rw [dite_eq_right h, add_mulVec, one_mulVec, smul_mulVec, Pi.add_apply, Pi.smul_apply, hM,
           hzr _ (by simp only [eI]; omega) (rowE b)]
         by_cases e : b = a
         · subst e

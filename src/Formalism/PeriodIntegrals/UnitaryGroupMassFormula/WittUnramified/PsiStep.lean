@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WittUnram
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WittUnram
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem psi_surjective (ψ : W →+* WittVector p k) (res : W →+* k) (hres : F
         _ = ψ (s n) + (p : WittVector p k) ^ n * (ψ (A (r n)) + (p : WittVector p k) * B (r n)) := by
           rw [← hAB (r n)]
         _ = ψ (s (n + 1)) + (p : WittVector p k) ^ (n + 1) * r (n + 1) := by
-          rw [hss, hrs, map_add, map_mul, map_pow, map_natCast]
+          rw [hss, hrs, map_add (f := _), map_mul, map_pow, map_natCast]
           ring
   have hdiv : ∀ m n, m ≤ n → (p : W) ^ m ∣ s n - s m := by
     intro m n hmn

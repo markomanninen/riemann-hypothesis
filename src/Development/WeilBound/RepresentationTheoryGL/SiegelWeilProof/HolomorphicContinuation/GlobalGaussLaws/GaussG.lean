@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GaussF
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GaussF
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem exists_sqrt {Y : Matrix (Fin n) (Fin n) ℂ} (hY : Y.PosDef) : ∃ S : M
     rw [Matrix.diagonal_conjTranspose, Matrix.diagonal_mul_diagonal]
     congr 1
     funext i
-    simp only [Function.comp_apply, Pi.star_apply, Complex.star_def, Complex.conj_ofReal]
+    simp only [Pi.star_apply, Complex.star_def, Complex.conj_ofReal, Function.comp_apply]
     rw [← Complex.ofReal_mul, Real.mul_self_sqrt (hY.eigenvalues_pos i).le]
     rfl
   have hS : U * d * (U * d)ᴴ = Y := by

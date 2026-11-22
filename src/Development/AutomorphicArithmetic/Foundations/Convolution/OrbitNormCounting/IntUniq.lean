@@ -1,21 +1,26 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
-import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.Transl
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ExistsNotMem
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
-import Development.AutomorphicArithmetic.UnitaryInvolutions.EventuallyMapMemMaximalCompactGL
-import Development.AutomorphicArithmetic.UnitaryInvolutions.EventuallySeparableOfIntegralModel
-import Development.AutomorphicArithmetic.UnitaryInvolutions.UnitaryInvolutionStabilizesIntegralAtNonsplit
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
+public import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.Transl
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ExistsNotMem
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+public import Development.AutomorphicArithmetic.UnitaryInvolutions.EventuallyMapMemMaximalCompactGL
+public import Development.AutomorphicArithmetic.UnitaryInvolutions.EventuallySeparableOfIntegralModel
+public import Development.AutomorphicArithmetic.UnitaryInvolutions.UnitaryInvolutionStabilizesIntegralAtNonsplit
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT
 open scoped Classical TensorProduct
 
 private theorem splitCase {E : Type} [Field E] [NumberField E] (w : Pl E) (n : ℕ) (g y : GLw n w)
-    (hg : g ∈ GlobalTheory.LFun.KGL w n) (hy : y ∈ GlobalTheory.LFun.KGL w n) (hp : y.val.charpoly = g.val.charpoly)
+    (hg : g ∈ GlobalTheory.LFun.KGL w (n := n)) (hy : y ∈ GlobalTheory.LFun.KGL w (n := n)) (hp : y.val.charpoly = g.val.charpoly)
     (hsep : ∀ Q : (Ov E w)[X], Q.map (Ov E w).subtype = g.val.charpoly → Q.Separable) :
-    ∃ k ∈ GlobalTheory.LFun.KGL w n, y = k⁻¹ * g * k := by
+    ∃ k ∈ GlobalTheory.LFun.KGL w (n := n), y = k⁻¹ * g * k := by
   obtain ⟨g₀, rfl⟩ := hg
   obtain ⟨y₀, rfl⟩ := hy
   have e : ∀ a : GL (Fin n) (Ov E w), (Formalism.UG.bc (n := Fin n) (Ov E w).subtype a).val = a.val.map (Ov E w).subtype := fun a => rfl

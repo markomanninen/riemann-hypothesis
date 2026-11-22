@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ValidForConstructedPointClassesEventuallyWorking
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
-import Formalism.LocalToGlobal.GroupLattices.AdmissibleAtGeneratorPlaces
-import Formalism.SharpRestriction.GlobalSchurBounds.LinkTied
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ValidForConstructedPointClassesEventuallyWorking
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+public import Formalism.LocalToGlobal.GroupLattices.AdmissibleAtGeneratorPlaces
+public import Formalism.SharpRestriction.GlobalSchurBounds.LinkTied
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,21 +43,6 @@ def H_tie (𝒜 : FamClass) : Prop :=
   Closed (W3 𝒜) fun Fm _ => Formalism.MainNotions.RealPlaceSecondLayerConditions Fm
 
 def Row_tie {Bd : BdT} (Q : V4.Slot) (Lk : LkT Bd) : Prop := Row Q Lk fun 𝒜 _ => H_tie 𝒜
-
-structure All (𝒜 : FamClass) : Prop where
-  aPt0 : ReferenceChainEvaluationAdmissible 𝒜
-  aPtTw : H_aPtTw 𝒜
-  aPer0 : H_aPer0 𝒜
-  aPerTw : H_aPerTw 𝒜
-  tie : H_tie 𝒜
-
-theorem row_all {Bd : BdT} {Q : V4.Slot} {Lk : LkT Bd}
-    (aPt0 : ReferenceChainEvaluationAtBundlePoints Q Lk) (aPtTw : TwistedPointAtBundlePoints Q Lk) (aPer0 : PeriodAtZeroAtBundlePoints Q Lk) (aPerTw : TwistedPeriodAtBundlePoints Q Lk) (tie : Row_tie Q Lk) :
-    Row Q Lk fun 𝒜 _ => All 𝒜 :=
-  Row.imp (Row.and aPt0 (Row.and aPtTw (Row.and aPer0 (Row.and aPerTw tie))))
-    fun _ _ _ ⟨a0, a1, a2, a3, a4⟩ => ⟨a0, a1, a2, a3, a4⟩
-
-example (𝒜 : FamClass) : H_aPerTw 𝒜 ↔ EvC (fun D O => Formalism.L2.G.Adm2InU.TwistedPeriodAdmissible D O.X O.ex.tw) 𝒜 := Iff.rfl
 
 end GlobalTheory.Fc.PeriodEntriesOverColumns
 

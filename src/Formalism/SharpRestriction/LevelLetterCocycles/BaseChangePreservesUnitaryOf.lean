@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.DualWByLettersExtended
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingBounds
+module
+
+public import Mathlib
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.DualWByLettersExtended
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem lkd_local (P : LocPrime l) (LL : FinExt l) : IsLocalRing ↥(OL LL) := b
   have ha' := lkd_pos P LL a ha
   have hb' := lkd_pos P LL b hb
   have h0 := zl_v_unit P LL hu.unit
-  rw [IsUnit.unit_spec, map_add] at h0
+  rw [IsUnit.unit_spec, (algebraMap ↥(OL LL) ↥LL.1).map_add a b] at h0
   have h1 := AddValuation.map_add (P.v LL) (algebraMap ↥(OL LL) ↥LL.1 a)
     (algebraMap ↥(OL LL) ↥LL.1 b)
   rw [h0] at h1
@@ -130,7 +134,7 @@ theorem liftb_res_nat (H : Subgroup G) {T T' : LocLat G Qp LL O} (F : LatHom T.L
 
 theorem liftb_res_inj (H : Subgroup G) (hH : H = ⊤) (T : LocLat G Qp LL O) :
     Function.Injective (Formalism.MainNotions.DeltaInvariantLattices.res H T) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro κ
   induction κ using Submodule.Quotient.induction_on with
   | H c =>
@@ -252,22 +256,6 @@ def liftb_hom (W : LocWach PD LL O v n) {T T' : LocLat G Qp LL O} (F : LatHom T.
   γ_comm := fun x => W.map_γ F W.gam x
   N_le := W.map_N F g.crys g'.crys
 
-def liftb_DDExact (W : LocWach PD LL O v n) {T₀ T₁ T₂ : LocLat G Qp LL O} (ι : LatHom T₀.L T₁.L)
-    (π : LatHom T₁.L T₂.L) : Prop :=
-  Function.Injective (W.map ι) ∧ ∀ x, W.map π x = 0 ↔ ∃ x₀, W.map ι x₀ = x
-
-def liftb_ses (W : LocWach PD LL O v n) {T₀ T₁ T₂ : LocLat G Qp LL O} (ι : LatHom T₀.L T₁.L)
-    (π : LatHom T₁.L T₂.L) (M : ℕ) (g₀ : liftb_Good W T₀ M) (g₁ : liftb_Good W T₁ M)
-    (g₂ : liftb_Good W T₂ M) (hE : liftb_DDExact W ι π)
-    (hsat : ∀ x : W.DD T₀, W.map ι x ∈ W.N T₁ → x ∈ W.N T₀) :
-    Formalism.CoboundaryTransfers.SES (liftb_wach (ℓ := ℓ) W T₀ M g₀) (liftb_wach (ℓ := ℓ) W T₁ M g₁)
-      (liftb_wach (ℓ := ℓ) W T₂ M g₂) where
-  ι := liftb_hom W ι M g₀ g₁
-  π := liftb_hom W π M g₁ g₂
-  ι_inj := hE.1
-  exact := hE.2
-  sat := hsat
-
 theorem liftb_neZero (W : LocWach PD LL O v n) : NeZero n :=
   ⟨by
     have := PD.finK₀
@@ -313,7 +301,8 @@ theorem liftb_good_of [NeZero n] (W : LocWach PD LL O v n) (T : LocLat G Qp LL O
     exact ⟨x', hx', h.symm⟩
   refine ⟨?_, hγN, ?_, hc⟩
   · intro x hx
-    rw [liftb_split W T x, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [liftb_split W T x, map_sum, Finset.smul_sum]
     refine Submodule.sum_mem _ (fun j _ => ?_)
     have h := h5.1 (j + 1) ((letE j : LetA O n) • x)
       (by rw [add_sub_cancel_right]; exact liftb_letE_mem W T j hx)
@@ -368,7 +357,8 @@ theorem liftb_kills_all [NeZero n] (W : LocWach PD LL O v n) {T₁ T₂ : LocLat
     exact ⟨x, liftb_Nl_le W T₁ i hx, hxe⟩
   choose x hx hxe using this
   refine ⟨∑ i, x i, Submodule.sum_mem _ (fun i _ => hx i), ?_⟩
-  rw [map_sum, Finset.sum_congr rfl (fun i _ => hxe i), ← Finset.smul_sum, ← liftb_split W T₂ y]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl (fun i _ => hxe i), ← Finset.smul_sum, ← liftb_split W T₂ y]
 
 theorem liftb_aeval_mem {R D : Type} [CommRing R] [AddCommGroup D] [Module R D] (N : Submodule R D)
     (f : D →ₗ[R] D) (h : ∀ x ∈ N, f x ∈ N) (P : Polynomial R) :
@@ -376,7 +366,7 @@ theorem liftb_aeval_mem {R D : Type} [CommRing R] [AddCommGroup D] [Module R D] 
   induction P using Polynomial.induction_on' with
   | add p q hp hq =>
     intro x hx
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact N.add_mem (hp x hx) (hq x hx)
   | monomial k a =>
     intro x hx
@@ -391,7 +381,7 @@ theorem liftb_aeval_res {D : Type} [AddCommGroup D] [Module O D] [Module ℤ_[�
     Polynomial.aeval (f.restrictScalars ℤ_[ℓ]) P y =
       Polynomial.aeval f (P.map (algebraMap ℤ_[ℓ] O)) y := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, Polynomial.map_add, LinearMap.add_apply, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), Polynomial.map_add (f := _), LinearMap.add_apply, hp, hq]
   | monomial k a =>
     rw [Polynomial.map_monomial, Polynomial.aeval_monomial, Polynomial.aeval_monomial,
       Module.End.mul_apply, Module.End.mul_apply, Module.algebraMap_end_apply,
@@ -483,158 +473,15 @@ theorem liftb_Qpow_bij (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (M : ℕ
     Function.Bijective (fun x : W.DD T => W.Q ^ M • x) :=
   liftb_unit_bij W T (W.Q ^ M) (by rw [map_pow]; exact (liftb_Q_unit W).pow M)
 
-theorem liftb_ratSurj (W : LocWach PD LL O v n) {T₀ T₁ T₂ : LocLat G Qp LL O}
-    (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L) (M : ℕ) (g₀ : liftb_Good W T₀ M)
-    (g₁ : liftb_Good W T₁ M) (g₂ : liftb_Good W T₂ M) (hE : liftb_DDExact W ι π)
-    (hsat : ∀ x : W.DD T₀, W.map ι x ∈ W.N T₁ → x ∈ W.N T₀) (e : ℕ)
-    (hses : IsSESLat (Qp := Qp) ι π) (hd : Formalism.MainNotions.DeltaInvariantLattices.p2d W ι π M)
-    (hCK : ∀ y ∈ W.N T₂, ∃ x ∈ W.N T₁, W.map π x = (PD.p ^ e : ℕ) • y) :
-    Formalism.CoboundaryTransfers.RatSurj (liftb_ses (ℓ := ℓ) W ι π M g₀ g₁ g₂ hE hsat) := by
-  intro y z hyz
-  obtain ⟨⟨hyQ, m, hm, hz⟩, hd1⟩ := hyz
-  have hyQ' : W.Q ^ M • y ∈ W.N T₂ := hyQ
-  have hz' : z = W.X • m := hz
-  have hm' : m ∈ W.N T₂ := hm
-  have hd1' : (W.γ T₂ y - y) - (W.φD T₂ z - z) = 0 := hd1
-  obtain ⟨n₁, hn₁, hπn₁⟩ := hCK _ hyQ'
-  obtain ⟨m₁, hm₁, hπm₁⟩ := hCK m hm'
-  obtain ⟨y₁, hy₁⟩ := (liftb_Qpow_bij W T₁ M).2 n₁
-  have hy₁' : W.Q ^ M • y₁ = n₁ := hy₁
-  have hπy₁ : W.map π y₁ = (PD.p ^ e : ℕ) • y := by
-    apply (liftb_Qpow_bij W T₂ M).1
-    change W.Q ^ M • W.map π y₁ = W.Q ^ M • ((PD.p ^ e : ℕ) • y)
-    rw [← liftb_map_smul, hy₁', hπn₁, smul_comm]
-  have hπz₁ : W.map π (W.X • m₁) = (PD.p ^ e : ℕ) • z := by
-    rw [liftb_map_smul, hπm₁, hz', smul_comm]
-  obtain ⟨w, hw, _, k, y₀, hy₀, z₀, hz₀, hk⟩ := hd hses ((PD.p ^ e : ℕ) • y) ((PD.p ^ e : ℕ) • z)
-    (by
-      change W.Q ^ M • ((PD.p ^ e : ℕ) • y) ∈ W.N T₂
-      rw [smul_comm]
-      exact (W.N T₂).smul_of_tower_mem _ hyQ')
-    ⟨(PD.p ^ e : ℕ) • m, (W.N T₂).smul_of_tower_mem _ hm', by
-      change W.X • ((PD.p ^ e : ℕ) • m) = _
-      rw [hz', smul_comm]⟩
-    (by
-      have h0 : (y, z) ∈ W.divisibleCocycles T₂ := (liftb_mem_Z1D W T₂ y z).2 hd1'
-      have := (W.divisibleCocycles T₂).smul_of_tower_mem (PD.p ^ e : ℕ) h0
-      exact this)
-    y₁ (W.X • m₁) (by change W.Q ^ M • y₁ ∈ W.N T₁; rw [hy₁']; exact hn₁) ⟨m₁, hm₁, rfl⟩ hπy₁ hπz₁
-  have hy₀' : W.Q ^ M • y₀ ∈ W.N T₀ := hy₀
-  obtain ⟨z₀', hz₀', hz₀e⟩ := hz₀
-  have hz₀e' : W.X • z₀' = z₀ := hz₀e
-  have hk' : (PD.p ^ k : ℕ) • w = (W.γ T₀ y₀ - y₀) - (W.φD T₀ z₀ - z₀) := by
-    rw [← hk, liftb_ns]
-  have hπι : ∀ x, W.map π (W.map ι x) = 0 := fun x => (hE.2 _).2 ⟨x, rfl⟩
-  refine ⟨k + e, (PD.p ^ k : ℕ) • y₁ - W.map ι y₀, (PD.p ^ k : ℕ) • (W.X • m₁) - W.map ι z₀,
-    ⟨⟨?_, ?_⟩, ?_⟩, 0, (W.N T₂).zero_mem, ?_, ?_⟩
-  · change W.Q ^ M • ((PD.p ^ k : ℕ) • y₁ - W.map ι y₀) ∈ W.N T₁
-    rw [smul_sub, smul_comm, hy₁', ← liftb_map_smul]
-    exact (W.N T₁).sub_mem ((W.N T₁).smul_of_tower_mem _ hn₁) (W.map_N ι g₀.crys g₁.crys _ hy₀')
-  · refine ⟨(PD.p ^ k : ℕ) • m₁ - W.map ι z₀', (W.N T₁).sub_mem ((W.N T₁).smul_of_tower_mem _ hm₁)
-      (W.map_N ι g₀.crys g₁.crys _ hz₀'), ?_⟩
-    change _ = W.X • ((PD.p ^ k : ℕ) • m₁ - W.map ι z₀')
-    rw [smul_sub, ← liftb_map_smul, hz₀e', smul_comm]
-  · change (W.γ T₁ ((PD.p ^ k : ℕ) • y₁ - W.map ι y₀) - ((PD.p ^ k : ℕ) • y₁ - W.map ι y₀)) -
-      (W.φD T₁ ((PD.p ^ k : ℕ) • (W.X • m₁) - W.map ι z₀) -
-        ((PD.p ^ k : ℕ) • (W.X • m₁) - W.map ι z₀)) = 0
-    have hγι : W.γ T₁ (W.map ι y₀) = W.map ι (W.γ T₀ y₀) := (W.map_γ ι W.gam y₀).symm
-    have hφι : W.φD T₁ (W.map ι z₀) = W.map ι (W.φD T₀ z₀) := (W.map_φ ι z₀).symm
-    have h1 : W.map ι ((PD.p ^ k : ℕ) • w) =
-        (W.map ι (W.γ T₀ y₀) - W.map ι y₀) - (W.map ι (W.φD T₀ z₀) - W.map ι z₀) := by
-      rw [hk', map_sub, map_sub, map_sub]
-    rw [map_nsmul, hw] at h1
-    rw [map_sub, map_sub, map_nsmul, map_nsmul, hγι, hφι]
-    have h3 : ((PD.p ^ k : ℕ) • W.γ T₁ y₁ - W.map ι (W.γ T₀ y₀) - ((PD.p ^ k : ℕ) • y₁ - W.map ι y₀)) -
-        ((PD.p ^ k : ℕ) • W.φD T₁ (W.X • m₁) - W.map ι (W.φD T₀ z₀) -
-          ((PD.p ^ k : ℕ) • (W.X • m₁) - W.map ι z₀)) =
-        (PD.p ^ k : ℕ) • ((W.γ T₁ y₁ - y₁) - (W.φD T₁ (W.X • m₁) - W.X • m₁)) -
-          ((W.map ι (W.γ T₀ y₀) - W.map ι y₀) - (W.map ι (W.φD T₀ z₀) - W.map ι z₀)) := by
-      rw [smul_sub, smul_sub, smul_sub]
-      abel
-    rw [h3, h1, sub_self]
-  · change W.map π ((PD.p ^ k : ℕ) • y₁ - W.map ι y₀) =
-      (((PD.p : ℕ) : ℤ_[ℓ]) ^ (k + e)) • y + (W.φD T₂ 0 - 0)
-    rw [map_sub, hπι, map_nsmul, hπy₁, liftb_ns, map_zero, pow_add, mul_smul]
-    simp
-  · change W.map π ((PD.p ^ k : ℕ) • (W.X • m₁) - W.map ι z₀) =
-      (((PD.p : ℕ) : ℤ_[ℓ]) ^ (k + e)) • z + (W.γ T₂ 0 - 0)
-    rw [map_sub, hπι, map_nsmul, hπz₁, liftb_ns, map_zero, pow_add, mul_smul]
-    simp
-
 def liftb_Complete (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) : Prop :=
   ∃ I : Ideal (LetA O n), W.Q ∈ I ∧ (∀ a ∈ I, W.φA a ∈ I) ∧ IsAdicComplete I ↥(W.N T)
 
 def liftb_RegXQ (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) : Prop :=
   ∀ x ∈ W.N T, (∃ m ∈ W.N T, W.Q • x = W.X • m) → ∃ m ∈ W.N T, x = W.X • m
 
-theorem liftb_lifts (W : LocWach PD LL O v n) (hp : PD.p = ℓ) (u : ℤ_[ℓ]ˣ)
-    (hu : algebraMap ℤ_[ℓ] O (u : ℤ_[ℓ]) = ((W.χΓ W.gam : Oˣ) : O))
-    (hv : PadicInt.valuation ((u : ℤ_[ℓ]) - 1) = W.s)
-    {T₀ T₁ T₂ : LocLat G Qp LL O} (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L) (M : ℕ)
-    (g₀ : liftb_Good W T₀ M) (g₁ : liftb_Good W T₁ M) (g₂ : liftb_Good W T₂ M)
-    (hE : liftb_DDExact W ι π) (hsat : ∀ x : W.DD T₀, W.map ι x ∈ W.N T₁ → x ∈ W.N T₀) (e : ℕ)
-    (jumps : Finset ℤ)
-    (hQ : ∃ w : LetA O n, W.γA W.gam W.Q = w * W.Q ∧ w - 1 ∈ Ideal.span {W.X})
-    (hses : IsSESLat (Qp := Qp) ι π) (hd : Formalism.MainNotions.DeltaInvariantLattices.p2d W ι π M)
-    (hCK : ∀ y ∈ W.N T₂, ∃ x ∈ W.N T₁, W.map π x = (PD.p ^ e : ℕ) • y)
-    (hj : ∀ a ∈ Formalism.MainNotions.DeltaInvariantLattices.Jumps (PD := PD) T₀, a ∈ jumps)
-    (hss : 1 ≤ M → Formalism.MainNotions.DeltaInvariantLattices.SSEig W T₀ (Formalism.MainNotions.DeltaInvariantLattices.invN W T₀ (W.Q ^ M)) (W.N T₀)
-      {c | ∃ a ∈ Formalism.MainNotions.DeltaInvariantLattices.Jumps (PD := PD) T₀, ∃ j : ℕ, 1 ≤ j ∧ j ≤ M ∧
-        c = (Formalism.MainNotions.DeltaInvariantLattices.uU W) ^ (-(a + j))})
-    (hC : liftb_Complete W T₀) (hR : liftb_RegXQ W T₀) (h6 : Formalism.MainNotions.DeltaInvariantLattices.wachSaturated W T₀) :
-    ∀ y z : W.DD T₂, W.Q ^ M • y ∈ W.N T₂ → (∃ m ∈ W.N T₂, z = W.X • m) → (y, z) ∈ W.divisibleCocycles T₂ →
-      ∃ y₁ z₁ : W.DD T₁, W.Q ^ M • y₁ ∈ W.N T₁ ∧ (∃ m ∈ W.N T₁, z₁ = W.X • m) ∧
-        (y₁, z₁) ∈ W.divisibleCocycles T₁ ∧
-        W.map π y₁ = (PD.p ^ (e + Formalism.LIFT.eU PD.p M W.s (JSet jumps M)) : ℕ) • y ∧
-        W.map π z₁ = (PD.p ^ (e + Formalism.LIFT.eU PD.p M W.s (JSet jumps M)) : ℕ) • z := by
-  subst hp
-  obtain ⟨I, hQI, hφI, hI⟩ := hC
-  have : IsAdicComplete I ↥(liftb_wach (ℓ := PD.p) W T₀ M g₀).N := hI
-  have hγX : (liftb_base (ℓ := PD.p) W).GammaX (u : ℤ_[PD.p]) := by
-    obtain ⟨t, ht⟩ := liftb_gammaX W
-    refine ⟨t, ?_⟩
-    rw [IsScalarTower.algebraMap_apply ℤ_[PD.p] O (LetA O n), hu]
-    exact ht
-  have hγQ : (liftb_base (ℓ := PD.p) W).GammaQ := by
-    obtain ⟨w, hw, hw1⟩ := hQ
-    obtain ⟨t, ht⟩ := Ideal.mem_span_singleton'.1 hw1
-    have hwt : w = 1 + W.X * t := by rw [mul_comm, ht]; ring
-    exact ⟨w, by rw [hwt]; exact liftb_one_add_X_unit W t, ⟨t, hwt⟩, hw⟩
-  have h1 := Formalism.RepresentationBoundsCohomology.N2.phi_map_surjective ℤ_[PD.p] (LetA O n) (liftb_base (ℓ := PD.p) W) M (W.DD T₀)
-    (liftb_wach (ℓ := PD.p) W T₀ M g₀) I 1 (M + 1)
-    ⟨1, by rw [pow_one, mul_one]; exact W.φA_X⟩ (by omega) hQI hφI
-  have hRX := Formalism.RepresentationBoundsCohomology.N2.regulator_bound_for_x PD.p (LetA O n) (liftb_base (ℓ := PD.p) W) M (W.DD T₀)
-    (liftb_wach (ℓ := PD.p) W T₀ M g₀) hR
-  have hRL : ∀ y, (liftb_wach (ℓ := PD.p) W T₀ M g₀).QInv y →
-      ((PD.p : ℕ) : ℤ_[PD.p]) • y ∈ (liftb_wach (ℓ := PD.p) W T₀ M g₀).N →
-      y ∈ (liftb_wach (ℓ := PD.p) W T₀ M g₀).N := by
-    intro y _ hy
-    refine h6 y ⟨1, ?_⟩
-    rw [pow_one, Nat.cast_smul_eq_nsmul]
-    rw [Nat.cast_smul_eq_nsmul] at hy
-    exact hy
-  have hL := Formalism.CoboundaryTransfers.wachLatticeUnramified_statement PD.p (LetA O n) (liftb_base (ℓ := PD.p) W) M u rfl W.φA_X hγX hγQ
-    (W.DD T₀) (W.DD T₁) (W.DD T₂) _ _ _ (liftb_ses (ℓ := PD.p) W ι π M g₀ g₁ g₂ hE hsat) e W.s
-    (JSet jumps M) W.s_pos W.s_two hv (liftb_zero_notMem_JSet jumps M) h1 hRX
-    (liftb_semi W T₀ M g₀ u hu jumps hj hss) hRL
-    (by
-      intro y hy
-      obtain ⟨x, hx, hxe⟩ := hCK y hy
-      exact ⟨x, hx, by rw [liftb_ns]; exact hxe⟩)
-    (liftb_ratSurj W ι π M g₀ g₁ g₂ hE hsat e hses hd hCK)
-  intro y z hy hz hyz
-  obtain ⟨y₁, z₁, ⟨⟨hy₁, hz₁⟩, hd₁⟩, e1, e2⟩ := hL y z ⟨⟨hy, hz⟩, (liftb_mem_Z1D W T₂ y z).1 hyz⟩
-  refine ⟨y₁, z₁, hy₁, hz₁, (liftb_mem_Z1D W T₁ y₁ z₁).2 hd₁, ?_, ?_⟩
-  · rw [← liftb_ns (R := ℤ_[PD.p])]; exact e1
-  · rw [← liftb_ns (R := ℤ_[PD.p])]; exact e2
-
 def liftb_HKer (W : LocWach PD LL O v n) : Prop :=
   ∀ (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L), Sur W F →
     ∃ (T₀ : LocLat G Qp LL O) (ι : LatHom T₀.L T₁.L), IsSESLat (Qp := Qp) ι F ∧ IsCrys PD T₀.ρ
-
-def liftb_HExact (W : LocWach PD LL O v n) : Prop :=
-  ∀ (T₀ T₁ T₂ : LocLat G Qp LL O) (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L),
-    IsSESLat (Qp := Qp) ι π → liftb_DDExact W ι π
 
 def liftb_HStr (W : LocWach PD LL O v n) : Prop :=
   ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → liftb_Complete W T ∧ liftb_RegXQ W T
@@ -682,82 +529,6 @@ theorem liftb_mem_jumpSet [NeZero n] (W : LocWach PD LL O v n) (T : LocLat G Qp 
   · have : ((hi i : ℕ) : ℤ) ≤ (Mmax n hi : ℤ) := by exact_mod_cast liftb_le_Mmax hi i
     linarith [h.2]
 
-theorem coreLiftB_of (W : LocWach PD LL O v n) (hp : PD.p = ℓ) (u : ℤ_[ℓ]ˣ)
-    (hu : algebraMap ℤ_[ℓ] O (u : ℤ_[ℓ]) = ((W.χΓ W.gam : Oˣ) : O))
-    (hv : PadicInt.valuation ((u : ℤ_[ℓ]) - 1) = W.s)
-    (Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop)
-    (h2 : Formalism.MainNotions.DeltaInvariantLattices.P2W W) (h5 : Formalism.MainNotions.DeltaInvariantLattices.P5W W) (h6 : Formalism.MainNotions.DeltaInvariantLattices.WachSaturationExactness W)
-    (hcons : Formalism.MainNotions.DeltaInvariantLattices.GammaSemisimpleQuotient W) (h2b : Formalism.MainNotions.DeltaInvariantLattices.HerrComplexSecondProperty W) (h2c : Formalism.MainNotions.DeltaInvariantLattices.HerrComplexThirdProperty W)
-    (h2d : Formalism.MainNotions.DeltaInvariantLattices.HerrComplexFourthProperty W) (hExtC : coreExt W) (hNat : W.ClNat)
-    (hJmp : Formalism.MainNotions.CrystallineLiftingBounds.coreJumps PD LL O) (hWB : coreWB W)
-    (hKer : liftb_HKer W) (hExact : liftb_HExact W) (hStr : liftb_HStr W) (hExt : liftb_HExt W)
-    (hOne : liftb_HOne W) : coreLiftB W := by
-  have := liftb_neZero W
-  intro hB T₁ T₂ F Mi hi hS hJ1
-  obtain ⟨c1, c2, hOnto⟩ := hS
-  obtain ⟨T₀, ι, hses, c0⟩ := hKer T₁ T₂ F ⟨c1, c2, hOnto⟩
-  have hJ := hJmp T₀ T₁ T₂ ι F hses c0 c1 c2
-  have hJ0 : JumpsLet W T₀ Mi hi := fun i τ hτ a ha => hJ1 i τ hτ a ((hJ τ a).2 (Or.inl ha))
-  have hJ2 : JumpsLet W T₂ Mi hi := fun i τ hτ a ha => hJ1 i τ hτ a ((hJ τ a).2 (Or.inr ha))
-  have hc0 := h2c T₀ Mi hi c0 (liftb_jl W T₀ Mi hi hJ0)
-  have hc1 := h2c T₁ Mi hi c1 (liftb_jl W T₁ Mi hi hJ1)
-  have hd := h2d T₀ T₁ T₂ ι F Mi hi c0 c1 c2 (liftb_jl W T₁ Mi hi hJ1)
-  rw [liftb_mx_eq] at hc0 hc1 hd
-  have hQ := hc0.1
-  have g₀ := liftb_good_of W T₀ c0 Mi hi (h2 T₀ c0) (h5 T₀ Mi hi c0 (liftb_jl W T₀ Mi hi hJ0)) hQ
-  have g₁ := liftb_good_of W T₁ c1 Mi hi (h2 T₁ c1) (h5 T₁ Mi hi c1 (liftb_jl W T₁ Mi hi hJ1)) hQ
-  have g₂ := liftb_good_of W T₂ c2 Mi hi (h2 T₂ c2) (h5 T₂ Mi hi c2 (liftb_jl W T₂ Mi hi hJ2)) hQ
-  have hE := hExact T₀ T₁ T₂ ι F hses
-  have hsat := (h6.2.2 T₀ T₁ T₂ ι F c0 c1 c2 hses).2.2.2.1
-  have hCK : ∀ y ∈ W.N T₂, ∃ x ∈ W.N T₁,
-      W.map F x = (PD.p ^ (eWB PD.p W.s (Hmax n Mi hi)) : ℕ) • y := by
-    intro y hy
-    obtain ⟨x, hx, hxe⟩ := liftb_kills_all W F _ (hWB hB T₁ T₂ F Mi hi ⟨c1, c2, hOnto⟩ hJ1) y hy
-    exact ⟨x, hx, by rw [hxe, lp, liftb_ns]⟩
-  have hL := liftb_lifts W hp u hu hv ι F (Mmax n Mi) g₀ g₁ g₂ hE hsat
-    (eWB PD.p W.s (Hmax n Mi hi)) (jumpSet W T₁ (Mmax n Mi) (Mmax n hi)) hQ hses hd hCK
-    (by
-      rintro a ⟨τ, ha⟩
-      exact liftb_mem_jumpSet W T₁ Mi hi hJ1 a τ ((hJ τ a).2 (Or.inl ha)))
-    (fun hM => (hcons T₀ c0) _ hM) (hStr T₀ c0).1 (hStr T₀ c0).2 (h6.1 T₀ c0)
-  apply liftb_LiftF_of PD F
-  intro κ hκ
-  obtain ⟨c, hc, hcf, rfl⟩ := (liftb_mem_H1fT PD T₂ κ).1 hκ
-  obtain ⟨Tp, ι', π', cp, hext⟩ := hExt T₂ c c2 hcf
-  obtain ⟨cone, hone0, e, he, hspan, hφe, hγe⟩ := hOne
-  have hJp' := hJmp T₂ Tp W.one ι' π' hext.1 c2 cp cone
-  have hJp : JumpsLet W Tp Mi hi := by
-    intro i τ hτ a ha
-    rcases (hJp' τ a).1 ha with h | h
-    · exact hJ2 i τ hτ a h
-    · rw [hone0 τ a h]
-      exact ⟨by simp, by simp⟩
-  have hImg : InImgA W π' (eWB PD.p W.s (Hmax n Mi hi)) := by
-    obtain ⟨x, hx, hxe⟩ := liftb_kills_all W π' _
-      (hWB hB Tp W.one π' Mi hi ⟨cp, cone, hext.1.2.2.1⟩ hJp) e he
-    exact ⟨e, he, hspan, hφe, hγe, x, hx, by rw [hxe, lp, liftb_ns, liftb_ns]⟩
-  obtain ⟨y, z, h, hy, hz, hcl⟩ := hExtC T₂ Tp ι' π' Mi hi c2 cp hJ2 c hc hext _ hImg
-  obtain ⟨y₁, z₁, hy₁, ⟨m₁, hm₁, hz₁⟩, h₁, e1, e2⟩ := hL y z hy hz h
-  have hf₁ := (hc1.2 y₁ z₁ hy₁ ⟨m₁, hm₁, hz₁.symm⟩ h₁).1
-  obtain ⟨κ₁, hκ₁⟩ := liftb_res_surj W.GKs hB.1 T₁ (W.cl T₁ ⟨(y₁, z₁), h₁⟩)
-  refine ⟨κ₁, (h2b T₁ c1 κ₁).2 (by rw [hκ₁]; exact hf₁), ?_⟩
-  apply liftb_res_inj W.GKs hB.1 T₂
-  rw [← liftb_res_nat, hκ₁]
-  have hN := hNat F ⟨(y₁, z₁), h₁⟩
-    ((PD.p ^ (eWB PD.p W.s (Hmax n Mi hi) + Formalism.LIFT.eU PD.p (Mmax n Mi) W.s
-      (JSet (jumpSet W T₁ (Mmax n Mi) (Mmax n hi)) (Mmax n Mi))) : ℕ) •
-        (⟨(y, z), h⟩ : ↥(W.divisibleCocycles T₂)))
-    (by
-      rw [e1, e2]
-      rfl)
-  refine Eq.trans hN ?_
-  refine Eq.trans (map_nsmul (W.cl T₂) _ _) ?_
-  refine Eq.trans (congrArg _ hcl) ?_
-  rw [map_smul, ← liftb_ns (R := O), smul_smul, ← pow_add]
-  congr 2
-  simp only [ePB]
-  ring
-
 end LiftBLocal
 
 end Formalism.MainNotions.LiftingTheory
@@ -798,7 +569,8 @@ theorem lifta_Del_inv (W : LocWach PD LL O v n) {a : W.Gam} (ha : a ∈ W.DelF) 
 theorem lifta_avg_inv (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (d : O) (x : W.DD T) :
     ∀ δ ∈ W.DelF, W.γD T δ (lifta_avg W T d x) = lifta_avg W T d x := by
   intro δ hδ
-  rw [lifta_avg_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lifta_avg_apply, map_smul, map_sum]
   congr 1
   refine Finset.sum_bij' (fun a _ => δ * a) (fun a _ => δ⁻¹ * a) ?_ ?_ ?_ ?_ ?_
   · intro a ha; exact lifta_Del_mul W hδ ha
@@ -821,20 +593,23 @@ theorem lifta_avg_N (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (d : O) (x 
 
 theorem lifta_avg_φ (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (d : O) (x : W.DD T) :
     lifta_avg W T d (W.φD T x) = W.φD T (lifta_avg W T d x) := by
-  rw [lifta_avg_apply, lifta_avg_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lifta_avg_apply, lifta_avg_apply, map_smul, map_sum]
   congr 1
   exact Finset.sum_congr rfl (fun δ _ => (W.φγ_comm T δ x).symm)
 
 theorem lifta_avg_γ (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (d : O) (g : W.Gam)
     (x : W.DD T) : lifta_avg W T d (W.γD T g x) = W.γD T g (lifta_avg W T d x) := by
-  rw [lifta_avg_apply, lifta_avg_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lifta_avg_apply, lifta_avg_apply, map_smul, map_sum]
   congr 1
   refine Finset.sum_congr rfl (fun δ _ => ?_)
   rw [← W.γD_mul, ← W.γD_mul, mul_comm]
 
 theorem lifta_avg_map (W : LocWach PD LL O v n) {T T' : LocLat G Qp LL O} (F : LatHom T.L T'.L)
     (d : O) (x : W.DD T) : W.map F (lifta_avg W T d x) = lifta_avg W T' d (W.map F x) := by
-  rw [lifta_avg_apply, lifta_avg_apply, ← algebraMap_smul W.EE d (∑ δ ∈ W.DelF, W.γD T δ x), map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lifta_avg_apply, lifta_avg_apply, ← algebraMap_smul W.EE d (∑ δ ∈ W.DelF, W.γD T δ x), map_smul,
     algebraMap_smul, map_sum]
   congr 1
   exact Finset.sum_congr rfl (fun δ _ => W.map_γ F δ x)
@@ -885,7 +660,7 @@ theorem lifta_interA (W : LocWach PD LL O v n) (h9 : P9π₀ W) (a : LetA O n) (
       rw [this, map_mul, PowerSeries.constantCoeff_X, zero_mul]
     have e3 : PowerSeries.constantCoeff (f i) = 0 := by
       have := congrArg PowerSeries.constantCoeff e1
-      rw [e2, map_add, map_mul, h0 i, zero_mul, zero_add, PowerSeries.constantCoeff_C] at this
+      rw [e2, map_add (f := _), map_mul, h0 i, zero_mul, zero_add, PowerSeries.constantCoeff_C] at this
       exact this.symm
     rw [e3, map_zero, add_zero] at e1
     exact e1
@@ -1045,8 +820,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
     {ℓ : ℕ} [Fact ℓ.Prime] [Algebra ℤ_[ℓ] O]
 
-open Polynomial Formalism.CoboundaryTransfers in
 
+open Polynomial Formalism.CoboundaryTransfers in
 theorem lifta_core (ℓ : ℕ) [Fact ℓ.Prime] (hℓ : ℓ ≠ 2) (A : Type) [CommRing A] [Algebra ℤ_[ℓ] A]
     (B : Base ℤ_[ℓ] A) (M : ℕ) (u : ℤ_[ℓ]ˣ) (jumps : Finset ℤ) (c : ℤ → ℤ_[ℓ])
     (hp : B.p = ℓ) (hPhi : B.PhiX (ℓ - 1)) (hγX : B.GammaX ((u : ℤ_[ℓ]) ^ (ℓ - 1)))
@@ -1068,8 +843,9 @@ theorem lifta_core (ℓ : ℕ) [Fact ℓ.Prime] (hℓ : ℓ ≠ 2) (A : Type) [C
   have hu₁c : (u₁ : ℤ_[ℓ]) = (u : ℤ_[ℓ]) ^ (ℓ - 1) := by rw [hu₁, Units.val_pow_eq_pow_val]
   have hγX₁ : B.GammaX (u₁ : ℤ_[ℓ]) := by rw [hu₁c]; exact hγX
   have hv₁ : PadicInt.valuation ((u₁ : ℤ_[ℓ]) - 1) = 1 := by
+    have hndvd : ¬ ℓ ∣ ℓ - 1 := Nat.not_dvd_of_pos_of_lt (by omega) (by omega)
     rw [hu₁c, Formalism.ResultantValuation.powSubOneValuation ℓ hℓ (u : ℤ_[ℓ]) hv (ℓ - 1) (by omega),
-      padicValNat.eq_zero_of_not_dvd (Nat.not_dvd_of_pos_of_lt (by omega) (by omega))]
+      Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd hndvd]
   set a := M / (ℓ - 1) with ha
   have hMa : M + 1 ≤ (ℓ - 1) * (a + 1) := Nat.lt_mul_div_succ M (by omega)
   have h1 := Formalism.RepresentationBoundsCohomology.N2.phi_map_surjective ℤ_[ℓ] A B M D₀ W₀ I (ℓ - 1) (a + 1) hPhi hMa hQI hφI
@@ -1128,7 +904,7 @@ theorem lifta_core (ℓ : ℕ) [Fact ℓ.Prime] (hℓ : ℓ ≠ 2) (A : Type) [C
   have hfac : a + padicValNat ℓ a.factorial ≤
       Formalism.RepresentationBoundsCohomology.N2.aStar ℓ M + padicValNat ℓ (Formalism.RepresentationBoundsCohomology.N2.aStar ℓ M).factorial := by
     have : padicValNat ℓ (a + 1).factorial = padicValNat ℓ (a + 1) + padicValNat ℓ a.factorial := by
-      rw [Nat.factorial_succ, padicValNat.mul (Nat.succ_ne_zero a) (Nat.factorial_ne_zero _)]
+      rw [Nat.factorial_succ, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.succ_ne_zero a) (Nat.factorial_ne_zero _)]
     simp only [Formalism.RepresentationBoundsCohomology.N2.aStar, ← ha]
     omega
   refine Formalism.RepresentationBoundsCohomology.N2.lifts_of_dvd S ?_ hL0
@@ -1216,7 +992,7 @@ theorem lifta_ring_of (W : LocWach PD LL O v n) (h9 : P9π₀ W) : lifta_Ring W 
     rw [this]
     exact W.AΔ.sub_mem (lifta_γΔ W _ _ hπΔ) hπΔ
   · have h1 : W.γA W.gam (qp W) = W.γA W.gam W.π₀ + ((PD.p : ℕ) : LetA O n) := by
-      rw [qp, map_add, map_natCast]
+      rw [qp, map_add (f := _), map_natCast]
     have h2 : W.γA W.gam W.π₀ = W.π₀ + (wγ : LetA O n) * W.π₀ * qp W := by rw [← hwγ]; ring
     rw [h1, h2]
     simp only [qp]
@@ -1286,18 +1062,6 @@ def lifta_hom (W : LocWach PD LL O v n) (R : lifta_Ring W) {T T' : LocLat G Qp L
   N_le := fun x hx => ⟨W.map_N F g.crys g'.crys x hx.1, fun δ hδ => by
     change W.γD T' δ (W.map F x) = W.map F x
     rw [← W.map_γ, hx.2 δ hδ]⟩
-
-def lifta_ses (W : LocWach PD LL O v n) (R : lifta_Ring W) {T₀ T₁ T₂ : LocLat G Qp LL O}
-    (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L) (M : ℕ) (g₀ : lifta_Good W T₀ M)
-    (g₁ : lifta_Good W T₁ M) (g₂ : lifta_Good W T₂ M) (hE : liftb_DDExact W ι π)
-    (hsat : ∀ x : W.DD T₀, W.map ι x ∈ W.N T₁ → x ∈ W.N T₀) :
-    Formalism.CoboundaryTransfers.SES (lifta_wach (ℓ := ℓ) W R T₀ M g₀) (lifta_wach (ℓ := ℓ) W R T₁ M g₁)
-      (lifta_wach (ℓ := ℓ) W R T₂ M g₂) where
-  ι := lifta_hom W R ι M g₀ g₁
-  π := lifta_hom W R π M g₁ g₂
-  ι_inj := hE.1
-  exact := hE.2
-  sat := fun x hx => ⟨hsat x hx.1, fun δ hδ => hE.1 (by rw [W.map_γ]; exact hx.2 δ hδ)⟩
 
 theorem lifta_qpow_bij (W : LocWach PD LL O v n) (R : lifta_Ring W) (T : LocLat G Qp LL O) (M : ℕ) :
     Function.Bijective (fun x : W.DD T => qp W ^ M • x) :=
@@ -1392,10 +1156,6 @@ theorem lifta_good_of (W : LocWach PD LL O v n) (R : lifta_Ring W) (hs : W.s = 1
     rw [e3, add_smul, one_smul, mul_smul, smul_add]
     abel
 
-theorem lifta_map_NΔ (W : LocWach PD LL O v n) {T T' : LocLat G Qp LL O} (F : LatHom T.L T'.L)
-    (hT : IsCrys PD T.ρ) (hT' : IsCrys PD T'.ρ) (x : W.DD T) (hx : x ∈ W.NΔ T) : W.map F x ∈ W.NΔ T' :=
-  ⟨W.map_N F hT hT' x hx.1, fun δ hδ => by rw [← W.map_γ, hx.2 δ hδ]⟩
-
 theorem lifta_π₀_X (W : LocWach PD LL O v n) (R : lifta_Ring W) (hs : W.s = 1)
     (T : LocLat G Qp LL O) (m : W.DD T) (hm : m ∈ W.N T) : ∃ m' ∈ W.N T, W.X • m' = W.π₀ • m := by
   obtain ⟨wπ, hwπ⟩ := R.ππ
@@ -1420,116 +1180,6 @@ theorem lifta_avg_πN (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (d : O) (
   choose y hy hyy using h
   refine ⟨d • ∑ δ ∈ W.DelF, y δ, (W.N T).smul_of_tower_mem d (Submodule.sum_mem _ (fun δ _ => hy δ)), ?_⟩
   rw [lifta_avg_apply, Finset.sum_congr rfl (fun δ _ => hyy δ), ← Finset.smul_sum, smul_comm]
-
-theorem lifta_ratSurj (W : LocWach PD LL O v n) (R : lifta_Ring W) (hs : W.s = 1)
-    {T₀ T₁ T₂ : LocLat G Qp LL O}
-    (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L) (M : ℕ) (g₀ : lifta_Good W T₀ M)
-    (g₁ : lifta_Good W T₁ M) (g₂ : lifta_Good W T₂ M) (hE : liftb_DDExact W ι π)
-    (hsat : ∀ x : W.DD T₀, W.map ι x ∈ W.N T₁ → x ∈ W.N T₀) (e : ℕ)
-    (hses : IsSESLat (Qp := Qp) ι π) (hd : Formalism.MainNotions.DeltaInvariantLattices.p2d W ι π M)
-    (d : O) (hd1 : d * (W.DelF.card : O) = 1) (h9 : P9π₀ W)
-    (hm0 : Formalism.MainNotions.DeltaInvariantLattices.wachModuleOverLetters W T₀ W.π₀)
-    (hCK : ∀ y ∈ W.NΔ T₂, ∃ x ∈ W.NΔ T₁, W.map π x = (PD.p ^ e : ℕ) • y) :
-    Formalism.CoboundaryTransfers.RatSurj (lifta_ses (ℓ := ℓ) W R ι π M g₀ g₁ g₂ hE hsat) := by
-  intro y z hyz
-  obtain ⟨⟨hyQ, m, hm, hz⟩, hd1'⟩ := hyz
-  have hyQ' : qp W ^ M • y ∈ W.NΔ T₂ := hyQ
-  have hz' : z = W.π₀ • m := hz
-  have hm' : m ∈ W.NΔ T₂ := hm
-  have hcoc : (W.γ T₂ y - y) - (W.φD T₂ z - z) = 0 := hd1'
-  obtain ⟨n₁, hn₁, hπn₁⟩ := hCK _ hyQ'
-  obtain ⟨m₁, hm₁, hπm₁⟩ := hCK m hm'
-  obtain ⟨y₁, hy₁⟩ := (lifta_qpow_bij W R T₁ M).2 n₁
-  have hy₁' : qp W ^ M • y₁ = n₁ := hy₁
-  have hy₁Δ : ∀ δ ∈ W.DelF, W.γD T₁ δ y₁ = y₁ :=
-    lifta_inv_of_q W R T₁ M y₁ (by rw [hy₁']; exact hn₁.2)
-  have hz₁Δ : ∀ δ ∈ W.DelF, W.γD T₁ δ (W.π₀ • m₁) = W.π₀ • m₁ :=
-    (invariant_smul_mem_invariants' W T₁ W.π₀ R.πΔ m₁ hm₁).2
-  have hπy₁ : W.map π y₁ = (PD.p ^ e : ℕ) • y := by
-    apply (lifta_qpow_bij W R T₂ M).1
-    change qp W ^ M • W.map π y₁ = qp W ^ M • ((PD.p ^ e : ℕ) • y)
-    rw [← liftb_map_smul, hy₁', hπn₁, smul_comm]
-  have hπz₁ : W.map π (W.π₀ • m₁) = (PD.p ^ e : ℕ) • z := by
-    rw [liftb_map_smul, hπm₁, hz', smul_comm]
-  obtain ⟨mX, hmX, hmXe⟩ := lifta_π₀_X W R hs T₂ m hm'.1
-  obtain ⟨m₁X, hm₁X, hm₁Xe⟩ := lifta_π₀_X W R hs T₁ m₁ hm₁.1
-  obtain ⟨w, hw, _, k, y₀, hy₀, z₀, hz₀, hk⟩ := hd hses ((PD.p ^ e : ℕ) • y) ((PD.p ^ e : ℕ) • z)
-    (by
-      change W.Q ^ M • ((PD.p ^ e : ℕ) • y) ∈ W.N T₂
-      rw [smul_comm]
-      exact (W.N T₂).smul_of_tower_mem _ ((lifta_Qq W R hs T₂ M y).2 hyQ'.1))
-    ⟨(PD.p ^ e : ℕ) • mX, (W.N T₂).smul_of_tower_mem _ hmX, by
-      change W.X • ((PD.p ^ e : ℕ) • mX) = _
-      rw [smul_comm, hmXe, hz']⟩
-    (by
-      have h0 : (y, z) ∈ W.divisibleCocycles T₂ := (liftb_mem_Z1D W T₂ y z).2 hcoc
-      exact (W.divisibleCocycles T₂).smul_of_tower_mem (PD.p ^ e : ℕ) h0)
-    y₁ (W.π₀ • m₁)
-    (by
-      change W.Q ^ M • y₁ ∈ W.N T₁
-      exact (lifta_Qq W R hs T₁ M y₁).2 (by rw [hy₁']; exact hn₁.1))
-    ⟨m₁X, hm₁X, hm₁Xe⟩ hπy₁ hπz₁
-  have hy₀' : qp W ^ M • y₀ ∈ W.N T₀ := (lifta_Qq W R hs T₀ M y₀).1 hy₀
-  obtain ⟨z₀', hz₀', hz₀e⟩ := hz₀
-  have hz₀e' : z₀ = (letπ : LetA O n) • z₀' := by rw [← lifta_X_eq W hs]; exact hz₀e.symm
-  have hk' : (PD.p ^ k : ℕ) • w = (W.γ T₀ y₀ - y₀) - (W.φD T₀ z₀ - z₀) := by
-    rw [← hk, liftb_ns]
-
-  set Y₀ := lifta_avg W T₀ d y₀ with hY₀
-  set Z₀ := lifta_avg W T₀ d z₀ with hZ₀
-  have hQY₀ : qp W ^ M • Y₀ ∈ W.NΔ T₀ := by
-    rw [hY₀, ← lifta_avg_smul W T₀ d _ (W.AΔ.pow_mem (lifta_qΔ W R.πΔ) M)]
-    exact lifta_avg_N W T₀ d _ hy₀'
-  have hZ₀N : Z₀ ∈ W.NΔ T₀ :=
-    lifta_avg_N W T₀ d _ (by rw [hz₀e']; exact (W.N T₀).smul_mem _ hz₀')
-  obtain ⟨x', hx', hx'e⟩ := lifta_interN W T₀ h9 hm0 Z₀ hZ₀N
-    (lifta_avg_πN W T₀ d z₀ ⟨z₀', hz₀', hz₀e'⟩)
-  have havg : (PD.p ^ k : ℕ) • lifta_avg W T₀ d w = (W.γ T₀ Y₀ - Y₀) - (W.φD T₀ Z₀ - Z₀) := by
-    rw [← map_nsmul, hk', map_sub, map_sub, map_sub, lifta_avg_φ]
-    have : lifta_avg W T₀ d (W.γ T₀ y₀) = W.γ T₀ (lifta_avg W T₀ d y₀) := lifta_avg_γ W T₀ d W.gam y₀
-    rw [this]
-  have hιavg : W.map ι (lifta_avg W T₀ d w) =
-      (W.γ T₁ y₁ - y₁) - (W.φD T₁ (W.π₀ • m₁) - W.π₀ • m₁) := by
-    rw [lifta_avg_map, hw, map_sub, map_sub, map_sub, lifta_avg_φ]
-    have h1 : lifta_avg W T₁ d (W.γ T₁ y₁) = W.γ T₁ (lifta_avg W T₁ d y₁) :=
-      lifta_avg_γ W T₁ d W.gam y₁
-    rw [h1, lifta_avg_fix W T₁ d hd1 y₁ hy₁Δ, lifta_avg_fix W T₁ d hd1 _ hz₁Δ]
-  have hπι : ∀ x, W.map π (W.map ι x) = 0 := fun x => (hE.2 _).2 ⟨x, rfl⟩
-  refine ⟨k + e, (PD.p ^ k : ℕ) • y₁ - W.map ι Y₀, (PD.p ^ k : ℕ) • (W.π₀ • m₁) - W.map ι Z₀,
-    ⟨⟨?_, ?_⟩, ?_⟩, 0, (W.NΔ T₂).zero_mem, ?_, ?_⟩
-  · change qp W ^ M • ((PD.p ^ k : ℕ) • y₁ - W.map ι Y₀) ∈ W.NΔ T₁
-    rw [smul_sub, smul_comm, hy₁', ← liftb_map_smul]
-    exact (W.NΔ T₁).sub_mem ((W.NΔ T₁).smul_of_tower_mem _ hn₁) (lifta_map_NΔ W ι g₀.crys g₁.crys _ hQY₀)
-  · refine ⟨(PD.p ^ k : ℕ) • m₁ - W.map ι x', (W.NΔ T₁).sub_mem ((W.NΔ T₁).smul_of_tower_mem _ hm₁)
-      (lifta_map_NΔ W ι g₀.crys g₁.crys _ hx'), ?_⟩
-    change _ = W.π₀ • ((PD.p ^ k : ℕ) • m₁ - W.map ι x')
-    rw [smul_sub, ← liftb_map_smul, ← hx'e, smul_comm]
-  · change (W.γ T₁ ((PD.p ^ k : ℕ) • y₁ - W.map ι Y₀) - ((PD.p ^ k : ℕ) • y₁ - W.map ι Y₀)) -
-      (W.φD T₁ ((PD.p ^ k : ℕ) • (W.π₀ • m₁) - W.map ι Z₀) -
-        ((PD.p ^ k : ℕ) • (W.π₀ • m₁) - W.map ι Z₀)) = 0
-    have hγι : W.γ T₁ (W.map ι Y₀) = W.map ι (W.γ T₀ Y₀) := (W.map_γ ι W.gam Y₀).symm
-    have hφι : W.φD T₁ (W.map ι Z₀) = W.map ι (W.φD T₀ Z₀) := (W.map_φ ι Z₀).symm
-    have h1 : W.map ι ((PD.p ^ k : ℕ) • lifta_avg W T₀ d w) =
-        (W.map ι (W.γ T₀ Y₀) - W.map ι Y₀) - (W.map ι (W.φD T₀ Z₀) - W.map ι Z₀) := by
-      rw [havg, map_sub, map_sub, map_sub]
-    rw [map_nsmul, hιavg] at h1
-    rw [map_sub, map_sub, map_nsmul, map_nsmul, hγι, hφι]
-    have h3 : ((PD.p ^ k : ℕ) • W.γ T₁ y₁ - W.map ι (W.γ T₀ Y₀) - ((PD.p ^ k : ℕ) • y₁ - W.map ι Y₀)) -
-        ((PD.p ^ k : ℕ) • W.φD T₁ (W.π₀ • m₁) - W.map ι (W.φD T₀ Z₀) -
-          ((PD.p ^ k : ℕ) • (W.π₀ • m₁) - W.map ι Z₀)) =
-        (PD.p ^ k : ℕ) • ((W.γ T₁ y₁ - y₁) - (W.φD T₁ (W.π₀ • m₁) - W.π₀ • m₁)) -
-          ((W.map ι (W.γ T₀ Y₀) - W.map ι Y₀) - (W.map ι (W.φD T₀ Z₀) - W.map ι Z₀)) := by
-      rw [smul_sub, smul_sub, smul_sub]
-      abel
-    rw [h3, h1, sub_self]
-  · change W.map π ((PD.p ^ k : ℕ) • y₁ - W.map ι Y₀) =
-      (((PD.p : ℕ) : ℤ_[ℓ]) ^ (k + e)) • y + (W.φD T₂ 0 - 0)
-    rw [map_sub, hπι, map_nsmul, hπy₁, liftb_ns, map_zero, pow_add, mul_smul]
-    simp
-  · change W.map π ((PD.p ^ k : ℕ) • (W.π₀ • m₁) - W.map ι Z₀) =
-      (((PD.p : ℕ) : ℤ_[ℓ]) ^ (k + e)) • z + (W.γ T₂ 0 - 0)
-    rw [map_sub, hπι, map_nsmul, hπz₁, liftb_ns, map_zero, pow_add, mul_smul]
-    simp
 
 def lifta_Complete (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) : Prop :=
   ∃ I : Ideal ↥W.AΔ, (∀ h : qp W ∈ W.AΔ, (⟨qp W, h⟩ : ↥W.AΔ) ∈ I) ∧ (∀ a ∈ I, lifta_φ₀ W a ∈ I) ∧
@@ -1570,7 +1220,7 @@ theorem lifta_JSet_eq (jumps : Finset ℤ) (M : ℕ) : Formalism.RepresentationB
 
 def lifta_Inv (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) : Submodule O (W.DD T) where
   carrier := {x | ∀ δ ∈ W.DelF, W.γD T δ x = x}
-  add_mem' := fun ha hb δ hδ => by rw [map_add, ha δ hδ, hb δ hδ]
+  add_mem' := fun ha hb δ hδ => by rw [map_add (f := _), ha δ hδ, hb δ hδ]
   zero_mem' := fun δ _ => map_zero _
   smul_mem' := fun c x hx δ hδ => by rw [map_smul, hx δ hδ]
 
@@ -1585,108 +1235,6 @@ theorem lifta_δ_Inv (W : LocWach PD LL O v n) (R : lifta_Ring W) (T : LocLat G 
   congr 1
   change W.γD T δ (W.γD T W.gam x) = W.γD T W.gam x
   rw [← W.γD_mul, mul_comm, W.γD_mul, hx δ hδ]
-
-theorem lifta_lifts (W : LocWach PD LL O v n) (hp : PD.p = ℓ) (hA : CaseA W) (u : ℤ_[ℓ]ˣ)
-    (hu : algebraMap ℤ_[ℓ] O (u : ℤ_[ℓ]) = ((W.χΓ W.gam : Oˣ) : O))
-    (hv : PadicInt.valuation ((u : ℤ_[ℓ]) - 1) = 1) (h9 : P9π₀ W)
-    {T₀ T₁ T₂ : LocLat G Qp LL O} (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L)
-    (Mi hi : ZMod n → ℕ)
-    (g₀ : lifta_Good W T₀ (Mmax n Mi)) (g₁ : lifta_Good W T₁ (Mmax n Mi))
-    (g₂ : lifta_Good W T₂ (Mmax n Mi))
-    (hE : liftb_DDExact W ι π) (hsat : ∀ x : W.DD T₀, W.map ι x ∈ W.N T₁ → x ∈ W.N T₀) (e : ℕ)
-    (hses : IsSESLat (Qp := Qp) ι π) (hd : Formalism.MainNotions.DeltaInvariantLattices.p2d W ι π (Mmax n Mi))
-    (d : O) (hd1 : d * (W.DelF.card : O) = 1) (hm0 : Formalism.MainNotions.DeltaInvariantLattices.wachModuleOverLetters W T₀ W.π₀)
-    (hCK : ∀ y ∈ W.NΔ T₂, ∃ x ∈ W.NΔ T₁, W.map π x = (PD.p ^ e : ℕ) • y)
-    (c0 : IsCrys PD T₀.ρ) (hJ0 : JumpsLet W T₀ Mi hi) (hD : coreDss W) (jumps : Finset ℤ)
-    (hj : jumpSet W T₀ (Mmax n Mi) (Mmax n hi) ⊆ jumps)
-    (hC : lifta_Complete W T₀) (h6 : Formalism.MainNotions.DeltaInvariantLattices.wachSaturated W T₀) :
-    ∀ y z : W.DD T₂, qp W ^ (Mmax n Mi) • y ∈ W.NΔ T₂ → (∃ m ∈ W.NΔ T₂, z = W.π₀ • m) →
-      (y, z) ∈ W.divisibleCocycles T₂ →
-      ∃ y₁ z₁ : W.DD T₁, qp W ^ (Mmax n Mi) • y₁ ∈ W.NΔ T₁ ∧ (∃ m ∈ W.NΔ T₁, z₁ = W.π₀ • m) ∧
-        (y₁, z₁) ∈ W.divisibleCocycles T₁ ∧
-        W.map π y₁ = (PD.p ^ (e + eUA PD.p (Mmax n Mi) (JSet jumps (Mmax n Mi))) : ℕ) • y ∧
-        W.map π z₁ = (PD.p ^ (e + eUA PD.p (Mmax n Mi) (JSet jumps (Mmax n Mi))) : ℕ) • z := by
-  subst hp
-  have R := lifta_ring_of W h9
-  obtain ⟨I, hQI, hφI, hI⟩ := hC
-  have : IsAdicComplete I ↥(lifta_wach (ℓ := PD.p) W R T₀ (Mmax n Mi) g₀).N := hI
-  obtain ⟨cE, hcE⟩ := R.πU.exists_right_inv
-  obtain ⟨c, hc⟩ := lifta_exists_c u hv
-  have hPhi : (lifta_base (ℓ := PD.p) W R).PhiX (PD.p - 1) := by
-    obtain ⟨t, ht, h⟩ := R.φπ
-    exact ⟨⟨t, ht⟩, Subtype.ext h⟩
-  have hγX : (lifta_base (ℓ := PD.p) W R).GammaX ((u : ℤ_[PD.p]) ^ (PD.p - 1)) := by
-    obtain ⟨t, ht, h⟩ := R.γπ
-    refine ⟨⟨t, ht⟩, Subtype.ext ?_⟩
-    change W.γA W.gam W.π₀ =
-      W.π₀ * (algebraMap ℤ_[PD.p] (LetA O n) ((u : ℤ_[PD.p]) ^ (PD.p - 1)) + W.π₀ * t)
-    rw [IsScalarTower.algebraMap_apply ℤ_[PD.p] O (LetA O n), map_pow, hu]
-    exact h
-  have hU : Units.map (algebraMap ℤ_[PD.p] O).toMonoidHom u = W.χΓ W.gam := Units.ext hu
-  have hcO : ∀ x : ℤ, ((PD.p : ℕ) : O) * algebraMap ℤ_[PD.p] O (c x) =
-      1 - (((W.χΓ W.gam) ^ (-x) : Oˣ) : O) := by
-    intro x
-    have h := congrArg (algebraMap ℤ_[PD.p] O) (hc x)
-    rw [map_mul, map_natCast, map_sub, map_one] at h
-    rw [h, ← hU, ← map_zpow]
-    rfl
-  have hstabN : ∀ x ∈ W.NΔ T₀, lifta_δ W T₀ cE x ∈ W.NΔ T₀ := by
-    intro x hx
-    obtain ⟨x', hx', h⟩ := g₀.γN x hx
-    have : lifta_δ W T₀ cE x = x' := by
-      apply lifta_π₀_cancel W T₀ cE hcE
-      rw [lifta_δ_spec W T₀ cE hcE, h]
-    rw [this]
-    exact hx'
-  have hSemi : Formalism.RepresentationBoundsCohomology.N2.SemiA (lifta_wach (ℓ := PD.p) W R T₀ (Mmax n Mi) g₀)
-      ((lifta_δ W T₀ cE).restrictScalars ℤ_[PD.p]) c jumps := by
-    intro y hy
-    have hy' : qp W ^ (Mmax n Mi) • y ∈ W.NΔ T₀ := hy
-    have hyΔ := lifta_inv_of_q W R T₀ (Mmax n Mi) y hy'.2
-    change Polynomial.aeval ((lifta_δ W T₀ cE).restrictScalars ℤ_[PD.p]) _ y ∈ W.NΔ T₀
-    rw [liftb_aeval_res, Polynomial.map_prod]
-    have h0 := lifta_semiO W T₀ cE hcE hA hD Mi hi c0 hJ0 (fun x => algebraMap ℤ_[PD.p] O (c x)) hcO
-      (Mmax n Mi) y hy'.1 hyΔ
-    have hsub : ((jumpSet W T₀ (Mmax n Mi) (Mmax n hi)) ×ˢ Finset.Icc (1 : ℤ) (Mmax n Mi)).image
-        (fun p : ℤ × ℤ => p.1 + p.2) ⊆ Formalism.RepresentationBoundsCohomology.N2.eigSet jumps (Mmax n Mi) :=
-      Finset.image_subset_image (Finset.product_subset_product hj (Finset.Subset.refl _))
-    obtain ⟨R', hR'⟩ := Finset.prod_dvd_prod_of_subset _ _
-      (fun x : ℤ => (Polynomial.X - Polynomial.C (algebraMap ℤ_[PD.p] O (c x)) : Polynomial O)) hsub
-    have hmap : ∏ j ∈ Formalism.RepresentationBoundsCohomology.N2.eigSet jumps (Mmax n Mi),
-        (Polynomial.X - Polynomial.C (c j)).map (algebraMap ℤ_[PD.p] O) =
-        ∏ j ∈ Formalism.RepresentationBoundsCohomology.N2.eigSet jumps (Mmax n Mi),
-          (Polynomial.X - Polynomial.C (algebraMap ℤ_[PD.p] O (c j)) : Polynomial O) :=
-      Finset.prod_congr rfl (fun j _ => by
-        rw [Polynomial.map_sub, Polynomial.map_X, Polynomial.map_C])
-    rw [hmap, hR', mul_comm, map_mul, Module.End.mul_apply]
-    refine liftb_aeval_mem (W.NΔ T₀) _ hstabN R' _ ⟨h0, ?_⟩
-    exact liftb_aeval_mem (lifta_Inv W T₀) _ (lifta_δ_Inv W R T₀ cE hcE) _ y hyΔ
-  have hZ : ∀ y, (lifta_wach (ℓ := PD.p) W R T₀ (Mmax n Mi) g₀).QInv y →
-      ((PD.p : ℕ) : ℤ_[PD.p]) • y ∈ (lifta_wach (ℓ := PD.p) W R T₀ (Mmax n Mi) g₀).N →
-      y ∈ (lifta_wach (ℓ := PD.p) W R T₀ (Mmax n Mi) g₀).N := by
-    intro y hyQ hy
-    have hyQ' : qp W ^ (Mmax n Mi) • y ∈ W.NΔ T₀ := hyQ
-    have hy' : ((PD.p : ℕ) : ℤ_[PD.p]) • y ∈ W.NΔ T₀ := hy
-    refine ⟨h6 y ⟨1, ?_⟩, lifta_inv_of_q W R T₀ (Mmax n Mi) y hyQ'.2⟩
-    rw [pow_one, Nat.cast_smul_eq_nsmul]
-    have := hy'.1
-    rw [Nat.cast_smul_eq_nsmul] at this
-    exact this
-  have hL := lifta_core PD.p hA.2.2 ↥W.AΔ (lifta_base (ℓ := PD.p) W R) (Mmax n Mi) u jumps c rfl hPhi
-    hγX hv hc (W.DD T₀) (W.DD T₁) (W.DD T₂) _ _ _
-    (lifta_ses (ℓ := PD.p) W R ι π (Mmax n Mi) g₀ g₁ g₂ hE hsat)
-    ((lifta_δ W T₀ cE).restrictScalars ℤ_[PD.p]) I (lifta_δ_spec W T₀ cE hcE) (hQI _) hφI hZ hSemi e
-    (by
-      intro y hy
-      obtain ⟨x, hx, hxe⟩ := hCK y hy
-      exact ⟨x, hx, by rw [liftb_ns]; exact hxe⟩)
-    (lifta_ratSurj W R hA.2.1 ι π (Mmax n Mi) g₀ g₁ g₂ hE hsat e hses hd d hd1 h9 hm0 hCK)
-  intro y z hy hz hyz
-  obtain ⟨y₁, z₁, ⟨⟨hy₁, hz₁⟩, hd₁⟩, e1, e2⟩ := hL y z ⟨⟨hy, hz⟩, (liftb_mem_Z1D W T₂ y z).1 hyz⟩
-  rw [lifta_JSet_eq] at e1 e2
-  refine ⟨y₁, z₁, hy₁, hz₁, (liftb_mem_Z1D W T₁ y₁ z₁).2 hd₁, ?_, ?_⟩
-  · rw [← liftb_ns (R := ℤ_[PD.p])]; exact e1
-  · rw [← liftb_ns (R := ℤ_[PD.p])]; exact e2
 
 def lifta_HStr (W : LocWach PD LL O v n) : Prop :=
   CaseA W → ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → lifta_Complete W T
@@ -1705,104 +1253,6 @@ theorem lifta_mem_Z1DΔ (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (y z : 
       ∀ δ ∈ W.DelF, W.γD T δ y = y ∧ W.γD T δ z = z := by
   simp [LocWach.wachCocyclesDelta, herrZ1Δ, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker,
     sub_eq_zero, Prod.ext_iff]
-
-theorem coreLiftA_of (W : LocWach PD LL O v n) (hp : PD.p = ℓ) (u : ℤ_[ℓ]ˣ)
-    (hu : algebraMap ℤ_[ℓ] O (u : ℤ_[ℓ]) = ((W.χΓ W.gam : Oˣ) : O))
-    (hv : PadicInt.valuation ((u : ℤ_[ℓ]) - 1) = W.s)
-    (h2 : Formalism.MainNotions.DeltaInvariantLattices.P2W W) (h5 : Formalism.MainNotions.DeltaInvariantLattices.P5W W) (h6 : Formalism.MainNotions.DeltaInvariantLattices.WachSaturationExactness W)
-    (h9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W) (h2b : Formalism.MainNotions.DeltaInvariantLattices.HerrComplexSecondProperty W) (h2c : Formalism.MainNotions.DeltaInvariantLattices.HerrComplexThirdProperty W)
-    (h2d : Formalism.MainNotions.DeltaInvariantLattices.HerrComplexFourthProperty W) (hExtC : coreExtΔ W) (hD : coreDss W)
-    (hNat : W.s = 1 → PD.p ≠ 2 → W.ClKNat) (hRes : Formalism.MainNotions.CrystallineLiftingBounds.coreResK W)
-    (hJmp : Formalism.MainNotions.CrystallineLiftingBounds.coreJumps PD LL O) (hWA : coreWA W)
-    (hKer : liftb_HKer W) (hExact : liftb_HExact W) (hStr : lifta_HStr W) (hExt : liftb_HExt W)
-    (hOne : liftb_HOne W) : coreLiftA W := by
-  have := liftb_neZero W
-  intro hA T₁ T₂ F Mi hi hS hJ1
-  have hs : W.s = 1 := hA.2.1
-  have hp2 : PD.p ≠ 2 := hA.2.2
-  rw [hs] at hv
-  obtain ⟨c1, c2, hOnto⟩ := hS
-  obtain ⟨T₀, ι, hses, c0⟩ := hKer T₁ T₂ F ⟨c1, c2, hOnto⟩
-  have hJ := hJmp T₀ T₁ T₂ ι F hses c0 c1 c2
-  have hJ0 : JumpsLet W T₀ Mi hi := fun i τ hτ a ha => hJ1 i τ hτ a ((hJ τ a).2 (Or.inl ha))
-  have hJ2 : JumpsLet W T₂ Mi hi := fun i τ hτ a ha => hJ1 i τ hτ a ((hJ τ a).2 (Or.inr ha))
-  have hc0 := h2c T₀ Mi hi c0 (liftb_jl W T₀ Mi hi hJ0)
-  have hc1 := h2c T₁ Mi hi c1 (liftb_jl W T₁ Mi hi hJ1)
-  have hd := h2d T₀ T₁ T₂ ι F Mi hi c0 c1 c2 (liftb_jl W T₁ Mi hi hJ1)
-  rw [liftb_mx_eq] at hc0 hc1 hd
-  have hQ := hc0.1
-  have gb₀ := liftb_good_of W T₀ c0 Mi hi (h2 T₀ c0) (h5 T₀ Mi hi c0 (liftb_jl W T₀ Mi hi hJ0)) hQ
-  have gb₁ := liftb_good_of W T₁ c1 Mi hi (h2 T₁ c1) (h5 T₁ Mi hi c1 (liftb_jl W T₁ Mi hi hJ1)) hQ
-  have gb₂ := liftb_good_of W T₂ c2 Mi hi (h2 T₂ c2) (h5 T₂ Mi hi c2 (liftb_jl W T₂ Mi hi hJ2)) hQ
-  have h90 := uniformizer_ring_and_module_clauses W h9 hA T₀ c0
-  have R := lifta_ring_of W h90.1
-  have g₀ := lifta_good_of W R hs T₀ _ gb₀ h90.2
-  have g₁ := lifta_good_of W R hs T₁ _ gb₁ (uniformizer_ring_and_module_clauses W h9 hA T₁ c1).2
-  have g₂ := lifta_good_of W R hs T₂ _ gb₂ (uniformizer_ring_and_module_clauses W h9 hA T₂ c2).2
-  have hcard : W.DelF.card = PD.p - 1 := by
-    rw [(h9 T₀ c0 hs hp2).1, finrank_eq_one_case_A W hA, Nat.div_one]
-  obtain ⟨d, hd1⟩ := lifta_exists_d W hp hcard
-  have hE := hExact T₀ T₁ T₂ ι F hses
-  have hsat := (h6.2.2 T₀ T₁ T₂ ι F c0 c1 c2 hses).2.2.2.1
-  have hCKN : ∀ y ∈ W.N T₂, ∃ x ∈ W.N T₁,
-      W.map F x = (PD.p ^ (eWA PD.p (Hmax n Mi hi)) : ℕ) • y := by
-    intro y hy
-    obtain ⟨x, hx, hxe⟩ := liftb_kills_all W F _ (hWA hA T₁ T₂ F Mi hi ⟨c1, c2, hOnto⟩ hJ1) y hy
-    exact ⟨x, hx, by rw [hxe, lp, liftb_ns]⟩
-  have hL := lifta_lifts W hp hA u hu hv h90.1 ι F Mi hi g₀ g₁ g₂ hE hsat
-    (eWA PD.p (Hmax n Mi hi)) hses hd d hd1 h90.2 (lifta_cokerΔ W F d hd1 _ hCKN) c0 hJ0 hD
-    (jumpSet W T₁ (Mmax n Mi) (Mmax n hi))
-    (lifta_jumpSet_mono W T₀ T₁ _ _ (fun τ a ha => (hJ τ a).2 (Or.inl ha))) (hStr hA T₀ c0) (h6.1 T₀ c0)
-  apply liftb_LiftF_of PD F
-  intro κ hκ
-  obtain ⟨c, hc, hcf, rfl⟩ := (liftb_mem_H1fT PD T₂ κ).1 hκ
-  obtain ⟨Tp, ι', π', cp, hext⟩ := hExt T₂ c c2 hcf
-  obtain ⟨cone, hone0, e, he, hspan, hφe, hγe⟩ := hOne
-  have hJp' := hJmp T₂ Tp W.one ι' π' hext.1 c2 cp cone
-  have hJp : JumpsLet W Tp Mi hi := by
-    intro i τ hτ a ha
-    rcases (hJp' τ a).1 ha with h | h
-    · exact hJ2 i τ hτ a h
-    · rw [hone0 τ a h]
-      exact ⟨by simp, by simp⟩
-  have hImg : InImgA W π' (eWA PD.p (Hmax n Mi hi)) := by
-    obtain ⟨x, hx, hxe⟩ := liftb_kills_all W π' _
-      (hWA hA Tp W.one π' Mi hi ⟨cp, cone, hext.1.2.2.1⟩ hJp) e he
-    exact ⟨e, he, hspan, hφe, hγe, x, hx, by rw [hxe, lp, liftb_ns, liftb_ns]⟩
-  obtain ⟨y, z, h, hy, hz, hcl⟩ := hExtC hA T₂ Tp ι' π' Mi hi c2 cp hJ2 c hc hext _ hImg
-  have hΔ := ((lifta_mem_Z1DΔ W T₂ y z).1 h).2
-  have hyΔ : qp W ^ (Mmax n Mi) • y ∈ W.NΔ T₂ := ⟨hy, fun δ hδ => by
-    rw [gammaD_semilinear, (W.AΔ.pow_mem (lifta_qΔ W R.πΔ) _) δ hδ, (hΔ δ hδ).1]⟩
-  obtain ⟨y₁, z₁, hy₁, ⟨m₁, hm₁, hz₁⟩, h₁, e1, e2⟩ :=
-    hL y z hyΔ hz (Formalism.MainNotions.CrystallineLiftingBounds.invariant_cocycle_le_gamma_cocycle W hs hp2 T₂ h)
-  have hy₁Δ := lifta_inv_of_q W R T₁ _ y₁ hy₁.2
-  have hz₁Δ : ∀ δ ∈ W.DelF, W.γD T₁ δ z₁ = z₁ := by
-    rw [hz₁]
-    exact (invariant_smul_mem_invariants' W T₁ W.π₀ R.πΔ m₁ hm₁).2
-  have h₁Δ : (y₁, z₁) ∈ W.wachCocyclesDelta T₁ := by
-    refine (lifta_mem_Z1DΔ W T₁ y₁ z₁).2 ⟨?_, fun δ hδ => ⟨hy₁Δ δ hδ, hz₁Δ δ hδ⟩⟩
-    rw [W.gamK_eq_one hs hp2]
-    exact h₁
-  obtain ⟨m₁X, hm₁X, hm₁Xe⟩ := lifta_π₀_X W R hs T₁ m₁ hm₁.1
-  have hf₁ := (hc1.2 y₁ z₁ ((lifta_Qq W R hs T₁ _ y₁).2 hy₁.1)
-    ⟨m₁X, hm₁X, by rw [hz₁]; exact hm₁Xe⟩ h₁).1
-  refine ⟨W.clK T₁ ⟨(y₁, z₁), h₁Δ⟩, (h2b T₁ c1 _).2 ?_, ?_⟩
-  · have hr := hRes hs hp2 T₁ ⟨(y₁, z₁), h₁Δ⟩
-    exact hr.symm ▸ hf₁
-  have hN := hNat hs hp2 F ⟨(y₁, z₁), h₁Δ⟩
-    ((PD.p ^ (eWA PD.p (Hmax n Mi hi) + eUA PD.p (Mmax n Mi)
-      (JSet (jumpSet W T₁ (Mmax n Mi) (Mmax n hi)) (Mmax n Mi))) : ℕ) •
-        (⟨(y, z), h⟩ : ↥(W.wachCocyclesDelta T₂)))
-    (by
-      rw [e1, e2]
-      rfl)
-  refine Eq.trans hN ?_
-  refine Eq.trans (map_nsmul (W.clK T₂) _ _) ?_
-  refine Eq.trans (congrArg _ hcl) ?_
-  rw [← liftb_ns (R := O), smul_smul, ← pow_add]
-  congr 2
-  simp only [ePA]
-  ring
 
 end LiftALocal
 
@@ -1877,7 +1327,7 @@ theorem lone_coord_actB {ι : Type} (b : Basis ι Qp V) (i : ι) (g : G) (x : V 
   | tmul l c =>
     rw [lone_actB_tmul PD ρ hρ, lone_coord_tmul, lone_coord_tmul]
     exact (((PD.actB g).toAlgHom.toLinearMap).restrictScalars Qp).map_smul _ _ |>.symm
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 include hρ in
 theorem lone_coord_actdR {ι : Type} (b : Basis ι Qp V) (i : ι) (g : G) (x : V ⊗[Qp] BdR) :
@@ -1887,7 +1337,7 @@ theorem lone_coord_actdR {ι : Type} (b : Basis ι Qp V) (i : ι) (g : G) (x : V
   | tmul l c =>
     rw [lone_actdR_tmul PD ρ hρ, lone_coord_tmul, lone_coord_tmul]
     exact (((PD.actdR g).toAlgHom.toLinearMap).restrictScalars Qp).map_smul _ _ |>.symm
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def lone_map : V ⊗[Qp] K₀ →ₗ[LL] V ⊗[Qp] B :=
   AlgebraTensorModule.lTensor LL V ((Algebra.linearMap K₀ B).restrictScalars Qp)
@@ -1910,7 +1360,8 @@ theorem lone_Dcris_eq [FiniteDimensional Qp V] :
       rw [← lone_coord_actB PD ρ hρ, hinv]
     choose c hc using hc
     refine ⟨∑ i, b i ⊗ₜ[Qp] c i, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [lone_decomp b x]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [lone_map, AlgebraTensorModule.lTensor_tmul]
@@ -1924,7 +1375,7 @@ theorem lone_Dcris_eq [FiniteDimensional Qp V] :
     | tmul l k =>
       simp only [lone_map, AlgebraTensorModule.lTensor_tmul, lone_actB_tmul PD ρ hρ]
       simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 include PD in
 theorem lone_map_injective :
@@ -1934,8 +1385,8 @@ theorem lone_map_injective :
     (algebraMap K₀ B).injective
   exact Module.Flat.lTensor_preserves_injective_linearMap (M := V) _ hi
 
-include hρ in
 
+include hρ in
 theorem lone_isCrys [FiniteDimensional Qp V] [FiniteDimensional LL V] : IsCrys PD ρ := by
   have := PD.finK₀
   unfold IsCrys
@@ -1945,15 +1396,15 @@ theorem lone_isCrys [FiniteDimensional Qp V] [FiniteDimensional LL V] : IsCrys P
 include PD in
 theorem lone_Fil_anti : Antitone PD.Fil := antitone_int_of_succ_le PD.Fil_anti
 
-include PD in
 
+include PD in
 theorem lone_K_mem (c : K) (a : ℤ) (ha : a ≤ 0) : algebraMap K BdR c ∈ PD.Fil a := by
   apply lone_Fil_anti PD ha
   rw [Algebra.algebraMap_eq_smul_one]
   exact (PD.Fil 0).smul_mem c PD.one_mem
 
-include PD in
 
+include PD in
 theorem lone_one_notMem : (1 : BdR) ∉ PD.Fil 1 := by
   intro h
   have := lone_nontrivial_BdR PD
@@ -1971,8 +1422,8 @@ theorem lone_one_notMem : (1 : BdR) ∉ PD.Fil 1 := by
   intro a
   exact lone_Fil_anti PD (by have := Int.self_le_toNat a; omega : a ≤ ((a.toNat : ℕ) : ℤ) + 1) (hk a.toNat)
 
-include PD in
 
+include PD in
 theorem lone_K_inter (c : K) (a : ℤ) (ha : 1 ≤ a) (h : algebraMap K BdR c ∈ PD.Fil a) : c = 0 := by
   by_contra hc
   apply lone_one_notMem PD
@@ -1989,11 +1440,11 @@ theorem lone_coord_FilV {ι : Type} (b : Basis ι Qp V) (i : ι) (a : ℤ) (x : 
     rw [AlgebraTensorModule.map_tmul, lone_coord_tmul]
     exact ((PD.Fil a).restrictScalars Qp).smul_mem _ f.2
   | add y z hy hz =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact (PD.Fil a).add_mem hy hz
 
-include hρ in
 
+include hρ in
 theorem lone_coord_DdR {ι : Type} (b : Basis ι Qp V) (i : ι) (x : V ⊗[Qp] BdR)
     (hx : x ∈ DdR PD ρ) : ∃ c : K, algebraMap K BdR c = lone_coord b i BdR x := by
   apply PD.invdR
@@ -2025,8 +1476,8 @@ theorem lone_DdR_inf [FiniteDimensional Qp V] (a : ℤ) (ha : 1 ≤ a) (x : V �
   have h0 : c = 0 := lone_K_inter PD c a ha (by rw [hc]; exact lone_coord_FilV PD b i a x hx')
   rw [← hc, h0, map_zero, TensorProduct.tmul_zero]
 
-include hρ in
 
+include hρ in
 theorem lone_jump [FiniteDimensional Qp V] (τ : K →ₐ[Qp] LL) (a : ℤ) (h : IsJumpV PD ρ τ a) :
     a = 0 := by
   by_contra ha
@@ -2162,58 +1613,6 @@ def linj_HMid (W : LocWach PD LL O v n) : Prop :=
   ∀ (T₀ T₁ T₂ : LocLat G Qp LL O) (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L),
     IsSESLat (Qp := Qp) ι π → ∀ x : W.DD T₁, W.map π x = 0 → ∃ x₀, W.map ι x₀ = x
 
-theorem linj_HExact_of (W : LocWach PD LL O v n) (E : EtTie W RA RW inclR φR gR πA)
-    (h : linj_HMid W) : liftb_HExact W := fun T₀ T₁ T₂ ι π hses =>
-  ⟨linj_map_inj W E ι π hses, fun x => ⟨h T₀ T₁ T₂ ι π hses x, by
-    rintro ⟨x₀, rfl⟩
-    exact linj_map_zero W E ι π hses x₀⟩⟩
-
-theorem linj_mid (W : LocWach PD LL O v n) (E : EtTie W RA RW inclR φR gR πA)
-    {T₀ T₁ T₂ : LocLat G Qp LL O} (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L)
-    (hses : IsSESLat (Qp := Qp) ι π) (S₀ : Set (TW RW T₀)) (S₁ : Set (TW RW T₁))
-    (hS : ∀ r : ↥T₁.L.T →ₗ[O] ↥T₀.L.T, ∀ y ∈ S₁,
-      TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) r y ∈ S₀)
-    (hF₀ : ∀ b, b ∈ S₀ → (∀ g, W.resΓ g = 1 → TWact (gR g) T₀ g b = b) → ∃ x₀, E.jD T₀ x₀ = b)
-    (hF₁ : ∀ x, E.jD T₁ x ∈ S₁) :
-    ∀ x : W.DD T₁, W.map π x = 0 → ∃ x₀, W.map ι x₀ = x := by
-  obtain ⟨r, s, hr, hιr, _⟩ := linj_split ι π hses
-  intro x hx
-  have hπ : TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) (linj_res π) (E.jD T₁ x) = 0 := by
-    rw [← E.jD_map, hx, map_zero]
-  have hb : TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) (linj_res ι)
-      (TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) r (E.jD T₁ x)) = E.jD T₁ x := by
-    have hsum : linj_res ι ∘ₗ r + s ∘ₗ linj_res π = LinearMap.id := by rw [hιr, sub_add_cancel]
-    have h1 : TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) (linj_res ι ∘ₗ r + s ∘ₗ linj_res π)
-        (E.jD T₁ x) = E.jD T₁ x := by rw [hsum, TensorProduct.map_id, LinearMap.id_apply]
-    have h2 : TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) (s ∘ₗ linj_res π) (E.jD T₁ x) =
-        TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) s
-          (TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) (linj_res π) (E.jD T₁ x)) := by
-      rw [linj_tmap, LinearMap.id_comp]
-    rw [TensorProduct.map_add_right, LinearMap.add_apply, h2, hπ, map_zero, add_zero] at h1
-    rw [linj_tmap, LinearMap.id_comp]
-    exact h1
-  have hinjT : Function.Injective
-      (TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) (linj_res ι)) := by
-    intro a b hab
-    have h' := congrArg (TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) r) hab
-    rw [linj_tmap, linj_tmap, hr, LinearMap.id_comp, TensorProduct.map_id] at h'
-    exact h'
-  obtain ⟨x₀, hx₀⟩ := hF₀ _ (hS r _ (hF₁ x)) (by
-    intro g hg
-    apply hinjT
-    have hact : linj_res ι ∘ₗ T₀.actT g = T₁.actT g ∘ₗ linj_res ι := by
-      ext y
-      exact ι.equiv g (y : T₀.V)
-    have h1 : TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) (linj_res ι)
-        (TWact (gR g) T₀ g (TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) r (E.jD T₁ x))) =
-        TWact (gR g) T₁ g (TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) (linj_res ι)
-          (TensorProduct.map (LinearMap.id : RW →ₗ[O] RW) r (E.jD T₁ x))) := by
-      unfold TWact
-      rw [linj_tmap, linj_tmap _ _ (linj_res ι), hact, LinearMap.id_comp, LinearMap.comp_id]
-    rw [h1, hb, ← E.jD_act, hg, W.γD_one])
-  refine ⟨x₀, E.jD_inj T₁ ?_⟩
-  rw [E.jD_map, hx₀, hb]
-
 end LiftInj
 
 section LiftInjD
@@ -2223,19 +1622,9 @@ variable {l : ℕ} [Fact l.Prime] {P : LocPrime l} {H : LocHW l P} {AI : LocAinf
 
 end LiftInjD
 
-theorem linj_left_holds (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l)
-    (h : Good K s LL) {T₀ T₁ T₂ : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)} (ι : LatHom T₀.L T₁.L)
-    (π : LatHom T₁.L T₂.L) (hses : IsSESLat (Qp := ℚ_[l]) ι π) :
-    Function.Injective (((HW l).W K s LL h).map ι) :=
-  linj_map_inj _ ((F l).E K s LL h).tie ι π hses
-
 def linjMidOpen (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     linj_HMid ((HW l).W K s LL h)
-
-theorem linj_HExact_holds (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (hM : linjMidOpen D HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l)
-    (s : ℕ) (LL : FinExt l) (h : Good K s LL) : liftb_HExact ((HW l).W K s LL h) :=
-  linj_HExact_of _ ((F l).E K s LL h).tie (hM l K s LL h)
 
 end Formalism.MainNotions.LiftingTheory
 
@@ -2275,7 +1664,7 @@ def lext_rep {T U : LocLat G Qp LL O} (lam : U.V →ₗ[LL] LL) (c : G → T.V)
     intro z
     rw [Module.End.mul_apply, lext_act_apply, lext_act_apply, lext_act_apply, hc, map_mul]
     ext
-    · simp only [Module.End.mul_apply, map_add, map_smul, smul_add]
+    · simp only [Module.End.mul_apply, map_add (f := _), map_smul, smul_add]
       abel
     · rfl
 
@@ -2413,7 +1802,7 @@ theorem lext_funct (ρ : Representation LL G V) (ρ' : Representation LL G V') (
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp only [lext_act_tmul, lext_mapB_tmul, hf]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem lext_mul_tmul (κ : K₀) (x : V) (b : B) :
     mulVB (K₀ := K₀) (B := B) (V := V) (LL := LL) κ (x ⊗ₜ[Qp] b) =
@@ -2426,7 +1815,7 @@ theorem lext_act_mul (ρ : Representation LL G V) (g : G) (κ : K₀) (m : V ⊗
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp only [lext_act_tmul, lext_mul_tmul, map_mul, AlgEquiv.commutes]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 def lext_coord {ι : Type} (b : Module.Basis ι Qp U) (i : ι) : U ⊗[Qp] B →ₗ[Qp] B :=
   (TensorProduct.lid Qp B).toLinearMap ∘ₗ LinearMap.rTensor B (b.coord i)
@@ -2455,7 +1844,7 @@ theorem lext_coord_act {ι : Type} (b : Module.Basis ι Qp U) (i : ι) (ρU : Re
   | tmul l c =>
     rw [lext_act_tmul, hU, lext_coord_tmul, lext_coord_tmul]
     exact (((PD.actB g).toAlgHom.toLinearMap).restrictScalars Qp).map_smul _ _ |>.symm
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem lext_fin [FiniteDimensional LL V] (ρ : Representation LL G V) (h : IsCrys PD ρ) :
     Module.Finite LL ↥(Dcris PD ρ) := by
@@ -2494,13 +1883,13 @@ theorem lext_crys [FiniteDimensional Qp LL] [FiniteDimensional LL V] [FiniteDime
     induction m using TensorProduct.induction_on with
     | zero => simp
     | tmul x b => simp [hiB, hrB, lext_mapB_tmul]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hpi : ∀ m, pB (iB m) = 0 := by
     intro m
     induction m using TensorProduct.induction_on with
     | zero => simp
     | tmul x b => simp [hiB, hpB, lext_mapB_tmul]
-    | add a b ha hb => simp only [map_add, ha, hb, add_zero]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb, add_zero]
   have hsum : ∀ z, iB (rB z) + sB (pB z) = z := by
     intro z
     induction z using TensorProduct.induction_on with
@@ -2510,7 +1899,7 @@ theorem lext_crys [FiniteDimensional Qp LL] [FiniteDimensional LL V] [FiniteDime
       congr 1
       simp
     | add a b ha hb =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       conv_rhs => rw [← ha, ← hb]
       abel
   have hiE : ∀ g m, iB (actVB PD ρ g m) = actVB PD ρp g (iB m) :=
@@ -2583,7 +1972,8 @@ theorem lext_crys [FiniteDimensional Qp LL] [FiniteDimensional LL V] [FiniteDime
       Submodule.sum_mem _ (fun i _ => hz i)⟩, Subtype.ext ?_⟩
     change pB (∑ i, (((0 : V), b i) ⊗ₜ[Qp] (algebraMap K₀ B (κ i)) -
       iB (mulVB (K₀ := K₀) (B := B) (V := V) (LL := LL) (κ i) (lam (b i) • x₀)))) = w
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [lext_decomp b w]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [map_sub, hpi, sub_zero, hpB, lext_mapB_tmul, hκ]
@@ -2644,21 +2034,21 @@ theorem lker_mapB_comp (f : V₀ →ₗ[LL] V₁) (g : V₁ →ₗ[LL] V₂) (m 
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp only [lext_mapB_tmul, LinearMap.comp_apply]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem lker_mapB_id (m : V₀ ⊗[Qp] B) :
     lext_mapB (Qp := Qp) (B := B) (LinearMap.id : V₀ →ₗ[LL] V₀) m = m := by
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp only [lext_mapB_tmul, LinearMap.id_apply]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem lker_mapB_add (f g : V₀ →ₗ[LL] V₁) (m : V₀ ⊗[Qp] B) :
     lext_mapB (Qp := Qp) (B := B) (f + g) m = lext_mapB f m + lext_mapB g m := by
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp only [lext_mapB_tmul, LinearMap.add_apply, TensorProduct.add_tmul]
-  | add a b ha hb => simp only [map_add, ha, hb]; abel
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]; abel
 
 theorem lker_crys [FiniteDimensional LL V₀] [FiniteDimensional LL V₁] [FiniteDimensional LL V₂]
     (ρ₀ : Representation LL G V₀) (ρ₁ : Representation LL G V₁) (ρ₂ : Representation LL G V₂)
@@ -2771,9 +2161,6 @@ def lker_rep {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L) :
     ext x
     simp
 
-theorem lker_rep_coe {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L) (g : G)
-    (x : ↥(LinearMap.ker F.f)) : ((lker_rep F g x : ↥(LinearMap.ker F.f)) : T₁.V) = T₁.ρ g x := rfl
-
 theorem lker_splitV {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L) (hOnto : F.Onto) :
     ∃ (r : T₁.V →ₗ[LL] ↥(LinearMap.ker F.f)) (s : T₂.V →ₗ[LL] T₁.V),
       r ∘ₗ (LinearMap.ker F.f).subtype = LinearMap.id ∧
@@ -2820,7 +2207,7 @@ theorem lker_lat_split {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L)
         apply Subtype.ext
         change ((a + b : ↥T₁.L.T) : T₁.V) - ((σ (φ (a + b)) : ↥T₁.L.T) : T₁.V) =
           ((a : T₁.V) - ((σ (φ a) : ↥T₁.L.T) : T₁.V)) + ((b : T₁.V) - ((σ (φ b) : ↥T₁.L.T) : T₁.V))
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
         push_cast
         abel
       map_smul' := fun c a => by
@@ -3008,7 +2395,7 @@ theorem lreg_X (W : LocWach PD LL O v n) (k : ℕ) :
     have hdiff : W.φA letπ - letπ ^ PD.p = ((PD.p : ℕ) : LetA O n) * (letπ * w) := by
       rw [hφπ]; ring
     refine ⟨letπ * w * c + W.φA r, ?_⟩
-    rw [pow_succ', AlgHom.mul_apply, hr, map_add, map_mul, map_pow, map_natCast]
+    rw [pow_succ', AlgHom.mul_apply, hr, map_add (f := _), map_mul, map_pow, map_natCast]
     have : W.φA letπ ^ (PD.p ^ k) = (letπ ^ PD.p : LetA O n) ^ (PD.p ^ k) +
         ((PD.p : ℕ) : LetA O n) * (letπ * w) * c := by
       rw [← hdiff, ← hc]; ring
@@ -3043,7 +2430,7 @@ theorem lreg_Q (W : LocWach PD LL O v n) :
     exact hr₀
   refine ⟨(W.φA ^ (W.s - 1)) (fun _ => r₀), ?_⟩
   unfold LocWach.Q LocWach.X
-  rw [hq, map_add, map_mul, map_natCast]
+  rw [hq, map_add (f := _), map_mul, map_natCast]
 
 theorem lreg_mul_single (c : LetA O n) (i : ZMod n) (y : PowerSeries O) :
     c * (Pi.single i y : LetA O n) = Pi.single i (c i * y) := by
@@ -3122,11 +2509,6 @@ theorem lreg_reg_D (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : �
     exact (Fact.out : l.Prime).ne_zero (by exact_mod_cast h2)
   exact (mul_eq_zero.1 hc).resolve_left hl
 
-theorem lreg_RegXQ_D (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (a1 : adm1 D HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ)
-    (LL : FinExt l) (h : Good K s LL) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL))
-    (hT : IsCrys ((D.loc l).PD K) T.ρ) : liftb_RegXQ ((HW l).W K s LL h) T :=
-  lreg_RegXQ _ (lreg_reg_D D HW F l K LL) T ((a1 l K s LL h) T hT)
-
 theorem lreg_HStr_D (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (a1 : adm1 D HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ)
     (LL : FinExt l) (h : Good K s LL) (hC : lreg_HCompl ((HW l).W K s LL h)) :
     liftb_HStr ((HW l).W K s LL h) :=
@@ -3138,10 +2520,6 @@ namespace Formalism.MainNotions.LiftingTheory
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 
-def liftOpen (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
-    linj_HMid ((HW l).W K s LL h)
-
 def liftBOpen (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     liftb_HStr ((HW l).W K s LL h)
@@ -3149,11 +2527,6 @@ def liftBOpen (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
 def liftAOpen (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     lifta_HStr ((HW l).W K s LL h)
-
-theorem liftBOpen_of (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (a1 : adm1 D HW F)
-    (hC : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
-      lreg_HCompl ((HW l).W K s LL h)) : liftBOpen D HW F :=
-  fun l _ K s LL h => lreg_HStr_D D HW F a1 l K s LL h (hC l K s LL h)
 
 theorem liftb_HOne_holds (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l)
     (h : Good K s LL) : liftb_HOne ((HW l).W K s LL h) :=
@@ -3163,35 +2536,6 @@ theorem liftb_HOne_holds (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) 
 theorem liftb_HExt_holds (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l)
     (h : Good K s LL) : liftb_HExt ((HW l).W K s LL h) :=
   lext_HExt_D D HW F l K s LL h (lone_HOne0_holds D HW F l K s LL h).1
-
-theorem lifting_case_B_of_open (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (a2 : adm2 D HW F) (a5 : adm5 D HW F) (a6 : adm6 D HW F) (a11 : adm11 D HW F)
-    (a13 : adm13 D HW F) (a14 : adm14 D HW F) (a15 : adm15 D HW F) (a17 : adm17 D HW F) (a21 : Formalism.MainNotions.CrystallineLiftingBounds.adm21 D HW F)
-    (a22 : Formalism.MainNotions.CrystallineLiftingBounds.adm22 D HW F) (a23 : Formalism.MainNotions.CrystallineLiftingBounds.adm23 D HW F) (hWB : WachKillsCaseB D HW F) (hO : liftOpen D HW F) (hOB : liftBOpen D HW F) :
-    LiftTheoremCaseB D HW F := by
-  intro l _ K s LL h
-  obtain ⟨z, hz, hzv⟩ := gam_zl (P := D.loc l) (H := HW l) h
-  exact coreLiftB_of (ℓ := l) ((HW l).W K s LL h) ((D.loc l).PD_p K) z hz
-    (by rw [(HW l).W_s]; exact hzv) (fun _ _ _ => True) (a2 l K s LL h) (a5 l K s LL h) (a6 l K s LL h)
-    (a11 l K s LL h) (a13 l K s LL h) (a14 l K s LL h) (a15 l K s LL h) (a17 l K s LL h)
-    (a21 l K s LL h).1 (a23 l K LL) (hWB l K s LL h) (lker_HKer_D D HW F a22 l K s LL h)
-    (linj_HExact_of _ ((F l).E K s LL h).tie (hO l K s LL h)) (hOB l K s LL h)
-    (liftb_HExt_holds D HW F l K s LL h) (liftb_HOne_holds D HW F l K s LL h)
-
-theorem lifting_case_A_of_open (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (a2 : adm2 D HW F) (a5 : adm5 D HW F) (a6 : adm6 D HW F) (a9 : adm9 D HW F)
-    (a13 : adm13 D HW F) (a14 : adm14 D HW F) (a15 : adm15 D HW F) (a18 : adm18 D HW F) (a19 : adm19 D HW F)
-    (a21 : Formalism.MainNotions.CrystallineLiftingBounds.adm21 D HW F) (a22 : Formalism.MainNotions.CrystallineLiftingBounds.adm22 D HW F) (a23 : Formalism.MainNotions.CrystallineLiftingBounds.adm23 D HW F) (hWA : WachKillsCaseA D HW F) (hO : liftOpen D HW F)
-    (hOA : liftAOpen D HW F) : LiftTheoremCaseA D HW F := by
-  intro l _ K s LL h
-  obtain ⟨z, hz, hzv⟩ := gam_zl (P := D.loc l) (H := HW l) h
-  exact coreLiftA_of (ℓ := l) ((HW l).W K s LL h) ((D.loc l).PD_p K) z hz
-    (by rw [(HW l).W_s]; exact hzv) (a2 l K s LL h) (a5 l K s LL h) (a6 l K s LL h)
-    (a9 l K s LL h) (a13 l K s LL h) (a14 l K s LL h) (a15 l K s LL h) (a18 l K s LL h)
-    (a19 l K s LL h)
-    (fun h1 h2 => (a21 l K s LL h).2 (by rw [← (HW l).W_s K s LL h]; exact h1)
-      (by rw [← (D.loc l).PD_p K]; exact h2))
-    (Formalism.MainNotions.CrystallineLiftingBounds.resK_holds D HW F l K s LL h) (a23 l K LL) (hWA l K s LL h) (lker_HKer_D D HW F a22 l K s LL h)
-    (linj_HExact_of _ ((F l).E K s LL h).tie (hO l K s LL h)) (hOA l K s LL h)
-    (liftb_HExt_holds D HW F l K s LL h) (liftb_HOne_holds D HW F l K s LL h)
 
 end Formalism.MainNotions.LiftingTheory
 
@@ -3207,7 +2551,7 @@ def gradedIdeal (ϖ : O) (k : ℕ) : Ideal (PowerSeries O) where
   carrier := {f | ∀ j, coeff j f ∈ Ideal.span {ϖ} ^ (k - j)}
   add_mem' := by
     intro a b ha hb j
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Ideal.add_mem _ (ha j) (hb j)
   zero_mem' := by
     intro j
@@ -3221,9 +2565,6 @@ def gradedIdeal (ϖ : O) (k : ℕ) : Ideal (PowerSeries O) where
       have := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
       omega
     exact Ideal.mul_mem_left _ _ (Ideal.pow_le_pow_right (by omega) (hf p.2))
-
-theorem mem_gradedIdeal_iff (ϖ : O) (k : ℕ) (f : PowerSeries O) :
-    f ∈ gradedIdeal ϖ k ↔ ∀ j, coeff j f ∈ Ideal.span {ϖ} ^ (k - j) := Iff.rfl
 
 theorem C_mul_mem_graded_ideal (ϖ : O) (k : ℕ) (f : PowerSeries O) (hf : f ∈ gradedIdeal ϖ k) :
     C ϖ * f ∈ gradedIdeal ϖ (k + 1) := by
@@ -3294,9 +2635,9 @@ theorem mem_ideal_pow_iff_coeff (ϖ : O) (k : ℕ) (f : PowerSeries O) :
   ⟨fun h => pow_le_graded_ideal ϖ k h, fun h => graded_ideal_le_pow ϖ k h⟩
 
 theorem hstr_ps_complete (ϖ : O) [IsAdicComplete (Ideal.span {ϖ}) O] :
-    IsAdicComplete (Ideal.span {PowerSeries.C ϖ, PowerSeries.X}) (PowerSeries O) where
-  haus' := by
-    intro x hx
+    IsAdicComplete (Ideal.span {PowerSeries.C ϖ, PowerSeries.X}) (PowerSeries O) := by
+  refine { haus' := ?_, prec' := ?_ }
+  · intro x hx
     ext j
     rw [map_zero]
     refine IsHausdorff.haus (inferInstance : IsHausdorff (Ideal.span {ϖ}) O) _ (fun m => ?_)
@@ -3305,8 +2646,7 @@ theorem hstr_ps_complete (ϖ : O) [IsAdicComplete (Ideal.span {ϖ}) O] :
     rw [SModEq.zero, smul_eq_mul, Ideal.mul_top] at h1
     have h2 := (mem_ideal_pow_iff_coeff ϖ (m + j) x).1 h1 j
     rwa [show m + j - j = m by omega] at h2
-  prec' := by
-    intro f hf
+  · intro f hf
     have hc : ∀ j, ∃ c : O, ∀ m,
         coeff j (f (m + j)) ≡ c [SMOD (Ideal.span {ϖ} ^ m • ⊤ : Submodule O O)] := by
       intro j
@@ -3339,17 +2679,16 @@ namespace Formalism.MainNotions.LiftingTheory
 theorem hstr_coord {A M R ι : Type} [CommRing A] [AddCommGroup M] [Module A M] [CommRing R]
     (I : Ideal A) (I₀ : Ideal R) [IsAdicComplete I₀ R] (e : M ≃+ (ι → R))
     (h : ∀ (k : ℕ) (x : M), x ∈ (I ^ k • ⊤ : Submodule A M) ↔ ∀ κ, e x κ ∈ I₀ ^ k) :
-    IsAdicComplete I M where
-  haus' := by
-    intro x hx
+    IsAdicComplete I M := by
+  refine { haus' := ?_, prec' := ?_ }
+  · intro x hx
     have h0 : e x = 0 := by
       funext κ
       refine IsHausdorff.haus (inferInstance : IsHausdorff I₀ R) _ (fun k => ?_)
       rw [SModEq.zero, smul_eq_mul, Ideal.mul_top]
       exact (h k x).1 (by simpa [SModEq.zero] using hx k) κ
     exact e.map_eq_zero_iff.1 h0
-  prec' := by
-    intro f hf
+  · intro f hf
     have hc : ∀ κ, ∃ L : R, ∀ k, e (f k) κ ≡ L [SMOD (I₀ ^ k • ⊤ : Submodule R R)] := by
       intro κ
       refine IsPrecomplete.prec (inferInstance : IsPrecomplete I₀ R) (f := fun k => e (f k) κ) ?_
@@ -3516,7 +2855,7 @@ theorem hstr_CompleteB (W : LocWach PD LL O v n) [IsAdicComplete (hstrI₀ O PD.
   refine ⟨hstrI O n PD.p, hstr_Q_mem W, hstr_φ_mem W, ?_⟩
   choose r b hb huniq using hfree.2
   have hinj : Function.Injective (hstrSyn W T r b hb) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     funext κ
     obtain ⟨i, j⟩ := κ
@@ -3548,7 +2887,7 @@ theorem hstr_CompleteB (W : LocWach PD LL O v n) [IsAdicComplete (hstrI₀ O PD.
       rw [← he' y, hstr_syn_smul, he]
       exact Ideal.mul_mem_right _ _ (hstr_eval_mem κ.1 k ha)
     · intro y z hy hz κ
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Ideal.add_mem _ (hy κ) (hz κ)
   · rw [← he' x]
     show (∑ κ : (Σ i, Fin (r i)), (Pi.single κ.1 (e x κ) : LetA O n) •
@@ -3613,14 +2952,14 @@ theorem hstra_abs {A' R D ι₁ ι₂ : Type} [CommRing A'] [CommRing R] [AddCom
         intro j _
         have : (fun i : ι₂ => (c + c') (j, i)) =
             ((fun i => c (j, i)) + fun i => c' (j, i) : ι₂ → R) := rfl
-        rw [this, map_add, add_smul] }
+        rw [this, map_add (f := _), add_smul] }
   have hg : ∀ c, g c = ∑ j, Θ (fun i => c (j, i)) • bM j := fun _ => rfl
   have hgc : ∀ c, ((g c : ↥N') : D) = ∑ j, Θ (fun i => c (j, i)) • b j := by
     intro c
     rw [hg, Submodule.coe_sum]
     rfl
   have hinj : Function.Injective g := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     have h0 : ∑ j, Θ (fun i => c (j, i)) • b j = 0 := by
       rw [← hgc, hc]
@@ -3658,7 +2997,7 @@ theorem hstra_abs {A' R D ι₁ ι₂ : Type} [CommRing A'] [CommRing R] [AddCom
       rw [← hge y, hsmul, heg]
       exact Ideal.mul_mem_right _ _ (hf κ.2)
     · intro y z hy hz κ
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Ideal.add_mem _ (hy κ) (hz κ)
   · rw [← hge x, hg]
     refine Submodule.sum_mem _ (fun j _ => Submodule.smul_mem_smul ?_ trivial)
@@ -3690,11 +3029,11 @@ theorem hstra_algHom_ext (F G : PowerSeries O →ₐ[O] PowerSeries O)
     have e1 : F f = F g * (F PowerSeries.X) ^ (k + 1) +
         F ((f.trunc (k + 1) : Polynomial O) : PowerSeries O) := by
       conv_lhs => rw [hf]
-      rw [map_add, map_mul, map_pow]
+      rw [map_add (f := _), map_mul, map_pow]
     have e2 : G f = G g * (G PowerSeries.X) ^ (k + 1) +
         G ((f.trunc (k + 1) : Polynomial O) : PowerSeries O) := by
       conv_lhs => rw [hf]
-      rw [map_add, map_mul, map_pow]
+      rw [map_add (f := _), map_mul, map_pow]
     have e3 : F f - G f = (F g - G g) * (F PowerSeries.X) ^ (k + 1) := by
       rw [e1, e2, hpoly, ← hX]
       ring
@@ -4345,10 +3684,10 @@ theorem lqb_lifts (W : LocWach PD LL O v n) (hp : PD.p = ℓ) (u : ℤ_[ℓ]ˣ)
   refine ⟨y', z', hy', hz', (liftb_mem_Z1D W T₁ y' z').2 hd', ?_, ?_⟩
   · have : y' = W.map ι a + (PD.p ^ Formalism.LIFT.eU PD.p M W.s (JSet jumps M) : ℕ) • y₁ := by
       rw [ha']; abel
-    rw [this, map_add, hE.2, zero_add, map_nsmul, hπy₁, smul_smul, ← pow_add, add_comm]
+    rw [this, map_add (f := _), hE.2, zero_add, map_nsmul, hπy₁, smul_smul, ← pow_add, add_comm]
   · have : z' = W.map ι b + (PD.p ^ Formalism.LIFT.eU PD.p M W.s (JSet jumps M) : ℕ) • (W.X • m₁) := by
       rw [hb']; abel
-    rw [this, map_add, hE.2, zero_add, map_nsmul, hπz₁, smul_smul, ← pow_add, add_comm]
+    rw [this, map_add (f := _), hE.2, zero_add, map_nsmul, hπz₁, smul_smul, ← pow_add, add_comm]
 
 def lqb_HLeft (W : LocWach PD LL O v n) : Prop :=
   ∀ (T₀ T₁ T₂ : LocLat G Qp LL O) (ι : LatHom T₀.L T₁.L) (π : LatHom T₁.L T₂.L),
@@ -4446,11 +3785,6 @@ theorem lifting_case_B_of_hypotheses (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc
     (a21 l K s LL h).1 (a23 l K LL) (hWB l K s LL h) (lker_HKer_D D HW F a22 l K s LL h)
     (lqb_HLeft_holds D HW F l K s LL h) (hstr_B D HW F a1 l K s LL h)
     (liftb_HExt_holds D HW F l K s LL h) (liftb_HOne_holds D HW F l K s LL h)
-
-theorem lifting_case_B_of_admitted (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (h : admitted D HW F Cm) : LiftTheoremCaseB D HW F := by
-  obtain ⟨a1, a2, -, -, a5, a6, -, -, -, -, a11, -, a13, a14, a15, a16, a17, -, -, -, a21, a22,
-    a23⟩ := h
-  exact lifting_case_B_of_hypotheses D HW F a1 a2 a5 a6 a11 a13 a14 a15 a17 a21 a22 a23 (wach_statement_case_B D HW F a2 a16)
 
 end Formalism.MainNotions.LiftingTheory
 
@@ -4580,7 +3914,7 @@ theorem lqa_lifts (W : LocWach PD LL O v n) (hp : PD.p = ℓ) (hA : CaseA W) (u 
       1 - (((W.χΓ W.gam) ^ (-x) : Oˣ) : O) := by
     intro x
     have h := congrArg (algebraMap ℤ_[PD.p] O) (hc x)
-    rw [map_mul, map_natCast, map_sub, map_one] at h
+    rw [map_mul, map_natCast, RingHom.map_sub, map_one] at h
     rw [h, ← hU, ← map_zpow]
     rfl
   have hstabN : ∀ x ∈ W.NΔ T₀, lifta_δ W T₀ cE x ∈ W.NΔ T₀ := by
@@ -4839,8 +4173,6 @@ theorem local_theory_of_admitted (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.l
   exact ⟨h1, h2, h3, h4, h5, h6, h7, lifting_all_parts_of_admitted D HW F Cm h⟩
 
 theorem frobenius_lifting (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) : Stmt D HW F Cm 10 23 32 32 := fun h => local_theory_of_admitted D HW F Cm h
-
-theorem local_theory_closed_form : RealisationStatementAll := ⟨10, 23, 32, 32, fun D HW F Cm => frobenius_lifting D HW F Cm⟩
 
 end Formalism.MainNotions.LiftingTheory
 

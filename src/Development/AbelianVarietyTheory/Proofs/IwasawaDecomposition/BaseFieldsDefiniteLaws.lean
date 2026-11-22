@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BaseDataEmbeddingConj
-import Formalism.LocalToGlobal.Columns.BaseLemmas
-import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BaseDataEmbeddingConj
+public import Formalism.LocalToGlobal.Columns.BaseLemmas
+public import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain GlobalTheory.Mem
 open Formalism.L2.Col
@@ -84,11 +88,6 @@ theorem unram (P : HeightOneSpectrum (𝓞 H.E)) :
 end Host
 
 variable (B : Base)
-
-theorem embE_conj (x : B.host.E) : B.embE (B.host.conj x) = star (B.embE x) := by
-  apply B.embLL.injective
-  rw [B.starLL_cx]
-  exact B.host.conjE_apply (B.embLL.comp B.embE) x
 
 theorem embLL_comp_embBar (τ : Tau B.R) :
     B.embLL.comp (B.fields.embBar τ) = B.host.emb ((τ : B.R.GG) * B.R.cc) := by

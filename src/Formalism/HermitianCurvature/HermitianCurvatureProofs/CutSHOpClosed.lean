@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamAlg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamDeriv
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHRepLin
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHCellTie
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamJFDeriv
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamAlg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamDeriv
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHRepLin
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHCellTie
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamJFDeriv
+
+@[expose] public section
 
 open scoped ContDiff Topology
 

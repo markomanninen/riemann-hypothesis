@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAStarOpModelAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAStarOpFundQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecFinal
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAStarOpModelAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAStarOpFundQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecFinal
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoordEquivApply
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StarStarOfInvol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoordEquivApply
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StarStarOfInvol
+
+@[expose] public section
+
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots GlobalTheory.TrEll
@@ -30,7 +35,8 @@ theorem gramOne_herm_nd : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [
       intro i
       have := congr_fun hw i
       simp only [Matrix.mulVec, dotProduct, gramOne, Matrix.of_apply, Pi.zero_apply] at this
-      rw [hz, Finset.sum_mul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hz, Finset.sum_mul, map_sum]
       rw [← this]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [smul_mul_assoc, map_smul, smul_eq_mul, mul_comm]
@@ -38,10 +44,12 @@ theorem gramOne_herm_nd : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [
       intro u
       have hu : u = ∑ i, σ (b.repr (star' P u) i) • star' P (b i) := by
         conv_lhs => rw [← hs u, ← b.sum_repr (star' P u)]
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [Algebra.smul_def, Algebra.smul_def, map_mul, star'_algebraMap]
-      rw [hu, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hu, Finset.mul_sum, map_sum]
       refine Finset.sum_eq_zero fun i _ => ?_
       rw [mul_smul_comm, map_smul, h1, smul_zero]
     have hz0 : z = 0 := (traceForm_nondegenerate E (Fld P)).1 z fun u => by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
-import Formalism.HarderNarasimhan.StatementPl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Formalism.HarderNarasimhan.StatementPl
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -55,7 +59,7 @@ theorem exists_point_factor (E : Type) [Field E] {Z : Scheme.{0}} (f : Z ⟶ Sp 
   have : IsAffine Z := isAffine_of_isAffineHom f
   obtain ⟨g, hg⟩ := Spec.map_surjective (R := CommRingCat.of E) (Z.isoSpec.inv ≫ f)
   have hfin : g.hom.Finite := (IsFinite.SpecMap_iff g).1 (hg ▸ inferInstance)
-  letI : Algebra E Γ(Z, ⊤) := g.hom.toAlgebra
+  let : Algebra E Γ(Z, ⊤) := g.hom.toAlgebra
   have : Module.Finite E Γ(Z, ⊤) := hfin
   obtain ⟨p, hp⟩ := exists_algHom_factor E Γ(Z, ⊤)
   refine ⟨p, fun Ω _ _ _ _ z hz => ?_⟩
@@ -85,8 +89,8 @@ end GlobalTheory.HSCore.SplitField
 
 namespace GlobalTheory.HSCore
 
-open SplitField in
 
+open SplitField in
 theorem exists_split : ∀ (F : Type) [Field F] [NumberField F] (T : Tuple F) (E : Type) [Field E] [NumberField E] [Algebra F E] (s : Fin T.D → Fin T.N → E), T.IsGoodSection E s → ∃ (E' : Type) (_ : Field E') (_ : NumberField E') (_ : Algebra F E') (_ : Algebra E E') (_ : IsScalarTower F E E'), Split T E' fun i k => algebraMap E E' (s i k) := by
   intro F _ _ T E _ _ _ s hs
   have hfin : IsFinite ((T.linSection E s).subschemeι ≫ (T.toLinSys.baseChange E).str) := hs.finiteEtale.finite

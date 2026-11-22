@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasDerivAtRightDerivativeCurve
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasDerivAtRightDerivativeCurve
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 open scoped ContDiff

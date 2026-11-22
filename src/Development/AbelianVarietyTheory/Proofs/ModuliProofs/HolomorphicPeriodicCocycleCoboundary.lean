@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CauchyRiemannIffDifferentiableOnComplexStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DbarSolveComplexTorusStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PeriodicCechCocycleSmoothCoboundaryStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CauchyRiemannIffDifferentiableOnComplexStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DbarSolveComplexTorusStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PeriodicCechCocycleSmoothCoboundaryStatement
+
+@[expose] public section
+
 open Complex Matrix
 open scoped ContDiff BigOperators Real Topology
 
@@ -134,7 +139,7 @@ theorem holomorphic_periodic_cocycle_coboundary : ∀ (g : ℕ) (Λ : Submodule 
       simp only [Pi.smul_apply, smul_eq_mul]
       ring
   · intro l z hz
-    simp only [(hb i).2 l z hz, hfΛ l z, map_add, antilin_apply _ (l : Fin g → ℂ), neg_dotProduct]
+    simp only [(hb i).2 l z hz, hfΛ l z, map_add (f := _), antilin_apply _ (l : Fin g → ℂ), neg_dotProduct]
     ring
   · intro i j z hz
     rw [hcb i j z hz]

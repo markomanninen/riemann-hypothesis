@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlEqOneOfPowPrimePow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlEqOneOfPowPrimePow
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -33,12 +38,14 @@ theorem eq_one_of_reduction_eq_one {E R k : Type} [Field E] [CommRing R] [CommRi
     exact h'
   have hsum : S.subtype.mapMatrix (∑ j ∈ Finset.range m, y.val ^ j)
       = (x⁻¹).val * ι.mapMatrix (∑ j ∈ Finset.range m, u.val ^ j) * x.val := by
-    rw [map_sum, map_sum, Finset.mul_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.mul_sum, Finset.sum_mul]
     exact Finset.sum_congr rfl fun j _ => hj j
   have hY : φ.mapMatrix y.val = 1 := by
     rw [← bc_val, hy, Units.val_one]
   have hk : φ.mapMatrix (∑ j ∈ Finset.range m, y.val ^ j) = (m : k) • 1 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_pow, hY, one_pow, Finset.sum_const, Finset.card_range]
     rw [Nat.cast_smul_eq_nsmul]
   have hd : (∑ j ∈ Finset.range m, u.val ^ j).det ≠ 0 := by

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.IdealNormPrincipalInExtension
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.IdealNormPrincipalInExtension
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.CompanionTheory.Ar.Basis

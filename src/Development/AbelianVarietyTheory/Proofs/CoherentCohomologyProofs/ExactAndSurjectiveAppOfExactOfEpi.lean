@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsQuasicoherentOfForallExistsAffine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsQuasicoherentOfForallExistsAffine
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Opposite
 
@@ -27,13 +31,6 @@ theorem coe_appLinear (φ : M ⟶ N) (U : X.Opens) : ⇑(appLinear φ U) = φ.ap
 theorem appLinear_comp (φ : M ⟶ N) (ψ : N ⟶ P) (U : X.Opens) :
     appLinear (φ ≫ ψ) U = appLinear ψ U ∘ₗ appLinear φ U := rfl
 
-theorem appLinear_id (M : X.Modules) (U : X.Opens) : appLinear (𝟙 M) U = LinearMap.id := rfl
-
-theorem appLinear_zero (M N : X.Modules) (U : X.Opens) : appLinear (0 : M ⟶ N) U = 0 := rfl
-
-theorem appLinear_add (φ ψ : M ⟶ N) (U : X.Opens) :
-    appLinear (φ + ψ) U = appLinear φ U + appLinear ψ U := rfl
-
 theorem app_app (φ : M ⟶ N) (ψ : N ⟶ P) (U : X.Opens) (s : Γ(M, U)) :
     ψ.app U (φ.app U s) = (φ ≫ ψ).app U s := rfl
 
@@ -44,14 +41,6 @@ theorem app_res (φ : M ⟶ N) (h : V ≤ U) (s : Γ(M, U)) :
 def sections (U : X.Opens) : X.Modules ⥤ ModuleCat.{u} Γ(X, U) where
   obj M := ModuleCat.of Γ(X, U) Γ(M, U)
   map φ := ModuleCat.ofHom (appLinear φ U)
-
-@[simp]
-theorem sections_obj (U : X.Opens) (M : X.Modules) :
-    (sections U).obj M = ModuleCat.of Γ(X, U) Γ(M, U) := rfl
-
-@[simp]
-theorem sections_map (U : X.Opens) (φ : M ⟶ N) :
-    (sections U).map φ = ModuleCat.ofHom (appLinear φ U) := rfl
 
 instance (U : X.Opens) : (sections U).Additive where
 
@@ -180,21 +169,9 @@ instance isQuasicoherent_pair_obj [M.IsQuasicoherent] [N.IsQuasicoherent]
     (j : Discrete WalkingPair) : ((pair M N).obj j).IsQuasicoherent := by
   obtain ⟨_ | _⟩ := j <;> assumption
 
-theorem isQuasicoherent_of_isZero (h : IsZero M) : M.IsQuasicoherent :=
-  haveI (j : Discrete PEmpty.{1}) : ((Functor.empty.{0} X.Modules).obj j).IsQuasicoherent :=
-    j.as.elim
-  isQuasicoherent_of_isColimit (D := Functor.empty.{0} X.Modules) h.isInitial
-
-open ZeroObject in
-instance isQuasicoherent_zero : (0 : X.Modules).IsQuasicoherent :=
-  isQuasicoherent_of_isZero (isZero_zero _)
 
 instance isQuasicoherent_cokernel (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent] :
     (cokernel φ).IsQuasicoherent :=
-  isQuasicoherent_colimit _
-
-instance isQuasicoherent_sigma {ι : Type w} [Small.{u} ι] (F : ι → X.Modules) [HasCoproduct F]
-    [∀ i, (F i).IsQuasicoherent] : (∐ F).IsQuasicoherent :=
   isQuasicoherent_colimit _
 
 instance isQuasicoherent_biproduct {ι : Type w} [Small.{u} ι] (F : ι → X.Modules)
@@ -204,14 +181,6 @@ instance isQuasicoherent_biproduct {ι : Type w} [Small.{u} ι] (F : ι → X.Mo
 instance isQuasicoherent_biprod [M.IsQuasicoherent] [N.IsQuasicoherent] :
     (M ⊞ N).IsQuasicoherent :=
   isQuasicoherent_of_isColimit (BinaryBiproduct.isColimit M N)
-
-instance isQuasicoherent_coprod [M.IsQuasicoherent] [N.IsQuasicoherent] :
-    (M ⨿ N).IsQuasicoherent :=
-  isQuasicoherent_colimit _
-
-instance isQuasicoherent_prod [M.IsQuasicoherent] [N.IsQuasicoherent] :
-    (M ⨯ N).IsQuasicoherent :=
-  isQuasicoherent_of_iso (biprod.isoProd M N)
 
 instance isQuasicoherent_pi {ι : Type w} [Finite ι] (F : ι → X.Modules) [HasProduct F]
     [∀ i, (F i).IsQuasicoherent] : (∏ᶜ F).IsQuasicoherent :=
@@ -238,15 +207,6 @@ theorem isQuasicoherent_of_exact_app {K : X.Modules} (ι : K ⟶ M) (φ : M ⟶ 
       rw [← app_res, ht, map_zero])
     exact ⟨n, hι U hU (by rw [Scheme.Modules.Hom.app_smul, hn, map_zero])⟩
 
-theorem isQuasicoherent_X₁_of_exact {S : ShortComplex X.Modules} (hS : S.Exact) [Mono S.f]
-    [S.X₂.IsQuasicoherent] [S.X₃.IsQuasicoherent] : S.X₁.IsQuasicoherent :=
-  isQuasicoherent_of_exact_app S.f S.g (fun U _ ↦ injective_app_of_mono S.f U)
-    fun U _ ↦ exact_app_of_exact_of_mono hS U
-
-theorem isQuasicoherent_X₃_of_exact {S : ShortComplex X.Modules} (hS : S.Exact) [Epi S.g]
-    [S.X₁.IsQuasicoherent] [S.X₂.IsQuasicoherent] : S.X₃.IsQuasicoherent :=
-  isQuasicoherent_of_isColimit hS.gIsCokernel
-
 theorem injective_kernel_ι_app (φ : M ⟶ N) (U : X.Opens) :
     Function.Injective ((kernel.ι φ).app U) :=
   injective_app_of_mono _ U
@@ -272,19 +232,6 @@ instance isQuasicoherent_abelianCoimage (φ : M ⟶ N) [M.IsQuasicoherent] [N.Is
 instance isQuasicoherent_image (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent] :
     (image φ).IsQuasicoherent :=
   isQuasicoherent_of_iso (Abelian.imageIsoImage φ)
-
-theorem isQuasicoherent_of_epi_of_mono {I : X.Modules} (e : M ⟶ I) (m : I ⟶ N) [Epi e] [Mono m]
-    [M.IsQuasicoherent] [N.IsQuasicoherent] : I.IsQuasicoherent :=
-  haveI := strongEpi_of_epi e
-  isQuasicoherent_of_iso (image.isoStrongEpiMono e m rfl).symm
-
-instance isQuasicoherent_cycles (S : ShortComplex X.Modules) [S.X₂.IsQuasicoherent]
-    [S.X₃.IsQuasicoherent] : S.cycles.IsQuasicoherent :=
-  isQuasicoherent_of_iso S.cyclesIsoKernel.symm
-
-instance isQuasicoherent_homology (S : ShortComplex X.Modules) [S.X₁.IsQuasicoherent]
-    [S.X₂.IsQuasicoherent] [S.X₃.IsQuasicoherent] : S.homology.IsQuasicoherent :=
-  isQuasicoherent_of_isColimit S.homologyIsCokernel
 
 end Closure
 
@@ -336,24 +283,9 @@ theorem exact_app_of_exact {S : ShortComplex X.Modules} (hS : S.Exact) [S.X₁.I
   haveI := (S.exact_iff_epi_kernel_lift).mp hS
   (exact_app_iff_surjective_lift S U).mpr (surjective_app_of_epi _ hU)
 
-theorem injective_image_ι_app (φ : M ⟶ N) (U : X.Opens) :
-    Function.Injective ((image.ι φ).app U) :=
-  injective_app_of_mono _ U
-
 theorem surjective_factorThruImage_app (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent]
     (hU : IsAffineOpen U) : Function.Surjective ((factorThruImage φ).app U) :=
   surjective_app_of_epi _ hU
-
-theorem range_image_ι_app (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent]
-    (hU : IsAffineOpen U) :
-    LinearMap.range (appLinear (image.ι φ) U) = LinearMap.range (appLinear φ U) := by
-  ext t
-  refine ⟨?_, ?_⟩
-  · rintro ⟨s, rfl⟩
-    obtain ⟨s, rfl⟩ := surjective_factorThruImage_app φ hU s
-    exact ⟨s, by rw [appLinear_apply, appLinear_apply, app_app, image.fac]⟩
-  · rintro ⟨s, rfl⟩
-    exact ⟨(factorThruImage φ).app U s, by rw [appLinear_apply, appLinear_apply, app_app, image.fac]⟩
 
 end Affine
 
@@ -409,81 +341,13 @@ theorem exact_iff_affineCover :
   simp only [S.exact_iff_epi_kernel_lift, epi_iff_affineCover 𝒰 hcov haff,
     exact_app_iff_surjective_lift]
 
-theorem shortExact_iff_affineCover :
-    S.ShortExact ↔ ∀ i, Function.Injective (S.f.app (𝒰 i)) ∧
-      Function.Exact (S.f.app (𝒰 i)) (S.g.app (𝒰 i)) ∧ Function.Surjective (S.g.app (𝒰 i)) := by
-  simp only [forall_and, ← exact_iff_affineCover 𝒰 hcov haff, ← mono_iff_affineCover 𝒰 hcov haff,
-    ← epi_iff_affineCover 𝒰 hcov haff]
-  exact ⟨fun h ↦ ⟨h.mono_f, h.exact, h.epi_g⟩, fun h ↦ .mk' h.2.1 h.1 h.2.2⟩
-
 end Cover
 
 section Subcategory
 
+
 variable (X) in
-
 abbrev qcoh : ObjectProperty X.Modules := fun M ↦ M.IsQuasicoherent
-
-instance : (qcoh X).IsClosedUnderIsomorphisms where
-  of_iso e _ := isQuasicoherent_of_iso e
-
-instance : (qcoh X).ContainsZero where
-  exists_zero := ⟨_, isZero_zero _, isQuasicoherent_zero⟩
-
-instance : (qcoh X).IsClosedUnderKernels where
-  kernels_le := by
-    rintro _ ⟨φ, k, hk, h₁, h₂⟩
-    exact isQuasicoherent_of_iso (M := kernel φ)
-      (IsLimit.conePointUniqueUpToIso (limit.isLimit _) hk)
-
-instance : (qcoh X).IsClosedUnderCokernels where
-  cokernels_le := by
-    rintro _ ⟨φ, k, hk, h₁, h₂⟩
-    exact isQuasicoherent_of_isColimit hk
-
-instance (J : Type w) [Category.{w'} J] [Small.{u} J] :
-    (qcoh X).IsClosedUnderColimitsOfShape J where
-  colimitsOfShape_le := by
-    rintro _ ⟨p⟩
-    have := p.prop_diag_obj
-    exact isQuasicoherent_of_isColimit p.isColimit
-
-instance : (qcoh X).IsClosedUnderFiniteProducts where
-  isClosedUnderLimitsOfShape J _ := .mk' (by
-    rintro _ ⟨F, hF⟩
-    have (j : J) : (F.obj ⟨j⟩).IsQuasicoherent := hF ⟨j⟩
-    exact isQuasicoherent_of_iso (M := ∏ᶜ fun j ↦ F.obj ⟨j⟩)
-      (HasLimit.isoOfNatIso (Discrete.natIsoFunctor (F := F))).symm)
-
-instance : Abelian (qcoh X).FullSubcategory := inferInstance
-
-instance : PreservesFiniteLimits (qcoh X).ι :=
-  haveI := (qcoh X).preservesKernels_ι
-  Functor.preservesFiniteLimits_of_preservesKernels _
-
-instance (J : Type) [SmallCategory J] [FinCategory J] : (qcoh X).IsClosedUnderLimitsOfShape J :=
-  (qcoh X).isClosedUnderLimitsOfShape_of_preservesLimitsOfShape_ι J
-
-theorem isQuasicoherent_of_isLimit {J : Type} [SmallCategory J] [FinCategory J]
-    {D : J ⥤ X.Modules} [h : ∀ j, (D.obj j).IsQuasicoherent] {c : Cone D} (hc : IsLimit c) :
-    c.pt.IsQuasicoherent :=
-  (qcoh X).prop_of_isLimit hc h
-
-instance isQuasicoherent_limit {J : Type} [SmallCategory J] [FinCategory J]
-    (D : J ⥤ X.Modules) [∀ j, (D.obj j).IsQuasicoherent] : (limit D).IsQuasicoherent :=
-  isQuasicoherent_of_isLimit (limit.isLimit D)
-
-instance isQuasicoherent_fiberProduct (φ : M ⟶ P) (ψ : N ⟶ P) [M.IsQuasicoherent]
-    [N.IsQuasicoherent] [P.IsQuasicoherent] : (pullback φ ψ).IsQuasicoherent :=
-  haveI (j : WalkingCospan) : ((cospan φ ψ).obj j).IsQuasicoherent := by
-    obtain _ | _ | _ := j <;> assumption
-  isQuasicoherent_limit _
-
-instance isQuasicoherent_amalgamatedSum (φ : P ⟶ M) (ψ : P ⟶ N) [M.IsQuasicoherent]
-    [N.IsQuasicoherent] [P.IsQuasicoherent] : (pushout φ ψ).IsQuasicoherent :=
-  haveI (j : WalkingSpan) : ((span φ ψ).obj j).IsQuasicoherent := by
-    obtain _ | _ | _ := j <;> assumption
-  isQuasicoherent_colimit _
 
 end Subcategory
 
@@ -493,77 +357,11 @@ theorem range_kernel_ι_app (φ : M ⟶ N) (U : X.Opens) :
     LinearMap.range (appLinear (kernel.ι φ) U) = LinearMap.ker (appLinear φ U) :=
   Submodule.ext fun s ↦ (exact_kernel_ι_app φ U s).symm
 
-theorem ker_cokernel_π_app (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent]
-    (hU : IsAffineOpen U) :
-    LinearMap.ker (appLinear (cokernel.π φ) U) = LinearMap.range (appLinear φ U) :=
-  Submodule.ext fun s ↦ exact_cokernel_π_app φ hU s
-
 def kernelSectionsEquiv (φ : M ⟶ N) (U : X.Opens) :
     Γ(kernel φ, U) ≃ₗ[Γ(X, U)] LinearMap.ker (appLinear φ U) :=
   (LinearEquiv.ofInjective (appLinear (kernel.ι φ) U) (injective_kernel_ι_app φ U)).trans
     (LinearEquiv.ofEq _ _ (range_kernel_ι_app φ U))
 
-@[simp]
-theorem kernelSectionsEquiv_apply_coe (φ : M ⟶ N) (U : X.Opens) (s : Γ(kernel φ, U)) :
-    (kernelSectionsEquiv φ U s : Γ(M, U)) = (kernel.ι φ).app U s := rfl
-
-def cokernelSectionsEquiv (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent]
-    (hU : IsAffineOpen U) :
-    (Γ(N, U) ⧸ LinearMap.range (appLinear φ U)) ≃ₗ[Γ(X, U)] Γ(cokernel φ, U) :=
-  (Submodule.quotEquivOfEq _ _ (ker_cokernel_π_app φ hU).symm).trans
-    (LinearMap.quotKerEquivOfSurjective (appLinear (cokernel.π φ) U)
-      (surjective_cokernel_π_app φ hU))
-
-@[simp]
-theorem cokernelSectionsEquiv_mk (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent]
-    (hU : IsAffineOpen U) (s : Γ(N, U)) :
-    cokernelSectionsEquiv φ hU (Submodule.Quotient.mk s) = (cokernel.π φ).app U s := rfl
-
-def imageSectionsEquiv (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent]
-    (hU : IsAffineOpen U) : Γ(image φ, U) ≃ₗ[Γ(X, U)] LinearMap.range (appLinear φ U) :=
-  (LinearEquiv.ofInjective (appLinear (image.ι φ) U) (injective_image_ι_app φ U)).trans
-    (LinearEquiv.ofEq _ _ (range_image_ι_app φ hU))
-
-@[simp]
-theorem imageSectionsEquiv_apply_coe (φ : M ⟶ N) [M.IsQuasicoherent] [N.IsQuasicoherent]
-    (hU : IsAffineOpen U) (s : Γ(image φ, U)) :
-    (imageSectionsEquiv φ hU s : Γ(N, U)) = (image.ι φ).app U s := rfl
-
-open DirectSum in
-
-def sigmaSectionsEquiv {ι : Type u} [DecidableEq ι] (F : ι → X.Modules)
-    [∀ i, (F i).IsQuasicoherent] (hU : IsAffineOpen U) :
-    (⨁ i, Γ(F i, U)) ≃ₗ[Γ(X, U)] Γ(∐ F, U) :=
-  haveI := preservesColimit_sections hU (Discrete.functor F)
-  ((ModuleCat.coprodIsoDirectSum fun i ↦ (sections U).obj (F i)).symm ≪≫
-    (PreservesCoproduct.iso (sections U) F).symm).toLinearEquiv
-
-@[simp]
-theorem sigmaSectionsEquiv_lof {ι : Type u} [DecidableEq ι] (F : ι → X.Modules)
-    [∀ i, (F i).IsQuasicoherent] (hU : IsAffineOpen U) (i : ι) (s : Γ(F i, U)) :
-    sigmaSectionsEquiv F hU (DirectSum.lof Γ(X, U) ι (fun i ↦ Γ(F i, U)) i s) =
-      (Sigma.ι F i).app U s := by
-  have := preservesColimit_sections hU (Discrete.functor F)
-  have h : ModuleCat.ofHom (DirectSum.lof Γ(X, U) ι (fun i ↦ (sections U).obj (F i)) i) ≫
-      (ModuleCat.coprodIsoDirectSum fun i ↦ (sections U).obj (F i)).inv ≫
-      (PreservesCoproduct.iso (sections U) F).inv = (sections U).map (Sigma.ι F i) := by
-    rw [← Category.assoc, ModuleCat.lof_coprodIsoDirectSum_inv, PreservesCoproduct.inv_hom,
-      ι_comp_sigmaComparison]
-  exact congr($h s)
-
-def piSectionsEquiv {ι : Type u} (F : ι → X.Modules) (U : X.Opens) :
-    Γ(∏ᶜ F, U) ≃ₗ[Γ(X, U)] (∀ i, Γ(F i, U)) :=
-  (PreservesProduct.iso (sections U) F ≪≫
-    ModuleCat.piIsoPi fun i ↦ (sections U).obj (F i)).toLinearEquiv
-
-@[simp]
-theorem piSectionsEquiv_apply {ι : Type u} (F : ι → X.Modules) (U : X.Opens) (s : Γ(∏ᶜ F, U))
-    (i : ι) : piSectionsEquiv F U s i = (Pi.π F i).app U s := by
-  have h : (PreservesProduct.iso (sections U) F).hom ≫
-      (ModuleCat.piIsoPi fun i ↦ (sections U).obj (F i)).hom ≫
-        ModuleCat.ofHom (LinearMap.proj i) = (sections U).map (Pi.π F i) := by
-    rw [ModuleCat.piIsoPi_hom_ker_subtype, PreservesProduct.iso_hom, piComparison_comp_π]
-  exact congr($h s)
 
 theorem app_sum {ι : Type w} (t : Finset ι) (φ : ι → (M ⟶ N)) (U : X.Opens) (s : Γ(M, U)) :
     (∑ i ∈ t, φ i).app U s = ∑ i ∈ t, (φ i).app U s := by
@@ -583,15 +381,11 @@ def biproductSectionsEquiv {ι : Type} [Fintype ι] (F : ι → X.Modules) [HasB
   right_inv s := by
     classical
     ext i
-    simp only [LinearMap.toFun_eq_coe, LinearMap.pi_apply, appLinear_apply, map_sum, app_app]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.toFun_eq_coe, LinearMap.pi_apply, appLinear_apply, map_sum, app_app]
     rw [Finset.sum_eq_single i (fun j _ hj ↦ by rw [biproduct.ι_π_ne F hj]; rfl) (by simp),
       biproduct.ι_π_self]
     rfl
-
-@[simp]
-theorem biproductSectionsEquiv_apply {ι : Type} [Fintype ι] (F : ι → X.Modules) [HasBiproduct F]
-    (U : X.Opens) (s : Γ(⨁ F, U)) (i : ι) :
-    biproductSectionsEquiv F U s i = (biproduct.π F i).app U s := rfl
 
 theorem biproductSectionsEquiv_symm_apply {ι : Type} [Fintype ι] (F : ι → X.Modules)
     [HasBiproduct F] (U : X.Opens) (s : ∀ i, Γ(F i, U)) :
@@ -608,16 +402,11 @@ def biprodSectionsEquiv (M N : X.Modules) (U : X.Opens) :
   right_inv s := by
     ext
     · change (biprod.fst : M ⊞ N ⟶ M).app U _ = _
-      rw [map_add, app_app, app_app, biprod.inl_fst, biprod.inr_fst]
+      rw [map_add (f := _), app_app, app_app, biprod.inl_fst, biprod.inr_fst]
       exact add_zero _
     · change (biprod.snd : M ⊞ N ⟶ N).app U _ = _
-      rw [map_add, app_app, app_app, biprod.inl_snd, biprod.inr_snd]
+      rw [map_add (f := _), app_app, app_app, biprod.inl_snd, biprod.inr_snd]
       exact zero_add _
-
-@[simp]
-theorem biprodSectionsEquiv_apply (M N : X.Modules) (U : X.Opens) (s : Γ(M ⊞ N, U)) :
-    biprodSectionsEquiv M N U s =
-      ((biprod.fst : M ⊞ N ⟶ M).app U s, (biprod.snd : M ⊞ N ⟶ N).app U s) := rfl
 
 end Equivs
 

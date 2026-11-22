@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalOfUniformlyAlmostInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RightTranslationCurveSqLeAndIntegralDerivEqZeroAStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalOfUniformlyAlmostInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RightTranslationCurveSqLeAndIntegralDerivEqZeroAStatement
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 open scoped ContDiff
 
@@ -83,7 +88,7 @@ theorem finiteDimensional_eigenspace_sum_sq_invariantFields : ∀ (K : Type) [Gr
     have ci : ∀ g : S, Continuous fun x => ‖g.1 x‖ ^ 2 := fun g => (hc g).norm.pow 2
     rw [← integral_finsetSum _ (fun i _ => hint (ci _)), ← integral_const_mul]
     refine integral_mono (hint (ci _))
-      (hint (continuous_const.mul (continuous_finset_sum _ fun i _ => ci _))) fun x => ?_
+      (hint (continuous_const.mul (continuous_finsetSum _ fun i _ => ci _))) fun x => ?_
     have h1 : ‖(d Y f).1 x‖ ≤ ∑ i, |a Y i| * ‖(d (X i) f).1 x‖ := by
       rw [hdY Y]
       simp only [LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum, Finset.sum_apply,

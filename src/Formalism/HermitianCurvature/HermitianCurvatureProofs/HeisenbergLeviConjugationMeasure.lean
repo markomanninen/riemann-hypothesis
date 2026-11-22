@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ENNReal NNReal
@@ -17,9 +21,6 @@ variable {ι : Type*} [Fintype ι] (H : Matrix ι ι ℂ)
 lemma herm_add_left (u u' v : ι → ℂ) : herm H (u + u') v = herm H u v + herm H u' v := by
   simp only [herm, mulVec_add, dotProduct_add]
 
-lemma herm_sub_left (u u' v : ι → ℂ) : herm H (u - u') v = herm H u v - herm H u' v := by
-  simp only [herm, mulVec_sub, dotProduct_sub]
-
 lemma herm_smul_left (c : ℂ) (u v : ι → ℂ) : herm H (c • u) v = c * herm H u v := by
   simp only [herm, mulVec_smul, dotProduct_smul, smul_eq_mul]
 
@@ -28,9 +29,6 @@ lemma herm_neg_left (u v : ι → ℂ) : herm H (-u) v = -herm H u v := by
 
 lemma herm_add_right (u v v' : ι → ℂ) : herm H u (v + v') = herm H u v + herm H u v' := by
   simp only [herm, star_add, add_dotProduct]
-
-lemma herm_neg_right (u v : ι → ℂ) : herm H u (-v) = -herm H u v := by
-  simp only [herm, star_neg, neg_dotProduct]
 
 lemma herm_zero_right (u : ι → ℂ) : herm H u 0 = 0 := by
   simp [herm]

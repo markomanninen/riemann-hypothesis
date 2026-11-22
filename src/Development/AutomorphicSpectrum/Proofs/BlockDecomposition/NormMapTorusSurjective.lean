@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
-import GroundTheory.LocalFields.Uniqueness
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+public import GroundTheory.LocalFields.Uniqueness
+
+@[expose] public section
 
 open PositivityTheory.Rg.Tf.Loc GroundTheory.LocalField Topology
 open Matrix

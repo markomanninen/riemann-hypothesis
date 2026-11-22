@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.FrobeniusOrbits.DiscrMaximalRealCyclotomic
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.FrobMulInertia
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CoprimeTwoPow
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.FrobeniusOrbits.DiscrMaximalRealCyclotomic
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.FrobMulInertia
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CoprimeTwoPow
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 
@@ -15,60 +19,12 @@ open Formalism.TwoAdicCyclotomicDecomposition
 
 namespace Misc2
 
-theorem galE_one {e q d : ℕ} (hqd : HypOdd q d) {L : Type} [Field L] [NumberField L]
-    {ζ a b : L} (h : IsLayer (e + 2) q d ζ a b) :
-    galE e ζ a b (1 : hostE ζ a b ≃ₐ[ℚ] hostE ζ a b) = 1 := by
-  obtain ⟨-, -, hmulE, -⟩ := hostGalois e q d hqd L ζ a b h
-  have := hmulE 1 1
-  rw [mul_one] at this
-  exact (mul_eq_left.mp this.symm)
-
-theorem ne_one_of_galE {e q d : ℕ} (hqd : HypOdd q d) {L : Type} [Field L] [NumberField L]
-    {ζ a b : L} (h : IsLayer (e + 2) q d ζ a b) (σ : hostE ζ a b ≃ₐ[ℚ] hostE ζ a b)
-    (hσ : galE e ζ a b σ ≠ 1) : σ ≠ 1 := by
-  rintro rfl
-  exact hσ (galE_one hqd h)
-
 theorem units_ne_one_iff (x : ℤˣ) : x ≠ 1 ↔ x = -1 := by
   rcases Int.units_eq_one_or x with rfl | rfl <;> decide
 
 end Misc2
 
 open Misc2
-
-theorem hostRamified_of (hI : HostInertia) : HostRamified := by
-  intro e q d he hH L _ _ ζ a b h p _ P _ _
-  have hqd := hH.toHypOdd
-  obtain ⟨-, -, -, hbij⟩ := hostGalois e q d hqd L ζ a b h
-  constructor
-  · rintro ⟨σ, hσ1, hσ⟩
-    by_contra hp
-    push Not at hp
-    obtain ⟨hp2, hpq, hpd⟩ := hp
-    have hF := hostFrob_of hostGalois hostGalSpec e q d hqd L ζ a b h p hp2 hpq hpd P
-    exact hσ1 ((hF.2.2 σ).mp hσ)
-  · rintro (rfl | rfl | rfl)
-    · obtain ⟨σ, hσ⟩ := hbij.2 (((1, 1), hcl e (u5 (e + 2))) : GG e)
-      refine ⟨σ, ne_one_of_galE hqd h σ ?_, ?_⟩
-      · rw [hσ]
-        intro h1
-        have h2 : hcl e (u5 (e + 2)) = 1 := congrArg Prod.snd h1
-        have h3 := (hostGroup e).2.2.2.2.2.2.2.1
-        rw [h2, orderOf_one] at h3
-        have : 2 ≤ 2 ^ e := by
-          calc 2 = 2 ^ 1 := by norm_num
-            _ ≤ 2 ^ e := Nat.pow_le_pow_right (by norm_num) he
-        omega
-      · have : P.LiesOver (span {(2 : ℤ)}) := by simpa using (inferInstance : P.LiesOver (span {((2 : ℕ) : ℤ)}))
-        exact ((hI e q d hH L ζ a b h σ).1 P).mpr (by rw [hσ]; rfl)
-    · obtain ⟨σ, hσ⟩ := hbij.2 (sg e)
-      refine ⟨σ, ne_one_of_galE hqd h σ ?_, ?_⟩
-      · rw [hσ]; simp [sg, Prod.ext_iff]
-      · exact ((hI e p d hH L ζ a b h σ).2.1 P).mpr (Or.inr hσ)
-    · obtain ⟨σ, hσ⟩ := hbij.2 (((1, -1), 1) : GG e)
-      refine ⟨σ, ne_one_of_galE hqd h σ ?_, ?_⟩
-      · rw [hσ]; simp [Prod.ext_iff]
-      · exact ((hI e q p hH L ζ a b h σ).2.2 P).mpr (Or.inr hσ)
 
 theorem hostPartner : HostPartner := by
   intro e τ hτ

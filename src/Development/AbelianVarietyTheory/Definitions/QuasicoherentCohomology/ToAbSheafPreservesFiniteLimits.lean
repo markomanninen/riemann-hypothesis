@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.SubsingletonOfSubsingletonFreeSheaf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.SubsingletonOfSubsingletonFreeSheaf
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Opposite Limits
 
@@ -11,27 +15,16 @@ namespace GlobalTheory
 
 variable {X : Scheme.{u}}
 
-variable (X) in
 
+variable (X) in
 def toAbSheaf : X.Modules ⥤ Sheaf (Opens.grothendieckTopology X) AddCommGrpCat.{u} :=
   SheafOfModules.toSheaf X.ringCatSheaf
 
-instance toAbSheaf_additive : (toAbSheaf X).Additive :=
+instance toAbSheaf_additive : (toAbSheaf (X := X)).Additive :=
   inferInstanceAs (SheafOfModules.toSheaf X.ringCatSheaf).Additive
 
-instance toAbSheaf_faithful : (toAbSheaf X).Faithful :=
-  inferInstanceAs (SheafOfModules.toSheaf X.ringCatSheaf).Faithful
-
-instance toAbSheaf_reflectsIsomorphisms : (toAbSheaf X).ReflectsIsomorphisms :=
-  inferInstanceAs (SheafOfModules.toSheaf X.ringCatSheaf).ReflectsIsomorphisms
-
-instance toAbSheaf_preservesFiniteLimits : PreservesFiniteLimits (toAbSheaf X) :=
+instance toAbSheaf_preservesFiniteLimits : PreservesFiniteLimits (toAbSheaf (X := X)) :=
   inferInstanceAs (PreservesFiniteLimits (SheafOfModules.toSheaf X.ringCatSheaf))
-
-@[simp] lemma toAbSheaf_obj_obj (F : X.Modules) : ((toAbSheaf X).obj F).obj = F.presheaf := rfl
-
-@[simp] lemma toAbSheaf_map_hom_app {F G : X.Modules} (φ : F ⟶ G) (U : X.Opens) :
-    ((toAbSheaf X).map φ).hom.app (op U) = φ.app U := rfl
 
 abbrev restrictGlobal (X : Scheme.{u}) (U : X.Opens) : Γ(X, ⊤) →+* Γ(X, U) :=
   (X.presheaf.map (homOfLE le_top : U ⟶ ⊤).op).hom
@@ -48,7 +41,7 @@ lemma map_restrictGlobal {U V : X.Opens} (i : V ⟶ U) (r : Γ(X, ⊤)) :
 
 def smulHom (F : X.Modules) (r : Γ(X, ⊤)) : F ⟶ F :=
   SheafOfModules.Hom.mk <| PresheafOfModules.homMk
-    { app := fun U ↦ F.smul (restrictGlobal X U.unop r)
+    { app := fun U ↦ (F.smul (restrictGlobal X U.unop r)).asHom
       naturality := fun U V i ↦ by
         have := F.map_comp_smul i.unop (restrictGlobal X U.unop r)
         rw [map_restrictGlobal] at this
@@ -66,23 +59,23 @@ def smulHom (F : X.Modules) (r : Γ(X, ⊤)) : F ⟶ F :=
 
 lemma smulHom_add (F : X.Modules) (r s : Γ(X, ⊤)) :
     smulHom F (r + s) = smulHom F r + smulHom F s := by
-  ext U x; rw [smulHom_app_apply, map_add, add_smul]; rfl
+  ext U x; rw [smulHom_app_apply, map_add (f := _), add_smul]; rfl
 
 lemma smulHom_mul (F : X.Modules) (r s : Γ(X, ⊤)) :
     smulHom F (r * s) = smulHom F s ≫ smulHom F r := by
   ext U x; rw [smulHom_app_apply, map_mul, mul_smul]; rfl
 
-@[reassoc] lemma smulHom_comp {F G : X.Modules} (φ : F ⟶ G) (r : Γ(X, ⊤)) :
+lemma smulHom_comp {F G : X.Modules} (r : Γ(X, ⊤)) (φ : F ⟶ G) :
     smulHom F r ≫ φ = φ ≫ smulHom G r := by
   ext U x
   exact φ.app_smul (restrictGlobal X U r) x
 
-@[simps] def smulEnd (F : X.Modules) : Γ(X, ⊤) →+* End F where
-  toFun := smulHom F
-  map_one' := smulHom_one F
-  map_mul' := smulHom_mul F
-  map_zero' := smulHom_zero F
-  map_add' := smulHom_add F
+def smulEnd (F : X.Modules) : Γ(X, ⊤) →+* End F where
+  toFun r := ⟨smulHom F r⟩
+  map_one' := by apply End.ext; simp
+  map_mul' r s := by apply End.ext; simpa using smulHom_mul F r s
+  map_zero' := by apply End.ext; simp
+  map_add' r s := by apply End.ext; simpa using smulHom_add F r s
 
 instance linearModules : Linear Γ(X, ⊤) X.Modules where
   homModule F G :=
@@ -104,9 +97,6 @@ lemma smul_hom_def {F G : X.Modules} (r : Γ(X, ⊤)) (φ : F ⟶ G) : r • φ 
 lemma smulHom_eq_smul_id (F : X.Modules) (r : Γ(X, ⊤)) : smulHom F r = r • 𝟙 F :=
   (Category.id_comp _).symm
 
-@[simp] lemma smul_app_apply {F G : X.Modules} (r : Γ(X, ⊤)) (φ : F ⟶ G) (U : X.Opens)
-    (x : Γ(F, U)) : (r • φ).app U x = restrictGlobal X U r • φ.app U x := rfl
-
 @[reducible] def addCommGroupOfAction {A M : Type*} [CommRing A] (inst : AddCommGroup M)
     (ρ : A →+* AddMonoid.End M) : AddCommGroup M :=
   { inst with
@@ -116,7 +106,7 @@ lemma smulHom_eq_smul_id (F : X.Modules) (r : Γ(X, ⊤)) : smulHom F r = r • 
       rw [map_zero, map_zero]; rfl
     zsmul_succ' := fun n x ↦ by
       change ρ (algebraMap ℤ A (n + 1 : ℕ)) x = ρ (algebraMap ℤ A n) x + x
-      rw [Nat.cast_succ, map_add, map_add, map_one, map_one]; rfl
+      rw [Nat.cast_succ, map_add (f := _), map_add (f := _), map_one, map_one]; rfl
     zsmul_neg' := fun n x ↦ by
       change ρ (algebraMap ℤ A (Int.negSucc n)) x = -ρ (algebraMap ℤ A (n + 1 : ℕ)) x
       rw [show Int.negSucc n = -((n + 1 : ℕ) : ℤ) from rfl, map_neg, map_neg]; rfl }
@@ -148,16 +138,13 @@ instance instModule : Module R (WithAction ρ) where
   smul_add r := map_add (ρ (algebraMap R A r))
   add_smul r s x := by
     change ρ (algebraMap R A (r + s)) x = _
-    rw [map_add, map_add]; rfl
+    rw [map_add (f := _), map_add (f := _)]; rfl
   zero_smul x := by
     change ρ (algebraMap R A 0) x = _
     rw [map_zero, map_zero]; rfl
 
-example : instModule ρ ℤ = AddCommGroup.toIntModule (WithAction ρ) := by
-  with_reducible_and_instances rfl
 
 variable {R} in
-
 lemma toBase_smul (r : R) (x : WithAction ρ) :
     toBase ρ (r • x) = ρ (algebraMap R A r) (toBase ρ x) := rfl
 
@@ -166,12 +153,6 @@ instance instIsScalarTower (S : Type*) [CommRing S] [Algebra S A] [Algebra R S]
   .of_algebraMap_smul fun r x ↦ by
     apply (toBase ρ).injective
     rw [toBase_smul, toBase_smul, ← IsScalarTower.algebraMap_apply]
-
-instance instSMulCommClass (S : Type*) [CommRing S] [Algebra S A] :
-    SMulCommClass R S (WithAction ρ) where
-  smul_comm r s x := by
-    rw [← algebraMap_smul A r, ← algebraMap_smul A s, ← algebraMap_smul A r,
-      ← algebraMap_smul A s (_ • x), smul_smul, smul_smul, mul_comm]
 
 def linearMap (f : M →+ N) (h : ∀ a x, f (ρ a x) = σ a (f x)) :
     WithAction ρ →ₗ[R] WithAction σ where
@@ -191,18 +172,24 @@ def linearEquiv (f : M ≃+ N) (h : ∀ a x, f (ρ a x) = σ a (f x)) :
   map_add' := f.map_add
   map_smul' _ x := h _ x
 
-lemma toBase_linearEquiv (f : M ≃+ N) (h : ∀ a x, f (ρ a x) = σ a (f x)) (x : WithAction ρ) :
-    toBase σ (linearEquiv ρ σ R f h x) = f (toBase ρ x) := rfl
-
 end WithAction
 
-@[simps] def functorEndRingHom {C D : Type*} [Category C] [Category D] [Preadditive C]
-    [Preadditive D] (G : C ⥤ D) [G.Additive] (Y : C) : End Y →+* End (G.obj Y) where
-  toFun f := G.map f
-  map_one' := G.map_id Y
-  map_mul' f g := G.map_comp g f
-  map_zero' := G.map_zero Y Y
-  map_add' _ _ := G.map_add
+def functorEndRingHom {C : Type u} {D : Type v} [Category C] [Category D]
+    [Preadditive C] [Preadditive D] (G : C ⥤ D) [G.Additive] (Y : C) :
+    End Y →+* End (G.obj Y) where
+  toFun f := ⟨G.map f.asHom⟩
+  map_one' := by
+    apply End.ext
+    exact G.map_id Y
+  map_mul' f g := by
+    apply End.ext
+    exact G.map_comp g.asHom f.asHom
+  map_zero' := by
+    apply End.ext
+    exact G.map_zero Y Y
+  map_add' f g := by
+    apply End.ext
+    exact G.map_add
 
 namespace SiteCoh
 
@@ -219,7 +206,11 @@ lemma map_comp_apply (f : F ⟶ G) (g : G ⟶ H) (x : F.H' n U) :
 
 lemma map_add_apply (f g : F ⟶ G) (x : F.H' n U) :
     map (f + g) n U x = map f n U x + map g n U x := by
-  simp only [map, Functor.map_add]; rfl
+  change ((Abelian.Ext.mk₀ (f + g)).postcomp _ (add_zero n)) x =
+    ((Abelian.Ext.mk₀ f).postcomp _ (add_zero n)) x +
+      ((Abelian.Ext.mk₀ g).postcomp _ (add_zero n)) x
+  simp [Abelian.Ext.mk₀_add, Abelian.Ext.postcomp]
+  rfl
 
 lemma map_zero_apply (x : F.H' n U) : map (0 : F ⟶ G) n U x = 0 := by
   simp only [map, Functor.map_zero]; rfl
@@ -236,16 +227,17 @@ lemma res_map_apply (f : F ⟶ G) (i : V ⟶ U) (x : F.H' n U) :
   (ConcreteCategory.congr_hom
     (((Sheaf.cohomologyPresheafFunctor J n).map f).naturality i.op) x).symm
 
+
 variable (F n U) in
-
 def endAction : End F →+* AddMonoid.End (F.H' n U) where
-  toFun f := (map f n U).hom
-  map_one' := AddMonoidHom.ext map_id_apply
-  map_mul' f g := AddMonoidHom.ext (map_comp_apply g f)
-  map_zero' := AddMonoidHom.ext map_zero_apply
-  map_add' f g := AddMonoidHom.ext (map_add_apply f g)
+  toFun f := (map f.asHom n U).hom
+  map_one' := AddMonoidHom.ext (fun x => map_id_apply x)
+  map_mul' f g := AddMonoidHom.ext (fun x => map_comp_apply g.asHom f.asHom x)
+  map_zero' := AddMonoidHom.ext (fun x => map_zero_apply x)
+  map_add' f g := AddMonoidHom.ext (fun x => map_add_apply f.asHom g.asHom x)
 
-lemma endAction_apply (f : End F) (x : F.H' n U) : endAction F n U f x = map f n U x := rfl
+lemma endAction_apply (f : End F) (x : F.H' n U) :
+    endAction (F := F) (n := n) (U := U) f x = map f.asHom n U x := rfl
 
 end SiteCoh
 

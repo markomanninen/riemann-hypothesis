@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,9 +51,7 @@ theorem BasisAt.smul {c : NChoice D} {w : D.what₂.places.Pl} {j : ℕ}
   intro b
   obtain ⟨h1, h2⟩ := h b
   refine ⟨?_, ?_⟩
-  · convert h1.units_smul (fun _ => u) using 1
-    funext i
-    simp [LinearMap.smul_apply, Units.smul_def]
+  · exact h1.units_smul (fun _ => u)
   · have h3 : (Set.range fun i => ((u : FractionRing (c.Oe w)) • e) (b i)) =
         (u : FractionRing (c.Oe w)) • Set.range fun i => e (b i) := by
       rw [← Set.range_smul]; rfl
@@ -100,8 +102,8 @@ theorem choiceSide_withE {cf : CharFrame D} {mt : MtFam D} {exp : NExpTied D} {c
     ⟨h.choice.twI_conj, h.choice.sd_place, h.choice.emb_side, h.choice.sd_conj, h.choice.one, h.choice.conj⟩,
     h.off, h.adm, h.psi, h.eMt_level⟩
 
-open Classical in
 
+open Classical in
 def pick (c : NChoice D)
     (G : ∀ w, D.what₂.muAt w ≠ D.what₂.mu0 → ∀ i : Fin D.R.m,
       D.what₂.MtL (D.what₂.muTw w) (i.1 + 1) →ₛₗ[c.embW w] Tgt c w (i.1 + 1)) :
@@ -113,7 +115,7 @@ theorem pick_eq (c : NChoice D)
     (G : ∀ w, D.what₂.muAt w ≠ D.what₂.mu0 → ∀ i : Fin D.R.m,
       D.what₂.MtL (D.what₂.muTw w) (i.1 + 1) →ₛₗ[c.embW w] Tgt c w (i.1 + 1))
     (w : D.what₂.places.Pl) (hw : D.what₂.muAt w ≠ D.what₂.mu0) (i : Fin D.R.m) : pick c G w (i.1 + 1) = G w hw i := by
-  simp only [pick, dif_pos (And.intro hw i.2)]
+  simp only [pick, dite_eq_left (And.intro hw i.2)]
 
 theorem pick_prop (c : NChoice D)
     (G : ∀ w, D.what₂.muAt w ≠ D.what₂.mu0 → ∀ i : Fin D.R.m,

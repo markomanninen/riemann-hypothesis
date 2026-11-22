@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerUnitClassModPrimePowProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerUnitClassModPrimePowProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,8 @@ theorem hilbert_ninety : ∀ (Ω K Γ : Type) [Field Ω] [Field K] [Algebra Ω K
     rw [QuotientGroup.eq] at h
     have e : g' = g * (g⁻¹ * g') := by group
     rw [e, cm, c1 _ h, map_one, one_mul, map_mul, AlgEquiv.mul_apply, h _ x.2]
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Fintype.sum_equiv (MulAction.toPerm γ) _ _ fun q => ?_
   rw [MulAction.toPerm_apply, F (γ * q.out) (γ • q).out
     (by rw [QuotientGroup.out_eq']; exact MulAction.Quotient.coe_smul_out D γ q), cm, map_mul, map_mul,
@@ -256,7 +261,8 @@ theorem cls_eq_of_mem_Gam : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] (ε : Ω
     | mem b hb =>
       refine ⟨hb.2 γ hγ, ?_⟩
       obtain ⟨c, -, hc⟩ := hb.1
-      rw [hc, hc, map_sum, map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hc, hc, map_sum, map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, map_smul, smul_smul]
       apply hsm
@@ -267,7 +273,7 @@ theorem cls_eq_of_mem_Gam : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] (ε : Ω
         rw [this]
       · rw [zero_pow h.ne', mul_zero, mul_zero]
     | zero => simp
-    | add x y _ _ hx hy => exact ⟨by rw [map_add, hx.1, hy.1], by simp only [Pi.add_apply, map_add, hx.2, hy.2, smul_add]⟩
+    | add x y _ _ hx hy => exact ⟨by rw [map_add (f := _), hx.1, hy.1], by simp only [Pi.add_apply, map_add (f := _), hx.2, hy.2, smul_add]⟩
     | smul a x _ hx => exact ⟨by rw [map_smul, hx.1], by simp only [Pi.smul_apply, map_smul, hx.2, smul_comm a]⟩
   have e1 : X.kmap l (X.sl (ofSL γ)).toRingEquiv (b u) = b ![1, 0] := by
     have := congrFun key.1 ![1, 0]

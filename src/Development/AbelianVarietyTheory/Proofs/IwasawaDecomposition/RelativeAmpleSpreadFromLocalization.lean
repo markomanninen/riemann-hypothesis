@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsAffineOpenPreimageBasicOpen
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsAffineOpenPreimageBasicOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,8 +119,8 @@ theorem exists_basicOpen_le {V : (Sp R).Opens} (hV : (q : Sp R) ∈ V) :
   obtain ⟨f, hf, hle⟩ := exists_basicOpen_le' hV
   exact ⟨f, hf, hle⟩
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem spMap_eq_fromSpecStalk (q : PrimeSpectrum R) :
     Spec.map (Spec.stalkIso (CommRingCat.of R) (q : Sp R)).hom ≫ (Sp R).fromSpecStalk (q : Sp R) =
       spMap (algebraMap R (Localization.AtPrime q.asIdeal)) := by
@@ -128,8 +132,8 @@ theorem spMap_eq_fromSpecStalk (q : PrimeSpectrum R) :
   refine (congrArg (Spec.map (Spec.stalkIso (CommRingCat.of R) (q : Sp R)).hom ≫ ·) e).trans ?_
   rw [← Category.assoc, ← Spec.map_comp, Iso.inv_hom_id, Spec.map_id, Category.id_comp]
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exists_isAffineOpen_preimage_basicOpen_of_stalk {x : Sp R} {p' : X' ⟶ Spec ((Sp R).presheaf.stalk x)}
     (H' : IsPullback φ p' p ((Sp R).fromSpecStalk x)) [QuasiCompact p] [QuasiSeparated p] [IsAffine X'] :
     ∃ f : R, x ∈ (PrimeSpectrum.basicOpen f : (Sp R).Opens) ∧ IsAffineOpen (p ⁻¹ᵁ PrimeSpectrum.basicOpen f) := by
@@ -232,13 +236,26 @@ theorem relAmple_spread_at : ∀ (R : Type) [CommRing R] [IsNoetherianRing R] (q
   let ψ := (A.hom ⁻¹ᵁ U).ι
   have : IsAffineHom ψ := MorphismProperty.of_isPullback (P := @IsAffineHom)
     (isPullback_morphismRestrict A.hom U) inferInstance
-  refine (relAmple_iff_isAmpleLB_of_isAffine _ (LB.isLB_pull hM _)).2
-    (isAmpleLB_of_cover (LB.isLB_pull hM _) hn (fun i => secPowPull (θ i) ψ) (top_le_iff.1 fun z _ => ?_) fun i => ?_)
-  · obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (hc z.2)
+  have hs : (⨆ i, Out.nonzeroLocus (secPowPull (θ i) ψ)) = ⊤ := by
+    apply top_le_iff.1
+    intro z _
+    obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (hc z.2)
     exact Opens.mem_iSup.2 ⟨i, (nonzeroLocus_secPowPull (θ i) ψ).ge hi⟩
-  · have e : ψ ⁻¹ᵁ (Out.nonzeroLocus (θ i) ⊓ A.hom ⁻¹ᵁ PrimeSpectrum.basicOpen f) =
+  have ha' : ∀ i, IsAffineOpen (Out.nonzeroLocus (secPowPull (θ i) ψ)) := by
+    intro i
+    have e : ψ ⁻¹ᵁ (Out.nonzeroLocus (θ i) ⊓ A.hom ⁻¹ᵁ PrimeSpectrum.basicOpen f) =
         Out.nonzeroLocus (secPowPull (θ i) ψ) :=
       (le_antisymm (fun z hz => hz.1) fun z hz => ⟨hz, z.2⟩).trans (nonzeroLocus_secPowPull (θ i) ψ).symm
     exact e ▸ (ha i).preimage ψ
+  apply (relAmple_iff_isAmpleLB_of_isAffine _ (LB.isLB_pull hM _)).2
+  refine ⟨LB.isLB_pull hM _, ⟨?_⟩, ?_⟩
+  · have e : (Set.univ : Set (A.hom ⁻¹ᵁ U).toScheme) =
+        ⋃ i, (Out.nonzeroLocus (secPowPull (θ i) ψ) : Set (A.hom ⁻¹ᵁ U).toScheme) := by
+      rw [← Opens.coe_iSup, hs, Opens.coe_top]
+    rw [e]
+    exact isCompact_iUnion fun i => (ha' i).isCompact
+  · intro x
+    obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (hs.ge (Set.mem_univ x))
+    exact ⟨n, hn, secPowPull (θ i) ψ, hi, ha' i⟩
 
 end GlobalTheory.AmpleSpreadAt

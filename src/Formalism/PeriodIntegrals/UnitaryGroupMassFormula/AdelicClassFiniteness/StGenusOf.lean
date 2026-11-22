@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.AdelClassFin
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.AdelClassFin
+
+@[expose] public section
 
 noncomputable section
 

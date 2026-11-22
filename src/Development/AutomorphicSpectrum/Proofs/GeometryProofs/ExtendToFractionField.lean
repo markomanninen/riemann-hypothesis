@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ExtendsToFractionField
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ExtendsToFractionField
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory
 
 namespace GlobalTheory.CompanionTheory.Ggeo

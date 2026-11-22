@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.SmallCones.UnfPar
-import Development.WeilBound.ThetaLifts.SmallCones.UnfMod
-import Development.WeilBound.ThetaLifts.SmallCones.UnfAbs
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicHaarInvariantUnitaryActionStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HyperbolicAndBlockOneNondegenerateStatement
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.UnfPar
+public import Development.WeilBound.ThetaLifts.SmallCones.UnfMod
+public import Development.WeilBound.ThetaLifts.SmallCones.UnfAbs
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicHaarInvariantUnitaryActionStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HyperbolicAndBlockOneNondegenerateStatement
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology PositivityTheory.PlacePermOperatorBicommutantSpan
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -16,27 +20,24 @@ namespace PositivityTheory.ThKCT.Unf
 theorem Par.transport {G G' N H H' T : Type} [Group G] [TopologicalSpace G] [Group G'] [TopologicalSpace G'] [TopologicalSpace N]
     [MeasurableSpace N] [Group H] [TopologicalSpace H] [Group H'] [TopologicalSpace H'] [CommGroup T] [TopologicalSpace T]
     {μN : Measure N} {nn : N → G} {ι : H →* G} {mm : T →* G} {χ : T →* ℝ≥0} (h : Par μN nn ι mm χ) (Φ : G ≃ₜ* G') (Ψ : H ≃ₜ* H') :
-    Par μN (fun p => Φ (nn p)) ((Φ : G →* G').comp (ι.comp (Ψ.symm : H' →* H))) ((Φ : G →* G').comp mm) χ where
-  cn := Φ.continuous.comp h.cn
-  ci := Φ.continuous.comp (h.ci.comp Ψ.symm.continuous)
-  cm := Φ.continuous.comp h.cm
-  cχ := h.cχ
-  emb := by
-    have := (Φ.toHomeomorph.isClosedEmbedding.comp h.emb).comp
+    Par μN (fun p => Φ (nn p)) ((Φ : G →* G').comp (ι.comp (Ψ.symm : H' →* H))) ((Φ : G →* G').comp mm) χ := by
+  refine ⟨Φ.continuous.comp h.cn, Φ.continuous.comp (h.ci.comp Ψ.symm.continuous),
+    Φ.continuous.comp h.cm, h.cχ, ?_, ?_, ?_, ?_, ?_, h.ne⟩
+  · have := (Φ.toHomeomorph.isClosedEmbedding.comp h.emb).comp
       ((Homeomorph.refl N).prodCongr (Ψ.symm.toHomeomorph.prodCongr (Homeomorph.refl T))).isClosedEmbedding
     refine (congrArg IsClosedEmbedding (funext fun z => ?_)).mp this
     exact (map_mul Φ _ _).trans (congrArg (· * _) (map_mul Φ _ _))
-  h1 p := by
+  · intro p
     obtain ⟨L, a, b⟩ := h.h1 p
     exact ⟨L, a, fun x => by rw [← map_mul, b]⟩
-  h2 u := by
+  · intro u
     obtain ⟨L, a, b⟩ := h.h2 (Ψ.symm u)
     exact ⟨L, a, fun x => (map_mul Φ _ _).symm.trans ((congrArg Φ (b x)).trans (map_mul Φ _ _))⟩
-  h3 t := by
+  · intro t
     obtain ⟨L, a, b, c⟩ := h.h3 t
     exact ⟨L, a, b, fun x => (map_mul Φ _ _).symm.trans ((congrArg Φ (c x)).trans (map_mul Φ _ _))⟩
-  h4 u t := (map_mul Φ _ _).symm.trans ((congrArg Φ (h.h4 _ t)).trans (map_mul Φ _ _))
-  ne := h.ne
+  · intro u t
+    exact (map_mul Φ _ _).symm.trans ((congrArg Φ (h.h4 _ t)).trans (map_mul Φ _ _))
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 

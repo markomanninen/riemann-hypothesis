@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GrCechFin
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GrCechFin
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -19,7 +23,7 @@ theorem isProper_str (R : Type) [CommRing R] (N : ℕ) : IsProper (PSpace.str R 
     · intro a b h
       exact MvPolynomial.C_injective (Fin (N + 1)) R (congrArg Subtype.val h)
     · rintro ⟨x, hx⟩
-      exact ⟨MvPolynomial.coeff 0 x, Subtype.ext
+      exact ⟨AddMonoidAlgebra.coeff x 0, Subtype.ext
         (MvPolynomial.totalDegree_eq_zero_iff_eq_C.1 ((MvPolynomial.totalDegree_zero_iff_isHomogeneous _).2 hx)).symm⟩
   have : IsIso (spMap (algebraMap R ↥(MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R 0))) := by
     have : IsIso (CommRingCat.ofHom (algebraMap R ↥(MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R 0))) :=

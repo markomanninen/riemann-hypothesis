@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShiftAtRExistsEq
-import Formalism.HermitianCurvature.FrameExists2
-import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OmgMulLeft
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HpkConjTranspose
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShiftAtRExistsEq
+public import Formalism.HermitianCurvature.FrameExists2
+public import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OmgMulLeft
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HpkConjTranspose
+
+@[expose] public section
+
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.CutBP2 Formalism.FourierDecayAlt.P.CutBPEq Matrix
 
 namespace GlobalTheory.CompanionTheory.OmegaBiInv

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.AntitoneOfMemInterl
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.AntitoneOfMemInterl
+
+@[expose] public section
 
 noncomputable section
 

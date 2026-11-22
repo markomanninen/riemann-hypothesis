@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -11,7 +15,7 @@ private theorem meas_union {G : Type*} [Group G] [MeasurableSpace G] [Measurable
   let S : A ⧸ J.subgroupOf A → Set G := fun q => (fun g => ((q.out : G) * t)⁻¹ * g) ⁻¹' (I : Set G)
   have hU : {g | ∃ x ∈ A, ∃ y ∈ I, g = x * t * y} = ⋃ q, S q := by
     ext g
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, S, Set.mem_preimage, SetLike.mem_coe]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, S, Set.mem_preimage, SetLike.mem_coe]
     constructor
     · rintro ⟨x, hx, y, hy, rfl⟩
       refine ⟨((⟨x, hx⟩ : A) : A ⧸ J.subgroupOf A), ?_⟩
@@ -43,8 +47,8 @@ private theorem index_modular {B : Type*} [Group B] [TopologicalSpace B] [IsTopo
     ext x; exact hJ x
   have hJo : IsOpen (J : Set B) := by
     rw [hJs]; exact (hAo.preimage (by fun_prop)).preimage (by fun_prop)
-  haveI : CompactSpace A := isCompact_iff_compactSpace.1 hAc
-  haveI : Finite (A ⧸ J.subgroupOf A) :=
+  have : CompactSpace A := isCompact_iff_compactSpace.1 hAc
+  have : Finite (A ⧸ J.subgroupOf A) :=
     Subgroup.quotient_finite_of_isOpen _ (hJo.preimage continuous_subtype_val)
   have h1 := meas_union ν A J J 1 (by simp) hJo.measurableSet
   have h2 : {g | ∃ x ∈ A, ∃ y ∈ J, g = x * 1 * y} = (A : Set B) := by
@@ -79,8 +83,8 @@ private theorem meas_dcoset {G : Type*} [Group G] [TopologicalSpace G] [IsTopolo
     have : (J : Set G) = (fun x => (t : G)⁻¹ * x * t) ⁻¹' (I : Set G) := Set.ext hJ
     rw [this]; exact hIo.preimage (by fun_prop)
   have hAc : IsCompact ((I ⊓ B : Subgroup G) : Set G) := hIc.inter_right hB
-  haveI : CompactSpace (I ⊓ B : Subgroup G) := isCompact_iff_compactSpace.1 hAc
-  haveI : Finite ((I ⊓ B : Subgroup G) ⧸ J.subgroupOf (I ⊓ B)) :=
+  have : CompactSpace (I ⊓ B : Subgroup G) := isCompact_iff_compactSpace.1 hAc
+  have : Finite ((I ⊓ B : Subgroup G) ⧸ J.subgroupOf (I ⊓ B)) :=
     Subgroup.quotient_finite_of_isOpen _ (hJo.preimage continuous_subtype_val)
   have e1 := meas_union μ (I ⊓ B) I J t hJ hIo.measurableSet
   have e2 : {g | ∃ x ∈ I, ∃ y ∈ I, g = x * t * y} = {g | ∃ x ∈ I ⊓ B, ∃ y ∈ I, g = x * t * y} := by
@@ -124,8 +128,9 @@ private theorem conj_mem {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace
     rw [he]
     rcases lt_or_ge (a i) (a j) with hij | hij
     · rw [h i j hij, mul_zero]
-    · simpa using Parabolic.valuation_zpow_mul_le_pow_mul (F := F) (e := 0) (z := a i - a j)
-        (x := (g : Matrix (Fin n) (Fin n) F) i j) (by simpa using hij)
+    · obtain ⟨d, hd⟩ : ∃ d : ℕ, a i - a j = d := ⟨(a i - a j).toNat, by omega⟩
+      rw [hd, zpow_natCast, map_mul, map_pow]
+      simpa [mul_comm] using mul_le_of_le_one_right' (a := ValuativeRel.valuation F ((g : Matrix (Fin n) (Fin n) F) i j)) (pow_le_one' (GLnLocal.valuation_uniformizer_lt_one F).le d)
   obtain ⟨h1, h2, h3⟩ := (mem_iwahori_iff F n).1 hg
   refine (mem_iwahori_iff F n).2 ⟨fun i j => (hle i j).trans (h1 i j),
     fun i j hij => (hle i j).trans_lt (h2 i j hij), fun i => ?_⟩

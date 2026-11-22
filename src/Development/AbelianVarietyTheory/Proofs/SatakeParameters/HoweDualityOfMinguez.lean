@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HypothesesAbsDet
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweDualityGL
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmQuotientTransposeInverseStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmQuotientTwistDetStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmQuotientTrivialRankZeroStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HypothesesAbsDet
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweDualityGL
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmQuotientTransposeInverseStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmQuotientTwistDetStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmQuotientTrivialRankZeroStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem exists_form_ne_zero {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCom
     | zero => simp
     | tmul v w =>
       simp [e, TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
-    | add y z hy hz => rw [map_add, map_add, hy, hz, map_add, Finsupp.add_apply]
+    | add y z hy hz => rw [map_add (f := _), map_add (f := _), hy, hz, map_add (f := _), Finsupp.add_apply]
   have hne : e x ≠ 0 := fun h => hx (e.injective (h.trans (map_zero e).symm))
   obtain ⟨i, hi⟩ := Finsupp.ne_iff.1 hne
   exact ⟨b.coord i, by rw [key]; simpa using hi⟩
@@ -102,8 +106,6 @@ def invT (n : ℕ) : GL (Fin n) k →* GL (Fin n) k where
   map_mul' a b := by
     apply Units.ext
     simp only [Units.val_mul, mul_inv_rev, Matrix.transpose_mul]
-
-theorem invT_val (n : ℕ) (g : GL (Fin n) k) : (invT n g).val = (g⁻¹).val.transpose := rfl
 
 theorem invT_invT (n : ℕ) (g : GL (Fin n) k) : invT n (invT n g) = g := by
   apply Units.ext
@@ -143,7 +145,7 @@ theorem uniq_left (hM : GlobalTheory.Published.MinguezThetaGL) (r n : ℕ) {V V'
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul v w => simp
-      | add y z hy hz => simp only [map_add, hy, hz]
+      | add y z hy hz => simp only [map_add (f := _), hy, hz]
     obtain ⟨V0, _, _, π', -, -, -, hU, -⟩ :=
       hM k n r (Nat.one_le_iff_ne_zero.2 h0.2) (Nat.one_le_iff_ne_zero.2 h0.1) W τ hτ hτi ⟨f, hf0, hf⟩
     obtain ⟨a⟩ := hU V σ hσ hσi ⟨F, hF0, hF⟩

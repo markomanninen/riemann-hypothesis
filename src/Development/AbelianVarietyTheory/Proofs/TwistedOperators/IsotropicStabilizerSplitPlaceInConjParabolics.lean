@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
-import Development.AbelianVarietyTheory.Definitions.Foundations.WittIndexEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WittIndexAddOfIsWittLower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+public import Development.AbelianVarietyTheory.Definitions.Foundations.WittIndexEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WittIndexAddOfIsWittLower
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,13 +77,14 @@ open GlobalTheory.AutFunCompare (colSpan exists_colSpan mem_extSub_colSpan)
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {v : HeightOneSpectrum (𝓞 F)}
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem splitVec_map_inclR_mulVec (τ : E →ₐ[F] Fv F v) {n r : ℕ} (C : Matrix (Fin n) (Fin r) E)
     (a : Fin r → Fv F v ⊗[F] E) :
     splitVec τ ((C.map (inclR (Fv F v))) *ᵥ a) = (C.map τ) *ᵥ fun k => splitProj τ (a k) := by
   funext i
-  simp [splitVec, Matrix.mulVec, dotProduct, map_sum, map_mul, splitProj_inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [splitVec, Matrix.mulVec, dotProduct, map_sum, map_mul, splitProj_inclR]
 
 end GlobalTheory.SplitStab
 

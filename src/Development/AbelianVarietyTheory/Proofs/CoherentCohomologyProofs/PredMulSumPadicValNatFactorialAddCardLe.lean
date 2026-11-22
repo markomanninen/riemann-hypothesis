@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -33,11 +37,6 @@ theorem isOrderingRule_toList :
     IsOrderingRule (fun α : Λ →₀ ℕ => (Finsupp.toMultiset α).toList) :=
   fun _ => Multiset.coe_toList _
 
-theorem IsOrderingRule.length_eq {ord : (Λ →₀ ℕ) → List Λ} (h : IsOrderingRule ord)
-    (α : Λ →₀ ℕ) : (ord α).length = degree α := by
-  rw [← Multiset.coe_card, h α, Finsupp.card_toMultiset]
-  rfl
-
 noncomputable def opPoly (D : Λ → B) (ord : (Λ →₀ ℕ) → List Λ) : MvPolynomial Λ R →ₗ[R] B :=
   (MvPolynomial.basisMonomials Λ R).constr R (fun α => opWord D (ord α))
 
@@ -51,13 +50,13 @@ theorem opPoly_mul_of_commute {D : Λ → B} (hD : ∀ l l', Commute (D l) (D l'
     {ord : (Λ →₀ ℕ) → List Λ} (h : IsOrderingRule ord) (P Q : MvPolynomial Λ R) :
     opPoly D ord (P * Q) = opPoly D ord P * opPoly D ord Q := by
   induction P using MvPolynomial.induction_on' with
-  | add p q hp hq => simp only [add_mul, map_add, hp, hq]
+  | add p q hp hq => simp only [add_mul, map_add (f := _), hp, hq]
   | monomial α a =>
     induction Q using MvPolynomial.induction_on' with
-    | add p q hp hq => simp only [mul_add, map_add, hp, hq]
+    | add p q hp hq => simp only [mul_add, map_add (f := _), hp, hq]
     | monomial β b =>
       have hp : (ord (α + β)).Perm (ord α ++ ord β) := by
-        rw [← Multiset.coe_eq_coe, ← Multiset.coe_add, h, h, h, map_add]
+        rw [← Multiset.coe_eq_coe, ← Multiset.coe_add, h, h, h, map_add (f := _)]
       rw [MvPolynomial.monomial_mul, opPoly_monomial, opPoly_monomial, opPoly_monomial,
         opWord_perm hD hp, opWord_append, smul_mul_smul_comm]
 
@@ -106,48 +105,6 @@ open MvPolynomial
 
 variable {R σ Λ : Type*} [CommRing R]
 
-noncomputable def constDeriv (v : σ → R) : Derivation R (MvPolynomial σ R) (MvPolynomial σ R) :=
-  mkDerivation R fun i => C (v i)
-
-@[simp] theorem constDeriv_X (v : σ → R) (i : σ) : constDeriv v (X i) = C (v i) :=
-  mkDerivation_X _ _ _
-
-theorem constDeriv_single [DecidableEq σ] (i : σ) :
-    constDeriv (Pi.single i (1 : R)) = pderiv i := by
-  refine derivation_ext fun j => ?_
-  rw [constDeriv_X, pderiv_X]
-  by_cases h : j = i
-  · subst h; simp
-  · simp [h]
-
-theorem constDeriv_commute (v v' : σ → R) :
-    Commute ((constDeriv v).toLinearMap : Module.End R (MvPolynomial σ R))
-      (constDeriv v').toLinearMap := by
-  have h : ⁅constDeriv v, constDeriv v'⁆ = 0 :=
-    derivation_ext fun j => by simp [Derivation.commutator_apply]
-  refine LinearMap.ext fun p => ?_
-  have := congrArg (fun D : Derivation R (MvPolynomial σ R) (MvPolynomial σ R) => D p) h
-  simpa [Derivation.commutator_apply, sub_eq_zero] using this
-
-theorem pderiv_commute (i j : σ) :
-    Commute ((pderiv i).toLinearMap : Module.End R (MvPolynomial σ R)) (pderiv j).toLinearMap := by
-  classical
-  rw [← constDeriv_single, ← constDeriv_single]
-  exact constDeriv_commute _ _
-
-noncomputable def pderivEval : MvPolynomial σ R →ₐ[R] Module.End R (MvPolynomial σ R) :=
-  commEval (fun i => (pderiv i).toLinearMap) pderiv_commute
-
-@[simp] theorem pderivEval_X (i : σ) :
-    pderivEval (X i : MvPolynomial σ R) = (pderiv i).toLinearMap := commEval_X _ _ i
-
-noncomputable def constDerivEval (v : Λ → σ → R) :
-    MvPolynomial Λ R →ₐ[R] Module.End R (MvPolynomial σ R) :=
-  commEval (fun l => (constDeriv (v l)).toLinearMap) fun _ _ => constDeriv_commute _ _
-
-@[simp] theorem constDerivEval_X (v : Λ → σ → R) (l : Λ) :
-    constDerivEval v (X l) = (constDeriv (v l)).toLinearMap := commEval_X _ _ l
-
 def multiFactorial (α : σ →₀ ℕ) : ℕ := α.prod fun _ n => n.factorial
 
 end Constant
@@ -194,7 +151,8 @@ theorem exists_eq_sum_X_mul [Fintype σ] {n : ℕ} {g : MvPowerSeries σ R}
     have h₂ : coeff (single i 1 + d) g = 0 := hg _ (by simp; omega)
     simp [h₂]
   · ext d
-    simp only [← hh, map_sum, hpart]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← hh, map_sum, hpart]
     by_cases hd : d = 0
     · subst hd
       simpa using hg 0 (by simp)
@@ -244,12 +202,6 @@ theorem mem_germIdeal_pow_iff_le_order [Finite σ] {n : ℕ} {g : MvPowerSeries 
   exact ⟨nat_le_order, fun h d hd => coeff_of_lt_order (lt_of_lt_of_le (by exact_mod_cast hd) h)⟩
 
 variable [Finite σ]
-
-noncomputable def leadingForm (N : ℕ) : MvPowerSeries σ R →ₗ[R] MvPolynomial σ R :=
-  MvPolynomial.homogeneousComponent N ∘ₗ truncTotal (N + 1)
-
-noncomputable def derivAtOrigin (D : Derivation R (MvPowerSeries σ R) (MvPowerSeries σ R)) :
-    σ → R := fun i => constantCoeff (D (X i))
 
 end Series
 

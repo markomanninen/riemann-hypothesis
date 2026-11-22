@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,29 +26,9 @@ variable {l}
 
 theorem χQ_coe (g : GQ l) : ((χQ l g : ℚ_[l]ˣ) : ℚ_[l]) = (((χZ l g : ℤ_[l]ˣ) : ℤ_[l]) : ℚ_[l]) := rfl
 
-theorem χZ_continuous : Continuous (χZ l) := by
-  first
-    | exact cyclotomicCharacter.continuous l ℚ_[l] (Om l)
-    | (unfold χZ; exact cyclotomicCharacter.continuous l ℚ_[l] (Om l))
-
 theorem χZ_spec (g : GQ l) (m : ℕ) (ζ : Om l) (h : ζ ^ (l ^ m) = 1) :
     g ζ = ζ ^ (((χZ l g : ℤ_[l]ˣ) : ℤ_[l]).toZModPow m).val :=
   cyclotomicCharacter.spec l (MulSemiringAction.toRingAut (GQ l) (Om l) g) ζ h
-
-theorem norm_sub_toZModPow_val (x : ℤ_[l]) (m : ℕ) :
-    ‖x - (((x.toZModPow m).val : ℕ) : ℤ_[l])‖ ≤ (l : ℝ) ^ (-(m : ℤ)) := by
-  haveI : NeZero (l ^ m) := ⟨pow_ne_zero _ (Fact.out : l.Prime).ne_zero⟩
-  rw [PadicInt.norm_le_pow_iff_mem_span_pow, ← PadicInt.ker_toZModPow, RingHom.mem_ker, map_sub, map_natCast,
-    ZMod.natCast_zmod_val, sub_self]
-
-theorem χQ_cyc (g : GQ l) (m : ℕ) (ζ : Om l) (h : ζ ^ (l ^ m) = 1) :
-    ∃ a : ℕ, ‖(χQ l g : ℚ_[l]) - (a : ℚ_[l])‖ ≤ (l : ℝ) ^ (-(m : ℤ)) ∧ g ζ = ζ ^ a := by
-  refine ⟨_, ?_, χZ_spec g m ζ h⟩
-  rw [χQ_coe]
-  have h2 := norm_sub_toZModPow_val ((χZ l g : ℤ_[l]ˣ) : ℤ_[l]) m
-  rw [PadicInt.norm_def] at h2
-  push_cast at h2
-  exact h2
 
 variable (l)
 

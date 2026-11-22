@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartOfBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartOfBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+
+@[expose] public section
 
 noncomputable section
 namespace PositivityTheory.HtPt.Cd

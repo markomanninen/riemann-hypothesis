@@ -1,11 +1,15 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
 section
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 namespace GlobalTheory.InertUnitNorm
 open IsDedekindDomain.HeightOneSpectrum Polynomial
@@ -47,7 +51,7 @@ theorem unit_eq_mul_conj_k : ∀ (F E : Type) [Field F] [NumberField F] [Field E
   set α : Fv F v ⊗[F] E := (1 : Fv F v) ⊗ₜ[F] (a : E) with hα
   have hq' : α ^ 2 + ι (algebraMap F (Fv F v) (b : F)) * α + ι (algebraMap F (Fv F v) (c : F)) = 0 := by
     have := congrArg (Algebra.TensorProduct.includeRight : E →ₐ[F] Fv F v ⊗[F] E) hq
-    rw [map_add, map_add, map_mul, map_pow, map_zero] at this
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, map_zero] at this
     rw [hιF, hιF]
     exact this
   have hσα : Algebra.TensorProduct.map (AlgHom.id (Fv F v) (Fv F v)) σ α =
@@ -55,9 +59,9 @@ theorem unit_eq_mul_conj_k : ∀ (F E : Type) [Field F] [NumberField F] [Field E
     rw [hα, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, hconj, hιF,
       TensorProduct.tmul_sub, TensorProduct.tmul_neg]
   refine ⟨ι x + ι y * α, ?_⟩
-  rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσα]
+  rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσα]
   have hKι := congrArg ι hK
-  simp only [map_add, map_sub, map_mul, map_pow] at hKι
+  simp only [map_add (f := _), map_sub, map_mul, map_pow] at hKι
   linear_combination (-1 : Fv F v ⊗[F] E) * hKι + ι y ^ 2 * hq'
 end GlobalTheory.InertUnitNorm
 end

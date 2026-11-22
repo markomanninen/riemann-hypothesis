@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.PlaceBelowAllPowers
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GoodPartMemBasisSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LenRBaseChangeSubquotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCommensurableOfIsLatIn
-import Formalism.LocalToGlobal.Columns.LocWLemmas
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.PlaceBelowAllPowers
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GoodPartMemBasisSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LenRBaseChangeSubquotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCommensurableOfIsLatIn
+public import Formalism.LocalToGlobal.Columns.LocWLemmas
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -58,8 +62,8 @@ theorem Induces.hom_local (h : Induces emb v) : IsLocalHom h.hom := by
 variable {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
   {W : Type} [AddCommGroup W] [Module (FractionRing O') W] [Module O' W] [IsScalarTower O' (FractionRing O') W]
 
-omit [IsScalarTower (𝓞 K) K V] in
 
+omit [IsScalarTower (𝓞 K) K V] in
 theorem relLength_read (h : Induces emb v) (rd : V →ₛₗ[emb] W) {ι : Type} [Fintype ι] (b : Module.Basis ι K V)
     (hli : LinearIndependent (FractionRing O') fun a => rd (b a)) :
     ∃ e : ℕ, 0 < e ∧ (∀ n : ℕ, IsDiscreteValuationRing.addVal O' (n : O') =
@@ -79,7 +83,6 @@ theorem relLength_read (h : Induces emb v) (rd : V →ₛₗ[emb] W) {ι : Type}
   have hnorm : ∀ t : O' ⊗[Ow v] V, ∃ c : Ow v, c ≠ 0 ∧ ∃ s : ι → O', c • t = ∑ a, s a ⊗ₜ b a := by
     intro t
     induction t with
-    | zero => exact ⟨1, one_ne_zero, 0, by simp⟩
     | tmul s x =>
       obtain ⟨c, hc⟩ := IsLocalization.exist_integer_multiples_of_finite (nonZeroDivisors (Ow v)) (b.repr x)
       choose y hy using hc
@@ -97,12 +100,13 @@ theorem relLength_read (h : Induces emb v) (rd : V →ₛₗ[emb] W) {ι : Type}
       refine Finset.sum_congr rfl fun a _ => ?_
       simp only [Pi.add_apply, Pi.smul_apply, TensorProduct.add_tmul, TensorProduct.smul_tmul']
   have hinj : Function.Injective g := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro t ht
     obtain ⟨c, hc, s, hs⟩ := hnorm t
     have h1 : ∑ a, algebraMap O' (FractionRing O') (s a) • rd (b a) = 0 := by
       have := congrArg g hs
-      rw [← algebraMap_smul O' c, map_smul, ht, smul_zero, map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← algebraMap_smul O' c, map_smul, ht, smul_zero, map_sum] at this
       simpa only [hg, algebraMap_smul] using this.symm
     have h2 : ∀ a, s a = 0 := fun a => (map_eq_zero_iff _ (IsFractionRing.injective O' (FractionRing O'))).1
       (Fintype.linearIndependent_iff.1 hli _ h1 a)
@@ -112,12 +116,11 @@ theorem relLength_read (h : Induces emb v) (rd : V →ₛₗ[emb] W) {ι : Type}
     have h4 : ∀ u : O' ⊗[Ow v] V, f.lTensor O' (c • u) = u := by
       intro u
       induction u with
-      | zero => simp
       | tmul s x =>
         rw [← TensorProduct.tmul_smul, LinearMap.lTensor_tmul]
         congr 1
         exact inv_smul_smul₀ cK x
-      | add x y hx hy => rw [smul_add, map_add, hx, hy]
+      | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy]
     rw [← h4 t, h3, map_zero]
   have hsp : ∀ A : Submodule (𝓞 K) V, Submodule.span O' (rd '' A) = ((atW v A).baseChange O').map g := by
     intro A
@@ -129,16 +132,6 @@ theorem relLength_read (h : Induces emb v) (rd : V →ₛₗ[emb] W) {ι : Type}
   · rw [hsp, hsp, relLength_map_of_injective g hinj]
     exact length_baseChange_subquotient_dvr (Ow v) O' _ _
 
-omit [NumberField K] [IsDomain O'] [IsDiscreteValuationRing O'] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Module O' W]
-  [IsScalarTower O' (FractionRing O') W] in
-
-theorem exists_read {ι : Type} [Fintype ι] (b : Module.Basis ι K V) (x : ι → W) :
-    ∃ rd : V →ₛₗ[emb] W, ∀ a, rd (b a) = x a := by
-  classical
-  refine ⟨⟨⟨fun y => ∑ a, emb (b.repr y a) • x a, fun y z => ?_⟩, fun r y => ?_⟩, fun a => ?_⟩
-  · simp [add_smul, Finset.sum_add_distrib]
-  · simp [mul_smul, Finset.smul_sum]
-  · simp [Finsupp.single_apply, apply_ite emb]
 
 variable [StarRing K]
 
@@ -227,8 +220,8 @@ def Reads (e : V →ₗ[K] V) (Θ Θψ : Submodule (𝓞 K) V) (rd : V →ₛₗ
 
 variable {Y E i j b k Q φ O'}
 
-omit [IsDomain O'] [IsDiscreteValuationRing O'] [NumberField K] in
 
+omit [IsDomain O'] [IsDiscreteValuationRing O'] [NumberField K] in
 theorem Reads.comap {V' : Type} [AddCommGroup V'] [Module K V'] [Module (𝓞 K) V'] [IsScalarTower (𝓞 K) K V']
     {e : V →ₗ[K] V} {Θ Θψ : Submodule (𝓞 K) V} {rd : V →ₛₗ[emb] FmExt Y i j b O'}
     (h : Reads Y E i j b k Q φ O' e Θ Θψ rd) (f : V' →ₗ[K] V) (hf : Function.Bijective f) {e' : V' →ₗ[K] V'}
@@ -373,6 +366,7 @@ def ExportTie (c : NChoice D) (E : IntegralHeckeForms.XD D) {Ks : Type} [Field K
 
 variable {Bs : DefBase D.what₂.LL} {Df : DefSide Bs} {S : IndefData Df} {P : Type} [Group P] [Finite P] {oc : OnConst}
 
+attribute [local instance 2000] Submodule.module in
 def TiedAt (c : NChoice D) (E : IntegralHeckeForms.XD D) (O : OnObj S P oc) (v : HeightOneSpectrum (𝓞 D.what₂.LL)) (i : Bs.J)
     (ι : Fin D.R.m) : Prop :=
   ∃ (T : Full D) (_ : Algebra T.J.Q.c.F D.what₂.LL) (R : RealDat D A T.J.Q.c.F)
@@ -418,23 +412,7 @@ theorem isLatIn_eTh {I : TwIn D} {i : D.ntw.Tw} (h : I.Ok i) {j : ℕ} (hj : j �
 
 theorem succ_mem_Icc (ι : Fin D.R.m) : (ι : ℕ) + 1 ∈ Finset.Icc 1 D.R.m := Finset.mem_Icc.2 ⟨Nat.le_add_left _ _, ι.2⟩
 
-def ExportInputs (bkP : BlochKatoReduction.BK D) (I : TwIn D) : Prop :=
-  ∀ i, D.ntw.NonzeroIndexPlace i → BlochKatoReduction.Gen.SetHyp (BlochKatoReduction.pin bkP) i ∧ I.Ok i
-
 abbrev Twist (i : D.ntw.Tw) : Type := Σ (Q : Finset (PlE D.host)) (k : ℕ), D.ntw.RCG i Q →* (D.ntw.Ok i k)ˣ
-
-def ChosenFrom (c : NChoice D) (w : D.what₂.places.Pl) (i : D.ntw.Tw) (b : Bool) (t : Twist i) : Prop :=
-  D.ntw.NonzeroIndexPlace i ∧ D.ntw.NonzeroIndexPlace (c.twI w) ∧ SamePlace i b (c.twI w) (c.sd w) ∧ Disjoint (c.Q w) (D.ntw.S0 (c.twI w)) ∧
-    ∃ ψ' : D.ntw.RCG i (c.Q w) →* (D.ntw.Ok i (c.k' w))ˣ, (⟨c.Q w, c.k' w, ψ'⟩ : Twist i) = t ∧
-      IsReading i (c.twI w) (c.k' w) (ψ'.comp (D.ntw.art i (c.Q w))) (chosenChar c w)
-
-def IsErrorFamily (E : IntegralHeckeForms.XD D) (i : D.ntw.Tw) (t : Twist i) (ε : ℕ → Bool → ℝ) : Prop :=
-  (∀ j b, 0 ≤ ε j b) ∧ ∑ j ∈ Finset.Icc 1 D.R.m, ∑ b : Bool, ε j b ≤ twEps D i ∧
-    ∀ (b : Bool) (i' : D.ntw.Tw) (b' : Bool), SamePlace i b i' b' → Disjoint t.1 (D.ntw.S0 i') →
-      ∀ φ : G D.host.E D.nd.Om →* (D.ntw.Ok i' t.2.1)ˣ, IsReading i i' t.2.1 (t.2.2.comp (D.ntw.art i t.1)) φ →
-        ∀ j ∈ Finset.Icc 1 D.R.m,
-          IntegralHeckeForms.IsLatIn (IntegralHeckeForms.eTh D.nexp i' j b' (IntegralHeckeForms.SgJ D.nexp E i' j b')) ((IntegralHeckeForms.V0 D.nexp i' j b').restrictScalars (D.ntw.O i')) →
-          PartBAt D.nexp E i' j b' t.2.1 t.1 φ (ε j b)
 
 theorem exists_leafTW1_of_twGoodAt (A : FamIn D.what₂.LL Γ Pl0 T0 D.R.m) (c : NChoice D) (I : TwIn D) (hG : TwGoodAt D c I)
     (O : OnObj S P oc) (ι : Bs.J → Fin D.R.m) (hι : Function.Injective ι) (hM : GoodPartLattice O) (hΘ : ThetaFullRank O)

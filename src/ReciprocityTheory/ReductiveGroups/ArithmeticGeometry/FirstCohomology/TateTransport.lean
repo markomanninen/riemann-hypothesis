@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ThetaMove
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ThetaMove
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,9 +54,9 @@ theorem weil_move (hW : WeilSt) {E : Type} [Field E] [NumberField E] [IsCMField 
   have mvy : 𝟙 _ ≫ θy₀.pt.left = (overResι (T := TFK (R := R) F) V ≫ y).left ≫ φ := by
     rw [hpy₀, Category.id_comp, Over.comp_left, Over.comp_left, Category.assoc]; rfl
   obtain ⟨θx, hθx, mx⟩ := exists_theta_move (T := overRes (T := TFK (R := R) F) V) (T₀ := overRes (T := TF (R := R) F) V)
-    hp (𝟙 _) hτ t.PP.isLB P.A.isLB w hw n _ θx₀ mvx
+    hp (𝟙 _) hτ t.PP.isLB P.A.isLB w hw n (overResι (T := TFK (R := R) F) V ≫ x) θx₀ mvx
   obtain ⟨θy, hθy, my⟩ := exists_theta_move (T := overRes (T := TFK (R := R) F) V) (T₀ := overRes (T := TF (R := R) F) V)
-    hp (𝟙 _) hτ t.PP.isLB P.A.isLB w hw n _ θy₀ mvy
+    hp (𝟙 _) hτ t.PP.isLB P.A.isLB w hw n (overResι (T := TFK (R := R) F) V ≫ y) θy₀ mvy
   have hm := commIsOf_move (T := overRes (T := TFK (R := R) F) V) (T₀ := overRes (T := TF (R := R) F) V) hp (𝟙 _) hτ t.PP.isLB P.A.isLB w n θx₀ θy₀ θx θy (by rw [hθx]; exact mvx)
     (by rw [hθy]; exact mvy) mx my (unitRes (T := TF (R := R) F) V c) (unitRes (T := TFK (R := R) F) V c) (fun Z r z => by rw [Category.comp_id]; rfl)
     (hall₀ θx₀ θy₀ hpx₀ hpy₀)

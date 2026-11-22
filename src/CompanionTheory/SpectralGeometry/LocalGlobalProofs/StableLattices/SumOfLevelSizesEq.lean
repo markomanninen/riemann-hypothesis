@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+
+@[expose] public section
+
 open Finset Polynomial
 open Formalism.REAL (GlRel KHighest IsWeight qdet Tm qminor)
 open CompanionTheory.D.LK (Pos Cn ann cre lift bd cpt allT wt ev)
@@ -18,7 +23,5 @@ theorem sum_sz_eq_card : ∀ (n M : ℕ) (lev : Fin n → ℕ), (∀ a, lev a < 
   refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) key.symm
   unfold sz
   congr 1
-  ext a
-  simp [Fin.ext_iff]
 
 end GlobalTheory.CompanionTheory.RgCOBlock.SumSz

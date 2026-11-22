@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSchwartzTranslate
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSchwartzTranslate
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,8 +106,8 @@ end GlobalTheory.RealWeil.Intertw
 
 namespace GlobalTheory.RealWeil
 
-open Intertw in
 
+open Intertw in
 theorem intertwining_symplectic_and_group_law : ∀ (l : Type) [Fintype l]
     (A : ℝ → (l ⊕ l → ℝ) →ₗ[ℝ] (l ⊕ l → ℝ)) (T : ℝ → Sch l →ₗ[ℂ] Sch l),
     (∀ s t f, T (s + t) f = T s (T t f)) → (∀ f, T 0 f = f) →
@@ -127,7 +131,7 @@ theorem intertwining_symplectic_and_group_law : ∀ (l : Type) [Fintype l]
       have k2 := hI t v f₁ f₂ hf₂
       have k3 := hI t (v + v') (T (-t) g0) f₃ hf₃
       rw [hsurj] at k1 k3
-      rw [k1, rhoFun_rhoFun, e2, map_smul, coe_smul_sch, k3, map_add] at k2
+      rw [k1, rhoFun_rhoFun, e2, map_smul, coe_smul_sch, k3, map_add (f := _)] at k2
       exact (eq_of_smul_eq_smul (rhoFun_gaussian_ne_zero (A t v + A t v')) k2).symm
     apply sub_eq_zero.mp
     refine eq_zero_of_exp_eq_one _ fun r => ?_

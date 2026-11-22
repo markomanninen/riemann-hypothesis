@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.FormalGroupWitt.WeightInvariance
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.FormalGroupWitt.WeightInvariance
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -16,7 +20,8 @@ theorem bnx_lin_pow {K : Type u} [Field K] {σ : Type*} [DecidableEq σ] (x y : 
       ∑ r ∈ Finset.range (k + 1),
         if Finsupp.single x r + Finsupp.single y (k - r) = μ then
           a ^ r * b ^ (k - r) * (k.choose r : K) else 0 := by
-  rw [add_pow, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [add_pow, map_sum]
   refine Finset.sum_congr rfl fun r _ => ?_
   have e : (C a * X x : MvPowerSeries σ K) ^ r * (C b * X y) ^ (k - r) *
       ((k.choose r : ℕ) : MvPowerSeries σ K) =
@@ -595,7 +600,7 @@ private theorem finsupp_prod_torus_pow_eq_C_mul_monomial {K : Type u} [Field K] 
   rw [hmono]
   rw [show ∑ t, Finsupp.single t (dd t) = dd from by
     ext u
-    simp [Finsupp.finset_sum_apply, Finsupp.single_apply]]
+    simp [Finsupp.finsetSum_apply, Finsupp.single_apply]]
 
 theorem bnx_torus_cong {K : Type u} [Field K] (l d : ℕ) [NeZero d] (hl : l.Prime) (hl3 : 3 ≤ l)
     (hd2 : 2 ≤ d) (hde : Even d) (ζ : K) (hζ : IsPrimitiveRoot ζ (l ^ d - 1))

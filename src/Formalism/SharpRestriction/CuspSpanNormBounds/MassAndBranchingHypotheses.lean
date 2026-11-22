@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeSCSCl
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
-import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
-import Formalism.HermitianLattices.StatementMass
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeSCSCl
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,83 +153,7 @@ section Family
 
 variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
 
-def familyUnitInput : Prop := ∀ x (i : Fm.Ix x), adm1 (Fm.D x i)
-
-def FamilySecondHypothesis : Prop := ∀ x (i : Fm.Ix x), adm2 (Fm.D x i)
-
-def FamilyFifthHypothesis : Prop := ∀ x (i : Fm.Ix x), adm5 (Fm.D x i)
-
-def FamilySixthHypothesis : Prop := ∀ x (i : Fm.Ix x), adm6 (Fm.D x i)
-
-def adm7F (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  ∃ C, OwnEv Fm fun C' Cl x i => ∀ u u', adm7 (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A C
-
-def FamilyTemperatureAsymptotic (Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  ∀ δ > 0, OwnEv Fm fun C' Cl x i => adm8 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 δ
-
-def proportionalityInputFamily (Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  OwnEv Fm fun C' Cl x i => adm9 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0
-
-def compactDualInputFamily (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => adm10 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 C
-
-def ComplementTwoFamily (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => adm11 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 C
-
-def FamilyPlancherelBound (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => adm12 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 C
-
-def ComplementCountFamily (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∀ Cq, ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => adm13 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 Cq C
-
-def FullRankFamily : Prop :=
-  ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), adm16 (Fm.D x i) (Fm.ex x hx i).gauge
-
-def FamilyBesselNormalizationBound (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∀ Cn, OwnEv Fm fun C' Cl x i => adm17 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1
-
-def G1Family (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => adm18 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 C
-
-def LogTermFamily (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, OwnEv Fm fun C' Cl x i => adm19 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 C1 C
-
-def G3BoundFamily (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  OwnEv Fm fun C' Cl x i => ∀ u u', adm20 (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A
-
-def AdmF : Prop :=
-  familyUnitInput Fm ∧ FamilySecondHypothesis Fm ∧ adm3 ∧ ArchimedeanSignatureMatching ∧ FamilyFifthHypothesis Fm ∧ FamilySixthHypothesis Fm ∧ adm14 ∧ adm15 ∧ FullRankFamily Fm ∧
-  ∀ Cg cb Cu cT CT C0 A C1 : ℝ,
-    adm7F Fm Cg cb Cu cT CT C0 A ∧ FamilyTemperatureAsymptotic Fm Cg cb Cu cT CT C0 ∧ proportionalityInputFamily Fm Cg cb Cu cT CT C0 ∧
-    compactDualInputFamily Fm Cg cb Cu cT CT C0 C1 ∧ ComplementTwoFamily Fm Cg cb Cu cT CT C0 C1 ∧ FamilyPlancherelBound Fm Cg cb Cu cT CT C0 C1 ∧
-    ComplementCountFamily Fm Cg cb Cu cT CT C0 C1 ∧ FamilyBesselNormalizationBound Fm Cg cb Cu cT CT C0 C1 ∧ G1Family Fm Cg cb Cu cT CT C0 C1 ∧
-    LogTermFamily Fm Cg cb Cu cT CT C0 C1 ∧ G3BoundFamily Fm Cg cb Cu cT CT C0 A
-
-def Conclusion1Family (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  ∃ C c, OwnEv Fm fun C' Cl x i => ∀ u u', Conclusion1 (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A C c
-
-def Conclusion2Family : Prop := ∀ x (i : Fm.Ix x), Conclusion2 (Fm.D x i)
-
 def Conclusion3Family : Prop := ∀ x, Fm.x1 < x → ∀ (i : Fm.Ix x) u, PointsLemma (Fm.D x i) u
-
-def SlopeLemmaFamily (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  ∃ C₀, ∀ C ≥ C₀, OwnEv Fm fun C' Cl x i => ∀ u u', Conclusion4 (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A C
-
-def SlopeLossFamily : Prop := ∃ C, ∀ CH, ∃ x0, ∀ x ≥ x0, ∀ i : Fm.Ix x, Conclusion5 (Fm.D x i) (Fm.L x i) CH C
-
-def Conclusion6Family (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  ∀ Ad, ∃ C₀, ∀ C ≥ C₀, OwnEv Fm fun C' Cl x i => ∀ u u', Conclusion6 (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A Ad C
-
-def FamilyRankTwoMassConclusion (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  ∃ C, OwnEv Fm fun C' Cl x i => ∀ u u', division_rows_rational_lattice (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A C
-
-def ConclusionOnFamily : Prop :=
-  Conclusion2Family Fm ∧ Conclusion3Family Fm ∧ SlopeLossFamily Fm ∧
-  ∀ Cg cb Cu cT CT C0 A : ℝ,
-    Conclusion1Family Fm Cg cb Cu cT CT C0 A ∧ SlopeLemmaFamily Fm Cg cb Cu cT CT C0 A ∧ Conclusion6Family Fm Cg cb Cu cT CT C0 A ∧
-    FamilyRankTwoMassConclusion Fm Cg cb Cu cT CT C0 A
-
-def KudlaFamilyStatement : Prop := AdmF Fm → ConclusionOnFamily Fm
 
 end Family
 

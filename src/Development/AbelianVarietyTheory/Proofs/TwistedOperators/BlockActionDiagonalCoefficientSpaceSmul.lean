@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 open Formalism.L2.Ker MvPolynomial
 
@@ -29,7 +33,7 @@ theorem rowAct_scalar_dualWeyl {r n : ℕ} (ν : Fin n → ℕ) (c : ℂ) (F : M
     (mem_weightedHomogeneousSubmodule _ _ _ _).1 (Submodule.mem_inf.1 hF).1
   ext m
   rw [Formalism.GradedWeylDivisibility.ldrow_coeff_rowAct_diag, coeff_smul, smul_eq_mul]
-  by_cases h : coeff m F = 0
+  by_cases h : AddMonoidAlgebra.coeff F m = 0
   · simp [h]
   · have hm := hw h
     rw [Finset.prod_pow_eq_pow_sum, mul_comm]
@@ -59,7 +63,7 @@ theorem blockAct_diag_mem_VV {ι : Type} [Fintype ι] {n : ℕ} (lam : ι → Fo
       GlobalTheory.CoefScale.rowAct_scalar_dualWeyl _ _ _ (hF τ)
     simp_rw [h2, map_smul, Algebra.smul_def, Finset.prod_mul_distrib, map_prod]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, smul_add]
   | smul a x _ hx => rw [map_smul, hx, smul_comm]
 
 end GlobalTheory

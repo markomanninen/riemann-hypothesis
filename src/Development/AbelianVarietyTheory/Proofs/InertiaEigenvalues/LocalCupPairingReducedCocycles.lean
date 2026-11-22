@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CupCoboundaryStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MuCocycleCoboundaryLiftStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsZmodPowCoboundaryOfRationalCoboundaryStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntegralOfNormLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CupCoboundaryStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MuCocycleCoboundaryLiftStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsZmodPowCoboundaryOfRationalCoboundaryStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntegralOfNormLeOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction Formalism.MainNotions.BlochKatoReduction.Gen GlobalTheory.TwSys GlobalTheory.SelFun GlobalTheory.Published GlobalTheory.Published.PoitouTate GlobalTheory.ResSel
 
 namespace GlobalTheory.CupAbove
@@ -44,7 +49,7 @@ def addCob {K Γ A : Type} [CommRing K] [Group Γ] [TopologicalSpace Γ] [Topolo
     obtain ⟨a, ha, h1⟩ := hz lam
     obtain ⟨a', ha', h2⟩ := hz' lam
     refine ⟨a + a', ha.add ha', fun g h => ?_⟩
-    simp only [Submodule.coe_add, Pi.add_apply, map_add, h1, h2]
+    simp only [Submodule.coe_add, Pi.add_apply, map_add (f := _), h1, h2]
     ring
   smul_mem' := fun k z hz lam => hz (lam.comp (AddMonoidHom.mulLeft k))
 
@@ -78,7 +83,7 @@ include hl hμ
 theorem exists_push (z : Z2 μ) (lam : K →+ ZMod (l ^ 1)) : ∃ w : Z2 (muLoc F l 1 A), ∀ g h, w.1 (g, h) = lam (z.1 (g, h)) := by
   refine ⟨⟨fun p => lam (z.1 p), continuous_of_discreteTopology.comp z.2.1, fun g h k => ?_⟩, fun _ _ => rfl⟩
   have e := congrArg lam (z.2.2 g h k)
-  rw [map_sub, map_add, map_sub, hμ, map_padic_mul φ hl, map_zero] at e
+  rw [map_sub, map_add (f := _), map_sub, hμ, map_padic_mul φ hl, map_zero] at e
   exact e
 
 theorem coboundaries_le_cyclotomic_additive : (B2 μ).comap (Z2 μ).subtype ≤
@@ -86,7 +91,7 @@ theorem coboundaries_le_cyclotomic_additive : (B2 μ).comap (Z2 μ).subtype ≤
   rintro z ⟨c, hc, e⟩ lam
   refine ⟨fun g => lam (c g), continuous_of_discreteTopology.comp hc, fun g h => ?_⟩
   have e' : z.1 (g, h) = μ g (c h) - c (g * h) + c g := (congrFun e (g, h)).symm
-  rw [e', map_add, map_sub, hμ, map_padic_mul φ hl]
+  rw [e', map_add (f := _), map_sub, hμ, map_padic_mul φ hl]
 
 end Galois
 
@@ -137,7 +142,8 @@ theorem dot_equivariant (T T' : Matrix (Fin r) (Fin r) O) (hT : IsUnit T.det) (u
 theorem dot_generators (T : Matrix (Fin r) (Fin r) O) (y y' : Fin r → O) (b b' : K) :
     (fun a => algebraMap O K (y a) • b) ⬝ᵥ (T.map (algebraMap O K)).mulVec (fun a => algebraMap O K (y' a) • b') =
       (b * b') * algebraMap O K (y ⬝ᵥ T.mulVec y') := by
-  simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, Matrix.map_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, Matrix.map_apply, smul_eq_mul]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun c _ => by ring
 
 end Matrices
@@ -170,7 +176,7 @@ theorem cup_eq_zero_above : LocalTateDuality → ∀ (D : Formalism.BasicNotions
       · rw [pow_one, IsLocalRing.maximalIdeal_eq_bot, Ideal.mem_bot] at hc
         rw [hc, zero_smul]
     exact h1.comp (f := fun p : DecV N v × (Fin D.R.r → K) => ((p.1 : GE N), p.2)) (by fun_prop)
-  rw [bkOn, dif_pos hv] at hx hy
+  rw [bkOn, dite_eq_left hv] at hx hy
   have key := cup_mem_of_span _ _ μ (dotProductBilin K K) continuous_of_discreteTopology hbe hc _
     (coboundaries_le_cyclotomic_additive φ hl μ hμ) _ _ (by
       rintro _ ⟨z, c, t, b, h1, h2, h3, rfl⟩ _ ⟨z', c', t', b', h1', h2', h3', rfl⟩

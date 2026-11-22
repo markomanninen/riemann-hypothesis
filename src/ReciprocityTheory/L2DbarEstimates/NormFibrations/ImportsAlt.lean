@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.NormFibrations.NormFib
-import ReciprocityTheory.L2DbarEstimates.NormFibrations.NormOrd
-import ReciprocityTheory.L2DbarEstimates.SymmetricSections.NormVanishOfHoloSection
+module
+
+public import ReciprocityTheory.L2DbarEstimates.NormFibrations.NormFib
+public import ReciprocityTheory.L2DbarEstimates.NormFibrations.NormOrd
+public import ReciprocityTheory.L2DbarEstimates.SymmetricSections.NormVanishOfHoloSection
+
+@[expose] public section
 
 universe u
 

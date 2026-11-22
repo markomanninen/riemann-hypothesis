@@ -1,8 +1,12 @@
-import Mathlib.RingTheory.PowerSeries.Substitution
-import Mathlib.RingTheory.PowerSeries.Order
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.AdicCompletion.Basic
-import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
+module
+
+public import Mathlib.RingTheory.PowerSeries.Substitution
+public import Mathlib.RingTheory.PowerSeries.Order
+public import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
+public import Mathlib.RingTheory.AdicCompletion.Basic
+public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem ringHom_ext_nil {h₁ h₂ : R⟦X⟧ →+* S⟦X⟧} (hC : ∀ r, h₁ 
     refine Polynomial.induction_on p (fun a => ?_) (fun p q hp hq => ?_) (fun n a _ => ?_)
     · rw [Polynomial.coe_C]
       exact hC a
-    · rw [Polynomial.coe_add, _root_.map_add, _root_.map_add, hp, hq]
+    · rw [Polynomial.coe_add, _root_.map_add (f := _), _root_.map_add (f := _), hp, hq]
     · rw [Polynomial.coe_mul, Polynomial.coe_pow, Polynomial.coe_C, Polynomial.coe_X,
         _root_.map_mul, _root_.map_mul, _root_.map_pow, _root_.map_pow, hC, hX]
   refine RingHom.ext fun F => sub_eq_zero.mp (PowerSeries.ext fun m => ?_)
@@ -40,7 +44,7 @@ theorem ringHom_ext_nil {h₁ h₂ : R⟦X⟧ →+* S⟦X⟧} (hC : ∀ r, h₁ 
   have hd : h₁ F - h₂ F = h₁ X ^ N * (h₁ G - h₂ G) := by
     have hF : F = (PowerSeries.trunc N F : R⟦X⟧) + X ^ N * G := by rw [← hG]; ring
     rw [hF]
-    simp only [_root_.map_add, _root_.map_mul, _root_.map_pow, hpoly, ← hX]
+    simp only [_root_.map_add (f := _), _root_.map_mul, _root_.map_pow, hpoly, ← hX]
     ring
   have hdvd : (X : S⟦X⟧) ^ (m + 1) ∣ h₁ F - h₂ F := by
     rw [hd]
@@ -66,14 +70,14 @@ private theorem constantCoeff_algHom_apply_of_constantCoeff_X {R : Type*} [CommR
   have hF : F = C (constantCoeff F) + X * G := by rw [← hG]; ring
   rw [hF]
   first
-  | simp only [_root_.map_add, _root_.map_mul, powerSeries_algHom_C, h0, PowerSeries.constantCoeff_C,
+  | simp only [_root_.map_add (f := _), _root_.map_mul, powerSeries_algHom_C, h0, PowerSeries.constantCoeff_C,
       PowerSeries.constantCoeff_X, zero_mul, add_zero]
   | simp [powerSeries_algHom_C, h0]
 
 private theorem powerSeries_algHom_injective_of_X_ne_zero {R : Type*} [CommRing R] [IsDomain R]
     (ψ : R⟦X⟧ →ₐ[R] R⟦X⟧) (h0 : constantCoeff (ψ X) = 0) (hne : ψ X ≠ 0) :
     Function.Injective ψ := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro F hF
   by_contra hF0
   have hex : ∃ n, coeff n F ≠ 0 := by
@@ -164,7 +168,7 @@ include ht
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal O) O] in
 theorem nil_k (k : ℕ) : IsNilpotent (constantCoeff ((X : (Qk O k)⟦X⟧) + C (mkk k t))) := by
-  rw [_root_.map_add, PowerSeries.constantCoeff_X, PowerSeries.constantCoeff_C, zero_add]
+  rw [_root_.map_add (f := _), PowerSeries.constantCoeff_X, PowerSeries.constantCoeff_C, zero_add]
   refine ⟨k, ?_⟩
   rw [← _root_.map_pow]
   exact Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.pow_mem_pow ht k)
@@ -202,7 +206,7 @@ theorem τk_compat {k k' : ℕ} (hkk : k ≤ k') :
     | exact congrArg C (Ideal.Quotient.factor_mk _ r).symm
     | rfl
   · show τk t ht k X = map (Ideal.Quotient.factor (Ideal.pow_le_pow_right (I := IsLocalRing.maximalIdeal O) hkk)) (τk t ht k' X)
-    rw [τk_X, τk_X, _root_.map_add, PowerSeries.map_X, PowerSeries.map_C]
+    rw [τk_X, τk_X, _root_.map_add (f := _), PowerSeries.map_X, PowerSeries.map_C]
     first
     | rw [Ideal.Quotient.factor_mk]
     | rfl
@@ -247,7 +251,7 @@ def shift : O⟦X⟧ →ₐ[O] O⟦X⟧ where
     rw [map_shiftFun, _root_.map_mul, _root_.map_mul, map_shiftFun, map_shiftFun]
   map_zero' := ext_k fun k => by rw [map_shiftFun, _root_.map_zero, _root_.map_zero]
   map_add' F G := ext_k fun k => by
-    rw [map_shiftFun, _root_.map_add, _root_.map_add, map_shiftFun, map_shiftFun]
+    rw [map_shiftFun, _root_.map_add (f := _), _root_.map_add (f := _), map_shiftFun, map_shiftFun]
   commutes' r := ext_k fun k => by
     rw [map_shiftFun, AlgHom.commutes, PowerSeries.algebraMap_apply, PowerSeries.algebraMap_apply,
       Algebra.algebraMap_self, RingHom.id_apply, map_C, Ideal.Quotient.algebraMap_eq]
@@ -255,7 +259,7 @@ def shift : O⟦X⟧ →ₐ[O] O⟦X⟧ where
 theorem map_shift (k : ℕ) (F : O⟦X⟧) : map (mkk k) (shift t ht F) = τk t ht k F := map_shiftFun t ht k F
 
 theorem shift_X : shift t ht X = X + C t := ext_k fun k => by
-  rw [map_shift, τk_X, _root_.map_add, PowerSeries.map_X, PowerSeries.map_C]
+  rw [map_shift, τk_X, _root_.map_add (f := _), PowerSeries.map_X, PowerSeries.map_C]
 
 theorem shift_shift (F : O⟦X⟧) : shift (-t) (neg_mem ht) (shift t ht F) = F := by
   refine ext_k fun k => ?_
@@ -266,7 +270,7 @@ theorem shift_shift (F : O⟦X⟧) : shift (-t) (neg_mem ht) (shift t ht F) = F 
     · show map (mkk k) (C r) = τk (-t) (neg_mem ht) k (shift t ht (C r))
       rw [PowerSeries.map_C, algC, τk_C]
     · show map (mkk k) X = τk (-t) (neg_mem ht) k (shift t ht X)
-      rw [PowerSeries.map_X, shift_X, _root_.map_add, τk_X, τk_C,
+      rw [PowerSeries.map_X, shift_X, _root_.map_add (f := _), τk_X, τk_C,
         _root_.map_neg, _root_.map_neg]
       ring
     · rw [PowerSeries.map_X, PowerSeries.constantCoeff_X]

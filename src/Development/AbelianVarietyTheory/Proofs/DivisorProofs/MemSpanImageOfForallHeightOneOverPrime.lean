@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+
+@[expose] public section
+
 open GlobalTheory.Desc
 
 namespace GlobalTheory.Desc.LocalDescent
@@ -16,7 +21,7 @@ theorem exists_basis_of_finite : ∀ (R F : Type) [CommRing R] [IsDomain R] [IsN
   have hl : ∀ r, l (algebraMap R B r) = c₀ r := fun r => IsLocalization.lift_eq hu r
   have hinj := IsLocalization.injective B p.primeCompl_le_nonZeroDivisors
   have hli : Function.Injective l := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     obtain ⟨⟨r, s⟩, e⟩ := IsLocalization.surj p.primeCompl z
     have h0 : c₀ r = 0 := by rw [← hl, ← e, map_mul, hz, zero_mul]
@@ -65,7 +70,7 @@ theorem span_test : ∀ (R₁ F₁ : Type) [CommRing R₁] [IsDomain R₁] [IsNo
     refine GlobalTheory.dvd_of_forall_height_eq_one ((map_ne_zero_iff _ hinj).mpr ha) fun Q hQ h1 haQ => ?_
     obtain ⟨hq, hd⟩ := (IsLocalization.isPrime_iff_isPrime_disjoint S A Q).mp hQ
     obtain ⟨s, hs, t', g', ht', e'⟩ := hloc (Q.comap (algebraMap R₁ A)) hq
-      (by rw [IsLocalization.height_comap S Q, h1]) haQ hd
+      (by rw [IsLocalization.height_under S Q, h1]) haQ hd
     have h0 := hind (fun j => t' * s * g j - t * a * g' j) (by
       simp only [map_sub, map_mul, sub_mul, mul_assoc, Finset.sum_sub_distrib, ← Finset.mul_sum, ← e, ← e']
       ring)
@@ -92,7 +97,7 @@ theorem mem_spanBy_of_forall_height_one : ∀ (R R₁ F F₁ : Type) [CommRing R
   classical
   have hθ : ∀ r, θ (c₀ r) = c₁ (ρ r) := fun r => RingHom.congr_fun hcomp r
   have hc₁ : Function.Injective c₁ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro r hr
     have := hlin 1 (fun _ => 1) (fun g hg => by
       funext i
@@ -151,10 +156,12 @@ theorem mem_spanBy_of_forall_height_one : ∀ (R R₁ F F₁ : Type) [CommRing R
     intro n' g' v hv
     choose h hh using fun i => hexp (v i) (hv i)
     refine ⟨fun j => ∑ i, g' i * ρ (h i j), ?_⟩
-    simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [mul_left_comm, ← hθ, ← map_mul, hh, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_left_comm, ← hθ, ← map_mul, hh, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, hθ, mul_assoc]
   have htS : ρ t ∈ S := ⟨t, ht, rfl⟩

@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.StepTStB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHSMTransport
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKrullDimMatAct
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.StepTStB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHSMTransport
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKrullDimMatAct
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -62,7 +67,7 @@ theorem map_subZ (M : J → J → ℤ) (g : MvPolynomial J ℤ) :
     map (Int.castRingHom ℂ) (subZ M g) = subC M (map (Int.castRingHom ℂ) g) := by
   induction g using MvPolynomial.induction_on with
   | C a => simp [subZ, subC]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n hp =>
     simp only [map_mul, hp, map_X]
     congr 1
@@ -72,11 +77,11 @@ def dirD (z w : J → ℂ) (h : MvPolynomial J ℂ) : ℂ :=
   ∑ i, eval z (pderiv i h) * w i
 
 theorem dirD_add (z w : J → ℂ) (p q : MvPolynomial J ℂ) : dirD z w (p + q) = dirD z w p + dirD z w q := by
-  simp only [dirD, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [dirD, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem dirD_mul (z w : J → ℂ) (p q : MvPolynomial J ℂ) :
     dirD z w (p * q) = eval z p * dirD z w q + eval z q * dirD z w p := by
-  simp only [dirD, pderiv_mul, map_add, map_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
+  simp only [dirD, pderiv_mul, map_add (f := _), map_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun i _ => by ring
 
 theorem dirD_C (z w : J → ℂ) (a : ℂ) : dirD z w (C a) = 0 := by
@@ -89,14 +94,15 @@ theorem dirD_X (z w : J → ℂ) (n : J) : dirD z w (X n) = w n := by
 
 theorem dirD_sum (z w : J → ℂ) {α : Type} (s : Finset α) (f : α → MvPolynomial J ℂ) :
     dirD z w (∑ a ∈ s, f a) = ∑ a ∈ s, dirD z w (f a) := by
-  simp only [dirD, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dirD, map_sum, Finset.sum_mul]
   exact Finset.sum_comm
 
 theorem dirD_subC (M : J → J → ℤ) (z w : J → ℂ) (h : MvPolynomial J ℂ) :
     dirD z w (subC M h) = dirD (intAct M z) (intAct M w) h := by
   induction h using MvPolynomial.induction_on with
   | C a => simp only [subC, bind₁_C_right, dirD_C]
-  | add p q hp hq => rw [map_add, dirD_add, dirD_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), dirD_add, dirD_add, hp, hq]
   | mul_X p n hp =>
     have hX : subC M (X n) = ∑ j, C (M n j : ℂ) * X j := by simp [subC]
     have h1 : dirD z w (∑ j, C (M n j : ℂ) * X j) = intAct M w n := by
@@ -167,11 +173,12 @@ theorem subZ_mem_coordIdeal_iff {Ω : Type} [Field Ω] [CharZero Ω] [DecidableE
 
 theorem matActC_conjPt (A : Matrix J J ℚ) (z : J → ℂ) : matActC A (conjPt z) = conjPt (matActC A z) := by
   funext i
-  simp [matActC, conjPt, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [matActC, conjPt, map_sum, map_mul]
 
 theorem contDiff_matActC {k : WithTop ℕ∞} (A : Matrix J J ℚ) : ContDiff ℝ k (matActC A) := by
   refine contDiff_pi.2 fun i => ?_
-  exact ContDiff.sum fun j _ => contDiff_const.mul (contDiff_apply ℝ ℂ j)
+  exact ContDiff.sum fun j _ => contDiff_const.mul (contDiff_apply ℝ (fun _ => ℂ) j)
 
 theorem eval_matSubst [DecidableEq J] (B : Matrix J J ℚ) (z : J → ℂ) (g : MvPolynomial J ℚ) :
     eval z (map (algebraMap ℚ ℂ) (matSubst B g)) = eval (matActC B z) (map (algebraMap ℚ ℂ) g) := by
@@ -340,8 +347,6 @@ theorem mem_mcPts_map_iff [DecidableEq (Ix κ)] {I : Ideal (MRing (GlobalTheory 
     · intro h
       have := mcPts_smul hI (fun _ => (c : ℂ)) (fun _ => hc') h
       convert this using 1
-      funext p
-      rfl
   rw [← hsm, mem_mcPts_iff_pts, mem_mcPts_iff_pts]
   simp only [pts, conePts, Set.mem_ofPred_eq]
   rw [vanish_map_iff, intAct_eqC hM]

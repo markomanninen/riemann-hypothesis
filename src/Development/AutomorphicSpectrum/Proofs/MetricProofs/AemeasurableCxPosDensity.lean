@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.PoincareLelong
-import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.SheetDensityEqSetSheetDensity
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxPosDens
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxSimple
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsSumMeasurableA
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SetFibreFiniteOfGoodProj
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.PoincareLelong
+public import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.SheetDensityEqSetSheetDensity
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxPosDens
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxSimple
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsSumMeasurableA
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SetFibreFiniteOfGoodProj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -187,7 +192,7 @@ theorem exists_setLift_family {S : Set ((Σ k, ι k) → ℂ)}
   have hBsome : ∀ t : T, Bo (some t) = if ∃ γ, Lift t γ then Bl t.1 else ∅ := fun t => rfl
   have hγsome : ∀ t : T, (h : ∃ γ, Lift t γ) → γo (some t) = h.choose := fun t h => by
     show (if h : ∃ γ, Lift t γ then h.choose else fun _ _ => 0) = _
-    rw [dif_pos h]
+    rw [dite_eq_left h]
   have hBo : ∀ o, IsOpen (Bo o) := by
     rintro (_ | t)
     · exact isOpen_empty
@@ -284,7 +289,7 @@ theorem cxPosDens_aemeasurable_of_finite {S : Set ((Σ k, ι k) → ℂ)}
     intro m
     have : T m = B m ∩ ⋂ m' ∈ Finset.range m, (B m' ∩ {y | σ m' y = σ m y})ᶜ := by
       ext y
-      simp [hTdef]
+      simp [hTdef, imp_iff_not_or]
     rw [this]
     exact (hBo m).measurableSet.inter (Finset.measurableSet_biInter _ fun m' _ =>
       ((hBo m').measurableSet.inter (measurableSet_eq_fun (hσm m') (hσm m))).compl)
@@ -306,7 +311,7 @@ theorem cxPosDens_aemeasurable_of_finite {S : Set ((Σ k, ι k) → ℂ)}
       simp only
       rw [Set.indicator_of_mem hm, hdens m y hm.1]
       unfold setSheetDensity
-      rw [dif_pos hex, hy _ _ _ hex.choose_spec hsh]
+      rw [dite_eq_left hex, hy _ _ _ hex.choose_spec hsh]
 
       choose i0 hi0 using hO m hm.1
       have hs : segre (γ m y) = segre (hex.choose y) := by
@@ -357,7 +362,7 @@ theorem cxPosDens_aemeasurable_of_finite {S : Set ((Σ k, ι k) → ℂ)}
         · rfl
       · have h0 : setSheetDensity S Ψ (pot L) g y w = 0 := by
           unfold setSheetDensity
-          rw [dif_neg hex]
+          rw [dite_eq_right hex]
         refine Eventually.of_forall fun N => ?_
         rw [h0, max_self]
         refine (Finset.sum_eq_zero fun m _ => ?_).symm
@@ -386,6 +391,6 @@ theorem cxPosDens_aemeasurable : ∀ (K : Type) [Fintype K] (ι : K → Type) [�
     (∀ (c : K → ℂ) (z : (Σ k, ι k) → ℂ), (∀ k, c k ≠ 0) → g (fun p => c p.1 * z p) = g z) →
     AEMeasurable (cxPosDens (conePts Q) Ψ (pot L) g) := by
   intro K _ ι _ Q e Ψ L g hQ hΨ hL hg hdeg
-  exact cxPosDens_aemeasurable_of_finite (fun z hz => hz.1) (GlobalTheory.CompanionTheory.Ar.Pub.CxFib.setFibre_finite K ι Q e Ψ hQ hΨ) hL hg hdeg
+  exact cxPosDens_aemeasurable_of_finite (by exact fun z hz => hz.1) (GlobalTheory.CompanionTheory.Ar.Pub.CxFib.setFibre_finite K ι Q e Ψ hQ hΨ) hL hg hdeg
 
 end GlobalTheory.CompanionTheory.Ar.Pub.CxPosMeas

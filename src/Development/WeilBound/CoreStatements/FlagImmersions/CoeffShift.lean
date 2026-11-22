@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.AltCMul
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.AltCMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ open MvPolynomial GlobalTheory.CompanionTheory.Ar.Top
 namespace RootFieldNumerics.M5
 
 theorem coeff_lin {ι : Type} [Fintype ι] [DecidableEq ι] (w : ι → ℝ) (a : ι →₀ ℕ) (n : ℕ) (h : ∑ x, a x = n) :
-    coeff a ((∑ x, w x • (X x : MvPolynomial ι ℝ)) ^ n) =
+    AddMonoidAlgebra.coeff ((∑ x, w x • (X x : MvPolynomial ι ℝ)) ^ n) a =
       (n.factorial : ℝ) * ∏ x, (((a x).factorial : ℝ)⁻¹ * w x ^ a x) := by
   rw [MvPolynomial.coeff_linearCombination_X_pow_of_fintype,
     Finsupp.sum_fintype a (fun _ m => m) (fun _ => rfl)]
@@ -29,7 +33,7 @@ theorem coeff_lin {ι : Type} [Fintype ι] [DecidableEq ι] (w : ι → ℝ) (a 
 
 theorem coeff_shift {ι : Type} [Fintype ι] [DecidableEq ι] (w : ι → ℝ) (x0 : ι) (s n : ℕ) (a : ι →₀ ℕ)
     (h : ∑ x, a x = n + s) :
-    coeff a (X x0 ^ s * (∑ x, (-w x) • (X x : MvPolynomial ι ℝ)) ^ n) =
+    AddMonoidAlgebra.coeff (X x0 ^ s * (∑ x, (-w x) • (X x : MvPolynomial ι ℝ)) ^ n) a =
       (-1) ^ n * (n.factorial : ℝ) * (s.factorial : ℝ) *
         (∏ x, (Polynomial.C (((a x).factorial : ℝ)⁻¹) *
           (Polynomial.C (w x) + if x = x0 then Polynomial.X else 0) ^ a x)).coeff s := by
@@ -133,7 +137,7 @@ theorem alt_pow (a : Ψ → Fin N → ℕ) (u : Wt Ψ N) (x0 : Ψ × Fin N) (s n
   rw [RootFieldNumerics.M5.linRoot_eq]
   unfold RootFieldNumerics.M5.alt
   simp only [hdet]
-  rw [Fintype.prod_sum, Polynomial.finset_sum_coeff, Finset.mul_sum]
+  rw [Fintype.prod_sum, Polynomial.finsetSum_coeff, Finset.mul_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [RootFieldNumerics.M5.coeff_shift (fun x : Ψ × Fin N => u x.1 x.2) x0 s n
       (RootFieldNumerics.M5.expo a σ) (hsum σ), hq σ, Finset.prod_mul_distrib,

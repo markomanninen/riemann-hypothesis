@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSNicePoly
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSNicePoly
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutSE
 

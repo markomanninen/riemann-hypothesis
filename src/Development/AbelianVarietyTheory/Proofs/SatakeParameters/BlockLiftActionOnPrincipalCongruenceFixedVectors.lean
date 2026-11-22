@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DetCharacterMemPrincipalCongruenceFixedVectors
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BlockSplitAll
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DetCharacterMemPrincipalCongruenceFixedVectors
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BlockSplitAll
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+
+@[expose] public section
+
 open GlobalTheory.GLq GlobalTheory.GLp GlobalTheory.SerSys
 
 namespace GlobalTheory.SerSys.BlockLift
@@ -125,7 +130,7 @@ theorem bm_apply (r t : ℕ) (h : Gn g r) (a b : Fin (r + t)) : bm r t h a b =
   unfold bm
   by_cases hab : (a : ℕ) < r ∧ (b : ℕ) < r
   · rw [if_pos hab, dif_pos hab]; simp [entN, hab]
-  · rw [if_neg hab, dif_neg hab]
+  · rw [if_neg hab, dite_eq_right hab]
     by_cases h2 : r ≤ (a : ℕ) ∧ r ≤ (b : ℕ)
     · rw [if_pos h2]
       have ha : (a : ℕ) - r < t := by omega
@@ -161,7 +166,7 @@ theorem blockLift_act (g : ℕ) [Fact g.Prime] (F : Type) [Field F] [ValuativeRe
     · rw [dif_pos hc] at hab ⊢
       obtain ⟨hA, hA'⟩ := entry_of_val e he _ _ hab
       exact ⟨hA, by rw [hA', ZMod.natCast_zmod_val]⟩
-    · rw [dif_neg hc] at hab ⊢
+    · rw [dite_eq_right hc] at hab ⊢
       obtain ⟨hA, hA'⟩ := entry_of_val e he (h'.val a b) (if a = b then 1 else 0)
         (by rw [hab]; split_ifs <;> simp)
       exact ⟨hA, by rw [hA']; split_ifs <;> simp⟩

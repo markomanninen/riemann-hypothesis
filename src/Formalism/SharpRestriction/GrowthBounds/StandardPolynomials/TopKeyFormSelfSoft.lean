@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.NormalWeightCovectorZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.NormalWeightCovectorZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,15 +103,16 @@ theorem hTop_ord (w : O) (x : X.TT) (g : Matrix (Fin (X.m + 1)) (Fin (X.m + 1)) 
     InWjRg X.p X.n' O w 1 (hhLetters X.TT) g (hTop O X x) 1 := by
   exact hook_key_order_ge_one w (hhLetters X.TT) 1 g hg (x, true) (x, false) rfl rfl rfl
 
-theorem softOK_hTop (w : O) (x : X.TT) : SoftOK w (hTop O X x) 1 (hTop O X x) (dgH x) where
-  fac := IsFac.of_exact (e := 1) (r := 0) (hTop_inA x) (fun g hg => hTop_ord w x g hg) le_rfl (hTop_inA x)
-    ((inA_iff_wj w).2 (wjSub w 0).zero_mem) (by
-      have := hTop_lift w x
-      rw [smul_zero, add_zero, pow_one]
-      exact this)
-  sgHom := ndHom_iff.2 (hTop_nd x)
-  liftPol := identity_lift_mem_Pol _ (hTop_pol x)
-  sgPol := hTop_pol x
+theorem softOK_hTop (w : O) (x : X.TT) : SoftOK w (hTop O X x) 1 (hTop O X x) (dgH x) := by
+  exact
+    { fac := IsFac.of_exact (e := 1) (r := 0) (hTop_inA x) (fun g hg => hTop_ord w x g hg) le_rfl (hTop_inA x)
+        ((inA_iff_wj w).2 (wjSub w 0).zero_mem) (by
+          have := hTop_lift w x
+          rw [smul_zero, add_zero, pow_one]
+          exact this)
+      sgHom := ndHom_iff.2 (hTop_nd x)
+      liftPol := identity_lift_mem_Pol _ (hTop_pol x)
+      sgPol := hTop_pol x }
 
 theorem EhatT_eq_sum (x : X.TT) (P : ℕ) :
     EhatT O X x P = ∑ a : Fin (X.m + 1), (MvPolynomial.X ((x, true), a) * MvPolynomial.X ((x, false), a) : RHH O X) ^ P := by
@@ -134,7 +139,8 @@ theorem hpow_congr (S : UniformizedDVR X.p O) (hS : S.SqP) (x : X.TT) (e : ℕ) 
       ∑ a : Fin (X.m + 1), (MvPolynomial.X ((x, true), a) * MvPolynomial.X ((x, false), a)) ^ (X.p ^ e) with hDdef
   have hD : hTop O X x ^ (X.p ^ e) - EhatT O X x (X.p ^ e) = MvPolynomial.map (algebraMap O (KK O)) D := by
     rw [EhatT_eq_sum, ← EhatT_one, EhatT_eq_sum, hDdef]
-    simp only [map_sub, map_pow, map_sum, map_mul, map_X, pow_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_pow, map_sum, map_mul, map_X, pow_one]
   rw [hD]
   apply Formalism.MainNotions.G.WittFrameLocaliserOrders.residue_zero_mem_order_one S
   have hp0 : ((X.p : ℕ) : IsLocalRing.ResidueField O) = 0 := by
@@ -142,31 +148,28 @@ theorem hpow_congr (S : UniformizedDVR X.p O) (hS : S.SqP) (x : X.TT) (e : ℕ) 
     exact S.p_mem
   haveI : CharP (IsLocalRing.ResidueField O) X.p := (CharP.charP_iff_prime_eq_zero Fact.out).2 hp0
   rw [hDdef]
-  simp only [map_sub, map_pow, map_sum, map_mul, map_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_pow, map_sum, map_mul, map_X]
   rw [sum_pow_char_pow, sub_self]
 
 theorem softH (S : UniformizedDVR X.p O) (hS : S.SqP) (x : X.TT) (e : ℕ) :
-    SoftOK S.w (hTop O X x ^ (X.p ^ e)) (X.p ^ e) (EhatT O X x (X.p ^ e)) (fun l => X.p ^ e * dgH x l) where
-  fac := by
-    have := ((softOK_hTop S.w x).pow (X.p ^ e)).fac
-    rw [mul_one] at this
-    exact this.congr_sg (hpow_congr S hS x e) ((mem_intSub O _).1 (EhatT_int x _))
-  sgHom := ndHom_iff.2 (by
-    have := EhatT_wh (O := O) (wN X) 1 x (X.p ^ e) (wN_pair x)
-    rwa [mul_one] at this)
-  liftPol := ((softOK_hTop S.w x).pow (X.p ^ e)).liftPol
-  sgPol := mem_Pol_iff.2 fun l => EhatT_wh (wL X l) _ x _ fun _ => rfl
+    SoftOK S.w (hTop O X x ^ (X.p ^ e)) (X.p ^ e) (EhatT O X x (X.p ^ e)) (fun l => X.p ^ e * dgH x l) := by
+  exact
+    { fac := by
+        have := ((softOK_hTop S.w x).pow (X.p ^ e)).fac
+        rw [mul_one] at this
+        exact this.congr_sg (hpow_congr S hS x e) ((mem_intSub O _).1 (EhatT_int x _))
+      sgHom := ndHom_iff.2 (by
+        have := EhatT_wh (O := O) (wN X) 1 x (X.p ^ e) (wN_pair x)
+        rwa [mul_one] at this)
+      liftPol := ((softOK_hTop S.w x).pow (X.p ^ e)).liftPol
+      sgPol := mem_Pol_iff.2 fun l => EhatT_wh (wL X l) _ x _ fun _ => rfl }
 
 theorem softHseg (S : UniformizedDVR X.p O) (hS : S.SqP) (C0 CE1 CE2 : ℝ) (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j)) :
     SoftOK S.w (hTop O X (topOdd X j i) ^ ((X.seg C0 CE1 CE2 j).P X.p i)) ((X.seg C0 CE1 CE2 j).P X.p i)
       (EhatT O X (topOdd X j i) ((X.seg C0 CE1 CE2 j).P X.p i))
       (fun l => (X.seg C0 CE1 CE2 j).P X.p i * dgH (topOdd X j i) l) := by
   exact softH S hS (topOdd X j i) _
-
-theorem sgKS_pow (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j)) (P : ℕ) :
-    sgKS O X j i ^ P = MvPolynomial.X ((topStart X j, true), 0) ^ (X.p ^ (segDists X.TT j).get i * P) *
-      MvPolynomial.X ((topOdd X j i, false), 0) ^ P := by
-  rw [sgKS, mul_pow, ← pow_mul]
 
 end H
 

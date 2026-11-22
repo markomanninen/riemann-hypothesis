@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.RatDatOfReal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.RatDatOfReal
+
+@[expose] public section
 
 open NumberField Formalism.IndefR.NX
 
@@ -31,7 +35,8 @@ theorem isKsForm_of_formsIso {LL Ks Ks' WL WL' G G' : Type} [Field LL] [NumberFi
       obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun Ks').1 hy'
       have hyeq : y = ∑ i, f.eK.symm (c i) • f.e.symm (b i) := by
         have : y = f.e.symm (∑ i, c i • b i) := by rw [hc]; simp
-        rw [this, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [this, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [← algebraMap_smul LL (c i) (b i), LinearEquiv.map_smul, ← algebraMap_smul LL (f.eK.symm (c i)),
           ← f.eK_LL, RingEquiv.apply_symm_apply]

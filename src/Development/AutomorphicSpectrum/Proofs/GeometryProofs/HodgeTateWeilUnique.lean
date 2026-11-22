@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionEmbeddingGeometricPointsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZeroOfValuesStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumberStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeRegularAtLocalPoint
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsStalkFractionOfGeneric
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionEmbeddingGeometricPointsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZeroOfValuesStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumberStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeRegularAtLocalPoint
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsStalkFractionOfGeneric
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
@@ -257,49 +261,50 @@ theorem tangent_congr (hξ : IsCptGen ξ) {G : Over X} [GrpObj G] (hG : IsSemiAb
     (h : ⊤ ≤ v.left ⁻¹ᵁ W) (h' : ⊤ ≤ v.left ⁻¹ᵁ W') :
     ∃ r₀ : X.presheaf.stalk q.1, (secVal (B := DualNumber (X.presheaf.stalk q.1)) v.left W h f).snd -
       (secVal (B := DualNumber (X.presheaf.stalk q.1)) v.left W' h' f').snd = n * r₀ := by
-  haveI : IsCommMonObj G := hG.comm
-  haveI : IsDomain (X.presheaf.stalk q.1) := (hξ.inj q).isDomain _
-  obtain ⟨κ, hκ⟩ := exists_frac hξ q
-  obtain ⟨T, _, _, Γ₀, i, hΓ, hpt⟩ := exists_gamma hξ hG hn hT GW q κ hκ
-  let V : G.left.Opens := W ⊓ W'
-  let f₁ : Γ(G.left, V) := G.left.presheaf.map (homOfLE (inf_le_left : V ≤ W)).op f
-  let f₂ : Γ(G.left, V) := G.left.presheaf.map (homOfLE (inf_le_right : V ≤ W')).op f'
-  let s : Γ(Γ₀.G.left, i ⁻¹ᵁ V) := (i.appLE V (i ⁻¹ᵁ V) le_rfl).hom (f₁ - f₂)
-  have hs : s = 0 := by
-    refine GlobalTheory.T.section_eq_zero_of_values (X.presheaf.stalk q.1) T Γ₀ (i ⁻¹ᵁ V) s fun t ht => ?_
-    obtain ⟨g, hg, hgt⟩ := hpt t
-    have hz : ⊤ ≤ ((Γ₀.pt t).left ≫ i) ⁻¹ᵁ V := ht
-    have e1 : BT.valAt (Γ₀.pt t).left (i ⁻¹ᵁ V) ht s = secVal ((Γ₀.pt t).left ≫ i) V hz (f₁ - f₂) :=
-      secVal_comp _ i V ht hz _
-    rw [e1, secVal_sub]
-    have hzW : ⊤ ≤ ((Γ₀.pt t).left ≫ i) ⁻¹ᵁ W := fun z _ => (@hz z trivial).1
-    have hzW' : ⊤ ≤ ((Γ₀.pt t).left ≫ i) ⁻¹ᵁ W' := fun z _ => (@hz z trivial).2
-    have hyW : ⊤ ≤ (spMap (κ.symm : Ω →+* FractionRing (X.presheaf.stalk q.1)) ≫ g.left) ⁻¹ᵁ W := hgt ▸ hzW
-    have hyW' : ⊤ ≤ (spMap (κ.symm : Ω →+* FractionRing (X.presheaf.stalk q.1)) ≫ g.left) ⁻¹ᵁ W' := hgt ▸ hzW'
-    have h₀ := le_of_field _ g.left hyW
-    have h₀' := le_of_field _ g.left hyW'
-    rw [secVal_res _ inf_le_left hzW hz f, secVal_res _ inf_le_right hzW' hz f',
-      secVal_congr hgt W hzW hyW f, secVal_congr hgt W' hzW' hyW' f',
-      secVal_base _ g.left W h₀ hyW f, secVal_base _ g.left W' h₀' hyW' f', hval g h₀ h₀' hg, sub_self]
-  obtain ⟨e₁, he₁⟩ := (stalkLie hξ M q).onto v hv.1
-  obtain ⟨vb, ⟨-, hvb⟩, -⟩ := GlobalTheory.T.existsUnique_tangent_dual_number (X.presheaf.stalk q.1) T Γ₀ X G (X.fromSpecStalk q.1) n i hΓ
-    (Stalk M q) (stalkLie hξ M q) e₁
-  rw [he₁] at hvb
-  have hV : ⊤ ≤ v.left ⁻¹ᵁ V := fun z _ => ⟨@h z trivial, @h' z trivial⟩
-  have h2 : ⊤ ≤ (Spec.map (CommRingCat.ofHom (dualMap (Ideal.Quotient.mk
-      (Ideal.span {((n : ℕ) : X.presheaf.stalk q.1)})))) ≫ v.left) ⁻¹ᵁ V := fun z _ => @hV _ trivial
-  have h3 : ⊤ ≤ (vb ≫ i) ⁻¹ᵁ V := hvb ▸ h2
-  have hP : ⊤ ≤ vb ⁻¹ᵁ (i ⁻¹ᵁ V) := h3
-  have e1 := secVal_comp vb i V hP h3 (f₁ - f₂)
-  change secVal vb (i ⁻¹ᵁ V) hP s = _ at e1
-  rw [hs, secVal_congr hvb V h3 h2, secVal_base _ v.left V hV h2, secVal_sub, secVal_res _ inf_le_left h hV f,
-    secVal_res _ inf_le_right h' hV f'] at e1
-  have e2 := congrArg TrivSqZeroExt.snd e1
-  have h0 : secVal vb (i ⁻¹ᵁ V) hP 0 = 0 := by simp [secVal]
-  rw [h0, dualMap_snd, TrivSqZeroExt.snd_zero, TrivSqZeroExt.snd_sub] at e2
-  have e3 := Ideal.Quotient.eq_zero_iff_mem.1 e2.symm
-  obtain ⟨r₀, hr₀⟩ := Ideal.mem_span_singleton.1 e3
-  exact ⟨r₀, hr₀⟩
+  set_option maxHeartbeats 16000000 in
+    haveI : IsCommMonObj G := hG.comm
+    haveI : IsDomain (X.presheaf.stalk q.1) := (hξ.inj q).isDomain _
+    obtain ⟨κ, hκ⟩ := exists_frac hξ q
+    obtain ⟨T, _, _, Γ₀, i, hΓ, hpt⟩ := exists_gamma hξ hG hn hT GW q κ hκ
+    let V : G.left.Opens := W ⊓ W'
+    let f₁ : Γ(G.left, V) := G.left.presheaf.map (homOfLE (inf_le_left : V ≤ W)).op f
+    let f₂ : Γ(G.left, V) := G.left.presheaf.map (homOfLE (inf_le_right : V ≤ W')).op f'
+    let s : Γ(Γ₀.G.left, i ⁻¹ᵁ V) := (i.appLE V (i ⁻¹ᵁ V) le_rfl).hom (f₁ - f₂)
+    have hs : s = 0 := by
+      refine GlobalTheory.T.section_eq_zero_of_values (X.presheaf.stalk q.1) T Γ₀ (i ⁻¹ᵁ V) s fun t ht => ?_
+      obtain ⟨g, hg, hgt⟩ := hpt t
+      have hz : ⊤ ≤ ((Γ₀.pt t).left ≫ i) ⁻¹ᵁ V := ht
+      have e1 : BT.valAt (Γ₀.pt t).left (i ⁻¹ᵁ V) ht s = secVal ((Γ₀.pt t).left ≫ i) V hz (f₁ - f₂) :=
+        secVal_comp _ i V ht hz _
+      rw [e1, secVal_sub]
+      have hzW : ⊤ ≤ ((Γ₀.pt t).left ≫ i) ⁻¹ᵁ W := fun z _ => (@hz z trivial).1
+      have hzW' : ⊤ ≤ ((Γ₀.pt t).left ≫ i) ⁻¹ᵁ W' := fun z _ => (@hz z trivial).2
+      have hyW : ⊤ ≤ (spMap (κ.symm : Ω →+* FractionRing (X.presheaf.stalk q.1)) ≫ g.left) ⁻¹ᵁ W := hgt ▸ hzW
+      have hyW' : ⊤ ≤ (spMap (κ.symm : Ω →+* FractionRing (X.presheaf.stalk q.1)) ≫ g.left) ⁻¹ᵁ W' := hgt ▸ hzW'
+      have h₀ := le_of_field _ g.left hyW
+      have h₀' := le_of_field _ g.left hyW'
+      rw [secVal_res _ inf_le_left hzW hz f, secVal_res _ inf_le_right hzW' hz f',
+        secVal_congr hgt W hzW hyW f, secVal_congr hgt W' hzW' hyW' f',
+        secVal_base _ g.left W h₀ hyW f, secVal_base _ g.left W' h₀' hyW' f', hval g h₀ h₀' hg, sub_self]
+    obtain ⟨e₁, he₁⟩ := (stalkLie hξ M q).onto v hv.1
+    obtain ⟨vb, ⟨-, hvb⟩, -⟩ := GlobalTheory.T.existsUnique_tangent_dual_number (X.presheaf.stalk q.1) T Γ₀ X G (X.fromSpecStalk q.1) n i hΓ
+      (Stalk M q) (stalkLie hξ M q) e₁
+    rw [he₁] at hvb
+    have hV : ⊤ ≤ v.left ⁻¹ᵁ V := fun z _ => ⟨@h z trivial, @h' z trivial⟩
+    have h2 : ⊤ ≤ (Spec.map (CommRingCat.ofHom (dualMap (Ideal.Quotient.mk
+        (Ideal.span {((n : ℕ) : X.presheaf.stalk q.1)})))) ≫ v.left) ⁻¹ᵁ V := fun z _ => @hV _ trivial
+    have h3 : ⊤ ≤ (vb ≫ i) ⁻¹ᵁ V := hvb ▸ h2
+    have hP : ⊤ ≤ vb ⁻¹ᵁ (i ⁻¹ᵁ V) := h3
+    have e1 := secVal_comp vb i V hP h3 (f₁ - f₂)
+    change secVal vb (i ⁻¹ᵁ V) hP s = _ at e1
+    rw [hs, secVal_congr hvb V h3 h2, secVal_base _ v.left V hV h2, secVal_sub, secVal_res _ inf_le_left h hV f,
+      secVal_res _ inf_le_right h' hV f'] at e1
+    have e2 := congrArg TrivSqZeroExt.snd e1
+    have h0 : secVal vb (i ⁻¹ᵁ V) hP 0 = 0 := by simp [secVal]
+    simp only [h0, GlobalTheory.CompanionTheory.Ar.dualMap, TrivSqZeroExt.snd_zero] at e2
+    have e3 := Ideal.Quotient.eq_zero_iff_mem.1 e2.symm
+    obtain ⟨r₀, hr₀⟩ := Ideal.mem_span_singleton.1 e3
+    exact ⟨r₀, by simpa only [zero_add, TrivSqZeroExt.snd_sub] using hr₀⟩
 end
 
 theorem isHTAt_iff : ∀ (X : Scheme.{0}) [IsLocallyNoetherian X] (Ω : Type) [Field Ω] [CharZero Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X), IsCptGen ξ → Flat.NormalCpt ξ → ∀ (G : Over X) [GrpObj G], IsSemiAbelian G → ∀ (L : LB G.left) (n : ℕ), 1 ≤ n → FullTorsion G ξ n → ∀ e, GenWeil G L ξ n e → ∀ (E : Type) [AddCommGroup E] [Module Ω E] (M : LieModel G ξ E) (y : Over.mk ξ ⟶ G) (q : Cpt ξ) (w w' : Module.Dual Ω E), y ^ n = 1 → M.IsHTAt L n y q w → (M.IsHTAt L n y q w' ↔ ∃ u ∈ M.omLat q, w' = w + n • u) := by

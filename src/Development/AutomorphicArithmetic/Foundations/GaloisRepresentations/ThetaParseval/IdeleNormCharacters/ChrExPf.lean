@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.IdeleNormCharacters.AbsFactsAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.IdeleNormCharacters.AbsFactsAlt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Host Formalism.ConjugateSelfDual Neutral.B1 ReciprocityTheory.Gal
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.HeckeGal GlobalTheory.CuspRep UpperTheory.Gal.TP.Chr
 
@@ -71,6 +76,9 @@ end UpperTheory.Gal.TP.Chr
 theorem UpperTheory.Gal.TP.Chr.chrEx :
     UpperTheory.Gal.TP.Chr.MuEmb → UpperTheory.Gal.TP.Chr.ReadEx → UpperTheory.Gal.TP.Chr.ReadLoc → UpperTheory.Gal.TP.Chr.ReadRes → UpperTheory.Gal.TP.Chr.ReadExp → UpperTheory.Gal.TP.Chr.AbsFacts → UpperTheory.Gal.TP.Chr.TypProd → UpperTheory.Gal.TP.Chr.ExpInj → UpperTheory.Gal.TP.Chr.ChrEx := by
   intro hMu hRE hRL hRR hRX hAb hTP hEI E _ _ _ hun emb w₀ m hm
+  have hloc (α β : HChar E) (w : HeightOneSpectrum (𝓞 E)) (x) :
+      (α * β).loc w x = α.loc w x * β.loc w x := by
+    rfl
   obtain ⟨μ, hμu, hμq, hμi, hμ0⟩ := hMu E hun emb w₀ m hm
   obtain ⟨χ, hr, hH⟩ := hRE E μ hμu
   have hl := hRL E μ χ hr
@@ -93,12 +101,12 @@ theorem UpperTheory.Gal.TP.Chr.chrEx :
     · simp
     · rw [pow_one, neg_one_pow_eq_pow_mod_two, ← hj, ← neg_one_pow_eq_pow_mod_two]
   · have h1 : (psi μ k s).loc w x = 1 := h x hx
-    rw [psi, HChar.loc_mul, hpow_loc, ((hAb E emb _).1 w).1 x hx, mul_one] at h1
+    rw [psi, hloc, hpow_loc, ((hAb E emb _).1 w).1 x hx, mul_one] at h1
     rw [lc_pow, hl]
     exact h1
   · have h1 : locChar (χ ^ k) w x = 1 := h x hx
     rw [lc_pow, hl] at h1
-    rw [psi, HChar.loc_mul, hpow_loc, ((hAb E emb _).1 w).1 x hx, mul_one]
+    rw [psi, hloc, hpow_loc, ((hAb E emb _).1 w).1 x hx, mul_one]
     exact h1
   · rw [psi, HChar.val_mul, Units.val_mul, hpow_val, Units.val_pow_eq_pow_val, ((hAb E emb _).1 w).2, hval, neg_div]
   · rw [hTP E emb _ _ (x : E), inf_psi hAb emb μ m hμi]

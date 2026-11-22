@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ theorem UpperTheory.Zero.ConvolutionTheory.EB.lvEx :
     UpperTheory.Zero.ConvolutionTheory.EB.LvEx := by
   intro E _ _ _ a b Z φ h
   have key : ∀ w : Pl E, ∃ (A : Subgroup (GLw a w)) (B : Subgroup (GLw b w)),
-      IsOpen (A : Set (GLw a w)) ∧ IsOpen (B : Set (GLw b w)) ∧ A ≤ KGL w a ∧ B ≤ KGL w b ∧
-      (w ∉ Z → A = KGL w a ∧ B = KGL w b) ∧ (w ∈ Z → IsHecke (A.prod B) (φ w)) := by
+      IsOpen (A : Set (GLw a w)) ∧ IsOpen (B : Set (GLw b w)) ∧ A ≤ KGL w (n := a) ∧ B ≤ KGL w (n := b) ∧
+      (w ∉ Z → A = KGL w (n := a) ∧ B = KGL w (n := b)) ∧ (w ∈ Z → IsHecke (A.prod B) (φ w)) := by
     intro w
     by_cases hw : w ∈ Z
     · obtain ⟨K', ho, hle, hH⟩ := h w hw
@@ -37,7 +41,7 @@ theorem UpperTheory.Zero.ConvolutionTheory.EB.lvEx :
           have := K'.mul_mem hx hy
           simpa using this
         exact hH.2 _ hxy g
-    · exact ⟨KGL w a, KGL w b, (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w a).1,
+    · exact ⟨KGL w (n := a), KGL w (n := b), (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w a).1,
         (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w b).1, le_rfl, le_rfl,
         fun _ => ⟨rfl, rfl⟩, fun h' => absurd h' hw⟩
   choose A B hA hB hA' hB' hoff hfix using key

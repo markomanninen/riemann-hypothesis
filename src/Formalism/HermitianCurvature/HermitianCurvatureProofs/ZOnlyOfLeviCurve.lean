@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZOnlyOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelPointEntryContDiffOn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeOperatorClass
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZOnlyOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelPointEntryContDiffOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeOperatorClass
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

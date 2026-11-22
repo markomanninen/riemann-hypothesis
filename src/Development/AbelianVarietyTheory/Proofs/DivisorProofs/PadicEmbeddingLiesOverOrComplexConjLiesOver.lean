@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsCyclotomicExtensionQI
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCyclotomicExtensionQI
+
+@[expose] public section
+
 open GlobalTheory.LKTrip NumberField
 
 namespace GlobalTheory.HTGroupOver
@@ -28,7 +33,7 @@ theorem exists_gen {F : Type} [Field F] [NumberField F] [IsCMField F] (Kq : Subf
   have hnr : ∀ a b : ℚ, b ≠ 0 → (a : F) + b * x0 ≠ 0 := by
     intro a b hb h
     have h2 := congrArg (fun w => (σ w).im) h
-    simp only [map_add, map_mul, map_ratCast, Complex.add_im, Complex.ratCast_im, Complex.mul_im,
+    simp only [map_add (f := _), map_mul, map_ratCast, Complex.add_im, Complex.ratCast_im, Complex.mul_im,
       Complex.ratCast_re, zero_mul, add_zero, zero_add, map_zero, Complex.zero_im] at h2
     rcases mul_eq_zero.1 h2 with h3 | h3
     · exact hb (by exact_mod_cast h3)
@@ -71,7 +76,7 @@ theorem exists_gen {F : Type} [Field F] [NumberField F] [IsCMField F] (Kq : Subf
       have h4 : (σ y0).im = 0 := by linarith
       have h5 : (σ y0).im = 2 * g 2 * (σ x0).im := by
         have e : σ y0 = ((2 * g 2 : ℚ) : ℂ) * σ x0 + ((g 1 : ℚ) : ℂ) := by
-          simp only [y0, map_add, map_mul, map_ratCast, map_ofNat]; push_cast; ring
+          simp only [y0, map_add (f := _), map_mul, map_ratCast, map_ofNat]; push_cast; ring
         rw [e, Complex.add_im, Complex.mul_im, Complex.ratCast_re, Complex.ratCast_im, Complex.ratCast_im]
         push_cast; ring
       rw [h5] at h4
@@ -116,7 +121,7 @@ theorem liesOver_or_conj : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (τ : G.
   · left
     intro z
     obtain ⟨a, b, rfl⟩ := hz z
-    simp only [Subfield.coe_add, Subfield.coe_mul, SubfieldClass.coe_ratCast, map_add, map_mul, map_ratCast, h]
+    simp only [Subfield.coe_add, Subfield.coe_mul, SubfieldClass.coe_ratCast, map_add (f := _), map_mul, map_ratCast, h]
   · right
     intro z
     obtain ⟨a, b, rfl⟩ := hz z

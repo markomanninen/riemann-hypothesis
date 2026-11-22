@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -31,7 +36,8 @@ theorem exists_unit_of_cocycle_rightAction_charZero :
   let F : K → K := fun b => ∑ γ, ((c γ : K))⁻¹ * σ γ b
   have hF : ∀ b δ, σ δ (F b) = c δ * F b := by
     intro b δ
-    simp only [F, map_sum, map_mul, map_inv₀, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, map_sum, map_mul, map_inv₀, Finset.mul_sum]
     apply Fintype.sum_equiv (Equiv.mulRight δ)
     intro γ
     simp only [Equiv.coe_mulRight]

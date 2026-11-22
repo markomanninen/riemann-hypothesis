@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.ContinuousHomomorphism.cont_hom :
     ∀ {Γ M : Type} [inst : Group Γ]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,8 +137,8 @@ private theorem isHecke_pair {G H : Type} [Group G] [Group H] [TopologicalSpace 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 private theorem isHecke_Tj (n : ℕ) (w : Pl E) (ϖ : w.adicCompletion E) (j : ℕ) :
-    IsHecke (GlobalTheory.LFun.KGL w n) (Tj ℂ n (Ov E w) ϖ j) := by
-  have hKe : GlobalTheory.LFun.KGL w n = GLint (Fin n) (Ov E w) := rfl
+    IsHecke (GlobalTheory.LFun.KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ j) := by
+  have hKe : GlobalTheory.LFun.KGL w (n := n) = GLint (Fin n) (Ov E w) := rfl
   have hc := (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL (E := E) w n).2
   unfold Tj
   refine isHecke_ind _ hc _ ?_ ?_ ?_

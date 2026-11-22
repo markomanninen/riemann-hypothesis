@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -54,12 +58,12 @@ private theorem ψ_neg_mul (x : A F) : ψ (-x) * ψ x = 1 := by
 private theorem cont_ψ : Continuous (ψ (F := F)) := continuous_subtype_val.comp continuous_adelicChar
 
 private theorem mkE_add (D : Dat F E) (a b c d : A F) : D.mkE (a + c) (b + d) = D.mkE a b + D.mkE c d := by
-  simp only [Dat.mkE, map_add, add_mul]
+  simp only [Dat.mkE, map_add (f := _), add_mul]
   abel
 
 private theorem mkE_rat (D : Dat F E) (x y : F) :
     D.mkE (rt x) (rt y) = rt (algebraMap F E x + algebraMap F E y * D.θ) := by
-  simp only [Dat.mkE, rt, AdeleBaseChange.adeleMap_algebraMap, map_add, map_mul]
+  simp only [Dat.mkE, rt, AdeleBaseChange.adeleMap_algebraMap, map_add (f := _), map_mul]
 
 private theorem cont_mkE (D : Dat F E) : Continuous fun x : Fin 2 → A F => D.mkE (x 0) (x 1) :=
   (AdeleBaseChange.continuous_adeleMap.comp (continuous_apply 0)).add
@@ -102,8 +106,8 @@ private theorem shift_J (D : Dat F E) {Φ : GL (Fin 2) (A E) → ℂ} (hL : ∀ 
     exact per_J D hL h η x
 
 private theorem sum_Tj {n : ℕ} {w : HeightOneSpectrum (𝓞 E)} {ϖ : w.adicCompletion E} (hϖ : Formalism.UG.IsUnifV E w ϖ) (j : ℕ) :
-    ∃ s : Finset (GL (Fin n) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w n),
-      ∀ G : GL (Fin n) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w n → ℂ,
+    ∃ s : Finset (GL (Fin n) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := n)),
+      ∀ G : GL (Fin n) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := n) → ℂ,
         ∑ᶠ c, Formalism.UG.Tj ℂ n (Formalism.UG.Ov E w) ϖ j c.out * G c =
           ∑ c ∈ s, Formalism.UG.Tj ℂ n (Formalism.UG.Ov E w) ϖ j c.out * G c := by
   have hf := Formalism.UG.P.finite_support_cosets (Formalism.UG.Final.GLintComm E w n) (GlobalTheory.LFun.Tj_mem_hecke (n := n) hϖ j).2
@@ -119,7 +123,7 @@ private theorem eig_int {n : ℕ} {w : HeightOneSpectrum (𝓞 E)} {B : Multiset
   obtain ⟨s, hs⟩ := sum_Tj (n := n) hϖ j
   rw [hs]
   simp only [← integral_const_mul]
-  rw [← integral_finset_sum _ fun c _ => (hi _).const_mul _]
+  rw [← integral_finsetSum _ fun c _ => (hi _).const_mul _]
   refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
   have e := (h x).eig ϖ hϖ j hj g
   rw [hs] at e

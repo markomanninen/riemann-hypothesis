@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -17,7 +21,8 @@ theorem lefschetz_of (hB : Base) (hT : LTransfer) (hC : LCycle) (hF : LFix) (hTr
   have hfx := hF k q p hq.1 hp.1 c a hc ha hE
   have hs : Set.Finite {y : Pt q | y.1 ≫ c = y.1 ≫ a} := hfx
   have h2 := hδ.trans d q p hq hp c a hc ha hE hs.toFinset (fun y => by simp)
-  rw [← h1, h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h1, h2, map_sum]
   have h3 : ∀ y : Pt q, (tr ∘ₗ push l a _) (δ.cl d y) = 1 := fun y => by
     rw [LinearMap.comp_apply, hP hB l k hl δ hδ d q p hq hp a ha hfin het y, htr]
   simp only [h3, Finset.sum_const, nsmul_eq_mul, mul_one]

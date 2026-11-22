@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+
+@[expose] public section
 
 open Matrix GlobalTheory.CompanionTheory.Ar.PB
 open scoped ComplexOrder

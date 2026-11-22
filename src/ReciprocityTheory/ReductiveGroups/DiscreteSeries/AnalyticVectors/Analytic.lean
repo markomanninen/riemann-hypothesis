@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Taylor
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Series
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Growth
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.NcBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Taylor
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Series
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Growth
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.NcBound
+
+@[expose] public section
 
 noncomputable section
 

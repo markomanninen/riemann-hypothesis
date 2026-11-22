@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecOfPInt
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecOfPInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,8 @@ theorem pull_vec [FiniteDimensional Qp LL] (hK : Function.Bijective (algebraMap 
   refine ⟨m, r, fun j => ?_, fun s hs hneg => ?_⟩
   · have h1 : crisMap B ι.f (dvO W T₂ e b r) = ∑ j, (∑ k, algebraMap O LL (r k) * algebraMap O LL (o k j)) •
         dv W Y e bY (Pi.single j 1) := by
-      rw [dvO_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [dvO_sum, map_sum]
       simp only [map_smul, ho, Finset.smul_sum, smul_smul, Finset.sum_smul]
       exact Finset.sum_comm
     have h2' : crisMap B ι.f (dvO W T₂ e b r) = ∑ j, ((PD.p : LL) ^ m * algebraMap O LL (cY j)) •
@@ -117,7 +122,8 @@ theorem pull_vec [FiniteDimensional Qp LL] (hK : Function.Bijective (algebraMap 
       simp only [smul_smul]
     have := congrFun (coef_eq _ hindY _ _ (h1.symm.trans h2')) j
     apply hinj
-    rw [map_sum, map_mul, map_pow, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_mul, map_pow, map_natCast]
     simpa only [map_mul] using this
   · rw [hdvr]
     exact Submodule.smul_mem _ _ (hall s hs hneg)
@@ -141,7 +147,8 @@ theorem o_inj [FiniteDimensional Qp LL] (hK : Function.Bijective (algebraMap K�
       exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
     exact ((Strict.mem_DcrisL_iff PD _ ξ).1 this).1
   have h0 : crisMap B ι.f ξ = 0 := by
-    rw [hξ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hξ, map_sum]
     simp only [map_smul, ho, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     simp only [← Finset.sum_smul, hρ, zero_smul, Finset.sum_const_zero]
@@ -149,8 +156,8 @@ theorem o_inj [FiniteDimensional Qp LL] (hK : Function.Bijective (algebraMap K�
   funext k
   exact Fintype.linearIndependent_iff.1 hind2 ρ (by rw [← hξ, hξ0]) k
 
-include W in
 
+include W in
 theorem right_inv (hV : ValRing (LL := LL) O v) (hinj : Function.Injective (algebraMap O LL)) {d dY : ℕ}
     (o : Fin d → Fin dY → O)
     (hinjo : ∀ ρ : Fin d → LL, (∀ j, ∑ k, ρ k * algebraMap O LL (o k j) = 0) → ρ = 0) :
@@ -172,7 +179,8 @@ theorem right_inv (hV : ValRing (LL := LL) O v) (hinj : Function.Injective (alge
       rw [hf, Finset.sum_apply]
       simp [Pi.single_apply]
     have h1 := congrArg (fun φ : (Fin d → LL) →ₗ[LL] (Fin d → LL) => φ (Pi.single k 1)) hg
-    simp only [LinearMap.comp_apply, LinearMap.id_apply, hv, map_sum, map_smul] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.comp_apply, LinearMap.id_apply, hv, map_sum, map_smul] at h1
     have h2 := congrFun h1 m
     rw [Finset.sum_apply] at h2
     simp only [Pi.smul_apply, smul_eq_mul] at h2
@@ -182,7 +190,8 @@ theorem right_inv (hV : ValRing (LL := LL) O v) (hinj : Function.Injective (alge
     · simp [Ne.symm hkm, hkm]
   obtain ⟨q, D, hD⟩ := int_vec W hV fun x : Fin dY × Fin d => Dl x.1 x.2
   refine ⟨q, fun j m => D (j, m), fun k m => hinj ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_mul, hD]
   have : ∑ j, algebraMap O LL (o k j) * ((PD.p : LL) ^ q * Dl j m) =
       (PD.p : LL) ^ q * ∑ j, algebraMap O LL (o k j) * Dl j m := by

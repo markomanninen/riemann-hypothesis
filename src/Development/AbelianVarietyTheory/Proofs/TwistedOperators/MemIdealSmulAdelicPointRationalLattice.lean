@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
@@ -69,7 +73,8 @@ theorem nontrivial_af : Nontrivial (Formalism.L2.Herm.Af F) := by
   let v : HeightOneSpectrum (𝓞 F) := ⟨p, hp, hp0⟩
   refine ⟨⟨0, 1, fun h => ?_⟩⟩
   have h' := congrArg (fun b : Formalism.L2.Herm.Af F => b v) h
-  simp at h'
+  change (0 : _) = 1 at h'
+  exact zero_ne_one h'
 
 theorem mem_smul_span (Λ : Submodule (𝓞 E) (Fin n → E)) (𝔪 : Ideal (𝓞 E)) (g : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))
     (y : Fin n → E)

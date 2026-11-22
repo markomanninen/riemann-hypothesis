@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRealCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRealCoord
+
+@[expose] public section
 
 open NumberField Matrix Formalism.MainNotions.S GlobalTheory.CuspGeo
 
@@ -53,7 +57,8 @@ theorem exists_integralMatrix_of_same_multiplicationMatrices {E : Type*} [Field 
     let a' : 𝓞 E := ⟨a, hai⟩
     have h1 : a = ∑ k, (RingOfIntegers.basis E).repr a' k • (integralBasis E k : E) := by
       have h2 := congrArg (algebraMap (𝓞 E) E) ((RingOfIntegers.basis E).sum_repr a')
-      rw [map_sum] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h2
       simp only [map_zsmul] at h2
       simp only [integralBasis_apply]
       exact h2.symm

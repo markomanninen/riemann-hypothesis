@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
-import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.SharpRestriction.GlobalSchurBounds.TaylorLogMetric
-import Formalism.LocalRingCardinality.Lemmas
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
+module
+
+public import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.SharpRestriction.GlobalSchurBounds.TaylorLogMetric
+public import Formalism.LocalRingCardinality.Lemmas
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
+
+@[expose] public section
 
 noncomputable section
 

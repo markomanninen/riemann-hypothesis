@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SphereTorusA
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereTorusA
+
+@[expose] public section
 
 noncomputable section
 

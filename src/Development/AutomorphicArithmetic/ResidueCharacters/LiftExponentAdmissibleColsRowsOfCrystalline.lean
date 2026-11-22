@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ResidueCharacters.ExistsUnion
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftColumnRowSetup
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ResidueCharacters.ExistsUnion
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftColumnRowSetup
+
+@[expose] public section
 
 noncomputable section
 

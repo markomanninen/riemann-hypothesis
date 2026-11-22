@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TransferenceA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TransferenceB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TransferenceA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TransferenceB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -57,13 +61,15 @@ theorem gtE_main (n : ℕ) : ∀ (b : Basis (Fin n) ℝ (EuclideanSpace ℝ (Fin
       intro p hp
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).mp hp
       refine (Submodule.mem_span_range_iff_exists_fun ℤ).mpr ⟨c, ?_⟩
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun j _ ↦ by rw [map_zsmul, hbE]
     have hspanφ' : ∀ x, x ∈ span ℤ (Set.range bE) → φ.symm x ∈ span ℤ (Set.range bW) := by
       intro x hx
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).mp hx
       refine (Submodule.mem_span_range_iff_exists_fun ℤ).mpr ⟨c, ?_⟩
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun j _ ↦ by
         rw [map_zsmul, hbE, LinearIsometryEquiv.symm_apply_apply]
     have hminE : ∀ x ∈ span ℤ (Set.range bE), x ≠ 0 → lam ≤ ‖x‖ := by

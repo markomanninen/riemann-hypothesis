@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPfD
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPfD
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.MI
 
@@ -66,7 +70,7 @@ lemma one_le_normSq_jacU {y : UpI ι r → ℂ} (hy : y ∈ Cy ι r) : 1 ≤ Com
   rw [map_prod]
   calc (1 : ℝ) = ∏ _i : Ix ι r, (1 : ℝ) := Finset.prod_const_one.symm
     _ ≤ _ := by
-      refine Finset.prod_le_prod (fun _ _ => zero_le_one) fun i _ => ?_
+      refine Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun i _ => ?_
       split_ifs
       · have h1 := ((hy (dI i.1 i.2.2)).1 rfl).1
         rw [Complex.normSq_eq_norm_sq]
@@ -78,7 +82,7 @@ lemma normSq_jacU_le {y : UpI ι r → ℂ} (hy : y ∈ Cy ι r) :
   unfold jacU
   rw [map_prod]
   calc _ ≤ ∏ _i : Ix ι r, (4 : ℝ) := by
-        refine Finset.prod_le_prod (fun _ _ => Complex.normSq_nonneg _) fun i _ => ?_
+        refine Finset.prod_le_prod₀ (fun _ _ => Complex.normSq_nonneg _) fun i _ => ?_
         split_ifs
         · have h1 := norm_le_of_Cy hy (dI i.1 i.2.2)
           rw [Complex.normSq_eq_norm_sq]
@@ -91,7 +95,7 @@ lemma Cy_subset_ball : Cy ι r ⊆ Metric.closedBall 0 2 := fun y hy =>
 
 lemma continuous_jacU : Continuous (jacU (ι := ι) (r := r)) := by
   unfold jacU
-  refine continuous_finset_prod _ fun i _ => ?_
+  refine continuous_finsetProd _ fun i _ => ?_
   by_cases h : i.2.2 < i.2.1
   · simp only [h, ↓reduceIte]
     exact continuous_apply _

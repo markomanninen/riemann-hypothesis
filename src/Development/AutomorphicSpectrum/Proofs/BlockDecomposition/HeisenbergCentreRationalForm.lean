@@ -1,13 +1,18 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnfoldingHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FundamentalDomainFourierUnfolding
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BigCellCosetsHermitianParam
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetCellInvariantUnipotent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NondegenerateCharacterCellFactorization
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SiegelEisensteinConvergent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RowD
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnfoldingHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FundamentalDomainFourierUnfolding
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BigCellCosetsHermitianParam
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetCellInvariantUnipotent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NondegenerateCharacterCellFactorization
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SiegelEisensteinConvergent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RowD
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
@@ -32,16 +37,16 @@ theorem centre_commutes_embedded_block {R : Type} [CommRing R] (hn : ρ + p = n)
       HMul.hMul (blk4 (bl hn 1 0 0 a) (bl hn 0 0 0 b) (bl hn 0 0 0 c) (bl hn 1 0 0 d))
         (blk4 1 (bl hn z 0 0 0) 0 1) := by
   have h1 : HMul.hMul (bl hn z 0 0 0) (bl hn 0 0 0 c) = 0 := by
-    rw [blockMatrix_multiply]
+    simp only [bl, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply]
     simp [bl]
   have h2 : HMul.hMul (bl hn z 0 0 0) (bl hn 1 0 0 d) = bl hn z 0 0 0 := by
-    rw [blockMatrix_multiply]
+    simp only [bl, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply]
     simp
   have h3 : HMul.hMul (bl hn 1 0 0 a) (bl hn z 0 0 0) = bl hn z 0 0 0 := by
-    rw [blockMatrix_multiply]
+    simp only [bl, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply]
     simp
   have h4 : HMul.hMul (bl hn 0 0 0 c) (bl hn z 0 0 0) = 0 := by
-    rw [blockMatrix_multiply]
+    simp only [bl, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply]
     simp [bl]
   rw [submatrix_fromBlocks_mul, submatrix_fromBlocks_mul, h1, h2, h3, h4]
   congr 1 <;> simp [add_comm]
@@ -51,11 +56,11 @@ theorem nzx_add (M : Maps D hn) (a b : hermA D ρ) : M.nzx (a + b) 0 = M.nzx a 0
 
 theorem nzx_comm_sh (M : Maps D hn) (z : hermA D ρ) (y : Mx D ρ p) :
     M.nzx z 0 * M.sh y = M.sh y * M.nzx z 0 := by
-  have h : tw z 0 y = z := by
-    apply Subtype.ext
-    simp [tw]
-  have e := nzx_sh M z 0 y
-  rwa [h] at e
+  apply GlobalTheory.CompanionTheory.FourierN.mat_injective
+  rw [mat_mul', mat_mul', M.nzx_mat, M.sh_mat, adj_zero]
+  rw [submatrix_fromBlocks_mul, submatrix_fromBlocks_mul]
+  simp only [bl, Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply]
+  simp
 
 theorem nzx_comm_emb (M : Maps D hn) (z : hermA D ρ) (h : G D p) :
     M.nzx z 0 * M.emb h = M.emb h * M.nzx z 0 := by

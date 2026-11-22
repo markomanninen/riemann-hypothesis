@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.TameInertiaTowers.TowerFieldFoundations
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.TameInertiaTowers.TowerFieldFoundations
+
+@[expose] public section
 
 open NumberField IntermediateField
 
@@ -100,13 +104,6 @@ theorem layer_galois (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b) :
     Function.Bijective (galMap h.1 a b) :=
   layerGalois (e + 2) q d (by omega) hqd L ζ a b h
 
-theorem galMap_one (h : IsLayer (e + 2) q d ζ a b) :
-    galMap h.1 a b (1 : Gal(L/ℚ)) = 1 := by
-  have hs : ∀ x : L, sgn (1 : Gal(L/ℚ)) x = 1 := fun x => by
-    rw [sgn.eq_1, if_pos (AlgEquiv.one_apply x)]
-  rw [galMap.eq_1, map_one, hs, hs]
-  rfl
-
 theorem fix_of_sgn_one {K : Type*} [Field K] [Algebra ℚ K] {σ : Gal(K/ℚ)} {x : K}
     (hs : sgn σ x = 1) : σ x = x := by
   rw [sgn.eq_1] at hs
@@ -137,7 +134,7 @@ theorem galMap_eq_neg_one_one_one_iff_eq_zeta_inversion (hqd : HypOdd q d) (h : 
 
 theorem apply_theta {N : ℕ} [NeZero N] (hζ : IsPrimitiveRoot ζ N) (τ : Gal(L/ℚ)) :
     τ (ζ + ζ⁻¹) = ζ ^ (hζ.autToPow ℚ τ : ZMod N).val + ζ⁻¹ ^ (hζ.autToPow ℚ τ : ZMod N).val := by
-  rw [map_add, map_inv₀, ← hζ.autToPow_spec ℚ τ, inv_pow]
+  rw [map_add (f := _), map_inv₀, ← hζ.autToPow_spec ℚ τ, inv_pow]
 
 theorem two_lt (e : ℕ) : 2 < 2 ^ (e + 2) := by
   have h4 : 2 ^ 2 ≤ 2 ^ (e + 2) := Nat.pow_le_pow_right (by norm_num) (by omega)
@@ -273,7 +270,7 @@ theorem finrank_cmField (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b) :
   haveI := (layer_galois hqd h).1
   have hL := (layer_galois hqd h).2.1
   rw [hostE_eq_fixedField hqd h]
-  have h1 := Module.finrank_mul_finrank ℚ (fixedField (Subgroup.zpowers (tau0 hqd h))) L
+  have h1 := (letI : Module.Free (fixedField (Subgroup.zpowers (tau0 hqd h))) L := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (fixedField (Subgroup.zpowers (tau0 hqd h))) L)
   rw [IntermediateField.finrank_fixedField_eq_card, hL] at h1
   simp only [Nat.card_zpowers, Fintype.card_zpowers, orderOf_zeta_inversion hqd h] at h1
   rw [pow_succ] at h1
@@ -320,7 +317,7 @@ theorem hPart_lift (h : IsLayer (e + 2) q d ζ a b) {σ : hostE ζ a b ≃ₐ[�
   have hex : ∃ u : (ZMod (2 ^ (e + 2)))ˣ, ((σ (thE ζ a b) : hostE ζ a b) : L) =
       ζ ^ (u : ZMod (2 ^ (e + 2))).val + ζ⁻¹ ^ (u : ZMod (2 ^ (e + 2))).val := ⟨_, hθ⟩
   unfold hPart
-  rw [dif_pos hex, hcl_eq_iff]
+  rw [dite_eq_left hex, hcl_eq_iff]
   have hs := hθ.symm.trans hex.choose_spec
   exact (trace_eq_iff_units h.1 _ _).mp hs.symm
 
@@ -417,7 +414,5 @@ theorem hostGalSpec : HostGalSpec := by
     show hPart e ζ a b σ = hcl e u ↔ _
     rw [hPart_lift h hστ, hcl_eq_iff, ← trace_eq_iff_units h.1, hστ, ← apply_theta h.1 τ]
     exact Iff.rfl
-
-theorem hostGaloisCore : HostFixed ∧ HostGalois ∧ HostGalSpec := ⟨hostFixed, hostGalois, hostGalSpec⟩
 
 end Formalism.FrobeniusOrbits

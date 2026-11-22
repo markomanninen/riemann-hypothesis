@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.RealGroupsPolar
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.RealGroupsPolar
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -12,7 +16,7 @@ variable {𝕜 : Type*} [RCLike 𝕜] {n : Type*} [Fintype n] [LinearOrder n]
 
 theorem mul_apply_self_of_isUpperTriangular {A B : Matrix n n 𝕜} (hA : A.IsUpperTriangular)
     (hB : B.IsUpperTriangular) (i : n) : (A * B) i i = A i i * B i i := by
-  rw [mul_apply, Finset.sum_eq_single i]
+  rw [Matrix.mul_apply, Finset.sum_eq_single i]
   · intro k _ hk
     rcases lt_or_gt_of_ne hk with h | h
     · rw [hA h, zero_mul]
@@ -44,7 +48,7 @@ theorem eq_one_of_mem_unitaryGroup_of_isUpperTriangular {t : Matrix n n 𝕜}
   have hii : ∀ i, t i i = 1 := by
     intro i
     have e := congrFun (congrFun h1 i) i
-    rw [mul_apply, Finset.sum_eq_single i (fun k _ hk => by rw [hdiag k i hk, mul_zero])
+    rw [Matrix.mul_apply, Finset.sum_eq_single i (fun k _ hk => by rw [hdiag k i hk, mul_zero])
       (fun h => absurd (Finset.mem_univ i) h), one_apply_eq, conjTranspose_apply] at e
     obtain ⟨hre, him⟩ := RCLike.pos_iff.1 (hpos i)
     have hr : t i i = (RCLike.re (t i i) : 𝕜) := by
@@ -64,8 +68,7 @@ variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
 
 theorem exists_isUpperTriangular_conjTranspose_mul_self {S : Matrix n n 𝕜} (hS : S.PosDef) :
     ∃ R : Matrix n n 𝕜, R.IsUpperTriangular ∧ Rᴴ * R = S := by
-  have hLi : (LDL.lowerInv hS).IsLowerTriangular := fun i j hij =>
-    LDL.lowerInv_triangular hS (OrderDual.toDual_lt_toDual.1 hij)
+  have hLi : (LDL.lowerInv hS).IsLowerTriangular := LDL.isLowerTriangular_lowerInv hS
   have hL : (LDL.lower hS).IsLowerTriangular := blockTriangular_inv_of_blockTriangular hLi
   have hD : (LDL.diag hS).PosDef := by
     rw [LDL.diag_eq_lowerInv_conj]
@@ -233,26 +236,26 @@ open Filter Set
 
 variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
 
-variable (n) in
 
+variable (n) in
 abbrev PosDiag := {a : n → ℝ // ∀ i, 0 < a i}
 
 abbrev UpperUnitriangular (n 𝕜 : Type*) [RCLike 𝕜] [LinearOrder n] :=
   {u : Matrix n n 𝕜 // u.IsUpperTriangular ∧ ∀ i, u i i = 1}
 
-theorem isUnit_det_iwasawa (x : unitaryGroup n 𝕜 × PosDiag n × UpperUnitriangular n 𝕜) :
+theorem isUnit_det_iwasawa (x : unitaryGroup n 𝕜 × PosDiag (n := n) × UpperUnitriangular n 𝕜) :
     IsUnit ((x.1 : Matrix n n 𝕜) * diagonal (fun i => (x.2.1.1 i : 𝕜)) * x.2.2.1).det := by
   rw [Matrix.mul_assoc, det_mul]
   exact (UnitaryGroup.det_isUnit x.1).mul
     (isUnit_det_diagonal_mul_of_unitriangular x.2.1.2 x.2.2.2.1 x.2.2.2.2)
 
-noncomputable def iwasawaMul (x : unitaryGroup n 𝕜 × PosDiag n × UpperUnitriangular n 𝕜) :
+noncomputable def iwasawaMul (x : unitaryGroup n 𝕜 × PosDiag (n := n) × UpperUnitriangular n 𝕜) :
     GL n 𝕜 :=
   ⟨(x.1 : Matrix n n 𝕜) * diagonal (fun i => (x.2.1.1 i : 𝕜)) * x.2.2.1,
     ((x.1 : Matrix n n 𝕜) * diagonal (fun i => (x.2.1.1 i : 𝕜)) * x.2.2.1)⁻¹,
     mul_nonsing_inv _ (isUnit_det_iwasawa x), nonsing_inv_mul _ (isUnit_det_iwasawa x)⟩
 
-@[simp] theorem coe_iwasawaMul (x : unitaryGroup n 𝕜 × PosDiag n × UpperUnitriangular n 𝕜) :
+@[simp] theorem coe_iwasawaMul (x : unitaryGroup n 𝕜 × PosDiag (n := n) × UpperUnitriangular n 𝕜) :
     ((iwasawaMul x : GL n 𝕜) : Matrix n n 𝕜) =
       (x.1 : Matrix n n 𝕜) * diagonal (fun i => (x.2.1.1 i : 𝕜)) * x.2.2.1 := rfl
 
@@ -266,7 +269,7 @@ theorem iwasawaMul_injective : Function.Injective (iwasawaMul (n := n) (𝕜 := 
   obtain ⟨h1, h2, h3⟩ := KAN_unique ha ha' hu hu' hu1 hu1' (congrArg Units.val h)
   subst h1 h2 h3; rfl
 
-noncomputable def iwasawaEquiv : unitaryGroup n 𝕜 × PosDiag n × UpperUnitriangular n 𝕜 ≃ GL n 𝕜 :=
+noncomputable def iwasawaEquiv : unitaryGroup n 𝕜 × PosDiag (n := n) × UpperUnitriangular n 𝕜 ≃ GL n 𝕜 :=
   Equiv.ofBijective iwasawaMul ⟨iwasawaMul_injective, iwasawaMul_surjective⟩
 
 theorem isCompact_unitaryGroup : IsCompact (unitaryGroup n 𝕜 : Set (Matrix n n 𝕜)) := by
@@ -408,66 +411,6 @@ open scoped Matrix.Norms.L2Operator Topology
 open Filter Set
 
 variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
-
-theorem iwasawaEquiv_symm_A (g : GL n 𝕜) (i : n) :
-    (iwasawaEquiv.symm g).2.1.1 i = RCLike.re ((((iwasawaK g : Matrix n n 𝕜))ᴴ * g) i i) := by
-  rw [iwasawaK_conjTranspose_mul, diagonal_mul, (iwasawaEquiv.symm g).2.2.2.2 i, mul_one,
-    RCLike.ofReal_re]
-
-theorem iwasawaEquiv_symm_N (g : GL n 𝕜) :
-    (iwasawaEquiv.symm g).2.2.1 = diagonal (fun i => (((iwasawaEquiv.symm g).2.1.1 i : 𝕜))⁻¹) *
-      (((iwasawaK g : Matrix n n 𝕜))ᴴ * g) := by
-  rw [iwasawaK_conjTranspose_mul, ← Matrix.mul_assoc, diagonal_mul_diagonal]
-  have : (fun i => (((iwasawaEquiv.symm g).2.1.1 i : 𝕜))⁻¹ * ((iwasawaEquiv.symm g).2.1.1 i : 𝕜)) =
-      fun _ => 1 := funext fun i => inv_mul_cancel₀ (by exact_mod_cast ((iwasawaEquiv.symm g).2.1.2 i).ne')
-  rw [this, diagonal_one, Matrix.one_mul]
-
-noncomputable def iwasawaHomeomorph :
-    unitaryGroup n 𝕜 × PosDiag n × UpperUnitriangular n 𝕜 ≃ₜ GL n 𝕜 where
-  toEquiv := iwasawaEquiv
-  continuous_toFun := by
-    have hM : Continuous (fun x : unitaryGroup n 𝕜 × PosDiag n × UpperUnitriangular n 𝕜 =>
-        (x.1 : Matrix n n 𝕜) * diagonal (fun i => (x.2.1.1 i : 𝕜)) * x.2.2.1) :=
-      ((continuous_subtype_val.comp continuous_fst).mul (Continuous.matrix_diagonal
-        (continuous_pi fun i => RCLike.continuous_ofReal.comp
-          ((continuous_apply i).comp (continuous_subtype_val.comp
-            (continuous_fst.comp continuous_snd)))))).mul
-        (continuous_subtype_val.comp (continuous_snd.comp continuous_snd))
-    refine Units.continuous_iff.2 ⟨hM, ?_⟩
-    exact continuousOn_matrix_inv.comp_continuous hM
-      (fun x => (isUnit_iff_isUnit_det _).2 (isUnit_det_iwasawa x))
-  continuous_invFun := by
-    have hK : Continuous (iwasawaK : GL n 𝕜 → unitaryGroup n 𝕜) := continuous_iwasawaK
-    have hR : Continuous (fun g : GL n 𝕜 => ((iwasawaK g : Matrix n n 𝕜))ᴴ * g) :=
-      (continuous_subtype_val.comp hK).matrix_conjTranspose.mul Units.continuous_val
-    have ha : Continuous fun g : GL n 𝕜 => (iwasawaEquiv.symm g).2.1.1 := by
-      have e : (fun g : GL n 𝕜 => (iwasawaEquiv.symm g).2.1.1) =
-          fun g i => RCLike.re ((((iwasawaK g : Matrix n n 𝕜))ᴴ * g) i i) :=
-        funext fun g => funext fun i => iwasawaEquiv_symm_A g i
-      rw [e]
-      exact continuous_pi fun i => RCLike.continuous_re.comp (hR.matrix_elem i i)
-    have hu : Continuous fun g : GL n 𝕜 => (iwasawaEquiv.symm g).2.2.1 := by
-      have e := funext (iwasawaEquiv_symm_N (n := n) (𝕜 := 𝕜))
-      rw [e]
-      refine Continuous.mul (Continuous.matrix_diagonal (continuous_pi fun i => ?_)) hR
-      refine Continuous.inv₀ (RCLike.continuous_ofReal.comp ((continuous_apply i).comp ha)) ?_
-      intro g
-      exact_mod_cast ((iwasawaEquiv.symm g).2.1.2 i).ne'
-    exact hK.prodMk ((ha.subtype_mk _).prodMk (hu.subtype_mk _))
-
-@[simp] theorem coe_iwasawaHomeomorph_apply
-    (x : unitaryGroup n 𝕜 × PosDiag n × UpperUnitriangular n 𝕜) :
-    ((iwasawaHomeomorph x : GL n 𝕜) : Matrix n n 𝕜) =
-      (x.1 : Matrix n n 𝕜) * diagonal (fun i => (x.2.1.1 i : 𝕜)) * x.2.2.1 := rfl
-
-theorem iwasawa_decomposition (g : GL n 𝕜) :
-    ∃! x : unitaryGroup n 𝕜 × PosDiag n × UpperUnitriangular n 𝕜,
-      (x.1 : Matrix n n 𝕜) * diagonal (fun i => (x.2.1.1 i : 𝕜)) * x.2.2.1 = g := by
-  refine ⟨iwasawaHomeomorph.symm g, congrArg Units.val (iwasawaHomeomorph.apply_symm_apply g), ?_⟩
-  intro x hx
-  apply iwasawaHomeomorph.injective
-  rw [Homeomorph.apply_symm_apply]
-  exact Units.ext hx
 
 end Homeomorph3
 

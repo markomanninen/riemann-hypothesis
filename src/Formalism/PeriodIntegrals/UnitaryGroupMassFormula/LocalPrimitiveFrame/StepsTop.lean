@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.LocFramePrim
+module
+
+public import Formalism.PeriodIntegrals.LocFramePrim
+
+@[expose] public section
 
 noncomputable section
 

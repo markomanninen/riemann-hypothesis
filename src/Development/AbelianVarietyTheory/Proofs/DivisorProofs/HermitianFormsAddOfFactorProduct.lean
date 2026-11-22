@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaNonvanishingBundleGenerated
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductAbelianUniformization
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DifferentiableOnProdOfForall
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbIsoOfSameFactor
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFactorAHLamDiag
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaNonvanishingBundleGenerated
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductAbelianUniformization
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DifferentiableOnProdOfForall
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbIsoOfSameFactor
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFactorAHLamDiag
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -84,11 +88,8 @@ theorem lamUnif_fr [IsCommMonObj A] {L L₁ : LB A.left} (u₁ : HolUnif A L₁ 
 theorem lamUnif_ex [IsCommMonObj A] {L L₁ : LB A.left} (u₁ : HolUnif A L₁ g) (u : HolUnif A L g) (hex : u.ex = u₁.ex) :
     (lamUnif u₁ u hex).ex = (sqUnif A u₁).ex := rfl
 
-theorem lamUnif_Λ [IsCommMonObj A] {L L₁ : LB A.left} (u₁ : HolUnif A L₁ g) (u : HolUnif A L g) (hex : u.ex = u₁.ex) :
-    (lamUnif u₁ u hex).Λ = sqLat u₁.Λ := rfl
 
 open Classical in
-
 def ext (Λ : Submodule ℤ (Fin g → ℂ)) (χ : Λ → ℂ) (w : Fin g → ℂ) : ℂ := if h : w ∈ Λ then χ ⟨w, h⟩ else 0
 
 theorem ext_of_mem (Λ : Submodule ℤ (Fin g → ℂ)) (χ : Λ → ℂ) {w : Fin g → ℂ} (h : w ∈ Λ) : ext Λ χ w = χ ⟨w, h⟩ := by
@@ -223,7 +224,7 @@ theorem lam_shift [IsCommMonObj A] {L L₁ : LB A.left} (u₁ : HolUnif A L₁ g
   have step : ∀ I, u.fr (j I) (cmap g I z) ^ ε I = ext u.Λ χ (cmap g I l) ^ ε I *
       Complex.exp ((ε I : ℂ) * (Real.pi * B Hm (cmap g I z) (cmap g I l) +
         Real.pi / 2 * B Hm (cmap g I l) (cmap g I l))) * u.fr (j I) (cmap g I (z + l)) ^ ε I := fun I => by
-    rw [hF.2.2 ⟨_, hmem I⟩ (j I) _ (hc I), map_add, ext_of_mem _ _ (hmem I), mul_zpow, mul_zpow, Complex.exp_int_mul]
+    rw [hF.2.2 ⟨_, hmem I⟩ (j I) _ (hc I), map_add (f := _), ext_of_mem _ _ (hmem I), mul_zpow, mul_zpow, Complex.exp_int_mul]
     rfl
   rw [lamUnif_fr, lamUnif_fr, Finset.prod_congr rfl (fun I _ => step I), Finset.prod_mul_distrib,
     Finset.prod_mul_distrib, ← Complex.exp_sum, charProd hM hF l ((hΛ _).2 hl1) ((hΛ _).2 hl2)]
@@ -232,8 +233,8 @@ theorem lam_shift [IsCommMonObj A] {L L₁ : LB A.left} (u₁ : HolUnif A L₁ g
 
 end GlobalTheory.TorusRM.LamAdd
 
-open GlobalTheory.TorusRM.LamAdd GlobalTheory.ProdUnifSq in
 
+open GlobalTheory.TorusRM.LamAdd GlobalTheory.ProdUnifSq in
 theorem GlobalTheory.TorusRM.lbIso_lam_of_add : ∀ (g : ℕ) (A : Over (Sp ℂ)) [GrpObj A], IsAbelianScheme A → IsProjOver A.hom →
     ∀ (M₁ M₂ M₃ : LB A.left) (u₁ : HolUnif A M₁ g) (u₂ : HolUnif A M₂ g) (u₃ : HolUnif A M₃ g)
       (H₁ H₂ H₃ : Matrix (Fin g) (Fin g) ℂ) (χ₁ : u₁.Λ → ℂ) (χ₂ : u₂.Λ → ℂ) (χ₃ : u₃.Λ → ℂ),

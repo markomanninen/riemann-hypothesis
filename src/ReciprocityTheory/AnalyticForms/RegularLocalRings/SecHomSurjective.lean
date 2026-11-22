@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLoc
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FromSpecResidueFieldAppTopIso
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLoc
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FromSpecResidueFieldAppTopIso
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -27,8 +31,8 @@ theorem val_eval₂ {S : Scheme.{0}} (s : S ⟶ Spec (.of ℂ)) [LocallyOfFinite
 
 namespace AffPres
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem secHom_C (P : AffPres sW) (c : ℂ) : P.secHom (C c) = constSec sW P.V c := by
   have key : (Scheme.ΓSpecIso (.of ℂ)).inv ≫
       (Spec.map (CommRingCat.ofHom (algebraMap ℂ (MvPolynomial (Fin P.n) ℂ ⧸ P.K)))).appTop ≫

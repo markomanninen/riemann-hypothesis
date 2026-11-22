@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.HodgeTateFromSandwich
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.HodgeTateFromSandwich
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankDcrisLetterDeRhamComponentEqDim
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedSubfieldLeCyclotomicExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDeRhamOfIsCrystallineSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamDieudonneSpansTensorDeRhamPeriods
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankDcrisLetterDeRhamComponentEqDim
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedSubfieldLeCyclotomicExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDeRhamOfIsCrystallineSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamDieudonneSpansTensorDeRhamPeriods
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Module
 
@@ -30,7 +34,8 @@ theorem exists_proj {F K L M : Type} [Field F] [Field K] [Field L] [Algebra F K]
   have he : ∀ τ, GlobalTheory.DeRhamSplit.evalEmb F K L (e τ) = Pi.single τ 1 := fun τ => Φ.apply_symm_apply _
   have hsum : ∑ τ, e τ = 1 := by
     apply hb.1
-    rw [map_sum, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one]
     simp only [he]
     exact Finset.univ_sum_single (fun _ => (1 : L))
   have hmul : ∀ τ c, (1 ⊗ₜ c) * e τ = (τ c ⊗ₜ 1) * e τ := by
@@ -45,7 +50,8 @@ theorem exists_proj {F K L M : Type} [Field F] [Field K] [Field L] [Algebra F K]
   have h2 : ∀ a, α a = Ψ (a ⊗ₜ 1) := fun c => by rw [hΨ, map_one, mul_one]
   refine ⟨fun σ => Ψ (e σ), fun x => ?_, fun σ c x => ?_, fun σ c x => ?_, fun σ c x => ?_,
     fun N hα hβ σ x hx => ?_⟩
-  · rw [← LinearMap.sum_apply, ← map_sum, hsum, map_one]; rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← LinearMap.sum_apply, ← map_sum, hsum, map_one]; rfl
   · rw [h1, h2, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, hmul]
   · rw [h1, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, mul_comm]
   · rw [h2, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, mul_comm]
@@ -54,7 +60,7 @@ theorem exists_proj {F K L M : Type} [Field F] [Field K] [Field L] [Algebra F K]
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a c => rw [hΨ]; exact hα _ _ (hβ _ _ hx)
-    | add y z hy hz => rw [map_add]; exact N.add_mem hy hz
+    | add y z hy hz => rw [map_add (f := _)]; exact N.add_mem hy hz
 
 theorem indep_of_span {L R D : Type} [Field L] [CommRing R] (ι : L → R) [AddCommGroup D] [Module L D]
     [FiniteDimensional L D] {n : ℕ} (hn : finrank L D = n) (A : D →+ (Fin n → R))
@@ -70,7 +76,8 @@ theorem indep_of_span {L R D : Type} [Field L] [CommRing R] (ι : L → R) [AddC
     rintro _ ⟨x, rfl⟩
     refine ⟨fun s => ι (Bs.repr x s), ?_⟩
     conv_rhs => rw [← Bs.sum_repr x]
-    simp only [Fintype.linearCombination_apply, map_sum, hA]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Fintype.linearCombination_apply, map_sum, hA]
   have hinj := OrzechProperty.injective_of_surjective_of_injective
     (LinearEquiv.funCongrLeft R R q.symm).toLinearMap _ (LinearEquiv.injective _) hsurj
   have hli : LinearIndependent R fun s => A (Bs s) := linearIndependent_iff_injective_fintypeLinearCombination.2 hinj
@@ -85,15 +92,15 @@ section Tens
 variable {Qp LL V : Type} [Field Qp] [Field LL] [Algebra Qp LL] [AddCommGroup V] [Module LL V]
   [Module Qp V] [IsScalarTower Qp LL V] {R : Type} [CommRing R] [Algebra Qp R]
 
-variable (Qp LL V) in
 
+variable (Qp LL V) in
 def mu (b : R) : V ⊗[Qp] R →ₗ[LL] V ⊗[Qp] R :=
   AlgebraTensorModule.map LinearMap.id (LinearMap.mulLeft Qp b)
 
 theorem mu_tmul (b c : R) (v : V) : mu Qp LL V b (v ⊗ₜ c) = v ⊗ₜ (b * c) := rfl
 
-variable (Qp V R) in
 
+variable (Qp V R) in
 def muHom : R →ₐ[Qp] Module.End Qp (V ⊗[Qp] R) :=
   (Module.End.lTensorAlgHom Qp R V).comp (Algebra.lmul Qp R)
 
@@ -102,7 +109,7 @@ theorem muHom_apply (b : R) (x : V ⊗[Qp] R) : muHom Qp V R b x = mu Qp LL V b 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => rfl
-  | add y z hy hz => rw [map_add, map_add, hy, hz]
+  | add y z hy hz => rw [map_add (f := _), map_add (f := _), hy, hz]
 
 theorem mu_mu (b c : R) (x : V ⊗[Qp] R) : mu Qp LL V b (mu Qp LL V c x) = mu Qp LL V (b * c) x := by
   simp only [← muHom_apply, map_mul, Module.End.mul_apply]
@@ -139,21 +146,22 @@ theorem coords_smul {n : ℕ} (v : Basis (Fin n) LL V) (ι : LL →ₐ[Qp] R) (c
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => funext j; simp [smul_tmul', coords_tmul, mul_assoc]
-  | add y z hy hz => rw [smul_add, map_add, map_add, hy, hz, smul_add]
+  | add y z hy hz => rw [smul_add, map_add (f := _), map_add (f := _), hy, hz, smul_add]
 
 theorem coords_mu {n : ℕ} (v : Basis (Fin n) LL V) (ι : LL →ₐ[Qp] R) (c : R) (x : V ⊗[Qp] R) :
     coords v ι (mu Qp LL V c x) = c • coords v ι x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => funext j; simp [mu_tmul, coords_tmul, mul_left_comm]
-  | add y z hy hz => rw [map_add, map_add, map_add, hy, hz, smul_add]
+  | add y z hy hz => rw [map_add (f := _), map_add (f := _), map_add (f := _), hy, hz, smul_add]
 
 theorem coords_surj {n : ℕ} (v : Basis (Fin n) LL V) (ι : LL →ₐ[Qp] R) :
     Function.Surjective (coords v ι) := by
   intro f
   refine ⟨∑ j, v j ⊗ₜ f j, ?_⟩
   funext j
-  rw [map_sum, Finset.sum_apply, Finset.sum_eq_single j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply, Finset.sum_eq_single j]
   · simp [coords_tmul]
   · intro k _ hk
     simp [coords_tmul, Finsupp.single_apply, hk]
@@ -194,7 +202,7 @@ theorem iota_mem (x : T.V ⊗[Qp] B) (hx : x ∈ Dcris PD T.ρ) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [ιV, actVdR, actVB, PD.ι_comm]
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 theorem iota_mu (c : K₀) (x : T.V ⊗[Qp] B) :
     ιV PD (LL := LL) (V := T.V) (mu Qp LL T.V (algebraMap K₀ B c) x) =
@@ -203,7 +211,7 @@ theorem iota_mu (c : K₀) (x : T.V ⊗[Qp] B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [ιV, mu_tmul]
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 theorem mu_mem_Dcris (c : K₀) (x : T.V ⊗[Qp] B) (hx : x ∈ Dcris PD T.ρ) :
     mu Qp LL T.V (algebraMap K₀ B c) x ∈ Dcris PD T.ρ := by
@@ -214,7 +222,7 @@ theorem mu_mem_Dcris (c : K₀) (x : T.V ⊗[Qp] B) (hx : x ∈ Dcris PD T.ρ) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [actVB, mu_tmul]
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 abbrev others (τ : K →ₐ[Qp] LL) : Submodule LL (T.V ⊗[Qp] BdR) :=
   ⨆ (τ' : K →ₐ[Qp] LL) (_ : τ' ≠ τ), DdRE PD T.ρ τ'
@@ -257,7 +265,8 @@ theorem mu_iota_mem [FiniteDimensional Qp K] [FiniteDimensional Qp K₀]
       (DcrisL PD T.ρ (τ.comp (IsScalarTower.toAlgHom Qp K₀ K))).map (ιV PD (LL := LL) (V := T.V)) ⊔
         others PD T τ := by
   obtain ⟨y, h1, h2⟩ := exists_sum hc0 _ (mu_mem_Dcris PD T) d hd
-  rw [← h1, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h1, map_sum, map_sum]
   refine Submodule.sum_mem _ fun σ _ => ?_
   let N : Submodule LL (T.V ⊗[Qp] BdR) := DdR PD T.ρ ⊓ ⨅ c : K₀,
     LinearMap.ker (mu Qp LL T.V (algebraMap K BdR (algebraMap K₀ K c)) - σ c • LinearMap.id)
@@ -300,7 +309,7 @@ theorem coords_ker {n : ℕ} (v : Basis (Fin n) LL T.V) (ι : LL →ₐ[Qp] BdR)
     rw [map_sub, coords_smul]
     exact sub_eq_zero.2 (coords_mu v ι (ι c) y).symm
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | smul c x _ hx => rw [coords_smul, hx, smul_zero]
 
 theorem indep (τ : K →ₐ[Qp] LL) (ι : LL →ₐ[Qp] BdR) (hι : ∀ c, ι (τ c) = algebraMap K BdR c)
@@ -321,17 +330,19 @@ theorem indep (τ : K →ₐ[Qp] LL) (ι : LL →ₐ[Qp] BdR) (hι : ∀ c, ι (
       intro f _
       obtain ⟨y, rfl⟩ := coords_surj v ι f
       obtain ⟨m, b, w, hw, rfl⟩ := hspan y
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [coords_mu]
       refine Submodule.smul_mem _ _ ?_
       obtain ⟨_, ⟨x, hx, rfl⟩, u, hu, e⟩ := Submodule.mem_sup.1 (hle (hw i))
-      rw [← e, map_add, coords_ker T v ι u (others_le_compKer PD T τ ι hι hu), add_zero]
+      rw [← e, map_add (f := _), coords_ker T v ι u (others_le_compKer PD T τ ι hι hu), add_zero]
       exact Submodule.subset_span ⟨⟨x, hx⟩, rfl⟩)
     (fun a => ⟨d a, hd a⟩) (LinearIndependent.of_comp D.subtype hli)
   refine Fintype.linearIndependent_iff.1 hl b ?_ a
   have := coords_ker T v ι _ h
-  rw [map_sum] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at this
   rw [← this]
   exact Finset.sum_congr rfl fun a _ => (coords_mu v ι _ _).symm
 
@@ -346,7 +357,7 @@ theorem act_compKer (g : G) (ι ι' : LL →ₐ[Qp] BdR) (h : ∀ c, PD.actdR g 
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [actVdR, mulVR, h]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   exact this hx
 
 theorem act_FilV (g : G) (a : ℤ) (x : T.V ⊗[Qp] BdR) (hx : x ∈ FilV PD (LL := LL) (V := T.V) a) :
@@ -355,7 +366,7 @@ theorem act_FilV (g : G) (a : ℤ) (x : T.V ⊗[Qp] BdR) (hx : x ∈ FilV PD (LL
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => exact ⟨T.ρ g v ⊗ₜ ⟨PD.actdR g b.1, PD.Fil_G g a _ b.2⟩, rfl⟩
-  | add y z hy hz => rw [map_add, map_add]; exact Submodule.add_mem _ hy hz
+  | add y z hy hz => rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 theorem mu_FilV (a : ℤ) (c : BdR) (hc : ∀ b ∈ PD.Fil a, c * b ∈ PD.Fil a) (x : T.V ⊗[Qp] BdR)
     (hx : x ∈ FilV PD (LL := LL) (V := T.V) a) :
@@ -364,7 +375,7 @@ theorem mu_FilV (a : ℤ) (c : BdR) (hc : ∀ b ∈ PD.Fil a, c * b ∈ PD.Fil a
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => exact ⟨v ⊗ₜ ⟨c * b.1, hc _ b.2⟩, rfl⟩
-  | add y z hy hz => rw [map_add, map_add]; exact Submodule.add_mem _ hy hz
+  | add y z hy hz => rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 theorem mem_FilV_of_comp {E : Type} [Field E] [Algebra Qp E] [Algebra K E] [Algebra E BdR]
     [IsScalarTower Qp E BdR] [IsScalarTower K E BdR] [FiniteDimensional Qp LL]
@@ -395,9 +406,9 @@ theorem mem_FilV_of_comp {E : Type} [Field E] [Algebra Qp E] [Algebra K E] [Alge
         rw [map_sub, h3, h2]
         exact sub_eq_zero.2 (h4 σ (σ c) y).symm
       | zero => simp
-      | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+      | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
       | smul c x _ hx => rw [h3, hx, smul_zero]
-    rw [← (mem_DdR PD T y).1 hy1 g, ← e1, map_add, map_add, hk _ hu', zero_add]
+    rw [← (mem_DdR PD T y).1 hy1 g, ← e1, map_add (f := _), map_add (f := _), hk _ hu', zero_add]
     exact h5 (FilV PD (LL := LL) (V := T.V) a).toAddSubgroup
       (fun c x hx => mu_FilV PD T a _ (hFil c) x hx) (fun c x hx => Submodule.smul_mem _ c hx) σ _
       (act_FilV PD T g a w hw)
@@ -499,8 +510,8 @@ theorem mem_FilV_local [IsDomain P.R.BdR] (K LL : FinExt l) (T : Lt K LL) (τ : 
     (by rw [← hσ₀, hι]; rfl)) hσ
   exact ⟨g, fun c => by rw [P.PD_actdR, hσ₀, P.actQdR_Om, hg]⟩
 
-variable {P} in
 
+variable {P} in
 theorem ddR_le {AI : LocAinf l P} (ht : LocTied l P AI) (K LL : FinExt l) (T : Lt K LL)
     (hc : Nat.card (↥K.1 →ₐ[ℚ_[l]] ↥LL.1) = finrank ℚ_[l] ↥K.1)
     (hc0 : Nat.card (↥(K0 K) →ₐ[ℚ_[l]] ↥LL.1) = finrank ℚ_[l] ↥(K0 K)) (hT : IsCrys (P.PD K) T.ρ)
@@ -514,8 +525,8 @@ theorem ddR_le {AI : LocAinf l P} (ht : LocTied l P AI) (K LL : FinExt l) (T : L
   obtain ⟨m, c, d, hd, rfl⟩ := (GlobalTheory.Per.CrisDR.isDR_of_isCrys l _ _ ht K LL T.V T.ρ hT).2 y hy
   exact Submodule.sum_mem _ fun j _ => mu_iota_mem (P.PD K) T hc hc0 τ (c j) (d j) (hd j)
 
-variable {P} in
 
+variable {P} in
 theorem component_tied {AI : LocAinf l P} (ht : LocTied l P AI) (K LL : FinExt l) (T : Lt K LL)
     (hc : Nat.card (↥K.1 →ₐ[ℚ_[l]] ↥LL.1) = finrank ℚ_[l] ↥K.1)
     (hc0 : Nat.card (↥(K0 K) →ₐ[ℚ_[l]] ↥LL.1) = finrank ℚ_[l] ↥(K0 K)) (hT : IsCrys (P.PD K) T.ρ)
@@ -546,8 +557,9 @@ theorem component_tied {AI : LocAinf l P} (ht : LocTied l P AI) (K LL : FinExt l
 
 end Local
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
+set_option synthInstance.maxHeartbeats 1000000 in
 theorem component : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (i : Let K) (ζ : ↥LL.1) τ ι, Comp (HW l) h i ζ τ ι → τ.comp (IsScalarTower.toAlgHom ℚ_[l] ↥(K0 K) ↥K.1) = W.emb i → (∀ (r : ℕ) (d : Fin r → T.V ⊗[ℚ_[l]] (D.loc l).R.B) (b : Fin r → (D.loc l).R.BdR), (∀ a, d a ∈ Di (HW l) h T i) → LinearIndependent ↥LL.1 d → ∑ a, mulVR T (b a) (ιV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) (d a)) ∈ compKer T ι → ∀ a, b a = 0) ∧ (∀ d ∈ Di (HW l) h T i, ∀ a : ℤ, ιV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) d ∈ FilAt ((D.loc l).PD K) T τ a ↔ ιV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) d ∈ compKer T ι ⊔ FilV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) a) ∧ (∀ w ∈ DdRE ((D.loc l).PD K) T.ρ τ, ∃ d ∈ Di (HW l) h T i, ιV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) d - w ∈ ⨆ (τ' : ↥K.1 →ₐ[ℚ_[l]] ↥LL.1) (_ : τ' ≠ τ), DdRE ((D.loc l).PD K) T.ρ τ') ∧ Module.finrank ↥LL.1 ↥(Di (HW l) h T i) = Module.finrank ↥LL.1 T.V := by
   intro D HW l _ K s LL h W T hT i ζ τ ι hC hτ
   obtain ⟨-, -, -, hc, hc0⟩ := Points.points D HW l K s LL h

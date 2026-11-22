@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,7 @@ variable {R : Type} [CommRing R] {C : Type} [Category.{0} C] (F : C ⥤ CommAlgC
 theorem cupHyp_add_swap (a b : Hyp1 F) : cupHyp F a b + cupHyp F b a = 0 := by
   obtain ⟨a, rfl⟩ := Hyp1.mk_surjective F a
   obtain ⟨b, rfl⟩ := Hyp1.mk_surjective F b
-  rw [cupHyp_mk, cupHyp_mk, ← map_add]
+  rw [cupHyp_mk, cupHyp_mk, ← map_add (f := _)]
   refine Hyp2.mk_eq_zero.2 ⟨(fun T T' φ ↦ -(a.1.1 T T' φ * b.1.1 T T' φ), 0), ?_⟩
   refine Tot2.ext (fun T T' T'' φ ψ ↦ ?_) (fun T T' φ ↦ ?_) fun T ↦ ?_
   · change _ = (cupTot F a.1 b.1).1 T T' T'' φ ψ + (cupTot F b.1 a.1).1 T T' T'' φ ψ
@@ -50,7 +54,7 @@ theorem exists_lift (hs : Function.Surjective (toO F)) (f : Z1 F) :
       abel
   refine ⟨fun T ↦ c.1.2 T - D R _ (g T), mem_cechDeRhamTotalCocyclesOne_iff.2 ⟨f.2, fun T T' φ ↦ ?_, fun T ↦ ?_⟩⟩
   · simp only [map_sub, p1_D]
-    rw [cechDeRhamTotalCocyclesOne.conn c φ, hg', map_add, map_sub]
+    rw [cechDeRhamTotalCocyclesOne.conn c φ, hg', map_add (f := _), map_sub]
     abel
   · simp [cechDeRhamTotalCocyclesOne.closed c]
 
@@ -108,19 +112,16 @@ theorem tensor_prim (p q m : V →ₗ[R] V') (p' q' m' : W →ₗ[R] W') (P : V'
     (ht : TensorProduct.map m m' t = TensorProduct.map p p' t + TensorProduct.map q q' t) : t = 0 := by
   have h1 : ∀ t : V ⊗[R] W, TensorProduct.map P Q (TensorProduct.map m m' t) = t := fun t ↦ by
     induction t with
-    | zero => simp
     | tmul v w => simp [hm, hm', hPp, hPq, hQp, hQq]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have h2 : ∀ t : V ⊗[R] W, TensorProduct.map P Q (TensorProduct.map p p' t) = 0 := fun t ↦ by
     induction t with
-    | zero => simp
     | tmul v w => simp [hQp]
-    | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
   have h3 : ∀ t : V ⊗[R] W, TensorProduct.map P Q (TensorProduct.map q q' t) = 0 := fun t ↦ by
     induction t with
-    | zero => simp
     | tmul v w => simp [hPq]
-    | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
   have := congrArg (TensorProduct.map P Q) ht
   rwa [h1, map_add, h2, h3, add_zero] at this
 
@@ -212,7 +213,8 @@ theorem eq_zero_of_alt [Module.Finite R V] [Module.Projective R V] (τ : ⋀[R]^
     exact this
   have hw : ∀ a b, wd (R := R) a b = ∑ i, ∑ j, (l i a * l j b) • wd (R := R) (x i) (x j) := fun a b ↦ by
     refine (congrArg₂ (fun y y' ↦ wd (R := R) y y') (hx a) (hx b)).trans ?_
-    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, Finset.smul_sum, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun i _ ↦ Finset.sum_congr rfl fun j _ ↦ by rw [mul_comm]
   have key : (LinearMap.id : ⋀[R]^2 V →ₗ[R] ⋀[R]^2 V) = ∑ i, ∑ j, if i < j then
@@ -237,7 +239,7 @@ theorem wedge_prim [Module.Finite R V] [Module.Projective R V] (p q m : V →ₗ
     (h : exteriorPower.map 2 m τ = exteriorPower.map 2 p τ + exteriorPower.map 2 q τ) : τ = 0 := by
   refine eq_zero_of_alt τ fun l l' ↦ ?_
   have h1 : alt (l ∘ₗ P) (l' ∘ₗ Q) ∘ₗ exteriorPower.map 2 m = alt l l' := ext2 fun a b ↦ by
-    simp only [LinearMap.comp_apply, map2, alt_ιMulti, hm, map_add, hPp, hPq, hQp, hQq, add_zero,
+    simp only [LinearMap.comp_apply, map2, alt_ιMulti, hm, map_add (f := _), hPp, hPq, hQp, hQq, add_zero,
       zero_add, map_zero]
   have h2 : alt (l ∘ₗ P) (l' ∘ₗ Q) ∘ₗ exteriorPower.map 2 p = 0 := ext2 fun a b ↦ by
     simp only [LinearMap.comp_apply, map2, alt_ιMulti, hQp, LinearMap.zero_apply, map_zero]
@@ -246,7 +248,7 @@ theorem wedge_prim [Module.Finite R V] [Module.Projective R V] (p q m : V →ₗ
     simp only [LinearMap.comp_apply, map2, alt_ιMulti, hPq, LinearMap.zero_apply, map_zero]
     ring
   have e := congrArg (alt (l ∘ₗ P) (l' ∘ₗ Q)) h
-  rw [map_add, show alt (l ∘ₗ P) (l' ∘ₗ Q) (exteriorPower.map 2 m τ) = alt l l' τ from
+  rw [map_add (f := _), show alt (l ∘ₗ P) (l' ∘ₗ Q) (exteriorPower.map 2 m τ) = alt l l' τ from
       LinearMap.congr_fun h1 τ, show alt (l ∘ₗ P) (l' ∘ₗ Q) (exteriorPower.map 2 p τ) = 0 from
       LinearMap.congr_fun h2 τ, show alt (l ∘ₗ P) (l' ∘ₗ Q) (exteriorPower.map 2 q τ) = 0 from
       LinearMap.congr_fun h3 τ, add_zero] at e
@@ -267,19 +269,17 @@ theorem mu_pull (m : CoefMap (RingHom.id R) F G) (muF : Z1 F ⊗[R] Glob1 F →�
     muG (TensorProduct.map m.pullbackOneCocycle (pullGlob1 m) t) T T' φ =
       q1 m T' (muF t _ _ (m.G.map φ)) := by
   induction t with
-  | zero => simp
   | tmul f ω =>
     rw [TensorProduct.map_tmul, hG, hF, prodFirstProjection_smul]
     rfl
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy]
 
 theorem rTensor_pull (m : CoefMap (RingHom.id R) F G) (t : Z1 F ⊗[R] Glob1 F) :
     (H1.mk G).rTensor (Glob1 G) (TensorProduct.map m.pullbackOneCocycle (pullGlob1 m) t) =
       TensorProduct.map m.pull1 (pullGlob1 m) ((H1.mk F).rTensor (Glob1 F) t) := by
   induction t with
-  | zero => simp
   | tmul f ω => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem exists_of_rTensor (muF : Z1 F ⊗[R] Glob1 F →ₗ[R] A1 F)
     (hF : ∀ f ω T T' φ, muF (f ⊗ₜ ω) T T' φ = f.1 T T' φ • ω.1 T') (t : Z1 F ⊗[R] Glob1 F)
@@ -290,7 +290,6 @@ theorem exists_of_rTensor (muF : Z1 F ⊗[R] Glob1 F →ₗ[R] A1 F)
   obtain ⟨u, rfl⟩ := (rTensor_exact (Glob1 F) hex (H1.mk_surjective F) t).1 ht
   clear ht
   induction u with
-  | zero => exact ⟨0, by simp⟩
   | tmul g ω =>
     refine ⟨fun T ↦ g T • ω.1 T, fun T T' φ ↦ ?_⟩
     rw [LinearMap.rTensor_tmul, hF]
@@ -300,14 +299,14 @@ theorem exists_of_rTensor (muF : Z1 F ⊗[R] Glob1 F →ₗ[R] A1 F)
     obtain ⟨b, hb⟩ := hx
     obtain ⟨b', hb'⟩ := hy
     refine ⟨b + b', fun T T' φ ↦ ?_⟩
-    simp only [map_add, Pi.add_apply, hb, hb']
+    simp only [map_add (f := _), Pi.add_apply, hb, hb']
     abel
 
 theorem prim_cup (m p q : CoefMap (RingHom.id R) F G)
     (hm : ∀ c, pullHyp1 m c = pullHyp1 p c + pullHyp1 q c) (c : Hyp1 F) :
     pullHyp2 m (cupHyp F c c) = pullHyp2 p (cupHyp F c c) + pullHyp2 q (cupHyp F c c) := by
   have := cupHyp_add_swap G (pullHyp1 p c) (pullHyp1 q c)
-  simp only [pullHyp2_cup, hm, map_add, LinearMap.add_apply]
+  simp only [pullHyp2_cup, hm, map_add (f := _), LinearMap.add_apply]
   linear_combination (norm := abel1) this
 
 theorem exists_rep (hcup : ∀ c, cup F c c = 0) (c : Hyp1 F) :
@@ -363,7 +362,7 @@ theorem surj_of_sum (p q : CoefMap (RingHom.id R) F G)
   obtain ⟨⟨a, b⟩, rfl⟩ := hb c
   obtain ⟨a, rfl⟩ := hs a
   obtain ⟨b, rfl⟩ := hs b
-  exact ⟨pullHyp1 p a + pullHyp1 q b, by rw [map_add, toO_pullHyp1, toO_pullHyp1]⟩
+  exact ⟨pullHyp1 p a + pullHyp1 q b, by rw [map_add (f := _), toO_pullHyp1, toO_pullHyp1]⟩
 
 theorem one_cob (m p q : CoefMap (RingHom.id R) F G) (muF : Z1 F ⊗[R] Glob1 F →ₗ[R] A1 F)
     (muG : Z1 G ⊗[R] Glob1 G →ₗ[R] A1 G)

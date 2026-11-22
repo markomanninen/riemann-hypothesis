@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.ClozelCohomologicalOf
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.ClozelCohomologicalOf
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,13 +50,13 @@ def Frame : Prop := ∀ (E : Type) [Field E] [NumberField E] (a : ℕ),
     (∀ i j, (fr i).1 * (fr j).1 - (fr j).1 * (fr i).1 = ∑ k, c i j k • iM (fr k).1) ∧
     ∀ k j, iM (fr k).1 * (fr j).1 - (fr j).1 * iM (fr k).1 = ∑ i, c i j k • (fr i).1
 
-def FrameCas : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+def FrameCas : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
   (M : Type) [AddCommGroup M] [Module ℂ M] [Module ℝ M] [IsScalarTower ℝ ℂ M] (φ : Lie E a →ₗ[ℝ] Module.End ℂ M),
   ∑ k : InfinitePlace E × Fin a × Fin a, φ (toL (fr k).1) * φ (toL (fr k).1) -
       ∑ k : InfinitePlace E × Fin a × Fin a, φ (toL (iM (fr k).1)) * φ (toL (iM (fr k).1)) =
     (2 : ℂ) • ∑ τ : E →+* ℂ, ∑ i, ∑ j, cx τ φ i j * cx τ φ j i
 
-def CxExpand : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+def CxExpand : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
   (N : Type) [AddCommGroup N] [Module ℂ N] [Module ℝ N] [IsScalarTower ℝ ℂ N] (φ : Lie E a →ₗ[ℝ] N) (X : Lie E a),
   φ X = ∑ τ : E →+* ℂ, ∑ i, ∑ j, coord τ (X i j) • cx τ φ i j
 
@@ -69,10 +73,10 @@ def Harmonic : Prop := ∀ (E : Type) [Field E] [NumberField E] (a : ℕ) (M : T
   (∀ (q : ℕ) (ω : Herm E a [⋀^Fin q]→ₗ[ℝ] M), IsCochain κ ω → dCo L ω = 0) →
   ∀ (q : ℕ) (ω : Herm E a [⋀^Fin q]→ₗ[ℝ] M), IsCochain κ ω → ω ≠ 0 → HasCohomology κ L
 
-def BigRep : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (Q : Type) [Fintype Q] [DecidableEq Q]
+def BigRep : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (Q : Type) [Fintype Q] [DecidableEq Q]
   (lab : Q → (E →+* ℂ)) (s : ℤ), IsStarRep (bigM (a := a) lab s) (bigD lab s)
 
-def BigCx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (Q : Type) [Fintype Q] [DecidableEq Q]
+def BigCx : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (Q : Type) [Fintype Q] [DecidableEq Q]
   (lab : Q → (E →+* ℂ)) (s : ℤ),
   (∀ (τ : E →+* ℂ) (i j : Fin a) (f : TV a ℂ Q), cx τ (bigD lab s) i j *ᵥ f =
     tE (fib lab τ) (0 : Fin a → Fin a → Module.End ℂ ℂ) i j f - if i = j then (s : ℂ) • f else 0) ∧
@@ -85,7 +89,7 @@ def Summand : Prop := ∀ (E : Type) [Field E] [NumberField E] (a : ℕ) (I : Ty
   ∃ (Ξ : AlgRep E a) (J : Matrix I (Fin Ξ.d) ℂ), Jᴴ * J = 1 ∧ (∀ w, J *ᵥ w ∈ D) ∧ Jᴴ *ᵥ v₀ ≠ 0 ∧
     (∀ y, R y * J = J * Ξ.mat y) ∧ (∀ y, Jᴴ * R y = Ξ.mat y * Jᴴ) ∧ ∀ X, dR X * J = J * Ξ.dmat X
 
-def Cochain : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+def Cochain : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
   (M : Type) [AddCommGroup M] [Module ℂ M] [Module ℝ M] [IsScalarTower ℝ ℂ M] (ρ : Kinf E a → Module.End ℂ M)
   (q N : ℕ) (lab : Fin q → (E →+* ℂ)) (tl : Fin N → (E →+* ℂ)) (η : TV a M (Fin q ⊕ (Fin N ⊕ Fin N))),
   (∀ k k', tl k ≠ barE E (tl k')) → (∀ γ, actT (lab3 (barE E) lab tl) (kap E a) ρ γ η = η) → altPair tl η ≠ 0 →

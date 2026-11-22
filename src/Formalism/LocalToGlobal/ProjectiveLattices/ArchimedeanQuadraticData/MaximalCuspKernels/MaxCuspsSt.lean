@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IntegrableOnIntegrand
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntegrableOnIntegrand
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+
+@[expose] public section
 
 noncomputable section
 

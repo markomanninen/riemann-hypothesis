@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorSumPolynomialOperator
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootVectorActionCutoff
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellMulVecBasis
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGHeadV
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLFrozen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorSumPolynomialOperator
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootVectorActionCutoff
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellMulVecBasis
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGHeadV
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLFrozen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ContDiff
@@ -177,18 +181,22 @@ theorem gauge_bar (n : Fin r → ℕ) (H : (Fin r → ℂ) → E) (c : Fin r →
 
 theorem wCell_vec (c : Fin r → ℂ) : ∀ n : ℕ, ∀ i : Fin (r + 1), i.val = n →
     (∀ a : Fin r, i.val ≤ a.val → wCell k r i c *ᵥ bvec (eI k r a) = bvec (eI k r a)) ∧
-    (∀ a : Fin r, a.val < i.val → wCell k r i c *ᵥ bvec (esI k r a) = (star (c a))⁻¹ • bvec (eI k r a))
-  | 0, i, hi => by
+    (∀ a : Fin r, a.val < i.val → wCell k r i c *ᵥ bvec (esI k r a) = (star (c a))⁻¹ • bvec (eI k r a)) := by
+  intro n
+  induction n with
+  | zero =>
+    intro i hi
     have : i = 0 := Fin.ext (by simp [hi])
     subst this
     rw [Formalism.FourierDecayAlt.P.Qx6.wCell_zero]
     exact ⟨fun a _ => by simp, fun a ha => absurd ha (by simp)⟩
-  | n + 1, i, hi => by
+  | succ n ih =>
+    intro i hi
     have hl : n < r := by have := i.isLt; omega
     set l : Fin r := ⟨n, hl⟩ with hldef
     have hil : i = l.succ := Fin.ext (by simp [l, hi])
     subst hil
-    obtain ⟨ih1, ih2⟩ := wCell_vec c n l.castSucc (by simp [l])
+    obtain ⟨ih1, ih2⟩ := ih l.castSucc (by simp [l])
     rw [Formalism.FourierDecayAlt.P.Qx6.wCell_succ]
     refine ⟨fun a ha => ?_, fun a ha => ?_⟩
     · rw [← Matrix.mulVec_mulVec, weyl_cell_mulVec_basis]
@@ -693,8 +701,8 @@ section main
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 
-open scoped Classical in
 
+open scoped Classical in
 def coefV (k r : ℕ) (Bi : Fin r → Fin (2 * r + k + 1)) (g : B.Mat k r) : ℂ :=
   if StrictMono (fun l => C3.keyS k r (Bi l)) then
     (Matrix.of fun a l : Fin r => ((Hpk k r * gᴴ * Hpk k r) *ᵥ bvec (eI k r (Fin.castLE le_rfl a))) (Bi l)).det

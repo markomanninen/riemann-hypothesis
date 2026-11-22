@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
-import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
-import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+public import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
+public import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -44,8 +48,8 @@ private theorem one_int (h : (Fin 1 → A F) → ℂ) :
   ((measurePreserving_funUnique (adeleMeasure F) (Fin 1)).symm.integral_comp' h).symm
 
 private theorem reindex_mem {ι κ : Type} [Fintype ι] [Fintype κ] (e : κ ≃ ι)
-    {f : (κ → A F) → ℂ} (hf : f ∈ schwartzBruhatPi F κ) :
-    (fun x : ι → A F => f (x ∘ e)) ∈ schwartzBruhatPi F ι := by
+    {f : (κ → A F) → ℂ} (hf : f ∈ schwartzBruhatPi (K := F) (ι := κ)) :
+    (fun x : ι → A F => f (x ∘ e)) ∈ schwartzBruhatPi (K := F) (ι := ι) := by
   have h := GroundTheory.Heights₂.Theta.comp_mulVec_mem_schwartzBruhatPi
     ((1 : Matrix ι ι F).submatrix e id) ((1 : Matrix ι ι F).submatrix id e)
     (by rw [Matrix.submatrix_mul_equiv]; simp) (by
@@ -62,12 +66,12 @@ private theorem elim_cons (a : Fin 1 → A F) (y : Fin 3 → A F) :
   ext i
   fin_cases i <;> rfl
 
-private theorem g_mem {φ : (Fin 4 → A F) → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4))
+private theorem g_mem {φ : (Fin 4 → A F) → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4))
     (η : Fin 3 → A F) :
     (fun a : Fin 1 → A F => adelicFourierPi F (fun y : Fin 3 → A F => φ (Fin.cons (a 0) y)) η)
-      ∈ schwartzBruhatPi F (Fin 1) := by
+      ∈ schwartzBruhatPi (K := F) (ι := Fin 1) := by
   have h1 : (fun x : (Fin 1 ⊕ Fin 3) → A F => φ (x ∘ (finSumFinEquiv (m := 1) (n := 3)).symm))
-      ∈ schwartzBruhatPi F (Fin 1 ⊕ Fin 3) :=
+      ∈ schwartzBruhatPi (K := F) (ι := Fin 1 ⊕ Fin 3) :=
     reindex_mem (finSumFinEquiv (m := 1) (n := 3)).symm hφ
   have h2 := GroundTheory.Heights₂.Theta.partialFourierPi_mem h1
   have h3 := reindex_mem (Equiv.sumComm (Fin 1) (Fin 3)) h2
@@ -80,18 +84,18 @@ private theorem g_mem {φ : (Fin 4 → A F) → ℂ} (hφ : φ ∈ schwartzBruha
   rw [e, GroundTheory.Heights₂.Theta.partialFourierPi_sumElim]
   simp only [elim_cons]
 
-private theorem slice_mem {φ : (Fin 4 → A F) → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4))
+private theorem slice_mem {φ : (Fin 4 → A F) → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4))
     (b : A F) :
-    (fun y : Fin 3 → A F => φ (Fin.cons b y)) ∈ schwartzBruhatPi F (Fin 3) := by
+    (fun y : Fin 3 → A F => φ (Fin.cons b y)) ∈ schwartzBruhatPi (K := F) (ι := Fin 3) := by
   have h1 : (fun x : (Fin 1 ⊕ Fin 3) → A F => φ (x ∘ (finSumFinEquiv (m := 1) (n := 3)).symm))
-      ∈ schwartzBruhatPi F (Fin 1 ⊕ Fin 3) :=
+      ∈ schwartzBruhatPi (K := F) (ι := Fin 1 ⊕ Fin 3) :=
     reindex_mem (finSumFinEquiv (m := 1) (n := 3)).symm hφ
   have h4 := GroundTheory.Heights₂.Theta.schwartzBruhatPi_sumElim_mem h1 (fun _ => b)
   convert h4 using 2
   rename_i y
   rw [elim_cons]
 
-private theorem ft_split {φ : (Fin 4 → A F) → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4))
+private theorem ft_split {φ : (Fin 4 → A F) → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4))
     (ξ : Fin 4 → A F) :
     adelicFourierPi F φ ξ = ∫ a : A F,
       adelicFourierPi F (fun y : Fin 3 → A F => φ (Fin.cons a y)) (Fin.tail ξ) * ψ (a * ξ 0)

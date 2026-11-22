@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SplittingOfExactnessAndData
-import Formalism.SharpRestriction.LevelLetterCocycles.RelayGeneralCaseOfAdmissible
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SplittingOfExactnessAndData
+public import Formalism.SharpRestriction.LevelLetterCocycles.RelayGeneralCaseOfAdmissible
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,9 +156,11 @@ theorem tauZ_exists [IsDomain O] (T : LocLat G Qp LL O) (hC : Ctx W T) (h9 : For
   set S := ∑ r ∈ Finset.range M, W.π₀ ^ r • Formalism.MainNotions.LiftingTheory.vecB W T b (y r) with hSdef
   have hφS : ((W.φD T) ^ A.j) S = ∑ r ∈ Finset.range M, ∑ m,
       (((W.φA ^ A.j) W.π₀) ^ r * algebraMap O (LetA O n) (y r m)) • β m := by
-    rw [hSdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hSdef, map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
-    rw [φpow_smul, map_pow, Formalism.MainNotions.LiftingTheory.vecB, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [φpow_smul, map_pow, Formalism.MainNotions.LiftingTheory.vecB, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [map_smul, ← algebraMap_smul (LetA O n) (y r m), smul_smul]
   have key : Formalism.MainNotions.ArcLiftingSetup.lA W ^ 0 • (Formalism.MainNotions.ArcLiftingSetup.lA W ^ κ • τ - Formalism.MainNotions.ArcLiftingSetup.lA W ^ σ • ((W.φD T) ^ A.j) S) =
@@ -213,7 +219,8 @@ theorem DelF_inv {g : W.Gam} (hg : g ∈ W.DelF) : g⁻¹ ∈ W.DelF := by
 theorem sumΔ_inv (T : LocLat G Qp LL O) (x : W.DD T) :
     ∀ δ ∈ W.DelF, W.γD T δ (∑ g ∈ W.DelF, W.γD T g x) = ∑ g ∈ W.DelF, W.γD T g x := by
   intro δ hδ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [← W.γD_mul]
   exact Finset.sum_nbij' (fun g => δ * g) (fun g => δ⁻¹ * g) (fun a ha => DelF_mul W hδ ha)
     (fun a ha => DelF_mul W (DelF_inv W hδ) ha) (fun a _ => inv_mul_cancel_left δ a)
@@ -331,7 +338,7 @@ theorem e_tf [NeZero n] [IsDomain O] (hinj : Function.Injective (algebraMap O LL
     | add t₁ t₂ h₁ h₂ =>
       obtain ⟨ζ₁, h₁⟩ := h₁
       obtain ⟨ζ₂, h₂⟩ := h₂
-      exact ⟨ζ₁ + ζ₂, by rw [map_add, h₁, h₂, add_smul]⟩
+      exact ⟨ζ₁ + ζ₂, by rw [map_add (f := _), h₁, h₂, add_smul]⟩
   haveI : Nontrivial W.EE := W.EE_inj.nontrivial
   obtain ⟨hfree, hrank⟩ := W.DD_free W.one
   rw [finrank_one_lat W hinj] at hrank
@@ -361,7 +368,8 @@ theorem lift_avg (hΔu : IsUnit ((W.DelF.card : ℕ) : O)) {Y : LocLat G Qp LL O
     rw [hy, map_smul, sumΔ_inv W Y z δ hδ]
   refine ⟨y, ⟨⟨N_of_Nl W hyNl, hyΔ⟩, hyNl⟩, ?_⟩
   have h1 : ∀ g ∈ W.DelF, W.map π (W.γD Y g z) = t := fun g hg => by rw [W.map_γ, ht, htΔ g hg]
-  rw [hy, LinearMap.map_smul_of_tower, hs, map_sum, Finset.sum_congr rfl h1, Finset.sum_const,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy, LinearMap.map_smul_of_tower, hs, map_sum, Finset.sum_congr rfl h1, Finset.sum_const,
     ← Nat.cast_smul_eq_nsmul O, smul_smul, hΔu.val_inv_mul, one_smul]
 
 theorem pp_pull [NeZero n] [IsDomain O] (hinj : Function.Injective (algebraMap O LL))
@@ -383,8 +391,8 @@ theorem pp_pull [NeZero n] [IsDomain O] (hinj : Function.Injective (algebraMap O
       (W.φA ^ e') g • u - θ • ((W.φD Y) ^ e') y = W.map ι v := by
     refine Relay2.Pp_ind W Y c e' _ ⟨0, 0, (Pp W T₂ c e').zero_mem, by simp, by simp⟩ ?_ ?_ ?_
     · rintro u₁ u₂ ⟨θ₁, v₁, hv₁, h₁, e₁⟩ ⟨θ₂, v₂, hv₂, h₂, e₂⟩
-      refine ⟨θ₁ + θ₂, v₁ + v₂, (Pp W T₂ c e').add_mem hv₁ hv₂, by rw [map_add, h₁, h₂, add_smul], ?_⟩
-      rw [map_add, ← e₁, ← e₂, smul_add, add_smul]
+      refine ⟨θ₁ + θ₂, v₁ + v₂, (Pp W T₂ c e').add_mem hv₁ hv₂, by rw [map_add (f := _), h₁, h₂, add_smul], ?_⟩
+      rw [map_add (f := _), ← e₁, ← e₂, smul_add, add_smul]
       abel
     · rintro u ⟨θ, v, hv, h, e₁⟩
       refine ⟨-θ, -v, (Pp W T₂ c e').neg_mem hv, by rw [map_neg, h, neg_smul], ?_⟩
@@ -560,7 +568,8 @@ theorem cutData_of [NeZero n] [IsDomain O] (hinj : Function.Injective (algebraMa
           Formalism.MainNotions.LiftingTheory.lp W rr • ((letE c : LetA O n) • e) := fun g _ => by
         rw [W.map_γ, hx'π, γD_smulA, hy0Δ]
         simp [Formalism.MainNotions.LiftingTheory.lp]
-      rw [hxdef, LinearMap.map_smul_of_tower, hs, map_sum, Finset.sum_congr rfl h1, Finset.sum_const,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hxdef, LinearMap.map_smul_of_tower, hs, map_sum, Finset.sum_congr rfl h1, Finset.sum_const,
         ← Nat.cast_smul_eq_nsmul O, smul_smul, show Formalism.MainNotions.LiftingTheory.lp W rr = lA W ^ rr from rfl,
         Split.lA_pow_smul, smul_smul]
       congr 1

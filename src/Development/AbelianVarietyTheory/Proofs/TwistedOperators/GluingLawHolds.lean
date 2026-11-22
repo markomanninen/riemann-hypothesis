@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MonomialMemRangeGlue
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MonomialMemRangeGlue
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {a b : ℕ}
 
-open Classical in
 
+open Classical in
 def rest (τ : D.what₂.Tau) (P : D.what₂.Tau → LPol b a) : PolF D b a :=
   ∏ ρ ∈ Finset.univ.erase τ, MvPolynomial.rename (fun s => (ρ, s)) (P ρ)
 
@@ -95,7 +99,8 @@ theorem fockS_ins (τ : D.what₂.Tau) (P : D.what₂.Tau → LPol b a) (ε : Fi
     (X : Matrix (Fin a) (Fin a) ℂ) (p : LPol b a) :
     fockS τ ε ε' X (ins τ P p) = ins τ P (locS ε ε' X p) := by
   unfold fockS locS
-  simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.add_apply, map_sum, map_smul, map_add,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.add_apply, map_sum, map_smul, map_add (f := _),
     Module.End.mul_apply, low_ins, rai_ins]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => ?_
   by_cases h : j = k <;> simp [h]
@@ -104,7 +109,8 @@ theorem fockT_ins (τ : D.what₂.Tau) (P : D.what₂.Tau → LPol b a) (ε : Fi
     (Y : Matrix (Fin b) (Fin b) ℂ) (p : LPol b a) :
     fockT τ ε ε' Y (ins τ P p) = ins τ P (locT ε ε' Y p) := by
   unfold fockT locT
-  simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.add_apply, map_sum, map_smul, map_add,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.add_apply, map_sum, map_smul, map_add (f := _),
     Module.End.mul_apply, low_ins, rai_ins]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => ?_
   by_cases h : j = k <;> simp [h]

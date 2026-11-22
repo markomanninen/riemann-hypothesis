@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.CyclotomicNorms.StatementI
+module
+
+public import Mathlib
+public import Formalism.CyclotomicNorms.StatementI
+
+@[expose] public section
 
 namespace Formalism.BasicNotions.Examples₂
 
@@ -539,7 +543,7 @@ theorem exc_dvd {g d l : ℕ} (hg : 1 ≤ g) (h1 : 1 ≤ d) (h9 : d ≤ 9) (h : 
     rw [h0, mul_zero, pow_zero] at this
     have := Nat.one_le_pow d g hg
     omega
-  refine ((dvd_pow_self l hv).trans pow_padicValNat_dvd).trans (List.dvd_prod ?_)
+  refine ((dvd_pow_self l hv).trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))).trans (List.dvd_prod ?_)
   exact List.mem_map.mpr ⟨d - 1, List.mem_range.mpr (by omega), by rw [Nat.sub_add_cancel h1]⟩
 
 theorem not_exc {g d l k : ℕ} (h1 : ¬ l ^ (k + 1) ∣ g ^ d - 1) (h2 : l ^ (4 * k) ≤ g ^ d) :
@@ -547,7 +551,7 @@ theorem not_exc {g d l k : ℕ} (h1 : ¬ l ^ (k + 1) ∣ g ^ d - 1) (h2 : l ^ (4
   rintro ⟨hl, h⟩
   have hv : padicValNat l (g ^ d - 1) ≤ k := by
     by_contra hc
-    exact h1 ((pow_dvd_pow l (by omega)).trans pow_padicValNat_dvd)
+    exact h1 ((pow_dvd_pow l (by omega)).trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)))
   have := Nat.pow_le_pow_right hl.pos (Nat.mul_le_mul_left 4 hv)
   omega
 

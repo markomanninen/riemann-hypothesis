@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.KeyRuleOneOfKeyFormula
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.HolFamilyOfIsPullback
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.KeyRuleOneOfKeyFormula
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.HolFamilyOfIsPullback
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -232,7 +236,7 @@ theorem sum_blockIn_blockPr (z : Fin n → ℂ) : ∑ i, blockIn e i (blockPr e 
 
 def blockLat (Λ : Submodule ℤ (Fin g → ℂ)) : Submodule ℤ (Fin n → ℂ) where
   carrier := {z | ∀ i, blockPr e i z ∈ Λ}
-  add_mem' := fun ha hb i => by rw [map_add]; exact Λ.add_mem (ha i) (hb i)
+  add_mem' := fun ha hb i => by rw [map_add (f := _)]; exact Λ.add_mem (ha i) (hb i)
   zero_mem' := fun i => by rw [map_zero]; exact Λ.zero_mem
   smul_mem' := fun c z hz i => by rw [map_zsmul]; exact Λ.smul_mem c (hz i)
 
@@ -258,7 +262,7 @@ theorem blockLat_full (Λ : Submodule ℤ (Fin g → ℂ)) (h : Submodule.span �
     split_ifs
     exacts [ha, Λ.zero_mem]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul r a _ ha => rw [ContinuousLinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ r ha
 
 end Blocks
@@ -312,10 +316,11 @@ theorem exists_powUnif (hL : L.IsLB) {L' : LB G'.left} (hL' : L'.IsLB) (w : LB.I
   refine ⟨⟨ex, fun z z' => pow_hom_ext p fun i => ?_, fun a => ?_, blockLat e u.Λ, fun z => ?_,
     blockLat_discrete e u.Λ, blockLat_full e u.Λ u.full, hc, fr', h₁, h₂, h₃⟩, fun z => Iff.rfl, hex, h₄⟩
   · have := p.hom i
-    rw [MonObj.mul_comp, hex, hex, hex, map_add, u.ex_add]
+    rw [MonObj.mul_comp, hex, hex, hex, map_add (f := _), u.ex_add]
   · choose z hz using fun i => u.ex_onto (a ≫ p.pr i)
     refine ⟨∑ i, blockIn e i (z i), pow_hom_ext p fun i => ?_⟩
-    rw [hex, ← hz, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hex, ← hz, map_sum]
     simp only [blockPr_blockIn, Finset.sum_ite_eq', Finset.mem_univ, if_true]
   · constructor
     · intro h i

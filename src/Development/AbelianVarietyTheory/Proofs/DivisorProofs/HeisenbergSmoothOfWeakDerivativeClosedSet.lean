@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFourierGau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFourierGau
+
+@[expose] public section
 
 open MeasureTheory Complex Matrix GlobalTheory.RealWeil
 open scoped RealInnerProductSpace ContDiff Real ComplexOrder
@@ -56,7 +60,7 @@ theorem sm_of_weak_deriv_closed : ∀ (V : Type) [NormedAddCommGroup V] [NormedS
       exact a2.comp_hasDerivAt (0 : ℝ) a1
     let D0 : V →ₗ[ℝ] B :=
       { toFun := g
-        map_add' := fun z z' => sep _ _ fun x => by rw [map_add, hgd, hgd, hgd, map_add]
+        map_add' := fun z z' => sep _ _ fun x => by rw [map_add (f := _), hgd, hgd, hgd, map_add (f := _)]
         map_smul' := fun r z => sep _ _ fun x => by rw [RingHom.id_apply, lsm, hgd, hgd, map_smul] }
     let D : V →L[ℝ] B := LinearMap.toContinuousLinearMap D0
     have hD : ∀ z, D z = g z := fun z => rfl

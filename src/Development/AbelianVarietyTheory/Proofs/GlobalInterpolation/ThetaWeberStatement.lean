@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ThetaConstantWeber
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EllipticOnePole
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JacobiProductOfThetaWeber
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ThetaConstantWeber
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EllipticOnePole
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JacobiProductOfThetaWeber
+
+@[expose] public section
 
 namespace GlobalTheory.ThetaWeberObj
 

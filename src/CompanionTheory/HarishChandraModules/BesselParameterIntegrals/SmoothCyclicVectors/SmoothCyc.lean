@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LowCyc
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LowSmooth
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.MaximalCompactIsCompact
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.IntegralMemOfIsClosed
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LowCyc
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LowSmooth
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.MaximalCompactIsCompact
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.IntegralMemOfIsClosed
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+
+@[expose] public section
 
 open Matrix Filter Topology Set
 

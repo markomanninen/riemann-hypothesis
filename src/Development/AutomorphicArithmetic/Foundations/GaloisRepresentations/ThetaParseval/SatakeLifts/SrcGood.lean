@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SatakeLifts.PairOfLiftAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JacTwistMapSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvTransposeInvTranspose
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SatakeLifts.PairOfLiftAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JacTwistMapSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvTransposeInvTranspose
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.ThetaGL UpperTheory.Gal.TP.Loc
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -18,8 +22,20 @@ theorem UpperTheory.Gal.TP.Loc.srcGood :
       exact Units.continuous_val.matrix_transpose
   refine ⟨?_, ?_, ?_⟩
   · exact isSmooth_twist (isSmooth_comp hs _ hcont) hc.detChar
-  · exact GlobalTheory.TypeTwo.EndTwist.isIrreducible_twist
-      (GlobalTheory.InvTransposeEnds.isIrreducible_comp hirr _ fun h => ⟨GlobalTheory.SplitFlip.invT h, GlobalTheory.SplitFlip.invT_invT h⟩) _
+  · have ht {G W : Type} [Group G] [AddCommGroup W] [Module ℂ W]
+        {ρ : Representation ℂ G W} (hρ : ρ.IsIrreducible) (χ : G →* ℂˣ) :
+        (twist ρ χ).IsIrreducible := by
+      let e : Subrepresentation (twist ρ χ) ≃o Subrepresentation ρ :=
+      { toFun := fun S => ⟨S.toSubmodule, fun g v hv => by
+          have h := S.toSubmodule.smul_mem (((χ g)⁻¹ : ℂˣ) : ℂ) (S.apply_mem_toSubmodule g hv)
+          simpa [twist_apply, smul_smul] using h⟩
+        invFun := fun S => ⟨S.toSubmodule, fun g v hv => S.toSubmodule.smul_mem _ (S.apply_mem_toSubmodule g hv)⟩
+        left_inv := fun _ => rfl
+        right_inv := fun _ => rfl
+        map_rel_iff' := Iff.rfl }
+      exact e.isSimpleOrder_iff.2 hρ
+    exact ht (GlobalTheory.InvTransposeEnds.isIrreducible_comp hirr _
+      fun h => ⟨GlobalTheory.SplitFlip.invT h, GlobalTheory.SplitFlip.invT_invT h⟩) _
   · obtain ⟨B, h1, h2, h3⟩ := hun
     refine ⟨B, h1, h2, fun g v w => ?_⟩
     rw [src_apply, src_apply, LinearMap.map_smul B, LinearMap.smul_apply, LinearMap.map_smulₛₗ, h3,

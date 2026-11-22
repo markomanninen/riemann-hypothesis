@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdPartialZpow
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HWDiag
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.TrPowSumFilterZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdPartialZpow
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HWDiag
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.TrPowSumFilterZero
+
+@[expose] public section
 
 open Matrix Finset Filter Topology Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Dec
 
@@ -18,7 +22,8 @@ private lemma trace_conj_map_algebraMap {A : Type} [Ring A] [Algebra ℂ A] (N :
     ∑ c, (P.map (algebraMap ℂ A) * N * Q.map (algebraMap ℂ A)) c c = ∑ c, N c c := by
   have key : ∀ j i : Fin n, ∑ c, algebraMap ℂ A (Q j c * P c i) = if j = i then 1 else 0 := by
     intro j i
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     have hji := congrFun (congrFun h j) i
     rw [Matrix.mul_apply] at hji
     rw [hji, Matrix.one_apply]
@@ -108,13 +113,10 @@ lemma sum_cycWord {A : Type} [Ring A] (E : Fin n → Fin n → A) (m : ℕ) :
   rw [← sum_paths_list_prod E m x x]
   refine Finset.sum_congr rfl fun b _ => ?_
   simp only [Fin.consEquiv_apply, cycWord, List.map_ofFn]
-  congr 2
+  apply congrArg List.prod
+  apply congrArg List.ofFn
   funext i
-  simp only [Function.comp]
-  congr 1
-  refine Fin.lastCases ?_ (fun j => ?_) i
-  · rw [finRotate_last, Fin.snoc_last, Fin.cons_zero]
-  · rw [finRotate_succ_apply, Fin.coeSucc_eq_succ, Fin.cons_succ, Fin.snoc_castSucc]
+  simp only [Function.comp_apply, Fin.snoc_eq_cons_rotate]
 
 section Linfty
 attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
@@ -275,8 +277,10 @@ lemma of_conj {U : Set (Matrix (Fin n) (Fin n) ℂ)} (hU : IsOpen U) (k k' : Mat
   simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply,
     Finset.sum_mul, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, mul_smul_comm, mul_one,
     smul_smul]
-  rw [hk, map_sum]
-  simp only [map_sum, map_smul, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hk, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finset.smul_sum, smul_smul]
   refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun i _ => ?_
   rw [mul_comm]
 

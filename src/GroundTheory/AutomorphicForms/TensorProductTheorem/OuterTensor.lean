@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.GenWindow
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.GenWindow
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,7 @@ theorem isIrreducible_outerTensor {ρ₁ : Representation ℂ M₁ V₁} {ρ₂ 
         rw [← h1]
         exact this
       | add f g hf hg =>
-        rw [map_add, TensorProduct.map_add_right, LinearMap.add_apply]
+        rw [map_add (f := _), TensorProduct.map_add_right, LinearMap.add_apply]
         exact Y.toSubmodule.add_mem hf hg
       | smul c f hf =>
         rw [map_smul, TensorProduct.map_smul_right, LinearMap.smul_apply]

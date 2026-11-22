@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaContOn
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaContOn
+
+@[expose] public section
 
 noncomputable section
 

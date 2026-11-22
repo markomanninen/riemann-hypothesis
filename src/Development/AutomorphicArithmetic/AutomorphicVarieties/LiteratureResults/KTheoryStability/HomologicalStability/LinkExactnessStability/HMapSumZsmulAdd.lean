@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PermRepSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PermRepSingle
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits GlobalTheory.HomStab
 
@@ -21,7 +25,6 @@ theorem hMap_add {k G : Type} [CommRing k] [Group G] {A B : Rep k G} (f g : A �
     hMap (f + g) n = hMap f n + hMap g n := by
   unfold hMap groupHomology.map
   rw [chainsMap_id_add, HomologicalComplex.homologyMap_add]
-  rfl
 
 noncomputable def hMapHom {k G : Type} [CommRing k] [Group G] (A B : Rep k G) (n : ℕ) :
     (A ⟶ B) →+ (groupHomology A n ⟶ groupHomology B n) :=

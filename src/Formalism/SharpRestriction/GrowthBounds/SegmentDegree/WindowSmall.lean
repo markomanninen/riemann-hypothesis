@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NegDminusLeMu
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NegDminusLeMu
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,7 +131,7 @@ theorem path_count_finite : PathCountFinite := by
       by_cases hm : m.val < N
       · have hcv := congrFun hc (i, ⟨m.val, by omega⟩)
         unfold code at hcv
-        rw [dif_pos ⟨hm, m.2⟩, dif_pos ⟨hm, m.2⟩] at hcv
+        rw [dite_eq_left ⟨hm, m.2⟩, dite_eq_left ⟨hm, m.2⟩] at hcv
         have e1 := h1.1 (by omega)
         have e2 := h2.1 (by omega)
         have hcv' : (μ i.succ m).toNat = (μ' i.succ m).toNat := hcv
@@ -143,7 +147,7 @@ theorem path_count_finite : PathCountFinite := by
           unfold code at hcv
           have hn1 : ¬ ((m.val - (r + K - 2 * N)) < N ∧ (m.val - (r + K - 2 * N)) < r + K) := by omega
           have hn2 : r + K - 2 * N + (m.val - (r + K - 2 * N)) < r + K := by have := m.2; omega
-          rw [dif_neg hn1, dif_neg hn1, dif_pos hn2, dif_pos hn2] at hcv
+          rw [dite_eq_right hn1, dite_eq_right hn1, dite_eq_left hn2, dite_eq_left hn2] at hcv
           have hme : (⟨r + K - 2 * N + (m.val - (r + K - 2 * N)), hn2⟩ : Fin (r + K)) = m :=
             Fin.ext (by simp only; omega)
           rw [hme] at hcv

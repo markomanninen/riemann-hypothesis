@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatSelfAverageHeisenberg
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsWeilSourceActionAndSmooth
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QuotientIntegralLinear
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProperTriple
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzFourierTransformPiSurjectiveSchwartzBruh
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatSelfAverageHeisenberg
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsWeilSourceActionAndSmooth
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QuotientIntegralLinear
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProperTriple
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzFourierTransformPiSurjectiveSchwartzBruh
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 open GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage (app HasTensorVal opEFJ IsQuotIntFJ)
@@ -44,7 +48,7 @@ theorem isQuotIntFJ_linear {n : Type} [Fintype n] [DecidableEq n] {c ρ : ℕ} (
   have hint : ∀ φ ∈ SB (GL (n ⊕ Fin c) k), ∀ h, Integrable (fun z => φ (ι z * h)) M := by
     intro φ hφ h
     obtain ⟨D, hD, hD'⟩ := GlobalTheory.RootEx.ProperTriple.proper_triple k n c ρ hp hpc _
-      (hφ.2.isCompact.image (continuous_mul_right h⁻¹))
+      (hφ.2.isCompact.image (continuous_mul_const h⁻¹))
     refine (hφ.1.continuous.comp (hm.mul continuous_const)).integrable_of_hasCompactSupport ?_
     refine HasCompactSupport.intro hD fun z hz => ?_
     by_contra h0
@@ -118,13 +122,13 @@ theorem tensorVal_unique {n₀ n₁ n₂ : Type} [Fintype n₀] [DecidableEq n�
       ∫ u, app (C u) (fun x => GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage.hat ψ ν (Θ x) u) ∂(Measure.pi fun _ => ν) := by
     intro m Ψ Φ₀ hd
     simp only [key]
-    rw [← integral_finset_sum _ fun i _ => int1 _ _]
+    rw [← integral_finsetSum _ fun i _ => int1 _ _]
     congr 1; funext u
     have : (fun x => GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage.hat ψ ν (Θ x) u) =
         (∑ i, GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage.hat ψ ν (Φ₀ i).1 u • Ψ i : SB (Matrix n₁ n₀ k)).1 := by
       funext x
       simp only [GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage.hat, hd, Finset.sum_mul, mul_assoc]
-      rw [integral_finset_sum _ fun i _ => (int2 _ u).const_mul _]
+      rw [integral_finsetSum _ fun i _ => (int2 _ u).const_mul _]
       simp [integral_const_mul, mul_comm]
     rw [this, GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage.app_coe]
     simp

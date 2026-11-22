@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactLevelOffFinEmpty
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AlgebraMapNormTensorEqProdConjugates
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsGLSubmatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactLevelOffFinEmpty
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AlgebraMapNormTensorEqProdConjugates
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsGLSubmatrix
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem norm_map (φ : R →ₐ[F] R') (x : R ⊗[F] E) :
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a e => simp [Algebra.TensorProduct.basis_repr_tmul]
-    | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   rw [Algebra.norm_eq_matrix_det (Algebra.TensorProduct.basis R' b),
     Algebra.norm_eq_matrix_det (Algebra.TensorProduct.basis R b), AlgHom.map_det]
   congr 1
@@ -67,8 +71,8 @@ theorem t2Space_tensorProduct_finiteExtension [TopologicalSpace R] [IsTopologica
   let e := (Algebra.TensorProduct.basis R (Module.finBasis F E)).equivFun
   T2Space.of_injective_continuous e.injective (IsModuleTopology.continuous_of_linearMap e.toLinearMap)
 
-omit [FiniteDimensional F E] in
 
+omit [FiniteDimensional F E] in
 def extUnit (j : R →ₗ[F] R') (hj : ∀ a b, j (a * b) = j a * j b) : (R ⊗[F] E)ˣ →* (R' ⊗[F] E)ˣ :=
   Units.map
     { toFun := fun y => 1 - tensNU j hj 1 + tensNU j hj y
@@ -91,8 +95,8 @@ theorem continuous_extUnit [TopologicalSpace R] [IsTopologicalRing R] [Topologic
   haveI := isTopologicalRing_tens (F := F) (E := E) (R := R')
   Continuous.units_map _ (continuous_const.add (GlobalTheory.AutFunCompare.continuous_tensNU j hj hc))
 
-omit [FiniteDimensional F E] in
 
+omit [FiniteDimensional F E] in
 def conjUnit (σ : E →ₐ[F] E) : (R ⊗[F] E)ˣ →* (R ⊗[F] E)ˣ := Units.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ).toMonoidHom
 
 end Norm
@@ -157,12 +161,12 @@ theorem absEw_eq_sq {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {w : InfinitePlace
     Algebra.TensorProduct.algebraMap_apply, infEmb_tmul, map_one, mul_one]
   exact NNReal.eq ((InfinitePlace.Completion.isometry_extensionEmbedding w).norm_map_of_map_zero (map_zero _) _).symm
 
-variable (F E) in
 
+variable (F E) in
 def unitFin (v : HeightOneSpectrum (𝓞 F)) : (AF F ⊗[F] E)ˣ →* (Fv F v ⊗[F] E)ˣ := Units.map (compFin F E v).toMonoidHom
 
-variable (F E) in
 
+variable (F E) in
 def unitInf (w : InfinitePlace F) : (AF F ⊗[F] E)ˣ →* (w.Completion ⊗[F] E)ˣ := Units.map (compInf F E w).toMonoidHom
 
 theorem absEv_unitFin (v : HeightOneSpectrum (𝓞 F)) (x : (AF F ⊗[F] E)ˣ) :
@@ -187,8 +191,8 @@ theorem finite_mulSupport_absEv (x : (AF F ⊗[F] E)ˣ) :
   (Filter.eventually_cofinite.1 ((Algebra.norm (AF F) x.1).2.2.and (Algebra.norm (AF F) x⁻¹.1).2.2)).subset
     fun _ hv h => hv (absEv_unitFin_eq_one h.1 h.2)
 
-variable (F E) in
 
+variable (F E) in
 def absE : (AF F ⊗[F] E)ˣ →* ℝ≥0 where
   toFun x := (∏ w, absEw F E w (unitInf F E w x)) * ∏ᶠ v, absEv F E v (unitFin F E v x)
   map_one' := by simp
@@ -220,7 +224,9 @@ theorem absE_inclR (x : Eˣ) : absE F E (Units.map (inclR (F := F) (AF F)).toMon
   · refine Finset.prod_congr rfl fun w _ => ?_
     rw [NNReal.coe_pow, coe_nnnorm]
     congr 1
-    exact InfinitePlace.Completion.norm_coe w _
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply, AbsoluteValue.Completion.norm_coe]
+    exact (InfinitePlace.coe_apply w _).symm
   · exact NNReal.toRealHom.toMonoidHom.map_finprod hf
 
 theorem continuous_unitFin (v : HeightOneSpectrum (𝓞 F)) : Continuous (unitFin F E v) :=
@@ -239,7 +245,7 @@ theorem continuous_absE : Continuous (absE F E) := by
       Valued.isOpen_valuationSubring (v.adicCompletion F)).preimage continuous_snd
   have h1 := (ho.preimage ((continuous_norm_tens (F := F) (E := E)).comp Units.continuous_val)).inter
     (ho.preimage ((continuous_norm_tens (F := F) (E := E)).comp Units.continuous_coe_inv))
-  refine (continuous_finset_prod Finset.univ fun w _ =>
+  refine (continuous_finsetProd Finset.univ fun w _ =>
     (continuous_absEw w).comp (continuous_unitInf (E := E) w)).continuousAt.congr ?_
   filter_upwards [h1.mem_nhds (x := 1) ⟨fun v => by simp, fun v => by simp⟩] with x hx
   rw [absE_apply, finprod_eq_one_of_forall_eq_one fun v => absEv_unitFin_eq_one (hx.1 v) (hx.2 v), mul_one]
@@ -281,12 +287,12 @@ theorem inFin_mul (v : HeightOneSpectrum (𝓞 F)) (a b : Fv F v) : inFin v (a *
 theorem inInf_mul (w : InfinitePlace F) (a b : w.Completion) : inInf w (a * b) = inInf w a * inInf w b :=
   Prod.ext (GlobalTheory.AutFunCompare.sgW_mul w a b) (mul_zero _).symm
 
-variable (F E) in
 
+variable (F E) in
 def ideleAt (v : HeightOneSpectrum (𝓞 F)) : (Fv F v ⊗[F] E)ˣ →* (AF F ⊗[F] E)ˣ := extUnit (inFin v) (inFin_mul v)
 
-variable (F E) in
 
+variable (F E) in
 def ideleAtInf (w : InfinitePlace F) : (w.Completion ⊗[F] E)ˣ →* (AF F ⊗[F] E)ˣ := extUnit (inInf w) (inInf_mul w)
 
 omit [NumberField F] [NumberField E] in
@@ -346,16 +352,6 @@ theorem absE_ideleAtInf (w : InfinitePlace F) (x : (w.Completion ⊗[F] E)ˣ) :
     absE F E (ideleAtInf F E w x) = absEw F E w x := by
   rw [absE_apply, Finset.prod_eq_single w (fun u _ hu => by rw [unitInf_ideleAtInf_ne hu, map_one]) (by simp)]
   simp
-
-example (h : Module.finrank F E = 2) (v : HeightOneSpectrum (𝓞 F)) (ϖ : (Fv F v)ˣ)
-    (hϖ : Valued.v ϖ.1 = WithZero.exp (-1 : ℤ)) :
-    absEv F E v (Units.map (algebraMap (Fv F v) (Fv F v ⊗[F] E)).toMonoidHom ϖ) =
-      ((Ideal.absNorm v.asIdeal : ℝ≥0) ^ 2)⁻¹ := by
-  rw [absEv_algebraMap, h, ← inv_pow]
-  congr 1
-  refine NNReal.eq ?_
-  rw [coe_nnnorm, FinitePlace.norm_def, hϖ, WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero]
-  exact congrArg NNReal.toReal (zpow_neg_one _)
 
 end GlobalTheory.Doubling
 

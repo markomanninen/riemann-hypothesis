@@ -1,9 +1,13 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.StrictJoinCandidates.InertInSec
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ShuffleChoices.ValEqCard
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingTransferOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfSubsetCpt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.StrictJoinCandidates.InertInSec
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ShuffleChoices.ValEqCard
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingTransferOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfSubsetCpt
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,14 +37,14 @@ def xiOf (n : ℕ) (β : Fin (n / 2) → ℂˣ) (k : Fin n) : ℂˣ :=
 
 theorem xi_lo (n : ℕ) (β : Fin (n / 2) → ℂˣ) (i : Fin (n / 2)) : xiOf n β (loE n i) = β i := by
   unfold xiOf
-  rw [dif_pos (show (loE n i).val < n / 2 from i.isLt)]
+  rw [dite_eq_left (show (loE n i).val < n / 2 from i.isLt)]
   rfl
 
 theorem xi_hi (n : ℕ) (β : Fin (n / 2) → ℂˣ) (i : Fin (n / 2)) : xiOf n β (hiE n i) = (β i)⁻¹ := by
   have hi := i.isLt
   unfold xiOf
-  rw [dif_neg (show ¬ (hiE n i).val < n / 2 by show ¬ (n - 1 - i.val < n / 2); omega),
-    dif_pos (show n - 1 - (hiE n i).val < n / 2 by show n - 1 - (n - 1 - i.val) < n / 2; omega)]
+  rw [dite_eq_right (show ¬ (hiE n i).val < n / 2 by show ¬ (n - 1 - i.val < n / 2); omega),
+    dite_eq_left (show n - 1 - (hiE n i).val < n / 2 by show n - 1 - (n - 1 - i.val) < n / 2; omega)]
   have key : ∀ j : Fin (n / 2), j.val = i.val → (β j)⁻¹ = (β i)⁻¹ := by
     intro j hj
     rw [Fin.ext hj]
@@ -49,7 +53,7 @@ theorem xi_hi (n : ℕ) (β : Fin (n / 2) → ℂˣ) (i : Fin (n / 2)) : xiOf n 
 theorem xi_mid (n : ℕ) (β : Fin (n / 2) → ℂˣ) (k : Fin n) (h1 : ¬ k.val < n / 2) (h2 : ¬ n - 1 - k.val < n / 2) :
     xiOf n β k = 1 := by
   unfold xiOf
-  rw [dif_neg h1, dif_neg h2]
+  rw [dite_eq_right h1, dite_eq_right h2]
 
 theorem prod_halves {M : Type} [CommMonoid M] (n : ℕ) (F : Fin n → M)
     (hmid : ∀ k : Fin n, ¬ k.val < n / 2 → ¬ n - 1 - k.val < n / 2 → F k = 1) :
@@ -119,12 +123,12 @@ theorem dlt_pw (w : Pl E) (β : Fin (n / 2) → ℂˣ) (x : Fin n → ℤ) :
 theorem xn_lo (β : Fin (n / 2) → ℂˣ) (k : Fin n) (h : k.val < n / 2) :
     ‖(xiOf n β k : ℂ)‖ = ‖(β ⟨k.val, h⟩ : ℂ)‖ := by
   unfold xiOf
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem xn_hi (β : Fin (n / 2) → ℂˣ) (k : Fin n) (h1 : ¬ k.val < n / 2) (h : n - 1 - k.val < n / 2) :
     ‖(xiOf n β k : ℂ)‖ = ‖(β ⟨n - 1 - k.val, h⟩ : ℂ)‖⁻¹ := by
   unfold xiOf
-  rw [dif_neg h1, dif_pos h, Units.val_inv_eq_inv_val, norm_inv]
+  rw [dite_eq_right h1, dite_eq_left h, Units.val_inv_eq_inv_val, norm_inv]
 
 theorem xn_mid (β : Fin (n / 2) → ℂˣ) (k : Fin n) (h1 : ¬ k.val < n / 2) (h2 : ¬ n - 1 - k.val < n / 2) :
     ‖(xiOf n β k : ℂ)‖ = 1 := by
@@ -199,7 +203,7 @@ theorem xi_map (β : Fin (n / 2) → ℂˣ) : Finset.univ.val.map (xiOf n β) = 
     have hc := congrArg Multiset.card hsplit
     simp only [Multiset.card_add, ← Finset.card_def, e1, e2, Finset.card_map, Finset.card_univ, Fintype.card_fin] at hc
     omega
-  rw [hsplit, Multiset.map_add, Multiset.map_add, e3, hcard, e1, e2, Finset.map_val, Finset.map_val, Multiset.map_map,
+  rw [hsplit, Multiset.map_add (f := _), Multiset.map_add (f := _), e3, hcard, e1, e2, Finset.map_val, Finset.map_val, Multiset.map_map,
     Multiset.map_map]
   unfold GlobalTheory.LGrp.bcParam
   congr 3

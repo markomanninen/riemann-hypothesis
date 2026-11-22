@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PhIUnionTrans
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumGraphEqSumEntN
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TrFirstPattern
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PhIUnionTrans
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumGraphEqSumEntN
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TrFirstPattern
+
+@[expose] public section
+
 open GlobalTheory.GLq Formalism.MainNotions.ArithmeticCylinders Polynomial
 open scoped Classical
 

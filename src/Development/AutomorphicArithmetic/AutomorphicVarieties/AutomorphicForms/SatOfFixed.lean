@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAveragingProjection
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAveragingProjection
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem hasFixed_of_sum {G V W : Type} [Group G] [TopologicalSpace G] [IsTopolog
       haveI := Fintype.ofFinite (K ⧸ stab σ K y)
       have := congrArg f (hz y)
       rw [avg_eq ρ K hle, ← map_zero f, ← this]
-      simp only [avg, avgH, cv, finsum_eq_sum_of_fintype, map_smul, map_sum, hf]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [avg, avgH, cv, finsum_eq_sum_of_fintype, map_smul, map_sum, hf]
     · have : stab ρ K (0 : W) = ⊤ := eq_top_iff.2 fun l _ => by rw [mem_stab, map_zero]
       have h1 : (stab ρ K (0 : W)).FiniteIndex := this ▸ inferInstance
       exact ⟨h1, avg_fixed ρ K h1 fun l _ => map_zero _⟩
@@ -84,7 +89,7 @@ private theorem isUnit_nat (w : HeightOneSpectrum (𝓞 F)) {M : ℕ} (hM : (M :
   · simpa using mul_inv_cancel₀ h0
 
 theorem locGL_mem_KLev (n : ℕ) (w : HeightOneSpectrum (𝓞 F)) {M : ℕ} (hM : (M : 𝓞 F) ∉ w.asIdeal)
-    {k : GL (Fin n) (w.adicCompletion F)} (hk : k ∈ GlobalTheory.LFun.KGL w n) : locGL F n w k ∈ KLev F n M := by
+    {k : GL (Fin n) (w.adicCompletion F)} (hk : k ∈ GlobalTheory.LFun.KGL w (n := n)) : locGL F n w k ∈ KLev F n M := by
   obtain ⟨k, rfl⟩ := hk
   refine ⟨cornerGL n (sInt w) k, map_cornerGL_of_zero _ _ (fun x => ?_) k, ?_⟩
   · obtain ⟨y, rfl⟩ := (isUnit_nat w hM).dvd (a := x)
@@ -106,7 +111,7 @@ theorem sat_of_isotypic (hS : SatLoc) {n M : ℕ} {V : Type} [AddCommGroup V] [M
     ∃ B, GlobalTheory.LFun.HasSatGL w (ρ.comp (locGL F n w)) B := by
   obtain ⟨h1, h2⟩ := hS F n w σ
   obtain ⟨x, hx0, hx⟩ := hρ
-  have hK : IsCompact (GlobalTheory.LFun.KGL w n : Set (GL (Fin n) (w.adicCompletion F))) :=
+  have hK : IsCompact (GlobalTheory.LFun.KGL w (n := n) : Set (GL (Fin n) (w.adicCompletion F))) :=
     GlobalTheory.LFun.IntPtsUnitary.isCompact_GLint _ (PI.AdicCompletionValuation.isCompact_adicCompletionIntegers F w)
   obtain ⟨B, hB⟩ := h1 (hasFixed_of_sum σ.ρ σ.smooth (ρ.comp (locGL F n w)) _ hK hi.2
     ⟨x, hx0, fun u hu => hx _ (locGL_mem_KLev n w hw hu)⟩)

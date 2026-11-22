@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOrthogonalLattice
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.OrthCountOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOrthogonalLattice
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.OrthCountOf
+
+@[expose] public section
 
 noncomputable section
 

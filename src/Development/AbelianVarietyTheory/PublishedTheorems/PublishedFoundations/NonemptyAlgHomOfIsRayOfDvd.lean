@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LFunctionPositiveConductorFourEight
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ForallHeckeIdealIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotInjectiveTwoPrimesEqualNormCofinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTwoPrimesSameNormOfTrivialFrobenius
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClosureFrobeniusElementsEqTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LFunctionPositiveConductorFourEight
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ForallHeckeIdealIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotInjectiveTwoPrimesEqualNormCofinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTwoPrimesSameNormOfTrivialFrobenius
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClosureFrobeniusElementsEqTop
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -119,7 +123,7 @@ theorem closure_isFrob_eq_top (M : Type) [Field M] [NumberField M] [Algebra K M]
     (hm : 𝔪 ≠ ⊥) :
     Subgroup.closure {σ : M ≃ₐ[K] M | ∃ 𝔭 : HeightOneSpectrum (𝓞 K), ¬ 𝔭.asIdeal ∣ 𝔪 ∧ IsFrob M 𝔭 σ} = ⊤ := by
   have hS : {𝔭 : HeightOneSpectrum (𝓞 K) | 𝔭.asIdeal ∣ 𝔪}.Finite := Ideal.finite_factors hm
-  refine GlobalTheory.Mem.FieldsEx.closure_frob_eq_top K M _ hS fun F _ _ _ hF σ => ?_
+  refine GlobalTheory.Mem.FieldsEx.closure_frob_eq_top K M {𝔭 : HeightOneSpectrum (𝓞 K) | 𝔭.asIdeal ∣ 𝔪} hS fun F _ _ _ hF σ => ?_
   by_contra hσ
   obtain ⟨T, hT, H⟩ := GlobalTheory.Mem.Fld.exists_two_primes_of_isFrob_one K F σ hσ
   choose P Q hne hP hQ hNP hNQ using fun v : {v // v ∉ {𝔭 : HeightOneSpectrum (𝓞 K) | 𝔭.asIdeal ∣ 𝔪} ∪ T} =>
@@ -127,7 +131,7 @@ theorem closure_isFrob_eq_top (M : Type) [Field M] [NumberField M] [Algebra K M]
   have hu : ∀ x : _ × Bool, (cond x.2 (P x.1) (Q x.1)).asIdeal.under (𝓞 K) = x.1.1.asIdeal := by
     rintro ⟨v, _ | _⟩
     exacts [(hQ v).over.symm, (hP v).over.symm]
-  refine GlobalTheory.Mem.ZetaPole.not_injective_double_primes K F _ (hS.union hT) (fun x => cond x.2 (P x.1) (Q x.1))
+  refine GlobalTheory.Mem.ZetaPole.not_injective_double_primes K F ({𝔭 : HeightOneSpectrum (𝓞 K) | 𝔭.asIdeal ∣ 𝔪} ∪ T) (hS.union hT) (fun x => cond x.2 (P x.1) (Q x.1))
     (fun x y h => ?_) ?_
   · have e : x.1 = y.1 := Subtype.ext (HeightOneSpectrum.ext (by rw [← hu x, ← hu y]; exact congrArg _ (congrArg _ h)))
     obtain ⟨v, a⟩ := x
@@ -203,8 +207,16 @@ namespace GlobalTheory.Published
 
 theorem rayClassFieldMaximalSt_holds : RayClassFieldMaximalSt := by
   intro K L L' _ _ _ _ _ _ _ _ _ _ 𝔪 hm h h'
-  let i : L →ₐ[K] AlgebraicClosure K := IsAlgClosed.lift
-  let j : L' →ₐ[K] AlgebraicClosure K := IsAlgClosed.lift
+  let i : L →ₐ[K] AlgebraicClosure K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
+  let j : L' →ₐ[K] AlgebraicClosure K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let e := AlgEquiv.ofInjectiveField i
   let e' := AlgEquiv.ofInjectiveField j
   have : IsGalois K i.fieldRange := IsGalois.of_algEquiv e
@@ -229,41 +241,6 @@ theorem nonempty_algHom_of_isRay_of_dvd {K L L' : Type} [Field K] [NumberField K
     [IsAbelianGalois K L'] {𝔪 𝔫 : Ideal (𝓞 K)} (hn : 𝔫 ≠ ⊥) (hd : 𝔪 ∣ 𝔫) (h : IsRay L 𝔫) (h' : IsRay L' 𝔪) :
     Nonempty (L' →ₐ[K] L) :=
   rayClassFieldMaximalSt_holds K L L' 𝔫 hn h (GlobalTheory.RayMaximal.isModulus_of_isRay h' hd hn)
-
-theorem nonempty_algHom_iff_isModulus {K L L' : Type} [Field K] [NumberField K] [Field L]
-    [NumberField L] [Algebra K L] [IsAbelianGalois K L] [Field L'] [NumberField L'] [Algebra K L']
-    [IsAbelianGalois K L'] {𝔪 : Ideal (𝓞 K)} (hm : 𝔪 ≠ ⊥) (h : IsRay L 𝔪) :
-    Nonempty (L' →ₐ[K] L) ↔ ∀ χ : (L' ≃ₐ[K] L') →* ℂˣ, IsModulus L' χ 𝔪 := by
-  refine ⟨fun ⟨f⟩ χ => ?_, rayClassFieldMaximalSt_holds K L L' 𝔪 hm h⟩
-  let _ := f.toRingHom.toAlgebra
-  have : IsScalarTower K L' L := IsScalarTower.of_algebraMap_eq fun x => (f.commutes x).symm
-  have hM := GlobalTheory.RayMaximal.isModulus_of_isRay h dvd_rfl hm (χ.comp (AlgEquiv.restrictNormalHom L'))
-  have hv : ∀ 𝔭 : HeightOneSpectrum (𝓞 K), ¬ 𝔭.asIdeal ∣ 𝔪 →
-      heckeVal L' χ 𝔭 = heckeVal L (χ.comp (AlgEquiv.restrictNormalHom L')) 𝔭 := fun 𝔭 hp => by
-    obtain ⟨σ, hσ⟩ := GlobalTheory.NT.exists_isFrob L 𝔭
-    rw [heckeVal_of_unramIn L _ (h.1 𝔭 hp) hσ,
-      heckeVal_of_unramIn L' χ (GlobalTheory.RayMaximal.unramIn_of_tower (h.1 𝔭 hp)) (GlobalTheory.RayMaximal.isFrob_restrictNormal hσ)]
-    rfl
-  have hi : ∀ I : Ideal (𝓞 K), I ≠ ⊥ → IsCoprime I 𝔪 →
-      heckeIdeal L' χ I = heckeIdeal L (χ.comp (AlgEquiv.restrictNormalHom L')) I := fun I hI hc => by
-    classical
-    refine finprod_congr fun 𝔭 => ?_
-    by_cases hp : 𝔭.asIdeal ∣ 𝔪
-    · have h0 : (Associates.mk 𝔭.asIdeal).count (Associates.mk I).factors = 0 := by
-        by_contra hne
-        exact 𝔭.prime.not_isUnit (hc.isUnit_of_dvd' ((Associates.count_ne_zero_iff_dvd hI 𝔭.irreducible).1 hne) hp)
-      simp only [h0, pow_zero]
-    · rw [hv 𝔭 hp]
-  refine ⟨hm, fun 𝔭 hp => hv 𝔭 hp ▸ hM.2.1 𝔭 hp, fun α β hr => ?_⟩
-  rw [hi _ (by simpa using hr.1) hr.2.2.1, hi _ (by simpa using hr.2.1) hr.2.2.2.1, hM.2.2 α β hr]
-
-theorem RayClassFieldSt.exists_maximal (H : RayClassFieldSt) (K : Type) [Field K]
-    [NumberField K] (𝔪 : Ideal (𝓞 K)) (hm : 𝔪 ≠ ⊥) :
-    ∃ (L : Type) (_ : Field L) (_ : NumberField L) (_ : Algebra K L) (_ : IsAbelianGalois K L), IsRay L 𝔪 ∧
-      ∀ (L' : Type) [Field L'] [NumberField L'] [Algebra K L'] [IsAbelianGalois K L'],
-        (∀ χ : (L' ≃ₐ[K] L') →* ℂˣ, IsModulus L' χ 𝔪) → Nonempty (L' →ₐ[K] L) := by
-  obtain ⟨L, _, _, _, _, h⟩ := H K 𝔪 hm
-  exact ⟨L, _, inferInstance, _, inferInstance, h, fun L' _ _ _ _ h' => rayClassFieldMaximalSt_holds K L L' 𝔪 hm h h'⟩
 
 end GlobalTheory.Published
 

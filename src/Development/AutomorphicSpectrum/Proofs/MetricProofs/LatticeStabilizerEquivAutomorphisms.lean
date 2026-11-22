@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume GroundTheory.Automorphic GlobalTheory.CompanionTheory.Ar.Cusp.Dict
 open scoped ENNReal InnerProductSpace
 open scoped ComplexOrder
@@ -39,7 +44,8 @@ theorem exists_clear {I : Type} (e : Λ →+ V) (he : Function.Injective e)
     rw [show (a : E) = algebraMap (𝓞 E) E a from rfl, ha, Algebra.smul_def]
   choose! a ha using h2
   refine ⟨d, (b.repr (e x)).support, a, nonZeroDivisors.ne_zero hd, he ?_⟩
-  rw [hs, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hs, map_sum]
   conv_lhs => rw [← b.linearCombination_repr (e x), Finsupp.linearCombination_apply, Finsupp.sum,
     Finset.smul_sum]
   refine Finset.sum_congr rfl fun i hi => ?_
@@ -55,7 +61,8 @@ theorem exists_ext (e : Λ →+ V) (he : Function.Injective e)
   have hdE : (d : E) ≠ 0 := by simpa using hd
   have h1 : (d : E) • (b.constr E fun i => e (f (xs i))) (e x) = (d : E) • e (f x) := by
     rw [← map_smul, ← hs, ← hs, ← map_smul, hx]
-    simp only [map_sum, hs, map_smul, ← hb, Module.Basis.constr_basis]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hs, map_smul, ← hb, Module.Basis.constr_basis]
   exact smul_right_injective _ hdE h1
 
 theorem exists_extEquiv (e : Λ →+ V) (he : Function.Injective e)
@@ -176,8 +183,8 @@ theorem exists_of_stab (C : LatEmb F) (γ : latticeStab C.h C.e.range) :
   rw [C.form_eq, C.form_eq, hφ, hφ]
   exact congrArg (fun t => Algebra.trace ℚ E (C.xi * t)) hu
 
-open scoped Pointwise in
 
+open scoped Pointwise in
 theorem exists_of_aut (C : LatEmb F) (φ : autGrp (E := E) F.form) :
     ∃ γ : latticeStab C.h C.e.range, ∀ x,
       ((γ : C.h.unitaryGroup) : (Fin (j + j') → E) ≃ₗ[E] (Fin (j + j') → E)) (C.e x) = C.e (φ.1 x) := by

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestTMExists
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RatioConditionOfSegFacts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestTMExists
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RatioConditionOfSegFacts
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 open GlobalTheory.GalCut GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.DefU GlobalTheory.Branching
@@ -31,7 +36,7 @@ private theorem span_top {a : ℕ} {κ : DomWeight a} (A : Set (nablaSq ℂ a κ
       induction hx using Submodule.span_induction with
       | mem x h => exact Submodule.subset_span (hst u x h)
       | zero => simp
-      | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
       | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx⟩
   rcases (isIrreducible_smallRep_unitary a κ).eq_bot_or_eq_top S with h | h
   · exfalso
@@ -57,17 +62,17 @@ theorem UpperTheory.Gal.Wt.wtBd_of :
         have h0 := (ExpLe s).zero_mem
         convert h0 using 1
         funext z
-        simp
+        simp only [map_zero, Pi.zero_apply]
       | add x y _ _ hx hy =>
         have := (ExpLe s).add_mem hx hy
         convert this using 1
         funext z
-        simp
+        simp only [map_add, Pi.add_apply]
       | smul c x _ hx =>
         have := (ExpLe s).smul_mem c hx
         convert this using 1
         funext z
-        simp
+        simp only [map_smul, Pi.smul_apply]
     have hmem := hall (top κ) (htop.ge Submodule.mem_top)
     have hfun : (fun z => L (sqRep ℂ a κ (tor a k z) (top κ))) = fun z : Circle => L (top κ) * (z : ℂ) ^ psum κ k := by
       funext z

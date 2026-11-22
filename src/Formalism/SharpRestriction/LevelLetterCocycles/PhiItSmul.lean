@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
+
+@[expose] public section
 
 noncomputable section
 

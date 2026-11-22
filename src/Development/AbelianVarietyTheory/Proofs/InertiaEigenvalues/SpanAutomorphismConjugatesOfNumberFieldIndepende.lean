@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfForallRingEquivFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfForallRingEquivFixed
+
+@[expose] public section
 
 namespace GlobalTheory.ConjSpan
 
@@ -89,7 +93,8 @@ theorem span_conj_eq_top : ∀ (K : Type) [Field K] [NumberField K] (σ : K →+
           intro x
           rw [RingEquiv.trans_apply, hφ, RingEquiv.symm_apply_eq, hψ])
         have h2 := congrArg ψ h1
-        simpa [map_sum, map_mul] using h2
+        set_option synthInstance.maxHeartbeats 100000 in
+          simpa [map_sum, map_mul] using h2
       have hlt : (Finset.univ.filter (fun i => ((fun i => ψ (z' i)) - z') i ≠ 0)).card < n := by
         rw [← hcard, ← hsupp]
         apply Finset.card_lt_card

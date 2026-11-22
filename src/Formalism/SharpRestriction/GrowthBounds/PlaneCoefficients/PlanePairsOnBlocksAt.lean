@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.Lemma5aGeneratorProducts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.Lemma5aGeneratorProducts
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,7 @@ theorem topDeg_castV {n' m r K : ℕ} (hk : m + 1 = r + K) (b : Fin n' × Fin (r
   rw [← Fintype.sum_equiv (finCongr hk.symm) (fun c => (b.mapDomain (castV hk)) (t, Fin.cast hk.symm c)) _
     (fun c => rfl)]
   refine Finset.sum_congr rfl fun c _ => ?_
-  exact Finsupp.mapDomain_apply hinj b (t, c)
+  exact Finsupp.mapDomain_apply_of_injective hinj b (t, c)
 
 def PlanePairsOnBlocksAt (C CLa : ℝ) : Prop :=
   ∀ (p : ℕ) (W Qq O Kf : Type) [CommRing W] [IsDomain W] [IsDiscreteValuationRing W] [Field Qq] [Algebra W Qq]

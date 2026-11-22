@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.WeylForU
+module
+
+public import Formalism.PeriodIntegrals.WeylForU
+
+@[expose] public section
 
 noncomputable section
 

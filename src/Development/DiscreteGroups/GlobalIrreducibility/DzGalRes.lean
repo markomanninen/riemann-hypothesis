@@ -1,8 +1,12 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.DzApprox
-import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.DzApprox
+public import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+
+@[expose] public section
 
 noncomputable section
 

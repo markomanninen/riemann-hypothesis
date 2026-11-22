@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementN
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ConstantCoeffInVarEqZero
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormFromDatum
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementN
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ConstantCoeffInVarEqZero
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormFromDatum
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -96,7 +100,8 @@ theorem matCoord_comp (h : IsLogPair l linv) (τ : O →+* K) (γ δ : Matrix m 
     (Formalism.L2.Th1.C.Pts.constantCoeff_sum_l h _ fun _ => MvPowerSeries.constantCoeff_X _) hδ0]
   conv_rhs => rw [matCoord, Formalism.L2.Th1.C.flin]
   congr 1
-  rw [← MvPowerSeries.coe_substAlgHom hs, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hs, map_sum]
   have h1 : ∀ j, MvPowerSeries.substAlgHom hs (MvPowerSeries.C (τ (γ w j)) *
       PowerSeries.subst (MvPowerSeries.X j : MvPowerSeries m K) l) =
       ∑ k, MvPowerSeries.C (τ (γ w j * δ j k)) *
@@ -109,7 +114,8 @@ theorem matCoord_comp (h : IsLogPair l linv) (τ : O →+* K) (γ δ : Matrix m 
     rw [map_mul, map_mul, mul_assoc]
   rw [Finset.sum_congr rfl fun j _ => h1 j, Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => ?_
-  rw [Matrix.mul_apply, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum, map_sum, Finset.sum_mul]
 
 theorem matCoord_one [DecidableEq m] (h : IsLogPair l linv) (τ : O →+* K) (w : m) :
     matCoord l linv τ (1 : Matrix m m O) w = MvPowerSeries.X w := by
@@ -148,7 +154,8 @@ theorem tensor4_exp {ph : PowerSeries K} (hph : PowerSeries.constantCoeff ph = 0
     exact Fintype.sum_prod_type _
   rw [h3]
   refine (Formalism.L2.Th1.C.mvExp_sum _ _ fun a _ => ?_).symm
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun i _ => constantCoeff_inVar_eq_zero _ hph
 
 end Exp

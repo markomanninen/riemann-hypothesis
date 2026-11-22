@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCRefTraceCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferKAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLine
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCRefTraceCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferKAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLine
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -29,14 +33,14 @@ private theorem toSm_smul_hermitian_curvature (P : M.Par) (c : ℂ) (u : MA.Qp P
     MA.toSm P (c • u) = c • MA.toSm P u := by
   unfold MA.toSm
   by_cases hu : u ∈ MA.smSub P.r P.TT
-  · rw [dif_pos hu, dif_pos (Subalgebra.smul_mem _ hu c)]
+  · rw [dite_eq_left hu, dite_eq_left (Subalgebra.smul_mem _ hu c)]
     rfl
-  · rw [dif_neg hu]
+  · rw [dite_eq_right hu]
     by_cases hc : c = 0
     · subst hc
-      rw [zero_smul, smul_zero, dif_pos (Subalgebra.zero_mem _)]
+      rw [zero_smul, smul_zero, dite_eq_left (Subalgebra.zero_mem _)]
       rfl
-    · rw [smul_zero, dif_neg]
+    · rw [smul_zero, dite_eq_right]
       intro hm
       apply hu
       have := Subalgebra.smul_mem _ hm c⁻¹

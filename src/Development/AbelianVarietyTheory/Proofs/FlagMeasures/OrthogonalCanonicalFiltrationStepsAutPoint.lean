@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointMajorantFramesGiveMajorants
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalLatticeFiltrationSizeProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointMajorantFramesGiveMajorants
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalLatticeFiltrationSizeProperties
+
+@[expose] public section
 
 open GlobalTheory.Count Formalism.MainNotions.S Formalism.HN Formalism.REAL Matrix NumberField MeasureTheory Finset
 
@@ -125,7 +129,7 @@ theorem sat_inf {V ι : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] 
     exact fun z hz => hz.2
   exact h5 (Submodule.subset_span hx)
 
-theorem perp_key [IsTotallyComplex K] {J : Matrix (Fin n) (Fin n) K}
+theorem perp_key [_root_.NumberField.IsTotallyComplex K] {J : Matrix (Fin n) (Fin n) K}
     (hJ : Formalism.UG.IsHerm (starRingEnd K) J) (hdet : J.det ≠ 0)
     (hs : ∀ (φ : K →+* ℂ) (a : K), φ (star a) = starRingEnd ℂ (φ a))
     (X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ) (hX : ∀ v, IsUnit (X v).det)
@@ -190,12 +194,12 @@ end Form
 
 section Slope
 
-variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
   [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι]
   [DecidableEq ι] (b : Module.Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
 
-variable (K) in
 
+variable (K) in
 def cK : ℝ := Real.log 2 / 2 - logDisc K / (2 * (Module.finrank ℚ K : ℝ))
 
 def nd (N : Submodule (𝓞 K) V) : ℝ :=
@@ -241,12 +245,12 @@ theorem htQ_eq (hX : ∀ v, IsUnit (X v).det) (N S : Submodule (𝓞 K) V) (hN :
   push_cast
   ring
 
-omit [IsTotallyComplex K] [IsScalarTower (𝓞 K) K V] in
+omit [_root_.NumberField.IsTotallyComplex K] [IsScalarTower (𝓞 K) K V] in
 theorem sat_mono {A N S : Submodule (𝓞 K) V} (hS : IsSat (Formalism.HermitianLatticesTheory.realize b X) A S)
     (h1 : S ≤ N) (h2 : N ≤ A) : IsSat (Formalism.HermitianLatticesTheory.realize b X) N S :=
   ⟨h1, shiftInv_zl_mono _ h1, fun x hx => hS.2.2 x (shiftInv_zl_mono _ h2 hx)⟩
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem rk_lt (hX : ∀ v, IsUnit (X v).det) {A N S : Submodule (𝓞 K) V} (hA : A.FG)
     (hS : IsSat (Formalism.HermitianLatticesTheory.realize b X) A S) (h1 : S < N) (h2 : N ≤ A) :
     (rk (Formalism.HermitianLatticesTheory.realize b X) S : ℝ) < rk (Formalism.HermitianLatticesTheory.realize b X) N := by
@@ -285,7 +289,7 @@ theorem largest_bound (hX : ∀ v, IsUnit (X v).det) {N M : Submodule (𝓞 K) V
   unfold nd
   linarith
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem sat_inf_sat (hX : ∀ v, IsUnit (X v).det) {A P Q : Submodule (𝓞 K) V}
     (hP : IsSat (Formalism.HermitianLatticesTheory.realize b X) A P) (hQ : IsSat (Formalism.HermitianLatticesTheory.realize b X) A Q) :
     IsSat (Formalism.HermitianLatticesTheory.realize b X) A (P ⊓ Q) := by

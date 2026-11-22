@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Formalism.LocalToGlobal.UnitaryNorms.CharProd
-import Formalism.LocalToGlobal.NumberFieldFamilies.IdTransSM
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Formalism.LocalToGlobal.UnitaryNorms.CharProd
+public import Formalism.LocalToGlobal.NumberFieldFamilies.IdTransSM
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+
+@[expose] public section
 
 noncomputable section
 

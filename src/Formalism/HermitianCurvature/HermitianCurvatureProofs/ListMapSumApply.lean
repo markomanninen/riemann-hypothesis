@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemStepsFull
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemStepsFull
+
+@[expose] public section
 
 open Matrix MvPolynomial Set
 open scoped ComplexConjugate ContDiff Topology
@@ -66,8 +70,8 @@ section mk
 
 variable [FiniteDimensional ℂ Wp]
 
-open Classical in
 
+open Classical in
 def mkTerm (D : RealPlaceData k r Wp Wq) {nf : ℕ} (fib : Fin nf → Mat k r → C6.EndH Wp Wq)
     (e : CT k r nf × List (Mat k r)) : DTerm k r Wp Wq where
   coef := cv D fib e.1

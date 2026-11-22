@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -14,7 +18,7 @@ variable {R : Type} [CommRing R] {k M : ℕ}
 theorem rel_add {f g f' g' : MvPolynomial (Fin k × Fin k) R} (h1 : Rel R k M f f') (h2 : Rel R k M g g') :
     Rel R k M (f + g) (f' + g') := by
   unfold Rel at *
-  rw [map_add, h1, h2, mul_add]
+  rw [map_add (f := _), h1, h2, mul_add]
 
 theorem rel_smul {f f' : MvPolynomial (Fin k × Fin k) R} (c : R) (h : Rel R k M f f') :
     Rel R k M (c • f) (c • f') := by
@@ -33,7 +37,7 @@ theorem rel_natMul {f f' : MvPolynomial (Fin k × Fin k) R} (n : ℕ) (h : Rel R
 
 theorem rowDiv_add (a b : Fin k) (j : ℕ) (f g : MvPolynomial (Fin k × Fin k) R) :
     rowDiv R a b j (f + g) = rowDiv R a b j f + rowDiv R a b j g := by
-  simp only [rowDiv, map_add, Polynomial.coeff_add]
+  simp only [rowDiv, map_add (f := _), Polynomial.coeff_add]
 
 theorem rowDiv_smul (a b : Fin k) (j : ℕ) (c : R) (f : MvPolynomial (Fin k × Fin k) R) :
     rowDiv R a b j (c • f) = c • rowDiv R a b j f := by
@@ -161,12 +165,13 @@ theorem revCol_one_mul_self {m : ℕ} : (revCol (1 : Matrix (Fin (m + 1)) (Fin (
 
 theorem revCol_one_transpose {m : ℕ} : (revCol (1 : Matrix (Fin (m + 1)) (Fin (m + 1)) K))ᵀ = revCol 1 := by
   ext i j
-  simp only [revCol, transpose_apply, submatrix_apply, id_eq, one_apply]
+  simp only [revCol, transpose_apply, submatrix_apply, id_eq, Matrix.one_apply]
   have h : (j = i.rev) ↔ (i = j.rev) :=
     ⟨fun h => by rw [h, Fin.rev_rev], fun h => by rw [h, Fin.rev_rev]⟩
-  by_cases hij : i = j.rev
-  · rw [if_pos hij, if_pos (h.mpr hij)]
-  · rw [if_neg hij, if_neg (fun h' => hij (h.mp h'))]
+  by_cases hij : j = i.rev
+  · rw [if_pos hij, if_pos (h.mp hij)]
+  · have h' : i ≠ j.rev := fun hh => hij (h.mpr hh)
+    rw [if_neg hij, if_neg h']
 
 theorem isUnit_revInv {m : ℕ} {z : Matrix (Fin (m + 1)) (Fin (m + 1)) K} (hz : IsUnit z.det) :
     IsUnit (revCol (z⁻¹)ᵀ).det := by

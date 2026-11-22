@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Mathlib.Data.Finsupp.PWO
-import Mathlib.Data.Finsupp.WellFounded
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Mathlib.Data.Finsupp.PWO
+public import Mathlib.Data.Finsupp.WellFounded
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -34,7 +38,7 @@ theorem UpperTheory.V.Alg.gordan :
         have hsplit : n = m + (n - m) := (add_tsub_cancel_of_le hmn).symm
         have hw : Finsupp.weight wt (n - m) = 0 := by
           have h1 := hn
-          rw [hsplit, map_add, hm'.2, zero_add] at h1
+          rw [hsplit, map_add (f := _), hm'.2, zero_add] at h1
           exact h1
         have hlt : n - m < n := by
           refine lt_of_le_of_ne tsub_le_self fun h => hm'.1 ?_

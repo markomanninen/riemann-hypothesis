@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.CastAddNeNatAdd
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.CastAddNeNatAdd
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
@@ -32,7 +36,7 @@ theorem exists_algIndep_tuple_near :
   have : Countable (MvPolynomial (Fin D) K) := by
     refine Function.Surjective.countable (f := fun l : List ((Fin D →₀ ℕ) × K) =>
       (l.map fun mc => MvPolynomial.monomial mc.1 mc.2).sum) fun p => ?_
-    refine ⟨p.support.toList.map fun m => (m, MvPolynomial.coeff m p), ?_⟩
+    refine ⟨p.support.toList.map fun m => (m, AddMonoidAlgebra.coeff p m), ?_⟩
     simp only [List.map_map]
     rw [Finset.sum_map_toList]
     exact p.as_sum.symm

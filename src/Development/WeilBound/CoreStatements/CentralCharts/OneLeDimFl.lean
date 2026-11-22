@@ -1,10 +1,14 @@
-import Development.WeilBound.CoreStatements.CentralCharts.PshAt0LogNorm
-import Development.WeilBound.CoreStatements.CentralCharts.CommonMembers
-import Development.WeilBound.CoreStatements.CentralCharts.IsPosPotBlock
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsArithVarOfSncModelStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LowerBoundHeightOnBoundaryStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BoundaryPointsClosedStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFinsetOfMemNhds
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.PshAt0LogNorm
+public import Development.WeilBound.CoreStatements.CentralCharts.CommonMembers
+public import Development.WeilBound.CoreStatements.CentralCharts.IsPosPotBlock
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsArithVarOfSncModelStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LowerBoundHeightOnBoundaryStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BoundaryPointsClosedStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFinsetOfMemNhds
+
+@[expose] public section
 
 noncomputable section
 

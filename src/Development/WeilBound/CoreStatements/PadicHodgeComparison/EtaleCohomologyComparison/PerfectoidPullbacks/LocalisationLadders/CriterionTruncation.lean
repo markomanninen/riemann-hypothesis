@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalisationLadders.TruncationHomExt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalisationLadders.TruncationHomExt
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
@@ -43,10 +47,6 @@ def E1 : Frame (Φ1 E) d where
     · refine Fin.cases ?_ (fun i => ?_) i
       · simpa using h0 σ'
       · simpa using h i
-
-@[simp] theorem frame_shift_domain : (E1 E).D = ⟨E.D, 𝟙 E.D⟩ := rfl
-
-theorem frame_shift_tau (i : Fin d) {Y : Cut E} (σ σ' : (E1 E).D ⟶ Y) : (E1 E).τ i σ σ' = E.τ i.succ σ.1 σ'.1 := rfl
 
 variable {E} (Q : Poly Φ)
 

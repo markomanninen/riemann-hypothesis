@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rankhs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rankhs
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
@@ -35,7 +39,7 @@ private theorem UpperTheory.V.KT.finite_subfamily_spans_dual {E Y : Type*} [AddC
     rwa [LinearMap.mem_ker, Module.Dual.eval_apply] at hm
 
 theorem UpperTheory.V.KT.vxdet :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (v : Vx L N),
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (v : Vx L N),
     ∃ M : Finset (Lat L N), M.card ≤ dd L N * N ∧ (∀ y ∈ M, q v.1 y = 1) ∧
       ∀ h : HS L N, (∀ y ∈ M, q h y = 1) → h = v.1 := by
   intro L _ _ _ N v

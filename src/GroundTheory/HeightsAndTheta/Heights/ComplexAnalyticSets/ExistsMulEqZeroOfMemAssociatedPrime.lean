@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Imports
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCMRegularElement
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFlatNormalFibres
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularCurve
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Imports
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCMRegularElement
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFlatNormalFibres
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularCurve
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets

@@ -1,16 +1,20 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.BloIn
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SwapInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BochnerOfLintegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PseudoEisensteinSectionPfunInBandSlicesReps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ConstantTermPairingVanishesOfOrthogonal
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.BloIn
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SwapInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BochnerOfLintegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PseudoEisensteinSectionPfunInBandSlicesReps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ConstantTermPairingVanishesOfOrthogonal
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContRep
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -72,7 +76,7 @@ private theorem pt_eq {K : Type} [Field K] [NumberField K] (y₁ y₂ : G1 K 2) 
     ← zt_add, ← zt_add]
   congr 3 <;> ring
 
-private theorem int_pair {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (Pl E)} (b : BW.Blo S 2)
+private theorem int_pair {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (Pl E)} (b : BW.Blo S 2)
     {τ : Submodule ℂ (L2 (BW.mu1 E 2))} {m B} (hb : BloIn b τ m B) {v : L2 (BW.mu1 E 2)} {φ : G1 E 2 → ℂ} (hc : Continuous φ)
     (hr : Reps (BW.mu1 E 2) v φ) :
     Integrable (fun x : RightCosetSpace (Gam E 2) => φ (Quotient.out x) *
@@ -85,12 +89,22 @@ private theorem int_pair {E : Type} [Field E] [NumberField E] [IsTotallyComplex 
         filter_upwards [hr, (measurePreserving_mul_left (BW.mu1 E 2) γ).quasiMeasurePreserving.ae hr] with y a b
         rw [← a, ← b, mk_mul_of_mem hγ]
       exact congrFun (((hc.comp (continuous_const_mul γ)).ae_eq_iff_eq _ hc).1 h1)
-    have h3 : (fun x : RightCosetSpace (Gam E 2) => ψ (Quotient.out x)) = quotFun ψ hinv := by
-      funext x
-      conv_rhs => rw [← Quotient.out_eq x]
+    let q : RightCosetSpace (Gam E 2) → ℂ := Quotient.lift ψ (fun a b hab => by
+      obtain ⟨γ, rfl⟩ := hab
+      exact hinv γ γ.2 b)
+    have hq : Continuous q := (isOpenQuotientMap_mk (Gam E 2)).isQuotientMap.continuous_iff.2 hc
+    set_option synthInstance.maxHeartbeats 200000 in
+    have he : (w : RightCosetSpace (Gam E 2) → ℂ) =ᵐ[quotientMeasure (Gam E 2) (BW.mu1 E 2)] q := by
+      have hm : ∀ᵐ x ∂(Measure.map (mk (Gam E 2)) ((BW.mu1 E 2).restrict (fundamentalDomain (Gam E 2)))), w x = q x := by
+        refine (ae_map_iff (measurable_mk (Gam E 2)).aemeasurable
+          (measurableSet_eq_fun (Lp.stronglyMeasurable w).measurable hq.measurable)).2 ?_
+        exact ae_restrict_of_ae hr
+      rwa [map_restrict_eq_quotientMeasure (BW.mu1 E 2) (isFundamentalDomain_fundamentalDomain (Gam E 2) (BW.mu1 E 2))] at hm
+    apply (Lp.memLp w).ae_eq (he.trans ?_)
+    exact Eventually.of_forall fun x => by
+      change q x = ψ (Quotient.out x)
+      conv_lhs => rw [← Quotient.out_eq x]
       rfl
-    rw [h3]
-    exact (Lp.memLp w).ae_eq (IsContRep.ae_eq_quotFun (μ := BW.mu1 E 2) (φ := w) (F := ψ) ⟨hc, hinv, hr⟩)
   obtain ⟨w, -, hw⟩ := hb.mem
   have hf : Continuous b.f.1 := ((BW.umgOps E 2).2 b.f (BW.cuspUmg E 2 b.f b.cusp).1).1
   exact (key hc hr).integrable_mul (key (hf.comp continuous_subtype_val) hw).star
@@ -99,7 +113,7 @@ private theorem zt_zero (K : Type) [Field K] [NumberField K] : UpperTheory.V.Z.I
   have : (⟨Real.exp 0, Real.exp_pos 0⟩ : {r : ℝ // 0 < r}) = 1 := Subtype.ext Real.exp_zero
   rw [UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.zt, this, map_one]
 
-private theorem ell_swap {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (Pl E)} (b b' : BW.Blo S 2)
+private theorem ell_swap {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (Pl E)} (b b' : BW.Blo S 2)
     {τ τ' ρ ρ' : Submodule ℂ (L2 (BW.mu1 E 2))} {m B m' B'} (hb : BloIn b τ m B) (hb' : BloIn b' τ' m' B')
     {f : G1 E (2 + 2) → ℂ} (hf : IsSec ρ ρ' f) (k : G1 E (2 + 2)) :
     (∀ m₂ : G1 E 2, Integrable (fun m₁ : RightCosetSpace (Gam E 2) => f (lv (Quotient.out m₁) m₂ 0 * k) *
@@ -116,20 +130,20 @@ private theorem ell_swap {E : Type} [Field E] [NumberField E] [IsTotallyComplex 
   have i₂ := fun i => int_pair b' hb' (hψ i).1 (hψ i).2.choose_spec.2
   refine ⟨fun m₂ => ?_, ?_⟩
   · simp only [e, Finset.sum_mul]
-    refine integrable_finset_sum _ fun i _ => ?_
+    refine integrable_finsetSum _ fun i _ => ?_
     simpa only [mul_right_comm] using (i₁ i).mul_const (ψ i m₂)
   · simp only [← integral_mul_const]
     refine integral_integral_swap ?_
     simp only [Function.uncurry_def, e, Finset.sum_mul]
-    refine integrable_finset_sum _ fun i _ => ((i₁ i).mul_prod (i₂ i)).congr (Eventually.of_forall fun p => ?_)
+    refine integrable_finsetSum _ fun i _ => ((i₁ i).mul_prod (i₂ i)).congr (Eventually.of_forall fun p => ?_)
     ring
 
-private theorem rep_eq {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} {μ : Measure (normOneGL E n)}
+private theorem rep_eq {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} {μ : Measure (normOneGL (K := E) (n := n))}
     [μ.IsHaarMeasure] {v : L2 μ} {φ : GlobalTheory.CuspRep.Sm E n} (h : BW.Rep μ v φ) {Φ : G1 E n → ℂ} (hc : Continuous Φ)
     (hr : Reps μ v Φ) (g : G1 E n) : φ.1 (g : GlobalTheory.CuspRep.GA E n) = Φ g := by
   have h1 : Continuous fun g : G1 E n => φ.1 (g : GlobalTheory.CuspRep.GA E n) := ((BW.umgOps E n).2 φ h.umg).1.comp continuous_subtype_val
   refine congrFun ((h1.ae_eq_iff_eq μ hc).1 ?_) g
-  filter_upwards [hr, (quasiMeasurePreserving_mk (Gam E n) μ).ae h.ae] with y a b
+  filter_upwards [hr, MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam E n) μ) h.ae] with y a b
   rw [← a, b]
   obtain ⟨⟨γ, δ, hδ⟩, hγ⟩ := mk_eq_mk_iff.1 (Quotient.out_eq (mk (Gam E n) y))
   rw [← hγ]
@@ -138,7 +152,7 @@ private theorem rep_eq {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
 
 set_option synthInstance.maxHeartbeats 200000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.compLine :
-    ∀ {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {μ : Measure (normOneGL E (2 + 2))} [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : Fam 𝔢) (b b' : BW.Blo 𝔢.S 2), BloIn b 𝔵.τ₂ 𝔵.m₂ 𝔵.B₂ → BloIn b' 𝔵.τ₁ 𝔵.m₁ 𝔵.B₁ →
+    ∀ {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {μ : Measure (normOneGL (K := E) (n := (2 + 2)))} [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : _root_.UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.Fam 𝔢) (b b' : BW.Blo 𝔢.S 2), BloIn b 𝔵.τ₂ 𝔵.m₂ 𝔵.B₂ → BloIn b' 𝔵.τ₁ 𝔵.m₁ 𝔵.B₁ →
       ∃ c : ℂ, c ≠ 0 ∧ ∀ k ∈ KG E (2 + 2), ∀ (u : ℝ → Eu 𝔵.d') (U : L (Eu 𝔵.d')) (φ : GlobalTheory.CuspRep.Sm E (2 + 2)), Continuous u → HasCompactSupport u →
         (∀ᵐ x : ℝ, U x = u x) → BW.Rep μ (𝔵.A'.J U) φ → ∀ t : Fin (dat2 b b').len → ℝ,
           (dat2 b b').comp (GlobalTheory.CuspRep.rt E (2 + 2) ((k : G1 E (2 + 2)) : GlobalTheory.CuspRep.GA E (2 + 2)) φ).1 t =
@@ -170,8 +184,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.compLine :
     refine integral_congr_ae (Eventually.of_forall fun X => ?_)
     have hz : ∀ g : AdelicGLn.AdelicGL E (2 + 2), g * BW.zt E (2 + 2) (a + a') = BW.zt E (2 + 2) (a + a') * g := fun g =>
       (centralSection_mul_comm _ g).symm
-    change φ.1 (_ * (k : GlobalTheory.CuspRep.GA E (2 + 2))) = th F (unipOne E (2 + 2) 2 X * (lv y₁ y₂ ((a - a') / 2) * k))
-    rw [← hth, ← hφ.cen (a + a') ((unipOne E (2 + 2) 2 X * (lv y₁ y₂ ((a - a') / 2) * k) : G1 E (2 + 2)) : GlobalTheory.CuspRep.GA E (2 + 2))]
+    change φ.1 (_ * (k : GlobalTheory.CuspRep.GA E (2 + 2))) = th F (unipOne (K := E) (n := 2 + 2) 2 X * (lv y₁ y₂ ((a - a') / 2) * k))
+    rw [← hth, ← hφ.cen (a + a') ((unipOne (K := E) (n := 2 + 2) 2 X * (lv y₁ y₂ ((a - a') / 2) * k) : G1 E (2 + 2)) : GlobalTheory.CuspRep.GA E (2 + 2))]
     congr 1
     rw [Subgroup.coe_mul, Subgroup.coe_mul, coe_unipOne, ← mul_assoc (unipGL X), hz, mul_assoc, mul_assoc]
   have hbU := (BW.cuspUmg E 2 b.f b.cusp).1

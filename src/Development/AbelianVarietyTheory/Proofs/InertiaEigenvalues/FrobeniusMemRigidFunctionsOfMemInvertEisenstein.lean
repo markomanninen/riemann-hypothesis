@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.BK Filter Topology
 
 namespace GlobalTheory.BK
@@ -53,7 +58,7 @@ theorem exists_mul_frob_E_eq_one_of_lt (O K : Type) [CommRing O] [NormedField K]
   simp only [map_mul, map_sub, map_one, rescale_X, expand_X, expand_C, map_neg] at h
   have h2 : (C (l : K)⁻¹ : K⟦X⟧) * l = 1 := by
     rw [← map_natCast (C : K →+* K⟦X⟧), ← map_mul, inv_mul_cancel₀ hl0, map_one]
-  rw [E, map_add, map_pow, frob_X, map_natCast, ← pow_mul, mul_comm l e]
+  rw [E, map_add (f := _), map_pow, frob_X, map_natCast, ← pow_mul, mul_comm l e]
   change c * _ = 1 at h
   linear_combination h + c * h2
 end GlobalTheory.BK

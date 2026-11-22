@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.TargetSt
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PFiniteIntegralClosure
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNmSectionsRational
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.TargetSt
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PFiniteIntegralClosure
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNmSectionsRational
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecEq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

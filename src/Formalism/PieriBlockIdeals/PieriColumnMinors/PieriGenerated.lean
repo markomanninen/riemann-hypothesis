@@ -1,8 +1,12 @@
-import Formalism.PieriBlockIdeals.StatementLP
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightDominantHolds
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightSuccessive
-import Formalism.PieriBlockIdeals.PieriColumnMinors.LpcDpartCommEps
-import Formalism.PieriBlockIdeals.PieriColumnMinors.GeneratedHighestWeightHolds
+module
+
+public import Formalism.PieriBlockIdeals.StatementLP
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightDominantHolds
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightSuccessive
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.LpcDpartCommEps
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.GeneratedHighestWeightHolds
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LP
 

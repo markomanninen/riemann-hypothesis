@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix Polynomial GlobalTheory.CuspRep
 open scoped ContDiff
@@ -58,7 +62,7 @@ private theorem contDiffOn_wt (u : ℂ) (e : (K →+* ℂ) → ℕ) : ContDiffOn
   exact h2.mul (contDiffOn_prod fun σ _ =>
     ((contDiff_detAt σ).contDiffOn.inv fun x hx => detAt_ne_zero hx σ).pow _)
 
-private theorem prod_coord [IsTotallyComplex K] (z : Cinf K) :
+private theorem prod_coord [_root_.NumberField.IsTotallyComplex K] (z : Cinf K) :
     ∏ σ : K →+* ℂ, coord σ z = ((∏ w, ‖z w‖ ^ 2 : ℝ) : ℂ) := by
   classical
   rw [← Finset.prod_fiberwise Finset.univ InfinitePlace.mk, Complex.ofReal_prod]
@@ -108,7 +112,7 @@ private theorem wt_succ (u : ℂ) (e : (K →+* ℂ) → ℕ) (τ : K →+* ℂ)
   rw [Finset.prod_eq_single τ (fun σ _ h => by simp [Pi.single_eq_of_ne h]) (by simp)]
   simp
 
-private theorem list_shift [IsTotallyComplex K] (hP : Ptw) (hI : Parts) (φ : Sm K n)
+private theorem list_shift [_root_.NumberField.IsTotallyComplex K] (hP : Ptw) (hI : Parts) (φ : Sm K n)
     (m : (K →+* ℂ) → Multiset ℂ) (hm : ∀ τ u, cap τ u φ = ((m τ).map (u + ·)).prod • φ) (g : GA K n) (u : ℂ) :
     ∀ l : List (K →+* ℂ), l.Nodup → ∀ (e : (K →+* ℂ) → ℕ) (Ψ : Lie K n → ℂ), IsTest Ψ →
       IsTest (l.foldr detD Ψ) ∧
@@ -149,9 +153,9 @@ private theorem linPoly_sum {ι : Type} (s : Finset ι) (m : ι → Multiset ℂ
   refine Finset.induction_on s (by simp [linPoly]) ?_
   intro a s ha ih
   rw [Finset.sum_insert ha, Finset.prod_insert ha, ← ih]
-  simp [linPoly, Multiset.map_add, Multiset.prod_add]
+  simp [linPoly, Multiset.map_add (f := _), Multiset.prod_add]
 
-private theorem wt_one [IsTotallyComplex K] (u : ℂ) {x : Lie K n} (hx : x ∈ invSet K n) :
+private theorem wt_one [_root_.NumberField.IsTotallyComplex K] (u : ℂ) {x : Lie K n} (hx : x ∈ invSet K n) :
     wt u (fun _ => 1) x = ((nrm x : ℝ) : ℂ) ^ (u - 1) := by
   have h : ∏ σ, detAt σ x = ((nrm x : ℝ) : ℂ) := prod_coord _
   rw [Complex.cpow_sub _ _ (by exact_mod_cast (nrm_pos hx).ne'), Complex.cpow_one, wt, div_eq_mul_inv, ← h,

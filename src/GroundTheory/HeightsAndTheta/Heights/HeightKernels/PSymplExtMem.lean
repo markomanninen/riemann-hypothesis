@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -30,8 +35,8 @@ lemma row_inr (i : Fin n) :
 
 end PSymplExtMem
 
-open PSymplExtMem in
 
+open PSymplExtMem in
 theorem SymplExtMem.proof (h1 : SymplOmegaMem.Statement) (h2 : SymplCons.Statement) :
     SymplExtMem.Statement := by
   intro R _ n α β γ δ Q hdet hQ

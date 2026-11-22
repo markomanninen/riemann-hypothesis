@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OpEqExp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OpEqExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,9 +115,6 @@ variable {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
 def RLinOnK (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ → (V →L[ℂ] V)) : Prop :=
   ∀ (X Y : Matrix (Fin n) (Fin n) ℂ) (r : ℝ), inK ε X → inK ε Y →
     A (X + Y) = A X + A Y ∧ A ((r : ℂ) • X) = (r : ℂ) • A X
-
-theorem rLinOnK_zero (ε : Fin n → Bool) : RLinOnK ε (0 : Matrix (Fin n) (Fin n) ℂ → (V →L[ℂ] V)) :=
-  fun _ _ _ _ _ => by simp
 
 def cext (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ → (V →L[ℂ] V)) (Z : Matrix (Fin n) (Fin n) ℂ) :
     V →L[ℂ] V :=

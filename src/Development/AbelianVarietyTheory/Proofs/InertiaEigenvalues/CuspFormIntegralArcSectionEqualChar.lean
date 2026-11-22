@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspFormBoundGoodPointsExtendsAllPoints
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupSetFinitelyGenerated
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SubsingletonOfScalar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspFormBoundGoodPointsExtendsAllPoints
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupSetFinitelyGenerated
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SubsingletonOfScalar
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.GoodPts GlobalTheory.GoodTransfer
 
@@ -20,7 +25,7 @@ theorem inV_of_arc_of_extIn : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
   intro E _ _ _ H Dw l Xo c r U hU la Y hP hop h4 a' n f hd hf hext T io hioI hκex b hb ϖ hϖ a y' hy' hA y z hz₁ hz₂ hz₃
   let _ := io.toAlgebra
   obtain ⟨h1, h2, -, hL4, hL5⟩ := GlobalTheory.firstFiveLaws
-  obtain ⟨hE, -⟩ := GlobalTheory.Reg.evLaws_genFr_atlas E H Dw l Xo c
+  have hE := GlobalTheory.Frames.allTest_of_secBaseChange h1.secBaseChange E H Dw l Xo c
   have hY : Mono Y.j := GlobalTheory.ThetaShiftProofs.mono_j Y (mono_spMap_subtype _)
   have hcpl : IsAdicComplete (Ideal.span {ϖ}) T.V := hϖ.maximalIdeal_eq ▸ T.cpl
   obtain ⟨χ, hχ, hsp⟩ := h4 T.V b ϖ a (Or.inr ⟨inferInstance, hϖ, hcpl⟩)
@@ -83,7 +88,7 @@ theorem inV_of_arc_of_extIn : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
     have hcoef : ∀ k : c.F, (i.comp io) k ∈ (algebraMap T'.V T'.Fr).range := fun k => by
       obtain ⟨a₀, ha₀⟩ := hioI k
       exact ⟨ω (PowerSeries.C a₀), by rw [RingHom.comp_apply, ← ha₀, hi]⟩
-    obtain ⟨x, hx⟩ := hext T' (i.comp io) hcoef ⟨yG, hE.test _ yG, hint⟩
+    obtain ⟨x, hx⟩ := hext T' (i.comp io) hcoef ⟨yG, hE _ yG, hint⟩
       ⟨spMap ω ≫ χ, zG, k₂, snd_eq Y zG _ (by
         rw [← Category.assoc, k₁, Category.assoc, hover, sp_comp, sp_comp, RingHom.comp_assoc _ io, ← hb]
         exact congrArg spMap (RingHom.ext fun x => (hi _).symm)),
@@ -111,7 +116,7 @@ theorem inV_of_arc_of_extIn : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
   have hint := GlobalTheory.ArcQ.integral_of_isArcFr h1 h2 E H Dw l Xo c _ _ Y T.V b a χ W ρ e th he hth hP T io ev
     (fun x x' hx => (hevC x).symm.trans (hx.trans (hevC x'))) (fun τ x => by rw [hevC]; exact hρ τ x) y₁ hy₁
   show InV T (evI y f)
-  rw [← inV_of_frBor hf.1 ⟨y₁, hE.test _ y₁, hint⟩ y t ht]
+  rw [← inV_of_frBor hf.1 ⟨y₁, hE _ y₁, hint⟩ y t ht]
   refine ⟨ev h₂, mul_right_cancel₀ (pow_ne_zero N hne) ?_⟩
   rw [← map_pow]
   refine Eq.trans ?_ hv.symm

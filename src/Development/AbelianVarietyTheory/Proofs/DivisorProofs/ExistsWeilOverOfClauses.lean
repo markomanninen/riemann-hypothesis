@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TwistedPlaceChoiceLiesOverPair
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyGridDataIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TwistedPlaceChoiceLiesOverPair
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyGridDataIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilOver
+
+@[expose] public section
 
 noncomputable section
 

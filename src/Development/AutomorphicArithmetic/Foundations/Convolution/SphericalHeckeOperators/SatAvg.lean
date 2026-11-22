@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.Mac
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.HlEval
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.ThPMul
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.Mac
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.HlEval
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.ThPMul
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -109,7 +113,8 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
 private theorem theta_sum₂ {ι : Type*} (S : Finset ι) (c : ι → ℂ) (y : ι → LaurentRing n) :
     thP μ (∑ i ∈ S, c i • y i) = ∑ i ∈ S, c i • thP μ (y i) := by
   have h : ∀ r : LaurentRing n, thP μ r = Finsupp.linearCombination ℂ (th μ) r.coeff := fun r => rfl
-  simp only [h, AddMonoidAlgebra.coeff_sum, AddMonoidAlgebra.coeff_smul, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, AddMonoidAlgebra.coeff_sum, AddMonoidAlgebra.coeff_smul, map_sum, map_smul]
 
 variable [BorelSpace (GL (Fin n) F)] [μ.IsHaarMeasure]
 
@@ -214,7 +219,8 @@ theorem UpperTheory.ConvolutionTheory.H.satAvg :
     rw [integral_finsetSum _ fun a ha => (integrable_mul_of_mem (hth a (hr a ha)) hΓ).const_mul _, Finset.mul_sum]
     refine Finset.sum_congr rfl fun a ha => ?_
     rw [integral_const_mul, ← mac F n μ z a (hr a ha), mul_left_comm]
-  rw [map_sub, h2, h3, sub_eq_zero, symSum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, h2, h3, sub_eq_zero, symSum, map_sum]
   simp only [(hlEval n t z hinj _).2, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun σ _ => ?_

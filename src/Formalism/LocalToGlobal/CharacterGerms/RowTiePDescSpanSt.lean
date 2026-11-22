@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePDescJet
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePDescJet
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,7 +53,7 @@ theorem descSpanSt_of (hS : HaSpanSt) : DescSpanSt Xo c := by
     rw [MvPolynomial.map_map, RingHom.ext_int (ι.comp (Int.castRingHom T.Fr)) (Int.castRingHom C)]
   let Ls := chartLetterSystem C3 V ι a
   let tc : (Fin n × Fin (chD C3.ch) →₀ ℕ) → C := fun μ =>
-    MvPolynomial.coeff μ (MvPowerSeries.trunc' C (DescP.cst P.totalDegree) f)
+    AddMonoidAlgebra.coeff (MvPowerSeries.trunc' C (DescP.cst P.totalDegree) f) μ
   have hP2 : ∀ g : PS C n (chD C3.ch),
       Y.nab Ls n g P = ∑ i, cc i * Y.nab Ls n g (MvPolynomial.map ι (Q i)) := by
     intro g
@@ -92,7 +96,7 @@ theorem descSpanSt_of (hS : HaSpanSt) : DescSpanSt Xo c := by
     refine ⟨hZ (e j).2 T.Fr, fun μ => ?_⟩
     simp only [Q]
     rw [MvPolynomial.coeff_map, eq_intCast]
-    exact ⟨((MvPolynomial.coeff μ (Z (e j).2) : ℤ) : T.V), map_intCast _ _⟩
+    exact ⟨((AddMonoidAlgebra.coeff (Z (e j).2) μ : ℤ) : T.V), map_intCast _ _⟩
   · intro j μ
     rw [MvPowerSeries.coeff_monomial]
     split_ifs

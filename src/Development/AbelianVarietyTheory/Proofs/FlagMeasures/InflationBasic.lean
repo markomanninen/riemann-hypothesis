@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceNormalFiniteIndex
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeStabiliserIsCompactIsOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCountData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceNormalFiniteIndex
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicLatticeStabiliserIsCompactIsOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCountData
+
+@[expose] public section
 
 open MeasureTheory Formalism.MainNotions.S GlobalTheory.RowLev NumberField IsDedekindDomain Matrix
 open scoped InnerProductSpace ComplexOrder TensorProduct Pointwise Classical
@@ -46,13 +50,13 @@ theorem inflation_basic : ∀ (I : AutInst) (g : ℕ) (Q : Type) [Group Q] (ρ :
   · intro q
     obtain ⟨t, ht⟩ := fibre_eq ρ q
     rw [ht]
-    exact ⟨measure_preimage_mul μf t _, hopen.preimage (continuous_mul_left t)⟩
+    exact ⟨measure_preimage_mul μf t _, hopen.preimage (continuous_const_mul t)⟩
   · intro a
     refine ⟨integrable_lift ρ μf hg a, ?_, fun x k hk k' hk' => lift_biinv ρ μf a x k hk k' hk'⟩
     rw [IsLocallyConstant.iff_eventually_eq]
     intro x
     have hnhds : (fun y => x⁻¹ * y) ⁻¹' I.Kg g ∈ nhds x :=
-      (hopen.preimage (continuous_mul_left x⁻¹)).mem_nhds (by
+      (hopen.preimage (continuous_const_mul x⁻¹)).mem_nhds (by
         show x⁻¹ * x ∈ I.Kg g
         rw [inv_mul_cancel]
         exact h1)

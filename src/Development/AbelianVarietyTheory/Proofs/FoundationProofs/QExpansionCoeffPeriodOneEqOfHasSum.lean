@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
+
+@[expose] public section
 
 open UpperHalfPlane ModularForm CongruenceSubgroup MeasureTheory Filter Topology
 open scoped MatrixGroups ModularForm Manifold

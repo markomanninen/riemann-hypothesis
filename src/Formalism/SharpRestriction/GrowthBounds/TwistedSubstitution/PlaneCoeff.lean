@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestXiPOfNS
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestXiPOfNS
+
+@[expose] public section
 
 noncomputable section
 

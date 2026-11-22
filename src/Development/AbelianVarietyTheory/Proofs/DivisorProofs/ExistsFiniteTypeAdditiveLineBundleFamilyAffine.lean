@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MorphismsSpreadOutToFgSubalgebra
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsRefinementOfIsLimit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MorphismsSpreadOutToFgSubalgebra
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsRefinementOfIsLimit
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -45,7 +49,6 @@ variable {R C}
 def stageMap {s t : Finset C} (h : s ⊆ t) : stage R C t ⟶ stage R C s :=
   spOMap (Subalgebra.inclusion (Algebra.adjoin_mono (Finset.coe_subset.mpr h)))
 
-@[reassoc]
 theorem toStage_stageMap {s t : Finset C} (h : s ⊆ t) : toStage R C t ≫ stageMap h = toStage R C s := by
   rw [toStage, stageMap, spOMap_comp, toStage]
   rfl
@@ -68,8 +71,8 @@ theorem locallyOfFiniteType_stage (s : Finset C) : LocallyOfFiniteType (stage R 
   rw [RingHom.finiteType_algebraMap, ← Subalgebra.fg_iff_finiteType]
   exact Subalgebra.fg_adjoin_finset s
 
-open GlobalTheory.CechPic in
 
+open GlobalTheory.CechPic in
 theorem exists_lb_stage (X : Over (Sp R)) [QuasiCompact X.hom] [QuasiSeparated X.hom]
     (N : LB (X ⊗ spO R C).left) (hN : N.IsLB) :
     ∃ (s : Finset C) (M : LB (X ⊗ stage R C s).left), M.IsLB ∧ LBIso N (M.pull (X ◁ toStage R C s).left) := by
@@ -84,8 +87,8 @@ theorem exists_lb_stage (X : Over (Sp R)) [QuasiCompact X.hom] [QuasiSeparated X
   rw [whiskerLeft_toStage_left]
   exact hiso
 
-open GlobalTheory.CechPic in
 
+open GlobalTheory.CechPic in
 theorem exists_stage_pull_eq (X : Over (Sp R)) [QuasiCompact X.hom] [QuasiSeparated X.hom]
     (s : Finset C) (c c' : Pic (X ⊗ stage R C s).left)
     (h : CechPic.pull (X ◁ toStage R C s).left c = CechPic.pull (X ◁ toStage R C s).left c') :

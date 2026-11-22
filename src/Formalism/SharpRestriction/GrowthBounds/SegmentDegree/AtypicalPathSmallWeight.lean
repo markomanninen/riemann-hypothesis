@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeight
+
+@[expose] public section
 
 noncomputable section
 

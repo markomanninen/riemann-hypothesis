@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.PrincZl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ContTw
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.PrincZl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ContTw
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base
 
@@ -51,7 +55,7 @@ theorem UpperTheory.V.Base.gammaGen :
     let S : Set U := Subtype.val ⁻¹' (V : Set (G k Ω))
     have hSc : IsClosed S := hVc.preimage continuous_subtype_val
     have hIc : IsClosed (κ '' S) := (hSc.isCompact.image hκc).isClosed
-    let T : Set ℤ_[l] := fun a => Multiplicative.ofAdd a ∈ κ '' S
+    let T : Set ℤ_[l] := Multiplicative.ofAdd ⁻¹' (κ '' S)
     have hTc : IsClosed T := hIc.preimage continuous_ofAdd
     have hTz : Set.range (Int.cast : ℤ → ℤ_[l]) ⊆ T := by
       rintro _ ⟨n, rfl⟩

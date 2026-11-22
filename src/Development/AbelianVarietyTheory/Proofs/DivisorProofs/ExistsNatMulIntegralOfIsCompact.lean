@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +24,10 @@ private lemma natCast_mul_mem_adicCompletionIntegers (N : ℕ) {b : FiniteAdeleR
   rw [← nsmul_eq_mul]
   exact nsmul_mem hb N
 
+
 open NumberField IsDedekindDomain in
 open scoped Classical in
 variable (F : Type) [Field F] [NumberField F] in
-
 theorem _root_.GlobalTheory.WeilM.exists_nat_mul_integral_of_isCompact {κ : Type} [Fintype κ]
     {K : Set (κ → FiniteAdeleRing (𝓞 F) F)}
     (hK : IsCompact K) : ∃ N : ℕ, 0 < N ∧ ∀ x ∈ K, ∀ i v,
@@ -132,10 +136,10 @@ private lemma mem_integers_of_forall_integral_finiteAdele (x : F)
   rw [HeightOneSpectrum.mem_adicCompletionIntegers] at hv
   simpa [HeightOneSpectrum.valuedAdicCompletion_eq_valuation] using hv
 
+
 open NumberField IsDedekindDomain in
 open scoped Classical in
 variable (F : Type) [Field F] [NumberField F] in
-
 theorem _root_.GlobalTheory.WeilM.summable_pureA {κ : Type} [Fintype κ]
     (f : SchwartzMap (κ → mixedEmbedding.mixedSpace F) ℂ)
     {g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ}
@@ -175,10 +179,10 @@ theorem _root_.GlobalTheory.WeilM.summable_pureA {κ : Type} [Fintype κ]
     rw [Set.indicator_of_mem hmem, mul_comm B]
     exact mul_le_mul_of_nonneg_left (hB _) (norm_nonneg _)
 
+
 open NumberField IsDedekindDomain in
 open scoped Classical in
 variable (F : Type) [Field F] [NumberField F] in
-
 theorem _root_.GlobalTheory.WeilM.summable_of_mem_schA {κ : Type} [Fintype κ]
     {Φ : (κ → AdeleRing (𝓞 F) F) → ℂ} (hΦ : Φ ∈ _root_.GlobalTheory.WeilM.schA F κ) :
     Summable fun ξ : κ → F => Φ (fun i => algebraMap F (AdeleRing (𝓞 F) F) (ξ i)) := by
@@ -191,10 +195,10 @@ theorem _root_.GlobalTheory.WeilM.summable_of_mem_schA {κ : Type} [Fintype κ]
   | add x y _ _ hx hy => simpa only [Pi.add_apply] using hx.add hy
   | smul a x _ hx => simpa only [Pi.smul_apply, smul_eq_mul] using hx.mul_left a
 
+
 open NumberField IsDedekindDomain in
 open scoped Classical in
 variable (F : Type) [Field F] [NumberField F] in
-
 theorem _root_.GlobalTheory.WeilM.summable_norm_of_mem_schA {κ : Type} [Fintype κ]
     {Φ : (κ → AdeleRing (𝓞 F) F) → ℂ} (hΦ : Φ ∈ _root_.GlobalTheory.WeilM.schA F κ) :
     Summable fun ξ : κ → F => ‖Φ (fun i => algebraMap F (AdeleRing (𝓞 F) F) (ξ i))‖ :=
@@ -239,10 +243,10 @@ def thetaLin (κ : Type) [Fintype κ] : schA F κ →ₗ[ℂ] ℂ where
 
 @[simp] theorem thetaLin_apply {κ : Type} [Fintype κ] (Φ : schA F κ) : thetaLin F κ Φ = thetaSum F Φ.1 := rfl
 
+
 open NumberField IsDedekindDomain in
 open scoped Classical in
 variable (F : Type) [Field F] [NumberField F] in
-
 theorem _root_.GlobalTheory.WeilM.thetaSum_summable_linear (κ : Type) [Fintype κ] :
     (∀ Φ ∈ _root_.GlobalTheory.WeilM.schA F κ,
       Summable fun ξ : κ → F => Φ (fun i => algebraMap F (AdeleRing (𝓞 F) F) (ξ i))) ∧

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 
@@ -78,12 +82,5 @@ theorem exists_iso_subscheme_vanishingIdeal_of_isClosed
         (Scheme.IdealSheafData.vanishingIdeal
           (⟨(C : Set X), hC⟩ : TopologicalSpace.Closeds X)).subschemeι :=
   exists_iso_subscheme_vanishingIdeal_of_coe_eq C _ rfl
-
-def complOpensOfIsClosed {X : Scheme} (C : X.Opens) (hC : IsClosed (C : Set X)) : X.Opens :=
-  ⟨(C : Set X)ᶜ, hC.isOpen_compl⟩
-
-@[simp]
-theorem coe_complOpensOfIsClosed {X : Scheme} (C : X.Opens) (hC : IsClosed (C : Set X)) :
-    ((complOpensOfIsClosed C hC : X.Opens) : Set X) = (C : Set X)ᶜ := rfl
 
 end FunctorialResolution.EmbeddedResolution

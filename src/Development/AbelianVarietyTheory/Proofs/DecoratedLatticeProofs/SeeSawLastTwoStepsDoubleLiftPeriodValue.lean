@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientPara
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HandBFSmul
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiThetaOfVac
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselPeriodLinearAndTranslationCombination
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaFlatMapIndepUnfoldingStep
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationDisjointPlacesCommuteVacua
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawCommonRealDatumBiThetaVacuumContractionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawUnfoldedDataEqKernelDataAtLevel
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastTwoStepsDoubleLiftPeriodEqIntegralStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientPara
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HandBFSmul
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiThetaOfVac
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselPeriodLinearAndTranslationCombination
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaFlatMapIndepUnfoldingStep
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationDisjointPlacesCommuteVacua
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawCommonRealDatumBiThetaVacuumContractionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawUnfoldedDataEqKernelDataAtLevel
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastTwoStepsDoubleLiftPeriodEqIntegralStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl
 open scoped TensorProduct
@@ -87,10 +92,10 @@ theorem autFun_multT {V : HSp D} {S : D.what₂.Tau → SPar} {θ : InfFam D} {M
     | smul_tprod r v =>
       rw [map_smul, LinearEquiv.coe_coe, PiTensorProduct.lift.tprod]
       exact autFun_smul (hT.aut v).toIsAutFun r
-    | add x y hx hy => rw [map_add]; exact autFun_add hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact autFun_add hx hy
   | zero => exact ⟨fun _ _ _ => by simp, ⟨⊤, isOpen_univ, fun _ _ _ _ => by simp⟩, by
       simp only [map_zero, LinearMap.zero_apply]; exact continuous_const⟩
-  | add T₁ T₂ _ _ h₁ h₂ => rw [map_add, LinearMap.add_apply]; exact autFun_add (h₁ x) (h₂ x)
+  | add T₁ T₂ _ _ h₁ h₂ => rw [map_add (f := _), LinearMap.add_apply]; exact autFun_add (h₁ x) (h₂ x)
   | smul c T _ h => rw [map_smul, LinearMap.smul_apply]; exact autFun_smul (h x) c
 
 theorem trc_eq_sum {V : HSp D} (e : GA D V →₀ ℂ) (f : GA D V → ℂ) : trc e f = e.sum fun g a => a • rTrans g f := rfl
@@ -169,8 +174,8 @@ theorem integral_sum_sum {X T L : HSp D} (o : OrthDec X T L) (cT : CoCpt T) (vT 
     {I J : Type} [Fintype I] [Fintype J] {Φ : I → J → GA D X → ℂ} (hΦ : ∀ i j, IsContAut X (Φ i j)) :
     ∫ h in vT.𝓕, f h * (∑ i, ∑ j, Φ i j) (o.emb (h, 1)) ∂vT.μ = ∑ i, ∑ j, ∫ h in vT.𝓕, f h * Φ i j (o.emb (h, 1)) ∂vT.μ := by
   simp only [Finset.sum_apply, Finset.mul_sum]
-  rw [integral_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => integrableOn_emb o cT vT hf (hΦ i j)]
-  exact Finset.sum_congr rfl fun i _ => integral_finset_sum _ fun j _ => integrableOn_emb o cT vT hf (hΦ i j)
+  rw [integral_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => integrableOn_emb o cT vT hf (hΦ i j)]
+  exact Finset.sum_congr rfl fun i _ => integral_finsetSum _ fun j _ => integrableOn_emb o cT vT hf (hΦ i j)
 
 theorem lst_smul (c : Comm D) (j : ℕ) (h : j + 2 * 0 + 2 = D.R.m) (τ) (s₁ : StepBF c.ψ (c.B j 0 h) (c.J j 0 h)) (a b : ℂ)
     (Ψ₁ : WO (c.V j) (c.V (j + 1)) → ℂ) (Ψ₂ : WO (c.V (j + 1)) c.T → ℂ) :

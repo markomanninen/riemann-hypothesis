@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.DualLattices.IsFibreSq
-import ReciprocityTheory.DualLattices.DualPairInh
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.DualLattices.IsFibreSq
+public import ReciprocityTheory.DualLattices.DualPairInh
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ private lemma dualTowerRing_π {R₀ : Type} [CommRing R₀] {Λ S : LAlg R₀} 
   obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective x
   induction f using Polynomial.induction_on with
   | C a => rw [dualTowerRing_C, Dq.sect, DualNum.ev_mk, Polynomial.eval_C]
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
   | monomial n a _ =>
     have h := dualTowerRing_X Dq ψ
     rw [DualNum.eta] at h

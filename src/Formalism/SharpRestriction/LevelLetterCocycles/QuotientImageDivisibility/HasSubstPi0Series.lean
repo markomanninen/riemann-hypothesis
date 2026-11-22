@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PhiExp
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.DvdOfDvdImage
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusUniformizerPowDvd
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PhiExp
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.DvdOfDvdImage
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusUniformizerPowDvd
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -62,7 +66,7 @@ theorem qp_unit_EE (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) :
   have e : algebraMap (LetA O n) W.EE (Formalism.MainNotions.LiftingTheory.qp W) =
       (U : W.EE) * (((PD.p : ℕ) : W.EE) * ((U⁻¹ : W.EEˣ) : W.EE) + 1) := by
     rw [mul_add, mul_one, ← mul_assoc, mul_comm (U : W.EE), mul_assoc, Units.mul_inv, mul_one, hU]
-    simp [Formalism.MainNotions.LiftingTheory.qp, map_add, map_natCast, add_comm]
+    simp [Formalism.MainNotions.LiftingTheory.qp, map_add (f := _), map_natCast, add_comm]
   rw [e]
   exact U.isUnit.mul h1
 

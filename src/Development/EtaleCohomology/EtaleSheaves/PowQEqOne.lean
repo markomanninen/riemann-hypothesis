@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTw0LocSplitOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTw0LocSplitOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -19,7 +23,8 @@ theorem local_eq {q : ℕ} [NeZero q] {B : Type} [CommRing B] [IsLocalRing B] (h
   have hyu : IsUnit y := IsUnit.of_pow_eq_one hy (NeZero.ne q)
   have hres : IsLocalRing.residue B (∑ i ∈ Finset.range q, x ^ i * y ^ (q - 1 - i)) =
       IsLocalRing.residue B ((q : B) * y ^ (q - 1)) := by
-    rw [map_sum, map_mul, map_pow, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_mul, map_pow, map_natCast]
     rw [Finset.sum_congr rfl (g := fun _ => IsLocalRing.residue B y ^ (q - 1))]
     · simp
     · intro i hi

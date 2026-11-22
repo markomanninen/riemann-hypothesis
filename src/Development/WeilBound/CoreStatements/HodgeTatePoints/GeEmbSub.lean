@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfFin
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteOpenHopfOrderStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemBtOrderIffBtSetStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularFunctionIffSectionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZeroOfValuesStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderTranslationInvariantStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHopfFin
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteOpenHopfOrderStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemBtOrderIffBtSetStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularFunctionIffSectionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZeroOfValuesStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderTranslationInvariantStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 namespace PositivityTheory.HtPt.Ge.EmbSub
 open GlobalTheory GlobalTheory.CompanionTheory GlobalTheory.CompanionTheory.Ar
@@ -19,12 +23,12 @@ section alg
 
 variable {R : Type} [CommRing R] {T : Type} [CommGroup T]
 
-open Classical in
 
+open Classical in
 noncomputable def ind (H : Subgroup T) : T → R := fun x => if x ∈ H then 1 else 0
 
-open Classical in
 
+open Classical in
 noncomputable def extZero (H : Subgroup T) (a : H → R) : T → R := fun x => if h : x ∈ H then a ⟨x, h⟩ else 0
 
 theorem ind_translate_mem {H : Subgroup T} {A : Subalgebra R (H → R)} {B : Subalgebra R (T → R)}
@@ -183,9 +187,46 @@ theorem openImmersion_translatesCover : ∀ (R : Type) [CommRing R] [IsDomain R]
   obtain ⟨H, A, hH, hA, hAs⟩ := GlobalTheory.T.finite_open_hopf_order R T Γ U hF
   have hU := isAffineOpen_of_fin Γ hF
   have hTr : ∀ f ∈ A, ∀ t, (fun h => f (t * h)) ∈ A := GlobalTheory.T.hopf_order_translation_invariant R H A hA
+  have hOrder : Γ.btOrder U = Γ.btOrder ⊤ := by
+    ext f
+    rw [GlobalTheory.T.mem_btOrder_iff_btSet, GlobalTheory.T.mem_btOrder_iff_btSet]
+    refine ⟨fun hf t g _ => ?_, fun hf t g _ => hf t g trivial⟩
+    obtain ⟨R', _, _, _, _, hNormal, hFlat, hPrime⟩ :=
+      @Htat.hens_normal R _ _ _ (Γ.G.hom g).asIdeal (Γ.G.hom g).isPrime
+    have hinj : Function.Injective (algebraMap R R') := FaithfulSMul.algebraMap_injective R R'
+    obtain ⟨Γ', F, hBase⟩ :=
+      PositivityTheory.UnitarySelfGeneration.bt_exists_bc R T Γ R' (algebraMap R R') hinj
+    have hinj' : Function.Injective ((algebraMap R' (FractionRing R')).comp (algebraMap R R')) :=
+      (IsFractionRing.injective R' (FractionRing R')).comp hinj
+    let κ : FractionRing R →+* FractionRing R' := IsFractionRing.lift hinj'
+    have hκa : ∀ r, κ (algebraMap R _ r) = algebraMap R' _ (algebraMap R R' r) :=
+      IsFractionRing.lift_algebraMap hinj'
+    have hκ : κ.comp (algebraMap R _) = (algebraMap R' _).comp (algebraMap R R') := RingHom.ext hκa
+    obtain ⟨g', hg, hClosed⟩ :=
+      Scheme.exists_preimage_of_isPullback hBase.cart g (IsLocalRing.closedPoint R') (by
+        apply PrimeSpectrum.ext
+        exact hPrime.symm)
+    have := Γ'.quasiFinite
+    have := Γ'.finPres
+    have := Γ'.separated
+    have := Γ'.quasiCompact
+    obtain ⟨U', hFinite, hClosedMem⟩ := Twhopf.finite_part R' Γ'.G.left Γ'.G.hom
+    have hSub := Twhopf.finite_sub R' T Γ' U' hFinite hClosedMem
+    have hPullSub := GlobalTheory.T.isFinOpenSub_base_change R T Γ R' Γ' F hBase U hF
+    have hle : F ⁻¹ᵁ U ≤ U' := Twhopf.finite_le R' _ Γ'.G.hom _ _ hPullSub.finite hClosedMem
+    have hReg : (fun h => algebraMap R R' (f h)) ∈ Γ'.btSet (F ⁻¹ᵁ U) := by
+      intro s x hx
+      have := Htat.reg_pull R T Γ R' Γ' F hBase κ hκ _ x (hf s (F x) hx)
+      simpa only [hκa] using this
+    rw [← GlobalTheory.T.mem_btOrder_iff_btSet,
+      ← GlobalTheory.T.btOrder_eq_of_le_of_isFinOpenSub R' T Γ' U' _ hSub hPullSub hle,
+      GlobalTheory.T.mem_btOrder_iff_btSet] at hReg
+    rw [← hg]
+    refine Htat.bt_reg_descent R T Γ R' Γ' F hBase hFlat κ hκ _ g' ?_
+    simpa only [hκa] using hReg t g' (hClosedMem g' hClosed)
   have hB : ∀ f : T → R, f ∈ Γ.btOrder ⊤ ↔ ∀ t, (fun h : H => f (t * h)) ∈ A := by
     intro f
-    rw [← Htat.bt_sub_eq_top R T Γ U hF, GlobalTheory.T.mem_btOrder_iff_btSet R T Γ U f]
+    rw [← hOrder, GlobalTheory.T.mem_btOrder_iff_btSet R T Γ U f]
     constructor
     · intro hf t
       obtain ⟨s, hs⟩ := (GlobalTheory.T.regular_function_iff_section R T Γ U _).1 (hf t)

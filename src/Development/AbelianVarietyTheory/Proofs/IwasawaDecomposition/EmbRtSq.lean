@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+
+@[expose] public section
 
 open NumberField
 
@@ -55,12 +59,6 @@ private theorem mult_conjEmb_eq_ite {H : Host E} (D : Datum H) (τ : E →+* ℂ
       rw [h]
       exact fun e => hne e.symm
     rw [if_pos h2, if_neg h3]
-
-theorem main {H : Host E} (D : Datum H) (τ : E →+* ℂ) :
-    Datum.mult D (conjEmb τ) + Datum.mult D τ = Datum.p D + Datum.q D := by
-  rw [mult_conjEmb_eq_ite]
-  unfold Datum.mult
-  split_ifs <;> omega
 
 end GlobalTheory.ConjugateMultiplicity
 

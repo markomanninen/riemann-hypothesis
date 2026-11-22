@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSubspaceIsometric
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.AnVecTorusLetter
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusExtExponentialDerivativeBijectiveTangent
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HermFormRsmulRight
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsLocalRingDual
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsIntegralDiscrMulOfTraceInt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CmMetrisedLineLengthsEqSectionLieNorms
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SplitBaseChange
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsSplit
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsTauCanonicalIffOfIsPullDegTauBimult
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieCombBaseChange
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieBasisCoordinatesBijectiveTangent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSubspaceIsometric
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.AnVecTorusLetter
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusExtExponentialDerivativeBijectiveTangent
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HermFormRsmulRight
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsLocalRingDual
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsIntegralDiscrMulOfTraceInt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CmMetrisedLineLengthsEqSectionLieNorms
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SplitBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsSplit
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsTauCanonicalIffOfIsPullDegTauBimult
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieCombBaseChange
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieBasisCoordinatesBijectiveTangent
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
@@ -69,8 +73,8 @@ theorem exists_vec (v : epsR A ⟶ D₀.P.A) (hv : IsTangent v) :
 
 end Scale
 
-open Classical in
 
+open Classical in
 theorem map_proj {E : Type} [Field E] [NumberField E] {g : ℕ} (ty : Fin g → (E →+* ℂ))
     (L : (Fin g → ℂ) →ₗ[ℂ] (Fin g → ℂ)) (S : Set (Fin g → ℂ)) (hS : Submodule.span ℝ S = ⊤)
     (h : ∀ (a : 𝓞 E), ∀ v ∈ S, L (fun j => ty j (a : E) * v j) = fun j => ty j (a : E) * L v j) (ρ : E →+* ℂ)
@@ -83,7 +87,7 @@ theorem map_proj {E : Type} [Field E] [NumberField E] {g : ℕ} (ty : Fin g → 
     | add x y _ _ hx hy =>
       have : (fun j => ty j (a : E) * (x + y) j) = (fun j => ty j (a : E) * x j) + fun j => ty j (a : E) * y j := by
         funext j; simp [mul_add]
-      rw [this, map_add, map_add, hx, hy]
+      rw [this, map_add (f := _), map_add (f := _), hx, hy]
       funext j; simp [mul_add]
     | smul r x _ hx =>
       have : (fun j => ty j (a : E) * (r • x) j) = (r : ℂ) • (fun j => ty j (a : E) * x j) := by
@@ -132,14 +136,16 @@ theorem exists_pull_form {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (hH : Hm.Is
 theorem eq_zero_of_trace {E : Type} [Field E] [NumberField E] {x : E}
     (h : ∀ a : 𝓞 E, Algebra.trace ℚ E ((a : E) * x) = 0) : x = 0 := by
   refine (traceForm_nondegenerate ℚ E).1 x fun y => ?_
-  rw [← (integralBasis E).sum_repr y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (integralBasis E).sum_repr y, map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [map_smul, Algebra.traceForm_apply, integralBasis_apply, _root_.mul_comm x]
   exact smul_eq_zero_of_right _ (h _)
 
 theorem herm_swap {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r) (u v : Fin r → E) :
     herm X.Gm v u = cc (herm X.Gm u v) := by
-  simp only [herm, cc, map_sum, map_mul, IsCMField.complexConj_apply_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [herm, cc, map_sum, map_mul, IsCMField.complexConj_apply_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [← X.Gm_herm a b, cc]
@@ -202,7 +208,7 @@ theorem letter_length_le : Known → ∀ (E : Type) [Field E] [NumberField E] [I
       rw [hP, ← this, ← map_smul, hz', hPw t (hy t ht0)]
       congr 1
       funext j
-      simp
+      by_cases h : (Uw.e j).1 = τ <;> simp [h, Pi.smul_apply, smul_eq_mul]
     obtain ⟨τ', hτ'⟩ : ∃ τ' : (U.X k).Ψ, τ'.1 = relab c σ τ ∨ conjEmb τ'.1 = relab c σ τ := by
       by_cases hm : relab c σ τ ∈ (U.X k).Ψ
       · exact ⟨⟨_, hm⟩, Or.inl rfl⟩

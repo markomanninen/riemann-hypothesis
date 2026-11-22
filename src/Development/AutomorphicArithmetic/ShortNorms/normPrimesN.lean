@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
+module
+
+public import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
+
+@[expose] public section
 
 open GlobalTheory.Mem.An Filter Topology
 

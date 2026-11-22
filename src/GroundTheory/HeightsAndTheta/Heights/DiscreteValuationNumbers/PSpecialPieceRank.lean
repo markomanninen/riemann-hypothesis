@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -105,7 +110,8 @@ theorem SpecialPieceRank.proof (h1 : GradedPieceFree.Statement.{u}) : SpecialPie
       rw [← hT, hfy']
       have hg' := congrArg Subtype.val hg
       simp only [Submodule.coe_sum, Submodule.coe_smul, Submodule.coe_zero, hv] at hg'
-      simp only [y, Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [y, Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
       rw [← hg']
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [← hc j, hsmul]
@@ -114,7 +120,7 @@ theorem SpecialPieceRank.proof (h1 : GradedPieceFree.Statement.{u}) : SpecialPie
     let z : gradedPieceR P m := ⟨Ideal.Quotient.mk P g0, Submodule.mem_map.2 ⟨g0, hg0, rfl⟩⟩
     have hyz : y = ϖ • z := by
       apply Subtype.ext
-      rw [← hfy', hfp, map_add, Ideal.Quotient.eq_zero_iff_mem.2 hp, zero_add, map_mul,
+      rw [← hfy', hfp, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 hp, zero_add, map_mul,
         Submodule.coe_smul]
       show _ = ϖ • Ideal.Quotient.mk P g0
       rw [← map_mul, C_mul']
@@ -144,7 +150,8 @@ theorem SpecialPieceRank.proof (h1 : GradedPieceFree.Statement.{u}) : SpecialPie
     have hy := congrArg Subtype.val (b.sum_repr y)
     simp only [Submodule.coe_sum, Submodule.coe_smul] at hy ⊢
     change _ = T (y : MRing ι O ⧸ P)
-    rw [← hy, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hy, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, hv, hsmul]
   rw [Module.finrank_eq_card_basis (Module.Basis.mk hli hsp), Module.finrank_eq_card_chooseBasisIndex]

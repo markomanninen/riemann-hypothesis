@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSecRankSpecialize
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecAlgFieldChange
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSecRankSpecialize
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecAlgFieldChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -48,8 +53,8 @@ theorem mem_maximalIdeal_smul_of_secMap_eq_zero {R : Type*} [CommRing R] [IsLoca
 
 end SecRankSpecialize
 
-open SecRankSpecialize in
 
+open SecRankSpecialize in
 theorem SecRankSpecialize.proof : SecRankSpecialize.Statement := by
   intro R K κ _ _ _ _ _ _ _ _ n e Q y hsurj hfin
   classical
@@ -80,7 +85,8 @@ theorem SecRankSpecialize.proof : SecRankSpecialize.Statement := by
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [hb, ← hr i, algebraMap_smul]
     have hz : ρ (x - ∑ i, r i • b i) = 0 := by
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp only [map_smul]
       rw [hsum, sub_self]
     have hm := mem_maximalIdeal_smul_of_secMap_eq_zero κ hsurj Q y _ hz
@@ -95,7 +101,7 @@ theorem SecRankSpecialize.proof : SecRankSpecialize.Statement := by
     induction hx using Submodule.span_induction with
     | mem z hz => obtain ⟨i, rfl⟩ := hz; exact Submodule.subset_span ⟨i, rfl⟩
     | zero => simp
-    | add u w _ _ hu hw => rw [map_add]; exact Submodule.add_mem _ hu hw
+    | add u w _ _ hu hw => rw [map_add (f := _)]; exact Submodule.add_mem _ hu hw
     | smul c u _ hu => rw [map_smul, ← algebraMap_smul K]; exact Submodule.smul_mem _ _ hu
   have hspan : Submodule.span K (Set.range fun i => ι (b i)) = ⊤ := by
     refine eq_top_iff.mpr fun z hz => ?_
@@ -110,7 +116,7 @@ theorem SecRankSpecialize.proof : SecRankSpecialize.Statement := by
           ← map_smul, smul_monomial, smul_eq_mul, mul_one]
       rw [hmon]
       exact Submodule.smul_mem _ _ (hB _)
-    | add p q hp hq => rw [map_add]; exact Submodule.add_mem _ hp hq
+    | add p q hp hq => rw [map_add (f := _)]; exact Submodule.add_mem _ hp hq
   calc Module.finrank K
           (Vertical.SecAlg (Q.map (MvPolynomial.map (algebraMap R K))) (algebraMap R K ∘ y))
         = Module.finrank K (Submodule.span K (Set.range fun i => ι (b i))) := by

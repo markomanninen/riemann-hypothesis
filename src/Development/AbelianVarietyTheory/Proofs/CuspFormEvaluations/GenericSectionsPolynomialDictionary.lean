@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroOfReducedInputs
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.CombBound4Of
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.DescentStatementPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroOfReducedInputs
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.CombBound4Of
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.DescSt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps GlobalTheory.Shares
 
@@ -66,7 +70,8 @@ private lemma algebraMap_mul_mem_Vw (la : HeightOneSpectrum (𝓞 B.KO)) (N : �
 
 theorem toRp_mem (la : HeightOneSpectrum (𝓞 B.KO)) (N : ℕ) (u : WeightFamilies.Wt D j)
     (p : MvPolynomial (Idx D j N) X.Forms) (hp : OfWt X u p) : toRp X la N p ∈ Vw X la N u := by
-  rw [p.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, map_sum]
   refine Submodule.sum_mem _ fun m _ => ?_
   obtain ⟨F, hF⟩ := LinearMap.mem_range.mp (hp m)
   have key : toRp X la N (MvPolynomial.monomial m (p.coeff m)) = emb X la N (p.coeff m) *
@@ -91,7 +96,8 @@ theorem toRp_mem (la : HeightOneSpectrum (𝓞 B.KO)) (N : ℕ) (u : WeightFamil
 
 theorem toFn_mem (R : Rdg X) {N : ℕ} (t : Idx D j N → ℂ) (u : WeightFamilies.Wt D j)
     (p : MvPolynomial (Idx D j N) X.Forms) (hp : OfWt X u p) : R.toFn t p ∈ R.sp u Set.univ := by
-  rw [p.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, map_sum]
   refine Submodule.sum_mem _ fun m _ => ?_
   obtain ⟨F, hF⟩ := LinearMap.mem_range.mp (hp m)
   have key : R.toFn t (MvPolynomial.monomial m (p.coeff m)) = R.ev (p.coeff m) *
@@ -141,7 +147,7 @@ theorem sp_span (R : Rdg X) (u : WeightFamilies.Wt D j) (s : Set (B.Cusp j u)) :
       simp only [map_zero]
       exact Submodule.zero_mem _
     | add x y _ _ hx hy =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       simp only [map_smul, R.ev_smul]
@@ -173,8 +179,8 @@ end GlobalTheory.Shares.PolyDict
 
 namespace GlobalTheory.Shares
 
-open PolyDict in
 
+open PolyDict in
 theorem polyDictionary : ∀ (D : D7) (B : WeightFamilies.Prov D) (P : ModuliIntegralCharts.Prov D) (j : ℕ) (X : PJ D B P j) (R : Rdg X) (la : HeightOneSpectrum (𝓞 B.KO)) (N : ℕ) (wL : WeightFamilies.Wt D j) (w : Fin N → B.Cusp j wL) (t : Idx D j N → ℂ), (∀ i, toRp X la N (∑ k, MvPolynomial.X (i, k) * MvPolynomial.C (X.inc wL (w k))) = sec X la w i ∧ R.toFn t (∑ k, MvPolynomial.X (i, k) * MvPolynomial.C (X.inc wL (w k))) = R.s w t i ∧ OfWt X wL (∑ k, MvPolynomial.X (i, k) * MvPolynomial.C (X.inc wL (w k)) : MvPolynomial (Idx D j N) X.Forms)) ∧ (∀ F, toRp X la N (MvPolynomial.C F) = emb X la N F ∧ R.toFn t (MvPolynomial.C F) = R.ev F) ∧ (∀ u (F : B.Cusp j u), OfWt X u (MvPolynomial.C (X.inc u F) : MvPolynomial (Idx D j N) X.Forms)) ∧ (∀ u u' (p q : MvPolynomial (Idx D j N) X.Forms), OfWt X u p → OfWt X u' q → OfWt X (wadd u u') (p * q)) ∧ (∀ u (p : MvPolynomial (Idx D j N) X.Forms), OfWt X u p → toRp X la N p ∈ Vw X la N u ∧ R.toFn t p ∈ R.sp u Set.univ) ∧ (∀ u u', ∀ f ∈ R.sp u Set.univ, ∀ g ∈ R.sp u' Set.univ, f * g ∈ R.sp (wadd u u') Set.univ) ∧ (∀ u (s : Set (B.Cusp j u)), R.sp u (Submodule.span B.KO s) = R.sp u s) ∧ (∀ u (M : Submodule B.KO (B.Cusp j u)), FiniteDimensional ℂ (R.sp u M) ∧ Module.finrank ℂ (R.sp u M) = Module.finrank B.KO M) := by
   intro D B P j X R la N wL w t
   refine ⟨fun i => ⟨?_, ?_, ?_⟩, fun F => ⟨PolyDict.toRp_C la N F, PolyDict.toFn_C R t F⟩,
@@ -182,17 +188,19 @@ theorem polyDictionary : ∀ (D : D7) (B : WeightFamilies.Prov D) (P : ModuliInt
     fun u p hp => ⟨PolyDict.toRp_mem la N u p hp, PolyDict.toFn_mem R t u p hp⟩,
     fun u u' f hf g hg => PolyDict.sp_mul R u u' f hf g hg,
     fun u s => PolyDict.sp_span R u s, fun u M => PolyDict.sp_finrank R u M⟩
-  · rw [map_sum]
-    unfold Formalism.MainNotions.Gaps.EtaleWeightGaps.sec
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_mul, PolyDict.toRp_X, PolyDict.toRp_C, Algebra.smul_def,
-      IsScalarTower.algebraMap_apply (Op X la N) (Kp X la N) (Rp X la N)]
-  · rw [map_sum]
-    unfold Rdg.s
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_mul, PolyDict.toFn_X, PolyDict.toFn_C]
-    funext y
-    simp [Pi.mul_apply, Pi.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      unfold Formalism.MainNotions.Gaps.EtaleWeightGaps.sec
+      refine Finset.sum_congr rfl fun k _ => ?_
+      rw [map_mul, PolyDict.toRp_X, PolyDict.toRp_C, Algebra.smul_def,
+        IsScalarTower.algebraMap_apply (Op X la N) (Kp X la N) (Rp X la N)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      unfold Rdg.s
+      refine Finset.sum_congr rfl fun k _ => ?_
+      rw [map_mul, PolyDict.toFn_X, PolyDict.toFn_C]
+      funext y
+      simp [Pi.mul_apply, Pi.smul_apply]
   · exact PolyDict.ofWt_sum wL _ _ fun k _ => PolyDict.ofWt_X_mul wL _ _ (PolyDict.ofWt_C wL (w k))
 
 end GlobalTheory.Shares

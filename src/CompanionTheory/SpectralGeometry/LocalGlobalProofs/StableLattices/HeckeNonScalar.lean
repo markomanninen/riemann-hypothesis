@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantEquality
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantEquality
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem IsP.mul {f g : ℂ → A} (hf : IsP f) (hg : IsP g) : IsP (fun t => f t 
 theorem IsP.sum {ι : Type*} (s : Finset ι) {f : ι → ℂ → A} (hf : ∀ i, IsP (f i)) :
     IsP (fun t => ∑ i ∈ s, f i t) := by
   choose p hp using hf
-  exact ⟨∑ i ∈ s, p i, fun t => by simp [eval_finset_sum, hp]⟩
+  exact ⟨∑ i ∈ s, p i, fun t => by simp [Polynomial.eval_finsetSum, hp]⟩
 
 theorem IsP.listProd (l : List (ℂ → A)) (h : ∀ f ∈ l, IsP f) :
     IsP (fun t => (l.map fun f => f t).prod) := by
@@ -48,7 +52,7 @@ theorem isPolynomial_capelliEntry {n : ℕ} (E : Fin n → Fin n → A) (x₀ : 
   by_cases h : a = b
   · have := IsP.lin (E a b + algebraMap ℂ A x₀) (1 : A)
     convert this using 2 with t
-    simp [capEntry, h, map_add, add_assoc]
+    simp [capEntry, h, map_add (f := _), add_assoc]
   · have := IsP.const (E a b)
     convert this using 2 with t
     simp [capEntry, h]
@@ -85,8 +89,9 @@ theorem coeff_extract {W : Type*} [AddCommGroup W] [Module ℂ W] (T : Module.En
         - C (φ u) * P = 0 := by
       refine Polynomial.funext fun t => ?_
       have := congrArg φ (h t)
-      simp only [map_add, map_sum, map_smul, smul_eq_mul] at this
-      simp only [eval_sub, eval_add, eval_mul, eval_finset_sum, eval_C, eval_X, eval_pow, eval_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul] at this
+      simp only [eval_sub, eval_add, eval_mul, Polynomial.eval_finsetSum, eval_C, eval_X, eval_pow, eval_zero]
       rw [sub_eq_zero, mul_comm (φ u)]
       simp only [mul_comm (φ _) (t ^ _)]
       exact this
@@ -94,10 +99,10 @@ theorem coeff_extract {W : Type*} [AddCommGroup W] [Module ℂ W] (T : Module.En
     have c1 := congrArg (fun q : ℂ[X] => q.coeff 1) hQ
     have k0 : 0 ∈ range k := mem_range.2 (by omega)
     have k1 : 1 ∈ range k := mem_range.2 (by omega)
-    simp only [coeff_sub, coeff_add, finset_sum_coeff, coeff_C_mul, coeff_X_pow, coeff_zero,
+    simp only [coeff_sub, coeff_add, Polynomial.finsetSum_coeff, coeff_C_mul, coeff_X_pow, coeff_zero,
       mul_ite, mul_one, mul_zero, coeff_X_mul, coeff_X_mul_zero, hP0, hP1] at c0 c1
     simp [k0, k1] at c0 c1
-    exact ⟨c0, by rw [map_add]; exact c1⟩
+    exact ⟨c0, by rw [map_add (f := _)]; exact c1⟩
   exact ⟨(Module.forall_dual_apply_eq_zero_iff ℂ _).1 fun φ => (key φ).1,
     (Module.forall_dual_apply_eq_zero_iff ℂ _).1 fun φ => (key φ).2⟩
 
@@ -130,7 +135,8 @@ theorem om_nnPlus {m : ℕ} (X : GMod (m + 1)) (y : Fin (m + 1) → ℂ) (x : �
     · simp
   show om X (nnPlus X.E y x v) b + x • nnPlus X.E y x v b = y b • capelliC X.E x v
   rw [hR, om_apply]
-  simp only [nnPlus, map_sum, map_smul, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [nnPlus, map_sum, map_smul, Finset.smul_sum]
   rw [Finset.sum_comm, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [← key c, smul_add, Finset.smul_sum]

@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.HerrClassFieldOfNorms
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HerrAAndNatural
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SmulCocycle
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.HerrClassFieldOfNorms
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HerrAAndNatural
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SmulCocycle
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 
 namespace GlobalTheory.AdmHerrLocal

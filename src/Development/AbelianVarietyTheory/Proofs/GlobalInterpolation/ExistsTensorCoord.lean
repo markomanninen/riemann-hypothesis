@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Formalism.UG Formalism.BasicNotions GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection
 open scoped TensorProduct
@@ -44,7 +48,7 @@ theorem exists_algHom (b : Module.Basis (Fin 2) F E) {θ : E} (h0 : b 0 = 1) (h1
   refine ⟨AlgHom.ofLinearMap f f0 fun x y => ?_, f1⟩
   obtain ⟨p, q, rfl⟩ := exists_coord b h0 h1 x
   obtain ⟨p', q', rfl⟩ := exists_coord b h0 h1 y
-  simp only [mul_add, add_mul, smul_mul_smul_comm, one_mul, mul_one, hθ, hr, map_add, map_smul,
+  simp only [mul_add, add_mul, smul_mul_smul_comm, one_mul, mul_one, hθ, hr, map_add (f := _), map_smul,
     f0, f1]
 
 theorem exists_tensor_coord (b : Module.Basis (Fin 2) F E) {θ : E} (h0 : b 0 = 1) (h1 : b 1 = θ)
@@ -66,7 +70,7 @@ theorem exists_ringEquiv (σ : E →ₐ[F] E) (hdeg : Module.finrank F E = 2) (h
     (hn : (θ * σ θ) ⊗ₜ[F] (1 : K) = (1 : E) ⊗ₜ[F] (r * r')) :
     ∃ (s : E ⊗[F] K ≃+* K × K) (φ : E →ₐ[F] K), φ θ = r ∧ φ (σ θ) = r' ∧
       ∀ (e : E) (k : K), s (e ⊗ₜ[F] k) = (φ e * k, φ (σ e) * k) := by
-  obtain ⟨t, ht'⟩ := hfix (θ + σ θ) (by rw [map_add, hσ, add_comm])
+  obtain ⟨t, ht'⟩ := hfix (θ + σ θ) (by rw [map_add (f := _), hσ, add_comm])
   obtain ⟨n, hn'⟩ := hfix (θ * σ θ) (by rw [map_mul, hσ, mul_comm])
   have htK : algebraMap F K t = r + r' := by
     rw [← ht', algebraMap_tmul] at ht; exact one_tmul_injective ht
@@ -74,11 +78,11 @@ theorem exists_ringEquiv (σ : E →ₐ[F] E) (hdeg : Module.finrank F E = 2) (h
     rw [← hn', algebraMap_tmul] at hn; exact one_tmul_injective hn
   have hθ : θ ∉ (algebraMap F E).range := by
     rintro ⟨a, rfl⟩
-    rw [AlgHom.commutes, ← map_add] at ht'
+    rw [AlgHom.commutes, ← map_add (f := _)] at ht'
     rw [AlgHom.commutes, ← map_mul] at hn'
     obtain rfl := (algebraMap F E).injective ht'
     obtain rfl := (algebraMap F E).injective hn'
-    rw [map_add] at htK
+    rw [map_add (f := _)] at htK
     rw [map_mul] at hnK
     apply hne
     have : (r - r') ^ 2 = 0 := by
@@ -90,7 +94,7 @@ theorem exists_ringEquiv (σ : E →ₐ[F] E) (hdeg : Module.finrank F E = 2) (h
     (by simp only [Algebra.smul_def, map_neg, htK, hnK]; ring)
   have hφ' : φ (σ θ) = r' := by
     have := congrArg φ ht'
-    rw [AlgHom.commutes, map_add, hφ, htK] at this
+    rw [AlgHom.commutes, map_add (f := _), hφ, htK] at this
     exact (add_left_cancel this).symm
   let g : E ⊗[F] K →ₐ[F] K × K :=
     (Algebra.TensorProduct.lift φ (AlgHom.id F K) fun _ _ => Commute.all _ _).prod
@@ -98,7 +102,7 @@ theorem exists_ringEquiv (σ : E →ₐ[F] E) (hdeg : Module.finrank F E = 2) (h
   have hg : ∀ (e : E) (k : K), g (e ⊗ₜ[F] k) = (φ e * k, φ (σ e) * k) := fun e k => rfl
   have hg2 : ∀ a c : K, g ((1 : E) ⊗ₜ[F] a + θ ⊗ₜ[F] c) = (a + r * c, a + r' * c) := by
     intro a c
-    rw [map_add, hg, hg, hφ, hφ']; simp
+    rw [map_add (f := _), hg, hg, hφ, hφ']; simp
   refine ⟨RingEquiv.ofBijective g ⟨?_, ?_⟩, φ, hφ, hφ', hg⟩
   · rw [injective_iff_map_eq_zero]
     intro x hx
@@ -151,7 +155,7 @@ theorem exists_isSplitting (F E : Type) [Field F] [NumberField F] [Field E] [Num
     | tmul e k =>
       have : sigR σ (v.adicCompletion F) (e ⊗ₜ[F] k) = σ e ⊗ₜ[F] k := rfl
       rw [this, hs, hs, hσ]; rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · induction hx using Subring.closure_induction with
     | mem x hx =>
       rcases hx with ⟨⟨_, a, rfl⟩, rfl⟩ | ⟨a, rfl⟩
@@ -160,7 +164,7 @@ theorem exists_isSplitting (F E : Type) [Field F] [NumberField F] [Field E] [Num
       · simp only [hone]; exact ⟨a.2, a.2⟩
     | zero => simp
     | one => simp
-    | add x y _ _ hx hy => rw [map_add]; exact ⟨add_mem hx.1 hy.1, add_mem hx.2 hy.2⟩
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact ⟨add_mem hx.1 hy.1, add_mem hx.2 hy.2⟩
     | neg x _ hx => rw [map_neg]; exact ⟨neg_mem hx.1, neg_mem hx.2⟩
     | mul x y _ _ hx hy => rw [map_mul]; exact ⟨mul_mem hx.1 hy.1, mul_mem hx.2 hy.2⟩
   · have hm : ∀ a ∈ v.adicCompletionIntegers F, (1 : E) ⊗ₜ[F] a ∈ intV E v := fun a ha =>
@@ -172,7 +176,7 @@ theorem exists_isSplitting (F E : Type) [Field F] [NumberField F] [Field E] [Num
     have : x = (1 : E) ⊗ₜ[F] ((s x).2 - r' * (((s x).1 - (s x).2) * u)) +
         θ ⊗ₜ[F] (1 : v.adicCompletion F) * (1 : E) ⊗ₜ[F] (((s x).1 - (s x).2) * u) := by
       apply s.injective
-      rw [map_add, map_mul, hone, hone, hs, h1, h2]
+      rw [map_add (f := _), map_mul, hone, hone, hs, h1, h2]
       apply Prod.ext
       · simp only [Prod.fst_add, Prod.fst_mul]
         linear_combination (-((s x).1 - (s x).2)) * huK

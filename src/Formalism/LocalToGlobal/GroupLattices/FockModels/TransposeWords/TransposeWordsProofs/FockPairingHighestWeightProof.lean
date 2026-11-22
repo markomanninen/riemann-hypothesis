@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -113,8 +117,8 @@ theorem fock_pairing_highest_weight_proof : FockPairingHighestWeight := by
     intro h0
     rw [h0, zero_mul, hev1] at eH
     exact one_ne_zero eH
-  have hcoef : coeff (lhwline_mnu hn ν) F = c * coeff (lhwline_mnu hn ν) (hw K hn ν) := by
-    have e : coeff (lhwline_mnu hn ν) F = coeff (lhwline_mnu hn ν) G := by
+  have hcoef : AddMonoidAlgebra.coeff F (lhwline_mnu hn ν) = c * AddMonoidAlgebra.coeff (hw K hn ν) (lhwline_mnu hn ν) := by
+    have e : AddMonoidAlgebra.coeff F (lhwline_mnu hn ν) = AddMonoidAlgebra.coeff G (lhwline_mnu hn ν) := by
       rw [hGdef, coeff_weightedHomogeneousComponent, if_pos (hHW (mem_support_iff.mp hDmem))]
     rw [e, hc, coeff_smul, smul_eq_mul]
   have hevF : eval (idFrame K r n) F = c := by

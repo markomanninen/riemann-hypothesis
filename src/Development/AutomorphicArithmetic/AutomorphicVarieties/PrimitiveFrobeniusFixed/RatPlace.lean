@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.ShaToShT
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IneTau
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadClKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadExists
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.DvdOfIne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.ShaToShT
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IneTau
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadClKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadExists
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.DvdOfIne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Odd UpperTheory.V.Stick UpperTheory.V.ML
 open scoped nonZeroDivisors Pointwise
@@ -91,7 +95,8 @@ private theorem cyc_nat {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure �
 private theorem l_mem (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsLocalRing O] [Algebra ℤ_[l] O]
     [Module.Finite ℤ_[l] O] : (l : O) ∈ IsLocalRing.maximalIdeal O := by
   have h : (l : ℤ_[l]) ∈ (IsLocalRing.maximalIdeal O).comap (algebraMap ℤ_[l] O) := by
-    rw [IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := ℤ_[l])
+    change (l : ℤ_[l]) ∈ (IsLocalRing.maximalIdeal O).under ℤ_[l]
+    rw [IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ_[l])
       (IsLocalRing.maximalIdeal O)), PadicInt.maximalIdeal_eq_span_p]
     exact Ideal.mem_span_singleton_self _
   simpa using h
@@ -136,7 +141,7 @@ private theorem sht_pi {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ
   refine kum hl hζ (fun g => (n g : ZMod l)) (fun g => f (c' g)) (fun g => ?_) (hlc.comp f) (fun g h => ?_)
     (fun q hq => ?_) t ht1 (z0 t h3) g
   · rw [hn g ζ hζ.pow_eq_one, ZMod.val_natCast, ← pow_eq_pow_mod _ hζ.pow_eq_one]
-  · rw [hcc, map_add, map_nsmul, nsmul_eq_mul]
+  · rw [hcc, map_add (f := _), map_nsmul, nsmul_eq_mul]
   · by_cases e : q = l
     · exact ⟨A₀, e ▸ hA₀, fun g hg => z0 g (by rw [hm g hg.1, hm0, smul_zero, sub_zero])⟩
     · obtain ⟨A, hA⟩ := (placeBasic Ω).1 q hq

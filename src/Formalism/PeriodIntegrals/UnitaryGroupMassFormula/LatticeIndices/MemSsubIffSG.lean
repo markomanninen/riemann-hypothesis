@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.MemSsubIffFlagC
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.MemSsubIffFlagC
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ private theorem flagC_reindex_iff {K ι : Type} [Field K] [Fintype ι] [Decidabl
     intro w
     rw [Matrix.reindex_apply, Matrix.submatrix_mulVec_equiv]
     congr 2
-    funext j
-    simp
+    ext i
+    simp [Function.comp_def]
   have key : ∀ (x : Fin n → K) (S : Set (Fin n → K)),
       x ∘ e.symm ∈ Submodule.span K ((fun w : Fin n → K => w ∘ e.symm) '' S) ↔ x ∈ Submodule.span K S := by
     intro x S

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.DworkExponentialRestrictions
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.DworkExponentialRestrictions
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem th_ren_eq (f : MvPowerSeries κ R) : ren φ f = MvPowerSeries.substAlgHo
 
 theorem th_ren_sum {α : Type} (s : Finset α) (f : α → MvPowerSeries κ R) :
     ren φ (∑ a ∈ s, f a) = ∑ a ∈ s, ren φ (f a) := by
-  simp only [th_ren_eq φ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [th_ren_eq φ, map_sum]
 
 theorem th_ren_mul (f g : MvPowerSeries κ R) : ren φ (f * g) = ren φ f * ren φ g := by
   simp only [th_ren_eq φ, map_mul]
@@ -68,7 +73,7 @@ theorem th_map_ren {S : Type} [CommRing S] (h : R →+* S) (f : MvPowerSeries κ
   rw [MvPowerSeries.map_subst (th_ren_hasSubst φ)]
   congr 1
   funext k
-  simp
+  exact MvPowerSeries.map_X h (φ k)
 
 end Rename₂
 
@@ -89,7 +94,8 @@ theorem th_expK_sum [CharZero K] {ι α : Type} (s : Finset α) (a : α → MvPo
   induction s using Finset.induction_on with
   | empty => rw [Finset.sum_empty, Finset.prod_empty, th_expK_zero]
   | insert v s hv ih =>
-    rw [Finset.sum_insert hv, Finset.prod_insert hv,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_insert hv, Finset.prod_insert hv,
       expK_add (h v (Finset.mem_insert_self _ _))
         (by rw [map_sum]; exact Finset.sum_eq_zero fun v' hv' => h v' (Finset.mem_insert_of_mem hv')),
       ih fun v' hv' => h v' (Finset.mem_insert_of_mem hv')]
@@ -106,7 +112,8 @@ theorem th_low_alt {p : ℕ} (hp : 2 ≤ p) {ι : Type} [DecidableEq ι] (x : �
   rw [map_sub, sub_eq_zero]
   show (∑ l ∈ range (d.degree + 1), if d = Finsupp.single (x l) (p ^ (2 * l)) then ((-1 : K) ^ l) else 0) = _
   unfold altPart
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X_pow, mul_ite, mul_one, mul_zero]
   refine Finset.sum_subset (Finset.range_subset_range.2 (by omega)) fun l _ hl => if_neg fun h => ?_
   have h1 : d.degree = p ^ (2 * l) := by rw [h, Finsupp.degree_single]
@@ -149,7 +156,8 @@ theorem th_Gt_sigma {Pl : Type} [Fintype Pl] (E : Pl → Type) [∀ v, Fintype (
 
 theorem th_Gt_const (E : Type) [Fintype E] (c c' : K0 p) : MvPowerSeries.constantCoeff (Gt p E c c') = 0 := by
   unfold Gt
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun e _ => th_ren_const _ (th_Gser_const c c')
 
 variable (X : Sys p)
@@ -187,7 +195,8 @@ theorem restGcA_of (hG : RestGc p) : RestGcA X := by
   have e1 : expK (-(MvPowerSeries.map (algebraMap (K0 p) K') (Gt p (X.EA j) (wK p c) (wK p (sigW p c))))) =
       ∏ v : X.Pl, ren (Sum.map (Sigma.mk v) (Sigma.mk v)) (expK (-(MvPowerSeries.map (algebraMap (K0 p) K')
         (Gt p (Eidx (X.G.P.n' v) (NN X.G.P.m X.t j) (NN X.G.P.m X.t (j + 1))) (wK p c) (wK p (sigW p c)))))) := by
-    rw [th_Gt_sigma, map_sum, ← Finset.sum_neg_distrib, th_expK_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [th_Gt_sigma, map_sum, ← Finset.sum_neg_distrib, th_expK_sum]
     · refine Finset.prod_congr rfl fun v _ => ?_
       rw [th_ren_expK _ (by rw [map_neg, hmG v, neg_zero]), th_ren_neg, th_map_ren]
     · intro v _

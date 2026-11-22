@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.IwaGlob
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.MemLatWIff
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.IwaGlob
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.MemLatWIff
+
+@[expose] public section
 
 noncomputable section
 

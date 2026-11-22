@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat GlobalTheory.UnRep
 open scoped TensorProduct Matrix
@@ -17,10 +21,10 @@ def intAdeles : Subring (FiniteAdeleRing (𝓞 F) F) where
   zero_mem' v := zero_mem (v.adicCompletionIntegers F)
   neg_mem' ha v := neg_mem (ha v)
 
+
 open NumberField IsDedekindDomain in
 open scoped TensorProduct Matrix in
 variable (F : Type) [Field F] [NumberField F] in
-
 theorem _root_.GlobalTheory.UnRep.Nakayama.mem_jacobson (a : _root_.GlobalTheory.UnRep.Nakayama.intAdeles F)
     (ha : ∀ v, Valued.v (a.1 v) < 1) :
     a ∈ Ideal.jacobson (⊥ : Ideal (_root_.GlobalTheory.UnRep.Nakayama.intAdeles F)) := by
@@ -34,7 +38,8 @@ theorem _root_.GlobalTheory.UnRep.Nakayama.mem_jacobson (a : _root_.GlobalTheory
       calc Valued.v (a.1 v) * Valued.v (y.1 v) ≤ Valued.v (a.1 v) * 1 := by gcongr
         _ < 1 := by rw [mul_one]; exact ha v
     have : (a * y + 1).1 v = 1 + a.1 v * y.1 v := by
-      simp [add_comm]
+      change a.1 v * y.1 v + 1 = 1 + a.1 v * y.1 v
+      exact add_comm _ _
     rw [this, Valuation.map_one_add_of_lt _ hlt]
   let w : FiniteAdeleRing (𝓞 F) F := ⟨fun v ↦ ((a * y + 1).1 v)⁻¹, Filter.Eventually.of_forall fun v ↦ by
     show _ ∈ v.adicCompletionIntegers F
@@ -104,10 +109,10 @@ private lemma one_tmul_mem_hat {S : Set (Fin n → E)} {x : Fin n → E} (hx : x
   exact AddSubgroup.subset_closure
     ⟨1, fun v ↦ one_mem (v.adicCompletionIntegers F), x, hx, rfl⟩
 
+
 open NumberField IsDedekindDomain in
 open scoped TensorProduct Matrix in
 open NumberField IsDedekindDomain in
-
 theorem _root_.GlobalTheory.UnRep.exists_inverse_one_add_preserving_hat : ∀ (F E : Type) [Field F] [NumberField F]
     [Field E] [NumberField E] [Algebra F E] (n : ℕ) (L : Submodule (𝓞 E) (Fin n → E)), L.FG →
     Submodule.span E (L : Set (Fin n → E)) = ⊤ → ∀ (N : ℕ) (e : FiniteAdeleRing (𝓞 F) F),

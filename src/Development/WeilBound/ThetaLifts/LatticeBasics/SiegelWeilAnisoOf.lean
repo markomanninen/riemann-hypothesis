@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.BoxSec
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesS
-import Development.WeilBound.ThetaLifts.LatticeBasics.RatEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzDeterminedBySchrodingerThetaValues
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BoxSec
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesS
+public import Development.WeilBound.ThetaLifts.LatticeBasics.RatEquiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzDeterminedBySchrodingerThetaValues
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem dbl_inj (hψ : IsStd ψ) (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := 
   refine (h.theta _ (GlobalTheory.HeisSchA.schr_mem_schA ψ hψ _ Φ hΦ)).unique (by
     convert hasSum_zero with y
     obtain ⟨c, e⟩ := schr_schr (ψ := ψ) (dd.e (incM F (Matrix.fromCols y (-y)))) (dd.e w)
-    rw [Darboux.rho, e, map_smul, ← map_add, ← Darboux.rho, h0, smul_zero])
+    rw [Darboux.rho, e, map_smul, ← map_add (f := _), ← Darboux.rho, h0, smul_zero])
 
 theorem dbl_comm (hψ : IsStd ψ) (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) {p t} (hp : IsPar p t) (g)
     {Φ} (hΦ : Φ ∈ schA F κ) : om p (S g Φ) = S g (om p Φ) := by
@@ -115,21 +119,21 @@ theorem _root_.GlobalTheory.ThK.Dbl.siegelWeilAniso_of (h1 : SiegelWeilStd) (h2 
   · intro F E _ _ _ _ _ σ B m n A Y M r s r' s' hB hm hn hA h0 hY hM χ hχ hc dd om S l hd h K a hK ha Φ₁ p1 Φ₂ p2
     refine sw_transl h1 h2 hB hm hn h0 (.inl ⟨hA, hY⟩) hχ hc h hK ha hM.haar hM.dom
       (polData_kfin hM (fun g₁ s1 g₂ s2 f₁ p1 f₂ p2 => box_kfin hL hB hK (hC F E σ B n Y r' s' hB (.inr hY) K hK)
-      h.weil.2.1.toIsSplitting hd (fun N n1 n2 => (sInf_le (a := N) ⟨fun f ⟨ε, hε⟩ => n1 ε f fun u u' hu hu' e => ?_,
+      h.weil.2.1.toIsSplitting hd (fun N n1 n2 => (sInf_le (a := N) ⟨fun f ⟨ε, hε⟩ => n1 ε f fun u u' hu hu' e => by
+        exact hε u u' hu hu' e _ _ (actsD_dop M hB.std hu f) (actsD_dop M hB.std hu' f),
         fun u hu f hf f₁ e => ?_⟩ : M.Pol B.ψ B.emb ≤ N)) s1 s2 p1 p2) p1 p2)
-    · exact hε u u' hu hu' e _ _ (actsD_dop M hB.std hu f) (actsD_dop M hB.std hu' f)
     · rw [actsD_unique' M hB.std hu e]; exact n2 u hu f hf
   · intro F E _ _ _ _ _ σ B n d X W M r s r' s' hB hn hd' hX hW h0 hM χ hχ hc dd om S l ⟨d', ht, hd⟩ h K a hK ha μ D hμ hD Φ₁ p1 Φ₂ p2
     have tr : ∀ {p q : ℕ} {u : Matrix (Fin p) (Fin q) (AE F E)}, At (evI F) u → At (evI F) uᵀ := fun hu c hc => by
       rw [← Matrix.transpose_smul, hu c hc, Matrix.transpose_zero]
     refine sw_transl h1 h2 hB hd' hn h0 (.inr ⟨hW, hX⟩) hχ hc h hK ha hμ hD
       (polData_kfin hM (fun g₁ s1 g₂ s2 f₁ p1 f₂ p2 => box_kfin hL hB hK (hC F E σ B n X r s hB (.inl hX) K hK)
-      h.weil.2.1.toIsSplitting hd (fun N n1 n2 => (sInf_le (a := N) ⟨fun f ⟨ε, hε⟩ => n1 ε f fun u u' hu hu' e => ?_,
+      h.weil.2.1.toIsSplitting hd (fun N n1 n2 => (sInf_le (a := N) ⟨fun f ⟨ε, hε⟩ => n1 ε f fun u u' hu hu' e => by
+        rw [← u.transpose_transpose, ← u'.transpose_transpose, ht, ht]
+        refine hε uᵀ u'ᵀ (tr hu) (tr hu') (fun w => ?_) _ _ (actsD_dop M hB.std (tr hu) f) (actsD_dop M hB.std (tr hu') f)
+        rw [Matrix.transpose_map, Matrix.transpose_map, e w, Matrix.transpose_smul, Matrix.transpose_mul, Matrix.transpose_mul,
+          Matrix.transpose_transpose, Matrix.mul_assoc],
         fun u hu f hf f₁ e => ?_⟩ : M.Pol B.ψ B.emb ≤ N)) s1 s2 p1 p2) p1 p2)
-    · rw [← u.transpose_transpose, ← u'.transpose_transpose, ht, ht]
-      refine hε uᵀ u'ᵀ (tr hu) (tr hu') (fun w => ?_) _ _ (actsD_dop M hB.std (tr hu) f) (actsD_dop M hB.std (tr hu') f)
-      rw [Matrix.transpose_map, Matrix.transpose_map, e w, Matrix.transpose_smul, Matrix.transpose_mul, Matrix.transpose_mul,
-        Matrix.transpose_transpose, Matrix.mul_assoc]
     · rw [actsD_unique' M hB.std hu e]
       have := n2 uᵀ (tr hu) f hf
       rwa [ht] at this

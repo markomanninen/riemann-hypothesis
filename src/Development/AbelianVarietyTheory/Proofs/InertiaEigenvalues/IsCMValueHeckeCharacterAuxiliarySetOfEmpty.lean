@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsValueTiedOfIsToricElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToricSumEqHeckeLValueMulAuxiliaryFactorsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeLNeZeroNat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsValueTiedOfIsToricElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToricSumEqHeckeLValueMulAuxiliaryFactorsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeLNeZeroNat
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,11 @@ theorem partialSum_mem (hA : GlobalTheory.Published.GlobalArtinReciprocity) (hG 
   obtain ⟨τ₀, -⟩ := hD.1 H.φ₀
   let Ω := AlgebraicClosure H.K
   let _ : Algebra H.K ℂ := ((φ τ₀).comp (algebraMap H.K H.E)).toAlgebra
-  let j : Ω →ₐ[H.K] ℂ := IsAlgClosed.lift
+  let j : Ω →ₐ[H.K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hj : ∀ x : H.K, j.toRingHom (algebraMap H.K Ω x) = φ τ₀ x := j.commutes
   obtain ⟨art, ha⟩ := hA H.K Ω
   obtain ⟨ρ, hρ, hg⟩ := hG R H I φ s κ 𝔣 χ hD Ω j.toRingHom τ₀ hj art ha T₀ hT₀ h0 Q hQ inferInstance T hT
@@ -118,7 +126,7 @@ theorem isCMValueHeckeCharacter_auxiliarySet_of_empty {E : Type} [Field E] [Numb
     {Q : Finset (HeightOneSpectrum (OF E))} (hQ : IsFinSetSplitPlacesCoprimeConductor 𝔣 Q) (h : IsValChar φ s κ 𝔣 ∅ χ) : IsValChar φ s κ 𝔣 Q χ := by
   refine ⟨h.1, h.2.1, h.2.2.1, fun v P hP => ⟨fun hv => ?_, fun _ => (h.2.2.2 v P hP).2 (Finset.notMem_empty v)⟩⟩
   refine ((h.2.2.2 v P hP).2 (Finset.notMem_empty v) 1).2 ?_
-  rw [expIn, multiplicity_eq_zero.2 (hQ v hv).2]
+  rw [expIn, multiplicity_eq_zero_of_not_dvd (hQ v hv).2]
   exact zero_le_one
 
 theorem exists_classTerms (hL : ToricSumFormula) (hU : UnramFin H.E) (hD : IsHostDatum H φ s κ 𝔣 χ)

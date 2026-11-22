@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGXi
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGXi
+
+@[expose] public section
+
 open NumberField TensorProduct
 
 namespace PositivityTheory.UnitarySelfGeneration
@@ -17,7 +22,8 @@ theorem trace_form_mulLeft_bijective (B Z : Type) [CommRing B] [Module.Finite �
     intro f
     choose m β hu hm using fun i => h (b.coord i)
     refine ⟨∑ i, (f (bZ i) * ↑(hu i).unit⁻¹) ⊗ₜ β i, bZ.ext fun j => ?_⟩
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     have h1 : ∀ i, T ((f (bZ i) * ↑(hu i).unit⁻¹) ⊗ₜ β i) (bZ j) = if j = i then f (bZ i) else 0 := by
       intro i
       have h2 : bZ j = 1 ⊗ₜ b j := Algebra.TensorProduct.basis_apply _ _
@@ -40,7 +46,7 @@ theorem tw_g_lam : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (bar :
   let l : 𝓞 E →ₗ[ℤ] ℤ := (AddMonoidHom.mk' l0 fun a b => by
     apply Int.cast_injective (α := ℚ)
     push_cast
-    rw [← hl0, ← hl0, ← hl0, ← map_add, ← mul_add]
+    rw [← hl0, ← hl0, ← hl0, ← map_add (f := _), ← mul_add]
     rfl).toIntLinearMap
   have hl : ∀ a, (l a : ℚ) = Algebra.trace ℚ E (ξ * a) := fun a => (hl0 a).symm
   let L : ℤ_[p] ⊗[ℤ] 𝓞 E →ₗ[ℤ_[p]] ℤ_[p] :=
@@ -64,7 +70,7 @@ theorem tw_g_lam : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (bar :
       rw [hlb]
       push_cast
       ring
-    | add x y hx hy => rw [map_add, map_add, map_add, hx, hy, neg_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy, neg_add]
   · obtain ⟨m, b, hm, hb⟩ := h3 f
     refine ⟨m, b, ?_, fun a => ?_⟩
     · rw [PadicInt.isUnit_iff]

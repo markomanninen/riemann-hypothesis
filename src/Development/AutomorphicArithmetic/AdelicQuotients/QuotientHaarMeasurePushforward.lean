@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.NormEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotOpen
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.NormEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotOpen
+
+@[expose] public section
+
 open UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open MeasureTheory
 open scoped ENNReal
@@ -17,8 +22,8 @@ theorem UpperTheory.quotient_haar_measure_pushforward :
   haveI : SecondCountableTopology U := TopologicalSpace.Subtype.secondCountableTopology (U : Set G)
   haveI : SecondCountableTopology (U.comap j) :=
     TopologicalSpace.Subtype.secondCountableTopology ((U.comap j : Subgroup T) : Set T)
-  haveI : BorelSpace U := Subtype.borelSpace (U : Set G)
-  haveI : BorelSpace (U.comap j) := Subtype.borelSpace ((U.comap j : Subgroup T) : Set T)
+  haveI : BorelSpace U := Subtype.borelSpace (fun x => x ∈ (U : Set G))
+  haveI : BorelSpace (U.comap j) := Subtype.borelSpace (fun x => x ∈ ((U.comap j : Subgroup T) : Set T))
   let i : U.comap j →* U := (j.comp (U.comap j).subtype).codRestrict U (fun t => t.2)
   have hi : ∀ t : U.comap j, (i t : G) = j t := fun _ => rfl
   obtain ⟨hPU, hO⟩ := quotOpen_of normEx quotEq G T μ j ν hP U hU i hi

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEWaveJc
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeibnizCls
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEWaveJc
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeibnizCls
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate

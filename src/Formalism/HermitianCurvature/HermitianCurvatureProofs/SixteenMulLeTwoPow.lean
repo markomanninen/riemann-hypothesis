@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.StatementSz
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CorollaryAOfPropositionA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VandermondeRatioHarmonic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaBoundOnBoundary
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CmRingIdempotentUnitRatioIdentity
+module
+
+public import Formalism.HermitianCurvature.StatementSz
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CorollaryAOfPropositionA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VandermondeRatioHarmonic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaBoundOnBoundary
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CmRingIdempotentUnitRatioIdentity
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.Sz9
 
@@ -108,8 +112,8 @@ namespace Formalism.FourierDecayAlt.P
 
 open Finset Formalism.FourierDecayAlt.Sz Formalism.FourierDecayAlt.P.Sz9
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem sz_sizesMain_of (hCorA : CorA) (hBeta : BetaOnCut) (hAZ : AZeroBound)
     (hIL : Interlacing) (hLA : LamAnti) (hTP : ThresholdProducts) (hTL : ThetaLower) (hThP : ThetaPower)
     (hFS : FinalSmall) : SizesMain := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.LocalRingCardinality.DataArith
-import Formalism.SharpRestriction.Divisibility.HookProducts.RBTieOp
-import Formalism.SharpRestriction.Divisibility.HookProducts.RBTieSlope
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.LocalRingCardinality.DataArith
+public import Formalism.SharpRestriction.Divisibility.HookProducts.RBTieOp
+public import Formalism.SharpRestriction.Divisibility.HookProducts.RBTieSlope
+
+@[expose] public section
 
 open Matrix NumberField Module
 

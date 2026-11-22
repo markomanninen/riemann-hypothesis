@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementC
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementC
+
+@[expose] public section
 
 noncomputable section
 

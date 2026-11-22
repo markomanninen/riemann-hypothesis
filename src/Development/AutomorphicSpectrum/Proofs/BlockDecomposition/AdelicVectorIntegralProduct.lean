@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LastRowMulRowGLInv
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LastRowMulRowGLInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,9 +11,9 @@ open scoped ContDiff
 
 namespace GlobalTheory.CompanionTheory.CutOff.Split
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
-def rowEquiv (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (k : ℕ) :
+def rowEquiv (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (k : ℕ) :
     (Fin k → InfiniteAdeleRing E) ≃ᵐ (Fin k → Cinf E) :=
   MeasurableEquiv.piCongrRight fun _ =>
     { toEquiv := (infEq E).symm.toEquiv

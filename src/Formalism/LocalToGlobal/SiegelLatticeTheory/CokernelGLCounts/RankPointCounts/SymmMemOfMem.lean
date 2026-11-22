@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.UnitaryNormalVectorCount
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TauExists
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.UnitaryNormalVectorCount
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TauExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Grp
 
-variable {D : D7} {T : D.host.E} (F : LFlag (VS D) D.R.rS T)
+variable {D : D7} {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
 
 theorem symm_mem_of_mem (s : (VS D).V ≃ₗ[D.host.E] (VS D).V) (U : Submodule D.host.E (VS D).V)
     (h : ∀ x ∈ U, s x ∈ U) : ∀ x ∈ U, s.symm x ∈ U := by

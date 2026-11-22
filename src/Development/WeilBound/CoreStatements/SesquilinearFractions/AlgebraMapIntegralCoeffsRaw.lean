@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.ExistsCommonDenominatorCoeffs
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.ExistsCommonDenominatorCoeffs
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -35,7 +39,7 @@ def integralCoeffs : D.La →ₗ[𝓞 E] (Fin p → 𝓞 E) where
     funext a
     apply IsFractionRing.injective (𝓞 E) E
     simp only [Pi.add_apply]
-    rw [map_add, algebraMap_bar_eq_conj, algebraMap_bar_eq_conj, algebraMap_bar_eq_conj, algebraMap_integralCoeffsRaw, algebraMap_integralCoeffsRaw, algebraMap_integralCoeffsRaw, projectionCoeffs_add,
+    rw [map_add (f := _), algebraMap_bar_eq_conj, algebraMap_bar_eq_conj, algebraMap_bar_eq_conj, algebraMap_integralCoeffsRaw, algebraMap_integralCoeffsRaw, algebraMap_integralCoeffsRaw, projectionCoeffs_add,
       Pi.add_apply, mul_add, map_add]
   map_smul' c y := by
     funext a

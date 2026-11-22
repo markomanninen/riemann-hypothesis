@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.ReferenceReprMemLattice
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DualBetaReferenceCongruence
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.ReferenceReprMemLattice
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DualBetaReferenceCongruence
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem hform_mulVec' {A : Type} [CommRing A] {n : Type} [Fintype n] [DecidableE
     simp only [Formalism.UG.hform, dotProduct, mulVec, Finset.mul_sum, mul_assoc]
   have hσ : (fun i => σ ((M *ᵥ x) i)) = (M.map σ) *ᵥ (fun i => σ (x i)) := by
     funext i
-    simp [mulVec, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [mulVec, dotProduct, map_sum, map_mul]
   rw [hdot, hdot, hσ, ← vecMul_transpose, ← dotProduct_mulVec]
   simp only [mulVec_mulVec, ← Matrix.mul_assoc]
   rw [show (M.map σ)ᵀ * J * M = J from hM]
@@ -112,8 +117,6 @@ theorem good_one : Good X 1 := ⟨par_one X, by simpa using par_one X⟩
 theorem good_mul {x y : X.B.I.Gf} (hx : Good X x) (hy : Good X y) : Good X (x * y) :=
   ⟨par_mul X hx.1 hy.1, by rw [_root_.mul_inv_rev]; exact par_mul X hy.2 hx.2⟩
 
-theorem good_inv {x : X.B.I.Gf} (hx : Good X x) : Good X x⁻¹ := ⟨hx.2, by rw [inv_inv]; exact hx.1⟩
-
 variable {X} (TR : TypedRed X)
 
 theorem leviM_mul_par {x y : X.B.I.Gf} (hx : Par X x) (hy : Par X y) (v : TR.Pl) :
@@ -134,7 +137,7 @@ theorem leviM_one (v : TR.Pl) : leviM TR 1 v = 1 := by
     · exact zero_mem _
   have e : (⟨_, hI⟩ : IntAf X.B.I.F X.B.I.E) = ⟨_, sub_mem hI hIt⟩ + ⟨_, hIt⟩ := by
     apply Subtype.ext; simp
-  rw [e, map_add, res_eq_zero_of_Z TR v _ hZ, zero_add]
+  rw [e, map_add (f := _), res_eq_zero_of_Z TR v _ hZ, zero_add]
   by_cases h : i = j
   · subst h
     simp only [if_true, Matrix.one_apply_eq]

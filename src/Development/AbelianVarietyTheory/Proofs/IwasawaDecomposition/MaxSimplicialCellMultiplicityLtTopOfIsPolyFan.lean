@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotIsPrimZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitelyManyIsoClassesProjectiveNumberFieldStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntBilinFormToRealMemBalancedPsdConeStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CellGeneratorOnRayOfLinIndepSubcellStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotIsPrimZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitelyManyIsoClassesProjectiveNumberFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntBilinFormToRealMemBalancedPsdConeStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CellGeneratorOnRayOfLinIndepSubcellStatement
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan
 
@@ -26,7 +30,7 @@ theorem cellMult_map {Y : Type} [AddCommGroup Y] [Module O Y] (f : balForms bar 
   refine exists_congr fun a => ?_
   rw [Submonoid.smul_def, Submonoid.smul_def]
   change _ ↔ (a : ℤ) • g x = 0
-  rw [← map_smul, LinearEquiv.map_eq_zero_iff]
+  rw [← g.map_smul, LinearEquiv.map_eq_zero_iff]
 
 theorem cellMult_le_of_finite (T : Set (balForms bar X)) (hT : T.Finite) :
     ∃ C : ℕ, ∀ (m : ℕ) (δ : Fin m → balForms bar X), (∀ i, δ i ∈ T) → cellMult bar δ ≤ C := by
@@ -94,10 +98,10 @@ theorem transport [Module.Finite O X] [Module.Finite O X₁] (e : X ≃ₗ[O] X�
       { toFun := pull e.toLinearMap, map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl }
     exact hl.map' P (LinearMap.ker_eq_bot.2 fun a b hab => by
       rw [← pull_symm_pull e a, ← pull_symm_pull e b]; exact congrArg _ hab)
-  · exact hp i k _ (by rw [← (pullBalEquiv bar e).symm_apply_apply ⟨δ i, h.mem i⟩, e0, hk, map_nsmul])
+  · exact hp i k ((pullBalEquiv bar e).symm β') (by rw [← (pullBalEquiv bar e).symm_apply_apply ⟨δ i, h.mem i⟩, e0, hk]; exact map_nsmul (pullBalEquiv bar e).symm.toAddMonoidHom k β')
 
 theorem perModule [Module.Finite O X] (hF : IsPolyFanOn bar φ X)
-    (hpsd : ∀ β ∈ balForms bar X, (∀ y, 0 ≤ β y y) → toReal β ∈ psdCone bar X) :
+    (hpsd : ∀ β ∈ balForms bar X, (∀ y, 0 ≤ β y y) → toReal β ∈ psdCone (bar := bar) (X := X)) :
     ∃ C : ℕ, ∀ (m : ℕ) (δ : Fin m → LinearMap.BilinForm ℤ X) (h : IsCell bar φ δ), LinearIndependent ℤ δ →
       (∀ i, IsPrim bar (⟨δ i, h.mem i⟩ : balForms bar X)) → cellMult bar (fun i => (⟨δ i, h.mem i⟩ : balForms bar X)) ≤ C := by
   classical
@@ -115,7 +119,7 @@ theorem perModule [Module.Finite O X] (hF : IsPolyFanOn bar φ X)
     rw [mul_smul, h1, mul_smul, h2, smul_comm]
   obtain ⟨C, hC⟩ := cellMult_le_of_finite T hT
   refine ⟨C, fun m δ h hl hp => ?_⟩
-  have hB : toReal (∑ i, δ i) ∈ psdCone bar X := hpsd _ (Submodule.sum_mem _ fun i _ => h.mem i) fun y => by
+  have hB : toReal (∑ i, δ i) ∈ psdCone (bar := bar) (X := X) := hpsd _ (Submodule.sum_mem _ fun i _ => h.mem i) fun y => by
     simp only [LinearMap.sum_apply]; exact Finset.sum_nonneg fun i _ => h.nonneg i y
   obtain ⟨e, n, γ, c, hγ, hγS, hc, hrel⟩ := hcov _ hB
   obtain ⟨h', hl', hp', hm⟩ := transport e h hl hp
@@ -128,8 +132,8 @@ theorem perModule [Module.Finite O X] (hF : IsPolyFanOn bar φ X)
 
 end MultBound
 
-open MultBound in
 
+open MultBound in
 theorem maxMult_lt_top : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (q : ℕ)
     (φ : InvFun (𝓞 E)), IsPolyFan H.bar q φ → maxMult H.bar q φ < ⊤ := by
   intro E _ _ _ H q φ hφ

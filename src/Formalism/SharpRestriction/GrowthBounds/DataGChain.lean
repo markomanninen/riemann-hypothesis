@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DataG
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+
+@[expose] public section
 
 open MvPolynomial
 

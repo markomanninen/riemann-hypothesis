@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.QuadCocycle
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianWeilActionUnitaryGroupTestFunctionsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.QuadCocycle
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianWeilActionUnitaryGroupTestFunctionsStatement
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real
@@ -14,11 +19,6 @@ noncomputable section
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Ψ : Finset (E →+* ℂ)} {n N : ℕ}
 
-omit [IsCMField E] in
-theorem exists_den {α β : Type} [Finite α] [Finite β] (x : Matrix α β E) :
-    ∃ D : ℕ, 0 < D ∧ IntM (D • x) := by
-  obtain ⟨D, hD, h⟩ := Dict.exists_den fun p : α × β => x p.1 p.2
-  exact ⟨D, hD, fun i j => h (i, j)⟩
 
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real in
@@ -60,7 +60,8 @@ private lemma map_trace_mul_mul_ccT_eq_trace_conjTranspose {E : Type} [Field E] 
     (τ : E →+* ℂ) (M P : Matrix (Fin n) (Fin N) E) (β : Matrix (Fin N) (Fin N) E) :
     τ (M * β * _root_.GlobalTheory.SW.ccT P).trace = (M.map τ * β.map τ * (P.map τ)ᴴ).trace := by
   rw [← _root_.GlobalTheory.SW.HAct.map_ccT, ← Matrix.map_mul, ← Matrix.map_mul]
-  simp only [Matrix.trace, Matrix.diag, map_sum, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag, map_sum, Matrix.map_apply]
 
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real in
@@ -91,10 +92,10 @@ private lemma trace_quadratic_form_shift_expand {n N : ℕ} (X Y : Matrix (Fin n
     star_pow, Nat.cast_mul, Nat.cast_ofNat, ha, hb, star_star]
   ring
 
+
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {Ψ : Finset (E →+* ℂ)} {n N : ℕ} in
-
 theorem _root_.GlobalTheory.SW.Parab.isSB_chiH (hΨ : _root_.GlobalTheory.SW.IsType Ψ)
     {β : Matrix (Fin N) (Fin N) E} (hβ : _root_.GlobalTheory.SW.ccT β = β) (c : ℂ)
     {φ : Matrix (Fin n) (Fin N) E → ℂ} (h : _root_.GlobalTheory.SW.IsSB φ) :
@@ -150,42 +151,15 @@ theorem _root_.GlobalTheory.SW.Parab.isSB_chiH (hΨ : _root_.GlobalTheory.SW.IsT
         rw [← _root_.GlobalTheory.SW.HAct.map_ccT, hβ]
       rw [NumberField.ComplexEmbedding.conjugate_coe_eq, map_trace_mul_mul_ccT_eq_trace_conjTranspose, map_trace_mul_mul_ccT_eq_trace_conjTranspose,
         Matrix.map_add _ (map_add τ.1), matrix_map_natCast_smul, trace_quadratic_form_shift_expand _ _ _ hBh R d, ht]
-      simp only [map_add, map_mul, map_pow, map_natCast, map_ofNat, map_trace_mul_mul_ccT_eq_trace_conjTranspose,
+      simp only [map_add (f := _), map_mul, map_pow, map_natCast, map_ofNat, map_trace_mul_mul_ccT_eq_trace_conjTranspose,
         matrix_map_natCast_smul]
-      simp only [Complex.star_def, map_add, map_mul, map_pow, map_natCast, map_ofNat]
+      simp only [Complex.star_def, map_add (f := _), map_mul, map_pow, map_natCast, map_ofNat]
     unfold _root_.GlobalTheory.SW.chiH
     rw [hsum, mul_add, Complex.exp_add]
     have hm1 : Complex.exp (2 * Real.pi * Complex.I * m) = 1 := by
       rw [show 2 * (Real.pi : ℂ) * Complex.I * m = m * (2 * Real.pi * Complex.I) by ring]
       exact Complex.exp_int_mul_two_pi_mul_I m
     rw [hm1, mul_one]
-
-theorem blocks {γ : M2 E N} (hγ : γ ∈ UU E N) (h0 : γ.toBlocks₂₁ = 0) :
-    ccT γ.toBlocks₁₁ * γ.toBlocks₂₂ = 1 ∧
-      ccT (γ.toBlocks₁₂ * ccT γ.toBlocks₁₁) = γ.toBlocks₁₂ * ccT γ.toBlocks₁₁ := by
-  have h : ccT γ * Matrix.J (Fin N) E * γ = Matrix.J (Fin N) E := hγ
-  have e : ccT γ = Matrix.fromBlocks (ccT γ.toBlocks₁₁) (ccT γ.toBlocks₂₁) (ccT γ.toBlocks₁₂)
-      (ccT γ.toBlocks₂₂) := by
-    ext (i | i) (j | j) <;> rfl
-  rw [e] at h
-  nth_rewrite 5 [← Matrix.fromBlocks_toBlocks γ] at h
-  have z : ccT (0 : Matrix (Fin N) (Fin N) E) = 0 := by ext i j; simp [ccT, cc]
-  rw [h0, z, Matrix.J, Matrix.fromBlocks_multiply, Matrix.fromBlocks_multiply,
-    Matrix.fromBlocks_inj] at h
-  obtain ⟨-, h2, h3, h4⟩ := h
-  generalize γ.toBlocks₁₁ = A at *
-  generalize γ.toBlocks₁₂ = B at *
-  generalize γ.toBlocks₂₂ = D at *
-  simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, Matrix.mul_one, Matrix.mul_neg,
-    Matrix.neg_mul, neg_inj] at h2 h3 h4
-  refine ⟨h2, ?_⟩
-  have h5 : A * ccT D = 1 := mul_eq_one_comm.1 h3
-  have h6 : D * ccT A = 1 := mul_eq_one_comm.1 h2
-  have h7 : ccT D * B = ccT B * D := by rw [← sub_eq_zero, sub_eq_add_neg]; exact h4
-  rw [Base.ccT_mul, Base.ccT_ccT]
-  calc A * ccT B = A * (ccT B * D) * ccT A := by
-        rw [Matrix.mul_assoc, Matrix.mul_assoc, h6, Matrix.mul_one]
-    _ = B * ccT A := by rw [← h7, ← Matrix.mul_assoc, h5, Matrix.one_mul]
 
 end
 
@@ -291,7 +265,8 @@ private lemma map_trace_mul_mul_ccT_self_eq_sum_dotProduct {E : Type} [Field E] 
       ∑ k, (x.map τ) k ⬝ᵥ (β.map τ) *ᵥ star ((x.map τ) k) := by
   have hc : ∀ a k, τ (_root_.GlobalTheory.SW.ccT x a k) = star (τ (x k a)) := fun a k =>
     congrFun (congrFun (_root_.GlobalTheory.SW.HAct.map_ccT τ x) a) k
-  simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, map_sum, map_mul, hc, dotProduct, mulVec,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, map_sum, map_mul, hc, dotProduct, mulVec,
     Matrix.map_apply, Pi.star_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Finset.sum_comm]
@@ -434,9 +409,9 @@ private lemma hFac_eq_prod_det_pow_of_toBlocks₂₁_eq_zero {E : Type} [Field E
   rw [RingHom.map_det]
   rfl
 
+
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real in
-
 theorem _root_.GlobalTheory.SW.weil_parabolic : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Ψ : Finset (E →+* ℂ)), _root_.GlobalTheory.SW.IsType Ψ → ∀ (n N : ℕ), Even n → ∀ φ : Matrix (Fin n) (Fin N) E → ℂ, _root_.GlobalTheory.SW.IsSB φ → (∀ γ ∈ _root_.GlobalTheory.SW.UU E N, γ.toBlocks₂₁ = 0 → ∀ x, _root_.GlobalTheory.SW.weil Ψ γ φ x = (∏ τ : Ψ, τ.1 γ.toBlocks₂₂.det ^ n) * _root_.GlobalTheory.SW.chiH Ψ (-(γ.toBlocks₁₂ * _root_.GlobalTheory.SW.ccT γ.toBlocks₁₁)) x * φ (x * γ.toBlocks₁₁)) ∧ ∀ γ ∈ _root_.GlobalTheory.SW.UU E N, ∀ γ' ∈ _root_.GlobalTheory.SW.UU E N, _root_.GlobalTheory.SW.botSpan γ = _root_.GlobalTheory.SW.botSpan γ' → ∀ Z ∈ _root_.GlobalTheory.SW.Hn Ψ N, ∀ z z', _root_.GlobalTheory.SW.eisTerm Ψ γ φ Z z z' = _root_.GlobalTheory.SW.eisTerm Ψ γ' φ Z z z' := by
   intro E _ _ _ Ψ hΨ n N hn φ hφ
   have hpar : ∀ γ ∈ _root_.GlobalTheory.SW.UU E N, γ.toBlocks₂₁ = 0 →

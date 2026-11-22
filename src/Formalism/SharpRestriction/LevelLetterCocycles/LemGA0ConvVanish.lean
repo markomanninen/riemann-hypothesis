@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LemmaGsOfLemGAB
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LemmaGsOfLemGAB
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,14 +31,15 @@ theorem lemGA0_cc_letπ (W : LocWach PD LL O v n) (i : ZMod n) :
     PowerSeries.constantCoeff (W.lev i 1 (letπ : LetA O n)) = 0 := by
   obtain ⟨E, hE0, -, hE⟩ := W.lev_π i 1 (lemGA0_one_root PD.p)
   have h := congrArg PowerSeries.constantCoeff hE
-  simp only [map_add, map_one, hE0, one_mul] at h
+  simp only [map_add (f := _), map_one, hE0, one_mul] at h
   linear_combination h
 
 theorem lemGA0_cc_π₀₁ (W : LocWach PD LL O v n) (hcard : W.DelF.card = PD.p - 1) (hp : 1 ≤ PD.p) :
     PowerSeries.constantCoeff W.π₀₁ = 0 := by
   unfold LocWach.π₀₁
   have h2 : ∀ δ, PowerSeries.constantCoeff (W.γ₀ δ PowerSeries.X) = (0 : O) := fun δ => (W.γ₀_X δ).1
-  simp only [map_add, map_sub, map_one, map_natCast, map_sum, h2, add_zero, Finset.sum_const,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sub, map_one, map_natCast, map_sum, h2, add_zero, Finset.sum_const,
     nsmul_eq_mul, mul_one, hcard]
   push_cast [Nat.cast_sub hp]
   ring
@@ -51,7 +56,7 @@ theorem lemGA0_cc_π₀ (W : LocWach PD LL O v n) (i : ZMod n) (h0 : PowerSeries
 theorem lemGA0_cc_qp (W : LocWach PD LL O v n) (i : ZMod n) (h0 : PowerSeries.constantCoeff W.π₀₁ = 0) :
     PowerSeries.constantCoeff (W.lev i 1 (Formalism.MainNotions.LiftingTheory.qp W)) = (PD.p : LL) := by
   unfold Formalism.MainNotions.LiftingTheory.qp
-  rw [map_add, map_natCast, map_add, lemGA0_cc_π₀ W i h0, map_natCast, zero_add]
+  rw [map_add (f := _), map_natCast, map_add (f := _), lemGA0_cc_π₀ W i h0, map_natCast, zero_add]
 
 variable {Zl Ai : Type} [CommRing Zl] [CommRing Ai] [Algebra Zl O] [Algebra Zl Ai]
 

@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+
+@[expose] public section
+
 open NumberField
 
 namespace PositivityTheory.Xgf

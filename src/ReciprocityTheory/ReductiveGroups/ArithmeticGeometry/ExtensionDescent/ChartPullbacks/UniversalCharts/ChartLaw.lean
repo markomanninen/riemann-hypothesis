@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.DualLiftCompJetSub
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.UnivChartLoc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.DualLiftCompJetSub
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.UnivChartLoc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,9 +42,6 @@ def ChartLawLocSt : Prop :=
           (∀ j, jetZeroR R κ m (ψ (zR m j)) = 0) ∧ y = algOverHom ψ ≫ x m
 
 variable {R : Type} [CommRing R]
-
-theorem algOverHom_eq {A B : Type} [CommRing A] [Algebra R A] [CommRing B] [Algebra R B] (ψ : A →ₐ[R] B) :
-    algOverHom ψ = spMap ψ := rfl
 
 variable {G : Over (Spec (CommRingCat.of R))} [GrpObj G]
 
@@ -89,14 +90,18 @@ theorem tcoord_congr {w w' : sp (R₀ := R) (DualNumber R) ⟶ G} (e : w = w') (
   subst e; rfl
 
 theorem list_prod_tan : ∀ {k : ℕ} (u : Fin k → (sp (R₀ := R) (DualNumber R) ⟶ G))
-    (hu : ∀ i, IsTan (u i)), ∃ h : IsTan (List.ofFn u).prod, tcoord hx _ h = ∑ i, tcoord hx (u i) (hu i)
-  | 0, u, hu => by
+    (hu : ∀ i, IsTan (u i)), ∃ h : IsTan (List.ofFn u).prod, tcoord hx _ h = ∑ i, tcoord hx (u i) (hu i) := by
+  intro k
+  induction k with
+  | zero =>
+    intro u hu
     have e0 : (List.ofFn u).prod = 1 := by simp
     refine ⟨e0 ▸ isTan_one, ?_⟩
     rw [tcoord_congr hx e0 _ isTan_one, tcoord_one]
     simp
-  | k + 1, u, hu => by
-    obtain ⟨h, e⟩ := list_prod_tan (fun i => u i.succ) (fun i => hu i.succ)
+  | succ k ih =>
+    intro u hu
+    obtain ⟨h, e⟩ := ih (fun i => u i.succ) (fun i => hu i.succ)
     have e0 : (List.ofFn u).prod = u 0 * (List.ofFn fun i => u i.succ).prod := by
       rw [List.ofFn_succ, List.prod_cons]
     refine ⟨e0 ▸ isTan_mul (hu 0) h, ?_⟩

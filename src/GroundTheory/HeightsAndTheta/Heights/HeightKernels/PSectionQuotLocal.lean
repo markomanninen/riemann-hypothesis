@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertPointLengthSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PSectionQuotFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertPointLengthSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PSectionQuotFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -49,8 +54,8 @@ theorem exists_mul_mem_of_mem_chartRingZ (m : Ideal (curveRing y)) (hm : m.IsPri
 
 end SectionQuotientLocal
 
-open SectionQuotientLocal in
 
+open SectionQuotientLocal in
 theorem SectionQuotLocal.proof : SectionQuotLocal.Statement := by
   intro T _ K' _ _ y s _hy hs hsP m t hm hrat a b hb hba
   set x := aeval y s with hx_def
@@ -106,7 +111,7 @@ theorem SectionQuotLocal.proof : SectionQuotLocal.Statement := by
   have hΦ : ∀ q (r : S), Φ (LocalizedModule.mk q r) = LocalizedModule.mk (ψ q) r :=
     fun q r => IsLocalizedModule.map_LocalizedModules S _ q r
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z
     refine LocalizedModule.induction_on (β := fun z => Φ z = 0 → z = 0) (fun q r hz => ?_) z
     rw [hΦ, ← LocalizedModule.zero_mk r, LocalizedModule.mk_eq] at hz
@@ -134,7 +139,7 @@ theorem SectionQuotLocal.proof : SectionQuotLocal.Statement := by
   let E := (LinearEquiv.ofBijective Φ ⟨hinj, hsurj⟩).extendScalarsOfIsLocalization S
     (Localization.AtPrime m)
   unfold locLen
-  rw [dif_pos hm, dif_pos hm, E.length_eq]
+  rw [dite_eq_left hm, dite_eq_left hm, E.length_eq]
 
 end
 

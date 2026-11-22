@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConjEmbRt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConjEmbRt
+
+@[expose] public section
 
 open MvPolynomial NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo
@@ -109,7 +113,7 @@ theorem rowDegree_le_of_rowAdd_eq {R : Type*} [CommRing R] [IsDomain R] [CharZer
   rw [map_zero, ← this]
   congr 2
   funext v
-  simp only [f]
+  simp [f]
   split_ifs <;> simp
 
 end General
@@ -118,8 +122,9 @@ section Rows
 
 variable {ι : Type*} {σ : ι → ι} {Ψ : ι → Prop} {dim : ι → ℕ} {p q : ℕ}
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 noncomputable def halfRowEquiv (hσ : Function.Involutive σ) (hΨ : ∀ τ, ¬ Ψ τ ↔ Ψ (σ τ))
     (hp : ∀ τ, Ψ τ → dim τ = p) (hq : ∀ τ, Ψ τ → dim (σ τ) = q) :
     (Σ τ : ι, Fin (dim τ)) ≃ {τ // Ψ τ} × (Fin p ⊕ Fin q) where
@@ -147,34 +152,17 @@ variable {E : Type} [Field E] {Ψ : (E →+* ℂ) → Prop} {dim : (E →+* ℂ)
   {p q : ℕ} (n : ℕ) (hΨ : ∀ τ, ¬ Ψ τ ↔ Ψ (ComplexEmbedding.conjugate τ))
   (hp : ∀ τ, Ψ τ → dim τ = p) (hq : ∀ τ, Ψ τ → dim (ComplexEmbedding.conjugate τ) = q)
 
-noncomputable def coordLetterEquiv : I2.Letter n dim ≃ Var {τ // Ψ τ} p q (Fin n) :=
-  (Equiv.prodComm _ _).trans
-    (((halfRowEquiv (ComplexEmbedding.involutive_conjugate E) hΨ hp hq).prodCongr
-      (Equiv.refl _)).trans (Equiv.prodAssoc _ _ _))
-
-@[simp] theorem coordLetterEquiv_symm_xVar (t : {τ // Ψ τ}) (a : Fin p) (k : Fin n) :
-    (coordLetterEquiv n hΨ hp hq).symm (xVar t a k) = (k, ⟨t.1, a.cast (hp _ t.2).symm⟩) := rfl
-
-@[simp] theorem coordLetterEquiv_symm_yVar (t : {τ // Ψ τ}) (b : Fin q) (k : Fin n) :
-    (coordLetterEquiv n hΨ hp hq).symm (yVar t b k) =
-      (k, ⟨ComplexEmbedding.conjugate t.1, b.cast (hq _ t.2).symm⟩) := rfl
-
 end Coord
 
 section Host
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-omit [NumberField E] [IsCMField E] in
 
-theorem conjEmb_eq_conjugate (τ : E →+* ℂ) : Tor.conjEmb τ = ComplexEmbedding.conjugate τ := rfl
 
 omit [NumberField E] [IsCMField E] in
-
 @[simp] theorem conjEmb_conjEmb (τ : E →+* ℂ) : Tor.conjEmb (Tor.conjEmb τ) = τ :=
   ComplexEmbedding.involutive_conjugate E τ
-
-abbrev HostType (H : Tor.Host E) : Type := {τ : E →+* ℂ // τ (H.rt : E) = H.rt0}
 
 variable (H : Tor.Host E)
 
@@ -213,28 +201,7 @@ theorem mult_conjEmb_of_mem {τ : E →+* ℂ} (h : τ (H.rt : E) = H.rt0) :
 
 variable (n : ℕ)
 
-def letterCoordEquiv : Tor.Letter D n ≃ I2.Letter n D.mult where
-  toFun x := (x.1.2.2, ⟨x.1.1, ⟨x.1.2.1, x.2⟩⟩)
-  invFun y := Tor.letter y.2.1 y.2.2.1 y.1 y.2.2.2
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-noncomputable def letterEquiv : Tor.Letter D n ≃ Var (HostType H) D.p D.q (Fin n) :=
-  (letterCoordEquiv D n).trans (coordLetterEquiv n (not_mem_hostType_iff H)
-    (fun _ => mult_of_mem D) fun _ => mult_conjEmb_of_mem D)
-
 variable {D n}
-
-@[simp] theorem letterEquiv_symm_xVar (t : HostType H) (a : Fin D.p) (k : Fin n) :
-    (letterEquiv D n).symm (xVar t a k) =
-      Tor.letter t.1 a k (a.isLt.trans_eq (mult_of_mem D t.2).symm) := rfl
-
-@[simp] theorem letterEquiv_symm_yVar (t : HostType H) (b : Fin D.q) (k : Fin n) :
-    (letterEquiv D n).symm (yVar t b k) =
-      Tor.letter (Tor.conjEmb t.1) b k (b.isLt.trans_eq (mult_conjEmb_of_mem D t.2).symm) := rfl
-
-def datumRow (D : Tor.Datum H) (t : HostType H) : Fin D.p ⊕ Fin D.q → (E →+* ℂ) × ℕ :=
-  Sum.elim (fun a => (t.1, a.1)) fun b => (Tor.conjEmb t.1, b.1)
 
 end Host
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotVanish
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotVanish
+
+@[expose] public section
 
 open Matrix MeasureTheory PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D4 PositivityTheory.Rg.Tf.Loc
 
@@ -38,7 +42,8 @@ theorem eq_zero_of_commute_of_separable {n : ℕ} (γ X : Matrix (Fin n) (Fin n)
     rw [hb]; exact (hv i).apply_eq_smul
   have hrepr : ∀ w j, b.repr (T w) j = (j : ℂ) * b.repr w j := fun w j => by
     conv_lhs => rw [← b.sum_repr w]
-    simp [map_sum, hTb, Finsupp.single_apply, Finset.sum_ite_eq', mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hTb, Finsupp.single_apply, Finset.sum_ite_eq', mul_comm]
   have hdiag : ∀ i j, j ≠ i → b.repr (R (b i)) j = 0 := fun i j hji => by
     have h1 := hrepr (R (b i)) j
     rw [hTR, hTb, map_smul, map_smul] at h1
@@ -104,9 +109,9 @@ theorem map_shear (ν : Measure E) [ν.IsAddHaarMeasure] (F : Submodule ℝ E) (
     rw [← e.apply_symm_apply (P (e (y, 0))), he] at this
     exact this
   have hshear : ∀ p, e.symm (e p + P (e p)) = (p.1, p.2 + g p.1) := fun p => by
-    have h1 : e p = e (p.1, 0) + e (0, p.2) := by rw [← map_add]; simp
+    have h1 : e p = e (p.1, 0) + e (0, p.2) := by rw [← map_add (f := _)]; simp
     have h2 : P (e p) = P (e (p.1, 0)) := by rw [h1]; exact hinv _ _ (hF0 _)
-    rw [map_add, e.symm_apply_apply, h2]
+    rw [map_add (f := _), e.symm_apply_apply, h2]
     ext1
     · simp [hg0]
     · simp [g]
@@ -124,7 +129,7 @@ theorem map_shear (ν : Measure E) [ν.IsAddHaarMeasure] (F : Submodule ℝ E) (
   have hc1 : Measure.map e.symm ν = Measure.addHaarScalarFactor (Measure.map e.symm ν) μ₀ • μ₀ :=
     Measure.isAddLeftInvariant_eq_smul _ _
   have hmap : Measure.map sh (Measure.map e.symm ν) = Measure.map e.symm ν := by
-    rw [hc1, Measure.map_smul, hmp.map_eq]
+    rw [hc1, Measure.map_smul _ hshc.measurable.aemeasurable, hmp.map_eq]
   have hfun : (fun x => x + P x) = e ∘ sh ∘ e.symm := funext fun x => by
     have := hshear (e.symm x)
     simp only [e.apply_symm_apply] at this
@@ -162,13 +167,13 @@ theorem exists_homeo_map_eq_smul (ν : Measure E) [ν.IsAddHaarMeasure] (F : Sub
   have hPc : Continuous P := hc.comp hLsc
   have hPF : ∀ x, P x ∈ F := fun x => hF _
   have hPinv : ∀ x, ∀ y ∈ F, P (x + y) = P x := fun x y hy => by
-    simp only [P, map_add]; exact hinv _ _ (hL' y hy)
+    simp only [P, map_add (f := _)]; exact hinv _ _ (hL' y hy)
   let Φ : E ≃ₜ E :=
     { toFun := fun x => L x + Q x
       invFun := fun z => L.symm (z - P z)
       left_inv := fun x => by
         have h1 : P (L x + Q x) = Q x := by
-          simp only [P, map_add, LinearEquiv.symm_apply_apply]
+          simp only [P, map_add (f := _), LinearEquiv.symm_apply_apply]
           exact hinv _ _ (hL' _ (hF x))
         simp [h1]
       right_inv := fun z => by
@@ -184,7 +189,8 @@ theorem exists_homeo_map_eq_smul (ν : Measure E) [ν.IsAddHaarMeasure] (F : Sub
   have hfun : (Φ : E → E) = (fun x => x + P x) ∘ L := funext fun x => by
     simp [Φ, P]
   have hs : Continuous fun x => x + P x := continuous_id.add hPc
-  rw [hfun, ← Measure.map_map hs.measurable hLc.measurable, hcL, Measure.map_smul, map_shear ν F P hPc hPF hPinv]
+  rw [hfun, ← Measure.map_map hs.measurable hLc.measurable, hcL,
+    Measure.map_smul _ hs.measurable.aemeasurable, map_shear ν F P hPc hPF hPinv]
 
 end Measure
 
@@ -440,44 +446,6 @@ theorem twist_val (d : GL (Fin n) ℂ) (h1 : perpD cj d W₁ = W₂) (h2 : perpD
     simp only [quad]; noncomm_ring
   rw [this, h3, h4, h5]
   simp
-
-theorem nilChange (d : GL (Fin n) ℂ) (hreg : (d * thetaR cj n d).val.charpoly.Separable) (hle : W₁ ≤ W₂)
-    (h1 : perpD cj d W₁ = W₂) (h2 : perpD cj d W₂ = W₁) (u : nilrad W₁ W₂ → GL (Fin n) ℂ)
-    (hu : ∀ X, (u X).val = 1 + X.1) [MeasurableSpace (nilrad W₁ W₂)] [BorelSpace (nilrad W₁ W₂)]
-    (ν : Measure (nilrad W₁ W₂)) [ν.IsAddHaarMeasure] :
-    ∃ (Φ : nilrad W₁ W₂ ≃ₜ nilrad W₁ W₂) (c : NNReal), c ≠ 0 ∧
-      (∀ X, u (Φ X) = (u X)⁻¹ * d * thetaR cj n (u X) * d⁻¹) ∧ Measure.map Φ ν = c • ν := by
-  let L : nilrad W₁ W₂ ≃ₗ[ℝ] nilrad W₁ W₂ :=
-    LinearEquiv.ofInjectiveEndo (slinN d h1 h2 - LinearMap.id) (slinN_injective d h1 h2 hreg)
-  have hLval : ∀ X, (L X).1 = slin d X.1 - X.1 := fun X => by
-    simp [L, slinN]
-  let Q : nilrad W₁ W₂ → nilrad W₁ W₂ := fun X =>
-    ⟨quad d X.1, two_mem hle (quadratic_term_nilradical_mem d h1 h2 X.2).1 (quadratic_term_nilradical_mem d h1 h2 X.2).2⟩
-  have hQc : Continuous Q :=
-    Continuous.subtype_mk ((continuous_quad d).comp continuous_subtype_val) _
-  obtain ⟨Φ, c, hc, hΦ, hmap⟩ := exists_homeo_map_eq_smul ν (nilrad2 W₁ W₂) L
-    (fun y hy => by
-      obtain ⟨hT, hT'⟩ := semilinear_term_nilradical_mem d h1 h2 hy.1 hy.2
-      refine ⟨fun z => ?_, fun z hz => ?_⟩
-      · rw [hLval, Matrix.sub_mulVec]; exact W₁.sub_mem (hT z) (hy.1 z)
-      · rw [hLval, Matrix.sub_mulVec, hT' z hz, hy.2 z hz, sub_zero])
-    Q hQc (fun X => quadratic_term_nilradical_mem d h1 h2 X.2)
-    (fun X Y hY => Subtype.ext (quad_add d h1 h2 X.2 hle hY.1 hY.2))
-  refine ⟨Φ, c, hc, fun X => ?_, hmap⟩
-  rw [mul_assoc, mul_assoc, eq_inv_mul_iff_mul_eq, ← mul_assoc]
-  refine Units.ext ?_
-  have e : (u (Φ X)).val = 1 + (slin d X.1 - X.1 + quad d X.1) := by
-    rw [hu, hΦ, Submodule.coe_add, hLval]
-  rw [Units.val_mul, e]
-  exact twist_val d h1 h2 (u X) X.1 X.2 (hu X)
-
-theorem nilChange_holds : NilChange := by
-  intro n W₁ W₂ hW e hreg h1 h2 _ _ ν _
-  obtain ⟨Φ, c, hc, hu, hmap⟩ := nilChange e hreg hW h1 h2 (uOf hW) (fun _ => rfl) ν
-  refine ⟨Φ.toMeasurableEquiv, c, pos_iff_ne_zero.2 hc, hmap, fun X => ?_⟩
-  change uOf hW (Φ X) * e = twConj (thetaR (starRingEnd ℂ) n) (uOf hW X) e
-  rw [hu, twConj]
-  group
 
 end Main
 

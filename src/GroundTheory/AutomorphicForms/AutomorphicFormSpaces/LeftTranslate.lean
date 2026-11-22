@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.GKModule
-import GroundTheory.AutomorphicForms.GKModules.Garding
-import GroundTheory.AutomorphicForms.GKModules.Casimir
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.GKModule
+public import GroundTheory.AutomorphicForms.GKModules.Garding
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -12,9 +16,6 @@ set_option linter.unusedSectionVars false
 attribute [local instance 100] LieRing.ofAssociativeRing
 
 def leftTranslate {M : Type*} [Mul M] {F : Type*} (a : M) (f : M → F) (g : M) : F := f (a * g)
-
-@[simp] theorem leftTranslate_apply {M : Type*} [Mul M] {F : Type*} (a : M) (f : M → F) (g : M) :
-    leftTranslate a f g = f (a * g) := rfl
 
 variable {𝔸 : Type*} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [FiniteDimensional ℝ 𝔸]
 variable {G : Subgroup 𝔸ˣ} {𝔤 : Submodule ℝ 𝔸}
@@ -40,15 +41,16 @@ def leftTranslateEnd (a : G) : Module.End ℂ (h.smoothFuns (F := F)) where
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-@[simp] theorem coe_leftTranslateEnd (a : G) (f : h.smoothFuns (F := F)) :
-    ((h.leftTranslateEnd a f : h.smoothFuns (F := F)) : G → F) = leftTranslate a f := rfl
-
 theorem leftTranslateEnd_mul (a b : G) :
     h.leftTranslateEnd (F := F) a * h.leftTranslateEnd b = h.leftTranslateEnd (b * a) :=
-  LinearMap.ext fun f => Subtype.ext (funext fun g => by simp [leftTranslate, mul_assoc])
+  LinearMap.ext fun f => Subtype.ext (funext fun g => by
+    change (f : G → F) (b * (a * g)) = (f : G → F) ((b * a) * g)
+    rw [mul_assoc])
 
 theorem leftTranslateEnd_one : h.leftTranslateEnd (F := F) 1 = 1 :=
-  LinearMap.ext fun f => Subtype.ext (funext fun g => by simp [leftTranslate])
+  LinearMap.ext fun f => Subtype.ext (funext fun g => by
+    change (f : G → F) (1 * g) = (f : G → F) g
+    rw [one_mul])
 
 theorem leftTranslateEnd_inv_mul (a : G) :
     h.leftTranslateEnd (F := F) a⁻¹ * h.leftTranslateEnd a = 1 := by

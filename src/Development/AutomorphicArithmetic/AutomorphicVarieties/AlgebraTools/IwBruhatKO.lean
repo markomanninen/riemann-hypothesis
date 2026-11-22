@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 namespace UpperTheory.V.AlgebraTools.BruhatKO
@@ -9,11 +14,11 @@ variable {n : ℕ} {k : Type} [Field k]
 
 private lemma mul_pm_apply (M : Matrix (Fin n) (Fin n) k) (σ : Equiv.Perm (Fin n)) (r c : Fin n) :
     (M * (pm k n σ : Matrix (Fin n) (Fin n) k)) r c = M r (σ c) := by
-  simp [mul_apply, pm_apply]
+  simp [Matrix.mul_apply, pm_apply]
 
 private lemma pm_mul_apply (M : Matrix (Fin n) (Fin n) k) (σ : Equiv.Perm (Fin n)) (r c : Fin n) :
     ((pm k n σ : Matrix (Fin n) (Fin n) k) * M) r c = M (σ⁻¹ r) c := by
-  rw [mul_apply, Fintype.sum_eq_single (σ⁻¹ r)]
+  rw [Matrix.mul_apply, Fintype.sum_eq_single (σ⁻¹ r)]
   · simp [pm_apply]
   · intro a ha
     rw [pm_apply, if_neg, zero_mul]
@@ -99,7 +104,7 @@ private lemma rowsReduced_step (h : GL (Fin n) k) (t : ℕ) (ht : t < n)
     intro a c hca
     replace hca : c < a := hca
     simp only [E₂, Matrix.add_apply, one_apply, vecMulVec_apply, Pi.single_apply]
-    rw [if_neg (ne_of_lt hca).symm]
+    rw [Matrix.one_apply_ne (ne_of_lt hca).symm]
     by_cases haj : a = j
     · subst haj
       simp [v, not_lt.mpr hca.le]
@@ -136,7 +141,7 @@ private lemma rowsReduced_step (h : GL (Fin n) k) (t : ℕ) (ht : t < n)
     intro a c hca
     replace hca : c < a := hca
     simp only [E₁, Matrix.add_apply, one_apply, vecMulVec_apply, Pi.single_apply]
-    rw [if_neg (ne_of_lt hca).symm]
+    rw [Matrix.one_apply_ne (ne_of_lt hca).symm]
     by_cases hci : c = i₀
     · subst hci
       simp [u, not_lt.mpr hca.le]

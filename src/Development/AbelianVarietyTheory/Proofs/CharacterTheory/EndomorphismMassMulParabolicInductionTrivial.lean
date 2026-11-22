@@ -1,26 +1,31 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CharpolyBlockAndInvariantUnderStabilizerNilradicStatement
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.FinsumSubspaceStabilizerMulBlockFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CardSubspacesMulGeneralLinearGroupCardStatement
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.EndomorphismMassEqOfLinearEquivInvariantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CharpolyBlockAndInvariantUnderStabilizerNilradicStatement
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.FinsumSubspaceStabilizerMulBlockFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CardSubspacesMulGeneralLinearGroupCardStatement
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.EndomorphismMassEqOfLinearEquivInvariantStatement
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL
 
 namespace GlobalTheory.CuspGL.MassMult
 
-open Classical in
+open scoped Classical
 
+open Classical in
 theorem finsum_subtype_dite {α : Type} [Fintype α] (p : α → Prop) (f : {x // p x} → ℂ) :
     ∑ᶠ x, f x = ∑ x, if h : p x then f ⟨x, h⟩ else 0 := by
   rw [finsum_eq_sum_of_fintype, ← Fintype.sum_subtype_add_sum_subtype p]
   have h1 : ∑ i : {x // ¬ p x}, (if h : p i.1 then f ⟨i.1, h⟩ else 0) = 0 :=
     Finset.sum_eq_zero fun i _ => dif_neg i.2
   rw [h1, add_zero]
-  exact Finset.sum_congr rfl fun i _ => by rw [dif_pos i.2]
+  exact Finset.sum_congr rfl fun i _ => by rw [dite_eq_left i.2]
+
 
 open Classical in
-
 theorem mass_eq {F : Type} [Field F] {V : Type} [AddCommGroup V] [Module F V] [FiniteDimensional F V]
     (φ : Module.End F V → ℂ) (P : F[X]) :
     mass φ P = ∑ᶠ g, if LinearMap.charpoly g = P then φ g else 0 := by
@@ -49,8 +54,8 @@ theorem mass_eq_zero {F : Type} [Field F] {V : Type} [AddCommGroup V] [Module F 
   rintro rfl
   exact h (LinearMap.charpoly_natDegree g).symm
 
-open Classical in
 
+open Classical in
 theorem indicator_split {F : Type} [Field F] (P : F[X])
     (T : Finset (F[X] × F[X])) (hT : ∀ x, x ∈ T ↔ x.1.Monic ∧ x.2.Monic ∧ x.1 * x.2 = P)
     {a b c : F[X]} (ha : a.Monic) (hb : b.Monic) (hc : c = a * b) (z : ℂ) :
@@ -78,8 +83,8 @@ theorem indicator_split {F : Type} [Field F] (P : F[X])
       · rw [if_neg h2, mul_zero]
     · rw [if_neg h1, zero_mul]
 
-open Classical in
 
+open Classical in
 theorem stab_sum (F : Type) [Field F] [Finite F] (V : Type) [AddCommGroup V] [Module F V]
     [FiniteDimensional F V] (W : Submodule F V) (φ : Module.End F W → ℂ) (P : F[X])
     (T : Finset (F[X] × F[X])) (hT : ∀ x, x ∈ T ↔ x.1.Monic ∧ x.2.Monic ∧ x.1 * x.2 = P) :

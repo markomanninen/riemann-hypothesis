@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalSpanXb
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalSpanXb
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -25,14 +30,6 @@ def ArithmeticIntersectionDivisorPushforward.Statement : Prop :=
 
 section Inhabitants
 
-open Classical in
-
-def idDeg (W' : Ideal (MRing (GlobalTheory 2))) : ℤ :=
-  if h : W'.IsPrime then
-    haveI := h
-    noBlockFam (genFibreIdOf W').Φ (fibreIdx (GlobalTheory 2) (id : Unit → Unit))
-      (fibreIdeal id (genFibreIdOf W')) 0 Fin.elim0
-  else 0
 
 end Inhabitants
 

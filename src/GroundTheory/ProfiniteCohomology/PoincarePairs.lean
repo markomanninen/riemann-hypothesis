@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoincarePairs.Devissage
-import GroundTheory.ProfiniteCohomology.PoincarePairs.MackeyCup
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.Devissage
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.MackeyCup
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -91,8 +96,8 @@ theorem compactCores_mackeyCompactCohomologyIso {k : Type u} [CommRing k] (V : O
 
 variable {n : ℕ} [NeZero n] (D : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep D]
 
-omit [NeZero n] [IsDiscreteRep D] in
 
+omit [NeZero n] [IsDiscreteRep D] in
 theorem tensorHom_coindDualHom_dualEvalPairing (U : OpenSubgroup G) :
     (coindDualHom (U : Subgroup G) (ULift.{u} (ZMod n)) D ⊗ₘ
         𝟙 (Rep.coind (U : Subgroup G).subtype (zmodRep.{u} (U : Subgroup G) n))) ≫
@@ -101,26 +106,24 @@ theorem tensorHom_coindDualHom_dualEvalPairing (U : OpenSubgroup G) :
         (dualEvalPairing (Rep.res (U : Subgroup G).subtype D) (zmodRep.{u} (U : Subgroup G) n)) ≫
       coindTrace (U : Subgroup G) D := by
   refine Rep.Hom.ext (Representation.IntertwiningMap.ext (LinearMap.ext fun z => ?_))
-  induction z using TensorProduct.induction_on with
-  | zero => simp only [map_zero]
+  induction z using TensorProduct.inductionOn with
   | tmul μ f => rfl
-  | add z z' hz hz' => simp only [map_add, hz, hz']
+  | add z z' hz hz' => simp only [map_add (f := _), hz, hz']
+
 
 omit [NeZero n] in
-
 theorem tensorHom_zmodDualIso_zmodMulPairingRight {K : Type u} [Group K]
     (E : Rep.{u} (ULift.{u} ℤ) K) (hE : ∀ d : E, n • d = 0) :
     ((zmodDualIso n E hE).hom ⊗ₘ 𝟙 (zmodRep.{u} K n)) ≫ zmodMulPairingRight n E hE =
       dualEvalPairing E (zmodRep.{u} K n) := by
   refine Rep.Hom.ext (Representation.IntertwiningMap.ext (LinearMap.ext fun z => ?_))
-  induction z using TensorProduct.induction_on with
-  | zero => simp only [map_zero]
+  induction z using TensorProduct.inductionOn with
   | tmul ν a =>
     obtain ⟨a⟩ := a
     change zmodMulAddHom n hE a (ν (ULift.up 1)) = ν (ULift.up a)
     rw [zmodMulAddHom_apply]
     exact (dualRep_zmodRep_apply n E ν a).symm
-  | add z z' hz hz' => simp only [map_add, hz, hz']
+  | add z z' hz hz' => simp only [map_add (f := _), hz, hz']
 
 variable {D}
 
@@ -204,8 +207,8 @@ namespace CompactDualityHypotheses
 
 variable (H : CompactDualityHypotheses φ n D t U₀)
 
-include H in
 
+include H in
 theorem bijective_compactDualityMap_coind (U : OpenSubgroup G) (hU : U ≤ U₀) {r s : ℕ}
     (h : r + s = 3) :
     Function.Bijective (compactDualityMap φ D h t
@@ -217,15 +220,14 @@ theorem bijective_compactDualityMap_coind (U : OpenSubgroup G) (hU : U ≤ U₀)
   exact bijective_of_bijective_comp (H.bijective_base U hU h) hsh
     (bijective_coindDualCompactMap φ hD U s) (compactDualityMap_coind φ hD U t h)
 
-include H in
-
-theorem compactGroupDualityHypotheses : CompactGroupDualityHypotheses φ n D t U₀ where
-  nonempty_addEquiv := H.nonempty_addEquiv
-  subsingleton_four := H.subsingleton_four
-  bijective_coind U hU _ _ h := H.bijective_compactDualityMap_coind U hU h
 
 include H in
+theorem compactGroupDualityHypotheses : CompactGroupDualityHypotheses φ n D t U₀ :=
+  ⟨H.nonempty_addEquiv, H.subsingleton_four,
+    fun U hU {r s} h => H.bijective_compactDualityMap_coind U hU (r := r) (s := s) h⟩
 
+
+include H in
 theorem bijective_compactDualityMap (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) {r s : ℕ} (h : r + s = 3) :
     Function.Bijective (compactDualityMap φ D h t M) :=

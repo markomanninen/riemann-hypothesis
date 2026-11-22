@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaSpanAdjoint
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsAdelicUnitaryTranslateStandardLattice
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsTautologicalMarking
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaSpanAdjoint
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsAdelicUnitaryTranslateStandardLattice
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsTautologicalMarking
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -99,7 +103,7 @@ theorem exists_trace_one [Algebra.Unramified (𝓞 (maximalRealSubfield E)) (�
       add_mem' := by
         rintro x y ⟨a, ha⟩ ⟨b, hb⟩
         refine ⟨a + b + x * c y, ?_⟩
-        simp only [map_add, map_mul, hcc]
+        simp only [map_add (f := _), map_mul, hcc]
         linear_combination ha + hb
       smul_mem' := by
         rintro a x ⟨b, hb⟩
@@ -117,7 +121,8 @@ theorem exists_trace_one [Algebra.Unramified (𝓞 (maximalRealSubfield E)) (�
 theorem form_adj (g : Matrix (Fin n) (Fin n) E) (v w : Fin n → E) :
     ∑ j, IsCMField.complexConj E (v j) * g.mulVec w j =
       ∑ j, IsCMField.complexConj E ((adjM g).mulVec v j) * w j := by
-  simp only [Matrix.mulVec, dotProduct, adjM, Matrix.of_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, adjM, Matrix.of_apply, map_sum, map_mul,
     IsCMField.complexConj_apply_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -239,7 +244,8 @@ theorem exists_lift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n 
         simp [hj]
       · simp
     rw [h3] at h1
-    simp only [Matrix.mul_apply, Matrix.star_apply, Matrix.of_apply, Matrix.add_apply, Matrix.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.star_apply, Matrix.of_apply, Matrix.add_apply, Matrix.smul_apply,
       Matrix.one_apply, smul_eq_mul, RingOfIntegers.coe_eq_algebraMap, map_sum, map_mul, map_add, map_sub,
       map_natCast, hst, apply_ite (algebraMap (𝓞 E) E), map_one, map_zero] at h1 h2 ⊢
     push_cast at h1
@@ -252,7 +258,7 @@ theorem exists_lift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n 
   have hinv : (star A).map π * A.map π = 1 := by
     rw [← Matrix.map_mul, hB]
     ext i j
-    simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, hπ,
+    simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, hπ,
       Matrix.one_apply, apply_ite π, map_one, map_zero, zero_mul, add_zero]
   have hinv' := mul_eq_one_comm.1 hinv
   have key : ∀ (v : Λ.La) (x : Fin n → 𝓞 E), (∀ j, (A.map π *ᵥ κ v) j = π (x j)) →
@@ -288,7 +294,8 @@ theorem exists_lift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n 
     obtain ⟨b, hb⟩ := c₃ v w x₀ y₀ hx₀ hy₀
     obtain ⟨b', hb'⟩ := form_congr (star_natCast _) hB x₀ y₀ r r'
     have h := congrArg (algebraMap (𝓞 E) E) hb'
-    simp only [map_sum, map_add, map_mul, hst, map_natCast] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_mul, hst, map_natCast] at h
     refine ⟨b - b', ?_⟩
     simp only [RingOfIntegers.coe_eq_algebraMap, map_sub] at h hb ⊢
     linear_combination hb - h
@@ -296,7 +303,8 @@ theorem exists_lift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n 
     obtain ⟨x₀, r, hx₀, rfl⟩ := key v x hx
     have h0 : κ (v - ∑ i, x₀ i • e i) = 0 := by
       funext l
-      simp only [map_sub, map_sum, map_smul, he, Pi.sub_apply, Finset.sum_apply, Pi.smul_apply, hx₀, Pi.zero_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_smul, he, Pi.sub_apply, Finset.sum_apply, Pi.smul_apply, hx₀, Pi.zero_apply]
       rw [Finset.sum_eq_single l]
       · simp [π, Algebra.smul_def]
       · intro i _ hi
@@ -309,7 +317,8 @@ theorem exists_lift : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n 
     have hm0 : Ideal.Quotient.mk (Ideal.span {(m : 𝓞 E)}) (m : 𝓞 E) = 0 :=
       Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _)
     rw [h1]
-    simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, ← ha, hAdef, Pi.add_apply, Matrix.mulVec,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, ← ha, hAdef, Pi.add_apply, Matrix.mulVec,
       dotProduct, Matrix.add_apply, Matrix.smul_apply, Matrix.of_apply, smul_eq_mul, Nat.cast_mul, map_add, map_mul,
       hm0, zero_mul, add_zero]
     refine Finset.sum_congr rfl fun i _ => ?_

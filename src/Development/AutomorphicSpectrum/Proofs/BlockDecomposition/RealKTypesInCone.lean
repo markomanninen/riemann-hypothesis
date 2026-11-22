@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.MuQMemHarmSet
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.MuQMemHarmSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem proj_highest {Kf : Fin n → Fin n → Module.End ℂ Y}
   subst e
   refine ⟨fun a => ?_, fun a b hab he => ?_⟩
   · have h := hz.1 a
-    rw [map_add, smul_add] at h
+    rw [map_add (f := _), smul_add] at h
     have h1 : Kf a a p - (μ a : ℂ) • p ∈ S := S.sub_mem (hS a a p hp) (S.smul_mem _ hp)
     have h2 : Kf a a p - (μ a : ℂ) • p = -(Kf a a r - (μ a : ℂ) • r) := by
       rw [eq_neg_iff_add_eq_zero]
@@ -44,7 +48,7 @@ theorem proj_highest {Kf : Fin n → Fin n → Module.End ℂ Y}
       exact Sᗮ.neg_mem (Sᗮ.sub_mem (orth_stable hK hS a a hr) (Sᗮ.smul_mem _ hr))
     exact sub_eq_zero.1 (eq_zero_of_mem_orth h1 h3)
   · have h := hz.2 a b hab he
-    rw [map_add] at h
+    rw [map_add (f := _)] at h
     have h2 : Kf a b p = -(Kf a b r) := eq_neg_of_add_eq_zero_left h
     refine eq_zero_of_mem_orth (hS a b p hp) ?_
     rw [h2]
@@ -70,7 +74,7 @@ theorem lift_highest [AddCommGroup X] [Module ℂ X] {Kf : Fin n → Fin n → M
     rw [this]
     exact S.sub_mem hm ht.1
   have hπt : π t = 0 := ht.2
-  have hπc : π c = π m := by rw [e, map_add, hπt, zero_add]
+  have hπc : π c = π m := by rw [e, map_add (f := _), hπt, zero_add]
   refine ⟨c, hcS, hπc, fun a => ?_, fun a b hab he => ?_⟩
   · have h1 : Kf a a c - (ν a : ℂ) • c ∈ T := by
       refine ⟨S.sub_mem (hS a a c hcS) (S.smul_mem _ hcS), ?_⟩
@@ -133,7 +137,7 @@ theorem comm_sumF {E E' : Fin n → Fin n → Module.End ℂ V} {F F' : Fin n �
 theorem kF_sumF (E1 E2 : Fin n → Fin n → Module.End ℂ V) (F1 F2 : Fin n → Fin n → Module.End ℂ W) (a b : Fin n) :
     kF (sumF E1 F1) (sumF E2 F2) a b = dsum (kF E1 E2 a b, kF F1 F2 a b) := by
   simp only [kF, sumF]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   rfl
 
 theorem epow_sumF (E : Fin n → Fin n → Module.End ℂ V) (F : Fin n → Fin n → Module.End ℂ W) (m : ℕ) (a b : Fin n) :
@@ -147,13 +151,15 @@ theorem epow_sumF (E : Fin n → Fin n → Module.End ℂ V) (F : Fin n → Fin 
   | succ m ih =>
     simp only [epow, ih, sumF]
     simp only [← map_mul]
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     exact congrArg dsum (Prod.ext (by simp [Prod.fst_sum]) (by simp [Prod.snd_sum]))
 
 theorem gelA_sumF (E : Fin n → Fin n → Module.End ℂ V) (F : Fin n → Fin n → Module.End ℂ W) (m : ℕ) :
     gelA (sumF E F) m = dsum (gelA E m, gelA F m) := by
   simp only [gelA, epow_sumF]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   exact congrArg dsum (Prod.ext (by simp [Prod.fst_sum]) (by simp [Prod.snd_sum]))
 
 theorem barF_sumF (E : Fin n → Fin n → Module.End ℂ V) (F : Fin n → Fin n → Module.End ℂ W) :
@@ -224,19 +230,16 @@ theorem locFin_sumF {E1 E2 : Fin n → Fin n → Module.End ℂ V} {F1 F2 : Fin 
 
 theorem admissible_direct_sum_cone {lam : Fin n → ℤ} {lev : Fin n → ℕ} {E1 E2 : Fin n → Fin n → Module.End ℂ V}
     (hV : AdmFor lam lev E1 E2) (M : Model lam lev) (hN : ∀ ν, IsSecondTypeWeight lam lev ν → hwSp M.F1 M.F2 ν = ⊥) :
-    AdmFor lam lev (sumF E1 M.F1) (sumF E2 M.F2) where
-  gl1 := glRel_sumF hV.gl1 M.gl1
-  gl2 := glRel_sumF hV.gl2 M.gl2
-  comm := comm_sumF hV.comm M.comm
-  unitK := unit_sumF hV.unitK M.unitK
-  locFin := locFin_sumF hV.locFin M.locFin
-  ch1 m x := by
+    AdmFor lam lev (sumF E1 M.F1) (sumF E2 M.F2) := by
+  refine ⟨glRel_sumF hV.gl1 M.gl1, glRel_sumF hV.gl2 M.gl2, comm_sumF hV.comm M.comm,
+    unit_sumF hV.unitK M.unitK, locFin_sumF hV.locFin M.locFin, ?_, ?_, ?_⟩
+  · intro m x
     rw [gelA_sumF]
     exact y_ext (hV.ch1 m _) (M.ch1 m _)
-  ch2 m x := by
+  · intro m x
     rw [barF_sumF, gelA_sumF]
     exact y_ext (hV.ch2 m _) (M.ch2 m _)
-  no_second_type_weight ν hν := by
+  · intro ν hν
     rw [Submodule.eq_bot_iff]
     intro y hy
     have h1 : y.ofLp.1 = 0 := by
@@ -294,7 +297,7 @@ theorem dsum_mem_alg {p : Module.End ℂ V × Module.End ℂ W} (hp : p ∈ pair
     rw [AlgHom.commutes]
     exact Subalgebra.algebraMap_mem _ r
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   | mul x y _ _ hx hy =>
     rw [map_mul]
@@ -344,7 +347,7 @@ def genN (A : Subalgebra ℂ (Module.End ℂ V × Module.End ℂ W)) (z : 𝐘) 
   carrier := {y | ∃ p ∈ A, dsum p z = y}
   add_mem' := by
     rintro _ _ ⟨p, hp, rfl⟩ ⟨q, hq, rfl⟩
-    exact ⟨p + q, add_mem hp hq, by rw [map_add, LinearMap.add_apply]⟩
+    exact ⟨p + q, add_mem hp hq, by rw [map_add (f := _), LinearMap.add_apply]⟩
   zero_mem' := ⟨0, zero_mem _, by rw [map_zero, LinearMap.zero_apply]⟩
   smul_mem' := by
     rintro c _ ⟨p, hp, rfl⟩

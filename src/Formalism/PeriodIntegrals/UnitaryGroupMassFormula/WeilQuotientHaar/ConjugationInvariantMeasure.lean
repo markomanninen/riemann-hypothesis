@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarMeasureUniqueness
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarMeasureUniqueness
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,6 +111,7 @@ theorem conjugation_invariant_measure : ConjInv := by
         rw [← pow_succ'] at e
         rw [← e, ← Measure.map_map (measurable_conj g) (measurable_conj (g ^ k)), ih, Measure.map_smul,
           hdmap g hg, smul_smul, pow_succ]
+        exact (measurable_conj g).aemeasurable
     have hbd : ∀ k : ℕ, d g hg ^ k ≤ μ Bc / μ K0 := by
       intro k
       rw [ENNReal.le_div_iff_mul_le (Or.inl hK0pos) (Or.inl hK0fin)]
@@ -130,6 +135,7 @@ theorem conjugation_invariant_measure : ConjInv := by
     have h1 : μ = (d h⁻¹ (hinvH h hh) * d h hh) • μ := by
       conv_lhs => rw [← Measure.map_id (μ := μ), ← e, ← Measure.map_map (measurable_conj h⁻¹) (measurable_conj h)]
       rw [hdmap h hh, Measure.map_smul, hdmap h⁻¹ (hinvH h hh), smul_smul, mul_comm]
+      exact (measurable_conj h⁻¹).aemeasurable
     have h2 := congrArg (fun ν : Measure G => ν K0) h1
     simp only [Measure.smul_apply, smul_eq_mul] at h2
     rw [mul_comm]

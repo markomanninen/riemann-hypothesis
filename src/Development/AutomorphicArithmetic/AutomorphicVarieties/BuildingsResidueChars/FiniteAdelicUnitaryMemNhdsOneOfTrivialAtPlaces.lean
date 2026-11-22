@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdmissibleLocalComponentDefiniteUnitary
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.GlobFixed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdmissibleLocalComponentDefiniteUnitary
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.GlobFixed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.BasicNotions
 open scoped TensorProduct
 
 theorem UpperTheory.finiteAdelicUnitary_mem_nhds_one_of_trivial_at_places :
-    ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (T : Set (HeightOneSpectrum (𝓞 E))), T.Finite → ∀ U ∈ nhds (1 : finU E n), ∃ S : Finset (HeightOneSpectrum (𝓞 E)), ∀ k : finU E n, (∀ u ∉ T, cLoc u (k : UA E n) ∈ GlobalTheory.LFun.KGL u n) → (∀ u ∈ S, cLoc u (k : UA E n) = 1) → k ∈ U := by
+    ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (T : Set (HeightOneSpectrum (𝓞 E))), T.Finite → ∀ U ∈ nhds (1 : finU (E := E) (n := n)), ∃ S : Finset (HeightOneSpectrum (𝓞 E)), ∀ k : finU (E := E) (n := n), (∀ u ∉ T, cLoc u (k : UA E n) ∈ GlobalTheory.LFun.KGL u (n := n)) → (∀ u ∈ S, cLoc u (k : UA E n) = 1) → k ∈ U := by
   classical
   intro E _ _ _ n T hT U hU
-  have hι : Topology.IsInducing (fun x : finU E n => ((x : UA E n) : GA E n)) :=
+  have hι : Topology.IsInducing (fun x : finU (E := E) (n := n) => ((x : UA E n) : GA E n)) :=
     Topology.IsInducing.subtypeVal.comp Topology.IsInducing.subtypeVal
   rw [hι.nhds_eq_comap, Filter.mem_comap] at hU
   obtain ⟨V, hV, hVU⟩ := hU
@@ -17,11 +22,11 @@ theorem UpperTheory.finiteAdelicUnitary_mem_nhds_one_of_trivial_at_places :
     GlobalTheory.DefU.LocAdm.continuous_finGL.continuousAt.preimage_mem_nhds (by rw [map_one]; exact hV)
   obtain ⟨S, hS⟩ := UpperTheory.V.Af.GlobalFixedVectors.exists_KAway_subset (M := 1) hV'
   refine ⟨S ∪ hT.toFinset, fun k hk hk1 => hVU ?_⟩
-  have hall : ∀ u, cLoc u (k : UA E n) ∈ GlobalTheory.LFun.KGL u n := fun u => by
+  have hall : ∀ u, cLoc u (k : UA E n) ∈ GlobalTheory.LFun.KGL u (n := n) := fun u => by
     by_cases hu : u ∈ T
     · rw [hk1 u (Finset.mem_union_right _ (hT.mem_toFinset.2 hu))]; exact one_mem _
     · exact hk u hu
-  have ent : ∀ (x : UA E n), (∀ u, cLoc u x ∈ GlobalTheory.LFun.KGL u n) → ∀ a b,
+  have ent : ∀ (x : UA E n), (∀ u, cLoc u x ∈ GlobalTheory.LFun.KGL u (n := n)) → ∀ a b,
       Matrix.GeneralLinearGroup.map (pFin E) (x : GA E n) a b ∈ UpperTheory.V.Af.Ohat E := fun x hx a b =>
     UpperTheory.V.Af.GlobalFixedVectors.mem_Ohat.2 fun u => by
       obtain ⟨Q, hQ⟩ := hx u

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,8 +18,8 @@ variable {ι : Type} [Fintype ι] [DecidableEq ι] {n : ι → ℕ}
 def metricDefect (A : HermLine n) (z : Cone n ℂ) : ℝ :=
   Real.log (A.metric z) - ∑ k, (A.deg k : ℝ) * Real.log (l2Norm (z k))
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem metricDefect_smul (A : HermLine n) (c : ι → ℂ) (z : Cone n ℂ) (hc : ∀ k, c k ≠ 0)
     (hz : BlockNonzero z) :
     metricDefect A (fun k i ↦ c k * z k i) = metricDefect A z := by
@@ -34,14 +39,14 @@ theorem continuous_l2Norm {m : ℕ} : Continuous (fun w : Fin m → ℂ ↦ l2No
   Real.continuous_sqrt.comp
     (continuous_finsetSum _ fun i _ ↦ (continuous_norm.comp (continuous_apply i)).pow 2)
 
-variable (n) in
 
+variable (n) in
 def unitSpheres : Set (Cone n ℂ) := {z | ∀ k, l2Norm (z k) = 1}
 
 omit [DecidableEq ι] in
-theorem isCompact_unitSpheres : IsCompact (unitSpheres n) := by
+theorem isCompact_unitSpheres : IsCompact (unitSpheres (n := n)) := by
   apply Metric.isCompact_of_isClosed_isBounded
-  · have : unitSpheres n = ⋂ k, {z : Cone n ℂ | l2Norm (z k) = 1} := by
+  · have : unitSpheres (n := n) = ⋂ k, {z : Cone n ℂ | l2Norm (z k) = 1} := by
       ext z; simp [unitSpheres]
     rw [this]
     exact isClosed_iInter fun k ↦
@@ -53,11 +58,11 @@ theorem isCompact_unitSpheres : IsCompact (unitSpheres n) := by
     rw [← hz k]
     exact norm_le_l2Norm (z k) i
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem exists_bound_metricDefect (A : HermLine n) :
     ∃ M, ∀ z : Cone n ℂ, BlockNonzero z → |metricDefect A z| ≤ M := by
-  have hsub : unitSpheres n ⊆ {z | BlockNonzero z} := fun z hz k h ↦ by
+  have hsub : unitSpheres (n := n) ⊆ {z | BlockNonzero z} := fun z hz k h ↦ by
     have := hz k
     rw [h] at this
     simp [l2Norm] at this
@@ -73,7 +78,7 @@ theorem exists_bound_metricDefect (A : HermLine n) :
   have hc : ∀ k, c k ≠ 0 := fun k ↦ by
     simp only [c, ne_eq, Complex.ofReal_eq_zero, inv_eq_zero]
     exact (vectorL2Norm_pos (hz k)).ne'
-  have hw : (fun k i ↦ c k * z k i) ∈ unitSpheres n := by
+  have hw : (fun k i ↦ c k * z k i) ∈ unitSpheres (n := n) := by
     intro k
     change l2Norm (fun i ↦ c k * z k i) = 1
     rw [vectorL2Norm_const_mul, Complex.norm_of_nonneg (inv_nonneg.mpr (vectorL2Norm_pos (hz k)).le)]
@@ -81,10 +86,10 @@ theorem exists_bound_metricDefect (A : HermLine n) :
   have := hM _ hw
   rwa [metricDefect_smul A c z hc hz, Real.norm_eq_abs] at this
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem metricDefect_standard [Fintype ι] (z : Cone n ℂ) (hz : BlockNonzero z) :
-    metricDefect (HermLine.standard n) z = 0 := by
+    metricDefect (HermLine.standard (n := n)) z = 0 := by
   unfold metricDefect
   change Real.log (∏ k, l2Norm (z k)) - ∑ k, ((1 : ℤ) : ℝ) * Real.log (l2Norm (z k)) = 0
   rw [Real.log_prod (fun k _ ↦ (vectorL2Norm_pos (hz k)).ne')]
@@ -99,8 +104,8 @@ def blockFin (y : Cone n K) (k : ι) (v : FinitePlace K) : ℝ := Real.log (⨆ 
 def blockSum (y : Cone n K) (k : ι) : ℝ :=
   (∑ᶠ v : FinitePlace K, blockFin y k v) + ∑ σ : K →+* ℂ, Real.log (l2Norm fun i ↦ σ (y k i))
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem finite_support_blockFin (y : Cone n K) (k : ι) (hy : y k ≠ 0) :
     (Function.support (blockFin y k)).Finite := by
   classical
@@ -146,8 +151,8 @@ theorem sum_log_places_eq_zero {t : K} (ht : t ≠ 0) :
   rw [Real.log_inv]
   ring
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem blockSum_nonneg (y : Cone n K) (k : ι) (hy : y k ≠ 0) : 0 ≤ blockSum y k := by
   obtain ⟨i0, hi0⟩ := Function.ne_iff.mp hy
   have ht : y k i0 ≠ 0 := hi0
@@ -196,8 +201,8 @@ theorem blockNonzero_sigma {x : Cone n (AlgebraicClosure ℚ)} (hx : BlockNonzer
   funext i
   exact (map_eq_zero σ).mp (congrFun h i)
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem height_eq_blockSum (A : HermLine n) (x : Cone n (AlgebraicClosure ℚ))
     (hx : BlockNonzero x) :
     height A x = ((Module.finrank ℚ (coordField x) : ℝ))⁻¹ *
@@ -231,14 +236,14 @@ theorem height_eq_blockSum (A : HermLine n) (x : Cone n (AlgebraicClosure ℚ))
   simp only [mul_add, Finset.sum_add_distrib]
   ring
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem height_standard_eq_blockSum (x : Cone n (AlgebraicClosure ℚ)) (hx : BlockNonzero x) :
-    height (HermLine.standard n) x = ((Module.finrank ℚ (coordField x) : ℝ))⁻¹ *
+    height (HermLine.standard (n := n)) x = ((Module.finrank ℚ (coordField x) : ℝ))⁻¹ *
       ∑ k, blockSum (coordVec x) k := by
   rw [height_eq_blockSum _ x hx]
   have h0 : ∀ σ : coordField x →+* ℂ,
-      metricDefect (HermLine.standard n) (fun k i ↦ σ (coordVec x k i)) = 0 :=
+      metricDefect (HermLine.standard (n := n)) (fun k i ↦ σ (coordVec x k i)) = 0 :=
     fun σ ↦ metricDefect_standard _ (blockNonzero_sigma hx σ)
   simp only [h0, Finset.sum_const_zero, add_zero]
   congr 1

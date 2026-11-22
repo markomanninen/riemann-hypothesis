@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -94,15 +98,15 @@ theorem D_mem_closure {δ : DividedPowers J} (hs : Q.IsStd δ η) (b : Q.P) :
       exact add_mem (AddSubgroup.subset_closure (pdGen_mem_rel η h hr))
         (AddSubgroup.subset_closure (pdGen_mem_two η h n 1))
   | zero => rw [map_zero, map_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _)]; exact add_mem hx hy
   | smul c x _ ih =>
-    rw [Algebra.smul_def, Derivation.leibniz, map_add, map_smul, map_smul]
+    rw [Algebra.smul_def, Derivation.leibniz, map_add (f := _), map_smul, map_smul]
     refine add_mem (smul_mem_closure η h _ ih) ?_
     have e : ι1 (D R Q.P (algebraMap B Q.P c)) = h.mDR (ι1 (D R B c)) := by rw [h.mDR_ι, h.m1_D]
     rw [e]; exact (smul_gen_mem η h x _).1
 
-omit [IsScalarTower R B Q.P] in
 
+omit [IsScalarTower R B Q.P] in
 theorem mDR_mul_dtau (α β : DR R B) :
     h.mDR α * (ι1 (D R Q.P (Q.e 1)) * h.mDR β) = ι1 (D R Q.P (Q.e 1)) * h.mDR (sgn α * β) := by
   rw [← mul_assoc, map_mul, h.mDR_sgn, ← mul_assoc, ι_mul (D R Q.P (Q.e 1)) (sgn (h.mDR α)), sgn_sgn]

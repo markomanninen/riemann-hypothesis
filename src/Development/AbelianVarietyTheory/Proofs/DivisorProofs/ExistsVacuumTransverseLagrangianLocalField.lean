@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatMatrixTranslationModulationIrreduc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSchroedingerEigenvectorCompactCocycle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergPreservesSchwartzBStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatMatrixTranslationModulationIrreduc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSchroedingerEigenvectorCompactCocycle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergPreservesSchwartzBStatement
+
+@[expose] public section
+
 open ValuativeRel Matrix
 
 namespace GlobalTheory.LagVac
@@ -51,7 +56,8 @@ theorem exists_fixed {A B X : Type} [AddCommGroup A] [AddCommGroup B] [AddCommGr
     rw [hconj, hfix h hh, (hK h).mp hh w, one_smul]
   refine ⟨∑ q : A ⧸ K, π (Quotient.out q) (S w φ), Submodule.sum_mem _ fun q _ => hPπ _ _ (hPS _ _ hφ),
     fun h0 => hw (hS w _ ?_), avg_fixed K π hπ _ hx⟩
-  rw [map_sum, ← h0]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← h0]
   exact Finset.sum_congr rfl fun q _ => (hconj _ _ _).symm
 
 section Lin
@@ -103,9 +109,11 @@ theorem exists_denom_lin {ι Y Y' : Type} [Fintype ι] [Fintype Y] [Fintype Y'] 
   classical
   obtain ⟨N, hN, h⟩ := exists_denom (fun t : ι × Y × Y' => l t.1 (Matrix.single t.2.1 t.2.2 1))
   refine ⟨N, hN, fun i u hu => ?_⟩
-  rw [Matrix.matrix_eq_sum_single u, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.matrix_eq_sum_single u, map_sum, Finset.mul_sum]
   refine Subring.sum_mem _ fun r _ => ?_
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Subring.sum_mem _ fun q _ => ?_
   rw [show Matrix.single r q (u r q) = u r q • Matrix.single r q (1 : k) by simp, hl, mul_left_comm]
   exact mul_mem (hu r q) (h (i, r, q))
@@ -142,8 +150,8 @@ theorem schr_mem_SB (hψ : ∀ y ∈ 𝒪[k], ψ y = 1) (w : (κ → k) × (κ �
     HasCompactSupport.mul_left (f := fun x : κ → k => ψ (x ⬝ᵥ w.2 + ⅟(2 : k) * (w.1 ⬝ᵥ w.2)))
       (hφ.2.comp_homeomorph (Homeomorph.addRight w.1))⟩
 
-omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem schr_ind (hψ : ∀ y ∈ 𝒪[k], ψ y = 1) (w : (κ → k) × (κ → k)) (h1 : ∀ i, w.1 i ∈ 𝒪[k])
     (h2 : ∀ i, ⅟(2 : k) * w.2 i ∈ 𝒪[k]) :
     schr ψ w (Set.indicator {y : κ → k | ∀ r, y r ∈ 𝒪[k]} (fun _ => (1 : ℂ))) =
@@ -182,9 +190,9 @@ theorem exists_fix_ind (hψ : ∀ y ∈ 𝒪[k], ψ y = 1) {Y Y' : Type} [Fintyp
   · have := h (Sum.inr i) u hu
     simpa [l, mul_left_comm] using this
 
+
 open GlobalTheory.IrredSB in
 omit [Invertible (2 : k)] in
-
 theorem finite_quot [CharZero k] (Y Y' : Type) [Fintype Y] [Fintype Y'] {N : ℕ} (hN : 0 < N) :
     Finite ((intMat k Y Y' × intMat k Y Y') ⧸
       (nsmulAddMonoidHom N : intMat k Y Y' × intMat k Y Y' →+ intMat k Y Y' × intMat k Y Y').range) := by
@@ -207,8 +215,8 @@ theorem finite_quot [CharZero k] (Y Y' : Type) [Fintype Y] [Fintype Y'] {N : ℕ
 
 end GlobalTheory.LagVac
 
-open GlobalTheory.WeilM GlobalTheory.VacLoc GlobalTheory.IrredSB in
 
+open GlobalTheory.WeilM GlobalTheory.VacLoc GlobalTheory.IrredSB in
 theorem GlobalTheory.LagVac.exists_vacuum : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k]
     [Invertible (2 : k)] {κ : Type} [Fintype κ] {n d : ℕ} (ψ0 : AddChar k ℂ), Continuous ψ0 →
     (∀ x : k, (∀ y ∈ 𝒪[k], ψ0 (x * y) = 1) ↔ x ∈ 𝒪[k]) →
@@ -248,9 +256,9 @@ theorem GlobalTheory.LagVac.exists_vacuum : ∀ {k : Type} [Field k] [ValuativeR
   have hlin : ∀ (w : (κ → k) × (κ → k)) (c : ℂ) (f : (κ → k) → ℂ),
       schr ψ w (c • f) = c • schr ψ w f := fun w c f => (schrL ψ w).map_smul c f
   have hTT : ∀ u u' φ, schr ψ (wT (u + u')) φ = schr ψ (wT u) (schr ψ (wT u') φ) := fun u u' φ => by
-    rw [schr_schr, hT, map_add]; simp
+    rw [schr_schr, hT, map_add (f := _)]; simp
   have hMM : ∀ u u' φ, schr ψ (wM (u + u')) φ = schr ψ (wM u) (schr ψ (wM u') φ) := fun u u' φ => by
-    rw [schr_schr, hM, map_add]; simp
+    rw [schr_schr, hM, map_add (f := _)]; simp
   have hMT : ∀ (u z : intMat k (Fin n) (Fin d)) φ,
       schr ψ (wT u) (schr ψ (wM z) φ) = schr ψ (wM z) (schr ψ (wT u) φ) := fun u z φ => by
     rw [schr_comm, hTM', hψ _ (hpint u z), one_smul]

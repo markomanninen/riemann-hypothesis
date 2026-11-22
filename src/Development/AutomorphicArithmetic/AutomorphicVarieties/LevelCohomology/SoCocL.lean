@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLocTors
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCobPlace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.CobDown
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLocTors
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCobPlace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.CobDown
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.X
 

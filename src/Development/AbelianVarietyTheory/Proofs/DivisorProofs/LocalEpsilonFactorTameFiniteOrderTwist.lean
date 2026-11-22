@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
-import Development.AbelianVarietyTheory.Definitions.Foundations.TupleConstantsNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeLocalGaussSumNormSqEqAbsNormPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
+public import Development.AbelianVarietyTheory.Definitions.Foundations.TupleConstantsNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeLocalGaussSumNormSqEqAbsNormPow
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.HeckeEps
 open Formalism.L2.Host (unif atFin unif_spec IsUnitAt)
@@ -50,7 +54,7 @@ theorem gaussSumAt_unr_mul {χ ξ : HChar E} {w : HeightOneSpectrum (𝓞 E)} (h
   have hz0 : ((Quotient.out (y : 𝓞 E ⧸ w.asIdeal ^ a) : 𝓞 E) : E) ≠ 0 := fun h => by
     rw [h, map_zero] at hy1
     exact zero_ne_one hy1
-  rw [gaussTerm, gaussTerm, dif_neg hz0, dif_neg hz0]
+  rw [gaussTerm, gaussTerm, dite_eq_right hz0, dite_eq_right hz0]
   have h1 : χ.locK w (Units.mk0 _ hz0) = 1 := by
     refine hχ _ ?_
     show Valued.v (((atFin w (Units.mk0 _ hz0)) : (w.adicCompletion E)ˣ) : w.adicCompletion E) = 1
@@ -89,7 +93,7 @@ theorem exists_gaussSumAt_dvd {K : Type} [Field K] [NumberField K] (σ : K →+*
     have hz0 : (z : E) ≠ 0 := fun h => by
       rw [h, map_zero] at hy1
       exact zero_ne_one hy1
-    rw [gaussTerm, dif_neg hz0]
+    rw [gaussTerm, dite_eq_right hz0]
     obtain ⟨x1, hx1⟩ := hξK (Units.mk0 _ hz0)⁻¹
     have hp : psiAt w (algebraMap E (w.adicCompletion E) ((z : E) / c)) ^ q = 1 := by
       rw [← psiAt_natMul]
@@ -116,10 +120,12 @@ theorem exists_gaussSumAt_dvd {K : Type} [Field K] [NumberField K] (σ : K →+*
   have hgi : IsIntegral ℤ (∑ y, X y) := IsIntegral.sum _ fun y _ => hXi y
   have hgi' : IsIntegral ℤ (∑ y, (X y)⁻¹) := IsIntegral.sum _ fun y _ => hXi' y
   have hσg : σ (∑ y, X y) = gaussSumAt ξ w 1 c := by
-    rw [map_sum, gaussSumAt, finsum_eq_sum_of_fintype]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, gaussSumAt, finsum_eq_sum_of_fintype]
     exact Finset.sum_congr rfl fun y _ => (hX y).1
   have hσg' : σ (∑ y, (X y)⁻¹) = starRingEnd ℂ (gaussSumAt ξ w 1 c) := by
-    rw [← hσg, map_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hσg, map_sum, map_sum, map_sum]
     exact Finset.sum_congr rfl fun y _ => by rw [map_inv₀, Complex.inv_eq_conj (hnorm y)]
   have hu : IsUnitary ξ := isUnitary_of_orderDvd hN hξN
   have hG := GlobalTheory.GaussMod.gaussSumAt_normSq ξ w 1 c one_ne_zero hξ hu (valuation_unif_pow w _)

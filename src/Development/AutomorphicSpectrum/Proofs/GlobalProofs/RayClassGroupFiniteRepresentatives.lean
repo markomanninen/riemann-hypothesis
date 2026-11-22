@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import Formalism.LocalToGlobal.GlobalTheory.GL2.TotallyComplexOfNoReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import Formalism.LocalToGlobal.GlobalTheory.GL2.TotallyComplexOfNoReal
+
+@[expose] public section
 
 set_option autoImplicit false
 

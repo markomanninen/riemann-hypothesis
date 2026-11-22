@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageCochainExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAlexanderWhitneyDiagonalSwapHomotopyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageCochainExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAlexanderWhitneyDiagonalSwapHomotopyStatement
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -39,7 +43,7 @@ theorem phi_res (w : ℤ) {N : ℕ} {V : Scheme.{0}} (g : V ⟶ U) (x : Sx E N U
     Sec.res g (phi μ a b w x c) = phi μ a b w (x.res g) c := by
   induction c using Finsupp.induction_linear with
   | zero => rw [map_zero, map_zero]; exact map_zero _
-  | add f f' hf hf' => rw [map_add, map_add, ← hf, ← hf']; exact map_add _ _ _
+  | add f f' hf hf' => rw [map_add (f := _), map_add (f := _), ← hf, ← hf']; exact map_add _ _ _
   | single z t =>
     rw [phi_single, phi_single, along_res, along_res, ← pv_res]
     simp only [Sec.res, map_zsmul]
@@ -48,7 +52,7 @@ theorem phi_along (w : ℤ) {N M : ℕ} (θ : SimplexCategory.mk N ⟶ SimplexCa
     phi μ a b w (x.along θ) c = phi μ a b w x (Pr.push θ c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp only [map_zero]
-  | add f f' hf hf' => rw [map_add, map_add, map_add, hf, hf']
+  | add f f' hf hf' => rw [map_add (f := _), map_add (f := _), map_add (f := _), hf, hf']
   | single z t =>
     rw [Pr.push, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single, phi_single, phi_single, along_along, along_along]
 
@@ -70,7 +74,8 @@ theorem phi_d₁ (w : ℤ) {N : ℕ} (x : Sx E N U) (p r : ℕ) (a' : SimplexCat
     change phi μ a b w x (∑ i : Fin (p + 2), Finsupp.single ⟨p, r, SimplexCategory.δ i ≫ a', b'⟩ ((-1) ^ (i : ℕ))) = _
     have e : sg (m * ((p + 1 : ℕ) : ℤ) + m) = sg (m * p) := by
       rw [show m * ((p + 1 : ℕ) : ℤ) + m = m * p + (m + m) by push_cast; ring, sg_add, sg_add, sg_sq, mul_one]
-    rw [map_sum, bdL, e, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, bdL, e, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [phi_single, face_eq, along_along, smul_comm]
 
@@ -83,7 +88,8 @@ theorem phi_d₂ (w : ℤ) {N : ℕ} (x : Sx E N U) (p r : ℕ) (a' : SimplexCat
     simp [bdR]
   | succ r =>
     change phi μ a b w x (∑ j : Fin (r + 2), Finsupp.single ⟨p, r, a', SimplexCategory.δ j ≫ b'⟩ ((-1) ^ (j : ℕ))) = _
-    rw [map_sum, bdR, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, bdR, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [phi_single, face_eq, along_along, smul_comm]
 
@@ -129,13 +135,13 @@ theorem phi_d (α : Cocycle ((chains R).obj E) I n) (β : Cocycle ((chains R).ob
     Sec.map (K.d w w') (phi μ α.1 β.1 w x c) = sg (n + m) • phi μ α.1 β.1 w' x (Pr.d N c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add f f' hf hf' => rw [map_add, map_add, map_add, smul_add, ← hf, ← hf']; exact map_add _ _ _
+  | add f f' hf hf' => rw [map_add (f := _), map_add (f := _), map_add (f := _), smul_add, ← hf, ← hf']; exact map_add _ _ _
   | single z t =>
     obtain ⟨p, r, a', b'⟩ := z
     have e1 : Sec.map (K.d w w') (phi μ α.1 β.1 w x (Finsupp.single ⟨p, r, a', b'⟩ t)) =
         t • sg (m * p) • Sec.map (K.d w w') (pv μ α.1 β.1 w p r (x.along a') (x.along b')) := by
       rw [phi_single]; simp only [Sec.map, map_zsmul]
-    rw [e1, d_pv_cyc μ α β w w' hw, Pr.d, Finsupp.linearCombination_single, map_zsmul, map_add, map_zsmul, phi_d₁, phi_d₂]
+    rw [e1, d_pv_cyc μ α β w w' hw, Pr.d, Finsupp.linearCombination_single, map_zsmul, map_add (f := _), map_zsmul, phi_d₁, phi_d₂]
     dsimp only
     have hm2 := sg_sq m
     simp only [sg_add, sg_neg, sg_one, sg_nat]
@@ -155,7 +161,8 @@ theorem sg_eq_of_even (c d : ℤ) (h : Even (c - d)) : sg c = sg d := by
 theorem phi_aw {k : ℤ} (hk : n + m = k) {a : Cochain ((chains R).obj E) I n} {b : Cochain ((chains R).obj E) J m}
     {c : Cochain ((chains R).obj E) K k} (hc : μ.IsAW hk a b c) (N : ℕ) (w : ℤ) (h : -(N : ℤ) + k = w) (x : Sx E N U) :
     phi μ a b w x (Pr.aw N) = ev c N w h U x := by
-  rw [hc N w h U x, Pr.aw, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc N w h U x, Pr.aw, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [phi_single, one_smul]
   dsimp only
@@ -166,7 +173,8 @@ theorem phi_wa {ν : Pair J I K} (hf : μ.IsFlip ν) {k : ℤ} (h' : m + n = k) 
     {b : Cochain ((chains R).obj E) J m} {c : Cochain ((chains R).obj E) K k} (hc : ν.IsAW h' b a c) (N : ℕ) (w : ℤ)
     (h : -(N : ℤ) + k = w) (x : Sx E N U) :
     phi μ a b w x (Pr.wa N) = sg (n * m) • ev c N w h U x := by
-  rw [hc N w h U x, Pr.wa, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc N w h U x, Pr.wa, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [phi_single]
   dsimp only
@@ -189,8 +197,8 @@ theorem ev_sub' {R : Type} [CommRing R] {E : Spc} {I : Cx R} {n : ℤ} (a b : Co
 
 end GlobalTheory.EtC.CupFlip
 
-open GlobalTheory.EtC.CupSpec GlobalTheory.EtC.CupFlip in
 
+open GlobalTheory.EtC.CupSpec GlobalTheory.EtC.CupFlip in
 theorem GlobalTheory.EtC.Pair.cup_flip : ∀ (R : Type) [CommRing R] {I J K : Cx R} (μ : Pair I J K) (ν : Pair J I K), μ.IsFlip ν →
     ∀ (E : Spc) {n m k : ℤ} (h : n + m = k) (h' : m + n = k) a b,
       μ.cup E h a b = (n * m).negOnePow • ν.cup E h' b a := by
@@ -213,7 +221,8 @@ theorem GlobalTheory.EtC.Pair.cup_flip : ∀ (R : Type) [CommRing R] {I J K : Cx
     | succ N =>
       have hb : phi μ α.1 β.1 t x (Pr.bd (hh N)) =
           ∑ i : Fin (N + 2), (-1 : ℤ) ^ (i : ℕ) • ev θ N t (by omega) U (x.face i) := by
-        rw [Pr.bd, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Pr.bd, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [map_zsmul, hθ, face_eq, phi_along]
       rw [ev_δ_succ (by omega) θ U N (t - 1) t (by omega) ht x, hθ, phi_d μ α β (t - 1) t (by omega), ← hb, h, sg_smul,

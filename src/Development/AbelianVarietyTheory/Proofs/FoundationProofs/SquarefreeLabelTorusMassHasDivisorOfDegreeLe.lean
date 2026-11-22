@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MassDegTypeLeCycleTypeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardPermExistsStableSubsetLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SquarefreeLabelTorusMassUnionBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MassDegTypeLeCycleTypeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardPermExistsStableSubsetLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SquarefreeLabelTorusMassUnionBounds
+
+@[expose] public section
 
 open Polynomial Classical GlobalTheory.BadShare
 namespace GlobalTheory.BadShare
@@ -116,8 +120,8 @@ private lemma exists_invariant_finset_card_of_le_cycleType {n : ℕ} (σ : Equiv
       rw [hT' x hx]
       exact Finset.mem_union_right _ hx
 
-open Polynomial Classical in
 
+open Polynomial Classical in
 theorem _root_.GlobalTheory.BadShare.mass_hasDiv_le : ∀ (g : ℕ) [Fact g.Prime], ∀ N a : ℕ, 0 < a → a < N →
     _root_.GlobalTheory.BadShare.mass g N (_root_.GlobalTheory.BadShare.HasDiv g a) ≤ 7 / 8 := by
   intro g _ N a ha haN

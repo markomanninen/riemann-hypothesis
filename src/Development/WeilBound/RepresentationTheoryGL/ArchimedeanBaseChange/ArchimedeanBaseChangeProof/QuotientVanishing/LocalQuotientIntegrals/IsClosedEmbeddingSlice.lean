@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem pf_Glob2 : PositivityTheory.Rg.BcB.D4.SplitAt2 → PositivityTheory.Rg.B
   have hFm : Measurable fun x => φ (twConj (thetaA E n) x (ratGL E n d)) * V (yOf τ Wof x) := by
     have h1 : Continuous fun x : GA E n => twConj (thetaA E n) x (ratGL E n d) :=
       (continuous_inv.mul continuous_const).mul hθc
-    refine (hφ.cont.comp h1).measurable.mul (hV.meas.comp (measurable_pi_lambda _ fun e' => ?_))
+    refine (hφ.cont.comp h1).measurable.mul (hV.meas.comp (Measurable.of_eval fun e' => ?_))
     have := hdegm (Wof e')
     rw [← BorelSpace.measurable_eq] at this
     exact measurable_const.sub this

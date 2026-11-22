@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CubeCechEquivalences.CechCubeBaseChange.BcSumSingle
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.OmegaPullSCompRight
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.Leaves
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CubeCechEquivalences.CechCubeBaseChange.BcSumSingle
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.OmegaPullSCompRight
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.Leaves
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC UpperTheory.Gal.G3.HN
 
@@ -15,7 +19,7 @@ private theorem bcSum_mapRange {M N M' N' : Type} [AddCommGroup M] [Module k M] 
     (x : J →₀ M) : bcSum e ψ' (x.mapRange f hf) = g (bcSum e ψ x) := by
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add a b ha hb => rw [Finsupp.mapRange_add hfa, map_add, map_add, map_add, ha, hb]
+  | add a b ha hb => rw [Finsupp.mapRange_add hfa, map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
   | single j m => rw [Finsupp.mapRange_single, bcSum_single, bcSum_single, map_smul, h]
 
 private theorem isBC_pi {T : Type} [Finite T] {M N : T → Type} [∀ t, AddCommGroup (M t)]
@@ -42,7 +46,8 @@ private theorem isBC_pi {T : Type} [Finite T] {M N : T → Type} [∀ t, AddComm
   · intro y
     choose x hx using fun t => (h t).2 (y t)
     refine ⟨∑ t, (x t).mapRange (Pi.single t) (Pi.single_zero t), ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have hs : ∀ t, bcSum e Ψ ((x t).mapRange (Pi.single t) (Pi.single_zero t)) = Pi.single t (y t) := by
       intro t
       rw [bcSum_mapRange e (ψ t) Ψ (Pi.single t) (Pi.single_zero t)

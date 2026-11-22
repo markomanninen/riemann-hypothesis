@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHermitianJmBracket
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsKFinDRep
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothVectorsModerateGrowthSmoothFrechetRepStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHermitianJmBracket
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsKFinDRep
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothVectorsModerateGrowthSmoothFrechetRepStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.LowTypeDetermined GlobalTheory.TypeSum
 open scoped InnerProductSpace Topology
@@ -76,7 +80,7 @@ theorem cwb_mem_Fam (h : Std ε σ) {T₀ : H →ₗ[ℂ] E}
     have e1 := GlobalTheory.SmVec.word_add hG h.1 (cwb_val_mem l₁) (Submodule.smul_mem _ (a : ℂ) h1) h2
     have e2 := GlobalTheory.SmVec.word_smul hG h.1 (cwb_val_mem l₁) (a : ℂ) h1
     change T₀ (GlobalTheory.SmVec.word σ _ _) = _ • T₀ (GlobalTheory.SmVec.word σ _ _) + T₀ (GlobalTheory.SmVec.word σ _ _)
-    rw [e1, e2, map_add, map_smul]
+    rw [e1, e2, map_add (f := _), map_smul]
   · intro l₁ l₂ X Y Z hZ
     simp only [List.map_append, List.map_cons, happ, hcons]
     have hw := hS l₂
@@ -101,7 +105,7 @@ private theorem isKFin_add {n : ℕ} {ε : Fin n → Bool} {H : Type} [NormedAdd
   · unfold IsKStableOn at hSK hSK' ⊢
     intro g hg x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hSK g hg y hy) (hSK' g hg z hz)
 
 private theorem isKFin_smul {n : ℕ} {ε : Fin n → Bool} {H : Type} [NormedAddCommGroup H]
@@ -172,7 +176,7 @@ theorem casselmanWallach_banach : GlobalTheory.Published.CasselmanWallach → �
         funext l
         have e := GlobalTheory.SmVec.word_add hG hσ.1 (cwb_val_mem l) (hσ.2.2.1 _ v.2) (hσ.2.2.1 _ w.2)
         show T₀ (Dw σ _ (v.1 + w.1)) = T₀ (Dw σ _ v.1) + T₀ (Dw σ _ w.1)
-        rw [← map_add]
+        rw [← map_add (f := _)]
         exact congrArg T₀ e
       map_smul' := fun c v => by
         apply Subtype.ext

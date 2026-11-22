@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.NormOneIsCoboundaryUnramifiedQuadratic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.Descent
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SqrtO
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.NormOneIsCoboundaryUnramifiedQuadratic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.Descent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SqrtO
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc Matrix
 
@@ -244,7 +248,7 @@ private theorem vanish_inert {O K : Type} [CommRing O] [IsDomain O] [IsDiscreteV
   have memI : ∀ w : Lsq K Δ, IsInt O w → w ∈ integralClosure O (Lsq K Δ) := fun w hw => hw
   have hK : ∀ k : K, IsIntegral O (algebraMap K (Lsq K Δ) k) → ∃ a : O, algebraMap O K a = k := by
     intro k hk
-    have h1 : IsIntegral O k := (isIntegral_algebraMap_iff (algebraMap K (Lsq K Δ)).injective).1 hk
+    have h1 : IsIntegral O k := (isIntegral_algebraMap_iff ).1 hk
     exact IsIntegrallyClosed.isIntegral_iff.1 h1
   haveI hfr : IsFractionRing (integralClosure O (Lsq K Δ)) (Lsq K Δ) :=
     integralClosure.isFractionRing_of_finite_extension K (Lsq K Δ)
@@ -402,10 +406,10 @@ private theorem vanish_split {O K : Type} [CommRing O] [IsDomain O] [IsDiscreteV
     intro z
     rw [hφ₁, hφ₂]
     apply QuadraticAlgebra.ext
-    · simp [he, QuadraticAlgebra.algebraMap_eq]
+    · simp [he, - algebraMap_eq]
       field_simp
       ring
-    · simp [he, QuadraticAlgebra.algebraMap_eq]
+    · simp [he, - algebraMap_eq]
       field_simp
       ring
   have intcrit : ∀ z : Lsq K Δ, φ₁ z ∈ (algebraMap O K).range →
@@ -467,7 +471,7 @@ private theorem vanish_split {O K : Type} [CommRing O] [IsDomain O] [IsDiscreteV
 
 private theorem vanish_sigL_mul {K : Type} [Field K] {Δ τ : K} (x y : EL Δ τ) : sigL (x * y) = sigL x * sigL y := by
   have hτ : star ((algebraMap K (Lsq K Δ)) τ) = (algebraMap K (Lsq K Δ)) τ := by
-    ext <;> simp [QuadraticAlgebra.algebraMap_eq]
+    ext <;> simp [- algebraMap_eq]
   apply QuadraticAlgebra.ext
   · simp [sigL, star_mul', star_add, star_neg, star_one]
   · simp [sigL, star_mul', star_add, hτ]
@@ -565,7 +569,7 @@ theorem UpperTheory.V.Z.Sym.Loc.vanish :
   have hτO : τ ∈ (algebraMap O K).range := by
     obtain ⟨o, ho⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
     refine ⟨o + 2, ?_⟩
-    rw [map_add, ho, map_ofNat]
+    rw [map_add (f := _), ho, map_ofNat]
     ring
   have hω1 : (ofE Δ ω : EL Δ τ) = ⟨0, 1⟩ := by
     ext <;> simp [ofE]

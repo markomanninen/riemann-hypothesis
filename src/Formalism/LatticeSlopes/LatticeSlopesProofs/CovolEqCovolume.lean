@@ -1,5 +1,9 @@
-import Formalism.LatticeSlopes.Statement
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+module
+
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+
+@[expose] public section
 
 open Module Submodule MeasureTheory
 
@@ -10,7 +14,7 @@ namespace Formalism.F
 theorem covol_eq_covolume' : CovolEqCovolume := by
   intro E _ _ _ _ _ L _ _
   classical
-  rw [covol, dif_pos (inferInstance : DiscreteTopology L)]
+  rw [covol, dite_eq_left (inferInstance : DiscreteTopology L)]
   set b := Module.finBasis ℤ L with hb
   set bR : Basis (Fin (Module.finrank ℤ L)) ℝ E := b.ofZLatticeBasis ℝ L with hbR
   have hrank : Module.finrank ℝ E = Module.finrank ℤ L := (ZLattice.rank ℝ L).symm

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.TrivSymmApply
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsContinuousSectionQuotientStatement
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.FrobeniusReciprocity.HaarDistr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSchwartzBruhatCharacterIntegralOneStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnimodularHaarRightInvariantStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.TrivSymmApply
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsContinuousSectionQuotientStatement
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.FrobeniusReciprocity.HaarDistr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSchwartzBruhatCharacterIntegralOneStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnimodularHaarRightInvariantStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,10 @@ variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [T2Spa
   (μG : Measure G) [μG.IsHaarMeasure] (χ : G →* ℂˣ)
 
 theorem fibSmul_fibSmul (a b : H) (z : Fib p) :
-    fibSmul hp a (fibSmul hp b z) = fibSmul hp (a * b) z :=
-  Subtype.ext (by simp [smul_smul])
+    fibSmul hp a (fibSmul hp b z) = fibSmul hp (a * b) z := by
+  apply Subtype.ext
+  change (a : G) • ((b : G) • z.1) = ((a : G) * (b : G)) • z.1
+  exact (mul_smul _ _ _).symm
 
 theorem int_chi_right [μG.IsMulRightInvariant] (α : SB G) (h0 : G) :
     ∫ g, (α : G → ℂ) (g * h0⁻¹) * (χ g : ℂ) ∂μG =
@@ -107,7 +113,7 @@ theorem fap_translF (uH : IsUnimod H) (h0 : H) (α : SB G) (φ : SB (Fib p)) :
   funext h
   simp [translF_apply, pullHomeo_apply, Homeomorph.coe_mulRight, fibSmul_fibSmul, mul_assoc]
 
-theorem eval_fap (hχ : Continuous fun g => (χ g : ℂ)) (ξ : eqv X χ) (α0 : SB G)
+theorem eval_fap (hχ : Continuous fun g => (χ g : ℂ)) (ξ : eqv (X := X) χ) (α0 : SB G)
     (hα0 : ∫ g, (α0 : G → ℂ) g * (χ g : ℂ) ∂μG = 1) (α : SB G) (φ : SB (Fib p)) :
     (ξ : Distr X) (fap hp σ hpc μH α φ) =
       (∫ g, (α : G → ℂ) g * (χ g : ℂ) ∂μG) * (ξ : Distr X) (fap hp σ hpc μH α0 φ) := by
@@ -124,7 +130,7 @@ theorem eval_fap (hχ : Continuous fun g => (χ g : ℂ)) (ξ : eqv X χ) (α0 :
 
 def FrMap (uG : IsUnimod G) (uH : IsUnimod H) (hχ : Continuous fun g => (χ g : ℂ)) (α0 : SB G)
     (hα0 : ∫ g, (α0 : G → ℂ) g * (χ g : ℂ) ∂μG = 1) :
-    eqv X χ →ₗ[ℂ] eqvF hp (χ.comp H.subtype) where
+    eqv (X := X) χ →ₗ[ℂ] eqvF hp (χ.comp H.subtype) where
   toFun ξ := ⟨(ξ : Distr X) ∘ₗ (avg hp σ hpc μH ∘ₗ tensR α0), fun h0 φ => by
     haveI := GlobalTheory.T.unimodular_haar_right_invariant G uG μG
     show (ξ : Distr X) (fap hp σ hpc μH α0 (translF hp h0 φ)) =
@@ -138,7 +144,7 @@ def FrMap (uG : IsUnimod G) (uH : IsUnimod H) (hχ : Continuous fun g => (χ g :
   map_smul' _ _ := rfl
 
 theorem FrMap_apply (uG : IsUnimod G) (uH : IsUnimod H) (hχ : Continuous fun g => (χ g : ℂ))
-    (α0 : SB G) (hα0 : ∫ g, (α0 : G → ℂ) g * (χ g : ℂ) ∂μG = 1) (ξ : eqv X χ)
+    (α0 : SB G) (hα0 : ∫ g, (α0 : G → ℂ) g * (χ g : ℂ) ∂μG = 1) (ξ : eqv (X := X) χ)
     (φ : SB (Fib p)) :
     ((FrMap hp σ hpc μH μG χ uG uH hχ α0 hα0 ξ : eqvF hp _) : Distr (Fib p)) φ =
       (ξ : Distr X) (fap hp σ hpc μH α0 φ) :=
@@ -200,7 +206,7 @@ theorem FrMap_surjective (uG : IsUnimod G) (uH : IsUnimod H)
           pullHomeo Ψ (tens (pullHomeo (Homeomorph.mulRight (h0 : G)) α) (translF hp h0 φ)) := by
         apply Subtype.ext
         funext q
-        simp [Ψ, translF_apply, fibSmul_fibSmul, mul_assoc]
+        simp [rtr, Ψ, triv, translF_apply, fibSmul_fibSmul, mul_assoc]
       show Lη (pullHomeo Ψ.symm (rtr h0 (pullHomeo Ψ (tens α φ)))) = Lη (tens α φ)
       rw [e, pull_pull_symm, hL, hL, (η.2 h0 φ)]
       have e2 : ∫ g, ((pullHomeo (Homeomorph.mulRight (h0 : G)) α : SB G) : G → ℂ) g *
@@ -230,7 +236,7 @@ theorem FrMap_surjective (uG : IsUnimod G) (uH : IsUnimod H)
     rw [← hfac]
     show Lη (pullHomeo Ψ.symm (pullHomeo Ψ (tens α φ))) = _
     rw [pull_pull_symm, hL]
-  have hmem : ξ0 ∈ eqv X χ := by
+  have hmem : ξ0 ∈ eqv (X := X) χ := by
     rw [mem_eqv]
     intro g f
     have : ξ0 ∘ₗ transl g = (χ g : ℂ) • ξ0 := by
@@ -249,7 +255,7 @@ theorem FrMap_surjective (uG : IsUnimod G) (uH : IsUnimod H)
 
 theorem supportedIn_FrMap (uG : IsUnimod G) (uH : IsUnimod H)
     (hχ : Continuous fun g => (χ g : ℂ)) (α0 : SB G)
-    (hα0 : ∫ g, (α0 : G → ℂ) g * (χ g : ℂ) ∂μG = 1) (ξ : eqv X χ) (C : Set X)
+    (hα0 : ∫ g, (α0 : G → ℂ) g * (χ g : ℂ) ∂μG = 1) (ξ : eqv (X := X) χ) (C : Set X)
     (hC : ∀ (g : G), ∀ x ∈ C, g • x ∈ C) :
     SupportedIn (ξ : Distr X) C ↔
       SupportedIn ((FrMap hp σ hpc μH μG χ uG uH hχ α0 hα0 ξ : eqvF hp _) : Distr (Fib p))

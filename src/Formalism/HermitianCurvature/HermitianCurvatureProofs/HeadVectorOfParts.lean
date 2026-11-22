@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTypesAtOfWeight
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolynomialHeadTypes
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactCoefficientAppend
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTypesAtOfWeight
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolynomialHeadTypes
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactCoefficientAppend
+
+@[expose] public section
 
 noncomputable section
 

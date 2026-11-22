@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.Tensor
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.Tensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem ker_le (K : ∀ i, Submodule ℂ (V i)) (R : Submodule ℂ (⨂[ℂ] i, 
     | smul_tprod c f =>
       rw [map_smul, map_smul, ← smul_sub, map_tprod, map_tprod]
       simpa using R.smul_mem c (h1 f Finset.univ)
-    | add x y hx hy => rw [map_add, map_add, add_sub_add_comm]; exact R.add_mem hx hy
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), add_sub_add_comm]; exact R.add_mem hx hy
   intro x hx
   have := h2 x
   rwa [LinearMap.mem_ker.1 hx, map_zero, sub_zero] at this

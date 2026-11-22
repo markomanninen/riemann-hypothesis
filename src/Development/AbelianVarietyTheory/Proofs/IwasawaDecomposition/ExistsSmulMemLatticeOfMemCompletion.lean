@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlESymmApply
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlESymmApply
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.L2.Forms Formalism.UG Formalism.L2.GlobalTheoryTheory.LocalLatticeBases NumberField IsDedekindDomain Matrix GlobalTheory.LevelHecke
 open scoped TensorProduct
 
@@ -51,9 +56,10 @@ theorem exists_rational_solution {F K V : Type} [Field F] [Field K] [Algebra F K
   refine ⟨b - T (S b) + T z, fun i => ?_, ?_⟩
   · have := hb i trivial
     convert this using 1
-    simp only [φ, Pi.map_apply, hS, map_sum, map_smul, Pi.add_apply, Pi.sub_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [φ, Pi.map_apply, hS, map_sum, map_smul, Pi.add_apply, Pi.sub_apply,
       Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_add, map_sub, map_mul, mul_comm]
-  · rw [← hS, map_add, map_sub, hST _ ⟨b, rfl⟩, hST _ hz, sub_self, zero_add]
+  · rw [← hS, map_add (f := _), map_sub, hST _ ⟨b, rfl⟩, hST _ hz, sub_self, zero_add]
 
 theorem functional_of_tmul {F E K : Type} [Field F] [Field E] [Field K] [Algebra F E] [Algebra F K]
     {n k : ℕ} (s : Fin k → Fin n → E) (z : Fin n → E) (a : Fin k → K)
@@ -61,11 +67,13 @@ theorem functional_of_tmul {F E K : Type} [Field F] [Field E] [Field K] [Algebra
     algebraMap F K (l z) = ∑ j, algebraMap F K (l (s j)) * a j := by
   classical
   have hl : ∀ y : Fin n → E, l y = ∑ i, l (Pi.single i (y i)) := fun y => by
-    rw [← map_sum, Finset.univ_sum_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Finset.univ_sum_single]
   have hi : ∀ i, l (Pi.single i (z i)) • (1 : K) = ∑ j, l (Pi.single i (s j i)) • a j := fun i => by
     have := congrArg (fun t => TensorProduct.lid F K
       (LinearMap.rTensor K (l.comp (LinearMap.single F (fun _ : Fin n => E) i)) t)) (h i)
-    simpa only [map_sum, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, LinearMap.comp_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, LinearMap.comp_apply,
       LinearMap.single_apply] using this
   rw [hl z, Algebra.algebraMap_eq_smul_one, Finset.sum_smul]
   simp only [hi]

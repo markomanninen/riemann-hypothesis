@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.GlobalTheory
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ShapeProdVarMatNeZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistGen
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.GlobalTheory
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ShapeProdVarMatNeZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,7 +133,7 @@ theorem freeOf_union {S T : Set σ} {G : MvPolynomial σ ℂ} (h1 : FreeOf S G) 
   · exact h1 e he v hv
   · exact h2 e he v hv
 
-theorem eq_C_of_support {Q : MvPolynomial σ ℂ} (h : ∀ e ∈ Q.support, e = 0) : Q = C (coeff 0 Q) := by
+theorem eq_C_of_support {Q : MvPolynomial σ ℂ} (h : ∀ e ∈ Q.support, e = 0) : Q = C (AddMonoidAlgebra.coeff Q 0) := by
   classical
   ext m
   rw [coeff_C]
@@ -255,7 +259,7 @@ theorem line_of (hC : CauchyHW) (hA : HypA) (hB : HypB) (hCc : HypC) (hD : HypD)
     have hvS : v ∉ Set.range (ιA p q r s μ μ') ∪ Set.range (ιB p q r s μ μ') ∪ Set.range (ιC p q r s μ μ') ∪
         Set.range (ιD p q r s μ μ') := fun h => hv (fD4 e' he' v h)
     exact hvS (hCov p q r s μ μ' P hP e he v (by rw [hee v hvS]; exact hv))
-  refine ⟨⟨sqA, sqB, sqC, sqD⟩, coeff 0 QD, ?_⟩
+  refine ⟨⟨sqA, sqB, sqC, sqD⟩, AddMonoidAlgebra.coeff QD 0, ?_⟩
   conv_lhs => rw [hPeq, eq_C_of_support hsupp]
   unfold vLine
   ring

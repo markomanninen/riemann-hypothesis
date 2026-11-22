@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAwaySurjective
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleIffVeryAmpleBy
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.InKIffTrivialTwist
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineOfQuasiAffine
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsClosedSubschemeTranslationKernel
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.KTrivOfGeneric
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAwaySurjective
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleIffVeryAmpleBy
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.InKIffTrivialTwist
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineOfQuasiAffine
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsClosedSubschemeTranslationKernel
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.KTrivOfGeneric
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj TensorProduct
@@ -53,7 +57,6 @@ theorem mono_of_finite {R : Type} [CommRing R] {X : Scheme.{0}} (h : X ⟶ Sp R)
     have hsurj : Function.Surjective (Algebra.TensorProduct.includeLeftRingHom : V →+* V ⊗[R] B) := by
       intro z
       induction z with
-      | zero => exact ⟨0, map_zero _⟩
       | add y z hy hz =>
         obtain ⟨y, rfl⟩ := hy
         obtain ⟨z, rfl⟩ := hz
@@ -73,7 +76,7 @@ variable {S S' : Scheme.{0}} {f : S' ⟶ S} {A : Over S} {A' : Over S'} [GrpObj 
 
 theorem inK_push (h : IsGrpPullback A' A f φ) (hL : L.IsLB) {T' : Over S'} (x : T' ⟶ A')
     (hx : InK A' (L.pull φ) x) : InK A L (pushPt h.1.w x) := by
-  have hL' := pull_isLB hL φ
+  have hL' := LB.isLB_pull hL φ
   obtain ⟨w, hw⟩ := PolBaseChange.lbIso_refl hL'
   replace hw := (isGen_iff w).1 hw
   intro p
@@ -113,8 +116,8 @@ theorem inK_push (h : IsGrpPullback A' A f φ) (hL : L.IsLB) {T' : Over S'} (x :
   fin_cases k
   exacts [congrArg (_ ≫ ·) k₃, congrArg (_ ≫ ·) k₂]
 
-variable (A L) in
 
+variable (A L) in
 def TrivAlong (f : S' ⟶ S) : Prop :=
   ∀ (T : Over S) (a : T.left ⟶ S'), a ≫ f = T.hom → ∀ x : T ⟶ A, InK A L x → x = 1
 
@@ -124,7 +127,7 @@ theorem TrivAlong.comp (h : TrivAlong A L f) {S'' : Scheme.{0}} (g : S'' ⟶ S')
 theorem trivAlong_of_kTriv (h : IsGrpPullback A' A f φ) (hL : L.IsLB) (hK : KTriv A' (L.pull φ)) :
     TrivAlong A L f := by
   intro T a ha x hx
-  have hL' := pull_isLB hL φ
+  have hL' := LB.isLB_pull hL φ
   have hxw : x.left ≫ A.hom = a ≫ f := (Over.w x).trans ha.symm
   let x' : Over.mk a ⟶ A' := Over.homMk (h.1.lift _ _ hxw) (h.1.lift_snd _ _ _)
   let U : Over.mk ((Over.mk a).hom ≫ f) ⟶ T := Over.homMk (𝟙 _) ((Category.id_comp _).trans ha.symm)
@@ -184,8 +187,8 @@ section Affine
 
 variable [IsCommMonObj A] {R : Type} [CommRing R]
 
-omit [IsCommMonObj A] in
 
+omit [IsCommMonObj A] in
 theorem relAmple_chart (j : Sp R ⟶ S) [IsOpenImmersion j] (g : S' ⟶ Sp R) (hL : L.IsLB) (hA : RelAmple A L) :
     RelAmple ((Over.pullback (g ≫ j)).obj A) (L.pull (pullback.fst A.hom (g ≫ j))) := by
   have hL' := pull_isLB hL (pullback.fst A.hom (g ≫ j))
@@ -204,8 +207,8 @@ theorem trivAlong_dvr (hG : GlobalFnsSt) (j : Sp R ⟶ S) [IsOpenImmersion j] (h
     ((cubeMapOf hp).rigLB M hL hr) c' (relAmple_chart j g M.isLB ha) fun x hx => ?_)
   exact h.pull hp M.isLB _ (𝟙 _) (Category.id_comp _) x hx
 
-omit [IsCommMonObj A] in
 
+omit [IsCommMonObj A] in
 theorem trivAlong_generic [IsDomain R] [IsIntegral S] (j : Sp R ⟶ S) [IsOpenImmersion j] (U : S.Opens)
     (hU : (U : Set S).Nonempty) (h : TrivAlong A L U.ι) (F : Type) [Field F] (ψ : R →+* F)
     (hψ : Function.Injective ψ) : TrivAlong A L (spMap ψ ≫ j) := by

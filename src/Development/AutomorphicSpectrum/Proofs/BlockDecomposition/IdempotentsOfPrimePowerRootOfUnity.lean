@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralLocalizationAwayInRing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectoidXiNonZeroDivisor
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueIdempotentLiftTiltStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralLocalizationAwayInRing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectoidXiNonZeroDivisor
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueIdempotentLiftTiltStatement
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -60,7 +64,8 @@ theorem proj_mul_proj (hq : ζ ^ q = 1) (hω : ζ * ω = 1) (hz : z ^ q = 1) (j 
         simp [pow_succ]
       rw [pow_succ, e]
       linear_combination (z * φ ω ^ j) * ih + φ ((ζ ^ k * ω ^ j) ^ i) * φ ω ^ j * hzk
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   conv_lhs => rw [proj, Finset.sum_mul]
   exact Finset.sum_congr rfl fun i _ => step i
 
@@ -93,7 +98,8 @@ theorem sum_proj (hq : IsPrimitiveRoot ζ q) (hq0 : 0 < q) (hω : ζ * ω = 1) :
     rw [mul_pow, map_pow, map_pow, ← pow_mul, ← pow_mul, mul_comm k i]
   simp_rw [e]
   rw [Finset.sum_comm]
-  simp_rw [← Finset.mul_sum, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [← Finset.mul_sum, ← map_sum]
   rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_range.2 hq0)]
   · simp
   · intro i hi hi0
@@ -182,8 +188,9 @@ theorem teich_sum {ι : Type*} [Fintype ι] {e : ι → A.A} (he : OrthogonalIde
   · have := he.isIdempotentElem_sum (s := Finset.univ)
     show _ * _ = _
     rw [← map_mul, this.eq]
-  · rw [WittVector.teichmuller_coeff_zero, ← WittVector.constantCoeff_apply, map_sum]
-    simp [WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [WittVector.teichmuller_coeff_zero, ← WittVector.constantCoeff_apply, map_sum]
+      simp [WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero]
 
 theorem sharp_zero : A.sharp 0 = 0 := by
   show A.th (WittVector.teichmuller l 0) = 0
@@ -192,7 +199,8 @@ theorem sharp_zero : A.sharp 0 = 0 := by
 theorem sharp_sum {ι : Type*} [Fintype ι] {e : ι → A.A} (he : OrthogonalIdempotents e) :
     A.sharp (∑ i, e i) = ∑ i, A.sharp (e i) := by
   show A.th (WittVector.teichmuller l _) = ∑ i, A.th (WittVector.teichmuller l _)
-  rw [teich_sum A he, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [teich_sum A he, map_sum]
 
 end Teich
 

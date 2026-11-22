@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.CompactUnitaryGroups.IsCompactUnitaryGroup
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.ExistsUnitaryCurve
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfinitesimalCharacterQuantumDet
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.CompactUnitaryGroups.IsCompactUnitaryGroup
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.ExistsUnitaryCurve
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfinitesimalCharacterQuantumDet
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ open scoped Classical
 
 namespace PositivityTheory.Rg.Cz.GK
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem exists_eval {π : CuspSub E a} (S : Submodule ℂ π.V) [FiniteDimensional ℂ S] (lam : π.V →ₗ[ℂ] ℂ) :
     ∃ (s : Finset (GA E a)) (c : GA E a → ℂ), ∀ v ∈ S, lam v = ∑ g ∈ s, c g * v.1.1 g := by
@@ -30,8 +34,8 @@ theorem continuous_eval (y : Sm E a) (g : GA E a) :
   rw [h1]
   exact (y.2 g).continuousOn.comp_continuous continuous_subtype_val fun k => val_mem_invSet (Unitary.toUnits k)
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem star_mul_of_places (D : InfinitePlace E → Matrix (Fin a) (Fin a) ℂ) (h : ∀ w, star (D w) * D w = 1) :
     star (Matrix.of fun i j w => D w i j : Matrix (Fin a) (Fin a) (Cinf E)) * Matrix.of (fun i j w => D w i j) = 1 := by
   ext i j w
@@ -42,8 +46,8 @@ theorem star_mul_of_places (D : InfinitePlace E → Matrix (Fin a) (Fin a) ℂ) 
   rw [this, Matrix.one_apply, Matrix.one_apply]
   split_ifs <;> rfl
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem atEmb_apply (τ : E →+* ℂ) (z : ℂ) (w : InfinitePlace E) :
     atEmb τ z w = if w = InfinitePlace.mk τ then
       (if (InfinitePlace.mk τ).embedding = τ then z else starRingEnd ℂ z) else 0 := by
@@ -128,14 +132,15 @@ theorem lieOp_atEmb (π : CuspSub E a) (τ : E →+* ℂ) (X : Matrix (Fin a) (F
   have key : ∀ (z : ℂ) (i j : Fin a), lieS E a i j (atEmb τ z) =
       z • Eop τ i j + star z • Eop (barE E τ) i j := by
     intro z i j
-    rw [atEmb_eq τ z, map_add, map_smul, map_smul, lieS_atEmb_one, lieS_atEmb_I]
+    rw [atEmb_eq τ z, map_add (f := _), map_smul, map_smul, lieS_atEmb_one, lieS_atEmb_I]
     conv_rhs => rw [← Complex.re_add_im z]
-    simp only [Complex.star_def, map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+    simp only [Complex.star_def, map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_I]
     rw [← Complex.coe_smul, ← Complex.coe_smul]
     match_scalars <;> ring
   refine LinearMap.ext fun φ => Subtype.ext ?_
   have hX : lie E a (fun i j => atEmb τ (X i j)) = ∑ i, ∑ j, lieS E a i j (atEmb τ (X i j)) := by
-    simp only [lieS_apply, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [lieS_apply, ← map_sum]
     exact congrArg _ (Matrix.matrix_eq_sum_single (Matrix.of fun i j => atEmb τ (X i j)))
   change lie E a (fun i j => atEmb τ (X i j)) φ.1 = _
   rw [hX]

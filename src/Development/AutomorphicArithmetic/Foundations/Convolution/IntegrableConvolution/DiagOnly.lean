@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,8 @@ private theorem trOn_fd (Z : Submodule ℂ H) [FiniteDimensional ℂ Z] (T : H �
     intro e
     simp only [ContinuousLinearMap.comp_apply]
     rw [hP e]
-    simp only [map_sum, map_smul, inner_sum, inner_smul_right]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, inner_sum, inner_smul_right]
   have hs : HasSum (fun i => ⟪stdHilbertBasis ℂ H i,
       (Z.starProjection ∘L T ∘L Z.starProjection) (stdHilbertBasis ℂ H i)⟫_ℂ)
       (∑ j, ⟪(b j : H), Z.starProjection (T (b j))⟫_ℂ) := by
@@ -127,7 +132,8 @@ private theorem trace_cut {Z : Type} [NormedAddCommGroup Z] [InnerProductSpace �
   calc LinearMap.trace ℂ Z T = LinearMap.trace ℂ Z (T * (M * c)) := by rw [hMc, mul_one]
     _ = ∑ j ∈ s, LinearMap.trace ℂ Z (T * ((a j - a' j) * (a j - a' j) * c))
           + LinearMap.trace ℂ Z (T * (Q * c)) := by
-        rw [hM, add_mul, mul_add, map_add, Finset.sum_mul, Finset.mul_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hM, add_mul, mul_add, map_add (f := _), Finset.sum_mul, Finset.mul_sum, map_sum]
     _ = LinearMap.trace ℂ Z (T * Q) := by
         rw [Finset.sum_eq_zero hzero, zero_add, hQc]
 
@@ -183,7 +189,8 @@ private theorem pow_root (a : H →L[ℂ] H) (hs : ∀ x y, ⟪a x, y⟫_ℂ = �
     simp
   have h1 : ∑ i ∈ Finset.range (n + 1), y ^ (n - i) * RCLike.re ⟪w, (a ^ i) w⟫_ℂ = 0 := by
     have h2 := congrArg (fun u => RCLike.re ⟪w, u⟫_ℂ) h0
-    simp only [ContinuousLinearMap.sum_apply, inner_sum, map_sum, inner_zero_right, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ContinuousLinearMap.sum_apply, inner_sum, map_sum, inner_zero_right, map_zero] at h2
     rw [← h2]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [Nat.add_sub_cancel, hcp, ContinuousLinearMap.mul_apply, ContinuousLinearMap.smul_apply,

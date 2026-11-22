@@ -1,8 +1,13 @@
-import Formalism.ThetaLogCoordinates.SandwichModelDomains.SpreadSquare
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+module
+
+public import Formalism.ThetaLogCoordinates.SandwichModelDomains.SpreadSquare
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.LatData
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -48,12 +53,27 @@ theorem cor_bound (hw : SwpWt) (ν : Fin n → ℕ) (l : ℕ) (hS : Spread ℚ_[
 theorem cor_latData (h1 : RowGlOne) (hw : SwpWt) (hP : SwpPol) (ν : Fin n → ℕ) (l : ℕ)
     (hS : Spread ℚ_[p] r n ν l) :
     LatData p (GR p r ν) (swappedDualWeyl p r n ν) (IntPol p (Fin n × Fin r)).toAddSubgroup l := by
-  have D := polLatData_of Formalism.InvariantFactorPaths.PW.Top.latBasisPol (p := p) (r := r) (vecL ν) (vecL ν) n
-    (OrderIso.refl (Fin r)).toOrderEmbedding
+  let e : Fin r ↪o Fin r := (OrderIso.refl (Fin r)).toOrderEmbedding
+  have D : LatData p (GAe p (vecL ν) n e) (Pol p r (vecL ν))
+      (IntPol p (Fin n × Fin r)).toAddSubgroup (vecL ν).total := by
+    letI := pol_fd (p := p) (r := r) (vecL ν)
+    refine ⟨GAe_pol_stable _ _ _ _, inferInstance, GAe_pol_finW _ _ _ _,
+      GAe_pol_bound _ _ _ _, intPol_zpClosed _, ?_, ?_, ?_⟩
+    · intro a b hab k x hx
+      rw [Submodule.mem_toAddSubgroup] at hx ⊢
+      rw [GAe_E]
+      exact divided_integral_holds p n r (vecL ν) n (e a) (e b)
+        (fun h => hab (e.injective h)) k x hx
+    · intro μ x hx
+      rw [GAe_comp]
+      exact intPol_whc _ μ x hx
+    · intro U hU
+      exact Formalism.InvariantFactorPaths.PW.Top.latBasisPol p _ U
+        (Submodule.finiteDimensional_of_le hU)
   exact
     { stable := cor_stable h1 ν
       fd := by
-        have := D.fd
+        letI := D.fd
         exact Submodule.finiteDimensional_of_le (cor_W_le_pol hP ν)
       finW := by
         obtain ⟨S, hS'⟩ := D.finW
@@ -158,9 +178,8 @@ theorem cor_eval_map (f0 : MvPolynomial (Fin r × Fin n) ℤ_[p]) :
       algebraMap ℤ_[p] ℚ_[p] (eval (idPoint ℤ_[p] r n) f0) := by
   rw [eval_map, eval, coe_eval₂Hom, eval₂_comp_left]
   congr 1
-  funext v
-  simp only [idPoint, Function.comp_apply]
-  split_ifs <;> simp
+  funext x
+  simp [idPoint]
 
 theorem cor_gen (hk : RowGlDiv) (hI : SwpInt) (hn : n ≤ r) (ν : Fin n → ℕ) (hν : Antitone ν) (μ : Fin r → ℤ)
     (h : MvPolynomial (Fin n × Fin r) ℚ_[p]) (hh : (GR p r ν).IsHW μ h) (hW : h ∈ swappedDualWeyl p r n ν)

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfTameLoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatHeckeCharacterTrivialCongruentUnits
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharFiniteOrderUnitIdele
-import Formalism.LocalToGlobal.UnitaryNorms.CharExGen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfTameLoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatHeckeCharacterTrivialCongruentUnits
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharFiniteOrderUnitIdele
+public import Formalism.LocalToGlobal.UnitaryNorms.CharExGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -334,17 +338,23 @@ theorem conj_real (ψ : E →+* ℂ) (k : maximalRealSubfield E) :
 
 theorem conjChar_trivOnF (hT : TrivOnF χ) (hbij : Function.Bijective fun i => InfinitePlace.mk (φ i)) :
     TrivOnF (conjChar φ σ p hp χ m hχ) := by
+  have eval_prod {α : Type} (s : Finset α) (f : α → (maximalRealSubfield E)ˣ →* ℂˣ) (k : (maximalRealSubfield E)ˣ) :
+      (∏ i ∈ s, f i) k = ∏ i ∈ s, f i k := by
+    classical
+    induction s using Finset.induction_on with
+    | empty => simp
+    | insert a s ha ih => simp [ha, ih, MonoidHom.mul_apply]
   refine ⟨fun v k => ?_, fun w k => ?_⟩
   · have h := hT.1 v k
     unfold HChar.resFin at h ⊢
-    rw [MonoidHom.finset_prod_apply] at h ⊢
+    rw [eval_prod] at h ⊢
     have e : ∀ P : HeightOneSpectrum (𝓞 E), ((conjChar φ σ p hp χ m hχ).locK P).comp (upF (maximalRealSubfield E)) k =
         Units.map (σ : ℂ →+* ℂ).toMonoidHom ((χ.locK P).comp (upF (maximalRealSubfield E)) k) := fun P =>
       conjChar_loc (hp := hp) (hχ := hχ) _ _
     simp only [e]
     rw [← map_prod, h, map_one]
   · unfold HChar.resInf
-    rw [MonoidHom.finset_prod_apply]
+    rw [eval_prod]
     refine Finset.prod_eq_one fun w' _ => ?_
     obtain ⟨j, rfl⟩ := hbij.2 w'
     apply Units.ext

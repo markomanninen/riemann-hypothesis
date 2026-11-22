@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem avgBd_sobCont : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [NormedAd
   intro n ε H _ _ _ σ h T Z C hZ hZU hC hA ι _ ℓ w hℓ hw hTw M hM hb
   choose m S hS hap using fun j => h.exists_inner_approx (hℓ j)
   have hc : ContinuousOn (fun y => ∑ j, ∑ i, ‖Dw σ (S j i) (σ y (w j))‖) Z :=
-    continuousOn_finset_sum _ fun j _ => continuousOn_finset_sum _ fun i _ =>
+    continuousOn_finsetSum _ fun j _ => continuousOn_finsetSum _ fun i _ =>
       ((h.continuousOn_Dw (hS j i) (hw j)).mono hZU).norm
   obtain ⟨K₀, hK₀⟩ := hZ.exists_bound_of_continuousOn hc
   set K := max K₀ 0 with hKdef

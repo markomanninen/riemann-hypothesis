@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem h_add_right (c : E ≃+* E) (h : V → V → E)
     (hadd : ∀ x y z : V, h (x + y) z = h x z + h y z)
     (hsym : ∀ x y : V, h y x = c (h x y)) (y a b : V) :
     h y (a + b) = h y a + h y b := by
-  rw [hsym (a + b) y, hadd, map_add, ← hsym, ← hsym]
+  rw [hsym (a + b) y, hadd, map_add (f := _), ← hsym, ← hsym]
 
 theorem h_smul_right (c : E ≃+* E) (h : V → V → E)
     (hsmul : ∀ (s : E) (x z : V), h (s • x) z = s * h x z)
@@ -100,13 +104,13 @@ theorem exists_unit_norm (c : E ≃+* E) (hcc : ∀ x, c (c x) = x)
     rw [hty, hadd, h_add_right c h hadd hsym, h_add_right c h hadd hsym,
       h_smul_right c h hsmul hsym, h_smul_right c h hsmul hsym, hsmul, hsmul, hct, ha, hyx,
       ← hox, ← hoy, hA, hB]
-    simp only [map_add, map_mul, map_one]
+    simp only [map_add (f := _), map_mul, map_one]
     linear_combination hz0
   obtain ⟨oe, hoe⟩ := hint _ heL _ heL
   have h1 : (1 : O) = oe - (ox + t * (z0 * ((a⁻¹ : Oˣ) : O)) * oy) := by
     apply IsFractionRing.injective O E
     rw [map_sub, hoe, key]
-    simp only [map_add, map_one, map_mul]
+    simp only [map_add (f := _), map_one, map_mul]
     ring
   have hm : (1 : O) ∈ IsLocalRing.maximalIdeal O := by
     rw [h1]

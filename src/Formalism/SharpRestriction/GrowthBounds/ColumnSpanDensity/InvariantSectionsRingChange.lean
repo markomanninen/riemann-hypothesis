@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.IsLatticeMapSubIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.IsLatticeMapSubIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem tensorLat_tr {S : Type*} [Fintype S] {k n : ℕ} (M : S → Submodule O�
     simp only [Iso2.pm, map_prod, blockEmb, map_rename]
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [Iso2.pm, map_add]
+    rw [Iso2.pm, map_add (f := _)]
     exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [← algebraMap_smul K₁ c x, Iso2.pm, map_smul', RingEquiv.coe_toRingHom, J.h, algebraMap_smul]

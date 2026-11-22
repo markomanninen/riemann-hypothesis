@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyConst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,6 @@ def ChangeVar (P : Parts X u u') (hr : P.S.G.r = D.R.rS) : Prop :=
         ENNReal.ofReal (K0 P) * ∫⁻ q, ENNReal.ofReal (Formalism.QuantumDeterminants.bcWeight P.S.G.k P.S.G.r
           (Formalism.QuantumDeterminants.Tz P.S.G.k P.S.G.r (P.T (P.τ.symm v)).base.z)
           (Formalism.QuantumDeterminants.Tz P.S.G.k P.S.G.r (P.T (P.τ.symm v)).base.z') q * F q)
-
-def NormFin (P : Parts X u u') : Prop := ∀ j, Formalism.FourierDecayAlt.B.normSq (P.T j).base (P.f j) ≠ ⊤
 
 def KMatch (P : Parts X u u') : Prop :=
   (P.S.g : ℝ) = ((Formalism.MainNotions.S.Lat.gS D : ℕ) : ℝ) → Formalism.FourierDecayAlt.S6.rd D.host.E = D.host.rdE → P.S.G.r = D.R.rS →

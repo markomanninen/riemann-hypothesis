@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open NumberField GlobalTheory.CuspRep GlobalTheory.CuspQuot GlobalTheory.AutGrow
 
 namespace GlobalTheory.SiegelTorusInf
 
-theorem exists_diag_infGL (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (r : Fin a → ℝ)
+theorem exists_diag_infGL (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (r : Fin a → ℝ)
     (hr : ∀ i, 0 < r i) : ∃ d : GL (Fin a) (Cinf E), d.val = Matrix.diagonal (fun i => fun _ => (r i : ℂ)) ∧
       diagUnits a (fun i => posIdele (K := E) (r i) (hr i)) = infGL E a d := by
   have h0 : ∀ i, (r i : ℂ) ≠ 0 := fun i => Complex.ofReal_ne_zero.2 (hr i).ne'
@@ -31,7 +35,7 @@ theorem exists_diag_infGL (E : Type) [Field E] [NumberField E] [IsTotallyComplex
       change 1 - sInf E 1 + sInf E _ = _
       congr 2
       funext w
-      simp only [expU]
+      change Complex.exp (Real.log (r i) : ℂ) = (r i : ℂ)
       rw [← Complex.ofReal_exp, Real.exp_log (hr i)]
     refine Units.ext ?_
     rw [coe_diagUnits]

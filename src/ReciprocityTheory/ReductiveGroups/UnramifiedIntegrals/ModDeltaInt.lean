@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEisInt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEisInt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane MatrixGroups CongruenceSubgroup Manifold
@@ -30,7 +34,7 @@ def tZ : PowerSeries ℤ := PowerSeries.mk fun n =>
 
 theorem eisensteinFourInt_eq : e4Z = 1 + PowerSeries.C (240 : ℤ) * s3Z := by
   ext n
-  simp only [e4Z, s3Z, map_add, PowerSeries.coeff_mk, PowerSeries.coeff_C_mul,
+  simp only [e4Z, s3Z, map_add (f := _), PowerSeries.coeff_mk, PowerSeries.coeff_C_mul,
     PowerSeries.coeff_one]
   split_ifs with h
   · subst h; simp
@@ -47,7 +51,7 @@ theorem eisensteinSixInt_eq : e6Z = 1 - PowerSeries.C (504 : ℤ) * s5Z := by
 theorem tZ_mul : PowerSeries.C (12 : ℤ) * tZ =
     PowerSeries.C (5 : ℤ) * s3Z + PowerSeries.C (7 : ℤ) * s5Z := by
   ext n
-  simp only [map_add, PowerSeries.coeff_C_mul, tZ, s3Z, s5Z, PowerSeries.coeff_mk]
+  simp only [map_add (f := _), PowerSeries.coeff_C_mul, tZ, s3Z, s5Z, PowerSeries.coeff_mk]
   exact Int.mul_ediv_cancel' (sigma_congr n)
 
 theorem eisenstein_cube_sub_sq_eq : e4Z ^ 3 - e6Z ^ 2 = PowerSeries.C (1728 : ℤ) *
@@ -73,14 +77,14 @@ private theorem dZ_eq_tZ_add_s3Z_sq_add_s3Z_cube_sub_s5Z_sq : dZ = tZ + PowerSer
 
 theorem dZ_coeff_zero : PowerSeries.coeff 0 dZ = 0 := by
   rw [dZ_eq_tZ_add_s3Z_sq_add_s3Z_cube_sub_s5Z_sq]
-  simp only [map_sub, map_add, PowerSeries.coeff_C_mul, pow_succ, pow_zero, one_mul,
+  simp only [map_sub, map_add (f := _), PowerSeries.coeff_C_mul, pow_succ, pow_zero, one_mul,
     PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, Finset.sum_range_succ,
     Finset.sum_range_zero, tZ, s3Z, s5Z, PowerSeries.coeff_mk, ArithmeticFunction.sigma_apply]
   norm_num
 
 theorem dZ_coeff_one : PowerSeries.coeff 1 dZ = 1 := by
   rw [dZ_eq_tZ_add_s3Z_sq_add_s3Z_cube_sub_s5Z_sq]
-  simp only [map_sub, map_add, PowerSeries.coeff_C_mul, pow_succ, pow_zero, one_mul,
+  simp only [map_sub, map_add (f := _), PowerSeries.coeff_C_mul, pow_succ, pow_zero, one_mul,
     PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, Finset.sum_range_succ,
     Finset.sum_range_zero, tZ, s3Z, s5Z, PowerSeries.coeff_mk, ArithmeticFunction.sigma_apply]
   norm_num

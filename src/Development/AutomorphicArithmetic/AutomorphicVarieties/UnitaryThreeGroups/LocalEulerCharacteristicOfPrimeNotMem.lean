@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -37,7 +41,7 @@ private theorem first_cohomology_equiv : Nonempty (H1 ρ ≃ H1 ρ') := by
       refine ⟨?_, fun a b => ?_⟩
       · have := hc.comp he'
         convert this using 1
-        funext x
+        funext g
         simp
       · have := hf (e.symm a) (e.symm b)
         simpa [map_mul, h] using this
@@ -76,7 +80,7 @@ private theorem second_cohomology_equiv : Nonempty (H2 ρ ≃ H2 ρ') := by
       refine ⟨?_, fun a b c => ?_⟩
       · have := hc.comp (he'.prodMap he')
         convert this using 1
-        funext x
+        funext p
         simp
       · have := hf (e.symm a) (e.symm b) (e.symm c)
         simpa [map_mul, h] using this

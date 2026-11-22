@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CoarseLabelFactorisation
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FrobeniusReductionProduct
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CoarseLabelFactorisation
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FrobeniusReductionProduct
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ def LateVectorsDistinctLeadingTerms : Prop :=
   ∀ (p n' r K : ℕ) [NeZero n'] [NeZero r] [NeZero K] (X : Dat n' r), X.Hyp p K → ∀ j, ∀ x ∈ X.toLate j,
     Function.Injective fun a : Fin r => posOf n' (X.row j x a)
 
-open Classical in
 
+open Classical in
 theorem ph_detPl_ne_zero {R : Type} [CommRing R] [Nontrivial R] {n' r : ℕ} [NeZero n'] (X : Dat n' r) (p K : ℕ)
     (hp : 0 < p) (j x : ℤ) (hinj : Function.Injective fun a : Fin r => posOf n' (X.row j x a)) :
     phSeg R K p X.F j (plEmb R r K (X.detPl R j x)) ≠ 0 := by

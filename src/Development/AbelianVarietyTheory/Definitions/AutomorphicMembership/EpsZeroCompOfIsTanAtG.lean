@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoQuotToImOmegaLieOfSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoQuotToImOmegaLieOfSplit
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,7 @@ def tanEv (hv : IsTanAtG t x v) {V : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ V) (s : Γ
 
 theorem tanEv_add (hv : IsTanAtG t x v) {V : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ V) (s s' : Γ(omega t.G, V)) :
     tanEv t hv h (s + s') = tanEv t hv h s + tanEv t hv h s' := by
-  simp only [tanEv, map_add]
+  simp only [tanEv, map_add (f := _)]
   exact map_add (Scheme.ΓSpecIso (.of k)).hom.hom _ _
 
 theorem tanEv_smul (hv : IsTanAtG t x v) {V : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ V) (a : Γ(X, V)) (s : Γ(omega t.G, V)) :
@@ -91,7 +95,7 @@ theorem tanEv_dUnit (hv : IsTanAtG t x v) {V : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ 
   set D := (Scheme.ΓSpecIso (.of (DualNumber k))).hom F with hD
   have hdec : F = (specO k (DualNumber k)).hom.appLE ⊤ ⊤ (le_preimage_top _ ⊤) (cst k D.fst) +
       (specO k (DualNumber k)).hom.appLE ⊤ ⊤ (le_preimage_top _ ⊤) (cst k D.snd) * epsFn k := by
-    rw [hB, hB, epsFn, ← map_mul, ← map_add]
+    rw [hB, hB, epsFn, ← map_mul, ← map_add (f := _)]
     have e : algebraMap k (DualNumber k) D.fst + algebraMap k (DualNumber k) D.snd * DualNumber.eps = D := by
       ext <;> simp [TrivSqZeroExt.algebraMap_eq_inl]
     rw [e, hD, Iso.hom_inv_id_apply]
@@ -99,7 +103,7 @@ theorem tanEv_dUnit (hv : IsTanAtG t x v) {V : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ 
       (sec (epsZero k)).appLE ⊤ ⊤ (le_preimage_top _ ⊤)
           ((specO k (DualNumber k)).hom.appLE ⊤ ⊤ (le_preimage_top _ ⊤) (cst k D.snd)) •
         d (sec_hom (epsZero k)) (le_preimage_top _ ⊤) (epsFn k) := by
-    rw [hdec, map_add, h3, h2, h3, smul_zero, add_zero, zero_add]
+    rw [hdec, map_add (f := _), h3, h2, h3, smul_zero, add_zero, zero_add]
   have h4 : (tanForm t hv).app ⊤ (pullbackSections x (omega t.G) h (dUnit t.G hW f)) =
       (epsIso k).hom.app ⊤ (d (sec_hom (epsZero k)) (le_preimage_top _ ⊤) F) := by
     rw [← h1]
@@ -173,8 +177,8 @@ theorem mem_ofBundle {F : B.X.Modules} (θ : F ⟶ B.om) [Mono θ] (hF hθ) {V :
   change s ∈ LinearMap.range (QCoh.appLinear θ V) ↔ _
   simp [LinearMap.mem_range]
 
-variable (B) in
 
+variable (B) in
 def top : Lat B :=
   ofBundle (𝟙 _) (have := B.t.semi; have := B.t.semi.smooth; exists_isFrame_omega B.t.G) fun _ _ s => ⟨s, rfl⟩
 
@@ -189,15 +193,10 @@ theorem ext {L L' : Lat B} (h : ∀ V, L.N.sec V = L'.N.sec V) : L = L' := by
   obtain rfl : N = N' := funext h
   rfl
 
-theorem isTop_iff {L : Lat B} : L.IsTop ↔ L = top B := by
-  refine ⟨fun hL => ext fun V => (hL V).trans (isTop_top V).symm, ?_⟩
-  rintro rfl
-  exact isTop_top
-
 end Lat
 
-variable (Y i₀) in
 
+variable (Y i₀) in
 structure Step : Type where
 
   B : Mdl Y i₀
@@ -224,8 +223,8 @@ def Step.Holds (t : Step Y i₀) (Z : Mdl Y i₀) : Prop :=
         InStep Z t.B t.σ t.k (spMap φ ≫ hU.fromSpec) v →
         ∀ j : Fin n, t.k ≤ (j : ℕ) → ∑ l, φ (a j l) * tanEv t.B.t hv h (t.L.N.incl.app V (m l)) = 0
 
-open Classical in
 
+open Classical in
 def stepTy (s : Finset (Step Y i₀)) (σ : E →+* ℂ) : Finset ℕ := (s.filter fun t => t.σ = σ).image Step.k
 
 theorem mem_stepTy {s : Finset (Step Y i₀)} {σ : E →+* ℂ} {r : ℕ} : r ∈ stepTy s σ ↔ ∃ t ∈ s, t.σ = σ ∧ t.k = r := by
@@ -235,24 +234,12 @@ def IsFlagCl (Z : Mdl Y i₀) (s : Finset (Step Y i₀)) (Z' : Mdl Y i₀) : Pro
   Z'.i = Z.i ∧ (∀ σ, Z'.ty σ = Z.ty σ ∪ stepTy s σ) ∧ (∃ f, IsMap Z' Z f) ∧ (∀ t ∈ s, t.Holds Z') ∧
     ∀ Z'' : Mdl Y i₀, (∃ g, IsMap Z'' Z g) → (∀ t ∈ s, t.Holds Z'') → ∃ h, IsMap Z'' Z' h
 
-open Classical in
 
+open Classical in
 def flagClosure (Z : Mdl Y i₀) (s : Finset (Step Y i₀)) : Mdl Y i₀ := if h : ∃ Z', IsFlagCl Z s Z' then h.choose else Z
 
-theorem isFlagCl_flagClosure {Z : Mdl Y i₀} {s : Finset (Step Y i₀)} (h : ∃ Z', IsFlagCl Z s Z') :
-    IsFlagCl Z s (flagClosure Z s) := by
-  rw [flagClosure, dif_pos h]
-  exact h.choose_spec
-
-theorem isFlagCl_empty {Z : Mdl Y i₀} (h : ∃ f, IsMap Z Z f) : IsFlagCl Z ∅ Z :=
-  ⟨rfl, fun σ => by simp [stepTy], h, by simp, fun _ hg _ => hg⟩
-
-theorem IsFlagCl.exists_isMap {Z Z₁ Z₂ : Mdl Y i₀} {s : Finset (Step Y i₀)} (h₁ : IsFlagCl Z s Z₁) (h₂ : IsFlagCl Z s Z₂) :
-    ∃ f, IsMap Z₁ Z₂ f :=
-  h₂.2.2.2.2 Z₁ h₁.2.2.1 h₁.2.2.2.1
 
 open Classical in
-
 def allSteps {B : Mdl Y i₀} (L : Lat B) : Finset (Step Y i₀) :=
   Finset.univ.image fun q : Σ σ : E →+* ℂ, Fin (Dw.mult σ + 1) => ⟨B, L, q.1, q.2, Nat.lt_succ_iff.1 q.2.2⟩
 
@@ -309,38 +296,18 @@ end Free
 
 variable {D : D7} {A : Amb D} {N j : ℕ} {S : Sig A N j} {κ : Lv A} {p : ℕ}
 
-open Classical in
 
+open Classical in
 def At.flagCl (ct : At S κ p) (Z : ct.Mdl) (s : Finset (Step ct.Y ⟨κ.l, κ.c, κ.good p ct.hp⟩)) : ct.Mdl :=
   if s = ∅ then Z else if s = allSteps (Lat.top Z) ∧ IsDRFlag Z ct.YY then ct.YY else flagClosure Z s
 
-theorem At.flagCl_empty (ct : At S κ p) (Z : ct.Mdl) : ct.flagCl Z ∅ = Z := by
-  simp [At.flagCl]
-
 theorem At.flagCl_allSteps (ct : At S κ p) : ct.flagCl ct.Xm (allSteps (Lat.top ct.Xm)) = ct.YY := by
   rw [At.flagCl, if_neg (allSteps_ne_empty _), if_pos ⟨rfl, ct.isYY⟩]
-
-theorem At.isFlagCl_flagCl (ct : At S κ p) (Z : ct.Mdl) (s : Finset (Step ct.Y ⟨κ.l, κ.c, κ.good p ct.hp⟩))
-    (hid : ∃ f, IsMap Z Z f) (hdr : IsDRFlag Z ct.YY → IsFlagCl Z (allSteps (Lat.top Z)) ct.YY)
-    (hex : ∃ Z', IsFlagCl Z s Z') : IsFlagCl Z s (ct.flagCl Z s) := by
-  rw [At.flagCl]
-  split_ifs with h₀ h₁
-  · subst h₀
-    exact isFlagCl_empty hid
-  · obtain ⟨rfl, h₂⟩ := h₁
-    exact hdr h₂
-  · exact isFlagCl_flagClosure hex
 
 def flgOf (ct : At S κ p) (P : ∀ B : ct.Mdl, Lat B → Prop) : FlgSt ct where
   FlagData := FlagFam P
   flagCl Z s := ct.flagCl Z s.1
   allFlags := FlagFam.deRham ct.Xm
   YY_eq := ct.flagCl_allSteps.symm
-
-example (ct : At S κ p) (P : ∀ B : ct.Mdl, Lat B → Prop) (Z : ct.Mdl) :
-    (flgOf ct P).flagCl Z (FlagFam.empty Z) = Z := ct.flagCl_empty Z
-
-example (ct : At S κ p) (P : ∀ B : ct.Mdl, Lat B → Prop) (σ : D.host.E →+* ℂ) :
-    stepTy (flgOf ct P).allFlags.1 σ = ct.YY.ty σ := (stepTy_allSteps _ σ).trans (ct.isYY.2.1.1 σ).symm
 
 end GlobalTheory.LocM

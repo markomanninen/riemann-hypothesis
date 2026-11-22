@@ -1,10 +1,15 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateSubstitution
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.ControlledTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IrreducibleComponentsOfSupport
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPartAlongDivisor
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialSplitting
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateSubstitution
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.ControlledTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IrreducibleComponentsOfSupport
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPartAlongDivisor
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialSplitting
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory
 
 universe u
@@ -132,11 +137,13 @@ theorem isMonomialSplitting_comap_of_generalizingMap (h : Y ⟶ X)
     (hg : GeneralizingMap (fun y : Y => h.base y)) {E : List X.IdealSheafData}
     {I M N : X.IdealSheafData} (hs : IsMonomialSplitting E I M N) :
     IsMonomialSplitting (E.map (fun D : X.IdealSheafData => D.comap h)) (I.comap h) (M.comap h)
-      (N.comap h) where
-  eq_mul := by rw [hs.eq_mul, Scheme.IdealSheafData.comap_mul]
-  monomial_support := support_comap_subset_biUnion h E M hs.monomial_support
-  monomial := hs.monomial.comap_of_isMonomialIn h
-  transversal := irreducibleComponents_not_subset_support_comap h hg E N hs.transversal
+      (N.comap h) := by
+  refine {
+    eq_mul := ?_
+    monomial_support := support_comap_subset_biUnion h E M hs.monomial_support
+    monomial := hs.monomial.comap_of_isMonomialIn h
+    transversal := irreducibleComponents_not_subset_support_comap h hg E N hs.transversal }
+  rw [hs.eq_mul, Scheme.IdealSheafData.comap_mul]
 
 theorem generalizingMap_base_of_flat (h : Y ⟶ X) [AlgebraicGeometry.Flat h] :
     GeneralizingMap (fun y : Y => h.base y) :=

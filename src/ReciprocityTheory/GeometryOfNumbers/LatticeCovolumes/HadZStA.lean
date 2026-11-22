@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory.LinearIndependentExtension
 
@@ -32,7 +36,7 @@ private theorem exists_linearIndependent_append_of_codim {r : ℕ} (w : Fin r �
       simp at h1
       omega
     have hu1 : LinearIndependent ℚ (Fin.snoc u0 (w j) : Fin (a + 1) → (Fin r → ℚ)) :=
-      linearIndependent_fin_snoc.mpr ⟨hu0, hj⟩
+      linearIndependent_finSnoc.mpr ⟨hu0, hj⟩
     obtain ⟨m, f, hm, hli⟩ := ih (a + 1) (Fin.snoc u0 (w j)) hu1 (by omega) (by omega)
     refine ⟨m + 1, Fin.cons j f, by omega, ?_⟩
     rw [Fin.comp_cons, Fin.append_right_cons]

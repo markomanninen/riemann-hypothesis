@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameL
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.Target
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameL
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.Target
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ def LocC : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : �
           Finset.univ.val.map ξ
 
 def LocE : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E), IsSplitAt w →
-  ∀ (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) → K' ≤ GlobalTheory.LFun.KGL w n →
+  ∀ (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) → K' ≤ GlobalTheory.LFun.KGL w (n := n) →
   GlobalTheory.BCT.IsLevel (MonoidHom.id _) (KL n w) (K'.subgroupOf (UL n w)) →
   ∀ σ : SmIrr (UL n w), fixed σ.ρ (K'.subgroupOf (UL n w)) ≠ ⊥ → ∀ (k : ℕ) (D : Fin k → Pre E n),
   ∃ (e : GLw n w → ℂ) (P : SmIrr (GLw n w)), IsHk K' e ∧ IsHecke (K'.subgroupOf (UL n w)) (fun y => e y.1) ∧

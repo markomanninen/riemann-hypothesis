@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.ColHLe
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.ColHLe
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -11,13 +15,13 @@ open Formalism.GradedWeylDivisibility Formalism.L2.G.Model.TS Formalism.L2.G.Pen
 def WeylLatticeInDetCoeffSpan : Prop :=
   ∀ (R : Type) [CommRing R] (n : ℕ) (ν : Fin n → ℕ), Antitone ν → ∀ c e : ℕ, (∀ t, ν t ≤ c) →
     weyl R n n le_rfl ν ≤ Submodule.span R (Set.range fun m : ℕ × Fin n →₀ ℕ =>
-      coeff m ((Matrix.of fun a i : Fin n => gX R n a i.val).det ^ e *
-        hvE (gX R n) (gY R n) c (fun k => colH ν k.val) (fun k => colH_le ν k.val)))
+      AddMonoidAlgebra.coeff ((Matrix.of fun a i : Fin n => gX R n a i.val).det ^ e *
+        hvE (gX R n) (gY R n) c (fun k => colH ν k.val) (fun k => colH_le ν k.val)) m)
 
 def WeylComplementInDetCoeffSpan : Prop :=
   ∀ (R : Type) [CommRing R] (n : ℕ) (μ : Fin n → ℕ), Antitone μ → ∀ c : ℕ, (∀ t, μ t ≤ c) →
     weyl R n n le_rfl (fun t => c - μ t.rev) ≤ Submodule.span R (Set.range fun m : ℕ × Fin n →₀ ℕ =>
-      coeff m (hvO (gX R n) (gY R n) c (fun k => colH μ k.val)))
+      AddMonoidAlgebra.coeff (hvO (gX R n) (gY R n) c (fun k => colH μ k.val)) m)
 
 def PairE : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (n : ℕ) (ν : Fin n → ℕ), Antitone ν → ∀ c : ℕ, (∀ t, ν t ≤ c) →

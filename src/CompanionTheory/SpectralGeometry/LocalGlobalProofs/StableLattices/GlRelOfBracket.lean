@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -227,7 +231,7 @@ theorem bracket_ext {R : Type*} [Ring R] [Algebra ℂ R] (C : Matrix (Fin n) (Fi
   have h2 := h _ _ (inG_re Y) (inG_im Z)
   have h3 := h _ _ (inG_im Y) (inG_re Z)
   have h4 := h _ _ (inG_im Y) (inG_im Z)
-  simp only [map_sub, map_add, map_smul, add_mul, mul_add, smul_mul_assoc, mul_smul_comm] at *
+  simp only [map_sub, map_add (f := _), map_smul, add_mul, mul_add, smul_mul_assoc, mul_smul_comm] at *
   linear_combination (norm := module) h1 + Complex.I • h2 + Complex.I • h3 +
     Complex.I • Complex.I • h4
 
@@ -248,7 +252,7 @@ theorem adj_ext {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
     (h : ∀ X, inG ε X → ∀ x y, ⟪C X x, y⟫_ℂ = -⟪x, C X y⟫_ℂ) (Y : Matrix (Fin n) (Fin n) ℂ) (x y : V) :
     ⟪C Y x, y⟫_ℂ = -⟪x, C (thetaJ ε Y) y⟫_ℂ := by
   rw [← re_add_im (ε := ε) Y, theta_pair (inG_re Y) (inG_im Y)]
-  simp only [map_add, map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
+  simp only [map_add (f := _), map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
     inner_add_left, inner_sub_right, inner_smul_left, inner_smul_right, h _ (inG_re Y), h _ (inG_im Y),
     Complex.conj_I]
   ring
@@ -304,7 +308,7 @@ theorem smMod (hL : CompanionTheory.D.DSIC.SmLin) (hB : CompanionTheory.D.DSIC.S
     { toFun := fun v => ⟨dsig σ X v, (hd X hX v v.2).1⟩
       map_add' := fun v w => Subtype.ext <| by
         have h1 := (hd X hX _ (v + w).2).2
-        simp only [Submodule.coe_add, map_add] at h1
+        simp only [Submodule.coe_add, map_add (f := _)] at h1
         exact h1.unique ((hd X hX v v.2).2.add (hd X hX w w.2).2)
       map_smul' := fun c v => Subtype.ext <| by
         have h1 := (hd X hX _ (c • v).2).2
@@ -344,7 +348,8 @@ theorem smMod (hL : CompanionTheory.D.DSIC.SmLin) (hB : CompanionTheory.D.DSIC.S
       exact matrix_eq_sum_single X
     have h2 : (C X v : H) = ∑ a, ∑ b, X a b • (C (single a b 1) v : H) := by
       conv_lhs => rw [h]
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum,
         Submodule.coe_smul]
     rw [← h2]
     exact hder X hX v
@@ -366,11 +371,12 @@ theorem smMod (hL : CompanionTheory.D.DSIC.SmLin) (hB : CompanionTheory.D.DSIC.S
     have h2 : ∀ Y, σ g (C Y v) = C (g * Y * g⁻¹) w := by
       intro Y
       rw [← re_add_im (ε := ε) Y]
-      simp only [Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul, map_add, map_smul,
+      simp only [Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul, map_add (f := _), map_smul,
         LinearMap.add_apply, LinearMap.smul_apply, Submodule.coe_add, Submodule.coe_smul,
         h1 _ (inG_re Y), h1 _ (inG_im Y)]
     rw [h2, conj_single]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum,
       Submodule.coe_smul]
 
 end GlobalTheory.CompanionTheory.SmoothModule

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeCont
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeCont
+
+@[expose] public section
 
 open NumberField
 open scoped NumberField.AdeleRing

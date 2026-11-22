@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HenselianLocalRingOfIsAdicComplete
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.ExistsGenPullTriv
-import Development.AbelianVarietyTheory.Definitions.Uniformization.IsCPPullback
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsLieBasisEigen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsLieBasisOfIsLocalRing
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.ExistsIsAddFundamentalDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HenselianLocalRingOfIsAdicComplete
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.ExistsGenPullTriv
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.IsCPPullback
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsLieBasisEigen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsLieBasisOfIsLocalRing
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.ExistsIsAddFundamentalDomain
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -118,8 +122,8 @@ open ReciprocityTheory.ChartRestriction.G.Chart (prodPts scaleD dualMapR)
 variable {R : Type} [CommRing R] {G : Over (Sp R)} [GrpObj G] [IsCommMonObj G] {n : ℕ}
   {v : Fin n → (epsR R ⟶ G)}
 
-open Classical in
 
+open Classical in
 def lieMat (hv : IsLieBasis v) (u : G ⟶ G) : Matrix (Fin n) (Fin n) R :=
   if h : IsMonHom u then Matrix.transpose (haveI := h; (SqZero.existsUnique_lieMatrix u hv.1 hv).exists.choose) else 0
 
@@ -127,16 +131,46 @@ theorem comp_eq_prodPts (hv : IsLieBasis v) (u : G ⟶ G) [IsMonHom u] (j : Fin 
     v j ≫ u = prodPts (fun i => lieMat hv u i j) v := by
   have h := (SqZero.existsUnique_lieMatrix u hv.1 hv).exists.choose_spec j
   rw [ReciprocityTheory.ChartRestriction.G.Chart.isLieComb_iff] at h
-  rw [lieMat, dif_pos (show IsMonHom u from inferInstance)]
+  rw [lieMat, dite_eq_left (show IsMonHom u from inferInstance)]
   exact h
 
 end GlobalTheory.LieCoordFibre
 
-open GlobalTheory.LieCoordFibre ReciprocityTheory.ChartRestriction.G.Chart in
 
+open GlobalTheory.LieCoordFibre ReciprocityTheory.ChartRestriction.G.Chart in
 theorem GlobalTheory.exists_lie_coordinates_fibres : ∀ (R : Type) [CommRing R] [IsLocalRing R] (G : Over (Sp R)) [GrpObj G] [IsCommMonObj G], Smooth G.hom → ∃ (n : ℕ) (M : (G ⟶ G) → Matrix (Fin n) (Fin n) R), (∀ g : ℕ, SmoothOfRelativeDimension g G.hom → n = g) ∧ ∀ (k : Type) [Field k] (f : R →+* k), ∃ T : (Fin n → k) → (epsPt (spMap f) ⟶ G), Function.Injective T ∧ (∀ v : epsPt (spMap f) ⟶ G, spMap (TrivSqZeroExt.fstHom k k k).toRingHom ≫ (v).left = (1 : Over.mk (spMap f) ⟶ G).left ↔ v ∈ Set.range T) ∧ (∀ c c', T (c + c') = T c * T c') ∧ (∀ (t : k) c, (T (t • c)).left = spMap (epsScale t) ≫ (T c).left) ∧ ∀ u : G ⟶ G, IsMonHom u → ∀ c, T c ≫ u = T (((M u).map f).mulVec c) := by
   intro R _ _ G _ _ hs
-  obtain ⟨n, v, hv⟩ := LieLocalBasis.exists_isLieBasis_of_isLocalRing R G hs
+  have hlocal : ∃ (n : ℕ) (y : Fin n → (epsR R ⟶ G)), IsLieBasis y := by
+    haveI := hs
+    obtain ⟨C⟩ := ReciprocityTheory.ChartRestriction.G.Chart.exists_chart G
+    obtain ⟨g, hg, n, v, hv⟩ := ReciprocityTheory.ChartRestriction.G.Chart.exists_lieBasis_away C (IsLocalRing.maximalIdeal R)
+    have hu : IsUnit g := by
+      by_contra h
+      exact hg ((IsLocalRing.mem_maximalIdeal g).2 h)
+    let L := Localization.Away g
+    let f' : L →+* R := IsLocalization.Away.lift (g := RingHom.id R) g hu
+    have hf' : f'.comp (algebraMap R L) = RingHom.id R := RingHom.ext fun r => IsLocalization.Away.lift_eq (g := RingHom.id R) g hu r
+    let G' := ReciprocityTheory.ChartRestriction.G.Chart.Gs G g
+    have hpb : IsGrpPullback G' G (ReciprocityTheory.ChartRestriction.G.Chart.fB R L) (pullback.fst G.hom _) :=
+      isGrpPullback_pullback G _
+    have hcomp : spMap f' ≫ ReciprocityTheory.ChartRestriction.G.Chart.fB R L = 𝟙 (Sp R) := by
+      simp only [ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap, ReciprocityTheory.ChartRestriction.G.Chart.fB]
+      rw [← Spec.map_comp, ← CommRingCat.ofHom_comp, hf']
+      exact Spec.map_id _
+    let φ' : G.left ⟶ G'.left := pullback.lift (𝟙 _) (G.hom ≫ spMap f') (by rw [Category.assoc, hcomp]; simp)
+    have hφ : φ' ≫ pullback.fst _ _ = 𝟙 _ := pullback.lift_fst _ _ _
+    have hw : φ' ≫ G'.hom = G.hom ≫ spMap f' := pullback.lift_snd _ _ _
+    haveI : IsMonHom (Iso.refl G).hom := inferInstanceAs (IsMonHom (𝟙 G))
+    have hid : IsGrpPullback G G (𝟙 (Sp R)) (𝟙 G.left) := (isGrpPullback_of_iso (Iso.refl G)).congr rfl rfl
+    have hn : IsGrpPullback G G (spMap f' ≫ ReciprocityTheory.ChartRestriction.G.Chart.fB R L) (φ' ≫ pullback.fst _ _) :=
+      hid.congr hcomp.symm hφ.symm
+    have hG : IsGrpPullback G G' (spMap f') φ' := hpb.cancel hn hw
+    have hs' : Smooth G'.hom := by
+      show Smooth (pullback.snd G.hom _)
+      infer_instance
+    obtain ⟨v', hv', -⟩ := GlobalTheory.exists_isLieBasis_baseChange L R f' G' G φ' hG hs' n v hv
+    exact ⟨n, v', hv'⟩
+  obtain ⟨n, v, hv⟩ := hlocal
   refine ⟨n, lieMat hv, fun g hg => ?_, fun k _ f => ?_⟩
   · obtain ⟨w, hw⟩ := KeyPow.exists_isLieBasis G hg
     exact card_eq_of_isLieBasis hv hw

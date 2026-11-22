@@ -1,5 +1,9 @@
-import Formalism.FormalDegreeBessel.StatementBF
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+module
+
+public import Formalism.FormalDegreeBessel.StatementBF
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

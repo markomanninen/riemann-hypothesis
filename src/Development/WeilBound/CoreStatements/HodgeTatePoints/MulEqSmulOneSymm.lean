@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix
@@ -42,7 +46,7 @@ theorem gp_mat : ∀ (C : Type) [Field C] (v : Valuation C NNReal) (R : Type) [C
   have hone : ∀ {n : Type} [DecidableEq n], (cp • (1 : Matrix n n R)).map φ = φ cp • (1 : Matrix n n C) := by
     intro n _
     ext i j
-    by_cases h : i = j <;> simp [Matrix.one_apply, h]
+    by_cases h : i = j <;> simp [h]
   have b1 := congrArg (·.map φ) h1
   have b11 := congrArg (·.map φ) a11
   have b12 := congrArg (·.map φ) a12

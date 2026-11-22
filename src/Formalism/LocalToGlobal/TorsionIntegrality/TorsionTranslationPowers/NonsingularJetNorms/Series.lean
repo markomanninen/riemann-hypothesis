@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementU
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementU
+
+@[expose] public section
 
 open PowerSeries Finset
 
@@ -47,7 +51,7 @@ theorem intS_X : IntS (X : K⟦X⟧) := by
 
 theorem intS_add {f g : K⟦X⟧} (hf : IntS f) (hg : IntS g) : IntS (f + g) := by
   intro n
-  rw [map_add]
+  rw [map_add (f := _)]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hf n) (hg n))
 
 theorem intS_neg {f : K⟦X⟧} (hf : IntS f) : IntS (-f) := by
@@ -195,7 +199,8 @@ theorem rootInt {N : ℕ} {g : K⟦X⟧} (hN : ‖(N : K)‖ = 1) (h0 : constant
         exact h1.symm
       set S : K⟦X⟧ := ∑ i ∈ range N, g ^ i * A ^ (N - 1 - i) with hS
       have hS0 : constantCoeff S = (N : K) := by
-        rw [hS, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hS, map_sum]
         simp [h0, hA0]
       have hfac : g ^ N - A ^ N = X ^ n * (B * S) := by
         rw [← (Commute.all g A).geom_sum₂_mul N, hB, ← hS]

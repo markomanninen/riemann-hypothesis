@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem exists_form (c : ∀ k, ι k) (G : MRing ι) :
     obtain ⟨n₁, f₁⟩ := e₁ L w hw
     obtain ⟨n₂, f₂⟩ := e₂ L w hw
     refine ⟨by rw [map_mul]; exact mul_ne_zero n₁ n₂, ?_⟩
-    simp only [map_add, map_mul, f₁, f₂]
+    simp only [map_add (f := _), map_mul, f₁, f₂]
     ring
   | mul_X p i hp =>
     obtain ⟨D, H, M, h, m, e⟩ := hp
@@ -139,8 +143,8 @@ theorem intHom_injective (τ : 𝓞 F →+* ℂ) : Function.Injective τ := by
 
 end OverUnique
 
-open OverUnique GroundTheory.Heights₂.Heights.LowerBoundFree in
 
+open OverUnique GroundTheory.Heights₂.Heights.LowerBoundFree in
 theorem existsUnique_ptOver (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Ω : Type) [Field Ω]
     (F : Type) [Field F] [NumberField F] (y : (Σ k, ι k) → Ω) (φ : F →+* Ω) (hO : OverInt y φ) :
     ∀ z ∈ mcPts (mCoordIdeal y), ∃! σ : F →+* ℂ, PtOver y φ σ z := by

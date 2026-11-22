@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.MirabolicGenerators.SideUnfold
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.MirabolicGenerators.SideUnfold
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open PositivityTheory.RgEis PositivityTheory.RgEis.MG
@@ -41,7 +45,7 @@ theorem pointwise_bound {K P : Subgroup G} {c : G → ℂ} {ρ : K →* (W →L[
       (φ v - ((‖φ v‖ : ℝ) : ℂ)) • w + φ v • (c r • ρ r u) := by
     have h2 : ρ v w = w + u := by simp [hu]
     have h3 : ρ (r * v) w = ρ r w + ρ r u := by
-      rw [map_mul, ContinuousLinearMap.mul_apply, h2, map_add]
+      rw [map_mul, ContinuousLinearMap.mul_apply, h2, map_add (f := _)]
     rw [hnorm, hφ, h3, smul_add, mul_comm, mul_smul, hwr, sub_smul, mul_smul]
     abel
   rw [hexp, hnorm]

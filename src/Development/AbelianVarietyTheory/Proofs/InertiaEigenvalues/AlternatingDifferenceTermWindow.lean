@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DltEqZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiscrMulMemOfIsIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DltEqZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiscrMulMemOfIsIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,7 @@ def dualSub (M : Submodule K.O B.A) : AddSubgroup B.A where
   zero_mem' := by intro z _; simp
   add_mem' := by
     intro s t hs ht z hz
-    rw [add_mul, map_add]
+    rw [add_mul, map_add (f := _)]
     exact add_mem (hs z hz) (ht z hz)
   neg_mem' := by
     intro s hs z hz
@@ -212,8 +216,8 @@ theorem prod_mul_eq (a : K.O) (P x : B.A) (k : ℕ) :
 
 end GlobalTheory.UnitLemma.Desc.Window
 
-open GlobalTheory.UnitLemma.Desc.Window in
 
+open GlobalTheory.UnitLemma.Desc.Window in
 theorem GlobalTheory.UnitLemma.Desc.term_window : ∀ (K : UQ) (B : InvAlg K) (ι : Type) [Fintype ι] (e π : ι → B.A)
     (S : Finset ι) (a : K.O), B.P.Separable → K.Small a → IsFrame B e π S → ∀ I I' : Finset ι, I ⊆ S → I' ⊆ S →
     (∀ i ∈ S, i ∈ I ∨ i ∈ I') → ∀ (N : ℕ) (x s : B.A), IsUnit x → IsUnit s → ∃ L₀ : ℕ, ∀ L ≥ L₀, ∀ k : ℕ, L ≤ k →

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JRepsA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JRepsA
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,7 +137,7 @@ theorem mud_conj_mul (hk : 1 ≤ k) (d : ℂ) (hd : 1 < ‖d‖) : (mud k d).map
   have hsc : conj (sgd d) = sgd d := hss
   ext i j
   rcases eq_or_ne j 0 with rfl | hj0
-  · rw [mul_mud_blk hk d _ _ _ (Or.inl rfl), hc, hc, one_apply]
+  · rw [mul_mud_blk hk d _ _ _ (Or.inl rfl), hc, hc, Matrix.one_apply]
     rcases eq_or_ne i 0 with rfl | hi0
     · simp only [character_first_entry hk, mud0L hk, character_last_entry hk, if_true, map_neg, hsc, Complex.conj_conj]
       linear_combination -hs
@@ -143,7 +147,7 @@ theorem mud_conj_mul (hk : 1 ≤ k) (d : ℂ) (hd : 1 < ‖d‖) : (mud k d).map
     · simp only [mud_row hk d hi0 hiL, if_neg hi0, if_neg hiL]
       simp
   rcases eq_or_ne j (Fin.last k) with rfl | hjL
-  · rw [mul_mud_blk hk d _ _ _ (Or.inr rfl), hc, hc, one_apply]
+  · rw [mul_mud_blk hk d _ _ _ (Or.inr rfl), hc, hc, Matrix.one_apply]
     rcases eq_or_ne i 0 with rfl | hi0
     · simp only [character_first_entry hk, mud0L hk, mudLL hk, if_neg h0L, if_neg h0L.symm, map_neg, hsc, Complex.conj_conj]
       ring
@@ -152,7 +156,7 @@ theorem mud_conj_mul (hk : 1 ≤ k) (d : ℂ) (hd : 1 < ‖d‖) : (mud k d).map
       linear_combination -hs
     · simp only [mud_row hk d hi0 hiL, if_neg hi0, if_neg hiL]
       simp
-  · rw [mul_mud_col hk d _ hj0 hjL, hc, mud_col hk d hj0 hjL, one_apply]
+  · rw [mul_mud_col hk d _ hj0 hjL, hc, mud_col hk d hj0 hjL, Matrix.one_apply]
     split_ifs <;> simp
 
 theorem herm_mulVec {n : ℕ} (H A : Matrix (Fin n) (Fin n) ℂ) (u v : Fin n → ℂ) :

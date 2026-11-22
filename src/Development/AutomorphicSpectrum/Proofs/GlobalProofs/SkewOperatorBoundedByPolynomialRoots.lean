@@ -1,9 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IoInjective
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SkewOfCommute
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta MeasureTheory Matrix
-open scoped TensorProduct Topology InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
+module
+
+public import Mathlib
+
+@[expose] public section
+
+open scoped InnerProductSpace
 
 namespace GlobalTheory.CompanionTheory.SkewSpec
 
@@ -97,7 +98,7 @@ theorem norm_le_of_aeval_eq_zero (M H : Type) [AddCommGroup M] [Module ℂ M] [N
       · have h2 : L (m * (p / m)) = 0 := by
           rw [hL, mul_comm, map_mul, Module.End.mul_apply, hx, map_zero]
         have h3 := congrArg L (EuclideanDomain.div_add_mod p m)
-        rw [map_add, h2, zero_add] at h3
+        rw [map_add (f := _), h2, zero_add] at h3
         exact h3
     · exact LinearMap.map_le_range
   haveI : Module.Finite ℂ (Polynomial.degreeLT ℂ m.natDegree) :=

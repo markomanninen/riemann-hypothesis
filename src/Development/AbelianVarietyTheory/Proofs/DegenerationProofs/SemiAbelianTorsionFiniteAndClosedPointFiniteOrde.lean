@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.JacobsonClosedPointsToolsInt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.JacobsonClosedPointsToolsInt
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -37,7 +41,8 @@ theorem finite_chars_pow_eq_one (X : Type) [AddCommGroup X] [Module.Finite ℤ X
     Finite {t : Multiplicative X →* Rˣ // t ^ n = 1} := by
   haveI : NeZero n := ⟨by omega⟩
   haveI : AddGroup.FG X := Module.Finite.iff_addGroup_fg.mp inferInstance
-  obtain ⟨S, hS⟩ := (Group.fg_def.mp (inferInstance : Group.FG (Multiplicative X)))
+  obtain ⟨S, hS, hfin⟩ := (Group.fg_iff.mp (inferInstance : Group.FG (Multiplicative X)))
+  haveI : Finite S := hfin.to_subtype
   let g : {t : Multiplicative X →* Rˣ // t ^ n = 1} → (S → rootsOfUnity n R) := fun t s =>
     ⟨t.1 s.1, (mem_rootsOfUnity _ _).2 (by simpa using DFunLike.congr_fun t.2 s.1)⟩
   refine Finite.of_injective g fun a b h => Subtype.ext ?_

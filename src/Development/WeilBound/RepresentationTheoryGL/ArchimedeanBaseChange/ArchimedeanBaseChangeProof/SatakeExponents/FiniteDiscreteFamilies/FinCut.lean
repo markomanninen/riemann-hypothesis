@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.RunFinOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.RunFinOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ def LevelFactor : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
   IsOpen (K : Set (GL (Fin n) (w.adicCompletion E))) →
   ∃ Ki : ∀ i, Subgroup (GL (Fin (N i)) (w.adicCompletion E)),
     (∀ i, IsOpen (Ki i : Set (GL (Fin (N i)) (w.adicCompletion E)))) ∧
-    (GlobalTheory.LFun.KGL w n ≤ K → ∀ i, GlobalTheory.LFun.KGL w (N i) ≤ Ki i) ∧
+    (GlobalTheory.LFun.KGL w (n := n) ≤ K → ∀ i, GlobalTheory.LFun.KGL w (n := (N i)) ≤ Ki i) ∧
     ∀ σ : ∀ i, SmIrr (GL (Fin (N i)) (w.adicCompletion E)), GlobalTheory.LGrp.IsSpherical (locProd h w σ) K →
       ∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (Ki i)
 

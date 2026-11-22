@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.IsUnitDetOfCartan
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.IsUnitDetOfCartan
+
+@[expose] public section
 
 noncomputable section
 

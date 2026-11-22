@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocIntegral
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingIntClosure
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingDimOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocIntegral
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingIntClosure
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingDimOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

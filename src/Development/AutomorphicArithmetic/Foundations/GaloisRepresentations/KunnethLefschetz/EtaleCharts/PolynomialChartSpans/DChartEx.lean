@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FinCover
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FinCover
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,10 +58,9 @@ private theorem alg_core {D : ℕ} (u : Fin D → B)
     exact this ha)
   have hm : ∀ y : B ⊗[P] B, mulQ (ρ y) = Algebra.TensorProduct.lmul' P y := by
     intro y
-    induction y using TensorProduct.induction_on with
-    | zero => simp
+    induction y using TensorProduct.inductionOn with
     | tmul x y => rw [hρ]; simp [mulQ]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   obtain ⟨t', ht0, ht1⟩ := (Algebra.FormallyUnramified.iff_exists_tensorProduct (R := P) (S := B)).1 inferInstance
   obtain ⟨t, ht⟩ := Ideal.Quotient.mk_surjective (ρ t')
   refine ⟨t, ?_, fun x hx => ?_⟩
@@ -86,10 +89,9 @@ private theorem alg2 {T : Type} [CommRing T] [Algebra R T] (a b : B →ₐ[R] T)
   obtain ⟨t, ht1, ht2⟩ := alg_core (R := R) u h
   have hm : ∀ y : B ⊗[R] B, m (Algebra.TensorProduct.productMap a b y) = Algebra.TensorProduct.lmul' R y := by
     intro y
-    induction y using TensorProduct.induction_on with
-    | zero => simp
+    induction y using TensorProduct.inductionOn with
     | tmul x y => simp [ma, mb]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   refine ⟨Algebra.TensorProduct.productMap a b t, by rw [hm, ht1], fun x hx => ?_⟩
   obtain ⟨y, rfl⟩ := hφ.2 x
   rw [hm] at hx
@@ -201,7 +203,7 @@ private theorem sq_main (Z : Sch R) (U : Z.left.Opens) (hU : IsAffineOpen U) :
     exact this
   let ψ₀ := pullback.map (Spec.map (CommRingCat.ofHom (algebraMap R B))) (Spec.map (CommRingCat.ofHom (algebraMap R B)))
     Z.hom Z.hom j j (𝟙 _) (by rw [Category.comp_id, hj]) (by rw [Category.comp_id, hj])
-  haveI : IsOpenImmersion ψ₀ := MorphismProperty.pullback_map (P := IsOpenImmersion) inferInstance inferInstance hj hj
+  haveI : IsOpenImmersion ψ₀ := MorphismProperty.pullbackMap (P := IsOpenImmersion) inferInstance inferInstance hj hj
   let ψ : Spec (CommRingCat.of (B ⊗[R] B)) ⟶ (XX Z).left := (pullbackSpecIso R B B).inv ≫ ψ₀
   haveI : IsOpenImmersion ψ := inferInstanceAs (IsOpenImmersion ((pullbackSpecIso R B B).inv ≫ ψ₀))
   have hr : Set.range ψ = (W : Set (XX Z).left) := by

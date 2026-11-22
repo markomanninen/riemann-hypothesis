@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.TorsionH0PointOfLocalTwist
+module
+
+public import Development.EtaleCohomology.EtaleTrace.TorsionH0PointOfLocalTwist
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC CochainComplex.HomComplex Opposite

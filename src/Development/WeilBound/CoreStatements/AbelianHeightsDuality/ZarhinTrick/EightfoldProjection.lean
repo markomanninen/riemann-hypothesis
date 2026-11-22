@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.IsPolarisationOfRelAmple
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.PolQuasiInverse
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.IsPolarisationOfRelAmple
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.PolQuasiInverse
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,8 +55,8 @@ theorem eightfold_snd_assoc (x : Fin 4 → (Y ⟶ A)) (z : Fin 4 → (Y ⟶ B)) 
     mk8 x z ≫ prj (A ⊗ B) i ≫ snd A B ≫ f = z i ≫ f := by
   rw [reassoc_of% (eightfold_snd x z i)]
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem ext8 {a b : Y ⟶ G4 (A ⊗ B)} (hx : ∀ i, a ≫ prj _ i ≫ fst A B = b ≫ prj _ i ≫ fst A B)
     (hz : ∀ i, a ≫ prj _ i ≫ snd A B = b ≫ prj _ i ≫ snd A B) : a = b := by
   have h : ∀ i, a ≫ prj (A ⊗ B) i = b ≫ prj (A ⊗ B) i := fun i =>
@@ -187,12 +191,13 @@ theorem zcPair_positionB (hD : IsDual A B P) (l : A ⟶ B) [IsMonHom l] (mu : B 
 
 end Slots
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem zcPair_pull {P : LB (A ⊗ B).left} (hP : P.IsLB) (l : A ⟶ B) (mu : B ⟶ A) (α : Matrix (Fin 4) (Fin 4) ℤ)
     {Y Y' : Over S} (h : Y' ⟶ Y) (u u' : Y ⟶ G4 (A ⊗ B)) :
     pull h.left (zcPair hP l mu α u u') = zcPair hP l mu α (h ≫ u) (h ≫ u') := by
-  simp only [zcPair, map_add, map_sum, map_zsmul, map_nsmul, pull_evc, Category.assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [zcPair, map_add (f := _), map_sum, map_zsmul, map_nsmul, pull_evc, Category.assoc]
 
 private theorem zpow_fin_sum_eq_prod_zpow {M : Type*} [CommGroup M] (a : M) (f : Fin 4 → ℤ) :
     a ^ (∑ k, f k) = ∏ k, a ^ f k := by
@@ -276,13 +281,25 @@ theorem zcPair_eq_one (hA : IsAbelianScheme A) (hB : IsAbelianScheme B) {P : LB 
   haveI := hB.comm
   have oneB : ∀ {Y : Over S} (f : Y ⟶ T), f ≫ (1 : T ⟶ B) = 1 := fun f => by simp
   have oneA : ∀ {Y : Over S} (f : Y ⟶ T), f ≫ (1 : T ⟶ A) = 1 := fun f => by simp
+  have eq_of_evc {A' B' T' : Over S} [GrpObj A'] [GrpObj B'] {P' : LB (A' ⊗ B').left}
+      (h : IsDual A' B' P') {y₁ y₂ : T' ⟶ B'}
+      (e : evc h.isLB (fst A' T') (snd A' T' ≫ y₁) =
+        evc h.isLB (fst A' T') (snd A' T' ≫ y₂)) : y₁ = y₂ := by
+    have hM : (ev P' (fst A' T') (snd A' T' ≫ y₁)).IsLB := pull_isLB h.isLB _
+    have ha : IsAdditive (ev P' (fst A' T') (snd A' T' ≫ y₁)) := by
+      refine (isAdditive_iff hM).2 fun Y a a' t ↦ ?_
+      rw [evc_ev h.isLB, evc_ev h.isLB, evc_ev h.isLB]
+      simp only [lift_fst, lift_snd_assoc]
+      exact (isAdditive_iff h.isLB).1 h.additive Y a a' (t ≫ y₁)
+    exact (h.univ T' _ hM ha).unique ((cls_eq_iff hM hM).1 rfl)
+      ((cls_eq_iff hM (pull_isLB h.isLB _)).1 e)
   have dB : ∀ y : T ⟶ B, evc hD.isLB (fst A T) (snd A T ≫ y) = 0 → y = 1 := by
     intro y hy
-    apply hD.eq_of_evc
+    apply eq_of_evc hD
     rw [hy, oneB, evc_one_right hD.isLB hD.zero]
   have dA : ∀ y : T ⟶ A, evc hD.isLB (snd B T ≫ y) (fst B T) = 0 → y = 1 := by
     intro y hy
-    apply hD'.eq_of_evc
+    apply eq_of_evc hD'
     rw [evc_swap hD.isLB hD'.isLB, evc_swap hD.isLB hD'.isLB, hy, oneA,
       IsAdditive.evc_one hD.isLB hD.additive]
   have R1 : ∀ i, postH l (a ≫ prj (A ⊗ B) i ≫ fst A B) ^ 2 *

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.Iwasawa
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.Iwasawa
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem blockDiagPart_mul {A B : Matrix (Fin n) (Fin n) F} (hA : A.BlockTriangul
     (hB : B.BlockTriangular β) :
     blockDiagPart F n β (A * B) = blockDiagPart F n β A * blockDiagPart F n β B := by
   ext i j
-  simp only [blockDiagPart_apply, mul_apply]
+  simp only [blockDiagPart_apply, Matrix.mul_apply]
   split_ifs with h
   · refine Finset.sum_congr rfl fun k _ => ?_
     by_cases hk : β i = β k
@@ -205,8 +209,8 @@ theorem diagGL_inv_conj_apply (d : Fin n → Fˣ) (g : GL (Fin n) F) (i j : Fin 
   rw [coe_diagGL, coe_diagGL, mul_diagonal, diagonal_mul]
   rfl
 
-variable (β) in
 
+variable (β) in
 def blockRank (i : Fin n) : ℕ := (Finset.univ.filter fun j => β j < β i).card
 
 theorem blockRank_lt {i j : Fin n} (h : β i < β j) : blockRank β i < blockRank β j := by

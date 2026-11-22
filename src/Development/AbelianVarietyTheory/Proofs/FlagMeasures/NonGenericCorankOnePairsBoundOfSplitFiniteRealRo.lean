@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FamDefs
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGVanish
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.StepAnalyticConstantsP
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormChainLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FamDefs
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGVanish
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.StepAnalyticConstantsP
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormChainLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,5 @@ theorem rowNG_of_cut2P (hc : NGCut2P) : RowNGP := by
   have r := key ha hG hN hF hS hFin hRe
   rw [hdd] at r
   exact r
-
-example : NGCut2P → RowNGP := rowNG_of_cut2P
 
 end GlobalTheory.NGRow

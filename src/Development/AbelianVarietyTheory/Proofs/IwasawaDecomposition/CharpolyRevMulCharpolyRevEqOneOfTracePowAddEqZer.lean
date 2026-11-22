@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.Artin.LogCharpoly
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Artin.LogCharpoly
+
+@[expose] public section
 
 namespace GlobalTheory
 

@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.ExistenceTheorem.PowerIndex
-import GroundTheory.GlobalFields.ExistenceTheorem.LocalPowers
-import GroundTheory.GlobalFields.IdeleGroups.IndexFormula
-import GroundTheory.GlobalFields.IdeleGroups.IndexProductFormula
-import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ExistenceTheorem.PowerIndex
+public import GroundTheory.GlobalFields.ExistenceTheorem.LocalPowers
+public import GroundTheory.GlobalFields.IdeleGroups.IndexFormula
+public import GroundTheory.GlobalFields.IdeleGroups.IndexProductFormula
+public import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -25,8 +29,8 @@ theorem index_range_powMonoidHom_adicCompletion_mul_norm (v : HeightOneSpectrum 
   rw [index_range_powMonoidHom_adicCompletion v (NeZero.ne n), hζv.card_rootsOfUnity,
     div_mul_cancel₀ _ hn, sq]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem eq_one_or_eq_two_of_isReal {w : InfinitePlace K} (hw : w.IsReal) : n = 1 ∨ n = 2 := by
   obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot K n
   have h := hζ.map_of_injective (InfinitePlace.embedding_of_isReal hw).injective
@@ -37,16 +41,18 @@ theorem eq_one_or_eq_two_of_isReal {w : InfinitePlace K} (hw : w.IsReal) : n = 1
   have hx2 : x ^ 2 = 1 := by rw [← sq_abs, habs, one_pow]
   exact (Nat.dvd_prime Nat.prime_two).1 (h.dvd_of_pow_eq_one 2 hx2)
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem index_range_powMonoidHom_infinitePlaceCompletion_mul_norm (w : InfinitePlace K) :
     ((powMonoidHom n : (w.Completion)ˣ →* (w.Completion)ˣ).range.index : ℝ) *
       ‖(n : w.Completion)‖ ^ w.mult = (n : ℝ) ^ 2 := by
   have hnorm : ‖(n : w.Completion)‖ = n := by
-    have h : ‖(n : w.Completion)‖ = w (n : K) := by
-      rw [← map_natCast (algebraMap K w.Completion) n]
-      exact InfinitePlace.Completion.norm_coe (K := K) (v := w) _
-    rw [h, InfinitePlace.map_natCast]
+    have hc (m : ℕ) : ((m : WithAbs w.1) : w.Completion) = m := by
+      induction m with
+      | zero => simp
+      | succ m ih => simp [Nat.cast_succ, ih]
+    simpa [hc, InfinitePlace.map_natCast] using
+      (InfinitePlace.Completion.norm_coe (v := w) (n : WithAbs w.1))
   rw [index_range_powMonoidHom_infinitePlaceCompletion w (NeZero.ne n), hnorm]
   rcases w.isReal_or_isComplex with hw | hw
   · rw [hw.mult_eq_one, pow_one]

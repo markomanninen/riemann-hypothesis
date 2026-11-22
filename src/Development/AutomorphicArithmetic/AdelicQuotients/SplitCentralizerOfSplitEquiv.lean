@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction PositivityTheory.Rg.Tf.Core Topology GroundTheory.Global.AdeleBaseChange
 
@@ -33,7 +38,7 @@ theorem UpperTheory.splitCentralizer_of_splitEquiv :
   obtain ⟨hcl, hmod, -⟩ := hN F E σ hσ n hn
   have hl : 0 < Module.finrank F E := Module.finrank_pos
   refine ⟨?_, ?_⟩
-  · obtain ⟨e, he⟩ := hS (G1 E n) {r : ℝ // 0 < r} (GA E n) (normOneGL E n).subtype
+  · obtain ⟨e, he⟩ := hS (G1 E n) {r : ℝ // 0 < r} (GA E n) (normOneGL (K := E) (n := n)).subtype
       ((rpowHom ((Module.finrank F E : ℝ))⁻¹).comp (detModule E n))
       ((mapGL n (adeleMap F E)).comp (centralSection F n))
       IsEmbedding.subtypeVal
@@ -78,7 +83,7 @@ theorem UpperTheory.splitCentralizer_of_splitEquiv :
         (fun g => by
           constructor
           · intro hg
-            have h1 : (g : GA F n) ∈ normOneGL F n := mem_normOneGL_iff_detModule.2 hg
+            have h1 : (g : GA F n) ∈ normOneGL (K := F) (n := n) := mem_normOneGL_iff_detModule.2 hg
             refine ⟨⟨⟨g, h1⟩, ?_⟩, rfl⟩
             rw [Subgroup.mem_centralizer_singleton_iff]
             refine Subtype.ext ?_
@@ -89,7 +94,7 @@ theorem UpperTheory.splitCentralizer_of_splitEquiv :
             exact mem_normOneGL_iff_detModule.1 x.1.2)
       exact ⟨e, fun x => congrArg Subtype.val (he x)⟩
     · have hmem : ∀ t : Subgroup.centralizer {γ₁},
-          mapGL n (adeleMap F E) ((t : G1 F n) : GA F n) ∈ normOneGL E n := fun t => by
+          mapGL n (adeleMap F E) ((t : G1 F n) : GA F n) ∈ normOneGL (K := E) (n := n) := fun t => by
         refine mem_normOneGL_iff_detModule.2 (Subtype.ext ?_)
         rw [hmod, mem_normOneGL_iff_detModule.1 (t : G1 F n).2]
         simp

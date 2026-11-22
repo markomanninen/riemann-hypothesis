@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondStd
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DiffGenLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondStd
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DiffGenLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem isDiffVal_dV : Formalism.L2.SG.LocVol.IsDiffVal v (Formalism.L2.SG.LocVo
       | mem y hy => exact hgmax y (Finset.mem_insert_of_mem hy)
       | zero => simp
       | add a b _ _ ha hb =>
-        rw [show ((a + b : 𝓞 F) : F) = (a : F) + (b : F) from rfl, map_add]
+        rw [show ((a + b : 𝓞 F) : F) = (a : F) + (b : F) from rfl, map_add (f := _)]
         exact le_trans (Valuation.map_add _ _ _) (max_le ha hb)
       | smul a b _ hb =>
         rw [show ((a • b : 𝓞 F) : F) = (a : F) * (b : F) from rfl, map_mul, Valuation.map_mul]

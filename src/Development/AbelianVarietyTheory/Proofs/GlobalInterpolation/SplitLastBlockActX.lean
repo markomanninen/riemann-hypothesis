@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.Columns.CoefColLemmas
-import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.Columns.CoefColLemmas
+public import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -72,7 +76,7 @@ def expOf {ι : Type} [Fintype ι] {n : ℕ} (b : ι → Fin n → ℕ) : ι × 
 @[simp] theorem expOf_apply {ι : Type} [Fintype ι] {n : ℕ} (b : ι → Fin n → ℕ) (p : ι × Fin n) : expOf b p = b p.1 p.2 := rfl
 
 theorem coefLast_eq_coeff [Fintype ι] (b : ι → Fin n → ℕ) (F : Pol K ι N) :
-    coefLast hN b F = coeff (expOf b) (splitLast K ι hN F) := by
+    coefLast hN b F = AddMonoidAlgebra.coeff (splitLast K ι hN F) (expOf b) := by
   classical
   induction F using MvPolynomial.induction_on' with
   | add p q hp hq => simp [hp, hq]
@@ -135,7 +139,8 @@ theorem isUnit_det_gramB (sg : ι → DomWeight n) [DecidableEq (VVIdx sg)] : Is
       refine (bVV K sg).ext fun j => ?_
       have hj := congrFun h j
       simp only [Matrix.vecMul, dotProduct, gramB, Matrix.of_apply, Pi.zero_apply] at hj
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, pairBK_apply, pairB_apply, bVV_coe,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, pairBK_apply, pairB_apply, bVV_coe,
         smul_eq_mul, LinearMap.zero_apply]
       simp only [mul_left_comm (v _), ← Finset.mul_sum, hj, mul_zero]
     rw [this]
@@ -150,7 +155,8 @@ theorem fockB_projVV (sg : ι → DomWeight n) (F : Pol K ι n) {y : Pol K ι n}
     intro k
     have hinv := Matrix.mul_nonsing_inv _ (isUnit_det_gramB (K := K) sg)
     rw [← fockBL_apply]
-    simp only [projVV, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.smulRight_apply, Submodule.coe_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [projVV, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.smulRight_apply, Submodule.coe_sum,
       Submodule.coe_smul, map_sum, map_smul, bVV_coe, smul_eq_mul, fockBL_apply]
     rw [Finset.sum_comm]
     have h1 : ∀ j, ∑ i, (gramB (K := K) sg)⁻¹ i j * (fockB (bVVfun K sg j) F * fockB (bVVfun K sg i) (bVVfun K sg k)) =
@@ -168,7 +174,7 @@ theorem fockB_projVV (sg : ι → DomWeight n) (F : Pol K ι n) {y : Pol K ι n}
   induction hy using Submodule.span_induction with
   | mem y hy => obtain ⟨k, rfl⟩ := hy; exact key k
   | zero => simp only [← fockBL_apply, map_zero]
-  | add y z _ _ hy hz => simp only [← fockBL_apply, map_add] at *; rw [hy, hz]
+  | add y z _ _ hy hz => simp only [← fockBL_apply, map_add (f := _)] at *; rw [hy, hz]
   | smul a y _ hy => simp only [← fockBL_apply, map_smul] at *; rw [hy]
 
 theorem projVV_coe (sg : ι → DomWeight n) (x : VV K sg) : projVV sg (x : Pol K ι n) = x :=
@@ -195,11 +201,11 @@ theorem projVV_blockAct (sg : ι → DomWeight n) (U : ι → Matrix (Fin n) (Fi
 end Proj
 
 theorem coeff_scale {A : Type} [CommRing A] [Fintype ι] (t : ι → A) (e : ι × Fin n →₀ ℕ) (P : MvPolynomial (ι × Fin n) A) :
-    coeff e (aeval (fun p : ι × Fin n => C (t p.1) * X p) P : MvPolynomial (ι × Fin n) A) =
-      (∏ p : ι × Fin n, t p.1 ^ e p) * coeff e P := by
+    AddMonoidAlgebra.coeff (aeval (fun p : ι × Fin n => C (t p.1) * X p) P : MvPolynomial (ι × Fin n) A) e =
+      (∏ p : ι × Fin n, t p.1 ^ e p) * AddMonoidAlgebra.coeff P e := by
   classical
   induction P using MvPolynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => simp only [map_add (f := _), MvPolynomial.coeff_add, hp, hq, mul_add]
   | monomial m a =>
     have : (aeval (fun p : ι × Fin n => C (t p.1) * X p) (monomial m a) : MvPolynomial (ι × Fin n) A) =
         C (∏ p : ι × Fin n, t p.1 ^ m p) * monomial m a := by
@@ -228,14 +234,16 @@ theorem splitLast_blockAct_X (A' : ι → Matrix (Fin N) (Fin N) K)
   obtain ⟨h1, h2, h3⟩ := h τ
   have hX : ∀ {m : ℕ} (U : ι → Matrix (Fin m) (Fin m) K) (τ : ι) (a s : Fin m),
       Formalism.GradedWeylDivisibility.blockAct K U (X (τ, a, s)) = ∑ b, C (U τ a b) * X (τ, b, s) := fun U τ a s => aeval_X _ _
-  rw [hX, map_sum, sum_split hN]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hX, map_sum, sum_split hN]
   simp only [map_mul, splitLast_C]
   rcases cases_idx hN s with rfl | ⟨s, rfl⟩
   · simp only [splitLast_X_lastCol, mul_zero, Finset.sum_const_zero, add_zero, map_zero]
   · rcases cases_idx hN a with rfl | ⟨a, rfl⟩
     · simp only [splitLast_X_up, splitLast_X_lastRow, (h2 _).2, h3, map_zero, zero_mul, Finset.sum_const_zero, zero_add,
         map_X, aeval_X]
-    · simp only [splitLast_X_up, splitLast_X_lastRow, (h2 _).1, h1, map_zero, zero_mul, add_zero, map_C, algHom_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [splitLast_X_up, splitLast_X_lastRow, (h2 _).1, h1, map_zero, zero_mul, add_zero, map_C, algHom_C,
         algebraMap_eq, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, hX, map_sum, map_mul]
 
 theorem coefLast_blockAct [Fintype ι] (b : ι → Fin n → ℕ) (A' : ι → Matrix (Fin N) (Fin N) K)
@@ -249,7 +257,7 @@ theorem coefLast_blockAct [Fintype ι] (b : ι → Fin n → ℕ) (A' : ι → M
     | C a =>
       have e : ∀ {m : ℕ} (U : ι → Matrix (Fin m) (Fin m) K), Formalism.GradedWeylDivisibility.blockAct K (n := m) U (C a) = C a := fun U => algHom_C _ _
       rw [e, splitLast_C, map_C, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, e, algHom_C, algebraMap_eq]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p v hp =>
       rw [map_mul, map_mul, hp, splitLast_blockAct_X K ι hN A' A t h, map_mul, map_mul, map_mul]
   rw [coefLast_eq_coeff, coefLast_eq_coeff, key, coeff_scale ι (fun τ => C (t τ)), coeff_map, smul_eq_C_mul,

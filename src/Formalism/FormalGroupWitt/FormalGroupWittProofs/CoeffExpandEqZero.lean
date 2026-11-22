@@ -1,4 +1,8 @@
-import Formalism.FormalGroupWitt.SubstInjectiveV
+module
+
+public import Formalism.FormalGroupWitt.SubstInjectiveV
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,8 @@ theorem low_coeff_vector : Formalism.FG.LowCoeffV.{u, v, w} := by
   have h1 := hD j d
   have h2 : MvPowerSeries.coeff d
       (∑ k, M j k • MvPowerSeries.expand q hq (MvPowerSeries.map σ (D k))) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero (fun k _ => ?_)
     rw [map_smul, smul_eq_mul,
       LowCoefficients.coeff_expand_eq_zero q hq hq2 _ N hN (fun m hm => by rw [MvPowerSeries.coeff_map, hlow k m hm, map_zero]) d hd,

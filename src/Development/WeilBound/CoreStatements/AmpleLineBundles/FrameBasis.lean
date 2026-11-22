@@ -1,7 +1,12 @@
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRing
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeFrameSpecializes
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreChartBundle
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtSmul
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRing
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeFrameSpecializes
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreChartBundle
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtSmul
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -22,10 +27,22 @@ theorem lat_val (X : Scheme.{0}) (G : Over X) [GrpObj G] [IsCommMonObj G] (Ω : 
       (∀ (a : regAt ξ ⟨centre z, h⟩) (r : R) e, ValAt ξ z (a : Ω) r → ev (a • e) = r • ev e) ∧
       Submodule.span R (Set.range ev) = ⊤ := by
   intro hξ hs
+  have exists_base {S : Scheme.{0}} {G : Over S} [GrpObj G] {A R : Type} [CommRing A] [CommRing R] (φ : A →+* R)
+      (x : Spec (CommRingCat.of A) ⟶ S) (z : Spec (CommRingCat.of R) ⟶ S)
+      (hz : Spec.map (CommRingCat.ofHom φ) ≫ x = z) {E F : Type} [AddCommGroup E] [Module A E] [AddCommGroup F]
+      [Module R F] (M : LieModel G x E) (N : LieModel G z F) :
+      ∃ j : E →+ F, (∀ e, (N.pt (j e)).left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap φ)) ≫ (M.pt e).left) ∧
+        (∀ (a : A) e, j (a • e) = φ a • j e) ∧
+        (Smooth G.hom → ∀ (n : ℕ) (b : Module.Basis (Fin n) A E),
+          Submodule.span R (Set.range fun k => j (b k)) = ⊤) := by
+    subst hz
+    letI := φ.toAlgebra
+    obtain ⟨j, h1, h2, h3⟩ := GlobalTheory.T.lie_model_base_change_map S G A R x E F M N
+    exact ⟨j, h1, h2, fun hs n b => (h3 hs n b).2⟩
   obtain ⟨EA, _, _, ⟨MA⟩⟩ := lieModel_exists X G (X.presheaf.stalk (centre z)) (X.fromSpecStalk (centre z))
-  obtain ⟨j, hj, hjs, hjb⟩ := LieVal.exists_base (A := X.presheaf.stalk (centre z)) (Scheme.stalkClosedPointTo z).hom _ z
+  obtain ⟨j, hj, hjs, hjb⟩ := exists_base (A := X.presheaf.stalk (centre z)) (Scheme.stalkClosedPointTo z).hom _ z
     (LieTangent.spec_centre z) MA MR
-  obtain ⟨i, hi, his, -⟩ := LieVal.exists_base (genMap ξ ⟨centre z, h⟩) _ ξ
+  obtain ⟨i, hi, his, -⟩ := exists_base (genMap ξ ⟨centre z, h⟩) _ ξ
     (LieTangent.spec_genMap ξ ⟨centre z, h⟩) MA M
 
   have hext : ∀ a, M.Extends ⟨centre z, h⟩ (i a) (MA.pt a) := fun a => ⟨MA.tan a, hi a⟩
@@ -104,7 +121,8 @@ theorem frame_basis [IsCommMonObj G] [Smooth G.hom] (hξ : IsCptGen ξ) (M : Lie
       apply Subtype.ext
       rw [Submodule.coe_sum]
       exact (B.sum_repr e).symm
-    rw [e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum]
     exact Finset.sum_congr rfl fun i _ => hsm _ _ _ (hc i)
   have hspan : ⊤ ≤ Submodule.span ℂ (Set.range b) := by
     rw [← hsp, Submodule.span_le]
@@ -150,15 +168,16 @@ theorem co_iff (M : LieModel G ξ Li) (B : Fin r → Li) (z : Sp ℂ ⟶ X) {V :
     have h1 : ∀ i, ψ (b i) = β i := fun i => (hβ i _).1 (by rw [hψ]; exact hb i)
     have h2 : u = ∑ i, c i • β i := by
       apply Mz.inj
-      rw [hv, ← hψ, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hv, ← hψ, map_sum]
       simp only [map_smul, h1]
     rw [h2]
     exact (β.repr_sum_self c).symm
   · rintro rfl
     exact ⟨V, inferInstance, inferInstance, Mz, β, fun i => (hβ i _).2 rfl, by rw [β.sum_repr]⟩
 
-open Classical in
 
+open Classical in
 def co (M : LieModel G ξ Li) (B : Fin r → Li) (z : Sp ℂ ⟶ X) (v : epsAt z ⟶ G) : Fin r → ℂ :=
   if h : ∃ c, Co M B z v c then h.choose else 0
 
@@ -166,7 +185,7 @@ theorem co_eq (M : LieModel G ξ Li) (B : Fin r → Li) (z : Sp ℂ ⟶ X) {V : 
     (Mz : LieModel G z V) (β : Module.Basis (Fin r) ℂ V) (hβ : ∀ i u, M.ValAt z (B i) (Mz.pt u) ↔ u = β i)
     (u : V) : co M B z (Mz.pt u) = β.repr u := by
   have h : ∃ c, Co M B z (Mz.pt u) c := ⟨_, (co_iff M B z Mz β hβ u _).2 rfl⟩
-  rw [co, dif_pos h]
+  rw [co, dite_eq_left h]
   exact (co_iff M B z Mz β hβ u _).1 h.choose_spec
 
 theorem dual_comp {R R' R'' : Type} [CommRing R] [CommRing R'] [CommRing R''] (φ : R →+* R') (ψ : R' →+* R'') :
@@ -215,12 +234,25 @@ theorem co_map [IsCommMonObj G] (τ : ℂ →+* ℂ) (M : LieModel G ξ Li) (B :
     (hz : spMap τ ≫ z = z') (v : epsAt z ⟶ G) (v' : epsAt z' ⟶ G) (hv' : v'.left = spMap (dualMap τ) ≫ v.left)
     {c : Fin r → ℂ} (h : Co M B z v c) : Co M B z' v' fun i => τ (c i) := by
   obtain ⟨V, _, _, Mz, b, hb, hv⟩ := h
+  have exists_base {S : Scheme.{0}} {G : Over S} [GrpObj G] {A R : Type} [CommRing A] [CommRing R] (φ : A →+* R)
+      (x : Spec (CommRingCat.of A) ⟶ S) (z : Spec (CommRingCat.of R) ⟶ S)
+      (hz : Spec.map (CommRingCat.ofHom φ) ≫ x = z) {E F : Type} [AddCommGroup E] [Module A E] [AddCommGroup F]
+      [Module R F] (M : LieModel G x E) (N : LieModel G z F) :
+      ∃ j : E →+ F, (∀ e, (N.pt (j e)).left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap φ)) ≫ (M.pt e).left) ∧
+        (∀ (a : A) e, j (a • e) = φ a • j e) ∧
+        (Smooth G.hom → ∀ (n : ℕ) (b : Module.Basis (Fin n) A E),
+          Submodule.span R (Set.range fun k => j (b k)) = ⊤) := by
+    subst hz
+    letI := φ.toAlgebra
+    obtain ⟨j, h1, h2, h3⟩ := GlobalTheory.T.lie_model_base_change_map S G A R x E F M N
+    exact ⟨j, h1, h2, fun hs n b => (h3 hs n b).2⟩
   obtain ⟨V', _, _, ⟨M'⟩⟩ := lieModel_exists X G ℂ z'
-  obtain ⟨j, hj, hjs, -⟩ := LieVal.exists_base τ z z' hz Mz M'
+  obtain ⟨j, hj, hjs, -⟩ := exists_base τ z z' hz Mz M'
   refine ⟨V', inferInstance, inferInstance, M', fun i => j (b i),
     fun i => valAt_map τ M hz _ _ _ (hj _) (hb i), Over.OverMorphism.ext ?_⟩
   have : ∑ i, τ (c i) • j (b i) = j (∑ i, c i • b i) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hjs]
   rw [this, hj, hv', hv]
 
@@ -242,7 +274,7 @@ theorem co_conj [IsCommMonObj G] [Smooth G.hom] (hξ : IsCptGen ξ) (M : LieMode
   by_cases hc : ∃ c, Co M B z v c
   · have h1 := co_map (starRingEnd ℂ) M B rfl v v' hv' hc.choose_spec
     have hc' : ∃ c, Co M B _ v' c := ⟨_, h1⟩
-    rw [co, co, dif_pos hc, dif_pos hc', co_unique hξ M B _ h hB hc'.choose_spec h1]
+    rw [co, co, dite_eq_left hc, dite_eq_left hc', co_unique hξ M B _ h hB hc'.choose_spec h1]
   · have hcc : (starRingEnd ℂ).comp (starRingEnd ℂ) = RingHom.id ℂ := RingHom.ext fun a => Complex.conj_conj a
     have hz : spMap (starRingEnd ℂ) ≫ spMap (starRingEnd ℂ) ≫ z = z := by
       rw [← Category.assoc, ← Spec.map_comp, ← CommRingCat.ofHom_comp, hcc, CommRingCat.ofHom_id, Spec.map_id,
@@ -253,18 +285,30 @@ theorem co_conj [IsCommMonObj G] [Smooth G.hom] (hξ : IsCptGen ξ) (M : LieMode
       rw [hv', ← Category.assoc, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← dual_comp, hcc, hd,
         CommRingCat.ofHom_id, Spec.map_id, Category.id_comp]
     have hc' : ¬ ∃ c, Co M B _ v' c := fun ⟨c, h⟩ => hc ⟨_, co_map (starRingEnd ℂ) M B hz v' v hv h⟩
-    rw [co, co, dif_neg hc, dif_neg hc']
+    rw [co, co, dite_eq_right hc, dite_eq_right hc']
     simp
 
 theorem co_val [IsCommMonObj G] [Smooth G.hom] (hξ : IsCptGen ξ) (M : LieModel G ξ Li)
     (B : Module.Basis (Fin r) Ω Li) (z : Sp ℂ ⟶ X) (h : genPt ξ ⤳ centre z)
     (hB : M.lat.IsFrameAt B ⟨centre z, h⟩) {e : Li} {v : epsAt z ⟶ G} (hv : M.ValAt z e v) (i : Fin r) :
     ValAt ξ z (B.repr e i) (co M B z v i) := by
+  have exists_base {S : Scheme.{0}} {G : Over S} [GrpObj G] {A R : Type} [CommRing A] [CommRing R] (φ : A →+* R)
+      (x : Spec (CommRingCat.of A) ⟶ S) (z : Spec (CommRingCat.of R) ⟶ S)
+      (hz : Spec.map (CommRingCat.ofHom φ) ≫ x = z) {E F : Type} [AddCommGroup E] [Module A E] [AddCommGroup F]
+      [Module R F] (M : LieModel G x E) (N : LieModel G z F) :
+      ∃ j : E →+ F, (∀ e, (N.pt (j e)).left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap φ)) ≫ (M.pt e).left) ∧
+        (∀ (a : A) e, j (a • e) = φ a • j e) ∧
+        (Smooth G.hom → ∀ (n : ℕ) (b : Module.Basis (Fin n) A E),
+          Submodule.span R (Set.range fun k => j (b k)) = ⊤) := by
+    subst hz
+    letI := φ.toAlgebra
+    obtain ⟨j, h1, h2, h3⟩ := GlobalTheory.T.lie_model_base_change_map S G A R x E F M N
+    exact ⟨j, h1, h2, fun hs n b => (h3 hs n b).2⟩
   obtain ⟨V, _, _, ⟨Mz⟩⟩ := lieModel_exists X G ℂ z
   obtain ⟨β, hβ, hβ'⟩ := frame_basis hξ M B z h hB Mz
   obtain ⟨h0, v₀, hv₀, hl⟩ := id hv
   obtain ⟨V₀, _, _, ⟨M₀⟩⟩ := lieModel_exists X G (X.presheaf.stalk (centre z)) (X.fromSpecStalk (centre z))
-  obtain ⟨j, hj, -, -⟩ := LieVal.exists_base (A := X.presheaf.stalk (centre z)) (Scheme.stalkClosedPointTo z).hom _ z
+  obtain ⟨j, hj, -, -⟩ := exists_base (A := X.presheaf.stalk (centre z)) (Scheme.stalkClosedPointTo z).hom _ z
     (LieTangent.spec_centre z) M₀ Mz
   obtain ⟨u₀, hu₀⟩ := M₀.onto v₀ hv₀.1
   have hu : v = Mz.pt (j u₀) := Over.OverMorphism.ext (by rw [hj, hu₀, hl])
@@ -289,11 +333,12 @@ theorem exists_core {V : Type} [AddCommGroup V] [Module ℂ V] {Λ : Type} [Fint
             add_left := fun a b c => ?_
             smul_left := fun a b c => ?_
             definite := fun a ha => ?_ }, fun _ _ => rfl⟩
-  · simp only [map_sum, map_mul, Complex.conj_ofReal, Complex.conj_conj, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, map_mul, Complex.conj_ofReal, Complex.conj_conj, mul_comm]
   · show 0 ≤ (∑ l, (ρ l : ℂ) * ∑ i, starRingEnd ℂ (f l a i) * f l a i).re
     rw [hre, Complex.ofReal_re]
     exact Finset.sum_nonneg fun l _ => hnn a l
-  · simp only [map_add, Pi.add_apply, add_mul, Finset.sum_add_distrib, mul_add]
+  · simp only [map_add (f := _), Pi.add_apply, add_mul, Finset.sum_add_distrib, mul_add]
   · simp only [map_smul, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
     exact Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun i _ => by ring
   · have h1 : (∑ l, (ρ l : ℂ) * ∑ i, starRingEnd ℂ (f l a i) * f l a i) = 0 := ha

@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.WeightedBoundRotatedUniformOfCubicThreshold
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.WaveInputsOfHypothesesGlobal
-import CompanionTheory.AutomorphicTheory.RankOneTori.FrameBesselBoundOfLargeConstants
+module
+
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.WeightedBoundRotatedUniformOfCubicThreshold
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.WaveInputsOfHypothesesGlobal
+public import CompanionTheory.AutomorphicTheory.RankOneTori.FrameBesselBoundOfLargeConstants
+
+@[expose] public section
 
 namespace CompanionTheory.WaveGrid
 

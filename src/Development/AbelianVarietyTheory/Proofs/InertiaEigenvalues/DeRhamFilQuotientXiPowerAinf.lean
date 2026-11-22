@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisIncl
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisIncl
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
+
 open Formalism Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation
 open scoped Formalism.Per
 
@@ -27,7 +32,7 @@ theorem isUnit_one_add {R : Type} [CommRing R] (I : Ideal R) (z : AdicCompletion
     simpa using Ideal.pow_mem_pow hrI n
   let u : AdicCompletion I R := ⟨fun n => Ring.inverse (1 + z.val n), fun {m n} hmn => by
     have e := congrArg (AdicCompletion.transitionMap I R hmn) (Ring.inverse_mul_cancel _ (hu n))
-    rw [AdicCompletion.transitionMap_map_mul, map_add, AdicCompletion.transitionMap_map_one,
+    rw [AdicCompletion.transitionMap_map_mul, map_add (f := _), AdicCompletion.transitionMap_map_one,
       z.property hmn] at e
     exact left_inv_eq_right_inv e (Ring.mul_inverse_cancel _ (hu m))⟩
   refine IsUnit.of_mul_eq_one u ?_
@@ -85,7 +90,7 @@ theorem exists_inv (T : LocTied l P AI) (y : P.R.BdR) (hy : y ∈ (P.PD (botExt 
   refine ⟨T.eD.symm (algebraMap (Per.BdRp l) (Per.BdR l) v), (T.fil _ _ _).2 ?_, T.eD.injective ?_⟩
   · rw [RingEquiv.apply_symm_apply]
     exact (mem_FilD_nat 0 _).2 ⟨v, mem_filtration_zero _, rfl⟩
-  · rw [map_mul, map_add, map_one, RingEquiv.apply_symm_apply, ← e,
+  · rw [map_mul, map_add (f := _), map_one, RingEquiv.apply_symm_apply, ← e,
       ← map_one (algebraMap (Per.BdRp l) (Per.BdR l)), ← map_add, ← map_mul, hv']
 
 theorem mul_mem_zero {a : ℤ} {x y : P.R.BdR} (hx : x ∈ (P.PD (botExt l)).Fil 0)

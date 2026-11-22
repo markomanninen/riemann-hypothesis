@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TensorProduct
 open UpperTheory.Gal.crystallineComparison
 
@@ -17,6 +22,8 @@ theorem UpperTheory.Gal.crystallineComparison.normInt_of :
     Module.Flat.projective_of_finitePresentation
   obtain ⟨N', hN'⟩ := hNE (Localization.Away (l : R)) (Localization.Away (l : R) ⊗[R] S) ι (fun k => 1 ⊗ₜ s k)
   obtain ⟨T, _, _, m, z, hinj, hz⟩ := hIS l d R S h
+  haveI : FaithfulSMul (Localization.Away (l : R)) T :=
+    (faithfulSMul_iff_algebraMap_injective _ _).2 hinj
   letI : Algebra R T := ((algebraMap (Localization.Away (l : R)) T).comp (algebraMap R (Localization.Away (l : R)))).toAlgebra
   haveI : IsScalarTower R (Localization.Away (l : R)) T := IsScalarTower.of_algebraMap_eq fun _ => rfl
   have hNz := hN' T (Fin m) z hz
@@ -26,12 +33,12 @@ theorem UpperTheory.Gal.crystallineComparison.normInt_of :
     have := hs.map (((z i).restrictScalars R).comp
       (Algebra.TensorProduct.includeRight : S →ₐ[R] (Localization.Away (l : R) ⊗[R] S)))
     simpa using this
-  have hco : ∀ (a : ℕ) (mm : ι →₀ ℕ), ∃ r, algebraMap R (Localization.Away (l : R)) r = MvPolynomial.coeff mm (N'.coeff a) := by
+  have hco : ∀ (a : ℕ) (mm : ι →₀ ℕ), ∃ r, algebraMap R (Localization.Away (l : R)) r = AddMonoidAlgebra.coeff (N'.coeff a) mm := by
     intro a mm
     apply hcl
     have h1 := hCI R T ι (Fin m) (fun i k => z i (1 ⊗ₜ s k)) hint a mm
     rw [← hNz, Polynomial.coeff_map, MvPolynomial.coeff_map] at h1
-    exact (isIntegral_algebraMap_iff hinj).1 h1
+    exact (isIntegral_algebraMap_iff ).1 h1
   obtain ⟨N, hN⟩ := hLP R (Localization.Away (l : R)) ι (algebraMap R (Localization.Away (l : R))) N' hco
   refine ⟨N, ?_⟩
   intro B _ _ hl I _ zB hzB

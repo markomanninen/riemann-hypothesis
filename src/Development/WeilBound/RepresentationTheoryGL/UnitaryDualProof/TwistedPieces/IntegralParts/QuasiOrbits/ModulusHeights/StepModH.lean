@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.QuasiOrbits.ModulusHeights.ContinuousHom
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.QuasiOrbits.ModulusHeights.ContinuousHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -250,7 +254,7 @@ theorem stepH : StepModH k := by
     exact hBU hxB
   have e : f = f₂ + (f - f₂) := by abel
   change ψ f = 0
-  rw [e, map_add, hker hf₂, zero_add]
+  rw [e, map_add (f := _), hker hf₂, zero_add]
   refine hV _ (Submodule.sub_mem _ hf (supportedIn_mono hU₁UU hf₂)) fun q hq => ?_
   by_cases hfq : f q = 0
   · simp [f₂, hfq]

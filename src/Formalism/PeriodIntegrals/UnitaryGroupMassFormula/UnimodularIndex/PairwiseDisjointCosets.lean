@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnimodIdx
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnimodIdx
+
+@[expose] public section
 
 open MeasureTheory Measure Topology Pointwise Set Function
 

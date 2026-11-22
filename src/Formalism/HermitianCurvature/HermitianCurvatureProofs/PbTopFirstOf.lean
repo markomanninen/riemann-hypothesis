@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaugeNormPower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MatrixUnitZeroZeroEqInsert
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaugeNormPower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MatrixUnitZeroZeroEqInsert
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

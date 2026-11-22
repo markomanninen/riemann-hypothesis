@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.SmallCones.IsoActFree
-import Development.WeilBound.ThetaLifts.SmallCones.ConeAB
-import Development.WeilBound.ThetaLifts.SmallCones.GenAnisoOf
-import Development.WeilBound.ThetaLifts.SmallCones.SoDefs
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.SmallCones.IsoActFree
+public import Development.WeilBound.ThetaLifts.SmallCones.ConeAB
+public import Development.WeilBound.ThetaLifts.SmallCones.GenAnisoOf
+public import Development.WeilBound.ThetaLifts.SmallCones.SoDefs
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FourierWhittaker.Series
-import GroundTheory.GlobalFields.TateThesis.LatticePoisson
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FourierWhittaker.Series
+public import GroundTheory.GlobalFields.TateThesis.LatticePoisson
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding MeasureTheory Topology Set Filter IsDedekindDomain
   Module
@@ -17,8 +21,8 @@ set_option linter.unusedSectionVars false
 
 variable {K : Type*} [Field K] [NumberField K] {ι : Type*} [Fintype ι]
 
-variable (K) in
 
+variable (K) in
 abbrev BIdx : Type _ := Free.ChooseBasisIndex ℤ (𝓞 K)
 
 def ofCoord (t : BIdx K → ℝ) : InfiniteAdeleRing K :=
@@ -36,7 +40,7 @@ theorem coordOf_ofCoord (t : BIdx K → ℝ) : coordOf (ofCoord t) = t := by
     LinearEquiv.apply_symm_apply]
 
 theorem ofCoord_add (s t : BIdx K → ℝ) : ofCoord (s + t) = ofCoord s + ofCoord t := by
-  simp [ofCoord, map_add]
+  simp [ofCoord, map_add (f := _)]
 
 theorem continuous_ofCoord : Continuous (ofCoord (K := K)) :=
   GroundTheory.Global.continuous_mixedToInfinite.comp (LinearMap.continuous_of_finiteDimensional _)
@@ -56,7 +60,8 @@ theorem ofCoord_intCast (n : BIdx K → ℤ) :
     ofCoord (fun j => (n j : ℝ)) =
       algebraMap K (InfiniteAdeleRing K) (algebraMap (𝓞 K) K (∑ j, n j • RingOfIntegers.basis K j)) := by
   apply (GroundTheory.Global.homeomorphMixedSpace K).injective
-  rw [homeomorphMixedSpace_ofCoord, homeomorphMixedSpace_algebraMap, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [homeomorphMixedSpace_ofCoord, homeomorphMixedSpace_algebraMap, map_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [latticeBasis_apply, integralBasis_apply, map_zsmul, map_zsmul, Int.cast_smul_eq_zsmul]
 
@@ -67,14 +72,15 @@ theorem mem_fundamentalSetInfinite_iff (y : InfiniteAdeleRing K) :
 theorem infiniteTrace_algebraMap_mul_ofCoord (q : K) (t : BIdx K → ℝ) :
     GroundTheory.Global.infiniteTrace K (algebraMap K (InfiniteAdeleRing K) q * ofCoord t) =
       ∑ j, t j * (Algebra.trace ℚ K (q * integralBasis K j) : ℝ) := by
-  rw [← GroundTheory.Global.mixedTrace_homeomorphMixedSpace, GroundTheory.Global.homeomorphMixedSpace_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← GroundTheory.Global.mixedTrace_homeomorphMixedSpace, GroundTheory.Global.homeomorphMixedSpace_mul,
     homeomorphMixedSpace_algebraMap, homeomorphMixedSpace_ofCoord, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [mul_smul_comm, map_smul, latticeBasis_apply, ← map_mul,
     GroundTheory.Global.mixedTrace_mixedEmbedding, smul_eq_mul]
 
-variable (K) in
 
+variable (K) in
 def traceDualBasis : Basis (BIdx K) ℚ K :=
   (Algebra.traceForm ℚ K).dualBasis (traceForm_nondegenerate ℚ K) (integralBasis K)
 
@@ -87,7 +93,8 @@ def dualVec (n : ι × BIdx K → ℤ) : ι → K := fun i => ∑ j, (n (i, j) :
 theorem trace_dualVec_mul (n : ι × BIdx K → ℤ) (i : ι) (k : BIdx K) :
     Algebra.trace ℚ K (dualVec n i * integralBasis K k) = n (i, k) := by
   classical
-  simp only [dualVec, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dualVec, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul,
     trace_traceDualBasis_mul, smul_eq_mul, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq]
   simp
@@ -106,8 +113,10 @@ theorem isDual_dualVec (n : ι × BIdx K → ℤ) : IsDual (dualVec n) := by
   have ha : algebraMap (𝓞 K) K a =
       ∑ k, ((RingOfIntegers.basis K).repr a k : ℚ) • integralBasis K k := by
     conv_lhs => rw [← (RingOfIntegers.basis K).sum_repr a]
-    simp [map_sum, integralBasis_apply, Int.cast_smul_eq_zsmul]
-  rw [ha, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, integralBasis_apply, Int.cast_smul_eq_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ha, Finset.mul_sum, map_sum]
   refine sum_mem fun k _ => ?_
   rw [mul_smul_comm, map_smul, trace_dualVec_mul, smul_eq_mul]
   exact ⟨(RingOfIntegers.basis K).repr a k * n (i, k), by rw [map_mul, eq_intCast, eq_intCast]⟩
@@ -201,7 +210,8 @@ theorem IsIntegralPeriodic.torusFun_toTorus {f : (ι → 𝔸[K]) → ℂ} (hf :
 theorem pair_torusPt (ξ : ι → K) (t : ι × BIdx K → ℝ) :
     pair ξ (torusPt t) = GroundTheory.Global.infiniteAdeleInl
       (∑ i, algebraMap K (InfiniteAdeleRing K) (ξ i) * ofCoord fun j => t (i, j)) := by
-  simp only [pair, torusPt, GroundTheory.Global.algebraMap_mul_infiniteAdeleInl, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pair, torusPt, GroundTheory.Global.algebraMap_mul_infiniteAdeleInl, map_sum]
 
 theorem adelicChar_neg_pair_dualVec_torusPt (n : ι × BIdx K → ℤ) (t : ι × BIdx K → ℝ) :
     (GroundTheory.Global.adelicChar K (-pair (dualVec n) (torusPt t)) : ℂ) =
@@ -211,7 +221,8 @@ theorem adelicChar_neg_pair_dualVec_torusPt (n : ι × BIdx K → ℤ) (t : ι �
     (-∑ i, algebraMap K (InfiniteAdeleRing K) (dualVec n i) * ofCoord fun j => t (i, j))
   refine (congrArg (fun z : Circle => (z : ℂ)) this).trans ?_
   congr 2
-  rw [map_neg (GroundTheory.Global.infiniteTrace K), neg_neg, map_sum, Fintype.sum_prod_type]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_neg (GroundTheory.Global.infiniteTrace K), neg_neg, map_sum, Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [infiniteTrace_algebraMap_mul_ofCoord]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -234,13 +245,13 @@ theorem IsIntegralPeriodic.integrand_finite {f : (ι → 𝔸[K]) → ℂ} (hf :
     exact adelicChar_pair_finiteAdeleInr hξ fun i => neg_mem (hz i)
   rw [hf.finite x z hz, pair_add, neg_add, AddChar.map_add_eq_mul, h1, mul_one]
 
-variable (K ι) in
 
+variable (K ι) in
 def infDomain : Set (ι → InfiniteAdeleRing K) :=
   Set.univ.pi fun _ => GroundTheory.Global.fundamentalSetInfinite K
 
-variable (K ι) in
 
+variable (K ι) in
 def finDomain : Set (ι → FiniteAdeleRing (𝓞 K) K) :=
   Set.univ.pi fun _ => (GroundTheory.Global.integralFiniteAdeles (𝓞 K) K : Set (FiniteAdeleRing (𝓞 K) K))
 
@@ -275,8 +286,8 @@ theorem setIntegral_vecDomain_eq {g : (ι → 𝔸[K]) → ℂ}
     simp only [e, infDomain, finDomain, vecDomain, GroundTheory.Global.fundamentalSet,
       MeasurableEquiv.arrowProdEquivProdArrow, Equiv.arrowProdEquivProdArrow, Set.mem_preimage,
       Set.mem_prod, Set.mem_pi, Set.mem_univ, true_implies, SetLike.mem_coe]
-    exact ⟨fun ⟨h1, h2⟩ i _ => ⟨h1 i, h2 i⟩,
-      fun h => ⟨fun i => (h i (mem_univ i)).1, fun i => (h i (mem_univ i)).2⟩⟩
+    exact ⟨fun ⟨h1, h2⟩ i => ⟨h1 i, h2 i⟩,
+      fun h => ⟨fun i => (h i).1, fun i => (h i).2⟩⟩
   have hsymm : ∀ p : (ι → InfiniteAdeleRing K) × (ι → FiniteAdeleRing (𝓞 K) K),
       (e.symm p : ι → 𝔸[K]) = (fun i => GroundTheory.Global.infiniteAdeleInl (p.1 i)) +
         fun i => GroundTheory.Global.finiteAdeleInr (p.2 i) := by
@@ -330,8 +341,8 @@ theorem continuous_coordEquiv : Continuous (coordEquiv (K := K) (ι := ι)) :=
 theorem continuous_coordEquiv_symm : Continuous (coordEquiv (K := K) (ι := ι)).symm :=
   continuous_pi fun p => (continuous_apply p.2).comp (continuous_coordOf.comp (continuous_apply p.1))
 
-variable (K ι) in
 
+variable (K ι) in
 def cube : Set (ι × BIdx K → ℝ) := {t | ∀ p, t p ∈ Ico (0 : ℝ) 1}
 
 theorem coordEquiv_preimage_infDomain :
@@ -473,7 +484,7 @@ theorem IsIntegralPeriodic.hasSum_vecCoeff {f : (ι → 𝔸[K]) → ℂ} (hf : 
     rw [hfx]
     convert h2 using 1
     funext n
-    simp only [Function.comp_apply, Equiv.neg_apply, hchar, smul_eq_mul, hcoeff, neg_neg]
+    simp [Function.comp_def, hcoeff, hchar, smul_eq_mul]
   refine (dualVec_injective.hasSum_iff fun ξ hξ => ?_).1 h3
   have hnd : ¬ IsDual ξ := fun hd => hξ (exists_dualVec_eq hd)
   rw [vecCoeff_eq_zero_of_not_isDual hf.periodic hf.finite hnd, zero_mul]

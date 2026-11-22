@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,7 +23,7 @@ theorem rTensor_smul {B B' : Type} [CommRing B] [Algebra R B] [CommRing B'] [Alg
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [TensorProduct.smul_tmul']
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 variable {C : Type} [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R)
 
@@ -56,9 +60,6 @@ def tenExt : C ⥤ CommAlgCat.{0} R where
     rw [← LinearMap.comp_apply, ← LinearMap.rTensor_comp]
     congr 2
     exact LinearMap.ext fun x ↦ mp_comp F φ ψ x))
-
-theorem mp_tenExt {T T' : C} (φ : T ⟶ T') (c : (tenExt N F).obj T) :
-    mp (tenExt N F) φ c = tenMap N F φ c := rfl
 
 theorem isUnit_mp_tenExt_iff {T S : C} (u : T ⟶ S) (c : (tenExt N F).obj T) :
     IsUnit (mp (tenExt N F) u c) ↔ IsUnit (mp F u c.fst) :=
@@ -118,7 +119,7 @@ theorem hasLoc_tenExt (H : Desc.HasLoc F) : Desc.HasLoc (tenExt N F) := by
     induction m using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => rfl
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hs : ∀ (a : F.obj T) (η : F.obj T' ⊗[R] N), a • η = mp F l a • η := fun a η ↦
     (algebraMap_smul (F.obj T') a η).symm
   refine ⟨T', l, (isUnit_mp_tenExt_iff N F l c).2 h1, fun y ↦ ?_, fun x hx ↦ ?_,

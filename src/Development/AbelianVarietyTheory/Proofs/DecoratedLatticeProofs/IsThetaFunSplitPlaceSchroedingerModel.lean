@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.SplitWeil ValuativeRel
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -25,7 +30,9 @@ theorem isThetaFunO_placeModel (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : 
       (latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True) 1 f₀ Tm)
     (Φ : WO S T → ℂ)
     (hΦ : IsSBHalf e (latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E))
-      fun _ => True) Φ) : IsThetaFunO ψ S T (Tm Φ) :=
-  GlobalTheory.DiagLiftFix.isTheta_placeModel hψ hS.1 hT.1 he.1 he.2.1 (infPart_of_isSplitIdem he) hf Tm hTm Φ hΦ
+      fun _ => True) Φ) : IsThetaFunO ψ S T (Tm Φ) := by
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hS
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hT
+  exact GlobalTheory.DiagLiftFix.isTheta_placeModel hψ inferInstance inferInstance he.1 he.2.1 (infPart_of_isSplitIdem he) hf Tm hTm Φ hΦ
 
 end GlobalTheory.LocMod.LinTheta

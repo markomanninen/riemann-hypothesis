@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCModConst
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCLineNonzero
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SsnRepOfOpen2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoExists
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SRaiseSNorm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaugeConstructionHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCModConst
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCLineNonzero
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SsnRepOfOpen2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoExists
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SRaiseSNorm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaugeConstructionHolds
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.MC
 

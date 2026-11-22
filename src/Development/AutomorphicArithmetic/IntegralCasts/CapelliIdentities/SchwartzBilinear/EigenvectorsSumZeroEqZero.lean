@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.P6.r14a
 
@@ -29,7 +33,8 @@ theorem eigenvectors_sum_zero_eq_zero {ι κ A : Type} [DecidableEq ι] [AddComm
       have h2 : ∑ i ∈ s, (f i k - f a k) • v i = 0 := by
         have h3 : ∑ i ∈ s, (f i k - f a k) • v i
             = T k (∑ i ∈ s, v i) - f a k • ∑ i ∈ s, v i := by
-          rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
           apply Finset.sum_congr rfl
           intro i hi
           rw [hv i hi k, sub_smul]

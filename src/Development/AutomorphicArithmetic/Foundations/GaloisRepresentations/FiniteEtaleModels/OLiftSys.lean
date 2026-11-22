@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.Bezout
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftOfEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.Bezout
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftOfEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ private theorem cg_trans {n : ℕ} {x y w : M} (h : Cg n x y) (k : Cg n y w) : C
 
 private theorem cg_hom {n : ℕ} (f : M →+ M) {x y : M} (h : Cg n x y) : Cg n (f x) (f y) := by
   obtain ⟨z, hz⟩ := h
-  exact ⟨f z, by rw [hz, map_add, map_nsmul]⟩
+  exact ⟨f z, by rw [hz, map_add (f := _), map_nsmul]⟩
 
 private theorem cg_smul {O : Type} [Ring O] [Module O M] {n : ℕ} (c : O) {x y : M} (h : Cg n x y) :
     Cg n (c • x) (c • y) := by
@@ -81,7 +85,7 @@ private theorem exists_mix {a b : ℕ} (hc : a.Coprime b) (f : M →+ M) :
       map_zero' := by simp
       map_add' := by
         intro x y
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
         abel }
   exact ⟨k, fun x => crt_elt hc (f x) x⟩
 
@@ -251,4 +255,4 @@ theorem UpperTheory.Gal.FiniteEtaleModels.O.liftSys :
       · rw [pow_one]
         exact_mod_cast hqa
       · rw [map_natCast]
-    rw [hz, map_add, hzero, add_zero]
+    rw [hz, map_add (f := _), hzero, add_zero]

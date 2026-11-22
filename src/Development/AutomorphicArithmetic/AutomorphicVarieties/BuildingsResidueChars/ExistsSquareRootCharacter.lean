@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.AdjointLowWeight.SymmetricCubeSymplecticSimilitude
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.AdjointLowWeight.SymmetricCubeSymplecticSimilitude
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 open GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V.Af UpperTheory.V.Ws UpperTheory.V.Sd UpperTheory.V.Sd.S3
@@ -21,9 +25,9 @@ private theorem sqrt_ex {O : Type} [CommRing O] [IsLocalRing O] [IsAdicComplete 
 
 private theorem add_unit {O : Type} [CommRing O] [IsLocalRing O] (h2 : IsUnit (2 : O)) {x y : O}
     (hx : residue O x = 1) (hy : residue O y = 1) : IsUnit (x + y) := by
-  rw [← residue_ne_zero_iff_isUnit, map_add, hx, hy]
+  rw [← residue_ne_zero_iff_isUnit, map_add (f := _), hx, hy]
   have h2' : residue O (2 : O) = 1 + 1 := by
-    rw [← map_one (residue O), ← map_add, one_add_one_eq_two]
+    rw [← map_one (residue O), ← map_add (f := _), one_add_one_eq_two]
   rw [← h2']
   exact (residue_ne_zero_iff_isUnit (2 : O)).mpr h2
 

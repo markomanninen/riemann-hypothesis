@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RealOfFixedByConjugations
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGFree
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGLam
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGTheta
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGStd
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGSemi
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RealOfFixedByConjugations
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGFree
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGLam
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGTheta
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGStd
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGSemi
+
+@[expose] public section
 
 open NumberField TensorProduct
 
@@ -24,14 +28,14 @@ theorem padic_act {N : ℕ} (φ : (Z ⊗[ℤ] L) ≃ₗ[Z] (Fin N → Z ⊗[ℤ]
   | tmul z x =>
     rw [LinearMap.baseChange_tmul]
     exact hφ z a x
-  | add u v hu hv => simp only [map_add, hu, hv, smul_add]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv, smul_add]
 
 private theorem baseChange_antisymm_of_self_eq_zero (B : LinearMap.BilinForm ℤ L) (hB : ∀ x, B x x = 0) (u v : Z ⊗[ℤ] L) :
     B.baseChange Z u v = - B.baseChange Z v u := by
   have hs : ∀ x y, B x y = - B y x := by
     intro x y
     have h := hB (x + y)
-    simp only [map_add, LinearMap.add_apply, hB, zero_add, add_zero] at h
+    simp only [map_add (f := _), LinearMap.add_apply, hB, zero_add, add_zero] at h
     exact eq_neg_of_add_eq_zero_right h
   induction u using TensorProduct.induction_on with
   | zero => simp
@@ -40,8 +44,8 @@ private theorem baseChange_antisymm_of_self_eq_zero (B : LinearMap.BilinForm ℤ
     | zero => simp
     | tmul w y =>
       rw [LinearMap.BilinForm.baseChange_tmul, LinearMap.BilinForm.baseChange_tmul, hs x y, neg_smul, mul_comm]
-    | add v w hv hw => simp only [map_add, LinearMap.add_apply, hv, hw, neg_add]
-  | add u u' hu hu' => simp only [map_add, LinearMap.add_apply, hu, hu', neg_add]
+    | add v w hv hw => simp only [map_add (f := _), LinearMap.add_apply, hv, hw, neg_add]
+  | add u u' hu hu' => simp only [map_add (f := _), LinearMap.add_apply, hu, hu', neg_add]
 
 theorem padic_alt (B : LinearMap.BilinForm ℤ L) (hB : ∀ x, B x x = 0) (u : Z ⊗[ℤ] L) :
     B.baseChange Z u u = 0 := by
@@ -49,7 +53,7 @@ theorem padic_alt (B : LinearMap.BilinForm ℤ L) (hB : ∀ x, B x x = 0) (u : Z
   | zero => simp
   | tmul z x => rw [LinearMap.BilinForm.baseChange_tmul, hB, zero_smul]
   | add u v hu hv =>
-    simp only [map_add, LinearMap.add_apply, hu, hv]
+    simp only [map_add (f := _), LinearMap.add_apply, hu, hv]
     rw [baseChange_antisymm_of_self_eq_zero B hB u v]
     abel
 
@@ -67,8 +71,8 @@ theorem padic_adj (bar : O ≃+* O) (B : LinearMap.BilinForm ℤ L) (hB : ∀ (a
       simp only [AddMonoidHom.coe_toIntLinearMap, LinearMap.toAddMonoidHom_coe, LinearMap.lsmul_apply,
         LinearMap.BilinForm.baseChange_tmul]
       rw [hB]
-    | add v w hv hw => simp only [map_add, hv, hw]
-  | add u u' hu hu' => simp only [map_add, LinearMap.add_apply, hu, hu']
+    | add v w hv hw => simp only [map_add (f := _), hv, hw]
+  | add u u' hu hu' => simp only [map_add (f := _), LinearMap.add_apply, hu, hu']
 
 theorem padic_form {N : ℕ} (bar : O ≃+* O) (φ : (Z ⊗[ℤ] L) ≃ₗ[Z] (Fin N → Z ⊗[ℤ] O))
     (hφ : ∀ (z : Z) (a : O) (x : L), φ (z ⊗ₜ (a • x)) = ((1 : Z) ⊗ₜ[ℤ] a : Z ⊗[ℤ] O) • φ (z ⊗ₜ x))
@@ -110,7 +114,7 @@ theorem padic_form {N : ℕ} (bar : O ≃+* O) (φ : (Z ⊗[ℤ] L) ≃ₗ[Z] (F
       rw [e1, e2, hz, hz]
       simp only [LinearMap.map_smul, LinearMap.compl₁₂_apply, LinearEquiv.coe_coe,
         LinearEquiv.symm_apply_apply, LinearMap.smul_apply, padic_adj bar B h3]
-    | add a a' ha ha' => simp only [add_smul, map_add, LinearMap.add_apply, ha, ha']
+    | add a a' ha ha' => simp only [add_smul, map_add (f := _), LinearMap.add_apply, ha, ha']
 
 end
 
@@ -162,7 +166,7 @@ theorem tw_g_padic : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (bar
     | tmul z a =>
       rw [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul]
       exact congrArg (z ⊗ₜ[ℤ] ·) (hbb a)
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hu : ∃ t : ℤ_[p] ⊗[ℤ] 𝓞 E,
       IsUnit (t - Algebra.TensorProduct.map (AlgHom.id ℤ_[p] ℤ_[p]) bar.toRingHom.toIntAlgHom t) := by
     refine ⟨1 ⊗ₜ θ, padic_unit p _ _ ?_⟩

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentForm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentForm
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -66,8 +70,8 @@ theorem fibre_transport {μ : Measure V} {ν : Measure X} {f f' : V → Y} {ι :
       rw [e2]
       exact h2.const_smul (a : ℝ)
 
-omit [BorelSpace V] in
 
+omit [BorelSpace V] in
 theorem fibre_scale {μ : Measure V} {ν : Measure X} {f : V → Y} {ι : X → Y} {U : Set V}
     {B : Set X} {fib : X → Measure V} (a k r : ℝ≥0) (hr : r * k = a)
     (hfib : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsFibreFamily μ f ι U ν B fib) :
@@ -98,8 +102,8 @@ section Loc
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-omit [NumberField F] [NumberField E] in
 
+omit [NumberField F] [NumberField E] in
 theorem gramR_conj (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) {M n : ℕ}
     (J : Matrix (Fin M) (Fin M) E) (g : GL (Fin M) E) (X : Fin n → Fin M → R ⊗[F] E) :
     gramR R σ (cT (σ : E →+* E) (g : Matrix (Fin M) (Fin M) E) * J * (g : Matrix (Fin M) (Fin M) E)) X =
@@ -108,8 +112,8 @@ theorem gramR_conj (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) {M
   simp only [gramR, hR, actTup]
   rw [GlobalTheory.CompanionTheory.SW.HIsom.JR_conj R σ J g, hform_conj]
 
-omit [Field F] [NumberField F] [NumberField E] [Algebra F E] in
 
+omit [Field F] [NumberField F] [NumberField E] [Algebra F E] in
 theorem li_mulVec {A : Type} [CommRing A] {M n : ℕ} (G : GL (Fin M) A) {X : Fin n → Fin M → A}
     (hX : LinearIndependent A X) :
     LinearIndependent A fun a => (G : Matrix (Fin M) (Fin M) A).mulVec (X a) := by
@@ -163,7 +167,8 @@ theorem local_transport (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M : ℕ} (J
   · refine fibre_transport e (fun X => gramR_conj R σ J g X) ?_ ha hm
     ext X
     exact li_mulVec_iff _ X
-  · rw [Measure.map_smul, ← hee, Measure.map_map e.continuous.measurable e.symm.continuous.measurable]
+  · rw [Measure.map_smul _ (hee ▸ e.continuous.measurable.aemeasurable), ← hee,
+      Measure.map_map e.continuous.measurable e.symm.continuous.measurable]
     simp
   · rw [Measure.smul_apply]
     have h1 : ((m S).map e.symm) (actTup R (bc (inclR R) g) ⁻¹' A) = m S A := by
@@ -226,8 +231,8 @@ section Lat
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E]
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem repr_scaled (R : Type) [CommRing R] [Algebra F R] {d : ℕ} (b b' : Module.Basis (Fin d) F E) (c : F)
     (h : ∀ y k, b'.repr y k = c * b.repr y k) (y : R ⊗[F] E) (k : Fin d) :
     (Algebra.TensorProduct.basis R b').repr y k =
@@ -238,7 +243,7 @@ theorem repr_scaled (R : Type) [CommRing R] [Algebra F R] {d : ℕ} (b b' : Modu
     simp only [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply, h,
       smul_eq_mul, map_mul]
     ring
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy, mul_add]
 
 theorem exists_clear (v : HeightOneSpectrum (𝓞 F)) (s : Finset F) :
     ∃ c : F, c ≠ 0 ∧ ∀ x ∈ s, algebraMap F (Fv F v) (c * x) ∈ v.adicCompletionIntegers F := by
@@ -276,7 +281,8 @@ theorem exists_scaled_basis {d : ℕ} (b : Module.Basis (Fin d) F E) (v : Height
     rw [hinv]
     simp only [actTup, Matrix.mulVec, dotProduct]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
-  rw [hXa, map_sum, Finsupp.finsetSum_apply, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hXa, map_sum, Finsupp.finsetSum_apply, Finset.mul_sum]
   refine sum_mem fun j _ => ?_
   rw [GlobalTheory.CompanionTheory.SW.LatRat.repr_mul, Finset.mul_sum]
   refine sum_mem fun k _ => ?_
@@ -290,14 +296,14 @@ section Theta
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-omit [NumberField F] [NumberField E] in
 
+omit [NumberField F] [NumberField E] in
 theorem ratAct_li_iff {M n : ℕ} (g : GL (Fin M) E) (X : Fin n → Fin M → E) :
     LinearIndependent E (ratAct (g : Matrix (Fin M) (Fin M) E) X) ↔ LinearIndependent E X :=
   li_mulVec_iff g X
 
-omit [NumberField F] [NumberField E] in
 
+omit [NumberField F] [NumberField E] in
 def framesEquiv (σ : E →ₐ[F] E) {M n : ℕ} (J : Matrix (Fin M) (Fin M) E) (g : GL (Fin M) E)
     (T : Matrix (Fin n) (Fin n) E) :
     framesE σ (cT (σ : E →+* E) (g : Matrix (Fin M) (Fin M) E) * J * (g : Matrix (Fin M) (Fin M) E)) T ≃
@@ -354,9 +360,10 @@ theorem theta_map_frames (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M n : ℕ}
     rw [← He.restrict_map, Measure.map_map He.measurable He.symm.measurable]
     simp
   unfold thetaMeas
-  rw [Measure.map_smul, hmass]
+  rw [Measure.map_smul _ hmG.aemeasurable, hmass]
   congr 1
-  rw [Measure.map_sum hmG.aemeasurable, ← sum_reindex (framesEquiv σ J g T)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Measure.map_sum hmG.aemeasurable, ← sum_reindex (framesEquiv σ J g T)]
   congr 1
   funext X
   rw [Measure.map_map hmG (hmf' _)]

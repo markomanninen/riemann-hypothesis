@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
@@ -7,7 +11,7 @@ private theorem isLocallyConstant_weighted_sum {X : Type*} [TopologicalSpace X] 
     (hf : ∀ c, IsLocallyConstant (f c)) : IsLocallyConstant (fun y => ∑ c ∈ T, c * f c y) := by
   have h : ∀ c, Continuous (f c) := fun c => (IsLocallyConstant.iff_continuous _).1 (hf c)
   exact (IsLocallyConstant.iff_continuous _).2
-    (continuous_finset_sum _ fun c _ => continuous_const.mul (h c))
+    (continuous_finsetSum _ fun c _ => continuous_const.mul (h c))
 
 theorem UpperTheory.Gal.TranscendenceTraces.wtClopen_of :
     WtCrit → FibFin → WtClopen := by

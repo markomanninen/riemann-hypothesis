@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+module
+
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 open GroundTheory.Heights₂.Heights MeasureTheory MvPolynomial Matrix GlobalTheory.CompanionTheory.Ar.Short.Crofton
 open scoped ENNReal
@@ -158,7 +163,7 @@ theorem eval_sectionPoly (g : MvPolynomial (Fin (e + 1) × Fin n) ℂ) (v : Fin 
   unfold sectionPoly
   induction g using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p ij hp =>
     rw [map_mul, map_mul, hp, map_mul, aeval_X, eval_X]
     congr 1
@@ -186,7 +191,7 @@ theorem sectionPoly_isHomogeneous {δ : ℕ} {g : MvPolynomial (Fin (e + 1) × F
   have hp := IsHomogeneous.prod Finset.univ (fun ij => firstSub v ij ^ d ij) _
     (fun ij _ => (hs ij).pow (d ij))
   rw [h1] at hp
-  simpa using (isHomogeneous_C (Fin n) (coeff d g)).mul hp
+  simpa using (isHomogeneous_C (Fin n) (AddMonoidAlgebra.coeff g d)).mul hp
 
 theorem eval_eq_zero_of_common_zero {W : Ideal (MvPolynomial (Fin n) ℂ)}
     {g : MvPolynomial (Fin (e + 1) × Fin n) ℂ} (hg : IsChowForm W (e + 1) g)
@@ -202,7 +207,8 @@ theorem eval_eq_zero_of_common_zero {W : Ideal (MvPolynomial (Fin n) ℂ)}
     · have h1 : aeval x q = 0 := hW q hq
       rw [aeval_algebraMap_apply, h1, map_zero]
     · have := congrArg a (hw i)
-      simpa [map_sum] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum] using this
   have h := (hg.2 g).2 dvd_rfl _ hmem
   rw [aeval_algebraMap_apply] at h
   exact hinj (h.trans (map_zero a).symm)
@@ -211,8 +217,8 @@ end
 
 end ModelDimension.ChowFactor
 
-open ModelDimension.ChowFactor in
 
+open ModelDimension.ChowFactor in
 theorem ModelDimension.chow_form_product_formula :
     ∀ (n e δ : ℕ) (W : Ideal (MvPolynomial (Fin n) ℂ)) (g : MvPolynomial (Fin (e + 1) × Fin n) ℂ)
   (v : Fin e × Fin n → ℂ) (P : Finset (Fin n → ℂ)) (u₀ : Fin n → ℂ),

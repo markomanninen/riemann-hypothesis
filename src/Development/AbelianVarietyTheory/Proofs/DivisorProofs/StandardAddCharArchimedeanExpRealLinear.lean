@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IteratedLineDerivMemWeylAlg
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IteratedLineDerivMemWeylAlg
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField MeasureTheory
@@ -50,14 +54,14 @@ theorem stdChar_mixed_linear : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ)
     · exact h
   have hzadd : ∀ x y, z (x + y) = z x + z y := by
     intro x y
-    simp only [z, TensorProduct.add_tmul, map_add, Finset.sum_add_distrib]
+    simp only [z, TensorProduct.add_tmul, map_add (f := _), Finset.sum_add_distrib]
   let g : mixedEmbedding.mixedSpace D.host.F →+ ℝ :=
     { toFun := fun a => -(z (e.symm a)).re
       map_zero' := by simp [z]
-      map_add' := by intro a b; simp only [map_add, hzadd, Complex.add_re, neg_add] }
+      map_add' := by intro a b; simp only [map_add (f := _), hzadd, Complex.add_re, neg_add] }
   have hg : Continuous g := by
     have : Continuous fun x : Ainf D.host.F => z x :=
-      continuous_finset_sum _ fun ρ _ => (hθ ρ).2
+      continuous_finsetSum _ fun ρ _ => (hθ ρ).2
     exact (Complex.continuous_re.comp (this.comp (continuous_ofMixed D.host.F))).neg
   refine ⟨(g.toRealLinearMap hg : mixedEmbedding.mixedSpace D.host.F →ₗ[ℝ] ℝ), ?_, fun a => rfl⟩
   intro a

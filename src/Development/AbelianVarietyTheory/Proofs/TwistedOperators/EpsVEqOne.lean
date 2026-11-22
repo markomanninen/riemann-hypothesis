@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingPiProdSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingPiProdSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,19 +109,19 @@ def frRow (B : Frames G) (t : T) (w : Pl D.host.E) (j : ℕ) (hj : j ≤ D.R.m) 
     Frame (Kw w) (G.V (.grid D.R.m j)).rank (Fin ((locGrid G t w).rank (D.R.m, j))) :=
   frOf (rank_vertex G t w (X := (D.R.m, j)) ⟨le_rfl, hj⟩) (B.β D.R.m j) w
 
+
 variable (G) in
 open Classical in
-
 def epsV (t : T) (w : Pl D.host.E) : (locGrid G t w).VertexGroup :=
   onColumn (G := locGrid G t w) fun j => if j ∈ idx D then sgnAt G t (-1) w j else 1
 
-variable (G) in
 
+variable (G) in
 def baseM (t : T) (w : Pl D.host.E) (j : ℕ) : GL (Fin ((locGrid G t w).rank (D.R.m, j))) (Kw w) :=
   if j = 0 then (stair (locGrid G t w) (unifAt w) (cosExp G w) j)⁻¹ else 1
 
-open Classical in
 
+open Classical in
 theorem epsV_apply (t : T) (w : Pl D.host.E) (j : ℕ) :
     epsV G t w (D.R.m, j) = if j ∈ idx D then sgnAt G t (-1) w j else 1 := by
   unfold epsV
@@ -178,16 +182,16 @@ variable {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn 
 abbrev EdgeDat (t : T) (w : Pl D.host.E) : Type :=
   ∀ b : Edge, Matrix (Fin ((locGrid ch.G t w).rank b.tgt)) (Fin ((locGrid ch.G t w).rank b.src)) (Kw w) → ℂ
 
-open Classical in
 
+open Classical in
 def IsArrVec (t : T) (w : Pl D.host.E) (e : AE D) (φ : EdgeDat ch t w) (j : ℕ) (hj : j < D.R.m)
     (v f : WO (ch.G.V (.grid D.R.m j)) (ch.G.V (.grid D.R.m (j + 1))) → ℂ) : Prop :=
   IsThetaFunO ch.W.ψ _ _ v ∧ IsLocVec ch.W (.mu t D.R.m j) e v (fun y => if IsHalf e y then φ (.theta D.R.m j)
     (ch.S.B.coord t w (X := (D.R.m, j + 1)) (Y := (D.R.m, j)) ⟨le_rfl, hj⟩ ⟨le_rfl, hj.le⟩
       (y.map fun a => cpt w (toEAf D a))) else 0) f
 
-open Classical in
 
+open Classical in
 def IsPts (t : T) (w : Pl D.host.E) (β : Cosets (G := locGrid ch.G t w) one_le_sLen (givenLevel ch.G t w)) (e : AE D)
     (r r₀ h : Pts ch.G) : Prop :=
   OneLoc t w e r (fun j => if j ∈ idx D then sgnAt ch.G t (-1) w j * (repsAt ch.G t w).elt β (D.R.m, j) else 1) ∧
@@ -219,16 +223,16 @@ def ArrP : Prop := ∀ t, ∀ w ∈ locPl ch.G t, ∀ p, IsPlc w p → ∀ (φ :
       ∃ Φ : SB (Matrix Z' Z (Kw w)), (∀ z, Φ.1 z = phiM (locGrid ch.G t w) (ε * g) g φ (.theta D.R.m j) (z.reindex σ' σ)ᵀ) ∧
         Tm Φ = ch.W.om (.mu t D.R.m j) (a * ρ, a' * ρ') f
 
-open Classical in
 
+open Classical in
 def LocP : Prop := ∀ t, ∀ w ∈ locPl ch.G t, ∀ p, IsPlc w p → ∀ β r r₀ h, IsPts ch t w β p.e r r₀ h → ∀ j (hj : j ≤ D.R.m),
   p.IsLoc (frRow ch.S.B t w j hj) ((r₀ j)⁻¹ * r j) ((epsV ch.G t w * (repsAt ch.G t w).elt β) (D.R.m, j)) ∧
   (Even j → (mt _ (h j * r₀ j)).map p.π * (frRow ch.S.B t w j hj).β = (frRow ch.S.B t w j hj).β *
     (baseM ch.G t w j).val) ∧
   (Odd j → ∃ δ, IsTilt ch.G j δ ∧ (mt _ (h j * r₀ j)).map p.π = (mt _ δ).map p.π)
 
-open Classical in
 
+open Classical in
 def BesP : Prop := ∀ t, ∀ w ∈ locPl ch.G t, ∀ p, IsPlc w p → ∀ (M : Vol ch.G) (hM : M.Is t) j σ (hj : j + 2 * σ + 2 = D.R.m) vN
   (a : GA D (ch.G.V (.grid D.R.m j))), (mt (ch.G.V (.grid D.R.m j)) a).map p.π * (frRow ch.S.B t w j (by omega)).β = (frRow ch.S.B t w j (by omega)).β *
     (baseM ch.G t w j).val →
@@ -243,8 +247,8 @@ def JacP : Prop := ∀ t, ∀ w ∈ locPl ch.G t, ∀ p, IsPlc w p → ∀ (M : 
       (frTop ch.S.toGridChoice t w (j + 1) (by omega))
       (mvFr p a (frRow ch.S.B t w (j + 1) (by omega)) (epsV ch.G t w (D.R.m, j + 1)) (frame hc))
 
-variable {ch} in
 
+variable {ch} in
 def Expands {t : T} {w : Pl D.host.E} (p : Place D (Kw w)) (j : ℕ) (hj : j + 1 < D.R.m)
     (a : Matrix (Fin (topRank (locGrid ch.G t w) (j + 1))) (Fin (topRank (locGrid ch.G t w) j)) (Kw w) ×
       Matrix (Fin (topRank (locGrid ch.G t w) (j + 1 + 1))) (Fin (topRank (locGrid ch.G t w) (j + 1))) (Kw w) → ℂ)

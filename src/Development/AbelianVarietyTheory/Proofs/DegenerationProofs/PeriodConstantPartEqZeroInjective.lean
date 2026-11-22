@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -55,7 +59,7 @@ theorem qkSt_of_ptSt : PtSt → QkSt := by
     obtain ⟨la, hy, hl⟩ := hker _ _ e
     refine ⟨AnArc.La.mk (d.eX.symm p.1.1.toAdd) 0 0 + la, (hrep _ _).2 ⟨?_, ?_⟩⟩
     · rw [AnArc.La.add_y, hy, add_zero, AnArc.La.mk_y, AddEquiv.apply_symm_apply]
-    · rw [map_add, ← hl, hc1, hv']
+    · rw [map_add (f := _), ← hl, hc1, hv']
   · refine ⟨⟨(Multiplicative.ofAdd (d.eX la.y), E ((k : ℂ)⁻¹ • B.P0 la)), ?_⟩, (hrep _ _).2 ⟨rfl, rfl⟩, fun p hp => ?_⟩
     · rw [NumD.mem_QT, ← hpow, hc2, hper]
       rfl
@@ -64,9 +68,9 @@ theorem qkSt_of_ptSt : PtSt → QkSt := by
   · obtain ⟨a, b⟩ := (hrep _ _).1 h
     obtain ⟨a', b'⟩ := (hrep _ _).1 h'
     refine (hrep _ _).2 ⟨?_, ?_⟩
-    · rw [AnArc.La.add_y, map_add, ← a, ← a']
+    · rw [AnArc.La.add_y, map_add (f := _), ← a, ← a']
       rfl
-    · rw [map_add, smul_add, hadd, ← b, ← b']
+    · rw [map_add (f := _), smul_add, hadd, ← b, ← b']
       rfl
   · obtain ⟨a, b⟩ := (hrep _ _).1 h
     obtain ⟨a', b'⟩ := (hrep _ _).1 h'
@@ -79,12 +83,12 @@ theorem qkSt_of_ptSt : PtSt → QkSt := by
       obtain ⟨e₀, hy, hl⟩ := hker _ _ e
       refine ⟨z₀ + e₀, sub_eq_zero.1 (period_constantPart_eq_zero_injective B _ ?_ ?_)⟩
       · apply d.eX.injective
-        rw [AnArc.La.sub_y, AnArc.La.add_y, AnArc.La.nsmul_y, AnArc.La.add_y, hy, add_zero, map_sub, map_add,
+        rw [AnArc.La.sub_y, AnArc.La.add_y, AnArc.La.nsmul_y, AnArc.La.add_y, hy, add_zero, map_sub, map_add (f := _),
           map_nsmul, hz, ← a, ← a', c, sub_self, map_zero]
-      · rw [map_sub, map_add, map_nsmul, map_add, ← hc2 (B.P0 la'), hl, add_assoc, smul_add, hc2, sub_self]
+      · rw [map_sub, map_add (f := _), map_nsmul, map_add (f := _), ← hc2 (B.P0 la'), hl, add_assoc, smul_add, hc2, sub_self]
     · rintro ⟨e, rfl⟩
       refine ⟨d.eX e.y, ?_, ?_⟩
-      · rw [a, a', AnArc.La.add_y, AnArc.La.nsmul_y, map_add, map_nsmul]
-      · rw [b, b', map_add, map_nsmul, smul_add, hc1, hadd, hper]
+      · rw [a, a', AnArc.La.add_y, AnArc.La.nsmul_y, map_add (f := _), map_nsmul]
+      · rw [b, b', map_add (f := _), map_nsmul, smul_add, hc1, hadd, hper]
 
 end GlobalTheory.Ex.Arch

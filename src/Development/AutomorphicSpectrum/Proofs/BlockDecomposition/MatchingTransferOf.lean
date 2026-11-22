@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchT
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchT
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,13 +25,6 @@ namespace GlobalTheory.CompanionTheory.MatchPow
 section Generic
 
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [T2Space G]
-
-theorem isHecke_continuous {L : Subgroup G} (ho : IsOpen (L : Set G)) {f : G → ℂ} (h : IsHecke L f) : Continuous f := by
-  refine IsLocallyConstant.continuous ((IsLocallyConstant.iff_eventually_eq f).2 fun x => ?_)
-  have hop : IsOpen {y : G | x⁻¹ * y ∈ L} := ho.preimage (continuous_const.mul continuous_id)
-  filter_upwards [hop.mem_nhds (by simp [L.one_mem] : x ∈ {y : G | x⁻¹ * y ∈ L})] with y hy
-  have := (h.2 _ hy x).2
-  rwa [mul_inv_cancel_left] at this
 
 theorem isHecke_zero (L : Subgroup G) : IsHecke L (fun _ : G => (0 : ℂ)) :=
   ⟨HasCompactSupport.zero, fun _ _ _ => ⟨rfl, rfl⟩⟩
@@ -269,15 +266,15 @@ theorem iwahori_pair_open (a b : ℕ) (w : Pl E) : IsOpen (((iwGL a w).prod (iwG
     (GlobalTheory.SmGL.IwahoriOnto.isOpen_iwahori (w.adicCompletion E) (Fin b))
 
 theorem iwahori_pair_le_maximal (a b : ℕ) (w : Pl E) :
-    (iwGL a w).prod (iwGL b w) ≤ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) :=
+    (iwGL a w).prod (iwGL b w) ≤ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) :=
   Subgroup.prod_mono (GlobalTheory.CompanionTheory.IwLevels.iwGL_le_KGL w a) (GlobalTheory.CompanionTheory.IwLevels.iwGL_le_KGL w b)
 
-theorem iw_idx (a : ℕ) (w : Pl E) : (iwGL a w).relIndex (GlobalTheory.LFun.KGL w a) ≠ 0 :=
+theorem iw_idx (a : ℕ) (w : Pl E) : (iwGL a w).relIndex (GlobalTheory.LFun.KGL w (n := a)) ≠ 0 :=
   GlobalTheory.CompanionTheory.IwLevels.relIndex_ne_zero (GlobalTheory.SmGL.IwahoriOnto.isOpen_iwahori (w.adicCompletion E) (Fin a))
     (GlobalTheory.CompanionTheory.IwLevels.isCompact_KGL w a)
 
 theorem iwahori_pair_index_ne_zero (a b : ℕ) (w : Pl E) :
-    ((iwGL a w).prod (iwGL b w)).relIndex ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) ≠ 0 := by
+    ((iwGL a w).prod (iwGL b w)).relIndex ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) ≠ 0 := by
   rw [relIndex_prod]
   exact mul_ne_zero (iw_idx a w) (iw_idx b w)
 
@@ -365,7 +362,7 @@ theorem entT_adm (n : ℕ) (w : Pl E) (ϖ : (w.adicCompletion E)ˣ) (a : ℕ) {J
   ring
 
 abbrev beta (a b : ℕ) (w : Pl E) : ℂ :=
-  ((((iwGL a w).prod (iwGL b w)).relIndex ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) : ℕ) : ℂ)⁻¹
+  ((((iwGL a w).prod (iwGL b w)).relIndex ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) : ℕ) : ℂ)⁻¹
 
 abbrev alpha (n : ℕ) (w : Pl E) (b : GLw n w) : ℂ := (((iwU n w b).relIndex (KL n w) : ℕ) : ℂ)⁻¹
 
@@ -388,7 +385,7 @@ theorem mconv_entT (hD : DcosMul) {w : Pl E} (n : ℕ) (ϖ : (w.adicCompletion E
         dd a (n - a) w (tdiag ϖ (restr (x' j) _ h.2.2.2.1)) (tdiag ϖ (restr (x' j) _ h.2.2.2.2)) z :=
       funext (entT_adm n w ϖ a c' x' h)
     have s1 : mconv (entT n w ϖ a c x s) (fun y => r * entT n w ϖ a c' x' s y) y =
-        r * hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w (n - a)))
+        r * hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := (n - a))))
           (fun z => entT n w ϖ a c x s z * entT n w ϖ a c' x' s (z⁻¹ * y)) :=
       conv_const ho hle hidx (entT_hecke n w ϖ a c x s) (entT_hecke n w ϖ a c' x' s) r y
     have s2 := conv_sum_sum ho hle hidx (fun j => c j * (-qh w) ^ (-vRes n a (lOf (x j)) s))
@@ -396,7 +393,7 @@ theorem mconv_entT (hD : DcosMul) {w : Pl E} (n : ℕ) (ϖ : (w.adicCompletion E
       (fun j => c' j * (-qh w) ^ (-vRes n a (lOf (x' j)) s))
       (fun j => dd a (n - a) w (tdiag ϖ (restr (x' j) _ h.2.2.2.1)) (tdiag ϖ (restr (x' j) _ h.2.2.2.2)))
       (fun j => dd_hecke _ _ _ _ _) (fun j => dd_hecke _ _ _ _ _) y
-    have s3 : ∀ j j', hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w (n - a))) (fun z =>
+    have s3 : ∀ j j', hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := (n - a)))) (fun z =>
           dd a (n - a) w (tdiag ϖ (restr (x j) _ h.2.2.2.1)) (tdiag ϖ (restr (x j) _ h.2.2.2.2)) z *
           dd a (n - a) w (tdiag ϖ (restr (x' j') _ h.2.2.2.1)) (tdiag ϖ (restr (x' j') _ h.2.2.2.2)) (z⁻¹ * y)) =
         beta a (n - a) w * dd a (n - a) w (tdiag ϖ (restr (x j + x' j') _ h.2.2.2.1))
@@ -490,44 +487,6 @@ theorem pow_claim (hFU : FUMul) (hD : DcosMul) (hU : Unr E) {w : Pl E} (hw : ¬ 
       rw [e1, lconv_comb hFU hU hw hb hϖ c x c' x' hx hx', pow_succ]
     · show mconv _ (mpow w _ (k + 1)) = _
       rw [e2, mconv_entT hD n ϖ hϖ a c x c' x' hx hx', pow_succ]
-
-theorem matchTOf : MatchTOf := by
-  intro hM4 hFU hD hLin E _ _ _ hU w hw n a ha b hb ϖ hϖ J _ c x hx k hk
-  obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
-  obtain ⟨J', _, c', x', hx', e1, e2⟩ := pow_claim hFU hD hU hw a hb hϖ c x hx k
-  have hc : Continuous (cj w) := (GlobalTheory.T.placeConjugation_properties_cmField E hU w).1
-  have hoU := GlobalTheory.CompanionTheory.IwLevels.isOpen_iwU n w b
-  have hoG := iwahori_pair_open a (n - a) w
-  have hm := hLin E n a (n - a) w 1 J' (fun j => alpha n w b ^ k * c' j) (fun j => fU n w b ϖ (lOf (x' j)))
-    (fun j => phiX n w b ϖ (x' j) a)
-    (fun j => ⟨isHecke_continuous hoU (fU_hecke hw b ϖ _ hc), (fU_hecke hw b ϖ _ hc).1,
-      isHecke_continuous hoG (phiX_hecke n w b ϖ _ a), (phiX_hecke n w b ϖ _ a).1⟩)
-    (fun j => (hM4 E hU w hw n a ha b hb ϖ hϖ (x' j) (hx' j).1 (hx' j).2).1)
-  have hcon : cR n a w b * beta a (n - a) w = alpha n w b := by
-    have h1 : (((iwGL a w).relIndex (GlobalTheory.LFun.KGL w a) : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (iw_idx a w)
-    have h2 : (((iwGL (n - a) w).relIndex (GlobalTheory.LFun.KGL w (n - a)) : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (iw_idx (n - a) w)
-    unfold cR beta alpha
-    rw [relIndex_prod, Nat.cast_mul]
-    field_simp
-  have ef : lpow (iwU n w b) (fun γ => ∑ j, c j * fU n w b ϖ (lOf (x j)) γ) (k + 1) =
-      fun γ => ∑ j, (alpha n w b ^ k * c' j) * fU n w b ϖ (lOf (x' j)) γ := by
-    rw [e1]
-    funext γ
-    rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl fun j _ => by ring
-  have eφ : (fun y => cR n a w b ^ (k + 1) * ∑ s, mpow w (entT n w ϖ a c x s) (k + 1) y) =
-      fun y => ∑ j, (alpha n w b ^ k * c' j) * phiX n w b ϖ (x' j) a y := by
-    funext y
-    simp only [e2, entT_eq, phiX_eq]
-    have e3 : ∑ s, beta a (n - a) w ^ k * ∑ j, c' j * tm n w ϖ a (x' j) s y =
-        beta a (n - a) w ^ k * ∑ j, c' j * ∑ s, tm n w ϖ a (x' j) s y := by
-      rw [← Finset.mul_sum, Finset.sum_comm]
-      simp only [Finset.mul_sum]
-    rw [e3, ← hcon, mul_pow, Finset.mul_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    ring
-  rw [ef, eφ]
-  exact hm
 
 end GlobalTheory.CompanionTheory.MatchPow
 

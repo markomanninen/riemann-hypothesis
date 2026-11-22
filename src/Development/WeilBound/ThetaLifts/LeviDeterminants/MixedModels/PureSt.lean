@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.RealSt
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictDef
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.RealSt
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictDef
+
+@[expose] public section
 
 noncomputable section
 

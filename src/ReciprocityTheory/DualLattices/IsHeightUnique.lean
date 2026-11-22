@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.HtLinStatement
-import ReciprocityTheory.DualLattices.HeightFunctionalStatementOfPairingProperties
+module
+
+public import ReciprocityTheory.DualLattices.HtLinStatement
+public import ReciprocityTheory.DualLattices.HeightFunctionalStatementOfPairingProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ lemma isHeight_map (hB1 : PairingPropertiesStatement B) {R S : LAlg R₀} (Dp : 
       rw [← B.map_comp, ← B.map_comp, hc]
     rw [e1, e2] at h1
     exact h1
-  · simp only [Units.coe_map, MonoidHom.coe_coe, hze, map_add, map_one, map_mul, hfσ, hfη]
+  · simp only [Units.coe_map, MonoidHom.coe_coe, hze, map_add (f := _), map_one, map_mul, hfσ, hfη]
     rfl
 
 lemma nsmul_tg_eta {R : LAlg R₀} (Dp : DualPair R) (N : ℕ) (hN : (N : (R : Type u)) = 0) (v : B.gg) :

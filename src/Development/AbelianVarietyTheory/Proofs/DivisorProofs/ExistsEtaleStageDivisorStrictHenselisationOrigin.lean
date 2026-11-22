@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtaleFactorOfIndEtAtPrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtaleFactorOfIndEtAtPrime
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 noncomputable section
@@ -57,7 +62,7 @@ theorem exists_stage_divisor : ∀ (T O : Type) [CommRing T] [IsDomain T] [IsLoc
     have h1 : v.toRingHom.comp (algebraMap (Polynomial T) W) = φ.comp (algebraMap (Polynomial T) _) := by
       rw [hφ]; exact v.comp_algebraMap
     rw [h1, ← Ideal.comap_comap, hloc]
-    exact Localization.AtPrime.comap_maximalIdeal (R := Polynomial T) (I := P)
+    exact Localization.AtPrime.under_maximalIdeal (R := Polynomial T) (I := P)
   have hunit : ∀ y : Q.primeCompl, IsUnit (v.toRingHom (y : W)) := by
     intro y
     by_contra hy

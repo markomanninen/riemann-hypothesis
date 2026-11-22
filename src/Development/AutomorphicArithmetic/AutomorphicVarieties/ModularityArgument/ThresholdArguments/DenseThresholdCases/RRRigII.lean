@@ -1,27 +1,28 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.IntIffNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicPointGalois
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.RigEnd3
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AdmissibleRankTwoSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWAutKQ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.NewformAut0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.RRFreeW
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.RigidEndTwoWOfPrintedAdjointLifting
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.IntIffNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicPointGalois
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.RigEnd3
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AdmissibleRankTwoSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VWAutKQ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.NewformAut0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.RRFreeW
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.RigidEndTwoWOfPrintedAdjointLifting
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section
-open private loc_of_int exists_fac from Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.IntIffNorm
+attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDomain UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing
 open UpperTheory.GalN.V
-section Factor
-open IsLocalRing UpperTheory.V UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.Base
-end Factor
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.HV GlobalTheory.GalOfCusp UpperTheory.V.Th
-open UpperTheory.V.Base in
+open UpperTheory.V.Base UpperTheory.V.Alg in
 theorem UpperTheory.V.Z.Win.RR.rigII_a_alt :
     U3.CohInp → _root_.UpperTheory.V.Af.HypothesesH' → _root_.UpperTheory.V.Th.AdjointLiftingTheorem → _root_.UpperTheory.V.Th.RigiditySecondCase := by
   intro hC hH hL Ω _ _ _ K _ _ _ _ l hl c N _ e ψ D U g₁ hM S f hf ι hII W hW hext hdet hmod
@@ -59,10 +60,52 @@ theorem UpperTheory.V.Z.Win.RR.rigII_a_alt :
   have hN := hH.litN
   have hframe := Fr.gd_ex ⟨⟨hN.coh.lf, hN.coh.lt, hN.coh.le, hN.coh.gf, hN.coh.ge, hN.coh.pt⟩, hN.coh.uo, hN.coh.gw⟩
     Ω K l c N e ψ D B hB
-  obtain ⟨A, hA1, hA2, hfA⟩ := exists_fac f hf
+  have hfactor : ∃ (A : Subalgebra c.O (PadicAlgCl l)) (_ : IsDiscreteValuationRing A)
+      (_ : Module.Finite c.O A), ∀ x, f x ∈ A := by
+    have := (dvrFacts l c.O).2.2.2.1
+    obtain ⟨E, hE⟩ := Loc.ptFin (l := l) S.R ((TrivSqZeroExt.inlAlgHom c.O _ _).comp f) hf
+    have := E.2
+    have integral_of_norm (x : PadicAlgCl l) (hx : ‖x‖ ≤ 1) : IsIntegral ℤ_[l] x := by
+      have hi : IsIntegral ℚ_[l] x := Algebra.IsIntegral.isIntegral x
+      change spectralValue (minpoly ℚ_[l] x) ≤ 1 at hx
+      rw [spectralValue_le_one_iff (minpoly.monic hi)] at hx
+      have hlifts : minpoly ℚ_[l] x ∈ Polynomial.lifts (algebraMap ℤ_[l] ℚ_[l]) :=
+        (Polynomial.lifts_iff_coeff_lifts _).mpr fun n => ⟨⟨_, hx n⟩, rfl⟩
+      obtain ⟨q, hq, -, hqm⟩ := Polynomial.lifts_and_degree_eq_and_monic hlifts (minpoly.monic hi)
+      exact ⟨q, hqm, by
+        rw [← Polynomial.aeval_def, ← Polynomial.aeval_map_algebraMap ℚ_[l], hq, minpoly.aeval]⟩
+    have hint (x : S.R) : IsIntegral ℤ_[l] (f x) := by
+      obtain ⟨a, ha⟩ := IsCO.res_surj (O := c.O) x
+      have ha' : IsIntegral ℤ_[l] (f (algebraMap c.O S.R a)) := by
+        rw [f.commutes]
+        exact (IsIntegral.of_finite (R := ℤ_[l]) a).map (IsScalarTower.toAlgHom ℤ_[l] c.O (PadicAlgCl l))
+      have hsum := (integral_of_norm _ (hf _ ha).le).add ha'
+      rwa [← map_add, sub_add_cancel] at hsum
+    obtain ⟨hDVR, hfin, -⟩ := UpperTheory.V.abelian₂.dvr_intClosure l E.1
+    let j : E.1 →ₐ[ℤ_[l]] PadicAlgCl l := E.1.val.restrictScalars ℤ_[l]
+    have hj : Function.Injective j := Subtype.val_injective
+    let equiv := (integralClosure ℤ_[l] E.1).equivMapOfInjective j hj
+    let B₀ := (integralClosure ℤ_[l] E.1).map j
+    have hB₀ : ∀ x, f x ∈ B₀ := fun x =>
+      ⟨⟨f x, (hE x).1⟩, (isIntegral_algHom_iff j hj).1 (hint x), rfl⟩
+    let A : Subalgebra c.O (PadicAlgCl l) :=
+      { B₀.toSubsemiring with algebraMap_mem' := fun a => f.commutes a ▸ hB₀ _ }
+    have hA : IsDiscreteValuationRing B₀ := IsDiscreteValuationRing.RingEquivClass.isDiscreteValuationRing equiv
+    have hAfin : Module.Finite ℤ_[l] B₀ := Module.Finite.equiv equiv.toLinearEquiv
+    have : Module.Finite ℤ_[l] A := hAfin
+    exact ⟨A, hA, Module.Finite.of_restrictScalars_finite ℤ_[l] c.O A, hB₀⟩
+  obtain ⟨A, hA1, hA2, hfA⟩ := hfactor
   haveI : Module.Finite ℤ_[l] A := Module.Finite.trans c.O A
   haveI := (UpperTheory.V.abelian₂.dvr_finite l A).1
-  have hord := Pr.ordPt_of_gd hC.loc D g₁ hM U S B hBj A (f.codRestrict A hfA) (loc_of_int _)
+  have hlocal : IsLocalHom (f.codRestrict A hfA) := by
+    let fA := f.codRestrict A hfA
+    let g : S.R →+* fA.range := fA.rangeRestrict
+    have hg : IsLocalHom g := IsLocalHom.of_surjective _ fA.rangeRestrict_surjective
+    have : Algebra.IsIntegral c.O A := Algebra.IsIntegral.of_finite c.O A
+    have : Algebra.IsIntegral fA.range A := Algebra.IsIntegral.tower_top (R := c.O)
+    have hi : IsLocalHom (algebraMap fA.range A) := Algebra.IsIntegral.isLocalHom _ _
+    exact ⟨fun x hx => hg.map_nonunit x (hi.map_nonunit (g x) hx)⟩
+  have hord := Pr.ordPt_of_gd hC.loc D g₁ hM U S B hBj A (f.codRestrict A hfA) hlocal
   have hpush : UnitaryThreeInertia.push A.val (U3.push (f.codRestrict A hfA) S.r.hom) = U3.push f S.r.hom := rfl
   have hM1 : 1 ≤ N * (discr K).natAbs := Nat.one_le_iff_ne_zero.2 (mul_ne_zero (NeZero.ne N) hd0)
   have hm : StrictAnti ![(e : ℤ), -(e : ℤ)] := by

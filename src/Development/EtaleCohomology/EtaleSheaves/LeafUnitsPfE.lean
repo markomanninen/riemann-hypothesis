@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfB
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfB
+
+@[expose] public section
 
 namespace LateralTheory.E.E4
 

@@ -1,18 +1,13 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocalQuotientHomExt
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocalQuotientHomExt
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC UpperTheory.Pbf
 
 namespace UpperTheory.GqPt
-
-private theorem tR_zpow (q : ℕ) (n : ℤ) :
-    (((tR q) ^ n : (LqR q)ˣ) : LqR q) = LaurentPolynomial.T n := by
-  obtain ⟨k, rfl | rfl⟩ := n.eq_nat_or_neg
-  · rw [zpow_natCast, Units.val_pow_eq_pow_val]
-    change (LaurentPolynomial.T 1 : LqR q) ^ k = _
-    rw [LaurentPolynomial.T_pow]; simp
-  · rw [zpow_neg, zpow_natCast, ← inv_pow, Units.val_pow_eq_pow_val]
-    change (LaurentPolynomial.T (-1) : LqR q) ^ k = _
-    rw [LaurentPolynomial.T_pow]; simp
 
 private theorem hom_ext (q : ℕ) {R : Type} [CommRing R] {f g : LqR q →+* R}
     (h : f (LaurentPolynomial.T 1) = g (LaurentPolynomial.T 1)) : f = g :=

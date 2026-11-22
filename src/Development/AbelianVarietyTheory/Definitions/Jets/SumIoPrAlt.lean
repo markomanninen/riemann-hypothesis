@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.PeriodIntegrals.CapelliEig
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.PeriodIntegrals.CapelliEig
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+
+@[expose] public section
 
 open Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal

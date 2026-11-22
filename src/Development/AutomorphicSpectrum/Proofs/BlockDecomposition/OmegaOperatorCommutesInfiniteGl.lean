@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmMemArchSmooth
-import Development.AutomorphicSpectrum.Proofs.HermitianForms.CasOfCapelliVec
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaOpCommLiB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmMemArchSmooth
+public import Development.AutomorphicSpectrum.Proofs.HermitianForms.CasOfCapelliVec
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaOpCommLiB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 open NumberField GlobalTheory.CuspRep GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.Reduction
 open scoped NumberField.AdeleRing
@@ -29,12 +34,14 @@ theorem sum_sq_map_eq {B : LinearMap.BilinForm ℝ L} {b : Module.Basis ι ℝ L
   set u := UniversalEnvelopingAlgebra.ι ℝ (L := L)
   have h1 : ∀ j, u (φ (b j)) = ∑ i, (ε i * B (b i) (φ (b j))) • u (b i) := fun j => by
     conv_lhs => rw [eq_sum_of_orthogonal hε horth (φ (b j))]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   have h2 : ∀ i, u (b i) = ∑ j, (ε j * B (φ (b j)) (b i)) • u (φ (b j)) := fun i => by
     have e := congrArg φ (eq_sum_of_orthogonal hε horth (ψ (b i)))
     rw [hψ] at e
     conv_lhs => rw [e]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← hφ (b j) (ψ (b i)), hψ]
   calc ∑ j, ε j • (u (φ (b j)) * u (φ (b j)))
@@ -54,7 +61,7 @@ theorem sum_sq_map_eq {B : LinearMap.BilinForm ℝ L} {b : Module.Basis ι ℝ L
 
 end General
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem archTraceForm_AdLie (g : archGroup E a) (X Y : (isExpLieAlgebra E a).lieSubalgebra) :
     archTraceForm E a ((isExpLieAlgebra E a).AdLie g X) ((isExpLieAlgebra E a).AdLie g Y) =
@@ -63,7 +70,8 @@ theorem archTraceForm_AdLie (g : archGroup E a) (X Y : (isExpLieAlgebra E a).lie
   congr 1
   have hgi : mat (((g⁻¹ : archGroup E a) : (ArchMatrix E a)ˣ) : ArchMatrix E a) *
       mat (((g : (ArchMatrix E a)ˣ)) : ArchMatrix E a) = 1 := by
-    rw [← mat_mul]
+    change (((g⁻¹ : archGroup E a) : (ArchMatrix E a)ˣ) : ArchMatrix E a) *
+      (((g : (ArchMatrix E a)ˣ)) : ArchMatrix E a) = 1
     simp
   change Matrix.trace ((mat ((g : (ArchMatrix E a)ˣ) : ArchMatrix E a) * mat (X : ArchMatrix E a) *
       mat (((g⁻¹ : archGroup E a) : (ArchMatrix E a)ˣ) : ArchMatrix E a)) *
@@ -88,7 +96,8 @@ theorem AdU_casimir {d : ℕ} (b : Module.Basis (Fin d) ℝ (isExpLieAlgebra E a
     (hε : ∀ i, ε i * ε i = 1)
     (horth : ∀ i j, archTraceForm E a (b i) (b j) = if i = j then ε i else 0) (g : archGroup E a) :
     (isExpLieAlgebra E a).AdU g (casimir b ε) = casimir b ε := by
-  simp only [casimir, map_sum, map_smul, map_mul, IsExpLieAlgebra.AdU_ι]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [casimir, map_sum, map_smul, map_mul, IsExpLieAlgebra.AdU_ι]
   exact sum_sq_map_eq hε horth archTraceForm_symm _ ((isExpLieAlgebra E a).AdLie g⁻¹)
     (archTraceForm_AdLie g) (AdLie_AdLie_inv g)
 
@@ -98,7 +107,7 @@ theorem toGL_surjective : Function.Surjective (toGL E a) := fun y => by
   ext i j
   simp
 
-theorem omegaOp_comm_rt (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a d : ℕ)
+theorem omegaOp_comm_rt (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a d : ℕ)
     (b : Module.Basis (Fin d) ℝ (AutomorphicForm.isExpLieAlgebra E a).lieSubalgebra) (ε : Fin d → ℝ)
     (hε : ∀ i, ε i = 1 ∨ ε i = -1)
     (horth : ∀ i j, AutomorphicForm.archTraceForm E a (b i) (b j) = if i = j then ε i else 0)
@@ -109,7 +118,7 @@ theorem omegaOp_comm_rt (E : Type) [Field E] [NumberField E] [IsTotallyComplex E
   rw [← infEmb_eq]
   have hrt : ∀ φ : Sm E a, smL E a (rt E a (infEmb E a u) φ) = rtInf u (smL E a φ) := fun _ => rfl
   refine LinearMap.ext fun ψ => smL_injective ?_
-  rw [Module.End.mul_apply, Module.End.mul_apply, smL_omegaOp, hrt, uAction_rtInf,
+  rw [mul_apply_eq_comp, mul_apply_eq_comp, smL_omegaOp, hrt, uAction_rtInf,
     AdU_casimir b ε hε2 horth, hrt, smL_omegaOp]
 
 end GlobalTheory.CompanionTheory.HCRep

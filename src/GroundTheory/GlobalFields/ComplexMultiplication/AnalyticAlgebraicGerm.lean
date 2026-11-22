@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology Set
 
@@ -99,8 +103,9 @@ noncomputable instance : Field MeroField := Ideal.Quotient.field _
 
 noncomputable instance : DecidableEq MeroField := Classical.decEq _
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def germ (f : ℂ → ℂ) : MeroField :=
   if h : Meromorphic f then Ideal.Quotient.mk meroNull ⟨f, h⟩ else 0
 
@@ -126,7 +131,7 @@ theorem germ_eq_zero_iff {f : ℂ → ℂ} (hf : Meromorphic f) : germ f = 0 ↔
 
 theorem germ_add {f g : ℂ → ℂ} (hf : Meromorphic f) (hg : Meromorphic g) :
     germ (f + g) = germ f + germ g := by
-  rw [germ_of hf, germ_of hg, germ_of (hf.add hg), ← map_add]
+  rw [germ_of hf, germ_of hg, germ_of (hf.add hg), ← map_add (f := _)]
   rfl
 
 theorem germ_mul {f g : ℂ → ℂ} (hf : Meromorphic f) (hg : Meromorphic g) :

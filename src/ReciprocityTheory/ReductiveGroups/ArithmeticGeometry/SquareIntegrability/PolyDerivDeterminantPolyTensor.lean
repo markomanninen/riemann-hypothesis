@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.L2NormFundamentalDomain
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.L2NormFundamentalDomain
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -48,11 +52,13 @@ end Expand
 section PD
 variable (X : PT E) (bs : Fin nb → Block E n X.dim)
 
-open Classical in
 
+open Classical in
 def lst (T : Choice bs) : List (Fin n × Vsp X.dim) :=
-  (Multiset.map (letter bs T) Finset.univ.val).toList.map
-    (fun l => (l.1, EuclideanSpace.single l.2 (1 : ℂ)))
+  by
+    classical
+    exact (Multiset.map (letter bs T) Finset.univ.val).toList.map
+      (fun l => (l.1, EuclideanSpace.single l.2 (1 : ℂ)))
 
 theorem prod_X_letter (T : Choice bs) :
     (∏ t : Slot bs, MvPolynomial.X (letter bs T t) : MvPolynomial (Letter n X.dim) ℂ) =
@@ -63,7 +69,8 @@ theorem prod_X_letter (T : Choice bs) :
 theorem toMultiset_letters (T : Choice bs) :
     Finsupp.toMultiset (∑ t : Slot bs, Finsupp.single (letter bs T t) 1) =
       Multiset.map (letter bs T) Finset.univ.val := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [Finsupp.toMultiset_single, one_nsmul]
   rw [Finset.sum_eq_multiset_sum]
   have h : ∀ (s : Multiset (Slot bs)),
@@ -96,16 +103,6 @@ theorem polyDeriv_determinantPoly_tensor (s : Fin n → (Fin 1 → Vsp X.dim) �
   rw [Pi.zero_apply, itD_col (hs k)]
   rfl
 
-open Classical in
-
-theorem colL_coe (T : Choice bs) (k : Fin n) :
-    ((colL (lst X bs T) k : List (Vsp X.dim)) : Multiset (Vsp X.dim)) =
-      ((Multiset.map (letter bs T) Finset.univ.val).filter (fun l => l.1 = k)).map
-        (fun l => EuclideanSpace.single l.2 (1 : ℂ)) := by
-  rw [colL, lst, List.filter_map, List.map_map, ← Multiset.map_coe]
-  conv_rhs => rw [← Multiset.coe_toList (Multiset.map (letter bs T) Finset.univ.val),
-    Multiset.filter_coe, Multiset.map_coe]
-  rfl
 
 end PD
 

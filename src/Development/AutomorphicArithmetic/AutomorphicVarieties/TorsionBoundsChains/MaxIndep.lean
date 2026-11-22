@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+
+@[expose] public section
 
 open CategoryTheory UpperTheory.V.KH
 
@@ -39,7 +43,7 @@ theorem UpperTheory.V.KH.maxIndep :
     exact (hl (Finsupp.mem_support_iff.mpr hy)).resolve_left hyx
   have hsum : l x • x + Finsupp.linearCombination ℤ id (Finsupp.erase x l) = 0 := by
     have h1 := congrArg (Finsupp.linearCombination ℤ id) (Finsupp.single_add_erase x l)
-    rw [map_add, Finsupp.linearCombination_single, hl0] at h1
+    rw [map_add (f := _), Finsupp.linearCombination_single, hl0] at h1
     simpa using h1
   have hxne : l x ≠ 0 := by
     intro h0

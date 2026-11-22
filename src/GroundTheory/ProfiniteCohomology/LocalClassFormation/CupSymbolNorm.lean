@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CupProducts.Projection
-import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
-import GroundTheory.ProfiniteCohomology.ClassFormations.Corestriction
-import GroundTheory.ProfiniteCohomology.CyclicCupProf
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.H0IsoHomCohomologyClassZero
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+public import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+public import GroundTheory.ProfiniteCohomology.ClassFormations.Corestriction
+public import GroundTheory.ProfiniteCohomology.CyclicCupProf
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.H0IsoHomCohomologyClassZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -121,8 +126,8 @@ section Projection
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
   (U : OpenSubgroup G)
 
-omit [IsTopologicalGroup G] [CompactSpace G] in
 
+omit [IsTopologicalGroup G] [CompactSpace G] in
 theorem coindTrace_naturality {k : Type} [CommRing k] [(U : Subgroup G).FiniteIndex]
     {A B : Rep.{0} k G} (φ : A ⟶ B) :
     Rep.coindMap (U : Subgroup G).subtype ((Rep.resFunctor (U : Subgroup G).subtype).map φ) ≫
@@ -132,7 +137,8 @@ theorem coindTrace_naturality {k : Type} [CommRing k] [(U : Subgroup G).FiniteIn
   change (coindTrace (U : Subgroup G) B).hom
       ((Rep.coindMap (U : Subgroup G).subtype ((Rep.resFunctor (U : Subgroup G).subtype).map φ)).hom f) =
     φ.hom ((coindTrace (U : Subgroup G) A).hom f)
-  rw [coindTrace_hom_apply, coindTrace_hom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coindTrace_hom_apply, coindTrace_hom_apply, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   induction c using QuotientGroup.induction_on with
   | H x =>

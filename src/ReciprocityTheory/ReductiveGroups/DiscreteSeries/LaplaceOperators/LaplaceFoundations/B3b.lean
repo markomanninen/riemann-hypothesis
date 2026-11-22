@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem b3b : DerivMatrixCoeffExp := by
       rw [sub_self]; exact h1
     exact h1'.comp_sub_const s s
   rw [hphi]
-  convert h2 using 1
+  convert (preTransparency := .reducible) h2 using 1
   · funext x
     have he : NormedSpace.exp ((x : ℂ) • Z) =
         NormedSpace.exp ((s : ℂ) • Z) * NormedSpace.exp (((x - s : ℝ) : ℂ) • Z) := by

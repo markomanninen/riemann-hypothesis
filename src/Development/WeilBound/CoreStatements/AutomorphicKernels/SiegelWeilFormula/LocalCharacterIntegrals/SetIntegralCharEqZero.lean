@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.MeasurePreservingOfAddEquiv
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.ShellInv
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.ShellNu
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.MeasurePreservingOfAddEquiv
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.ShellInv
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.ShellNu
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem sigR_sigR (hcm : IsCMExt F E σ) (a : Fv F v ⊗[F] E) : sigR (Fv F v) �
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul k e => simp [sigR, sigma_sigma hcm]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def sigE (hcm : IsCMExt F E σ) : (Fv F v ⊗[F] E) ≃ₐ[Fv F v] (Fv F v ⊗[F] E) :=
   AlgEquiv.ofAlgHom (Algebra.TensorProduct.map (AlgHom.id (Fv F v) (Fv F v)) σ)
@@ -37,14 +41,14 @@ theorem sigE_apply (hcm : IsCMExt F E σ) (a : Fv F v ⊗[F] E) : sigE hcm a = s
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul k e => simp [sigE, sigR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem trace_sigR (hcm : IsCMExt F E σ) (a : Fv F v ⊗[F] E) :
     Algebra.trace (Fv F v) (Fv F v ⊗[F] E) (sigR (Fv F v) σ a) = Algebra.trace (Fv F v) (Fv F v ⊗[F] E) a := by
   rw [← sigE_apply hcm, Algebra.trace_eq_of_algEquiv]
 
-variable (σ) in
 
+variable (σ) in
 def cs {p q : ℕ} (x : Matrix (Fin p) (Fin q) (Fv F v ⊗[F] E)) : Matrix (Fin q) (Fin p) (Fv F v ⊗[F] E) :=
   (x.map (sigR (Fv F v) σ))ᵀ
 
@@ -66,7 +70,8 @@ theorem cs_herm {n : ℕ} (b : HermR (Fv F v) σ n) : cs σ (b : Matrix (Fin n) 
 
 theorem trace_cs {p : ℕ} (x : Matrix (Fin p) (Fin p) (Fv F v ⊗[F] E)) :
     Matrix.trace (cs σ x) = sigR (Fv F v) σ (Matrix.trace x) := by
-  simp [cs, Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [cs, Matrix.trace, map_sum]
 
 theorem trPair_eq {n : ℕ} (S T : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) :
     trPair (Fv F v) S T = algebraMap F (Fv F v) (1 / 2) *
@@ -83,7 +88,7 @@ theorem trPair_lin (hcm : IsCMExt F E σ) {n : ℕ} (T b : HermR (Fv F v) σ n) 
       Algebra.trace (Fv F v) (Fv F v ⊗[F] E) (Matrix.trace (T.1 * b.1 * x)) := by
   have h1 : Matrix.trace (T.1 * (cs σ x * b.1)) = sigR (Fv F v) σ (Matrix.trace (T.1 * b.1 * x)) := by
     rw [← trace_cs, cs_mul, cs_mul, cs_herm, cs_herm, Matrix.trace_mul_comm, Matrix.mul_assoc]
-  rw [trPair_eq, Matrix.mul_add, Matrix.trace_add, map_add, h1, trace_sigR hcm, ← Matrix.mul_assoc, ← two_mul,
+  rw [trPair_eq, Matrix.mul_add, Matrix.trace_add, map_add (f := _), h1, trace_sigR hcm, ← Matrix.mul_assoc, ← two_mul,
     ← mul_assoc]
   have : algebraMap F (Fv F v) (1 / 2) * 2 = 1 := by
     rw [show (2 : Fv F v) = algebraMap F (Fv F v) 2 from (map_ofNat _ 2).symm, ← map_mul]; norm_num
@@ -228,8 +233,8 @@ theorem mul_le_half_of_small {C r : ℝ} (hC : 0 ≤ C) (hr : r ≤ 1 / (2 * (C 
   rw [mul_one_div, div_le_div_iff₀ (by positivity) (by norm_num)]
   nlinarith
 
-variable (v) in
 
+variable (v) in
 theorem exists_normPres (σ : E →ₐ[F] E) (n : ℕ) : ∃ r > 0, ∀ x : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E),
     nM v x ≤ r → ∀ b : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E), nM v (cs σ (1 + x) * b * (1 + x)) = nM v b := by
   obtain ⟨C, hC, h⟩ := exists_nM_pert v σ n
@@ -245,8 +250,8 @@ theorem exists_normPres (σ : E →ₐ[F] E) (n : ℕ) : ∃ r > 0, ∀ x : Matr
   · have : b = 0 := nM_eq_zero.1 hb.symm
     subst this; simp
 
-variable (v) in
 
+variable (v) in
 theorem exists_inv (n : ℕ) : ∃ r > 0, ∀ x : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E), nM v x ≤ r →
     ∃ x' : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E), (1 + x) * (1 + x') = 1 ∧ (1 + x') * (1 + x) = 1 ∧
       nM v x' ≤ nM v x := by
@@ -282,8 +287,8 @@ theorem exists_inv (n : ℕ) : ∃ r > 0, ∀ x : Matrix (Fin n) (Fin n) (Fv F v
   · have : Cm * nM v x * nM v x' ≤ 1 / 2 * nM v x' := mul_le_mul_of_nonneg_right hsm hpos.le
     linarith
 
-variable (v) in
 
+variable (v) in
 theorem exists_quad (σ : E →ₐ[F] E) {n : ℕ} (T : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) :
     ∃ C, 0 ≤ C ∧ ∀ x b : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E),
       ‖trPair (Fv F v) T (cs σ x * b * x)‖ ≤ C * nM v x ^ 2 * nM v b := by
@@ -326,8 +331,8 @@ theorem nM_single_le {p q : ℕ} (i : Fin p) (j : Fin q) (w : Fv F v ⊗[F] E) :
   · rw [Matrix.single_apply, if_pos h]
   · rw [Matrix.single_apply, if_neg h, nA_zero]; exact nA_nonneg w
 
-variable (v) in
 
+variable (v) in
 theorem exists_nontriv (σ : E →ₐ[F] E) (hcm : IsCMExt F E σ) {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F ψ) {n : ℕ}
     (T : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) (hT : IsUnit T.det) :
     ∃ C > 0, ∀ b : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E), 0 < nM v b → ∀ r : ℝ, C ≤ r * nM v b →
@@ -397,8 +402,8 @@ instance t2Space_local_matrix (n : ℕ) : T2Space (Matrix (Fin n) (Fin n) (Fv F 
 instance secondCountable_Herm (n : ℕ) : SecondCountableTopology (HermR (Fv F v) σ n) :=
   TopologicalSpace.Subtype.secondCountableTopology _
 
-variable (σ) in
 
+variable (σ) in
 def conjM {n : ℕ} (a b : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E) :=
   cs σ a * b * a
 
@@ -500,7 +505,7 @@ def chi (ψ : AddChar (AF F) ℂ) {n : ℕ} (T b : HermR (Fv F v) σ n) (x : Mat
 
 theorem chi_add (ψ : AddChar (AF F) ℂ) {n : ℕ} (T b : HermR (Fv F v) σ n) (x y : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) :
     chi ψ T b (x + y) = chi ψ T b x * chi ψ T b y := by
-  simp only [chi, Matrix.mul_add, Matrix.trace_add, map_add, neg_add]
+  simp only [chi, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add]
   exact psiV_add ψ _ _
 
 theorem continuous_chi {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F ψ) {n : ℕ} (T : HermR (Fv F v) σ n) :

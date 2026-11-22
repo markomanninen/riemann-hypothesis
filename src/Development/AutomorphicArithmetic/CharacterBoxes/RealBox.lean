@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
-import Development.AutomorphicArithmetic.CharacterBoxes.RealSplit
+module
+
+public import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
+public import Development.AutomorphicArithmetic.CharacterBoxes.RealSplit
+
+@[expose] public section
 
 open Formalism.HC UpperTheory.Top
 

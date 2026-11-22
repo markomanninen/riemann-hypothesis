@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.MemMirabQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HolLin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.MemMirabQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HolLin
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,11 +19,11 @@ variable {F : Type} [Field F] [NumberField F]
 private theorem div_mul (a : Ideal (𝓞 F) → ℂ) (w : Pl F) (n : Ideal (𝓞 F)) : coefDiv a w.asIdeal (w.asIdeal * n) = a n := by
   have h : ∃ 𝔫, w.asIdeal * n = w.asIdeal * 𝔫 := ⟨n, rfl⟩
   unfold coefDiv
-  rw [dif_pos h, ← mul_left_cancel₀ w.ne_bot h.choose_spec]
+  rw [dite_eq_left h, ← mul_left_cancel₀ w.ne_bot h.choose_spec]
 
 private theorem div_not (a : Ideal (𝓞 F) → ℂ) (w : Pl F) {m : Ideal (𝓞 F)} (h : ¬ w.asIdeal ∣ m) : coefDiv a w.asIdeal m = 0 := by
   unfold coefDiv
-  rw [dif_neg]
+  rw [dite_eq_right]
   exact h
 
 private theorem not_dvd_mul {v w : Pl F} (hvw : v ≠ w) {m : Ideal (𝓞 F)} (h : ¬ v.asIdeal ∣ m) : ¬ v.asIdeal ∣ w.asIdeal * m := by
@@ -132,7 +136,7 @@ private theorem sum_step (χ : Ideal (𝓞 F) → ℂ) (hχ : ∀ I J, I ≠ ⊥
     · rintro (⟨n, hn, rfl⟩ | ⟨h, -⟩)
       · exact mul_dvd_mul_left _ hn
       · exact h.mul_left _
-  rw [hs, finsum_mem_union _ ((dvd_fin hm).image _) ((dvd_fin hm).subset fun r h => h.1),
+  rw [hs, finsum_mem_union _ ((dvd_fin hm).image _) ((dvd_fin hm).subset fun r (h : r ∈ {r : Ideal (𝓞 F) | r ∣ m ∧ ¬ w.asIdeal ∣ r}) => h.1),
     finsum_mem_image (fun x _ y _ h => mul_left_cancel₀ w.ne_bot h)]
   · congr 1
     rw [finsum_mem_eq_finite_toFinset_sum _ (dvd_fin hm), finsum_mem_eq_finite_toFinset_sum _ (dvd_fin hm), Finset.mul_sum]
@@ -170,7 +174,7 @@ private def intS {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) : Subring ℂ 
     exact mul_le_one₀ ha (norm_nonneg _) hb
   one_mem' := by simp
   add_mem' {a b} ha hb := by
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
   zero_mem' := by simp
   neg_mem' {a} ha := by simpa using ha

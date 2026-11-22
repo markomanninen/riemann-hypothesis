@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistPlaceLastTwoLevelIndicesNeZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistPlaceNormalisedCombinationsPreserveThetaFunStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastDoubleThetaLiftIntegrableLinearStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawLastTwoStepsAllTwistPlacesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistPlaceLastTwoLevelIndicesNeZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistPlaceNormalisedCombinationsPreserveThetaFunStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastDoubleThetaLiftIntegrableLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawLastTwoStepsAllTwistPlacesStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.QPl ValuativeRel
@@ -153,14 +157,14 @@ theorem qLast_of_pin : ∀ (D : D7) (c : Comm D) (v : VCom c) (t : Tup c) (w : V
   have hint : ∀ α, IntegrableOn (fun h' => f h' * G α (E (h', 1))) c.volT.𝓕 c.volT.μ := by
     intro α
     rw [key α]
-    exact integrable_finset_sum _ fun g _ => ((han α).1 _ (hom g) f hfc).const_mul _
+    exact integrable_finsetSum _ fun g _ => ((han α).1 _ (hom g) f hfc).const_mul _
   have hL : ∀ α, ∑ g ∈ (w.ε j α).support, w.ε j α g * ∫ h' in c.volT.𝓕, f h' * c.bl j (t.kom j) (t.kom (j + 1)) (φ α)
       (c.lst j h (v.τ j h) (t.sBF j 0 h) (t.om j (g, 1) X) Y) (E (h', 1)) ∂c.volT.μ =
       ∫ h' in c.volT.𝓕, f h' * G α (E (h', 1)) ∂c.volT.μ := by
     intro α
-    rw [key α, integral_finset_sum _ fun g _ => ((han α).1 _ (hom g) f hfc).const_mul _]
+    rw [key α, integral_finsetSum _ fun g _ => ((han α).1 _ (hom g) f hfc).const_mul _]
     exact Finset.sum_congr rfl fun g _ => (integral_const_mul _ _).symm
-  rw [Finset.sum_congr rfl fun α _ => hL α, ← integral_finset_sum _ fun α _ => hint α]
+  rw [Finset.sum_congr rfl fun α _ => hL α, ← integral_finsetSum _ fun α _ => hint α]
 
   have hcard : Fintype.card (t.Ch (j + 1 + 1)) = 1 := by
     rw [Fintype.card_congr (F.eqv (j + 1 + 1)), Fintype.card_pi]
@@ -178,7 +182,7 @@ theorem qLast_of_pin : ∀ (D : D7) (c : Comm D) (v : VCom c) (t : Tup c) (w : V
       rw [hF.εT (j + 1 + 1) h β]
       by_cases ha : (∏ i, (F.Q i).wt (j + 1 + 1) (F.eqv (j + 1 + 1) β i)) = 0
       · simp [trc, ha]
-      · rw [trc, Finsupp.support_single_ne_zero _ ha, Finset.sum_singleton]
+      · rw [trc, Finsupp.support_single _ ha, Finset.sum_singleton]
         funext x
         simp [rTrans]
     rw [← integral_const_mul]

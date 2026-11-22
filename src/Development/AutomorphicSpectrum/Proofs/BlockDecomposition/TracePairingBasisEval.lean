@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PsiApply
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PsiApply
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.Pb.Psi
 
@@ -34,7 +38,7 @@ theorem T_fac : ∀ {W A C₀ : Type} [CommRing W] [CommRing A] [CommRing C₀] 
     | tmul x' y =>
       rw [TensorProduct.smul_tmul', hE, hE, smul_eq_mul, map_mul, map_mul, mul_assoc]
     | add t t' ht ht' =>
-      rw [smul_add, map_add, map_add, ht, ht', mul_add]
+      rw [smul_add, map_add (f := _), map_add (f := _), ht, ht', mul_add]
   refine ⟨E, hE, fun G hG z => ?_⟩
   induction z using TensorProduct.induction_on with
   | zero => simp
@@ -42,7 +46,8 @@ theorem T_fac : ∀ {W A C₀ : Type} [CommRing W] [CommRing A] [CommRing C₀] 
     have hsum : ∑ s, ι (T c k hk (b.coord s) (a ⊗ₜ y)) * E (b s) =
         ι (c a) * E ((1 : K₀) ⊗ₜ y) := by
       conv_rhs => rw [← b.sum_repr ((1 : K₀) ⊗ₜ y)]
-      rw [map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl (fun s _ => ?_)
       have hT : T c k hk (b.coord s) (a ⊗ₜ y) = c a * k (b.repr ((1 : K₀) ⊗ₜ y) s) := by
         first
@@ -51,6 +56,6 @@ theorem T_fac : ∀ {W A C₀ : Type} [CommRing W] [CommRing A] [CommRing C₀] 
       rw [hEs, hT, map_mul, mul_assoc]
     rw [hG, hsum, hE, map_one, map_one, one_mul, hi]
   | add x y hx hy =>
-    simp only [map_add, hx, hy, add_mul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hx, hy, add_mul, Finset.sum_add_distrib]
 
 end GlobalTheory.CompanionTheory.FrobFac

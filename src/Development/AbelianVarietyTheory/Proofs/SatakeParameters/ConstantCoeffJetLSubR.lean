@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Formalism.LocalRingCardinality.DataKerI
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Formalism.LocalRingCardinality.DataKerI
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker NumberField IsDedekindDomain
 
@@ -23,10 +27,6 @@ theorem jetL_monomial (J : (δ →₀ ℕ) → K) (m : σ ⊕ δ →₀ ℕ) (c 
     simp [smul_monomial]
   rw [h1, map_smul, jetL, Module.Basis.constr_basis, smul_monomial, smul_eq_mul]
 
-def subR [Fintype σ'] (K : Type) [Field K] (r : σ → σ' → Prop) [∀ v u, Decidable (r v u)] (d : σ → σ' → δ) :
-    MvPolynomial σ K →ₐ[K] MvPolynomial (σ' ⊕ δ) K :=
-  aeval fun v => ∑ u, if r v u then X (Sum.inl u) * X (Sum.inr (d v u)) else 0
-
 end Generic
 
 section Main
@@ -37,20 +37,12 @@ theorem applyAt0_eq (l : ℕ) [Fact l.Prime] (a b : ℕ) (Th : MvPowerSeries (ι
     (Q : MvPolynomial (KM.XZ ι a b) ℤ) :
     KM.applyAt0 a b l Th Q = jetL (fun m => (m.prod fun _ k => (k.factorial : ℂ_[l])) * MvPowerSeries.coeff m Th)
       (MvPolynomial.map (Int.castRingHom ℂ_[l]) Q) := by
-  conv_rhs => rw [Q.as_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [Q.as_sum, map_sum, map_sum]
   unfold KM.applyAt0
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [map_monomial, jetL_monomial, mul_assoc]
   rfl
-
-abbrev sameFrame {a b : ℕ} (v : ι × Fin a × Fin a) (u : ι × Fin b × Fin b) : Prop :=
-  u.1 = v.1 ∧ u.2.2.1 = v.2.2.1
-
-def trVar (ι : Type) (a b : ℕ) : DVar ι a b ≃ ι × Fin a × Fin b where
-  toFun v := (v.1, v.2.2, v.2.1)
-  invFun v := (v.1, v.2.2, v.2.1)
-  left_inv _ := rfl
-  right_inv _ := rfl
 
 end Main
 

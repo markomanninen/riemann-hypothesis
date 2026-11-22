@@ -1,7 +1,12 @@
-import Formalism.LocalToGlobal.Columns.ChainTwTop
-import Formalism.LocalToGlobal.Columns.ChainTwZero
-import Formalism.LocalToGlobal.Columns.ChainTwPsi
-import Formalism.LocalToGlobal.Columns.ChainTwAn
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainTwMain
+public import Formalism.LocalToGlobal.Columns.WithTopLevGTop
+public import Formalism.LocalToGlobal.Columns.ChainTwZero
+public import Formalism.LocalToGlobal.Columns.ChainTwPsi
+public import Formalism.LocalToGlobal.Columns.ChainTwAn
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 

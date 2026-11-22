@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.Descent
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.Descent
+
+@[expose] public section
 
 open Matrix Polynomial NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -28,14 +32,12 @@ private theorem desc_alg {k R : Type} [CommRing k] [CommRing R] [Algebra k R] (c
     convert h2 using 1
     funext z
     induction z with
-    | zero => simp
-    | add a b ha hb => simp only [Function.comp_apply, map_add] at ha hb ⊢; rw [ha, hb]
+    | add a b ha hb => simp only [Function.comp_apply, map_add (f := _)] at ha hb ⊢; rw [ha, hb]
     | tmul r a => rw [hf, ← Algebra.smul_def]; rfl
   refine ⟨A, inferInstance, inferInstance, AlgEquiv.ofBijective f hbij, fun z => ?_⟩
   change f _ = s (f z)
   induction z with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul r a =>
     have h1 : io c A (r ⊗ₜ a) = c r ⊗ₜ a := by simp [io]
     have h2 : s a = a := a.2
@@ -51,7 +53,7 @@ private theorem inv_ex {k R : Type} [CommRing k] [CommRing R] [Algebra k R] (c :
   have hx : IsUnit (AdjoinRoot.root P) := by
     have h1 : AdjoinRoot.mk P (X * P.divX + C (P.coeff 0)) = 0 := by
       rw [X_mul_divX_add, AdjoinRoot.mk_self]
-    rw [map_add, map_mul, AdjoinRoot.mk_X, AdjoinRoot.mk_C] at h1
+    rw [map_add (f := _), map_mul, AdjoinRoot.mk_X, AdjoinRoot.mk_C] at h1
     have h2 := (hu.map (AdjoinRoot.of P)).neg
     rw [← eq_neg_of_add_eq_zero_left h1] at h2
     exact isUnit_of_mul_isUnit_left h2
@@ -75,7 +77,7 @@ private theorem inv_ex {k R : Type} [CommRing k] [CommRing R] [Algebra k R] (c :
     obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective z
     induction p using Polynomial.induction_on with
     | C a => rw [AdjoinRoot.mk_C, h1, h1, hcc]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | monomial m a ih =>
       rw [pow_succ, ← mul_assoc, map_mul, map_mul, map_mul, ih, AdjoinRoot.mk_X, h2, h3]
   · change _ * s0 _ = 1

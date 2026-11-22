@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.ArcCM
@@ -34,7 +38,8 @@ theorem coeff_coefPoly {σ K : Type} [Field K] (ι : K →+* ℂ) (j : ℤ) (Q :
 theorem eval_coefPoly {σ K : Type} [Field K] (ι : K →+* ℂ) (j : ℤ) (Q : MvPolynomial σ (LaurentSeries K))
     (x : σ → ℂ) : MvPolynomial.eval x (coefPoly ι j Q) =
       ∑ μ ∈ Q.support, ι ((Q.coeff μ).coeff j) * ∏ v ∈ μ.support, x v ^ μ v := by
-  rw [coefPoly, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coefPoly, map_sum]
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [MvPolynomial.eval_monomial]
   rfl
@@ -71,12 +76,14 @@ theorem coeff_eq_zero_of_vanish_on_invBl : ∀ (E : Type) [Field E] [NumberField
     refine eq_zero_of_eval_off D P hD fun x hx => ?_
     rw [hDe] at hx
     have hx' : InvBl x := fun τ => (Finset.prod_ne_zero_iff.mp hx) τ (Finset.mem_univ τ)
-    rw [← h x hx', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h x hx', map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, MvPolynomial.eval_C, eval_coefPoly]
     rfl
-  have := congrArg (MvPolynomial.coeff μ) hP
+  have := congrArg (AddMonoidAlgebra.coeff · μ) hP
   rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_zero] at this
+  change (∑ i, (MvPolynomial.C (a i) * coefPoly ι d.jj (arcNum (evR Xo c (F i) d.yF))).coeff μ) = 0 at this
   rw [← this]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [MvPolynomial.coeff_C_mul, coeff_coefPoly]

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafAugLocalPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafAugLocalPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -20,12 +24,14 @@ theorem altSum (m : ℕ) : ∑ i : Fin (m + 2), (-1 : ℤ) ^ (i : ℕ) = if Even
 
 theorem dL {R : Type} [CommRing R] (Y : PSh) (m : ℕ) (T : Scheme.{0}ᵒᵖ) (z : ((((chainsP R).obj (disc.obj Y)).X (m + 1)).obj T)) :
     ((((chainsP R).obj (disc.obj Y)).d (m + 1) m).app T).hom z = (∑ i : Fin (m + 2), (-1 : ℤ) ^ (i : ℕ)) • z := by
+  change (((freeP R).obj Y).obj T) at z
   have e : ∀ i : Fin (m + 2), SimplicialObject.δ (disc.obj Y) i = 𝟙 _ := fun _ => rfl
   simp [chainsP, e]
   erw [LinearMap.sum_apply, Finset.sum_smul]
   refine Finset.sum_congr rfl fun i _ => ?_
-  erw [NatTrans.app_zsmul]
-  rfl
+  simp
+  simpa only [Int.cast_pow, Int.cast_neg, Int.cast_one] using
+    (Module.End.intCast_apply (R := ULift.{1} R) ((-1 : ℤ) ^ (i : ℕ)) z)
 
 section
 variable {R : Type} [CommRing R]
@@ -54,7 +60,7 @@ def imSv {K L : PCx R} (φ : K ⟶ L) (n : ℕ) {T : Scheme.{0}} (y : (L.X n).ob
 theorem imSv_add {K L : PCx R} (φ : K ⟶ L) (n : ℕ) {T : Scheme.{0}} (y z : (L.X n).obj (op T)) :
     imSv φ n y ⊓ imSv φ n z ≤ imSv φ n (y + z) := by
   rintro U f ⟨⟨a, ha⟩, ⟨b, hb⟩⟩
-  exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+  exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
 
 theorem imSv_smul {K L : PCx R} (φ : K ⟶ L) (n : ℕ) {T : Scheme.{0}} (y : (L.X n).obj (op T)) (r : ULift.{1} R) :
     imSv φ n y ≤ imSv φ n (r • y) := by
@@ -94,7 +100,7 @@ theorem gen_mem (hcov : ∀ x : X, ∃ j, x ∈ Set.range (c j)) [∀ j, IsOpenI
   let σ : Fin (0 + 1) ⥤ J := (Functor.const _).obj (j t)
   refine ⟨ModuleCat.freeMk (ULift.up ((inj (D ⋙ yoneda) (op (SimplexCategory.mk 0)) σ).app (op (V t).toScheme) a)), ?_⟩
   erw [ModuleCat.free_map_apply, ModuleCat.free_map_apply]
-  refine congrArg ModuleCat.freeMk (ULift.ext _ _ ?_)
+  refine congrArg ModuleCat.freeMk (ULift.ext ?_)
   show (a ≫ D.map (𝟙 (j t))) ≫ c (j t) = (V t).ι ≫ g
   rw [D.map_id, Category.comp_id]
   exact IsOpenImmersion.lift_fac _ _ _

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.IsoCyclic
-import GroundTheory.LocalFields.AbstractLocalReciprocity.FunctorialityTransfer
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.IsoCyclic
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.FunctorialityTransfer
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 
@@ -105,8 +109,8 @@ section Restrict
 
 variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
 
-omit [IsTopologicalGroup G] [CompactSpace G] in
 
+omit [IsTopologicalGroup G] [CompactSpace G] in
 theorem galRestrict_surjective {K L M : OpenSubgroup G} [((L : Subgroup G).subgroupOf K).Normal]
     [((M : Subgroup G).subgroupOf K).Normal] (hLM : L ≤ M) :
     Function.Surjective (galRestrict (K := K) (L := M) (K' := K) (L' := L) le_rfl hLM) := by
@@ -114,8 +118,8 @@ theorem galRestrict_surjective {K L M : OpenSubgroup G} [((L : Subgroup G).subgr
   induction q using QuotientGroup.induction_on with
   | H τ => exact ⟨(τ : (K : Subgroup G) ⧸ (L : Subgroup G).subgroupOf K), rfl⟩
 
-omit [CompactSpace G] in
 
+omit [CompactSpace G] in
 theorem conjOpen_eq_of_normal {K M : OpenSubgroup G} (hMK : M ≤ K)
     [((M : Subgroup G).subgroupOf K).Normal] {g : G} (hg : g ∈ (K : Subgroup G)) :
     conjOpen g M = M := by
@@ -132,7 +136,7 @@ theorem Abelianization.lift_injective_of_ker_le {Γ T : Type*} [Group Γ] [CommG
   induction z using QuotientGroup.induction_on with
   | H q =>
     have hq : Abelianization.lift f (Abelianization.of q) = 1 := hz
-    rw [Abelianization.lift_apply_of] at hq
+    change f q = 1 at hq
     have := h hq
     rw [← Abelianization.ker_of, MonoidHom.mem_ker] at this
     exact this

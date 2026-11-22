@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThickLetterWordLatticeSurjectionHypotheses
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNeZeroMemJumpTypeTwo
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GoodCoefficientRingIntegersPadicFiniteExtension
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ChiCrysOfConstituent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeightRegularOfExt
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.LiftingConditionOfWindows
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThickLetterWordLatticeSurjectionHypotheses
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNeZeroMemJumpTypeTwo
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GoodCoefficientRingIntegersPadicFiniteExtension
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ChiCrysOfConstituent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeightRegularOfExt
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.LiftingConditionOfWindows
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ theorem mem_stdG_OL (x : Fin k → ↥LL.1) : x ∈ stdG ↥(OL LL) ↥LL.1 k �
   · intro h
     exact ⟨fun j => ⟨x j, h j⟩, rfl⟩
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def stdLat (M : ↥(GK K) →* Matrix (Fin k) (Fin k) ↥LL.1) (hO : ∀ g a b, M g a b ∈ OL LL)
     (hc : ∀ v, Continuous fun g => (M g).mulVec v) : Lat K LL where
   V := Fin k → ↥LL.1
@@ -119,7 +123,7 @@ theorem locC_eq_map {k : ℕ} (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i
     TruncatedSeriesCountingIdentities.locC Cx M g = (mapM (toK D.nd i) M (decS D.nd w (Br.iota D.nbr i w hw g))).map (phiK i w hw Cx) := by
   refine Matrix.ext fun a b => ?_
   change Cx.inc ((D.nbr i w hw).toLL (M _ a b)) = Cx.inc (Br.toLLK (D.nbr i w hw) (toK D.nd i (M _ a b)))
-  rw [GlobalTheory.WordJumpsCompare.toLLK_toK]
+  rw [Br.toLLK_alg]
   rfl
 
 theorem mapM_rDuO (h : GE D.nd) :

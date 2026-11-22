@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+
+@[expose] public section
+
 open GlobalTheory.NeedB Polynomial
 
 namespace GlobalTheory
@@ -49,7 +54,8 @@ theorem is_c1_of_finite_of_tsen_lang_systems : ∀ (F K : Type) [Field F] [Field
       rfl
     have key2 : MvPolynomial.eval (fun k => algebraMap F K (y k)) G
         = ∑ l, algebraMap F K (MvPolynomial.eval y (P l)) * b l := by
-      simp only [P, map_sum, MvPolynomial.eval_monomial, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [P, map_sum, MvPolynomial.eval_monomial, Finset.sum_mul]
       rw [Finset.sum_comm, MvPolynomial.eval_eq]
       refine Finset.sum_congr rfl (fun s hs => ?_)
       conv_lhs => rw [← b.sum_repr (G.coeff s)]

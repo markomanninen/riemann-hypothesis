@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ProEqvPfA
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ProEqvPfA
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.CoverCut LateralTheory.E.ProEqvPf
@@ -7,19 +11,11 @@ namespace LateralTheory.E.GluePf
 
 theorem sec_sub {R : Type} [CommRing R] (F : Shv R) (X : Scheme.{0}) [IsEmpty X] : Subsingleton (Sec F X) := by
   have hb : (⊥ : Sieve X) ∈ Scheme.etaleTopology X := Scheme.bot_mem_grothendieckTopology X
-  have h1 : (𝟙 (F.obj.obj (op X))) = 0 := by
-    apply ((F.cond (F.obj.obj (op X))) _ hb).isSeparatedFor.ext
-    intro Y f hf
-    exact hf.elim
   constructor
   intro a b
-  have ha : a = 0 := by
-    have := congrArg (fun φ => (φ : F.obj.obj (op X) ⟶ _).hom a) h1
-    simpa using this
-  have hb' : b = 0 := by
-    have := congrArg (fun φ => (φ : F.obj.obj (op X) ⟶ _).hom b) h1
-    simpa using this
-  rw [ha, hb']
+  have h1 := (isSheaf_iff_isSheaf_of_type _ _).1
+    ((Presheaf.isSheaf_iff_isSheaf_forget _ F.obj (forget (ModuleCat.{1} (ULift.{1} R)))).1 F.property)
+  exact (h1 ⊥ hb).isSeparatedFor.ext (fun _ _ hf => hf.elim)
 
 theorem pull_inj_of_initial {R : Type} [CommRing R] {F : Shv R} {X Y : Scheme.{0}} (hX : IsInitial X) (f : Y ⟶ X) (n : ℤ)
     (x : H R (sch.obj X) F n) (hx : pull R (sch.map f) F n x = 0) : x = 0 := by
@@ -149,7 +145,7 @@ theorem surj_fin (hM : MV) (H : Hyp) (q : ℕ) (i n : ℤ) {X P : Scheme.{0}} (�
         exact mem_ι _ p
       · have e : pull _ (sch.map φ) _ _ x' - z = pull _ (sch.map φ) _ _ (x' - x) + (pull _ (sch.map φ) _ _ x - z) := by
           rw [map_sub]; abel
-        rw [e, map_add, map_add, map_sub (pull _ (sch.map V.ι) _ _), hx j', sub_self, map_zero, add_zero,
+        rw [e, map_add (f := _), map_add (f := _), map_sub (pull _ (sch.map V.ι) _ _), hx j', sub_self, map_zero, add_zero,
           ← pull_comp, ← pull_comp, ← CategoryTheory.Functor.map_comp, ← CategoryTheory.Functor.map_comp]
         refine vanish_of_range C.ι _ ?_ n _ (by rw [map_sub, h2, sub_self])
         rintro _ ⟨p, rfl⟩

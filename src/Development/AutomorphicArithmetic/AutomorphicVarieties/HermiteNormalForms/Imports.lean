@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rypos
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Locfin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.RynePlace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Psdcone
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rypos
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Locfin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.RynePlace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Psdcone
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
 
 theorem UpperTheory.V.KT.good :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ), ConeExtensionAcyclic.Good (qc L N) (Psd L N) := by
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ), ConeExtensionAcyclic.Good (qc L N) (Psd L N) := by
   intro L _ _ _ N
   obtain ⟨hc, hs, hp, hd⟩ := psdcone L N
   refine ⟨fun h hh => ?_, ?_, hc, hs, ?_, hd⟩

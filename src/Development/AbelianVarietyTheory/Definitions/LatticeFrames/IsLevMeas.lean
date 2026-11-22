@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ParBoundW
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HalfLinearCocycle
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ParBoundW
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HalfLinearCocycle
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ structure Twist (D : D7) where
   chi : ℕ → ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ
   ξ : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ
 
-open Classical in
 
+open Classical in
 structure Twist.Is (c : Com D) (w : Twist D) : Prop where
   com : c.Is
   union : c.Pg = w.Pg ∪ w.Q
@@ -170,12 +174,6 @@ def LevInt (D : D7) : Prop := ForStepQ D fun c _ _ s s' p => ∀ ipD ip, IsMet c
     ∫ g in levSet s, flatInt p m X a φ (PiLocalization₂.val u₁ (PiTensorProduct.tprod ℂ v)) (PiLocalization₂.val u₂ (PiTensorProduct.tprod ℂ v))
       (((D.R.t : ℝ) / 2 : ℝ) : ℂ) g ∂s.ν = (∫ g, zReal p m X φ v g ∂mR) * conj (ip u₁ u₂)
 
-def StepExact (D : D7) : Prop := ForStepQ D fun c w k s s' p => ∀ ipD ip, IsMet c s ipD ip → ∀ m X, IsCovolOne (ratL s'.V s.V) m X →
-  ∀ mR, IsLevMeas s mR → ∀ φ v, RealConv p m X φ v mR → ∀ (u₁ u₂ : s.CC c) B, IsPar u₁ B → IsQ w k u₁ →
-    ∀ l, GlobalTheory.Cont.HolValueAt (fun z => GlobalTheory.LFun.LSD D c.S B (c.chT (k + 1)) (z + 1 / 2)) ((D.R.t : ℂ) / 2) l →
-      s'.pet (p.up φ (PiLocalization₂.val u₁ (PiTensorProduct.tprod ℂ v))) (p.up φ (PiLocalization₂.val u₂ (PiTensorProduct.tprod ℂ v))) =
-        conj ((GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift.volQ s'.V s'.ν : ℂ) * (l / dS (c.S : Set _) s s') * locQ c w k * ∫ g, zReal p m X φ v g ∂mR) * ip u₁ u₂
-
 def LFull (D : D7) : Prop := ∀ c : Com D, c.Is → ∀ B : GlobalTheory.LFun.Fam D.host.E,
   GlobalTheory.LFun.Bounded (GlobalTheory.LFun.above D.host.E (c.S : Set (HeightOneSpectrum (𝓞 D.host.F)))) B D.R.r ((D.R.r : ℝ) / 2) → ∀ k < D.R.m,
     ∃ H, H ≠ 0 ∧ IsHval c (c.S : Set _) k H ∧
@@ -190,9 +188,9 @@ def idxQ (PP : Pl D.host.E) (j : ℕ) : ℝ :=
 
 def volOne (PP : Pl D.host.E) (j : ℕ) : ℝ := zinv PP 0 D.R.r * ((Ideal.absNorm PP.asIdeal : ℝ) ^ (D.R.r * (j * D.R.t)))⁻¹
 
-open Classical in
 
-def Twist.S₀ (w : Twist D) : Set (HeightOneSpectrum (𝓞 D.host.F)) := (w.Pg.image fun PP => PP.under (𝓞 D.host.F) : Finset _)
+open Classical in
+def Twist.S₀ (w : Twist D) : Set (HeightOneSpectrum (𝓞 D.host.F)) := (w.Pg.image fun PP => (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) : Finset _)
 
 def kapOf (w : Twist D) (k : ℕ) (p : Step c s s') (m : Measure (WO s.V s'.V)) (X : Set (WO s.V s'.V)) (mR : Measure (GinfC s.V))
     (φ : PolF D s'.V.rank s.V.rank) (v : s.M.Vec) (H₀ : ℂ) : ℂ :=
@@ -219,10 +217,6 @@ def StepLam (D : D7) : Prop := ForStepQ D fun c w k s s' p => ∀ ipD ip ipD' ip
       ∀ x₁ : s'.CC c, (∀ y, ip' y x₁ = ip (p.io y) u₁) → IsPar x₁ (chainPar c B (k + 1)) ∧ IsQ w (k + 1) x₁ ∧
         ∀ (u₂ : s.CC c) (x₂ : s'.CC c), (∀ y, ip' y x₂ = ip (p.io y) u₂) → ip' x₁ x₂ * ipD' w₀ w₀ =
           conj (kapOf w k p m X mR φ v H₀ * GlobalTheory.LFun.LSD D c.S B (c.μ (k + 1)) ((1 + (D.R.t : ℂ)) / 2)) * ip u₁ u₂
-
-example (c : Com D) (PP : Pl D.host.E) (x : (AE D)ˣ) : qPar c PP x 0 = 0 := rfl
-
-example (c : Com D) (PP : Pl D.host.E) : blockL c 0 PP = 1 := by simp [blockL]
 
 end GlobalTheory.ChainTw
 

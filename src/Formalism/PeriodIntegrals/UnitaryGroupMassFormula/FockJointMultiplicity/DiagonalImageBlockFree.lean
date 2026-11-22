@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.PurCauchy
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.PurCauchy
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,8 @@ theorem diagonal_hypothesis : HypDiag := by
   intro σ m ι hι α P hP
   conv_lhs => rw [P.as_sum]
   conv_rhs => rw [P.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun e he => ?_
   have hm : MvPolynomial.monomial e (P.coeff e) = MvPolynomial.C (P.coeff e) * MvPolynomial.monomial e 1 := by
     rw [MvPolynomial.C_mul_monomial, mul_one]
@@ -126,7 +131,7 @@ theorem diagonal_image_block_free : HypFree := by
     rw [MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq]
     exact hC a
   next p q hp hq =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact hadd _ _ hp hq
   next p w hp =>
     rw [map_mul, MvPolynomial.aeval_X]

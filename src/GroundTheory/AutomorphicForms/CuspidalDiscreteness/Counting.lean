@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.Discrete
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.Discrete
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Set
 
@@ -67,8 +71,8 @@ theorem exists_natCast_mul_integral_of_isCompact {𝒦 : Set (FiniteAdeleRing (�
   obtain ⟨z, hz⟩ := GroundTheory.Global.exists_eq_of_forall_mem_adicCompletionIntegers K _ hmem
   exact ⟨z, hz⟩
 
-open scoped Classical in
 
+open scoped Classical in
 theorem exists_abs_repr_le :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (z : 𝓞 K) (i : Module.Free.ChooseBasisIndex ℤ (𝓞 K)),
       |(((RingOfIntegers.basis K).repr z i : ℤ) : ℝ)| ≤

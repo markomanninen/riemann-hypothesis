@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteMapOpen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteMapOpen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -130,7 +135,10 @@ theorem exists_point_of_evalYT_eq_zero (J : Ideal (MvPolynomial (Fin n) ℂ))
     exact hq'
   have key2 : ∀ F, e F = 0 → g F ∈ Q := by
     intro F hF
-    have hF' : F ∈ Q.comap (algebraMap _ _) := by rw [hQP]; exact hF
+    have hF' : F ∈ Q.comap (algebraMap _ _) := by
+      change F ∈ Ideal.under _ Q
+      rw [hQP]
+      exact hF
     exact hF'
   refine ⟨z, fun q hq => key q ?_, ?_, ?_⟩
   · rw [Ideal.Quotient.eq_zero_iff_mem.2 hq]
@@ -153,9 +161,9 @@ theorem exists_point_of_evalYT_eq_zero (J : Ideal (MvPolynomial (Fin n) ℂ))
 
 end FiniteMapOpen
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 open FiniteMapOpen in
-
 theorem FiniteMapOpen.proof : FiniteMapOpen.Statement := by
   classical
   intro n d J p hJ hinj hfin x hx U hU
@@ -189,14 +197,16 @@ theorem FiniteMapOpen.proof : FiniteMapOpen.Statement := by
     have hP0 : ∀ w, w ≠ x → P w ≠ 0 := by
       intro w hw h0
       obtain ⟨j, hj⟩ := Function.ne_iff.1 hw
-      have h1 := congrArg (fun q => Polynomial.coeff q j) h0
-      simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at h1
+      have h1 := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q j) h0
+      simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply, Polynomial.coeff_zero] at h1
       rw [Finset.sum_eq_single j (fun k _ hk => if_neg (fun h => hk (Fin.ext h))) (by simp)] at h1
       simp only [if_true] at h1
       exact hj (sub_eq_zero.1 h1)
+    have hsub : {w | (w ∈ zeroLocus J ∧ φ w = y₀) ∧ w ≠ x}.Finite :=
+      hfib.subset (by intro w hw; exact hw.1)
     have hbad : (⋃ w ∈ {w | (w ∈ zeroLocus J ∧ φ w = y₀) ∧ w ≠ x},
         {c : ℂ | (P w).eval c = 0}).Finite :=
-      (hfib.subset fun w hw => hw.1).biUnion fun w hw =>
+      hsub.biUnion fun w hw =>
         Polynomial.finite_setOfPred_isRoot (hP0 w hw.2)
     obtain ⟨c, hc⟩ := hbad.infinite_compl.nonempty
     refine ⟨c, fun w hw hwx h => hc ?_⟩

@@ -1,12 +1,16 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralLeOfMinor
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopX
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMulLeftFin
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapEqOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableRight
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermScaleMain
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrbEx
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisMeas
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralLeOfMinor
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopX
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMulLeftFin
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapEqOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableRight
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermScaleMain
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrbEx
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisMeas
+
+@[expose] public section
 
 namespace PositivityTheory.Rg.Rsw.Em
 

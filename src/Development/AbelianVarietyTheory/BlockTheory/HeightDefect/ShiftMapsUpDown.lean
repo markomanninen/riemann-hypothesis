@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,8 +35,8 @@ def offS (V W : HSp D) (S : Finset (HeightOneSpectrum (𝓞 D.host.F))) : AddSub
   add_mem' := by
     rintro x y ⟨hx, hx'⟩ ⟨hy, hy'⟩
     refine ⟨fun i j => ?_, fun v hv i j => ?_⟩
-    · rw [Matrix.add_apply, RingHom.map_add, hx i j, hy i j, add_zero]
-    · rw [Matrix.add_apply, RingHom.map_add, hx' v hv i j, hy' v hv i j, add_zero]
+    · rw [Matrix.add_apply, RingHom.map_add (f := _), hx i j, hy i j, add_zero]
+    · rw [Matrix.add_apply, RingHom.map_add (f := _), hx' v hv i j, hy' v hv i j, add_zero]
   neg_mem' := by
     rintro x ⟨hx, hx'⟩
     refine ⟨fun i j => ?_, fun v hv i j => ?_⟩
@@ -114,22 +118,10 @@ def HomLatSelfDual (D : D7) : Prop :=
   ∀ ψ : AddChar (AF D.host.F) ℂ, IsStdChar D ψ (-1) → ∀ (V W : HSp D) (S : Finset (HeightOneSpectrum (𝓞 D.host.F))),
     ∀ x ∈ offS V W S, x ∈ homLat V W S ↔ ∀ l ∈ homLat V W S, ψ (sympl V W x l) = 1
 
-def VacSignIndep (D : D7) : Prop :=
-  ∀ ψ : AddChar (AF D.host.F) ℂ, IsStdChar D ψ (-1) → ∀ θ : 𝓞 D.host.E, (θ : D.host.E) + star (θ : D.host.E) = 1 →
-    ∀ (V W : HSp D) (S : Finset (HeightOneSpectrum (𝓞 D.host.F))),
-      ∀ l ∈ homLat V W S, vacSignOf ψ (θ : D.host.E) V W l = vacSign ψ V W l
-
-def VacuumExists (Wl : WeilTied D X T) : Prop :=
-  ∀ V W : HSp D, V.rank ≠ W.rank → ∀ S : Finset (HeightOneSpectrum (𝓞 D.host.F)), ∃ Φ : X.Sch V W, Φ ≠ 0 ∧ IsVacuum Wl V W S Φ
-
 def HyperspecialFixesVacuum (Wl : WeilTied D X T) : Prop :=
   ∀ (V W : HSp D) (χ χ' : X.Chr), V.rank ≠ W.rank → ResEta D (T.eChr χ) V.rank → ResEta D (T.eChr χ') W.rank →
     ∀ S : Finset (HeightOneSpectrum (𝓞 D.host.F)), UnramOutside D S (T.eChr χ) → UnramOutside D S (T.eChr χ') →
       ∀ g ∈ KsphC V S, ∀ h ∈ KsphC W S, ∀ Φ : X.Sch V W, IsVacuum Wl V W S Φ → Wl.om V W χ χ' (g, h) Φ = Φ
-
-theorem IsVacuum.mono (Wl : WeilTied D X T) (V W : HSp D) {S S' : Finset (HeightOneSpectrum (𝓞 D.host.F))} (hS : S ⊆ S')
-    {Φ : X.Sch V W} (h : IsVacuum Wl V W S Φ) : IsVacuum Wl V W S' Φ :=
-  fun l hl => h l ⟨⟨hl.1.1, fun v hv => hl.1.2 v (hS hv)⟩, hl.2⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.ShiftMapsUpDown
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalVolumeLift
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalZero
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SiegelWeilAnisotropicUnitary
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalVolumeLift
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SiegelWeilAnisotropicUnitary
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ def wcoef (ν : Measure (WO A B)) (𝓕 : Set (WO A B)) (Φ₁ Φ₂ : WO A B �
 
 def rcoef (u₁ u₂ : GA D A → ℂ) : GA D A → ℂ := fun g => petersson A m (rTr A g u₁) u₂
 
-variable (A) in
 
+variable (A) in
 def hgtL (L : Lat A) (a : GL (Fin A.rank) (AE D)) (g : GA D A) : ℝ≥0 :=
   hgtAd D.sp.cm.sig (dblSp A).gram L a (io A (g, 1))
 
@@ -45,13 +49,13 @@ def integrand (ν : Measure (WO A B)) (𝓕 : Set (WO A B)) (L : Lat A) (a : GL 
     (u₁ u₂ : GA D A → ℂ) (s : ℂ) : GA D A → ℂ :=
   fun g => wcoef om ν 𝓕 Φ₁ Φ₂ g * npow (hgtL A L a g) (s - sZero A B) * rcoef m u₁ u₂ g
 
-variable (A) in
 
+variable (A) in
 def openOff (L : Lat A) (Sf : Finset (FinPl D)) : Set (GA D A) :=
   {g | ∀ v ∉ Sf, proj D.sp.cm.sig A.gram v g ∈ stabLoc D.sp.cm.sig A.gram L v}
 
-variable (A) in
 
+variable (A) in
 def SphFun (L : Lat A) (Sf : Finset (FinPl D)) (u : GA D A → ℂ) : Prop :=
   ∀ v ∉ Sf, ∀ k ∈ stabLoc D.sp.cm.sig A.gram L v, ∀ g, u (g * emb D.sp.cm.sig A.gram v k) = u g
 
@@ -85,17 +89,6 @@ structure Unram (ψ : AddChar (AF D.host.F) ℂ) (A B : HSp D) (χB : (AE D)ˣ �
   sph₁ : IsSphOff ψ A B LA LB Sf Φ₁
 
   sph₂ : IsSphOff ψ A B LA LB Sf Φ₂
-
-def SiegelWeilAll (D : D7) : Prop :=
-  ∀ (ψ : AddChar (AF D.host.F) ℂ) (A B : HSp D), 1 ≤ A.rank → A.rank < B.rank →
-    (wittIndex B = 0 ∨ A.rank + wittIndex B < B.rank) →
-  ∀ (χB : (AE D)ˣ →* Circle) (omh : WRep (dblSp A) B), IsWeilDatumO ψ (dblSp A) B 1 χB omh →
-  ∀ a : GL (Fin A.rank) (AE D), IsMaj A a →
-  ∀ (ν : Measure (WO A B)) (𝓕 : Set (WO A B)), IsCovolOne (ratL B A) ν 𝓕 →
-  ∀ mH : Measure (GA D B), mH.IsHaarMeasure →
-  ∀ φ : WO (dblSp A) B → ℂ, IsThetaFunO ψ (dblSp A) B φ → IsKFinVec omh (Khat A a) φ →
-    (∀ g, Integrable (AutomorphicL2Unitary.descend (GQ B) fun h => thetaKO omh g h φ) (autMeasure B mH)) ∧
-    Eis.EisValueAt A (flat A a (swSec A B omh ν 𝓕 φ) (sZero A B)) (sZero A B) (ThetaMean.thetaMean omh mH φ)
 
 def GlobalFormAt (A : HSp D) (L : Lat A) : Prop :=
   ∀ (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (B : HSp D) (χA χB : (AE D)ˣ →* Circle) (sA : RealMat A)

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.SchurRelationsDiscreteSeries
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SchurRelationsDiscreteSeries
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+
+@[expose] public section
 
 namespace PI.WBL.NIS
 

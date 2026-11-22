@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.ExistsIntBasis
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.ExistsIntBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,13 +56,15 @@ theorem ratV_mem_latLoc {Λ : Set (Fin n → E)} {x : Fin n → E} (hx : x ∈ �
   Submodule.subset_span ⟨x, hx, rfl⟩
 
 theorem sdc_isOpen_latLoc (Λ : Set (Fin n → E))
-    (hL : ∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsLattice E L ∧ (L : Set (Fin n → E)) = Λ) :
+    (hL : ∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsFullLattice E L ∧ (L : Set (Fin n → E)) = Λ) :
     IsOpen (latLoc (E := E) v Λ : Set (Fin n → Fv F v ⊗[F] E)) := by
   classical
   have : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E
   obtain ⟨L, hLat, rfl⟩ := hL
   obtain ⟨d, b, hb⟩ := exists_int_basis (F := F) (E := E)
-  obtain ⟨N, hN, hNw⟩ := exists_int_smul_mem_all L hLat.span_eq_top
+  letI : Submodule.IsFullLattice E L := hLat
+  obtain ⟨N, hN, hNw⟩ := exists_int_smul_mem_all L
+    (Submodule.IsFullLattice.span_eq_top (A := E) (M := L))
     (fun p : Fin n × Fin d => (Pi.single p.1 (b p.2) : Fin n → E))
   have hNF : IsUnit ((N : F)) := by
     rw [isUnit_iff_ne_zero]
@@ -162,7 +168,9 @@ theorem sdc_isCompact_latLoc (Λ : Set (Fin n → E))
   exact (isCompact_univ_pi fun _ => PI.AdicCompletionValuation.isCompact_adicCompletionIntegers F v).image
     (continuous_finsetSum _ fun i _ => by fun_prop)
 
-theorem topW_holds (Λ : Set (Fin n → E)) (a : ℕ) : TopW v Λ a := by
+theorem topW_holds (Λ : Set (Fin n → E)) (a : ℕ)
+    (hFull : ∃ L : Submodule (𝓞 E) (Fin n → E),
+      Submodule.IsFullLattice E L ∧ (L : Set (Fin n → E)) = Λ) : TopW v Λ a := by
   intro hL
   have e : LamT (E := E) v Λ a =
       Set.pi Set.univ (fun _ : Fin a => (latLoc (E := E) v Λ : Set (Fin n → Fv F v ⊗[F] E))) := by
@@ -170,7 +178,7 @@ theorem topW_holds (Λ : Set (Fin n → E)) (a : ℕ) : TopW v Λ a := by
     simp [LamT, Set.mem_pi]
   rw [e]
   exact ⟨isCompact_univ_pi fun _ => sdc_isCompact_latLoc v Λ hL,
-    isOpen_set_pi Set.finite_univ fun _ _ => sdc_isOpen_latLoc v Λ hL⟩
+    isOpen_set_pi Set.finite_univ fun _ _ => sdc_isOpen_latLoc v Λ hFull⟩
 
 end TopWs
 

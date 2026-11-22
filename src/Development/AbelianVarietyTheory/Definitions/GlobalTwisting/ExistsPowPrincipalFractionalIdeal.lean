@@ -1,20 +1,24 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Formalism.LocalRingCardinality.DataForms
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTwoTorsionCMPointAllConjugates
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaComplexConjugationCompatible
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumTranslateConjugateJetBound
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeanSquareEvenThetaConjugateLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthonormalRealBasisComplexCoordinates
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmFiniteAdeleStrongApproxModAdelicIdeal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTraceDualFamilyInverseHalfDifferent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicData
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IntegersMemInverseHalfDifferent
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Formalism.LocalRingCardinality.DataForms
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTwoTorsionCMPointAllConjugates
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaComplexConjugationCompatible
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumTranslateConjugateJetBound
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeanSquareEvenThetaConjugateLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthonormalRealBasisComplexCoordinates
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmFiniteAdeleStrongApproxModAdelicIdeal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTraceDualFamilyInverseHalfDifferent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicData
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IntegersMemInverseHalfDifferent
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,6 @@ abbrev imM : IntermediateField ℚ ℂ := ι.toRatAlgHom.fieldRange
 
 def imEquiv : LL ≃ₐ[ℚ] imM ι := AlgEquiv.ofInjectiveField ι.toRatAlgHom
 
-@[simp] theorem coe_imEquiv (x : LL) : ((imEquiv ι x : imM ι) : ℂ) = ι x := rfl
-
 instance imM_numberField : NumberField (imM ι) where
   to_finiteDimensional := LinearEquiv.finiteDimensional (imEquiv ι).toLinearEquiv
 
@@ -39,24 +41,6 @@ def rhoOf (s : LL →+* ℂ) : imM ι →ₐ[ℚ] ℂ := s.toRatAlgHom.comp (imE
 
 @[simp] theorem rhoOf_imEquiv (s : LL →+* ℂ) (x : LL) : rhoOf ι s (imEquiv ι x) = s x := by
   simp [rhoOf]
-
-def rhoEquiv : (LL →+* ℂ) ≃ (imM ι →ₐ[ℚ] ℂ) where
-  toFun := rhoOf ι
-  invFun ρ := (ρ.comp (imEquiv ι).toAlgHom).toRingHom
-  left_inv s := by ext x; simp
-  right_inv ρ := by
-    ext x
-    obtain ⟨y, rfl⟩ := (imEquiv ι).surjective x
-    simp
-
-@[simp] theorem rhoEquiv_apply (s : LL →+* ℂ) : rhoEquiv ι s = rhoOf ι s := rfl
-
-theorem sum_rhoOf (f : (imM ι →ₐ[ℚ] ℂ) → ℝ) : ∑ s : LL →+* ℂ, f (rhoOf ι s) = ∑ ρ, f ρ :=
-  (rhoEquiv ι).sum_comp f
-
-theorem card_emb : Fintype.card (LL →+* ℂ) = Module.finrank ℚ (imM ι) := by
-  rw [NumberField.Embeddings.card LL ℂ]
-  exact (imEquiv ι).toLinearEquiv.finrank_eq
 
 end Image
 
@@ -158,9 +142,6 @@ section Line
 
 variable {D : D7} {M : IntermediateField ℚ ℂ} [NumberField M]
 
-def intT (hM : ∀ τ x, embT D τ x ∈ M) (τ : D.what₂.Tau) (b : 𝓞 D.host.E) : 𝓞 M :=
-  RingOfIntegers.mapRingHom ((embT D τ).codRestrict M (hM τ)) b
-
 theorem ellT_ne_bot (hM : ∀ τ x, embT D τ x ∈ M) (τ : D.what₂.Tau) : ellT D M τ ≠ ⊥ := by
   first
   | exact @_root_.GlobalTheory.InverseHalfDifferent.ellT_ne_bot
@@ -175,8 +156,8 @@ theorem ne_zero_of_span_eq (hM : ∀ τ x, embT D τ x ∈ M) {τ : D.what₂.Ta
   rintro rfl
   exact ellT_ne_bot hM τ (by rw [← ha, Submodule.span_singleton_eq_bot])
 
-omit [NumberField M] in
 
+omit [NumberField M] in
 theorem exp_neg_logMet {Λ : AddSubgroup ℂ} {ρ : M →ₐ[ℚ] ℂ} (hΛ : 0 < area (lamConj M ρ Λ)) {a : M}
     (ha : a ≠ 0) : Real.exp (-logMet M Λ ρ a) = area (lamConj M ρ Λ) / (Real.pi * ‖ρ a‖ ^ 2) := by
   have h1 : 0 < ‖ρ a‖ := norm_pos_iff.2 ((map_ne_zero ρ).2 ha)
@@ -184,8 +165,8 @@ theorem exp_neg_logMet {Λ : AddSubgroup ℂ} {ρ : M →ₐ[ℚ] ℂ} (hΛ : 0 
   unfold logMet
   rw [Real.exp_neg, Real.exp_log (by positivity), inv_div]
 
-omit [NumberField M] in
 
+omit [NumberField M] in
 theorem logMet_mul {Λ : AddSubgroup ℂ} {ρ : M →ₐ[ℚ] ℂ} (hΛ : 0 < area (lamConj M ρ Λ)) {c a : M}
     (hc : c ≠ 0) (ha : a ≠ 0) :
     logMet M Λ ρ (c * a) = 2 * Real.log ‖ρ c‖ + logMet M Λ ρ a := by
@@ -220,7 +201,7 @@ theorem index_span_mul (c : 𝓞 M) {a : M} (ha : a ≠ 0) :
       exact ⟨r, by simp [f, mul_smul]⟩
   change AddSubgroup.relIndex _ _ = _
   rw [h1, h2, AddSubgroup.relIndex_map_map_of_injective _ _ hf, AddSubgroup.relIndex_top_right]
-  rfl
+  exact (Ideal.absNorm_eq_index _).symm
 
 theorem sum_log_norm (c : 𝓞 M) (hc : c ≠ 0) :
     ∑ ρ : M →ₐ[ℚ] ℂ, Real.log ‖ρ (c : M)‖ = Real.log (Ideal.absNorm (Ideal.span {c}) : ℕ) := by
@@ -350,27 +331,6 @@ namespace ExtraTie
 variable {G : GlobalExtra LL D.what₂.Tau} {a : D.what₂.Tau → imM ι} (T : ExtraTie D cc δ ι G a)
 include T
 
-theorem ne_zero (τ : D.what₂.Tau) : a τ ≠ 0 := ne_zero_of_span_eq T.data.1 (T.gen τ)
-
-theorem om_eq (τ : D.what₂.Tau) (s : LL →+* ℂ) :
-    G.Om τ s = area (lamConj (imM ι) (rhoOf ι s) (lamOf D cc δ)) /
-      (Real.pi * ‖rhoOf ι s (a τ)‖ ^ 2) := by
-  rw [T.om, exp_neg_logMet (area_lamConj_pos T.crv T.data _) (T.ne_zero τ)]
-
-theorem log_om (τ : D.what₂.Tau) (s : LL →+* ℂ) :
-    Real.log (G.Om τ s) = -logMet (imM ι) (lamOf D cc δ) (rhoOf ι s) (a τ) := by
-  rw [T.om, Real.log_exp]
-
-theorem th_sq (s : LL →+* ℂ) :
-    G.thOne s ^ 2 = th0NormSq D (imM ι) (lamOf D cc δ) (rhoOf ι s) :=
-  T.th s _ (Classical.epsilon_spec (exists_isThetaZero T.crv T.data _))
-
-theorem logOmMean_eq (τ : D.what₂.Tau) :
-    G.logOmMean τ = meanLogOm D (lamOf D cc δ) (imM ι) τ := by
-  rw [meanLogOm_eq_of_gen T.data.1 (area_lamConj_pos T.crv T.data) (T.gen τ), GlobalExtra.logOmMean,
-    card_emb ι, ← sum_rhoOf ι, ← Finset.sum_neg_distrib]
-  simp only [T.log_om]
-
 end ExtraTie
 
 namespace PerTie
@@ -378,48 +338,7 @@ namespace PerTie
 variable (T : PerTie D cc δ)
 include T
 
-theorem crv : Crv D cc δ := T.1
-
-theorem data : DataIn D (tor0 D cc δ) (coefM D) := T.2.1
-
-theorem logOmMean_eq (τ : D.what₂.Tau) :
-    D.gx.logOmMean τ = meanLogOm D (lamOf D cc δ) (coefM D) τ := by
-  obtain ⟨a, h⟩ := (perTie_iff D cc δ).1 T
-  exact h.logOmMean_eq τ
-
-theorem th_sq (s : D.what₂.LL →+* ℂ) :
-    D.gx.thOne s ^ 2 = th0NormSq D (coefM D) (lamOf D cc δ) (rhoOf D.what₂.embLL s) := by
-  obtain ⟨a, h⟩ := (perTie_iff D cc δ).1 T
-  exact h.th_sq s
-
 end PerTie
-
-example (T : PerTie D cc δ) :
-    ¬ PerTie (withGx D { D.gx with
-      thOne := fun s => 2 * D.gx.thOne s
-      thOne_pos := fun s => mul_pos two_pos (D.gx.thOne_pos s) }) cc δ := by
-  rw [perTie_withGx_iff]
-  rintro ⟨a, h⟩
-  have h1 := h.th_sq D.what₂.embLL
-  rw [← T.th_sq] at h1
-  have := D.gx.thOne_pos D.what₂.embLL
-  simp only at h1
-  nlinarith
-
-example {G G' : GlobalExtra LL D.what₂.Tau} {a a' : D.what₂.Tau → imM ι} (T : ExtraTie D cc δ ι G a)
-    (T' : ExtraTie D cc δ ι G' a') (τ : D.what₂.Tau) : G.logOmMean τ = G'.logOmMean τ := by
-  rw [T.logOmMean_eq, T'.logOmMean_eq]
-
-example (h : Crv D cc δ) (hM : DataIn D (tor0 D cc δ) (imM ι)) (a : D.what₂.Tau → imM ι)
-    (τ : D.what₂.Tau) (ha : a τ ≠ 0) (s : LL →+* ℂ) :
-    (gxOf h hM (fun τ => 2 * a τ)).Om τ s = (gxOf h hM a).Om τ s / 4 := by
-  change Real.exp _ = Real.exp _ / 4
-  rw [exp_neg_logMet (area_lamConj_pos h hM _) ha,
-    exp_neg_logMet (area_lamConj_pos h hM _) (mul_ne_zero two_ne_zero ha), map_mul, map_ofNat, norm_mul]
-  simp only [Complex.norm_ofNat]
-  ring
-
-example : ¬ PerTie D ⊥ δ := fun T => T.crv.1.1 rfl
 
 end Comparison₂
 
@@ -435,7 +354,8 @@ theorem sum_dual_family {r : ℕ} {a a' : Fin r → D.host.E}
   refine GlobalTheory.OrthoCoord.embT_indep
     (fun τ => ∑ k, embT D τ (D.host.conj (a' k)) * embT D σ (a k) - if τ = σ then 1 else 0) (fun t => ?_) τ
   have h1 := congrArg (embT D σ) (h t)
-  rw [map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at h1
   have h2 : ∀ k, embT D σ ((Algebra.trace D.host.K D.host.E (t * D.host.conj (a' k))) • a k) =
       ∑ τ, embT D τ (D.host.conj (a' k)) * embT D σ (a k) * embT D τ t := fun k => by
     rw [Algebra.smul_def, map_mul]
@@ -476,7 +396,6 @@ theorem mem_ellT_iff {M : IntermediateField ℚ ℂ} [NumberField M] (hM : ∀ �
       | smul c x _ hx =>
         have hc : IsIntegral ℤ (((c : M) : ℂ)) := map_isIntegral_int (M.val : M →+* ℂ) c.isIntegral_coe
         convert hc.mul hx using 1
-        · rfl
         rw [Finset.mul_sum]
         refine Finset.sum_congr rfl fun σ _ => ?_
         rw [← mul_assoc]
@@ -549,7 +468,6 @@ theorem span_inv_eq_ellT {M : IntermediateField ℚ ℂ} [NumberField M] (hM : �
         mul_div_cancel_right₀ _ ((map_ne_zero ψ).2 hα)]
       exact map_isIntegral_int ψ r.isIntegral_coe
     convert hc.mul h2 using 1
-    · rfl
     change ((c : M) : ℂ) * ((γ⁻¹ : M) : ℂ) * ψ y = _
     rw [IntermediateField.coe_inv]
     ring
@@ -559,10 +477,9 @@ theorem span_inv_eq_ellT {M : IntermediateField ℚ ℂ} [NumberField M] (hM : �
       intro n z hz
       induction hz using Submodule.pow_induction_on_left' with
       | algebraMap r => simpa using map_isIntegral_int ψ r.isIntegral_coe
-      | add _ _ _ _ _ h1 h2 => simpa only [map_add, mul_add] using h1.add h2
+      | add _ _ _ _ _ h1 h2 => simpa only [map_add (f := _), mul_add] using h1.add h2
       | mem_mul m hm i z _ hz =>
         convert (hx m hm).mul hz using 1
-        · rfl
         rw [map_mul, pow_succ]; ring
     have h1 := key h α (hA ▸ Submodule.mem_span_singleton_self α)
     rw [← hγ, ← mul_pow] at h1
@@ -612,13 +529,6 @@ theorem exists_extraTie_of_crv {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (h : Crv 
         ExtraTie D cc δ (M.val : M →+* ℂ) G a := by
   obtain ⟨M, hN, h0, hM, ha⟩ := exists_field_gen h M₀
   exact ⟨M, hN, h0, exists_extraTie h M hM ha⟩
-
-example (D : D7) : ∃ (δ : ℂ) (LL : Type) (_ : Field LL) (_ : NumberField LL) (ι : LL →+* ℂ)
-    (G : GlobalExtra LL D.what₂.Tau) (a : D.what₂.Tau → imM ι), ExtraTie D ⊤ δ ι G a := by
-  obtain ⟨δ, hδ⟩ := IsAlgClosed.exists_pow_nat_eq (TaylorLogMetric.discr (lamOf D ⊤ 1)) (n := 12) (by norm_num)
-  have h : Crv D ⊤ δ := ⟨⟨top_ne_bot, by rw [Ideal.absNorm_top]; exact Nat.coprime_one_left _⟩, hδ⟩
-  obtain ⟨M, hN, -, G, a, T⟩ := exists_extraTie_of_crv h ⊥
-  exact ⟨δ, M, inferInstance, hN, _, G, a, T⟩
 
 end Free
 

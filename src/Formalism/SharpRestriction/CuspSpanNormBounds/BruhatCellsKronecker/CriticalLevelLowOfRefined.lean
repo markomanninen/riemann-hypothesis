@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
-import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,7 @@ theorem TfFacts.core (F : TfFacts D large₂ C' Cl Cu C0) {C3 : ℝ} (hCl : 4 �
   have hQ : ((D.R.k : ℝ) ^ 4) ^ (2 * D.R.rS + 1) ≤ ∏ j ∈ Finset.Ioc 1 D.R.m, bOne D τ j := by
     have hc : (Finset.Ioc 1 D.R.m).card = 2 * D.R.rS + 1 := by rw [Nat.card_Ioc]; omega
     rw [← hc, ← Finset.prod_const]
-    refine Finset.prod_le_prod (fun j _ => by positivity) (fun j hj => ?_)
+    refine Finset.prod_le_prod₀ (fun j _ => by positivity) (fun j hj => ?_)
     rw [Finset.mem_Ioc] at hj
     refine le_trans ?_ (F.hbk τ j (by omega) hj.2)
     rw [← Real.rpow_natCast]
@@ -333,7 +337,7 @@ theorem TfFacts.tframe (F : TfFacts D large₂ C' Cl Cu C0) {C3 : ℝ} (hCl : 4 
   have hg1 : 1 ≤ (gg D ^ 2) ^ D.R.k := one_le_pow₀ (one_le_pow₀ (by nlinarith))
   have hprod : (gg D ^ 2) ^ D.R.k ≤ ∏ τ, (Tcrit D w τ / Tr D w) ^ D.R.k := by
     have h1 : ∏ _τ : D.what₂.Tau, (gg D ^ 2) ^ D.R.k ≤ ∏ τ, (Tcrit D w τ / Tr D w) ^ D.R.k :=
-      Finset.prod_le_prod (fun τ _ => by positivity) (fun τ _ => pow_le_pow_left₀ (by positivity) (hτ τ) _)
+      Finset.prod_le_prod₀ (fun τ _ => by positivity) (fun τ _ => pow_le_pow_left₀ (by positivity) (hτ τ) _)
     refine le_trans ?_ h1
     rw [Finset.prod_const, Finset.card_univ, D.what₂.card_Tau]
     have hf : 1 ≤ D.R.f := by

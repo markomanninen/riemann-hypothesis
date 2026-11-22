@@ -1,14 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
 
 namespace GlobalTheory
 
-open Polynomial in
 
+open Polynomial in
 theorem finsum_embeddings_over_eq_sum_roots {F L : Type} [Field F] [Field L] [Algebra F L]
     [Algebra.IsSeparable F L] (pb : PowerBasis F L) (τ : F →+* ℂ) {δ : ℕ} (r : Fin δ → ℂ)
     (hr : ∏ i, (X - C (r i)) = (minpoly F pb.gen).map τ) (g : (L →+* ℂ) → ℝ) (g' : ℂ → ℝ)
@@ -76,16 +81,16 @@ theorem measurable_sum_embeddings_over_generic_point :
     exact (MvPolynomial.continuous_eval _).measurable
   have hev : ∀ f, Measurable (ev f) := fun f => (hpm _).div (hpm _)
   let cf : (σ → ℂ) → Fin pb.dim → ℂ := fun t i => ev ((minpoly F pb.gen).coeff i) t
-  have hcf : Measurable cf := measurable_pi_lambda _ fun i => hev _
+  have hcf : Measurable cf := Measurable.of_eval fun i => hev _
   let G : (σ → ℂ) → ℂ → ℝ := fun t z =>
     Nf fun i => ∑ l : Fin pb.dim, ev (pb.basis.repr (b i) l) t * z ^ (l : ℕ)
   refine ⟨fun t => ∑ k, G t (ρ (cf t) k), ?_, ?_⟩
-  · refine Finset.measurable_sum _ fun k _ => hNf.comp (measurable_pi_lambda _ fun i => ?_)
+  · refine Finset.measurable_sum _ fun k _ => hNf.comp (Measurable.of_eval fun i => ?_)
     refine Finset.measurable_sum _ fun l _ => (hev _).mul (Measurable.pow_const ?_ _)
     exact (measurable_pi_apply k).comp (hρm.comp hcf)
   · intro t ht
     have hinj : Function.Injective (MvPolynomial.eval₂Hom sg t : R →+* ℂ) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro p hp
       by_contra h
       exact ht p h hp
@@ -115,7 +120,8 @@ theorem measurable_sum_embeddings_over_generic_point :
     · rw [hρ]
       have hmon : (minpoly F pb.gen).Monic := minpoly.monic pb.isIntegral_gen
       conv_rhs => rw [hmon.as_sum, pb.natDegree_minpoly]
-      rw [Polynomial.map_add, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Polynomial.map_add (f := _), Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
         Finset.sum_range]
       simp [cf, hτ]
     · intro P hP
@@ -123,7 +129,8 @@ theorem measurable_sum_embeddings_over_generic_point :
       congr 1
       funext i
       conv_lhs => rw [← pb.basis.sum_repr (b i)]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [Algebra.smul_def, map_mul, pb.basis_eq_pow, map_pow, ← hτ, ← hP]
       rfl

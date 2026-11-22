@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
+
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
 
@@ -20,8 +25,8 @@ theorem good_baseChange : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](B
       | zero => simp
       | tmul b x =>
         simp [e₀, e₁, LinearMap.baseChange_tmul, AlgebraTensorModule.cancelBaseChange_tmul]
-      | add y y' h h' => simp only [tmul_add, map_add, h, h']
-    | add v v' h h' => simp only [map_add, h, h']
+      | add y y' h h' => simp only [tmul_add, map_add (f := _), h, h']
+    | add v v' h h' => simp only [map_add (f := _), h, h']
   have hw' : d.lTensor C (e₁ w) = 0 := by rw [← hnat, hw, map_zero]
   have hmem := hd C hC (e₁ w) hw' k
   have hsmul : r k • e₁ w = e₁ (algebraMap A B (r k) • w) := by
@@ -38,7 +43,7 @@ theorem good_baseChange : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](B
         simp [LinearMap.baseChange_tmul, x.2]
       refine ⟨c ⊗ₜ ⟨_, hx⟩, ?_⟩
       simp [e₁, AlgebraTensorModule.cancelBaseChange_symm_tmul]
-    | add u u' h h' => rw [map_add, map_add]; exact Submodule.add_mem _ h h'
+    | add u u' h h' => rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ h h'
   obtain ⟨u, hu⟩ := hmem
   have := key u
   rw [hu, hsmul, LinearEquiv.symm_apply_apply] at this

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerTail
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinJoinPointVertDiv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerTail
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinJoinPointVertDiv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -8,8 +13,8 @@ namespace GroundTheory.Heights₂.Heights.NumbersDVR
 open MvPolynomial
 open IndefiniteRowSideFullHecke.NumbersDVR.Bundles (liftVar pullDeg joinCoord mcIdeal IsVertDiv)
 
-open JoinPointVerticalDivisor in
 
+open JoinPointVerticalDivisor in
 theorem JoinVerticalDivisor.proof : JoinVerticalDivisor.Statement := by
   intro O _ _ _ Ω _ _ K _ ι _ x K' _ ι' _ z b f g hD
   obtain ⟨⟨α, β, hf, hg, hb⟩, hfP, hgP, hU⟩ := hD

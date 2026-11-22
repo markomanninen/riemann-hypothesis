@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
-import Formalism.DropLevelBounds.ThBounds
-import Formalism.IncomingBounds.IncomingBound
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
+public import Formalism.DropLevelBounds.ThBounds
+public import Formalism.IncomingBounds.IncomingBound
+
+@[expose] public section
 
 open scoped BigOperators
 open Classical
@@ -55,7 +59,7 @@ private theorem ev_iff' {d : ℕ} [NeZero d] (hd : Odd d) (ev : ZMod d → ZMod 
       map_add, map_natCast, map_natCast, ZMod.natCast_eq_one_iff_odd.2 hd, ZMod.natCast_eq_one_iff_odd.2 hi,
       add_sub_cancel_right]
   have hres : (((s + (d : ZMod (2 * d)) - i).val : ℕ) : ZMod d) = ((s.val : ℕ) : ZMod d) - i := by
-    rw [cast_val_eq_castHom_of_double, cast_val_eq_castHom_of_double, map_sub, map_add, map_natCast, map_natCast, ZMod.natCast_self, add_zero]
+    rw [cast_val_eq_castHom_of_double, cast_val_eq_castHom_of_double, map_sub, map_add (f := _), map_natCast, map_natCast, ZMod.natCast_self, add_zero]
   rw [hpar, hres]
 
 private theorem least_level_odd (k l : ℕ) (hl : 2 ≤ l) : Odd (RF.i0 k l) := by

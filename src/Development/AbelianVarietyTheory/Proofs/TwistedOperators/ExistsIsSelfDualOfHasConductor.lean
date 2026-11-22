@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 open scoped NNReal ENNReal
@@ -48,15 +52,17 @@ theorem exists_isSelfDual_of_hasConductor (h : HasConductor ψ c) : ∃ ν : Mea
   have : (a • ν₀).IsAddHaarMeasure := .nnreal_smul ν₀ ha0
   refine ⟨a • ν₀, (isSelfDual_iff_vol h _).2 ?_⟩
   have hval : ((a • ν₀) (𝒪[k] : Set k)).toReal = (Real.sqrt (nabs k c))⁻¹ := by
-    rw [Measure.smul_apply, h1, ENNReal.smul_def, smul_eq_mul, mul_one, ENNReal.coe_toReal]
+    rw [smul_apply, h1, ENNReal.smul_def, smul_eq_mul, mul_one, ENNReal.coe_toReal]
     rfl
   rw [hval, inv_pow, Real.sq_sqrt hn.le, inv_mul_cancel₀ hn.ne']
 
 theorem isUnitVol_iff_isSelfDual (h : HasConductor ψ 1) (ν : Measure k) : IsUnitVol ν ↔ IsSelfDual ψ ν := by
   constructor
-  · exact isSelfDual_of_isUnitVol ν h
+  · intro hν
+    haveI := hν.1
+    exact isSelfDual_of_isUnitVol ν h hν
   · intro hsd
-    have := hsd.1
+    haveI : ν.IsAddHaarMeasure := hsd.1
     have e := (isSelfDual_iff_vol h ν).1 hsd
     rw [nabs_one, mul_one] at e
     have hnn : 0 ≤ (ν (𝒪[k] : Set k)).toReal := ENNReal.toReal_nonneg

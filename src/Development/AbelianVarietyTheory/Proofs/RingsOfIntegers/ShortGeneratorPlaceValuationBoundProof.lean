@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.ShortVectorBound.ScaledLatticesInSupLattices
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AdmissibleColumnsLeAndHarmonicMapCover
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ModuliUnivEtaKilled
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.EqZeroOfComplex
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValuationLowerBoundHostFieldAllPlaces
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.TotalDegreeLeOfRowDeg
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CardFunLevQ
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ShortValueBoundOfCoprime
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ShortBoundOfTrivAt
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.EvROfFrMapFromTest
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.DvdOfCastDvd
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsIntegralZpowOfPowEqOne
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EmbEqOfInPsi
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightOnDatum
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.ShortVectorBound.ScaledLatticesInSupLattices
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AdmissibleColumnsLeAndHarmonicMapCover
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ModuliUnivEtaKilled
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.EqZeroOfComplex
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValuationLowerBoundHostFieldAllPlaces
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.TotalDegreeLeOfRowDeg
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CardFunLevQ
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ShortValueBoundOfCoprime
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ShortBoundOfTrivAt
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.EvROfFrMapFromTest
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.DvdOfCastDvd
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsIntegralZpowOfPowEqOne
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EmbEqOfInPsi
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightOnDatum
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -262,7 +266,7 @@ theorem shortBound : ShortBoundSt := by
   have hbe := hs.beta j hj w.n (h.kPsi j hj) Λ hU hTb
   have hβ : betaH (Dw := T.Q.Dw j) T.Q.c Λ ≠ 0 ∧ BetaIs (Dw := T.Q.Dw j) T.Q.c Λ (betaH (Dw := T.Q.Dw j) T.Q.c Λ) := by
     unfold betaH
-    rw [dif_pos hbe]
+    rw [dite_eq_left hbe]
     exact ⟨hbe.choose_spec.1, hbe.choose_spec.2.1⟩
   obtain ⟨ef1, ef2, ef3⟩ := GlobalTheory.PlaceInt.eF_transfer _ _ _ _ (T.Q.Xo j) T.Q.c w.n (T.dδ j w.n) Λ
   obtain ⟨T', iT, r, io₂, y₂, C, ζ, z, tp, F, hr, hiT, hfr, hio, hC, hrat, hζ, hz, hgi, htp, hF, hval⟩ :=

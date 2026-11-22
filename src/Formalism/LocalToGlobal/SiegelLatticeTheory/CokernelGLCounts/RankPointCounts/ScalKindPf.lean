@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.ExistsNeZeroMem
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumBAt
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.ExistsNeZeroMem
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumBAt
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,8 @@ def wv (F' : LFlag S r T') (v : Fin (r + 1) → E) : S.V := ∑ j, v j • F'.fl
 
 theorem hT_wv (F : LFlag S r T) (F' : LFlag S r T') (v : Fin (r + 1) → E) (i : Fin (r + 1)) :
     S.hT (F.fl.fvec i) (wv F' v) = (Zhat F.fl F'.fl *ᵥ v) i := by
-  simp only [wv, Matrix.mulVec, dotProduct, map_sum, map_smul, smul_eq_mul, zhat_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [wv, Matrix.mulVec, dotProduct, map_sum, map_smul, smul_eq_mul, zhat_apply]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 
 theorem wv_eq (F' : LFlag S r T') (v : Fin (r + 1) → E) :
@@ -230,14 +235,14 @@ theorem zeta_core (k : ℕ) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V 
     have hAv : A' *ᵥ v = b := by
       rw [hvdef, Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ (isUnit_iff_ne_zero.2 hA), Matrix.one_mulVec]
     have hvz : ∀ i, S.hT (F.fl.fvec i) ((1 : E) • F.fl.z + wv F' v) = 0 := fun i => by
-      rw [one_smul, map_add, hermitian_frame_z, hT_wv, hAv]
+      rw [one_smul, map_add (f := _), hermitian_frame_z, hT_wv, hAv]
       by_cases hi : i = Fin.last r
       · subst hi; simp [hb]
       · simp [hb, hi, Pi.single_eq_of_ne hi]
     obtain ⟨v'', hl'', hv''⟩ := transfer 1 v hvz
     have hA''v : A'' *ᵥ v'' = b := funext fun i => by
       have := hv'' i
-      rw [one_smul, map_add, hermitian_frame_z, hT_wv] at this
+      rw [one_smul, map_add (f := _), hermitian_frame_z, hT_wv] at this
       by_cases hi : i = Fin.last r
       · subst hi
         rw [if_pos rfl] at this
@@ -306,7 +311,7 @@ theorem sgnL_succ : sgnL (D := D) (D.R.rS + 1) = sgnL (D := D) D.R.rS := by
   rw [Fin.prod_univ_castSucc]
   simp
 
-theorem dmin_eq {u u' : D.what₂.Word} {F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
+theorem dmin_eq {u u' : D.what₂.Word} {F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
     {w : Point D.host.E (D.R.rS + 1)} (hc : IsInCell (ZhatOM (ZhatL (lf D F0) F')) w) (l : ℕ) (h : l ≤ D.R.rS + 1) :
     Dmin w l = sgnL l * leadMinorE (ZhatL (lf D F0) F') l := by
   obtain ⟨L, U, hL, hU, hZ⟩ := hc
@@ -317,15 +322,15 @@ theorem dmin_eq {u u' : D.what₂.Word} {F' : LFlag (VS D) D.R.rS ((Tu D u' : �
     exact det_sub_ZhatOM h _
   have hD : Dmin w l = ((ptMat w).submatrix (Fin.castLE h) (Fin.castLE h)).det := by
     unfold Dmin
-    rw [dif_pos h]
+    rw [dite_eq_left h]
   have hM : leadMinorE (ZhatL (lf D F0) F') l =
       ((ZhatL (lf D F0) F').submatrix (Fin.castLE h) (Fin.castLE h)).det := by
     unfold leadMinorE
-    rw [dif_pos h]
+    rw [dite_eq_left h]
   rw [hD, hM, e1]
   rfl
 
-theorem kind_eq {u u' : D.what₂.Word} {F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
+theorem kind_eq {u u' : D.what₂.Word} {F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
     {w : Point D.host.E (D.R.rS + 1)} (hc : IsInCell (ZhatOM (ZhatL (lf D F0) F')) w) :
     kind w = if Dr (lf D F0) F' = 0 then none else some (Dr1 (lf D F0) F' / Dr (lf D F0) F') := by
   have h1 := dmin_eq hc D.R.rS (Nat.le_succ _)

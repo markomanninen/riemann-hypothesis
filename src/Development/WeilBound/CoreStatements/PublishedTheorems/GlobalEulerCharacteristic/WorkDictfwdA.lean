@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.Narrow
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.RatioOneKilled
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalFiniteness.Transport
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroCoind
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkDictfwdB
+module
+
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.RatioOneKilled
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalFiniteness.Transport
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroCoind
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkDictfwdB
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global ReciprocityTheory.Gal Formalism.ConjugateSelfDual
 
@@ -46,7 +50,11 @@ theorem isCCAt_conj {w : InfinitePlace F} (hw : w.IsReal) {c c' : G F Ω} (hc : 
 theorem exists_fieldTransport :
     ∃ (K : FiniteSubfield) (τ : Ω ≃+* AlgebraicClosure ℚ) (σ : F ≃+* K.1),
       ∀ x : F, τ (algebraMap F Ω x) = ((σ x : K.1) : AlgebraicClosure ℚ) := by
-  let σ0 : F →ₐ[ℚ] AlgebraicClosure ℚ := IsAlgClosed.lift
+  let σ0 : F →ₐ[ℚ] AlgebraicClosure ℚ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let K : FiniteSubfield := ⟨σ0.fieldRange,
     LinearEquiv.finiteDimensional (AlgEquiv.ofInjectiveField σ0).toLinearEquiv⟩
   letI : Algebra F (AlgebraicClosure ℚ) := σ0.toRingHom.toAlgebra
@@ -128,7 +136,8 @@ theorem continuous_galTransport (K : FiniteSubfield) (τ : Ω ≃+* AlgebraicClo
     intro s hs
     obtain ⟨K0, hK0, hK0s⟩ := (krullTopology_mem_nhds_one_iff K.1 _ s).1 hs
     classical
-    let b := Module.finBasis K.1 K0
+    set_option synthInstance.maxHeartbeats 200000 in
+      let b := Module.finBasis K.1 K0
     let L0 : IntermediateField F (maxUnramifiedOutside F Ω S) :=
       IntermediateField.adjoin F (Set.range fun i => (tauE τ S S' hmem).symm (b i : _))
     have hL0 : FiniteDimensional F L0 :=
@@ -215,8 +224,8 @@ theorem real_H0_card_eq_fixed (K : FiniteSubfield) (S' : Set (HeightOneSpectrum 
           Nat.card {b : B // B.ρ (resS (Ω := AlgebraicClosure ℚ) S' cc) b = b} := by
   exact PositivityTheory.Lit1.GEN.W_dictfwd_b.real_H0_card_eq_fixed K S' ιr v
 
-open scoped Classical in
 
+open scoped Classical in
 theorem transport_data {l : ℕ} [Fact l.Prime] (S : Finset (HeightOneSpectrum (𝓞 F)))
     (hS : ContainsAbove S l) :
     ∃ (K : FiniteSubfield) (S' : Set (HeightOneSpectrum (𝓞 K.1))) (_ : S'.Finite)
@@ -237,8 +246,9 @@ theorem transport_data {l : ℕ} [Fact l.Prime] (S : Finset (HeightOneSpectrum (
   obtain ⟨K, τ, σ, hτ⟩ := exists_fieldTransport (F := F) (Ω := Ω)
   obtain ⟨S', hS', θ, hn, hθ⟩ := gsTransport_compat K τ σ hτ S
   obtain ⟨e, hcard, hcc⟩ := realPlaces_transport K τ σ hτ
-  let ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal},
-      AlgebraicClosure ℚ →ₐ[K.1] AlgebraicClosure v.1.Completion := fun v => IsAlgClosed.lift
+  set_option synthInstance.maxHeartbeats 200000 in
+    let ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal},
+        AlgebraicClosure ℚ →ₐ[K.1] AlgebraicClosure v.1.Completion := fun v => IsAlgClosed.lift
   choose cc hccv hfixv using fun v => real_H0_card_eq_fixed K S' ιr v
   choose g hg using fun v => exists_transport_elem K τ σ hτ (cc v)
   refine ⟨K, S', hS', θ, ιr, fun w => if hw : w.IsReal then g (e ⟨w, hw⟩) else 1, e,
@@ -252,8 +262,8 @@ theorem transport_data {l : ℕ} [Fact l.Prime] (S : Finset (HeightOneSpectrum (
     show A.ρ (θ.symm (θ _)) a = a ↔ _
     rw [ContinuousMulEquiv.symm_apply_apply]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem ratio_F_exists {l : ℕ} [Fact l.Prime] (h : RatioOne l (fun _ => True))
     (S : Finset (HeightOneSpectrum (𝓞 F))) (hS : ContainsAbove S l) :
     ∃ c' : InfinitePlace F → G F Ω, (∀ w, w.IsReal → IsCCAt w (c' w)) ∧
@@ -279,8 +289,8 @@ theorem ratio_F_exists {l : ℕ} [Fact l.Prime] (h : RatioOne l (fun _ => True))
   rw [hcard, h1]
   exact (Fintype.prod_equiv e _ _ (fun w => by rw [hfix A w])).symm
 
-open scoped Classical in
 
+open scoped Classical in
 theorem ratio_F {l : ℕ} [Fact l.Prime] (h : RatioOne l (fun _ => True))
     (S : Finset (HeightOneSpectrum (𝓞 F))) (hS : ContainsAbove S l)
     (A : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside F Ω (S : Set (HeightOneSpectrum (𝓞 F)))))

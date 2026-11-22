@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommuteMatrixTwoEntries
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommuteMatrixTwoEntries
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate
@@ -34,7 +38,7 @@ theorem mem_zfns (L : R.LevelData A r) : L.ζ ∈ Fr.zfns L ∧ L.ζi ∈ Fr.zfn
 
 theorem lowering_constant_sub (L : R.LevelData A r) (Y Y' : ℂ) :
     L.l0 Y - L.l0 Y' = algebraMap ℂ A (Y' - Y) * (L.ζb * L.GGi) := by
-  simp only [R.LevelData.l0, map_sub, map_add]
+  simp only [R.LevelData.l0, map_sub, map_add (f := _)]
   noncomm_ring
 
 theorem embed_lowering_constant (L : R.LevelData A r) (Y : ℂ) :

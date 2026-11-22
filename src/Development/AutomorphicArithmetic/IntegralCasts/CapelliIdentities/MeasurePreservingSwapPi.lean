@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory in
 private theorem UpperTheory.Reformulated.B.Qe3b.mp_left.{u_1, u_2, u_3}

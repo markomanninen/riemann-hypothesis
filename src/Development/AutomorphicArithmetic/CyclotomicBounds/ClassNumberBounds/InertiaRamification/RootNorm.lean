@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.BridgeDefs
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.BridgeDefs
+
+@[expose] public section
 
 namespace KStar.Ram
 
@@ -51,11 +55,12 @@ theorem padicValNat_absNorm_one_sub {K : Type*} [Field K] [NumberField K] (l : �
       have hne : p ^ (j + 1) ≠ 1 := fun h => by rw [h] at hm; norm_num at hm
       by_cases hpl : p = l
       · subst hpl
-        rw [padicValNat_self, rootWeight, if_pos ⟨hne, j + 1, rfl⟩]
+        rw [Nat.padicValNat_def, Nat.Prime.multiplicity_self, rootWeight,
+          if_pos ⟨hne, j + 1, rfl⟩]
         have ht : ((p ^ (j + 1)).totient : ℚ) ≠ 0 := by
           exact_mod_cast (Nat.totient_pos.mpr (by positivity)).ne'
         rw [Nat.cast_one, mul_one_div, div_self ht]
-      · rw [padicValNat_primes (Ne.symm hpl), rootWeight, if_neg]
+      · rw [Nat.padicValNat_def, multiplicity_primes (Ne.symm hpl), rootWeight, if_neg]
         · simp
         · rintro ⟨-, s, hs⟩
           apply hpl
@@ -74,15 +79,15 @@ theorem padicValNat_absNorm_one_sub {K : Type*} [Field K] [NumberField K] (l : �
           omega
         · exact hpp ⟨p, j, hp, hj.symm⟩
       rw [h1, rootWeight, if_neg]
-      · simp
+      · simp [_root_.Nat.padicValNat_def (n := 1)]
       · rintro ⟨-, s, hs⟩
         rcases s with _ | s
         · rw [pow_zero] at hs
           omega
         · exact hpp ⟨l, s, Fact.out, hs⟩
-  rw [Ideal.absNorm_span_singleton, hnormZ, Int.natAbs_pow, padicValNat.pow, hk]
-  push_cast
-  rw [hv]
+  rw [Nat.padicValNat_def] at hv
+  rw [Ideal.absNorm_span_singleton, hnormZ, Int.natAbs_pow, Nat.padicValNat_def,
+    Nat.multiplicity_pow, hk, Nat.cast_mul, Nat.cast_mul, hv]
   ring
 
 end KStar.Ram

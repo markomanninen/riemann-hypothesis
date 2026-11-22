@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.MinimalSolution
+module
+
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.MinimalSolution
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates
 

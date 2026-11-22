@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtLAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtLAlgebraMap
+
+@[expose] public section
+
 open GlobalTheory.LogDerProj
 
 set_option autoImplicit false
@@ -57,7 +62,8 @@ theorem exists_pow_smul_eq_res : ∀ {k R S : Type} [Field k] [CommRing R] [Comm
     intro t ht
     have hdvd : (c ⟨t, ht⟩ : R) ∣ (m : R) := by
       show (c ⟨t, ht⟩ : R) ∣ ((∏ t, c t : Submonoid.powers f) : R)
-      rw [Submonoid.coe_finset_prod]
+      change (c ⟨t, ht⟩ : R) ∣ (Submonoid.subtype (Submonoid.powers f)) (∏ t, c t)
+      rw [map_prod]
       exact Finset.dvd_prod_of_mem _ (Finset.mem_univ _)
     obtain ⟨q, hq⟩ := hdvd
     rw [hq, mul_comm _ q, mul_assoc]

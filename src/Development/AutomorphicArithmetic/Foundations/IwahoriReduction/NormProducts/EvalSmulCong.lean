@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
-import Development.AbelianVarietyTheory.Definitions.Foundations.ActWBOfInvariant
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalPowerUnitsTowerClosurePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularFunctionTowerUnitGroupStableSlashGaloisStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ActWBOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalPowerUnitsTowerClosurePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularFunctionTowerUnitGroupStableSlashGaloisStatement
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.Kd.K4 Polynomial
 open scoped Matrix MatrixGroups TensorProduct
 
@@ -30,7 +35,8 @@ private theorem cg_sum {X : Tower Ω ε} {l : ℕ} [Fact l.Prime] {n : ℕ} {ι 
     (h : ∀ i ∈ s, CgF X l n (f i) (g i)) : CgF X l n (∑ i ∈ s, f i) (∑ i ∈ s, g i) := by
   rw [cgF_iff]
   intro u
-  simp only [Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, map_sum]
   exact Finset.sum_congr rfl fun i hi => (cgF_iff X l n _ _).1 (h i hi) u
 
 private theorem eval_kmap_eq (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n : ℕ) (φ : X.K ≃+* X.K) {y y' : X.Khat l}
@@ -240,11 +246,13 @@ private theorem tr_comp {X : Tower Ω ε} {l : ℕ} [Fact l.Prime] {n w : ℕ} {
   rw [Fintype.sum_prod_type_right]
   refine cg_sum _ fun i _ => ?_
   simp only [← act_act_SL]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   refine act_cg X l n _ ?_
   rw [cgF_iff]
   intro u
-  rw [Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, map_sum]
   set r : ℤ_[l] := ((lam 0 : ℤ_[l]) * u 0 + (lam 1 : ℤ_[l]) * u 1) ^ w with hr
   have hk : ∀ k, AdicCompletion.eval (idl l) (X.Kl l) n
       (X.act l (δ k : Matrix (Fin 2) (Fin 2) ℤ) (sec X l w lam x') u) =
@@ -287,7 +295,8 @@ private theorem polMod_tr [IsAlgClosure ℚ Ω] {X : Tower Ω ε} {l : ℕ} [Fac
     fun k => ⟨∏ i, b i ^ z i k, ?_, ?_⟩, fun u => ?_⟩
   · exact (unS X (l ^ n)).prod_mem fun i _ => (unS X (l ^ n)).zpow_mem (hb i) _
   · unfold Rep
-    rw [map_sum, cls_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, cls_prod]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, cls_zpow, hr i]
   · unfold trH
@@ -333,7 +342,8 @@ theorem UpperTheory.Kd.K4.trc :
     fun H' κ _ δ hHH hδ => ⟨isTr_comp hHH hH2 hγ hδ, fun a' h x' hx' hp => tr_comp hH1 hx hx' lam γ hδ hp⟩⟩
   have e : X.act l (g : Matrix (Fin 2) (Fin 2) ℤ) (trH X l w γ lam x) = trH X l w (fun i => γ i * g) lam x := by
     unfold trH
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => act_act_SL X l _ _ _
   rw [e]
   exact tr_cg hH1 hi hx hx lam (isTr_mul hγ hg) hγ

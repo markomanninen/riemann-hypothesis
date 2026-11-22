@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
-import Formalism.HarderNarasimhan.StatementPl
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Formalism.HarderNarasimhan.StatementPl
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory.CechPic GlobalTheory.CxPts GlobalTheory.HermTools GlobalTheory.Vanishing GlobalTheory.Adelic GlobalTheory.HilbertSamuel GlobalTheory.ChowHt GlobalTheory.TangentOrigin
@@ -16,7 +21,7 @@ theorem filV_symV_ker : ∀ (K : Type) [Field K] [NumberField K] (X : Data K) (s
   have key : symV Co a x = 0 ↔ hs.sym (Nat.sub_add_cancel haT) (spaceV X s)
       ((X.V X.T).subtype.restrict (fun _ hx => hx) x) = 0 := by
     unfold symV
-    rw [dif_pos haT]
+    rw [dite_eq_left haT]
     constructor
     · intro h
       funext α

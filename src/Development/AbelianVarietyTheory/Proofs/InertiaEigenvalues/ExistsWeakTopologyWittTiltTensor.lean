@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContinuousGaloisLatticeMatrixIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContinuousGaloisLatticeMatrixIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,7 @@ theorem continuous_peval [IsTopologicalRing R] {k : ℕ} (φ : MvPolynomial (Fin
   induction φ using MvPolynomial.induction_on with
   | C a => simpa using continuous_const
   | add φ ψ h1 h2 =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact h1.add h2
   | mul_X φ i h =>
     simp only [map_mul, MvPolynomial.aeval_X]
@@ -216,19 +220,20 @@ theorem coords_map (b : Module.Basis ι R T) (σ : W →ₐ[R] W) (ρ : T →ₗ
       ∑ j, algebraMap R W (b.repr (ρ (b j)) i) * σ (coords W O b x j) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy, mul_add, Finset.sum_add_distrib]
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy, mul_add, Finset.sum_add_distrib]
   | tmul r t =>
     induction r using TensorProduct.induction_on with
     | zero => simp
     | add x y hx hy =>
-      simp only [add_tmul, map_add, Pi.add_apply, hx, hy, mul_add, Finset.sum_add_distrib]
+      simp only [add_tmul, map_add (f := _), Pi.add_apply, hx, hy, mul_add, Finset.sum_add_distrib]
     | tmul a w =>
       simp only [TensorProduct.map_tmul, AlgHom.toLinearMap_apply, Algebra.TensorProduct.map_tmul,
         AlgHom.id_apply, coords_tmul, map_smul σ]
       rw [← map_smul ρ]
       generalize a • t = u
       conv_lhs => rw [← b.sum_repr u]
-      simp only [map_sum, LinearMap.map_smul_of_tower, map_smul, Finsupp.coe_finset_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.map_smul_of_tower, map_smul, Finsupp.coe_finsetSum,
         Finset.sum_apply, Finsupp.smul_apply, Finset.sum_smul, smul_eq_mul, Algebra.smul_def,
         map_mul, Finset.sum_mul]
       exact Finset.sum_congr rfl fun j _ => by ring
@@ -255,7 +260,7 @@ theorem exists_top_tensor [TopologicalSpace R] [TopologicalSpace W] [IsTopologic
   refine ⟨τ, h2, Topology.IsInducing.topologicalAddGroup (coords W O b) ⟨rfl⟩, ?_, ?_⟩
   · refine continuous_induced_rng.2 (continuous_pi fun i => ?_)
     simp only [Function.comp_apply, coords_map]
-    refine continuous_finset_sum _ fun j _ => ?_
+    refine continuous_finsetSum _ fun j _ => ?_
     exact ((hc.comp (hρ i j)).comp continuous_fst).mul
       (hσ.comp (continuous_fst.prodMk ((continuous_apply j).comp (h0.comp continuous_snd))))
   · refine (Continuous.isClosedEmbedding ?_ ?_).isEmbedding
@@ -277,7 +282,7 @@ theorem compact_of_basis {p : ℕ} [Fact p.Prime] {T ι : Type} [AddCommGroup T]
     have : (b.equivFun.symm : (ι → ℤ_[p]) → T) = fun c => ∑ i, c i • b i :=
       funext fun c => b.equivFun_symm_apply c
     rw [this]
-    exact continuous_finset_sum _ fun i _ => (h (b i)).comp (continuous_apply i)
+    exact continuous_finsetSum _ fun i _ => (h (b i)).comp (continuous_apply i)
   refine ⟨b.equivFun.symm.surjective.compactSpace hF, fun U hU => ?_⟩
   have h1 : b.equivFun.symm ⁻¹' U ∈ 𝓝 (0 : ι → ℤ_[p]) :=
     hF.continuousAt (by simpa using hU)
@@ -389,8 +394,8 @@ theorem exists_top_WCb (AI : LocAinf l P) :
     continuous_padicInt_witt (zlW l (Cb l)),
     continuous_map_witt (fun g : GQ l => (autCb l (AI.actT g)).toRingHom) ha⟩
 
-open GlobalTheory.HWL in
 
+open GlobalTheory.HWL in
 theorem exists_weakTop : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K LL : FinExt l) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)), ∃ τ : TopologicalSpace (TW (RW LL) T), letI := τ; T2Space (TW (RW LL) T) ∧ IsTopologicalAddGroup (TW (RW LL) T) ∧ Continuous (fun p : ↥(GK K) × TW (RW LL) T => TWact (AI.gRW LL (p.1 : GQ l)) T p.1 p.2) ∧ Topology.IsEmbedding (fun t : ↥T.L.T => (1 : RW LL) ⊗ₜ[↥(OL LL)] t) ∧ CompactSpace ↥T.L.T ∧ ∀ U ∈ nhds (0 : ↥T.L.T), ∃ k : ℕ, ∀ t : ↥T.L.T, l ^ k • t ∈ U := by
   intro l _ P AI K LL T
   haveI := LL.2

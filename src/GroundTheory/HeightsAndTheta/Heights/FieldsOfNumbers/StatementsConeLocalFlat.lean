@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLoc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLoc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -14,8 +19,8 @@ section Cone
 
 variable {K : Type*} [DecidableEq K] {ι : K → Type*} {F : Type*} [Field F]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem primeCompl_map_le_nonZeroDivisors (P W : Ideal (MRing ι F)) [P.IsPrime] [W.IsPrime]
     (hPW : P ≤ W) :
     W.primeCompl.map (Ideal.Quotient.mk P) ≤ nonZeroDivisors (MRing ι F ⧸ P) := by
@@ -28,8 +33,8 @@ def coneLocal (P W : Ideal (MRing ι F)) [P.IsPrime] [W.IsPrime] (hPW : P ≤ W)
     Subalgebra (MRing ι F ⧸ P) (FractionRing (MRing ι F ⧸ P)) :=
   Localization.subalgebra.ofField _ _ (primeCompl_map_le_nonZeroDivisors P W hPW)
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 instance coneLocal.isLocalization (P W : Ideal (MRing ι F)) [P.IsPrime] [W.IsPrime] (hPW : P ≤ W) :
     IsLocalization (W.primeCompl.map (Ideal.Quotient.mk P)) (coneLocal P W hPW) :=
   Localization.subalgebra.isLocalization_ofField _ _ _

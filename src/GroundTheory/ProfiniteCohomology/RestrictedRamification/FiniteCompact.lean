@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.TensorHomDualRepRootsOfUnityIsoCartierPairing
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.TensorHomDualRepRootsOfUnityIsoCartierPairing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -10,8 +15,6 @@ noncomputable section
 namespace GroundTheory.ProfCoh
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.Global FiniteSubfield
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 universe u
 
@@ -41,6 +44,8 @@ theorem finite_compactCohomology [Finite ι] (n : ℕ) [Finite (cohomology A n)]
 
 end Abstract
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 variable (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1))) [Finite S]
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
 
@@ -53,13 +58,5 @@ theorem finite_compactCohomologyRes_gs_of_finite
   refine finite_cohomology_localField _ (by
     change ((Nat.card M : ℕ) : (v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1) ≠ 0
     exact Nat.cast_ne_zero.2 Nat.card_pos.ne') m
-
-theorem finite_compactCohomologyRes_gs
-    (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
-    (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((Nat.card M : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
-    (r : ℕ) (hr : r ≤ 2) :
-    Finite (compactCohomologyRes (gsFinFamily S ιs) M r) := by
-  have := finite_cohomology_gs K S M hS r hr
-  exact finite_compactCohomologyRes_gs_of_finite K S ιs M r
 
 end GroundTheory.ProfCoh

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.GaloisOnCp
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.GaloisOnCp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.PAdicHodge
@@ -50,7 +55,7 @@ theorem normTraceF_add (y z : Ω) : normTraceF F (y + z) = normTraceF F y + norm
   have h1 := e ⟨y, hy⟩
   have h2 := e ⟨z, hz⟩
   have h3 := e (⟨y, hy⟩ + ⟨z, hz⟩)
-  rw [LinearMap.map_add, add_div, ← h1, ← h2] at h3
+  rw [LinearMap.map_add (f := _), add_div, ← h1, ← h2] at h3
   exact h3
 
 theorem normTraceF_smul (a : F) (y : Ω) : normTraceF F (a • y) = a * normTraceF F y := by
@@ -68,15 +73,8 @@ def normTraceFₗ : Ω →ₗ[F] F where
 
 def normTraceₗ : Ω →ₗ[F] Ω := (Algebra.linearMap F Ω).comp (normTraceFₗ F)
 
-@[simp] theorem normTraceFₗ_apply (y : Ω) : normTraceFₗ F y = normTraceF F y := rfl
-
-@[simp] theorem normTraceₗ_apply (y : Ω) : normTraceₗ F y = normTrace F y := rfl
-
 theorem normTrace_add (y z : Ω) : normTrace F (y + z) = normTrace F y + normTrace F z :=
   map_add (normTraceₗ F) y z
-
-theorem normTrace_sub (y z : Ω) : normTrace F (y - z) = normTrace F y - normTrace F z :=
-  map_sub (normTraceₗ F) y z
 
 @[simp] theorem normTrace_zero : normTrace F (0 : Ω) = 0 := map_zero (normTraceₗ F)
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ theorem isBaseChange_hom {R A C P : Type} [CommRing R] [CommRing A] [CommRing C]
     intro φ
     ext p
     conv_rhs => rw [← hexp p]
-    simp [map_sum, hA, hco, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hA, hco, mul_comm]
   let θ : C ⊗[A] (P →ₗ[R] A) →ₗ[C] (P →ₗ[R] C) := g.liftBaseChange C
   have hθ : ∀ c φ, θ (c ⊗ₜ φ) = c • g φ := fun c φ => LinearMap.liftBaseChange_tmul _ _ _ _
   let inv : (P →ₗ[R] C) → C ⊗[A] (P →ₗ[R] A) := fun ψ => ∑ k, ψ (b k) ⊗ₜ co k
@@ -79,7 +84,8 @@ theorem isBaseChange_hom {R A C P : Type} [CommRing R] [CommRing A] [CommRing C]
     intro ψ
     ext p
     conv_rhs => rw [← hexp p]
-    simp only [inv, map_sum, hθ, LinearMap.sum_apply, LinearMap.smul_apply, hg, hco, hC, smul_eq_mul, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [inv, map_sum, hθ, LinearMap.sum_apply, LinearMap.smul_apply, hg, hco, hC, smul_eq_mul, mul_comm]
   refine IsBaseChange.of_equiv (LinearEquiv.ofBijective θ
     ⟨Function.LeftInverse.injective hl, Function.RightInverse.surjective hr⟩) fun φ => ?_
   exact (hθ 1 φ).trans (one_smul _ _)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 
@@ -21,7 +25,7 @@ theorem eq_zero_of_forall_nhds {V : Type} [NormedAddCommGroup V] [NormedSpace �
     rw [Metric.mem_ball, dist_eq_norm, add_sub_cancel_left, norm_smul, Real.norm_of_nonneg htpos.le]
     nlinarith [norm_nonneg z]
   have h1 := hb _ hmem
-  rw [map_add, LinearMap.add_apply, map_smul, LinearMap.smul_apply, h0, zero_add, smul_eq_mul] at h1
+  rw [map_add (f := _), LinearMap.add_apply, map_smul, LinearMap.smul_apply, h0, zero_add, smul_eq_mul] at h1
   exact (mul_eq_zero.mp h1).resolve_left htpos.ne'
 
 theorem main {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]
@@ -37,7 +41,7 @@ theorem main {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimens
       map_add' := by
         intro p q
         funext y
-        simp only [Prod.fst_add, Prod.snd_add, map_add, Complex.ofReal_add, Pi.add_apply]
+        simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), Complex.ofReal_add, Pi.add_apply]
         ring
       map_smul' := by
         intro s p
@@ -106,10 +110,10 @@ theorem main {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimens
   let m : V →ₗ[ℝ] V →ₗ[ℝ] ℂ := LinearMap.mk₂ ℝ
     (fun a y => (-(2 * Real.pi * Complex.I)) * ((T y (W a).1 : ℝ) : ℂ) +
       Complex.I * ((-(2 * Real.pi * Complex.I)) * ((T y (W a).2 : ℝ) : ℂ)))
-    (by intro a₁ a₂ y; simp only [map_add, Prod.fst_add, Prod.snd_add, Complex.ofReal_add]; ring)
+    (by intro a₁ a₂ y; simp only [map_add (f := _), Prod.fst_add, Prod.snd_add, Complex.ofReal_add]; ring)
     (by intro s a y; simp only [map_smul, Prod.smul_fst, Prod.smul_snd, smul_eq_mul, Complex.ofReal_mul,
       Complex.real_smul]; ring)
-    (by intro a y₁ y₂; simp only [map_add, LinearMap.add_apply, Complex.ofReal_add]; ring)
+    (by intro a y₁ y₂; simp only [map_add (f := _), LinearMap.add_apply, Complex.ofReal_add]; ring)
     (by intro s a y; simp only [map_smul, LinearMap.smul_apply, smul_eq_mul, Complex.ofReal_mul,
       Complex.real_smul]; ring)
   refine ⟨m, fun a y => ?_⟩

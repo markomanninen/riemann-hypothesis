@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PlaceB
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PlaceB
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem w_one_le (h : Std p n' k1 t m c r TT a b lam0 w) (s : Fin n') :
 theorem lamI_ge_last (h : Std p n' k1 t m c r TT a b lam0 w) (s : Fin n') (i : ℕ) (h1 : 1 ≤ i) (h2 : i ≤ k1 + 1) :
     lam0 s (Fin.last k1) ≤ lamI lam0 s i := by
   unfold lamI
-  rw [dif_pos ⟨h1, h2⟩]
+  rw [dite_eq_left ⟨h1, h2⟩]
   exact h.dom s (Fin.le_last _)
 
 theorem lamI_add_w_nonneg (h : Std p n' k1 t m c r TT a b lam0 w) (s : Fin n') (i j : ℕ) (h1 : 1 ≤ i)
@@ -38,7 +42,7 @@ theorem al_nonneg (h : Std p n' k1 t m c r TT a b lam0 w) (s : Fin n') : 0 ≤ a
   unfold al
   split_ifs
   · unfold lamI
-    rw [dif_pos (show 1 ≤ 1 ∧ 1 ≤ k1 + 1 by omega), dif_pos (show 1 ≤ 2 ∧ 2 ≤ k1 + 1 by omega)]
+    rw [dite_eq_left (show 1 ≤ 1 ∧ 1 ≤ k1 + 1 by omega), dite_eq_left (show 1 ≤ 2 ∧ 2 ≤ k1 + 1 by omega)]
     exact sub_nonneg.mpr (h.dom s (Fin.mk_le_mk.mpr (by omega)))
   · exact le_rfl
 

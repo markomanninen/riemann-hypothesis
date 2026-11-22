@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedSeries
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedProj
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedSqrt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedSeries
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedProj
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedSqrt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical

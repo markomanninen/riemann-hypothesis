@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -23,6 +28,6 @@ theorem map_pi_eq_of_map_addHaar_eq (G : Type) [AddCommGroup G] [TopologicalSpac
   have he := Measure.isAddLeftInvariant_eq_smul μ (Measure.pi fun _ : Fin m => ν)
   generalize Measure.addHaarScalarFactor μ (Measure.pi fun _ : Fin m => ν) = c at he
   subst he
-  rw [Measure.map_smul, hpi.map_eq]
+  rw [Measure.map_smul c hpi.measurable.aemeasurable, hpi.map_eq]
 
 end GlobalTheory

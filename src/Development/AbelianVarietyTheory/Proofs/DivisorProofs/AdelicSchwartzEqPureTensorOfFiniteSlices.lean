@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TendstoUnitaryAdelicPointsAgreeOnGrowingFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TendstoUnitaryAdelicPointsAgreeOnGrowingFinset
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -57,7 +61,8 @@ def hyb (S : Finset (HeightOneSpectrum (𝓞 F))) (y g : Af F) : Af F :=
 theorem evalV_hyb (S : Finset (HeightOneSpectrum (𝓞 F))) (y g : Af F) (u : HeightOneSpectrum (𝓞 F)) :
     evalV F u (hyb S y g) = if u ∈ S then evalV F u y else evalV F u g := by
   unfold hyb
-  rw [map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum]
   split_ifs with hu
   · rw [Finset.sum_eq_single u (fun v _ hv => evalV_singleFin_ne (Ne.symm hv) _) (fun h => absurd hu h),
       evalV_singleFin_self]
@@ -128,7 +133,8 @@ theorem eq_pure_of_slices : ∀ {F : Type} [Field F] [NumberField F] {κ : Type}
   let ξ0 : κ → Af F := fun i => ∑ v ∈ hT0f.toFinset, singleFin v (ζ v i)
   have hξ0 : ∀ v i, evalV F v (ξ0 i) = ζ v i := by
     intro v i
-    simp only [ξ0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ξ0, map_sum]
     by_cases hv : v ∈ T0
     · rw [Finset.sum_eq_single v (fun u _ hu => evalV_singleFin_ne (Ne.symm hu) _)
         (fun h => absurd (hT0f.mem_toFinset.2 hv) h), evalV_singleFin_self]

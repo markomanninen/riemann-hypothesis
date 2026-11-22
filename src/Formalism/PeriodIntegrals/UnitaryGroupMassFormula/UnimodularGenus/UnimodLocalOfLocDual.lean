@@ -1,23 +1,17 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularGenus.StdLatEqSpan
-import Formalism.HermitianLattices.StatementMass
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularGenus.StdLatEqSpan
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+
+@[expose] public section
 
 open NumberField
 
 noncomputable section
 
 namespace PI.UG.W
-
-example (E : Type) [Field E] [NumberField E] [StarRing E] : PI.UG.IsCMUnram E ↔ Formalism.HermitianLatticesTheory.IsCMUnram E := Iff.rfl
-
-example (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ) (p : Ideal (𝓞 E)) (N : Submodule (𝓞 E) (Sp E n)) :
-    IsUnimodularAt (hStd E n) p N ↔ Formalism.HermitianLatticesTheory.IsUnimodularAt (hStd E n) p N := Iff.rfl
-
-example (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ) (p : Ideal (𝓞 E)) (N : Submodule (𝓞 E) (Sp E n)) :
-    (∃ g ∈ isom (hStd E n), gmap g (loc (K := E) p (stdLat E n)) = loc (K := E) p N) ↔
-    (∃ g ∈ Formalism.HermitianLatticesTheory.isom (hStd E n), Formalism.HermitianLatticesTheory.gmap g (Formalism.HermitianLatticesTheory.loc (K := E) p (stdLat E n)) = Formalism.HermitianLatticesTheory.loc (K := E) p N) :=
-  Iff.rfl
 
 theorem stdLat_isOrtho (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ) :
     Formalism.HermitianLatticesTheory.IsOrthoLattice (hStd E n) (stdLat E n) n := by
@@ -57,9 +51,11 @@ theorem unimodLocal_of_locDual (hLD : Formalism.HermitianLatticesTheory.LocDual)
   have hsymm : (hStd E n).IsSymm := by
     first
       | (refine ⟨fun x y => ?_⟩
-         simp [hStd, map_sum, starRingEnd_apply, star_mul', mul_comm])
+         set_option synthInstance.maxHeartbeats 100000 in
+           simp [hStd, map_sum, starRingEnd_apply, star_mul', mul_comm])
       | (intro x y
-         simp [hStd, map_sum, starRingEnd_apply, star_mul', mul_comm])
+         set_option synthInstance.maxHeartbeats 100000 in
+           simp [hStd, map_sum, starRingEnd_apply, star_mul', mul_comm])
   have hstar : ∀ r : 𝓞 E, star (algebraMap (𝓞 E) E r) ∈ Set.range (algebraMap (𝓞 E) E) := by
     intro r
     exact ⟨RingOfIntegers.mapRingHom (starRingEnd E) r, rfl⟩

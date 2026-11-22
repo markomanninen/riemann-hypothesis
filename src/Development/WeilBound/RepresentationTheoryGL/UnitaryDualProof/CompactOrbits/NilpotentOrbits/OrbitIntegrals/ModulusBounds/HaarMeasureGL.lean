@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MeasuresModulus
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MeasuresModulus
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,6 @@ variable {H : Type} [Group H]
 
 def swTw (σ : H →* H) : H × H →* H × H :=
   (MonoidHom.prodMap σ σ).comp (MulEquiv.prodComm : H × H ≃* H × H).toMonoidHom
-
-@[simp] theorem swTw_apply (σ : H →* H) (y : H × H) : swTw σ y = (σ y.2, σ y.1) := rfl
 
 theorem mem_twCent_swTw (σ : H →* H) (hσ : ∀ g, σ (σ g) = g) (d d' : H) (g : H × H) :
     g ∈ twCent (swTw σ) (d, d') ↔

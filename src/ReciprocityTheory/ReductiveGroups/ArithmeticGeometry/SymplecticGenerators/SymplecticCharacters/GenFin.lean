@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.GenCol
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.GenCol
+
+@[expose] public section
 
 open Matrix
 
@@ -69,7 +73,7 @@ theorem phase2 (k : Fin g) (n : ℕ) : ∀ M ∈ symplecticGroup (Fin g) ℤ, Co
     have hib : i ≠ b := fun h => by subst h; omega
     have e1 : ∀ c : Fin g, (i = c ↔ c = i) := fun c => eq_comm
     constructor <;> intro r <;> rcases r with c | c <;>
-      simp [spDiag, U, E, E', Matrix.fromBlocks, Matrix.one_apply, hia, hib, e1]
+      simp [spDiag, U, E, E', Matrix.fromBlocks, Matrix.one_apply, Function.swap, hia, hib, e1]
   have hnew : ∀ c, (spDiag U * M) (Sum.inl c) (Sum.inl k) =
       M (Sum.inl c) (Sum.inl k) - if c = a then t * M (Sum.inl b) (Sum.inl k) else 0 := by
     intro c
@@ -136,7 +140,7 @@ theorem move_col (k j : Fin g) (hjk : (k : ℕ) ≤ j) (hne : j ≠ k) (s : ℤ)
     · simp [spDiag, U, P, Matrix.one_apply, Matrix.fromBlocks]
     · simp [spDiag, U, P, Matrix.one_apply, Matrix.fromBlocks]
     · have h1 : (i = a) ↔ (a = i) := eq_comm
-      simp [spDiag, U, P, Matrix.one_apply, Matrix.fromBlocks, Matrix.transpose_apply, hsw, h1]
+      simp [spDiag, U, P, Matrix.one_apply, Matrix.fromBlocks, Function.swap, hsw, h1]
   · rw [Matrix.mul_apply, Fintype.sum_sum_type]
     rcases r with a | a <;>
       simp [spDiag, U, P, hsupp, Matrix.one_apply, Matrix.fromBlocks, Equiv.swap_apply_eq_iff] <;>

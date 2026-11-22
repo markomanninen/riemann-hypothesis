@@ -1,15 +1,20 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsLevMeas
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaChainCharQuotientLFunctionEntireNeZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChainTwistPlacesSplitUnramifiedQuotientsStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsLevMeas
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaChainCharQuotientLFunctionEntireNeZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChainTwistPlacesSplitUnramifiedQuotientsStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -22,8 +27,8 @@ noncomputable section
 
 namespace GlobalTheory.ChainTw.EulerAtTwist
 
-open GlobalTheory.LFun in
 
+open GlobalTheory.LFun in
 theorem eulerProd_eq_mul_prod {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     {S₀ S : Set (HeightOneSpectrum (𝓞 F))} {A : Finset (HeightOneSpectrum (𝓞 F))}
     (hS : ∀ v, v ∈ S ↔ v ∈ S₀ ∨ v ∈ A) (hA : ∀ v ∈ A, v ∉ S₀) {c : Fam E} {r : ℕ} {κ : ℝ}
@@ -50,8 +55,8 @@ theorem eulerProd_eq_mul_prod {F E : Type} [Field F] [NumberField F] [Field E] [
   rw [e] at h4
   exact h1.unique h4
 
-open GlobalTheory.LFun in
 
+open GlobalTheory.LFun in
 theorem Lv_pair {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (c : Fam E)
     {v : HeightOneSpectrum (𝓞 F)} {P P' : HeightOneSpectrum (𝓞 E)} (hne : P' ≠ P)
     (hv : ∀ u : HeightOneSpectrum (𝓞 E), u.under (𝓞 F) = v ↔ u = P ∨ u = P') (s : ℂ) :
@@ -128,8 +133,8 @@ theorem quotL_entire_ne_zero_off (c : Com D) (hc : c.Is) (S' : Finset (HeightOne
     rw [h0, Complex.zero_re] at this
     exact lt_irrefl _ this
 
-open GlobalTheory.LFun in
 
+open GlobalTheory.LFun in
 theorem eval_relation (c : Com D) (w : Twist D) (hw : w.Is c) {i j : ℕ} (hi : i ∈ Finset.Icc 1 D.R.m)
     (hj : j ∈ Finset.Icc 1 D.R.m) {Λ Λ₀ : ℂ → ℂ} (hΛ : Differentiable ℂ Λ) (hΛ₀ : Differentiable ℂ Λ₀)
     (e : ∀ z : ℂ, 1 < z.re → Λ z = eulerProd (above D.host.E (c.S : Set (HeightOneSpectrum (𝓞 D.host.F))))
@@ -143,7 +148,7 @@ theorem eval_relation (c : Com D) (w : Twist D) (hw : w.Is c) {i j : ℕ} (hi : 
   classical
   obtain ⟨hS, hQS, hinj, hpair, -⟩ := GlobalTheory.T.chainTwistPlaces_split_unramifiedQuotients D c w hw
   have hpair' : ∀ PP ∈ w.Q, ∃ PP' : Pl D.host.E, PP' ≠ PP ∧
-      (∀ P : Pl D.host.E, P.under (𝓞 D.host.F) = PP.under (𝓞 D.host.F) ↔ P = PP ∨ P = PP') ∧
+      (∀ P : Pl D.host.E, P.under (𝓞 D.host.F) = (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) ↔ P = PP ∨ P = PP') ∧
       Ideal.absNorm PP'.asIdeal = Ideal.absNorm PP.asIdeal ∧
       val (F := D.host.F) (c.μ i * (c.μ j)⁻¹) PP' = (val (F := D.host.F) (c.μ i * (c.μ j)⁻¹) PP)⁻¹ :=
     fun PP hPP => by
@@ -169,7 +174,7 @@ theorem eval_relation (c : Com D) (w : Twist D) (hw : w.Is c) {i j : ℕ} (hi : 
       (1 - (val (F := D.host.F) χ PP : ℂ)⁻¹ * npow PP (-z)) ≠ 0 := fun z hz PP =>
     mul_ne_zero (one_sub_ne_zero PP (hu PP) hz) (one_sub_ne_zero PP (hu' PP) hz)
 
-  let A : Finset (HeightOneSpectrum (𝓞 D.host.F)) := w.Q.image fun PP => PP.under (𝓞 D.host.F)
+  let A : Finset (HeightOneSpectrum (𝓞 D.host.F)) := w.Q.image fun PP => (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)
   have hS' : ∀ v, v ∈ (c.S : Set (HeightOneSpectrum (𝓞 D.host.F))) ↔ v ∈ w.S₀ ∨ v ∈ A := fun v =>
     (hS v).trans (or_congr_right Finset.mem_image.symm)
   have hA : ∀ v ∈ A, v ∉ w.S₀ := fun v hv => by
@@ -215,8 +220,8 @@ end GlobalTheory.ChainTw.EulerAtTwist
 
 namespace GlobalTheory.ChainTw.EulerAtTwist
 
-open GlobalTheory.LFun in
 
+open GlobalTheory.LFun in
 theorem restore_hval : ∀ (D : D7) (c : Com D) (w : Twist D), w.Is c → ∀ k < D.R.m,
     (∀ H H₀, IsHval c (c.S : Set _) k H → IsHval c w.S₀ k H₀ → H₀ = H * ∏ PP ∈ w.Q, blockL c k PP) ∧
     ∃ H₀, H₀ ≠ 0 ∧ IsHval c w.S₀ k H₀ := by
@@ -259,6 +264,3 @@ theorem restore_hval : ∀ (D : D7) (c : Com D) (w : Twist D), w.Is c → ∀ k 
     exact (hΛ i hi).2.2 n this.1 this.2
 
 end GlobalTheory.ChainTw.EulerAtTwist
-
-example : ∀ (D : D7) (c : Com D) (w : Twist D), w.Is c → ∀ k < D.R.m, (∀ H H₀, IsHval c (c.S : Set _) k H → IsHval c w.S₀ k H₀ → H₀ = H * ∏ PP ∈ w.Q, blockL c k PP) ∧ ∃ H₀, H₀ ≠ 0 ∧ IsHval c w.S₀ k H₀ :=
-  GlobalTheory.ChainTw.EulerAtTwist.restore_hval

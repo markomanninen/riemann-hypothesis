@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsUniqueSecIsFnAt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsUniqueSecIsFnAt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -133,7 +137,7 @@ theorem exists_isPullConst (hL : L.IsLB) {Hm : Matrix (Fin g) (Fin g) ℂ} {χ :
       rw [hrj _ _ hj', hrj _ _ hj, exAt_add_period u p z l l.2]
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, ContinuousLinearMap.coe_coe,
         LinearMap.coe_toContinuousLinearMap']
-      rw [hAH.2.2.2 l i z hi, hAH.2.2.2 ⟨Φ l, map_mem_period hΦ l.2⟩ i' (Φ z) hi', map_add,
+      rw [hAH.2.2.2 l i z hi, hAH.2.2.2 ⟨Φ l, map_mem_period hΦ l.2⟩ i' (Φ z) hi', map_add (f := _),
         hBf, hBf]
       have n1 := zpow_ne_zero a (hχ l)
       have n2 := zpow_ne_zero b (hχ ⟨Φ l, map_mem_period hΦ l.2⟩)
@@ -208,30 +212,21 @@ theorem IsPullConst.eq_one (hL : L.IsLB) {rig : LB.Gen (L.pull (eSec A))} (hrig 
   rw [ex_zero] at hi
   exact fun _ hy => Set.mem_iInter.2 fun _ => hi hy
 
-theorem IsPullConst.unique (hL : L.IsLB) {m : T ⊗ A ⟶ A} {Φ : (Fin g → ℂ) → Fin g → ℂ}
-    (hΦ : ∀ z, exAt u p z ≫ m.left = (u.ex (Φ z)).left) {a b : ℤ}
-    {α : LB.Gen (LB.LinComb L (K := Fin 2) ![(snd T A).left, m.left] ![a, -b])} {c c' : ℂ}
-    (hc : IsPullConst u p Φ a b α c) (hc' : IsPullConst u p Φ a b α c') : c = c' := by
-  obtain ⟨i, hi⟩ := exists_chart u valueRules hL 0
-  obtain ⟨i', hi'⟩ := exists_chart u valueRules hL (Φ 0)
-  have hj := (exAt_mem_pairChart_iff (hΦ 0) ![i, i']).2 ⟨hi, hi'⟩
-  exact mul_right_cancel₀ (zpow_ne_zero a (u.fr_ne i 0 hi)) ((hc _ 0 hj).symm.trans (hc' _ 0 hj))
 
 variable (p) in
-
 theorem exAt_snd_comp {f : A ⟶ A} {z w : Fin g → ℂ} (h : u.ex w = u.ex z ≫ f) :
     exAt u p z ≫ (snd T A ≫ f).left = (u.ex w).left := by
   rw [Over.comp_left, ← Category.assoc, exAt_snd, h, Over.comp_left]
 
-variable (u) in
 
+variable (u) in
 theorem ex_natCast_smul (k : ℕ) (z : Fin g → ℂ) : u.ex ((k : ℂ) • z) = u.ex z ^ k := by
   induction k with
   | zero => rw [Nat.cast_zero, zero_smul, ex_zero, pow_zero]
   | succ n ih => rw [Nat.cast_succ, add_smul, one_smul, u.ex_add, ih, pow_succ]
 
-variable (u p) in
 
+variable (u p) in
 theorem exAt_mulT (k : ℕ) (z : Fin g → ℂ) :
     exAt u p z ≫ (mulT A T k).left = exAt u p ((k : ℂ) • z) :=
   (Over.comp_left _ _ _ _ _).symm.trans (congrArg CommaMorphism.left (by

@@ -1,8 +1,13 @@
-import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLbud
-import Formalism.LocalToGlobal.GlobalTheory.PlacesP
+module
+
+public import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLbud
+public import Formalism.LocalToGlobal.GlobalTheory.PlacesP
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions NumberField Classical
 
 namespace GlobalTheory

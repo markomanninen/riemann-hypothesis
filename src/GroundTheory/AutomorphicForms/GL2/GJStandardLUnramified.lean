@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJUnramified
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJUnramified
+
+@[expose] public section
 
 open MeasureTheory Filter Set Topology Metric
 open scoped ValuativeRel

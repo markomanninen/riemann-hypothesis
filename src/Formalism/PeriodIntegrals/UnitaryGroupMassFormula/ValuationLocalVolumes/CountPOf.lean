@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVBadTOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.HRAddSmul
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVBadTOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.HRAddSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem countP_of (a : ℕ) (Y : TupV (E := E) v n a) (hM : MeasP σ J ψ v Λ a
   have hq := qv_pos v
   set μ := dX σ J ψ v a with hμdef
   have : μ.IsAddHaarMeasure := by
-    rw [hμdef, dX, dif_pos hμ]
+    rw [hμdef, dX, dite_eq_left hμ]
     exact hμ.choose_spec.1
   have hPL : lamP v Λ a ϖ ≤ lamA v Λ a := by
     rintro _ ⟨Z, hZ, rfl⟩ i

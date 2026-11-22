@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -169,6 +173,6 @@ theorem UpperTheory.ConvolutionTheory.L1.quotAny :
     UpperTheory.ConvolutionTheory.L1.QuotAny := by
   intro X T _ _ _ _ _ _ _ _ _ _ _ μ _ ν _ _ i hi Φ ρ hΦ hinv hρ hfin
   have hex : ∃ ρ, PositivityTheory.Rg.Tf.Geo.IsNormAlong id i ν ρ := ⟨ρ, hρ⟩
-  rw [PositivityTheory.Rg.Tf.Geo.quotInt, dif_pos hex]
+  rw [PositivityTheory.Rg.Tf.Geo.quotInt, dite_eq_left hex]
   have hc := hex.choose_spec
   exact (UpperTheory.ConvolutionTheory.L1.cpx_eq hi hΦ hinv hρ.1 hρ.2 hc.1 hc.2 hfin).symm

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameStabiliserMapsToCompletedLattice
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DefGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameStabiliserMapsToCompletedLattice
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+
+@[expose] public section
+
 open NumberField
 open scoped TensorProduct Matrix
 set_option maxHeartbeats 1000000 in

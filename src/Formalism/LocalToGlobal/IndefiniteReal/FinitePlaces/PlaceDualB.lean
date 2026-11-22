@@ -1,5 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualBSt
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherLast
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualBSt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +97,7 @@ lemma exists_nat_mem_AA : ∃ N : ℕ, 0 < N ∧ ((N : D.host.E)) ∈ (D.host.AA
   exact h3
 
 lemma exists_nat_smul_mem {n : ℕ} {Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)}
-    (hΛ : Submodule.IsLattice D.host.E Λ) (x : Fin n → D.host.E) :
+    (hΛ : Submodule.IsFullLattice D.host.E Λ) (x : Fin n → D.host.E) :
     ∃ N : ℕ, 0 < N ∧ (N : D.host.E) • x ∈ Λ :=
   _root_.UpperTheory.Reformulated.B.Rd4.exists_nat_smul_mem hΛ x
 
@@ -108,9 +113,9 @@ lemma gen_single (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) (i : Fin T.ra
     ∃ NT NS : ℕ, 0 < NT ∧ 0 < NS ∧ ∀ α ∈ intAf D.host.F, ∀ a ∈ D.host.AA,
       Matrix.single i j (pairA D.host.F 0 α ⊗ₜ[D.host.F] (a * ((NT * NS : ℕ) : D.host.E))) ∈ latAll S T ΛS ΛT := by
   classical
-  obtain ⟨NT, hNT, ht⟩ := exists_nat_smul_mem hT.1 (Pi.single i (1 : D.host.E))
+  obtain ⟨NT, hNT, ht⟩ := exists_nat_smul_mem (PDA.selfDual_isFullLattice T ΛT hT) (Pi.single i (1 : D.host.E))
   set w : Fin S.rank → D.host.E := Matrix.vecMul (Pi.single j (1 : D.host.E)) S.gram⁻¹ with hw
-  obtain ⟨NS, hNS, hs⟩ := exists_nat_smul_mem hS.1 (star w)
+  obtain ⟨NS, hNS, hs⟩ := exists_nat_smul_mem (PDA.selfDual_isFullLattice S ΛS hS) (star w)
   refine ⟨NT, NS, hNT, hNS, fun α hα a ha => ?_⟩
   have hrow : ∀ j', ∑ k, star (((NS : D.host.E) • star w) k) * S.gram k j' =
       (NS : D.host.E) * (if j = j' then 1 else 0) := by
@@ -309,7 +314,7 @@ lemma mul_fI_eq (y : AE D) : y * fI D = finiteEmbeddingTensor D (finPart D y) :=
   induction y using TensorProduct.induction_on with
   | zero => rw [zero_mul, map_zero, map_zero]
   | tmul a z => rw [tmul_fI]; rfl
-  | add y y' h h' => rw [add_mul, h, h', map_add, map_add]
+  | add y y' h h' => rw [add_mul, h, h', map_add (f := _), map_add (f := _)]
 
 lemma exists_nat_mul_intAE (w : Af D.host.F ⊗[D.host.F] D.host.E) : ∃ k : ℕ, 0 < k ∧ k • w ∈ intAE D := by
   induction w using TensorProduct.induction_on with
@@ -344,8 +349,8 @@ lemma uniform_nat {ι : Type*} [Fintype ι] (P : ι → ℕ → Prop) (hP : ∀ 
   rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ i)]
   exact hP i _ _ (hPk i)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 lemma lower (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) :
     ∃ c : ℕ, 0 < c ∧ ∀ Z : WO S T, (∀ i j, IntF (Z i j)) → c • Z ∈ latAll S T ΛS ΛT := by
   classical
@@ -374,7 +379,7 @@ lemma lower (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) :
           push_cast; ring
         rw [heq]; exact hm
       | zero => rw [map_zero, Matrix.single_zero, smul_zero]; exact zero_mem _
-      | add x x' _ _ h h' => rw [map_add, Matrix.single_add, smul_add]; exact add_mem h h'
+      | add x x' _ _ h h' => rw [map_add (f := _), Matrix.single_add, smul_add]; exact add_mem h h'
       | neg x _ h =>
         have e : Matrix.single i j (-(finiteEmbeddingTensor D x)) = -Matrix.single i j (finiteEmbeddingTensor D x) := by
           ext a b; simp only [Matrix.single_apply, Matrix.neg_apply]; split_ifs <;> simp
@@ -458,8 +463,8 @@ lemma intF_gen {α : Af D.host.F} (hα : α ∈ intAf D.host.F) (o : 𝓞 D.host
     IntF (pairA D.host.F 0 α ⊗ₜ[D.host.F] ((o : 𝓞 D.host.E) : D.host.E)) :=
   ⟨by rw [tmul_fI]; rfl, AddSubgroup.subset_closure ⟨α, hα, o, rfl⟩⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 lemma upper (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) :
     ∃ c : ℕ, 0 < c ∧ ∀ t ∈ latAll S T ΛS ΛT, ∀ i j, IntF ((c • t) i j) := by
   obtain ⟨d₀, hd₀, hAA⟩ := AA_denom' (D := D)

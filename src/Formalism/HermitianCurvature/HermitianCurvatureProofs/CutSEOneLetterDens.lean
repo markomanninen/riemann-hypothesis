@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Matrix ComplexConjugate
@@ -48,28 +52,6 @@ theorem hs_zero_l (C : Wq →L[ℂ] Wp) : B.hsInner 0 C = 0 := by
 
 theorem hs_zero_r (A : Wq →L[ℂ] Wp) : B.hsInner A 0 = 0 := by
   rw [← zero_smul ℂ (0 : Wq →L[ℂ] Wp), hs_smul_r]; simp
-
-theorem plus_pt (t Y : ℂ) (ht : t ≠ 0) (hY : conj Y = Y) (A0 A1 B0 B1 SubquotientNontrivial ProjectiveBundleFormulaTorsion : Wq →L[ℂ] Wp) :
-    B.hsInner (-((conj t)⁻¹ • A1)) (Y • B0 + ProjectiveBundleFormulaTorsion - t • B1) +
-      B.hsInner (conj t • A0 + (Y + 1) • A1 - SubquotientNontrivial) (t⁻¹ • B0) =
-    (B.hsInner A0 B0 + B.hsInner A1 B1) + (conj t)⁻¹ * B.hsInner A1 B0 -
-      B.hsInner ((conj t)⁻¹ • SubquotientNontrivial) B0 - B.hsInner A1 (t⁻¹ • ProjectiveBundleFormulaTorsion) := by
-  have hct : conj t ≠ 0 := (map_ne_zero _).mpr ht
-  simp only [sub_eq_add_neg, hs_add_l, hs_add_r, hs_smul_l, hs_smul_r, hs_neg_l, hs_neg_r, map_inv₀, hY,
-    Complex.conj_conj]
-  field_simp
-  ring
-
-theorem minus_pt (t Y : ℂ) (ht : t ≠ 0) (hY : conj Y = Y) (A0 A1 B0 B1 SubquotientNontrivial ProjectiveBundleFormulaTorsion : Wq →L[ℂ] Wp) :
-    B.hsInner (-(t⁻¹ • A1)) (Y • B0 - ProjectiveBundleFormulaTorsion - conj t • B1) +
-      B.hsInner (t • A0 + (Y - 1) • A1 + SubquotientNontrivial) ((conj t)⁻¹ • B0) =
-    (B.hsInner A0 B0 + B.hsInner A1 B1) - t⁻¹ * B.hsInner A1 B0 +
-      B.hsInner (t⁻¹ • SubquotientNontrivial) B0 + B.hsInner A1 ((conj t)⁻¹ • ProjectiveBundleFormulaTorsion) := by
-  have hct : conj t ≠ 0 := (map_ne_zero _).mpr ht
-  simp only [sub_eq_add_neg, hs_add_l, hs_add_r, hs_smul_l, hs_smul_r, hs_neg_l, hs_neg_r, map_inv₀, hY,
-    Complex.conj_conj]
-  field_simp
-  ring
 
 end HS
 
@@ -234,17 +216,6 @@ theorem clsE_op (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.
     (h : Φ ∈ ClsE S P z z' π π' X L st l0 D l) : X.op l j Φ ∈ ClsE S P z z' π π' X L st l0 D l :=
   opClos_op X l _ j h
 
-theorem clsE_eU (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
-    (π' : Mx P.k P.r → (Wq →L[ℂ] Wq)) (X : ActualOps P.k P.r z z' π π')
-    (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (Pr (RadSp P.k P.r z z' π π'))) (l0 : ℕ)
-    (D : B.RealPlaceData P.k P.r Wp Wq) (l : Fin P.r) (a : S) (i j : Fin 2) (v : Ix S → RadSp P.k P.r z z' π π')
-    (hv : ∀ b, v b ∈ ClsE S P z z' π π' X L st l0 D l) (y : Ix S) :
-    act (eU a i j : SlopeTestRemainingChoices S (Pr (RadSp P.k P.r z z' π π'))) v y ∈ ClsE S P z z' π π' X L st l0 D l := by
-  rw [action_elementary_unit_apply]
-  split_ifs
-  · exact hv _
-  · exact zero_mem _
-
 end ClsP
 
 section Pt
@@ -271,7 +242,7 @@ theorem ivlet_plus_1 (X : ActualOps k r z z' π π') (L : R.LevelData (Pr (RadSp
     act (ivlet (site L l) le) u (Function.update y le.intersection_update_fsHerm_neg_one 1) =
       X.op l 4 (u y) + (le.pt + 1) • u (Function.update y le.intersection_update_fsHerm_neg_one 1) - X.op l 3 (u (Function.update y le.intersection_update_fsHerm_neg_one 1)) := by
   simp [ivlet, hp, action_inserted_letter_apply, upd_upd, upd_self y le.intersection_update_fsHerm_neg_one hy, Fin.sum_univ_two, site, hAL.1 l, hAL.2.2.1 l,
-    pfst_neg, pfst_zero, pfst_star_mkP, pfst_add, pfst_alg, sub_eq_add_neg, add_smul]
+    pfst_neg, pfst_zero, pfst_star_mkP, pfst_add, pfst_alg, pfst_one_apply, sub_eq_add_neg, add_smul]
   abel
 
 theorem vlet_plus_0 (X : ActualOps k r z z' π π') (L : R.LevelData (Pr (RadSp k r z z' π π')) r)
@@ -399,13 +370,13 @@ theorem hsSum_int (μ : Measure (Mt k r)) (hμ : B.IsHaarOn (Glev k r (Fin.last 
     (hx : ∀ b, x b ∈ lcSub k r z z' π π') (hy : ∀ b, y b ∈ lcSub k r z z' π π') (p : Fin r → ℂ) :
     Integrable (hsSum x y p) μ := by
   unfold hsSum
-  exact integrable_finset_sum _ fun b _ => int_lc μ hμ (hx b) (hy b) p
+  exact integrable_finsetSum _ fun b _ => int_lc μ hμ (hx b) (hy b) p
 
 theorem pairSum_eq (μ : Measure (Mt k r)) (hμ : B.IsHaarOn (Glev k r (Fin.last r)) μ) (x y : Ix S → RadSp k r z z' π π')
     (hx : ∀ b, x b ∈ lcSub k r z z' π π') (hy : ∀ b, y b ∈ lcSub k r z z' π π') (p : Fin r → ℂ) :
     ∑ b, pairAt μ (x b) (y b) p = ∫ g, hsSum x y p g ∂μ := by
   unfold hsSum pairAt
-  rw [integral_finset_sum _ fun b _ => int_lc μ hμ (hx b) (hy b) p]
+  rw [integral_finsetSum _ fun b _ => int_lc μ hμ (hx b) (hy b) p]
 
 theorem int4 {α : Type} [MeasurableSpace α] {ν : Measure α} (f1 f2 f3 f4 : α → ℂ) (c d : ℂ)
     (i1 : Integrable f1 ν) (i2 : Integrable f2 ν) (i3 : Integrable f3 ν) (i4 : Integrable f4 ν) :
@@ -639,8 +610,8 @@ end Core
 
 end OneLetterPf
 
-open OneLetterPf in
 
+open OneLetterPf in
 theorem one_letter_density_estimate (hL : LeibnizCls) (hS : DensSmoothCls) : OneLetterDens := by
   intro Wp Wq _ _ _ _ _ _ S _ _ P z z' π π' X μ L st l0 D hD hl1 hl2 hz hz' hπ hπ' l hl le hre
   have : SFinite μ := sfinite_of_isHaarOn _ μ hD.2.1

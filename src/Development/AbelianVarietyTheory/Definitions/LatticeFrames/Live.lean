@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsStdFr
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FamCol
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RescOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsStdFr
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTopAlt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RescOne
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -21,8 +26,8 @@ variable {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws
 
 abbrev chrK (W : RealPack ex) (t : W.P.T) (j : ℕ) : (AE (I.rec7 l Z))ˣ →* Circle := (pk W).toLevCh.mu t (j + 1)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure QJ (a : GeoAll W u) (t : W.P.T) where
   Ch₀ : ℕ → Type
   A : TwDat I l Z u (W.P.I.tup t) Ch₀
@@ -41,12 +46,6 @@ variable {a : GeoAll W u} {t : W.P.T} (J : QJ a t)
 abbrev QJ.G (i : Fin J.r) := a.Q (J.pl i) ⟨t, J.mem i⟩
 
 abbrev QJ.Ch (j : ℕ) : Type := ∀ i, (J.E i).Ch j
-
-def QJ.wt (j : ℕ) (α : J.Ch j) : ℂ := ∏ i, (J.E i).wt j (α i)
-
-def QJ.dQ (s : ∀ j, J.Ch j → ℂ) (j : ℕ) (α : J.Ch j) (γ : J.Ch (j + 1)) :
-    WO ((I.rec7 l Z).sp.X j) ((I.rec7 l Z).sp.X (j + 1)) →₀ ℂ :=
-  (s j α * (s (j + 1) γ)⁻¹) • (J.wt j α • aconv (List.ofFn fun i => (J.E i).dL j (α i) (γ i)))
 
 structure QJ.Reads : Prop where
   is : J.A.Is
@@ -82,21 +81,6 @@ structure QJ.Reads : Prop where
     GlobalTheory.SymBridge.IsOrd GlobalTheory.SymBridge.xPos e → ∀ r,
       (ofSplit (a.G n).q).pr (Formalism.L2.Col.repY (J.A.p0 ((a.G n).s + 1) (J.ι _ y)).1.2 (e r)) - (a.G n).S.y0 (Fin B.R.t) r ∈ 𝒪[(a.G n).k]
   live : J.A.Live J.ι
-
-def QJ.Vol (V : ℕ → ℂ) : Prop :=
-  ∀ j, j < B.R.m → ∀ α, (GlobalTheory.SeeSaw.volLev (a.g.x j).vol (J.A.U j (J.ι j α)) : ℂ) * J.wt j α = V j
-
-def QJ.Dat (C : ℕ → ℂ) (s : ∀ j, J.Ch j → ℂ) (ζ : ∀ j, J.Ch j → J.Ch (j + 1) → ℂ) (ρ : ℕ → ℂ) : Prop :=
-  (∀ j α, ∃ n : ℕ, 0 < n ∧ s j α ^ n = 1) ∧ (∀ α, s 0 α = 1) ∧ (∀ j, ∃ n : ℕ, 0 < n ∧ ρ j ^ n = 1) ∧
-    ∀ j (hj : j + 1 ≤ B.R.m) α γ,
-      IsRatDatum (pk W).ψ _ _ J.A.e (fun z => C j * J.wt j α * ζ j α γ * J.A.xi j hj (J.ι j α) (J.ι (j + 1) γ) z) (a.g.vac j)
-        (comb (pk W).ψ _ _ (J.dQ s j α γ) (comb (pk W).ψ _ _ (a.v.dG j) (comb (pk W).ψ _ _ (a.v.dT j) (a.g.vac j)))) ∧
-      ζ j α γ * (J.A.chr (j + 1) (J.A.xr j (J.ι j α)) : ℂ) * (J.A.chr (j + 1) (J.A.xr (j + 1) (J.ι (j + 1) γ)) : ℂ)⁻¹ = ρ j
-
-def QJ.VolT (VT : ℂ) : Prop :=
-  ∃ UT : Subgroup (GA (I.rec7 l Z) (I.rec7 l Z).sp.X'),
-    (∀ h, h ∈ UT ↔ a.g.bT⁻¹ * h * a.g.bT ∈ levS _ (pk W).βX (datXP (pk W) (lvP W) t)) ∧
-    ∀ β, (GlobalTheory.SeeSaw.volLev a.g.volT UT : ℂ) * J.wt B.R.m β = VT
 
 end GlobalTheory.Fam
 

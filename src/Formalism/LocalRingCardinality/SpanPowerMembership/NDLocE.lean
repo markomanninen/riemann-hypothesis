@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocD
+module
+
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocD
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,7 @@ instance OL_dvr : IsDiscreteValuationRing ↥(OL LL) := by
     have hm := l_mem_max LL
     rw [isField_iff_maximalIdeal_eq.mp hf, Ideal.mem_bot] at hm
     exact hl.out.ne_zero (Nat.cast_injective (R := ↥(OL LL)) (by simpa using hm))
-  exact ((IsDiscreteValuationRing.TFAE _ hnf).out 0 2).mpr hded
+  exact ((IsDiscreteValuationRing.TFAE _ hnf).out 1 3).mpr hded
 
 instance OL_frac : IsFractionRing ↥(OL LL) ↥LL.1 :=
   integralClosure.isFractionRing_of_finite_extension ℚ_[l] ↥LL.1

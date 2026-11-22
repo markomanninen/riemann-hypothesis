@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+
+@[expose] public section
 
 open MeasureTheory PositivityTheory.Rg.Tf.Loc
 open scoped ENNReal NNReal
@@ -39,8 +43,8 @@ theorem PositivityTheory.Rg.BcB.CV.pf_QMap : PositivityTheory.Rg.BcB.D4.NormEq �
   have : LocallyCompactSpace (T.map e.toMonoidHom) := hT'c.locallyCompactSpace
   by_cases hex : ∃ ρ, IsQuotNormaliser T ν ρ
   swap
-  · rw [quotIntegral, dif_neg hex]
-  rw [quotIntegral, dif_pos hex]
+  · rw [quotIntegral, dite_eq_right hex]
+  rw [quotIntegral, dite_eq_left hex]
   have hρ : IsQuotNormaliser T ν hex.choose := hex.choose_spec
   set ρ := hex.choose
 
@@ -79,7 +83,7 @@ theorem PositivityTheory.Rg.BcB.CV.pf_QMap : PositivityTheory.Rg.BcB.D4.NormEq �
     rw [map_mul, e.symm_apply_apply]
     exact hFT t ht _
   have hex' : ∃ ρ, IsQuotNormaliser (T.map e.toMonoidHom) ν' ρ := ⟨ρ', hρ'⟩
-  rw [quotIntegral, dif_pos hex', hN G' μ' _ ν' _ _ ρ' hF' hFT' hex'.choose_spec hρ'] at h0
+  rw [quotIntegral, dite_eq_left hex', hN G' μ' _ ν' _ _ ρ' hF' hFT' hex'.choose_spec hρ'] at h0
   have key : a • ∫ g, F g * ((((c : ℝ≥0∞)⁻¹ * ρ g).toReal : ℝ) : ℂ) ∂μ = 0 := by
     rw [← integral_smul_nnreal_measure, ← ha, integral_map_equiv]
     exact h0

@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.DerivDerivNonposOfIsLocalMax
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.DerivDerivNonposOfIsLocalMax
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.OntoC
 
@@ -49,12 +53,6 @@ theorem setLIntegral_muF {U : Set (V (nd X))} (hU : MeasurableSet U) (hUO : U �
     (measurable_densF X x0) (ae_of_all _ fun _ => ENNReal.ofReal_lt_top),
     Measure.restrict_restrict hU, Set.inter_eq_left.mpr hUO]
   rfl
-
-theorem deriv_ka (bb t : ℝ) : deriv (fun t : ℝ => Real.exp (-bb * t)) t = -bb * Real.exp (-bb * t) := by
-  have h : HasDerivAt (fun t : ℝ => Real.exp (-bb * t)) (Real.exp (-bb * t) * (-bb * 1)) t :=
-    ((hasDerivAt_id t).const_mul (-bb)).exp
-  rw [h.deriv]
-  ring
 
 private lemma wdb_holo_lemma {n : ℕ} (j : Fin n) {g : V n → ℂ} {y : V n}
     (hg : DifferentiableAt ℂ g y) : wdb n j g y = 0 := by
@@ -130,7 +128,8 @@ theorem dbar_ka (bb : ℝ) {f0 : Frame X.Ψ r → ℂ} (hf0 : DifferentiableOn �
     rw [wdb_mul hK.differentiableAt (hF.restrictScalars ℝ), wdb_holo_lemma j hF, wdb_ofReal hka,
       hwd j, map_mul, Complex.conj_ofReal]
     ring
-  simp only [hw, map_sum, map_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hw, map_sum, map_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   ring
 

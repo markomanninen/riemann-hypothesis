@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CubeSignEmb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CubeSignEmb
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -24,7 +29,7 @@ private theorem detC_erase {S κ : Type} [CommRing S] [LinearOrder κ] {p : ℕ}
   have h' : (t.erase (t.orderEmbOfFin h k)).card = p := by
     rw [Finset.card_erase_of_mem (Finset.orderEmbOfFin_mem _ _ _), h]; rfl
   unfold detC
-  rw [dif_pos h']
+  rw [dite_eq_left h']
   congr 1
   ext a b
   simp only [Matrix.of_apply]
@@ -75,7 +80,8 @@ theorem UpperTheory.Gal.productCup_of_system.det_of :
   rw [key]
   by_cases h : t.card = p + 1
   · have h0 := congrArg (fun x => act x m) (ring_core ρ f t h)
-    simp only [map_zero, LinearMap.zero_apply, map_sum, LinearMap.sum_apply] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_zero, LinearMap.zero_apply, map_sum, LinearMap.sum_apply] at h0
     rw [Pi.zero_apply, ← h0]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← zsmul_eq_mul, map_zsmul, LinearMap.smul_apply, map_mul, Module.End.mul_apply]

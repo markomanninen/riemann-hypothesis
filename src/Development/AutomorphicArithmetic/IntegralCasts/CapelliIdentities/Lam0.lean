@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct in
 theorem UpperTheory.Reformulated.B.Qf1.lam0 :

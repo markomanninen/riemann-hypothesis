@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep
 
 namespace GlobalTheory.LeviConstTerm
@@ -18,14 +23,14 @@ theorem setIntegral_comp_aut {G : Type} [AddCommGroup G] [TopologicalSpace G] [I
     have hmeas : Measurable U := U.continuous.measurable
     haveI : (μ.map U).IsAddHaarMeasure := U.isAddHaarMeasure_map μ
     have hc := Measure.isAddLeftInvariant_eq_smul (μ.map U) μ
-    have hq : Measure.QuasiMeasurePreserving U μ μ := ⟨hmeas, by rw [hc]; exact Measure.smul_absolutelyContinuous⟩
+    have hq : Measure.QuasiMeasurePreserving U μ μ := ⟨hmeas.aemeasurable, by rw [hc]; exact Measure.smul_absolutelyContinuous⟩
     have hS : IsAddFundamentalDomain Γ (U ⁻¹' 𝓕) μ := by
       refine h𝓕.preimage_of_equiv (e := fun γ : Γ => (⟨U.symm γ, hU' _ γ.2⟩ : Γ)) hq ?_ ?_
       · refine ⟨fun x y hxy => Subtype.ext (U.symm.injective (congrArg Subtype.val hxy)), fun y => ⟨⟨U y, hU _ y.2⟩, ?_⟩⟩
         exact Subtype.ext (U.symm_apply_apply _)
       · intro γ x
         change U (U.symm γ + x) = (γ : G) + U x
-        rw [map_add, U.apply_symm_apply]
+        rw [map_add (f := _), U.apply_symm_apply]
     refine ⟨⟨hmeas, ?_⟩, hS⟩
     have h2 : μ (U ⁻¹' 𝓕) = 1 := (hS.measure_eq h𝓕).trans h1
     have h3 : μ.map U 𝓕 = 1 := by
@@ -55,13 +60,13 @@ theorem nilM_conjN {m n : Matrix (Fin a) (Fin a) R} (hm : IsBlockSL2Embedding r 
   ext i j
   by_cases h : (i : ℕ) < r ∧ r ≤ (j : ℕ)
   · simp only [nilM, Matrix.of_apply, dif_pos h]; rfl
-  · rw [nilM, Matrix.of_apply, dif_neg h, Matrix.mul_apply]
+  · rw [nilM, Matrix.of_apply, dite_eq_right h, Matrix.mul_apply]
     refine (Finset.sum_eq_zero fun k _ => ?_).symm
     rcases hn k j with h1 | h1
     · rw [Matrix.mul_apply, Finset.sum_eq_zero, zero_mul]
       intro l _
       rcases hm i l with h2 | h2
-      · rw [nilM, Matrix.of_apply, dif_neg (fun h' => h (by omega)), mul_zero]
+      · rw [nilM, Matrix.of_apply, dite_eq_right (fun h' => h (by omega)), mul_zero]
       · rw [h2, zero_mul]
     · rw [h1, mul_zero]
 
@@ -108,7 +113,7 @@ theorem unip_mul (m : GL (Fin a) R) (hm : IsBlockSL2Embedding r m.val) (hm' : Is
   change (1 + nilM x) * m.val = m.val * (1 + nilM (conjN m⁻¹.val m.val x))
   rw [nilM_conjN hm' hm, mul_add, add_mul, one_mul, mul_one, ← mul_assoc, ← mul_assoc, Units.mul_inv, one_mul]
 
-theorem constTerm_levi_invariant : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a r : ℕ) (hr : r ≤ a) [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E)) (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → μ 𝓕 = 1 → ∀ f : GA E a → ℂ, (∀ γ g, f (ratGL E a γ * g) = f g) → ∀ (γ : GL (Fin r) E × GL (Fin (a - r)) E) (g : GA E a), ∫ x in 𝓕, f (unip x * (ratGL E a (GlobalTheory.LeviGA.blkGL hr γ) * g)) ∂μ = ∫ x in 𝓕, f (unip x * g) ∂μ := by
+theorem constTerm_levi_invariant : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a r : ℕ) (hr : r ≤ a) [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E)) (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → μ 𝓕 = 1 → ∀ f : GA E a → ℂ, (∀ γ g, f (ratGL E a γ * g) = f g) → ∀ (γ : GL (Fin r) E × GL (Fin (a - r)) E) (g : GA E a), ∫ x in 𝓕, f (unip x * (ratGL E a (GlobalTheory.LeviGA.blkGL hr γ) * g)) ∂μ = ∫ x in 𝓕, f (unip x * g) ∂μ := by
   intro E _ _ _ a r hr _ _ μ 𝓕 hμ h𝓕 h1 f hf γ g
   haveI : Countable E := Countable.of_equiv _ (Module.finBasis ℚ E).equivFun.toEquiv.symm
   haveI : Countable (ratN E a r) := by

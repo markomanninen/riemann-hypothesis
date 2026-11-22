@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.CornerDeterminantCounts.ThetaMbeU
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.Common
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.CornerDeterminantCounts.ThetaMbeU
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.Common
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem mulVec_mem_headColsU (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) R) (w : Fin
     simp [Finset.sum_apply, Pi.single_apply]
   have hsum : Z.mulVec w = ∑ j, w j • Z.mulVec (Pi.single j 1) := by
     conv_lhs => rw [hw']
-    rw [← Matrix.mulVecLin_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Matrix.mulVecLin_apply, map_sum]
     simp only [map_smul, Matrix.mulVecLin_apply]
   rw [hsum, Fin.sum_univ_castSucc, hw, zero_smul, add_zero]
   refine Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ ?_
@@ -253,7 +258,7 @@ theorem mem_range_PhiU (p : M.Cok Y × E) :
     obtain ⟨c, x⟩ := p
     obtain ⟨u, rfl⟩ := Submodule.Quotient.mk_surjective _ c
     dsimp only at h
-    rw [linQ_mk, ← map_add, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at h
+    rw [linQ_mk, ← map_add (f := _), Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at h
     simp only [Model.Rsub, LinearMap.mem_range] at h
     obtain ⟨s, hs⟩ := h
     have hs' : (s : E) = x + lamE Y al u := hs
@@ -337,16 +342,7 @@ theorem ellU_comp (g : MbMod Z₁.Z →ₗ[M.R] MbMod Z₂.Z) (he : g (eCl Z₁.
 theorem ellU_equiv (γ : MbMod Z₁.Z ≃ₗ[M.R] MbMod Z₂.Z) (he : γ (eCl Z₁.Z) = eCl Z₂.Z) (m : MbMod Z₁.Z) :
     ellU hY₂ hal₂ (γ m) = ellU hY₁ hal₁ m := ellU_comp hY₁ hal₁ hY₂ hal₂ γ.toLinearMap he m
 
-include hY₁ hal₁ in
-theorem mk_extL_mulVec (w : Fin r → M.R) :
-    (Submodule.Quotient.mk (extL r (Y₁.Z *ᵥ w)) : MbMod Z₁.Z) = (-(∑ j, al₁ j * w j)) • eCl Z₁.Z := by
-  exact mk_extL_mulVec_eq_neg_sum_smul_eCl hY₁ hal₁ w
 
-include hY₁ hal₁ in
-theorem mk_sub_extL (v : Fin (r + 1) → M.R) :
-    (Submodule.Quotient.mk v : MbMod Z₁.Z) =
-      Submodule.Quotient.mk (extL r (fun i => v i.castSucc)) + v (Fin.last r) • eCl Z₁.Z := by
-  exact mk_eq_mk_extL_add_last_smul_eCl Z₁ v
 
 include hY₁ hal₁ in
 theorem range_le_ker_indU (g : MbMod Z₁.Z →ₗ[M.R] MbMod Z₂.Z) (he : g (eCl Z₁.Z) = eCl Z₂.Z) :
@@ -365,7 +361,7 @@ theorem indU_piU (g : MbMod Z₁.Z →ₗ[M.R] MbMod Z₂.Z) (he : g (eCl Z₁.Z
   obtain ⟨v, rfl⟩ := Submodule.Quotient.mk_surjective _ m
   rw [piU_mk]
   show piU hY₂ (g (Submodule.Quotient.mk (extL r fun i => v i.castSucc))) = _
-  rw [mk_eq_mk_extL_add_last_smul_eCl Z₁ v, map_add, map_smul, he, map_add, map_smul, piU_e, smul_zero, add_zero]
+  rw [mk_eq_mk_extL_add_last_smul_eCl Z₁ v, map_add (f := _), map_smul, he, map_add (f := _), map_smul, piU_e, smul_zero, add_zero]
 
 theorem symm_e (γ : MbMod Z₁.Z ≃ₗ[M.R] MbMod Z₂.Z) (he : γ (eCl Z₁.Z) = eCl Z₂.Z) :
     γ.symm.toLinearMap (eCl Z₂.Z) = eCl Z₁.Z := by

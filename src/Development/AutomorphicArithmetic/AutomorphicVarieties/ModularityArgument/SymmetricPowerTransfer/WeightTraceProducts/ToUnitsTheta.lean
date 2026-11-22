@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.WeightDeterminantTwists.WtMain
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.LevelTwoFiniteIndex
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.WeightDeterminantTwists.WtMain
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.LevelTwoFiniteIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem cS_tr (hj : 1 ≤ j) (γ : SU Δ) (τ : K) (h : HasTr (γ : DX Δ) τ) :
 
 theorem cK_tr (hj : 1 ≤ j) (g : DX Δ) (τ : K) (h : (mt g).trace = algebraMap K _ (2 + τ)) (h' : (mt g).det = algebraMap K _ (2 + τ)) :
     LinearMap.trace ℂ _ (cK em j g) = ch em j τ :=
-  (wtMain _ I em j hj).kappa g _ (by rw [h, map_add, map_ofNat]) (by rw [h', map_add, map_ofNat])
+  (wtMain _ I em j hj).kappa g _ (by rw [h, map_add (f := _), map_ofNat]) (by rw [h', map_add (f := _), map_ofNat])
 
 theorem cK_scal (hj : 1 ≤ j) (z : Kˣ) (s : DX Δ) (h : IsScal z s) (v : VD I (2 * j + 1)) :
     cK em j s v = (∏ w, em w (algebraMap K _ (z : K)))⁻¹ • v := by

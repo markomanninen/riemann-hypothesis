@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsSelfDualForm
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsSelfDualForm
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU NumberField MeasureTheory
 open scoped TensorProduct

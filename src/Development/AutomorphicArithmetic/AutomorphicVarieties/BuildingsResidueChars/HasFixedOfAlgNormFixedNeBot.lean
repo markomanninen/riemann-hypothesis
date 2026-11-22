@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N ValuativeRel
 open GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp
@@ -17,7 +21,7 @@ private theorem UpperTheory.V.hasFixed_of_equiv {G V W : Type} [Group G] [AddCom
   exact h1.symm
 
 private theorem UpperTheory.V.hasFixed_of_nu {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
-    [IsNonarchimedeanLocalField k] (x : IrrGL k) (s : ℂ) (U : Subgroup (GL (Fin x.1) k))
+    [IsNonarchimedeanLocalField k] (x : IrrGL (k := k)) (s : ℂ) (U : Subgroup (GL (Fin x.1) k))
     (hU : U ≤ GlobalTheory.SplitWeil.KO k (Fin x.1)) (h : UpperTheory.V.Af.HasFixed (x.nu s).rep U) :
     UpperTheory.V.Af.HasFixed x.rep U := by
   obtain ⟨v, hv, h1⟩ := UpperTheory.V.hasFixed_of_equiv (x.twEquiv _ _) h

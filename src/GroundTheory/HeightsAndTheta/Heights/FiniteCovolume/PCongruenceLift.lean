@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsStabilizerLevi
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementLattice
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementExtension
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsNsmulMem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsStabilizerLevi
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementLattice
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementExtension
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsNsmulMem
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 

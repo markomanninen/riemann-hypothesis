@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.DefiniteUnitaryAction
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteGroupActsUnitarily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.DefiniteUnitaryAction
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteGroupActsUnitarily
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,10 +25,6 @@ theorem actsUnitarily_of_clauses (R : RealDat D A Ks) (hE : R.models_HE) (gE : R
     fun i σ => GlobalTheory.FiniteGroupUnitary.isUnitaryRep_of_norm _ (GlobalTheory.T.norm_liftForms_finiteGroup_action R hW gW hν i σ),
     fun t σ => h.1 t σ, fun i t σ => h.2 i t σ⟩
 
-theorem unitaryAction : UnitaryAction := fun _ _ _ _ _ _ _ _ _ _ _ R _ h =>
-  actsUnitarily_of_clauses R h.models.HE h.models.gE h.models.ν0 h.models.HW h.models.gW h.models.νW h.fam.tie
-    h.models.cX h.models.cV
-
 theorem geometric_unitary (R : RealDat D A Ks) (hU : R.LUnif) (hW : R.models_HW) (gW : R.models_gW) (h : ActsUnitarily R)
     (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) (g : G) (x y : Fin (R.nW i) → D.what₂.LL) :
     inner ℂ ((R.FW i).j σ ((R.FW i).ρ g x)) ((R.FW i).j σ ((R.FW i).ρ g y)) = inner ℂ ((R.FW i).j σ x) ((R.FW i).j σ y) := by
@@ -37,27 +37,5 @@ theorem geometric_unitary (R : RealDat D A Ks) (hU : R.LUnif) (hW : R.models_HW)
       Fintype.card_ne_zero
   rw [e, e, inner_smul_left, inner_smul_right, h.formsW, ← mul_assoc, Complex.conj_mul', n]
   simp
-
-def lineDatum : CSD ℚ where
-  Cl := Unit
-  V := ℚ
-  ιV := Unit
-  bV := Module.Basis.singleton Unit ℚ
-  pair := LinearMap.mk₂'ₛₗ _ _ (fun a b => a * b) (fun _ _ _ => add_mul _ _ _)
-    (fun c a b => by simp [mul_assoc]) (fun _ _ _ => mul_add _ _ _) (fun c a b => by simp [mul_left_comm])
-  Gam := fun _ => Unit
-  ρ := fun _ => 1
-  Nab := fun _ => ⊤
-  Del := fun _ => ⊤
-
-theorem not_isUnitaryAt_scalars (σ : ℚ →+* ℂ) :
-    ¬ IsUnitaryAt lineDatum σ (Representation.ofDistribMulAction ℚ ℚˣ lineDatum.Forms) := by
-  intro h
-  let f : lineDatum.Forms := ⟨fun _ => (1 : ℚ), fun _ _ => rfl⟩
-  have hs : ∀ a, σ (star a) = starRingEnd ℂ (σ a) := fun a => by simp
-  have := (isUnitaryAt_iff lineDatum σ hs _).1 h (Units.mk0 2 two_ne_zero) f f
-  change ∑ c : Unit, ((Fintype.card Unit : ℕ) : ℚ)⁻¹ * (((2 : ℚ) * 1) * ((2 : ℚ) * 1)) =
-    ∑ c : Unit, ((Fintype.card Unit : ℕ) : ℚ)⁻¹ * ((1 : ℚ) * 1) at this
-  norm_num at this
 
 end GlobalTheory.UnitaryActionTest

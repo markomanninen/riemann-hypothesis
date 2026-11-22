@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.CommPresIsoSub
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrBase
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.CommPresIsoSub
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -298,8 +302,8 @@ theorem greedy_list (S : UniformizedDVR p O) (l : List (NIdx Dt)) (hl : l.Nodup)
     rw [List.map_cons, List.prod_cons, Module.End.mul_apply, hmap, hi']
     exact hmu.trans hka'
 
-include D in
 
+include D in
 theorem restJP {n' : ℕ} (S : UniformizedDVR p O) (hR : AdmissibleDVR p n' O) (dNo : TL J Dt.nL r → ℕ)
     (y : MvPolynomial (TL J Dt.nL r × Fin K) (KK O)) :
     ∃ (ka : ZMod J → ℕ → Fin K → ℤ) (e : Module.End (KK O) (MvPolynomial (TL J Dt.nL r × Fin K) (KK O))),

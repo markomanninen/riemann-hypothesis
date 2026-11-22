@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumUnderAdelicPairModulusOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpanRationalTranslatesVacuum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ApplyAt0Smul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionRationalTranslateMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMovesOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisFix
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitCompDet
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VlLeOfMemHatId
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulConjSmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitInertFactor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumUnderAdelicPairModulusOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpanRationalTranslatesVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ApplyAt0Smul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionRationalTranslateMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMovesOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisFix
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitCompDet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VlLeOfMemHatId
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulConjSmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitInertFactor
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ theorem zeroAt_zero (q : ℕ) : ZeroAt D q 0 :=
 theorem trivAt_one {N : ℕ} (q : ℕ) : TrivAt D q ((1 : GA D N) : GL (Fin N) (AE D)) := fun i j => by
   simpa using zeroAt_zero (D := D) q
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem fix_of_prop {δ t0 : ℂ} {Q : ℕ} (P : Pair D ⊤ δ t0 Q) (hT : P.e0 ∈ TT D (tor0 D ⊤ δ) P.a P.d) {g' : GA D P.d}
     {H : VC D P.a P.d → ℂ} {c : ℂ} (hc' : P.W.Om 1 g' P.e0 = c • H) :
     H ∈ TT D (tor0 D ⊤ δ) P.a P.d ∧ ∀ k : GA D P.a, P.W.Om k 1 P.e0 = P.e0 → P.W.Om k 1 H = H := by
@@ -116,7 +120,5 @@ theorem cosetVec_fix (G : GridData L sc) (i j : Fin D.R.m) (hI : Inp D) {μ₀ :
   have hWT := GlobalTheory.FunObj.NormUniq.wd_rat_mem_TT P.crv one_pos (by rw [one_smul]; exact pt_unitBlock_mem δ 0 P.a P.d) hHT
   unfold cosetVec
   rw [P.W.smul _ _ _ _ hWT, hW]
-
-example : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc) (i j : Fin D.R.m), Inp D → ∀ {μ₀ : T}, L.Is μ₀ → ∀ {δ t0 : ℂ} {Q : ℕ} {P P' : Pair D ⊤ δ t0 Q}, IsBottom G μ₀ i j (condE G.pl) P P' → ∀ {k : GA D P.a}, k ∈ intG D P.a → CongOne D (condE G.pl) k → P.W.Om k 1 (cosetVec P (condE G.pl) 0) = cosetVec P (condE G.pl) 0 := @cosetVec_fix
 
 end GlobalTheory.FunObj.CosetFix

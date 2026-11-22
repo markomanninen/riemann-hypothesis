@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,10 +15,6 @@ open MvPolynomial
 abbrev Letter (T : Type) (r : T → ℕ) (n : ℕ) : Type := Σ σ : T, Fin (r σ) × Fin n
 
 variable {T : Type} (r : T → ℕ) (n : ℕ)
-
-def letMat (R : Type) [CommRing R] (σ : T) :
-    Matrix (Fin (r σ)) (Fin n) (MvPolynomial (Letter T r n) R) :=
-  fun a b => X ⟨σ, a, b⟩
 
 variable (k : Type) [Field k]
 

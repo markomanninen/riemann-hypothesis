@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.ULieDefs
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QdetTopThreeOrders
+module
 
-open NumberField Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut GlobalTheory.ULie
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableOfIsSm
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InducedSectionZFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QdetTopThreeOrders
+
+@[expose] public section
+
+open NumberField Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut
 open scoped TensorProduct
-
-private noncomputable def UpperTheory.prodComplLinearPoly (n : ℕ) (S : Finset (Fin n)) : Polynomial ℂ :=
-  ∏ k ∈ Sᶜ, (Polynomial.X - Polynomial.C (k : ℂ))
 
 private theorem UpperTheory.coeff_mem_span_range_of_polynomial_eq {A : Type} [Ring A] [Algebra ℂ A] (f : ℂ → A) (q : ℕ → A)
     (m : ℕ) (hf : ∀ u : ℂ, f u = ∑ k ∈ Finset.range m, u ^ k • q k) :
@@ -117,14 +121,15 @@ theorem UpperTheory.exists_qdet_eq_pow_add_sum_coeff_mem_span :
     simpa using (hQ σ).1
   have hQ2 : ∀ σ, (Q σ).coeff n = if σ = 1 then 1 else 0 := fun σ => (hQ σ).2
   have hPn : P.coeff n = 1 := by
-    simp only [P, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul, hQ2]
+    simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul, hQ2]
     simp
   have heval : ∀ u : ℂ, Formalism.REAL.qdet X u = P.eval₂ (RingHom.id A) (algebraMap ℂ A u) := by
     intro u
     let ψ := Polynomial.eval₂RingHom' (RingHom.id A) (algebraMap ℂ A u)
       (fun a => Algebra.commute_algebraMap_right u a)
     show _ = ψ P
-    simp only [P, Q, map_sum, map_mul, map_list_prod, List.map_ofFn]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, Q, map_sum, map_mul, map_list_prod, List.map_ofFn]
     simp only [Formalism.REAL.qdet, Formalism.REAL.qminor]
     refine Finset.sum_congr rfl (fun σ _ => ?_)
     congr 1

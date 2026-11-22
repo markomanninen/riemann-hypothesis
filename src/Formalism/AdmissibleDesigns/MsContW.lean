@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.EKSymmCont
-import Formalism.AdmissibleDesigns.YtTarget
+module
+
+public import Formalism.AdmissibleDesigns.EKSymmCont
+public import Formalism.AdmissibleDesigns.YtTarget
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

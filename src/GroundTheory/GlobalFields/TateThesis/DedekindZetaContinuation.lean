@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.DedekindContinuation
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.DedekindContinuation
+
+@[expose] public section
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex Topology Filter Set
 open scoped Real

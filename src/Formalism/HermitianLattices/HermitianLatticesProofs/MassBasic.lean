@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementMass
-import Formalism.ThetaLiftIndependence.ThetaOrbitSums.ClassRepsDefinite
-import Formalism.ThetaLiftIndependence.ThetaOrbitSums.LatLiftIndep
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusBasic
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.ThetaLiftIndependence.ThetaOrbitSums.ClassRepsDefinite
+public import Formalism.ThetaLiftIndependence.ThetaOrbitSums.LatLiftIndep
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusBasic
+
+@[expose] public section
 
 open NumberField
 
@@ -25,10 +29,10 @@ theorem massBasic_mass_eq (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (Rin
     (hs : ∃ s, Formalism.ThetaLiftIndependence.IsClassReps h L s) :
     mass h L = ∑ M ∈ hs.choose, ((Nat.card (Formalism.ThetaLiftIndependence.autL h M) : ℕ) : ℝ)⁻¹ := by
   unfold mass
-  rw [dif_pos hs]
+  rw [dite_eq_left hs]
 
 theorem massBasic_self_mem_genus (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (RingOfIntegers K) V)
-    (hL : Submodule.IsLattice K L) : L ∈ genus h L := by
+    (hL : Submodule.IsFullLattice K L) : L ∈ genus h L := by
   rw [genus, Set.mem_setOf_eq]
   refine ⟨hL, ?_⟩
   intro p _
@@ -38,9 +42,18 @@ theorem massBasic_self_mem_genus (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodu
 
 end MassBasicAux
 
-theorem massBasic : MassBasic := by
+theorem massBasic :
+    ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
+      [FiniteDimensional K V] [Module (RingOfIntegers K) V] [IsScalarTower (RingOfIntegers K) K V]
+      (h : V →ₗ⋆[K] V →ₗ[K] K), h.IsSymm →
+      (∀ x : V, x ≠ 0 → 0 < Algebra.trace ℚ K (h x x)) →
+      ∀ L : Submodule (RingOfIntegers K) V, Submodule.IsFullLattice K L →
+        (∃ s, Formalism.ThetaLiftIndependence.IsClassReps h L s) ∧
+        (∀ s, Formalism.ThetaLiftIndependence.IsClassReps h L s →
+          mass h L = ∑ M ∈ s, ((Nat.card (Formalism.ThetaLiftIndependence.autL h M) : ℕ) : ℝ)⁻¹) ∧
+        0 < mass h L := by
   intro K V _ _ _ _ _ _ _ _ h hh hpos L hL
-  obtain ⟨hex, hwt, -⟩ := Formalism.ThetaLiftIndependence.classRepsDefinite K V h hh hpos L hL
+  obtain ⟨hex, hwt, -⟩ := Formalism.ThetaLiftIndependence.classRepsDefinite K V h hh hpos L hL.toIsLattice
   refine ⟨hex, fun s hs => ?_, ?_⟩
   · rw [massBasic_mass_eq h L hex]
     have e := Formalism.ThetaLiftIndependence.latLiftIndep K V h L (fun _ => 1) (fun _ => 1)

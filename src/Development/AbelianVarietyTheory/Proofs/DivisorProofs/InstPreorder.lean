@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -72,8 +76,8 @@ variable {R}
 noncomputable def Hens.of (i : EtNbhd R) : i.B →+* Hens R :=
   Ring.DirectLimit.of (fun i : EtNbhd R => i.B) (fun _ _ h => ⇑(EtNbhd.trans h)) i
 
-variable (R) in
 
+variable (R) in
 noncomputable instance : Algebra R (Hens R) :=
   ((Hens.of (EtNbhd.base (R := R))).comp (algebraMap R (EtNbhd.base (R := R)).B)).toAlgebra
 

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

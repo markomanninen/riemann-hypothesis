@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.LinQRawRange
-import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LinQRawRange
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
+
+@[expose] public section
 
 open ValuativeRel Classical
 

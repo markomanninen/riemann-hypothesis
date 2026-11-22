@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LineKroneckerRightMatrixConjTranspose
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LineKroneckerRightMatrixConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {σ : Type} {k l n : ℕ}
 
 def harmSub (z : Fin k × Fin n → σ) (y : Fin l × Fin n → σ) : Submodule ℂ (MvPolynomial σ ℂ) where
   carrier := {P | ∀ i j, ∑ t, pderiv (z (i, t)) (pderiv (y (j, t)) P) = 0}
-  add_mem' := fun ha hb i j => by simp only [map_add, Finset.sum_add_distrib, ha i j, hb i j, add_zero]
+  add_mem' := fun ha hb i j => by simp only [map_add (f := _), Finset.sum_add_distrib, ha i j, hb i j, add_zero]
   zero_mem' := fun i j => by simp
   smul_mem' := fun c _ ha i j => by
     simp only [Derivation.map_smul, ← Finset.smul_sum, ha i j, smul_zero]
@@ -22,7 +26,7 @@ theorem pderiv_pderiv_polar [DecidableEq σ] (u v a b : σ) (P : MvPolynomial σ
     pderiv u (pderiv v (X a * pderiv b P)) = X a * pderiv b (pderiv u (pderiv v P)) +
       (if u = a then pderiv b (pderiv v P) else 0) +
       (if v = a then pderiv u (pderiv b P) else 0) := by
-  rw [pderiv_X_mul', map_add, pderiv_X_mul', pderiv_swap v b, pderiv_swap u b]
+  rw [pderiv_X_mul', map_add (f := _), pderiv_X_mul', pderiv_swap v b, pderiv_swap u b]
   split_ifs <;> simp [pderiv_swap u b]
 
 theorem lap_colOp [DecidableEq σ] (z : Fin k × Fin n → σ) (y : Fin l × Fin n → σ) {I J : Type}
@@ -30,9 +34,11 @@ theorem lap_colOp [DecidableEq σ] (z : Fin k × Fin n → σ) (y : Fin l × Fin
     ∑ t, pderiv (z (i, t)) (pderiv (y (j, t)) (colOp ℂ x a b P)) =
       ∑ t, ∑ c, (if z (i, t) = x (c, a) then pderiv (x (c, b)) (pderiv (y (j, t)) P) else 0) +
       ∑ t, ∑ c, (if y (j, t) = x (c, a) then pderiv (z (i, t)) (pderiv (x (c, b)) P) else 0) := by
-  simp only [colOp_apply, map_sum, pderiv_pderiv_polar, Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [colOp_apply, map_sum, pderiv_pderiv_polar, Finset.sum_add_distrib]
   rw [Finset.sum_comm]
-  simp only [← Finset.mul_sum, ← map_sum, hP i j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Finset.mul_sum, ← map_sum, hP i j]
   simp
 
 theorem harmSub_mixedOp {z : Fin k × Fin n → σ} {y : Fin l × Fin n → σ}
@@ -104,7 +110,7 @@ theorem Sep.mixed {z : Fin k × Fin n → σ} {y : Fin l × Fin n → σ} {A B :
 theorem mixed_weight (z : Fin k × Fin n → σ) (y : Fin l × Fin n → σ) {P : MvPolynomial σ ℂ}
     {t : Fin n} {w : ℚ} (h : mixedOp ℂ z y t t P = (w : ℂ) • P) {m : σ →₀ ℕ} (hm : m ∈ P.support) :
     w = ((∑ i, m (z (i, t)) : ℕ) : ℚ) - (∑ j, m (y (j, t)) : ℕ) := by
-  have := congrArg (coeff m) h
+  have := congrArg (AddMonoidAlgebra.coeff · m) h
   rw [mixedOp_apply, coeff_sub, coeff_sum, coeff_sum, coeff_smul] at this
   simp only [GlobalTheory.Harm.HighestUnique.coeff_X_mul_pderiv, ← Finset.sum_mul, ← sub_mul,
     smul_eq_mul] at this

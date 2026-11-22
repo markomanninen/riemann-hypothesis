@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealCusp
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealCusp
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,9 +53,9 @@ theorem isSelfDualBy_of_iso {π π₁ π₂ : TR.CuspSub F a} {χ : HChar F} (B 
     simp [e, hc]
   · obtain ⟨ψ, rfl⟩ := S.surjective ψ
     have e : π.op (.lie X) (S ψ) = S (π.op (.lie (TR.toL (-(Matrix.of X)ᵀ))) ψ + d (Matrix.of X).trace • ψ) :=
-      T.injective (by rw [hT, hS, hS, x₂, x₁, map_add, map_add, map_smul, map_smul])
+      T.injective (by rw [hT, hS, hS, x₂, x₁, map_add (f := _), map_add (f := _), map_smul, map_smul])
     have := hX X φ ψ
-    simp only [e, LinearMap.compl₂_apply, LinearEquiv.coe_coe, LinearEquiv.symm_apply_apply, map_add, map_smul, smul_eq_mul]
+    simp only [e, LinearMap.compl₂_apply, LinearEquiv.coe_coe, LinearEquiv.symm_apply_apply, map_add (f := _), map_smul, smul_eq_mul]
     linear_combination this
 
 end UpperTheory.V.Af

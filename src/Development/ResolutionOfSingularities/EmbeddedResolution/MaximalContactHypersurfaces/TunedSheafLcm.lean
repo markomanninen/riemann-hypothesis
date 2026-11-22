@@ -1,11 +1,16 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedIdealPowers
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedIdealSheaf
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedIdealPowers
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedIdealSheaf
+
+@[expose] public section
+
 universe u
 
 open AlgebraicGeometry CategoryTheory
@@ -28,9 +33,9 @@ private theorem foldr_lcm_consecutive_pos :
     ∀ (n s : ℕ), 0 < s → 0 < (List.range' s n).foldr Nat.lcm 1
   | 0, s, _ => Nat.one_pos
   | (n + 1), s, hs => by
-      have h := foldr_lcm_consecutive_pos n (s + 1) (by omega)
+      have h := foldr_lcm_consecutive_pos n (s + 1) (Nat.succ_pos s)
       show 0 < Nat.lcm s ((List.range' (s + 1) n).foldr Nat.lcm 1)
-      exact Nat.pos_of_ne_zero (Nat.lcm_ne_zero (by omega) (by omega))
+      exact Nat.pos_of_ne_zero (Nat.lcm_ne_zero (Nat.ne_of_gt hs) (Nat.ne_of_gt h))
 
 theorem lcmUpTo_pos (m : ℕ) : 0 < lcmUpTo m :=
   foldr_lcm_consecutive_pos m 1 Nat.one_pos

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj Pointwise
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -59,13 +64,13 @@ theorem residue_perfect_and_char :
     obtain ⟨w, rfl⟩ := residue_surjective y
     have hint : IsIntegral K (algebraMap W L w) := Algebra.IsIntegral.isIntegral _
     set p := minpoly K (algebraMap W L w)
-    obtain ⟨b, hb⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors R) p
+    obtain ⟨b, hbmem, hb⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors R) p
     set q := IsLocalization.integerNormalization (nonZeroDivisors R) p
     have hp0 : p ≠ 0 := minpoly.ne_zero hint
     have hq0 : q ≠ 0 := by
       intro hq; rw [hq, Polynomial.map_zero] at hb
-      have hb0 : (algebraMap R K (b : R)) ≠ 0 :=
-        IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors b.2
+      have hb0 : (algebraMap R K b) ≠ 0 :=
+        IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hbmem
       rw [Algebra.smul_def, Polynomial.algebraMap_apply] at hb
       exact hp0 ((mul_eq_zero.1 hb.symm).resolve_left (by simpa using hb0))
     have hqw : Polynomial.eval₂ φ w q = 0 := by

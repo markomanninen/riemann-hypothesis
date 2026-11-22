@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,7 +107,7 @@ theorem C_gen (M : ι → Module.End ℂ U) (hc : ∀ i j, Commute (M i) (M j)) 
       Module.End.one_apply, map_sub, hinv i _ (C_pow_mem hgP m' _ y.2), sub_self]
   have hkv : (k : U) + r = v := congrArg Subtype.val hkr
   have hΦk : Φ (k : U) ≠ 0 := by
-    intro h0; apply hΦv; rw [← hkv, map_add, h0, hΦr, add_zero]
+    intro h0; apply hΦv; rw [← hkv, map_add (f := _), h0, hΦr, add_zero]
   have hkQ : (k : U) ∈ Q := by
     refine Submodule.mem_inf.2 ⟨k.2, ?_⟩
     rw [LinearMap.mem_ker, ← C_restrict_pow hgP, LinearMap.mem_ker.1 hk, Submodule.coe_zero]
@@ -122,17 +126,6 @@ theorem C_gen (M : ι → Module.End ℂ U) (hc : ∀ i j, Commute (M i) (M j)) 
   exact ⟨w, (Submodule.mem_inf.1 hw).1, hw0, hfix⟩
 
 end Fixed
-
-theorem exists_fixed {U : Type*} [AddCommGroup U] [Module ℂ U] [FiniteDimensional ℂ U] {ι : Type*}
-    (M : ι → Module.End ℂ U) (hc : ∀ i j, Commute (M i) (M j)) (Φ : U →ₗ[ℂ] ℂ) (hΦ : Φ ≠ 0)
-    (hinv : ∀ i, Φ ∘ₗ M i = Φ) : ∃ w, w ≠ 0 ∧ ∀ i, M i w = w := by
-  have hv : ∃ v ∈ (⊤ : Submodule ℂ U), Φ v ≠ 0 := by
-    by_contra h
-    push Not at h
-    exact hΦ (LinearMap.ext fun v => by rw [h v Submodule.mem_top, LinearMap.zero_apply])
-  obtain ⟨w, -, hw0, hfix⟩ := C_gen M hc Φ _ ⊤ rfl (fun _ _ _ => Submodule.mem_top)
-    (fun i v _ => LinearMap.congr_fun (hinv i) v) hv
-  exact ⟨w, hw0, hfix⟩
 
 theorem eig_lift {X Y : Type*} (W : Submodule ℂ (X → ℂ)) [FiniteDimensional ℂ W]
     (L : ℝ → (X → ℂ) →ₗ[ℂ] (X → ℂ)) (hL : ∀ s t, ∀ w ∈ W, L s (L t w) = L t (L s w))

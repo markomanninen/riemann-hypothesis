@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreStar
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreGen
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreStar
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ def sd_rhoA (p q r s : ℕ) (τ : ℂ) (d : ℕ) (a b : Ix r s) : Module.End ℂ
 theorem sd_rhoA_coe (τ : ℂ) (d : ℕ) {a b : Ix r s} (hab : sameBlock a b) (u : sd_hA p q r s d) :
     (sd_rhoA p q r s τ d a b u : FV p q r s) = sd_fvTw p q r s τ (Eab a b) u := by
   unfold sd_rhoA
-  rw [dif_pos hab]
+  rw [dite_eq_left hab]
   rfl
 
 theorem sd_rhoA_adj (τ : ℂ) (τ0 : ℚ) (hτ : τ = τ0) (d : ℕ) : AdjK (sd_rhoA p q r s τ d) := by
@@ -200,7 +204,7 @@ theorem side_of {p q r s : ℕ} (c τ : ℂ) (c0 τ0 : ℚ) (hc : c = c0) (hτ :
       have e : thMkC p q r s c (units (fockAct2 p q r s) a b x) =
           thAct p q r s c τ (Eab a b) (thMkC p q r s c x) -
             (τ * (Eab a b).trace) • thMkC p q r s c x := by
-        rw [thAct_mk, twAct_apply, map_add, map_smul]
+        rw [thAct_mk, twAct_apply, map_add (f := _), map_smul]
         simp [units]
       rw [e]
       exact N.sub_mem (hst _ _ hx) (N.smul_mem _ hx)

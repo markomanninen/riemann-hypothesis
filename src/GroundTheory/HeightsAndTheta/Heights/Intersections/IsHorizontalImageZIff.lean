@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsPrimeSpanXb
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalSpanXb
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalSpanTwo
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IdDeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsPrimeSpanXb
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalSpanXb
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalSpanTwo
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IdDeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,8 +21,8 @@ namespace ArithmeticIntersectionCycle
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
   {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem comap_C_imageZ (v : (Σ k, ι k) → (Σ k', ι' k')) (W' : Ideal (MRing ι')) :
     (imageZ v W').comap (C : ℤ →+* MRing ι) = W'.comap (C : ℤ →+* MRing ι') := by
   ext c
@@ -93,7 +98,9 @@ theorem ArithmeticIntersectionCycle.proof (hHor : ArithmeticIntersectionHorizont
     intro W hW
     have h := hPush K ι K' ι' κ v P' n G J s α W E hv hP' hP hJ hs hsP (hfin.mem_toFinset.1 hW)
       (fun W' hW' _ => hE W' hW'.1.isPrime)
-    rw [finsum_mem_eq_finite_toFinset_sum _ (hfin'.subset fun x hx => hx.1)] at h
+    have hfiber : {W' | W' ∈ divSupp P' (rename v s) ∧ imageZ v W' = W}.Finite :=
+      hfin'.subset (fun _ hx => hx.1)
+    rw [finsum_mem_eq_finite_toFinset_sum _ hfiber] at h
     rw [← h]
     refine Finset.sum_congr ?_ fun _ _ => rfl
     ext W'

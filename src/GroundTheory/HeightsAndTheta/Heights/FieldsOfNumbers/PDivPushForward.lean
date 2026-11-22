@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivPushForward
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsContractRelDimLe
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivPushForwardLocal
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDivCycleSupport
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivPushForward
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsContractRelDimLe
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivPushForwardLocal
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDivCycleSupport
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -29,7 +34,7 @@ theorem DivPushForward.proof (hC : ContractRelDimLe.Statement.{u})
     refine (Ideal.finite_minimalPrimes_of_isNoetherianRing _
       (P' ⊔ Ideal.span {rename (blockIncl j ι') a})).subset fun W' hW' => ?_
     by_contra h
-    exact hW' (by rw [hD', divCycle, dif_neg (fun h' => h h'.1)])
+    exact hW' (by rw [hD', divCycle, dite_eq_right (fun h' => h h'.1)])
 
   let rd : Ideal (MRing ι' F) → ℤ := fun W' =>
     if h : W'.IsPrime then haveI := h; (relDeg j W' : ℤ) else 0

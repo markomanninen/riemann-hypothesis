@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.MainNotions.Pf14
 
@@ -16,7 +20,8 @@ theorem smith_mem {O : Type*} [CommRing O] [IsDomain O] [IsPrincipalIdealRing O]
       intro y
       conv_rhs => rw [show y = ∑ i, y i • Pi.single i (1 : O) by
         ext k; simp [Finset.sum_apply, Pi.single_apply]]
-      simp only [map_sum, map_smul, smul_eq_mul, hφdef, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul, hφdef, mul_comm]
     have hprim : ∃ i, IsUnit (φ i) := by
       by_contra hne
       push_neg at hne
@@ -36,7 +41,8 @@ theorem smith_mem {O : Type*} [CommRing O] [IsDomain O] [IsPrincipalIdealRing O]
     have hc : snf.bM.coord j s =
         ∑ k, snf.bN.repr ⟨s, hs⟩ k * snf.a k * (if snf.f k = j then 1 else 0) := by
       conv_lhs => rw [hs']
-      simp [map_sum, map_smul, Finsupp.single_apply, mul_assoc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_smul, Finsupp.single_apply, mul_assoc]
     by_cases hj : ∃ k, snf.f k = j
     · obtain ⟨k0, rfl⟩ := hj
       have hc0 : snf.bM.coord (snf.f k0) s = snf.bN.repr ⟨s, hs⟩ k0 * snf.a k0 := by

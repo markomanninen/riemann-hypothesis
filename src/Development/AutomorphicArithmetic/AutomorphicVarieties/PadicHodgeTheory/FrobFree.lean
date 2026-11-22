@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobDense
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RootEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobDense
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RootEqOne
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 private theorem graph_ext {G Y : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -74,7 +79,8 @@ private theorem root_eq_one {v : ℕ} [Fact v.Prime] {m : ℕ} (hm : ¬ v ∣ m)
     (h : ‖η - 1‖ < 1) : η = 1 :=
   _root_.UpperTheory.Reformulated.B.Qe14.root_eq_one hm hη h
 
-private theorem exists_level {v : ℕ} [Fact v.Prime] (σ : GQ v) (hσ : IsFrob σ) (n : ℕ) (hn : 0 < n) :
+private theorem exists_level {v : ℕ} [Fact v.Prime] (σ : GQ v)
+    (hσ : UpperTheory.V.Loc.IsFrob (v := v) σ) (n : ℕ) (hn : 0 < n) :
     ∃ U : Subgroup (GQ v), U.Normal ∧ IsOpen (U : Set (GQ v)) ∧ Iq v ≤ U ∧ ∀ k : ℤ, σ ^ k ∈ U → (n : ℤ) ∣ k := by
   have hv : v.Prime := Fact.out
   have h1 : 1 < v ^ n := Nat.one_lt_pow hn.ne' hv.one_lt
@@ -134,6 +140,67 @@ private theorem exists_level {v : ℕ} [Fact v.Prime] (σ : GQ v) (hσ : IsFrob 
     exact Nat.gcd_eq_left_iff_dvd.1 (Nat.pow_right_injective hv.two_le h7).symm
 
 theorem UpperTheory.V.Loc.frobFree :
-    ∀ {v : ℕ} [Fact v.Prime] (σ : GQ v), IsFrob σ → ∀ (Y : Type) [Group Y] [TopologicalSpace Y] [IsTopologicalGroup Y] [CompactSpace Y] [TotallyDisconnectedSpace Y] [T2Space Y] (y : Y), ∃ f : GQ v →* Y, Continuous f ∧ (∀ g ∈ Iq v, f g = 1) ∧ f σ = y := by
+    ∀ {v : ℕ} [Fact v.Prime] (σ : GQ v), UpperTheory.V.Loc.IsFrob (v := v) σ →
+      ∀ (Y : Type) [Group Y] [TopologicalSpace Y] [IsTopologicalGroup Y] [CompactSpace Y] [TotallyDisconnectedSpace Y] [T2Space Y] (y : Y), ∃ f : GQ v →* Y, Continuous f ∧ (∀ g ∈ Iq v, f g = 1) ∧ f σ = y := by
   intro v _ σ hσ Y _ _ _ _ _ _ y
-  exact graph_ext (Iq v) σ (frobDense σ hσ) (exists_level σ hσ) y
+  have hd : (Iq v ⊔ Subgroup.zpowers σ).topologicalClosure = ⊤ := by
+    have hv : v.Prime := Fact.out
+    have level : ∀ {x : Om v}, x ∈ MaximalUnramifiedExtension v →
+        ∃ m : ℕ, ¬ v ∣ m ∧
+          ∀ g h : GQ v, (∀ z : Om v, z ^ m = 1 → g z = h z) → g x = h x := by
+      intro x hx
+      have combine : ∀ {a b : Om v},
+          (∃ m : ℕ, ¬ v ∣ m ∧ ∀ g h : GQ v, (∀ z : Om v, z ^ m = 1 → g z = h z) → g a = h a) →
+          (∃ m : ℕ, ¬ v ∣ m ∧ ∀ g h : GQ v, (∀ z : Om v, z ^ m = 1 → g z = h z) → g b = h b) →
+          ∃ m : ℕ, ¬ v ∣ m ∧ ∀ g h : GQ v, (∀ z : Om v, z ^ m = 1 → g z = h z) →
+            g a = h a ∧ g b = h b := by
+        rintro a b ⟨m, hm, ha⟩ ⟨n, hn, hb⟩
+        refine ⟨m * n, fun h => (hv.dvd_mul.mp h).elim hm hn, fun g h hgh => ⟨ha g h ?_, hb g h ?_⟩⟩
+        · exact fun z hz => hgh z (by rw [pow_mul, hz, one_pow])
+        · exact fun z hz => hgh z (by rw [mul_comm, pow_mul, hz, one_pow])
+      unfold MaximalUnramifiedExtension at hx
+      induction hx using IntermediateField.adjoin_induction with
+      | mem x hx =>
+        obtain ⟨m, -, hm, hxm⟩ := hx
+        exact ⟨m, hm, fun g h hgh => hgh x hxm⟩
+      | algebraMap x =>
+        exact ⟨1, hv.not_dvd_one, fun g h _ => by rw [AlgEquiv.commutes, AlgEquiv.commutes]⟩
+      | add x y _ _ hx hy =>
+        obtain ⟨m, hm, h⟩ := combine hx hy
+        exact ⟨m, hm, fun g k hgk => by rw [map_add, map_add, (h g k hgk).1, (h g k hgk).2]⟩
+      | inv x _ hx =>
+        obtain ⟨m, hm, h⟩ := hx
+        exact ⟨m, hm, fun g k hgk => by rw [map_inv₀, map_inv₀, h g k hgk]⟩
+      | mul x y _ _ hx hy =>
+        obtain ⟨m, hm, h⟩ := combine hx hy
+        exact ⟨m, hm, fun g k hgk => by rw [map_mul, map_mul, (h g k hgk).1, (h g k hgk).2]⟩
+    let H : ClosedSubgroup (GQ v) :=
+      ⟨(Iq v ⊔ Subgroup.zpowers σ).topologicalClosure, Subgroup.isClosed_topologicalClosure _⟩
+    have hH := InfiniteGalois.fixingSubgroup_fixedField H
+    have hle : Iq v ⊔ Subgroup.zpowers σ ≤ (H : Subgroup (GQ v)) := Subgroup.le_topologicalClosure _
+    refine eq_top_iff.mpr fun g _ => ?_
+    change g ∈ (H : Subgroup (GQ v))
+    rw [← hH, IntermediateField.mem_fixingSubgroup_iff]
+    intro x hx
+    rw [IntermediateField.mem_fixedField_iff] at hx
+    have hxK : x ∈ MaximalUnramifiedExtension v := by
+      rw [← InfiniteGalois.fixedField_fixingSubgroup (MaximalUnramifiedExtension v),
+        IntermediateField.mem_fixedField_iff]
+      exact fun f hf => hx f (hle (Subgroup.mem_sup_left hf))
+    obtain ⟨m, hm, h⟩ := level hxK
+    obtain ⟨j, hj⟩ := KStar.IdealValuations.exists_pow_of_aut g hm
+    have frob_pow (z : Om v) (hz : z ^ m = 1) (k : ℕ) : (σ ^ k) z = z ^ v ^ k := by
+      have hm0 : m ≠ 0 := fun e => hm (e ▸ dvd_zero v)
+      have hnorm : ‖z‖ = 1 := by
+        apply (pow_eq_one_iff_of_nonneg (norm_nonneg _) hm0).mp
+        rw [← norm_pow, hz, norm_one]
+      have hσz : σ z = z ^ v := by
+        refine KStar.IdealValuations.norm_aut_and_roots.2 m _ _ hm ?_ ?_ (hσ z hnorm.le)
+        · rw [← map_pow, hz, map_one]
+        · rw [← pow_mul, mul_comm, pow_mul, hz, one_pow]
+      induction k with
+      | zero => simp
+      | succ k ih => rw [pow_succ', AlgEquiv.mul_apply, ih, map_pow, hσz, ← pow_mul, ← pow_succ']
+    rw [h g (σ ^ j) fun z hz => (hj z hz).trans (frob_pow z hz j).symm]
+    exact hx _ (hle (Subgroup.mem_sup_right (Subgroup.npow_mem_zpowers σ j)))
+  exact graph_ext (Iq v) σ hd (exists_level σ hσ) y

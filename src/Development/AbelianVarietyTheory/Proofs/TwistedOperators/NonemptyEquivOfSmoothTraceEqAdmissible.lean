@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.OpTrace
 
 namespace GlobalTheory.CharIndep
@@ -18,7 +23,7 @@ theorem exists_smul_eq_self_and_smul_eq_zero {R M N : Type*} [Ring R] [AddCommGr
           congr($(h1 (LinearMap.snd R M N ∘ₗ φ ∘ₗ LinearMap.inl R M N)) x.1)
         have a2 : (φ (0, x.2)).1 = 0 :=
           congr($(h2 (LinearMap.fst R M N ∘ₗ φ ∘ₗ LinearMap.inr R M N)) x.2)
-        have a3 : φ x = φ (x.1, 0) + φ (0, x.2) := by rw [← map_add]; simp
+        have a3 : φ x = φ (x.1, 0) + φ (0, x.2) := by rw [← map_add (f := _)]; simp
         simp only [Module.End.smul_def, RingHom.id_apply]
         ext
         · simp [a3, a2]
@@ -58,7 +63,7 @@ theorem exists_smoothOp_eq_comp {G : Type} [Group G] [TopologicalSpace G] [IsTop
     obtain ⟨f, f1, f2, f3⟩ := ha
     obtain ⟨f', f1', f2', f3'⟩ := hb
     refine ⟨f + f', f1.add f1', f2.add f2', fun V _ _ ρ hρ => ?_⟩
-    rw [hρ.smoothOp_add f1 f2 f1' f2', f3 V ρ hρ, f3' V ρ hρ, map_add, LinearMap.add_comp]
+    rw [hρ.smoothOp_add f1 f2 f1' f2', f3 V ρ hρ, f3' V ρ hρ, map_add (f := _), LinearMap.add_comp]
   | smul c a ha =>
     obtain ⟨f, f1, f2, f3⟩ := ha
     refine ⟨c • f, f1.comp (c • ·), f2.comp_left (g := (c • ·)) (smul_zero c),

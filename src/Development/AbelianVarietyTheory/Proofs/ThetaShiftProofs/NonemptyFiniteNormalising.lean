@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsScalarFormTraceForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsScalarFormTraceForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ theorem val_tau_nsmul (k : ℕ) (a b : D.X) :
 
 end Values
 
-variable (D) in
 
+variable (D) in
 def canφ (y y' : D.X) : Fin 4 → ((𝟙_ (Over (Sp R))).left ⟶ D.P.A.left) :=
   ![(D.c y * D.c y').left, (D.c y).left, (D.c y').left, (1 : 𝟙_ (Over (Sp R)) ⟶ D.P.A).left]
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUnitaryMulTriangular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUnitaryMulTriangular
+
+@[expose] public section
 
 open GlobalTheory.DualWeyl MvPolynomial NumberField IsDedekindDomain
 open Formalism.L2.DIV (colLat IsBasisAt dualFr)
@@ -37,7 +41,8 @@ theorem localization_dualFr_le (w : HeightOneSpectrum (𝓞 K)) {M M' : Submodul
   rwa [dotProduct_smul, ← smul_dotProduct, smul_smul] at h1
 
 theorem dualFr_colLat (B : GL (Fin N) K) : dualFr (colLat B) = colLat (Formalism.BasicNotions.inside₂ K N B) := by
-  ext φ
+  apply SetLike.ext
+  intro φ
   rw [mem_colLat_iff]
   constructor
   · intro h

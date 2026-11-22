@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -16,7 +20,8 @@ theorem ringHom_extends_algHom_of_span_of_finrank_eq :
     apply Submodule.span_le.mpr
     rintro _ ⟨x, rfl⟩
     have hx : x = ∑ i, b.repr x i • b i := (b.sum_repr x).symm
-    rw [hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum]
     apply Submodule.sum_mem
     intro i _
     rw [map_zsmul, ← Int.cast_smul_eq_zsmul ℂ]

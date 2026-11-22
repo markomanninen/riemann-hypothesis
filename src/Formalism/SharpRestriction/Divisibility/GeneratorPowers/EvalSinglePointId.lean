@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTiePf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetSubstPSTrunc
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTiePf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetSubstPSTrunc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,22 +22,6 @@ attribute [local instance] Over.cartesianMonoidalCategory
 section Alg
 
 variable {S : Type} [CommRing S] {d : ℕ}
-
-theorem psJet_coe_trunc {κ : Type} [Fintype κ] [DecidableEq κ] (m : ℕ) (g : MvPowerSeries κ S) :
-    psJet m ((psTrunc m g : MvPolynomial κ S) : MvPowerSeries κ S) = psJet m g := by
-  unfold Formalism.L2.Pj.psJet
-  congr 1
-  unfold Formalism.L2.Pj.psTrunc
-  refine Finset.sum_congr rfl fun e he => ?_
-  congr 1
-  rw [MvPolynomial.coeff_coe]
-  simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial]
-  rw [Finset.sum_eq_single e]
-  · simp
-  · intro b _ hb
-    simp [hb]
-  · intro h
-    exact absurd he h
 
 theorem eval_single_point_id (g : PS S 1 d) : ev (n := 1) ![pt S (n := 1) d 0] g = g := by
   have h : (fun p : Fin 1 × Fin d => (![pt S (n := 1) d 0] : Fin 1 → Pt S 1 d) p.1 p.2) =
@@ -105,7 +93,8 @@ theorem const_lg (G : FGLaw S d) {n : ℕ} (j : Fin n) (i : Fin d) :
   exact ReciprocityTheory.ChartRestriction.G.TB.LogPf.constantCoeff_prim _
 
 theorem const_bilL (G : FGLaw S d) (cc : Fin d → Fin d → S) : MvPowerSeries.constantCoeff (bilL G cc) = 0 := by
-  simp only [Formalism.MainNotions.ModuliIntegralCharts.H1.CIndFrFix.bilL, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.MainNotions.ModuliIntegralCharts.H1.CIndFrFix.bilL, map_sum]
   refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun l _ => ?_
   have h0 : MvPowerSeries.constantCoeff (lg G (0 : Fin 2) i * lg G (1 : Fin 2) l) = 0 := by
     rw [map_mul, const_lg, zero_mul]
@@ -202,21 +191,6 @@ private theorem app_res_top_lemma {Y Z : Scheme.{0}} (h : Z ⟶ Y) (W : Y.Opens)
     rfl
   exact congrArg (fun f => f.hom v) e
 
-theorem pullGen_scale {Y Z : Scheme.{0}} {K : Type} [Fintype K] (φ : K → (Y ⟶ Xo.univ.t.G.left)) (ε : K → ℤ)
-    (v : Γ(Y, ⊤)ˣ) (g : LB.Gen (LB.LinComb Xo.univ.t.PP.L φ ε)) (h : Z ⟶ Y) :
-    LB.pullGen Xo.univ.t.PP.L φ ε (scaleGen φ ε v g) h =
-      scaleGen (fun k => h ≫ φ k) ε (Units.map h.appTop.hom.toMonoidHom v) (LB.pullGen Xo.univ.t.PP.L φ ε g h) := by
-  simp only [ReciprocityTheory.ChartRestriction.G.Semi.LB.pullGen, Formalism.L2.Pj.scaleGen]
-  congr 1
-  funext j
-  rw [map_mul, map_mul]
-  congr 1
-  apply Units.ext
-  first
-  | exact app_res_top_lemma h _ _ v.val
-  | (simp only [ReciprocityTheory.ChartRestriction.G.Semi.res, ReciprocityTheory.ChartRestriction.G.Semi.pullU, Units.coe_map, MonoidHom.coe_coe]
-     exact app_res_top_lemma h _ _ v.val)
-
 private theorem res_res_top_lemma {X : Scheme.{0}} {V W : X.Opens} (h2 : W ≤ V) (x : Γ(X, ⊤)ˣ) :
     ReciprocityTheory.ChartRestriction.G.Semi.res h2 (ReciprocityTheory.ChartRestriction.G.Semi.res (le_top : V ≤ ⊤) x) =
       ReciprocityTheory.ChartRestriction.G.Semi.res (le_top : W ≤ ⊤) x := by
@@ -304,8 +278,8 @@ theorem corr_pull_scale {Y Z : Scheme.{0}} {K : Type} [Fintype K] (φ : K → (Y
       exact (res_res_top_lemma inf_le_right _).symm
     · exact pull_res_lemma h inf_le_right hA inf_le_right (h1 j') (t'.s j')
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem germ_order {S : Type} [CommRing S] [Algebra c.F S] [Algebra ℚ S] [StarRing (𝓞 E)] (y : FrPt Xo c S)
     (C : ChartAt Xo c y) (e' : ∀ m, FrTy y C.d C.x m) (cc : ℕ → Fin C.d → Fin C.d → S)
     (he : ∀ m, ∃ u : (Jet S (Fin 2 × Fin C.d) m)ˣ,

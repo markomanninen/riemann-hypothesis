@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.TsumIdealEqSumClassGroup
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ClassGroupCoprimeRepresentative
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayLSeriesEulerProduct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.TsumIdealEqSumClassGroup
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ClassGroupCoprimeRepresentative
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayLSeriesEulerProduct
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ open scoped nonZeroDivisors
 
 namespace GlobalTheory.HeckeStrip
 
-open Classical in
 
+open Classical in
 theorem tsum_ideal_eq_sum_classGroup_of_summable {K : Type} [Field K] [NumberField K]
     (b : ClassGroup (𝓞 K) → (Ideal (𝓞 K))⁰) (G : Ideal (𝓞 K) → ℂ) (H : ClassGroup (𝓞 K) → Ideal (𝓞 K) → ℂ)
     (hb : Function.Bijective (fun c => ClassGroup.mk0 (b c))) (h0 : G ⊥ = 0) (hsum : Summable G)
@@ -26,12 +30,12 @@ theorem tsum_ideal_eq_sum_classGroup_of_summable {K : Type} [Field K] [NumberFie
     by_cases hI : I = ⊥
     · subst hI
       rw [h0]
-      exact (Finset.sum_eq_zero fun c _ => Set.indicator_of_notMem (fun h => h.1 rfl) _).symm
+      exact (Finset.sum_eq_zero fun c _ => Set.indicator_of_notMem (by exact fun h => h.1 rfl) _).symm
     · obtain ⟨c, hc, hu⟩ := GlobalTheory.existsUnique_isPrincipal_mul_classRep b hb I hI
       rw [Finset.sum_eq_single c]
       · exact (Set.indicator_of_mem (show I ∈ S c from ⟨hI, hc⟩) _).symm
       · intro c' _ hne
-        exact Set.indicator_of_notMem (fun h => hne (hu c' h.2)) _
+        exact Set.indicator_of_notMem (by exact fun h => hne (hu c' h.2)) _
       · simp
   rw [tsum_congr h1, Summable.tsum_finsetSum (fun c _ => hsum.indicator (S c))]
   refine Finset.sum_congr rfl fun c _ => ?_

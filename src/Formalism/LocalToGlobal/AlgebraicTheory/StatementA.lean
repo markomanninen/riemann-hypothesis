@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementH
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementH
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -12,19 +16,14 @@ def scl {K : Type} [Field K] (n : Type) [DecidableEq n] (c : K) : n → n → K 
 
 def LogDerJets : Prop :=
   ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (F a : PowerSeries K) (ρ : ℝ), 1 ≤ ρ →
-    PowerSeries.derivative K F = a * F → ‖PowerSeries.constantCoeff F‖ ≤ 1 →
+    PowerSeries.derivative (R := K) F = a * F → ‖PowerSeries.constantCoeff F‖ ≤ 1 →
     (∀ i : ℕ, ‖((i.factorial : ℕ) : K) * PowerSeries.coeff i a‖ ≤ ρ) →
     ∀ i : ℕ, ‖((i.factorial : ℕ) : K) * PowerSeries.coeff i F‖ ≤ ρ ^ i
 
 def PowLogDer : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (G V : PowerSeries K) (c : K) (M : ℕ), 0 < M → c ≠ 0 →
     G ^ M = PowerSeries.C (c ^ M) * V →
-    PowerSeries.C (M : K) * (PowerSeries.derivative K G * V) = G * PowerSeries.derivative K V
-
-def ScaleJets : Prop :=
-  ∀ (K : Type) [NormedField K] (n : Type) [Fintype n] [DecidableEq n] (c : K) (f : MvPowerSeries n K),
-    JetsIntegral (linSub (scl n c) f) ↔
-      ∀ κ : n →₀ ℕ, ‖((mfact κ : ℕ) : K) * MvPowerSeries.coeff κ f‖ * ‖c‖ ^ κ.degree ≤ 1
+    PowerSeries.C (M : K) * (PowerSeries.derivative (R := K) G * V) = G * PowerSeries.derivative (R := K) V
 
 def ProdScaleJets : Prop :=
   ∀ (K : Type) [NormedField K] [IsUltrametricDist K] (κ n : Type) [Fintype κ] [Fintype n] [DecidableEq n] (c : K)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameDualTupleIdealsCastAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameDualTupleIdealsCastAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ variable {E : Type} [Field E] {n : ℕ} (σ : E →+* E) (J : Matrix (Fin n) (Fi
 theorem _root_.GlobalTheory.SnMass.VolN.form_conj (hσ : ∀ x, σ (σ x) = x) (hJ : ∀ i j, σ (J j i) = J i j)
     (x y : Fin n → E) :
     σ (_root_.GlobalTheory.SgAlg.form σ J x y) = _root_.GlobalTheory.SgAlg.form σ J y x := by
-  simp only [_root_.GlobalTheory.SgAlg.form, dotProduct, Matrix.mulVec, map_sum, map_mul, hσ, hJ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [_root_.GlobalTheory.SgAlg.form, dotProduct, Matrix.mulVec, map_sum, map_mul, hσ, hJ,
     Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -101,10 +106,10 @@ section Lat
 
 variable {E : Type} [Field E] [NumberField E] {n : ℕ} (σ : E →+* E) (J : Matrix (Fin n) (Fin n) E)
 
+
 open NumberField IsDedekindDomain MeasureTheory Matrix in
 open scoped TensorProduct ENNReal nonZeroDivisors in
 variable {E : Type} [Field E] [NumberField E] {n : ℕ} (σ : E →+* E) (J : Matrix (Fin n) (Fin n) E) in
-
 theorem _root_.GlobalTheory.SnMass.VolN.form_mem_inv (hσ : ∀ x, σ (σ x) = x)
     {Λ : Submodule (𝓞 E) (Fin n → E)}
     (hΛ : ∀ v ∈ Λ, ∀ w ∈ Λ, _root_.GlobalTheory.SgAlg.form σ J v w ∈ (algebraMap (𝓞 E) E).range)
@@ -197,9 +202,9 @@ variable {E : Type} [Field E] [NumberField E]
 
 end Main
 
+
 open NumberField IsDedekindDomain MeasureTheory Matrix in
 open scoped TensorProduct ENNReal nonZeroDivisors in
-
 theorem _root_.GlobalTheory.SnMass.VolN.row_mem_homLat : ∀ (F E : Type) [Field F] [NumberField F]
     [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (k r : ℕ)
     (J : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) E)
@@ -328,7 +333,8 @@ theorem _root_.GlobalTheory.SnMass.VolN.row_mem_homLat : ∀ (F E : Type) [Field
         - ∑ c, τ (_root_.GlobalTheory.SgAlg.form (σ : E →+* E) J u (fun i => P i (Fin.castSucc c))) •
             (fun i => τ (f i c)) := by
       ext i
-      simp [ht, _root_.GlobalTheory.SnMass.VolN.projF, Finset.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [ht, _root_.GlobalTheory.SnMass.VolN.projF, Finset.sum_apply, map_sum]
     have hproj : _root_.Formalism.QuantumDeterminants.herm (_root_.Formalism.QuantumDeterminants.Hpk k r) (_root_.Formalism.QuantumDeterminants.bvec (_root_.Formalism.QuantumDeterminants.wI k r l)) (A w *ᵥ fun i => τ (u i)) =
         _root_.Formalism.QuantumDeterminants.herm (_root_.Formalism.QuantumDeterminants.Hpk k r) (_root_.Formalism.QuantumDeterminants.bvec (_root_.Formalism.QuantumDeterminants.wI k r l)) (A w *ᵥ fun i => τ (t i)) := by
       rw [hvec, Matrix.mulVec_sub, Matrix.mulVec_sub, Matrix.mulVec_sum, Matrix.mulVec_sum]

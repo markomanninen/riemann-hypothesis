@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.WeaklyAdmissibleFiltrations.StatementTor
-import Formalism.GaloisCohomology.Statement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.WeaklyAdmissibleFiltrations.StatementTor
+public import Formalism.GaloisCohomology.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,18 +61,7 @@ def WpKO (i : N.Loc) (ρ : G H.E N.Om →* GL (Fin R.r) (N.O i)) := coefRep (Wp 
 def KOtw (i : N.Loc) (e : ℤ) : Representation (N.O i) (G H.E N.Om) (KmodO (N.O i)) :=
   Formalism.GaloisCohomology.scalRep (KmodO (N.O i)) ((epsO N i) ^ (-e))
 
-def rChiInv (i : N.Loc) (r : G H.E N.Om →* GL (Fin R.nV) (N.O i)) :
-    Representation (N.O i) (G H.E N.Om) (Fin R.nV → N.O i) :=
-  twistRep (glRep r) (N.chi i 1)⁻¹
-
-def rDualChi (i : N.Loc) (r : G H.E N.Om →* GL (Fin R.nV) (N.O i)) :
-    Representation (N.O i) (G H.E N.Om) (Module.Dual (N.O i) (Fin R.nV → N.O i)) :=
-  twistRep (Representation.dual (glRep r)) (N.chi i 1 * epsO N i)
-
 end Glob
-
-def liftSpanFinrank {R : Ranks} (what₂ : Rows.Data R) (μ : what₂.Tup) (j : ℕ) : ℕ :=
-  Module.finrank ℂ (what₂.Zj μ j)
 
 def hE {R : Ranks} (H : Host R) : ℕ := NumberField.classNumber H.E
 
@@ -158,7 +151,7 @@ def Z1urD {V : Type} [AddCommGroup V] [Module LL V] [Module O V] [IsScalarTower 
   add_mem' := by
     rintro a b ⟨x, hx⟩ ⟨y, hy⟩
     refine ⟨x + y, fun g hg => ?_⟩
-    simp only [Pi.add_apply, hx g hg, hy g hg, map_add]
+    simp only [Pi.add_apply, hx g hg, hy g hg, map_add (f := _)]
     abel
   smul_mem' := by
     rintro c a ⟨x, hx⟩
@@ -432,8 +425,8 @@ def CharpolyCoeffsInSubalgebra {X' : Type} (T' : Subalgebra (N.O i) (X' → N.O 
     Prop :=
   (∀ (m : ℕ) (a : Fin m → X' → MatN N i), (∀ k, InSpan N i T' rep (a k)) →
     ∀ d : Fin m →₀ ℕ,
-      (fun x' => MvPolynomial.coeff d (Matrix.det (∑ k,
-        (MvPolynomial.X k : MvPolynomial (Fin m) (N.O i)) • (a k x').map MvPolynomial.C))) ∈ T') ∧
+      (fun x' => AddMonoidAlgebra.coeff (Matrix.det (∑ k,
+        (MvPolynomial.X k : MvPolynomial (Fin m) (N.O i)) • (a k x').map MvPolynomial.C)) d) ∈ T') ∧
   (∀ (g : ℕ) (Θ : Fin g → Fin g → X' → MatN N i), (∀ p q, InSpan N i T' rep (Θ p q)) →
     (fun x' => Matrix.det (Matrix.of fun (pa qb : Fin g × Fin R.nV) =>
       Θ pa.1 qb.1 x' pa.2 qb.2)) ∈ T')
@@ -576,29 +569,6 @@ def rhoBarTw (π : N.X i) (a : ℤ) : Representation (kk N i) (GE N) (kr N i) :=
   matRep (mapM (IsLocalRing.residue (N.O i))
     (twistM (rhoO N i ρ π) ((chiU N i 1)⁻¹ * (epsU N i) ^ a)))
 
-def TameInertiaCondition (π : N.X i) (S : IdempotentChoiceData N i) : Prop :=
-  ∀ v : HeightOneSpectrum (𝓞 H.E), (v ∈ N.S i ∨ v ∈ N.Q i) →
-    TameGen N (N.plOm.1 v) (N.gam0 i v) ∧
-    ((v ∈ N.Q i ∨ v ∈ placesOver H.E H.pde) →
-      (∀ x, ∀ γ ∈ Ine (F := H.E) (N.plOm.1 v),
-        (rO N i r x γ - 1) *
-          (rO N i r x γ - ((chiU N i 1 γ : (N.O i)ˣ) : N.O i) • (1 : MatN N i)) = 0) ∧
-      ∃ γ ∈ Ine (F := H.E) (N.plOm.1 v), chiU N i 1 γ ≠ 1) ∧
-    ((∃ k, v ∈ placesOver H.E (H.g k)) →
-      ∃ P : Polynomial (N.T i),
-        (∀ x, ∀ γ ∈ Ine (F := H.E) (N.plOm.1 v),
-          Polynomial.aeval (rO N i r x (N.gam0 i v)) (P.map (evT N i x)) *
-            (rO N i r x γ - ((chiU N i 1 γ : (N.O i)ˣ) : N.O i) • (1 : MatN N i)) = 0) ∧
-        IsUnit (P.eval (algebraMap (N.O i) (N.T i) (N.zeta i v)))) ∧
-    (v ∈ N.S i →
-      (∀ c : Fin R.t, ∀ φ : (S.X' → MatN N i) →ₗ[N.O i] KmodO (N.O i),
-        (∀ a, InR' N r S a → ∀ y, InY N r S y → φ (a * y) = S.ψχ c a • φ y) →
-        ∀ γ ∈ Ine (F := H.E) (N.plOm.1 v), φ (yg N r S γ) = 0) ∧
-      ∀ a : ℤ,
-        Subsingleton ↥(H0 ((rhoBarTw N ρ π a).comp (decS N v))) ∧
-        Subsingleton (H1 ((rhoBarTw N ρ π a).comp (decS N v))) ∧
-        Subsingleton (H2 ((rhoBarTw N ρ π a).comp (decS N v))))
-
 end G5
 
 end Formalism.MainNotions.N
@@ -713,8 +683,9 @@ def vecS (k : ℕ) : (Fin k → FractionRing O) →ₛₗ[Bw.eO.toRingHom] (Fin 
     simp only [Pi.smul_apply, Algebra.smul_def, map_mul, toLLK_alg]
     rfl
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 100000 in
+set_option synthInstance.maxHeartbeats 400000 in
 def phi (k : ℕ) : KOG O k →ₛₗ[Bw.eO.toRingHom] ((Fin k → LLw Bw) ⧸ stdG (Ow Bw) (LLw Bw) k) :=
   Submodule.mapQ _ _ (vecS Bw k) (by
     rintro _ ⟨u, rfl⟩
@@ -722,8 +693,9 @@ def phi (k : ℕ) : KOG O k →ₛₗ[Bw.eO.toRingHom] ((Fin k → LLw Bw) ⧸ s
     funext j
     exact (toLLK_alg Bw (u j)).symm)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 100000 in
+set_option synthInstance.maxHeartbeats 400000 in
 def Phi {k : ℕ} (rho : Representation O ↥Gw (KOG O k)) :
     ↥(Z1 rho) →ₛₗ[Bw.eO.toRingHom] (↥(GK Bw.Kw) → (Fin k → LLw Bw) ⧸ stdG (Ow Bw) (LLw Bw) k) where
   toFun c g := phi Bw k ((c : ↥Gw → KOG O k) (ι Bw g))
@@ -734,8 +706,9 @@ def Phi {k : ℕ} (rho : Representation O ↥Gw (KOG O k)) :
     funext g
     exact (phi Bw k).map_smulₛₗ c _
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 100000 in
+set_option synthInstance.maxHeartbeats 400000 in
 def bkG (P : LocPrime l) {k : ℕ} (rho : Representation O ↥Gw (KOG O k))
     (M : ↥Gw →* Matrix (Fin k) (Fin k) O) : Submodule O (H1 rho) :=
   ((HfD (P.PD Bw.Kw) (lat Bw M)).comap (Phi Bw rho)).map (Submodule.mkQ _)
@@ -752,8 +725,6 @@ instance finKw : FiniteDimensional ℚ_[l] ↥Bw.Kw.1 := Bw.Kw.2
 instance finLL : FiniteDimensional ℚ_[l] (LLw Bw) := Bw.LL.2
 
 def cE : E →+* ↥Bw.Kw.1 := (Bw.j.comp (algebraMap E Ω)).codRestrict Bw.Kw.1 Bw.j_E
-
-def SplitsW : Prop := Nat.card (↥Bw.Kw.1 →ₐ[ℚ_[l]] LLw Bw) = finrank ℚ_[l] ↥Bw.Kw.1
 
 def EOAlg : Prop :=
   ∀ z : ℤ_[l], Bw.eO (algebraMap ℤ_[l] O z) = algebraMap ℤ_[l] (Ow Bw) z
@@ -775,8 +746,8 @@ variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] (A : 
   (P : LocPrime l)
   (nb : ∀ w, w ∈ placesOver E l → LocBridge l E Ω (Dec (F := E) (A.1 w)) O)
 
-open Classical in
 
+open Classical in
 def LlG {k : ℕ} (M : Formalism.ConjugateSelfDual.G E Ω →* Matrix (Fin k) (Fin k) O) :
     ∀ v, Submodule O (H1 ((WKG M).comp (Dec (F := E) (A.1 v)).subtype)) :=
   fun v => if h : v ∈ placesOver E l then
@@ -876,9 +847,6 @@ def IsPotCrysW : Prop := (nbr i w hw).IsPotCrysW (L (N.l i)) (r.comp (decS N w))
 def IsJumpW (τ : Kw nbr i w hw →ₐ[ℚ_[N.l i]] LL nbr i w hw) (a : ℤ) : Prop :=
   (nbr i w hw).IsJumpW (L (N.l i)) (r.comp (decS N w)) τ a
 
-def jumpMult (τ : Kw nbr i w hw →ₐ[ℚ_[N.l i]] LL nbr i w hw) (a : ℤ) : ℤ :=
-  multV (PD L nbr i w hw) ((nbr i w hw).rep (r.comp (decS N w))) τ a
-
 end Cr
 
 def DegW : Prop := finrank ℚ_[N.l i] (Kw nbr i w hw) = locDeg H.E w
@@ -888,8 +856,6 @@ def EmbTypeU (τ : Kw nbr i w hw →ₐ[ℚ_[N.l i]] LL nbr i w hw) : Prop :=
   ∃ φ ∈ H.cmType,
     ∀ (x : H.E) (y : what₂.LL), toLLK (nbr i w hw) (N.embK i y) = τ (cEw nbr i w hw x) →
       what₂.embLL y = φ x
-
-def PlTypeU : Prop := ∀ τ, EmbTypeU nbr i w hw τ
 
 end Loc
 
@@ -908,10 +874,6 @@ def bkTw (w : HeightOneSpectrum (𝓞 H.E)) (hw : w ∈ placesOver H.E (tw.l i))
     (M : GE N →* Matrix (Fin k) (Fin k) (tw.O0 i)) :
     Submodule (tw.O0 i) (H1 ((WKG M).comp (decS N w))) :=
   bkG (nbt i w hw) (L (tw.l i)) ((WKG M).comp (decS N w)) (M.comp (decS N w))
-
-def selTw (Sig : Set (HeightOneSpectrum (𝓞 H.E))) {k : ℕ}
-    (M : GE N →* Matrix (Fin k) (Fin k) (tw.O0 i)) : Submodule (tw.O0 i) (H1 (WKG M)) :=
-  selG N.plOm (tw.l i) (L (tw.l i)) (nbt i) Sig M
 
 end Tw
 

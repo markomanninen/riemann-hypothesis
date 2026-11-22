@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SqChar
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Branch
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeylNumeratorLaplace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjSubMulNegMulOfNormOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjDiagonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SqChar
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Branch
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeylNumeratorLaplace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjSubMulNegMulOfNormOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjDiagonal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -34,7 +39,7 @@ theorem chAt_prod_eq_gtChar {n : ℕ} (lam : DomWeight n) (t : Fin n → ℂ) (h
   have hex : ∃ g : GL (Fin n) ℂ, (g : Matrix (Fin n) (Fin n) ℂ).charpoly = ∏ i, (X - C (t i)) :=
     ⟨hdet.unit, by simp [charpoly_diagonal]⟩
   unfold chAt
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨P, hP⟩ := exists_mul_eq_mul_diagonal _ t ht hex.choose_spec
   set g := hex.choose
   let D : GL (Fin n) ℂ := P⁻¹ * g * P
@@ -54,20 +59,17 @@ theorem chAt_prod_eq_gtChar {n : ℕ} (lam : DomWeight n) (t : Fin n → ℂ) (h
   rw [← htr, hfD, hgD, e, LinearMap.trace_mul_comm, mul_assoc, e2, mul_one]
 
 theorem exists_eq_prod_X_sub_C : ∀ (a : ℕ) (Q : ℂ[X]), Q.Monic → Q.natDegree = a →
-    ∃ α : Fin a → ℂ, Q = ∏ i, (X - C (α i))
-  | 0, Q, hm, hd => ⟨Fin.elim0, by rw [Fin.prod_univ_zero]; exact Polynomial.eq_one_of_monic_natDegree_zero hm hd⟩
-  | a + 1, Q, hm, hd => by
-    obtain ⟨r, hr⟩ := IsAlgClosed.exists_root Q (by
-      rw [degree_eq_natDegree hm.ne_zero, hd]; exact_mod_cast Nat.succ_ne_zero a)
-    have hdiv : (X - C r) * (Q /ₘ (X - C r)) = Q := mul_divByMonic_eq_iff_isRoot.mpr hr
-    have hm' : (Q /ₘ (X - C r)).Monic := (monic_X_sub_C r).of_mul_monic_left (by rw [hdiv]; exact hm)
-    have hd' : (Q /ₘ (X - C r)).natDegree = a := by
-      rw [natDegree_divByMonic _ (monic_X_sub_C r), hd, natDegree_X_sub_C]; rfl
-    obtain ⟨α, hα⟩ := exists_eq_prod_X_sub_C a _ hm' hd'
-    refine ⟨Fin.cons r α, ?_⟩
-    rw [Fin.prod_univ_succ, Fin.cons_zero]
-    simp only [Fin.cons_succ]
-    rw [← hα, hdiv]
+    ∃ α : Fin a → ℂ, Q = ∏ i, (X - C (α i)) := by
+  intro a Q hm hd
+  have hs : Q.Splits := IsAlgClosed.splits Q
+  obtain ⟨roots, hroots⟩ : ∃ roots : List ℂ, (roots : Multiset ℂ) = Q.roots :=
+    Quotient.exists_rep Q.roots
+  have hlength : roots.length = a := by
+    rw [← Multiset.coe_card, hroots, ← hs.natDegree_eq_card_roots, hd]
+  rw [← hlength]
+  refine ⟨fun i => roots[(i : ℕ)], ?_⟩
+  rw [← Fin.prod_ofFn, List.ofFn_getElem_eq_map roots (fun z => X - C z)]
+  simpa only [← hroots, Multiset.map_coe, Multiset.prod_coe] using hs.eq_prod_roots_of_monic hm
 
 theorem wden_addCases (a b : ℕ) (α : Fin a → ℂ) (β : Fin b → ℂ) :
     wden (a + b) (Fin.addCases α β) = wden a α * wden b β * ∏ i, ∏ j, (α i - β j) := by
@@ -170,8 +172,8 @@ theorem val_add_compl {n : ℕ} (s : Finset (Fin n)) : s.val + sᶜ.val = (Finse
 
 end GlobalTheory.LaplaceChar
 
-open GlobalTheory.LaplaceChar ReciprocityTheory.ChartRestriction.TR.Weyl in
 
+open GlobalTheory.LaplaceChar ReciprocityTheory.ChartRestriction.TR.Weyl in
 theorem GlobalTheory.character_laplace_factorisation : ∀ (a b : ℕ) (lam : DomWeight (a + b)) (e : ℤ), Odd e → ∃ (ι : Type) (_ : Fintype ι) (l₁ : ι → DomWeight a) (l₂ : ι → DomWeight b) (ε : ι → ℂ), (∀ j, (infOfWeight (l₁ j)).map (· + (b : ℂ) * e / 2) + (infOfWeight (l₂ j)).map (· + (a : ℂ) * e / 2) = infOfWeight lam) ∧ ∀ Q₁ Q₂ : ℂ[X], Q₁.Monic → Q₂.Monic → Q₁.natDegree = a → Q₂.natDegree = b → (Q₁ * Q₂).Separable → (∀ z ∈ (Q₁ * Q₂).roots, ‖z‖ = 1) → ((resultant Q₁ Q₂ / (‖resultant Q₁ Q₂‖ : ℂ)) ^ e * ‖resultant Q₁ Q₂‖) * (starRingEnd ℂ) (chAt lam (Q₁ * Q₂)) = ∑ j, ε j * (starRingEnd ℂ) (chAt (l₁ j) Q₁) * (starRingEnd ℂ) (chAt (l₂ j) Q₂) := by
   intro a b lam e he
   obtain ⟨m, rfl⟩ := he
@@ -201,7 +203,7 @@ theorem GlobalTheory.character_laplace_factorisation : ∀ (a b : ℕ) (lam : Do
       simp only [Function.comp_apply, selW, selR, F, Pi.add_apply, delta_apply, hK]
       push_cast
       ring
-    rw [hL, hR, ← Multiset.map_add, val_add_compl]
+    rw [hL, hR, ← Multiset.map_add (f := _), val_add_compl]
     rfl
   · intro Q₁ Q₂ h1 h2 hd1 hd2 hsep hroot
     beta_reduce
@@ -287,7 +289,8 @@ theorem GlobalTheory.character_laplace_factorisation : ∀ (a b : ℕ) (lam : Do
       rw [← mul_assoc, hW, Finset.mul_sum]
       exact Finset.sum_congr rfl fun J _ => by ring
     have hc := congrArg (starRingEnd ℂ) key
-    simp only [map_mul, map_sum, map_pow, map_neg, map_one] at hc
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_sum, map_pow, map_neg, map_one] at hc
     have hsA : ∀ J : {J : Finset (Fin (a + b)) // J.card = a},
         gtChar a (selW lam (selL J) (selL_strictMono J) (-(b : ℤ) * K)).w α =
           (∏ i, α i) ^ (-(b : ℤ) * K) * gtChar a (fun k => (lam.w + delta (a + b)) (selL J k) - delta a k) α :=

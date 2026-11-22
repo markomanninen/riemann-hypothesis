@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementTB
+module
+
+public import Formalism.HermitianCurvature.StatementTB
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.FinitePointSets
 

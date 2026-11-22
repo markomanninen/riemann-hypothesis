@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -22,9 +26,6 @@ lemma nA_Hf_sub_left (u v w : EuclideanSpace ℂ ι) : Hf (u - v) w = Hf u w - H
 lemma nA_Hf_sub_right (u v w : EuclideanSpace ℂ ι) : Hf u (v - w) = Hf u v - Hf u w := by
   simp [Hf, mul_sub, Finset.sum_sub_distrib]
 
-lemma nA_Hf_smul_left (c : ℂ) (v w : EuclideanSpace ℂ ι) : Hf (c • v) w = c * Hf v w := by
-  simp [Hf, Finset.mul_sum, mul_assoc]
-
 lemma nA_Hf_smul_right (c : ℂ) (v w : EuclideanSpace ℂ ι) :
     Hf v (c • w) = (starRingEnd ℂ) c * Hf v w := by
   simp only [Hf, Finset.mul_sum]
@@ -32,13 +33,8 @@ lemma nA_Hf_smul_right (c : ℂ) (v w : EuclideanSpace ℂ ι) :
   simp [map_mul]; ring
 
 lemma nA_Hf_conj (v w : EuclideanSpace ℂ ι) : (starRingEnd ℂ) (Hf v w) = Hf w v := by
-  simp [Hf, map_sum, mul_comm]
-
-lemma nA_Hf_self_im (v : EuclideanSpace ℂ ι) : (Hf v v).im = 0 := by
-  have h := nA_Hf_conj v v
-  have := congrArg Complex.im h
-  simp at this
-  linarith
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Hf, map_sum, mul_comm]
 
 variable {n : ℕ}
 
@@ -55,16 +51,11 @@ lemma nA_HC_sub_right (u v w : Fin n → EuclideanSpace ℂ ι) : HC u (v - w) =
   simp [HC, nA_Hf_sub_right, Finset.sum_sub_distrib]
 
 lemma nA_HC_conj (v w : Fin n → EuclideanSpace ℂ ι) : (starRingEnd ℂ) (HC v w) = HC w v := by
-  simp [HC, map_sum, nA_Hf_conj]
-
-lemma nA_HC_self_im (v : Fin n → EuclideanSpace ℂ ι) : (HC v v).im = 0 := by
-  simp [HC, Complex.im_sum, nA_Hf_self_im]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [HC, map_sum, nA_Hf_conj]
 
 lemma nA_HC_re_symm (v w : Fin n → EuclideanSpace ℂ ι) : (HC w v).re = (HC v w).re := by
   rw [← nA_HC_conj v w, Complex.conj_re]
-
-lemma nA_HC_self_ofReal (v : Fin n → EuclideanSpace ℂ ι) : HC v v = ((HC v v).re : ℂ) := by
-  apply Complex.ext <;> simp [nA_HC_self_im]
 
 lemma nA_HC_sub_sub_re (v a : Fin n → EuclideanSpace ℂ ι) :
     (HC (v - a) (v - a)).re = (HC v v).re - 2 * (HC v a).re + (HC a a).re := by
@@ -258,7 +249,7 @@ lemma pullbackSection_mem_thetaSpace {q n : ℕ} {π : Vsp X.dim →ₗ[ℂ] Vsp
       intro k
       have h := hs.2 (fun _ => π (γ k)) (fun _ => hπ.2.1 _ (hγ k)) (fun _ => π (v k))
       have e1 : (fun _ : Fin 1 => π ((v + γ) k)) = (fun _ => π (v k)) + (fun _ => π (γ k)) := by
-        funext; simp [map_add]
+        funext; simp [map_add (f := _)]
       rw [e1, h]
       simp only [HC, Finset.univ_unique, Finset.sum_singleton, Finset.prod_singleton, hπ.2.2.1,
         hπ.2.2.2 _ (hγ k), pow_one]
@@ -280,7 +271,7 @@ lemma translate_pullbackSection {q n : ℕ} {π : Vsp X.dim →ₗ[ℂ] Vsp X.di
     intro j
     have h := hs.2 (fun _ => π (k j)) (fun _ => hk j) (fun _ => π ((v - k) j))
     have e1 : (fun _ : Fin 1 => π ((v - k) j)) + (fun _ => π (k j)) = (fun _ => π (v j)) := by
-      funext; simp [← map_add]
+      funext; simp [← map_add (f := _)]
     rw [e1] at h
     simp only [HC, Finset.univ_unique, Finset.sum_singleton, Finset.prod_singleton, hπ.2.2.1,
       pow_one] at h

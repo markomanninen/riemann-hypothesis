@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MonomialFrameSpan.SatDefs
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MonomialFrameSpan.SatDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem res_sum (n : Lt → (ℕ × Fin N0 →₀ ℕ)) (t : Lt) :
     res t (∑ s, (n s).mapDomain (emb s)) = n t := by
   ext p
   rw [res_apply, Finsupp.finsetSum_apply, Finset.sum_eq_single t]
-  · exact Finsupp.mapDomain_apply (emb_inj t) _ _
+  · exact Finsupp.mapDomain_apply_of_injective (emb_inj t) _ _
   · intro s _ hst
     apply Finsupp.mapDomain_of_notMem_range
     rintro ⟨q, hq⟩
@@ -202,12 +206,13 @@ theorem projZ : ProjZ := by
     simp only [π, LinearMap.coe_comp, Function.comp_apply, Submodule.coe_subtype]
     rw [Submodule.projectionOnto_apply_left (hCm s) ⟨x, hx⟩]
   refine ⟨Tmap π, fun P => ?_, fun J => ?_⟩
-  · rw [MvPolynomial.as_sum P, map_sum]
-    refine Submodule.sum_mem _ fun m _ => ?_
-    have : monomial m (coeff m P) = coeff m P • monomial m (1 : ℤ) := by
-      rw [smul_monomial, smul_eq_mul, mul_one]
-    rw [this, LinearMap.map_smul, Tmap_monomial]
-    exact Submodule.smul_mem _ _ (prod_mem_span nu _ fun s => hπmem s _)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [MvPolynomial.as_sum P, map_sum]
+      refine Submodule.sum_mem _ fun m _ => ?_
+      have : monomial m (AddMonoidAlgebra.coeff P m) = AddMonoidAlgebra.coeff P m • monomial m (1 : ℤ) := by
+        rw [smul_monomial, smul_eq_mul, mul_one]
+      rw [this, LinearMap.map_smul, Tmap_monomial]
+      exact Submodule.smul_mem _ _ (prod_mem_span nu _ fun s => hπmem s _)
   · rw [nablaX_eq, Tmap_prod]
     refine Finset.prod_congr rfl fun s _ => ?_
     rw [hπfix]

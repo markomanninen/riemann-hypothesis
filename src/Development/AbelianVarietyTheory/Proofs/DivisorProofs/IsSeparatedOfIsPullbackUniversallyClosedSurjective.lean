@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -52,8 +57,8 @@ instance : (MorphismProperty.diagonal closedRange).DescendsAlong
 
 end GlobalTheory.SepDescent
 
-open GlobalTheory.SepDescent in
 
+open GlobalTheory.SepDescent in
 theorem GlobalTheory.isSeparated_of_isPullback_universallyClosed_surjective :
     ∀ (R : Type) [CommRing R] (S : Scheme.{0}) (π : S ⟶ Sp R), UniversallyClosed π → Surjective π →
     ∀ (G' : Over S) (G : Over (Sp R)) (β : G'.left ⟶ G.left),

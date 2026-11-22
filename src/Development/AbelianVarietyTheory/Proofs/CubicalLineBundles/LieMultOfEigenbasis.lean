@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.EllPullExistsOAct
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LieMultIffFinrank
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.EllPullExistsOAct
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LieMultIffFinrank
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,7 +67,8 @@ theorem exists_label {E K k : Type} [Field E] [NumberField E] [Field K] [CharZer
   have : CharZero k := j.charZero_iff j.injective |>.1 inferInstance
   have hτ : Function.Injective τ := by
     rw [RingHom.injective_iff_ker_eq_bot]
-    refine Ideal.eq_bot_of_comap_eq_bot (R := ℤ) ?_
+    refine Ideal.eq_bot_of_under_eq_bot (R := ℤ) ?_
+    change Ideal.comap (algebraMap ℤ (𝓞 E)) (RingHom.ker τ) = ⊥
     rw [RingHom.comap_ker, ← RingHom.injective_iff_ker_eq_bot]
     exact RingHom.injective_int _
   have hi : Function.Injective fun t => j.comp (lab t) := fun t t' e =>

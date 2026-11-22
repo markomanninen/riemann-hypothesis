@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.HostThickExists
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Inertia
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Decomp
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CoprimeTwoPow
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.HostThickExists
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Inertia
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Decomp
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CoprimeTwoPow
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise

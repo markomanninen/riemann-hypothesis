@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BlockRatReal
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.WeylLeDual
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.SumIcoTsubTelescope
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.RowDivStable
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylMap
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylRowStable
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BlockRatReal
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.WeylLeDual
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.SumIcoTsubTelescope
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.RowDivStable
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylMap
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylRowStable
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -31,7 +35,7 @@ theorem eval_map_rowAct {LL : Type} [Field LL] (φ : LL →+* ℂ) {k : ℕ} (g 
       eval (fun x => (g.map φ * z) x.1 x.2) (MvPolynomial.map φ F) := by
   induction F using MvPolynomial.induction_on with
   | C a => simp [Formalism.GradedWeylDivisibility.rowAct]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp]
     congr 1

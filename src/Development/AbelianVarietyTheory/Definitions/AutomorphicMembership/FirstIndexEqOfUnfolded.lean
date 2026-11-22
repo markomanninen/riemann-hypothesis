@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.LatticeGeometry.NormDetInf
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OrthoStatementPf
-import Development.AbelianVarietyTheory.Counterexamples.UpperHalfSurvey.ExistsFundSetOrth
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FinMuAllData
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnfFamily
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.InvariantDataMet
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.LatticeGeometry.NormDetInf
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OrthoStatementPf
+public import Development.AbelianVarietyTheory.Counterexamples.UpperHalfSurvey.ExistsFundSetOrth
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FinMuAllData
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnfFamily
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.InvariantDataMet
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,10 +45,6 @@ theorem flagConst_add (p q : ℕ) : flagConst (p + q) = grassConst p q * flagCon
     rw [e1, e2, e3, ih, pow_add]
     field_simp
 
-example : flagConst 2 = 1 / Real.pi := by simp [flagConst, Finset.prod_range_succ]
-
-example : grassConst 1 1 = 1 / Real.pi := by simp [grassConst]
-
 theorem isOrth_x0F (X : Data E r) : IsOrth X (x0F X) := fun τ => (X.signature τ).choose_spec.2
 
 theorem muF_fundSet_le (X : Data E r) {x0 x1 : Frame X.Ψ r} (ho : IsOrth X x0) (ho1 : IsOrth X x1)
@@ -76,7 +76,7 @@ theorem muF_fundSet_le (X : Data E r) {x0 x1 : Frame X.Ψ r} (ho : IsOrth X x0) 
   have hset : (FF ∩ {z | ∃ y ∈ CechHodgeFiltration, ∃ γ ∈ X.Γ, ∃ b ∈ Bor X.Ψ r,
       cpt X x0 z = lact γ (rmul (cpt X x1 y) b)} : Set (V (nd X))) =ᵐ[muF X x0] FF := by
     filter_upwards [h1] with z hz
-    refine propext ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
+    refine ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
     have hb : cpt X x0 z ∉ Bad := fun hb => by simp [Set.indicator_of_mem hb] at hz
     simp only [hBaddef, Set.mem_iInter, not_forall, Set.mem_compl_iff, not_not, Set.mem_preimage] at hb
     obtain ⟨γ, ⟨y, b⟩, ⟨hy, hb⟩, e⟩ := hb
@@ -125,7 +125,8 @@ theorem gram_eq_mul (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (x : Matri
     (gram τ G x)ᵀ = xᴴ * (G.map τ)ᵀ * x := by
   ext a b
   simp only [ReciprocityTheory.ChartRestriction.G.FD.gram, hermC, ReciprocityTheory.ChartRestriction.G.FD.col, transpose_apply, of_apply, mul_apply, conjTranspose_apply, map_apply,
-    Finset.sum_mul, RCLike.star_def]
+    Finset.sum_mul, Finset.mul_sum, RCLike.star_def]
+  simp only [Matrix.mul_apply, conjTranspose_apply, map_apply, transpose_apply, Finset.sum_mul, Finset.mul_sum, RCLike.star_def]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 
 variable (X : Data E r) {j : ℕ} (hj : j ≤ r) {Tau : Type} (ι : Tau → X.Ψ)
@@ -302,19 +303,6 @@ def cxOfModels : CxPkg Tau r j Comp where
   normDetInf := fun t z => onQuot
     (fun w => detNorm (hodgeC (Y z.1) (κ z.1)) ((s z.1 t : ℂ) / (mat (x0F (Y z.1)) (κ z.1 t)).det) w t) z.2
 
-def ptOfFrame (k : Comp) (x : (Y k).dom) : (cxOfModels hj Y hr hp κ B s).XC :=
-  ⟨k, Quot.mk _ ⟨domPt (Y k) hj (κ k) x, domPt_mem (Y k) hj (κ k) (hp k) x.2⟩⟩
-
-theorem ptOfFrame_eq (k : Comp) (x x' : (Y k).dom) {γ : GL (Fin r) E} (hγ : γ ∈ (Y k).Γ) {b : Frame (Y k).Ψ r}
-    (hb : b ∈ Bor (Y k).Ψ r) (e : x'.1 = rmul (lact γ x.1) b) :
-    ptOfFrame hj Y hr hp κ B s k x = ptOfFrame hj Y hr hp κ B s k x' := by
-  refine congrArg (Sigma.mk k) (Quot.sound ⟨_, ⟨γ, hγ, rfl⟩, ?_⟩)
-  show moebI _ (domPt (Y k) hj (κ k) x) = domPt (Y k) hj (κ k) x'
-  rw [e, domPt_rmul _ _ _ hb, domPt_lact _ _ _ (hp k) _ x.2]
-
-def invariantB (k : Comp) : BdData Tau j (r - j) (gammaU (Y k) hj (κ k)) :=
-  invariantData (gammaU_le (Y k) hj (κ k) (hp k)) (hodgeC (Y k) (κ k)) (hodgeC_pos _ _)
-
 end Models
 
 section Moduli
@@ -344,14 +332,6 @@ variable [Fintype Tau] (hr : 0 < r) (T : Tau ≃ {τ : E →+* ℂ // τ (H.rt :
 
 def cxTrue : CxPkg Tau r j U.Comp :=
   cxOfModels (le_of_isUnf U hU e) U.X hr (first_index_eq_of_unfolded U hU e) (cmEquiv U hU T) B s
-
-theorem ptOfFrame_eq_of_frBor {k k' : U.Comp} (x : (U.X k).dom) (x' : (U.X k').dom)
-    (h : ∃ t : Ix Dw → (CAt σ)ˣ, FrBor t (U.un k x) (U.un k' x')) :
-    ptOfFrame (le_of_isUnf U hU e) U.X hr (first_index_eq_of_unfolded U hU e) (cmEquiv U hU T) B s k x =
-      ptOfFrame (le_of_isUnf U hU e) U.X hr (first_index_eq_of_unfolded U hU e) (cmEquiv U hU T) B s k' x' := by
-  obtain ⟨γ, hγ, b, hb, h1⟩ := (hU.2.2.2.1 k k' x x').1 h
-  obtain ⟨rfl, h2⟩ := Sigma.mk.inj h1
-  exact ptOfFrame_eq _ _ _ _ _ _ _ _ x x' hγ hb (eq_of_heq h2)
 
 end Moduli
 

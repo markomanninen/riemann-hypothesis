@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnBetaFrame
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnBetaFrame
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 open Formalism.REAL Formalism.QuantumDeterminants
@@ -73,7 +77,7 @@ theorem group_action_pairing_holds : GAPair := by
     rw [← setIntegral_eq_integral_of_forall_compl_eq_zero hz]
     refine setIntegral_congr_fun hQm fun x hx => ?_
     simp only [MA.ext, hval X hX, hval Y hY]
-    rw [dif_pos (show x ∈ MA.Qset S.G.r (D.parOf S v).TT from hx)]
+    rw [dite_eq_left (show x ∈ MA.Qset S.G.r (D.parOf S v).TT from hx)]
     rw [hW x hx, map_mul, Complex.conj_ofReal]
     have hw := wq_pos (k := S.G.k) hx
     have hs : ((Real.sqrt (MA.wq S.G.k x (D.parOf S v).TT) : ℝ) : ℂ) *

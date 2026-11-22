@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Bridge
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ConjDesc
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.NormInj
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.SgIterateEqSelf
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ContractI
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.StrictNormal
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.UnitNorm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Bridge
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ConjDesc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.NormInj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.SgIterateEqSelf
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ContractI
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.StrictNormal
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.UnitNorm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets PositivityTheory.Rg.Tf.Loc UpperTheory.ConvolutionTheory.Loc
 
@@ -99,7 +103,7 @@ private theorem quot_dcoset {G : Type} [Group G] [TopologicalSpace G] [IsTopolog
     rw [key]
     exact ENNReal.mul_ne_top (ENNReal.inv_ne_top.2 (hV0 y)) hUc.measure_ne_top
   have hm2 : Measurable fun g => S.indicator (fun _ => (1 : ENNReal)) g * hex.choose g := hm.mul hex.choose_spec.1
-  rw [quotIntegral, dif_pos hex]
+  rw [quotIntegral, dite_eq_left hex]
   have : ∀ g, F g * ((hex.choose g).toReal : ℂ) = c * ((S.indicator (fun _ => 1) g * hex.choose g).toReal : ℂ) := by
     intro g
     by_cases hg : g ∈ S <;> simp [hF, hg]

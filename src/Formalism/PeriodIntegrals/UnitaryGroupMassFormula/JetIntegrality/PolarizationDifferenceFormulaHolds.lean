@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.TwoUnit
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.TwoUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem cc_sum {l : PowerSeries K} (hl0 : PowerSeries.constantCoeff l = 0) {τ :
     {a b : MvPowerSeries τ K} (ha : MvPowerSeries.constantCoeff a = 0)
     (hb : MvPowerSeries.constantCoeff b = 0) :
     MvPowerSeries.constantCoeff (PowerSeries.subst a l + PowerSeries.subst b l) = 0 := by
-  rw [map_add, PowerSeries.constantCoeff_subst_eq_zero ha l hl0,
+  rw [map_add (f := _), PowerSeries.constantCoeff_subst_eq_zero ha l hl0,
     PowerSeries.constantCoeff_subst_eq_zero hb l hl0, add_zero]
 
 end R

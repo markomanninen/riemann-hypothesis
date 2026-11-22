@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReadPk
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeRepresentativesPartsOtherLaterStagesStatement
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinTypRepCast
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReadPk
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeRepresentativesPartsOtherLaterStagesStatement
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinTypRepCast
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Cx Formalism.IndefR.RecTie
 open scoped TensorProduct InnerProductSpace ComplexOrder
@@ -12,8 +17,8 @@ noncomputable section
 
 namespace GlobalTheory.Mem.R3.Rw
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem chT_tr : ∀ (B : Base) (C : Cols B) (a b : Late B C) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (Ks : Type) [Field Ks] [NumberField Ks] [iK : Algebra Ks a.D.what₂.LL] (A : FamIn a.D.what₂.LL G Pl0 T a.D.R.m) (R : RealDat a.D A Ks) (F : Face a.D A) (y : Hd R) (y' : HdB b R), Same b y y' → ∀ (bb : Bool) (Φ : Type) (rep : Φ → _) (Top : C.Tup → Hs) (c : ChD C.Tup Φ B.R.m Top) jA (t : ChT y F bb rep (Top := Top) jA c) jA', HEq jA' jA → ∃ t' : @ChT b.D G _ _ Pl0 T (famM b A) Ks _ _ (alg b iK) (real b R) y' (face b F) bb Φ ((rep)) Top jA' c, letI := alg b iK; HEq t'.jE t.jE ∧ HEq t'.jM t.jM ∧ HEq t'.jX t.jX := by
   intro B C a b G _ _ Pl0 T Ks _ _ iK A R F y y' hS bb Φ rep Top c jA t jA' hjA
   have hP := (GlobalTheory.T.typeRepresentativesParts_otherLaterStages B C a b G Pl0 T Ks A R F y y' hS).2.1
@@ -62,7 +67,11 @@ theorem chT_tr : ∀ (B : Base) (C : Cols B) (a b : Late B C) (G : Type) [Group 
       have h0 : t.jM μa 1 va ∈ (y.C F).CC bb μa 1 := cast (congrArg (t.jM μa 1 va ∈ ·) e.symm) ((h))
       have hv := chain_ioC b (R := R) (y.tupT μa) 0 (t.jM μa 1 va) ((h)) h0
       have e' := (t.io0 μa hUa x va h0).trans (congrArg (fun z => (y.C F).ipE bb (t.jE x) z) hv.symm)
-      kexactB e'
+      run_tac Lean.Elab.Tactic.withMainContext do
+        let goal ← Lean.Elab.Tactic.getMainGoal
+        let some decl := (← Lean.getLCtx).findFromUserName? `e' | throwError "missing proof"
+        goal.assign (Lean.mkFVar decl.fvarId)
+        Lean.Elab.Tactic.replaceMainGoal []
     io := fun μ hU j h1 h2 x v h => by
       let μa : a.D.what₂.Tup := (μ)
       have hUa : y.Us μa := (hU)
@@ -72,7 +81,11 @@ theorem chT_tr : ∀ (B : Base) (C : Cols B) (a b : Late B C) (G : Type) [Group 
       have h0 : t.jM μa (j + 1) va ∈ (y.C F).CC bb μa (j + 1) := cast (congrArg (t.jM μa (j + 1) va ∈ ·) e.symm) ((h))
       have hv := chain_ioC b (R := R) (y.tupT μa) j (t.jM μa (j + 1) va) ((h)) h0
       have e' := (t.io μa hUa j h1 h2a x va h0).trans (congrArg (fun z => (y.C F).ipP bb μa j (t.jM μa j x) z) hv.symm)
-      kexactB e'
+      run_tac Lean.Elab.Tactic.withMainContext do
+        let goal ← Lean.Elab.Tactic.getMainGoal
+        let some decl := (← Lean.getLCtx).findFromUserName? `e' | throwError "missing proof"
+        goal.assign (Lean.mkFVar decl.fvarId)
+        Lean.Elab.Tactic.replaceMainGoal []
     ioTop := fun μ hU x v v' hvv h => by
       let μa : a.D.what₂.Tup := (μ)
       have hUa : y.Us μa := (hU)

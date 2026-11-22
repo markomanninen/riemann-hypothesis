@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct
 
@@ -33,7 +37,7 @@ theorem isLocalizedModule_subtype {A K : Type} [CommRing A] [IsDomain A] [Field 
       refine ⟨((s₂ : A) • m₁ + (s₁ : A) • m₂, s₁ * s₂), ?_⟩
       have e₁' : (s₁ : A) • y₁ = (m₁ : Ω) := e₁
       have e₂' : (s₂ : A) • y₂ = (m₂ : Ω) := e₂
-      simp only [map_add, map_smul, Submodule.subtype_apply, ← e₁', ← e₂', Submonoid.smul_def,
+      simp only [map_add (f := _), map_smul, Submodule.subtype_apply, ← e₁', ← e₂', Submonoid.smul_def,
         Submonoid.coe_mul]
       rw [smul_add, mul_smul, mul_comm, mul_smul, smul_comm (s₂ : A) (s₁ : A) y₁,
         smul_comm (s₂ : A) (s₁ : A) y₂]
@@ -65,13 +69,13 @@ private theorem rankAtStalk_eq_finrank' {R : Type} [CommRing R] [IsDomain R] {P 
   exact IsLocalizedModule.finrank_eq q.asIdeal.primeCompl
     (LocalizedModule.mkLinearMap q.asIdeal.primeCompl P) q.asIdeal.primeCompl_le_nonZeroDivisors
 
-theorem bc_iso : ∀ (A K : Type) [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFractionRing A K] (Ω : Type) [AddCommGroup Ω] [Module K Ω] [Module A Ω] [IsScalarTower A K Ω] (M : Submodule A Ω) (C : Type) [Field C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] (hv : v.Integers O) [Algebra A O] (Ω' : Type) [AddCommGroup Ω'] [Module C Ω'] [Module O Ω'] [IsScalarTower O C Ω'] (L : Submodule O Ω') (ι : M →ₛₗ[algebraMap A O] Ω'), M.IsLattice K → Module.Projective A M → L.IsLattice C → Submodule.span O (Set.range ι) = L → Module.finrank K Ω = Module.finrank C Ω' → ∃ j : O ⊗[A] M →ₗ[O] Ω', Function.Injective j ∧ LinearMap.range j = L ∧ ∀ x, j (1 ⊗ₜ x) = ι x := by
+theorem bc_iso : ∀ (A K : Type) [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFractionRing A K] (Ω : Type) [AddCommGroup Ω] [Module K Ω] [Module A Ω] [IsScalarTower A K Ω] (M : Submodule A Ω) (C : Type) [Field C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] (hv : v.Integers O) [Algebra A O] (Ω' : Type) [AddCommGroup Ω'] [Module C Ω'] [Module O Ω'] [IsScalarTower O C Ω'] (L : Submodule O Ω') (ι : M →ₛₗ[algebraMap A O] Ω'), M.IsFullLattice K → Module.Projective A M → L.IsFullLattice C → Submodule.span O (Set.range ι) = L → Module.finrank K Ω = Module.finrank C Ω' → ∃ j : O ⊗[A] M →ₗ[O] Ω', Function.Injective j ∧ LinearMap.range j = L ∧ ∀ x, j (1 ⊗ₜ x) = ι x := by
   intro A K _ _ _ _ _ Ω _ _ _ _ M C _ v O _ _ hv _ Ω' _ _ _ _ L ι hM hproj hL hspan hdim
   haveI : IsDomain O := hv.hom_inj.isDomain
   haveI : ValuationRing O := ValuationRing.of_integers v hv
   haveI : IsFractionRing O C := hv.isFractionRing
-  haveI : Module.Finite A M := Module.Finite.iff_fg.mpr hM.1
-  haveI : Module.Finite O L := Module.Finite.iff_fg.mpr hL.1
+  haveI : Module.Finite A M := Module.Finite.iff_fg.mpr (hM.toIsLattice.fg)
+  haveI : Module.Finite O L := Module.Finite.iff_fg.mpr (hL.toIsLattice.fg)
   haveI : Module.Flat O L := by
     rw [Module.Flat.flat_iff_torsion_eq_bot_of_isBezout, eq_bot_iff]
     rintro x ⟨a, ha⟩
@@ -100,7 +104,7 @@ theorem bc_iso : ∀ (A K : Type) [CommRing A] [IsDomain A] [Field K] [Algebra A
       | tmul o x =>
         show o • ι x ∈ L
         exact L.smul_mem o (hspan ▸ Submodule.subset_span ⟨x, rfl⟩)
-      | add t₁ t₂ h₁ h₂ => rw [map_add]; exact L.add_mem h₁ h₂
+      | add t₁ t₂ h₁ h₂ => rw [map_add (f := _)]; exact L.add_mem h₁ h₂
     · rw [← hspan, Submodule.span_le]
       rintro _ ⟨x, rfl⟩
       exact ⟨1 ⊗ₜ x, hj x⟩
@@ -114,8 +118,8 @@ theorem bc_iso : ∀ (A K : Type) [CommRing A] [IsDomain A] [Field K] [Algebra A
   have hbij : Function.Bijective j' := by
     apply Module.bijective_of_surjective_of_rankAtStalk_eq hsurj
     intro m _
-    rw [Module.rankAtStalk_baseChange, rankAtStalk_eq_finrank', rankAtStalk_eq_finrank', ← finrank_lattice M hM.2, hdim,
-      finrank_lattice L hL.2]
+    rw [Module.rankAtStalk_baseChange, rankAtStalk_eq_finrank', rankAtStalk_eq_finrank', ← finrank_lattice M hM.span_eq_top, hdim,
+      finrank_lattice L hL.span_eq_top]
   intro t₁ t₂ h
   exact hbij.1 (Subtype.ext h)
 

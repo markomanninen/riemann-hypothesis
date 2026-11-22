@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFundamentalDomainSmulIff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFundamentalDomainSmulIff
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures
 open scoped TensorProduct ENNReal
@@ -13,6 +17,6 @@ theorem fundamentalDomain_covol : ∀ (F E : Type) [Field F] [NumberField F] [Fi
   refine domains_and_covolume F E σ n J K (ratOf (K := K)) rfl covol ?_ μ hμ
   intro ν hν
   refine ⟨hν.choose, hν.choose_spec, ?_⟩
-  rw [covol, dif_pos hν]
+  rw [covol, dite_eq_left hν]
 
 end GlobalTheory.ClosedSubgroupCovol

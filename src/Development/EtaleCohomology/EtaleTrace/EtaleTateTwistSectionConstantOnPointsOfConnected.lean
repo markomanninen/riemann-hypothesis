@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.EtaleTrace.EtaleTateTwistSectionsDeterminedByPointsOfProper
-import Development.EtaleCohomology.TateTwists.StrictHenselianAcyclic
-import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsGlueOfForgetIsSheaf
+module
+
+public import Development.EtaleCohomology.EtaleTrace.EtaleTateTwistSectionsDeterminedByPointsOfProper
+public import Development.EtaleCohomology.TateTwists.StrictHenselianAcyclic
+public import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsGlueOfForgetIsSheaf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -18,7 +22,7 @@ def EtaleTateTwistSectionConstantOnPointsOfConnectedProper : Prop := ∀ (l : �
 
 theorem q_nsmul {q : ℕ} {U : Scheme.{0}} (x : Sec (tw q 0) U) : q • x = 0 := by
   rw [← Nat.cast_smul_eq_nsmul (ULift.{1} (ZMod q))]
-  have : ((q : ℕ) : ULift.{1} (ZMod q)) = 0 := ULift.ext _ _ (by simp)
+  have : ((q : ℕ) : ULift.{1} (ZMod q)) = 0 := ULift.ext (by simp)
   rw [this, zero_smul]
 
 theorem res_comp {q : ℕ} {W V U : Scheme.{0}} (a : W ⟶ V) (b : V ⟶ U) (x : Sec (tw q 0) U) :

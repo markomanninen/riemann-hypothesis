@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
+
+@[expose] public section
 
 namespace UpperTheory.Gal.InertialTypesAlt.L
 
@@ -82,7 +86,7 @@ private theorem step {A : Type} [CommRing A] (I : Ideal A) (τ : A ≃+* A) (d :
       unfold itN
       apply Finset.prod_congr rfl
       intro i _
-      rw [hit, map_add, map_one, map_mul, ← hit, ← hit, hwit]
+      rw [hit, map_add (f := _), map_one, map_mul, ← hit, ← hit, hwit]
     rw [itN_mul, ← hN, e1, hc, ha]
     have e2 : N * (1 + 1 * ((x - N) * v) + ((x - N) * v) ^ 2 * c) - x = N * c * ((x - N) * v) ^ 2 := by
       linear_combination (x - N) * hNv

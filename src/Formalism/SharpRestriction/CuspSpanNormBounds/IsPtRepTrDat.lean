@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.ContinuousRootCoords
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockExponentKappaIdentity
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrameFactorGe
-import Formalism.SharpRestriction.CuspSpanNormBounds.TheoremBConstants
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.ContinuousRootCoords
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockExponentKappaIdentity
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrameFactorGe
+public import Formalism.SharpRestriction.CuspSpanNormBounds.TheoremBConstants
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 

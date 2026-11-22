@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.SzHypFam
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RowsConc
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PgFrameAtRecord
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CriticalLevelLePowAllPlacesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.SzHypFam
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RowsConc
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PgFrameAtRecord
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CriticalLevelLePowAllPlacesStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S
 
@@ -112,7 +116,7 @@ theorem levelPrime_size : Formalism.HermitianLatticesTheory.SiegelMassRatio → 
     have hprod : ∏ τ, (Tcrit D u τ / Tr D u) ^ D.R.k ≤ q ^ D.R.k := by
       rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ τ0)]
       have hrest : ∏ τ ∈ Finset.univ.erase τ0, (Tcrit D u τ / Tr D u) ^ D.R.k ≤ 1 :=
-        Finset.prod_le_one (fun τ _ => pow_nonneg (hxpos τ).le _)
+        Finset.prod_le_one₀ (fun τ _ => pow_nonneg (hxpos τ).le _)
           (fun τ _ => pow_le_one₀ (hxpos τ).le (le_trans (hx τ) hq1))
       calc (Tcrit D u τ0 / Tr D u) ^ D.R.k * ∏ τ ∈ Finset.univ.erase τ0, (Tcrit D u τ / Tr D u) ^ D.R.k
           ≤ (Tcrit D u τ0 / Tr D u) ^ D.R.k * 1 :=

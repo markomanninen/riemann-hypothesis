@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -25,7 +29,7 @@ theorem UpperTheory.V.Ws.fibTrdeg :
         have halg : IsAlgebraic S x⁻¹ := by
           refine ⟨Polynomial.C (⟨x, hx⟩ : S) * Polynomial.X - 1, ?_, ?_⟩
           · intro h
-            have h' := congrArg (fun q => Polynomial.coeff q 0) h
+            have h' := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q 0) h
             simp at h'
           · simp [h0]
         exact (hmemS _).mpr (hSalg _ halg) }

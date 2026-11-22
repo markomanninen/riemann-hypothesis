@@ -1,23 +1,30 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefSectionsAsymptotic
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsShiftSectionBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFujitaOne
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.Imports
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AmpleSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NefRR
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalChartLattice
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinrankChartLatQMono
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KleimanInputUniverseZero
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KTwins
-import Development.WeilBound.CoreStatements.HodgeTatePoints.A36
-import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuaNum
-import Development.WeilBound.CoreStatements.HodgeTatePoints.SiubOf
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsNeZeroOfIsSubvar
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalNef
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefPlusAmpleDegree
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ExistsLinearIndependentOfGenerates
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaGeneric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsShiftSectionBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.GeneratedModOfSubsingleton
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAmpleOfGenTwist
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AmpleSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NefRR
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalChartLattice
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinrankChartLatQMono
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KleimanInputUniverseZero
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KTwins
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.A36
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuaNum
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.SiubOf
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsNeZeroOfIsSubvar
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalNef
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefPlusAmpleDegree
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ExistsLinearIndependentOfGenerates
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.ArakelovGeometry GroundTheory.Heights₂.Heights.HilbertSamuel Filter Topology
 
 namespace GlobalTheory.CompanionTheory.NefSections
@@ -88,7 +95,7 @@ namespace GlobalTheory.CompanionTheory.NefSections
 open GroundTheory.Heights₂.Heights ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Kleiman2
 
 theorem exists_rat_multilinear_le {M : Type} [AddCommGroup M] {n : ℕ}
-    (f : MultilinearMap ℤ (fun _ : Fin n => M) ℤ) (μ e : M) (ε : ℚ) (hε : 0 < ε) :
+    (f : (Π _ : Fin n, M) →ₘₗ[ℤ] ℤ) (μ e : M) (ε : ℚ) (hε : 0 < ε) :
     ∃ t : ℚ, 0 < t ∧ ∀ (a : ℕ) (m : ℤ), 1 ≤ a → (m : ℚ) = a * t →
       ((f (fun _ => a • μ + m • e) : ℤ) : ℚ) ≤ (a : ℚ) ^ n * (((f fun _ => μ : ℤ) : ℚ) + ε) := by
   let g : ℚ → ℚ := fun t => PositivityTheory.HtPt.Siua.form f μ e (fun _ => 1) (fun _ => 1 * t)

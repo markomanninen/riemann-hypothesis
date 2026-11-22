@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentreAtOfIsAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentreAtOfIsAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -41,8 +46,8 @@ theorem coordFn_add {D : CartierDiv Y} {W : Y.Opens}
     (a b : sectionsOn (twist (GlobalTheory.structureModule Y) (toLB D)) W) (i : (toLB D).ι) :
     coordFn (a + b) i = coordFn a i + coordFn b i := rfl
 
-open Classical in
 
+open Classical in
 def ratOn (D : CartierDiv Y) (W : Y.Opens) :
     sectionsOn (twist (GlobalTheory.structureModule Y) (toLB D)) W →+ Y.functionField where
   toFun a := if h : genericPoint Y ∈ W then
@@ -55,7 +60,7 @@ def ratOn (D : CartierDiv Y) (W : Y.Opens) :
     · rfl
   map_add' a b := by
     split_ifs with h
-    · rw [coordFn_add, map_add, add_div]
+    · rw [coordFn_add, map_add (f := _), add_div]
     · rw [add_zero]
 
 theorem ratOn_apply (D : CartierDiv Y) {W : Y.Opens} (h : genericPoint Y ∈ W)

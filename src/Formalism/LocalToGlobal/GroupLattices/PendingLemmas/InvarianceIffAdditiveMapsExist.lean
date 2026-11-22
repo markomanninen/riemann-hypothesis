@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SysC
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WittFractionToCoefficients
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.OrbitSumStabilizer
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesTrivial
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CardFilterValLt
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SuccMulSuccSubOneDivSucc
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SysC
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WittFractionToCoefficients
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.OrbitSumStabilizer
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesTrivial
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CardFilterValLt
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SuccMulSuccSubOneDivSucc
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,22 +56,6 @@ variable (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : CEmbC X.G)
     (F : ∀ j, X.Lt j → X.Lt (j + 1) → MvPowerSeries (T × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p])
 
 abbrev pendT : Pend X := pendR X E.toCEmb hfin hst (beLT hLT) (thFOf X pos F)
-
-theorem adm6_pendT (D : Formalism.BasicNotions.D7) : Formalism.MainNotions.FormalGroupSystem.adm6 D X (pendT X E hfin hst hLT pos F) := up_down_adjoint D X _
-
-theorem invariance_of_stable_geometry (D : Formalism.BasicNotions.D7) :
-    letI := wittFractionAlgebraCp p
-    letI := algKfC E.toCEmb
-    StabGeo X ℂ_[p] hfin (thFOf X pos F) → KapStab X ℂ_[p] → Formalism.MainNotions.FormalGroupSystem.MinkowskiCounting D X (pendT X E hfin hst hLT pos F) := by
-  let _ := wittFractionAlgebraCp p
-  let _ := algKfC E.toCEmb
-  exact invariance_representatives X E.toCEmb hfin hst (beLT hLT) D (thFOf X pos F) (delEquivOn_GdC X ℂ_[p]) (vtIn_GdC X ℂ_[p])
-
-theorem invariance_of_trivial_stabilisers (D : Formalism.BasicNotions.D7) (hT : ∀ j c, (X.Lv.lev j c).TrivStab) :
-    Formalism.MainNotions.FormalGroupSystem.MinkowskiCounting D X (pendT X E hfin hst hLT pos F) := by
-  let _ := wittFractionAlgebraCp p
-  let _ := algKfC E.toCEmb
-  exact invariance_representatives_trivial X E.toCEmb hfin hst (beLT hLT) D (thFOf X pos F) hT (delEquivOn_GdC X ℂ_[p]) (vtIn_GdC X ℂ_[p])
 
 theorem invariance_iff_additive_maps_exist (D : Formalism.BasicNotions.D7) :
     Formalism.MainNotions.FormalGroupSystem.adm5 D X (pendT X E hfin hst hLT pos F) ↔

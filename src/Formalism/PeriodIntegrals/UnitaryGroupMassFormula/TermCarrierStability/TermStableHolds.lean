@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermCarrierStability.AdmissibleStableUnderFrameChange
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermCarrierStability.MemSpanImageEquiv
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermCarrierStability.AdmissibleStableUnderFrameChange
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermCarrierStability.MemSpanImageEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ section D7
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem tr_XS (D : D7) {T' : D.host.E} {γ : (VS D).V ≃ₗ[D.host.E] (VS D).V}
-    {x F₂ : LFlag (VS D) D.R.rS T'} (he : ∀ k, F₂.fl.e k = γ (x.fl.e k)) :
+    {x F₂ : LFlag (D.sp.Y 0) D.R.rS T'} (he : ∀ k, F₂.fl.e k = γ (x.fl.e k)) :
     Tr γ (XS D F₂.fl) (XS D x.fl) := by
   intro v
   have hmap : XS D F₂.fl = (XS D x.fl).map
@@ -35,7 +39,7 @@ theorem tr_XS (D : D7) {T' : D.host.E} {γ : (VS D).V ≃ₗ[D.host.E] (VS D).V}
   rfl
 
 theorem frameOK_tr (D : D7) {T' : D.host.E} {γ : (VS D).V ≃ₗ[D.host.E] (VS D).V}
-    {x F₂ : LFlag (VS D) D.R.rS T'} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Tr γ Λ Λ)
+    {x F₂ : LFlag (D.sp.Y 0) D.R.rS T'} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Tr γ Λ Λ)
     (he : ∀ k, F₂.fl.e k = γ (x.fl.e k)) (hz : F₂.fl.z = γ x.fl.z)
     (hiso : ∀ a b, (VS D).hT (γ a) (γ b) = (VS D).hT a b) (hx : FrameOK D Λ x) : FrameOK D Λ F₂ :=
   ⟨fixedConv_tr Λ (gS D) hΛ he hz hiso hx.1, Tr.eq (tr_XLam Λ hΛ he) (tr_XS D he) hx.2⟩
@@ -65,12 +69,6 @@ theorem termStable_holds (D : D7) (u u' : D.what₂.Word) : TermStable D u u' :=
   exact ⟨isLift_tr Λ hΛγ hz hzt hxl,
     admissible_stable_under_frame_change Λ (gS D) (lf D F0) x.1 F₂ hFl.1 hFc hxl.1 hxf.1 hxa n hn m hm hfr,
     frameOK_tr D Λ hΛγ he hz hiso hxf⟩
-
-theorem hyp_inhabited (D : D7) (u : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : IsRowLat D F0 Λ) :
-    ∃ (x : Carrier (PD D Λ (lf D F0) u)) (F₂ : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)),
-      DCRel Λ (lf D F0) x.1 F₂ :=
-  ⟨⟨lf D F0, pd_self F0 Λ hΛ⟩, lf D F0, 1, one_mem_NLam Λ _, 1, one_mem_NLam Λ _, fun _ => rfl, rfl⟩
 
 end D7
 

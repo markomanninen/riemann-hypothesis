@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ue16.exists_smul_mem :
     ∀ {G : Type} [inst : Group G] {LL : Type} [inst_1 : Field LL] {O : Type} [inst_2 : CommRing O]

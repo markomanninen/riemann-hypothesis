@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
 
@@ -77,8 +81,8 @@ noncomputable def finAdeleMap : FiniteAdeleRing (𝓞 K) K →+* FiniteAdeleRing
 
 noncomputable def infAdeleMap : InfiniteAdeleRing K →+* InfiniteAdeleRing L :=
   RingHom.pi fun w : InfinitePlace L =>
-    (LiesOver.completionMap (v := w.comap (algebraMap K L)) (w := w)).comp
-      (Pi.evalRingHom (fun v : InfinitePlace K => v.Completion) _)
+    (AbsoluteValue.Completion.map (w.comap (algebraMap K L)).val w.val).comp
+      (Pi.evalRingHom (fun v : InfinitePlace K => v.Completion) (w.comap (algebraMap K L)))
 
 noncomputable def adeleMap : AdeleRing (𝓞 K) K →+* AdeleRing (𝓞 L) L :=
   RingHom.prodMap (infAdeleMap K L) (finAdeleMap K L)
@@ -89,7 +93,7 @@ theorem valued_complMap (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum 
   by_cases hx : x = 0
   · subst hx
     have := w.isPrime
-    rw [map_zero, map_zero, map_zero, zero_pow (Ideal.ramificationIdx_pos w.asIdeal (𝓞 K)).ne']
+    rw [map_zero, map_zero, map_zero, zero_pow (Ideal.ramificationIdx_pos (R := 𝓞 K) w.asIdeal).ne']
   have hx' : complMap v w x ≠ 0 := (map_ne_zero _).2 hx
   have h1 : {y | Valued.v y = Valued.v x} ∈ nhds x :=
     Valued.locally_const ((Valuation.ne_zero_iff _).2 hx)
@@ -100,9 +104,7 @@ theorem valued_complMap (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum 
   have e1 : Valued.v (algebraMap K (v.adicCompletion K) a) = Valued.v x := ha1
   have e2 : Valued.v (complMap v w (algebraMap K (v.adicCompletion K) a)) =
       Valued.v (complMap v w x) := ha2
-  have := w.isPrime
-  rw [← e2, ← e1, complMap_algebraMap,
-    ← Ideal.ramificationIdx'_eq_ramificationIdx v.asIdeal w.asIdeal v.ne_bot]
+  rw [← e2, ← e1, complMap_algebraMap]
   change Valued.v ((algebraMap K L a : L) : w.adicCompletion L) =
     Valued.v ((a : K) : v.adicCompletion K) ^ _
   rw [valuedAdicCompletion_eq_valuation', valuedAdicCompletion_eq_valuation',
@@ -114,7 +116,9 @@ theorem adeleMap_spec :
       (∀ x : K, adeleMap K L (algebraMap K _ x) = algebraMap L _ (algebraMap K L x)) ∧
       ∀ x : K, infAdeleMap K L (algebraMap K _ x) = algebraMap L _ (algebraMap K L x) := by
   have hinf : Continuous (infAdeleMap K L) :=
-    continuous_pi fun w => LiesOver.continuous_completionMap.comp (continuous_apply _)
+    continuous_pi fun w =>
+      (AbsoluteValue.Completion.continuous_map (w.comap (algebraMap K L)).val w.val).comp
+        (continuous_apply _)
   have hfin : Continuous (finAdeleMap K L) :=
     RestrictedProduct.mapAlong_continuous
       (fun v : HeightOneSpectrum (𝓞 K) => v.adicCompletion K)
@@ -130,7 +134,7 @@ theorem adeleMap_spec :
     intro x y h
     funext v
     obtain ⟨w, rfl⟩ := InfinitePlace.comap_surjective (K := L) v
-    exact (LiesOver.completionMap (v := w.comap (algebraMap K L)) (w := w)).injective
+    exact (AbsoluteValue.Completion.map (w.comap (algebraMap K L)).val w.val).injective
       (congrFun h w)
   have ifin : Function.Injective (finAdeleMap K L) := by
     intro x y h
@@ -146,7 +150,10 @@ theorem adeleMap_spec :
       infAdeleMap K L (algebraMap K _ x) = algebraMap L _ (algebraMap K L x) := by
     intro x
     funext w
-    exact (LiesOver.completionMap_coe (v := w.comap (algebraMap K L)) (w := w)
+    change AbsoluteValue.Completion.map (w.comap (algebraMap K L)).val w.val
+      (algebraMap K (InfiniteAdeleRing K) x (w.comap (algebraMap K L))) = _
+    rw [InfiniteAdeleRing.algebraMap_apply, InfiniteAdeleRing.algebraMap_apply]
+    exact (AbsoluteValue.Completion.map_coe (w.comap (algebraMap K L)).val w.val
       (WithAbs.toAbs _ x)).trans rfl
   refine ⟨hinf.prodMap hfin, iinf.prodMap ifin, hinf, fun x => Prod.ext (ainf x) ?_, ainf⟩
   exact FiniteAdeleRing.ext _ fun w => complMap_algebraMap _ w x

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Formalism.SharpRestriction.InertJacobiLevels.HostFam
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiagSingleSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Formalism.SharpRestriction.InertJacobiLevels.HostFam
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiagSingleSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem planeVec_planeVec (N n h p : ℕ) (hN : n + 2 * h ≤ N) (hp : p = n + h
   have hj := j.isLt
   have c1 : cut N (n + h) ⟨n + i, by omega⟩ = false := by simp [cut]
   have c2 : cut N (n + h) ⟨n + h + i, by omega⟩ = true := by simp [cut]
-  simp only [planeVec, map_add, LinearMap.add_apply, diag_single_single, c1, c2]
+  simp only [planeVec, map_add (f := _), LinearMap.add_apply, diag_single_single, c1, c2]
   have e1 : ¬ (n + (i : ℕ) = n + h + j) := by omega
   have e2 : ¬ (n + h + (i : ℕ) = n + j) := by omega
   rw [if_neg e1, if_neg e2]
@@ -52,7 +56,7 @@ theorem planeVec_planeVec (N n h p : ℕ) (hN : n + 2 * h ≤ N) (hp : p = n + h
 
 theorem ext_planeVec (N n h : ℕ) (hN : n + 2 * h ≤ N) (neg : Fin N → Bool) (x : Fin n → E) (a b : E)
     (i : Fin h) : diagForm N neg (extTo n N x) (planeVec N n h hN a b i) = 0 := by
-  rw [planeVec, map_add, diag_ext_single, diag_ext_single, add_zero]
+  rw [planeVec, map_add (f := _), diag_ext_single, diag_ext_single, add_zero]
   · simp only; omega
   · simp only; omega
 
@@ -60,7 +64,7 @@ theorem single_planeVec (N n h : ℕ) (hN : n + 2 * h ≤ N) (neg : Fin N → Bo
     (hl : n + 2 * h ≤ l) (c a b : E) (i : Fin h) :
     diagForm N neg (Pi.single l c) (planeVec N n h hN a b i) = 0 := by
   have hi := i.isLt
-  rw [planeVec, map_add, diag_single_single, diag_single_single, if_neg, if_neg, add_zero]
+  rw [planeVec, map_add (f := _), diag_single_single, diag_single_single, if_neg, if_neg, add_zero]
   · simp only; omega
   · simp only; omega
 
@@ -147,10 +151,6 @@ theorem spacesNorm_coord :
   · have h : R.rankY 0 = R.k + R.m - 1 := by simp [Ranks.rankY, Ranks.r]
     refine signSpace_cut_eq _ (R.rankY 0) R.r (R.k + j - 1) (R.m - j) h ?_ ?_ <;> omega
   · exact signSpace_false_eq _ _
-
-theorem spacesNorm_T : (spacesNorm R cm T hT pz hpz).T = T := rfl
-
-theorem spacesNorm_Vneg (j : ℕ) : (spacesNorm R cm T hT pz hpz).Vneg j = false := rfl
 
 theorem spacesNorm_Y_sig (j : ℕ) (τ : E →+* ℂ) : ((spacesNorm R cm T hT pz hpz).Y j).sig τ = sigYD R j :=
   spY_sig R j τ

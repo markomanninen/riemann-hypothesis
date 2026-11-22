@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantEqualityStatement
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantEqualityStatement
+
+@[expose] public section
 
 open Finset
 
@@ -38,7 +42,8 @@ theorem omMinor : OmMinor := by
   simp only [LinearMap.compLeft_apply, Function.comp_apply, ← h]
   simp only [Module.End.mul_apply, LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply,
     Pi.add_apply, Pi.smul_apply, om_apply]
-  simp only [minorOp, LinearMap.coe_mk, AddHom.coe_mk, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [minorOp, LinearMap.coe_mk, AddHom.coe_mk, map_sum, map_smul]
   refine (add_comm _ _).trans ?_
   congr 1
   · exact sum_comm

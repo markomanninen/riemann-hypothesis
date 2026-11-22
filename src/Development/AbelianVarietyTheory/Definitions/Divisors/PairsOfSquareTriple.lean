@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPairOfIsTriple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPairOfIsTriple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,20 +36,6 @@ theorem two_le_rank {a a' : ℕ} {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : 
 theorem conj_conj (h : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
   exact τ.injective (by rw [h.2.2.2, h.2.2.2, star_star])
-
-example : BorelSpace (AE F E)ˣ := ⟨rfl⟩
-
-example {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (K : Subgroup (UA σ J)) : BorelSpace K :=
-  haveI : BorelSpace (UA σ J) := ⟨rfl⟩
-  Subtype.borelSpace _
-
-example {a a' : ℕ} {G : Geo σ a a'} (h : G.IsGood B) : 2 * ((a - a') / 2) + a' = a ∧ 2 ≤ (a - a') / 2 := by
-  obtain ⟨k, hk⟩ := h.even
-  have h1 := h.lt
-  have h2 := h.eBig
-  omega
-
-example : (9 - (1 + 2)) / 2 + 1 = 4 ∧ (7 + 2 - 3) / 2 = 3 := by decide
 
 end General
 

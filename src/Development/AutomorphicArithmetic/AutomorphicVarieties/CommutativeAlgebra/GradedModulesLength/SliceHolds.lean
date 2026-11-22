@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.EtHolds
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FtHolds
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.EtHolds
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FtHolds
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -29,10 +33,10 @@ private theorem exists_ptDer_eq_degree_smul_of_graded {O A K : Type} [CommRing O
       push_cast
       ring
     | add b₁ b₂ h₁ h₂ =>
-      simp only [mul_add, map_add, smul_add, h₁, h₂, smul_eq_mul]
+      simp only [mul_add, map_add (f := _), smul_add, h₁, h₂, smul_eq_mul]
       ring
   | add a₁ a₂ h₁ h₂ =>
-    simp only [add_mul, map_add, smul_add, add_smul, h₁, h₂, smul_eq_mul]
+    simp only [add_mul, map_add (f := _), smul_add, add_smul, h₁, h₂, smul_eq_mul]
     ring
 
 private theorem degree_derivation_vanishes_on_homogeneous_ideal {O A K : Type} [CommRing O] [CommRing A] [Algebra O A] [Field K] [Algebra O K]
@@ -41,7 +45,8 @@ private theorem degree_derivation_vanishes_on_homogeneous_ideal {O A K : Type} [
     ∀ a ∈ I, E a = 0 := by
   classical
   intro a ha
-  rw [← DirectSum.sum_support_decompose 𝒜 a, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← DirectSum.sum_support_decompose 𝒜 a, map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [hE i _ (SetLike.coe_mem _), hξ _ (hI i ha), mul_zero]
 

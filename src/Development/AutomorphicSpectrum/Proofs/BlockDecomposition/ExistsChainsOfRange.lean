@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.JordanChain
 
@@ -46,7 +50,7 @@ theorem exists_chains_of_range [FiniteDimensional K V] (f : V →ₗ[K] V)
     have h2 := hLV.comp idx hidx
     convert h2 using 1
     funext b
-    simp only [t, Function.comp, idx, chainVec]
+    change (f ^ e' b) (u b) = ((g ^ (e' b - 1)) (w b) : LinearMap.range f)
     rw [pow_coe_of_restrict f g hg, ← hstep]
     congr 2
     have := he' b

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HilbertSlashUnnormalizedConstMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.RationalGL2InfiniteFiniteFactor
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HilbertSlashUnnormalizedConstMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.RationalGL2InfiniteFiniteFactor
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
 
@@ -83,7 +88,7 @@ theorem sl_bound (k : ℕ) (f : Hn F → ℂ) (hf : Gr f) : ∃ (C : ℝ) (N : �
   have hK : 1 ≤ K := by simp only [K]; linarith
   have h1 : (∏ v, |(x : Matrix (Fin 2) (Fin 2) (InfinitePlace F → ℝ)).det v|) ≤ (K ^ 2) ^ n := by
     rw [hnc, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun v _ => abs_nonneg _) fun v _ => by rw [← cmp_det]; exact (hb v).1
+    exact Finset.prod_le_prod₀ (fun v _ => abs_nonneg _) fun v _ => by rw [← cmp_det]; exact (hb v).1
   have h1' : (∏ v, |(x : Matrix (Fin 2) (Fin 2) (InfinitePlace F → ℝ)).det v|) ^ ((k : ℝ) / 2) ≤ K ^ (2 * n * k) := by
     calc _ ≤ ((K ^ 2) ^ n) ^ ((k : ℝ) / 2) :=
           Real.rpow_le_rpow (Finset.prod_nonneg fun v _ => abs_nonneg _) h1 (by positivity)
@@ -94,7 +99,7 @@ theorem sl_bound (k : ℕ) (f : Hn F → ℂ) (hf : Gr f) : ∃ (C : ℝ) (N : �
     rw [norm_pow, pow_mul, norm_inv, norm_prod, ← Finset.prod_inv_distrib]
     refine pow_le_pow_left₀ (Finset.prod_nonneg fun v _ => by positivity) ?_ k
     rw [hnc, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun v _ => by positivity) fun v _ => (hb v).2.1
+    exact Finset.prod_le_prod₀ (fun v _ => by positivity) fun v _ => (hb v).2.1
   have h3 : ‖f (act x fun _ => UpperHalfPlane.I)‖ ≤ |C| * K ^ (4 * n * A) := by
     refine (hC _).trans ?_
     have hn : ∀ v, 0 ≤ (1 + ‖((act x (fun _ => UpperHalfPlane.I) v : ℍ) : ℂ)‖ ^ 2) / (act x (fun _ => UpperHalfPlane.I) v).im :=
@@ -103,7 +108,7 @@ theorem sl_bound (k : ℕ) (f : Hn F → ℂ) (hf : Gr f) : ∃ (C : ℝ) (N : �
     rw [pow_mul, pow_mul]
     refine pow_le_pow_left₀ (Finset.prod_nonneg fun v _ => hn v) ?_ A
     rw [hnc, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun v _ => hn v) fun v _ => (hb v).2.2
+    exact Finset.prod_le_prod₀ (fun v _ => hn v) fun v _ => (hb v).2.2
   have hK0 : 0 ≤ K := by linarith
   simp only [sl, sl0]
   rw [norm_mul, norm_mul, Complex.norm_real, Real.norm_of_nonneg

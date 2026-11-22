@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaRestSExpV
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.DworkExponentialRestrictions
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaRestSExpV
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.DworkExponentialRestrictions
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ private theorem exists_expK_neg_eq_map_of_expK_eq_one_add {ι : Type} (z : MvPow
   calc expK (-z) = expK (-z) * (MvPowerSeries.map (algebraMap (WW p) (K0 p)) ((1 + h) *
         MvPowerSeries.invOfUnit (1 + h) 1)) := by rw [h1, map_one, mul_one]
     _ = (expK (-z) * expK z) * MvPowerSeries.map (algebraMap (WW p) (K0 p))
-        (MvPowerSeries.invOfUnit (1 + h) 1) := by rw [map_mul, map_add, map_one, ← hz, mul_assoc]
+        (MvPowerSeries.invOfUnit (1 + h) 1) := by rw [map_mul, map_add (f := _), map_one, ← hz, mul_assoc]
     _ = _ := by rw [h2, one_mul]
 
 theorem ea_reduce {σ τ A : Type} [Finite σ] [Fintype A] (a b : A → σ) (be : MvPowerSeries (Fin 2) (K0 p))
@@ -139,7 +143,8 @@ theorem ea_reduce {σ τ A : Type} [Finite σ] [Fintype A] (a b : A → σ) (be 
     intro x; unfold sub2 ren; congr 1; funext k; fin_cases k <;> rfl
   have hS0 : MvPowerSeries.constantCoeff
       (∑ x : A, sub2 p be (MvPowerSeries.X (a x) : MvPowerSeries σ (K0 p)) (MvPowerSeries.X (b x))) = 0 := by
-    rw [map_sum]; exact Finset.sum_eq_zero fun x _ => by rw [hsubren]; exact hren0 _ _ hbe0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; exact Finset.sum_eq_zero fun x _ => by rw [hsubren]; exact hren0 _ _ hbe0
   have hPh0 : MvPowerSeries.constantCoeff Ph = 0 := by
     have h3 := hPh.1; rw [map_sub, hS0, sub_zero] at h3; exact h3
   have hy0 : MvPowerSeries.constantCoeff (inParam p be - Gser p c c') = 0 := by
@@ -158,12 +163,14 @@ theorem ea_reduce {σ τ A : Type} [Finite σ] [Fintype A] (a b : A → σ) (be 
         (MvPowerSeries.X (b x)))) + ∑ x : A, ren ![a x, b x] (inParam p be - Gser p c c')) := by
     rw [th_inParam_neg, hY, hInS]; ring
   have hGs0 : MvPowerSeries.constantCoeff (∑ x : A, ren ![a x, b x] (Gser p c c')) = 0 := by
-    rw [map_sum]; exact Finset.sum_eq_zero fun x _ => hren0 _ _ hG0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; exact Finset.sum_eq_zero fun x _ => hren0 _ _ hG0
   have hE0 : MvPowerSeries.constantCoeff (inParam p Ph - inParam p (∑ x : A, sub2 p be
       (MvPowerSeries.X (a x) : MvPowerSeries σ (K0 p)) (MvPowerSeries.X (b x)))) = 0 := by
     rw [map_sub, th_inParam_const p hPh0, th_inParam_const p hS0, sub_zero]
   have hY0 : MvPowerSeries.constantCoeff (∑ x : A, ren ![a x, b x] (inParam p be - Gser p c c')) = 0 := by
-    rw [map_sum]; exact Finset.sum_eq_zero fun x _ => hren0 _ _ hy0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; exact Finset.sum_eq_zero fun x _ => hren0 _ _ hy0
   have hinExp : ∀ f : MvPowerSeries σ (K0 p), MvPowerSeries.constantCoeff f = 0 →
       inParam p (expK f) = expK (inParam p f) := fun f hf => by
     unfold inParam
@@ -185,7 +192,8 @@ theorem ea_reduce {σ τ A : Type} [Finite σ] [Fintype A] (a b : A → σ) (be 
       induction s using Finset.induction_on with
       | empty => simp [th_expK_zero]
       | insert x s hx ih =>
-        rw [Finset.sum_insert hx, Finset.prod_insert hx, neg_add,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.sum_insert hx, Finset.prod_insert hx, neg_add,
           expK_add (hneg0 _ (hren0 _ _ hy0))
             (hneg0 _ (by rw [map_sum]; exact Finset.sum_eq_zero fun _ _ => hren0 _ _ hy0)), ih]
     rw [hYdef, hprod]
@@ -220,7 +228,7 @@ theorem ea_reduce {σ τ A : Type} [Finite σ] [Fintype A] (a b : A → σ) (be 
     change MvPowerSeries.subst (tOf vp μ L)
       (MvPowerSeries.map (algebraMap (K0 p) K') (inParam p (expK (-Ph)))) = _
     rw [hinExp _ (hneg0 _ hPh0), hdecomp,
-      expK_add (hneg0 _ hGs0) (hneg0 _ (by rw [map_add, hE0, hY0, add_zero])),
+      expK_add (hneg0 _ hGs0) (hneg0 _ (by rw [map_add (f := _), hE0, hY0, add_zero])),
       neg_add, expK_add (hneg0 _ hE0) (hneg0 _ hY0), hwE, hwY, ← map_mul,
       map_mul, MvPowerSeries.subst_mul hT, th_map_expK, map_neg]
 

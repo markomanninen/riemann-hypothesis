@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.FmTools
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousPairProjection
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.FmTools
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousPairProjection
+
+@[expose] public section
 
 noncomputable section
 

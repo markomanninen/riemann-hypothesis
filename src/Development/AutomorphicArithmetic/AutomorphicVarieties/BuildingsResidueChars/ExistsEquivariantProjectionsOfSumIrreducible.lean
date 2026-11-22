@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped MonoidAlgebra
 
@@ -19,18 +23,19 @@ private theorem ss_proj {R V : Type} [Ring R] [AddCommGroup V] [Module R V]
   refine ⟨K, inferInstance, fun i => LinearMap.range (j i.1), fun i => Q i.1, ?_, ?_, ?_⟩
   · intro i
     rw [← isSimpleModule_iff_isAtom]
-    haveI := ht i.1
+    have := ht i.1
     exact IsSimpleModule.congr (LinearEquiv.ofInjective _ (hj i.1)).symm
   · intro i w
     exact ⟨e w i.1, rfl⟩
   · intro w hw
     rw [Finset.sum_coe_sort K (fun i => Q i w)]
     apply e.injective
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have h1 : ∀ i, e (Q i w) = DFinsupp.single i (e w i) := fun i => by simp [Q]
     simp_rw [h1]
     ext1 m
-    rw [DFinsupp.finset_sum_apply]
+    rw [DFinsupp.finsetSum_apply]
     rw [Finset.sum_eq_single m]
     · simp
     · intro b _ hb
@@ -48,11 +53,11 @@ private noncomputable def toSub (U : Submodule ℂ W) (hU : ∀ g, ∀ u ∈ U, 
     Submodule ℂ[H] ρ.asModule where
   carrier := {x | ρ.asModuleEquiv x ∈ U}
   add_mem' := fun {a b} ha hb => by
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at *
     exact U.add_mem ha hb
   zero_mem' := by simp
   smul_mem' := fun c x hx => by
-    simp only [Set.mem_setOf_eq] at *
+    simp only [Set.mem_ofPred_eq] at *
     rw [Representation.asModuleEquiv_map_smul]
     exact ρ.asAlgebraHom_mem_of_forall_mem U hU _ hx c
 
@@ -113,7 +118,7 @@ theorem UpperTheory.exists_equivariant_projections_of_sum_irreducible :
     ∀ (H W : Type) [Group H] [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ H W), (∀ x : W, x ∈ ⨆ U : {U : Submodule ℂ W // U ≠ ⊥ ∧ (∀ g, ∀ u ∈ U, ρ g u ∈ U) ∧ ∀ N ≤ U, (∀ g, ∀ u ∈ N, ρ g u ∈ N) → N = ⊥ ∨ N = U}, U.1) → ∀ M : Submodule ℂ W, FiniteDimensional ℂ M → ∃ (κ : Type) (_ : Fintype κ) (U : κ → Submodule ℂ W) (P : κ → W →ₗ[ℂ] W), (∀ i, U i ≠ ⊥ ∧ (∀ g, ∀ u ∈ U i, ρ g u ∈ U i) ∧ ∀ N ≤ U i, (∀ g, ∀ u ∈ N, ρ g u ∈ N) → N = ⊥ ∨ N = U i) ∧ (∀ i w, P i w ∈ U i) ∧ (∀ i g w, P i (ρ g w) = ρ g (P i w)) ∧ ∀ w ∈ M, ∑ i, P i w = w := by
   intro H W _ _ _ ρ hsum M hM
   classical
-  haveI : IsSemisimpleModule ℂ[H] ρ.asModule := by
+  have : IsSemisimpleModule ℂ[H] ρ.asModule := by
     apply IsSemisimpleModule.of_sSup_simples_eq_top
     rw [eq_top_iff]
     intro y _
@@ -152,7 +157,8 @@ theorem UpperTheory.exists_equivariant_projections_of_sum_irreducible :
     induction hw using Submodule.span_induction with
     | mem x hx =>
       simp_rw [hQ]
-      rw [← map_sum, hsum' _ (Finset.mem_image_of_mem _ hx), LinearEquiv.apply_symm_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hsum' _ (Finset.mem_image_of_mem _ hx), LinearEquiv.apply_symm_apply]
     | zero => simp
-    | add x y _ _ hx hy => simp_rw [map_add]; rw [Finset.sum_add_distrib, hx, hy]
+    | add x y _ _ hx hy => simp_rw [map_add (f := _)]; rw [Finset.sum_add_distrib, hx, hy]
     | smul c x _ hx => simp_rw [map_smul]; rw [← Finset.smul_sum, hx]

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsChartFromCoordinates
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsDpOfCompOnGens
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsChartFromCoordinates
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsDpOfCompOnGens
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison.Pb
 
@@ -66,7 +71,7 @@ theorem lift_unique {I' : Ideal R'} {J : Ideal D} {B : Type} [CommRing B]
     rw [hφ, map_one, map_one, one_mul]
   · rintro φ₂ ⟨h1, h2⟩
     refine Ideal.Quotient.ringHom_ext (RingHom.ext fun w => ?_)
-    refine TensorProduct.induction_on w (by simp) (fun r x => ?_) (fun u v hu hv => ?_)
+    refine TensorProduct.inductionOn w (fun r x => ?_) (fun u v hu hv => ?_)
     · have t : r ⊗ₜ[R] x = (r ⊗ₜ[R] (1 : D)) * ((1 : R') ⊗ₜ[R] x) := by simp
       have e1 := RingHom.congr_fun h1 (Ideal.Quotient.mk I' r)
       have e2 := RingHom.congr_fun h2 (Ideal.Quotient.mk J x)
@@ -74,7 +79,7 @@ theorem lift_unique {I' : Ideal R'} {J : Ideal D} {B : Type} [CommRing B]
       change φ₂ (Ideal.Quotient.mk _ ((1 : R') ⊗ₜ[R] x)) = _ at e2
       change φ₂ (Ideal.Quotient.mk _ (r ⊗ₜ[R] x)) = φ (Ideal.Quotient.mk _ (r ⊗ₜ[R] x))
       rw [hφ, t, map_mul, map_mul, e1, e2]
-    · simp only [RingHom.comp_apply, map_add] at hu hv ⊢
+    · simp only [RingHom.comp_apply, map_add (f := _)] at hu hv ⊢
       rw [hu, hv]
 
 end Ring

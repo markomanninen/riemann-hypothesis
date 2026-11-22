@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSeparatingElementRingHomModuleFiniteIntStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSeparatingElementRingHomModuleFiniteIntStatement
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -35,7 +39,7 @@ theorem weight_isRingHom {k V C : Type*} [Field k] [AddCommGroup V] [Module k V]
   have hRadd : ∀ x y, R (x + y) = R x + R y := fun x y => by
     ext v
     show ρ (x + y) (v : V) = ρ x (v : V) + ρ y (v : V)
-    rw [map_add]; rfl
+    rw [map_add (f := _)]; rfl
   have hRmul : ∀ x y, R (x * y) = R x * R y := fun x y => by
     ext v
     show ρ (x * y) (v : V) = ρ x (ρ y (v : V))
@@ -94,7 +98,7 @@ theorem weight_isRingHom {k V C : Type*} [Field k] [AddCommGroup V] [Module k V]
     have e : R (x + y) - algebraMap k _ (ψ (x + y)) -
         (R x - algebraMap k _ (ψ x) + (R y - algebraMap k _ (ψ y))) =
         algebraMap k (Module.End k U) (ψ x + ψ y - ψ (x + y)) := by
-      rw [hRadd, map_sub, map_add]; abel
+      rw [hRadd, map_sub, map_add (f := _)]; abel
     rw [e] at h3
     exact (sub_eq_zero.1 (key _ h3)).symm
 
@@ -166,7 +170,7 @@ theorem charpoly_lmul_includeRight (k C : Type) [Field k] [CommRing C] [Module.F
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [Algebra.TensorProduct.tmul_mul_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   rw [e, LinearMap.charpoly_baseChange, algebraMap_int_eq]
 
 theorem finrank_weight_eq : ∀ (k : Type) [Field k] [IsAlgClosed k] (C : Type) [CommRing C]

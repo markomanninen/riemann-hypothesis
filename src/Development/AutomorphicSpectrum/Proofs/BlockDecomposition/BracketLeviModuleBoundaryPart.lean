@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionPreservesSupportDegree
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionCommutesWithTotalBoundary
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionIsGlRepresentation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketWedgeFormula
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionPreservesSupportDegree
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionCommutesWithTotalBoundary
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionIsGlRepresentation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketWedgeFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -314,7 +318,7 @@ theorem br_dm_gen (haa : ∀ i j, a i * a j + a j * a i = 0) (hcc : ∀ i j, c i
     exact sum_congr rfl fun i _ => sum_congr rfl fun l _ => sum_congr rfl fun m _ => by rw [mul_comm]
   have h3 : br (Dm a c A) (Dm a c B) =
       (∑ m, ∑ l, B m l • ((∑ x, A l x • c x) * a m)) - ∑ m, ∑ l, B m l • (c l * ∑ i, A i m • a i) := by
-    conv_lhs => rw [Dm.eq_1 a c B]
+    change br (Dm a c A) (∑ i, ∑ k, B i k • (c k * a i)) = _
     simp only [br_sum_right, br_smul_right, br_mul, dm_a haa hac, dm_c hcc hac, mul_neg, smul_add, smul_neg,
       sum_add_distrib, sum_neg_distrib, sub_eq_add_neg]
   rw [h3, h1, h2]
@@ -419,7 +423,7 @@ theorem lFq_bd (hP : PairRel E1 E2) {lev : Fin n → ℕ} (hm : Monotone lev) {x
       rw [annq_eq_zero hx ha, map_zero, map_zero, smul_zero]
   rw [bdq_eq]
   simp only [br, LinearMap.sub_apply, Module.End.mul_apply] at h1 h2
-  simp only [LinearMap.add_apply, map_add]
+  simp only [LinearMap.add_apply, map_add (f := _)]
   rw [sub_eq_zero.1 h1, sub_eq_zero.1 h2]
 
 theorem mt_id {lev : Fin n → ℕ} (hm : Monotone lev) {s t : Bool} {p q r v : Fin n} (hpq : lev p = lev q)
@@ -567,7 +571,7 @@ theorem leviRel : LeviRel := by
     have ff := R false false
     simp only [beq_self_eq_true, Bool.true_beq, Bool.false_beq, Bool.not_true, Bool.not_false,
       beq_iff_eq] at tt tf ft ff
-    simp only [c1, c2, LinearMap.smul_apply, LinearMap.add_apply, LinearMap.sub_apply, map_smul, map_add, map_sub]
+    simp only [c1, c2, LinearMap.smul_apply, LinearMap.add_apply, LinearMap.sub_apply, map_smul, map_add (f := _), map_sub]
     refine ⟨?_, ?_, ?_⟩
     · split_ifs at tt tf ft ff ⊢ <;>
         linear_combination (norm := module) (1 / 4 : ℂ) • tt + (1 / 4 : ℂ) • tf + (1 / 4 : ℂ) • ft + (1 / 4 : ℂ) • ff

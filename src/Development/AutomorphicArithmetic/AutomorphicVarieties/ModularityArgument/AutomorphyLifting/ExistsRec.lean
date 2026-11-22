@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AbsCentral
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.RecTExists
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLanglandsOfHyp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AbsCentral
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.RecTExists
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLanglandsOfHyp
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,13 +23,5 @@ theorem exRec (N : GlobalTheory.Mem.LiteralAutomorphy.LitN) (h : IsPlaceOver A w
     N.aut.art N.loc.exh N.loc.multi N.loc.cos N.loc.zel N.loc.geo N.loc.bz).1 E Ω A w h).exists
 
 theorem exRec' (_N : GlobalTheory.Mem.LiteralAutomorphy.LitN) (h : IsPlaceOver A w) : ∃ rc, IsRecT h rc := recTExists E Ω A w h
-
-theorem exLL (H : GlobalTheory.Published.LocalLanglandsGL) (h : IsPlaceOver A w) : ∃ rc, IsRec h rc := (H.1 E Ω A w h).exists
-
-theorem exLL' (_H : True) (h : IsPlaceOver A w) : ∃ rc, IsRecT h rc := recTExists E Ω A w h
-
-theorem exists_rec_alt : type_of% @UpperTheory.V.Af.Hypotheses₂.exists_rec := by
-  intros
-  exact exRec (by assumption : UpperTheory.V.Af.Hypotheses₂).litN _
 
 end UpperTheory.V.Z.Win

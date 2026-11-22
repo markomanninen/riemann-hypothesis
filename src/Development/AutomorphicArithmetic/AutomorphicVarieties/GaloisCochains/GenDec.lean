@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.LocEuler
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ChoiceFunction
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.LocEuler
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ChoiceFunction
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.Fr UpperTheory.V.GC
 
@@ -257,7 +261,7 @@ theorem UpperTheory.V.GC.genDec :
   obtain ⟨f1, f2⟩ := finrank_cocycles_trivial_mod_l (locDeg v) _ hω' e1 (by rw [e2 hv, e3])
   obtain ⟨n, hn⟩ : ∃ n, locDeg v = n + 1 := by
     have := v.isPrime
-    have h1 := Ideal.ramificationIdx_pos v.asIdeal ℤ
+    have h1 := Ideal.ramificationIdx_pos (R := ℤ) v.asIdeal
     have h2 := Ideal.inertiaDeg_pos v.asIdeal ℤ
     exact Nat.exists_eq_succ_of_ne_zero (Nat.mul_ne_zero h1.ne' h2.ne')
   rw [hn] at f2 ⊢

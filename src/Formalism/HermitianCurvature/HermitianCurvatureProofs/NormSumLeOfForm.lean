@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.FormNormSumIdentities
 
@@ -29,7 +33,8 @@ theorem form_sum_conj (B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ) (J : Finset κ) (
       ∑ j ∈ J, ∑ l ∈ J, conj (a j) * a l * B (y j) (y l) := by
   rw [LinearMap.map_sum₂]
   refine sum_congr rfl fun j _ => ?_
-  rw [map_smul, LinearMap.smul_apply, map_sum, smul_eq_mul, mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, LinearMap.smul_apply, map_sum, smul_eq_mul, mul_sum]
   refine sum_congr rfl fun l _ => ?_
   rw [map_smulₛₗ, smul_eq_mul, Complex.conj_conj]
   ring

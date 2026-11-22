@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ReesSheafBase
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackBaseChange
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ReesSheafBase
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackBaseChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -14,13 +19,13 @@ noncomputable section
 variable {A : Type u} [CommRing A] {I : Ideal A} {X : Scheme.{u}} [X.Over (Spec (.of A))]
   {F : X.Modules} {V : X.Opens}
 
-variable (I F V) in
 
+variable (I F V) in
 abbrev unitPr : Γ(F, V) →+ Γ((Scheme.Modules.pullback (reesPr I X)).obj F, reesPr I X ⁻¹ᵁ V) :=
   Etale.pullbackUnitApp (reesPr I X) F V
 
-variable (I F V) in
 
+variable (I F V) in
 abbrev unitB : Γ((Scheme.Modules.pullback (reesPr I X)).obj F, reesPr I X ⁻¹ᵁ V) →+
     Γ((Scheme.Modules.pullback (reesPolyMap I X)).obj
       ((Scheme.Modules.pullback (reesPr I X)).obj F), reesPolyMap I X ⁻¹ᵁ (reesPr I X ⁻¹ᵁ V)) :=
@@ -102,13 +107,13 @@ lemma thetaMap_smul (s : polyRing I V) (x : Γ((Scheme.Modules.pullback (reesPol
     thetaMap hF hV (s • x) = polyRingHom (I := I) hV s • thetaMap hF hV x :=
   (exists_theta hF hV).choose_spec.2 s x
 
-variable (I F V) in
 
+variable (I F V) in
 abbrev polySec := Γ((Scheme.Modules.pullback (reesPolyMap I X)).obj
       ((Scheme.Modules.pullback (reesPr I X)).obj F), reesPolyMap I X ⁻¹ᵁ (reesPr I X ⁻¹ᵁ V))
 
-variable (I F V) in
 
+variable (I F V) in
 def lambdaMap : PolynomialModule Γ(X, V) Γ(F, V) →+ polySec I F V where
   toFun q := q.coeff.sum fun n m =>
     (polyRingInv (I := I) (V := V) (Polynomial.X ^ n)) • unitB I F V (unitPr I F V m)
@@ -119,7 +124,7 @@ def lambdaMap : PolynomialModule Γ(X, V) Γ(F, V) →+ polySec I F V where
     · intro n
       simp
     · intro n m m'
-      rw [map_add, map_add, smul_add]
+      rw [map_add (f := _), map_add (f := _), smul_add]
 
 lemma lambdaMap_single (n : ℕ) (m : Γ(F, V)) :
     lambdaMap I F V (PolynomialModule.single Γ(X, V) n m) =
@@ -134,11 +139,11 @@ lemma unitB_unitPr_smul (c : Γ(X, V)) (m : Γ(F, V)) :
 lemma lambdaMap_smul (p : Polynomial Γ(X, V)) (q : PolynomialModule Γ(X, V) Γ(F, V)) :
     lambdaMap I F V (p • q) = polyRingInv (I := I) (V := V) p • lambdaMap I F V q := by
   induction p using Polynomial.induction_on' with
-  | add p p' hp hp' => rw [add_smul, map_add, hp, hp', map_add, add_smul]
+  | add p p' hp hp' => rw [add_smul, map_add (f := _), hp, hp', map_add (f := _), add_smul]
   | monomial i c =>
     induction q using PolynomialModule.induction_linear with
     | zero => simp
-    | add q q' h h' => rw [smul_add, map_add, h, h', map_add, smul_add]
+    | add q q' h h' => rw [smul_add, map_add (f := _), h, h', map_add (f := _), smul_add]
     | single j m =>
       rw [PolynomialModule.monomial_smul_single, lambdaMap_single, lambdaMap_single,
         unitB_unitPr_smul, smul_smul, smul_smul, polyRingInv, Polynomial.coe_eval₂RingHom,
@@ -155,7 +160,7 @@ lemma lambdaMap_theta₁ (y : Γ((Scheme.Modules.pullback (reesPr I X)).obj F, r
   let L1 : Γ((Scheme.Modules.pullback (reesPr I X)).obj F, reesPr I X ⁻¹ᵁ V) →ₗ[
       Γ(reesScheme I X, reesPr I X ⁻¹ᵁ V)] polySec I F V :=
     { toFun := fun y => lambdaMap I F V (theta₁ hF hV y)
-      map_add' := fun y y' => by rw [map_add, map_add]
+      map_add' := fun y y' => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun s y => by
         rw [theta₁_smul, lambdaMap_smul, reesRingHom, RingHom.comp_apply,
           polyRingInv_polyRingHom]
@@ -175,12 +180,12 @@ lemma lambdaMap_theta₁ (y : Γ((Scheme.Modules.pullback (reesPr I X)).obj F, r
   exact congrArg (fun L : _ →ₗ[Γ(reesScheme I X, reesPr I X ⁻¹ᵁ V)] polySec I F V => L y)
     (e1.trans e2.symm)
 
-include hF hV in
 
+include hF hV in
 theorem lambdaMap_thetaMap (x : polySec I F V) : lambdaMap I F V (thetaMap hF hV x) = x := by
   let L3 : polySec I F V →ₗ[polyRing I V] polySec I F V :=
     { toFun := fun x => lambdaMap I F V (thetaMap hF hV x)
-      map_add' := fun x x' => by rw [map_add, map_add]
+      map_add' := fun x x' => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun s x => by
         rw [thetaMap_smul, lambdaMap_smul, polyRingInv_polyRingHom]
         rfl }

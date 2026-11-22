@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.TransportSD
@@ -9,23 +14,41 @@ theorem map_map_equiv_left {α β γ : Type} [MeasurableSpace α] [MeasurableSpa
   by_cases hg : AEMeasurable g (μ.map e)
   · exact AEMeasurable.map_map_of_aemeasurable hg e.measurable.aemeasurable
   · have hg' : ¬ AEMeasurable (g ∘ e) μ := by rwa [← aemeasurable_map_equiv_iff e]
-    rw [Measure.map_of_not_aemeasurable hg, Measure.map_of_not_aemeasurable hg']
+    by_cases hμ : μ = 0
+    · simp [hμ]
+    · have heμ : Measure.map e μ ≠ 0 := (Measure.map_ne_zero_iff e.measurable.aemeasurable).mpr hμ
+      rw [Measure.map_of_not_aemeasurable_of_ne_zero hg heμ,
+        Measure.map_of_not_aemeasurable_of_ne_zero hg' hμ]
 
+open scoped Classical in
 theorem map_map_equiv_right {α β γ : Type} [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
-    (μ : Measure α) (T : α → β) (e : β ≃ᵐ γ) : (μ.map T).map e = μ.map (e ∘ T) := by
+    (μ : Measure α) (T : α → β) (e : β ≃ᵐ γ) :
+    (if AEMeasurable T μ then μ.map T else 0).map e =
+      (if AEMeasurable (e ∘ T) μ then μ.map (e ∘ T) else 0) := by
   by_cases hT : AEMeasurable T μ
-  · exact AEMeasurable.map_map_of_aemeasurable e.measurable.aemeasurable hT
+  · have hT' := e.measurable.comp_aemeasurable hT
+    simpa only [if_pos hT, if_pos hT'] using
+      AEMeasurable.map_map_of_aemeasurable e.measurable.aemeasurable hT
   · have hT' : ¬ AEMeasurable (e ∘ T) μ := by
       intro h
       apply hT
       have := e.symm.measurable.comp_aemeasurable h
       simpa [Function.comp_def] using this
-    rw [Measure.map_of_not_aemeasurable hT, Measure.map_of_not_aemeasurable hT', Measure.map_zero]
+    simp only [if_neg hT, if_neg hT', Measure.map_zero]
 
 end GlobalTheory.TransportSD
 
 open GlobalTheory.TransportSD in
-theorem GlobalTheory.transport_selfDual_fourB : ∀ {V V' : Type} [AddCommGroup V] [TopologicalSpace V] [MeasurableSpace V] [BorelSpace V] [AddCommGroup V'] [TopologicalSpace V'] [MeasurableSpace V'] [BorelSpace V'] (h : V' ≃+ V), Continuous h → Continuous h.symm → ∀ (μ : Measure V) (B : V → V → ℂ), (SelfDual μ B → SelfDual (Measure.map h.symm μ) (fun x y => B (h x) (h y))) ∧ ∀ (f : V' → ℂ) (y : V'), fourB (Measure.map h.symm μ) (fun x y => B (h x) (h y)) f y = fourB μ B (fun v => f (h.symm v)) (h y) := by
+theorem GlobalTheory.transport_selfDual_fourB :
+    ∀ {V V' : Type} [AddCommGroup V] [TopologicalSpace V] [MeasurableSpace V] [BorelSpace V]
+    [AddCommGroup V'] [TopologicalSpace V'] [MeasurableSpace V'] [BorelSpace V']
+    (h : V' ≃+ V), Continuous h → Continuous h.symm → ∀ (μ : Measure V) (B : V → V → ℂ),
+    (SelfDual μ B ∧ (∀ x : V, AEMeasurable (x + ·) μ) →
+      SelfDual (Measure.map h.symm μ) (fun x y => B (h x) (h y)) ∧
+        (∀ x : V', AEMeasurable (x + ·) (Measure.map h.symm μ))) ∧
+    ∀ (f : V' → ℂ) (y : V'),
+      fourB (Measure.map h.symm μ) (fun x y => B (h x) (h y)) f y =
+        fourB μ B (fun v => f (h.symm v)) (h y) := by
   intro V V' _ _ _ _ _ _ _ _ h hc hs μ B
   let he : V ≃ₜ V' := { toEquiv := h.symm.toEquiv, continuous_toFun := hs, continuous_invFun := hc }
   let e : V ≃ᵐ V' := he.toMeasurableEquiv
@@ -39,7 +62,12 @@ theorem GlobalTheory.transport_selfDual_fourB : ∀ {V V' : Type} [AddCommGroup 
     funext v
     rw [he_eq]
     simp
-  refine ⟨fun hsd => ⟨?_, ?_⟩, four⟩
+  -- The old zero fallback in `Measure.map` made left invariance imply AE measurability.
+  refine ⟨fun ⟨hsd, hAe⟩ => ?_, four⟩
+  have hcomp (x' : V') :
+      (fun y' => x' + y') ∘ (e : V → V') = (e : V → V') ∘ (fun v => h x' + v) := by
+    funext v; rw [he_eq]; simp
+  refine ⟨⟨?_, ?_⟩, ?_⟩
   · obtain ⟨hH, -⟩ := hsd
     rw [hμ]
     have h1 : IsFiniteMeasureOnCompacts (Measure.map e μ) := by
@@ -54,10 +82,9 @@ theorem GlobalTheory.transport_selfDual_fourB : ∀ {V V' : Type} [AddCommGroup 
       exact (hK.image hc).measure_lt_top
     have h2 : (Measure.map e μ).IsAddLeftInvariant := by
       refine ⟨fun x' => ?_⟩
-      rw [map_map_equiv_left]
-      have hcomp : (fun y' => x' + y') ∘ (e : V → V') = (e : V → V') ∘ (fun v => h x' + v) := by
-        funext v; rw [he_eq]; simp
-      rw [hcomp, ← map_map_equiv_right, hH.toIsAddLeftInvariant.map_add_left_eq_self (h x')]
+      rw [map_map_equiv_left, hcomp,
+        ← AEMeasurable.map_map_of_aemeasurable e.measurable.aemeasurable (hAe (h x')),
+        hH.toIsAddLeftInvariant.map_add_left_eq_self (h x')]
     have h3 : (Measure.map e μ).IsOpenPosMeasure := by
       refine ⟨fun U hU hne => ?_⟩
       rw [MeasurableEquiv.map_apply]
@@ -76,3 +103,6 @@ theorem GlobalTheory.transport_selfDual_fourB : ∀ {V V' : Type} [AddCommGroup 
       funext v; rw [four]; simp
     rw [this, hsd.2 _ hf' (h y)]
     simp
+  · intro x'
+    rw [hμ, aemeasurable_map_equiv_iff e, hcomp]
+    exact e.measurable.comp_aemeasurable (hAe (h x'))

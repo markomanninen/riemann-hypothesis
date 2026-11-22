@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.HformEntry
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.HformEntry
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,8 @@ theorem step (hs : ∀ z, s (s z) = z) (hJ : IsHerm s J) (hdet : IsUnit J.det)
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
   have hherm : ∀ x y : Fin n → S, hform s J y x = s (hform s J x y) := by
     intro x y
-    simp only [hform, map_sum, map_mul, hs, hJ']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hform, map_sum, map_mul, hs, hJ']
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
   have hRu : ∀ (k : S) (w : Fin n → S), k + s k = s k * k * hform s J w w →

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdEApply
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdEApply
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma GlobalTheory.StableLatCount Polynomial
 
 noncomputable section

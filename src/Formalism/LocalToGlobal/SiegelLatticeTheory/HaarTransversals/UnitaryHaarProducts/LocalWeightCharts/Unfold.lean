@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.WavePacketL1L2
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.WavePacketL1L2
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,9 +48,9 @@ lemma Hpk_eq (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
 
 lemma Hpk_sq (k r : ℕ) : Formalism.QuantumDeterminants.Hpk k r * Formalism.QuantumDeterminants.Hpk k r = 1 := by
   ext i j
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp only [Hpk_eq k r i, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
-  rw [Hpk_eq, sig_sig, sgn_sig, one_apply]
+  rw [Hpk_eq, sig_sig, sgn_sig, Matrix.one_apply]
   by_cases h : j = i
   · rw [if_pos h, if_pos h.symm]; unfold sgn; split_ifs <;> norm_num
   · rw [if_neg h, if_neg (Ne.symm h), mul_zero]

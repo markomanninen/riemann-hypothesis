@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.StdSubPlacesConst
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.JOInjective
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.StdSubPlacesConst
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.JOInjective
+
+@[expose] public section
 
 noncomputable section
 

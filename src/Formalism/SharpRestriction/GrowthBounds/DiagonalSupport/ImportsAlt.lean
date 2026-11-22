@@ -1,3 +1,7 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValLamOfSubset
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MemSupportSumMonomial
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwistSliceCoeff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValLamOfSubset
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MemSupportSumMonomial
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwistSliceCoeff
+
+@[expose] public section

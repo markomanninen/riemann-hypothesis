@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFundamentalDomainGLStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AutomorphicNormFiniteNonzeroStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrthogonalOfNonIsomorphicStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TypedSpaceApproximation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelSumBoundUniformStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFundamentalDomainGLStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AutomorphicNormFiniteNonzeroStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrthogonalOfNonIsomorphicStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TypedSpaceApproximation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelSumBoundUniformStatement
+
+@[expose] public section
 
 open scoped Classical
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology
@@ -17,7 +21,7 @@ noncomputable section
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.FiniteDiscreteTypes
 
 theorem isoV_symm {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ} {V V' : Submodule ℂ (Sm E N)}
-    (hV : IsStable V) (h : IsoV V V') : IsoV V' V := by
+    (hV : _root_.GlobalTheory.CuspRep.IsStable V) (h : IsoV V V') : IsoV V' V := by
   obtain ⟨T, hT⟩ := h
   refine ⟨T.symm, fun o φ ψ e => ?_⟩
   have hm : act o (T.symm φ).1 ∈ V := hV o _ (T.symm φ).2

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.SplitPlaceTypes
-import Development.AbelianVarietyTheory.Counterexamples.NonGaloisSurvey.SplitRowIffOfIsEmpty
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugatePlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitRowAt
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.SplitPlaceTypes
+public import Development.AbelianVarietyTheory.Counterexamples.NonGaloisSurvey.SplitRowIffOfIsEmpty
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugatePlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitRowAt
+
+@[expose] public section
 
 noncomputable section
 

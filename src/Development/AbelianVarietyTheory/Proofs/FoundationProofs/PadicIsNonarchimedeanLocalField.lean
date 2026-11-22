@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped NNReal ENNReal Pointwise Topology
@@ -154,7 +158,7 @@ theorem nabs_uniformiser {ϖ : 𝒪[k]} (hϖ : Irreducible ϖ) {x : kˣ} (hx : (
   have hS : ∀ (r : 𝓀[k]) (y : 𝒪[k]), (y : k) ∈ S r ↔ IsLocalRing.residue _ y = r := by
     intro r y
     have := mem_cball_uniformiser hϖ hx (-(l r) + y)
-    rw [← IsLocalRing.residue_eq_zero_iff, map_add, map_neg, hl, neg_add_eq_zero, eq_comm] at this
+    rw [← IsLocalRing.residue_eq_zero_iff, map_add (f := _), map_neg, hl, neg_add_eq_zero, eq_comm] at this
     simpa [S] using this
   have hsub : ∀ r, S r ⊆ (𝒪[k] : Set k) := by
     intro r z hz
@@ -233,8 +237,8 @@ theorem ratCircle_eq_zero {x : AddCircle (1 : ℚ)} (h : ratCircle x = 0) : x = 
   rw [zsmul_eq_mul, mul_one] at hn ⊢
   exact_mod_cast hn
 
-variable (k) in
 
+variable (k) in
 theorem exists_hasConductor_one : ∃ ψ : AddChar k Circle, HasConductor ψ 1 := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[k]
   have h0 : (ϖ : k) ≠ 0 := by simpa using hϖ.ne_zero
@@ -428,8 +432,8 @@ theorem fourier_inversion (h : HasConductor ψ c) {f : k → ℂ} (hf : f ∈ SB
     rw [← nabs_mul, mul_comm, inv_mul_cancel_right]
   rw [h4]; ring
 
-omit [ν.IsAddHaarMeasure] in
 
+omit [ν.IsAddHaarMeasure] in
 theorem isSelfDual_of_isUnitVol (h : HasConductor ψ 1) (hν : IsUnitVol ν) : IsSelfDual ψ ν := by
   haveI := hν.1
   refine ⟨hν.1, fun f hf => ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.AevalEqZeroOfHomogeneousComponent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.AevalEqZeroOfHomogeneousComponent
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -43,8 +47,9 @@ end Dimension
 
 section Principal
 
-attribute [local instance] Polynomial.algebra Polynomial.isLocalization in
+attribute [local instance] Polynomial.algebra Polynomial.isLocalization
 
+attribute [local instance] Polynomial.algebra Polynomial.isLocalization in
 theorem isPrincipal_of_forall_C_mem {R : Type*} [CommRing R] [IsDomain R]
     [UniqueFactorizationMonoid R] (E : Ideal (Polynomial R)) [hE : E.IsPrime]
     (h : ∀ r, Polynomial.C r ∈ E → r = 0) : E.IsPrincipal := by
@@ -97,22 +102,23 @@ theorem injective_of_constantCoeff {R S V : Type*} [CommRing R] [CommRing S]
     (ψ : MvPolynomial V R →+* MvPolynomial V S) (hX : ∀ v, ψ (X v) = X v)
     (h : ∀ r, constantCoeff (ψ (C r)) = 0 → r = 0) : Function.Injective ψ := by
   classical
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro P hP
   by_contra hne
   obtain ⟨a, ha, hmin⟩ := P.support.exists_minimal (support_nonempty.2 hne)
   have hmon (b : V →₀ ℕ) (r : R) : ψ (monomial b r) = ψ (C r) * monomial b 1 := by
     rw [monomial_eq, monomial_eq, map_mul, C_1, one_mul, map_finsuppProd]
     simp [hX]
-  have : coeff a (ψ P) = constantCoeff (ψ (C (coeff a P))) := by
-    conv_lhs => rw [P.as_sum, map_sum, coeff_sum]
+  have : AddMonoidAlgebra.coeff (ψ P) a = constantCoeff (ψ (C (AddMonoidAlgebra.coeff P a))) := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [P.as_sum, map_sum, coeff_sum]
     rw [Finset.sum_eq_single a]
     · rw [hmon, coeff_mul_monomial', if_pos le_rfl, tsub_self, mul_one, constantCoeff_eq]
     · intro b hb hba
       rw [hmon, coeff_mul_monomial', if_neg]
       exact fun hle => hba (le_antisymm hle (hmin hb hle))
     · exact fun h => absurd ha h
-  rw [hP, coeff_zero] at this
+  simp only [hP, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at this
   exact mem_support_iff.1 ha (h _ this.symm)
 
 theorem injective_of_eval {R S V : Type*} [CommRing R] [CommRing S]
@@ -149,7 +155,7 @@ theorem algebraicIndependent_div {K F β : Type*} [Field K] [Field F] [Algebra K
       obtain ⟨m, p', hp, hp'⟩ := hp
       obtain ⟨n, q', hq, hq'⟩ := hq
       refine ⟨m + n, p' * X i₀ ^ n + q' * X i₀ ^ m, ?_, by simp [hπ0, hp', hq']⟩
-      simp only [map_add, map_mul, map_pow, aeval_X, hp, hq]
+      simp only [map_add (f := _), map_mul, map_pow, aeval_X, hp, hq]
       ring
     | mul_X p i hp =>
       obtain ⟨m, p', hp, hp'⟩ := hp
@@ -170,7 +176,8 @@ variable {K : Type u} [Field K] {σ β : Type} [Fintype σ] [Fintype β]
 
 theorem elimIdeal_ne_bot {p : Ideal (MvPolynomial σ K)} [hP : p.IsPrime]
     (hp : p.IsHomogeneous (homogeneousSubmodule σ K)) (hX : ∃ j, X j ∉ p)
-    (hdim : ringKrullDim (MvPolynomial σ K ⧸ p) ≤ (Fintype.card β : ℕ)) : elimIdeal β p ≠ ⊥ := by
+    (hdim : ringKrullDim (MvPolynomial σ K ⧸ p) ≤ (Fintype.card β : ℕ)) :
+    elimIdeal (β := β) p ≠ ⊥ := by
   classical
   intro hE
   have hne := genericPoint_ne_zero hX
@@ -208,7 +215,7 @@ theorem elimIdeal_ne_bot {p : Ideal (MvPolynomial σ K)} [hP : p.IsPrime]
       MvPolynomial {v : β × σ // v ∉ elimIndices Set.univ j₀} B :=
     ((linFormElim u hu Set.univ).restrictScalars K).comp (mapAlgHom (Algebra.ofId K B))
   have hχ : Function.Injective χ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro f hf
     have h1 : map (algebraMap K B) f ∈ Ideal.span (Set.range (linForm u : β → _)) := by
       rw [← Set.image_univ, ← ker_linFormElim u hu]
@@ -229,6 +236,8 @@ theorem elimIdeal_ne_bot {p : Ideal (MvPolynomial σ K)} [hP : p.IsPrime]
     rw [this]
     exact Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨i, rfl⟩)
   have h5 := trdeg_le_of_injective χ hχ
+  have : FaithfulSMul K B :=
+    (faithfulSMul_iff_algebraMap_injective K B).2 (algebraMap K B).injective
   rw [← trdeg_add_eq K B (A := MvPolynomial {v : β × σ // v ∉ elimIndices Set.univ j₀} B), hs',
     MvPolynomial.trdeg_of_isDomain, MvPolynomial.trdeg_of_isDomain, Cardinal.mk_fintype,
     Cardinal.mk_fintype, Cardinal.lift_natCast, Cardinal.lift_natCast] at h5
@@ -241,8 +250,8 @@ theorem elimIdeal_ne_bot {p : Ideal (MvPolynomial σ K)} [hP : p.IsPrime]
   have h9 := Fintype.card_subtype_le fun v : β × σ => v ∈ elimIndices Set.univ j₀
   omega
 
-omit [Fintype σ] in
 
+omit [Fintype σ] in
 theorem exists_algebraicIndependent_genericPoint [Finite σ] {p : Ideal (MvPolynomial σ K)}
     [p.IsPrime] (hdim : ringKrullDim (MvPolynomial σ K ⧸ p) = (Fintype.card β : ℕ)) :
     ∃ κ : β → σ, AlgebraicIndependent K fun i => genericPoint p (κ i) := by
@@ -259,6 +268,8 @@ theorem exists_algebraicIndependent_genericPoint [Finite σ] {p : Ideal (MvPolyn
     exact Ideal.Quotient.mk_surjective
   have : Algebra.IsAlgebraic (Algebra.adjoin K (Set.range x)) A :=
     ⟨fun a => isAlgebraic_algebraMap (⟨a, htop ▸ trivial⟩ : Algebra.adjoin K (Set.range x))⟩
+  have : FaithfulSMul K A :=
+    (faithfulSMul_iff_algebraMap_injective K A).2 (algebraMap K A).injective
   obtain ⟨t, ht, hb⟩ := exists_isTranscendenceBasis_subset (R := K) (Set.range x)
   have hc := hb.cardinalMk_eq_trdeg
   rw [hs', hsβ] at hc
@@ -274,7 +285,7 @@ theorem exists_algebraicIndependent_genericPoint [Finite σ] {p : Ideal (MvPolyn
 
 theorem isPrincipal_elimIdeal [Nonempty β] {p : Ideal (MvPolynomial σ K)} [p.IsPrime]
     (hdim : ringKrullDim (MvPolynomial σ K ⧸ p) = (Fintype.card β : ℕ)) :
-    (elimIdeal β p).IsPrincipal := by
+    (elimIdeal (β := β) p).IsPrincipal := by
   classical
   obtain ⟨κ, hκ⟩ := exists_algebraicIndependent_genericPoint hdim
   obtain ⟨i₀⟩ := ‹Nonempty β›
@@ -283,7 +294,7 @@ theorem isPrincipal_elimIdeal [Nonempty β] {p : Ideal (MvPolynomial σ K)} [p.I
   let j₀ := κ i₀
   have h0 : ξ j₀ ≠ 0 := hκ.ne_zero i₀
   have hκ0 (i : β) (hi : i ≠ i₀) : κ i ≠ j₀ := fun h => hi (hκ.injective (congrArg ξ h))
-  have : (elimIdeal β p).IsPrime := isPrime_elimIdeal ⟨j₀, fun h =>
+  have : (elimIdeal (β := β) p).IsPrime := isPrime_elimIdeal ⟨j₀, fun h =>
     h0 (by rw [← aeval_genericPoint_eq_zero_iff, aeval_X] at h; exact h)⟩
   let V := β × {j : σ // j ≠ j₀}
   let W := {i : β // i ≠ i₀}
@@ -308,7 +319,7 @@ theorem isPrincipal_elimIdeal [Nonempty β] {p : Ideal (MvPolynomial σ K)} [p.I
       Finset.sum_subtype (p := fun l => l ≠ j₀) (F := inferInstance) _ (by simp)]
     simp only [t, s, dif_pos, neg_mul, Finset.sum_mul, mul_assoc, ← C_mul, div_mul_cancel₀ _ h0]
     rw [neg_add_eq_zero]
-    exact Finset.sum_congr rfl fun k _ => by rw [dif_neg k.2]
+    exact Finset.sum_congr rfl fun k _ => by rw [dite_eq_right k.2]
   have hz : aeval t (rename (fun v => δ (some v)) g) = 0 := by
     refine aeval_eq_zero_of_mem_elimIdeal (ξ := fun j => C (ξ j)) (fun a ha => ?_)
       (fun h => h0 (C_eq_zero.1 (congrFun h j₀))) ht hg
@@ -341,7 +352,8 @@ theorem isPrincipal_elimIdeal [Nonempty β] {p : Ideal (MvPolynomial σ K)} [p.I
         · intro k _ hk
           rw [if_neg fun h => hk (Subtype.ext h), zero_mul]
         · simp
-      simp only [ψ, s, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, aeval_X, RingHom.comp_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [ψ, s, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, aeval_X, RingHom.comp_apply,
         eval₂Hom_C, map_neg, map_sum, map_mul, eval_X, eval_C, this]
       ring
     exact DFunLike.congr_fun this r

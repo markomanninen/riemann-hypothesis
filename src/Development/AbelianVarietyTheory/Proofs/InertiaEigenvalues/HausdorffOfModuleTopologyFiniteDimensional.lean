@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ theorem oneTensor_map {R : Type} [CommRing R] [Algebra O R] {T T' : LocLat G Qp 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => simp [oneTensor, TWmap]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem oneTensor_act {R : Type} [CommRing R] [Algebra O R] {T T' : LocLat G Qp LL O}
     (f : LatHom T.L T'.L) (φ : R →ₐ[O] R) (g : G) (x : TW R T) :
@@ -68,7 +72,7 @@ theorem oneTensor_act {R : Type} [CommRing R] [Algebra O R] {T T' : LocLat G Qp 
     simp only [oneTensor, TWact, TensorProduct.map_tmul]
     congr 1
     exact Subtype.ext (f.equiv g t)
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem one_tmul_inj {R : Type} [CommRing R] [Algebra O R] (hR : Function.Injective (algebraMap O R))
     (T : LocLat G Qp LL O) (t t' : ↥T.L.T) (h : (1 : R) ⊗ₜ[O] t = (1 : R) ⊗ₜ[O] t') : t = t' := by
@@ -131,7 +135,7 @@ section Concrete
 variable {l : ℕ} [Fact l.Prime]
 
 theorem zl_wcb_injective : Function.Injective (algebraMap ℤ_[l] (WCb l)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra h0
   rw [PadicInt.unitCoeff_spec h0, map_mul, map_pow, map_natCast] at hx
@@ -140,6 +144,7 @@ theorem zl_wcb_injective : Function.Injective (algebraMap ℤ_[l] (WCb l)) := by
   · exact WittVector.p_nonzero l (Cb l) (eq_zero_of_pow_eq_zero h)
 
 theorem ol_rw_injective (LL : FinExt l) : Function.Injective (algebraMap ↥(OL LL) (RW LL)) := by
+  set_option synthInstance.maxHeartbeats 200000 in
   haveI : Module.Flat ℤ_[l] ↥(OL LL) := by
     rw [Module.Flat.flat_iff_torsion_eq_bot_of_isBezout, eq_bot_iff]
     rintro x ⟨⟨a, ha⟩, hx⟩
@@ -161,7 +166,7 @@ theorem le_v_iff (P : LocPrime l) (LL : FinExt l) (x : ℚ_[l]) (k : ℕ) :
   have h1 : 0 ≤ P.v LL (algebraMap ℚ_[l] ↥LL.1 y) ↔ ‖y‖ ≤ 1 := by
     rw [P.v_O]
     change IsIntegral ℤ_[l] _ ↔ _
-    rw [isIntegral_algebraMap_iff (algebraMap ℚ_[l] ↥LL.1).injective,
+    rw [isIntegral_algebraMap_iff ,
       IsIntegrallyClosed.isIntegral_iff]
     constructor
     · rintro ⟨z, rfl⟩
@@ -190,8 +195,8 @@ theorem norm_eq_of_v_eq (P : LocPrime l) (LL : FinExt l) (x : ℚ_[l]) (k : ℕ)
   have : k + 1 ≤ k := by exact_mod_cast h2
   omega
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_lift_dense (P : LocPrime l) (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL)
     (act : GQ l →* (PadicComplex l ≃+* PadicComplex l)) (hact : IsActC act)
     (W : LocWach (P.PD K) ↥LL.1 ↥(OL LL) (P.v LL) (Module.finrank ℚ_[l] ↥(K0 K))) (hs : W.s = s) :
@@ -239,8 +244,8 @@ theorem exists_lift_dense (P : LocPrime l) (K : FinExt l) (s : ℕ) (LL : FinExt
 
 end Concrete
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem clNat : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW), adm9 D HW F →
     ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
     let S := sit D.loc HW l (D.locA l) K s LL h

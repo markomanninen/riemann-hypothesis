@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DicksonExistsFiniteSubfamilyBelowStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.ConvexCones.FinitePosDefFormSublevelStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DicksonExistsFiniteSubfamilyBelowStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.ConvexCones.FinitePosDefFormSublevelStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,7 @@ theorem exists_finite_below_mod_two {X : Type} [AddCommGroup X] [Module.Finite �
     intro y
     refine ⟨e.symm (fun i => -(e y i / 2)), ?_⟩
     apply e.injective
-    rw [map_add, map_add, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
+    rw [map_add (f := _), map_add (f := _), LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
     funext i
     simp only [ZMod.val_intCast, Pi.add_apply, Nat.cast_ofNat]
     rw [Int.emod_def]
@@ -60,7 +64,7 @@ theorem exists_finite_below_mod_two {X : Type} [AddCommGroup X] [Module.Finite �
     exact ⟨w, hw, hwv⟩
   have hpick : red (pick (red y) v) = red y ∧ f (pick (red y) v) = v := by
     dsimp only [pick]
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   refine ⟨pick (red y) v, Set.mem_iUnion.mpr ⟨red y, v, hvM, rfl⟩, hred y _ hpick.1, ?_⟩
   rw [hpick.2]

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.TripleMultiplicationConstantCoeff
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.TripleMultiplicationConstantCoeff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,13 +18,13 @@ open Formalism.L2.FormalSeriesBounds Formalism.L2.FormalSeriesBounds.PartialDeri
 
 variable {C : Type} [Field C] [CharZero C] {dd : ℕ} {V : VF C} {O : Type} [CommRing O] [StarRing O]
 
-theorem pderiv_first_unit_series_maximal (Y : FBChart C V O dd) (i : Fin dd) : MaximalIdealCongruence.MMS V (pderiv C ((0 : Fin 2), i) Y.u1) := by
+theorem pderiv_first_unit_series_maximal (Y : FBChart C V O dd) (i : Fin dd) : MaximalIdealCongruence.MMS V (pderiv (R := C) ((0 : Fin 2), i) Y.u1) := by
   have hu : Y.u1 = FB.expS C (evl Y V.l Y.h - (V.l : C) • Y.h) := rfl
   have hE0 : constantCoeff (evl Y V.l Y.h - (V.l : C) • Y.h) = 0 := by
     rw [map_sub, show (V.l : C) • Y.h = ((V.l : ℕ) : PS C 2 dd) * Y.h by
       rw [Nat.cast_smul_eq_nsmul, nsmul_eq_mul], map_mul, PartialDerivEval.h_const, mul_zero, sub_zero]
     exact FirstUnitSeriesIntegrality.height_multiple_constantCoeff Y V.l
-  have hd : pderiv C ((0 : Fin 2), i) Y.u1 =
+  have hd : pderiv (R := C) ((0 : Fin 2), i) Y.u1 =
       (V.l : PS C 2 dd) * (Y.u1 * ∑ m, (Pm Y m - evl Y V.l (Pm Y m)) * logJacobianTwoPoints Y m i) := by
     rw [hu, PartialDerivEval.pderiv_expS hE0, dE, ← hu]; ring
   have hint : IntS V (Y.u1 * ∑ m, (Pm Y m - evl Y V.l (Pm Y m)) * logJacobianTwoPoints Y m i) := by
@@ -57,7 +61,7 @@ theorem UU_int (Y : FBChart C V O dd) {w : Pt C 3 dd} (hw0 : ∀ j, constantCoef
   intS_ev (constant_zero_two_points _ (z0p3 0) hw0) (int_two _ (triple_coordinate_integral 0) hw) (first_unit_series_integral C V O dd Y)
 
 theorem UU_frob (Y : FBChart C V O dd) {w : Pt C 3 dd} (hw0 : ∀ j, constantCoeff (w j) = 0)
-    (hw : ∀ j, IntS V (w j)) (hd : ∀ i j, pderiv C ((0 : Fin 3), i) (w j) = 0) : FrobD V (UU Y w) := by
+    (hw : ∀ j, IntS V (w j)) (hd : ∀ i j, pderiv (R := C) ((0 : Fin 3), i) (w j) = 0) : FrobD V (UU Y w) := by
   intro i
   unfold UU
   rw [d_ev_keep hw0 i (hd i)]
@@ -99,16 +103,16 @@ theorem QQ_int (Y : FBChart C V O dd) : IntS V (QQ Y) := by
   · exact intS_X _
 
 theorem pderiv_triple_multiplication (Y : FBChart C V O dd) (k i : Fin dd) :
-    pderiv C ((0 : Fin 3), i) (m3 Y.B.G V.l k) = ev ![(p3 0 : Pt C 3 dd)] (Jac (mulL Y.B.G.F V.l) k i) := by
-  show pderiv C ((0 : Fin 3), i) (ev ![(p3 0 : Pt C 3 dd)] (mulL Y.B.G.F V.l k)) = _
+    pderiv (R := C) ((0 : Fin 3), i) (m3 Y.B.G V.l k) = ev ![(p3 0 : Pt C 3 dd)] (Jac (mulL Y.B.G.F V.l) k i) := by
+  show pderiv (R := C) ((0 : Fin 3), i) (ev ![(p3 0 : Pt C 3 dd)] (mulL Y.B.G.F V.l k)) = _
   rw [pderiv_eval_single (P := (p3 0 : Pt C 3 dd)) (z0p3 0), Finset.sum_eq_single i (fun j _ hj => by
-      show _ * pderiv C _ (pt C (n := 3) dd 0 j) = 0
+      show _ * pderiv (R := C) _ (pt C (n := 3) dd 0 j) = 0
       rw [LiftedCoordinateEvaluation.pderiv_pt_same, if_neg hj, mul_zero]) (fun h => absurd (Finset.mem_univ i) h)]
-  show _ * pderiv C _ (pt C (n := 3) dd 0 i) = _
+  show _ * pderiv (R := C) _ (pt C (n := 3) dd 0 i) = _
   rw [LiftedCoordinateEvaluation.pderiv_pt_same, if_pos rfl, mul_one]
   rfl
 
-theorem pderiv_triple_multiplication_maximal (Y : FBChart C V O dd) (k i : Fin dd) : MaximalIdealCongruence.MMS V (pderiv C ((0 : Fin 3), i) (m3 Y.B.G V.l k)) := by
+theorem pderiv_triple_multiplication_maximal (Y : FBChart C V O dd) (k i : Fin dd) : MaximalIdealCongruence.MMS V (pderiv (R := C) ((0 : Fin 3), i) (m3 Y.B.G V.l k)) := by
   rw [pderiv_triple_multiplication, jac_l, Matrix.smul_apply, ev_eq_alg (z0_1 _ (z0p3 0)), map_nsmul, ← ev_eq_alg (z0_1 _ (z0p3 0)),
     nsmul_eq_mul]
   refine MaximalIdealCongruence.mms_l_mul (intS_ev (z0_1 _ (z0p3 0)) (fun k' j => by fin_cases k'; exact intS_X _) ?_)
@@ -122,15 +126,15 @@ theorem QQ_frob (Y : FBChart C V O dd) : FrobD V (QQ Y) := by
   intro i
   unfold QQ
   rw [pderiv_eval_triple (constant_zero_triple_multiplication Y)]
-  have h1 : ∑ j, ev ![m3 Y.B.G V.l, p3 1, p3 2] (pderiv C ((1 : Fin 3), j) Y.B.ph2) *
-      pderiv C ((0 : Fin 3), i) ((![m3 Y.B.G V.l, p3 1, p3 2] : Fin 3 → Pt C 3 dd) 1 j) = 0 :=
+  have h1 : ∑ j, ev ![m3 Y.B.G V.l, p3 1, p3 2] (pderiv (R := C) ((1 : Fin 3), j) Y.B.ph2) *
+      pderiv (R := C) ((0 : Fin 3), i) ((![m3 Y.B.G V.l, p3 1, p3 2] : Fin 3 → Pt C 3 dd) 1 j) = 0 :=
     Finset.sum_eq_zero fun j _ => by
-      show _ * pderiv C _ (pt C (n := 3) dd 1 j) = 0
+      show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 j) = 0
       rw [LiftedCoordinateEvaluation.pderiv_pt_ne _ _ _ (by decide : (1 : Fin 3) ≠ 0), mul_zero]
-  have h2 : ∑ j, ev ![m3 Y.B.G V.l, p3 1, p3 2] (pderiv C ((2 : Fin 3), j) Y.B.ph2) *
-      pderiv C ((0 : Fin 3), i) ((![m3 Y.B.G V.l, p3 1, p3 2] : Fin 3 → Pt C 3 dd) 2 j) = 0 :=
+  have h2 : ∑ j, ev ![m3 Y.B.G V.l, p3 1, p3 2] (pderiv (R := C) ((2 : Fin 3), j) Y.B.ph2) *
+      pderiv (R := C) ((0 : Fin 3), i) ((![m3 Y.B.G V.l, p3 1, p3 2] : Fin 3 → Pt C 3 dd) 2 j) = 0 :=
     Finset.sum_eq_zero fun j _ => by
-      show _ * pderiv C _ (pt C (n := 3) dd 2 j) = 0
+      show _ * pderiv (R := C) _ (pt C (n := 3) dd 2 j) = 0
       rw [LiftedCoordinateEvaluation.pderiv_pt_ne _ _ _ (by decide : (2 : Fin 3) ≠ 0), mul_zero]
   rw [h1, h2, add_zero, add_zero]
   refine MaximalIdealCongruence.mms_sum _ fun j _ => MaximalIdealCongruence.MMS.mul_left ?_ (pderiv_triple_multiplication_maximal Y j i)

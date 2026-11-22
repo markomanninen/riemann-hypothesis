@@ -1,11 +1,15 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.CovOfPoints
-import Development.EtaleCohomology.EtaleSheaves.RelativeCohomologyForgetInjectiveDegreeZeroOfSub
-import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling.LeafKill2Of
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCofilteredLimitAffineEtaleOfIsStalkStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictlyHenselianEtaleStalkOverPointStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsSepGlueOfSurjectiveFamily
-import Development.EtaleCohomology.EtaleDuality.TASCohSplitPfEmpty
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.CovOfPoints
+public import Development.EtaleCohomology.EtaleSheaves.RelativeCohomologyForgetInjectiveDegreeZeroOfSub
+public import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling.LeafKill2Of
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCofilteredLimitAffineEtaleOfIsStalkStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictlyHenselianEtaleStalkOverPointStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsSepGlueOfSurjectiveFamily
+public import Development.EtaleCohomology.EtaleDuality.TASCohSplitPfEmpty
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -91,10 +95,6 @@ end UpperTheory.Cb.TensorPullbackSquares
 
 namespace UpperTheory.Cb.TensorPullbackSquares
 open LateralTheory.E.E4 LateralTheory.E.LeafGhostCut LateralTheory.E.EtaleTopologySheaves LateralTheory.E.LeafDegCut
-
-private def tmP {I : Type} [SmallCategory I] (G : I ⥤ Scheme.{0}) {j : I} {W : Scheme.{0}} (v : W ⟶ G.obj j)
-    {m' m : Over j} (g : m' ⟶ m) : pullback (G.map m'.hom) v ⟶ pullback (G.map m.hom) v :=
-  tm v ((Over.post G).map g)
 
 private theorem cont_qc (hA : A9) (hB : B1) (q : ℕ) (i : ℤ) {I : Type} [SmallCategory I] [IsCofiltered I]
     (G : I ⥤ Scheme.{0}) (c : Cone G) (hc : IsLimit c) (hcomp : ∀ j, CompactSpace (G.obj j))

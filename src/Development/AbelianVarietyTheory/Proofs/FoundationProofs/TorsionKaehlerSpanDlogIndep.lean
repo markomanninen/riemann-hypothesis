@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsEqOfSmulMkEqZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PSqSmulKaehlerMemSpan
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KaehlerDOfPowEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsEqOfSmulMkEqZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PSqSmulKaehlerMemSpan
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KaehlerDOfPowEq
+
+@[expose] public section
 
 open GlobalTheory.AlmostEt GlobalTheory.K5
 

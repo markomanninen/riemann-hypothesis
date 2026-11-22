@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.SharpRestriction.Divisibility.KudlaSiegelWeil
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLatticeIffIntegralMatrixSplitChart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedConjugatePlaceUniformiser
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFinWeil
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsDeltaPsi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.SharpRestriction.Divisibility.KudlaSiegelWeil
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLatticeIffIntegralMatrixSplitChart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedConjugatePlaceUniformiser
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFinWeil
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsDeltaPsi
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ theorem Chart.pi_eq_of_finPart (h : Chart e σ π) {a b : AE D} (hab : finPart D
 
 def Chart.sec (h : Chart e σ π) : LP D P →+ AE D :=
   AddMonoidHom.mk' (fun z => e * Function.surjInv h.2.1 z) fun z z' => by
-    rw [← mul_add, h.mul_eq_iff, RingHom.map_add]
+    rw [← mul_add, h.mul_eq_iff, RingHom.map_add (f := _)]
     simp only [Function.surjInv_eq]
 
 theorem Chart.mul_sec (h : Chart e σ π) (z : LP D P) : e * h.sec z = h.sec z := by
@@ -88,7 +92,7 @@ theorem exists_isGen (D : D7) (P : HeightOneSpectrum (𝓞 D.host.E)) : ∃ c, I
     induction ha using Submodule.span_induction with
     | mem a ha => exact hmax a ha
     | zero => simp only [map_zero, zero_le]
-    | add x y _ _ hx hy => rw [RingHom.map_add]; exact Valuation.map_add_le _ hx hy
+    | add x y _ _ hx hy => rw [RingHom.map_add (f := _)]; exact Valuation.map_add_le _ hx hy
     | smul o x _ hx =>
       have ho : Valued.v (algebraMap D.host.E (LP D P) (o : D.host.E)) ≤ 1 := by
         rw [GlobalTheory.Idele.valued_algebraMap]
@@ -147,11 +151,13 @@ theorem Chart.pi_rk (h : Chart e σ π) (S T : HSp D) (a : D.host.E) (s : Fin S.
     refine h.pi_eq_of_finPart ?_
     rw [rk, Matrix.of_apply, finPart_liftFin]
     simp only [← finPart_cA]
-    rw [RingHom.map_mul (finPart D) (_ * _), RingHom.map_mul (finPart D) (incA D a), map_sum (finPart D)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [RingHom.map_mul (finPart D) (_ * _), RingHom.map_mul (finPart D) (incA D a), map_sum (finPart D)]
     simp only [finPart_mul_incA]
     rfl
   rw [h1]
-  simp only [RingHom.map_mul, map_sum π, h.1.2.1, h.pi_idem, one_mul, h.2.2.2.1, h.2.2.2.2.1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.map_mul, map_sum π, h.1.2.1, h.pi_idem, one_mul, h.2.2.2.1, h.2.2.2.2.1]
 
 theorem mem_latO_iff (h : Chart e σ π) (hσ : ∀ x, Valued.v (σ x) = Valued.v x) (hS : Frame S e σ π βS) (hT : Frame T e σ π βT)
     (hc : IsGen D P c) {u : WO S T} (hu : IsHalf e u) :
@@ -187,13 +193,15 @@ theorem mem_latO_iff (h : Chart e σ π) (hσ : ∀ x, Valued.v (σ x) = Valued.
               S.gram.map (algebraMap D.host.E (LP D P))) := by
         ext i j : 2
         rw [Matrix.map_apply, Matrix.of_apply, hm]
-        simp only [Matrix.smul_apply, smul_eq_mul, vecMulVec_apply, Matrix.vecMul, dotProduct, Matrix.map_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.smul_apply, smul_eq_mul, vecMulVec_apply, Matrix.vecMul, dotProduct, Matrix.map_apply,
           RingHom.map_mul, map_sum, hs', h.2.2.2.1]
         ring
       rw [e1, Matrix.mul_smul, Matrix.smul_mul, mul_vecMulVec, vecMulVec_mul, vecMul_vecMul, hS.gram_mul]
       convert h5 using 1
       have e2 : ((fun k => σ (π (incA D (s k)))) ᵥ* cT σ (βS⁻¹).1) j = σ (((βS⁻¹).1 *ᵥ fun k => π (incA D (s k))) j) := by
-        rw [Matrix.mulVec, dotProduct, map_sum, Matrix.vecMul, dotProduct]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Matrix.mulVec, dotProduct, map_sum, Matrix.vecMul, dotProduct]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [σ.map_mul, mul_comm]
         rfl
@@ -228,7 +236,8 @@ theorem mem_latO_iff (h : Chart e σ π) (hσ : ∀ x, Valued.v (σ x) = Valued.
       (sum_mem fun j (_ : j ∈ Finset.univ) => rk_mem S T ha₀ (hs j) (ht j))
     convert hU using 1
     ext i l
-    rw [Matrix.smul_apply, smul_eq_mul, ← hu i l, h.mul_eq_iff, Matrix.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.smul_apply, smul_eq_mul, ← hu i l, h.mul_eq_iff, Matrix.sum_apply, map_sum]
     have hsum : ∀ j, π (rk S T a₀ (fun k => finPart D (e * h.sec (βS.1 k j)))
         (fun k => finPart D (e * h.sec (Y k j))) i l) = algebraMap D.host.E (LP D P) a₀ * (Y i j * (βS⁻¹).1 j l) := by
       intro j
@@ -300,7 +309,8 @@ theorem th_conj (h : Chart e σ π) (hσ : ∀ x, σ (σ x) = x) (z : LP D P) : 
 theorem Chart.pi_hO (h : Chart e σ π) (u u' : WO S T) :
     π (hO S T u u') = Matrix.trace ((S.gram⁻¹).map (algebraMap D.host.E (LP D P)) * cT σ (u'.map π) *
       T.gram.map (algebraMap D.host.E (LP D P)) * u.map π) := by
-  simp only [hO, map_sum π, RingHom.map_mul, h.2.2.2.1, h.2.2.2.2.1, Matrix.trace, Matrix.diag, Matrix.mul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hO, map_sum π, RingHom.map_mul, h.2.2.2.1, h.2.2.2.2.1, Matrix.trace, Matrix.diag, Matrix.mul_apply,
     Finset.sum_mul]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [Finset.sum_comm]
@@ -368,8 +378,8 @@ theorem th_cond (hψ : IsStdChar D ψ (-1)) (h : Chart e σ π) (hσ : ∀ x, Va
     have h1 := (latO_dual hψ _ _ _ (h.half_fin (kap_half h _))).1 ((hs _).2 (mul_mem hz hu)) _ ((hs 1).2 (one_mem _))
     rwa [key, Matrix.single_apply_same, σ.map_one, mul_one] at h1
 
-open GlobalTheory.FinWeilO GlobalTheory.FinWeil in
 
+open GlobalTheory.FinWeilO GlobalTheory.FinWeil in
 theorem span_vacua (hψ : IsStdChar D ψ (-1)) (he : e * e = e) (hce : cA D e = e)
     (h2 : ∀ u ∈ latO S T (L0c D S) (L0c D T) (fun _ => True), IsHalf e u →
       ∃ u' ∈ latO S T (L0c D S) (L0c D T) (fun _ => True), u' + u' = u) (N : Submodule ℂ (thetaSub ψ S T))

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.CharacterColumnKernels.StatementRho
-import Formalism.GaloisCohomology.LocalTateDualityK
-import ReciprocityTheory.Hypotheses.GalCohDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
+module
+
+public import Mathlib
+public import Formalism.CharacterColumnKernels.StatementRho
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import ReciprocityTheory.Hypotheses.GalCohDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
+
+@[expose] public section
+
 open ReciprocityTheory.Gal
 
 noncomputable section
@@ -103,7 +108,8 @@ theorem h2_bounded_cyclotomic : Formalism.GaloisCohomology.LocalTateDualityK →
   obtain ⟨c, u, hu⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hw hϖ
   obtain ⟨s, hs⟩ := Ideal.mem_span_singleton'.1 hpϖ
   haveI hQ := finite_quot hϖ c
-  refine ⟨(p ^ c) ^ ((p ^ c) ^ Nat.card (O ⧸ Ideal.span {ϖ ^ c})), fun n hn h => ?_⟩
+  refine ⟨(p ^ c) ^ ((p ^ c) ^ Nat.card (O ⧸ Ideal.span {ϖ ^ c})), ?_⟩
+  intro n hn h
   letI := GlobalTheory.ShapeNeg.levZ (M := M) p n h
   obtain ⟨x₀, hx₀⟩ := lev_cyclic eM hϖ n
   have hkn : ∀ y : Lev M (ϖ ^ n), (ϖ ^ n) • y = 0 := fun y => Lev.ext (by
@@ -156,9 +162,11 @@ theorem h2_bounded_cyclotomic : Formalism.GaloisCohomology.LocalTateDualityK →
       rw [← Nat.cast_smul_eq_nsmul O, smul_smul, ← mul_pow, mul_comm ϖ s, hs, Nat.cast_pow]
     rw [hy, hkill]
   have hA : ∀ a : A, (p ^ c : ℕ) • a = 0 := by
-    intro a; apply Subtype.ext; apply TDual.ext; intro y
-    rw [← Nat.cast_smul_eq_nsmul (ZMod (p ^ n)), Submodule.coe_smul, TDual.smul_apply,
-      ← nsmul_eq_mul, ← td_nsmul, hkillp]; rfl
+    intro a; apply Subtype.ext; apply LinearMap.ext; intro y
+    rw [← Nat.cast_smul_eq_nsmul (ZMod (p ^ n)), Submodule.coe_smul]
+    change ((p ^ c : ℕ) : ZMod (p ^ n)) •
+      (a : TDual (ZMod (p ^ n)) (Lev M (ϖ ^ n))) y = 0
+    rw [Nat.cast_smul_eq_nsmul, ← td_nsmul, hkillp]
   let T := {x : ZMod (p ^ n) // (p ^ c) • x = 0}
   have hT : Nat.card T ≤ p ^ c := by
     classical
@@ -176,7 +184,7 @@ theorem h2_bounded_cyclotomic : Formalism.GaloisCohomology.LocalTateDualityK →
   let G : A → (O ⧸ Ideal.span {ϖ ^ c} → T) := fun a q =>
     ⟨(a : TDual (ZMod (p ^ n)) (Lev M (ϖ ^ n))) (q.out • x₀), by rw [← td_nsmul, hkillp]⟩
   have hGinj : Function.Injective G := by
-    intro a a' hG; apply Subtype.ext; apply TDual.ext; intro y
+    intro a a' hG; apply Subtype.ext; apply LinearMap.ext; intro y
     obtain ⟨t, rfl⟩ := hx₀ y
     have h1 := congrArg Subtype.val (congrFun hG (Ideal.Quotient.mk _ t))
     simp only [G] at h1

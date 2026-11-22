@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SheafIsomorphism
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SheafIsomorphism
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite
@@ -7,11 +11,11 @@ namespace LateralTheory.E.LeafShIsoPf.Sh
 open LateralTheory.E.LeafDegCut LateralTheory.E.EtaleTopologySheaves LateralTheory.E.LeafShIsoPf
 
 def LeafSecRep : Prop := ∀ (B : Scheme.{0}) (q : ℕ), ∃ e : ∀ (F : SShv B q) (U : B.Etale),
-    ((H0 B q).obj ((OU B q).obj U) ⟶ F) ≃ ToType (F.val.obj (op U)),
+    ((H0 B q).obj ((OU B q).obj U) ⟶ F) ≃ ToType (F.obj.obj (op U)),
   (∀ (F G : SShv B q) (g : F ⟶ G) (U : B.Etale) (t : (H0 B q).obj ((OU B q).obj U) ⟶ F),
     e G U (t ≫ g) = g.hom.app (op U) (e F U t)) ∧
   (∀ (F : SShv B q) (U U' : B.Etale) (a : U' ⟶ U) (t : (H0 B q).obj ((OU B q).obj U) ⟶ F),
-    e F U' ((H0 B q).map ((OU B q).map a) ≫ t) = F.val.map a.op (e F U t)) ∧
+    e F U' ((H0 B q).map ((OU B q).map a) ≫ t) = F.obj.map a.op (e F U t)) ∧
   (∀ (F : SShv B q) (U : B.Etale) (t t' : (H0 B q).obj ((OU B q).obj U) ⟶ F), e F U (t - t') = e F U t - e F U t')
 
 theorem LeafSheafIso_of (hR : LeafSecRep) : LeafSheafIso := by

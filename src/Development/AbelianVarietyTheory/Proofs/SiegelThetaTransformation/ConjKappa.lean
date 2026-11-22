@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHnStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHnStatement
+
+@[expose] public section
+
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
 
@@ -114,7 +119,8 @@ theorem comm (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) (h₁ : (mat x₁ τ).det �
         intro had; rw [had] at ha; exact ha hd
       rw [Matrix.mul_apply] at h0
       have h0' := congrArg (starRingEnd ℂ) h0
-      rw [map_sum, map_zero] at h0'
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h0'
       rw [← h0', dotProduct]
       exact Finset.sum_congr rfl fun c _ => by simp [mat]
     rw [hP]; simp
@@ -133,7 +139,8 @@ theorem lin_coord (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) (v₁ v₂ : Fin r → 
       intro w; simp [Matrix.mulVec, dotProduct, aLin, ha]
     have hc : conj (per X x₂ v₂ (τ, a)) = (aLin X x₁ x₂ τ *ᵥ Data.emb τ.1 v₂) a := by
       rw [hL, per_of_lt X x₂ v₂ τ ha]
-      simp only [hermC, FD.col, mat, Matrix.of_apply, map_sum, map_mul, Complex.conj_conj,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hermC, FD.col, mat, Matrix.of_apply, map_sum, map_mul, Complex.conj_conj,
         conj_Gm, Finset.sum_mul]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun b _ => by ring
@@ -167,7 +174,8 @@ theorem anti_coord (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) (v₁ v₂ : Fin r →
     ring
   · have hc : conj (per X x₂ v₂ (τ, a)) = (aAnti X x₁ x₂ τ *ᵥ star (Data.emb τ.1 v₂)) a := by
       rw [per_of_le X x₂ v₂ τ (not_lt.mp ha)]
-      simp only [Matrix.mulVec, dotProduct, aAnti, Matrix.of_apply, if_neg ha, map_sum, map_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, aAnti, Matrix.of_apply, if_neg ha, map_sum, map_mul,
         Pi.star_apply, Complex.star_def]
     rw [if_neg ha, hc]
     simp only [sgn, if_neg ha]
@@ -243,7 +251,8 @@ theorem dbl_per : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : �
     have h2 : (((X.κ0 / 4) • ((y₁ + y₂) * X.Gm)).map τ.1) k j =
         τ.1 X.κ0 / 4 * ((Data.emb τ.1 (y₁ k) + Data.emb τ.1 (y₂ k)) ᵥ* X.Gm.map τ.1) j := by
       have h4 : τ.1 (4 : E) = 4 := map_ofNat τ.1 4
-      simp [Matrix.mul_apply, Matrix.vecMul, dotProduct, Data.emb, map_sum, Finset.mul_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.mul_apply, Matrix.vecMul, dotProduct, Data.emb, map_sum, Finset.mul_sum,
         add_mul, h4]
     rw [h1, h2, dblZ]
     simp only [Matrix.vecMul_smul, ← Matrix.vecMul_vecMul, Matrix.vecMul_transpose,
@@ -271,7 +280,8 @@ theorem dbl_per : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : �
       have hk := conj_kappa X τ.1
       have hG := conj_Gm X τ.1
       have h4 : τ.1 (4 : E) = 4 := map_ofNat τ.1 4
-      simp only [Matrix.map_apply, Matrix.smul_apply, Matrix.mul_apply, Matrix.add_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.map_apply, Matrix.smul_apply, Matrix.mul_apply, Matrix.add_apply,
         smul_eq_mul, map_mul, map_div₀, map_sum, map_add, h4, hk, hG, Matrix.mulVec, dotProduct,
         Pi.add_apply, Pi.star_apply, Data.emb, Finset.mul_sum]
       refine Finset.sum_congr rfl fun x _ => ?_

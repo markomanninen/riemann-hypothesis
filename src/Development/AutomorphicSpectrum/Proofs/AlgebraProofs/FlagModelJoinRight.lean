@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSubAlt
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XSJoinright
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PairNumberPullbackStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSubAlt
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XSJoinright
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PairNumberPullbackStatement
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.FlagModelJoinRight
 

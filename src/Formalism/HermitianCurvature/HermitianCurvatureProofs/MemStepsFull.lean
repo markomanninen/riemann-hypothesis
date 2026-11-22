@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenBigCellSet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenBigCellSet
+
+@[expose] public section
 
 open Matrix MvPolynomial Set
 open scoped ComplexConjugate ContDiff Topology
@@ -138,22 +142,6 @@ lemma cv_mul (D : RealPlaceData k r Wp Wq) {nf : ℕ} (fib : Fin nf → Mat k r 
   rw [smul_mul_smul_comm]
   congr 1
   ring
-
-lemma good_mul {nf : ℕ} {L : Finset (Fin (r + 2))} {e₁ e : CT k r nf × List (Mat k r)} (h₁ : Good L e₁)
-    (h : Good L e) : Good L (mulCT e₁.1 e.1, e.2) := by
-  unfold Good at h₁ h ⊢
-  obtain ⟨ha1, hs1, -⟩ := h₁
-  obtain ⟨ha, hs, hw⟩ := h
-  refine ⟨fun l hl => ?_, fun x hx => ?_, hw⟩
-  · by_cases h1 : e₁.1.a l ≠ 0 ∨ e₁.1.b l ≠ 0
-    · exact ha1 l h1
-    · apply ha l
-      push_neg at h1
-      simpa [mulCT, h1.1, h1.2] using hl
-  · simp only [mulCT, List.mem_append] at hx
-    rcases hx with hx | hx
-    · exact hs1 x hx
-    · exact hs x hx
 
 def fo {nf : ℕ} (es : List (Fin nf × List (Mat k r))) : ℕ := (es.map fun e => e.2.length).sum
 

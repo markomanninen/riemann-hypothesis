@@ -1,10 +1,14 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.MainNotions.RamifiedCoefficientChains.S9.ExtensionLemmaAlt
 
 theorem padicValNat_factorial_succ (p : ℕ) [Fact p.Prime] (M : ℕ) :
     padicValNat p (M + 1).factorial = padicValNat p M.factorial + padicValNat p (M + 1) := by
-  rw [Nat.factorial_succ, padicValNat.mul (Nat.add_one_ne_zero M) (Nat.factorial_ne_zero M)]
+  rw [Nat.factorial_succ, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.add_one_ne_zero M) (Nat.factorial_ne_zero M)]
   omega
 
 theorem padicValNat_sum_Ioc_add_factorial (p : ℕ) [Fact p.Prime] (K M : ℕ) (h : K ≤ M) :
@@ -26,7 +30,7 @@ theorem digits_sum_le_log (p : ℕ) [Fact p.Prime] (K : ℕ) :
   have h2 : (p.digits K).length ≤ Nat.log p K + 1 := by
     rcases Nat.eq_zero_or_pos K with rfl | hK
     · simp
-    · rw [Nat.digits_len p K hp.one_lt hK.ne']
+    · rw [Nat.length_digits p K hp.one_lt hK.ne']
   calc (p.digits K).sum ≤ (p.digits K).length * (p - 1) := h1
     _ ≤ (Nat.log p K + 1) * (p - 1) := Nat.mul_le_mul h2 (le_refl _)
     _ = (p - 1) * (Nat.log p K + 1) := Nat.mul_comm _ _
@@ -34,8 +38,10 @@ theorem digits_sum_le_log (p : ℕ) [Fact p.Prime] (K : ℕ) :
 theorem padicValNat_sum_Ioc_le (p : ℕ) [Fact p.Prime] (K M : ℕ) (h : K ≤ M) :
     (p - 1) * ∑ k ∈ Finset.Ioc K M, padicValNat p k ≤ M - K + (p.digits K).sum := by
   have h2 := padicValNat_sum_Ioc_add_factorial p K M h
-  have hM := sub_one_mul_padicValNat_factorial (p := p) M
-  have hK := sub_one_mul_padicValNat_factorial (p := p) K
+  have hM : (p - 1) * padicValNat p M.factorial = M - (p.digits M).sum := by
+    simpa only [Nat.padicValNat_def] using (Nat.Prime.sub_one_mul_multiplicity_factorial (n := M) (Fact.out : p.Prime))
+  have hK : (p - 1) * padicValNat p K.factorial = K - (p.digits K).sum := by
+    simpa only [Nat.padicValNat_def] using (Nat.Prime.sub_one_mul_multiplicity_factorial (n := K) (Fact.out : p.Prime))
   have sM := Nat.digit_sum_le p M
   have sK := Nat.digit_sum_le p K
   have e : (p - 1) * ∑ k ∈ Finset.Ioc K M, padicValNat p k + (p - 1) * padicValNat p K.factorial =
@@ -47,7 +53,9 @@ theorem padicValInt_sum_le_Ioc (p : ℕ) (Y : Finset ℤ) (K M : ℕ) (hY : ∀ 
     (hinj : ∀ x ∈ Y, ∀ y ∈ Y, x.natAbs = y.natAbs → x = y) :
     ∑ x ∈ Y, padicValInt p x ≤ ∑ k ∈ Finset.Ioc K M, padicValNat p k := by
   have e : ∑ k ∈ Y.image Int.natAbs, padicValNat p k = ∑ x ∈ Y, padicValInt p x :=
-    Finset.sum_image (by intro x hx y hy hxy; exact hinj x hx y hy hxy)
+    by
+      simpa only [padicValInt, Nat.padicValNat_def] using
+        (Finset.sum_image (f := fun k => padicValNat p k) (by intro x hx y hy hxy; exact hinj x hx y hy hxy))
   rw [← e]
   apply Finset.sum_le_sum_of_subset
   intro k hk

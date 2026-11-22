@@ -1,7 +1,16 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.CentralCuspSplit
-import GroundTheory.AutomorphicForms.UnitaryAdmissible
-import GroundTheory.AutomorphicForms.GL2Classical.Irreducible
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.CentralCuspSplit
+public import GroundTheory.AutomorphicForms.UnitaryAdmissible
+public import GroundTheory.AutomorphicForms.GL2Classical.EigenformTranslates
+public import GroundTheory.AutomorphicForms.GL2Classical.Smooth
+public import GroundTheory.AutomorphicForms.HarishChandraCentre
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.SmoothKZ
+public import GroundTheory.AutomorphicForms.GL2Classical.KFinite
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +32,7 @@ theorem exists_compl_centralCuspForms (U : Submodule ℂ (cuspForms K n)) (hU : 
       (∀ X, ∀ φ ∈ C, (gkModuleCusp K n).ρ X φ ∈ C) ∧ (∀ k, ∀ φ ∈ C, (gkModuleCusp K n).σ k φ ∈ C) ∧
       (∀ g, ∀ φ ∈ C, finRepCusp K n g φ ∈ C) ∧ U ⊓ C = ⊥ ∧ U ⊔ C = centralCuspForms K n := by
   obtain ⟨d, b, ε, B, hε, horth, hsymm, hinv, hK⟩ := exists_archCartanData (K := K) (n := n)
-  obtain ⟨μ, hμ⟩ : ∃ μ : Measure (Reduction.normOneGL K n), μ.IsHaarMeasure := ⟨Measure.haar, inferInstance⟩
+  obtain ⟨μ, hμ⟩ : ∃ μ : Measure (Reduction.normOneGL (K := K) (n := n)), μ.IsHaarMeasure := ⟨Measure.haar, inferInstance⟩
   exact exists_isCompl_of_finite (cuspToL2 μ)
     (fun a ha h0 => injOn_cuspToL2 μ ha (fun _ _ => rfl) (h0.trans (map_zero (cuspToL2 μ)).symm))
     (fun g a ha c hc => petersson_inner_finiteAdelic_invariant μ g ha hc)
@@ -90,8 +99,8 @@ theorem isIrreducible_cuspSubmodule_of (U : Submodule ℂ (cuspForms K n))
     obtain ⟨y', hy', e⟩ := this
     rwa [← Subtype.ext e]
 
-variable (K n) in
 
+variable (K n) in
 structure CuspidalAutomorphicRepresentation where
 
   carrier : Submodule ℂ (cuspForms K n)
@@ -118,9 +127,6 @@ def ofIrreducible (U : Submodule ℂ (cuspForms K n)) (hU : U ≤ centralCuspFor
   isIrreducible := hirr
   exists_compl := exists_compl_centralCuspForms U hU hρ hσ hτ
 
-@[simp] theorem carrier_ofIrreducible (U : Submodule ℂ (cuspForms K n)) (hU hρ hσ hτ hirr) :
-    (ofIrreducible (K := K) (n := n) U hU hρ hσ hτ hirr).carrier = U := rfl
-
 abbrev toModule (π : CuspidalAutomorphicRepresentation K n) : AdelicGKModule K n π.carrier :=
   cuspSubmodule K n π.carrier π.stable_ρ π.stable_σ π.stable_τ
 
@@ -133,28 +139,7 @@ theorem nonempty_adelicDecomposition (π : CuspidalAutomorphicRepresentation K n
 
 end CuspidalAutomorphicRepresentation
 
-open GL2Classical ModularForm CongruenceSubgroup in
 
-def CuspidalAutomorphicRepresentation.ofEigenform {N : ℕ} [NeZero N] {k : ℤ}
-    (f : CuspForm (Gamma0 N : Subgroup (GL (Fin 2) ℝ)) k)
-    (hf : ∀ (p : ℕ) [Fact p.Prime], ∃ c : ℂ, heckeCusp N p k f = c • f)
-    (hf1 : (UpperHalfPlane.qExpansion 1 f).coeff 1 = 1) : CuspidalAutomorphicRepresentation ℚ 2 :=
-  have hst := isGKFStable_gkfSpan (liftCusp f)
-  have hle : gkfSpan (liftCusp f) ≤ centralCuspForms ℚ 2 :=
-    gkfSpan_le ⟨fun X _ hv => ρ_mem_centralCuspForms X hv, fun x _ hv => σ_mem_centralCuspForms x hv,
-      fun g _ hv => finRepCusp_mem_centralCuspForms g hv⟩
-      (fun s x => centralSection_of_mem_translateSpanCusp f (liftCusp_mem_translateSpanCusp f) s x)
-  have hirr := gkfSpan_liftCusp_irreducible f hf hf1
-  CuspidalAutomorphicRepresentation.ofIrreducible (gkfSpan (liftCusp f)) hle hst.1 hst.2.1 hst.2.2
-    (isIrreducible_cuspSubmodule_of _ hst.1 hst.2.1 hst.2.2 hirr.1
-      fun W hW hWρ hWσ hWτ => hirr.2 W ⟨hWρ, hWσ, hWτ⟩ hW)
-
-open GL2Classical ModularForm CongruenceSubgroup in
-theorem CuspidalAutomorphicRepresentation.carrier_ofEigenform {N : ℕ} [NeZero N] {k : ℤ}
-    (f : CuspForm (Gamma0 N : Subgroup (GL (Fin 2) ℝ)) k)
-    (hf : ∀ (p : ℕ) [Fact p.Prime], ∃ c : ℂ, heckeCusp N p k f = c • f)
-    (hf1 : (UpperHalfPlane.qExpansion 1 f).coeff 1 = 1) :
-    (CuspidalAutomorphicRepresentation.ofEigenform f hf hf1).carrier = gkfSpan (liftCusp f) := rfl
 
 end AutomorphicForm
 

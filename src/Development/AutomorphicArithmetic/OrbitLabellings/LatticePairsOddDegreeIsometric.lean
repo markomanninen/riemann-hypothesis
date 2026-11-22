@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BeData
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsConstantCoeffOne
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.LocalRingCardinality.DataForced
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SubstUnitaryLogarithmicCoordinatesStatement
-import Development.AutomorphicArithmetic.OrbitLabellings.ExistsUnitQuotientOfNormOneUnramifiedUltrametric
-import Development.AutomorphicArithmetic.OrbitLabellings.IntegralMvExpSumLogSOfOddPeriod
-import Development.AutomorphicArithmetic.OrbitLabellings.StdSeriesOrbitCoordinateChangeOfOddInert
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BeData
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsConstantCoeffOne
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.LocalRingCardinality.DataForced
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SubstUnitaryLogarithmicCoordinatesStatement
+public import Development.AutomorphicArithmetic.OrbitLabellings.ExistsUnitQuotientOfNormOneUnramifiedUltrametric
+public import Development.AutomorphicArithmetic.OrbitLabellings.IntegralMvExpSumLogSOfOddPeriod
+public import Development.AutomorphicArithmetic.OrbitLabellings.StdSeriesOrbitCoordinateChangeOfOddInert
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.TaylorLogMetric GlobalTheory.KerStd UpperTheory.G2 Classical
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
@@ -52,14 +56,16 @@ private lemma subst_lin_comp {K n m τ : Type} [Field K] [Fintype n] [Fintype m]
   rw [MvPowerSeries.subst_comp_subst_apply (MvPowerSeries.hasSubst_of_constantCoeff_zero fun k => by simp) hs]
   congr 1
   funext k
-  rw [← MvPowerSeries.coe_substAlgHom hs, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hs, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, MvPowerSeries.coe_substAlgHom, MvPowerSeries.subst_X hs, MvPowerSeries.subst_C]
 
 private lemma cc_linS {K K0 Lt β : Type} [Field K] [Field K0] (j : K0 →+* K) (σ : K0 →+* K0) (i : ℕ) [NeZero i]
     (pos : Lt → ℕ → Lt) (c : K0) (r : Lt) (b : β) : MvPowerSeries.constantCoeff (linS j σ i pos c r b) = 0 := by
   unfold linS
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun s _ => ?_
   split_ifs <;> simp
 

@@ -1,37 +1,15 @@
-import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
-import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.NonemptyCoefficientFieldPrime
+module
+
+public import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
+public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.NonemptyCoefficientFieldPrime
+
+@[expose] public section
 
 noncomputable section
 
 namespace Formalism.MainNotions.DIV.Inh
 
 open Formalism.BasicNotions Formalism.MainNotions.ModuliIntegralCharts NumberField
-
-theorem nonempty_local_provision_degenerate (D : D7) : Nonempty (ModuliIntegralCharts.Prov D) := by
-  exact ⟨{
-    Dat := Empty
-    rk := fun w => w.elim
-    jj := fun w => w.elim
-    jj_range := fun w => w.elim
-    loc := fun w => w.elim
-    ex := fun w => w.elim
-    NgC := fun _ => Unit
-    NgC_ne := fun _ => ⟨()⟩
-    KF := fun _ _ => Unit
-    kfNorm := fun _ _ => 1
-    pbKF := fun w => w.elim
-    levIn := fun _ _ => True
-    Xg := fun _ => Unit
-    bc := fun {w} => w.elim
-    DivX := fun _ => Unit
-    effD := fun _ => True
-    noVertD := fun _ => True
-    posBdD := fun _ => True
-    ampleOnAbelianBase := fun _ _ _ => True
-    Met := fun _ => Unit
-    nefFib := fun _ => True
-    ampleGen := fun _ => True
-    limRA := fun _ => True }⟩
 
 namespace LocalProvisionModel
 
@@ -47,17 +25,11 @@ theorem emb_conj (σ : D.host.E →ₐ[ℚ] ℂ) (x : D.host.E) : σ (D.host.con
   exact (D.host.der.conj_iff (σ : D.host.E →+* ℂ) D.host.conj).mpr
     (D.host.gal.apply_symm_apply _) x
 
-theorem conj_conj' (x : D.host.E) : D.host.conj (D.host.conj x) = x := by
-  have h : ∀ y, D.host.φ₀ (D.host.conj y) = starRingEnd ℂ (D.host.φ₀ y) :=
-    (D.host.der.conj_iff D.host.φ₀ D.host.conj).mpr (D.host.gal.apply_symm_apply _)
-  apply D.host.φ₀.injective
-  rw [h, h, Complex.conj_conj]
-
 def beO : 𝓞 D.host.E →ₗ[ℤ] 𝓞 D.host.E →ₗ[ℤ] ℝ :=
   LinearMap.mk₂ ℤ (fun a b => ((Algebra.trace ℤ (𝓞 D.host.E) (a * cjO D b) : ℤ) : ℝ))
-    (by intro a a' b; rw [add_mul, map_add, Int.cast_add])
+    (by intro a a' b; rw [add_mul, map_add (f := _), Int.cast_add])
     (by intro c a b; rw [smul_mul_assoc, map_smul, smul_eq_mul, Int.cast_mul, zsmul_eq_mul])
-    (by intro a b b'; rw [map_add, mul_add, map_add, Int.cast_add])
+    (by intro a b b'; rw [map_add (f := _), mul_add, map_add (f := _), Int.cast_add])
     (by intro c a b; rw [map_zsmul, mul_smul_comm, map_smul, smul_eq_mul, Int.cast_mul, zsmul_eq_mul])
 
 theorem beO_apply (a b : 𝓞 D.host.E) :
@@ -80,7 +52,8 @@ theorem beO_eq (a b : 𝓞 D.host.E) : ((beO D a b : ℝ) : ℂ) =
 
 theorem beO_symm (a b : 𝓞 D.host.E) : beO D a b = beO D b a := by
   apply Complex.ofReal_injective
-  rw [← Complex.conj_ofReal (beO D a b : ℝ), beO_eq, beO_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Complex.conj_ofReal (beO D a b : ℝ), beO_eq, beO_eq, map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_mul, Complex.conj_conj, mul_comm]
 
@@ -151,7 +124,8 @@ theorem beO_sum {ι : Type} [Fintype ι] (a : ι → 𝓞 D.host.E) (c : ι → 
     _ = ((∑ σ : D.host.E →ₐ[ℚ] ℂ, Complex.normSq (∑ i, (c i : ℂ) * σ (a i : D.host.E)) : ℝ) : ℂ) := by
         push_cast
         refine Finset.sum_congr rfl fun σ _ => ?_
-        rw [← Complex.mul_conj, map_sum, Finset.sum_mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← Complex.mul_conj, map_sum, Finset.sum_mul_sum]
         refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
         rw [map_mul, Complex.conj_ofReal]
         ring
@@ -210,8 +184,8 @@ theorem beK_posDef (k : ℕ) (c : (Σ _ : Fin k, Module.Free.ChooseBasisIndex �
   exact Finset.sum_pos' (fun _ _ => Complex.normSq_nonneg _)
     ⟨σ, Finset.mem_univ _, Complex.normSq_pos.mpr hσ⟩
 
-open Classical in
 
+open Classical in
 def rk01 (P : Prop) : ℕ := if P then 0 else 1
 
 theorem rank_indicator_le_one (P : Prop) : rk01 P ≤ 1 := by
@@ -273,8 +247,6 @@ theorem atM_card (k n : ℕ) (h : 0 < n) : Fintype.card (AtM k n) = n ^ k := by
   have hn : nn n = n := if_neg (by omega)
   rw [Fintype.card_fun, ZMod.card, Fintype.card_fin, hn]
 
-macro "exists_prescribed_local_data" : tactic => `(tactic| (intros; first | trivial | rfl | exact Subsingleton.elim _ _ | simp))
-
 structure MP (D : D7) (p : ℕ) where
   K : CF p
   Gn : Type
@@ -314,12 +286,12 @@ variable (D : D7) (r j p : ℕ) (M : MP D p)
   secAdd := fun _ => inferInstance
   H0 := fun _ => ⊤
   nrm := fun _ _ _ => 0
-  nrm_nonneg := by exists_prescribed_local_data
-  norm_le_one_of_mem_sections := by exists_prescribed_local_data
+  nrm_nonneg := by intros; exact le_rfl
+  norm_le_one_of_mem_sections := by intros <;> simp_all
   GIso := fun _ _ => Empty
   vrat := fun _ _ => 0
   Lb := fun _ => ()
-  Lb_inv := by exists_prescribed_local_data
+  Lb_inv := by intros <;> simp_all
   nrmRef := fun _ _ _ => 0
   DVP := M.Gn
   dvRho := fun y => rk01 (M.ab y)
@@ -332,7 +304,7 @@ variable (D : D7) (r j p : ℕ) (M : MP D p)
   chConst := fun _ => True
   PL := Unit
   phiAt := fun _ _ _ => 0
-  phiAt_zero := by exists_prescribed_local_data
+  phiAt_zero := fun _ {_} _ _ => rfl
   divGe := fun _ _ _ _ => True
   FJd := Unit
   Chr := fun _ => Unit
@@ -377,7 +349,7 @@ variable (D : D7) (r j p : ℕ) (M : MP D p)
   snAdd := fun _ _ _ => inferInstance
   snMod := fun _ _ _ => inferInstance
   act := fun _ _ _ => 1
-  act_scal := by exists_prescribed_local_data
+  act_scal := by intros <;> simp_all
   vth := fun _ _ _ => 0
   Jet := fun _ _ _ _ => PUnit
   jAdd := fun _ _ _ _ => inferInstance
@@ -450,6 +422,7 @@ variable (D : D7) (r j p : ℕ) (M : MP D p)
   genNe := fun _ => M.ne
   redK := fun _ y => y
   dvRho_pos_iff := fun _ y => by
+    change M.Gn at y
     show 0 < rk01 (M.ab y) ↔ ¬ M.ab y
     by_cases h : M.ab y <;> simp [rk01, h]
   genK := fun η => η
@@ -464,16 +437,17 @@ variable (D : D7) (r j p : ℕ) (M : MP D p)
   chFam := fun _ => ()
   ptK := fun _ y => y
   ptK_good := fun _ y => by
+    change M.Gn at y
     show Subsingleton (Fin (rk01 (M.ab y)) → 𝓞 D.host.E) ↔ rk01 (M.ab y) = 0
     rw [subsingleton_rank_indicator_iff]
     by_cases h : M.ab y <;> simp [rk01, h]
   vpi := fun _ => 1
-  vpi_pos := by exists_prescribed_local_data
+  vpi_pos := by intros; exact zero_lt_one
   ordGe := fun _ _ _ _ => True
   yEta := fun η => η
   yEta_good := fun η => subsingleton_rank_indicator_iff D (M.ab η)
   homSh := fun _ _ => ()
-  homSh_inv := by exists_prescribed_local_data
+  homSh_inv := by intros <;> simp_all
   isoSec := fun _ => 0
   nrm_isoSec := fun φ => Empty.elim φ
   isoSymm := fun φ => Empty.elim φ
@@ -484,20 +458,26 @@ variable (D : D7) (r j p : ℕ) (M : MP D p)
   lieL := fun _ => ⊤
   eig := fun _ _ => ⊤
   Wst := fun _ _ _ => ⊤
-  Wst_le := by exists_prescribed_local_data
+  Wst_le := by intros <;> simp_all
   taut := fun _ _ _ => ⊤
-  taut_eq := by exists_prescribed_local_data
+  taut_eq := by intros <;> simp_all
   nrmIn := fun _ _ _ _ => 0
-  nrmRef_def := by exists_prescribed_local_data
-  nrm_Lb_def := by exists_prescribed_local_data
-  om_smul := by exists_prescribed_local_data
+  nrmRef_def := by intros <;> simp_all
+  nrm_Lb_def := by intros <;> simp_all
+  om_smul := by intros <;> simp_all
   TC := fun _ => PUnit
   tcAdd := fun _ => inferInstance
   tcMod := fun _ => inferInstance
   iT := fun _ => 0
-  iT_span := by exists_prescribed_local_data
+  iT_span := by
+    intros
+    apply le_antisymm le_top
+    intro x hx
+    have : x = 0 := Subsingleton.elim _ _
+    rw [this]
+    exact Submodule.zero_mem _
   htC := fun _ => 0
-  htC_iT := by exists_prescribed_local_data
+  htC_iT := by intros <;> simp_all
   psiC := fun _ => 0
   lieGt1 := fun _ => ⊤
   eT := fun _ _ => 0
@@ -545,32 +525,6 @@ variable (D : D7) (r j p : ℕ) (M : MP D p)
   Pm_tail := fun c τ i _ _ => le_trans (neg_le_abs _)
     (abs_le_pmM D (M.dg c) (r + j) τ _ (Finset.Icc_subset_Icc (by omega) (by omega)))
 
-@[reducible] def provDegenerate (Dat : Type) (rk jj : Dat → ℕ) (h : ∀ w, 1 ≤ jj w ∧ jj w + 1 ≤ rk w)
-    (M : ∀ (_ : Dat) (p : ℕ), MP D p) : ModuliIntegralCharts.Prov D where
-  Dat := Dat
-  rk := rk
-  jj := jj
-  jj_range := h
-  loc := fun w p => locM D (rk w) (jj w) p (M w p)
-  ex := fun w p => extM D (rk w) (jj w) p (M w p)
-  NgC := fun _ => Unit
-  NgC_ne := fun _ => ⟨()⟩
-  KF := fun _ _ => Unit
-  kfNorm := fun _ _ => 1
-  pbKF := fun _ _ _ _ => 0
-  levIn := fun _ _ => True
-  Xg := fun _ => Unit
-  bc := fun _ _ => ()
-  DivX := fun _ => Unit
-  effD := fun _ => True
-  noVertD := fun _ => True
-  posBdD := fun _ => True
-  ampleOnAbelianBase := fun _ _ _ => True
-  Met := fun _ => Unit
-  nefFib := fun _ => True
-  ampleGen := fun _ => True
-  limRA := fun _ => True
-
 def mpTrivialAb (K : CF p) : MP D p where
   K := K
   Gn := Unit
@@ -585,13 +539,6 @@ end LocalProvisionModel
 open LocalProvisionModel
 
 variable (D : D7)
-
-theorem exists_full_local_provision :
-    ∃ P : ModuliIntegralCharts.Prov D, ∀ r j, 1 ≤ j → j + 1 ≤ r → ∃ w : P.Dat, P.rk w = r ∧ P.jj w = j := by
-  refine ⟨provDegenerate D {rj : ℕ × ℕ // 1 ≤ rj.2 ∧ rj.2 + 1 ≤ rj.1} (fun w => w.1.1) (fun w => w.1.2)
-    (fun w => w.2) (fun _ p => mpTrivialAb D p (Classical.choice (nonempty_coefficient_field p))), ?_⟩
-  intro r j hj hr
-  exact ⟨⟨(r, j), hj, hr⟩, rfl, rfl⟩
 
 end Formalism.MainNotions.DIV.Inh
 

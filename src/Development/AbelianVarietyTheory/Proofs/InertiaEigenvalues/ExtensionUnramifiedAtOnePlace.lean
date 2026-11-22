@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroTypeInertia
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicRingEquivAdicCompletionPlaceUnramifiedDegreStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOfRootCongrOfDerivUnitStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusPowApplySubPowLtOneStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NotMemSqOfDerivativeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardQuotientEqOfPowSubSelfMemStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsTotallyComplexOfPrimitiveRootThreeLeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TotallyComplexOfRootQuadraticNegDiscStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroTypeInertia
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicRingEquivAdicCompletionPlaceUnramifiedDegreStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOfRootCongrOfDerivUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusPowApplySubPowLtOneStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NotMemSqOfDerivativeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardQuotientEqOfPowSubSelfMemStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsTotallyComplexOfPrimitiveRootThreeLeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TotallyComplexOfRootQuadraticNegDiscStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host GlobalTheory.HeckeGal GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GLq GlobalTheory.SmGL Formalism.L2.NT
 
 noncomputable section
@@ -24,7 +29,7 @@ def idealBelow (K : Type) [Field K] [NumberField K] [Algebra K Ω] (A : Valuatio
   carrier := {x | A.valuation (algebraMap K Ω (x : K)) < 1}
   add_mem' {a b} ha hb := by
     show A.valuation (algebraMap K Ω ((a + b : 𝓞 K) : K)) < 1
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact Valuation.map_add_lt _ ha hb
   zero_mem' := by show A.valuation (algebraMap K Ω ((0 : 𝓞 K) : K)) < 1; simp
   smul_mem' c b hb := by
@@ -87,8 +92,8 @@ theorem adjoin_gen_eq_top (E : Type) [Field E] [Algebra E Ω] (β : Ω) (hβ : I
     IntermediateField.adjoin_simple_toSubalgebra_of_isAlgebraic hβ.isAlgebraic]
   rfl
 
-open IntermediateField in
 
+open IntermediateField in
 theorem core {E : Type} [Field E] [NumberField E] [Algebra E Ω] [IsAlgClosure E Ω] {g : ℕ} [Fact g.Prime]
     {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} (h : IsPlaceOver A w)
     (hg1 : ((g : ℕ) : 𝓞 E) ∈ w.asIdeal) (hg2 : ((g : ℕ) : 𝓞 E) ∉ w.asIdeal ^ 2) (hN : normV w = g)
@@ -182,7 +187,8 @@ theorem core {E : Type} [Field E] [NumberField E] [Algebra E Ω] [IsAlgClosure E
     have hfβ' : aeval β' f = 0 := by
       have h2 := hmap f
       rw [hfβ, ← map_zero (algebraMap E' Ω)] at h2
-      exact_mod_cast (algebraMap E' Ω).injective h2
+      apply RingOfIntegers.coe_injective
+      simpa only [map_zero] using (algebraMap E' Ω).injective h2
     have hover : ∀ x : 𝓞 E, algebraMap (𝓞 E) (𝓞 E') x ∈ w'.asIdeal ↔ x ∈ w.asIdeal := by
       intro x
       rw [← h x]
@@ -206,7 +212,7 @@ theorem core {E : Type} [Field E] [NumberField E] [Algebra E Ω] [IsAlgClosure E
     let ζ' : 𝓞 E' := ⟨ζE, hζint⟩
     haveI : w'.asIdeal.IsMaximal := w'.isMaximal
     refine GlobalTheory.T.card_quotient_eq_of_pow_sub_self_mem' w'.asIdeal (g ^ n) ζ' hq2 ?_ ?_ ?_
-    · apply FaithfulSMul.algebraMap_injective (𝓞 E') E'
+    · apply RingOfIntegers.coe_injective
       rw [map_pow, map_one]
       exact hζE.pow_eq_one
     · intro j hj0 hjq hm

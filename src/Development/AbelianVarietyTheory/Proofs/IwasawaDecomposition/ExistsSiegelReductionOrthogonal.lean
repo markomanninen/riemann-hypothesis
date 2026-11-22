@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegelZeroFront
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegelZeroFront
+
+@[expose] public section
+
 open Matrix GlobalTheory.RedTh NumberField GlobalTheory.PolFan ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 noncomputable section
@@ -53,12 +58,13 @@ lemma siegelGlue_scale {s m : ℕ} (d₁ : Fin s → ℝ) (d₂ : Fin m → ℝ)
 lemma isSiegel_glue {s m : ℕ} {e₁ : Fin s → ℝ} {u₁ : Matrix (Fin s) (Fin s) ℝ} {e₂ : Fin m → ℝ}
     {u₂ : Matrix (Fin m) (Fin m) ℝ} (h₁ : IsSiegel e₁ u₁) (h₂ : IsSiegel e₂ u₂)
     (hj : ∀ (i : Fin s) (j : Fin m), (j : ℕ) = 0 → e₁ i ≤ 4 * e₂ j) :
-    IsSiegel (Fin.append e₁ e₂) (siegelGlueMat u₁ u₂) where
-  nonneg i := by
+    IsSiegel (Fin.append e₁ e₂) (siegelGlueMat u₁ u₂) := by
+  refine IsSiegel.mk ?_ ?_ ?_ ?_ ?_
+  · intro i
     induction i using Fin.addCases with
     | left a => simpa using h₁.nonneg a
     | right a => simpa using h₂.nonneg a
-  step p q h := by
+  · intro p q h
     induction p using Fin.addCases with
     | left a =>
       induction q using Fin.addCases with
@@ -78,56 +84,49 @@ lemma isSiegel_glue {s m : ℕ} {e₁ : Fin s → ℝ} {u₁ : Matrix (Fin s) (F
       | right b =>
         simp only [Fin.val_natAdd] at h
         simpa using h₂.step a b (by omega)
-  diag i := by
+  · intro i
     induction i using Fin.addCases with
     | left a => simpa using h₁.diag a
     | right a => simpa using h₂.diag a
-  lower i j h := by
+  · intro i j h
     induction i using Fin.addCases with
     | left a =>
       induction j using Fin.addCases with
       | left b =>
         rw [siegelGlueMat_ll]
-        exact h₁.lower a b (by rw [Fin.lt_iff_val_lt_val] at h ⊢; simpa using h)
+        exact h₁.lower a b (by rw [Fin.lt_def] at h ⊢; simpa using h)
       | right b => simp
     | right a =>
       induction j using Fin.addCases with
       | left b => simp
       | right b =>
         rw [siegelGlueMat_rr]
-        exact h₂.lower a b (by rw [Fin.lt_iff_val_lt_val] at h ⊢; simpa using h)
-  upper i j h := by
+        exact h₂.lower a b (by rw [Fin.lt_def] at h ⊢; simpa using h)
+  · intro i j h
     induction i using Fin.addCases with
     | left a =>
       induction j using Fin.addCases with
       | left b =>
         rw [siegelGlueMat_ll]
-        exact h₁.upper a b (by rw [Fin.lt_iff_val_lt_val] at h ⊢; simpa using h)
+        exact h₁.upper a b (by rw [Fin.lt_def] at h ⊢; simpa using h)
       | right b => simp
     | right a =>
       induction j using Fin.addCases with
       | left b => simp
       | right b =>
         rw [siegelGlueMat_rr]
-        exact h₂.upper a b (by rw [Fin.lt_iff_val_lt_val] at h ⊢; simpa using h)
+        exact h₂.upper a b (by rw [Fin.lt_def] at h ⊢; simpa using h)
 
 lemma isSiegel_zero_of {n : ℕ} {d : Fin n → ℝ} {u : Matrix (Fin n) (Fin n) ℝ} (h : IsSiegel d u) :
-    IsSiegel (0 : Fin n → ℝ) u where
-  nonneg _ := le_refl _
-  step _ _ _ := by simp
-  diag := h.diag
-  lower := h.lower
-  upper := h.upper
+    IsSiegel (0 : Fin n → ℝ) u :=
+  IsSiegel.mk (fun _ => le_refl _) (by simp) h.diag h.lower h.upper
 
 lemma isSiegel_smul_of {n : ℕ} {d : Fin n → ℝ} {u : Matrix (Fin n) (Fin n) ℝ} (h : IsSiegel d u)
-    {t : ℝ} (ht : 0 ≤ t) : IsSiegel (fun i => t * d i) u where
-  nonneg i := mul_nonneg ht (h.nonneg i)
-  step p q hpq := by
-    have := h.step p q hpq
-    nlinarith
-  diag := h.diag
-  lower := h.lower
-  upper := h.upper
+    {t : ℝ} (ht : 0 ≤ t) : IsSiegel (fun i => t * d i) u := by
+  refine IsSiegel.mk (fun i => mul_nonneg ht (h.nonneg i)) ?_ h.diag h.lower h.upper
+  intro p q hpq
+  have := h.step p q hpq
+  nlinarith
 
 theorem siegelData_glue_scaled : ∀ (s m : ℕ) (d₁ : Fin s → ℝ) (u₁ : Matrix (Fin s) (Fin s) ℝ) (d₂ : Fin m → ℝ) (u₂ : Matrix (Fin m) (Fin m) ℝ), IsSiegel d₁ u₁ → IsSiegel d₂ u₂ → (∀ i, 0 < d₁ i) → (∀ i, 0 < d₂ i) → ∃ (t : ℝ) (d d' : Fin (s + m) → ℝ) (u : Matrix (Fin (s + m)) (Fin (s + m)) ℝ), 0 < t ∧ IsSiegel d u ∧ IsSiegel d' u ∧ (∀ i, 0 < d' i) ∧ (∀ i j : Fin s, gram d u (Fin.castAdd m i) (Fin.castAdd m j) = 0 ∧ gram d' u (Fin.castAdd m i) (Fin.castAdd m j) = t * gram d₁ u₁ i j) ∧ (∀ (i : Fin s) (j : Fin m), gram d u (Fin.castAdd m i) (Fin.natAdd s j) = 0 ∧ gram d u (Fin.natAdd s j) (Fin.castAdd m i) = 0 ∧ gram d' u (Fin.castAdd m i) (Fin.natAdd s j) = 0 ∧ gram d' u (Fin.natAdd s j) (Fin.castAdd m i) = 0) ∧ ∀ i j : Fin m, gram d u (Fin.natAdd s i) (Fin.natAdd s j) = gram d₂ u₂ i j ∧ gram d' u (Fin.natAdd s i) (Fin.natAdd s j) = gram d₂ u₂ i j := by
   intro s m d₁ u₁ d₂ u₂ h₁ h₂ p₁ p₂

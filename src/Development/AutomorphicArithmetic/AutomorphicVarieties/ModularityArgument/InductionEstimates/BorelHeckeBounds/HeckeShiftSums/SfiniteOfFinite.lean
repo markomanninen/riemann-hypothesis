@@ -1,19 +1,23 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.TruncKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.LamRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmBdReal
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TraceKer
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TwAdj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAdj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QmapPres
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtTw
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.NormLeOfSq
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KvCont
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.HeckeP
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PolyBdAll
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.TruncKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.LamRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmBdReal
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TraceKer
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.TwAdj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAdj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QmapPres
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtTw
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.NormLeOfSq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KvCont
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.HeckeP
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PolyBdAll
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -99,108 +103,109 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.famTr :
           trace (Λ ∘L (Rop μ f ∘L θ.U) ∘L P ∘L Λ) = ∫ y, w y ∂quotientMeasure (Gam K (2 + 2)) μ ∧
           (∀ y, Om T (Quotient.out y) → w y = ⟪P (kv μ a (Quotient.out y)), M (P (kv μ (CuspidalProjection.ccStar g) (θ.e (Quotient.out y))))⟫_ℂ) ∧
           ∀ y, ¬ Om T (Quotient.out y) → ‖w y‖ ≤ C * (qht (Quotient.out y : G1 K (2 + 2)) ^ N')⁻¹ * ‖M‖ := by
-  intro K _ _ _ μ _ μ₂ _ τ₁ τ₂ hp D d d' A A' θ a g P hP hUP hUΛ ha hDa hg hDg N'
-  classical
-  haveI := Reduction.isFiniteMeasure_quotientMeasure (K := K) (n := 2 + 2) μ
-  haveI hsf : SFinite (quotientMeasure (Gam K (2 + 2)) μ) := sfinite_of_finite _
-  haveI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by simp⟩
-  haveI : SecondCountableTopology (RightCosetSpace (Gam K (2 + 2))) :=
-    (isOpenQuotientMap_mk (Gam K (2 + 2))).isQuotientMap.secondCountableTopology
-      (isOpenQuotientMap_mk (Gam K (2 + 2))).isOpenMap
-  haveI : MeasurableSpace.CountablyGenerated (RightCosetSpace (Gam K (2 + 2))) := BorelSpace.countablyGenerated
-  haveI : IsSeparable (quotientMeasure (Gam K (2 + 2)) μ) := isSeparable_of_sigmaFinite _
-  haveI : SecondCountableTopology (Lp ℂ 2 (quotientMeasure (Gam K (2 + 2)) μ)) := Lp.SecondCountableTopology
-  haveI : TopologicalSpace.SeparableSpace (Lp ℂ 2 (quotientMeasure (Gam K (2 + 2)) μ)) :=
-    TopologicalSpace.SecondCountableTopology.to_separableSpace
-  have hDs := hecke_star D g hDg
-  generalize hs : CuspidalProjection.ccStar g = s at hg hDs ⊢
-  obtain ⟨k, kγ, kO, kfar, -, kT⟩ := truncKer K μ μ₂ τ₁ τ₂ hp D d d' A A' a P hP ha hDa
-  obtain ⟨l, lγ, lO, -, ⟨C₂, N₂, hC₂, lb⟩, lT⟩ := truncKer K μ μ₂ τ₁ τ₂ hp D d d' A A' s P hP hg hDs
-  obtain ⟨C₃, c, hC₃, hθ⟩ := qhtTw K (2 + 2) μ θ
-  obtain ⟨C₁, hC₁, kb⟩ := kfar (N' + c * N₂)
-  obtain ⟨C₄, N₄, hC₄, b₄⟩ := (kvBd K (2 + 2) μ s).1 (UpperTheory.ConvolutionTheory.C.polyBdAll K (2 + 2) μ s)
-  obtain ⟨C₅, c₅, N₅, -, hC₅, hb⟩ := UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.omBd (K := K)
-  obtain ⟨q1, -, -⟩ := qhtBasic K (2 + 2)
-  have q0 : ∀ x : G1 K (2 + 2), 0 < qht x := fun x => zero_lt_one.trans_le (q1 x)
-  obtain ⟨-, hq⟩ := qmapPres (Gam K (2 + 2)) μ θ.e θ.mem_gam θ.pres
-  have hsa : ∀ u w : L2 μ, ⟪P u, w⟫_ℂ = ⟪u, P w⟫_ℂ := fun u w => hP.1.isSymmetric u w
-  have kvγ := (ropAe K (2 + 2) μ s).2
-  refine ⟨C₁ * (C₂ * C₃ ^ N₂), by positivity, fun f M Λ T hT hM hf hΛ => ?_⟩
-  obtain ⟨⟨B₁, hB₁⟩, km, kHS, kae⟩ := kT T Λ hT hΛ
-  obtain ⟨⟨B₂, hB₂⟩, lm, lHS, lae⟩ := lT T Λ hT hΛ
-  obtain ⟨e1, e2, e3⟩ := alg Λ P θ.U M (Rop μ a) (Rop μ g) (Rop μ s) hΛ.1 hP.1 hP.2.1 hUP (hUΛ T Λ hT hΛ) hM
-    ((Hecke₃ K μ μ₂ τ₁ τ₂ hp D d d' A A' P hP).2 g hDg) (by rw [ropAdj, hs])
-  rw [hf, e1]
-  have hBHS : IsHilbertSchmidt (P ∘L Rop μ g ∘L θ.U ∘L Λ) := by
-    have := (lHS.comp_left (ContinuousLinearMap.adjoint θ.U)).adjoint
-    rwa [← e3, ContinuousLinearMap.adjoint_adjoint] at this
-  obtain ⟨oγ, -, om⟩ := omMeas (K := K) T
-  have lout : ∀ x, l T (Quotient.out (mk (Gam K (2 + 2)) x)) = l T x := fun x => by
-    obtain ⟨γ, hγ, e⟩ := out_mk x
-    rw [e, lγ T γ hγ]
-  have kvout : ∀ x, UpperTheory.ConvolutionTheory.K.kv μ s (Quotient.out (mk (Gam K (2 + 2)) x)) = UpperTheory.ConvolutionTheory.K.kv μ s x := fun x => by
-    obtain ⟨γ, hγ, e⟩ := out_mk x
-    rw [e, kvγ γ hγ]
-  let k₂ : RightCosetSpace (Gam K (2 + 2)) → L2 μ := fun y =>
-    if Om T (Quotient.out y : G1 K (2 + 2)) then P (UpperTheory.ConvolutionTheory.K.kv μ s (θ.e (Quotient.out y))) else l T (θ.e (Quotient.out y))
-  have m1 : StronglyMeasurable fun y : RightCosetSpace (Gam K (2 + 2)) => P (UpperTheory.ConvolutionTheory.K.kv μ s (θ.e (Quotient.out y))) := by
-    refine Continuous.stronglyMeasurable ?_
-    rw [(isOpenQuotientMap_mk (Gam K (2 + 2))).isQuotientMap.continuous_iff]
-    have : ((fun y : RightCosetSpace (Gam K (2 + 2)) => P (UpperTheory.ConvolutionTheory.K.kv μ s (θ.e (Quotient.out y)))) ∘ mk (Gam K (2 + 2))) =
-        fun x => P (UpperTheory.ConvolutionTheory.K.kv μ s (θ.e x)) := by
-      funext x
+  set_option synthInstance.maxHeartbeats 200000 in
+    intro K _ _ _ μ _ μ₂ _ τ₁ τ₂ hp D d d' A A' θ a g P hP hUP hUΛ ha hDa hg hDg N'
+    classical
+    haveI := Reduction.isFiniteMeasure_quotientMeasure (K := K) (n := 2 + 2) μ
+    haveI hsf : SFinite (quotientMeasure (Gam K (2 + 2)) μ) := sfinite_of_finite _
+    haveI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by simp⟩
+    haveI : SecondCountableTopology (RightCosetSpace (Gam K (2 + 2))) :=
+      (isOpenQuotientMap_mk (Gam K (2 + 2))).isQuotientMap.secondCountableTopology
+        (isOpenQuotientMap_mk (Gam K (2 + 2))).isOpenMap
+    haveI : MeasurableSpace.CountablyGenerated (RightCosetSpace (Gam K (2 + 2))) := BorelSpace.countablyGenerated
+    haveI : IsSeparable (quotientMeasure (Gam K (2 + 2)) μ) := isSeparable_of_sigmaFinite _
+    haveI : SecondCountableTopology (Lp ℂ 2 (quotientMeasure (Gam K (2 + 2)) μ)) := Lp.SecondCountableTopology
+    haveI : TopologicalSpace.SeparableSpace (Lp ℂ 2 (quotientMeasure (Gam K (2 + 2)) μ)) :=
+      TopologicalSpace.SecondCountableTopology.to_separableSpace
+    have hDs := hecke_star D g hDg
+    generalize hs : CuspidalProjection.ccStar g = s at hg hDs ⊢
+    obtain ⟨k, kγ, kO, kfar, -, kT⟩ := truncKer K μ μ₂ τ₁ τ₂ hp D d d' A A' a P hP ha hDa
+    obtain ⟨l, lγ, lO, -, ⟨C₂, N₂, hC₂, lb⟩, lT⟩ := truncKer K μ μ₂ τ₁ τ₂ hp D d d' A A' s P hP hg hDs
+    obtain ⟨C₃, c, hC₃, hθ⟩ := qhtTw K (2 + 2) μ θ
+    obtain ⟨C₁, hC₁, kb⟩ := kfar (N' + c * N₂)
+    obtain ⟨C₄, N₄, hC₄, b₄⟩ := (kvBd K (2 + 2) μ s).1 (UpperTheory.ConvolutionTheory.C.polyBdAll K (2 + 2) μ s)
+    obtain ⟨C₅, c₅, N₅, -, hC₅, hb⟩ := UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.omBd (K := K)
+    obtain ⟨q1, -, -⟩ := qhtBasic K (2 + 2)
+    have q0 : ∀ x : G1 K (2 + 2), 0 < qht x := fun x => zero_lt_one.trans_le (q1 x)
+    obtain ⟨-, hq⟩ := qmapPres (Gam K (2 + 2)) μ θ.e θ.mem_gam θ.pres
+    have hsa : ∀ u w : L2 μ, ⟪P u, w⟫_ℂ = ⟪u, P w⟫_ℂ := fun u w => hP.1.isSymmetric u w
+    have kvγ := (ropAe K (2 + 2) μ s).2
+    refine ⟨C₁ * (C₂ * C₃ ^ N₂), by positivity, fun f M Λ T hT hM hf hΛ => ?_⟩
+    obtain ⟨⟨B₁, hB₁⟩, km, kHS, kae⟩ := kT T Λ hT hΛ
+    obtain ⟨⟨B₂, hB₂⟩, lm, lHS, lae⟩ := lT T Λ hT hΛ
+    obtain ⟨e1, e2, e3⟩ := alg Λ P θ.U M (Rop μ a) (Rop μ g) (Rop μ s) hΛ.1 hP.1 hP.2.1 hUP (hUΛ T Λ hT hΛ) hM
+      ((Hecke₃ K μ μ₂ τ₁ τ₂ hp D d d' A A' P hP).2 g hDg) (by rw [ropAdj, hs])
+    rw [hf, e1]
+    have hBHS : IsHilbertSchmidt (P ∘L Rop μ g ∘L θ.U ∘L Λ) := by
+      have := (lHS.comp_left (ContinuousLinearMap.adjoint θ.U)).adjoint
+      rwa [← e3, ContinuousLinearMap.adjoint_adjoint] at this
+    obtain ⟨oγ, -, om⟩ := omMeas (K := K) T
+    have lout : ∀ x, l T (Quotient.out (mk (Gam K (2 + 2)) x)) = l T x := fun x => by
       obtain ⟨γ, hγ, e⟩ := out_mk x
-      simp only [Function.comp_apply, e, map_mul]
-      rw [kvγ _ ((θ.mem_gam γ).2 hγ)]
-    rw [this]
-    exact P.continuous.comp ((kvCont K (2 + 2) μ s).comp θ.e.continuous)
-  have m2 : StronglyMeasurable fun y : RightCosetSpace (Gam K (2 + 2)) => l T (θ.e (Quotient.out y)) := by
-    have := lm.comp_measurable hq.measurable
-    simpa only [Function.comp_def, lout] using this
-  have k₂m : StronglyMeasurable k₂ := StronglyMeasurable.ite om m1 m2
-  have k₂b : ∀ y, ‖k₂ y‖ ≤ max (‖P‖ * (C₄ * (C₃ * (C₅ * Real.exp (N₅ * T)) ^ c) ^ N₄)) B₂ := fun y => by
-    by_cases hy : Om T (Quotient.out y : G1 K (2 + 2))
-    · simp only [k₂, if_pos hy]
-      refine le_trans ?_ (le_max_left _ _)
-      refine (P.le_opNorm _).trans (mul_le_mul_of_nonneg_left ((b₄ _).trans (mul_le_mul_of_nonneg_left
-        (pow_le_pow_left₀ (q0 _).le ((hθ _).trans (mul_le_mul_of_nonneg_left
-        (pow_le_pow_left₀ (q0 _).le ((hb T _ hT).1 hy) _) hC₃)) _) hC₄)) (norm_nonneg _))
-    · simp only [k₂, if_neg hy]
-      exact (hB₂ _).trans (le_max_right _ _)
-  have bae : ∀ φ, (ContinuousLinearMap.adjoint (P ∘L Rop μ g ∘L θ.U ∘L Λ) φ : RightCosetSpace (Gam K (2 + 2)) → ℂ)
-      =ᵐ[quotientMeasure (Gam K (2 + 2)) μ] fun y => ⟪k₂ y, φ⟫_ℂ := fun φ => by
-    have t1 := twAdj K (2 + 2) μ θ ((Λ ∘L Rop μ s ∘L P) φ)
-    have t2 := hq.quasiMeasurePreserving.ae (lae φ)
-    have t3 := twAdj K (2 + 2) μ θ (Rop μ s (P φ))
-    have t4 := hq.quasiMeasurePreserving.ae ((ropAe K (2 + 2) μ s).1 (P φ))
-    have t5 : ∀ w : L2 μ, ∀ᵐ y ∂quotientMeasure (Gam K (2 + 2)) μ, Om T (Quotient.out y : G1 K (2 + 2)) →
-        (Λ w : RightCosetSpace (Gam K (2 + 2)) → ℂ) y = (w : RightCosetSpace (Gam K (2 + 2)) → ℂ) y := fun w => by
-      refine ae_q μ (MeasurableSet.imp om (measurableSet_eq_fun (Lp.stronglyMeasurable _).measurable
-        (Lp.stronglyMeasurable _).measurable)) ?_
-      filter_upwards [(lamRep K μ μ₂ τ₁ τ₂ hp D d d' A A' P Λ T hP hT hΛ).2.1 w] with x hx h
+      rw [e, lγ T γ hγ]
+    have kvout : ∀ x, UpperTheory.ConvolutionTheory.K.kv μ s (Quotient.out (mk (Gam K (2 + 2)) x)) = UpperTheory.ConvolutionTheory.K.kv μ s x := fun x => by
       obtain ⟨γ, hγ, e⟩ := out_mk x
-      rw [e, oγ γ hγ] at h
-      exact hx h
-    filter_upwards [t1, t2, t3, t4, t5 (ContinuousLinearMap.adjoint θ.U (Rop μ s (P φ)))] with y u1 u2 u3 u4 u5
-    by_cases hy : Om T (Quotient.out y : G1 K (2 + 2))
-    · simp only [k₂, if_pos hy]
-      rw [e2, u5 hy, u3, u4, kvout, hsa]
+      rw [e, kvγ γ hγ]
+    let k₂ : RightCosetSpace (Gam K (2 + 2)) → L2 μ := fun y =>
+      if Om T (Quotient.out y : G1 K (2 + 2)) then P (UpperTheory.ConvolutionTheory.K.kv μ s (θ.e (Quotient.out y))) else l T (θ.e (Quotient.out y))
+    have m1 : StronglyMeasurable fun y : RightCosetSpace (Gam K (2 + 2)) => P (UpperTheory.ConvolutionTheory.K.kv μ s (θ.e (Quotient.out y))) := by
+      refine Continuous.stronglyMeasurable ?_
+      rw [(isOpenQuotientMap_mk (Gam K (2 + 2))).isQuotientMap.continuous_iff]
+      have : ((fun y : RightCosetSpace (Gam K (2 + 2)) => P (UpperTheory.ConvolutionTheory.K.kv μ s (θ.e (Quotient.out y)))) ∘ mk (Gam K (2 + 2))) =
+          fun x => P (UpperTheory.ConvolutionTheory.K.kv μ s (θ.e x)) := by
+        funext x
+        obtain ⟨γ, hγ, e⟩ := out_mk x
+        simp only [Function.comp_apply, e, map_mul]
+        rw [kvγ _ ((θ.mem_gam γ).2 hγ)]
+      rw [this]
+      exact P.continuous.comp ((kvCont K (2 + 2) μ s).comp θ.e.continuous)
+    have m2 : StronglyMeasurable fun y : RightCosetSpace (Gam K (2 + 2)) => l T (θ.e (Quotient.out y)) := by
+      have := lm.comp_measurable hq.measurable
+      simpa only [Function.comp_def, lout] using this
+    have k₂m : StronglyMeasurable k₂ := StronglyMeasurable.ite om m1 m2
+    have k₂b : ∀ y, ‖k₂ y‖ ≤ max (‖P‖ * (C₄ * (C₃ * (C₅ * Real.exp (N₅ * T)) ^ c) ^ N₄)) B₂ := fun y => by
+      by_cases hy : Om T (Quotient.out y : G1 K (2 + 2))
+      · simp only [k₂, if_pos hy]
+        refine le_trans ?_ (le_max_left _ _)
+        refine (P.le_opNorm _).trans (mul_le_mul_of_nonneg_left ((b₄ _).trans (mul_le_mul_of_nonneg_left
+          (pow_le_pow_left₀ (q0 _).le ((hθ _).trans (mul_le_mul_of_nonneg_left
+          (pow_le_pow_left₀ (q0 _).le ((hb T _ hT).1 hy) _) hC₃)) _) hC₄)) (norm_nonneg _))
+      · simp only [k₂, if_neg hy]
+        exact (hB₂ _).trans (le_max_right _ _)
+    have bae : ∀ φ, (ContinuousLinearMap.adjoint (P ∘L Rop μ g ∘L θ.U ∘L Λ) φ : RightCosetSpace (Gam K (2 + 2)) → ℂ)
+        =ᵐ[quotientMeasure (Gam K (2 + 2)) μ] fun y => ⟪k₂ y, φ⟫_ℂ := fun φ => by
+      have t1 := twAdj K (2 + 2) μ θ ((Λ ∘L Rop μ s ∘L P) φ)
+      have t2 := hq.quasiMeasurePreserving.ae (lae φ)
+      have t3 := twAdj K (2 + 2) μ θ (Rop μ s (P φ))
+      have t4 := hq.quasiMeasurePreserving.ae ((ropAe K (2 + 2) μ s).1 (P φ))
+      have t5 : ∀ w : L2 μ, ∀ᵐ y ∂quotientMeasure (Gam K (2 + 2)) μ, Om T (Quotient.out y : G1 K (2 + 2)) →
+          (Λ w : RightCosetSpace (Gam K (2 + 2)) → ℂ) y = (w : RightCosetSpace (Gam K (2 + 2)) → ℂ) y := fun w => by
+        refine ae_q μ (MeasurableSet.imp om (measurableSet_eq_fun (Lp.stronglyMeasurable _).measurable
+          (Lp.stronglyMeasurable _).measurable)) ?_
+        filter_upwards [(lamRep K μ μ₂ τ₁ τ₂ hp D d d' A A' P Λ T hP hT hΛ).2.1 w] with x hx h
+        obtain ⟨γ, hγ, e⟩ := out_mk x
+        rw [e, oγ γ hγ] at h
+        exact hx h
+      filter_upwards [t1, t2, t3, t4, t5 (ContinuousLinearMap.adjoint θ.U (Rop μ s (P φ)))] with y u1 u2 u3 u4 u5
+      by_cases hy : Om T (Quotient.out y : G1 K (2 + 2))
+      · simp only [k₂, if_pos hy]
+        rw [e2, u5 hy, u3, u4, kvout, hsa]
+      · simp only [k₂, if_neg hy]
+        rw [e3, ContinuousLinearMap.comp_apply, u1, u2, lout]
+    refine ⟨isTraceClass_comp kHS (hBHS.comp_left M), fun y => ⟪k T (Quotient.out y), M (k₂ y)⟫_ℂ, ?_, ?_, fun y hy => ?_, fun y hy => ?_⟩
+    · refine Integrable.of_bound (km.inner (M.continuous.comp_stronglyMeasurable k₂m)).aestronglyMeasurable
+        (B₁ * (‖M‖ * max (‖P‖ * (C₄ * (C₃ * (C₅ * Real.exp (N₅ * T)) ^ c) ^ N₄)) B₂)) (Filter.Eventually.of_forall fun y => ?_)
+      exact (norm_inner_le_norm _ _).trans (mul_le_mul (hB₁ _) ((M.le_opNorm _).trans
+        (mul_le_mul_of_nonneg_left (k₂b y) (norm_nonneg _))) (norm_nonneg _) ((norm_nonneg _).trans (hB₁ 1)))
+    · exact traceKer _ _ M _ _ k₂ (MemLp.of_bound km.aestronglyMeasurable _ (Filter.Eventually.of_forall fun y => hB₁ _))
+        (MemLp.of_bound k₂m.aestronglyMeasurable _ (Filter.Eventually.of_forall k₂b)) kHS hBHS kae bae
+    · simp only [k₂, if_pos hy, kO T _ hy]
     · simp only [k₂, if_neg hy]
-      rw [e3, ContinuousLinearMap.comp_apply, u1, u2, lout]
-  refine ⟨isTraceClass_comp kHS (hBHS.comp_left M), fun y => ⟪k T (Quotient.out y), M (k₂ y)⟫_ℂ, ?_, ?_, fun y hy => ?_, fun y hy => ?_⟩
-  · refine Integrable.of_bound (km.inner (M.continuous.comp_stronglyMeasurable k₂m)).aestronglyMeasurable
-      (B₁ * (‖M‖ * max (‖P‖ * (C₄ * (C₃ * (C₅ * Real.exp (N₅ * T)) ^ c) ^ N₄)) B₂)) (Filter.Eventually.of_forall fun y => ?_)
-    exact (norm_inner_le_norm _ _).trans (mul_le_mul (hB₁ _) ((M.le_opNorm _).trans
-      (mul_le_mul_of_nonneg_left (k₂b y) (norm_nonneg _))) (norm_nonneg _) ((norm_nonneg _).trans (hB₁ 1)))
-  · exact traceKer _ _ M _ _ k₂ (MemLp.of_bound km.aestronglyMeasurable _ (Filter.Eventually.of_forall fun y => hB₁ _))
-      (MemLp.of_bound k₂m.aestronglyMeasurable _ (Filter.Eventually.of_forall k₂b)) kHS hBHS kae bae
-  · simp only [k₂, if_pos hy, kO T _ hy]
-  · simp only [k₂, if_neg hy]
-    have z0 := q0 (Quotient.out y)
-    have z1 := kb T _ hT hy
-    have z2 : ‖l T (θ.e (Quotient.out y))‖ ≤ C₂ * (C₃ * qht (Quotient.out y : G1 K (2 + 2)) ^ c) ^ N₂ :=
-      (lb T _ hT).trans (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (q0 _).le (hθ _) _) hC₂)
-    refine (norm_inner_le_norm _ _).trans ((mul_le_mul z1 ((M.le_opNorm _).trans
-      (mul_le_mul_of_nonneg_left z2 (norm_nonneg _))) (norm_nonneg _) (by positivity)).trans (le_of_eq ?_))
-    rw [mul_pow, pow_add, pow_mul]
-    field_simp
+      have z0 := q0 (Quotient.out y)
+      have z1 := kb T _ hT hy
+      have z2 : ‖l T (θ.e (Quotient.out y))‖ ≤ C₂ * (C₃ * qht (Quotient.out y : G1 K (2 + 2)) ^ c) ^ N₂ :=
+        (lb T _ hT).trans (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (q0 _).le (hθ _) _) hC₂)
+      refine (norm_inner_le_norm _ _).trans ((mul_le_mul z1 ((M.le_opNorm _).trans
+        (mul_le_mul_of_nonneg_left z2 (norm_nonneg _))) (norm_nonneg _) (by positivity)).trans (le_of_eq ?_))
+      rw [mul_pow, pow_add, pow_mul]
+      field_simp

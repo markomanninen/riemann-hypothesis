@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.PolynomialIntegralityJets
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.PolynomialIntegralityJets
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
+
+@[expose] public section
 
 open NumberField MvPowerSeries
 
@@ -16,10 +20,10 @@ section Formal
 variable {p : ℕ} [Fact p.Prime] {σ κ : Type}
 
 def dirDer [Fintype σ] (v : σ → ℂ_[p]) : MvPowerSeries σ ℂ_[p] →ₗ[ℂ_[p]] MvPowerSeries σ ℂ_[p] :=
-  ∑ k, v k • (pderiv ℂ_[p] k).toLinearMap
+  ∑ k, v k • (pderiv (R := ℂ_[p]) k).toLinearMap
 
 theorem dirDer_apply [Fintype σ] (v : σ → ℂ_[p]) (G : MvPowerSeries σ ℂ_[p]) :
-    dirDer v G = ∑ k, v k • pderiv ℂ_[p] k G := by
+    dirDer v G = ∑ k, v k • pderiv (R := ℂ_[p]) k G := by
   simp [dirDer, LinearMap.sum_apply]
 
 theorem dirDer_add [Fintype σ] (v w : σ → ℂ_[p]) : dirDer (v + w) = dirDer v + dirDer w := by
@@ -35,7 +39,7 @@ theorem jetAt_zero (F : MvPowerSeries κ ℂ_[p]) : jetAt F 0 = constantCoeff F 
   simp [jetAt]
 
 theorem jetAt_add_single (F : MvPowerSeries κ ℂ_[p]) (β : κ →₀ ℕ) (x : κ) :
-    jetAt F (β + Finsupp.single x 1) = jetAt (pderiv ℂ_[p] x F) β := by
+    jetAt F (β + Finsupp.single x 1) = jetAt (pderiv (R := ℂ_[p]) x F) β := by
   classical
   have key : ((β + Finsupp.single x 1).prod fun _ n => (n.factorial : ℂ_[p])) =
       (β.prod fun _ n => (n.factorial : ℂ_[p])) * ((β x : ℂ_[p]) + 1) := by
@@ -58,15 +62,16 @@ theorem constantCoeff_linAt [Fintype σ] [Fintype κ] (c : σ → κ → ℂ_[p]
   ModuliIntegralCharts.H1.ExpTieAlg.const_subst0 (linAt_const c) G
 
 theorem pderiv_linAt [Fintype σ] [Fintype κ] (c : σ → κ → ℂ_[p]) (G : MvPowerSeries σ ℂ_[p]) (x : κ) :
-    pderiv ℂ_[p] x (linAt c G) = linAt c (dirDer (fun k => c k x) G) := by
+    pderiv (R := ℂ_[p]) x (linAt c G) = linAt c (dirDer (fun k => c k x) G) := by
   classical
   have ha := ModuliIntegralCharts.H1.ExpTieAlg.hasSubst0 (linAt_const c)
   unfold linAt
   rw [ModuliIntegralCharts.H1.ExpTieAlg.pderiv_subst ha, dirDer_apply, ModuliIntegralCharts.H1.ExpTieAlg.subst_sum' ha]
   refine Finset.sum_congr rfl fun k _ => ?_
-  have : pderiv ℂ_[p] x (∑ y : κ, algebraMap ℂ_[p] (MvPowerSeries κ ℂ_[p]) (c k y) * X y) =
+  have : pderiv (R := ℂ_[p]) x (∑ y : κ, algebraMap ℂ_[p] (MvPowerSeries κ ℂ_[p]) (c k y) * X y) =
       algebraMap ℂ_[p] (MvPowerSeries κ ℂ_[p]) (c k x) := by
-    simp only [← Algebra.smul_def, map_sum, Derivation.map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← Algebra.smul_def, map_sum, Derivation.map_smul]
     rw [Finset.sum_eq_single x]
     · rw [pderiv_X_self, Algebra.algebraMap_eq_smul_one]
     · intro y _ hy
@@ -92,7 +97,7 @@ theorem jetsIntegral_linAt [Fintype σ] [Fintype κ] (c : σ → κ → ℂ_[p])
     obtain ⟨β, rfl⟩ : ∃ β, α = β + Finsupp.single x 1 := ⟨α - Finsupp.single x 1, (tsub_add_cancel_of_le hle).symm⟩
     rw [jetAt_add_single, pderiv_linAt]
     refine ih _ (hc x G hG) β ?_
-    rw [map_add, Finsupp.degree_single] at hn
+    rw [map_add (f := _), Finsupp.degree_single] at hn
     omega
 
 end Formal
@@ -177,7 +182,7 @@ theorem keeps_add {v w : D.what₂.Tau × Fin N' × Fin N → ℂ_[p]} (hv : Kee
   have h2 := hw G hG
   rw [jetsInt_iff] at h1 h2 ⊢
   intro l hl
-  rw [dirDer_add, LinearMap.add_apply, map_add, map_add]
+  rw [dirDer_add, LinearMap.add_apply, map_add (f := _), map_add (f := _)]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (h1 l hl) (h2 l hl))
 
 theorem keeps_smul {c : ℂ_[p]} (hc : ‖c‖ ≤ 1) {v : D.what₂.Tau × Fin N' × Fin N → ℂ_[p]} (hv : Keeps D lam Y v) :
@@ -195,31 +200,6 @@ section Eigen
 
 variable (D : D7) {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) {N N' : ℕ}
   {L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)} {L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)}
-
-theorem keeps_mmM (M : IntermediateField ℚ ℂ) [NumberField M] (hM : ∀ τ x, embT D τ x ∈ M)
-    {A : Matrix (Fin N') (Fin N) D.host.E} (hA : A ∈ homL D L L') {m : D.what₂.Tau → M} (hm : m ∈ mmM D M) :
-    Keeps D lam (YYl D L L') fun k => lamC lam (m k.1 : ℂ) * vecY D lam A k := by
-  obtain ⟨g, hg⟩ := exists_lamHom lam (algebraMap M ℂ)
-  have hg' : ∀ x : M, lamC lam (x : ℂ) = g x := hg
-  simp only [hg']
-  induction hm using Submodule.span_induction with
-  | mem v hv =>
-    obtain ⟨a, ha, rfl⟩ := hv
-    have hy : a • A ∈ YYl D L L' := Submodule.subset_span ⟨a, ha, A, hA, rfl⟩
-    convert keeps_vecY D lam _ hy using 2 with k
-    obtain ⟨ρ, hρ⟩ := exists_lamHom lam (embT D k.1)
-    have e : ((TaylorLogMetric.liftM M (embT D k.1 a) : M) : ℂ) = embT D k.1 a := by rw [TaylorLogMetric.liftM, dif_pos (hM _ _)]
-    rw [← hg', e]
-    simp only [vecY, tauEmb, hρ, Matrix.smul_apply, smul_eq_mul]
-    rw [map_mul]
-  | zero => convert keeps_zero D lam (YYl D L L') using 2; simp
-  | add v w _ _ hv hw => convert keeps_add D lam _ hv hw using 2; simp [add_mul]
-  | smul c v _ hv =>
-    have hc : ‖g (c : M)‖ ≤ 1 :=
-      GlobalTheory.SplitEmbSep.norm_le_one_of_isIntegral (map_isIntegral_int g c.isIntegral_coe)
-    convert keeps_smul D lam _ hc hv using 2 with k
-    have : (c • v) k.1 = (c : M) * v k.1 := rfl
-    rw [this, map_mul, Pi.smul_apply, smul_eq_mul, mul_assoc]
 
 theorem exists_smul_mem_homL (ρ : D.host.E →+* ℂ_[p]) (hL : L.FG) {P : Matrix (Fin N) (Fin N) D.host.E}
     {P' : Matrix (Fin N') (Fin N') D.host.E} (hP : LocBasisW D ρ L P) (hP' : LocBasisW D ρ L' P') (a : Fin N) (b : Fin N') :
@@ -279,68 +259,6 @@ theorem exists_smul_mem_homL (ρ : D.host.E →+* ℂ_[p]) (hL : L.FG) {P : Matr
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Finset.mul_sum, Finset.sum_mul]
     exact Finset.sum_congr rfl fun j _ => by ring
 
-theorem keeps_coordChange (M : IntermediateField ℚ ℂ) [NumberField M] (hM : ∀ τ x, embT D τ x ∈ M)
-    (dg : D.what₂.Tau → ℂ) (hdg : ∀ τ, ∃ s : M, (s : ℂ) = dg τ ∧ ellT D M τ = Submodule.span (𝓞 M) {s})
-    (c0 : D.what₂.Tau → ℂ_[p]) (hc0 : ∀ τ, ‖c0 τ‖ = 1) (hL : L.FG)
-    {P : D.what₂.Tau → Matrix (Fin N) (Fin N) D.host.E} {P' : D.what₂.Tau → Matrix (Fin N') (Fin N') D.host.E}
-    (hP : ∀ τ, LocBasisW D (tauEmb D lam τ) L (P τ)) (hP' : ∀ τ, LocBasisW D (tauEmb D lam τ) L' (P' τ))
-    (x : (Bool × G.HH D) × Fin N × Fin N') :
-    Keeps D lam (YYl D L L') fun k => coordChange D lam (fun τ => c0 τ * lamC lam (dg τ)) P P' k x := by
-  classical
-  set τ := tauPl D x.1 with hτ
-  obtain ⟨ρ, hρ⟩ := exists_lamHom lam (embT D τ)
-  have hρ' : tauEmb D lam τ = ρ := funext hρ
-  obtain ⟨s, hs, hA⟩ := exists_smul_mem_homL D ρ hL (hρ' ▸ hP τ) (hρ' ▸ hP' τ) x.2.1 x.2.2
-  obtain ⟨g, hg, hell⟩ := hdg τ
-  have hm : g ∈ ellT D M τ := hell ▸ Submodule.mem_span_singleton_self g
-  have hk := keeps_mmM D lam M hM hA (Submodule.mem_comap.1 hm)
-  have hs0 : ρ s ≠ 0 := by
-    intro h
-    rw [h, norm_zero] at hs
-    exact zero_ne_one hs
-  have hn : ‖c0 τ * (ρ s)⁻¹‖ ≤ 1 := by rw [norm_mul, norm_inv, hs, hc0]; simp
-  have hinv : ((P τ).map ρ)⁻¹ = ((P τ)⁻¹).map ρ := by
-    apply Matrix.inv_eq_left_inv
-    rw [← Matrix.map_mul, Matrix.nonsing_inv_mul _ (Ne.isUnit (hP τ).1), Matrix.map_one _ (map_zero ρ) (map_one ρ)]
-  convert keeps_smul D lam _ hn hk using 2 with k
-  obtain ⟨τ', i, j⟩ := k
-  simp only [coordChange, Pi.smul_apply, smul_eq_mul, LinearMap.single_apply, ← hτ]
-  split_ifs with h
-  · subst h
-    simp only [Pi.single_eq_same, hg, vecY, hρ', hinv, Matrix.map_apply, Matrix.of_apply, map_mul]
-    field_simp
-  · rw [Pi.single_eq_of_ne' h]
-    have : lamC lam 0 = 0 := by rw [lamC, dif_pos (zero_mem _)]; exact map_zero lam
-    simp [this]
-
 end Eigen
-
-theorem jetInt_at (D : D7) (Dx : DivX D) (Tw : TwForms D) (E : KerEnt D Dx Tw)
-    (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Formalism.L2.Ker.Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ)
-    (O : ∀ u μ, GL3Theta.LiftObj D (D.chTw u μ))
-    (hInt : B.IntP χ) (hComb : GL3Theta.kerComb D cc δ (B.eNat χ)) :
-    JetInt_at D Dx Tw E cc δ B χ O := by
-  intro _ u μ hLev hKer w hw hd hSer i hi c c'
-  have hj : JetsIntegral (E.Th u μ w i c c') := by
-    obtain ⟨P, hP, hTh⟩ := hSer
-    obtain ⟨c0, hc0, hE⟩ := hTh i hi c c'
-    have hev : ∀ j, Even (D.R.N j) := fun j => D.R.k_even.add ((D.R.t_odd.add_one).mul_left j)
-    have hAdm : admitted D _ _ ((O u μ).lat i c).1 ((O u μ).lat (i + 1) c').1 :=
-      ⟨hev _, hev _, ((O u μ).lat i c).2, ((O u μ).lat (i + 1) c').2⟩
-    have hC := hComb _ _ _ _ _ _ hAdm ((hKer i hi).1 c c') _ (E.lam w) ((not_mem_S hLev w).1 hw)
-    have hJ := ((hInt _ (E.lam w) _ _ _ _ hAdm).1 hd _ hC).2.1
-    obtain ⟨M, _, hM, hdg⟩ := (O u μ).dgen_gen
-    rw [hE]
-    exact jetsIntegral_linAt _ _ (fun _ h => jetsInt_const D _ _ h)
-      (fun x => keeps_coordChange D (E.lam w) M hM _ hdg c0 hc0 ((O u μ).lat i c).2.1
-        (hP i hi.le c) (hP (i + 1) hi c') x) _ hJ
-  exact ⟨hj, fun P => polyIntegral_applyAt0 _ _ _ _ hj P, fun I => polyIntegral_applyAt0 _ _ _ _ hj _⟩
-
-theorem jetInt_at_of_famTie (D : D7) (Dx : DivX D) (Tw : TwForms D) (E : KerEnt D Dx Tw)
-    (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Formalism.L2.Ker.Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ)
-    (O : ∀ u μ, GL3Theta.LiftObj D (D.chTw u μ))
-    (h : FamTie D cc δ χ → B.IntP χ ∧ GL3Theta.kerComb D cc δ (B.eNat χ)) :
-    JetInt_at D Dx Tw E cc δ B χ O :=
-  fun hF => jetInt_at D Dx Tw E cc δ B χ O (h hF).1 (h hF).2 hF
 
 end GlobalTheory.Proof.DirectionalDerivative

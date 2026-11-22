@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
-import GroundTheory.ProfiniteCohomology.GaloisModules.CoeGalRootsOfUnityHomApply
-import GroundTheory.ProfiniteCohomology.Colimit
-import GroundTheory.ProfiniteCohomology.TorsionDualDefs
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.CupProducts
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
-import GroundTheory.ProfiniteCohomology.Procyclic
-import GroundTheory.ProfiniteCohomology.FilteredHomology
-import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+public import GroundTheory.ProfiniteCohomology.GaloisModules.CoeGalRootsOfUnityHomApply
+public import GroundTheory.ProfiniteCohomology.Colimit
+public import GroundTheory.ProfiniteCohomology.TorsionDualDefs
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.CupProducts
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+public import GroundTheory.ProfiniteCohomology.Procyclic
+public import GroundTheory.ProfiniteCohomology.FilteredHomology
+public import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -23,8 +28,6 @@ section Triv
 variable (G : Type) [Group G] (A : Type) [AddCommGroup A]
 
 abbrev trivRep : Rep.{0} (ULift.{0} ℤ) G := Rep.of (intRep.{0} (1 : G →* AddMonoid.End A))
-
-theorem trivRep_ρ_apply (g : G) (a : A) : (trivRep G A).ρ g a = a := rfl
 
 instance isDiscreteRep_trivRep [TopologicalSpace G] [IsTopologicalGroup G] :
     IsDiscreteRep (trivRep G A) :=
@@ -91,8 +94,8 @@ theorem coe_divFunAction_apply (g : G) (f : divFun φ A) (i : I) (x : G) :
     ((divFunAction φ A g f : divFun φ A) : I → G → A) i x = (f : I → G → A) i (x * g) :=
   rfl
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem exists_mem_nhds_one_forall_mul_eq {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [CompactSpace G] {X : Type*} {f : G → X} (hf : IsLocallyConstant f) :
     ∃ V ∈ nhds (1 : G), ∀ x : G, ∀ v ∈ V, f (x * v) = f x := by
@@ -158,9 +161,6 @@ def divFunMap {B : Type} [AddCommGroup B] (g : A →+ B) : divFunRep φ A ⟶ di
       map_add' := fun f₁ f₂ => Subtype.ext (funext fun _ => funext fun _ => map_add g _ _) },
     fun _ => LinearMap.ext fun _ => rfl⟩
 
-theorem coe_divFunMap_hom_apply {B : Type} [AddCommGroup B] (g : A →+ B) (f : divFun φ A) :
-    (((divFunMap φ A g).hom f : divFun φ B) : I → G → B) = fun i x => g ((f : I → G → A) i x) := rfl
-
 abbrev ratToQZ : ℚ →+ QZ := QuotientAddGroup.mk' (AddSubgroup.zmultiples (1 : ℚ))
 
 theorem ratToQZ_eq_zero_iff (q : ℚ) : ratToQZ q = 0 ↔ ∃ n : ℤ, (n : ℚ) = q := by
@@ -189,9 +189,9 @@ instance isDiscreteRep_divFunSequence_X₂ [CompactSpace G] : IsDiscreteRep (div
 instance isDiscreteRep_divFunSequence_X₃ [CompactSpace G] : IsDiscreteRep (divFunSequence φ).X₃ :=
   inferInstanceAs (IsDiscreteRep (divFunRep φ QZ))
 
-theorem divFunSequence_shortExact : (divFunSequence φ).ShortExact where
-  exact := by
-    apply shortComplex_exact_of_forall_exists
+theorem divFunSequence_shortExact : (divFunSequence φ).ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ?_ ?_
+  · apply shortComplex_exact_of_forall_exists
     intro f₀ hf
     let f : divFun φ ℚ := f₀
     have hint : ∀ i x, ((⌊(f : I → G → ℚ) i x⌋ : ℤ) : ℚ) = (f : I → G → ℚ) i x := fun i x => by
@@ -212,12 +212,14 @@ theorem divFunSequence_shortExact : (divFunSequence φ).ShortExact where
     · apply Subtype.ext
       funext i x
       exact hint i x
-  mono_f := (Rep.mono_iff_injective _).2 fun f₁ f₂ h => by
+  · apply (Rep.mono_iff_injective _).2
+    intro f₁ f₂ h
     apply Subtype.ext
     funext i x
     have := congrArg (fun f : divFun φ ℚ => (f : I → G → ℚ) i x) h
     exact Int.cast_injective this
-  epi_g := (Rep.epi_iff_surjective _).2 fun f₀ => by
+  · apply (Rep.epi_iff_surjective _).2
+    intro f₀
     classical
     let f : divFun φ QZ := f₀
     let sec : QZ → ℚ := fun q => if q = 0 then 0 else Function.surjInv ratToQZ_surjective q
@@ -272,15 +274,15 @@ theorem isZero_cohomology_of_bijective_nsmul_ulift (M : Rep.{0} (ULift.{0} ℤ) 
   rw [map_zero, cohomologyMap_nsmul_id_apply]
   exact hx
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem exists_coprime_smul_cohomology_eq_zero (M : Rep.{0} (ULift.{0} ℤ) G) [IsDiscreteRep M]
     (ℓ : ℕ) (hM : ∀ m : M.V, ∃ N : ℕ, N.Coprime ℓ ∧ N • m = 0) (n : ℕ) (x : cohomology M n) :
     ∃ N : ℕ, N.Coprime ℓ ∧ N • x = 0 := by
   classical
   obtain ⟨z, rfl⟩ := cohomologyπ_surjective M n x
-  set c := cochainOf M (cocycleι M n z) with hc
-  have hlc : IsLocallyConstant c := (cocycleι M n z : locallyConstantCochains M n).2
+  let c := cochainOf (A := M) (cocycleι (A := M) (p := n) z)
+  have hlc : IsLocallyConstant c := isLocallyConstant_cochainOf _
   have hfin : (Set.range c).Finite := hlc.range_finite
   choose N hNc hNm using hM
   refine ⟨∏ m ∈ hfin.toFinset, N m, Nat.Coprime.prod_left fun m _ => hNc m, ?_⟩
@@ -295,25 +297,14 @@ theorem exists_coprime_smul_cohomology_eq_zero (M : Rep.{0} (ULift.{0} ℤ) G) [
     rw [hd, mul_comm, ← smul_smul, hNm, smul_zero]
   rw [← map_nsmul, hz, map_zero]
 
-omit [TotallyDisconnectedSpace G] in
-
-theorem eq_zero_of_pow_smul_eq_zero_of_coprime (M : Rep.{0} (ULift.{0} ℤ) G) [IsDiscreteRep M] (ℓ : ℕ)
-    (hM : ∀ m : M.V, ∃ N : ℕ, N.Coprime ℓ ∧ N • m = 0) (n : ℕ) (x : cohomology M n) (k : ℕ)
-    (hx : ℓ ^ k • x = 0) : x = 0 := by
-  obtain ⟨N, hN, hNx⟩ := exists_coprime_smul_cohomology_eq_zero M ℓ hM n x
-  have h1 : addOrderOf x ∣ N := addOrderOf_dvd_of_nsmul_eq_zero hNx
-  have h2 : addOrderOf x ∣ ℓ ^ k := addOrderOf_dvd_of_nsmul_eq_zero hx
-  have h3 : addOrderOf x = 1 :=
-    Nat.Coprime.eq_one_of_dvd (Nat.Coprime.coprime_dvd_left h1 (hN.pow_right k)) h2
-  exact AddMonoid.addOrderOf_eq_one_iff.1 h3
 
 variable {I : Type} {H : I → Type} [∀ i, Group (H i)] [∀ i, TopologicalSpace (H i)]
   [∀ i, IsTopologicalGroup (H i)] [∀ i, CompactSpace (H i)] [∀ i, TotallyDisconnectedSpace (H i)]
   (φ : ∀ i, H i →* G) (hφ : ∀ i, Continuous (φ i))
 
+
 omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] [∀ i, TopologicalSpace (H i)]
   [∀ i, IsTopologicalGroup (H i)] [∀ i, CompactSpace (H i)] [∀ i, TotallyDisconnectedSpace (H i)] in
-
 theorem bijective_nsmul_divFun_rat {n : ℕ} (hn : n ≠ 0) :
     Function.Bijective (fun f : divFun φ ℚ => n • f) := by
   have hn' : (n : ℚ) ≠ 0 := by exact_mod_cast hn
@@ -340,9 +331,9 @@ theorem bijective_nsmul_divFun_rat {n : ℕ} (hn : n ≠ 0) :
       simp only [AddSubgroup.coe_nsmul, Pi.smul_apply, nsmul_eq_mul]
       field_simp
 
+
 omit [∀ i, TopologicalSpace (H i)] [∀ i, IsTopologicalGroup (H i)] [∀ i, CompactSpace (H i)]
   [∀ i, TotallyDisconnectedSpace (H i)] in
-
 theorem isZero_cohomology_one_divFunRep_int : IsZero (cohomology (divFunRep φ ℤ) 1) := by
   have hS := divFunSequence_shortExact φ
   have h1 : Subsingleton (cohomology (divFunSequence φ).X₂ 1) :=
@@ -395,8 +386,8 @@ section TrivSeq
 
 variable (Γ : Type) [Group Γ]
 
-omit [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [CompactSpace G] [TotallyDisconnectedSpace G] in
 def trivMap {A B : Type} [AddCommGroup A] [AddCommGroup B] (g : A →+ B) :
     trivRep Γ A ⟶ trivRep Γ B :=
   Rep.ofHom ⟨uliftIntLinearMap g, fun _ => LinearMap.ext fun _ => rfl⟩
@@ -409,14 +400,16 @@ def trivSequence : ShortComplex (Rep.{0} (ULift.{0} ℤ) Γ) :=
     intro n
     exact (ratToQZ_eq_zero_iff _).2 ⟨(n : ℤ), rfl⟩)
 
-theorem trivSequence_shortExact : (trivSequence Γ).ShortExact where
-  exact := by
-    apply shortComplex_exact_of_forall_exists
+theorem trivSequence_shortExact : (trivSequence Γ).ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ?_ ?_
+  · rw [← ShortComplex.exact_map_iff_of_faithful _
+      (forget₂ (Rep.{0} (ULift.{0} ℤ) Γ) (ModuleCat.{0} (ULift.{0} ℤ))),
+      ShortComplex.moduleCat_exact_iff]
     intro q hq
     obtain ⟨n, hn⟩ := (ratToQZ_eq_zero_iff _).1 hq
     exact ⟨n, hn⟩
-  mono_f := (Rep.mono_iff_injective _).2 fun a b h => Int.cast_injective (α := ℚ) h
-  epi_g := (Rep.epi_iff_surjective _).2 ratToQZ_surjective
+  · exact (Rep.mono_iff_injective _).2 (Int.cast_injective (α := ℚ))
+  · exact (Rep.epi_iff_surjective _).2 ratToQZ_surjective
 
 variable [TopologicalSpace Γ] [IsTopologicalGroup Γ]
 

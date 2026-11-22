@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoitouTate.RealEvenTau
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoitouTate.RealEvenTau
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,8 +26,8 @@ section Hypotheses
 variable [Fintype S] {N : ℕ} [NeZero N]
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((N : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S) (hev : Even N)
 
-include hS hev in
 
+include hS hev in
 theorem gsTauBijective_of_le (W₀ : OpenSubgroup (galUnramifiedOutside K.1 ℚ̄ S))
     (hW₀ : ∀ σ ∈ W₀, ∀ ζ : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ, ζ ^ (2 * N) = 1 →
       σ (ζ : maxUnramifiedOutside K.1 ℚ̄ S) = ζ)
@@ -30,9 +35,9 @@ theorem gsTauBijective_of_le (W₀ : OpenSubgroup (galUnramifiedOutside K.1 ℚ�
   obtain ⟨L, _, hL, rfl⟩ := exists_gsOpenSubgroup_eq K S U
   exact gsTauBijective_gsOpenSubgroup S ιs hS hev hL W₀ hW₀ hU
 
+
 set_option maxHeartbeats 1000000 in
 include hS hev in
-
 theorem bijective_tateCompactDualityMap_coind_gs_of_even
     (t : tateCompactCohomologyRes (gsFinFamily S ιs) (gsRealFamily S ιr) (gsRoots S N) 3 →+ ZMod N)
     (ht : Function.Surjective t) (W₀ : OpenSubgroup (galUnramifiedOutside K.1 ℚ̄ S))
@@ -57,8 +62,8 @@ theorem bijective_tateCompactDualityMap_coind_gs_of_even
     (tateCoresTrace (gsFinFamily S ιs) (gsRealFamily S ιr) U hfree t) hτ h
   convert hb using 1
 
-include hS hev in
 
+include hS hev in
 theorem exists_tateCompactDualityHypotheses_gs_of_even
     (t : tateCompactCohomologyRes (gsFinFamily S ιs) (gsRealFamily S ιr) (gsRoots S N) 3 →+ ZMod N)
     (ht : Function.Surjective t) :
@@ -77,8 +82,8 @@ theorem exists_tateCompactDualityHypotheses_gs_of_even
         (zmodRep.{0} (U : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)) N))) := isDiscreteRep_dualRep _ _
     convert bijective_tateCompactDualityMap_coind_gs_of_even S ιr ιs hS hev t ht W₀ hW₀ U hU h using 1
 
-include hS hev in
 
+include hS hev in
 theorem bijective_tateCompactDualityMap_gs_of_even
     (t : tateCompactCohomologyRes (gsFinFamily S ιs) (gsRealFamily S ιr) (gsRoots S N) 3 →+ ZMod N)
     (ht : Function.Surjective t) (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S))
@@ -87,8 +92,8 @@ theorem bijective_tateCompactDualityMap_gs_of_even
   (exists_tateCompactDualityHypotheses_gs_of_even S ιr ιs hS hev t ht).elim fun _ H =>
     H.bijective_tateCompactDualityMap M hM h hs
 
-include hS hev in
 
+include hS hev in
 theorem gsEvenTatePoitouTateHypotheses :
     TatePoitouTateHypotheses (gsFinFamily S ιs) (gsRealFamily S ιr) (gsRoots S N)
       (gsTrace S ιr ιs N) (gsLocalInvRootsQZ S ιs N) (gsRealInvRootsQZ S ιr N) := by

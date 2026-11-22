@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.DevissageDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.DevissageDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -137,9 +142,9 @@ theorem tateCompactDualityMap_cohomologyMap {A B : Rep.{u} k G} [IsDiscreteRep A
     (x : cohomology A r) (y : tateCompactCohomologyRes φ ψ (dualRep D B) s) :
     tateCompactDualityMap φ ψ D h t B ((cohomologyMap f r).hom x) y =
       tateCompactDualityMap φ ψ D h t A x ((tateCompactCohomologyResMap φ ψ (dualMap D f) s).hom y) := by
-  rw [tateCompactDualityMap_apply, tateCompactDualityMap_apply,
-    tateCompactCupRes_tateCompactCohomologyResMap φ ψ (dualEvalPairing D A) (dualEvalPairing D B)
-      (dualMap D f) f (tensorHom_dualEvalPairing D f)]
+  rw [tateCompactDualityMap_apply, tateCompactDualityMap_apply]
+  exact congrArg t (tateCompactCupRes_tateCompactCohomologyResMap φ ψ (dualEvalPairing D A)
+    (dualEvalPairing D B) (dualMap D f) f (tensorHom_dualEvalPairing D f) _ y x).symm
 
 theorem bijective_tateCompactDualityMap_of_sum {J : Type*} [Fintype J] (X : J → Rep.{u} k G)
     [∀ j, IsDiscreteRep (X j)] [∀ j, IsDiscreteRep (dualRep D (X j))] (P : Rep.{u} k G)
@@ -181,8 +186,10 @@ theorem bijective_tateCompactDualityMap_of_sum {J : Type*} [Fintype J] (X : J �
       (χ.comp (tateCompactCohomologyResMap φ ψ (dualMap D (p j)) s).hom.toAddMonoidHom)
     refine ⟨∑ j, (cohomologyMap (i j) r).hom (a j), ?_⟩
     ext y
-    rw [map_sum, AddMonoidHom.finsetSum_apply]
-    conv_rhs => rw [← hdual y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, AddMonoidHom.finsetSum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← hdual y, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [tateCompactDualityMap_cohomologyMap, ha j]
     rfl

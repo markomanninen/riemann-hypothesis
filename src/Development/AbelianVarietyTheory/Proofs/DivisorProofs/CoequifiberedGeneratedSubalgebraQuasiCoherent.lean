@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubNatCompSubIncl
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubNatCompSubIncl
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits Opposite GlobalTheory.QcSub
 
@@ -8,10 +12,10 @@ theorem isLocalizationAway_subring {A A' : Type} [CommRing A] [CommRing A'] (ρ 
     (S : Subring A) (S' : Subring A') (hρ : ∀ a ∈ S, ρ a ∈ S') (s : A) (hs : s ∈ S)
     (hloc : letI := ρ.toAlgebra; IsLocalization.Away s A')
     (hu : ∃ v ∈ S', ρ s * v = 1) (hd : ∀ a : A, ρ a ∈ S' → ∃ m : ℕ, s ^ m * a ∈ S) :
-    letI := (ρ.restrict S S' hρ).toAlgebra
-    IsLocalization.Away (⟨s, hs⟩ : S) S' := by
-  letI := ρ.toAlgebra
-  letI := (ρ.restrict S S' hρ).toAlgebra
+    (letI := (ρ.restrict S S' hρ).toAlgebra
+     IsLocalization.Away (⟨s, hs⟩ : S) S') := by
+  let := ρ.toAlgebra
+  let := (ρ.restrict S S' hρ).toAlgebra
   refine .mk _ ?_ (fun z ↦ ?_) fun a b hab ↦ ?_
   · obtain ⟨v, hv, hsv⟩ := hu
     exact .of_mul_eq_one (⟨v, hv⟩ : S') (Subtype.ext hsv)
@@ -40,7 +44,7 @@ theorem coequifibered_subNat (X : Scheme.{0}) (F : X.Opensᵒᵖ ⥤ CommRingCat
     (subNat F α V T).Coequifibered := by
   rw [Scheme.AffineZariskiSite.coequifibered_iff_forall_isLocalizationAway]
   intro U f
-  have hloc := isLocalizationAway F α hα U.2 f
+  have hloc := Scheme.AffineZariskiSite.coequifibered_iff_forall_isLocalizationAway.mp hα U f
   have hnat : (F.map (homOfLE (X.basicOpen_le f)).op).hom ((α.app (op U.1)).hom f) =
       (α.app (op (X.basicOpen f))).hom ((X.presheaf.map (homOfLE (X.basicOpen_le f)).op).hom f) := by
     have := congr($(α.naturality (homOfLE (X.basicOpen_le f)).op).hom f)

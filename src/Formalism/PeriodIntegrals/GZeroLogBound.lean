@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.PrincipalHermitianLattice
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.PrincipalHermitianLattice
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.LocalisedSmooth
 
@@ -120,8 +124,8 @@ theorem isLocalization_adjoin {Ω : Type} [Field Ω] [CharZero Ω] (A : Subalgeb
 
 end GlobalTheory.CompanionTheory.Ar.LocalisedSmooth
 
-open GlobalTheory.CompanionTheory.Ar.LocalisedSmooth in
 
+open GlobalTheory.CompanionTheory.Ar.LocalisedSmooth in
 theorem GlobalTheory.CompanionTheory.Ar.LocalisedSmooth.smooth_localised
     (Ω₀ Ω : Type) [Field Ω₀] [Field Ω] [CharZero Ω₀] [CharZero Ω] [Algebra Ω₀ Ω]
     (A₀ : Subalgebra ℤ Ω₀) (A₁ : Subalgebra ℤ Ω) (φ : A₀ →+* A₁)

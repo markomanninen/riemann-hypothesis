@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial in
 private lemma spectrum_nonempty_of_countable_rank {V : Type} [AddCommGroup V] [_root_.Module ℂ V]
@@ -31,16 +35,18 @@ private lemma spectrum_nonempty_of_countable_rank {V : Type} [AddCommGroup V] [_
     rw [this, hR, mul_one]
   have hp : aeval T p v = 0 := by
     have h1 := congrArg (aeval T (∏ j ∈ s, (X - C j))) hm
-    rw [map_zero, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum] at h1
     rw [← h1]
-    simp only [p, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun a ha => ?_
     rw [map_mul, aeval_C, ← key a ha, map_smul]
     simp [Module.End.mul_apply, Module.algebraMap_end_apply]
   have hp0 : p ≠ 0 := by
     intro h0
     have h1 : eval i p = m i * ∏ j ∈ s.erase i, (i - j) := by
-      simp only [p, eval_finset_sum, eval_mul, eval_C]
+      simp only [p, Polynomial.eval_finsetSum, eval_mul, eval_C]
       rw [Finset.sum_eq_single_of_mem i hi]
       · simp [q, eval_prod]
       · intro b hb hbi
@@ -111,7 +117,7 @@ theorem UpperTheory.Reformulated.B.DYhd6.main :
     let e : V →ₗ[B] V :=
       { toFun := fun x => a • x - d x
         map_add' := fun x y => by
-          rw [smul_add, d.map_add]
+          rw [smul_add, map_add d x y]
           abel
         map_smul' := fun b x => by
           simp only [RingHom.id_apply]

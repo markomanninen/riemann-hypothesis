@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.SquareNormBound.sq_norm_le :
     ∀ {m n : ℕ} (x : Fin m → Fin n → ℂ),

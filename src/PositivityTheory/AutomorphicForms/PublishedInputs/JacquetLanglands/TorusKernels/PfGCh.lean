@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,10 +11,12 @@ open scoped NNReal
 namespace UpperTheory.Esk.CharacterExpansionLemmas
 
 theorem key (ν : Valuation ℂ ℝ≥0) (τ δ : ℂ) (hτ : ν τ ≤ 1) (hδ : ν δ ≤ 1) :
-    ∀ n, ν (ch τ δ n) ≤ 1 ∧ ν (ch τ δ (n + 1)) ≤ 1 ∧ ν (ch τ δ (n + 1) - τ ^ n) ≤ ν δ
-  | 0 => by simp [ch]
-  | n + 1 => by
-    obtain ⟨h0, h1, h2⟩ := key ν τ δ hτ hδ n
+    ∀ n, ν (ch τ δ n) ≤ 1 ∧ ν (ch τ δ (n + 1)) ≤ 1 ∧ ν (ch τ δ (n + 1) - τ ^ n) ≤ ν δ := by
+  intro n
+  induction n with
+  | zero => simp [ch]
+  | succ n ih =>
+    obtain ⟨h0, h1, h2⟩ := ih
     have e : ch τ δ (n + 2) = τ * ch τ δ (n + 1) - δ * ch τ δ n := rfl
     have e2 : ch τ δ (n + 2) - τ ^ (n + 1) = τ * (ch τ δ (n + 1) - τ ^ n) - δ * ch τ δ n := by
       rw [e]; ring

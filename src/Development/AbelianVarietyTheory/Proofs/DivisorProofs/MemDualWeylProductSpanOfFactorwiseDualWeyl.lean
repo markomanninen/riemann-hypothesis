@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockSub
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueDualWeylWeightProjector
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockSub
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueDualWeylWeightProjector
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Pj GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.ExpTie GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative Formalism.CohomologicalDescent.LogSmallConstantBounds Formalism.CohomologicalDescent.ShortWeightBounds Formalism.CohomologicalDescent.LD Formalism.RankGapBounds.FormsTensorLocalization
 open MvPolynomial Formalism.GradedWeylDivisibility GlobalTheory.HighWtEmb
 
@@ -14,12 +19,12 @@ variable {k : Type} [Field k]
 
 def mr {σ A B : Type} [CommRing A] [Algebra k A] [CommRing B] [Algebra k B] (L : A →ₗ[k] B)
     (F : MvPolynomial σ A) : MvPolynomial σ B :=
-  ∑ m ∈ F.support, monomial m (L (coeff m F))
+  ∑ m ∈ F.support, monomial m (L (AddMonoidAlgebra.coeff F m))
 
 section
 variable {σ A B : Type} [CommRing A] [Algebra k A] [CommRing B] [Algebra k B] (L : A →ₗ[k] B)
 
-theorem coeff_mr (F : MvPolynomial σ A) (m : σ →₀ ℕ) : coeff m (mr L F) = L (coeff m F) := by
+theorem coeff_mr (F : MvPolynomial σ A) (m : σ →₀ ℕ) : AddMonoidAlgebra.coeff (mr L F) m = L (AddMonoidAlgebra.coeff F m) := by
   classical
   simp only [mr, coeff_sum, coeff_monomial]
   rw [Finset.sum_ite_eq']
@@ -43,9 +48,10 @@ theorem mr_map_mul (q : MvPolynomial σ k) (F : MvPolynomial σ A) :
     mr L (map (algebraMap k A) q * F) = map (algebraMap k B) q * mr L F := by
   classical
   ext n
-  simp only [coeff_mr, coeff_mul, coeff_map, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coeff_mr, coeff_mul, coeff_map, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
-  rw [← Algebra.smul_def (coeff x.1 q) (coeff x.2 F), LinearMap.map_smul, Algebra.smul_def]
+  rw [← Algebra.smul_def (AddMonoidAlgebra.coeff q x.1) (AddMonoidAlgebra.coeff F x.2), LinearMap.map_smul, Algebra.smul_def]
 end
 
 theorem mr_C_mul_map {σ A : Type} [CommRing A] [Algebra k A] (L : A →ₗ[k] k) (c : A) (h : MvPolynomial σ k) :
@@ -60,7 +66,7 @@ theorem commAlgEquiv_monomial_one {S₁ S₂ : Type} (m' : S₁ →₀ ℕ) :
   simp only [Finsupp.prod, map_prod, map_pow, commAlgEquiv_X]
 
 theorem coeff_coeff_commAlgEquiv {S₁ S₂ : Type} (F : MvPolynomial S₁ (MvPolynomial S₂ k)) (β : S₂ →₀ ℕ) (m : S₁ →₀ ℕ) :
-    coeff m (coeff β (commAlgEquiv k S₁ S₂ F)) = coeff β (coeff m F) := by
+    AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff (commAlgEquiv k S₁ S₂ F) β) m = AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff F m) β := by
   classical
   induction F using MvPolynomial.induction_on' with
   | monomial m' a =>
@@ -89,7 +95,7 @@ theorem mr_aeval {σ τ' A : Type} [CommRing A] [Algebra k A] (L : A →ₗ[k] k
     rw [h2, map_mul, aeval_C, h1, algebraMap_eq, mr_C_mul_map, ← h2, mr_monomial,
       show (monomial u (L a) : MvPolynomial σ k) = L a • monomial u 1 by rw [smul_monomial, smul_eq_mul, mul_one],
       map_smul]
-  | add p q hp hq => rw [map_add, mr_add, hp, hq, mr_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), mr_add, hp, hq, mr_add, map_add (f := _)]
 
 theorem colAddGen_eq_aeval (A : Type) [CommRing A] [Algebra k A] {r n : ℕ} (l j : Fin n) :
     colAddGen A (r := r) l j = aeval (fun v => map (algebraMap k A)
@@ -274,7 +280,7 @@ theorem span_gen_empty (D : ι → Submodule k (MvPolynomial (Fin N × Fin N) k)
   | mul_X p v ih => exact hmulX v p ih
 
 theorem mem_span_gen_univ (D : ι → Submodule k (MvPolynomial (Fin N × Fin N) k)) (P : MvPolynomial (BVar N ι) k)
-    (h : ∀ τ β, coeff β (Ψ N τ P) ∈ D τ) : P ∈ Submodule.span k (gen N D Finset.univ) := by
+    (h : ∀ τ β, AddMonoidAlgebra.coeff (Ψ N τ P) β ∈ D τ) : P ∈ Submodule.span k (gen N D Finset.univ) := by
   choose π hπ1 hπ2 using fun τ => exists_proj (D τ)
   have key : ∀ T : Finset ι, P ∈ Submodule.span k (gen N D T) := by
     intro T
@@ -299,13 +305,13 @@ end GlobalTheory.HighWtEmb.NabInter
 
 namespace GlobalTheory.HighWtEmb
 
-open NabInter in
 
+open NabInter in
 theorem mem_nabK_of_toBlock : ∀ (k : Type) [Field k] (N : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι]
     (ν : ι → Fin N → ℕ) (P : MvPolynomial (BVar N ι) k),
     (∀ τ, toBlock k N τ P ∈ dualWeyl (MvPolynomial (OVar N τ) k) N N (ν τ)) → P ∈ nabK k N ν := by
   intro k _ N ι _ _ ν P hP
-  have h : ∀ τ β, coeff β (Ψ N τ P) ∈ dualWeyl k N N (ν τ) := by
+  have h : ∀ τ β, AddMonoidAlgebra.coeff (Ψ N τ P) β ∈ dualWeyl k N N (ν τ) := by
     intro τ β
     have := dualWeyl_mr (lcoeff k β) N N (ν τ) _ (hP τ)
     convert this using 1

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepBasic
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepBasic
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -14,7 +18,7 @@ theorem rep_sqrt_sq : ((Real.sqrt d : ℝ) : ℂ) ^ 2 = d := by
   rw [← Complex.ofReal_pow, Real.sq_sqrt (Nat.cast_nonneg d), Complex.ofReal_natCast]
 
 theorem rep_conj_theta : conj (cmTheta b d) = ((b : ℂ) - Complex.I * ((Real.sqrt d : ℝ) : ℂ)) / 2 := by
-  simp only [cmTheta, map_div₀, map_add, map_mul, map_intCast, Complex.conj_I, Complex.conj_ofReal,
+  simp only [cmTheta, map_div₀, map_add (f := _), map_mul, map_intCast, Complex.conj_I, Complex.conj_ofReal,
     map_ofNat]
   ring
 
@@ -37,7 +41,7 @@ theorem rep_elt_norm (hOK : 4 * (a : ℤ) * c = b ^ 2 + d) (p q : ℤ) :
   have h1 := rep_theta_add_conj b d
   have h2 := rep_theta_mul_conj a b c d hOK
   have hN := Complex.mul_conj lam
-  simp only [map_mul, map_add, map_intCast, map_natCast]
+  simp only [map_mul, map_add (f := _), map_intCast, map_natCast]
   push_cast
   linear_combination ((p : ℂ) * a + q * cmTheta b d) * ((p : ℂ) * a + q * conj (cmTheta b d)) * hN +
     (Complex.normSq lam : ℂ) * p * q * a * h1 + (Complex.normSq lam : ℂ) * q ^ 2 * h2

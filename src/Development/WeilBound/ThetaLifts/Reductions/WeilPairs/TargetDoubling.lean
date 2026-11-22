@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ContinuousDualG
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ContinuousDualG
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes

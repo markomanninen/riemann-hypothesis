@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UlZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UlZero
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V
 
@@ -62,13 +66,13 @@ private theorem ul_ex [Finite N] (ρ : Representation ℤ D N) (ho : IsOpen (ρ.
     { carrier := {s | ∃ a, (∀ j ∈ I, ρ j a = a) ∧ ∀ y, (∀ j ∈ I, ρ j y = y) → τ s y = a + ρ s y}
       one_mem' := ⟨0, fun j _ => map_zero _, fun y _ => by simp⟩
       mul_mem' := fun {s t} ⟨a, ha, ha'⟩ ⟨b, hb, hb'⟩ =>
-        ⟨a + ρ s b, fun j hj => by rw [map_add, ha j hj, stab s b hb j hj], fun y hy => by
+        ⟨a + ρ s b, fun j hj => by rw [map_add (f := _), ha j hj, stab s b hb j hj], fun y hy => by
           rw [map_mul, Equiv.Perm.mul_apply, hb' y hy,
-            ha' _ (fun j hj => by rw [map_add, hb j hj, stab t y hy j hj]), map_add, ul_mul, add_assoc]⟩
+            ha' _ (fun j hj => by rw [map_add (f := _), hb j hj, stab t y hy j hj]), map_add (f := _), ul_mul, add_assoc]⟩
       inv_mem' := fun {s} ⟨a, ha, ha'⟩ =>
         ⟨-ρ s⁻¹ a, fun j hj => by rw [map_neg, stab _ a ha j hj], fun y hy => by
           rw [map_inv, Equiv.Perm.inv_eq_iff_eq,
-            ha' _ (fun j hj => by rw [map_add, map_neg, stab _ a ha j hj, stab _ y hy j hj]),
+            ha' _ (fun j hj => by rw [map_add (f := _), map_neg, stab _ a ha j hj, stab _ y hy j hj]),
             map_add, map_neg, inv1, inv1, add_neg_cancel_left]⟩ }
   have hS : ∀ s, s ∈ S := by
     refine ul_top I φ h S ?_ (fun s hs => ⟨0, fun j _ => map_zero _, fun y hy => ?_⟩) ⟨x, hx, fun y _ => ?_⟩
@@ -117,7 +121,7 @@ private theorem ul_abs [Finite N] (ρ : Representation ℤ D N) (ho : IsOpen (ρ
   refine ⟨Z, hfin, fun z hz => hz.1, hcob, fun z hz => hz.2, ?_⟩
   let r : Z →+ (I → N) := AddMonoidHom.mk' (fun z s => z.1 s.1) fun _ _ => rfl
   let π : N →+ (I → N) := AddMonoidHom.mk' (fun Y s => ρ s.1 Y - Y) fun a b => funext fun s => by
-    simp only [map_add, Pi.add_apply]; abel
+    simp only [map_add (f := _), Pi.add_apply]; abel
   have hr : r.range = π.range := by
     refine le_antisymm ?_ ?_
     · rintro _ ⟨z, rfl⟩

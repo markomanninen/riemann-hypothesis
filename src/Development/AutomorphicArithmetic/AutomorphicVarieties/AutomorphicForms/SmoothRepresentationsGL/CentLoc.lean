@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -83,5 +87,6 @@ theorem UpperTheory.V.Af.Smo.centLoc :
   have := hu (y * Units.mk0 p hp0 ^ WithZero.log (Valued.v (y : w.adicCompletion E))) (by
     have hp' : Valued.v p = WithZero.exp (-1 : ℤ) := hp
     rw [Units.val_mul, Units.val_zpow_eq_zpow_val, map_mul, map_zpow₀, Units.val_mk0, hp', ← WithZero.exp_zsmul]
-    simp [WithZero.exp_log hy0])
+    simp only [zsmul_neg, zsmul_one, Int.cast_id]
+    rw [WithZero.exp_neg, WithZero.exp_log hy0, mul_inv_cancel₀ hy0])
   exact (H.mul_mem_cancel_right (H.zpow_mem hpH _)).1 this

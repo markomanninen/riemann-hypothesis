@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JsetEmb
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JsetEmb
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,9 +63,6 @@ theorem field_inter_filtration_one_eq_zero (c : K) (hc : algebraMap K BdR c ∈ 
     rw [← one_mul (PD.ι PD.t), h0, zero_mul]
   rw [this]
   exact (PD.Fil 2).zero_mem
-
-def invPsi (φ : V →ₗ[Qp] Qp) : V ⊗[Qp] BdR →ₗ[Qp] BdR :=
-  TensorProduct.lift ((LinearMap.lsmul Qp BdR).compl₁₂ φ LinearMap.id)
 
 end Inv
 

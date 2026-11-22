@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -41,7 +46,7 @@ theorem baseChange_inf_lattice_eq_subspace : ∀ {O V : Type} [CommRing O] [IsDo
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul c x => rw [het]; exact W.smul_mem c x.2.2
-    | add a b ha hb => rw [map_add]; exact W.add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact W.add_mem ha hb
   · intro v hv
     obtain ⟨⟨n, d⟩, hd⟩ := IsLocalizedModule.surj (nonZeroDivisors O) N.subtype v
     have hdv : (d : O) • v = (n : V) := hd

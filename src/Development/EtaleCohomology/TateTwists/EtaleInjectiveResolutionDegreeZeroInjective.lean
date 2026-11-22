@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleTwistExtendsThroughMonoToResolutionZero
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTwistExtendsThroughMonoToResolutionZero
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 namespace LateralTheory.EtaleFoundations

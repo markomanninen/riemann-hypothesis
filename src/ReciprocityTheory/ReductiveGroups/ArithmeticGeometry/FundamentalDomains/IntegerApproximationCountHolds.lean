@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RingOfIntegersCovering
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PackingSeparation
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RingOfIntegersCovering
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PackingSeparation
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -34,7 +38,7 @@ theorem integerApproximationCount_holds : IntegerApproximationCount (E := E) := 
   rcases InfinitePlace.mk_eq_iff.mp hmk with h | h
   · have hmem : w.1.embedding ∈ X.Ψ := h ▸ τ.2
     have hZ : Z w = w' τ := by
-      rw [hZw, dif_pos hmem]
+      rw [hZw, dite_eq_left hmem]
       congr 1
       exact Subtype.ext h
     rw [hZ, h] at hcoord
@@ -43,7 +47,7 @@ theorem integerApproximationCount_holds : IntegerApproximationCount (E := E) := 
       intro hm
       exact ((X.cmType _).mp hm) (h ▸ τ.2)
     have hZ : Z w = conj (w' τ) := by
-      rw [hZw, dif_neg hnot]
+      rw [hZw, dite_eq_right hnot]
       congr 2
       exact Subtype.ext h
     have hemb : w.1.embedding (α : E) = conj (τ.1 (α : E)) := by

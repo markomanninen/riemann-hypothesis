@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateChartIntegralStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.PointHTOfFargues
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionPointsDefinedGenericStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeIntegralModelsStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatPar
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLat
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatPol
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyCoordIdealStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateChartIntegralStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.PointHTOfFargues
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionPointsDefinedGenericStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeIntegralModelsStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatPar
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLat
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatPol
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyCoordIdealStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -205,7 +210,7 @@ theorem isUnit_of_coprime {C O : Type} [Field C] [CommRing O] [Algebra O C] {v :
   have h1 : v (algebraMap O C (a : O)) < 1 := lt_of_le_of_ne (hv.map_le_one _) hne
   obtain ⟨r, s, hrs⟩ := Nat.Coprime.cast (R := O) h
   have h2 : v (algebraMap O C (r * a + s * p)) < 1 := by
-    rw [map_add, map_mul, map_mul]
+    rw [map_add (f := _), map_mul, map_mul]
     refine Valuation.map_add_lt v ?_ ?_ <;> rw [map_mul]
     · exact mul_lt_one_of_nonneg_of_lt_one_right (hv.map_le_one _) zero_le h1
     · exact mul_lt_one_of_nonneg_of_lt_one_right (hv.map_le_one _) zero_le hp
@@ -313,8 +318,8 @@ theorem qhom_eq_one {E : Type} [Field E] [NumberField E] (N n : ℕ) (y : Fin N 
   · rintro ⟨y', rfl⟩ i
     exact ⟨y' i, by simp⟩
 
-open PositivityTheory.HtPt.Htat in
 
+open PositivityTheory.HtPt.Htat in
 theorem exists_coords {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} (D : Datum H) {S : Scheme.{0}}
     (t : SAB H S) {Ω : Type} [Field Ω] (ξ : Sp Ω ⟶ S) (p m : ℕ) [Fact p.Prime] (hm : 1 ≤ m)
     {ev : D.La → (Over.mk ξ ⟶ t.G)} {ζ₀ : Ωˣ} (hev : IsParam D t ξ (p ^ m) ev ζ₀)

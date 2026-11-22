@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,16 +20,20 @@ theorem uInv_ccle {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ
     (hσ : ‖σ‖ ≤ 2) :
     ∀ (w : List C.Letter) (x : Wd.Ix (Fin w.length) → B.Mat k r → E) (c : ℝ), (∀ e, B.CCle A m (x e) c) →
       ∀ e, B.CCle A m (KB.uInv σ w x e) (3 ^ w.length * c) ∧
-        B.CCle A m (fun g => KB.uInv σ w x e g - x e g) (3 ^ w.length * ‖σ‖ * c)
-  | [], x, c, hx, e => by
+        B.CCle A m (fun g => KB.uInv σ w x e g - x e g) (3 ^ w.length * ‖σ‖ * c) := by
+  intro w
+  induction w with
+  | nil =>
+    intro x c hx e
     have hc : 0 ≤ c := JCx2.pd_ccle_nonneg (hx e)
     refine ⟨by simpa [KB.uInv] using hx e, ?_⟩
     simp only [KB.uInv, sub_self, List.length_nil, pow_zero, one_mul]
     exact JCx2.pd_ccle_mono_c BetaSesquilinearity.CCle_zero (by positivity)
-  | l :: w, x, c, hx, e => by
+  | cons l w ih =>
+    intro x c hx e
     have hc : 0 ≤ c := JCx2.pd_ccle_nonneg (hx e)
-    have ih0 := uInv_ccle A m σ hσ w (fun e' => x (Fin.cons (0 : Fin 2) e')) c (fun e' => hx _) (fun a => e a.succ)
-    have ih1 := uInv_ccle A m σ hσ w (fun e' => x (Fin.cons (1 : Fin 2) e')) c (fun e' => hx _) (fun a => e a.succ)
+    have ih0 := ih (fun e' => x (Fin.cons (0 : Fin 2) e')) c (fun e' => hx _) (fun a => e a.succ)
+    have ih1 := ih (fun e' => x (Fin.cons (1 : Fin 2) e')) c (fun e' => hx _) (fun a => e a.succ)
     have hs : ‖(if l.1 then σ else conj σ)‖ = ‖σ‖ := norm_letter_scal σ l.1
     have h3 : (0 : ℝ) ≤ 3 ^ w.length := by positivity
     have hσ0 : 0 ≤ ‖σ‖ := norm_nonneg _
@@ -34,13 +42,13 @@ theorem uInv_ccle {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ
     have hp : (3 : ℝ) ^ (l :: w).length = 3 * 3 ^ w.length := by rw [hlen, pow_succ, mul_comm]
     simp only [KB.uInv]
     by_cases he : e 0 = 0
-    · rw [if_pos he]
+    · rw [ite_eq_left he]
       have hxe : x e = x (Fin.cons (0 : Fin 2) (fun a => e a.succ)) := by
         conv_lhs => rw [hce, he]
       refine ⟨JCx2.pd_ccle_mono_c ih0.1 (by rw [hp]; nlinarith), ?_⟩
       rw [hxe]
       exact JCx2.pd_ccle_mono_c ih0.2 (by rw [hp]; nlinarith [mul_nonneg h3 hσ0])
-    · rw [if_neg he]
+    · rw [ite_eq_right he]
       have he1 : e 0 = 1 := by
         rcases Fin.exists_fin_two.1 ⟨e 0, rfl⟩ with h | h
         · exact absurd h he

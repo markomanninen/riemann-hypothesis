@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.CoeffSubstInvMemOfTwoLeOrder
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.CoeffSubstInvMemOfTwoLeOrder
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Sh
 
@@ -35,7 +39,7 @@ theorem eval_close {C : Type} [Field C] (v : AddValuation C (WithTop ℝ)) {ι :
     have e : MvPolynomial.eval x (p + q) - MvPolynomial.eval x' (p + q) =
         (MvPolynomial.eval x p - MvPolynomial.eval x' p) +
           (MvPolynomial.eval x q - MvPolynomial.eval x' q) := by
-      simp only [map_add]; ring
+      simp only [map_add (f := _)]; ring
     rw [e]
     refine le_trans (le_min (h₁ x' fun i => le_trans ?_ (hx' i))
       (h₂ x' fun i => le_trans ?_ (hx' i))) (v.map_add _ _)
@@ -78,7 +82,7 @@ theorem exists_poly_coeff {C : Type} [Field C] {d : ℕ} (l : Fin d → MvPowerS
   rw [← coeff_map, map_subst hL, hm]
   congr 2
   funext a
-  simp only [L, map_sum, map_mul, hm, map_C, MvPolynomial.eval_X, smul_eq_C_mul]
+  simp [L, hm, smul_eq_C_mul]
 
 theorem integral_of_limit :
   (∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithTop ℝ)) (d : ℕ) (G : LogFGL v d) (A : Matrix (Fin d) (Fin d) C),

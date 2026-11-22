@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FoldDCUnfold
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldUnfold
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FoldingUnfolding.TransExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FoldDCUnfold
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldUnfold
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FoldingUnfolding.TransExists
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal
@@ -103,7 +107,7 @@ theorem foldDCUnfold_of (h0 : TransExists.{u}) (h1 : TransIndep.{u}) (h2 : Trans
       (hTP (r : G)).2 (fun y : G => g y * h ((r : G)⁻¹ * y)) (hFm r) (hinv r)
   · haveI : Countable (Set.range (fun p : E (r : G) × D => (p.1 : G) * (p.2 : G))) :=
       (hΓc.mono (hTP (r : G)).2.1).to_subtype
-    exact (Measurable.ennreal_tsum fun η : Set.range (fun p : E (r : G) × D => (p.1 : G) * (p.2 : G)) =>
+    exact (Measurable.tsum fun η : Set.range (fun p : E (r : G) × D => (p.1 : G) * (p.2 : G)) =>
       (hFm (r : G)).comp (measurable_const_mul (η : G))).aemeasurable
 
 end PI.FoldDCUnfold.W

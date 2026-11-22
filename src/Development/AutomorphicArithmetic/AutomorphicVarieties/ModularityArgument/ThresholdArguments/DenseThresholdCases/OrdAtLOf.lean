@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.PlainTorOfPs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.PlainTorOfPs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -12,7 +16,6 @@ open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterm
 open UpperTheory.V.HV (Coef)
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open UpperTheory.V.Z UpperTheory.V.Z.Ord
-open private ex_emb from Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HodgeTateWeightsOfLocalGlobal
 namespace UpperTheory.V.Z.Ord.AtLOrdinary
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 private theorem plainTor_of_ps [CharZero k] {n : ℕ} (σ : SmIrr (GL (Fin n) k)) (ω : Fin n → kˣ →* ℂˣ) (hs : ∀ i, IsSmoothChar (ω i))
@@ -47,7 +50,24 @@ theorem UpperTheory.V.Z.Ord.at_l_of_literal_automorphy_n :
   have hG : Win.Gd (rc (algNorm τ)) := UpperTheory.V.Z.Win.Gu.plainGd L Ω A w h rc hrc n τ hP
   obtain ⟨h1, h2⟩ := hHT hP A h O Bw hj
   refine ⟨h1, fun t LL' τ' hτ => ?_, fun s => ?_⟩
-  · obtain ⟨j, rfl⟩ := ex_emb h Bw hj t LL' τ' hτ
+  · have hemb : ∃ j : UpperTheory.V.W.Emb l w,
+        j.1.comp (algebraMap L (w.adicCompletion L)) = t := by
+      have hplace : w = GlobalTheory.EvExtend.placeOf t := by
+        refine HeightOneSpectrum.ext (Ideal.ext fun x => ?_)
+        rw [GlobalTheory.EvExtend.mem_placeOf, hτ]
+        let f := LL'.1.val.comp τ'
+        let y : Bw.Kw.1 := ⟨Bw.j (algebraMap L Ω x), Bw.j_E x⟩
+        have hnorm : ‖f y‖ = ‖(y : PadicAlgCl l)‖ := by
+          rw [← PadicAlgCl.spectralNorm_eq, ← PadicAlgCl.spectralNorm_eq, spectralNorm,
+            spectralNorm, minpoly.algHom_eq f f.injective,
+            ← minpoly.algHom_eq Bw.Kw.1.val Bw.Kw.1.val.injective]
+          rfl
+        refine ((hj.valuation_lt_one_iff _).symm.trans (h x)).symm.trans ?_
+        exact iff_of_eq (congrArg (· < 1) hnorm.symm)
+      rw [hplace]
+      obtain ⟨j, hc, hx, -⟩ := GlobalTheory.EvExtend.exists_ext t
+      exact ⟨⟨j, hc⟩, RingHom.ext hx⟩
+    obtain ⟨j, rfl⟩ := hemb
     have e : HT (j.1.comp (algebraMap L _)) =
         Finset.univ.val.map fun i => htW lam i (j.1.comp (algebraMap L _)) := by
       refine Multiset.map_injective (f := fun k : ℤ => (k : ℂ)) Int.cast_injective ?_

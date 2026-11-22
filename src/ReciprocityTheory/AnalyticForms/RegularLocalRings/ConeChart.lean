@@ -1,7 +1,11 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjHyp
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.MemConePtsIffChartIdeal
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartA
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartB
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjHyp
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.MemConePtsIffChartIdeal
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartA
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartB
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -42,8 +46,8 @@ theorem ringKrullDim_locAt_chart_le {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)}
   obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective b
   exact ⟨Ideal.Quotient.mk _ a, rfl⟩
 
-set_option maxHeartbeats 600000 in
 
+set_option maxHeartbeats 600000 in
 theorem le_ringKrullDim_locAt_chart {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (e : ℕ)
     (hdim : ∀ Q ∈ P.minimalPrimes,
       ringKrullDim (MvPolynomial (Σ k, ι k) ℂ ⧸ Q) = ((e + Fintype.card K : ℕ) : WithBot ℕ∞))
@@ -141,8 +145,8 @@ theorem ringKrullDim_locAt_chart (P : Ideal (MvPolynomial (Σ k, ι k) ℂ)) (hP
     ringKrullDim (locAt (chartIdeal P p) z) = e :=
   le_antisymm (ringKrullDim_locAt_chart_le hP e hdim p z hz) (le_ringKrullDim_locAt_chart e hdim p z hz)
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem isRegularLocalRing_locAt_chart (P : Ideal (MvPolynomial (Σ k, ι k) ℂ)) (e : ℕ)
     (hdim : ∀ Q ∈ P.minimalPrimes,
       ringKrullDim (MvPolynomial (Σ k, ι k) ℂ ⧸ Q) = ((e + Fintype.card K : ℕ) : WithBot ℕ∞))
@@ -163,11 +167,38 @@ theorem isRegularLocalRing_locAt_chart (P : Ideal (MvPolynomial (Σ k, ι k) ℂ
     have h := hz _ (hXI k)
     simpa [sub_eq_zero] using h
   obtain ⟨hloc, hnoeth⟩ := locAt_isLocalRing_isNoetherian (chartIdeal P p) z hz
-  have hcot := finrank_cotangentSpace_locAt (chartIdeal P p) z
   have hd := ringKrullDim_locAt_chart P hP e hdim p z hz
   let grad : MvPolynomial (Σ k, ι k) ℂ → (Σ k, ι k) → ℂ := fun h j => eval z (pderiv j h)
+  let chartJac : Submodule ℂ ((Σ k, ι k) → ℂ) :=
+    Submodule.span ℂ (grad '' (chartIdeal P p : Set (MvPolynomial (Σ k, ι k) ℂ)))
+  have hcot : Module.finrank (ResidueField (locAt (chartIdeal P p) z))
+      (CotangentSpace (locAt (chartIdeal P p) z)) + Module.finrank ℂ chartJac =
+      Fintype.card (Σ k, ι k) := by
+    let I := chartIdeal P p
+    let I' := I.map (renR (Σ k, ι k)).toRingHom
+    obtain ⟨hloc', hnoeth'⟩ := locRing_isLocalRing_isNoetherian I' (renPt z) (renPt_zero I z hz)
+    let L : ((Σ k, ι k) → ℂ) ≃ₗ[ℂ] (Fin (Fintype.card (Σ k, ι k)) → ℂ) :=
+      LinearEquiv.funCongrLeft ℂ ℂ (Fintype.equivFin (Σ k, ι k)).symm
+    have hset : ReciprocityTheory.AnForm.R.grad (renPt z) '' (I' : Set _) =
+        (L : _ →ₗ[ℂ] _) '' (grad '' (I : Set _)) := by
+      ext w
+      constructor
+      · rintro ⟨q, hq, rfl⟩
+        obtain ⟨h, hh, rfl⟩ := (Ideal.mem_map_of_equiv (renR (Σ k, ι k)) q).1 hq
+        exact ⟨grad h, ⟨h, hh, rfl⟩, (grad_renC z h).symm⟩
+      · rintro ⟨_, ⟨h, hh, rfl⟩, rfl⟩
+        exact ⟨renR (Σ k, ι k) h, Ideal.mem_map_of_mem _ hh, grad_renC z h⟩
+    have hjac : Module.finrank ℂ chartJac = Module.finrank ℂ (jacSpan I' (renPt z)) := by
+      unfold jacSpan
+      rw [hset, Submodule.span_image]
+      exact (LinearEquiv.finrank_map_eq L chartJac).symm
+    have hcotEquiv := @finrank_cotangentSpace_eq_of_ringEquiv _ _ _ _
+      hloc hloc' hnoeth hnoeth' (locAtEquiv I z)
+    rw [hcotEquiv, hjac]
+    exact @finrank_cotangentSpace_locRing _ I' (renPt z) hloc'
   let v : Fin (Fintype.card (Σ k, ι k) - (e + Fintype.card K)) ⊕ K → (Σ k, ι k) → ℂ :=
     Sum.elim (fun i => grad (G (a i))) (fun k => grad (X ⟨k, p k⟩ - 1))
+  let blockWt (k : K) (q : Σ k, ι k) : ℕ := if q.1 = k then 1 else 0
   let lam : K → ((Σ k, ι k) → ℂ) →ₗ[ℂ] ℂ := fun k =>
     { toFun := fun w => ∑ q, (blockWt k q : ℂ) * (z q * w q)
       map_add' := fun w w' => by
@@ -179,8 +210,17 @@ theorem isRegularLocalRing_locAt_chart (P : Ideal (MvPolynomial (Σ k, ι k) ℂ
   have hlamG : ∀ k i, lam k (grad (G i)) = 0 := by
     intro k i
     obtain ⟨dg, hdg⟩ := hG i
-    rw [hlam]
-    exact (sum_blockWt_eval hdg k z).trans (by rw [hz _ (hGI i), mul_zero])
+    have hw : IsWeightedHomogeneous (blockWt k) (G i) (dg k) := by
+      intro d hd
+      rw [← hdg d (MvPolynomial.mem_support_iff.mpr hd) k]
+      simp only [Finsupp.weight_apply, smul_eq_mul]
+      rw [Finsupp.sum_fintype _ _ (by simp), Fintype.sum_sigma, Fintype.sum_eq_single k]
+      · simp [blockWt]
+      · intro k' hk'
+        simp [blockWt, hk']
+    have h := congrArg (eval z) hw.sum_weight_X_mul_pderiv
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [hlam, grad, map_sum, nsmul_eq_mul, mul_assoc, hz _ (hGI i)] using h
   have hlamX : ∀ k k', lam k (grad (X ⟨k', p k'⟩ - 1)) = if k' = k then 1 else 0 := by
     intro k k'
     rw [hlam, Finset.sum_eq_single ⟨k', p k'⟩]
@@ -196,7 +236,8 @@ theorem isRegularLocalRing_locAt_chart (P : Ideal (MvPolynomial (Σ k, ι k) ℂ
     have hK : ∀ k, g (Sum.inr k) = 0 := by
       intro k
       have h := congrArg (lam k) hg
-      simp only [map_add, map_sum, map_smul, map_zero, smul_eq_mul, v, Sum.elim_inl, Sum.elim_inr,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, map_smul, map_zero, smul_eq_mul, v, Sum.elim_inl, Sum.elim_inr,
         hlamG, hlamX, mul_zero, Finset.sum_const_zero, zero_add, mul_ite, mul_one,
         Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
       exact h
@@ -222,13 +263,13 @@ theorem isRegularLocalRing_locAt_chart (P : Ideal (MvPolynomial (Σ k, ι k) ℂ
     rintro (i | k)
     · exact hFin i
     · exact hK k
-  have hmem : ∀ x, v x ∈ jacSpanAt (chartIdeal P p) z := by
+  have hmem : ∀ x, v x ∈ chartJac := by
     rintro (i | k)
     · exact Submodule.subset_span ⟨G (a i), hGI (a i), rfl⟩
     · exact Submodule.subset_span ⟨_, hXI k, rfl⟩
-  have hrank : (Fintype.card (Σ k, ι k) - (e + Fintype.card K)) + Fintype.card K ≤ Module.finrank ℂ (jacSpanAt (chartIdeal P p) z) := by
-    let v' : Fin (Fintype.card (Σ k, ι k) - (e + Fintype.card K)) ⊕ K → jacSpanAt (chartIdeal P p) z := fun x => ⟨v x, hmem x⟩
-    have hv' : LinearIndependent ℂ v' := LinearIndependent.of_comp (jacSpanAt _ _).subtype hv
+  have hrank : (Fintype.card (Σ k, ι k) - (e + Fintype.card K)) + Fintype.card K ≤ Module.finrank ℂ chartJac := by
+    let v' : Fin (Fintype.card (Σ k, ι k) - (e + Fintype.card K)) ⊕ K → chartJac := fun x => ⟨v x, hmem x⟩
+    have hv' : LinearIndependent ℂ v' := LinearIndependent.of_comp chartJac.subtype hv
     simpa using hv'.fintype_card_le_finrank
   have hcotle : Module.finrank (ResidueField (locAt (chartIdeal P p) z))
       (CotangentSpace (locAt (chartIdeal P p) z)) ≤ e := by

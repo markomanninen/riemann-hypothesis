@@ -1,24 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
-import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.LiftHeckeOperators
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
-import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
-import Formalism.LocalToGlobal.IndefiniteReal.PartsRow
-import Development.AbelianVarietyTheory.Definitions.Divisors.InstCMHostS
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGoodFixedVectorOfTypeOccurringInRows
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankWEigenpartEqRowsFullHecke
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoreClausesOfWeakCharacterisation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicIsometryMatchingFrames
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBaseLevelVectorOfPrincipalLevelFixed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarRowsLevelCharacterEqLiftsLevelCharacter
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugateModelsMultiplicityEqual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCompatFiniteIsometry
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexConjugationMapsMultiplicitySpaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+public import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.LiftHeckeOperators
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
+public import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+public import Formalism.LocalToGlobal.IndefiniteReal.PartsRow
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InstCMHostS
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGoodFixedVectorOfTypeOccurringInRows
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankWEigenpartEqRowsFullHecke
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoreClausesOfWeakCharacterisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicIsometryMatchingFrames
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBaseLevelVectorOfPrincipalLevelFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarRowsLevelCharacterEqLiftsLevelCharacter
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugateModelsMultiplicityEqual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCompatFiniteIsometry
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexConjugationMapsMultiplicitySpaceStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
@@ -35,8 +40,8 @@ section Similitude
 
 variable {R : Type} [CommRing R] {σ : R →+* R} {n : ℕ}
 
-open ReciprocityTheory.Aut in
 
+open ReciprocityTheory.Aut in
 theorem scalar_of_comm (hσ : ∀ x, σ (σ x) = x) (h2 : IsUnit (2 : R)) (a : Matrix (Fin n) (Fin n) R)
     (ha : ∀ κ ∈ UGroup n σ hσ, a * κ.val = κ.val * a) (i₀ : Fin n) : a = a i₀ i₀ • (1 : Matrix (Fin n) (Fin n) R) := by
   have key : ∀ P : Matrix (Fin n) (Fin n) R, P * P = 1 → conjT σ P = P → a * P = P * a := fun P h1 h3 =>
@@ -69,8 +74,8 @@ theorem scalar_of_comm (hσ : ∀ x, σ (σ x) = x) (h2 : IsUnit (2 : R)) (a : M
     rw [(h2.mul_right_eq_zero).1 e2]
     simp [hij]
 
-open ReciprocityTheory.Aut in
 
+open ReciprocityTheory.Aut in
 theorem exists_unitary_conj : ∀ {R : Type} [CommRing R] (σ : R →+* R) (hσ : ∀ x, σ (σ x) = x) {n : ℕ}, IsUnit (2 : R) → Odd n → ∀ g : GL (Fin n) R, (∀ κ ∈ ReciprocityTheory.Aut.UGroup n σ hσ, g * κ * g⁻¹ ∈ ReciprocityTheory.Aut.UGroup n σ hσ) → ∃ h ∈ ReciprocityTheory.Aut.UGroup n σ hσ, ∀ κ : GL (Fin n) R, g * κ * g⁻¹ = h * κ * h⁻¹ := by
   intro R _ σ hσ n h2 hn g hg
   obtain ⟨k, rfl⟩ := hn
@@ -131,8 +136,8 @@ theorem block_frame_conjugation_identity {R : Type} [CommRing R] {a b c : ℕ} (
     _ = (bW' * bW) * K' * (bW' * (J * J') * bW) := by rw [← hc]; simp only [Matrix.mul_assoc]
     _ = _ := by rw [hJ, Matrix.mul_one, hW, Matrix.one_mul, Matrix.mul_one]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem frames_inner : ∀ {D : D7} (Y W : HSp D) {n : ℕ} (hF : D.host.F = maximalRealSubfield D.host.E) (PY : principalLevelFrame.RowPsi Y n) (PW : principalLevelFrame.RowPsi W n), GlobalTheory.StdFrame.StdPsi hF PY → GlobalTheory.StdFrame.StdPsi hF PW → Odd Y.rank → ∀ (β : GL (Fin Y.rank) (Lev.EAf D)) (β' : GL (Fin W.rank) (Lev.EAf D)) (Pg : Finset (Pl D.host.E)) (j : Matrix (Fin W.rank) (Fin Y.rank) (Lev.EAf D)) (Φ : GfC Y ≃ₜ* GfC W), GlobalTheory.CuspMult.IsFinIso Y W β β' Pg j Φ → ∃ h : Formalism.AUTREP.GAf D.host.E n, ∀ κ, ((Φ ⟨PY.ψ κ, PY.into κ⟩ : GfC W) : GA D W) = PW.ψ (h * κ * h⁻¹) := by
   intro D Y W n hF PY PW hY hW hodd β β' Pg j Φ hI
   obtain ⟨⟨bY, bY', hY1, hY2, hYf⟩, -⟩ := hY
@@ -186,8 +191,8 @@ theorem frames_inner : ∀ {D : D7} (Y W : HSp D) {n : ℕ} (hF : D.host.F = max
     exact (k ⟨κ, hκ⟩).2
   exact ⟨⟨h, hU⟩, fun κ => Subtype.ext ((hg κ).symm.trans (hh κ.1))⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_conj_map : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A) {n : ℕ} (PY : principalLevelFrame.RowPsi (Yc D 0) n) π, π ∈ principalLevelFrame.OccRows R.θ PY (R.MY 0) (fun b => (levS _ (R.βY 0) (R.dat0 (R.levR F b)))) (fun b => (levChi _ (R.βY 0) (R.dat0 (R.levR F b)))) (fun _ => R.e0) → ∃ (M₀ : DSModel (Yc D 0) (parA (Ptw D) 0)) (f : π.S →ₗ[ℂ] MMap M₀), f ≠ 0 ∧ principalLevelFrame.IsEqvA (principalLevelFrame.actM PY M₀) π f ∧ ∀ x, f x ∈ GlobalTheory.CuspMult.allMaps R.θ M₀ := by
   intro D G _ _ Pl0 T A Ks _ _ _ R F n PY π hπ
   obtain ⟨b, hb⟩ := hπ
@@ -212,7 +217,7 @@ theorem exists_conj_map : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T :
   let f : π.S →ₗ[ℂ] MMap M₀ :=
     { toFun := fun x => GlobalTheory.ConjDim.conjMap (R.MY 0) M₀ c h (Φ (st x))
       map_add' := fun x y => by
-        rw [hadd, map_add]
+        rw [hadd, map_add (f := _)]
         exact MultilinearMap.ext fun v' => star_add _ _
       map_smul' := fun a x => by
         rw [hsmul, map_smul]
@@ -234,12 +239,12 @@ theorem exists_conj_map : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T :
     have : f x = T' := by
       refine MultilinearMap.ext fun v' => funext fun g => ?_
       rw [e1 v' (fun τ => ⟨c τ (v' τ), (h τ _).1 (v' τ).2⟩) (fun _ => rfl) g]
-      rfl
+      simp only [f, LinearMap.coe_mk, AddHom.coe_mk, GlobalTheory.ConjDim.conjMap_apply, Pi.star_apply]
     rw [this]
-    exact GlobalTheory.PartDims.mult_le R.θ _ (fun k hk => hk.elim) hT'
+    exact GlobalTheory.PartDims.mult_le R.θ _ (J' := ∅) (fun k hk => hk.elim) hT'
+
 
 open Formalism.IndefR.principalLevelFrame in
-
 theorem exists_good_base_vec : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A) {s : ℕ}, A.fam.Ok s → GlobalTheory.Hk3.Core R F → (∀ χ ∈ A.X, chiIdem χ * lvlIdem F.P0 F.ψ0 ≠ 0) → ∀ {n : ℕ} (PY : principalLevelFrame.RowPsi (Yc D 0) n) (π : Formalism.L2.NG.FinTyp D.host.E n) (v : Formalism.AUTREP.GAf D.host.E n → ℂ), v ∈ π.S → v ≠ 0 → principalLevelFrame.IsTypeVec (PY.ψ ⁻¹' levS _ (R.βY 0) (R.dat0 R.triv)) (fun _ => 1) v → (∀ κ : G → Formalism.AUTREP.GAf D.host.E n, (∀ g, IsLevelLift (Yc D 0) (R.βY 0) (R.dat0 R.triv) (R.eG g) (PY.ψ (κ g))) → ∑ g, RealDat.eC (A := A) D.what₂.embLL g • Formalism.L2.NG.rt D.host.E n (κ g) v = v) → ∃ x ∈ π.S, x ≠ 0 ∧ principalLevelFrame.IsTypeVec (PY.ψ ⁻¹' levS _ (R.βY 0) (R.dat0 (R.levR F false))) (fun κ => levChi _ (R.βY 0) (R.dat0 (R.levR F false)) (PY.ψ κ)) x ∧ ∀ κ : G → Formalism.AUTREP.GAf D.host.E n, (∀ g, IsLevelLift (Yc D 0) (R.βY 0) (R.dat0 R.triv) (R.eG g) (PY.ψ (κ g))) → ∑ g, RealDat.eC (A := A) D.what₂.embLL g • Formalism.L2.NG.rt D.host.E n (κ g) x = x := by
   intro D G _ _ Pl0 T A Ks _ _ _ R F s hOk hC hne n PY π v hvS hv0 hvT hgood
   classical
@@ -267,7 +272,7 @@ theorem exists_good_base_vec : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl
         exact GlobalTheory.BaseVec.conj_mem_principal R hc (hk g).1 (hk g).2.1
       rw [rt_rt, show c * k g = k g * ((k g)⁻¹ * c * k g) by group, ← rt_rt, hvfix _ hc']
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
     | smul a x _ hx => rw [map_smul, hx]
   have hprod : ∀ g h, ∀ w ∈ Ws, Formalism.L2.NG.rt D.host.E n (k g) (Formalism.L2.NG.rt D.host.E n (k h) w) =
       Formalism.L2.NG.rt D.host.E n (k (g * h)) w := by
@@ -299,7 +304,7 @@ theorem exists_good_base_vec : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl
       rw [hprod g h v hvWs]
       exact Submodule.subset_span ⟨g * h, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Ws.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Ws.add_mem hx hy
     | smul a x _ hx => rw [map_smul]; exact Ws.smul_mem a hx
   let ρ : Representation ℂ G Ws :=
     { toFun := fun g => (Formalism.L2.NG.rt D.host.E n (k g)).restrict (fun w hw => hstab g w hw)
@@ -318,13 +323,14 @@ theorem exists_good_base_vec : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl
       obtain ⟨h, rfl⟩ := hx
       simp only [hprod _ h v hvWs]
       conv_rhs => rw [← hgoodv]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul, hprod h _ v hvWs]
       refine Fintype.sum_equiv (MulAut.conj h⁻¹).toEquiv _ _ fun g => ?_
       simp only [MulEquiv.toEquiv_eq_coe, MulEquiv.coe_toEquiv, MulAut.conj_apply]
       rw [hcen, show h * (h⁻¹ * g * h⁻¹⁻¹) = g * h by group]
     | zero => simp
-    | add x y _ _ hx hy => simp only [map_add, smul_add, Finset.sum_add_distrib, hx, hy]
+    | add x y _ _ hx hy => simp only [map_add (f := _), smul_add, Finset.sum_add_distrib, hx, hy]
     | smul a x _ hx =>
       simp only [map_smul]
       simp only [smul_comm _ a, ← Finset.smul_sum, hx]
@@ -448,9 +454,9 @@ def eqv {D : D7} {Y : HSp D} {n : ℕ} (P : principalLevelFrame.RowPsi Y n) : Fo
       obtain ⟨h, hh⟩ := P.onto g.1 g.2
       exact ⟨h, Subtype.ext hh⟩⟩
 
+
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem exists_mem_isotL (hP : GlobalTheory.Published.HarishChandraFinite) {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A) {s : ℕ} (hOk : A.fam.Ok s) (hC : GlobalTheory.Hk3.Core R F) (hM : MultEq R) (hX : Formalism.L2.DIV.GoodStable A.X) (hgen : ∀ χ ∈ A.X, chiIdem χ * lvlIdem F.P0 F.ψ0 ≠ 0) {n : ℕ} (hF : D.host.F = maximalRealSubfield D.host.E) (PY : principalLevelFrame.RowPsi (Yc D 0) n) (i : Fin D.R.m) (PW : principalLevelFrame.RowPsi (Wc D i) n) (hPY : GlobalTheory.StdFrame.StdPsi hF PY) (hPW : GlobalTheory.StdFrame.StdPsi hF PW) (π : Formalism.L2.NG.FinTyp D.host.E n) (hπ : π ∈ principalLevelFrame.OccRows R.θ PY (R.MY 0) (fun b => (levS _ (R.βY 0) (R.dat0 (R.levR F b)))) (fun b => (levChi _ (R.βY 0) (R.dat0 (R.levR F b)))) (fun _ => R.e0)) :
     ∃ w ∈ principalLevelFrame.isotL R.θ PW (R.MW i (sg0 D A))
       (levS _ (R.βW i) (R.datWp i (R.levL F false (sg0 D A))))
@@ -486,7 +492,8 @@ theorem exists_mem_isotL (hP : GlobalTheory.Published.HarishChandraFinite) {D : 
     · have := hyG (fun g => e.symm (κ g)) (fun g => by
         have e1 : PY.ψ (e.symm (κ g)) = (κ g : GA D (Yc D 0)) := congrArg Subtype.val (e.apply_symm_apply (κ g))
         rw [e1]; exact hκ g)
-      rw [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, Representation.asAlgebraHom_single, map_one, one_smul, Module.End.one_apply, sub_eq_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, Representation.asAlgebraHom_single, map_one, one_smul, Module.End.one_apply, sub_eq_zero]
       apply Subtype.ext
       rw [Submodule.coe_sum]
       refine Eq.trans (Finset.sum_congr rfl fun g _ => ?_) this
@@ -565,29 +572,6 @@ theorem exists_mem_isotL (hP : GlobalTheory.Published.HarishChandraFinite) {D : 
   show f' (GlobalTheory.OccRowVec.finRep π h⁻¹ (GlobalTheory.OccRowVec.finRep π h ⟨y, hyS⟩)) = _
   rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
 
-set_option maxHeartbeats 1000000 in
-set_option synthInstance.maxHeartbeats 400000 in
-
-theorem isot_ne_bot : GlobalTheory.Published.HarishChandraFinite → ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type} {A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat3 D A3 Ks) (F : Face3 D A3) {s : ℕ}, A3.fam3.Ok3 s → R.WeakCharacterisation F → R.toRealDat.ExAt → GlobalTheory.CuspMult.MultEq R.toRealDat → Formalism.L2.DIV.GoodStable A3.A.X → (∀ χ ∈ A3.A.X, chiIdem χ * lvlIdem F.P0 F.ψ0 ≠ 0) → ∀ (tupT : D.what₂.Tup → T) (hm : 0 < D.R.m) (hTop : RecTie.TopMultH R.toRealDat) (hinj : ∀ i t, Function.Injective (R.toRealDat.extV i t)) (X0 : BaseLevelRowSide D) (Ish : RecTie.RowIds (RowSide.sharp D) (RecTie.toChainReal R.toRealDat F.lv2 tupT hm hTop) true) (Ib : RecTie.RowIds X0.s (RecTie.toChainReal R.toRealDat F.lv2 tupT hm hTop) false) (IL : RecTie.LiftIds (RecTie.toLiftReal R.toRealDat F.lv2 tupT hm hTop hinj)) (Kc : RecTie.ColReal D) {Xd : DivX D} (E : EigIdx D Xd) (labPi : E.Pi → A3.A.fam.base.Ix) {n : ℕ} (PY : principalLevelFrame.RowPsi (Yc D 0) n) (PW : ∀ i, principalLevelFrame.RowPsi (Wc D i) n) eFT piOf ι nch Tp, RecTie.RecReal R.toRealDat F.lv2 tupT hm hTop hinj X0 Ish Ib IL Kc E labPi PY PW eFT piOf ι nch Tp → tupT D.what₂.mu0 = A3.A.μ0 → ∀ (hF : D.host.F = maximalRealSubfield D.host.E), GlobalTheory.StdFrame.StdPsi hF PY → (∀ i, GlobalTheory.StdFrame.StdPsi hF (PW i)) → ∀ σ (i : Fin D.R.m), D.what₂.isot ((i : ℕ) + 1) (D.what₂.ft σ) ≠ ⊥ := by
-  intro hP D G _ _ Pl0 I0 T A3 Ks _ _ _ R F s hOk hChar hEx hME hGS hgen tupT hm hTop hinj X0 Ish Ib IL Kc Xd E labPi n PY PW eFT piOf ι nch Tp hRec hmu hF hPY hPW σ i
-  have hL := hRec.tied.lift
-  obtain ⟨w, hw, hw0⟩ := exists_mem_isotL hP R.toRealDat F.lv2 hOk.ok2 (GlobalTheory.CoreOfWeak.core_of_weak R F hChar hEx).1 hME hGS hgen hF PY i (PW i)
-    hPY (hPW i) (principalLevelFrame.rowRepR R.θ (eFT (D.what₂.ft σ))) (principalLevelFrame.rowRepR_occ _ _)
-  intro hbot
-  let L := RecTie.toLiftReal R.toRealDat F.lv2 tupT hm hTop hinj
-  let lw : L.AmbW i := (PiTensorProduct.lift : Mult.MMap (R.MW i (sg0 D A3.A)) ≃ₗ[ℂ] L.AmbW i) w
-  have hgood : lw ∈ L.Wc i := Submodule.mem_map_of_mem hw.1
-  let y : D.what₂.Mj ((i : ℕ) + 1) := (IL.jMj i).symm ⟨lw, hgood⟩
-  have hjy : ((IL.jMj i y : L.Wc i) : L.AmbW i) = lw := by
-    simp only [y, LinearEquiv.apply_symm_apply]
-  have hmem : ((IL.jMj i y : L.Wc i) : L.AmbW i) ∈ IL.prtW i (D.what₂.ft σ) := by
-    rw [hjy, hRec.prtWE]
-    exact ⟨w, hw, rfl⟩
-  have hy0 : y ∈ D.what₂.isot ((i : ℕ) + 1) (D.what₂.ft σ) := (hL.isot i _ y).2 hmem
-  rw [hbot, Submodule.mem_bot] at hy0
-  apply hw0
-  have h1 : lw = 0 := by rw [← hjy, hy0, map_zero]; rfl
-  exact (PiTensorProduct.lift : Mult.MMap (R.MW i (sg0 D A3.A)) ≃ₗ[ℂ] L.AmbW i).injective (h1.trans (map_zero _).symm)
 
 end GlobalTheory.KapIsot
 end

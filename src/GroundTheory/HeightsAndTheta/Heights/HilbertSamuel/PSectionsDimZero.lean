@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionsDimZero
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbFnValueSpan
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveAlgebraic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionsDimZero
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbFnValueSpan
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveAlgebraic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -113,12 +118,13 @@ theorem valueSpan_le (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (hc : ∀ k, y 
       (LinearMap.mulRight ℚ (∏ k, y ⟨k, c k⟩ ^ d k)) := by
   refine Submodule.span_le.mpr ?_
   rintro _ ⟨g, hg, rfl⟩
-  rw [SetLike.mem_coe, g.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [SetLike.mem_coe, g.as_sum, map_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
   rw [aeval_monomial_int, monVal_eq y c hc m]
   have hb : ∀ k, blockDeg m k = d k := fun k => hg m hm k
   simp only [hb]
-  exact Submodule.mem_map.mpr ⟨((coeff m g : ℤ) : Ω) * monVal (rt y c) m,
+  exact Submodule.mem_map.mpr ⟨((AddMonoidAlgebra.coeff g m : ℤ) : Ω) * monVal (rt y c) m,
     (mul_mem (intCast_mem _ _) (monVal_mem y c m) : _ * _ ∈ chartRingQ y c),
     by rw [LinearMap.mulRight_apply, mul_assoc]⟩
 
@@ -168,7 +174,7 @@ theorem exists_le_span {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal y
       rintro _ ⟨p, rfl⟩
       exact (CoordCurveDegree.isAlgebraic_ratio hP c hc p).isIntegral)
   have hfg : (Subalgebra.toSubmodule (chartRingQ y c)).FG := Module.Finite.iff_fg.mp hfin
-  have hcpt := (CompleteLattice.isCompactElement_iff_le_of_directed_sSup_le _ _).mp
+  have hcpt := (isCompactElement_iff_le_of_directed_sSup_le _).mp
     ((Submodule.fg_iff_compact _).mp hfg)
   obtain ⟨_, ⟨D, rfl⟩, hD⟩ := hcpt (Set.range V) (Set.range_nonempty V)
     (directedOn_range.mpr hmono.directed_le) (by
@@ -176,7 +182,8 @@ theorem exists_le_span {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal y
       change x ∈ chartRingQ y c at hx
       rw [chartRingQ, Algebra.adjoin_range_eq_range_aeval] at hx
       obtain ⟨f, rfl⟩ := hx
-      rw [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, f.as_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, f.as_sum, map_sum]
       refine Submodule.sum_mem _ fun m _ => ?_
       rw [aeval_monomial_rat]
       refine Submodule.smul_mem _ _ ?_
@@ -199,14 +206,14 @@ theorem valueSpan_eq (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (hc : ∀ k, y 
 theorem eventualValue_eq {f : (K → ℤ) → ℤ} {v : ℤ} (h : ∀ᶠ m in atTop, f m = v) :
     NumbersDVR.eventualValue f = v := by
   have hex : ∃ c, ∀ᶠ m in atTop, f m = c := ⟨v, h⟩
-  rw [NumbersDVR.eventualValue, dif_pos hex]
+  rw [NumbersDVR.eventualValue, dite_eq_left hex]
   obtain ⟨m, h1, h2⟩ := (hex.choose_spec.and h).exists
   rw [← h1, h2]
 
 end SectionsDimZero
 
-open SectionsDimZero in
 
+open SectionsDimZero in
 theorem SectionsDimZero.proof : SectionsDimZero.Statement := by
   intro K _ ι _ Ω _ _ y a n hP
   classical

@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
+
+@[expose] public section
 
 universe u
 

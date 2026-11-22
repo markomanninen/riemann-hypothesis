@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.StatementO
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.StatementO
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf.QuadraticBasis
 
@@ -7,7 +11,7 @@ open Polynomial
 private theorem qr_fix {F k : Type} [Field F] [Field k] [Fintype F] (ι : F →+* k) (q : ℕ)
     (hF : Fintype.card F = q) (hq : 1 < q) (x : k) (hx : x ^ q = x) : ∃ y, ι y = x := by
   classical
-  have hP : (X ^ q - X : k[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero k hq
+  have hP : (X ^ q - X : k[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq
   have hroot : ∀ z : k, z ^ q = z → z ∈ (X ^ q - X : k[X]).roots.toFinset := by
     intro z hz
     rw [Multiset.mem_toFinset, mem_roots hP, IsRoot, eval_sub, eval_pow, eval_X, hz, sub_self]
@@ -20,7 +24,7 @@ private theorem qr_fix {F k : Type} [Field F] [Field k] [Fintype F] (ι : F →+
     rw [Finset.card_image_of_injective _ ι.injective, Finset.card_univ, hF]
     calc _ ≤ Multiset.card (X ^ q - X : k[X]).roots := Multiset.toFinset_card_le _
       _ ≤ (X ^ q - X : k[X]).natDegree := card_roots' _
-      _ = q := FiniteField.X_pow_card_sub_X_natDegree_eq k hq
+      _ = q := Polynomial.natDegree_X_pow_sub_X (R := k) hq
   have heq := Finset.eq_of_subset_of_card_le hsub hle
   have hx' := hroot x hx
   rw [← heq] at hx'
@@ -47,13 +51,13 @@ private theorem qr_exists {F k : Type} [Field F] [Field k] [Fintype F] [Fintype 
     exact ht y hy
   obtain ⟨b, hb⟩ := qr_fix ι (p ^ n) hF hq (-(t + t ^ (p ^ n))) (by
     have h := hφ (-(t + t ^ (p ^ n)))
-    rw [map_neg, map_add, hφ, hφ, hqq, htq] at h
+    rw [map_neg, map_add (f := _), hφ, hφ, hqq, htq] at h
     rw [← h]; ring)
   obtain ⟨c, hc⟩ := qr_fix ι (p ^ n) hF hq (t * t ^ (p ^ n)) (by
     rw [mul_pow, hqq, htq, mul_comm])
   have hmonic : (X ^ 2 + C b * X + C c : F[X]).Monic := by monicity!
   have hmap : (X ^ 2 + C b * X + C c : F[X]).map ι = (X - C t) * (X - C (t ^ (p ^ n))) := by
-    simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_pow, map_X, map_C, hb, hc, map_neg,
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_pow, map_X, map_C, hb, hc, map_neg,
       map_add, map_mul]
     ring
   have hQ : (X ^ ((p ^ n) ^ 2) - X : F[X]).map ι = (X ^ ((p ^ n) ^ 2) - X : k[X]) := by
@@ -68,7 +72,7 @@ private theorem qr_exists {F k : Type} [Field F] [Field k] [Fintype F] [Fintype 
   · intro x hx
     have h1 : (ι x - t) * (ι x - t ^ (p ^ n)) = 0 := by
       have h := congrArg ι hx
-      rw [map_add, map_add, map_mul, map_pow, hb, hc, map_zero] at h
+      rw [map_add (f := _), map_add (f := _), map_mul, map_pow, hb, hc, map_zero] at h
       linear_combination h
     rcases mul_eq_zero.mp h1 with h | h
     · exact ht x (sub_eq_zero.mp h)
@@ -84,13 +88,13 @@ private theorem qr_root {F k : Type} [Field F] [Field k] [Fintype k] (ι : F →
   have h1q : 1 < Fintype.card k := by
     have : 1 < p ^ n := Nat.one_lt_pow hn.ne' hp.one_lt
     rw [hk]; nlinarith
-  have hQ0 : (X ^ ((p ^ n) ^ 2) - X : k[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero k (hk ▸ h1q)
+  have hQ0 : (X ^ ((p ^ n) ^ 2) - X : k[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero (hk ▸ h1q)
   have hdvd' : (X ^ 2 + C (ι b) * X + C (ι c) : k[X]) ∣ X ^ ((p ^ n) ^ 2) - X := by
     have h := Polynomial.map_dvd ι hdvd
     simpa using h
   have hsplitQ : (X ^ ((p ^ n) ^ 2) - X : k[X]).Splits := by
     rw [← hk, splits_iff_card_roots, FiniteField.roots_X_pow_card_sub_X,
-      FiniteField.X_pow_card_sub_X_natDegree_eq k h1q]
+      Polynomial.natDegree_X_pow_sub_X (R := k) h1q]
     simp
   have hsplitP := Splits.of_dvd hsplitQ hQ0 hdvd'
   have hdegP : (X ^ 2 + C (ι b) * X + C (ι c) : k[X]).natDegree = 2 := by compute_degree!
@@ -113,7 +117,7 @@ private theorem qr_root {F k : Type} [Field F] [Field k] [Fintype k] (ι : F →
   · intro y hy
     apply hno y
     apply ι.injective
-    rw [map_add, map_add, map_mul, map_pow, hy, map_zero]
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, hy, map_zero]
     exact ht
 
 private theorem qr_hensel {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
@@ -157,7 +161,7 @@ private theorem qr_transport (p n : ℕ) {W₁ W₂ : Type} [CommRing W₁] [Com
   · intro x hx
     apply hr (ψ.symm x)
     apply ψ.injective
-    rw [map_add, map_add, map_mul, map_pow, hψ, hψ, RingEquiv.apply_symm_apply, map_zero]
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, hψ, hψ, RingEquiv.apply_symm_apply, map_zero]
     exact hx
 
 private theorem qr_side (p n : ℕ) (hp : p.Prime) (hn : 0 < n) (W O : Type) [CommRing W] [IsDomain W]
@@ -210,7 +214,7 @@ private theorem qr_side (p n : ℕ) (hp : p.Prime) (hn : 0 < n) (W O : Type) [Co
         apply ht2
         have e : Ideal.Quotient.mk (Ideal.span {w}) (2 * a₀ + j b) =
             2 * Ideal.Quotient.mk (Ideal.span {w}) a₀ + ι (Ideal.Quotient.mk _ b) := by
-          rw [hι, map_add, map_mul]
+          rw [hι, map_add (f := _), map_mul]
           first | rfl | (rw [map_ofNat]) | norm_num | simp
         rw [← e, Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton]
         exact hdv)

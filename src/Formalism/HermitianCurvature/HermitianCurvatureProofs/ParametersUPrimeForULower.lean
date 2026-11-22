@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RealInputsBuiltClosedForm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HighestWeightPolynomials
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameCompletion
+module
+
+public import Formalism.HermitianCurvature.StatementTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RealInputsBuiltClosedForm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HighestWeightPolynomials
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameCompletion
+
+@[expose] public section
 
 section PartBasic
 
@@ -84,7 +88,8 @@ theorem act_mul {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} 
     (M N : Wd.SlopeTestRemainingChoices S (Q.Pr (Q.RadSp k r z z' π π'))) (x : Wd.Ix S → Q.RadSp k r z z' π π') :
     P5.act (M * N) x = P5.act M (P5.act N x) := by
   funext a
-  simp only [P5.act, Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [P5.act, Matrix.mul_apply, map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => ?_
   have key : ∀ s : Finset (Wd.Ix S),
@@ -94,102 +99,6 @@ theorem act_mul {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} 
     | empty => rw [Finset.sum_empty, Finset.sum_empty]; rfl
     | insert j s hj ih => rw [Finset.sum_insert hj, Finset.sum_insert hj, ← ih]; rfl
   exact key Finset.univ
-
-theorem _root_.Formalism.FourierDecayAlt.P.top_of_radial : Top.TopOfRadial := by
-  intro Wp Wq _ _ _ _ _ _ P l0 T ν' m₀ Θ TP X μ L st hD hTL w A ε F hA hcl Φ hΦ p c g e' TP' τ hp hcg hτ hint
-    hV hex hd
-  unfold Top.topOf P5.topDens
-  refine Finset.sum_congr rfl fun e _ => ?_
-  set x := P5.act (P5.bTall L (D.positionted w)) (Top.firstStateVector Φ) with hx
-  set y := P5.act (Fr.ofWord L st (D.positionted w)).F x with hy
-  have hVe : D.vecV T.base ν' m₀ (Θ.Θ w e F) p = τ ((y e : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) c g) := by
-    rw [hV e, act_mul]
-  rw [hVe, act_mul, hd y e, hsInner_sum_smul_left]
-  refine Finset.sum_congr rfl fun ρ _ => ?_
-  rw [hint, hτ, hsInner_proj (TP'.E ρ) (TP'.idem ρ) (TP'.selfAdj ρ)]
-  push_cast
-  ring
-
-theorem isBuiltPlaceT_mono {E : Type} [Field E] [NumberField E] [IsCMField E] {Wp Wq : InfinitePlace E → Type}
-    [∀ x, NormedAddCommGroup (Wp x)] [∀ x, InnerProductSpace ℂ (Wp x)] [∀ x, NormedAddCommGroup (Wq x)]
-    [∀ x, InnerProductSpace ℂ (Wq x)] [∀ x, FiniteDimensional ℂ (Wp x)] [∀ x, FiniteDimensional ℂ (Wq x)]
-    {S : C.HidaSetting E Wp Wq} {T : ∀ v : Fin S.f, D.LevTower S.G.k S.G.r (Wp (S.pl v)) (Wq (S.pl v))}
-    {f : ∀ v : Fin S.f, B.Mat S.G.k S.G.r → (Wq (S.pl v) →L[ℂ] Wp (S.pl v))} {χ : ℝ → ℝ}
-    {ν' : Fin S.f → Fin (2 * S.G.r + S.G.k + 1) → ℂ} {m₀ : Fin S.f → B.Mat S.G.k S.G.r}
-    {Θ : ∀ v : Fin S.f, Top.TopLift S.G.k S.G.r (Wp (S.pl v)) (Wq (S.pl v))}
-    {TP : ∀ v : Fin S.f, Top.TypeProj (D.parOf S v) (T v).base.π (T v).base.z (m₀ v *ᵥ ν' v)}
-    {A₀ Cc c : ℝ} (hc : c ≤ Cc) (h : Top.IsBuiltPlaceT Cc S T f χ ν' m₀ Θ TP A₀) :
-    Top.IsBuiltPlaceT c S T f χ ν' m₀ Θ TP A₀ := by
-  unfold Top.IsBuiltPlaceT JCT.IsBuiltPlace at h ⊢
-  obtain ⟨⟨g1, g2, hU, hB, hl1, hl2, hG, hL, hCA, hCk, hk2, hA, hOn⟩, hT⟩ := h
-  refine ⟨⟨g1, g2, hU, hB, hl1, hl2, hG, ?_, le_trans hc hCA, hCk, hk2, ?_, hOn⟩, hT⟩
-  · intro v
-    have h1 := hL v
-    have hY : (0 : ℝ) ≤ (S.G.k : ℝ) * S.Ntop * ((S.G.r : ℝ) + 1) ^ 2 + (S.Ntop : ℝ) ^ 2 * ((S.G.r : ℝ) + 1) ^ 2 +
-        (S.Ntop : ℝ) ^ 3 := by positivity
-    nlinarith [mul_le_mul_of_nonneg_right hc hY]
-  · have hY : (0 : ℝ) ≤ ((S.G.r : ℝ) + 1) ^ 4 *
-        ((S.Ntop : ℝ) * (2 * (S.G.r : ℝ) + S.G.k + 1) ^ 2 + (2 * (S.G.r : ℝ) + S.G.k + 1) ^ 3) := by positivity
-    nlinarith [mul_le_mul_of_nonneg_right hc hY]
-
-theorem _root_.Formalism.FourierDecayAlt.P.typed_inputs_of_inputs : Top.InputsTOfInputs := by
-  intro hW hL hS hP hI
-  obtain ⟨c1, hW⟩ := hW
-  obtain ⟨c2, hL⟩ := hL
-  obtain ⟨c3, C₄, hC₄, hS⟩ := hS
-  refine ⟨max c1 (max c2 c3), C₄, hC₄, ?_⟩
-  intro E _ _ _ Wp Wq _ _ _ _ _ _ S T f χ ν' m₀ Θ TP A₀ hBP
-  refine ⟨hW E Wp Wq S T f χ ν' m₀ Θ TP A₀ (isBuiltPlaceT_mono (by simp) hBP),
-    hL E Wp Wq S T f χ ν' m₀ Θ TP A₀ (isBuiltPlaceT_mono (by simp) hBP),
-    hS E Wp Wq S T f χ ν' m₀ Θ TP A₀ (isBuiltPlaceT_mono (by simp) hBP), fun v => ?_,
-    hI E Wp Wq S T f χ ν' m₀ Θ TP A₀ hBP.1.1 hBP.1.2.1 hBP.1.2.2.1 hBP.2⟩
-  exact hP (Wp (S.pl v)) (Wq (S.pl v)) (D.parOf S v) (S.l + 1) (T v) (ν' v) (m₀ v) (Θ v) (TP v) (f v) χ (D.AdmAt S v)
-
-theorem _root_.Formalism.FourierDecayAlt.P.real_inputs_closed_typed : Top.RealInputsBuiltClosedT := by
-  intro hPA hRMF hPD hFS hMA hIB hMu hLEM hLA hSL hWv hLB hLT hSF hMP hTP
-  obtain ⟨C₆, hC₆, hLE⟩ := lemma_E_of_model lemma_E_of_residue level_zero_holds good_of_admissible hLEM
-  obtain ⟨c1, hLA⟩ := hLA
-  obtain ⟨c2, hSL⟩ := hSL
-  obtain ⟨c3, hWv⟩ := hWv
-  obtain ⟨c4, hLB⟩ := hLB
-  obtain ⟨c5, hLT⟩ := hLT
-  obtain ⟨c6, C₄, hC₄, hSF⟩ := hSF
-  obtain ⟨c7, hMP⟩ := hMP
-  refine ⟨C₆, max c1 (max c2 (max c3 (max c4 (max c5 (max c6 c7))))), C₄, hC₆, hC₄, ?_⟩
-  intro E _ _ _ Wp Wq _ _ _ _ _ _ S T f χ ν' m₀ Θ TP A₀ c H _ _ Vt hBPT hSB hc hcut hVt
-  set top := Top.topsOf S T ν' m₀ Θ TP with htopdef
-  have hBP : JCT.IsBuiltPlace (max c1 (max c2 (max c3 (max c4 (max c5 (max c6 c7)))))) S T f χ ν' m₀ top A₀ := hBPT.1
-  have m1 := jct_isBuiltPlace_mono (by simp) hBP (c := c1)
-  have m2 := jct_isBuiltPlace_mono (by simp) hBP (c := c2)
-  have m3 := isBuiltPlaceT_mono (by simp) hBPT (c := c3)
-  have m4 := jct_isBuiltPlace_mono (by simp) hBP (c := c4)
-  have m5 := isBuiltPlaceT_mono (by simp) hBPT (c := c5)
-  have m6 := isBuiltPlaceT_mono (by simp) hBPT (c := c6)
-  have m7 := jct_isBuiltPlace_mono (by simp) hBP (c := c7)
-  have htop : ∀ v, D.TopPSD (T v) (f v) χ (D.AdmAt S v) (top v) := fun v =>
-    hTP (Wp (S.pl v)) (Wq (S.pl v)) (D.parOf S v) (S.l + 1) (T v) (ν' v) (m₀ v) (Θ v) (TP v) (f v) χ (D.AdmAt S v)
-  obtain ⟨hg1, hg2, hU, hB, hl1, hl2, hGr, -, -, hsm, -, -⟩ := hBP
-  choose L j lam Cm σ hmod using hMP E Wp Wq S T f χ ν' m₀ top A₀ m7 c hc
-  obtain ⟨Lw, hW, hTW⟩ := hWv E Wp Wq S T f χ ν' m₀ Θ TP A₀ m3
-  obtain ⟨Ll, hLB1, hTL1⟩ := hLB E Wp Wq S T f χ ν' m₀ top A₀ m4
-  obtain ⟨Ll', hLT1, hTL2⟩ := hLT E Wp Wq S T f χ ν' m₀ Θ TP A₀ m5
-  have hTL : JC.ThresholdsLift S Ll Ll' := by
-    unfold JC.ThresholdsLift
-    exact ⟨hTL1, hTL2⟩
-  have hIn : JCT.BuiltInputs C₄ C₆ S T f χ ν' m₀ top L j lam c Cm σ Lw Ll Ll' Vt := by
-    unfold JCT.BuiltInputs
-    exact ⟨hl1, hl2, hLA E Wp Wq S T f χ ν' m₀ top A₀ m1, hSL E Wp Wq S T f χ ν' m₀ top A₀ m2 hSB, htop, hGr, hW,
-      hTW, hLB1, hLT1, hTL, hSF E Wp Wq S T f χ ν' m₀ Θ TP A₀ m6, hsm, hcut, hmod, hVt⟩
-  refine ⟨L, j, lam, Cm, σ, hmod, ?_⟩
-  intro Kr hK0 Th e
-  obtain ⟨hPos, hGr', hInt, hP1, hP23, hT, hPG⟩ :=
-    jct_parts_loc hPA hRMF hPD hFS hMA hMu C₄ C₆ E Wp Wq S T f χ ν' m₀ top A₀ L j lam c Cm σ Lw Ll Ll' H Vt
-      hg1 hg2 hU hB (hIB E Wp Wq S T f χ ν' m₀ Θ TP A₀ hg1 hg2 hU hBPT.2) hIn
-  have hE : C.LemmaE S (JCT.jvModel S j Cm) :=
-    hLE E Wp Wq S T f χ ν' m₀ top A₀ L j lam c Cm σ hB
-      (fun v ε hε => cutoff_smooth _ _ _ _ (T v).base χ (f v) ε hB.1 (hsm v) hε) hcut hmod
-  exact real_inputs_concrete_holds E Wp Wq S (JCT.jvModel S j Cm) H Vt C₄ hg1 hg2 hPos hGr' hInt hP1 hP23 hT hE
-    hPG Kr hK0 Th e
 
 end
 
@@ -216,7 +125,7 @@ theorem typ_inner_pres (hu : ∀ h ∈ UWset k r z, ∀ v, ‖π h v‖ = ‖v�
   first
     | exact (⟨(π h).toLinearMap, hu h hh⟩ : W →ₗᵢ[ℂ] W).inner_map_map v v'
     | (have key := (⟨(π h).toLinearMap, hu h hh⟩ : W →ₗᵢ[ℂ] W).inner_map_map v v'; simpa using key)
-    | (rw [inner_eq_sum_norm_sq_div_four, inner_eq_sum_norm_sq_div_four]; simp only [← map_add, ← map_sub, ← map_smul, hu h hh]; done)
+    | (rw [inner_eq_sum_norm_sq_div_four, inner_eq_sum_norm_sq_div_four]; simp only [← map_add (f := _), ← map_sub, ← map_smul, hu h hh]; done)
 
 theorem typ_dOp_skew (hπ : IsCRepOn (UWset k r z) π) (hc : ContinuousOn π (UWset k r z))
     (hu : ∀ h ∈ UWset k r z, ∀ v, ‖π h v‖ = ‖v‖) {X : Mx k r} (hX : QrD.InLieW k r z X) (v v' : W) :
@@ -364,7 +273,7 @@ theorem typ_rho_succ (P : M.Par) (ρ : M.Ty P) (j : Fin (P.k - 1)) :
     M.rho P ρ ((j : ℕ) + 1) = P.lo ((j : ℕ) + 1) + ((ρ j : ℕ) : ℝ) := by
   have hj := j.isLt
   unfold M.rho
-  rw [dif_pos (show 1 ≤ (j : ℕ) + 1 ∧ (j : ℕ) + 1 ≤ P.k - 1 by omega)]
+  rw [dite_eq_left (show 1 ≤ (j : ℕ) + 1 ∧ (j : ℕ) + 1 ≤ P.k - 1 by omega)]
   all_goals first | rfl | simp
 
 private theorem u_add_le_u_of_ok {Q : M.Par} (h : Q.OK) {i : ℕ} (hi1 : 1 ≤ i) :
@@ -642,7 +551,7 @@ theorem vecw_vec_intertwine (S : B.RealPlaceData k r Wp Wq) {ν' : Fin (2 * r + 
     rw [hfix] at h1
     exact h1
   · unfold D.vecV
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     ext v
     simp
 
@@ -780,7 +689,8 @@ theorem vecw_qmF {X Y : Type*} [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] 
     (hE : ∀ i j x, E' i j (V x) = V (E i j x)) (a b : Fin t → Fin n) (u : ℂ) (x : X) :
     Q.qmF E' a b u (V x) = V (Q.qmF E a b u x) := by
   unfold Q.qmF
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_smul]
   congr 1
@@ -835,41 +745,28 @@ def parametersUForUPrime (P : M.Par) : M.Par := { P with u' := P.u }
 
 def parametersUPrimeForU (P : M.Par) : M.Par := { P with u := P.u' }
 
-theorem parameters_u_for_u_prime_ok {P : M.Par} (h : P.OK) : (parametersUForUPrime P).OK where
-  k_pos := h.k_pos
-  T_pos := h.T_pos
-  T'_pos := h.T'_pos
-  int_u := h.int_u
-  int_u' := h.int_u
-  gap := by
-    intro i hi
-    have g := h.gap i hi
-    simp only [M.Par.lo, M.Par.hi, parametersUForUPrime, max_self, min_self] at g ⊢
-    have a1 := le_max_left (P.u (i + 1)) (P.u' (i + 1))
-    have a2 := min_le_left (P.u i) (P.u' i)
-    linarith
+theorem parameters_u_for_u_prime_ok {P : M.Par} (h : P.OK) : (parametersUForUPrime P).OK := by
+  refine ⟨h.k_pos, h.T_pos, h.T'_pos, h.int_u, h.int_u, ?_⟩
+  intro i hi
+  have g := h.gap i hi
+  simp only [M.Par.lo, M.Par.hi, parametersUForUPrime, max_self, min_self] at g ⊢
+  have a1 := le_max_left (P.u (i + 1)) (P.u' (i + 1))
+  have a2 := min_le_left (P.u i) (P.u' i)
+  linarith
 
-theorem parameters_u_prime_for_u_ok {P : M.Par} (h : P.OK) : (parametersUPrimeForU P).OK where
-  k_pos := h.k_pos
-  T_pos := h.T_pos
-  T'_pos := h.T'_pos
-  int_u := by
+theorem parameters_u_prime_for_u_ok {P : M.Par} (h : P.OK) : (parametersUPrimeForU P).OK := by
+  have hint : ∀ i ∈ Icc 1 P.k, ∃ n : ℤ, P.u' i - P.u' 1 = n := by
     intro i hi
     obtain ⟨a, ha⟩ := h.int_u' i hi
-    obtain ⟨b, hb⟩ := h.int_u' 1 (by simp [Finset.mem_Icc]; exact h.k_pos)
-    exact ⟨a - b, by simp only [parametersUPrimeForU]; push_cast; linarith⟩
-  int_u' := by
-    intro i hi
-    obtain ⟨a, ha⟩ := h.int_u' i hi
-    obtain ⟨b, hb⟩ := h.int_u' 1 (by simp [Finset.mem_Icc]; exact h.k_pos)
-    exact ⟨a - b, by simp only [parametersUPrimeForU]; push_cast; linarith⟩
-  gap := by
-    intro i hi
-    have g := h.gap i hi
-    simp only [M.Par.lo, M.Par.hi, parametersUPrimeForU, max_self, min_self] at g ⊢
-    have a1 := le_max_right (P.u (i + 1)) (P.u' (i + 1))
-    have a2 := min_le_right (P.u i) (P.u' i)
-    linarith
+    obtain ⟨b, hb⟩ := h.int_u' 1 (Finset.mem_Icc.mpr ⟨le_rfl, h.k_pos⟩)
+    exact ⟨a - b, by push_cast; linarith⟩
+  refine ⟨h.k_pos, h.T_pos, h.T'_pos, hint, hint, ?_⟩
+  intro i hi
+  have g := h.gap i hi
+  simp only [M.Par.lo, M.Par.hi, parametersUPrimeForU, max_self, min_self] at g ⊢
+  have a1 := le_max_right (P.u (i + 1)) (P.u' (i + 1))
+  have a2 := min_le_right (P.u i) (P.u' i)
+  linarith
 
 theorem vecw_rho_eq {Q : M.Par} (π : M.Ty Q) {i : ℕ} (hi : i ∈ Icc 1 (Q.k - 1)) :
     ∃ n : ℕ, n ≤ Q.wid i ∧ M.rho Q π i = Q.lo i + n := by
@@ -880,7 +777,7 @@ theorem vecw_rho_eq {Q : M.Par} (π : M.Ty Q) {i : ℕ} (hi : i ∈ Icc 1 (Q.k -
     simp only [e] at this
     omega
   · unfold M.rho
-    rw [dif_pos hi]
+    rw [dite_eq_left hi]
 
 theorem vecw_lo_le_hi {Q : M.Par} (h : Q.OK) {i : ℕ} (hi : i ∈ Icc 1 (Q.k - 1)) : Q.lo i ≤ Q.hi i := by
   exact h.gap i hi
@@ -1126,7 +1023,8 @@ theorem vecw_good_of_eig {P : M.Par} (hOK : P.OK) {π : B.Mat P.k P.r → (Wp �
         simp only [sub_smul, Finset.sum_sub_distrib]
         rw [← Finset.smul_sum, hμ]
         simp only [← h2]
-        rw [← map_sum, hμ, h1, sub_self]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, hμ, h1, sub_self]
       have hind := (iSupIndep_iff_finsetSum_eq_zero_imp_eq_zero S).1 hInt.submodule_iSupIndep Finset.univ
         (fun τ' => (M.xC (parametersUForUPrime P) τ' Y - M.xC (parametersUPrimeForU P) σ Y) • (μ τ' : Wp))
         (fun τ' _ => Submodule.smul_mem _ _ (μ τ').2) hsum τ (Finset.mem_univ τ)
@@ -1137,7 +1035,8 @@ theorem vecw_good_of_eig {P : M.Par} (hOK : P.OK) {π : B.Mat P.k P.r → (Wp �
       rw [hz0]
       simp
   rw [← hμ]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun τ _ => hcomp τ
 
@@ -1170,7 +1069,7 @@ theorem vecw_main : Formalism.FourierDecayAlt.Top.VecVTypes := by
     rw [vecw_capRep_intertwine S hbase F p hB₀' w v, heig' σ w v hv, map_smul]
   · simp
   · intro a b ha hb
-    simp only [map_add, Finset.sum_add_distrib, ha, hb]
+    simp only [map_add (f := _), Finset.sum_add_distrib, ha, hb]
 
 end Formalism.FourierDecayAlt.P.Topx1
 

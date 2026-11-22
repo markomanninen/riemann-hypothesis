@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,10 @@ lemma zero_set_circ_null (p : ℂ[X]) (hp : p ≠ 0) :
     volume.restrict (Set.Ioc (0 : ℝ) 1) {t | p.eval (circPt t) = 0} = 0 := by
   rw [Measure.restrict_apply' measurableSet_Ioc]
   apply Set.Finite.measure_zero _ volume
-  apply Set.Finite.of_finite_image (f := circPt) _ (circPt_injOn.mono fun _ h => h.2)
+  apply Set.Finite.of_finite_image (f := circPt) _
+    (Set.InjOn.mono
+      (s₁ := {t | p.eval (circPt t) = 0} ∩ Set.Ioc (0 : ℝ) 1)
+      (s₂ := Set.Ioc (0 : ℝ) 1) (fun _ h => h.2) circPt_injOn)
   apply p.roots.finite_toSet.subset
   rintro _ ⟨t, ⟨ht, _⟩, rfl⟩
   simpa [mem_roots hp] using ht

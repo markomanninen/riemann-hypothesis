@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.IntegralPartFibres.Zpart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzLocallyConstantSupport
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.LocallyCompactAEf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.IntegralPartFibres.Zpart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzLocallyConstantSupport
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.LocallyCompactAEf
+
+@[expose] public section
 
 noncomputable section
 
@@ -198,6 +202,12 @@ theorem distribHaarChar_pi [MeasurableSpace k] [BorelSpace k] (d : ℕ) (g : kˣ
   let μk : Measure k := Measure.addHaar
   have h0 : μk S ≠ 0 := (Measure.measure_pos_of_mem_nhds (μ := μk) hSn).ne'
   have hfin : μk S ≠ ∞ := hSc.measure_lt_top.ne
+  haveI : (Measure.pi fun _ : Fin d => μk).Regular := by
+    apply Measure.regular_of_isAddLeftInvariant (K := Set.univ.pi fun _ : Fin d => S)
+    · exact isCompact_univ_pi fun _ => hSc
+    · exact ⟨0, mem_interior_iff_mem_nhds.mpr (set_pi_mem_nhds Set.finite_univ fun _ _ => hSn)⟩
+    · rw [Measure.pi_pi]
+      exact ENNReal.prod_ne_top fun _ _ => hfin
   apply distribHaarChar_eq_of_measure_smul_eq_mul (μ := Measure.pi fun _ : Fin d => μk)
     (s := Set.univ.pi fun _ => S)
   · rw [Measure.pi_pi]

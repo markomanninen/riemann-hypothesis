@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightRecR
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitDivVertical
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitFiniteSum
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitArchSum
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Comparison
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightRecR
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitDivVertical
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitFiniteSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitArchSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Comparison
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,15 +19,16 @@ noncomputable section
 
 variable {ι : Type} [Fintype ι] [DecidableEq ι] {n : ι → ℕ}
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem mConeMap_of_isMultiHomog {Ω : Type*} [Field Ω] (y : Coord n → Ω)
     (s : MvPolynomial (Coord n) ℤ) (a : ι → ℕ) (hs : Geo.IsMultiHomog (ι := blockIdx n) s a) :
     Geo.mConeMap (ι := blockIdx n) y s = C (eval₂ (Int.castRingHom Ω) y s) * ∏ k, X k ^ a k := by
   classical
   conv_lhs => rw [s.as_sum]
   conv_rhs => rw [s.as_sum, eval₂_sum]
-  rw [map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm ↦ ?_
   have hmon : ∏ p ∈ m.support, (X p.1 : MvPolynomial ι Ω) ^ m p = ∏ k, X k ^ a k := by
     rw [Finset.prod_subset (Finset.subset_univ m.support) (fun p _ hp ↦ by

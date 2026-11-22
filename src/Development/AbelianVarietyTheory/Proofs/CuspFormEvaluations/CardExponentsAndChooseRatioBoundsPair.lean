@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BinomRatio
-import ReciprocityTheory.SemistableReduction.FinrankRestrictTotalDegree
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BinomRatio
+public import ReciprocityTheory.SemistableReduction.FinrankRestrictTotalDegree
+
+@[expose] public section
 
 namespace GlobalTheory
 

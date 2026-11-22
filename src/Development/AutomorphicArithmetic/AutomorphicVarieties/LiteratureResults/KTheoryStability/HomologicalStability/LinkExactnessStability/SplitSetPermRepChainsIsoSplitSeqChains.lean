@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.MemSplitSeqIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KAcyclicHomology
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.MemSplitSeqIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KAcyclicHomology
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits GlobalTheory.HomStab GlobalTheory.SeqCx UpperTheory.V.KL
 
@@ -14,7 +18,8 @@ private theorem split_set_boundary_comp_face_sum (R : Type) [CommRing R] (n p : 
   apply Finsupp.lhom_ext
   intro l a
   have hlen : l.1.length = p + 1 := l.2.2
-  simp only [LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul,
     Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
   unfold bd
   rw [Finsupp.linearCombination_single, hlen, Finset.smul_sum]

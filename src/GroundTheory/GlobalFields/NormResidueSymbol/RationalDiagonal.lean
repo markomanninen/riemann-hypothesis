@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.RationalLocal
-import GroundTheory.GlobalFields.NormResidueSymbol.RangeIdeleNormLeKerIdeleSymbol
-import GroundTheory.GlobalFields.IdeleGroups.Rational
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.RationalLocal
+public import GroundTheory.GlobalFields.NormResidueSymbol.RangeIdeleNormLeKerIdeleSymbol
+public import GroundTheory.GlobalFields.IdeleGroups.Rational
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

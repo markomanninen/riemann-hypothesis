@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DivMulMemSPOfSub
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DivMulMemSPOfSub
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -24,47 +28,71 @@ local notation "mk" => Ideal.Quotient.mk (extP K 𝔭 ^ k)
 
 theorem exists_mk_iff {d : 𝓞 F} (hd : d ≠ 0) (hk : vF 𝔭 d ≤ k) (z : 𝓞 K) :
     (∃ w : 𝓞 K ⧸ extP K 𝔭 ^ k, mk z = w * mk (ι d)) ↔ jK z / jK (ι d) ∈ HU.SP K 𝔭 := by
+  have hd0 : jK (ι d) ≠ 0 := by
+    change algebraMap F K (d : F) ≠ 0
+    exact (map_eq_zero_iff _ (algebraMap F K).injective).not.mpr (by exact_mod_cast hd)
   constructor
   · rintro ⟨w, hw⟩
     obtain ⟨w, rfl⟩ := Ideal.Quotient.mk_surjective w
     have e : mk z = mk (w * ι d) := by rw [hw, map_mul]
-    exact div_mem_SP_of_sub h𝔭 hd hk (Ideal.Quotient.eq.mp e)
+    have hx := Ideal.pow_le_pow_right hk (Ideal.Quotient.eq.mp e)
+    obtain ⟨t, ht, htx⟩ := exists_mul_mem_span h𝔭 hd
+    have hle : Ideal.span {t} * 𝔭 ^ vF 𝔭 d ≤ Ideal.span {d} :=
+      Ideal.span_singleton_mul_le_iff.mpr htx
+    have hmap := Ideal.map_mono (f := ι) hle
+    rw [Ideal.map_mul, Ideal.map_span, Set.image_singleton, Ideal.map_pow,
+      Ideal.map_span, Set.image_singleton, ← extP] at hmap
+    obtain ⟨q, hq⟩ := Ideal.mem_span_singleton'.mp
+      (Ideal.span_singleton_mul_le_iff.mp hmap _ hx)
+    have hdiv : jK (z - w * ι d) / jK (ι d) ∈ HU.SP K 𝔭 := by
+      refine HU.mem_SP.mpr ⟨t, ht, q, ?_⟩
+      rw [← mul_div_assoc]
+      exact (eq_div_iff hd0).mpr (by simpa only [map_mul] using congrArg jK hq)
+    have hsum : jK z / jK (ι d) = jK (z - w * ι d) / jK (ι d) + jK w := by
+      rw [map_sub, map_mul, sub_div, mul_div_cancel_right₀ _ hd0, sub_add_cancel]
+    rw [hsum]
+    exact add_mem hdiv (HU.jK_mem_SP w)
   · intro h
-    obtain ⟨w, hw⟩ := exists_sub_mul_mem h𝔭 hd h k
-    refine ⟨mk w, ?_⟩
-    have e : mk z = mk (w * ι d) := Ideal.Quotient.eq.mpr hw
+    obtain ⟨t, ht, w, hw⟩ := HU.mem_SP.mp h
+    obtain ⟨u, hu⟩ := exists_inv_mod h𝔭 ht k
+    have hmul : w * ι d = ι t * z := by
+      apply FaithfulSMul.algebraMap_injective (𝓞 K) K
+      rw [map_mul, map_mul, hw, mul_assoc, div_mul_cancel₀ _ hd0]
+    have heq : z - (ι u * w) * ι d = ι (1 - t * u) * z := by
+      rw [mul_assoc, hmul, map_sub, map_one, map_mul]
+      ring
+    have hmem : z - (ι u * w) * ι d ∈ extP K 𝔭 ^ k := by
+      rw [heq]
+      exact Ideal.mul_mem_right _ _ (localizedQuotients.ι_mem_pow hu)
+    refine ⟨mk (ι u * w), ?_⟩
+    have e : mk z = mk ((ι u * w) * ι d) := Ideal.Quotient.eq.mpr hmem
     rw [e, map_mul]
 
 theorem exists_mk_mul_iff {d d' : 𝓞 F} (hd : d ≠ 0) (hd' : d' ≠ 0) (hk : vF 𝔭 d + vF 𝔭 d' ≤ k)
     (z : 𝓞 K) :
     (∃ w : 𝓞 K ⧸ extP K 𝔭 ^ k, mk z = mk (ι d) * w * mk (ι d')) ↔
       jK z / (jK (ι d) * jK (ι d')) ∈ HU.SP K 𝔭 := by
-  constructor
-  · rintro ⟨w, hw⟩
-    obtain ⟨w, rfl⟩ := Ideal.Quotient.mk_surjective w
-    have e : mk z = mk (ι d * w * ι d') := by rw [hw, map_mul, map_mul]
-    have h1 := div_mul_mem_SP_of_mem h𝔭 hd hd' hk (Ideal.Quotient.eq.mp e)
-    have h2 : jK w ∈ HU.SP K 𝔭 :=
-      HU.mem_SP.mpr ⟨1, (Ideal.ne_top_iff_one _).mp h𝔭.ne_top, w, by simp⟩
-    have hd0 : jK (ι d) ≠ 0 := jK_ι_ne_zero (K := K) hd
-    have hd0' : jK (ι d') ≠ 0 := jK_ι_ne_zero (K := K) hd'
-    have key : jK z / (jK (ι d) * jK (ι d')) =
-        jK (z - ι d * w * ι d') / (jK (ι d) * jK (ι d')) + jK w := by
-      simp only [map_sub, map_mul]
-      rw [div_add' _ _ _ (mul_ne_zero hd0 hd0')]
-      congr 1
-      ring
-    rw [key]
-    exact add_mem h1 h2
-  · intro h
-    have h' : jK z / jK (ι (d * d')) ∈ HU.SP K 𝔭 := by rwa [map_mul, map_mul]
-    obtain ⟨w, hw⟩ := exists_sub_mul_mem h𝔭 (mul_ne_zero hd hd') h' k
-    refine ⟨mk w, ?_⟩
-    have e1 : z - ι d * w * ι d' = z - w * ι (d * d') := by rw [map_mul]; ring
-    have e : mk z = mk (ι d * w * ι d') := by
-      rw [Ideal.Quotient.eq, e1]
-      exact hw
-    rw [e, map_mul, map_mul]
+  have hprime : Prime 𝔭 := Ideal.prime_of_isPrime
+    (Ring.ne_bot_of_isMaximal_of_not_isField h𝔭 (RingOfIntegers.not_isField F)) h𝔭.isPrime
+  have hfin {x : 𝓞 F} (hx : x ≠ 0) : FiniteMultiplicity 𝔭 (Ideal.span {x}) :=
+    FiniteMultiplicity.of_prime_left hprime (by simpa using hx)
+  have hv {x : 𝓞 F} (hx : x ≠ 0) : vF 𝔭 x = multiplicity 𝔭 (Ideal.span {x}) := by
+    have hset : {n : ℕ | x ∈ 𝔭 ^ n} = Set.Iic (multiplicity 𝔭 (Ideal.span {x})) := by
+      ext n
+      simp only [Set.mem_ofPred_eq, Set.mem_Iic]
+      rw [← (hfin hx).pow_dvd_iff_le_multiplicity, Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
+    rw [vF, hset, csSup_Iic]
+  have hdd' := mul_ne_zero hd hd'
+  have hval : vF 𝔭 (d * d') = vF 𝔭 d + vF 𝔭 d' := by
+    rw [hv hdd', hv hd, hv hd', ← Ideal.span_singleton_mul_span_singleton]
+    exact multiplicity_mul hprime (by simpa only [Ideal.span_singleton_mul_span_singleton] using hfin hdd')
+  have hmk (w : 𝓞 K ⧸ extP K 𝔭 ^ k) :
+      mk (ι d) * w * mk (ι d') = w * mk (ι (d * d')) := by
+    simp only [map_mul]
+    rw [mul_comm (mk (ι d)) w, mul_assoc]
+  have hden : jK (ι (d * d')) = jK (ι d) * jK (ι d') := by rw [map_mul, map_mul]
+  rw [← hden, ← exists_mk_iff hdd' (hval.symm ▸ hk) z]
+  simp only [hmk]
 
 variable {m : ℕ} (a : Fin m → 𝓞 F)
 

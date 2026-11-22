@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.Numbers
+module
+
+public import Formalism.LocalToGlobal.Divisibility.Numbers
+
+@[expose] public section
 
 namespace Formalism.MainNotions.DIV.HookProducts
 

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -12,7 +16,7 @@ theorem exists_maximal_stab_of_finset {V : Type} [AddCommGroup V] [Module ℂ V]
         ∀ U : Submodule ℂ V, Stab G U → N' ≤ U → U = N' ∨ U = ⊤ := by
   intro N hRN hN hNtop
   let s : Set (Submodule ℂ V) := {U | R ≤ U ∧ Stab G U ∧ ¬ (↑F : Set V) ⊆ ↑U}
-  have hcomp := (CompleteLattice.isCompactElement_iff_le_of_directed_sSup_le _ _).1
+  have hcomp := (isCompactElement_iff_le_of_directed_sSup_le _).1
     (Submodule.finset_span_isCompactElement (R := ℂ) F)
   have hNs : N ∈ s := ⟨hRN, hN, fun h => hNtop (hF N hRN hN h)⟩
   obtain ⟨M, hNM, hM⟩ := zorn_le_nonempty₀ s (by

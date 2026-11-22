@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.AlongCvSmul
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.AlongCvSmul
+
+@[expose] public section
 
 noncomputable section
 

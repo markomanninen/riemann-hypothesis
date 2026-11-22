@@ -1,4 +1,8 @@
-import Formalism.FrobeniusContraction.Statement
+module
+
+public import Formalism.FrobeniusContraction.Statement
+
+@[expose] public section
 
 noncomputable section
 

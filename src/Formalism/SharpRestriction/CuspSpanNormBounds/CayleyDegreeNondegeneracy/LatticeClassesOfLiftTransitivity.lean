@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ExistsDecompOrthIsotropicPlus
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ExistsDecompOrthIsotropicPlus
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ theorem extendByIdentity_mem_flag_stabilizer (γ : (D.sp.X 0).V ≃ₗ[D.host.E]
   · rw [← LinearEquiv.eq_symm_apply]
     exact (extendByIdentity_symm_fix_orth D γ _ (z_mem_orth_range D u F0 hz)).symm
 
-include he hz in
 
+include he hz in
 theorem transport_isLattice_latticeWithZ (γ : (D.sp.X 0).V ≃ₗ[D.host.E] (D.sp.X 0).V) (hγ : γ ∈ isom (D.sp.X 0).hT) (Λ : LatV D)
     (hΛ : IsRowLat D F0 Λ) :
     IsRowLat D F0 (gmap (extendByIdentity D γ) Λ) ∧
@@ -77,7 +81,7 @@ theorem lattice_classes_of_lift_transitivity (hL : LiftsConjugateUnderStabilizer
         exact hσ.2.2.symm
       have e3 : σ.symm (D.sp.iXY 0 w + c • F0.z) - (D.sp.iXY 0 (γ.symm w) + c • F0.z) =
           -(σ.symm (σ (D.sp.iXY 0 (γ.symm w)) - D.sp.iXY 0 w)) := by
-        rw [map_add, map_smul, hzs, map_sub, LinearEquiv.symm_apply_apply]
+        rw [map_add (f := _), map_smul, hzs, map_sub, LinearEquiv.symm_apply_apply]
         abel
       rw [e3]
       exact F0.X.neg_mem h2

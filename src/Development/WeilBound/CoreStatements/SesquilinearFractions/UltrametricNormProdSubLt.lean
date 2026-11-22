@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
 open scoped ComplexOrder
 
@@ -36,7 +41,7 @@ theorem ultrametric_norm_prod_sub_lt {ι : Type} (s : Finset ι) (a b : ι → A
     have hpb : ‖∏ i ∈ s, b i‖ ≤ r ^ s.card := by
       rw [norm_prod]
       calc ∏ i ∈ s, ‖b i‖ ≤ ∏ _i ∈ s, r :=
-            Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i hi => hb i (Finset.mem_insert_of_mem hi)
+            Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i hi => hb i (Finset.mem_insert_of_mem hi)
         _ = r ^ s.card := Finset.prod_const r
     have hpos : 0 < r ^ (s.card + 1) := pow_pos hr _
     refine lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ?_ ?_)

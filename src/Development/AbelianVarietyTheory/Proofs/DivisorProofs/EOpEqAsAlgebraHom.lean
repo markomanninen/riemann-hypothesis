@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelTypeEigenfunctionOfLiftableElement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelTypeEigenfunctionOfLiftableElement
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem eOp_eq_asAlgebraHom (e : MonoidAlgebra LL G) :
   induction e using MonoidAlgebra.induction_linear with
   | zero => ext x; simp [eOp_eq_sum]
   | add a b ha hb =>
-    rw [map_add, ← ha, ← hb]; ext x
+    rw [map_add (f := _), ← ha, ← hb]; ext x
     simp [eOp_eq_sum, add_smul, Finset.sum_add_distrib]
   | single g a =>
     classical
@@ -71,8 +75,8 @@ theorem mem_eigenspace_iff₂ (P : Subgroup G) (lam : P →* LLˣ) (x : WL) :
   rw [rho_eq, Units.val_mul, mul_smul]
   exact (smul_right_injective WL (Units.ne_zero _)).eq_iff
 
-open Classical in
 
+open Classical in
 def avg (P : Subgroup G) (lam : P →* LLˣ) (x : WL) : WL :=
   ∑ p : P, ((Nat.card P : LL)⁻¹ * (((lam p)⁻¹ : LLˣ) : LL)) • twRep A p x
 
@@ -81,7 +85,8 @@ theorem avg_mem (P : Subgroup G) (lam : P →* LLˣ) (x : WL) : avg A P lam x �
   rw [mem_eigenspace_iff₂]
   intro q
   unfold avg
-  rw [map_sum, Finset.smul_sum, ← Equiv.sum_comp (Equiv.mulLeft q) (fun p => ((lam q : LLˣ) : LL) • _)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum, ← Equiv.sum_comp (Equiv.mulLeft q) (fun p => ((lam q : LLˣ) : LL) • _)]
   refine Finset.sum_congr rfl fun p _ => ?_
   simp only [Equiv.coe_mulLeft, map_smul, Subgroup.coe_mul, map_mul, Module.End.mul_apply, smul_smul]
   congr 1
@@ -103,7 +108,8 @@ theorem mem_span_good_iff (σ : LL →+* ℂ) {M : Type} [AddCommGroup M] [Modul
     simp
   have hE : ∀ x, e (A.j σ (A.eOp c x)) = ∑ g, σ (c g) • a g (e (A.j σ x)) := by
     intro x
-    rw [eOp_eq_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eOp_eq_sum, map_sum, map_sum]
     exact Finset.sum_congr rfl fun g _ => by rw [map_smulₛₗ, map_smul, htw]
   constructor
   · intro hh
@@ -116,8 +122,8 @@ theorem mem_span_good_iff (σ : LL →+* ℂ) {M : Type} [AddCommGroup M] [Modul
     | zero => simp
     | add x y _ _ hx hy =>
       refine ⟨fun p => ?_, ?_⟩
-      · rw [map_add, map_add, hx.1, hy.1, smul_add]
-      · simp only [map_add, smul_add, Finset.sum_add_distrib, hx.2, hy.2]
+      · rw [map_add (f := _), map_add (f := _), hx.1, hy.1, smul_add]
+      · simp only [map_add (f := _), smul_add, Finset.sum_add_distrib, hx.2, hy.2]
     | smul r x _ hx =>
       refine ⟨fun p => ?_, ?_⟩
       · rw [map_smul, map_smul, hx.1, smul_comm]
@@ -137,7 +143,8 @@ theorem mem_span_good_iff (σ : LL →+* ℂ) {M : Type} [AddCommGroup M] [Modul
         · rw [← LinearMap.comp_apply (A.ρ p) (A.eOp c), ← h2, LinearMap.comp_apply, avg_mem A P lam x p, map_smul]
         · have : e (A.j σ (avg A P lam x)) = Pi (e (A.j σ x)) := by
             unfold avg
-            simp only [Pi, map_sum, LinearMap.sum_apply, LinearMap.smul_apply]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [Pi, map_sum, LinearMap.sum_apply, LinearMap.smul_apply]
             exact Finset.sum_congr rfl fun g _ => by rw [map_smulₛₗ, map_smul, htw]
           rw [hE, this]
           simp only [E, LinearMap.sum_apply, LinearMap.smul_apply]
@@ -145,7 +152,7 @@ theorem mem_span_good_iff (σ : LL →+* ℂ) {M : Type} [AddCommGroup M] [Modul
       | add x y _ _ hx hy =>
         obtain ⟨x', hx', ex⟩ := hx
         obtain ⟨y', hy', ey⟩ := hy
-        exact ⟨x' + y', Submodule.add_mem _ hx' hy', by simp only [map_add, ex, ey]⟩
+        exact ⟨x' + y', Submodule.add_mem _ hx' hy', by simp only [map_add (f := _), ex, ey]⟩
       | smul r x _ hx =>
         obtain ⟨x', hx', ex⟩ := hx
         exact ⟨r • x', Submodule.smul_mem _ r hx', by simp only [map_smul, ex]⟩
@@ -181,7 +188,8 @@ theorem ws_eq_span (R : RealDat D A Ks) (F : Face D A) (b : Bool) (i : Fin D.R.m
     have h1 := congrArg (fun z : R.WL F b i => (z : Fin (R.nW i) → D.what₂.LL))
       ((Module.finBasis D.what₂.LL (R.WL F b i)).sum_repr ⟨x, hx⟩)
     simp only [Submodule.coe_sum, Submodule.coe_smul] at h1
-    rw [← h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1, map_sum]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [map_smulₛₗ]
     refine Submodule.smul_mem _ _ ?_
@@ -202,7 +210,7 @@ theorem exists_lift (R : RealDat D A Ks) (hU : R.LUnif) (i : Fin D.R.m) (σ : D.
     ext v h
     show _ * actG0 _ _ _ _ _ h = 0
     unfold actG0
-    rw [dif_neg hk]
+    rw [dite_eq_right hk]
     simp
   have h1 : x ∈ Submodule.span ℂ (Set.range ((R.FW i).j σ)) := (hU i σ).2.1 ▸ Submodule.mem_top
   have h2 : Submodule.span ℂ (Set.range ((R.FW i).j σ)) = ⊥ := by

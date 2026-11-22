@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
@@ -105,13 +109,13 @@ theorem exists_continuousMultilinearMap_of_inner_eq_prod {ι : Type} [Fintype ι
     ∃ Φ : ContinuousMultilinearMap ℂ H K, ∀ y, Φ y ∈ closure (Submodule.span ℂ (Set.range f) : Set K) ∧
       ∀ a, ⟪f a, Φ y⟫_ℂ = (c : ℂ) * ∏ τ, ⟪e τ (a τ), y τ⟫_ℂ := by
   choose F hF1 hF2 hF3 using exists_vector_of_inner_eq_prod e f c hd hf
-  let L : (∀ τ, A τ) → MultilinearMap ℂ H ℂ := fun a =>
+  let L : (∀ τ, A τ) → MultilinearMap (RingHom.id ℂ) H ℂ := fun a =>
     (c : ℂ) • (MultilinearMap.mkPiAlgebra ℂ ι ℂ).compLinearMap fun τ => innerₛₗ ℂ (e τ (a τ))
   have hL : ∀ a y, ⟪f a, F y⟫_ℂ = L a y := by
     intro a y
     rw [hF2]; simp [L]
   have hmem : ∀ y, F y ∈ (Submodule.span ℂ (Set.range f)).topologicalClosure := hF1
-  let M : MultilinearMap ℂ H K :=
+  let M : MultilinearMap (RingHom.id ℂ) H K :=
     { toFun := F
       map_update_add' := by
         intro _ m i p q
@@ -137,8 +141,8 @@ theorem exists_continuousMultilinearMap_of_inner_eq_prod {ι : Type} [Fintype ι
   rw [mul_pow, Real.sq_sqrt (abs_nonneg c)]
   simpa using h
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_equivariant_multilinear_of_matrixCoeff_eq :
     ∀ (n : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι] (Hm : ι → Mt n) (H : ι → Type) [∀ τ, NormedAddCommGroup (H τ)] [∀ τ, InnerProductSpace ℂ (H τ)] [∀ τ, CompleteSpace (H τ)] (σ : ∀ τ, Mt n → (H τ →L[ℂ] H τ)) (K : Type) [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K] (ρ : (ι → Mt n) → (K →L[ℂ] K)) (v : ∀ τ, H τ) (k : K), (∀ τ, (Hm τ).det ≠ 0 ∧ IsURepOn (Formalism.QuantumDeterminants.UH (Hm τ)) (σ τ) ∧ IsIrredOn (Formalism.QuantumDeterminants.UH (Hm τ)) (σ τ) ∧ ‖v τ‖ = 1) → ρ 1 = 1 → (∀ u ∈ UG Hm, ∀ u' ∈ UG Hm, ρ (u * u') = ρ u * ρ u') → (∀ u ∈ UG Hm, ∀ y, ‖ρ u y‖ = ‖y‖) → (∀ u ∈ UG Hm, ⟪k, ρ u k⟫_ℂ = ((‖k‖ ^ 2 : ℝ) : ℂ) * ∏ τ, ⟪v τ, σ τ (u τ) (v τ)⟫_ℂ) → ∃ Φ : ContinuousMultilinearMap ℂ H K, Φ v = k ∧ (∀ τ, ∀ g ∈ Formalism.QuantumDeterminants.UH (Hm τ), ∀ y, Φ (Function.update y τ (σ τ g (y τ))) = ρ (Pi.mulSingle τ g) (Φ y)) ∧ ∀ y, Φ y ∈ closure (Submodule.span ℂ {z | ∃ u ∈ UG Hm, z = ρ u k} : Set K) := by
   intro n ι _ _ Hm H _ _ _ σ K _ _ _ ρ v k hσ hρ1 hρm hρn hco

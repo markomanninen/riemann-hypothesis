@@ -1,14 +1,18 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InCell
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitOfRetract
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsNMapAdd
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousUnipotentBlockFamily
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsBUnique
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardSymplecticFormSqNegOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LowerDiagonalOfUpperTriangularBlock
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CellConditionsOfSmulEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulNBlockInr
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InCell
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitOfRetract
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsNMapAdd
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousUnipotentBlockFamily
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsBUnique
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardSymplecticFormSqNegOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LowerDiagonalOfUpperTriangularBlock
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CellConditionsOfSmulEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulNBlockInr
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,12 +46,12 @@ theorem cell_eq {e : AE D} (hee : e * e = e) :
   change IsUnit _ ↔ IsUnit _
   rw [det_mix_one hee]
 
-open Classical in
 
+open Classical in
 def tau (e : AE D) (g : G D p) : hermS D p e := if h : ∃ x, IsB e g x then h.choose else 0
 
 theorem isB_tau {e : AE D} {g : G D p} (h : ∃ x, IsB e g x) : IsB e g (tau e g) := by
-  rw [tau, dif_pos h]
+  rw [tau, dite_eq_left h]
   exact h.choose_spec
 
 theorem tau_eq {e : AE D} {g : G D p} {x : hermS D p e} (h : IsB e g x) : tau e g = x :=

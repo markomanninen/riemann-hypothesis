@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseLen
-import Formalism.LocalRingCardinality.Lemmas
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseLen
+public import Formalism.LocalRingCardinality.Lemmas
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.WeaklyAdmissibleFiltrations
 

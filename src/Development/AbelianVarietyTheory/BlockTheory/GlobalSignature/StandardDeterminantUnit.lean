@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
-import Formalism.LocalToGlobal.Columns.StdLatUnimodular
-import Formalism.LocalToGlobal.Columns.DecoFin
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+public import Formalism.LocalToGlobal.Columns.StdLatUnimodular
+public import Formalism.LocalToGlobal.Columns.DecoFin
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -17,36 +21,28 @@ section Generic
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
   {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
-def StdAtAll (d : DecoSet E n ST SG) : Prop :=
+def StdAtAll (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : Prop :=
   ∀ P ∈ ST, d.1.at P = stdAt E n P
 
-def DetUnitAt (d : DecoSet E n ST SG) (Q : HeightOneSpectrum (𝓞 E)) : Prop :=
+def DetUnitAt (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (Q : HeightOneSpectrum (𝓞 E)) : Prop :=
   ∀ g : Sp E n ≃ₗ[E] Sp E n, (∀ x : Sp E n, g x ∈ d.1.at Q ↔ x ∈ stdAt E n Q) →
     Q.valuation E (LinearMap.det (g : Sp E n →ₗ[E] Sp E n)) = 1
 
 def SplitNonConj (ST : Finset (HeightOneSpectrum (𝓞 E))) : Prop :=
   ∀ P ∈ ST, ∀ Q ∈ ST, Q ≠ conjPrime₂ P
 
-variable (E n ST SG) in
 
+variable (E n ST SG) in
 def HasStdReps : Prop :=
-  ∀ d : DecoSet E n ST SG, ∃ ga : UF E n, StdAtAll (((ga, 1) : UF E n × GLG E n SG) • d)
+  ∀ d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG), ∃ ga : UF E n, StdAtAll (((ga, 1) : UF E n × GLG (E := E) (n := n) (SG := SG)) • d)
 
-variable (E n ST SG) in
-
-def StdDetUnit : Prop :=
-  ∀ d : DecoSet E n ST SG, StdAtAll d → ∀ P ∈ ST, DetUnitAt d P ∧ DetUnitAt d (conjPrime₂ P)
 
 end Generic
 
 def Representatives : Prop :=
   ∀ (X : Fields), X.Ok → ∀ (Pr : Primes X), Pr.Ok → ∀ (u : Pr.Word) (n : ℕ) (SG : Finset (HeightOneSpectrum (𝓞 X.E)))
-    (d : DecoSet X.E n (Pr.vT u) SG), ∃ ga : UF X.E n, ∀ P ∈ Pr.vT u,
-      ((((ga, 1) : UF X.E n × GLG X.E n SG) • d).1.at P = stdAt X.E n P)
-
-def RepresentativesDet : Prop :=
-  ∀ (X : Fields), X.Ok → ∀ (Pr : Primes X), Pr.Ok → ∀ (u : Pr.Word) (n : ℕ) (SG : Finset (HeightOneSpectrum (𝓞 X.E))),
-    StdDetUnit X.E n (Pr.vT u) SG
+    (d : DecoSet (E := X.E) (n := n) (ST := Pr.vT u) (SG := SG)), ∃ ga : UF X.E n, ∀ P ∈ Pr.vT u,
+      ((((ga, 1) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) • d).1.at P = stdAt X.E n P)
 
 def RepresentativesSplit : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 E))),

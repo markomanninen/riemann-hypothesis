@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.Reduction
 open scoped NumberField.AdeleRing
 
@@ -60,7 +65,7 @@ theorem le_of_ratio_le {n : ℕ} {ρ : Fin n → ℝ} (hρ : ∀ i, 0 < ρ i) (h
   have h2 : ρ i ^ n ≤ R ^ n := by
     rw [h1]
     calc ∏ j, ρ i / ρ j ≤ ∏ _j : Fin n, R :=
-          Finset.prod_le_prod (fun j _ => (div_pos (hρ i) (hρ j)).le) (fun j _ => h i j)
+          Finset.prod_le_prod₀ (fun j _ => (div_pos (hρ i) (hρ j)).le) (fun j _ => h i j)
       _ = R ^ n := by simp
   exact (pow_le_pow_iff_left₀ (hρ i).le (by linarith) hn).1 h2
 
@@ -80,7 +85,7 @@ theorem one_le_rpow_mul_prod {n : ℕ} {ρ : Fin n → ℝ} (hρ : ∀ i, 0 < ρ
   have hR0 : 0 < R := by linarith
   rw [Real.rpow_sum_of_pos hR0, ← Finset.prod_mul_distrib]
   calc (1 : ℝ) = ∏ _i : Fin n, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun i _ => ?_)
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun i _ => ?_)
   rcases le_total 0 (lam i) with hl | hl
   · rw [abs_of_nonneg hl, ← Real.mul_rpow hR0.le (hρ i).le]
     refine Real.one_le_rpow ?_ hl
@@ -141,7 +146,7 @@ theorem rapid_decay_of_one_parabolic_bounds : ∀ (K : Type) [Field K] [NumberFi
       have h1 : (fun i => posIdele (K := K) (r i) (hr i)) = 1 := by
         funext i
         have h2 : (⟨r i, hr i⟩ : {x : ℝ // 0 < x}) = 1 := Subtype.ext (hr1 i)
-        change posIdeleHom K ⟨r i, hr i⟩ = 1
+        change posIdeleHom (K := K) ⟨r i, hr i⟩ = 1
         rw [h2, map_one]
       rw [h1, map_one]
     have hP : ∏ i, r i ^ lam i = 1 :=

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGDatumOneOneOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.HxiTZeroComb
-import Development.AbelianVarietyTheory.Definitions.Divisors.NontrivialOfArtinQE
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeckeMap
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsGHeckeMapForget
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGDatumOneOneOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HxiTZeroComb
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NontrivialOfArtinQE
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeckeMap
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsGHeckeMapForget
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,49 +64,5 @@ section Eig
 variable {N : ℕ} {X : GenModel gb N} {k : ℕ} {S : Finset ℕ} {θ : (G.La →ₗ[G.O] G.La) → ℕ → ℂ} {a b : ℕ}
 
 end Eig
-
-def objOfEq {N M : ℕ} (h : N = M) {S : Scheme.{0}} {s : S ⟶ Sp ℂ} (o : GObj gb N s) : GObj gb M s where
-  A := o.A
-  ab := o.ab
-  act := o.act
-  P := o.P
-  isLB := o.isLB
-  rig₁ := o.rig₁
-  rig₂ := o.rig₂
-  symm := o.symm
-  ample := o.ample
-  rosati := o.rosati
-  lie := o.lie
-  lieRank := o.lieRank
-  eta := o.eta
-  eta_add := o.eta_add
-  eta_lin := o.eta_lin
-  eta_ker := h ▸ o.eta_ker
-  geom := h ▸ o.geom
-
-def modelOfEq {N M : ℕ} (h : N = M) (X : GenModel gb N) : GenModel gb M where
-  X := X.X
-  s := X.s
-  univ := objOfEq h X.univ
-  rep S s' o := by
-    subst h
-    exact X.rep S s' o
-
-example (N : ℕ) (S : Finset ℕ) (c t : ℕ) (hc : 0 < c) (hN : c.Coprime N) (hS : ∀ q ∈ S, c.Coprime q) :
-    IsHeckeIdx (G := G) N S ((c + N * t) • LinearMap.id) c :=
-  ⟨hc, hN, hS, fun x => ⟨t • x, by simp [add_smul, mul_smul, smul_comm t N x]⟩⟩
-
-example (N : ℕ) (S : Finset ℕ) (g : G.La →ₗ[G.O] G.La) (h : IsHeckeIdx N S g 1) (x : G.La) :
-    ∃ y, g x = x + N • y := by
-  obtain ⟨y, hy⟩ := h.2.2.2 x
-  exact ⟨y, by rw [← hy, one_nsmul, add_sub_cancel]⟩
-
-example (N : ℕ) (g : G.La →ₗ[G.O] G.La) : ¬ IsHeckeIdx N ∅ g 0 := fun h => lt_irrefl 0 h.1
-
-example {N : ℕ} (X : GenModel gb N) (k : ℕ) (S : Finset ℕ) (θ : (G.La →ₗ[G.O] G.La) → ℕ → ℂ) (d : ℕ) :
-    (altPoly X k S θ d).natDegree ≤ d := by
-  unfold altPoly
-  refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun a ha => ?_
-  exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (Nat.lt_succ_iff.mp (Finset.mem_range.mp ha))
 
 end GlobalTheory.W2

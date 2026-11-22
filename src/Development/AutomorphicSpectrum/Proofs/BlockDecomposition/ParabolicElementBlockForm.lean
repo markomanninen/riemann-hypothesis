@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BCT ValuativeRel
 open scoped Classical TensorProduct
@@ -48,7 +52,7 @@ theorem parab_eq_blk : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
     rw [hM]; exact (p : GLw n w).isUnit
   unfold GlobalTheory.BCT.blk
   simp only
-  rw [dif_pos hU]
+  rw [dite_eq_left hU]
   exact Units.ext (by rw [IsUnit.unit_spec, hM])
 
 end GlobalTheory.CompanionTheory.ParabBlock

@@ -1,14 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmAOneApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmAOneApply
+
+@[expose] public section
+
 open Matrix MeasureTheory ValuativeRel GlobalTheory.SplitFlip GlobalTheory.SmGL GlobalTheory.WeilM GlobalTheory.RankFibre GlobalTheory.SplitWeil GlobalTheory.RankFibreKer
 
 namespace GlobalTheory.RankFibreKer
 
-theorem nhds_one_slice_invariant : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (a d : ℕ) (Φ : Matrix (Fin a) (Fin d) k → ℂ), Φ ∈ fullRankSB k a d →
+open scoped Pointwise in
+theorem nhds_one_slice_invariant : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (a d : ℕ) (Φ : Matrix (Fin a) (Fin d) k → ℂ), Φ ∈ fullRankSB (k := k) a d →
     ∀ (s : Matrix (Fin a) (Fin d) k → GL (Fin a) k), ContinuousOn s {Y | Y.rank = a} →
-    (∀ Y : Matrix (Fin a) (Fin d) k, Y.rank = a → ((s Y)⁻¹).val * Y ∈ slice k a d) →
-    (∀ (Z : Matrix (Fin a) (Fin d) k) (g : GL (Fin a) k), Z ∈ slice k a d → g.val * Z ∈ slice k a d → g = 1) →
-    ∃ U ∈ nhds (1 : GL (Fin a) k), ∀ x ∈ U, ∀ (g : GL (Fin a) k), ∀ Z ∈ slice k a d,
+    (∀ Y : Matrix (Fin a) (Fin d) k, Y.rank = a → ((s Y)⁻¹).val * Y ∈ slice (k := k) a d) →
+    (∀ (Z : Matrix (Fin a) (Fin d) k) (g : GL (Fin a) k), Z ∈ slice (k := k) a d → g.val * Z ∈ slice (k := k) a d → g = 1) →
+    ∃ U ∈ nhds (1 : GL (Fin a) k), ∀ x ∈ U, ∀ (g : GL (Fin a) k), ∀ Z ∈ slice (k := k) a d,
       Φ (g.val * x.val * Z) = Φ (g.val * Z) := by
   intro k _ _ _ _ a d Φ hΦ s hs hsl huniq
   obtain ⟨⟨hlc, hcpt⟩, hrk⟩ := hΦ
@@ -45,7 +51,7 @@ theorem nhds_one_slice_invariant : ∀ (k : Type) [Field k] [ValuativeRel k] [To
     simp [hn]
   obtain ⟨u, v, -, hv, hAu, h1v, huv⟩ := generalized_tube_lemma hA isCompact_singleton hno hsub
 
-  have key : ∀ (h : GL (Fin a) k) (Z : Matrix (Fin a) (Fin d) k), Z ∈ slice k a d → Φ (h.val * Z) ≠ 0 →
+  have key : ∀ (h : GL (Fin a) k) (Z : Matrix (Fin a) (Fin d) k), Z ∈ slice (k := k) a d → Φ (h.val * Z) ≠ 0 →
       (h, Z) ∈ f '' tsupport Φ := by
     intro h Z hZ hne
     have hY : h.val * Z ∈ tsupport Φ := subset_tsupport _ hne
@@ -68,11 +74,11 @@ theorem nhds_one_slice_invariant : ∀ (k : Type) [Field k] [ValuativeRel k] [To
   by_cases h0' : Φ (g.val * x.val * Z) ≠ 0
   · have hm : (g * x, Z) ∈ f '' tsupport Φ := key (g * x) Z hZ (by simpa [Units.val_mul] using h0')
     have := huv (Set.mk_mem_prod (hAu hm) (show x⁻¹ ∈ v from hxv'))
-    simp only [hn, Set.mem_setOf_eq] at this
+    simp only [hn, Set.mem_ofPred_eq] at this
     rw [Units.val_mul, Matrix.mul_assoc g.val x.val, ← Units.val_mul, mul_inv_cancel, Units.val_one,
       Matrix.mul_one] at this
     rw [this]
-  push_neg at h0 h0'
+  push Not at h0 h0'
   rw [h0, h0']
 
 end GlobalTheory.RankFibreKer

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
-import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyIntegralOfIsIntegralOfIsAlgClosed
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsRegularOfSupportDimQuotientAddLengthLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
+public import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyIntegralOfIsIntegralOfIsAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsRegularOfSupportDimQuotientAddLengthLe
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -98,7 +103,11 @@ theorem isDomain_tensor_of_closure (k Ω S : Type) [Field k] [Field Ω] [IsAlgCl
     [Algebra.IsAlgebraic k Ω] [CommRing S] [Algebra k S] [Algebra.FiniteType k S] [IsDomain (Ω ⊗[k] S)]
     (F : Type) [Field F] [Algebra k F] : IsDomain (F ⊗[k] S) := by
   let L := AlgebraicClosure F
-  let j : Ω →ₐ[k] L := IsAlgClosed.lift
+  let j : Ω →ₐ[k] L := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   letI : Algebra Ω L := j.toRingHom.toAlgebra
   haveI : IsScalarTower k Ω L := IsScalarTower.of_algebraMap_eq fun x => (j.commutes x).symm
   haveI := isDomain_tensor_of_isAlgClosed Ω (Ω ⊗[k] S) L
@@ -150,7 +159,7 @@ theorem geomInt_away_baseChange (K k Ω R : Type) [Field K] [Field k] [Field Ω]
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a r => simp [φ, Algebra.smul_def]
-    | add x y hx hy => simp only [TensorProduct.tmul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [TensorProduct.tmul_add, map_add (f := _), hx, hy]
   refine geomInt_away k Ω (k ⊗[K] R) e he (fun h => h0 ?_) (fun x y hxy => ?_)
   · rw [← hφ, h, map_zero]
   · have h1 := congrArg φ hxy
@@ -182,14 +191,14 @@ theorem exists_finite_level (K C R : Type) [Field K] [Field C] [Algebra K C] [Co
       induction e using TensorProduct.induction_on with
       | zero => simp
       | tmul a r => rfl
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     refine ⟨k₁ ⊔ k₂, sup_le h₁ h₂,
       (Algebra.TensorProduct.map (IntermediateField.inclusion (le_sup_left : k₁ ≤ k₁ ⊔ k₂))
         (AlgHom.id K R) : k₁ ⊗[K] R →ₐ[K] _) e₁ +
       (Algebra.TensorProduct.map (IntermediateField.inclusion (le_sup_right : k₂ ≤ k₁ ⊔ k₂))
         (AlgHom.id K R) : k₂ ⊗[K] R →ₐ[K] _) e₂,
       inferInstance, ?_⟩
-    rw [map_add, key, key]
+    rw [map_add (f := _), key, key]
 
 theorem exists_geomInt_component : ∀ (K : Type) [Field K] [NumberField K] [Algebra K ℂ] (R : Type) [CommRing R] [Algebra K R] [Algebra.Smooth K R] (p : R →ₐ[K] ℂ), ∃ (k : IntermediateField K ℂ) (e : k ⊗[K] R), FiniteDimensional K k ∧ IsIdempotentElem e ∧ Algebra.TensorProduct.lift k.val p (fun _ _ => Commute.all _ _) e = 1 ∧ GeomInt k (Localization.Away e) := by
   intro K _ _ _ R _ _ _ p
@@ -212,7 +221,7 @@ theorem exists_geomInt_component : ∀ (K : Type) [Field K] [NumberField K] [Alg
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a r => rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   refine ⟨k, e, hfin, he, ?_, ?_⟩
   · rw [← hπ]
     exact (IsIdempotentElem.iff_eq_zero_or_one.1 (he'.map π)).resolve_left hP

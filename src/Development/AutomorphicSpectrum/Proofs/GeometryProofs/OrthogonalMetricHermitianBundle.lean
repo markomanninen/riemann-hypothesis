@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSubFibreSubFib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsUnitNatCastStalk
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsConstStalk
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinrankFiniteFlatTorsionSubschemeEqCardPoints
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtEigen
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSubFibreSubFib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsUnitNatCastStalk
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsConstStalk
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinrankFiniteFlatTorsionSubschemeEqCardPoints
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtEigen
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -39,14 +44,14 @@ theorem core_span {R V F : Type} [CommRing R] [AddCommGroup V] [Module R V] [Add
     | mem b hb => exact h a ha b hb
     | zero => rw [map_zero]; exact InnerProductSpace.Core.inner_zero_right _
     | add u v _ _ hu hv =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (InnerProductSpace.Core.inner_add_right _ _ _).trans (by rw [show _ = _ from hu, show _ = _ from hv, add_zero])
     | smul r u _ hu =>
       rw [hs]
       exact (InnerProductSpace.Core.inner_smul_right _ _).trans (by rw [show _ = _ from hu, mul_zero])
   | zero => rw [map_zero]; exact InnerProductSpace.Core.inner_zero_left _
   | add u v _ _ hu hv =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (InnerProductSpace.Core.inner_add_left _ _ _).trans (by rw [show _ = _ from hu, show _ = _ from hv, add_zero])
   | smul r u _ hu =>
     rw [hs]
@@ -80,8 +85,6 @@ end Form
 
 section Eigen
 
-theorem epsMul_eq (c : ℂ) : GlobalTheory.CompanionTheory.Ar.epsMul c = ReciprocityTheory.ChartRestriction.G.Geo.Tor.epsScale c := rfl
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H} {l : Level H} {Xo : Moduli D l}
   {c : Coeff l} {Y : Model Xo c (algebraMap (𝓞 c.F) c.F)} {S : Finset ℕ} {Ω : Type} [Field Ω] {K : Type} [Fintype K]
   {J : K → Type} {y : (Σ k, J k) → Ω}
@@ -93,21 +96,21 @@ theorem isLieEigen_of_gen (𝔐 : HodgeCpt Y S y) {L : Type} [Field L] [NumberFi
     (σ : L →+* ℂ) {V : Type} [AddCommGroup V] [Module (𝓞 L) V] (MB : LieModel 𝔐.t.G z V) (x : V)
     (hx : x ∈ subGens 𝔐.M U z MB)
     (w : epsAt (spMap (σ.comp (algebraMap (𝓞 L) L)) ≫ z) ⟶ 𝔐.t.G)
-    (hw : MB.Lifts (σ.comp (algebraMap (𝓞 L) L)) (𝟙 𝔐.t.G.left) x w) :
+    (hw : (w.left ≫ (𝟙 𝔐.t.G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (σ.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt x).left)) :
     IsLieEigen 𝔐.t.act (spMap (σ.comp (algebraMap (𝓞 L) L)) ≫ z)
       ((σ.comp ((Scheme.stalkClosedPointTo (spMap (algebraMap (𝓞 L) L) ≫ z)).hom.comp g₀)).comp (labelEmb c s)) w := by
   obtain ⟨e, he, v, hval, hl⟩ := hx
   have hσ : spMap σ ≫ spMap (algebraMap (𝓞 L) L) ≫ z = spMap (σ.comp (algebraMap (𝓞 L) L)) ≫ z := by
     rw [← Category.assoc]
     exact congrArg (· ≫ z) (spec_comp _ _)
-  have hd : dualMap (σ.comp (algebraMap (𝓞 L) L)) = (dualMap σ).comp (dualMap (algebraMap (𝓞 L) L)) := by
+  have hd : GlobalTheory.CompanionTheory.Ar.dualMap (σ.comp (algebraMap (𝓞 L) L)) = (GlobalTheory.CompanionTheory.Ar.dualMap σ).comp (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap (𝓞 L) L)) := by
     refine RingHom.ext fun a => ?_
     ext <;> simp
   have hw' : w = epsBase σ hσ ≫ v := by
     refine (left_eq_iff σ hσ w v).1 ?_
-    have h1 : w.left = spMap (dualMap (σ.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt x).left := by
+    have h1 : w.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (σ.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt x).left := by
       simpa [LieModel.Lifts] using hw
-    have h2 : v.left = spMap (dualMap (algebraMap (𝓞 L) L)) ≫ (MB.pt x).left := by
+    have h2 : v.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap (𝓞 L) L)) ≫ (MB.pt x).left := by
       simpa [LieModel.Lifts] using hl
     rw [h1, h2, hd, ← Category.assoc]
     exact congrArg (· ≫ (MB.pt x).left) (spec_comp _ _).symm
@@ -115,7 +118,7 @@ theorem isLieEigen_of_gen (𝔐 : HodgeCpt Y S y) {L : Type} [Field L] [NumberFi
   refine ⟨isTanAt_base σ hσ hval.isTanAt, fun a => ?_⟩
   have ev := GlobalTheory.CompanionTheory.Ar.FlagFib.valAt_eigen E H D l Xo c Y S Ω K J y 𝔐 L _ hp g₀ hg s e v a (hU he) hval
   have e1 : ((epsBase σ hσ ≫ v) ≫ 𝔐.t.act.act a).left =
-      Spec.map (CommRingCat.ofHom (dualMap σ)) ≫ (v ≫ 𝔐.t.act.act a).left := rfl
+      Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap σ)) ≫ (v ≫ 𝔐.t.act.act a).left := rfl
   rw [e1, ev, ← Category.assoc, spec_dual_eps, Category.assoc]
   rfl
 
@@ -137,10 +140,11 @@ theorem orthAt_subFib : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
   intro u hu u' hu'
   let w := epsBase (σ.comp (algebraMap (𝓞 L) L)) rfl ≫ MB.pt u
   let w' := epsBase (σ.comp (algebraMap (𝓞 L) L)) rfl ≫ MB.pt u'
-  have hl : MB.Lifts (σ.comp (algebraMap (𝓞 L) L)) (𝟙 𝔐.t.G.left) u w := Category.comp_id _
-  have hl' : MB.Lifts (σ.comp (algebraMap (𝓞 L) L)) (𝟙 𝔐.t.G.left) u' w' := Category.comp_id _
+  have hl : (w.left ≫ (𝟙 𝔐.t.G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (σ.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt u).left) := Category.comp_id _
+  have hl' : (w'.left ≫ (𝟙 𝔐.t.G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (σ.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt u').left) := Category.comp_id _
   have e1 := isLieEigen_of_gen 𝔐 z hp g₀ hg s U hU σ MB u hu w hl
   have e2 := isLieEigen_of_gen 𝔐 z hp g₀ hg s' U' hU' σ MB u' hu' w' hl'
   exact (hF σ u u' w w' hl hl').trans (hO _ _ _ w w' hne e1 e2)
 
 end GlobalTheory.CompanionTheory.Ar.FlagFib.FibOrth
+

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PairCalc
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PairCalc
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
 open GlobalTheory.IwLevel (InSub IsIsogDeg)
@@ -51,7 +56,7 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.oMod_of :
   have hx : x ⊗ₜ[ℤ] (1 : ℤ_[p]) =
       (algebraMap (𝓞 D.F) D.O c) ⊗ₜ[ℤ] (1 : ℤ_[p]) + (p : ℤ) • e.symm M' := by
     have := congrArg e.symm hM
-    rw [e.symm_apply_apply, map_add, map_zsmul, AlgEquiv.commutes,
+    rw [e.symm_apply_apply, map_add (f := _), map_zsmul, AlgEquiv.commutes,
       Algebra.TensorProduct.algebraMap_apply] at this
     exact this
   let P : Submodule ℤ D.O := LinearMap.range (LinearMap.lsmul ℤ D.O (p : ℤ))
@@ -72,7 +77,7 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.oMod_of :
     change PadicInt.toZMod (1 : ℤ_[p]) • (Submodule.Quotient.mk y : D.O ⧸ P) = _
     rw [map_one, one_smul]
   have h2 := congrArg Φ hx
-  rw [map_add, map_zsmul, h1, h1] at h2
+  rw [map_add (f := _), map_zsmul, h1, h1] at h2
   have h3 : (p : ℤ) • Φ (e.symm M') = 0 := by
     rw [natCast_zsmul]; exact hP _
   rw [h3, add_zero, Submodule.Quotient.eq] at h2

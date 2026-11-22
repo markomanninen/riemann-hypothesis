@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeHasBasisAtEveryFinitePlace
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NabIndepAndDelIndepLocalConditionsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StdWeylLatticesFgAndSpanCoeffSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeHasBasisAtEveryFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NabIndepAndDelIndepLocalConditionsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StdWeylLatticesFgAndSpanCoeffSpace
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.L2.DIV Formalism.DivisionValues GlobalTheory.TestLat Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open scoped Matrix ComplexOrder
@@ -44,8 +48,8 @@ theorem exists_smul_le_of_fg (N N' : Submodule (𝓞 K) V) (hfg : N'.FG)
   | add y z _ _ hy hz => rw [smul_add]; exact N.add_mem hy hz
   | smul c y _ hy => rw [smul_comm]; exact N.smul_mem _ hy
 
-omit [Module K V] [IsScalarTower (𝓞 K) K V] in
 
+omit [Module K V] [IsScalarTower (𝓞 K) K V] in
 theorem mem_of_forall_locP (N : Submodule (𝓞 K) V) {x : V}
     (h : ∀ w : HeightOneSpectrum (𝓞 K), x ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal N) : x ∈ N := by
   by_contra hx
@@ -96,12 +100,13 @@ theorem span_colLat_one : Submodule.span K (colLat (1 : GL (Fin n) K) : Set (Fin
   funext a
   simp [Matrix.one_apply, Pi.single_apply]
 
-theorem exists_isBasisAt_one (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
+theorem exists_isBasisAt_one (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
     ∃ a : 𝓞 K, a ≠ 0 ∧ ∀ w : HeightOneSpectrum (𝓞 K), a ∉ w.asIdeal → IsBasisAt w M 1 := by
+  letI : Submodule.IsFullLattice K M := hM
   obtain ⟨a, ha0, ha⟩ := exists_smul_le_of_fg (colLat (1 : GL (Fin n) K)) M hM.fg
     (fun x _ => by rw [span_colLat_one]; trivial)
   obtain ⟨b, hb0, hb⟩ := exists_smul_le_of_fg M (colLat (1 : GL (Fin n) K))
-    (Submodule.fg_span (Set.finite_range _)) (fun x _ => by rw [hM.span_eq_top]; trivial)
+    (Submodule.fg_span (Set.finite_range _)) (fun x _ => by rw [Submodule.IsFullLattice.span_eq_top]; trivial)
   refine ⟨a * b, mul_ne_zero ha0 hb0, fun w hw => le_antisymm ?_ ?_⟩
   · exact localization_le_of_smul_mem w (fun h => hw (w.asIdeal.mul_mem_right _ h)) ha
   · exact localization_le_of_smul_mem w (fun h => hw (w.asIdeal.mul_mem_left _ h)) hb
@@ -156,7 +161,7 @@ theorem transLat_colLat (lam : ι → DomWeight n) (T : Submodule (𝓞 K) (Pol 
 
 theorem locP_transLat (lam : ι → DomWeight n) (T : Submodule (𝓞 K) (Pol K ι n))
     (hT : Submodule.span K (T : Set (Pol K ι n)) = VV K lam)
-    (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ))
+    (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ))
     (hI : ∀ (w : HeightOneSpectrum (𝓞 K)) (B B' : ι → GL (Fin n) K), (∀ τ, IsBasisAt w (M τ) (B τ)) →
       (∀ τ, IsBasisAt w (M τ) (B' τ)) → ∀ F : Pol K ι n,
       (actP lam B⁻¹ F ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal T ↔ actP lam B'⁻¹ F ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal T))
@@ -217,9 +222,25 @@ theorem locP_transLat (lam : ι → DomWeight n) (T : Submodule (𝓞 K) (Pol K 
 theorem nabDelLoc_free_leVV : NabDelLoc ∧ NabDelFree ∧ NabLeVV := by
   refine ⟨?_, ?_, ?_⟩
   · intro K _ _ ι _ n lam M hM w B hB
-    exact ⟨locP_transLat lam _ (GlobalTheory.StdLatSpan.std_fg_span K ι n lam).2.2.1 M hM
+    have hMfull : ∀ τ, Submodule.IsFullLattice K (M τ) := by
+      intro τ
+      first
+      | exact hM τ
+      | have hcol : Submodule.span K (colLat (B τ) : Set (Fin n → K)) = ⊤ := by
+          rw [colLat, Submodule.span_span_of_tower]
+          change Submodule.span K (Set.range ((B τ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K).col) = ⊤
+          rw [← Matrix.range_mulVecLin]
+          exact LinearMap.range_eq_top.mpr (Matrix.mulVec_surjective_iff_isUnit.mpr (B τ).isUnit)
+        refine { toIsLattice := hM τ, span_eq_top := ?_ }
+        rw [eq_top_iff, ← hcol, Submodule.span_le]
+        intro x hx
+        apply Submodule.span_le_restrictScalars (GlobalTheory.LatBasisAt.locRing w) K _
+        rw [← GlobalTheory.LatBasisAt.mem_localization_iff_mem_span, hB τ,
+          GlobalTheory.LatBasisAt.mem_localization_iff_mem_span]
+        exact Submodule.subset_span hx
+    exact ⟨locP_transLat lam _ (GlobalTheory.StdLatSpan.std_fg_span K ι n lam).2.2.1 M hMfull
         (fun w B B' => GlobalTheory.T.nabIndep_and_delIndep_local_conditions.1 K ι n lam w M B B') w B hB,
-      locP_transLat lam _ (GlobalTheory.StdLatSpan.std_fg_span K ι n lam).2.2.2 M hM
+      locP_transLat lam _ (GlobalTheory.StdLatSpan.std_fg_span K ι n lam).2.2.2 M hMfull
         (fun w B B' => GlobalTheory.T.nabIndep_and_delIndep_local_conditions.2 K ι n lam w M B B') w B hB⟩
   · intro K _ _ ι _ n lam B
     exact ⟨transLat_colLat lam _ B fun w B' hB' F =>

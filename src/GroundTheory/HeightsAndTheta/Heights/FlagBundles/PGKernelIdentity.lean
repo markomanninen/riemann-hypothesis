@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FlagBundles
@@ -39,7 +44,8 @@ theorem add_mul_kernelSum (a b : S) (k : ℕ) :
 
 theorem map_kernelSum {T : Type*} [CommRing T] (φ : S →+* T) (a b : S) (k : ℕ) :
     φ (kernelSum a b k) = kernelSum (φ a) (φ b) k := by
-  simp [kernelSum, map_sum, map_sub, map_mul, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [kernelSum, map_sum, map_sub, map_mul, map_pow]
 
 theorem kernelSum_one_one (k : ℕ) : kernelSum (1 : S) 1 k = 0 := by
   simp [kernelSum]

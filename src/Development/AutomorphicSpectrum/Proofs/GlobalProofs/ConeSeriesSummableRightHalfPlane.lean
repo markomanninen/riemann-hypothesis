@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialSum
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -76,7 +80,7 @@ theorem coneTerm_summable : ∀ (ι : Type) [Fintype ι] (r : ℕ) (a : ι → F
         refine Finset.prod_congr rfl (fun j _ => ?_)
         rw [Complex.norm_cpow_eq_rpow_re_of_pos (hLpos j), Complex.neg_re]
     _ ≤ ∏ _j : ι, (c * S) ^ (-s.re) :=
-        Finset.prod_le_prod (fun j _ => Real.rpow_nonneg (hLpos j).le _)
+        Finset.prod_le_prod₀ (fun j _ => Real.rpow_nonneg (hLpos j).le _)
           (fun j _ => key (mul_pos hc0 hS0) (hL j))
     _ = (c ^ (-s.re)) ^ Fintype.card ι * (S ^ (-s.re)) ^ Fintype.card ι := by
         rw [Finset.prod_const, Finset.card_univ, Real.mul_rpow hc0.le hS0.le, mul_pow]
@@ -86,7 +90,7 @@ theorem coneTerm_summable : ∀ (ι : Type) [Fintype ι] (r : ℕ) (a : ι → F
         rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     _ ≤ (c ^ (-s.re)) ^ Fintype.card ι * ∏ i, ((m i : ℝ) + 1) ^ (-s.re) := by
         apply mul_le_mul_of_nonneg_left _ hC
-        apply Finset.prod_le_prod (fun i _ => hv0)
+        apply Finset.prod_le_prod₀ (fun i _ => hv0)
         intro i _
         apply key (by positivity)
         have hi : (m i : ℝ) ≤ ∑ k, (m k : ℝ) :=

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittTowerRestrictionUnipotentRadicalInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertieStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZero
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittTowerRestrictionUnipotentRadicalInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertieStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZero
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
@@ -91,7 +95,6 @@ end GlobalTheory.AnisoMean
 
 namespace GlobalTheory.AnisoMean
 variable {D : D7}
-local infixl:70 " ⬝ " => HMul.hMul
 
 theorem exists_fin_add_real {S T : HSp D} (w : WO S T) :
     ∃ u v : WO S T, u.map (infPart D) = 0 ∧ v.map (finPart D) = 0 ∧ w = u + v := by
@@ -120,7 +123,7 @@ theorem trace_one_tmul {F E : Type} [Field F] [Field E] [Algebra F E] [Module.Fi
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [LinearMap.baseChange_tmul, Algebra.TensorProduct.tmul_mul_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   rw [Algebra.trace_apply, h, LinearMap.trace_baseChange, Algebra.trace_apply]
 
 theorem sum_eq_trace {m n : ℕ} (A : Matrix (Fin m) (Fin m) D.host.E) (G : Matrix (Fin n) (Fin n) D.host.E)
@@ -141,7 +144,8 @@ theorem symplOH_rat (S T : HSp D) (x y : Matrix (Fin T.rank) (Fin S.rank) D.host
       (1 / 2 * Algebra.trace D.host.F D.host.E (D.host.xi0 * (S.gram⁻¹ * yᴴ * T.gram * x).trace)) := by
   have key : hO S T (x.map (incA D)) (y.map (incA D)) = incA D ((S.gram⁻¹ * yᴴ * T.gram * x).trace) := by
     rw [← sum_eq_trace]
-    simp only [hO, Matrix.map_apply, cA_incA_eq_incA_star, ← map_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hO, Matrix.map_apply, cA_incA_eq_incA_star, ← map_mul, ← map_sum]
   rw [symplOH, symplO, key, ← map_mul]
   rw [show incA D (D.host.xi0 * (S.gram⁻¹ * yᴴ * T.gram * x).trace) =
     (1 : AF D.host.F) ⊗ₜ[D.host.F] (D.host.xi0 * (S.gram⁻¹ * yᴴ * T.gram * x).trace) from rfl, trace_one_tmul, ← map_mul]
@@ -170,16 +174,16 @@ theorem actO_mul_mt (S T : HSp D) (g : GA D S) (w : WO S T) :
   rw [mt_one, Matrix.one_mul, Matrix.mul_assoc, ← mt_mul, mul_inv_cancel, mt_one, Matrix.mul_one]
 
 theorem ni_fix {V : HSp D} {r : ℕ} {C : Matrix (Fin V.rank) (Fin r) D.host.E} {g : GA D V} (hg : g ∈ NI V C) :
-    Formalism.L2.Theta.mt V g ⬝ C.map (incA D) = C.map (incA D) ∧
-      (adj D C * V.gram).map (incA D) ⬝ Formalism.L2.Theta.mt V g = (adj D C * V.gram).map (incA D) := by
+    Formalism.L2.Theta.mt V g * C.map (incA D) = C.map (incA D) ∧
+      (adj D C * V.gram).map (incA D) * Formalism.L2.Theta.mt V g = (adj D C * V.gram).map (incA D) := by
   induction hg using Subgroup.closure_induction with
   | mem g hg =>
     obtain ⟨h1, h2, -⟩ := hg
     constructor
-    · have e : (Formalism.L2.Theta.mt V g - 1) ⬝ C.map (incA D) = 0 := h1
+    · have e : (Formalism.L2.Theta.mt V g - 1) * C.map (incA D) = 0 := h1
       rw [Matrix.sub_mul, Matrix.one_mul, sub_eq_zero] at e
       exact e
-    · have e : (adj D C * V.gram).map (incA D) ⬝ (Formalism.L2.Theta.mt V g - 1) = 0 := h2
+    · have e : (adj D C * V.gram).map (incA D) * (Formalism.L2.Theta.mt V g - 1) = 0 := h2
       rw [Matrix.mul_sub, Matrix.mul_one, sub_eq_zero] at e
       exact e
   | one => simp only [mt_one, Matrix.one_mul, Matrix.mul_one, and_self]
@@ -256,9 +260,6 @@ end GlobalTheory.AnisoMean
 
 namespace GlobalTheory.AnisoMean
 variable {D : D7}
-local infixl:70 " ⬝ " => HMul.hMul
-
-local notation "𝕚⟨" M "⟩" => (Matrix.map M (incA D) : Matrix _ _ (AE D))
 
 theorem decomp_generic {A : Type*} [CommRing A] {w N n' r : ℕ} (T : Matrix (Fin w) (Fin N) A)
     (g : Matrix (Fin N) (Fin N) A) (C C' : Matrix (Fin N) (Fin r) A) (B : Matrix (Fin N) (Fin n') A)
@@ -277,13 +278,13 @@ theorem rationalMatrix_decomposition_isotropicFrame {N n' r w : ℕ} (C C' : Mat
     (B : Matrix (Fin N) (Fin n') D.host.E) (P' P : Matrix (Fin r) (Fin N) D.host.E)
     (R : Matrix (Fin n') (Fin N) D.host.E) (hE : C * P' + (B * R + C' * P) = 1)
     (y : Matrix (Fin w) (Fin r) D.host.E) (g : Matrix (Fin N) (Fin N) (AE D))
-    (hfix : g ⬝ 𝕚⟨C⟩ = 𝕚⟨C⟩) (u : Matrix (Fin N) (Fin N) D.host.E) (hu : g = 𝕚⟨u⟩) :
-    𝕚⟨y * P'⟩ ⬝ g = 𝕚⟨y * P'⟩ + 𝕚⟨y * P' * (u - 1) * B⟩ ⬝ 𝕚⟨R⟩ + 𝕚⟨y * P' * (u - 1) * C'⟩ ⬝ 𝕚⟨P⟩ := by
-  have hid : 𝕚⟨C⟩ * 𝕚⟨P'⟩ + (𝕚⟨B⟩ * 𝕚⟨R⟩ + 𝕚⟨C'⟩ * 𝕚⟨P⟩) = (1 : Matrix (Fin N) (Fin N) (AE D)) := by
+    (hfix : g * (Matrix.map (C) (incA D)) = (Matrix.map (C) (incA D))) (u : Matrix (Fin N) (Fin N) D.host.E) (hu : g = (Matrix.map (u) (incA D))) :
+    (Matrix.map (y * P') (incA D)) * g = (Matrix.map (y * P') (incA D)) + (Matrix.map (y * P' * (u - 1) * B) (incA D)) * (Matrix.map (R) (incA D)) + (Matrix.map (y * P' * (u - 1) * C') (incA D)) * (Matrix.map (P) (incA D)) := by
+  have hid : (Matrix.map (C) (incA D)) * (Matrix.map (P') (incA D)) + ((Matrix.map (B) (incA D)) * (Matrix.map (R) (incA D)) + (Matrix.map (C') (incA D)) * (Matrix.map (P) (incA D))) = (1 : Matrix (Fin N) (Fin N) (AE D)) := by
     rw [← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_add _ (map_add _),
       ← Matrix.map_add _ (map_add _), hE, Matrix.map_one _ (map_zero _) (map_one _)]
   rw [decomp_generic _ g _ _ _ _ _ _ hid hfix, hu]
-  have hs : 𝕚⟨u⟩ - 1 = 𝕚⟨u - 1⟩ := by
+  have hs : (Matrix.map (u) (incA D)) - 1 = (Matrix.map (u - 1) (incA D)) := by
     rw [Matrix.map_sub _ (map_sub _), Matrix.map_one _ (map_zero _) (map_one _)]
   rw [hs]
   simp only [← Matrix.map_mul]
@@ -292,10 +293,10 @@ theorem rat_decomp {V V' W : HSp D} {r : ℕ} {C C' : Matrix (Fin V.rank) (Fin r
     {B : Matrix (Fin V.rank) (Fin V'.rank) D.host.E} (hs : IsIsoSplit V V' C B)
     (h1 : adj D C * V.gram * C' = 1) (h2 : adj D C' * V.gram * C' = 0) (h3 : adj D C' * V.gram * B = 0)
     (y : Matrix (Fin W.rank) (Fin r) D.host.E) (γ : GA D V)
-    (hfix : Formalism.L2.Theta.mt V γ ⬝ C.map (incA D) = C.map (incA D))
+    (hfix : Formalism.L2.Theta.mt V γ * C.map (incA D) = C.map (incA D))
     (u : Matrix (Fin V.rank) (Fin V.rank) D.host.E) (hu : Formalism.L2.Theta.mt V γ = u.map (incA D)) :
     ∃ (a : Matrix (Fin W.rank) (Fin V'.rank) D.host.E) (b : Matrix (Fin W.rank) (Fin r) D.host.E),
-      (y * (adj D C' * V.gram)).map (incA D) ⬝ Formalism.L2.Theta.mt V γ =
+      (y * (adj D C' * V.gram)).map (incA D) * Formalism.L2.Theta.mt V γ =
         (y * (adj D C' * V.gram)).map (incA D) + midPart V V' W B (a.map (incA D)) +
           isoPart V W C (b.map (incA D)) := ⟨_, _, rationalMatrix_decomposition_isotropicFrame C C' B _ _ _ (frame_identity hs h1 h2 h3) y _ hfix u hu⟩
 
@@ -315,12 +316,6 @@ theorem cA_one (N : ℕ) (i j : Fin N) :
   rcases eq_or_ne i j with rfl | h
   · simp
   · rw [Matrix.one_apply_ne h, Matrix.one_apply_ne h.symm, map_zero]
-
-private theorem cA_incA_apply_eq_incA_star (e : D.host.E) : cA D (incA D e) = incA D (star e) := by
-  show Algebra.TensorProduct.map (AlgHom.id _ _) D.sp.cm.sig ((1 : AF D.host.F) ⊗ₜ[D.host.F] e) =
-    (1 : AF D.host.F) ⊗ₜ[D.host.F] star e
-  rw [Algebra.TensorProduct.map_tmul]
-  rfl
 
 set_option maxHeartbeats 1000000 in
 theorem exists_central (V : HSp D) (X : Matrix (Fin V.rank) (Fin V.rank) D.host.E) (hXX : X * X = 0)
@@ -342,7 +337,7 @@ theorem exists_central (V : HSp D) (X : Matrix (Fin V.rank) (Fin V.rank) D.host.
     ext i j
     simp only [Formalism.UG.cT, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, Y,
       Matrix.conjTranspose_apply]
-    rw [map_add]
+    rw [map_add (f := _)]
     congr 1
     exact cA_one (D := D) V.rank j i
   have h3 : Xᴴ * V.gram * X = 0 := by
@@ -411,8 +406,8 @@ theorem pairing_trace {V W : HSp D} {r : ℕ} {C C' : Matrix (Fin V.rank) (Fin r
 
 theorem central_comm {V : HSp D} {r : ℕ} {C : Matrix (Fin V.rank) (Fin r) D.host.E} (S₀ : Matrix (Fin r) (Fin r) D.host.E)
     (a : AF D.host.F) {g : GA D V} (hg : g ∈ NI V C) :
-    (1 + a • (C * S₀ * (adj D C * V.gram)).map (incA D)) ⬝ Formalism.L2.Theta.mt V g =
-      Formalism.L2.Theta.mt V g ⬝ (1 + a • (C * S₀ * (adj D C * V.gram)).map (incA D)) := by
+    (1 + a • (C * S₀ * (adj D C * V.gram)).map (incA D)) * Formalism.L2.Theta.mt V g =
+      Formalism.L2.Theta.mt V g * (1 + a • (C * S₀ * (adj D C * V.gram)).map (incA D)) := by
   obtain ⟨h1, h2⟩ := ni_fix hg
   have hX : (C * S₀ * (adj D C * V.gram)).map (incA D) =
       C.map (incA D) * S₀.map (incA D) * (adj D C * V.gram).map (incA D) := by
@@ -424,7 +419,6 @@ end GlobalTheory.AnisoMean
 
 namespace GlobalTheory.AnisoMean
 variable {D : D7}
-local infixl:70 " ⬝ " => HMul.hMul
 
 theorem sq_zero_generic {R : Type*} [Ring R] {N r : ℕ} (C : Matrix (Fin N) (Fin r) R) (S₀ : Matrix (Fin r) (Fin r) R)
     (P : Matrix (Fin r) (Fin N) R) (h : P * C = 0) : (C * S₀ * P) * (C * S₀ * P) = 0 := by
@@ -454,10 +448,10 @@ theorem central_mem_NI {V : HSp D} {r : ℕ} {C : Matrix (Fin V.rank) (Fin r) D.
   unfold NI
   apply Subgroup.subset_closure
   refine ⟨?_, ?_, ?_⟩
-  · show ((matHom V z).1 - 1) ⬝ C.map (incA D) = 0
+  · show ((matHom V z).1 - 1) * C.map (incA D) = 0
     rw [hm, Matrix.smul_mul, ← Matrix.map_mul, Matrix.mul_assoc, hCC, Matrix.mul_zero,
       Matrix.map_zero _ (map_zero _), smul_zero]
-  · show (adj D C * V.gram).map (incA D) ⬝ ((matHom V z).1 - 1) = 0
+  · show (adj D C * V.gram).map (incA D) * ((matHom V z).1 - 1) = 0
     rw [hm, Matrix.mul_smul, ← Matrix.map_mul, show adj D C * V.gram * (C * S₀ * (adj D C * V.gram)) =
       adj D C * V.gram * C * S₀ * (adj D C * V.gram) by simp only [Matrix.mul_assoc], hCC, Matrix.zero_mul,
       Matrix.zero_mul, Matrix.map_zero _ (map_zero _), smul_zero]
@@ -470,7 +464,8 @@ theorem central_mem_NI {V : HSp D} {r : ℕ} {C : Matrix (Fin V.rank) (Fin r) D.
       ext i
       have := congrFun h0 i
       simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Pi.zero_apply] at this ⊢
-      rw [← map_zero (incA D), ← this, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_zero (incA D), ← this, map_sum]
       simp only [map_mul]
     show ((matHom V z).1 - 1).mulVec _ = _
     rw [hm, Matrix.smul_mulVec, key, smul_zero, Matrix.mulVec_zero]
@@ -479,7 +474,7 @@ theorem iso_mt_central {V W : HSp D} {r : ℕ} {C C' : Matrix (Fin V.rank) (Fin 
     (h1 : adj D C * V.gram * C' = 1) (y : Matrix (Fin W.rank) (Fin r) D.host.E)
     (S₀ : Matrix (Fin r) (Fin r) D.host.E) (a : AF D.host.F) {z : GA D V}
     (hz : Formalism.L2.Theta.mt V z = 1 + a • (C * S₀ * (adj D C * V.gram)).map (incA D)) :
-    (y * (adj D C' * V.gram)).map (incA D) ⬝ Formalism.L2.Theta.mt V z =
+    (y * (adj D C' * V.gram)).map (incA D) * Formalism.L2.Theta.mt V z =
       isoPart V W C (a • (y * S₀).map (incA D)) + (y * (adj D C' * V.gram)).map (incA D) := by
   have hd := dual_one h1
   rw [hz, Matrix.mul_add, Matrix.mul_one, Matrix.mul_smul, add_comm]

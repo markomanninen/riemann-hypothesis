@@ -1,12 +1,149 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ToGlob0
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.CosetExpUnique
-import Formalism.LocalRingCardinality.SpanPowerMembership.NZRowGat
-import Formalism.LocalRingCardinality.SpanPowerMembership.NZRowW
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyRecordOfLocStage
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsRecordOverChoices
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ToGlob0
+public import Formalism.LocalRingCardinality.SpanPowerMembership
+public import Formalism.LocalRingCardinality.SpanPowerMembership.RankRecordRowDimensionZero
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SecondLabelsNonempty
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SmallHostRootDiscriminantLe
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalGapNonemptyAndRecordNonempty
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormOnePrimeElements
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsRanksRankValFrame
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScale
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NcardPrimesOverOfStabilizer
+public import Development.AutomorphicArithmetic.MeanSquareBounds.pairEx
+public import Development.AutomorphicArithmetic.CharacterBoxes.PairHyp
+public import Development.AutomorphicArithmetic.ShortNorms.typePrimesN
+public import Development.AutomorphicArithmetic.ShortNorms.levelPrimeN
+public import Development.AutomorphicArithmetic.ShortNorms.MulLogLeRpowEventually
+public import Development.AutomorphicArithmetic.CoprimeRanks.AdmChi
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.NonemptyFieldAxiomsCyclicPow
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormPrimesImagQuadShortIntervalLowerBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormOneIffOfSqrt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormOneModEqOneAndOfDvd
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NZRowF
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NZTypeH
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleWeightMiddleEntries
+public import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
+public import Formalism.LocalRingCardinality.SpanPowerMembership.GPlacesExampleNatAct
+public import Formalism.CyclotomicNorms.StatementT
+public import Formalism.LocalRingCardinality.SpanPowerMembership.EntPlNonempty
+public import Formalism.LocalRingCardinality.Lemmas
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalRingCardinality.SpanPowerMembership.SignSplitEquivInl
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraTheta
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleySignature
+public import Formalism.SharpRestriction.Divisibility.InnerProductFormulaField
+public import Formalism.LocalRingCardinality.DataKerP
+public import Formalism.LocalRingCardinality.DataLatDefs
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ClassRecordRowDimensionZero
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraVal
+public import Formalism.LocalRingCardinality.DataNChTie
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExistsHomOfBasis
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.PrincipalHermitianLattice
+public import Formalism.LocalRingCardinality.DataDIVDefs
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleClassGroupCardPos
+public import Formalism.LocalRingCardinality.DataNChoice
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraNum
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraGat
+public import Formalism.LocalRingCardinality.DataMink
+public import Formalism.LocalRingCardinality.DataIdx
+public import Formalism.LocalRingCardinality.SpanPowerMembership.DivXExample
+public import Formalism.LocalRingCardinality.DataAmbForm
+public import Formalism.LocalRingCardinality.DataKap
+public import Formalism.LocalRingCardinality.DataRows
+public import Formalism.LocalRingCardinality.DataForms
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NZRowC
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NZLevD
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsLat
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
+public import Formalism.SharpRestriction.GrowthBounds.DataGChain
+public import Formalism.LocalRingCardinality.SpanPowerMembership.GatSetting
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.DeterminantTwistRowActionMem
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.JOInjective
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraGatC
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRealPD
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalPrimeAinf
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LFunctionPositiveConductorFourEight
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SetUnipotentTranslate
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeCoprimeSmallConductor
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsExplicitParameters
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsLevChOfLevelPrime
+public import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExplZeta
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExplChi
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LogDerOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ZeroCount
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.Jutila
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.PageThm
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.IsExcRat
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.QuadraticHeckeZeroEstimates
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LogCondLeThree
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
+public import Formalism.SharpRestriction.InertJacobiLevels.HostFam
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ScalePolynomialQuantitiesComparison
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.ThickExists
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogAddRpowMulLogPowLeRpow
+public import Development.AutomorphicArithmetic.ThickFrames.ThickFrame2Large
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DivLeRpowThreeQuarters
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KroneckerTwoNegEqJacobiSymTwo
+public import Development.AutomorphicArithmetic.CharacterBoxes.RealSplit
+public import Development.AutomorphicArithmetic.MeanSquareBounds.IndUnique
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.GlobalBoundRefinements
+public import Formalism.CyclotomicNorms.StatementI
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsImagQuadIntegers
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ClassNumberLeAbsDiscrOfFinrankEqTwo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassNumberBounds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimeIdealsCountingBounds
+public import Formalism.GL3MeanSquares.SmoothedRemainderRealIntegralFormula
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LogFactorialEqSumVonMangoldtMulDiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LogDerivSeriesOfExplicit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DirichletLZerosInWindowFiniteAndPosOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DirichletLZeroSymmetry
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SumIndicatorLeZsumR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DirichletLZerosInWindowFiniteAndPosOrderStatement
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.PrimesInProgressionCountLowerBound
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SumVonMangoldtLeTwoMul
+public import Development.AutomorphicArithmetic.CharacterBoxes.ThinChoice
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsRefill
+public import Formalism.LocalRingCardinality.HostCls
+public import Development.AutomorphicArithmetic.ThickFrames.topsBase
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
+public import Formalism.SharpRestriction.GlobalSchurBounds.ZetaZeroFreeRegion
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChoiceOfTops
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowNumAt
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsStdLarge
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.XLeZBaseOfPowLeN
+public import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjugateEmbApply
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.JointQOfSmallField
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HostSzOfSizes
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIsRayIntermediateField
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapSplit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPreHasLetters
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardFrameOfDiagonalStages
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,170 +151,13 @@ namespace GlobalTheory.Diag.PG.Model0
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S
 
-theorem scale_pos (D : D7) (u : D.what₂.Word) : 0 < (D.mem u).A.GamP ^ (-2 : ℤ) * D.what₂.Dstar := by
-  have hG : 0 < (D.mem u).A.GamP := lt_trans one_pos (D.mem u).A.one_lt_gammaP
-  have hD : 0 < D.what₂.Dstar := by rw [← D.Dstar_eq u]; exact (D.mem u).A.Dstar_pos
-  positivity
-
-theorem duWin_of_data {D : D7} {C0 : ℝ} (h : StandingNumericalData D C0) : DuWin D C0 := h.2.2.2.2.2.2.2.2.2.1
-
-theorem duWin_zero_iff (D : D7) : DuWin D 0 ↔ ∀ u, D.duS u = 0 := by
-  unfold DuWin
-  simp
-
-theorem duWin_forces {D : D7} {C0 : ℝ} (h : DuWin D C0) (h0 : C0 ≠ 0) : 1 ≤ C0 ∧ ∀ u, D.duS u ≠ 0 := by
-  obtain ⟨a, b⟩ := h D.u₀
-  have hp := scale_pos D D.u₀
-  have hd : (0 : ℝ) ≤ D.duS D.u₀ := Nat.cast_nonneg _
-  have hC : 0 < C0 := by
-    rcases lt_or_gt_of_ne h0 with hc | hc
-    · nlinarith
-    · exact hc
-  refine ⟨?_, fun u hu => ?_⟩
-  · rw [div_le_iff₀ hC] at a
-    by_contra hc
-    have h1 : C0 < 1 := not_le.1 hc
-    have h2 : (D.duS D.u₀ : ℝ) * C0 ≤ (D.mem D.u₀).A.GamP ^ (-2 : ℤ) * D.what₂.Dstar * C0 * C0 :=
-      mul_le_mul_of_nonneg_right b hC.le
-    have h3 : C0 * C0 < 1 := by nlinarith
-    nlinarith
-  · have a := (h u).1
-    rw [hu, Nat.cast_zero] at a
-    exact absurd a (not_le.2 (div_pos (scale_pos D u) hC))
-
-theorem duWin_three (D : D7)
-    (hr : ∀ u, (D.duS u : ℝ) = ((D.mem u).A.duStar : ℝ) * (((D.mem u).A.T : ℝ) ^ D.R.k - 1) ^ D.R.f) : DuWin D 3 := by
-  intro u
-  have hG : 0 < (D.mem u).A.GamP := lt_trans one_pos (D.mem u).A.one_lt_gammaP
-  have hD := (D.mem u).A.Dstar_pos
-  have hd : (0 : ℝ) < (D.mem u).A.duStar := by exact_mod_cast (D.mem u).A.duStar_pos
-  have hk : 0 < D.R.k := by have := D.R.m_add_three_le_k; omega
-  have hf : 0 < D.R.f := by unfold Ranks.f Ranks.n; positivity
-  have hfk : D.R.f ≤ D.R.k := D.R.f_le_k
-  have hN : (0 : ℝ) < (D.R.f : ℝ) * D.R.k := by positivity
-  obtain ⟨w1, w2⟩ := D.T_win u
-  set T : ℝ := ((D.mem u).A.T : ℝ) with hT
-  set S : ℝ := (D.mem u).A.Tstar with hS
-  have hS0 : 0 < S := by rw [hS]; unfold ColumnsAtT.Tstar ColumnsAtT.Xu; positivity
-  have hT2 : (2 : ℝ) ≤ T := by rw [hT]; exact_mod_cast (D.mem u).A.T_prime.two_le
-  have key : (D.mem u).A.GamP ^ (-2 : ℤ) * D.what₂.Dstar = (D.mem u).A.duStar * S ^ (D.R.f * D.R.k) := by
-    rw [hS, ← D.Dstar_eq u]
-    unfold ColumnsAtT.Tstar ColumnsAtT.Xu
-    rw [mul_pow, ← Real.rpow_natCast, ← Real.rpow_natCast, ← Real.rpow_mul (by positivity), ← Real.rpow_mul hG.le]
-    push_cast
-    rw [one_div_mul_cancel hN.ne', div_mul_cancel₀ _ hN.ne', Real.rpow_one, ← Real.rpow_intCast]
-    push_cast
-    field_simp
-  have hTk : 2 * (D.R.f : ℝ) ≤ T ^ D.R.k := by
-    have a : 2 * D.R.k ≤ 2 ^ D.R.k := by
-      obtain ⟨j, hj⟩ : ∃ j, D.R.k = j + 1 := ⟨D.R.k - 1, by omega⟩
-      rw [hj, pow_succ]
-      have := Nat.lt_two_pow_self (n := j)
-      omega
-    have b : (2 : ℝ) * D.R.f ≤ 2 ^ D.R.k := by exact_mod_cast (by omega : 2 * D.R.f ≤ 2 ^ D.R.k)
-    exact b.trans (pow_le_pow_left₀ (by norm_num) hT2 _)
-  have hf1 : (1 : ℝ) ≤ D.R.f := by exact_mod_cast hf
-  have hTp : 0 < T ^ D.R.k := by positivity
-  rw [key, hr u]
-  constructor
-  · have a : S ^ (D.R.f * D.R.k) ≤ (T ^ D.R.k) ^ D.R.f := by
-      rw [← pow_mul, mul_comm D.R.k]; exact pow_le_pow_left₀ hS0.le w1 _
-    have hq : 1 / T ^ D.R.k ≤ 1 := by rw [div_le_one hTp]; linarith
-    have b := one_add_mul_le_pow (a := -(1 / T ^ D.R.k)) (by linarith [show 0 ≤ 1 / T ^ D.R.k by positivity]) D.R.f
-    have c : (D.R.f : ℝ) * (1 / T ^ D.R.k) ≤ 1 / 2 := by
-      rw [mul_one_div, div_le_iff₀ hTp]; linarith
-    have e : (T ^ D.R.k - 1) ^ D.R.f = (T ^ D.R.k) ^ D.R.f * (1 + -(1 / T ^ D.R.k)) ^ D.R.f := by
-      rw [← mul_pow]; congr 1; field_simp; ring
-    have g : (1 : ℝ) / 2 ≤ (1 + -(1 / T ^ D.R.k)) ^ D.R.f := by linarith
-    have hp : 0 < (T ^ D.R.k) ^ D.R.f := by positivity
-    have : S ^ (D.R.f * D.R.k) / 3 ≤ (T ^ D.R.k - 1) ^ D.R.f := by rw [e]; nlinarith
-    rw [mul_div_assoc]
-    exact mul_le_mul_of_nonneg_left this hd.le
-  · have a : (T ^ D.R.k - 1) ^ D.R.f ≤ T ^ (D.R.f * D.R.k) := by
-      rw [mul_comm, pow_mul]; exact pow_le_pow_left₀ (by linarith) (by linarith) _
-    have b : T ^ (D.R.f * D.R.k) ≤ ((1 + 1 / ((D.R.f : ℝ) * D.R.k)) * S) ^ (D.R.f * D.R.k) :=
-      pow_le_pow_left₀ (by linarith) w2 _
-    have c : (1 + 1 / ((D.R.f : ℝ) * D.R.k)) ^ (D.R.f * D.R.k) ≤ 3 := by
-      have c1 : 1 + 1 / ((D.R.f : ℝ) * D.R.k) ≤ Real.exp (1 / ((D.R.f : ℝ) * D.R.k)) := by
-        linarith [Real.add_one_le_exp (1 / ((D.R.f : ℝ) * D.R.k))]
-      refine (pow_le_pow_left₀ (by positivity) c1 _).trans ?_
-      rw [← Real.exp_nat_mul]
-      push_cast
-      rw [mul_one_div_cancel hN.ne']
-      linarith [Real.exp_one_lt_d9]
-    rw [mul_pow] at b
-    have hp : 0 < S ^ (D.R.f * D.R.k) := by positivity
-    have : (T ^ D.R.k - 1) ^ D.R.f ≤ S ^ (D.R.f * D.R.k) * 3 := by nlinarith
-    rw [mul_assoc]
-    exact mul_le_mul_of_nonneg_left this hd.le
-
 section Rec
 
 open Formalism.BasicNotions.Examples₂ Formalism.BasicNotions.Examples₂.NZ
 
-abbrev pkg (N : ℕ) : ClsPkg where
-  cls := fun _ => Fin (N + 1)
-  clsFin := fun _ => inferInstance
-  stab := fun _ _ => Unit
-  stabGrp := fun _ _ => inferInstance
-  stabFin := fun _ _ => inferInstance
-  DGam := 1
-  DGam_pos := one_pos
-  dvd := fun _ _ => by simp
-
-set_option maxHeartbeats 1600000 in
-
-def recd (N : ℕ) : D7 :=
-  letI := H0.cmStar
-  hostLevelRecord H0 (W := Unit) () (fun _ _ => hc0) (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ _ => rfl)
-    (fun _ _ _ => rfl) 1 one_pos (fun _ _ l h => exampleWeight_cloud_gap_four l h) (fun _ _ => false) (fun _ _ _ => rfl)
-    (fun _ _ l h => by
-      have := exampleWeight_middle_entries l h
-      simp only [Bool.false_eq_true, if_false, sub_zero]
-      exact this)
-    (fun _ _ => 1) (fun _ _ => one_pos) (fun _ => 1) (fun _ => one_pos) 0 (fun _ => 0) (fun _ => 1) (fun _ => one_pos)
-    (fun _ => pkg N) (fun _ => T0) (dstarOf T0) (dstarOf_pos T0) (fun _ => 1) (fun _ => one_pos) 2 one_lt_two
-    (fun _ => exampleLevel_near_lower Tau0 T0) exampleHost_type_primes_split exampleHost_typeHypothesis (fun _ => examplePrime_mem_levelPrimes) (fun _ => examplePrime_ne_split_primes) (fun _ => π0O)
-    (fun _ => π0_mem_K) (fun _ => π0_norm) (fun _ => π0_cong)
-    (fun _ i _ => ((hostSpacesOfNorm H0 T0 (π0O : H0.E) π0_norm).X i).L0)
-    (fun _ i _ => ((hostSpacesOfNorm H0 T0 (π0O : H0.E) π0_norm).X i).standardTuple_isLattice)
-    (LocalGap.localGapOfRecord GlobalTheory.Mem.nonempty_record_of_locStage.some _)
-    (fun _ _ _ => 0) (fun _ _ _ => 0) (fun _ => false) (fun _ => rfl) 1 1 1 le_rfl Unit (fun _ => ()) (fun _ => ())
-    (lbl_nonempty H0 exampleHost_typeHypothesis 5 (by norm_num) (by decide) (by decide)).some (fun _ => by norm_num [T0]) (fun _ _ => 0)
-    (fun _ => ⊤)
-    (localDataAtServedPlace' H0 (fun _ _ => hc0) (fun _ : Unit => pkg N) (fun _ => T0) (fun _ _ => 0) (fun _ => 0) (fun _ _ => ∅))
-    (localData_rank_eq_classes H0 (fun _ _ => hc0) (fun _ : Unit => pkg N) (fun _ => T0) (fun _ _ => 0) (fun _ => 0) (fun _ _ => ∅))
-
-theorem recd_duS (N u) : (recd N).duS u = N + 1 :=
-  (atTN_rank (fun _ : Tau2 R0 => hc0) (pkg N) T0 (dstarOf T0) (dstarOf_pos T0) 1 one_pos 2 one_lt_two).trans (by simp)
 
 end Rec
 
-theorem succ_pred_pow (T k f : ℕ) (hT : 2 ≤ T) (hk : 0 < k) :
-    ∃ N : ℕ, ((N + 1 : ℕ) : ℝ) = ((1 : ℕ) : ℝ) * ((T : ℝ) ^ k - 1) ^ f := by
-  have a : 1 < T ^ k := Nat.one_lt_pow hk.ne' hT
-  have b : 0 < (T ^ k - 1) ^ f := pow_pos (by omega) _
-  refine ⟨(T ^ k - 1) ^ f - 1, ?_⟩
-  rw [Nat.sub_add_cancel b]
-  push_cast [Nat.cast_sub a.le]
-  ring
-
-open Formalism.BasicNotions.Examples₂ in
-
-theorem duWin_nontrivial : (∃ D : D7, DuWin D 3 ∧ ∀ u, D.duS u ≠ 0) ∧ ∃ D : D7, ¬ DuWin D 3 ∧ ∀ u, D.duS u ≠ 0 := by
-  obtain ⟨N, hN⟩ := succ_pred_pow T0 R0.k R0.f examplePrime_prime.two_le (by decide)
-  have h : DuWin (recd N) 3 := duWin_three _ fun u => by rw [recd_duS]; exact hN
-  refine ⟨⟨_, h, (duWin_forces h (by norm_num)).2⟩, recd (9 * N + 9), fun h' => ?_, fun u => by
-    rw [recd_duS]; omega⟩
-  have a := (h ()).1
-  have b := (h' ()).2
-  rw [recd_duS N ()] at a
-  rw [recd_duS (9 * N + 9) ()] at b
-  have e : ((recd (9 * N + 9)).mem ()).A.GamP ^ (-2 : ℤ) * (recd (9 * N + 9)).what₂.Dstar =
-      ((recd N).mem ()).A.GamP ^ (-2 : ℤ) * (recd N).what₂.Dstar := rfl
-  rw [e] at b
-  push_cast at a b
-  linarith
 
 theorem two_le_rd {R : Ranks} (H : Host R) : 2 ≤ H.rdE := UpperTheory.Ram.Rd.two_le_rdE H
 
@@ -247,84 +227,6 @@ theorem globalRows_of_sizeData {D : D7} (L : SizeData₂ D) (P : ParameterChoice
     refine ⟨by linarith, by linarith, ?_⟩
     rw [c]; push_cast; ring
 
-open Formalism.MainNotions.Inhab Formalism.L2.GlobalTheoryTheory GlobalTheory.EX GlobalTheory.FieldSize GlobalTheory.FinalJoin GlobalTheory.FinalJoin2 GlobalTheory.RunJoin GlobalTheory.Mem GlobalTheory.EX.OB in
-
-theorem exists_glob0_of_zeroFreeRegion (p1 : GlobalTheory.Mem.An.ExplZeta) (p2 : GlobalTheory.Mem.An.ExplChi) (p3 : GlobalTheory.Mem.An.LogDerOne)
-    (p4 : GlobalTheory.Mem.An.ZeroCount) (p5 : Formalism.ZeroFreeDirichlet.ZFRDirichlet) (p6 : GlobalTheory.Mem.An.TZRat) (p7 : GlobalTheory.Mem.An.PageThm)
-    (p8 : GlobalTheory.Mem.An.Jutila) (p9 : GlobalTheory.Mem.An.QuadraticHeckeZeroEstimates) (hR : GlobalTheory.NT.RayField)
-    (eps CD x : ℝ) (he : 0 < eps) (he52 : eps < 1 / 52) (hCD : 0 < CD) :
-    ∃ (y : ℝ) (D : D7), x ≤ y ∧ Glob0 D y eps CD 10 ∧ (∃ τ, Top D τ) ∧ ∃ τ, ¬ Top D τ := by
-  have hH := DC.hostExQ_of_hostEx (smallPrimeOne_of_tzRat p6) (hostEx_of_zeroFreeRegion p1 p2 p3 p4 p5 p6 p7 p8 p9)
-  have hLP := (normPrimes_and_levelPrime p9).2
-  obtain ⟨CT2, C8, C5, c6, Cb, hC8, -, -, -, hK⟩ := exists_chGood_unb hH _ he he52
-  obtain ⟨C, hStd, hCT2, hCp, hL, -⟩ := exists_std_large ⟨0, 0, fun _ => 0, fun _ => CD⟩
-    ⟨0, 0, fun _ => 0, fun _ => 0⟩ CT2 C8 hC8
-  have hCC : CD ≤ C.P.CCount := hL.2.2.2 _ (by simp [FC.cLast])
-  obtain ⟨c1, hN⟩ := szRow_numAt _ he he52 C hStd
-  obtain ⟨c2, hN⟩ := hN (max c1 0) (le_max_left _ _)
-  obtain ⟨x1, hN⟩ := hN (max c2 402) (le_max_left _ _)
-  obtain ⟨x3, h3⟩ := exists_levCh_of_levelPrime hLP _ 1 C he he52 one_pos hStd
-  obtain ⟨x4, h4⟩ := exists_record_over_choices hR _ (max c1 0) (max c2 402) C he he52 hStd (le_max_right _ _) (le_max_right _ _)
-  obtain ⟨s, hs, hsy, hK⟩ := hK C hStd hCT2 hCp (max c1 0) (le_max_right _ _) (max c2 402) (le_max_right _ _)
-    (max x1 (max x3 (max x4 (max x ((max 2 (5 / (eps / 100))) ^ (eps / 100)⁻¹)))))
-  obtain ⟨y, hy⟩ : ∃ y, s.x = y := ⟨_, rfl⟩
-  have hy1 : x1 ≤ y := hy ▸ (le_max_left _ _).trans hsy
-  have hy3 : x3 ≤ s.x := ((le_max_left _ _).trans (le_max_right _ _)).trans hsy
-  have hy4 : x4 ≤ s.x := (((le_max_left _ _).trans (le_max_right _ _)).trans (le_max_right _ _)).trans hsy
-  have hyx : x ≤ y :=
-    hy ▸ ((((le_max_left _ _).trans (le_max_right _ _)).trans (le_max_right _ _)).trans (le_max_right _ _)).trans hsy
-  have hyP : (max 2 (5 / (eps / 100))) ^ (eps / 100)⁻¹ ≤ y :=
-    hy ▸ ((((le_max_right _ _).trans (le_max_right _ _)).trans (le_max_right _ _)).trans (le_max_right _ _)).trans hsy
-  obtain ⟨P, a, b, c, hP, -⟩ := hK 0
-  have hfk : (0 : ℝ) < (P.R.f : ℝ) * P.R.k := by
-    have h1 := P.R.m_add_three_le_k
-    have h2 : 0 < P.R.f := by unfold Ranks.f Ranks.n; positivity
-    have h3 : 0 < P.R.k := by omega
-    positivity
-  obtain ⟨Ds, hDs, hlog⟩ := exists_window_start _ (1 * P.R.m * s.L) (GamS C s P.R) hfk (Real.exp_pos _)
-  obtain ⟨Lv, -, -, l3⟩ := h3 _ _ s P _ a b c (fun _ => 1) Ds hs hy3 hP.ok (fun _ => one_pos) hDs (fun _ => hlog)
-  obtain ⟨D, -, -, -, hA, L, hsc, hV⟩ := h4 s P _ a b c Lv hs hy4 hP.ok l3
-  have hsx : L.sc.x = y := by rw [hsc, hy]
-  have hse : L.sc.eps = eps := by rw [hsc, hs]
-  obtain ⟨⟨N⟩, -, -⟩ := hN _ _ hse (hy1.trans hsx.ge) hV hA
-  have e1 : N.params.CCount = C.P.CCount := by
-    have := congrArg (fun l : List ℝ => l.getD 12 0) N.params_K
-    exact this
-  have e2 : N.params.CYL = C.P.CYL := by
-    have := congrArg (fun l : List ℝ => l.getD 19 0) N.params_K
-    exact this
-  have hX : max 2 (5 / (eps / 100)) ≤ XX L := by
-    unfold XX szTh
-    rw [hsx, hse]
-    have h0 : (0 : ℝ) ≤ max 2 (5 / (eps / 100)) := le_trans (by norm_num) (le_max_left _ _)
-    have hp : 0 < eps / 100 := by positivity
-    have := Real.rpow_le_rpow (Real.rpow_nonneg h0 _) hyP hp.le
-    rwa [Real.rpow_inv_rpow h0 hp.ne'] at this
-  have G := globalRows_of_sizeData L N.params N.sizes ((le_max_left _ _).trans hX)
-    (by unfold szTh; rw [hse]; exact (le_max_right _ _).trans hX) CD hCD (e1 ▸ hCC)
-  rw [hsx, hse, e2, hStd.2.2.2.2.2.1, show (9 : ℝ) + 1 = 10 by norm_num] at G
-  refine ⟨y, D, hyx, G, Model.exists_top D ?_, Model.exists_not_top D⟩
-  have t1 := hV.host.2.1.1
-  have hn : (0 : ℝ) < D.R.n := by
-    have : 0 < D.R.n := D.R.ord_pos
-    exact_mod_cast this
-  have hd : 0 < L.sc.delta1 := Real.rpow_pos_of_pos (by linarith [L.sc.one_lt_alt]) _
-  have : (0 : ℝ) < D.host.TT.card := lt_of_lt_of_le (by positivity) t1
-  exact Finset.card_pos.1 (by exact_mod_cast this)
-
-theorem one_lt_of_global_data {D : D7} {x eps CD Cg : ℝ} (G : Glob0 D x eps CD Cg) : 1 < x := by
-  have h := G.nums.k_hi
-  have hk : (5 : ℝ) ≤ D.R.k := by
-    have := D.R.m_add_three_le_k; have := D.R.two_le_m
-    exact_mod_cast (by omega : 5 ≤ D.R.k)
-  rw [show (5 : ℝ) = ((5 : ℕ) : ℝ) by norm_num, Real.rpow_natCast] at h
-  by_contra hc
-  have : x ^ 5 ≤ 1 ^ 5 := (Odd.strictMono_pow (by decide : Odd 5)).monotone (not_lt.1 hc)
-  linarith
-
-theorem not_glob0_small (x eps CD Cg : ℝ) : ¬ Glob0 (recd 0) x eps CD Cg := fun G => by
-  have h : ((2 : ℕ) : ℝ) ^ 4 ≤ ((8 : ℕ) : ℝ) := G.nums.mf
-  norm_num at h
 
 end GlobalTheory.Diag.PG.Model0
 

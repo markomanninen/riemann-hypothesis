@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutChartSection
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutChartSectionChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutChartSection
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutChartSectionChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -31,7 +36,7 @@ theorem SegreFlagCutChartSection.proof : SegreFlagCutChartSection.Statement := b
         simp [vdeg, zetaFirst, liftPairDeg]
         omega
     · let gg : (Σ o : Option K, bundleIdx (bundleIdx ι M) M' (Function.Embedding.some o)) →
-          MRing (bundleIdx (bundleIdx ι M) M') O := fun p =>
+          ReciprocityTheory.ChartRestriction.G.Geo.MRingOver O (bundleIdx (bundleIdx ι M) M') := fun p =>
         match p with
         | ⟨none, l⟩ => Y l
         | ⟨some kk, i⟩ => X ⟨some (some kk), i⟩
@@ -74,7 +79,7 @@ theorem SegreFlagCutChartSection.proof : SegreFlagCutChartSection.Statement := b
         simp [vdeg, zetaSecond, liftPairDeg]
         omega
     · let gg : (Σ o : Option K, bundleIdx (bundleIdx ι M) M' (secondFactorBlocks o)) →
-          MRing (bundleIdx (bundleIdx ι M) M') O := fun p =>
+          ReciprocityTheory.ChartRestriction.G.Geo.MRingOver O (bundleIdx (bundleIdx ι M) M') := fun p =>
         match p with
         | ⟨none, l⟩ => Y l
         | ⟨some kk, i⟩ => X ⟨some (some kk), i⟩

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.WithZeroEqOfLeExpIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.WithZeroEqOfLeExpIff
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -21,7 +26,7 @@ theorem valuation_eq_or_eq_conj_of_under_eq : ∀ (E : Type) [Field E] [NumberFi
       (IsCMField.complexConj_eq_self_iff E _).1 hfix
     have hint : IsIntegral ℤ (⟨_, hF⟩ : maximalRealSubfield E) := by
       have := (x * e x).isIntegral_coe
-      exact (isIntegral_algebraMap_iff (algebraMap (maximalRealSubfield E) E).injective).1 this
+      exact (isIntegral_algebraMap_iff ).1 this
     have hz : algebraMap (𝓞 (maximalRealSubfield E)) (𝓞 E) ⟨_, hint⟩ = x * e x :=
       RingOfIntegers.ext rfl
     have h1 : (⟨_, hint⟩ : 𝓞 (maximalRealSubfield E)) ∈ (w.under (𝓞 (maximalRealSubfield E))).asIdeal := by

@@ -1,11 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
-open Matrix Finset MeasureTheory
-open scoped ContDiff ComplexConjugate InnerProductSpace
-open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
-open PositivityTheory.RgTw (Mat)
-open GlobalTheory.CompanionTheory.GLK (e1 e2 f1)
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ConeWeightsNotSecondType
+public import Formalism.RealPlaceAnalysis.StatementA
+
+@[expose] public section
+
+open Finset
+open PositivityTheory.RgBcC.RealD (inCone)
 
 namespace GlobalTheory.CompanionTheory.HighestCone
 
@@ -15,7 +17,7 @@ theorem letter_comm (hg : Formalism.REAL.GlRel K) (a b c d : Fin n) (v : V) :
     K a b (K c d v) = K c d (K a b v) + (if b = c then K a d v else 0)
       - (if d = a then K c b v else 0) := by
   have h := congrArg (fun f : Module.End ℂ V => f v) (hg a b c d)
-  simp only [LinearMap.sub_apply, Module.End.mul_apply] at h
+  simp only [LinearMap.sub_apply, mul_apply_eq_comp] at h
   have h3 : (if b = c then K a d else 0 : Module.End ℂ V) v = if b = c then K a d v else 0 := by
     split_ifs <;> simp
   have h4 : (if d = a then K c b else 0 : Module.End ℂ V) v = if d = a then K c b v else 0 := by
@@ -35,7 +37,7 @@ theorem levi_step (hg : Formalism.REAL.GlRel K) (lev : Fin n → ℕ) (C : Fin n
   let S : Submodule ℂ V :=
     { carrier := {z | z ∈ Z ∧ ∀ a b, C a b → K a b z ∈ Z}
       add_mem' := fun {u w} hu hw => ⟨Z.add_mem hu.1 hw.1, fun a b h => by
-        rw [map_add]; exact Z.add_mem (hu.2 a b h) (hw.2 a b h)⟩
+        rw [map_add (f := _)]; exact Z.add_mem (hu.2 a b h) (hw.2 a b h)⟩
       zero_mem' := ⟨Z.zero_mem, fun a b _ => by rw [map_zero]; exact Z.zero_mem⟩
       smul_mem' := fun r u hu => ⟨Z.smul_mem r hu.1, fun a b h => by
         rw [map_smul]; exact Z.smul_mem r (hu.2 a b h)⟩ }
@@ -108,7 +110,7 @@ theorem coneSpan_letter (hg : Formalism.REAL.GlRel K) (lev : Fin n → ℕ) (ν 
       push_cast
       ring
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add u w _ _ hu hw => rw [map_add]; exact Submodule.add_mem _ hu hw
+  | add u w _ _ hu hw => rw [map_add (f := _)]; exact Submodule.add_mem _ hu hw
   | smul r u _ hu => rw [map_smul]; exact Submodule.smul_mem _ r hu
 
 theorem inCone_of_ne (lev : Fin n → ℕ) (ev : V →ₗ[ℂ] ℂ) (μ ν : Fin n → ℝ)
@@ -167,7 +169,7 @@ theorem inCone_of_highest : ∀ (n : ℕ) (V : Type) [AddCommGroup V] [Module �
     let S : Submodule ℂ V :=
       { carrier := {y | y ∈ Y ∧ ∀ a b, K a b y ∈ Z}
         add_mem' := fun {u w} hu hw => ⟨Y.add_mem hu.1 hw.1, fun a b => by
-          rw [map_add]; exact Z.add_mem (hu.2 a b) (hw.2 a b)⟩
+          rw [map_add (f := _)]; exact Z.add_mem (hu.2 a b) (hw.2 a b)⟩
         zero_mem' := ⟨Y.zero_mem, fun a b => by rw [map_zero]; exact Z.zero_mem⟩
         smul_mem' := fun r u hu => ⟨Y.smul_mem r hu.1, fun a b => by
           rw [map_smul]; exact Z.smul_mem r (hu.2 a b)⟩ }

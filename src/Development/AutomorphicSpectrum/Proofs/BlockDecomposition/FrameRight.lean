@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ThetaBasic
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeUnderTranslation
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ThetaBasic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeUnderTranslation
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open GlobalTheory.CompanionTheory.DegMoveProof
 
 namespace GlobalTheory.CompanionTheory.DegRightProof
 
-theorem frame_right {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n k : ℕ} (x h : GA E n)
+theorem frame_right {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n k : ℕ} (x h : GA E n)
     (M : Matrix (Fin n) (Fin k) (Ad E)) :
     h.val * (((x * h)⁻¹ : GA E n).val * M) = (x⁻¹ : GA E n).val * M := by
   rw [← Matrix.mul_assoc, ← Units.val_mul, _root_.mul_inv_rev, mul_inv_cancel_left]

@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionDenominatorBound
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.CommutatorTripleProductLeibniz
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.CasimirPowerScaledInsertDividedPower
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightDifferenceLeEllOfRep
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionDenominatorBound
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.CommutatorTripleProductLeibniz
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.CasimirPowerScaledInsertDividedPower
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightDifferenceLeEllOfRep
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.IrreducibleImage
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RestrictIso
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SectionBasis
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SectionTensor
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackUnit
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackCoherent
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CokernelCoherent
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.Annihilator
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelativeSerre
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.HasExtInstances
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ExistsChow
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.IrreducibleImage
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RestrictIso
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SectionBasis
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SectionTensor
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackUnit
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackCoherent
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CokernelCoherent
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.Annihilator
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelativeSerre
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.HasExtInstances
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ExistsChow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -90,6 +95,7 @@ theorem finiteH_step
   have hG' : IsCoherent ((Scheme.Modules.pullback ψ).obj F) := isCoherent_pullback ψ hF
   set G' := (Scheme.Modules.pullback ψ).obj F
   obtain ⟨n₀, hn₀⟩ := ProjScheme.exists_relativeSerre i ψ G' hG'
+  letI : (𝟙_ Z'.Modules).IsQuasicoherent := isQuasicoherent_unit Z'
   obtain ⟨n₁, hn₁⟩ := ProjScheme.exists_generatingSections_twist i (𝟙_ Z'.Modules)
     (isCoherent_unit Z')
   set n := max n₀ n₁
@@ -97,7 +103,6 @@ theorem finiteH_step
   set L := ProjScheme.twistingSheaf i (n : ℤ)
   have eL : ProjScheme.twist i (𝟙_ Z'.Modules) (n : ℤ) ≅ L := λ_ L
   obtain ⟨σL, hσL⟩ := exists_generatingSections_of_iso eL ⟨σ, hσ⟩
-  have := isQuasicoherent_unit Z'
   have : L.IsQuasicoherent :=
     (SheafOfModules.isQuasicoherent Z'.ringCatSheaf).prop_of_iso eL
       (ProjScheme.isQuasicoherent_twist i (𝟙_ Z'.Modules) (n : ℤ))

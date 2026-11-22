@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.DimStepB
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.DimStepB
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,21 +15,23 @@ lemma dimStep_one_mem {n : ℕ} (ε : Fin n → Bool) : (1 : Matrix (Fin n) (Fin
 
 lemma dimStep_good {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} (hσ : IsURepOn (Kset (allPos n)) σ) :
-    Good (fun g : Kset (allPos n) => σ g.1) where
-  isom := fun g v => hσ.2.1 g.1 g.2 v
-  inv := fun g => ⟨⟨star g.1, Kset_star _ g.2⟩, fun v => by
+    Good (fun g : Kset (allPos n) => σ g.1) := by
+  refine ⟨fun g v => hσ.2.1 g.1 g.2 v, ?_, ?_, ?_⟩
+  · intro g
+    refine ⟨⟨star g.1, Kset_star _ g.2⟩, fun v => ?_⟩
     show σ g.1 (σ (star g.1) v) = v
     rw [← ContinuousLinearMap.comp_apply, ← hσ.1.2 _ g.2 _ (Kset_star _ g.2),
       Unitary.mul_star_self_of_mem g.2.1, hσ.1.1]
-    rfl⟩
-  mul := fun g g' => ⟨⟨g.1 * g'.1, Kset_mul _ g.2 g'.2⟩, fun v => by
+    rfl
+  · intro g g'
+    refine ⟨⟨g.1 * g'.1, Kset_mul _ g.2 g'.2⟩, fun v => ?_⟩
     show σ g.1 (σ g'.1 v) = σ (g.1 * g'.1) v
     rw [hσ.1.2 _ g.2 _ g'.2]
-    rfl⟩
-  one := ⟨⟨1, dimStep_one_mem _⟩, fun v => by
+    rfl
+  · refine ⟨⟨1, dimStep_one_mem _⟩, fun v => ?_⟩
     show σ 1 v = v
     rw [hσ.1.1]
-    rfl⟩
+    rfl
 
 lemma dimStep_stab {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {W : Submodule ℂ H} :

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EigLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.DelSerre
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HeckeEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.FinDim
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EigLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.DelSerre
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HeckeEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.FinDim
+
+@[expose] public section
 
 open Formalism.ConjugateSelfDual CongruenceSubgroup UpperHalfPlane UpperTheory.V.Af UpperTheory.V.Sd
 open scoped MatrixGroups ModularForm
@@ -29,7 +33,7 @@ private theorem coef_add {N : ℕ} {k : ℤ} (f g : CuspForm (Gamma1 N) k) (n : 
     coef (f + g : CuspForm (Gamma1 N) k) n = coef f n + coef g n := by
   show PowerSeries.coeff n (qExpansion 1 ⇑(f + g)) =
     PowerSeries.coeff n (qExpansion 1 ⇑f) + PowerSeries.coeff n (qExpansion 1 ⇑g)
-  rw [show ⇑(f + g) = ⇑f + ⇑g from rfl, ModularForm.qExpansion_add one_pos (one_mem_per N) f g, map_add]
+  rw [show ⇑(f + g) = ⇑f + ⇑g from rfl, ModularForm.qExpansion_add one_pos (one_mem_per N) f g, map_add (f := _)]
 
 private theorem norm_chi {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (a : ZMod N) : ‖ι.symm (χ a)‖ ≤ 1 := by
@@ -122,7 +126,7 @@ private def Phi {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (N : ℕ) (k : 
   toFun g n := if n = 0 then 0 else ι.symm (coef g n)
   map_add' f g := by
     funext n
-    by_cases h : n = 0 <;> simp only [h, if_true, if_false, coef_add, Pi.add_apply, map_add, add_zero]
+    by_cases h : n = 0 <;> simp only [h, if_true, if_false, coef_add, Pi.add_apply, map_add (f := _), add_zero]
   map_smul' a f := by
     funext n
     by_cases h : n = 0 <;> simp only [h, if_true, if_false, coef_smul, Pi.smul_apply, map_mul, smul_eq_mul, mul_zero]
@@ -158,7 +162,7 @@ private def cjSub (N k : ℕ) (χ : DirichletCharacter ℂ N) : Submodule ℂ (C
     obtain ⟨f', a1, a2⟩ := hf' σ
     obtain ⟨g', b1, b2⟩ := hg' σ
     refine ⟨f' + g', (chSub N k (cj σ χ)).add_mem a1 b1, fun n hn => ?_⟩
-    rw [coef_add, coef_add, a2 n hn, b2 n hn, map_add]
+    rw [coef_add, coef_add, a2 n hn, b2 n hn, map_add (f := _)]
   zero_mem' := by
     refine ⟨(chSub N k χ).zero_mem, fun σ => ⟨0, (chSub N k (cj σ χ)).zero_mem, fun n _ => ?_⟩⟩
     rw [coef_zero', map_zero]
@@ -184,8 +188,8 @@ private theorem heckeC (N k : ℕ) [NeZero N] (hk : 1 ≤ k) (χ : DirichletChar
   rw [hf''n n hn, hg'n n hn]
   by_cases hd : p ∣ n
   · have hq : 1 ≤ n / p := Nat.div_pos (Nat.le_of_dvd (by omega) hd) hp.pos
-    simp only [hd, if_true, hf'n _ hq, hf'n _ hpn, hcj, map_add, map_mul, map_pow, map_natCast]
-  · simp only [hd, if_false, hf'n _ hpn, hcj, map_add, map_mul, mul_zero, map_zero]
+    simp only [hd, if_true, hf'n _ hq, hf'n _ hpn, hcj, map_add (f := _), map_mul, map_pow, map_natCast]
+  · simp only [hd, if_false, hf'n _ hpn, hcj, map_add (f := _), map_mul, mul_zero, map_zero]
 
 private theorem fT_Phi {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (N : ℕ) (k : ℤ) (g : CuspForm (Gamma1 N) k)
     {p : ℕ} (hp : p.Prime) (e : ℂ) {n : ℕ} (hn : 1 ≤ n) :
@@ -195,7 +199,7 @@ private theorem fT_Phi {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (N : ℕ
   rw [fT_apply, Phi_apply, if_neg hpn]
   by_cases hd : p ∣ n
   · have hq : n / p ≠ 0 := (Nat.div_pos (Nat.le_of_dvd (by omega) hd) hp.pos).ne'
-    rw [if_pos hd, if_pos hd, Phi_apply, if_neg hq, map_add, map_mul]
+    rw [if_pos hd, if_pos hd, Phi_apply, if_neg hq, map_add (f := _), map_mul]
   · rw [if_neg hd, if_neg hd]
     simp
 

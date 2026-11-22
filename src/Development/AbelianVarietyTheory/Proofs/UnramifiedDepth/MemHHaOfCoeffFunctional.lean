@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+
+@[expose] public section
+
 open scoped BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj NumberField
 
@@ -45,7 +50,7 @@ theorem coeffMap_comm (φ : L →ₗ[K] K) (f : MvPolynomial σ L →ₗ[L] MvPo
     (h : ∀ A, f (MvPolynomial.map (algebraMap K L) A) = MvPolynomial.map (algebraMap K L) (g A))
     (P : MvPolynomial σ L) : coeffMap φ (f P) = g (coeffMap φ P) := by
   induction P using MvPolynomial.induction_on' with
-  | add p q hp hq => rw [map_add, coeffMap_add, coeffMap_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), coeffMap_add, coeffMap_add, map_add (f := _), hp, hq]
   | monomial μ c =>
     have e : (monomial μ c : MvPolynomial σ L) =
         MvPolynomial.C c * MvPolynomial.map (algebraMap K L) (monomial μ 1) := by
@@ -59,7 +64,8 @@ theorem lap_one_map (τ τ' : T) (a : Fin (r τ)) (a' : Fin (r τ'))
     (A : MvPolynomial (Letter T r n) K) :
     lap r n L 1 τ τ' a a' (MvPolynomial.map (algebraMap K L) A) =
       MvPolynomial.map (algebraMap K L) (lap r n K 1 τ τ' a a' A) := by
-  simp only [lap, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lap, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum]
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun b' _ => ?_
   by_cases hb : b = b'
   · subst hb
@@ -71,7 +77,7 @@ theorem rowShift_map (s : T) (i i' : Fin (r s)) (t : K) (A : MvPolynomial (Lette
       MvPolynomial.map (algebraMap K L) (rowShift r n K s i i' t A) := by
   induction A using MvPolynomial.induction_on with
   | C c => simp [rowShift]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p l hp =>
     simp only [map_mul, hp, map_X]
     congr 1

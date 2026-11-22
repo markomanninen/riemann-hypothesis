@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnEqZeroOfDegreeZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CreAnnApply
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketLeviModuleBoundaryPart
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveWedgeHighestCoefficient
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnEqZeroOfDegreeZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CreAnnApply
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BracketLeviModuleBoundaryPart
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem adLq_apply (s : Bool) (p q : Fin n) (x : Cq n V) :
 
 theorem lift_adLq (T : V →ₗ[ℂ] W) (s : Bool) (p q : Fin n) (x : Cq n V) :
     liftq n T (adLq s p q x) = adLq s p q (liftq n T x) := by
-  simp only [adLq_apply, map_sum, map_smul, lift_cre', lift_ann']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [adLq_apply, map_sum, map_smul, lift_cre', lift_ann']
 
 section MorLemmas
 
@@ -51,15 +56,16 @@ theorem MorQ.lift_Tl (h : MorQ T E1 E2 F1 F2) (i : Lt n) (y : Cq n V) :
 theorem MorQ.bd (h : MorQ T E1 E2 F1 F2) (x : Cq n V) :
     liftq n T (bdq E1 E2 x) = bdq F1 F2 (liftq n T x) := by
   rw [bd_apply, bd_apply]
-  simp only [map_add, map_smul, map_sum, lift_cre', lift_ann', h.lift_Tl]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_smul, map_sum, lift_cre', lift_ann', h.lift_Tl]
 
 theorem MorQ.lF (h : MorQ T E1 E2 F1 F2) (s : Bool) (p q : Fin n) (x : Cq n V) :
     liftq n T (lFq E1 E2 s p q x) = lFq F1 F2 s p q (liftq n T x) := by
-  simp only [lFq, LinearMap.add_apply, map_add, h.lift_Ts, lift_adLq]
+  simp only [lFq, LinearMap.add_apply, map_add (f := _), h.lift_Ts, lift_adLq]
 
 theorem MorQ.cc1 (h : MorQ T E1 E2 F1 F2) (p q : Fin n) (x : Cq n V) :
     liftq n T (c1 E1 E2 p q x) = c1 F1 F2 p q (liftq n T x) := by
-  simp only [GlobalTheory.CompanionTheory.PairMult.c1, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add, h.lF]
+  simp only [GlobalTheory.CompanionTheory.PairMult.c1, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add (f := _), h.lF]
 
 theorem MorQ.cc2 (h : MorQ T E1 E2 F1 F2) (p q : Fin n) (x : Cq n V) :
     liftq n T (c2 E1 E2 p q x) = c2 F1 F2 p q (liftq n T x) := by
@@ -80,7 +86,7 @@ theorem MorQ.evC (h : MorQ T E1 E2 F1 F2) (lev : Fin n → ℕ) (b : FreeAlgebra
   · intro a b ha hb x
     simp only [map_mul, Module.End.mul_apply, ha, hb]
   · intro a b ha hb x
-    simp only [map_add, LinearMap.add_apply, ha, hb]
+    simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
 
 theorem MorQ.ev (h : MorQ T E1 E2 F1 F2) (a : FreeAlgebra ℂ (Bool × Fin n × Fin n)) :
     ∀ y : V, T (ev2 E1 E2 a y) = ev2 F1 F2 a (T y) := by
@@ -95,7 +101,7 @@ theorem MorQ.ev (h : MorQ T E1 E2 F1 F2) (a : FreeAlgebra ℂ (Bool × Fin n × 
   · intro a b ha hb y
     simp only [map_mul, Module.End.mul_apply, ha, hb]
   · intro a b ha hb y
-    simp only [map_add, LinearMap.add_apply, map_add, ha, hb]
+    simp only [map_add (f := _), LinearMap.add_apply, map_add (f := _), ha, hb]
 
 theorem MorQ.lift_ev (h : MorQ T E1 E2 F1 F2) (a : FreeAlgebra ℂ (Bool × Fin n × Fin n)) (x : Cq n V) :
     liftq n T (liftq n (ev2 E1 E2 a) x) = liftq n (ev2 F1 F2 a) (liftq n T x) := by
@@ -124,7 +130,7 @@ theorem evC_facts (hR : LeviRel) {lev : Fin n → ℕ} (hlev : Monotone lev) {E1
       obtain ⟨f1, f2, f3⟩ := hs false _ _ hc
       rw [if_pos hc]
       by_cases h1 : c.1 = true
-      · simp only [h1, if_true, GlobalTheory.CompanionTheory.PairMult.c1, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add]
+      · simp only [h1, if_true, GlobalTheory.CompanionTheory.PairMult.c1, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add (f := _)]
         refine ⟨Submodule.smul_mem (supSub V _) _ (Submodule.add_mem (supSub V _) t1 f1), fun j hj =>
           Submodule.smul_mem (supSub V _) _ (Submodule.add_mem (supSub V _) (t2 j hj) (f2 j hj)), ?_⟩
         rw [t3, f3]
@@ -144,7 +150,7 @@ theorem evC_facts (hR : LeviRel) {lev : Fin n → ℕ} (hlev : Monotone lev) {E1
   · intro a b ha hb x hx
     obtain ⟨h1, h2, h3⟩ := ha x hx
     obtain ⟨h4, h5, h6⟩ := hb x hx
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     exact ⟨Submodule.add_mem (supSub V _) h1 h4, fun j hj => Submodule.add_mem (supSub V _) (h2 j hj) (h5 j hj),
       by rw [h3, h6]⟩
 
@@ -162,7 +168,8 @@ theorem lift_bd_comm {E1 E2 : Fin n → Fin n → Module.End ℂ V} {S : Lt n �
       exact (LinearMap.congr_fun (hT i hi).eq _).symm
     · rw [← lift_ann', ann_zero hx hi]
       simp
-  simp only [map_add, map_smul, map_sum, lift_cre', lift_ann' T, hk]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_smul, map_sum, lift_cre', lift_ann' T, hk]
 
 theorem single_degree_zero (v : V) : DegQ 0 (Pi.single ∅ v : Cq n V) := by
   intro A hA
@@ -222,7 +229,7 @@ theorem evC_single (lev : Fin n → ℕ) (E1 E2 : Fin n → Fin n → Module.End
   · intro a b ha hb v
     simp only [map_mul, Module.End.mul_apply, ha, hb]
   · intro a b ha hb v
-    simp only [map_add, LinearMap.add_apply, ha, hb, Pi.single_add]
+    simp only [map_add (f := _), LinearMap.add_apply, ha, hb, Pi.single_add]
 
 theorem single_one_deg (i : Lt n) (y : V) : DegQ 1 (Pi.single {i} y : Cq n V) := by
   intro A hA
@@ -331,7 +338,8 @@ theorem shift_zero {lev : Fin n → ℕ} {a b : FreeAlgebra ℂ (Bool × Fin n �
         split_ifs
         · exact bd_single E1 E2 l _
         · simp
-      simp only [t, map_sum, h1]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [t, map_sum, h1]
       exact (map_sum (AddMonoidHom.single (fun _ : Finset (Lt n) => V) ∅) _ _).symm
     rw [e, ← hw, eq_single hx, lift_single, evC_single, ← Pi.single_sub]
     simp

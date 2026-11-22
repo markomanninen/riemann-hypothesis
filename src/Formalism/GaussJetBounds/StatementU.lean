@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.StatementP
+module
+
+public import Formalism.GaussJetBounds.StatementP
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -34,7 +38,7 @@ def OneLetterGauss : Prop :=
     ∀ (sgn : ℂ_[l]), (sgn = 1 ∨ sgn = -1) →
     ∀ (p : Fin C → ℕ) (hp : ∀ c, p c ≤ N0) (I : ∀ c, Fin (p c) → Fin N1) (a : ℕ), 1 ≤ a →
       (∑ c, p c) ≤ a → ∀ n : (Fin N0 × Fin N0) →₀ ℕ,
-      ‖MvPolynomial.coeff n (frameJetOne p hp I (thetaOne g U sgn ep be))‖ ≤
+      ‖AddMonoidAlgebra.coeff (frameJetOne p hp I (thetaOne g U sgn ep be)) n‖ ≤
         ‖(l : ℂ_[l])‖ ^ (rho l * ((∑ c, p c : ℕ) : ℝ) -
           ((N0 : ℝ) * N1) * (Real.logb l (a : ℝ) + 1))
 

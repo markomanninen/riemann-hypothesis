@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -15,7 +19,8 @@ private lemma realTrace_toLin (g : ℕ) (H : Matrix (Fin g) (Fin g) ℂ) :
     intro z
     rw [← Algebra.trace_complex_apply, Algebra.trace_eq_matrix_trace Complex.basisOneI]
     rfl
-  simp only [hb, LinearMap.toMatrix_eq_toMatrix', LinearMap.toMatrix'_toLin', map_sum, ← Finset.sum_add_distrib,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hb, LinearMap.toMatrix_eq_toMatrix', LinearMap.toMatrix'_toLin', map_sum, ← Finset.sum_add_distrib,
     Complex.add_conj]
   push_cast
   rfl
@@ -45,7 +50,8 @@ private lemma trace_of_basis (L : Type) [AddCommGroup L] [Module.Free ℤ L] [Mo
         ∑ k, ((b.repr (f (b j)) k : ℤ) : ℝ) • bV k := by
       rw [LinearMap.restrictScalars_apply, hbV, Matrix.toLin'_apply, ← hf]
       conv_lhs => rw [← b.sum_repr (f (b j))]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_zsmul, hbV, Int.cast_smul_eq_zsmul]
     rw [LinearMap.toMatrix_apply, hsum, Matrix.map_apply, LinearMap.toMatrix_apply, bV.repr_sum_self]

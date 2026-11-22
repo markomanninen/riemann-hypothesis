@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionNormSqExtension
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLeviLogFlat
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLeviHolPerturb
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLeviCompHol
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLeviFSInvariant
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionNormSqExtension
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLeviLogFlat
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLeviHolPerturb
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLeviCompHol
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLeviFSInvariant
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

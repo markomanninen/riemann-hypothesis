@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.XiValIffXiAt
-import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
-import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRootNear
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousCharacterFiniteOrderIntegralUnits
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.XiValIffXiAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
+public import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRootNear
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousCharacterFiniteOrderIntegralUnits
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj GlobalTheory.FinalJoin GlobalTheory.CompRat
 open scoped TensorProduct
@@ -98,12 +102,12 @@ theorem exists_proj {O S : Type} [CommRing O] [CommRing S] (ι : O →+* S) (bar
     obtain ⟨y, w, hy⟩ := hlift (ι b) (ι b') (ι t) (by
       rw [← map_mul, ← map_natCast ι, ← map_mul, ← ht, map_sub, map_one]; ring)
     have hcy : c y = ι (bar b) + ((M * p : ℕ) : S) * c w := by
-      rw [hy, map_add, map_mul, map_natCast, hc]
+      rw [hy, map_add (f := _), map_mul, map_natCast, hc]
     have hN : ∀ s : S, ((M * p : ℕ) : S) * s ∈ I.map ι := fun s => by
       push_cast
       exact Ideal.mul_mem_right _ _ (Ideal.mul_mem_left _ _ hpS)
     have hbb : bar b = 1 + bar (a - 1) * bar j * bar β * M := by
-      rw [hbdef]; simp only [map_add, map_mul, map_one, map_natCast]
+      rw [hbdef]; simp only [map_add (f := _), map_mul, map_one, map_natCast]
     have hπy : π y = u := by
       rw [← ha, hπ, hy]
       have := Ideal.add_mem _ (Ideal.mem_map_of_mem ι hba) (hN w)
@@ -126,9 +130,9 @@ theorem exists_proj {O S : Type} [CommRing O] [CommRing S] (ι : O →+* S) (bar
       rw [Units.val_mul, map_mul]
       linear_combination ((y : S) * c ((y'⁻¹ : Sˣ) : S)) * hy'' + this
     · have e1 : ι b = 1 + ι ((a - 1) * j * β) * M := by
-        rw [hbdef, map_add, map_one, map_mul, map_natCast]
+        rw [hbdef, map_add (f := _), map_one, map_mul, map_natCast]
       have e2 : ι (bar b) = 1 + ι (bar (a - 1) * bar j * bar β) * M := by
-        rw [hbb, map_add, map_one, map_mul, map_natCast]
+        rw [hbb, map_add (f := _), map_one, map_mul, map_natCast]
       rw [Units.val_mul]
       push_cast at hy hcy
       linear_combination hy'' + ((y'⁻¹ : Sˣ) : S) * (hy - hcy + e1 - e2)
@@ -147,7 +151,7 @@ theorem exists_proj {O S : Type} [CommRing O] [CommRing S] (ι : O →+* S) (bar
       rwa [Ideal.mem_comap, map_sub, map_one] at this
     obtain ⟨w₁, hw₁⟩ := hmul _ (Ideal.mem_map_of_mem ι hi) _ h2
     obtain ⟨w₂, hw₂⟩ := hmul _ h1 _ (Ideal.mem_map_of_mem ι hj)
-    have hij' : ι i + ι j = 1 := by rw [← map_add, hij, map_one]
+    have hij' : ι i + ι j = 1 := by rw [← map_add (f := _), hij, map_one]
     refine exists_mul_of_coprime hMp hw (w := w₂ - x * w₁) ?_
     linear_combination hw₂ - x * hw₁ - (x - 1) * hij' + ι i * hx
 
@@ -232,10 +236,9 @@ theorem sg_mem_intHat (c : E ≃ₐ[F] E) (z : RA F E) (hz : z ∈ intHat F E) :
 omit [NumberField E] in
 theorem sg_sg (c : E ≃ₐ[F] E) (hc : ∀ x, c (c x) = x) (z : RA F E) :
     sg (FiniteAdeleRing (𝓞 F) F) c (sg (FiniteAdeleRing (𝓞 F) F) c z) = z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul a x => simp [sg, hc]
-  | add x y h1 h2 => simp only [map_add, h1, h2]
+  | add x y h1 h2 => simp only [map_add (f := _), h1, h2]
 
 theorem exists_char (c : E ≃ₐ[F] E) (hc : ∀ x, c (c x) = x) (bar : 𝓞 E →+* 𝓞 E)
     (hbar : ∀ a, ((bar a : 𝓞 E) : E) = c a) (M p : ℕ) (hp : 0 < p) (hMp : p.Coprime M) (I : Ideal (𝓞 E))

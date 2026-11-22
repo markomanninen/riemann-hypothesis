@@ -1,22 +1,26 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ApplyLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChiGamPowNeOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesDataLevIsExpansionAtZeta
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MaxUnramifiedActsOnLetterIdempotentImage
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsOpenDiscConvergentRingWithExpansions
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWachModulePeriodMapToBcris
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWachLatticeMatricesGammaPhi
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEvaluationConvergentSeriesBcris
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBeta
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusSubOneWittTensorLatticeSurjectiveFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMulLeft
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionXQFrobenius
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCocycleSolutionConv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfFrob
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZgFormulaStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ApplyLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChiGamPowNeOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesDataLevIsExpansionAtZeta
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MaxUnramifiedActsOnLetterIdempotentImage
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsOpenDiscConvergentRingWithExpansions
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWachModulePeriodMapToBcris
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWachLatticeMatricesGammaPhi
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEvaluationConvergentSeriesBcris
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBeta
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusSubOneWittTensorLatticeSurjectiveFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMulLeft
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionXQFrobenius
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCocycleSolutionConv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfFrob
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZgFormulaStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,17 +30,17 @@ namespace GlobalTheory.NL.PoleCrys
 
 section Algebra
 
-open PowerSeries in
 
+open PowerSeries in
 theorem constantCoeff_algHom {L : Type} [CommRing L] (γ : L⟦X⟧ →ₐ[L] L⟦X⟧) (h0 : constantCoeff (γ X) = 0)
     (a : L⟦X⟧) : constantCoeff (γ a) = constantCoeff a := by
   conv_lhs => rw [PowerSeries.eq_shift_mul_X_add_const a]
   have : γ (C (constantCoeff a)) = C (constantCoeff a) := γ.commutes _
-  rw [map_add, map_mul, this, map_add, map_mul, h0]
+  rw [map_add (f := _), map_mul, this, map_add (f := _), map_mul, h0]
   simp
 
-open PowerSeries in
 
+open PowerSeries in
 theorem eq_zero_of_fixed {L ι : Type} [Field L] [Fintype ι] [DecidableEq ι] (γ : L⟦X⟧ →ₐ[L] L⟦X⟧)
     (h0 : constantCoeff (γ X) = 0) (hu : ∀ k : ℕ, 0 < k → coeff 1 (γ X) ^ k ≠ 1) (G : ι → ι → L⟦X⟧)
     (hG : ∀ i j, constantCoeff (G i j) = if i = j then 1 else 0) (d : ι → L⟦X⟧)
@@ -58,7 +62,8 @@ theorem eq_zero_of_fixed {L ι : Type} [Field L] [Fintype ι] [DecidableEq ι] (
         rw [he j, map_mul, map_pow, hz]
         ring
       have h3 := congrArg constantCoeff h2
-      simp only [map_sum, map_mul, map_pow, hG, constantCoeff_algHom γ h0, ite_mul, one_mul, zero_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, map_pow, hG, constantCoeff_algHom γ h0, ite_mul, one_mul, zero_mul,
         Finset.sum_ite_eq, Finset.mem_univ, if_true] at h3
       have h4 : constantCoeff (e i) = 0 := by
         have : constantCoeff (e i) * (constantCoeff z ^ (k + 1) - 1) = 0 := by linear_combination h3
@@ -72,7 +77,8 @@ theorem semi_coord {A M ι : Type} [CommRing A] [AddCommGroup M] [Module A M] [F
     (hf : ∀ a x, f (a • x) = σ a • f x) (e : ι → M) (q : A) (H : Matrix ι ι A)
     (hH : ∀ j, q • f (e j) = ∑ i, H i j • e i) (c : ι → A) :
     q • f (Fintype.linearCombination A e c) = Fintype.linearCombination A e (H.mulVec fun j => σ (c j)) := by
-  simp only [Fintype.linearCombination_apply, map_sum, hf, Finset.smul_sum, Matrix.mulVec, dotProduct,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Fintype.linearCombination_apply, map_sum, hf, Finset.smul_sum, Matrix.mulVec, dotProduct,
     Finset.sum_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -170,7 +176,8 @@ theorem coord_eq (hu : ∀ k : ℕ, 0 < k → algebraMap O LL (Γ.χΓ Γ.gam : 
       fun i => toL O LL n ((Gm g).mulVec (fun j => letγ (R.γ₀ g) (c j)) i) := by
     intro g c
     funext i
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, toL_γ, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, toL_γ, Matrix.map_apply]
   have hf := fixed_diff (γL R Γ.gam).toRingHom (γL R g).toRingHom (γL_comm R _ _) ((Gm Γ.gam).map (toL O LL n))
     ((Gm g).map (toL O LL n)) (by rw [← hm, ← hm, mul_comm]) w (fun j => toL O LL n (z j))
     (fun j => toL O LL n (z' j)) hw (by
@@ -199,7 +206,8 @@ theorem coord_eq (hu : ∀ k : ℕ, 0 < k → algebraMap O LL (Γ.χΓ Γ.gam : 
   · have e1 : PowerSeries.constantCoeff (toL O LL n (z' i) k) = 0 := (hc (z' i k)).trans (by rw [hz0, map_zero])
     have e2 : ∀ j, PowerSeries.constantCoeff (γL R g (w j) k) = 0 := fun j =>
       (constantCoeff_algHom _ (hX g) _).trans (hw0 j k)
-    simp only [Matrix.mulVec, dotProduct, Pi.sub_apply, Finset.sum_apply, Pi.mul_apply, map_sub, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, Pi.sub_apply, Finset.sum_apply, Pi.mul_apply, map_sub, map_sum, map_mul,
       e1, e2, hw0, mul_zero, Finset.sum_const_zero, sub_zero]
   · have := congrFun (congrFun hf i) k
     rw [Matrix.mulVec, dotProduct, Finset.sum_apply] at this
@@ -253,7 +261,8 @@ theorem exists_val (hinj : Function.Injective inclR) (gA : G → (RA →ₐ[O] R
   have hval : ∀ c : ι → LetA O n, Val β hβ inclR T (E.jD T (∑ i, c i • e i))
       (∑ i, actS T.V B (β (I.io (c i))) (x i)) := by
     intro c
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine val_sum _ _ _ fun i => ?_
     rw [jD_smulA]
     exact (hx i).smul _
@@ -287,11 +296,12 @@ theorem exists_val (hinj : Function.Injective inclR) (gA : G → (RA →ₐ[O] R
           refine Finset.sum_congr rfl fun j _ => ?_
           rw [map_mul, map_pow]
           ring
-        simp only [MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubmonoidClass.coe_finset_sum,
+        simp only [MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubmonoidClass.coe_finsetSum,
           AddMemClass.coe_add, a, h']
         ring
       have e2 := congrArg Dc.J e1
-      simp only [map_mul, map_pow, map_sum, map_add, Dc.J_toL, Dc.J_γ] at e2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_mul, map_pow, map_sum, map_add (f := _), Dc.J_toL, Dc.J_γ] at e2
       rw [map_pow]
       exact e2) w' hw'
   have key' : actVB PD T.ρ g w' - w' = ∑ i, actS T.V B (β (I.io (z' i))) (x i) := key
@@ -352,7 +362,7 @@ theorem core (Mo : WN E zl) (hinj : Function.Injective inclR) (gA : G → (O ⊗
   have hsur : ∀ x ∈ Mo.N T, ∃ c, lin c = x := fun x hx =>
     ⟨nb.equivFun ⟨x, hx⟩, by
       have := congrArg Subtype.val (nb.sum_equivFun ⟨x, hx⟩)
-      rw [AddSubmonoidClass.coe_finset_sum] at this
+      rw [AddSubmonoidClass.coe_finsetSum] at this
       exact (Fintype.linearCombination_apply _ _ _).trans this⟩
   have hlin : Function.Injective lin :=
     (injective_iff_map_eq_zero lin).mpr fun c hc => funext (Fintype.linearIndependent_iff.mp
@@ -417,9 +427,9 @@ theorem isUnit_prod (hinj : Function.Injective inclR) (φA : O ⊗[Zl] Ai →ₐ
     rw [pow_succ', AlgHom.mul_apply, hinj ((hφ3 _).trans (hφ1 _).symm), hφ2]
     exact ih.map _
 
+
 include hI in
 set_option maxHeartbeats 1000000 in
-
 theorem mem_of_layers (ιA : Ai →+* B)
     (hβ₀ : ∀ (o : O) (w : Ai), β (o ⊗ₜ[Zl] w) = algebraMap O LL o ⊗ₜ[Qp] ιA w)
     (zl : PowerSeries Zl →+* LetA O n) (h1 : IsCrys PD W.one.ρ)
@@ -447,7 +457,7 @@ theorem mem_of_layers (ιA : Ai →+* B)
     intro o r
     induction r using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+    | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
     | tmul a w => rw [smul_tmul', hβ₀, hβ₀, smul_tmul', smul_eq_mul, smul_eq_mul, map_mul]
   have hN : nOf W T = W.N T := nOf_crys W hT
   rw [← hN] at nb hu2 hy
@@ -517,8 +527,8 @@ theorem exists_disc' (hT : LocTied l P AI) (h : Good K s LL) (Γ : GamS P K s LL
 
 end Concrete
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem solvable (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime]
     (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL) (hL : Laws (HW l) (F l) h) (J : Multiset ℕ) (r : ℕ)
     (C : Set (LetA ↥LL.1 (Module.finrank ℚ_[l] ↥(K0 K)))) (t : LetA ↥LL.1 (Module.finrank ℚ_[l] ↥(K0 K)))
@@ -533,9 +543,9 @@ theorem solvable (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.
   exact (congrArg (fun f => (H.map (toL _ _ _)).mulVec f - w)
     (funext fun j => γL_apply (SerL (HW l) (F l) h hL) _ (w j))).trans k3
 
+
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem main : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW), P7 D HW F := by
   intro D HW F l _ K s LL h T hT J y z hy hz hyz
   refine Classical.byContradiction fun hcon => ?_

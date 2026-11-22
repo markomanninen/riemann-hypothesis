@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.CRSecA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.CRSecA
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,9 +36,9 @@ theorem fM_line (a0 V0 dV : Mn n) (h0 : V0ᴴ = V0) (t : ℝ) :
       t • (reP dV + Complex.I • (a0 * ((2 : ℂ) • imaginary dV) * a0ᴴ)) +
       (t ^ 2) • (Complex.I • (a0 * imaginary dV * imaginary dV * a0ᴴ)) := by
   have hr : reP (V0 + t • dV) = V0 + t • reP dV := by
-    rw [← reL_apply, map_add, map_smul, reL_apply, reL_apply, reP_of_herm h0]
+    rw [← reL_apply, map_add (f := _), map_smul, reL_apply, reL_apply, reP_of_herm h0]
   have hi : imaginary (V0 + t • dV) = t • imaginary dV := by
-    rw [← imL_apply, map_add, map_smul, imL_apply, imL_apply, imaginaryPart_of_isHermitian h0, zero_add]
+    rw [← imL_apply, map_add (f := _), map_smul, imL_apply, imL_apply, imaginaryPart_of_isHermitian h0, zero_add]
   unfold fM
   rw [hr, hi]
   simp only [Matrix.mul_add, Matrix.add_mul, Matrix.mul_one, Matrix.mul_smul, Matrix.smul_mul,

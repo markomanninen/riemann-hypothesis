@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointStep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenAdelicUnipotentTimesIntegralOutsideSet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFactor
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointStep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenAdelicUnipotentTimesIntegralOutsideSet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFactor
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -31,10 +35,6 @@ theorem psi_castM {a b : ℕ} (h : a = b) (v : Fin (2 * a + k + 1) → ℂ) (c :
   subst h
   simp [D.castM, castV_rfl']
 
-theorem castM_UH {a b : ℕ} (h : a = b) {g : B.Mat k a} (hg : g ∈ UH (Hpk k a)) : D.castM h g ∈ UH (Hpk k b) := by
-  subst h
-  simpa [D.castM] using hg
-
 theorem castM_N {a b : ℕ} (h : a = b) {g : B.Mat k a} (hg : g ∈ Nset k a) : D.castM h g ∈ Nset k b := by
   subst h
   simpa [D.castM] using hg
@@ -43,10 +43,6 @@ theorem castM_UWv {a b : ℕ} (h : a = b) {v : Fin (2 * a + k + 1) → ℂ} {g :
     D.castM h g ∈ UWset k b (D.castV h v) := by
   subst h
   simpa [D.castM, castV_rfl'] using hg
-
-theorem castM_inj {a b : ℕ} (h : a = b) {g g' : B.Mat k a} (e : D.castM h g = D.castM h g') : g = g' := by
-  subst h
-  simpa [D.castM] using e
 
 theorem castM_cont {a b : ℕ} (h : a = b) : Continuous (D.castM (k := k) h) := by
   subst h

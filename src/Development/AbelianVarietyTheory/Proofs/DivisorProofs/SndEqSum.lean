@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SecondComponentSum
 
@@ -27,7 +31,7 @@ theorem snd_eq_sum {k A : Type} [CommRing k] [CommRing A] [Algebra k A] {D : ℕ
   let ℓ : A →ₗ[k] K :=
     { toFun := fun a => TrivSqZeroExt.snd (θ a)
       map_add' := fun a b => by
-        simp only [map_add, TrivSqZeroExt.snd_add]
+        simp only [map_add (f := _), TrivSqZeroExt.snd_add]
       map_smul' := fun c a => by
         change TrivSqZeroExt.snd (θ (c • a)) = φ (algebraMap k A c) * TrivSqZeroExt.snd (θ a)
         rw [Algebra.smul_def, hsndmul, hθ, zero_mul, add_zero]
@@ -38,7 +42,8 @@ theorem snd_eq_sum {k A : Type} [CommRing k] [CommRing A] [Algebra k A] {D : ℕ
     rw [hsndmul, mul_comm (TrivSqZeroExt.snd (θ a))]
 
   have key := congrArg d.liftKaehlerDifferential (B.sum_repr (KaehlerDifferential.D k A s))
-  rw [Derivation.liftKaehlerDifferential_comp_D, map_sum] at key
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Derivation.liftKaehlerDifferential_comp_D, map_sum] at key
   change d s = _
   rw [← key]
   refine Finset.sum_congr rfl fun b _ => ?_

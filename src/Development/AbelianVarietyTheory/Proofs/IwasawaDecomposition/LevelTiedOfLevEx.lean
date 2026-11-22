@@ -1,5 +1,10 @@
-import Formalism.LocalToGlobal.UnitaryNorms.LeastSplitAuxiliaryPrimeThetaChainSpec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.LeastSplitAuxiliaryPrimeThetaChainSpec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
+
+@[expose] public section
+
 open Formalism.BasicNotions GlobalTheory.Mem.HD
 
 theorem GlobalTheory.Mem.HD.levelTied_of_levEx : ∀ D : D7, LevEx D → Formalism.L2.Host.LevelTied D :=

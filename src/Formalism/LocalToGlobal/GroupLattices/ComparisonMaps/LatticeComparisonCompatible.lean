@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpLApply
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.TiedRec
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpLApply
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.TiedRec
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ variable {D : D7}
 def embFr (T : ∀ u : D.what₂.Word, Forms0 D u) (u : D.what₂.Word) :
     ((D.fm u).lat 0).V →ₛₗ[D.what₂.embLL] ((D.mem u).C.cls 0 → Fr D 0 (Nat.zero_le _) → ℂ) where
   toFun x := fun cl z => (D.fm u).emb 0 x cl (((T u).val0).eY.symm z)
-  map_add' x y := by funext cl z; rw [map_add]; rfl
+  map_add' x y := by funext cl z; rw [map_add (f := _)]; rfl
   map_smul' a x := by funext cl z; rw [LinearMap.map_smulₛₗ]; rfl
 
 structure CmpIn (D : D7) (X : Formalism.L2.Herm.Herm0 D) where

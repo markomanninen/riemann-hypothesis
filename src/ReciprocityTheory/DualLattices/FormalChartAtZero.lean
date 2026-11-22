@@ -1,6 +1,11 @@
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import ReciprocityTheory.DualLattices.HtLinStatement
-import ReciprocityTheory.DualLattices.StThmAFull
+module
+
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import ReciprocityTheory.DualLattices.HtLinStatement
+public import ReciprocityTheory.DualLattices.NsetExpInjectiveSurjective
+public import ReciprocityTheory.DualLattices.SmallLevelClassSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +22,8 @@ def tEval {σ : Type} [Fintype σ] [DecidableEq σ] {S : Type} [CommRing S] [Alg
   ∑ e : σ → Fin N, algebraMap R₀ S (MvPowerSeries.coeff
     (Finsupp.equivFunOnFinite.symm fun i => (e i : ℕ)) f) * ∏ i, a i ^ (e i : ℕ)
 
-open Classical in
 
+open Classical in
 def nEval {σ : Type} [Fintype σ] [DecidableEq σ] {S : Type} [CommRing S] [Algebra R₀ S]
     (f : MvPowerSeries σ R₀) (a : σ → S) : S :=
   if h : ∃ N, ∀ i, a i ^ N = 0 then tEval (Nat.find h) f a else 0
@@ -32,7 +37,7 @@ def IsNilOver {R K : LAlg R₀} (ρ : LHom R K) : Prop :=
 
 lemma map_add_ker (B : BX R₀) {R K : LAlg R₀} (ρ : LHom R K) (x y : {x : B.G R // B.map ρ x = 0}) :
     B.map ρ (x.1 + y.1) = 0 := by
-  rw [map_add, x.2, y.2, add_zero]
+  rw [map_add (f := _), x.2, y.2, add_zero]
 
 lemma map_nat_ker (B : BX R₀) {R R' K : LAlg R₀} (ρ : LHom R K) (ρ' : LHom R' K) (f : LHom R R')
     (hf : ρ'.comp f = ρ) (x : {x : B.G R // B.map ρ x = 0}) : B.map ρ' (B.map f x.1) = 0 := by

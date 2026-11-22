@@ -1,7 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitInert
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ExistsPowPrincipalFractionalIdeal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumUnderAdelicPairModulusOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpanRationalTranslatesVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ApplyAt0Smul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OddEigenvectorUniqueUpToUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionRationalTranslateMemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecMemThetaSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilOperatorFixesCosetVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilFixesCosetVectorCongruentOneModIdealStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridNuUnitTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CondESupConj
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfIdem
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ExistsPowPrincipalFractionalIdeal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.IndefR.Links IsDedekindDomain NumberField Polynomial
 open scoped Pointwise nonZeroDivisors
 open Formalism.L2.Host (HChar embTau)
@@ -13,8 +29,6 @@ noncomputable section
 namespace GlobalTheory.SkewLatSD
 
 variable (D : D7)
-
-local notation "FI" => FractionalIdeal (𝓞 D.host.E)⁰ D.host.E
 
 theorem star_eq_conj' (x : D.host.E) : (letI := D.host.cmStar; star x) = D.host.conj x := by
   have := D.host.isCMField_hostE
@@ -40,11 +54,11 @@ theorem smul_ne_bot (g : Gal(D.host.E/ℚ)) {I : Ideal (𝓞 D.host.E)} (h : I �
   rw [e, Ideal.mem_bot, smul_eq_zero_iff_eq] at this
   exact hj0 this
 
-theorem coe_ne_zero {I : Ideal (𝓞 D.host.E)} (h : I ≠ ⊥) : (I : FI) ≠ 0 := by
+theorem coe_ne_zero {I : Ideal (𝓞 D.host.E)} (h : I ≠ ⊥) : (I : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) ≠ 0 := by
   rwa [Ne, FractionalIdeal.coeIdeal_eq_zero]
 
 theorem map_mem_div (g : Gal(D.host.E/ℚ)) {I J : Ideal (𝓞 D.host.E)} (hJ : J ≠ ⊥) {x : D.host.E}
-    (hx : x ∈ (I : FI) / (J : FI)) : g x ∈ ((g • I : Ideal (𝓞 D.host.E)) : FI) / ((g • J : Ideal (𝓞 D.host.E)) : FI) := by
+    (hx : x ∈ (I : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) / (J : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E)) : g x ∈ ((g • I : Ideal (𝓞 D.host.E)) : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) / ((g • J : Ideal (𝓞 D.host.E)) : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := by
   rw [FractionalIdeal.mem_div_iff_of_ne_zero (coe_ne_zero hJ)] at hx
   rw [FractionalIdeal.mem_div_iff_of_ne_zero (coe_ne_zero (smul_ne_bot g hJ))]
   intro c hc
@@ -82,11 +96,9 @@ theorem skewLat_sd : ∀ (D : D7) (𝔪 : Ideal (𝓞 D.host.E)) (N : ℕ), 𝔪
   have hσ𝔫 : σ • 𝔫 = 𝔪 := conj_smul_conj_smul D 𝔪
 
   have toB : ∀ x ∈ (𝔪 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) / (𝔫 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E), σ x ∈ (𝔫 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) / (𝔪 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := fun x hx => by
-    have := map_mem_div σ h𝔫0 hx
-    rwa [hσ𝔫] at this
+    simpa only [← h𝔫, hσ𝔫] using (map_mem_div σ h𝔫0 hx)
   have toA : ∀ x ∈ (𝔫 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) / (𝔪 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E), σ x ∈ (𝔪 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) / (𝔫 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := fun x hx => by
-    have := map_mem_div σ h𝔪 hx
-    rwa [hσ𝔫] at this
+    simpa only [← h𝔫, hσ𝔫] using (map_mem_div σ h𝔪 hx)
   have hmem := fun y => mem_skewLat_iff (D := D) (𝔪 := 𝔪) (N := N) y
   refine ⟨?_, ?_, ?_⟩
   · unfold GlobalTheory.FunObj.SqNum.skewLat

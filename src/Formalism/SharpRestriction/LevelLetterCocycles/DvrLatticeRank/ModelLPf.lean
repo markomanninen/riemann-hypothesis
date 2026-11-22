@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfL
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfD
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfK
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfL
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfD
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfK
+
+@[expose] public section
 
 noncomputable section
 

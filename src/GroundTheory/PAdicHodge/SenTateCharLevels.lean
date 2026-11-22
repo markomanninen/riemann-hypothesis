@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.SenTateCharTower
-import GroundTheory.PAdicHodge.SenTateCharUnitPow
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.SenTateCharTower
+public import GroundTheory.PAdicHodge.SenTateCharUnitPow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -17,8 +22,8 @@ variable {p : ℕ} [hp : Fact p.Prime] {K : IntermediateField ℚ_[p] (PadicAlgC
 instance valuativeExtension_charTower (k : ℕ) : ValuativeExtension K (charTower η k) :=
   GroundTheory.LocalField.intermediateField_valuativeExtension_left _
 
-variable (K η) in
 
+variable (K η) in
 def artinLevel (n : ℕ) : ℕ := sInf {k | ¬ artinImage K η n ≤ unitsOneAdd p (k + 1)}
 
 theorem artinLevel_spec {n : ℕ} (h : artinImage K η n ≠ ⊥) :
@@ -38,7 +43,7 @@ theorem artinLevel_spec {n : ℕ} (h : artinImage K η n ≠ ⊥) :
       rw [h0]
       exact this
   · have hmem' : ¬ artinImage K η n ≤ unitsOneAdd p (artinLevel K η n + 1) := hmem
-    exact SetLike.not_le_iff_exists.1 hmem'
+    exact IsConcreteLE.not_le_iff_exists.1 hmem'
 
 theorem artinLevel_mono (hA : ∀ n, artinImage K η n ≠ ⊥) : Monotone (artinLevel K η) := by
   intro n n' hnn'
@@ -117,8 +122,8 @@ theorem upperRamificationGroup_charTower_eq_map (hη : Continuous η) {k n : ℕ
     rw [e]
     exact mul_mem hσ' (unitsOneAdd_antitone (min_le_right _ _) h2')
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem relIndex_charTowerGal {s t : ℕ} (hs : 2 ≤ s) (hst : s ≤ t) {a : ℤ_[p]ˣ} (haR : a ∈ η.range)
     (ha : a ∈ unitsOneAdd p s) (ha' : a ∉ unitsOneAdd p (s + 1)) :
     (charTowerGal η t).relIndex (charTowerGal η s) = p ^ (t - s) := by
@@ -209,18 +214,20 @@ theorem sum_zpow_block_le (μ : ℕ → ℕ) (hμ : Monotone μ) {e n₀ : ℕ}
 
     have hcard : (Finset.Ioc (N - (e * q + e)) (N - e * q)).card = e := by
       rw [Nat.card_Ioc]; omega
-    calc (e : ℝ) * b ^ ((k : ℤ) - q)
-        = ∑ _j ∈ Finset.Ioc (N - (e * q + e)) (N - e * q), b ^ ((k : ℤ) - q) := by
-          rw [Finset.sum_const, hcard, nsmul_eq_mul]
-      _ ≤ ∑ j ∈ Finset.Ioc (N - (e * q + e)) (N - e * q), b ^ (μ j : ℤ) := by
-          refine Finset.sum_le_sum fun j hj => ?_
-          rw [Finset.mem_Ioc] at hj
-          refine zpow_le_zpow_right₀ hb ?_
-
-          have h1 : μ (j + e * q) = μ j + q := hiter q j (by omega)
-          have h2 : k + 1 ≤ μ (j + e * q + e) := hN.trans (hμ (by omega))
-          rw [hper _ (by omega), h1] at h2
-          omega
+    have hconst : (∑ _j ∈ Finset.Ioc (N - (e * q + e)) (N - e * q), b ^ ((k : ℤ) - q)) =
+        (e : ℝ) * b ^ ((k : ℤ) - q) := by
+      rw [Finset.sum_const, hcard, nsmul_eq_mul]
+    have hpoint : ∀ j ∈ Finset.Ioc (N - (e * q + e)) (N - e * q),
+        b ^ ((k : ℤ) - q) ≤ b ^ (μ j : ℤ) := by
+      intro j hj
+      rw [Finset.mem_Ioc] at hj
+      refine zpow_le_zpow_right₀ hb ?_
+      have h1 : μ (j + e * q) = μ j + q := hiter q j (by omega)
+      have h2 : k + 1 ≤ μ (j + e * q + e) := hN.trans (hμ (by omega))
+      rw [hper _ (by omega), h1] at h2
+      omega
+    rw [← hconst]
+    exact Finset.sum_le_sum hpoint
 
 theorem artinLevel_add_mul {n₀ e : ℕ}
     (hper : ∀ n, n₀ ≤ n → artinLevel K η (n + e) = artinLevel K η n + 1) (i : ℕ) :
@@ -274,7 +281,10 @@ theorem le_herbrandPsi_div_ramificationIndex (hη : Continuous η) (hA : ∀ n, 
   obtain ⟨c, hc⟩ : ∃ c, (upperRamificationGroup K (charTower η (k + 1)) n').relIndex
       (lowerRamificationGroup K (charTower η (k + 1)) 0) = c := ⟨_, rfl⟩
   have hE : ramificationIndex K (charTower η (k + 1)) = c * p ^ (k + 1 - artinLevel K η n') := by
-    rw [← card_lowerRamificationGroup_zero, ← Subgroup.relIndex_bot_left,
+    have hcard : Nat.card (lowerRamificationGroup K (charTower η (k + 1)) 0) =
+        ramificationIndex K (charTower η (k + 1)) :=
+      card_lowerRamificationGroup_zero K (charTower η (k + 1))
+    rw [← hcard, ← Subgroup.relIndex_bot_left,
       ← Subgroup.relIndex_mul_relIndex _ _ _ bot_le hn'0, Subgroup.relIndex_bot_left,
       card_upperRamificationGroup_charTower hη hA h2 (by omega), hc, mul_comm]
 

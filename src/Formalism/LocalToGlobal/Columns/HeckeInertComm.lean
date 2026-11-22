@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.HeckeInertSq
-import Formalism.LocalToGlobal.Columns.PathCountSymmetricHolds
+module
+
+public import Formalism.LocalToGlobal.Columns.HeckeInertSq
+public import Formalism.LocalToGlobal.Columns.PathCountSymmetricHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem hiConj_mul {I J : Ideal (𝓞 E)} (hI : HiConj I) (hJ : HiConj J) : HiCo
   refine Submodule.mul_induction_on (C := fun r => cO E r ∈ I * J) ha (fun x hx y hy => ?_) (fun x y hx hy => ?_)
   · rw [map_mul]
     exact Ideal.mul_mem_mul (hI x hx) (hJ y hy)
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact Ideal.add_mem _ hx hy
 
 theorem hiConj_pow {I : Ideal (𝓞 E)} (hI : HiConj I) (k : ℕ) : HiConj (I ^ k) := by
@@ -78,7 +82,7 @@ theorem hiConj_split (P : HeightOneSpectrum (𝓞 E)) : HiConj (P.asIdeal * (con
       rw [cO_cO]
       exact hx
     exact Ideal.mul_mem_mul_rev hy' hx'
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact Ideal.add_mem _ hx hy
 
 theorem hi_isCoprime {P Q : HeightOneSpectrum (𝓞 E)} (h : P ≠ Q) : IsCoprime P.asIdeal Q.asIdeal := Ideal.isCoprime_iff_sup_eq.2
@@ -86,11 +90,6 @@ theorem hi_isCoprime {P Q : HeightOneSpectrum (𝓞 E)} (h : P ≠ Q) : IsCoprim
 
 theorem hi_sup_inert_split {P Q : HeightOneSpectrum (𝓞 E)} (h1 : P ≠ Q) (h2 : P ≠ conjPrime₂ Q) (k : ℕ) :
     P.asIdeal ^ k ⊔ Q.asIdeal * (conjPrime₂ Q).asIdeal = ⊤ := Ideal.isCoprime_iff_sup_eq.1 ((hi_isCoprime h1).mul_right (hi_isCoprime h2)).pow_left
-
-theorem hi_sup_split_inert {P Q : HeightOneSpectrum (𝓞 E)} (h1 : P ≠ Q) (h2 : P ≠ conjPrime₂ Q) (k : ℕ) :
-    Q.asIdeal * (conjPrime₂ Q).asIdeal ⊔ P.asIdeal ^ k = ⊤ := by
-  rw [sup_comm]
-  exact hi_sup_inert_split h1 h2 k
 
 theorem hi_sup_inert_inert {P Q : HeightOneSpectrum (𝓞 E)} (h : P ≠ Q) (k l : ℕ) :
     P.asIdeal ^ k ⊔ Q.asIdeal ^ l = ⊤ := Ideal.isCoprime_iff_sup_eq.1 (hi_isCoprime h).pow
@@ -138,7 +137,7 @@ def HiBd (I : Ideal (𝓞 E)) (R : Submodule (𝓞 E) (Sp E n) → Submodule (�
   ∀ N N', R N N' → I • N ≤ N' ∧ I • N' ≤ N
 
 theorem hi_middle_unique {I J : Ideal (𝓞 E)} (hIJ : I ⊔ J = ⊤) {Rx Ry : Submodule (𝓞 E) (Sp E n) →
-    Submodule (𝓞 E) (Sp E n) → Prop} (hx : HiBd I Rx) (hy : HiBd J Ry) {d e₁ e₂ f : DecoSet E n ST SG}
+    Submodule (𝓞 E) (Sp E n) → Prop} (hx : HiBd I Rx) (hy : HiBd J Ry) {d e₁ e₂ f : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)}
     (h1 : Rx d.1.N e₁.1.N) (h1' : Ry e₁.1.N f.1.N) (h2 : Rx d.1.N e₂.1.N) (h2' : Ry e₂.1.N f.1.N)
     (hf1 : e₁.1.f = d.1.f) (hb1 : e₁.1.be = d.1.be) (hf2 : e₂.1.f = d.1.f) (hb2 : e₂.1.be = d.1.be) :
     e₁ = e₂ := by
@@ -157,8 +156,8 @@ theorem hi_exchange {I J : Ideal (𝓞 E)} (hIJ : I ⊔ J = ⊤) (hJc : HiConj J
     {Rx Ry : Submodule (𝓞 E) (Sp E n) → Submodule (𝓞 E) (Sp E n) → Prop} (hx : HiBd I Rx) (hy : HiBd J Ry)
     (px : HiPar Rx) (py : HiPar Ry)
     (sT : ∀ N N', Ry N N' → ∀ R : ST, SameAt R.1 N N') (sG : ∀ N N', Ry N N' → ∀ w : SG, SameAt w.1 N N')
-    {d e f : DecoSet E n ST SG} (h1 : Rx d.1.N e.1.N) (h2 : Ry e.1.N f.1.N) :
-    ∃ e' : DecoSet E n ST SG, Ry d.1.N e'.1.N ∧ Rx e'.1.N f.1.N ∧ e'.1.f = d.1.f ∧ e'.1.be = d.1.be := by
+    {d e f : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)} (h1 : Rx d.1.N e.1.N) (h2 : Ry e.1.N f.1.N) :
+    ∃ e' : DecoSet (E := E) (n := n) (ST := ST) (SG := SG), Ry d.1.N e'.1.N ∧ Rx e'.1.N f.1.N ∧ e'.1.f = d.1.f ∧ e'.1.be = d.1.be := by
   obtain ⟨α, hα, β, hβ, hab, hαc, hβc⟩ := hi_exists_conj hJc hIJ
   have rNe : HiRel α d.1.N e.1.N := HiRel.of_ideal (hx _ _ h1).1 (hx _ _ h1).2 hα
   have reM : HiRel β e.1.N f.1.N := HiRel.of_ideal (hy _ _ h2).1 (hy _ _ h2).2 hβ
@@ -166,8 +165,36 @@ theorem hi_exchange {I J : Ideal (𝓞 E)} (hIJ : I ⊔ J = ⊤) (hJc : HiConj J
   set C := hiCorner α β f.1.N d.1.N with hC
   obtain ⟨i, hi, hi0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hI0
   obtain ⟨j, hj, hj0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hJ0
+  have hfull : Submodule.IsFullLattice E f.1.N := by
+    let := f.2.lat
+    refine { span_eq_top := ?_ }
+    let W := Submodule.span E (f.1.N : Set (Sp E n))
+    change W = ⊤
+    by_contra h
+    let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+    let g : Sp E n →ₗ[E] Module.Dual E W :=
+      (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+    have hdim : finrank E (Module.Dual E W) < finrank E (Sp E n) := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt h
+    obtain ⟨x, hx, hx₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    have hsmul (a : E) : a • e x ∈ f.1.N := by
+      rw [← f.2.uni, dualBasic_mem_dual]
+      intro y hy
+      apply hStd_mem_one_symm
+      have hxy : hStd E n (e x) y = 0 :=
+        congrArg (fun k : Module.Dual E W => k ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+      simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+    let i : E →ₗ[𝓞 E] f.1.N :=
+      ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict f.1.N hsmul
+    let : Module.Finite (𝓞 E) f.1.N := Module.Finite.iff_fg.mpr f.2.lat.fg
+    let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
   have hl : Submodule.IsLattice E C :=
-    hiCorner_lattice hab d.2.lat f.2.lat hi0 hj0 (fun x hx' => (hx _ _ h1).1 (Submodule.smul_mem_smul hi hx'))
+    hiCorner_lattice hab d.2.lat hfull hi0 hj0 (fun x hx' => (hx _ _ h1).1 (Submodule.smul_mem_smul hi hx'))
       (fun y hy' => (hy _ _ h2).1 (Submodule.smul_mem_smul hj hy'))
   have hu : IsUnimodular (hStd E n) C := hiCorner_unimodular hab hαc hβc d.2.uni f.2.uni rNe reM
   have hba : β + α = 1 := by rw [add_comm]; exact hab
@@ -182,16 +209,16 @@ section Count
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
-open Classical in
 
+open Classical in
 theorem hi_count_eq {I J : Ideal (𝓞 E)} (hIJ : I ⊔ J = ⊤) (hIc : HiConj I) (hJc : HiConj J) (hI0 : I ≠ ⊥)
     (hJ0 : J ≠ ⊥) {Rx Ry : Submodule (𝓞 E) (Sp E n) → Submodule (𝓞 E) (Sp E n) → Prop} (hx : HiBd I Rx)
     (hy : HiBd J Ry) (px : HiPar Rx) (py : HiPar Ry)
     (sTx : ∀ N N', Rx N N' → ∀ R : ST, SameAt R.1 N N') (sGx : ∀ N N', Rx N N' → ∀ w : SG, SameAt w.1 N N')
     (sTy : ∀ N N', Ry N N' → ∀ R : ST, SameAt R.1 N N') (sGy : ∀ N N', Ry N N' → ∀ w : SG, SameAt w.1 N N')
-    (A B : DecoSet E n ST SG → Finset (DecoSet E n ST SG))
+    (A B : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) → Finset (DecoSet (E := E) (n := n) (ST := ST) (SG := SG)))
     (hA : ∀ d e, e ∈ A d ↔ Rx d.1.N e.1.N ∧ e.1.f = d.1.f ∧ e.1.be = d.1.be)
-    (hB : ∀ d e, e ∈ B d ↔ Ry d.1.N e.1.N ∧ e.1.f = d.1.f ∧ e.1.be = d.1.be) (d f : DecoSet E n ST SG) :
+    (hB : ∀ d e, e ∈ B d ↔ Ry d.1.N e.1.N ∧ e.1.f = d.1.f ∧ e.1.be = d.1.be) (d f : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :
     ((A d).filter fun e => f ∈ B e).card = ((B d).filter fun e => f ∈ A e).card := by
   have hJI : J ⊔ I = ⊤ := by rw [sup_comm]; exact hIJ
   have hL : ((A d).filter fun e => f ∈ B e).card ≤ 1 := by
@@ -237,10 +264,10 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K]
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
   {ST SG : Finset (HeightOneSpectrum (𝓞 E))} {S : GSD K}
 
-open Classical in
 
+open Classical in
 theorem hi_commute (c : DecoPts S E n ST SG) (A B : LocOp S S)
-    (a b : DecoSet E n ST SG → Finset (DecoSet E n ST SG))
+    (a b : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) → Finset (DecoSet (E := E) (n := n) (ST := ST) (SG := SG)))
     (hA : ∀ (φ : S.EqFun) (d : S.D), ((A.op φ : S.EqFun) : S.D → S.V) d =
       ∑ e ∈ (a (c.pts d)).map c.pts.symm.toEmbedding, (φ : S.D → S.V) e)
     (hB : ∀ (φ : S.EqFun) (d : S.D), ((B.op φ : S.EqFun) : S.D → S.V) d =
@@ -248,8 +275,8 @@ theorem hi_commute (c : DecoPts S E n ST SG) (A B : LocOp S S)
     (h : ∀ d f, ((a d).filter fun e => f ∈ b e).card = ((b d).filter fun e => f ∈ a e).card) :
     Commute A.op B.op := by
   classical
-  have key : ∀ (D : DecoSet E n ST SG) (ψ : DecoSet E n ST SG → S.V)
-      (p q : DecoSet E n ST SG → Finset (DecoSet E n ST SG)) (U : Finset (DecoSet E n ST SG)),
+  have key : ∀ (D : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (ψ : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) → S.V)
+      (p q : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) → Finset (DecoSet (E := E) (n := n) (ST := ST) (SG := SG))) (U : Finset (DecoSet (E := E) (n := n) (ST := ST) (SG := SG))),
       (∀ e ∈ p D, q e ⊆ U) →
       ∑ x ∈ p D, ∑ y ∈ q x, ψ y = ∑ y ∈ U, ((p D).filter fun e => y ∈ q e).card • ψ y := by
     intro D ψ p q U hU

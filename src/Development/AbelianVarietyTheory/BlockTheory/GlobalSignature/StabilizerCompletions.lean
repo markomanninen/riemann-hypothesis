@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,8 +88,8 @@ section Basic₂
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin M) (Fin M) E)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem mem_stabVec (x : Fin M → E) (k : HA (Af F) σ J) :
     k ∈ stabVec σ J x ↔ actVec σ J k (ratVec F x) = ratVec F x := by
   constructor

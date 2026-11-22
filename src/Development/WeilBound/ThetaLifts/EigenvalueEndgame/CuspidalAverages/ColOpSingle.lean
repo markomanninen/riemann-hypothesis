@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.LeSuccIff
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.LeSuccIff
+
+@[expose] public section
 
 noncomputable section
 

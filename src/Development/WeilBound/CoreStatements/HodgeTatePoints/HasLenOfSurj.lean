@@ -1,10 +1,14 @@
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import ReciprocityTheory.DualLattices.CharTableIsUnit
-import ReciprocityTheory.DualLattices.SqIdeal
-import ReciprocityTheory.DualLattices.PowMemCarrier
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RiEasy
+module
+
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import ReciprocityTheory.DualLattices.CharTableIsUnit
+public import ReciprocityTheory.DualLattices.SqIdeal
+public import ReciprocityTheory.DualLattices.PowMemCarrier
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RiEasy
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
@@ -32,7 +36,7 @@ lemma teich_mod_p (p : ℕ) [hp : Fact p.Prime] (hv : v.Integers R) {t : C} (ht 
     (h : v (t - n) < 1) : t - n ∈ pInt (C := C) R p := by
   obtain ⟨μ, hμ⟩ := hv.exists_of_le_one h.le
   have ht' : (μ + n) ^ p = μ + n := hv.hom_inj (by
-    rw [map_pow, map_add, hμ, map_natCast, sub_add_cancel, ht])
+    rw [map_pow, map_add (f := _), hμ, map_natCast, sub_add_cancel, ht])
   obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hp.out μ (n : R)
   obtain ⟨k, hk⟩ : (p : ℤ) ∣ (n : ℤ) ^ p - n := by
     rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]; push_cast; rw [ZMod.pow_card, sub_self]

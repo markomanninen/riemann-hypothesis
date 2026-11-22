@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+
+@[expose] public section
 
 open Matrix GlobalTheory.CompanionTheory.Jp Module
 
@@ -101,7 +105,7 @@ theorem exists_equiv_triple [FiniteDimensional k V] (S T₁ T₂ : Submodule k V
     exact Subtype.property _
   · rw [← s₁] at ht
     obtain ⟨p, hp, a, ha, rfl⟩ := Submodule.mem_sup.1 ht
-    rw [map_add]
+    rw [map_add (f := _)]
     have e₁ : e p = eS ⟨p, hp.1⟩ := he₁ ⟨p, hp.1⟩
     have e₂ : e a = eR ⟨a, l₁ ha⟩ := he₂ ⟨a, l₁ ha⟩
     have m₁ : (eS ⟨p, hp.1⟩ : V) ∈ S ⊓ T₂ := hS ⟨p, hp.1⟩ hp

@@ -1,9 +1,14 @@
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.AdmissibleSignatures
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NumericalConditionsTheoremTLargePrimeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MaxFrobeniusOrbitLengthDiffBoundsZmodStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrimePowSmulDescentPhiMemLatticeOfOrbitBoundStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrimePowSmulPhiMemLatticeOfMemFiltrationStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinLpowEisensteinPowTwistedDecompStatement
+module
+
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.AdmissibleSignatures
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NumericalConditionsTheoremTLargePrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MaxFrobeniusOrbitLengthDiffBoundsZmodStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrimePowSmulDescentPhiMemLatticeOfOrbitBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrimePowSmulPhiMemLatticeOfMemFiltrationStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinLpowEisensteinPowTwistedDecompStatement
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.BK
 
 namespace GlobalTheory.ZetaDenominator
@@ -78,7 +83,7 @@ theorem zetaBound : GlobalTheory.IndefiniteRowSideFullHecke.AdmissibleSignatures
     rw [← Nat.cast_pow, Nat.cast_smul_eq_nsmul]
     exact nsmul_mem hv' _
   have key : (l : K) ^ c₁ • D.zeta y = c • (D.phi X0 + D.phi Q) := by
-    rw [← map_add, ← hsplit, map_smul, hζ, smul_comm]
+    rw [← map_add (f := _), ← hsplit, map_smul, hζ, smul_comm]
   rw [key]
   exact D.MM.smul_mem ⟨c, hc⟩ (add_mem hφX0 hφQ)
 

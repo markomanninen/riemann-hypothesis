@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.TopLengthBoundViaSplitting
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.LemmaFiveThreeExtensionOfModule
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.TopLengthBoundViaSplitting
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.LemmaFiveThreeExtensionOfModule
+
+@[expose] public section
 
 open Finset Classical
 
@@ -8,11 +12,6 @@ noncomputable section
 namespace Formalism.RepresentationBoundsCohomology.ringDataObjects
 
 open Formalism.NG Formalism.TruncatedSeriesCounting.TruncatedSeriesCountingIdentities Formalism.RepresentationBoundsCohomology.BR
-
-theorem freeImp : FreeImp := by
-  intro O _ _ _ X X' T Z p d _ _ R' _ Tc _ _ _ _ G _ r χ E e₁ δ π' t ht bl ρk _ _ _ _ δO h ι _ _ colIdx hinj
-    D j e' Kc k0 hoff g₀ n _ _
-  exact h ι colIdx hinj D j e' Kc k0 hoff
 
 theorem free_of_bound (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (X X' : Type)
     (T : Subalgebra O (X → O)) (T' : Subalgebra O (X' → O)) (Z : Set X) (p : X' → X) (q : ℕ)
@@ -74,16 +73,10 @@ theorem displayFree (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRin
     exact h
   refine free_of_bound O X D.X' T D.T' Z D.p D.q D.b d D.R' D.T' G D.r D.χ D.E D.e₁ D.δ D.π' D.ρπ t ht bl
     D.ρk D.sE D.tE D.δO hT fun ι _ _ colIdx Dd j Kc k0 hφ => ?_
-  obtain ⟨g, n, hn⟩ := Module.Finite.exists_fin (R := D.R')
+  set_option synthInstance.maxHeartbeats 400000 in
+   obtain ⟨g, n, hn⟩ := Module.Finite.exists_fin (R := D.R')
     (M := ColNNJ D.r D.χ D.E D.e₁ D.δ (fun l => Dd (colIdx l)) (fun l => j (colIdx l)) Kc k0)
   rw [hpπ]
   exact lemma_five_three_any_residue_field O X d G t ht bl T r₀ π χ₁ ε g₀ eB e₁ s hP hA hI hX D hD Z _ g n hn hφ
-
-theorem composite_of_chain_holds : CompositeOfChain := by
-  intro O _ _ _ X _ T d _ _ G _ r₀ π t ht bl χ₁ ε hP hA eB e₁ hI g₀ s hX
-  obtain ⟨D, hD, ⟨i1, i2, i3, i4, i5⟩, _, hT⟩ :=
-    ring_objects_exist O X T d G r₀ π t ht bl χ₁ ε hP hA eB e₁ hI g₀ s hX
-  exact ⟨D, hD, i1, i2, i3, i4, i5, fun Z =>
-    displayFree O X T d G r₀ π t ht bl χ₁ ε hP hA eB e₁ hI g₀ s hX D hD hT Z⟩
 
 end Formalism.RepresentationBoundsCohomology.ringDataObjects

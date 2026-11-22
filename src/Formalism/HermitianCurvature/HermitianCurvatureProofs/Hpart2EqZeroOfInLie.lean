@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BridgeQminor
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BridgeQminor
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -104,7 +108,7 @@ def Psi (D : Mat k r →L[ℝ] E) (g Z : Mat k r) : E :=
   D (g * hpart1 (Hpk k r) Z) + Complex.I • D (g * hpart2 (Hpk k r) Z)
 
 theorem Psi_add (D : Mat k r →L[ℝ] E) (g Z W : Mat k r) : Psi D g (Z + W) = Psi D g Z + Psi D g W := by
-  simp only [Psi, hpart1_add', hpart2_add', Matrix.mul_add, map_add, smul_add]
+  simp only [Psi, hpart1_add', hpart2_add', Matrix.mul_add, map_add (f := _), smul_add]
   abel
 
 theorem D_real (D : Mat k r →L[ℝ] E) (g M : Mat k r) (x : ℝ) : D (g * ((x : ℂ) • M)) = (x : ℂ) • D (g * M) := by

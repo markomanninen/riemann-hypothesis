@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -21,7 +25,8 @@ variable {X X' Y Z : Scheme.{0}}
 
 theorem gs_sum (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) {I : Type} [Fintype I] (a : I → Γ(X, U)) :
     gs r z U (∑ i, a i) = ∑ i, gs r z U (a i) := by
-  simp only [gs_eq r z U h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gs_eq r z U h, map_sum]
 
 theorem sec_ext {M : LB X} {s s' : LB.Sec M} (h : ∀ j, s.f j = s'.f j) : s = s' := by
   obtain ⟨f, _⟩ := s
@@ -51,8 +56,8 @@ theorem gs_secChart {A' : LB X'} {A : LB X} {h : X' ⟶ X} (a : ChartPull A' A h
 variable (L : LB Y) {K : Type} [Fintype K] (φ : K → (X ⟶ Y)) (ε : K → ℤ) (π : X' ⟶ X) (ψ : K → (X' ⟶ Y))
   (e : ∀ k, ψ k = π ≫ φ k)
 
-include e in
 
+include e in
 theorem mem_wchart_iff (j : K → L.ι) (y : X') : y ∈ LB.wchart L ψ j ↔ π y ∈ LB.wchart L φ j := by
   obtain rfl : ψ = fun k => π ≫ φ k := funext e
   exact ⟨fun hy => Set.mem_iInter.2 fun k => Set.mem_iInter.1 hy k,
@@ -84,8 +89,8 @@ def Rep (c : R' →+* Γ(X', ⊤)) (v : Fin F.a → R') (s : ∀ j, Γ(X', LB.wc
 
 variable {F π ψ}
 
-include e in
 
+include e in
 theorem Rep.sec_eq {c : R' →+* Γ(X', ⊤)} {v : Fin F.a → R'} {s s' : LB.Sec (LB.LinComb L ψ ε)}
     (h : Rep π ψ F c v s.f) (h' : Rep π ψ F c v s'.f) : s = s' := by
   refine sec_ext fun j => fn_ext fun y hy => ?_
@@ -94,8 +99,8 @@ theorem Rep.sec_eq {c : R' →+* Γ(X', ⊤)} {v : Fin F.a → R'} {s s' : LB.Se
   exact (sec_trans s (𝟙 X') y hy hm).trans ((congrArg _ ((h _ (𝟙 X') y i hi).trans (h' _ (𝟙 X') y i hi).symm)).trans
     (sec_trans s' (𝟙 X') y hy hm).symm)
 
-include e in
 
+include e in
 theorem Rep.sum {c : R' →+* Γ(X', ⊤)} {I : Type} [Fintype I] {w : I → Fin F.a → R'}
     {b : I → ∀ j, Γ(X', LB.wchart L ψ j)} (h : ∀ l, Rep π ψ F c (w l) (b l)) (a : I → R') :
     Rep π ψ F c (fun k => ∑ l, w l k * a l) (fun j => ∑ l, rs X' le_top (c (a l)) * b l j) := by
@@ -103,13 +108,14 @@ theorem Rep.sum {c : R' →+* Γ(X', ⊤)} {I : Type} [Fintype I] {w : I → Fin
   have hm : r z ∈ LB.wchart L ψ (F.ch i) := (mem_wchart_iff L φ π ψ e _ _).2 (F.le i hi)
   have ht : r z ∈ (⊤ : X'.Opens) := trivial
   rw [gs_sum r z _ hm]
-  simp only [map_sum, map_mul, gs_sum r z _ ht, gs_mul r z _ ht, gs_mul r z _ hm, gs_res r z le_top hm,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, gs_sum r z _ ht, gs_mul r z _ ht, gs_mul r z _ hm, gs_res r z le_top hm,
     fun l => h l Z r z i hi, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => by ring
 
-include e in
 
+include e in
 theorem Rep.pull {X'' : Scheme.{0}} {R'' : Type} [CommRing R''] {c : R' →+* Γ(X', ⊤)} {c' : R'' →+* Γ(X'', ⊤)}
     {v : Fin F.a → R'} {v' : Fin F.a → R''} {s : ∀ j, Γ(X', LB.wchart L ψ j)} (h : Rep π ψ F c v s)
     (ρ : X'' ⟶ X') {π' : X'' ⟶ X} (hπ : π' = ρ ≫ π) {ψ' : K → (X'' ⟶ Y)} (e' : ∀ k, ψ' k = ρ ≫ ψ k)
@@ -126,8 +132,8 @@ theorem Rep.pull {X'' : Scheme.{0}} {R'' : Type} [CommRing R''] {c : R' →+* Γ
   rw [hv, Category.assoc]
   exact congrArg (· * _) (gs_pull r ρ z ⊤ trivial _).symm
 
-include e in
 
+include e in
 theorem rep_main (g : R →+* R') (f' : X' ⟶ Spec (CommRingCat.of R'))
     (H : IsPullback π f' f (Spec.map (CommRingCat.ofHom g))) (c : R' →+* Γ(X', ⊤))
     (hc : ∀ x, c x = f'.appTop.hom ((Scheme.ΓSpecIso (CommRingCat.of R')).inv.hom x)) :
@@ -181,30 +187,30 @@ variable {S : Scheme.{0}} (A : Over S) [GrpObj A] (L : LB A.left) (n : ℤ) {R :
 def cfun (h : T ⟶ Over.mk t₀) : R →+* Γ(T.left, ⊤) :=
   h.left.appTop.hom.comp (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem snd_eq (h : T' ⟶ T) : (snd T' A).left = (h ▷ A).left ≫ (snd T A).left := by
   rw [← Over.comp_left, whiskerRight_snd]
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem fst_eq (h : T' ⟶ T) : (h ▷ A).left ≫ (fst T A).left = (fst T' A).left ≫ h.left := by
   rw [← Over.comp_left, whiskerRight_fst, Over.comp_left]
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem isPullback_snd (T : Over S) : IsPullback (snd T A).left (fst T A).left A.hom T.hom :=
   (IsPullback.of_hasPullback T.hom A.hom).flip
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem isPullback_whisker (h : T' ⟶ T) : IsPullback (h ▷ A).left (fst T' A).left (fst T A).left h.left := by
   refine IsPullback.of_right ?_ (fst_eq A h) (isPullback_snd A T)
   rw [← snd_eq, Over.w]
   exact isPullback_snd A T'
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem isPullback_affine [IsAffine T.left] (h : T ⟶ Over.mk t₀) :
     IsPullback (h ▷ A).left ((fst T A).left ≫ T.left.toSpecΓ) (fst (Over.mk t₀) A).left
       (Spec.map (CommRingCat.ofHom (cfun h))) := by

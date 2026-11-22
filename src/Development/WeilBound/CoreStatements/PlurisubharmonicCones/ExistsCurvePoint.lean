@@ -1,13 +1,17 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.AevalZeroOfMem
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PFunctionFieldFinite
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMChartTrdeg
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMChartHomog
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMChartDehomog
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNefAddBlock
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjContract
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PBlockRatioAlg
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjectionFormulaDegree
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.AevalZeroOfMem
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PFunctionFieldFinite
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMChartTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMChartHomog
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMChartDehomog
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNefAddBlock
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjContract
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PBlockRatioAlg
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjectionFormulaDegree
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo PositivityTheory.HtPt GroundTheory.Heights₂.Heights
 open GroundTheory.Heights₂.Heights.CoordinateConeArithVar
@@ -82,7 +86,7 @@ theorem dim_le {L : Type} [Field L] [Algebra (ZMod p) L] (hL : Algebra.trdeg (ZM
   have hΦ : ∀ g : MRing J, mConeMap w g = Φ (Bridge.GeoNum.red p g) := fun g => by
     induction g using MvPolynomial.induction_on with
     | C a => simp
-    | add f g hf hg => simp only [map_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), hf, hg]
     | mul_X f x hf => simp only [map_mul, hf, map_X]; simp [mConeMap, Φ]
   have hcm : mCoordIdeal w = (RingHom.ker Φ).comap (Bridge.GeoNum.red p) := by
     ext g

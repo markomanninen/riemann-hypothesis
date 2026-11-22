@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 open IntermediateField
 
@@ -35,7 +40,7 @@ theorem exists_pow_linearIndependent_of_isFractionRing (O F : Type) [CommRing O]
     rw [eq_top_iff, ← hγ, adjoin_simple_le_iff]; exact hγL
   refine ⟨x + t • y, ?_⟩
   have ha : algebraMap O F (x + t • y) = algebraMap O F x + (t : F) * algebraMap O F y := by
-    rw [map_add, map_nsmul, nsmul_eq_mul]
+    rw [map_add (f := _), map_nsmul, nsmul_eq_mul]
   have hint : IsIntegral ℚ (algebraMap O F (x + t • y)) := Algebra.IsIntegral.isIntegral _
   have hdeg : (minpoly ℚ (algebraMap O F (x + t • y))).natDegree = Module.finrank ℚ F := by
     rw [← adjoin.finrank hint, ha, ← hL, htop, finrank_top']

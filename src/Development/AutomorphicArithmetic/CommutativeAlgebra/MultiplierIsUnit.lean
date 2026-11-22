@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntAfIntCast
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntAfIntCast
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ private theorem exists_dvd_EFA (D : Datum p) (d : ℤ) (hd : ∀ x y : D.La, d �
     | add u u' _ _ h h' =>
       obtain ⟨c, hc, e⟩ := h
       obtain ⟨c', hc', e'⟩ := h'
-      exact ⟨c + c', isIntAf_add hc hc', by rw [map_add, e, e', mul_add]⟩
+      exact ⟨c + c', isIntAf_add hc hc', by rw [map_add (f := _), e, e', mul_add]⟩
     | neg u _ h =>
       obtain ⟨c, hc, e⟩ := h
       exact ⟨-c, isIntAf_neg hc, by rw [map_neg, e, mul_neg]⟩
@@ -42,7 +46,7 @@ private theorem exists_dvd_EFA (D : Datum p) (d : ℤ) (hd : ∀ x y : D.La, d �
   | add u u' _ _ h h' =>
     obtain ⟨c, hc, e⟩ := h
     obtain ⟨c', hc', e'⟩ := h'
-    exact ⟨c + c', isIntAf_add hc hc', by rw [map_add, LinearMap.add_apply, e, e', mul_add]⟩
+    exact ⟨c + c', isIntAf_add hc hc', by rw [map_add (f := _), LinearMap.add_apply, e, e', mul_add]⟩
   | neg u _ h =>
     obtain ⟨c, hc, e⟩ := h
     exact ⟨-c, isIntAf_neg hc, by rw [map_neg, LinearMap.neg_apply, e, mul_neg]⟩

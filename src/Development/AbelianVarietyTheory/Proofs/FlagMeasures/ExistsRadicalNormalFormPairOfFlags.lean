@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,10 +50,15 @@ theorem entry_cases (t : ℂ) (s : ℕ) (bs : List (ℂ × ℕ)) (i j : ℕ) (h 
     · rw [if_neg h2] at h; exact absurd rfl h
 
 theorem entry_same : ∀ (bs : List (ℂ × ℕ)) (i j i' j' : ℕ), ptEntry bs i j ≠ 0 → ptEntry bs i' j' ≠ 0 →
-    blockIdx bs i = blockIdx bs i' → ptEntry bs i j = ptEntry bs i' j' ∧ i + j = i' + j'
-  | [], _, _, _, _, h, _, _ => absurd rfl h
-  | (t, s) :: bs, i, j, i', j', h, h', hb => by
-    have ih := entry_same bs (i - s) (j - s) (i' - s) (j' - s)
+    blockIdx bs i = blockIdx bs i' → ptEntry bs i j = ptEntry bs i' j' ∧ i + j = i' + j' := by
+  intro bs
+  induction bs with
+  | nil =>
+    intro i j i' j' h h' hb
+    exact absurd rfl h
+  | cons b bs ih =>
+    rcases b with ⟨t, s⟩
+    intro i j i' j' h h' hb
     simp only [blockIdx] at hb
     rcases entry_cases t s bs i j h with ⟨a1, a2, a3⟩ | ⟨a1, a2, a3⟩ <;>
       rcases entry_cases t s bs i' j' h' with ⟨b1, b2, b3⟩ | ⟨b1, b2, b3⟩
@@ -57,20 +66,27 @@ theorem entry_same : ∀ (bs : List (ℂ × ℕ)) (i j i' j' : ℕ), ptEntry bs 
     · rw [if_pos a1, if_neg (by omega)] at hb; omega
     · rw [if_pos b1, if_neg (by omega)] at hb; omega
     · rw [if_neg (by omega), if_neg (by omega)] at hb
-      obtain ⟨e1, e2⟩ := ih (a3 ▸ h) (b3 ▸ h') (by omega)
+      obtain ⟨e1, e2⟩ := ih (i - s) (j - s) (i' - s) (j' - s)
+        (a3 ▸ h) (b3 ▸ h') (by omega)
       exact ⟨by rw [a3, b3, e1], by omega⟩
 
 theorem entry_exists : ∀ (bs : List (ℂ × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧ 1 ≤ b.2) → ∀ j, j < (bs.map Prod.snd).sum →
-    ∃ i, i < (bs.map Prod.snd).sum ∧ ptEntry bs i j ≠ 0
-  | [], _, j, h => by simp at h
-  | (t, s) :: bs, hb, j, h => by
+    ∃ i, i < (bs.map Prod.snd).sum ∧ ptEntry bs i j ≠ 0 := by
+  intro bs
+  induction bs with
+  | nil =>
+    intro hb j h
+    simp at h
+  | cons b bs ih =>
+    rcases b with ⟨t, s⟩
+    intro hb j h
     simp only [List.map_cons, List.sum_cons] at h ⊢
     by_cases h1 : j < s
     · refine ⟨s - 1 - j, by omega, ?_⟩
       simp only [ptEntry]
       rw [if_pos (by omega), if_pos (by omega)]
       exact (hb (t, s) (by simp)).1
-    · obtain ⟨i, hi, he⟩ := entry_exists bs (fun b hb' => hb b (by simp [hb'])) (j - s) (by omega)
+    · obtain ⟨i, hi, he⟩ := ih (fun b hb' => hb b (by simp [hb'])) (j - s) (by omega)
       refine ⟨s + i, by omega, ?_⟩
       simp only [ptEntry]
       rw [if_neg (by omega), if_pos (by omega)]

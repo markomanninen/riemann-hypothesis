@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+
+@[expose] public section
 
 open Matrix
 

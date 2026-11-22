@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -28,7 +33,7 @@ theorem isArithVar_projLine : IsArithVar (⊥ : Ideal (MRing (PBlk 2))) 2 := by
     have hc : Nat.card ((_ : Unit) × PBlk 2 ()) = 2 := by
       rw [Nat.card_eq_fintype_card, Fintype.card_sigma]
       simp
-    rw [hc, Fintype.card_unit]
+    rw [ENat.card_eq_coe_natCard, hc, Fintype.card_unit]
     rfl
 
 theorem isSmoothHerm_fsLine (n : ℕ) : IsSmoothHerm (fsLine n) := by
@@ -40,14 +45,10 @@ theorem isSmoothHerm_fsLine (n : ℕ) : IsSmoothHerm (fsLine n) := by
   rw [hfun]
   refine contDiffOn_prod fun k _ => ContDiffOn.sqrt ?_ fun z hz => ?_
   · exact (ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp
-      (contDiff_apply ℝ ℂ (⟨k, i⟩ : Σ k, PBlk n k))).contDiffOn
+      (contDiff_apply ℝ (fun _ => ℂ) (⟨k, i⟩ : Σ k, PBlk n k))).contDiffOn
   · obtain ⟨i, hi⟩ := hz k
     exact (Finset.sum_pos' (fun j _ => sq_nonneg ‖z ⟨k, j⟩‖)
       ⟨i, Finset.mem_univ _, pow_pos (norm_pos_iff.mpr hi) 2⟩).ne'
-
-theorem DegreeGeneric.hyps_inhabited :
-    IsArithVar (⊥ : Ideal (MRing (PBlk 2))) (1 + 1) ∧ ∀ j, IsSmoothHerm (![fsLine 2] j) :=
-  ⟨isArithVar_projLine, fun j => by fin_cases j; exact isSmoothHerm_fsLine 2⟩
 
 end
 

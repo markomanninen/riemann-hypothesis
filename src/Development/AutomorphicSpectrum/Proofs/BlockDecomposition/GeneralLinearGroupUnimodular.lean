@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientIntegrationFormulaDiscreteSubgroupLeft
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientIntegrationFormulaDiscreteSubgroupLeft
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped NNReal
@@ -26,8 +30,14 @@ theorem dg_one : dg (1 : Fin n → ℂˣ) = 1 := by
 noncomputable def pm (σ : Equiv.Perm (Fin n)) : GL (Fin n) ℂ where
   val := σ.toPEquiv.toMatrix
   inv := σ.symm.toPEquiv.toMatrix
-  val_inv := by rw [PEquiv.toMatrix_toPEquiv_mul]; ext i j; simp [one_apply, eq_comm]
-  inv_val := by rw [PEquiv.toMatrix_toPEquiv_mul]; ext i j; simp [one_apply, eq_comm]
+  val_inv := by
+    rw [PEquiv.toMatrix_toPEquiv_mul]
+    ext i j
+    simp [Matrix.one_apply]
+  inv_val := by
+    rw [PEquiv.toMatrix_toPEquiv_mul]
+    ext i j
+    simp [Matrix.one_apply]
 
 theorem pm_mul_dg (σ : Equiv.Perm (Fin n)) (d : Fin n → ℂˣ) :
     pm σ * dg d = dg (d ∘ σ) * pm σ := by

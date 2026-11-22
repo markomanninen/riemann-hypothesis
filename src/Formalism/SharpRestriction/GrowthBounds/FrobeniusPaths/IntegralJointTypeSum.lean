@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.JointTypeLatticeSaturated
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.IntegralJointTypeSumOfParts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.JointTypeLatticeSaturated
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.IntegralJointTypeSumOfParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,6 @@ namespace Formalism.MainNotions.LemmaBAlt
 section Ops
 
 variable {F : Type*} [Field F] {N m k : ℕ} (LL : Letters (Fin N)) (S : Set (Fin N)) (e : Fin m → Fin k)
-
-lemma glOps_eq_E (a b : Fin m) : glOps F m LL S a b = glOpsE F LL S (id : Fin m → Fin m) a b := rfl
 
 lemma glOpsE_mul (a b : Fin m) (f g : MvPolynomial (Fin N × Fin k) F) :
     glOpsE F LL S e a b (f * g) = f * glOpsE F LL S e a b g + g * glOpsE F LL S e a b f := by
@@ -84,7 +86,7 @@ lemma inter_iso (E : GLOps n K V) (E' : GLOps n K W) (T : V →ₗ[K] W) (hT : �
       · intro a b hab
         rw [← hT, hv.2.2 a b hab, map_zero]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ h1 h2 => rw [map_add]; exact Submodule.add_mem _ h1 h2
+  | add x y _ _ h1 h2 => rw [map_add (f := _)]; exact Submodule.add_mem _ h1 h2
   | smul c x _ h => rw [map_smul]; exact Submodule.smul_mem _ _ h
 
 end Inter
@@ -94,9 +96,9 @@ section Deg
 variable {F : Type*} [Field F] {N m k : ℕ} (LL : Letters (Fin N)) (S : Set (Fin N)) (e : Fin m → Fin k)
 
 lemma coeff_XD {σ : Type*} (i j : σ) (f : MvPolynomial σ F) (mm : σ →₀ ℕ) :
-    coeff mm (X i * pderiv j f) =
+    AddMonoidAlgebra.coeff (X i * pderiv j f) mm =
       if mm i = 0 then 0 else
-        coeff (mm - Finsupp.single i 1 + Finsupp.single j 1) f * (((mm - Finsupp.single i 1 : σ →₀ ℕ) j : ℕ) + 1 : F) := by
+        AddMonoidAlgebra.coeff f (mm - Finsupp.single i 1 + Finsupp.single j 1) * (((mm - Finsupp.single i 1 : σ →₀ ℕ) j : ℕ) + 1 : F) := by
   classical
   rw [coeff_X_mul']
   by_cases h : mm i = 0
@@ -104,7 +106,7 @@ lemma coeff_XD {σ : Type*} (i j : σ) (f : MvPolynomial σ F) (mm : σ →₀ �
   · rw [if_pos (by simpa using h), if_neg h, coeff_pderiv]
 
 lemma coeff_XDii {σ : Type*} (i : σ) (f : MvPolynomial σ F) (mm : σ →₀ ℕ) :
-    coeff mm (X i * pderiv i f) = (mm i : F) * coeff mm f := by
+    AddMonoidAlgebra.coeff (X i * pderiv i f) mm = (mm i : F) * AddMonoidAlgebra.coeff f mm := by
   rw [coeff_XD]
   by_cases h : mm i = 0
   · rw [if_pos h, h]; simp
@@ -118,15 +120,15 @@ lemma coeff_XDii {σ : Type*} (i : σ) (f : MvPolynomial σ F) (mm : σ →₀ �
       rw [← h2, Nat.cast_add, Nat.cast_one]
     rw [h3, mul_comm]
 
-open Classical in
 
+open Classical in
 def wtA (mm : Fin N × Fin k →₀ ℕ) (a : Fin m) : ℤ :=
   ∑ l : Fin N, if l ∈ S then (if LL.vec l then (mm (l, e a) : ℤ) else -(mm (l, e a) : ℤ)) else 0
 
 def tot (mm : Fin N × Fin k →₀ ℕ) : ℤ := ∑ a, wtA LL S e mm a
 
 lemma coeff_Eaa (a : Fin m) (f : MvPolynomial (Fin N × Fin k) F) (mm : Fin N × Fin k →₀ ℕ) :
-    coeff mm (glOpsE F LL S e a a f) = (wtA LL S e mm a : F) * coeff mm f := by
+    AddMonoidAlgebra.coeff (glOpsE F LL S e a a f) mm = (wtA LL S e mm a : F) * AddMonoidAlgebra.coeff f mm := by
   simp only [glOpsE, LinearMap.sum_apply, coeff_sum, wtA]
   push_cast
   rw [Finset.sum_mul]
@@ -179,7 +181,7 @@ lemma XD_mem (he : Function.Injective e) (s : ℤ) (l : Fin N) (c d : Fin m) (f 
   by_cases h : mm (l, e c) = 0
   · rw [if_pos h] at hmm; exact absurd rfl hmm
   · rw [if_neg h] at hmm
-    have h0 : coeff (mm - Finsupp.single (l, e c) 1 + Finsupp.single (l, e d) 1) f ≠ 0 := left_ne_zero_of_mul hmm
+    have h0 : AddMonoidAlgebra.coeff f (mm - Finsupp.single (l, e c) 1 + Finsupp.single (l, e d) 1) ≠ 0 := left_ne_zero_of_mul hmm
     have h1 := hf (Finset.mem_coe.2 (mem_support_iff.2 h0))
     have h2 : Finsupp.single (l, e c) 1 ≤ mm := Finsupp.single_le_iff.2 (Nat.one_le_iff_ne_zero.2 h)
     simp only [Set.mem_ofPred_eq] at h1 ⊢
@@ -220,8 +222,10 @@ lemma hwv_mem [CharZero F] (lam : Fin m → ℤ) (v : MvPolynomial (Fin N × Fin
   intro a _
   simp only [weightSp, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.smul_apply,
     Module.End.one_apply] at hv
-  have h1 := congrArg (coeff mm) (hv a)
-  rw [coeff_sub, coeff_Eaa, coeff_smul, coeff_zero, smul_eq_mul, ← sub_mul] at h1
+  have h1 := congrArg (AddMonoidAlgebra.coeff · mm) (hv a)
+  rw [coeff_sub, coeff_Eaa, coeff_smul, smul_eq_mul, ← sub_mul] at h1
+  have hz : (AddMonoidAlgebra.coeff (0 : MvPolynomial (Fin N × Fin k) F)) mm = 0 := by simp
+  rw [hz] at h1
   rcases mul_eq_zero.1 h1 with h | h
   · exact_mod_cast sub_eq_zero.1 h
   · exact absurd h hmm
@@ -335,16 +339,16 @@ lemma Tev_inter (hd1 : ∀ a, dcd (e a) = some a) (hd2 : ∀ c a, dcd c = some a
     Tev dcd y (glOpsE F LL S e a b f) = glOpsE F LL S (id : Fin m → Fin m) a b (Tev dcd y f) := by
   induction f using MvPolynomial.induction_on with
   | C c => rw [glOpsE_C, map_zero, Tev_C, glOpsE_C]
-  | add p q hp hq => rw [map_add, map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p v ih =>
-    rw [glOpsE_mul, map_add, map_mul, map_mul, map_mul, glOpsE_mul, ih, Tev_gen LL e dcd hd1 hd2]
+    rw [glOpsE_mul, map_add (f := _), map_mul, map_mul, map_mul, glOpsE_mul, ih, Tev_gen LL e dcd hd1 hd2]
 
 lemma eval_Tev (hd2 : ∀ c a, dcd c = some a → c = e a) (z : Fin N × Fin k → F)
     (f : MvPolynomial (Fin N × Fin k) F) :
     eval (fun v' : Fin N × Fin m => z (v'.1, e v'.2)) (Tev dcd z f) = eval z f := by
   induction f using MvPolynomial.induction_on with
   | C c => rw [Tev_C, eval_C, eval_C]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p v ih =>
     rw [map_mul, map_mul, map_mul, ih, Tev_X, eval_X]
     congr 1
@@ -411,31 +415,31 @@ def dcdTan (r K : ℕ) : Fin (r + K) → Option (Fin K) := fun c =>
 
 lemma dcdPl_1 (r K : ℕ) (a : Fin r) : dcdPl r K (Fin.castAdd K a) = some a := by
   unfold dcdPl
-  rw [dif_pos (show (Fin.castAdd K a).val < r from a.2)]
+  rw [dite_eq_left (show (Fin.castAdd K a).val < r from a.2)]
   rfl
 
 lemma dcdPl_2 (r K : ℕ) (c : Fin (r + K)) (a : Fin r) (h : dcdPl r K c = some a) : c = Fin.castAdd K a := by
   unfold dcdPl at h
   by_cases hc : c.val < r
-  · rw [dif_pos hc] at h
+  · rw [dite_eq_left hc] at h
     rw [← Option.some.inj h]
     ext; rfl
-  · rw [dif_neg hc] at h
+  · rw [dite_eq_right hc] at h
     exact absurd h (by simp)
 
 lemma dcdTan_1 (r K : ℕ) (a : Fin K) : dcdTan r K (Fin.natAdd r a) = some a := by
   unfold dcdTan
-  rw [dif_pos (show r ≤ (Fin.natAdd r a).val by simp)]
+  rw [dite_eq_left (show r ≤ (Fin.natAdd r a).val by simp)]
   congr 1
   ext; simp
 
 lemma dcdTan_2 (r K : ℕ) (c : Fin (r + K)) (a : Fin K) (h : dcdTan r K c = some a) : c = Fin.natAdd r a := by
   unfold dcdTan at h
   by_cases hc : r ≤ c.val
-  · rw [dif_pos hc] at h
+  · rw [dite_eq_left hc] at h
     rw [← Option.some.inj h]
     ext; simp; omega
-  · rw [dif_neg hc] at h
+  · rw [dite_eq_right hc] at h
     exact absurd h (by simp)
 
 theorem hjc_pf (D : Formalism.BasicNotions.D7) (h14 : JointComponentsPaths D) : HJc D := by

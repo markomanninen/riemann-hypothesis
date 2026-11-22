@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HeckeIrreducible
-import GroundTheory.AutomorphicForms.MeasuresGL
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HeckeIrreducible
+public import GroundTheory.AutomorphicForms.MeasuresGL
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRootsLiftToZeros
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreRest
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRootsLiftToZeros
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreRest
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbSplitPt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbSplitPt
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -50,11 +54,11 @@ theorem vecV_split [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (Bs : B
   obtain ⟨hint, heq⟩ := fub Bs h'.choose θ hθL F hi hR'
   refine ⟨hint, ?_⟩
   unfold D.vecV
-  rw [dif_pos h, dif_pos h']
+  rw [dite_eq_left h, dite_eq_left h']
   have hex : ∃ θ', D.IsNormCut Bs h'.choose (D.muR Bs h'.choose (h.1.2 ▸ D.ptPerm q)) θ' ∧
       Integrable (fun p => θ' p • D.orbIntegrand Bs h'.choose F p) Bs.μSS := ⟨θ, hθ, hi⟩
   unfold D.orbJ
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   refine (Formalism.FourierDecayAlt.P.orbital_integral_indep_choice k r Wp Wq Bs h'.choose _ hrel hR F _ θ hex.choose_spec.1 hθ
     hex.choose_spec.2 hi).trans heq
 

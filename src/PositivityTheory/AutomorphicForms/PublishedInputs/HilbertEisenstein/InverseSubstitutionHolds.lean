@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HcToIdele
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SecondCountableTopologyUnits
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HcToIdele
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SecondCountableTopologyUnits
+
+@[expose] public section
 
 noncomputable section
 

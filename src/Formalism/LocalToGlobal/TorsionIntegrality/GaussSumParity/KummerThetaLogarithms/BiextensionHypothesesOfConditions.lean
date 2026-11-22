@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.LetterShift
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
-import Formalism.GaussJetBounds.GaussJetProofs.Transfer
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.LetterShift
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+public import Formalism.GaussJetBounds.GaussJetProofs.Transfer
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -210,7 +214,8 @@ variable {K : Type} [Field K] {τ τ' : Type}
 theorem subst_C_mul_sum {a : τ → MvPowerSeries τ' K} (ha : HasSubst a) (c : K) {α : Type}
     (s : Finset α) (f : α → MvPowerSeries τ K) :
     subst a (MvPowerSeries.C c * ∑ k ∈ s, f k) = MvPowerSeries.C c * ∑ k ∈ s, subst a (f k) := by
-  rw [MvPowerSeries.subst_mul ha, MvPowerSeries.subst_C, ← MvPowerSeries.coe_substAlgHom ha,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPowerSeries.subst_mul ha, MvPowerSeries.subst_C, ← MvPowerSeries.coe_substAlgHom ha,
     map_sum]
 
 variable {d : ℕ} [NeZero d]

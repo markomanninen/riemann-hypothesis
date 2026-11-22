@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.FdFixed
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPow
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.WeakPow
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.LocTw
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.IsIntegralOpUntw
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.ChiBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExTwist
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.FdFixed
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPow
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.WeakPow
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.LocTw
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.IsIntegralOpUntw
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.ChiBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExTwist
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -20,8 +24,11 @@ open UpperTheory.Gal.InertialTypesAlt.G
 theorem UpperTheory.Gal.InertialTypesAlt.G.varTrace :
     UpperTheory.Gal.InertialTypesAlt.G.VarTrace := by
   intro F E _ _ _ _ _ _ _ _ σ hσ hp n hn π P hP hW v w hv _ _ _ _ mF mE hmF hmE τ τ' hτ hτ' s I hs hI
-  let μE : Measure (normOneGL E n) := Measure.haar
-  obtain ⟨χ', ⟨z₀, hz'⟩, V, hV⟩ := Dp.exTwist E n μE P hn
+  let μE : Measure (normOneGL (K := E) (n := n)) := Measure.haar
+  have : μE.IsHaarMeasure :=
+    inferInstanceAs (Measure.haar : Measure (normOneGL (K := E) (n := n))).IsHaarMeasure
+  have hTwist := UpperTheory.ConvolutionTheory.Dp.exTwist E n μE P hn
+  obtain ⟨χ', ⟨z₀, hz'⟩, V, hV⟩ := hTwist
   obtain ⟨hex, htw⟩ := T.powTwist F E
   obtain ⟨χ, hz⟩ := (hex z₀).1
   obtain ⟨hi, hi', h1⟩ := htw z₀ χ χ' hz hz'

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ variable {E : Type} [Field E] [NumberField E] {a : ℕ}
 def chi (ψ : AddChar (Ad E) ℂ) (w : Pl E) : AddChar (w.adicCompletion E) ℂ where
   toFun y := ψ (sFin E (sLoc E w y))
   map_zero_eq_one' := by simp only [map_zero, AddChar.map_zero_eq_one]
-  map_add_eq_mul' x y := by simp only [map_add, AddChar.map_add_eq_mul]
+  map_add_eq_mul' x y := by simp only [map_add (f := _), AddChar.map_add_eq_mul]
 
 theorem chi_apply (ψ : AddChar (Ad E) ℂ) (w : Pl E) (y : w.adicCompletion E) :
     chi ψ w y = ψ (sFin E (sLoc E w y)) := rfl
@@ -29,7 +33,8 @@ theorem chi_cont {ψ : AddChar (Ad E) ℂ} (hψ : StdPsi ψ) (w : Pl E) : Contin
 theorem lastE_loc (w : Pl E) {k : ℕ} (y : UnipotentBlockColumnIndex a k k → w.adicCompletion E) :
     lastE k (fun t => sFin E (sLoc E w (y t))) = sFin E (sLoc E w (lastE k y)) := by
   unfold lastE
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun t _ => ?_
   split_ifs <;> simp
 

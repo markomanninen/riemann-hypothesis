@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFEDefs
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFEDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem map_mul_right_haar_modular (h : G) :
     map (· * h) (C.haar μ₀) = modularCharacter h • C.haar μ₀ := by
   rw [C.map_mul_right_haar μ₀ h, C.modularCharacter_eq h]
 
-include C in
 
+include C in
 theorem continuous_modularCharacter : Continuous (modularCharacter : G → ℝ≥0) := by
   have : (modularCharacter : G → ℝ≥0) = fun g => C.leftModulus g * (C.rightModulus g)⁻¹ := by
     funext g
@@ -43,8 +47,8 @@ theorem lintegral_mul_right_haar (h : G) {f : G → ℝ≥0∞} (hf : Measurable
     lintegral_smul_measure]
   rfl
 
-include C in
 
+include C in
 theorem modularCharacter_eq_one_of_mem {V : OpenSubgroup G} (hV : IsCompact (V : Set G)) {v : G}
     (hv : v ∈ V) : modularCharacter v = 1 := by
   obtain ⟨h1, h2⟩ := C.modulus_eq_one_of_mem hV hv

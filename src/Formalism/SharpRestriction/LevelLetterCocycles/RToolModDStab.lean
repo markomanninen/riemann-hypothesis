@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.Step1KillXList
-import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.LetterConditionGlobal
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.Step1KillXList
+public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.LetterConditionGlobal
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,13 +82,13 @@ theorem rToolMod_dStab [NeZero n] (hP9 : Formalism.MainNotions.DeltaInvariantLat
   have hγq : W.γA W.gam (Formalism.MainNotions.LiftingTheory.qp W) =
       Formalism.MainNotions.LiftingTheory.qp W * (1 + W.π₀ * (w₂ : LetA O n)) := by
     have e1 : W.γA W.gam (Formalism.MainNotions.LiftingTheory.qp W) = W.γA W.gam W.π₀ + ((PD.p : ℕ) : LetA O n) := by
-      simp only [Formalism.MainNotions.LiftingTheory.qp, map_add, map_natCast]
+      simp only [Formalism.MainNotions.LiftingTheory.qp, map_add (f := _), map_natCast]
     rw [e1, hγπ]
     simp only [Formalism.MainNotions.LiftingTheory.qp]
     ring
   have hΔq : ∀ δ ∈ W.DelF, W.γA δ (Formalism.MainNotions.LiftingTheory.qp W) = Formalism.MainNotions.LiftingTheory.qp W := by
     intro δ hδ
-    simp only [Formalism.MainNotions.LiftingTheory.qp, map_add, map_natCast, hΔπ δ hδ]
+    simp only [Formalism.MainNotions.LiftingTheory.qp, map_add (f := _), map_natCast, hΔπ δ hδ]
   have ha : IsUnit (algebraMap (LetA O n) W.EE W.π₀) := by
     rw [hw₁, map_mul, map_pow]
     exact (w₁.isUnit.map _).mul (W.EE_π.pow _)
@@ -102,7 +106,7 @@ theorem rToolMod_dStab [NeZero n] (hP9 : Formalism.MainNotions.DeltaInvariantLat
     have hinv := Ring.mul_inverse_cancel _ ha
     have h2 : algebraMap (LetA O n) W.EE (Formalism.MainNotions.LiftingTheory.qp W) = algebraMap (LetA O n) W.EE W.π₀ *
         (((PD.p : ℕ) : W.EE) * Ring.inverse (algebraMap (LetA O n) W.EE W.π₀) * 1 + 1) := by
-      simp only [Formalism.MainNotions.LiftingTheory.qp, map_add, map_natCast]
+      simp only [Formalism.MainNotions.LiftingTheory.qp, map_add (f := _), map_natCast]
       linear_combination (-((PD.p : ℕ) : W.EE)) * hinv
     rw [h2]; exact ha.mul h1
   obtain ⟨e, he⟩ : ∃ e, e = Ring.inverse (algebraMap (LetA O n) W.EE W.π₀) := ⟨_, rfl⟩

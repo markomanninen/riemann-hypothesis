@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaBijections.SySmulRight
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaBijections.SySmulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,8 @@ theorem cmb_sum (c : Ix d → AF F) : d.cmb c = ∑ k, c k • ek d k :=
 theorem ek_rat (k : Ix d) : ∃ M : Matrix (Fin d.m) (Fin d.n) E, ek d k = incM F M := by
   refine ⟨Matrix.of fun i j => (∑ k', (if k = (i, j, k') then (1 : F) else 0) • d.bs k' : E), ?_⟩
   ext i j
-  simp only [ek, SD.cmb, incM, Matrix.map_apply, Matrix.of_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ek, SD.cmb, incM, Matrix.map_apply, Matrix.of_apply, map_sum]
   refine Finset.sum_congr rfl fun k' _ => ?_
   show _ = (1 : AF F) ⊗ₜ[F] _
   split_ifs <;> simp
@@ -71,7 +76,8 @@ theorem xs_incM (x : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) E) :
 
 theorem om_ratV {κ : Type} [Fintype κ] (y z y' z' : κ → F) :
     om (ratV y z) (ratV y' z') = algebraMap F (AF F) (om (y, z) (y', z')) := by
-  simp [om, ratV, dotProduct, map_sum, map_mul, map_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [om, ratV, dotProduct, map_sum, map_mul, map_sub]
 
 theorem dot_sv {κ : Type} [Fintype κ] (τ : κ ≃ Ix d) (X : Mx F E d.m d.n)
     (w : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) :

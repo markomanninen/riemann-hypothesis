@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
-import Development.AbelianVarietyTheory.Definitions.Foundations.StrictInterlaceIffDescEnum
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StrictInterlaceIffDescEnum
+
+@[expose] public section
 
 noncomputable section
 

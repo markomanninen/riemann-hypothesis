@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.LocalToGlobal.Divisibility.TuplesLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.LocalToGlobal.Divisibility.TuplesLemmas
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV
 
 namespace GlobalTheory

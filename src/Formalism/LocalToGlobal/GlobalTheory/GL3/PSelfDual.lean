@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfTrace
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CanonicalTranslateJets
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfTrace
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CanonicalTranslateJets
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,9 +130,9 @@ theorem alg_step (cc : Ideal (𝓞 D.host.K)) (hcc : cc ≠ ⊥) {N N' : ℕ}
     Ideal.dvd_iff_le.mpr ((Ideal.span_singleton_le_iff_mem _).mpr hc0)
   obtain ⟨cc', hcc'⟩ := hdvd
   have hc0K : ((c0 : D.host.K)) ≠ 0 := by
-    intro h; apply hc0ne; exact RingOfIntegers.ext (by simpa using h)
+    intro h; apply hc0ne; exact RingOfIntegers.ext h
   have hc0E : (((c0 : D.host.K) : D.host.E)) ≠ 0 := by
-    intro h; apply hc0K; exact Subtype.ext (by simpa using h)
+    intro h; apply hc0K; exact Subtype.ext h
   have key : ∀ e ∈ cc', ((((e : D.host.K) / (c0 : D.host.K) : D.host.K) : D.host.E)) • X ∈
       YYl D L L' := by
     intro e he
@@ -179,8 +183,8 @@ theorem alg_step (cc : Ideal (𝓞 D.host.K)) (hcc : cc ≠ ⊥) {N N' : ℕ}
   have h1 := main c0 (by rw [← hcc']; exact Ideal.mem_span_singleton_self c0)
   rwa [div_self hc0K, IntermediateField.coe_one, one_smul] at h1
 
-variable (D) in
 
+variable (D) in
 theorem coord (δ : ℂ) (hδ : δ ≠ 0) (u : D.what₂.Tau → ℂ)
     (hu : ∀ y : D.host.E, ∃ k : D.host.K,
       ∑ τ, u τ * embT D τ y = δ * D.host.φ₀ (k : D.host.E)) :
@@ -195,11 +199,11 @@ theorem coord (δ : ℂ) (hδ : δ ≠ 0) (u : D.what₂.Tau → ℂ)
         calc δ * D.host.φ₀ (g (y1 + y2) : D.host.E)
             = ∑ τ, u τ * embT D τ (y1 + y2) := (hg _).symm
           _ = ∑ τ, u τ * embT D τ y1 + ∑ τ, u τ * embT D τ y2 := by
-              simp only [map_add, mul_add, Finset.sum_add_distrib]
+              simp only [map_add (f := _), mul_add, Finset.sum_add_distrib]
           _ = δ * D.host.φ₀ (g y1 : D.host.E) + δ * D.host.φ₀ (g y2 : D.host.E) := by
               rw [hg, hg]
           _ = δ * D.host.φ₀ ((g y1 + g y2 : D.host.K) : D.host.E) := by
-              simp only [IntermediateField.coe_add, map_add]; ring
+              simp only [IntermediateField.coe_add, map_add (f := _)]; ring
       map_smul' := fun k y => by
         apply ginj
         calc δ * D.host.φ₀ (g (k • y) : D.host.E)
@@ -379,7 +383,8 @@ theorem SelfDualRec_of_curve (hC : CurveSelfDualRec) : SelfDualRec := by
       unfold hYY
       rw [← FL.sum_tau_trace, Finset.mul_sum]
       refine Finset.sum_congr rfl fun τ _ => ?_
-      simp only [map_sum, map_mul, FL.emb_conj, Finset.mul_sum, Matrix.of_apply, hXv]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, FL.emb_conj, Finset.mul_sum, Matrix.of_apply, hXv]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       ring
     rw [e1] at hcY
@@ -401,7 +406,7 @@ open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Fo
 theorem im_comb (w1 w2 : ℂ) (m1 n1 m2 n2 : ℤ) :
     (starRingEnd ℂ ((m1 : ℂ) * w1 + (n1 : ℂ) * w2) * ((m2 : ℂ) * w1 + (n2 : ℂ) * w2)).im =
       ((m1 * n2 - n1 * m2 : ℤ) : ℝ) * (starRingEnd ℂ w1 * w2).im := by
-  simp only [map_add, map_mul, map_intCast, Complex.mul_im, Complex.mul_re,
+  simp only [map_add (f := _), map_mul, map_intCast, Complex.mul_im, Complex.mul_re,
     Complex.add_im, Complex.add_re, Complex.intCast_re, Complex.intCast_im, Complex.conj_re,
     Complex.conj_im]
   push_cast
@@ -476,7 +481,7 @@ theorem finrank_K : Module.finrank ℚ D.host.K = 2 := by
   have hd := d_pos D
   have hmon : (X ^ 2 + C (D.host.d : ℚ)).Monic := monic_X_pow_add_C _ two_ne_zero
   have hev : aeval s (X ^ 2 + C (D.host.d : ℚ)) = 0 := by
-    rw [map_add, map_pow, aeval_X, aeval_C, hs]
+    rw [map_add (f := _), map_pow, aeval_X, aeval_C, hs]
     simp
   have hirr : Irreducible (X ^ 2 + C (D.host.d : ℚ)) := by
     apply irreducible_of_degree_le_three_of_not_isRoot
@@ -576,22 +581,22 @@ theorem curve_lattice_self_dual : CurveSelfDualRec := by
         (m : D.host.E) * ((c1 : D.host.K) : D.host.E) + (n : D.host.E) * ((c2 : D.host.K) : D.host.E) := by
       rw [← CS.coe_intO D m, ← CS.coe_intO D n]
       rfl
-    rw [e, hw1, hw2, map_add, map_mul, map_mul, map_intCast, map_intCast]
+    rw [e, hw1, hw2, map_add (f := _), map_mul, map_mul, map_intCast, map_intCast]
     ring
   have hD : (starRingEnd ℂ w1 * w2).im ≠ 0 := by
     obtain ⟨p1, q1, e1⟩ := CS.K_repr D _ (c1 : D.host.K).2
     obtain ⟨p2, q2, e2⟩ := CS.K_repr D _ (c2 : D.host.K).2
     have hφ1 : D.host.φ₀ ((c1 : D.host.K) : D.host.E) =
         (p1 : ℂ) + (q1 : ℂ) * (Complex.I * (Real.sqrt D.host.d : ℂ)) := by
-      rw [e1, map_add, map_mul, map_ratCast, map_ratCast, CS.embedding_sqrt_neg_d]
+      rw [e1, map_add (f := _), map_mul, map_ratCast, map_ratCast, CS.embedding_sqrt_neg_d]
     have hφ2 : D.host.φ₀ ((c2 : D.host.K) : D.host.E) =
         (p2 : ℂ) + (q2 : ℂ) * (Complex.I * (Real.sqrt D.host.d : ℂ)) := by
-      rw [e2, map_add, map_mul, map_ratCast, map_ratCast, CS.embedding_sqrt_neg_d]
+      rw [e2, map_add (f := _), map_mul, map_ratCast, map_ratCast, CS.embedding_sqrt_neg_d]
     have him : (starRingEnd ℂ w1 * w2).im =
         Complex.normSq δ * (((p1 * q2 - q1 * p2 : ℚ) : ℝ) * Real.sqrt D.host.d) := by
       rw [hw1, hw2, CS.im_conj_mul, hφ1, hφ2]
       congr 1
-      simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I, Complex.mul_im,
+      simp only [map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_I, Complex.mul_im,
         Complex.mul_re, Complex.add_im, Complex.add_re, Complex.ratCast_re, Complex.ratCast_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, Complex.neg_re,
         Complex.neg_im, map_ratCast]
@@ -622,8 +627,5 @@ theorem curve_lattice_self_dual : CurveSelfDualRec := by
   exact CS.dual_of_basis _ h1 h2 hD (CS.area_of_basis _ h1 h2 hb hD) x hx
 
 theorem self_dual_lattice : SelfDualRec := SelfDualRec_of_curve curve_lattice_self_dual
-
-theorem LinkThIndep_of_arith' (hA : HfArithRec) : LinkThIndep :=
-  LinkThIndep_of_arith hA self_dual_lattice
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity

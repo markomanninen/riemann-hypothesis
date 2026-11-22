@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+
+@[expose] public section
+
 open Classical
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology GroundTheory.Automorphic GroundTheory.Automorphic.Reduction UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Ci PositivityTheory.Rg.Fx PositivityTheory.Rg.Tf.Core
@@ -6,10 +11,11 @@ open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology Gro
 private theorem totalDegree_aeval_le {σ : Type*} (q : MvPolynomial σ ℂ) (hq : q.totalDegree ≤ 1) (p : Polynomial ℂ) :
     (Polynomial.aeval q p).totalDegree ≤ p.natDegree := by
   rw [Polynomial.aeval_eq_sum_range]
-  refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun i hi => ?_)
+  refine totalDegree_finsetSum_le fun i hi => ?_
   have hi' : i ≤ p.natDegree := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
   refine (totalDegree_smul_le _ _).trans ((totalDegree_pow _ _).trans ?_)
-  calc i * q.totalDegree ≤ i * 1 := Nat.mul_le_mul_left _ hq
+  calc
+    i * q.totalDegree ≤ i * 1 := Nat.mul_le_mul_left _ hq
     _ ≤ p.natDegree := by simpa using hi'
 
 private theorem exists_fin_map (n : ℕ) (s : Multiset ℂ) (hs : s.card = n) :
@@ -37,8 +43,8 @@ theorem UpperTheory.ConvolutionTheory.Ci.bdLem :
       · exact Finset.mem_union_right _ (h1' x h)
     · intro β
       rw [coeff_mul]
-      refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun p _ => ?_)
-      exact (totalDegree_mul _ _).trans (Nat.add_le_add (h3 _) (h3' _))
+      exact totalDegree_finsetSum_le fun _ _ =>
+        (totalDegree_mul _ _).trans (Nat.add_le_add (h3 _) (h3' _))
   · intro η m
     have hq : (C ((2 / η : ℝ) : ℂ) * X none - 1 : MvPolynomial (Option (Ix K n)) ℂ).totalDegree ≤ 1 := by
       refine (totalDegree_sub _ _).trans (max_le ?_ (by simp))

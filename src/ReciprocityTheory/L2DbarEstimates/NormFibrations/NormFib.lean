@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.JacobianInterpolationStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.JacobianInterpolationStatement
+
+@[expose] public section
 
 universe u
 

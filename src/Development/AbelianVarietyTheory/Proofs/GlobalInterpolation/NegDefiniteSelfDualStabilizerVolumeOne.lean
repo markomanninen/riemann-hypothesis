@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousGrpHom
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousGrpHom
+
+@[expose] public section
+
 open NumberField MeasureTheory Formalism.BasicNotions Formalism.MainNotions.StandardLattice Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -51,8 +56,8 @@ theorem unitary_of_negative_definite {n m : ℕ} (e : Fin m ≃ Fin 0 ⊕ Fin n)
   show bm * A = A * X
   simp only [bm, Matrix.mul_assoc, hLA, Matrix.mul_one]
 
-open Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.StabFin in
 
+open Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.StabFin in
 theorem measure_SFin_negDef : ∀ (D : D7) (W : HSpace D.host.E) (n : ℕ), W.SigOK → (∀ τ, W.sig τ = (0, n)) →
     ∀ μ : Measure (HA (AF D.host.F) D.sp.cm.sig W.gram), IsVolMeas D W 0 n μ →
     μ (StabFin.SFin D.sp.cm.sig W.gram (L0c D W) : Set (HA (AF D.host.F) D.sp.cm.sig W.gram)) = 1 := by

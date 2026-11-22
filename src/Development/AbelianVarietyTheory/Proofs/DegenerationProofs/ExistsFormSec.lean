@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CoeffSymmSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CoeffSymmSum
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH
@@ -15,7 +20,8 @@ theorem map_form {B B' J : Type} [CommRing B] [CommRing B'] (ψ : B →+* B') (T
     (c : (J →₀ ℕ) → B) (s : J → B) :
     ψ (∑ m ∈ T, c m * m.prod (fun i n => s i ^ n)) =
       ∑ m ∈ T, ψ (c m) * m.prod (fun i n => ψ (s i) ^ n) := by
-  simp only [map_sum, map_mul, Finsupp.prod, map_prod, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, Finsupp.prod, map_prod, map_pow]
 
 theorem form_scale {B J : Type} [CommRing B] (T : Finset (J →₀ ℕ)) (d : ℕ)
     (hT : ∀ m ∈ T, ∑ i ∈ m.support, m i = d) (c : (J →₀ ℕ) → B) (u : B) (s : J → B) :
@@ -70,7 +76,7 @@ theorem supp_form {B J : Type} [CommRing B] (f : A →+* B)
     change _ = AddMonoidAlgebra.liftNCRingHom f g hc _
     simp [AddMonoidAlgebra.liftNCRingHom]
   change (e.symm.toRingHom _).coeff α ≠ 0 at hα
-  rw [map_form, AddMonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply] at hα
+  rw [map_form, AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply] at hα
   obtain ⟨m, hm, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hα
   have h2 : ((e.symm.toRingHom (f (c m))).coeff.support : Set X) ⊆ 0 := by
     change ((e.symm (f (c m))).coeff.support : Set X) ⊆ 0

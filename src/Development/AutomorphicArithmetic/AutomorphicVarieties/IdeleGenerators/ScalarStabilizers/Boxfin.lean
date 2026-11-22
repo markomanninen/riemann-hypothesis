@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Base UpperTheory.V.Sd
 
@@ -27,10 +32,9 @@ theorem UpperTheory.V.Sd.Hm.boxfin :
   intro F _ _ _ y ξ
   by_cases hne : ∃ η₀ : F, ∃ 𝔪, GenD (algebraMap F (Af F) η₀ * (y : Af F)) 𝔪
   swap
-  · convert Set.finite_empty
-    ext η
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-    exact fun h => hne ⟨η, h.2.2⟩
+  · apply Set.Finite.subset Set.finite_empty
+    intro η h
+    exact (hne ⟨η, h.2.2⟩).elim
   obtain ⟨η₀, 𝔪₀, h₀⟩ := hne
   obtain ⟨d, hd, hd0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h₀.1
   obtain ⟨w₀⟩ : Nonempty (HeightOneSpectrum (𝓞 F)) := by

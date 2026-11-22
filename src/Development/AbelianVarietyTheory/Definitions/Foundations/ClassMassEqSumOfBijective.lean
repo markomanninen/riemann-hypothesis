@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,10 +83,10 @@ theorem FiniteClasses.of_le (h : FiniteClasses Γ K) (hle : K' ≤ K) (hi : K'.r
     (DoubleCoset.mk Γ K' (p.1.out * (p.2.out : K)) : ClassSet Γ K')) fun c => ?_, fun g => ?_⟩
   · induction c using Quotient.inductionOn' with
     | h g =>
-      obtain ⟨γ, k, hγ, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ K g
+      obtain ⟨γ, hγ, k, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ K g
       obtain ⟨k', e'⟩ := QuotientGroup.mk_out_eq_mul (K'.subgroupOf K) (⟨k, hk⟩ : K)⁻¹
       refine ⟨(DoubleCoset.mk Γ K g, QuotientGroup.mk (⟨k, hk⟩ : K)⁻¹), ?_⟩
-      refine ((DoubleCoset.eq Γ K' _ _).2 ⟨γ, hγ, (k' : K), k'.2, ?_⟩).symm
+      refine ((@DoubleCoset.eq _ _ Γ K' _ _).2 ⟨γ, hγ, (k' : K), k'.2, ?_⟩).symm
       simp only [e, e', Subgroup.coe_mul, Subgroup.coe_inv]
       group
   · haveI := h.2 g
@@ -97,8 +101,8 @@ theorem FiniteClasses.of_ge (h : FiniteClasses Γ K') (hle : K' ≤ K) (hi : K'.
     fun g => ?_⟩
   · induction c using Quotient.inductionOn' with
     | h g =>
-      obtain ⟨γ, k, hγ, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ K' g
-      exact ⟨DoubleCoset.mk Γ K' g, ((DoubleCoset.eq Γ K _ _).2 ⟨γ, hγ, k, hle hk, e⟩).symm⟩
+      obtain ⟨γ, hγ, k, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ K' g
+      exact ⟨DoubleCoset.mk Γ K' g, ((@DoubleCoset.eq _ _ Γ K _ _).2 ⟨γ, hγ, k, hle hk, e⟩).symm⟩
   · haveI := h.2 g
     let f : stabAt Γ K g → K ⧸ K'.subgroupOf K := fun x => QuotientGroup.mk ⟨_, x.2⟩
     let s : (K ⧸ K'.subgroupOf K) → stabAt Γ K g := fun q =>
@@ -138,17 +142,17 @@ theorem bijective_classMap (hπ : Function.Surjective π) :
       (DoubleCoset.mk (Γ.map π) L (π c.out) : ClassSet (Γ.map π) L) := by
   constructor
   · intro c d e
-    obtain ⟨_, ⟨γ, hγ, rfl⟩, k, hk, e'⟩ := (DoubleCoset.eq _ _ _ _).1 e
-    rw [← DoubleCoset.out_eq' _ _ c, ← DoubleCoset.out_eq' _ _ d]
-    refine (DoubleCoset.eq _ _ _ _).2 ⟨γ, hγ, (γ * c.out)⁻¹ * d.out, ?_, by group⟩
+    obtain ⟨_, ⟨γ, hγ, rfl⟩, k, hk, e'⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 e
+    rw [← DoubleCoset.out_eq' c, ← DoubleCoset.out_eq' d]
+    refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨γ, hγ, (γ * c.out)⁻¹ * d.out, ?_, by group⟩
     rw [Subgroup.mem_comap, map_mul, e', map_inv, map_mul, inv_mul_cancel_left]
     exact hk
   · intro c
     induction c using Quotient.inductionOn' with
     | h g' =>
       obtain ⟨g, rfl⟩ := hπ g'
-      obtain ⟨γ, k, hγ, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ (L.comap π) g
-      refine ⟨DoubleCoset.mk Γ (L.comap π) g, ((DoubleCoset.eq (Γ.map π) L _ _).2
+      obtain ⟨γ, hγ, k, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ (L.comap π) g
+      refine ⟨DoubleCoset.mk Γ (L.comap π) g, ((@DoubleCoset.eq _ _ (Γ.map π) L _ _).2
         ⟨π γ, ⟨γ, hγ, rfl⟩, π k, hk, ?_⟩).symm⟩
       rw [e, map_mul, map_mul]
 
@@ -182,8 +186,8 @@ theorem finiteClasses_comap (hπ : Function.Surjective π) (hΓ : Set.InjOn π �
 
 end Transport
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem FiniteClasses.measure_toReal [MeasurableSpace G] [MeasurableMul G] [Countable Γ] (h : FiniteClasses Γ K)
     (μ : Measure G) [μ.IsMulLeftInvariant] (hK : MeasurableSet (K : Set G)) (hK1 : μ K = 1) {𝓕 : Set G}
     (h𝓕 : IsFundamentalDomain Γ 𝓕 μ) : (μ 𝓕).toReal = classMass Γ K := by
@@ -195,11 +199,11 @@ theorem FiniteClasses.measure_toReal [MeasurableSpace G] [MeasurableMul G] [Coun
     classMass_eq_finsum_out, finsum_eq_sum_of_fintype]
   · simp only [e]
   · intro x
-    obtain ⟨γ, hγ, k, hk, e⟩ := (DoubleCoset.eq Γ K _ x).1 (DoubleCoset.out_eq' Γ K (DoubleCoset.mk Γ K x))
+    obtain ⟨γ, hγ, k, hk, e⟩ := (@DoubleCoset.eq _ _ Γ K _ x).1 (DoubleCoset.out_eq' (DoubleCoset.mk Γ K x))
     exact ⟨_, ⟨γ, hγ⟩, ⟨k, hk⟩, e⟩
   · intro i j γ γ' k k' e
-    rw [← DoubleCoset.out_eq' _ _ i, ← DoubleCoset.out_eq' _ _ j]
-    refine (DoubleCoset.eq _ _ _ _).2 ⟨(γ'⁻¹ * γ : Γ), (γ'⁻¹ * γ).2, (k * k'⁻¹ : K), (k * k'⁻¹).2, ?_⟩
+    rw [← DoubleCoset.out_eq' i, ← DoubleCoset.out_eq' j]
+    refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨(γ'⁻¹ * γ : Γ), (γ'⁻¹ * γ).2, (k * k'⁻¹ : K), (k * k'⁻¹).2, ?_⟩
     rw [Subgroup.coe_mul, Subgroup.coe_mul, mul_assoc, mul_assoc, ← mul_assoc (γ : G), ← mul_assoc, ← mul_assoc,
       mul_assoc _ _ (k : G), e]
     simp [mul_assoc]
@@ -227,7 +231,7 @@ theorem swapTens_sig (x : R ⊗[F] E) :
     swapTens F E R (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ x) = Formalism.UG.sigR σ R (swapTens F E R x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul a x => rfl
 
 theorem exists_swapPts : ∃ e : HA R σ J ≃* UPts σ J R,
@@ -269,8 +273,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 def unitaryMass (K : Subgroup (HA (Af F) σ J)) : ℝ :=
   classMass (ratIn (Af F) σ J) K
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem unitaryMass_comap_swapPts (L : Subgroup (UPts σ J (Af F))) :
     unitaryMass σ J (L.comap (swapPts (Af F) σ J : HA (Af F) σ J →* UPts σ J (Af F))) =
       classMass ((ratPts σ J (Af F)).subgroupOf (UPts σ J (Af F))) L := by
@@ -374,7 +378,7 @@ theorem intTens_open_compact (F E : Type) [Field F] [NumberField F] [Field E] [N
           rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul]
       | zero => intro y _; rw [map_zero, zero_smul]; exact zero_mem _
       | one => intro y hy; rwa [map_one, one_smul]
-      | add a b _ _ ha hb => intro y hy; rw [map_add, add_smul]; exact add_mem (ha y hy) (hb y hy)
+      | add a b _ _ ha hb => intro y hy; rw [map_add (f := _), add_smul]; exact add_mem (ha y hy) (hb y hy)
       | neg a _ ha => intro y hy; rw [map_neg, neg_smul]; exact neg_mem (ha y hy)
       | mul a b _ _ ha hb => intro y hy; rw [map_mul, mul_smul]; exact ha _ (hb y hy)
     have h0 := key _ hw _ (AddSubgroup.subset_closure
@@ -489,8 +493,8 @@ theorem IsFinProj.surjective (h : IsFinProj σ J π) : Function.Surjective π :=
   obtain ⟨g, h1, h2⟩ := (parts_spec σ J).2 1 (HA.mat (Af F) σ J b)
   refine ⟨⟨g, ((parts_spec σ J).1 g).2 ⟨h1 ▸ one_mem _, h2 ▸ b.2⟩⟩, Subtype.ext ((h _).trans h2)⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem IsFinProj.injOn (h : IsFinProj σ J π) : Set.InjOn π (ratIn (AF F) σ J) := by
   haveI : Nontrivial (Af F) := by
     obtain ⟨P, hP⟩ := Ideal.exists_maximal (𝓞 F)
@@ -563,7 +567,7 @@ theorem classMass_top_top (G : Type) [Group G] :
   · have : stabAt (⊤ : Subgroup G) ⊤ 1 = Set.univ := Set.eq_univ_of_forall fun _ => Subgroup.mem_top _
     simp [this]
   · induction c using Quotient.inductionOn' with
-    | h g => exact ⟨(), (DoubleCoset.eq ⊤ ⊤ _ _).2 ⟨g, trivial, 1, trivial, by simp⟩⟩
+    | h g => exact ⟨(), (@DoubleCoset.eq _ _ ⊤ ⊤ _ _).2 ⟨g, trivial, 1, trivial, by simp⟩⟩
 
 theorem classMass_bot {G : Type} [Group G] (K : Subgroup G) [K.FiniteIndex] :
     classMass (⊥ : Subgroup G) K = K.index := by
@@ -573,29 +577,5 @@ theorem classMass_bot {G : Type} [Group G] (K : Subgroup G) [K.FiniteIndex] :
     ⟨one_mem_stabAt _ _ _, fun _ _ => Subsingleton.elim _ _⟩, e]
   rfl
 
-theorem finiteClasses_of_finite {G : Type} [Group G] [Finite G] (Γ K : Subgroup G) : FiniteClasses Γ K :=
-  ⟨Quotient.finite _, fun _ => inferInstance⟩
-
-example : classMass (⊤ : Subgroup (Equiv.Perm (Fin 3))) ⊤ = 1 / 6 := by
-  rw [classMass_top_top, Nat.card_eq_fintype_card, Fintype.card_perm]
-  norm_num [Nat.factorial]
-
-example : classMass (⊥ : Subgroup (Equiv.Perm (Fin 3))) ⊥ = 6 := by
-  rw [classMass_bot, Subgroup.index_bot, Nat.card_eq_fintype_card, Fintype.card_perm]
-  norm_num [Nat.factorial]
-
-example : ¬ FiniteClasses (⊤ : Subgroup (Multiplicative ℤ)) ⊤ := fun h => by
-  haveI := h.2 1
-  exact not_finite_iff_infinite.2 inferInstance (Finite.of_injective
-    (fun n : Multiplicative ℤ => (⟨⟨n, trivial⟩, Subgroup.mem_top _⟩ : stabAt (⊤ : Subgroup (Multiplicative ℤ)) ⊤ 1))
-    fun x y e => congrArg (fun z => z.1.1) e)
-
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes in
-
-example {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
-    (J : Matrix (Fin 0) (Fin 0) E) : unitaryMass σ J ⊤ = 1 := by
-  haveI : Subsingleton (HA (Af F) σ J) := ⟨fun x y => Subtype.ext (Units.ext (Subsingleton.elim _ _))⟩
-  rw [unitaryMass, Subsingleton.elim (ratIn (Af F) σ J) ⊥, classMass_bot]
-  simp
 
 end GlobalTheory.Mass

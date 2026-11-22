@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.InverseLineDerivatives.AtTraceT
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.InverseLineDerivatives.AtTraceT
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,9 +21,9 @@ private theorem elementaryAct_map_mul (a b : Fin n) (s : ℂ) : Formalism.Graded
       ((Polynomial.aeval (C s : MvPolynomial (Fin n × Fin n) ℂ)).restrictScalars ℂ).comp (Formalism.GradedWeylDivisibility.rowGen ℂ (n := n) a b) := by
   apply MvPolynomial.algHom_ext
   rintro ⟨p, q⟩
-  simp only [Formalism.GradedWeylDivisibility.rowAct, Formalism.GradedWeylDivisibility.rowGen, MvPolynomial.aeval_X, AlgHom.comp_apply, AlgHom.restrictScalars_apply, map_add]
+  simp only [Formalism.GradedWeylDivisibility.rowAct, Formalism.GradedWeylDivisibility.rowGen, MvPolynomial.aeval_X, AlgHom.comp_apply, AlgHom.restrictScalars_apply, map_add (f := _)]
   rw [Polynomial.aeval_C]
-  simp only [Matrix.transpose_apply, Matrix.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Matrix.transpose_apply, Matrix.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
   congr 1
   · rw [Finset.sum_eq_single p]
     · simp
@@ -52,7 +56,8 @@ def qP (lam : Fin n → ℤ) (a b : Fin n) (i j : Jd n lam) : Polynomial ℂ :=
 theorem extL_rowAct (lam : Fin n → ℤ) (a b : Fin n) (i j : Jd n lam) (s : ℂ) :
     Cxc.extL lam i (Formalism.GradedWeylDivisibility.rowAct ℂ (n := n) (1 + single a b s)ᵀ
       ((wb lam j : Formalism.BasicNotions.nablaSq ℂ n (dw lam)) : MvPolynomial (Fin n × Fin n) ℂ)) = (qP lam a b i j).eval s := by
-  rw [rowAct_eq_aeval, Polynomial.aeval_eq_sum_range' (lt_add_of_pos_right _ two_pos), qP, Polynomial.eval_finset_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rowAct_eq_aeval, Polynomial.aeval_eq_sum_range' (lt_add_of_pos_right _ two_pos), qP, Polynomial.eval_finsetSum, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [smul_eq_mul, ← map_pow, mul_comm, ← MvPolynomial.smul_eq_C_mul, map_smul]
   rw [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X, smul_eq_mul, mul_comm]
@@ -60,14 +65,14 @@ theorem extL_rowAct (lam : Fin n → ℤ) (a b : Fin n) (i j : Jd n lam) (s : �
 
 theorem qP_eval_zero (lam : Fin n → ℤ) (a b : Fin n) (i j : Jd n lam) :
     (qP lam a b i j).eval 0 = Cxc.extL lam i ((wb lam j : Formalism.BasicNotions.nablaSq ℂ n (dw lam)) : MvPolynomial (Fin n × Fin n) ℂ) := by
-  rw [← Polynomial.coeff_zero_eq_eval_zero, qP, Polynomial.finset_sum_coeff]
+  rw [← Polynomial.coeff_zero_eq_eval_zero, qP, Polynomial.finsetSum_coeff]
   simp only [Polynomial.coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq, if_pos (by simp), (GlobalTheory.Mem.GelfCheck.rowE_eq_rowDiv ℂ n n a b _).2]
 
 theorem qP_deriv_zero (lam : Fin n → ℤ) (a b : Fin n) (i j : Jd n lam) :
     (Polynomial.derivative (qP lam a b i j)).eval 0 =
       Cxc.extL lam i (GlobalTheory.Mem.Gelf.rowE ℂ n n a b ((wb lam j : Formalism.BasicNotions.nablaSq ℂ n (dw lam)) : MvPolynomial (Fin n × Fin n) ℂ)) := by
-  rw [← Polynomial.coeff_zero_eq_eval_zero, Polynomial.coeff_derivative, qP, Polynomial.finset_sum_coeff]
+  rw [← Polynomial.coeff_zero_eq_eval_zero, Polynomial.coeff_derivative, qP, Polynomial.finsetSum_coeff]
   simp only [Polynomial.coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq, if_pos (by simp), (GlobalTheory.Mem.GelfCheck.rowE_eq_rowDiv ℂ n n a b _).1]
   simp
@@ -154,7 +159,7 @@ theorem fderiv_single (lam : Fin n → ℤ) (a b : Fin n) (z : ℂ) :
   have h2 := hasDerivAt_pi.1 (hasDerivAt_pi.1 h1 i) j
   rw [← (line_deriv lam a b i j z).unique h2, qP_eval_zero, qP_deriv_zero]
   change _ = z * Cxc.extL lam i (Et lam a b ((wb lam j : Formalism.BasicNotions.nablaSq ℂ n (dw lam)) : MvPolynomial (Fin n × Fin n) ℂ))
-  rw [Et, Matrix.add_apply, LinearMap.add_apply, map_add, Matrix.smul_apply, Matrix.one_apply]
+  rw [Et, Matrix.add_apply, LinearMap.add_apply, map_add (f := _), Matrix.smul_apply, Matrix.one_apply]
   split_ifs with hab
   · simp
     ring
@@ -164,9 +169,11 @@ theorem fderiv_single (lam : Fin n → ℤ) (a b : Fin n) (z : ℂ) :
 theorem atDer' : AtDer := by
   intro n lam _ Y
   conv_lhs => rw [Matrix.matrix_eq_sum_single Y]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun b _ => fderiv_single lam a b (Y a b)
 
 end PositivityTheory.RgBcC.Cxd2.Der

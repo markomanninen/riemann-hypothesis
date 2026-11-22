@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
-import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
-import Mathlib.RingTheory.Polynomial.Vieta
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
+public import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
+public import Mathlib.RingTheory.Polynomial.Vieta
+
+@[expose] public section
 
 open MvPolynomial in
 theorem UpperTheory.symmetricSubalgebra_le_adjoin_range_prod_C_add_X_complex :
@@ -12,7 +16,7 @@ theorem UpperTheory.symmetricSubalgebra_le_adjoin_range_prod_C_add_X_complex :
     intro u
     have h := congrArg (Polynomial.eval (C u : MvPolynomial (Fin n) ℂ))
       (MvPolynomial.prod_C_add_X_eq_sum_esymm ℂ (Fin n))
-    simp only [Polynomial.eval_prod, Polynomial.eval_finset_sum, Polynomial.eval_add, Polynomial.eval_X,
+    simp only [Polynomial.eval_prod, Polynomial.eval_finsetSum, Polynomial.eval_add, Polynomial.eval_X,
       Polynomial.eval_C, Polynomial.eval_mul, Polynomial.eval_pow, Fintype.card_fin] at h
     rw [h]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -26,17 +30,18 @@ theorem UpperTheory.symmetricSubalgebra_le_adjoin_range_prod_C_add_X_complex :
       apply Polynomial.funext
       intro u
       have h2 := h1 _ (Algebra.subset_adjoin ⟨u, rfl⟩)
-      simp only [hv, map_sum, map_smul, smul_eq_mul] at h2
-      simp only [Polynomial.eval_finset_sum, Polynomial.eval_monomial, Polynomial.eval_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hv, map_sum, map_smul, smul_eq_mul] at h2
+      simp only [Polynomial.eval_finsetSum, Polynomial.eval_monomial, Polynomial.eval_zero]
       rw [← h2]
       exact Finset.sum_congr rfl fun i _ => mul_comm _ _
-    have h3 := congrArg (fun p => Polynomial.coeff p (n - j)) hp
-    simp only [Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at h3
+    have h3 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p (n - j)) hp
+    simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at h3
     rw [Finset.sum_eq_single j] at h3
     · exact hφ (by simpa using h3)
     · intro b hb hbj
       rw [Finset.mem_range] at hb
-      rw [if_neg (by omega)]
+      exact Finsupp.single_eq_of_ne (by omega)
     · intro h
       exact absurd (Finset.mem_range.2 hj) h
   intro p hp

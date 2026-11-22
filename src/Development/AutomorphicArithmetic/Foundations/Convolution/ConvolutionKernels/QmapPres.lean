@@ -1,4 +1,8 @@
-import GroundTheory.AutomorphicForms.QuotientMeasure
+module
+
+public import GroundTheory.AutomorphicForms.QuotientMeasure
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.RightCosetSpace
 

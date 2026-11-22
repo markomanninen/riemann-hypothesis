@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KrylovApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KrylovApply
+
+@[expose] public section
+
 open Matrix Polynomial
 
 noncomputable section
@@ -13,7 +18,8 @@ theorem pow_dim_eq_neg_sum_charpoly_coeff {F : Type} [Field F] {r : ℕ} (y : Ma
   have hd : y.charpoly.natDegree = r := by simpa using Matrix.charpoly_natDegree_eq_dim y
   rw [hd] at hm
   rw [hm] at h
-  simp [map_sum, Algebra.smul_def] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, Algebra.smul_def] at h
   rw [Fin.sum_univ_eq_sum_range (fun k => y.charpoly.coeff k • y ^ k)]
   simp only [Algebra.smul_def]
   exact eq_neg_of_add_eq_zero_left h

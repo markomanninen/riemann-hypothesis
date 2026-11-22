@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0.MHF
 
@@ -16,7 +20,7 @@ theorem bw_single (b : Fin B) (v : Fin B × Fin n) (e : ℕ) :
   obtain ⟨i, j⟩ := v
   by_cases h : i = b
   · subst h; simp [bw, Finsupp.single_apply]
-  · simp [bw, Finsupp.single_apply, h]
+  · simp [bw, h]
 
 noncomputable def psiB (b : Fin B) :
     MvPolynomial (Fin B × Fin n) K →ₐ[K] Polynomial (MvPolynomial (Fin B × Fin n) K) :=
@@ -32,24 +36,26 @@ theorem psiB_monomial (b : Fin B) (s : Fin B × Fin n →₀ ℕ) (a : K) :
   · simp [psiB, bw, MvPolynomial.algebraMap_eq, Polynomial.algebraMap_apply]
   · rename_i v e f _ _ ih
     rw [monomial_single_add, map_mul, map_pow, ih, psiB_X, bw_add, bw_single]
-    split_ifs <;> simp only [map_mul, map_pow, mul_pow, ← pow_mul, pow_add, mul_one, mul_zero,
-      pow_zero, add_zero, zero_add] <;> ring
+    split_ifs <;> simp only [map_mul, map_pow, mul_pow, ← pow_mul, pow_add, mul_one,
+      pow_zero, zero_add] <;> ring
 
 theorem psiB_eq_of_hom (b : Fin B) (δ : ℕ) (f : MvPolynomial (Fin B × Fin n) K)
     (hf : ∀ s ∈ f.support, bw b s = δ) : psiB b f = Polynomial.C f * Polynomial.X ^ δ := by
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul]
   exact Finset.sum_congr rfl fun s hs => by rw [psiB_monomial, hf s hs]
 
 theorem coeff_psiB_ne_zero (b : Fin B) (f : MvPolynomial (Fin B × Fin n) K)
     (s : Fin B × Fin n →₀ ℕ) (hs : s ∈ f.support) : (psiB b f).coeff (bw b s) ≠ 0 := by
   classical
   intro h0
-  have h1 := congrArg (MvPolynomial.coeff s) h0
+  have h1 := congrArg (AddMonoidAlgebra.coeff · s) h0
   conv at h1 => lhs; rw [f.as_sum]
-  rw [map_sum, Polynomial.finsetSum_coeff, coeff_sum] at h1
-  simp only [psiB_monomial, Polynomial.coeff_C_mul_X_pow, coeff_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff, coeff_sum] at h1
+  simp only [psiB_monomial, Polynomial.coeff_C_mul_X_pow, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h1
   rw [Finset.sum_eq_single s] at h1
   · simp at h1; exact (mem_support_iff.1 hs) h1
   · intro s' _ hne

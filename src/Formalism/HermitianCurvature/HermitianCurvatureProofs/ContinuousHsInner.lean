@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
+
+@[expose] public section
 
 open Matrix MeasureTheory Topology
 
@@ -57,7 +61,7 @@ theorem topDens_contOn {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {π : Mx
     have hb := radSp_contOn (act (Fr.ofWord L st w).F y e) c0 hO hg hdom
     have hc := continuous_hsInner.comp_continuousOn (ha.prodMk hb)
     exact hc
-  have h2 := continuousOn_finset_sum Finset.univ (fun e _ => h1 e)
+  have h2 := continuousOn_finsetSum Finset.univ (fun e _ => h1 e)
   refine h2.congr fun ζ _ => ?_
   unfold topDens
   rfl

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.PhNormOfUnits
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.SplitZeroOf
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.PhNormOfUnits
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.SplitZeroOf
+
+@[expose] public section
 
 namespace Formalism.MainNotions.Ext.CutA
 
@@ -42,7 +46,7 @@ theorem phNorm_of (H1 : PhNormOfUnits) (H2 : PhNormClosed) (D : D7) (hOK : PhNor
     unfold Formalism.HC.HostRaw.K at hsqK ⊢
     intro y hy
     induction hy using IntermediateField.adjoin_induction
-    all_goals simp_all [Set.mem_singleton_iff, map_add, map_mul, map_inv₀, map_neg, AlgEquiv.commutes,
+    all_goals simp_all [Set.mem_singleton_iff, map_add (f := _), map_mul, map_inv₀, map_neg, AlgEquiv.commutes,
       add_mem, mul_mem, inv_mem, neg_mem, IntermediateField.algebraMap_mem]
   have hQ : ∀ x : D.host.E, D.host.φ₀ x ∈ Qbar := by
     intro x
@@ -56,7 +60,7 @@ theorem phNorm_of (H1 : PhNormOfUnits) (H2 : PhNormClosed) (D : D7) (hOK : PhNor
       lamC lam (D.host.φ₀ x) = lam ⟨D.host.φ₀ x, hQ x⟩ := by
     intro p _ lam x
     unfold lamC
-    rw [dif_pos (hQ x)]
+    rw [dite_eq_left (hQ x)]
   have key : ∀ {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]),
       (∀ α ∈ OKp D lam, ∀ β ∈ OKp D lam, α + β ∈ OKp D lam) ∧
       (∀ α ∈ OKp D lam, ∀ β ∈ OKp D lam, α * β ∈ OKp D lam) ∧

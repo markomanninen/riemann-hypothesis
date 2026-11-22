@@ -1,5 +1,9 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
-import Lemmata.GeneralBFactRightRest.Imports
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+public import Lemmata.GeneralBFactRightRest.Imports
+
+@[expose] public section
 
 open Polynomial UniqueFactorizationMonoid
 

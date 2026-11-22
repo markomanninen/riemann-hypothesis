@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColMapEqColMapV
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockCompTranslate
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VecIsThetaFunOAlt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairVEqOfProdFunEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionProductInvariantInnerVertexLevelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColMapEqColMapV
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockCompTranslate
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VecIsThetaFunOAlt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairVEqOfProdFunEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionProductInvariantInnerVertexLevelStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -12,8 +17,8 @@ noncomputable section
 
 namespace GlobalTheory.ExpansionInvariance
 
-variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T} in
 
+variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T} in
 theorem colMapV_congr (S : GridChoice W U) (t : T)
     (v v' : ∀ j : Fin D.R.m, WO (G.pS (.top t j : Pair T)) (G.pT (.top t j : Pair T)) → ℂ) (x x' : ∀ j, FinPt G (.top j))
     (h : ∀ j (hj : j < D.R.m), fockComp W S.N.frC (.top t j) (v ⟨j, hj⟩) (x j * S.N.u _) (x (j + 1) * S.N.u _) =
@@ -25,8 +30,8 @@ theorem colMapV_congr (S : GridChoice W U) (t : T)
       fockComp W S.N.frC (.top t j) (v' ⟨j, hj⟩) (x' j * S.N.u _) (x' (j + 1) * S.N.u _) else 0) := by
     funext j
     by_cases hj : j < D.R.m
-    · rw [dif_pos hj, dif_pos hj, h j hj]
-    · rw [dif_neg hj, dif_neg hj]
+    · rw [dite_eq_left hj, dite_eq_left hj, h j hj]
+    · rw [dite_eq_right hj, dite_eq_right hj]
   unfold colMapV
   rw [e]
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultMk
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultMk
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,7 +162,7 @@ theorem bMk_eq (C0 CE1 CE2 : ℝ) (β : GlobalTheory X) (j : Fin (numSeg X.TT)) 
   unfold bMk
   simp only [Finsupp.single_add, smul_add, Finset.sum_add_distrib, Finset.smul_sum, Finsupp.smul_single, smul_eq_mul]
   ext k
-  simp only [Finsupp.coe_add, Pi.add_apply, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.single_apply]
+  simp only [Finsupp.coe_add, Pi.add_apply, Finset.sum_apply', Finsupp.single_apply]
   by_cases hs : ((topStart X j, true), (0 : Fin (X.m + 1))) = k
   · subst hs
     simp [Finset.mul_sum, mul_add, Finset.sum_add_distrib, Fin.succ_ne_zero]

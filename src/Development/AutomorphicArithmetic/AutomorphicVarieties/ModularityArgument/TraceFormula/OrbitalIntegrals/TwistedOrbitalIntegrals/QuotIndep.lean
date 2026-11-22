@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+
+@[expose] public section
 
 open MeasureTheory Topology PositivityTheory.Rg.Tf.Loc
 open scoped ENNReal
@@ -77,5 +81,5 @@ theorem UpperTheory.V.Z.Tf.Orb.quotIndep :
   intro G _ _ _ _ _ _ _ _ μG hμ H μ _ _ F hF hFH ρ hρ
   have : MeasurableInv H := ⟨(measurable_subtype_coe.inv).subtype_mk⟩
   have hex : ∃ ρ, IsQuotNormaliser H μ ρ := ⟨ρ, hρ⟩
-  rw [quotIntegral, dif_pos hex]
+  rw [quotIntegral, dite_eq_left hex]
   exact wd_eq (j := H.subtype) measurable_subtype_coe hF (fun t g => hFH t t.2 g) hex.choose_spec.1 hex.choose_spec.2 hρ.1 hρ.2

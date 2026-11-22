@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.TwLocGenPfSec
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.TwLocGenPfSec
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

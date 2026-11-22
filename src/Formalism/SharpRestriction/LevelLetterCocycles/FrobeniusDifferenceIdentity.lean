@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.GammaSubCocycleComponent
-import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVectorsBoundOfExtTool
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.GammaSubCocycleComponent
+public import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVectorsBoundOfExtTool
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,9 +111,6 @@ def letterIdempotentMap (i : ZMod n) : W.DD T →ₗ[O] W.DD T where
   map_add' x y := smul_add _ x y
   map_smul' r x := Formalism.MainNotions.N.Pv.LocalLengthBound.osmul_comm W T (letE i) r x
 
-@[simp] theorem letterIdempotentMap_apply (i : ZMod n) (x : W.DD T) :
-    letterIdempotentMap W T i x = (letE i : LetA O n) • x := rfl
-
 variable {W T}
 
 theorem frobenius_lift_identity (N s₁ σ : ℕ) (yv : W.DD T) (ms t μ : ZMod n → W.DD T) (c : ZMod n) :
@@ -142,7 +143,7 @@ theorem frobenius_difference_identity (N s₁ σ : ℕ) (yv : W.DD T) (ms t μ :
         ((PD.p : ℕ) : O) ^ (s₁ + σ) • (((PD.p : ℕ) : O) ^ N • ((letE c : LetA O n) • yv) +
           W.φD T (μ (c - 1)) - μ c) := by
   unfold frobeniusShiftDefectOfLiftCorrection
-  simp only [map_sub, map_add, map_smul, smul_add, smul_sub, smul_smul, ← pow_add]
+  simp only [map_sub, map_add (f := _), map_smul, smul_add, smul_sub, smul_smul, ← pow_add]
   simp only [add_comm, add_left_comm, add_assoc]
   abel
 

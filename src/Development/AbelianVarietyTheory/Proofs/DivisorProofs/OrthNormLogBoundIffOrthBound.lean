@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ScaledCoisometryNorms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ScaledCoisometryNorms
+
+@[expose] public section
 
 open scoped ComplexOrder Matrix
 open Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Col
@@ -21,7 +25,7 @@ theorem gramSum_eq_sumGram {K : Type} [Field K] {N n : ℕ} (hN : N = n + 1) (G'
     · simp [ha, hb]
     · have h1 : a = Br.iL hN := Fin.ext (by have := a.2; simp only [Br.iL]; omega)
       have h2 : b = Br.iL hN := Fin.ext (by have := b.2; simp only [Br.iL]; omega)
-      rw [dif_neg ha, dif_neg ha, if_neg hb, if_neg hb, if_pos ⟨h1, h2⟩]
+      rw [dite_eq_right ha, dite_eq_right ha, if_neg hb, if_neg hb, if_pos ⟨h1, h2⟩]
 
 theorem length_eq {K : Type} [Field K] [StarRing K] (s : K →+* ℂ) (hs : ∀ x : K, s (star x) = star (s x)) (g t : K) :
     s (star t * g * t) = ((‖s t‖ ^ 2 : ℝ) : ℂ) * s g := by

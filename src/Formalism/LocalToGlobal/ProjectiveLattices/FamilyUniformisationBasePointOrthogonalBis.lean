@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
-import Formalism.LocalToGlobal.ProjectiveLattices.IntAll
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,11 +40,6 @@ theorem MuVal.norm {V : HSp D} {χ : (AE D)ˣ →* Circle} {mu : GA D V → ℂ}
     | exact Circle.norm_coe _
     | exact Circle.abs_coe _
     | exact mem_sphere_zero_iff_norm.mp (χ x).2
-
-def muRec {X : ThetaX D} (T : ThetaTied D X) (μ : D.what₂.Tup) (j : ℕ) : (AE D)ˣ →* Circle :=
-  T.eChr (X.chrOf μ j)
-
-def muRec0 {X : ThetaX D} (T : ThetaTied D X) (j : ℕ) : (AE D)ˣ →* Circle := muRec T D.what₂.mu0 j
 
 def FinUnit (x : (AE D)ˣ) : Prop :=
   infPart D (x : AE D) = 1 ∧ finPart D (x : AE D) ∈ intAE D ∧ finPart D ((x⁻¹ : (AE D)ˣ) : AE D) ∈ intAE D
@@ -92,8 +91,8 @@ def IsOrthogonalFrame {E : Type} [Field E] [NumberField E] [IsCMField E] {r : �
 variable {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
   {σ : c.F →+* ℂ} {r : ℕ}
 
-open Classical in
 
+open Classical in
 def DictLat (U : Unf Xo c σ r) (V : HSp D) (hr : V.rank = r) (dict : GA D V → Σ k, Frame (U.X k).Ψ r)
     (ι : Dw.La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)) {g : ℕ} (e : Fin g ≃ Σ τ : D.host.E →+* ℂ, Fin (Dw.mult τ))
     (F : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) (fun j => relab c σ (e j).1))

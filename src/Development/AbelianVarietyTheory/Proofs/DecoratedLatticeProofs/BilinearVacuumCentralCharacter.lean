@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValLast
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiThetaOfVac
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CentralEigenRealDatumFiniteSumFockProducts
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleLiftFockSumEqSumIteratedLifts
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientParaStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilOperatorIntegralCommOfBoundedFiniteMeasureStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvariStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WeilRepresentationContinuous
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemMultTOfEquivariant
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CompactAverageSmoothFamilyClosedUnderDerivatives
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.LevelADef
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsBiSmooth
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiThetaOfVac
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CentralEigenRealDatumFiniteSumFockProducts
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleLiftFockSumEqSumIteratedLifts
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIntegralCompactAutomorphicQuotientParaStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilOperatorIntegralCommOfBoundedFiniteMeasureStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvariStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WeilRepresentationContinuous
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemMultTOfEquivariant
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CompactAverageSmoothFamilyClosedUnderDerivatives
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.LevelADef
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw
 open scoped TensorProduct
@@ -115,12 +120,14 @@ theorem fderiv_om (hom : IsWeilDatumO ψ S T χS χT om) (hc : Chart θ σ) {n :
     rw [← this]
     congr 1
     funext y
-    rw [map_add, add_assoc]
+    rw [map_add (f := _), add_assoc]
   have h3 : dv θ σ S T (mov θ g⁻¹ h⁻¹ u) f = ∑ j, ((e.repr (mov θ g⁻¹ h⁻¹ u) j : ℝ) : ℂ) • dv θ σ S T (e j) f := by
     have := congrArg (fun z => ((dvL hc hψ S T z ⟨f, hf⟩ : thetaSub ψ S T) : WO S T → ℂ)) (e.sum_repr (mov θ g⁻¹ h⁻¹ u))
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum, Submodule.coe_smul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum, Submodule.coe_smul] at this
     exact this.symm
-  rw [h2, dv_om hom hc g h u hf, h3, map_sum, map_add (piW θ T S), hc.pi_iota] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, dv_om hom hc g h u hf, h3, map_sum, map_add (piW θ T S), hc.pi_iota] at h1
   simp only [map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at h1
   rw [h1]
   ring
@@ -183,8 +190,8 @@ theorem sm_mean (hom : IsWeilDatumO ψ S T χS χT om) (hc : Chart θ σ) {K : T
 
 end Smooth
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem exists_haar {S : HSp D} {y : DefSp S} (hy : y.Is) : CompactSpace ↥(GinfC S ⊓ Subgroup.center (GA D S)) ∧
     ∃ ν : Measure ↥(GinfC S ⊓ Subgroup.center (GA D S)), IsProbabilityMeasure ν ∧ ν.IsMulLeftInvariant := by
   obtain ⟨i1, i2, i3, i4, i5, -⟩ := GlobalTheory.Mem.AdelicGroupTop.adelic_unitary_topology D S
@@ -343,7 +350,7 @@ theorem comb_mean (hom : IsWeilDatumO ψ S T χS χT om)
     exact Finset.sum_congr rfl fun _ _ => by ring
   rw [GlobalTheory.FrComb.comb_apply]
   simp only [mean, e]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · simp only [integral_const_mul]
   · exact fun x _ => ((GlobalTheory.AvgFam.integrable_of_continuous ν (hχ.mul ((hom.om_cont f hf _).comp
       (continuous_subtype_val.prodMk continuous_const)))).const_mul _).const_mul _
@@ -451,18 +458,19 @@ theorem biLift_sum (hwa : IsWeilDatumO ψ A S χA χS oma) (hwb : IsWeilDatumO �
       intro v; funext u; simp [Finset.sum_apply, mul_comm]
     have e2 : (fun v => oma (h₀, h₁) (fun u => ∑ i, X i u * Y i v) 0) = ∑ i, oma (h₀, h₁) (X i) 0 • Y i := by
       funext v; rw [e1 v, map_sum]; simp [Finset.sum_apply, mul_comm]
-    rw [e2, map_sum]; simp [Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2, map_sum]; simp [Finset.sum_apply]
   have hin : ∀ h₁, ∫ h₀ in vA.𝓕, φ h₀ * ∑ i, oma (h₀, h₁) (X i) 0 * omb (h₁, h₂) (Y i) 0 ∂vA.μ =
       ∑ i, (∫ g in vA.𝓕, oma (g, h₁) (X i) 0 * φ g ∂vA.μ) * omb (h₁, h₂) (Y i) 0 := by
     intro h₁
     have e : (fun h₀ => φ h₀ * ∑ i, oma (h₀, h₁) (X i) 0 * omb (h₁, h₂) (Y i) 0) =
         fun h₀ => ∑ i, oma (h₀, h₁) (X i) 0 * φ h₀ * omb (h₁, h₂) (Y i) 0 := by
       funext h₀; rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun i _ => by ring
-    rw [e, integral_finset_sum]
+    rw [e, integral_finsetSum]
     · exact Finset.sum_congr rfl fun i _ => integral_mul_const _ _
     · exact fun i _ => (integrableOn_kernel hA vA hwa (hX i) hφ h₁).mul_const _
   simp only [biLift, hint, hin]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   intro i _
   exact Integrable.congr (integrableOn_kernel hS vS hwb (hY i) (contAut_lift hwa hA vA (hX i) hφ) h₂)
     (Filter.Eventually.of_forall fun h₁ => mul_comm _ _)

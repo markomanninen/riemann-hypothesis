@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup
 
 namespace GlobalTheory
@@ -11,8 +16,9 @@ theorem dualBasis_coord_mem_maximalIdeal : ∀ (O : Type) [CommRing O] [IsLocalR
   have hsum : l = ∑ i, l (ε i) • ε.dualBasis i := by
     refine ε.ext fun a => ?_
     simp [Module.Basis.dualBasis_apply_self, Finset.sum_apply, LinearMap.sum_apply]
-  rw [hsum, map_sum]
-  simp only [Finsupp.coe_finset_sum, Finset.sum_apply, map_smul, Finsupp.coe_smul, Pi.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum]
+  simp only [Finset.sum_apply', map_smul, Finsupp.smul_apply, smul_eq_mul]
   exact Ideal.sum_mem _ fun i _ => Ideal.mul_mem_right _ _ (hl _)
 
 end GlobalTheory

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GlobalCore
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GlobalCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,15 +45,16 @@ theorem lin_cont {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O
   have h : ∀ y : X → Matrix (Fin n) (Fin n) O,
       φ y = ∑ x, ∑ p, ∑ q, y x p q • φ (Pi.single x (Matrix.single p q 1)) := by
     intro y
-    simp only [← map_smul, ← map_sum]
-    congr 1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_smul, ← map_sum]
+    apply congrArg φ
     funext x
-    simp only [Finset.sum_apply, Pi.smul_apply]
+    simp only [Finset.sum_apply]
     rw [Finset.sum_eq_single x]
-    · simp only [Pi.single_eq_same, Matrix.smul_single, smul_eq_mul, mul_one]
+    · simp only [Pi.smul_apply, Pi.single_eq_same, Matrix.smul_single, smul_eq_mul, mul_one]
       exact Matrix.matrix_eq_sum_single (y x)
     · intro b _ hb
-      simp [Pi.single_eq_of_ne hb.symm]
+      simp [Pi.smul_apply, Pi.single_eq_of_ne hb.symm]
     · simp
   rw [show (φ : _ → _) = _ from funext h]
   refine continuous_finsetSum _ fun x _ => continuous_finsetSum _ fun p _ =>
@@ -99,7 +104,7 @@ theorem cocW_le (hr : GoodR D.nd i r) (Xs : Set (D.nd.X i)) {k : ℕ}
   rintro _ ⟨φ, hφ, -, rfl⟩
   refine ⟨(lin_cont (D.nd.O_adic i) φ).comp (yg_cont i r S hr), fun g h => ?_⟩
   show φ _ = φ _ + WKG M g (φ _)
-  rw [yg_mul, map_add, hφ _ (tw_mem i r S g) _ (yg_mem i r S h), hψ]
+  rw [yg_mul, map_add (f := _), hφ _ (tw_mem i r S g) _ (yg_mem i r S h), hψ]
   rfl
 
 theorem blocks (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) (π : D.nd.X i)

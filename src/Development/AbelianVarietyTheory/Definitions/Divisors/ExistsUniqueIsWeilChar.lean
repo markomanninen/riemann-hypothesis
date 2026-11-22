@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StAvDefs
-import Development.AbelianVarietyTheory.Definitions.Divisors.LogAbsVpOfNormalised
-import Development.AbelianVarietyTheory.Definitions.Divisors.MapSmulOfIsHausdorff
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsUniqueIsAl
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsFiniteFlatTorsionOfIsGt
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsGenericPointHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFiniteAndFlatTorsion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueLim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionCharacterExtAndExistsOfIntegralPoints
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StAvDefs
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LogAbsVpOfNormalised
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MapSmulOfIsHausdorff
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsUniqueIsAl
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsFiniteFlatTorsionOfIsGt
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsGenericPointHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFiniteAndFlatTorsion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueLim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionCharacterExtAndExistsOfIntegralPoints
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -154,8 +158,8 @@ theorem isEig_lieScale {τ : Λ →+* O} (c : O) {x : LieG G} (hx : AvDefs.IsEig
 
 variable {p : ℕ} [IsAdicComplete (Ideal.span {(p : O)}) O]
 
-omit [IsCommMonObj G] in
 
+omit [IsCommMonObj G] in
 def dlogTv (χ : Tv G p) : omega G :=
   ⟨(existsUnique_isAl χ).choose, (existsUnique_isAl χ).choose_spec.1.1⟩
 
@@ -179,8 +183,8 @@ theorem dlogTv_mul {χ χ' χ'' : Tv G p} (h : ∀ n, χ''.χ n = χ.χ n * χ'.
     one_smul, MulOpposite.op_one, one_smul, add_comm]
   exact map_add (algebraMap O R) _ _
 
-omit [IsCommMonObj G] in
 
+omit [IsCommMonObj G] in
 theorem map_span_dlogTv :
     (Submodule.span O (Set.range (dlogTv (G := G) (p := p)))).map (omega G).subtype = htSpan G p := by
   rw [Submodule.map_span]
@@ -204,8 +208,8 @@ section Points
 
 variable [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O]
 
-variable (p O) in
 
+variable (p O) in
 abbrev red (m : ℕ) : O →ₐ[O] O ⧸ Ideal.span {(p : O) ^ m} := Ideal.Quotient.mkₐ O _
 
 omit [Fact p.Prime] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] in
@@ -220,7 +224,7 @@ theorem isLocalRing : IsLocalRing O := by
   rw [mem_nonunits_iff, hv.isUnit_iff_valuation_eq_one] at *
   have ha' := lt_of_le_of_ne (hv.map_le_one a) ha
   have hb' := lt_of_le_of_ne (hv.map_le_one b) hb
-  rw [map_add]
+  rw [map_add (f := _)]
   exact ne_of_lt (lt_of_le_of_lt (v.map_add _ _) (max_lt ha' hb'))
 
 omit [Fact p.Prime] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] in
@@ -229,8 +233,8 @@ theorem factor_red (m : ℕ) : ptMap (Ideal.Quotient.factorₐ O (Ideal.span_sin
   rw [GlobalTheory.TangentPow.ptMap_comp_ptMap]
   exact congrArg (fun φ => ptMap φ) (AlgHom.ext fun _ => rfl)
 
-include P in
 
+include P in
 theorem hom_ext_red {X : Over (Sp O)} {Q Q' : specO O O ⟶ X}
     (h : ∀ m, ptMap (red p O m) ≫ Q = ptMap (red p O m) ≫ Q') : Q = Q' := by
   have := P.isLocalRing
@@ -304,18 +308,6 @@ abbrev T : Type := TateA P.A p
 def actT : Λ →+* Module.End ℤ_[p] P.T := actTate P.oA.toRingAct p _
 
 variable [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O]
-
-def tateGt : Submodule ℤ_[p] P.T := LinearMap.range (Tate.map p P.toA)
-
-def torusPts : (specO O O ⟶ splitTorus (Sp O) P.Ext.X) →* (specO O O ⟶ P.Gt) :=
-  haveI := P.D.i_hom
-  MonoidHom.mk' (fun x => x ≫ P.D.i) fun x y => MonObj.mul_comp x y _
-
-def tateTorus : Submodule ℤ_[p] P.T := LinearMap.range (Tate.map p (P.toA.comp P.torusPts))
-
-theorem tateTorus_le_tateGt : P.tateTorus ≤ P.tateGt := by
-  rintro _ ⟨t, rfl⟩
-  exact ⟨Tate.map p P.torusPts t, Tate.ext fun n => rfl⟩
 
 variable [IsAlgClosed C] [CharZero C]
 
@@ -419,15 +411,6 @@ def al₀ : P.T →ₗ[ℤ_[p]] omega P.Gt where
     (AddMonoidHom.mk' (fun t : P.T => (dlogTv (P.weilChar t)).1 x) fun s t => by
       rw [dlogTv_mul (P.weilChar_add s t)]; rfl) a t)
 
-theorem eq_al₀_iff (t : P.T) (f : omega P.Gt) :
-    f = P.al₀ t ↔ ∃ χ : Tv P.Gt p, P.IsWeilChar t χ ∧ IsAl χ f.1 := by
-  constructor
-  · rintro rfl
-    exact ⟨P.weilChar t, P.isWeilChar_weilChar t, isAl_dlogTv _⟩
-  · rintro ⟨χ, hχ, hf⟩
-    rw [(P.existsUnique_isWeilChar t).unique hχ (P.isWeilChar_weilChar t)] at hf
-    exact eq_dlogTv hf
-
 theorem al₀_act (a : Λ) (t : P.T) : P.al₀ (P.actT a t) = omegaAct P.oGt a (P.al₀ t) := P.dlogTv_weilChar_act a t
 
 def al : O ⊗[ℤ_[p]] P.T →ₗ[O] omega P.Gt := P.al₀.liftBaseChange O
@@ -444,7 +427,7 @@ theorem map_range_al_le : (LinearMap.range P.al).map (omega P.Gt).subtype ≤ ht
     rw [P.al_tmul]
     exact Submodule.smul_mem _ c (Submodule.subset_span ⟨P.weilChar t, rfl⟩)
   | add u u' hu hu' =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hu hu'
 
 end Point

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+
+@[expose] public section
+
 open CategoryTheory Limits Opposite AlgebraicTopology GlobalTheory.EZ
 universe u v
 
@@ -40,7 +45,8 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 theorem dbl_d_f (Y : SimplicialObject (SimplicialObject C)) (a b : ℕ) :
     ((dbl Y).d (a + 1) a).f b = (ev Y).map (dH (a + 1) b a b) := by
-  simp only [dH, and_self, if_true, Functor.map_sum, Functor.map_zsmul, ev_map_bop,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dH, and_self, if_true, Functor.map_sum, Functor.map_zsmul, ev_map_bop,
     idc_self, op_id, CategoryTheory.Functor.map_id, Category.comp_id]
   rw [Finset.sum_range]
   dsimp only [dbl, alternatingFaceMapComplex]
@@ -51,7 +57,8 @@ theorem dbl_d_f (Y : SimplicialObject (SimplicialObject C)) (a b : ℕ) :
 
 theorem dbl_X_d (Y : SimplicialObject (SimplicialObject C)) (a b : ℕ) :
     ((dbl Y).X a).d (b + 1) b = (ev Y).map (dV a (b + 1) a b) := by
-  simp only [dV, and_self, if_true, Functor.map_sum, Functor.map_zsmul, ev_map_bop,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dV, and_self, if_true, Functor.map_sum, Functor.map_zsmul, ev_map_bop,
     idc_self, op_id, CategoryTheory.Functor.map_id, NatTrans.id_app, Category.id_comp]
   rw [Finset.sum_range]
   change (AlternatingFaceMapComplex.obj (Y.obj (op (SimplexCategory.mk a)))).d (b + 1) b = _
@@ -138,7 +145,7 @@ theorem ιTotal_tot_d (Y : SimplicialObject (SimplicialObject C)) (a b k : ℕ)
   change _ ≫ ((dbl Y).total (ComplexShape.down ℕ)).d (k + 1) k = _
   rw [HomologicalComplex₂.total_d, Preadditive.comp_add, ιTotal_D₁ Y a b k h, ιTotal_D₂ Y a b k h]
   refine Eq.trans Finset.sum_add_distrib.symm (Finset.sum_congr rfl (fun x _ => ?_))
-  rw [dT, Functor.map_add, Functor.map_zsmul]
+  rw [dT, (ev Y).map_add, (ev Y).map_zsmul]
   first
     | (rw [Preadditive.add_comp, Preadditive.zsmul_comp])
     | (simp only [Preadditive.add_comp, Preadditive.zsmul_comp])
@@ -148,5 +155,3 @@ theorem ιTotal_tot_d (Y : SimplicialObject (SimplicialObject C)) (a b k : ℕ)
 end
 
 end GlobalTheory.EZ
-
-example : ∀ {C : Type u} [Category.{v} C] [Preadditive C] [HasFiniteCoproducts C] (Y : SimplicialObject (SimplicialObject C)) (a b k : ℕ) (h : a + b = k + 1), (dbl Y).ιTotal (ComplexShape.down ℕ) a b (k + 1) (by simpa only [ComplexShape.π_def] using h) ≫ (tot Y).d (k + 1) k = ∑ x ∈ (Finset.HasAntidiagonal.antidiagonal k).attach, (ev Y).map (dT a b x.1.1 x.1.2) ≫ (dbl Y).ιTotal (ComplexShape.down ℕ) x.1.1 x.1.2 k (by simpa only [ComplexShape.π_def] using Finset.HasAntidiagonal.mem_antidiagonal.1 x.2) := @GlobalTheory.EZ.ιTotal_tot_d

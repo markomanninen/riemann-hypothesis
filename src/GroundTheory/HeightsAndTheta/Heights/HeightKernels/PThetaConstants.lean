@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsTheta
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsTheta
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -27,8 +32,8 @@ lemma log_rhs (C ρ d : ℝ) (g : ℕ) (hd : 0 < d) :
 
 end KThetaConstants
 
-open KThetaConstants in
 
+open KThetaConstants in
 theorem ThetaConstants.proof : ThetaConstants.Statement := by
   intro C₃ hC₃
   have hK1 : (1 : ℝ) ≤ max C₃ 1 := le_max_right _ _

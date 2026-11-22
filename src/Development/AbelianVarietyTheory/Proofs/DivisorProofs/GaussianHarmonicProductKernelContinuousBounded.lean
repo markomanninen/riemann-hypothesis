@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbAApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableWeightedHeckeThetaKernelHalfSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbAApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableWeightedHeckeThetaKernelHalfSpace
+
+@[expose] public section
+
 open NumberField MeasureTheory
 open scoped RealInnerProductSpace FourierTransform
 
@@ -14,7 +19,7 @@ theorem gauss_cont_bound : ∀ (I : Type) [Fintype I] (n : I → ℤ), Continuou
   intro I _ n
   refine ⟨?_, ⟨Decay.gC n, fun w => ?_⟩⟩
   · unfold gauss
-    refine continuous_finset_prod _ fun i _ => ?_
+    refine continuous_finsetProd _ fun i _ => ?_
     have hc : Continuous fun w : EuclideanSpace ℂ I => (WithLp.ofLp w) i :=
       (continuous_apply i).comp (PiLp.continuous_ofLp 2 _)
     exact ((Decay.continuous_hmon _).comp hc).mul (by fun_prop)

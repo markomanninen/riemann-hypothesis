@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -154,7 +158,7 @@ theorem UpperTheory.V.Alg.carver :
     (by
       rintro _ ⟨m, ⟨hm, hm'⟩, rfl⟩ _ ⟨n, ⟨hn, hn'⟩, rfl⟩
       refine ⟨m + n, ⟨fun h => hm (add_eq_zero.1 h).1, by rw [hg]; exact mul_ne_zero hm' hn'⟩, ?_⟩
-      simp only [hg, map_add, norm_mul, Prod.mk_add_mk,
+      simp only [hg, map_add (f := _), norm_mul, Prod.mk_add_mk,
         Real.log_mul (norm_ne_zero_iff.2 hm') (norm_ne_zero_iff.2 hn')])
     (by
       rintro _ ⟨n, ⟨hn, hn'⟩, rfl⟩ h

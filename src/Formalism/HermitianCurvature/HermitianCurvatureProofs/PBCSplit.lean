@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCLim
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCLim
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 
@@ -177,8 +181,8 @@ theorem limit_average_translate_eq (hG : GermData Y U P Q hat) (κ : H → H →
   rw [← ht]
   congr 1
   funext x
-  simp only [AddSubgroup.coe_add, AddSubgroup.coe_mk]
-  rw [show (x : crystallineComparison.V f) + σ' + (σ - σ') = (x : crystallineComparison.V f) + σ by abel]
+  simp only [AddSubgroup.coe_add]
+  congr 1 <;> abel
 
 private lemma bdd_finset_sum {β ι : Type} (s : Finset ι) (g : ι → β → ℂ) (hg : ∀ i ∈ s, crystallineComparison.Bdd (g i)) :
     crystallineComparison.Bdd (fun x => ∑ i ∈ s, g i x) := by

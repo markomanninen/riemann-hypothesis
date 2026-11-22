@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemShellUIffDepth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeylCellStabilizerMeasure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalWeylCellTranslate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusConjugationWeylCell
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeylCellStabilizerMeasureTwo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCellUAbsorbUnip
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemShellUIffDepth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeylCellStabilizerMeasure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalWeylCellTranslate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusConjugationWeylCell
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeylCellStabilizerMeasureTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCellUAbsorbUnip
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.SatakeBound GlobalTheory.WeylCell Formalism.UG GlobalTheory.WeylCell.WeylUnipotentShell
 open scoped NNReal ENNReal
 
@@ -14,6 +19,40 @@ noncomputable section
 namespace GlobalTheory.CompanionTheory.InvStep
 
 open GlobalTheory.ShellU GlobalTheory.GKConjScale GlobalTheory.UnipShiftU
+
+private theorem weylRep_inv_mul_diag_local {L : Type} [Field L] {n : ℕ}
+    {w : Equiv.Perm (Fin n)} {x : GL (Fin n) L} (hx : IsWeylRep w x) (p : Fin n) :
+    (Units.val x⁻¹) p (w p) * (Units.val x) (w p) p = 1 := by
+  have h : (Units.val (x⁻¹ * x)) p p = (Units.val (1 : GL (Fin n) L)) p p := by rw [inv_mul_cancel]
+  rw [Units.val_mul, Matrix.mul_apply, Units.val_one, Matrix.one_apply_eq] at h
+  rwa [Finset.sum_eq_single (w p) (fun b _ hb => by rw [hx b p hb, mul_zero]) (by simp)] at h
+
+private theorem weylRep_inv_local {L : Type} [Field L] {n : ℕ}
+    {w : Equiv.Perm (Fin n)} {x : GL (Fin n) L} (hx : IsWeylRep w x) :
+    IsWeylRep w⁻¹ x⁻¹ := by
+  intro p a hpa
+  have hne : (Units.val x) a (w⁻¹ a) ≠ 0 := by
+    intro h0
+    have h : (Units.val (x * x⁻¹)) a a = (Units.val (1 : GL (Fin n) L)) a a := by rw [mul_inv_cancel]
+    rw [Units.val_mul, Matrix.mul_apply, Units.val_one, Matrix.one_apply_eq] at h
+    rw [Finset.sum_eq_single (w⁻¹ a) (fun b _ hb => by
+      rw [hx a b (fun e => hb (w.injective (by simpa using e)).symm), zero_mul]) (by simp),
+      h0, zero_mul] at h
+    exact zero_ne_one h
+  have h : (Units.val (x⁻¹ * x)) p (w⁻¹ a) = (Units.val (1 : GL (Fin n) L)) p (w⁻¹ a) := by rw [inv_mul_cancel]
+  rw [Units.val_mul, Matrix.mul_apply, Units.val_one, Matrix.one_apply_ne hpa] at h
+  rw [Finset.sum_eq_single a (fun b _ hb => by
+      rw [hx b (w⁻¹ a) (by simpa using hb), mul_zero]) (by simp)] at h
+  exact (mul_eq_zero.1 h).resolve_right hne
+
+private theorem weylRep_conj_apply_local {L : Type} [Field L] {n : ℕ}
+    {w : Equiv.Perm (Fin n)} {x : GL (Fin n) L} (hx : IsWeylRep w x) (u : GL (Fin n) L)
+    (p q : Fin n) : (Units.val (x⁻¹ * u * x)) p q =
+      (Units.val x⁻¹) p (w p) * (Units.val u) (w p) (w q) * (Units.val x) (w q) q := by
+  have hi := weylRep_inv_local hx
+  rw [Units.val_mul, Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single (w q)
+    (fun b _ hb => by rw [hx b q hb, mul_zero]) (by simp), Matrix.mul_apply,
+    Finset.sum_eq_single (w p) (fun b _ hb => by rw [hi p b (fun e => hb (by rw [e]; simp)), zero_mul]) (by simp)]
 
 theorem shell_measure' : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] [CompleteSpace L]
     (ϖ : L) (σ : L →+* L) (q : ℕ), IsUnramInv ϖ σ q → ∀ (n : ℕ) (k : Fin (n / 2)), ¬ k.val + 1 < n / 2 →
@@ -30,7 +69,7 @@ theorem shell_measure' : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplic
   have haa : lo k ≠ (lo k).rev := by
     intro h
     have := congrArg Fin.val h
-    simp only [Fin.val_rev, Fin.coe_castLE] at this
+    simp only [Fin.val_rev, Fin.val_castLE] at this
     have := k.2
     omega
   have hshape := cellU_rankOne_shape L σ n k hk hn y hy
@@ -80,7 +119,7 @@ theorem shell_measure' : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplic
       intro i l
       show (1 + Matrix.single a a.rev (-b) : Matrix (Fin n) (Fin n) L) i l =
         σ ((1 + Matrix.single a a.rev b : Matrix (Fin n) (Fin n) L) l.rev i.rev)
-      rw [Matrix.add_apply, Matrix.add_apply, map_add, Matrix.one_apply, Matrix.one_apply, Matrix.single_apply,
+      rw [Matrix.add_apply, Matrix.add_apply, map_add (f := _), Matrix.one_apply, Matrix.one_apply, Matrix.single_apply,
         Matrix.single_apply, apply_ite σ, apply_ite σ, map_one, map_zero, hb]
       congr 1
       · exact if_congr (by rw [Fin.rev_inj, eq_comm]) rfl rfl
@@ -88,7 +127,7 @@ theorem shell_measure' : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplic
         rw [Fin.rev_inj, and_comm, Fin.rev_eq_iff]
     refine ⟨⟨⟨g, hg⟩, (hshape _).2 fun i l h => ?_⟩, hent b⟩
     show (1 + Matrix.single a a.rev b : Matrix (Fin n) (Fin n) L) i l = _
-    rw [Matrix.add_apply, Matrix.single_apply, if_neg (fun h' => h ⟨h'.1.symm, h'.2.symm⟩), add_zero]
+    rw [Matrix.add_apply, Matrix.single_apply, ite_eq_right (fun h' => h ⟨h'.1.symm, h'.2.symm⟩), add_zero]
   let φ : cellU y →* Multiplicative L :=
     { toFun := fun u => Multiplicative.ofAdd (c u)
       map_one' := by simp only [hone]; rfl
@@ -206,7 +245,7 @@ theorem conjScale' : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicativ
   have hsh : ∀ j : ℤ, MeasurableSet (S j) ∧ μ (S j) = (q : ENNReal) ^ j := shell_measure' L ϖ σ q hU n k hk hn y hyK hy μ hμ
   have hpre : c ⁻¹' S 0 = S (-2 * r) := by
     ext u
-    simp only [S, Set.mem_preimage, Set.mem_setOf_eq]
+    simp only [S, Set.mem_preimage, Set.mem_ofPred_eq]
     show Valued.v (((((t : GL (Fin n) L))⁻¹ * ((u : GU σ n) : GL (Fin n) L) * (t : GL (Fin n) L) : GL (Fin n) L) :
       Matrix (Fin n) (Fin n) L) a a.rev) ≤ _ ↔ _
     rw [gl_conj_apply_of_offdiag ht, map_mul, map_mul, map_inv₀, ← hTd, hva, hva', ← WithZero.coe_inv,
@@ -228,7 +267,7 @@ theorem conjScale' : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicativ
   have e := Measure.isMulLeftInvariant_eq_smul (μ.map c) μ
   have hfac : Measure.haarScalarFactor (μ.map c) μ = Q := by
     have h := congrArg (fun ν : Measure (cellU y) => ν (S 0)) e
-    simp only [Measure.smul_apply, hS0, hmap, ENNReal.smul_def, smul_eq_mul, mul_one] at h
+    simp only [smul_apply, hS0, hmap, ENNReal.smul_def, smul_eq_mul, mul_one] at h
     exact ENNReal.coe_injective (h.symm.trans hQ.symm)
   have hmu : μ.map c = Q • μ := e.trans (by rw [hfac])
   refine ⟨fun F => ?_, fun F => ?_⟩
@@ -247,7 +286,7 @@ theorem shiftCore (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))
     (ν : GU σ n) (hν : IsUnipU ν) :
     ∃ u' ∈ cellU y, ∀ u ∈ cellU y, ∀ g : GU σ n, φ (y⁻¹ * u * ν * g) = φ (y⁻¹ * (u' * u) * g) := by
   have hne : a ≠ a' := fun e => by have := congrArg Fin.val e; omega
-  have hlt : a < a' := by rw [Fin.lt_iff_val_lt_val]; omega
+  have hlt : a < a' := by rw [Fin.lt_def]; omega
   have hrev' : a'.rev = a := by rw [← hrev, Fin.rev_rev]
   have hνB : (ν : GL (Fin n) L) ∈ unipB L (Fin n) := (mem_unipB L).2 ⟨hν.1, hν.2⟩
   set c : L := ((ν : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) a a' with hc
@@ -281,8 +320,8 @@ theorem shiftCore (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))
     split_ifs with h1 h2 <;> simp_all
   have hTB : T ∈ unipB L (Fin n) := by
     refine (mem_unipB L).2 ⟨fun i j h => ?_, fun i => ?_⟩
-    · rw [hT, if_neg (ne_of_lt h).symm, if_neg (fun e => by obtain ⟨rfl, rfl⟩ := e; exact absurd h (not_lt.2 hlt.le)), add_zero]
-    · rw [hT, if_pos rfl, if_neg (fun h => hne (h.1.symm.trans h.2)), add_zero]
+    · rw [hT, ite_eq_right (ne_of_lt h).symm, ite_eq_right (fun e => by obtain ⟨rfl, rfl⟩ := e; exact absurd h (not_lt.2 hlt.le)), add_zero]
+    · rw [hT, ite_eq_left rfl, ite_eq_right (fun h => hne (h.1.symm.trans h.2)), add_zero]
   have hback : ∀ i j, Equiv.swap a a' i = a → Equiv.swap a a' j = a' → i = a' ∧ j = a := by
     intro i j h1 h2
     exact ⟨by rw [← Equiv.swap_apply_self a a' i, h1, Equiv.swap_apply_left],
@@ -292,14 +331,14 @@ theorem shiftCore (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))
     rw [mem_cell]
     refine ⟨hTB, mem_unipBLower.2 ⟨fun i j hij => ?_, fun i => ?_⟩⟩
     · rw [Units.val_mul, Units.val_mul, conj_apply hy, hT,
-        if_neg (fun e => (ne_of_lt hij) ((Equiv.injective _) e)),
-        if_neg (fun e => by
+        ite_eq_right (fun e => (ne_of_lt hij) ((Equiv.injective _) e)),
+        ite_eq_right (fun e => by
           obtain ⟨h1, h2⟩ := hback i j e.1 e.2
           rw [h1, h2] at hij
           exact absurd hij (not_lt.2 hlt.le))]
       simp
-    · rw [Units.val_mul, Units.val_mul, conj_apply hy, hT, if_pos rfl,
-        if_neg (fun h => hne (h.1.symm.trans h.2)), add_zero, mul_one, inv_mul_diag hy]
+    · rw [Units.val_mul, Units.val_mul, conj_apply hy, hT, ite_eq_left rfl,
+        ite_eq_right (fun h => hne (h.1.symm.trans h.2)), add_zero, mul_one, inv_mul_diag hy]
   · intro u hu g
     have huB : (u : GL (Fin n) L) ∈ unipB L (Fin n) := (mem_cell.1 hu).1
     set N : GL (Fin n) L := (u : GL (Fin n) L) * ν * (u : GL (Fin n) L)⁻¹ * T⁻¹ with hN
@@ -308,7 +347,7 @@ theorem shiftCore (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))
     have hNa : (N : Matrix (Fin n) (Fin n) L) a a' = 0 := by
       rw [hN, unipB_mul_apply_succ (mul_mem (mul_mem huB hνB) (inv_mem huB)) (inv_mem hTB) haa,
         unipB_mul_apply_succ (mul_mem huB hνB) (inv_mem huB) haa, unipB_mul_apply_succ huB hνB haa,
-        unipB_inv_apply_succ hTB haa, unipB_inv_apply_succ huB haa, hT, if_neg hne, if_pos ⟨rfl, rfl⟩]
+        unipB_inv_apply_succ hTB haa, unipB_inv_apply_succ huB haa, hT, ite_eq_right hne, ite_eq_left ⟨rfl, rfl⟩]
       ring
     let b : GU σ n := y⁻¹ * u * ν * u⁻¹ * (⟨T, hTG⟩ : GU σ n)⁻¹ * y
     have hbG : (b : GL (Fin n) L) = (y : GL (Fin n) L)⁻¹ * N * y := by
@@ -354,12 +393,12 @@ theorem shiftEven (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))
     (hφ : ∀ b g : GU σ n, IsBorelU b → φ (b * g) = chiDeltaU q α b * φ g) (y : GU σ n)
     (hy : IsWeylRep (simpleU k) (y : GL (Fin n) L)) (ν : GU σ n) (hν : IsUnipU ν) :
     ∃ u' ∈ cellU y, ∀ u ∈ cellU y, ∀ g : GU σ n, φ (y⁻¹ * u * ν * g) = φ (y⁻¹ * (u' * u) * g) := by
-  have hs : simpleU k = Equiv.swap (lo k) (lo k).rev := by simp only [simpleU, if_neg hk]
+  have hs : simpleU k = Equiv.swap (lo k) (lo k).rev := by simp only [simpleU, ite_eq_right hk]
   rw [hs] at hy
   have haa : ((lo k).rev).val = (lo k).val + 1 := by
     obtain ⟨m, hm⟩ := hn
     have := k.2
-    simp only [Fin.val_rev, lo, Fin.coe_castLE]
+    simp only [Fin.val_rev, lo, Fin.val_castLE]
     omega
   exact shiftCore L σ q n (lo k) (lo k).rev rfl haa α φ hφ y hy ν hν
 
@@ -389,7 +428,7 @@ theorem shiftOdd : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative 
       · exact hn'.2 i
       · exact Matrix.one_apply_eq i
     · rw [hp₀]; unfold blockKeep
-      rw [if_neg, Matrix.one_apply_ne hij.ne]
+      rw [ite_eq_right, Matrix.one_apply_ne hij.ne]
       rintro ⟨⟨h1, -⟩, -, h2⟩
       rcases hor with h | h
       · exact absurd h1 (not_le.2 h)
@@ -422,7 +461,7 @@ theorem shiftOdd : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative 
   have hgv : (g : GL (Fin n) L) = (y : GL (Fin n) L)⁻¹ * (M : GL (Fin n) L) * (y : GL (Fin n) L) := rfl
   have hgB : IsBorelU g := by
     intro i j hij
-    rw [hgv, GKFactor.weylRep_conj_apply hy]
+    rw [hgv, weylRep_conj_apply_local hy]
     have hz : ((M : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) (simpleU k i) (simpleU k j) = 0 := by
       rcases lt_or_gt_of_ne (fun e : simpleU k i = simpleU k j => hij.ne' ((simpleU k).injective e)) with hl | hl
       · have hno := (swap_lt_swap_iff_of_add_two (lo k) (lo k).rev _ _ hA hl).not.1 (by
@@ -430,13 +469,13 @@ theorem shiftOdd : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative 
         rw [not_or, not_lt, not_lt] at hno
         have := congrFun (congrFun hM1 (simpleU k i)) (simpleU k j)
         unfold blockKeep at this
-        rw [if_pos ⟨⟨hno.1, hl.le.trans hno.2⟩, hno.1.trans hl.le, hno.2⟩, Matrix.one_apply_ne hl.ne] at this
+        rw [ite_eq_left ⟨⟨hno.1, hl.le.trans hno.2⟩, hno.1.trans hl.le, hno.2⟩, Matrix.one_apply_ne hl.ne] at this
         exact this
       · exact ((mem_unipB L).1 hMB).1 _ _ hl
     rw [hz, mul_zero, zero_mul]
   have hgd : ∀ i, ((g : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) i i = 1 := by
     intro i
-    rw [hgv, GKFactor.weylRep_conj_apply hy, ((mem_unipB L).1 hMB).2, mul_one, GKFactor.weylRep_inv_mul_diag hy]
+    rw [hgv, weylRep_conj_apply_local hy, ((mem_unipB L).1 hMB).2, mul_one, weylRep_inv_mul_diag_local hy]
   have ho : ordL (1 : L) = 0 := by
     unfold ordL
     split_ifs with h

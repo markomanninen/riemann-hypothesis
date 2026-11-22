@@ -1,15 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.KTrivExternalTensorPowerLineBundle
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TrivOnOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsProjByOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AbelianProjectiveBaseChange
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ComparisonTorusInvariant
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RosatiCubicalAdditive
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCAndCoordCorrespond
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.KTrivExternalTensorPowerLineBundle
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TrivOnOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsProjByOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AbelianProjectiveBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ComparisonTorusInvariant
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RosatiCubicalAdditive
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCAndCoordCorrespond
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -132,7 +136,8 @@ theorem loc_gen_of_thickenings (hG : GlobalFnsSt) {R : Type} [CommRing R] (I : I
         pull κ (∑ k, ε k • pull (π ≫ φ k) (cls L hL)) = 0 := fun π κ => by
     refine (cls_eq_zero_iff (LB.isLB_pull (LB.isLB_pull hF π) κ)).symm.trans ?_
     rw [cls_pull (LB.isLB_pull hF π), cls_pull hF, cls_linComb hL]
-    simp only [map_sum, map_zsmul, pull_comp]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, pull_comp]
   obtain ⟨J, hJ⟩ := TrivRep.exists_ideal_locTriv hG R B hB hp _ hF
   have hz : J ≤ RingHom.ker (RingHom.id R) := fun a ha => by
     refine IsHausdorff.haus (I := I) ‹_› a fun n => ?_
@@ -143,7 +148,8 @@ theorem loc_gen_of_thickenings (hG : GlobalFnsSt) {R : Type} [CommRing R] (I : I
   obtain ⟨U, hU, ht⟩ := (hJ R (RingHom.id R) _ (𝟙 _) B.hom (by
     rw [CommRingCat.ofHom_id, Spec.map_id]; exact IsPullback.id_horiz _)).2 hz s
   refine ⟨U, hU, (gen_iff_sum hL _ _).2 ?_⟩
-  simpa only [map_sum, map_zsmul, ← pull_comp, Category.id_comp] using (key _ _).1 ht
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum, map_zsmul, ← pull_comp, Category.id_comp] using (key _ _).1 ht
 
 theorem exists_gen_through {X₁ X₂ E Y : Scheme.{0}} {L₁ : LB X₁} {L₂ : LB X₂} (h₁ : L₁.IsLB) (h₂ : L₂.IsLB)
     {F₁ : E ⟶ X₁} {F₂ : E ⟶ X₂} (w : LB.Iso (L₁.pull F₁) (L₂.pull F₂)) (hw : w.IsGen) {K : Type} [Fintype K]

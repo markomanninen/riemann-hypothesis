@@ -1,5 +1,10 @@
-import Formalism.AdmissibleDesigns.SelmerMatchFinal
-import Formalism.AdmissibleDesigns.H1MapMemLocallyConstant
+module
+
+public import Formalism.AdmissibleDesigns.H1MapMemLcH1
+public import Formalism.AdmissibleDesigns.CocZeroOfUnr
+public import Formalism.AdmissibleDesigns.H1MapMemLocallyConstant
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

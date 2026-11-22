@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisAutMemAdelicCompletionIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisAutMemAdelicCompletionIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,9 +56,5 @@ theorem exists_endLat_trace_eq_one (E : Type) [Field E] [NumberField E] [IsCMFie
   have h1 : (1 : 𝓞 E) ∈ traceIdeal Λ := htop ▸ Submodule.mem_top
   obtain ⟨Z, hZ, e⟩ := h1
   exact ⟨Z, hZ, by rw [e]; simp⟩
-
-example : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (G : Matrix (Fin r) (Fin r) E)
-    (Λ : Submodule (𝓞 E) (Fin r → E)), 1 ≤ r → SelfDualLat G Λ → ∃ Z ∈ endLat Λ, Z.trace = 1 :=
-  exists_endLat_trace_eq_one
 
 end GlobalTheory.LieDisc

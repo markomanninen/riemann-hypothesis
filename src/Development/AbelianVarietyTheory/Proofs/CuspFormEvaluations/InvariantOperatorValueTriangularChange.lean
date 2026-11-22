@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.InvariantDerivationsCommuteFormalConnection
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.WeightAddLeOfMemSupportDividedContraction
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.InvariantDerivationsCommuteFormalConnection
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.WeightAddLeOfMemSupportDividedContraction
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -203,7 +207,8 @@ theorem dEnd_comb (F : Fin d → PS S 2 d) {κ : Type} [Fintype κ] (c : κ → 
     (hv : ∀ e, v e = ∑ j, c j * w j e) : dEnd F v = ∑ j, c j • dEnd F (w j) := by
   refine LinearMap.ext fun g => ?_
   rw [LinearMap.sum_apply]
-  simp only [LinearMap.smul_apply, dEnd_apply, Dof, hv, map_sum, map_mul, Finset.sum_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.smul_apply, dEnd_apply, Dof, hv, map_sum, map_mul, Finset.sum_mul,
     Finset.smul_sum, MvPowerSeries.smul_eq_C_mul]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun e _ => ?_
@@ -252,97 +257,103 @@ end GlobalTheory.RowTriangular
 
 namespace GlobalTheory
 
+
 open RowTriangular ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ in
 open scoped TensorProduct in
-
 theorem nabVal_triangular : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (c : Coeff l) [StarRing (𝓞 E)] (S : Type) [CommRing S] [Algebra c.F S] [Algebra ℚ S] (d : ℕ) (B : Germ.FB S d (𝓞 E)) (hg : Germ.PS S 2 d), B.IsCanonGauge S hg → ∀ (k n : ℕ) (f : Fin n → MvPowerSeries (Fin 1 × Fin d) S) (uvec uvec' : Lt1 Dw → Fin d → S) (cf : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Fin (Dw.mult τ) → S), (∀ τ i j, i < j → cf τ i j = 0) → (∀ τ i e, uvec' ⟨τ, i⟩ e = ∑ j, cf τ i j * uvec ⟨τ, j⟩ e) → (∀ τ i, IsUnit (cf τ i i)) → ∀ (a : (E →+* ℂ) × ℕ → ℕ) (P : MvPolynomial (LtN Dw n) c.F), P ∈ HHa Dw.mult n c.F ComplexEmbedding.conjugate (InPsi H) (fun τ i => a (τ, i)) → ∑ m ∈ P.support, algebraMap c.F S (P.coeff m) * ∏ b, B.nabVal S hg H.w0 k (f b) uvec' (MvPolynomial.monomial (colOf m b) 1) = (∏ ℓ : Lt1 Dw, cf ℓ.1 ℓ.2 ℓ.2 ^ a (ℓ.1, ℓ.2)) * ∑ m ∈ P.support, algebraMap c.F S (P.coeff m) * ∏ b, B.nabVal S hg H.w0 k (f b) uvec (MvPolynomial.monomial (colOf m b) 1) := by
-  classical
-  intro E _ _ _ H Dw l c _ S _ _ _ d B hg _ k n f uvec uvec' cf hcf huv hu a P hP
-  unfold HHa at hP
-  obtain ⟨-, hI, hD⟩ := hP
-  have t4 : B.FK S = B.G.F := by
-    funext i
-    simp [FB.FK, FGLaw.mapF]
-  have hcomm : ∀ u v : Fin d → S, dEnd (B.FK S) u * dEnd (B.FK S) v = dEnd (B.FK S) v * dEnd (B.FK S) u := by
-    intro u v
-    refine LinearMap.ext fun g => ?_
-    simp only [Module.End.mul_apply, dEnd_apply]
-    rw [t4]
-    exact FormalConnection.dof_comm_law B.G u v g
-  let s : Set (Module.End S (PS S 1 d)) := Set.range fun e : Fin d => dEnd (B.FK S) (Pi.single e 1)
-  have hs : ∀ x ∈ s, ∀ y ∈ s, x * y = y * x := by
-    rintro _ ⟨e, rfl⟩ _ ⟨e', rfl⟩
-    exact hcomm _ _
-  letI : CommRing (Algebra.adjoin S s) := Algebra.adjoinCommRingOfComm S hs
-  have hmem : ∀ v : Fin d → S, dEnd (B.FK S) v ∈ Algebra.adjoin S s := by
-    intro v
-    rw [dEnd_comb (B.FK S) (fun e => v e) (fun e => Pi.single e 1) v (fun e' => by simp [Pi.single_apply])]
-    exact Subalgebra.sum_mem _ fun e _ => Subalgebra.smul_mem _ (Algebra.subset_adjoin (Set.mem_range_self e)) _
-  obtain ⟨G, hG⟩ : ∃ G : Fin n → PS S 1 d, ∀ (b : Fin n) (u : Lt1 Dw → Fin d → S) (Q : MvPolynomial (Lt1 Dw) S),
-      B.nabVal S hg H.w0 k (f b) u Q = MvPowerSeries.constantCoeff (DpolyOf (B.FK S) u Q (G b)) :=
-    ⟨_, fun b u Q => rfl⟩
-  let lam : Fin n → Algebra.adjoin S s →ₗ[S] S := fun b =>
-    { toFun := fun z => MvPowerSeries.constantCoeff ((z : Module.End S (PS S 1 d)) (G b))
-      map_add' := fun z z' => by simp
-      map_smul' := fun r z => by simp [MvPowerSeries.smul_eq_C_mul] }
-  let φ : c.F →+* (⨂[S] _ : Fin n, Algebra.adjoin S s) :=
-    (algebraMap S (⨂[S] _ : Fin n, Algebra.adjoin S s)).comp (algebraMap c.F S)
-  have hpull : ∀ (r : S) (t : ⨂[S] _ : Fin n, Algebra.adjoin S s),
-      prodForm lam (algebraMap S _ r * t) = r * prodForm lam t := by
-    intro r t
-    rw [← Algebra.smul_def, map_smul, smul_eq_mul]
-  have hval : ∀ (U : Lt1 Dw → Fin d → S) (X : Lt1 Dw → Algebra.adjoin S s),
-      (∀ l, (Algebra.adjoin S s).val (X l) = dEnd (B.FK S) (U l)) →
-      ∑ m ∈ P.support, algebraMap c.F S (P.coeff m) *
-          ∏ b, B.nabVal S hg H.w0 k (f b) U (MvPolynomial.monomial (colOf m b) 1) =
-        prodForm lam (MvPolynomial.eval₂Hom φ (fun ℓ : LtN Dw n =>
-          PiTensorProduct.singleAlgHom (R := S) (A := fun _ : Fin n => Algebra.adjoin S s) ℓ.2.2
-            (X ⟨ℓ.1, ℓ.2.1⟩)) P) := by
-    intro U X hX
-    rw [MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_eq', map_sum]
-    refine Finset.sum_congr rfl fun m _ => ?_
-    rw [show φ (P.coeff m) = algebraMap S _ (algebraMap c.F S (P.coeff m)) from rfl, hpull]
-    congr 1
-    have e1 : ∀ b, B.nabVal S hg H.w0 k (f b) U (MvPolynomial.monomial (colOf m b) 1) =
-        lam b (∏ l, X l ^ (colOf m b) l) := by
-      intro b
-      rw [hG, dpoly_monomial, dmon_eq (B.FK S) (Algebra.adjoin S s).val U X hX]
-      rfl
-    simp only [e1]
-    rw [← prodForm_prod]
-    congr 1
-    simp only [map_prod, map_pow]
-    rw [Finset.prod_comm, Fintype.prod_sigma, Fintype.prod_sigma]
-    refine Finset.prod_congr rfl fun τ _ => ?_
-    rw [Fintype.prod_prod_type]
-    refine Finset.prod_congr rfl fun i _ => Finset.prod_congr rfl fun b _ => ?_
-    simp [colOf]
-  let X : Lt1 Dw → Algebra.adjoin S s := fun l => ⟨dEnd (B.FK S) (uvec l), hmem _⟩
-  let X' : Lt1 Dw → Algebra.adjoin S s := fun l => ⟨dEnd (B.FK S) (uvec' l), hmem _⟩
-  have hx' : ∀ τ i, X' ⟨τ, i⟩ = ∑ j, cf τ i j • X ⟨τ, j⟩ := by
-    intro τ i
-    apply Subtype.val_injective
-    change dEnd (B.FK S) (uvec' ⟨τ, i⟩) = (Algebra.adjoin S s).val (∑ j, cf τ i j • X ⟨τ, j⟩)
-    rw [map_sum]
-    simp only [map_smul]
-    exact dEnd_comb (B.FK S) (cf τ i) (fun j => uvec ⟨τ, j⟩) _ (huv τ i)
-  rw [hval uvec' X' (fun l => rfl), hval uvec X (fun l => rfl)]
-  have hY : (fun ℓ : LtN Dw n => PiTensorProduct.singleAlgHom (R := S)
-        (A := fun _ : Fin n => Algebra.adjoin S s) ℓ.2.2 (X' ⟨ℓ.1, ℓ.2.1⟩)) =
-      fun ℓ => ∑ j, algebraMap S (⨂[S] _ : Fin n, Algebra.adjoin S s) (cf ℓ.1 ℓ.2.1 j) *
-        PiTensorProduct.singleAlgHom (R := S) (A := fun _ : Fin n => Algebra.adjoin S s) ℓ.2.2 (X ⟨ℓ.1, j⟩) := by
-    funext ℓ
-    rw [hx', map_sum]
-    simp only [map_smul]
-    simp only [Algebra.smul_def]
-  have h3 := eval₂_triangular φ hI hD (fun τ i j => algebraMap S (⨂[S] _ : Fin n, Algebra.adjoin S s) (cf τ i j))
-    (fun τ i j h => by simp [hcf τ i j h]) (fun τ i => (hu τ i).map _)
-    (fun ℓ : LtN Dw n => PiTensorProduct.singleAlgHom (R := S)
-        (A := fun _ : Fin n => Algebra.adjoin S s) ℓ.2.2 (X ⟨ℓ.1, ℓ.2.1⟩))
-  rw [hY]
-  refine (congrArg (prodForm lam) h3).trans ?_
-  rw [← hpull]
-  congr 2
-  simp [map_prod, map_pow]
+  open RowTriangular ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB in
+  open scoped TensorProduct IsMulCommutative in
+    classical
+    intro E _ _ _ H Dw l c _ S _ _ _ d B hg _ k n f uvec uvec' cf hcf huv hu a P hP
+    unfold HHa at hP
+    obtain ⟨-, hI, hD⟩ := hP
+    have t4 : B.FK S = B.G.F := by
+      funext i
+      simp [FB.FK, FGLaw.mapF]
+    have hcomm : ∀ u v : Fin d → S, dEnd (B.FK S) u * dEnd (B.FK S) v = dEnd (B.FK S) v * dEnd (B.FK S) u := by
+      intro u v
+      refine LinearMap.ext fun g => ?_
+      simp only [Module.End.mul_apply, dEnd_apply]
+      rw [t4]
+      exact FormalConnection.dof_comm_law B.G u v g
+    let s : Set (Module.End S (PS S 1 d)) := Set.range fun e : Fin d => dEnd (B.FK S) (Pi.single e 1)
+    have hs : ∀ x ∈ s, ∀ y ∈ s, x * y = y * x := by
+      rintro _ ⟨e, rfl⟩ _ ⟨e', rfl⟩
+      exact hcomm _ _
+    letI : IsMulCommutative (Algebra.adjoin S s) :=
+      Algebra.isMulCommutative_adjoin S (fun x hx y hy _ => hs x hx y hy)
+    have hmem : ∀ v : Fin d → S, dEnd (B.FK S) v ∈ Algebra.adjoin S s := by
+      intro v
+      rw [dEnd_comb (B.FK S) (fun e => v e) (fun e => Pi.single e 1) v (fun e' => by simp [Pi.single_apply])]
+      exact Subalgebra.sum_mem _ fun e _ => Subalgebra.smul_mem _ (Algebra.subset_adjoin (Set.mem_range_self e)) _
+    obtain ⟨G, hG⟩ : ∃ G : Fin n → PS S 1 d, ∀ (b : Fin n) (u : Lt1 Dw → Fin d → S) (Q : MvPolynomial (Lt1 Dw) S),
+        B.nabVal S hg H.w0 k (f b) u Q = MvPowerSeries.constantCoeff (DpolyOf (B.FK S) u Q (G b)) :=
+      ⟨_, fun b u Q => rfl⟩
+    let lam : Fin n → Algebra.adjoin S s →ₗ[S] S := fun b =>
+      { toFun := fun z => MvPowerSeries.constantCoeff ((z : Module.End S (PS S 1 d)) (G b))
+        map_add' := fun z z' => by simp
+        map_smul' := fun r z => by simp [MvPowerSeries.smul_eq_C_mul] }
+    let φ : c.F →+* (⨂[S] _ : Fin n, Algebra.adjoin S s) :=
+      (algebraMap S (⨂[S] _ : Fin n, Algebra.adjoin S s)).comp (algebraMap c.F S)
+    have hpull : ∀ (r : S) (t : ⨂[S] _ : Fin n, Algebra.adjoin S s),
+        prodForm lam (algebraMap S _ r * t) = r * prodForm lam t := by
+      intro r t
+      rw [← Algebra.smul_def, map_smul, smul_eq_mul]
+    have hval : ∀ (U : Lt1 Dw → Fin d → S) (X : Lt1 Dw → Algebra.adjoin S s),
+        (∀ l, (Algebra.adjoin S s).val (X l) = dEnd (B.FK S) (U l)) →
+        ∑ m ∈ P.support, algebraMap c.F S (P.coeff m) *
+            ∏ b, B.nabVal S hg H.w0 k (f b) U (MvPolynomial.monomial (colOf m b) 1) =
+          prodForm lam (MvPolynomial.eval₂Hom φ (fun ℓ : LtN Dw n =>
+            PiTensorProduct.singleAlgHom (R := S) (A := fun _ : Fin n => Algebra.adjoin S s) ℓ.2.2
+              (X ⟨ℓ.1, ℓ.2.1⟩)) P) := by
+      intro U X hX
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_eq', map_sum]
+      refine Finset.sum_congr rfl fun m _ => ?_
+      rw [show φ (P.coeff m) = algebraMap S _ (algebraMap c.F S (P.coeff m)) from rfl, hpull]
+      congr 1
+      have e1 : ∀ b, B.nabVal S hg H.w0 k (f b) U (MvPolynomial.monomial (colOf m b) 1) =
+          lam b (∏ l, X l ^ (colOf m b) l) := by
+        intro b
+        rw [hG, dpoly_monomial, dmon_eq (B.FK S) (Algebra.adjoin S s).val U X hX]
+        rfl
+      simp only [e1]
+      rw [← prodForm_prod]
+      congr 1
+      simp only [map_prod, map_pow]
+      rw [Finset.prod_comm, Fintype.prod_sigma, Fintype.prod_sigma]
+      refine Finset.prod_congr rfl fun τ _ => ?_
+      rw [Fintype.prod_prod_type]
+      refine Finset.prod_congr rfl fun i _ => Finset.prod_congr rfl fun b _ => ?_
+      simp [colOf]
+    let X : Lt1 Dw → Algebra.adjoin S s := fun l => ⟨dEnd (B.FK S) (uvec l), hmem _⟩
+    let X' : Lt1 Dw → Algebra.adjoin S s := fun l => ⟨dEnd (B.FK S) (uvec' l), hmem _⟩
+    have hx' : ∀ τ i, X' ⟨τ, i⟩ = ∑ j, cf τ i j • X ⟨τ, j⟩ := by
+      intro τ i
+      apply Subtype.val_injective
+      change dEnd (B.FK S) (uvec' ⟨τ, i⟩) = (Algebra.adjoin S s).val (∑ j, cf τ i j • X ⟨τ, j⟩)
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
+      simp only [map_smul]
+      exact dEnd_comb (B.FK S) (cf τ i) (fun j => uvec ⟨τ, j⟩) _ (huv τ i)
+    rw [hval uvec' X' (fun l => rfl), hval uvec X (fun l => rfl)]
+    have hY : (fun ℓ : LtN Dw n => PiTensorProduct.singleAlgHom (R := S)
+          (A := fun _ : Fin n => Algebra.adjoin S s) ℓ.2.2 (X' ⟨ℓ.1, ℓ.2.1⟩)) =
+        fun ℓ => ∑ j, algebraMap S (⨂[S] _ : Fin n, Algebra.adjoin S s) (cf ℓ.1 ℓ.2.1 j) *
+          PiTensorProduct.singleAlgHom (R := S) (A := fun _ : Fin n => Algebra.adjoin S s) ℓ.2.2 (X ⟨ℓ.1, j⟩) := by
+      funext ℓ
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx', map_sum]
+      simp only [map_smul]
+      simp only [Algebra.smul_def]
+    have h3 := eval₂_triangular φ hI hD (fun τ i j => algebraMap S (⨂[S] _ : Fin n, Algebra.adjoin S s) (cf τ i j))
+      (fun τ i j h => by simp [hcf τ i j h]) (fun τ i => (hu τ i).map _)
+      (fun ℓ : LtN Dw n => PiTensorProduct.singleAlgHom (R := S)
+          (A := fun _ : Fin n => Algebra.adjoin S s) ℓ.2.2 (X ⟨ℓ.1, ℓ.2.1⟩))
+    rw [hY]
+    refine (congrArg (prodForm lam) h3).trans ?_
+    rw [← hpull]
+    congr 2
+    simp [map_prod, map_pow]
 
 end GlobalTheory

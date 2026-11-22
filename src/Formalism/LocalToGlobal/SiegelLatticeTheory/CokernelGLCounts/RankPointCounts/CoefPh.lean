@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbVal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbSumGlue
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbSumShift
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbVal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbSumGlue
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbSumShift
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem phase_class_holds {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Lo
       Y' = Loc.uLow xy.1 * modMat δ T T' p w * Loc.uUp w₀ xy.2
   · by_cases h : ∃ xy : (Loc.IL (D.R.rS + 1) → (D.s.atP p).Ep) × (Loc.IN w₀ → (D.s.atP p).Ep),
         Y = Loc.uLow xy.1 * modMat δ T T' p w * Loc.uUp w₀ xy.2
-    · rw [dif_pos h', dif_pos h]
+    · rw [dite_eq_left h', dite_eq_left h]
       congr 1
       have e1 := zAt_eq hmat h.choose
       have e2 := zAt_eq hmat h'.choose

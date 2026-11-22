@@ -1,19 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IntegrandEqOnPiece
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocalFieldUniformizerNormProperties
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GeneralLinearIntegralCompactOpen
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.MemIntegralGLIffIntegralUnitDet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GeneralLinearUnimodularHaar
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IwasawaDecompositionUpperTriangular
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IntegrandEqOnPiece
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocalFieldUniformizerNormProperties
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GeneralLinearIntegralCompactOpen
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.MemIntegralGLIffIntegralUnitDet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GeneralLinearUnimodularHaar
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IwasawaDecompositionUpperTriangular
+
+@[expose] public section
 
 open MeasureTheory Matrix GlobalTheory.CompanionTheory.QL
 
 namespace GlobalTheory.ThK.Dbl.Split
 
-set_option hygiene false in
-local notation "𝟙" => (1 : Matrix (Fin n) (Fin n) k)
-set_option hygiene false in
-local notation "𝟘" => (0 : Matrix (Fin n) (Fin n) k)
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {O : Subring k} {ϖ : kˣ}
   {nrm : AbsoluteValue k ℝ} {q n : ℕ}
@@ -47,7 +47,7 @@ theorem zeta (h : LF O (ϖ : k) nrm q) {A : kˣ →* ℂ} (hA : ∀ u : kˣ, nrm
       exact mul_inv_cancel₀ (zpow_pos hq _).ne')
     rw [map_mul, map_inv, map_zpow, mul_inv_eq_one₀ (zpow_ne_zero _ hϖ)] at this
     beta_reduce
-    rw [dif_neg h0, this, mul_zpow, hx, ← Complex.ofReal_zpow, ← Real.rpow_intCast, ← Real.rpow_intCast, ← Real.rpow_mul hq.le,
+    rw [dite_eq_right h0, this, mul_zpow, hx, ← Complex.ofReal_zpow, ← Real.rpow_intCast, ← Real.rpow_intCast, ← Real.rpow_mul hq.le,
       ← Real.rpow_mul hq.le]
     congr 3; push_cast; ring
   · have hd : b.1.det = ∏ i, b.1 i i := det_of_upperTriangular hb
@@ -56,7 +56,7 @@ theorem zeta (h : LF O (ϖ : k) nrm q) {A : kˣ →* ℂ} (hA : ∀ u : kˣ, nrm
     beta_reduce
     rw [map_mul, map_mul, hA (GeneralLinearGroup.det κ) ((GlobalTheory.CompanionTheory.QLDet.mem_GLint_iff h n κ).1 hκ).2, mul_one, this, map_prod]
     refine Finset.prod_congr rfl fun i _ => ?_
-    rw [dif_neg (h0 i), mul_assoc, ← Complex.ofReal_mul, ← Real.rpow_add (nrm.pos (h0 i))]
+    rw [dite_eq_right (h0 i), mul_assoc, ← Complex.ofReal_mul, ← Real.rpow_add (nrm.pos (h0 i))]
     simp [a]
   · rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg (Real.rpow_nonneg hq.le _), mul_assoc, e]
     exact hb _ (by have := i.2; omega)
@@ -112,7 +112,8 @@ theorem doubling (h : LF O (ϖ : k) nrm q) {A B : kˣ →* ℂ} (hA : ∀ u : k�
 
 theorem exists_frame (h : LF O (ϖ : k) nrm q) (g : GL (Fin n) k) : ∃ (t : GL (Fin n) k) (κ : GL (Fin n ⊕ Fin n) k),
     (∀ i j, κ.1 i j ∈ O) ∧ (∀ i j, (κ⁻¹).1 i j ∈ O) ∧ IsGcd O g t ∧
-      (κ⁻¹).1 * fromRows 𝟙 𝟙 = fromRows ((g⁻¹).1 * t.1) t.1 := by
+      (κ⁻¹).1 * fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) 1 =
+        fromRows ((g⁻¹).1 * t.1) t.1 := by
   let r := (reindexAlgEquiv k k (finSumFinEquiv (m := n) (n := n))).toMulEquiv
   let N : GL (Fin n ⊕ Fin n) k := ⟨fromBlocks g.1 0 (-g.1) 1, fromBlocks (g⁻¹).1 0 1 1,
     by simp [fromBlocks_multiply], by simp [fromBlocks_multiply]⟩
@@ -127,13 +128,14 @@ theorem exists_frame (h : LF O (ϖ : k) nrm q) (g : GL (Fin n) k) : ∃ (t : GL 
   have bb : b.1 = fromBlocks b.1.toBlocks₁₁ b.1.toBlocks₁₂ 0 b.1.toBlocks₂₂ := by rw [← b0, fromBlocks_toBlocks]
   have ht : b.1.toBlocks₁₁.det ≠ 0 := left_ne_zero_of_mul (b := b.1.toBlocks₂₂.det) (by rw [← det_fromBlocks_zero₂₁, ← bb]; exact GeneralLinearGroup.det_ne_zero b)
   let t : GL (Fin n) k := GeneralLinearGroup.mkOfDetNeZero _ ht
-  have key : (c⁻¹).1 * fromRows 𝟙 𝟘 = fromRows ((g⁻¹).1 * t.1) t.1 := by
+  have key : (c⁻¹).1 * fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) 0 =
+      fromRows ((g⁻¹).1 * t.1) t.1 := by
     rw [show c⁻¹ = N⁻¹ * b by rw [e']; group, Units.val_mul, Matrix.mul_assoc, bb, fromBlocks_mul_fromRows]
     exact (fromBlocks_mul_fromRows _ _ _ _ _ _).trans (by simp; rfl)
   let C : GL (Fin n ⊕ Fin n) k := ⟨fromBlocks 1 0 1 1, fromBlocks 1 0 (-1) 1,
     by simp [fromBlocks_multiply], by simp [fromBlocks_multiply]⟩
   have o : ∀ i j : Fin n, (1 : Matrix (Fin n) (Fin n) k) i j ∈ O := fun i j => by
-    rw [one_apply]; split_ifs; exacts [O.one_mem, O.zero_mem]
+    rw [Matrix.one_apply]; split_ifs; exacts [O.one_mem, O.zero_mem]
   have mul : ∀ {α β γ : Type} [Fintype β] (x : Matrix α β k) (y : Matrix β γ k), (∀ i j, x i j ∈ O) → (∀ i j, y i j ∈ O) →
       ∀ i j, (x * y) i j ∈ O := fun x y hx hy i j => O.sum_mem fun l _ => O.mul_mem (hx i l) (hy l j)
   refine ⟨t, C * c, mul _ _ ?_ c1, ?_, fun a => ?_, ?_⟩
@@ -141,25 +143,27 @@ theorem exists_frame (h : LF O (ϖ : k) nrm q) (g : GL (Fin n) k) : ∃ (t : GL 
   · rw [_root_.mul_inv_rev]
     refine mul _ _ c2 ?_
     rintro (i | i) (j | j); exacts [o i j, O.zero_mem, O.neg_mem (o i j), o i j]
-  · have k2 : (c⁻¹).1 * fromRows (t⁻¹ * a).1 𝟘 = fromRows (g⁻¹ * a).1 a.1 := by
+  · have k2 : (c⁻¹).1 * fromRows (m₂ := Fin n) (t⁻¹ * a).1 0 = fromRows (g⁻¹ * a).1 a.1 := by
       have := congrArg (· * (t⁻¹ * a).1) key
       simpa only [Matrix.mul_assoc, fromRows_mul, Matrix.one_mul, Matrix.zero_mul, Units.val_mul,
         Units.mul_inv_cancel_left] using this
     refine ⟨fun ⟨h1, h2⟩ i j => ?_, fun h1 => ?_⟩
     · have := mul c.1 (fromRows (g⁻¹ * a).1 a.1) c1 (by rintro (i | i) j; exacts [h2 i j, h1 i j]) (.inl i) j
       rwa [← k2, ← Matrix.mul_assoc, Units.mul_inv, Matrix.one_mul] at this
-    · have := mul _ (fromRows (t⁻¹ * a).1 𝟘) c2 (by rintro (i | i) j; exacts [h1 i j, O.zero_mem])
+    · have := mul _ (fromRows (m₂ := Fin n) (t⁻¹ * a).1 0) c2 (by rintro (i | i) j; exacts [h1 i j, O.zero_mem])
       rw [k2] at this
       exact ⟨fun i j => this (.inr i) j, fun i j => this (.inl i) j⟩
   · rw [_root_.mul_inv_rev, Units.val_mul, Matrix.mul_assoc, ← key]
     congr 1
     exact (fromBlocks_mul_fromRows _ _ _ _ _ _).trans (by simp)
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem exists_dual (J : GL (Fin n) k) {p J₂ : GL (Fin n ⊕ Fin n) k} (hJ : J₂.1 = fromBlocks J.1 0 0 (-J.1)) {t : GL (Fin n) k}
-    (h : p.1 * fromRows 𝟙 𝟙 = fromRows 𝟙 𝟙 * t.1) : ∃ t' : GL (Fin n) k,
-      (J₂⁻¹).1 * (p⁻¹).1ᵀ * J₂.1 * fromRows 𝟙 𝟙 = fromRows 𝟙 𝟙 * t'.1 ∧
+    (h : p.1 * fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) 1 =
+      fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) 1 * t.1) : ∃ t' : GL (Fin n) k,
+      (J₂⁻¹).1 * (p⁻¹).1ᵀ * J₂.1 * fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) 1 =
+        fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) 1 * t'.1 ∧
         GeneralLinearGroup.det t' = GeneralLinearGroup.det t * (GeneralLinearGroup.det p)⁻¹ := by
   obtain ⟨A, B, C, D, e⟩ : ∃ A B C D, p.1 = fromBlocks A B C D := ⟨_, _, _, _, (fromBlocks_toBlocks _).symm⟩
   rw [e, fromBlocks_mul_fromRows, fromRows_mul] at h
@@ -167,21 +171,25 @@ theorem exists_dual (J : GL (Fin n) k) {p J₂ : GL (Fin n ⊕ Fin n) k} (hJ : J
   have hA : A = t.1 - B := eq_sub_of_add_eq h.1
   have hC : C = t.1 - D := eq_sub_of_add_eq h.2
   have d : p.1.det = t.1.det * (D - B).det := by
-    have : p.1 * fromBlocks 𝟙 𝟘 𝟙 𝟙 = fromBlocks 𝟙 𝟘 𝟙 𝟙 * fromBlocks t.1 B 0 (D - B) := by
+    have : p.1 * fromBlocks 1 0 1 1 = fromBlocks 1 0 1 1 * fromBlocks t.1 B 0 (D - B) := by
       simp [e, fromBlocks_multiply, hA, hC]
     simpa [det_fromBlocks_zero₂₁, det_fromBlocks_zero₁₂] using congrArg det this
   have hs : (D - B)ᵀ.det ≠ 0 := by
     rw [det_transpose]; exact right_ne_zero_of_mul (d.symm.trans_ne (GeneralLinearGroup.det_ne_zero p))
   let s := GeneralLinearGroup.mkOfDetNeZero _ hs
-  have k1 : p.1ᵀ * fromRows 𝟙 (-𝟙) = fromRows 𝟙 (-𝟙) * s.1 := by
+  have k1 : p.1ᵀ * fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) (-1) =
+      fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) (-1) * s.1 := by
     rw [e, fromBlocks_transpose, fromBlocks_mul_fromRows, fromRows_mul, hA, hC]
-    change _ = fromRows (𝟙 * (D - B)ᵀ) (-𝟙 * (D - B)ᵀ)
+    change _ = fromRows (1 * (D - B)ᵀ) (-1 * (D - B)ᵀ)
     congr 1 <;> simp [transpose_sub] <;> abel
-  have k2 : (p⁻¹).1ᵀ * fromRows 𝟙 (-𝟙) = fromRows 𝟙 (-𝟙) * (s⁻¹).1 := by
+  have k2 : (p⁻¹).1ᵀ * fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) (-1) =
+      fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) (-1) * (s⁻¹).1 := by
     have := congrArg (fun x => (p⁻¹).1ᵀ * x * (s⁻¹).1) k1
     simp only [← Matrix.mul_assoc, ← transpose_mul, Units.mul_inv, transpose_one, Matrix.one_mul] at this
     rw [this, Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one]
-  have k3 : J₂.1 * fromRows 𝟙 𝟙 = fromRows 𝟙 (-𝟙) * J.1 := by rw [hJ, fromBlocks_mul_fromRows, fromRows_mul]; simp
+  have k3 : J₂.1 * fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) 1 =
+      fromRows (m₂ := Fin n) (1 : Matrix (Fin n) (Fin n) k) (-1) * J.1 := by
+    rw [hJ, fromBlocks_mul_fromRows, fromRows_mul]; simp
   refine ⟨J⁻¹ * s⁻¹ * J, ?_, Units.ext ?_⟩
   · rw [Matrix.mul_assoc, k3, ← Matrix.mul_assoc, Matrix.mul_assoc (J₂⁻¹).1, k2, Units.val_mul, Units.val_mul,
       ← Matrix.mul_assoc, ← Matrix.mul_assoc, ← Matrix.mul_assoc]

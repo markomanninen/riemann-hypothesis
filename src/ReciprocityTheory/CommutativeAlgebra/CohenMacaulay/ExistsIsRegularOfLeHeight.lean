@@ -1,4 +1,8 @@
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.RingKrullDimQuotientOfMemAssociatedPrimes
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.RingKrullDimQuotientOfMemAssociatedPrimes
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 
@@ -9,7 +13,7 @@ variable {R : Type*} [CommRing R] [IsLocalRing R]
 private theorem height_le_length_of_mem_minimalPrimes [IsNoetherianRing R] (rs : List R) {p : Ideal R}
     (hp : p ∈ (Ideal.ofList rs).minimalPrimes) : p.height ≤ (rs.length : ℕ∞) := by
   classical
-  have h1 := Ideal.height_le_spanRank_toENat_of_mem_minimal_primes _ p hp
+  have h1 := Ideal.height_le_spanRank_toENat_of_mem_minimalPrimes _ p hp
   have hcard : Cardinal.mk {x | x ∈ rs} ≤ rs.length := by
     have : {x | x ∈ rs} = (rs.toFinset : Set R) := by ext; simp
     rw [this]

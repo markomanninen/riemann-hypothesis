@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeIntA
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeIntA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 

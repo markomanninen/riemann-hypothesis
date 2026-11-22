@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LengthEqLengthInvariantsOfTorsionLevels
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LengthEqLengthInvariantsOfTorsionLevels
+
+@[expose] public section
 
 open scoped TensorProduct
 open GlobalTheory.TateLimit
@@ -36,19 +40,3 @@ private theorem step (l : ℕ) [Fact l.Prime] (X : Type) [AddCommGroup X] [Modul
   first
     | exact Nat.mul_le_mul h1 h2
     | exact (Nat.mul_le_mul h2 h1).trans_eq (mul_comm _ _)
-
-theorem UpperTheory.V.K.cardQuotPow :
-    ∀ (l : ℕ) [Fact l.Prime] (X : Type) [AddCommGroup X] [Module ℤ_[l] X] [Finite X] (c : ℕ), Nat.card (X ⧸ lpow l X c) ≤ Nat.card (X ⧸ lpow l X 1) ^ c := by
-  intro l _ X _ _ _ c
-  induction c with
-  | zero =>
-    have h : lpow l X 0 = ⊤ := by
-      rw [eq_top_iff]
-      intro x _
-      exact ⟨x, by simp⟩
-    haveI : Subsingleton (X ⧸ lpow l X 0) := Submodule.Quotient.subsingleton_iff.2 h
-    rw [pow_zero]
-    exact (Nat.card_of_subsingleton (0 : X ⧸ lpow l X 0)).le
-  | succ c ih =>
-    rw [pow_succ']
-    exact (step l X c).trans (Nat.mul_le_mul_left _ ih)

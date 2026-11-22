@@ -1,5 +1,9 @@
-import Formalism.LandauZeroFreeBounds.SiegelWalfiszAP
-import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+module
+
+public import Formalism.LandauZeroFreeBounds.SiegelWalfiszAP
+public import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+
+@[expose] public section
 
 open Finset Complex ArithmeticFunction
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,9 +39,9 @@ theorem allPrim_of_abelianDeRhamFree (h : GlobalTheory.Published.AbelianDeRhamFr
     ⟨pullOver (dp0 R) (𝟙 _) (fst A A) a + pullOver (dp0 R) (𝟙 _) (snd A A) b, by
     refine Prod.ext ?_ ?_
     · change pullOver _ _ _ _ = a
-      rw [map_add, pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, one0, id0, add_zero]
+      rw [map_add (f := _), pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, one0, id0, add_zero]
     · change pullOver _ _ _ _ = b
-      rw [map_add, pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, one0, id0, zero_add]⟩
+      rw [map_add (f := _), pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, one0, id0, zero_add]⟩
   have hb : Function.Bijective Ψ := Module.bijective_of_surjective_of_rankAtStalk_eq hs (by
     intro m hm
     rw [Module.rankAtStalk_prod, Pi.add_apply, r1, r2]; ring)
@@ -46,10 +50,10 @@ theorem allPrim_of_abelianDeRhamFree (h : GlobalTheory.Published.AbelianDeRhamFr
   have e2 : lift (1 : A ⟶ A) (𝟙 A) ≫ μ[A] = 𝟙 A := by rw [← Hom.mul_def, _root_.one_mul]
   refine Prod.ext ?_ ?_
   · change pullOver _ _ _ _ = pullOver _ _ _ _
-    rw [map_add, pullOver_pullOver, pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, e1,
+    rw [map_add (f := _), pullOver_pullOver, pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, e1,
       one0, id0, add_zero]
   · change pullOver _ _ _ _ = pullOver _ _ _ _
-    rw [map_add, pullOver_pullOver, pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, e2,
+    rw [map_add (f := _), pullOver_pullOver, pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, e2,
       one0, id0, zero_add]
 
 theorem abelianDeRhamFree_toFree (h : GlobalTheory.Published.AbelianDeRhamFree) :

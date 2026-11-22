@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthFourDenominator
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsExponentLeLiftsAtArcOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthFourDenominator
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsExponentLeLiftsAtArcOf
+
+@[expose] public section
 
 noncomputable section
 

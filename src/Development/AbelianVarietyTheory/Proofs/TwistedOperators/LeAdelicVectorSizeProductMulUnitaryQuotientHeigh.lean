@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VsizeNonneg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FinitePlaceRelativeNormLeLocalSizePowStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePlaceRelativeNormLeMaxEmbeddingPowStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VsizeNonneg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FinitePlaceRelativeNormLeLocalSizePowStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePlaceRelativeNormLeMaxEmbeddingPowStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -57,7 +61,8 @@ theorem vFin_mulVec_le (V : HSp D) (g : GA D V) (v : HeightOneSpectrum (𝓞 D.h
       htFin D.host.F v (Formalism.UG.bc (compFin D.host.F D.host.E v) (matHom V g)) := fun j => by
     rw [← bc_fin_apply]
     exact (absFin_le_normFin D.host.F v _ i j).trans (le_htOf _ _)
-  rw [mulVec_apply', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mulVec_apply', map_sum]
   refine absFin_sum_le _ v _ _ fun j _ => ?_
   rw [map_mul]
   refine (absFin_mul_le _ v _ _).trans (mul_le_mul' (hM j) ?_)
@@ -87,7 +92,8 @@ theorem vInf_mulVec_le (V : HSp D) (g : GA D V) (w : InfinitePlace D.host.F) (x 
   have hφ : ∀ a b : AE D, infEmb τ (compInf D.host.F D.host.E w (a * b)) =
       infEmb τ (compInf D.host.F D.host.E w a) * infEmb τ (compInf D.host.F D.host.E w b) := fun a b =>
     ((infEmb τ).comp (compInf D.host.F D.host.E w)).map_mul a b
-  rw [mulVec_apply', map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mulVec_apply', map_sum, map_sum]
   refine (nnnorm_sum_le _ _).trans ?_
   calc ∑ j, ‖infEmb τ (compInf D.host.F D.host.E w (Formalism.L2.Theta.mt V g i j * x j))‖₊
       ≤ ∑ _j : Fin V.rank, htInf D.host.F w (Formalism.UG.bc (compInf D.host.F D.host.E w) (matHom V g)) * vInf w x :=

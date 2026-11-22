@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwasawaUnitaryUpperTriangular
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwasawaUnitaryUpperTriangular
+
+@[expose] public section
+
 open Matrix Finset MeasureTheory
 open scoped ContDiff ComplexConjugate InnerProductSpace
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
@@ -21,9 +26,8 @@ theorem exists_Pb_mul_unitary : ∀ (n : ℕ) (lev : Fin n → ℕ), Monotone le
   have hg' : g = bᴴ * kᴴ := by
     rw [← Matrix.conjTranspose_mul, ← hb, Matrix.conjTranspose_conjTranspose]
   have hkH : kᴴ ∈ Matrix.unitaryGroup (Fin n) ℂ := by
-    rw [Matrix.mem_unitaryGroup_iff]
-    have := (Matrix.mem_unitaryGroup_iff').1 hk
-    simpa [Matrix.star_eq_conjTranspose] using this
+    rw [← Matrix.star_eq_conjTranspose]
+    exact Unitary.star_mem hk
   refine ⟨bᴴ, ⟨?_, ?_⟩, ⟨kᴴ, hkH⟩, hg'⟩
   · intro h0
     apply hdet

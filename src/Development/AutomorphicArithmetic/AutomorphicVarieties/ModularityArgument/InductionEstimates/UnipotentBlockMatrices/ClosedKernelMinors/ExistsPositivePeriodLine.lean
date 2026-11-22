@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BumpEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.Heckify
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.FlatInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BumpEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.Heckify
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.FlatInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -134,7 +138,7 @@ private theorem exists_uniform_neighborhood {d : ℕ} (S : Eu d →ₗ[ℂ] (G �
       conv_lhs => rw [← (EuclideanSpace.basisFun (Fin d) ℂ).sum_repr p.1]
       simp
     rw [this]
-    refine continuous_finset_sum _ fun i _ => Continuous.mul (by fun_prop) ((hS _).comp continuous_snd)
+    refine continuous_finsetSum _ fun i _ => Continuous.mul (by fun_prop) ((hS _).comp continuous_snd)
   refine (isCompact_sphere (0 : Eu d) 1).induction_on (p := fun s => ∃ O ∈ 𝓝 (1 : G), ∀ v ∈ s, ∃ x, ∃ ε, 0 ≤ ε ∧
     ε < ‖H x * S v x‖ ∧ ∀ k ∈ U, ∀ h ∈ O,
       ‖e k‖ * ‖H (x * k * h) * S v (x * k * h) - H (x * k) * S v (x * k)‖ ≤ ε) ⟨univ, univ_mem, by simp⟩ ?_ ?_ ?_
@@ -214,7 +218,7 @@ private theorem exists_positive_period_line {K : Type} [Field K] [NumberField K]
     rw [e3, zero_sub, norm_neg] at e2
     exact absurd e2 (not_le.2 h2)
   have hinj : Function.Injective T := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     by_contra hne
     have hn : ‖v‖ ≠ 0 := norm_ne_zero_iff.2 hne

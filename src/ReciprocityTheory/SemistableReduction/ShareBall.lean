@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.ShareBallC
+module
+
+public import ReciprocityTheory.SemistableReduction.ShareBallC
+
+@[expose] public section
 
 noncomputable section
 

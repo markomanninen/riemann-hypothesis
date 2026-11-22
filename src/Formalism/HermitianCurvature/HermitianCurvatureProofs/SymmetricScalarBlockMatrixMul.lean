@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementU
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 
@@ -127,7 +131,7 @@ theorem zhat_apply_low (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (g : Mat
     (a b : Fin (r + 1)) (ha : a.val < r) (hb : b.val < r) :
     Zhat k r z z' g a b = g ⟨2 * r + k - a.val, by omega⟩ ⟨b.val, by omega⟩ := by
   unfold Zhat fvec herm
-  rw [dif_pos ha, dif_pos hb]
+  rw [dite_eq_left ha, dite_eq_left hb]
   have hstar : star (bvec (eI k r ⟨a.val, ha⟩)) = bvec (eI k r ⟨a.val, ha⟩) := by
     ext i; simp only [bvec, Pi.star_apply, Pi.single_apply]; split_ifs <;> simp
   rw [hstar]
@@ -313,12 +317,12 @@ theorem fm_eq (z : Fin (2 * (j + ρ) + k + 1) → ℂ) (hz : inWb k (j + ρ) z) 
     unfold fvec
     rw [column_index_second_val]
     by_cases hc : y.val < ρ
-    · rw [dif_pos (by omega), dif_pos hc]
+    · rw [dite_eq_left (by omega), dite_eq_left hc]
       simp only [bvec, eI, Pi.single_apply, Fin.ext_iff, block_index_middle_val]
       by_cases hxy : x.val = y.val
       · rw [if_pos (by omega), if_pos hxy]
       · rw [if_neg (by omega), if_neg hxy]
-    · rw [dif_neg (by omega), dif_neg hc]
+    · rw [dite_eq_right (by omega), dite_eq_right hc]
       simp only [lowV]
       congr 1
   · rw [fvec_apply_ge z _ _ (by rw [block_index_last_val]; omega), hz _ (Or.inr (by rw [block_index_last_val]; omega))]

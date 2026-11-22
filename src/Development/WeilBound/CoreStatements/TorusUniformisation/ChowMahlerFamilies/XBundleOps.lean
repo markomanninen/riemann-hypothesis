@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SumMemLoc
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AffineHilbertIdealSheafOfQuotientIdealTop
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XBundleOfFamily
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SumMemLoc
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AffineHilbertIdealSheafOfQuotientIdealTop
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XBundleOfFamily
+
+@[expose] public section
+
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.Num GroundTheory.Heights₂.Heights.NumbersDVR
 open ReciprocityTheory.ChartRestriction.G.Geo (ChartBundle chartRing)
-open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg mcIdeal chartMon joinCoord bcCoord pullDeg liftVar fnField ck rootNum SameGeneric LatLE IsPull IsPullBC IsSubQuot QuotIso IsFrobPres FlagModel modelDeg)
+open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg chartMon)
 
 namespace PositivityTheory.Xgn.A_bundle_ops
 
@@ -57,7 +62,8 @@ theorem locFree_comap (R : Subalgebra O Ω) {N : ℕ} (L : AddSubgroup V) (e : V
     rw [hb]
     refine exists_congr fun a => and_congr_right fun _ => ?_
     rw [← e.symm.injective.eq_iff, e.symm_apply_apply]
-    simp only [map_sum, map_smul, Function.comp_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Function.comp_apply]
 
 theorem locFree_prod (R : Subalgebra O Ω) {N N₁ : ℕ} (L : AddSubgroup V) (L₁ : AddSubgroup V₁)
     (h : LocFree R N L) (h₁ : LocFree R N₁ L₁) : LocFree R (N + N₁) (L.prod L₁) := by
@@ -137,38 +143,42 @@ theorem op_sum (N N₁ : ℕ) (V : Type) [AddCommGroup V] [Module Ω V] (V₁ : 
     [Module Ω V₁] (E : ChartBundle O (mseg x) N V) (F : ChartBundle O (mseg x) N₁ V₁) :
     ∃ P : ChartBundle O (mseg x) (N + N₁) (V × V₁),
       ∀ s, mseg x s ≠ 0 → P.lat s = (E.lat s).prod (F.lat s) := by
-  obtain ⟨hE, hE'⟩ := (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x N V).2 E
-  obtain ⟨hF, hF'⟩ := (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x N₁ V₁).2 F
-  refine (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x _ _).1 (fun s => (E.lat s).prod (F.lat s))
-    ⟨fun s hs a ha v hv => ⟨hE.1 s hs a ha _ hv.1, hF.1 s hs a ha _ hv.2⟩,
-      fun s t hs ht v hv => ?_⟩ fun s hs => locFree_prod _ _ _ (hE' s hs) (hF' s hs)
-  obtain ⟨n, hn⟩ := hE.2 s t hs ht _ hv.1
-  obtain ⟨m, hm⟩ := hF.2 s t hs ht _ hv.2
+  have hL (s : ∀ k, ι k) (hs : mseg x s ≠ 0) :
+      LocFree (chartRing O (mseg x) s) (N + N₁) ((E.lat s).prod (F.lat s)) :=
+    locFree_prod _ _ _ ⟨E.stable s, E.frame s hs⟩ ⟨F.stable s, F.frame s hs⟩
+  refine ⟨{ lat := fun s => (E.lat s).prod (F.lat s)
+            stable := fun s a ha v hv => ⟨E.stable s a ha _ hv.1, F.stable s a ha _ hv.2⟩
+            frame := fun s hs => (hL s hs).2
+            overlap := ?_ }, fun _ _ => rfl⟩
+  intro s t hs ht v hv
+  obtain ⟨n, hn⟩ := E.overlap s t hs ht _ hv.1
+  obtain ⟨m, hm⟩ := F.overlap s t hs ht _ hv.2
   refine ⟨n + m, ?_, ?_⟩
-  · have := hE.1 t ht _ (pow_mem (div_mem x s t) m) _ hn
+  · have := E.stable t _ (pow_mem (div_mem x s t) m) _ hn
     rw [smul_smul, ← pow_add, add_comm] at this
     exact this
-  · have := hF.1 t ht _ (pow_mem (div_mem x s t) n) _ hm
+  · have := F.stable t _ (pow_mem (div_mem x s t) n) _ hm
     rw [smul_smul, ← pow_add] at this
     exact this
 
 theorem op_scale (N : ℕ) (V : Type) [AddCommGroup V] [Module Ω V] (E : ChartBundle O (mseg x) N V)
     (c : Ω) (hc : c ≠ 0) : ∃ E' : ChartBundle O (mseg x) N V, IsScaled x c E.lat E'.lat := by
-  obtain ⟨hE, hE'⟩ := (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x N V).2 E
   let e : V ≃ₗ[Ω] V := LinearEquiv.smulOfNeZero Ω V c⁻¹ (inv_ne_zero hc)
   have he : ∀ v, e v = c⁻¹ • v := fun _ => rfl
   let Γ : (∀ k, ι k) → AddSubgroup V := fun s => (E.lat s).comap e.toLinearMap.toAddMonoidHom
   have hΓ : ∀ s v, v ∈ Γ s ↔ e v ∈ E.lat s := fun _ _ => Iff.rfl
-  obtain ⟨E', h⟩ := (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x N V).1 Γ
-    ⟨fun s hs a ha v hv => by
-        rw [hΓ, map_smul]
-        exact hE.1 s hs a ha _ hv,
-      fun s t hs ht v hv => by
-        obtain ⟨m, hm⟩ := hE.2 s t hs ht _ ((hΓ s v).1 hv)
-        exact ⟨m, by rw [hΓ, map_smul]; exact hm⟩⟩
-    fun s hs => locFree_comap _ _ e _ (hΓ s) (hE' s hs)
-  refine ⟨E', fun s hs v => ?_⟩
-  rw [h s hs, hΓ, he]
+  have hL (s : ∀ k, ι k) (hs : mseg x s ≠ 0) :
+      LocFree (chartRing O (mseg x) s) N (Γ s) :=
+    locFree_comap _ _ e _ (hΓ s) ⟨E.stable s, E.frame s hs⟩
+  refine ⟨{ lat := Γ, stable := ?_, frame := fun s hs => (hL s hs).2, overlap := ?_ }, ?_⟩
+  · intro s a ha v hv
+    rw [hΓ, map_smul]
+    exact E.stable s a ha _ hv
+  · intro s t hs ht v hv
+    obtain ⟨m, hm⟩ := E.overlap s t hs ht _ ((hΓ s v).1 hv)
+    exact ⟨m, by rw [hΓ, map_smul]; exact hm⟩
+  intro s _ v
+  rw [hΓ, he]
   constructor
   · intro hv
     exact ⟨_, hv, (smul_inv_smul₀ hc v).symm⟩
@@ -195,16 +205,19 @@ theorem op_line (u : Ω) (a : K → ℤ) (hu : u ≠ 0) :
         exact ⟨fun _ => r, fun _ => hr, by simp⟩
       · rintro ⟨r, hr, rfl⟩
         exact ⟨r 0, hr 0, by simp⟩
-  obtain ⟨A, h⟩ := (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x 1 Ω).1 Γ
-    ⟨fun s hs => (hL s hs).1, fun s t hs ht v hv => by
-      obtain ⟨r, hr, rfl⟩ := (hΓ s v).1 hv
-      obtain ⟨m, hm⟩ := mul_mem (chart_le_loc x s t hs hr) (mon_mem (O := O) x s t hs ht a)
-      refine ⟨m, (hΓ _ _).2 ⟨_, hm, ?_⟩⟩
-      have := mon_ne x t ht a
-      rw [smul_eq_mul]
-      generalize (mseg x s / mseg x t) ^ m = g
-      field_simp⟩ hL
-  exact ⟨A, fun s hs v => by rw [h s hs, hΓ]⟩
+  refine ⟨{ lat := Γ, stable := ?_, frame := fun s hs => (hL s hs).2, overlap := ?_ },
+    fun s _ v => hΓ s v⟩
+  · intro s b hb v hv
+    obtain ⟨r, hr, rfl⟩ := (hΓ s v).1 hv
+    exact (hΓ _ _).2 ⟨b * r, mul_mem hb hr, by rw [smul_eq_mul, mul_assoc]⟩
+  · intro s t hs ht v hv
+    obtain ⟨r, hr, rfl⟩ := (hΓ s v).1 hv
+    obtain ⟨m, hm⟩ := mul_mem (chart_le_loc x s t hs hr) (mon_mem (O := O) x s t hs ht a)
+    refine ⟨m, (hΓ _ _).2 ⟨_, hm, ?_⟩⟩
+    have := mon_ne x t ht a
+    rw [smul_eq_mul]
+    generalize (mseg x s / mseg x t) ^ m = g
+    field_simp
 
 theorem op_triv (N : ℕ) (V : Type) [AddCommGroup V] [Module Ω V] (b : Module.Basis (Fin N) Ω V) :
     ∃ T : ChartBundle O (mseg x) N V,
@@ -222,46 +235,51 @@ theorem op_triv (N : ℕ) (V : Type) [AddCommGroup V] [Module Ω V] (b : Module.
     · rintro ⟨r, hr, rfl⟩ i
       rw [b.repr_sum_self]
       exact hr i
-  obtain ⟨T, h⟩ := (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x N V).1 Γ
-    ⟨fun s _ => (hL s).1, fun s t hs _ v hv => by
-      let R := chartRing O (mseg x) t
-      obtain ⟨m, hm⟩ := Reflexive.exists_uniform_pow R R.toSubring.toAddSubgroup
-        (fun a ha e he => R.mul_mem ha he) _ (div_mem x s t) (fun i => b.repr v i)
-        fun i => chart_le_loc x s t hs ((hΓ s v).1 hv i)
-      refine ⟨m, (hΓ _ _).2 fun i => ?_⟩
-      rw [map_smul]
-      exact hm i⟩ fun s _ => hL s
-  exact ⟨T, fun s hs v => by rw [h s hs, hΓ]⟩
+  refine ⟨{ lat := Γ, stable := fun s => (hL s).1, frame := fun s _ => (hL s).2, overlap := ?_ },
+    fun s _ v => hΓ s v⟩
+  intro s t hs _ v hv
+  let R := chartRing O (mseg x) t
+  obtain ⟨m, hm⟩ := Reflexive.exists_uniform_pow R R.toSubring.toAddSubgroup
+    (fun a ha e he => R.mul_mem ha he) _ (div_mem x s t) (fun i => b.repr v i)
+    fun i => chart_le_loc x s t hs ((hΓ s v).1 hv i)
+  refine ⟨m, (hΓ _ _).2 fun i => ?_⟩
+  rw [map_smul]
+  exact hm i
 
 theorem op_dual (N : ℕ) (V : Type) [AddCommGroup V] [Module Ω V] (V₁ : Type) [AddCommGroup V₁]
     [Module Ω V₁] (E : ChartBundle O (mseg x) N V) (β : V →ₗ[Ω] V₁ →ₗ[Ω] Ω)
     (hβ : Function.Bijective β.flip) :
     ∃ F : ChartBundle O (mseg x) N V₁, IsDualLat O x β E.lat F.lat := by
-  obtain ⟨hE, hE'⟩ := (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x N V).2 E
+  have hE (s : ∀ k, ι k) (hs : mseg x s ≠ 0) : LocFree (chartRing O (mseg x) s) N (E.lat s) :=
+    ⟨E.stable s, E.frame s hs⟩
   let Γ : (∀ k, ι k) → AddSubgroup V₁ := fun s =>
     ⨅ v : E.lat s, (chartRing O (mseg x) s).toSubring.toAddSubgroup.comap (β v).toAddMonoidHom
   have hΓ : ∀ s w, w ∈ Γ s ↔ ∀ v ∈ E.lat s, β v w ∈ chartRing O (mseg x) s :=
     fun s w => AddSubgroup.mem_iInf.trans ⟨fun h v hv => h ⟨v, hv⟩, fun h v => h v v.2⟩
   have hL : ∀ s, mseg x s ≠ 0 → LocFree (chartRing O (mseg x) s) N (Γ s) := fun s hs =>
-    (DualLattice.locFree_dual _ β hβ N _ _ (hE' s hs) (hΓ s)).1
-  obtain ⟨F, h⟩ := (PositivityTheory.Xgn.t_bundle_of_family O Ω K ι x N V₁).1 Γ
-    ⟨fun s hs => (hL s hs).1, fun s t hs ht w hw => by
-      obtain ⟨m, hm⟩ := Reflexive.exists_uniform_denominator _ N _ (hE' t ht) _ (div_mem x s t)
-        (β.flip w) fun v hv => by
-          obtain ⟨n, hn⟩ := hE.2 t s ht hs v hv
-          have h1 := chart_le_loc x s t hs ((hΓ s w).1 hw _ hn)
-          have h2 : (mseg x s / mseg x t) ^ n ∈ loc (chartRing O (mseg x) t) _ (div_mem x s t) :=
-            ⟨0, by simpa using pow_mem (div_mem (O := O) x s t) n⟩
-          have h3 := mul_mem h2 h1
-          have e : (mseg x s / mseg x t) ^ n * β ((mseg x t / mseg x s) ^ n • v) w = β.flip w v := by
-            rw [map_smul, LinearMap.smul_apply, smul_eq_mul, ← mul_assoc, ← mul_pow,
-              div_mul_div_cancel₀ ht, div_self hs, one_pow, one_mul, LinearMap.flip_apply]
-          rw [e] at h3
-          exact h3
-      refine ⟨m, (hΓ _ _).2 fun v hv => ?_⟩
-      rw [map_smul]
-      exact hm v hv⟩ hL
-  exact ⟨F, hβ, fun s hs w => by rw [h s hs, hΓ]⟩
+    (DualLattice.locFree_dual _ β hβ N _ _ (hE s hs) (hΓ s)).1
+  refine ⟨{ lat := Γ, stable := ?_, frame := fun s hs => (hL s hs).2, overlap := ?_ },
+    hβ, fun s _ w => hΓ s w⟩
+  · intro s a ha w hw
+    refine (hΓ _ _).2 fun v hv => ?_
+    rw [map_smul, smul_eq_mul]
+    exact mul_mem ha ((hΓ s w).1 hw v hv)
+  · intro s t hs ht w hw
+    obtain ⟨m, hm⟩ := Reflexive.exists_uniform_denominator _ N _ (hE t ht) _ (div_mem x s t)
+      (β.flip w) fun v hv => by
+        obtain ⟨n, hn⟩ := E.overlap t s ht hs v hv
+        have h1 := chart_le_loc x s t hs ((hΓ s w).1 hw _ hn)
+        have h2 : (mseg x s / mseg x t) ^ n ∈ loc (chartRing O (mseg x) t) _ (div_mem x s t) :=
+          ⟨0, by simpa using pow_mem (div_mem (O := O) x s t) n⟩
+        have h3 := mul_mem h2 h1
+        have e : (mseg x s / mseg x t) ^ n * β ((mseg x t / mseg x s) ^ n • v) w = β.flip w v := by
+          rw [map_smul, LinearMap.smul_apply, smul_eq_mul, ← mul_assoc, ← mul_pow,
+            div_mul_div_cancel₀ ht, div_self hs, one_pow, one_mul, LinearMap.flip_apply]
+        rw [e] at h3
+        exact h3
+    refine ⟨m, (hΓ _ _).2 fun v hv => ?_⟩
+    rw [map_smul]
+    exact hm v hv
 
 end Ops
 

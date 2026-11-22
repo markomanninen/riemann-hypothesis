@@ -1,8 +1,12 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.HomogExistsStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
-import ReciprocityTheory.GroupCohomology.HomogIso
-import ReciprocityTheory.GroupCohomology.PrismOpZeroEval
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.HomogExistsStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+public import ReciprocityTheory.GroupCohomology.HomogIso
+public import ReciprocityTheory.GroupCohomology.PrismOpZeroEval
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 

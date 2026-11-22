@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+module
+
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter Topology
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
-import Lemmata.GeneralBFactLeftExtra.Imports
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import Lemmata.GeneralBFactLeftExtra.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -114,7 +118,7 @@ theorem gauss_abs_mul_of_monomial_order (m : MonomialOrder σ) (w : FinitePlace 
       obtain ⟨hxne, hxmem⟩ := Finset.mem_erase.1 hx
       have hsum : x.1 + x.2 = s0 + t0 := Finset.HasAntidiagonal.mem_antidiagonal.1 hxmem
       have hsyn : m.toSyn x.1 + m.toSyn x.2 = m.toSyn s0 + m.toSyn t0 := by
-        rw [← map_add, ← map_add, hsum]
+        rw [← map_add (f := _), ← map_add (f := _), hsum]
       rw [map_mul]
       rcases lt_trichotomy (m.toSyn x.1) (m.toSyn s0) with h1 | h1 | h1
       · have h2 : m.toSyn t0 < m.toSyn x.2 := by

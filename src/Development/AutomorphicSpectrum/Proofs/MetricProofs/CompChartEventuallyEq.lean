@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.PullDominateStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.PullDominateStatement
+
+@[expose] public section
 
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff

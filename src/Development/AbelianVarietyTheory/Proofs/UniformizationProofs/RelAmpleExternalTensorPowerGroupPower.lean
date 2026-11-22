@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineAndGeneratedOfWideProduct
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineAndGeneratedOfWideProduct
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
 open scoped CategoryTheory.Obj
@@ -105,7 +110,7 @@ theorem Embeds.reindex {π : Y ⟶ B} {P : LB Y} {I J : Type} {s : I → LB.Sec 
   refine ⟨MvPolynomial.rename e.symm p, ?_⟩
   rw [MvPolynomial.coe_eval₂Hom, MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_rename]
   congr 1
-  funext a
+  funext j
   simp
 
 theorem gs_finprod {X Z : Scheme.{0}} (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) {K : Type}
@@ -197,7 +202,7 @@ theorem Embeds.box [IsAffine B] {π : Y ⟶ B} {π' : Y' ⟶ B}
       obtain rfl : ρ i ≫ π = π' := hw.1 i
       exact (congrArg (fun q => q.hom c)
         (Scheme.Hom.appLE_comp_appLE (ρ i) π ⊤ _ _ le_top (le' i))).symm
-    | add p q hp hq => rw [map_add, map_add]; exact add_mem hp hq
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _)]; exact add_mem hp hq
     | mul_X p m hp =>
       rw [map_mul, map_mul]
       refine mul_mem hp ⟨MvPolynomial.X (Function.update a i m), ?_⟩

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertPointNagata
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointMultChart
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingPow
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertPointNagata
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointMultChart
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PLocRingPow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -21,8 +26,8 @@ theorem isMultiHomog_comp (n : ℕ) (f : MRing (fun _ : Unit => T)) :
     IsMultiHomog (comp n f) (fun _ => n) :=
   Inter.LocRingPow.isMultiHomog_iff.mpr (weightedHomogeneousComponent_isWeightedHomogeneous _ _)
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem exists_comp_not_mem {J : Ideal (MRing (fun _ : Unit => T))} {f : MRing (fun _ : Unit => T)}
     (hf : f ∉ J) : ∃ n, comp n f ∉ J := by
   obtain ⟨D, hD⟩ := Inter.LocRingPow.exists_component_not_mem hf
@@ -32,8 +37,8 @@ theorem comp_mem {J : Ideal (MRing (fun _ : Unit => T))} (hJ : IsMultiHomogIdeal
     {f : MRing (fun _ : Unit => T)} (hf : f ∈ J) (n : ℕ) : comp n f ∈ J :=
   Inter.LocRingPow.component_mem hJ hf _
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem aeval_eq_eval₂ {S : Type*} [CommRing S] [Algebra ℤ S] (v : (Σ _ : Unit, T) → S)
     (f : MRing (fun _ : Unit => T)) : aeval v f = eval₂ (Int.castRingHom S) v f := by
   rw [aeval_def, show algebraMap ℤ S = Int.castRingHom S from RingHom.ext_int _ _]
@@ -60,12 +65,12 @@ theorem coeff_aeval {S : Type*} [CommRing S] [Algebra ℤ S] [Algebra ℤ (Polyn
     by_cases h : n = ∑ i, u ⟨(), i⟩
     · rw [if_pos h, comp, h, hw.weightedHomogeneousComponent_same]
     · rw [if_neg h, comp, hw.weightedHomogeneousComponent_ne _ (fun e => h (congrFun e ())), map_zero]
-  | add p q hp hq => rw [map_add, Polynomial.coeff_add, hp, hq, comp, comp, comp, map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), Polynomial.coeff_add, hp, hq, comp, comp, comp, map_add (f := _), map_add (f := _)]
 
 end VerticalPointNagata
 
-open VerticalPointNagata in
 
+open VerticalPointNagata in
 theorem VertPointNagata.proof (hCh : VertPointChart.Statement) : VertPointNagata.Statement := by
   intro T _ K' _ _ y s hP hs hsP W hW t ht _ _ a b hb hab
   classical
@@ -184,7 +189,7 @@ theorem VertPointNagata.proof (hCh : VertPointChart.Statement) : VertPointNagata
     · intro h0
       by_contra hf
       obtain ⟨n, hn⟩ := exists_comp_not_mem hf
-      have h1 := congrArg (fun q => Polynomial.coeff q n) h0
+      have h1 := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q n) h0
       simp only [Polynomial.coeff_zero] at h1
       rw [hψcoeff] at h1
       have h2 := congrArg ι h1
@@ -252,7 +257,7 @@ theorem VertPointNagata.proof (hCh : VertPointChart.Statement) : VertPointNagata
         (fun p q hp hq => ?_) (fun n c ih => ?_)
       · obtain ⟨x, hx⟩ := hp
         obtain ⟨x', hx'⟩ := hq
-        exact ⟨x + x', by rw [map_add, hx, hx', map_add]⟩
+        exact ⟨x + x', by rw [map_add (f := _), hx, hx', map_add (f := _)]⟩
       · obtain ⟨x, hx⟩ := ih
         obtain ⟨x', hx'⟩ := hXim
         exact ⟨x * x', by rw [map_mul, hx, hx', ← map_mul, pow_succ, mul_assoc]⟩

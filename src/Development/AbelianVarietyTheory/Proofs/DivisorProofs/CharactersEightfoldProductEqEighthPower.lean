@@ -1,10 +1,15 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsActIffIsDiagEnd
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowCompMonHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqAddNsmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorMatchComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorMatchIdOneMul
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsActIffIsDiagEnd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowCompMonHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqAddNsmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorMatchComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorMatchIdOneMul
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -57,7 +62,8 @@ theorem main : ∀ (V₁ : Type) [CommRing V₁] [IsDomain V₁] [IsLocalRing V�
       exact torMatch_unique V₁ hB G₀ hG₀ D₀ A₀ U₀ V₁ hB G₀ hG₀ D₀ A₀ U₀ (RingHom.id V₁) _ Function.injective_id _ _ h hone₀
   have dsum : ∀ (χ : Fin 8 → D₀.toPre.X) w, d w (∑ u, c u (χ u)) = χ w := by
     intro χ w
-    rw [map_sum, Finset.sum_eq_single w]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single w]
     · have := DFunLike.congr_fun (dc w w) (χ w)
       simpa using this
     · intro b _ hb
@@ -92,7 +98,7 @@ theorem main : ∀ (V₁ : Type) [CommRing V₁] [IsDomain V₁] [IsLocalRing V�
   refine ⟨c, hc, fun χ χ' h => funext fun w => ?_, fun z => ⟨fun v => d v z, ?_⟩⟩
   · rw [← dsum χ w, ← dsum χ' w]; exact congrArg (d w) h
   · have := DFunLike.congr_fun hsum z
-    rw [AddMonoidHom.finset_sum_apply] at this
+    rw [AddMonoidHom.finsetSum_apply] at this
     simpa using this
 
 end GlobalTheory.Poinc.Eq8.Chars8

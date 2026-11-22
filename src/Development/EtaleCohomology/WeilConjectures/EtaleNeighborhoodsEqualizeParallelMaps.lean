@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.WeilConjectures.AbsorbPf
+module
+
+public import Development.EtaleCohomology.WeilConjectures.AbsorbPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory LateralTheory.E.t_E3Cut TensorProduct

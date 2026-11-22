@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.AlgRepEndIrreducible
 open scoped TensorProduct
@@ -78,7 +82,7 @@ private theorem single_mul_eq_sum_smul_single {n : ℕ} (y : Matrix (Fin n) (Fin
   simp [Matrix.mul_apply, Matrix.single_apply, Matrix.sum_apply, ite_and]
 
 private theorem sum_sign_left_mul_update_eq_trace_smul {M : Type} [AddCommGroup M] [Module ℂ M] {n : ℕ}
-    (μ : MultilinearMap ℂ (fun _ : Fin n => Matrix (Fin n) (Fin n) ℂ) M)
+    (μ : (Fin n → Matrix (Fin n) (Fin n) ℂ) →ₘₗ[ℂ] M)
     (y : Matrix (Fin n) (Fin n) ℂ) (τ : Equiv.Perm (Fin n)) :
     ∑ σ : Equiv.Perm (Fin n), (Equiv.Perm.sign σ : ℤ) •
         ∑ k, μ (Function.update (units σ τ) k (y * units σ τ k))
@@ -107,7 +111,7 @@ private theorem sum_sign_left_mul_update_eq_trace_smul {M : Type} [AddCommGroup 
   rfl
 
 private theorem sum_sign_right_mul_update_eq_trace_smul {M : Type} [AddCommGroup M] [Module ℂ M] {n : ℕ}
-    (μ : MultilinearMap ℂ (fun _ : Fin n => Matrix (Fin n) (Fin n) ℂ) M)
+    (μ : (Fin n → Matrix (Fin n) (Fin n) ℂ) →ₘₗ[ℂ] M)
     (y : Matrix (Fin n) (Fin n) ℂ) (σ : Equiv.Perm (Fin n)) :
     ∑ τ : Equiv.Perm (Fin n), (Equiv.Perm.sign τ : ℤ) •
         ∑ k, μ (Function.update (units σ τ) k (units σ τ k * y))
@@ -136,7 +140,8 @@ private theorem sum_sign_right_mul_update_eq_trace_smul {M : Type} [AddCommGroup
   rfl
 
 theorem UpperTheory.V.AlgRepEndIrreducible.epsDer :
-    ∀ (M : Type) [AddCommGroup M] [Module ℂ M] (n : ℕ) (μ : MultilinearMap ℂ (fun _ : Fin n => Matrix (Fin n) (Fin n) ℂ) M) (y : Matrix (Fin n) (Fin n) ℂ),
+    ∀ (M : Type) [AddCommGroup M] [Module ℂ M] (n : ℕ)
+      (μ : (Fin n → Matrix (Fin n) (Fin n) ℂ) →ₘₗ[ℂ] M) (y : Matrix (Fin n) (Fin n) ℂ),
       eps (fun x => ∑ k, μ (Function.update x k (y * x k - x k * y))) = 0 := by
   intro M _ _ n μ y
   show ∑ τ : Equiv.Perm (Fin n), ∑ σ : Equiv.Perm (Fin n),

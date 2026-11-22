@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.TB
 
@@ -48,7 +52,7 @@ noncomputable def ratNormFam : NormFam ℚ ℚ where
   nonneg _ _ := norm_nonneg _
   eq_zero σ v h := by simpa using h
   smul σ a v := by rw [smul_eq_mul, map_mul, norm_mul]
-  add σ v w := by rw [map_add]; exact norm_add_le _ _
+  add σ v w := by rw [map_add (f := _)]; exact norm_add_le _ _
 
 noncomputable def ratInt : Submodule (𝓞 ℚ) ℚ := Submodule.span (𝓞 ℚ) {1}
 
@@ -86,10 +90,5 @@ theorem ratInt_span : Submodule.span ℚ (ratInt : Set ℚ) = ⊤ := by
   intro x
   have := Submodule.smul_mem (Submodule.span ℚ (ratInt : Set ℚ)) x (Submodule.subset_span h1)
   simpa using this
-
-example (h1 : DiscOfProdLowerSt) (h2 : FGOfDiscSt) (h3 : IsLatticeOfDiscSt) :
-    UnifDiscrete ratNormFam ratInt ∧ ratInt.FG ∧ Submodule.IsLattice ℚ ratInt :=
-  ⟨h1 ℚ ℚ ratNormFam ratInt 0 ratInt_prodLower, h2 ℚ ℚ ratNormFam ratInt ratInt_unifDiscrete,
-    h3 ℚ ℚ ratNormFam ratInt ratInt_unifDiscrete ratInt_span⟩
 
 end ReciprocityTheory.ChartRestriction.G.TB

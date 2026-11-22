@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HfAlgSmulRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HfAlgSmulRight
+
+@[expose] public section
 
 open scoped BigOperators
 
@@ -116,11 +120,11 @@ theorem perp_relIndex (c : O ≃+* O) (cK : K ≃+* K)
     intro x y
     apply IsFractionRing.injective O K
     apply mul_right_cancel₀ hβ0
-    rw [← ha, map_add, add_mul, ← ha, ← ha]
+    rw [← ha, map_add (f := _), add_mul, ← ha, ← ha]
     simpa using hf_add_right cK J v (x : Fin r → K) y
   let ψ : L.toAddSubgroup →+ IsLocalRing.ResidueField O :=
     AddMonoidHom.mk' (fun l => IsLocalRing.residue O (a l)) (by
-      intro x y; rw [hadd, map_add])
+      intro x y; rw [hadd, map_add (f := _)])
   have hker : (perp cK J L v).toAddSubgroup.addSubgroupOf L.toAddSubgroup = ψ.ker := by
     ext l
     rw [AddSubgroup.mem_addSubgroupOf, AddMonoidHom.mem_ker]

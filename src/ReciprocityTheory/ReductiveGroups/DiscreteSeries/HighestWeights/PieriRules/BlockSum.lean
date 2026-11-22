@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.DS.HW
 
@@ -8,7 +12,7 @@ private theorem coeff_card_sub_one_eq_sum_eval_div_prod_sub {α : Type*} [Decida
     (hu : Set.InjOn u S) (F : Polynomial ℝ) (hF : F.degree < S.card) :
     F.coeff (S.card - 1) = ∑ s ∈ S, F.eval (u s) / ∏ b ∈ S.erase s, (u s - u b) := by
   have h := congrArg (fun p : Polynomial ℝ => p.coeff (S.card - 1)) (Lagrange.eq_interpolate hu hF)
-  rw [h, Lagrange.interpolate_apply, Polynomial.finset_sum_coeff]
+  rw [h, Lagrange.interpolate_apply, Polynomial.finsetSum_coeff]
   refine Finset.sum_congr rfl fun s hs => ?_
   rw [Polynomial.coeff_C_mul, div_eq_mul_inv, ← Finset.prod_inv_distrib]
   congr 1
@@ -20,7 +24,7 @@ private theorem coeff_card_sub_one_eq_sum_eval_div_prod_sub {α : Type*} [Decida
   have hm : (∏ b ∈ S.erase s, (X - C (u b))).Monic :=
     Polynomial.monic_prod_of_monic _ _ (fun b _ => Polynomial.monic_X_sub_C _)
   have hd : (∏ b ∈ S.erase s, (X - C (u b))).natDegree = (S.erase s).card :=
-    Polynomial.natDegree_finset_prod_X_sub_C_eq_card _ _
+    Polynomial.natDegree_finsetProd_X_sub_C_eq_card _ _
   rw [hc, ← hd, hm.coeff_natDegree, mul_one]
 
 private theorem sum_prod_sub_add_div_sub_eq_card {α : Type*} [DecidableEq α] (S : Finset α) (u : α → ℝ)
@@ -35,9 +39,9 @@ private theorem sum_prod_sub_add_div_sub_eq_card {α : Type*} [DecidableEq α] (
   have hm2 : (∏ b ∈ S, (X - C (u b))).Monic :=
     Polynomial.monic_prod_of_monic _ _ (fun b _ => Polynomial.monic_X_sub_C _)
   have hd1 : (∏ b ∈ S, (X - C (u b - c))).natDegree = S.card :=
-    Polynomial.natDegree_finset_prod_X_sub_C_eq_card _ _
+    Polynomial.natDegree_finsetProd_X_sub_C_eq_card _ _
   have hd2 : (∏ b ∈ S, (X - C (u b))).natDegree = S.card :=
-    Polynomial.natDegree_finset_prod_X_sub_C_eq_card _ _
+    Polynomial.natDegree_finsetProd_X_sub_C_eq_card _ _
   have hdeg : F.degree < S.card := by
     have h := Polynomial.degree_sub_lt
       (by rw [Polynomial.degree_eq_natDegree hm1.ne_zero, Polynomial.degree_eq_natDegree hm2.ne_zero, hd1, hd2])

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Yzd2.Phi :
     (n : ℕ) → (R : Type) → [CommRing R] → Matrix (Fin n) (Fin n) R :=

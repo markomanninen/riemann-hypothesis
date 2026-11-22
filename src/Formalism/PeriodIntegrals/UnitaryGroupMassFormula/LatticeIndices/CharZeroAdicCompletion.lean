@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.FirstEmbeddingAlgebraMap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatTop
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.FirstEmbeddingAlgebraMap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatTop
+
+@[expose] public section
 
 noncomputable section
 

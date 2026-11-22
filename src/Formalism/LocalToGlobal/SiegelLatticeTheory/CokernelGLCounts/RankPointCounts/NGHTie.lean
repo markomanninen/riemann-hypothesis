@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FamDefs
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ProdFormulaE
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilySeparationBound
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEstimateWords
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FamDefs
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ProdFormulaE
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilySeparationBound
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEstimateWords
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ def HTTheta : Prop :=
 
 section Asm
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem prod_inf_sq (x : E) : ∏ w : InfinitePlace E, w x ^ 2 = |((Algebra.norm ℚ x : ℚ) : ℝ)| := by
   rw [← Rat.cast_abs, ← InfinitePlace.prod_eq_abs_norm]

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.RoundingSum
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.StarRingExtOfStar
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrameNStHolds
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValFinProdGen
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPowFrame
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalStatementStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalJetsPowerProductStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.RoundingSum
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.StarRingExtOfStar
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrameNStHolds
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValFinProdGen
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPowFrame
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalStatementStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalJetsPowerProductStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -56,7 +60,7 @@ theorem exists_basis_bounds {X X' : Type} [AddCommGroup X] [AddCommGroup X'] {n 
   · obtain ⟨i, j, h⟩ := hb k
     have e2 : sumQ xe Q (b' k + w) = sumQ xe Q w + (Q (b j + xe w i) - Q (xe w i)) := by
       unfold sumQ
-      rw [map_add, h]
+      rw [map_add (f := _), h]
       exact sum_single_add Q i (b j) (xe w)
     have e3 : sumQ xe Q (b' k + w) - sumQ xe Q (b' k) - sumQ xe Q w = Q (b j + xe w i) - Q (b j) - Q (xe w i) := by
       rw [e1 k i j h, e2]; ring

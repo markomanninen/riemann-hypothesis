@@ -1,4 +1,8 @@
-import Formalism.EisensteinCokernelLengths.ExponentChainBound
+module
+
+public import Formalism.EisensteinCokernelLengths.ExponentChainBound
+
+@[expose] public section
 
 noncomputable section
 

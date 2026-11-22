@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColGen
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColGen
+
+@[expose] public section
 
 noncomputable section
 

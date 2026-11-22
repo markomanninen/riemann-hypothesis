@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
 
 open CategoryTheory GlobalTheory.CxCoh
 
@@ -25,7 +29,7 @@ theorem fnMap_h2_bijective (C : Type 1) [Category.{0} C] (K : Cx C) (h11 : K.M1.
     obtain ⟨ω, hω⟩ := h11 (fun T T' φ => a.1.2.1 T T' φ + K.d0 T' (f T T' φ)) (by
       intro T T' T'' φ ψ
       rw [ha2 T T' T'' φ ψ, ← hz T T' T'' φ ψ]
-      simp only [map_add, map_sub, K.diffZero_natural]
+      simp only [map_add (f := _), map_sub, K.diffZero_natural]
       abel)
     have hη : (fun T => a.1.2.2 T - K.d1 T (ω T)) = 0 := by
       apply h20
@@ -55,24 +59,24 @@ theorem fnMap_h2_bijective (C : Type 1) [Category.{0} C] (K : Cx C) (h11 : K.M1.
     obtain ⟨hb1, -, -, -⟩ := b.2
     obtain ⟨f, hf⟩ := h12 (fun T T' T'' φ ψ => K.d0 T'' (b.1.1 T T' T'' φ ψ)) (by
       intro T T' T'' T''' φ ψ χ
-      rw [← K.diffZero_natural, ← map_add, hb1, map_add])
+      rw [← K.diffZero_natural, ← map_add (f := _), hb1, map_add (f := _)])
     obtain ⟨g, hg⟩ := h21 (fun T T' φ => K.d1 T' (-f T T' φ)) (by
       intro T T' T'' φ ψ
       have e := hf T T' T'' φ ψ
       have e2 : f T T'' (φ ≫ ψ) = K.M1.map ψ (f T T' φ) + f T' T'' ψ - K.d0 T'' (b.1.1 T T' T'' φ ψ) := by
         rw [e]; abel
       rw [e2]
-      simp only [map_neg, map_add, map_sub, K.diffOne_diffZero, K.diffOne_natural]
+      simp only [map_neg, map_add (f := _), map_sub, K.diffOne_diffZero, K.diffOne_natural]
       abel)
     have h3 : (fun T => K.d2 T (g T)) = 0 := by
       apply h30
       intro T T' φ
       have e := hg T T' φ
       have e2 : g T' = K.M2.map φ (g T) + K.d1 T' (-f T T' φ) := by rw [e]; abel
-      rw [e2, map_add, K.diffTwo_comp_diffOne, add_zero, K.diffTwo_natural]
+      rw [e2, map_add (f := _), K.diffTwo_comp_diffOne, add_zero, K.diffTwo_natural]
     let a : K.Z2 := ⟨(b.1.1, fun T T' φ => -f T T' φ, g), by
       refine ⟨hb1, fun T T' T'' φ ψ => ?_, fun T T' φ => ?_, fun T => ?_⟩
-      · rw [hf T T' T'' φ ψ]; simp only [map_neg, map_sub, map_add]; abel
+      · rw [hf T T' T'' φ ψ]; simp only [map_neg, map_sub, map_add (f := _)]; abel
       · have e := hg T T' φ
         change g T' = K.M2.map φ (g T) + K.d1 T' (-f T T' φ)
         rw [e]; abel

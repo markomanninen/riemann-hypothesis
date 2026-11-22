@@ -1,11 +1,13 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledC
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroCoind
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledC
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroCoind
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
 namespace PositivityTheory.Lit1.GEN.W_coinf_b
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 theorem uliftInt_smul {A : Type} [AddCommGroup A] (inst : Module (ULift.{0} ℤ) A) (c : ULift.{0} ℤ) (a : A) :
     inst.smul c a = c.down • a := by
@@ -40,8 +42,9 @@ theorem cosetEquiv_symm_smul (g : G) (y : Γ ⧸ D) :
 
 end Equiv
 
-set_option maxHeartbeats 1000000 in
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
+set_option maxHeartbeats 1000000 in
 theorem coind_eq_infl_funRep (ℓ : ℕ) [Fact ℓ.Prime] (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1)))
     (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
     (L : FiniteSubfield) [Fact (K ≤ L)]

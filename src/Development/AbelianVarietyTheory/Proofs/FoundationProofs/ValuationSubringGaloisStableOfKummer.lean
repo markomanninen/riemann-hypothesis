@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGaloisConjValuationSubringSameTraceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGaloisConjValuationSubringSameTraceStatement
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ GlobalTheory.KZ.ES
 
@@ -75,7 +80,7 @@ theorem valuationSubring_galois_stable_of_kummer : ∀ (l : ℕ), l.Prime → �
   obtain ⟨hHn, hHi⟩ := isPGroup_coatom_normal_index_eq hP H hH
   haveI : IsGalois F (IntermediateField.fixedField H) := IsGalois.of_fixedField_normal_subgroup H
   have hfr : Module.finrank F (IntermediateField.fixedField H) = l := by
-    have h1 := Module.finrank_mul_finrank F (IntermediateField.fixedField H) L
+    have h1 := (letI : Module.Free (IntermediateField.fixedField H) L := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank F (IntermediateField.fixedField H) L)
     rw [IntermediateField.finrank_fixedField_eq_card, ← IsGalois.card_aut_eq_finrank F L,
       ← H.card_mul_index, hHi, mul_comm (Nat.card H)] at h1
     exact Nat.eq_of_mul_eq_mul_right Nat.card_pos h1

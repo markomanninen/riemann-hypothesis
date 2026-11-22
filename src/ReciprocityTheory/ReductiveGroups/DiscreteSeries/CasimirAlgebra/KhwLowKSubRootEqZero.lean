@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.RhoEqRhoCAddRhoN
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.CasimirKKhwVec
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.RhoEqRhoCAddRhoN
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.CasimirKKhwVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -135,7 +139,8 @@ theorem casimir_khw_identity (ε : Fin n → Bool) {E : Fin n → Fin n → Modu
     simp only [LinearMap.sum_apply, inner_sum]
     push_cast
     congr 1
-    · exact sum_congr rfl (fun a _ => by rw [Module.End.mul_apply, hA]; push_cast; ring)
+    · exact sum_congr rfl (fun a _ => by
+        simpa only [Function.comp_apply, Complex.ofReal_mul, Complex.ofReal_pow] using hA a)
     · refine sum_congr rfl (fun a _ => ?_)
       refine sum_congr rfl (fun b hb => ?_)
       rw [hB a b (mem_filter.1 hb).2]; push_cast; ring

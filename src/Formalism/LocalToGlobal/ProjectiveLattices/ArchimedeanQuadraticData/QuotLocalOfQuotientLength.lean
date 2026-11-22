@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QuotSt
-import Formalism.FilteredPoleLength.LocalDescentLevels.MemSpanBasisFun
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QuotSt
+public import Formalism.FilteredPoleLength.LocalDescentLevels.MemSpanBasisFun
+
+@[expose] public section
 
 namespace Formalism.L2.Pj.QAt
 
@@ -30,7 +34,8 @@ noncomputable def matA (b : Basis (Fin ρ) O Q) (c : Fin ρ → (Q →ₗ[O] O))
 theorem c_eq_sum (b : Basis (Fin ρ) O Q) (c : Fin ρ → (Q →ₗ[O] O)) (i : Fin ρ) (q : Q) :
     c i q = ∑ k, matA b c i k * b.repr q k := by
   conv_lhs => rw [← b.sum_repr q]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, smul_eq_mul, mul_comm]
   rfl
@@ -41,7 +46,8 @@ noncomputable def cK (b : Basis (Fin ρ) O Q) (c : Fin ρ → (Q →ₗ[O] O)) :
 
 theorem cK_coordK (b : Basis (Fin ρ) O Q) (c : Fin ρ → (Q →ₗ[O] O)) (q : Q) (i : Fin ρ) :
     cK b c (coordK b q) i = algebraMap O (FractionRing O) (c i q) := by
-  rw [c_eq_sum b c i q, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [c_eq_sum b c i q, map_sum]
   simp only [cK, Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Matrix.map_apply, coordK,
     LinearMap.coe_mk, AddHom.coe_mk, map_mul]
 

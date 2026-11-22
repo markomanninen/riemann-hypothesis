@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.QuotInv
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.QuotInv
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ENNReal
@@ -22,9 +26,6 @@ lemma measurable_mm : Measurable (fun p : MtM m × MtM m => mm p.1 p.2) :=
 
 lemma measurable_mm_left (b : MtM m) : Measurable (fun a : MtM m => mm a b) :=
   measurable_mm.comp (measurable_id.prodMk measurable_const)
-
-lemma measurable_mm_right (a : MtM m) : Measurable (fun b : MtM m => mm a b) :=
-  measurable_mm.comp (measurable_const.prodMk measurable_id)
 
 def minv (a : MtM m) : MtM m := fun i j => (Matrix.of a)⁻¹ i j
 

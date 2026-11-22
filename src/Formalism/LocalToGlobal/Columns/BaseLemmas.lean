@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+module
+
+public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -16,14 +20,14 @@ theorem mem_divs {A : Type} [CommRing A] [IsDedekindDomain A] {a : A} (ha : a �
     have h := Ideal.finite_factors hI
     simpa only [Ideal.dvd_span_singleton] using h
   unfold divs
-  rw [dif_pos hfin, Set.Finite.mem_toFinset]
+  rw [dite_eq_left hfin, Set.Finite.mem_toFinset]
   rfl
 
 theorem ofQ_w {N : ℕ} {x : Fin N → ℚ} (h : Antitone x) (hz : ∀ i, ∃ z : ℤ, x i = z) (i : Fin N) :
     ((ofQ x).w i : ℚ) = x i := by
   obtain ⟨z, hz'⟩ := hz i
   unfold ofQ
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   simp [hz']
 
 theorem anti_sub_rho {N : ℕ} (x : ℕ → ℚ) (h : ∀ n, n + 1 < N → x (n + 1) + 1 ≤ x n) :
@@ -67,12 +71,12 @@ variable {R : Ranks} (P : HCParam R)
 
 theorem bAt_of {n : ℕ} (h : n < R.m) : (of P).bAt n = P.b ⟨n, h⟩ := by
   unfold RowPar.bAt
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem eAt_of {n : ℕ} (h : n < R.m) : (of P).eAt n = P.e ⟨n, h⟩ := by
   unfold RowPar.eAt
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem bAt_int (n : ℕ) : ∃ z : ℤ, (of P).bAt n = z := by
@@ -89,12 +93,12 @@ theorem eAt_int (n : ℕ) : ∃ z : ℤ, (of P).eAt n = z := by
 
 theorem vb_lo {n : ℕ} (h : n < R.k - 1) : (of P).vb n = P.v ⟨n, h⟩ := by
   unfold RowPar.vb
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem vb_hi {n : ℕ} (h : ¬ n < R.k - 1) : (of P).vb n = -(of P).bAt (n - (R.k - 1)) := by
   unfold RowPar.vb
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 theorem vb_int (n : ℕ) : ∃ z : ℤ, (of P).vb n = z := by
   unfold RowPar.vb
@@ -149,7 +153,7 @@ def sh (R : Ranks) : ℚ := ((R.m : ℚ) * ((R.t : ℚ) + 1)) / 2
 
 theorem sgHC_lo (S : RowPar R) {n : ℕ} (h : n < R.k - 1) : S.sgHC n = sh R + S.vb n := by
   unfold RowPar.sgHC RowPar.vb RowPar.sh
-  rw [dif_pos h, dif_pos h]
+  rw [dite_eq_left h, dite_eq_left h]
 
 theorem sgHC_b (S : RowPar R) (B : ℕ) : S.sgHC (R.k - 1 + B * (R.t + 1)) = sh R - S.bAt B := by
   have h1 : ¬ (R.k - 1 + B * (R.t + 1) < R.k - 1) := by omega
@@ -157,7 +161,7 @@ theorem sgHC_b (S : RowPar R) (B : ℕ) : S.sgHC (R.k - 1 + B * (R.t + 1)) = sh 
   have e2 : B * (R.t + 1) % (R.t + 1) = 0 := by simp
   have e3 : B * (R.t + 1) / (R.t + 1) = B := Nat.mul_div_cancel B (Nat.succ_pos _)
   unfold RowPar.sgHC RowPar.sh
-  rw [dif_neg h1, e, if_pos e2, e3]
+  rw [dite_eq_right h1, e, if_pos e2, e3]
   ring
 
 theorem sgHC_e (S : RowPar R) (B ρ : ℕ) (h1 : 1 ≤ ρ) (h2 : ρ ≤ R.t) :
@@ -167,7 +171,7 @@ theorem sgHC_e (S : RowPar R) (B ρ : ℕ) (h1 : 1 ≤ ρ) (h2 : ρ ≤ R.t) :
   have e : R.k - 1 + B * (R.t + 1) + ρ - (R.k - 1) = B * (R.t + 1) + ρ := by omega
   have hne : ¬ ((B * (R.t + 1) + ρ) % (R.t + 1) = 0) := by rw [hd.2]; omega
   unfold RowPar.sgHC RowPar.sh
-  rw [dif_neg h1', e, if_neg hne, hd.1, hd.2]
+  rw [dite_eq_right h1', e, if_neg hne, hd.1, hd.2]
   ring
 
 theorem sgHC_step {n : ℕ} (hn : n + 1 < R.N R.m - 1) : (of P).sgHC (n + 1) + 1 ≤ (of P).sgHC n := by
@@ -444,7 +448,7 @@ theorem lamOf_wtN {R : Ranks} (P : HCParam R) {j : ℕ} (hj : j ≤ R.m) (i : Fi
       exact ⟨-y, by rw [he, hy]; push_cast; ring⟩
   obtain ⟨z, hz⟩ := hint
   unfold Examples₂.lamOf
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
   show ((⌊Examples₂.wtQ P j hj i⌋ : ℤ) : ℚ) = _
   rw [hz, Int.floor_intCast, ← hz]
   unfold Examples₂.wtQ Examples₂.wtN
@@ -452,18 +456,6 @@ theorem lamOf_wtN {R : Ranks} (P : HCParam R) {j : ℕ} (hj : j ≤ R.m) (i : Fi
   · rfl
   · rfl
   · exact absurd (R.blk_lt hj i h1) h2
-
-theorem wtN_new {R : Ranks} (P : HCParam R) {j : ℕ} (hj : j < R.m) {n : ℕ} (h1 : R.N j ≤ n) (h2 : n < R.N (j + 1)) :
-    Examples₂.wtN P n = -wG R (P.e ⟨j, hj⟩) (j + 1) := by
-  have h1' : R.k + j * (R.t + 1) ≤ n := h1
-  have h2' : n < R.k + (j + 1) * (R.t + 1) := h2
-  have hb : Examples₂.blkN R n = j :=
-    Nat.div_eq_of_lt_le (by omega) (show n - R.k < (j + 1) * (R.t + 1) by omega)
-  have hbm : Examples₂.blkN R n < R.m := hb ▸ hj
-  unfold Examples₂.wtN
-  rw [dif_neg (by omega : ¬ n < R.k), dif_pos hbm]
-  have e : (⟨Examples₂.blkN R n, hbm⟩ : Fin R.m) = ⟨j, hj⟩ := Fin.ext hb
-  rw [e, hb]
 
 namespace Wts
 
@@ -488,10 +480,6 @@ theorem lamTrue_eq (u : Word) (j : ℕ) (τ : X.Tau) (i : Fin (R.N j)) :
   simp only [Int.cast_add, Int.cast_neg, Int.cast_mul, Int.cast_natCast]
   rw [cast_t_add_one_div_two R]
   ring
-
-theorem lamTrue_zero (u : Word) (τ : X.Tau) (i : Fin (R.N 0)) : (W.lamTrue u 0 τ).w i = (W.lamN u 0 τ).w i := by
-  show (W.lamN u 0 τ).w i + -(((0 : ℕ) : ℤ) * (((R.t + 1) / 2 : ℕ) : ℤ)) = (W.lamN u 0 τ).w i
-  simp
 
 theorem lamTrue_old (u : Word) {j : ℕ} (hj : j < R.m) (τ : X.Tau) (i : Fin (R.N (j + 1))) (h : i.1 < R.N j) :
     ((W.lamTrue u (j + 1) τ).w i : ℚ) =
@@ -519,7 +507,7 @@ theorem lamTrue_new (u : Word) {j : ℕ} (hj : j < R.m) (τ : X.Tau) (i : Fin (R
     have h2 : i.1 < R.k + (j + 1) * (R.t + 1) := i.2
     exact Nat.div_eq_of_lt_le (by omega) (show i.1 - R.k < (j + 1) * (R.t + 1) by omega)
   have hj1 : j + 1 ≤ R.m := by omega
-  rw [lamTrue_eq W u (j + 1) τ i, lamN_eq W u hj1 τ i, dif_neg hk]
+  rw [lamTrue_eq W u (j + 1) τ i, lamN_eq W u hj1 τ i, dite_eq_right hk]
   have e : (⟨(i.1 - R.k) / (R.t + 1), R.blk_lt hj1 i hk⟩ : Fin R.m) = ⟨j, hj⟩ := Fin.ext hblk
   rw [e, hblk]
   have hN0 : ((R.N (j + 1 - 1) : ℕ) : ℚ) = R.k + j * (R.t + 1) := by
@@ -552,13 +540,6 @@ theorem nuW_eq_true (u : Word) {j : ℕ} (hj : j < R.m) (τ : X.Tau) (i : Fin (R
 
 variable {W}
 
-theorem sgW_eq (hW : W.Ok) (τ : X.Tau) (i : Fin (R.N R.m - 1)) :
-    ((W.sgW τ).w i : ℚ) = (W.row τ).sgHC i.1 - rhoVec (R.N R.m - 1) i := by
-  obtain ⟨P, hP⟩ := hW.row_ok τ
-  unfold Wts.sgW
-  rw [← hP]
-  exact RowPar.sg_eq P i
-
 theorem lamV_eq (hW : W.Ok) {j : ℕ} (h1 : 1 ≤ j) (h2 : j ≤ R.m) (τ : X.Tau) (i : Fin R.nV) :
     ((W.lamV j τ).w i : ℚ) = (W.row τ).lamVQ j i := by
   obtain ⟨P, hP⟩ := hW.row_ok τ
@@ -585,17 +566,6 @@ end RowPar
 namespace Wts
 
 variable {X : Fields} {Word : Type} {R : Ranks} (W : Wts X Word R)
-
-theorem degTrue_eq (u : Word) (τ : X.Tau) :
-    W.degTrue u τ = W.deg u τ - (R.m : ℤ) * (((R.t + 1) / 2 : ℕ) : ℤ) := by
-  have hN1 : 1 ≤ R.N R.m := by
-    show 1 ≤ R.k + R.m * (R.t + 1)
-    have := R.m_add_three_le_k
-    omega
-  unfold Wts.degTrue Wts.deg Wts.lamTrue Wts.sgTrue Wts.sgW RowPar.sgTrue
-  simp only [shiftW, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-    nsmul_eq_mul, Nat.cast_sub hN1, Nat.cast_one]
-  ring
 
 end Wts
 

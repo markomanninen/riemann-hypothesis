@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PsiCStarMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceContOn
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PsiCStarMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceContOn
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 
@@ -16,11 +20,6 @@ instance borelRC : BorelSpace (U.RC k r 0) := Prod.borelSpace
 instance borelXiH : BorelSpace (U.XiH r 0 σ) := by
   have : BorelSpace ((U.LW σ → ℂ) × (G.UT r → ℂ)) := Prod.borelSpace
   have : BorelSpace ((Fin 0 → Fin r → ℂ) × (Fin r → Fin 0 → ℂ)) := Prod.borelSpace
-  exact Prod.borelSpace
-
-instance borelXi : BorelSpace (U.Xi k r 0 0 σ) := by
-  have : BorelSpace (U.RC k r 0 × U.RC k r 0) := Prod.borelSpace
-  have := borelXiH (r := r) σ
   exact Prod.borelSpace
 
 end inst
@@ -146,8 +145,8 @@ theorem chiL_integrable (w0 : Equiv.Perm (Fin r)) : Integrable (chiL w0) := by
   rw [volume_pi, Measure.pi_pi]
   simp [boxC_vol]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem inner_int (S : B.RealPlaceData k r Wp Wq) (z0 z0' : Fin (2 * 0 + k + 1) → ℂ)
     (hz : S.z = liftVec k r 0 z0) (hz' : S.z' = liftVec k r 0 z0')
     (σ : Equiv.Perm (Fin r)) (d : Fin r → ℂ) (hd : ∀ a, d a ≠ 0) (γ0 : B.Mat k 0) (hγ0 : γ0 ∈ B.GV k 0)

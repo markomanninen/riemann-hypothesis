@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstExpansionIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondExpansionIdentity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstExpansionIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondExpansionIdentity
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate

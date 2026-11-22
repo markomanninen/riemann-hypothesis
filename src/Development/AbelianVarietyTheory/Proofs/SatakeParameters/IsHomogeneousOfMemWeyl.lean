@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelJets
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RenameUpperLeftCornerMemWeylLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeylRowActionMemWeylLatticeSquareStatement
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPowEqSpanNormOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelJets
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RenameUpperLeftCornerMemWeylLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeylRowActionMemWeylLatticeSquareStatement
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPowEqSpanNormOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem coeff_subGen_mem {ν : Fin a → ℕ} {ν' : Fin b → ℕ} (hν : Antit
         beta_reduce
         rw [← lclosedeq_hw_map (algebraMap ℤ S), lclosedeq_applyWord_map]⟩
     | zero => rw [map_zero]; exact zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := map (algebraMap ℤ S))]; exact add_mem hx hy
     | smul c x _ hx => rw [map_zsmul]; exact zsmul_mem hx c
   have h2 := GlobalTheory.T.weylRowAction_mem_weylLattice_square S b ν' hν M _ (hmap _ h1)
   let ψ : MvPolynomial (Fin b × Fin b) S →+* MvPolynomial (Fin b × Fin a) (MvPolynomial (Fin b × Fin b) ℤ) :=
@@ -95,7 +99,7 @@ theorem coeff_subGen_mem {ν : Fin a → ℕ} {ν' : Fin b → ℕ} (hν : Antit
     · exact Submodule.subset_span ⟨w, rfl⟩
     · exact zero_mem _
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, coeff_add]; exact add_mem (hx α) (hy α)
+  | add x y _ _ hx hy => rw [map_add (f := _), AddMonoidAlgebra.coeff_add]; exact add_mem (hx α) (hy α)
   | smul c x _ hx =>
     classical
     rw [smul_eq_C_mul, map_mul, coeff_mul]
@@ -114,19 +118,11 @@ variable {D : D7} {N : ℕ} {wt : D.what₂.Tau → DomWeight N}
 
 variable {Tw : TwForms D} {u : D.what₂.Word} {μ : D.what₂.Tup} {O : LiftObj D (D.chTw u μ)} {i : ℕ}
 
-def pureVal (Tw : TwForms D) (O : LiftObj D (D.chTw u μ)) (i : ℕ)
-    (f : D.what₂.Tau → MvPolynomial (Fin (D.R.N i) × Fin (D.R.N i)) ℤ) : (D.chTw u μ).Y i → ℂ :=
-  fun y => (∏ τ, aeval (fun v : Fin (D.R.N i) × Fin (D.R.N i) => O.frm i y τ v.1 v.2) (f τ)) *
-    ∏ τ, (O.frm i y τ).det ^ lastTrue Tw u μ i τ
-
 end Integral
 
 section Subst
 
 variable {D : D7} {N N' : ℕ}
-
-def monoT (R : Type) [CommRing R] (α : D.what₂.Tau → (Fin N' × Fin N →₀ ℕ)) : MvPolynomial (Idx D N N') R :=
-  ∏ τ, ∏ v ∈ (α τ).support, X (τ, v) ^ α τ v
 
 end Subst
 

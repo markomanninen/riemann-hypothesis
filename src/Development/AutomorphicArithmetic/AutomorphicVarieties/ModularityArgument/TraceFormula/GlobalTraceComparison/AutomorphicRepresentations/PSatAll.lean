@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousFlipGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyPcRatFMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousFlipGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyPcRatFMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG GlobalTheory.BCT GlobalTheory.LFun
@@ -47,7 +51,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.satAll_pf :
   have hne : (⟨y, hy⟩ : π.V) ≠ 0 := fun e => h0 (congrArg Subtype.val e)
   refine ⟨fun hB hf => ?_, fun hB hf => ?_⟩
   · rw [CG.hasSat_mk] at hB
-    have hx : (⟨y, hy⟩ : π.V) ∈ fixed (π.locRep w) (KGL w n) :=
+    have hx : (⟨y, hy⟩ : π.V) ∈ fixed (π.locRep w) (KGL w (n := n)) :=
       GlobalTheory.LGrp.mem_fixed.2 fun k hk => Subtype.ext (GlobalTheory.LGrp.mem_fixed.1 hf k hk)
     exact (hB.2 _ hx hne).map (ρ' := rw' n w false) π.V.subtype (fun _ _ => rfl) h0
   · rw [CG.hasSat_mk] at hB
@@ -59,7 +63,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.satAll_pf :
     have hs : HasSatGL w σ (B.map (·⁻¹)) :=
       GlobalTheory.ThetaSatake.hasSatGL_of_invT (GlobalTheory.ThetaSatake.cloc w) (conjLoc_spec _ w).2.2
         (GlobalTheory.ThetaSatake.absNorm_cw w).symm T (fun g x => ?_) hB
-    · have hx : (⟨y, hy⟩ : π.V) ∈ fixed σ (KGL w n) :=
+    · have hx : (⟨y, hy⟩ : π.V) ∈ fixed σ (KGL w (n := n)) :=
         GlobalTheory.LGrp.mem_fixed.2 fun k hk => Subtype.ext (GlobalTheory.LGrp.mem_fixed.1 hf k hk)
       exact (hs.2 _ hx hne).map (ρ' := rw' n w true) π.V.subtype (fun _ _ => rfl) h0
     · have e : π.locRep (GlobalTheory.ThetaSatake.cw w) g = σ (k * GlobalTheory.CompanionTheory.ConjSat.flipGL w g * k⁻¹) := by

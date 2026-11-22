@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open NumberField IsDedekindDomain GroundTheory.Global GroundTheory.Global.SemiLocal GroundTheory.Global.AdeleBaseChange
 open scoped TensorProduct NumberField.AdeleRing
@@ -14,14 +19,15 @@ private theorem galOf_cont {A B : Type*} [CommRing A] [Algebra F A] [CommRing B]
   have h : ∀ y, galOf e σ y = ∑ i, e (σ (b i) ⊗ₜ 1) * e (1 ⊗ₜ c i y) := by
     intro y
     change e (Algebra.TensorProduct.map (σ : E →ₐ[F] E) (AlgHom.id F A) (e.symm y)) = _
-    rw [hs, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs, map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.TensorProduct.map_tmul, ← map_mul, Algebra.TensorProduct.tmul_mul_tmul, mul_one,
       one_mul]
     rfl
   have h' : (galOf e σ : B → B) = fun y => ∑ i, e (σ (b i) ⊗ₜ 1) * e (1 ⊗ₜ c i y) := funext h
   rw [h']
-  exact continuous_finset_sum _ fun i _ => continuous_const.mul (hm.comp (hc i))
+  exact continuous_finsetSum _ fun i _ => continuous_const.mul (hm.comp (hc i))
 
 private theorem galAd_cont (σ : E ≃ₐ[F] E) : Continuous (galAd σ) := by
   haveI : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E

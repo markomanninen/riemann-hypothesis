@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivPushForward
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PExistsForm
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRational
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivPushForward
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PExistsForm
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRational
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -38,8 +43,8 @@ theorem weight_apply_eval {σ : Type*} (w : σ → K' → ℕ) (d : σ →₀ �
 
 variable [DecidableEq K] [DecidableEq K']
 
-omit [DecidableEq K] [DecidableEq K'] in
 
+omit [DecidableEq K] [DecidableEq K'] in
 theorem weight_mapDomain {σ τ M : Type*} [AddCommMonoid M] (w : τ → M) (g : σ → τ)
     (d : σ →₀ ℕ) : Finsupp.weight w (Finsupp.mapDomain g d) = Finsupp.weight (w ∘ g) d := by
   simp only [Finsupp.weight_apply]
@@ -104,25 +109,22 @@ theorem rename_component (a : MRing (fun k => ι' (j k)) F) (b : K → ℕ) :
     simp
 
 theorem isMultiProjPrime_contractPrime {P' : Ideal (MRing ι' F)} (hP' : IsMultiProjPrime P') :
-    IsMultiProjPrime (contractPrime j P') where
-  isPrime := by
-    have := hP'.isPrime
-    exact contractPrime.isPrime j P'
-  multiHomog := by
-    intro f hf b
+    IsMultiProjPrime (contractPrime j P') := by
+  have := hP'.isPrime
+  refine ⟨contractPrime.isPrime j P', ?_, ?_⟩
+  · intro f hf b
     show rename (blockIncl j ι') _ ∈ P'
     rw [rename_component]
     exact hP'.multiHomog _ hf _
-  relevant := by
-    intro k
+  · intro k
     obtain ⟨i, hi⟩ := hP'.relevant (j k)
     refine ⟨i, ?_⟩
     show rename (blockIncl j ι') (X ⟨k, i⟩) ∉ P'
     rw [rename_X]
     exact hi
 
-omit [DecidableEq K] [DecidableEq K'] in
 
+omit [DecidableEq K] [DecidableEq K'] in
 theorem contractFracMap_algebraMap (P' : Ideal (MRing ι' F)) [P'.IsPrime]
     (a : MRing (fun k => ι' (j k)) F) :
     contractFracMap j P' (algebraMap _ _ (Ideal.Quotient.mk (contractPrime j P') a)) =
@@ -145,8 +147,8 @@ theorem map_homFracDegZero_le (P' : Ideal (MRing ι' F)) [P'.IsPrime] :
     isMultiHomog_rename j ι' hf, isMultiHomog_rename j ι' hg, hgP, ?_⟩
   rw [map_div₀, contractFracMap_algebraMap, contractFracMap_algebraMap]
 
-omit [DecidableEq K] [DecidableEq K'] in
 
+omit [DecidableEq K] [DecidableEq K'] in
 theorem pullDeg_sub (bf bg : K → ℕ) :
     pullDeg j (fun k => (bf k : ℤ) - bg k) =
       fun k' => ((Function.extend j bf 0 k' : ℕ) : ℤ) - ((Function.extend j bg 0 k' : ℕ) : ℤ) := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -151,7 +155,8 @@ theorem exists_sum_mul_pow_div_eq_one [Fintype J] (t : J → Ω) (ht : ∃ i, t 
   · obtain ⟨c, hc⟩ := Ideal.mem_span_range_iff_exists_fun.mp ((Ideal.eq_top_iff_one _).mp hI)
     refine ⟨fun i => ⟨c i, (c i).2⟩, ?_⟩
     have h := congrArg C.toSubring.subtype hc
-    rw [map_sum, map_one] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one] at h
     exact h
   exfalso
   obtain ⟨V, hV, hV'⟩ := Ideal.image_subset_nonunits_valuationSubring _ hI

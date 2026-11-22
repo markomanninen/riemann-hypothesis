@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -14,14 +18,14 @@ private theorem wcomp_mul_homog {O σ X : Type} [CommRing O] [AddCommGroup X] (w
     have hp' := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
     by_cases h2 : Finsupp.weight wt p.2 = c
     · rw [coeff_wcomp, if_pos]
-      rw [← h, ← hp', map_add, h2, add_sub_cancel_right]
+      rw [← h, ← hp', map_add (f := _), h2, add_sub_cancel_right]
     · rw [ha _ h2, mul_zero, mul_zero]
   · refine (Finset.sum_eq_zero fun p hp => ?_).symm
     have hp' := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
     by_cases h2 : Finsupp.weight wt p.2 = c
     · rw [coeff_wcomp, if_neg, zero_mul]
       intro h1
-      exact h (by rw [← hp', map_add, h1, h2, sub_add_cancel])
+      exact h (by rw [← hp', map_add (f := _), h1, h2, sub_add_cancel])
     · rw [ha _ h2, mul_zero]
 
 private theorem homog_of_span {O σ X : Type} [CommRing O] [AddCommGroup X] (wt : σ → X)
@@ -38,7 +42,7 @@ private theorem homog_of_span {O σ X : Type} [CommRing O] [AddCommGroup X] (wt 
     | zero => intro b j; simp
     | add x y _ _ hx hy =>
       intro b j
-      rw [mul_add, map_add]
+      rw [mul_add, map_add (f := _)]
       exact add_mem (hx b j) (hy b j)
     | smul r x _ hx =>
       intro b j
@@ -124,7 +128,7 @@ theorem UpperTheory.V.Alg.part_closed :
     have h5 : f - wcomp O W.wt j f =
         (f - y - g) - wcomp O W.wt j (f - y - g) + (g - wcomp O W.wt j g) := by
       rw [map_sub, map_sub, h3]; ring
-    rw [h5, map_add, (RingHom.mem_ker).1 (sub_mem h1 h2), zero_add]
+    rw [h5, map_add (f := _), (RingHom.mem_ker).1 (sub_mem h1 h2), zero_add]
     exact Ideal.mem_map_of_mem _ h4
   have h0 : W.π (f - wcomp O W.wt j f) = 0 := by
     have := Ideal.iInf_pow_eq_bot_of_isLocalRing (maximalIdeal R) (maximalIdeal.isMaximal R).ne_top

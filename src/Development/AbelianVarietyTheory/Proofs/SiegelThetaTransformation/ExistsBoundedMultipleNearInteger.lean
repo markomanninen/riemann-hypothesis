@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SimultaneousDiophantineApprox
 
@@ -83,7 +87,8 @@ theorem exists_bounded_multiple_near_integer (E : Type) [Field E] [NumberField E
       ring
     rw [hx, pi_norm_lt_iff one_pos]
     intro σ
-    rw [canonicalEmbedding.apply_at, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [canonicalEmbedding.apply_at, map_sum]
     refine lt_of_le_of_lt (norm_sum_le _ _) ?_
     refine lt_of_le_of_lt (Finset.sum_le_sum (g := fun i => 1 / (N : ℝ) * ∑ τ : E →+* ℂ, ‖τ (b i)‖)
       fun i _ => ?_) ?_

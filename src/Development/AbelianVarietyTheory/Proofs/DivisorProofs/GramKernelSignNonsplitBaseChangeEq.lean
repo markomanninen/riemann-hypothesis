@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FiniteDimensionalMram
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FiniteDimensionalMram
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.UnitaryClasses
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -83,7 +88,7 @@ theorem ordL_mul {x y : L} (hx : x ≠ 0) (hy : y ≠ 0) : ordL (x * y) = ordL x
   have hy' : Valued.v y ≠ 0 := (Valuation.ne_zero_iff _).2 hy
   have hxy' : Valued.v (x * y) ≠ 0 := (Valuation.ne_zero_iff _).2 (mul_ne_zero hx hy)
   unfold ordL
-  rw [dif_neg hx', dif_neg hy', dif_neg hxy']
+  rw [dite_eq_right hx', dite_eq_right hy', dite_eq_right hxy']
   have : WithZero.unzero hxy' = WithZero.unzero hx' * WithZero.unzero hy' := by
     apply WithZero.coe_injective
     rw [WithZero.coe_mul, WithZero.coe_unzero, WithZero.coe_unzero, WithZero.coe_unzero, map_mul]
@@ -134,7 +139,8 @@ theorem gram_det_map (hφ : ∀ x, τ (φ x) = φ (σ x)) (H A : Matrix (Fin n) 
   have e2 : (Matrix.of fun i j => hform τ (H.map φ) (c i).1 (c j).1) =
       ((gramOn σ H V).map φ).submatrix (finCongr hk) (finCongr hk) := by
     ext i j
-    simp only [Matrix.of_apply, hc, v, Matrix.submatrix_apply, Matrix.map_apply, gramOn, hform, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.of_apply, hc, v, Matrix.submatrix_apply, Matrix.map_apply, gramOn, hform, map_sum, map_mul,
       Function.comp_apply, hφ, finCongr_apply]
     rfl
   rw [e2, Matrix.det_submatrix_equiv_self,

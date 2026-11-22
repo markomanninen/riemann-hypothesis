@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.LFun Formalism.UG Formalism.UG.P Formalism.L2.Host UpperTheory.V.Cj.S
 open GroundTheory.Automorphic.AutomorphicForm (UPos unipGL constantTerm archCompact infEmb isExpLieAlgebra)
@@ -11,7 +15,7 @@ section SlopeTestRemainingChoices
 variable {E : Type} [Field E] [NumberField E] {a : ℕ}
 
 private theorem kgl_eq (w : Pl E) :
-    GroundTheory.Automorphic.GLnLocal.integralGL (w.adicCompletion E) a = KGL w a := by
+    GroundTheory.Automorphic.GLnLocal.integralGL (w.adicCompletion E) a = KGL w (n := a) := by
   have h : ∀ O : Subring (w.adicCompletion E), O = (ValuativeRel.valuation (w.adicCompletion E)).integer →
       GroundTheory.Automorphic.GLnLocal.integralGL (w.adicCompletion E) a = GLint (Fin a) O := by
     rintro _ rfl
@@ -45,7 +49,7 @@ theorem UpperTheory.V.Cj.S.rtK :
     rw [e, (h.cap t).2 u, map_smul]
   · set kf := GeneralLinearGroup.map (pFin E) k with hkf
     set kw := GeneralLinearGroup.map (pLoc E w) kf with hkw
-    have hmem : kw ∈ KGL w a := by
+    have hmem : kw ∈ KGL w (n := a) := by
       rw [← kgl_eq]
       have e : kw = GroundTheory.Automorphic.Reduction.finAt w k := by
         ext i j : 2

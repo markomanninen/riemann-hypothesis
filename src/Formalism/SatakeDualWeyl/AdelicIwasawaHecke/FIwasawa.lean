@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.StatementF
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaE
+module
+
+public import Formalism.SatakeDualWeyl.StatementF
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaE
+
+@[expose] public section
 
 open Formalism.UG Matrix
 
@@ -15,7 +19,7 @@ theorem fIwasawa_ordL_mul (x y : L) (hx : x ≠ 0) (hy : y ≠ 0) :
   have hy' : Valued.v y ≠ 0 := (Valuation.ne_zero_iff _).mpr hy
   have hxy' : Valued.v (x * y) ≠ 0 := by rw [map_mul]; exact mul_ne_zero hx' hy'
   unfold Formalism.UG.ordL
-  rw [dif_neg hxy', dif_neg hx', dif_neg hy']
+  rw [dite_eq_right hxy', dite_eq_right hx', dite_eq_right hy']
   have key : WithZero.unzero hxy' = WithZero.unzero hx' * WithZero.unzero hy' := by
     apply WithZero.coe_injective
     simp only [WithZero.coe_mul, WithZero.coe_unzero, map_mul]
@@ -34,7 +38,7 @@ theorem fIwasawa_ordL_unit (x y : L) (hx : Valued.v x ≤ 1) (hy : Valued.v y �
   have hv : Valued.v x = 1 := le_antisymm hx hge
   have hne : Valued.v x ≠ 0 := by rw [hv]; exact one_ne_zero
   unfold Formalism.UG.ordL
-  rw [dif_neg hne]
+  rw [dite_eq_right hne]
   have key : WithZero.unzero hne = 1 := by
     apply WithZero.coe_injective
     rw [WithZero.coe_unzero, hv, WithZero.coe_one]

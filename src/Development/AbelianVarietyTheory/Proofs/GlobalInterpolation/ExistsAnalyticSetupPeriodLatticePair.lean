@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfTrace
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PThIndep
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PSelfDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CmBaseFieldIntegersAndCurveIdealFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfTrace
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PThIndep
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PSelfDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CmBaseFieldIntegersAndCurveIdealFacts
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Classical Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker GlobalTheory.MomN
 open scoped ComplexOrder
@@ -107,7 +111,8 @@ theorem embV_comb {r : ℕ} (k : Fin r → D.host.K) (b : Fin r → Matrix (Fin 
     δ • embV D (tor0 D cc δ) (∑ i, ((k i : D.host.K) : D.host.E) • b i)
       = ∑ i, D.host.φ₀ ((k i : D.host.K) : D.host.E) • (δ • embV D (tor0 D cc δ) (b i)) := by
   funext τ i j
-  simp [embV, tor0, embT_Kc, Finset.sum_apply, Matrix.sum_apply, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [embV, tor0, embT_Kc, Finset.sum_apply, Matrix.sum_apply, map_sum, Finset.mul_sum]
   exact Finset.sum_congr rfl fun l _ => by ring
 
 theorem embV_injective [Nonempty D.what₂.Tau] :
@@ -287,13 +292,15 @@ theorem periodSetup : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : 
         rw [← hAe, ContinuousLinearEquiv.apply_symm_apply]
       have e2 : (s : ℂ) • (δ • embV D (tor0 D cc δ) A) = δ • embV D (tor0 D cc δ) ((s : D.host.E) • A) := by
         rw [embV_natsmul, smul_comm]
-      rw [e1, ← map_smul, e2, hc, embV_comb, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e1, ← map_smul, e2, hc, embV_comb, map_sum]
       exact Finset.sum_congr rfl fun i _ => by rw [map_smul]
     · intro c hc hsum i
       choose k hk using fun i => (hOK (c i)).1 (hc i)
       have e1 : ∑ i, c i • coord D N N' (δ • embV D (tor0 D cc δ) (b i))
           = coord D N N' (δ • embV D (tor0 D cc δ) (∑ i, (((k i : 𝓞 D.host.K) : D.host.K) : D.host.E) • b i)) := by
-        rw [embV_comb, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [embV_comb, map_sum]
         exact Finset.sum_congr rfl fun i _ => by rw [hk]; exact ((coord D N N').map_smul _ _).symm
       have hsum' : coord D N N' (δ • embV D (tor0 D cc δ) (∑ i, (((k i : 𝓞 D.host.K) : D.host.K) : D.host.E) • b i)) = 0 := by
         rw [← e1]; exact hsum

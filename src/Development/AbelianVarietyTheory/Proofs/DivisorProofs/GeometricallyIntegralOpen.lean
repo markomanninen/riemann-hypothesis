@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.EndoLbIsoSymmetryHypothesisExtendNormalModel
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.GenericExistsUniqueOActOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCechPicardGlueFiniteDisjointCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCechLineBundleAmbientOfOpenImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLineBundlePullOfIsLineBundleOnOpen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionTranslatesCoverSemiAbelianStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBundleExtensionTranslateOpenStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.EndoLbIsoSymmetryHypothesisExtendNormalModel
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.GenericExistsUniqueOActOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCechPicardGlueFiniteDisjointCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCechLineBundleAmbientOfOpenImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLineBundlePullOfIsLineBundleOnOpen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionTranslatesCoverSemiAbelianStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBundleExtensionTranslateOpenStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -246,13 +250,13 @@ theorem exists_quot {Q P : Scheme.{0}} {J : Q ⟶ P} {N N' : LB P} {L : LB Q} (h
   rw [← val Z r z l hm, ← hτ l, gm_res r z _ hm]
 
 theorem isOn_div {P : Scheme.{0}} {N N' : LB P} {V V' : P.Opens} (hN : IsOn V N) (hN' : IsOn V' N') :
-    IsOn (V ⊓ V') (LB.div N N') where
-  le a := inf_le_inf (hN.le a.1) (hN'.le a.2)
-  cov x hx := by
+    IsOn (V ⊓ V') (LB.div N N') := by
+  refine ⟨fun a ↦ inf_le_inf (hN.le a.1) (hN'.le a.2), ?_, ?_⟩
+  · intro x hx
     obtain ⟨a, ha⟩ := hN.cov x hx.1
     obtain ⟨b, hb⟩ := hN'.cov x hx.2
     exact ⟨(a, b), ha, hb⟩
-  coc x a b c ha hb hc := by
+  · intro x a b c ha hb hc
     rw [gm_div' N N' (𝟙 P) x a b ha hb, gm_div' N N' (𝟙 P) x b c hb hc, gm_div' N N' (𝟙 P) x a c ha hc,
       ← hN.coc x a.1 b.1 c.1 ha.1 hb.1 hc.1, ← hN'.coc x a.2 b.2 c.2 ha.2 hb.2 hc.2, mul_inv,
       _root_.mul_mul_mul_comm]

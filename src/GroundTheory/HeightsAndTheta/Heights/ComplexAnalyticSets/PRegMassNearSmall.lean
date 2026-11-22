@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegMassNearSmall
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegFormCompare
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegBallMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSmallSetBallCover
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarIntAdd
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegMassNearSmall
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegFormCompare
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegBallMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSmallSetBallCover
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarIntAdd
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -66,7 +71,7 @@ theorem RegMassNearSmall.proof (hCmp : RegFormCompare.Statement) (hBall : RegBal
   have hT : ∫ y, chartDens J A w ψ y ≤ T.card * (C₂ * r ^ (2 * d)) := by
     rw [hsum, integral_finsetSum _ fun c hc => (hball c hc).1, ← nsmul_eq_mul, ← Finset.sum_const]
     exact Finset.sum_le_sum fun c hc => (hball c hc).2
-  rw [varInt, dif_pos h]
+  rw [varInt, dite_eq_left h]
   calc |chartInt J A (fun x => χ x * f x) (vecCons (logReg u ε) φ)|
       ≤ ∫ y, C₁ * chartDens J A w ψ y := by
         refine abs_integral_le_integral_abs.trans (integral_mono_of_nonneg

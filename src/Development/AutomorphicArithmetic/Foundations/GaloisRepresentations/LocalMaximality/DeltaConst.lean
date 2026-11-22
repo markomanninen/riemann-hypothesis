@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -94,7 +99,7 @@ private theorem mem_acxC' {σ E : Type} [LinearOrder σ] [AddCommGroup E] [Modul
 
 private theorem pk_zero {d : ℕ} {I : Finset (Fin (d + 1))} (h : 0 ∈ I) : pk I = 0 := by
   have hn : I.Nonempty := ⟨0, h⟩
-  rw [pk, dif_pos hn]
+  rw [pk, dite_eq_left hn]
   exact le_antisymm (I.min'_le 0 h) (Fin.zero_le _)
 
 section

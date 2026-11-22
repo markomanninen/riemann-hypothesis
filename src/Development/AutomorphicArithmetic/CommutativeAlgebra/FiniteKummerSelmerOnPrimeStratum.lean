@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
-import Development.AutomorphicArithmetic.CommutativeAlgebra.SpecializationTensorRingHomProperties
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsSpecializationOfEvalNeZero
-import Development.AutomorphicArithmetic.CommutativeAlgebra.TensorDedekindLocalUniformizer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.SpecializationTensorRingHomProperties
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsSpecializationOfEvalNeZero
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.TensorDedekindLocalUniformizer
+
+@[expose] public section
 
 open GroundTheory.FunctionField UpperTheory.Et.Sel
 open scoped TensorProduct
@@ -198,7 +202,8 @@ theorem UpperTheory.finite_kummerSelmer_on_prime_stratum :
       rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_inv_cancel₀ hdK]
       rfl
     have hFab : F * inc L (B i) b = inc L (B i) a := by
-      simp only [F, a, b, inc, Finset.sum_mul, map_sum, Algebra.TensorProduct.map_tmul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [F, a, b, inc, Finset.sum_mul, map_sum, Algebra.TensorProduct.map_tmul,
         AlgHom.id_apply, Subalgebra.coe_val, Algebra.TensorProduct.tmul_mul_tmul, mul_one]
       refine Finset.sum_congr rfl (fun j _ => ?_)
       congr 1

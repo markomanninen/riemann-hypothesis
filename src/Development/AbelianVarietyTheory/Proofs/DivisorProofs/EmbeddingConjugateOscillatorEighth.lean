@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrAtEmb
-import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionFirst
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbeddingConjugateOscillatorFirst
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaFockVacuumProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrAtEmb
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionFirst
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbeddingConjugateOscillatorFirst
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaFockVacuumProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem inner_of_int {K : Type} [Field K] [StarRing K] {I : Type} [Fintype I] {n
   generalize bVV K lam = b at hp hu
   conv_lhs => rw [← b.sum_repr u, ← b.sum_repr v]
   conv_rhs => rw [← b.sum_repr u, ← b.sum_repr v]
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, map_mul,
     RingHom.id_apply, sum_inner, inner_sum, inner_smul_left, inner_smul_right, hp, Finset.mul_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun a' _ => ?_
   rw [starRingEnd_apply (b.repr u a'), hu a' σ]
@@ -128,7 +133,7 @@ theorem toG_pG (he : Function.Bijective e) (hl : IsLt (mv e lt)) (h : IsTyp D H)
     conv_rhs => rw [← m1, Finset.prod_range]
     refine Finset.prod_congr rfl fun i _ => ?_
     have hi : (i : ℕ) < Dw.p := lt_of_lt_of_eq i.2 m1
-    rw [map_pow, dif_pos (by omega), if_pos ((h.1 _).2 ⟨e t, rfl⟩), toG_minorP]
+    rw [map_pow, dite_eq_left (by omega), if_pos ((h.1 _).2 ⟨e t, rfl⟩), toG_minorP]
     congr 1
     · rw [minorPlus]
       congr 1
@@ -145,7 +150,7 @@ theorem toG_pG (he : Function.Bijective e) (hl : IsLt (mv e lt)) (h : IsTyp D H)
     conv_rhs => rw [← m2, Finset.prod_range]
     refine Finset.prod_congr rfl fun i _ => ?_
     have hi : (i : ℕ) < Dw.q := lt_of_lt_of_eq i.2 m2
-    rw [map_pow, dif_pos (by omega), if_neg ((h.2 _).2 ⟨e t, rfl⟩), toG_minorP]
+    rw [map_pow, dite_eq_left (by omega), if_neg ((h.2 _).2 ⟨e t, rfl⟩), toG_minorP]
     congr 1
     · rw [minorMinus]
       congr 1
@@ -168,11 +173,12 @@ theorem toG_gaStar (he : Function.Injective e) (hl : IsLt (mv e lt)) (h : IsTyp 
     toG c φ lt (gaStar c (ga.map (IsCMField.complexConj D.host.E)) P) = PhaseMap.sub pW U (toG c φ lt P) := by
   induction P using MvPolynomial.induction_on with
   | C a => rw [MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq, toG_C, MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq]
-  | add P Q hP hQ => simp only [map_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ]
   | mul_X P ℓ hP =>
     simp only [map_mul, hP]
     congr 1
-    rw [toG_X, gaStar, MvPolynomial.aeval_X, MvPolynomial.aeval_X, letB, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [toG_X, gaStar, MvPolynomial.aeval_X, MvPolynomial.aeval_X, letB, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     have hc : lt ⟨ℓ.1, ℓ.2.1, j⟩ = ((lt ℓ).1, (lt ℓ).2.1, j) :=
       Prod.ext (he (congrArg Prod.fst (hl.col h ℓ j))) (congrArg Prod.snd (hl.col h ℓ j) :)

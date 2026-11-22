@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaOK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaOK
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,9 +59,7 @@ def kap (h d : ℕ) (k : Fin 8) : (Fin (8 * h) ⊕ Fin (8 * h) → ℤ) →+ (Fi
 
 theorem kap_apply (h d : ℕ) (k : Fin 8) (a : Fin (8 * h) ⊕ Fin (8 * h) → ℤ) :
     kap h d k a = ∑ l, vMat d (sig k) (sig l) • blk h l a := by
-  unfold kap
-  rw [AddMonoidHom.finset_sum_apply]
-  rfl
+  simp [kap]
 
 theorem inner_sum (d : ℕ) (m n : Fin 8) :
     ∑ k, ∑ l, vMat d (sig k) (sig m) * form d (sig k) (sig l) * vMat d (sig l) (sig n) =
@@ -78,7 +80,8 @@ theorem formZ_kap {h d : ℕ} (hd : 0 < d) (a b : Fin (8 * h) ⊕ Fin (8 * h) �
       ∑ m, ∑ n, vMat d (sig k) (sig m) * vMat d (sig l) (sig n) * omegaStd (blk h m a) (blk h n b) := by
     intro k l
     rw [← omegaB_apply, kap_apply, kap_apply]
-    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
       omegaB_apply, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun m _ => Finset.sum_congr rfl fun n _ => ?_
@@ -118,7 +121,7 @@ theorem blk_jlMap (h : ℕ) (l : Fin 8) (a : Fin h ⊕ Fin h → ℤ) :
     rcases x with i | i <;> simp [blk, emb, jlMap]
   · have hl1 : 1 ≤ (l : ℕ) := Nat.one_le_iff_ne_zero.mpr fun h0 => hl (Fin.ext h0)
     rcases x with i | i <;> simp only [blk, emb, jlMap, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Function.comp_apply,
-      Sum.map_inl, Sum.map_inr, Pi.zero_apply] <;> rw [dif_neg] <;> simp only [finProdFinEquiv_apply_val, not_lt] <;>
+      Sum.map_inl, Sum.map_inr, Pi.zero_apply] <;> rw [dite_eq_right] <;> simp only [finProdFinEquiv_apply_val, not_lt] <;>
       nlinarith [i.2]
 
 theorem kap_jlMap (h d : ℕ) (k : Fin 8) (a : Fin h ⊕ Fin h → ℤ) :
@@ -131,8 +134,8 @@ end GlobalTheory.ZarhinFam.KappaEx
 
 namespace GlobalTheory.ZarhinFam
 
-open KappaEx in
 
+open KappaEx in
 theorem exists_kappaOK : ∀ (h M d : ℕ), 1 ≤ h → 3 ≤ M → Odd M → 0 < d → M.Coprime d →
     ∃ κ : Fin 8 → (Fin (8 * h) ⊕ Fin (8 * h) → ℤ) →+ (Fin h ⊕ Fin h → ℤ), GlobalTheory.ZarhinFam.KappaOK h M d κ := by
   intro h M d _ _ _ hd _

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IntegralNormBound
 
@@ -20,7 +24,7 @@ theorem main {k A : Type} [Field k] [CommRing A] [Algebra k A] {Q : Ideal A} {π
       exact Ideal.mul_mem_mul (Ideal.pow_mem_pow hπ m) ha
     have key : u - Polynomial.aeval π (p + Polynomial.C a * Polynomial.X ^ m)
         = q + π ^ m * (c - algebraMap k A a) := by
-      simp only [map_add, map_mul, Polynomial.aeval_C, Polynomial.aeval_X, map_pow]
+      simp only [map_add (f := _), map_mul, Polynomial.aeval_C, Polynomial.aeval_X, map_pow]
       linear_combination (-1 : A) * hyq
     rw [key]
     exact Ideal.add_mem _ hq hpm

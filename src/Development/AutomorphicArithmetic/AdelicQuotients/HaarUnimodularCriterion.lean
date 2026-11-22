@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
+
+@[expose] public section
+
 open UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open MeasureTheory
 open scoped ENNReal NNReal
@@ -12,7 +17,8 @@ private theorem haar_inv_eq_self {G : Type} [Group G] [TopologicalSpace G] [IsTo
   have hsq : μ = (c * c) • μ := by
     calc μ = μ.inv.inv := hinv.symm
       _ = (c • μ).inv := by rw [hc]
-      _ = c • μ.inv := by simp only [Measure.inv_def, Measure.map_smul]
+      _ = c • μ.inv := by
+        simpa only [Measure.inv_def] using Measure.map_smul c (μ := μ) measurable_inv.aemeasurable
       _ = c • (c • μ) := by rw [hc]
       _ = (c * c) • μ := by rw [smul_smul]
   have K : TopologicalSpace.PositiveCompacts G := Classical.arbitrary _

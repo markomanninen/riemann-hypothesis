@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2repResIsGLRep
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2repResIsGLRep
+
+@[expose] public section
 
 noncomputable section
 

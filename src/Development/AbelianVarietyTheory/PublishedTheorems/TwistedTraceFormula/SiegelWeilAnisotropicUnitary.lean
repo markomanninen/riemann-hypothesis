@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedBessel
-import Development.AbelianVarietyTheory.Definitions.Foundations.EisValueAtIffEisPoleLE
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedBessel
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EisValueAtIffEisPoleLE
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,20 +84,6 @@ theorem leftInv_theta (g : GA D S) : LeftInv (GQ T) fun h => thetaKO ω g h f :=
   rwa [← Module.End.mul_apply, ← map_mul, Prod.mk_mul_mk, one_mul] at this
 
 variable {ν : Measure (GA D T)} [ν.IsHaarMeasure]
-
-theorem integrable_theta (hT : ∃ K : Set (GA D T), IsCompact K ∧ ∀ h, ∃ γ ∈ GQ T, ∃ k ∈ K, h = γ * k) (g : GA D S) :
-    Integrable (AutomorphicL2Unitary.descend (GQ T) fun h => thetaKO ω g h f) (autMeasure T ν) := by
-  obtain ⟨K, hK, hc⟩ := hT
-  have h1 : Continuous fun h => thetaKO ω g h f := (hω.om_cont f hf 0).comp (Continuous.prodMk_right g)
-  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn h1.continuousOn
-  refine Integrable.of_bound ?_ C (.of_forall fun q => ?_)
-  · refine aestronglyMeasurable_quotMeasure_iff_lift.2 ?_
-    rw [show lift (GQ T) (AutomorphicL2Unitary.descend (GQ T) fun h => thetaKO ω g h f) = _ from
-      funext (leftInv_theta hω hf g).descend_mk]
-    exact h1.measurable.aestronglyMeasurable
-  · obtain ⟨γ, hγ, k, hk, e⟩ := hc q.out
-    rw [AutomorphicL2Unitary.descend, e]
-    exact (congrArg norm (leftInv_theta hω hf g γ hγ k)).trans_le (hC k hk)
 
 theorem thetaMean_eq {𝓕 : Set (GA D T)} (h𝓕 : IsFundamentalDomain (GQ T) 𝓕 ν) (g : GA D S) :
     thetaMean ω ν f g = ⨍ h in 𝓕, thetaKO ω g h f ∂ν := by

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointAtZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIffEtaleAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNoetherianModelOfDivisorOfConstants
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNoetherianNormalLocalApprox
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalizationAtPrimeIsDiscreteValuationRingOfHeig
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointAtZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIffEtaleAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNoetherianModelOfDivisorOfConstants
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNoetherianNormalLocalApprox
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalizationAtPrimeIsDiscreteValuationRingOfHeig
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 noncomputable section
@@ -31,7 +36,7 @@ theorem height_comap_eq_one_of_goingDown {A B : Type} [CommRing A] [IsDomain A] 
     haveI := hr
     obtain ⟨P₁, hP₁Q, hP₁, hP₁o⟩ := Ideal.exists_ideal_lt_liesOver_of_lt (p := r) (q := p) Q hrp
     haveI := hP₁
-    haveI : (⊥ : Ideal A).IsPrime := Ideal.bot_prime
+    haveI : (⊥ : Ideal A).IsPrime := Ideal.isPrime_bot
     obtain ⟨P₀, hP₀P₁, hP₀, -⟩ := Ideal.exists_ideal_lt_liesOver_of_lt (p := ⊥) (q := r) P₁
       (bot_lt_iff_ne_bot.mpr hr0)
     haveI := hP₀
@@ -41,7 +46,7 @@ theorem height_comap_eq_one_of_goingDown {A B : Type} [CommRing A] [IsDomain A] 
     have h4 : (1 : ℕ∞) ≤ P₁.height := le_trans le_add_self h1
     have h3 : (1 : ℕ∞) + 1 ≤ 1 := le_trans (by gcongr) h2
     exact absurd h3 (by decide)
-  · haveI : (⊥ : Ideal A).IsPrime := Ideal.bot_prime
+  · haveI : (⊥ : Ideal A).IsPrime := Ideal.isPrime_bot
     have := Ideal.height_add_one_le_of_lt_of_isPrime (bot_lt_iff_ne_bot.mpr hne)
     simpa using this
 
@@ -86,7 +91,7 @@ theorem exists_kummer_enlargement : ∀ (T : Type) [CommRing T] [IsDomain T] [Is
   have hy : ∀ p : Ideal A, ∃ y : T, y ^ q = i (π p) := by
     intro p
     obtain ⟨y, hy⟩ := hT (X ^ q - C (i (π p))) (monic_X_pow_sub_C _ hq.ne')
-      (by rw [natDegree_X_pow_sub_C]; exact hq)
+      (by rw [natDegree_X_pow_sub_C _]; exact hq)
     refine ⟨y, ?_⟩
     simpa [sub_eq_zero] using hy
   choose y hy using hy
@@ -172,7 +177,7 @@ theorem exists_kummer_enlargement : ∀ (T : Type) [CommRing T] [IsDomain T] [Is
   set P : Ideal B := p₁.comap (algebraMap B (loc S)) with hP
   have hPh : P.height = 1 := by
     rw [hP, ← hp₁]
-    exact IsLocalization.height_comap M p₁
+    exact IsLocalization.height_under M p₁
   have hcomap : p₁.comap f = P.comap (algebraMap A B) := by
     rw [hP, Ideal.comap_comap, ← IsScalarTower.algebraMap_eq]
     rfl
@@ -191,7 +196,7 @@ theorem exists_kummer_enlargement : ∀ (T : Type) [CommRing T] [IsDomain T] [Is
     obtain ⟨hrprime, har⟩ := hr
     by_contra hlt
     have hlt' : r < p₁.comap f := lt_of_le_of_ne hrp (fun e => hlt (e ▸ le_rfl))
-    haveI : (⊥ : Ideal A).IsPrime := Ideal.bot_prime
+    haveI : (⊥ : Ideal A).IsPrime := Ideal.isPrime_bot
     have hr0 : (⊥ : Ideal A) < r := by
       refine bot_lt_iff_ne_bot.mpr fun h => ha ?_
       have : a ∈ r := har (Ideal.mem_span_singleton_self a)

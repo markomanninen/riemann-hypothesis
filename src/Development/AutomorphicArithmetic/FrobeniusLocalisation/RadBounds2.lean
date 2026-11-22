@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LogRdSum
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.MemRam
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.RadBounds
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.NormDiffEK
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.RdLower
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LogRdSum
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.MemRam
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.RadBounds
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.NormDiffEK
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.RdLower
+
+@[expose] public section
 
 open UpperTheory.HF
 

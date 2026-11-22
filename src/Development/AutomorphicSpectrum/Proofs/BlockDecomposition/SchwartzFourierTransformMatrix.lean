@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.ExistsEquivInnerOfNondegenerate
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.ExistsEquivInnerOfNondegenerate
+
+@[expose] public section
+
 open scoped Matrix SchwartzMap FourierTransform RealInnerProductSpace
 open MeasureTheory
 

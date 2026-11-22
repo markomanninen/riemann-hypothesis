@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TruncSum
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SummableOneDivAbsNormSq
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TruncSum
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SummableOneDivAbsNormSq
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW GlobalTheory.CompanionTheory.Mass.MeanV PositivityTheory.Rg.Mass NumberField IsDedekindDomain MeasureTheory Topology Filter
 open scoped ENNReal NNReal Classical
@@ -48,7 +52,7 @@ theorem tail_sum_finset_prod_two_mul_div_sq :
     (Real.prod_one_add_le_exp_sum _ ha0).trans
       (Real.exp_le_exp.mpr (hsum.sum_le_tsum _ (fun v _ => ha0 v)))
   have hB1 : 1 ≤ ∏ v ∈ U \ T, (1 + a v) := by
-    have := Finset.prod_le_prod (s := U \ T) (f := fun _ => (1 : ℝ)) (g := fun v => 1 + a v)
+    have := Finset.prod_le_prod₀ (s := U \ T) (f := fun _ => (1 : ℝ)) (g := fun v => 1 + a v)
       (fun _ _ => zero_le_one) (fun v _ => by linarith [ha0 v])
     simpa using this
 

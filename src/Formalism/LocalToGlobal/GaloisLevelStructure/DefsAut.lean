@@ -1,4 +1,8 @@
-import Formalism.AlgebraicWeights.IsAlgWeight
+module
+
+public import Formalism.AlgebraicWeights.IsAlgWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ section aut
 
 variable (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ)
 
-local notation3 "L⁺" => NumberField.maximalRealSubfield L
+local notation3 "L⁺" => maximalRealSubfield L
 
 def Cong (N : ℕ) (κ : GAf L n) : Prop :=
   κ ∈ Umax L n ∧ ∀ i j, ∃ y ∈ ALint L,
@@ -99,8 +103,8 @@ def AlgWt.Iso (a b : AlgWt L n) : Prop := ∃ T : a.W ≃ₗ[ℂ] b.W, ∀ γ x,
 def AlgWt.IsDual (a b : AlgWt L n) : Prop :=
   ∃ B : a.W →ₗ[ℂ] b.W →ₗ[ℂ] ℂ, B ≠ 0 ∧ ∀ γ x y, B (a.ρ γ x) (b.ρ γ y) = B x y
 
-open Classical in
 
+open Classical in
 def evPt (τ : L →+* ℂ) (B : GL (Fin n) ℂ) : (L →+* ℂ) × Fin n × Fin n → ℂ := fun p =>
   if p.1 = τ then B.val p.2.1 p.2.2
   else if p.1 = ComplexEmbedding.conjugate τ then (B⁻¹).val p.2.2 p.2.1
@@ -126,7 +130,7 @@ def AutRep.Iso (π π' : AutRep L n) : Prop := π.toAlgWt.Iso π'.toAlgWt ∧ Is
 def AutRep.mult (π : AutRep L n) : ℕ := multRep π.ρ π.S
 
 def AutRep.SphAt (π : AutRep L n) (v : HeightOneSpectrum (𝓞 L⁺)) : Prop :=
-  ∃ f ∈ π.S, f ≠ 0 ∧ ∀ κ ∈ Umax L n, TrivOutside {v} κ → rt L n κ f = f
+  ∃ f ∈ π.S, f ≠ 0 ∧ ∀ κ ∈ Umax L n, TrivOutside (L := L) {v} κ → rt L n κ f = f
 
 def OverPl (w : HeightOneSpectrum (𝓞 L)) (v : HeightOneSpectrum (𝓞 L⁺)) : Prop :=
   w.asIdeal.comap (algebraMap (𝓞 L⁺) (𝓞 L)) = v.asIdeal
@@ -137,16 +141,16 @@ def TypeSp (ρ : Representation ℂ (GQ L n) W) (J : Subgroup (GAf L n)) (χ : J
   zero_mem' := ⟨Submodule.zero_mem _, fun _ => by simp⟩
   add_mem' := by
     rintro f f' ⟨h1, h2⟩ ⟨h1', h2'⟩
-    exact ⟨Submodule.add_mem _ h1 h1', fun κ => by rw [map_add, h2, h2', smul_add]⟩
+    exact ⟨Submodule.add_mem _ h1 h1', fun κ => by rw [map_add (f := _), h2, h2', smul_add]⟩
   smul_mem' := by
     rintro c f ⟨h1, h2⟩
     exact ⟨Submodule.smul_mem _ c h1, fun κ => by rw [map_smul, h2, smul_comm]⟩
 
 def HypOutside (J : Subgroup (GAf L n)) (χ : J →* ℂˣ) (B : Set (HeightOneSpectrum (𝓞 L⁺))) : Prop :=
-  ∀ κ : GAf L n, TrivOutside Bᶜ κ → (κ ∈ J ↔ κ ∈ Umax L n) ∧ ∀ h : κ ∈ J, χ ⟨κ, h⟩ = 1
+  ∀ κ : GAf L n, TrivOutside (L := L) Bᶜ κ → (κ ∈ J ↔ κ ∈ Umax L n) ∧ ∀ h : κ ∈ J, χ ⟨κ, h⟩ = 1
+
 
 open Classical in
-
 def heckeD (J : Subgroup (GAf L n)) (D : Set (GAf L n)) (f : GAf L n → W) : GAf L n → W :=
   fun g => ∑ᶠ c : GAf L n ⧸ J, if hc : ∃ x ∈ D, (x : GAf L n ⧸ J) = c then f (g * hc.choose) else 0
 

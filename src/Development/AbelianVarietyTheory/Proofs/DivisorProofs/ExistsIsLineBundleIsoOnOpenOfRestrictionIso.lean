@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WhiskerLeftEqLift
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlueLineBundles
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WhiskerLeftEqLift
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlueLineBundles
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

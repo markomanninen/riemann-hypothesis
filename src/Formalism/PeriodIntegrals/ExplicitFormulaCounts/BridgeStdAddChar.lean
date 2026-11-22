@@ -1,5 +1,9 @@
-import Formalism.UnipotentAdelicQuotients.StdAdditiveCharExists
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.StdCharTR
+module
+
+public import Formalism.UnipotentAdelicQuotients.StdAdditiveCharExists
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.StdCharTR
+
+@[expose] public section
 
 open NumberField
 

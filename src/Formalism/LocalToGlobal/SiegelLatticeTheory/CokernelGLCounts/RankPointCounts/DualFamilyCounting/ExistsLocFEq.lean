@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanExists
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocFSubspace
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ApplyMemSmulOfMemAutSub
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsLatticeOfFibReps
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanExists
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocFSubspace
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ApplyMemSmulOfMemAutSub
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsLatticeOfFibReps
+
+@[expose] public section
 
 open NumberField Module
 
@@ -30,15 +34,13 @@ theorem fibP_eq (h : V →ₗ⋆[K] V →ₗ[K] K) (U : Submodule K V) (𝔭 : I
 theorem isLattice_sup {X Y : Submodule K V} (hc : IsCompl X Y) {A B : Submodule (𝓞 K) V}
     (hA : IsLatIn X A) (hB : IsLatIn Y B) : Submodule.IsLattice K (A ⊔ B) := by
   refine ⟨hA.1.sup hB.1, ?_⟩
-  rw [eq_top_iff, ← hc.sup_eq_top, ← hA.2, ← hB.2]
-  exact sup_le (Submodule.span_mono (SetLike.coe_subset_coe.mpr le_sup_left))
-    (Submodule.span_mono (SetLike.coe_subset_coe.mpr le_sup_right))
-
-theorem exists_locF_eq {A B : Submodule (𝓞 K) V} (hA : Submodule.IsLattice K A)
-    (hB : Submodule.IsLattice K B) :
+  intro s hs hli
+  exact (LinearIndependent.iff_fractionRing _ _).mp hli
+theorem exists_locF_eq {A B : Submodule (𝓞 K) V} (hA : Submodule.IsFullLattice K A)
+    (hB : Submodule.IsFullLattice K B) :
     ∃ s : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, ∀ 𝔭 ∉ s, locF 𝔭.1 A = locF 𝔭.1 B := by
-  obtain ⟨n, hn, hnA⟩ := LocF.exists_zsmul_le hA hB
-  obtain ⟨m, hm, hmB⟩ := LocF.exists_zsmul_le hB hA
+  obtain ⟨n, hn, hnA⟩ := LocF.exists_zsmul_le hA.toIsLattice hB
+  obtain ⟨m, hm, hmB⟩ := LocF.exists_zsmul_le hB.toIsLattice hA
   have hc : ((n * m : ℤ) : 𝓞 F) ≠ 0 := by
     exact_mod_cast mul_ne_zero hn hm
   obtain ⟨s, hs⟩ := (LocalFactorEquality.finite_vF_ne_zero hc).exists_finset

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+
+@[expose] public section
 
 open ReciprocityTheory.Gal UpperTheory.V.Base
 
@@ -17,7 +21,8 @@ private theorem prj_mem (π : Representation O Q N) (c : O) (ψ : Q →* Oˣ) (x
     prj π c ψ x ∈ eig π ψ := by
   rw [mem_eig]
   intro h
-  rw [prj_apply, map_smul, smul_comm, map_sum, Finset.smul_sum (r := ((ψ h : Oˣ) : O))]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [prj_apply, map_smul, smul_comm, map_sum, Finset.smul_sum (r := ((ψ h : Oˣ) : O))]
   congr 1
   refine Fintype.sum_equiv (Equiv.mulLeft h) _ _ fun g => ?_
   rw [map_smul, smul_smul, Equiv.coe_mulLeft, ← Units.val_mul, ← map_mul, map_mul π, Module.End.mul_apply]
@@ -26,7 +31,8 @@ private theorem prj_mem (π : Representation O Q N) (c : O) (ψ : Q →* Oˣ) (x
 
 private theorem prj_act (π : Representation O Q N) (c : O) (ψ : Q →* Oˣ) (h : Q) (x : N) :
     prj π c ψ (π h x) = ((ψ h : Oˣ) : O) • prj π c ψ x := by
-  rw [← mem_eig.1 (prj_mem π c ψ x) h, prj_apply, prj_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← mem_eig.1 (prj_mem π c ψ x) h, prj_apply, prj_apply, map_smul, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [map_smul, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, mul_comm]
@@ -109,7 +115,8 @@ theorem UpperTheory.V.Base.lenEigEq :
       exact Finset.sum_congr rfl fun ψ _ => by rw [← hf, ← hf, hxy]
     · intro y
       refine ⟨∑ χ, (y χ : N), funext fun ψ => Subtype.ext ?_⟩
-      rw [hf, map_sum, Finset.sum_eq_single ψ, prj_self π hc ψ (y ψ).2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hf, map_sum, Finset.sum_eq_single ψ, prj_self π hc ψ (y ψ).2]
       · intro χ _ hχ
         exact prj_ne π c hχ.symm (y χ).2
       · simp

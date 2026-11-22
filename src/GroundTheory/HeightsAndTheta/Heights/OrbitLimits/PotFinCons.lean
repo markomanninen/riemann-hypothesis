@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PoincareLelongRegularised
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPtsRegLimit
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPtsAbsIntegrable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PoincareLelongRegularised
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPtsRegLimit
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPtsAbsIntegrable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

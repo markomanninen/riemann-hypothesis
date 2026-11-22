@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsWeaklyRegularIffIsQuasiRegularSeqOfIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsRegularQuotSMulTop
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsWeaklyRegularIffIsQuasiRegularSeqOfIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsRegularQuotSMulTop
+
+@[expose] public section
 
 open RingTheory.Sequence IsLocalRing TensorProduct
 
@@ -51,7 +55,6 @@ theorem flat_of_basis_mod_pow [IsNoetherianRing A] (B : Type*) [CommRing B] [IsN
     rw [eq_top_iff]
     rintro t -
     induction t with
-    | zero => exact zero_mem _
     | add x y hx hy => exact add_mem hx hy
     | tmul y j =>
       have hy : y ∈ Submodule.span A (Set.range m) ⊔ I • ⊤ := by rw [hsurj]; trivial
@@ -67,10 +70,10 @@ theorem flat_of_basis_mod_pow [IsNoetherianRing A] (B : Type*) [CommRing B] [IsN
     intro w
     induction w using Finsupp.induction_linear with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | single s j => simp [μ, φ]
   obtain ⟨c, hc⟩ := I.exists_pow_inf_eq_pow_smul (M := A) J
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro t ht
   have hμt : μ t = 0 := by simp [μ, ht]
   have key : ∀ n : ℕ, t ∈ (I ^ n • ⊤ : Submodule A (M ⊗[A] J)) := by
@@ -80,7 +83,7 @@ theorem flat_of_basis_mod_pow [IsNoetherianRing A] (B : Type*) [CommRing B] [IsN
     obtain ⟨_, ⟨w, rfl⟩, v, hv, rfl⟩ := Submodule.mem_sup.mp h1
     refine add_mem ?_ (Submodule.smul_mono_left (Ideal.pow_le_pow_right (by omega)) hv)
     have h2 : μ (φ w) ∈ (I ^ (n + c) • ⊤ : Submodule A M) := by
-      rw [map_add, add_eq_zero_iff_eq_neg] at hμt
+      rw [map_add (f := _), add_eq_zero_iff_eq_neg] at hμt
       rw [hμt, neg_mem_iff]
       have := Submodule.mem_map_of_mem (f := μ) hv
       rw [Submodule.map_smul''] at this
@@ -98,7 +101,8 @@ theorem flat_of_basis_mod_pow [IsNoetherianRing A] (B : Type*) [CommRing B] [IsN
     have := Submodule.mem_map_of_mem (f := TensorProduct.mk A M J (m s)) (h3 s)
     rw [Submodule.map_smul''] at this
     exact Submodule.smul_mono le_rfl le_top this
-  have h0 := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := M ⊗[A] J) _ hI
+  have h0 := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := M ⊗[A] J)
+    (I.map (algebraMap A B)) (by simpa only [Ideal.jacobson_bot] using hI)
   rw [← Submodule.mem_bot B, ← h0, Submodule.mem_iInf]
   intro n
   rw [← Ideal.map_pow, ← Submodule.restrictScalars_mem A, Ideal.smul_restrictScalars]
@@ -121,7 +125,7 @@ theorem IsQuasiRegularSeq.flat_of_isMaximal [IsNoetherianRing A] (B : Type*) [Co
     induction z using Finsupp.induction_linear with
     | zero => simp
     | add x y hx hy =>
-      rw [map_add, Submodule.Quotient.mk_add, hx, hy, Finsupp.mapRange_add (map_add _), map_add]
+      rw [map_add (f := _), Submodule.Quotient.mk_add, hx, hy, Finsupp.mapRange_add (map_add _), map_add (f := _)]
     | single s a => simp [hm, ← Ideal.Quotient.algebraMap_eq]
   refine flat_of_basis_mod_pow B hI m ?_ fun n z hz s => ?_
   · rw [eq_top_iff]
@@ -537,17 +541,6 @@ theorem flat_of_isCM_of_quasiFinite [IsRegularLocalRing A] [IsLocalRing B]
   flat_of_isCM_of_ringKrullDim_add_le hB
     ((add_le_add_right ringKrullDim_quotient_map_maximalIdeal_le_zero _).trans (by rwa [add_zero]))
 
-theorem flat_of_isRegularLocalRing_of_quasiFinite [IsRegularLocalRing A] [IsRegularLocalRing B]
-    [IsLocalHom (algebraMap A B)] [Algebra.QuasiFinite A B]
-    (hd : ringKrullDim A = ringKrullDim B) : Module.Flat A B :=
-  flat_of_isCM_of_quasiFinite (isCM_of_isRegularLocalRing B) hd.le
-
-theorem free_of_isRegularLocalRing_of_finite [IsRegularLocalRing A] [IsRegularLocalRing B]
-    [IsLocalHom (algebraMap A B)] [Module.Finite A B]
-    (hd : ringKrullDim A = ringKrullDim B) : Module.Free A B :=
-  have := flat_of_isRegularLocalRing_of_quasiFinite hd
-  Module.free_of_flat_of_isLocalRing
-
 theorem flat_localization_atPrime_of_isCM (p : Ideal A) [p.IsPrime] (q : Ideal B) [q.IsPrime]
     [q.LiesOver p] [IsRegularLocalRing (Localization.AtPrime p)] [Algebra.QuasiFiniteAt A q]
     (hB : IsCM (Localization.AtPrime q)) (hd : p.height ≤ q.height) :
@@ -573,13 +566,6 @@ theorem flat_of_isRegularRing_of_isRegularRing [IsRegularRing A] [IsRegularRing 
     [Algebra.QuasiFinite A B]
     (hd : ∀ q : Ideal B, q.IsMaximal → (q.under A).height ≤ q.height) : Module.Flat A B :=
   flat_of_isRegularRing_of_isCM (fun _ _ => isCM_of_isRegularLocalRing _) hd
-
-example (p : ℕ) [Fact p.Prime] : RingTheory.Sequence.IsRegular ℤ_[p] [(p : ℤ_[p]) ^ 2] := by
-  refine isRegular_of_radical_eq_maximalIdeal ?_ ?_
-  · rw [Ideal.ofList_singleton, ← Ideal.span_singleton_pow, Ideal.radical_pow _ two_ne_zero,
-      ← PadicInt.maximalIdeal_eq_span_p, (maximalIdeal.isMaximal _).isPrime.radical]
-  · rw [IsDiscreteValuationRing.ringKrullDim_eq_one]
-    simp
 
 end Miracle
 

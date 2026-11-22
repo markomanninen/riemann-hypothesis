@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteOfGaloisTraceRelation
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalMapGalElt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteOfGaloisTraceRelation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalMapGalElt
+
+@[expose] public section
+
 open scoped TensorProduct
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.finite_of_galois_trace_relation : ∀ (A R C : Type) [CommRing A] [CommRing R] [Algebra A R] [IsNoetherianRing R] [CommRing C] [Algebra R C]

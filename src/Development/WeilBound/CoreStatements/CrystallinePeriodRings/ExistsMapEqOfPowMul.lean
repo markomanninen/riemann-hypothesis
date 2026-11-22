@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.InstCommRingBcris
-import GroundTheory.PAdicHodge.BCrisPlusInvariants
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.InstCommRingBcris
+public import GroundTheory.PAdicHodge.BCrisPlusInvariants
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem loc2_surj (x : Per6.Loc2 a t) : ∃ (m n : ℕ) (y : A),
 theorem loc2_lift_injective {E : Type} [CommRing E] (f : A →+* E) (ha : IsUnit (f a))
     (ht : IsUnit (f t)) (hf : Function.Injective f) :
     Function.Injective (Per6.Loc2.lift f ha ht) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨m, n, y, h⟩ := loc2_surj x
   have h1 := congrArg (Per6.Loc2.lift f ha ht) h
@@ -101,7 +105,7 @@ def pullHom {B C E : Type} [CommRing B] [Field C] [Field E] (ι : B →+* E)
     rw [map_mul ι, (hf _).choose_spec, (hf _).choose_spec, (hf _).choose_spec, map_mul])
   map_zero' := hι (by rw [(hf _).choose_spec, map_zero, map_zero])
   map_add' x y := hι (by
-    rw [map_add ι, (hf _).choose_spec, (hf _).choose_spec, (hf _).choose_spec, map_add])
+    rw [map_add ι, (hf _).choose_spec, (hf _).choose_spec, (hf _).choose_spec, map_add (f := _)])
 
 theorem map_pullHom {B C E : Type} [CommRing B] [Field C] [Field E] (ι : B →+* E)
     (hι : Function.Injective ι) (f : C →+* E) (hf : ∀ c, ∃ b, ι b = f c) (c : C) :
@@ -161,8 +165,8 @@ theorem cB_isFrac : IsFrac (Per6.cB l) (l : Acris) (Per6.tA l) := loc2_isFrac
 
 theorem isUnit_cB_l : IsUnit (Per6.cB l (l : Acris)) := (cB_isFrac l).1
 
-variable {l} in
 
+variable {l} in
 theorem bcris_surj (x : Per6.Bcris l) : ∃ (m n : ℕ) (y : Acris),
     Per6.cB l (l : Acris) ^ m * Per6.cB l (Per6.tA l) ^ n * x = Per6.cB l y :=
   (cB_isFrac l).2.2 x
@@ -172,11 +176,13 @@ theorem bcris_hom_ext {E : Type} [Semiring E] {f g : Per6.Bcris l →+* E}
     (h : ∀ x, f (Per6.cB l x) = g (Per6.cB l x)) : f = g :=
   (cB_isFrac l).hom_ext h
 
-theorem φB_comp : (Per6.φB l).comp (Per6.cB l) = (Per6.cB l).comp (ACris.phi ℂ_[l] l) :=
+theorem φB_comp :
+    (Per6.φB l).comp (Per6.cB l) = (Per6.cB l).comp (ACris.phi (K := ℂ_[l]) (p := l)) :=
   loc2_map_comp _ _ _ _ _
 
 variable {l} in
-theorem φB_cB (x : Acris) : Per6.φB l (Per6.cB l x) = Per6.cB l (ACris.phi ℂ_[l] l x) :=
+theorem φB_cB (x : Acris) :
+    Per6.φB l (Per6.cB l x) = Per6.cB l (ACris.phi (K := ℂ_[l]) (p := l) x) :=
   ((RingHom.comp_apply _ _ x).symm.trans (RingHom.congr_fun (φB_comp l) x)).trans
     (RingHom.comp_apply _ _ x)
 
@@ -200,8 +206,8 @@ theorem kur_eq : MaximalUnramifiedExtension l = unramifiedClosure l := by
 
 def oD : Om l →+* Per6.BdR l := algClToBdRField l
 
-variable {l} in
 
+variable {l} in
 theorem exists_iota_eq (y : ACris.BCrisPlus ℂ_[l] l) : ∃ (k : ℕ) (a : Acris),
     ACris.iota ℂ_[l] l a = ACris.iota ℂ_[l] l (l : Acris) ^ k * ACris.iotaPlus ℂ_[l] l y :=
   away_exists (ACris.iotaPlus ℂ_[l] l) (ACris.iota ℂ_[l] l) ACris.iotaPlus_algebraMap y
@@ -263,13 +269,11 @@ def tiltEquiv : OCb l ≃+* PreTilt ↥(normInteger ℂ_[l]) l :=
   RingEquiv.ofRingHom (Per6.tiltMap l) (tiltInv l) (RingHom.ext (tiltMap_tiltInv l))
     (RingHom.ext (tiltInv_tiltMap l))
 
-variable {l} in
 
+variable {l} in
 def galT (g : GQ l) : OCb l →+* OCb l :=
   (tiltInv l).comp ((preTiltMap l (galCp (Per6.toBot g) : ℂ_[l] →+* ℂ_[l])
     (AInf.norm_galCp_toRingHom (Per6.toBot g))).comp (Per6.tiltMap l))
-
-def ζO (n : ℕ) : OC l := (Per6.intEquiv l).symm (rootSeqInt l n)
 
 def εO : OCb l := tiltInv l (epsilon l)
 

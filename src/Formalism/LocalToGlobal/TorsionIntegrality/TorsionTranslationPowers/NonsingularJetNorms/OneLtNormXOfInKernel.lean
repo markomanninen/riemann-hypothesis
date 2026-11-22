@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementS
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.FacShapeZero
-import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Taylor0ConstMul
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementS
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.FacShapeZero
+public import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Taylor0ConstMul
+
+@[expose] public section
 
 open PowerSeries
 
@@ -70,11 +74,6 @@ variable {K : Type} [NormedField K] (W : WeierstrassCurve K)
 theorem in_kernel_of_one_lt_norm_x (R : W.toAffine.Point) (h : 1 < ‖px W R‖) : Formalism.ELL.InFormalGroupPoints R := by
   cases R with
   | zero => trivial
-  | some x y hxy => exact h
-
-theorem one_lt_norm_x_of_in_kernel (R : W.toAffine.Point) (hR : R ≠ 0) (h : Formalism.ELL.InFormalGroupPoints R) : 1 < ‖px W R‖ := by
-  cases R with
-  | zero => exact absurd rfl hR
   | some x y hxy => exact h
 
 theorem py_int [IsUltrametricDist K] (hW : Formalism.ELL.IntegralModel W) (R : W.toAffine.Point)

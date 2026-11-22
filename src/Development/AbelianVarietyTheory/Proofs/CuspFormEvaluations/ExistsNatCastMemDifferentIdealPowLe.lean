@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Imports
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Imports
+
+@[expose] public section
 
 open NumberField Pointwise
 

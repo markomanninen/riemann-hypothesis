@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.RestWinOfLvl
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.RestWinOfLvl
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.NmHContrPos
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ExteriorWedgeSqZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.NmHContrPos
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ExteriorWedgeSqZero
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CellBlock
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CellBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,17 +42,21 @@ theorem pm_cons (t : E) (s : ℕ) (bs : List (E × ℕ)) :
     simp only [ptEntry]
     rw [if_neg (by omega), if_pos ⟨by omega, by omega⟩, Nat.add_sub_cancel_left, Nat.add_sub_cancel_left]
 
-theorem bd_all : ∀ L : List (E × ℕ), (∀ b ∈ L, b.1 ≠ 0 ∧ 1 ≤ b.2) → BDm (pm L)
-  | [], _ => by
-    intro d _
+theorem bd_all : ∀ L : List (E × ℕ), (∀ b ∈ L, b.1 ≠ 0 ∧ 1 ≤ b.2) → BDm (pm L) := by
+  intro L
+  induction L with
+  | nil =>
+    intro _ d _
     refine ⟨1, one_ne_zero, ?_⟩
     rintro Z _ ⟨L0, U0, hL0, hU0, hZ⟩
     exact ⟨L0, U0, hL0, hU0, hZ, ⟨0, by ext i; exact absurd i.isLt (by simp)⟩,
       ⟨0, by ext i; exact absurd i.isLt (by simp)⟩⟩
-  | (t, s) :: bs, h => by
+  | cons b bs ih =>
+    rcases b with ⟨t, s⟩
+    intro h
     have ht : t ≠ 0 := (h (t, s) List.mem_cons_self).1
-    have ih := bd_all bs (fun b hb => h b (List.mem_cons_of_mem _ hb))
-    exact bd_step t ht (pm bs) (pm ((t, s) :: bs)) (pm_cons t s bs) ih
+    exact bd_step t ht (pm bs) (pm ((t, s) :: bs)) (pm_cons t s bs)
+      (ih fun b hb => h b (List.mem_cons_of_mem _ hb))
 
 theorem map_smul' {m n : Type*} (c : 𝓞 E) (X : Matrix m n (𝓞 E)) :
     (c • X).map (algebraMap (𝓞 E) E) = algebraMap (𝓞 E) E c • X.map (algebraMap (𝓞 E) E) := by
@@ -65,7 +73,7 @@ theorem lob_of {N : ℕ} {b : 𝓞 E} {A : Matrix (Fin N) (Fin N) E} (hA : IsLoU
     have := congrFun (congrFun h i) j
     simp only [Matrix.sub_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul] at this
     show algebraMap (𝓞 E) E ((1 + b • Y) i j) = A i j
-    rw [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul]
+    rw [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul]
     by_cases hij : i = j
     · subst hij
       rw [Matrix.one_apply_eq] at this ⊢
@@ -89,7 +97,7 @@ theorem upb_of {N : ℕ} {b : 𝓞 E} {A : Matrix (Fin N) (Fin N) E} (hA : IsUpU
     have := congrFun (congrFun h i) j
     simp only [Matrix.sub_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul] at this
     show algebraMap (𝓞 E) E ((1 + b • Y) i j) = A i j
-    rw [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul]
+    rw [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul]
     by_cases hij : i = j
     · subst hij
       rw [Matrix.one_apply_eq] at this ⊢

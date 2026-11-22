@@ -1,12 +1,16 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorCommutation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AlgebraicQuantumDeterminant
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliCoordinates
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftDerivativeCurves
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AnisotropicColumnSums
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftTypeAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameEntries
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorCommutation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AlgebraicQuantumDeterminant
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliCoordinates
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftDerivativeCurves
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AnisotropicColumnSums
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftTypeAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameEntries
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 
@@ -19,11 +23,5 @@ theorem capelli_hat_frame : Qr.ChatFrame := qr_chatFrame_of frame_minor
 
 theorem determinant_hat : DetHat :=
   qr_detHat_of algebraic_quantum_determinant capelli_hat_frame capelli_right_good left_right_swap
-
-theorem determinant_hat_regular : DetHatRegular := qr_detHatRegular_of determinant_hat
-
-theorem regular_to_smooth : RegularToSmooth := fun _ => determinant_hat
-
-theorem determinant_generic : DetGeneric := qr_detGeneric_of determinant_hat_regular
 
 end Formalism.FourierDecayAlt.P

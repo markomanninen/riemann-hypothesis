@@ -1,4 +1,8 @@
-import Formalism.JumpKernelCokernel.Statement
+module
+
+public import Formalism.JumpKernelCokernel.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ variable {O : Type} [CommRing O] {V : Type} [AddCommGroup V] [Module O V]
 theorem decomp (d : Module.End O V) (P : O[X]) (v : V) :
     aeval d P v = P.eval 0 • v + aeval d P.divX (d v) := by
   conv_lhs => rw [← Polynomial.divX_mul_X_add P]
-  rw [map_add, map_mul, aeval_X, aeval_C, LinearMap.add_apply, Module.End.mul_apply,
+  rw [map_add (f := _), map_mul, aeval_X, aeval_C, LinearMap.add_apply, Module.End.mul_apply,
     Module.algebraMap_end_apply, ← Polynomial.coeff_zero_eq_eval_zero, add_comm]
 
 theorem aeval_mem (d : Module.End O V) (M : Submodule O V) (hM : M.map d ≤ M) :
@@ -29,7 +33,7 @@ theorem aeval_mem (d : Module.End O V) (M : Submodule O V) (hM : M.map d ≤ M) 
   induction Q using Polynomial.induction_on' with
   | add p q hp hq =>
     intro v hv
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact M.add_mem (hp v hv) (hq v hv)
   | monomial n a =>
     intro v hv

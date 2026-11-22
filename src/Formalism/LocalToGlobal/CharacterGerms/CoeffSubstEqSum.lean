@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePGerm
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePGerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,15 +112,6 @@ theorem Tends.add {s t : ℕ → C} {x y : C} (hs : Tends V s x) (ht : Tends V t
   rw [e]
   exact ge_add_lemma_2 (h1 n (le_of_max_le_left hn)) (h2 n (le_of_max_le_right hn))
 
-theorem Tends.neg {s : ℕ → C} {x : C} (hs : Tends V s x) : Tends V (fun n => -s n) (-x) := by
-  intro w
-  obtain ⟨n0, h0⟩ := hs w
-  refine ⟨n0, fun n hn => ?_⟩
-  have e : -x - -s n = -(x - s n) := by ring
-  show V.Ge w (-x - -s n)
-  rw [e]
-  exact ge_neg_lemma_3 (h0 n hn)
-
 theorem Tends.sub {s t : ℕ → C} {x y : C} (hs : Tends V s x) (ht : Tends V t y) :
     Tends V (fun n => s n - t n) (x - y) := by
   intro w
@@ -211,7 +206,7 @@ theorem TendsS.unique {f : ℕ → MvPowerSeries σ C} {F G : MvPowerSeries σ C
 theorem TendsS.add {f g : ℕ → MvPowerSeries σ C} {F G : MvPowerSeries σ C} (hf : TendsS V f F)
     (hg : TendsS V g G) : TendsS V (fun n => f n + g n) (F + G) := by
   intro μ
-  simpa only [map_add] using (hf μ).add (hg μ)
+  simpa only [map_add (f := _)] using (hf μ).add (hg μ)
 
 theorem TendsS.sub {f g : ℕ → MvPowerSeries σ C} {F G : MvPowerSeries σ C} (hf : TendsS V f F)
     (hg : TendsS V g G) : TendsS V (fun n => f n - g n) (F - G) := by
@@ -266,7 +261,7 @@ theorem Ord.mul {k k' : ℕ} {f g : MvPowerSeries σ C} (hf : Ord k f) (hg : Ord
   intro p hp
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
   have hd : Finsupp.degree p.1 + Finsupp.degree p.2 = Finsupp.degree μ := by
-    rw [← hp, map_add]
+    rw [← hp, map_add (f := _)]
   by_cases h1 : Finsupp.degree p.1 < k
   · rw [hf p.1 h1, zero_mul]
   · have h2 : Finsupp.degree p.2 < k' := by omega
@@ -275,10 +270,6 @@ theorem Ord.mul {k k' : ℕ} {f g : MvPowerSeries σ C} (hf : Ord k f) (hg : Ord
 theorem Ord.one : Ord 0 (1 : MvPowerSeries σ C) := by
   intro μ h
   exact absurd h (Nat.not_lt_zero _)
-
-theorem Ord.mono {k k' : ℕ} {f : MvPowerSeries σ C} (hf : Ord k f) (h : k' ≤ k) : Ord k' f := by
-  intro μ hμ
-  exact hf μ (lt_of_lt_of_le hμ h)
 
 theorem Ord.pow {k : ℕ} {f : MvPowerSeries σ C} (hf : Ord k f) (e : ℕ) : Ord (k * e) (f ^ e) := by
   induction e with

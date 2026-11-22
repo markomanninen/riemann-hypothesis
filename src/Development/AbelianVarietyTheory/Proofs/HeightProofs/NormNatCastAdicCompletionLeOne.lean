@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
-import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+module
+
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+public import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+
+@[expose] public section
 
 namespace GlobalTheory.AdicNatCastNorm
 

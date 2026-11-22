@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.AtInj
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.AtInj
+
+@[expose] public section
 
 theorem UpperTheory.ConvolutionTheory.T.oneTerm :
     UpperTheory.ConvolutionTheory.T.OneTerm := by

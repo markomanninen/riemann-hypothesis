@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WittExtensionTotallyDefiniteHermitianStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodulaStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatticeQuotientGensAndIntermediateCountStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WittExtensionTotallyDefiniteHermitianStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodulaStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatticeQuotientGensAndIntermediateCountStatement
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
@@ -40,11 +44,13 @@ theorem nondeg (h : V →ₗ⋆[K] V →ₗ[K] K) (hp : PD h) : h.Nondegenerate 
 
 omit [StarRing K] [FiniteDimensional K V] in
 theorem lat_map (A : Submodule K V) (p : V →ₗ[K] A) (hp : Function.Surjective p)
-    (N : Submodule (𝓞 K) V) (hN : Submodule.IsLattice K N) :
-    Submodule.IsLattice K (N.map (p.restrictScalars (𝓞 K))) := by
-  refine ⟨hN.fg.map _, ?_⟩
-  have e : ((N.map (p.restrictScalars (𝓞 K)) : Submodule (𝓞 K) A) : Set A) = p '' (N : Set V) := rfl
-  rw [e, ← Submodule.map_span, hN.span_eq_top, Submodule.map_top, LinearMap.range_eq_top.2 hp]
+    (N : Submodule (𝓞 K) V) (hN : Submodule.IsFullLattice K N) :
+    Submodule.IsFullLattice K (N.map (p.restrictScalars (𝓞 K))) := by
+  haveI : Submodule.IsLattice K (N.map (p.restrictScalars (𝓞 K))) :=
+    Submodule.IsLattice.of_fg K (hN.fg.map _)
+  refine ⟨?_⟩
+  change Submodule.span K (p '' (N : Set V)) = ⊤
+  rw [← Submodule.map_span, hN.span_eq_top, Submodule.map_top, LinearMap.range_eq_top.2 hp]
 
 theorem dual_latIn (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hp : PD h) (A : Submodule K V)
     (hsA : (hRes h A).IsSymm) (hpA : PD (hRes h A)) (p : V →ₗ[K] A) (hsur : Function.Surjective p)
@@ -164,9 +170,9 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
   have hp1 : ∀ a : U, p a = a := Submodule.projectionOnto_apply_left hc
   have hq1 : ∀ a : W, q a = a := Submodule.projectionOnto_apply_left hc.symm
   obtain ⟨iU, dU⟩ := dual_latIn h hs hp U hsU hpU p (Submodule.projectionOnto_surjective hc)
-    (fun x a => by conv_rhs => rw [← hpq x, map_add, LinearMap.add_apply, horth', add_zero]) L hL
+    (fun x a => by conv_rhs => rw [← hpq x, map_add (f := _), LinearMap.add_apply, horth', add_zero]) L hL
   obtain ⟨iW, dW⟩ := dual_latIn h hs hp W hsW hpW q (Submodule.projectionOnto_surjective hc.symm)
-    (fun x a => by conv_rhs => rw [← hpq x, map_add, LinearMap.add_apply, horth, zero_add]) L hL
+    (fun x a => by conv_rhs => rw [← hpq x, map_add (f := _), LinearMap.add_apply, horth, zero_add]) L hL
   have hLd : L ≤ dual h L := by rw [ht]; exact le_sup_left
   have nL := (GlobalTheory.T.hermitianLatticeDiscriminantOrder_ne_zero_unimodular K V h hK hs (nondeg h hp) L hL).1
   have nU := (GlobalTheory.T.hermitianLatticeDiscriminantOrder_ne_zero_unimodular K U _ hK hsU (nondeg _ hpU) _ iU).1

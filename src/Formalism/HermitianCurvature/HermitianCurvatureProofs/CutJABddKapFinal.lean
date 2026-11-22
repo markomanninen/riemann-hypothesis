@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSnDatumBd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSnChainPf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapTP
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSnDatumBd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSnChainPf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapTP
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

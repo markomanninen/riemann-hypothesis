@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
-import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
+public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ def jn (e : Tp →₀ ℕ) (n : Lw →₀ ℕ) : Tp ⊕ Lw →₀ ℕ := e.mapDo
 
 lemma mapDomain_inl_inl (e : Tp →₀ ℕ) (τ : Tp) :
     (e.mapDomain (Sum.inl : Tp → Tp ⊕ Lw)) (Sum.inl τ) = e τ :=
-  Finsupp.mapDomain_apply Sum.inl_injective _ _
+  Finsupp.mapDomain_apply_of_injective Sum.inl_injective _ _
 
 lemma mapDomain_inl_inr (e : Tp →₀ ℕ) (x : Lw) :
     (e.mapDomain (Sum.inl : Tp → Tp ⊕ Lw)) (Sum.inr x) = 0 :=
@@ -29,7 +33,7 @@ lemma mapDomain_inl_inr (e : Tp →₀ ℕ) (x : Lw) :
 
 lemma mapDomain_inr_inr (n : Lw →₀ ℕ) (x : Lw) :
     (n.mapDomain (Sum.inr : Lw → Tp ⊕ Lw)) (Sum.inr x) = n x :=
-  Finsupp.mapDomain_apply Sum.inr_injective _ _
+  Finsupp.mapDomain_apply_of_injective Sum.inr_injective _ _
 
 lemma mapDomain_inr_inl (n : Lw →₀ ℕ) (τ : Tp) :
     (n.mapDomain (Sum.inr : Lw → Tp ⊕ Lw)) (Sum.inl τ) = 0 :=
@@ -76,7 +80,7 @@ section Op
 variable {K Tp Lw : Type} [Field K]
 
 lemma coeff_jn (e : Tp →₀ ℕ) (n : Lw →₀ ℕ) (R : MvPolynomial Lw K) :
-    MvPolynomial.coeff (jn e n) (topMonoP e * lowPoly R) = MvPolynomial.coeff n R := by
+    AddMonoidAlgebra.coeff (topMonoP e * lowPoly R) (jn e n) = AddMonoidAlgebra.coeff R n := by
   unfold jn topMonoP lowPoly
   rw [MvPolynomial.coeff_monomial_mul, one_mul,
     MvPolynomial.coeff_rename_mapDomain _ Sum.inr_injective]
@@ -104,7 +108,7 @@ lemma support_topLow [DecidableEq Tp] [DecidableEq Lw] (e : Tp →₀ ℕ) (R : 
 lemma jetPair_topLow [Fintype Tp] [Fintype Lw] (e : Tp →₀ ℕ)
     (R : MvPolynomial Lw K) (G : MvPowerSeries (Tp ⊕ Lw) K) :
     jetPair (topMonoP e * lowPoly R) G =
-      ∑ n ∈ R.support, MvPolynomial.coeff n R * ((mfact e * mfact n : ℕ) : K) *
+      ∑ n ∈ R.support, AddMonoidAlgebra.coeff R n * ((mfact e * mfact n : ℕ) : K) *
         MvPowerSeries.coeff (jn e n) G := by
   classical
   rw [jetPair_eq_sum _ _ _ (support_topLow e R), Finset.sum_image (fun a _ c _ h => jn_injective e h)]
@@ -141,10 +145,11 @@ lemma shiftPoly_lowPoly (b : κ → Lw → K) (Q : MvPolynomial Lw K) :
   unfold shiftPoly lowPoly
   induction Q using MvPolynomial.induction_on with
   | C a => simp [MvPolynomial.algebraMap_eq]
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
   | mul_X f x hf =>
     simp only [map_mul, hf]
-    simp [ext0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [ext0, map_sum]
 
 lemma hasseDir_topLow (b : κ → Lw → K) (β : κ →₀ ℕ) (e : Tp →₀ ℕ) (Q : MvPolynomial Lw K) :
     hasseDir (ext0 (Tp := Tp) b) β (topMonoP e * lowPoly Q) =
@@ -175,7 +180,7 @@ lemma agree_mul {D : ℕ} {f f' g g' : MvPowerSeries σ K} (hf : Agree D f f') (
   rw [MvPowerSeries.coeff_mul, MvPowerSeries.coeff_mul]
   refine Finset.sum_congr rfl fun x hx => ?_
   have hx' := Finset.HasAntidiagonal.mem_antidiagonal.1 hx
-  have hd : x.1.degree + x.2.degree = n.degree := by rw [← hx', map_add]
+  have hd : x.1.degree + x.2.degree = n.degree := by rw [← hx', map_add (f := _)]
   rw [hf _ (by omega), hg _ (by omega)]
 
 lemma agree_pow {D : ℕ} {f f' : MvPowerSeries σ K} (hf : Agree D f f') (i : ℕ) :
@@ -260,7 +265,7 @@ lemma integral_pow {σ : Type} {f : MvPowerSeries σ K} (hf : Integral f) (i : �
 lemma norm_prod_pow_le_one {α : Type} (s : Finset α) (a : α → K) (m : α → ℕ)
     (ha : ∀ i, ‖a i‖ ≤ 1) : ‖∏ i ∈ s, a i ^ m i‖ ≤ 1 := by
   rw [norm_prod]
-  refine Finset.prod_le_one (fun _ _ => norm_nonneg _) fun i _ => ?_
+  refine Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun i _ => ?_
   rw [norm_pow]
   exact pow_le_one₀ (norm_nonneg _) (ha i)
 
@@ -398,7 +403,7 @@ lemma term_bound (h1 : JetPairingHasseIdentity) (h2 : HasseDerivIntegralHomogene
     (aA : Φ → K) (dA : Φ → Tp →₀ ℕ) (aB : κ → K) (dB : κ → Tp →₀ ℕ) (b : κ → Lw → K)
     (e : Tp →₀ ℕ) (Q : MvPolynomial Lw K) (hp : p.Prime) (hpn : ‖(p : K)‖ = (p : ℝ)⁻¹)
     (haA : ∀ φ, ‖aA φ‖ ≤ 1) (haB : ∀ k, ‖aB k‖ ≤ 1) (hb : ∀ k x, ‖b k x‖ ≤ 1) (hZ : Integral Z)
-    (hY : Integral Y) (hZlow : LowGe p Z) (hQ : ∀ n, ‖MvPolynomial.coeff n Q‖ ≤ 1)
+    (hY : Integral Y) (hZlow : LowGe p Z) (hQ : ∀ n, ‖AddMonoidAlgebra.coeff Q n‖ ≤ 1)
     (i : ℕ) (k : Φ ⊕ κ ⊕ Fin 2 → ℕ) (hk : ∑ j, k j = i) (U : MvPowerSeries (Tp ⊕ Lw) K)
     (hU : Integral U) :
     ((p : K) ^ i)⁻¹ * (((Nat.multinomial univ k : ℕ) : K) *
@@ -454,7 +459,7 @@ lemma term_bound (h1 : JetPairingHasseIdentity) (h2 : HasseDerivIntegralHomogene
     omega
   · have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.pos
     set s := ∑ φ, k (Sum.inl φ) + ∑ x, β x + k (Sum.inr (Sum.inr 0)) with hs
-    set cR := MvPolynomial.coeff n (hasseDir b β Q) with hcR
+    set cR := AddMonoidAlgebra.coeff (hasseDir b β Q) n with hcR
     have hx : ((p : K) ^ i)⁻¹ * (((Nat.multinomial univ k : ℕ) : K) *
         (((∏ x, (β x).factorial : ℕ) : K) * (cR * ((mfact e * mfact n : ℕ) : K) *
           (cTot p aA aB k * v)))) =
@@ -517,7 +522,8 @@ theorem TermBound_of (h1 : JetPairingHasseIdentity) (h2 : HasseDerivIntegralHomo
         (∑ i ∈ range (D + 1), MvPowerSeries.C (((p : K) ^ i)⁻¹) *
           ((∑ j, ETerm.piece p Z Y aA dA aB dB b j) ^ i * U i)) := by
       refine ETerm.jetPair_congr _ _ _ fun m hm => ?_
-      rw [hgU m, hsupp m hm, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hgU m, hsupp m hm, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [MvPowerSeries.coeff_C_mul,
         ETerm.agree_mul (ETerm.agree_pow hag i) (ETerm.agree_refl D (U i)) m (hsupp m hm).le]

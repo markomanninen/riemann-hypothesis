@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionValueUnitFrameEqLocalFunctionUnitScalarStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfForallAlgHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionValueUnitFrameEqLocalFunctionUnitScalarStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfForallAlgHom
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -32,8 +36,8 @@ end GlobalTheory.HSAmp.IndepCx
 
 namespace GlobalTheory.HSAmp
 
-open ReciprocityTheory.ChartRestriction.G.DVR.FlatBC (algX) in
 
+open ReciprocityTheory.ChartRestriction.G.DVR.FlatBC (algX) in
 theorem linearIndependent_vals : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsIntegral X] (p : X ⟶ Sp k) (D : ℕ),
     IsArithVar p D → ∀ (P : Pair p), ∀ (a b : ℤ) (ι : Type) [Fintype ι] (f : ι → X.functionField),
     (∀ i, f i ∈ P.H a b) → LinearIndependent ℤ f → ∀ c : ι → ℂ,
@@ -60,7 +64,8 @@ theorem linearIndependent_vals : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [I
     intro n hn
     apply hli n
     have h1 := congrArg (fnOf U hgU) hn
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [map_zsmul, hg, hloc] at h1
     have h2 : (∑ l, n l • f l) * ((P.r i : X.functionField) ^ a * (P.r' j : X.functionField) ^ b) = 0 := by
       rw [Finset.sum_mul]; simpa only [smul_mul_assoc] using h1

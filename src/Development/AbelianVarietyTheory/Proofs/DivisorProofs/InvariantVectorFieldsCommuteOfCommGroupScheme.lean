@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -20,8 +25,6 @@ section Rings
 variable {S : Type} [CommRing S]
 
 def fstH (S : Type) [CommRing S] : DualNumber S →+* S := (TrivSqZeroExt.fstHom S S S).toRingHom
-
-@[simp] theorem fstH_apply (x : DualNumber S) : fstH S x = x.fst := rfl
 
 def swap (S : Type) [CommRing S] : DualNumber (DualNumber S) →+* DualNumber (DualNumber S) where
   toFun x := TrivSqZeroExt.inl (TrivSqZeroExt.inl x.fst.fst + TrivSqZeroExt.inr x.snd.fst) +
@@ -46,7 +49,7 @@ theorem dualMap_comp_inc (φ : R →+* S) : (dualMap φ).comp (inc R) = (inc S).
   refine RingHom.ext fun x => ?_; ext <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
 
 theorem fst_comp_inc : (fstH S).comp (inc S) = RingHom.id S := by
-  refine RingHom.ext fun x => ?_; simp [TrivSqZeroExt.algebraMap_eq_inl]
+  refine RingHom.ext fun x => ?_; simp [fstH, TrivSqZeroExt.algebraMap_eq_inl]
 
 theorem swap_inc_inc_comp (φ : R →+* S) : (swap S).comp ((inc (DualNumber S)).comp ((inc S).comp φ)) =
     (inc (DualNumber S)).comp ((inc S).comp φ) := by
@@ -59,10 +62,7 @@ theorem swap_dualMap_inc (φ : R →+* S) : (swap S).comp (dualMap ((inc S).comp
   refine RingHom.ext fun x => ?_; ext <;> simp [swap, dualMap, TrivSqZeroExt.algebraMap_eq_inl]
 
 theorem fst_comp_dualMap (φ : R →+* S) : (fstH S).comp (dualMap φ) = φ.comp (fstH R) := by
-  refine RingHom.ext fun x => ?_; simp [dualMap]
-
-theorem inc_comp_fst : (inc R).comp (fstH R) = ((tm (0 • LinearMap.id : R →ₗ[R] R)) : DualNumber R →+* DualNumber R) := by
-  refine RingHom.ext fun x => ?_; ext <;> simp [tm, TrivSqZeroExt.algebraMap_eq_inl]
+  refine RingHom.ext fun x => ?_; simp [fstH, dualMap]
 
 end Rings2
 

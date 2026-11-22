@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.BoxMulA
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.BoxMulA
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,13 +27,15 @@ theorem map_mul_left_infinite {m : MeasurableSpace (InfiniteAdeleRing F)}
     hm.measurable_eq.trans (GroundTheory.Global.borelSpace_infiniteAdeleRing (K := F)).measurable_eq.symm
   have h := Measure.isAddLeftInvariant_eq_smul μ (GroundTheory.Global.infiniteAdeleMeasure F)
   rw [h, Measure.map_smul, GroundTheory.Global.map_mul_left_infiniteAdeleMeasure, smul_comm]
+  exact (continuous_const_mul (b : InfiniteAdeleRing F)).measurable.aemeasurable
 
 theorem norm_algebraMap_infinite (a : F) :
     ‖algebraMap F (InfiniteAdeleRing F) a‖ = ∏ w : InfinitePlace F, w a ^ w.mult := by
   rw [InfiniteAdeleRing.norm_def]
   refine Finset.prod_congr rfl fun w _ => ?_
   congr 1
-  exact InfinitePlace.Completion.norm_coe w _
+  rw [InfiniteAdeleRing.algebraMap_apply]
+  exact AbsoluteValue.Completion.norm_coe (WithAbs.toAbs w.1 a)
 
 end Infinite
 

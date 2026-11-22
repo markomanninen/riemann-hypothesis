@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Polynomial DividedPowers GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
 
@@ -20,7 +25,8 @@ theorem sub_sub_smul_eq_zero_of_smul_eq_zero {Λ N : Type} [CommRing Λ] [AddCom
     rw [hd, smul_smul, mul_comm, h0, zero_smul]
   have hsum : γ z - z - c • z = ∑ j, a 0 j • (γ (y j) - y j - c • y j) := by
     conv_lhs => rw [hz']
-    simp only [map_sum, map_smul, Finset.smul_sum, smul_sub, Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.smul_sum, smul_sub, Finset.sum_sub_distrib]
     congr 1
     exact Finset.sum_congr rfl (fun j _ => smul_comm _ _ _)
   rw [hsum]
@@ -43,7 +49,7 @@ theorem smul_eq_zero_of_fixed {Λ N : Type} [CommRing Λ] [AddCommGroup N] [Modu
           linear_combination (norm := module) -(w * ξ) • hx'
         rw [this, hx]
       have h2 := hE _ h1
-      simp only [map_add, map_smul] at h2
+      simp only [map_add (f := _), map_smul] at h2
       have hM : (w * ξ) • (γ x' - x') = 0 := by
         subst hμ
         linear_combination (norm := module) h2 - hx'
@@ -72,7 +78,7 @@ theorem exists_mem_smul_top {Λ N : Type} [CommRing Λ] [AddCommGroup N] [Module
     obtain ⟨x₁, hx₁, e₁⟩ := ihx
     obtain ⟨y₁, hy₁, e₂⟩ := ihy
     refine ⟨x₁ + y₁, Submodule.add_mem _ hx₁ hy₁, ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     linear_combination (norm := module) e₁ + e₂
 
 theorem exists_sub_eq_smul {Λ N : Type} [CommRing Λ] [AddCommGroup N] [Module Λ N]

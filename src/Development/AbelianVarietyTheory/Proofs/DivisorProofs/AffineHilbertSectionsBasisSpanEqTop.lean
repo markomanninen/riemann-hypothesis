@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BasicIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.BaseChangeKernels.Affine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BasicIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.BaseChangeKernels.Affine
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite
 
@@ -71,17 +75,16 @@ theorem span_gen_eq_top (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (N 
       (W : Z.Opens))).hom (algebraMap S Q ((Scheme.ΓSpecIso (CommRingCat.of B)).inv.hom b))) ∈
       Submodule.span Γ(Z, W) (Set.range fun j => gen A B y W (e j)) := by
     intro b
-    rw [← e.sum_repr b, map_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e.sum_repr b, map_sum, map_sum, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     rw [Algebra.smul_def, term]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
   refine eq_top_iff.mpr fun x _ => ?_
   obtain ⟨q, rfl⟩ := hsurj x
-  refine hbc.inductionOn q (fun q => (show Sec A B y W from (y.2.1.subschemeι.app (pullback.snd (str A B) y.1 ⁻¹ᵁ
+  refine hbc.inductionOn q (motive := fun q => (show Sec A B y W from (y.2.1.subschemeι.app (pullback.snd (str A B) y.1 ⁻¹ᵁ
       (W : Z.Opens))).hom q) ∈ Submodule.span Γ(Z, W) (Set.range fun j => gen A B y W (e j)))
-    ?_ ?_ ?_ ?_
-  · convert zero_mem (Submodule.span Γ(Z, W) (Set.range fun j => gen A B y W (e j)))
-    exact map_zero _
+    ?_ ?_ ?_
   · intro s
     obtain ⟨b, rfl⟩ : ∃ b, (Scheme.ΓSpecIso (CommRingCat.of B)).inv.hom b = s :=
       ⟨(Scheme.ΓSpecIso (CommRingCat.of B)).hom.hom s, by simp⟩
@@ -90,7 +93,7 @@ theorem span_gen_eq_top (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (N 
     rw [hι]
     exact Submodule.smul_mem _ _ hn
   · intro a b ha hb
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem ha hb
 
 end GlobalTheory.HilbAff

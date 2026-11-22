@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.VaceigenDual
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.VaceigenDual
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 

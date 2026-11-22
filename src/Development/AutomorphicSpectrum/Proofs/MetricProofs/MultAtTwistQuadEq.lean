@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsHorizontalTwist
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialMultAt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PBCMult
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LengthLocalizedModuleQuotient
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsHorizontalTwist
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialMultAt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PBCMult
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LengthLocalizedModuleQuotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -173,7 +177,7 @@ theorem multAt_twist (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (�
     multAt (J.map inc ⊔ Ideal.span {quad p}) (twist p W) = multAt J W := by
   have hWp : W.IsPrime := hW.1.1
   unfold multAt
-  rw [dif_pos hT, dif_pos hWp]
+  rw [dite_eq_left hT, dite_eq_left hWp]
   exact congrArg ENat.toNat (length_cut_of_flat inc (quad p) J W (twist p W) rfl
     (comap_inc_twist p W) (flat_quad p))
 

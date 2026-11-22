@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 open scoped Topology
 
 namespace GlobalTheory.RootEx
 
+
 open MeasureTheory ValuativeRel Matrix in
 open scoped Topology Pointwise in
-
 theorem _root_.GlobalTheory.RootEx.exists_isOpen_addSubgroup_add_eq {X : Type*}
     [AddCommGroup X] [TopologicalSpace X]
     [IsTopologicalAddGroup X] {Φ : X → ℂ} (hlc : IsLocallyConstant Φ) (hcs : IsCompact (tsupport Φ)) :
@@ -70,9 +74,9 @@ theorem _root_.GlobalTheory.RootEx.exists_isOpen_addSubgroup_add_eq {X : Type*}
     rw [neg_add_cancel_right] at h
     exact h.symm
 
+
 open MeasureTheory ValuativeRel Matrix in
 open scoped Topology Pointwise in
-
 theorem _root_.GlobalTheory.RootEx.sb_matrix_exists_isOpen_addSubgroup :
     ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
       (a b : Type) [Fintype a] [Fintype b], ∀ Φ ∈ _root_.GlobalTheory.SplitWeil.SB (Matrix a b k),

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,6 @@ theorem coord_rTensor {ι : Type} [DecidableEq ι] (b : Module.Basis ι F X) (f 
     (i : ι) : TensorProduct.equivFinsuppOfBasisRight b (f.rTensor X y) i =
       f (TensorProduct.equivFinsuppOfBasisRight b y i) := by
   induction y with
-  | zero => simp
   | add x y hx hy => simp [hx, hy]
   | tmul y x => simp
 
@@ -83,10 +86,12 @@ theorem tensor_inj {P : Subgroup M} (σ : Representation F P W) (y : smoothPart 
   classical
   let b := Module.Free.chooseBasis F X
   apply (TensorProduct.equivFinsuppOfBasisRight b).injective
+  rw [(TensorProduct.equivFinsuppOfBasisRight b).map_zero]
   ext i m
   have := coord_rTensor b (evalAt σ m) y i
   rw [h] at this
-  exact this.symm.trans (by simp)
+  change (evalAt σ m) ((TensorProduct.equivFinsuppOfBasisRight b y) i) = (evalAt σ m) 0
+  simpa only [map_zero, Finsupp.zero_apply] using this.symm
 
 theorem tensor_surj {P : Subgroup M} (σ : Representation F P W) {K : Set M} (hK : IsCompact K)
     (hPK : ∀ m, ∃ p : P, ∃ c ∈ K, m = p * c) (ψ : M → W ⊗[F] X)
@@ -133,8 +138,7 @@ theorem stage {Q R : Subgroup G} (hRQ : R ≤ Q) {P : Subgroup M} (ℓ : Q →* 
       (evalAt σ 1).rTensor X (TensorProduct.map (smInd P σ (ℓ q)) (τ q) y) =
         (τ q).lTensor W ((evalAt σ (ℓ q)).rTensor X y) := fun q y => by
     induction y with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul f x =>
       simp only [TensorProduct.map_tmul, LinearMap.rTensor_tmul, LinearMap.lTensor_tmul]
       congr 1
@@ -151,8 +155,7 @@ theorem stage {Q R : Subgroup G} (hRQ : R ≤ Q) {P : Subgroup M} (ℓ : Q →* 
     congr 1
     generalize j y = z
     induction z with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul f x =>
       simp only [TensorProduct.map_tmul, LinearMap.rTensor_tmul, LinearMap.lTensor_tmul]
       congr 1
@@ -206,7 +209,8 @@ def pr {R : Type} [CommRing R] (e : a ⊕ b ≃ n) : parab R (two e) →* GL a R
   (leviTwo R a b).symm.toMonoidHom.comp (leviProj R (two e))
 
 def sec {R : Type} [CommRing R] (e : a ⊕ b ≃ n) : GL a R × GL b R →* parab R (two e) :=
-  (emb₂ R e).codRestrict _ fun _ => leviEmb_mem_parab R _ _
+  (emb₂ R e).codRestrict _ fun g => mem_parab_iff.2 fun _ _ i j h => by
+    simp [emb₂, leviEmb, Matrix.blockDiagonal'_apply, h.ne']
 
 theorem pr_fst {R : Type} [CommRing R] (e : a ⊕ b ≃ n) (q : parab R (two e)) (i j : a) :
     ((pr e q).1 : Matrix a a R) i j = ((q : GL n R) : Matrix n n R) (e (.inl i)) (e (.inl j)) := rfl
@@ -214,8 +218,10 @@ theorem pr_fst {R : Type} [CommRing R] (e : a ⊕ b ≃ n) (q : parab R (two e))
 theorem pr_snd {R : Type} [CommRing R] (e : a ⊕ b ≃ n) (q : parab R (two e)) (i j : b) :
     ((pr e q).2 : Matrix b b R) i j = ((q : GL n R) : Matrix n n R) (e (.inr i)) (e (.inr j)) := rfl
 
-theorem pr_sec {R : Type} [CommRing R] (e : a ⊕ b ≃ n) (g : GL a R × GL b R) : pr e (sec e g) = g :=
-  congrArg (leviTwo R a b).symm (leviProj_leviEmb R (two e) (leviTwo R a b g))
+theorem pr_sec {R : Type} [CommRing R] (e : a ⊕ b ≃ n) (g : GL a R × GL b R) : pr e (sec e g) = g := by
+  apply (leviTwo R a b).injective
+  ext x i j
+  simp [pr, sec, leviProj_apply, emb₂, leviEmb, Matrix.blockDiagonal'_apply_eq]
 
 theorem continuous_sec {R : Type} [CommRing R] [TopologicalSpace R] (e : a ⊕ b ≃ n) :
     Continuous (sec (R := R) e) :=
@@ -239,7 +245,9 @@ theorem dl_sec (e : a ⊕ b ≃ n) : ∀ᶠ u in 𝓝 (1 : GL a k × GL b k), dl
   have h := ((isSmoothChar_deltaHalf k (m := Two a b)).comp (leviTwo k a b).toMonoidHom
     (continuous_leviTwo k)).mem_nhds (one_mem _)
   refine Filter.mem_of_superset h fun u hu => ?_
-  exact (congrArg (deltaHalf k (Two a b)) (leviProj_leviEmb k (two e) (leviTwo k a b u))).trans hu
+  have he : leviProj k (two e) (sec e u) = leviTwo k a b u := by
+    exact (leviTwo k a b).symm.injective (pr_sec e u)
+  exact (congrArg (deltaHalf k (Two a b)) he).trans hu
 
 def dat (e : a ⊕ b ≃ n) (ρ : Representation ℂ (GL a k × GL b k) W) :
     Representation ℂ (parab k (two e)) W :=
@@ -272,8 +280,7 @@ theorem dat_snd (e : a ⊕ b ≃ n) (π₁ : Representation ℂ (GL a k) V₁) (
     (q : parab k (two e)) (y : V₁ ⊗[ℂ] V₂) :
     dat e (extTensor π₁ π₂) q y = TensorProduct.map (π₁ (pr e q).1) (tauSnd e π₂ q) y := by
   induction y with
-  | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul f x =>
     rw [dat_apply, extTensor_tmul, TensorProduct.map_tmul, ← TensorProduct.tmul_smul, tauSnd_apply]
 
@@ -282,8 +289,7 @@ theorem dat_fst (e : a ⊕ b ≃ n) (π₁ : Representation ℂ (GL a k) V₁) (
     TensorProduct.comm ℂ V₁ V₂ (dat e (extTensor π₁ π₂) q y) =
       TensorProduct.map (π₂ (pr e q).2) (tauFst e π₁ q) (TensorProduct.comm ℂ V₁ V₂ y) := by
   induction y with
-  | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul f x =>
     rw [dat_apply, extTensor_tmul, map_smul, TensorProduct.comm_tmul, TensorProduct.comm_tmul,
       TensorProduct.map_tmul, ← TensorProduct.tmul_smul, tauFst_apply]
@@ -355,12 +361,10 @@ theorem action_eq (e₁ : ab ⊕ c ≃ n) (f₁ : a ⊕ b ≃ ab) (e₂ : a ⊕ 
     simp only [Units.val_mul]
     ring
   induction z with
-  | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul y x =>
     induction y with
-    | zero => simp only [TensorProduct.zero_tmul, map_zero]
-    | add x y hx hy => simp only [TensorProduct.add_tmul, map_add, hx, hy]
+    | add x y hx hy => simp only [TensorProduct.add_tmul, map_add (f := _), hx, hy]
     | tmul y z =>
       rw [TensorProduct.comm_tmul, TensorProduct.assoc_symm_tmul, TensorProduct.map_tmul,
         TensorProduct.map_tmul, dat_apply, dat_apply, extTensor_tmul, extTensor_tmul, g₁, g₂,

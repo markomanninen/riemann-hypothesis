@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.TupleConstantsNeZero
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.TupleConstantsNeZero
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Finset GlobalTheory.Square
 open Formalism.DivisionValues (vw conjPl)

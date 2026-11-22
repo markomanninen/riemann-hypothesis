@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -172,7 +176,7 @@ theorem an_eval {ι : Type} (f : ι → MC n → ℂ) (B₀ : MC n) (hf : ∀ k,
   induction R using MvPolynomial.induction_on with
   | C a => simpa using analyticAt_const
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p k hp =>
     simp only [map_mul, MvPolynomial.eval_X]
@@ -234,7 +238,7 @@ theorem dirC_comp (G : MC n → ℂ) (y : E n) (hG : DifferentiableAt ℂ G (her
     (hG.hasFDerivAt.restrictScalars ℝ).comp y hermL.hasFDerivAt
   unfold dirC
   rw [show (fun y => G (herm y)) = fun y => G (hermL y) from rfl, hd.fderiv]
-  simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_restrictScalars', map_add, map_smul,
+  simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_restrictScalars', map_add (f := _), map_smul,
     smul_eq_mul]
 
 theorem hermC_eq (w : Fin n → Fin n → ℂ) :

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem tr_eDat (N : ℕ) (P : Mt g N → Prop) (φ : Mt g N → ZMod g) (ψ : A
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   by_cases hx : P (x : Mt g N) <;>
-    simp [MonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply, Finsupp.single_apply, hx, mul_assoc]
+    simp [MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply, Finsupp.single_apply, hx, mul_assoc]
 
 theorem card_uniUp (N : ℕ) (S : ℕ → Prop) :
     (Finset.univ.filter fun u : Gn g N => IsUniUp (u : Mt g N) ∧

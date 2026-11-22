@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafCloseBCut
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafCloseBCut
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry TopologicalSpace

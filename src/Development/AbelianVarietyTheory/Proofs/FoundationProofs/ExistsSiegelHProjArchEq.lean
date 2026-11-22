@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem exists_siegelH_projArch_eq (x : ∀ w : InfinitePlace F, siegelH w.Compl
       rw [Subgroup.coe_mul, map_mul, coe_embArchP, projArch_embArch_ne σ Q hv.1, h2 v hv.2, mul_one]
     · rw [Subgroup.coe_mul, map_mul, coe_embArchP, proj_embArch, h3, mul_one]
 
-variable {L : Submodule (𝓞 E) (Fin n → E)} [Submodule.IsLattice E L] {a : GL (Fin n) (AF F ⊗[F] E)}
+variable {L : Submodule (𝓞 E) (Fin n → E)} [Submodule.IsFullLattice E L] {a : GL (Fin n) (AF F ⊗[F] E)}
 
 theorem HasIwasawa.adelic (hf : ∀ v : HeightOneSpectrum (𝓞 F), HasIwasawa σ Q (KFin σ Q L v))
     (hi : ∀ w : InfinitePlace F, HasIwasawa σ Q (KArch σ Q w (bc (compInf F E w) a))) :

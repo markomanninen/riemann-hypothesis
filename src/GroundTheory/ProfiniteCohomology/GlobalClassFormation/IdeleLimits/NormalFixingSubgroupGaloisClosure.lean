@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Invariants
-import GroundTheory.GlobalFields.IdeleClassGroup.InvariantsGalois
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Invariants
+public import GroundTheory.GlobalFields.IdeleClassGroup.InvariantsGalois
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -32,8 +37,6 @@ variable {K}
 instance (p : GLevel K) : Fact (K ≤ p.1) := ⟨p.2.1⟩
 
 instance (p : GLevel K) : p.1.1.fixingSubgroup.Normal := p.2.2
-
-theorem le_def {p q : GLevel K} : p ≤ q ↔ p.1 ≤ q.1 := Iff.rfl
 
 instance : IsDirectedOrder (GLevel K) where
   directed p q := by
@@ -96,19 +99,14 @@ theorem smul_of_restrictHom [F.1.fixingSubgroup.Normal] (g : K.1.fixingSubgroup)
   rw [smul_idele_eq_ideleEquiv]
   exact smul_of_eq_of_ideleEquiv _ _ (fun _ ↦ rfl) x
 
-variable (K F) in
 
+variable (K F) in
 def levelMor [F.1.fixingSubgroup.Normal] : Rep.res (restrictHom (F := K) (E := F)) (ideleRep K.1 F.1) ⟶ limitRep K :=
   Rep.ofHom ⟨(MonoidHom.toAdditive (of F)).toIntLinearMap, fun g => LinearMap.ext fun x =>
     congrArg Additive.ofMul (smul_of_restrictHom g x.toMul).symm⟩
 
-@[simp]
-theorem levelMor_hom_apply [F.1.fixingSubgroup.Normal] (x : Additive (IdeleGroup F.1)) :
-    (levelMor K F).hom x = Additive.ofMul (of F x.toMul) :=
-  rfl
 
 variable (K F) in
-
 def levelInfl [F.1.fixingSubgroup.Normal] (n : ℕ) : cohomology (ideleRep K.1 F.1) n ⟶ cohomology (limitRep K) n :=
   cohomologyMapAlong restrictHom continuous_restrictHom (levelMor K F) n
 

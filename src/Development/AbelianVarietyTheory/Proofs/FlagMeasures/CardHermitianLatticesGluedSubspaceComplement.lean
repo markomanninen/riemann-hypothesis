@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodula
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatticeQuotientGensAndIntermediateCount
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WittExtensionTotallyDefiniteHermitian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodula
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatticeQuotientGensAndIntermediateCount
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WittExtensionTotallyDefiniteHermitian
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
@@ -14,24 +18,6 @@ namespace GlobalTheory.Mass.Glue
 section
 
 variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V]
-
-theorem mem_perp (h : V →ₗ⋆[K] V →ₗ[K] K) (U : Submodule K V) (v : V) :
-    v ∈ perp h U ↔ ∀ x ∈ U, h x v = 0 := by
-  simp [perp, Submodule.mem_iInf]
-
-theorem nondeg_of_pd [NumberField K] (h : V →ₗ⋆[K] V →ₗ[K] K) (hp : PD h) : h.Nondegenerate := by
-  obtain ⟨τ⟩ : Nonempty (K →+* ℂ) := inferInstance
-  constructor
-  · intro x hx
-    by_contra h0
-    have := hp τ x h0
-    rw [hx x] at this
-    simp at this
-  · intro x hx
-    by_contra h0
-    have := hp τ x h0
-    rw [hx x] at this
-    simp at this
 
 end
 
@@ -193,13 +179,13 @@ private lemma le_sup_map_dual_latIn_perp {h : V →ₗ⋆[K] V →ₗ[K] K} (hs 
   · rw [_root_.Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
     intro y hy
     have hyL := hL _ (mem_latIn_iff.1 hy) _ hx
-    rw [map_add, (_root_.GlobalTheory.Mass.Witt.mem_perp h W w).1 hw _ y.2, add_zero] at hyL
+    rw [map_add (f := _), (_root_.GlobalTheory.Mass.Witt.mem_perp h W w).1 hw _ y.2, add_zero] at hyL
     rw [hRes_apply]
     exact hyL
   · rw [_root_.Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
     intro y hy
     have hyL := hL _ (mem_latIn_iff.1 hy) _ hx
-    rw [map_add, apply_eq_zero_of_mem_perp hs hu y.2, zero_add] at hyL
+    rw [map_add (f := _), apply_eq_zero_of_mem_perp hs hu y.2, zero_add] at hyL
     rw [hRes_apply]
     exact hyL
 

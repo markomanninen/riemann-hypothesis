@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabelsCharOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalCharacterFormula
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabelsCharOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalCharacterFormula
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem thetaOf_gen_pow (L : GlobalTheory.GLq.LabelDatum p) {d : ℕ} (hd : 0 < 
   have hp : 0 < p ^ d - 1 := g_pow_sub_pos hd
   have h : ∃ m : ℕ, L.gen d ^ n = L.gen d ^ m := ⟨n, rfl⟩
   unfold GlobalTheory.GLq.thetaOf
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   have hfin : IsOfFinOrder (L.gen d) := by
     rw [← orderOf_pos_iff, L.gen_order d hd]; exact hp
   have h1 := hfin.pow_eq_pow_iff_modEq.1 h.choose_spec

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFrameTranslatedPerpOfIsFrame
-import Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.HWSpan
-import Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.KShift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFrameTranslatedPerpOfIsFrame
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.HWSpan
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.BesselModels.KShift
+
+@[expose] public section
 
 open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 

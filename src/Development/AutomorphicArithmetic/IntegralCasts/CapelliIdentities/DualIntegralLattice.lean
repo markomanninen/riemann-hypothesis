@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.DualIntegralLattice.aux2 :
     ∀ (E : Type) [inst : Field E] [inst_1 : NumberField E], (Algebra.traceForm ℚ E).Nondegenerate := by
@@ -34,7 +38,8 @@ private theorem key1 {S : Type} [CommRing S] [IsDomain S] [CharZero S] {ι : Typ
     simp only [← hg]
     have h1 : (d : ZMod (p ^ R)) * g a = g (d • a) := by
       rw [map_zsmul, zsmul_eq_mul]
-    rw [h1, hdual, map_sum, Finset.mul_sum, map_sum, Int.cast_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, hdual, map_sum, Finset.mul_sum, map_sum, Int.cast_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     have h2 : a * (((g (b k)).val : S) * w k) = ((g (b k)).val : ℕ) • (a * w k) := by
       rw [nsmul_eq_mul]; ring
@@ -58,8 +63,10 @@ private theorem key1 {S : Type} [CommRing S] [IsDomain S] [CharZero S] {ι : Typ
           Pi.single i (c.symm (y j) * x i) := by
         rw [← Pi.single_smul, smul_eq_mul]
       rw [h1, ← hadj, h2, star, mul_assoc]
-    conv_lhs => rw [hxs, map_sum, AddMonoidHom.finset_sum_apply, hys]
-    simp only [map_sum, Finset.mul_sum, Int.cast_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [hxs, map_sum, AddMonoidHom.finsetSum_apply, hys]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.mul_sum, Int.cast_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
     exact term i j
@@ -125,7 +132,8 @@ private theorem key2 {S : Type} [CommRing S] {N p : ℕ} [Finite (S ⧸ Ideal.sp
       refine hker _ ?_
       have := congrFun h0 j
       simp only [Matrix.vecMul, dotProduct, Pi.zero_apply] at this
-      rw [map_sum, ← this]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← this]
       exact Finset.sum_congr rfl fun i _ => by rw [map_mul, hx]; rfl)
     refine sub_eq_zero.mp (funext fun i => ?_)
     rw [← hx, hx']
@@ -178,7 +186,8 @@ private theorem key4 (E : Type) [Field E] [NumberField E] :
   have hTw : ∀ m k, T (b m * w k) = if k = m then discr E else 0 := by
     intro m k
     have h1 : T (b m * w k) = (Q.adjugate * Q) k m := by
-      simp only [w, Finset.mul_sum, map_sum, Matrix.mul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [w, Finset.mul_sum, map_sum, Matrix.mul_apply]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [mul_smul_comm, map_zsmul, mul_comm (b m), hQ', smul_eq_mul]
     rw [h1, Matrix.adjugate_mul, hQ, Matrix.smul_apply, Matrix.one_apply]
@@ -213,7 +222,8 @@ private theorem key4 (E : Type) [Field E] [NumberField E] :
     have hTa : ∀ k, T (a * w k) = b.repr a k * discr E := by
       intro k
       conv_lhs => rw [← b.sum_repr a]
-      rw [Finset.sum_mul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_mul, map_sum]
       simp only [smul_mul_assoc, map_zsmul, hTw, smul_eq_mul]
       simp
     change discr E • a = ∑ k, T (a * w k) • b k
@@ -284,7 +294,7 @@ theorem UpperTheory.Reformulated.B.DualIntegralLattice.main :
       map_one' := hinj (by rw [ht]; simp)
       map_zero' := hinj (by rw [ht]; simp)
       map_mul' := fun a b => hinj (by rw [ht, map_mul, ht, ht]; simp)
-      map_add' := fun a b => hinj (by rw [ht, map_add, ht, ht]; simp) }
+      map_add' := fun a b => hinj (by rw [ht, map_add (f := _), ht, ht]; simp) }
   have hdet := key3 τ hpu W hkey
   let Wo := W.map τ
   have hinv : Wo * Wo⁻¹ = 1 := Matrix.mul_nonsing_inv _ hdet
@@ -301,7 +311,8 @@ theorem UpperTheory.Reformulated.B.DualIntegralLattice.main :
     ⟨((NumberField.discr E : ℤ) : O) * Wo⁻¹ i j, by simp⟩, hfin _ fun i j => ?_⟩
   have h2 : algebraMap O Ω (Wo i j) = σ ((W i j : NumberField.RingOfIntegers E) : E) := ht _
   rw [h2]
-  simp only [W, Matrix.of_apply, map_sum, map_mul, hw, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [W, Matrix.of_apply, map_sum, map_mul, hw, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp only [map_natCast, map_mul, map_intCast]
   ring

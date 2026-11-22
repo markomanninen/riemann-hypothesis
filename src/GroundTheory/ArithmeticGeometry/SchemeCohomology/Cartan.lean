@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ConsCompSuccAboveZero
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.InjectiveCech
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ConsCompSuccAboveZero
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.InjectiveCech
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -52,8 +57,8 @@ end
 variable (P : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u})
   (hP : Presheaf.IsSheaf (Opens.grothendieckTopology X) P)
 
-include hP in
 
+include hP in
 lemma exists_glue {ι : Type w} (U : ι → Opens X) (V : Opens X) (hUV : ∀ a, U a ≤ V)
     (hV : V ≤ iSup U) (τ : Cochain P U 0) (hτ : d P U 0 τ = 0) :
     ∃ t : P.obj (op V), ∀ i : Fin 1 → ι,
@@ -91,8 +96,8 @@ lemma exists_glue {ι : Type w} (U : ι → Opens X) (V : Opens X) (hUV : ∀ a,
   simp only [sf, res_res]
   exact (res_congr P U τ hi _ le_rfl).trans (res_refl _ _ _)
 
-variable {P} in
 
+variable {P} in
 lemma CechAcyclic.of_shortExact' {ι : Type w} (U : ι → Opens X)
     {F I Q : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (f : F ⟶ I) (g : I ⟶ Q) (hfg : f ≫ g = 0)
     (hinj : ∀ {n : ℕ} (i : Fin (n + 1) → ι), Function.Injective (f.app (op (inter U i))))

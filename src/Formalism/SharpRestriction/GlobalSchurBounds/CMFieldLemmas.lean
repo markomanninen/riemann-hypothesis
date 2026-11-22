@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationBoundaryCriterion
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationBoundaryCriterion
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ def Conclusion1 (D : D7) : Prop :=
       (primesOver 𝔭 (𝓞 D.host.E)).ncard = 2) ∧
   rdF D = D.host.rdE
 
-open Classical in
 
+open Classical in
 def Conclusion2 (D : D7) : Prop :=
   (∀ φ : D.host.E →+* ℂ, φ ∈ PhiEmb D ↔ (starRingEnd ℂ).comp φ ∉ PhiEmb D) ∧
   (∀ φ ∈ PhiEmb D, ∀ x : D.host.E, x ∈ D.host.K → φ x = D.host.φ₀ x) ∧
@@ -64,8 +68,8 @@ def PointsLemma (D : D7) : Prop :=
       (Set.range fun i : ℕ => Formalism.HC.Frame.placeOf ((gOf D φ₀ h) ^ i * τ)).ncard = addOrderOf h ∧
         (D.R.h h ≠ 0 → Even (addOrderOf h)))
 
-open Classical in
 
+open Classical in
 def Conclusion4 (D : D7) (C : ℝ) : Prop :=
   (∀ l : ℕ, l.Prime → l ≠ 2 → ∀ j : ℕ, j ≤ D.R.e →
     ((2 ^ j : ℕ) • hOf D.R.e l = 0 ↔
@@ -91,8 +95,8 @@ def transl {φ : Formalism.HC.Frame} (T : Finset ℕ) (u₀ : φ.A) : Set φ.A :
 
 def coset {G : Type} [AddCommGroup G] (t h : G) : Set G := {x | ∃ i : ℤ, x = t + i • h}
 
-open Classical in
 
+open Classical in
 def Conclusion5 (D : D7) (C : ℝ) : Prop :=
   ∀ Lw : ℕ, 2 ≤ Lw → ∃ T₂ : Finset ℕ,
     (∀ s ∈ T₂, (s : ℝ) < (D.R.n0 : ℝ) / (4 * Lw)) ∧
@@ -111,8 +115,8 @@ def TorusPairsWithVariant (D : D7) : Prop :=
 def bern {α : Type*} [Fintype α] (δ : ℝ) (T : Finset α) : ℝ :=
   δ ^ T.card * (1 - δ) ^ (Fintype.card α - T.card)
 
-open Classical in
 
+open Classical in
 def Conclusion6 (D : D7) (sc : Scale) : Prop :=
   ∀ δ : ℝ, 0 < δ → δ ≤ 1 → 16 ≤ δ * D.R.n →
   ∀ β : ℝ, ∀ BAD : HH D → HH D → Finset (HH D) → Prop,
@@ -219,8 +223,8 @@ end Points
 def IsProG {G : Type} [Group G] [TopologicalSpace G] (g : ℕ) (Uw : Subgroup G) : Prop :=
   IsCompact (Uw : Set G) ∧ ∀ N : Subgroup Uw, IsOpen (N : Set Uw) → N.Normal → ∃ m : ℕ, N.index = g ^ m
 
-open IsDedekindDomain TensorProduct in
 
+open IsDedekindDomain TensorProduct in
 def division_rows_rational_lattice (D : D7) : Prop :=
   ∀ σ : D.host.E →ₐ[D.host.F] D.host.E, (∀ x, σ x = D.host.conj x) →
   ∀ J : Matrix (Fin D.R.k) (Fin D.R.k) D.host.E, IsHerm (σ : D.host.E →+* D.host.E) J → IsDef σ J →
@@ -264,12 +268,8 @@ def Conclusion8 (D : D7) : Prop :=
 def Conclusion₂ (D : D7) (C₄ C₅ : ℝ) (sc : Scale) : Prop :=
   Conclusion1 D ∧ Conclusion2 D ∧ PointsLemma D ∧ Conclusion4 D C₄ ∧ Conclusion5 D C₅ ∧ TorusPairsWithVariant D ∧ Conclusion6 D sc ∧ division_rows_rational_lattice D ∧ Conclusion8 D
 
-def Stmt (D : D7) (C₄ C₅ : ℝ) (sc : Scale) : Prop := Conclusion₂ D C₄ C₅ sc
-
 def ConclusionOnFamily {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (C₄ C₅ : ℝ) : Prop :=
   ∀ x : ℝ, Fm.x1 < x → ∀ i : Fm.Ix x, Conclusion₂ (Fm.D x i) C₄ C₅ (Fm.L x i).sc
-
-def KudlaFamilyStatement {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (C₄ C₅ : ℝ) : Prop := ConclusionOnFamily Fm C₄ C₅
 
 end Formalism.MainNotions.UnusedSlot33
 

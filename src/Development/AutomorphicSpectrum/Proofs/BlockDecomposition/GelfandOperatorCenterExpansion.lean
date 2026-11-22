@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyEqOfAgreeGLs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TrETransposeEqPhiSeq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandValueNegationStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyEqOfAgreeGLs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TrETransposeEqPhiSeq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandValueNegationStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem map_phiSeq (φ : A →+* B) (N : A) (τ : ℕ → A) (m : ℕ) :
   induction m using Nat.strong_induction_on with
   | _ m ih =>
     rw [phiSeq_unfold N, phiSeq_unfold (φ N)]
-    simp only [map_sub, map_sum, map_mul, map_bco, Function.comp]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_mul, map_bco, Function.comp]
     congr 1
     exact Finset.sum_congr rfl fun j _ => by rw [ih j j.isLt]
 
@@ -74,7 +79,8 @@ theorem phiSeq_words (n m : ℕ) : ∃ (N : ℕ) (c : Fin N → ℂ) (w : Fin N 
     funext k; simp
   rw [h2, map_natCast] at h1
   rw [← h1, h]
-  simp only [map_sum, RingHom.coe_coe, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, RingHom.coe_coe, map_smul]
   refine Finset.sum_congr rfl fun i _ => ?_
   congr 1
   rw [map_list_prod, List.map_map]
@@ -310,7 +316,7 @@ theorem Epw_apply (hR : RCalc) (s : Bool) (f : Sm n V) (m : ℕ) (a b : Fin n) :
   | succ m ih =>
     intro g hg
     simp only [Epw, Epow, Finset.sum_apply, LinearMap.sum_apply, Module.End.mul_apply,
-      AddSubmonoidClass.coe_finset_sum]
+      AddSubmonoidClass.coe_finsetSum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [eS_apply hR s a c _ hg]
     exact Eu_agree_GLs s a c (ih c b) g hg
@@ -326,7 +332,7 @@ theorem EpwT_apply (hR : RCalc) (s : Bool) (f : Sm n V) (m : ℕ) (a b : Fin n) 
   | succ m ih =>
     intro g hg
     simp only [Epw, EpowT, Finset.sum_apply, LinearMap.sum_apply, Module.End.mul_apply,
-      AddSubmonoidClass.coe_finset_sum]
+      AddSubmonoidClass.coe_finsetSum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [eS_apply hR s c a _ hg]
     exact Eu_agree_GLs s c a (ih c b) g hg
@@ -334,13 +340,13 @@ theorem EpwT_apply (hR : RCalc) (s : Bool) (f : Sm n V) (m : ℕ) (a b : Fin n) 
 theorem trE_apply (hR : RCalc) (s : Bool) (f : Sm n V) (j : ℕ) :
     ∀ g ∈ GLs n, (trE (eS (V := V) hR s) j f).1 g = gel s j f.1 g := by
   intro g hg
-  simp only [trE, gel, Finset.sum_apply, LinearMap.sum_apply, AddSubmonoidClass.coe_finset_sum]
+  simp only [trE, gel, Finset.sum_apply, LinearMap.sum_apply, AddSubmonoidClass.coe_finsetSum]
   exact Finset.sum_congr rfl fun a _ => Epw_apply hR s f j a a g hg
 
 theorem trET_apply (hR : RCalc) (s : Bool) (f : Sm n V) (j : ℕ) :
     ∀ g ∈ GLs n, (trE (fun a b => eS (V := V) hR s b a) j f).1 g = gelT s j f.1 g := by
   intro g hg
-  simp only [trE, gelT, Finset.sum_apply, LinearMap.sum_apply, AddSubmonoidClass.coe_finset_sum]
+  simp only [trE, gelT, Finset.sum_apply, LinearMap.sum_apply, AddSubmonoidClass.coe_finsetSum]
   exact Finset.sum_congr rfl fun a _ => EpwT_apply hR s f j a a g hg
 
 theorem prod_apply (hR : RCalc) (s : Bool) (f : Sm n V) (w : List ℕ) :
@@ -367,7 +373,7 @@ theorem transposed_invariants : ∀ (n m : ℕ), ∃ (N : ℕ) (c : Fin N → �
     have key := GlTranspose.trE_transpose_eq_phiSeq n (eS (n := n) (V := V) hR s) (eS_rel hR s) m
     rw [h (trE (eS (n := n) (V := V) hR s))] at key
     rw [gelT_agree_GLs s m hF x hx, ← trET_apply hR s F m x hx, key]
-    simp only [LinearMap.sum_apply, LinearMap.smul_apply, AddSubmonoidClass.coe_finset_sum,
+    simp only [LinearMap.sum_apply, LinearMap.smul_apply, AddSubmonoidClass.coe_finsetSum,
       Finset.sum_apply, Submodule.coe_smul, Pi.smul_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [prod_apply hR s F (w i) x hx, zOp_agree_GLs n _ f F.1 hF x hx]

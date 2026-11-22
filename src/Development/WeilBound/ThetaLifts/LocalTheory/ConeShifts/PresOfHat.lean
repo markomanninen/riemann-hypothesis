@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.StarMemSchA
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryDoubledBlockDiagOne
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.StarMemSchA
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryDoubledBlockDiagOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ theorem pres_of_hat {X : Spc F E n} {g : Matrix (Fin n) (Fin n) (AE F E)}
   have := dn _ (hg y (up y hy))
   rwa [show sg v 1 • (g *ᵥ y) = g *ᵥ y from idem_smul (at_mulVec_right g ((mem_latW_loc X y).1 hy).1)] at this
 
-variable (σ) in
 
+variable (σ) in
 def USub' (X : Spc F E n) (v : Pl F) : Subgroup (UA σ X.J) where
   carrier := UAt σ X (evFin F v)
   one_mem' := one_mem_UAt X v

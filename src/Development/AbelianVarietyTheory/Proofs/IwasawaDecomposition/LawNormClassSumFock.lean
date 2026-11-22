@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Formalism.LocalToGlobal.Divisibility.FramesLemmas
-import Formalism.LocalToGlobal.Divisibility.ClassSumLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Formalism.LocalToGlobal.Divisibility.FramesLemmas
+public import Formalism.LocalToGlobal.Divisibility.ClassSumLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem classSum_gram_posDef (s : K →+* ℂ) {W : Type} [AddCommGroup W] [Modu
   have hw : ∀ c, (0 : ℂ) < ((C.wt c : ℂ))⁻¹ := fun c => inv_pos.2 (by exact_mod_cast C.wt_pos c)
   have hc : ∀ f g : C.Cl → C.V, s (C.csum f g) = ∑ c, ((C.wt c : ℂ))⁻¹ * B (ψ (f c)) (ψ (g c)) := by
     intro f g
-    simp only [CSD.csum, map_sum, map_mul, map_inv₀, map_natCast, hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [CSD.csum, map_sum, map_mul, map_inv₀, map_natCast, hs]
   have hsemi : (C.H.map s).PosSemidef := by
     refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ ?_
     · ext i j
@@ -37,7 +42,8 @@ theorem classSum_gram_posDef (s : K →+* ℂ) {W : Type} [AddCommGroup W] [Modu
     · intro x
       have e : star x ⬝ᵥ (C.H.map s) *ᵥ x = ∑ c, ((C.wt c : ℂ))⁻¹ *
           B (∑ i, x i • ψ ((C.basis i : C.Cl → C.V) c)) (∑ j, x j • ψ ((C.basis j : C.Cl → C.V) c)) := by
-        simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, CSD.H, Matrix.of_apply, hc, map_sum, LinearMap.sum_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, CSD.H, Matrix.of_apply, hc, map_sum, LinearMap.sum_apply,
           LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, Finset.mul_sum, Finset.sum_mul, Pi.star_apply,
           starRingEnd_apply, RingHom.id_apply]
         rw [Finset.sum_comm]
@@ -79,7 +85,8 @@ theorem majAt_stdFrame_classSum (v : InfinitePlace K) (hv : ∀ a, v.embedding (
     simp only [Formalism.HermitianLatticesTheory.majAt, Formalism.HermitianLatticesTheory.fcoord, h2]
   have hm : metOf (stdFrame C.H v) = C.H.map v.embedding := (frameOfSpec _ _ hH).2
   rw [h1, majAt_eq, hm, ← hI x, ← hI y, C.csum_sum]
-  simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, map_sum, map_mul, hv, Finset.mul_sum, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, map_sum, map_mul, hv, Finset.mul_sum, Pi.star_apply,
     starRingEnd_apply, mul_assoc]
 
 end ClassSum
@@ -123,7 +130,8 @@ theorem GStep.lawNorm : ∀ {E K ι : Type} [Field E] [NumberField E] [StarRing 
   have hi : inst = (S.csd emb lam h).finCl := Subsingleton.elim _ _
   subst hi
   unfold CSD.csum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_mul, map_inv₀, map_natCast]
   have h2 : (S.csd emb lam h).wt c = Nat.card (S.Stab c) := (@Nat.card_eq_fintype_card _ (_)).symm

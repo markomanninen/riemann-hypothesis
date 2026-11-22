@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvalMod
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvalMod
+
+@[expose] public section
+
 noncomputable section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations
 open GlobalTheory.HeckeGal GlobalTheory.Pst GlobalTheory.TripleGal GlobalTheory.CompanionTheory.LTHodge GlobalTheory.CompanionTheory.LTPer
@@ -19,7 +24,7 @@ theorem theta_period_eq_zero_of_theta_eq_zero :
     | succ n ih =>
       have hs : ltIter ϖ q (n + 1) Q = ϖ * ltIter ϖ q n Q + (ltIter ϖ q n Q) ^ q := by
         simp only [ltIter, Function.iterate_succ_apply']
-      rw [hs, map_add, map_mul, map_pow, ih]
+      rw [hs, map_add (f := _), map_mul, map_pow, ih]
       simp [show q ≠ 0 by omega]
   have hne : θ ϖ ≠ 0 := by
     intro h0

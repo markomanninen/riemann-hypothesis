@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+
+@[expose] public section
+
 open Matrix Finset Formalism.MainNotions.S Formalism.REAL GlobalTheory.SepReal
 
 noncomputable section
@@ -107,7 +112,7 @@ theorem boost_exists : ∀ (m : ℕ) (ε : Fin m → Bool) (a b : Fin m → ℂ)
   have hT : ∑ i, ∑ j, ‖A i j‖ ^ 2 = (m : ℝ) + 4 * c2 - 4 := by
     have : ((∑ i, ∑ j, ‖A i j‖ ^ 2 : ℝ) : ℂ) = trace (A * A) := by
       push_cast
-      simp only [trace, Matrix.diag, mul_apply]
+      simp only [trace, Matrix.diag, Matrix.mul_apply]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       rw [← Complex.mul_conj']
       congr 1

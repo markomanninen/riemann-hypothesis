@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvSepA
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvSepA
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,7 @@ theorem isInvForm_formI {I : (GL (Fin m) k → ℂ) →ₗ[ℂ] ℂ} (hI : PosIn
   · rw [formI_apply, formI_apply, ← hI.2.1 _ (isTestFun_pair x y)]
     congr 1
     funext g
-    simp only [map_mul, Complex.conj_conj]
-    ring
+    simp [map_mul, mul_comm]
   · exact (hI.2.2 _ (isTestFun_pair x x) fun g => by rw [conj_mul_self_re]; exact Complex.normSq_nonneg _).1
   · rw [formI_apply, formI_apply]
     simp only [rhoW_apply]
@@ -52,8 +55,8 @@ theorem formI_self_ne_zero {I : (GL (Fin m) k → ℂ) →ₗ[ℂ] ℂ} (hI : Po
   rw [conj_mul_self_re] at this
   exact Complex.normSq_eq_zero.1 this
 
-variable (ψ) in
 
+variable (ψ) in
 def cK (I : (GL (Fin m) k → ℂ) →ₗ[ℂ] ℂ) (K : Subgroup (GL (Fin m) k)) : ℂ :=
   formI ψ I (delta ψ K) (delta ψ K)
 

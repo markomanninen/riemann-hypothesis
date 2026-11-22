@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.MuTuOfTuSize
-import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
-import Formalism.SharpRestriction.LevelLetterCocycles.AlignN
-import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+module
+
+public import Formalism.SharpRestriction.MuTuOfTuSize
+public import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
+public import Formalism.SharpRestriction.LevelLetterCocycles.AlignN
+public import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+
+@[expose] public section
 
 noncomputable section
 

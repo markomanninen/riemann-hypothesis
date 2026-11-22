@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RankOneBoostIsometries
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RankOneBoostIsometries
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -30,7 +34,7 @@ private theorem hermC_Gm_smul_left (c : ℂ) (u v : Fin r → ℂ) :
 
 private theorem hermC_Gm_add_right (u v v' : Fin r → ℂ) :
     hermC τ.1 X.Gm u (v + v') = hermC τ.1 X.Gm u v + hermC τ.1 X.Gm u v' := by
-  simp only [hermC, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [hermC, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 private theorem hermC_Gm_sub_right (u v v' : Fin r → ℂ) :
     hermC τ.1 X.Gm u (v - v') = hermC τ.1 X.Gm u v - hermC τ.1 X.Gm u v' := by
@@ -78,7 +82,8 @@ private theorem hermC_ppos_right_eq_sum_gramPos_inv (x w : Fin r → ℂ) :
     hermC τ.1 X.Gm x (X.ppos z τ w) = ∑ a, conj (∑ b, hermC τ.1 X.Gm w
       (col (mat z τ) (Fin.castLE X.p0_le b)) * (X.gramPos z τ)⁻¹ b a) *
         hermC τ.1 X.Gm x (col (mat z τ) (Fin.castLE X.p0_le a)) := by
-  rw [← FD.hermC_conj τ.1 X.Gm_herm (X.ppos z τ w) x, Data.ppos, hermC_Gm_sum_left X τ hz, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← FD.hermC_conj τ.1 X.Gm_herm (X.ppos z τ w) x, Data.ppos, hermC_Gm_sum_left X τ hz, map_sum]
   simp only [hermC_Gm_smul_left X τ hz, map_mul, FD.hermC_conj τ.1 X.Gm_herm]
 
 private theorem hermC_ppos_ppos (u w : Fin r → ℂ) :

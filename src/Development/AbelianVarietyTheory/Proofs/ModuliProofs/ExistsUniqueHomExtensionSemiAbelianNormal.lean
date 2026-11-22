@@ -1,17 +1,21 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoOfDensePartOfIsIntegral
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompPowEqOneOfPullbackHom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FiniteTorsionSemiAbelian
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLiftOfSchemeTheoreticallyDominant
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsIsoOfIsFiniteOfUniqueLiftOfClassicalPoints
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FiniteOfIsClosedOfFiniteInterClosedPoints
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoOfDensePartOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompPowEqOneOfPullbackHom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FiniteTorsionSemiAbelian
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLiftOfSchemeTheoreticallyDominant
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsIsoOfIsFiniteOfUniqueLiftOfClassicalPoints
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FiniteOfIsClosedOfFiniteInterClosedPoints
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -44,7 +48,9 @@ theorem mem_range_or_exists_dvr {W Z : Scheme.{0}} (i : W ⟶ Z) [IsPreimmersion
 theorem finite_torsion_points {X : Scheme.{0}} {G : Over X} [GrpObj G] (hG : IsSemiAbelian G)
     {Ω : Type} [Field Ω] [IsAlgClosed Ω] (t : Sp Ω ⟶ X) {n : ℕ} (hn : 0 < n) :
     Finite {x : Over.mk t ⟶ G // x ^ n = 1} := by
-  have := GlobalTheory.finite_torsion_semiAbelian Ω _ (IsSemiAbelian.pullback t G hG) n hn
+  haveI := hG.comm
+  have := (semiAbelian_torsion_finite_and_closedPoint_finiteOrder AbTorsionFinite.finite_torsion).1
+    Ω ((Over.pullback t).obj G) (hG.fibres Ω t) n hn
   let e := TorsionLift.ptsEquiv t G (𝟙_ (Over (Sp Ω))) t (Category.id_comp _)
   refine Finite.of_injective
     (β := {x : 𝟙_ (Over (Sp Ω)) ⟶ (Over.pullback t).obj G // x ^ n = 1})
@@ -63,7 +69,7 @@ theorem locallyQuasiFinite_of_torsion {X : Scheme.{0}} (z : X ⟶ Sp ℤ) [Local
   have : JacobsonSpace Γ.left := jacobsonSpace_of_locallyOfFiniteType_int (p.left ≫ G.hom ≫ z)
   have : JacobsonSpace G.left := jacobsonSpace_of_locallyOfFiniteType_int (G.hom ≫ z)
   refine locallyQuasiFinite_of_finite_fibres_closedPoints p.left fun w hw ↦ ?_
-  have hσ : IsClosed ({p.left w} : Set G.left) := p.left.closePoints_subset_preimage_closedPoints hw
+  have hσ : IsClosed ({p.left w} : Set G.left) := p.left.closedPoints_subset_preimage_closedPoints hw
   generalize p.left w = σ at hσ
   have : Finite (G.left.residueField σ) :=
     (jacobson_closedPoints_tools_int G.left (G.hom ≫ z)).2.1 σ hσ
@@ -100,8 +106,8 @@ theorem locallyQuasiFinite_of_torsion {X : Scheme.{0}} (z : X ⟶ Sp ℤ) [Local
 
 end GlobalTheory.HomExt
 
-open GlobalTheory GlobalTheory.HomExt in
 
+open GlobalTheory GlobalTheory.HomExt in
 theorem GlobalTheory.existsUnique_hom_extension_semiAbelian_normal :
     (∀ (T K : Type) [CommRing T] [IsDomain T] [IsDiscreteValuationRing T] [Field K] [Algebra T K] [IsFractionRing T K] (G G' : Over (Sp T)) [GrpObj G] [GrpObj G'], IsSemiAbelian G → IsSemiAbelian G' → ∀ f : (Over.pullback (spMap (algebraMap T K))).obj G ⟶ (Over.pullback (spMap (algebraMap T K))).obj G', IsMonHom f → ∃! F : G ⟶ G', IsMonHom F ∧ (Over.pullback (spMap (algebraMap T K))).map F = f) → ∀ (X U : Scheme.{0}) (j : U ⟶ X), (ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme X ∧ ∃ z : X ⟶ Sp ℤ, LocallyOfFiniteType z ∧ Flat z) → IsPreimmersion j → Flat j → IsDominant j → QuasiCompact j → ∀ (G G' : Over X) [GrpObj G] [GrpObj G'], IsSemiAbelian G → IsSemiAbelian G' → ∀ f : (Over.pullback j).obj G ⟶ (Over.pullback j).obj G', IsMonHom f → ∃! F : G ⟶ G', IsMonHom F ∧ (Over.pullback j).map F = f := by
   rintro H X U j ⟨hX, z, _, -⟩ _ _ _ _ G G' _ _ hG hG' f hf
@@ -146,9 +152,9 @@ theorem GlobalTheory.existsUnique_hom_extension_semiAbelian_normal :
   have : IsLocallyNoetherian Γ := LocallyOfFiniteType.isLocallyNoetherian p
   have : Surjective p := by
     refine ⟨fun σ ↦ ?_⟩
-    rcases mem_range_or_exists_dvr u σ with ⟨w, rfl⟩ | ⟨T, _, _, _, a, c, hc, rfl⟩
+    rcases HomExt.mem_range_or_exists_dvr u σ with ⟨w, rfl⟩ | ⟨T, _, _, _, a, c, hc, rfl⟩
     · exact ⟨i w, by rw [← Scheme.Hom.comp_apply, hip]⟩
-    obtain ⟨F, s, -, -, hs₂, hs⟩ := exists_hom_along_dvr H j hG hG' f T _ a c hc
+    obtain ⟨F, s, -, -, hs₂, hs⟩ := HomExt.exists_hom_along_dvr H j hG hG' f T _ a c hc
     have := schemeTheoreticallyDominant_fractionField T (FractionRing T)
     have hF : F.left ≫ pullback.snd G'.hom (a ≫ G.hom) = pullback.snd G.hom (a ≫ G.hom) := Over.w F
     obtain ⟨l, ⟨hl, -⟩, -⟩ := graphClosure.existsUnique_lift G.hom G'.hom u φ huφ a
@@ -161,16 +167,16 @@ theorem GlobalTheory.existsUnique_hom_extension_semiAbelian_normal :
   let q' : Γ' ⟶ G' := Over.homMk q hpq.symm
   have : LocallyOfFiniteType p'.left := ‹LocallyOfFiniteType p›
   have : LocallyQuasiFinite p := by
-    refine locallyQuasiFinite_of_torsion z hG' p' q'
+    refine HomExt.locallyQuasiFinite_of_torsion z hG' p' q'
       (fun a b ↦ graphClosure.hom_ext G.hom G'.hom u φ huφ) fun k _ x n hx ↦ ?_
-    rcases mem_range_or_exists_dvr i (x default) with hw | ⟨T, _, _, _, a, c, hc, ha⟩
-    · obtain ⟨c, rfl⟩ := exists_lift_of_range_subset i x (by
+    rcases HomExt.mem_range_or_exists_dvr i (x default) with hw | ⟨T, _, _, _, a, c, hc, ha⟩
+    · obtain ⟨c, rfl⟩ := HomExt.exists_lift_of_range_subset i x (by
         rintro _ ⟨t, rfl⟩
         rwa [Subsingleton.elim t default])
-      exact comp_pow_eq_one_of_pullback_hom j f p' q' _ c
+      exact HomExt.comp_pow_eq_one_of_pullback_hom j f p' q' _ c
         (by rw [Category.assoc]; exact congrArg (c ≫ ·) hip.symm)
         (by rw [Category.assoc]; exact congrArg (c ≫ ·) hiq.symm) n hx
-    obtain ⟨F, s, _, hs₁, hs₂, hs⟩ := exists_hom_along_dvr H j hG hG' f T _ (a ≫ p) c
+    obtain ⟨F, s, _, hs₁, hs₂, hs⟩ := HomExt.exists_hom_along_dvr H j hG hG' f T _ (a ≫ p) c
       (by rw [← reassoc_of% hc, hip])
     have := schemeTheoreticallyDominant_fractionField T (FractionRing T)
     have hF : F.left ≫ pullback.snd G'.hom ((a ≫ p) ≫ G.hom) =
@@ -194,9 +200,9 @@ theorem GlobalTheory.existsUnique_hom_extension_semiAbelian_normal :
       refine ⟨IsLocalRing.closedPoint _, ?_⟩
       exact (Scheme.Hom.comp_apply r a _).trans
         ((congrArg a (IsLocalRing.comap_closedPoint (IsLocalRing.residue T))).trans ha)
-    rw [field_point_comp_eq_iff _ _ x _ ⟨default, rfl⟩,
-      ← field_point_comp_eq_iff (Z := Γ'.left) _ _ (r ≫ a) _ hr] at hx ⊢
-    exact comp_pow_eq_one_of_pullback_hom _ F p' q' (r ≫ a) (r ≫ s)
+    rw [HomExt.field_point_comp_eq_iff _ _ x _ ⟨default, rfl⟩,
+      ← HomExt.field_point_comp_eq_iff (Z := Γ'.left) _ _ (r ≫ a) _ hr] at hx ⊢
+    exact HomExt.comp_pow_eq_one_of_pullback_hom _ F p' q' (r ≫ a) (r ≫ s)
       (by rw [Category.assoc, hs₁, Category.assoc]; rfl)
       (by rw [Category.assoc, hb, Category.assoc]; rfl) n hx
   have : IsIso p := by
@@ -204,7 +210,7 @@ theorem GlobalTheory.existsUnique_hom_extension_semiAbelian_normal :
     have : Flat (i ≫ p) := by rwa [hip]
     have : IsDominant (i ≫ p) := by rwa [hip]
     have : QuasiCompact (i ≫ p) := by rwa [hip]
-    exact isIso_of_densePart i p
+    exact HomExt.isIso_of_densePart i p
   obtain ⟨ψ, hψ, huψ⟩ := graphClosure.exists_extension_of_isIso_fst G.hom G'.hom u φ huφ
   let F : G ⟶ G' := Over.homMk ψ hψ.symm
   have hF : (Over.pullback j).map F = f := by

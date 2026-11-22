@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareStanding
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantHeisenbergLatticeVacuumFunction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSplittingSplitOm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousCharacterCocycleTrivialNearZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSubgroupSymplecticAnnihilatorLocalFieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSchwartzBruhatSchroedingerFixedLocalFieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerMemSchwartzBruhatFinitePlaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareStanding
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantHeisenbergLatticeVacuumFunction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSplittingSplitOm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousCharacterCocycleTrivialNearZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSubgroupSymplecticAnnihilatorLocalFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSchwartzBruhatSchroedingerFixedLocalFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerMemSchwartzBruhatFinitePlaceStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -54,7 +58,7 @@ theorem exists_twisted_sum_ne_zero : ∀ {G Y X : Type} [AddCommGroup G] [Fintyp
     have e : ∑ s : S, (s : AddChar G ℂ) a = θ w a * ∑ s : S, (s : AddChar G ℂ) a := by
       rw [Finset.mul_sum]
       exact (Fintype.sum_equiv (Equiv.mulLeft s₀) (fun s => θ w a * (s : AddChar G ℂ) a)
-        (fun s => (s : AddChar G ℂ) a) (fun s => by simp [s₀, AddChar.mul_apply])).symm
+        (fun s => (s : AddChar G ℂ) a) (fun s => by simp [s₀])).symm
     have h2 : (1 - θ w a) * ∑ s : S, (s : AddChar G ℂ) a = 0 := by rw [sub_mul, one_mul, ← e, sub_self]
     exact (mul_eq_zero.mp h2).resolve_left (sub_ne_zero.mpr (Ne.symm hw))
   have hsum : ∀ s : S, ∑ a, (s : AddChar G ℂ) a • c a = 0 := by
@@ -82,7 +86,8 @@ theorem avg_fixed : ∀ {A X : Type} [AddCommGroup A] [AddCommGroup X] [Module �
     have h : -a + Quotient.out (a : A ⧸ H) ∈ H :=
       QuotientAddGroup.eq.mp (QuotientAddGroup.out_eq' (a : A ⧸ H)).symm
     rw [show Quotient.out (a : A ⧸ H) = a + (-a + Quotient.out (a : A ⧸ H)) by abel, hπ, hx₀ _ h]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   calc ∑ q : A ⧸ H, π b (π (Quotient.out q) x₀) = ∑ q : A ⧸ H, π (b + Quotient.out q) x₀ :=
         Finset.sum_congr rfl fun q _ => (hπ _ _ _).symm
     _ = ∑ q : A ⧸ H, π (Quotient.out ((b : A ⧸ H) + q)) x₀ := by
@@ -123,9 +128,9 @@ theorem schr_comm (v w : (κ → R) × (κ → R)) (φ : (κ → R) → ℂ) :
 
 end Schr
 
-set_option maxHeartbeats 1000000 in
 
-theorem exists_schr_eigen : ∀ {F : Type} [Field F] [NumberField F] (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F) (ψ : AddChar (Fv F v) ℂ), Continuous ψ → ψ ≠ 1 →
+set_option maxHeartbeats 1000000 in
+theorem exists_schr_eigen : ∀ {F : Type} [Field F] [NumberField F] (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)) (ψ : AddChar (Fv F v) ℂ), Continuous ψ → ψ ≠ 1 →
     ∀ {κ M : Type} [Fintype κ] [Fintype M] (u : M → (κ → Fv F v) × (κ → Fv F v))
       (χ : (M → v.adicCompletionIntegers F) → ℂ), Continuous χ →
       (∀ a : M → v.adicCompletionIntegers F, ∑ m, (a m : Fv F v) • u m = 0 → χ a = 1) →
@@ -142,7 +147,7 @@ theorem exists_schr_eigen : ∀ {F : Type} [Field F] [NumberField F] (v : Global
       map_add' := fun a b => by simp [add_smul, Finset.sum_add_distrib] }
   have hlamc : Continuous lamH := by
     show Continuous fun a : M → v.adicCompletionIntegers F => ∑ m, (a m : Fv F v) • u m
-    exact continuous_finset_sum _ fun m _ => by fun_prop
+    fun_prop
   have hχ0 : χ 0 = 1 := hker 0 (by simp)
   have hco' : ∀ a b, χ (a + b) = χ a * χ b *
       (ψ (⅟(2 : Fv F v) * ((lamH a).1 ⬝ᵥ (lamH b).2 - (lamH b).1 ⬝ᵥ (lamH a).2)))⁻¹ := fun a b => by
@@ -187,7 +192,7 @@ theorem exists_schr_eigen : ∀ {F : Type} [Field F] [NumberField F] (v : Global
   let Ks : AddSubgroup (M → v.adicCompletionIntegers F) :=
     { carrier := {a | ∀ w ∈ Y, β (lamH a) w = 1}
       zero_mem' := fun w _ => by rw [map_zero]; exact hβ0 w
-      add_mem' := fun {a b} ha hb w hw => by rw [map_add, hβadd, ha w hw, hb w hw, one_mul]
+      add_mem' := fun {a b} ha hb w hw => by rw [map_add (f := _), hβadd, ha w hw, hb w hw, one_mul]
       neg_mem' := fun {a} ha w hw => by
         have := hβadd (lamH a) (-(lamH a)) w
         rw [add_neg_cancel, ha w hw, one_mul, hβ0] at this
@@ -210,7 +215,7 @@ theorem exists_schr_eigen : ∀ {F : Type} [Field F] [NumberField F] (v : Global
       schr ψ w (c • f) = c • schr ψ w f := fun w c f => (schrL ψ w).map_smul c f
   have hπmul : ∀ a b φ, πL (a + b) φ = πL a (πL b φ) := by
     intro a b φ
-    rw [hπ, hπ, hπ, hlin, schr_schr, smul_smul, smul_smul, map_add]
+    rw [hπ, hπ, hπ, hlin, schr_schr, smul_smul, smul_smul, map_add (f := _)]
     congr 1
     rw [hco' a b, mul_inv, mul_inv, inv_inv]
   have hconj : ∀ a (w : (κ → Fv F v) × (κ → Fv F v)) φ,
@@ -231,7 +236,7 @@ theorem exists_schr_eigen : ∀ {F : Type} [Field F] [NumberField F] (v : Global
     exact hf a _ h
   have hβper : ∀ w ∈ Y, ∀ a, ∀ h ∈ Ks, β (lamH (a + h)) w = β (lamH a) w := by
     intro w hw a h hh
-    rw [map_add, hβadd, (hKs h).mp hh w hw, mul_one]
+    rw [map_add (f := _), hβadd, (hKs h).mp hh w hw, mul_one]
   have hout0 : Quotient.out (0 : (M → v.adicCompletionIntegers F) ⧸ Ks) ∈ Ks :=
     (QuotientAddGroup.eq_zero_iff _).mp (QuotientAddGroup.out_eq' 0)
   let θ : Y → AddChar ((M → v.adicCompletionIntegers F) ⧸ Ks) ℂ := fun w =>
@@ -247,7 +252,7 @@ theorem exists_schr_eigen : ∀ {F : Type} [Field F] [NumberField F] (v : Global
   have hθadd : ∀ w w', θ (w + w') = θ w * θ w' := by
     intro w w'
     ext q
-    rw [AddChar.mul_apply, hθ, hθ, hθ, AddSubgroup.coe_add, hβadd']
+    rw [mul_apply, hθ, hθ, hθ, AddSubgroup.coe_add, hβadd']
   have hθsep : ∀ q, (∀ w, θ w q = 1) → q = 0 := by
     intro q hq
     induction q using QuotientAddGroup.induction_on with | H a => ?_
@@ -264,7 +269,8 @@ theorem exists_schr_eigen : ∀ {F : Type} [Field F] [NumberField F] (v : Global
     rw [hconj, hπK h hh, (hKs h).mp hh w₀ w₀.2, one_smul]
   have hsum : schr ψ (w₀ : (κ → Fv F v) × (κ → Fv F v)) (∑ q, θ w₀ q • c q) =
       ∑ q : (M → v.adicCompletionIntegers F) ⧸ Ks, πL (Quotient.out q) (schr ψ (w₀ : (κ → Fv F v) × (κ → Fv F v)) φ₁) := by
-    rw [show schr ψ (w₀ : (κ → Fv F v) × (κ → Fv F v)) (∑ q, θ w₀ q • c q) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show schr ψ (w₀ : (κ → Fv F v) × (κ → Fv F v)) (∑ q, θ w₀ q • c q) =
       ∑ q, schr ψ (w₀ : (κ → Fv F v) × (κ → Fv F v)) (θ w₀ q • c q) from map_sum (schrL ψ (w₀ : (κ → Fv F v) × (κ → Fv F v))) _ _]
     exact Finset.sum_congr rfl fun q _ => (hconj _ _ _).symm
   refine ⟨∑ q : (M → v.adicCompletionIntegers F) ⧸ Ks, πL (Quotient.out q) (schr ψ (w₀ : (κ → Fv F v) × (κ → Fv F v)) φ₁),

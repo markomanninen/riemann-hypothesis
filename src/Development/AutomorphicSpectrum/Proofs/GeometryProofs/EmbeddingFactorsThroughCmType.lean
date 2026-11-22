@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ImaginaryRootConj
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ImaginaryRootConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem exists_ext {E : Type} [Field E] [NumberField E] {K : Type} [Field K] [Ch
     ∃ ψ : E →+* K, ψ.comp (algebraMap (𝓞 E) E) = τ := by
   have hker : RingHom.ker τ = ⊥ := by
     apply Ideal.eq_bot_of_comap_eq_bot (R := ℤ)
-    rw [RingHom.comap_ker, RingHom.ker_eq_bot_iff_eq_zero]
+    rw [Ideal.under_def, RingHom.comap_ker, RingHom.ker_eq_bot_iff_eq_zero]
     intro n hn
     simpa using hn
   have hinj : Function.Injective τ := (RingHom.injective_iff_ker_eq_bot τ).mpr hker

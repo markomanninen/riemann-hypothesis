@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartCutoffEnergy
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartHessCompare
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PHermFormCompare
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartCutoffEnergy
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartHessCompare
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PHermFormCompare
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -24,7 +29,7 @@ theorem sqn_smul {D : ℕ} (c : ℝ) (y : Fin D → ℂ) : sqn (c • y) = c ^ 2
 
 theorem contDiff_sqn {D : ℕ} : ContDiff ℝ 1 (sqn (D := D)) := by
   unfold sqn
-  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℂ).comp (contDiff_apply ℝ ℂ i)
+  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℂ).comp (contDiff_apply ℝ (fun _ => ℂ) i)
 
 theorem chartCutoff_eq {D : ℕ} (k : ℕ) (y : Fin D → ℂ) :
     chartCutoff k y = Real.smoothTransition (2 - sqn y / ((k : ℝ) + 1) ^ 2) := rfl
@@ -164,14 +169,24 @@ theorem mdisc_cons_smul_one {n : ℕ} (l m : ℂ) :
     mdisc (Fin.cons (l • (1 : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ))
       (fun _ : Fin n => m • (1 : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ)) :
         Fin (n + 1) → Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ) = l * m ^ n := by
-  obtain ⟨f, hf⟩ := exists_multilinearMap_eq_mdisc (D := n + 1)
+  obtain ⟨f, hf⟩ := (by
+    show ∃ F : MultilinearMap (RingHom.id ℂ)
+        (fun _ : Fin (n + 1) => Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ) ℂ,
+        ⇑F = _root_.ReciprocityTheory.AnForm.mdisc
+    refine ⟨MultilinearMap.mk' _root_.ReciprocityTheory.AnForm.mdisc
+      _root_.ReciprocityTheory.AnForm.A.mdisc_update_add ?_, rfl⟩
+    intro A k c B
+    simpa only [RingHom.id_apply, smul_eq_mul] using
+      (_root_.ReciprocityTheory.AnForm.A.mdisc_update_smul A k c B))
   have h : (Fin.cons (l • (1 : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ))
       (fun _ : Fin n => m • (1 : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ)) :
         Fin (n + 1) → Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ) =
       fun i => (Fin.cons l (fun _ : Fin n => m) : Fin (n + 1) → ℂ) i • (fun _ => (1 : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ)) i := by
     funext i
     refine Fin.cases ?_ (fun i => ?_) i <;> simp
-  rw [h, ← hf, f.map_smul_univ, hf, mdisc_const, det_one, Fin.prod_cons]
+  rw [h, ← hf, f.map_smul_univ]
+  simp only [RingHom.id_apply]
+  rw [hf, mdisc_const, det_one, Fin.prod_cons]
   simp
 
 end ChartCutoffEnergyAlt
@@ -271,8 +286,8 @@ theorem finrank_eq (n : ℕ) : Module.finrank ℝ (Fin (n + 1) → ℂ) = 2 * n 
 
 end ChartCutoffEnergyAlt
 
-open ChartCutoffEnergyAlt in
 
+open ChartCutoffEnergyAlt in
 theorem ChartCutoffEnergy.proof : ChartCutoffEnergy.Statement := by
   intro n T hT
   choose C hC0 hC using fun i => hess_bound (hT i)

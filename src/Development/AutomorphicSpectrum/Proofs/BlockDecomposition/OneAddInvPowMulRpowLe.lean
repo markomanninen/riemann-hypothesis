@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
-import GroundTheory.GlobalFields.TateThesis.TateMain
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousAdeleWeight
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtra
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
+public import GroundTheory.GlobalFields.TateThesis.TateMain
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousAdeleWeight
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GlobalTheory.CompanionTheory.EpConvB
@@ -49,7 +54,7 @@ theorem integrable_weight {σ : ℝ} (hσ : 1 < σ) : ∃ A₀ : ℕ, ∀ (L : (
     have hq : ∏ w, (1 + ‖(a : InfiniteAdeleRing K) w‖) ^ k ≤ (1 + ‖y‖) ^ A := by
       calc ∏ w, (1 + ‖(a : InfiniteAdeleRing K) w‖) ^ k
           ≤ ∏ _w : InfinitePlace K, (1 + ‖y‖) ^ k :=
-            Finset.prod_le_prod (fun w _ ↦ by positivity) fun w _ ↦
+            Finset.prod_le_prod₀ (fun w _ ↦ by positivity) fun w _ ↦
               pow_le_pow_left₀ (by positivity)
                 (by
                   have h : ‖(a : InfiniteAdeleRing K) w‖ ≤ ‖y‖ :=
@@ -91,14 +96,16 @@ theorem inv_mulVec_mulVec (m : GL ι 𝔸[K]) (y : ι → 𝔸[K]) :
 theorem fin_mulVec (M : Matrix ι ι 𝔸[K]) (z : ι → 𝔸[K]) (i : ι) :
     ((M *ᵥ z) i).2 = ∑ j, Adele2.finRingHom (M i j) * (z j).2 := by
   show Adele2.finRingHom (∑ j, M i j * z j) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun j _ ↦ map_mul _ _ _
 
 theorem inf_mulVec (M : Matrix ι ι 𝔸[K]) (z : ι → 𝔸[K]) (i : ι) :
     homeomorphMixedSpace K ((M *ᵥ z) i).1 =
       ∑ j, Adele2.infRingHom (M i j) * homeomorphMixedSpace K (z j).1 := by
   show Adele2.infRingHom (∑ j, M i j * z j) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun j _ ↦ map_mul _ _ _
 
 theorem majorant_tensor (φ : 𝓢(ι → mixedSpace K, ℂ)) (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
@@ -114,7 +121,7 @@ theorem majorant_tensor (φ : 𝓢(ι → mixedSpace K, ℂ)) (I : (FractionalId
   have hfc : Continuous (Adele2.finRingHom (K := K)) := continuous_snd
   have hic : Continuous (Adele2.infRingHom (K := K)) :=
     (homeomorphMixedSpace K).continuous.comp continuous_fst
-  have hT : Continuous T := continuous_pi fun i ↦ continuous_finset_sum _ fun j _ ↦
+  have hT : Continuous T := continuous_pi fun i ↦ continuous_finsetSum _ fun j _ ↦
     (hfc.comp ((continuous_inv_entry i j).comp continuous_fst)).mul
       ((continuous_apply j).comp continuous_snd)
   set S : Set 𝔸ᶠ[K] := ⋃ i : ι, (fun x : ι → 𝔸ᶠ[K] ↦ x i) '' (T '' (C ×ˢ B))
@@ -132,7 +139,7 @@ theorem majorant_tensor (φ : 𝓢(ι → mixedSpace K, ℂ)) (I : (FractionalId
     exact h.symm
   let c : GL ι 𝔸[K] → ℝ := fun h ↦ ∑ i, ∑ j,
     ‖Adele2.infRingHom (((h⁻¹ : GL ι 𝔸[K]) : Matrix ι ι 𝔸[K]) i j)‖
-  have hc : Continuous c := continuous_finset_sum _ fun i _ ↦ continuous_finset_sum _ fun j _ ↦
+  have hc : Continuous c := continuous_finsetSum _ fun i _ ↦ continuous_finsetSum _ fun j _ ↦
     (hic.comp (continuous_inv_entry i j)).norm
   obtain ⟨D, hD⟩ := hC.exists_bound_of_continuousOn hc.continuousOn
   set D' := max D 1
@@ -186,7 +193,7 @@ theorem majorant_tensor (φ : 𝓢(ι → mixedSpace K, ℂ)) (I : (FractionalId
     have hprod : (t ^ (N * A))⁻¹ ≤ ∏ i, adeleWeight L A (y i) := by
       calc (t ^ (N * A))⁻¹ = ∏ _i : ι, (t ^ A)⁻¹ := by
             rw [Finset.prod_const, Finset.card_univ, inv_pow, ← pow_mul, mul_comm]
-        _ ≤ _ := Finset.prod_le_prod (fun _ _ ↦ by positivity) fun i _ ↦ hw i
+        _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ ↦ by positivity) fun i _ ↦ hw i
     calc ‖φ z‖ ≤ P * ((1 + ‖z‖) ^ (N * A))⁻¹ := hφ z
       _ = P * D' ^ (N * A) * (t ^ (N * A))⁻¹ := by
           have hz : (1 + ‖z‖) ^ (N * A) ≠ 0 := by positivity
@@ -198,7 +205,7 @@ theorem majorant_tensor (φ : 𝓢(ι → mixedSpace K, ℂ)) (I : (FractionalId
   · rw [if_neg hm', mul_zero, norm_zero]
     exact hR0
 
-theorem exists_majorant {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.schwartzBruhatPi K ι)
+theorem exists_majorant {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.schwartzBruhatPi (K := K) (ι := ι))
     {C : Set (GL ι 𝔸[K])} (hC : IsCompact C) (A : ℕ) :
     ∃ (M : ℝ) (L : (FractionalIdeal (𝓞 K)⁰ K)ˣ), 0 ≤ M ∧ ∀ m ∈ C, ∀ y : ι → 𝔸[K],
       ‖Ψ ((m : Matrix ι ι 𝔸[K]) *ᵥ y)‖ ≤ M * ∏ i, adeleWeight L A (y i) := by
@@ -215,7 +222,7 @@ theorem exists_majorant {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.s
     set L := fractionalIdealSupUnit L₁ L₂
     have hmono : ∀ {L' : (FractionalIdeal (𝓞 K)⁰ K)ˣ}, (L' : FractionalIdeal (𝓞 K)⁰ K) ≤ L →
         ∀ y : ι → 𝔸[K], ∏ i, adeleWeight L' A (y i) ≤ ∏ i, adeleWeight L A (y i) := fun h y ↦
-      Finset.prod_le_prod (fun _ _ ↦ adeleWeight_nonneg _ _ _) fun i _ ↦ adeleWeight_mono h A _
+      Finset.prod_le_prod₀ (fun _ _ ↦ adeleWeight_nonneg _ _ _) fun i _ ↦ adeleWeight_mono h A _
     refine ⟨M₁ + M₂, L, add_nonneg h₁ h₂, fun m hm y ↦ ?_⟩
     calc ‖(G + H) ((m : Matrix ι ι 𝔸[K]) *ᵥ y)‖
         ≤ ‖G ((m : Matrix ι ι 𝔸[K]) *ᵥ y)‖ + ‖H ((m : Matrix ι ι 𝔸[K]) *ᵥ y)‖ := norm_add_le _ _
@@ -248,7 +255,7 @@ theorem exists_finiteModule_le (L : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
   refine ⟨(finiteModule (diagonal K u))⁻¹, by positivity, fun τ hτ ↦ ?_⟩
   have h1 : finiteModule (diagonal K u * τ) ≤ 1 := by
     rw [finiteModule, finprod_eq_prod _ (finite_mulSupport_norm _)]
-    refine Finset.prod_le_one (fun _ _ ↦ norm_nonneg _) fun v _ ↦ ?_
+    refine Finset.prod_le_one₀ (fun _ _ ↦ norm_nonneg _) fun v _ ↦ ?_
     have h2 := hd _ hτ v
     have h3 : ((diagonal K u * τ : IdeleGroup K) : 𝔸[K]).2 v ∈ v.adicCompletionIntegers K := by
       simpa [coe_diagonal, u] using h2
@@ -285,7 +292,7 @@ theorem sep_adele {L : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {c : ℝ} (hc0 : 0 < c
     rw [this]
   have hinf : infiniteModule τ ≤ Z ^ Module.finrank ℚ K := by
     rw [infiniteModule, ← InfinitePlace.sum_mult_eq, ← Finset.prod_pow_eq_pow_sum]
-    refine Finset.prod_le_prod (fun _ _ ↦ by positivity) fun w _ ↦ pow_le_pow_left₀ (norm_nonneg _) ?_ _
+    refine Finset.prod_le_prod₀ (fun _ _ ↦ by positivity) fun w _ ↦ pow_le_pow_left₀ (norm_nonneg _) ?_ _
     rw [← hZ]
     exact norm_le_norm_homeomorphMixedSpace _ w
   rw [div_le_iff₀ hc0, ← hmod, ideleModule_apply]
@@ -436,7 +443,7 @@ theorem lineInt_nonneg (L : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (A : ℕ) (x : �
 
 theorem continuous_lineFn (L : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (A : ℕ) {x : ℝ} (hx : 0 ≤ x) (ν : ι → K) :
     Continuous (lineFn L A x ν) :=
-  (continuous_finset_prod _ fun j _ ↦ continuous_tw L A (ν j)).mul
+  (continuous_finsetProd _ fun j _ ↦ continuous_tw L A (ν j)).mul
     (continuous_ideleModule_val.rpow_const fun _ ↦ Or.inr hx)
 
 theorem lineFn_mul_diagonal (L : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (A : ℕ) (x : ℝ) (ν : ι → K) (c : Kˣ)
@@ -460,7 +467,7 @@ theorem integrable_lineFn {L : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {A : ℕ} {x :
   have h1 : tw L A t 1 = adeleWeight L A (t : 𝔸[K]) := by simp [tw]
   rw [h1]
   exact mul_le_of_le_one_right (adeleWeight_nonneg _ _ _)
-    (Finset.prod_le_one (fun _ _ ↦ tw_nonneg _ _ _ _) fun _ _ ↦ tw_le_one _ _ _ _)
+    (Finset.prod_le_one₀ (fun _ _ ↦ tw_nonneg _ _ _ _) fun _ _ ↦ tw_le_one _ _ _ _)
 
 theorem summable_lineInt {L : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {A : ℕ} {x c : ℝ} (hx : 1 < x) (hc : 0 ≤ c)
     (hI₁ : Integrable (fun t : IdeleGroup K ↦ adeleWeight L A (t : 𝔸[K]) * (ideleModule K t : ℝ) ^ x)
@@ -483,8 +490,8 @@ theorem summable_lineInt {L : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {A : ℕ} {x c 
   have hint : ∀ ν ∈ F', Integrable (lineFn L A x ν) (ideleMeasure K) := fun ν hν ↦
     integrable_lineFn (by linarith) hI₁ (hF' ν hν)
   simp only [lineInt]
-  rw [← integral_finset_sum _ hint]
-  refine integral_mono (integrable_finset_sum _ hint) hB fun t ↦ ?_
+  rw [← MeasureTheory.integral_finsetSum _ hint]
+  refine integral_mono (MeasureTheory.integrable_finsetSum _ hint) hB fun t ↦ ?_
   obtain ⟨hs, ht⟩ := hθ t
   set s : ℝ := (ideleModule K t : ℝ)
   have hs0 : 0 < s := (ideleModule K t).2
@@ -503,7 +510,7 @@ theorem summable_lineInt {L : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {A : ℕ} {x c 
         mul_le_mul_of_nonneg_left (one_add_inv_pow_mul_rpow_le hs0 x n) (mul_nonneg (pow_nonneg hc n) hw0)
     _ = B t := by simp only [B]; ring
 
-theorem clause_one {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.schwartzBruhatPi K ι) (i₀ : ι) (a b : ℝ)
+theorem clause_one {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.schwartzBruhatPi (K := K) (ι := ι)) (i₀ : ι) (a b : ℝ)
     (C : Set (GL ι 𝔸[K])) (ha : 1 < a) (hC : IsCompact C) :
     ∃ f : IdeleGroup K → ℝ, Integrable f (ideleMeasure K) ∧ ∀ x : ℝ, a ≤ x → x ≤ b → ∀ m ∈ C,
       ∀ t : IdeleGroup K,
@@ -535,7 +542,7 @@ theorem clause_one {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.schwar
       _ = _ := by ring
   · exact ⟨0, integrable_zero _ _ _, fun x hax hxb ↦ absurd (hax.trans hxb) hab⟩
 
-theorem clause_two {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.schwartzBruhatPi K ι) (x : ℝ)
+theorem clause_two {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.schwartzBruhatPi (K := K) (ι := ι)) (x : ℝ)
     (C : Set (GL ι 𝔸[K])) (hx : max 1 (Fintype.card ι : ℝ) < x) (hC : IsCompact C) :
     ∃ u : Projectivization K (ι → K) → ℝ, Summable u ∧ ∀ m ∈ C, ∀ l,
       ∫ t : IdeleGroup K, ‖Ψ ((t : 𝔸[K]) • ((m : Matrix ι ι 𝔸[K]) *ᵥ ratV l.rep))‖ *
@@ -594,7 +601,7 @@ theorem clause_two {Ψ : (ι → 𝔸[K]) → ℂ} (hΨ : Ψ ∈ GJMatrix.schwar
     simp only [lineFn_mul_diagonal]
     congr 1
     funext j
-    simp only [ν, Units.val_mk0]
+    change l.rep (ix l) * ((l.rep (ix l))⁻¹ * l.rep j) = l.rep j
     rw [← mul_assoc, mul_inv_cancel₀ (hix l), one_mul]
   refine le_trans ?_ (mul_le_mul_of_nonneg_left hle hM)
   rw [hlin, lineInt, ← integral_const_mul]

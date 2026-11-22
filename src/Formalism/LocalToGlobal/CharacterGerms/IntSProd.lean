@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.ConstantCoeffSinglePointZero
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantCoeffSinglePointZero
+
+@[expose] public section
 
 noncomputable section
 

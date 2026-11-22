@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.RealExtOfExact
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExtensionRuleStmt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.T2SpaceLocalLatticeRepresentationSpace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardTorsionMulFinrank
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.RealExtOfExact
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExtensionRuleStmt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.T2SpaceLocalLatticeRepresentationSpace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardTorsionMulFinrank
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.WachCoordinates Formalism.MainNotions.WachCoordinates.Br Module IsLocalRing
 
@@ -114,11 +118,11 @@ private theorem UpperTheory.Prune.bk_core [IsTopologicalRing LL] [FiniteDimensio
   have e1 : (w : W.DD T × W.DD T).1 - y = W.φD T m - m := congrArg Prod.fst hmw
   have e2 : (w : W.DD T × W.DD T).2 - z = W.γD T W.gamK m - m := congrArg Prod.snd hmw
   refine ⟨E₀ + W.map ι m, fun δ hδ => ?_, ?_, ?_, ?_⟩
-  · rw [map_add, hΔ δ hδ, ← W.map_γ, hm δ hδ]
-  · rw [map_add, hπ, (hex _).2 ⟨m, rfl⟩, add_zero]
-  · rw [sub_eq_iff_eq_add.1 e1, map_add, map_sub, hy, map_add, W.map_φ]
+  · rw [map_add (f := _), hΔ δ hδ, ← W.map_γ, hm δ hδ]
+  · rw [map_add (f := _), hπ, (hex _).2 ⟨m, rfl⟩, add_zero]
+  · rw [sub_eq_iff_eq_add.1 e1, map_add (f := _), map_sub, hy, map_add (f := _), W.map_φ]
     abel
-  · rw [sub_eq_iff_eq_add.1 e2, map_add, map_sub, hz, map_add, W.map_γ]
+  · rw [sub_eq_iff_eq_add.1 e2, map_add (f := _), map_sub, hz, map_add (f := _), W.map_γ]
     abel
 
 end Generic

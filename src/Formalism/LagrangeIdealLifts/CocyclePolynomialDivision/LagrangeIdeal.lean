@@ -1,4 +1,8 @@
-import Formalism.LagrangeIdealLifts.Statement
+module
+
+public import Formalism.LagrangeIdealLifts.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem lagrangian_ideal_holds : LagrangeIdeal := by
   have hQ : (∏ a ∈ S₁, (X - C (c a))) ∣ F * ∏ b ∈ S₂, (X - C (c b)) - C (ℓ ^ N) := by
     apply prod_X_sub_C_dvd_of_injOn S₁ c hinj
     intro a ha
-    rw [eval_sub, eval_mul, eval_C, hF, eval_finset_sum, Finset.sum_eq_single a]
+    rw [eval_sub, eval_mul, eval_C, hF, Polynomial.eval_finsetSum, Finset.sum_eq_single a]
     · simp only [eval_mul, eval_C, eval_prod, eval_sub, eval_X]
       rw [hu a ha]
       ring

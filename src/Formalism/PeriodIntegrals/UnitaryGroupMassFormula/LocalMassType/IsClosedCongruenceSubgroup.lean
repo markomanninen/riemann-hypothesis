@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.UnitaryLocalMassIdentity
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.ContinuousHRRight
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.UnitaryLocalMassIdentity
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.ContinuousHRRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem continuous_sigR : Continuous (sigR (Fv F v) σ) := by
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [f, sigR]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   rw [heq]
   exact hf
 
@@ -105,8 +109,6 @@ end HATop
 section Lat
 
 variable {n : ℕ} (v : HeightOneSpectrum (𝓞 F)) (Λ : Set (Fin n → E))
-
-theorem sc_one : sc (E := E) v 1 = 1 := rfl
 
 theorem mem_gLat_iff {x : Fv F v} (hx : x ≠ 0) (w : Fin n → Fv F v ⊗[F] E) :
     (∃ y ∈ latLoc (E := E) v Λ, w = sc (E := E) v x • y) ↔
@@ -215,7 +217,7 @@ theorem isOpen_congruence_tuples (σ : E →ₐ[F] E) (J : Matrix (Fin n) (Fin n
   have hC : IsClosed {p : Sg (E := E) v g a × (Fin a → Fin n → Fv F v ⊗[F] E) |
       (∑ i, (p.1 : Fin a → Fv F v ⊗[F] E) i • p.2 i) ∈ latLoc (E := E) v Λ} := by
     refine (LocMassOrdKv.isClosed_latLoc (σ := σ) (J := J) (v := v) Λ hSD).preimage ?_
-    exact continuous_finset_sum _ fun i _ =>
+    exact continuous_finsetSum _ fun i _ =>
       ((continuous_apply i).comp (continuous_subtype_val.comp continuous_fst)).smul
         ((continuous_apply i).comp continuous_snd)
   have himg : (P2 v Λ a)ᶜ = Prod.snd '' {p : Sg (E := E) v g a × (Fin a → Fin n → Fv F v ⊗[F] E) |

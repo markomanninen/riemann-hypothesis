@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.XLeOrthXplus
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.XLeOrthXplus
+
+@[expose] public section
 
 noncomputable section
 
@@ -192,8 +196,8 @@ theorem core (k : ℕ) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V ≃�
     intro b hbe hbz
     rw [Xplus, mem_orth_Xplus]
     refine ⟨fun a => ?_, ?_⟩
-    · rw [map_add, F.fl.z_orth a, hbe a, add_zero]
-    · rw [map_add, F.fl.z_norm, hbz, neg_add_cancel]
+    · rw [map_add (f := _), F.fl.z_orth a, hbe a, add_zero]
+    · rw [map_add (f := _), F.fl.z_norm, hbz, neg_add_cancel]
 
   have hconcl : ∀ (F₂ : LFlag S r T'), F₂.zt = F₂.fl.z → ∀ b x x₂ : S.V, (∀ a, S.hT (F.fl.e a) b = 0) →
       S.hT F.fl.z b = T → x ∈ Xsp F → x₂ ∈ Xsp F₂ →

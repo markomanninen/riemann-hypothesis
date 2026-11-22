@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasSumZeroOfTwoLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedEqOneOfLe
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.TsumIdealMulAbsNormCpowEqExpTsum
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasSumZeroOfTwoLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedEqOneOfLe
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.TsumIdealMulAbsNormCpowEqExpTsum
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,9 +102,6 @@ def congr (r : HeightOneSpectrum (𝓞 E) → WithZero (Multiplicative ℤ)) : S
       linear_combination h, Valuation.map_neg, map_mul, h1, one_mul]
     exact (ha w).2
 
-theorem mem_congr {r : HeightOneSpectrum (𝓞 E) → WithZero (Multiplicative ℤ)} {z : (Af E)ˣ} :
-    z ∈ congr r ↔ ∀ w, Valued.v ((z : Af E) w) = 1 ∧ Valued.v ((z : Af E) w - 1) ≤ r w := Iff.rfl
-
 def radN (E : Type) [Field E] [NumberField E] (N : ℕ) (w : HeightOneSpectrum (𝓞 E)) : WithZero (Multiplicative ℤ) :=
   Valued.v (N : w.adicCompletion E)
 
@@ -115,11 +116,6 @@ theorem zterm_mul (χ : HChar E) (s : ℂ) (z z' : (Af E)ˣ) : zterm χ s (z * z
 theorem differentiable_zterm (χ : HChar E) (z : (Af E)ˣ) : Differentiable ℂ fun s => zterm χ s z :=
   Differentiable.const_mul (Differentiable.const_cpow differentiable_id
     (Or.inl (by exact_mod_cast (ObjModel.modF_pos z).ne'))) _
-
-theorem zterm_ne_zero (χ : HChar E) (s : ℂ) (z : (Af E)ˣ) : zterm χ s z ≠ 0 :=
-  mul_ne_zero (Units.ne_zero _) (by
-    rw [Ne, Complex.cpow_eq_zero_iff, not_and_or]
-    exact Or.inl (by exact_mod_cast (ObjModel.modF_pos z).ne'))
 
 theorem modF_eq_one {u : (Af E)ˣ} (hu : ∀ w, Valued.v ((u : Af E) w) = 1) : modF u = 1 := by
   unfold modF

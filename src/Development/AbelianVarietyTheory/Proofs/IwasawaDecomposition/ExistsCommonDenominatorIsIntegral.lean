@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneAddSmulVecMulVecMulVec
-open ReciprocityTheory.ChartRestriction.G.FD NumberField GlobalTheory.UnipKill
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonoSpMapRingOfIntegersAlt
+
+@[expose] public section
+
+open ReciprocityTheory.ChartRestriction.G.FD NumberField
 
 namespace GlobalTheory
 

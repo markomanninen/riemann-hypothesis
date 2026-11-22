@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalArchimedeanSchwartzFockOperator
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DOpMemDStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalArchimedeanSchwartzFockOperator
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DOpMemDStep
+
+@[expose] public section
+
 open NumberField MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.AdelicU
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.finiteDimensional_archimedeanSchwartzFockOperatorSpan : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ] (P : Submodule ℂ (SInf F κ)),

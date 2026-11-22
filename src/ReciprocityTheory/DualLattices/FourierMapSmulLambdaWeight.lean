@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.SumLambdaWeight
+module
+
+public import ReciprocityTheory.DualLattices.SumLambdaWeight
+
+@[expose] public section
 
 noncomputable section
 

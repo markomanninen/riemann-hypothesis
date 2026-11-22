@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GelfandTransference.Statement
+module
+
+public import Mathlib
+public import Formalism.GelfandTransference.Statement
+
+@[expose] public section
 
 namespace Bl.DetNormLeProdRows
 
@@ -21,7 +25,7 @@ private theorem det_norm_le_prod_rows (ρ : ℕ) (A : Matrix (Fin ρ) (Fin ρ) �
   have key : ‖A.det‖ = ‖b.toBasis.det v‖ := by
     rw [hbv, norm_mul, hb1, one_mul, he]
   rw [key, InnerProductSpace.gramSchmidtOrthonormalBasis_det h v, norm_prod]
-  apply Finset.prod_le_prod (fun i _ => norm_nonneg _)
+  apply Finset.prod_le_prod₀ (fun i _ => norm_nonneg _)
   intro i _
   calc ‖inner ℂ (b i) (v i)‖ ≤ ‖b i‖ * ‖v i‖ := norm_inner_le_norm _ _
     _ = ‖v i‖ := by rw [b.orthonormal.1 i, one_mul]

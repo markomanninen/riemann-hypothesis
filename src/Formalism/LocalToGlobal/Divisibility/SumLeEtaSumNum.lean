@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.TwistedPlaceEtaSumLeExtended
+module
+
+public import Formalism.LocalToGlobal.Divisibility.TwistedPlaceEtaSumLeExtended
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder

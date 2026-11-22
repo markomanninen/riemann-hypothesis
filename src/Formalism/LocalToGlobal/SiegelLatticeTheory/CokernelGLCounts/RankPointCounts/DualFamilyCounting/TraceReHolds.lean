@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.RowParseval
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEstimateWords
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.RowParseval
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEstimateWords
+
+@[expose] public section
 
 noncomputable section
 

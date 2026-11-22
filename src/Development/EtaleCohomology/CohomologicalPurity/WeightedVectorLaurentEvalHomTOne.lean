@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafWCechRec
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafWCechRec
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -83,9 +87,12 @@ theorem pr_mk {X Y : Spc} (n : SimplexCategoryᵒᵖ) (U : Scheme.{0}ᵒᵖ) (a 
     | ⟨WalkingPair.left⟩ => a
     | ⟨WalkingPair.right⟩ => b
   let l := Types.Limit.mk (pair X Y ⋙ ev n U) x (by
-    rintro ⟨j⟩ ⟨j'⟩ ⟨⟨h⟩⟩
-    obtain rfl : j = j' := h
-    exact ConcreteCategory.congr_hom ((pair X Y ⋙ ev n U).map_id ⟨j⟩) (x ⟨j⟩))
+    intro j j' f
+    have e : j = j' := IsDiscrete.eq_of_hom f
+    subst j'
+    have ef : f = 𝟙 j := Subsingleton.elim _ _
+    subst f
+    exact ConcreteCategory.congr_hom ((pair X Y ⋙ ev n U).map_id j) (x j))
   obtain ⟨w, hw⟩ : ∃ w, (preservesLimitIso (ev n U) (pair X Y)).hom w = l :=
     ⟨(preservesLimitIso (ev n U) (pair X Y)).inv l, ConcreteCategory.congr_hom (preservesLimitIso (ev n U) (pair X Y)).inv_hom_id l⟩
   refine ⟨w, ?_, ?_⟩
@@ -195,8 +202,8 @@ theorem sW_natn {m : SimplexCategoryᵒᵖ} (θ : n ⟶ m) (w : ((W d R).obj n).
 
 end elems
 
-variable (d R) in
 
+variable (d R) in
 def rW : W d R ⟶ disc.obj (yoneda.obj (Spec (CommRingCat.of (AP d R)))) where
   app n :=
     { app := fun U => TypeCat.ofHom fun w => toS (rhom ((cW w).obj 0) (ofS (sW w)))
@@ -213,8 +220,8 @@ def rW : W d R ⟶ disc.obj (yoneda.obj (Spec (CommRingCat.of (AP d R)))) where
     rw [cW_natn, sW_natn]
     exact congrArg toS (rhom_congr (chain_ratio (cW w) _) _)
 
-variable (d R) in
 
+variable (d R) in
 def gW : (W d R).obj (op (SimplexCategory.mk 0)) ⟶
     yoneda.obj (Spec (CommRingCat.of (LaurentPolynomial (AP d R)))) where
   app U := TypeCat.ofHom fun w => toS (ghom ((cW w).obj 0) (ofS (sW w)))

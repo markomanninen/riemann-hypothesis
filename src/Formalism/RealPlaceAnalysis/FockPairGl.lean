@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.StatementA
+module
+
+public import Formalism.RealPlaceAnalysis.StatementA
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -44,17 +48,5 @@ def FockPairGl : Prop :=
   ∀ (M n' : ℕ) (ε : Fin M → Bool) (ε' : Fin n' → Bool),
     GlRel (Eg ε ε') ∧ GlRel (Eg' ε ε') ∧
     ∀ (i j : Fin M) (a b : Fin n'), Eg ε ε' i j * Eg' ε ε' a b = Eg' ε ε' a b * Eg ε ε' i j
-
-def FockAdj : Prop :=
-  ∀ (M n' : ℕ) (ε : Fin M → Bool) (ε' : Fin n' → Bool) (f g : MvPolynomial (Fin M × Fin n') ℂ),
-    (∀ (i : Fin M) (a : Fin n'), fockF (bop ε ε' i a f) g =
-      (if sgnv ε ε' i a then 1 else -1) * fockF f (bpl ε ε' i a g)) ∧
-    (∀ i j : Fin M, fockF (Eg ε ε' i j f) g = (sgn ε i j : ℂ) * fockF f (Eg ε ε' j i g)) ∧
-    (∀ a b : Fin n', fockF (Eg' ε ε' a b f) g = (sgn ε' a b : ℂ) * fockF f (Eg' ε ε' b a g))
-
-def FockCas : Prop :=
-  ∀ (M n' : ℕ) (ε : Fin M → Bool) (ε' : Fin n' → Bool),
-    NN ε ε' = -∑ a, Eg' ε ε' a a ∧
-    Cas (Eg ε ε') - (M : ℂ) • NN ε ε' = Cas (Eg' ε ε') - (n' : ℂ) • NN ε ε'
 
 end Formalism.REAL

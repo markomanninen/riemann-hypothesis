@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DegFrame
-import Formalism.FrobeniusOrbits.HostCorollaries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DegFrame
+public import Formalism.FrobeniusOrbits.HostCorollaries
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.L2.Geo GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ShFam.Pad
@@ -74,17 +78,5 @@ theorem two_mul_length : 2 * (letters Dw).length = Module.finrank ℚ E * (Dw.p 
 end Free
 
 theorem finrank_host (D : D7) : Module.finrank ℚ D.host.E = 2 * D.R.f := D.host.finrank_E'
-
-theorem letters_spec : ∀ (D : D7) (A : Amb D) (N j : ℕ) (S : Sig A N j) (κ : Lv A) (s : FinalTheorems S κ), (letters S.Dw).length = D.R.f * N ∧ (letters S.Dw).Nodup ∧ (∀ x, x ∈ letters S.Dw) ∧ ∀ t : D.what₂.Tau, S.Dw.mult (DV.tauEmb D t) = j ∧ S.Dw.mult (conjEmb (DV.tauEmb D t)) = N - j := by
-  intro D A N j S _ _
-  refine ⟨?_, nodup_letters _, mem_letters _, fun t => ⟨?_, ?_⟩⟩
-  · have h := two_mul_length S.Dw
-    rw [finrank_host, S.rank_eq, mul_assoc] at h
-    omega
-  · rw [Datum.mult, if_pos (A.cm t), S.p_eq]
-  · rw [Datum.mult, if_neg (conj_ne (A.cm t))]
-    have := S.p_eq
-    have := S.rank_eq
-    omega
 
 end GlobalTheory.Proof.LetterConjugation

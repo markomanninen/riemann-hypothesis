@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -33,7 +38,7 @@ theorem th_pr_mul (f : IdeleGroup F → ℝ≥0∞) (ξ : Fˣ) (a : IdeleGroup F
 
 theorem measurable_th {f : IdeleGroup F → ℝ≥0∞} (hf : Measurable f) : Measurable (th f) := by
   unfold th
-  exact Measurable.ennreal_tsum fun t => hf.comp (measurable_const_mul _)
+  exact Measurable.tsum fun t => hf.comp (measurable_const_mul _)
 
 theorem setLIntegral_mul_right (g : normOneSubgroup F → ℝ≥0∞)
     (hg : ∀ (ξ : Fˣ) u, g (diagonalToNormOne F ξ * u) = g u) (b : normOneSubgroup F) :

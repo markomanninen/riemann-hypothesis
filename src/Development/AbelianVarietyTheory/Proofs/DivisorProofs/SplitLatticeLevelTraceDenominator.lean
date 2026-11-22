@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+
+@[expose] public section
+
 open NumberField UpperHalfPlane GlobalTheory.HilbFam GlobalTheory.QFam
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization (Emb Frac latM qPow upperHalf cK omegaFactor IsPartialZeta HasExpansion)
 open GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates (iterD partialD)
@@ -44,7 +49,7 @@ theorem trace_denominator_of_hasLevel : ∀ (F : Type) [Field F] [NumberField F]
     exact exists_int_mul_trace_of_hasLevel h hν (h2 1 trivial)
   · rintro a b ⟨⟨m, hm⟩, m', hm'⟩ ⟨⟨n, hn⟩, n', hn'⟩
     refine ⟨⟨m + n, ?_⟩, m' + n', ?_⟩
-    · rw [map_add, mul_add, hm, hn]; push_cast; ring
-    · rw [add_mul, map_add, mul_add, hm', hn']; push_cast; ring
+    · rw [map_add (f := _), mul_add, hm, hn]; push_cast; ring
+    · rw [add_mul, map_add (f := _), mul_add, hm', hn']; push_cast; ring
 
 end GlobalTheory.HilbFam

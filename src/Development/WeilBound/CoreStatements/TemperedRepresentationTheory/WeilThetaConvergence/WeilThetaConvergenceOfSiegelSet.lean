@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaConvergenceOfSiegelSetStatement
-import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaConvergenceOfSiegelSetStatement
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.WTC
 

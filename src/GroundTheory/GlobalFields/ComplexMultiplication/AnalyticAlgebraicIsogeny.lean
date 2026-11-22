@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticAlgebraicIndependent
-import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticAlgebraicUnivAdd
-import GroundTheory.GlobalFields.ComplexMultiplication.DifferentialConstant
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualWeil
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticAlgebraicIndependent
+public import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticAlgebraicUnivAdd
+public import GroundTheory.GlobalFields.ComplexMultiplication.DifferentialConstant
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualWeil
+
+@[expose] public section
 
 open Filter Topology Set Polynomial WeierstrassCurve.Affine GroundTheory.Arith.Abelian KaehlerDifferential
 open scoped PeriodPair
@@ -209,26 +213,26 @@ theorem respectsAdd_isogPt {α : ℂ} (hα : α ∈ latticeHom L₁ L₂) (h0 : 
     (isGenPt_affinePoint L₁ _ 0 one_add_sqrt_two_ne_zero)
   refine (map_genEval_congr _ eS _ (isGenPt_affinePoint L₁ _ 0 one_add_sqrt_two_ne_zero)).trans ?_
   refine vs.trans (key.trans ?_)
-  rw [← v1, ← vr]
-  congr 1
-  exact map_genEval_congr _ eA.symm _ _
+  have vA := map_genEval_congr (isogPt hα h0) eA.symm
+    (isGenPt_affinePoint L₁ 1 0 one_ne_zero) hA
+  exact congrArg₂ (· + ·) (v1.symm.trans vA) vr.symm
 
 def latticeIsog {α : ℂ} (hα : α ∈ latticeHom L₁ L₂) (h0 : α ≠ 0) :
     Isogeny (weierstrassCurve L₁) (weierstrassCurve L₂) :=
   ⟨isogPt hα h0, (isIsogeny_iff _).2 ⟨isGenPt_isogPt hα h0, respectsAdd_isogPt hα h0⟩⟩
 
-open Classical in
 
+open Classical in
 def latticeToHom (α : latticeHom L₁ L₂) : isogHom (weierstrassCurve L₁) (weierstrassCurve L₂) :=
   if h : (α : ℂ) = 0 then 0 else (latticeIsog α.2 h).toHom
 
 theorem latticeToHom_of_ne_zero (α : latticeHom L₁ L₂) (h : (α : ℂ) ≠ 0) :
     (latticeToHom α).1 = isogPt α.2 h := by
-  rw [latticeToHom, dif_neg h]
+  rw [latticeToHom, dite_eq_right h]
   rfl
 
 theorem latticeToHom_of_eq_zero (α : latticeHom L₁ L₂) (h : (α : ℂ) = 0) : latticeToHom α = 0 := by
-  rw [latticeToHom, dif_pos h]
+  rw [latticeToHom, dite_eq_left h]
 
 def omegaDeriv : KaehlerDifferential ℂ MeroField →ₗ[MeroField] MeroField := germDeriv.liftKaehlerDifferential
 
@@ -258,7 +262,7 @@ theorem germ_derivWeierstrassP_half_ne_zero (L : PeriodPair) (t s : ℂ) (ht : t
   refine ⟨X ^ 3 + C (-(L.g₂ / 4)) * X + C (-(L.g₃ / 4)), ?_, ?_⟩
   · apply_fun (fun p ↦ p.coeff 3)
     simp
-  · simp only [map_add, map_pow, aeval_X, map_mul, aeval_C]
+  · simp only [map_add (f := _), map_pow, aeval_X, map_mul, aeval_C]
     linear_combination -e
 
 theorem omegaDeriv_affinePoint (L : PeriodPair) (t s : ℂ) (ht : t ≠ 0) :

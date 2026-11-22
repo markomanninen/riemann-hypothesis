@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
-import Development.AutomorphicArithmetic.MeanSquareBounds.twistK
-import Development.AutomorphicArithmetic.MeanSquareBounds.SumMinLeDiv
-import Development.AutomorphicArithmetic.MeanSquareBounds.SPsqLe
-import Development.AutomorphicArithmetic.MeanSquareBounds.RRLe
-import Development.AutomorphicArithmetic.MeanSquareBounds.SumCNLe
-import Development.AutomorphicArithmetic.MeanSquareBounds.MeanSqAbs
+module
+
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+public import Development.AutomorphicArithmetic.MeanSquareBounds.twistK
+public import Development.AutomorphicArithmetic.MeanSquareBounds.SumMinLeDiv
+public import Development.AutomorphicArithmetic.MeanSquareBounds.SPsqLe
+public import Development.AutomorphicArithmetic.MeanSquareBounds.RRLe
+public import Development.AutomorphicArithmetic.MeanSquareBounds.SumCNLe
+public import Development.AutomorphicArithmetic.MeanSquareBounds.MeanSqAbs
+
+@[expose] public section
 
 open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
 

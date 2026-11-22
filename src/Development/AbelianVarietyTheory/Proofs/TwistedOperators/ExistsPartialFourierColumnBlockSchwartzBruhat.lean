@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocIsoRefl
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeasurePreservingPiCurry
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PartialColumnFourierMemSchwartzBruhatStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PartialColumnFourierInversionSchwartzBruhatStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PartialColumnFourierEqFiniteFourierSumDepthStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocIsoRefl
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeasurePreservingPiCurry
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PartialColumnFourierMemSchwartzBruhatStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PartialColumnFourierInversionSchwartzBruhatStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PartialColumnFourierEqFiniteFourierSumDepthStatement
+
+@[expose] public section
 
 namespace GlobalTheory.ColFourier
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.SplitFlip
@@ -114,7 +118,7 @@ theorem GlobalTheory.ColFourier.exists_blockFourier : ∀ (k : Type) [Field k] [
     intro Ξ hΞ T R
     have hc : Continuous fun S : Matrix A C k => pairM S R := by unfold pairM; fun_prop
     refine ⟨((hψ.isLocallyConstant.comp_continuous hc).comp (fun z : Circle => (z : ℂ))).mul
-      (hΞ.1.comp_continuous (continuous_add_right T)), ?_⟩
+      (hΞ.1.comp_continuous (continuous_add_const T)), ?_⟩
     exact (hΞ.2.comp_homeomorph (Homeomorph.addRight T)).mul_left
   refine ⟨F, ⟨fun Ξ h => ?_, fun Ξ₁ h₁ Ξ₂ h₂ he => ?_, fun Ψ hΨ => ?_⟩, fun Ξ hΞ T R hT hR => ?_,
     fun Ξ hΞ T R hT hR => ?_, fun Ξ hΞ n hn => ?_⟩
@@ -150,5 +154,5 @@ theorem GlobalTheory.ColFourier.exists_blockFourier : ∀ (k : Type) [Field k] [
   · rw [hFe _ (hmod Ξ hΞ T R), hFe _ hΞ]
     exact GlobalTheory.ColFourier.fourierInt_shift ψ m hm P Ξ T R hT hR
   · rw [hFe _ hΞ] at hn ⊢
-    rw [← GlobalTheory.T.partialColumnFourier_eq_finiteFourierSum_depth k A C ψ⁻¹ m ϖ hϖ hψ' hm P n _ hn]
+    rw [← GlobalTheory.ColFourier.fourierInt_eq_fourierSum k A C ψ⁻¹ m ϖ hϖ hψ' hm P n _ hn]
     exact hInv ψ hψ Ξ hΞ

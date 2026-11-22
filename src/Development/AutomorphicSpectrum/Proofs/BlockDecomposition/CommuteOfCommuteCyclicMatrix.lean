@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
-import GroundTheory.AutomorphicForms.AnisotropicHeight
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
+public import GroundTheory.AutomorphicForms.AnisotropicHeight
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D4 GlobalTheory.CompanionTheory.TorusCh
 open scoped Pointwise
 
@@ -14,7 +19,7 @@ theorem map_aeval_commute_of_commute {K R : Type} [Field K] [CommRing R] [Algebr
     intro h
     induction h using Polynomial.induction_on' with
     | add p q hp hq =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact hp.add_right hq
     | monomial k a =>
       rw [aeval_monomial, map_mul, map_pow]

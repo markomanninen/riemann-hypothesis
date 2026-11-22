@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.LVSmulA
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.LVSmulA
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem LV_sum {ι : Type} (K : ℕ) (s : Finset ι) (f : ι → W.DD T)
     rw [Finset.sum_empty, Finset.sum_empty, LV_zero]
   | insert a s ha ih =>
     rw [Finset.sum_insert ha, Finset.sum_insert ha]
-    refine ⟨by rw [map_add, smul_add]; exact Submodule.add_mem _ (hf a) ih.1, ?_⟩
+    refine ⟨by rw [map_add (f := _), smul_add]; exact Submodule.add_mem _ (hf a) ih.1, ?_⟩
     rw [LV_add W T c ζ K _ _ (hf a) ih.1, ih.2]
 
 theorem letE_idem (d : ZMod n) : (letE d : LetA O n) * letE d = letE d := by
@@ -86,7 +90,8 @@ theorem span_le_range (hp4 : Formalism.MainNotions.DeltaInvariantLattices.p4 W P
     set p := (PiNS W T π' 1).comap (NcS W T (c - 1)).subtype
     set o := bL.repr (mkL W T π' c y hy)
     have h2 : (∑ k, o k • bL k) = p.mkQ (∑ k, o k • (⟨rep k, hrep k⟩ : ↥(NcS W T (c - 1)))) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_smul, hbrep]
       rfl

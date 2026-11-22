@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,8 @@ theorem polySlash_one (w : ℕ) {p : ℂ[X]} (hp : p ∈ degreeLT ℂ (w + 1)) :
 
 theorem polySlash_conj (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) :
     (slP w g p).map (starRingEnd ℂ) = slP w g (p.map (starRingEnd ℂ)) := by
-  rw [polySlash_apply, polySlash_apply, Polynomial.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [polySlash_apply, polySlash_apply, Polynomial.map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp [smul_eq_C_mul, Polynomial.map_mul, Polynomial.map_pow, coeff_map, rowA, rowB]
 
@@ -76,9 +81,11 @@ theorem polySlash_mul {m n : ℕ} (g : Matrix (Fin 2) (Fin 2) ℤ) {u v : ℂ[X]
     rw [Finset.sum_mul_sum]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [C_mul, pow_add]; ring
-  rw [e, map_sum, polySlash_apply m g u, polySlash_apply n g v, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum, polySlash_apply m g u, polySlash_apply n g v, Finset.sum_mul_sum]
   refine Finset.sum_congr rfl fun i hi => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j hj => ?_
   have hi' := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
   have hj' := Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)
@@ -117,7 +124,7 @@ theorem polySlash_one_linear (h : Matrix (Fin 2) (Fin 2) ℤ) (x y : ℂ) :
     calc slP 1 h (C y) = slP 1 h (y • (1 : ℂ[X])) := by rw [smul_eq_C_mul, mul_one]
       _ = y • rowB h := by rw [map_smul, e0]
       _ = C y * rowB h := smul_eq_C_mul _
-  rw [map_add, e0', ← smul_eq_C_mul, map_smul, e1, smul_eq_C_mul]
+  rw [map_add (f := _), e0', ← smul_eq_C_mul, map_smul, e1, smul_eq_C_mul]
 
 theorem polySlash_one_rowA (g h : Matrix (Fin 2) (Fin 2) ℤ) : slP 1 h (rowA g) = rowA (g * h) := by
   rw [rowA, polySlash_one_linear]
@@ -140,7 +147,8 @@ theorem polySlash_rowA_pow_mul_rowB_pow (g h : Matrix (Fin 2) (Fin 2) ℤ) (a b 
 
 theorem polySlash_polySlash (w : ℕ) (g h : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) :
     slP w (g * h) p = slP w h (slP w g p) := by
-  rw [polySlash_apply w g p, map_sum, polySlash_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [polySlash_apply w g p, map_sum, polySlash_apply]
   refine Finset.sum_congr rfl fun i hi => ?_
   have hi' := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
   rw [map_smul]

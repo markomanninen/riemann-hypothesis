@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocResidueFrac
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocMaxIdeals
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsUnitOfNumMem
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PSemilocRankFrac
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocResidueFrac
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocMaxIdeals
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsUnitOfNumMem
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PSemilocRankFrac
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -106,7 +111,7 @@ theorem aeval_memI {F : Type} [Field F] [Algebra F Ω] (L : IntermediateField F 
     rw [aeval_C, algebraMap_int_eq, eq_intCast]
     exact intCast_mem _ a
   | add f g hf hg =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hf hg
   | mul_X f p hf =>
     rw [map_mul, aeval_X]
@@ -202,8 +207,8 @@ end Field
 
 end SemilocResidueFrac
 
-open SemilocResidueFrac SemilocRankFrac regularityLocalResidue_holds in
 
+open SemilocResidueFrac SemilocRankFrac regularityLocalResidue_holds in
 theorem SemilocResidueFrac.proof (hFin : SemilocFinite.Statement) (hMax : SemilocMaxIdeals.Statement) :
     SemilocResidueFrac.Statement := by
   intro K _ ι _ K' _ ι' _ κ v P' n s α W hv hP' hQ hs hsQ hW W' hW' _ G' i' hi' F _ _ hF
@@ -277,8 +282,8 @@ theorem SemilocResidueFrac.proof (hFin : SemilocFinite.Statement) (hMax : Semilo
   have hinvB : ∀ b, ρB b ≠ 0 → ∃ c, ρB c * ρB b = 1 := fun b hb => by
     obtain ⟨c, i, hi, e⟩ := h𝔪.exists_inv fun h => hb ((hkerB b).2 h)
     refine ⟨c, ?_⟩
-    have h := congrArg ρB e
-    rwa [map_add, map_mul, (hkerB i).2 hi, add_zero, map_one] at h
+    have h := congrArg (fun x => ρB x) e
+    rwa [ρB.map_add, ρB.map_mul, (hkerB i).2 hi, add_zero, ρB.map_one] at h
   have hinvA : ∀ a : locRing (imageZ v P') W, ρB (algebraMap _ (semiLocRing P' (fibreOver v P' W)) a) ≠ 0 →
       ∃ c, ρB (algebraMap _ (semiLocRing P' (fibreOver v P' W)) c) * ρB (algebraMap _ _ a) = 1 :=
     fun a ha => by

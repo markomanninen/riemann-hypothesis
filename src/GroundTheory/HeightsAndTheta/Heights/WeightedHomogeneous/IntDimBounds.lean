@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.IntDimTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.IntDimTrdeg
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 

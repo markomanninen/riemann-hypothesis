@@ -1,4 +1,25 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.GsFrCut
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFdGramCut
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundX
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.UnitaryWeylCompact
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFlagVector
+public import Formalism.HermitianCurvature.BigCellVanishingOfCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeBoundInBanachSpace
+public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.ReverseCauchySchwarzHolds
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FixedFrameProperty
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MajorantEstimate
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FixedPointsGramVector
+
+@[expose] public section
 
 open MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.C6
 open Matrix
@@ -37,53 +58,5 @@ def omW' (z z' : Fin (2 * r + k + 1) → ℂ) (g : B.Mat k r) : Fin (2 * r + k +
   prW k r z' (g⁻¹ *ᵥ xcofL k r z z' g)
 
 end defs
-
-structure GfBaseD (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) where
-  nu : Fin (2 * r + k + 1) → ℂ
-  nu' : Fin (2 * r + k + 1) → ℂ
-  U0 : Set (Fin (2 * r + k + 1) → ℂ)
-  nu_mem : nu ∈ Wsp k r z
-  nu_unit : herm (Hpk k r) nu nu = 1
-  nu'_mem : nu' ∈ Wsp k r z'
-  nu'_unit : herm (Hpk k r) nu' nu' = 1
-  isotropic_subspace_eq : ∀ u, u ∈ U0 ↔ u ∈ Wsp k r z ∧ herm (Hpk k r) u nu = 0
-  isotropic_subspace_eq_primed : ∀ u, u ∈ U0 ↔ u ∈ Wsp k r z' ∧ herm (Hpk k r) u nu' = 0
-
-def gfSig {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} (D0 : GfBaseD k r z z') : Set (B.Mat k r) :=
-  {y | y ∈ B.GV k r ∧ 0 < Gf k r z z' y ∧
-    (∃ t : ℝ, 0 < t ∧ omW k r z z' y = (t : ℂ) • D0.nu) ∧ (∃ t : ℝ, 0 < t ∧ omW' k r z z' y = (t : ℂ) • D0.nu') ∧
-    ∀ u ∈ D0.U0, ∃ v ∈ Xsp k r, ∃ v' ∈ Xsp k r, y *ᵥ (u + v') = u + v}
-
-def GfBase : Prop :=
-  ∀ (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ), 1 ≤ k → 1 ≤ r → C2.StdZ k r z → C2.StdZ k r z' →
-    Nonempty (GfBaseD k r z z')
-
-def GfSat : Prop :=
-  ∀ (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ), 1 ≤ k → 1 ≤ r → C2.StdZ k r z → C2.StdZ k r z' →
-    ∀ D0 : GfBaseD k r z z', ∀ y ∈ gfSig D0, ∀ n ∈ Nset k r, ∀ n' ∈ Nset k r, n * y * n' ∈ gfSig D0
-
-def GfStab : Prop :=
-  ∀ (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ), 1 ≤ k → 1 ≤ r → C2.StdZ k r z → C2.StdZ k r z' →
-    ∀ D0 : GfBaseD k r z z', ∀ y ∈ gfSig D0, ∀ α ∈ UWset k r z, ∀ β ∈ UWset k r z',
-      α * y * β ∈ gfSig D0 → Rel z z' y (α * y * β)
-
-def GfLocal : Prop :=
-  ∀ (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ), 1 ≤ k → 1 ≤ r → C2.StdZ k r z → C2.StdZ k r z' →
-    ∀ D0 : GfBaseD k r z z', ∀ g₀ ∈ B.GV k r, 0 < Gf k r z z' g₀ →
-      ∃ (O : Set (B.Mat k r)) (Fl : B.Mat k r → B.Mat k r × B.Mat k r),
-        IsOpen O ∧ g₀ ∈ O ∧ ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) Fl O ∧
-        ∀ g ∈ O, g ∈ B.GV k r → 0 < Gf k r z z' g →
-          (Fl g).1 ∈ UWset k r z ∧ (Fl g).2 ∈ UWset k r z' ∧ (Fl g).1 * g * (Fl g).2 ∈ gfSig D0
-
-theorem gsSliceP_of_gf (hB : GfBase) (hS : GfSat) (hT : GfStab) (hL : GfLocal) : GsSliceP := by
-  intro k r z z' hk hr hz hz'
-  obtain ⟨D0⟩ := hB k r z z' hk hr hz hz'
-  exact ⟨gfSig D0, hS k r z z' hk hr hz hz' D0, hT k r z z' hk hr hz hz' D0, hL k r z z' hk hr hz hz' D0⟩
-
-theorem gramSlice_of_gf (hB : GfBase) (hS : GfSat) (hT : GfStab) (hL : GfLocal) : GramSlice :=
-  gramSlice_of_slice (gsSliceP_of_gf hB hS hT hL)
-
-theorem gsFrames_of_gf (hB : GfBase) (hS : GfSat) (hT : GfStab) (hL : GfLocal) : GsFrames :=
-  gsFrames_of_slice (gsSliceP_of_gf hB hS hT hL)
 
 end PI.UnitaryGroupMassFormula.GsFr

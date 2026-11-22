@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MemPrimesOverOfMem
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MemPrimesOverOfMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -747,8 +751,8 @@ theorem V_le : Nat.log 2 (4 * D.host.Lw) ≤ D.R.e + 2 := by
   have := Nat.log_lt_of_lt_pow h4 h3
   omega
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem rowd_sum (T : Finset ℕ) (hT : ∀ l ∈ T, 2 ≤ l ∧ Odd l ∧ ordH D l ≤ 4 * D.host.Lw) :
     (D.R.r : ℝ) * ∑ l ∈ T, Real.log l / (l : ℝ) ^ 2 ≤ 4 * D.R.m * large₂ L ^ 2 := by
   have hR := three_le_R_zero L hC P hPar hL

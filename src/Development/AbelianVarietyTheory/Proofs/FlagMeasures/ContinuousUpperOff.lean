@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShearMeasurability
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShearMeasurability
+
+@[expose] public section
 
 noncomputable section
 

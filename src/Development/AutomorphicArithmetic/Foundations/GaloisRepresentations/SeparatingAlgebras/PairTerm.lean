@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical UpperTheory.Gal.Gen
 
@@ -52,7 +56,8 @@ private theorem pair_term {n : ℕ} (t : ℝ) (w : Fin n → ℂˣ) (hinj : Func
 theorem UpperTheory.Gal.Gen.rConj_pf :
     UpperTheory.Gal.Gen.RFormula → UpperTheory.Gal.Gen.RConj := by
   intro hR n t l z hinj hz
-  rw [hR n t _ z hinj, hR n t l z hinj, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hR n t _ z hinj, hR n t l z hinj, map_sum]
   refine (Fintype.sum_equiv (Equiv.mulRight (Fin.revPerm : Equiv.Perm (Fin n))) _ _ ?_).symm
   intro σ
   have hw : ∀ i, ‖((z ∘ σ) i : ℂ)‖ = 1 := fun i => hz _

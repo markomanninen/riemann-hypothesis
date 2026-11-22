@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -128,10 +132,10 @@ theorem exists_typeComplement : ∀ (K V : Type) [Group K] [AddCommGroup V] [Mod
     obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.mp hv
     have h1 : ∀ {a b : V}, a ∈ X.toSubmodule → b ∈ Y₀.toSubmodule → p (a + b) = a := by
       intro a b ha hb
-      rw [map_add, Submodule.projection_apply_of_mem_left _ ha]
+      rw [map_add (f := _), Submodule.projection_apply_of_mem_left _ ha]
       have : p b = 0 := (Submodule.projection_apply_eq_zero_iff hXY₀).mpr hb
       rw [this, add_zero]
-    rw [map_add, h1 (X.apply_mem_toSubmodule k hx) (Y₀.apply_mem_toSubmodule k hy), h1 hx hy]
+    rw [map_add (f := _), h1 (X.apply_mem_toSubmodule k hx) (Y₀.apply_mem_toSubmodule k hy), h1 hx hy]
 
   have hYY₀ : Y.toSubmodule ≤ Y₀.toSubmodule := by
     refine iSup₂_le fun S ⟨hA, hn⟩ => ?_

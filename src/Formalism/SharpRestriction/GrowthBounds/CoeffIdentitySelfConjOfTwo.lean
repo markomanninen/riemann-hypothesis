@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.CoeffIdentitySelfConjOfFourOpen
-import Formalism.SharpRestriction.GrowthBounds.PsOfIntS
-import Formalism.SharpRestriction.GrowthBounds.RescaleInV
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoeffIdentitySelfConjOfFourOpen
+public import Formalism.SharpRestriction.GrowthBounds.PsOfIntS
+public import Formalism.SharpRestriction.GrowthBounds.RescaleInV
+
+@[expose] public section
 
 noncomputable section
 

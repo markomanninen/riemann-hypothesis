@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.ProIsoAt
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwLift
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.ProIsoAt
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwLift
+
+@[expose] public section
+
 open NumberField TensorProduct GlobalTheory.CompanionTheory.Ar
 
 namespace GlobalTheory.CompanionTheory.Ar

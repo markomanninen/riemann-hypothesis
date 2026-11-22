@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSameFOfDiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SIsoReD
-import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSameFOfDiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SIsoReD
+public import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+public import Lean
+
+@[expose] public section
 
 noncomputable section
 

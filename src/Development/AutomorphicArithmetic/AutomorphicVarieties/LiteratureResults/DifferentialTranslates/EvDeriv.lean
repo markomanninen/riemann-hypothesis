@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,14 +11,14 @@ open scoped TensorProduct
 
 namespace UpperTheory.V.Lit.Dr
 
-private theorem hasDerivAt_evaluation_lie {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} (Ξ : AlgRep E a)
+private theorem hasDerivAt_evaluation_lie {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} (Ξ : AlgRep E a)
     (X : Lie E a) (c : ℝ → GL (Fin a) (Cinf E)) (h0 : c 0 = 1) (hX : HasDerivAt (fun t => toL (c t).val) X 0)
     (h : GA E a) (m : Sm E a ⊗[ℂ] (Fin Ξ.d → ℂ)) :
     HasDerivAt (fun t => Ξ.mat (c t) *ᵥ ev m (h * infGL E a (c t))) (ev (smLie Ξ X m) h) 0 := by
   induction m using TensorProduct.induction_on with
   | zero => simpa using hasDerivAt_const (0 : ℝ) (0 : Fin Ξ.d → ℂ)
   | add x y hx hy =>
-    simpa only [map_add, Pi.add_apply, Matrix.mulVec_add] using hx.fun_add hy
+    simpa only [map_add (f := _), Pi.add_apply, Matrix.mulVec_add] using hx.fun_add hy
   | tmul φ v =>
     have h1 := GlobalTheory.CuspRep.hasDerivAt_curve φ h c X h0 hX
     have h2 : HasDerivAt (fun t => Ξ.mat (c t) *ᵥ v) (Ξ.dmat X *ᵥ v) 0 :=
@@ -24,7 +28,7 @@ private theorem hasDerivAt_evaluation_lie {E : Type} [Field E] [NumberField E] [
     simp only [h0, map_one, mul_one, Matrix.one_mulVec] at h3
     have h4 : ev (smLie Ξ X (φ ⊗ₜ[ℂ] v)) h = φ.1 h • Ξ.dmat X *ᵥ v + lieD X φ.1 h • v := by
       change ev ((lie E a X φ) ⊗ₜ[ℂ] v + φ ⊗ₜ[ℂ] (Ξ.dmat X *ᵥ v)) h = _
-      rw [map_add, Pi.add_apply, ev_tmul, ev_tmul, add_comm]
+      rw [map_add (f := _), Pi.add_apply, ev_tmul, ev_tmul, add_comm]
       rfl
     rw [h4]
     simpa only [ev_tmul, Matrix.mulVec_smul] using h3

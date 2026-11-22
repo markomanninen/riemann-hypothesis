@@ -1,23 +1,27 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.PropagationTheoremGL2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NicePrimeEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ExistsNicePrimeAboveOfLargeDim
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LocProp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.GlobProp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ChartOfFlat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.GlobOfCharts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MinHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MonMemPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FibreClosed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ResEqOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocFlat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocRho
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ExistsNonzeroLowCocycle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.KrullDimLtOfNotLeTriangular
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.QuotientHomNonvanishingBound
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ChainedOfComap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Seedpt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.HasObs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.PropagationTheoremGL2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.NicePrimeEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ExistsNicePrimeAboveOfLargeDim
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LocProp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.GlobProp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ChartOfFlat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.GlobOfCharts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MinHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MonMemPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FibreClosed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ResEqOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocFlat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocRho
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ExistsNonzeroLowCocycle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.KrullDimLtOfNotLeTriangular
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.QuotientHomNonvanishingBound
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ChainedOfComap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Seedpt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.HasObs
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.Fr
 
@@ -80,18 +84,21 @@ private theorem comp_of_ti {S : Space O F 3} {x : Ideal S.A} {L : S.Loc x} {I : 
 private theorem ld_ok (hF : F.Ok C₀) (hB : F.Big C₀) {S : Space O F 3} {M : Ideal S.B} (hM : S.FinLam M)
     (h1 : P1' S M) (h23 : P23' S M) {I₃ : Ideal S.B} (hI₃ : S.FinLam I₃)
     (hE : ∀ ξ : Ideal S.A, ξ.IsPrime → S.u.TE ξ → I₃ ≤ S.π ξ) {x : Ideal S.A} (hx : ¬ S.u.triP ≤ x) (L : S.Loc x)
-    {I : Ideal L.R} (hI : L.Sharp I) : (ld M L I).Ok where
-  good_up _ _ h hP := le_trans hP (π_mono L h)
-  ti_down _ _ h hQ := ⟨⟨fun h' => hQ.1.1 (h'.trans h), fun h' => hQ.1.2 (h'.trans h)⟩,
-    fun e h' => hQ.2 e (h'.trans h)⟩
-  nice_type p hp := by
+    {I : Ideal L.R} (hI : L.Sharp I) : (ld M L I).Ok := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro P Q h hP
+    exact le_trans hP (π_mono L h)
+  · intro P Q h hQ
+    exact ⟨⟨fun h' => hQ.1.1 (h'.trans h), fun h' => hQ.1.2 (h'.trans h)⟩,
+      fun e h' => hQ.2 e (h'.trans h)⟩
+  · intro p hp
     by_cases h : L.ρ.ee ≤ p.asIdeal
     · exact Or.inr ⟨hp.off, rfl, h⟩
     · exact Or.inl ⟨hp.off, fun _ => h⟩
-  nice_good J hJ hd := by
+  · intro J hJ hd
     obtain ⟨p, hp, hle⟩ := exists_nice_prime_above_of_large_dim l O F C₀ 3 hF hB (Or.inr rfl) S x L hx M hM J.asIdeal hJ hd
     exact ⟨⟨p, hp.prime⟩, hp, hle⟩
-  nice_thick e he _ J hJ hd := by
+  · intro e he _ J hJ hd
     obtain ⟨a, b, c⟩ := (loc_rho hF (Or.inr rfl) S x L).2.2.1 e.asIdeal
     have he' : L.ρ.TE e.asIdeal := he.1
     have h3 : I₃ ≤ L.π e.asIdeal := hE (L.im e.asIdeal) (Ideal.IsPrime.comap _)
@@ -99,8 +106,9 @@ private theorem ld_ok (hF : F.Ok C₀) (hB : F.Big C₀) {S : Space O F 3} {M : 
     obtain ⟨p, hp, hle⟩ := exists_nice_prime_above_of_large_dim l O F C₀ 3 hF hB (Or.inr rfl) S x L hx I₃ hI₃ J.asIdeal
       (h3.trans (π_mono L hJ)) hd
     exact ⟨⟨p, hp.prime⟩, hp, ⟨hp.off, rfl, he'.2.2.trans (le_trans hJ hle)⟩, hle⟩
-  comp P hP hm := comp_of_ti hI hP hm
-  chain P Q hP hQ := by
+  · intro P hP hm
+    exact comp_of_ti hI hP hm
+  · intro P Q hP hQ
     have key : ∀ q : Ideal L.R, Relation.ReflTransGen
         (fun P Q : Ideal L.R => P ∈ I.minimalPrimes ∧ Q ∈ I.minimalPrimes ∧
           ((3 * F.d + 1 : ℕ) : WithBot ℕ∞) ≤ ringKrullDim (L.R ⧸ (P ⊔ Q))) P.asIdeal q →
@@ -110,9 +118,11 @@ private theorem ld_ok (hF : F.Ok C₀) (hB : F.Big C₀) {S : Space O F 3} {M : 
       | refl => exact fun _ => Relation.ReflTransGen.refl
       | tail _ hab ih => exact fun _ => (ih hab.1.1.1).tail hab
     exact key _ (hI.chained.2 _ hP _ hQ) Q.isPrime
-  dich P hP := hI.dich _ hP
-  p1 p hp hT hG P hle := h1 x L p.asIdeal hp hT hG P.asIdeal P.isPrime hle
-  p23 p hp hT q hpq hex P' hle hT' := by
+  · intro P hP
+    exact hI.dich _ hP
+  · intro p hp hT hG P hle
+    exact h1 x L p.asIdeal hp hT hG P.asIdeal P.isPrime hle
+  · intro p hp hT q hpq hex P' hle hT'
     obtain ⟨P, a, b, c⟩ := hex
     refine h23 x L p.asIdeal q.asIdeal hp hT ?_ ⟨P.asIdeal, P.isPrime, a, b, c⟩ P'.asIdeal P'.isPrime hle hT'
     refine Relation.ReflTransGen.lift PrimeSpectrum.asIdeal ?_ _ _ hpq

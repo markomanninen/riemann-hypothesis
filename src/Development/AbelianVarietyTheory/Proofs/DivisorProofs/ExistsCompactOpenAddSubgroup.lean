@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 
@@ -7,9 +11,9 @@ namespace GlobalTheory.WeilM.HaarUniq
 
 variable {V : Type} [AddCommGroup V] [TopologicalSpace V]
 
+
 open MeasureTheory Filter Topology in
 variable {V : Type} [AddCommGroup V] [TopologicalSpace V] in
-
 theorem _root_.GlobalTheory.WeilM.HaarUniq.exists_compact_openAddSubgroup [NonarchimedeanAddGroup V]
     [LocallyCompactSpace V] :
     ∃ K : OpenAddSubgroup V, IsCompact (K : Set V) := by
@@ -17,9 +21,9 @@ theorem _root_.GlobalTheory.WeilM.HaarUniq.exists_compact_openAddSubgroup [Nonar
   obtain ⟨K, hK⟩ := NonarchimedeanAddGroup.is_nonarchimedean C hC0
   exact ⟨K, hC.of_isClosed_subset K.isClosed hK⟩
 
+
 open MeasureTheory Filter Topology in
 variable {V : Type} [AddCommGroup V] [TopologicalSpace V] in
-
 theorem _root_.GlobalTheory.WeilM.HaarUniq.indicator_mem [IsTopologicalAddGroup V] [T2Space V]
     (K : OpenAddSubgroup V) (hK : IsCompact (K : Set V)) :
     Set.indicator (K : Set V) (fun _ => (1 : ℂ)) ∈ _root_.GlobalTheory.WeilM.SB V := by
@@ -32,9 +36,9 @@ theorem _root_.GlobalTheory.WeilM.HaarUniq.indicator_mem [IsTopologicalAddGroup 
   · exact ⟨(K : Set V)ᶜ, K.isClosed.isOpen_compl, hx, fun y hy => by
       simp [Set.indicator_of_notMem hy, Set.indicator_of_notMem hx]⟩
 
+
 open MeasureTheory Filter Topology in
 variable {V : Type} [AddCommGroup V] [TopologicalSpace V] in
-
 theorem _root_.GlobalTheory.WeilM.HaarUniq.exists_invariant [NonarchimedeanAddGroup V] {φ : V → ℂ}
     (hφ : φ ∈ _root_.GlobalTheory.WeilM.SB V) :
     ∃ K : OpenAddSubgroup V, ∀ k ∈ K, ∀ x, φ (x + k) = φ x := by
@@ -72,9 +76,9 @@ theorem _root_.GlobalTheory.WeilM.HaarUniq.exists_invariant [NonarchimedeanAddGr
     rw [hval i _ hxi', hval i _ hx']
   rw [image_eq_zero_of_notMem_tsupport hx, image_eq_zero_of_notMem_tsupport hxk]
 
+
 open MeasureTheory Filter Topology in
 variable {V : Type} [AddCommGroup V] [TopologicalSpace V] in
-
 theorem _root_.GlobalTheory.WeilM.HaarUniq.exists_decomp [IsTopologicalAddGroup V] (K : OpenAddSubgroup V)
     {φ : V → ℂ} (hc : HasCompactSupport φ) (hinv : ∀ k ∈ K, ∀ x, φ (x + k) = φ x) :
     ∃ S : Finset (V ⧸ K.toAddSubgroup),
@@ -127,7 +131,8 @@ private theorem exists_coeff_form_and_integral [IsTopologicalAddGroup V] [T2Spac
   · calc m φ = m (∑ q ∈ S, φ q.out •
           (fun x => Set.indicator (H : Set V) (fun _ => (1 : ℂ)) (x + -q.out))) := congrArg m hS
       _ = ∑ q ∈ S, φ q.out * m (Set.indicator (H : Set V) (fun _ => (1 : ℂ))) := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           refine Finset.sum_congr rfl fun q _ => ?_
           rw [map_smul, smul_eq_mul, hm _ hmemH]
       _ = _ := by rw [Finset.sum_mul]
@@ -136,7 +141,7 @@ private theorem exists_coeff_form_and_integral [IsTopologicalAddGroup V] [T2Spac
             rw [← hS]
       _ = ∑ q ∈ S, φ q.out * (μ.real (H : Set V) : ℂ) := by
           simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-          rw [integral_finset_sum]
+          rw [MeasureTheory.integral_finsetSum]
           · refine Finset.sum_congr rfl fun q _ => ?_
             rw [integral_const_mul,
               integral_add_right_eq_self (fun x => Set.indicator (H : Set V) (fun _ => (1 : ℂ)) x),
@@ -146,9 +151,9 @@ private theorem exists_coeff_form_and_integral [IsTopologicalAddGroup V] [T2Spac
             exact (hint.comp_add_right _).const_mul _
       _ = _ := by rw [Finset.sum_mul]
 
+
 open MeasureTheory Filter Topology in
 variable {V : Type} [AddCommGroup V] [TopologicalSpace V] in
-
 theorem _root_.GlobalTheory.WeilM.HaarUniq.exists_eq_mul_integral : ∀ (V : Type) [AddCommGroup V]
     [TopologicalSpace V] [NonarchimedeanAddGroup V]
     [LocallyCompactSpace V] [T2Space V] [MeasurableSpace V] [BorelSpace V] (μ : Measure V)

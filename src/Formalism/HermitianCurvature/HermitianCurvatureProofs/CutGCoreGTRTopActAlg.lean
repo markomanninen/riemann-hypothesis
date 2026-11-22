@@ -1,7 +1,11 @@
-import Formalism.RealPlaceAnalysis.StatementE
-import Mathlib.Algebra.Polynomial.Eval.Defs
-import Mathlib.Algebra.Polynomial.Degree.Defs
-import Mathlib.GroupTheory.Perm.Support
+module
+
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Mathlib.Algebra.Polynomial.Eval.Defs
+public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import Mathlib.GroupTheory.Perm.Support
+
+@[expose] public section
 
 open Polynomial Finset
 
@@ -55,10 +59,13 @@ theorem eval_prodP {m : ℕ} (lin : Fin m → Prop) [DecidablePred lin] (B : Fin
 
 theorem coeff_all : ∀ {m : ℕ} (B : Fin m → A),
     (List.ofFn fun l => (X + C (B l) : A[X])).prod.coeff m = 1 ∧
-      (1 ≤ m → (List.ofFn fun l => (X + C (B l) : A[X])).prod.coeff (m - 1) = ∑ l, B l)
-  | 0, B => by simp
-  | m + 1, B => by
-    have ih := coeff_all (fun l : Fin m => B l.succ)
+      (1 ≤ m → (List.ofFn fun l => (X + C (B l) : A[X])).prod.coeff (m - 1) = ∑ l, B l) := by
+  intro m
+  induction m with
+  | zero => simp
+  | succ m ih =>
+    intro B
+    specialize ih (fun l => B l.succ)
     have hdeg : (List.ofFn fun l : Fin m => (X + C (B l.succ) : A[X])).prod.natDegree ≤ m := by
       have := natDegree_prodP (fun _ : Fin m => True) (fun l => B l.succ)
       simp only [if_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one] at this
@@ -97,14 +104,11 @@ theorem quadratic_top_algebra_holds : QTopAlg := by
       intro σ
       have e1 : (List.ofFn fun k : Fin n => Tm E (Y + h - (k : ℂ)) (id (σ k)) (id k)) =
           List.ofFn fun l => (if lin σ l then algebraMap ℂ A Y else 0) + B σ l := by
-        congr 1
-        funext l
-        simp only [Tm, id, lin, B]
-        split_ifs with hl
-        · have : Y + h - ((l : ℕ) : ℂ) = Y + (h - ((l : ℕ) : ℂ)) := by ring
-          rw [this, map_add]
-          abel
-        · simp
+        refine congrArg List.ofFn (funext fun l => ?_)
+        simp only [Tm, id_eq, lin, B]
+        split_ifs
+        · rw [add_sub_assoc, map_add, add_assoc]
+        · simp only [zero_add]
       rw [e1, ← eval_prodP]
       have hdeg : (Pσ σ).natDegree < n + 1 := by
         have := natDegree_prodP (lin σ) (B σ)
@@ -135,7 +139,8 @@ theorem quadratic_top_algebra_holds : QTopAlg := by
         rw [if_pos (show lin 1 l from rfl)]
       rw [e1, (coeff_all (B 1)).2 hn]
       simp only [B, Equiv.Perm.one_apply, if_true]
-      rw [Finset.sum_add_distrib, add_comm, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_add_distrib, add_comm, ← map_sum]
       congr 1
       congr 1
       rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]

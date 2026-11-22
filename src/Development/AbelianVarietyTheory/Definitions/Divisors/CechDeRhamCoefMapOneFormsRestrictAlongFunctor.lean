@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CechDeRhamTotalDifferentialOneFunctionPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CechDeRhamTotalDifferentialOneFunctionPart
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -58,14 +62,14 @@ end
 
 def pullTot1 : Tot1 F →ₛₗ[σ] Tot1 F' where
   toFun c := (fun _ T' φ ↦ m.α T' (c.1 _ _ (m.G.map φ)), fun T ↦ q1 m T (c.2 _))
-  map_add' a b := Tot1.ext (by intros; simp) (by intros; simp)
-  map_smul' r a := Tot1.ext (by intros; simp [m.smul]) (by intros; simp)
+  map_add' a b := Tot1.ext (F := F') (by intros; simp) (by intros; simp)
+  map_smul' r a := Tot1.ext (F := F') (by intros; simp [m.smul]) (by intros; simp)
 
 def pullTot2 : Tot2 F →ₛₗ[σ] Tot2 F' where
   toFun c := (fun _ _ T'' φ ψ ↦ m.α T'' (c.1 _ _ _ (m.G.map φ) (m.G.map ψ)),
     fun _ T' φ ↦ q1 m T' (c.2.1 _ _ (m.G.map φ)), fun T ↦ qOm m 2 T (c.2.2 _))
-  map_add' a b := Tot2.ext (by intros; simp) (by intros; simp) (by intros; simp)
-  map_smul' r a := Tot2.ext (by intros; simp [m.smul]) (by intros; simp) (by intros; simp)
+  map_add' a b := Tot2.ext (F := F') (by intros; simp) (by intros; simp) (by intros; simp)
+  map_smul' r a := Tot2.ext (F := F') (by intros; simp [m.smul]) (by intros; simp) (by intros; simp)
 
 section
 variable {T T' T'' : C'} (φ : T ⟶ T') (ψ : T' ⟶ T'')
@@ -89,7 +93,7 @@ theorem pullTot1_dTot0 (g : Tot0 F) : pullTot1 m (dTot0 F g) = dTot0 F' fun T �
 
 theorem pullTot2_dTot1 (c : Tot1 F) : pullTot2 m (dTot1 F c) = dTot1 F' (pullTot1 m c) :=
   Tot2.ext (fun T T' T'' φ ψ ↦ by
-      simp only [cechDeRhamPullbackTotalDegreeTwo_function_part, cechDeRhamTotalDifferentialOne_functionPart, pullTot1_f, map_sub, map_add, m.naturality, Functor.map_comp])
+      simp only [cechDeRhamPullbackTotalDegreeTwo_function_part, cechDeRhamTotalDifferentialOne_functionPart, pullTot1_f, map_sub, map_add (f := _), m.naturality, Functor.map_comp])
     (fun T T' φ ↦ by simp only [pullTot2_a, dTot1_a, pullTot1_f, pullTot1_ω, map_sub, cechDeRhamCoefMapOneForms_naturality, cechDeRhamCoefMapOneForms_D])
     fun T ↦ by simp only [pullTot2_η, dTot1_η, pullTot1_ω, qOm_dOne]
 
@@ -108,10 +112,10 @@ def pullZZ2 : cechDeRhamTotalCocyclesTwo F →ₛₗ[σ] cechDeRhamTotalCocycles
   ((pullTot2 m).domRestrict (cechDeRhamTotalCocyclesTwo F)).codRestrict (cechDeRhamTotalCocyclesTwo F') fun c ↦ by
     change pullTot2 m c.1 ∈ _
     refine mem_cechDeRhamTotalCocyclesTwo_iff.2 ⟨fun T T' T'' T''' φ ψ χ ↦ ?_, fun T T' T'' φ ψ ↦ ?_, fun T T' φ ↦ ?_, fun T ↦ ?_⟩
-    · simp only [cechDeRhamPullbackTotalDegreeTwo_function_part, Functor.map_comp, ← map_add, ← m.naturality, cechDeRhamTotalCocyclesTwo.comp c]
-    · simp only [cechDeRhamPullbackTotalDegreeTwo_function_part, pullTot2_a, Functor.map_comp, cechDeRhamTotalCocyclesTwo.one c, map_add, cechDeRhamCoefMapOneForms_naturality, cechDeRhamCoefMapOneForms_D]
+    · simp only [cechDeRhamPullbackTotalDegreeTwo_function_part, Functor.map_comp, ← map_add (f := _), ← m.naturality, cechDeRhamTotalCocyclesTwo.comp c]
+    · simp only [cechDeRhamPullbackTotalDegreeTwo_function_part, pullTot2_a, Functor.map_comp, cechDeRhamTotalCocyclesTwo.one c, map_add (f := _), cechDeRhamCoefMapOneForms_naturality, cechDeRhamCoefMapOneForms_D]
     · simp only [pullTot2_η, pullTot2_a]
-      rw [cechDeRhamTotalCocyclesTwo.two c (m.G.map φ), map_add, qOm_pOm, qOm_dOne]
+      rw [cechDeRhamTotalCocyclesTwo.two c (m.G.map φ), map_add (f := _), qOm_pOm, qOm_dOne]
     · rw [pullTot2_η, ← qOm_dTwo, cechDeRhamTotalCocyclesTwo.closed c, map_zero]
 
 theorem coe_pullZZ1 (c : cechDeRhamTotalCocyclesOne F) : (pullZZ1 m c).1 = pullTot1 m c.1 := rfl
@@ -202,11 +206,11 @@ theorem pullHyp1_eq_of_natTrans (c : Hyp1 F) : pullHyp1 m c = pullHyp1 m' c := b
   rw [pullHyp1_mk, pullHyp1_mk, Hyp1.mk_eq_mk]
   refine ⟨fun T ↦ -m'.α T (f.1.1 _ _ (θ.app T)), Tot1.ext (fun T T' φ ↦ ?_) fun T ↦ ?_⟩
   · have e := congrArg (fun ξ ↦ m'.α T' (f.1.1 _ _ ξ)) (θ.naturality φ)
-    simp only [cechDeRhamTotalCocyclesOne.comp f, map_add, h, m'.naturality] at e
+    simp only [cechDeRhamTotalCocyclesOne.comp f, map_add (f := _), h, m'.naturality] at e
     simp only [dTot0_f, Prod.fst_sub, Pi.sub_apply, coe_pullZZ1, pullTot1_f, map_neg]
     linear_combination -e
   · simp only [dTot0_ω, Prod.snd_sub, Pi.sub_apply, coe_pullZZ1, pullTot1_ω, map_neg]
-    rw [cechDeRhamTotalCocyclesOne.conn f (θ.app T), map_add, cechDeRhamCoefMapOneForms_eq_of_natTrans m m' θ h, cechDeRhamCoefMapOneForms_D]; abel
+    rw [cechDeRhamTotalCocyclesOne.conn f (θ.app T), map_add (f := _), cechDeRhamCoefMapOneForms_eq_of_natTrans m m' θ h, cechDeRhamCoefMapOneForms_D]; abel
 
 theorem pullHyp2_eq_of_natTrans (c : Hyp2 F) : pullHyp2 m c = pullHyp2 m' c := by
   obtain ⟨z, rfl⟩ := Hyp2.mk_surjective F c
@@ -219,16 +223,16 @@ theorem pullHyp2_eq_of_natTrans (c : Hyp2 F) : pullHyp2 m c = pullHyp2 m' c := b
     have e3 := congrArg (m'.α T'') (cechDeRhamTotalCocyclesTwo.comp z (θ.app T) (m'.G.map φ) (m'.G.map ψ))
     rw [θ.naturality ψ] at e1
     rw [θ.naturality φ] at e2
-    simp only [map_add, h, m'.naturality] at e1 e2 e3
+    simp only [map_add (f := _), h, m'.naturality] at e1 e2 e3
     simp only [cechDeRhamTotalDifferentialOne_functionPart, Prod.fst_sub, Pi.sub_apply, coe_pullZZ2, cechDeRhamPullbackTotalDegreeTwo_function_part, map_sub, Functor.map_comp]
     linear_combination -e1 + e2 - e3
   · have e := congrArg (fun ξ ↦ q1 m' T' (z.1.2.1 _ _ ξ)) (θ.naturality φ)
-    simp only [cechDeRhamTotalCocyclesTwo.one z, map_add, cechDeRhamCoefMapOneForms_eq_of_natTrans m m' θ h, cechDeRhamCoefMapOneForms_naturality, cechDeRhamCoefMapOneForms_D] at e
+    simp only [cechDeRhamTotalCocyclesTwo.one z, map_add (f := _), cechDeRhamCoefMapOneForms_eq_of_natTrans m m' θ h, cechDeRhamCoefMapOneForms_naturality, cechDeRhamCoefMapOneForms_D] at e
     simp only [dTot1_a, Prod.fst_sub, Prod.snd_sub, Pi.sub_apply, coe_pullZZ2, pullTot2_a, map_sub,
       map_neg]
     linear_combination (norm := abel1) -e
   · simp only [dTot1_η, Prod.snd_sub, Pi.sub_apply, coe_pullZZ2, pullTot2_η, map_neg]
-    rw [cechDeRhamTotalCocyclesTwo.two z (θ.app T), map_add, qOm_pOm_app m m' θ h, qOm_dOne]; abel
+    rw [cechDeRhamTotalCocyclesTwo.two z (θ.app T), map_add (f := _), qOm_pOm_app m m' θ h, qOm_dOne]; abel
 
 end Nat
 

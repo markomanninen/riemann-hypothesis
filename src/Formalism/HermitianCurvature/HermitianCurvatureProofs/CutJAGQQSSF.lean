@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFBridge
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFKap
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFSS
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFBridge
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFKap
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFSS
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 

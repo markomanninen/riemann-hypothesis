@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DetLatticeFrameGenStatement
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DetLatticeFrameGenStatement
+
+@[expose] public section
 
 noncomputable section
 

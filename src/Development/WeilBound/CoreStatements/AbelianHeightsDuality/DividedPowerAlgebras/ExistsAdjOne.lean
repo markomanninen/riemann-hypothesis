@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.CompF
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.RingTrunc
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.CompF
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.RingTrunc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -79,11 +83,11 @@ theorem exists_trunc (S : Thick (dp0 R) s) (hS : InN κ S) (n : ℕ) (hn : 1 ≤
   intro V hV φ
   obtain ⟨G, hG, hGa⟩ := huniv V.B V.J V.δ hV (φ.φ : S.B →+* V.B) φ.dp
   refine ⟨pushDesc S a θ ha hnil φ G hG hGa, ?_, ?_⟩
-  · refine Thick.hom_ext fun b ↦ ?_
+  · refine Thick.Hom.ext' (AlgHom.ext fun b ↦ ?_)
     rw [Thick.comp_φ]
     exact DFunLike.congr_fun hGa b
   · intro ψ hψ
-    refine Thick.hom_ext fun x ↦ ?_
+    refine Thick.Hom.ext' (AlgHom.ext fun x ↦ ?_)
     obtain ⟨b, rfl⟩ := hsurj x
     have h1 := Thick.comp_φ (pushHom S a θ ha hnil) ψ b
     rw [hψ] at h1
@@ -100,7 +104,7 @@ theorem exists_adj_one (S : Thick (dp0 R) s) (hS : InN κ S) (n : ℕ) (hn : 1 �
   intro V hV φ z hz
   obtain ⟨G, ⟨hG, hGa, hGy⟩, huniq⟩ := huniv V.B V.J V.δ hV (φ.φ : S.B →+* V.B) φ.dp z hz
   refine ⟨pushDesc S a θ ha hnil φ G hG hGa, ⟨?_, hGy⟩, ?_⟩
-  · refine Thick.hom_ext fun b ↦ ?_
+  · refine Thick.Hom.ext' (AlgHom.ext fun b ↦ ?_)
     rw [Thick.comp_φ]
     exact DFunLike.congr_fun hGa b
   · rintro ψ ⟨hψ, hψy⟩
@@ -111,7 +115,7 @@ theorem exists_adj_one (S : Thick (dp0 R) s) (hS : InN κ S) (n : ℕ) (hn : 1 �
       rw [hψ] at h1
       exact h1.symm
     have heq : g = G := huniq g ⟨ψ.dp, hcomp, hψy⟩
-    refine Thick.hom_ext fun x ↦ ?_
+    refine Thick.Hom.ext' (AlgHom.ext fun x ↦ ?_)
     exact DFunLike.congr_fun heq x
 
 theorem exists_adj' (S : Thick (dp0 R) s) (hS : InN κ S) (d n : ℕ) (hn : 1 ≤ n) :

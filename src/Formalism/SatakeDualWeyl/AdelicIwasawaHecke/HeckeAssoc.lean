@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AssocFin
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AssocFin
+
+@[expose] public section
 
 noncomputable section
 

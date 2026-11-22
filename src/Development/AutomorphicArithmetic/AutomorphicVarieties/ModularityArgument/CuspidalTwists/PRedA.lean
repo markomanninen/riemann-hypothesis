@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.PromodularityCaseThree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SpaceMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedDim
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.PromodularityCaseThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SpaceMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedDim
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Cu
 
@@ -105,7 +109,7 @@ theorem UpperTheory.V.Cu.redA_of : RedTanA → RedA := by
     · exact congrArg (· * c.r g⁻¹) (Matrix.ext fun i j => (hy _).2.symm)
     · exact congrArg (· * adj (c.n v)) (Matrix.ext fun i j => (hy _).2.symm)
   have hinj : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro D hD
     obtain ⟨y, h1⟩ := hy D
     obtain ⟨y0, h0⟩ := hy 0

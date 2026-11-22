@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeasMain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_TypeNormMeas_TC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeasHM
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeasMain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_TypeNormMeas_TC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeasHM
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 

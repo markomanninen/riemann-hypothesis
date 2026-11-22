@@ -1,8 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StepExactNS
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TowerAtPre
-import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeCharTameAtOfFactorsThroughResidue
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StepExactNS
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TowerIsChain
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.MiPinnedWithFinIff
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StepsOnto
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopMultAndExtVInjective
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsInfFamAndStdChar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsAtAndSeedFacts
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfExpMulZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTupChars
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderEqOrSmulUnderEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Formalism.LocalRingCardinality.PosOfIsomEmb
+public import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeCharTameAtOfFactorsThroughResidue
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,12 +66,6 @@ theorem disjoint_Pg_Q (L : LevCh D T) {μ0 : T} (hL : L.Is μ0) (t : T) : Disjoi
   obtain ⟨i, hi⟩ := (hL.Pg P).1 hP
   obtain ⟨⟨q, hq, hcard, -, hqg⟩, -⟩ := hL.Q_pl t P hPQ
   exact not_two_primes P.isPrime.ne_top (D.host.g_prime i) hq (fun h => hqg i h.symm) (g_mem_of_div L.C hi) (char_mem hcard)
-
-theorem rangeX_iff : RangeX R ↔ Formalism.IndefR.RecTie.TopMultH R := Iff.rfl
-
-theorem comR_S (t : T) : (comR R t).S = GlobalTheory.IndefiniteRowSideFullHecke.LabelSettingScalars.badPl R t := by
-  unfold Com.S GlobalTheory.IndefiniteRowSideFullHecke.LabelSettingScalars.badPl comR
-  congr
 
 theorem mem_S (hL : R.toLevCh.Is A.μ0) (t : T) (k : Fin 2) (P : Pl D.host.E)
     (hk : ((D.host.g k : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal) : P.under (𝓞 D.host.F) ∈ (comR R t).S := by
@@ -118,39 +128,8 @@ theorem twist_of (hL : R.toLevCh.Is A.μ0) (t : T) (hc : (comR R t).Is) (hne : �
     (twR R t).Is (comR R t) := by
   have hd := disjoint_Pg_Q R.toLevCh hL t
   refine ⟨hc, rfl, hd, fun j PP hP => ?_, fun j PP hP => ?_, hne, fun g => Iff.rfl, rfl⟩
-  · exact if_neg (Finset.disjoint_left.1 hd hP)
-  · exact if_pos hP
-
-theorem stepX_toCC (h : RangeX R) (t : T) (x : (R.HX t).H) :
-    PiTensorProduct.lift.symm ((stepX R h t).io (toCC R h t x)).1 = GlobalTheory.IndefiniteRowSideFullHecke.LabelSettingScalars.topStep R t x := rfl
-
-theorem toCC_val (h : RangeX R) (t : T) (x : (R.HX t).H) (v) (g) :
-    PiLocalization₂.val (toCC R h t x) v g = R.prX (R.cX.ext ((R.HX t).e x) g) v := rfl
-
-theorem toCC_surj (h : RangeX R) (t : T) : Function.Surjective (toCC R h t) :=
-  (LinearEquiv.ofEq _ _ (h t)).surjective.comp (LinearMap.surjective_rangeRestrict _)
-
-theorem isInnerProduct_of_isMet (t : T) (k : ℕ) {ipD ip} (hm : IsMet (comR R t) (stY R t k) ipD ip) (x y : (stY R t k).CC (comR R t)) :
-    GlobalTheory.IndefiniteRowSideFullHecke.LabelSettingScalars.IsIP R t k (PiTensorProduct.lift.symm x.1) (PiTensorProduct.lift.symm y.1) (ip y x) := by
-  intro v v'
-  have h1 := hm.integ y x (PiTensorProduct.tprod ℂ v') (PiTensorProduct.tprod ℂ v)
-  have h2 := hm.schur y x (PiTensorProduct.tprod ℂ v') (PiTensorProduct.tprod ℂ v)
-  rw [hm.pure v' v] at h2
-  have e : (fun g => star ((PiTensorProduct.lift.symm x.1) v g) * (PiTensorProduct.lift.symm y.1) v' g) =
-      fun g => PiLocalization₂.val y (PiTensorProduct.tprod ℂ v') g * conj (PiLocalization₂.val x (PiTensorProduct.tprod ℂ v) g) := by
-    funext g; rw [mul_comm]; rfl
-  refine ⟨?_, ?_⟩
-  · exact (congrArg (fun F => IntegrableOn F (stY R t k).fd (stY R t k).ν) e).mpr h1
-  · exact (congrArg (fun F : GA D (stY R t k).V → ℂ => ∫ g in (stY R t k).fd, F g ∂(stY R t k).ν) e).trans h2
-
-theorem ipDict_of (hv : ∀ k < D.R.m, ∃ v : (R.MY k).Vec, ∏ τ, ⟪(v τ : (R.MY k).H τ), (v τ : (R.MY k).H τ)⟫_ℂ ≠ 0) : IPDict R := by
-  intro t k hk ipD ip hm x y a
-  obtain ⟨v, hv⟩ := hv k hk
-  exact ⟨fun h => hasPeterssonInner_unique _ _ _ _ _ v hv h (isInnerProduct_of_isMet R t k hm x y), fun h => h ▸ isInnerProduct_of_isMet R t k hm x y⟩
-
-theorem stepExactNS_of (h : StepExact D) : StepExactNS D :=
-  fun hg c w hw k hk s s' hs hs' p hp ipD ip hm m X hX mR hR φ v hc u₁ u₂ B hB hQ _ =>
-    h hg c w hw k hk s s' hs hs' p hp ipD ip hm m X hX mR hR φ v hc u₁ u₂ B hB hQ
+  · exact ite_eq_right (Finset.disjoint_left.1 hd hP)
+  · exact ite_eq_left hP
 
 theorem Q_base (hL : R.toLevCh.Is A.μ0) : R.Q A.μ0 = ∅ := by
   ext PP
@@ -163,8 +142,8 @@ theorem Q_base (hL : R.toLevCh.Is A.μ0) : R.Q A.μ0 = ∅ := by
 theorem isUnitAt_of (P : Pl D.host.E) (a : 𝓞 D.host.E) (k : D.host.Eˣ) (u : (kP P)ˣ) (hk : (k : D.host.E) = a)
     (hu : (u : kP P) = Ideal.Quotient.mk _ a) : Formalism.L2.Host.IsUnitAt P (Formalism.L2.Host.atFin P k) := by
   have ha : a ∉ P.asIdeal := fun h => by
-    haveI := P.isMaximal
-    haveI : Nontrivial (kP P) := Ideal.Quotient.nontrivial_iff.2 P.isPrime.ne_top
+    have := P.isMaximal
+    have : Nontrivial (kP P) := Ideal.Quotient.nontrivial_iff.2 P.isPrime.ne_top
     have : (u : kP P) = 0 := hu.trans (Ideal.Quotient.eq_zero_iff_mem.2 h)
     exact u.ne_zero this
   show Valued.v (algebraMap D.host.E (P.adicCompletion D.host.E) (k : D.host.E)) = 1
@@ -196,7 +175,7 @@ theorem com_is (hL : R.toLevCh.Is A.μ0) (hM : R.IsModels) (hC : R.IsChain) (t :
   · have h1 := GlobalTheory.HeckeInfExp.hasInfExp_of_chrEq D _ _ _ (hL.mu0 j) (GlobalTheory.InnerSteps.hasInfQ_tauE (R.C.isMu0 j).inf) τ
     simp only [Formalism.L2.Host.eExp, Equiv.symm_apply_apply] at h1
     obtain ⟨n, hn, ho⟩ := hL.xi_fin t
-    haveI : IsTotallyComplex D.host.E := by infer_instance
+    have : IsTotallyComplex D.host.E := by infer_instance
     have h3 := GlobalTheory.HeckeInfExp.hasInfExp_of_chrEq D _ _ (fun _ => 0) (hL.xi t)
       ⟨fun _ => 0, fun _ => by norm_num, fun x => by
         rw [GlobalTheory.TypeValues.inf_eq_one _ hn ho x]; simp⟩ τ
@@ -212,12 +191,13 @@ theorem com_is (hL : R.toLevCh.Is A.μ0) (hM : R.IsModels) (hC : R.IsChain) (t :
       rcases (hL.Q_ram t w).1 hc with h | ⟨P', h, hc⟩
       · exact ⟨w, by simp only [comR, Finset.mem_union]; exact Or.inr h, rfl⟩
       · exact ⟨P', by simp only [comR, Finset.mem_union]; exact Or.inr h, under_eq_of_conj hc⟩
-    rw [Formalism.L2.Host.HChar.loc_mul, h1, h2 x hx, mul_one]
+    change (R.C.mu0 j).loc w x * (R.xiH t).loc w x = 1
+    rw [h1, h2 x hx, mul_one]
   · have hun := isUnitAt_of PP a k u hk hu
     show ((comR R t).chi ((j : ℕ) + 1) PP)⁻¹ u = (R.C.mu0 j).locK PP k * (R.xiH t).locK PP k
     have hP' : PP ∈ R.Pg ∨ PP ∈ R.Q t := by simpa only [comR, Finset.mem_union] using hP
     rcases hP' with h | h
-    · have e : (comR R t).chi ((j : ℕ) + 1) PP = R.chi ((j : ℕ) + 1) PP := if_neg (Finset.disjoint_left.1 hd h)
+    · have e : (comR R t).chi ((j : ℕ) + 1) PP = R.chi ((j : ℕ) + 1) PP := ite_eq_right (Finset.disjoint_left.1 hd h)
       have h2 : (R.xiH t).UnrAt PP := by
         by_contra hc
         rcases (hL.Q_ram t PP).1 hc with h' | ⟨P', h', hc⟩
@@ -229,7 +209,7 @@ theorem com_is (hL : R.toLevCh.Is A.μ0) (hM : R.IsModels) (hC : R.IsChain) (t :
       have h3 : (R.xiH t).locK PP k = 1 := h2 _ hun
       rw [e, h3, mul_one]
       exact hL.chi j PP h a k u hk hu
-    · have e : (comR R t).chi ((j : ℕ) + 1) PP = (R.xiR t PP)⁻¹ := if_pos h
+    · have e : (comR R t).chi ((j : ℕ) + 1) PP = (R.xiR t PP)⁻¹ := ite_eq_left h
       obtain ⟨⟨q, hq, hcard, -, hqg⟩, -⟩ := hL.Q_pl t PP h
       have h3 : (R.C.mu0 j).locK PP k = 1 := (R.C.isMu0 j).unr PP (fun i hi =>
         not_two_primes PP.isPrime.ne_top hq (D.host.g_prime i) (hqg i) (char_mem hcard) hi) _ hun
@@ -261,7 +241,7 @@ theorem xiR_ne (hL : R.toLevCh.Is A.μ0) (t : T) : ∀ PP ∈ R.Q t, R.xiR t PP 
     rw [← h, map_mul, hv1, hsv, one_mul]
   have ha : a ∉ PP.asIdeal := fun hm =>
     absurd hav (ne_of_lt ((PP.valuation_lt_one_iff_mem (K := D.host.E) a).mpr hm))
-  haveI : PP.asIdeal.IsMaximal := PP.isMaximal
+  have : PP.asIdeal.IsMaximal := PP.isMaximal
   have key : ∀ (b : 𝓞 D.host.E), b ∉ PP.asIdeal → ∀ y : D.host.Eˣ, (y : D.host.E) = b → (R.xiH t).locK PP y = 1 := by
     intro b hb y hy
     have hms : (Ideal.Quotient.mk PP.asIdeal b : kP PP) ≠ 0 := by
@@ -289,7 +269,7 @@ theorem xiR_ne (hL : R.toLevCh.Is A.μ0) (t : T) : ∀ PP ∈ R.Q t, R.xiR t PP 
     have hlt : Valued.v (algebraMap D.host.E (PP.adicCompletion D.host.E) k - x) < 1 := hk
     generalize Valued.v (algebraMap D.host.E (PP.adicCompletion D.host.E) k - x) = z at hlt
     rcases eq_or_ne z 0 with rfl | hz
-    · exact zero_le'
+    · exact zero_le
     · rw [← WithZero.exp_log hz] at hlt ⊢
       rw [← WithZero.exp_zero, WithZero.exp_lt_exp] at hlt
       rw [WithZero.exp_le_exp]
@@ -306,15 +286,6 @@ theorem zinv_pos (PP : Pl D.host.E) (a b : ℕ) : 0 < zinv PP a b := by
   refine Finset.prod_pos fun n hn => sub_pos.2 (inv_lt_one_of_one_lt₀ (one_lt_pow₀ ?_ ?_))
   · exact_mod_cast HeightOneSpectrum.one_lt_absNorm PP
   · have := (Finset.mem_Ioc.1 hn).1; omega
-
-theorem rVol_zero (h : RVol R) (t : T) :
-    GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift.volQ (Yc D 0) (R.νY t 0) = GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift.volQ (Yc D 0) (R.νY A.μ0 0) := by
-  have h2 := D.R.two_le_m
-  rw [((h t).1 0 (by omega)).1, Finset.prod_eq_one, mul_one]
-  intro PP _
-  have := (zinv_pos PP 0 D.R.r).ne'
-  simp [idxQ, zinv] at this ⊢
-  exact this
 
 end GlobalTheory.ChainTw.RModel
 

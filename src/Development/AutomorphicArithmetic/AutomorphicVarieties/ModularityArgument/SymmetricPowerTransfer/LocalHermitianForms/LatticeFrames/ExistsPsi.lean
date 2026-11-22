@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LatticeFrames.ExistsFrame
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IsFixMapIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LatCls
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LatticeFrames.ExistsFrame
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IsFixMapIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LatCls
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,9 +14,9 @@ open QuadraticAlgebra
 
 variable {O K : Type} [CommRing O] [Field K] [Algebra O K] {Δ τ : K}
 
-variable (τ) in
 
-def Bf (c t : K) : K × Etau K τ →ₗ[K] K × Etau K τ →ₗ[K] K :=
+variable (τ) in
+def Bf (τ c t : K) : K × Etau K τ →ₗ[K] K × Etau K τ →ₗ[K] K :=
   LinearMap.mk₂ K (fun v w => c * v.1 * w.1 + t * QuadraticAlgebra.trace (v.2 * star w.2))
     (fun a b w => by simp [QuadraticAlgebra.trace_def]; ring) (fun a b w => by simp [QuadraticAlgebra.trace_def]; ring)
     (fun a b w => by simp [QuadraticAlgebra.trace_def]; ring) (fun a b w => by simp [QuadraticAlgebra.trace_def]; ring)
@@ -95,12 +99,12 @@ theorem exists_psi {s : K} {β : Etau K τ} (hD : τ ^ 2 - 4 ≠ 0) (hs : s ≠ 
       2 * y * y' * ((hβ.unit⁻¹ : (Etau K τ)ˣ) : Etau K τ) * β * star b) * hk +
     (-2 * y * y' * star b) * hinv + b * htr - y' * hs1 - y * hs2
 
-variable (O) in
 
+variable (O) in
 def S0 (s : K) (β : Etau K τ) (Λ : Set (Etau K τ)) : Set (K × Etau K τ) := {v | ∀ y ∈ Λ, psi s β v y ∈ Λ}
 
-variable (O) in
 
+variable (O) in
 structure Uni (c t : K) (S : Set (K × Etau K τ)) : Prop where
   fg : ∃ s : Finset (K × Etau K τ), S = Submodule.span O (s : Set (K × Etau K τ))
   dual : ∀ y, y ∈ S ↔ ∀ x ∈ S, Bf τ c t x y ∈ (algebraMap O K).range

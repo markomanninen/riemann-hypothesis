@@ -1,28 +1,33 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsArBaseAway
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicCompleteOfLeOfIsNoetherianRingStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAbelianSchemeOfThickeningsLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LineBundleTrivialOnFibre
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveLiftIff
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSquareUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjBySmoothIsProperGeometricallyIntegral
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NsmulMemSmulTop
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAbelianLiftAmpleBundle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftOfStep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRigLBCubical
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullEqZeroOfChart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSharpPowOf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SmoothOfRelativeDimensionOfCharZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsArBaseAway
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicCompleteOfLeOfIsNoetherianRingStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAbelianSchemeOfThickeningsLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LineBundleTrivialOnFibre
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveLiftIff
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSquareUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjBySmoothIsProperGeometricallyIntegral
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NsmulMemSmulTop
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAbelianLiftAmpleBundle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftOfStep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRigLBCubical
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullEqZeroOfChart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSharpPowOf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SmoothOfRelativeDimensionOfCharZero
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ZM GlobalTheory.SiegLev GlobalTheory.SiegelTor
@@ -78,7 +83,17 @@ theorem exists_lift : ∀ (K : Type) [Field K] [IsAlgClosed K] (V : Type) [CommR
   let g₀ : Y₀.left ⟶ A.left := pullback.fst A.hom s
   have G₀ : IsGrpPullback Y₀ A s g₀ := isGrpPullback_pullback A s
   have hL₀ : (L.pull g₀).IsLB := pull_isLB hL g₀
-  have hA₀ : IsAbelianScheme Y₀ := GlobalTheory.PolPull.isAbelianScheme_of_isGrpPullback hA G₀
+  have hA₀ : IsAbelianScheme Y₀ := by
+    have hcomm : IsCommMonObj Y₀ := by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (G₀.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← G₀.2 T x y (pushPt G₀.1.w x) (pushPt G₀.1.w y) rfl rfl,
+        ← G₀.2 T y x (pushPt G₀.1.w y) (pushPt G₀.1.w x) rfl rfl, _root_.mul_comm]
+    exact { comm := hcomm
+            smooth := MorphismProperty.of_isPullback (P := @Smooth) G₀.1 hA.smooth
+            proper := MorphismProperty.of_isPullback (P := @IsProper) G₀.1 hA.proper
+            geomConnected := MorphismProperty.of_isPullback (P := @GeometricallyConnected) G₀.1 hA.geomConnected }
   haveI := hA.proper
   have ha₀ : RelAmple Y₀ (L.pull g₀) := GlobalTheory.AmpleBaseChange.relAmple_of_isPullback hL haL G₀.1
   have hK₀ : KTriv Y₀ (L.pull g₀) := by

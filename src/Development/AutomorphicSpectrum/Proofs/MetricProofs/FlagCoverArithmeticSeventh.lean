@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsImg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOverPt
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsValueAtOfTorus
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AevalNeZeroOfNotMem
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Values
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsImg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOverPt
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsValueAtOfTorus
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AevalNeZeroOfNotMem
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Values
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 
@@ -23,7 +28,7 @@ theorem exists_analytic_zero (f : W × ℂ → ℂ) (p : W × ℂ) (hf : Analyti
   set A := fderiv ℂ f p with hA
   let Lm : W × ℂ →L[ℂ] W × ℂ := (ContinuousLinearMap.fst ℂ W ℂ).prod A
   have hinj : Function.Injective Lm := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨h, τ⟩ hv
     have h1 : h = 0 := congrArg Prod.fst hv
     have h2 : A (h, τ) = 0 := congrArg Prod.snd hv
@@ -39,7 +44,7 @@ theorem exists_analytic_zero (f : W × ℂ → ℂ) (p : W × ℂ) (hf : Analyti
         (u, (0 : ℂ)) + ((c - A (u, 0)) / A ((0 : W), (1 : ℂ))) • ((0 : W), (1 : ℂ)) := by simp
     refine Prod.ext rfl ?_
     show A _ = c
-    rw [h3, map_add, map_smul, smul_eq_mul, div_mul_cancel₀ _ hd]
+    rw [h3, map_add (f := _), map_smul, smul_eq_mul, div_mul_cancel₀ _ hd]
     ring
   let Le := ContinuousLinearEquiv.ofBijective Lm (LinearMap.ker_eq_bot.mpr hinj)
     (LinearMap.range_eq_top.mpr hsurj)
@@ -90,7 +95,7 @@ theorem exists_analytic_root (a : ℕ → W → ℂ) (n : ℕ) (w₀ : W) (θ₀
   let f : W × ℂ → ℂ := fun x => (∑ e ∈ Finset.range n, Polynomial.C (a e x.1) * Polynomial.X ^ e).eval x.2
   have hfe : f = fun x => ∑ e ∈ Finset.range n, a e x.1 * x.2 ^ e := by
     funext x
-    simp [f, Polynomial.eval_finset_sum]
+    simp [f, Polynomial.eval_finsetSum]
   have hf : AnalyticAt ℂ f (w₀, θ₀) := by
     rw [hfe]
     refine Finset.analyticAt_fun_sum _ fun e he => ?_
@@ -126,7 +131,7 @@ theorem exists_sep_poly {Ω : Type} [Field Ω] [CharZero Ω] {L L' : Intermediat
   · rw [Polynomial.coeff_map]; exact SetLike.coe_mem _
   · rw [Polynomial.coeff_map]; exact SetLike.coe_mem _
   · have := congrArg (Polynomial.map (algebraMap L Ω)) hab
-    simpa [Polynomial.map_add, Polynomial.map_mul, Polynomial.derivative_map] using this
+    simpa [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.derivative_map] using this
   · have h := congrArg (algebraMap (IntermediateField.extendScalars hle) Ω) (minpoly.aeval L t')
     rw [map_zero, ← Polynomial.aeval_algebraMap_apply] at h
     rw [Polynomial.eval_map_algebraMap]
@@ -183,7 +188,7 @@ theorem isMultiHomog_rename_block {κ : K → K'} {v : (Σ k, ι k) → (Σ k, �
         exact eq_of_heq (Sigma.mk.inj (hv.2.1 h2)).2
     calc ∑ i', (Finsupp.mapDomain v m0) ⟨κ k, i'⟩ = ∑ i', m0 ⟨k, g i'⟩ := by
           refine Finset.sum_congr rfl fun i' _ => ?_
-          rw [← hg i', Finsupp.mapDomain_apply hv.2.1]
+          rw [← hg i', Finsupp.mapDomain_apply_of_injective hv.2.1]
       _ = ∑ i, m0 ⟨k, i⟩ := hb.sum_comp fun i => m0 ⟨k, i⟩
   · rw [Function.extend_apply' _ _ _ (by simpa using hk)]
     refine Finset.sum_eq_zero fun i' _ => ?_
@@ -244,7 +249,7 @@ theorem exists_rep {Ω : Type} [Field Ω] [CharZero Ω] (y : (Σ k, ι k) → Ω
       isMultiHomog_mul hh hh', ?_, ?_⟩
     · rw [add_comm d d']; exact isMultiHomog_mul hg' hh
     · rw [map_mul]; exact mul_ne_zero hy hy'
-    · simp only [map_add, map_mul, he, he']; ring
+    · simp only [map_add (f := _), map_mul, he, he']; ring
   | inv a _ ha =>
     by_cases h0 : a = 0
     · rw [h0, _root_.inv_zero]; exact zero_rep
@@ -360,7 +365,7 @@ theorem polyVal_of_rep (hv : IsBlockMap κ v) (x' : (Σ k, ι' k) → Ω) {P : P
     {g h : ℕ → MRing ι} (hr : IsRep (x' ∘ v) P n d g h) {z : (Σ k, ι' k) → ℂ}
     (hz : ∀ e < n, ev (h e) (z ∘ v) ≠ 0) : PolyVal x' z P (valPoly n g h (z ∘ v)) := fun e => by
   have hc : (valPoly n g h (z ∘ v)).coeff e = if e < n then fr (g e) (h e) (z ∘ v) else 0 := by
-    simp [valPoly, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
+    simp [valPoly, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
   by_cases he : e < n
   · rw [hc, if_pos he]
     obtain ⟨a, b, c, f⟩ := hr.2 e

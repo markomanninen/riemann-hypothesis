@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIwVecTrivial
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.DepthZeroJacquetInjective
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCuspidalIffCompositions
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EventuallyInv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIwVecTrivial
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.DepthZeroJacquetInjective
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCuspidalIffCompositions
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EventuallyInv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,12 +35,12 @@ theorem val_dg {n : ℕ} (p : parab k (points (Fin n))) (i : Fin n) :
   rw [Matrix.GeneralLinearGroup.val_det_apply, Matrix.det_unique]
   rfl
 
-variable (k) in
 
+variable (k) in
 def twoBlockParabolicFirstBlock (r t : ℕ) : parab k (two (eSt r t)) →* GL (Fin r) k := (MonoidHom.fst _ _).comp (Stages.pr _)
 
-variable (k) in
 
+variable (k) in
 def midPar (r t : ℕ) : Subgroup (GL (Fin (r + t)) k) :=
   ((parab k (points (Fin r))).comap (twoBlockParabolicFirstBlock k r t)).map (parab k (two (eSt r t))).subtype
 
@@ -237,16 +241,14 @@ theorem stage_two (ψ₁ : Fin r → kˣ →* ℂˣ) (ψ₂ : Fin t → kˣ →*
       simp only [Units.val_one, one_smul, Module.End.one_apply])
     (rho1 ψ₁ ψ₂) (TensorProduct.comm _ _ _) (fun q y => by
       induction y with
-      | zero => simp only [map_zero]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [LinearEquiv.map_add, LinearMap.map_add, hx, hy]
       | tmul a f =>
         show TensorProduct.comm ℂ _ _ ((sB ψ₁ (fstB q) a) ⊗ₜ (Stages.tauSnd (eSt r t) (prinSeries ψ₂) (incl q) f)) = _
         rw [TensorProduct.comm_tmul, TensorProduct.comm_tmul, TensorProduct.map_tmul, Stages.tauSnd_apply]
         exact TensorProduct.smul_tmul _ _ _)
     (sB (Fin.append ψ₁ ψ₂)) (TensorProduct.lid ℂ ℂ) (fun q h z => by
       induction z with
-      | zero => simp only [map_zero]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [LinearEquiv.map_add, LinearMap.map_add, hx, hy]
       | tmul a b =>
         rw [TensorProduct.lid_tmul, TensorProduct.map_tmul, TensorProduct.lid_tmul]
         show sB (Fin.append ψ₁ ψ₂) ⟨q, h⟩ (a • b) =

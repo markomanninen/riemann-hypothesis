@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormAnisotropicPart
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormAnisotropicPart
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,10 +26,6 @@ section point
 
 theorem cast_perm_val {m n : ℕ} (e : m = n) (σ : Equiv.Perm (Fin m)) (x : Fin n) :
     ((e ▸ σ) x).val = (σ (Fin.cast e.symm x)).val := by
-  subst e; rfl
-
-theorem cast_diag_apply {m n : ℕ} (e : m = n) (d : Fin m → ℂ) (x : Fin n) :
-    (e ▸ d) x = d (Fin.cast e.symm x) := by
   subst e; rfl
 
 theorem ptSize_app (h : C.LPt) (n : ℕ) (hh : D.IsLocPt h n) (ζ : ℂ) : D.ptSize (h ++ [(1, ζ)]) = n + 1 := by
@@ -81,7 +81,7 @@ theorem baseFrame_last (p : KB.Pl P Wp Wq) (ν'r : Fin (2 * (P.r - P.r) + P.k + 
     ext i j
     rw [Formalism.FourierDecayAlt.P.PBI.m0R, ← hm]
     simp only [D.castM, Matrix.reindex_apply, Matrix.submatrix_apply, ιLev]
-    rw [dif_pos (by simp; omega), dif_pos (by simp; omega)]
+    rw [dite_eq_left (by simp; omega), dite_eq_left (by simp; omega)]
     congr 1 <;> ext <;> simp
   rw [e1, e2]
   exact (Formalism.FourierDecayAlt.P.PBI.levFrame_nuR p).2.2

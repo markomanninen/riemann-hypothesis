@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EvalTRph
-import Formalism.LocalToGlobal.IndefiniteReal.SquareIntegrableTransfer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EvalTRph
+public import Formalism.LocalToGlobal.IndefiniteReal.SquareIntegrableTransfer
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,10 +34,6 @@ theorem rows_eq_hom
 
 variable {S : D.what₂.Tau → SPar} (M : DSModel (D.sp.Y 0) S) (E : Submodule ℂ (MMap M)) (G : GoodOp X)
   (ι : GA D (D.sp.Y 0) ≃* X.B.I.GA) (t : GA D (D.sp.Y 0)) (v₀ : M.Vec)
-
-def OntoFromHom : Prop :=
-  ∀ Φ ∈ X.B.I.eHom X.B.σs X.B.μf X.B.fund X.B.R X.B.Re, ∀ F : EEC X G, Φ (X.B.tens X.B.w) = star (F : L2X X) →
-    ∃ T ∈ E, (F : L2X X) =ᵐ[muX X] fun x => ev M v₀ T (ι.symm x * t)
 
 variable {X M E G ι t v₀}
 

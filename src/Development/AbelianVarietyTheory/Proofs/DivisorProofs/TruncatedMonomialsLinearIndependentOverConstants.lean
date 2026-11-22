@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -14,11 +19,11 @@ theorem truncMono_deriv_aeval {k A : Type} [Field k] [CommRing A] [Algebra k A] 
   | C b =>
     rw [aeval_C, pderiv_C, map_zero]
     exact hB i _ b.2
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
   | mul_X p j hp =>
     have h1 : E i (aeval x p * x j) = aeval x p * E i (x j) + x j * E i (aeval x p) := by
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
-    rw [map_mul, aeval_X, h1, hp, pderiv_mul, pderiv_X, map_add, map_mul, map_mul, aeval_X, hE]
+    rw [map_mul, aeval_X, h1, hp, pderiv_mul, pderiv_X, map_add (f := _), map_mul, map_mul, aeval_X, hE]
     by_cases h : i = j
     · subst h; simp; ring
     · simp [h, Pi.single_apply, Ne.symm h]; ring
@@ -30,17 +35,17 @@ theorem truncMono_eq_zero {p : ℕ} [Fact p.Prime] {k A : Type} [Field k] [CommR
     (hB : ∀ i, ∀ b ∈ B, E i b = 0) :
     ∀ n : ℕ, ∀ F : MvPolynomial (Fin d) B,
       (∀ m ∈ F.support, (∀ i, m i < p) ∧ ∑ i, m i ≤ n) → aeval x F = 0 → F = 0 := by
-  have hconst : ∀ F : MvPolynomial (Fin d) B, (∀ m, m ≠ 0 → coeff m F = 0) →
+  have hconst : ∀ F : MvPolynomial (Fin d) B, (∀ m, m ≠ 0 → AddMonoidAlgebra.coeff F m = 0) →
       aeval x F = 0 → F = 0 := by
     intro F hc hF
-    have hFC : F = C (coeff 0 F) := by
+    have hFC : F = C (AddMonoidAlgebra.coeff F 0) := by
       refine MvPolynomial.ext _ _ (fun m => ?_)
       rw [coeff_C]
       by_cases hm : m = 0
       · subst hm; simp
       · rw [if_neg (Ne.symm hm)]; exact hc m hm
     rw [hFC, aeval_C] at hF
-    have h0 : coeff 0 F = 0 := Subtype.ext (by simpa using hF)
+    have h0 : AddMonoidAlgebra.coeff F 0 = 0 := Subtype.ext (by simpa using hF)
     rw [hFC, h0, C_0]
   intro n
   induction n with
@@ -79,7 +84,8 @@ theorem truncMono_eq_zero {p : ℕ} [Fact p.Prime] {k A : Type} [Field k] [CommR
     by_contra hc
     have hlt := (hs m (mem_support_iff.mpr hc)).1 i
     have hcoef := coeff_pderiv (i := i) F (m - Finsupp.single i 1)
-    rw [Finsupp.sub_add_single_one_cancel hi, hpd i, coeff_zero] at hcoef
+    rw [Finsupp.sub_add_single_one_cancel hi, hpd i] at hcoef
+    simp at hcoef
     have hmi : (m - Finsupp.single i 1 : Fin d →₀ ℕ) i + 1 = m i := by
       simp only [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_eq_same]; omega
     have hunit : IsUnit (((m - Finsupp.single i 1 : Fin d →₀ ℕ) i : B) + 1) := by
@@ -91,7 +97,11 @@ theorem truncMono_eq_zero {p : ℕ} [Fact p.Prime] {k A : Type} [Field k] [CommR
       rw [Ne, CharP.cast_eq_zero_iff k p]
       intro hdvd
       exact hi (Nat.eq_zero_of_dvd_of_lt hdvd hlt)
-    exact hc ((hunit.mul_left_eq_zero).mp hcoef.symm)
+    have hcoef' : F.coeff m * (((m - Finsupp.single i 1 : Fin d →₀ ℕ) i : B) + 1) = 0 := by
+      have hmi' : m i - 1 = (m - Finsupp.single i 1 : Fin d →₀ ℕ) i := by
+        omega
+      simpa only [← hmi'] using hcoef.symm
+    exact hc ((hunit.mul_left_eq_zero).mp hcoef')
 
 end GlobalTheory
 
@@ -110,12 +120,13 @@ theorem truncMono_linearIndependent : ∀ (p : ℕ) [Fact p.Prime] (k A : Type) 
     have := congrArg (fun f : Fin d →₀ ℕ => f i) hab
     simpa [toF] using this
   let F : MvPolynomial (Fin d) B := ∑ a, monomial (toF a) (g a)
-  have hcoeff : ∀ m, coeff m F = ∑ a, if toF a = m then g a else 0 := by
+  have hcoeff : ∀ m, AddMonoidAlgebra.coeff F m = ∑ a, if toF a = m then g a else 0 := by
     intro m
     simp only [F, coeff_sum, coeff_monomial]
   have hF : aeval x F = 0 := by
     rw [← hg]
-    simp only [F, map_sum, aeval_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, map_sum, aeval_monomial]
     refine Finset.sum_congr rfl (fun a _ => ?_)
     rw [Finsupp.prod_fintype _ _ (fun i => pow_zero _), Subalgebra.smul_def]
     rfl
@@ -134,8 +145,12 @@ theorem truncMono_linearIndependent : ∀ (p : ℕ) [Fact p.Prime] (k A : Type) 
     simp [toF, (a i).isLt.le]
   intro a
   have := hcoeff (toF a)
-  rw [hF0, coeff_zero] at this
+  rw [hF0] at this
+  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at this
   simp_rw [hinj.eq_iff] at this
+  have hsum : (∑ b : Fin d → Fin p, if b = a then g b else 0) = g a := by
+    simp
+  rw [hsum] at this
   simpa using this.symm
 
 end GlobalTheory

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Columns
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PadicNormDetLatticeBasisEqDetIdealNormStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Columns
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PadicNormDetLatticeBasisEqDetIdealNormStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions
 
 namespace GlobalTheory.SatakeUnitDeterminantBasis

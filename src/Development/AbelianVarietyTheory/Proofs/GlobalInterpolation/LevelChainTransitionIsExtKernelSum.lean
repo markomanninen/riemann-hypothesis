@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
+
+@[expose] public section
+
 open Formalism.BasicNotions Classical NumberField GlobalTheory.LvT
 open Formalism.MainNotions.product_first_zeroth_parts (Ow tops wsum ten blk nfAll CSpan IntSpan Nm_succ wSh cTw)
 
@@ -13,8 +18,9 @@ theorem isExt_KT : ∀ (D : D7) (u : D.what₂.Word) (X : Ch D u) (i : ℕ) (M :
     rw [Submodule.coe_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [hΦ.1 c, K.Kmap_eq, Submodule.coe_smul]
-  · simp only [map_sum, map_smul]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    rw [hK g']
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, map_smul]
+      refine Finset.sum_congr rfl fun c _ => ?_
+      rw [hK g']
 
 end GlobalTheory.LvT

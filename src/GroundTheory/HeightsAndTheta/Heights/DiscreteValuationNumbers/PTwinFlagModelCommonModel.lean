@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisExtra
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerSide
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerTail
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerRest
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSub
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSubAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisExtra
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerSide
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerTail
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerRest
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSub
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSubAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR

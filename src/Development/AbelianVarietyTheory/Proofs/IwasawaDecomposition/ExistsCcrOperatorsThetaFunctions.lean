@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCCRXOpDOp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCCRXOpDOp
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ theorem exists_restrict {Θ M : Type} [AddCommGroup Θ] [Module ℂ Θ] [AddComm
     ∃ a : Module.End ℂ Θ, ∀ f, j (a f) = A (j f) := by
   choose a ha using hA
   exact ⟨{ toFun := a
-           map_add' := fun f g => hj (by simp only [map_add, ha])
+           map_add' := fun f g => hj (by simp only [map_add (f := _), ha])
            map_smul' := fun c f => hj (by simp only [map_smul, ha, RingHom.id_apply]) }, ha⟩
 
 theorem isCCR_restrict {Θ M κ : Type} [DecidableEq κ] [AddCommGroup Θ] [Module ℂ Θ] [AddCommGroup M] [Module ℂ M]
@@ -27,8 +31,8 @@ theorem isCCR_restrict {Θ M κ : Type} [DecidableEq κ] [AddCommGroup Θ] [Modu
     rw [this]
     split_ifs <;> simp
 
-open Matrix GlobalTheory.RealWeil in
 
+open Matrix GlobalTheory.RealWeil in
 theorem exists_ops {ι : Type} [Fintype ι] [DecidableEq ι] (H : Matrix ι ι ℂ) (hH : Hᴴ = H) (hd : H.det ≠ 0)
     {B : Type} [NormedAddCommGroup B] [NormedSpace ℂ B] (ρ : (ι → ℂ) → B →L[ℂ] B)
     (hρ : IsHeis (fun x y => (star y ⬝ᵥ H *ᵥ x).im) ρ) {Θ : Type} [AddCommGroup Θ] [Module ℂ Θ] (J : Θ →ₗ[ℂ] B)
@@ -51,13 +55,14 @@ theorem exists_ops {ι : Type} [Fintype ι] [DecidableEq ι] (H : Matrix ι ι �
     refine ⟨(-(1 / (4 * Real.pi)) : ℂ) • (g₁ + Complex.I • g₂), Subtype.ext ?_⟩
     rw [hd₀]
     change J _ = dOp ρ H k (J f)
-    rw [dOp, map_smul, map_add, map_smul, e₁, e₂]
+    rw [dOp, map_smul, map_add (f := _), map_smul, e₁, e₂]
   choose x hx using h1
   choose d hd' using h2
   refine ⟨x, d, isCCR_restrict j hj hx hd' hc, fun X f => ?_⟩
   have ex : ∀ k f, J (x k f) = xOp ρ k (J f) := fun k f => (congrArg Subtype.val (hx k f)).trans (hx₀ k _)
   have ed : ∀ k f, J (d k f) = dOp ρ H k (J f) := fun k f => (congrArg Subtype.val (hd' k f)).trans (hd₀ k _)
-  simp only [nOp, LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply, map_sum, map_smul, ex, ed]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [nOp, LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply, map_sum, map_smul, ex, ed]
 
 end GlobalTheory.Mem.Lift.ThOps
 
@@ -67,8 +72,8 @@ open scoped TensorProduct ContDiff Topology
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open scoped Classical
 
-open GlobalTheory.RealWeil in
 
+open GlobalTheory.RealWeil in
 theorem GlobalTheory.Mem.Lift.exists_isCCR_theta : ∀ (D : D7) (θ : InfF D) (σ : (D.what₂.Tau → ℂ) →+ AE D), GlobalTheory.FockCompare.Chart θ σ → ∀ (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1)) (S T : HSp D), ∃ x d : GlobalTheory.RealWeil.Ix S T → Module.End ℂ (GlobalTheory.RealWeil.thetaSub ψ S T), IsCCR x d ∧ ∀ (X : Matrix (GlobalTheory.RealWeil.Ix S T) (GlobalTheory.RealWeil.Ix S T) ℂ) (f : GlobalTheory.RealWeil.thetaSub ψ S T) (F : GlobalTheory.RealWeil.BB ψ S T), (F.1 : WO S T → ℂ) = f.1 → ((∑ k, ∑ l, X k l • (x k * d l)) f).1 = (nOp (GlobalTheory.RealWeil.rhoV hψ σ S T) (GlobalTheory.RealWeil.HM S T) X F).1 := by
   intro D θ σ h ψ hψ S T
   let J : thetaSub ψ S T →ₗ[ℂ] BB ψ S T :=

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.AdKMeasurePreserving
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PSpecB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.AdKMeasurePreserving
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PSpecB
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +24,6 @@ theorem toMK_inv_eq_conjTranspose {ε : Fin n → Bool} (k : KG ε) : toMK k⁻�
 theorem conj_pmat_eq_adK {ε : Fin n → Bool} (k : KG ε) (z : PCoord ε → ℂ) :
     toMK k⁻¹ * pmat z * toMK k = pmat (adK k⁻¹ z) := by
   rw [pmat_adK, toMK_inv_eq_conjTranspose, Matrix.conjTranspose_conjTranspose]
-
-theorem pmat_real_smul {ε : Fin n → Bool} (t : ℝ) (z : PCoord ε → ℂ) :
-    pmat ((t : ℂ) • z) = (t : ℂ) • pmat z := by
-  rw [Complex.coe_smul, adKAux_pmat_smul]
 
 theorem rhoP_real_smul {ε : Fin n → Bool} (t : ℝ) (z : PCoord ε → ℂ) : rhoP ((t : ℂ) • z) = |t| * rhoP z := by
   have hS : ∑ ab, ‖((t : ℂ) • z) ab‖ ^ 2 = t ^ 2 * ∑ ab, ‖z ab‖ ^ 2 := by

@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ConnectionKillsSeries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogInv
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeExp
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ConnectionKillsSeries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogInv
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeExp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,9 +20,10 @@ section VF
 variable {k : Type} [CommRing k] {τ : Type} [Fintype τ]
 
 theorem vf_vf (c c' : τ → MvPowerSeries τ k) (G : MvPowerSeries τ k) :
-    vf c (vf c' G) = vf (fun t => vf c (c' t)) G + ∑ s, ∑ t, c s * c' t * pderiv k s (pderiv k t G) := by
+    vf c (vf c' G) = vf (fun t => vf c (c' t)) G + ∑ s, ∑ t, c s * c' t * pderiv (R := k) s (pderiv (R := k) t G) := by
   unfold vf
-  simp only [map_sum, Derivation.leibniz, smul_eq_mul, mul_add, Finset.sum_add_distrib, Finset.sum_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Derivation.leibniz, smul_eq_mul, mul_add, Finset.sum_add_distrib, Finset.sum_mul, Finset.mul_sum]
   rw [add_comm]
   congr 1
   · rw [Finset.sum_comm]
@@ -28,8 +33,8 @@ theorem vf_vf (c c' : τ → MvPowerSeries τ k) (G : MvPowerSeries τ k) :
 theorem vf_comm (c c' : τ → MvPowerSeries τ k) (G : MvPowerSeries τ k) :
     vf c (vf c' G) - vf c' (vf c G) = vf (fun t => vf c (c' t) - vf c' (c t)) G := by
   rw [vf_vf, vf_vf]
-  have h : ∑ s, ∑ t, c' s * c t * pderiv k s (pderiv k t G) =
-      ∑ s, ∑ t, c s * c' t * pderiv k s (pderiv k t G) := by
+  have h : ∑ s, ∑ t, c' s * c t * pderiv (R := k) s (pderiv (R := k) t G) =
+      ∑ s, ∑ t, c s * c' t * pderiv (R := k) s (pderiv (R := k) t G) := by
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun t _ => ?_
     rw [pderiv_comm]
@@ -76,13 +81,13 @@ private theorem cc_ev_lemma {m n : ℕ} {a : Fin m → Pt k n d} (ha : CZ a) (f 
   simpa using congrArg constantCoeff h1
 
 private theorem constantCoeff_pderiv_eq_coeff_single {σ : Type} (p : σ) (f : MvPowerSeries σ k) :
-    constantCoeff (pderiv k p f) = coeff (Finsupp.single p 1) f := by
+    constantCoeff (pderiv (R := k) p f) = coeff (Finsupp.single p 1) f := by
   rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.coeff_pderiv]
   simp
 
 private theorem pderiv_fin_one_ev (g : PS k 2 d) (b : Fin d) :
-    pderiv k ((0 : Fin 1), b) (ev (n := 1) ![pt k d 0, 0] g) =
-      ev (n := 1) ![pt k d 0, 0] (pderiv k ((0 : Fin 2), b) g) := by
+    pderiv (R := k) ((0 : Fin 1), b) (ev (n := 1) ![pt k d 0, 0] g) =
+      ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((0 : Fin 2), b) g) := by
   rw [pderiv_ev cz1, Fintype.sum_prod_type, Fin.sum_univ_two]
   simp [pt_apply, MvPowerSeries.pderiv_X, Pi.single_apply]
 
@@ -105,57 +110,57 @@ theorem ez_y (h : PS k 1 d) : ev (n := 1) ![pt k d 0, 0] (ev (n := 2) ![pt k d 1
   rw [e, ev_zeroFam]
 
 theorem d_y (h : PS k 1 d) (b : Fin d) :
-    pderiv k ((1 : Fin 2), b) (ev (n := 2) ![pt k d 1] h) = ev (n := 2) ![pt k d 1] (pderiv k ((0 : Fin 1), b) h) := by
+    pderiv (R := k) ((1 : Fin 2), b) (ev (n := 2) ![pt k d 1] h) = ev (n := 2) ![pt k d 1] (pderiv (R := k) ((0 : Fin 1), b) h) := by
   rw [pderiv_ev czY, Fintype.sum_prod_type, Fin.sum_univ_one]
   simp [pt_apply, MvPowerSeries.pderiv_X, Pi.single_apply]
 
 theorem d_F (h : PS k 1 d) (v : Fin 2 × Fin d) :
-    pderiv k v (ev (n := 2) ![G.F] h) = ∑ c, ev (n := 2) ![G.F] (pderiv k ((0 : Fin 1), c) h) * pderiv k v (G.F c) := by
+    pderiv (R := k) v (ev (n := 2) ![G.F] h) = ∑ c, ev (n := 2) ![G.F] (pderiv (R := k) ((0 : Fin 1), c) h) * pderiv (R := k) v (G.F c) := by
   rw [pderiv_ev (czFF (G := G)), Fintype.sum_prod_type, Fin.sum_univ_one]
   rfl
 
 theorem ez_Ar (j c : Fin d) : ev (n := 1) ![pt k d 0, 0] (Ar G j c) = Jac G j c := rfl
 
-theorem ez_dF (c b : Fin d) : ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), b) (G.F c)) = Jac G c b := rfl
+theorem ez_dF (c b : Fin d) : ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), b) (G.F c)) = Jac G c b := rfl
 
 theorem coeff_F_y (c i : Fin d) : coeff (Finsupp.single ((1 : Fin 2), i) 1) (G.F c) = if c = i then 1 else 0 := by
   have ha : CZ (![0, pt k d 0] : Fin 2 → Pt k 1 d) := CZ.cons cc_zero (CZ.cons (cc_pt 0) CZ.nil)
-  have h := congrArg (pderiv k ((0 : Fin 1), i)) (G.unit c)
+  have h := congrArg (pderiv (R := k) ((0 : Fin 1), i)) (G.unit c)
   rw [pderiv_ev ha, Fintype.sum_prod_type, Fin.sum_univ_two] at h
   simp [pt_apply, MvPowerSeries.pderiv_X, Pi.single_apply] at h
   rw [← constantCoeff_pderiv_eq_coeff_single, ← cc_ev_lemma ha, h]
   split_ifs <;> simp_all
 
 theorem cc_jac' (c i : Fin d) : constantCoeff (Jac G c i) = if c = i then 1 else 0 := by
-  show constantCoeff (ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (G.F c))) = _
+  show constantCoeff (ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), i) (G.F c))) = _
   rw [cc_ev_lemma cz1, constantCoeff_pderiv_eq_coeff_single, coeff_F_y G c i]
 
 theorem C_cc_jac (c i : Fin d) : (C (constantCoeff (Jac G c i)) : PS k 1 d) = if c = i then 1 else 0 := by
   rw [cc_jac' G c i]
   split_ifs <;> simp
 
-theorem cc_d_jac (b c i : Fin d) : constantCoeff (pderiv k ((0 : Fin 1), b) (Jac G c i)) =
+theorem cc_d_jac (b c i : Fin d) : constantCoeff (pderiv (R := k) ((0 : Fin 1), b) (Jac G c i)) =
     coeff (Finsupp.single ((0 : Fin 2), b) 1 + Finsupp.single ((1 : Fin 2), i) 1) (G.F c) := by
-  show constantCoeff (pderiv k ((0 : Fin 1), b)
-    (ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (G.F c)))) = _
+  show constantCoeff (pderiv (R := k) ((0 : Fin 1), b)
+    (ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), i) (G.F c)))) = _
   rw [pderiv_fin_one_ev, cc_ev_lemma cz1, constantCoeff_pderiv_eq_coeff_single, MvPowerSeries.coeff_pderiv]
   simp
 
 private theorem coeff_single_add_single_eq_constantCoeff_pderiv_pderiv (F : PS k 2 d) (b i : Fin d) :
     coeff (Finsupp.single ((0 : Fin 2), b) 1 + Finsupp.single ((1 : Fin 2), i) 1) F =
-      constantCoeff (pderiv k ((0 : Fin 2), b) (pderiv k ((1 : Fin 2), i) F)) := by
+      constantCoeff (pderiv (R := k) ((0 : Fin 2), b) (pderiv (R := k) ((1 : Fin 2), i) F)) := by
   rw [constantCoeff_pderiv_eq_coeff_single, MvPowerSeries.coeff_pderiv]
   simp
 
 private theorem pderiv_zero_ev_swap (g : PS k 2 d) (b : Fin d) :
-    pderiv k ((0 : Fin 2), b) (ev (n := 2) ![pt k d 1, pt k d 0] g) =
-      ev (n := 2) ![pt k d 1, pt k d 0] (pderiv k ((1 : Fin 2), b) g) := by
+    pderiv (R := k) ((0 : Fin 2), b) (ev (n := 2) ![pt k d 1, pt k d 0] g) =
+      ev (n := 2) ![pt k d 1, pt k d 0] (pderiv (R := k) ((1 : Fin 2), b) g) := by
   rw [pderiv_ev (CZ.cons (cc_pt 1) (CZ.cons (cc_pt 0) CZ.nil)), Fintype.sum_prod_type, Fin.sum_univ_two]
   simp [pt_apply, MvPowerSeries.pderiv_X, Pi.single_apply]
 
 private theorem pderiv_one_ev_swap (g : PS k 2 d) (b : Fin d) :
-    pderiv k ((1 : Fin 2), b) (ev (n := 2) ![pt k d 1, pt k d 0] g) =
-      ev (n := 2) ![pt k d 1, pt k d 0] (pderiv k ((0 : Fin 2), b) g) := by
+    pderiv (R := k) ((1 : Fin 2), b) (ev (n := 2) ![pt k d 1, pt k d 0] g) =
+      ev (n := 2) ![pt k d 1, pt k d 0] (pderiv (R := k) ((0 : Fin 2), b) g) := by
   rw [pderiv_ev (CZ.cons (cc_pt 1) (CZ.cons (cc_pt 0) CZ.nil)), Fintype.sum_prod_type, Fin.sum_univ_two]
   simp [pt_apply, MvPowerSeries.pderiv_X, Pi.single_apply]
 
@@ -167,25 +172,26 @@ theorem kappa_symm (b i c : Fin d) :
   rw [pderiv_one_ev_swap, pderiv_zero_ev_swap, cc_ev_lemma (CZ.cons (cc_pt 1) (CZ.cons (cc_pt 0) CZ.nil)), pderiv_comm]
 
 theorem T_eq (b i j : Fin d) :
-    ∑ c, Jac G c b * pderiv k ((0 : Fin 1), c) (Jac G j i) =
-      ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), b) (Ar G j i)) +
-      ∑ c, Jac G j c * C (constantCoeff (pderiv k ((0 : Fin 1), b) (Jac G c i))) := by
-  have h := congrArg (fun f => ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), b) f)) (jac_F G j i)
-  simp only [d_F, map_sum, Derivation.leibniz, smul_eq_mul, ev_sum cz1, ev_add cz1, ev_mul cz1, ezF, ez_dF, d_y,
+    ∑ c, Jac G c b * pderiv (R := k) ((0 : Fin 1), c) (Jac G j i) =
+      ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), b) (Ar G j i)) +
+      ∑ c, Jac G j c * C (constantCoeff (pderiv (R := k) ((0 : Fin 1), b) (Jac G c i))) := by
+  have h := congrArg (fun f => ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), b) f)) (jac_F G j i)
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [d_F, map_sum, Derivation.leibniz, smul_eq_mul, ev_sum cz1, ev_add cz1, ev_mul cz1, ezF, ez_dF, d_y,
     ez_y, ez_Ar, C_cc_jac, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
     Finset.mem_univ, if_true] at h
-  have e : ∑ c, Jac G c b * pderiv k ((0 : Fin 1), c) (Jac G j i) =
-      ∑ c, pderiv k ((0 : Fin 1), c) (Jac G j i) * Jac G c b :=
+  have e : ∑ c, Jac G c b * pderiv (R := k) ((0 : Fin 1), c) (Jac G j i) =
+      ∑ c, pderiv (R := k) ((0 : Fin 1), c) (Jac G j i) * Jac G c b :=
     Finset.sum_congr rfl fun _ _ => mul_comm _ _
   rw [e, h]
   ring
 
 theorem T_symm (b i j : Fin d) :
-    ∑ c, Jac G c b * pderiv k ((0 : Fin 1), c) (Jac G j i) = ∑ c, Jac G c i * pderiv k ((0 : Fin 1), c) (Jac G j b) := by
+    ∑ c, Jac G c b * pderiv (R := k) ((0 : Fin 1), c) (Jac G j i) = ∑ c, Jac G c i * pderiv (R := k) ((0 : Fin 1), c) (Jac G j b) := by
   rw [T_eq G b i j, T_eq G i b j]
   congr 1
-  · show ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), b) (pderiv k ((1 : Fin 2), i) (G.F j))) =
-      ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (pderiv k ((1 : Fin 2), b) (G.F j)))
+  · show ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), b) (pderiv (R := k) ((1 : Fin 2), i) (G.F j))) =
+      ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), i) (pderiv (R := k) ((1 : Fin 2), b) (G.F j)))
     rw [pderiv_comm]
   · refine Finset.sum_congr rfl fun c _ => ?_
     rw [cc_d_jac G b c i, cc_d_jac G i c b, kappa_symm G b i c]
@@ -198,7 +204,7 @@ theorem dof_vf (v : Fin d → k) (g : PS k 1 d) : Dof G.F v g = vf (co G v) g :=
   rfl
 
 theorem vf_co_jac (u : Fin d → k) (j i : Fin d) :
-    vf (co G u) (Jac G j i) = ∑ b, C (u b) * ∑ c, Jac G c b * pderiv k ((0 : Fin 1), c) (Jac G j i) := by
+    vf (co G u) (Jac G j i) = ∑ b, C (u b) * ∑ c, Jac G c b * pderiv (R := k) ((0 : Fin 1), c) (Jac G j i) := by
   unfold vf co
   rw [Fintype.sum_prod_type, Fin.sum_univ_one]
   simp only [Finset.sum_mul, Finset.mul_sum]
@@ -207,7 +213,8 @@ theorem vf_co_jac (u : Fin d → k) (j i : Fin d) :
 
 private theorem vf_finset_sum {τ : Type} [Fintype τ] {ι : Type} (s : Finset ι) (c : τ → MvPowerSeries τ k)
     (f : ι → MvPowerSeries τ k) : vf c (∑ i ∈ s, f i) = ∑ i ∈ s, vf c (f i) := by
-  simp only [vf, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [vf, map_sum, Finset.mul_sum]
   rw [Finset.sum_comm]
 
 private theorem sum_mul_sum_symm_swap_of_symmetric {ι : Type} [Fintype ι] (x y : ι → PS k 1 d) (T : ι → ι → PS k 1 d)
@@ -223,7 +230,7 @@ theorem co_bracket (u v : Fin d → k) (p : Fin 1 × Fin d) :
   simp only [co, vf_finset_sum, vf_Cmul, vf_co_jac]
   rw [sub_eq_zero]
   exact sum_mul_sum_symm_swap_of_symmetric (fun i => C (v i)) (fun b => C (u b))
-    (fun b i => ∑ c, Jac G c b * pderiv k ((0 : Fin 1), c) (Jac G p.2 i)) (fun b i => T_symm G b i p.2)
+    (fun b i => ∑ c, Jac G c b * pderiv (R := k) ((0 : Fin 1), c) (Jac G p.2 i)) (fun b i => T_symm G b i p.2)
 
 theorem dof_comm_law (u v : Fin d → k) (g : PS k 1 d) : Dof G.F u (Dof G.F v g) = Dof G.F v (Dof G.F u g) := by
   simp only [dof_vf]

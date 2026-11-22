@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.BasicNotions
 open scoped ENNReal
 
@@ -23,7 +28,8 @@ theorem minor_smul_eq_rowSpace_of_cofVec_orth (K V : Type) [Field K] [NumberFiel
     intro b'; ext i j; simp
   have h0 : ∑ b, φ (u b) * Formalism.HermitianLatticeCounting.LatticeSumBounds.cofVec (Y.map (algebraMap (𝓞 K) K)) b = 0 := by
     have := congrArg φ hu
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     rw [← this]
     refine Finset.sum_congr rfl fun b' _ => ?_
     rw [hφ, mul_comm]
@@ -33,10 +39,12 @@ theorem minor_smul_eq_rowSpace_of_cofVec_orth (K V : Type) [Field K] [NumberFiel
   have h := congrFun ((Formalism.HermitianLatticeCounting.Final.LatticeSumBounds.kernelRowSpace K r (Y.map (algebraMap (𝓞 K) K))).2
     (fun b => φ (u b)) h0 b₀) b
   rw [hsub, ← RingHom.map_det, ← RingHom.map_adjugate] at h
-  rw [map_sub, sub_eq_zero, hφ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, sub_eq_zero, hφ, map_sum]
   simp only [Pi.smul_apply, smul_eq_mul] at h
   rw [h]
-  simp only [Matrix.vecMul, dotProduct, hφ, map_sum, RingHom.mapMatrix_apply, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.vecMul, dotProduct, hφ, map_sum, RingHom.mapMatrix_apply, Matrix.map_apply]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [mul_comm]
   congr 1

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -10,7 +14,8 @@ theorem matAct_comp_linear {R M N : Type*} [CommRing R] [AddCommGroup M] [Module
     [AddCommGroup N] [Module R N] {n : ℕ} (A : Matrix (Fin n) (Fin n) R) (f : M →ₗ[R] N)
     (v : Fin n → M) : matAct (M := N) A (fun i => f (v i)) = fun i => f (matAct (M := M) A v i) := by
   funext i
-  simp [matAct, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [matAct, map_sum, map_smul]
 
 theorem matAct_self_apply {R : Type*} [CommRing R] {n : ℕ} (A : Matrix (Fin n) (Fin n) R)
     (v : Fin n → R) : matAct (M := R) A v = A.mulVec v := by

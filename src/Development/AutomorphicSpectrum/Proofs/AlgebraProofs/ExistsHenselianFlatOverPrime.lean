@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHens
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHens
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.CommAlg
 

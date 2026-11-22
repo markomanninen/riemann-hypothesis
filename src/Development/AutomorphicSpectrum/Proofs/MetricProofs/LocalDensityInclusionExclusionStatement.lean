@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalDensityInclusionExclusion
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.ConvExpandStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalDensityInclusionExclusion
+public import ReciprocityTheory.AnalyticForms.LeviForms.ConvExpandStatement
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

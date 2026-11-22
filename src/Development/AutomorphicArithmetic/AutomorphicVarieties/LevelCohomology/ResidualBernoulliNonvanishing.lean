@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.UnramifiedCocycleIsCoboundaryOfBernoulliUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Counts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LemmaK
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsPrimitiveRootPow
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.HomKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.GalBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.NormO
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BOneSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.UnramifiedCocycleIsCoboundaryOfBernoulliUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Counts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LemmaK
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsPrimitiveRootPow
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.HomKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.GalBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.NormO
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BOneSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Odd UpperTheory.V.ML UpperTheory.V.X
 
@@ -66,7 +70,7 @@ private theorem red_chi (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure �
   show red (algebraMap ℤ_[l] O x) = a
   rw [← (CharP.natCast_eq_natCast k l).2 h3]
   conv_lhs => rw [h5]
-  simp only [map_add, map_mul, map_natCast, pow_one, CharP.cast_eq_zero, mul_zero, zero_add]
+  simp only [map_add (f := _), map_mul, map_natCast, pow_one, CharP.cast_eq_zero, mul_zero, zero_add]
 
 private theorem red_ne_one {O k : Type} [CommRing O] [IsDomain O] [Field k] (l : ℕ) [CharP k l] (red : O →+* k) (x : O) (n : ℕ)
     (hn : ¬ l ∣ n) (hx : x ^ n = 1) (h1 : x ≠ 1) : red x ≠ 1 := by
@@ -76,7 +80,8 @@ private theorem red_ne_one {O k : Type} [CommRing O] [IsDomain O] [Field k] (l :
     rw [hx, sub_self] at this
     exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 h1)
   have := congrArg red hs
-  simp only [map_sum, map_pow, h, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one, map_zero] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_pow, h, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one, map_zero] at this
   exact hn ((CharP.cast_eq_zero_iff k l n).1 this)
 
 private theorem sum_units {R : Type} [CommRing R] {N : ℕ} [NeZero N] (ψ : DirichletCharacter R N) (f : ZMod N → R) :
@@ -226,7 +231,8 @@ theorem UpperTheory.V.X.residual_bernoulli_nonvanishing :
         Bern.genB 1 (χ⁻¹.ringHomComp c.O.val.toRingHom : ZMod N → PadicAlgCl l) := by
       have e1 : c.O.val (∑ b : (ZMod N)ˣ, (B4.Eone N a b : c.O) * χ⁻¹ b) =
           c.O.val u * Bern.genB 1 (χ⁻¹.ringHomComp c.O.val.toRingHom : ZMod N → PadicAlgCl l) := by
-        rw [hu, map_sub, map_one, map_mul, map_natCast, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hu, map_sub, map_one, map_mul, map_natCast, map_sum]
         refine Eq.trans (Finset.sum_congr rfl fun b _ => ?_) h1
         rw [map_mul, map_intCast]
         rfl
@@ -251,7 +257,8 @@ theorem UpperTheory.V.X.residual_bernoulli_nonvanishing :
       rw [mul_assoc]
       linear_combination (-red (χ⁻¹ b)) * h1 - z ((σ b)⁻¹ * (u * σ b)) * h2
     refine (mul_eq_zero.1 (Eq.trans ?_ h)).resolve_left hS
-    rw [map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_mul, map_intCast, zsmul_eq_mul, mul_assoc, ← hv]
   refine ⟨z (σ b₀) / ((γ (σ b₀) : k) - 1), fun g => ?_⟩

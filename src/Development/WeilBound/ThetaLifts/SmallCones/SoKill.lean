@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.SoDefs
-import Development.WeilBound.ThetaLifts.SmallCones.SoStab
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.SoDefs
+public import Development.WeilBound.ThetaLifts.SmallCones.SoStab
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,7 +162,7 @@ theorem so_kill (hL : LinEx) {B : Base F E} {r s r' s' : ℕ} (hB : B.IsGood σ)
     { toFun := fun φ' => L (tens (evFin F v) φ' r)
       map_add' := fun a b => by
         have e : tens (evFin F v) (a + b) r = tens (evFin F v) a r + tens (evFin F v) b r := funext fun _ => add_mul _ _ _
-        rw [e, map_add]
+        rw [e, map_add (f := _)]
       map_smul' := fun c a => by
         have e : tens (evFin F v) (c • a) r = c • tens (evFin F v) a r := funext fun _ => mul_assoc _ _ _
         rw [e, map_smul]
@@ -191,7 +195,7 @@ theorem so_kill (hL : LinEx) {B : Base F E} {r s r' s' : ℕ} (hB : B.IsGood σ)
       have := sub_ne_zero.2 hne
       field_simp
       ring
-    rw [k3, map_add, AddChar.map_add_eq_mul] at k2
+    rw [k3, map_add (f := _), AddChar.map_add_eq_mul] at k2
     refine hs₀ ((mul_eq_right₀ fun e0 => ?_).1 k2)
     have := GlobalTheory.StdCharFromIsStd.norm_psi hB.std (liftV v (a.2.2 * (s₀ / (b - a.2.2))))
     rw [e0, norm_zero] at this

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.TwTrSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.TwTrSum
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.GuLine
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.GuLine
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,15 +28,15 @@ theorem dv_coeff_mul_eq_zero_of_lt_order {R : Type*} [CommRing R] {σ : Type*} (
 
 theorem dv_pderiv_subst_coe {R : Type*} [CommRing R] {σ : Type*} {a : MvPowerSeries σ R}
     (ha : PowerSeries.HasSubst a) (P : Polynomial R) (i : σ) :
-    MvPowerSeries.pderiv R i (PowerSeries.subst a (P : PowerSeries R)) =
-      PowerSeries.subst a (PowerSeries.derivative R (P : PowerSeries R)) * MvPowerSeries.pderiv R i a := by
+    MvPowerSeries.pderiv (R := R) i (PowerSeries.subst a (P : PowerSeries R)) =
+      PowerSeries.subst a (PowerSeries.derivative (R := R) (P : PowerSeries R)) * MvPowerSeries.pderiv (R := R) i a := by
   rw [PowerSeries.derivative_coe, PowerSeries.subst_coe ha, PowerSeries.subst_coe ha,
     Derivation.comp_aeval_eq, smul_eq_mul]
 
 theorem pderiv_subst {R : Type*} [CommRing R] {σ : Type*} {a : MvPowerSeries σ R}
     (ha : PowerSeries.HasSubst a) (f : PowerSeries R) (i : σ) :
-    MvPowerSeries.pderiv R i (PowerSeries.subst a f) =
-      PowerSeries.subst a (PowerSeries.derivative R f) * MvPowerSeries.pderiv R i a := by
+    MvPowerSeries.pderiv (R := R) i (PowerSeries.subst a f) =
+      PowerSeries.subst a (PowerSeries.derivative (R := R) f) * MvPowerSeries.pderiv (R := R) i a := by
   rw [← sub_eq_zero]
   ext e
   rw [map_zero]
@@ -40,29 +44,29 @@ theorem pderiv_subst {R : Type*} [CommRing R] {σ : Type*} {a : MvPowerSeries σ
   set g : PowerSeries R := PowerSeries.mk fun n => PowerSeries.coeff (n + m) f
   have hf : f = ((PowerSeries.trunc m f : Polynomial R) : PowerSeries R) + PowerSeries.X ^ m * g := by
     ext n
-    rw [map_add, Polynomial.coeff_coe, PowerSeries.coeff_trunc, PowerSeries.coeff_X_pow_mul']
+    rw [map_add (f := _), Polynomial.coeff_coe, PowerSeries.coeff_trunc, PowerSeries.coeff_X_pow_mul']
     by_cases hn : n < m
     · simp [hn, not_le.mpr hn]
     · simp [hn, not_lt.mp hn, g, Nat.sub_add_cancel (not_lt.mp hn)]
-  have key : MvPowerSeries.pderiv R i (PowerSeries.subst a f) -
-      PowerSeries.subst a (PowerSeries.derivative R f) * MvPowerSeries.pderiv R i a =
-      a ^ m * (MvPowerSeries.pderiv R i (PowerSeries.subst a g) -
-        PowerSeries.subst a (PowerSeries.derivative R g) * MvPowerSeries.pderiv R i a) := by
+  have key : MvPowerSeries.pderiv (R := R) i (PowerSeries.subst a f) -
+      PowerSeries.subst a (PowerSeries.derivative (R := R) f) * MvPowerSeries.pderiv (R := R) i a =
+      a ^ m * (MvPowerSeries.pderiv (R := R) i (PowerSeries.subst a g) -
+        PowerSeries.subst a (PowerSeries.derivative (R := R) g) * MvPowerSeries.pderiv (R := R) i a) := by
     have hc : PowerSeries.subst a ((m : PowerSeries R)) = (m : MvPowerSeries σ R) := by
       rw [← map_natCast (PowerSeries.C (R := R)), PowerSeries.subst_C, map_natCast]
     conv_lhs => rw [hf]
-    simp only [map_add, Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul, nsmul_eq_mul,
+    simp only [map_add (f := _), Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul, nsmul_eq_mul,
       PowerSeries.derivative_X, mul_one]
     simp only [PowerSeries.subst_add ha, PowerSeries.subst_mul ha, PowerSeries.subst_pow ha,
       PowerSeries.subst_X ha, hc]
-    simp only [map_add, Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul, nsmul_eq_mul,
+    simp only [map_add (f := _), Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul, nsmul_eq_mul,
       dv_pderiv_subst_coe ha]
     ring
   rw [key]
   exact dv_coeff_mul_eq_zero_of_lt_order _ _ e hm
 
 theorem derivative_flog (W : WeierstrassCurve ℂ_[p]) (wq : PowerSeries ℂ_[p]) :
-    PowerSeries.derivative ℂ_[p] (flog W wq) = omegaW W wq := by
+    PowerSeries.derivative (R := ℂ_[p]) (flog W wq) = omegaW W wq := by
   ext n
   rw [PowerSeries.coeff_derivative, flog, PowerSeries.coeff_mk, if_neg (Nat.succ_ne_zero n),
     Nat.add_sub_cancel]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -52,7 +56,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.tower :
   intro K _ _ μ _ E hEm hE Ψ hΨm hΨ
   haveI : Countable (Gam K (2 + 2)) := inferInstance
   have hD := isFundamentalDomain_fundamentalDomain (Gam K (2 + 2)) μ
-  rw [← lintegral_indicator hEm, hD.lintegral_eq_tsum'', ← lintegral_tsum]
+  set_option synthInstance.maxHeartbeats 200000 in
+    rw [← lintegral_indicator hEm, hD.lintegral_eq_tsum'', ← lintegral_tsum]
   · refine lintegral_congr fun y => ?_
     exact (tower_point (Gam K (2 + 2)) (ParΓ K 2 2) E hE Ψ hΨ y).symm
   · intro γ

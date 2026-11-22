@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActPMemLocPDelStdOfIsBasisAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TransportedLatticeLocalizationFreeLeCoefficientS
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActPMemLocPDelStdOfIsBasisAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TransportedLatticeLocalizationFreeLeCoefficientS
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,13 @@ theorem nabStd_le_locP (h : NablaMemDeltaLocallyAtLargePrime) {ι : Type} [Finty
   rintro _ ⟨f, hf, rfl⟩
   exact GlobalTheory.TestLat.WeylLocal.ten_mem_locP w _ f fun τ => nablaSq_le_locP h (lam τ) hp w hw (hs τ) (hf τ)
 
-theorem nabLeDel_of_local (h : NablaMemDeltaLocallyAtLargePrime) : GlobalTheory.ColPeriod.NabLeDel := by
-  intro K _ _ ι _ n lam M hM p w hp hw hs x hx
+theorem nabLeDel_of_local (h : NablaMemDeltaLocallyAtLargePrime)
+    (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n)
+    (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ))
+    (p : ℕ) (w : HeightOneSpectrum (𝓞 K)) (hp : p.Prime) (hw : (p : 𝓞 K) ∈ w.asIdeal)
+    (hs : ∀ τ, (lam τ).spread < p) :
+    localization₂ w.asIdeal (nabK lam M) ≤ localization₂ w.asIdeal (delK lam M) := by
+  intro x hx
   choose B hB using fun τ => GlobalTheory.LatBasisAt.basisAtEx K n (M τ) (hM τ) w
   have h1 := GlobalTheory.TransLoc.nabDelLoc_free_leVV.1 K ι n lam M hM w B hB
   have hx' : x.1 ∈ localization₂ w.asIdeal (nabP lam M) := hx

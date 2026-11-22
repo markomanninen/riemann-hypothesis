@@ -1,4 +1,8 @@
-import Formalism.FormalDegreeBessel.StatementWR
+module
+
+public import Formalism.FormalDegreeBessel.StatementWR
+
+@[expose] public section
 
 open scoped ContDiff
 
@@ -15,12 +19,12 @@ theorem isOpen_omX (m : ℕ) : IsOpen (OmX m) := by
   rw [Set.setOf_forall]
   exact isOpen_iInter_of_finite fun l => isOpen_ne_fun (continuous_apply l) continuous_const
 
-theorem coord_contDiff (l : Fin m) : ContDiff ℝ ∞ (fun x : Fin m → ℂ => x l) := contDiff_apply ℝ ℂ l
+theorem coord_contDiff (l : Fin m) : ContDiff ℝ ∞ (fun x : Fin m → ℂ => x l) := contDiff_apply ℝ (fun _ => ℂ) l
 
 theorem conjCoord_contDiff (l : Fin m) : ContDiff ℝ ∞ (fun x : Fin m → ℂ => star (x l)) := by
   first
-  | exact ContDiff.star (contDiff_apply ℝ ℂ l)
-  | exact (Complex.conjCLE.contDiff).comp (contDiff_apply ℝ ℂ l)
+  | exact ContDiff.star (contDiff_apply ℝ (fun _ => ℂ) l)
+  | exact (Complex.conjCLE.contDiff).comp (contDiff_apply ℝ (fun _ => ℂ) l)
 
 theorem fderiv_apply_contDiffOn {f : (Fin m → ℂ) → E} (hf : ContDiffOn ℝ ∞ f (OmX m))
     (v : Fin m → ℂ) : ContDiffOn ℝ ∞ (fun x => fderiv ℝ f x v) (OmX m) := by

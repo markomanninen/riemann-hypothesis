@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MuDvdOfDvdIterates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MuDvdOfDvdIterates
+
+@[expose] public section
 
 open CategoryTheory Opposite Matrix GlobalTheory GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
@@ -29,8 +33,8 @@ theorem frobenius_iterate_teichmuller (k : ℕ) (x : PreTilt O p) :
     rw [Function.iterate_succ_apply', ih, WittVector.frobenius_eq_map_frobenius,
       WittVector.map_teichmuller, frobenius_def, ← pow_mul, ← pow_succ]
 
-variable (p O) in
 
+variable (p O) in
 def ghostHom (n : ℕ) : Ainf p O →+* O where
   toFun := ghost p O n
   map_one' := by rw [ghost, iterate_map_one, map_one]
@@ -48,7 +52,8 @@ theorem ghost_succ_xi {ε : PreTilt O p} (hε : IsPrimitiveSystem ε) (k : ℕ) 
     rw [h0, one_pow]
   change ghostHom p O (k + 1) (xi ε) = p
   unfold xi
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_pow]
   change ∑ i ∈ Finset.range p, (ghost p O (k + 1) (WittVector.teichmuller p (root ε))) ^ i = p
   simp [h]

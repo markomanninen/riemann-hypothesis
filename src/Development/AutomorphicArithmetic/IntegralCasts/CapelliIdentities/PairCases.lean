@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.PairCases.pair_cases :
     ∀ {a b c d : @Units Complex (@Semiring.toMonoid Complex Complex.instSemiring)},

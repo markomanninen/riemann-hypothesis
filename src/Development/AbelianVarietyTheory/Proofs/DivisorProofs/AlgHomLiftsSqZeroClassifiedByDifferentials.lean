@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.LiftSys GlobalTheory.Published
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -54,8 +59,6 @@ theorem J.mem {h : Setup I π p α} (x : J h) : x.val ∈ I.map (algebraMap R B'
 
 def J.mk (h : Setup I π p α) (x : B') (hx : x ∈ I.map (algebraMap R B')) : J h := (⟨x, hx⟩ : ↥(I.map (algebraMap R B')))
 
-@[simp] theorem J.val_mk (h : Setup I π p α) (x : B') (hx) : (J.mk h x hx).val = x := rfl
-
 theorem J.ext {h : Setup I π p α} {x y : J h} (e : x.val = y.val) : x = y := Subtype.ext e
 
 @[simp] theorem J.val_add {h : Setup I π p α} (x y : J h) : (x + y).val = x.val + y.val := rfl
@@ -81,7 +84,7 @@ instance (h : Setup I π p α) : Module B₀ (J h) where
   smul_add x y z := J.ext (by rw [smul_val h (h.p_sec x), J.val_add, J.val_add, smul_val h (h.p_sec x),
     smul_val h (h.p_sec x), mul_add])
   add_smul x z y := J.ext (by
-    rw [smul_val h (b := h.sec x + h.sec z) (by rw [map_add, h.p_sec, h.p_sec]), J.val_add, smul_val h (h.p_sec x),
+    rw [smul_val h (b := h.sec x + h.sec z) (by rw [map_add (f := _), h.p_sec, h.p_sec]), J.val_add, smul_val h (h.p_sec x),
       smul_val h (h.p_sec z), map_add, add_mul])
   zero_smul y := J.ext (by rw [smul_val h (map_zero p), map_zero, zero_mul, J.val_zero])
 
@@ -98,7 +101,7 @@ theorem eq_on_ideal (h : Setup I π p α) (β : B →ₐ[R] B') (hβ : ∀ b, α
   refine Submodule.span_induction (p := fun z _ ↦ α z = β z) ?_ ?_ ?_ ?_ hx'
   · rintro z ⟨r, -, rfl⟩; rw [AlgHom.commutes, AlgHom.commutes]
   · rw [map_zero, map_zero]
-  · intro y z _ _ hy hz; rw [map_add, map_add, hy, hz]
+  · intro y z _ _ hy hz; rw [map_add (f := _), map_add (f := _), hy, hz]
   · intro c z hzI hz
     have hzI' : z ∈ I.map (algebraMap R B) := hzI
     rw [smul_eq_mul, map_mul, map_mul, hz]
@@ -165,17 +168,17 @@ def theta (h : Setup I π p α) (hπ : Function.Surjective π) (β : B →ₐ[R]
     (hβ : ∀ b, α b - β b ∈ I.map (algebraMap R B')) : Ω[B₀⁄R₀] →+ B' where
   toFun w := ((der h hπ β hβ).liftKaehlerDifferential w).val
   map_zero' := by rw [map_zero]; rfl
-  map_add' x y := by rw [map_add]; rfl
+  map_add' x y := by rw [map_add (f := _)]; rfl
 
 theorem isTheta_theta (h : Setup I π p α) (hπ : Function.Surjective π) (β : B →ₐ[R] B')
-    (hβ : ∀ b, α b - β b ∈ I.map (algebraMap R B')) : IsTheta I p α β (theta h hπ β hβ) where
-  smul b w := by
+    (hβ : ∀ b, α b - β b ∈ I.map (algebraMap R B')) : IsTheta I p α β (theta h hπ β hβ) := by
+  refine ⟨?_, ?_, fun w ↦ J.mem _⟩
+  · intro b w
     change ((der h hπ β hβ).liftKaehlerDifferential (p b • w)).val = _
     rw [LinearMap.map_smul, smul_val h rfl]; rfl
-  der b := by
+  · intro b
     change ((der h hπ β hβ).liftKaehlerDifferential (D R₀ B₀ (p b))).val = _
     rw [Derivation.liftKaehlerDifferential_comp_D, der_val]
-  mem w := J.mem _
 
 theorem theta_unique (h : Setup I π p α) {β : B →ₐ[R] B'} {θ₁ θ₂ : Ω[B₀⁄R₀] →+ B'}
     (h₁ : IsTheta I p α β θ₁) (h₂ : IsTheta I p α β θ₂) : θ₁ = θ₂ := by
@@ -187,7 +190,7 @@ theorem theta_unique (h : Setup I π p α) {β : B →ₐ[R] B'} {θ₁ θ₂ : 
     obtain ⟨b, rfl⟩ := h.surj y
     rw [h₁.der, h₂.der]
   · rw [map_zero, map_zero]
-  · intro y z _ _ hy hz; rw [map_add, map_add, hy, hz]
+  · intro y z _ _ hy hz; rw [map_add (f := _), map_add (f := _), hy, hz]
   · intro c z _ hz
     obtain ⟨b, rfl⟩ := h.surj c
     rw [h₁.smul, h₂.smul, hz]
@@ -197,23 +200,22 @@ def betaOf (h : Setup I π p α) (θ : Ω[B₀⁄R₀] →+ B') (hs : ∀ b w, �
   toFun b := α b - θ (D R₀ B₀ (p b))
   map_one' := by rw [map_one, map_one, Derivation.map_one_eq_zero, map_zero, sub_zero]
   map_mul' b c := by
-    rw [map_mul, map_mul, Derivation.leibniz, map_add, hs, hs]
+    rw [map_mul, map_mul, Derivation.leibniz, map_add (f := _), hs, hs]
     have := mul_eq_zero_of_mem h.sq (hm (D R₀ B₀ (p b))) (hm (D R₀ B₀ (p c)))
     linear_combination -this
   map_zero' := by rw [map_zero, map_zero, map_zero, map_zero, sub_zero]
   map_add' b c := by
-    rw [map_add, map_add, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _)]
     ring
   commutes' r := by
     rw [AlgHom.commutes, h.semi.map_algebraMap, Derivation.map_algebraMap, map_zero, sub_zero]
 
 theorem isTheta_betaOf (h : Setup I π p α) (θ : Ω[B₀⁄R₀] →+ B') (hs : ∀ b w, θ (p b • w) = α b * θ w)
-    (hm : ∀ w, θ w ∈ I.map (algebraMap R B')) : IsTheta I p α (betaOf h θ hs hm) θ where
-  smul := hs
-  der b := by
-    change _ = α b - (α b - θ (D R₀ B₀ (p b)))
-    ring
-  mem := hm
+    (hm : ∀ w, θ w ∈ I.map (algebraMap R B')) : IsTheta I p α (betaOf h θ hs hm) θ := by
+  refine ⟨hs, ?_, hm⟩
+  intro b
+  change _ = α b - (α b - θ (D R₀ B₀ (p b)))
+  ring
 
 end GlobalTheory.LiftSys.SqZeroDiff
 

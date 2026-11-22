@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.GoodOfLpow
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.GoodOfLpow
+
+@[expose] public section
 
 noncomputable section
 

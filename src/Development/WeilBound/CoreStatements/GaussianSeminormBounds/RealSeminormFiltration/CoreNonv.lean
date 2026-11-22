@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreGraph
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDelta
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreProj
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreGraph
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDelta
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreProj
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,9 +130,11 @@ theorem conj_first_action_comm (a b : Ix p q) (P : Pol p q r s) :
     cjP (fockAct1 p q r s (Eab a b) P) = fockAct1 p q r s (Eab a b) (cjP P) := by
   rw [PI.FHS.fockAct1_eq, PI.FHS.omAct_apply, PI.FHS.omAct_apply]
   show MvPolynomial.map _ _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun l' _ => ?_
   change cjP _ = _
   rw [cjP_smul, cjP_omE]
@@ -148,7 +154,7 @@ private theorem fockInner_cjP_fockAct1_thetaM_adjoint {p q r s : ℕ} (Z : Mat p
   | h_zero =>
     simp [cjP, PI.FHS.fockInner_zero_left, PI.FHS.fockInner_zero_right]
   | h_add A B hA hB =>
-    rw [map_add, map_add, LinearMap.add_apply, cjP_add, PI.FHS.fockInner_add_left, hA, hB, map_add,
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, cjP_add, PI.FHS.fockInner_add_left, hA, hB, map_add (f := _),
       LinearMap.add_apply, PI.FHS.fockInner_add_right]
   | h_std_basis i j t =>
     have hE : Matrix.single i j t = t • Eab i j := by
@@ -211,7 +217,7 @@ theorem nontrivial_of_pair {p q r s : ℕ} (c : ℂ) (c0 : ℚ) (hc : c = c0) (h
     LinearMap.mk₂ ℂ (fun u v => fockInner (cjP (Ψ u)) v)
       (by
         intro u u' v
-        rw [map_add, cjP_add, PI.FHS.fockInner_add_left])
+        rw [map_add (f := _), cjP_add, PI.FHS.fockInner_add_left])
       (by
         intro t u v
         rw [map_smul, cjP_smul, PI.FHS.fockInner_smul_left, Complex.conj_conj]

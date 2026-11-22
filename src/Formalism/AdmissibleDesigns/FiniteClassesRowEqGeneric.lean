@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.LiftMapEquivariant
+module
+
+public import Formalism.AdmissibleDesigns.LiftMapEquivariant
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -41,7 +45,7 @@ theorem fs_eq {n : ℕ} (hn : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l i)) 
     Fs i dc VT VT' Dat n = FsG (Γ := ↥(Γn i dc n)) (eK (D.nbr i _ hn)) (Br.PD D.loc D.nbr i _ hn) (Br.iota D.nbr i _ hn) (Dat n) := by
   have key : fZ i dc n (Dat n).ρT' = finZ (eK (D.nbr i _ hn)) (Br.PD D.loc D.nbr i _ hn) (Dat n).ρT' (Br.iota D.nbr i _ hn) := by
     unfold fZ
-    rw [dif_pos hn]
+    rw [dite_eq_left hn]
   unfold Fs FsG Hf₂ finiteClassesContinuousMap fPre finiteClassesContinuous finPre
   rw [key]
 
@@ -50,7 +54,7 @@ theorem finite_classes_row_eq_generic {n : ℕ} (hn : K.plOf i dc n ∈ placesOv
       (resRep ρ₁ (Γn i dc n)) := by
   have key : fZ i dc n (locRep (resRep ρ₁ (Γn i dc n))) = finZ (eK (D.nbr i _ hn)) (Br.PD D.loc D.nbr i _ hn) (locRep (resRep ρ₁ (Γn i dc n))) (Br.iota D.nbr i _ hn) := by
     unfold fZ
-    rw [dif_pos hn]
+    rw [dite_eq_left hn]
   unfold Hf₁ finiteClassesContinuousLocal finiteClassesContinuousLattice finiteClassesContinuousMap fPre finiteClassesContinuous finPre
   rw [key]
   rfl
@@ -58,8 +62,8 @@ theorem finite_classes_row_eq_generic {n : ℕ} (hn : K.plOf i dc n ∈ placesOv
 variable (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i)))
   (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) (πx : D.nd.X i)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem rowLenD_eq_gen {n : ℕ} (hw : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l i)) :
     rowLenD i dc VT VT' Dat ρ₁ π vD hpD heD n =
       Module.length (D.nd.O i)
@@ -71,8 +75,8 @@ theorem rowLenD_eq_gen {n : ℕ} (hw : K.plOf i dc n ∈ placesOver D.host.E (D.
   unfold rowLenD
   exact len_congr (fs_eq i dc VT VT' Dat hw) (by unfold imRow; rw [finite_classes_row_eq_generic i dc ρ₁ hw]; rfl)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem rowLenD_eq {n : ℕ} (hw : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l i))
     [Module.Finite (D.nd.O i) T₁] [Module.Free (D.nd.O i) T₁]
     [Module.Finite (D.nd.O i) (Dat n).T'] [Module.Free (D.nd.O i) (Dat n).T']
@@ -97,8 +101,8 @@ theorem rowLenD_eq {n : ℕ} (hw : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l
       (Br.PD D.loc D.nbr i _ hw) (Br.iota D.nbr i _ hw) (Dat n) (resRep ρ₁ (Γn i dc n)) π (vD n) (hpD n) (heD n) hsp
       hbij hcobn htopV htop1)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem rowTie_disp (hπ : Function.Surjective π)
     (hSub : RowSub (ρ₁ := ρ₁) i dc r) (hOrb : RowOrb (ρ₁ := ρ₁) i dc)
     (hMat : RowMat i dc VT VT' Dat ρ πx) (hTop : RowTop i dc VT' (T₁ := T₁))
@@ -156,16 +160,6 @@ theorem rowTie_disp (hπ : Function.Surjective π)
   simp only [ENat.toNat_coe]
   exact hmk
 
-variable (lenRow : HeightOneSpectrum (𝓞 D.host.E) → ℚ) in
-
-theorem tieRow_disp (hG : K.SelfGood i) (hadm : TruncatedSeriesCountingIdentities.LengthBoundAtPlaces i r ρ πx dc lenRow) (hπ : Function.Surjective π)
-    (hSub : RowSub (ρ₁ := ρ₁) i dc r) (hOrb : RowOrb (ρ₁ := ρ₁) i dc)
-    (hMat : RowMat i dc VT VT' Dat ρ πx) (hTop : RowTop i dc VT' (T₁ := T₁))
-    (hFin : RowFin i dc VT VT' Dat (T₁ := T₁))
-    (hcob : ∀ n ∈ K.rowsN i dc, OrbC i dc (n := n) (Dat n).ρT') :
-    K.TieRow i dc (rowLenD i dc VT VT' Dat ρ₁ π vD hpD heD) lenRow := by
-  exact K.Sel.tieRow_rec i dc r ρ πx _ lenRow hG hadm
-    (rowTie_disp i dc VT VT' Dat ρ₁ π vD hpD heD r ρ πx hπ hSub hOrb hMat hTop hFin hcob)
 
 end Rec
 

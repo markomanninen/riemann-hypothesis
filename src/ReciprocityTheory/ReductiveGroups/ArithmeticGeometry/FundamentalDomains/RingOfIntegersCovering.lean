@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.BabaiCovering
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegralTraceNormBounds
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.BabaiCovering
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegralTraceNormBounds
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.RingOfIntegersCovering
 
@@ -22,10 +26,10 @@ theorem cover_OE (Z : VS E) :
   have hlam2 : lam ^ 2 = 4 * f * t⁻¹ := Real.sq_sqrt (by positivity)
   have hmin : ∀ x ∈ span ℤ (Set.range (bd E)), x ≠ 0 → lam ≤ ‖x‖ := by
     intro x hx hx0
-    have h := norm_bd_ge x hx hx0
-    rw [← hf_def, ← hD_def, htinv] at h
+    have hnorm := norm_bd_ge x hx hx0
+    rw [← hf_def, ← hD_def, htinv] at hnorm
     rw [hlam_def, ← Real.sqrt_sq (norm_nonneg x)]
-    exact Real.sqrt_le_sqrt h
+    exact Real.sqrt_le_sqrt hnorm
   obtain ⟨x, hx, hxb⟩ := BabaiCovering.cover (bas E) (bd E) inner_bas_bd lam hlam hmin Z
   obtain ⟨α, rfl⟩ := mem_span_bas hx
   refine ⟨α, ?_⟩

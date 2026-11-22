@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.FixedPointCriteria.IntDown
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.SplitUnitElements.IntE
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.FixedPointCriteria.IntDown
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.SplitUnitElements.IntE
+
+@[expose] public section
 
 open QuadraticAlgebra Matrix UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -13,7 +17,7 @@ theorem UpperTheory.V.Z.Sym.Loc.One.princ :
     obtain ⟨v, hv⟩ := hu
     rw [← hv]
     exact (Units.map (algebraMap O K).toMonoidHom v).ne_zero
-  have hg : PK.Gen1 O (ω : Etau K τ) := by
+  have hg : PK.Gen1 (O := O) (ω : Etau K τ) := by
     refine ⟨?_, ?_, ?_⟩
     · simpa [QuadraticAlgebra.trace] using hτ
     · exact ⟨1, by simp [QuadraticAlgebra.norm]⟩

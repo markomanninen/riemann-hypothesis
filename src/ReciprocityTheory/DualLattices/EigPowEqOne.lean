@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.IsUnitOfNotMem
+module
+
+public import ReciprocityTheory.DualLattices.IsUnitOfNotMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,7 +157,8 @@ theorem proj (p : ℕ) [Fact p.Prime] (hv : v.Integers R) (hpv : v (algebraMap R
   have hfrob : res hv ((∑ γ, (ψ i γ ^ (Fintype.card G - 1)) ^ p •
       (A γ).map (algebraMap ℤ_[p] R)) a b) =
       res hv ((∑ γ, ψ i γ ^ (Fintype.card G - 1) • (A γ).map (algebraMap ℤ_[p] R)) a b) ^ p := by
-    simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, map_sum, map_mul,
       map_pow]
     rw [sum_pow_char]
     refine Finset.sum_congr rfl fun γ _ => ?_

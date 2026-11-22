@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.InjSlicePf
+module
+
+public import Development.EtaleCohomology.KummerTheory.InjSlicePf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -131,7 +135,7 @@ def zAdj : (zFun : ((Over U)ᵒᵖ ⥤ A) ⥤ (Cᵒᵖ ⥤ A)) ⊣ (Functor.whis
         show zNatApp (zUnit P) X.unop ≫ zCoApp (zPre P) X.unop = 𝟙 _
         apply Sigma.hom_ext; intro s
         rw [ι_zNatApp_assoc]; erw [ι_zCoApp]; simp
-        all_goals rfl
+        exact (Category.comp_id (Sigma.ι (fun s : X.unop ⟶ U => P.obj (op (Over.mk s))) s)).symm
       right_triangle := by
         ext Q V
         simp only [NatTrans.comp_app, Functor.whiskerRight_app, Functor.associator_inv_app, Functor.whiskerLeft_app,

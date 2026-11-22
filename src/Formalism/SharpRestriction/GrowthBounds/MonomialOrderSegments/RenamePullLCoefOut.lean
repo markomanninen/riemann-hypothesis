@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.MonomialMemPolKSg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.MonomialMemPolKSg
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem pullL_coefOut (μ : D.EM) (Z : MvPolynomial (D.ML × Fin D.r) K) :
     D.pullL j (coefOut (D.outSeg j) μ Z) =
       ∑ α ∈ Z.support, if eOut (D.outSeg j) α = μ then monomial (D.pullE j α) (Z.coeff α) else 0 := by
   unfold coefOut
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun α _ => ?_
   split_ifs
   · rw [pullL, lsup_monomial, pullE_eIn, smul_monomial, smul_eq_mul, mul_one]
@@ -30,7 +35,8 @@ theorem pullL_coefOut (μ : D.EM) (Z : MvPolynomial (D.ML × Fin D.r) K) :
 
 theorem rename_pullL_coefOut (μ : D.EM) (Z : MvPolynomial (D.ML × Fin D.r) K) :
     rename (Prod.map (D.e0 j) id) (D.pullL j (coefOut (D.outSeg j) μ Z)) = coefOut (D.outSeg j) μ Z := by
-  rw [pullL_coefOut, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [pullL_coefOut, map_sum]
   unfold coefOut
   refine Finset.sum_congr rfl fun α _ => ?_
   split_ifs
@@ -47,7 +53,8 @@ theorem Th_eq (Z : MvPolynomial (D.ML × Fin D.r) K) :
       ∑ α ∈ Z.support, if eOut (D.outSeg j) α = μ then
         Z.coeff α • D.TT j cc PP (monomial (D.pullE j α) 1) else 0 := by
     intro μ
-    rw [pullL_coefOut, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pullL_coefOut, map_sum]
     refine Finset.sum_congr rfl fun α _ => ?_
     split_ifs
     · have : monomial (D.pullE j α) (Z.coeff α) = Z.coeff α • monomial (D.pullE j α) (1 : K) := by

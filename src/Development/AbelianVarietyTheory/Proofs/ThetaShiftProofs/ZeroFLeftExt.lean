@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PsiWeightZeroLinearCombination
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PsiWeightZeroLinearCombination
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace GlobalTheory.ToricData
 variable {K : Type} [CommRing K] [IsDomain K] {X : Type} [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X]
 variable (q : X → (FractionRing K)ˣ) (F : Type) [Field F] [Algebra (FractionRing K) F]
 
-omit [Module.Free ℤ X] [Module.Finite ℤ X] in
 
+omit [Module.Free ℤ X] [Module.Finite ℤ X] in
 theorem hom_eq_iff {F : Type} [Field F] {t t' : Multiplicative X →* Fˣ} :
     (∀ χ : X, t (Multiplicative.ofAdd χ) = t' (Multiplicative.ofAdd χ)) ↔ t = t' :=
   ⟨fun h => MonoidHom.ext fun χ => h χ.toAdd, fun h _ => h ▸ rfl⟩

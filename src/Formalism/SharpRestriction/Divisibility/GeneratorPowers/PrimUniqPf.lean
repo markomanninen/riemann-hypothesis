@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PrimUniqSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBTransport
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PrimUniqSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBTransport
+
+@[expose] public section
 
 set_option autoImplicit false
 

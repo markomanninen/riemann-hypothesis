@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -11,7 +16,7 @@ private lemma detC_img {S κ : Type} [CommRing S] [LinearOrder κ] {d : ℕ} (ρ
   have h := card_img e
   have hu : e = (img e).orderEmbOfFin h :=
     Finset.orderEmbOfFin_unique' h (fun x => by simp [img])
-  rw [detC, dif_pos h]
+  rw [detC, dite_eq_left h]
   congr 1
   ext a b
   simp only [Matrix.of_apply]
@@ -79,7 +84,8 @@ private lemma core (hDet : Det) (hK2 : KoszulBoundaryOfComponentMemIdeal) (hKS :
   refine iSup₂_le ?_
   rintro _ ⟨l, rfl⟩ _ ⟨x, hx, rfl⟩
   show act (r (ι l)) x ∈ _
-  rw [hrel l, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hrel l, map_sum, LinearMap.sum_apply]
   refine Submodule.sum_mem _ fun b _ => ?_
   rw [mul_comm, map_mul, Module.End.mul_apply]
   exact (le_iSup₂_of_le (f := fun (t : S) (_ : t ∈ Set.range fun j => r (ι (e0 j))) => M.map (act t))
@@ -102,13 +108,13 @@ theorem UpperTheory.Gal.productCup_of_system.koszulThree_of_det :
     have hex : ∃ i, e i = (e0 j).1 := ⟨j, rfl⟩
     have : hex.choose = j := e.injective hex.choose_spec
     simp only [ρ]
-    rw [dif_pos hex, this]
+    rw [dite_eq_left hex, this]
   have h2 : ∀ a, ρ (e0' a) = N a := fun a => by
     have hn : ¬ ∃ j, e j = (e0' a).1 := fun ⟨j, hj⟩ => hdis a j hj.symm
     have hex : ∃ i, e' i = (e0' a).1 := ⟨a, rfl⟩
     have : hex.choose = a := e'.injective hex.choose_spec
     simp only [ρ]
-    rw [dif_neg hn, dif_pos hex, this]
+    rw [dite_eq_right hn, dite_eq_left hex, this]
   have hρ : ∀ l b, ρ l b ∈ R := fun l b => by
     simp only [ρ]
     split_ifs with h h'

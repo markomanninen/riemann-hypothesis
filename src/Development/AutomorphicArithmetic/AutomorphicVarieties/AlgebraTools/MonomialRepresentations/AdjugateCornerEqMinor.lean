@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -129,7 +133,7 @@ private theorem separable_quartic_of_dsc_ne_zero {F : Type} [Field F] (b c d e :
   have hm : algebraMap F (AlgebraicClosure F) (dsc b c d e) = dsc (algebraMap F (AlgebraicClosure F) b)
       (algebraMap F (AlgebraicClosure F) c) (algebraMap F (AlgebraicClosure F) d)
       (algebraMap F (AlgebraicClosure F) e) := by
-    simp only [dsc, map_sub, map_add, map_mul, map_pow, map_ofNat]
+    simp only [dsc, map_sub, map_add (f := _), map_mul, map_pow, map_ofNat]
   rw [hm]
   simp [hf, IsRoot] at h0 h1
   have hd : algebraMap F (AlgebraicClosure F) d = -(4 * r ^ 3 + 3 * (algebraMap F (AlgebraicClosure F) b) * r ^ 2
@@ -208,7 +212,7 @@ theorem UpperTheory.V.AlgebraTools.disc4 :
     ring
   have hm3 : ∀ i j k, m3 A i j k = φ (m3 x i j k) * RatFunc.X ^ (w i + w j + w k) := by
     intro i j k
-    simp only [m3, hA, map_sub, map_add, map_mul, zpow_add₀ hX0]
+    simp only [m3, hA, map_sub, map_add (f := _), map_mul, zpow_add₀ hX0]
     ring
   have hdm : (x.map φ).det = φ x.det := by
     rw [RingHom.map_det]

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,9 +44,10 @@ def rayPrimes {K : Type} [Field K] [NumberField K] (𝔮 : Ideal (𝓞 K)) (X : 
 def NormOne (d M p : ℕ) : Prop :=
   ∃ A B : ℤ, A ^ 2 + (d : ℤ) * B ^ 2 = 4 * (p : ℤ) ∧ (M : ℤ) ∣ B ∧ (2 * (M : ℤ)) ∣ A - 2 - B
 
-open Classical in
 
-def normPrimes (d M : ℕ) (X Y : ℝ) : Finset ℕ :=
-  (Ioc ⌊X⌋₊ ⌊Y⌋₊).filter (fun p => p.Prime ∧ NormOne d M p)
+open Classical in
+def normPrimes (d M : ℕ) (X Y : ℝ) : Finset ℕ := by
+  classical
+  exact (Ioc ⌊X⌋₊ ⌊Y⌋₊).filter (fun p => p.Prime ∧ NormOne d M p)
 
 end GlobalTheory.Mem.An

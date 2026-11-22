@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl
@@ -21,7 +26,8 @@ theorem det_mul_eq_sum_mnr {R : Type} [CommRing R] {ι : Type} [Fintype ι] [Dec
       simp [Matrix.mul_apply, Finset.sum_apply]
     rw [this]
     rfl
-  rw [h1, MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, MultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [MultilinearMap.map_smul_univ]
   rfl

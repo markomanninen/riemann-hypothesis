@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddScalBound
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrames.GramSchmidtFramesLocal
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrames.GsFramesOfIso
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddScalBound
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrames.WbPartOfInWb
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSchmidtFrames.GsFramesOfIso
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

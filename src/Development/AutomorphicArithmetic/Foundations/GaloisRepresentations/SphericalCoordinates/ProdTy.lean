@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -60,7 +64,7 @@ theorem UpperTheory.Gal.W2.fibW_of :
     have hc1 : (evAt ty ev τ).card = n * ε τ := by simp [hcard, typeMult, h1, h2]
     have hc2 : (evAt ty ev (ComplexEmbedding.conjugate τ)).card =
         n * ε (ComplexEmbedding.conjugate τ) := by simp [hcard, typeMult, h3, h4]
-    rw [hA', hB', hrts, evFull, Multiset.map_add, Multiset.prod_add, Multiset.map_map]
+    rw [hA', hB', hrts, evFull, Multiset.map_add (f := _), Multiset.prod_add, Multiset.map_map]
     rcases (by omega : ε τ = 0 ∧ ε (ComplexEmbedding.conjugate τ) = 1 ∨
         ε τ = 1 ∧ ε (ComplexEmbedding.conjugate τ) = 0) with ⟨e1, e2⟩ | ⟨e1, e2⟩
     · rw [e1, Nat.mul_zero, Multiset.card_eq_zero] at hc1

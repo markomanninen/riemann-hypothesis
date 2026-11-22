@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Model
@@ -16,8 +21,8 @@ theorem isFractionRing_of_subalgebra {A K : Type*} [CommRing A] [IsDomain A] [Fi
     exact ⟨⟨algebraMap A B a, ⟨_, mem_nonZeroDivisors_of_ne_zero hs⟩⟩, h⟩
   · simpa using Subtype.ext h
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem DominatingDVR.proof (hKA : KrullAkizuki.Statement) (hBU : BlowUpChart.Statement) :
     DominatingDVR.Statement := by
   intro A _ _ _ _ hAf K _ _ _
@@ -80,7 +85,7 @@ theorem DominatingDVR.proof (hKA : KrullAkizuki.Statement) (hBU : BlowUpChart.St
   have hPbot : P ≠ ⊥ := by
     rintro rfl
     have hF : IsField R := by
-      rw [IsLocalRing.isField_iff_maximalIdeal_eq, ← hPc, Ideal.comap_bot_of_injective _ hinj]
+      rw [IsLocalRing.isField_iff_maximalIdeal_eq, ← hPc, Ideal.under_def, Ideal.comap_bot_of_injective _ hinj]
     have h0 := ringKrullDim_eq_zero_of_isField hF
     rw [hdimR] at h0
     exact one_ne_zero h0

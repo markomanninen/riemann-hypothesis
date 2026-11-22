@@ -1,18 +1,23 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergmanIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergmanDensIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BergmanNorms
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsBis
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalBergmanBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PUniformBergmanBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartBergmanBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartTaylorCover
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PComplexTaylorTwo
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPolydiscSubmean
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntegralOfBergman
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBergmanIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBergmanDensIntegrable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergmanIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergmanDensIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BergmanNorms
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsBis
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalBergmanBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PUniformBergmanBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartBergmanBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartTaylorCover
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PComplexTaylorTwo
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPolydiscSubmean
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntegralOfBergman
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBergmanIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBergmanDensIntegrable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

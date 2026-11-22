@@ -1,10 +1,14 @@
-import Development.EtaleCohomology.KummerTheory.InvOfField
-import Development.EtaleCohomology.KummerTheory.LocalHomotopyEtaleCohomology
-import Development.EtaleCohomology.KummerTheory.FinSHInv
-import Development.EtaleCohomology.KummerTheory.FinStalk
-import Development.EtaleCohomology.KummerTheory.FinBock
-import Development.EtaleCohomology.KummerTheory.FinAdicDeg
-import Development.EtaleCohomology.KummerTheory.FinLimit
+module
+
+public import Development.EtaleCohomology.KummerTheory.InvOfField
+public import Development.EtaleCohomology.KummerTheory.LocalHomotopyEtaleCohomology
+public import Development.EtaleCohomology.KummerTheory.FinSHInv
+public import Development.EtaleCohomology.KummerTheory.FinStalk
+public import Development.EtaleCohomology.KummerTheory.FinBock
+public import Development.EtaleCohomology.KummerTheory.FinAdicDeg
+public import Development.EtaleCohomology.KummerTheory.FinLimit
+
+@[expose] public section
 
 namespace LateralTheory.KummerTheory
 

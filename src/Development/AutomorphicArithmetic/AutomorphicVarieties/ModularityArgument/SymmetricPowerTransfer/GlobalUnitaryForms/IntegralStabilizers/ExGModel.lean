@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+
+@[expose] public section
 
 open Matrix QuadraticAlgebra
 
@@ -79,7 +83,7 @@ theorem exG_models {c : K} {d m : EL Δ τ} (h : IsDat c d m) (P : Sp Δ τ ≃�
   let f : (Fin 3 → Lsq K Δ) →ₗ[Lsq K Δ] (Fin 3 → Lsq K Δ) :=
     { toFun := fun w => P (semi d (P.symm (star w)))
       map_add' := fun u v => by
-        rw [← map_add, star_add, map_add]
+        rw [← map_add (f := _), star_add, map_add (f := _)]
         congr 1
         simp [semi, sg_add, mul_add]
       map_smul' := fun a u => by
@@ -143,7 +147,7 @@ theorem exG_norm [CharZero K] {c : K} {d m : EL Δ τ} (h : IsDat c d m) :
   have hy1 : y = algebraMap _ _ y.re := by ext1 <;> simp [him]
   have hy2 : sigL y = algebraMap _ _ (star y.re) := by ext1 <;> simp [him, sigL]
   refine ⟨y.re, QuadraticAlgebra.algebraMap_injective (a := -1) (b := algebraMap K (Lsq K Δ) τ) ?_⟩
-  rw [map_mul, map_mul, ← hy1, ← hy2, algebraMap_norm_eq_mul_star, hy, sg_mul, sg_mul, hs, ← h1, map_add, map_add, ← ht,
+  rw [map_mul, map_mul, ← hy1, ← hy2, algebraMap_norm_eq_mul_star, hy, sg_mul, sg_mul, hs, ← h1, map_add (f := _), map_add (f := _), ← ht,
     map_ofNat, map_ofNat]
   linear_combination (-(m * star m * (1 + star ω) ^ 2)) * hd - (m * star m * (2 + star ω)) * hn
 

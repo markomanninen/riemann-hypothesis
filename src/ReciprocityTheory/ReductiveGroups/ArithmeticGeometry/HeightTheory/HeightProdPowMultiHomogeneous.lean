@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationGenericRatioEqRestriction
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationGenericRatioEqRestriction
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -76,7 +80,7 @@ private lemma ratio_eq_of_eq_smul' {Ω' V : Type*} [Field Ω'] [AddCommGroup V] 
     (hg : g ≠ 0) (h : f = a • g) : ratio f g = a := by
   have hex : ∃ b : Ω', f = b • g := ⟨a, h⟩
   unfold ratio
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hc := hex.choose_spec
   exact smul_left_injective Ω' hg (hc.symm.trans h)
 

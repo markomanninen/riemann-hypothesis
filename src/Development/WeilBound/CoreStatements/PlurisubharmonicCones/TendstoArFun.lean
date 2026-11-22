@@ -1,10 +1,14 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushTest
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushPF
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.GenericFibreIntersectionPullback
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ArithIntersectionMultilinearAllStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.MonomialLinesPermutationStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HermitianCombinationSmoothConjStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.RefLinked
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushTest
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushPF
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.GenericFibreIntersectionPullback
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ArithIntersectionMultilinearAllStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.MonomialLinesPermutationStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HermitianCombinationSmoothConjStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.RefLinked
+
+@[expose] public section
 
 open MvPolynomial Filter Topology ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top SheetDecomposition
 
@@ -103,7 +107,8 @@ theorem arFun_prod (hII : IsFullIntersectionSystem II) (t : ℝ) {d : ℕ} (hd :
     rw [Finset.prod_smul, Int.cast_smul_eq_zsmul, toA, toA, map_zsmul]
   have h2 : toA (∑ w : Fin (dimFl Ψ N + 1) → Ψ × Fin N, ∏ j, c j (w j) • X (w j) : RP Ψ N) =
       ∑ w : Fin (dimFl Ψ N + 1) → Ψ × Fin N, toA (∏ j, c j (w j) • X (w j)) := map_sum (rename some) _ _
-  rw [h2, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun w _ => ?_
   rw [h1, map_smul, smul_eq_mul, mul_assoc, arFun_word M hII, Int.cast_prod]
 
@@ -126,7 +131,7 @@ theorem tendsto_arFun (h : M.Converges II) (F : RPA Ψ N) :
     obtain ⟨L, hL⟩ := h m
     simp only [e, map_smul, RootModel.arFun, RootModel.PP, Module.Basis.constr_basis, hL.limUnder_eq]
     exact hL.const_smul a
-  | add p q hp hq => simpa only [map_add] using hp.add hq
+  | add p q hp hq => simpa only [map_add (f := _)] using hp.add hq
 
 theorem test_factor' [DecidableEq Ψ] {p q n r : ℕ} (e : Fin r ≃ PairIx Ψ p q) (hq : q ≤ p) (hn : n = Fintype.card Ψ * p * q) :
     (testPoly p : RP Ψ (p + q)) =

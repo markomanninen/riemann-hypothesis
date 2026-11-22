@@ -1,12 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped ComplexOrder
 open Matrix
 
 namespace GlobalTheory
 
+
 open scoped ComplexOrder in
 open Matrix in
-
 theorem _root_.GlobalTheory.conjTranspose_mul_mul_self_of_unitary_conj :
     ∀ (n d : ℕ) (J P : Matrix (Fin n) (Fin n) ℂ) (Xb Yb : Matrix (Fin n) (Fin d) ℂ) (y₀ : GL (Fin d) ℂ),
     J.conjTranspose = J → P.conjTranspose = P → Xb.conjTranspose * J * Xb = 0 → Yb.conjTranspose * J * Yb = 0 →

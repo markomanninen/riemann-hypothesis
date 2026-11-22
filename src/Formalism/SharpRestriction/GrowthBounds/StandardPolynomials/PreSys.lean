@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.YcondFactor
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.YcondFactor
+
+@[expose] public section
 
 noncomputable section
 

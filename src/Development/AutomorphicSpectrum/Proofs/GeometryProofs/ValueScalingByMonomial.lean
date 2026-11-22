@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemPtsOverOfMemMcPts
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.OneMemChartLatNm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemPtsOverOfMemMcPts
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.OneMemChartLatNm
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsWeaklyRegularIffIsQuasiRegularSeqOfIsLocalRing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchedSupportCompletions
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsWeaklyRegularIffIsQuasiRegularSeqOfIsLocalRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,8 +66,8 @@ structure Tup (R : Type) [CommRing R] [Algebra O R] [IsCO O R] : Type 1 where
   y : Fin T.q → Fin n → R
   y_mem : ∀ j i, y j i ∈ maximalIdeal R
 
-variable {Λ A} in
 
+variable {Λ A} in
 def Tup.Maps {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing R'] (t : Tup Λ A R) (f : R →+* R')
     (D' : GDet n R' (Ph0 Λ)) (ψ' : ∀ v, Fin n → L.Gv v →* R'ˣ) (s' : R') (U' y' : Fin T.q → Fin n → R') : Prop :=
   t.D.map f = D' ∧ (∀ v i, pushCh f (t.ψ v i) = ψ' v i) ∧ f t.s = s' ∧ (∀ j i, f (t.U j i) = U' j i) ∧
@@ -136,7 +140,6 @@ instance : Module (Spo A) (X0 m) := inferInstanceAs (Module (Spo A) (Spo A ⊗[B
 instance : Module W.R (X0 m) := Module.compHom (X0 m) m.π.toRingHom
 instance : Module (abelian₂ O Unit D) (X0 m) := Module.compHom (X0 m) ((algebraMap B (Spo A)).comp A.b.lam.toRingHom)
 
-theorem X0.smul_def (a : W.R) (x : X0 m) : a • x = m.π a • x := rfl
 theorem X0.lam_smul_def (a : abelian₂ O Unit D) (x : X0 m) : a • x = algebraMap B (Spo A) (A.b.lam a) • x := rfl
 
 def IsApproximateAnnihilatorAtLevels (a : W.R) : Prop :=

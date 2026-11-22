@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WeilQuotMeas
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientMeasure.StepBruhat
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientMeasure.LintegralMulAvgComm
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WeilQuotMeas
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientMeasure.StepBruhat
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientMeasure.LintegralMulAvgComm
+
+@[expose] public section
 
 noncomputable section
 

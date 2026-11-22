@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsFiniteDvrExtensionEmbeddingResidueField
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Formalism.LocalToGlobal.CharacterGerms.RowTieTop
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsFiniteDvrExtensionEmbeddingResidueField
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieTop
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+
+@[expose] public section
+
 open scoped BigOperators TensorProduct
 open NumberField IsLocalRing Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 open ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs

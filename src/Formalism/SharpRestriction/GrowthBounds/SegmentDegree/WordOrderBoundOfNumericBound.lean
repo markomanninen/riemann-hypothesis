@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.AllowedLettersOfLateRows
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.AllowedLettersOfLateRows
+
+@[expose] public section
 
 noncomputable section
 

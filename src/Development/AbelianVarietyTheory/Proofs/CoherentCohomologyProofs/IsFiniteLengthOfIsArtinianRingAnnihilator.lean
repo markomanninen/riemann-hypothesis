@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthRestrictScalarsEqSumInertiaDegOfSubset
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsSmulEqMapOfIsCompactOfIsQuasiSeparated
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthRestrictScalarsEqSumInertiaDegOfSubset
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsSmulEqMapOfIsCompactOfIsQuasiSeparated
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -343,7 +347,8 @@ theorem QCoh.germ_support_bijective (hf : (support F).Finite)
   choose s h₁ h₂ using key
   refine ⟨∑ x, s x, funext fun y => ?_⟩
   beta_reduce
-  rw [map_sum, Finset.sum_eq_single y (fun x _ hx => h₂ x y hx.symm) (by simp), h₁]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single y (fun x _ hx => h₂ x y hx.symm) (by simp), h₁]
 
 variable (R : Type v) [CommRing R] [Algebra R Γ(X, ⊤)]
 
@@ -409,7 +414,7 @@ theorem length_coh_zero_eq_sum [CompactSpace X] (h : suppDim F ≤ 0) :
   letI (x : X) := baseModuleStalk F (algebraMap R Γ(X, ⊤)) x
   let l : sectionsOn F ⊤ →ₗ[R] ∀ x : support F, (F.presheaf.stalk x.1 :) :=
     { toFun := fun s x => F.presheaf.germ ⊤ x.1 (Opens.mem_top _) (sectionsOn.toΓ F ⊤ s)
-      map_add' := fun s t => funext fun x => by rw [map_add, map_add]; rfl
+      map_add' := fun s t => funext fun x => by rw [map_add (f := _), map_add (f := _)]; rfl
       map_smul' := fun r s => funext fun x => by
         rw [sectionsOn.toΓ_smul, restrictGlobal_top, germ_smul]; rfl }
   have hl : Function.Bijective l := (germ_support_bijective hf fun x hx =>
@@ -430,7 +435,7 @@ variable {X : Scheme.{0}} {F : X.Modules} [AlgebraicGeometry.IsNoetherian X] [Is
 theorem subsingleton_coh_of_suppDim_le_zero (h : suppDim F ≤ 0) {n : ℕ} (hn : 0 < n) :
     Subsingleton (coh F n) := by
   have := isArtinianScheme_annihilatorSheaf h
-  have := cohOn.subsingleton_of_isAffineOpen (onAnnihilator F) (isAffineOpen_top _) hn
+  haveI := cohOn.subsingleton_of_isAffineOpen (onAnnihilator F) (isAffineOpen_top _) hn
   exact ((cohOn.mapIso ℤ ⊤ n (isoPushforwardOnAnnihilator F)).trans
     (coh.pushforwardEquiv ℤ (fun r => (map_intCast _ r).trans (eq_intCast _ r).symm)
       (onAnnihilator F) n)).toEquiv.subsingleton
@@ -481,8 +486,8 @@ theorem residueDegree_eq_finrank (x : X) :
 
 variable [LocallyOfFiniteType f] [CompactSpace X] {F : X.Modules} [IsFiniteQC F]
 
-include f in
 
+include f in
 theorem isNoetherian_of_locallyOfFiniteType_field : AlgebraicGeometry.IsNoetherian X :=
   have := LocallyOfFiniteType.isLocallyNoetherian f
   {}
@@ -566,23 +571,9 @@ theorem hdim_twist_of_suppDim_le_zero {M : LB X} (hM : M.IsLB) (n : ℕ) :
     hdim k (twist F M) n = hdim k F n :=
   (nonempty_twist_iso_of_suppDim_le_zero h hM).elim (hdim_congr k n)
 
-theorem chi_twist_of_suppDim_le_zero {M : LB X} (hM : M.IsLB) : chi k (twist F M) = chi k F :=
-  (nonempty_twist_iso_of_suppDim_le_zero h hM).elim (chi_congr k)
-
 theorem chi_eq_hdim_zero_of_suppDim_le_zero : chi k F = hdim k F 0 :=
   chi_eq_hdim_zero k fun _ hn => subsingleton_coh_of_suppDim_le_zero h hn
 
 end Twists
-
-example (I : Ideal ℤ) [I.IsMaximal] (M : LB (Sp ℤ)) (hM : M.IsLB) :
-    Nonempty (twist (tildeIntQuotient I) M ≅ tildeIntQuotient I) := by
-  have : Module.Finite (CommRingCat.of ℤ) (ModuleCat.of ℤ (ℤ ⧸ I)) :=
-    inferInstanceAs (Module.Finite ℤ (ℤ ⧸ I))
-  have : IsFiniteQC (tildeIntQuotient I) := (isFiniteQC_tilde_iff _).2 this
-  refine nonempty_twist_iso_of_suppDim_le_zero (le_of_eq ?_) hM
-  rw [suppDim_tilde]
-  refine (Module.supportDim_quotient_eq_ringKrullDim I).trans ?_
-  letI := Ideal.Quotient.field I
-  exact ringKrullDim_eq_zero_of_field _
 
 end GlobalTheory

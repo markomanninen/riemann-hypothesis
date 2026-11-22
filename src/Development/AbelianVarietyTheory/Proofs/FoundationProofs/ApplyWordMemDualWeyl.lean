@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.StatementE
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.StatementE
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 
@@ -24,7 +28,7 @@ private theorem rowGen_map_intCast {R S : Type} [CommRing R] [CommRing S] (φ : 
     Polynomial.map (MvPolynomial.map φ) (rowGen R a b f) = rowGen S a b (map φ f) := by
   induction f using MvPolynomial.induction_on with
   | C c => simp [rowGen]
-  | add p q hp hq => rw [map_add, map_add, Polynomial.map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), Polynomial.map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p v hp =>
     rw [map_mul, Polynomial.map_mul, hp, map_mul, map_mul, map_X]
     congr 1
@@ -64,7 +68,7 @@ theorem eval_idFrame_int {r n : ℕ} (F : MvPolynomial (Fin r × Fin n) ℤ) :
     eval (idFrame ℚ r n) (map (Int.castRingHom ℚ) F) = ((eval (idFrame ℤ r n) F : ℤ) : ℚ) := by
   induction F using MvPolynomial.induction_on with
   | C c => simp
-  | add p q hp hq => simp only [map_add, hp, hq, Int.cast_add]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, Int.cast_add]
   | mul_X p v hp =>
     simp only [map_mul, map_X, eval_X, hp, Int.cast_mul]
     congr 1
@@ -96,7 +100,7 @@ private theorem fockQ_zero_right {σ : Type} (f : MvPolynomial σ ℚ) : fockQ f
 
 private theorem fockQ_add_right {σ : Type} (f g g' : MvPolynomial σ ℚ) :
     fockQ f (g + g') = fockQ f g + fockQ f g' := by
-  rw [← fockB_apply, map_add, fockB_apply, fockB_apply]
+  rw [← fockB_apply, map_add (f := _), fockB_apply, fockB_apply]
 
 private theorem fockQ_smul_right' {σ : Type} (f g : MvPolynomial σ ℚ) (c : ℚ) :
     fockQ f (c • g) = c * fockQ f g := by
@@ -135,7 +139,7 @@ theorem nablaEqDualWeylOf : NablaEqDualWeylOf := by
       obtain ⟨a, ha⟩ := hx
       obtain ⟨b, hb⟩ := hy
       refine ⟨a + b, ?_⟩
-      rw [map_add, fockQ_add_right, ha, hb]
+      rw [map_add (f := _), fockQ_add_right, ha, hb]
       push_cast
       ring
     | smul c x _ hx =>
@@ -160,7 +164,7 @@ theorem nablaEqDualWeylOf : NablaEqDualWeylOf := by
         exact Submodule.subset_span ⟨_, rfl⟩
       obtain ⟨z, hz⟩ := hPQ _ hmem
       exact ⟨z, by rw [fockQ_symm, hAdj, hz]⟩
-    have hcoef : ∀ e : Fin r × Fin n →₀ ℕ, LowerTri e → ∃ z : ℤ, coeff e P = z := by
+    have hcoef : ∀ e : Fin r × Fin n →₀ ℕ, LowerTri e → ∃ z : ℤ, AddMonoidAlgebra.coeff P e = z := by
       intro e he
       by_cases hs : ∀ s : Fin n, ∑ a : Fin r, e (a, s) = ν s
       · obtain ⟨z, hz⟩ := hint (wordOf e)
@@ -180,11 +184,13 @@ theorem nablaEqDualWeylOf : NablaEqDualWeylOf := by
     exact hP
 
 theorem dual_dual_of_isLattice {V : Type} [AddCommGroup V] [Module ℚ V] (B : LinearMap.BilinForm ℚ V)
-    (hB : B.Nondegenerate) (hB' : B.IsSymm) (M : Submodule ℤ V) [M.IsLattice ℚ] :
+    (hB : B.Nondegenerate) (hB' : B.IsSymm) (M : Submodule ℤ V) [M.IsFullLattice ℚ] :
     B.dualSubmodule (B.dualSubmodule M) = M := by
+  have := Submodule.IsLattice.finite ℚ M
+  have := Submodule.IsLattice.free ℚ M
   classical
   let b := Module.Free.chooseBasis ℤ M
-  let b' := b.extendOfIsLattice ℚ
+  let b' := b.extendOfIsFullLattice ℚ
   have hrange : (Set.range b' : Set V) = M.subtype '' Set.range b := by
     rw [← Set.range_comp]
     congr 1
@@ -259,8 +265,9 @@ private theorem mem_dualWeyl_rat_of_mem_map_weyl {r n : ℕ} (hn : n ≤ r) (ν 
   exact dualWeylMap ℤ ℚ (Int.castRingHom ℚ) r n ν G (weylLeDual ℤ r n hn ν hν hG)
 
 theorem weyl_isLattice {r n : ℕ} (hn : n ≤ r) (ν : Fin n → ℕ) (hν : Antitone ν) :
-    (inV ν ((weyl ℤ r n hn ν).map (intQ r n))).IsLattice ℚ where
-  fg := by
+    (inV ν ((weyl ℤ r n hn ν).map (intQ r n))).IsFullLattice ℚ := by
+  refine { toIsLattice := ?_, span_eq_top := ?_ }
+  · apply Submodule.IsLattice.of_fg ℚ
     have hW : (weyl ℤ r n hn ν).FG := by
       have := isNoetherian_of_fg_of_noetherian _ (dualWeyl_int_fg r n ν)
       exact Submodule.FG.of_le_of_isNoetherian (weylLeDual ℤ r n hn ν hν)
@@ -275,8 +282,7 @@ theorem weyl_isLattice {r n : ℕ} (hn : n ≤ r) (ν : Fin n → ℕ) (hν : An
         exact ⟨⟨P, hsub P hP⟩, hP, rfl⟩
     rw [heq]
     exact hW.map _
-  span_eq_top := by
-    have hsub := mem_dualWeyl_rat_of_mem_map_weyl hn ν hν
+  · have hsub := mem_dualWeyl_rat_of_mem_map_weyl hn ν hν
     apply Submodule.map_injective_of_injective (f := (dualWeyl ℚ r n ν).subtype) Subtype.val_injective
     rw [Submodule.map_span, Submodule.map_top, Submodule.range_subtype]
     apply le_antisymm

@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeFiniteFibreDim
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeFibreDegree
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMassOfFibre
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjectionsContainOpen
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeAvoidsFinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjHomInjective
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeAvoidsOpen
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeAvoidsExists
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLeadIdealDim
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLinearFormCut
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PHomogDimZeroPow
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeFiniteFibreDim
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeFibreDegree
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMassOfFibre
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjectionsContainOpen
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeAvoidsFinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjHomInjective
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeAvoidsOpen
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeAvoidsExists
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLeadIdealDim
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLinearFormCut
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PHomogDimZeroPow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -95,7 +100,8 @@ theorem ConeFiniteFibreDim.proof : ConeFiniteFibreDim.Statement := by
     refine congrArg (fun f => eval₂Hom (RingHom.id ℂ) f p) (funext fun ij => ?_)
     obtain ⟨i, j⟩ := ij
     change eval v (g (i, j)) = (blk v * N) i j
-    simp only [g, blk, Matrix.mul_apply, map_sum, map_mul, eval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [g, blk, Matrix.mul_apply, map_sum, map_mul, eval_C]
     refine Finset.sum_congr rfl fun l _ => ?_
     induction i using Fin.addCases <;> simp
   have hP0 : bind₁ g p ≠ 0 := by

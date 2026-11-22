@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.TestBump
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.ValNhds
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.UnitCont
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.TestBump
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.ValNhds
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.UnitCont
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.UnitaryBC UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible
 open UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Bor UpperTheory.V.Lit.Dr
 open scoped TensorProduct GlobalTheory.CuspRep.CuspidalL2GL
@@ -26,7 +31,7 @@ private theorem summ (u : G → ℂ) (hu : HasCompactSupport u) (g : G) : Summab
   have hK : IsCompact ((fun x => x * g⁻¹) '' tsupport u) := IsCompact.image hu (by fun_prop)
   have hf := ht hK.compl_mem_cocompact
   rw [Filter.mem_map, Filter.mem_cofinite] at hf
-  refine summable_of_finite_support (hf.subset fun γ hγ => ?_)
+  refine summable_of_hasFiniteSupport (hf.subset fun γ hγ => ?_)
   simp only [Set.mem_compl_iff, Set.mem_preimage, not_not]
   exact ⟨γ * g, subset_tsupport _ hγ, by simp⟩
 
@@ -48,7 +53,7 @@ private theorem orb_ne (u : G → ℂ) (hu : HasCompactSupport u) (hp : ∀ g, �
 
 end
 
-private theorem lev_iff {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} (φ : Sm E a) :
+private theorem lev_iff {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} (φ : Sm E a) :
     HasLev φ ↔ IsOpen (stab (finGL E a) φ.1 : Set (GL (Fin a) (Af E))) := by
   have : {k | act (.fin k) φ = φ} = (stab (finGL E a) φ.1 : Set (GL (Fin a) (Af E))) := by
     ext k
@@ -62,7 +67,9 @@ theorem UpperTheory.V.Cj.H.orbLift :
   obtain ⟨u, hu, hp, hne, -⟩ := testBump E a C Set.univ hC isOpen_univ (Set.subset_univ _)
   obtain ⟨w, hw, ew⟩ := orbSm E a u hu
   have hZ : IsClosed ((latticeGL E a : Set (GA E a)) * C) :=
-    IsClosed.mul_right_of_isCompact Subgroup.isClosed_of_discrete hC
+    by
+      set_option synthInstance.maxHeartbeats 200000 in
+        exact IsClosed.mul_right_of_isCompact Subgroup.isClosed_of_discrete hC
   have hwZ : ∀ g ∈ (latticeGL E a : Set (GA E a)) * C, w.1 g ≠ 0 := by
     rintro _ ⟨γ, hγ, c, hc, rfl⟩
     rw [ew]

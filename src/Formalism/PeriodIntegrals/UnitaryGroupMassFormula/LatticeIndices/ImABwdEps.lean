@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ImAInModPSplit
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ImAInModPSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,20 +24,5 @@ theorem imA_bw_eps (p : TypX X) (i : Fin D.R.k) :
     epsP X p • PI.FinKW.vecV X.B.I p.1 (X.bw i) = PI.FinKW.vecV X.B.I p.1 (X.bw i) := by
   conv_rhs => rw [X.bw_w i]
   rw [imA_vecV_smul']
-
-theorem imA_bw_eps' (p : TypX X) (i : Fin D.R.k) :
-    (1 - epsP X p) • PI.FinKW.vecV X.B.I p.1 (X.bw i) = 0 := by
-  rw [sub_smul, one_smul, imA_bw_eps, sub_self]
-
-theorem imA_bwd_eps' (p : TypX X) (i : Fin D.R.k) :
-    (1 - epsP X p) • PI.FinKW.vecV X.B.I p.1 (X.bwd i) = PI.FinKW.vecV X.B.I p.1 (X.bwd i) := by
-  conv_rhs => rw [X.bwd_w i]
-  rw [imA_vecV_smul', imA_eps'_eq]
-
-theorem imA_bwd_eps (p : TypX X) (i : Fin D.R.k) :
-    epsP X p • PI.FinKW.vecV X.B.I p.1 (X.bwd i) = 0 := by
-  have h := imA_bwd_eps' X p i
-  rw [sub_smul, one_smul, sub_eq_self] at h
-  exact h
 
 end MassDataIdxSteps

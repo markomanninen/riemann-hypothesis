@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramHspOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianSelfDualLatticeSpaceFormHermitianNondeg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatA
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
-import Formalism.LocalToGlobal.IndefiniteReal.DatumLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramHspOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianSelfDualLatticeSpaceFormHermitianNondeg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatA
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumLemmas
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField
@@ -144,26 +148,8 @@ theorem latQ_isLattice {M N : Matrix (Fin k) (Fin k) D.host.E} (hMN : M * N = 1)
           exact Submodule.smul_mem _ _ ih
       have := key _ hx'
       rwa [hback] at this
-  · rw [eq_top_iff]
-    intro x _
-    have hx' : star (N *ᵥ x) ∈ Submodule.span D.host.E (L' : Set (Fin k → D.host.E)) := by
-      rw [hL'.span_eq_top]; trivial
-    have key : ∀ a ∈ Submodule.span D.host.E (L' : Set (Fin k → D.host.E)),
-        M *ᵥ star a ∈ Submodule.span D.host.E ((latQ D N L' : Submodule (𝓞 D.host.E) (Fin k → D.host.E)) :
-          Set (Fin k → D.host.E)) := by
-      intro a ha
-      induction ha using Submodule.span_induction with
-      | mem a ha => exact Submodule.subset_span ((psi_mem_iff D hNM a).2 ha)
-      | zero => simp
-      | add a b _ _ iha ihb =>
-        rw [star_add, Matrix.mulVec_add]
-        exact Submodule.add_mem _ iha ihb
-      | smul c a _ ih =>
-        rw [psi_smul]
-        exact Submodule.smul_mem _ _ ih
-    have := key _ hx'
-    rwa [hback] at this
-
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
 theorem localLattice_isLattice (hP : FactPrincipalDatum) (Λ : Submodule (𝓞 D.host.E) (Fin k → D.host.E))
     (hΛ : Λ.IsLattice D.host.E) : (lattice₂ D Λ).IsLattice D.host.E := by
   refine ⟨localLattice_fg D Λ hΛ.fg, ?_⟩
@@ -171,23 +157,8 @@ theorem localLattice_isLattice (hP : FactPrincipalDatum) (Λ : Submodule (𝓞 D
     inv_ne_zero (Formalism.L2.Pj.AA_ne_zero hP D)
   obtain ⟨b, hb, hb0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot
     (fun h => h0 (FractionalIdeal.coeToSubmodule_eq_bot.1 h))
-  rw [eq_top_iff]
-  rintro v -
-  have hv0 : v ∈ Submodule.span D.host.E (Λ : Set (Fin k → D.host.E)) := by rw [hΛ.span_eq_top]; trivial
-  have hv : b • v ∈ Submodule.span D.host.E ((lattice₂ D Λ : Submodule (𝓞 D.host.E) (Fin k → D.host.E)) :
-      Set (Fin k → D.host.E)) := by
-    induction hv0 using Submodule.span_induction with
-    | mem z hz => exact Submodule.subset_span (smul_mem_latP hP hb hz)
-    | zero => simp
-    | add x y _ _ hx hy =>
-      rw [smul_add]
-      exact Submodule.add_mem _ hx hy
-    | smul c x _ ih =>
-      rw [smul_comm]
-      exact Submodule.smul_mem _ _ ih
-  have := Submodule.smul_mem _ b⁻¹ hv
-  rwa [smul_smul, inv_mul_cancel₀ hb0, one_smul] at this
-
+  intro s hs hli
+  exact (LinearIndependent.iff_fractionRing _ _).mp hli
 variable (B : Base D.host.F D.host.E) {d : ℕ} (Y : Spc D.host.F D.host.E d) {r s : ℕ}
 
 theorem det_J_ne_zero_skew (hY : Y.IsSkew D.sp.cm.sig B r s) : Y.J.det ≠ 0 := by
@@ -258,7 +229,7 @@ theorem skew_to_herm (hY : Y.IsSkew D.sp.cm.sig B r s) :
     have h1 := congrArg Matrix.det hMN
     rw [Matrix.det_mul, Matrix.det_one, h0, mul_zero] at h1
     exact zero_ne_one h1
-  refine ⟨latQ D G (lattice₂ D Y.L), latQ_isLattice D hMN hNM _ (localLattice_isLattice D hP Y.L hY.lat), ?_, ?_, ?_⟩
+  refine ⟨latQ D G (lattice₂ D Y.L), latQ_isLattice D hMN hNM _ (localLattice_isLattice D hP Y.L hY.lat.toIsLattice), ?_, ?_, ?_⟩
   ·
     refine ⟨fun x y => ?_⟩
     simp only [GlobalTheory.WeilSchrodingerHerm.sesq_apply, starRingEnd_apply, dotProduct, Matrix.mulVec, star_sum, star_mul',

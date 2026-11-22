@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchubGamApply
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchubGamApply
+
+@[expose] public section
+
 open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Classical
 
@@ -24,7 +29,7 @@ theorem degFl_rename_perm {ι : Type} [Fintype ι] [DecidableEq ι] {N : ℕ} (�
     intro σ
     ext y
     obtain ⟨⟨a, i⟩, rfl⟩ := hsurj y
-    rw [Finsupp.mapDomain_apply hinj]
+    rw [Finsupp.mapDomain_apply_of_injective hinj]
     simp [Formalism.DegreeFormula.permExp, hfdef, Pi.mul_apply, Pi.inv_apply]
   have hsgn : ∀ σ : ι → Equiv.Perm (Fin N),
       (∏ τ, ((Equiv.Perm.sign ((σ * ρ⁻¹) τ) : ℤ) : ℝ)) =

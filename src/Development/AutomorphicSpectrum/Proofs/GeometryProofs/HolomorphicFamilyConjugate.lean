@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsOver
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsOver
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
-open GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.NineStatements GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GlobalTheory.CompanionTheory.Ar.Cusp.FamEx
+open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GlobalTheory.CompanionTheory.Ar.Cusp.FamEx
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp.FamEx
 
@@ -31,13 +36,13 @@ theorem valAt'_spMap_comp {X : Scheme.{0}} (σ : ℂ →+* ℂ) (x : Sp ℂ ⟶ 
   unfold ReciprocityTheory.ChartRestriction.G.Geo.Tor.valAt'
   by_cases hx : ⊤ ≤ x ⁻¹ᵁ U
   · have hc : ⊤ ≤ (spMap σ ≫ x) ⁻¹ᵁ U := (top_le_spMap_comp_iff σ x U).2 hx
-    rw [dif_pos hc, dif_pos hx]
+    rw [dite_eq_left hc, dite_eq_left hx]
     unfold ReciprocityTheory.ChartRestriction.G.Geo.Tor.valAt
     rw [← Scheme.Hom.appLE_comp_appLE (spMap σ) x U ⊤ ⊤ hx (by simp)]
     rw [CommRingCat.hom_comp, RingHom.comp_apply]
     exact gammaSpecIso_appLE_spMap_apply _ σ _
   · have hc : ¬ ⊤ ≤ (spMap σ ≫ x) ⁻¹ᵁ U := fun h => hx ((top_le_spMap_comp_iff σ x U).1 h)
-    rw [dif_neg hc, dif_neg hx, map_zero]
+    rw [dite_eq_right hc, dite_eq_right hx, map_zero]
 
 private theorem differentiableOn_conj_comp_star {m : ℕ} {g : (Fin m → ℂ) → ℂ} {S : Set (Fin m → ℂ)}
     (hg : DifferentiableOn ℂ g S) :
@@ -52,7 +57,7 @@ private theorem differentiableOn_conj_comp_star {m : ℕ} {g : (Fin m → ℂ) �
   have hR := ((starL' ℝ : ℂ ≃L[ℝ] ℂ) : ℂ →L[ℝ] ℂ).hasFDerivAt.comp_hasFDerivWithinAt b h3
   let L' : (Fin m → ℂ) →L[ℂ] ℂ :=
     { toFun := fun v => star (L (star v))
-      map_add' := fun v w => by simp [star_add, map_add]
+      map_add' := fun v w => by simp [star_add, map_add (f := _)]
       map_smul' := fun c v => by simp [star_smul, map_smul]
       cont := continuous_star.comp (L.continuous.comp continuous_star) }
   exact ⟨L', HasFDerivWithinAt.of_restrictScalars (𝕜 := ℝ) hR (by ext v; rfl)⟩

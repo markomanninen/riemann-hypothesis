@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CoefS
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CoefS
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published.SiegelOneVector GlobalTheory.CompanionTheory.Hypotheses₂.OneV
 open scoped TensorProduct ENNReal NNReal Topology
 
@@ -62,5 +67,6 @@ theorem unit_mul_map_haar : ∀ (F : Type) [Field F] [NumberField F] (e : Ainf F
     have : (e.symm ∘ e : Ainf F → Ainf F) = id := by funext y; simp
     rw [this, Measure.map_id]
   rw [← back (lam.map fun y => t * y), key, Measure.map_smul, back]
+  exact hms.aemeasurable
 
 end GlobalTheory.CompanionTheory.HaarScale

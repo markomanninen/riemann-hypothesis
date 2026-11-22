@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqA
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqA
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqB
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -59,7 +63,7 @@ theorem copy_subst {V : Type} [CommRing V] (d m : ℕ) (φ : Fin d → MvPowerSe
   generalize psTrunc m (φ j) = P
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p k hp =>
     rw [map_mul, map_mul, hp, MvPolynomial.rename_X, MvPolynomial.aeval_X]
     obtain ⟨a, b⟩ := k

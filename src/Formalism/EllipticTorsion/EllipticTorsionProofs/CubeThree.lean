@@ -1,8 +1,12 @@
-import Formalism.EllipticTorsion.CoeffRing
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WChord
-import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsUnitFactor
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WSubst
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
+module
+
+public import Formalism.EllipticTorsion.CoeffRing
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WChord
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.ExistsUnitFactor
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WSubst
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
+
+@[expose] public section
 
 open PowerSeries
 
@@ -195,9 +199,6 @@ lemma weq_iff' (W : WeierstrassCurve K) (s v : MvPowerSeries σ K) :
   simp only [MvPowerSeries.smul_eq_C_mul]
   constructor <;> intro h <;> linear_combination -h
 
-lemma a_mem (i : Fin 5) : ![W.a₁, W.a₂, W.a₃, W.a₄, W.a₆] i ∈ Sadj W := by
-  fin_cases i <;> exact Algebra.subset_adjoin (by simp)
-
 lemma Ca_mem : (MvPowerSeries.C W.a₁ : MvPowerSeries σ K) ∈ TT W σ ∧
     (MvPowerSeries.C W.a₂ : MvPowerSeries σ K) ∈ TT W σ ∧
     (MvPowerSeries.C W.a₃ : MvPowerSeries σ K) ∈ TT W σ ∧
@@ -314,13 +315,13 @@ lemma pair [Finite σ] (hw : WFixed W w) (a b : MvPowerSeries σ K) (ha : cc a =
   · simp [Formalism.ELL.WeierstrassChordSeries.nu, hW, hX0]
   · have h := congrArg φ hAi
     rw [map_mul, map_one] at h
-    simpa only [chordCoeffCubicAt, Formalism.ELL.WeierstrassChordSeries.C3, Formalism.ELL.WeierstrassChordSeries.c3, Formalism.ELL.WeierstrassChordSeries.ca, map_add, map_mul, map_pow,
+    simpa only [chordCoeffCubicAt, Formalism.ELL.WeierstrassChordSeries.C3, Formalism.ELL.WeierstrassChordSeries.c3, Formalism.ELL.WeierstrassChordSeries.ca, map_add (f := _), map_mul, map_pow,
       map_one, hC] using h
   · simp only [Formalism.ELL.WeierstrassChordSeries.z3, chordCoeffQuadraticAt, Formalism.ELL.WeierstrassChordSeries.C2, Formalism.ELL.WeierstrassChordSeries.c2, Formalism.ELL.WeierstrassChordSeries.ca, map_sub,
       map_neg, map_add, map_mul, map_pow, map_ofNat, hC, hX0, hX1]
   · have h := congrArg φ hDi
     rw [map_mul, map_one] at h
-    simpa only [DDs, Formalism.ELL.WeierstrassChordSeries.dd, Formalism.ELL.WeierstrassChordSeries.w3, Formalism.ELL.WeierstrassChordSeries.ca, map_add, map_mul, map_neg, map_one,
+    simpa only [DDs, Formalism.ELL.WeierstrassChordSeries.dd, Formalism.ELL.WeierstrassChordSeries.w3, Formalism.ELL.WeierstrassChordSeries.ca, map_add (f := _), map_mul, map_neg, map_one,
       hC] using h
   · rw [← hφ, Formalism.ELL.WeierstrassChordSeries.F2, map_mul]
   · rw [hφ, constantCoeff_subst_of_zero_lemma_2 hab0, Formalism.ELL.WeierstrassChordSeries.lam_cc hw]

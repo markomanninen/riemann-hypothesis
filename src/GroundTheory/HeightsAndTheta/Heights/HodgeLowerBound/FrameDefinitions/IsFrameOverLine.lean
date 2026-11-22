@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Metric
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.Example
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Metric
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.Example
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -31,8 +36,8 @@ def quotWedge (F : Submodule Ω E) {j : ℕ} (hj : j ≤ N) (b : Fin N → E) : 
 variable {y : (Σ k, ι k) → Ω} {W : ChartBundle ℤ (segreCoord y) N E} {Xo : Set ((Σ k, ι k) → ℂ)}
   {P : Ideal (MRing ι)} {n nc : ℕ} {Bd : Set ((Σ k, ι k) → ℂ)} {χ : Fin nc → SncChart P n Bd}
 
-open Classical in
 
+open Classical in
 def gramAt (hm : HermMetric y W Xo χ) (b : Fin N → E) (z : (Σ k, ι k) → ℂ) :
     Matrix (Fin N) (Fin N) ℂ :=
   if hl : ∃ l, InFrameDomain y (hm.chart l) (hm.fr l) z then
@@ -89,8 +94,8 @@ def MuFrameAt.norm {H : HodgeData D} {z : (Σ k, ι k) → ℂ} (d : MuFrameAt H
   ‖valAt D.y d.u z‖ * (∏ k, ‖z ⟨k, d.c k⟩‖ ^ H.aMu k) *
     ∏ τ, Real.sqrt (quotNormSq D.j_le_N (gramAt (D.h τ) (d.b τ) z))
 
-open Classical in
 
+open Classical in
 def muMetric (H : HodgeData D) (z : (Σ k, ι k) → ℂ) : ℝ :=
   if h : Nonempty (MuFrameAt H z) then h.some.norm else 0
 
@@ -101,41 +106,6 @@ def phMu (H : HodgeData D) (z : (Σ k, ι k) → ℂ) : ℝ := Real.log ((muLine
 end Main
 
 namespace Line
-
-def lineF : Submodule Line.Ω (Fin 2 → Line.Ω) := Submodule.span Line.Ω {Pi.single 0 1}
-
-theorem isFrameOver_line (l : Fin 2) :
-    IsFrameOver yLine (trivialBundle (segreCoord yLine) 2) (fun _ : Unit => l) 1 ⇑(Pi.basisFun Line.Ω (Fin 2)) :=
-  ⟨segreCoord_line_ne_zero l, one_mem _, one_ne_zero,
-    (Pi.basisFun Line.Ω (Fin 2)).linearIndependent, trivial_frame_iff _ 2 _⟩
-
-def lineHodge (II : IntersectionSystem)
-    (hII : ∀ W : Ideal (MRing (PBlk 2)), IsArithVar W 1 → 0 ≤ II Unit (PBlk 2) W 1 ![fsLine 2]) :
-    HodgeData (lineData II hII) where
-  F _ := lineF
-  aMu := 0
-  Λ := PiTensorProduct.tprod Line.Ω fun _ => quotWedge lineF (lineData II hII).j_le_N (Pi.basisFun Line.Ω (Fin 2))
-  locally c _ := by
-    refine ⟨1, fun _ => 1, fun _ => 1, fun _ => one_mem _, fun _ => one_mem _, by simp, fun _ => ?_⟩
-    refine ⟨fun _ => Pi.basisFun Line.Ω (Fin 2), fun _ => ⟨isFrameOver_line (c ()), (Pi.basisFun Line.Ω (Fin 2)).span_eq, ?_⟩,
-      1, isUnitOn_one _ _ _, ?_⟩
-    · show Submodule.span Line.Ω (Set.range (⇑(Pi.basisFun Line.Ω (Fin 2)) ∘
-          headIdx (show 1 ≤ 2 by decide))) = lineF
-      have : Set.range (⇑(Pi.basisFun Line.Ω (Fin 2)) ∘ headIdx (show 1 ≤ 2 by decide)) =
-          {Pi.single 0 1} := by
-        ext v
-        simp only [Set.mem_range, Function.comp_apply, Set.mem_singleton_iff]
-        constructor
-        · rintro ⟨a, rfl⟩
-          rw [Fin.fin_one_eq_zero a]
-          simp [headIdx]
-        · rintro rfl
-          exact ⟨0, by simp [headIdx]⟩
-      rw [this]
-      rfl
-    · simp [chartMono]
-
-theorem lineHodge_aMu (II : IntersectionSystem) (hII) : (lineHodge II hII).aMu = 0 := rfl
 
 end Line
 

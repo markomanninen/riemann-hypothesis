@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CentralProducts.TopProdD
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralCharacterEqProdSupercuspidalSupport
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicProductTwoRepsEquivTwoBlockInduction
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CentralProducts.TopProdD
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralCharacterEqProdSupercuspidalSupport
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicProductTwoRepsEquivTwoBlockInduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem exists_fin (S : Module.End ℂ V) (T : Module.End ℂ W)
         (∀ u ∈ P, F u ∈ P) → (∀ u ∈ Q, F u ∈ Q) → ∀ u ∈ P ⊔ Q, F u ∈ P ⊔ Q := by
       intro M _ _ F P Q hP hQ u hu
       obtain ⟨p, hp, q, hq, rfl⟩ := Submodule.mem_sup.1 hu
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (hP p hp) (hQ q hq)
     have mono : ∀ (P P' : Submodule ℂ V) (Q Q' : Submodule ℂ W), P ≤ P' → Q ≤ Q' →
         LinearMap.range (TensorProduct.map P.subtype Q.subtype) ≤
@@ -135,9 +139,9 @@ theorem eigProd : EigProd k := by
     obtain ⟨⟨b', y'⟩, rfl⟩ := (two (stdSum (rfl : r + t = r + t))).surjective j
     by_cases hb : b = b'
     · subst hb
-      rw [leviEmb_apply_same]
+      simp only [leviEmb, blockDiagonal'_apply_eq, Equiv.symm_apply_apply, Matrix.reindex_apply, Matrix.submatrix_apply, MonoidHom.coe_toHomUnits, MonoidHom.coe_mk, OneHom.coe_mk]
       simp [GeneralLinearGroup.scalar, diagonal_apply]
-    · rw [leviEmb_apply_ne _ _ _ hb]
+    · simp only [leviEmb, blockDiagonal'_apply, Equiv.symm_apply_apply, Matrix.reindex_apply, Matrix.submatrix_apply, MonoidHom.coe_toHomUnits, MonoidHom.coe_mk, OneHom.coe_mk, hb, ↓reduceDIte]
       simp [hb]
   obtain ⟨g, hg⟩ : ∃ g, f.1.1 g ≠ 0 := by
     by_contra h
@@ -147,9 +151,18 @@ theorem eigProd : EigProd k := by
   have hcomm : g * sc (r + t) x = sc (r + t) x * g := by
     ext i j
     simp [mul_comm]
-  have h5 := parInd_law (two (stdSum (rfl : r + t = r + t))) (piTensor (twoRep A.ρ B.ρ)) f
-    ⟨_, leviEmb_mem_parab k _ (fun a => GeneralLinearGroup.scalar (Two (Fin r) (Fin t) a) x)⟩ g
-  rw [leviProj_leviEmb, GlobalTheory.CentralSupport.deltaHalf_scalar] at h5
+  let e := two (stdSum (rfl : r + t = r + t))
+  let d : Levi k (Two (Fin r) (Fin t)) := fun a => GeneralLinearGroup.scalar _ x
+  have hp : leviEmb k e d ∈ parab k e := by
+    apply mem_parab_iff.2
+    intro a b i j hab
+    simp [leviEmb, blockDiagonal'_apply, hab.ne']
+  have hproj : leviProj k e ⟨leviEmb k e d, hp⟩ = d := by
+    funext a
+    ext i j
+    simp [leviProj_apply, leviEmb, blockDiagonal'_apply_eq]
+  have h5 := parInd_law e (piTensor (twoRep A.ρ B.ρ)) f ⟨leviEmb k e d, hp⟩ g
+  rw [hproj, GlobalTheory.CentralSupport.deltaHalf_scalar] at h5
   have h6 : piTensor (twoRep A.ρ B.ρ) (fun a => GeneralLinearGroup.scalar (Two (Fin r) (Fin t) a) x) (f.1.1 g) =
       c • f.1.1 g := by
     have h7 : f.1.1 (leviEmb k (two (stdSum (rfl : r + t = r + t)))
@@ -162,7 +175,7 @@ theorem eigProd : EigProd k := by
       TensorProduct.map (A.ρ (sc r x)) (B.ρ (sc t x)) (Exponents.boolTensorEquiv (X := TwoT A.V B.V) z) := by
     intro z
     induction z using PiTensorProduct.induction_on with
-    | add z w hz hw => rw [map_add, map_add, hz, hw, map_add, map_add]
+    | add z w hz hw => rw [map_add (f := _), map_add (f := _), hz, hw, map_add (f := _), map_add (f := _)]
     | smul_tprod s z =>
       rw [map_smul, map_smul, map_smul, map_smul, piTensor_tprod, Exponents.boolTensorEquiv_tprod,
         Exponents.boolTensorEquiv_tprod, TensorProduct.map_tmul]
@@ -177,8 +190,8 @@ theorem eigProd : EigProd k := by
     (fun b => by obtain ⟨U, h, hb, hs⟩ := hB b; exact ⟨U, h, hb, fun u hu => hs x u hu⟩) y
   exact tensor_eig _ _ (hinj A) U₁ U₂ s₁ y hmem hy0 c hyc
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem eigFilt : EigFilt k := by
   intro n V _ _ ρ ℓ F hF h0 hℓ x c v hv hvc
   classical

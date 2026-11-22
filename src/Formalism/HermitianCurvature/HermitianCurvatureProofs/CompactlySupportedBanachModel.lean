@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Formalism.HermitianCurvature.StatementU
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CayleyForm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+public import Formalism.HermitianCurvature.StatementU
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CayleyForm
+
+@[expose] public section
 
 open Matrix Filter Topology
 
@@ -314,8 +318,8 @@ lemma cd_Mv : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (Mv : (J k r → �
   rw [← contDiffOn_univ, cdm_iff]
   intro p q
   simp only [Mv, Matrix.of_apply]
-  exact ((Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ ℝ (p, q, false))).add
-    ((Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ ℝ (p, q, true))).mul contDiff_const)).contDiffOn
+  exact ((Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) (p, q, false))).add
+    ((Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) (p, q, true))).mul contDiff_const)).contDiffOn
 
 def Lt (i : J k r) : Mat k r := (nrm (true, prj (Eb i))).2
 
@@ -450,7 +454,8 @@ lemma aC_apply (g0 : Mat k r) (i : J k r) (Y W : J k r → ℝ) :
   have e1 : -(fderiv ℝ (chart g0) Y W) * (chart g0 Y)⁻¹ =
       ∑ b, W b • (-(fderiv ℝ (chart g0) Y (ebv b)) * (chart g0 Y)⁻¹) := by
     conv_lhs => rw [hW]
-    rw [map_sum, ← Finset.sum_neg_distrib, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← Finset.sum_neg_distrib, Finset.sum_mul]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_smul, ← smul_neg, Matrix.smul_mul]
   rw [e1, kc_sum]
@@ -497,7 +502,8 @@ lemma hasFDeriv_chart {g0 : Mat k r} (hg0 : g0 ∈ GV k r) {H : Mat k r → E}
   simp only [ContinuousLinearMap.smulRight_apply]
   have hop : ∀ i, op true (Lt i) H c = fderiv ℝ h' c (-(Lt i * c)) := fun i =>
     op_eq_op' 0 true hU hcd hff (Lt_unit i).1 c hcU hcG
-  simp_rw [hop, ← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [hop, ← map_smul, ← map_sum]
   congr 1
   set Xv := -(fderiv ℝ (chart g0) Y W) * c⁻¹ with hXv
   have hXl : inLie k r Xv := tangent hg0 hY W
@@ -768,8 +774,8 @@ abbrev Lp (k r mm : ℕ) (E : Type*) [NormedAddCommGroup E] : Type _ := lp (fun 
 def Tf (a : ℝ) (mm : ℕ) (F : Mat k r → E) : Idx k r mm → E :=
   fun i => ((gN i.1.2 ^ a : ℝ) : ℂ) • dLR i.1.1.1 i.1.1.2 F i.1.2
 
-open Classical in
 
+open Classical in
 def Kf (a : ℝ) {mm : ℕ} (x : Idx k r mm → E) (u w : List (Mat k r)) (g : Mat k r) : E :=
   if h : Vd mm u w g then ((gN g ^ (-a) : ℝ) : ℂ) • x ⟨((u, w), g), h⟩ else 0
 
@@ -806,7 +812,7 @@ lemma Tf_inv {a : ℝ} {mm : ℕ} {x : Idx k r mm → E} {F : Mat k r → E} (hx
 lemma Kf_eq {a : ℝ} {mm : ℕ} {x : Idx k r mm → E} {F : Mat k r → E} (hx : x = Tf a mm F)
     {g : Mat k r} (hg : g ∈ GV k r) : Kf a x [] [] g = F g := by
   have h : Vd mm [] [] g := ⟨by simp, by simp, by simp, hg⟩
-  rw [Kf, dif_pos h, ← Tf_inv hx h]; rfl
+  rw [Kf, dite_eq_left h, ← Tf_inv hx h]; rfl
 
 lemma dLR_zero (u v : List (Mat k r)) : dLR u v (0 : Mat k r → E) = 0 := by
   rw [dLR_eq]
@@ -875,7 +881,7 @@ lemma vs_closed {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] (a : ℝ) 
       u.length + w.length ≤ mm → ∀ g ∈ GV k r, ‖dLR u w (Fs n) g - K u w g‖ ≤ gN g ^ (-a) * ε n := by
     intro n u w hu hw hl g hg
     have h : Vd mm u w g := ⟨hu, hw, hl, hg⟩
-    rw [Tf_inv (hFs n).2.2 h, hK, Kf, dif_pos h, ← smul_sub,
+    rw [Tf_inv (hFs n).2.2 h, hK, Kf, dite_eq_left h, ← smul_sub,
       norm_rsmul _ (Real.rpow_nonneg (gN_pos hg).le _)]
     refine mul_le_mul_of_nonneg_left ?_ (Real.rpow_nonneg (gN_pos hg).le _)
     have := lp.norm_apply_le_norm (p := ⊤) (by simp) (xs n - v) ⟨((u, w), g), h⟩
@@ -886,7 +892,7 @@ lemma vs_closed {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] (a : ℝ) 
   refine ⟨K [] [], ⟨‖v‖, hck, ?_⟩, ?_, ?_⟩
   · intro u w hu hw hl g hg
     have h : Vd mm u w g := ⟨hu, hw, hl, hg⟩
-    rw [hid u w hu hw hl g hg, hK, Kf, dif_pos h, norm_rsmul _ (Real.rpow_nonneg (gN_pos hg).le _),
+    rw [hid u w hu hw hl g hg, hK, Kf, dite_eq_left h, norm_rsmul _ (Real.rpow_nonneg (gN_pos hg).le _),
       ← mul_assoc, ← Real.rpow_add (gN_pos hg), add_neg_cancel, Real.rpow_zero, one_mul]
     exact lp.norm_apply_le_norm (by simp) _ _
   · intro g hg hgS
@@ -901,11 +907,11 @@ lemma vs_closed {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] (a : ℝ) 
       have := lp.norm_apply_le_norm (p := ⊤) (by simp) (xs n - v) ⟨(([], []), g), h⟩
       simp only [lp.coeFn_sub, Pi.sub_apply, hz n, zero_sub, norm_neg] at this
       exact this
-    rw [hK, Kf, dif_pos h, norm_le_zero_iff.1 hv, smul_zero]
+    rw [hK, Kf, dite_eq_left h, norm_le_zero_iff.1 hv, smul_zero]
   · funext i
     obtain ⟨⟨⟨u, w⟩, g⟩, h⟩ := i
     show v ⟨((u, w), g), h⟩ = ((gN g ^ a : ℝ) : ℂ) • dLR u w (K [] []) g
-    rw [hid u w h.1 h.2.1 h.2.2.1 g h.2.2.2, hK, Kf, dif_pos h, rsmul_cancel' h.2.2.2]
+    rw [hid u w h.1 h.2.1 h.2.2.1 g h.2.2.2, hK, Kf, dite_eq_left h, rsmul_cancel' h.2.2.2]
 
 def evL {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] (a : ℝ) (mm : ℕ) (S : Set (Mat k r)) :
     Vs E a mm S →ₗ[ℂ] (Mat k r → E) where

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UpqRep
+module
+
+public import Formalism.PeriodIntegrals.UpqRep
+
+@[expose] public section
 
 open Matrix Topology Set Filter
 open scoped ContDiff
@@ -14,7 +18,7 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 variable {n : ℕ}
 
 theorem contDiff_entry (i j : Fin n) : ContDiff ℝ ∞ fun y : Matrix (Fin n) (Fin n) ℂ => y i j :=
-  contDiff_apply_apply ℝ ℂ i j
+  contDiff_apply_apply ℝ i j
 
 theorem contDiff_hs : ContDiff ℝ ∞ (hs : Matrix (Fin n) (Fin n) ℂ → ℝ) := by
   unfold hs

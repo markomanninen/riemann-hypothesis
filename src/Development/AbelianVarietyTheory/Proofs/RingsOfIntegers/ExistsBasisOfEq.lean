@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.SectionScalarValuation
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.SectionScalarValuation
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -123,7 +127,8 @@ private theorem gs_gF_sum_mul_eq_sum_mul_gs_gF {V : Type} [CommRing V] [IsDomain
     (y : (DegPre.BF D.toPre F).left) {n : ℕ} (x z : Fin n → F) :
     gs (𝟙 _) y ⊤ (gF D.toPre F (∑ i, x i * z i)) =
       ∑ i, gs (𝟙 _) y ⊤ (gF D.toPre F (x i)) * gs (𝟙 _) y ⊤ (gF D.toPre F (z i)) := by
-  rw [map_sum, SectionScalarValuation.gs_sum (𝟙 _) y ⊤ trivial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, SectionScalarValuation.gs_sum (𝟙 _) y ⊤ trivial]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, gs_mul (𝟙 _) y ⊤ trivial]
 

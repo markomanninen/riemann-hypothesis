@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -29,7 +33,8 @@ theorem gh_decomp {N : ℕ} (v : Fin N → E) : v = ∑ m : Fin N, v m • eN E 
 theorem gh_apply {M N : ℕ} (f : (Fin M → E) →ₗ[E] (Fin N → E)) (v : Fin M → E) (l : Fin N) :
     f v l = ∑ m : Fin M, v m * f (eN E M m.1) l := by
   conv_lhs => rw [gh_decomp v]
-  simp [map_sum, Finset.sum_apply, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, Finset.sum_apply, mul_comm]
 
 theorem gh_atN_add {N : ℕ} (v w : Fin N → E) (i : ℕ) : atN (v + w) i = atN v i + atN w i := by
   unfold atN
@@ -65,7 +70,7 @@ theorem unfolding_matrix_sub {n' c' n c : ℕ} (y : (Fin n' → E) →ₗ[E] (Fi
   by_cases hs : s < n' + c'
   · rw [dif_pos hs, LinearMap.sub_apply, Pi.sub_apply, xx1_eN_apply y t hs, xx1_eN_apply y t' hs]
     split_ifs <;> first | rfl | exact sub_self _
-  · rw [dif_neg hs, gh_eN_ge (not_lt.mp hs)]
+  · rw [dite_eq_right hs, gh_eN_ge (not_lt.mp hs)]
     simp
 
 end Vec

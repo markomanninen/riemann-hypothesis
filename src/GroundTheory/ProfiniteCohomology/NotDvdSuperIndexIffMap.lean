@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.OpenNormal
-import GroundTheory.ProfiniteCohomology.Supernatural
-import GroundTheory.ProfiniteCohomology.OfNatRelIndexSupAntitone
-import GroundTheory.ProfiniteCohomology.IsProPGroupSubgroupIffIsPGroupMap
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.OpenNormal
+public import GroundTheory.ProfiniteCohomology.Supernatural
+public import GroundTheory.ProfiniteCohomology.OfNatRelIndexSupAntitone
+public import GroundTheory.ProfiniteCohomology.IsProPGroupSubgroupIffIsPGroupMap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -53,8 +58,8 @@ def IsProSylow (p : ℕ) (P : Subgroup G) : Prop :=
 variable [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G]
 variable {p : ℕ} [hp : Fact p.Prime]
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem not_dvd_superIndex_iff_map (H : Subgroup G) :
     ¬ Supernatural.ofNat p ∣ superIndex H ↔
       ∀ U : OpenNormalSubgroup G, ¬ p ∣ (H.map (QuotientGroup.mk' (U : Subgroup G))).index := by
@@ -69,18 +74,8 @@ theorem isProSylow_iff {P : Subgroup G} (hP : IsClosed (P : Set G)) :
   rw [IsProSylow, isProPGroup_subgroup_iff_isPGroup_map, not_dvd_superIndex_iff_map, ← forall_and]
   exact ⟨fun h => h.2, fun h => ⟨hP, h⟩⟩
 
-noncomputable def IsProSylow.toSylow {P : Subgroup G} (hP : IsProSylow p P)
-    (U : OpenNormalSubgroup G) : Sylow p (G ⧸ (U : Subgroup G)) :=
-  IsPGroup.toSylow (isProPGroup_subgroup_iff_isPGroup_map.mp hP.2.1 U)
-    ((not_dvd_superIndex_iff_map P).mp hP.2.2 U)
-
-@[simp] theorem IsProSylow.coe_toSylow {P : Subgroup G} (hP : IsProSylow p P)
-    (U : OpenNormalSubgroup G) :
-    (hP.toSylow U : Subgroup (G ⧸ (U : Subgroup G))) = P.map (QuotientGroup.mk' (U : Subgroup G)) :=
-  rfl
 
 omit [CompactSpace G] [TotallyDisconnectedSpace G] in
-
 noncomputable def sylowSystem (p : ℕ) [Fact p.Prime] (H : Subgroup G) :
     OpenNormalSubgroup G ⥤ Type _ where
   obj U := {S : Sylow p (G ⧸ (U : Subgroup G)) //

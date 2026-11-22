@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
 
 open Matrix Finset MeasureTheory
 open scoped ContDiff ComplexConjugate InnerProductSpace
@@ -18,19 +22,17 @@ theorem ini_injective {n : ℕ} (j : Fin n) : Function.Injective (ini j) :=
   Fin.castLE_injective j.isLt
 
 theorem lm_one {n : ℕ} (j : Fin n) : lm j (1 : Mat n) = 1 := by
-  unfold lm
+  delta lm
   rw [Matrix.submatrix_one _ (ini_injective j), Matrix.det_one]
 
 theorem gm_one {n : ℕ} (j : Fin n) : gm j (1 : Mat n) = 1 := by
-  unfold gm
-  have h : ((1 : Mat n).submatrix (ini j) id) * ((1 : Mat n).submatrix (ini j) id)ᴴ = 1 := by
-    ext a b
-    simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.submatrix_apply, id, Matrix.one_apply]
-    simp [(ini_injective j).eq_iff]
-  rw [h, Matrix.det_one]
+  delta gm
+  rw [Matrix.conjTranspose_submatrix, Matrix.conjTranspose_one,
+    ← Matrix.submatrix_mul _ _ _ _ _ Function.bijective_id, Matrix.mul_one,
+    Matrix.submatrix_one _ (ini_injective j), Matrix.det_one]
 
 theorem fRaw_one (n : ℕ) (lam : Fin n → ℤ) (lev : Fin n → ℕ) : fRaw lam lev 1 = 1 := by
-  unfold fRaw
+  delta fRaw
   rw [Set.indicator_of_mem (one_mem_GLs n)]
   simp [lm_one, gm_one]
 

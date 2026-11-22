@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagClosure
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependenceAlgebra
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagClosure
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependenceAlgebra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -69,7 +74,8 @@ theorem hsymm_option_succ (α : Type*) [Fintype α] [DecidableEq α] (c : ℕ) :
       (fun s : Sym (Option α) (c + 1) => (s.1.map X).prod)).symm
   rw [hL, Fintype.sum_sum_type]
   unfold hsymm
-  rw [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum]
   congr 1
   · refine Finset.sum_congr rfl fun s _ => ?_
     show ((none ::ₘ s.1).map X).prod = _
@@ -83,7 +89,7 @@ theorem hsymm_fin_succ (k c : ℕ) :
     hsymm (Fin (k + 1)) ℤ (c + 1) =
       X (Fin.last k) * hsymm (Fin (k + 1)) ℤ c + rename Fin.castSucc (hsymm (Fin k) ℤ (c + 1)) := by
   have h := congrArg (rename (finSuccEquivLast (n := k)).symm) (hsymm_option_succ (Fin k) c)
-  rw [rename_hsymm, map_add, map_mul, rename_X, rename_hsymm, rename_rename] at h
+  rw [rename_hsymm, map_add (f := _), map_mul, rename_X, rename_hsymm, rename_rename] at h
   rw [h]
   have e1 : (finSuccEquivLast (n := k)).symm none = Fin.last k := finSuccEquivLast_symm_none
   have e2 : (finSuccEquivLast (n := k)).symm ∘ some = Fin.castSucc :=
@@ -106,7 +112,7 @@ theorem flagHsymm_eq_rename (N n : ℕ) : ∀ (k : ℕ) (hk : k ≤ N) (c : ℕ)
       flagHsymm_eq_rename N n (k + 1) hk c, hsymm_fin_succ, map_add, map_mul, rename_X, rename_rename]
     have hv : flagVar N n k = X (Fin.castAdd n (Fin.castLE hk (Fin.last k))) := by
       unfold flagVar
-      rw [dif_pos (by omega)]
+      rw [dite_eq_left (by omega)]
       rfl
     rw [hv]
     exact add_comm _ _
@@ -143,7 +149,8 @@ theorem flagClosurePt_top {K : Type*} {ι : K → Type} {Ω : Type*} [Field Ω] 
       intro i
       calc ψ (e i) = ψ (∑ j, w.repr (e i) j • w j) := by rw [w.sum_repr]
         _ = ∑ j, w.repr (e i) j * ψ (w j) := by simp only [map_sum, map_smul, smul_eq_mul]
-    simp only [flagCoord, Fin.is_lt, if_true, hψ, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [flagCoord, Fin.is_lt, if_true, hψ, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     ring
@@ -225,7 +232,7 @@ theorem SegreClosureNumber.proof (hExp : PairNumberExpansionIndependence.Stateme
       intro r Bf hB Es hEs Fs hFs Q' hQ'
       have hfv : flagVar N n k = X (Fin.castAdd n ⟨k, hk⟩) := by
         unfold flagVar
-        rw [dif_pos hk]
+        rw [dite_eq_left hk]
       have hxB : (X (Fin.castAdd n ⟨k, hk⟩) * Bf : MvPolynomial (Fin (N + n)) ℤ).IsHomogeneous (r + 1) := by
         have h := (isHomogeneous_X ℤ (Fin.castAdd n ⟨k, hk⟩)).mul hB
         rwa [add_comm 1 r] at h

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.TraceRestrictSupDisjoint
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.TraceRestrictSupDisjoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,9 +80,9 @@ private theorem chSym_exE {W : Type*} [NormedAddCommGroup W] [NormedSpace ℂ W]
   have he : ∀ f : Module.End ℂ W, ∀ x, e f x = f x := fun f x => rfl
   have hm : ∀ f g : Module.End ℂ W, e (f * g) = e f * e g := fun f g => ContinuousLinearMap.ext fun x => rfl
   have k1 : e X * e H - e H * e X = -(e Y + e Y) := by
-    rw [← hm, ← hm, ← map_sub, h1, map_neg, map_add]
+    rw [← hm, ← hm, ← map_sub, h1, map_neg, map_add (f := _)]
   have k2 : e X * e Y - e Y * e X = e H + e H := by
-    rw [← hm, ← hm, ← map_sub, h2, map_add]
+    rw [← hm, ← hm, ← map_sub, h2, map_add (f := _)]
   obtain ⟨u, u', hu1, hu2, hu3, hu4⟩ := chSym_exU (e X) (e H) (e Y) k1 k2
   have ev : ∀ {f g : W →L[ℂ] W}, f = g → ∀ x, f x = g x := fun h x => by rw [h]
   refine ⟨(u : Module.End ℂ W), (u' : Module.End ℂ W), ?_, ?_, ?_, ?_⟩
@@ -172,7 +176,7 @@ private theorem chSym_mv {n : ℕ} {W : Type*} [AddCommGroup W] [Module ℂ W] (
     (ν : Wt n) (x : W) (hx : IsWeight E ν x) : IsWeight E (ν ∘ Equiv.swap a b) (u x) := by
   have A : E a a (u x) + E b b (u x) = (ν a : ℂ) • u x + (ν b : ℂ) • u x := by
     have e := LinearMap.congr_fun h4.eq x
-    simp only [Module.End.mul_apply, LinearMap.add_apply, hx a, hx b, map_add, map_smul] at e
+    simp only [Module.End.mul_apply, LinearMap.add_apply, hx a, hx b, map_add (f := _), map_smul] at e
     exact e
   have Bq : E a a (u x) - E b b (u x) = -((ν a : ℂ) • u x - (ν b : ℂ) • u x) := by
     have e := LinearMap.congr_fun h3 x

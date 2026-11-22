@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.Num
 
 theorem PositivityTheory.Xgn.t_summand_bc : ∀ {o Ω C : Type} [CommRing o] [Field Ω] [Field C] [Algebra o Ω] [Algebra o C] [Algebra Ω C] [IsScalarTower o Ω C] (R : Subalgebra o Ω) (RC : Subalgebra o C), (∀ a ∈ R, algebraMap Ω C a ∈ RC) → ∀ {V Vc : Type} [AddCommGroup V] [Module Ω V] [AddCommGroup Vc] [Module C Vc] [Module Ω Vc] [IsScalarTower Ω C Vc] (b : V →ₗ[Ω] Vc), IsBaseChange C b → ∀ (L : AddSubgroup V) (U : Submodule Ω V), (∀ a ∈ R, ∀ v ∈ L, a • v ∈ L) → Summand L U → Summand (spanOver RC (b '' L)) (Submodule.span C (b '' U)) ∧ spanOver RC (b '' L) ⊓ (Submodule.span C (b '' U)).toAddSubgroup = spanOver RC (b '' (L ⊓ U.toAddSubgroup : AddSubgroup V)) := by
@@ -20,7 +25,7 @@ theorem PositivityTheory.Xgn.t_summand_bc : ∀ {o Ω C : Type} [CommRing o] [Fi
       rw [map_zero]
       exact zero_mem _
     | add y z _ _ hy hz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hy hz
     | neg y _ hy =>
       rw [map_neg]
@@ -32,13 +37,10 @@ theorem PositivityTheory.Xgn.t_summand_bc : ∀ {o Ω C : Type} [CommRing o] [Fi
       obtain ⟨e, he, rfl⟩ := hx
       rw [hρC, hρid e he]
     | zero => exact map_zero _
-    | add x y _ _ hx hy => rw [map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
     | smul a x _ hx => rw [map_smul, hx]
   refine ⟨⟨ρC, fun v => ?_, hid, hmap hρL⟩, ?_⟩
-  · refine hb.inductionOn v (fun v => ρC v ∈ Submodule.span C (b '' U)) ?_ ?_ ?_ ?_
-    · show ρC 0 ∈ _
-      rw [map_zero]
-      exact zero_mem _
+  · refine hb.inductionOn v ?_ ?_ ?_
     · intro m
       show ρC (b m) ∈ _
       rw [hρC]
@@ -49,7 +51,7 @@ theorem PositivityTheory.Xgn.t_summand_bc : ∀ {o Ω C : Type} [CommRing o] [Fi
       exact Submodule.smul_mem _ s hn
     · intro n₁ n₂ h₁ h₂
       show ρC (n₁ + n₂) ∈ _
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem h₁ h₂
   · apply le_antisymm
     · rintro x ⟨hx1, hx2⟩

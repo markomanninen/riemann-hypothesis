@@ -1,5 +1,9 @@
-import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ def charRep (χ : Γ →* Rˣ) : Representation R Γ R where
 @[simp] theorem charRep_apply (χ : Γ →* Rˣ) (g : Γ) (x : R) :
     charRep χ g x = ((χ g : Rˣ) : R) * x := rfl
 
-variable (R M) in
 
+variable (R M) in
 def TDual := Module.Dual R M
 
 instance : AddCommGroup (TDual R M) := inferInstanceAs (AddCommGroup (Module.Dual R M))
@@ -44,25 +48,26 @@ def TDual.mk (φ : M →ₗ[R] R) : TDual R M := φ
 
 @[simp] theorem TDual.smul_apply (c : R) (φ : TDual R M) (m : M) : (c • φ) m = c * φ m := rfl
 
-@[ext] theorem TDual.ext {φ ψ : TDual R M} (h : ∀ m, φ m = ψ m) : φ = ψ := LinearMap.ext h
-
 def twDual (χ : Γ →* Rˣ) (rho : Representation R Γ M) : Representation R Γ (TDual R M) where
   toFun g :=
     { toFun := fun φ => TDual.mk (((χ g : Rˣ) : R) • ((φ : M →ₗ[R] R) ∘ₗ rho g⁻¹))
       map_add' := fun φ ψ => by
-        ext m
+        refine DFunLike.ext _ _ fun m => ?_
         show ((χ g : Rˣ) : R) * (φ (rho g⁻¹ m) + ψ (rho g⁻¹ m)) =
           ((χ g : Rˣ) : R) * φ (rho g⁻¹ m) + ((χ g : Rˣ) : R) * ψ (rho g⁻¹ m)
         ring
       map_smul' := fun c φ => by
-        ext m
+        refine DFunLike.ext _ _ fun m => ?_
         show ((χ g : Rˣ) : R) * (c * φ (rho g⁻¹ m)) = c * (((χ g : Rˣ) : R) * φ (rho g⁻¹ m))
         ring }
-  map_one' := by ext φ m; simp; rfl
+  map_one' := by
+    refine LinearMap.ext fun φ => DFunLike.ext _ _ fun m => ?_
+    change ((χ 1 : Rˣ) : R) * φ (rho (1 : Γ)⁻¹ m) = φ m
+    simp
   map_mul' g h := by
-    ext φ m
+    refine LinearMap.ext fun φ => DFunLike.ext _ _ fun m => ?_
     show _ * φ (rho (g * h)⁻¹ m) = _ * (_ * φ (rho h⁻¹ (rho g⁻¹ m)))
-    rw [mul_inv_rev, map_mul rho, Module.End.mul_apply, map_mul χ, Units.val_mul, mul_assoc]
+    rw [mul_inv_rev, map_mul rho, mul_apply_eq_comp, map_mul χ, Units.val_mul, mul_assoc]
 
 @[simp] theorem twDual_apply (χ : Γ →* Rˣ) (rho : Representation R Γ M) (g : Γ) (φ : TDual R M)
     (m : M) : twDual χ rho g φ m = ((χ g : Rˣ) : R) * φ (rho g⁻¹ m) := rfl
@@ -73,12 +78,7 @@ def evalPair : M →ₗ[R] TDual R M →ₗ[R] R := LinearMap.applyₗ
 
 theorem evalPair_equiv (χ : Γ →* Rˣ) (rho : Representation R Γ M) (g : Γ) (m : M)
     (φ : TDual R M) : evalPair (rho g m) (twDual χ rho g φ) = charRep χ g (evalPair m φ) := by
-  have e : rho g⁻¹ (rho g m) = m := by
-    first
-      | exact Representation.inv_self_apply rho g m
-      | rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
-      | rw [← LinearMap.mul_apply, ← map_mul, inv_mul_cancel, map_one, LinearMap.one_apply]
-  rw [evalPair_apply, twDual_apply, charRep_apply, evalPair_apply, e]
+  rw [evalPair_apply, twDual_apply, charRep_apply, evalPair_apply, Representation.inv_self_apply]
 
 end Coeff
 
@@ -140,8 +140,8 @@ variable (F Ω) (l : ℕ) [Fact l.Prime] (r : ℕ)
 
 abbrev muRep : Representation (ZMod (l ^ r)) (G F Ω) (ZMod (l ^ r)) := charRep (cycMod F Ω l r)
 
-variable {F Ω l r} in
 
+variable {F Ω l r} in
 abbrev tateDual {M : Type*} [AddCommGroup M] [Module (ZMod (l ^ r)) M]
     (rho : Representation (ZMod (l ^ r)) (G F Ω) M) :
     Representation (ZMod (l ^ r)) (G F Ω) (TDual (ZMod (l ^ r)) M) :=

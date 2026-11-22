@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ theorem coeff_revChar_mul (φ : A →+* B) (h : FinFree φ) (u : A) (b : B) (k :
   generalize LinearMap.toMatrix e e (Algebra.lmul A B b) = M
   congr 1
   rw [Matrix.charpolyRev, Matrix.charpolyRev, ← coe_compRingHom_apply, RingHom.map_det]
-  congr 1
+  apply congrArg (fun (p : A[X]) => p.coeff)
+  apply congrArg Matrix.det
   refine Matrix.ext fun i j => ?_
   by_cases hij : i = j <;> simp [hij] <;> ring
 
@@ -88,7 +93,7 @@ theorem finFree_revChar_of_isPushout {φ : A →+* B} {α : A →+* A'} {β : B 
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul r x => simp [IsBaseChange.equiv_tmul]; rfl
-    | add s t hs ht => simp only [map_add, hs, ht]
+    | add s t hs ht => simp only [map_add (f := _), hs, ht]
   simp only [revChar]
   rw [e, reverse, reverse, (LinearMap.charpoly_monic _).natDegree_map, reflect_map]
 
@@ -197,8 +202,8 @@ theorem exists_sec_image_nonzeroLocus [IsFinite f] [Flat f] [IsLocallyNoetherian
     have lg : W ≤ M.U a.1.2 ⊓ M.U b.1.2 := le_inf (la.trans a.2.2.1) (lb.trans b.2.2.1)
     have : Nonempty W := ⟨⟨x, hx⟩⟩
     obtain ⟨hF, ea⟩ := finFree_revChar_of_isPushout (isPushout_app f a.2.1 hW la) a.2.2.2
-    have ea := congrArg (coeff · k) (ea hF (τ a))
-    have eb := congrArg (coeff · k)
+    have ea := congrArg (fun (p : Γ(X, W)[X]) => p.coeff k) (ea hF (τ a))
+    have eb := congrArg (fun (p : Γ(X, W)[X]) => p.coeff k)
       ((finFree_revChar_of_isPushout (isPushout_app f b.2.1 hW lb) b.2.2.2).2 hF (τ b))
     simp only [coeff_map] at ea eb
     have eτ : resG Y (show f ⁻¹ᵁ W ≤ f ⁻¹ᵁ a.1.1 from fun _ hy => la hy) (τ a) =

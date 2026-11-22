@@ -1,4 +1,8 @@
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+module
+
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem len_coker_add {A B C : Type} [AddCommGroup A] [Module O A] [AddCommGroup
       rw [Submodule.Quotient.eq'] at hz
       obtain ⟨t, ht⟩ := hz
       refine ⟨g t, ?_⟩
-      rw [h2, ht, map_add, map_neg, hfg.apply_apply_eq_zero, neg_zero, zero_add]
+      rw [h2, ht, map_add (f := _), map_neg, hfg.apply_apply_eq_zero, neg_zero, zero_add]
 
 end Snake
 

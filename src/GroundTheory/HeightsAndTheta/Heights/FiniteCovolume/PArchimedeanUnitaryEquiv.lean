@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdelicSplit
-import GroundTheory.HeightsAndTheta.Theta.RealPlace
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdelicSplit
+public import GroundTheory.HeightsAndTheta.Theta.RealPlace
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -14,7 +18,7 @@ noncomputable section
 attribute [local instance] tensorTopology isModuleTopology_tensor isTopologicalRing_tensor
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 theorem isNonsplitAt_of_isTotallyComplex (u : InfinitePlace F) : IsNonsplitAt E u := by
   have hu : u.IsReal := IsTotallyReal.isReal u
@@ -52,8 +56,12 @@ theorem norm_placeEmbedding_algebraMap (u : InfinitePlace F) (x : F) :
   rw [IsScalarTower.algebraMap_apply F u.Completion (u.Completion ⊗[F] E),
     realPlaceEquiv_algebraMap,
     Complex.norm_real, ringEquivRealOfIsReal_apply]
-  erw [extensionEmbeddingOfIsReal_coe hu]
-  exact norm_embedding_of_isReal hu x
+  have h : extensionEmbeddingOfIsReal hu (algebraMap F u.Completion x) =
+      embedding_of_isReal hu x := by
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply]
+    simpa using extensionEmbeddingOfIsReal_coe hu (WithAbs.toAbs u.1 x)
+  rw [h, norm_embedding_of_isReal hu x]
 
 def placeAbove (u : InfinitePlace F) : InfinitePlace E :=
   InfinitePlace.mk (placeEmbedding u)
@@ -131,8 +139,8 @@ section Unitary
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-omit [NumberField F] [NumberField E] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 def unitaryPointsComplexEquiv {R : Type*} [CommRing R] [Algebra F R] [TopologicalSpace R]
     [IsTopologicalRing R] (H : Matrix ι ι E) (Ψ : R ⊗[F] E ≃+* ℂ) (hc : Continuous Ψ)
     (hc' : Continuous Ψ.symm) (hs : ∀ z, Ψ (conjBase F E R z) = starRingEnd ℂ (Ψ z))
@@ -179,8 +187,8 @@ def unitaryPointsPlaceEquiv (h : HermitianForm F E W) (v : Basis ι E W) (w : In
     (completionTensorEquiv_conjBase _)
     (by rw [map_completionTensorEquiv_gram, Equiv.apply_symm_apply])
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 def piUnitaryEquivArch (h : HermitianForm F E W) (v : Basis ι E W) :
     (∀ w : InfinitePlace E, unitaryGroupMatrix (starRingEnd ℂ) (gramAt h v w)) ≃ₜ*
       archUnitary h v where

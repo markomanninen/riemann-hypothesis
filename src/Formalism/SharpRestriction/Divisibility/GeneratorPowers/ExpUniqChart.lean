@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqGlue
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndExp
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqGlue
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndExp
+
+@[expose] public section
 
 set_option autoImplicit false
 

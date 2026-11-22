@@ -1,12 +1,17 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace Opposite
@@ -19,10 +24,6 @@ namespace EmbeddedBlowupSequence
 
 variable {k : Type u} [Field k] [CharZero k] {Y : Scheme.{u}} [AlgebraicGeometry.IsAffine Y]
   {pY : Y ⟶ Spec (CommRingCat.of k)} [AlgebraicGeometry.LocallyOfFiniteType pY]
-
-instance instIsClosedImmersionEmbCompIsoZeroInv (S : EmbeddedBlowupSequence k Y pY) :
-    AlgebraicGeometry.IsClosedImmersion (S.emb ≫ S.ambientSeq.isoZero.inv) :=
-  inferInstance
 
 def detachedToCoprod (T : EmbeddedBlowupSequence k Y pY) (s : ℕ) :
     ∀ (i : ℕ), s < i → (T.detachedScheme s ⟶ T.detachedCoprod i)
@@ -154,10 +155,6 @@ theorem strictTransformToBase_emb (i : ℕ) :
 def detachedCoprodInl (i : ℕ) : S.detachedCoprod i ⟶ S.detachedCoprod (i + 1) :=
   (coprod.inl : S.detachedCoprod i ⟶ S.detachedCoprod i ⨿ S.detachedScheme i)
 
-theorem detachedCoprodInl_eq (i : ℕ) :
-    S.detachedCoprodInl i = (coprod.inl : S.detachedCoprod i ⟶ S.detachedCoprod i ⨿ S.detachedScheme i) :=
-  rfl
-
 theorem detachedCoprodInl_inr_totalTransition (i : ℕ) :
     S.detachedCoprodInl i ≫ (coprod.inr : S.detachedCoprod (i + 1) ⟶ S.totalSpace (i + 1)) ≫
         S.totalTransition i =
@@ -222,8 +219,8 @@ theorem detachedToCoprod_succ_of_lt (s i : ℕ) (h : s < i) :
 
 theorem detachedToCoprod_self (i : ℕ) :
     S.detachedToCoprod i (i + 1) (Nat.lt_succ_self i) = S.detachedCoprodInr i := by
-  rw [detachedToCoprod]
-  simp [detachedCoprodInr_eq]
+  set_option backward.isDefEq.respectTransparency false in
+    simp [detachedToCoprod, detachedCoprodInr_eq]
 
 private theorem detachedCoprod_hom_ext_forall (W : EmbeddedBlowupSequence k Y pY) :
     ∀ (i : ℕ) (Z : Scheme.{u}) (f g : W.detachedCoprod i ⟶ Z),

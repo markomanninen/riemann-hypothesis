@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IntermediateField Polynomial ArithmeticFunction
 
@@ -57,14 +61,6 @@ private theorem log_abs_norm_sub_one_mul_totient_eq {m : ℕ} (hm : 1 < m) {L : 
   rw [habs, Real.log_pow, log_abs_eval_one_cyclotomic_eq_vonMangoldt hm, ← Module.finrank_mul_finrank ℚ ℚ⟮η - 1⟯ L, hdeg]
   push_cast; ring
 
-theorem log_norm_cyc {m : ℕ} (hm : 1 < m) {F : Type*} [Field F] [NumberField F] [IsCyclotomicExtension {m} ℚ F]
-    {η : F} (hη : IsPrimitiveRoot η m) : Real.log |((Algebra.norm ℚ (η - 1) : ℚ) : ℝ)| = vonMangoldt m := by
-  haveI : NeZero m := ⟨by omega⟩
-  have h := log_abs_norm_sub_one_mul_totient_eq hm hη
-  rw [IsCyclotomicExtension.finrank F (cyclotomic.irreducible_rat (by omega : 0 < m))] at h
-  have ht : (0 : ℝ) < m.totient := by exact_mod_cast Nat.totient_pos.2 (by omega)
-  exact mul_right_cancel₀ ht.ne' (h.trans (mul_comm _ _))
-
 private theorem absNorm_map_algebraMap_eq_pow_finrank {L E : Type*} [Field L] [NumberField L] [Field E] [NumberField E]
     [Algebra E L] (I : Ideal (𝓞 E)) :
     Ideal.absNorm (I.map (algebraMap (𝓞 E) (𝓞 L))) = Ideal.absNorm I ^ Module.finrank E L := by
@@ -72,17 +68,12 @@ private theorem absNorm_map_algebraMap_eq_pow_finrank {L E : Type*} [Field L] [N
     exact (IsFractionRing.finrank_eq (𝓞 E) E (𝓞 L) L).symm
   rw [Ideal.absNorm_algebraMap (𝓞 E) (𝓞 L) I, hr]
 
-theorem log_norm_root {m : ℕ} (hm : 1 < m) {L : Type*} [Field L] [NumberField L] {η : L}
-    (hη : IsPrimitiveRoot η m) :
-    Real.log |((Algebra.norm ℚ (η - 1) : ℚ) : ℝ)| * (m.totient : ℝ) = (Module.finrank ℚ L : ℝ) * vonMangoldt m := by
-  exact log_abs_norm_sub_one_mul_totient_eq hm hη
-
 variable {N : ℕ} [NeZero N] {L : Type*} [Field L] [NumberField L] [IsCyclotomicExtension {N} ℚ L] {ζ : L}
   (hζ : IsPrimitiveRoot ζ N) (E : Type*) [Field E] [NumberField E] [Algebra E L]
 include hζ
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem adjoin_top : Algebra.adjoin E {ζ} = ⊤ := by
   have h1 : Algebra.adjoin ℚ ({ζ} : Set L) = ⊤ := IsCyclotomicExtension.adjoin_primitive_root_eq_top hζ
   refine eq_top_iff.2 fun x hxt => ?_
@@ -287,14 +278,17 @@ theorem log_norm_weight (u : ZMod N) (hu : u ≠ 1) :
   rw [mul_div_assoc', eq_div_iff ht.ne']
   exact key
 
-open Classical in
 
+local instance (p : Prop) : Decidable p := Classical.propDecidable p
+
+open Classical in
 theorem log_rd (U : Subgroup (ZMod N)ˣ)
     (hU : ∀ (σ : L ≃ₐ[ℚ] L) (u : (ZMod N)ˣ), σ ζ = ζ ^ (u : ZMod N).val →
       ((∀ x : E, σ (algebraMap E L x) = algebraMap E L x) ↔ u ∈ U)) :
     Real.log |(discr E : ℝ)| / Module.finrank ℚ E =
       ∑ u ∈ (Finset.univ : Finset (ZMod N)ˣ).filter (fun u => u ∉ U),
         vonMangoldt (addOrderOf ((u : ZMod N) - 1)) / ((addOrderOf ((u : ZMod N) - 1)).totient : ℝ) := by
+  classical
   haveI : FiniteDimensional E L := Module.Finite.of_restrictScalars_finite ℚ E L
   haveI : IsGalois ℚ L := IsCyclotomicExtension.isGalois {N} ℚ L
   have hφ : Module.finrank ℚ L = N.totient :=

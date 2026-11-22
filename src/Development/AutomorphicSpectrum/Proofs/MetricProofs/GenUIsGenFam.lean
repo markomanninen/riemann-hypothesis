@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericFlagOverGenericField
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericFlagOverGenericField
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem genU_isGenFam (Ω : Type) [Field Ω] {S : Type} (r : S → ℕ) : IsGenF
         rw [← MvPolynomial.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
         exact IntermediateField.algebraMap_mem _ c
       · rename_i p q hp hq
-        rw [map_add]
+        rw [map_add (f := _)]
         exact add_mem hp hq
       · rename_i p i hp
         rw [map_mul]

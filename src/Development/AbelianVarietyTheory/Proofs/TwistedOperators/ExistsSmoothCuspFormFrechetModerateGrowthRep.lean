@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsGrowthSobNeTopOfIsAutFunSm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RWordRTrAdelic
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCuspFunctionClosedUnderOperations
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RderMemAutFormsCuspForms
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCompactKinfAndConj
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModerateGrowthSobolevSizeRightTranslatePolyBoundStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GrowthSobolevCauchyTendstoSmoothLimitStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCuspFunOfTendstoModerateGrowthSizeStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryAdelicHeightRealFrameElementLeHsPowStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexDerivativeRightDerivativeCommutatorStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoModerateGrowthSizeTranslateNearOneStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoModerateGrowthSizeDifferenceQuotientStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsGrowthSobNeTopOfIsAutFunSm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RWordRTrAdelic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCuspFunctionClosedUnderOperations
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RderMemAutFormsCuspForms
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCompactKinfAndConj
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModerateGrowthSobolevSizeRightTranslatePolyBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GrowthSobolevCauchyTendstoSmoothLimitStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCuspFunOfTendstoModerateGrowthSizeStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryAdelicHeightRealFrameElementLeHsPowStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexDerivativeRightDerivativeCommutatorStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoModerateGrowthSizeTranslateNearOneStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoModerateGrowthSizeDifferenceQuotientStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,8 +49,8 @@ theorem growthSob_RderC_le (hθ : IsInfFam θ) {φ : GA D V → ℂ} (hs : φ �
     rw [growthSob_smul]
     exact mul_le_mul' le_rfl (wordSum_letter_le d _ φ)
 
-variable (θ N) in
 
+variable (θ N) in
 def cuspSub (hU : IsOpen (U : Set (GA D V))) : Submodule ℂ (GA D V → ℂ) where
   carrier := {φ | Continuous φ ∧ (∀ γ ∈ GQ V, ∀ g, φ (γ * g) = φ g) ∧ (∀ k ∈ U, k ∈ GfC V → ∀ g, φ (g * k) = φ g) ∧
     φ ∈ SmFun θ V ∧ IsCuspFun V φ ∧ ∀ d, growthSob θ V d N φ ≠ ⊤}
@@ -102,16 +106,16 @@ theorem Rder_mem_cuspSub (hθ : IsInfFam θ) {τ : D.what₂.Tau} {X : Matrix (F
     exact ne_top_of_le_ne_top (ENNReal.mul_ne_top (ENNReal.sum_ne_top.2 fun _ _ => enorm_ne_top) (a6 _))
       (growthSob_RderC_le hθ a4 τ X d)
 
-variable (θ N hU) in
 
+variable (θ N hU) in
 def Sp : Type := cuspSub θ N hU
 
 instance : AddCommGroup (Sp θ N hU) := inferInstanceAs (AddCommGroup (cuspSub θ N hU))
 
 instance : Module ℂ (Sp θ N hU) := inferInstanceAs (Module ℂ (cuspSub θ N hU))
 
-variable (θ N hU) in
 
+variable (θ N hU) in
 def incl : Sp θ N hU →ₗ[ℂ] (GA D V → ℂ) := (cuspSub θ N hU).subtype
 
 theorem incl_mem (x : Sp θ N hU) : incl θ N hU x ∈ cuspSub θ N hU := x.2
@@ -122,12 +126,12 @@ theorem incl_fin (x : Sp θ N hU) (d : ℕ) : growthSob θ V d N (incl θ N hU x
 
 theorem incl_injective : Function.Injective (incl θ N hU) := Subtype.val_injective
 
-variable (θ N hU) in
 
+variable (θ N hU) in
 def sem (d : ℕ) : Seminorm ℂ (Sp θ N hU) :=
   Seminorm.of (fun x => (growthSob θ V d N (incl θ N hU x)).toReal)
     (fun x y => by
-      rw [map_add, ← ENNReal.toReal_add (incl_fin x d) (incl_fin y d)]
+      rw [map_add (f := _), ← ENNReal.toReal_add (incl_fin x d) (incl_fin y d)]
       exact ENNReal.toReal_mono (ENNReal.add_ne_top.2 ⟨incl_fin x d, incl_fin y d⟩)
         (growthSob_add_le (incl_sm x) (incl_sm y) d N))
     fun c x => by rw [map_smul, growthSob_smul, ENNReal.toReal_mul, toReal_enorm]
@@ -208,8 +212,8 @@ theorem continuous_of_le (T : Sp θ N hU →ₗ[ℂ] Sp θ N hU) (h : ∀ d, ∃
   rw [mul_zero] at this
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds this (fun _ => zero_le) h
 
-variable (N hU) in
 
+variable (N hU) in
 def act (hθ : IsInfFam θ) (h : GinfC V) : Sp θ N hU →L[ℂ] Sp θ N hU where
   toLinearMap := (rTrLin h.1).restrict fun _ hx => rTr_mem_cuspSub hθ h.2 hx
   cont := continuous_of_le _ fun d => by
@@ -221,8 +225,8 @@ theorem RderC_mem_cuspSub (hθ : IsInfFam θ) (τ : D.what₂.Tau) (Z : Matrix (
   add_mem (Rder_mem_cuspSub hθ (GlobalTheory.SmoothAutCheck.parts_mem V τ Z).1 hφ)
     (Submodule.smul_mem _ _ (Rder_mem_cuspSub hθ (GlobalTheory.SmoothAutCheck.parts_mem V τ Z).2 hφ))
 
-variable (N hU) in
 
+variable (N hU) in
 def derL (hθ : IsInfFam θ) (τ : D.what₂.Tau) :
     Matrix (Fin V.rank) (Fin V.rank) ℂ →ₗ[ℂ] Sp θ N hU →ₗ[ℂ] Sp θ N hU :=
   LinearMap.mk₂ ℂ (fun Z x => ⟨RderC θ V τ Z (incl θ N hU x), RderC_mem_cuspSub hθ τ Z (incl_mem x)⟩)
@@ -234,8 +238,8 @@ def derL (hθ : IsInfFam θ) (τ : D.what₂.Tau) :
 theorem incl_derL (hθ : IsInfFam θ) (τ : D.what₂.Tau) (Z : Matrix (Fin V.rank) (Fin V.rank) ℂ) (x : Sp θ N hU) :
     incl θ N hU (derL N hU hθ τ Z x) = RderC θ V τ Z (incl θ N hU x) := rfl
 
-variable (N hU) in
 
+variable (N hU) in
 def der (hθ : IsInfFam θ) (τ : D.what₂.Tau) (Z : Matrix (Fin V.rank) (Fin V.rank) ℂ) : Sp θ N hU →L[ℂ] Sp θ N hU where
   toLinearMap := derL N hU hθ τ Z
   cont := continuous_of_le _ fun d => ⟨d + 1, _, ENNReal.sum_ne_top.2 fun _ _ => enorm_ne_top, fun x =>
@@ -282,14 +286,14 @@ theorem tendsto_zero_of_comm (hθ : IsInfFam θ) {α : Type} {F : Filter α} (u 
       refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds this (fun _ => zero_le) fun a => ?_
       refine le_trans ?_ (add_le_add (le_wordSum (l := l) le_rfl _) le_rfl)
       refine le_of_eq_of_le (congrArg _ ?_) growthSize_add_le
-      rw [← (linOnSm_glWord l).add _ (incl_sm _) _ (incl_sm _), ← map_add, sub_add_cancel, wordAct_append]
+      rw [← (linOnSm_glWord l).add _ (incl_sm _) _ (incl_sm _), ← map_add (f := _), sub_add_cancel, wordAct_append]
       rfl
   refine tendsto_zero_iff.2 fun d => ?_
   simpa only [Finset.sum_const_zero, growthSob, wordSum] using tendsto_finsetSum (Finset.range (d + 1)) fun k _ =>
     tendsto_finsetSum Finset.univ fun (a : Fin k → _) _ => key (List.ofFn a) x
 
-variable (θ) in
 
+variable (θ) in
 def pt (τ : D.what₂.Tau) (u : Matrix (Fin V.rank) (Fin V.rank) ℂ) : GinfC V := ⟨atTau θ V τ u, atTau_mem V τ u⟩
 
 theorem tendsto_act_one (hθ : IsInfFam θ) (τ : D.what₂.Tau) (x : Sp θ N hU) :
@@ -375,7 +379,7 @@ theorem tendsto_quot (hθ : IsInfFam θ) {τ : D.what₂.Tau} {X : Matrix (Fin V
     · subst c
       refine ⟨_, (tendsto_ad_exp X Z).congr fun t => ?_, incl_injective ?_⟩
       · rw [adAt, hi, (hs _).2.1, (hs _).2.1]
-      · rw [map_add, eX, incl_derL, eX]
+      · rw [map_add (f := _), eX, incl_derL, eX]
         exact hbr.1
     · refine ⟨0, tendsto_const_nhds.congr fun t => ?_, incl_injective ?_⟩
       · rw [adAt, hi, (hs _).2.2 _ c, (hs _).2.2 _ c, Matrix.one_mul, Matrix.mul_one, sub_self, smul_zero]
@@ -417,24 +421,32 @@ theorem conj_mem_lieAt (A : GlobalTheory.ChainFr.Fr V) (τ : D.what₂.Tau) {X :
 
 theorem isSmoothModRep (hθ : IsInfFam θ) (A : GlobalTheory.ChainFr.Fr V) (τ : D.what₂.Tau) :
     GlobalTheory.SmoothGlob.IsSmoothModRep (A.ε τ) (sem θ N hU) (fun g => act N hU hθ (pt θ τ ((A.fr τ)⁻¹ * g * A.fr τ)))
-      fun X => der N hU hθ τ ((A.fr τ)⁻¹ * X * A.fr τ) where
-  withSeminorms := withSem
-  map_one := ContinuousLinearMap.ext fun x => by
+      (fun X => der N hU hθ τ ((A.fr τ)⁻¹ * X * A.fr τ)) := by
+  refine
+    { withSeminorms := withSem
+      map_one := ?_
+      map_mul := ?_
+      continuousOn := ?_
+      hasDRep := ?_
+      growth := ?_ }
+  · refine ContinuousLinearMap.ext fun x => ?_
     rw [Matrix.mul_one, mul_eq_one_comm.1 (fr_mul_inv A τ), show pt θ τ 1 = 1 from Subtype.ext (atTau_one hθ V τ)]
     exact act_one hθ x
-  map_mul a ha b hb := ContinuousLinearMap.ext fun x => by
+  · intro a ha b hb
+    refine ContinuousLinearMap.ext fun x => ?_
     rw [ContinuousLinearMap.comp_apply, ← act_mul, ← pt_mul hθ τ (conj_mem_UH A τ ha) (conj_mem_UH A τ hb)]
     congr 3
     simp only [Matrix.mul_assoc]
     rw [← Matrix.mul_assoc (A.fr τ), fr_mul_inv, Matrix.one_mul]
-  continuousOn v := (continuousOn_act hθ τ v).comp
-    ((continuous_const.matrix_mul continuous_id).matrix_mul continuous_const).continuousOn fun _ h => conj_mem_UH A τ h
-  hasDRep X hX v := by
+  · intro v
+    exact (continuousOn_act hθ τ v).comp
+      ((continuous_const.matrix_mul continuous_id).matrix_mul continuous_const).continuousOn fun _ h => conj_mem_UH A τ h
+  · intro X hX v
     refine tendsto_sub_nhds_zero_iff.1 ((tendsto_quot hθ (conj_mem_lieAt A τ hX) v).congr fun t => ?_)
     beta_reduce
     rw [← Matrix.exp_conj' _ _ (A.fr_unit τ), Matrix.mul_smul, Matrix.smul_mul]
     rfl
-  growth i := by
+  · intro i
     obtain ⟨C, m, hC⟩ := GlobalTheory.T.moderateGrowthSobolevSize_rightTranslate_polyBound D θ hθ V i N
     obtain ⟨C', m', hC'⟩ := GlobalTheory.T.unitaryAdelicHeight_realFrameElement_le_hsPow D θ hθ V A τ
     refine ⟨(C * ‖C'‖₊ ^ m) • sem θ N hU i, m' * m, (withSem.continuous_seminorm i).const_smul (C * ‖C'‖₊ ^ m),

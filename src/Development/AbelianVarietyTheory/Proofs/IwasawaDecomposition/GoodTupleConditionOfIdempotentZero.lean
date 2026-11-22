@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NcardPrimesOverOfStabilizer
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.DedekindZetaEqSumRealEisenstein
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyRingHomComplexOfLeContinuum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTameGenAtOfValuationSubring
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRingHomOfIsIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NcardPrimesOverOfStabilizer
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.DedekindZetaEqSumRealEisenstein
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyRingHomComplexOfLeContinuum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTameGenAtOfValuationSubring
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+public import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRingHomOfIsIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ theorem isAlgebraic_rat (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Alge
 
 variable {R : Ranks}
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem exists_isCMConjOm (H : Host R) (Ω : Type) [Field Ω] [Algebra H.E Ω] [IsAlgClosure H.E Ω] :
     ∃ c : Ω ≃+* Ω, IsCMConjOm H.E Ω c := by
   have : CharZero Ω := charZero_of_injective_algebraMap (algebraMap H.E Ω).injective
@@ -236,7 +240,7 @@ theorem exists_iota (g l : ℕ) [Fact g.Prime] [hl : Fact l.Prime] : ∃ ι : Fo
     rw [map_mul, map_mul, h2, ← map_mul, ← map_mul, mul_inv_cancel₀ hy, map_one, map_one]
   have h3 : IsPrimitiveRoot (1 : Formalism.CyclotomicNorms.Fbar l) n := by
     rw [← isRoot_cyclotomic_iff, ← h1, ← map_cyclotomic n ρ]
-    exact (hprim.isRoot_cyclotomic hnpos).map
+    exact (hprim.isRoot_cyclotomic hnpos).map ρ
   have h4 : n = 1 := h3.unique IsPrimitiveRoot.one
   exact (mul_inv_eq_one₀ hy).1 (orderOf_eq_one_iff.1 h4)
 
@@ -251,8 +255,9 @@ theorem two_le_r (R : Ranks) : 2 ≤ R.r := by
   omega
 
 theorem f_pos (R : Ranks) : 0 < R.f := by
+  have := R.ord_pos
   unfold Ranks.f Ranks.n
-  positivity
+  omega
 
 def lData (H : Host R) (p : ℕ) [Fact p.Prime] : Formalism.GaloisCohomology.LData H.E (AlgebraicClosure H.E) p :=
   (nonempty_lData H.E (AlgebraicClosure H.E) p).some
@@ -272,8 +277,8 @@ theorem monic_unip {K : Type} [CommRing K] [Nontrivial K] (n : ℕ) :
   have h' : (X - 1 : K[X]).natDegree = 1 := by simpa using natDegree_X_sub_C (1 : K)
   exact ⟨h.pow n, by rw [h.natDegree_pow, h', mul_one]⟩
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def nData (H : Host R) (what₂ : Rows.Data R) (hsha : ∀ p e, what₂.shaLen p e = shaTrue H p e)
     (hs : ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E)
     (hc : what₂.restRowsFiniteGroupCard = ∏ k : Fin 2, (Nat.card (GL (Fin R.r) (ZMod (H.g k)))) ^ R.f) : NData R H what₂ where
@@ -281,7 +286,7 @@ def nData (H : Host R) (what₂ : Rows.Data R) (hsha : ∀ p e, what₂.shaLen p
   plOm := ⟨placeOf _, isPlaceOver_placeOf _⟩
   ldat := lData H
   sha_eq := fun p hp e _ _ n h => by
-    rw [hsha, shaTrue, dif_pos hp.out]
+    rw [hsha, shaTrue, dite_eq_left hp.out]
     show ((Formalism.GaloisCohomology.shaLen (lData H p) (e : ℤ)).toNat : ℚ) = n
     rw [h, ENat.toNat_natCast]
   Loc := Empty
@@ -383,8 +388,8 @@ abbrev UnrFam (H : Host R) (a : ℕ) : Type :=
 def negOneFam (H : Host R) : UnrFam H 1 :=
   ⟨(fun _ => ⟨{-1}, by simp⟩, fun _ => {0}), fun _ => rfl, fun _ => rfl⟩
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def nAut (N : NData R H what₂) [IsEmpty N.Loc] (pl : ∀ k, N.PlG k → PlE H)
     (h1 : ∀ k v, pl k v ∈ placesOver H.E (H.g k)) (h2 : ∀ k, Function.Injective (pl k))
     (h3 : ∀ k v v', ¬ IsConjPl H (pl k v) (pl k v')) : NAut N where
@@ -548,8 +553,8 @@ section Twist
 
 variable [NumberField what₂.LL] [StarRing what₂.LL] (LL0 : IntermediateField ℚ what₂.LL)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def nTw (N : NData R H what₂) [IsEmpty N.Loc] : NTw R H what₂ LL0 N where
   cc := (exists_isCMConjOm H N.Om).choose
   cc_cm := (exists_isCMConjOm H N.Om).choose_spec
@@ -670,8 +675,8 @@ def nTw (N : NData R H what₂) [IsEmpty N.Loc] : NTw R H what₂ LL0 N where
 
 variable {LL0}
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def nExp {N : NData R H what₂} (tw : NTw R H what₂ LL0 N) [IsEmpty tw.Tw] : NExp R H what₂ LL0 N tw where
   U := ⊥
   eLL0 := fun _ => 0
@@ -720,8 +725,8 @@ def nExp {N : NData R H what₂} (tw : NTw R H what₂ LL0 N) [IsEmpty tw.Tw] : 
   eH := fun i => isEmptyElim i
   eH_idem := fun i => isEmptyElim i
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def nTh {N : NData R H what₂} {tw : NTw R H what₂ LL0 N} [IsEmpty tw.Tw] (ex : NExp R H what₂ LL0 N tw) :
     NTh R H what₂ LL0 N tw ex where
   iC := fun i => isEmptyElim i
@@ -780,8 +785,8 @@ section Types
 
 variable {H : Host R} {what₂ : Rows.Data R}
 
-open Classical in
 
+open Classical in
 def unipSer (K : Type) [Field K] (r : ℕ) (A : Type) [Ring A] (f : K[X]) : A :=
   if f = (X - 1) ^ r then 1 else 0
 
@@ -820,8 +825,8 @@ def cenTriv (Γ : Type) [Group Γ] (V : Type) [AddCommGroup V] [Module ℂ V] :
     Subalgebra.center ℂ (MonoidAlgebra ℂ Γ) →ₐ[ℂ] Module.End ℂ V :=
   (MonoidAlgebra.lift ℂ (Module.End ℂ V) Γ 1).comp (Subalgebra.val _)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def nTypes (N : NData R H what₂) [IsEmpty N.Loc] (pl : ∀ k, N.PlG k → PlE H)
     (h1 : ∀ k v, pl k v ∈ placesOver H.E (H.g k)) (h2 : ∀ k, Function.Injective (pl k))
     (h3 : ∀ k v v', ¬ IsConjPl H (pl k v) (pl k v'))
@@ -911,9 +916,9 @@ theorem idempotent_good_tuples_eq_zero {N : NData R H what₂} {A : NAut N} (T :
 theorem good_tuple_condition_of_idempotent_zero {N : NData R H what₂} {A : NAut N} (T : NTypes A) (h : T.e0 = 0)
     (h1 : ∀ μ, what₂.eOp μ = 0) (h2 : ∀ μ j, what₂.eMt μ j = 0) : T.IdempotentMatchesAction := by
   refine ⟨fun μ => ?_, fun μ j => ?_⟩
-  · rw [h, h1, NTypes.onAmb, dif_pos (zero_mem _)]
+  · rw [h, h1, NTypes.onAmb, dite_eq_left (zero_mem _)]
     exact (map_zero (T.cenAmb μ)).symm
-  · rw [h, h2, NTypes.onMt, dif_pos (zero_mem _)]
+  · rw [h, h2, NTypes.onMt, dite_eq_left (zero_mem _)]
     exact (map_zero (T.cenMt μ j)).symm
 
 end Types
@@ -976,10 +981,6 @@ def adapt {B : Base} {C : Cols B} (W : RowsRest B C) : RowsRest B C :=
 theorem exists_nStage_adapt (B : Base) (C : Cols B) (W : RowsRest B C) (L : LocStage) :
     ∃ N : NStage B C (adapt W), N.toLocStage = L :=
   exists_nStage_of_rows B C (adapt W) L (fun _ _ => rfl) (fun _ _ _ _ => rfl) (fun _ => rfl) (fun _ _ => rfl)
-
-theorem exists_nStage : ∀ (B : Base) (C : Cols B) (W : RowsRest B C) (L : LocStage),
-    ∃ W' : RowsRest B C, W' = adapt W ∧ ∃ N : NStage B C W', N.toLocStage = L :=
-  fun B C W L => ⟨adapt W, rfl, exists_nStage_adapt B C W L⟩
 
 end GlobalTheory.Mem.GaloisStage
 

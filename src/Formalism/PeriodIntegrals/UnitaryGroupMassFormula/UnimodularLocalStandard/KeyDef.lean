@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnimodLocStd
+module
+
+public import Formalism.PeriodIntegrals.UnimodLocStd
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate

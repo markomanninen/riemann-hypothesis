@@ -1,15 +1,20 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField NumberField.InfinitePlace NumberField.Units NumberField.Units.dirichletUnitTheorem
 
 namespace GlobalTheory.IntegerUnitBound
 
-open scoped Classical in
 
+open scoped Classical in
 theorem exists_unit_norm_add_le (E : Type) [Field E] [NumberField E] :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ v : logSpace E, ∃ u : (𝓞 E)ˣ,
       ∀ w, |v w + logEmbedding E (Additive.ofMul u) w| ≤ C := by
-  let B := (basisUnitLattice E).ofZLatticeBasis ℝ (unitLattice E)
+  classical
+  let B := (basisUnitLattice E).ofZLatticeBasis (E := logSpace E) ℝ (unitLattice E)
   refine ⟨∑ i, ‖B i‖, Finset.sum_nonneg fun i _ => norm_nonneg _, fun v => ?_⟩
 
   have hmem : -((ZSpan.floor B v : logSpace E)) ∈ unitLattice E := by
@@ -27,11 +32,12 @@ theorem exists_unit_norm_add_le (E : Type) [Field E] [NumberField E] :
     _ = ‖ZSpan.fract B v‖ := by rw [hsum]
     _ ≤ ∑ i, ‖B i‖ := ZSpan.norm_fract_le B v
 
-open scoped Classical in
 
+open scoped Classical in
 theorem exists_unit_of_sum_eq_zero (E : Type) [Field E] [NumberField E] :
     ∃ C : ℝ, ∀ t : InfinitePlace E → ℝ, ∑ w, (mult w : ℝ) * t w = 0 → ∃ u : (𝓞 E)ˣ,
       ∀ w : InfinitePlace E, |t w + Real.log (w (u : E))| ≤ C := by
+  classical
   obtain ⟨C₁, hC₁, hC⟩ := exists_unit_norm_add_le E
   refine ⟨Fintype.card (InfinitePlace E) * C₁, fun t ht => ?_⟩
   obtain ⟨u, hu⟩ := hC (fun w => (mult w.1 : ℝ) * t w.1)

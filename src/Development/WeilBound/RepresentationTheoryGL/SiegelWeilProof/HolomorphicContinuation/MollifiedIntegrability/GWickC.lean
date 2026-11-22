@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.EvXPderivPhiP
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.EvXPderivPhiP
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,14 +89,12 @@ theorem wick_of (hI : IntegP) : Wick := by
     ring
   rw [hsec]
   simp_rw [key]
-  rw [integral_neg, integral_finset_sum]
+  rw [integral_neg, MeasureTheory.integral_finsetSum]
   · simp only [integral_const_mul, ibpW, hsec]
     simp only [Finset.sum_neg_distrib, mul_neg, neg_neg]
   · intro j _
     refine Integrable.const_mul ?_ _
     refine (hint (M * pderiv (a, j, false) (phiP ε c t b))).congr (Filter.Eventually.of_forall fun x => ?_)
     simp only [evX, map_mul]; ring
-
-theorem wick (hI : IntegP) : Wick := wick_of hI
 
 end PositivityTheory.Rg.Sw.WR.G

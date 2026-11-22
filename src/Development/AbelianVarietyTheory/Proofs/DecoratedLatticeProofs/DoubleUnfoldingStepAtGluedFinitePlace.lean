@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.T2SpaceMatrixOfIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleThetaUnfoldingEquivariantUnitaryGroups
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUniqueStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLinearModelLatticeVacuumBaseStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SourceLiftAtGluedPlaceProofStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GluedLatticeFiniteExpansionsLocalFieldStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLineComponentsContractionStatement
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IndicatorFunctionIdentity
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClopenIsCompactMapsPair
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DualLatticeCosetIndicatorIsSchwartzBruhatStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GluedLatticeDatumMainPartMemSchwartzBruhatStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierPairingPairCharIndicatorDualLatticeIndicaStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierPairingPairCharIndicatorCosetIndicatorStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierPairingDualIndicatorAddNonzeroCosetsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierPairingCharIndicatorDualLatticeCosetsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.T2SpaceMatrixOfIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleThetaUnfoldingEquivariantUnitaryGroups
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUniqueStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLinearModelLatticeVacuumBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SourceLiftAtGluedPlaceProofStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GluedLatticeFiniteExpansionsLocalFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLineComponentsContractionStatement
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IndicatorFunctionIdentity
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClopenIsCompactMapsPair
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DualLatticeCosetIndicatorIsSchwartzBruhatStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GluedLatticeDatumMainPartMemSchwartzBruhatStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierPairingPairCharIndicatorDualLatticeIndicaStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierPairingPairCharIndicatorCosetIndicatorStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierPairingDualIndicatorAddNonzeroCosetsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierPairingCharIndicatorDualLatticeCosetsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,12 +58,12 @@ theorem exists_trilinear {σ : ℕ} {B : BesLev D (σ + 1)} {J : JacLev D (σ + 
   · intro c y y'
     refine Subtype.ext ?_
     change hand0 s₁ s₂ l vL v.1 (U₁ x) (U₂ (c • y + y')) = _
-    rw [map_add, map_smul]
+    rw [map_add (f := _), map_smul]
     exact Comm.doubleThetaUnfolding_linear_second_datum s₁ s₂ l vL v.2 (h₁ x) (h₂ y) (h₂ y') c
   · intro c x x'
     refine LinearMap.ext fun y => Subtype.ext ?_
     change hand0 s₁ s₂ l vL v.1 (U₁ (c • x + x')) (U₂ y) = _
-    rw [map_add, map_smul]
+    rw [map_add (f := _), map_smul]
     exact Comm.doubleThetaUnfolding_linear_first_datum s₁ s₂ l vL v.2 (h₁ x) (h₁ x') (h₂ y) c
   · intro c v v'
     refine LinearMap.ext fun x => LinearMap.ext fun y => Subtype.ext ?_
@@ -87,7 +91,7 @@ theorem handBF_sum {ρ : ℕ} {B : BesLev D ρ} {J : JacLev D ρ} (s : StepBF ψ
   · funext h w
     simp [handBF]
   · intro a S ha ih
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, ih, map_add]
+    rw [Finset.sum_insert ha, Finset.sum_insert ha, ih, map_add (f := _)]
     have := Comm.handBF_right s l hφ (hU (x a)) (hU (∑ i ∈ S, x i)) 1
     rw [one_smul, star_one, one_smul] at this
     exact this.symm
@@ -242,8 +246,8 @@ end GlobalTheory.FinPl.Vertex
 
 namespace GlobalTheory.FinPl.Vertex
 
-open Classical in
 
+open Classical in
 theorem vertexGlued (D : D7) : VertexGlued D := by
   intro k _ _ _ _ p q ψ χ hχ hIs
   letI : MeasurableSpace k := borel k
@@ -444,7 +448,6 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
               rw [one_smul] at this
               exact this) z]
         congr 1
-        funext w
         simp
       have e3 := Comm.doubleThetaUnfolding_equivariant_unitaryGroups s₁ s₂ l vL (hFF A) (t₁ (xv A' Q)) (t₂ (yd Q)) (α.gl g) 1 1
       rw [one_emb, Comm.emb_gl hα g, hid] at e3
@@ -477,9 +480,11 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
         (U₂ (y₀ + ∑ Q'' ∈ withLat Q.lat, y Q'')) =
         ∑ Q' ∈ withLat Q.lat, ((Θ v' (x Q') y₀).1 + ∑ Q'' ∈ withLat Q.lat, (Θ v' (x Q') (y Q'')).1) := by
       refine (hΘ v' _ _).symm.trans ?_
-      rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
       refine Finset.sum_congr rfl fun Q' _ => ?_
-      rw [map_add, map_sum, Submodule.coe_add, Submodule.coe_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_sum, Submodule.coe_add, Submodule.coe_sum]
     rw [h2, hΞ₂, hexp, Finset.sum_congr rfl fun Q' hQ' => by rw [t0 Q' hQ', zero_add, t1 Q' hQ', hall Q' hQ'],
       Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, hfin]
 
@@ -516,7 +521,8 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
       have hsum : hand0 s₁ s₂ l vL (FFStar q (resChar χ hχ q) φ P₁) (U₁ (∑ Q' ∈ withLat Q.lat, x Q')) (U₂ yK) =
           ∑ Q' ∈ withLat Q.lat, (Θ v' (x Q') yK).1 := by
         refine (hΘ v' _ _).symm.trans ?_
-        rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, LinearMap.sum_apply, Submodule.coe_sum]
       have t0 : ∀ Q' ∈ withLat Q.lat, (Θ v' (x Q') yK).1 = 0 := fun Q' hQ' => by
         have := key v' (phiOne P₁ Q') (GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem P₁ Q') (latInd Q.lat Λ) hL
           (charInd (resChar χ hχ q) Q') (vecInd Q.lat) (dualInd Q.lat) (dualInd Q.lat) (charInd_mem' _ Q') hvec hdual hdual
@@ -600,12 +606,14 @@ theorem vertexGlued (D : D7) : VertexGlued D := by
       calc hand0 s₁ s₂ l vL (φ P) (U₁ (r⁻¹ • (x₀ + ∑ Q' ∈ withLat Q.lat, xm Q'))) (U₂ yP)
           = (Θ vP (r⁻¹ • (x₀ + ∑ Q' ∈ withLat Q.lat, xm Q')) yP).1 := (hΘ vP _ _).symm
         _ = r⁻¹ • ((Θ vP x₀ yP).1 + ∑ Q' ∈ withLat Q.lat, (Θ vP (xm Q') yP).1) := by
-          rw [map_smul, map_add, map_sum, LinearMap.smul_apply, LinearMap.add_apply, LinearMap.sum_apply,
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_smul, map_add (f := _), map_sum, LinearMap.smul_apply, LinearMap.add_apply, LinearMap.sum_apply,
             Submodule.coe_smul, Submodule.coe_add, Submodule.coe_sum]
         _ = r⁻¹ • ((Θ vP x₀ yP).1 + ∑ Q' ∈ withLat Q.lat, (Θ vP (xmv Q') yP).1) := by
           rw [Finset.sum_congr rfl hm]
         _ = r⁻¹ • (Θ vP (x₀ + ∑ Q' ∈ withLat Q.lat, xmv Q') yP).1 := by
-          rw [map_add, map_sum, LinearMap.add_apply, LinearMap.sum_apply, Submodule.coe_add, Submodule.coe_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_add (f := _), map_sum, LinearMap.add_apply, LinearMap.sum_apply, Submodule.coe_add, Submodule.coe_sum]
         _ = 0 := by
           rw [hs, map_smul, LinearMap.smul_apply, Submodule.coe_smul, hzero, smul_zero, smul_zero]
 

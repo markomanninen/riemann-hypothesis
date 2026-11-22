@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramAtPosDef
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FockVacuumAnnihilationEquationRealCoordinates
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealSymplecticFormAlternatingInvariantDefinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramAtPosDef
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FockVacuumAnnihilationEquationRealCoordinates
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealSymplecticFormAlternatingInvariantDefinite
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField Matrix MvPolynomial
 open GlobalTheory.SignedHC GlobalTheory.ChiGrid Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.FunObj
@@ -28,7 +33,7 @@ theorem differentiable_mul_of_cr {V : Type} [NormedAddCommGroup V] [NormedSpace 
       rw [← Complex.coe_smul, ← Complex.coe_smul, smul_smul, ← add_smul]
       congr 1
       exact (Complex.re_add_im a).symm
-    rw [e, L.map_add, L.map_smul, L.map_smul, hI, Complex.real_smul, Complex.real_smul]
+    rw [e, map_add L, L.map_smul, L.map_smul, hI, Complex.real_smul, Complex.real_smul]
     conv_rhs => rw [← Complex.re_add_im a]
     ring
   let g : V →L[ℂ] ℂ :=

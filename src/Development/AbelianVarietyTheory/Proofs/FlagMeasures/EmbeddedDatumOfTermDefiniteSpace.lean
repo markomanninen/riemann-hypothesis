@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefiniteThetaLatticeLeFixedIndexBound
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLiftEmbeddedDatumOfTermStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefiniteThetaLatticeLeFixedIndexBound
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLiftEmbeddedDatumOfTermStatement
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt GlobalTheory.DegAsm
 open scoped Pointwise ENNReal Classical
@@ -82,7 +86,26 @@ theorem isLattice_pre (φ : W ≃ₗ[K] C) {M : Submodule (𝓞 K) C} (h : Submo
   have hs : ((M.map ((φ.symm : C →ₗ[K] W).restrictScalars (𝓞 K)) : Submodule (𝓞 K) W) : Set W) =
       (φ.symm : C →ₗ[K] W) '' (M : Set C) := by
     simp [Submodule.map_coe]
-  rw [hs, Submodule.span_image, h.span_eq_top, Submodule.map_top, LinearEquiv.range]
+  rw [hs]
+  intro s hsM hli
+  have hsub : (φ : W →ₗ[K] C) '' s ⊆ (M : Set C) := by
+    rintro _ ⟨x, hx, rfl⟩
+    obtain ⟨y, hy, hxy⟩ := hsM hx
+    simpa [← hxy] using hy
+  have hli' : LinearIndepOn (𝓞 K) id ((φ : W →ₗ[K] C) '' s) :=
+    (linearIndepOn_id_imageₛ_iff (f := (φ : W →ₗ[K] C).restrictScalars (𝓞 K))
+      φ.injective.injOn).2 hli
+  have hK := h.linearIndepOn _ hsub hli'
+  exact (linearIndepOn_id_imageₛ_iff (f := (φ : W →ₗ[K] C))
+    φ.injective.injOn).1 hK
+
+omit [NumberField K] [StarRing K] in
+theorem isFullLattice_pre (φ : W ≃ₗ[K] C) {M : Submodule (𝓞 K) C}
+    (h : Submodule.IsFullLattice K M) : Submodule.IsFullLattice K (pre φ M) := by
+  refine { toIsLattice := isLattice_pre φ h.toIsLattice, span_eq_top := ?_ }
+  rw [pre_eq_map]
+  change Submodule.span K (φ.symm.toLinearMap '' (M : Set C)) = ⊤
+  rw [← Submodule.map_span, h.span_eq_top, Submodule.map_top, LinearEquiv.range]
 
 omit [NumberField K] in
 theorem dual_pre (φ : W ≃ₗ[K] C) {HW : HermSpace K W} {H' : HermSpace K C}
@@ -128,7 +151,7 @@ theorem isDat_pre (φ : W ≃ₗ[K] C) {HW : HermSpace K W} {H' : HermSpace K C}
       pre φ (fixLat Γ) := by
     ext y
     simp [fixLat, pre, Submodule.mem_comap]
-  refine ⟨⟨isLattice_pre φ hlat, ?_⟩, ?_, ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_⟩
+  refine ⟨⟨isFullLattice_pre φ hlat, ?_⟩, ?_, ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_⟩
   · intro a ha b hb
     have hab := hint _ ha _ hb
     simp only [LinearMap.flip_apply, LinearMap.restrictScalars_apply, LinearEquiv.coe_coe] at hab ⊢

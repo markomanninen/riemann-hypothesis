@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.UnitaryBC
 
@@ -12,7 +16,11 @@ theorem algebraMap_mem_maximalRealSubfield_iff {K L : Type} [Field K] [Field L] 
   constructor
   · intro hL ψ
     let : Algebra K ℂ := ψ.toAlgebra
-    let φ : L →ₐ[K] ℂ := IsAlgClosed.lift
+    let φ : L →ₐ[K] ℂ := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     have hφ : φ (algebraMap K L x) = ψ x := φ.commutes x
     rw [← hφ]
     exact hL φ.toRingHom

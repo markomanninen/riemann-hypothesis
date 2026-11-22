@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralZeroFrequencyInvariant
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
+module
+
+public import Formalism.HermitianCurvature.StatementB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralZeroFrequencyInvariant
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ENNReal
@@ -235,10 +239,10 @@ theorem hs_norm_le (A B : Wq →L[ℂ] Wp) : ‖hsInner A B‖ ≤ hsK Wp Wq * (
     _ = ‖L‖ ^ 2 * (‖A‖ * ‖B‖) := by ring
 
 theorem hs_add_left (A A' B : Wq →L[ℂ] Wp) : hsInner (A + A') B = hsInner A B + hsInner A' B := by
-  simp only [hsInner, ← hsL_apply, map_add, inner_add_right]
+  simp only [hsInner, ← hsL_apply, map_add (f := _), inner_add_right]
 
 theorem hs_add_right (A B B' : Wq →L[ℂ] Wp) : hsInner A (B + B') = hsInner A B + hsInner A B' := by
-  simp only [hsInner, ← hsL_apply, map_add, inner_add_left]
+  simp only [hsInner, ← hsL_apply, map_add (f := _), inner_add_left]
 
 theorem hs_smul_right (a : ℂ) (A B : Wq →L[ℂ] Wp) : hsInner A (a • B) = conj a * hsInner A B := by
   simp only [hsInner, ← hsL_apply, map_smul, inner_smul_left]

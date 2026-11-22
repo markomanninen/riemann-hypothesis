@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.StatementF
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddPiOMul
-import GroundTheory.LocalFields.FilteredSurj
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.StatementF
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddPiOMul
+public import GroundTheory.LocalFields.FilteredSurj
+
+@[expose] public section
+
 open Polynomial Matrix Formalism.UG
 
 noncomputable section
@@ -32,11 +37,11 @@ theorem exists_norm_lift_step : ∀ (L : Type) [Field L] [Valued L (WithZero (Mu
     rw [hπA, GlobalTheory.UTr.conj_algebraMap]; congr 1; exact Subtype.ext h.2.2.1
   have hconjc : GlobalTheory.UTr.conj P (ι cO) + ι cO = 1 := by
     have := congrArg ι hcs
-    rw [map_add, map_one] at this
+    rw [map_add (f := _), map_one] at this
     rw [hι, GlobalTheory.UTr.conj_algebraMap]; rw [← this]; ring
   have h1 : (x : GlobalTheory.UTr.Alg P) - 1 ∈ Ideal.span {πA ^ m} := hxm
   obtain ⟨a, ha⟩ := Ideal.mem_span_singleton'.1 h1
-  have hxc : GlobalTheory.UTr.conj P (x : GlobalTheory.UTr.Alg P) = x := GlobalTheory.UTr.mem_plus.1 hx
+  have hxc : GlobalTheory.UTr.conj P (x : GlobalTheory.UTr.Alg P) = x := (GlobalTheory.UTr.mem_plus (P := P)).1 hx
   have hca : πA ^ m * GlobalTheory.UTr.conj P a = πA ^ m * a := by
     have := congrArg (GlobalTheory.UTr.conj P) ha
     rw [map_mul, map_pow, hconjπ, map_sub, map_one, hxc] at this
@@ -49,7 +54,7 @@ theorem exists_norm_lift_step : ∀ (L : Type) [Field L] [Valued L (WithZero (Mu
     GlobalTheory.UTr.conj P (1 + πA ^ (k + 1) * (ι cO * a)) ∈ Ideal.span {πA ^ (k + 1 + 1)}
   have e1 : GlobalTheory.UTr.conj P (1 + πA ^ (k + 1) * (ι cO * a)) =
       1 + πA ^ (k + 1) * (GlobalTheory.UTr.conj P (ι cO) * GlobalTheory.UTr.conj P a) := by
-    rw [map_add, map_one, map_mul, map_pow, hconjπ, map_mul]
+    rw [map_add (f := _), map_one, map_mul, map_pow, hconjπ, map_mul]
   rw [e1, Ideal.mem_span_singleton']
   refine ⟨-(πA ^ k * ι cO * a * GlobalTheory.UTr.conj P (ι cO) * GlobalTheory.UTr.conj P a), ?_⟩
   linear_combination ha + GlobalTheory.UTr.conj P (ι cO) * hca + πA ^ (k + 1) * a * hconjc

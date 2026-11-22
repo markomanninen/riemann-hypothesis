@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsIntegralGaugedFormalGroupLawSelfConjugateSquar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsIntegralGaugedFormalGroupLawSelfConjugateSquar
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,9 +36,6 @@ theorem kill_subst {κ : Type} [Finite κ] (e : σ ↪ τ) {a : κ → MvPowerSe
   simp only [map_pow]
 
 def kp (e : σ ↪ τ) {κ : Type} (a : κ → MvPowerSeries τ C) : κ → MvPowerSeries σ C := fun k => killCompl e (a k)
-
-theorem zc_kp (e : σ ↪ τ) {κ : Type} {a : κ → MvPowerSeries τ C} (ha : Zc a) : Zc (kp e a) :=
-  fun k => cc_kill e (ha k)
 
 theorem killCompl_substPointsPowerSeries_two (e : σ ↪ τ) {a b : Fin dd → MvPowerSeries τ C} (ha : Zc a) (hb : Zc b) (f : PS C 2 dd) :
     killCompl e (sb ![a, b] f) = sb ![kp e a, kp e b] f := by
@@ -146,7 +147,7 @@ theorem kp_law (e : σ ↪ τ) {a b : Fin dd → MvPowerSeries τ C} (ha : Zc a)
 theorem kill_dfc (e : σ ↪ τ) {a b c : Fin dd → MvPowerSeries τ C} (ha : Zc a) (hb : Zc b) (hc : Zc c) :
     killCompl e (dfc Y a b c) = dfc Y (kp e a) (kp e b) (kp e c) := by
   unfold dfc
-  rw [map_sub, map_add, killCompl_substPointsPowerSeries_two e ha hb, killCompl_substPointsPowerSeries_two e ha hc, killCompl_substPointsPowerSeries_two e ha (zc_law Y hb hc), kp_law Y e hb hc]
+  rw [map_sub, map_add (f := _), killCompl_substPointsPowerSeries_two e ha hb, killCompl_substPointsPowerSeries_two e ha hc, killCompl_substPointsPowerSeries_two e ha (zc_law Y hb hc), kp_law Y e hb hc]
 
 theorem dfc_left {b c : Fin dd → MvPowerSeries τ C} (hb : Zc b) (hc : Zc c) : dfc Y 0 b c = 0 := by
   unfold dfc
@@ -190,9 +191,9 @@ theorem coeff_formalBiextensionChart_secondPhase (μ : Fin 2 × Fin dd →₀ �
       rintro rfl
       exact hν (0, i) (by simp) rfl
     unfold dfc
-    rw [map_sub, map_add, van_h Y (zc_pt _) (zc_pt _) hx m hs, van_h Y (zc_pt _) (zc_pt _) hx m hs,
+    rw [map_sub, map_add (f := _), van_h Y (zc_pt _) (zc_pt _) hx m hs, van_h Y (zc_pt _) (zc_pt _) hx m hs,
       van_h Y (zc_pt _) (zc_law Y (zc_pt _) (zc_pt _)) hx m hs, add_zero, sub_zero]
-  · rw [map_add, Finsupp.weight_apply, Finsupp.sum_mapDomain_index (by simp) (fun _ _ _ => add_smul _ _ _),
+  · rw [map_add (f := _), Finsupp.weight_apply, Finsupp.sum_mapDomain_index (by simp) (fun _ _ _ => add_smul _ _ _),
       Finsupp.weight_single]
     simp [Finsupp.sum, Fin.succ_ne_zero]
 
@@ -237,7 +238,8 @@ theorem killCompl_formalGroupCocycleLinearTerm_column (col : Fin 2) (u : Fin 2 �
     funext ⟨j, i⟩
     fin_cases j <;> rfl
   rw [dfc_square Y p (zc_gp _) (zc_gp _) (zc_gp _), Fintype.sum_prod_type]
-  simp only [key, ← coeff_killCompl, map_sum, coeff_formalBiextensionChart_secondPhase]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [key, ← coeff_killCompl, map_sum, coeff_formalBiextensionChart_secondPhase]
   rw [Finset.sum_eq_single col]
   · refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.sum_eq_single col]

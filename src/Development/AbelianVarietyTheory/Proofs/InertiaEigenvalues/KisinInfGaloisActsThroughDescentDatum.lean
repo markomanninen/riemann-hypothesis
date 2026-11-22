@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinLatticeExponentsAinfComparisonStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichmullerSubOneAinfPropertiesCompatibleRootsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinLatticeExponentsAinfComparisonStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichmullerSubOneAinfPropertiesCompatibleRootsStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -17,8 +22,8 @@ variable {l : ℕ} [hl : Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero e]
   [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K] [NormedAlgebra ℚ_[l] K]
   [TameDescentExponentData K l e a] (t : Wq l a →ₐ[ℤ_[l]] O) (ϖ : PiSys l e)
 
-variable (O) in
 
+variable (O) in
 def actS (γ : TameGal K l e a) : (ZMod a → S O K e) →+* (ZMod a → S O K e) where
   toFun f τ := ⟨ringAct γ (fun σ => (f σ : K⟦X⟧)) τ, rot_S.ringAct_mem γ (fun σ => (f σ).2) τ⟩
   map_one' := funext fun τ => Subtype.ext (by
@@ -72,7 +77,8 @@ theorem galOCr_iC_of_covers {h : GQ l} {γ : TameGal K l e a} (hc : Covers K t �
     simp only [Pi.mul_apply, Pi.single_eq_same, one_mul]
     rfl
   change F f = F' f
-  rw [hx, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx, map_sum, map_sum]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [map_mul, map_mul, hs, ← RingHom.comp_apply F d, hd]
   rfl
@@ -88,8 +94,8 @@ variable {l : ℕ} [hl : Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero e]
   [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K] [NormedAlgebra ℚ_[l] K]
   [TameDescentExponentData K l e a] (t : Wq l a →ₐ[ℤ_[l]] O) (ϖ : PiSys l e)
 
-omit [TameDescentExponentData K l e a] in
 
+omit [TameDescentExponentData K l e a] in
 theorem pow_mul_iB (N : ℕ) (F : ZMod a → invL l (S O K e)) (G : ZMod a → S O K e)
     (hG : ∀ τ, (G τ : K⟦X⟧) = (l : K⟦X⟧) ^ N * F τ) :
     (l : OB l O) ^ N * ϖ.iB t K F = toOB l O (ϖ.iC t K G) := by
@@ -138,7 +144,7 @@ theorem TWact_smul {R : Type} [CommRing R] [Algebra O R] (f : R →ₐ[O] R) (T 
   | zero => simp only [smul_zero, map_zero]
   | tmul w y =>
     simp only [TWact, smul_tmul', TensorProduct.map_tmul, AlgHom.toLinearMap_apply, smul_eq_mul, map_mul]
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 theorem TWact_TWincl {R R' : Type} [CommRing R] [CommRing R'] [Algebra O R] [Algebra O R'] (φ : R →ₐ[O] R')
     (f : R →ₐ[O] R) (f' : R' →ₐ[O] R') (h : ∀ r, f' (φ r) = φ (f r)) (T : LocLat G ℚ_[l] K O) (g : G)
@@ -147,13 +153,13 @@ theorem TWact_TWincl {R R' : Type} [CommRing R] [CommRing R'] [Algebra O R] [Alg
   | zero => simp only [map_zero]
   | tmul w y =>
     simp only [TWact, TWincl, TensorProduct.map_tmul, AlgHom.toLinearMap_apply, LinearMap.id_apply, h]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Tensor
 
+
 omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K]
   [TameDescentExponentData K l e a] [NeZero a] [NeZero e] [NormedAlgebra ℚ_[l] K] in
-
 theorem galOB_toB (s : GQ l) (x : OA l O) : galOB O s (toB l O x) = toB l O (galOA O s x) := by
   rw [toB, AlgHom.comp_apply, AlgHom.comp_apply, galOB_toOB, galOCr_toOCr]
 
@@ -260,11 +266,13 @@ theorem actB_jB_toBcris {ι : Type} [Fintype ι] [DecidableEq ι] {P : PhiMod O 
     apply Subtype.ext
     rw [Submodule.coe_sum, hσ]
     conv_lhs => rw [P.eq_sum_phi_bas σ.1]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Δ.act_smul_tot]
     rfl
-  rw [e1, e2, map_sum, map_sum, map_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, e2, map_sum, map_sum, map_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have hL := actB_jB_of_mem_L hcmp hdesc hc (hw i) (hw' i) rfl (hwS i) (hwS' i)
   rw [toBcris_smul P (f i) (w i) (hwS i), toBcris_smul P (f' i) (w' i) (hwS' i), jB.map_smul, jB.map_smul]

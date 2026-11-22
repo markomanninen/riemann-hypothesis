@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ theorem res_eq_zero_iff (x : R) : res O R x = 0 ↔ x ∈ maximalIdeal R := by
   show (RingEquiv.ofBijective _ (resMap_bijective O R)).symm (residue R x) = 0 ↔ _
   rw [map_eq_zero_iff _ (RingEquiv.injective _), residue_eq_zero_iff]
 
-variable {O R} in
 
+variable {O R} in
 theorem res_map {R' : Type} [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') (x : R) :
     res O R' (f x) = res O R x := by
   obtain ⟨a, ha⟩ := IsCO.res_surj (O := O) x
@@ -80,12 +84,12 @@ variable (O : Type) [CommRing O] {σ X : Type} [AddCommGroup X] (wt : σ → X)
 
 def wtPart (j : X) : Submodule O (MvPowerSeries σ O) where
   carrier := {f | ∀ n, Finsupp.weight wt n ≠ j → coeff n f = 0}
-  add_mem' ha hb n hn := by rw [map_add, ha n hn, hb n hn, add_zero]
+  add_mem' ha hb n hn := by rw [map_add (f := _), ha n hn, hb n hn, add_zero]
   zero_mem' n _ := map_zero _
   smul_mem' c f hf n hn := by rw [map_smul, hf n hn, smul_zero]
 
-open Classical in
 
+open Classical in
 def wcomp (j : X) : MvPowerSeries σ O →ₗ[O] MvPowerSeries σ O where
   toFun f := fun n => if Finsupp.weight wt n = j then coeff n f else 0
   map_add' f g := funext fun n => by
@@ -109,7 +113,7 @@ theorem mul_mem_wtPart {i j : X} {f g : MvPowerSeries σ O} (hf : f ∈ wtPart O
   refine Finset.sum_eq_zero fun p hp => ?_
   by_cases h1 : Finsupp.weight wt p.1 = i
   · have h2 : Finsupp.weight wt p.2 ≠ j := fun h2 => hn (by
-      rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hp, map_add, h1, h2])
+      rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hp, map_add (f := _), h1, h2])
     rw [hg _ h2, mul_zero]
   · rw [hf _ h1, zero_mul]
 
@@ -148,7 +152,7 @@ structure WPres (O X R : Type) [CommRing O] [AddCommGroup X] [CommRing R] [Algeb
   wt : σ → X
   π : MvPowerSeries σ O →ₐ[O] R
   surj : Function.Surjective π
-  homog : IsHomog O wt (RingHom.ker π)
+  homog : IsHomog O (wt := wt) (RingHom.ker π)
 
 attribute [instance] WPres.fin
 
@@ -289,7 +293,7 @@ def Lift.map (f : R →ₐ[O] R') (r : Lift O rbar R) : Lift O rbar R' where
       rw [← res_eq_zero_iff O, res_map, res_eq_zero_iff]
       exact hy
     exact (r.cont a b N).comp (Ideal.quotientMap _ (f : R →+* R') hle)
-  red g a b := (res_map f _).trans (r.red g a b)
+  red g a b := (res_map (O := O) (R := R) (R' := R') f _).trans (r.red g a b)
 
 @[simp] theorem Lift.map_hom (f : R →ₐ[O] R') (r : Lift O rbar R) (g : Γ) (a b : ι) :
     (r.map f).hom g a b = f (r.hom g a b) := rfl
@@ -300,12 +304,11 @@ def Lift.comap {H : Type} [Group H] [TopologicalSpace H] (φ : H →* Γ) (hφ :
   cont a b N := (r.cont a b N).comp_continuous hφ
   red g a b := r.red (φ g) a b
 
+
 variable (O rbar) in
-
-def Cond : Type 1 := ∀ (R : Type) [CommRing R] [Algebra O R] [IsCO O R], Lift O rbar R → Prop
-
-def polyCond (C : Set (MvPolynomial (Γ × ι × ι) O)) : Cond O rbar :=
-  fun _ _ _ _ r => ∀ p ∈ C, MvPolynomial.aeval (fun s : Γ × ι × ι => r.hom s.1 s.2.1 s.2.2) p = 0
+def Cond (O : Type) [CommRing O] [IsLocalRing O] {Γ ι : Type} [Group Γ] [TopologicalSpace Γ]
+    [Fintype ι] [DecidableEq ι] (rbar : Γ →* Matrix ι ι (ResidueField O)) : Type 1 :=
+  ∀ (R : Type) [CommRing R] [Algebra O R] [IsCO O R], Lift O rbar R → Prop
 
 def Represents (P : Cond O rbar) (r : Lift O rbar R) : Prop :=
   ∀ (R' : Type) [CommRing R'] [Algebra O R'] [IsCO O R'],
@@ -316,23 +319,18 @@ def Lift.Generates (r : Lift O rbar R) : Prop :=
 
 variable {X : Type} [AddCommGroup X] (w : ι → X)
 
-variable (rbar) in
 
-def Centralises : Prop := ∀ g a b, w a ≠ w b → rbar g a b = 0
-
-def IsTorusConj (t : Multiplicative X →* Rˣ) (r r' : Lift O rbar R) : Prop :=
+def IsTorusConj (w : ι → X) (t : Multiplicative X →* Rˣ) (r r' : Lift O rbar R) : Prop :=
   ∀ g a b, r'.hom g a b = t (Multiplicative.ofAdd (w a - w b)) * r.hom g a b
 
 def Lift.TStable (r : Lift O rbar R) : Prop :=
   ∀ (R' : Type) [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') (t : Multiplicative X →* R'ˣ),
-    (∀ j, res O R' (t j) = 1) → ∃ f' : R →ₐ[O] R', IsTorusConj w t (r.map f) (r.map f')
+    (∀ j, res O R' (t j) = 1) → ∃ f' : R →ₐ[O] R',
+      IsTorusConj w t (Lift.map (O := O) (rbar := rbar) (R := R) (R' := R') f r)
+        (Lift.map (O := O) (rbar := rbar) (R := R) (R' := R') f' r)
 
-def Lift.Adapted (r : Lift O rbar R) (W : WPres O X R) : Prop :=
-  (∀ g a b, r.hom g a b ∈ W.part (w a - w b)) ∧
-    ∀ i, ∃ g a b, ∃ c : O, W.z i = r.hom g a b - algebraMap O R c ∧ W.wt i = w a - w b ∧ (w a ≠ w b → c = 0)
 
 variable (Γ) in
-
 def PhiCond (l : ℕ) : Prop :=
   ∀ H : Subgroup Γ, IsOpen (H : Set Γ) →
     Finite {φ : H →* Multiplicative (ZMod l) // IsOpen (φ.ker : Set H)}

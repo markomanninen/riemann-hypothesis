@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EntireAntilinearLatticePeriodsConstStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueUniformisingVectorVerticalTangentStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsDifferentiableOnVerticalVectorFieldStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EntireAntilinearLatticePeriodsConstStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueUniformisingVectorVerticalTangentStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsDifferentiableOnVerticalVectorFieldStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -23,22 +27,23 @@ private theorem valAt'_comp_lemma {Y Z : Scheme.{0}} (x : Sp ℂ ⟶ Y) (φ : Y 
   unfold valAt'
   by_cases h : ⊤ ≤ (x ≫ φ) ⁻¹ᵁ U
   · have h' : ⊤ ≤ x ⁻¹ᵁ φ ⁻¹ᵁ U := h
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     unfold valAt
     rw [Scheme.Hom.comp_appLE]
     rfl
   · have h' : ¬ ⊤ ≤ x ⁻¹ᵁ φ ⁻¹ᵁ U := h
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
 
 theorem ptDer_push {X Y : Scheme.{0}} (y : Sp ℂ ⟶ X) (f : X ⟶ Y) (δ : ∀ W : X.Opens, Γ(X, W) → ℂ) (h : PtDer y δ) :
-    PtDer (y ≫ f) (fun W a => δ (f ⁻¹ᵁ W) ((f.app W).hom a)) where
-  add W hW a b := by
-    rw [map_add]
+    PtDer (y ≫ f) (fun W a => δ (f ⁻¹ᵁ W) ((f.app W).hom a)) := by
+  constructor
+  · intro W hW a b
+    rw [(f.app W).hom.map_add]
     exact h.add (f ⁻¹ᵁ W) hW _ _
-  mul W hW a b := by
+  · intro W hW a b
     rw [map_mul, valAt'_comp_lemma y f W a, valAt'_comp_lemma y f W b]
     exact h.mul (f ⁻¹ᵁ W) hW _ _
-  res W W' hle hW a := by
+  · intro W W' hle hW a
     have hle' : f ⁻¹ᵁ W' ≤ f ⁻¹ᵁ W := fun x hx => hle hx
     have nat : (f.app W').hom (resG Y hle a) = resG X hle' ((f.app W).hom a) :=
       congrArg (fun φ : Γ(Y, W) ⟶ Γ(X, f ⁻¹ᵁ W') => φ.hom a) (f.naturality (homOfLE hle).op)
@@ -46,14 +51,15 @@ theorem ptDer_push {X Y : Scheme.{0}} (y : Sp ℂ ⟶ X) (f : X ⟶ Y) (δ : ∀
     exact h.res (f ⁻¹ᵁ W) (f ⁻¹ᵁ W') hle' hW _
 
 theorem ptDer_sub {X : Scheme.{0}} (y : Sp ℂ ⟶ X) (δ δ' : ∀ W : X.Opens, Γ(X, W) → ℂ) (h : PtDer y δ) (h' : PtDer y δ') :
-    PtDer y (fun W a => δ W a - δ' W a) where
-  add W hW a b := by
+    PtDer y (fun W a => δ W a - δ' W a) := by
+  constructor
+  · intro W hW a b
     rw [h.add W hW, h'.add W hW]
     ring
-  mul W hW a b := by
+  · intro W hW a b
     rw [h.mul W hW, h'.mul W hW]
     ring
-  res W W' hle hW a := by
+  · intro W W' hle hW a
     rw [h.res W W' hle hW, h'.res W W' hle hW]
 
 theorem app_top_constFn {R : Type} [CommRing R] {X : Scheme.{0}} (p : X ⟶ Sp R) (f : X ⟶ X) (hf : f ≫ p = p) (r : R) :
@@ -113,7 +119,7 @@ theorem comm_of_endo : ∀ (P₀ : Out.PolAV (Sp ℂ)) (u : HolUnif P₀.A P₀.
     rw [← u.ker, hF, (u.ker l).2 hl, hone]
   have hexF : ∀ z, ∀ l ∈ u.Λ, u.ex (F (z + l)) = u.ex (F z) := by
     intro z l hl
-    rw [map_add]
+    rw [map_add (f := _)]
     exact ex_add_lattice u _ _ (hFl l hl)
   have hdom : ∀ W z, z ∈ dom u m (f ⁻¹ᵁ W) ↔ F z ∈ dom u m W := by
     intro W z
@@ -170,23 +176,23 @@ theorem comm_of_endo : ∀ (P₀ : Out.PolAV (Sp ℂ)) (u : HolUnif P₀.A P₀.
         show ⊤ ≤ ((u.ex (F (z + l))).left ≫ m) ⁻¹ᵁ W
         rw [hexF z l hl]
         exact hz
-      rw [hw (z + l) (Set.mem_univ _) W a hz', map_add, fderiv_fn_add_lattice u m W a (F z) (F l) hFl']
+      rw [hw (z + l) (Set.mem_univ _) W a hz', map_add (f := _), fderiv_fn_add_lattice u m W a (F z) (F l) hFl']
     · intro W a hz
       have hzf : z ∈ dom u m (f ⁻¹ᵁ W) := (hdom W z).2 hz
       have e1 := hKS.per ⟨F l, hFl'⟩ W a (F z) hz
       have e2 := hKS.per ⟨l, hl⟩ (f ⁻¹ᵁ W) ((f.app W).hom a) z hzf
       have hd0 := hw z (Set.mem_univ _) W a hz
       show s (F (z + l)) W a - s (z + l) (f ⁻¹ᵁ W) ((f.app W).hom a) = _
-      rw [map_add, e1, e2, hfd W a z hz]
+      rw [map_add (f := _), e1, e2, hfd W a z hz]
       show _ = fderiv ℂ (fn u m W a) (F z) (w z + (Θ.mulVec (star (F l)) - F (Θ.mulVec (star l))))
-      rw [ContinuousLinearMap.comp_apply, LinearMap.coe_toContinuousLinearMap', map_add, map_sub, ← hd0]
+      rw [ContinuousLinearMap.comp_apply, LinearMap.coe_toContinuousLinearMap', map_add (f := _), map_sub, ← hd0]
       ring
 
   have hc_add : ∀ v v' : Fin P₀.g → ℂ,
       Θ.mulVec (star (F (v + v'))) - F (Θ.mulVec (star (v + v'))) =
         (Θ.mulVec (star (F v)) - F (Θ.mulVec (star v))) + (Θ.mulVec (star (F v')) - F (Θ.mulVec (star v'))) := by
     intro v v'
-    rw [map_add, star_add, star_add, Matrix.mulVec_add, Matrix.mulVec_add, map_add]
+    rw [map_add (f := _), star_add, star_add, Matrix.mulVec_add, Matrix.mulVec_add, map_add (f := _)]
     abel
   have hc_smul : ∀ (a : ℂ) (v : Fin P₀.g → ℂ),
       Θ.mulVec (star (F (a • v))) - F (Θ.mulVec (star (a • v))) =

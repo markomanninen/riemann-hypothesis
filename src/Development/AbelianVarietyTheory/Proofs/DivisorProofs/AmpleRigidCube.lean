@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteOrderSt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CubeTheoremPicardGroup
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsGenThetaOfIsAbelianScheme
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteOrderSt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CubeTheoremPicardGroup
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsGenThetaOfIsAbelianScheme
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.AmpleRigid
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -34,7 +39,8 @@ theorem cube_pic_of_gen (L : LB B.left) (hL : L.IsLB) (hΘ : ∃ t : LB.Gen (The
     (GlobalTheory.CechPic.cls_linComb hL (fun I : ULift.{0} (Finset (Fin 3)) => (psum B (x3 B) I.down).left)
       (fun I => (-1 : ℤ) ^ (3 - I.down.card)) hT).symm.trans h0
   have h2 := congrArg (GlobalTheory.CechPic.pull (lift x (lift y z)).left) h1
-  rw [map_sum, map_zero] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h2
   simp only [map_zsmul, ← GlobalTheory.CechPic.pull_comp, ← Over.comp_left, comp_psum, lift_comp_cubeCoordinates] at h2
   rw [← Equiv.ulift.symm.sum_comp] at h2
   simp only [Equiv.ulift_symm_down] at h2

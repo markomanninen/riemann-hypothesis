@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsShiftDegreePolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PGenericFibreDim
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsShiftDegreePolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PGenericFibreDim
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -17,7 +22,7 @@ namespace ShiftDegreePolynomial
 def toMultilinear {K : Type} {n : ℕ} (f : (Fin n → K → ℤ) → ℤ)
     (hadd : ∀ (bs : Fin n → K → ℤ) (j : Fin n) (x y : K → ℤ),
       f (Function.update bs j (x + y)) = f (Function.update bs j x) + f (Function.update bs j y)) :
-    MultilinearMap ℤ (fun _ : Fin n => K → ℤ) ℤ where
+    MultilinearMap (RingHom.id ℤ) (fun _ : Fin n => K → ℤ) ℤ where
   toFun := f
   map_update_add' := by
     intro inst m i x y
@@ -42,7 +47,7 @@ theorem expand {K : Type} {n : ℕ} (f : (Fin n → K → ℤ) → ℤ)
       (s.piecewise (fun _ => a) (fun _ => b)) = s.piecewise (fun _ => q • a) (fun _ => b) := by
     funext i
     by_cases hi : i ∈ s <;> simp [Finset.piecewise, hi]
-  rw [h3, Finset.prod_const, smul_eq_mul] at h2
+  rw [h3, Finset.prod_const, RingHom.id_apply, smul_eq_mul] at h2
   exact h2
 
 theorem genericFibre {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)]

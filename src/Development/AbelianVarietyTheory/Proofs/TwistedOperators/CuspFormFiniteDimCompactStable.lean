@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsAllTiedNotStable
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesHermitianUniqueOfClassification
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.FinitePartTypes
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AutomorphicFormUniformLimitDiscreteSeriesSeriesStatement
-import Formalism.LocalToGlobal.IndefiniteReal.MultLemmas
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSumOfMemMultSpan
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RderMemAutFormsCuspForms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegrationByPartsRightDerivativeAdelicQuotient
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteVolumeAdelicUnitaryQuotient
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsAllTiedNotStable
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesHermitianUniqueOfClassification
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.FinitePartTypes
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AutomorphicFormUniformLimitDiscreteSeriesSeriesStatement
+public import Formalism.LocalToGlobal.IndefiniteReal.MultLemmas
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSumOfMemMultSpan
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RderMemAutFormsCuspForms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegrationByPartsRightDerivativeAdelicQuotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteVolumeAdelicUnitaryQuotient
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
@@ -103,8 +107,8 @@ theorem atTau_inv (hθ : IsInfFam θ) {τ : D.what₂.Tau} {k : Matrix (Fin V.ra
   exact ((GlobalTheory.PointAtPlaceHom.atTau_laws D θ hθ V τ).1 k⁻¹ hk').unique
     (GlobalTheory.PointAtPlaceHom.atTau_spec hθ V τ hk') hat
 
-variable (θ V) in
 
+variable (θ V) in
 def cuspSub : Submodule ℂ (GA D V → ℂ) where
   carrier := {f | IsAutFunSm θ V f ∧ IsCuspFun V f}
   zero_mem' := ⟨Formalism.IndefR.Mult.isAutFunSm_zero θ V, Formalism.IndefR.Mult.isCuspFun_zero V⟩
@@ -137,7 +141,8 @@ private theorem det_gram_ne_zero' {D : D7} (V : HSp D) : V.gram.det ≠ 0 := by
     intro i
     have h1 := congrFun hc i
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply] at h1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, smul_eq_mul]
     rw [← h1]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -210,13 +215,13 @@ theorem exists_form_cuspSub (hP : GlobalTheory.Published.CuspRapidDecay) (hθ : 
   let B : (GA D V → ℂ) → (GA D V → ℂ) → ℂ := fun x y => ∫ g in 𝓕, star (P x g) * P y g ∂μ
   let b : (GA D V → ℂ) →ₗ⋆[ℂ] (GA D V → ℂ) →ₗ[ℂ] ℂ := LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) B
     (fun x x' y => by
-      simp only [B, map_add, Pi.add_apply, star_add, add_mul]
+      simp only [B, map_add (f := _), Pi.add_apply, star_add, add_mul]
       exact integral_add (hPI x y) (hPI x' y))
     (fun c x y => by
       simp only [B, map_smul, Pi.smul_apply, smul_eq_mul, star_mul', starRingEnd_apply, mul_assoc]
       exact integral_const_mul _ _)
     (fun x y y' => by
-      simp only [B, map_add, Pi.add_apply, mul_add]
+      simp only [B, map_add (f := _), Pi.add_apply, mul_add]
       exact integral_add (hPI x y) (hPI x y'))
     (fun c x y => by
       simp only [B, map_smul, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
@@ -282,28 +287,6 @@ theorem exists_form_cuspSub (hP : GlobalTheory.Published.CuspRapidDecay) (hθ : 
       (fun g t => ((hasDerivAt_comp_mul_oneP hθ hX (mem hx).1 g t).star).mul (hasDerivAt_comp_mul_oneP hθ hX (mem hy).1 g t))
     rw [integral_add (hint (mem hRx).1 (mem hy).1 (mem hy).2) (hint (mem hx).1 (mem hRy).1 (mem hRy).2)] at key
     linear_combination key
-
-theorem exists_petersson_gkGen : GlobalTheory.FunPr.Hypotheses₂ → ∀ {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
-    (S : D.what₂.Tau → SPar) (M : Formalism.IndefR.Mult.DSModel V S), IsInfFam (D := D) θ →
-    ∀ ψ : GA D V → ℂ, IsAutFunSm θ V ψ → IsCuspFun V ψ →
-    (∃ W : Submodule ℂ (GA D V → ℂ), FiniteDimensional ℂ W ∧ ψ ∈ W ∧ ∀ τ, ∀ g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ),
-      M.fr τ * g * (M.fr τ)⁻¹ ∈ Formalism.REAL.Kset (M.ε τ) → ∀ f ∈ W, rTr V (atTau θ V τ g) f ∈ W) →
-    ∃ b : (GA D V → ℂ) →ₗ⋆[ℂ] (GA D V → ℂ) →ₗ[ℂ] ℂ,
-      (∀ x ∈ GlobalTheory.CuspGK.gkGen θ M ψ, x ≠ 0 → 0 < (b x x).re) ∧
-      (∀ x ∈ GlobalTheory.CuspGK.gkGen θ M ψ, ∀ y ∈ GlobalTheory.CuspGK.gkGen θ M ψ, star (b x y) = b y x) ∧
-      (∀ τ g, GlobalTheory.CuspGK.InK M τ g → ∀ x ∈ GlobalTheory.CuspGK.gkGen θ M ψ, ∀ y ∈ GlobalTheory.CuspGK.gkGen θ M ψ,
-        b x (rTr V (atTau θ V τ g) y) = b (rTr V (atTau θ V τ g⁻¹) x) y) ∧
-      (∀ τ, ∀ X ∈ lieAt V τ, ∀ x ∈ GlobalTheory.CuspGK.gkGen θ M ψ, ∀ y ∈ GlobalTheory.CuspGK.gkGen θ M ψ,
-        b x (Rder θ V τ X y) = -b (Rder θ V τ X x) y) := by
-  intro hPr D θ V S M hθ ψ hψ hψc _
-  obtain ⟨b, hpos, hherm, htr, hlie⟩ := exists_form_cuspSub (θ := θ) (V := V) hPr.cuspRapidDecay hθ
-  have hle : GlobalTheory.CuspGK.gkGen θ M ψ ≤ cuspSub θ V :=
-    GlobalTheory.CuspGK.gkGen_le θ M (show IsAutFunSm θ V ψ ∧ IsCuspFun V ψ from ⟨hψ, hψc⟩)
-      ⟨fun τ g hg f hf => rTr_mem_cuspSub hθ (show _ ∧ _ from hg).1 hf,
-        fun τ X hX f hf => Rder_mem_cuspSub hθ hX hf⟩
-  exact ⟨b, fun x hx hx0 => hpos x (hle hx) hx0, fun x hx y hy => hherm x (hle hx) y (hle hy),
-    fun τ g hg x hx y hy => htr τ g (show _ ∧ _ from hg).1 x (hle hx) y (hle hy),
-    fun τ X hX x hx y hy => hlie τ X hX x (hle hx) y (hle hy)⟩
 
 end GlobalTheory.CuspGKPet
 

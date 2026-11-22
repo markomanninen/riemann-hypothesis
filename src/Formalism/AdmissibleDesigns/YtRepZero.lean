@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.ContOfInjY
+module
+
+public import Formalism.AdmissibleDesigns.ContOfInjY
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -90,8 +94,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
 abbrev ytVG : Representation LL G (TrV e (MK (O := O) (↥(Ymod r χ E) × O))) :=
   repL e (locRep (resRep (ytRep O r χ E) Dw)) eG.symm.toMonoidHom
 
-variable (Qp) in
 
+variable (Qp) in
 def ytG [Module.Finite O A] [NoZeroSMulDivisors O A] (hfd : FiniteDimensional LL (TrV e (MK (O := O) (↥(Ymod r χ E) × O))))
     (hcont : ∀ x, Continuous fun g => ytVG (e := e) r χ E Dw eG g x) : YtLat (G := G) (Qp := Qp) LL Ow :=
   haveI := finY (O := O) r χ E
@@ -99,10 +103,6 @@ def ytG [Module.Finite O A] [NoZeroSMulDivisors O A] (hfd : FiniteDimensional LL
   haveI := nzsdY (O := O) r χ E
   haveI := nzsd_prod (O := O) (N := ↥(Ymod r χ E))
   mkYt heO eG.symm.toMonoidHom Qp (resRep (ytRep O r χ E) Dw) (fun _ _ => rfl) hcont
-
-theorem ytG_ρ [Module.Finite O A] [NoZeroSMulDivisors O A] (hfd : FiniteDimensional LL (TrV e (MK (O := O) (↥(Ymod r χ E) × O))))
-    (hcont : ∀ x, Continuous fun g => ytVG (e := e) r χ E Dw eG g x) :
-    (ytG Qp heO r χ E Dw eG hfd hcont).ρ = ytVG (e := e) r χ E Dw eG := rfl
 
 theorem ytG_psi [Module.Finite O A] [NoZeroSMulDivisors O A] (hfd : FiniteDimensional LL (TrV e (MK (O := O) (↥(Ymod r χ E) × O))))
     (hcont : ∀ x, Continuous fun g => ytVG (e := e) r χ E Dw eG g x)

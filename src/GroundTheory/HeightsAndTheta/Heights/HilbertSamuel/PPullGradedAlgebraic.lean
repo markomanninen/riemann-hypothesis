@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullGradedAlgebraic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullGradedAlgebraic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -76,8 +81,8 @@ theorem aeval_diagMono_ne_zero [Fintype K] {Ω : Type} [Field Ω] [CharZero Ω] 
 
 end PullGradedAlgebraic
 
-open PullGradedAlgebraic in
 
+open PullGradedAlgebraic in
 theorem PullGradedAlgebraic.proof : PullGradedAlgebraic.Statement := by
   intro K _ ι _ Ω _ _ y D e L d₀ hy he hL hgr p q hpq
   classical
@@ -104,9 +109,10 @@ theorem PullGradedAlgebraic.proof : PullGradedAlgebraic.Statement := by
     | _ n ih =>
     intro g hg
     by_cases hn : n ≤ n₀
-    · rw [g.as_sum, map_sum, Finset.sum_div]
+    · set_option synthInstance.maxHeartbeats 100000 in
+      rw [g.as_sum, map_sum, Finset.sum_div]
       refine Submodule.sum_mem _ fun m hm => ?_
-      have hmono : monomial m (coeff m g) = coeff m g • monomial m (1 : ℚ) := by
+      have hmono : monomial m (AddMonoidAlgebra.coeff g m) = AddMonoidAlgebra.coeff g m • monomial m (1 : ℚ) := by
         rw [smul_monomial, smul_eq_mul, mul_one]
       rw [hmono, map_smul, smul_div_assoc]
       exact Submodule.smul_of_tower_mem _ _ (Submodule.subset_span ⟨n, hn, m, fun k => hg m hm k, rfl⟩)

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolCut
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntLowMul
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolCut
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntLowMul
+
+@[expose] public section
 
 noncomputable section
 

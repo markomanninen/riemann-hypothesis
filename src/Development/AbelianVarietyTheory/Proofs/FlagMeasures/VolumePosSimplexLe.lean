@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementMass
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementMass
+
+@[expose] public section
+
 open MeasureTheory NumberField Finset
 
 namespace GlobalTheory.SimplexVolume

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AbsPhi
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PrepairingEtaleValue
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PhiAbs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AbsPhi
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PrepairingEtaleValue
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PhiAbs
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1000000
@@ -50,8 +54,8 @@ theorem psi_lin (Fm : FMap G C I D β₁.pull) {M : Model l K} (a : D.Ch M) (hM 
     (x : (D.H' a).N j) (f : Module.Dual C.K₀ (I.D M j)) : Fm.ψ a j (c • x) f = iP C Fm.k c * Fm.ψ a j x f := by
   rw [Fm.lin a hM, iP_apply]
 
-open Classical in
 
+open Classical in
 def delta (hF : R.Facts) (hC : C.Facts) (Fm : FMap G C I D β₁.pull) {M : Model l K} (a : D.Ch M) (j : ℕ) :
     (D.A a).N j →+ (Module.Dual C.K₀ (I.D M j) →+ C.C) :=
   if hM : G M then
@@ -72,7 +76,7 @@ variable (hF : R.Facts) (hC : C.Facts) (Fm : FMap G C I D β₁.pull)
 theorem delta_key {M : Model l K} {a : D.Ch M} (hM : G M) {j : ℕ} {c : R.A} {x : (D.H' a).N j} {y : (D.A a).N j}
     (h : β.β' a j x = c • y) (f : Module.Dual C.K₀ (I.D M j)) :
     Fm.ψ a j x f = iP C Fm.k c * delta hF hC Fm a j y f := by
-  rw [delta, dif_pos hM]
+  rw [delta, dite_eq_left hM]
   exact GamU.hom_key _ _ _ _ _ _ h f
 
 theorem delta_key' {M : Model l K} {a : D.Ch M} (hM : G M) {j : ℕ} (y : (D.A a).N j) (f : Module.Dual C.K₀ (I.D M j)) :
@@ -144,8 +148,8 @@ theorem deltaE_id {M : Model l K} {a a' : D.Ch M} (m : D.Mo (𝟙 M.X) (Category
   rw [this]
   exact congrArg _ (LinearMap.ext fun x => by rw [LinearMap.comp_apply, Fm.pull_id M hM n x])
 
-include hL in
 
+include hL in
 theorem deltaE_indep {M : Model l K} (hM : G M) (a a' : D.Ch M) (n : ℕ) (u : M.T n) (f : Module.Dual C.K₀ (I.D M n)) :
     delta hF hC Fm a n (E.e a n u) f = delta hF hC Fm a' n (E.e a' n u) f := by
   obtain ⟨b, ⟨m₁⟩, ⟨m₂⟩⟩ := hL.refine M M (𝟙 M.X) (Category.id_comp _) hM hM a a'
@@ -162,14 +166,14 @@ theorem cD_tmV {M : Model l K} (hM : G M) (a : D.Ch M) (n : ℕ) (z : ℚ_[l]) (
   unfold cD tmV
   exact ExtV.ext_tmul _ z u f
 
-open Classical in
 
+open Classical in
 def cC (M : Model l K) (n : ℕ) : M.V n →+ (Module.Dual C.K₀ (I.D M n) →+ C.C) :=
   if hM : G M then cD hF hC Fm E hM (a0 hL M hM) n else 0
 
 theorem cC_tmV {M : Model l K} (hM : G M) (n : ℕ) (z : ℚ_[l]) (u : M.T n) (f : Module.Dual C.K₀ (I.D M n)) :
     cC hF hC Fm hL E M n (tmV M n z u) f = C.q z * delta hF hC Fm (a0 hL M hM) n (E.e _ n u) f := by
-  rw [cC, dif_pos hM, cD_tmV]
+  rw [cC, dite_eq_left hM, cD_tmV]
 
 theorem cC_toV {M : Model l K} (hM : G M) (a : D.Ch M) (n : ℕ) (u : M.T n) (f : Module.Dual C.K₀ (I.D M n)) :
     cC hF hC Fm hL E M n (M.toV n u) f = delta hF hC Fm a n (E.e a n u) f := by
@@ -177,7 +181,7 @@ theorem cC_toV {M : Model l K} (hM : G M) (a : D.Ch M) (n : ℕ) (u : M.T n) (f 
 
 theorem cC_not {M : Model l K} (hM : ¬ G M) (n : ℕ) (v : M.V n) (f : Module.Dual C.K₀ (I.D M n)) :
     cC hF hC Fm hL E M n v f = 0 := by
-  rw [cC, dif_neg hM]; rfl
+  rw [cC, dite_eq_right hM]; rfl
 
 def crys (hE : EtSide G) (hinj : ∀ (M : Model l K) (n : ℕ), G M → ∀ {a : ℕ} (b : Module.Basis (Fin a) ℚ_[l] (M.V n))
     (z : Fin a → C.C), (∀ f, ∑ i, z i * cC hF hC Fm hL E M n (b i) f = 0) → z = 0) : CrysCmp G C I where
@@ -189,7 +193,7 @@ def crys (hE : EtSide G) (hinj : ∀ (M : Model l K) (n : ℕ), G M → ∀ {a :
       · intro z' u
         rw [smul_tmV, cC_tmV hF hC Fm hL E hM, cC_tmV hF hC Fm hL E hM, map_mul, mul_assoc]
       · intro x y hx hy
-        simp only [smul_add, map_add, AddMonoidHom.add_apply, hx, hy, mul_add]
+        simp only [smul_add, map_add (f := _), AddMonoidHom.add_apply, hx, hy, mul_add]
     · rw [cC_not hF hC Fm hL E hM, cC_not hF hC Fm hL E hM, mul_zero]
   lin' M n k v f := by
     by_cases hM : G M
@@ -199,7 +203,7 @@ def crys (hE : EtSide G) (hinj : ∀ (M : Model l K) (n : ℕ), G M → ∀ {a :
         rw [cC_tmV hF hC Fm hL E hM, cC_tmV hF hC Fm hL E hM, delta_lin' hF hC Fm hM]
         ring
       · intro x y hx hy
-        simp only [map_add, AddMonoidHom.add_apply, hx, hy, mul_add]
+        simp only [map_add (f := _), AddMonoidHom.add_apply, hx, hy, mul_add]
     · rw [cC_not hF hC Fm hL E hM, cC_not hF hC Fm hL E hM, mul_zero]
   fin M n hM := ⟨hE.fin M hM n, Fm.fin M hM n⟩
   equi M n hM σ v f := by
@@ -209,7 +213,7 @@ def crys (hE : EtSide G) (hinj : ∀ (M : Model l K) (n : ℕ), G M → ∀ {a :
       rw [act_tmV, cC_tmV hF hC Fm hL E hM, cC_tmV hF hC Fm hL E hM, E.act _ hM, delta_act hF hC Fm hL hM, map_mul,
         hC.σ_q]
     · intro x y hx hy
-      simp only [map_add, AddMonoidHom.add_apply, hx, hy]
+      simp only [map_add (f := _), AddMonoidHom.add_apply, hx, hy]
   inj M n hM := hinj M n hM
   phi M n hM m b v f := by
     refine V_induction (p := fun v => cC hF hC Fm hL E M n v f =
@@ -220,7 +224,7 @@ def crys (hE : EtSide G) (hinj : ∀ (M : Model l K) (n : ℕ), G M → ∀ {a :
       rw [delta_phi hF hC Fm hL hM _ (E.phi _ hM n u) b f, Finset.mul_sum]
       exact Finset.sum_congr rfl fun s _ => by ring
     · intro x y hx hy
-      simp only [map_add, AddMonoidHom.add_apply, add_mul, Finset.sum_add_distrib]
+      simp only [map_add (f := _), AddMonoidHom.add_apply, add_mul, Finset.sum_add_distrib]
       rw [hx, hy]
   nat M N u hu n hM hN v f := by
     refine V_induction (p := fun v => cC hF hC Fm hL E M n (Model.pullV u hu n v) f =
@@ -232,7 +236,7 @@ def crys (hE : EtSide G) (hinj : ∀ (M : Model l K) (n : ℕ), G M → ∀ {a :
       obtain ⟨a', -, ⟨m⟩⟩ := hL.refine M N u hu hM hN (a0 hL M hM) (a0 hL N hN)
       rw [deltaE_indep hF hC Fm hL E hM (a0 hL M hM) a', deltaE_nat hF hC Fm E m hM hN]
     · intro x y hx hy
-      simp only [map_add, AddMonoidHom.add_apply, hx, hy]
+      simp only [map_add (f := _), AddMonoidHom.add_apply, hx, hy]
 
 theorem cC_inj (hE : EtSide G) (κ : PMap G D) (hInj : ComparisonInjectiveStrict) (P : Pre G R)
     (hP : ∀ M, G M → ∀ (a : D.Ch M) (n : ℕ) (v : M.T n) (φ : Module.Dual K (HdR M.q n)),
@@ -281,8 +285,8 @@ theorem cC_inj (hE : EtSide G) (κ : PMap G D) (hInj : ComparisonInjectiveStrict
       rw [cC_tmV hF hC Fm hL E hM, cC_toV hF hC Fm hL E hM (a0 hL M hM), map_mul, hC.ι_q]
       ring
     · intro x y hx hy
-      rw [map_add, AddMonoidHom.add_apply, hx, hy, ← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun s _ => by rw [map_add, AddMonoidHom.add_apply, map_add, add_mul]
+      rw [map_add (f := _), AddMonoidHom.add_apply, hx, hy, ← Finset.sum_add_distrib]
+      exact Finset.sum_congr rfl fun s _ => by rw [map_add (f := _), AddMonoidHom.add_apply, map_add (f := _), add_mul]
   have hz' := (hInj l K R G P hF hE M hM n).1 b (fun i => C.ι (z i)) (fun φ => by
     simp only [relV, Finset.mul_sum]
     rw [Finset.sum_comm]
@@ -290,7 +294,8 @@ theorem cC_inj (hE : EtSide G) (κ : PMap G D) (hInj : ComparisonInjectiveStrict
     have h := hz ((Module.finBasis C.K₀ (I.D M n)).coord s)
     calc ∑ i, C.ι (z i) * (C.ι (cC hF hC Fm hL E M n (b i) ((Module.finBasis C.K₀ (I.D M n)).coord s)) * w s (f φ))
         = C.ι (∑ i, z i * cC hF hC Fm hL E M n (b i) ((Module.finBasis C.K₀ (I.D M n)).coord s)) * w s (f φ) := by
-          rw [map_sum, Finset.sum_mul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.sum_mul]
           exact Finset.sum_congr rfl fun i _ => by rw [map_mul]; ring
       _ = 0 := by rw [h, map_zero, zero_mul])
   funext i

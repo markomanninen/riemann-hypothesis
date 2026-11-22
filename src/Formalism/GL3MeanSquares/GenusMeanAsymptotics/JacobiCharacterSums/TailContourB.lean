@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.TailKernel
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.PerronHorizontalSegmentBound
+module
+
+public import Mathlib
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.PerronHorizontalSegmentBound
+
+@[expose] public section
 
 open Complex MeasureTheory
 
@@ -92,7 +96,7 @@ theorem tc_cont {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : χ �
       (hd.analyticAt _).deriv.continuousAt
     have hcp : ContinuousAt (fun s : ℂ => (y : ℂ) ^ s) ((σ : ℂ) + (u : ℂ) * I) :=
       continuousAt_const_cpow (Complex.ofReal_ne_zero.2 hy.ne')
-    apply ContinuousAt.div
+    apply ContinuousAt.div₀
     · exact ((hdL.div hLc hL).neg).mul hcp
     · fun_prop
     · exact mul_ne_zero hs0 hs1
@@ -195,7 +199,7 @@ theorem tc_left_int {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : 
     rw [div_le_div_iff₀ (by linarith) hpos]
     linarith
   have hgc : Continuous (fun u : ℝ => 2 / (δ + |u|)) :=
-    continuous_const.div (by fun_prop)
+    continuous_const.div₀ (by fun_prop)
       (fun u => (by have := abs_nonneg u; linarith : (0 : ℝ) < δ + |u|).ne')
   have hg : IntervalIntegrable (fun u : ℝ => M * (4 * η * z ^ σ) * (2 / (δ + |u|)))
       MeasureTheory.volume (-T) T :=

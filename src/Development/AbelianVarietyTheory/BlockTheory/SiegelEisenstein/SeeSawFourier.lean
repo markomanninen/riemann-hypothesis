@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ def nrm (L : HSp D) (ζ : Fin L.rank → D.host.E) : D.host.E := star ζ ⬝ᵥ 
 def colQ {m : ℕ} (ζ : Fin m → D.host.E) : Matrix (Fin m) (Fin 1) D.host.E := replicateCol (Fin 1) ζ
 
 def beta (S : HSp D) {L L'' : HSp D} (ζ₁ : Fin L.rank → D.host.E) (ζ : Fin L''.rank → D.host.E) (x : WO L S) : WO S L'' :=
-  (rat (colQ ζ) : Mx D L''.rank 1) ⬝
-    (adj (incA D (nrm L'' ζ)⁻¹ • (x ⬝ (rat (colQ ζ₁) : Mx D L.rank 1) : Mx D S.rank 1)) ⬝ gA S : Mx D 1 S.rank)
+  (rat (colQ ζ) : Mx D L''.rank 1) *
+    (adj (incA D (nrm L'' ζ)⁻¹ • (x * (rat (colQ ζ₁) : Mx D L.rank 1) : Mx D S.rank 1)) * gA S : Mx D 1 S.rank)
 
 def OppLines (L L'' : HSp D) (ζ₁ : Fin L.rank → D.host.E) (ζ : Fin L''.rank → D.host.E) : Prop :=
   IsLineVec L ζ₁ ∧ IsLineVec L'' ζ ∧ nrm L ζ₁ = -nrm L'' ζ
@@ -33,7 +37,7 @@ def weilChar (p : SplitPt D k) (ψ : AddChar (AF D.host.F) ℂ) (a : k) : ℂ :=
 variable {p : SplitPt D k} {S T : HSp D} {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n']
 
 def atW (α : Frame p S n') (β : Frame p T n) (x : Matrix n n' k) : WO S T :=
-  Matrix.map (β.b ⬝ (x ⬝ α.b') : Matrix (Fin T.rank) (Fin S.rank) k) p.sec
+  Matrix.map (β.b * (x * α.b') : Matrix (Fin T.rank) (Fin S.rank) k) p.sec
 
 def IsModel (ψ : AddChar (AF D.host.F) ℂ) (α : Frame p S n') (β : Frame p T n)
     (M : (Matrix n n' k → ℂ) →ₗ[ℂ] (WO S T → ℂ)) : Prop :=

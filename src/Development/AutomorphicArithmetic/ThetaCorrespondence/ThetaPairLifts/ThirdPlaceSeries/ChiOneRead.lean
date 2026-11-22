@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GaloisFamilyResidualImage
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GaloisFamilyResidualImage
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -25,7 +29,7 @@ theorem chiOne_read_alt : ∀ (D : D7) (cf : CharFrame D) (jE : D.host.E →+* Q
   have key : ∀ z : (AdeleRing (𝓞 D.host.E) D.host.E)ˣ, (Bs.chiD.firstHeckeCharacter (T.twOf i) (X.nd.j i)).χ z =
       (cf.mu0 j).1 z * (cf.delAt (X.nd.l i)).1 z * (cf.eta.1 z)⁻¹ := by
     intro z
-    simp only [Formalism.L2.NC.NChiData.firstHeckeCharacter, Formalism.L2.NC.HC.mul_χ, Formalism.L2.NC.HC.inv_χ, MonoidHom.mul_apply, MonoidHom.inv_apply]
+    change (Bs.chiD.mu0 (X.nd.j i)).χ z * (Bs.chiD.del (T.twOf i)).χ z * ((Bs.chiD.etaT).χ z)⁻¹ = _
     rw [← hj, Bs.ringSpec_normalisedCharacter_eq j z, Bs.eta_eq]
     have hd := Bs.del_eq (T.twOf i) z
     rw [hl'] at hd

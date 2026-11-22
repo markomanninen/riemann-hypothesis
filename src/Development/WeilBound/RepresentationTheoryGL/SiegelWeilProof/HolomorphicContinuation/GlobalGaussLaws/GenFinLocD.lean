@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GenFinLocC
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GenFinLocC
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,8 @@ theorem lift2 (σ : R →+* R) (hσ : ∀ x, σ (σ x) = x) (𝔪 : Ideal R) [h�
   have hse : Ideal.Quotient.mk 𝔪 (σ e) = 1 := by
     rw [show e = 1 - f by rw [← hef]; ring, map_sub, map_one, map_sub, map_one, hsf, sub_zero]
   refine ⟨u * f + σ y * e, ?_, ?_⟩
-  · rw [map_add, map_mul, map_mul, hf1, he0]; ring
-  · rw [map_add, map_mul, map_mul, map_add, map_mul, map_mul, hσ, hsf, hse]; ring
+  · rw [map_add (f := _), map_mul, map_mul, hf1, he0]; ring
+  · rw [map_add (f := _), map_mul, map_mul, map_add (f := _), map_mul, map_mul, hσ, hsf, hse]; ring
 
 theorem caseB (hS : LocRedSplit) (σ : R →+* R) (hσ : ∀ a, σ (σ a) = a) (𝔪 : Ideal R) [h𝔪 : 𝔪.IsMaximal]
     (hne : 𝔪.comap σ ≠ 𝔪) (horb : ∀ 𝔫 : Ideal R, 𝔫.IsMaximal → 𝔫 = 𝔪 ∨ 𝔫 = 𝔪.comap σ)

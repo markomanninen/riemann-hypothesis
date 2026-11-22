@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.TotalDegreeBindLe
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.TotalDegreeBindLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem avgKFin_holds : AvgKFin := by
     have hint' : ∀ m ∈ q'.support, Integrable
         (fun k => q'.coeff m • (evP (MvPolynomial.monomial m 1) k • π (Matrix.of k) w)) μ :=
       fun m _ => (hint m).smul (q'.coeff m)
-    rw [e1, integral_finset_sum _ hint']
+    rw [e1, integral_finsetSum _ hint']
     refine Submodule.sum_mem _ fun m hm => ?_
     rw [integral_smul]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨m, ?_, rfl⟩)

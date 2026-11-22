@@ -1,7 +1,11 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.Imports
-import GroundTheory.AutomorphicForms.GL2.SummableNormIffAndTsumEqCoset2
-import GroundTheory.GlobalFields.TateThesis.Gaussian
-import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.Imports
+public import GroundTheory.AutomorphicForms.GL2.SummableNormIffAndTsumEqCoset2
+public import GroundTheory.GlobalFields.TateThesis.Gaussian
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+
+@[expose] public section
 
 noncomputable section
 

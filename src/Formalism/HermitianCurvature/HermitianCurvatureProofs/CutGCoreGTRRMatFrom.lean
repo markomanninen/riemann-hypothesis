@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRotCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolPhaseRel
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRotCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolPhaseRel
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -41,15 +45,13 @@ def rotA (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) (φ : ℝ) (X : Wq →
 theorem rotA_sum (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) (φ : ℝ) {ι : Type} (s : Finset ι) (a : ι → ℂ)
     (X : ι → (Wq →L[ℂ] Wp)) : rotA P Bs φ (∑ i ∈ s, a i • X i) = ∑ i ∈ s, a i • rotA P Bs φ (X i) := by
   ext v
-  simp [rotA, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [rotA, map_sum, map_smul]
 
 theorem rotA_smul (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) (φ : ℝ) (a : ℂ) (X : Wq →L[ℂ] Wp) :
     rotA P Bs φ (a • X) = a • rotA P Bs φ X := by
   ext v
   simp [rotA]
-
-theorem rotM_eq (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) (E : M.Ty P → (Wq →L[ℂ] Wp)) (φ : ℝ) (ρ ρ' : M.Ty P) :
-    rotM P Bs.z Bs.z' Bs.π Bs.π' E φ ρ ρ' = inner ℂ (B.hsVec (E ρ)) (B.hsVec (rotA P Bs φ (E ρ'))) := rfl
 
 theorem ann_tz (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) (hpl : Q.IsPlace P Bs.z Bs.z' Bs.π Bs.π') {ζ : ℂ}
     (hζ : P.TT < Complex.normSq ζ) : Tz P.k P.r Bs.z * Tz P.k P.r Bs.z' < Complex.normSq ζ := by

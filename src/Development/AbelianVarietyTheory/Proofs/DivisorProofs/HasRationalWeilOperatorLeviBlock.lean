@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
+
+@[expose] public section
+
 open scoped Matrix GlobalTheory.VacAny
 open NumberField IsDedekindDomain MeasureTheory Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RatWeilOp
 
@@ -106,7 +111,7 @@ theorem levi_map_mul {R : Type} [CommRing R] (f : F →+* R) {g h : Matrix κ κ
   exact ⟨by rw [← Matrix.map_mul, h1, Matrix.map_one _ (map_zero f) (map_one f)],
     by rw [← Matrix.map_mul, h2, Matrix.map_one _ (map_zero f) (map_one f)]⟩
 
-theorem mulVec_mem_integers (v : Pl F) (M : Matrix κ κ (Fv F v))
+theorem mulVec_mem_integers (v : Pl (F := F)) (M : Matrix κ κ (Fv F v))
     (hM : ∀ i j, M i j ∈ v.adicCompletionIntegers F) (x : κ → Fv F v) (hx : ∀ i, x i ∈ v.adicCompletionIntegers F) :
     ∀ i, (M *ᵥ x) i ∈ v.adicCompletionIntegers F :=
   fun i => sum_mem fun j _ => mul_mem (hM i j) (hx j)
@@ -117,7 +122,7 @@ noncomputable section
 namespace GlobalTheory.RatWeilOp
 variable {κ : Type} [Fintype κ] [DecidableEq κ] {F : Type} [Field F] [NumberField F]
 
-theorem ind_mulVec (v : Pl F) (M N : Matrix κ κ (Fv F v)) (hNM : N * M = 1)
+theorem ind_mulVec (v : Pl (F := F)) (M N : Matrix κ κ (Fv F v)) (hNM : N * M = 1)
     (hM : ∀ i j, M i j ∈ v.adicCompletionIntegers F) (hN : ∀ i j, N i j ∈ v.adicCompletionIntegers F) (x : κ → Fv F v) :
     ind κ v (M *ᵥ x) = ind κ v x := by
   have key : (∀ i, (M *ᵥ x) i ∈ v.adicCompletionIntegers F) ↔ ∀ i, x i ∈ v.adicCompletionIntegers F := by
@@ -140,10 +145,10 @@ noncomputable section
 namespace GlobalTheory.RatWeilOp
 variable {κ : Type} [Fintype κ] [DecidableEq κ] {F : Type} [Field F] [NumberField F]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem funLeft_pure_levi {g h : Matrix κ κ F} (hI1 : hᵀ.map (mixedEmbedding F) * g.map (mixedEmbedding F) = 1)
-    (hI2 : g.map (mixedEmbedding F) * hᵀ.map (mixedEmbedding F) = 1) (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) :
+    (hI2 : g.map (mixedEmbedding F) * hᵀ.map (mixedEmbedding F) = 1) (f : SInf F κ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) :
     LinearMap.funLeft ℂ ℂ (fun x : κ → AF F => hᵀ.map (algebraMap F (AF F)) *ᵥ x) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) =
       GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (SchwartzMap.compCLMOfContinuousLinearEquiv ℂ (mulVecCLE _ _ hI1 hI2) f)
         (fun v => LinearMap.funLeft ℂ ℂ (fun x : κ → Fv F v => hᵀ.map (algebraMap F (Fv F v)) *ᵥ x) (φ v)) := by
@@ -185,12 +190,12 @@ end GlobalTheory.RatWeilOp
 noncomputable section
 namespace GlobalTheory.RatWeilOp
 
-open scoped Classical in
 
+open scoped Classical in
 theorem hasOp_levi (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ) (κ : Type) [Fintype κ] [DecidableEq κ]
     (g h : Matrix κ κ F) (hg : gᵀ * h = 1) : HasOp ψ (Matrix.fromBlocks g 0 0 h) := by
   obtain ⟨hI1, hI2⟩ := levi_map_mul (mixedEmbedding F) hg
-  have hv : ∀ v : Pl F, (hᵀ.map (algebraMap F (Fv F v))) * g.map (algebraMap F (Fv F v)) = 1 ∧
+  have hv : ∀ v : Pl (F := F), (hᵀ.map (algebraMap F (Fv F v))) * g.map (algebraMap F (Fv F v)) = 1 ∧
       g.map (algebraMap F (Fv F v)) * hᵀ.map (algebraMap F (Fv F v)) = 1 := fun v => levi_map_mul _ hg
   refine ⟨LinearMap.funLeft ℂ ℂ (fun x : κ → AF F => hᵀ.map (algebraMap F (AF F)) *ᵥ x), 1,
     SchwartzMap.compCLMOfContinuousLinearEquiv ℂ (mulVecCLE _ _ hI1 hI2),

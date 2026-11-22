@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.GoodPartHermitianSpec
-import Formalism.LocalToGlobal.Divisibility.ClassSumLemmas
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ClassSumDualGeOfFamily
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.GoodPartHermitianSpec
+public import Formalism.LocalToGlobal.Divisibility.ClassSumLemmas
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ClassSumDualGeOfFamily
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -160,7 +164,8 @@ private theorem dot_H_lemma {K : Type} [Field K] [NumberField K] [StarRing K] (S
   have hp : ∀ (x y : Fin S.dim → K) (u w : Fin S.dim → S.V),
       S.pair (∑ k, x k • u k) (∑ l, y l • w l) = ∑ k, ∑ l, star (x k) * y l * S.pair (u k) (w l) := by
     intro x y u w
-    simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
       starRingEnd_apply, RingHom.id_apply, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
@@ -212,7 +217,8 @@ theorem group_action_matrix_adjoint : GaMatAdj := by
   intro K _ _ _ S G _ _ r hr a
   rw [S.gaMat_eq_lift r (gaStar a)]
   unfold gaStar
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [MonoidAlgebra.lift_single]
   unfold CSD.gaMat
   rw [Matrix.conjTranspose_sum, Finset.sum_mul, Finset.mul_sum]
@@ -231,7 +237,8 @@ theorem gaMat_lvlIdem (P : Subgroup G) (ψ : P →* Kˣ) :
       ∑ h : P, ((Nat.card P : K)⁻¹ * ((ψ h⁻¹ : Kˣ) : K)) • S.actMat r (h : G) := by
   rw [S.gaMat_eq_lift r]
   unfold lvlIdem
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun h _ => ?_
   rw [MonoidAlgebra.lift_single]
   rfl
@@ -618,7 +625,7 @@ theorem IsAbsIrrChar.isIntegral {χ : G → K} (h : IsAbsIrrChar χ) (t : G) : I
   have h2 : IsIntegral ℤ (algebraMap K (AlgebraicClosure K) (χ t)) := by
     rw [← hχ t]
     exact h1
-  exact (isIntegral_algebraMap_iff (algebraMap K (AlgebraicClosure K)).injective).mp h2
+  exact (isIntegral_algebraMap_iff ).mp h2
 
 private theorem coeff_chiIdem_lemma {K : Type} [Field K] {G : Type} [Group G] [Fintype G] (χ : G → K) (t : G) :
     (chiIdem χ).coeff t = χ 1 / (Fintype.card G : K) * χ t⁻¹ := by
@@ -734,7 +741,11 @@ theorem IsAbsIrrChar.map_inv {χ : G → K} (h : IsAbsIrrChar χ) (σ : K →+* 
     σ (χ t⁻¹) = starRingEnd ℂ (σ (χ t)) := by
   obtain ⟨n, ρ, -, hρ⟩ := h
   let _ : Algebra K ℂ := σ.toAlgebra
-  let τ : AlgebraicClosure K →ₐ[K] ℂ := IsAlgClosed.lift
+  let τ : AlgebraicClosure K →ₐ[K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hτ : ∀ x : K, τ (algebraMap K (AlgebraicClosure K) x) = σ x := fun x => τ.commutes x
   let A : G → Matrix (Fin n) (Fin n) (AlgebraicClosure K) := fun s => LinearMap.toMatrix' (ρ s)
   have hA : ∀ s, (A s).trace = algebraMap K (AlgebraicClosure K) (χ s) := by
@@ -747,7 +758,8 @@ theorem IsAbsIrrChar.map_inv {χ : G → K} (h : IsAbsIrrChar χ) (σ : K →+* 
   have hone : A 1 = 1 := by simp [A, Module.End.one_eq_id]
   have htr : ∀ s, ((A s).map τ).trace = σ (χ s) := by
     intro s
-    rw [← hτ, ← hA s, Matrix.trace, Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hτ, ← hA s, Matrix.trace, Matrix.trace, map_sum]
     rfl
   have hmap : ∀ s u, (A (s * u)).map τ = (A s).map τ * (A u).map τ := by
     intro s u
@@ -826,7 +838,8 @@ theorem convA {k V G : Type} [Field k] [IsAlgClosed k] [Group G] [Fintype G] [Ad
   set T : V →ₗ[k] V := ∑ s, φ s • ρ s with hTdef
   have hT : ∀ g v, T (ρ g v) = ρ g (T v) := by
     intro g v
-    simp only [hTdef, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hTdef, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
     rw [← Equiv.sum_comp (MulAut.conj g).toEquiv]
     refine Finset.sum_congr rfl fun s _ => ?_
     have e1 : φ ((MulAut.conj g).toEquiv s) = φ s := by simpa [MulAut.conj_apply] using hφ g s
@@ -839,7 +852,8 @@ theorem convA {k V G : Type} [Field k] [IsAlgClosed k] [Group G] [Fintype G] [Ad
     intro u
     have : LinearMap.trace k V (T * ρ u) = c * ρ.character u := by
       rw [hc]; simp [character, Module.End.mul_eq_comp]
-    rw [← this, hTdef, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, hTdef, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [smul_mul_assoc, map_smul, smul_eq_mul, character, map_mul]
   have h2 := h1 1
@@ -849,8 +863,8 @@ theorem convA {k V G : Type} [Field k] [IsAlgClosed k] [Group G] [Fintype G] [Ad
 
 variable {K : Type} [Field K] [CharZero K] {G : Type} [Group G] [Fintype G]
 
-open Classical in
 
+open Classical in
 theorem conv_char {χ χ' : G → K} (h : IsAbsIrrChar χ) (h' : IsAbsIrrChar χ') (u : G) :
     (∑ s, χ s⁻¹ * χ' (s * u)) * χ' 1 = if χ = χ' then (Fintype.card G : K) * χ' u else 0 := by
   classical
@@ -900,7 +914,8 @@ theorem conv_char {χ χ' : G → K} (h : IsAbsIrrChar χ) (h' : IsAbsIrrChar χ
   apply hj
   rw [hfin, hsum] at hA
   simp only [hρ'] at hA
-  rw [map_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, map_sum]
   simp only [map_mul]
   rw [hA]
   split_ifs
@@ -1161,6 +1176,52 @@ theorem mem_dual_iff {K : Type} [Field K] [NumberField K] [StarRing K] {n : ℕ}
   unfold Formalism.HermitianLatticesTheory.dual Formalism.E.hdual
   simp only [Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
 
+theorem span_eq_top_of_scaled_dual_le {K V : Type} [Field K] [NumberField K] [StarRing K]
+    [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
+    (pair : V →ₗ⋆[K] V →ₗ[K] K) (M : Submodule (𝓞 K) V)
+    (hfg : M.FG) {c : 𝓞 K} (hc : c ≠ 0)
+    (hdual : ∀ x ∈ Formalism.HermitianLatticesTheory.dual pair M, c • x ∈ M) :
+    Submodule.span K (M : Set V) = ⊤ := by
+  rw [eq_top_iff]
+  intro x _
+  obtain ⟨generators, hgen⟩ := hfg
+  obtain ⟨d, hd⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 K))
+    generators (fun y => pair y x)
+  have hmem : (d : 𝓞 K) • x ∈ Formalism.HermitianLatticesTheory.dual pair M := by
+    rw [Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+    intro y hy
+    rw [← hgen] at hy
+    induction hy using Submodule.span_induction with
+    | mem y hy =>
+        rw [LinearMap.map_smul_of_tower]
+        exact Submodule.mem_one.mpr (hd y hy)
+    | zero => simp
+    | add y z _ _ hy hz =>
+        rw [map_add, LinearMap.add_apply]
+        exact add_mem hy hz
+    | smul a y _ hy =>
+        obtain ⟨b, hb⟩ := exponent_index_lattice.hstar (K := K) a
+        rw [← algebraMap_smul K a y, LinearMap.map_smulₛₗ₂]
+        change star (algebraMap (𝓞 K) K a) • pair y ((d : 𝓞 K) • x) ∈ _
+        rw [← hb, algebraMap_smul K]
+        exact Submodule.smul_mem _ _ hy
+  have hcK : algebraMap (𝓞 K) K c ≠ 0 := by
+    simpa only [map_zero] using (IsFractionRing.injective (𝓞 K) K).ne hc
+  have hdK : algebraMap (𝓞 K) K d ≠ 0 :=
+    IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors d.2
+  apply (Submodule.smul_mem_iff _ hdK).mp
+  rw [algebraMap_smul K]
+  apply (Submodule.smul_mem_iff _ hcK).mp
+  rw [algebraMap_smul K]
+  exact Submodule.subset_span (hdual _ hmem)
+
+theorem CSD.Good.nab_isFullLattice {K : Type} [Field K] [NumberField K] [StarRing K]
+    {S : CSD K} {s : ℕ} (h : S.Good s) (c : S.Cl) : Submodule.IsFullLattice K (S.Nab c) := by
+  have hs : (s : 𝓞 K) ≠ 0 := by exact_mod_cast h.s_pos.ne'
+  exact { toIsLattice := h.nab_lat c
+          span_eq_top := span_eq_top_of_scaled_dual_le S.pair _ (h.nab_lat c).fg hs
+            (fun x hx => h.del_le c (h.dual_le c x hx)) }
+
 private theorem hform_eq_lemma {K : Type} [Field K] [NumberField K] [StarRing K] {m : ℕ} (M : Matrix (Fin m) (Fin m) K)
     (u v : Fin m → K) : hform M u v = star u ⬝ᵥ (M *ᵥ v) := by
   unfold hform
@@ -1185,9 +1246,10 @@ theorem boundsIAt_of (h : BoundsIHyps) : BoundsIAt := by
     (by intro x y _; exact Subsingleton.elim _ _)
   obtain ⟨hl1, hl2, hl3⟩ := bounds_class_field_fixed K S.dim (S.BaseDimension r X P ψ) S.H hH hdet (S.V0E r X P ψ)
     (S.goodPartProjection r X P ψ) hp S.Cl S.V S.pair hS.symm hS.nondeg S.Gam S.ρ hS.inv S.I S.I_injective S.I_onto
-    S.isClassSum S.Nab S.Del hS.nab_lat s hS.dual_le hS.del_le hS.del_stable G (S.actMat r)
+    S.isClassSum S.Nab S.Del hS.nab_isFullLattice
+    s hS.dual_le hS.del_le hS.del_stable G (S.actMat r)
     (fun t => (goodAt X P ψ).coeff t) (Fintype.card G * Nat.card P) he hint hdel
-  refine ⟨hl1, hl2, ?_⟩
+  refine ⟨hl1.toIsLattice, hl2.toIsLattice, ?_⟩
   intro x hx
   have hP : (Nat.card P : K) ≠ 0 := by exact_mod_cast (Nat.card_pos (α := P)).ne'
   have hx' : ((Nat.card P : K)⁻¹ • x) ∈
@@ -1205,44 +1267,6 @@ theorem boundsIAt_of (h : BoundsIHyps) : BoundsIAt := by
     field_simp
   rw [e] at h4
   exact h4
-
-theorem lvlDualLe_of (h1 : CutOrthProj) (h2 : LvlIdemSpec) (h3 : ActLat) : LvlDualLe := by
-  intro K _ _ _ v0 hv0 S s hS hpos G _ _ r hr P ψ y hy
-  obtain ⟨hg, -⟩ := h2 K v0 hv0 G P ψ
-  obtain ⟨hp, he⟩ := h1 K v0 hv0 S hpos G r hr (lvlIdem P ψ) hg.idem hg.selfAdj
-  obtain ⟨hH, hdet, -⟩ := orthogonal_projection_exists K v0 hv0 S.dim 0 S.H hpos 0
-    (by intro x y _; exact Subsingleton.elim _ _)
-  have hA : Submodule.IsLattice K S.nabLat := ValuationLatticeField.valLatF_isLattice S.I S.I_injective S.Nab hS.nab_lat
-  have hP : (Nat.card P : K) ≠ 0 := by exact_mod_cast (Nat.card_pos (α := P)).ne'
-  have hy' : ((Nat.card P : K)⁻¹ • y) ∈
-      Formalism.HermitianLatticesTheory.dual (hform ((S.cutE r (lvlIdem P ψ))ᴴ * S.H * S.cutE r (lvlIdem P ψ)))
-        (cutLat (S.cutE r (lvlIdem P ψ)) S.nabLat) := by
-    rw [mem_dual_iff]
-    intro z hz
-    have := (mem_dual_iff _ _ _).1 hy z hz
-    rwa [CSD.lvlH, hform_smul] at this
-  rw [sectioned_dual_lattice K S.dim _ S.H hH hdet _ _ hp S.nabLat hA] at hy'
-  obtain ⟨z, hz, hzy⟩ := hy'
-  have hz' : (s : 𝓞 K) • z ∈ S.delLat :=
-    class_sum_dual_le_fixed K S.dim S.H S.Cl S.V S.pair hS.symm hS.nondeg S.Gam S.ρ hS.inv S.I S.I_onto
-      S.isClassSum S.Nab S.Del hS.nab_lat s hS.dual_le hS.del_stable z hz
-  have h5 := projection_integral K S.dim G (S.actMat r) (fun t => (lvlIdem P ψ).coeff t) (Nat.card P)
-    hg.integral S.delLat (fun t => (h3 K S G r hr t).2) _ hz'
-  show (S.cutE r (lvlIdem P ψ)).mulVec ((s : 𝓞 K) • y) ∈ S.delLat
-  have e : (S.cutE r (lvlIdem P ψ)).mulVec ((s : 𝓞 K) • y) =
-      (Nat.card P : 𝓞 K) • (∑ t, (lvlIdem P ψ).coeff t • S.actMat r t).mulVec ((s : 𝓞 K) • z) := by
-    have e1 : (∑ t, (lvlIdem P ψ).coeff t • S.actMat r t) = S.cutE r (lvlIdem P ψ) * S.cutPr r (lvlIdem P ψ) :=
-      he.symm
-    have e2 : y = (Nat.card P : K) • (S.cutPr r (lvlIdem P ψ)).mulVec z := by
-      have : (S.cutPr r (lvlIdem P ψ)).mulVec z = (Nat.card P : K)⁻¹ • y := hzy
-      rw [this, smul_smul, mul_inv_cancel₀ hP, one_smul]
-    rw [e1, ← Matrix.mulVec_mulVec]
-    conv_lhs => rw [e2]
-    simp only [← algebraMap_smul K ((s : 𝓞 K)), ← algebraMap_smul K ((Nat.card P : 𝓞 K)), map_natCast,
-      Matrix.mulVec_smul]
-    rw [smul_comm]
-  rw [e]
-  exact h5
 
 theorem hform_cut {K : Type} [Field K] [NumberField K] [StarRing K] {n d : ℕ}
     (H : Matrix (Fin n) (Fin n) K) (E : Matrix (Fin n) (Fin d) K) (x y : Fin d → K) :
@@ -1294,9 +1318,6 @@ theorem level_class_sum : LvlClassSum := by
 theorem level_operator_spec : LvlOpSpec := by
   exact lvlOpSpec_of orthogonal_projection_spec level_idempotent_spec
 
-theorem level_dual_lattice_le : LvlDualLe := by
-  exact lvlDualLe_of orthogonal_projection_spec level_idempotent_spec action_preserves_lattice
-
 theorem level_operator_integral : BoundsIHyps := by
   exact boundsIHyps_of orthogonal_projection_spec good_at_spec action_preserves_lattice
 
@@ -1310,282 +1331,5 @@ namespace Formalism.L2.DIV.Test
 open Formalism.DivisionValues
 
 variable (K : Type) [Field K] [NumberField K] [StarRing K] (G : Type) [Group G] [Fintype G]
-
-def stdPair : K →ₗ⋆[K] K →ₗ[K] K :=
-  LinearMap.mk₂'ₛₗ (starRingEnd K) (RingHom.id K) (fun x y => star x * y)
-    (by intro x y z; simp [add_mul])
-    (by intro a x y; simp only [smul_eq_mul, star_mul', starRingEnd_apply, mul_assoc])
-    (by intro x y z; simp [mul_add])
-    (by intro a x y; simp [mul_left_comm])
-
-@[simp] theorem stdPair_apply (x y : K) : stdPair K x y = star x * y := rfl
-
-abbrev regCSD : CSD K where
-  Cl := G
-  V := K
-  ιV := Unit
-  bV := Basis.singleton Unit K
-  pair := stdPair K
-  Gam := fun _ => Unit
-  ρ := fun _ => 1
-  Nab := fun _ => 1
-  Del := fun _ => 1
-
-theorem mem_regForms (f : G → K) : f ∈ (regCSD K G).Forms := by
-  intro c γ
-  rfl
-
-def regAct : Representation K G (regCSD K G).Forms where
-  toFun t := LinearMap.codRestrict _
-    ((LinearMap.funLeft K K (fun c : G => c * t)) ∘ₗ (regCSD K G).Forms.subtype)
-    (fun f => mem_regForms K G _)
-  map_one' := by
-    apply LinearMap.ext; intro f; apply Subtype.ext; funext c
-    exact congrArg f.1 (mul_one (c : G))
-  map_mul' := by
-    intro s t
-    apply LinearMap.ext; intro f; apply Subtype.ext; funext c
-    exact congrArg f.1 (mul_assoc (c : G) s t).symm
-
-theorem regAct_apply (t : G) (f : (regCSD K G).Forms) (c : G) :
-    ((regAct K G t f).1 : G → K) c = (f.1 : G → K) (c * t) := rfl
-
-theorem reg_wt (c : G) : (regCSD K G).wt c = 1 := rfl
-
-theorem reg_csum (f g : G → K) : (regCSD K G).csum f g = ∑ c : G, star (f c) * g c := by
-  unfold CSD.csum
-  simp only [reg_wt, Nat.cast_one, inv_one, one_mul]
-  rfl
-
-theorem regAct_good : (regCSD K G).ActGood (regAct K G) where
-  unitary := by
-    intro t f g
-    rw [reg_csum, reg_csum]
-    exact Equiv.sum_comp (Equiv.mulRight t) (fun c : G => star ((f.1 : G → K) c) * (g.1 : G → K) c)
-  nab_stable := by
-    intro t f hf c
-    exact hf ((c : G) * t)
-  del_stable := by
-    intro t f hf c
-    exact hf ((c : G) * t)
-
-theorem isAbsIrrChar_one : IsAbsIrrChar (fun _ : G => (1 : K)) := by
-  refine ⟨1, 1, ?_, ?_⟩
-  · have hs : IsSimpleOrder (Submodule (AlgebraicClosure K) (Fin 1 → AlgebraicClosure K)) := by
-      have : IsSimpleModule (AlgebraicClosure K) (Fin 1 → AlgebraicClosure K) :=
-        isSimpleModule_iff_finrank_eq_one.mpr (by simp)
-      exact this.1
-    have : Nontrivial (Subrepresentation (1 : Representation (AlgebraicClosure K) G
-        (Fin 1 → AlgebraicClosure K))) :=
-      ⟨⊥, ⊤, fun h => bot_ne_top (congrArg Subrepresentation.toSubmodule h)⟩
-    refine ⟨fun σ => ?_⟩
-    rcases hs.eq_bot_or_eq_top σ.toSubmodule with h | h
-    · exact Or.inl (Subrepresentation.toSubmodule_injective h)
-    · exact Or.inr (Subrepresentation.toSubmodule_injective h)
-  · intro t
-    simp [Representation.character]
-
-theorem idemOf_one_coeff (t : G) :
-    (idemOf ({fun _ : G => (1 : K)} : Finset (G → K))).coeff t = 1 / (Fintype.card G : K) := by
-  rw [coeff_idemOf, Finset.sum_singleton]
-  simp
-
-theorem lvlIdem_bot (ψ : (⊥ : Subgroup G) →* Kˣ) : lvlIdem (⊥ : Subgroup G) ψ = 1 := by
-  exact level_idempotent_bot K G ψ
-
-private theorem v0dim_pos_lemma (K : Type) [Field K] [NumberField K] [StarRing K] (G : Type) [Group G]
-    [Fintype G] (X : Finset (G → K)) (P : Subgroup G) (ψ : P →* Kˣ)
-    (h : ∑ t : G, (goodAt X P ψ).coeff t ≠ 0) : 0 < (regCSD K G).BaseDimension (regAct K G) X P ψ := by
-  let f1 : (regCSD K G).Forms := ⟨fun _ => (1 : K), mem_regForms K G _⟩
-  have hfix : ∀ t : G, regAct K G t f1 = f1 := fun t => rfl
-  have hact : ∀ t : G, ((regCSD K G).actMat (regAct K G) t).mulVec ((regCSD K G).basis.equivFun f1) =
-      (regCSD K G).basis.equivFun f1 := by
-    intro t
-    have h1 := (regCSD K G).I_actMat (regAct K G) t ((regCSD K G).basis.equivFun f1)
-    rw [LinearEquiv.symm_apply_apply, hfix] at h1
-    have h3 : (regCSD K G).basis.equivFun.symm (((regCSD K G).actMat (regAct K G) t).mulVec
-        ((regCSD K G).basis.equivFun f1)) = f1 := Subtype.ext h1
-    have h4 := congrArg (regCSD K G).basis.equivFun h3
-    rwa [LinearEquiv.apply_symm_apply] at h4
-  have hsm : ∀ (c : K) (M : Matrix (Fin (regCSD K G).dim) (Fin (regCSD K G).dim) K)
-      (v : Fin (regCSD K G).dim → K), (c • M).mulVec v = c • M.mulVec v := by
-    intro c M v
-    ext i
-    simp [Matrix.mulVec, dotProduct, Finset.mul_sum, mul_assoc]
-  have hsum : ∀ (s : Finset G) (M : G → Matrix (Fin (regCSD K G).dim) (Fin (regCSD K G).dim) K)
-      (v : Fin (regCSD K G).dim → K), (∑ t ∈ s, M t).mulVec v = ∑ t ∈ s, (M t).mulVec v := by
-    intro s M v
-    induction s using Finset.cons_induction with
-    | empty => simp
-    | cons a s ha ih => rw [Finset.sum_cons, Finset.sum_cons, Matrix.add_mulVec, ih]
-  have hga : ((regCSD K G).gaMat (regAct K G) (goodAt X P ψ)).mulVec ((regCSD K G).basis.equivFun f1) =
-      (∑ t : G, (goodAt X P ψ).coeff t) • (regCSD K G).basis.equivFun f1 := by
-    unfold CSD.gaMat
-    rw [hsum, Finset.sum_smul]
-    refine Finset.sum_congr rfl fun t _ => ?_
-    rw [hsm, hact t]
-  have hx1 : (regCSD K G).basis.equivFun f1 ≠ 0 := by
-    intro h0
-    have h5 : f1 = 0 := (regCSD K G).basis.equivFun.injective (by rw [h0, map_zero])
-    have h6 := congrArg (fun f : (regCSD K G).Forms => (f : G → K) 1) h5
-    simp [f1] at h6
-  show 0 < Module.finrank K (LinearMap.range ((regCSD K G).gaMat (regAct K G) (goodAt X P ψ)).mulVecLin)
-  apply Module.finrank_pos_iff_exists_ne_zero.mpr
-  refine ⟨⟨(∑ t : G, (goodAt X P ψ).coeff t) • (regCSD K G).basis.equivFun f1,
-    LinearMap.mem_range.mpr ⟨(regCSD K G).basis.equivFun f1, by rw [Matrix.mulVecLin_apply, hga]⟩⟩, ?_⟩
-  intro h0
-  have h7 := congrArg Subtype.val h0
-  exact smul_ne_zero h hx1 h7
-
-theorem reg_V0dim_pos (ψ : (⊥ : Subgroup G) →* Kˣ) :
-    0 < (regCSD K G).BaseDimension (regAct K G) ({fun _ : G => (1 : K)} : Finset (G → K)) ⊥ ψ := by
-  apply v0dim_pos_lemma
-  unfold goodAt
-  rw [lvlIdem_bot, mul_one]
-  simp only [idemOf_one_coeff, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  rw [one_div, mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)]
-  exact one_ne_zero
-
-theorem mem_dual_one (y : K) :
-    y ∈ Formalism.HermitianLatticesTheory.dual (stdPair K) (1 : Submodule (𝓞 K) K) ↔ y ∈ (1 : Submodule (𝓞 K) K) := by
-  have key : y ∈ Formalism.HermitianLatticesTheory.dual (stdPair K) (1 : Submodule (𝓞 K) K) ↔
-      ∀ z ∈ (1 : Submodule (𝓞 K) K), stdPair K z y ∈ (1 : Submodule (𝓞 K) K) := by
-    unfold Formalism.HermitianLatticesTheory.dual Formalism.E.hdual
-    simp only [Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
-  rw [key]
-  constructor
-  · intro h
-    have h1 := h 1 (by rw [Submodule.mem_one]; exact ⟨1, map_one _⟩)
-    rwa [stdPair_apply, star_one, one_mul] at h1
-  · intro hy z hz
-    rw [stdPair_apply]
-    rw [Submodule.mem_one] at hy hz ⊢
-    obtain ⟨a, rfl⟩ := hz
-    obtain ⟨b, rfl⟩ := hy
-    have ha : IsIntegral ℤ (algebraMap (𝓞 K) K a) := (int_iff_lemma _).mp ⟨a, rfl⟩
-    have hb : IsIntegral ℤ (algebraMap (𝓞 K) K b) := (int_iff_lemma _).mp ⟨b, rfl⟩
-    have hs : IsIntegral ℤ (star (algebraMap (𝓞 K) K a)) := ha.map (starRingEnd K).toIntAlgHom
-    obtain ⟨c, hc⟩ := (int_iff_lemma _).mpr (hs.mul hb)
-    exact ⟨c, hc⟩
-
-theorem reg_good : (regCSD K G).Good 1 where
-  symm := ⟨fun x y => by
-    show starRingEnd K (star x * y) = star y * x
-    rw [starRingEnd_apply, star_mul', star_star, mul_comm]⟩
-  nondeg := by
-    constructor
-    · intro x hx
-      have := hx 1
-      simpa using this
-    · intro y hy
-      have := hy 1
-      simpa using this
-  inv := fun c γ x y => rfl
-  nab_lat := fun c => ⟨by
-    show (1 : Submodule (𝓞 K) K).FG
-    rw [Submodule.one_eq_span]; exact Submodule.fg_span_singleton _, by
-    show Submodule.span K (((1 : Submodule (𝓞 K) K) : Set K)) = ⊤
-    rw [eq_top_iff]
-    intro x _
-    have h1 : (1 : K) ∈ Submodule.span K (((1 : Submodule (𝓞 K) K) : Set K)) :=
-      Submodule.subset_span (Submodule.one_le.mp le_rfl)
-    simpa using Submodule.smul_mem _ x h1⟩
-  del_le := fun c => le_rfl
-  del_stable := fun c γ y hy => hy
-  s_pos := Nat.one_pos
-  dual_le := fun c y hy => by
-    rw [Nat.cast_one, one_smul]
-    exact (mem_dual_one K y).mp hy
-  del_dual := fun c y hy => by
-    rw [Nat.cast_one, one_smul]
-    exact (mem_dual_one K y).mpr hy
-
-theorem reg_H_posDef (v0 : InfinitePlace K) (h0 : IsConjAt v0) :
-    ((regCSD K G).H.map v0.embedding).PosDef := by
-  classical
-  let B : Matrix G (Fin (regCSD K G).dim) K :=
-    Matrix.of fun c i => (((regCSD K G).basis i).1 : G → K) c
-  have hH : (regCSD K G).H = Bᴴ * B := by
-    ext i j
-    simp only [CSD.H, Matrix.of_apply, Matrix.mul_apply, Matrix.conjTranspose_apply]
-    exact reg_csum K G _ _
-  have hmap : (regCSD K G).H.map v0.embedding = (B.map v0.embedding)ᴴ * (B.map v0.embedding) := by
-    rw [hH, Matrix.map_mul, Matrix.conjTranspose_map (f := v0.embedding) (fun a => h0 a)]
-  have hBI : ∀ x, B.mulVec x = (regCSD K G).I x := by
-    intro x
-    rw [CSD.I_eq_sum]
-    funext c
-    simp only [Matrix.mulVec, dotProduct, B, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply,
-      smul_eq_mul]
-    exact Finset.sum_congr rfl fun i _ => mul_comm _ _
-  have hinj : Function.Injective (Matrix.toLin' B) := by
-    intro x y hxy
-    rw [Matrix.toLin'_apply, Matrix.toLin'_apply, hBI, hBI] at hxy
-    exact (regCSD K G).I_injective hxy
-  obtain ⟨g, hg⟩ := (Matrix.toLin' B).exists_leftInverse_of_injective (LinearMap.ker_eq_bot.mpr hinj)
-  have hC : LinearMap.toMatrix' g * B = 1 := by
-    have h := congrArg LinearMap.toMatrix' hg
-    rwa [LinearMap.toMatrix'_comp, LinearMap.toMatrix'_toLin', LinearMap.toMatrix'_id] at h
-  have hC' : (LinearMap.toMatrix' g).map v0.embedding * B.map v0.embedding = 1 := by
-    rw [← Matrix.map_mul, hC, Matrix.map_one _ (map_zero _) (map_one _)]
-  have hinj' : Function.Injective (B.map v0.embedding).mulVec := by
-    intro x y hxy
-    have h := congrArg ((LinearMap.toMatrix' g).map v0.embedding).mulVec hxy
-    simpa only [Matrix.mulVec_mulVec, hC', Matrix.one_mulVec] using h
-  rw [hmap]
-  exact Matrix.PosDef.conjTranspose_mul_self _ hinj'
-
-def aug : MonoidAlgebra K G →ₐ[K] K := MonoidAlgebra.lift K K G (1 : G →* K)
-
-theorem aug_eq_sum (a : MonoidAlgebra K G) : aug K G a = ∑ t : G, a.coeff t := by
-  unfold aug
-  rw [MonoidAlgebra.lift_apply, Finsupp.sum_fintype]
-  · simp
-  · intro
-    simp
-
-theorem aug_idemOf_one : aug K G (idemOf ({fun _ : G => (1 : K)} : Finset (G → K))) = 1 := by
-  rw [aug_eq_sum]
-  simp only [idemOf_one_coeff, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  rw [one_div, mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)]
-
-theorem aug_lvlIdem_one (P : Subgroup G) : aug K G (lvlIdem P (1 : P →* Kˣ)) = 1 := by
-  classical
-  unfold lvlIdem aug
-  rw [map_sum]
-  have e : ∀ h : P, (MonoidAlgebra.lift K K G (1 : G →* K)) (MonoidAlgebra.single (h : G)
-      ((Nat.card P : K)⁻¹ * (((1 : P →* Kˣ) h⁻¹ : Kˣ) : K))) = (Nat.card P : K)⁻¹ := by
-    intro h
-    rw [MonoidAlgebra.lift_single]
-    simp
-  rw [Finset.sum_congr rfl fun h _ => e h, Finset.sum_const, Finset.card_univ, ← Nat.card_eq_fintype_card,
-    nsmul_eq_mul, mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Nat.card_pos.ne')]
-
-theorem reg_V0dim_pos_lvl (P : Subgroup G) :
-    0 < (regCSD K G).BaseDimension (regAct K G) ({fun _ : G => (1 : K)} : Finset (G → K)) P 1 := by
-  apply v0dim_pos_lemma
-  rw [← aug_eq_sum]
-  unfold goodAt
-  rw [map_mul, aug_idemOf_one, aug_lvlIdem_one, mul_one]
-  exact one_ne_zero
-
-theorem rat_isConjAt (v0 : InfinitePlace ℚ) : IsConjAt v0 := by
-  intro a
-  rw [star_trivial, eq_ratCast v0.embedding a, map_ratCast]
-
-theorem hyps_sat (P : Subgroup (Equiv.Perm (Fin 3))) :
-    ∃ v0 : InfinitePlace ℚ, IsConjAt v0 ∧
-      (regCSD ℚ (Equiv.Perm (Fin 3))).Good 1 ∧
-      ((regCSD ℚ (Equiv.Perm (Fin 3))).H.map v0.embedding).PosDef ∧
-      (regCSD ℚ (Equiv.Perm (Fin 3))).ActGood (regAct ℚ (Equiv.Perm (Fin 3))) ∧
-      (∀ χ ∈ ({fun _ => (1 : ℚ)} : Finset (Equiv.Perm (Fin 3) → ℚ)), IsAbsIrrChar χ) ∧
-      0 < (regCSD ℚ (Equiv.Perm (Fin 3))).BaseDimension (regAct ℚ (Equiv.Perm (Fin 3)))
-        ({fun _ => (1 : ℚ)} : Finset (Equiv.Perm (Fin 3) → ℚ)) P 1 := by
-  have v0 : InfinitePlace ℚ := by
-    first
-    | exact Rat.infinitePlace
-    | exact Classical.choice inferInstance
-  exact ⟨v0, rat_isConjAt v0, reg_good ℚ _, reg_H_posDef ℚ _ v0 (rat_isConjAt v0), regAct_good ℚ _,
-    fun χ hχ => (Finset.mem_singleton.mp hχ) ▸ isAbsIrrChar_one ℚ _, reg_V0dim_pos_lvl ℚ _ P⟩
 
 end Formalism.L2.DIV.Test

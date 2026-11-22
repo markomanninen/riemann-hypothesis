@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.GroupLattices.CloudFilling.CloudBound
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
-import Formalism.SharpRestriction.InertJacobiLevels.VVEqEmptyOfNotIsResidueClassZero
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.CloudFilling.CloudBound
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+public import Formalism.SharpRestriction.InertJacobiLevels.VVEqEmptyOfNotIsResidueClassZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem wRec_eq (D : D7) (u : D.what₂.Word) (g : D.R.Psi) (j : ℕ) (hj : j �
   have hjm : j - 1 < D.R.m := by omega
   have h := (D.fm u).lam_eq D.R.m le_rfl (D.eTau.symm g)
     ⟨D.R.k + (min j D.R.m - 1) * (D.R.t + 1), blkIdx_lt D.R j⟩
-  rw [dif_neg (by show ¬ D.R.k + (min j D.R.m - 1) * (D.R.t + 1) < D.R.k; omega)] at h
+  rw [dite_eq_right (by show ¬ D.R.k + (min j D.R.m - 1) * (D.R.t + 1) < D.R.k; omega)] at h
   have hb : (D.R.k + (min j D.R.m - 1) * (D.R.t + 1) - D.R.k) / (D.R.t + 1) = j - 1 := by
     rw [Nat.add_sub_cancel_left, Nat.mul_div_cancel _ (Nat.succ_pos _), min_eq_left hj'.2]
   have h' : ((((D.fm u).lam D.R.m (D.eTau.symm g)).w
@@ -33,7 +37,7 @@ theorem wRec_eq (D : D7) (u : D.what₂.Word) (g : D.R.Psi) (j : ℕ) (hj : j �
   simp only [wG] at h''
   push_cast at h''
   unfold wRec wj Formalism.MainNotions.G.kaJ
-  rw [dif_pos hjm]
+  rw [dite_eq_left hjm]
   push_cast
   rw [h'']
   ring
@@ -42,7 +46,7 @@ theorem lamRec_real (D : D7) (u : D.what₂.Word) (g : D.R.Psi) (i : Fin (D.R.k 
     ((lamRec D u g i : ℤ) : ℝ) =
       (((D.hcW u (D.eTau.symm g)).u ⟨i.1, hi⟩ : ℚ) : ℝ) - (((D.R.k : ℝ) - 1) / 2 - (i.1 : ℝ)) := by
   have h := (D.fm u).lam_eq 0 (Nat.zero_le _) (D.eTau.symm g) ⟨i.1, by simp only [Ranks.N]; omega⟩
-  rw [dif_pos hi] at h
+  rw [dite_eq_left hi] at h
   have h' := congrArg (fun q : ℚ => (q : ℝ)) h
   simp only [hcToWeightQ, rhoVec] at h'
   push_cast at h'

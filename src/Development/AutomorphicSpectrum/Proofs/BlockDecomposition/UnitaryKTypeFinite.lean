@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleOfLinearReductive
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleUnitaryIrreducibleRep
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwasawaOfLinearReductive
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlkConjTranspose
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteSetOfDetLineEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalIsoPartOfSimple
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleOfLinearReductive
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleUnitaryIrreducibleRep
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwasawaOfLinearReductive
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlkConjTranspose
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteSetOfDetLineEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalIsoPartOfSimple
+
+@[expose] public section
 
 open NumberField MeasureTheory Topology Matrix GlobalTheory.AutomorphicL2Unitary GlobalTheory.DiscreteSum GlobalTheory.OpTrace GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL
 
@@ -16,8 +20,8 @@ namespace GlobalTheory.CompanionTheory.AdmGL
 
 variable {ι : Type} [Fintype ι] [DecidableEq ι] {a n : ℕ}
 
-open scoped Classical in
 
+open scoped Classical in
 def toGL (M : Matrix (Fin a) (Fin a) (ι → ℂ)) : GL (Fin a) (ι → ℂ) :=
   if h : IsUnit M then h.unit else 1
 
@@ -106,7 +110,21 @@ theorem finiteDimensional_isoPart_gl [CompleteSpace H] {σ : GL (Fin a) (ι → 
     (ρ : Representation ℂ (Matrix.unitaryGroup (Fin a) (ι → ℂ)) W) :
     FiniteDimensional ℂ (isoPart (σ.comp Unitary.toUnits) ρ) := by
   let e := Fintype.equivFin (Fin a × ι)
-  have hLR := isLinRed_blkG e
+  have hLR : GlobalTheory.LinRed.IsLinRed (blkG e) := by
+    refine
+      { one_mem := ⟨1, isUnit_one, blk_one e⟩
+        mul_mem := ?_
+        isUnit := fun g hg => ((mem_blkG_iff e).1 hg).1
+        inv_mem := ?_
+        closed := fun g hg hcl => (mem_blkG_iff e).2 ⟨hg, blk_unblk_of_mem_closure e hcl⟩
+        connected := isPreconnected_blkG e
+        star_mem := ?_ }
+    · rintro _ ⟨M, hM, rfl⟩ _ ⟨N, hN, rfl⟩
+      exact ⟨M * N, IsUnit.mul hM hN, blk_mul e M N⟩
+    · rintro _ ⟨M, hM, rfl⟩
+      exact ⟨M⁻¹, (Matrix.isUnit_nonsing_inv_iff).2 hM, (blk_inv e hM).symm⟩
+    · rintro _ ⟨M, hM, rfl⟩
+      exact ⟨Mᴴ, IsUnit.star hM, blk_conjTranspose e M⟩
   have hA := GlobalTheory.CompanionTheory.admitted.isAdmissible_of_unitary_irreducible hLR
     (GlobalTheory.CompanionTheory.AdmIwa.RamifiedPrimeLengthBound hLR (GlobalTheory.CompanionTheory.IwaGen.iwaOn_of_isLinRed hLR)) H (blkRep e σ)
     (isURepOn_blkRep e hσ) (isIrredOn_blkRep e hi)
@@ -142,7 +160,7 @@ theorem finiteDimensional_isoPart_gl [CompleteSpace H] {σ : GL (Fin a) (ι → 
   rw [heq]
   exact hfin
 
-theorem admissible_GL_Cinf : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : GL (Fin a) (Cinf E) →* (H →L[ℂ] H)), IsUnitaryRep σ → IsTopIrreducible σ → ∀ (W : Type) [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (ρ : Representation ℂ (Kinf E a) W), FiniteDimensional ℂ ↥(⨆ (T : W →ₗ[ℂ] H) (_ : ∀ k w, T (ρ k w) = σ (Unitary.toUnits k) (T w)), LinearMap.range T : Submodule ℂ H) := by
+theorem admissible_GL_Cinf : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : GL (Fin a) (Cinf E) →* (H →L[ℂ] H)), IsUnitaryRep σ → IsTopIrreducible σ → ∀ (W : Type) [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (ρ : Representation ℂ (Kinf E a) W), FiniteDimensional ℂ ↥(⨆ (T : W →ₗ[ℂ] H) (_ : ∀ k w, T (ρ k w) = σ (Unitary.toUnits k) (T w)), LinearMap.range T : Submodule ℂ H) := by
   intro E _ _ _ a H _ _ _ σ hσ hi W _ _ _ ρ
   classical
   exact finiteDimensional_isoPart_gl hσ hi ρ

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.SiegelPar
-import GroundTheory.AutomorphicForms.ReductionHeight
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelPar
+public import GroundTheory.AutomorphicForms.ReductionHeight
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -15,8 +19,8 @@ namespace GlobalTheory.CompanionTheory.RedCov
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) {r : ℕ}
 
-variable (F) in
 
+variable (F) in
 def ratV (z : Fin n → E) : Fin n → AF F ⊗[F] E := fun i => inclR (F := F) (AF F) (z i)
 
 def hv (ξ : Fin n → AF F ⊗[F] E) : ℝ :=

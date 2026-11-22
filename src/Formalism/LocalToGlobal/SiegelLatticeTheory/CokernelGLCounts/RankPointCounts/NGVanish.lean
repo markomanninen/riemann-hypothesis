@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGAnalytic
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGAnalytic
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem stepTermVanish_of_form (h : FormNGC) : StepTermVanish := by
   have hex : ∃ w' : Point D.host.E (D.R.rS + 1), toPts w' = ptPN t ∧ ∃ g, Formalism.L2.SG.RealObj.IsPtRep X u u' w' g :=
     ⟨w, hw, hrep⟩
   unfold J2of at hJ
-  rw [dif_pos hex] at hJ
+  rw [dite_eq_left hex] at hJ
   have hJw : Jw Y u u' ν hex.choose = 0 :=
     hsEmb_eq_zero _ (norm_eq_zero.1 (pow_eq_zero_iff two_ne_zero |>.1 hJ))
   obtain ⟨c, A, B, hO⟩ := hform hex.choose hex.choose_spec.1 hex.choose_spec.2
@@ -67,26 +71,5 @@ theorem stepTermVanish_of_form (h : FormNGC) : StepTermVanish := by
   rw [hamp]
   simp
   rfl
-
-def FormRelC : Prop :=
-  ∀ Cg cb Cw cT CT C0 : ℝ, ∃ C'₀ Cl₀ : ℝ, ∀ C' Cl : ℝ, C'₀ ≤ C' → Cl₀ ≤ Cl →
-    ∀ (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
-      Ctx Cg cb Cw cT CT C0 C' Cl D large₂ X Y u u' →
-      ∀ ν, Pinned X u u' ν → ∀ t ∈ (Y.tO u u').ngSet ∪ (Y.tO u u').genSet, (Y.tO u u').vec t ≠ 0 →
-        (∃ w : Point D.host.E (D.R.rS + 1), toPts w = ptPN t ∧ ∃ g, Formalism.L2.SG.RealObj.IsPtRep X u u' w g) ∧
-        ∀ w : Point D.host.E (D.R.rS + 1), toPts w = ptPN t → (∃ g, Formalism.L2.SG.RealObj.IsPtRep X u u' w g) →
-          ∃ (c : ℂ) (A : X.Vpi u →L[ℂ] X.Vpi u) (B : X.Vpi u' →L[ℂ] X.Vpi u'),
-            OOt t = c • A.comp ((haveI := FiniteDimensional.complete ℂ (X.Vpi u)
-              OO (ν (Formalism.L2.SG.RealObj.gamW X u u' w)) Set.univ (X.Wu u) (X.Wu u')
-                (Formalism.L2.SG.RealObj.gamW X u u' w)).comp B)
-
-theorem formNGC_of_rel (h : FormRelC) : FormNGC := by
-  intro Cg cb Cw cT CT C0
-  obtain ⟨a, b, hh⟩ := h Cg cb Cw cT CT C0
-  exact ⟨a, b, fun C' Cl h1 h2 D large₂ X Y u u' hc ν hν t ht hv =>
-    hh C' Cl h1 h2 D large₂ X Y u u' hc ν hν t (Set.mem_union_left _ ht) hv⟩
-
-theorem stepTermVanish_of_rel (h : FormRelC) : StepTermVanish :=
-  stepTermVanish_of_form (formNGC_of_rel h)
 
 end Formalism.L2.SG.NGVanish

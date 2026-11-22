@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityDropZeroBlocksStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityDropZeroBlocksStatement
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult Zc Zc.Cos
 
 namespace GlobalTheory.CompanionTheory.FineProd
@@ -42,7 +47,7 @@ end GlobalTheory.CompanionTheory.FineProd
 
 namespace GlobalTheory.CompanionTheory.FineProd
 
-theorem jm_row : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {h N : ℕ} (W : List (IrrGL k)) (c : Fin W.length → Fin h) (i : Fin h) (Y : Fin W.length → IrrGL k), (∀ j, c j = i → Y j = W.get j) → (∀ j, c j ≠ i → (Y j).1 = 0) → ∀ (hd : ∑ j, (Y j).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), jm Y hd π = jmL (sub W c i) π := by
+theorem jm_row : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {h N : ℕ} (W : List (IrrGL (k := k))) (c : Fin W.length → Fin h) (i : Fin h) (Y : Fin W.length → IrrGL (k := k)), (∀ j, c j = i → Y j = W.get j) → (∀ j, c j ≠ i → (Y j).1 = 0) → ∀ (hd : ∑ j, (Y j).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), jm Y hd π = jmL (sub W c i) π := by
   intro k _ _ _ _ h N W c i Y hY h0 hd V _ _ π
   obtain ⟨o, ho, hr, hg⟩ := sub_positions_univ W c i
   have hget : (sub W c i).get = fun a => Y (o a) := by
@@ -67,12 +72,12 @@ theorem jm_row : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] 
   have hdeg : ∑ a, ((sub W c i).get a).1 = N := by
     rw [hget]
     exact hsum
-  have hcongr : ∀ {r : ℕ} (x y : Fin r → IrrGL k) (hx : ∑ a, (x a).1 = N) (hy : ∑ a, (y a).1 = N),
+  have hcongr : ∀ {r : ℕ} (x y : Fin r → IrrGL (k := k)) (hx : ∑ a, (x a).1 = N) (hy : ∑ a, (y a).1 = N),
       x = y → jm x hx π = jm y hy π := by
     intro r x y hx hy e
     subst e
     rfl
-  rw [GlobalTheory.T.jacquet_multiplicity_drop_zero_blocks Y hd o ho hnz hsum π, jmL, dif_pos hdeg]
+  rw [GlobalTheory.T.jacquet_multiplicity_drop_zero_blocks Y hd o ho hnz hsum π, jmL, dite_eq_left hdeg]
   exact hcongr _ _ _ _ hget.symm
 
 end GlobalTheory.CompanionTheory.FineProd

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtPtBridgeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtPtBridgeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,7 @@ def secZero : LB.Sec L where
 
 def secAdd (s t : LB.Sec L) : LB.Sec L where
   f := fun i => s.f i + t.f i
-  compat := fun i j => by simp only [map_add, s.compat, t.compat, mul_add]
+  compat := fun i j => by simp only [map_add (f := _), s.compat, t.compat, mul_add]
 
 def secNeg (s : LB.Sec L) : LB.Sec L where
   f := fun i => - s.f i
@@ -145,7 +149,7 @@ instance : Module F (Fam D F k) where
   mul_smul x y a := fam_ext fun α j => by simp only [smul_f, map_mul, resTop, _root_.mul_assoc]
   smul_zero x := fam_ext fun α j => by simp only [smul_f, zero_f, mul_zero]
   smul_add x a b := fam_ext fun α j => by simp only [smul_f, add_f, mul_add]
-  add_smul x y a := fam_ext fun α j => by simp only [smul_f, add_f, map_add, resTop, add_mul]
+  add_smul x y a := fam_ext fun α j => by simp only [smul_f, add_f, map_add (f := _), resTop, add_mul]
   zero_smul a := fam_ext fun α j => by simp only [smul_f, zero_f, map_zero, resTop, zero_mul]
 
 theorem isSmul_iff (ζ : F) (s s' : Fam D F k) : Fam.IsSmul D F ζ s s' ↔ s' = ζ • s := by

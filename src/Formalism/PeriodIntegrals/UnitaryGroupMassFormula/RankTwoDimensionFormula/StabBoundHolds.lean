@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DimFormCOfThree
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DimFormCOfThree
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem crd_gOf (M : GL (Fin X.B.I.n) X.B.I.E) (y : (VS D).V) :
   funext i
   simp only [Formalism.L2.SG.HidaSetting.HidaSetting.crd, crdOf]
   rw [hr]
-  simp [Matrix.mulVec, dotProduct, hmat, map_sum, crdOf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, hmat, map_sum, crdOf]
 
 theorem crd_injective : Function.Injective X.crd := by
   intro a b h
@@ -76,14 +81,16 @@ theorem gOf_isom (M : GL (Fin X.B.I.n) X.B.I.E) (hM : M ∈ Formalism.UG.UJ (sta
   have key : ∀ i j, (VS D).hT (gOf X M (X.bas i)) (gOf X M (X.bas j)) = (VS D).hT (X.bas i) (X.bas j) := by
     intro i j
     rw [hg, hg, ← X.J_eq, ← congrFun (congrFun hU i) j]
-    simp only [map_sum, LinearMap.map_smulₛₗ₂, LinearMap.sum_apply, LinearMap.map_smul, smul_eq_mul, ← X.J_eq,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smulₛₗ₂, LinearMap.sum_apply, LinearMap.map_smul, smul_eq_mul, ← X.J_eq,
       hmat, Matrix.map_apply, RingEquiv.toRingHom_eq_coe, RingHom.coe_coe, starRingEnd_apply, star_host,
       Formalism.UG.cT, Matrix.mul_apply, Matrix.transpose_apply, map_mul, Finset.sum_mul]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
     ring
   intro x y
   rw [← X.bas.sum_repr x, ← X.bas.sum_repr y]
-  simp only [map_sum, LinearEquiv.map_smul, LinearMap.map_smulₛₗ₂, LinearMap.sum_apply, LinearMap.map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearEquiv.map_smul, LinearMap.map_smulₛₗ₂, LinearMap.sum_apply, LinearMap.map_smul,
     smul_eq_mul, key]
 
 def matOf (η : X.B.I.Gf) : GL (Fin X.B.I.n) X.B.I.E :=
@@ -225,7 +232,8 @@ theorem eq_of_ind (u : D.what₂.Word) (g1 g2 : (VS D).V ≃ₗ[D.host.E] (VS D)
     have hc : ∀ b, c b = 0 := by
       intro b
       have := hb b
-      simpa [map_sum, hfe] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, hfe] using this
     simp [hc]
   have hperp : ∀ x ∈ perpS (VS D) (X.Fu u).X, g1 x = g2 x := by
     intro x hx
@@ -242,13 +250,15 @@ theorem eq_of_ind (u : D.what₂.Word) (g1 g2 : (VS D).V ≃ₗ[D.host.E] (VS D)
     unfold FlagG.X at hx
     rw [X.Fu_e, Submodule.mem_span_range_iff_exists_fun] at hx
     obtain ⟨c, rfl⟩ := hx
-    simp [map_sum, X.ef]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, X.ef]
   apply LinearEquiv.ext
   intro v
   have hsplit : v = (v - ∑ a, (VS D).hT (X.eX a) v • X.fY a) + ∑ a, (VS D).hT (X.eX a) v • X.fY a := by abel
-  rw [hsplit, map_add, map_add, hperp _ (hv' v)]
+  rw [hsplit, map_add (f := _), map_add (f := _), hperp _ (hv' v)]
   congr 1
-  simp [map_sum, hf1, hf2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, hf1, hf2]
 
 end PI.UnitaryDimensionFormula.StabB
 

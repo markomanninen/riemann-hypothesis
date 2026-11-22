@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,6 @@ instance : InnerProductSpace ℂ (Cj H) where
     exact inner_smul_right _ _ _
 
 instance [CompleteSpace H] : CompleteSpace (Cj H) := inferInstanceAs (CompleteSpace H)
-
-instance [Nontrivial H] : Nontrivial (Cj H) := inferInstanceAs (Nontrivial H)
 
 def opCj (A : H →L[ℂ] H) : Cj H →L[ℂ] Cj H where
   toFun x := toCj (A (ofCj x))

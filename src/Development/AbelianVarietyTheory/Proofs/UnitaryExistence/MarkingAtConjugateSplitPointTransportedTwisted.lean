@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ConjugationActsOnCmTorsionByMultiplication
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLatticeIsometryConjSplitPointAnyLevelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ConjugationActsOnCmTorsionByMultiplication
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLatticeIsometryConjSplitPointAnyLevelStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.PureType GlobalTheory.CompRat
@@ -30,7 +34,7 @@ theorem marking_conj_lcm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     have e : F.ex i' P' ((l.A : ℂ)⁻¹ • P' (F.t i' v)) = F.ex i' P' ((l.A : ℂ)⁻¹ • P' w) :=
       Over.OverMorphism.ext key
     have e' := F.ex_add i' P' hP' ((l.A : ℂ)⁻¹ • P' (F.t i' v - w)) ((l.A : ℂ)⁻¹ • P' w)
-    rw [← smul_add, ← map_add, sub_add_cancel, e] at e'
+    rw [← smul_add, ← map_add (f := _), sub_add_cancel, e] at e'
     obtain ⟨x, hx⟩ := (F.ex_ker i' P' hP' _).1 (mul_eq_right.1 e'.symm)
     refine ⟨x, ?_⟩
     rw [← sub_eq_iff_eq_add']
@@ -47,7 +51,7 @@ theorem marking_conj_lcm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     have e : F.ex i' P' ((l.M : ℂ)⁻¹ • P' (F.t i' v)) = F.ex i' P' ((l.M : ℂ)⁻¹ • P' w) :=
       Over.OverMorphism.ext key
     have e' := F.ex_add i' P' hP' ((l.M : ℂ)⁻¹ • P' (F.t i' v - w)) ((l.M : ℂ)⁻¹ • P' w)
-    rw [← smul_add, ← map_add, sub_add_cancel, e] at e'
+    rw [← smul_add, ← map_add (f := _), sub_add_cancel, e] at e'
     obtain ⟨x, hx⟩ := (F.ex_ker i' P' hP' _).1 (mul_eq_right.1 e'.symm)
     refine ⟨x, ?_⟩
     rw [← sub_eq_iff_eq_add']

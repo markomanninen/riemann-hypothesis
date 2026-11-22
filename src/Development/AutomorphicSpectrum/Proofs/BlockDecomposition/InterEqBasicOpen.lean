@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
+
+@[expose] public section
+
 open CrystallineSemistableComparison CrystallineSemistableComparison.Onto
 
 set_option autoImplicit false
@@ -34,7 +39,7 @@ theorem map_id_apply (v : Ω[A⁄K]) :
     rw [KaehlerDifferential.map_D]
     rfl
   | zero => exact map_zero _
-  | add x y _ _ hx hy => rw [map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
   | smul c x _ hx =>
     exact ((KaehlerDifferential.map K K A A).map_smul c x).trans (congrArg (c • ·) hx)
 
@@ -50,7 +55,7 @@ theorem omMap_id (a : ℕ) (ω : Om K A a) : omMap (AlgHom.id K A) a ω = ω := 
     funext k
     exact map_id_apply (g k)
   | zero => exact map_zero _
-  | add x y _ _ hx hy => rw [map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
   | smul c x _ hx => rw [GlobalTheory.CompanionTheory.SurjectionOntoH4.omMap_smul, hx, AlgHom.id_apply]
 
 theorem mem_of_map_eq (β : A ≃ₐ[K] B) {I : Ideal A} {J : Ideal B} (h : I.map β = J) (x : A) (hx : x ∈ I) : β x ∈ J := by

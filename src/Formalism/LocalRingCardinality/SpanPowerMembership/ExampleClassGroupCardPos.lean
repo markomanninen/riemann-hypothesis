@@ -1,16 +1,20 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Formalism.LocalRingCardinality.SpanPowerMembership.Places
-import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Formalism.LocalRingCardinality.SpanPowerMembership.RelDet
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleWeightMiddleEntries
-import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
-import Formalism.LocalRingCardinality.SpanPowerMembership.PlacesOverNcardOfSplitInj
-import Formalism.LocalRingCardinality.SpanPowerMembership.GPlacesExampleNatAct
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleNewtypesIdempotentZero
-import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtB
-import Formalism.LocalRingCardinality.SpanPowerMembership.HaarDensityNeZero
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Places
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Formalism.LocalRingCardinality.SpanPowerMembership.RelDet
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleWeightMiddleEntries
+public import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
+public import Formalism.LocalRingCardinality.SpanPowerMembership.PlacesOverNcardOfSplitInj
+public import Formalism.LocalRingCardinality.SpanPowerMembership.GPlacesExampleNatAct
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleNewtypesIdempotentZero
+public import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtB
+public import Formalism.LocalRingCardinality.SpanPowerMembership.HaarDensityNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,11 +34,6 @@ theorem LocalGap.tame {R : Ranks} {H : Host R} (_G : LocalGap H) : TameHyp H := 
 
 def LocalGap.cd {R : Ranks} {H : Host R} (_G : LocalGap H) : CDHaar := CD.cdHaar
 
-def LocalGap.transport {R R' : Ranks} {H : Host R} (G : LocalGap H) (H' : Host R') : LocalGap H' :=
-  ⟨G.nloc, G.nlocA, G.nlocT⟩
-
-def LocalGap.localGapOfRecord (D : D7) {R : Ranks} (H : Host R) : LocalGap H := ⟨D.loc, D.locA, D.locT⟩
-
 variable (H : Host R0) (T : ℕ) [hT : Fact T.Prime]
 
 abbrev Tau0 : Type := ↥(R0.Psi)
@@ -52,10 +51,10 @@ abbrev rowsH : Rows.Data R0 :=
 abbrev memT : Member R0 Tau0 (fun _ => hc0) := trivialMember Tau0 T (dstarOf T) (dstarOf_pos T)
 
 theorem nHypH (hg : ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E) :
-    NHyp H (rowsH H T) where
-  hsha := fun p _ e _ _ => shaExample_eq H p e
-  hcard := rfl
-  hg := hg
+    NHyp H (rowsH H T) :=
+  { hsha := fun p _ e _ _ => shaExample_eq H p e
+    hcard := rfl
+    hg := hg }
 
 theorem normAt_empty {K V ι : Type} [Field K] [NumberField K] [AddCommGroup V] [Module K V]
     [Fintype ι] [DecidableEq ι] [IsEmpty ι] (b : Module.Basis ι K V)
@@ -76,9 +75,9 @@ abbrev sDataH (hg : ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H
     (fun _ _ l h => exampleWeight_middle_entries l h) (locAdj (conjF H) {H.g 0, H.g 1} (slocH H)
       (fun p hp => (splH H hg ht.jac p hp).some))
 
+
 set_option synthInstance.maxHeartbeats 200000 in
 set_option maxHeartbeats 1600000 in
-
 def exampleRecordOfData
     (hg : ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E) (ht : THyp H)
     (hlev : T ∈ H.levelPrimes) (hpde : T ≠ H.pde ∧ T ≠ H.pde')

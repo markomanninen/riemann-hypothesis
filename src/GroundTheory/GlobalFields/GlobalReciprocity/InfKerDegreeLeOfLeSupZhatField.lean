@@ -1,36 +1,31 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleClassGroup.Theory
-import GroundTheory.GlobalFields.NormResidueSymbol.Cyclotomic
-import GroundTheory.LocalFields.AbstractLocalReciprocity.Isomorphism
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleClassGroup.Theory
+public import GroundTheory.GlobalFields.NormResidueSymbol.Cyclotomic
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.Isomorphism
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open NumberField IntermediateField GroundTheory.LocalField.Abstract
 open scoped GroundTheory.LocalField.Abstract
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 namespace FiniteSubfield
 
 abbrev openSubgroup (F : FiniteSubfield) : OpenSubgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄) :=
   ⟨F.1.fixingSubgroup, F.1.fixingSubgroup_isOpen⟩
 
-@[simp]
-theorem coe_openSubgroup (F : FiniteSubfield) :
-    (F.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) = F.1.fixingSubgroup :=
-  rfl
-
 theorem openSubgroup_le {F E : FiniteSubfield} (h : F ≤ E) : E.openSubgroup ≤ F.openSubgroup :=
   fun _ hx ↦ IntermediateField.fixingSubgroup_le (show F.1 ≤ E.1 from h) hx
 
 variable (F E : FiniteSubfield) [Fact (F ≤ E)]
   [(E.1.fixingSubgroup.subgroupOf F.1.fixingSubgroup).Normal]
-
-instance normal_openSubgroup :
-    ((E.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)).subgroupOf F.openSubgroup).Normal :=
-  ‹(E.1.fixingSubgroup.subgroupOf F.1.fixingSubgroup).Normal›
 
 def quotientGaloisEquiv :
     ((F.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) ⧸
@@ -58,7 +53,7 @@ variable (K L : FiniteSubfield) [hKL : Fact (K ≤ L)]
   [(L.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup).Normal]
 
 abbrev reciprocityEquiv :
-    Abelianization ((K.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) ⧸
+    Group.Abelianization ((K.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) ⧸
         (L.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)).subgroupOf K.openSubgroup) ≃*
       tateZero IdeleClassLimit (K.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) L.openSubgroup :=
   classFieldTheory.toClassFieldData.reciprocityAbEquiv (openSubgroup_le hKL.out)
@@ -69,27 +64,13 @@ abbrev normClass : IdeleClassGroup K.1 →*
   (QuotientGroup.mk' (norm IdeleClassLimit (K.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄))
     (L.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄))).range).comp (fixedEquiv K).toMonoidHom
 
-def abstractSymbol : IdeleClassGroup K.1 →* Abelianization (L.1 ≃ₐ[K.1] L.1) :=
-  (Abelianization.map (quotientGaloisEquiv K L).toMonoidHom).comp
+def abstractSymbol : IdeleClassGroup K.1 →* Group.Abelianization (L.1 ≃ₐ[K.1] L.1) :=
+  (Group.Abelianization.map (quotientGaloisEquiv K L).toMonoidHom).comp
     ((reciprocityEquiv K L).symm.toMonoidHom.comp (normClass K L))
 
 theorem abstractSymbol_apply (c : IdeleClassGroup K.1) :
-    abstractSymbol K L c = Abelianization.map (quotientGaloisEquiv K L).toMonoidHom
+    abstractSymbol K L c = Group.Abelianization.map (quotientGaloisEquiv K L).toMonoidHom
       ((reciprocityEquiv K L).symm (normClass K L c)) :=
-  rfl
-
-theorem abstractSymbol_eq_of_reciprocity (c : IdeleClassGroup K.1) (g : K.1.fixingSubgroup)
-    (h : classFieldTheory.toClassFieldData.reciprocity (openSubgroup_le hKL.out)
-        classFieldTheory.classFieldAxiom
-        (QuotientGroup.mk (s := (L.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)).subgroupOf K.openSubgroup) g) =
-      normClass K L c) :
-    abstractSymbol K L c = Abelianization.of (restrictHom g) := by
-  have e : (reciprocityEquiv K L).symm (normClass K L c) =
-      Abelianization.of (QuotientGroup.mk (s := (L.openSubgroup : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)).subgroupOf
-        K.openSubgroup) g) := by
-    rw [MulEquiv.symm_apply_eq, ClassFieldData.reciprocityAbEquiv_of]
-    exact h.symm
-  rw [abstractSymbol_apply, e, Abelianization.map_of]
   rfl
 
 end Map

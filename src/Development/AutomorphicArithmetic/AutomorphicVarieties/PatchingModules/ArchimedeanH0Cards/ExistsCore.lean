@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.OdKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlProps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.FinAm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CentraliserRank
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.OdKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlProps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.FinAm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CentraliserRank
+
+@[expose] public section
+
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
 private theorem quasi_inv {A M : Type} [CommRing A] [IsDomain A] [AddCommGroup M] [Module A M] [Module.Free A M]
@@ -90,7 +95,7 @@ private theorem odd_kill {A : Type} [CommRing A] [IsDomain A] {n : ℕ} (a : ℕ
     (LinearMap.mulLeft A S - LinearMap.mulRight A S) ∘ₗ (LinearMap.id - evP A n a) + evP A n a
   have hΦ : ∀ Z, Φ Z = S * (Z - evP A n a Z) - (Z - evP A n a Z) * S + evP A n a Z := fun _ => rfl
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro Z hZ
     have od : ∀ i j : Fin n, (((i : ℕ) < a) ↔ ((j : ℕ) < a)) → (Z - evP A n a Z) i j = 0 := fun i j e => by
       rw [Matrix.sub_apply, localComponent_apply₂, if_pos e, sub_self]
@@ -273,7 +278,7 @@ private theorem descend {Γ0 : Type} [Group Γ0] [TopologicalSpace Γ0] [IsTopol
   · obtain ⟨a, rfl⟩ := hs a
     obtain ⟨b, rfl⟩ := hs b
     apply θ.injective
-    rw [← map_mul, h, map_add, h, hθ, h, hz.2]
+    rw [← map_mul, h, map_add (f := _), h, hθ, h, hz.2]
 
 end Coc
 

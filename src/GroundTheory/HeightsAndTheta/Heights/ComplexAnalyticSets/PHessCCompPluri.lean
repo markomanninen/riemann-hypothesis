@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.MaIntEmpty
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHessCCompPluri
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.MaIntEmpty
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHessCCompPluri
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

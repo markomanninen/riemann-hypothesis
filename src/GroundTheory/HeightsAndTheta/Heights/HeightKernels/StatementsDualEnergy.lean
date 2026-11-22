@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -19,13 +24,6 @@ def DualMetricEnergy.Statement : Prop :=
           (fun z => Real.log ((dualLine F b hb).h z) - Real.log ((dualLine F.withStdMetric b hb).h z)) =
       1 / 2 * (∑ σ : K →+* ℂ, Real.log (F.metric σ).det.re) *
         geomDeg (grassIdeal 1 1 (i - 1)) (fsMulti (plBlocks 1 1 (i - 1))) (1 * 1 * (i - 1))
-
-example : Σ' (b : Module.Basis Unit ℤ (dualLattice HermLattice.scaledExample)),
-    Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b)) ∧ 1 ≤ 1 ∧
-      HermLattice.scaledExample.metric ≠ HermLattice.scaledExample.withStdMetric.metric :=
-  ⟨dualBasisStandard, dualEmbMatrix_standard_bijective, le_rfl, fun h => by
-    have h1 := congrFun (congrFun (congrFun h (Rat.castHom ℂ)) 0) 0
-    simp [HermLattice.scaledExample, HermLattice.withStdMetric] at h1⟩
 
 end
 

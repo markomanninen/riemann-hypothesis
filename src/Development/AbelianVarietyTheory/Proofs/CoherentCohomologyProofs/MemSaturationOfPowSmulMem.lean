@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SubmoduleSaturation
 
@@ -21,8 +25,5 @@ def saturation (g : A) (K : Submodule A M) : Submodule A M where
     refine ⟨k, ?_⟩
     rw [smul_comm]
     exact K.smul_mem _ hk
-
-theorem le_saturation (g : A) (K : Submodule A M) : K ≤ saturation g K :=
-  fun m hm => ⟨0, by simpa using hm⟩
 
 end GlobalTheory.SubmoduleSaturation

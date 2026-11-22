@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
 namespace GlobalTheory
@@ -21,7 +26,8 @@ private theorem exists_dual_algHom_smulRight_apply_ne_zero {W V : Type} [AddComm
   calc y = Φ 1 y := by simp
     _ = ∑ i, Φ (ℓ.smulRight (Module.finBasis ℂ W i))
           (Φ (((Module.finBasis ℂ W).coord i).smulRight w) y) := by
-        rw [← sum_smulRight_finBasis_mul_smulRight_eq_one w ℓ h, map_sum, LinearMap.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← sum_smulRight_finBasis_mul_smulRight_eq_one w ℓ h, map_sum, LinearMap.sum_apply]
         simp only [map_mul, Module.End.mul_apply]
     _ = 0 := by simp [hzero]
 
@@ -32,8 +38,8 @@ private theorem smulRight_mul_smulRight_of_apply_eq_one {W : Type} [AddCommGroup
   ext x
   simp [h]
 
-open NumberField IsDedekindDomain Matrix in
 
+open NumberField IsDedekindDomain Matrix in
 theorem _root_.GlobalTheory.commuting_endAlgebras_common_fixed_vector :
     ∀ (ι : Type) [Fintype ι] (Wv : ι → Type) [∀ v, AddCommGroup (Wv v)] [∀ v, Module ℂ (Wv v)]
       [∀ v, FiniteDimensional ℂ (Wv v)] (V : Type) [AddCommGroup V] [Module ℂ V]

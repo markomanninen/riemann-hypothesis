@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLatSmulBlockLat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemGlLatCongOfSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLatSmulBlockLat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemGlLatCongOfSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,13 +71,6 @@ theorem local_tensors (hL : L.Is μ₀) {W : G.Weil} (B : Frames G) (ρ : RealMa
   refine ⟨τ, τ', H, fun b => ?_⟩
   obtain ⟨a, ha⟩ := ρ.exists_matched i j b
   exact ⟨a, ha t, a, b, τ, τ', n, Φ, ha t, h, H, rfl, rfl⟩
-
-theorem exists_hasFlip (hL : L.Is μ₀) {W : G.Weil} (B : Frames G) (ρ : RealMatch W) (t : T) (i j : Fin D.R.m)
-    (hde : Nat.Coprime D.host.pde (D.host.QS * D.host.q) ∧ Nat.Coprime D.host.pde' (D.host.QS * D.host.q))
-    (hc : ∀ P ∈ L.Q t, ((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal) (n Φ)
-    (h : ∀ w ∈ locPl G t, depthAt G w ≤ n w ∧ IsNatDatum (unifAt w) (n w) (Φ w)) :
-    ∃ τ τ', HasFlip B t ρ i j n Φ τ τ' ∧ ∀ b, ∃ a, ρ.Matched a b ∧ IsMatched B t ρ i j (tensT W a τ) (tensT W b τ') :=
-  (local_tensors hL B ρ t i j).2.2.2 (fun _ hw => Good.badInt_notMem hL hde hc hw) n Φ h
 
 end GlobalTheory.FunObj.LocTensor
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -153,8 +157,6 @@ noncomputable instance : CommRing (ShuffleAlgebra K A) where
   mul_one x := (mulLin_comm K _ _).trans (mulLin_one K x)
   mul_comm := mulLin_comm K
 
-theorem mul_def (x y : ShuffleAlgebra K A) : x * y = mulLin K x y := rfl
-
 noncomputable instance : Algebra K (ShuffleAlgebra K A) :=
   Algebra.ofModule (fun r x y => LinearMap.map_smul₂ (mulLin K) r x y)
     (fun r x y => (mulLin K x).map_smul r y)
@@ -163,9 +165,6 @@ theorem word_nil : word K ([] : List A) = 1 := rfl
 
 theorem word_mul_word (u v : List A) :
     word K u * word K v = ((shuffle u v).map (word K)).sum := mulLin_word K u v
-
-instance [Nontrivial K] : Nontrivial (ShuffleAlgebra K A) :=
-  inferInstanceAs (Nontrivial (List A →₀ K))
 
 end ShuffleAlgebra
 
@@ -545,7 +544,7 @@ theorem repr_sum_word (s : Multiset (List A)) (w : List A) :
   induction s using Multiset.induction_on with
   | empty => simp
   | cons x s ih =>
-    rw [Multiset.map_cons, Multiset.sum_cons, map_add, Finsupp.add_apply, ih,
+    rw [Multiset.map_cons, Multiset.sum_cons, map_add (f := _), Finsupp.add_apply, ih,
       ← wordBasis_apply, Module.Basis.repr_self, Multiset.count_cons, Finsupp.single_apply]
     by_cases h : x = w
     · simp [h, add_comm]
@@ -610,7 +609,7 @@ theorem monomial_eq_prod {σ : Type} (d : σ →₀ ℕ) :
   induction d using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    rw [map_add, Multiset.map_add, Multiset.prod_add, ← hf, ← hg, MvPolynomial.monomial_mul,
+    rw [map_add (f := _), Multiset.map_add (f := _), Multiset.prod_add, ← hf, ← hg, MvPolynomial.monomial_mul,
       one_mul]
   | single a n =>
     rw [Finsupp.toMultiset_single, ← MvPolynomial.X_pow_eq_monomial]
@@ -638,7 +637,7 @@ theorem aeval_injective [CharZero K] : Function.Injective
     rw [monomial_eq_prod, map_multiset_prod, ← Multiset.prod_coe, ← Multiset.map_coe, hΛ,
       Multiset.map_map, Multiset.map_map]
     simp
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro p hp
   by_contra hne
   obtain ⟨d₀, hd₀, hmax⟩ := p.support.exists_max_image (fun d => (Λ d).flatten)
@@ -646,9 +645,11 @@ theorem aeval_injective [CharZero K] : Function.Injective
   have hsum : p = ∑ d ∈ p.support, p.coeff d • MvPolynomial.monomial d (1 : K) := by
     conv_lhs => rw [p.as_sum]
     simp [MvPolynomial.smul_monomial]
-  rw [hsum, map_sum] at hp
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum] at hp
   have h1 := congrArg (fun x => (wordBasis K A).repr x (Λ d₀).flatten) hp
-  simp only [map_smul, hmon, map_sum, Finsupp.finsetSum_apply, Finsupp.smul_apply, map_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, hmon, map_sum, Finsupp.finsetSum_apply, Finsupp.smul_apply, map_zero,
     Finsupp.zero_apply, smul_eq_mul] at h1
   rw [Finset.sum_eq_single d₀] at h1
   · exact mul_ne_zero (MvPolynomial.mem_support_iff.1 hd₀) (repr_prod_self K _) h1

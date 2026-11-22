@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PhiCentreEigenfunctionDiscreteSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiRestrictionHolomorphicNearOneStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiEntriesRealAnalyticStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PhiCentreEigenfunctionDiscreteSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiRestrictionHolomorphicNearOneStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiEntriesRealAnalyticStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ContDiff
@@ -552,7 +556,7 @@ theorem eword_intK {ε : Fin n → Bool} {c : KG ε → ℂ} (hc : Continuous c)
         conv_lhs => rw [cm.2.2.1]
         simp [Matrix.mul_add]
       simp only [Dz]
-      rw [e, map_add, map_smul, smul_eq_mul]
+      rw [e, map_add (f := _), map_smul, smul_eq_mul]
     have hA := integrable_slice hc (analytic_Dz (analytic_Dw hG w) (Formalism.REAL.cpart1 ε (Matrix.single p.1 p.2 1))) hU
     have hB := integrable_slice hc (analytic_Dz (analytic_Dw hG w) (Formalism.REAL.cpart2 ε (Matrix.single p.1 p.2 1))) hU
     simp only [intK]
@@ -630,13 +634,13 @@ theorem inner_ps {ε : Fin n → Bool} (lam : Fin n → ℝ) {abelian₂ : Fin n
   have hInt' := hInt.apply_continuousLinearMap v
   show ⟪u, ((Module.finrank ℂ W : ℂ) • ∫ k : KG ε, Phi lam ((toMK k)⁻¹ * z * toMK k) •
       (innerSL ℂ (τ (toMK k) w)).smulRight (τ (toMK k) w) ∂(muK ε)) v⟫_ℂ = _
-  rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.integral_apply hInt, inner_smul_right,
+  rw [smul_apply, ContinuousLinearMap.integral_apply hInt, inner_smul_right,
     ← integral_inner hInt']
   simp only [intK]
   rw [← integral_const_mul]
   congr 1
   funext k
-  simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply,
+  simp only [smul_apply, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply,
     inner_smul_right, pk]
   ring
 

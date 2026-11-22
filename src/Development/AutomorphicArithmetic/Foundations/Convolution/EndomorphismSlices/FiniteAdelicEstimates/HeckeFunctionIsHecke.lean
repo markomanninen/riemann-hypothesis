@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.LocAlg
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.PositionTest
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.EntEmpty
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintTranslate
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.LocAlg
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.PositionTest
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.EntEmpty
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintTranslate
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ private theorem ind_hecke (w : Pl E) : IsHecke (K2 a b w) ((K2 a b w : Set _).in
 
 private theorem ind_ind (w : Pl E) : PositivityTheory.Rg.BcN.F2.mconv ((K2 a b w : Set _).indicator 1) ((K2 a b w : Set _).indicator 1) =
     ((K2 a b w : Set _).indicator 1 : GLw a w × GLw b w → ℂ) :=
-  ((locAlg E a b ∅ ⟨fun w => KGL w a, fun w => KGL w b, fun w => (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w a).1,
+  ((locAlg E a b ∅ ⟨fun w => KGL w (n := a), fun w => KGL w (n := b), fun w => (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w a).1,
     fun w => (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w b).1, fun _ => le_rfl, fun _ => le_rfl, fun _ _ => ⟨rfl, rfl⟩⟩ w).2.2.2.2 _ (ind_hecke w)).1
 
 variable {Z : Finset (Pl E)} (L : Lv a b Z)

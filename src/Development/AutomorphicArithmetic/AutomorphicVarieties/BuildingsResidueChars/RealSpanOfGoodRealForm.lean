@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Spanpsd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.SimpSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Spanpsd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.SimpSpan
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.KT UpperTheory.V.Af.BA in
 theorem UpperTheory.real_span_of_good_real_form :

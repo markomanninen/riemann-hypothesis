@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.Adm3OfExtension
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAt
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.Adm3OfExtension
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAt
+
+@[expose] public section
 
 noncomputable section
 

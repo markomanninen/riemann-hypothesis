@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructure
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjBesselCharacterIsUnfoldingThetaFunctionOfGra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructure
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjBesselCharacterIsUnfoldingThetaFunctionOfGra
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem coefX_eq (hz : d.i₀ *ᵥ z = d'.i₀ *ᵥ z') (n : GA D S) :
   rw [coefX, ← mulVec_mulVec, ← mulVec_mulVec, e]
 
 theorem coefX_nB' (hz : d.i₀ *ᵥ z = d'.i₀ *ᵥ z') (b : Mx D ρ S₀'.rank) :
-    coefX d z (d'.nB b) = (d.pX ⬝ d'.jX) *ᵥ (b *ᵥ ratV z') := by
+    coefX d z (d'.nB b) = (d.pX * d'.jX) *ᵥ (b *ᵥ ratV z') := by
   have e0 : d.pX *ᵥ (d'.j0 *ᵥ ratV z') = 0 := by
     have := coefX_eq d d' hz 1
     rw [GlobalTheory.MixModel.mt_one, one_mulVec, coefX, GlobalTheory.MixModel.mt_one, Matrix.one_mul, d.pX_j0, zero_mulVec] at this
@@ -107,17 +111,17 @@ theorem coefX_nB' (hz : d.i₀ *ᵥ z = d'.i₀ *ᵥ z') (b : Mx D ρ S₀'.rank
 theorem e_eq (hz : d.i₀ *ᵥ z = d'.i₀ *ᵥ z') (hz' : z' ≠ 0) (hN : ∀ n ∈ flagN d', n ∈ flagN d) : d'.e = d.e * (d.qX * d'.e) := by
   apply rat_injective
   rw [rat_mul, rat_mul]
-  change d'.jX = d.jX ⬝ (d.pX ⬝ d'.jX)
+  change d'.jX = d.jX * (d.pX * d'.jX)
   ext k i : 2
   obtain ⟨b, hb⟩ := exists_b hz' i 1
   have e : d.j0 *ᵥ ratV z = d'.j0 *ᵥ ratV z' := (ratV_mulVec _ _).symm.trans ((congrArg ratV hz).trans (ratV_mulVec _ _))
   obtain ⟨u, -, b₁, c, hn⟩ := Decomp.flag_decomp d (hN _ (d'.nB_mem_NFlag b))
-  have h1 : mt S (d'.nB b) *ᵥ (d.j0 *ᵥ ratV z) = d.j0 *ᵥ ratV z + d.jX *ᵥ ((u.1 ⬝ b₁) *ᵥ ratV z) := by
+  have h1 : mt S (d'.nB b) *ᵥ (d.j0 *ᵥ ratV z) = d.j0 *ᵥ ratV z + d.jX *ᵥ ((u.1 * b₁) *ᵥ ratV z) := by
     rw [hn, mulVec_mulVec, Decomp.flag_unipotent_product_anisotropic_action, add_mulVec, mulVec_mulVec]
   have h2 : mt S (d'.nB b) *ᵥ (d.j0 *ᵥ ratV z) = d.j0 *ᵥ ratV z + d'.jX *ᵥ Pi.single i 1 := by
     rw [e, mulVec_mulVec, d'.nB_j0, add_mulVec, ← mulVec_mulVec, hb]
   have h3 := add_left_cancel (h2.symm.trans h1)
-  have h4 : (d.jX ⬝ (d.pX ⬝ d'.jX)) *ᵥ Pi.single i 1 = d'.jX *ᵥ Pi.single i 1 := by
+  have h4 : (d.jX * (d.pX * d'.jX)) *ᵥ Pi.single i 1 = d'.jX *ᵥ Pi.single i 1 := by
     rw [← mulVec_mulVec, ← mulVec_mulVec, h3, mulVec_mulVec _ d.pX, d.pX_jX, one_mulVec]
   have := congrFun h4 k
   simp only [mulVec_single_one] at this
@@ -136,12 +140,12 @@ theorem first_eq {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {�
   have e1 := e_eq d d' hz hz' fun n => (hN n).2
   have e2 := e_eq d' d hz.symm hz0 fun n => (hN n).1
   have q1 : d'.qX * d'.e = 1 := d'.e'e
-  have hT : (rat (d.qX * d'.e) : Mx D _ _) = d.pX ⬝ d'.jX := rat_mul _ _
+  have hT : (rat (d.qX * d'.e) : Mx D _ _) = d.pX * d'.jX := rat_mul _ _
   generalize d.qX * d'.e = T at e1 hT
   generalize hS : d'.qX * d.e = S' at e2
   have hST : S' * T = 1 := by rw [← hS, Matrix.mul_assoc, ← e1, q1]
-  have hX : d.jX = d'.jX ⬝ rat S' := (congrArg rat e2).trans (rat_mul _ _)
-  have hTS : (rat T : Mx D _ _) ⬝ rat S' = 1 := by rw [← rat_mul, mul_eq_one_comm.1 hST, rat_one]
+  have hX : d.jX = d'.jX * rat S' := (congrArg rat e2).trans (rat_mul _ _)
+  have hTS : (rat T : Mx D _ _) * rat S' = 1 := by rw [← rat_mul, mul_eq_one_comm.1 hST, rat_one]
   have hell : ∀ y : Fin (σ + 1) → AE D, ell D (σ + 1) ⬝ᵥ y = y (Fin.last σ) := fun y => by
     rw [dotProduct, Finset.sum_eq_single (Fin.last σ)]
     · simp [ell]
@@ -210,7 +214,8 @@ theorem first_eq {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {�
     rw [psiBes_levi, psiUni, h1, hadd, h5, psiBes, simpleSum, h2, h4, hadd, dotProduct_zero, add_zero, map_one, one_mul] at h3
     rw [map_one, mul_one, ← h3]
     congr 1
-    simp only [upSum, map_sum, Finset.mul_sum, Matrix.of_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [upSum, map_sum, Finset.mul_sum, Matrix.of_apply]
     exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by split_ifs <;> simp
 
 end GlobalTheory.FirstVec

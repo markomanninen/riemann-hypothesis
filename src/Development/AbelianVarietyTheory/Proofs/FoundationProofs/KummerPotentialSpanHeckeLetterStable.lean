@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.LiftApplyOfMemAdmissibleSubalgebra
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerPotentialRelationLinearHeckeStableStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.LiftApplyOfMemAdmissibleSubalgebra
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerPotentialRelationLinearHeckeStableStatement
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ
 
@@ -15,7 +20,7 @@ theorem polySlash_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (m
   | C a => simp [slP]
   | add p q hp hq => simp [hp, hq]
   | mul_X p i hp =>
-    simp only [map_mul, hp, MvPolynomial.map_X, Betti.slP_X, map_add, map_smul]
+    simp only [map_mul, hp, MvPolynomial.map_X, Betti.slP_X, map_add (f := _), map_smul]
     simp [MvPolynomial.smul_eq_C_mul]
 
 theorem opP_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (m : Matrix (Fin 2) (Fin 2) ℤ)
@@ -29,7 +34,8 @@ theorem sum_opP_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) {ι 
     (∑ j ∈ s, opP S (m j)) (fun z => MvPolynomial.map φ (F z)) =
       fun z => MvPolynomial.map φ ((∑ j ∈ s, opP R (m j)) F z) := by
   funext z
-  simp only [LinearMap.sum_apply, Finset.sum_apply, opP_map, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, Finset.sum_apply, opP_map, map_sum]
 
 theorem opL_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (N l : ℕ) (T : Letter)
     (F : ℂ → MvPolynomial (Fin 2) R) :
@@ -43,8 +49,8 @@ theorem opL_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (N l : �
 
 end GlobalTheory.KZ.H3.LamStab
 
-open GlobalTheory.KZ.H3 GlobalTheory.KZ.H3.LamStab in
 
+open GlobalTheory.KZ.H3 GlobalTheory.KZ.H3.LamStab in
 theorem GlobalTheory.KZ.H3.lam_stable : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε) (N l : ℕ) [Fact l.Prime]
     {E : Type} [Field E] [Algebra ℤ_[l] E] (T : Letter) (p : (E ⊗[ℤ_[l]] X.Fn l) × (ℂ → MvPolynomial (Fin 2) E)),
     p ∈ H3.abelian₂ X l E → (X.opV N l E T p.1, opL E N l T p.2) ∈ H3.abelian₂ X l E := by

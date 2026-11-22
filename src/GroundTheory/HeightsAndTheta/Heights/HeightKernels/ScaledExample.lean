@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegreeDual
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegreeDual
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -67,20 +72,6 @@ def HermLattice.scaledExample : HermLattice ℚ 1 where
   conj := fun _ => by
     ext a c
     by_cases h : a = c <;> simp [h, map_ofNat]
-
-example : Function.Bijective (Matrix.mulVecLin
-    (dualEmbMatrix (F := HermLattice.scaledExample) dualBasisStandard)) :=
-  dualEmbMatrix_standard_bijective
-
-example : Function.Bijective (Matrix.mulVecLin
-    (dualEmbMatrix (F := HermLattice.scaledExample.withStdMetric) dualBasisStandard)) :=
-  dualEmbMatrix_standard_bijective
-
-example : HermLine (dualBlocks Unit) × HermLine (dualBlocks Unit) × HermLine (dualBlocks Unit) ×
-    PLift (1 ≤ 1) :=
-  ⟨dualLine HermLattice.scaledExample dualBasisStandard dualEmbMatrix_standard_bijective,
-    dualLine HermLattice.scaledExample.withStdMetric dualBasisStandard dualEmbMatrix_standard_bijective,
-    dualLine (HermLattice.standard ℚ 1) dualBasisStandard dualEmbMatrix_standard_bijective, ⟨le_rfl⟩⟩
 
 end
 

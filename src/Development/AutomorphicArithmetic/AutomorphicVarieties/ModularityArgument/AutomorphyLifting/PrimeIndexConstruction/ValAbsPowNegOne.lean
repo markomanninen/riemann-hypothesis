@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.ThruBadAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.IndGlue
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CharpolyEqProd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.WinInd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.WindowMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.SuppSmo
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatakeMatchBaseChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.ThruBadAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.IndGlue
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CharpolyEqProd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.WinInd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.WindowMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.SuppSmo
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatakeMatchBaseChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ private theorem over_two (h2 : Module.finrank F E = 2) {w w' w'' : HeightOneSpec
 
 variable (sat : HeightOneSpectrum (𝓞 E) → Multiset ℂˣ → Prop)
 
-variable (F) in
 
+variable (F) in
 private def HasPair (u : HeightOneSpectrum (𝓞 F)) : Prop :=
   ∃ w w' : HeightOneSpectrum (𝓞 E), w ≠ w' ∧ w.under (𝓞 F) = u ∧ w'.under (𝓞 F) = u
 
@@ -107,7 +111,9 @@ private theorem indSys_indSat (h2 : Module.finrank F E = 2) (hex : ∀ᶠ w in F
   · obtain ⟨B, hB⟩ := hw w rfl
     obtain ⟨B', hB'⟩ := hw w' hu
     exact ⟨B, B', hB, hB', Or.inl ⟨w, w', hne.symm, rfl, hu, B, B', hB, hB', rfl⟩⟩
-  have hq1 : 1 < normV (w.under (𝓞 F)) := NumberField.HeightOneSpectrum.one_lt_absNorm _
+  have hq1 : 1 < normV (w.under (𝓞 F)) := by
+    simpa [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using
+      (NumberField.HeightOneSpectrum.one_lt_absNorm (w.under (𝓞 F)))
   have hnp : ¬ HasPair (E := E) F (w.under (𝓞 F)) := by
     rintro ⟨a, b, hab, ha, hb⟩
     have e : normV w = normV (w.under (𝓞 F)) := by
@@ -140,7 +146,7 @@ private theorem eig_unique {F Ω : Type} [Field F] [NumberField F] [Field Ω] [A
 
 section Tw
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {a : ℕ}
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {a : ℕ}
 
 private theorem val_absPow_neg_one (u : HeightOneSpectrum (𝓞 K)) :
     (((GlobalTheory.HeckeGal.Model.absPow K (-1)).val u : ℂˣ) : ℂ) = (normV u : ℂ) := by
@@ -158,7 +164,7 @@ private theorem sat_tw {π : CuspSub K a} {w : HeightOneSpectrum (𝓞 K)} {B : 
 
 end Tw
 
-private theorem indSys_of_att {K M Ω : Type} [Field K] [NumberField K] [IsTotallyComplex K] [Field M] [NumberField M] [IsTotallyComplex M] [Field Ω]
+private theorem indSys_of_att {K M Ω : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M] [Field Ω]
     [Algebra K M] [Algebra K Ω] [Algebra M Ω] [IsScalarTower K M Ω] [IsAlgClosure M Ω] (h2 : Module.finrank K M = 2)
     {l : ℕ} [Fact l.Prime] {ι : Qbar l ≃+* ℂ} {π : CuspSub M 2} {r : G M Ω →* GL (Fin 2) (Qbar l)} (hatt : AttC ι r π)
     {R : G K Ω →* GL (Fin 4) (Qbar l)} (H : IndCh (galEmb K M Ω) r R) {P : CuspSub K 4} (hP : AttC ι R P) :
@@ -180,9 +186,12 @@ private theorem indSys_of_att {K M Ω : Type} [Field K] [NumberField K] [IsTotal
       have := UpperTheory.V.Af.Es.charEig_cyc (Ω := Ω) ι hlu 1
       simpa using this
     have e := eig_unique (UpperTheory.frobenius_eigenvalues_twist K Ω l ι 4 R _ u _ _ hFp hc) hF
+    have hnorm : 1 < normV u := by
+      simpa [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using
+        (NumberField.HeightOneSpectrum.one_lt_absNorm u)
     have hq : (((normV u : ℝ) ^ ((((4 : ℕ) : ℝ) - 1) / 2) : ℝ) : ℂ) ≠ 0 :=
       Complex.ofReal_ne_zero.2 (Real.rpow_pos_of_pos (Nat.cast_pos.2
-        (zero_lt_one.trans (NumberField.HeightOneSpectrum.one_lt_absNorm u))) _).ne'
+        (zero_lt_one.trans hnorm)) _).ne'
     have e2 : B₂ = Bp.map (· * (GlobalTheory.HeckeGal.Model.absPow K (-1)).val u) := by
       rw [algSat_val, algSat_val, Multiset.map_map] at e
       refine Multiset.map_injective (fun a b h => Units.ext (mul_left_cancel₀ hq h)) (e.symm.trans ?_)
@@ -208,7 +217,10 @@ theorem awInd : AwInd := by
   refine ⟨t + a, fun v => ImaginaryQuadraticEtaCharacter.suppSmo K 4 (by norm_num) _ _ ?_ (t + a) v (ha 4 (by norm_num) _ t v (hQ v))⟩
   refine hP.2.mono fun u ⟨B, hB, _⟩ => ⟨B, ?_, hB⟩
   have h1 := sat_tw (sat_tw hB (-1)) 1
-  have hq : (normV u : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (zero_lt_one.trans (NumberField.HeightOneSpectrum.one_lt_absNorm u)).ne'
+  have hnorm : 1 < normV u := by
+    simpa [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using
+      (NumberField.HeightOneSpectrum.one_lt_absNorm u)
+  have hq : (normV u : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (zero_lt_one.trans hnorm).ne'
   have e : (B.map (· * (GlobalTheory.HeckeGal.Model.absPow K (-1)).val u)).map (· * (GlobalTheory.HeckeGal.Model.absPow K 1).val u) = B := by
     rw [Multiset.map_map]
     refine (Multiset.map_congr rfl fun b _ => ?_).trans (Multiset.map_id B)

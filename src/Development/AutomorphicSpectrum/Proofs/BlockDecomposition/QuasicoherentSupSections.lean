@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowSubSuccLe
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndSurjectiveAppOfExactOfEpi
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowSubSuccLe
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndSurjectiveAppOfExactOfEpi
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -45,41 +49,41 @@ theorem sumMap_app_add (S T : Subobject E) (V : X.Opens) (s : Γ((S : X.Modules)
       S.arrow.app V s + T.arrow.app V t := by
   have hs : biprod.inl ≫ sumMap S T = S.arrow := by simp [sumMap]
   have ht : biprod.inr ≫ sumMap S T = T.arrow := by simp [sumMap]
-  rw [map_add, GlobalTheory.QCoh.app_app, GlobalTheory.QCoh.app_app, hs, ht]
+  rw [map_add (f := _), GlobalTheory.QCoh.app_app, GlobalTheory.QCoh.app_app, hs, ht]
 
 end GlobalTheory.CompanionTheory.GE.SupSecs
 
 namespace GlobalTheory.CompanionTheory.GE
 
-open SupSecs in
 
+open SupSecs in
 theorem supsecs {X : Scheme.{0}} {E : X.Modules} (hE : E.IsQuasicoherent) (S T : Subobject E)
     (hS : (S : X.Modules).IsQuasicoherent) (hT : (T : X.Modules).IsQuasicoherent) :
     ((S ⊔ T : Subobject E) : X.Modules).IsQuasicoherent ∧
       ∀ V : X.Opens, IsAffineOpen V →
         secs (S ⊔ T) V = {x | ∃ s ∈ secs S V, ∃ t ∈ secs T V, x = s + t} := by
-  rw [sup_eq_imageSubobject]
-  refine ⟨GlobalTheory.QCoh.isQuasicoherent_of_iso (imageSubobjectIso (sumMap S T)).symm, fun V hV ↦ ?_⟩
-  have hr : secs (imageSubobject (sumMap S T)) V = Set.range ((sumMap S T).app V) := by
-    have harrow : (imageSubobject (sumMap S T)).arrow =
-        (imageSubobjectIso (sumMap S T)).hom ≫ image.ι (sumMap S T) :=
-      (imageSubobject_arrow (sumMap S T)).symm
+  rw [SupSecs.sup_eq_imageSubobject]
+  refine ⟨GlobalTheory.QCoh.isQuasicoherent_of_iso (imageSubobjectIso (SupSecs.sumMap S T)).symm, fun V hV ↦ ?_⟩
+  have hr : secs (imageSubobject (SupSecs.sumMap S T)) V = Set.range ((SupSecs.sumMap S T).app V) := by
+    have harrow : (imageSubobject (SupSecs.sumMap S T)).arrow =
+        (imageSubobjectIso (SupSecs.sumMap S T)).hom ≫ image.ι (SupSecs.sumMap S T) :=
+      (imageSubobject_arrow (SupSecs.sumMap S T)).symm
     ext y
     constructor
     · rintro ⟨a, rfl⟩
-      obtain ⟨b, hb⟩ := GlobalTheory.QCoh.surjective_factorThruImage_app (sumMap S T) hV
-        ((imageSubobjectIso (sumMap S T)).hom.app V a)
+      obtain ⟨b, hb⟩ := GlobalTheory.QCoh.surjective_factorThruImage_app (SupSecs.sumMap S T) hV
+        ((imageSubobjectIso (SupSecs.sumMap S T)).hom.app V a)
       refine ⟨b, ?_⟩
       rw [harrow, ← GlobalTheory.QCoh.app_app, ← hb, GlobalTheory.QCoh.app_app, image.fac]
     · rintro ⟨b, rfl⟩
-      refine ⟨(factorThruImageSubobject (sumMap S T)).app V b, ?_⟩
+      refine ⟨(factorThruImageSubobject (SupSecs.sumMap S T)).app V b, ?_⟩
       rw [GlobalTheory.QCoh.app_app, imageSubobject_arrow_comp]
   rw [hr]
   ext x
   constructor
   · rintro ⟨y, rfl⟩
-    exact ⟨_, ⟨_, rfl⟩, _, ⟨_, rfl⟩, sumMap_app S T V y⟩
+    exact ⟨_, ⟨_, rfl⟩, _, ⟨_, rfl⟩, SupSecs.sumMap_app S T V y⟩
   · rintro ⟨_, ⟨s, rfl⟩, _, ⟨t, rfl⟩, rfl⟩
-    exact ⟨_, sumMap_app_add S T V s t⟩
+    exact ⟨_, SupSecs.sumMap_app_add S T V s t⟩
 
 end GlobalTheory.CompanionTheory.GE

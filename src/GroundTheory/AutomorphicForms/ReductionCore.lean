@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionFinite
-import GroundTheory.AutomorphicForms.ReductionIwasawa
-import GroundTheory.AutomorphicForms.ReductionBlock
-import GroundTheory.AutomorphicForms.ReductionDirichlet
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionFinite
+public import GroundTheory.AutomorphicForms.ReductionIwasawa
+public import GroundTheory.AutomorphicForms.ReductionBlock
+public import GroundTheory.AutomorphicForms.ReductionDirichlet
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set Matrix
 open scoped NumberField.AdeleRing RestrictedProduct
@@ -162,7 +166,7 @@ theorem adelicNorm_single_one {n : ℕ} (i : Fin n) :
       Pi.single i 1 := fun v => by
     ext k
     by_cases hk : k = i
-    · subst hk; simp [finComp]
+    · subst hk; simp [finComp]; rfl
     · simp only [finComp, Pi.single_eq_of_ne hk]; rfl
   have he : ∀ (E : Type _) [NormedField E], euclidNorm (Pi.single i (1 : E) : Fin n → E) = 1 := by
     intro E _
@@ -189,7 +193,7 @@ theorem hasFiniteContent_single_one {n : ℕ} (i : Fin n) :
   have hfin : finComp v (Pi.single i (1 : 𝔸[K]) : Fin n → 𝔸[K]) = Pi.single i 1 := by
     ext k
     by_cases hk : k = i
-    · subst hk; simp [finComp]
+    · subst hk; simp [finComp]; rfl
     · simp only [finComp, Pi.single_eq_of_ne hk]; rfl
   rw [hfin]
   refine le_antisymm ((pi_norm_le_iff_of_nonneg zero_le_one).2 fun j => ?_) ?_
@@ -218,7 +222,7 @@ theorem ratVec_single_add_single {n : ℕ} (i i' : Fin n) (a c : K) :
     ratVec (Pi.single i a + Pi.single i' c : Fin n → K) =
       Pi.single i (algebraMap K 𝔸[K] a) + Pi.single i' (algebraMap K 𝔸[K] c) := by
   ext k
-  simp only [ratVec, Pi.add_apply, map_add]
+  simp only [ratVec, Pi.add_apply, map_add (f := _)]
   by_cases h1 : k = i <;> by_cases h2 : k = i' <;>
     simp [Pi.single_apply, h1, h2, apply_ite (algebraMap K 𝔸[K])]
 

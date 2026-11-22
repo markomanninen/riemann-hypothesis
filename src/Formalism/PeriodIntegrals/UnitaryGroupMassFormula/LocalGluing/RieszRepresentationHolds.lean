@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGluing.LocGlueOfPair
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGluing.LocGlueOfPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,10 +31,12 @@ theorem rieszRepresentation_holds : Riesz := by
     intro v a
     rw [H.h_herm (∑ j, a j • b j) v]
     have hs : H.h (∑ j, a j • b j) v = ∑ j, a j * H.h (b j) v := by
-      rw [← hℓ, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hℓ, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, hℓ, smul_eq_mul]
-    rw [hs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, ← H.h_herm]
   let A : Matrix (Module.Free.ChooseBasisIndex E V) (Module.Free.ChooseBasisIndex E V) E :=

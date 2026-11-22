@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsUnimodularBesselModelUnitaryGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsUnimodularBesselModelUnitaryGroup
+
+@[expose] public section
+
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf
 open scoped InnerProductSpace ENNReal Topology
 
@@ -29,8 +34,8 @@ theorem enorm_avg_sq_le {Wp : Type*} [NormedAddCommGroup Wp] [NormedSpace ℝ Wp
   · have hA : ‖∫ y in S, f y ∂μ‖ₑ ≤ ∫⁻ y in S, ‖f y‖ₑ ∂μ := enorm_integral_le_lintegral_enorm _
     have hC := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := 1) (q := 2) (μ := μ.restrict S)
       (by norm_num) hf
-    rw [eLpNorm_one_eq_lintegral_enorm, eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero
-      ENNReal.ofNat_ne_top, Measure.restrict_apply_univ] at hC
+    rw [eLpNorm_one_eq_lintegral_enorm hf, eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero
+      ENNReal.ofNat_ne_top hf, Measure.restrict_apply_univ] at hC
     norm_num at hC
     have hsmul : ‖(μ S).toReal⁻¹ • ∫ y in S, f y ∂μ‖ₑ = (μ S)⁻¹ * ‖∫ y in S, f y ∂μ‖ₑ := by
       rw [enorm_smul, Real.enorm_eq_ofReal (by positivity), ENNReal.ofReal_inv_of_pos
@@ -110,6 +115,13 @@ theorem tendsto_zero_of_eventually_le {u : ℕ → ℝ≥0∞} {M : ℝ≥0∞} 
   filter_upwards [h ε hε0] with j hj
   exact hj.trans hεe.le
 
+theorem stronglyMeasurable_avgR {Wp : Type*} [NormedAddCommGroup Wp] [NormedSpace ℝ Wp]
+    (μ : Measure (Mt k r)) [SFinite μ] (j : ℕ) {h : Mt k r → Wp} (hh : StronglyMeasurable h) :
+    StronglyMeasurable (avgR μ j h) := by
+  have h2 : StronglyMeasurable (fun p : Mt k r × Mt k r => h (rmulM (Matrix.of p.1) p.2)) :=
+    hh.comp_measurable (continuous_mulPair.comp continuous_swap).measurable
+  exact (h2.integral_prod_right' (ν := μ.restrict (nbd k r j))).const_smul _
+
 theorem tendsto_avg_cont {Wp : Type*} [NormedAddCommGroup Wp] [NormedSpace ℝ Wp] [CompleteSpace Wp] (μ : Measure (Mt k r))
     (hμ : IsHaarOn (GG k r) μ) {K : Set (Mt k r)} (hK : IsCompact K) (c : Mt k r → Wp)
     (hc : Continuous c) :
@@ -157,20 +169,14 @@ theorem tendsto_avg_cont {Wp : Type*} [NormedAddCommGroup Wp] [NormedSpace ℝ W
       _ = ε := by field_simp [(ENNReal.toReal_pos h0 htop).ne']
   have := eLpNorm_le_of_ae_bound (p := 2) (μ := μ.restrict K) (C := ε)
     (f := fun x => avgR μ j c x - c x)
+    (((stronglyMeasurable_avgR μ j hc.stronglyMeasurable).sub hc.stronglyMeasurable).aestronglyMeasurable)
     ((ae_restrict_iff' hK.measurableSet).2 (Filter.Eventually.of_forall hpt))
   simpa [Measure.restrict_apply_univ] using this
 
-theorem eLp2_eq {Wp : Type*} [NormedAddCommGroup Wp] (ν : Measure (Mt k r)) (f : Mt k r → Wp) :
+theorem eLp2_eq {Wp : Type*} [NormedAddCommGroup Wp] (ν : Measure (Mt k r)) (f : Mt k r → Wp) (hf : AEStronglyMeasurable f ν) :
     eLpNorm f 2 ν = (∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν) ^ (1/2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hf]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
-
-theorem stronglyMeasurable_avgR {Wp : Type*} [NormedAddCommGroup Wp] [NormedSpace ℝ Wp]
-    (μ : Measure (Mt k r)) [SFinite μ] (j : ℕ) {h : Mt k r → Wp} (hh : StronglyMeasurable h) :
-    StronglyMeasurable (avgR μ j h) := by
-  have h2 : StronglyMeasurable (fun p : Mt k r × Mt k r => h (rmulM (Matrix.of p.1) p.2)) :=
-    hh.comp_measurable (continuous_mulPair.comp continuous_swap).measurable
-  exact (h2.integral_prod_right' (ν := μ.restrict (nbd k r j))).const_smul _
 
 theorem map_restrict_le (μ : Measure (Mt k r)) (hU : IsUnimod (GG k r) μ) {x : Mt k r}
     (hx : Matrix.of x ∈ GG k r) {S K' : Set (Mt k r)} (hK' : MeasurableSet K')
@@ -184,8 +190,8 @@ theorem map_restrict_le (μ : Measure (Mt k r)) (hU : IsUnimod (GG k r) μ) {x :
 
 end GlobalTheory.SgInf.Mollify
 
-open GlobalTheory.SgInf.Mollify in
 
+open GlobalTheory.SgInf.Mollify in
 theorem GlobalTheory.SgInf.tendsto_average_L2 : ∀ (k r : ℕ) (μ : Measure (Mt k r)), IsHaarOn (GG k r) μ → ∀ {Wp : Type}
     [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp] (g : Mt k r → Wp),
     (∀ K : Set (Mt k r), IsCompact K → AEStronglyMeasurable g (μ.restrict K) ∧
@@ -210,17 +216,32 @@ theorem GlobalTheory.SgInf.tendsto_average_L2 : ∀ (k r : ℕ) (μ : Measure (M
   have hg'm : StronglyMeasurable g' := hgm.stronglyMeasurable_mk
   have hgg' : g =ᵐ[ν] g' := hgm.ae_eq_mk
   have hmemg : MemLp g 2 ν := by
-    refine ⟨hgm, ?_⟩
-    rw [eLp2_eq]
+    change eLpNorm g 2 ν < ⊤
+    rw [eLp2_eq ν g hgm]
     exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hgI.ne
   have hmem : MemLp g' 2 ν := hmemg.ae_eq hgg'
+
+  have havg : ∀ j, AEStronglyMeasurable (fun x => avgR μ j g x - g x) (μ.restrict K) := by
+    intro j
+    have heq : (fun x => avgR μ j g x - g x) =ᵐ[μ.restrict K]
+        (fun x => avgR μ j g' x - g' x) := by
+      filter_upwards [ae_restrict_of_ae (ae_iff.2 hμ.2.2.1), ae_restrict_mem hK.measurableSet,
+        (Measure.absolutelyContinuous_of_le hle).ae_le hgg'] with x hxG hxK hxg
+      have hmap := map_restrict_le μ hU hxG (S := nbd k r j) hK'm
+        (fun y hy => hsub y (nbd_subset_zero j hy) x hxK)
+      have hf : Measurable (rmulM (k := k) (r := r) (Matrix.of x)) := (continuous_rmulM _).measurable
+      have hae : ∀ᵐ y ∂(μ.restrict (nbd k r j)), g (rmulM (Matrix.of x) y) = g' (rmulM (Matrix.of x) y) :=
+        ae_of_ae_map hf.aemeasurable ((Measure.absolutelyContinuous_of_le hmap).ae_le hgg')
+      unfold avgR
+      rw [integral_congr_ae hae, hxg]
+    exact (((stronglyMeasurable_avgR μ j hg'm).sub hg'm).aestronglyMeasurable.congr heq.symm)
 
   suffices H : Filter.Tendsto (fun j : ℕ => eLpNorm (fun x => avgR μ j g x - g x) 2 (μ.restrict K))
       Filter.atTop (nhds 0) by
     have := ENNReal.Tendsto.pow (n := 2) H
     simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow] at this
     refine this.congr fun j => ?_
-    rw [eLp2_eq, sq_rpow_half]; rfl
+    rw [eLp2_eq _ _ (havg j), sq_rpow_half]; rfl
   apply tendsto_zero_of_eventually_le (M := 3) (by norm_num)
   intro ε hε
   set δ := ENNReal.ofReal ε
@@ -232,7 +253,8 @@ theorem GlobalTheory.SgInf.tendsto_average_L2 : ∀ (k r : ℕ) (μ : Measure (M
   have hA : ∀ j, eLpNorm (avgR μ j h) 2 (μ.restrict K) ≤ δ := by
     intro j
     refine le_trans ?_ hcδ
-    rw [eLp2_eq, eLp2_eq]
+    rw [eLp2_eq _ _ (stronglyMeasurable_avgR μ j hhm).aestronglyMeasurable,
+      eLp2_eq _ _ ((hgm.stronglyMeasurable_mk.sub c.continuous.stronglyMeasurable).aestronglyMeasurable)]
     exact ENNReal.rpow_le_rpow (lint_avg_le μ hμ hK.measurableSet hK'm hsub h hhm j) (by norm_num)
   have hC : eLpNorm (fun x => c x - g' x) 2 (μ.restrict K) ≤ δ := by
     refine le_trans (eLpNorm_mono_measure _ hle) ?_
@@ -263,23 +285,14 @@ theorem GlobalTheory.SgInf.tendsto_average_L2 : ∀ (k r : ℕ) (μ : Measure (M
     rw [e1, e2, hxg]
     abel
   rw [eLpNorm_congr_ae hid]
-  have m1 : AEStronglyMeasurable (avgR μ j h) (μ.restrict K) :=
-    (stronglyMeasurable_avgR μ j hhm).aestronglyMeasurable
-  have m2 : AEStronglyMeasurable (fun x => avgR μ j c x - c x) (μ.restrict K) :=
-    ((stronglyMeasurable_avgR μ j c.continuous.stronglyMeasurable).sub
-      c.continuous.stronglyMeasurable).aestronglyMeasurable
-  have m3 : AEStronglyMeasurable (fun x => c x - g' x) (μ.restrict K) :=
-    (c.continuous.stronglyMeasurable.sub hg'm).aestronglyMeasurable
   calc eLpNorm (fun x => (avgR μ j h x + (avgR μ j c x - c x)) + (c x - g' x)) 2 (μ.restrict K)
       ≤ eLpNorm (fun x => avgR μ j h x + (avgR μ j c x - c x)) 2 (μ.restrict K)
         + eLpNorm (fun x => c x - g' x) 2 (μ.restrict K) :=
-        eLpNorm_add_le (m1.add m2) m3 one_le_two
+        eLpNorm_add_le one_le_two
     _ ≤ (eLpNorm (avgR μ j h) 2 (μ.restrict K)
         + eLpNorm (fun x => avgR μ j c x - c x) 2 (μ.restrict K))
         + eLpNorm (fun x => c x - g' x) 2 (μ.restrict K) := by
         gcongr
-        exact eLpNorm_add_le m1 m2 one_le_two
+        exact eLpNorm_add_le one_le_two
     _ ≤ (δ + δ) + δ := by gcongr; exact hA j
     _ = 3 * ENNReal.ofReal ε := by ring
-
-example : ∀ (k r : ℕ) (μ : Measure (Mt k r)), IsHaarOn (GG k r) μ → ∀ {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp] (g : Mt k r → Wp), (∀ K : Set (Mt k r), IsCompact K → AEStronglyMeasurable g (μ.restrict K) ∧ ∫⁻ x in K, (‖g x‖₊ : ENNReal) ^ 2 ∂μ < ⊤) → ∀ K : Set (Mt k r), IsCompact K → Filter.Tendsto (fun j : ℕ => ∫⁻ x in K, (‖avgR μ j g x - g x‖₊ : ENNReal) ^ 2 ∂μ) Filter.atTop (nhds 0) := GlobalTheory.SgInf.tendsto_average_L2

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.FinalTheorems
+module
+
+public import Development.EtaleCohomology.KummerTheory.FinalTheorems
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite

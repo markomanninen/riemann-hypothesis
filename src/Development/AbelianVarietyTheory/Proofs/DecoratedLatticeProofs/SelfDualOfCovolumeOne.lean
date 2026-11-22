@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierInversionZeroCompactQuotient
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierInversionZeroCompactQuotient
+
+@[expose] public section
 
 open MeasureTheory Topology
 
@@ -25,7 +29,7 @@ theorem unfold {G : Type} [AddCommGroup G] [TopologicalSpace G] [IsTopologicalAd
   · have h1 : ∫⁻ y in 𝓕, ∑' γ : Γ, ‖c (γ + y)‖ₑ ∂μ ≠ ⊤ := by
       rw [lintegral_tsum fun γ => (hm γ).enorm]; exact hfin
     have h2 : AEMeasurable (fun y => ∑' γ : Γ, ‖c (γ + y)‖ₑ) (μ.restrict 𝓕) :=
-      AEMeasurable.ennreal_tsum fun γ => (hm γ).enorm
+      AEMeasurable.tsum fun γ => (hm γ).enorm
     filter_upwards [ae_lt_top' h2 h1] with y hy
     have : ∑' γ : Γ, (‖c (γ + y)‖₊ : ENNReal) ≠ ⊤ := by
       simpa only [enorm_eq_nnnorm] using hy.ne
@@ -134,7 +138,7 @@ theorem inversion_zero {Φ : G → ℂ} (hΦ : Continuous Φ) (hs : HasCompactSu
     Integrable.of_bound (continuous_const.mul (hc' ξ)).aestronglyMeasurable ‖Φ ξ‖
       (Filter.Eventually.of_forall fun y => by rw [norm_mul, hn, mul_one])
   have hFs : Summable fun ξ : Γ => ∫ y in 𝓕, ‖Φ ξ * B ξ y‖ ∂μ := by
-    refine summable_of_finite_support (hfin.subset ?_)
+    refine summable_of_hasFiniteSupport (hfin.subset ?_)
     intro ξ hξ h0
     exact hξ (by simp [h0])
   have horth : ∀ ξ : Γ, ξ ≠ 0 → ∫ y in 𝓕, B ξ y ∂μ = 0 := by

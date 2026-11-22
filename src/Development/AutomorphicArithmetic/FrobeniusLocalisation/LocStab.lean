@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped Pointwise
 
@@ -105,10 +110,10 @@ theorem approx (β γ : PadicAlgCl l) (f : ℚ_[l][X]) {ε : ℝ} (hε : 0 < ε)
     obtain ⟨G, h1, h2⟩ := hp (half_pos hε)
     obtain ⟨H, h3, h4⟩ := hq (half_pos hε)
     refine ⟨G + H, ?_, ?_⟩
-    · simp only [map_add]
+    · simp only [map_add (f := _)]
       rw [add_sub_add_comm]
       exact (norm_add_le _ _).trans_lt (by linarith)
-    · simp only [map_add]
+    · simp only [map_add (f := _)]
       rw [add_sub_add_comm]
       exact (norm_add_le _ _).trans_lt (by linarith)
   | monomial n a =>

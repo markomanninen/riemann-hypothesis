@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DomOfStripDown
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DomOfStripDown
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.ComapMaximalIdealParDVR
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.ComapMaximalIdealParDVR
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -27,7 +32,8 @@ theorem eval₂_mul_of_isHomogeneous {k S : Type*} [CommSemiring k] [CommSemirin
 
 theorem map_linForm {R S : Type*} [CommRing R] [CommRing S] {n : ℕ} (f : R →+* S) (u : Fin n → R) :
     MvPolynomial.map f (linForm u) = linForm (fun j => f (u j)) := by
-  simp [linForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [linForm, map_sum]
 
 variable {k : Type} [Field k] {n : ℕ}
 
@@ -101,7 +107,8 @@ theorem eval₂_genPt (p : MvPolynomial (Fin n) k) :
 theorem sT_ne_zero (j : Fin n) (hj : genPt Q j ≠ 0) : sT Q e ≠ 0 := by
   intro h
   have h' := congrArg (eval (Pi.single j 1)) h
-  simp [sT, Pi.single_apply] at h'
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [sT, Pi.single_apply] at h'
   exact hj h'
 
 theorem secIdeal_le_ker (hQh : IsHomogIdeal Q) (c : Fin n → Fn Q) (hc : ∑ j, c j * genPt Q j = 1)
@@ -130,7 +137,8 @@ theorem secIdeal_le_ker (hQh : IsHomogIdeal Q) (c : Fin n → Fn Q) (hc : ∑ j,
   · rw [Ideal.span_le, Set.range_subset_iff]
     intro i
     have h1 : ∑ l, C (c l) * C (genPt Q l) = (1 : MvPolynomial (Fin e × Fin n) (Fn Q)) := by
-      rw [← C_1, ← hc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← C_1, ← hc, map_sum]
       simp_rw [C_mul]
     have key : ∑ l, genSubst (genPt Q) c (i, l) * C (genPt Q l) = 0 := by
       simp only [genSubst]
@@ -139,15 +147,19 @@ theorem secIdeal_le_ker (hQh : IsHomogIdeal Q) (c : Fin n → Fn Q) (hc : ∑ j,
         rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
         exact Finset.sum_congr rfl fun l _ => by ring]
       rw [h1, mul_one, sub_self]
-    rw [SetLike.mem_coe, RingHom.mem_ker, secForm, linForm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [SetLike.mem_coe, RingHom.mem_ker, secForm, linForm, map_sum]
     simp only [map_mul, Ψt, coe_eval₂Hom, eval₂_C, eval₂_X, RingHom.comp_apply, ρ_X_inl, xs, ι]
     simp_rw [← mul_assoc, ← map_mul]
-    rw [← Finset.sum_mul, ← map_sum, ← map_sum, key, map_zero, map_zero, zero_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_mul, ← map_sum, ← map_sum, key, map_zero, map_zero, zero_mul]
   · rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, RingHom.mem_ker, chartForm, linForm]
-    simp only [map_sub, map_one, map_sum, map_mul, Ψt, coe_eval₂Hom, eval₂_C, eval₂_X, RingHom.comp_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_one, map_sum, map_mul, Ψt, coe_eval₂Hom, eval₂_C, eval₂_X, RingHom.comp_apply,
       ρ_X_inr, xs, ι]
     simp_rw [← mul_assoc, ← map_mul]
-    rw [← Finset.sum_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_mul, ← map_sum]
     have : ∑ l, X l * (C (C (genPt Q l)) : Tgt Q e) = sT Q e := rfl
     rw [this, mul_inv_cancel₀ hs', sub_self]
 
@@ -210,7 +222,8 @@ theorem secR_isDomain (h₁ : ChartDomain.Statement) (Q : Ideal (MvPolynomial (F
     have h : Ideal.Quotient.mk (secIdeal (Q.map (MvPolynomial.map (C : k →+* MvPolynomial (Par e n) k)))
         (X : Par e n → MvPolynomial (Par e n) k)) (chartForm X - 1) = 0 :=
       Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mem_sup_right (Ideal.mem_span_singleton_self _))
-    rw [map_sub, map_one, sub_eq_zero, chartForm, linForm, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_one, sub_eq_zero, chartForm, linForm, map_sum] at h
     simpa [xc, secCoord] using h
   have hchart : ∀ j (a : SecR Q e), algebraMap _ (Localization.Away (xc Q e j)) a = 0 →
       ∃ N : ℕ, xc Q e j ^ N * a = 0 := by
@@ -276,8 +289,7 @@ theorem map_secIdeal (Q : Ideal (MvPolynomial (Fin n) k)) (e : ℕ) :
     rw [Ideal.map_span, ← Set.range_comp]
     congr 2
     funext i
-    simp only [Function.comp_apply, secForm, map_linForm]
-    rfl
+    simp [secForm, map_linForm, genPar]
   have h3 : (Ideal.span {chartForm (X : Par e n → MvPolynomial (Par e n) k) - 1}).map
       (MvPolynomial.map (algebraMap (MvPolynomial (Par e n) k) (GenParField k e n))) =
       Ideal.span {chartForm (genPar k e n) - 1} := by
@@ -287,8 +299,8 @@ theorem map_secIdeal (Q : Ideal (MvPolynomial (Fin n) k)) (e : ℕ) :
 
 end GenSecDomain
 
-open GenSecDomain in
 
+open GenSecDomain in
 theorem GenSecDomain.proof (h₁ : ChartDomain.Statement) (h₂ : IncidenceGeneric.Statement)
     (h₃ : IncIdealBelow.Statement) : GenSecDomain.Statement := by
   intro k _ n e Q g hQ hg

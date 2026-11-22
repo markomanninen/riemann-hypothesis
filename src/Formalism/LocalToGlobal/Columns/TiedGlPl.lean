@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.TiedGlCore
-import Formalism.LocalToGlobal.Columns.RecLevelHost
+module
+
+public import Formalism.LocalToGlobal.Columns.TiedGlCore
+public import Formalism.LocalToGlobal.Columns.RecLevelHost
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -37,8 +41,8 @@ theorem gloRho_oToS (a : 𝓞 E) : gloRho v spl halg (oToS F E a) = IsLocalRing.
   rw [gloRho_apply]
   congr 1
 
-include hc in
 
+include hc in
 theorem glk_ker (w : Pl E) (hov : IsOver v w) (ϖ : 𝓞 E) (h2 : cO E ϖ ∉ w.asIdeal)
     (hval : Valued.v (gloPhi v spl (inclE (F := F) (v.adicCompletion F) (algebraMap (𝓞 E) E ϖ))) < 1) :
     ∀ a ∈ w.asIdeal, gloRho v spl halg (oToS F E a) = 0 := by
@@ -93,99 +97,10 @@ structure GSplit where
   sp_alg : ∀ i v h (a : v.adicCompletion X.F), sp i v h ((1 : X.E) ⊗ₜ[X.F] a) = (a, a)
   sp_pi : ∀ i v h, Valued.v (sp i v h (inclE (F := X.F) (v.adicCompletion X.F) (hc.sig (Pr.piG i : X.E)))).1 < 1
 
-include hc hPr in
-theorem glk_under (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) : v ∈ plUnder X.F (Pr.vG i) ↔ (Pr.g i : 𝓞 X.F) ∈ v.asIdeal := by
-  have hne : X.conjO (Pr.piG i) ≠ 0 := by
-    intro h0
-    have := hPr.piG_norm i
-    rw [h0, mul_zero] at this
-    exact (Nat.cast_ne_zero.2 (hPr.g_prime i).ne_zero) this.symm
-  refine mem_plUnder_iff_norm hc (fun P => mem_divs hne P) (Pr.g i) ?_ v
-  have h2 : cO X.E (X.conjO (Pr.piG i)) = Pr.piG i := RingOfIntegers.ext (star_star _)
-  rw [h2, mul_comm]; exact hPr.piG_norm i
-
-theorem glk_vG_le (i : Fin 2) {w : Pl X.E} (h : w ∈ Pr.vG i) : w ∈ Pr.vGs := by
-  classical
-  unfold Primes.vGs
-  fin_cases i
-  · exact Finset.mem_union_left _ h
-  · exact Finset.mem_union_right _ h
-
-def gwOf (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal) : Pr.vGs :=
-  ⟨((glk_under hc hPr i v).2 h).choose, glk_vG_le i ((glk_under hc hPr i v).2 h).choose_spec.1⟩
-
-theorem gwOf_mem (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal) :
-    (gwOf hc hPr i v h).1 ∈ Pr.vG i := ((glk_under hc hPr i v).2 h).choose_spec.1
-
-theorem gwOf_over (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal) :
-    IsOver v (gwOf hc hPr i v h).1 := ((glk_under hc hPr i v).2 h).choose_spec.2
-
-theorem gwOf_uniq (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal) (w' : Pr.vGs)
-    (hw' : IsOver v w'.1) : w' = gwOf hc hPr i v h := by
-  rcases rll_over_cases hc (gwOf_over hc hPr i v h) hw' with e | e
-  · exact Subtype.ext e
-  · exact absurd e (rlh_vGs_not_conj hPr (gwOf hc hPr i v h).2 w'.2)
 
 variable {hc}
 
-theorem GSplit.ker (S : GSplit (Pr := Pr) hc) (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal) :
-    ∀ a ∈ (gwOf hc hPr i v h).1.asIdeal, gloRho v (S.sp i v h) (S.sp_alg i v h) (oToS X.F X.E a) = 0 := by
-  refine glk_ker hc v (S.sp i v h) (S.sp_alg i v h) _ (gwOf_over hc hPr i v h) (X.conjO (Pr.piG i)) ?_ (S.sp_pi i v h)
-  have h2 : cO X.E (X.conjO (Pr.piG i)) = Pr.piG i := RingOfIntegers.ext (star_star _)
-  rw [h2]
-  intro hmem
-  have h3 : X.conjO (Pr.piG i) ∈ (gwOf hc hPr i v h).1.asIdeal := decoFin_mem_of_mem_divs (gwOf_mem hc hPr i v h)
-  obtain ⟨a, b, e⟩ := hPr.piG_cop i
-  apply one_notMem (gwOf hc hPr i v h).1
-  rw [← e]
-  exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ hmem) (Ideal.mul_mem_left _ _ h3)
 
-def GSplit.eK (S : GSplit (Pr := Pr) hc) (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal) :
-    kP (gwOf hc hPr i v h).1 ≃+* kv X.F v :=
-  gloE v (S.sp i v h) (S.sp_alg i v h) _ (S.ker hPr i v h)
-
-include hPr in
-
-theorem GSplit.res_one (S : GSplit (Pr := Pr) hc) (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal)
-    (ϖ : 𝓞 X.E) (hϖ : (Pr.g i : 𝓞 X.E) ∣ ϖ - 1) : gloRho v (S.sp i v h) (S.sp_alg i v h) (oToS X.F X.E ϖ) = 1 := by
-  obtain ⟨s, hs⟩ := hϖ
-  have hg : (Pr.g i : 𝓞 X.E) ∈ (gwOf hc hPr i v h).1.asIdeal := by
-    have h1 : (Pr.g i : 𝓞 X.F) ∈ (gwOf hc hPr i v h).1.asIdeal.comap (algebraMap (𝓞 X.F) (𝓞 X.E)) := (gwOf_over hc hPr i v h) ▸ h
-    rwa [Ideal.mem_comap, map_natCast] at h1
-  have h2 : ϖ = 1 + (Pr.g i : 𝓞 X.E) * s := by rw [← hs]; ring
-  rw [h2, map_add, map_add, map_one, map_one, S.ker hPr i v h _ (Ideal.mul_mem_right _ _ hg), add_zero]
-
-def GSplit.unitOf (S : GSplit (Pr := Pr) hc) (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal)
-    (ϖ : 𝓞 X.E) (hϖ : (Pr.g i : 𝓞 X.E) ∣ ϖ - 1) : (v.adicCompletionIntegers X.F)ˣ :=
-  IsUnit.unit (a := (⟨gloPhi v (S.sp i v h) (inclE (F := X.F) (v.adicCompletion X.F) (algebraMap (𝓞 X.E) X.E ϖ)), by
-      have := gloPhi_int v (S.sp i v h) (S.sp_alg i v h) _ (afsplit_prV_int v _ (oToS X.F X.E ϖ).2)
-      rwa [show ((oToS X.F X.E ϖ : Formalism.L2.Herm.intAf X.F X.E) : X.E ⊗[X.F] Formalism.L2.Herm.Af X.F) =
-        inclE (F := X.F) (Formalism.L2.Herm.Af X.F) (algebraMap (𝓞 X.E) X.E ϖ) from rfl, afsplit_prV_inclE] at this⟩ :
-      v.adicCompletionIntegers X.F)) (by
-    rw [← IsLocalRing.notMem_maximalIdeal, ← IsLocalRing.residue_eq_zero_iff, ← gloRho_oToS v (S.sp i v h) (S.sp_alg i v h) ϖ,
-      S.res_one hPr i v h ϖ hϖ]
-    exact one_ne_zero)
-
-theorem GSplit.unitOf_val (S : GSplit (Pr := Pr) hc) (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal)
-    (ϖ : 𝓞 X.E) (hϖ : (Pr.g i : 𝓞 X.E) ∣ ϖ - 1) :
-    ((S.unitOf hPr i v h ϖ hϖ : v.adicCompletionIntegers X.F) : v.adicCompletion X.F) =
-      gloPhi v (S.sp i v h) (inclE (F := X.F) (v.adicCompletion X.F) (algebraMap (𝓞 X.E) X.E ϖ)) := rfl
-
-theorem GSplit.unitOf_res (S : GSplit (Pr := Pr) hc) (i : Fin 2) (v : HeightOneSpectrum (𝓞 X.F)) (h : (Pr.g i : 𝓞 X.F) ∈ v.asIdeal)
-    (ϖ : 𝓞 X.E) (hϖ : (Pr.g i : 𝓞 X.E) ∣ ϖ - 1) :
-    IsLocalRing.residue (v.adicCompletionIntegers X.F) (S.unitOf hPr i v h ϖ hϖ) = 1 := by
-  rw [← S.res_one hPr i v h ϖ hϖ, gloRho_oToS]
-  rfl
-
-include hPr in
-theorem glk_piT_cong (u : Pr.Word) (i : Fin 2) : (Pr.g i : 𝓞 X.E) ∣ Pr.piT u - 1 := by
-  refine Dvd.dvd.trans ?_ (hPr.piT_cong u)
-  have : Pr.g i ∣ Pr.cond * (Pr.g 0 * Pr.g 1) ^ 2 := by
-    refine Dvd.dvd.mul_left (Dvd.dvd.trans ?_ (dvd_pow_self _ two_ne_zero)) _
-    fin_cases i
-    · exact Dvd.intro _ rfl
-    · exact Dvd.intro_left _ rfl
-  exact Nat.cast_dvd_cast this
 
 end Pl
 

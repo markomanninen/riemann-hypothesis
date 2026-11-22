@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.OrdDetUniformizerImageEq
-import Development.WeilBound.ThetaLifts.SphericalLattices.MemRangeOfEntries
-import Development.WeilBound.ThetaLifts.SphericalLattices.IntMFromBlocks
-import Development.WeilBound.ThetaLifts.SphericalLattices.OneAddNe
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.OrdDetUniformizerImageEq
+public import Development.WeilBound.ThetaLifts.SphericalLattices.MemRangeOfEntries
+public import Development.WeilBound.ThetaLifts.SphericalLattices.IntMFromBlocks
+public import Development.WeilBound.ThetaLifts.SphericalLattices.OneAddNe
+
+@[expose] public section
 
 namespace PositivityTheory.Sph.M2
 

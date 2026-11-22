@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalJ
-import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.Th0FromPhPrime
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.GoodModelLattice
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementK
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalJ
+public import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.Th0FromPhPrime
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.GoodModelLattice
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementK
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -148,7 +152,8 @@ theorem kernel_stable_of_integral_kernel (hK : KernelIntegral) : KernelStableUnd
     have hl : t + P ∉ L.lattice := fun h => hn (lattice_point_in_kernel_subgroup hU _ h)
     exact not_lt.1 (mt (mem_kernel_subgroup_iff_norm hU _ hl).2 hn)
   have h := congrArg ι hiso
-  simp only [map_mul, map_pow, map_add, map_sum, map_sub] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_pow, map_add (f := _), map_sum, map_sub] at h
   rw [hb] at h
   rw [mem_kernel_subgroup_iff_norm hU _ hαt]
   rw [mem_kernel_subgroup_iff_norm hU _ htL] at ht

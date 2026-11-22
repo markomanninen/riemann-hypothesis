@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanPeriodLatticeComplexSemiAbelianEqTopStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanPeriodLatticeComplexSemiAbelianEqTopStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ShFam.Pad GlobalTheory.ShFam.Hor GlobalTheory.ShFam.Hor.LogCh
 open scoped Matrix CategoryTheory.Obj Topology
@@ -42,7 +47,7 @@ theorem exists_lagrangian_dual_in_coisotropic : ∀ (r : ℕ) (M : Matrix (Fin r
       have h2 := hvL a' ha'
       have h3 : B a v = 0 := by rw [hskewB, hvL a ha, neg_zero]
       have h4 := hBalt v
-      simp [map_add, map_smul, h1, h2, h3, h4]
+      simp [map_add (f := _), map_smul, h1, h2, h3, h4]
     have hle : L ⊔ Submodule.span ℝ {v} ≤ W :=
       sup_le hLW (by rw [Submodule.span_le]; simpa using hvW)
     have hP : P (finrank ℝ ↥(L ⊔ Submodule.span ℝ {v})) := ⟨_, hle, hiso, rfl⟩
@@ -112,7 +117,8 @@ theorem exists_lagrangian_dual_in_coisotropic : ∀ (r : ℕ) (M : Matrix (Fin r
     have hc : ∀ i, b.repr ⟨v, hvL'⟩ i = 0 := by
       intro i
       have h := hvf i
-      rw [hv', map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hv', map_sum] at h
       simpa [map_smul, hfe] using h
     have h0 : (⟨v, hvL'⟩ : L) = 0 := b.repr.injective (by ext i; simp [hc])
     simpa using congrArg Subtype.val h0

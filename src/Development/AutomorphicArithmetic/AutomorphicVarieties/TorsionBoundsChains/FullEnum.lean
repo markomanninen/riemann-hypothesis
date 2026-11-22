@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+
+@[expose] public section
 
 open CategoryTheory UpperTheory.V.KH
 
@@ -20,7 +24,7 @@ theorem UpperTheory.V.KH.fullEnum :
     rw [linearIndependent_iff']
     intro s c hs i hi
     have := congrArg (fun f : ι →₀ ℤ => f i) hs
-    simp only [Finsupp.finset_sum_apply, Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul,
+    simp only [Finsupp.finsetSum_apply, Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul,
       Finsupp.coe_zero, Pi.zero_apply] at this
     rw [Finset.sum_eq_single i] at this
     · simp only [if_true, mul_one] at this

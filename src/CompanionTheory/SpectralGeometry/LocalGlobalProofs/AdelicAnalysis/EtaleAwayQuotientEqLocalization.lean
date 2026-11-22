@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem trace_entry [FiniteDimensional F E] (σ : E →ₐ[F] E) {d : ℕ} (b : 
         (algebraMap F R (Algebra.trace F E (σ (b k) * e * b l)) *
           (Algebra.TensorProduct.basis R b).repr v l) := by
   conv_lhs => rw [expand b R u, expand b R v]
-  simp only [map_sum, Finset.sum_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
   have : sigR R σ (((Algebra.TensorProduct.basis R b).repr u k) ⊗ₜ[F] b k) =
@@ -83,17 +88,20 @@ theorem trGram_det_ne_zero {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {M d : ℕ}
     have h0 := congrFun hBv (i, k)
     simp only [Matrix.mulVec, dotProduct, Fintype.sum_prod_type, trGram, Pi.zero_apply] at h0
     rw [← h0]
-    simp only [Matrix.mulVec, dotProduct, hy, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, hy, Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun l _ => ?_
     rw [mul_smul_comm, mul_smul_comm, map_smul, smul_eq_mul, mul_comm, mul_assoc]
   have key2 : ∀ i (e : E), Algebra.trace F E (e * (J *ᵥ y) i) = 0 := by
     intro i e
     have he : e = ∑ k, (b.repr (σ e) k) • σ (b k) := by
       have h3 := congrArg σ (b.sum_repr (σ e))
-      rw [sig_sig h, map_sum] at h3
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [sig_sig h, map_sum] at h3
       exact h3.symm.trans (Finset.sum_congr rfl fun k _ => σ.toLinearMap.map_smul _ _)
     rw [he]
-    simp only [Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, key, smul_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, key, smul_zero,
       Finset.sum_const_zero]
   have hw : J *ᵥ y = 0 := by
     funext i
@@ -123,7 +131,8 @@ theorem trace_form_coords : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
   intro R _ _ x y
   have hh : hR R σ J x y = ∑ i, ∑ j, sigR R σ (x i) * ((1 : R) ⊗ₜ[F] J i j) * y j := rfl
   rw [hh]
-  simp only [map_sum, TraceFormGram.trace_entry σ b R]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, TraceFormGram.trace_entry σ b R]
   simp only [dotProduct, Matrix.mulVec, Fintype.sum_prod_type, Matrix.map_apply, TraceFormGram.trGram,
     Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_

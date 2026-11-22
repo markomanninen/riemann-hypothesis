@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.IntegrableConjPowGaussian
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.IntegrableConjPowGaussian
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ def Dec (a : K × (ι → ℂ) → ℂ) : Prop := ∀ N : ℕ, ∃ C : ℝ, ∀ 
 
 theorem norm_rationalWeight_le (κ : ι → ℕ) (e : ℕ) (x : ι → ℂ) : ‖r0 κ e x‖ ≤ (1 + ‖x‖) ^ (2 * e * Fintype.card ι) := by
   rw [r0, norm_prod, pow_mul, ← Finset.card_univ, ← Finset.prod_const]
-  refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun w _ => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun w _ => ?_
   rw [norm_mul, norm_pow, norm_pow, norm_div, Complex.norm_real, norm_norm]
   have h1 : (‖x w‖ / ‖x w‖) ^ κ w ≤ 1 := pow_le_one₀ (by positivity) (div_self_le_one _)
   have h2 : ‖x w‖ ^ (2 * e) ≤ (1 + ‖x‖) ^ (2 * e) := pow_le_pow_left₀ (norm_nonneg _) (by linarith [norm_le_pi_norm x w]) _
@@ -46,7 +50,7 @@ theorem Dec.bound {a : K × (ι → ℂ) → ℂ} (ha : Dec a) (M : ℕ) : ∃ (
 
 theorem continuousOn_rationalWeight (κ : ι → ℕ) (e : ℕ) : ContinuousOn (r0 κ e) {x | ∀ w, x w ≠ 0} := by
   refine continuousOn_finsetProd _ fun w _ => ?_
-  refine ContinuousOn.mul (ContinuousOn.pow (ContinuousOn.div (by fun_prop) (by fun_prop) fun x hx => ?_) _) (by fun_prop)
+  refine ContinuousOn.mul (ContinuousOn.pow (ContinuousOn.div₀ (by fun_prop) (by fun_prop) fun x hx => ?_) _) (by fun_prop)
   simpa using hx w
 
 theorem open_U : IsOpen {p : K × (ι → ℂ) | ∀ w, p.2 w ≠ 0} := by

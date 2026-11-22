@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenericHeckeMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsGHeckeMapForget
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenericHeckeMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsGHeckeMapForget
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.G3
@@ -32,7 +36,7 @@ private theorem pt_transfer {N' N : ℕ} (hN : 0 < N) (hNp : N.Coprime p) {o : G
       exact absurd hdp (Fact.out : p.Prime).one_lt.ne'
     · exact h0
   have hn : 0 < N * d := Nat.mul_pos hN hd0
-  have hnp : (N * d).Coprime p := Nat.Coprime.mul hNp hdp
+  have hnp : (N * d).Coprime p := Nat.Coprime.mul_left hNp hdp
   have h1 : (a ≫ ψ₁) ^ N = 1 := by
     rw [ha]
     exact (J₁.onto N hN _).mpr ⟨y, rfl⟩

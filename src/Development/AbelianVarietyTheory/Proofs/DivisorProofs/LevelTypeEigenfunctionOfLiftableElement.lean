@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.RowsOfLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.RowsOfLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem levelType_eigenfunction_of_liftable_element {V : HSp D} {β : GL (Fin V.
   have ha := levChi_ne_zero (β := β) (flagL L) hex.choose
   funext h
   unfold actG0
-  rw [dif_pos hex, hF _ hmem h, hc]
+  rw [dite_eq_left hex, hF _ hmem h, hc]
   field_simp
 
 variable {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
@@ -44,7 +48,7 @@ theorem exists_lift_of_ne_zero (R : RealDat D A Ks) (hinj : Function.Injective R
     ext v h
     show actG0 _ _ _ _ _ h = 0
     unfold actG0
-    rw [dif_neg hk]
+    rw [dite_eq_right hk]
     rfl
   have : R.gE g⁻¹ (R.gE g x) = x := by
     rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]

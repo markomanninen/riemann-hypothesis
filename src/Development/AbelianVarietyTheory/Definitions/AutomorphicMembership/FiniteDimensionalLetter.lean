@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EqOfPowEqOneOfNormSubLt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFrobeniusSemisimplification
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNilpotentZpowSubOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanMkQOneTmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EqOfPowEqOneOfNormSubLt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFrobeniusSemisimplification
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNilpotentZpowSubOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanMkQOneTmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,8 @@ theorem finiteDimensional_letter {ι : Type} [Fintype ι] (b : ι → D)
   rw [← span_letterMk, Submodule.span_le, Set.Finite.coe_toFinset]
   rintro _ ⟨x, rfl⟩
   obtain ⟨c, rfl⟩ := hb x
-  rw [letterMk, tmul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [letterMk, tmul_sum, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   have := letterMk_mul m F τ (c i) (b i)
   rw [letterMk] at this
@@ -109,8 +114,8 @@ def Induces : Prop := ∀ x, x ∈ A ↔ ‖Bw.j x‖ ≤ 1
 
 variable {Bw}
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem Induces.valuation_lt_one_iff (hj : Induces Bw) (x : Ω) : A.valuation x < 1 ↔ ‖Bw.j x‖ < 1 := by
   rw [valuation_lt_one_iff', hj, hj, map_inv₀, norm_inv]
   rcases eq_or_ne x 0 with rfl | hx
@@ -135,8 +140,8 @@ theorem weilToGK_j (σ : ↥(Weil h)) (x : Ω) :
 
 variable {Bw h} [IsAlgClosure E Ω]
 
-variable (l) in
 
+variable (l) in
 def alpha (σ : ↥(Weil h)) : ℤ := resDeg l w * deg σ
 
 theorem frobUr_pow_root (n : ℕ) (c : ↥(MaximalUnramifiedExtension l)) (m : ℕ) (h0 : 0 < m) (hm : ¬ l ∣ m) (hc : c ^ m = 1) :
@@ -186,8 +191,8 @@ theorem commute_actD_phiU (g : ↥(GK K)) (n : ℤ) :
     Commute (actD P ρ g) ((phiU P ρ ^ n : (End LL ↥(Dpst P ρ))ˣ) : End LL ↥(Dpst P ρ)) :=
   Commute.units_zpow_right (u := phiU P ρ) (phiD_actD P ρ g).symm n
 
-omit [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ)] in
 
+omit [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ)] in
 theorem phiD_pow_mulD (n : ℕ) (c : ↥(MaximalUnramifiedExtension l)) :
     phiD P ρ ^ n * mulD P ρ c = mulD P ρ ((frobUr l ^ n) c) * phiD P ρ ^ n := by
   induction n generalizing c with

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -258,7 +262,8 @@ theorem biInvariant_eval {z : Fin p × Fin p → σ} (hz : Function.Injective z)
     funext s
     by_cases hs : ∃ w, z w = s
     · obtain ⟨⟨u, v⟩, rfl⟩ := hs
-      simp only [setBlock_apply hz, map_add, eval_X, map_sum, hz.eq_iff, Prod.mk.injEq,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [setBlock_apply hz, map_add (f := _), eval_X, map_sum, hz.eq_iff, Prod.mk.injEq,
         apply_ite (eval (setBlock z x M)), map_mul, eval_C, map_zero, rowAdd, of_apply]
       by_cases hu : u = b <;> simp [hu]
     · have : ∀ w, s ≠ z w := fun w h => hs ⟨w, h.symm⟩
@@ -270,7 +275,8 @@ theorem biInvariant_eval {z : Fin p × Fin p → σ} (hz : Function.Injective z)
     funext s
     by_cases hs : ∃ w, z w = s
     · obtain ⟨⟨u, v⟩, rfl⟩ := hs
-      simp only [setBlock_apply hz, map_add, eval_X, map_sum, hz.eq_iff, Prod.mk.injEq,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [setBlock_apply hz, map_add (f := _), eval_X, map_sum, hz.eq_iff, Prod.mk.injEq,
         apply_ite (eval (setBlock z x Mᵀ)), map_mul, eval_C, map_zero, rowAdd, of_apply,
         transpose_apply]
       by_cases hu : v = b <;> simp [hu]
@@ -286,8 +292,9 @@ theorem eval_setBlock_diagonal {z : Fin p × Fin p → σ} (hz : Function.Inject
     intro s
     by_cases hs : ∃ w, z w = s
     · obtain ⟨⟨u, v⟩, rfl⟩ := hs
-      simp only [w, setBlock_apply hz, diagonal_apply, one_apply, of_apply]
-      split_ifs <;> simp
+      simp only [w, setBlock_apply hz]
+      change diagonal d u v = (1 : Matrix (Fin p) (Fin p) K) u v * d u
+      by_cases h : u = v <;> simp [diagonal_apply, Matrix.one_apply, h]
     · simp [w, setBlock_of_not _ _ hs]
   rw [eval_eq, eval_eq, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
@@ -307,8 +314,8 @@ theorem eval_setBlock_diagonal {z : Fin p × Fin p → σ} (hz : Function.Inject
 
 end UnipotentInvariant
 
-open UnipotentInvariant in
 
+open UnipotentInvariant in
 theorem eq_mul_prod_minors {K σ : Type*} [Field K] [CharZero K] [DecidableEq σ] {p : ℕ} (z : Fin p × Fin p → σ) (hz : Function.Injective z)
     (P : MvPolynomial σ K) (c : Fin p → ℕ)
     (hrow : ∀ a, ∀ m ∈ P.support, ∑ k, m (z (a, k)) = ∑ i ∈ Finset.Ici a, c i)

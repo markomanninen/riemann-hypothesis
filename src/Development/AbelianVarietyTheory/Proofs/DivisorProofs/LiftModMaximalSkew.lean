@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 
 namespace GlobalTheory
@@ -21,7 +26,8 @@ theorem lift_mod_maximal_skew : ∀ (O : Type) [CommRing O] [IsLocalRing O] (c :
     ext i j; simp [Matrix.transpose_apply, Matrix.map_apply, hJ]
   have hEc : (E.map c)ᵀ = E := by
     ext i j
-    simp only [hE, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.mul_apply, map_add, map_sum, map_mul, hc, hJ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hE, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.mul_apply, map_add (f := _), map_sum, map_mul, hc, hJ]
     rw [add_comm]
     congr 1 <;> refine Finset.sum_congr rfl (fun k _ => ?_) <;> ring
   have hJinv : J * ((J⁻¹).map c)ᵀ = 1 := by
@@ -35,7 +41,8 @@ theorem lift_mod_maximal_skew : ∀ (O : Type) [CommRing O] [IsLocalRing O] (c :
   have hDmap : D.map c = u • (((J⁻¹).map c)ᵀ * (E.map c)ᵀ) := by
     rw [← Matrix.transpose_mul, ← Matrix.map_mul, hD]
     ext i j
-    simp [Matrix.transpose_apply, Matrix.map_apply, Matrix.smul_apply, Matrix.mul_apply, map_sum, map_mul, hcu]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.transpose_apply, Matrix.map_apply, Matrix.smul_apply, Matrix.mul_apply, map_sum, map_mul, hcu]
   have hDc : J * D.map c = u • E := by
     rw [hDmap, Matrix.mul_smul, ← Matrix.mul_assoc, hJinv, Matrix.one_mul, hEc]
   refine ⟨Z₀ - D, ?_, ?_⟩

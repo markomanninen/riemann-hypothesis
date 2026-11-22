@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SelfDualLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.DualBasis
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.HformSumRight
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SelfDualLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.DualBasis
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.HformSumRight
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain
 
@@ -64,7 +68,8 @@ theorem dualBasis : DualBasis := by
   refine ⟨fun j => e.symm (Pi.single j 1), fun i j => ?_, fun w => ⟨fun j => e w j, ?_⟩⟩
   · rw [← hvec_apply, ← he, LinearEquiv.apply_symm_apply, Pi.single_apply]
   · apply e.injective
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, LinearEquiv.apply_symm_apply]
     ext i
     simp [Finset.sum_apply, Pi.single_apply]

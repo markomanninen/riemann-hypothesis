@@ -1,5 +1,9 @@
-import ReciprocityTheory.GroupCohomology.TransgressionStatement
-import ReciprocityTheory.GroupCohomology.LowHolds
+module
+
+public import ReciprocityTheory.GroupCohomology.TransgressionStatement
+public import ReciprocityTheory.GroupCohomology.LowHolds
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 

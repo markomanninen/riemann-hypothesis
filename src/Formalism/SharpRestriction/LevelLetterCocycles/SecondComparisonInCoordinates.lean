@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
-import Formalism.SharpRestriction.LevelLetterCocycles.ExponentWindowSubsetShort
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
-import Lemmata.FirstBlockLemmaI.Imports
-import Lemmata.GeneralBFactRightForm.Imports
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExponentWindowSubsetShort
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+public import Lemmata.FirstBlockLemmaI.Imports
+public import Lemmata.GeneralBFactRightForm.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -172,7 +176,8 @@ theorem mem_DelF_mul {δ' : W.Gam} (hδ' : δ' ∈ W.DelF) (δ : W.Gam) :
 
 theorem sum_γA_mem (c : LetA O n) : ∑ δ ∈ W.DelF, W.γA δ c ∈ W.AΔ := by
   intro δ' hδ'
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_equiv (Equiv.mulLeft δ') (fun δ => ?_) (fun δ _ => ?_)
   · exact mem_DelF_mul hδ' δ
   · rw [← γA_mul]
@@ -187,7 +192,8 @@ theorem average (hΔ : IsUnit ((W.DelF.card : ℕ) : O)) {r : ℕ} (c : Fin r �
     fun j => W.AΔ.smul_mem (sum_γA_mem (c j)) _, ?_⟩
   have h1 : ∀ δ ∈ W.DelF, z = ∑ j, W.γA δ (c j) • w j := by
     intro δ hδ
-    rw [← hz δ hδ, h, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hz δ hδ, h, map_sum]
     exact Finset.sum_congr rfl fun j _ => by rw [γD_smulA, hw j δ hδ]
   have h2 : ((W.DelF.card : ℕ) : O) • z = ∑ j, (∑ δ ∈ W.DelF, W.γA δ (c j)) • w j := by
     simp only [Finset.sum_smul]
@@ -206,7 +212,8 @@ theorem φspan_le {r : ℕ} (b : Fin r → W.DD T)
   obtain ⟨a, ha⟩ := hb x hx
   have e : W.φD T (((letE (i - 1) : LetA O n) • (LinearMap.id : W.DD T →ₗ[LetA O n] W.DD T)) x) =
       ∑ j, W.φA (a j) • W.φD T ((letE (i - 1) : LetA O n) • b j) := by
-    rw [LinearMap.smul_apply, LinearMap.id_apply, ha, Finset.smul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.smul_apply, LinearMap.id_apply, ha, Finset.smul_sum, map_sum]
     exact Finset.sum_congr rfl fun j _ => by rw [smul_comm, φD_smulA]
   rw [SetLike.mem_coe, e]
   exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -430,7 +437,8 @@ theorem pull_mutual (L : Formalism.ExponentWindows.E.Lat B' n' V) (m h : ZMod n'
         rintro _ ⟨y, hy, rfl⟩
         rw [SetLike.mem_coe, hi] at hy
         obtain ⟨cf, hcf⟩ := (Submodule.mem_span_range_iff_exists_fun (PowerSeries O')).1 (h2 y hy)
-        rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.lsmul_apply, ← L.φ_semi, ← hcf, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [SetLike.mem_coe, Submodule.mem_comap, LinearMap.lsmul_apply, ← L.φ_semi, ← hcf, map_sum]
         refine Submodule.sum_mem _ fun a _ => ?_
         rw [L.φ_semi]
         exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩)

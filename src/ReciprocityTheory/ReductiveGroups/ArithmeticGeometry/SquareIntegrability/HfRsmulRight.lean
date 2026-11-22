@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GaussianTailBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GaussianTailBound
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 open NumberField Complex
@@ -14,13 +18,6 @@ lemma Hf_eq_inner {ι : Type} [Fintype ι] (v w : EuclideanSpace ℂ ι) : Hf v 
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [RCLike.inner_apply, mul_comm]
 
-lemma re_Hf {ι : Type} [Fintype ι] (v w : EuclideanSpace ℂ ι) : (Hf v w).re = inner ℝ v w := by
-  unfold Hf
-  rw [PiLp.inner_apply, Complex.re_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  simp only [Complex.inner, Complex.mul_re, Complex.conj_re, Complex.conj_im]
-  ring
-
 lemma Hf_add_left {ι : Type} [Fintype ι] (v v' w : EuclideanSpace ℂ ι) :
     Hf (v + v') w = Hf v w + Hf v' w := by
   simp only [Hf, PiLp.add_apply, add_mul, Finset.sum_add_distrib]
@@ -29,7 +26,6 @@ lemma Hf_zero_left {ι : Type} [Fintype ι] (v : EuclideanSpace ℂ ι) : Hf 0 v
   simp [Hf]
 
 open Classical in
-
 def prj {dim : (E →+* ℂ) → ℕ} (σ : E →+* ℂ) : Vsp dim →ₗ[ℂ] Vsp dim where
   toFun v := WithLp.toLp 2 fun i => if i.1 = σ then v i else 0
   map_add' v w := by ext i; simp only [PiLp.add_apply]; split_ifs <;> simp
@@ -70,7 +66,6 @@ lemma ne_conj [IsCMField E] (σ : E →+* ℂ) : ComplexEmbedding.conjugate σ �
   exact hc (ComplexEmbedding.isReal_iff.mpr h)
 
 open Classical in
-
 def Mc {dim : (E →+* ℂ) → ℕ} (σ : E →+* ℂ) (c : ℂ) : Vsp dim →ₗ[ℂ] Vsp dim where
   toFun v := WithLp.toLp 2 fun i => if i.1 = σ then c * v i else
     if i.1 = ComplexEmbedding.conjugate σ then (starRingEnd ℂ) c * v i else 0

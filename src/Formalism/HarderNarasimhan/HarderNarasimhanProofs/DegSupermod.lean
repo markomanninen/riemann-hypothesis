@@ -1,5 +1,9 @@
-import Formalism.HarderNarasimhan.DegSupermodZ
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermodZ
+module
+
+public import Formalism.HarderNarasimhan.DegSupermodZ
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermodZ
+
+@[expose] public section
 
 open Module Submodule
 

@@ -1,19 +1,24 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ConeSite
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ZeroC
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartRestrictPullBijective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningFiltrationIsFil
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepresentativeRestrict
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCupListRepresentative
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitLogRepresentativeCompat
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FilteredCochainExtendOfSurjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopRepresentativeAdd
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueTopGradedRep
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopGradedRepRestrict
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopGradedRepDerivationCompat
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopGradedRepOpenCompat
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ConeSite
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ZeroC
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartRestrictPullBijective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningFiltrationIsFil
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepresentativeRestrict
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCupListRepresentative
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitLogRepresentativeCompat
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FilteredCochainExtendOfSurjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopRepresentativeAdd
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueTopGradedRep
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopGradedRepRestrict
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopGradedRepDerivationCompat
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TopGradedRepOpenCompat
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris ReciprocityTheory.ChartRestriction.G.Geo.Tor CrystallineSemistableComparison CrystallineSemistableComparison.Pb
@@ -86,7 +91,8 @@ theorem glue {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] (F : C ⥤ Mo
     (e2 : c0 - ∑ j, (resU F (hP j)).pull m (ω j) = (resU F h).pull m x) :
     c = ∑ j, (resU F (hA j)).pull m (ω' j) + x := by
   apply hi
-  rw [map_add, map_sum, ← e0, ← e2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum, ← e0, ← e2]
   have e5 : ∀ j, (resU F h).pull m ((resU F (hA j)).pull m (ω' j)) = (resU F (hP j)).pull m (ω j) := fun j => by
     rw [← hω j, pull_resU_comp, pull_resU_comp]
   rw [Finset.sum_congr rfl fun j _ => e5 j]
@@ -96,7 +102,8 @@ theorem glue_res {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] (F : C �
     {Q W : ObjectProperty C} (A : ι → ObjectProperty C) (h : W ≤ Q) (hA : ∀ j, Q ≤ A j) (hW : ∀ j, W ≤ A j) (m : ℕ)
     (c x : HU F Q m) (ω' : ∀ j, HU F (A j) m) (e : c = ∑ j, (resU F (hA j)).pull m (ω' j) + x) :
     (resU F h).pull m c = ∑ j, (resU F (hW j)).pull m (ω' j) + (resU F h).pull m x := by
-  rw [e, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_add (f := _), map_sum]
   refine congrArg (· + _) (Finset.sum_congr rfl fun j _ => ?_)
   rw [pull_resU_comp]
 
@@ -135,8 +142,8 @@ theorem rep_zero_xdt (h1 : CrystallineSemistableComparison.Pb.KH.LocGr) (h2 : Cr
   have e0 : x = 0 := by simpa using e
   rwa [e0] at hx
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem main : KH.LocGr → KH.PolyTf → KH.GrAff →
     ∀ {K : Type} [Field K] [CharZero K] {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of K)) (n : ℕ)
     [SmoothOfRelativeDimension (n + 1) q] {N : ℕ} (i : X ⟶ PSpace K N) (y : Fin (n + 2) → MvPolynomial (Fin (N + 1)) K),

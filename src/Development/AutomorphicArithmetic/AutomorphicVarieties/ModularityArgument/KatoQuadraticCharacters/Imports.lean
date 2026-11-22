@@ -1,3 +1,7 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+
+@[expose] public section

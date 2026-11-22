@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.CornerGLContinuity
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Formalism.LocalRingCardinality.HostCls
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CornerGLContinuity
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Formalism.LocalRingCardinality.HostCls
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.DerKer
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.DerKer
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem unip_val_apply (n : ℕ) (v : Multiplicative (Fin n → k)) (a b : Fin (
     ((unip k n v : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) a b =
       (if a = b then 1 else 0) + (if ha : (a : ℕ) < n then (if (b : ℕ) = n then v.toAdd ⟨a, ha⟩ else 0) else 0) := by
   show (1 + colMat k n v.toAdd) a b = _
-  rw [Matrix.add_apply, one_apply]
+  rw [Matrix.add_apply, Matrix.one_apply]
   congr 1
   have hb : (b = Fin.last n) ↔ (b : ℕ) = n := by rw [Fin.ext_iff, Fin.val_last]
   induction a using Fin.lastCases with
@@ -75,7 +79,7 @@ theorem blkAt_val_apply (n N : ℕ) (h : n ≤ N) (g : GL (Fin n) k) (i j : Fin 
   rw [coe_reindexAlgEquiv, coe_reindexAlgEquiv, reindex_apply, reindex_apply, submatrix_apply, submatrix_apply]
   simp only [finCongr_symm, finCongr_apply, finSumFinEquiv_symm_dite, Fin.val_cast]
   by_cases hi : (i : ℕ) < n <;> by_cases hj : (j : ℕ) < n <;>
-    simp [hi, hj, fromBlocks_apply₁₁, fromBlocks_apply₁₂, fromBlocks_apply₂₁, fromBlocks_apply₂₂, one_apply,
+    simp [hi, hj, fromBlocks_apply₁₁, fromBlocks_apply₁₂, fromBlocks_apply₂₁, fromBlocks_apply₂₂, Matrix.one_apply,
       Fin.ext_iff]
   all_goals (try split_ifs) <;> first | rfl | omega
 
@@ -183,7 +187,7 @@ theorem derUnip_decomp (ψ : AddChar k Circle) (m N : ℕ) (h : m + 2 ≤ N) (u 
   have hent : ∀ i j, (u' : Matrix (Fin N) (Fin N) k) i j = (u : Matrix (Fin N) (Fin N) k) i j -
       (if hi : (i : ℕ) < m + 1 then x ⟨i, hi⟩ * (u : Matrix (Fin N) (Fin N) k) r j else 0) := by
     intro i j
-    rw [hu'def, Units.val_mul, mul_apply]
+    rw [hu'def, Units.val_mul, Matrix.mul_apply]
     simp only [colEl_val_apply, add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq,
       Finset.mem_univ, if_true]
     by_cases hi : (i : ℕ) < m + 1
@@ -224,7 +228,7 @@ theorem derUnip_decomp (ψ : AddChar k Circle) (m N : ℕ) (h : m + 2 ≤ N) (u 
         ∑ p : Fin N × Fin N with (p.2 : ℕ) = p.1 + 1 ∧ m + 2 - 1 ≤ (p.1 : ℕ), (u' : Matrix (Fin N) (Fin N) k) p.1 p.2 := by
       refine Finset.sum_congr rfl fun p hp => ?_
       have hp' := (Finset.mem_filter.1 hp).2
-      rw [hent, dif_neg (by omega), sub_zero]
+      rw [hent, dite_eq_right (by omega), sub_zero]
     exact congrArg (fun t => ((Circle.toUnits (ψ t) : ℂˣ) : ℂ)) hs
 
 end PositivityTheory.RgUd.Form.U.Atom

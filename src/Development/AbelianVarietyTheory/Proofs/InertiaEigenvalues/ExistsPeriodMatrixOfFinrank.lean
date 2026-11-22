@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
+
+@[expose] public section
+
 open TensorProduct Module
 
 noncomputable section
@@ -56,7 +61,7 @@ theorem exists_periodMatrix_of_finrank (F E : Type) [Field F] [Field E] [Algebra
         exact Matrix.mulVec_zero _
       map_add' := by
         intro x y
-        simp only [Pi.add_apply, map_add]
+        simp only [Pi.add_apply, map_add (f := _)]
         exact Matrix.mulVec_add _ _ _ }
   have hσ : ∀ g (c : B) (w : n → B), σ g (c • w) = act g c • σ g w := by
     intro g c w

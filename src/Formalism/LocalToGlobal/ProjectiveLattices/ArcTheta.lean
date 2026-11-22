@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ThetaFramePf
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThetaFramePf
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -11,8 +15,8 @@ open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestrictio
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem frame_of_gen (Xo : Moduli Dw l) {S : Type} [CommRing S] (x : Sp S ⟶ Xo.X) (t' : SAB H (Sp S))
     (m1 : SABMap t' Xo.univ.t x) (σ' : LB.Sec t'.PP.L)
     (hgen : ∀ s' : LB.Sec t'.PP.L, ∃! a : S, ∀ i, s'.f i = constFn t'.G.hom _ a * σ'.f i) :

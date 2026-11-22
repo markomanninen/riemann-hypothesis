@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PositivityTheory.Rg.Rs.ctstepglue
 
@@ -36,7 +40,7 @@ theorem conj_block {R : Type*} [CommRing R] {n : ℕ} (r : ℕ) (b : GL (Fin n) 
   refine ⟨Z * Bi * Di, ?_, ?_⟩
   · intro i j h
     have hZB : (Z * Bi) i j = 0 := by
-      rw [mul_apply]
+      rw [Matrix.mul_apply]
       refine Finset.sum_eq_zero fun k _ => ?_
       by_cases hk : (i : ℕ) < r ∧ r ≤ (k : ℕ)
       · have hj : (j : ℕ) < r := by

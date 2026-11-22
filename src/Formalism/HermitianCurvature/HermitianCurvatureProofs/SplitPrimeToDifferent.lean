@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.PrimeToDifferent
+module
+
+public import Formalism.HermitianCurvature.PrimeToDifferent
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.S6x4
 
@@ -81,7 +85,7 @@ theorem exists_theta (E : Type) [Field E] [NumberField E] [IsCMField E]
     rw [hdual, FractionalIdeal.mem_one_iff] at hmem
     obtain ⟨z, hz⟩ := hmem
     have hint : IsIntegral ℤ a := by
-      rw [← isIntegral_algebraMap_iff (FaithfulSMul.algebraMap_injective F E), ← hz]
+      rw [← isIntegral_algebraMap_iff (B := E), ← hz]
       exact z.isIntegral_coe
     rw [FractionalIdeal.mem_one_iff]
     exact ⟨⟨a, hint⟩, rfl⟩
@@ -106,36 +110,6 @@ namespace Formalism.FourierDecayAlt.P
 open Formalism.FourierDecayAlt.S6 Formalism.FourierDecayAlt.P.S6x4
 open NumberField NumberField.IsCMField Module
 open scoped nonZeroDivisors
-
-theorem splitPrimeToDifferent : Formalism.FourierDecayAlt.S6.SplitCoprime := by
-  intro E _ _ _ p ⟨hp, h⟩
-  unfold PrimeToDifferent
-  rw [Ideal.isCoprime_iff_sup_eq]
-  by_contra hne
-  obtain ⟨P, hPmax, hle⟩ := Ideal.exists_le_maximal _ hne
-  have hD : differentIdeal ℤ (𝓞 E) ≤ P := le_sup_left.trans hle
-  have hpP : (p : 𝓞 E) ∈ P := hle (Ideal.mem_sup_right (Ideal.mem_span_singleton_self _))
-  have h2 := (h P hPmax.isPrime hpP).2
-  let p0 : Ideal ℤ := Ideal.span {(p : ℤ)}
-  have hmap : p0.map (algebraMap ℤ (𝓞 E)) = Ideal.span {(p : 𝓞 E)} := by
-    simp [p0, Ideal.map_span]
-  have hp0 : p0 ≠ ⊥ := by
-    simp [p0, hp.ne_zero]
-  have : p0.IsMaximal :=
-    PrincipalIdealRing.isMaximal_of_irreducible (Nat.prime_iff_prime_int.1 hp).irreducible
-  have : Finite (ℤ ⧸ p0) := Ideal.finiteQuotientOfFreeOfNeBot p0 hp0
-  obtain ⟨Q, hQ⟩ : P ∣ p0.map (algebraMap ℤ (𝓞 E)) :=
-    Ideal.dvd_iff_le.2 (by rw [hmap, Ideal.span_singleton_le_iff_mem]; exact hpP)
-  have hcop : IsCoprime P Q := by
-    rw [Ideal.isCoprime_iff_sup_eq]
-    by_contra hc
-    have he : P = P ⊔ Q := hPmax.eq_of_le hc le_sup_left
-    have hQP : Q ≤ P := by rw [he]; exact le_sup_right
-    apply h2
-    have : p0.map (algebraMap ℤ (𝓞 E)) ≤ P ^ 2 := by
-      rw [hQ, pow_two]; exact Ideal.mul_mono_right hQP
-    exact this (by rw [hmap]; exact Ideal.mem_span_singleton_self _)
-  exact not_dvd_differentIdeal_of_isCoprime ℤ P Q hcop hQ.symm (Ideal.dvd_iff_le.2 hD)
 
 theorem traceDualGe : Formalism.FourierDecayAlt.S6.DualSupset := by
   intro E _ _ _ hU g ν s hg l hl t ht
@@ -195,7 +169,7 @@ theorem traceDualGe : Formalism.FourierDecayAlt.S6.DualSupset := by
     ((FractionalIdeal.mem_one_iff _).2 ⟨θ, rfl⟩)
   rw [Algebra.traceForm_apply] at hz
   have e : Algebra.trace ℚ E ((x + complexConj E x) * (θ : E)) = Algebra.trace ℚ E x := by
-    rw [add_mul, map_add, ← trace_conj E (complexConj E x * (θ : E)), map_mul (complexConj E),
+    rw [add_mul, map_add (f := _), ← trace_conj E (complexConj E x * (θ : E)), map_mul (complexConj E),
       complexConj_apply_apply, ← map_add, ← mul_add, hθ, mul_one]
   rw [e] at hz
   exact hz

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CubeResApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CubeResApply
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -64,7 +68,7 @@ theorem prj_empty (e : κ → P) (M : P → ModuleCat.{0} R) (b : P) {s : Finset
   funext fun _ ↦ dif_neg hs
 
 def prjHom (e : κ → P) (M : P → ModuleCat.{0} R) (b : P) : cubeOf e (coind M) ⟶ cubeB e M b :=
-  Cube.homMk (prj e M b) fun {s t} h x ↦ by
+  Cube.homMk κ R (prj e M b) fun {s t} h x ↦ by
     by_cases hs : s.Nonempty
     · refine funext fun ht ↦ ?_
       have hs' : t.Nonempty := hs.mono h
@@ -123,10 +127,5 @@ theorem isZero_homology (e : κ → P) (he : Function.Surjective e) (M : P → M
     IsZero (((cechOf e).obj (coind M)).homology (n + 1)) :=
   (HomologicalComplex.exactAt_iff_isZero_homology _ _).1
     ((cechComplex_exactAt_succ_iff (cubeOf e (coind M)) n).2 (exact_d e he M n))
-
-example : ∀ {R : Type} [CommRing R] {P : Type} [SemilatticeInf P] {κ : Type} [LinearOrder κ] (e : κ → P),
-    Function.Surjective e → ∀ (M : P → ModuleCat.{0} R) (n : ℕ),
-    IsZero (((cechOf e).obj (coind M)).homology (n + 1)) :=
-  fun e he M n ↦ isZero_homology e he M n
 
 end GlobalTheory.CompanionTheory.Hodge.Nerve.Acyc

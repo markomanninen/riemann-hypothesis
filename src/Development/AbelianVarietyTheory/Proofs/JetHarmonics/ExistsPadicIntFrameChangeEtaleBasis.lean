@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImagQuadraticMaximalOrderArithmeticAtSplitPrime
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImagQuadraticMaximalOrderArithmeticAtSplitPrime
+
+@[expose] public section
 
 noncomputable section
 open GlobalTheory.MomOne Formalism.L2.Ker.JMB
@@ -23,7 +27,8 @@ theorem beta_sum_left {κ : Type} [Fintype κ] (d : ℕ) (Hm : Matrix (Fin g) (F
 
 theorem beta_conj (d : ℕ) {Hm : Matrix (Fin g) (Fin g) ℂ} (h : Hm.IsHermitian) (z w : Fin g → ℂ) :
     conj (beta d Hm z w) = beta d Hm w z := by
-  simp only [beta, hf, map_mul, map_sum, Complex.conj_ofReal, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [beta, hf, map_mul, map_sum, Complex.conj_ofReal, Complex.conj_conj]
   rw [Finset.sum_comm]
   congr 1
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -90,7 +95,8 @@ theorem frameChange : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (g :
     simp only [Finset.univ_unique, Finset.sum_singleton] at e2
     rw [← hsc k, e2] at e
     have e3 := congrArg conj e
-    simp only [map_sum, map_mul, beta_conj S.d hH, map_natCast] at e3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, beta_conj S.d hH, map_natCast] at e3
     simp_rw [← mul_div_assoc, mul_comm (beta _ _ _ _)]
     rw [← Finset.sum_div, ← e3, hx]
     split_ifs with h
@@ -135,7 +141,8 @@ theorem frameChange : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (g :
       simp [ite_smul]) j
     have h2 : e j = if j = l then 1 else 0 := sub_eq_zero.1 ((mul_eq_zero.1 h0).resolve_left hP0)
     have h3 := congrArg conj h2
-    simp only [e, map_sum, map_mul, map_div₀, beta_conj S.d hH, map_natCast] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, map_sum, map_mul, map_div₀, beta_conj S.d hH, map_natCast] at h3
     rw [h3]
     split_ifs <;> simp
 
@@ -160,18 +167,24 @@ theorem frameChange : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (g :
     rw [div_eq_mul_inv, map_mul, hu, hn]
     exact map_mul (zcHom q) _ _
   have e1 : M * N = 1 := by
-    ext i k : 2
+    apply Matrix.ext
+    intro i k
     apply zcHom_injective q
-    rw [Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum]
     simp_rw [map_mul, hM, hN, ← map_mul]
-    rw [← map_sum, hMN, Matrix.one_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hMN, Matrix.one_apply]
     split_ifs <;> simp
   have e2 : N * M = 1 := by
-    ext i k : 2
+    apply Matrix.ext
+    intro i k
     apply zcHom_injective q
-    rw [Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum]
     simp_rw [map_mul, hM, hN, ← map_mul]
-    rw [← map_sum, hNM, Matrix.one_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hNM, Matrix.one_apply]
     split_ifs <;> simp
   refine ⟨{ toFun := M.mulVec
             invFun := N.mulVec
@@ -180,7 +193,8 @@ theorem frameChange : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (g :
             continuous_toFun := continuous_const.matrix_mulVec continuous_id
             continuous_invFun := continuous_const.matrix_mulVec continuous_id }, fun A i => ?_⟩
   show zcHom q (∑ j, M i j * A j) = ∑ j, zcHom q (A j) * _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun j _ => by rw [map_mul, hM, mul_comm]
 
 end GlobalTheory.MomOne

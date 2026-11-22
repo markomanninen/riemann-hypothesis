@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped BigOperators
 
@@ -43,7 +47,7 @@ theorem coeff_aeval_one_add_X_pow_sub_one_ne_zero :
     exact Ideal.mem_span_singleton.mp (hle hr)
   obtain ⟨r, hr, rfl⟩ : ∃ r ∈ Ideal.span (Set.range fun q : σ => (MvPolynomial.X q : MvPolynomial σ k) ^ (l ^ M)),
       D = u * ∏ q, MvPolynomial.X q ^ n q + r := ⟨_, hD, by ring⟩
-  rw [map_add, Polynomial.coeff_add, (Polynomial.X_pow_dvd_iff.mp (hideal r hr)) _ hlt, add_zero,
+  rw [map_add (f := _), Polynomial.coeff_add, (Polynomial.X_pow_dvd_iff.mp (hideal r hr)) _ hlt, add_zero,
     map_mul, map_prod]
   simp only [map_pow, MvPolynomial.aeval_X, ← pow_mul, Finset.prod_pow_eq_pow_sum]
   have hsum : ∑ q, l ^ e q * n q = ∑ q, n q * l ^ e q :=

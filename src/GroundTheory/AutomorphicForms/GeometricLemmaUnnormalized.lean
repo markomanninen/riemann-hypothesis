@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemmaGraded
-import GroundTheory.AutomorphicForms.GeometricLemmaCellKernel
-import GroundTheory.AutomorphicForms.GeometricLemmaCellSurjective
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemmaGraded
+public import GroundTheory.AutomorphicForms.GeometricLemmaCellKernel
+public import GroundTheory.AutomorphicForms.GeometricLemmaCellSurjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

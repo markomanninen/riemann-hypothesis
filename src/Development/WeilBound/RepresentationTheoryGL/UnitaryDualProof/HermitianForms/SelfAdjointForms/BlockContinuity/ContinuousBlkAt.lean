@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.FixK
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlockHomomorphism
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.FixK
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlockHomomorphism
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem dens_exists_of (hB : Lv ψ h π s B)
       obtain ⟨hA, h1, h2, h3⟩ := big (L (v₁ + v₂) w) (L v₁ w) (L v₂ w) (hL _ _) (hL _ _) (hL _ _)
       rw [hf _ _ _ hA h1, hf _ _ _ hA h2, hf _ _ _ hA h3]
       simp only [T]
-      rw [hadj _ hA, hadj _ hA, hadj _ hA, map_add, LinearMap.add_apply, mul_add])
+      rw [hadj _ hA, hadj _ hA, hadj _ hA, map_add (f := _), LinearMap.add_apply, mul_add])
     (fun c v w => by
       obtain ⟨hA, h1, h2, -⟩ := big (L (c • v) w) (L v w) (L v w) (hL _ _) (hL _ _) (hL _ _)
       rw [hf _ _ _ hA h1, hf _ _ _ hA h2]
@@ -113,7 +117,7 @@ theorem dens_exists_of (hB : Lv ψ h π s B)
       obtain ⟨hA, h1, h2, h3⟩ := big (L v (w₁ + w₂)) (L v w₁) (L v w₂) (hL _ _) (hL _ _) (hL _ _)
       rw [hf _ _ _ hA h1, hf _ _ _ hA h2, hf _ _ _ hA h3]
       simp only [T]
-      rw [map_add, mul_add])
+      rw [map_add (f := _), mul_add])
     (fun c v w => by
       obtain ⟨hA, h1, h2, -⟩ := big (L v (c • w)) (L v w) (L v w) (hL _ _) (hL _ _) (hL _ _)
       rw [hf _ _ _ hA h1, hf _ _ _ hA h2]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual
 

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeightProductGermIndep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneSubPowLe
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsCompactRoots
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeightProductGermIndep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneSubPowLe
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsCompactRoots
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.GermRateSplit
 
@@ -49,7 +53,7 @@ theorem top_core {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl (D.
     have hz : ∀ j, (p v).V F' (PBL.stdS S (ptJ s h x y j)) = 0 := by
       intro j
       unfold KB.Pl.V D.vecV
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨hl, -⟩
       have hl' := (PBD.isLocPt_toStd_iff _ _ hg _ 1 _).1 hl
       refine hgood fun q hq => hl'.1 q ?_
@@ -207,7 +211,7 @@ theorem top_core {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq} {p : ∀ v, KB.Pl (D.
           Real.sqrt_one, Complex.ofReal_one, one_smul]
       · have h0 : (p v).V F' (H ++ [(m + 2, l2 * z)]) = 0 := by
           unfold KB.Pl.V D.vecV
-          rw [dif_neg]
+          rw [dite_eq_right]
           rintro ⟨-, hpos⟩
           exact hG (lt_of_lt_of_eq hpos (congrArg (fun T => D.ptG T S.G.r (H ++ [(m + 2, l2 * z)])) hTTeq))
         rw [hOL2] at h0

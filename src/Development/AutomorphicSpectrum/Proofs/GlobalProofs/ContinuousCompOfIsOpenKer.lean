@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsCoprimePowOfMemIneKer
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCard
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualEvalBidualApply
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsCoprimePowOfMemIneKer
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCard
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualEvalBidualApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem geo_succ (f : Module.End R M) (m : M) (k : ℕ) :
 
 theorem geo_add (f : Module.End R M) (m : M) (a b : ℕ) :
     geo f m (a + b) = geo f m a + (f ^ a) (geo f m b) := by
-  simp only [geo, Finset.sum_range_add, map_sum, pow_add, Module.End.mul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [geo, Finset.sum_range_add, map_sum, pow_add, Module.End.mul_apply]
 
 theorem geo_mul (f : Module.End R M) (m : M) {N : ℕ} (hN : f ^ N = 1) (a : ℕ) :
     geo f m (a * N) = a • geo f m N := by
@@ -58,7 +63,7 @@ theorem continuous_comp_of_isOpen_ker [TopologicalSpace D] [IsTopologicalGroup D
     (d : D →* Multiplicative (ZMod N)) (hd : IsOpen (d.ker : Set D))
     (F : Multiplicative (ZMod N) → X) : Continuous fun g => F (d g) := by
   refine IsLocallyConstant.continuous ((IsLocallyConstant.iff_exists_open _).2 fun g => ?_)
-  refine ⟨(fun x => g⁻¹ * x) ⁻¹' (d.ker : Set D), hd.preimage (continuous_mul_left _), ?_, ?_⟩
+  refine ⟨(fun x => g⁻¹ * x) ⁻¹' (d.ker : Set D), hd.preimage (continuous_const_mul _), ?_, ?_⟩
   · simp [MonoidHom.mem_ker]
   · intro x hx
     have hx' : d (g⁻¹ * x) = 1 := hx
@@ -347,7 +352,7 @@ theorem tri_add (f₁ : Module.End R M₁) (f₂ : Module.End R M₂) (fP : Modu
         b (geo f₁ m₁ c) ((f₂ ^ c) m₂) := by
       simp [tri, Finset.sum_range_succ]
     rw [e1, ih, e2, geo_add, geo_succ, pow_add, Module.End.mul_apply]
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     rw [b_pow f₁ f₂ fP b hb]
     abel
 
@@ -510,8 +515,9 @@ theorem annihilators_of (χ : D →* (ZMod n)ˣ) (hχ : ContAction (charRep χ))
   have hcT : ContAction (twDual χ rho) := GlobalTheory.DualSide.contAction_twDual hχ hrho
   have hIT : ∀ σ ∈ I, twDual χ rho σ = 1 := fun σ hσ => by
     have hinv : rho σ⁻¹ = 1 := hI _ (I.inv_mem hσ)
-    refine LinearMap.ext fun f => TDual.ext fun m => ?_
-    simp [twDual_apply, hχI σ hσ, hinv]
+    refine LinearMap.ext fun f => LinearMap.ext fun m => ?_
+    change ((χ σ : (ZMod n)ˣ) : ZMod n) * f (rho σ⁻¹ m) = f m
+    simp [hχI σ hσ, hinv]
   have hIP : ∀ σ ∈ I, charRep χ σ = 1 := fun σ hσ => by
     refine LinearMap.ext fun x => ?_
     simp [charRep_apply, hχI σ hσ]
@@ -544,8 +550,8 @@ theorem annihilators_of (χ : D →* (ZMod n)ˣ) (hχ : ContAction (charRep χ))
 
 end Main
 
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual GlobalTheory.TameQuot GlobalTheory.WeilDeligne in
 
+open NumberField IsDedekindDomain Formalism.ConjugateSelfDual GlobalTheory.TameQuot GlobalTheory.WeilDeligne in
 theorem unramifiedOrthogonality_of (hF : LocalFiniteness) (hD : LocalTateDuality)
     (hE : LocalEulerChar) : UnramifiedOrthogonality := by
   intro F Ω _ _ _ _ _ l _ r M _ _ _ _ _ A rho v hr hA hl hI hc

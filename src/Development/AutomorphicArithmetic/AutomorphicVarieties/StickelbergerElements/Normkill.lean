@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.SamePrimesMulPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.StickelbergerTheorem.StickelbergerAt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StmtFields
-import Mathlib.RingTheory.Ideal.Norm.RelNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.SamePrimesMulPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.StickelbergerTheorem.StickelbergerAt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StmtFields
+public import Mathlib.RingTheory.Ideal.Norm.RelNorm
+
+@[expose] public section
 
 open NumberField UpperTheory.V UpperTheory.V.Kum UpperTheory.V.Stick UpperTheory.V.Stk
 
@@ -46,7 +50,7 @@ theorem UpperTheory.V.Stk.prod_galois_classGroup_map_eq_one :
   rw [← map_prod]
   set J := ∏ g : Gal(C/ℚ), idMap g.toRingEquiv I with hJ
   have hv : (J : Ideal (𝓞 C)) = (Ideal.relNorm ℤ I.1).map (algebraMap ℤ (𝓞 C)) := by
-    rw [← prod_conj I.1 (nonZeroDivisors.ne_zero I.2), hJ, Submonoid.coe_finset_prod]
+    rw [← prod_conj I.1 (nonZeroDivisors.ne_zero I.2), hJ, Submonoid.coe_finsetProd]
     rfl
   refine (ClassGroup.mk0_eq_one_iff J.2).2 ?_
   rw [hv, Ideal.relNorm_int, Ideal.map_span, Set.image_singleton]

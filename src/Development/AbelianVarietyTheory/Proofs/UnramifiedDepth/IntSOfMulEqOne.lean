@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CocycleIntegral
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CocycleIntegral
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem mvExp_eq_subst [CharZero C] {σ : Type} {F : MvPowerSeries σ C} (hF : c
 
 theorem mvExp_add [CharZero C] {σ : Type} {F G : MvPowerSeries σ C} (hF : constantCoeff F = 0)
     (hG : constantCoeff G = 0) : mvExp (F + G) = mvExp F * mvExp G := by
-  rw [mvExp_eq_subst hF, mvExp_eq_subst hG, mvExp_eq_subst (by rw [map_add, hF, hG, add_zero]),
+  rw [mvExp_eq_subst hF, mvExp_eq_subst hG, mvExp_eq_subst (by rw [map_add (f := _), hF, hG, add_zero]),
     ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.exp_add hF hG]
 
 theorem mvExp_zero' [CharZero C] {σ : Type} : mvExp (0 : MvPowerSeries σ C) = 1 := by
@@ -54,13 +58,14 @@ theorem mvExp_sum [CharZero C] {σ α : Type} (s : Finset α) {F : α → MvPowe
   induction s using Finset.induction_on with
   | empty => simp [mvExp_zero']
   | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.prod_insert ha, mvExp_add (hF a) (by simp [map_sum, hF]), ih]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_insert ha, Finset.prod_insert ha, mvExp_add (hF a) (by simp [map_sum, hF]), ih]
 
 theorem cc_subst {σ τ : Type} [Finite σ] {a : σ → MvPowerSeries τ C} (ha : ∀ s, constantCoeff (a s) = 0)
     (F : MvPowerSeries σ C) : constantCoeff (subst a F) = constantCoeff F := by
   have hs := hasSubst_of_constantCoeff_zero ha
   have e : F = (F - MvPowerSeries.C (constantCoeff F)) + MvPowerSeries.C (constantCoeff F) := by ring
-  rw [e, subst_add hs, map_add, constantCoeff_subst_zero ha (by simp), subst_C]
+  rw [e, subst_add hs, map_add (f := _), constantCoeff_subst_zero ha (by simp), subst_C]
   simp
 
 theorem subst_mvExp [CharZero C] {σ τ : Type} [Finite σ] {a : σ → MvPowerSeries τ C}
@@ -111,7 +116,7 @@ theorem intS_of_mul_eq_one {V : VF C} {σ : Type} {F G : MvPowerSeries σ C} (hF
 def logInt [CharZero C] (V : VF C) (σ : Type) : AddSubgroup (MvPowerSeries σ C) where
   carrier := {F | constantCoeff F = 0 ∧ IntS V (mvExp F)}
   zero_mem' := ⟨map_zero _, by rw [mvExp_zero']; exact intS_one⟩
-  add_mem' := fun {F G} hF hG => ⟨by rw [map_add, hF.1, hG.1, add_zero], by
+  add_mem' := fun {F G} hF hG => ⟨by rw [map_add (f := _), hF.1, hG.1, add_zero], by
     rw [mvExp_add hF.1 hG.1]; exact intS_mul hF.2 hG.2⟩
   neg_mem' := fun {F} hF => ⟨by rw [map_neg, hF.1, neg_zero], by
     refine intS_of_mul_eq_one hF.2 ?_ ?_

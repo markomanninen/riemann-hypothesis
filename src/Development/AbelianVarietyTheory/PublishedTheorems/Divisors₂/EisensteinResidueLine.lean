@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EisensteinIsotropicLine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EisensteinIsotropicLine
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open scoped TensorProduct NNReal
 
 namespace GlobalTheory.Published
 
-open GlobalTheory.EisLine in
 
+open GlobalTheory.EisLine in
 def EisensteinResidueLine : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ →
     Algebra.Unramified (𝓞 F) (𝓞 E) →

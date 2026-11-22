@@ -1,10 +1,14 @@
-import Formalism.LatticeSlopes.Statement
-import Formalism.LatticeSlopes.CovolAntiSameRank
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolPos
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DegQuot
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SaturationProperties
-import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxAttained
+module
+
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.LatticeSlopes.CovolAntiSameRank
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolPos
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DegQuot
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SaturationProperties
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxAttained
+
+@[expose] public section
 
 open Module Submodule
 
@@ -20,7 +24,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDim
 theorem finite_mem_norm_le (L : Submodule ℤ E) [hL : DiscreteTopology L] (C : ℝ) :
     {v : E | v ∈ L ∧ ‖v‖ ≤ C}.Finite := by
   have hD : DiscreteTopology (L.toAddSubgroup) := hL
-  have hcl : IsClosed (L : Set E) := AddSubgroup.isClosed_of_discrete (H := L.toAddSubgroup)
+  have hcl : IsClosed (L : Set E) := (L.toAddSubgroup).isClosed_of_discreteTopology
   have hs : IsDiscrete (L : Set E) := isDiscrete_iff_discreteTopology.mpr hL
   refine (Metric.finite_isBounded_inter_isClosed hs (Metric.isBounded_closedBall (x := (0 : E)) (r := C))
     hcl).subset ?_

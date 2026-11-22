@@ -1,20 +1,23 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HaarExists
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ParabolicSubgroupEquality
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LineFacts
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HaarExistence
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.RightDerivativeZeroOutsideSupport
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ParabolicSubgroupEquality
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LineFacts
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.RightDerivativeZeroOutsideSupport
+
+@[expose] public section
 
 noncomputable section
 
 open Matrix
-open CompanionTheory.RgExh.Dec CompanionTheory.RgExh.Dec.L ReciprocityTheory.ChartRestriction.DS GlobalTheory.CompanionTheory.PSubFlag
+open CompanionTheory.RgExh.Dec ReciprocityTheory.ChartRestriction.DS GlobalTheory.CompanionTheory.PSubFlag
 
 namespace GlobalTheory.CompanionTheory.UGeo
 
-variable {n : ℕ} {ε : Fin n → Bool} {A : Matrix (Fin n) (Fin n) ℂ}
+open Formalism.REAL (hs)
+open GlobalTheory.CompanionTheory.GradLine (eT exp_mulVec_of_eigen)
 
-local notation "hs" => Formalism.REAL.hs
+variable {n : ℕ} {ε : Fin n → Bool} {A : Matrix (Fin n) (Fin n) ℂ}
 
 def Pz (A : Matrix (Fin n) (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ := 1 - A * A
 
@@ -79,14 +82,8 @@ theorem Pp_idem (hA : IsGrad ε A) : Pp A * Pp A = Pp A := by
 theorem Pz_eq : Pz A = 1 - Pm A - Pp A := by
   rw [← sum_proj (A := A)]; abel
 
-theorem Pz_Pm (hA : IsGrad ε A) : Pz A * Pm A = 0 := by
-  rw [Pz_eq, Matrix.sub_mul, Matrix.sub_mul, Matrix.one_mul, Pm_idem hA, Pp_Pm hA]; simp
-
 theorem Pm_Pz (hA : IsGrad ε A) : Pm A * Pz A = 0 := by
   rw [Pz_eq, Matrix.mul_sub, Matrix.mul_sub, Matrix.mul_one, Pm_idem hA, Pm_Pp hA]; simp
-
-theorem Pz_Pp (hA : IsGrad ε A) : Pz A * Pp A = 0 := by
-  rw [Pz_eq, Matrix.sub_mul, Matrix.sub_mul, Matrix.one_mul, Pp_idem hA, Pm_Pp hA]; simp
 
 theorem Pp_Pz (hA : IsGrad ε A) : Pp A * Pz A = 0 := by
   rw [Pz_eq, Matrix.mul_sub, Matrix.mul_sub, Matrix.mul_one, Pp_idem hA, Pp_Pm hA]; simp
@@ -209,17 +206,17 @@ theorem Pp_ne_zero (hA : IsGrad ε A) : Pp A ≠ 0 := by
   exact Pm_ne_zero hA h2
 
 theorem aT_mul_of_eigen {P : Matrix (Fin n) (Fin n) ℂ} {c : ℂ} (h : A * P = c • P) (t : ℝ) :
-    aT A t * P = Complex.exp (t * c) • P := by
+    eT A t * P = Complex.exp (t * c) • P := by
   ext i j
   have h1 : ((t : ℂ) • A) *ᵥ (fun k => P k j) = ((t : ℂ) * c) • (fun k => P k j) := by
     funext a
     have := congrFun (congrFun h a) j
     simp only [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul] at this
     simp only [Matrix.mulVec, dotProduct, Matrix.smul_apply, smul_eq_mul, Pi.smul_apply, mul_assoc, ← Finset.mul_sum, this]
-  have h2 := congrFun (GlobalTheory.CompanionTheory.GradLine.exp_mulVec_of_eigen h1) i
-  simpa [aT, Matrix.mulVec, dotProduct, Matrix.mul_apply] using h2
+  have h2 := congrFun (exp_mulVec_of_eigen h1) i
+  simpa [eT, Matrix.mulVec, dotProduct, Matrix.mul_apply] using h2
 
-theorem aT_Pm (hA : IsGrad ε A) (t : ℝ) : aT A t * Pm A = ((Real.exp (-t) : ℝ) : ℂ) • Pm A := by
+theorem aT_Pm (hA : IsGrad ε A) (t : ℝ) : eT A t * Pm A = ((Real.exp (-t) : ℝ) : ℂ) • Pm A := by
   have h : A * Pm A = (-1 : ℂ) • Pm A := by rw [A_Pm hA]; simp
   rw [aT_mul_of_eigen h]
   congr 1
@@ -227,7 +224,7 @@ theorem aT_Pm (hA : IsGrad ε A) (t : ℝ) : aT A t * Pm A = ((Real.exp (-t) : �
   congr 1
   ring
 
-theorem aT_Pp (hA : IsGrad ε A) (t : ℝ) : aT A t * Pp A = ((Real.exp t : ℝ) : ℂ) • Pp A := by
+theorem aT_Pp (hA : IsGrad ε A) (t : ℝ) : eT A t * Pp A = ((Real.exp t : ℝ) : ℂ) • Pp A := by
   have h : A * Pp A = (1 : ℂ) • Pp A := by rw [A_Pp hA]; simp
   rw [aT_mul_of_eigen h]
   congr 1
@@ -235,7 +232,7 @@ theorem aT_Pp (hA : IsGrad ε A) (t : ℝ) : aT A t * Pp A = ((Real.exp t : ℝ)
   congr 1
   ring
 
-theorem aT_Pz (hA : IsGrad ε A) (t : ℝ) : aT A t * Pz A = Pz A := by
+theorem aT_Pz (hA : IsGrad ε A) (t : ℝ) : eT A t * Pz A = Pz A := by
   have h : A * Pz A = (0 : ℂ) • Pz A := by rw [A_Pz hA]; simp
   rw [aT_mul_of_eigen h]
   simp

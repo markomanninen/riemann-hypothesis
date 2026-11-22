@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.DiaSame
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.DiaSame
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open scoped TensorProduct Classical
 
 variable {D : D7} {u : D.what₂.Word}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem eop_eq (T : Forms0 D u) (v : (D.mem u).A.vT) (ψ : Fn D u 0)
     {g : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F) → Fr D 0 (Nat.zero_le _) → ℂ}
     (hg : g ∈ AdFun T.cls0.lev (embT D))
@@ -42,8 +46,8 @@ def EDiaSame0F (T : Forms0 D u) : Prop :=
       (∀ x, IsDnMvF T v c x.1 (Mv x)) ∧
       ∀ x, (Mv (σ x)).1⁻¹ * ((Mv x).1 * δ.1) ∈ T.cls0.lev.U
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem eop_dia (T : Forms0 D u) (hE : EDiaSame0F T) (v : (D.mem u).A.vT)
     (a : ((D.mem u).A.Fv v)ˣ) (ψ : Fn D u 0) (hψ : ψ ∈ (D.fm u).Fi 0) :
     Eop D u 0 v (dia D u 0 v a ψ) = Eop D u 0 v ψ := by

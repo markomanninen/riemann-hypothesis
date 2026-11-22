@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.Bridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RqFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SChain
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.Bridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RqFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SChain
+
+@[expose] public section
 
 open NumberField UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK UpperTheory.V.ZK.Up
 
@@ -39,7 +43,7 @@ private theorem bock_abs {C2 C1 C0 D2 D1 H : Type} [AddCommGroup C2] [AddCommGro
       abel
     have hsum : (⟨w', LinearMap.mem_ker.2 hw0'⟩ : LinearMap.ker d0) = ⟨w, LinearMap.mem_ker.2 hw0⟩ + ⟨d1 u, hd⟩ :=
       Subtype.ext heq
-    rw [hsum, map_add, (hz ⟨d1 u, hd⟩).2 ⟨u, rfl⟩, add_zero]
+    rw [hsum, map_add (f := _), (hz ⟨d1 u, hd⟩).2 ⟨u, rfl⟩, add_zero]
   choose X W hXr hXd using hlift
   have hW0 : ∀ y, d0 (W y) = 0 := fun y => hker _ _ (hXd y)
   let f : LinearMap.ker e → H := fun y => cls ⟨W y, LinearMap.mem_ker.2 (hW0 y)⟩
@@ -59,8 +63,8 @@ private theorem bock_abs {C2 C1 C0 D2 D1 H : Type} [AddCommGroup C2] [AddCommGro
     apply Subtype.ext
     show f (a + b) = f a + f b
     have hab := hwd (X (a + b)) (X a + X b) (W (a + b)) (W a + W b) (hW0 _)
-      (by rw [map_add, hW0, hW0, add_zero]) (by rw [map_add, hXr, hXr, hXr]; rfl)
-      (hXd _) (by rw [map_add, hXd, hXd, smul_add])
+      (by rw [map_add (f := _), hW0, hW0, add_zero]) (by rw [map_add (f := _), hXr, hXr, hXr]; rfl)
+      (hXd _) (by rw [map_add (f := _), hXd, hXd, smul_add])
     exact hab.trans (map_add cls ⟨W a, LinearMap.mem_ker.2 (hW0 a)⟩ ⟨W b, LinearMap.mem_ker.2 (hW0 b)⟩)
   · intro y hy
     have hy' : f y = 0 := congrArg Subtype.val hy

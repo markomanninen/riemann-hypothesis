@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SHEqvPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SHEqvPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC Polynomial IsLocalRing
@@ -38,7 +42,8 @@ theorem uniq {C : Type} [CommRing C] [IsLocalRing C] {n : ℕ} (hn : IsUnit (n :
   have key := (Commute.all x y).geom_sum₂_mul n
   rw [hx, hy, sub_self] at key
   have hS : IsUnit (∑ i ∈ Finset.range n, x ^ i * y ^ (n - 1 - i)) := by
-    rw [← residue_ne_zero_iff_isUnit, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← residue_ne_zero_iff_isUnit, map_sum]
     have : ∀ i ∈ Finset.range n, residue C (x ^ i * y ^ (n - 1 - i)) = residue C x ^ (n - 1) := by
       intro i hi
       rw [map_mul, map_pow, map_pow, ← hr, ← pow_add]
@@ -132,7 +137,7 @@ theorem decomp (η : Prim q C) (z : (Prim q C →₀ ULift.{1} (ZMod q)) ⧸ twR
   induction x using Finsupp.induction_linear with
   | zero => simp
   | add x y hx hy =>
-    rw [Submodule.Quotient.mk_add, map_add, add_smul, ← hx, ← hy]
+    rw [Submodule.Quotient.mk_add, map_add (f := _), add_smul, ← hx, ← hy]
   | single ξ c =>
     have hrel : Finsupp.single ξ (1 : ULift.{1} (ZMod q)) - Finsupp.single η (ULift.up (((ex η η * ex η ξ) ^ i : (ZMod q)ˣ) : ZMod q))
         ∈ twRel q i C := by

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightTypeAction0
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightTypeAction0
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField Matrix
 open scoped ContDiff

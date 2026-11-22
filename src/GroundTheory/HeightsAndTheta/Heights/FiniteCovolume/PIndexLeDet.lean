@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -53,7 +57,8 @@ theorem IndexLeDet.proof (E : Type*) [Field E] [NumberField E] : IndexLeDet.Stat
     rw [Basis.det_apply, ← Matrix.det_transpose]
     congr 1
     ext i j
-    rw [Matrix.transpose_apply, Basis.toMatrix_apply, hb i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.transpose_apply, Basis.toMatrix_apply, hb i, map_sum]
     simp [Finsupp.single_apply]
   rw [hdetb] at hcard
 

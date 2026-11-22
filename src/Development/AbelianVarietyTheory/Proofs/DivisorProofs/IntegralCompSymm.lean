@@ -1,9 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KerToCoinvIffInvFactor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagCoIsotropic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantLinOm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import GroundTheory.AutomorphicForms.MeasuresModulus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AdelicAdmissibleSmul
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.KudlaSplittingSplitUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilObjectsInhabited
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocallyConstantSplitOm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrangianInvariantFormsProportionalFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StoneVonNeumannSchwartzBruhatAnyCharacter
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import GroundTheory.AutomorphicForms.MeasuresModulus
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,6 +28,7 @@ theorem map_symm_eq_smul (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace
     (μ : Measure (ι → k)) [μ.IsAddHaarMeasure] (M : (ι → k) ≃ₗ[k] (ι → k)) :
     μ.map M.symm = (distribHaarChar k (LinearEquiv.det M)) • μ := by
   classical
+  obtain ⟨_, _⟩ := GlobalTheory.SplitWeil.Model.secondCountable_and_t2_local_field (k := k)
   have hc : Continuous M.symm := (M.symm : (ι → k) →ₗ[k] (ι → k)).continuous_on_pi
   ext s hs
   rw [Measure.map_apply hc.measurable hs, Measure.smul_apply, ← GroundTheory.Automorphic.Measures.distribHaarChar_pi_eq,

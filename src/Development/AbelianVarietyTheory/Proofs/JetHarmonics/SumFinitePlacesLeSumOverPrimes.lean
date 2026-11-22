@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Pj
 
@@ -38,8 +42,8 @@ theorem finite_resChar_eq {p : ℕ} (hp : p.Prime) :
   rintro _ ⟨la, hla, rfl⟩
   exact mem_primesOverFinset hp la hla
 
-set_option linter.deprecated false in
 
+set_option linter.deprecated false in
 theorem sum_ram_log_le {p : ℕ} (hp : p.Prime) (T : Finset (HeightOneSpectrum (𝓞 K)))
     (hT : ∀ la ∈ T, resCharOf la = p) :
     ∑ la ∈ T, (ramOverZ la : ℝ) * Real.log (Ideal.absNorm la.asIdeal) ≤

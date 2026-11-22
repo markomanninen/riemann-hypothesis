@@ -1,11 +1,15 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.CuspEmbP
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetSubLeftOfAdmissibleStatement
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExhUnipRadOne
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetOfInducedFiltrationStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.InducedCellSemisimplificationStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IrreducibleSmoothAdmissibleGLStatement
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.CuspEmbP
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetSubLeftOfAdmissibleStatement
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExhUnipRadOne
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetOfInducedFiltrationStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.InducedCellSemisimplificationStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IrreducibleSmoothAdmissibleGLStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,29 +22,29 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 theorem geometricLemmaGL : GlobalTheory.Published.GeometricLemma :=
   fun k _ _ _ _ => ⟨GlobalTheory.T.jacquet_of_induced_filtration k, GlobalTheory.T.induced_cell_semisimplification k⟩
 
-theorem embL_of_eq {x : IrrGL k} {l : List (IrrGL k)} {y : Fin l.length → IrrGL k} (e : y = l.get)
+theorem embL_of_eq {x : IrrGL (k := k)} {l : List (IrrGL (k := k))} {y : Fin l.length → IrrGL (k := k)} (e : y = l.get)
     (hd : ∑ a, (y a).1 = x.1) (f : x.rep.IntertwiningMap (prodIrr y hd)) (hf : Function.Injective f) : EmbL x l := by
   subst e
   exact ⟨hd, f, hf⟩
 
-theorem embL_pair {x : IrrGL k} {y : Fin 2 → IrrGL k} {hd : ∑ a, (y a).1 = x.1}
+theorem embL_pair {x : IrrGL (k := k)} {y : Fin 2 → IrrGL (k := k)} {hd : ∑ a, (y a).1 = x.1}
     {f : x.rep.IntertwiningMap (prodIrr y hd)} (hf : Function.Injective f) : EmbL x [y 0, y 1] :=
   embL_of_eq (l := [y 0, y 1]) (y := y) (funext fun i => by fin_cases i <;> rfl) hd f hf
 
-theorem embL_nil (x : IrrGL k) (h0 : x.1 = 0) : EmbL x [] := by
+theorem embL_nil (x : IrrGL (k := k)) (h0 : x.1 = 0) : EmbL x [] := by
   obtain ⟨n, c⟩ := x
   obtain rfl : n = 0 := h0
-  have hd : ∑ a : Fin ([] : List (IrrGL k)).length, (([] : List (IrrGL k)).get a).fst =
-      (⟨0, c⟩ : IrrGL k).fst := by simp
-  obtain ⟨E⟩ : Nonempty ((prodIrr ([] : List (IrrGL k)).get hd).Equiv (IrrGL.rep ⟨0, c⟩)) :=
+  have hd : ∑ a : Fin ([] : List (IrrGL (k := k))).length, (([] : List (IrrGL (k := k))).get a).fst =
+      (⟨0, c⟩ : IrrGL (k := k)).fst := by simp
+  obtain ⟨E⟩ : Nonempty ((prodIrr ([] : List (IrrGL (k := k))).get hd).Equiv (IrrGL.rep ⟨0, c⟩)) :=
     exh_equiv_zero _ _ (PiTensorProduct.isEmptyEquiv (Fin 0)) _ c.rep.irr
   exact ⟨hd, E.symm.toIntertwiningMap, fun a b hab => E.symm.toLinearEquiv.injective hab⟩
 
-variable (k) in
 
+variable (k) in
 theorem cuspEmbP (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hR : RefineP k) : CuspEmbP k := by
   have hJ : JacquetSubLeft k := GlobalTheory.T.jacquet_sub_left_of_admissible hA
-  suffices H : ∀ n : ℕ, ∀ x : IrrGL k, x.1 = n → ∃ l : List (IrrGL k), (∀ ρ ∈ l, ρ.IsCusp) ∧ EmbL x l from
+  suffices H : ∀ n : ℕ, ∀ x : IrrGL (k := k), x.1 = n → ∃ l : List (IrrGL (k := k)), (∀ ρ ∈ l, ρ.IsCusp) ∧ EmbL x l from
     fun x => H _ x rfl
   intro n
   induction n using Nat.strong_induction_on with
@@ -59,8 +63,8 @@ theorem cuspEmbP (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hR : Ref
       exacts [hc, hl ρ hρ]
     · simpa using hR x (y 1) [y 0] l [] hy (by simpa using embL_pair hf)
 
-variable (k) in
 
+variable (k) in
 theorem suppP : SuppP k := by
   intro x a y l 𝔫 hl hx hxy hy Δ hΔ
   obtain ⟨hd, f, hf⟩ := hx
@@ -74,7 +78,7 @@ theorem suppP : SuppP k := by
     GlobalTheory.CompanionTheory.Hypotheses₂.TD.hasSupport_of_isSubquotient_prodIrr (fun i => (hz i).hasSupport) y.2.rep.irr
       hcos.isSubquotient
   obtain ⟨sa, hsa⟩ := GlobalTheory.CompanionTheory.Hypotheses₂.TD.exists_hasSupport hBZ hG a
-  have ht : ∀ i, HasSupport (([a, y] : List (IrrGL k)).get i).rep (![sa, ∑ i, (D i).ms] i) := by
+  have ht : ∀ i, HasSupport (([a, y] : List (IrrGL (k := k))).get i).rep (![sa, ∑ i, (D i).ms] i) := by
     intro i
     fin_cases i
     exacts [hsa, hsy]
@@ -94,8 +98,8 @@ theorem suppP : SuppP k := by
 theorem irreducibleAdmissibleGL : GlobalTheory.Published.IrreducibleAdmissibleGL :=
   fun k _ _ _ _ n => GlobalTheory.T.irreducible_smooth_admissible_GL k (Fin n)
 
-variable (k) in
 
+variable (k) in
 theorem cuspEmbP_of_refine (hR : RefineP k) : CuspEmbP k :=
   cuspEmbP k irreducibleAdmissibleGL hR
 

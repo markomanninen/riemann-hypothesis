@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OnMatInfOfIsUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsKerOpRowFreqColGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnipotentLowerRowsLeviSetClosedSubgroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArchimedeanRapidKernelOperatorFinsetSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OnMatInfOfIsUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsKerOpRowFreqColGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnipotentLowerRowsLeviSetClosedSubgroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArchimedeanRapidKernelOperatorFinsetSum
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep GlobalTheory.JSW GlobalTheory.JSW.MirCinf MeasureTheory
 open scoped FourierTransform ContDiff
 
@@ -118,12 +123,12 @@ namespace GlobalTheory.JSW.MirCinf
 
 variable {E : Type} [Field E] [NumberField E] {n : ℕ}
 
-open Classical in
 
+open Classical in
 def unitVecInf (j : Fin n) (w : InfinitePlace E) (z : ℂ) : Fin n → Cinf E := Pi.single j (Pi.single w z)
 
-variable (E n) in
 
+variable (E n) in
 def dualVecInf : ((Fin n → Cinf E) →L[ℝ] ℝ) →L[ℝ] (Fin n → Cinf E) :=
   LinearMap.toContinuousLinearMap
     { toFun := fun ζ j w => (-(ζ (unitVecInf j w 1) : ℂ) + Complex.I * (ζ (unitVecInf j w Complex.I) : ℂ)) / 2
@@ -160,7 +165,7 @@ theorem dualVecInf_spec (ζ : (Fin n → Cinf E) →L[ℝ] ℝ) (v : Fin n → C
   have h1 : ζ v = ∑ j, ∑ w, ((v j w).re * ζ (unitVecInf j w 1) + (v j w).im * ζ (unitVecInf j w Complex.I)) := by
     calc ζ v = ζ (∑ j, ∑ w, ((v j w).re • unitVecInf j w 1 + (v j w).im • unitVecInf j w Complex.I)) :=
           congrArg ζ (eq_sum_unitVecInf v)
-      _ = _ := by simp only [map_sum, map_add, map_smul, smul_eq_mul]
+      _ = _ := by simp only [map_sum, map_add (f := _), map_smul, smul_eq_mul]
   rw [h1, Finset.sum_comm]
   simp only [Finset.sum_apply, Pi.mul_apply, Complex.re_sum, dualVecInf_apply, Finset.mul_sum, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun w _ => Finset.sum_congr rfl fun j _ => ?_
@@ -172,7 +177,7 @@ theorem dualVecInf_spec (ζ : (Fin n → Cinf E) →L[ℝ] ℝ) (v : Fin n → C
 theorem one_le_htInf_nf (y : GL (Fin n) (Cinf E)) : 1 ≤ htInf y := by
   unfold htInf
   calc (1 : ℝ) = ∏ _w : InfinitePlace E, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
 
 theorem compGL_colGL (w : InfinitePlace E) (r : ℕ) (ξ : Fin n → Cinf E) :
     compGL w (colGL r ξ) = colGL r (fun i => ξ i w) := by
@@ -187,7 +192,7 @@ theorem htInf_colGL_le (r : ℕ) (ξ : Fin n → Cinf E) :
     htInf (colGL r ξ) ≤ (1 + 2 * (n : ℝ) ^ 2 * (1 + ‖ξ‖)) ^ Fintype.card (InfinitePlace E) := by
   unfold htInf
   rw [← Finset.card_univ, ← Finset.prod_const]
-  refine Finset.prod_le_prod (fun w _ => (htGL_pos _).le) fun w _ => ?_
+  refine Finset.prod_le_prod₀ (fun w _ => (htGL_pos _).le) fun w _ => ?_
   change htGL (compGL w (colGL r ξ)) ≤ _
   rw [compGL_colGL]
   refine (htGL_colGL_le r _).trans ?_
@@ -295,12 +300,8 @@ theorem exists_kerOpInf_rowFreq_colGL : ∀ (E : Type) [Field E] [NumberField E]
         ContinuousLinearMap.inl ℝ Z V z +
           ContinuousLinearMap.inr ℝ Z V (rowCutInf ρ (g : Matrix (Fin n) (Fin n) (Cinf E))) := by
       simp
-    rw [hsplit, map_add, AddChar.map_add_eq_mul, Circle.coe_mul]
+    rw [hsplit, map_add (f := _), AddChar.map_add_eq_mul, Circle.coe_mul]
     simp only [η', ContinuousLinearMap.comp_apply]
     ring
-
-example (E : Type) [Field E] [NumberField E] (n : ℕ) :
-    IsKerOpInf (fun W (_ : ℝ × (Fin n → Cinf E)) g => W (g * (1 : GL (Fin n) (Cinf E)))) :=
-  isKerOpInf_dirac (ℝ × (Fin n → Cinf E)) 1
 
 end GlobalTheory.JSW.MirCinf

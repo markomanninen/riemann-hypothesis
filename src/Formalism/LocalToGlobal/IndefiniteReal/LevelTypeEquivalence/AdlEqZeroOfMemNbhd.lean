@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.ExistsDenOfIsCompactAdele
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.IntAdCpctOpen
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.ExistsDenOfIsCompactAdele
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.IntAdCpctOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,15 +31,15 @@ theorem adl_exists_place_ge_one (r : 𝓞 F) (hr : r ≠ 0) :
   rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ w0)] at hN
   have h1 : w0 (r : F) ^ w0.mult < 1 := pow_lt_one₀ (hnn w0) (h w0) InfinitePlace.mult_pos.ne'
   have h2 : ∏ w ∈ Finset.univ.erase w0, w (r : F) ^ w.mult ≤ 1 :=
-    Finset.prod_le_one (fun w _ => pow_nonneg (hnn w) _) (fun w _ => pow_le_one₀ (hnn w) (h w).le)
+    Finset.prod_le_one₀ (fun w _ => pow_nonneg (hnn w) _) (fun w _ => pow_le_one₀ (hnn w) (h w).le)
   have h3 : 0 ≤ w0 (r : F) ^ w0.mult := pow_nonneg (hnn w0) _
   nlinarith
 
 open scoped AdeleRing
 
-variable (F) in
 
-def adlNbhd : Set (AdeleRing (𝓞 F) F) :=
+variable (F) in
+def adlNbhd (F : Type) [Field F] [NumberField F] : Set (AdeleRing (𝓞 F) F) :=
   {x | (∀ w, ‖x.1 w‖ < 1) ∧ ∀ v, x.2 v ∈ v.adicCompletionIntegers F}
 
 theorem adl_isOpen_nbhd : IsOpen (adlNbhd F) := by
@@ -68,8 +72,8 @@ theorem adl_zero_mem_nbhd : (0 : AdeleRing (𝓞 F) F) ∈ adlNbhd F := by
 
 theorem adl_norm_algebraMap (x : F) (w : InfinitePlace F) :
     ‖(algebraMap F (InfiniteAdeleRing F) x) w‖ = w x := by
-  simp [InfiniteAdeleRing.algebraMap_apply]
-  first | rfl | simp [WithAbs.equiv, WithAbs.toAbs]
+  rw [InfiniteAdeleRing.algebraMap_apply]
+  exact AbsoluteValue.Completion.norm_coe (WithAbs.toAbs w.1 x)
 
 theorem adl_eq_zero_of_mem_nbhd (a : F) (ha : algebraMap F (AdeleRing (𝓞 F) F) a ∈ adlNbhd F) : a = 0 := by
   obtain ⟨hinf, hfin⟩ := ha
@@ -144,10 +148,10 @@ theorem adl_cocompact : ∃ K : Set (AdeleRing (𝓞 F) F), IsCompact K ∧
   obtain ⟨r, hr⟩ := hCy (x.1 - algebraMap F _ u)
   refine ⟨u + r, ?_, ?_⟩
   · show x.1 - algebraMap F (InfiniteAdeleRing F) (u + r) ∈ C
-    rw [map_add, ← sub_sub]
+    rw [map_add (f := _), ← sub_sub]
     exact hr
   · have : x.2 - algebraMap F (FiniteAdeleRing (𝓞 F) F) (u + r) =
-        (x.2 - algebraMap F _ u) - algebraMap F _ (r : F) := by rw [map_add, sub_sub]
+        (x.2 - algebraMap F _ u) - algebraMap F _ (r : F) := by rw [map_add (f := _), sub_sub]
     show ∀ v, (x.2 - algebraMap F (FiniteAdeleRing (𝓞 F) F) (u + r)) v ∈ _
     rw [this]
     exact sub_mem hu (Formalism.L2.GlobalTheoryTheory.FiltrationBoundaryCriterion.CompactFixesLatticeTheory.algebraMap_mem_intAd r)

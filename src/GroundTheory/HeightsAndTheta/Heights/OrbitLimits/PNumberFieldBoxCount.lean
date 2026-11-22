@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsNumberFieldBoxCount
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLatticeImageZLattice
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCovolumeRelIndex
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsEmbeddingSumPlaces
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsMixedBoxCount
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsNumberFieldBoxCount
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLatticeImageZLattice
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCovolumeRelIndex
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsEmbeddingSumPlaces
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsMixedBoxCount
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -27,10 +32,10 @@ theorem inf_full {F : Type*} [Field F] {L B : AddSubgroup F}
     simpa [mul_comm] using h
 
 theorem fg_of_le {G : Type*} [AddCommGroup G] {H K : AddSubgroup G} (hK : K.FG) (hHK : H ≤ K) : H.FG := by
-  obtain ⟨S, hS⟩ := hK
-  have hK' : (AddSubgroup.toIntSubmodule K).FG := ⟨S, by rw [← AddSubgroup.toIntSubmodule_closure, hS]⟩
-  obtain ⟨T, hT⟩ := hK'.of_le (S := AddSubgroup.toIntSubmodule H) hHK
-  exact ⟨T, AddSubgroup.toIntSubmodule.injective (by rw [AddSubgroup.toIntSubmodule_closure, hT])⟩
+  have hK' : (AddSubgroup.toIntSubmodule K).FG := by
+    rwa [Submodule.fg_iff_addSubgroup_fg, AddSubgroup.toIntSubmodule_toAddSubgroup]
+  have hH' := hK'.of_le (S := AddSubgroup.toIntSubmodule H) hHK
+  rwa [Submodule.fg_iff_addSubgroup_fg, AddSubgroup.toIntSubmodule_toAddSubgroup] at hH'
 
 theorem forall_le_iff {F : Type*} [Field F] [NumberField F] (ρ : (F →+* ℂ) → ℝ)
     (hρc : ∀ σ, ρ (ComplexEmbedding.conjugate σ) = ρ σ) (x : F) :
@@ -63,8 +68,8 @@ theorem relIndex_latticeImage {F : Type*} [Field F] [NumberField F] (H K : AddSu
   simp only [latticeImage, AddSubgroup.toIntSubmodule_toAddSubgroup]
   exact AddSubgroup.relIndex_map_map_of_injective _ _ (mixedEmbedding_injective F)
 
-open scoped Classical in
 
+open scoped Classical in
 theorem proof (h1 : LatticeImageZLattice.Statement) (h2 : CovolumeRelIndex.Statement)
     (h4 : EmbeddingSumPlaces.Statement) (h5 : MixedBoxCount.Statement) : NumberFieldBoxCount.Statement := by
   intro F _ _ B hB hBf

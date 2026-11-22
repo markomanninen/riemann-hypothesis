@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Exbasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.DetPull
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hnf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Nearvec
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Exbasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.DetPull
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hnf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Nearvec
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped Pointwise

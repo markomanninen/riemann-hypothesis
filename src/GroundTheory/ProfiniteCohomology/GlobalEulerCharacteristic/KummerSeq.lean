@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.H0IsoHomCohomologyClassZero
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveSnake
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.H0IsoHomCohomologyClassZero
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveSnake
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -23,9 +28,9 @@ theorem cohomologyMap_res_nsmul_apply (O : Rep.{u} (ULift.{u} ℤ) G) [IsDiscret
   rw [Functor.map_nsmul, CategoryTheory.Functor.map_id]
   exact cohomologyMap_nsmul_id_apply _ n i x
 
+
 set_option linter.unusedSectionVars false in
 include hS in
-
 theorem nsmul_cohomologyMap_res_f_apply (i : ℕ) (x : cohomology (Rep.res N.subtype T) i) :
     n • (cohomologyMap ((Rep.resFunctor N.subtype).map f) i).hom x = 0 := by
   rw [← cohomologyMap_res_nsmul_apply N O n i]
@@ -50,12 +55,6 @@ def kummerTorsHom (i : ℕ) :
     (mem_ker_lsmul_iff n _).2 (nsmul_cohomologyMap_res_f_apply N hS i x)⟩
   map_zero' := Subtype.ext (map_zero _)
   map_add' _ _ := Subtype.ext (map_add _ _ _)
-
-@[simp]
-theorem coe_kummerTorsHom_apply (i : ℕ) (x : cohomology (Rep.res N.subtype T) i) :
-    ((kummerTorsHom N hS i x : TorsN _ n) : cohomology (Rep.res N.subtype O) i) =
-      (cohomologyMap ((Rep.resFunctor N.subtype).map f) i).hom x :=
-  rfl
 
 include hS in
 theorem range_lsmul_le_ker_δ (i : ℕ) :
@@ -117,8 +116,8 @@ theorem kummerTorsHom_eq_zero_iff (i : ℕ) (x : cohomology (Rep.res N.subtype T
       apply Subtype.ext
       exact congrArg (fun φ => φ.hom y) (δ_comp (shortExact_map_res N hS) i (i + 1) rfl)
 
-include hS in
 
+include hS in
 theorem cohomologyMap_res_f_injective_zero :
     Function.Injective (cohomologyMap ((Rep.resFunctor N.subtype).map f) 0).hom := by
   have hf : Function.Injective f.hom := (Rep.mono_iff_injective f).1 hS.mono_f
@@ -155,8 +154,8 @@ variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   (N : Subgroup G) [N.Normal] [CompactSpace N] {Γ : Type*} [Group Γ] (π : G →* Γ)
   (hπ : Function.Surjective π) (hker : π.ker ≤ N)
 
-include hker in
 
+include hker in
 theorem cohomologyConj_eq_of_map_eq (A : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep A] (i : ℕ)
     {g h : G} (hgh : π g = π h) : cohomologyConj A N i g = cohomologyConj A N i h := by
   refine cohomologyConj_eq_of_mk_eq A N i (QuotientGroup.eq.2 (hker ?_))
@@ -189,8 +188,8 @@ theorem conjActionOf_smul (A : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep A] (i :
 variable {T O : Rep.{u} (ULift.{u} ℤ) G} [IsDiscreteRep T] [IsDiscreteRep O]
   {l : ℕ} {f : T ⟶ O} {w : f ≫ (l • 𝟙 O) = 0} (hS : (ShortComplex.mk f (l • 𝟙 O) w).ShortExact)
 
-include hS in
 
+include hS in
 theorem toFun_eq_modN_add_torsN (d : AdditiveFunction.{u} l Γ) (i : ℕ)
     [Finite (ModN (cohomology (Rep.res N.subtype O) i) l)]
     [Finite (TorsN (cohomology (Rep.res N.subtype O) (i + 1)) l)]
@@ -245,8 +244,8 @@ theorem toFun_eq_modN_add_torsN (d : AdditiveFunction.{u} l Γ) (i : ℕ)
       change kummerTorsHom N hS (i + 1) (e (e.symm x)) = z
       rw [AddEquiv.apply_symm_apply, hx]⟩
 
-include hS in
 
+include hS in
 theorem toFun_eq_torsN_zero (d : AdditiveFunction.{u} l Γ)
     [Finite (TorsN (cohomology (Rep.res N.subtype O) 0) l)]
     {X : Type u} [AddCommGroup X] [Module (ZMod l) X] [Finite X] (ρX : Representation (ZMod l) Γ X)

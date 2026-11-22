@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacBound
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarHaar
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacBound
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ def pOfB (ε : Fin n → Bool) (B : Pt ε → Qt ε → ℂ) : Matrix (Fin n) (F
     if ha : ε a = true then (if hb : ε b = false then B ⟨a, ha⟩ ⟨b, hb⟩ else 0)
     else (if hb : ε b = true then star (B ⟨b, hb⟩ ⟨a, by simpa using ha⟩) else 0)
 
-open Classical in
 
+open Classical in
 def toUJ (ε : Fin n → Bool) (m : Matrix (Fin n) (Fin n) ℂ) : UJ ε :=
   if h : inUJ ε m then
     ⟨⟨m, Jm ε * mᴴ * Jm ε, mul_eq_one_comm.mp (left_inv_of_inUJ ε m h), left_inv_of_inUJ ε m h⟩, h⟩
@@ -104,11 +108,11 @@ def phiL (ε : Fin n → Bool) : (Pt ε → Qt ε → ℂ) ≃ₗ[ℝ] (PCoord �
     simp only [phiF, pOfB, Matrix.of_apply]
     by_cases ha : ε a = true
     · have hb : ε b = false := by cases hb : ε b <;> simp_all
-      simp only [dif_pos ha, dif_pos hb, pmat, dif_pos (And.intro hlt hne)]
+      simp only [dite_eq_left ha, dite_eq_left hb, pmat, dite_eq_left (And.intro hlt hne)]
     · have hb : ε b = true := by cases hb : ε b <;> simp_all
       have h1 : ¬ (a < b ∧ ε b ≠ ε a) := fun h => lt_asymm h.1 hlt
       have h2 : b < a ∧ ε a ≠ ε b := ⟨hlt, hne⟩
-      simp only [dif_neg ha, dif_pos hb, pmat, dif_neg h1, dif_pos h2, star_star]
+      simp only [dite_eq_right ha, dite_eq_left hb, pmat, dite_eq_right h1, dite_eq_left h2, star_star]
 
 theorem lintegral_pmat_le (ε : Fin n → Bool) :
     ∃ c : ℝ≥0∞, c ≠ ⊤ ∧ ∀ H : Matrix (Fin n) (Fin n) ℂ → ℝ≥0∞,
@@ -147,14 +151,22 @@ theorem haar_polar_le (ε : Fin n → Bool) (hq : 1 ≤ q0 ε) (ν : Measure (UJ
   refine ⟨c * (muK ε Set.univ)⁻¹ * c',
     ENNReal.mul_ne_top (ENNReal.mul_ne_top ENNReal.coe_ne_top (ENNReal.inv_ne_top.2 hK)) hc', ?_⟩
   intro f hf
-  set F : (Fin n → Fin n → ℂ) → ℝ≥0∞ := fun m => f (toUJ ε m) with hFdef
-  have hFm : Measurable F := measurable_comp_toUJ ε hf
-  have hFg : ∀ g : UJ ε, F (toM g) = f g := fun g => by simp only [hFdef, toUJ_toM]
+  let F : (Fin n → Fin n → ℂ) → ℝ≥0∞ := fun m => f (toUJ ε m)
+  let G : KG ε × (PCoord ε → ℂ) → ℝ≥0∞ := f ∘ fdphPhi ε
+  have hφ : Measurable (fdphPhi ε) := (fdph_phi_continuous ε).measurable
+  have hG : Measurable G := hf.comp hφ
+  have hG_eq (kz : KG ε × (PCoord ε → ℂ)) : G kz = F (polarM kz) := by
+    change f (fdphPhi ε kz) = f (toUJ ε (polarM kz))
+    rw [← fdph_toM_phi ε kz, toUJ_toM]
+  have hmap : muPolar ε = Measure.map (fdphPhi ε) ((dk ε).prod (fdphNu ε)) := by
+    ext S hS
+    rw [Measure.map_apply hφ hS]
+    exact fdph_apply ε hS
   have hJm : Measurable (fun z : PCoord ε → ℂ => ENNReal.ofReal (Jac z)) :=
     ENNReal.measurable_ofReal.comp (jac_continuous ε).measurable
   have hmeas : AEMeasurable (Function.uncurry fun (k : KG ε) (z : PCoord ε → ℂ) =>
-      F (polarM (k, z)) * ENNReal.ofReal (Jac z)) ((dk ε).prod volume) :=
-    ((hFm.comp (intMuCD_measurable_pM ε)).mul (hJm.comp measurable_snd)).aemeasurable
+      G (k, z) * ENNReal.ofReal (Jac z)) ((dk ε).prod volume) :=
+    (hG.mul (hJm.comp measurable_snd)).aemeasurable
   let H : Matrix (Fin n) (Fin n) ℂ → ℝ≥0∞ := fun X =>
     (∫⁻ k, F (toMK k * NormedSpace.exp X) ∂(muK ε)) *
       ENNReal.ofReal (Real.exp (n * Real.sqrt (2 * q0 ε) * Real.sqrt (hs X)))
@@ -164,20 +176,26 @@ theorem haar_polar_le (ε : Fin n → Bool) (hq : 1 ≤ q0 ε) (ν : Measure (UJ
     refine ENNReal.ofReal_le_ofReal ((jac_le_exp z).trans (Real.exp_le_exp.2 ?_))
     exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (by linarith)
       (Real.sqrt_nonneg _)) (Real.sqrt_nonneg _)
-  calc ∫⁻ g, f g ∂ν = c * ∫⁻ g, F (toM g) ∂(muPolar ε) := by
+  calc ∫⁻ g, f g ∂ν = c * ∫⁻ kz, G kz ∂((dk ε).prod (fdphNu ε)) := by
         conv_lhs => rw [hν]
-        rw [lintegral_smul_measure, smul_eq_mul]
-        simp only [hFg]
-    _ = c * ∫⁻ k, ∫⁻ z, F (polarM (k, z)) * ENNReal.ofReal (Jac z) ∂volume ∂(dk ε) := by
-        rw [lintegral_muPolar ε F hFm]
-    _ = c * ∫⁻ z, ∫⁻ k, F (polarM (k, z)) * ENNReal.ofReal (Jac z) ∂(dk ε) ∂volume := by
-        rw [lintegral_lintegral_swap hmeas]
+        rw [lintegral_smul_measure, smul_eq_mul, hmap, lintegral_map hf hφ]
+        rfl
+    _ = c * ∫⁻ k, ∫⁻ z, G (k, z) * ENNReal.ofReal (Jac z) ∂volume ∂(dk ε) := by
+        refine congrArg (c * ·) ((lintegral_prod G hG.aemeasurable).trans ?_)
+        refine lintegral_congr fun k => ?_
+        have hk : Measurable (fun z : PCoord ε → ℂ => G (k, z)) :=
+          hG.comp measurable_prodMk_left
+        rw [fdphNu, lintegral_withDensity_eq_lintegral_mul volume hJm hk]
+        exact lintegral_congr fun z => mul_comm _ _
+    _ = c * ∫⁻ z, ∫⁻ k, G (k, z) * ENNReal.ofReal (Jac z) ∂(dk ε) ∂volume := by
+        exact congrArg (c * ·) (lintegral_lintegral_swap hmeas)
     _ = c * ∫⁻ z, (muK ε Set.univ)⁻¹ * ((∫⁻ k, F (toMK k * NormedSpace.exp (pmat z)) ∂(muK ε)) *
           ENNReal.ofReal (Jac z)) ∂volume := by
         congr 1
         refine lintegral_congr fun z => ?_
-        rw [lintegral_mul_const' _ _ ENNReal.ofReal_ne_top, dk, lintegral_smul_measure, smul_eq_mul,
-          mul_assoc]
+        simp only [hG_eq]
+        rw [dk_def, lintegral_mul_const' _ _ ENNReal.ofReal_ne_top, lintegral_smul_measure,
+          smul_eq_mul, mul_assoc]
         rfl
     _ ≤ c * ∫⁻ z : PCoord ε → ℂ, (muK ε Set.univ)⁻¹ * H (pmat z) ∂volume := by
         exact mul_le_mul_right (lintegral_mono fun z => mul_le_mul_right (mul_le_mul_right (hJ z) _) _) c

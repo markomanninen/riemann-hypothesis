@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.CubeIcoMeas
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LintegralLintegralNormSqRiemannTheta
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.CubeIcoMeas
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LintegralLintegralNormSqRiemannTheta
+
+@[expose] public section
 
 open Complex Matrix MeasureTheory
 open ReciprocityTheory.ChartRestriction.G.I2 ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -13,8 +17,8 @@ noncomputable section
 
 variable {g : ℕ} {τ : Matrix (Fin g) (Fin g) ℂ}
 
-variable (τ) in
 
+variable (τ) in
 def realPt : (Fin g ⊕ Fin g → ℝ) →ₗ[ℝ] (Fin g → ℂ) where
   toFun p := (fun i => (p (.inl i) : ℂ)) + τ *ᵥ fun i => (p (.inr i) : ℂ)
   map_add' p q := by
@@ -112,7 +116,8 @@ theorem mem_lat_perBasis (y : EuclideanSpace ℂ (Fin g)) :
       ext k
       simp [Finset.sum_apply, Pi.single_apply]
     simp only [sumBasis, Module.Basis.map_apply, Pi.basisFun_apply]
-    rw [hm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, Int.cast_smul_eq_zsmul]
   show y ∈ Submodule.span ℤ (Set.range (perBasis hs hp φ)) ↔ _
@@ -125,8 +130,8 @@ theorem mem_lat_perBasis (y : EuclideanSpace ℂ (Fin g)) :
 
 variable (hφ : ∀ v w, Hf v w = hermForm (imInv τ) (φ v) (φ w))
 
-include hφ in
 
+include hφ in
 theorem im_Hf_realCoord (p q : Fin g ⊕ Fin g → ℝ) :
     (Hf (realCoord hs hp φ p) (realCoord hs hp φ q)).im =
       ∑ i, p (.inr i) * q (.inl i) - ∑ i, p (.inl i) * q (.inr i) := by
@@ -157,12 +162,14 @@ def torus (a b : Fin g → ℝ) : GT (Fin g) where
     obtain ⟨n, hn⟩ := (mem_lat_perBasis hs hp φ y).1 y.2
     have hy : y = ∑ j, n j • e j := by
       apply Subtype.ext
-      simp only [hn, e, AddSubmonoidClass.coe_finset_sum, Submodule.coe_smul_of_tower,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hn, e, AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul_of_tower,
         ← map_zsmul, ← map_sum]
       congr 1
       funext j
       simp [Pi.single_apply]
-    rw [hn, im_Hf_realCoord hs hp φ hφ, hy, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hn, im_Hf_realCoord hs hp φ hφ, hy, map_sum]
     simp [mul_comm]
   ka y := cexp (((π * ∑ i, (realCoord hs hp φ).symm y (.inl i) * (realCoord hs hp φ).symm y (.inr i) +
     2 * π * (∑ i, a i * (realCoord hs hp φ).symm y (.inl i) -
@@ -201,7 +208,7 @@ theorem canTh_mem_Sec : (fun v => canTh τ a b (φ v)) ∈ (torus hs hp φ hφ a
   intro γ hγ v
   obtain ⟨m, n, h⟩ := (mem_lat_torus hs hp φ hφ a b γ).1 hγ
   beta_reduce
-  rw [map_add, h, canTh_add_period hs hp a b m n rfl, torus_ka hs hp φ hφ a b h, hφ, hφ, h]
+  rw [map_add (f := _), h, canTh_add_period hs hp a b m n rfl, torus_ka hs hp φ hφ a b h, hφ, hφ, h]
   simp only [Nat.cast_one, one_mul]
   ring_nf
 

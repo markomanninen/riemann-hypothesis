@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.HerbrandLocalBase
-import GroundTheory.LocalFields.CompleteTrivialLocal
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.HerbrandLocalBase
+public import GroundTheory.LocalFields.CompleteTrivialLocal
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -11,9 +15,9 @@ variable {K L : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K]
   [Field L] [ValuativeRel L] [TopologicalSpace L] [IsNonarchimedeanLocalField L]
   [Algebra K L] [ValuativeExtension K L] [FiniteDimensional K L]
 
+
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [Algebra K L]
   [ValuativeExtension K L] [FiniteDimensional K L] in
-
 theorem finiteIndex_of_isOpen_integerUnits {V : Subgroup 𝒪[L]ˣ} (h : IsOpen (V : Set 𝒪[L]ˣ)) :
     V.FiniteIndex := by
   have : Finite (𝒪[L]ˣ ⧸ V) := Subgroup.quotient_finite_of_isOpen V h
@@ -47,21 +51,9 @@ theorem cycHerbrand_units_eq_finrank (hσ : ∀ g, g ∈ Subgroup.zpowers σ) :
 
 variable [IsCyclic (L ≃ₐ[K] L)]
 
-theorem natCard_tateZero_integerUnits_eq :
-    Finite (TateZero (L ≃ₐ[K] L) 𝒪[L]ˣ) ∧ Finite (TateNegOne (L ≃ₐ[K] L) 𝒪[L]ˣ) ∧
-      Nat.card (TateZero (L ≃ₐ[K] L) 𝒪[L]ˣ) = Nat.card (TateNegOne (L ≃ₐ[K] L) 𝒪[L]ˣ) := by
-  obtain ⟨τ, hτ⟩ := IsCyclic.exists_generator (α := L ≃ₐ[K] L)
-  obtain ⟨hA, h1⟩ := cycHerbrand_integerUnits_eq_one hτ
-  obtain ⟨f0, f1⟩ := (hasHerbrandQuotient_iff hτ).mp hA
-  refine ⟨f0, f1, ?_⟩
-  rw [cycHerbrand_ofMulDistribMulAction hτ] at h1
-  have h0 : (Nat.card (TateNegOne (L ≃ₐ[K] L) 𝒪[L]ˣ) : ℚ) ≠ 0 := by
-    exact_mod_cast Nat.card_pos.ne'
-  exact_mod_cast (div_eq_one_iff_eq h0).mp h1
 
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel L]
   [TopologicalSpace L] [IsNonarchimedeanLocalField L] [ValuativeExtension K L] [IsGalois K L] in
-
 theorem natCard_tateNegOne_units : Nat.card (TateNegOne (L ≃ₐ[K] L) Lˣ) = 1 := by
   have := subsingleton_tateNegOne_units (K := K) (L := L)
   exact Nat.card_eq_one_iff_unique.mpr ⟨inferInstance, inferInstance⟩

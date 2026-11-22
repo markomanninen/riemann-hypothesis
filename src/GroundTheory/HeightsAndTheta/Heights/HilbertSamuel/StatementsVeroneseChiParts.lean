@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeroneseParts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStA
-import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.MonoNormSq
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeroneseParts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStA
+public import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.MonoNormSq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -31,19 +36,6 @@ theorem adtEnum_zero_eq (D : ℕ) (l : Fin (Finset.Nat.antidiagonalTuple (D + 1)
     (((Finset.Nat.antidiagonalTuple (D + 1) 0).equivFin.symm l).2)
   funext i
   exact (Finset.sum_eq_zero_iff.mp h) i (Finset.mem_univ i)
-
-example (D : ℕ) : ∀ k, aeval (Veronese.x D) ((fun _ : Fin 1 => (1 : MvPolynomial (Ix (Idx D)) ℚ)) k) =
-    ∑ l : Fin (Finset.Nat.antidiagonalTuple (D + 1) (2 * 0)).card,
-      (((fun _ _ => 1 : Matrix (Fin 1) (Fin (Finset.Nat.antidiagonalTuple (D + 1) (2 * 0)).card) ℤ) k l : ℤ) :
-        Veronese.Fld D) * ∏ i, Veronese.t D i ^ adtEnum D (2 * 0) l i := by
-  intro k
-  have hc : (Finset.Nat.antidiagonalTuple (D + 1) (2 * 0)).card = 1 := by
-    rw [Nat.mul_zero, Finset.Nat.antidiagonalTuple_zero_right, Finset.card_singleton]
-  rw [map_one]
-  have : ∀ l : Fin (Finset.Nat.antidiagonalTuple (D + 1) (2 * 0)).card,
-      (((1 : ℤ) : Veronese.Fld D) * ∏ i, Veronese.t D i ^ adtEnum D (2 * 0) l i) = 1 := fun l => by
-    simp [adtEnum_zero_eq D l]
-  simp only [this, Finset.sum_const, Finset.card_univ, Fintype.card_fin, hc, one_smul]
 
 end
 

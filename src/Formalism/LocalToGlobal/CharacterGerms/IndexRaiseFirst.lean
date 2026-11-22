@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroRestrictPoints
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroRestrictPoints
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,7 @@ theorem index_raise_first (i : Fin dd) (L : ℕ) (γ : Fin 2 × Fin dd →₀ �
 def FrobX (V : VF C) (f : PS C 3 dd) : Prop :=
   ∀ p : Fin 3 × Fin dd →₀ ℕ, (∃ j, ¬ V.l ∣ p ((0 : Fin 3), j)) → V.MM (coeff p f)
 
-def FrobD (V : VF C) (f : PS C 3 dd) : Prop := ∀ j : Fin dd, MaximalIdealCongruence.MMS V (pderiv C ((0 : Fin 3), j) f)
+def FrobD (V : VF C) (f : PS C 3 dd) : Prop := ∀ j : Fin dd, MaximalIdealCongruence.MMS V (MvPowerSeries.pderiv ((0 : Fin 3), j) f)
 
 private theorem v_natCast_nonneg_of_vf (V : VF C) (m : ℕ) : 0 ≤ V.v (m : C) := by
   induction m with
@@ -126,7 +130,7 @@ theorem frobD_mul {f g : PS C 3 dd} (hf : IntS V f) (hg : IntS V g) (hf' : FrobD
   intro j
   rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
   intro μ
-  rw [map_add]
+  rw [map_add (f := _)]
   apply mm_add_of_mm_of_mm
   · exact mms_mul_of_intS_of_mms hf (hg' j) μ
   · exact mms_mul_of_intS_of_mms hg (hf' j) μ
@@ -142,7 +146,7 @@ theorem eq_up_of {p : Fin 3 × Fin dd →₀ ℕ} (hp : ∀ j, p ((0 : Fin 3), j
     exact Fin.succ_ne_zero _ hq.1
   | succ k' =>
     have e : ((Fin.succ k', j) : Fin 3 × Fin dd) = up 2 (k', j) := rfl
-    rw [e, Finsupp.mapDomain_apply (up_inj 2), Finsupp.comapDomain_apply]
+    rw [e, Finsupp.mapDomain_apply_of_injective (up_inj 2), Finsupp.comapDomain_apply]
 
 theorem coeff_free {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) {p : Fin 3 × Fin dd →₀ ℕ}
     (hp : ∀ j, p ((0 : Fin 3), j) = 0) : coeff p f = if p = 0 then 1 else 0 := by

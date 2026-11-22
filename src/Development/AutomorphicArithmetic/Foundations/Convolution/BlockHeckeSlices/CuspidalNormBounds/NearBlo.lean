@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.NearFinite
-import GroundTheory.AutomorphicForms.LocallyProfinite
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IndependenceEigenvectors
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NonSplitSequence
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.NearFinite
+public import GroundTheory.AutomorphicForms.LocallyProfinite
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IndependenceEigenvectors
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NonSplitSequence
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Cm
 open scoped TensorProduct
@@ -30,7 +34,7 @@ private theorem trInv {R : Type} [CommRing R] {r : ℕ} (X Y Z : Matrix (Fin r) 
     Matrix.trace ((X * Y - Y * X) * Z) = -Matrix.trace (Y * (X * Z - Z * X)) := by
   rw [sub_mul, mul_sub, Matrix.trace_sub, Matrix.trace_sub, neg_sub, mul_assoc X, Matrix.trace_mul_comm X, mul_assoc, mul_assoc]
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r : ℕ}
 
 private theorem cenScalar (z : UC E r) (hz : z ∈ Subalgebra.center ℂ (UC E r)) :
     ∃ κ : ((E →+* ℂ) → Fin r → ℂ) → ℂ, Continuous κ ∧ ∀ (f : Sm E r) Λ, (∀ τ u, cap τ u f = (∏ i, (u + Λ τ i)) • f) →
@@ -44,7 +48,7 @@ private theorem cenScalar (z : UC E r) (hz : z ∈ Subalgebra.center ℂ (UC E r
   | add x y _ _ hx hy =>
     obtain ⟨a, ha, h1⟩ := hx
     obtain ⟨b, hb, h2⟩ := hy
-    exact ⟨a + b, ha.add hb, fun f Λ h => by rw [map_add, LinearMap.add_apply, h1 f Λ h, h2 f Λ h, Pi.add_apply, add_smul]⟩
+    exact ⟨a + b, ha.add hb, fun f Λ h => by rw [map_add (f := _), LinearMap.add_apply, h1 f Λ h, h2 f Λ h, Pi.add_apply, add_smul]⟩
   | mul x y _ _ hx hy =>
     obtain ⟨a, ha, h1⟩ := hx
     obtain ⟨b, hb, h2⟩ := hy
@@ -63,7 +67,7 @@ private theorem typeMap (ρ : Typ E r) : ∃ (X : Submodule ℂ (Matrix (Fin ρ.
     intro k x
     induction x using Finsupp.induction_linear with
     | zero => simp
-    | add x y hx hy => rw [Finsupp.mapDomain_add, map_add, map_add, hx, hy, mul_add]
+    | add x y hx hy => rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), hx, hy, mul_add]
     | single a c => simp [A]
   have hst : ∀ (k : KA E r), ∀ y ∈ LinearMap.range A, LinearMap.mulLeft ℂ (ρ.ρ k) y ∈ LinearMap.range A := by
     rintro k _ ⟨x, rfl⟩
@@ -80,7 +84,7 @@ private theorem typeMap (ρ : Typ E r) : ∃ (X : Submodule ℂ (Matrix (Fin ρ.
     induction x using Finsupp.induction_linear with
     | zero => simp
     | add x y hx hy =>
-      rw [map_add, Finsupp.sum_add_index' (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _), ← hx, ← hy]
+      rw [map_add (f := _), Finsupp.sum_add_index' (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _), ← hx, ← hy]
       rfl
     | single a c =>
       rw [Finsupp.sum_single_index (zero_mul _)]
@@ -131,7 +135,8 @@ private theorem finSpace (ρ : Typ E r) (B : ℝ) : ∃ W : Submodule ℂ (cuspF
       map_one' := Subtype.ext (map_one _)
       map_mul' := fun _ _ => Subtype.ext (map_mul _ _ _) }
   have hι : Continuous ι := (continuous_finEmb.comp continuous_subtype_val).subtype_mk _
-  obtain ⟨U, hU, hUρ⟩ := openKer (ρ.ρ.comp ι) (ρ.cont.comp hι)
+  set_option synthInstance.maxHeartbeats 200000 in
+    obtain ⟨U, hU, hUρ⟩ := openKer (ρ.ρ.comp ι) (ρ.cont.comp hι)
   obtain ⟨X, τ, hX⟩ := typeMap ρ
   refine ⟨_, C.nearFinite E r (Fin d) e ε hε2 (fun i j => by rw [← hB, horth]) U hU X τ c, fun S b hk hb =>
     Submodule.subset_span ⟨fun s x => ?_, fun u hu g => ?_, hX _ hk, (smEq E r b.f).2, κ b.Λ, ?_, ?_⟩⟩
@@ -161,7 +166,7 @@ end UpperTheory.ConvolutionTheory.BW
 
 open UpperTheory.ConvolutionTheory.BW in
 theorem UpperTheory.ConvolutionTheory.BW.nearBlo :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.NearBlo E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.NearBlo E := by
   classical
   intro E _ _ _ S r ρ B
   obtain ⟨W, hW, hmem⟩ := finSpace ρ B

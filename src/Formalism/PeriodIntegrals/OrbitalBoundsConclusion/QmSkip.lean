@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SkipSuccessorIndex.SkipSucc2
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SkipSuccessorIndex.SkipSucc2
+
+@[expose] public section
 
 theorem quantum_minor_skip : PI.QmSkip := by
   have hsa : ∀ {n : ℕ} (p : Fin (n + 1)) (k : Fin n),

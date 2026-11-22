@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -41,7 +45,6 @@ def gmul {k l : ℕ} (a : A q E k) (b : A q E l) : A q E (k + l) :=
 
 def gone (q : ℕ) (E : Spc) : A q E 0 := (one q E).cast (by simp) (by simp)
 
-instance : GradedMonoid.GMul (A q E) := ⟨gmul⟩
 instance : GradedMonoid.GOne (A q E) := ⟨gone q E⟩
 
 theorem negOnePow_even (i j : ℕ) : (2 * (i : ℤ) * (2 * (j : ℤ))).negOnePow = 1 :=
@@ -69,44 +72,46 @@ theorem gmul_comm {i j : ℕ} (a : A q E i) (b : A q E j) : HEq (gmul a b) (gmul
   rw [(hr q E).2.2 a b, negOnePow_even, one_smul, cast_cast]
   exact (cast_heq _ _ _).trans (cast_heq _ _ _).symm
 
-def gcr (h : Inv q E) : DirectSum.GCommRing (A q E) where
-  mul a b := gmul a b
-  one := gone q E
-  one_mul := by
-    rintro ⟨k, a⟩
-    refine Sigma.ext (zero_add k) ?_
-    show HEq (gmul (gone q E) a) a
-    simp only [gmul, gone, cup_cast_left]
-    rw [one_cup hr h]
-    simp only [cast_cast]
-    exact cast_heq _ _ _
-  mul_one := by
-    rintro ⟨k, a⟩
-    refine Sigma.ext (add_zero k) ?_
-    show HEq (gmul a (gone q E)) a
-    simp only [gmul, gone, cup_cast_right]
-    rw [cup_one hr h]
-    simp only [cast_cast]
-    exact cast_heq _ _ _
-  mul_assoc := by
-    rintro ⟨i, a⟩ ⟨j, b⟩ ⟨k, c⟩
-    exact Sigma.ext (add_assoc i j k) (gmul_assoc hr a b c)
-  mul_comm := by
-    rintro ⟨i, a⟩ ⟨j, b⟩
-    exact Sigma.ext (add_comm i j) (gmul_comm hr a b)
-  mul_zero a := by simp only [gmul, map_zero, cast_zero]
-  zero_mul b := by simp only [gmul, map_zero, AddMonoidHom.zero_apply, cast_zero]
-  mul_add a b c := by simp only [gmul, map_add, cast_add]
-  add_mul a b c := by simp only [gmul, map_add, AddMonoidHom.add_apply, cast_add]
-  natCast n := n • gone q E
-  natCast_zero := zero_smul _ _
-  natCast_succ n := succ_nsmul _ _
-  intCast n := n • gone q E
-  intCast_ofNat n := natCast_zsmul _ _
-  intCast_negSucc_ofNat n := by
-    show Int.negSucc n • gone q E = -((n + 1 : ℕ) • gone q E)
-    rw [negSucc_zsmul]
-
+def gcr (h : Inv q E) : DirectSum.GCommRing (A q E) :=
+  letI : GradedMonoid.GMul (A q E) := ⟨gmul⟩
+  {
+    mul a b := gmul a b
+    one := gone q E
+    one_mul := by
+      rintro ⟨k, a⟩
+      refine Sigma.ext (zero_add k) ?_
+      show HEq (gmul (gone q E) a) a
+      simp only [gmul, gone, cup_cast_left]
+      rw [one_cup hr h]
+      simp only [cast_cast]
+      exact cast_heq _ _ _
+    mul_one := by
+      rintro ⟨k, a⟩
+      refine Sigma.ext (add_zero k) ?_
+      show HEq (gmul a (gone q E)) a
+      simp only [gmul, gone, cup_cast_right]
+      rw [cup_one hr h]
+      simp only [cast_cast]
+      exact cast_heq _ _ _
+    mul_assoc := by
+      rintro ⟨i, a⟩ ⟨j, b⟩ ⟨k, c⟩
+      exact Sigma.ext (add_assoc i j k) (gmul_assoc hr a b c)
+    mul_comm := by
+      rintro ⟨i, a⟩ ⟨j, b⟩
+      exact Sigma.ext (add_comm i j) (gmul_comm hr a b)
+    mul_zero a := by simp only [gmul, map_zero, cast_zero]
+    zero_mul b := by simp only [gmul, map_zero, AddMonoidHom.zero_apply, cast_zero]
+    mul_add a b c := by simp only [gmul, map_add (f := _), cast_add]
+    add_mul a b c := by simp only [gmul, map_add (f := _), AddMonoidHom.add_apply, cast_add]
+    natCast n := n • gone q E
+    natCast_zero := zero_smul _ _
+    natCast_succ n := succ_nsmul _ _
+    intCast n := n • gone q E
+    intCast_ofNat n := natCast_zsmul _ _
+    intCast_negSucc_ofNat n := by
+      show Int.negSucc n • gone q E = -((n + 1 : ℕ) • gone q E)
+      rw [negSucc_zsmul]
+  }
 end
 
 section
@@ -120,8 +125,8 @@ def projOf (E : Spc) (k : ℕ) : DirectSum ℕ (A q E) →+ A q E k where
   map_zero' := rfl
   map_add' x y := DirectSum.add_apply x y k
 
-include hn in
 
+include hn in
 def mapOf {E E' : Spc} (f : E ⟶ E') (h : Inv q E) (h' : Inv q E') :
     letI := ringOf hr E h; letI := ringOf hr E' h'; DirectSum ℕ (A q E') →+* DirectSum ℕ (A q E) :=
   letI := gcr hr h; letI := gcr hr h'
@@ -186,7 +191,7 @@ theorem etale_even_cohomology_graded_commRing_of_cup_ring_axioms (hn : DivisorNa
         by_cases hjk : j = k
         · subst hjk; rw [DirectSum.of_eq_same, DirectSum.of_eq_same]
         · rw [DirectSum.of_eq_of_ne _ _ _ (Ne.symm hjk), DirectSum.of_eq_of_ne _ _ _ (Ne.symm hjk), map_zero]
-      | add x y hx hy => simp only [map_add, hx, hy] }⟩
+      | add x y hx hy => simp only [map_add (f := _), hx, hy] }⟩
 
 theorem LeafRing_of (hn : LeafA6nat) (hr : LeafA6ring) : LeafRing := etale_even_cohomology_graded_commRing_of_cup_ring_axioms hn hr
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormAdditiveCharacterTypePrimeEqOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCharactersAgreeCommonStabiliserStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermInvariantsIndependentOfWitnessesStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormAdditiveCharacterTypePrimeEqOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCharactersAgreeCommonStabiliserStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermInvariantsIndependentOfWitnessesStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -66,7 +70,8 @@ theorem frameCls_smul (h : S.GLV) (g g' : Fin (r + 1) → S.V) :
       (h⁻¹ • y = ∑ i, c i • g0 i) ↔ y = ∑ i, c i • h (g0 i) := by
     intro y c g0
     have hs : ∑ i, c i • h (g0 i) = h (∑ i, c i • g0 i) := by
-      simp only [map_sum, LinearEquiv.map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearEquiv.map_smul]
     rw [hs]
     constructor
     · intro e
@@ -89,7 +94,8 @@ theorem lev_smul (h : S.GLV) (g g' : Fin (r + 1) → S.V) (b : S.V) :
   have hs : ∀ al al' : Fin (r + 1) → E, (∑ i, al i • h (g i) + ∑ i, al' i • h (g' i)) =
       h (∑ i, al i • g i + ∑ i, al' i • g' i) := by
     intro al al'
-    simp only [map_add, map_sum, LinearEquiv.map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, LinearEquiv.map_smul]
   simp only [hs, h.injective.eq_iff]
 
 theorem spanTo_map (g : Fin (r + 1) → S.V) (t : E)
@@ -165,7 +171,7 @@ theorem sup_iff (h : S.GLV) (hh : h ∈ S.St) (J : ℕ) (v : S.V) :
       h' w ∈ S.spanTo S.f J ⊔ S.spanTo S.f' J := by
     intro h' hh' w hw
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hw
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup ((spanTo_iff S h' hh' J a).2 ha) ((spanTo_iff' S h' hh' J b).2 hb)
   exact map_iff_of S _ S.St hS h hh v
 
@@ -242,7 +248,7 @@ theorem isTermW_smul (h : S.GLV) (hh : h ∈ S.St) (d : S.Datum) (Λ : Submodule
 theorem wit_spec (d : S.Datum) (Λ : Submodule L.O S.V) (H : S.IsTerm d Λ) :
     S.IsTermW d Λ (S.wit d Λ).1 (S.wit d Λ).2 := by
   unfold Frames.wit
-  rw [dif_pos H]
+  rw [dite_eq_left H]
   exact Exists.choose_spec H
 
 theorem tauRel_map (h : S.GLV) (hh : h ∈ S.St) (d : S.Datum) (Λ : Submodule L.O S.V)
@@ -274,12 +280,12 @@ theorem tauRel_map (h : S.GLV) (hh : h ∈ S.St) (d : S.Datum) (Λ : Submodule L
   · exact Submodule.add_mem _ (u1.2 w hw1) ((spanTo_iff S h hh r la).2 hla)
   · exact Submodule.add_mem _ (u2.2 w hw2) ((spanTo_iff' S h hh r la').2 hla')
   · have e : w + (h w - w + h la) = h (w + la) := by
-      rw [map_add]
+      rw [map_add (f := _)]
       abel
     rw [e]
     exact (mem_smul_iff S h Λ _).2 h1
   · have e : w + (h w - w + h la') = h (w + la') := by
-      rw [map_add]
+      rw [map_add (f := _)]
       abel
     rw [e]
     exact (mem_smul_iff S h Λ _).2 h2
@@ -440,17 +446,17 @@ theorem stabiliser_acts_on_terms : ∀ {F : Type} [Field F] [ValuativeRel F] [To
     · intro H x₁ h1 x₁' h1' x₂ h2 x₂' h2' t1 t2
       have t1' := (inTh_iff S h Λ (x₁ + x₁')).2 t1
       have t2' := (inTh_iff S h Λ (x₂ + x₂')).2 t2
-      rw [map_add] at t1' t2'
+      rw [map_add (f := _)] at t1' t2'
       have h3 := H (h x₁) ((hX _).2 h1) (h x₁') ((hX' _).2 h1') (h x₂) ((hX _).2 h2)
         (h x₂') ((hX' _).2 h2') t1' t2'
       unfold Frames.h at h3 ⊢
       rwa [isom S h hh] at h3
     · intro H x₁ h1 x₁' h1' x₂ h2 x₂' h2' t1 t2
       have t1' : S.InTh (h • Λ) (h (h⁻¹ x₁ + h⁻¹ x₁')) := by
-        rw [map_add, e, e]
+        rw [map_add (f := _), e, e]
         exact t1
       have t2' : S.InTh (h • Λ) (h (h⁻¹ x₂ + h⁻¹ x₂')) := by
-        rw [map_add, e, e]
+        rw [map_add (f := _), e, e]
         exact t2
       have h3 := H (h⁻¹ x₁) ((hX _).1 (by rw [e]; exact h1)) (h⁻¹ x₁') ((hX' _).1 (by rw [e]; exact h1'))
         (h⁻¹ x₂) ((hX _).1 (by rw [e]; exact h2)) (h⁻¹ x₂') ((hX' _).1 (by rw [e]; exact h2'))

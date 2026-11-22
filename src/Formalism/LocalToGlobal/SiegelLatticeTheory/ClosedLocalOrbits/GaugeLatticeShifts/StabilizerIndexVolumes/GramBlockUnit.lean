@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,13 +16,13 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E]
 theorem leadMinor_top {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) :
     Formalism.MainNotions.S.leadMinorE Z (r + 1) = Z.det := by
   unfold Formalism.MainNotions.S.leadMinorE
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   congr 1
 
 theorem leadMinor_r {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E) :
     Formalism.MainNotions.S.leadMinorE Z r = Z.adjugate (Fin.last r) (Fin.last r) := by
   unfold Formalism.MainNotions.S.leadMinorE
-  rw [dif_pos (Nat.le_succ r), Matrix.adjugate_fin_succ_eq_det_submatrix]
+  rw [dite_eq_left (Nat.le_succ r), Matrix.adjugate_fin_succ_eq_det_submatrix]
   have : (-1 : E) ^ ((Fin.last r : ℕ) + (Fin.last r : ℕ)) = 1 := by
     rw [← two_mul, pow_mul]; simp
   rw [this, one_mul, Fin.succAbove_last]

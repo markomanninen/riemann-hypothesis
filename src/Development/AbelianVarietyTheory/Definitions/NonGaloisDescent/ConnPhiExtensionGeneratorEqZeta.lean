@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesVecReduceModUMulVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesVecReduceModUMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ theorem ulim_sub_dvd {s : ℕ → K⟦X⟧} (h : ∀ n, (X : K⟦X⟧) ^ (n + 1)
   rw [map_sub] at this ⊢
   rw [ulim, coeff_mk, ← neg_sub, this, neg_zero]
 
-variable (K a ι) in
 
+variable (K a ι) in
 def uPow (m : ℕ) : Submodule K⟦X⟧ (Vec K a ι) where
   carrier := {v | ∀ τ i, (X : K⟦X⟧) ^ m ∣ v τ i}
   add_mem' hv hw τ i := dvd_add (hv τ i) (hw τ i)
@@ -107,7 +111,7 @@ theorem geom_eq {T : Module.End K (Vec K a ι)} (hT : Raises T) {w : Vec K a ι}
   have := sub_mem (geom_sub_mem hT hw (m + 1)) (hT m _ (geom_sub_mem hT hw m))
   convert this using 1
   simp only [Finset.sum_range_succ', pow_succ', ← Finset.mul_sum, LinearMap.add_apply,
-    Module.End.mul_apply, map_sub, pow_zero, Module.End.one_apply]
+    mul_apply_eq_comp, map_sub, pow_zero, one_apply_eq_self]
   abel
 
 def cst : (ZMod a → ι → K) →ₗ[K] Vec K a ι where
@@ -120,14 +124,14 @@ def cst : (ZMod a → ι → K) →ₗ[K] Vec K a ι where
 @[simp] theorem red_cst (d : ZMod a → ι → K) : red (cst d) = d := by ext τ i; simp
 
 def derV : Module.End K (Vec K a ι) where
-  toFun v τ i := PowerSeries.derivative K (v τ i)
+  toFun v τ i := PowerSeries.derivative (v τ i)
   map_add' v w := by ext τ i : 2; simp
   map_smul' c v := by ext τ i : 2; simp
 
 @[simp] theorem derV_apply (v : Vec K a ι) (τ : ZMod a) (i : ι) :
-    derV v τ i = PowerSeries.derivative K (v τ i) := rfl
+    derV v τ i = PowerSeries.derivative (v τ i) := rfl
 
-def derTot (f : ZMod a → K⟦X⟧) : ZMod a → K⟦X⟧ := fun τ => PowerSeries.derivative K (f τ)
+def derTot (f : ZMod a → K⟦X⟧) : ZMod a → K⟦X⟧ := fun τ => PowerSeries.derivative (f τ)
 
 def NTot (f : ZMod a → K⟦X⟧) : ZMod a → K⟦X⟧ := fun τ => N K (f τ)
 
@@ -165,8 +169,8 @@ theorem raises_smul_phi (c : K) : Raises (c • P.phi) := fun m v hv => by
   ext τ i : 2
   simp [smul_eq_C_mul]
 
-omit [IsUltrametricDist K] [Fintype ι] [DecidableEq ι] in
 
+omit [IsUltrametricDist K] [Fintype ι] [DecidableEq ι] in
 theorem _root_.GlobalTheory.BK.Raises.eq_zero {T : Module.End K (Vec K a ι)} (hT : Raises T) {α : Type}
     {σ : α → α} (hσ : Function.Surjective σ) {δ : α → Vec K a ι} (h1 : ∀ x, δ x ∈ uPow K a ι 1)
     (h : ∀ x, δ (σ x) = T (δ x)) (x : α) : δ x = 0 := by
@@ -197,7 +201,8 @@ theorem xiSeq_dvd (n : ℕ) (τ : ZMod a) (i j : ι) :
     rw [zero_add, pow_one, X_dvd_iff]
     simp only [xiSeq_succ, xiSeq_zero, Matrix.map_one _ (map_zero (frob K l)) (map_one _), Matrix.mul_one, map_sub]
     rw [Matrix.mul_apply] at h ⊢
-    simp only [map_sum, map_mul, Matrix.map_apply, constantCoeff_C, mx0] at h ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Matrix.map_apply, constantCoeff_C, mx0] at h ⊢
     rw [h, Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp
   | succ n ih =>
@@ -281,8 +286,8 @@ theorem phi_xi (d : P.D) : P.phi (P.xi d) = P.xi (P.phiD d) := by
   ext τ i : 2
   simp [phiD_apply, Matrix.mulVec, dotProduct]
 
-variable {P} in
 
+variable {P} in
 theorem map_xi {Q : PhiMod O K l e a κ} {g : Vec K a ι → Vec K a κ}
     (hg : ∀ v, g (P.phi v) = Q.phi (g v)) (d : P.D) : g (P.xi d) = Q.xi (red (g (P.xi d))) := by
   rw [← sub_eq_zero]
@@ -303,7 +308,7 @@ def nabla : Module.End K (Vec K a ι) := P.xiExt.conj derV
 
 def conn : Module.End K (Vec K a ι) where
   toFun v := (X : K⟦X⟧) • P.nabla v
-  map_add' v w := by rw [map_add, smul_add]
+  map_add' v w := by rw [map_add (f := _), smul_add]
   map_smul' c v := by rw [map_smul, smul_comm]; rfl
 
 theorem conn_apply (v : Vec K a ι) : P.conn v = (X : K⟦X⟧) • P.nabla v := rfl
@@ -326,7 +331,7 @@ theorem conn_xiExt (w : Vec K a ι) : P.conn (P.xiExt w) = P.xiExt fun τ i => N
 theorem nabla_smul_tot (f : ZMod a → K⟦X⟧) (v : Vec K a ι) :
     P.nabla (f • v) = derTot f • v + f • P.nabla v := by
   obtain ⟨w, rfl⟩ := P.xiExt.surjective v
-  rw [← xiExt_smul_tot, nabla_xiExt, nabla_xiExt, ← xiExt_smul_tot, ← xiExt_smul_tot, ← map_add]
+  rw [← xiExt_smul_tot, nabla_xiExt, nabla_xiExt, ← xiExt_smul_tot, ← xiExt_smul_tot, ← map_add (f := _)]
   congr 1
   ext τ i : 2
   simp [derTot, add_comm, mul_comm]
@@ -348,21 +353,23 @@ theorem conn_phi (v : Vec K a ι) : P.conn (P.phi v) = (l : K) • P.phi (P.conn
   rw [phi_xiExt, conn_xiExt, conn_xiExt, phi_xiExt, ← map_smul]
   congr 1
   ext τ i : 2
-  simp only [Matrix.mulVec, dotProduct, map_sum, Pi.smul_apply, Finset.smul_sum, frobV_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, Pi.smul_apply, Finset.smul_sum, frobV_apply,
     Matrix.map_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← smul_eq_C_mul, ← smul_eq_C_mul, Derivation.map_smul, N_frob, smul_comm, smul_eq_C_mul (a := (l : K)),
     map_natCast]
 
-variable {P} in
 
+variable {P} in
 theorem map_conn {Q : PhiMod O K l e a κ} (g : Vec K a ι →+ Vec K a κ)
     (σ : (ZMod a → K⟦X⟧) → ZMod a → K⟦X⟧) (hσ : ∀ f, σ (NTot f) = NTot (σ f))
     (hs : ∀ f v, g (f • v) = σ f • g v) (hg : ∀ v, g (P.phi v) = Q.phi (g v)) (v : Vec K a ι) :
     g (P.conn v) = Q.conn (g v) := by
   obtain ⟨w, rfl⟩ := P.xiExt.surjective v
   rw [eq_sum_bas w]
-  simp only [map_sum, xiExt_smul_tot, ← cst_single, ← xi_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, xiExt_smul_tot, ← cst_single, ← xi_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [conn_smul_tot, conn_xi, smul_zero, add_zero, hs, hs, conn_smul_tot, map_xi hg, conn_xi,
     smul_zero, add_zero, hσ]
@@ -450,8 +457,8 @@ theorem zeta_phi_sub (m : Vec K a ι) : P.zeta (P.phi m - m) = P.conn (P.phi m) 
   (P.zeta_unique (P.conn_mem_uPow _) (by
     rw [map_sub P.conn, sub_sub_cancel, lphi_apply, conn_phi])).symm
 
-variable {P} in
 
+variable {P} in
 theorem map_zeta {Q : PhiMod O K l e a κ} (g : Vec K a ι →ₗ[K] Vec K a κ)
     (h1 : ∀ v ∈ uPow K a ι 1, g v ∈ uPow K a κ 1) (hg : ∀ v, g (P.phi v) = Q.phi (g v))
     (hN : ∀ v, g (P.conn v) = Q.conn (g v)) (y : Vec K a ι) : g (P.zeta y) = Q.zeta (g y) :=
@@ -498,8 +505,8 @@ namespace PhiMod
 
 variable (P : PhiMod O K l e a ι) {y : Vec K a ι} (hy : y ∈ P.Mext (invE l e (A O K)))
 
-omit [Fact l.Prime] in
 
+omit [Fact l.Prime] in
 def plus : PhiMod O K l e a (ι ⊕ Unit) :=
   ofMatrix (fun τ => Matrix.fromBlocks (P.mx τ) (Matrix.replicateCol Unit (y τ)) 0 1)
     (fun τ => Matrix.fromBlocks (P.mxInv τ) (Matrix.replicateCol Unit (-(P.mxInv τ *ᵥ y τ))) 0 1)
@@ -521,7 +528,7 @@ theorem plus_phi_join (v : Vec K a ι) (f : ZMod a → K⟦X⟧) :
   rw [phi_apply, plus, mx_ofMatrix]
   ext1 i
   rcases i with i | i <;>
-    simp [join, Matrix.mulVec, dotProduct, phi_apply, Fintype.sum_sum_type, mul_comm]
+    simp [join, Matrix.mulVec, dotProduct, phi_apply, frobTot, Fintype.sum_sum_type, mul_comm]
 
 def plusInl : Hom P (P.plus hy) where
   mat _ := Matrix.fromRows 1 0
@@ -552,7 +559,7 @@ theorem conn_phi_extension_generator_eq_zeta : (P.plus hy).conn ((P.plus hy).phi
   rw [Hom.app_zeta, ← zeta_phi_sub, phi_extension_generator_eq_add, add_sub_cancel_left]
 
 theorem plus_conn_xVec_eq : (P.plus hy).conn xVec = (P.plusInl hy).app (P.zeta y - P.conn y) := by
-  rw [map_sub, ← conn_phi_extension_generator_eq_zeta, phi_extension_generator_eq_add, map_add, Hom.app_conn, add_sub_cancel_right]
+  rw [map_sub, ← conn_phi_extension_generator_eq_zeta, phi_extension_generator_eq_add, map_add (f := _), Hom.app_conn, add_sub_cancel_right]
 
 variable [NormedAlgebra ℚ_[l] K] [NeZero e]
 
@@ -562,9 +569,9 @@ def plusProj : Hom (P.plus hy) (rankOne O K l e fun _ => 0) where
     rintro τ i (j | j)
     exacts [zero_mem _, one_mem _]
   comm τ := by
-    have h : (rankOne O K l e fun _ : ZMod a => 0).mx τ = 1 := by
+    have h : (rankOne O K l e fun _ => 0).mx τ = 1 := by
       ext1 i j
-      exact (mx_rankOne (n := 0) rfl).trans (pow_zero _)
+      simp [mx, rankOne]
     rw [h, plus, mx_ofMatrix, Matrix.fromCols_map, Matrix.map_one _ (map_zero _) (map_one _),
       Matrix.map_zero _ (map_zero _), Matrix.fromCols_mul_fromBlocks]
     simp

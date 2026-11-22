@@ -1,5 +1,9 @@
-import Formalism.DefsOC
-import Formalism.ZetaNonvanishing.MellinSAux
+module
+
+public import Formalism.DefsOC
+public import Formalism.ZetaNonvanishing.MellinSAux
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter Topology ArithmeticFunction
 

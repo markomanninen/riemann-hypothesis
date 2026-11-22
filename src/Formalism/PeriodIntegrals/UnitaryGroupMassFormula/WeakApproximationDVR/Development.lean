@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WeakApproxDVR
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.BigExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WeakApproxDVR
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.BigExists
+
+@[expose] public section
 
 namespace PI.WA
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem semiBC_piMap {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) (J :
 def piFrob {A : Type} [CommRing A] (φ : A →+* A) (d : A) (J : Type) :
     (J → A) →ₛₗ[(algebraMap A (Localization.Away d)).comp φ] LocalizedModule (Submonoid.powers d) (J → A) where
   toFun x := LocalizedModule.mk (piMap φ J x) 1
-  map_add' x y := by simp [LocalizedModule.mk_add_mk]
+  map_add' x y := by simp
   map_smul' c x := by
     rw [RingHom.comp_apply, algebraMap_smul, LocalizedModule.smul'_mk, LinearMap.map_smulₛₗ]
 
@@ -90,7 +94,8 @@ theorem sum_frob {T J : Type} [AddCommGroup T] [Module ℤ_[l] T] [Fintype J] (�
     (h : ∀ i, d ^ r * (d ^ k * WittVector.frobenius (x i)) = d ^ r * m i) :
     inclW l d ^ k • TensorProduct.map (frobW l).toLinearMap LinearMap.id (∑ i, inclW l (x i) ⊗ₜ[ℤ_[l]] β i) =
       ∑ i, inclW l (m i) ⊗ₜ[ℤ_[l]] β i := by
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [TensorProduct.map_tmul, AlgHom.toLinearMap_apply, LinearMap.id_apply, frobW_inclW,
     ← mul_left_cancel₀ (pow_ne_zero r hd) (h i), map_mul, map_pow, smul_tmul', smul_eq_mul]
@@ -99,7 +104,8 @@ theorem sum_gal {T J : Type} [AddCommGroup T] [Module ℤ_[l] T] [Fintype J] (β
     (ρ : T →ₗ[ℤ_[l]] T) (hρ : ∀ x, ρ x = x) (x : J → Ainf l) :
     ∑ i, inclW l (Per.σA g (x i)) ⊗ₜ[ℤ_[l]] β i =
       TensorProduct.map (galW l g).toLinearMap ρ (∑ i, inclW l (x i) ⊗ₜ[ℤ_[l]] β i) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [TensorProduct.map_tmul, AlgEquiv.toLinearMap_apply, galW_inclW, hρ]
 
@@ -121,10 +127,20 @@ theorem unitPowMap_gal (F : FinExt l) {T J : Type} [AddCommGroup T] [Module ℤ_
 
 theorem realises_unitPow (F : FinExt l) {T J : Type} [AddCommGroup T] [Module ℤ_[l] T] [Fintype J]
     [DecidableEq J] (β : Module.Basis J ℤ_[l] T) (ρ : ↥(GK F) → (T →ₗ[ℤ_[l]] T)) (hρ : ∀ g x, ρ g x = x) :
-    Realises F (unitPow l ↥(OL F) J) (ainfObj F) (ainfId F) T ρ (unitPowMap F β) where
-  ainf := isAinf_ainfObj F
-  bc := SemiBC.comp_equiv (semiBC_piMap ((inclW l).comp (ainfId F).toRingHom) J) _
-  j_φ d hd x m k h := unitPowMap_frob F β d.1 hd x m k h
-  j_act g x := unitPowMap_gal F β g (ρ g) (hρ g) x
+    Realises F (unitPow l ↥(OL F) J) (ainfObj F) (ainfId F) T ρ (unitPowMap F β) := by
+  have hAinf : IsAinf F (ainfObj F) (ainfId F) := by
+    refine ⟨fun _ => rfl, fun _ => Iff.rfl, ?_⟩
+    intro x a h
+    have hθ : ainfQuot l (Ideal.Quotient.mk _ a) = ainfQuot l ((ainfQuot l).symm (intToOC F x)) :=
+      congrArg (ainfQuot l) h
+    rw [RingEquiv.apply_symm_apply] at hθ
+    exact congrArg Subtype.val hθ
+  refine ⟨hAinf, ?_, ?_, ?_⟩
+  · exact SemiBC.comp_equiv (semiBC_piMap ((inclW l).comp (ainfId F).toRingHom) J)
+      (β.baseChange (WCb l)).equivFun.symm
+  · intro d hd x m k h
+    exact unitPowMap_frob F β d.1 hd x m k h
+  · intro g x
+    exact unitPowMap_gal F β g (ρ g) (hρ g) x
 
 end GlobalTheory.BKReal

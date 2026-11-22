@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LineScalingNorm.ConstantOneMemNonvanishing
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferKPt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreKLEig
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LineScalingNorm.ConstantOneMemNonvanishing
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferKPt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreKLEig
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix

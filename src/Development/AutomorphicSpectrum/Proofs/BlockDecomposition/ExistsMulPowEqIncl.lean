@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
+
+@[expose] public section
+
 open CrystallineSemistableComparison.Onto GlobalTheory.CompanionTheory.SurjectionOntoH4
 
 set_option autoImplicit false
@@ -28,7 +33,7 @@ theorem exists_mul_pow_eq_incl {M M' : AddSubmonoid (Gam n d)} (h : M ≤ M') (c
     obtain ⟨N₁, a₁, h₁⟩ := hf
     obtain ⟨N₂, a₂, h₂⟩ := hg'
     refine ⟨N₁ + N₂, a₁ * mon K c hc ^ N₂ + a₂ * mon K c hc ^ N₁, ?_⟩
-    rw [map_add, map_mul, map_mul, ← h₁, ← h₂, pow_add, map_mul]
+    rw [map_add (f := _), map_mul, map_mul, ← h₁, ← h₂, pow_add, map_mul]
     ring
   | single m k =>
     obtain ⟨N, hN⟩ := hg m.1 m.2

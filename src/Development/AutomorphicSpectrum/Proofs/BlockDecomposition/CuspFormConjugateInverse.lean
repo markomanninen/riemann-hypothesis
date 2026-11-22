@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.GelfandKazhdanDuality.IsCuspFormDualMap
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothConjugateInverseMem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartStarInvT
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.GelfandKazhdanDuality.IsCuspFormDualMap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothConjugateInverseMem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartStarInvT
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,11 +34,12 @@ theorem qdet_semilinear {n : ℕ} (D : V →ₗ⋆[ℂ] V) (X Y : Fin n → Fin 
   have hT : ∀ (w : ℂ) (i j : Fin n) (v : V),
       Formalism.REAL.Tm Y (star w) i j (D v) = D (Formalism.REAL.Tm X w i j v) := by
     intro w i j v
-    simp only [Formalism.REAL.Tm, LinearMap.add_apply, map_add, h]
+    simp only [Formalism.REAL.Tm, LinearMap.add_apply, map_add (f := _), h]
     split_ifs
     · simp [Module.algebraMap_end_apply]
     · simp
-  simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [Module.End.mul_apply, Module.End.mul_apply, Module.End.intCast_apply, Module.End.intCast_apply, map_zsmul]
   congr 1
@@ -44,10 +49,10 @@ theorem qdet_semilinear {n : ℕ} (D : V →ₗ⋆[ℂ] V) (X Y : Fin n → Fin 
 
 end Semilinear
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+
 
 variable (E a) in
-
 def dual : Sm E a →ₗ⋆[ℂ] Sm E a where
   toFun φ := ⟨fun g => star (φ.1 (invA E a g)), GlobalTheory.CompanionTheory.DualSm.conj_invA_mem_Sm φ.2⟩
   map_add' φ ψ := Subtype.ext (funext fun g => by simp)
@@ -130,51 +135,49 @@ theorem continuous_invT {R : Type} [CommRing R] [TopologicalSpace R] [IsTopologi
   · change Continuous fun g : GL (Fin a) R => g.val j i
     exact Units.continuous_val.matrix_elem _ _
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem norm_toL_transpose_le (M : Matrix (Fin a) (Fin a) (Cinf E)) : ‖toL Mᵀ‖ ≤ ‖toL M‖ :=
   (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun i => (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun j =>
     (norm_le_pi_norm (toL M j) i).trans (norm_le_pi_norm (toL M) j)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem height_invT_le (y : GL (Fin a) (Cinf E)) : height (invT a (Cinf E) y) ≤ height y := by
   have h1 : ‖toL (invT a (Cinf E) y).val‖ ≤ ‖toL (y⁻¹).val‖ := norm_toL_transpose_le (y⁻¹).val
   have h2 : ‖toL ((invT a (Cinf E) y)⁻¹).val‖ ≤ ‖toL y.val‖ := norm_toL_transpose_le y.val
   unfold height
   linarith
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem height_invT (y : GL (Fin a) (Cinf E)) : height (invT a (Cinf E) y) = height y := by
   refine le_antisymm (height_invT_le y) ?_
   have h := height_invT_le (invT a (Cinf E) y)
   have e : invT a (Cinf E) (invT a (Cinf E) y) = y := Units.ext (Matrix.transpose_transpose y.val)
   rwa [e] at h
 
-theorem isAutForm_dual {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (dual E a φ) where
-  left γ g := by
+theorem isAutForm_dual {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (dual E a φ) := by
+  refine { left := ?_, level := ?_, kfin := ?_, zfin := ?_, growth := ?_ }
+  · intro γ g
     rw [dual_apply, dual_apply, map_mul]
     have e : invA E a (ratGL E a γ) = ratGL E a (invT a E γ) :=
       (GlobalTheory.CompanionTheory.DualAct.map_invT (algebraMap E (Ad E)) γ).symm
     rw [e, h.left]
-  level := by
-    convert h.level.preimage (continuous_invT (a := a) (R := Af E)) using 1
+  · convert h.level.preimage (continuous_invT (a := a) (R := Af E)) using 1
     ext k
     exact (Eq.congr_left (act_dual (.fin k) φ)).trans dual_injective.eq_iff
-  kfin := by
-    have := h.kfin
+  · have := h.kfin
     have := finiteDimensional_map _ this
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep E a k φ)).map
       (dual E a)) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.subset_span ⟨_, rfl⟩, (act_dual (.cpt k) φ).symm⟩
-  zfin := by
-    have := finiteDimensional_map _ h.zfin
+  · have := finiteDimensional_map _ h.zfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) ''
       Zalg E a)).map (dual E a)) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     obtain ⟨z', h1, h2⟩ := Zalg_dual hz
     exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  growth g := by
+  · intro g
     obtain ⟨C, N, h1⟩ := h.growth (invA E a g)
     refine ⟨C, N, fun y => ?_⟩
     have e : (dual E a φ).1 (g * infGL E a y) =
@@ -185,8 +188,8 @@ theorem isAutForm_dual {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (dual E a φ
     rw [e, norm_star]
     exact h2
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem phiU_eq : PhiU a (Ad E) = ratGL E a (PhiU a E) := by
   ext i j
   change GlobalTheory.Tw.Phi a (Ad E) i j = algebraMap E (Ad E) (GlobalTheory.Tw.Phi a E i j)
@@ -203,7 +206,7 @@ theorem invA_eq (g : GA E a) :
   rw [e]
   group
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem blockMap_id_mem_ratN {r s : ℕ} (h : r + s = a) {x : BlockIx a r → Ad E} (hx : x ∈ ratN E a r) :
     blockMap h (RingHom.id (Ad E)) x ∈ ratN E a s := by
   obtain ⟨y, rfl⟩ := hx
@@ -235,7 +238,7 @@ theorem isCuspidal_dual {φ : GA E a → ℂ} (hl : ∀ γ g, φ (ratGL E a γ *
   have h2 := hφ s (by omega) (by omega) (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
     (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving e fun y x => by
       change β (β.symm y + x) = y + β x
-      rw [map_add, β.apply_symm_apply]) (PhiU a (Ad E) * invA E a g)
+      rw [map_add (f := _), β.apply_symm_apply]) (PhiU a (Ad E) * invA E a g)
   rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
   have e1 : ∀ x : BlockIx a r → Ad E,
       φ (invA E a (unip x * g)) = φ (unip (m x) * (PhiU a (Ad E) * invA E a g)) := fun x => by
@@ -251,9 +254,9 @@ theorem isCuspidal_dual {φ : GA E a → ℂ} (hl : ∀ γ g, φ (ratGL E a γ *
 
 end GlobalTheory.CompanionTheory.DualCusp
 
-open GlobalTheory.CompanionTheory.DualCusp in
 
-theorem GlobalTheory.CompanionTheory.DualCusp.isCuspForm_conj_invA {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+open GlobalTheory.CompanionTheory.DualCusp in
+theorem GlobalTheory.CompanionTheory.DualCusp.isCuspForm_conj_invA {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
     (φ : Sm E a) (hψ : (fun g => star (φ.1 (invA E a g))) ∈ Sm E a) (h : IsCuspForm φ) :
     IsCuspForm (⟨fun g => star (φ.1 (invA E a g)), hψ⟩ : Sm E a) :=
   ⟨isAutForm_dual h.1, isCuspidal_dual h.1.left h.2⟩

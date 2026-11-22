@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.WeylComplementInDetCoeffSpan
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.WeylComplementInDetCoeffSpan
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -13,7 +17,7 @@ section Coeff
 variable {R : Type*} [CommRing R] {A : Type*} [CommRing A] [Algebra R A] {τ : Type*}
 
 theorem eval_mem_span (F : MvPolynomial τ A) (p : τ → R) :
-    eval (fun t => algebraMap R A (p t)) F ∈ Submodule.span R (Set.range fun m => coeff m F) := by
+    eval (fun t => algebraMap R A (p t)) F ∈ Submodule.span R (Set.range fun m => AddMonoidAlgebra.coeff F m) := by
   classical
   rw [MvPolynomial.eval_eq]
   refine Submodule.sum_mem _ fun d _ => ?_
@@ -25,11 +29,11 @@ theorem eval_mem_span (F : MvPolynomial τ A) (p : τ → R) :
 theorem coeff_twist_mem (ρ : A →+* Polynomial A) (ψ : τ → MvPolynomial τ (Polynomial R)) (H : MvPolynomial τ A)
     (hH : map ρ H = eval₂ ((C : Polynomial A →+* MvPolynomial τ (Polynomial A)).comp Polynomial.C)
         (fun t => map (Polynomial.mapRingHom (algebraMap R A)) (ψ t)) H) (m : τ →₀ ℕ) (k : ℕ) :
-    (ρ (coeff m H)).coeff k ∈ Submodule.span R (Set.range fun m => coeff m H) := by
+    (ρ (AddMonoidAlgebra.coeff H m)).coeff k ∈ Submodule.span R (Set.range fun m => AddMonoidAlgebra.coeff H m) := by
   classical
   set g : τ → MvPolynomial τ (Polynomial A) := fun t => map (Polynomial.mapRingHom (algebraMap R A)) (ψ t) with hg
   set f := (C : Polynomial A →+* MvPolynomial τ (Polynomial A)).comp Polynomial.C with hf
-  have e1 : eval₂ f g H = ∑ d ∈ H.support, eval₂ f g (monomial d (coeff d H)) := by
+  have e1 : eval₂ f g H = ∑ d ∈ H.support, eval₂ f g (monomial d (AddMonoidAlgebra.coeff H d)) := by
     conv_lhs => rw [H.as_sum]
     exact map_sum (eval₂Hom f g) _ _
   rw [← coeff_map, hH, e1, coeff_sum, Polynomial.finsetSum_coeff]
@@ -50,7 +54,7 @@ variable {R : Type*} [CommRing R]
 def rowDivL {n : ℕ} (a b : Fin n) (k : ℕ) :
     MvPolynomial (Fin n × Fin n) R →ₗ[R] MvPolynomial (Fin n × Fin n) R where
   toFun := rowDiv R a b k
-  map_add' f g := by simp only [rowDiv, map_add, Polynomial.coeff_add]
+  map_add' f g := by simp only [rowDiv, map_add (f := _), Polynomial.coeff_add]
   map_smul' c f := by simp only [rowDiv, map_smul, Polynomial.coeff_smul, RingHom.id_apply]
 
 theorem rowDiv_span {n : ℕ} (a b : Fin n) (k : ℕ) (S : Set (MvPolynomial (Fin n × Fin n) R))
@@ -100,14 +104,15 @@ theorem weight_rowInd {n : ℕ} (a : Fin n) (d : Fin n × Fin n →₀ ℕ) :
 theorem rowDiv_diag {n : ℕ} (a : Fin n) (k : ℕ) (f : MvPolynomial (Fin n × Fin n) R) (z : ℤ)
     (hf : IsWeightedHomogeneous (rowInd a) f z) : rowDiv R a a k f = (z.toNat.choose k) • f := by
   classical
-  have e : ∀ d ∈ f.support, rowDiv R a a k (monomial d (coeff d f)) = (z.toNat.choose k) • monomial d (coeff d f) := by
+  have e : ∀ d ∈ f.support, rowDiv R a a k (monomial d (AddMonoidAlgebra.coeff f d)) = (z.toNat.choose k) • monomial d (AddMonoidAlgebra.coeff f d) := by
     intro d hd
     have hw := hf (mem_support_iff.mp hd)
     rw [weight_rowInd] at hw
     rw [rowDiv, rowGen_diag_monomial, Polynomial.coeff_C_mul, Polynomial.coeff_X_add_one_pow, ← hw, Int.toNat_natCast,
       mul_comm, ← nsmul_eq_mul]
   conv_lhs => rw [f.as_sum]
-  rw [show rowDiv R a a k (∑ d ∈ f.support, monomial d (coeff d f)) = rowDivL a a k (∑ d ∈ f.support, monomial d (coeff d f))
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show rowDiv R a a k (∑ d ∈ f.support, monomial d (AddMonoidAlgebra.coeff f d)) = rowDivL a a k (∑ d ∈ f.support, monomial d (AddMonoidAlgebra.coeff f d))
     from rfl, map_sum]
   conv_rhs => rw [f.as_sum, Finset.smul_sum]
   exact Finset.sum_congr rfl e
@@ -214,10 +219,11 @@ theorem g_rowDiv_shift (R : Type*) [CommRing R] {n : ℕ} (H : ℤ) (a b : Fin r
     (f : MvPolynomial (Fin r × Fin n) R) (hf : IsWeightedHomogeneous (htW ht n) f H) :
     IsWeightedHomogeneous (htW ht n) (rowDiv R a b k f) (H + k * (ht a - ht b)) := by
   unfold rowDiv
-  conv => enter [2, 1, 2]; rw [f.as_sum]
-  rw [map_sum, Polynomial.finsetSum_coeff]
+  conv => enter [2, 1, 1]; rw [f.as_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
-  have := gShift_rowGen_monomial (ht := ht) R a b d (coeff d f) k
+  have := gShift_rowGen_monomial (ht := ht) R a b d (AddMonoidAlgebra.coeff f d) k
   rwa [hf (mem_support_iff.mp hd)] at this
 
 theorem g_weight {n : ℕ} (d : Fin r × Fin n →₀ ℕ) :
@@ -226,7 +232,7 @@ theorem g_weight {n : ℕ} (d : Fin r × Fin n →₀ ℕ) :
   induction d using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    simp only [map_add, Pi.add_apply, Nat.cast_add, mul_add, Finset.sum_add_distrib, hf, hg]
+    simp only [map_add (f := _), Pi.add_apply, Nat.cast_add, mul_add, Finset.sum_add_distrib, hf, hg]
   | single v c =>
     simp [Finsupp.weight_apply, htW, rowW, Pi.single_apply, Finsupp.sum_single_index, mul_comm]
 
@@ -451,7 +457,8 @@ theorem eval_hvE (c : ℕ) (h : Fin c → ℕ) (hh : ∀ k, h k ≤ n) :
   unfold lpMinor
   congr 1
   ext i t
-  simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, gX, gY, map_sum, map_mul, eval_X, eval_C, ptE]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, gX, gY, map_sum, map_mul, eval_X, eval_C, ptE]
   rw [Finset.sum_eq_single (Fin.castLE (hh k) i)]
   · simp
   · intro b _ hb
@@ -471,7 +478,8 @@ theorem entry_even (a b : Fin n) (i : ℕ) (t : Fin n) :
       eval₂Hom ((C : Polynomial (MvPolynomial (Fin n × Fin n) R) →+* MvPolynomial (ℕ × Fin n) _).comp Polynomial.C)
         (fun v => map (Polynomial.mapRingHom (algebraMap R (MvPolynomial (Fin n × Fin n) R))) (psiE R a b v))
         (∑ a' : Fin n, (X (i, a') : GenR R n) * C (X (a', t))) := by
-  simp only [map_sum, map_mul, map_X, map_C, eval₂Hom_X', eval₂Hom_C, RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, rowGen_X, psiE,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_X, map_C, eval₂Hom_X', eval₂Hom_C, RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, rowGen_X, psiE,
     map_add, map_X]
   have hL : ∀ a' : Fin n, (X (i, a') : MvPolynomial (ℕ × Fin n) (Polynomial (MvPolynomial (Fin n × Fin n) R))) *
       (C (Polynomial.C (X (a', t))) + C (if a' = b then Polynomial.X * Polynomial.C (X (a, t)) else 0)) =
@@ -511,7 +519,7 @@ theorem detX_even (a b : Fin n) (hab : a ≠ b) :
         (Matrix.of fun a i : Fin n => gX R n a i.val) = Xm.updateRow a (Xm a + (C (Polynomial.X : Polynomial (MvPolynomial (Fin n × Fin n) R)) :
           MvPolynomial (ℕ × Fin n) (Polynomial (MvPolynomial (Fin n × Fin n) R))) • Xm b) := by
     refine Matrix.ext fun a' i => ?_
-    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, gX, eval₂Hom_X', psiE, map_add, map_X, hXm]
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, gX, eval₂Hom_X', psiE, map_add (f := _), map_X, hXm]
     by_cases h : a' = a
     · subst h
       rw [Matrix.updateRow_self, if_pos rfl, map_mul, map_C, map_X, Polynomial.coe_mapRingHom, Polynomial.map_X]
@@ -700,7 +708,7 @@ theorem catM_odd (a b : Fin n) (hab : a ≠ b) (l : ℕ) :
       (gX R n a₁ i)) = mulC (Matrix.transvection b a (-(C Polynomial.X))) X' := by
     funext a' i
     rw [mulC_tv_apply]
-    simp only [gX, eval₂Hom_X', psiO, map_add, map_X, hX']
+    simp only [gX, eval₂Hom_X', psiO, map_add (f := _), map_X, hX']
     by_cases h : a' = b
     · subst h; rw [if_pos rfl, if_pos rfl, map_mul, map_neg, map_C, map_X, Polynomial.coe_mapRingHom, Polynomial.map_X]
     · rw [if_neg h, if_neg h, map_zero]

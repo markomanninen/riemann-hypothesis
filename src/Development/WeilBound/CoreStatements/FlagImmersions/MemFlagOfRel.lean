@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFiniteExtension
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsValLineLogNormAtIffEmbedding
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFiniteExtension
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsValLineLogNormAtIffEmbedding
+
+@[expose] public section
 
 noncomputable section
 
